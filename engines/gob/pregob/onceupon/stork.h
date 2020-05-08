@@ -28,7 +28,7 @@
 #include "gob/aniobject.h"
 
 namespace Common {
-	class String;
+class String;
 }
 
 namespace Gob {
@@ -72,21 +72,19 @@ public:
 
 private:
 	enum State {
-		kStateFlyNearWithBundle    = 0,
-		kStateFlyFarWithBundle       ,
-		kStateFlyNearWithoutBundle   ,
+		kStateFlyNearWithBundle = 0,
+		kStateFlyFarWithBundle,
+		kStateFlyNearWithoutBundle,
 		kStateFlyFarWithoutBundle
 	};
 
-
-	Surface   *_frame;
+	Surface *_frame;
 	ANIObject *_bundle;
 
 	State _state;
 
-	bool       _shouldDrop;
+	bool _shouldDrop;
 	BundleDrop _bundleDrop;
-
 
 	void setState(State state, uint16 anim);
 	void setState(State state, uint16 anim, int16 x);

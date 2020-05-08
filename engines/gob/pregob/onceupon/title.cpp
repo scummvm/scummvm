@@ -20,10 +20,10 @@
  *
  */
 
-#include "gob/gob.h"
-#include "gob/global.h"
-#include "gob/palanim.h"
 #include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/palanim.h"
 
 #include "gob/sound/sound.h"
 
@@ -62,7 +62,7 @@ void Title::handleFrameEvent() {
 void Title::playMusic() {
 	// Look at what platform this is and play the appropriate music type
 
-	if      (_vm->getPlatform() == Common::kPlatformDOS)
+	if (_vm->getPlatform() == Common::kPlatformDOS)
 		playMusicDOS();
 	else if (_vm->getPlatform() == Common::kPlatformAmiga)
 		playMusicAmiga();
@@ -88,8 +88,8 @@ void Title::playMusicAmiga() {
 void Title::playMusicAtariST() {
 	// Play a Soundblaster composition
 
-	static const int16        titleMusic[21] = { 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0, -1};
-	static const char * const titleFiles[ 3] = {"baba1.snd", "baba2.snd", "baba3.snd"};
+	static const int16 titleMusic[21] = {0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0, -1};
+	static const char *const titleFiles[3] = {"baba1.snd", "baba2.snd", "baba3.snd"};
 
 	for (uint i = 0; i < ARRAYSIZE(titleFiles); i++)
 		_vm->_sound->sampleLoad(_vm->_sound->sampleGetBySlot(i), SOUND_SND, titleFiles[i]);

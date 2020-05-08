@@ -20,9 +20,9 @@
  *
  */
 
+#include "ultima/nuvie/pathfinder/seek_path.h"
 #include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/pathfinder/dir_finder.h"
-#include "ultima/nuvie/pathfinder/seek_path.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -30,11 +30,9 @@ namespace Nuvie {
 using Std::vector;
 
 SeekPath::SeekPath() : A_scan(0), B_scan(0) {
-
 }
 
 SeekPath::~SeekPath() {
-
 }
 
 /* Get two relative directions that a line can travel to trace around an
@@ -48,14 +46,14 @@ bool SeekPath::get_obstacle_tracer(MapCoord &start, sint32 xdir, sint32 ydir,
 		if (check_loc(checkA)) { // can go in X
 			Axdir = xdir;
 			Aydir = 0; // Horizontal; in X direction
-		} else { // X is blocked, must go in Y
+		} else {       // X is blocked, must go in Y
 			Axdir = 0;
 			Aydir = -ydir; // Vertical; opposite Y direction
 		}
 		if (check_loc(checkB)) { // can go in Y
 			Bxdir = 0;
 			Bydir = ydir; // Vertical; in Y direction
-		} else { // Y is blocked, must go in X
+		} else {          // Y is blocked, must go in X
 			Bxdir = -xdir;
 			Bydir = 0; // Horizontal; opposite X direction
 		}
@@ -110,7 +108,7 @@ void SeekPath::trace_around_corner(MapCoord &line, sint32 &deltax, sint32 &delta
    has been found. Trace nodes are placed at turns and where the scan ends. */
 bool SeekPath::trace_obstacle(MapCoord line, sint32 deltax, sint32 deltay, sint32 xdir, sint32 ydir, Std::vector<MapCoord> *scan) {
 	const uint32 scan_max = 8; // number of squares to check before giving up
-	bool bend = false; // true if the scanning line is rotated 90 degrees
+	bool bend = false;         // true if the scanning line is rotated 90 degrees
 	uint32 s = 0;
 	do {
 		line.x += deltax;
@@ -166,7 +164,7 @@ void SeekPath::create_path(MapCoord &start, MapCoord &goal) {
 
 /* Returns true if a path is found around the obstacle between locations. */
 bool SeekPath::path_search(MapCoord &start, MapCoord &goal) {
-	sint8 xdir = 0, ydir = 0; // direction start->goal
+	sint8 xdir = 0, ydir = 0;                               // direction start->goal
 	DirFinder::get_normalized_dir(start, goal, xdir, ydir); // init xdir & ydir
 
 	// confirm that goal is more than one square away

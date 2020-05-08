@@ -45,6 +45,7 @@ private:
 
 	int _highlightedAction;
 	int _selectedAction;
+
 public:
 	RightClickDialog();
 	~RightClickDialog() override;
@@ -62,6 +63,7 @@ private:
 	CursorType _cursorNum;
 	int _inDialog;
 	bool _closeFlag;
+
 public:
 	AmmoBeltDialog();
 	~AmmoBeltDialog() override;
@@ -74,6 +76,7 @@ public:
 class RadioConvDialog : public GfxDialog {
 private:
 	GfxButton _buttons[8];
+
 public:
 	RadioConvDialog();
 	~RadioConvDialog() override;
@@ -82,19 +85,19 @@ public:
 	static int show();
 };
 
-class OptionsDialog: public GfxDialog {
+class OptionsDialog : public GfxDialog {
 private:
 	GfxButton _btnSave, _btnRestore, _btnRestart;
 	GfxButton _btnQuit, _btnResume;
 	GfxButton _btnSound;
 	GfxMessage _gfxMessage;
+
 public:
 	OptionsDialog();
 	~OptionsDialog() override {}
 
 	static void show();
 };
-
 
 } // End of namespace BlueForce
 

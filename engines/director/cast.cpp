@@ -21,13 +21,13 @@
  */
 
 #include "common/substream.h"
-#include "graphics/surface.h"
 #include "graphics/macgui/maceditabletext.h"
+#include "graphics/surface.h"
 #include "image/image_decoder.h"
 
-#include "director/director.h"
 #include "director/cachedmactext.h"
 #include "director/cast.h"
+#include "director/director.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/stxt.h"
@@ -54,7 +54,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 	if (version < 4) {
 		_pitch = 0;
-		_flags = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled
+		_flags = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
 		_bytes = stream.readUint16();
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
@@ -111,10 +111,10 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 		for (uint32 s = 0; s < stringLength; s++)
 			stream.readByte();
 
-		/*uint16 width =*/ stream.readUint16LE(); //maybe?
+		/*uint16 width =*/stream.readUint16LE(); //maybe?
 		_initialRect = Score::readRect(stream);
 
-		/*uint32 somethingElse =*/ stream.readUint32();
+		/*uint32 somethingElse =*/stream.readUint32();
 		_boundingRect = Score::readRect(stream);
 
 		_bitsPerPixel = stream.readUint16();
@@ -199,9 +199,9 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version, int32 bgcol
 		}
 
 		debugC(2, kDebugLoading, "TextCast(): flags1: %d, border: %d gutter: %d shadow: %d pad1: %x align: %04x",
-				_flags, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
+		       _flags, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
 		debugC(2, kDebugLoading, "TextCast(): rgb: 0x%04x 0x%04x 0x%04x, pad2: %x pad3: %d pad4: %d shadow: %d flags: %d totHeight: %d",
-				_palinfo1, _palinfo2, _palinfo3, pad2, pad3, pad4, _textShadow, _textFlags, totalTextHeight);
+		       _palinfo1, _palinfo2, _palinfo3, pad2, pad3, pad4, _textShadow, _textFlags, totalTextHeight);
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCast(): rect:");
 		}
@@ -277,11 +277,11 @@ void TextCast::importStxt(const Stxt *stxt) {
 	_cachedMacText->setStxt(this);
 }
 
-void TextCast::importRTE(byte *text) 	{
+void TextCast::importRTE(byte *text) {
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
 	//child1 is the raw text.
-	_ptext = _ftext = Common::String((char*)text);
+	_ptext = _ftext = Common::String((char *)text);
 	//child2 is positional?
 }
 
@@ -356,7 +356,7 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 	_modified = false;
 
 	debugC(3, kDebugLoading, "ShapeCast: fl: %x unk1: %x type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
-		flags, unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
+	       flags, unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
 
 	if (debugChannelSet(3, kDebugLoading))
 		_initialRect.debugPrint(0, "ShapeCast: rect:");

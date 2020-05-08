@@ -27,82 +27,155 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBomb, CBackground)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(TrueTalkGetStateValueMsg)
-	ON_MESSAGE(SetFrameMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(TrueTalkGetStateValueMsg)
+ON_MESSAGE(SetFrameMsg)
 END_MESSAGE_MAP()
 
 const int CORRECT_WHEELS = 23;
 
 static const char *const HUNDREDS_WAVS_EN[] = {
-	"", "z#353.wav", "z#339.wav", "z#325.wav", "z#311.wav", "z#297.wav",
-	"z#283.wav", "z#269.wav", "z#255.wav", "z#241.wav"
-};
+    "", "z#353.wav", "z#339.wav", "z#325.wav", "z#311.wav", "z#297.wav",
+    "z#283.wav", "z#269.wav", "z#255.wav", "z#241.wav"};
 
 static const char *const HUNDREDS_AND_WAVS_EN[] = {
-	"", "z#352.wav", "z#338.wav", "z#324.wav", "z#310.wav", "z#296.wav",
-	"z#281.wav", "z#268.wav", "z#254.wav", "z#240.wav"
-};
+    "", "z#352.wav", "z#338.wav", "z#324.wav", "z#310.wav", "z#296.wav",
+    "z#281.wav", "z#268.wav", "z#254.wav", "z#240.wav"};
 
 static const char *const COUNTDOWN_WAVS_EN[100] = {
-	"bombcountdown_c0.wav", "z#355.wav", "z#341.wav",  "z#327.wav", "z#313.wav",
-	"z#299.wav", "z#285.wav", "z#271.wav", "z#257.wav", "z#243.wav",
-	"z#354.wav", "z#350.wav", "z#349.wav", "z#348.wav", "z#347.wav",
-	"z#346.wav", "z#345.wav", "z#344.wav", "z#343.wav", "z#342.wav",
-	"z#340.wav", "z#336.wav", "z#335.wav", "z#334.wav", "z#333.wav",
-	"z#332.wav", "z#331.wav", "z#330.wav", "z#329.wav", "z#328.wav",
-	"z#326.wav", "z#322.wav", "z#321.wav", "z#320.wav", "z#319.wav",
-	"z#318.wav", "z#317.wav", "z#316.wav", "z#315.wav", "z#314.wav",
-	"z#312.wav", "z#308.wav", "z#307.wav", "z#306.wav", "z#305.wav",
-	"z#304.wav", "z#303.wav", "z#302.wav", "z#301.wav", "z#300.wav",
-	"z#298.wav", "z#294.wav", "z#293.wav", "z#292.wav", "z#291.wav",
-	"z#290.wav", "z#289.wav", "z#288.wav", "z#287.wav", "z#286.wav",
-	"z#284.wav", "z#280.wav", "z#279.wav", "z#278.wav", "z#277.wav",
-	"z#276.wav", "z#275.wav", "z#274.wav", "z#273.wav", "z#272.wav",
-	"z#270.wav", "z#266.wav", "z#265.wav", "z#264.wav", "z#263.wav",
-	"z#262.wav", "z#261.wav", "z#260.wav", "z#259.wav", "z#258.wav",
-	"z#256.wav", "z#252.wav", "z#251.wav", "z#250.wav", "z#249.wav",
-	"z#248.wav", "z#247.wav", "z#246.wav", "z#245.wav", "z#244.wav",
-	"z#242.wav", "z#238.wav", "z#237.wav", "z#236.wav", "z#235.wav",
-	"z#234.wav", "z#233.wav", "z#232.wav", "z#231.wav", "z#230.wav",
+    "bombcountdown_c0.wav",
+    "z#355.wav",
+    "z#341.wav",
+    "z#327.wav",
+    "z#313.wav",
+    "z#299.wav",
+    "z#285.wav",
+    "z#271.wav",
+    "z#257.wav",
+    "z#243.wav",
+    "z#354.wav",
+    "z#350.wav",
+    "z#349.wav",
+    "z#348.wav",
+    "z#347.wav",
+    "z#346.wav",
+    "z#345.wav",
+    "z#344.wav",
+    "z#343.wav",
+    "z#342.wav",
+    "z#340.wav",
+    "z#336.wav",
+    "z#335.wav",
+    "z#334.wav",
+    "z#333.wav",
+    "z#332.wav",
+    "z#331.wav",
+    "z#330.wav",
+    "z#329.wav",
+    "z#328.wav",
+    "z#326.wav",
+    "z#322.wav",
+    "z#321.wav",
+    "z#320.wav",
+    "z#319.wav",
+    "z#318.wav",
+    "z#317.wav",
+    "z#316.wav",
+    "z#315.wav",
+    "z#314.wav",
+    "z#312.wav",
+    "z#308.wav",
+    "z#307.wav",
+    "z#306.wav",
+    "z#305.wav",
+    "z#304.wav",
+    "z#303.wav",
+    "z#302.wav",
+    "z#301.wav",
+    "z#300.wav",
+    "z#298.wav",
+    "z#294.wav",
+    "z#293.wav",
+    "z#292.wav",
+    "z#291.wav",
+    "z#290.wav",
+    "z#289.wav",
+    "z#288.wav",
+    "z#287.wav",
+    "z#286.wav",
+    "z#284.wav",
+    "z#280.wav",
+    "z#279.wav",
+    "z#278.wav",
+    "z#277.wav",
+    "z#276.wav",
+    "z#275.wav",
+    "z#274.wav",
+    "z#273.wav",
+    "z#272.wav",
+    "z#270.wav",
+    "z#266.wav",
+    "z#265.wav",
+    "z#264.wav",
+    "z#263.wav",
+    "z#262.wav",
+    "z#261.wav",
+    "z#260.wav",
+    "z#259.wav",
+    "z#258.wav",
+    "z#256.wav",
+    "z#252.wav",
+    "z#251.wav",
+    "z#250.wav",
+    "z#249.wav",
+    "z#248.wav",
+    "z#247.wav",
+    "z#246.wav",
+    "z#245.wav",
+    "z#244.wav",
+    "z#242.wav",
+    "z#238.wav",
+    "z#237.wav",
+    "z#236.wav",
+    "z#235.wav",
+    "z#234.wav",
+    "z#233.wav",
+    "z#232.wav",
+    "z#231.wav",
+    "z#230.wav",
 };
 
 const char *const HUNDREDS_WAVS_DE[10] = {
-	"z#56.wav", "z#54.wav", "z#53.wav", "z#52.wav", "z#51.wav",
-	"z#50.wav", "z#49.wav", "z#48.wav", "z#47.wav", "z#55.wav"
-};
+    "z#56.wav", "z#54.wav", "z#53.wav", "z#52.wav", "z#51.wav",
+    "z#50.wav", "z#49.wav", "z#48.wav", "z#47.wav", "z#55.wav"};
 
 const char *const ONE_TO_NINETEEN_WAVS_DE[19] = {
-	"z#15.wav", "z#97.wav", "z#95.wav", "z#86.wav", "z#84.wav",
-	"z#82.wav", "z#80.wav", "z#78.wav", "z#76.wav", "z#74.wav",
-	"z#73.wav", "z#72.wav", "z#71.wav", "z#70.wav", "z#69.wav",
-	"z#68.wav", "z#67.wav", "z#66.wav", "z#65.wav"
-};
+    "z#15.wav", "z#97.wav", "z#95.wav", "z#86.wav", "z#84.wav",
+    "z#82.wav", "z#80.wav", "z#78.wav", "z#76.wav", "z#74.wav",
+    "z#73.wav", "z#72.wav", "z#71.wav", "z#70.wav", "z#69.wav",
+    "z#68.wav", "z#67.wav", "z#66.wav", "z#65.wav"};
 
 const char *const TENS_WAVS_DE[9] = {
-	"z#98.wav", "z#96.wav", "z#92.wav", "z#85.wav", "z#83.wav",
-	"z#81.wav", "z#79.wav", "z#77.wav", "z#75.wav"
-};
+    "z#98.wav", "z#96.wav", "z#92.wav", "z#85.wav", "z#83.wav",
+    "z#81.wav", "z#79.wav", "z#77.wav", "z#75.wav"};
 
 const char *const DIGITS_WAVS_DE[9] = {
-	"z#74.wav", "z#64.wav", "z#63.wav", "z#62.wav", "z#61.wav",
-	"z#60.wav", "z#59.wav", "z#58.wav", "z#57.wav"
-};
+    "z#74.wav", "z#64.wav", "z#63.wav", "z#62.wav", "z#61.wav",
+    "z#60.wav", "z#59.wav", "z#58.wav", "z#57.wav"};
 
 const char *const WAVES_970_DE[30] = {
-	"z#46.wav", "z#45.wav", "z#44.wav", "z#43.wav", "z#42.wav",
-	"z#41.wav", "z#40.wav", "z#39.wav", "z#38.wav", "z#37.wav",
-	"z#36.wav", "z#35.wav", "z#34.wav", "z#33.wav", "z#32.wav",
-	"z#31.wav", "z#30.wav", "z#29.wav", "z#28.wav", "z#27.wav",
-	"z#26.wav", "z#25.wav", "z#24.wav", "z#23.wav", "z#22.wav",
-	"z#21.wav", "z#20.wav", "z#19.wav", "z#18.wav", "z#17.wav"
-};
+    "z#46.wav", "z#45.wav", "z#44.wav", "z#43.wav", "z#42.wav",
+    "z#41.wav", "z#40.wav", "z#39.wav", "z#38.wav", "z#37.wav",
+    "z#36.wav", "z#35.wav", "z#34.wav", "z#33.wav", "z#32.wav",
+    "z#31.wav", "z#30.wav", "z#29.wav", "z#28.wav", "z#27.wav",
+    "z#26.wav", "z#25.wav", "z#24.wav", "z#23.wav", "z#22.wav",
+    "z#21.wav", "z#20.wav", "z#19.wav", "z#18.wav", "z#17.wav"};
 
 CBomb::CBomb() : CBackground() {
 	_active = false;
@@ -407,7 +480,7 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 						const char *tensStr = TENS_WAVS_DE[tens - 1];
 						if (_soundHandle) {
 							_soundHandle = queueSound(tensStr, _soundHandle,
-								_volume, 0, false, Audio::Mixer::kSpeechSoundType);
+							                          _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 						} else {
 							CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
 							_soundHandle = playSound(tensStr, prox);
@@ -417,14 +490,14 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 						if (digit != 0) {
 							const char *digitStr = DIGITS_WAVS_DE[digit - 1];
 							_soundHandle = queueSound(digitStr, _soundHandle,
-								_volume, 0, false, Audio::Mixer::kSpeechSoundType);
+							                          _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 						}
 					} else if (remainder != 0) {
 						// One to nineteen
 						const char *name = ONE_TO_NINETEEN_WAVS_DE[remainder - 1];
 						if (_soundHandle) {
 							_soundHandle = queueSound(name, _soundHandle,
-								_volume, 0, false, Audio::Mixer::kSpeechSoundType);
+							                          _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 						} else {
 							CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
 							_soundHandle = playSound(name, prox);

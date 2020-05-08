@@ -1,4 +1,4 @@
- /* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -37,7 +37,6 @@ public:
 
 class ConditionVariable : public Condition {
 public:
-
 	void deserialize(Archive &archive) override;
 	bool evaluate(const Actor *actor) const override = 0;
 

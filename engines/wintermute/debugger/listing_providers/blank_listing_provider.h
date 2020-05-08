@@ -23,9 +23,9 @@
 #ifndef BLANK_LISTING_PROVIDER_H_
 #define BLANK_LISTING_PROVIDER_H_
 
+#include "engines/wintermute/debugger/error.h"
 #include "engines/wintermute/debugger/listing.h"
 #include "engines/wintermute/debugger/listing_provider.h"
-#include "engines/wintermute/debugger/error.h"
 
 namespace Wintermute {
 class BlankListingProvider : public ListingProvider {

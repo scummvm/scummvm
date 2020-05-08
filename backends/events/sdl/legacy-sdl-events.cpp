@@ -240,7 +240,7 @@ void LegacySdlEventSource::checkScreenChange() {
 		return;
 	}
 
-	int newMaxX = _graphicsManager->getWindowWidth()  - 1;
+	int newMaxX = _graphicsManager->getWindowWidth() - 1;
 	int newMaxY = _graphicsManager->getWindowHeight() - 1;
 
 	if (_km.x_max != newMaxX || _km.y_max != newMaxY) {
@@ -295,7 +295,7 @@ bool LegacySdlEventSource::handleControllerButton(const SDL_Event &ev, Common::E
 		_km.modifier = !buttonUp;
 	}
 
-	return 	SdlEventSource::handleControllerButton(ev, event, buttonUp);
+	return SdlEventSource::handleControllerButton(ev, event, buttonUp);
 }
 
 bool LegacySdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) {

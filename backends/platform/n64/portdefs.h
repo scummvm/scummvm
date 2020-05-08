@@ -25,15 +25,15 @@
 
 #include <n64utils.h>
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
 #include <ctype.h>
 #include <math.h>
 #include <new>
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
 
 #undef assert
-#define assert(x)  ((x) ? 0 : (print_error("ASSERT TRIGGERED:\n\n("#x")\n%s\nline: %d", __FILE__, __LINE__)))
+#define assert(x) ((x) ? 0 : (print_error("ASSERT TRIGGERED:\n\n(" #x ")\n%s\nline: %d", __FILE__, __LINE__)))
 
 #endif // __N64_PORTDEFS__

@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/shared/engine/ultima.h"
-#include "engines/metaengine.h"
 #include "common/system.h"
+#include "engines/metaengine.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/shared/engine/ultima.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -109,12 +109,11 @@ bool NuvieIOFileRead::readToBuf(unsigned char *buf, uint32 buf_size) {
 	return true;
 }
 
-
 // NuvieIOFileWrite
 //
 
 NuvieIOFileWrite::NuvieIOFileWrite() : _saveFileData(DisposeAfterUse::YES),
-		_file(nullptr), _saveFile(nullptr), _isAutosave(false) {
+                                       _file(nullptr), _saveFile(nullptr), _isAutosave(false) {
 }
 
 NuvieIOFileWrite::~NuvieIOFileWrite() {

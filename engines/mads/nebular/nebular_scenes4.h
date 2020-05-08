@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 

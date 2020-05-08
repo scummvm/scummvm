@@ -20,11 +20,11 @@
  *
  */
 
-#include "sci/sci.h"
 #include "sci/engine/features.h"
-#include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/vm.h"		// for Object
+#include "sci/engine/state.h"
+#include "sci/engine/vm.h" // for Object
+#include "sci/sci.h"
 #include "sci/sound/audio.h"
 #ifdef ENABLE_SCI32
 #include "sci/sound/audio32.h"
@@ -46,7 +46,8 @@ reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
 	error("not supposed to call this");
 }
 
-#define CREATE_DOSOUND_FORWARD(_name_) reg_t k##_name_(EngineState *s, int argc, reg_t *argv) { return g_sci->_soundCmd->k##_name_(s, argc, argv); }
+#define CREATE_DOSOUND_FORWARD(_name_) \
+	reg_t k##_name_(EngineState *s, int argc, reg_t *argv) { return g_sci->_soundCmd->k##_name_(s, argc, argv); }
 
 CREATE_DOSOUND_FORWARD(DoSoundInit)
 CREATE_DOSOUND_FORWARD(DoSoundPlay)
@@ -144,9 +145,9 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case kSciAudioPosition:
 		return make_reg(0, g_sci->_audio->audioCdPosition());
-	case kSciAudioWPlay: // CD Audio can't be preloaded
-	case kSciAudioRate: // No need to set the audio rate
-	case kSciAudioVolume: // The speech setting isn't used by CD Audio
+	case kSciAudioWPlay:    // CD Audio can't be preloaded
+	case kSciAudioRate:     // No need to set the audio rate
+	case kSciAudioVolume:   // The speech setting isn't used by CD Audio
 	case kSciAudioLanguage: // No need to set the language
 		break;
 	case kSciAudioCD:
@@ -186,8 +187,8 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			module = argv[1].toUint16();
 			number = ((argv[2].toUint16() & 0xff) << 24) |
 			         ((argv[3].toUint16() & 0xff) << 16) |
-			         ((argv[4].toUint16() & 0xff) <<  8) |
-			          (argv[5].toUint16() & 0xff);
+			         ((argv[4].toUint16() & 0xff) << 8) |
+			         (argv[5].toUint16() & 0xff);
 		} else {
 			warning("kDoAudio: Play called with an unknown number of parameters (%d)", argc);
 			return NULL_REG;
@@ -322,7 +323,7 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 			id = ResourceId(kResourceTypeSync, argv[2].toUint16());
 		} else if (argc == 7) {
 			id = ResourceId(kResourceTypeSync36, argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(),
-							argv[5].toUint16(), argv[6].toUint16());
+			                argv[5].toUint16(), argv[6].toUint16());
 		} else {
 			warning("kDoSync: Start called with an unknown number of parameters (%d)", argc);
 			return s->r_acc;

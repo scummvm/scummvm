@@ -27,8 +27,8 @@
 #include "common/debug.h"
 #include "common/file.h"
 
-#include "gnap/music.h"
 #include "gnap/gnap.h"
+#include "gnap/music.h"
 
 namespace Gnap {
 

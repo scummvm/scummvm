@@ -98,7 +98,7 @@ void KyraEngine_HoF::refreshAnimObjects(int force) {
 			y = 142;
 
 		int width = curObject->width + curObject->width2 + 8;
-		int height = curObject->height + curObject->height2*2;
+		int height = curObject->height + curObject->height2 * 2;
 		if (width + x > 320)
 			width -= width + x - 322;
 		if (height + y > 143)
@@ -194,8 +194,8 @@ void KyraEngine_HoF::updateCharacterAnim(int) {
 	animState->shapePtr = getShapePtr(c->animFrame);
 	animState->shapeIndex1 = animState->shapeIndex2 = c->animFrame;
 
-	int xAdd = _shapeDescTable[c->animFrame-9].xAdd;
-	int yAdd = _shapeDescTable[c->animFrame-9].yAdd;
+	int xAdd = _shapeDescTable[c->animFrame - 9].xAdd;
+	int yAdd = _shapeDescTable[c->animFrame - 9].yAdd;
 
 	_charScale = getScale(c->x1, c->y1);
 
@@ -214,7 +214,7 @@ void KyraEngine_HoF::updateCharacterAnim(int) {
 }
 
 void KyraEngine_HoF::updateSceneAnim(int anim, int newFrame) {
-	AnimObj *animObject = &_animObjects[1+anim];
+	AnimObj *animObject = &_animObjects[1 + anim];
 	if (!animObject->enabled)
 		return;
 

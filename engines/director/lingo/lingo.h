@@ -24,16 +24,16 @@
 #define DIRECTOR_LINGO_LINGO_H
 
 #include "audio/audiostream.h"
+#include "common/endian.h"
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
-#include "common/endian.h"
 #include "common/str-array.h"
 
-#include "director/types.h"
 #include "director/lingo/lingo-gr.h"
+#include "director/types.h"
 
 namespace Common {
-	class SeekableSubReadStreamEndian;
+class SeekableSubReadStreamEndian;
 }
 
 namespace Director {
@@ -53,8 +53,8 @@ enum LexerDefineState {
 };
 
 typedef void (*inst)(void);
-#define	STOP (inst)0
-#define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
+#define STOP (inst)0
+#define ENTITY_INDEX(t, id) ((t)*100000 + (id))
 
 typedef Common::Array<inst> ScriptData;
 
@@ -62,33 +62,36 @@ struct FuncDesc {
 	Common::String name;
 	const char *proto;
 
-	FuncDesc(Common::String n, const char *p) { name = n; proto = p; }
+	FuncDesc(Common::String n, const char *p) {
+		name = n;
+		proto = p;
+	}
 };
 
 typedef Common::HashMap<void *, FuncDesc *> FuncHash;
 
-struct Symbol {	/* symbol table entry */
+struct Symbol { /* symbol table entry */
 	Common::String name;
 	int type;
 	union {
-		int		i;			/* VAR */
-		double	f;			/* FLOAT */
-		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
-		void (*func)();		/* OPCODE */
-		void (*bltin)(int);	/* BUILTIN */
-		Common::String	*s;	/* STRING */
-		DatumArray *farr;	/* ARRAY, POINT, RECT */
+		int i;              /* VAR */
+		double f;           /* FLOAT */
+		ScriptData *defn;   /* FUNCTION, PROCEDURE */
+		void (*func)();     /* OPCODE */
+		void (*bltin)(int); /* BUILTIN */
+		Common::String *s;  /* STRING */
+		DatumArray *farr;   /* ARRAY, POINT, RECT */
 		PropertyArray *parr;
 	} u;
-	int nargs;		/* number of arguments */
-	int maxArgs;	/* maximal number of arguments, for builtins */
-	bool parens;	/* whether parens required or not, for builitins */
+	int nargs;   /* number of arguments */
+	int maxArgs; /* maximal number of arguments, for builtins */
+	bool parens; /* whether parens required or not, for builitins */
 
 	bool global;
 	Common::Array<Common::String> *argNames;
 	Common::Array<Common::String> *varNames;
-	ScriptContext *ctx;		/* optional script context to execute with */
-	int archiveIndex; 		/* optional archive to execute with */
+	ScriptContext *ctx; /* optional script context to execute with */
+	int archiveIndex;   /* optional archive to execute with */
 
 	Symbol();
 };
@@ -101,22 +104,34 @@ struct PCell {
 	PCell(Datum &prop, Datum &val);
 };
 
-struct Datum {	/* interpreter stack type */
+struct Datum { /* interpreter stack type */
 	int type;
 
 	union {
-		int	i;				/* INT, ARGC, ARGCNORET */
-		double f;			/* FLOAT */
-		Common::String *s;	/* STRING */
-		Symbol	*sym;
-		DatumArray *farr;	/* ARRAY, POINT, RECT */
+		int i;             /* INT, ARGC, ARGCNORET */
+		double f;          /* FLOAT */
+		Common::String *s; /* STRING */
+		Symbol *sym;
+		DatumArray *farr;    /* ARRAY, POINT, RECT */
 		PropertyArray *parr; /* PARRAY */
 	} u;
 
-	Datum() { u.sym = NULL; type = VOID; }
-	Datum(int val) { u.i = val; type = INT; }
-	Datum(double val) { u.f = val; type = FLOAT; }
-	Datum(Common::String *val) { u.s = val; type = STRING; }
+	Datum() {
+		u.sym = NULL;
+		type = VOID;
+	}
+	Datum(int val) {
+		u.i = val;
+		type = INT;
+	}
+	Datum(double val) {
+		u.f = val;
+		type = FLOAT;
+	}
+	Datum(Common::String *val) {
+		u.s = val;
+		type = STRING;
+	}
 
 	double makeFloat();
 	int makeInt();
@@ -148,21 +163,19 @@ typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Comm
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
-struct CFrame {	/* proc/func call stack frame */
-	Symbol	*sp;	/* symbol table entry */
-	int		retpc;	/* where to resume after return */
-	ScriptData	*retscript;	 /* which script to resume after return */
-	ScriptContext	*retctx;   /* which script context to use after return */
-	int 	retarchive;	/* which archive to use after return */
+struct CFrame {            /* proc/func call stack frame */
+	Symbol *sp;            /* symbol table entry */
+	int retpc;             /* where to resume after return */
+	ScriptData *retscript; /* which script to resume after return */
+	ScriptContext *retctx; /* which script context to use after return */
+	int retarchive;        /* which archive to use after return */
 	SymbolHash *localvars;
 };
-
 
 struct LingoArchive {
 	ScriptContextHash scriptContexts[kMaxScriptType + 1];
 	Common::Array<Common::String> names;
 };
-
 
 class Lingo {
 
@@ -229,10 +242,28 @@ public:
 
 	void printAllVars();
 
-	int code1(inst code) { _currentScript->push_back(code); return _currentScript->size() - 1; }
-	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
-	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
-	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
+	int code1(inst code) {
+		_currentScript->push_back(code);
+		return _currentScript->size() - 1;
+	}
+	int code2(inst code_1, inst code_2) {
+		int o = code1(code_1);
+		code1(code_2);
+		return o;
+	}
+	int code3(inst code_1, inst code_2, inst code_3) {
+		int o = code1(code_1);
+		code1(code_2);
+		code1(code_3);
+		return o;
+	}
+	int code4(inst code_1, inst code_2, inst code_3, inst code_4) {
+		int o = code1(code_1);
+		code1(code_2);
+		code1(code_3);
+		code1(code_4);
+		return o;
+	}
 	int codeString(const char *s);
 	void codeLabel(int label);
 	int codeInt(int val);
@@ -257,9 +288,17 @@ public:
 	inst getInst(uint pc) { return (*_currentScript)[pc]; }
 	int readInt() { return getInt(_pc++); }
 	int getInt(uint pc) { return (int)READ_UINT32(&((*_currentScript)[pc])); }
-	double readFloat() { double d = getFloat(_pc); _pc += calcCodeAlignment(sizeof(double)); return d; }
+	double readFloat() {
+		double d = getFloat(_pc);
+		_pc += calcCodeAlignment(sizeof(double));
+		return d;
+	}
 	double getFloat(uint pc) { return *(double *)(&((*_currentScript)[pc])); }
-	char *readString() { char *s = getString(_pc); _pc += calcStringAlignment(s); return s; }
+	char *readString() {
+		char *s = getString(_pc);
+		_pc += calcStringAlignment(s);
+		return s;
+	}
 	char *getString(uint pc) { return (char *)(&((*_currentScript)[pc])); }
 
 	void pushVoid();

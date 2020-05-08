@@ -32,9 +32,20 @@
 namespace Xeen {
 
 enum LocationAction {
-	BANK = 0, BLACKSMITH = 1, GUILD = 2, TAVERN = 3, TEMPLE = 4,
-	TRAINING = 5, ARENA = 6, NO_ACTION = 7, REAPER = 8, GOLEM = 9,
-	DWARF_MINE = 10, SPHINX = 11, PYRAMID = 12, DWARF_TOWN = 13
+	BANK = 0,
+	BLACKSMITH = 1,
+	GUILD = 2,
+	TAVERN = 3,
+	TEMPLE = 4,
+	TRAINING = 5,
+	ARENA = 6,
+	NO_ACTION = 7,
+	REAPER = 8,
+	GOLEM = 9,
+	DWARF_MINE = 10,
+	SPHINX = 11,
+	PYRAMID = 12,
+	DWARF_TOWN = 13
 };
 
 class XeenEngine;
@@ -55,6 +66,7 @@ protected:
 	uint _farewellTime;
 	int _drawCtr1, _drawCtr2;
 	bool _exitToUi;
+
 protected:
 	/**
 	 * Draw the window
@@ -80,6 +92,7 @@ protected:
 	 * Handle any farewell
 	 */
 	virtual void farewell() {}
+
 public:
 	BaseLocation(LocationAction action);
 	~BaseLocation() override;
@@ -106,6 +119,7 @@ private:
 	 * Handles deposits or withdrawls fro the bank
 	 */
 	void depositWithdrawl(PartyBank whereId);
+
 protected:
 	/**
 	 * Generates the display text for the location, for a given character
@@ -121,6 +135,7 @@ protected:
 	 * Handles options for the particular location
 	 */
 	Character *doOptions(Character *c) override;
+
 public:
 	BankLocation();
 	~BankLocation() override {}
@@ -142,6 +157,7 @@ protected:
 	 * Handles options for the particular location
 	 */
 	Character *doOptions(Character *c) override;
+
 public:
 	BlacksmithLocation();
 	~BlacksmithLocation() override {}
@@ -158,6 +174,7 @@ protected:
 	 * Handles options for the particular location
 	 */
 	Character *doOptions(Character *c) override;
+
 public:
 	GuildLocation();
 	~GuildLocation() override {}
@@ -169,6 +186,7 @@ private:
 	uint _v22;
 	int _v23;
 	int _v24;
+
 protected:
 	/**
 	* Generates the display text for the location, for a given character
@@ -184,6 +202,7 @@ protected:
 	 * Handles options for the particular location
 	 */
 	Character *doOptions(Character *c) override;
+
 public:
 	TavernLocation();
 	~TavernLocation() override {}
@@ -200,6 +219,7 @@ private:
 	int _v13, _v14;
 	bool _blessed;
 	int _v5, _v6;
+
 protected:
 	/**
 	* Generates the display text for the location, for a given character
@@ -210,6 +230,7 @@ protected:
 	 * Handles options for the particular location
 	 */
 	Character *doOptions(Character *c) override;
+
 public:
 	TempleLocation();
 	~TempleLocation() override {}
@@ -221,6 +242,7 @@ private:
 	bool _charsTrained[MAX_ACTIVE_PARTY];
 	uint _experienceToNextLevel;
 	uint _maxLevel;
+
 protected:
 	/**
 	 * Generates the display text for the location, for a given character
@@ -231,6 +253,7 @@ protected:
 	 * Handles options for the particular location
 	 */
 	Character *doOptions(Character *c) override;
+
 public:
 	TrainingLocation();
 	~TrainingLocation() override {}
@@ -254,11 +277,13 @@ protected:
 	Direction _mazeDir;
 	Common::Point _mazePos;
 	bool _keyFound;
+
 protected:
 	/**
 	 * Sets the new location
 	 */
 	void setNewLocation();
+
 public:
 	CutsceneLocation(LocationAction action);
 };
@@ -269,6 +294,7 @@ private:
 	 * Get the new location
 	 */
 	void getNewLocation();
+
 public:
 	ReaperCutscene();
 	~ReaperCutscene() override {}
@@ -284,7 +310,8 @@ private:
 	/**
 	 * Get the new location
 	 */
-	void getNewLocation(); 
+	void getNewLocation();
+
 public:
 	GolemCutscene();
 	~GolemCutscene() override {}
@@ -301,6 +328,7 @@ private:
 	 * Get the new location
 	 */
 	void getNewLocation();
+
 public:
 	DwarfCutscene();
 	~DwarfCutscene() override {}
@@ -317,6 +345,7 @@ private:
 	 * Get the new location
 	 */
 	void getNewLocation();
+
 public:
 	SphinxCutscene();
 	~SphinxCutscene() override {}
@@ -347,17 +376,19 @@ private:
 	LocationMessage() : Locations::BaseLocation(NO_ACTION) { setWaitBounds(); }
 
 	bool execute(int portrait, const Common::String &name,
-		const Common::String &text, int confirm);
+	             const Common::String &text, int confirm);
 
 	void loadButtons();
+
 public:
 	static bool show(int portrait, const Common::String &name,
-		const Common::String &text, int confirm);
+	                 const Common::String &text, int confirm);
 };
 
 class LocationManager {
 private:
 	Locations::BaseLocation *_location;
+
 public:
 	LocationManager();
 

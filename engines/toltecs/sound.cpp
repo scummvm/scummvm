@@ -21,13 +21,13 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/resource.h"
 #include "toltecs/segmap.h"
 #include "toltecs/sound.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
@@ -121,10 +121,10 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			Resource *soundResource = _vm->_res->load(resIndex);
 
 			Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-								Audio::makeRawStream(soundResource->data,
-								soundResource->size, 22050, Audio::FLAG_UNSIGNED,
-								DisposeAfterUse::NO),
-								type == kChannelTypeBackground ? 0 : 1);
+			    Audio::makeRawStream(soundResource->data,
+			                         soundResource->size, 22050, Audio::FLAG_UNSIGNED,
+			                         DisposeAfterUse::NO),
+			    type == kChannelTypeBackground ? 0 : 1);
 
 			channels[freeChannel].type = type;
 			channels[freeChannel].resIndex = resIndex;
@@ -135,8 +135,8 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 
 			_vm->_mixer->playStream(soundType, &channels[freeChannel].handle,
 			                        stream, -1, volume, panning);
-		}	// if (freeChannel >= 0)
-	}	// resIndex
+		} // if (freeChannel >= 0)
+	}     // resIndex
 }
 
 void Sound::updateSpeech() {
@@ -191,15 +191,15 @@ void Sound::loadState(Common::ReadStream *in, int version) {
 			Resource *soundResource = _vm->_res->load(channels[i].resIndex);
 
 			Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-								Audio::makeRawStream(soundResource->data,
-								soundResource->size, 22050, Audio::FLAG_UNSIGNED,
-								DisposeAfterUse::NO),
-								channels[i].type == kChannelTypeBackground ? 0 : 1);
+			    Audio::makeRawStream(soundResource->data,
+			                         soundResource->size, 22050, Audio::FLAG_UNSIGNED,
+			                         DisposeAfterUse::NO),
+			    channels[i].type == kChannelTypeBackground ? 0 : 1);
 
 			Audio::Mixer::SoundType soundType = getScummVMSoundType((SoundChannelType)channels[i].type);
 
 			_vm->_mixer->playStream(soundType, &channels[i].handle,
-				stream, -1, channels[i].volume, channels[i].panning);
+			                        stream, -1, channels[i].volume, channels[i].panning);
 		}
 	}
 }

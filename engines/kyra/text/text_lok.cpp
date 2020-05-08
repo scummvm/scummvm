@@ -20,11 +20,11 @@
  *
  */
 
-#include "kyra/text/text.h"
 #include "kyra/engine/kyra_lok.h"
-#include "kyra/graphics/animator_lok.h"
 #include "kyra/engine/sprites.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/animator_lok.h"
+#include "kyra/text/text.h"
 
 #include "common/system.h"
 
@@ -227,8 +227,8 @@ int KyraEngine_LoK::initCharacterChat(int8 charNum) {
 	_animator->restoreAllObjectBackgrounds();
 
 	if (charNum > 4 && charNum < 11) {
-		const uint8 animDisableTable[] = { 3, 1, 1, 5, 0, 6 };
-		const uint8 animEnableTable[] = { 4, 2, 5, 6, 1, 7 };
+		const uint8 animDisableTable[] = {3, 1, 1, 5, 0, 6};
+		const uint8 animEnableTable[] = {4, 2, 5, 6, 1, 7};
 
 		_disabledTalkAnimObject = animDisableTable[charNum - 5];
 		_enabledTalkAnimObject = animEnableTable[charNum - 5];
@@ -251,7 +251,7 @@ int KyraEngine_LoK::initCharacterChat(int8 charNum) {
 }
 
 void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration) {
-	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
+	uint8 startAnimFrames[] = {0x10, 0x32, 0x56, 0x0, 0x0, 0x0};
 
 	uint16 chatTicks;
 	int16 convoInitialized;

@@ -64,7 +64,7 @@ void Room::mudd3Tick1() {
 }
 
 void Room::mudd3UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  3, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
@@ -100,12 +100,12 @@ void Room::mudd3UseSpockOnSphere() {
 		if (!_awayMission->mudd.databaseDestroyed) {
 			showDescription(0, true);
 			showText(TX_SPEAKER_SPOCK, 52, true);
-			showText(TX_SPEAKER_KIRK,  12, true);
+			showText(TX_SPEAKER_KIRK, 12, true);
 			showText(TX_SPEAKER_MCCOY, 24, true);
 		}
-		showText(TX_SPEAKER_KIRK,   6, true);
+		showText(TX_SPEAKER_KIRK, 6, true);
 		showText(TX_SPEAKER_SPOCK, 48, true);
-		showText(TX_SPEAKER_KIRK,   8, true);
+		showText(TX_SPEAKER_KIRK, 8, true);
 		showText(TX_SPEAKER_SPOCK, 51, true);
 	} else if (_awayMission->mudd.translatedAlienLanguage) {
 		if (_awayMission->mudd.accessedAlienDatabase)
@@ -118,7 +118,7 @@ void Room::mudd3UseSpockOnSphere() {
 			showText(TX_SPEAKER_SPOCK, 50, true);
 			showText(TX_SPEAKER_SPOCK, 49, true);
 			showText(TX_SPEAKER_SPOCK, 46, true);
-			showText(TX_SPEAKER_KIRK,   7, true);
+			showText(TX_SPEAKER_KIRK, 7, true);
 
 			_awayMission->mudd.missionScore++;
 			playVoc("LSHAIANS");
@@ -140,7 +140,7 @@ void Room::mudd3UseSpockOnSphere() {
 		showText(TX_SPEAKER_SPOCK, 43, true);
 		showText(TX_SPEAKER_MCCOY, 22, true);
 		showText(TX_SPEAKER_SPOCK, 56, true);
-		showText(TX_SPEAKER_KIRK,  15, true);
+		showText(TX_SPEAKER_KIRK, 15, true);
 		showText(TX_SPEAKER_SPOCK, 47, true);
 		_roomVar.mudd.suggestedUsingTricorders = true;
 	} else {
@@ -250,11 +250,10 @@ void Room::mudd3Timer1Expired() { // Tricorders ready for use again
 // Harry Mudd stumbled into the room
 void Room::mudd3Timer2Expired() {
 	const TextRef choices[] = {
-		TX_SPEAKER_KIRK,
-		10,
-		9,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    10,
+	    9,
+	    TX_BLANK};
 
 	_awayMission->mudd.computerDataErasedOrDestroyed = true;
 
@@ -306,7 +305,6 @@ void Room::mudd3UseMemoryDiskOnSphere() {
 	} else
 		showDescription(19, true);
 }
-
 
 void Room::mudd3GetRepairTool() {
 	if (_awayMission->mudd.tookRepairTool)
@@ -375,14 +373,14 @@ void Room::mudd3LookAtSpock() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
 		showDescription(12, true);
 	else
-		showDescription( 2, true);
+		showDescription(2, true);
 }
 
 void Room::mudd3LookAtMccoy() {
 	if (!_awayMission->mudd.muddInDatabaseRoom)
 		showDescription(10, true);
 	else
-		showDescription( 9, true);
+		showDescription(9, true);
 }
 
 void Room::mudd3LookAtRedshirt() {
@@ -398,18 +396,18 @@ void Room::mudd3LookAtMudd() {
 
 void Room::mudd3TalkToKirk() {
 	if (!_awayMission->mudd.muddInDatabaseRoom) {
-		showText(TX_SPEAKER_KIRK,  14, true);
+		showText(TX_SPEAKER_KIRK, 14, true);
 		showText(TX_SPEAKER_SPOCK, 57, true);
 		showText(TX_SPEAKER_MCCOY, 25, true);
 	} else
-		showText(TX_SPEAKER_KIRK,  2, true);
+		showText(TX_SPEAKER_KIRK, 2, true);
 }
 
 void Room::mudd3TalkToSpock() {
 	if (!_awayMission->mudd.muddInDatabaseRoom) {
 		showText(TX_SPEAKER_SPOCK, 55, true);
 		showText(TX_SPEAKER_MCCOY, 33, true);
-		showText(TX_SPEAKER_KIRK,  11, true);
+		showText(TX_SPEAKER_KIRK, 11, true);
 	} else
 		showText(TX_SPEAKER_SPOCK, 19, true);
 }
@@ -419,14 +417,14 @@ void Room::mudd3TalkToMccoy() {
 		showText(TX_SPEAKER_MCCOY, 23, true);
 	else {
 		showText(TX_SPEAKER_MCCOY, 30, true);
-		showText(TX_SPEAKER_MUDD,  62, true);
+		showText(TX_SPEAKER_MUDD, 62, true);
 	}
 }
 
 void Room::mudd3TalkToRedshirt() {
 	if (!_awayMission->mudd.muddInDatabaseRoom) {
 		showText(TX_SPEAKER_BUCHERT, 70, true);
-		showText(TX_SPEAKER_KIRK,    16, true);
+		showText(TX_SPEAKER_KIRK, 16, true);
 		showText(TX_SPEAKER_BUCHERT, 71, true);
 	} else
 		showText(TX_SPEAKER_BUCHERT, 67, true);
@@ -436,15 +434,15 @@ void Room::mudd3TalkToMudd() {
 	// ENHANCEMENT: the 2nd part of the if condition is new; whether he physically
 	// destroys the database or does through software, he should give this reaction.
 	if (_awayMission->mudd.databaseDestroyed || _awayMission->mudd.muddErasedDatabase) {
-		showText(TX_SPEAKER_MUDD,    60, true);
-		showText(TX_SPEAKER_MCCOY,   29, true);
-		showText(TX_SPEAKER_MUDD,    61, true);
-		showText(TX_SPEAKER_KIRK,    13, true);
-		showText(TX_SPEAKER_MUDD,    58, true);
-		showText(TX_SPEAKER_SPOCK,   TX_DEM0N009);
+		showText(TX_SPEAKER_MUDD, 60, true);
+		showText(TX_SPEAKER_MCCOY, 29, true);
+		showText(TX_SPEAKER_MUDD, 61, true);
+		showText(TX_SPEAKER_KIRK, 13, true);
+		showText(TX_SPEAKER_MUDD, 58, true);
+		showText(TX_SPEAKER_SPOCK, TX_DEM0N009);
 		showText(TX_SPEAKER_BUCHERT, 69, true);
-		showText(TX_SPEAKER_MUDD,    59, true);
-		showText(TX_SPEAKER_KIRK,     5, true);
+		showText(TX_SPEAKER_MUDD, 59, true);
+		showText(TX_SPEAKER_KIRK, 5, true);
 	}
 }
 
@@ -452,4 +450,4 @@ void Room::mudd3UseMedkit() {
 	showText(TX_SPEAKER_MCCOY, 20, true);
 }
 
-}
+} // namespace StarTrek

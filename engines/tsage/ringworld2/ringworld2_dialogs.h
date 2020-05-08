@@ -23,13 +23,13 @@
 #ifndef TSAGE_RINGWORLD2_DIALOGS_H
 #define TSAGE_RINGWORLD2_DIALOGS_H
 
+#include "common/list.h"
+#include "common/rect.h"
+#include "common/system.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
 #include "tsage/events.h"
 #include "tsage/graphics.h"
-#include "common/list.h"
-#include "common/rect.h"
-#include "common/system.h"
 
 namespace TsAGE {
 
@@ -51,6 +51,7 @@ private:
 	int _highlightedAction;
 	int _selectedAction;
 	CursorType _previousCursor;
+
 public:
 	RightClickDialog();
 	~RightClickDialog() override;
@@ -60,11 +61,12 @@ public:
 	int execute();
 };
 
-class CharacterDialog: public GfxDialog {
+class CharacterDialog : public GfxDialog {
 private:
 	GfxMessage _msgTitle;
 	GfxButton _btnQuinn, _btnMiranda, _btnSeeker;
 	GfxButton _btnCancel;
+
 public:
 	CharacterDialog();
 	~CharacterDialog() override {}
@@ -72,12 +74,13 @@ public:
 	static void show();
 };
 
-class HelpDialog: public GfxDialog {
+class HelpDialog : public GfxDialog {
 private:
 	GfxMessage _msgTitle, _msgVersion;
 	GfxButton _btnList[7];
 	GfxMessage _btnDescription[7];
 	GfxButton _btnResume;
+
 public:
 	HelpDialog();
 	~HelpDialog() override {}

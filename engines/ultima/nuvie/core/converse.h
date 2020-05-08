@@ -23,12 +23,12 @@
 #ifndef NUVIE_CORE_CONVERSE_H
 #define NUVIE_CORE_CONVERSE_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/shared/std/containers.h"
 #include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/views/view.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -50,9 +50,8 @@ class ConvScript;
 
 using Std::string;
 
-
-#define CONVERSE_GUMP_DEFAULT   0
-#define CONVERSE_GUMP_U7_STYLE  1
+#define CONVERSE_GUMP_DEFAULT 0
+#define CONVERSE_GUMP_U7_STYLE 1
 #define CONVERSE_GUMP_WOU_STYLE 2
 
 uint8 get_converse_gump_type_from_config(Configuration *config);
@@ -65,20 +64,20 @@ typedef struct {
 	converse_value val;
 } converse_typed_value;
 
-#define U6TALK_VAR_SEX       0x10 // sex of avatar: male=0 female=1
-#define U6TALK_VAR_KARMA     0x14 // avatar's karma
-#define U6TALK_VAR_GARGF     0x15 // 1=player knows Gargish
-#define U6TALK_VAR_NPC_NAME  0x17
+#define U6TALK_VAR_SEX 0x10   // sex of avatar: male=0 female=1
+#define U6TALK_VAR_KARMA 0x14 // avatar's karma
+#define U6TALK_VAR_GARGF 0x15 // 1=player knows Gargish
+#define U6TALK_VAR_NPC_NAME 0x17
 #define U6TALK_VAR_PARTYLIVE 0x17 // number of people (living) following avatar
-#define U6TALK_VAR_PARTYALL  0x18 // number of people (total) following avatar
-#define U6TALK_VAR_HP        0x19 // avatar's health
+#define U6TALK_VAR_PARTYALL 0x18  // number of people (total) following avatar
+#define U6TALK_VAR_HP 0x19        // avatar's health
 #define U6TALK_VAR_PLAYER_NAME 0x19
-#define U6TALK_VAR_QUESTF    0x1A // 0="Thou art not upon a sacred quest!"
+#define U6TALK_VAR_QUESTF 0x1A // 0="Thou art not upon a sacred quest!"
 #define WOUTALK_VAR_ADD_TO_INVENTORY_FAILED 0x1D
-#define U6TALK_VAR_WORKTYPE  0x20 // current activity of npc, from schedule
-#define U6TALK_VAR_YSTRING   0x22 // value of $Y variable.
-#define U6TALK_VAR_INPUT     0x23 // previous input from player ($Z)
-#define U6TALK_VAR__LAST_ 0x25    // (all above 36 appear uninitialized)
+#define U6TALK_VAR_WORKTYPE 0x20 // current activity of npc, from schedule
+#define U6TALK_VAR_YSTRING 0x22  // value of $Y variable.
+#define U6TALK_VAR_INPUT 0x23    // previous input from player ($Z)
+#define U6TALK_VAR__LAST_ 0x25   // (all above 36 appear uninitialized)
 
 /* Conversation engine, apart from the interpreter. Loads converse files,
  * and reads script into buffer. Also manages input/output and has npc-related
@@ -113,19 +112,19 @@ class Converse {
 	uint8 script_num; //this could differ from npc_num when talking to guards or wisps etc.
 	Std::string _name, _desc;
 
-	bool active; // running npc script? (either paused or unpaused)
-	bool need_input; // waiting for text input
+	bool active;             // running npc script? (either paused or unpaused)
+	bool need_input;         // waiting for text input
 	bool party_all_the_time; // force NPCs to join player's party?
 
-	string in_str; // last input from player
-	string out_str; // text that is to be printed
+	string in_str;       // last input from player
+	string out_str;      // text that is to be printed
 	char *allowed_input; // characters requested for single-character input
 
 	char aname[16]; // return from npc_name()
 	struct converse_variables_s {
 		converse_value cv;
 		char *sv;
-	} *variables; /* initialized for [U6TALK_VAR__LAST_+1] items */
+	} * variables; /* initialized for [U6TALK_VAR__LAST_+1] items */
 
 	ConverseSpeech *speech;
 	bool using_fmtowns;
@@ -155,7 +154,7 @@ public:
 	void continue_script();
 	void stop();
 
-	bool running()    {
+	bool running() {
 		return (active);
 	}
 	bool is_waiting_for_scroll() {
@@ -168,7 +167,7 @@ public:
 
 	bool input();
 	void print(const char *s = NULL);
-	const Std::string &get_input()  {
+	const Std::string &get_input() {
 		return in_str;
 	}
 	const Std::string &get_output() {
@@ -191,7 +190,8 @@ public:
 	}
 	const char *get_svar(uint8 varnum);
 	void set_var(uint8 varnum, uint32 val) {
-		if (varnum <= U6TALK_VAR__LAST_) variables[varnum].cv = val;
+		if (varnum <= U6TALK_VAR__LAST_)
+			variables[varnum].cv = val;
 	}
 	void set_svar(uint8 varnum, const char *set);
 	void init_variables();
@@ -202,10 +202,10 @@ public:
 	};
 
 	bool conversations_stop_music;
+
 private:
 	void print_prompt();
 };
-
 
 /* Conversation script container. Maintains current position in the script. The
  * object only exists if it has data loaded. Different classes with an identical
@@ -232,7 +232,7 @@ public:
 
 	void read_script();
 	bool loaded() {
-		return ((buf && buf_len));    // script is loaded?
+		return ((buf && buf_len)); // script is loaded?
 	}
 
 	/* Reading */
@@ -258,7 +258,7 @@ public:
 		skip(offset);
 	}
 
-	uint32 pos()                    {
+	uint32 pos() {
 		return (buf_pt - buf);
 	}
 	bool overflow(uint32 ptadd = 0) {

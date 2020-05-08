@@ -34,11 +34,14 @@ class CSound;
 class CMusicRoom {
 private:
 	MusicRoomInstrument _instruments[4];
+
 public:
 	static CMusicRoomHandler *_musicHandler;
+
 public:
 	CGameManager *_gameManager;
 	CSound *_sound;
+
 public:
 	CMusicRoom(CGameManager *owner);
 	~CMusicRoom();

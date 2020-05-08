@@ -21,11 +21,11 @@
  */
 
 #include "xeen/patcher.h"
-#include "xeen/xeen.h"
-#include "xeen/map.h"
-#include "xeen/party.h"
 #include "common/memstream.h"
 #include "common/serializer.h"
+#include "xeen/map.h"
+#include "xeen/party.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
@@ -36,26 +36,26 @@ struct ScriptEntry {
 };
 
 struct ObjectEntry {
-	int _gameId;			///< Game Id
-	int _removeMazeId;		///< Maze Id of copy to remove
-	int _removeObjNumber;	///< Object number of copy to remove
-	int _refMazeId;			///< Reference object maze id
-	int _refObjNumber;		///< Reference object's number
+	int _gameId;          ///< Game Id
+	int _removeMazeId;    ///< Maze Id of copy to remove
+	int _removeObjNumber; ///< Object number of copy to remove
+	int _refMazeId;       ///< Reference object maze id
+	int _refObjNumber;    ///< Reference object's number
 };
 
-const byte DS_MAP54_LINE8[] = { 8, 10, 10, DIR_EAST, 8, OP_MoveWallObj, 20, 100, 100 };
-const byte SW_MAP53_LINE8[] = { 5, 14, 6, DIR_EAST, 8, OP_Exit };
-const byte DS_MAP116[] = { 9, 10, 6, 4, 2, OP_TakeOrGive, 0, 0, 103, 127 };
-const byte DS_MAP62_PIT1[] = { 9, 11, 8, DIR_ALL, 4, OP_FallToMap, 61, 11, 8, 0 };
-const byte DS_MAP62_PIT2[] = { 9, 7, 4, DIR_ALL, 4, OP_FallToMap, 61, 7, 4, 0 };
+const byte DS_MAP54_LINE8[] = {8, 10, 10, DIR_EAST, 8, OP_MoveWallObj, 20, 100, 100};
+const byte SW_MAP53_LINE8[] = {5, 14, 6, DIR_EAST, 8, OP_Exit};
+const byte DS_MAP116[] = {9, 10, 6, 4, 2, OP_TakeOrGive, 0, 0, 103, 127};
+const byte DS_MAP62_PIT1[] = {9, 11, 8, DIR_ALL, 4, OP_FallToMap, 61, 11, 8, 0};
+const byte DS_MAP62_PIT2[] = {9, 7, 4, DIR_ALL, 4, OP_FallToMap, 61, 7, 4, 0};
 
 #define SCRIPT_PATCHES_COUNT 5
 static const ScriptEntry SCRIPT_PATCHES[] = {
-	{ GType_DarkSide, 54, DS_MAP54_LINE8 },	// Fix curtain on level 2 of Ellinger's Tower
-	{ GType_Swords, 53, SW_MAP53_LINE8 },	// Fix chest in Hart having gems, but saying "Nothing Here"
-	{ GType_DarkSide, 116, DS_MAP116 },		// Fix statue in Dark Tower setting invalid world flag
-	{ GType_DarkSide, 62, DS_MAP62_PIT1 },	// Fix fall position for pit
-	{ GType_DarkSide, 62, DS_MAP62_PIT2 }	// Fix fall position for pit
+    {GType_DarkSide, 54, DS_MAP54_LINE8}, // Fix curtain on level 2 of Ellinger's Tower
+    {GType_Swords, 53, SW_MAP53_LINE8},   // Fix chest in Hart having gems, but saying "Nothing Here"
+    {GType_DarkSide, 116, DS_MAP116},     // Fix statue in Dark Tower setting invalid world flag
+    {GType_DarkSide, 62, DS_MAP62_PIT1},  // Fix fall position for pit
+    {GType_DarkSide, 62, DS_MAP62_PIT2}   // Fix fall position for pit
 };
 
 // List of objects that that need to be removed. Most of these are for copies of objects that appear in
@@ -63,15 +63,14 @@ static const ScriptEntry SCRIPT_PATCHES[] = {
 // When the main object is removed, the original didn't properly also removie the object copies
 #define REMOVE_OBJECTS_COUNT 6
 static const ObjectEntry REMOVE_OBJECTS[] = {
-	// Floating statue in the distance off SE corner of map
-	{ GType_Clouds, 24, 15, 0, 0 },
-	// Desert Paladin stones
-	{ GType_DarkSide, 10, 9, 14, 1 },
-	{ GType_DarkSide, 11, 5, 10, 0 },
-	{ GType_DarkSide, 15, 5, 14, 4 },
-	{ GType_DarkSide, 15, 6, 14, 5 },
-	{ GType_DarkSide, 10, 10, 14, 5 }
-};
+    // Floating statue in the distance off SE corner of map
+    {GType_Clouds, 24, 15, 0, 0},
+    // Desert Paladin stones
+    {GType_DarkSide, 10, 9, 14, 1},
+    {GType_DarkSide, 11, 5, 10, 0},
+    {GType_DarkSide, 15, 5, 14, 4},
+    {GType_DarkSide, 15, 6, 14, 5},
+    {GType_DarkSide, 10, 10, 14, 5}};
 
 /*------------------------------------------------------------------------*/
 
@@ -98,8 +97,7 @@ void Patcher::patchScripts() {
 
 		// Scan through the events to find a matching line
 		int idx = 0;
-		while (idx < (int)map._events.size() && (evt._position != map._events[idx]._position
-				|| evt._direction != map._events[idx]._direction || evt._line != map._events[idx]._line))
+		while (idx < (int)map._events.size() && (evt._position != map._events[idx]._position || evt._direction != map._events[idx]._direction || evt._line != map._events[idx]._line))
 			++idx;
 
 		// Set the event

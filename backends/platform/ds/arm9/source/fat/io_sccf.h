@@ -20,9 +20,9 @@
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE SCCF_GetInterface(void) ;
+extern LPIO_INTERFACE SCCF_GetInterface(void);
 
-#endif	// define IO_SCCF_H
+#endif // define IO_SCCF_H
 /*
 	io_sccf.h
 
@@ -45,6 +45,6 @@ extern LPIO_INTERFACE SCCF_GetInterface(void) ;
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE SCCF_GetInterface(void) ;
+extern LPIO_INTERFACE SCCF_GetInterface(void);
 
-#endif	// define IO_SCCF_H
+#endif // define IO_SCCF_H

@@ -20,11 +20,11 @@
  *
  */
 
+#include "ultima/nuvie/gui/gui_drag_manager.h"
+#include "ultima/nuvie/core/events.h" // /
+#include "ultima/nuvie/core/game.h"   // -+- Included so we can set WAIT_MODE while dragging.
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui_drag_area.h"
-#include "ultima/nuvie/gui/gui_drag_manager.h"
-#include "ultima/nuvie/core/game.h"  // -+- Included so we can set WAIT_MODE while dragging.
-#include "ultima/nuvie/core/events.h" // /
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
 
 namespace Ultima {
@@ -46,7 +46,7 @@ GUI_status GUI_DragManager::start_drag(GUI_DragArea *src, int msg, void *d, unsi
 	message = msg;
 	data = d;
 	is_out_of_range = out_of_range;
-//Game::get_game()->get_event()->set_mode(WAIT_MODE);
+	//Game::get_game()->get_event()->set_mode(WAIT_MODE);
 	Game::get_game()->pause_user();
 	return GUI_DRAG_AND_DROP;
 }
@@ -54,7 +54,7 @@ GUI_status GUI_DragManager::start_drag(GUI_DragArea *src, int msg, void *d, unsi
 void GUI_DragManager::drop(GUI_DragArea *drag_target, int x, int y) {
 	DEBUG(0, LEVEL_DEBUGGING, "Drop\n");
 
-//Game::get_game()->get_event()->endAction(); // WAIT_MODE
+	//Game::get_game()->get_event()->endAction(); // WAIT_MODE
 	Game::get_game()->unpause_user();
 	if (is_out_of_range) {
 		MsgScroll *scroll = Game::get_game()->get_scroll();
@@ -68,7 +68,6 @@ void GUI_DragManager::drop(GUI_DragArea *drag_target, int x, int y) {
 		drag_target->drag_perform_drop(x, y, message, data);
 	} else
 		drag_source->drag_drop_failed(x, y, message, data);
-
 
 	drag_source = NULL;
 

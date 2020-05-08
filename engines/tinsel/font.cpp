@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "tinsel/font.h"
 #include "tinsel/actors.h"
 #include "tinsel/dw.h"
-#include "tinsel/font.h"
 #include "tinsel/handle.h"
 #include "tinsel/object.h"
 #include "tinsel/sysvar.h"
@@ -33,7 +33,7 @@ namespace Tinsel {
 void Font::SetTagFontHandle(SCNHANDLE hFont) {
 	_hTagFont = _hRegularTagFont = hFont;
 	if (TinselV0)
-		SetTalkFontHandle(hFont);	// Also re-use for talk text
+		SetTalkFontHandle(hFont); // Also re-use for talk text
 }
 
 void Font::FettleFontPal(SCNHANDLE fontPal) {
@@ -41,18 +41,18 @@ void Font::FettleFontPal(SCNHANDLE fontPal) {
 	IMAGE *pImg;
 
 	assert(fontPal);
-	assert(_hTagFont); // Tag font not declared
+	assert(_hTagFont);  // Tag font not declared
 	assert(_hTalkFont); // Talk font not declared
 
 	pFont = (const FONT *)LockMem(_hTagFont);
-	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg)); // get image for char 0
 	if (!TinselV2)
 		pImg->hImgPal = TO_32(fontPal);
 	else
 		pImg->hImgPal = 0;
 
 	pFont = (const FONT *)LockMem(_hTalkFont);
-	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg));	// get image for char 0
+	pImg = (IMAGE *)LockMem(FROM_32(pFont->fontInit.hObjImg)); // get image for char 0
 	if (!TinselV2)
 		pImg->hImgPal = TO_32(fontPal);
 	else

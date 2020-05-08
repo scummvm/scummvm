@@ -31,6 +31,7 @@ class Introduction {
 private:
 	bool showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize);
 	bool interruptableDelay(uint32 milliseconds);
+
 public:
 	bool show();
 };

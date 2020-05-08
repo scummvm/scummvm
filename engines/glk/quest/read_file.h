@@ -23,9 +23,9 @@
 #ifndef GLK_QUEST_READ_FILE
 #define GLK_QUEST_READ_FILE
 
+#include "common/array.h"
 #include "glk/quest/geas_file.h"
 #include "glk/quest/string.h"
-#include "common/array.h"
 
 namespace Glk {
 namespace Quest {
@@ -38,7 +38,9 @@ extern String get_token(String s, bool cvt_paren = false);
 extern bool find_token(String s, String tok, int &tok_start, int &tok_end, bool cvt_paren = false);
 extern GeasFile read_geas_file(GeasInterface *gi, const String &filename);
 
-enum trim_modes { TRIM_SPACES, TRIM_UNDERSCORE, TRIM_BRACE };
+enum trim_modes { TRIM_SPACES,
+	              TRIM_UNDERSCORE,
+	              TRIM_BRACE };
 extern String trim(String, trim_modes mode = TRIM_SPACES);
 
 //Common::WriteStream &operator<< (Common::WriteStream &o, const Common::Array<String> &v);

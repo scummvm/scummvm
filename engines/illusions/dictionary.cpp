@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 #include "illusions/resources/actorresource.h"
 #include "illusions/resources/backgroundresource.h"
 #include "illusions/resources/fontresource.h"

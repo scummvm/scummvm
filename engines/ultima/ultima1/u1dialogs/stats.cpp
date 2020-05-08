@@ -21,23 +21,22 @@
  */
 
 #include "ultima/ultima1/u1dialogs/stats.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map_overworld.h"
-#include "ultima/ultima1/maps/map.h"
-#include "ultima/ultima1/widgets/transport.h"
-#include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/maps/map_overworld.h"
+#include "ultima/ultima1/u1gfx/drawing_support.h"
+#include "ultima/ultima1/widgets/transport.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Stats, FullScreenDialog)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(CharacterInputMsg)
+ON_MESSAGE(ShowMsg)
+ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
-
 
 bool Stats::ShowMsg(CShowMsg &msg) {
 	addInfoMsg(_game->_res->PRESS_SPACE_TO_CONTINUE, false);
@@ -79,7 +78,7 @@ void Stats::load() {
 	Maps::MapOverworld *overworld = getMap()->getOverworldMap();
 
 	// Basic attributes
-	const uint basicAttributes[7] = { c._hitPoints,c._strength, c._agility, c._stamina, c._charisma,c._wisdom, c._intelligence };
+	const uint basicAttributes[7] = {c._hitPoints, c._strength, c._agility, c._stamina, c._charisma, c._wisdom, c._intelligence};
 	addStats(_game->_res->STAT_NAMES, basicAttributes, 0, 6);
 
 	// Money line(s)
@@ -99,17 +98,17 @@ void Stats::load() {
 	for (uint idx = 1; idx < c._armour.size(); ++idx) {
 		if (!c._armour[idx]->empty())
 			_stats.push_back(StatEntry(formatStat(c._armour[idx]->_name.c_str(), c._armour[idx]->_quantity),
-				(int)idx == c._equippedArmour ? _game->_highlightColor : _game->_textColor));
+			                           (int)idx == c._equippedArmour ? _game->_highlightColor : _game->_textColor));
 	}
 	for (uint idx = 1; idx < c._weapons.size(); ++idx) {
 		if (!c._weapons[idx]->empty())
 			_stats.push_back(StatEntry(formatStat(c._weapons[idx]->_longName.c_str(), c._weapons[idx]->_quantity),
-				(int)idx == c._equippedWeapon ? _game->_highlightColor : _game->_textColor));
+			                           (int)idx == c._equippedWeapon ? _game->_highlightColor : _game->_textColor));
 	}
 	for (uint idx = 1; idx < c._spells.size(); ++idx) {
 		if (!c._spells[idx]->empty())
 			_stats.push_back(StatEntry(formatStat(c._spells[idx]->_name.c_str(), c._spells[idx]->_quantity),
-				(int)idx == c._equippedSpell ? _game->_highlightColor : _game->_textColor));
+			                           (int)idx == c._equippedSpell ? _game->_highlightColor : _game->_textColor));
 	}
 
 	// Counts of transport types
@@ -152,10 +151,10 @@ void Stats::draw() {
 
 	// Player name and description
 	s.writeString(Common::String::format(_game->_res->PLAYER, c._name.c_str()),
-		TextPoint(2, 2), _game->_edgeColor);
+	              TextPoint(2, 2), _game->_edgeColor);
 	s.writeString(Common::String::format(_game->_res->PLAYER_DESC, c.getLevel(),
-		_game->_res->SEX_NAMES[c._sex], _game->_res->RACE_NAMES[c._race], _game->_res->CLASS_NAMES[c._class]),
-		TextPoint(2, 3), _game->_edgeColor);
+	                                     _game->_res->SEX_NAMES[c._sex], _game->_res->RACE_NAMES[c._race], _game->_res->CLASS_NAMES[c._class]),
+	              TextPoint(2, 3), _game->_edgeColor);
 
 	// Display stats
 	for (uint idx = 0; idx < MIN(26U, _stats.size() - _startingIndex); ++idx) {

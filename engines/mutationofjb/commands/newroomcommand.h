@@ -42,6 +42,7 @@ public:
 
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
+
 private:
 	uint8 _sceneId;
 	uint16 _x;
@@ -51,6 +52,6 @@ private:
 	ScriptExecutionContext *_innerExecCtx;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

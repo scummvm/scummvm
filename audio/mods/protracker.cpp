@@ -21,8 +21,8 @@
  */
 
 #include "audio/mods/protracker.h"
-#include "audio/mods/paula.h"
 #include "audio/mods/module.h"
+#include "audio/mods/paula.h"
 
 #include "common/textconsole.h"
 
@@ -112,7 +112,7 @@ private:
 	}
 	void doVibrato(int track) {
 		_track[track].vibrato =
-				(_track[track].vibratoDepth * sinetable[_track[track].vibratoPos]) / 128;
+		    (_track[track].vibratoDepth * sinetable[_track[track].vibratoPos]) / 128;
 		_track[track].vibratoPos += _track[track].vibratoSpeed;
 		_track[track].vibratoPos %= 64;
 	}
@@ -133,22 +133,19 @@ private:
 
 	void updateRow();
 	void updateEffects();
-
 };
 
 const int16 ProtrackerStream::sinetable[64] = {
-		 0,   24,   49,   74,   97,  120,  141,  161,
-	 180,  197,  212,  224,  235,  244,  250,  253,
-	 255,  253,  250,  244,  235,  224,  212,  197,
-	 180,  161,  141,  120,   97,   74,   49,   24,
-		 0,  -24,  -49,  -74,  -97, -120, -141, -161,
-	-180, -197, -212, -224, -235, -244, -250, -253,
-	-255, -253, -250, -244, -235, -224, -212, -197,
-	-180, -161, -141, -120,  -97,  -74,  -49,  -24
-};
+    0, 24, 49, 74, 97, 120, 141, 161,
+    180, 197, 212, 224, 235, 244, 250, 253,
+    255, 253, 250, 244, 235, 224, 212, 197,
+    180, 161, 141, 120, 97, 74, 49, 24,
+    0, -24, -49, -74, -97, -120, -141, -161,
+    -180, -197, -212, -224, -235, -244, -250, -253,
+    -255, -253, -250, -244, -235, -224, -212, -197,
+    -180, -161, -141, -120, -97, -74, -49, -24};
 
-ProtrackerStream::ProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo) :
-		Paula(stereo, rate, rate/50) {
+ProtrackerStream::ProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo) : Paula(stereo, rate, rate / 50) {
 	bool result = _module.load(*stream, offs);
 	assert(result);
 
@@ -296,8 +293,8 @@ void ProtrackerStream::updateRow() {
 				}
 				break;
 			case 0x9:
-				break;	// Retrigger note
-			case 0xA: // Fine volume slide up
+				break; // Retrigger note
+			case 0xA:  // Fine volume slide up
 				vol = _track[track].vol + ey;
 				if (vol > 64)
 					vol = 64;
@@ -355,8 +352,8 @@ void ProtrackerStream::updateEffects() {
 			if (exy) {
 				const int idx = (_tick == 1) ? 0 : (_tick % 3);
 				_track[track].period =
-					_module.noteToPeriod(_track[track].arpeggioNotes[idx],
-							_track[track].finetune);
+				    _module.noteToPeriod(_track[track].arpeggioNotes[idx],
+				                         _track[track].finetune);
 			}
 			break;
 		case 0x1:
@@ -385,8 +382,8 @@ void ProtrackerStream::updateEffects() {
 		case 0xE:
 			switch (ex) {
 			case 0x6:
-				break;	// Pattern loop
-			case 0x9:	// Retrigger note
+				break; // Pattern loop
+			case 0x9:  // Retrigger note
 				if (ey && (_tick % ey) == 0)
 					_track[track].offset = Offset(0);
 				break;
@@ -415,7 +412,7 @@ void ProtrackerStream::interrupt() {
 		_track[track].offset = getChannelOffset(track);
 		if (_tick == 0 && _track[track].arpeggio) {
 			_track[track].period = _module.noteToPeriod(_track[track].arpeggioNotes[0],
-					_track[track].finetune);
+			                                            _track[track].finetune);
 		}
 	}
 

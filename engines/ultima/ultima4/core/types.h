@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_CORE_TYPES_H
 #define ULTIMA4_CORE_TYPES_H
 
-#include "ultima/ultima4/map/direction.h"
 #include "common/scummsys.h"
+#include "ultima/ultima4/map/direction.h"
 
 namespace Ultima {
 namespace Ultima4 {

@@ -25,8 +25,8 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 
-#include "prince/prince.h"
 #include "prince/hero.h"
+#include "prince/prince.h"
 #include "prince/script.h"
 
 namespace Prince {

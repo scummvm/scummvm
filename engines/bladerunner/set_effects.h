@@ -40,8 +40,8 @@ class SetEffects {
 	float _distanceCoeficient;
 	Color _fadeColor;
 	float _fadeDensity;
-	int   _fogCount;
-	Fog  *_fogs;
+	int _fogCount;
+	Fog *_fogs;
 
 public:
 	SetEffects(BladeRunnerEngine *vm);

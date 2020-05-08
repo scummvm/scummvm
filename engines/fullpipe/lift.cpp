@@ -22,15 +22,15 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
+#include "fullpipe/objects.h"
 
+#include "fullpipe/gameloader.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/scene.h"
 #include "fullpipe/statics.h"
-#include "fullpipe/messages.h"
-#include "fullpipe/gameloader.h"
-#include "fullpipe/motion.h"
 
 namespace Fullpipe {
 
@@ -213,7 +213,6 @@ void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 					if (id == var->_value.intValue)
 						ani->_statics = ani->getStaticsById(id);
 				}
-
 			}
 		}
 	}
@@ -302,7 +301,7 @@ void FullpipeEngine::lift_closedoorSeq() {
 			_lift->startAnim(MV_LFT_CLOSE, 0, -1);
 		}
 	} else {
-		if (_lift->_statics->_staticsId == ST_LFT_CLOSED ) {
+		if (_lift->_statics->_staticsId == ST_LFT_CLOSED) {
 			_lift->changeStatics2(ST_LFT_CLOSED);
 		} else {
 			_lift->startAnim(MV_LFT_CLOSE, 0, -1);
@@ -516,6 +515,5 @@ void FullpipeEngine::lift_setButtonStatics(Scene *sc, int buttonId) {
 		}
 	}
 }
-
 
 } // End of namespace Fullpipe

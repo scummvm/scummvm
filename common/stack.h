@@ -23,8 +23,8 @@
 #ifndef COMMON_STACK_H
 #define COMMON_STACK_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 
 namespace Common {
 
@@ -82,10 +82,9 @@ public:
 	}
 
 protected:
-	T         _stack[MAX_SIZE];
+	T _stack[MAX_SIZE];
 	size_type _size;
 };
-
 
 /**
  * Variable size stack class, implemented using our Array class.

@@ -21,19 +21,19 @@
  */
 
 #include "ultima/ultima4/map/movement.h"
-#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/core/debugger.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event_handler.h"
-#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/tile.h"
-#include "ultima/ultima4/core/debugger.h"
-#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -206,7 +206,7 @@ int moveObject(Map *map, Creature *obj, MapCoords avatar) {
 		/* If the pirate ship turned last move instead of moving, this time it must
 		   try to move, not turn again */
 		if (obj->getTile().getTileType()->isPirateShip() && DIR_IN_MASK(obj->getTile().getDirection(), dirmask) &&
-		        (obj->getTile() != obj->getPrevTile()) && (obj->getPrevCoords() == obj->getCoords())) {
+		    (obj->getTile() != obj->getPrevTile()) && (obj->getPrevCoords() == obj->getCoords())) {
 			dir = obj->getTile().getDirection();
 			break;
 		}
@@ -253,7 +253,7 @@ int moveObject(Map *map, Creature *obj, MapCoords avatar) {
 	 * Set the new coordinates
 	 */
 	if (!(new_coords == obj->getCoords()) &&
-	        !MAP_IS_OOB(map, new_coords)) {
+	    !MAP_IS_OOB(map, new_coords)) {
 		obj->setCoords(new_coords);
 	}
 	return 1;
@@ -343,7 +343,7 @@ void movePartyMember(MoveEvent &event) {
 			if (ct->isWinOrLose() && !ct->isCamping()) {
 				// A fully-healed party member fled from an evil creature :(
 				if (ct->getCreature() && ct->getCreature()->isEvil() &&
-				        g_context->_party->member(member)->getHp() == g_context->_party->member(member)->getMaxHp())
+				    g_context->_party->member(member)->getHp() == g_context->_party->member(member)->getMaxHp())
 					g_context->_party->adjustKarma(KA_HEALTHY_FLED_EVIL);
 			}
 
@@ -389,7 +389,7 @@ void movePartyMember(MoveEvent &event) {
 				// See if we're on a trigger
 				if (newCoords == trigger) {
 					MapCoords change1(triggers[i]._changeX1, triggers[i]._changeY1, g_context->_location->_coords.z),
-					          change2(triggers[i].changeX2, triggers[i].changeY2, g_context->_location->_coords.z);
+					    change2(triggers[i].changeX2, triggers[i].changeY2, g_context->_location->_coords.z);
 
 					/**
 					 * Remove any previous annotations placed at our target coordinates
@@ -400,11 +400,13 @@ void movePartyMember(MoveEvent &event) {
 					// Change the tiles!
 					if (change1.x || change1.y) {
 						/*if (m) combatAddCreature(m, triggers[i].change_x1, triggers[i].change_y1, c->location->coords.z);
-						else*/ g_context->_location->_map->_annotations->add(change1, triggers[i]._tile, false, true);
+						else*/
+						g_context->_location->_map->_annotations->add(change1, triggers[i]._tile, false, true);
 					}
 					if (change2.x || change2.y) {
 						/*if (m) combatAddCreature(m, triggers[i].change_x2, triggers[i].change_y2, c->location->coords.z);
-						else*/ g_context->_location->_map->_annotations->add(change2, triggers[i]._tile, false, true);
+						else*/
+						g_context->_location->_map->_annotations->add(change2, triggers[i]._tile, false, true);
 					}
 				}
 			}
@@ -442,7 +444,7 @@ bool slowedByWind(int direction) {
 	if (direction == g_context->_windDirection)
 		return (g_ultima->_saveGame->_moves % 4) != 0;
 	// 1 of 4 moves while moving directly away from wind fails
-	else if (direction == dirReverse((Direction) g_context->_windDirection))
+	else if (direction == dirReverse((Direction)g_context->_windDirection))
 		return (g_ultima->_saveGame->_moves % 4) == 3;
 	else
 		return false;

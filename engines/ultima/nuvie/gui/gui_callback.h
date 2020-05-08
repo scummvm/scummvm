@@ -23,8 +23,8 @@
 #ifndef NUVIE_GUI_GUI_CALLBACK_H
 #define NUVIE_GUI_GUI_CALLBACK_H
 
-#include "ultima/nuvie/gui/gui_status.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/gui_status.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -32,7 +32,6 @@ namespace Nuvie {
 class GUI_CallBack {
 
 public:
-
 	GUI_CallBack() {
 		return;
 	}
@@ -43,7 +42,6 @@ public:
 		DEBUG(0, LEVEL_WARNING, "Unhandled callback. msg (%x)\n", msg);
 		return GUI_PASS;
 	}
-
 };
 
 } // End of namespace Nuvie

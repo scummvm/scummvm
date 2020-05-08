@@ -26,25 +26,22 @@
 namespace Xeen {
 
 #define CALLBACKS_PER_SECOND 73
-	
+
 const byte SoundDriverAdlib::OPERATOR1_INDEXES[CHANNEL_COUNT] = {
-	0, 1, 2, 8, 9, 0xA, 0x10, 0x11, 0x12
-};
+    0, 1, 2, 8, 9, 0xA, 0x10, 0x11, 0x12};
 
 const byte SoundDriverAdlib::OPERATOR2_INDEXES[CHANNEL_COUNT] = {
-	3, 4, 5, 0xB, 0xC, 0xD, 0x13, 0x14, 0x15
-};
+    3, 4, 5, 0xB, 0xC, 0xD, 0x13, 0x14, 0x15};
 
 const uint SoundDriverAdlib::WAVEFORMS[24] = {
-	0, 347, 388, 436, 462, 519, 582, 646,
-	0, 362, 406, 455, 484, 542, 607, 680,
-	0, 327, 367, 412, 436, 489, 549, 618
-};
+    0, 347, 388, 436, 462, 519, 582, 646,
+    0, 362, 406, 455, 484, 542, 607, 680,
+    0, 327, 367, 412, 436, 489, 549, 618};
 
 /*------------------------------------------------------------------------*/
 
 SoundDriverAdlib::SoundDriverAdlib() : _field180(0), _field181(0), _field182(0),
-		_musicVolume(0), _sfxVolume(0) {
+                                       _musicVolume(0), _sfxVolume(0) {
 	Common::fill(&_musInstrumentPtrs[0], &_musInstrumentPtrs[16], (const byte *)nullptr);
 	Common::fill(&_fxInstrumentPtrs[0], &_fxInstrumentPtrs[16], (const byte *)nullptr);
 
@@ -281,7 +278,7 @@ bool SoundDriverAdlib::musFade(const byte *&srcP, byte param) {
 bool SoundDriverAdlib::musStartNote(const byte *&srcP, byte param) {
 	if (param < 7) {
 		byte note = *srcP++;
-		++srcP;		// Second byte is fade, which is unused by Adlib
+		++srcP; // Second byte is fade, which is unused by Adlib
 		uint freq = calcFrequency(note);
 		debugC(3, kDebugSound, "musStartNote %x -> %x", note, freq);
 

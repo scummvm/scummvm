@@ -21,19 +21,19 @@
  */
 
 #include "ultima/ultima1/u1gfx/viewport_map.h"
-#include "ultima/ultima1/u1gfx/sprites.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/u1gfx/sprites.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(ViewportMap, Shared::ViewportMap)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
 ViewportMap::ViewportMap(TreeItem *parent) : Shared::ViewportMap(parent), _mapType(Maps::MAP_OVERWORLD) {
-	_sprites = new Sprites(this);	
+	_sprites = new Sprites(this);
 }
 
 ViewportMap::~ViewportMap() {

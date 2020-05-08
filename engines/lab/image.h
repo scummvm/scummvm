@@ -32,7 +32,7 @@
 #define LAB_IMAGE_H
 
 namespace Common {
-	class File;
+class File;
 }
 
 namespace Lab {

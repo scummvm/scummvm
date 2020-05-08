@@ -20,15 +20,15 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/textdrawer.h"
+#include "illusions/illusions.h"
 #include "illusions/screen.h"
 #include "illusions/screentext.h"
 
 namespace Illusions {
 
 bool TextDrawer::wrapText(FontResource *font, uint16 *text, WidthHeight *dimensions, Common::Point offsPt,
-	uint textFlags, uint16 *&outTextPtr) {
+                          uint textFlags, uint16 *&outTextPtr) {
 	_font = font;
 	_text = text;
 	_dimensions = dimensions;
@@ -67,7 +67,8 @@ void TextDrawer::drawText(Screen *screen, Graphics::Surface *surface, uint16 bac
 				Common::Rect textRect = _font->calculateRectForText(textLine._text, textLine._length);
 				// Fill in remainder of text line with background color.
 				surface->fillRect(Common::Rect(textLine._x + x + textRect.right, textLine._y + y,
-											   surface->w - 4, textLine._y + y + textRect.bottom), backgroundColor);
+				                               surface->w - 4, textLine._y + y + textRect.bottom),
+				                  backgroundColor);
 			}
 		}
 #if 0
@@ -185,7 +186,6 @@ bool TextDrawer::wrapTextIntern(int16 x, int16 y, int16 maxWidth, int16 maxHeigh
 				done = true;
 			}
 		}
-
 	}
 
 	_dimensions->_width = maxLineWidth;

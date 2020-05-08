@@ -21,8 +21,8 @@
  */
 
 #include "glk/advsys/game.h"
-#include "glk/advsys/definitions.h"
 #include "common/memstream.h"
+#include "glk/advsys/definitions.h"
 
 namespace Glk {
 namespace AdvSys {
@@ -99,9 +99,9 @@ enum LinkField {
 };
 
 Game::Game() : Header(), _stream(nullptr), _restartFlag(false), _residentOffset(0), _wordCount(0),
-		_objectCount(0), _actionCount(0), _variableCount(0), _wordTable(nullptr), _wordTypeTable(nullptr),
-		_objectTable(nullptr), _actionTable(nullptr), _variableTable(nullptr), _saveArea(nullptr),
-		_msgBlockNum(-1), _msgBlockOffset(0) {
+               _objectCount(0), _actionCount(0), _variableCount(0), _wordTable(nullptr), _wordTypeTable(nullptr),
+               _objectTable(nullptr), _actionTable(nullptr), _variableTable(nullptr), _saveArea(nullptr),
+               _msgBlockNum(-1), _msgBlockOffset(0) {
 	_msgCache.resize(MESSAGE_CACHE_SIZE);
 	for (int idx = 0; idx < MESSAGE_CACHE_SIZE; ++idx)
 		_msgCache[idx] = new CacheEntry();

@@ -23,18 +23,20 @@
 #ifndef GLK_FROTZ_MEM
 #define GLK_FROTZ_MEM
 
-#include "glk/frotz/frotz_types.h"
 #include "glk/frotz/config.h"
+#include "glk/frotz/frotz_types.h"
 
 namespace Glk {
 namespace Frotz {
 
-#define SET_WORD(addr,v)  zmp[addr] = hi(v); zmp[addr+1] = lo(v)
-#define LOW_WORD(addr,v)  v = READ_BE_UINT16(&zmp[addr])
-#define HIGH_WORD(addr,v) v = READ_BE_UINT16(&zmp[addr])
-#define HIGH_LONG(addr,v) v = READ_BE_UINT32(&zmp[addr])
-#define SET_BYTE(addr,v)   zmp[addr] = v
-#define LOW_BYTE(addr,v)   v = zmp[addr]
+#define SET_WORD(addr, v) \
+	zmp[addr] = hi(v);    \
+	zmp[addr + 1] = lo(v)
+#define LOW_WORD(addr, v) v = READ_BE_UINT16(&zmp[addr])
+#define HIGH_WORD(addr, v) v = READ_BE_UINT16(&zmp[addr])
+#define HIGH_LONG(addr, v) v = READ_BE_UINT32(&zmp[addr])
+#define SET_BYTE(addr, v) zmp[addr] = v
+#define LOW_BYTE(addr, v) v = zmp[addr]
 
 typedef uint offset_t;
 
@@ -67,6 +69,7 @@ protected:
 	zbyte *undo_mem, *prev_zmp, *undo_diff;
 	int undo_count;
 	int reserve_mem;
+
 private:
 	/**
 	 * Handles setting the story file, parsing it if it's a Blorb file
@@ -87,6 +90,7 @@ private:
 	 * Setup undo data
 	 */
 	void initializeUndo();
+
 protected:
 	/**
 	 * Read a value from the header extension (former mouse table).
@@ -147,6 +151,7 @@ protected:
 	 * Applies a quetzal-like diff to dest
 	 */
 	void mem_undiff(zbyte *diff, long diff_length, zbyte *dest);
+
 public:
 	/**
 	 * Constructor

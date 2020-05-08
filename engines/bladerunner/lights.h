@@ -37,9 +37,9 @@ class Lights {
 
 	BladeRunnerEngine *_vm;
 
-	Color                  _ambientLightColor;
+	Color _ambientLightColor;
 	Common::Array<Light *> _lights;
-	int                    _frame;
+	int _frame;
 
 public:
 	Lights(BladeRunnerEngine *vm);

@@ -55,13 +55,12 @@ private:
 	static const uint16 kLoop[kLoopCount][3];
 
 	enum Sound {
-		kSoundCackle  = 0,
-		kSoundThunder    ,
+		kSoundCackle = 0,
+		kSoundThunder,
 		kSoundCount
 	};
 
 	static const char *kSound[kSoundCount];
-
 
 	uint8 _house;
 
@@ -77,7 +76,6 @@ private:
 
 	uint _loopID[kLoopCount];
 	uint _currentLoop;
-
 
 	void lightningEffect();
 

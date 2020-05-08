@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/assets.h"
 #include "mads/sequence.h"
+#include "common/scummsys.h"
+#include "mads/assets.h"
+#include "mads/mads.h"
 #include "mads/scene.h"
 
 namespace MADS {
@@ -95,8 +95,8 @@ bool SequenceList::addSubEntry(int index, SequenceTrigger mode, int frameIndex, 
 }
 
 int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks,
-		int msgX, int msgY, bool nonFixed, int scale, int depth, int frameInc, SpriteAnimType animType, int numSprites,
-		int frameStart) {
+                      int msgX, int msgY, bool nonFixed, int scale, int depth, int frameInc, SpriteAnimType animType, int numSprites,
+                      int frameStart) {
 	Scene &scene = _vm->_game->_scene;
 
 	// Find a free slot
@@ -261,7 +261,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 			if (seqEntry._flags & 2) {
 				// Check for object having moved off-screen
 				if ((pt.x + width) < 0 || (pt.x + width) >= MADS_SCREEN_WIDTH ||
-						pt.y < 0 || (pt.y - height) >= MADS_SCENE_HEIGHT) {
+				    pt.y < 0 || (pt.y - height) >= MADS_SCENE_HEIGHT) {
 					result = true;
 					seqEntry._doneFlag = true;
 				}
@@ -299,8 +299,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 			// Currently in reverse mode and moved past starting frame
 			result = true;
 
-			if (seqEntry._animType == ANIMTYPE_CYCLED)
-			{
+			if (seqEntry._animType == ANIMTYPE_CYCLED) {
 				// Switch back to forward direction again
 				seqEntry._frameIndex = seqEntry._frameStart + 1;
 				seqEntry._frameInc = 1;
@@ -324,7 +323,7 @@ bool SequenceList::loadSprites(int seqIndex) {
 		case SEQUENCE_TRIGGER_EXPIRE:
 		case SEQUENCE_TRIGGER_LOOP:
 			if (((seqEntry._entries._mode[i] == SEQUENCE_TRIGGER_EXPIRE) && seqEntry._doneFlag) ||
-				((seqEntry._entries._mode[i] == SEQUENCE_TRIGGER_LOOP) && result))
+			    ((seqEntry._entries._mode[i] == SEQUENCE_TRIGGER_LOOP) && result))
 				idx = i;
 			break;
 
@@ -449,27 +448,26 @@ int SequenceList::addSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks, i
 	Scene &scene = _vm->_game->_scene;
 	MSprite *spriteFrame = scene._sprites[srcSpriteIdx]->getFrame(0);
 	int depth = scene._depthSurface.getDepth(Common::Point(
-		spriteFrame->_offset.x + (spriteFrame->w / 2),
-		spriteFrame->_offset.y + (spriteFrame->h / 2)));
+	    spriteFrame->_offset.x + (spriteFrame->w / 2),
+	    spriteFrame->_offset.y + (spriteFrame->h / 2)));
 
 	return add(srcSpriteIdx, flipped, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0,
-		true, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
+	           true, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
 }
 
 int SequenceList::addReverseSpriteCycle(int srcSpriteIdx, bool flipped, int numTicks,
-		int triggerCountdown, int timeoutTicks, int extraTicks) {
+                                        int triggerCountdown, int timeoutTicks, int extraTicks) {
 	Scene &scene = _vm->_game->_scene;
 
 	SpriteAsset *asset = scene._sprites[srcSpriteIdx];
 	MSprite *spriteFrame = asset->getFrame(0);
 	int depth = scene._depthSurface.getDepth(Common::Point(
-		spriteFrame->_offset.x + (spriteFrame->w / 2),
-		spriteFrame->_offset.y + (spriteFrame->h / 2)));
+	    spriteFrame->_offset.x + (spriteFrame->w / 2),
+	    spriteFrame->_offset.y + (spriteFrame->h / 2)));
 
 	return add(srcSpriteIdx, flipped, asset->getCount(), triggerCountdown, timeoutTicks, extraTicks,
-		numTicks, 0, 0, true, 100, depth - 1, -1, ANIMTYPE_CYCLED, 0, 0);
+	           numTicks, 0, 0, true, 100, depth - 1, -1, ANIMTYPE_CYCLED, 0, 0);
 }
-
 
 int SequenceList::startCycle(int srcSpriteIndex, bool flipped, int cycleIndex) {
 	int result = addSpriteCycle(srcSpriteIndex, flipped, INDEFINITE_TIMEOUT, 0, 0, 0);
@@ -480,14 +478,14 @@ int SequenceList::startCycle(int srcSpriteIndex, bool flipped, int cycleIndex) {
 }
 
 int SequenceList::startPingPongCycle(int srcSpriteIndex, bool flipped, int numTicks,
-		int triggerCountdown, int timeoutTicks, int extraTicks) {
+                                     int triggerCountdown, int timeoutTicks, int extraTicks) {
 	SpriteAsset *sprites = _vm->_game->_scene._sprites[srcSpriteIndex];
 	MSprite *frame = sprites->getFrame(0);
 	int depth = _vm->_game->_scene._depthSurface.getDepth(Common::Point(
-		frame->_offset.x + frame->w / 2, frame->_offset.y + frame->h / 2));
+	    frame->_offset.x + frame->w / 2, frame->_offset.y + frame->h / 2));
 
 	return add(srcSpriteIndex, flipped, 1, triggerCountdown, timeoutTicks,
-		extraTicks, numTicks, 0, 0, true, 100, depth - 1, 1, ANIMTYPE_PING_PONG, 0, 0);
+	           extraTicks, numTicks, 0, 0, true, 100, depth - 1, 1, ANIMTYPE_PING_PONG, 0, 0);
 }
 
 void SequenceList::updateTimeout(int srcSeqIndex, int destSeqIndex) {
@@ -503,7 +501,6 @@ void SequenceList::updateTimeout(int srcSeqIndex, int destSeqIndex) {
 		_entries[destSeqIndex]._timeout = timeout;
 	else
 		player._priorTimer = timeout - player._ticksAmount;
-
 }
 
 void SequenceList::setScale(int spriteIdx, int scale) {
@@ -572,4 +569,4 @@ void SequenceList::setSeqPlayer(int idx, bool flag) {
 		_vm->_game->syncTimers(SYNC_SEQ, idx, SYNC_PLAYER, 0);
 }
 
-} // End of namespace
+} // namespace MADS

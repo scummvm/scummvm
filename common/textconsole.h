@@ -41,7 +41,6 @@ typedef void (*OutputFormatter)(char *dst, const char *src, size_t dstSize);
  */
 void setErrorOutputFormatter(OutputFormatter f);
 
-
 /**
  * A callback which is invoked by error() just before aborting.
  * A typical example would be a function which shows a debug
@@ -59,7 +58,6 @@ void setErrorHandler(ErrorHandler handler);
 
 } // End of namespace Common
 
-
 void NORETURN_PRE error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 #ifdef DISABLE_TEXT_CONSOLE
@@ -76,6 +74,5 @@ inline void warning(const char *s, ...) {}
 void warning(const char *s, ...) GCC_PRINTF(1, 2);
 
 #endif
-
 
 #endif

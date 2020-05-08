@@ -27,26 +27,26 @@
  */
 
 #include "engines/wintermute/ui/ui_edit.h"
-#include "engines/wintermute/ui/ui_object.h"
-#include "engines/wintermute/ui/ui_tiled_image.h"
-#include "engines/wintermute/utils/string_util.h"
+#include "common/keyboard.h"
+#include "common/util.h"
 #include "engines/wintermute/base/base_active_rect.h"
-#include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/font/base_font.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_string_table.h"
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/ui/ui_object.h"
+#include "engines/wintermute/ui/ui_tiled_image.h"
+#include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/utils/utils.h"
-#include "common/util.h"
-#include "common/keyboard.h"
 
 namespace Wintermute {
 
@@ -78,7 +78,6 @@ UIEdit::UIEdit(BaseGame *inGame) : UIObject(inGame) {
 	_canFocus = true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 UIEdit::~UIEdit() {
 	if (!_sharedFonts) {
@@ -90,7 +89,6 @@ UIEdit::~UIEdit() {
 	delete[] _cursorChar;
 	_cursorChar = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::loadFile(const char *filename) {
@@ -112,7 +110,6 @@ bool UIEdit::loadFile(const char *filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(TEMPLATE)
@@ -399,7 +396,6 @@ bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -476,7 +472,6 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -547,12 +542,10 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *UIEdit::scToString() {
 	return "[edit]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void UIEdit::setCursorChar(const char *character) {
@@ -560,19 +553,17 @@ void UIEdit::setCursorChar(const char *character) {
 		return;
 	}
 	delete[] _cursorChar;
-	_cursorChar = new char [strlen(character) + 1];
+	_cursorChar = new char[strlen(character) + 1];
 	if (_cursorChar) {
 		strcpy(_cursorChar, character);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::display(int offsetX, int offsetY) {
 	if (!_visible) {
 		return STATUS_OK;
 	}
-
 
 	// hack!
 	TTextEncoding OrigEncoding = _gameRef->_textEncoding;
@@ -604,10 +595,10 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	bool focused = isFocused();
 
 	_selStart = MAX<int32>(_selStart, 0);
-	_selEnd   = MAX<int32>(_selEnd, 0);
+	_selEnd = MAX<int32>(_selEnd, 0);
 
 	_selStart = (int)MIN((size_t)_selStart, strlen(_text));
-	_selEnd   = (int)MIN((size_t)_selEnd,   strlen(_text));
+	_selEnd = (int)MIN((size_t)_selEnd, strlen(_text));
 
 	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
 	int cursorWidth = font->getTextWidth((byte *)_cursorChar);
@@ -630,9 +621,9 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		curFirst = true;
 	} else {
 		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX<int32>(0, _selStart - _scrollOffset)) +
-				sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
+		           sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
 
-				> _width - cursorWidth - 2 * _frameWidth) {
+		       > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= (int)strlen(_text)) {
 				break;
@@ -645,7 +636,6 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		s2 = _selEnd;
 		curFirst = false;
 	}
-
 
 	int alignOffset = 0;
 
@@ -664,7 +654,6 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		}
 
 		TTextAlign align = TAL_LEFT;
-
 
 		// unselected 1
 		if (s1 > _scrollOffset) {
@@ -728,15 +717,12 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		}
 	}
 
-
-	_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
-
+	_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 	_gameRef->_textEncoding = OrigEncoding;
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
@@ -765,12 +751,12 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 		} else if (event->kbd.keycode == Common::KEYCODE_END) {
 			_selEnd = _gameRef->_textRTL ? 0 : strlen(_text);
 		} else if (event->kbd.keycode == Common::KEYCODE_LEFT ||
-				   event->kbd.keycode == Common::KEYCODE_UP) {
+		           event->kbd.keycode == Common::KEYCODE_UP) {
 			_selEnd--;
 		} else {
 			_selEnd++;
 		}
-			
+
 		if (!BaseKeyboardState::isShiftDown()) {
 			_selStart = _selEnd;
 		}
@@ -848,8 +834,6 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 	return false;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
 int UIEdit::deleteChars(int start, int end) {
 	if (start > end) {
@@ -875,7 +859,6 @@ int UIEdit::deleteChars(int start, int end) {
 
 	return end - start;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 int UIEdit::insertChars(int pos, const byte *chars, int num) {
@@ -904,8 +887,6 @@ int UIEdit::insertChars(int pos, const byte *chars, int num) {
 
 	return num;
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::persist(BasePersistenceManager *persistMgr) {

@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/spells/blink.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map_tile.h"
 
 namespace Ultima {
@@ -41,7 +41,7 @@ void Blink::dungeonCast(Maps::MapDungeon *map) {
 		newPos = Point(_game->getRandomNumber(1, 9), _game->getRandomNumber(1, 9));
 		map->getTileAt(newPos, &tile);
 	} while (newPos != map->getPosition() && tile._widget &&
-			!tile._isBeams && !tile._isWall && !tile._isSecretDoor);
+	         !tile._isBeams && !tile._isWall && !tile._isSecretDoor);
 
 	// And teleport there
 	addInfoMsg(_game->_res->TELEPORTED);

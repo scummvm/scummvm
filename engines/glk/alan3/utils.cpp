@@ -22,14 +22,14 @@
 
 #include "glk/alan3/utils.h"
 #include "glk/alan3/alan_version.h"
-#include "glk/alan3/glkio.h"
-#include "glk/alan3/options.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/output.h"
 #include "glk/alan3/exe.h"
-#include "glk/alan3/state.h"
-#include "glk/alan3/lists.h"
 #include "glk/alan3/fnmatch.h"
+#include "glk/alan3/glkio.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/options.h"
+#include "glk/alan3/output.h"
+#include "glk/alan3/state.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -61,14 +61,14 @@ void terminate(CONTEXT, int code) {
 /*======================================================================*/
 void printVersion(int buildNumber) {
 	printf("Arun - Adventure Language Interpreter version %s", alan.version.string);
-	if (buildNumber != 0) printf("-%d", buildNumber);
+	if (buildNumber != 0)
+		printf("-%d", buildNumber);
 	printf(" (%s %s)", alan.date, alan.time);
 }
 
-
 /*======================================================================*/
 void usage(const char *programName) {
-#if (BUILD+0) != 0
+#if (BUILD + 0) != 0
 	printVersion(BUILD);
 #else
 	printVersion(0);
@@ -88,7 +88,6 @@ void usage(const char *programName) {
 	printf("    -r       make regression test easier (don't timestamp, page break, randomize...)\n");
 	g_io->glk_set_style(style_Normal);
 }
-
 
 #ifndef FNM_CASEFOLD
 #define FNM_CASEFOLD 0

@@ -21,10 +21,10 @@
  */
 
 #include "mutationofjb/commands/endblockcommand.h"
-#include "mutationofjb/script.h"
-#include "mutationofjb/commands/conditionalcommand.h"
-#include "common/str.h"
 #include "common/debug.h"
+#include "common/str.h"
+#include "mutationofjb/commands/conditionalcommand.h"
+#include "mutationofjb/script.h"
 
 /** @file
  * <look> | <walk> | <talk> | <pickup> | <use> | <else> | <macro> | <extra> | <endRandom>
@@ -105,12 +105,11 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 		}
 
 		ActionInfo ai = {
-			ActionInfo::Use,
-			obj1,
-			obj2,
-			firstChar == '#',
-			nullptr
-		};
+		    ActionInfo::Use,
+		    obj1,
+		    obj2,
+		    firstChar == '#',
+		    nullptr};
 		parseCtx._actionInfos.push_back(ai);
 		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if ((line.hasPrefix("#ELSE") || line.hasPrefix("=ELSE"))) {
@@ -134,7 +133,6 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 	if (firstChar == '#') {
 		_hashFound = true;
 	}
-
 
 	return true;
 }
@@ -187,7 +185,7 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *ol
 				if (!parseCtx._startups.contains(it->_id)) {
 					parseCtx._startups[it->_id] = newCommand;
 				} else {
-					warning("Startup %u already exists", (unsigned int) it->_id);
+					warning("Startup %u already exists", (unsigned int)it->_id);
 				}
 				it = _foundStartups.erase(it);
 			}
@@ -257,4 +255,4 @@ Common::String EndBlockCommand::debugString() const {
 	return "ENDBLOCK";
 }
 
-}
+} // namespace MutationOfJB

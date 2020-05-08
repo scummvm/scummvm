@@ -21,8 +21,8 @@
  */
 
 #include "glk/adrift/scare.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 
 namespace Glk {
 namespace Adrift {
@@ -44,7 +44,6 @@ enum { TASK_MAXIMUM_RECURSION = 128 };
 
 /* Trace flag, set before running. */
 static sc_bool task_trace = FALSE;
-
 
 /*
  * task_get_hint_common()
@@ -85,7 +84,6 @@ sc_bool task_has_hints(sc_gameref_t game, sc_int task) {
 	/* A non-empty question implies hints available. */
 	return !sc_strempty(task_get_hint_question(game, task));
 }
-
 
 /*
  * task_can_run_task_directional()
@@ -156,7 +154,6 @@ sc_bool task_can_run_task_directional(sc_gameref_t game, sc_int task, sc_bool fo
 	}
 }
 
-
 /*
  * task_can_run_task()
  *
@@ -168,10 +165,8 @@ sc_bool task_can_run_task(sc_gameref_t game, sc_int task) {
 	 * aren't common in games.  There is, though, probably a little bit of
 	 * redundant work going on here.
 	 */
-	return task_can_run_task_directional(game, task, FALSE)
-	       || task_can_run_task_directional(game, task, TRUE);
+	return task_can_run_task_directional(game, task, FALSE) || task_can_run_task_directional(game, task, TRUE);
 }
-
 
 /*
  * task_move_object()
@@ -183,7 +178,7 @@ static void task_move_object(sc_gameref_t game, sc_int object, sc_int var2, sc_i
 
 	/* Select action depending on var2. */
 	switch (var2) {
-	case 0:                    /* To room */
+	case 0: /* To room */
 		if (var3 == 0) {
 			if (task_trace)
 				sc_trace("Task: moving object %ld to hidden\n", object);
@@ -202,7 +197,7 @@ static void task_move_object(sc_gameref_t game, sc_int object, sc_int var2, sc_i
 		}
 		break;
 
-	case 1:                    /* To roomgroup part */
+	case 1: /* To roomgroup part */
 		if (task_trace) {
 			sc_trace("Task: moving object %ld to random room in group %ld\n",
 			         object, var3);
@@ -212,45 +207,45 @@ static void task_move_object(sc_gameref_t game, sc_int object, sc_int var2, sc_i
 		                  lib_random_roomgroup_member(game, var3));
 		break;
 
-	case 2:                    /* Into object */
+	case 2: /* Into object */
 		if (task_trace)
 			sc_trace("Task: moving object %ld into %ld\n", object, var3);
 
 		gs_object_move_into(game, object, obj_container_object(game, var3));
 		break;
 
-	case 3:                    /* Onto object */
+	case 3: /* Onto object */
 		if (task_trace)
 			sc_trace("Task: moving object %ld onto %ld\n", object, var3);
 
 		gs_object_move_onto(game, object, obj_surface_object(game, var3));
 		break;
 
-	case 4:                    /* Held by */
+	case 4: /* Held by */
 		if (task_trace)
 			sc_trace("Task: moving object %ld to held by %ld\n", object, var3);
 
-		if (var3 == 0)            /* Player */
+		if (var3 == 0) /* Player */
 			gs_object_player_get(game, object);
-		else if (var3 == 1)       /* Ref character */
+		else if (var3 == 1) /* Ref character */
 			gs_object_npc_get(game, object, var_get_ref_character(vars));
-		else                      /* NPC id */
+		else /* NPC id */
 			gs_object_npc_get(game, object, var3 - 2);
 		break;
 
-	case 5:                    /* Worn by */
+	case 5: /* Worn by */
 		if (task_trace)
 			sc_trace("Task: moving object %ld to worn by %ld\n", object, var3);
 
-		if (var3 == 0)            /* Player */
+		if (var3 == 0) /* Player */
 			gs_object_player_wear(game, object);
-		else if (var3 == 1)       /* Ref character */
+		else if (var3 == 1) /* Ref character */
 			gs_object_npc_wear(game, object, var_get_ref_character(vars));
-		else                      /* NPC id */
+		else /* NPC id */
 			gs_object_npc_wear(game, object, var3 - 2);
 		break;
 
-	case 6: {                  /* Same room as */
+	case 6: { /* Same room as */
 		sc_int room, npc;
 
 		if (task_trace) {
@@ -258,12 +253,12 @@ static void task_move_object(sc_gameref_t game, sc_int object, sc_int var2, sc_i
 			         object, var3);
 		}
 
-		if (var3 == 0)          /* Player */
+		if (var3 == 0) /* Player */
 			room = gs_playerroom(game);
-		else if (var3 == 1) {   /* Ref character */
+		else if (var3 == 1) { /* Ref character */
 			npc = var_get_ref_character(vars);
 			room = gs_npc_location(game, npc) - 1;
-		} else {                /* NPC id */
+		} else { /* NPC id */
 			npc = var3 - 2;
 			room = gs_npc_location(game, npc) - 1;
 		}
@@ -277,7 +272,6 @@ static void task_move_object(sc_gameref_t game, sc_int object, sc_int var2, sc_i
 	}
 }
 
-
 /*
  * task_run_move_object_action()
  *
@@ -289,32 +283,31 @@ static void task_run_move_object_action(sc_gameref_t game, sc_int var1, sc_int v
 
 	/* Select depending on value in var1. */
 	switch (var1) {
-	case 0:                    /* All held */
+	case 0: /* All held */
 		for (object = 0; object < gs_object_count(game); object++) {
 			if (gs_object_position(game, object) == OBJ_HELD_PLAYER)
 				task_move_object(game, object, var2, var3);
 		}
 		break;
 
-	case 1:                    /* All worn */
+	case 1: /* All worn */
 		for (object = 0; object < gs_object_count(game); object++) {
 			if (gs_object_position(game, object) == OBJ_WORN_PLAYER)
 				task_move_object(game, object, var2, var3);
 		}
 		break;
 
-	case 2:                    /* Ref object */
+	case 2: /* Ref object */
 		object = var_get_ref_object(vars);
 		task_move_object(game, object, var2, var3);
 		break;
 
-	default:                   /* Dynamic object */
+	default: /* Dynamic object */
 		object = obj_dynamic_object(game, var1 - 3);
 		task_move_object(game, object, var2, var3);
 		break;
 	}
 }
-
 
 /*
  * task_move_npc_to_room()
@@ -331,12 +324,12 @@ static void task_move_npc_to_room(sc_gameref_t game, sc_int npc, sc_int room) {
 	else
 		gs_set_npc_location(game, npc,
 		                    lib_random_roomgroup_member(game,
-		                            room - gs_room_count(game)) + 1);
+		                                                room - gs_room_count(game)) +
+		                        1);
 
 	gs_set_npc_parent(game, npc, -1);
 	gs_set_npc_position(game, npc, 0);
 }
-
 
 /*
  * task_run_move_npc_action()
@@ -351,11 +344,11 @@ static void task_run_move_npc_action(sc_gameref_t game, sc_int var1, sc_int var2
 	if (var1 == 0) {
 		/* Player -- decide where to move player to. */
 		switch (var2) {
-		case 0:                /* To room */
+		case 0: /* To room */
 			gs_move_player_to_room(game, var3);
 			return;
 
-		case 1:                /* To roomgroup part */
+		case 1: /* To roomgroup part */
 			if (task_trace) {
 				sc_trace("Task: moving player to random room in group %ld\n",
 				         var3);
@@ -365,14 +358,14 @@ static void task_run_move_npc_action(sc_gameref_t game, sc_int var1, sc_int var2
 			                       lib_random_roomgroup_member(game, var3));
 			return;
 
-		case 2:                /* To same room as... */
+		case 2: /* To same room as... */
 			switch (var3) {
-			case 0:            /* ...player! */
+			case 0: /* ...player! */
 				return;
-			case 1:            /* ...referenced NPC */
+			case 1: /* ...referenced NPC */
 				npc = var_get_ref_character(vars);
 				break;
-			default:           /* ...specified NPC */
+			default: /* ...specified NPC */
 				npc = var3 - 2;
 				break;
 			}
@@ -388,24 +381,25 @@ static void task_run_move_npc_action(sc_gameref_t game, sc_int var1, sc_int var2
 				gs_move_player_to_room(game, room);
 			return;
 
-		case 3:                /* To standing on */
+		case 3: /* To standing on */
 			gs_set_playerposition(game, 0);
 			gs_set_playerparent(game, obj_standable_object(game, var3 - 1));
 			return;
 
-		case 4:                /* To sitting on */
+		case 4: /* To sitting on */
 			gs_set_playerposition(game, 1);
 			gs_set_playerparent(game, obj_standable_object(game, var3 - 1));
 			return;
 
-		case 5:                /* To lying on */
+		case 5: /* To lying on */
 			gs_set_playerposition(game, 2);
 			gs_set_playerparent(game, obj_lieable_object(game, var3 - 1));
 			return;
 
 		default:
 			sc_fatal("task_run_move_npc_action:"
-			         " unknown player move type, %ld\n", var2);
+			         " unknown player move type, %ld\n",
+			         var2);
 			return;
 		}
 	} else {
@@ -417,11 +411,11 @@ static void task_run_move_npc_action(sc_gameref_t game, sc_int var1, sc_int var2
 
 		/* Decide where to move the NPC to. */
 		switch (var2) {
-		case 0:                /* To room */
+		case 0: /* To room */
 			task_move_npc_to_room(game, npc, var3 - 1);
 			return;
 
-		case 1:                /* To roomgroup part */
+		case 1: /* To roomgroup part */
 			if (task_trace) {
 				sc_trace("Task: moving NPC %ld to random room in group %ld\n",
 				         npc, var3);
@@ -431,9 +425,9 @@ static void task_run_move_npc_action(sc_gameref_t game, sc_int var1, sc_int var2
 			                      lib_random_roomgroup_member(game, var3));
 			return;
 
-		case 2:                /* To same room as... */
+		case 2: /* To same room as... */
 			switch (var3) {
-			case 0:            /* ...player */
+			case 0: /* ...player */
 				if (task_trace) {
 					sc_trace("Task: moving NPC %ld to same room as player\n",
 					         npc);
@@ -441,21 +435,23 @@ static void task_run_move_npc_action(sc_gameref_t game, sc_int var1, sc_int var2
 
 				task_move_npc_to_room(game, npc, gs_playerroom(game));
 				break;
-			case 1:            /* ...referenced NPC */
+			case 1: /* ...referenced NPC */
 				ref_npc = var_get_ref_character(vars);
 				if (task_trace) {
 					sc_trace("Task: moving NPC %ld to"
-					         " same room as referenced NPC %ld\n", npc, ref_npc);
+					         " same room as referenced NPC %ld\n",
+					         npc, ref_npc);
 				}
 
 				room = gs_npc_location(game, ref_npc) - 1;
 				task_move_npc_to_room(game, npc, room);
 				break;
-			default:           /* ...specified NPC */
+			default: /* ...specified NPC */
 				ref_npc = var3 - 2;
 				if (task_trace) {
 					sc_trace("Task: moving NPC %ld to"
-					         " same room as NPC %ld\n", npc, ref_npc);
+					         " same room as NPC %ld\n",
+					         npc, ref_npc);
 				}
 
 				room = gs_npc_location(game, ref_npc) - 1;
@@ -464,29 +460,29 @@ static void task_run_move_npc_action(sc_gameref_t game, sc_int var1, sc_int var2
 			}
 			return;
 
-		case 3:                /* To standing on */
+		case 3: /* To standing on */
 			gs_set_npc_position(game, npc, 0);
 			gs_set_npc_parent(game, npc, obj_standable_object(game, var3));
 			return;
 
-		case 4:                /* To sitting on */
+		case 4: /* To sitting on */
 			gs_set_npc_position(game, npc, 1);
 			gs_set_npc_parent(game, npc, obj_standable_object(game, var3));
 			return;
 
-		case 5:                /* To lying on */
+		case 5: /* To lying on */
 			gs_set_npc_position(game, npc, 2);
 			gs_set_npc_parent(game, npc, obj_lieable_object(game, var3));
 			return;
 
 		default:
 			sc_fatal("task_run_move_npc_action:"
-			         " unknown NPC move type, %ld\n", var2);
+			         " unknown NPC move type, %ld\n",
+			         var2);
 			return;
 		}
 	}
 }
-
 
 /*
  * task_run_change_object_status()
@@ -540,14 +536,13 @@ static void task_run_change_object_status(sc_gameref_t game, sc_int var1, sc_int
 	}
 }
 
-
 /*
  * task_run_change_variable_action()
  *
  * Change a variable's value in inscrutable ways.
  */
 static void task_run_change_variable_action(sc_gameref_t game,
-		sc_int var1, sc_int var2, sc_int var3, const sc_char *expr, sc_int var5) {
+                                            sc_int var1, sc_int var2, sc_int var3, const sc_char *expr, sc_int var5) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
@@ -574,18 +569,18 @@ static void task_run_change_variable_action(sc_gameref_t game,
 
 	/* Select first based on variable type. */
 	switch (type) {
-	case TAFVAR_NUMERIC:       /* Integer */
+	case TAFVAR_NUMERIC: /* Integer */
 
 		/* Select again based on action type. */
 		switch (var2) {
-		case 0:                /* Var = */
+		case 0: /* Var = */
 			if (task_trace)
 				sc_trace("Task: variable %ld (%s) = %ld\n", var1, name, var3);
 
 			var_put_integer(vars, name, var3);
 			return;
 
-		case 1:                /* Var += */
+		case 1: /* Var += */
 			if (task_trace)
 				sc_trace("Task: variable %ld (%s) += %ld\n", var1, name, var3);
 
@@ -593,7 +588,7 @@ static void task_run_change_variable_action(sc_gameref_t game,
 			var_put_integer(vars, name, value);
 			return;
 
-		case 2:                /* Var = rnd(range) */
+		case 2: /* Var = rnd(range) */
 			if (task_trace) {
 				sc_trace("Task: variable %ld (%s) = random(%ld,%ld)\n",
 				         var1, name, var3, var5);
@@ -603,7 +598,7 @@ static void task_run_change_variable_action(sc_gameref_t game,
 			var_put_integer(vars, name, value);
 			return;
 
-		case 3:                /* Var += rnd(range) */
+		case 3: /* Var += rnd(range) */
 			if (task_trace) {
 				sc_trace("Task: variable %ld (%s) += random(%ld,%ld)\n",
 				         var1, name, var3, var5);
@@ -613,7 +608,7 @@ static void task_run_change_variable_action(sc_gameref_t game,
 			var_put_integer(vars, name, value);
 			return;
 
-		case 4:                /* Var = ref */
+		case 4: /* Var = ref */
 			value = var_get_ref_number(vars);
 			if (task_trace) {
 				sc_trace("Task: variable %ld (%s) = ref, %ld\n",
@@ -623,10 +618,11 @@ static void task_run_change_variable_action(sc_gameref_t game,
 			var_put_integer(vars, name, value);
 			return;
 
-		case 5:                /* Var = expr */
+		case 5: /* Var = expr */
 			if (!expr_eval_numeric_expression(expr, vars, &value)) {
 				sc_error("task_run_change_variable_action:"
-				         " invalid expression, %s\n", expr);
+				         " invalid expression, %s\n",
+				         expr);
 				value = 0;
 			}
 			if (task_trace) {
@@ -639,16 +635,17 @@ static void task_run_change_variable_action(sc_gameref_t game,
 
 		default:
 			sc_fatal("task_run_change_variable_action:"
-			         " unknown integer change type, %ld\n", var2);
+			         " unknown integer change type, %ld\n",
+			         var2);
 			break;
 		}
 		break;
 
-	case TAFVAR_STRING:        /* String */
+	case TAFVAR_STRING: /* String */
 
 		/* Select again based on action type. */
 		switch (var2) {
-		case 0:                /* Var = text literal */
+		case 0: /* Var = text literal */
 			if (task_trace) {
 				sc_trace("Task: variable %ld (%s) = \"%s\"\n",
 				         var1, name, expr);
@@ -657,7 +654,7 @@ static void task_run_change_variable_action(sc_gameref_t game,
 			var_put_string(vars, name, expr);
 			return;
 
-		case 1:                /* Var = ref */
+		case 1: /* Var = ref */
 			string = var_get_ref_text(vars);
 			if (task_trace) {
 				sc_trace("Task: variable %ld (%s) = ref, \"%s\"\n",
@@ -667,10 +664,11 @@ static void task_run_change_variable_action(sc_gameref_t game,
 			var_put_string(vars, name, string);
 			return;
 
-		case 2:                /* Var = expr */
+		case 2: /* Var = expr */
 			if (!expr_eval_string_expression(expr, vars, &mutable_string)) {
 				sc_error("task_run_change_variable_action:"
-				         " invalid string expression, %s\n", expr);
+				         " invalid string expression, %s\n",
+				         expr);
 				mutable_string = (sc_char *)sc_malloc(strlen("[expr error]") + 1);
 				strcpy(mutable_string, "[expr error]");
 			}
@@ -685,18 +683,19 @@ static void task_run_change_variable_action(sc_gameref_t game,
 
 		default:
 			sc_fatal("task_run_change_variable_action:"
-			         " unknown string change type, %ld\n", var2);
+			         " unknown string change type, %ld\n",
+			         var2);
 			break;
 		}
 		break;
 
 	default:
 		sc_fatal("task_run_change_variable_action:"
-		         " invalid variable type, %ld\n", type);
+		         " invalid variable type, %ld\n",
+		         type);
 		break;
 	}
 }
-
 
 /*
  * task_run_change_score_action()
@@ -755,7 +754,6 @@ static void task_run_change_score_action(sc_gameref_t game, sc_int task, sc_int 
 	}
 }
 
-
 /*
  * task_run_set_task_action()
  *
@@ -785,7 +783,6 @@ static sc_bool task_run_set_task_action(sc_gameref_t game, sc_int var1, sc_int v
 
 	return status;
 }
-
 
 /*
  * task_run_end_game_action()
@@ -849,7 +846,6 @@ static sc_bool task_run_end_game_action(sc_gameref_t game, sc_int var1) {
 	return status;
 }
 
-
 /*
  * task_run_task_action()
  *
@@ -872,7 +868,7 @@ static sc_bool task_run_task_action(sc_gameref_t game, sc_int task, sc_int actio
 
 	/* Demultiplex depending on type. */
 	switch (type) {
-	case 0:                    /* Move object. */
+	case 0: /* Move object. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -882,7 +878,7 @@ static sc_bool task_run_task_action(sc_gameref_t game, sc_int task, sc_int actio
 		task_run_move_object_action(game, var1, var2, var3);
 		break;
 
-	case 1:                    /* Move player/NPC. */
+	case 1: /* Move player/NPC. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -892,7 +888,7 @@ static sc_bool task_run_task_action(sc_gameref_t game, sc_int task, sc_int actio
 		task_run_move_npc_action(game, var1, var2, var3);
 		break;
 
-	case 2:                    /* Change object status. */
+	case 2: /* Change object status. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -900,7 +896,7 @@ static sc_bool task_run_task_action(sc_gameref_t game, sc_int task, sc_int actio
 		task_run_change_object_status(game, var1, var2);
 		break;
 
-	case 3:                    /* Change variable. */
+	case 3: /* Change variable. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -914,13 +910,13 @@ static sc_bool task_run_task_action(sc_gameref_t game, sc_int task, sc_int actio
 		task_run_change_variable_action(game, var1, var2, var3, expr, var5);
 		break;
 
-	case 4:                    /* Change score. */
+	case 4: /* Change score. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		task_run_change_score_action(game, task, var1);
 		break;
 
-	case 5:                    /* Execute/unset task. */
+	case 5: /* Execute/unset task. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -928,13 +924,13 @@ static sc_bool task_run_task_action(sc_gameref_t game, sc_int task, sc_int actio
 		status = task_run_set_task_action(game, var1, var2);
 		break;
 
-	case 6:                    /* End game. */
+	case 6: /* End game. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		status = task_run_end_game_action(game, var1);
 		break;
 
-	case 7:                    /* Battle options, ignored for now... */
+	case 7: /* Battle options, ignored for now... */
 		break;
 
 	default:
@@ -944,7 +940,6 @@ static sc_bool task_run_task_action(sc_gameref_t game, sc_int task, sc_int actio
 
 	return status;
 }
-
 
 /*
  * task_run_task_actions()
@@ -1011,7 +1006,6 @@ static sc_bool task_run_task_actions(sc_gameref_t game, sc_int task) {
 	return status;
 }
 
-
 /*
  * task_start_npc_walks()
  *
@@ -1039,7 +1033,6 @@ static void task_start_npc_walks(sc_gameref_t game, sc_int task) {
 		npc_start_npc_walk(game, npc, walk);
 	}
 }
-
 
 /*
  * task_run_task_unrestricted()
@@ -1196,7 +1189,6 @@ static sc_bool task_run_task_unrestricted(sc_gameref_t game, sc_int task, sc_boo
 	return status;
 }
 
-
 /*
  * task_run_task()
  *
@@ -1264,7 +1256,6 @@ sc_bool task_run_task(sc_gameref_t game, sc_int task, sc_bool forwards) {
 	/* Return the task's status. */
 	return status;
 }
-
 
 /*
  * task_debug_trace()

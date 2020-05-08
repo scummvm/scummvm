@@ -53,7 +53,7 @@ public:
 
 	void setGlowX(int16 value);
 
-	void setGlowY(int16 value);	
+	void setGlowY(int16 value);
 
 	// Original name : blackbars
 	void drawBlackBars();
@@ -161,28 +161,28 @@ private:
 	int16 _glowW;
 	int16 _glowH;
 
-	bool  _showVideoSubtitle;
+	bool _showVideoSubtitle;
 
 	Common::Point _cursKeepPos;
 
-	View  *_mainView;
-	View  *_underSubtitlesView;
-	View  *_subtitlesView;
-	View  *_underBarsView;
+	View *_mainView;
+	View *_underSubtitlesView;
+	View *_subtitlesView;
+	View *_underBarsView;
 
 	Common::Rect _underSubtitlesScreenRect;
-	Common::Rect _underSubtitlesBackupRect;	
+	Common::Rect _underSubtitlesBackupRect;
 
 	Common::Rect _underTopBarScreenRect;
 	Common::Rect _underBottomBarBackupRect;
 	Common::Rect _underBottomBarScreenRect;
 	Common::Rect _underTopBarBackupRect;
 
-	byte *_underSubtitlesViewBuf; // CHECKME: Useless?	
+	byte *_underSubtitlesViewBuf; // CHECKME: Useless?
 
-	byte *_mainViewBuf;	
+	byte *_mainViewBuf;
 
-	View  *_hnmView;
+	View *_hnmView;
 	byte *_hnmViewBuf;
 	byte *_view2Buf;
 
@@ -190,27 +190,25 @@ private:
 
 	Common::Rect _rect_dst, _rect_src;
 
-	View  *_view2;	
+	View *_view2;
 
 	int _hnmFrameNum;
 
-	bool  _videoCanceledFlag;  //TODO: hnm_canceled
+	bool _videoCanceledFlag; //TODO: hnm_canceled
 
-	color_t _globalPalette[256];    //TODO palette_t
+	color_t _globalPalette[256]; //TODO palette_t
 
 	byte *_subtitlesViewBuf;
 
 	bool _needToFade;
 
 	color3_t _newColor;
-	color_t  _oldPalette[256];    // TODO palette_t ?
-	color_t  _newPalette[256];
+	color_t _oldPalette[256]; // TODO palette_t ?
+	color_t _newPalette[256];
 
-	bool _showBlackBars;	
+	bool _showBlackBars;
 
 	void saveUnderSubtitles(int16 y);
-
-
 
 	void displayHNMSubtitle();
 
@@ -239,6 +237,6 @@ private:
 	void handleHNMSubtitles();
 };
 
-}   // namespace Cryo
+} // namespace Cryo
 
 #endif // CRYO_EDEN_GRAPHICS_H

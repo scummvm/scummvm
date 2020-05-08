@@ -29,63 +29,62 @@ namespace AdvSys {
 #define TRUE -1
 
 OpcodeMethod VM::_METHODS[0x34] = {
-	&VM::opBRT,
-	&VM::opBRF,
-	&VM::opBR,
-	&VM::opT,
-	&VM::opNIL,
-	&VM::opPUSH,
-	&VM::opNOT,
-	&VM::opADD,
-	&VM::opSUB,
-	&VM::opMUL,
-	&VM::opDIV,
-	&VM::opREM,
-	&VM::opBAND,
-	&VM::opBOR,
-	&VM::opBNOT,
-	&VM::opLT,
-	&VM::opEQ,
-	&VM::opGT,
-	&VM::opLIT,
-	&VM::opVAR,
-	&VM::opGETP,
-	&VM::opSETP,
-	&VM::opSET,
-	&VM::opPRINT,
-	&VM::opTERPRI,
-	&VM::opPNUMBER,
-	&VM::opFINISH,
-	&VM::opCHAIN,
-	&VM::opABORT,
-	&VM::opEXIT,
-	&VM::opRETURN,
-	&VM::opCALL,
-	&VM::opSVAR,
-	&VM::opSSET,
-	&VM::opSPLIT,
-	&VM::opSNLIT,
-	&VM::opYORN,
-	&VM::opSAVE,
-	&VM::opRESTORE,
-	&VM::opARG,
-	&VM::opASET,
-	&VM::opTMP,
-	&VM::opTSET,
-	&VM::opTSPACE,
-	&VM::opCLASS,
-	&VM::opMATCH,
-	&VM::opPNOUN,
-	&VM::opRESTART,
-	&VM::opRAND,
-	&VM::opRNDMIZE,
-	&VM::opSEND,
-	&VM::opVOWEL
-};
+    &VM::opBRT,
+    &VM::opBRF,
+    &VM::opBR,
+    &VM::opT,
+    &VM::opNIL,
+    &VM::opPUSH,
+    &VM::opNOT,
+    &VM::opADD,
+    &VM::opSUB,
+    &VM::opMUL,
+    &VM::opDIV,
+    &VM::opREM,
+    &VM::opBAND,
+    &VM::opBOR,
+    &VM::opBNOT,
+    &VM::opLT,
+    &VM::opEQ,
+    &VM::opGT,
+    &VM::opLIT,
+    &VM::opVAR,
+    &VM::opGETP,
+    &VM::opSETP,
+    &VM::opSET,
+    &VM::opPRINT,
+    &VM::opTERPRI,
+    &VM::opPNUMBER,
+    &VM::opFINISH,
+    &VM::opCHAIN,
+    &VM::opABORT,
+    &VM::opEXIT,
+    &VM::opRETURN,
+    &VM::opCALL,
+    &VM::opSVAR,
+    &VM::opSSET,
+    &VM::opSPLIT,
+    &VM::opSNLIT,
+    &VM::opYORN,
+    &VM::opSAVE,
+    &VM::opRESTORE,
+    &VM::opARG,
+    &VM::opASET,
+    &VM::opTMP,
+    &VM::opTSET,
+    &VM::opTSPACE,
+    &VM::opCLASS,
+    &VM::opMATCH,
+    &VM::opPNOUN,
+    &VM::opRESTART,
+    &VM::opRAND,
+    &VM::opRNDMIZE,
+    &VM::opSEND,
+    &VM::opVOWEL};
 
 VM::VM(OSystem *syst, const GlkGameDescription &gameDesc) : GlkInterface(syst, gameDesc), Game(),
-		_fp(_stack), _pc(0), _status(IN_PROGRESS), _actor(-1), _action(-1), _dObject(-1),
-		_ndObjects(-1), _iObject(-1), _wordPtr(nullptr) {
+                                                            _fp(_stack), _pc(0), _status(IN_PROGRESS), _actor(-1), _action(-1), _dObject(-1),
+                                                            _ndObjects(-1), _iObject(-1), _wordPtr(nullptr) {
 }
 
 ExecutionResult VM::execute(int offset) {
@@ -109,7 +108,8 @@ void VM::executeOpcode() {
 
 	if (gDebugLevel > 0) {
 		Common::String s;
-		for (int idx = (int)_stack.size() - 1; idx >= 0; --idx) s += Common::String::format("  %d", _stack[idx]);
+		for (int idx = (int)_stack.size() - 1; idx >= 0; --idx)
+			s += Common::String::format("  %d", _stack[idx]);
 		debugC(kDebugScripts, "%.4x - %.2x - %d%s", _pc - 1, opcode, _stack.size(), s.c_str());
 	}
 
@@ -575,7 +575,8 @@ bool VM::getLine() {
 bool VM::getWord(Common::String &line) {
 	// Find the end of the word
 	const char *wordP = line.c_str();
-	for (; *wordP && !isWhitespace(*wordP); ++wordP) {}
+	for (; *wordP && !isWhitespace(*wordP); ++wordP) {
+	}
 
 	// Copy out the next word
 	InputWord iw;

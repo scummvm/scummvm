@@ -23,13 +23,13 @@
  *
  */
 
+#include "pegasus/neighborhood/wsc/wsc.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/shieldchip.h"
-#include "pegasus/neighborhood/wsc/wsc.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -60,23 +60,21 @@ enum {
 };
 
 static const TimeValue s_moleculeLoopTimes[] = {
-	kMoleculeLoop0Time,
-	kMoleculeLoop1Time,
-	kMoleculeLoop2Time,
-	kMoleculeLoop3Time,
-	kMoleculeLoop4Time,
-	kMoleculeLoop5Time,
-	kMoleculeLoop6Time
-};
+    kMoleculeLoop0Time,
+    kMoleculeLoop1Time,
+    kMoleculeLoop2Time,
+    kMoleculeLoop3Time,
+    kMoleculeLoop4Time,
+    kMoleculeLoop5Time,
+    kMoleculeLoop6Time};
 
 static const TimeValue s_moleculeFailTimes[] = {
-	kMoleculeFail0Time,
-	kMoleculeFail1Time,
-	kMoleculeFail2Time,
-	kMoleculeFail3Time,
-	kMoleculeFail4Time,
-	kMoleculeFail5Time
-};
+    kMoleculeFail0Time,
+    kMoleculeFail1Time,
+    kMoleculeFail2Time,
+    kMoleculeFail3Time,
+    kMoleculeFail4Time,
+    kMoleculeFail5Time};
 
 static const int16 kAuditoriumAngleOffset = 5;
 
@@ -485,7 +483,7 @@ static const CoordType kMoleculesMovieLeft = kNavAreaLeft + 112;
 static const CoordType kMoleculesMovieTop = kNavAreaTop + 40;
 
 WSC::WSC(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "WSC", kWSCID),
-		_moleculesMovie(kNoDisplayElement) {
+                                                            _moleculesMovie(kNoDisplayElement) {
 
 	_argonSprite = nullptr;
 	_cachedZoomSpot = nullptr;
@@ -501,7 +499,7 @@ WSC::WSC(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHan
 	setIsItemTaken(kStunGun);
 
 	GameState.setTakenItemID(kArgonPickup, GameState.isTakenItemID(kArgonCanister) &&
-			GameState.isTakenItemID(kSinclairKey));
+	                                           GameState.isTakenItemID(kSinclairKey));
 }
 
 uint16 WSC::getDateResID() const {
@@ -546,8 +544,7 @@ protected:
 };
 
 void PryDoorMessage::performAIAction(AIRule *rule) {
-	if (((PegasusEngine *)g_engine)->playerHasItemID(kShieldBiochip)
-			&& ((PegasusEngine *)g_engine)->getCurrentBiochip()->getObjectID() != kShieldBiochip)
+	if (((PegasusEngine *)g_engine)->playerHasItemID(kShieldBiochip) && ((PegasusEngine *)g_engine)->getCurrentBiochip()->getObjectID() != kShieldBiochip)
 		AIPlayMessageAction::performAIAction(rule);
 }
 
@@ -656,11 +653,11 @@ uint WSC::getNumHints() {
 		return 2;
 	case MakeRoomView(kWSC02, kSouth):
 		if (_vm->getEnergyDeathReason() == kDeathDidntStopPoison &&
-				!_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
-				!GameState.getWSCDesignedAntidote())
+		    !_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
+		    !GameState.getWSCDesignedAntidote())
 			return 3;
 		else if (!GameState.getScoringGotNitrogenCanister() ||
-				!GameState.getScoringGotSinclairKey())
+		         !GameState.getScoringGotSinclairKey())
 			return 1;
 		break;
 	case MakeRoomView(kWSC03, kNorth):
@@ -692,22 +689,22 @@ uint WSC::getNumHints() {
 	case MakeRoomView(kWSC04, kEast):
 	case MakeRoomView(kWSC04, kWest):
 		if (_vm->getEnergyDeathReason() == kDeathDidntStopPoison &&
-				!_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
-				!GameState.getWSCDesignedAntidote())
+		    !_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
+		    !GameState.getWSCDesignedAntidote())
 			return 3;
 		break;
 	case MakeRoomView(kWSC02Messages, kSouth):
 		if (_vm->getEnergyDeathReason() == kDeathDidntStopPoison &&
-				!_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
-				!GameState.getWSCDesignedAntidote())
+		    !_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
+		    !GameState.getWSCDesignedAntidote())
 			return 3;
 		else if (!GameState.getScoringGotNitrogenCanister())
 			return 1;
 		break;
 	case MakeRoomView(kWSC02Morph, kSouth):
 		if (_vm->getEnergyDeathReason() == kDeathDidntStopPoison &&
-				!_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
-				!GameState.getWSCDesignedAntidote())
+		    !_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
+		    !GameState.getWSCDesignedAntidote())
 			return 3;
 		else if (!GameState.getScoringGotSinclairKey())
 			return 1;
@@ -732,8 +729,8 @@ uint WSC::getNumHints() {
 		break;
 	case MakeRoomView(kWSC61, kSouth):
 		if (!GameState.getScoringSawSinclairEntry1() ||
-				!GameState.getScoringSawSinclairEntry2() ||
-				!GameState.getScoringSawSinclairEntry3())
+		    !GameState.getScoringSawSinclairEntry2() ||
+		    !GameState.getScoringSawSinclairEntry3())
 			return 1;
 		break;
 	case MakeRoomView(kWSC98, kWest):
@@ -761,8 +758,8 @@ Common::String WSC::getHintMovie(uint hintNum) {
 		return "Images/AI/Globals/XGLOB5C";
 	case MakeRoomView(kWSC02, kSouth):
 		if (_vm->getEnergyDeathReason() == kDeathDidntStopPoison &&
-				!_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
-				!GameState.getWSCDesignedAntidote())
+		    !_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
+		    !GameState.getWSCDesignedAntidote())
 			return Common::String::format("Images/AI/WSC/XWPH%d", hintNum);
 
 		return "Images/AI/Globals/XGLOB1C";
@@ -834,8 +831,8 @@ Common::String WSC::getHintMovie(uint hintNum) {
 	case MakeRoomView(kWSC02Messages, kSouth):
 	case MakeRoomView(kWSC02Morph, kSouth):
 		if (_vm->getEnergyDeathReason() == kDeathDidntStopPoison &&
-				!_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
-				!GameState.getWSCDesignedAntidote())
+		    !_privateFlags.getFlag(kWSCPrivateInMoleculeGameFlag) &&
+		    !GameState.getWSCDesignedAntidote())
 			// analyzer hint
 			return Common::String::format("Images/AI/WSC/XWPH%d", hintNum);
 
@@ -1068,7 +1065,7 @@ void WSC::getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry) {
 
 CanMoveForwardReason WSC::canMoveForward(ExitTable::Entry &entry) {
 	if (GameState.getCurrentRoomAndView() == MakeRoomView(kWSC01, kWest) &&
-			getCurrentActivation() != kActivateHotSpotAlways)
+	    getCurrentActivation() != kActivateHotSpotAlways)
 		return kCantMoveWatchingDiagnosis;
 
 	return Neighborhood::canMoveForward(entry);
@@ -1138,11 +1135,11 @@ void WSC::closeDoorOffScreen(const RoomID room, const DirectionConstant) {
 	case kWSC93:
 		keyCard = _vm->getAllItems().findItemByID(kKeyCard);
 		if (keyCard->getItemState() == kFlashlightOn && (GameState.getCurrentRoom() == kWSC81 ||
-				GameState.getCurrentRoom() == kWSC93)) {
+		                                                 GameState.getCurrentRoom() == kWSC93)) {
 			keyCard->setItemState(kFlashlightOff);
 			playSpotSoundSync(kWSCFlashlightClickIn, kWSCFlashlightClickOut);
 		} else if (keyCard->getItemState() == kFlashlightOff && (GameState.getCurrentRoom() == kWSC82 ||
-				GameState.getCurrentRoom() == kWSC92)) {
+		                                                         GameState.getCurrentRoom() == kWSC92)) {
 			keyCard->setItemState(kFlashlightOn);
 			playSpotSoundSync(kWSCFlashlightClickIn, kWSCFlashlightClickOut);
 		}
@@ -1424,7 +1421,7 @@ void WSC::loadAmbientLoops() {
 	else if (room >= kWSC82 && room <= kWSC92)
 		loadLoopSound1("Sounds/World Science Center/Creature Feature.22K.AIFF");
 	else if ((room >= kWSC60 && room <= kWSC61West) || (room >= kWSC64 && room <= kWSC81) ||
-			(room >= kWSC93 && room <= kWSC97))
+	         (room >= kWSC93 && room <= kWSC97))
 		loadLoopSound1("Sounds/World Science Center/The Other Side.22K.AIFF", 0x100 / 12);
 	else if (room == kWSC98)
 		loadLoopSound1("Sounds/World Science Center/WCatLoop.22K.AIFF");
@@ -1629,7 +1626,7 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 			if (GameState.getWSCCatwalkDark()) {
 				//	Change the gun hot spot...
 				_vm->getAllHotspots().setHotspotRect(kW98StunGunSpotID, Common::Rect(181 + kNavAreaLeft,
-						99 + kNavAreaTop,372 + kNavAreaLeft, 149 + kNavAreaTop));
+				                                                                     99 + kNavAreaTop, 372 + kNavAreaLeft, 149 + kNavAreaTop));
 			}
 			setCurrentActivation(kActivationRobotGone);
 		}
@@ -1957,7 +1954,8 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			break;
 		case kW98MorphsToRobot:
 			if (_argonSprite) {
-				delete _argonSprite; _argonSprite = 0;
+				delete _argonSprite;
+				_argonSprite = 0;
 				startExtraSequence(kW98RobotGassed, kExtraCompletedFlag, kFilterNoInput);
 			} else if (_privateFlags.getFlag(kWSCPrivateClickedCatwalkCableFlag)) {
 				startExtraSequence(kW98RobotShocked, kExtraCompletedFlag, kFilterNoInput);
@@ -1969,7 +1967,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			GameState.setWSCCatwalkDark(true);
 			// Change the gun hot spot...
 			_vm->getAllHotspots().setHotspotRect(kW98StunGunSpotID, Common::Rect(181 + kNavAreaLeft, 99 + kNavAreaTop,
-					372 + kNavAreaLeft, 149 + kNavAreaTop));
+			                                                                     372 + kNavAreaLeft, 149 + kNavAreaTop));
 			setCurrentActivation(kActivationRobotDead);
 			GameState.setWSCRobotDead(true);
 			GameState.setScoringStoppedWSCRobot();
@@ -2028,7 +2026,7 @@ void WSC::setUpMoleculeGame() {
 	_privateFlags.setFlag(kWSCPrivateInMoleculeGameFlag, true);
 	setCurrentActivation(kActivationW03NorthInGame);
 	initOneMovie(&_moleculesMovie, "Images/World Science Center/Molecules.movie",
-			kWSCMoleculesMovieOrder, kMoleculesMovieLeft, kMoleculesMovieTop, true);
+	             kWSCMoleculesMovieOrder, kMoleculesMovieLeft, kMoleculesMovieTop, true);
 	_moleculesMovie.redrawMovieWorld();
 	_moleculeBin.initMoleculeBin();
 	_moleculeGameLevel = 0;
@@ -2141,7 +2139,6 @@ void WSC::moleculeGameClick(const HotSpotID id) {
 		_moleculesMovie.setSegment(s_moleculeFailTimes[_numCorrect], s_moleculeFailTimes[_numCorrect] + kMoleculeFailTime);
 		_moleculesMovie.setTime(s_moleculeFailTimes[_numCorrect]);
 		_moleculesMovie.start();
-
 
 		while (_moleculesMovie.isRunning()) {
 			InputDevice.pumpEvents();
@@ -2427,7 +2424,7 @@ void WSC::pickedUpItem(Item *item) {
 		item = (Item *)_vm->getAllItems().findItemByID(kSinclairKey);
 		_vm->addItemToInventory((InventoryItem *)item);
 		_vm->getAllHotspots().setHotspotRect(kWSC02SouthMorphOutSpotID,
-				Common::Rect(kNavAreaLeft, kNavAreaTop, 512 + kNavAreaLeft, 256 + kNavAreaTop));
+		                                     Common::Rect(kNavAreaLeft, kNavAreaTop, 512 + kNavAreaLeft, 256 + kNavAreaTop));
 		break;
 	case kArgonCanister:
 		GameState.setScoringGotArgonCanister();

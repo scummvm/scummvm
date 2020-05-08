@@ -45,7 +45,7 @@
 */
 
 namespace Common {
-	class ReadStream;
+class ReadStream;
 }
 
 namespace Pegasus {
@@ -93,8 +93,8 @@ public:
 	void setArea(const CoordType, const CoordType, const CoordType, const CoordType);
 	void getBoundingBox(Common::Rect &) const;
 	void getArea(Region &) const;
-	void getCenter(Common::Point&) const;
-	void getCenter(CoordType&, CoordType&) const;
+	void getCenter(Common::Point &) const;
+	void getCenter(CoordType &, CoordType &) const;
 
 	void moveSpotTo(const CoordType, const CoordType);
 	void moveSpotTo(const Common::Point);
@@ -139,8 +139,8 @@ public:
 	void removeOneHotspot(const HotSpotID);
 	void removeMaskedHotspots(const HotSpotFlags = kNoHotSpotFlags);
 
-	void setHotspotRect(const HotSpotID, const Common::Rect&);
-	void getHotspotRect(const HotSpotID, Common::Rect&);
+	void setHotspotRect(const HotSpotID, const Common::Rect &);
+	void getHotspotRect(const HotSpotID, Common::Rect &);
 };
 
 typedef HotspotList::iterator HotspotIterator;

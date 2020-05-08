@@ -30,7 +30,6 @@ namespace Nuvie {
 
 class Song : public Sound {
 public:
-
 	virtual bool Init(const char *filename) {
 		return false;
 	}
@@ -48,10 +47,11 @@ public:
 	}
 
 	void SetName(const char *name) {
-		if (name) m_Filename = name;    // SB-X
+		if (name)
+			m_Filename = name; // SB-X
 	}
-private:
 
+private:
 };
 
 } // End of namespace Nuvie

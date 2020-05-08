@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/base/base_scriptable.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 #ifndef WINTERMUTE_PLUGINS_H
 #define WINTERMUTE_PLUGINS_H

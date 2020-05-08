@@ -52,8 +52,8 @@ protected:
 	// Override createAudioCDManager() to get our Windows-specific
 	// version.
 	virtual AudioCDManager *createAudioCDManager();
-	
-	HWND getHwnd() { return ((SdlWindow_Win32*)_window)->getHwnd(); }
+
+	HWND getHwnd() { return ((SdlWindow_Win32 *)_window)->getHwnd(); }
 
 	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
 };

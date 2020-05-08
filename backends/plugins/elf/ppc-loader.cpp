@@ -104,19 +104,19 @@ bool PPCDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 		Elf32_Shdr *curShdr = &(shdr[i]);
 
 		if ((curShdr->sh_type == SHT_REL) &&
-				curShdr->sh_entsize == sizeof(Elf32_Rel) &&
-				int32(curShdr->sh_link) == _symtab_sect &&
-				curShdr->sh_info < ehdr->e_shnum &&
-				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {
+		    curShdr->sh_entsize == sizeof(Elf32_Rel) &&
+		    int32(curShdr->sh_link) == _symtab_sect &&
+		    curShdr->sh_info < ehdr->e_shnum &&
+		    (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {
 			warning("elfloader: REL entries not supported!");
 			return false;
 		}
 
 		if ((curShdr->sh_type == SHT_RELA) &&
-				curShdr->sh_entsize == sizeof(Elf32_Rela) &&
-				int32(curShdr->sh_link) == _symtab_sect &&
-				curShdr->sh_info < ehdr->e_shnum &&
-				(shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {
+		    curShdr->sh_entsize == sizeof(Elf32_Rela) &&
+		    int32(curShdr->sh_link) == _symtab_sect &&
+		    curShdr->sh_info < ehdr->e_shnum &&
+		    (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {
 			if (!relocate(curShdr->sh_offset, curShdr->sh_size, _segment))
 				return false;
 		}

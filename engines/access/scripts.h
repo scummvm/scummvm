@@ -23,9 +23,9 @@
 #ifndef ACCESS_SCRIPTS_H
 #define ACCESS_SCRIPTS_H
 
-#include "common/scummsys.h"
-#include "common/memstream.h"
 #include "access/data.h"
+#include "common/memstream.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -35,7 +35,7 @@ class Scripts;
 #define SCRIPT_START_BYTE 0xE0
 #define ROOM_SCRIPT 2000
 
-typedef void(Scripts::*ScriptMethodPtr)();
+typedef void (Scripts::*ScriptMethodPtr)();
 
 class Scripts : public Manager {
 private:
@@ -140,6 +140,7 @@ protected:
 	void cmdHelp_v2();
 	void cmdCycleBack();
 	void cmdSetHelp();
+
 public:
 	int _sequence;
 	bool _endFlag;

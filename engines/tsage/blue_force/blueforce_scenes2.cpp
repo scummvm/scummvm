@@ -69,7 +69,7 @@ void Scene200::Action1::signal() {
 		rot->setDelay(10);
 
 		scene->setAction(&scene->_sequenceManager, this, 201, &scene->_object1, &scene->_object2,
-			&scene->_object3, &scene->_object4, &scene->_object5, &scene->_object6, NULL);
+		                 &scene->_object3, &scene->_object4, &scene->_object5, &scene->_object6, NULL);
 		break;
 	}
 	case 5:
@@ -99,7 +99,6 @@ void Scene200::Action2::signal() {
 		break;
 	}
 }
-
 
 /*--------------------------------------------------------------------------*/
 
@@ -170,7 +169,7 @@ void Scene210::Action1::signal() {
 		rot->setDelay(10);
 
 		scene->setAction(&scene->_sequenceManager, this, 210, &scene->_object10, &scene->_object11,
-			&scene->_object12, &scene->_object13, &scene->_object14, &scene->_object15, NULL);
+		                 &scene->_object12, &scene->_object13, &scene->_object14, &scene->_object15, NULL);
 		break;
 	}
 	case 3:
@@ -187,10 +186,10 @@ void Scene210::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(210);
 
-// FIXME: This fixes an obvious glitch during scene transition.
-//        Shouldn't it be included in the 2 previous functions?
+	// FIXME: This fixes an obvious glitch during scene transition.
+	//        Shouldn't it be included in the 2 previous functions?
 	clearScreen();
-//
+	//
 
 	BF_GLOBALS._scenePalette.loadPalette(235);
 	BF_GLOBALS._scenePalette.refresh();
@@ -303,7 +302,7 @@ void Scene220::Action1::signal() {
 		rot->setDelay(10);
 
 		scene->setAction(&scene->_sequenceManager, this, 220, &scene->_object4, &scene->_object5,
-			&scene->_object6, &scene->_object7, &scene->_object8, &scene->_object9, NULL);
+		                 &scene->_object6, &scene->_object7, &scene->_object8, &scene->_object9, NULL);
 		break;
 	}
 	case 12:
@@ -357,10 +356,10 @@ void Scene220::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(220);
 
-// FIXME: This fixes an obvious glitch during scene transition.
-//        Shouldn't it be included in the 2 previous functions?
+	// FIXME: This fixes an obvious glitch during scene transition.
+	//        Shouldn't it be included in the 2 previous functions?
 	clearScreen();
-//
+	//
 
 	_object2.postInit();
 	_object2.setVisage(220);
@@ -510,7 +509,7 @@ void Scene225::Action1::signal() {
 		rot->setDelay(10);
 
 		scene->setAction(&scene->_sequenceManager, this, 225, &scene->_object15, &scene->_object16,
-			&scene->_object17, &scene->_object18, &scene->_object19, &scene->_object20, NULL);
+		                 &scene->_object17, &scene->_object18, &scene->_object19, &scene->_object20, NULL);
 		break;
 	case 21:
 		scene->_object21.hide();
@@ -829,7 +828,7 @@ bool Scene270::Grandma::startAction(CursorType action, Event &event) {
 				scene->_sceneMode = 2710;
 				scene->setAction(&scene->_sequenceManager1, scene, 2710, &BF_GLOBALS._player, &scene->_grandma, NULL);
 			} else if (BF_GLOBALS.getFlag(onDuty) || (BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) == 2) ||
-						(scene->_field386 != 0)) {
+			           (scene->_field386 != 0)) {
 				scene->_stripManager.start(2723, &BF_GLOBALS._stripProxy);
 			} else {
 				BF_GLOBALS._player.disableControl();
@@ -898,8 +897,8 @@ bool Scene270::Exit::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene270::Scene270(): SceneExt() {
-	_field380 = _field382 =_field384 = _field386 = 0;
+Scene270::Scene270() : SceneExt() {
+	_field380 = _field382 = _field384 = _field386 = 0;
 	_field219A = _tempPos.x = _tempPos.y = _field21A0 = 0;
 	_sceneMode = 0;
 }
@@ -934,9 +933,9 @@ void Scene270::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (((BF_GLOBALS._bookmark >= bLauraToParamedics) && (BF_GLOBALS._dayNumber == 1) &&
-				(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 2) &&
-				(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 1)) ||
-			((BF_GLOBALS._dayNumber == 3) && BF_GLOBALS.getFlag(fGotGreen355fTalkedToGrannyDay3))) {
+	     (BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 2) &&
+	     (BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 1)) ||
+	    ((BF_GLOBALS._dayNumber == 3) && BF_GLOBALS.getFlag(fGotGreen355fTalkedToGrannyDay3))) {
 		BF_GLOBALS._walkRegions.disableRegion(6);
 		BF_GLOBALS._walkRegions.disableRegion(14);
 		BF_GLOBALS._walkRegions.disableRegion(19);
@@ -1139,7 +1138,7 @@ void Scene270::signal() {
 		_sceneMode = 2718;
 		_lyle.setFrame2(-1);
 		setAction(&_sequenceManager1, this, 2718, &BF_GLOBALS._player, &_laura, &_skip,
-			&_lyle, &_grandma, NULL);
+		          &_lyle, &_grandma, NULL);
 		break;
 	case 2718:
 		BF_GLOBALS._walkRegions.disableRegion(6);
@@ -1172,7 +1171,7 @@ void Scene270::signal() {
 
 void Scene270::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
-			(_field380 == 1) && !_action) {
+	    (_field380 == 1) && !_action) {
 		_tempPos = event.mousePos;
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 2706;
@@ -1183,7 +1182,7 @@ void Scene270::process(Event &event) {
 	SceneExt::process(event);
 
 	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1)) &&
-			!_field384 && !_field386) {
+	    !_field384 && !_field386) {
 		// Check if the cursor is on an exit
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
@@ -1670,7 +1669,7 @@ void Scene271::signal() {
 
 void Scene271::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
-			(_field796 == 1)  && (!_action)) {
+	    (_field796 == 1) && (!_action)) {
 		_tempPos = event.mousePos;
 		BF_GLOBALS._player.disableControl();
 

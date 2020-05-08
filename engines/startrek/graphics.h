@@ -24,8 +24,8 @@
 
 #include "startrek/bitmap.h"
 #include "startrek/font.h"
-#include "startrek/startrek.h"
 #include "startrek/sprite.h"
+#include "startrek/startrek.h"
 
 #include "common/ptr.h"
 #include "common/rect.h"
@@ -39,12 +39,10 @@ namespace StarTrek {
 class Font;
 class StarTrekEngine;
 
-
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 200;
 
 const int MAX_SPRITES = 32;
-
 
 class Graphics {
 public:

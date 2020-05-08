@@ -48,7 +48,6 @@ void FreeToken(int which);
 void FreeAllTokens();
 bool TestToken(int which);
 
-
 } // End of namespace Tinsel
 
-#endif		// TINSEL_TOKEN_H
+#endif // TINSEL_TOKEN_H

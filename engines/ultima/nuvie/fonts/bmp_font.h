@@ -41,7 +41,6 @@ class BMPFont : public Font {
 	bool rune_mode;
 
 public:
-
 	BMPFont();
 	~BMPFont() override;
 
@@ -54,8 +53,8 @@ public:
 	uint16 drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 	                uint8 color) override;
 	uint16 getStringWidth(const char *str, uint16 string_len) override;
-protected:
 
+protected:
 };
 
 } // End of namespace Nuvie

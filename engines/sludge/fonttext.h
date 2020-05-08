@@ -69,7 +69,6 @@ private:
 	Common::HashMap<uint32, uint32> _fontTable;
 
 	inline uint32 fontInTable(uint32 x) { return _fontTable[x]; }
-
 };
 
 } // End of namespace Sludge

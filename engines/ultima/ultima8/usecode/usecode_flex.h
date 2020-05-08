@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_USECODE_USECODEFLEX_H
 #define ULTIMA8_USECODE_USECODEFLEX_H
 
-#include "ultima/ultima8/usecode/usecode.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
+#include "ultima/ultima8/usecode/usecode.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -32,8 +32,8 @@ namespace Ultima8 {
 // multiple inheritance. um, yes :-)
 class UsecodeFlex : public Usecode, protected RawArchive {
 public:
-	UsecodeFlex(Common::SeekableReadStream *rs) : RawArchive(rs) { }
-	~UsecodeFlex() override { }
+	UsecodeFlex(Common::SeekableReadStream *rs) : RawArchive(rs) {}
+	~UsecodeFlex() override {}
 
 	const uint8 *get_class(uint32 classid) override;
 	uint32 get_class_size(uint32 classid) override;

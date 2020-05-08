@@ -22,22 +22,21 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/graphics/type_flags.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/games/treasure_loader.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/games/treasure_loader.h"
-#include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/graphics/type_flags.h"
+#include "ultima/ultima8/kernel/core_app.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 TypeFlags::TypeFlags() {
 }
-
 
 TypeFlags::~TypeFlags() {
 }
@@ -48,7 +47,6 @@ ShapeInfo *TypeFlags::getShapeInfo(uint32 shapenum) {
 	else
 		return nullptr;
 }
-
 
 void TypeFlags::load(Common::SeekableReadStream *rs) {
 	// TODO: detect U8/crusader format somehow?!
@@ -75,19 +73,31 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 
 		if (GAME_IS_U8) {
 
-			if (data[0] & 0x01) si._flags |= ShapeInfo::SI_FIXED;
-			if (data[0] & 0x02) si._flags |= ShapeInfo::SI_SOLID;
-			if (data[0] & 0x04) si._flags |= ShapeInfo::SI_SEA;
-			if (data[0] & 0x08) si._flags |= ShapeInfo::SI_LAND;
-			if (data[0] & 0x10) si._flags |= ShapeInfo::SI_OCCL;
-			if (data[0] & 0x20) si._flags |= ShapeInfo::SI_BAG;
-			if (data[0] & 0x40) si._flags |= ShapeInfo::SI_DAMAGING;
-			if (data[0] & 0x80) si._flags |= ShapeInfo::SI_NOISY;
+			if (data[0] & 0x01)
+				si._flags |= ShapeInfo::SI_FIXED;
+			if (data[0] & 0x02)
+				si._flags |= ShapeInfo::SI_SOLID;
+			if (data[0] & 0x04)
+				si._flags |= ShapeInfo::SI_SEA;
+			if (data[0] & 0x08)
+				si._flags |= ShapeInfo::SI_LAND;
+			if (data[0] & 0x10)
+				si._flags |= ShapeInfo::SI_OCCL;
+			if (data[0] & 0x20)
+				si._flags |= ShapeInfo::SI_BAG;
+			if (data[0] & 0x40)
+				si._flags |= ShapeInfo::SI_DAMAGING;
+			if (data[0] & 0x80)
+				si._flags |= ShapeInfo::SI_NOISY;
 
-			if (data[1] & 0x01) si._flags |= ShapeInfo::SI_DRAW;
-			if (data[1] & 0x02) si._flags |= ShapeInfo::SI_IGNORE;
-			if (data[1] & 0x04) si._flags |= ShapeInfo::SI_ROOF;
-			if (data[1] & 0x08) si._flags |= ShapeInfo::SI_TRANSL;
+			if (data[1] & 0x01)
+				si._flags |= ShapeInfo::SI_DRAW;
+			if (data[1] & 0x02)
+				si._flags |= ShapeInfo::SI_IGNORE;
+			if (data[1] & 0x04)
+				si._flags |= ShapeInfo::SI_ROOF;
+			if (data[1] & 0x08)
+				si._flags |= ShapeInfo::SI_TRANSL;
 			si._family = data[1] >> 4;
 
 			si._equipType = data[2] & 0x0F;
@@ -100,10 +110,14 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._animData = data[4] >> 4;
 
 			si._unknown = data[5] & 0x0F;
-			if (data[5] & 0x10) si._flags |= ShapeInfo::SI_EDITOR;
-			if (data[5] & 0x20) si._flags |= ShapeInfo::SI_EXPLODE;
-			if (data[5] & 0x40) si._flags |= ShapeInfo::SI_UNKNOWN46;
-			if (data[5] & 0x80) si._flags |= ShapeInfo::SI_UNKNOWN47;
+			if (data[5] & 0x10)
+				si._flags |= ShapeInfo::SI_EDITOR;
+			if (data[5] & 0x20)
+				si._flags |= ShapeInfo::SI_EXPLODE;
+			if (data[5] & 0x40)
+				si._flags |= ShapeInfo::SI_UNKNOWN46;
+			if (data[5] & 0x80)
+				si._flags |= ShapeInfo::SI_UNKNOWN47;
 
 			si._weight = data[6];
 
@@ -114,20 +128,32 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			// might have to split up remorse/regret at some point
 
 			// unchecked
-			if (data[0] & 0x01) si._flags |= ShapeInfo::SI_FIXED;
-			if (data[0] & 0x02) si._flags |= ShapeInfo::SI_SOLID;
-			if (data[0] & 0x04) si._flags |= ShapeInfo::SI_SEA;
-			if (data[0] & 0x08) si._flags |= ShapeInfo::SI_LAND;
-			if (data[0] & 0x10) si._flags |= ShapeInfo::SI_OCCL;
-			if (data[0] & 0x20) si._flags |= ShapeInfo::SI_BAG;
-			if (data[0] & 0x40) si._flags |= ShapeInfo::SI_DAMAGING;
-			if (data[0] & 0x80) si._flags |= ShapeInfo::SI_NOISY;
+			if (data[0] & 0x01)
+				si._flags |= ShapeInfo::SI_FIXED;
+			if (data[0] & 0x02)
+				si._flags |= ShapeInfo::SI_SOLID;
+			if (data[0] & 0x04)
+				si._flags |= ShapeInfo::SI_SEA;
+			if (data[0] & 0x08)
+				si._flags |= ShapeInfo::SI_LAND;
+			if (data[0] & 0x10)
+				si._flags |= ShapeInfo::SI_OCCL;
+			if (data[0] & 0x20)
+				si._flags |= ShapeInfo::SI_BAG;
+			if (data[0] & 0x40)
+				si._flags |= ShapeInfo::SI_DAMAGING;
+			if (data[0] & 0x80)
+				si._flags |= ShapeInfo::SI_NOISY;
 
 			// unchecked
-			if (data[1] & 0x01) si._flags |= ShapeInfo::SI_DRAW;
-			if (data[1] & 0x02) si._flags |= ShapeInfo::SI_IGNORE;
-			if (data[1] & 0x04) si._flags |= ShapeInfo::SI_ROOF;
-			if (data[1] & 0x08) si._flags |= ShapeInfo::SI_TRANSL;
+			if (data[1] & 0x01)
+				si._flags |= ShapeInfo::SI_DRAW;
+			if (data[1] & 0x02)
+				si._flags |= ShapeInfo::SI_IGNORE;
+			if (data[1] & 0x04)
+				si._flags |= ShapeInfo::SI_ROOF;
+			if (data[1] & 0x08)
+				si._flags |= ShapeInfo::SI_TRANSL;
 			si._family = data[1] >> 4;
 			si._family += (data[2] & 1) << 4;
 
@@ -136,17 +162,24 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._y = (data[3] >> 2) & 0x1F;
 			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
-			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
-			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRUSUNK61;
-			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRUSUNK62;
-			if (data[6] & 0x08) si._flags |= ShapeInfo::SI_CRUSUNK63;
-			if (data[6] & 0x10) si._flags |= ShapeInfo::SI_CRUSUNK64;
-			if (data[6] & 0x20) si._flags |= ShapeInfo::SI_CRUS_NPC;
-			if (data[6] & 0x40) si._flags |= ShapeInfo::SI_CRUSUNK66;
-			if (data[6] & 0x80) si._flags |= ShapeInfo::SI_CRUSUNK67;
+			if (data[6] & 0x01)
+				si._flags |= ShapeInfo::SI_EDITOR;
+			if (data[6] & 0x02)
+				si._flags |= ShapeInfo::SI_CRUSUNK61;
+			if (data[6] & 0x04)
+				si._flags |= ShapeInfo::SI_CRUSUNK62;
+			if (data[6] & 0x08)
+				si._flags |= ShapeInfo::SI_CRUSUNK63;
+			if (data[6] & 0x10)
+				si._flags |= ShapeInfo::SI_CRUSUNK64;
+			if (data[6] & 0x20)
+				si._flags |= ShapeInfo::SI_CRUS_NPC;
+			if (data[6] & 0x40)
+				si._flags |= ShapeInfo::SI_CRUSUNK66;
+			if (data[6] & 0x80)
+				si._flags |= ShapeInfo::SI_CRUSUNK67;
 
 			si._animType = 0;
-
 		}
 
 		si._weaponInfo = nullptr;
@@ -168,7 +201,6 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 	loadMonsterInfo();
 }
 
-
 // load weapon info from the 'weapons' config root
 void TypeFlags::loadWeaponInfo() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
@@ -177,7 +209,7 @@ void TypeFlags::loadWeaponInfo() {
 	Std::vector<istring> weaponkeys;
 	weaponkeys = config->listSections("weapons", true);
 	for (Std::vector<istring>::const_iterator iter = weaponkeys.begin();
-	        iter != weaponkeys.end(); ++iter) {
+	     iter != weaponkeys.end(); ++iter) {
 		const istring &k = *iter;
 		WeaponInfo *wi = new WeaponInfo;
 
@@ -220,7 +252,6 @@ void TypeFlags::loadWeaponInfo() {
 	}
 }
 
-
 void TypeFlags::loadArmourInfo() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	MainShapeArchive *msf = GameData::get_instance()->getMainShapes();
@@ -229,7 +260,7 @@ void TypeFlags::loadArmourInfo() {
 	Std::vector<istring> armourkeys;
 	armourkeys = config->listSections("armour", true);
 	for (Std::vector<istring>::const_iterator iter = armourkeys.begin();
-	        iter != armourkeys.end(); ++iter) {
+	     iter != armourkeys.end(); ++iter) {
 		const istring &k = *iter;
 		ArmourInfo ai;
 
@@ -286,7 +317,7 @@ void TypeFlags::loadMonsterInfo() {
 	Std::vector<istring> monsterkeys;
 	monsterkeys = config->listSections("monsters", true);
 	for (Std::vector<istring>::const_iterator iter = monsterkeys.begin();
-	        iter != monsterkeys.end(); ++iter) {
+	     iter != monsterkeys.end(); ++iter) {
 		const istring k = *iter;
 		MonsterInfo *mi = new MonsterInfo;
 
@@ -353,7 +384,7 @@ void TypeFlags::loadMonsterInfo() {
 			bool ok = treasureLoader.parse(treasure, mi->_treasure);
 			if (!ok) {
 				perr << "failed to parse treasure info for monster '" << k
-				     << "'"  << Std::endl;
+				     << "'" << Std::endl;
 				mi->_treasure.clear();
 			}
 		} else {

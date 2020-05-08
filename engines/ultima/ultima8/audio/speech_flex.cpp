@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/speech_flex.h"
 #include "ultima/ultima8/audio/audio_sample.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/util.h"
 
 namespace Ultima {
@@ -52,8 +52,7 @@ SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 		_phrases.push_back(str);
 	}
 
-	delete [] buf;
-
+	delete[] buf;
 }
 
 SpeechFlex::~SpeechFlex(void) {
@@ -68,16 +67,17 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 	TabsToSpaces(text, 1);
 
 	Std::string::size_type pos1 = text.findFirstNotOf(' ');
-	if (pos1 == Std::string::npos) return 0;
+	if (pos1 == Std::string::npos)
+		return 0;
 
 	Std::string::size_type pos2 = text.findLastNotOf(' ');
 	text = text.substr(pos1, pos2 - pos1 + 1);
 
-//	pout << "Looking for string: \"" << text << "\"" << Std::endl;
+	//	pout << "Looking for string: \"" << text << "\"" << Std::endl;
 
 	for (it = _phrases.begin(); it != _phrases.end(); ++it) {
 		if (text.find(it->c_str()) == 0) {
-//			pout << "Found: " << i << Std::endl;
+			//			pout << "Found: " << i << Std::endl;
 			end = (*it).size() + start + pos1;
 			if (end >= start + pos2)
 				end = phrase.size();
@@ -86,7 +86,7 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 		i++;
 	}
 
-//	pout << "Not found" << Std::endl;
+	//	pout << "Not found" << Std::endl;
 
 	return 0;
 }
@@ -98,15 +98,18 @@ uint32 SpeechFlex::getSpeechLength(const Std::string &phrase) {
 	while (end < phrase.size()) {
 		start = end;
 		int index = getIndexForPhrase(phrase, start, end);
-		if (!index) break;
+		if (!index)
+			break;
 
 		AudioSample *sample = getSample(index);
-		if (!sample) break;
+		if (!sample)
+			break;
 
 		uint32 samples_ = sample->getLength();
 		uint32 rate = sample->getRate();
 		bool stereo = sample->isStereo();
-		if (stereo) rate *= 2;
+		if (stereo)
+			rate *= 2;
 
 		length += (samples_ * 1000) / rate;
 		length += 33; // one engine frame of overhead between speech samples_

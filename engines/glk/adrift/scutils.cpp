@@ -20,13 +20,13 @@
  *
  */
 
-#include "glk/adrift/scare.h"
-#include "glk/adrift/scprotos.h"
-#include "glk/glk.h"
-#include "glk/events.h"
 #include "common/debug.h"
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "glk/adrift/scare.h"
+#include "glk/adrift/scprotos.h"
+#include "glk/events.h"
+#include "glk/glk.h"
 
 namespace Glk {
 namespace Adrift {
@@ -51,7 +51,6 @@ void sc_trace(const sc_char *format, ...) {
 	va_end(ap);
 	debug("%s", s.c_str());
 }
-
 
 /*
  * sc_error()
@@ -80,7 +79,6 @@ void sc_fatal(const sc_char *format, ...) {
 	error("%s", s.c_str());
 }
 
-
 /* Unique non-heap address for zero size malloc() and realloc() requests. */
 static void *sc_zero_allocation = &sc_zero_allocation;
 
@@ -101,7 +99,7 @@ void *sc_malloc(size_t size) {
 
 	allocated = malloc(size);
 	if (!allocated)
-		sc_fatal("sc_malloc: requested %lu bytes\n", (sc_uint) size);
+		sc_fatal("sc_malloc: requested %lu bytes\n", (sc_uint)size);
 	else if (allocated == sc_zero_allocation)
 		sc_fatal("sc_malloc: zero-byte allocation address returned\n");
 
@@ -122,7 +120,7 @@ void *sc_realloc(void *pointer, size_t size) {
 
 	allocated = realloc(pointer, size);
 	if (!allocated)
-		sc_fatal("sc_realloc: requested %lu bytes\n", (sc_uint) size);
+		sc_fatal("sc_realloc: requested %lu bytes\n", (sc_uint)size);
 	else if (allocated == sc_zero_allocation)
 		sc_fatal("sc_realloc: zero-byte allocation address returned\n");
 
@@ -138,7 +136,6 @@ void sc_free(void *pointer) {
 	if (pointer && pointer != sc_zero_allocation)
 		free(pointer);
 }
-
 
 /*
  * sc_strncasecmp()
@@ -175,7 +172,6 @@ sc_int sc_strcasecmp(const sc_char *s1, const sc_char *s2) {
 	else
 		return s1len < s2len ? -1 : s1len > s2len ? 1 : 0;
 }
-
 
 /*
  * sc_platform_rand()
@@ -240,9 +236,8 @@ static sc_int sc_congruential_rand(sc_uint new_seed) {
 	}
 }
 
-
 /* Function pointer for the actual random number generator in use. */
-static sc_int(*sc_rand_function)(sc_uint) = sc_platform_rand;
+static sc_int (*sc_rand_function)(sc_uint) = sc_platform_rand;
 
 /*
  * sc_set_congruential_random()
@@ -290,7 +285,6 @@ sc_int sc_randomint(sc_int low, sc_int high) {
 	return (high < low) ? low : low + sc_rand() % (high - low + 1);
 }
 
-
 /* Miscellaneous general ascii constants. */
 static const sc_char NUL = '\0';
 static const sc_char SPACE = ' ';
@@ -314,7 +308,6 @@ sc_bool sc_strempty(const sc_char *string) {
 	return TRUE;
 }
 
-
 /*
  * sc_trim_string()
  *
@@ -326,7 +319,7 @@ sc_char *sc_trim_string(sc_char *string) {
 	assert(string);
 
 	for (index_ = strlen(string) - 1;
-	        index_ >= 0 && sc_isspace(string[index_]); index_--)
+	     index_ >= 0 && sc_isspace(string[index_]); index_--)
 		string[index_] = NUL;
 
 	for (index_ = 0; sc_isspace(string[index_]);)
@@ -335,7 +328,6 @@ sc_char *sc_trim_string(sc_char *string) {
 
 	return string;
 }
-
 
 /*
  * sc_normalize_string()
@@ -367,7 +359,6 @@ sc_char *sc_normalize_string(sc_char *string) {
 	return string;
 }
 
-
 /*
  * sc_compare_word()
  *
@@ -377,10 +368,8 @@ sc_bool sc_compare_word(const sc_char *string, const sc_char *word, sc_int lengt
 	assert(string && word);
 
 	/* Return TRUE if string starts with word, then space or string end. */
-	return sc_strncasecmp(string, word, length) == 0
-	       && (string[length] == NUL || sc_isspace(string[length]));
+	return sc_strncasecmp(string, word, length) == 0 && (string[length] == NUL || sc_isspace(string[length]));
 }
-
 
 /*
  * sc_hash()

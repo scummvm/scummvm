@@ -34,15 +34,17 @@ void extractStringTable(File &src, const char *filename, int offset, int count) 
 		if (offset == 87754 && idx == 19) {
 			// String entry #19 for Lord British is dodgy in the original data
 			const char *STR = "\n\n\n\n\nHe says:\nThe Great Stygian Abyss is the darkest pocket of evil "
-				"remaining in Britannia!\n\n\n\n\nIt is said that in the deepest recesses of "
-				"the Abyss is the Chamber of the Codex!\n\n\n\nIt is also said that only one "
-				"of highest Virtue may enter this Chamber, one such as an Avatar!!!\n";
+			                  "remaining in Britannia!\n\n\n\n\nIt is said that in the deepest recesses of "
+			                  "the Abyss is the Chamber of the Codex!\n\n\n\nIt is also said that only one "
+			                  "of highest Virtue may enter this Chamber, one such as an Avatar!!!\n";
 			dest.write(STR, (int)strlen(STR));
 			dest.writeByte(0);
 
 			// Skip to next line
-			while (src.readByte()) {}
-			while (src.readByte()) {}
+			while (src.readByte()) {
+			}
+			while (src.readByte()) {
+			}
 			continue;
 		}
 
@@ -81,33 +83,33 @@ void extractUltima4Resources() {
 	if (f1.computeMD5() != 115195)
 		error("Unknown version of Ultima 4 title.exe");
 
-	const int INTRO_TEXT_OFFSET = 17445 - 1;  // (start at zero)
+	const int INTRO_TEXT_OFFSET = 17445 - 1; // (start at zero)
 	extractStringTable(f1, "intro_questions.dat", INTRO_TEXT_OFFSET, 28);
 	extractStringTable(f1, "intro_text.dat", -1, 24);
 	extractStringTable(f1, "intro_gypsy.dat", -1, 15);
 
-	// Extract miscellaneous data from the title.exe
-	#define INTRO_MAP_OFFSET 30339
-	#define INTRO_FIXUPDATA_OFFSET 29806
-	#define INTRO_SCRIPT_TABLE_SIZE 548
-	#define INTRO_SCRIPT_TABLE_OFFSET 30434
-	#define INTRO_BASETILE_TABLE_SIZE 15
-	#define INTRO_BASETILE_TABLE_OFFSET 16584
-	#define BEASTIE1_FRAMES 0x80
-	#define BEASTIE2_FRAMES 0x40
-	#define BEASTIE_FRAME_TABLE_OFFSET 0x7380
-	#define BEASTIE1_FRAMES_OFFSET 0
-	#define BEASTIE2_FRAMES_OFFSET 0x78
-	#define INTRO_MAP_HEIGHT 5
-	#define INTRO_MAP_WIDTH 19
+// Extract miscellaneous data from the title.exe
+#define INTRO_MAP_OFFSET 30339
+#define INTRO_FIXUPDATA_OFFSET 29806
+#define INTRO_SCRIPT_TABLE_SIZE 548
+#define INTRO_SCRIPT_TABLE_OFFSET 30434
+#define INTRO_BASETILE_TABLE_SIZE 15
+#define INTRO_BASETILE_TABLE_OFFSET 16584
+#define BEASTIE1_FRAMES 0x80
+#define BEASTIE2_FRAMES 0x40
+#define BEASTIE_FRAME_TABLE_OFFSET 0x7380
+#define BEASTIE1_FRAMES_OFFSET 0
+#define BEASTIE2_FRAMES_OFFSET 0x78
+#define INTRO_MAP_HEIGHT 5
+#define INTRO_MAP_WIDTH 19
 
 	extractData(f1, "intro_sig.dat", INTRO_FIXUPDATA_OFFSET, 533);
 	extractData(f1, "intro_map.dat", INTRO_MAP_OFFSET,
-		INTRO_MAP_WIDTH * INTRO_MAP_HEIGHT);
+	            INTRO_MAP_WIDTH * INTRO_MAP_HEIGHT);
 	extractData(f1, "intro_script.dat", INTRO_SCRIPT_TABLE_OFFSET, INTRO_SCRIPT_TABLE_SIZE);
 	extractData(f1, "intro_base_tile.dat", INTRO_BASETILE_TABLE_OFFSET, INTRO_BASETILE_TABLE_SIZE);
 	extractData(f1, "intro_beastie1.dat", BEASTIE_FRAME_TABLE_OFFSET + BEASTIE1_FRAMES_OFFSET,
-		BEASTIE1_FRAMES);
+	            BEASTIE1_FRAMES);
 	extractData(f1, "intro_beastie2.dat", BEASTIE_FRAME_TABLE_OFFSET + BEASTIE2_FRAMES_OFFSET,
-		BEASTIE2_FRAMES);
+	            BEASTIE2_FRAMES);
 }

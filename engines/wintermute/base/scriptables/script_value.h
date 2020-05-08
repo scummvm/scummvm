@@ -29,11 +29,10 @@
 #ifndef WINTERMUTE_SCVALUE_H
 #define WINTERMUTE_SCVALUE_H
 
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/base/scriptables/dcscript.h"   // Added by ClassView
 #include "common/str.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/base/scriptables/dcscript.h" // Added by ClassView
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 
@@ -85,11 +84,13 @@ public:
 	ScValue *getProp(const char *name);
 	BaseScriptable *_valNative;
 	ScValue *_valRef;
+
 private:
 	bool _valBool;
 	int32 _valInt;
 	double _valFloat;
 	char *_valString;
+
 public:
 	TValType _type;
 	ScValue(BaseGame *inGame);

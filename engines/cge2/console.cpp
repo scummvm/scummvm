@@ -45,4 +45,4 @@ bool CGE2Console::doCarpetWorkaround(int argc, const char **argv) {
 	return true;
 }
 
-} // End of namespace CGE
+} // namespace CGE2

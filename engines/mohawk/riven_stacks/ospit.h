@@ -52,7 +52,6 @@ public:
 
 	// External commands - Elevator Combination
 	void xgwatch(const ArgumentArray &args);
-
 };
 
 } // End of namespace RivenStacks

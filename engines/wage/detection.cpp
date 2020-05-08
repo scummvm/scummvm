@@ -20,12 +20,11 @@
  *
  */
 
-
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
+#include "engines/advancedDetector.h"
 
 #include "wage/wage.h"
 
@@ -35,19 +34,18 @@ const char *WageEngine::getGameFile() const {
 	return _gameDescription->filesDescriptions[0].fileName;
 }
 
-}
+} // namespace Wage
 
 static const PlainGameDescriptor wageGames[] = {
-	{"afm", "Another Fine Mess"},
-	{"amot", "A Mess O' Trouble"},
-	{"cantitoe", "Camp Cantitoe"},
-	{"drakmythcastle", "Drakmyth Castle"},
-	{"raysmaze", "Ray's Maze"},
-	{"scepters", "Enchanted Scepters"},
-	{"twisted", "Twisted!"},
-	{"wage", "WAGE"},
-	{0, 0}
-};
+    {"afm", "Another Fine Mess"},
+    {"amot", "A Mess O' Trouble"},
+    {"cantitoe", "Camp Cantitoe"},
+    {"drakmythcastle", "Drakmyth Castle"},
+    {"raysmaze", "Ray's Maze"},
+    {"scepters", "Enchanted Scepters"},
+    {"twisted", "Twisted!"},
+    {"wage", "WAGE"},
+    {0, 0}};
 
 #include "wage/detection_tables.h"
 
@@ -78,18 +76,16 @@ public:
 };
 
 bool WageMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSimpleSavesNames);
 }
 
 bool Wage::WageEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 bool WageMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -100,7 +96,7 @@ bool WageMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 }
 
 SaveStateList WageMetaEngine::listSaves(const char *target) const {
-	const uint32 WAGEflag = MKTAG('W','A','G','E');
+	const uint32 WAGEflag = MKTAG('W', 'A', 'G', 'E');
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	char saveDesc[128] = {0};
@@ -147,9 +143,9 @@ void WageMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(WAGE)
-	REGISTER_PLUGIN_DYNAMIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
+REGISTER_PLUGIN_STATIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
 #endif
 
 namespace Wage {

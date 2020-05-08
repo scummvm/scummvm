@@ -25,15 +25,15 @@
 #ifndef KYRA_SOUND_MLALF98_H
 #define KYRA_SOUND_MLALF98_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
 
 namespace Kyra {

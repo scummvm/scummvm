@@ -28,9 +28,9 @@
 namespace Ultima {
 namespace Ultima1 {
 namespace Maps {
-	class MapCityCastle;
+class MapCityCastle;
 }
-	
+
 namespace U1Dialogs {
 
 /**
@@ -39,12 +39,17 @@ namespace U1Dialogs {
 class Tavern : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
 	bool FrameMsg(CFrameMsg &msg);
+
 private:
 	Maps::MapCityCastle *_map;
 	//uint _tavernNum;
 	uint _tipNumber;
 	uint _countdown;
-	enum { INITIAL, TIP0, TIP_PAGE1, TIP_PAGE2 } _buyDisplay;
+	enum { INITIAL,
+		   TIP0,
+		   TIP_PAGE1,
+		   TIP_PAGE2 } _buyDisplay;
+
 private:
 	/**
 	 * Delay be a specified amount
@@ -68,11 +73,13 @@ private:
 	 * Draws the Sell dialog content
 	 */
 	void drawSell();
+
 protected:
 	/**
 	 * Set the mode
 	 */
 	void setMode(BuySell mode) override;
+
 public:
 	CLASSDEF;
 

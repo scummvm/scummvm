@@ -30,7 +30,7 @@
 namespace Kyra {
 
 Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
-	: Screen(vm, system, _screenDimTable, _screenDimTableCount) {
+    : Screen(vm, system, _screenDimTable, _screenDimTableCount) {
 	_vm = vm;
 	_unkPtr1 = _unkPtr2 = 0;
 	_bitBlitNum = 0;
@@ -367,7 +367,7 @@ void Screen_LoK_16::getFadeParams(const Palette &pal, int delay, int &delayInc, 
 
 int Screen_LoK_16::fadePalStep(const Palette &pal, int diff) {
 	error("Screen_LoK_16::fadePalStep called");
-	return 0;   // for compilers that don't support NORETURN
+	return 0; // for compilers that don't support NORETURN
 }
 
 void Screen_LoK_16::paletteMap(uint8 idx, int r, int g, int b) {

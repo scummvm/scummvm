@@ -23,11 +23,11 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_PERSON_H
 #define ULTIMA_ULTIMA1_WIDGETS_PERSON_H
 
-#include "ultima/ultima1/widgets/urban_widget.h"
+#include "ultima/shared/maps/creature.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/maps/map_base.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/shared/maps/creature.h"
+#include "ultima/ultima1/widgets/urban_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -38,9 +38,11 @@ namespace Widgets {
  */
 class Person : public UrbanWidget, public Shared::Maps::Creature {
 	DECLARE_MESSAGE_MAP;
+
 protected:
 	Ultima1Game *_game;
 	Maps::MapBase *_map;
+
 protected:
 	/**
 	 * Returns true if the guards are currently hostile
@@ -58,20 +60,19 @@ protected:
 	Point getRandomMoveDelta() const {
 		return Point(getRandomDelta(), getRandomDelta());
 	}
+
 public:
 	CLASSDEF;
 
 	/**
 	 * Constructor
 	 */
-	Person(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
-		UrbanWidget(game, map, tileNum), Shared::Maps::Creature(game, map, hitPoints), _game(game), _map(map) {}
+	Person(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) : UrbanWidget(game, map, tileNum), Shared::Maps::Creature(game, map, hitPoints), _game(game), _map(map) {}
 
 	/**
 	 * Constructor
 	 */
-	Person(Ultima1Game *game, Maps::MapBase *map, uint tileNum) :
-		UrbanWidget(game, map, tileNum), Shared::Maps::Creature(game, map), _game(game), _map(map) {}
+	Person(Ultima1Game *game, Maps::MapBase *map, uint tileNum) : UrbanWidget(game, map, tileNum), Shared::Maps::Creature(game, map), _game(game), _map(map) {}
 
 	/**
 	 * Handles loading and saving data

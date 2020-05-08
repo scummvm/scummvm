@@ -43,7 +43,7 @@
 namespace Cloud {
 namespace Id {
 
-class IdStorage: public Cloud::BaseStorage {
+class IdStorage : public Cloud::BaseStorage {
 protected:
 	void printFiles(FileArrayResponse response);
 	void printBool(BoolResponse response);

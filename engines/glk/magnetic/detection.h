@@ -37,9 +37,9 @@ namespace Magnetic {
  * supply a status line, so this data can be used instead.
  */
 struct gms_game_table_t {
-	const uint32 undo_size;   ///< Header word at offset 0x22
-	const uint32 undo_pc;     ///< Header word at offset 0x26
-	const char *const name;   ///< Game title and platform
+	const uint32 undo_size; ///< Header word at offset 0x22
+	const uint32 undo_pc;   ///< Header word at offset 0x26
+	const char *const name; ///< Game title and platform
 };
 typedef const gms_game_table_t *gms_game_tableref_t;
 

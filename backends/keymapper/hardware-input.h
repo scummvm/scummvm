@@ -77,7 +77,7 @@ struct HardwareInput {
 	KeyState key;
 
 	HardwareInput()
-		: inputCode(0), type(kHardwareInputTypeInvalid) { }
+	    : inputCode(0), type(kHardwareInputTypeInvalid) {}
 
 	static HardwareInput createCustom(const String &i, HardwareInputCode ic, const String &desc) {
 		return createSimple(kHardwareInputTypeCustom, i, ic, desc);
@@ -125,7 +125,7 @@ struct HardwareInputTableEntry {
 	const char *desc;
 
 	static const HardwareInputTableEntry *findWithCode(const HardwareInputTableEntry *_entries, HardwareInputCode code) {
-		for (const HardwareInputTableEntry *hw = _entries;  hw->hwId; hw++) {
+		for (const HardwareInputTableEntry *hw = _entries; hw->hwId; hw++) {
 			if (hw->code == code) {
 				return hw;
 			}
@@ -134,7 +134,7 @@ struct HardwareInputTableEntry {
 	}
 
 	static const HardwareInputTableEntry *findWithId(const HardwareInputTableEntry *_entries, const String &id) {
-		for (const HardwareInputTableEntry *hw = _entries;  hw->hwId; hw++) {
+		for (const HardwareInputTableEntry *hw = _entries; hw->hwId; hw++) {
 			if (id.equals(hw->hwId)) {
 				return hw;
 			}
@@ -175,7 +175,7 @@ struct AxisTableEntry {
 	const char *desc;
 
 	static const AxisTableEntry *findWithCode(const AxisTableEntry *_entries, HardwareInputCode code) {
-		for (const AxisTableEntry *hw = _entries;  hw->hwId; hw++) {
+		for (const AxisTableEntry *hw = _entries; hw->hwId; hw++) {
 			if (hw->code == code) {
 				return hw;
 			}
@@ -184,7 +184,7 @@ struct AxisTableEntry {
 	}
 
 	static const AxisTableEntry *findWithId(const AxisTableEntry *_entries, const String &id) {
-		for (const AxisTableEntry *hw = _entries;  hw->hwId; hw++) {
+		for (const AxisTableEntry *hw = _entries; hw->hwId; hw++) {
 			if (id.equals(hw->hwId)) {
 				return hw;
 			}
@@ -192,7 +192,6 @@ struct AxisTableEntry {
 		return nullptr;
 	}
 };
-
 
 /**
  * Interface for querying information about a hardware input device

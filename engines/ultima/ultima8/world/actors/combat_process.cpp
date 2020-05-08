@@ -20,23 +20,23 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/graphics/shape_info.h"
+#include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/ambush_process.h"
+#include "ultima/ultima8/world/actors/animation_tracker.h"
+#include "ultima/ultima8/world/actors/loiter_process.h"
+#include "ultima/ultima8/world/actors/monster_info.h"
+#include "ultima/ultima8/world/actors/pathfinder_process.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/weapon_info.h"
-#include "ultima/ultima8/world/actors/animation_tracker.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/world/actors/pathfinder_process.h"
-#include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/actors/monster_info.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/world/actors/loiter_process.h"
-#include "ultima/ultima8/world/actors/ambush_process.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,7 +45,6 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(CombatProcess, Process)
 
 CombatProcess::CombatProcess() : Process(), _target(0), _fixedTarget(0), _combatMode(CM_WAITING) {
-
 }
 
 CombatProcess::CombatProcess(Actor *actor_) : _target(0), _fixedTarget(0), _combatMode(CM_WAITING) {
@@ -175,22 +174,27 @@ void CombatProcess::setTarget(ObjId newtarget) {
 bool CombatProcess::isValidTarget(Actor *target_) {
 	assert(target_);
 	Actor *a = getActor(_itemNum);
-	if (!a) return false; // uh oh
+	if (!a)
+		return false; // uh oh
 
 	// don't target_ self
-	if (target_ == a) return false;
+	if (target_ == a)
+		return false;
 
 	// not in the fastarea
-	if (!target_->hasFlags(Item::FLG_FASTAREA)) return false;
+	if (!target_->hasFlags(Item::FLG_FASTAREA))
+		return false;
 
 	// dead actors don't make good targets
-	if (target_->isDead()) return false;
+	if (target_->isDead())
+		return false;
 
 	// feign death only works on undead and demons
 	if (target_->hasActorFlags(Actor::ACT_FEIGNDEATH)) {
 
 		if ((a->getDefenseType() & WeaponInfo::DMG_UNDEAD) ||
-		        (a->getShape() == 96)) return false; // CONSTANT!
+		    (a->getShape() == 96))
+			return false; // CONSTANT!
 	}
 
 	// otherwise, ok
@@ -201,14 +205,16 @@ bool CombatProcess::isEnemy(Actor *target_) {
 	assert(target_);
 
 	Actor *a = getActor(_itemNum);
-	if (!a) return false; // uh oh
+	if (!a)
+		return false; // uh oh
 
 	return ((a->getEnemyAlignment() & target_->getAlignment()) != 0);
 }
 
 ObjId CombatProcess::seekTarget() {
 	Actor *a = getActor(_itemNum);
-	if (!a) return 0; // uh oh
+	if (!a)
+		return 0; // uh oh
 
 	if (_fixedTarget) {
 		Actor *t = getActor(_fixedTarget);
@@ -249,7 +255,8 @@ void CombatProcess::turnToDirection(int direction) {
 		return;
 	int curdir = a->getDir();
 	int step = 1;
-	if ((curdir - direction + 8) % 8 < 4) step = -1;
+	if ((curdir - direction + 8) % 8 < 4)
+		step = -1;
 	Animation::Sequence turnanim = Animation::combatStand;
 
 	ProcId prevpid = 0;
@@ -258,7 +265,8 @@ void CombatProcess::turnToDirection(int direction) {
 	for (int dir = curdir; !done;) {
 		ProcId animpid = a->doAnim(turnanim, dir);
 
-		if (dir == direction) done = true;
+		if (dir == direction)
+			done = true;
 
 		if (prevpid) {
 			Process *proc = Kernel::get_instance()->getProcess(animpid);
@@ -271,7 +279,8 @@ void CombatProcess::turnToDirection(int direction) {
 		dir = (dir + step + 8) % 8;
 	}
 
-	if (prevpid) waitFor(prevpid);
+	if (prevpid)
+		waitFor(prevpid);
 }
 
 bool CombatProcess::inAttackRange() {
@@ -280,7 +289,8 @@ bool CombatProcess::inAttackRange() {
 		return false; // shouldn't happen
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = nullptr;
-	if (shapeinfo) mi = shapeinfo->_monsterInfo;
+	if (shapeinfo)
+		mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_ranged)
 		return true; // ranged attacks (ghost's fireball) always in range
@@ -290,11 +300,13 @@ bool CombatProcess::inAttackRange() {
 		return false;
 
 	while (tracker.step()) {
-		if (tracker.hitSomething()) break;
+		if (tracker.hitSomething())
+			break;
 	}
 
 	ObjId hit = tracker.hitSomething();
-	if (hit == _target) return true;
+	if (hit == _target)
+		return true;
 
 	return false;
 }
@@ -305,7 +317,8 @@ void CombatProcess::waitForTarget() {
 		return; // shouldn't happen
 	ShapeInfo *shapeinfo = a->getShapeInfo();
 	MonsterInfo *mi = nullptr;
-	if (shapeinfo) mi = shapeinfo->_monsterInfo;
+	if (shapeinfo)
+		mi = shapeinfo->_monsterInfo;
 
 	if (mi && mi->_shifter && a->getMapNum() != 43 && (getRandom() % 2) == 0) {
 		// changelings (except the ones at the U8 endgame pentagram)
@@ -341,7 +354,8 @@ void CombatProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool CombatProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_target = rs->readUint16LE();
 	_fixedTarget = rs->readUint16LE();

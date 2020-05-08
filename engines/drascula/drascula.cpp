@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/file.h"
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/keyboard.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -31,8 +31,8 @@
 
 #include "engines/util.h"
 
-#include "drascula/drascula.h"
 #include "drascula/console.h"
+#include "drascula/drascula.h"
 
 namespace Drascula {
 
@@ -73,7 +73,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	term_int = 0;
 	currentChapter = 0;
 	_loadedDifferentChapter = false;
-	_canSaveLoad  = false;
+	_canSaveLoad = false;
 	musicStopped = 0;
 	FrameSSN = 0;
 	globalSpeed = 0;
@@ -218,8 +218,7 @@ DrasculaEngine::~DrasculaEngine() {
 }
 
 bool DrasculaEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL || f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL || f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error DrasculaEngine::run() {
@@ -477,7 +476,7 @@ bool DrasculaEngine::runCurrentChapter() {
 				return true;
 			}
 		}
-	// From here onwards the items have different IDs
+		// From here onwards the items have different IDs
 	} else if (currentChapter == 4) {
 		addObject(kItemPhone2);
 		addObject(kItemCross2);
@@ -604,7 +603,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		// while the plug (object 16) is held
 		// Fixes bug #2059621 - "DRASCULA: Plug bug"
 		if (_rightMouseButton == 1 && !_menuScreen &&
-			!(currentChapter == 5 && pickedObject == 16)) {
+		    !(currentChapter == 5 && pickedObject == 16)) {
 			_rightMouseButton = 0;
 			_characterMoved = false;
 			if (trackProtagonist == 2)
@@ -709,7 +708,6 @@ bool DrasculaEngine::runCurrentChapter() {
 	return false;
 }
 
-
 bool DrasculaEngine::verify1() {
 	int l;
 
@@ -725,8 +723,7 @@ bool DrasculaEngine::verify1() {
 			}
 		}
 
-		if (_mouseX > curX && _mouseY > curY
-				&& _mouseX < curX + curWidth && _mouseY < curY + curHeight)
+		if (_mouseX > curX && _mouseY > curY && _mouseX < curX + curWidth && _mouseY < curY + curHeight)
 			doBreak = 1;
 
 		for (l = 0; l < numRoomObjs; l++) {
@@ -790,7 +787,7 @@ Common::KeyCode DrasculaEngine::getScan() {
 	return key;
 }
 
-void DrasculaEngine::addKeyToBuffer(Common::KeyState& key) {
+void DrasculaEngine::addKeyToBuffer(Common::KeyState &key) {
 	if ((_keyBufferHead + 1) % KEYBUFSIZE == _keyBufferTail) {
 		warning("key buffer overflow");
 		return;
@@ -875,7 +872,7 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 	for (n = 0; n < newHeight; n++) {
 		for (m = 0; m < newWidth; m++) {
 			copyRect((int)pixelX, (int)pixelY, xx2 + m, yy2 + n,
-					 1, 1, dir_inicio, dir_fin);
+			         1, 1, dir_inicio, dir_fin);
 
 			pixelX += totalX;
 		}
@@ -884,7 +881,7 @@ void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int w
 	}
 }
 
-void DrasculaEngine::hipo_sin_nadie(int counter){
+void DrasculaEngine::hipo_sin_nadie(int counter) {
 	int y = 0, trackCharacter = 0;
 	if (currentChapter == 3)
 		y = -1;
@@ -953,8 +950,8 @@ bool DrasculaEngine::loadDrasculaDat() {
 
 	if (ver != DRASCULA_DAT_VER) {
 		Common::String errorMessage = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
-			filename.c_str(), DRASCULA_DAT_VER, 0, ver, 0);
+		    _("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+		    filename.c_str(), DRASCULA_DAT_VER, 0, ver, 0);
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 

@@ -21,23 +21,23 @@
  */
 
 #include "sci/video/robot_decoder.h"
-#include "common/archive.h"          // for SearchMan
-#include "common/debug.h"            // for debugC
-#include "common/endian.h"           // for MKTAG
-#include "common/memstream.h"        // for MemoryReadStream
-#include "common/platform.h"         // for Platform::kPlatformMacintosh
-#include "common/rational.h"         // for operator*, Rational
-#include "common/str.h"              // for String
-#include "common/stream.h"           // for SeekableReadStream
-#include "common/substream.h"        // for SeekableSubReadStreamEndian
-#include "common/textconsole.h"      // for error, warning
-#include "common/types.h"            // for Flag::NO, Flag::YES
-#include "sci/engine/seg_manager.h"  // for SegManager
-#include "sci/graphics/celobj32.h"   // for Ratio, ::kLowResX, ::kLowResY
-#include "sci/graphics/text32.h"     // for BitmapResource
-#include "sci/sound/audio32.h"       // for Audio32
-#include "sci/sci.h"                 // for kDebugLevels::kDebugLevelVideo
-#include "sci/util.h"                // for READ_SCI11ENDIAN_UINT16, READ_SC...
+#include "common/archive.h"         // for SearchMan
+#include "common/debug.h"           // for debugC
+#include "common/endian.h"          // for MKTAG
+#include "common/memstream.h"       // for MemoryReadStream
+#include "common/platform.h"        // for Platform::kPlatformMacintosh
+#include "common/rational.h"        // for operator*, Rational
+#include "common/str.h"             // for String
+#include "common/stream.h"          // for SeekableReadStream
+#include "common/substream.h"       // for SeekableSubReadStreamEndian
+#include "common/textconsole.h"     // for error, warning
+#include "common/types.h"           // for Flag::NO, Flag::YES
+#include "sci/engine/seg_manager.h" // for SegManager
+#include "sci/graphics/celobj32.h"  // for Ratio, ::kLowResX, ::kLowResY
+#include "sci/graphics/text32.h"    // for BitmapResource
+#include "sci/sci.h"                // for kDebugLevels::kDebugLevelVideo
+#include "sci/sound/audio32.h"      // for Audio32
+#include "sci/util.h"               // for READ_SCI11ENDIAN_UINT16, READ_SC...
 
 namespace Sci {
 
@@ -45,15 +45,14 @@ namespace Sci {
 
 extern void deDPCM16Mono(int16 *out, const byte *in, const uint32 numBytes, int16 &sample);
 
-RobotAudioStream::RobotAudioStream(const int32 bufferSize) :
-	_loopBuffer((byte *)malloc(bufferSize)),
-	_loopBufferSize(bufferSize),
-	_decompressionBuffer(nullptr),
-	_decompressionBufferSize(0),
-	_decompressionBufferPosition(-1),
-	_waiting(true),
-	_finished(false),
-	_firstPacketPosition(-1) {}
+RobotAudioStream::RobotAudioStream(const int32 bufferSize) : _loopBuffer((byte *)malloc(bufferSize)),
+                                                             _loopBufferSize(bufferSize),
+                                                             _decompressionBuffer(nullptr),
+                                                             _decompressionBufferSize(0),
+                                                             _decompressionBufferPosition(-1),
+                                                             _waiting(true),
+                                                             _finished(false),
+                                                             _firstPacketPosition(-1) {}
 
 RobotAudioStream::~RobotAudioStream() {
 	free(_loopBuffer);
@@ -346,12 +345,11 @@ int RobotAudioStream::readBuffer(Audio::st_sample_t *outBuffer, int numSamples) 
 #pragma mark -
 #pragma mark RobotDecoder
 
-RobotDecoder::RobotDecoder(SegManager *segMan) :
-	_delayTime(this),
-	_segMan(segMan),
-	_status(kRobotStatusUninitialized),
-	_audioBuffer(nullptr),
-	_rawPalette((uint8 *)malloc(kRawPaletteSize)) {}
+RobotDecoder::RobotDecoder(SegManager *segMan) : _delayTime(this),
+                                                 _segMan(segMan),
+                                                 _status(kRobotStatusUninitialized),
+                                                 _audioBuffer(nullptr),
+                                                 _rawPalette((uint8 *)malloc(kRawPaletteSize)) {}
 
 RobotDecoder::~RobotDecoder() {
 	close();
@@ -479,7 +477,7 @@ void RobotDecoder::initRecordAndCuePositions() {
 	_recordPositions.reserve(_numFramesTotal);
 	recordSizes.reserve(_numFramesTotal);
 
-	switch(_version) {
+	switch (_version) {
 	case 5: // 16-bit sizes and positions
 		for (int i = 0; i < _numFramesTotal; ++i) {
 			_videoSizes.push_back(_stream->readUint16());
@@ -703,9 +701,8 @@ void RobotDecoder::showFrame(const uint16 frameNo, const uint16 newX, const uint
 					const int16 lowResY = (scaledY2 * screenToLowResY).toInt();
 
 					bitmap.setOrigin(Common::Point(
-						(scaledX - (lowResX * lowResToScreenX).toInt()) * -1,
-						(lowResY * lowResToScreenY).toInt() - scaledY1
-					));
+					    (scaledX - (lowResX * lowResToScreenX).toInt()) * -1,
+					    (lowResY * lowResToScreenY).toInt() - scaledY1));
 
 					_screenItemX[i] = lowResX;
 					_screenItemY[i] = lowResY;
@@ -755,8 +752,8 @@ void RobotDecoder::showFrame(const uint16 frameNo, const uint16 newX, const uint
 
 int16 RobotDecoder::getCue() const {
 	if (_status == kRobotStatusUninitialized ||
-		_status == kRobotStatusPaused ||
-		_syncFrame) {
+	    _status == kRobotStatusPaused ||
+	    _syncFrame) {
 		return 0;
 	}
 
@@ -804,8 +801,7 @@ void RobotDecoder::setRobotTime(const int frameNo) {
 #pragma mark -
 #pragma mark RobotDecoder - Timing
 
-RobotDecoder::DelayTime::DelayTime(RobotDecoder *decoder) :
-	_decoder(decoder) {
+RobotDecoder::DelayTime::DelayTime(RobotDecoder *decoder) : _decoder(decoder) {
 	for (int i = 0; i < kDelayListSize; ++i) {
 		_timestamps[i] = i;
 		_delays[i] = 0;
@@ -876,13 +872,12 @@ uint32 RobotDecoder::getTickCount() const {
 #pragma mark -
 #pragma mark RobotDecoder - Audio
 
-RobotDecoder::AudioList::AudioList() :
-	_blocks(),
-	_blocksSize(0),
-	_oldestBlockIndex(0),
-	_newestBlockIndex(0),
-	_startOffset(0),
-	_status(kRobotAudioReady) {}
+RobotDecoder::AudioList::AudioList() : _blocks(),
+                                       _blocksSize(0),
+                                       _oldestBlockIndex(0),
+                                       _newestBlockIndex(0),
+                                       _startOffset(0),
+                                       _status(kRobotAudioReady) {}
 
 void RobotDecoder::AudioList::startAudioNow() {
 	submitDriverMax();
@@ -965,9 +960,8 @@ void RobotDecoder::AudioList::setAudioOffset(const int offset) {
 	_startOffset = offset;
 }
 
-RobotDecoder::AudioList::AudioBlock::AudioBlock(const int position, const int size, const byte* const data) :
-	_position(position),
-	_size(size) {
+RobotDecoder::AudioList::AudioBlock::AudioBlock(const int position, const int size, const byte *const data) : _position(position),
+                                                                                                              _size(size) {
 	_data = (byte *)malloc(size);
 	memcpy(_data, data, size);
 }
@@ -1031,7 +1025,7 @@ bool RobotDecoder::primeAudio(const uint32 startTick) {
 		_audioList.prepareForPrimer();
 
 		if (audioStartPosition < _evenPrimerSize * 2 ||
-			audioStartPosition + 1 < _oddPrimerSize * 2) {
+		    audioStartPosition + 1 < _oddPrimerSize * 2) {
 
 			byte *evenPrimerBuffer = new byte[_evenPrimerSize];
 			byte *oddPrimerBuffer = new byte[_oddPrimerSize];
@@ -1302,7 +1296,7 @@ void RobotDecoder::frameNowVisible() {
 		const int currentAudioFrameNo = status.bytesPlaying / bytesPerFrame;
 		debugC(kDebugLevelVideo, "Video frame %d %s audio frame %d", currentVideoFrameNo, currentVideoFrameNo == currentAudioFrameNo ? "=" : currentVideoFrameNo < currentAudioFrameNo ? "<" : ">", currentAudioFrameNo);
 		if (currentVideoFrameNo < _numFramesTotal &&
-			currentAudioFrameNo < _numFramesTotal) {
+		    currentAudioFrameNo < _numFramesTotal) {
 
 			bool shouldResetRobotTime = false;
 
@@ -1331,7 +1325,7 @@ void RobotDecoder::frameNowVisible() {
 	}
 }
 
-void RobotDecoder::expandCel(byte* target, const byte* source, const int16 celWidth, const int16 celHeight) const {
+void RobotDecoder::expandCel(byte *target, const byte *source, const int16 celWidth, const int16 celHeight) const {
 	assert(source != nullptr && target != nullptr);
 
 	const int sourceHeight = (celHeight * _verticalScaleFactor) / 100;
@@ -1380,7 +1374,7 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 	}
 
 	if (_hasAudio &&
-		(getSciVersion() < SCI_VERSION_3 || shouldSubmitAudio)) {
+	    (getSciVersion() < SCI_VERSION_3 || shouldSubmitAudio)) {
 		int audioPosition, audioSize;
 		if (readAudioDataFromRecord(_currentFrameNo, _audioBuffer, audioPosition, audioSize)) {
 			_audioList.addBlock(audioPosition, audioSize, _audioBuffer);
@@ -1460,7 +1454,7 @@ uint32 RobotDecoder::createCel5(const byte *rawVideoData, const int16 screenItem
 	const int16 celWidth = (int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 2);
 	const int16 celHeight = (int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 4);
 	const Common::Point celPosition((int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 10),
-									(int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 12));
+	                                (int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 12));
 	const uint16 dataSize = READ_SCI11ENDIAN_UINT16(rawVideoData + 14);
 	const int16 numDataChunks = (int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 16);
 

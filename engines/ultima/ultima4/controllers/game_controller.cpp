@@ -21,15 +21,15 @@
  */
 
 #include "ultima/ultima4/controllers/game_controller.h"
+#include "common/system.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/debugger.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/death.h"
+#include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/moongate.h"
-#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/annotation.h"
@@ -38,7 +38,7 @@
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/ultima4.h"
-#include "common/system.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -46,12 +46,11 @@ namespace Ultima4 {
 GameController *g_game = nullptr;
 
 static const MouseArea MOUSE_AREAS[] = {
-	{ 3, { { 8, 8 }, { 8, 184 }, { 96, 96 } }, MC_WEST, DIR_WEST },
-	{ 3, { { 8, 8 }, { 184, 8 }, { 96, 96 } }, MC_NORTH, DIR_NORTH },
-	{ 3, { { 184, 8 }, { 184, 184 }, { 96, 96 } }, MC_EAST, DIR_EAST },
-	{ 3, { { 8, 184 }, { 184, 184 }, { 96, 96 } }, MC_SOUTH, DIR_SOUTH },
-	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 } }, MC_NORTH, DIR_NONE }
-};
+    {3, {{8, 8}, {8, 184}, {96, 96}}, MC_WEST, DIR_WEST},
+    {3, {{8, 8}, {184, 8}, {96, 96}}, MC_NORTH, DIR_NORTH},
+    {3, {{184, 8}, {184, 184}, {96, 96}}, MC_EAST, DIR_EAST},
+    {3, {{8, 184}, {184, 184}, {96, 96}}, MC_SOUTH, DIR_SOUTH},
+    {0, {{0, 0}, {0, 0}, {0, 0}}, MC_NORTH, DIR_NONE}};
 
 GameController::GameController() : _mapArea(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H), _paused(false), _pausedTimer(0) {
 	g_game = this;
@@ -252,7 +251,8 @@ void GameController::finishTurn() {
 
 		if (g_context->_party->getTorchDuration() <= 0)
 			g_screen->screenMessage("It's Dark!\n");
-		else g_context->_party->burnTorch();
+		else
+			g_context->_party->burnTorch();
 
 		/* handle dungeon traps */
 		if (dungeon->currentToken() == DUNGEON_TRAP) {
@@ -267,7 +267,6 @@ void GameController::finishTurn() {
 			}
 		}
 	}
-
 
 	/* draw a prompt */
 	g_screen->screenPrompt();
@@ -366,7 +365,7 @@ void GameController::initMoons() {
 	g_context->_moonPhase = 0;
 
 	while ((g_ultima->_saveGame->_trammelPhase != trammelphase) ||
-	        (g_ultima->_saveGame->_feluccaPhase != feluccaphase))
+	       (g_ultima->_saveGame->_feluccaPhase != feluccaphase))
 		updateMoons(false);
 }
 
@@ -524,7 +523,7 @@ void GameController::avatarMoved(MoveEvent &event) {
 		checkSpecialCreatures(event._dir);
 	/* things that happen while on foot or horseback */
 	if ((g_context->_transportContext & TRANSPORT_FOOT_OR_HORSE) &&
-	        !(event._result & (MOVE_SLOWED | MOVE_BLOCKED))) {
+	    !(event._result & (MOVE_SLOWED | MOVE_BLOCKED))) {
 		if (checkMoongates())
 			event._result = (MoveResult)(MOVE_MAP_CHANGE | MOVE_END_TURN);
 	}
@@ -540,10 +539,12 @@ void GameController::avatarMovedInDungeon(MoveEvent &event) {
 			if (event._result & MOVE_TURNED) {
 				if (dirRotateCCW((Direction)g_ultima->_saveGame->_orientation) == realDir)
 					g_screen->screenMessage("Turn Left\n");
-				else g_screen->screenMessage("Turn Right\n");
+				else
+					g_screen->screenMessage("Turn Right\n");
 			}
 			/* show 'Advance' or 'Retreat' in dungeons */
-			else g_screen->screenMessage("%s\n", realDir == g_ultima->_saveGame->_orientation ? "Advance" : "Retreat");
+			else
+				g_screen->screenMessage("%s\n", realDir == g_ultima->_saveGame->_orientation ? "Advance" : "Retreat");
 		}
 
 		if (event._result & MOVE_BLOCKED)
@@ -600,8 +601,8 @@ void GameController::timerFired() {
 
 		/* balloon moves about 4 times per second */
 		if ((g_context->_transportContext == TRANSPORT_BALLOON) &&
-		        g_context->_party->isFlying()) {
-			g_context->_location->move(dirReverse((Direction) g_context->_windDirection), false);
+		    g_context->_party->isFlying()) {
+			g_context->_location->move(dirReverse((Direction)g_context->_windDirection), false);
 		}
 
 		updateMoons(true);
@@ -620,16 +621,14 @@ void GameController::timerFired() {
 		 * force pass if no commands within last 20 seconds
 		 */
 		Controller *controller = eventHandler->getController();
-		if (controller != nullptr && (eventHandler->getController() == g_game ||
-			dynamic_cast<CombatController *>(eventHandler->getController()) != nullptr) &&
-			gameTimeSinceLastCommand() > 20) {
+		if (controller != nullptr && (eventHandler->getController() == g_game || dynamic_cast<CombatController *>(eventHandler->getController()) != nullptr) &&
+		    gameTimeSinceLastCommand() > 20) {
 
 			/* pass the turn, and redraw the text area so the prompt is shown */
 			MetaEngine::executeAction(KEYBIND_PASS);
 			g_screen->screenRedrawTextArea(TEXT_AREA_X, TEXT_AREA_Y, TEXT_AREA_W, TEXT_AREA_H);
 		}
 	}
-
 }
 
 void GameController::checkSpecialCreatures(Direction dir) {
@@ -639,14 +638,14 @@ void GameController::checkSpecialCreatures(Direction dir) {
 		int x, y;
 		Direction dir;
 	} pirateInfo[] = {
-		{ 224, 220, DIR_EAST }, /* N'M" O'A" */
-		{ 224, 228, DIR_EAST }, /* O'E" O'A" */
-		{ 226, 220, DIR_EAST }, /* O'E" O'C" */
-		{ 227, 228, DIR_EAST }, /* O'E" O'D" */
-		{ 228, 227, DIR_SOUTH }, /* O'D" O'E" */
-		{ 229, 225, DIR_SOUTH }, /* O'B" O'F" */
-		{ 229, 223, DIR_NORTH }, /* N'P" O'F" */
-		{ 228, 222, DIR_NORTH } /* N'O" O'E" */
+	    {224, 220, DIR_EAST},  /* N'M" O'A" */
+	    {224, 228, DIR_EAST},  /* O'E" O'A" */
+	    {226, 220, DIR_EAST},  /* O'E" O'C" */
+	    {227, 228, DIR_EAST},  /* O'E" O'D" */
+	    {228, 227, DIR_SOUTH}, /* O'D" O'E" */
+	    {229, 225, DIR_SOUTH}, /* O'B" O'F" */
+	    {229, 223, DIR_NORTH}, /* N'P" O'F" */
+	    {228, 222, DIR_NORTH}  /* N'O" O'E" */
 	};
 
 	/*
@@ -654,8 +653,8 @@ void GameController::checkSpecialCreatures(Direction dir) {
 	 * ships
 	 */
 	if (dir == DIR_EAST &&
-	        g_context->_location->_coords.x == 0xdd &&
-	        g_context->_location->_coords.y == 0xe0) {
+	    g_context->_location->_coords.x == 0xdd &&
+	    g_context->_location->_coords.y == 0xe0) {
 		for (i = 0; i < 8; i++) {
 			obj = g_context->_location->_map->addCreature(creatureMgr->getById(PIRATE_ID), MapCoords(pirateInfo[i].x, pirateInfo[i].y));
 			obj->setDirection(pirateInfo[i].dir);
@@ -667,11 +666,11 @@ void GameController::checkSpecialCreatures(Direction dir) {
 	 * daemons unless horn has been blown
 	 */
 	if (dir == DIR_SOUTH &&
-	        g_context->_location->_coords.x >= 229 &&
-	        g_context->_location->_coords.x < 234 &&
-	        g_context->_location->_coords.y >= 212 &&
-	        g_context->_location->_coords.y < 217 &&
-	        *g_context->_aura != Aura::HORN) {
+	    g_context->_location->_coords.x >= 229 &&
+	    g_context->_location->_coords.x < 234 &&
+	    g_context->_location->_coords.y >= 212 &&
+	    g_context->_location->_coords.y < 217 &&
+	    *g_context->_aura != Aura::HORN) {
 		for (i = 0; i < 8; i++)
 			g_context->_location->_map->addCreature(creatureMgr->getById(DAEMON_ID), MapCoords(231, g_context->_location->_coords.y + 1, g_context->_location->_coords.z));
 	}
@@ -719,11 +718,12 @@ void GameController::creatureCleanup() {
 		MapCoords o_coords = obj->getCoords();
 
 		if ((obj->getType() == Object::CREATURE) && (o_coords.z == g_context->_location->_coords.z) &&
-		        o_coords.distance(g_context->_location->_coords, g_context->_location->_map) > MAX_CREATURE_DISTANCE) {
+		    o_coords.distance(g_context->_location->_coords, g_context->_location->_map) > MAX_CREATURE_DISTANCE) {
 
 			/* delete the object and remove it from the map */
 			i = map->removeObject(i);
-		} else i++;
+		} else
+			i++;
 	}
 }
 
@@ -738,8 +738,8 @@ void GameController::checkRandomCreatures() {
 	/* If there are too many creatures already,
 	   or we're not on the world map, don't worry about it! */
 	if (!canSpawnHere ||
-	        g_context->_location->_map->getNumberOfCreatures() >= MAX_CREATURES_ON_MAP ||
-	        xu4_random(spawnDivisor) != 0)
+	    g_context->_location->_map->getNumberOfCreatures() >= MAX_CREATURES_ON_MAP ||
+	    xu4_random(spawnDivisor) != 0)
 		return;
 
 	gameSpawnCreature(nullptr);
@@ -752,8 +752,8 @@ void GameController::checkBridgeTrolls() {
 
 	// TODO: CHEST: Make a user option to not make chests block bridge trolls
 	if (!g_context->_location->_map->isWorldMap() ||
-	        g_context->_location->_map->tileAt(g_context->_location->_coords, WITH_OBJECTS)->_id != bridge->getId() ||
-	        xu4_random(8) != 0)
+	    g_context->_location->_map->tileAt(g_context->_location->_coords, WITH_OBJECTS)->_id != bridge->getId() ||
+	    xu4_random(8) != 0)
 		return;
 
 	g_screen->screenMessage("\nBridge Trolls!\n");
@@ -796,8 +796,8 @@ void GameController::attack(Direction dir) {
 	}
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(
-		MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-		1, 1, nullptr, true);
+	    MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+	    1, 1, nullptr, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (attackAt(*i))
 			return;
@@ -823,7 +823,7 @@ bool GameController::attackAt(const Coords &coords) {
 	if (!ground->isChest()) {
 		ground = g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITHOUT_OBJECTS);
 		if ((under = g_context->_location->_map->objectAt(g_context->_location->_coords)) &&
-			under->getTile().getTileType()->isShip())
+		    under->getTile().getTileType()->isShip())
 			ground = under->getTile().getTileType();
 	}
 
@@ -833,8 +833,8 @@ bool GameController::attackAt(const Coords &coords) {
 
 	// Not good karma to be killing the innocent.  Bad avatar!
 	if (m->isGood() || /* attacking a good creature */
-			/* attacking a docile (although possibly evil) person in town */
-		((m->getType() == Object::PERSON) && (m->getMovementBehavior() != MOVEMENT_ATTACK_AVATAR)))
+	                   /* attacking a docile (although possibly evil) person in town */
+	    ((m->getType() == Object::PERSON) && (m->getMovementBehavior() != MOVEMENT_ATTACK_AVATAR)))
 		g_context->_party->adjustKarma(KA_ATTACKED_GOOD);
 
 	CombatController *cc = new CombatController(CombatMap::mapForTile(ground, g_context->_party->getTransport().getTileType(), m));

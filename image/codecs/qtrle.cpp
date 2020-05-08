@@ -61,20 +61,20 @@ QTRLEDecoder::~QTRLEDecoder() {
 	delete[] _ditherPalette;
 }
 
-#define CHECK_STREAM_PTR(n) \
-	do { \
-		if ((stream.pos() + n) > stream.size()) { \
+#define CHECK_STREAM_PTR(n)                                                                            \
+	do {                                                                                               \
+		if ((stream.pos() + n) > stream.size()) {                                                      \
 			warning("QTRLE Problem: stream out of bounds (%d > %d)", stream.pos() + n, stream.size()); \
-			return; \
-		} \
+			return;                                                                                    \
+		}                                                                                              \
 	} while (0)
 
-#define CHECK_PIXEL_PTR(n) \
-	do { \
-		if ((int32)pixelPtr + n > (int)_paddedWidth * _surface->h) { \
+#define CHECK_PIXEL_PTR(n)                                                                                        \
+	do {                                                                                                          \
+		if ((int32)pixelPtr + n > (int)_paddedWidth * _surface->h) {                                              \
 			warning("QTRLE Problem: pixel ptr = %d, pixel limit = %d", pixelPtr + n, _paddedWidth * _surface->h); \
-			return; \
-		} \
+			return;                                                                                               \
+		}                                                                                                         \
 	} while (0)
 
 void QTRLEDecoder::decode1(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
@@ -201,7 +201,7 @@ void QTRLEDecoder::decode8(Common::SeekableReadStream &stream, uint32 rowPtr, ui
 				// get the next 4 bytes from the stream, treat them as palette indices, and output them rleCode times
 				CHECK_STREAM_PTR(4);
 
-				byte pi[4];  // 4 palette indexes
+				byte pi[4]; // 4 palette indexes
 
 				for (byte i = 0; i < 4; i++)
 					pi[i] = stream.readByte();
@@ -325,7 +325,7 @@ void QTRLEDecoder::dither24(Common::SeekableReadStream &stream, uint32 rowPtr, u
 	uint32 pixelPtr = 0;
 	byte *output = (byte *)_surface->getPixels();
 
-	static const uint16 colorTableOffsets[] = { 0x0000, 0xC000, 0x4000, 0x8000 };
+	static const uint16 colorTableOffsets[] = {0x0000, 0xC000, 0x4000, 0x8000};
 
 	// clone2727 thinks this should be startLine & 3, but the original definitely
 	// isn't doing this. Unless startLine & 3 is always 0? Kinda defeats the

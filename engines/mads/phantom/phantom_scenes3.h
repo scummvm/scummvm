@@ -26,8 +26,8 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -49,6 +49,7 @@ protected:
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
 	void setPlayerSpritesPrefix();
+
 public:
 	Scene3xx(MADSEngine *vm) : PhantomScene(vm) {}
 };
@@ -90,6 +91,7 @@ private:
 	bool _anim0ActvFl;
 	int _hempHotspotId;
 	int _skipFrameCheckFl;
+
 public:
 	Scene303(MADSEngine *vm);
 	void synchronize(Common::Serializer &s) override;

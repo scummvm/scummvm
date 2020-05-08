@@ -20,14 +20,14 @@
  *
  */
 
+#include "mohawk/myst_stacks/credits.h"
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
-#include "mohawk/cursors.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/credits.h"
 
 #include "common/system.h"
 
@@ -36,10 +36,9 @@ namespace MystStacks {
 
 // NOTE: Credits Start Card is 10000
 
-Credits::Credits(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm, kCreditsStack),
-		_creditsRunning(false),
-		_curImage(0) {
+Credits::Credits(MohawkEngine_Myst *vm) : MystScriptParser(vm, kCreditsStack),
+                                          _creditsRunning(false),
+                                          _curImage(0) {
 	setupOpcodes();
 }
 
@@ -80,7 +79,7 @@ void Credits::runPersistentScripts() {
 }
 
 uint16 Credits::getVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 0: // Credits Image Control
 		return _curImage;
 	case 1: // Credits Music Control (Good / bad ending)

@@ -27,8 +27,8 @@
 
 #include "graphics/surface.h"
 
-#include "common/rect.h"
 #include "common/array.h"
+#include "common/rect.h"
 
 namespace ZVision {
 
@@ -41,8 +41,7 @@ public:
 	void setString(int strLine);
 
 private:
-
-	Common::Array< Common::String > _strings;
+	Common::Array<Common::String> _strings;
 	Common::Rect _rectangle;
 	int16 _curString;
 	Graphics::Surface *_surface;

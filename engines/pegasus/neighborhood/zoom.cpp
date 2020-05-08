@@ -42,7 +42,7 @@ void ZoomTable::loadFromStream(Common::SeekableReadStream *stream) {
 		_entries[i].room = stream->readUint16BE();
 		_entries[i].direction = stream->readByte();
 		debug(0, "Zoom[%d]: %d %d %d %d %d", i, _entries[i].hotspot, _entries[i].movieStart,
-				_entries[i].movieEnd, _entries[i].room, _entries[i].direction);
+		      _entries[i].movieEnd, _entries[i].room, _entries[i].direction);
 		stream->readByte(); // alignment
 	}
 }

@@ -60,7 +60,7 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 			*reinterpret_cast<uint8 *>(buf) = static_cast<uint8>(val & 0xFF);
 			buf = (reinterpret_cast<uint8 *>(buf)) + 1;
 			val = ((val & 0xFF) << 24) | ((val & 0xFFFFFF00) >> 8);
-			align --;
+			align--;
 		}
 
 		// Ok, shift along by 2 bytes
@@ -73,7 +73,8 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 	}
 
 	// Fill Aligned
-	if (dwords) memset_32_aligned(buf, val, dwords);
+	if (dwords)
+		memset_32_aligned(buf, val, dwords);
 
 	// Do the unaligned data
 	if (align) {
@@ -87,7 +88,8 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 			*reinterpret_cast<uint16 *>(buf) = static_cast<uint16>(val & 0xFFFF);
 
 			// Ok, shift along by another byte
-			if (align & 1) *(reinterpret_cast<uint8 *>(buf) + 2) = static_cast<uint8>((val >> 16) & 0xFF);
+			if (align & 1)
+				*(reinterpret_cast<uint8 *>(buf) + 2) = static_cast<uint8>((val >> 16) & 0xFF);
 		}
 	}
 }
@@ -99,10 +101,12 @@ inline void memset_32(void *buf, uint32 val, uint32 dwords) {
 //
 inline void memset_16(void *buf, int32 val, uint32 words) {
 	// Use memset_32
-	if (words > 1) memset_32(buf, val | val << 16, words>>1);
+	if (words > 1)
+		memset_32(buf, val | val << 16, words >> 1);
 
 	// Final word
-	if (words & 1) *(reinterpret_cast<uint16 *>(buf) + (words - 1)) = static_cast<uint16>(val & 0xFFFF);
+	if (words & 1)
+		*(reinterpret_cast<uint16 *>(buf) + (words - 1)) = static_cast<uint16>(val & 0xFFFF);
 }
 
 } // End of namespace Ultima8

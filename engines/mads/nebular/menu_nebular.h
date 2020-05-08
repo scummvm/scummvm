@@ -36,11 +36,17 @@ class MADSEngine;
 namespace Nebular {
 
 enum MADSGameAction {
-	START_GAME, RESUME_GAME, SHOW_INTRO, CREDITS, QUOTES, EXIT,
-	SETS, EVOLVE
+	START_GAME,
+	RESUME_GAME,
+	SHOW_INTRO,
+	CREDITS,
+	QUOTES,
+	EXIT,
+	SETS,
+	EVOLVE
 };
 
-class MainMenu: public MenuView {
+class MainMenu : public MenuView {
 private:
 	SpriteAsset *_menuItems[7];
 	int _menuItemIndexes[7];
@@ -95,6 +101,7 @@ private:
 	 * Show the bonus item icons, if available
 	 */
 	void showBonusItems();
+
 protected:
 	/**
 	 * Display the menu
@@ -110,6 +117,7 @@ protected:
 	 * Event handler
 	 */
 	bool onEvent(Common::Event &event) override;
+
 public:
 	MainMenu(MADSEngine *vm);
 
@@ -127,11 +135,13 @@ private:
 	 * Signals when to close the dialog
 	 */
 	bool _breakFlag;
+
 protected:
 	/**
 	* Event handler
 	*/
 	bool onEvent(Common::Event &event) override;
+
 public:
 	AdvertView(MADSEngine *vm);
 
@@ -146,6 +156,7 @@ public:
 class RexAnimationView : public AnimationView {
 protected:
 	void scriptDone() override;
+
 public:
 	RexAnimationView(MADSEngine *vm) : AnimationView(vm) {}
 };

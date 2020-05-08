@@ -28,9 +28,8 @@
 
 namespace Networking {
 
-PostRequest::PostRequest(Common::String url, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _url(url), _jsonCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false), _postData(nullptr), _postLen(0), _jsonData(nullptr) {
+PostRequest::PostRequest(Common::String url, Networking::JSONValueCallback cb, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _url(url), _jsonCallback(cb),
+                                                                                                                _workingRequest(nullptr), _ignoreCallback(false), _postData(nullptr), _postLen(0), _jsonData(nullptr) {
 
 	_contentType = "application/octet-stream";
 }
@@ -76,7 +75,6 @@ void PostRequest::start() {
 	if (_postData)
 		request->setBuffer(_postData, _postLen);
 
-
 	if (_jsonData)
 		request->addPostField(Common::JSON::stringify(_jsonData));
 
@@ -90,7 +88,8 @@ void PostRequest::responseCallback(Networking::JsonResponse response) {
 		delete json;
 		return;
 	}
-	if (response.request) _date = response.request->date();
+	if (response.request)
+		_date = response.request->date();
 
 	Networking::ErrorResponse error(this, "PostRequest::responseCallback: unknown error");
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;

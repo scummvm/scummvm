@@ -20,15 +20,15 @@
  *
  */
 
+#include "mohawk/myst_stacks/stoneship.h"
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
-#include "mohawk/myst_state.h"
 #include "mohawk/myst_sound.h"
+#include "mohawk/myst_state.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/stoneship.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -37,9 +37,8 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Stoneship::Stoneship(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm, kStoneshipStack),
-		_state(vm->_gameState->_stoneship) {
+Stoneship::Stoneship(MohawkEngine_Myst *vm) : MystScriptParser(vm, kStoneshipStack),
+                                              _state(vm->_gameState->_stoneship) {
 	setupOpcodes();
 
 	_tunnelRunning = false;
@@ -165,7 +164,7 @@ void Stoneship::runPersistentScripts() {
 }
 
 uint16 Stoneship::getVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 0: // Water Drained From Lighthouse / Right Button Of Pump
 		return _state.pumpState == 4;
 	case 1: // Water Drained From Tunnels To Brothers' Rooms / Middle Button Of Pump
@@ -290,7 +289,7 @@ uint16 Stoneship::getVar(uint16 var) {
 }
 
 void Stoneship::toggleVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 0: // Water Drained From Lighthouse / Right Button Of Pump
 		if (_state.pumpState == 4)
 			_state.pumpState = 0;
@@ -312,7 +311,7 @@ void Stoneship::toggleVar(uint16 var) {
 	case 6: // Chest valve state
 		_state.chestValveState = (_state.chestValveState + 1) % 2;
 		break;
-	case 8:  // Lighthouse Chest Key Position
+	case 8: // Lighthouse Chest Key Position
 		if (_state.trapdoorKeyState) {
 			if (_state.trapdoorKeyState == 1)
 				_state.trapdoorKeyState = 2;
@@ -489,11 +488,11 @@ void Stoneship::o_telescopeMove(uint16 var, const ArgumentsArray &args) {
 	_telescopeOldMouse = mouse.x;
 
 	// Copy image to screen
-    Common::Rect src = Common::Rect(_telescopePosition, 0, _telescopePosition + 112, 112);
-    _vm->_gfx->copyImageSectionToScreen(_telescopePanorama, src, display->getRect());
+	Common::Rect src = Common::Rect(_telescopePosition, 0, _telescopePosition + 112, 112);
+	_vm->_gfx->copyImageSectionToScreen(_telescopePanorama, src, display->getRect());
 
-    // Draw lighthouse
-    telescopeLighthouseDraw();
+	// Draw lighthouse
+	telescopeLighthouseDraw();
 }
 
 void Stoneship::o_telescopeStop(uint16 var, const ArgumentsArray &args) {
@@ -852,18 +851,18 @@ void Stoneship::batteryGauge_run() {
 }
 
 void Stoneship::o_tunnel_init(uint16 var, const ArgumentsArray &args) {
-		_tunnelImagesCount = args[0];
+	_tunnelImagesCount = args[0];
 
-		assert(_tunnelImagesCount <= 2 && "Too many images");
+	assert(_tunnelImagesCount <= 2 && "Too many images");
 
-		for (uint i = 0; i < _tunnelImagesCount; i++) {
-			_tunnelImages[i] = args[i + 1];
-		}
+	for (uint i = 0; i < _tunnelImagesCount; i++) {
+		_tunnelImages[i] = args[i + 1];
+	}
 
-		_tunnelAlarmSound = args[args.size() - 1];
+	_tunnelAlarmSound = args[args.size() - 1];
 
-		debugC(kDebugScript, "\timage count: %d", _tunnelImagesCount);
-		debugC(kDebugScript, "\tsoundIdAlarm: %d", _tunnelAlarmSound);
+	debugC(kDebugScript, "\timage count: %d", _tunnelImagesCount);
+	debugC(kDebugScript, "\tsoundIdAlarm: %d", _tunnelAlarmSound);
 }
 
 void Stoneship::tunnel_run() {

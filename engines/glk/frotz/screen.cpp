@@ -21,10 +21,10 @@
  */
 
 #include "glk/frotz/screen.h"
+#include "common/file.h"
+#include "glk/conf.h"
 #include "glk/frotz/bitmap_font.h"
 #include "glk/frotz/frotz.h"
-#include "glk/conf.h"
-#include "common/file.h"
 #include "graphics/fonts/ttf.h"
 #include "image/bmp.h"
 

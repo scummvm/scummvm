@@ -23,11 +23,11 @@
 #ifndef ULTIMA8_AUDIO_U8MUSICPROCESS_H
 #define ULTIMA8_AUDIO_U8MUSICPROCESS_H
 
+#include "audio/mididrv.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
-#include "audio/mididrv.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -54,9 +54,8 @@ public:
 		//! Track queued to start after current
 		int _queued;
 
-		TrackState() : _wanted(0), _lastRequest(0), _queued(0) { }
-		TrackState(int wanted, int lastRequest, int queued) :
-			_wanted(wanted), _lastRequest(lastRequest), _queued(queued) { }
+		TrackState() : _wanted(0), _lastRequest(0), _queued(0) {}
+		TrackState(int wanted, int lastRequest, int queued) : _wanted(wanted), _lastRequest(lastRequest), _queued(queued) {}
 	};
 
 private:
@@ -70,7 +69,7 @@ private:
 	PlaybackStates _state;
 	int _songBranches[128];
 
-	int _currentTrack;      //! Currently playing track (don't save)
+	int _currentTrack; //! Currently playing track (don't save)
 
 	TrackState _trackState;
 

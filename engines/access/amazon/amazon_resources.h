@@ -23,17 +23,19 @@
 #ifndef ACCESS_AMAZON_RESOURCES_H
 #define ACCESS_AMAZON_RESOURCES_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "access/resources.h"
 #include "access/font.h"
+#include "access/resources.h"
+#include "common/array.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
 namespace Amazon {
 
 enum InventoryEnum {
-	INV_BAITED_POLE = 67, INV_TORCH = 76, INV_KNIFE_SPEAR = 78
+	INV_BAITED_POLE = 67,
+	INV_TORCH = 76,
+	INV_KNIFE_SPEAR = 78
 };
 
 struct RiverStruct {
@@ -111,7 +113,8 @@ extern RiverStruct RIVER0OBJECTS[46];
 extern RiverStruct RIVER1OBJECTS[50];
 extern RiverStruct RIVER2OBJECTS[54];
 extern RiverStruct *RIVER_OBJECTS[3][2];
-enum { RIVER_START = 0, RIVER_END = 1 };
+enum { RIVER_START = 0,
+	   RIVER_END = 1 };
 
 extern const int HELP1COORDS[2][4];
 
@@ -122,12 +125,13 @@ extern const int CAST_END_OBJ1[4][4];
 
 extern const int RMOUSE[10][2];
 
-class AmazonResources: public Resources {
+class AmazonResources : public Resources {
 protected:
 	/**
 	 * Load data from the access.dat file
 	 */
 	void load(Common::SeekableReadStream &s) override;
+
 public:
 	AmazonFont *_font3x5, *_font6x6;
 	Common::String NO_HELP_MESSAGE;
@@ -137,6 +141,7 @@ public:
 	Common::String BAR_MESSAGE;
 	Common::String HELPLVLTXT[3];
 	Common::String IQLABELS[9];
+
 public:
 	AmazonResources(AccessEngine *vm) : Resources(vm), _font3x5(nullptr), _font6x6(nullptr) {}
 	~AmazonResources() override;

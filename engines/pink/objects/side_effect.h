@@ -23,8 +23,8 @@
 #ifndef PINK_SIDE_EFFECT_H
 #define PINK_SIDE_EFFECT_H
 
-#include "pink/utils.h"
 #include "pink/objects/object.h"
+#include "pink/utils.h"
 
 namespace Pink {
 

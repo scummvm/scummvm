@@ -94,7 +94,6 @@ typedef TPoint<int32> Point3;
 typedef TPoint<int16> Point3_Short;
 typedef TPoint<Fixed14> Point_Fixed14;
 
-
 template<typename T>
 struct TMatrix {
 private:
@@ -155,22 +154,22 @@ struct Star {
 // Struct for objects in space.
 // TODO: what does this stand for? Maybe rename it.
 struct R3 {
-	Point3 pos; // 0x0
-	Matrix matrix; // 0xc
-	int16 field1e; // 0x1e
-	int16 field20; // 0x20
-	int16 field22; // 0x22
-	int16 field24; // 0x24
+	Point3 pos;         // 0x0
+	Matrix matrix;      // 0xc
+	int16 field1e;      // 0x1e
+	int16 field20;      // 0x20
+	int16 field22;      // 0x22
+	int16 field24;      // 0x24
 	Point3_Short speed; // 0x26
-	int32 funcPtr1; // 0x2c
-	int32 funcPtr2; // 0x30
-	int16 field34; // 0x34
-	Point3 field36; // 0x36
-	Matrix matrix2; // 0x42
-	int32 field54; // 0x54 (used for sorting by draw priority?)
-	int16 field58; // 0x58
-	int16 field5a; // 0x5a
-	Bitmap *bitmap; // 0x68 (was: shpFile)
+	int32 funcPtr1;     // 0x2c
+	int32 funcPtr2;     // 0x30
+	int16 field34;      // 0x34
+	Point3 field36;     // 0x36
+	Matrix matrix2;     // 0x42
+	int32 field54;      // 0x54 (used for sorting by draw priority?)
+	int16 field58;      // 0x58
+	int16 field5a;      // 0x5a
+	Bitmap *bitmap;     // 0x68 (was: shpFile)
 	// 0x6a (was: bitmapOffset)
 	double field80; // 0x80
 	double field88; // 0x88

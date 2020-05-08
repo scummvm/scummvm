@@ -20,9 +20,9 @@
  *
  */
 
-#include "draci/draci.h"
 #include "draci/animation.h"
 #include "draci/barchive.h"
+#include "draci/draci.h"
 #include "draci/game.h"
 #include "draci/screen.h"
 #include "draci/sound.h"
@@ -78,7 +78,7 @@ Common::Point Animation::getCurrentFramePosition() const {
 void Animation::setLooping(bool looping) {
 	_looping = looping;
 	debugC(7, kDraciAnimationDebugLevel, "Setting looping to %d on animation %d",
-		looping, _id);
+	       looping, _id);
 }
 
 void Animation::markDirtyRect(Surface *surface) const {
@@ -133,9 +133,9 @@ void Animation::nextFrame(bool force) {
 	}
 
 	debugC(6, kDraciAnimationDebugLevel,
-	"anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d x=%d y=%d z=%d",
-	_id, _tick, frame->getDelay(), _tick + frame->getDelay(), _vm->_system->getMillis(),
-	_currentFrame, _frames.size(), frame->getX() + getRelativeX(), frame->getY() + getRelativeY(), _z);
+	       "anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d x=%d y=%d z=%d",
+	       _id, _tick, frame->getDelay(), _tick + frame->getDelay(), _vm->_system->getMillis(),
+	       _currentFrame, _frames.size(), frame->getX() + getRelativeX(), frame->getY() + getRelativeY(), _z);
 }
 
 uint Animation::nextFrameNum() const {
@@ -168,8 +168,8 @@ void Animation::drawFrame(Surface *surface) {
 	if (_hasChangedFrame && sample) {
 		uint duration = _vm->_sound->playSound(sample, Audio::Mixer::kMaxChannelVolume, false);
 		debugC(3, kDraciSoundDebugLevel,
-			"Playing sample on animation %d, frame %d: %d+%d at %dHz: %dms",
-			_id, _currentFrame, sample->_offset, sample->_length, sample->_frequency, duration);
+		       "Playing sample on animation %d, frame %d: %d+%d at %dHz: %dms",
+		       _id, _currentFrame, sample->_offset, sample->_length, sample->_frequency, duration);
 	}
 	_hasChangedFrame = false;
 }
@@ -184,8 +184,8 @@ void Animation::setPlaying(bool playing) {
 
 void Animation::setScaleFactors(double scaleX, double scaleY) {
 	debugC(5, kDraciAnimationDebugLevel,
-		"Setting scaling factors on anim %d (scaleX: %.3f scaleY: %.3f)",
-		_id, scaleX, scaleY);
+	       "Setting scaling factors on anim %d (scaleX: %.3f scaleY: %.3f)",
+	       _id, scaleX, scaleY);
 
 	markDirtyRect(_vm->_screen->getSurface());
 
@@ -365,7 +365,7 @@ void AnimationManager::drawScene(Surface *surf) {
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if (! ((*it)->isPlaying()) ) {
+		if (!((*it)->isPlaying())) {
 			continue;
 		}
 
@@ -521,7 +521,7 @@ const Animation *AnimationManager::getTopAnimation(int x, int y) const {
 				matches = true;
 
 			} else if (frame->getType() == kDrawableSprite &&
-					   reinterpret_cast<const Sprite *>(frame)->getPixel(x, y, anim->getCurrentFrameDisplacement()) != transparent) {
+			           reinterpret_cast<const Sprite *>(frame)->getPixel(x, y, anim->getCurrentFrameDisplacement()) != transparent) {
 
 				matches = true;
 			}
@@ -596,7 +596,7 @@ Animation *AnimationManager::load(uint animNum) {
 		// scripts in a room are responsible for loading their animations.
 		const BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
 		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length,
-			relative ? 0 : x, relative ? 0 : y, true);
+		                        relative ? 0 : x, relative ? 0 : y, true);
 
 		// Some frames set the scaled dimensions to 0 even though other frames
 		// from the same animations have them set to normal values

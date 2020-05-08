@@ -42,16 +42,16 @@ namespace Ultima8 {
 //
 
 class idMan {
-	uint16      _begin;          //!< start of the available range of IDs
-	uint16      _end;            //!< current end of the range
-	uint16      _maxEnd;         //!< end of the available range
-	uint16      _startCount;     //!< number of IDs to make available initially
+	uint16 _begin;      //!< start of the available range of IDs
+	uint16 _end;        //!< current end of the range
+	uint16 _maxEnd;     //!< end of the available range
+	uint16 _startCount; //!< number of IDs to make available initially
 
-	uint16      _usedCount;      //!< number of IDs currently in use
+	uint16 _usedCount; //!< number of IDs currently in use
 
-	Std::vector<uint16> _ids;    //!< the 'next' field in a list of free IDs
-	uint16      _first;          //!< the first ID in the free list
-	uint16      _last;           //!< the last ID in the last list
+	Std::vector<uint16> _ids; //!< the 'next' field in a list of free IDs
+	uint16 _first;            //!< the first ID in the free list
+	uint16 _last;             //!< the last ID in the last list
 public:
 	//! \param begin start of the range of available IDs
 	//! \param max_end end of the range of available IDs
@@ -60,27 +60,27 @@ public:
 	~idMan();
 
 	//! check if this idMan is full
-	bool        isFull() const {
+	bool isFull() const {
 		return _first == 0 && _end >= _maxEnd;
 	}
 
 	//! clear all IDs, reset size to the startcount, and set max_end to new_max
-	void        clearAll(uint16 new_max = 0);
+	void clearAll(uint16 new_max = 0);
 
 	//! get a free ID
 	//! \return a free ID, or 0 if none are available
-	uint16      getNewID();
+	uint16 getNewID();
 
 	//! mark a given ID as used, expanding if necessary.
 	//! Note: reserveID is O(n), so don't use too often.
 	//! \return false if the ID was already used or is out of range
-	bool        reserveID(uint16 id);
+	bool reserveID(uint16 id);
 
 	//! release an id
-	void        clearID(uint16 id);
+	void clearID(uint16 id);
 
 	//! check if an ID is in use
-	bool        isIDUsed(uint16 id) const {
+	bool isIDUsed(uint16 id) const {
 		return id >= _begin && id <= _end && _ids[id] == 0 && id != _last;
 	}
 
@@ -89,7 +89,7 @@ public:
 	//!       It exists for dumpMap currently. If that is rewritten not
 	//!       to need more than 32768 object IDs, this function should be
 	//!       deleted.
-	void        setNewMax(uint16 maxEnd) {
+	void setNewMax(uint16 maxEnd) {
 		_maxEnd = maxEnd;
 	}
 

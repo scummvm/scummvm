@@ -23,10 +23,10 @@
 #ifndef ILLUSIONS_SCREENTEXT_H
 #define ILLUSIONS_SCREENTEXT_H
 
-#include "illusions/graphics.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
+#include "illusions/graphics.h"
 
 namespace Illusions {
 
@@ -64,17 +64,18 @@ public:
 	void updateTextInfoPosition(Common::Point position);
 	void clipTextInfoPosition(Common::Point &position);
 	bool refreshScreenText(FontResource *font, WidthHeight dimensions, Common::Point offsPt,
-		uint16 *text, uint textFlags, uint16 backgroundColor, uint16 borderColor, uint16 *&outTextPtr);
+	                       uint16 *text, uint textFlags, uint16 backgroundColor, uint16 borderColor, uint16 *&outTextPtr);
 	bool insertText(uint16 *text, uint32 fontId, WidthHeight dimensions, Common::Point offsPt, uint flags,
-		uint16 backgroundColor, uint16 borderColor, byte colorR, byte colorG, byte colorB, uint16 *&outTextPtr);
+	                uint16 backgroundColor, uint16 borderColor, byte colorR, byte colorG, byte colorB, uint16 *&outTextPtr);
 	void removeText();
 	void clearText();
+
 public:
 	IllusionsEngine *_vm;
 	Common::Point _position;
 	WidthHeight _dimensions;
 	Graphics::Surface *_surface;
-	Common::List<ScreenTextEntry*> _screenTexts;
+	Common::List<ScreenTextEntry *> _screenTexts;
 	void freeTextSurface();
 };
 

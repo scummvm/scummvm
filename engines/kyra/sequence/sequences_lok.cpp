@@ -21,17 +21,17 @@
  */
 
 #include "kyra/engine/kyra_lok.h"
-#include "kyra/sequence/seqplayer.h"
-#include "kyra/resource/resource.h"
 #include "kyra/engine/sprites.h"
-#include "kyra/graphics/wsamovie.h"
-#include "kyra/graphics/animator_lok.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/animator_lok.h"
+#include "kyra/graphics/wsamovie.h"
+#include "kyra/resource/resource.h"
+#include "kyra/sequence/seqplayer.h"
 #include "kyra/sound/sound.h"
 
-#include "common/system.h"
-#include "common/savefile.h"
 #include "common/list.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 namespace Kyra {
 
@@ -88,13 +88,12 @@ void KyraEngine_LoK::seq_intro() {
 		_res->loadPakFile("INTRO.VRM");
 
 	static const IntroProc introProcTable[] = {
-		&KyraEngine_LoK::seq_introPublisherLogos,
-		&KyraEngine_LoK::seq_introLogos,
-		&KyraEngine_LoK::seq_introStory,
-		&KyraEngine_LoK::seq_introMalcolmTree,
-		&KyraEngine_LoK::seq_introKallakWriting,
-		&KyraEngine_LoK::seq_introKallakMalcolm
-	};
+	    &KyraEngine_LoK::seq_introPublisherLogos,
+	    &KyraEngine_LoK::seq_introLogos,
+	    &KyraEngine_LoK::seq_introStory,
+	    &KyraEngine_LoK::seq_introMalcolmTree,
+	    &KyraEngine_LoK::seq_introKallakWriting,
+	    &KyraEngine_LoK::seq_introKallakMalcolm};
 
 	Common::InSaveFile *in;
 	if ((in = _saveFileMan->openForLoading(getSavegameFilename(0)))) {
@@ -283,7 +282,7 @@ bool KyraEngine_LoK::seq_introStory() {
 			s2 = _seq_textsTable[19];
 			x1 = (Screen::SCREEN_W - _screen->getTextWidth(s1)) / 2;
 			x2 = (Screen::SCREEN_W - _screen->getTextWidth(s2)) / 2;
-			uint8 colorMap[] = { 0, 15, 12, 12 };
+			uint8 colorMap[] = {0, 15, 12, 12};
 			_screen->setTextColor(colorMap, 0, 3);
 			y2 = 184;
 			col1 = 5;
@@ -330,20 +329,15 @@ bool KyraEngine_LoK::seq_introKallakMalcolm() {
 
 void KyraEngine_LoK::seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly) {
 	static const uint16 specialJewelTable[] = {
-		0x167, 0x162, 0x15D, 0x158, 0x153, 0xFFFF
-	};
+	    0x167, 0x162, 0x15D, 0x158, 0x153, 0xFFFF};
 	static const uint16 specialJewelTable1[] = {
-		0x14F, 0x154, 0x159, 0x15E, 0x163, 0xFFFF
-	};
+	    0x14F, 0x154, 0x159, 0x15E, 0x163, 0xFFFF};
 	static const uint16 specialJewelTable2[] = {
-		0x150, 0x155, 0x15A, 0x15F, 0x164, 0xFFFF
-	};
+	    0x150, 0x155, 0x15A, 0x15F, 0x164, 0xFFFF};
 	static const uint16 specialJewelTable3[] = {
-		0x151, 0x156, 0x15B, 0x160, 0x165, 0xFFFF
-	};
+	    0x151, 0x156, 0x15B, 0x160, 0x165, 0xFFFF};
 	static const uint16 specialJewelTable4[] = {
-		0x152, 0x157, 0x15C, 0x161, 0x166, 0xFFFF
-	};
+	    0x152, 0x157, 0x15C, 0x161, 0x166, 0xFFFF};
 	if (!noSound)
 		snd_playSoundEffect(0x5F);
 	_screen->hideMouse();
@@ -767,7 +761,7 @@ void KyraEngine_LoK::seq_makeBrandonWisp() {
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if ((_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245) ||
-		        (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186))
+		    (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186))
 			_screen->fadePalette(_screen->getPalette(10), 0x54);
 	} else {
 		if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245)
@@ -829,8 +823,8 @@ void KyraEngine_LoK::seq_dispelMagicAnimation() {
 void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	int newItem = -1;
 
-	static const uint8 flaskTable1[] = { 0x46, 0x48, 0x4A, 0x4C };
-	static const uint8 flaskTable2[] = { 0x47, 0x49, 0x4B, 0x4D };
+	static const uint8 flaskTable1[] = {0x46, 0x48, 0x4A, 0x4C};
+	static const uint8 flaskTable2[] = {0x47, 0x49, 0x4B, 0x4D};
 
 	if (item >= 60 && item <= 77) {
 		assert(_flaskFull);
@@ -853,8 +847,7 @@ void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	assert(type < _fullFlask_Size && type >= 0);
 
 	static const uint16 voiceEntries[] = {
-		0x1F40, 0x1F41, 0x1F42, 0x1F45
-	};
+	    0x1F40, 0x1F41, 0x1F42, 0x1F45};
 	assert(type < ARRAYSIZE(voiceEntries));
 
 	characterSays(voiceEntries[type], _fullFlask[type], 0, -2);
@@ -865,14 +858,17 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int makeFlaskEmpty, int f
 		uint8 r, g, b;
 
 		switch (item) {
-		case 60: case 61:
+		case 60:
+		case 61:
 			// 0xC22
 			r = 50;
 			g = 8;
 			b = 8;
 			break;
 
-		case 62: case 63: case 76:
+		case 62:
+		case 63:
+		case 76:
 		case 77:
 			// 0x00E
 			r = 0;
@@ -880,7 +876,8 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int makeFlaskEmpty, int f
 			b = 58;
 			break;
 
-		case 64: case 65:
+		case 64:
+		case 65:
 			// 0xFF5
 			r = 63;
 			g = 63;
@@ -927,17 +924,20 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int makeFlaskEmpty, int f
 		uint8 red, green, blue;
 
 		switch (item) {
-		case 60: case 61:
+		case 60:
+		case 61:
 			red = 63;
 			green = blue = 6;
 			break;
 
-		case 62: case 63:
+		case 62:
+		case 63:
 			red = green = 0;
 			blue = 67;
 			break;
 
-		case 64: case 65:
+		case 64:
+		case 65:
 			red = 84;
 			green = 78;
 			blue = 14;
@@ -971,9 +971,9 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int makeFlaskEmpty, int f
 			blue = 100;
 		}
 
-		red   = red * 0x3F / 100;
+		red = red * 0x3F / 100;
 		green = green * 0x3F / 100;
-		blue  = blue * 0x3F / 100;
+		blue = blue * 0x3F / 100;
 
 		_screen->setPaletteIndex(0xFE, red, green, blue);
 	}
@@ -1216,8 +1216,8 @@ struct CreditsLine {
 } // end of anonymous namespace
 
 void KyraEngine_LoK::seq_playCredits() {
-	static const uint8 colorMap[] = { 0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	static const char stringTerms[] = { 0x5, 0xD, 0x0};
+	static const uint8 colorMap[] = {0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	static const char stringTerms[] = {0x5, 0xD, 0x0};
 
 	typedef Common::List<CreditsLine> CreditsLineList;
 	CreditsLineList lines;
@@ -1302,7 +1302,7 @@ void KyraEngine_LoK::seq_playCredits() {
 		else if (alignment == 4)
 			line.x = 161;
 		else
-			line.x = (320  - _screen->getTextWidth((const char *)currentString)) / 2 + 1;
+			line.x = (320 - _screen->getTextWidth((const char *)currentString)) / 2 + 1;
 
 		line.y = currentY;
 		if (lineEndCode != 5)
@@ -1631,19 +1631,17 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 
 int KyraEngine_LoK::handleBeadState() {
 	static const int table1[] = {
-		-1, -2, -4, -5, -6, -7, -6, -5,
-		-4, -2, -1,  0,  1,  2,  4,  5,
-		 6,  7,  6,  5,  4,  2,  1,  0, 0
-	};
+	    -1, -2, -4, -5, -6, -7, -6, -5,
+	    -4, -2, -1, 0, 1, 2, 4, 5,
+	    6, 7, 6, 5, 4, 2, 1, 0, 0};
 
 	static const int table2[] = {
-		0, 0, 1, 1, 2, 2, 3, 3,
-		4, 4, 5, 5, 5, 5, 4, 4,
-		3, 3, 2, 2, 1, 1, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0
-	};
+	    0, 0, 1, 1, 2, 2, 3, 3,
+	    4, 4, 5, 5, 5, 5, 4, 4,
+	    3, 3, 2, 2, 1, 1, 0, 0,
+	    0, 0, 0, 0, 0, 0, 0, 0,
+	    0, 0, 0, 0, 0, 0, 0, 0,
+	    0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	switch (_beadStateVar) {
 	case 0:
@@ -1738,7 +1736,7 @@ int KyraEngine_LoK::handleBeadState() {
 			if (_system->getMillis() > _beadStateTimer2 && _malcolmFlag == 7 && !_unkAmuletVar && !_text->printed()) {
 				snd_playSoundEffect(0x0B);
 				if (_currentCharacter->x1 > 233 && _currentCharacter->x1 < 305 && _currentCharacter->y1 > 85 && _currentCharacter->y1 < 105 &&
-				        (_brandonStatusBit & 0x20)) {
+				    (_brandonStatusBit & 0x20)) {
 					_beadState1.unk8 = 290;
 					_beadState1.unk9 = 40;
 					_beadStateVar = 5;
@@ -1854,7 +1852,6 @@ void KyraEngine_LoK::initBeadState(int x, int y, int x2, int y2, int unk, BeadSt
 		unk1 = 0;
 	else
 		unk1 = -1;
-
 
 	if (yDiff > 0)
 		unk2 = 1;
@@ -1972,11 +1969,10 @@ void KyraEngine_LoK::updateKyragemFading() {
 	}
 
 	static const uint8 kyraGemPalette[0x28] = {
-		0x3F, 0x3B, 0x38, 0x34, 0x32, 0x2F, 0x2C, 0x29, 0x25, 0x22,
-		0x1F, 0x1C, 0x19, 0x16, 0x12, 0x0F, 0x0C, 0x0A, 0x06, 0x03,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-	};
+	    0x3F, 0x3B, 0x38, 0x34, 0x32, 0x2F, 0x2C, 0x29, 0x25, 0x22,
+	    0x1F, 0x1C, 0x19, 0x16, 0x12, 0x0F, 0x0C, 0x0A, 0x06, 0x03,
+	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 	if (_system->getMillis() < _kyragemFadingState.timerCount)
 		return;
@@ -2067,10 +2063,10 @@ void KyraEngine_LoK::drawJewelPress(int jewel, int drawSpecial) {
 }
 
 void KyraEngine_LoK::drawJewelsFadeOutStart() {
-	static const uint16 jewelTable1[] = { 0x164, 0x15F, 0x15A, 0x155, 0x150, 0xFFFF };
-	static const uint16 jewelTable2[] = { 0x163, 0x15E, 0x159, 0x154, 0x14F, 0xFFFF };
-	static const uint16 jewelTable3[] = { 0x166, 0x160, 0x15C, 0x157, 0x152, 0xFFFF };
-	static const uint16 jewelTable4[] = { 0x165, 0x161, 0x15B, 0x156, 0x151, 0xFFFF };
+	static const uint16 jewelTable1[] = {0x164, 0x15F, 0x15A, 0x155, 0x150, 0xFFFF};
+	static const uint16 jewelTable2[] = {0x163, 0x15E, 0x159, 0x154, 0x14F, 0xFFFF};
+	static const uint16 jewelTable3[] = {0x166, 0x160, 0x15C, 0x157, 0x152, 0xFFFF};
+	static const uint16 jewelTable4[] = {0x165, 0x161, 0x15B, 0x156, 0x151, 0xFFFF};
 	for (int i = 0; jewelTable1[i] != 0xFFFF; ++i) {
 		if (queryGameFlag(0x57))
 			_screen->drawShape(0, _shapes[jewelTable1[i]], _amuletX2[2], _amuletY2[2], 0, 0);
@@ -2086,7 +2082,7 @@ void KyraEngine_LoK::drawJewelsFadeOutStart() {
 }
 
 void KyraEngine_LoK::drawJewelsFadeOutEnd(int jewel) {
-	static const uint16 jewelTable[] = { 0x153, 0x158, 0x15D, 0x162, 0x148, 0xFFFF };
+	static const uint16 jewelTable[] = {0x153, 0x158, 0x15D, 0x162, 0x148, 0xFFFF};
 	int newDelay = 0;
 
 	switch (jewel - 1) {

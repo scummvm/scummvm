@@ -36,6 +36,7 @@ public:
 	~FontResourceLoader() override {}
 	void load(Resource *resource) override;
 	bool isFlag(int flag) override;
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -66,6 +67,7 @@ public:
 	int16 getCharHeight() const { return _charHeight; }
 	int16 getLineIncr() const { return _lineIncr; }
 	const Common::Rect calculateRectForText(uint16 *text, uint textLength);
+
 public:
 	uint32 _totalSize;
 	int16 _charHeight;
@@ -83,6 +85,7 @@ public:
 	FontInstance(IllusionsEngine *vm);
 	void load(Resource *resource) override;
 	void unload() override;
+
 public:
 	IllusionsEngine *_vm;
 	FontResource *_fontResource;

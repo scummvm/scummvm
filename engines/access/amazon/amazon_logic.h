@@ -23,10 +23,10 @@
 #ifndef ACCESS_AMAZON_LOGIC_H
 #define ACCESS_AMAZON_LOGIC_H
 
-#include "common/scummsys.h"
-#include "access/scripts.h"
-#include "access/asurface.h"
 #include "access/amazon/amazon_resources.h"
+#include "access/asurface.h"
+#include "access/scripts.h"
+#include "common/scummsys.h"
 
 namespace Access {
 namespace Amazon {
@@ -38,6 +38,7 @@ class AmazonEngine;
 class AmazonManager {
 protected:
 	AmazonEngine *_vm;
+
 public:
 	AmazonManager(AmazonEngine *vm) : _vm(vm) {}
 };
@@ -52,6 +53,7 @@ class PannedScene : public AmazonManager {
 		int _pObjXl;
 		int _pObjYl;
 	};
+
 protected:
 	int _xCount;
 	int _xTrack;
@@ -63,6 +65,7 @@ protected:
 	int _pNumObj;
 
 	PanEntry _pan[PAN_SIZE];
+
 public:
 	PannedScene(AmazonEngine *vm);
 
@@ -72,6 +75,7 @@ public:
 class CampScene : public PannedScene {
 protected:
 	bool _skipStart;
+
 public:
 	CampScene(AmazonEngine *vm);
 
@@ -87,6 +91,7 @@ private:
 	void doCreditDemo();
 	void scrollTitle();
 	void doTent();
+
 public:
 	Opening(AmazonEngine *vm);
 
@@ -106,6 +111,7 @@ public:
 	void scrollFall();
 	void mWhileFly();
 	void mWhileFall();
+
 public:
 	Plane(AmazonEngine *vm);
 };
@@ -119,6 +125,7 @@ private:
 
 	int _jCnt[JUNGLE_SIZE];
 	int _jungleX[JUNGLE_SIZE];
+
 public:
 	Jungle(AmazonEngine *vm);
 
@@ -142,6 +149,7 @@ private:
 	void setHorizontalCode();
 	void guardSee();
 	void setGuardFrame();
+
 public:
 	Guard(AmazonEngine *vm);
 
@@ -201,6 +209,7 @@ private:
 	void scrollRiver();
 	void scrollRiver1();
 	void setRiverPan();
+
 public:
 	River(AmazonEngine *vm);
 
@@ -210,7 +219,8 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
-enum AntDirection { ANT_RIGHT = 0, ANT_LEFT = 1 };
+enum AntDirection { ANT_RIGHT = 0,
+	                ANT_LEFT = 1 };
 
 class Ant : public AmazonManager {
 private:
@@ -231,6 +241,7 @@ private:
 	int antHandleRight(int indx, const int *&buf);
 	int antHandleLeft(int indx, const int *&buf);
 	int antHandleStab(int indx, const int *&buf);
+
 public:
 	Ant(AmazonEngine *vm);
 

@@ -21,11 +21,11 @@
  */
 
 #include "glk/alan2/detection.h"
-#include "glk/alan2/detection_tables.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/alan2/detection_tables.h"
 
 namespace Glk {
 namespace Alan2 {

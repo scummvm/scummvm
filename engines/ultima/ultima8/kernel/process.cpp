@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -33,7 +33,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Process)
 DEFINE_CUSTOM_MEMORY_ALLOCATION(Process)
 
 Process::Process(ObjId it, uint16 ty)
-	: _pid(0xFFFF), _flags(0), _itemNum(it), _type(ty), _result(0) {
+    : _pid(0xFFFF), _flags(0), _itemNum(it), _type(ty), _result(0) {
 	Kernel::get_instance()->assignPID(this);
 }
 
@@ -51,7 +51,7 @@ void Process::terminate() {
 
 	// wake up waiting processes
 	for (Std::vector<ProcId>::iterator i = _waiting.begin();
-	        i != _waiting.end(); ++i) {
+	     i != _waiting.end(); ++i) {
 		Process *p = kernel->getProcess(*i);
 		if (p)
 			p->wakeUp(_result);
@@ -88,7 +88,8 @@ void Process::waitFor(ProcId pid_) {
 void Process::waitFor(Process *proc) {
 	assert(this != proc);
 	ProcId pid_ = 0;
-	if (proc) pid_ = proc->getPid();
+	if (proc)
+		pid_ = proc->getPid();
 
 	waitFor(pid_);
 }
@@ -99,19 +100,26 @@ void Process::suspend() {
 
 void Process::dumpInfo() const {
 	Common::String info = Common::String::format(
-		"Process %d class %s, item %d, type %x, status ",
-		getPid(), GetClassType()._className, _itemNum, _type);
+	    "Process %d class %s, item %d, type %x, status ",
+	    getPid(), GetClassType()._className, _itemNum, _type);
 
-	if (_flags & PROC_ACTIVE) info += "A";
-	if (_flags & PROC_SUSPENDED) info += "S";
-	if (_flags & PROC_TERMINATED) info += "T";
-	if (_flags & PROC_TERM_DEFERRED) info += "t";
-	if (_flags & PROC_FAILED) info += "F";
-	if (_flags & PROC_RUNPAUSED) info += "R";
+	if (_flags & PROC_ACTIVE)
+		info += "A";
+	if (_flags & PROC_SUSPENDED)
+		info += "S";
+	if (_flags & PROC_TERMINATED)
+		info += "T";
+	if (_flags & PROC_TERM_DEFERRED)
+		info += "t";
+	if (_flags & PROC_FAILED)
+		info += "F";
+	if (_flags & PROC_RUNPAUSED)
+		info += "R";
 	if (!_waiting.empty()) {
 		info += ", notify: ";
 		for (Std::vector<ProcId>::const_iterator i = _waiting.begin(); i != _waiting.end(); ++i) {
-			if (i != _waiting.begin()) info += ", ";
+			if (i != _waiting.begin())
+				info += ", ";
 			info += *i;
 		}
 	}

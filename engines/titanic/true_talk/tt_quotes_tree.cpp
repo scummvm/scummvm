@@ -21,16 +21,16 @@
  */
 
 #include "titanic/true_talk/tt_quotes_tree.h"
+#include "common/algorithm.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
-#include "common/algorithm.h"
 
 namespace Titanic {
 
 /**
  * Specifies the starting index for each of the three main trees
  */
-static uint TABLE_INDEXES[3] = { 922, 1015, 1018 };
+static uint TABLE_INDEXES[3] = {922, 1015, 1018};
 
 void TTquotesTree::load() {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/TREE");
@@ -61,7 +61,7 @@ void TTquotesTree::load() {
 }
 
 int TTquotesTree::search(const char *str, QuoteTreeNum treeNum,
-		TTtreeResult *buffer, uint tagId, uint *remainder) {
+                         TTtreeResult *buffer, uint tagId, uint *remainder) {
 	const TTquotesTreeEntry *bTree = &_entries[TABLE_INDEXES[treeNum]];
 	if (!search1(&str, bTree, buffer, tagId) || !buffer->_treeItemP)
 		return -1;
@@ -77,7 +77,7 @@ int TTquotesTree::search(const char *str, QuoteTreeNum treeNum,
 }
 
 bool TTquotesTree::search1(const char **str, const TTquotesTreeEntry *bTree,
-		TTtreeResult *buffer, uint tagId) {
+                           TTtreeResult *buffer, uint tagId) {
 	buffer->_treeItemP = nullptr;
 	(buffer + 1)->_treeItemP = nullptr;
 
@@ -85,7 +85,7 @@ bool TTquotesTree::search1(const char **str, const TTquotesTreeEntry *bTree,
 	bool flag = false;
 
 	for (uint mode = bTree->_id >> 24; mode != 0;
-			++bTree, mode = bTree->_id >> 24) {
+	     ++bTree, mode = bTree->_id >> 24) {
 
 		switch (mode) {
 		case 1:
@@ -127,14 +127,14 @@ bool TTquotesTree::search1(const char **str, const TTquotesTreeEntry *bTree,
 }
 
 bool TTquotesTree::search2(const char **str, const TTquotesTreeEntry *bTree,
-		TTtreeResult *buffer, uint tagId) {
+                           TTtreeResult *buffer, uint tagId) {
 	buffer->_treeItemP = bTree;
 	(buffer + 1)->_treeItemP = nullptr;
 
 	const char *strP = *str;
 	bool flag = false;
 	for (uint mode = bTree->_id >> 24; mode != 0;
-			++bTree, mode = bTree->_id >> 24) {
+	     ++bTree, mode = bTree->_id >> 24) {
 		switch (mode) {
 		case 0:
 			return true;

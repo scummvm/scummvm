@@ -30,6 +30,7 @@ namespace Titanic {
 class CChangesSeasonButton : public CSTButton {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	CLASSDEF;
 	CChangesSeasonButton();

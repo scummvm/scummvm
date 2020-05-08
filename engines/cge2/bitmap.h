@@ -37,7 +37,7 @@ class CGE2Engine;
 class EncryptedStream;
 class V2D;
 
-#define kMaxPath      128
+#define kMaxPath 128
 
 enum {
 	kBmpEOI = 0x0000,
@@ -60,6 +60,7 @@ class Bitmap {
 
 	Common::String setExtension(const Common::String &str, const Common::String &ext);
 	bool loadVBM(EncryptedStream *f);
+
 public:
 	uint16 _w;
 	uint16 _h;
@@ -85,7 +86,6 @@ public:
 
 	static uint8 *makeSpeechBubbleTail(int des, uint8 colorSet[][4]);
 };
-
 
 typedef Bitmap *BitmapPtr;
 

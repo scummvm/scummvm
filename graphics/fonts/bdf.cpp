@@ -22,8 +22,8 @@
 
 #include "graphics/fonts/bdf.h"
 
-#include "common/file.h"
 #include "common/endian.h"
+#include "common/file.h"
 #include "common/textconsole.h"
 
 #include "graphics/surface.h"
@@ -31,7 +31,7 @@
 namespace Graphics {
 
 BdfFont::BdfFont(const BdfFontData &data, DisposeAfterUse::Flag dispose)
-	: _data(data), _dispose(dispose) {
+    : _data(data), _dispose(dispose) {
 }
 
 BdfFont::~BdfFont() {
@@ -78,7 +78,6 @@ int BdfFont::getCharWidth(uint32 chr) const {
 	else
 		return _data.advances[ch];
 }
-
 
 template<typename PixelType>
 void drawCharIntern(byte *ptr, uint pitch, const byte *src, int h, int width, int minX, int maxX, const PixelType color) {
@@ -203,8 +202,8 @@ byte *loadCharacter(Common::SeekableReadStream &stream, int &encoding, int &adva
 
 	while (true) {
 		line = stream.readLine();
-		line.trim(); 	// BDF files created from unifont tools (make hex)
-						// have a rogue space character after the "BITMAP" label
+		line.trim(); // BDF files created from unifont tools (make hex)
+		    // have a rogue space character after the "BITMAP" label
 
 		if (stream.err() || stream.eos()) {
 			warning("BdfFont::loadCharacter: Premature end of file");
@@ -425,7 +424,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				delete[] familyName;
 			}
 			familyName = new char[line.size()];
-			Common::strlcpy(familyName, line.c_str() + 13, line.size() - 12);	// strlcpy() copies at most size-1 characters and then add a '\0'
+			Common::strlcpy(familyName, line.c_str() + 13, line.size() - 12); // strlcpy() copies at most size-1 characters and then add a '\0'
 			char *p = &familyName[strlen(familyName)];
 			while (p != familyName && *p != '"')
 				p--;
@@ -446,7 +445,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				delete[] slant;
 			}
 			slant = new char[line.size()];
-			Common::strlcpy(slant, line.c_str() + 7, line.size() - 6);  // strlcpy() copies at most size-1 characters and then add a '\0'
+			Common::strlcpy(slant, line.c_str() + 7, line.size() - 6); // strlcpy() copies at most size-1 characters and then add a '\0'
 			char *p = &slant[strlen(slant)];
 			while (p != slant && *p != '"')
 				p--;
@@ -504,10 +503,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			hasFixedAdvance = false;
 
 		const BdfBoundingBox &bbox = font.boxes[i];
-		if (bbox.width != font.defaultBox.width
-		    || bbox.height != font.defaultBox.height
-		    || bbox.xOffset != font.defaultBox.xOffset
-		    || bbox.yOffset != font.defaultBox.yOffset)
+		if (bbox.width != font.defaultBox.width || bbox.height != font.defaultBox.height || bbox.xOffset != font.defaultBox.xOffset || bbox.yOffset != font.defaultBox.yOffset)
 			hasFixedBBox = false;
 	}
 
@@ -534,8 +530,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 	}
 
 	// Adapt for the fact that we never use encoding 0.
-	if (font.defaultCharacter < firstCharacter
-	    || font.defaultCharacter > lastCharacter)
+	if (font.defaultCharacter < firstCharacter || font.defaultCharacter > lastCharacter)
 		font.defaultCharacter = -1;
 
 	font.firstCharacter = firstCharacter;
@@ -688,7 +683,6 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 			bitmaps[i] = 0;
 		}
 	}
-
 
 	if (stream.readByte() == 0xFF) {
 		advances = new byte[data.numCharacters];

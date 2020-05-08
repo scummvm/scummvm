@@ -29,8 +29,11 @@
 namespace Titanic {
 
 enum TransparencyMode {
-	TRANS_MASK0 = 0, TRANS_MASK255 = 1, TRANS_ALPHA0 = 2,
-	TRANS_ALPHA255 = 3, TRANS_DEFAULT = 4
+	TRANS_MASK0 = 0,
+	TRANS_MASK255 = 1,
+	TRANS_ALPHA0 = 2,
+	TRANS_ALPHA255 = 3,
+	TRANS_DEFAULT = 4
 };
 
 class CTransparencySurface {
@@ -42,6 +45,7 @@ private:
 	bool _flag;
 	byte _transparentColor;
 	byte _opaqueColor;
+
 private:
 	/**
 	* Returns a a pixel from the transparency surface
@@ -50,6 +54,7 @@ private:
 		byte pixel = *(const byte *)_surface->getBasePtr(_pos.x, _pos.y);
 		return pixel;
 	}
+
 public:
 	/**
 	 * Constructor

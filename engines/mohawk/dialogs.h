@@ -40,7 +40,7 @@ class CheckboxWidget;
 class CommandSender;
 class PopUpWidget;
 class StaticTextWidget;
-}
+} // namespace GUI
 
 namespace Mohawk {
 
@@ -72,7 +72,7 @@ public:
 
 class PauseDialog : public InfoDialog {
 public:
-	PauseDialog(MohawkEngine* vm, const Common::String &message);
+	PauseDialog(MohawkEngine *vm, const Common::String &message);
 	void handleKeyDown(Common::KeyState state) override;
 };
 

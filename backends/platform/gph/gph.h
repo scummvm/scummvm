@@ -26,10 +26,10 @@
 #if defined(GPH_DEVICE)
 
 #include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl-sys.h"
-#include "backends/platform/sdl/posix/posix.h"
 #include "backends/events/gph/gph-events.h"
 #include "backends/graphics/gph/gph-graphics.h"
+#include "backends/platform/sdl/posix/posix.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
 class OSystem_GPH : public OSystem_POSIX {
 public:

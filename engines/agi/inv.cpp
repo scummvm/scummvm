@@ -20,12 +20,12 @@
  *
  */
 
+#include "agi/inv.h"
 #include "agi/agi.h"
 #include "agi/graphics.h"
-#include "agi/inv.h"
-#include "agi/text.h"
 #include "agi/keyboard.h"
 #include "agi/systemui.h"
+#include "agi/text.h"
 
 namespace Agi {
 
@@ -176,7 +176,7 @@ void InventoryMgr::keyPress(uint16 newKey) {
 
 	case AGI_KEY_ESCAPE: {
 		_vm->cycleInnerLoopInactive(); // exit show-loop
-		_activeItemNr = -1; // no item selected
+		_activeItemNr = -1;            // no item selected
 		break;
 	}
 

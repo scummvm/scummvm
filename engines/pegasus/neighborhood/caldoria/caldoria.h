@@ -400,7 +400,7 @@ protected:
 };
 
 class Caldoria : public Neighborhood {
-friend class SinclairCallBack;
+	friend class SinclairCallBack;
 
 public:
 	Caldoria(InputHandler *, PegasusEngine *);

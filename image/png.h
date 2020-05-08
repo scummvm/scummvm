@@ -39,7 +39,7 @@
 namespace Common {
 class SeekableReadStream;
 class WriteStream;
-}
+} // namespace Common
 
 namespace Graphics {
 struct Surface;
@@ -60,6 +60,7 @@ public:
 	int getTransparentColor() const { return _transparentColor; }
 	void setSkipSignature(bool skip) { _skipSignature = skip; }
 	void setKeepTransparencyPaletted(bool keep) { _keepTransparencyPaletted = keep; }
+
 private:
 	Graphics::PixelFormat getByteOrderRgbaPixelFormat() const;
 

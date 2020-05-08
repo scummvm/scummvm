@@ -27,23 +27,23 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMaitreD, CTrueTalkNPC)
-	ON_MESSAGE(RestaurantMusicChanged)
-	ON_MESSAGE(TrueTalkTriggerActionMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(NPCPlayTalkingAnimationMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
-	ON_MESSAGE(LoadSuccessMsg)
-	ON_MESSAGE(TextInputMsg)
-	ON_MESSAGE(TriggerNPCEvent)
+ON_MESSAGE(RestaurantMusicChanged)
+ON_MESSAGE(TrueTalkTriggerActionMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(NPCPlayTalkingAnimationMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
+ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
+ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(TextInputMsg)
+ON_MESSAGE(TriggerNPCEvent)
 END_MESSAGE_MAP()
 
 CMaitreD::CMaitreD() : CTrueTalkNPC(),
-	_priorMusicName("z#40.wav"), _musicName("z#40.wav"), _unused5(0), _hasMusic(true),
-	_musicSet(false), _fightFlag(false), _unused6(true), _savedFightFlag(false),
-	_timerId(0), _defeated(false) {
+                       _priorMusicName("z#40.wav"), _musicName("z#40.wav"), _unused5(0), _hasMusic(true),
+                       _musicSet(false), _fightFlag(false), _unused6(true), _savedFightFlag(false),
+                       _timerId(0), _defeated(false) {
 }
 
 void CMaitreD::save(SimpleFile *file, int indent) {
@@ -160,9 +160,8 @@ bool CMaitreD::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 bool CMaitreD::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	static const char *const NAMES[] = {
-		"Talking0", "Talking1", "Talking2", "Talking3", "Talking4",
-		"Talking5", "Talking6", "Talking7", nullptr
-	};
+	    "Talking0", "Talking1", "Talking2", "Talking3", "Talking4",
+	    "Talking5", "Talking6", "Talking7", nullptr};
 
 	if (msg->_value2 != 2) {
 		msg->_names = NAMES;

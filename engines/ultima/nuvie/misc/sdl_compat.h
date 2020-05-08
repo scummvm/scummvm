@@ -43,7 +43,7 @@ extern void SDL_FreeSurface(Graphics::ManagedSurface *&s);
 extern void SDL_ShowCursor(bool show);
 extern uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b);
 extern int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *srcrect,
-	Graphics::ManagedSurface *dst, Common::Rect *dstrect);
+                           Graphics::ManagedSurface *dst, Common::Rect *dstrect);
 extern int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint color);
 extern void SDL_UpdateRect(Graphics::ManagedSurface *surf, int x, int y, int w, int h);
 extern void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *rects);
@@ -55,7 +55,7 @@ extern int SDL_PollEvent(Common::Event *event);
 extern int SDL_LockSurface(Graphics::ManagedSurface *surface);
 extern int SDL_UnlockSurface(Graphics::ManagedSurface *surface);
 extern Graphics::ManagedSurface *SDL_ConvertSurface(Graphics::ManagedSurface *src,
-	const Graphics::PixelFormat &fmt, uint32 flags);
+                                                    const Graphics::PixelFormat &fmt, uint32 flags);
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

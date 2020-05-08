@@ -22,15 +22,14 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+#include "common/memstream.h"
 #include "ultima/ultima8/audio/music_flex.h"
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Archive)
-
 
 MusicFlex::MusicFlex(Common::SeekableReadStream *rs) : Archive(rs) {
 	Std::memset(_info, 0, sizeof(SongInfo *) * 128);
@@ -47,7 +46,7 @@ MusicFlex::~MusicFlex() {
 	for (i = 0; i < _count; i++) {
 		delete _songs[i];
 	}
-	delete [] _songs;
+	delete[] _songs;
 }
 
 MusicFlex::SongInfo::SongInfo() : _numMeasures(0), _loopJump(0) {
@@ -57,7 +56,7 @@ MusicFlex::SongInfo::SongInfo() : _numMeasures(0), _loopJump(0) {
 
 MusicFlex::SongInfo::~SongInfo() {
 	for (int i = 0; i < 128; i++) {
-		delete [] _transitions[i];
+		delete[] _transitions[i];
 	}
 }
 
@@ -75,7 +74,8 @@ const MusicFlex::SongInfo *MusicFlex::getSongInfo(uint32 index) const {
 }
 
 void MusicFlex::cache(uint32 index) {
-	if (index >= _count) return;
+	if (index >= _count)
+		return;
 	uint32 size;
 	uint8 *data = getRawObject(index, &size);
 	if (!data) {
@@ -86,13 +86,15 @@ void MusicFlex::cache(uint32 index) {
 }
 
 void MusicFlex::uncache(uint32 index) {
-	if (index >= _count) return;
+	if (index >= _count)
+		return;
 	delete _songs[index];
 	_songs[index] = nullptr;
 }
 
 bool MusicFlex::isCached(uint32 index) const {
-	if (index >= _count) return false;
+	if (index >= _count)
+		return false;
 	return (_songs[index] != nullptr);
 }
 
@@ -117,9 +119,10 @@ void MusicFlex::loadSongInfo() {
 		ds.readline(line);
 
 		// We have hit the end of the section
-		if (line.at(0) == '#') break;
+		if (line.at(0) == '#')
+			break;
 
-		Std::string::size_type  begIdx, endIdx;
+		Std::string::size_type begIdx, endIdx;
 
 		// Find the first not space, which will get us the name
 		begIdx = line.findFirstNotOf(' ');
@@ -161,7 +164,8 @@ void MusicFlex::loadSongInfo() {
 		ds.readline(line);
 
 		// We have hit the end of the section
-		if (line.at(0) == '#') break;
+		if (line.at(0) == '#')
+			break;
 	}
 
 	// Skip 'Section3'
@@ -169,7 +173,8 @@ void MusicFlex::loadSongInfo() {
 		ds.readline(line);
 
 		// We have hit the end of the section
-		if (line.at(0) == '#') break;
+		if (line.at(0) == '#')
+			break;
 	}
 
 	// Read 'Section4' (trans _info)
@@ -177,9 +182,10 @@ void MusicFlex::loadSongInfo() {
 		ds.readline(line);
 
 		// We have hit the end of the section
-		if (line.at(0) == '#') break;
+		if (line.at(0) == '#')
+			break;
 
-		Std::string::size_type  begIdx, endIdx;
+		Std::string::size_type begIdx, endIdx;
 
 		// Get 'from' name
 		begIdx = line.findFirstNotOf(' ');
@@ -194,7 +200,8 @@ void MusicFlex::loadSongInfo() {
 		// Find index of from name
 		int fi;
 		for (fi = 0; fi < 128; fi++) {
-			if (_info[fi] && from == _info[fi]->_filename) break;
+			if (_info[fi] && from == _info[fi]->_filename)
+				break;
 		}
 
 		if (fi == 128)
@@ -203,7 +210,8 @@ void MusicFlex::loadSongInfo() {
 		// Find index of to name
 		int ti;
 		for (ti = 0; ti < 128; ti++) {
-			if (_info[ti] && to == _info[ti]->_filename) break;
+			if (_info[ti] && to == _info[ti]->_filename)
+				break;
 		}
 
 		if (ti == 128)

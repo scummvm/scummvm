@@ -26,7 +26,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CChangesSeasonButton, CSTButton)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
 CChangesSeasonButton::CChangesSeasonButton() : CSTButton() {

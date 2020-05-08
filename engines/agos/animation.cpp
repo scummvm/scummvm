@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #ifdef ENABLE_AGOS2
 
 #include "common/endian.h"
@@ -35,9 +33,9 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
+#include "agos/agos.h"
 #include "agos/animation.h"
 #include "agos/intern.h"
-#include "agos/agos.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
@@ -47,7 +45,7 @@
 namespace AGOS {
 
 MoviePlayer::MoviePlayer(AGOSEngine_Feeble *vm)
-	: _vm(vm) {
+    : _vm(vm) {
 	_mixer = _vm->_mixer;
 
 	_leftButtonDown = false;
@@ -139,100 +137,99 @@ void MoviePlayer::handleNextFrame() {
 ///////////////////////////////////////////////////////////////////////////////
 
 const char *const MoviePlayerDXA::_sequenceList[90] = {
-	"agent32",
-	"Airlock",
-	"Badluck",
-	"bentalk1",
-	"bentalk2",
-	"bentalk3",
-	"BigFight",
-	"BLOWLAB",
-	"breakdown",
-	"bridge",
-	"button2",
-	"cargo",
-	"COACH",
-	"Colatalk",
-	"cygnus2",
-	"dream",
-	"escape2",
-	"FASALL",
-	"fbikewurb",
-	"feebdel",
-	"Feebohno",
-	"feebpump",
-	"feefone1",
-	"feefone2",
-	"founder2",
-	"founder3",
-	"founder4",
-	"fxmadsam",
-	"fxwakeup",
-	"gate",
-	"Get Car",
-	"getaxe",
-	"getlift",
-	"icetrench",
-	"intomb1",
-	"intomb2",
-	"Jackpot",
-	"knockout",
-	"labocto",
-	"longfeeb",
-	"Mainmin",
-	"maznat",
-	"meetsquid",
-	"mflirt",
-	"mfxHappy",
-	"Mix_Feeb1",
-	"Mix_Feeb2",
-	"Mix_Feeb3",
-	"Mix_Guardscn",
-	"Mlights1",
-	"MLights2",
-	"MProtest",
-	"mudman",
-	"munlock",
-	"MUS5P2",
-	"MUSOSP1",
-	"Omenter",
-	"Omnicofe",
-	"OUTMIN~1",
-	"Readbook",
-	"Rebelhq",
-	"RebelHQ2",
-	"Reedin",
-	"rescue1",
-	"rescue2",
-	"samcar",
-	"Samdead",
-	"scanner",
-	"Sleepy",
-	"spitbrai",
-	"statue1",
-	"statue2",
-	"sva1",
-	"sva2",
-	"Teeter",
-	"Temple2",
-	"Temple3",
-	"Temple4",
-	"Temple5",
-	"Temple6",
-	"Temple7",
-	"Temple8",
-	"Tic-tac2",
-	"torture",
-	"transmit",
-	"Typey",
-	"ventfall",
-	"ventoff",
-	"wasting",
-	"wurbatak"
-};
+    "agent32",
+    "Airlock",
+    "Badluck",
+    "bentalk1",
+    "bentalk2",
+    "bentalk3",
+    "BigFight",
+    "BLOWLAB",
+    "breakdown",
+    "bridge",
+    "button2",
+    "cargo",
+    "COACH",
+    "Colatalk",
+    "cygnus2",
+    "dream",
+    "escape2",
+    "FASALL",
+    "fbikewurb",
+    "feebdel",
+    "Feebohno",
+    "feebpump",
+    "feefone1",
+    "feefone2",
+    "founder2",
+    "founder3",
+    "founder4",
+    "fxmadsam",
+    "fxwakeup",
+    "gate",
+    "Get Car",
+    "getaxe",
+    "getlift",
+    "icetrench",
+    "intomb1",
+    "intomb2",
+    "Jackpot",
+    "knockout",
+    "labocto",
+    "longfeeb",
+    "Mainmin",
+    "maznat",
+    "meetsquid",
+    "mflirt",
+    "mfxHappy",
+    "Mix_Feeb1",
+    "Mix_Feeb2",
+    "Mix_Feeb3",
+    "Mix_Guardscn",
+    "Mlights1",
+    "MLights2",
+    "MProtest",
+    "mudman",
+    "munlock",
+    "MUS5P2",
+    "MUSOSP1",
+    "Omenter",
+    "Omnicofe",
+    "OUTMIN~1",
+    "Readbook",
+    "Rebelhq",
+    "RebelHQ2",
+    "Reedin",
+    "rescue1",
+    "rescue2",
+    "samcar",
+    "Samdead",
+    "scanner",
+    "Sleepy",
+    "spitbrai",
+    "statue1",
+    "statue2",
+    "sva1",
+    "sva2",
+    "Teeter",
+    "Temple2",
+    "Temple3",
+    "Temple4",
+    "Temple5",
+    "Temple6",
+    "Temple7",
+    "Temple8",
+    "Tic-tac2",
+    "torture",
+    "transmit",
+    "Typey",
+    "ventfall",
+    "ventoff",
+    "wasting",
+    "wurbatak"};
 
 MoviePlayerDXA::MoviePlayerDXA(AGOSEngine_Feeble *vm, const char *name)
-	: MoviePlayer(vm) {
+    : MoviePlayer(vm) {
 	debug(0, "Creating DXA cutscene player");
 
 	memset(baseName, 0, sizeof(baseName));
@@ -243,7 +240,7 @@ MoviePlayerDXA::MoviePlayerDXA(AGOSEngine_Feeble *vm, const char *name)
 
 bool MoviePlayerDXA::load() {
 	if ((_vm->getPlatform() == Common::kPlatformAmiga || _vm->getPlatform() == Common::kPlatformMacintosh) &&
-		_vm->_language != Common::EN_ANY) {
+	    _vm->_language != Common::EN_ANY) {
 		_sequenceNum = 0;
 		for (uint i = 0; i < 90; i++) {
 			if (!scumm_stricmp(baseName, _sequenceList[i]))
@@ -378,7 +375,7 @@ bool MoviePlayerDXA::processFrame() {
 void MoviePlayerDXA::readSoundData(Common::SeekableReadStream *stream) {
 	uint32 tag = stream->readUint32BE();
 
-	if (tag == MKTAG('W','A','V','E')) {
+	if (tag == MKTAG('W', 'A', 'V', 'E')) {
 		uint32 size = stream->readUint32BE();
 
 		if (_sequenceNum) {
@@ -410,9 +407,8 @@ void MoviePlayerDXA::readSoundData(Common::SeekableReadStream *stream) {
 // Movie player for Smacker movies
 ///////////////////////////////////////////////////////////////////////////////
 
-
 MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
-	: MoviePlayer(vm), SmackerDecoder() {
+    : MoviePlayer(vm), SmackerDecoder() {
 	debug(0, "Creating SMK cutscene player");
 
 	memset(baseName, 0, sizeof(baseName));

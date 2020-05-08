@@ -38,7 +38,6 @@ static const sc_char NUL = '\0';
 /* Properties trace flag. */
 static sc_bool prop_trace = FALSE;
 
-
 /*
  * Property tree node definition, uses a child list representation for
  * fast lookup on indexed nodes.  Name is a variable type, as is property,
@@ -74,7 +73,6 @@ struct sc_prop_set_s {
 };
 typedef sc_prop_set_s sc_prop_set_t;
 
-
 /*
  * prop_is_valid()
  *
@@ -83,7 +81,6 @@ typedef sc_prop_set_s sc_prop_set_t;
 static sc_bool prop_is_valid(sc_prop_setref_t bundle) {
 	return bundle && bundle->magic == PROP_MAGIC;
 }
-
 
 /*
  * prop_round_up()
@@ -96,7 +93,6 @@ static sc_int prop_round_up(sc_int elements) {
 	extended = elements + PROP_GROW_INCREMENT - 1;
 	return (extended / PROP_GROW_INCREMENT) * PROP_GROW_INCREMENT;
 }
-
 
 /*
  * prop_ensure_capacity()
@@ -133,7 +129,6 @@ static void *prop_ensure_capacity(void *array, sc_int old_size, sc_int new_size,
 	return array;
 }
 
-
 /*
  * prop_trim_capacity()
  *
@@ -148,7 +143,6 @@ static void *prop_trim_capacity(void *array, sc_int size, sc_int element_size) {
 		return array;
 }
 
-
 /*
  * prop_compare()
  *
@@ -157,9 +151,8 @@ static void *prop_trim_capacity(void *array, sc_int size, sc_int element_size) {
  * bsearch() and qsort().
  */
 static int prop_compare(const void *string1, const void *string2) {
-	return strcmp(*(sc_char * const *) string1, *(sc_char * const *) string2);
+	return strcmp(*(sc_char *const *)string1, *(sc_char *const *)string2);
 }
-
 
 /*
  * prop_dictionary_lookup()
@@ -180,9 +173,9 @@ static const sc_char *prop_dictionary_lookup(sc_prop_setref_t bundle, const sc_c
 	if (bundle->dictionary_length > 0) {
 		const sc_char *const *dict_search;
 
-		dict_search = (const sc_char * const *)bsearch(&string, bundle->dictionary,
-		              bundle->dictionary_length,
-		              sizeof(bundle->dictionary[0]), prop_compare);
+		dict_search = (const sc_char *const *)bsearch(&string, bundle->dictionary,
+		                                              bundle->dictionary_length,
+		                                              sizeof(bundle->dictionary[0]), prop_compare);
 		if (dict_search)
 			return *dict_search;
 	}
@@ -193,9 +186,9 @@ static const sc_char *prop_dictionary_lookup(sc_prop_setref_t bundle, const sc_c
 
 	/* Extend the dictionary if necessary. */
 	bundle->dictionary = (sc_char **)prop_ensure_capacity(bundle->dictionary,
-	                     bundle->dictionary_length,
-	                     bundle->dictionary_length + 1,
-	                     sizeof(bundle->dictionary[0]));
+	                                                      bundle->dictionary_length,
+	                                                      bundle->dictionary_length + 1,
+	                                                      sizeof(bundle->dictionary[0]));
 
 	/* Add the new entry to the end of the dictionary array, and sort. */
 	bundle->dictionary[bundle->dictionary_length++] = dict_string;
@@ -206,7 +199,6 @@ static const sc_char *prop_dictionary_lookup(sc_prop_setref_t bundle, const sc_c
 	/* Return the address of the new string. */
 	return dict_string;
 }
-
 
 /*
  * prop_new_node()
@@ -227,10 +219,9 @@ static sc_prop_noderef_t prop_new_node(sc_prop_setref_t bundle) {
 
 		/* Extend the node pools array if necessary. */
 		bundle->node_pools = (sc_prop_noderef_t *)prop_ensure_capacity(bundle->node_pools,
-		                     bundle->node_pools_length,
-		                     bundle->node_pools_length + 1,
-		                     sizeof(bundle->
-		                            node_pools[0]));
+		                                                               bundle->node_pools_length,
+		                                                               bundle->node_pools_length + 1,
+		                                                               sizeof(bundle->node_pools[0]));
 
 		/* Create a new node pool, and increment the length. */
 		required = NODE_POOL_CAPACITY * sizeof(*bundle->node_pools[0]);
@@ -245,7 +236,6 @@ static sc_prop_noderef_t prop_new_node(sc_prop_setref_t bundle) {
 	/* Return the new node. */
 	return node;
 }
-
 
 /*
  * prop_find_child()
@@ -314,7 +304,6 @@ static sc_prop_noderef_t prop_find_child(sc_prop_noderef_t parent, sc_int type, 
 	return NULL;
 }
 
-
 /*
  * prop_add_child()
  *
@@ -322,7 +311,7 @@ static sc_prop_noderef_t prop_find_child(sc_prop_noderef_t parent, sc_int type, 
  * needs to be passed so that string names can be added to the dictionary.
  */
 static sc_prop_noderef_t prop_add_child(sc_prop_noderef_t parent, sc_int type,
-		sc_vartype_t name, sc_prop_setref_t bundle) {
+                                        sc_vartype_t name, sc_prop_setref_t bundle) {
 	sc_prop_noderef_t child;
 
 	/* Not possible if growable allocations have been trimmed. */
@@ -367,9 +356,9 @@ static sc_prop_noderef_t prop_add_child(sc_prop_noderef_t parent, sc_int type,
 
 		/* Resize the parent's child list if necessary. */
 		parent->child_list = (sc_prop_noderef_t *)prop_ensure_capacity(parent->child_list,
-		                     parent->property.integer,
-		                     name.integer + 1,
-		                     sizeof(*parent->child_list));
+		                                                               parent->property.integer,
+		                                                               name.integer + 1,
+		                                                               sizeof(*parent->child_list));
 
 		/* Update the child count if the new node increases it. */
 		if (parent->property.integer <= name.integer)
@@ -382,9 +371,9 @@ static sc_prop_noderef_t prop_add_child(sc_prop_noderef_t parent, sc_int type,
 	case PROP_KEY_STRING:
 		/* Add a single entry to the child list, and resize. */
 		parent->child_list = (sc_prop_noderef_t *)prop_ensure_capacity(parent->child_list,
-		                     parent->property.integer,
-		                     parent->property.integer + 1,
-		                     sizeof(*parent->child_list));
+		                                                               parent->property.integer,
+		                                                               parent->property.integer + 1,
+		                                                               sizeof(*parent->child_list));
 
 		/* Store the child at the end of the list. */
 		parent->child_list[parent->property.integer++] = child;
@@ -396,7 +385,6 @@ static sc_prop_noderef_t prop_add_child(sc_prop_noderef_t parent, sc_int type,
 
 	return child;
 }
-
 
 /*
  * prop_put()
@@ -413,14 +401,13 @@ static sc_prop_noderef_t prop_add_child(sc_prop_noderef_t parent, sc_int type,
  * integer, and another string.
  */
 void prop_put(sc_prop_setref_t bundle, const sc_char *format,
-		sc_vartype_t vt_value, const sc_vartype_t vt_key[]) {
+              sc_vartype_t vt_value, const sc_vartype_t vt_key[]) {
 	sc_prop_noderef_t node;
 	sc_int index_;
 	assert(prop_is_valid(bundle));
 
 	/* Format check. */
-	if (!format || format[0] == NUL
-	        || format[1] != '-' || format[2] != '>' || format[3] == NUL)
+	if (!format || format[0] == NUL || format[1] != '-' || format[2] != '>' || format[3] == NUL)
 		sc_fatal("prop_put: format error\n");
 
 	/* Trace property put. */
@@ -505,7 +492,6 @@ void prop_put(sc_prop_setref_t bundle, const sc_char *format,
 	}
 }
 
-
 /*
  * prop_get()
  *
@@ -513,14 +499,13 @@ void prop_put(sc_prop_setref_t bundle, const sc_char *format,
  * with "->" replaced with "<-".  Returns FALSE if no such property exists.
  */
 sc_bool prop_get(sc_prop_setref_t bundle, const sc_char *format, sc_vartype_t *vt_rvalue,
-		const sc_vartype_t vt_key[]) {
+                 const sc_vartype_t vt_key[]) {
 	sc_prop_noderef_t node;
 	sc_int index_;
 	assert(prop_is_valid(bundle));
 
 	/* Format check. */
-	if (!format || format[0] == NUL
-	        || format[1] != '<' || format[2] != '-' || format[3] == NUL)
+	if (!format || format[0] == NUL || format[1] != '<' || format[2] != '-' || format[3] == NUL)
 		sc_fatal("prop_get: format error\n");
 
 	/* Trace property get. */
@@ -553,7 +538,7 @@ sc_bool prop_get(sc_prop_setref_t bundle, const sc_char *format, sc_vartype_t *v
 		sc_int type;
 
 		/* Move node down to the matching child, NULL if no match. */
-		type = format[index_ + 3 ];
+		type = format[index_ + 3];
 		node = prop_find_child(node, type, vt_key[index_]);
 		if (!node)
 			break;
@@ -613,7 +598,6 @@ sc_bool prop_get(sc_prop_setref_t bundle, const sc_char *format, sc_vartype_t *v
 	return TRUE;
 }
 
-
 /*
  * prop_trim_node()
  * prop_solidify()
@@ -632,8 +616,8 @@ static void prop_trim_node(sc_prop_noderef_t node) {
 
 		/* Trim allocation on this node. */
 		node->child_list = (sc_prop_noderef_t *)prop_trim_capacity(node->child_list,
-		                   node->property.integer,
-		                   sizeof(*node->child_list));
+		                                                           node->property.integer,
+		                                                           sizeof(*node->child_list));
 	}
 }
 
@@ -648,20 +632,19 @@ void prop_solidify(sc_prop_setref_t bundle) {
 	 * with a little wasted heap memory.
 	 */
 	bundle->dictionary = (sc_char **)prop_trim_capacity(bundle->dictionary,
-	                     bundle->dictionary_length,
-	                     sizeof(bundle->dictionary[0]));
+	                                                    bundle->dictionary_length,
+	                                                    sizeof(bundle->dictionary[0]));
 	bundle->node_pools = (sc_prop_noderef_t *)prop_trim_capacity(bundle->node_pools,
-	                     bundle->node_pools_length,
-	                     sizeof(bundle->node_pools[0]));
+	                                                             bundle->node_pools_length,
+	                                                             sizeof(bundle->node_pools[0]));
 	bundle->orphans = (void **)prop_trim_capacity(bundle->orphans,
-	                  bundle->orphans_length,
-	                  sizeof(bundle->orphans[0]));
+	                                              bundle->orphans_length,
+	                                              sizeof(bundle->orphans[0]));
 	prop_trim_node(bundle->root_node);
 
 	/* Set the bundle so that no more properties can be added. */
 	bundle->is_readonly = TRUE;
 }
-
 
 /*
  * prop_get_integer()
@@ -701,7 +684,6 @@ const sc_char *prop_get_string(sc_prop_setref_t bundle, const sc_char *format, c
 	return vt_rvalue.string;
 }
 
-
 /*
  * prop_get_child_count()
  *
@@ -718,7 +700,6 @@ sc_int prop_get_child_count(sc_prop_setref_t bundle, const sc_char *format, cons
 	/* Return overloaded integer property value, the child count. */
 	return vt_rvalue.integer;
 }
-
 
 /*
  * prop_create_empty()
@@ -762,7 +743,6 @@ static sc_prop_setref_t prop_create_empty() {
 
 	return bundle;
 }
-
 
 /*
  * prop_destroy_child_list()
@@ -822,7 +802,6 @@ void prop_destroy(sc_prop_setref_t bundle) {
 	sc_free(bundle);
 }
 
-
 /*
  * prop_create()
  *
@@ -845,7 +824,6 @@ sc_prop_setref_t prop_create(const sc_tafref_t taf) {
 	return bundle;
 }
 
-
 /*
  * prop_adopt()
  *
@@ -856,14 +834,13 @@ void prop_adopt(sc_prop_setref_t bundle, void *addr) {
 
 	/* Extend the orphans array if necessary. */
 	bundle->orphans = (void **)prop_ensure_capacity(bundle->orphans,
-	                  bundle->orphans_length,
-	                  bundle->orphans_length + 1,
-	                  sizeof(bundle->orphans[0]));
+	                                                bundle->orphans_length,
+	                                                bundle->orphans_length + 1,
+	                                                sizeof(bundle->orphans[0]));
 
 	/* Add the new address to the end of the array. */
 	bundle->orphans[bundle->orphans_length++] = addr;
 }
-
 
 /*
  * prop_debug_is_dictionary_string()
@@ -886,13 +863,13 @@ static sc_bool prop_debug_is_dictionary_string(sc_prop_setref_t bundle, const sc
 }
 
 static void prop_debug_dump_node(sc_prop_setref_t bundle, sc_int depth,
-		sc_int child_index, sc_prop_noderef_t node) {
+                                 sc_int child_index, sc_prop_noderef_t node) {
 	sc_int index_;
 
 	/* Write node preamble, indented two spaces for each depth count. */
 	for (index_ = 0; index_ < depth; index_++)
 		sc_trace("  ");
-	sc_trace("%ld : %p", child_index, (void *) node);
+	sc_trace("%ld : %p", child_index, (void *)node);
 
 	/* Write node, or just a newline if none. */
 	if (node) {
@@ -944,14 +921,13 @@ void prop_debug_dump(sc_prop_setref_t bundle) {
 
 	sc_trace("bundle->node_pools =\n");
 	for (index_ = 0; index_ < bundle->node_pools_length; index_++)
-		sc_trace("%3ld : %p\n", index_, (void *) bundle->node_pools[index_]);
+		sc_trace("%3ld : %p\n", index_, (void *)bundle->node_pools[index_]);
 
 	sc_trace("bundle->node_count = %ld\n", bundle->node_count);
 	sc_trace("bundle->root_node = {\n");
 	prop_debug_dump_node(bundle, 0, 0, bundle->root_node);
-	sc_trace("}\nbundle->taf = %p\n", (void *) bundle->taf);
+	sc_trace("}\nbundle->taf = %p\n", (void *)bundle->taf);
 }
-
 
 /*
  * prop_debug_trace()

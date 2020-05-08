@@ -22,10 +22,10 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
-#include "ultima/ultima8/misc/util.h"
-#include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
+#include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
+#include "ultima/ultima8/graphics/fonts/shape_font.h"
+#include "ultima/ultima8/misc/util.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -37,28 +37,33 @@ ShapeFont *FontShapeArchive::getFont(uint32 fontnum) {
 }
 
 void FontShapeArchive::cache(uint32 shapenum) {
-	if (shapenum >= _count) return;
-	if (_shapes.empty()) _shapes.resize(_count);
+	if (shapenum >= _count)
+		return;
+	if (_shapes.empty())
+		_shapes.resize(_count);
 
-	if (_shapes[shapenum]) return;
+	if (_shapes[shapenum])
+		return;
 
 	uint32 shpsize;
 	uint8 *data = getRawObject(shapenum, &shpsize);
 
-	if (!data || shpsize == 0) return;
+	if (!data || shpsize == 0)
+		return;
 
 	// Auto detect format
 	if (!_format)
 		_format = Shape::DetectShapeFormat(data, shpsize);
 
 	if (!_format) {
-		delete [] data;
+		delete[] data;
 		perr << "Error: Unable to detect shape format for flex." << Std::endl;
 		return;
 	}
 
 	Shape *shape = new ShapeFont(data, shpsize, _format, _id, shapenum);
-	if (_palette) shape->setPalette(_palette);
+	if (_palette)
+		shape->setPalette(_palette);
 
 	_shapes[shapenum] = shape;
 }

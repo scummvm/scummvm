@@ -23,15 +23,15 @@
 #ifndef COMPOSER_COMPOSER_H
 #define COMPOSER_COMPOSER_H
 
+#include "common/debug-channels.h"
+#include "common/debug.h"
+#include "common/error.h"
 #include "common/ini-file.h"
 #include "common/random.h"
-#include "common/system.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
-#include "common/error.h"
-#include "common/serializer.h"
-#include "common/textconsole.h"
 #include "common/rect.h"
+#include "common/serializer.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
@@ -42,11 +42,11 @@
 
 #include "audio/mixer.h"
 
-#include "composer/resource.h"
 #include "composer/console.h"
+#include "composer/resource.h"
 
 namespace Audio {
-	class QueuingAudioStream;
+class QueuingAudioStream;
 }
 
 namespace Composer {
@@ -59,9 +59,9 @@ enum GameType {
 };
 
 enum GameFileTypes {
-	GAME_CONFIGFILE     = 1 << 0,    // Game configuration
-	GAME_SCRIPTFILE     = 1 << 1,    // Game script
-	GAME_EXECUTABLE     = 1 << 2     // Game executable
+	GAME_CONFIGFILE = 1 << 0, // Game configuration
+	GAME_SCRIPTFILE = 1 << 1, // Game script
+	GAME_EXECUTABLE = 1 << 2  // Game executable
 };
 
 class Archive;
@@ -78,7 +78,7 @@ enum {
 
 class Button {
 public:
-	Button() { }
+	Button() {}
 	Button(Common::SeekableReadStream *stream, uint16 id, uint gameType);
 	Button(Common::SeekableReadStream *stream);
 
@@ -134,8 +134,8 @@ struct QueuedScript {
 };
 
 struct PendingPageChange {
-	PendingPageChange() { }
-	PendingPageChange(uint16 id, bool remove) : _pageId(id), _remove(remove) { }
+	PendingPageChange() {}
+	PendingPageChange(uint16 id, bool remove) : _pageId(id), _remove(remove) {}
 
 	uint16 _pageId;
 	bool _remove;
@@ -158,13 +158,13 @@ class ComposerEngine : public Engine {
 protected:
 	Common::Error run() override;
 
-	template <typename T>
+	template<typename T>
 	void syncArray(Common::Serializer &ser, Common::Array<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
-	template <typename T>
+	template<typename T>
 	void syncList(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
-	template <typename T>
+	template<typename T>
 	void syncListReverse(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
-	template <typename T>
+	template<typename T>
 	void sync(Common::Serializer &ser, T &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion);
 	bool canLoadGameStateCurrently() override { return true; }
 	Common::Error loadGameState(int slot) override;
@@ -215,7 +215,7 @@ private:
 	Common::List<Pipe *> _pipes;
 	Common::Array<Common::SeekableReadStream *> _pipeStreams;
 
-	Common::HashMap<uint16, Common::Array<RandomEvent> > _randomEvents;
+	Common::HashMap<uint16, Common::Array<RandomEvent>> _randomEvents;
 
 	void onMouseDown(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);

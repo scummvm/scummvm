@@ -20,12 +20,12 @@
  *
  */
 
-#include "sci/sci.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/scriptdebug.h"
 #include "sci/engine/state.h"
-#include "sci/engine/selector.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -38,10 +38,12 @@ namespace Sci {
 
 // The defines below can be used to construct static selector tables for games which don't have
 // a vocab.997 resource, by dumping the selector table from other similar versions or games
-#define FIND_SELECTOR(_slc_) _selectorCache._slc_ = findSelector(#_slc_); \
+#define FIND_SELECTOR(_slc_)                     \
+	_selectorCache._slc_ = findSelector(#_slc_); \
 	debugN("\t{ \"%s\", %d },\n", #_slc_, _selectorCache._slc_)
 
-#define FIND_SELECTOR2(_slc_, _slcstr_) _selectorCache._slc_ = findSelector(_slcstr_); \
+#define FIND_SELECTOR2(_slc_, _slcstr_)            \
+	_selectorCache._slc_ = findSelector(_slcstr_); \
 	debugN("\t{ \"%s\", %d },\n", _slcstr_, _selectorCache._slc_)
 
 #endif
@@ -93,7 +95,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(play);
 	FIND_SELECTOR(restore);
 	FIND_SELECTOR(number);
-	FIND_SELECTOR(handle);	// nodePtr
+	FIND_SELECTOR(handle); // nodePtr
 	FIND_SELECTOR(client);
 	FIND_SELECTOR(dx);
 	FIND_SELECTOR(dy);
@@ -108,7 +110,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(xLast);
 	FIND_SELECTOR(yLast);
 	FIND_SELECTOR(moveSpeed);
-	FIND_SELECTOR(canBeHere);	// cantBeHere
+	FIND_SELECTOR(canBeHere); // cantBeHere
 	FIND_SELECTOR(heading);
 	FIND_SELECTOR(mover);
 	FIND_SELECTOR(doit);
@@ -251,7 +253,7 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 	if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
 		reg_t curValue = *address.getPointer(segMan);
 		debugPropertyAccess(segMan->getObject(object), object, 0, selectorId,
-			                curValue, NULL_REG, segMan, BREAK_SELECTORREAD);
+		                    curValue, NULL_REG, segMan, BREAK_SELECTORREAD);
 	}
 
 	return *address.getPointer(segMan);
@@ -281,7 +283,7 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
 		reg_t curValue = *address.getPointer(segMan);
 		debugPropertyAccess(segMan->getObject(object), object, 0, selectorId,
-			                curValue, value, segMan, BREAK_SELECTORWRITE);
+		                    curValue, value, segMan, BREAK_SELECTORWRITE);
 	}
 
 	*address.getPointer(segMan) = value;
@@ -291,14 +293,14 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 }
 
 void invokeSelector(EngineState *s, reg_t object, int selectorId,
-	int k_argc, StackPtr k_argp, int argc, const reg_t *argv) {
+                    int k_argc, StackPtr k_argp, int argc, const reg_t *argv) {
 	int i;
 	int framesize = 2 + 1 * argc;
 	int slc_type;
 	StackPtr stackframe = k_argp + k_argc;
 
-	stackframe[0] = make_reg(0, selectorId);  // The selector we want to call
-	stackframe[1] = make_reg(0, argc); // Argument count
+	stackframe[0] = make_reg(0, selectorId); // The selector we want to call
+	stackframe[1] = make_reg(0, argc);       // Argument count
 
 	slc_type = lookupSelector(s->_segMan, object, selectorId, NULL, NULL);
 
@@ -366,8 +368,7 @@ SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector sel
 		return kSelectorNone;
 	}
 
-
-//	return _lookupSelector_function(segMan, obj, selectorId, fptr);
+	//	return _lookupSelector_function(segMan, obj, selectorId, fptr);
 }
 
 } // End of namespace Sci

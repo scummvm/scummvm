@@ -25,8 +25,8 @@
 #ifndef __DMAPIPE_H__
 #define __DMAPIPE_H__
 
-#include "backends/platform/ps2/sysdefs.h"
 #include "backends/platform/ps2/GsDefs.h"
+#include "backends/platform/ps2/sysdefs.h"
 
 class SinglePipe;
 
@@ -56,6 +56,7 @@ public:
 	void setFinishEvent(void);
 	void flush(void);
 	void waitForDma(void);
+
 private:
 	void checkSpace(uint32 needed);
 	uint64 *_buf;

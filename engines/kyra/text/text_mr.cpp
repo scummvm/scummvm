@@ -28,7 +28,7 @@
 namespace Kyra {
 
 TextDisplayer_MR::TextDisplayer_MR(KyraEngine_MR *vm, Screen_MR *screen)
-	: TextDisplayer(vm, screen), _vm(vm), _screen(screen) {
+    : TextDisplayer(vm, screen), _vm(vm), _screen(screen) {
 }
 
 char *TextDisplayer_MR::preprocessString(const char *str) {
@@ -52,27 +52,27 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 
 	if (textWidth > maxTextWidth) {
 		int count = 0, offs = 0;
-		if (textWidth > (3*maxTextWidth)) {
-			count = getCharLength(p, textWidth/4);
+		if (textWidth > (3 * maxTextWidth)) {
+			count = getCharLength(p, textWidth / 4);
 			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 			p += count + offs;
 			// No update of textWidth here
 		}
 
-		if (textWidth > (2*maxTextWidth)) {
-			count = getCharLength(p, textWidth/3);
+		if (textWidth > (2 * maxTextWidth)) {
+			count = getCharLength(p, textWidth / 3);
 			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 			p += count + offs;
 			textWidth = _screen->getTextWidth(p);
 		}
 
-		count = getCharLength(p, textWidth/2);
+		count = getCharLength(p, textWidth / 2);
 		offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 		p += count + offs;
 		textWidth = _screen->getTextWidth(p);
 
 		if (textWidth > maxTextWidth) {
-			count = getCharLength(p, textWidth/2);
+			count = getCharLength(p, textWidth / 2);
 			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 		}
 	}
@@ -90,7 +90,7 @@ int TextDisplayer_MR::dropCRIntoString(char *str, int minOffs, int maxOffs) {
 			*proc = '\r';
 			return offset;
 		} else if (*proc == '-') {
-			memmove(proc+1, proc, strlen(proc)+1);
+			memmove(proc + 1, proc, strlen(proc) + 1);
 			*(++proc) = '\r';
 			++offset;
 			return offset;
@@ -110,7 +110,7 @@ int TextDisplayer_MR::dropCRIntoString(char *str, int minOffs, int maxOffs) {
 			*proc = '\r';
 			return offset;
 		} else if (*proc == '-') {
-			memmove(proc+1, proc, strlen(proc)+1);
+			memmove(proc + 1, proc, strlen(proc) + 1);
 			*(++proc) = '\r';
 			++offset;
 			return offset;
@@ -134,7 +134,7 @@ void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 
 		c2 = 0x00;
 	}
 
-	uint8 colorMap[] = { 0, 255, 240, 240 };
+	uint8 colorMap[] = {0, 255, 240, 240};
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
 	_screen->_charWidth = -2;
@@ -187,7 +187,7 @@ int KyraEngine_MR::chatGetType(const char *str) {
 }
 
 int KyraEngine_MR::chatCalcDuration(const char *str) {
-	return MAX<int>(120, strlen(str)*6);
+	return MAX<int>(120, strlen(str) * 6);
 }
 
 void KyraEngine_MR::objectChat(const char *str, int object, int vocHigh, int vocLow) {
@@ -204,23 +204,21 @@ void KyraEngine_MR::objectChat(const char *str, int object, int vocHigh, int voc
 		_mainCharacter.facing = 5;
 
 	static const uint8 talkScriptTable[] = {
-		0x10, 0x11, 0x12, 0x13,
-		0x0C, 0x0D, 0x0E, 0x0F,
-		0x0C, 0x0D, 0x0E, 0x0F,
-		0x04, 0x05, 0x06, 0x07,
-		0x00, 0x01, 0x02, 0x03,
-		0x00, 0x01, 0x02, 0x03,
-		0x08, 0x09, 0x0A, 0x0B,
-		0x08, 0x09, 0x0A, 0x0B
-	};
+	    0x10, 0x11, 0x12, 0x13,
+	    0x0C, 0x0D, 0x0E, 0x0F,
+	    0x0C, 0x0D, 0x0E, 0x0F,
+	    0x04, 0x05, 0x06, 0x07,
+	    0x00, 0x01, 0x02, 0x03,
+	    0x00, 0x01, 0x02, 0x03,
+	    0x08, 0x09, 0x0A, 0x0B,
+	    0x08, 0x09, 0x0A, 0x0B};
 
 	static const char *const talkFilenameTable[] = {
-		"MTFL00S.EMC", "MTFL00Q.EMC", "MTFL00E.EMC", "MTFL00T.EMC",
-		"MTFR00S.EMC", "MTFR00Q.EMC", "MTFR00E.EMC", "MTFR00T.EMC",
-		 "MTL00S.EMC",  "MTL00Q.EMC",  "MTL00E.EMC",  "MTL00T.EMC",
-		 "MTR00S.EMC",  "MTR00Q.EMC",  "MTR00E.EMC",  "MTR00T.EMC",
-		 "MTA00S.EMC",  "MTA00Q.EMC",  "MTA00E.EMC",  "MTA00T.EMC"
-	};
+	    "MTFL00S.EMC", "MTFL00Q.EMC", "MTFL00E.EMC", "MTFL00T.EMC",
+	    "MTFR00S.EMC", "MTFR00Q.EMC", "MTFR00E.EMC", "MTFR00T.EMC",
+	    "MTL00S.EMC", "MTL00Q.EMC", "MTL00E.EMC", "MTL00T.EMC",
+	    "MTR00S.EMC", "MTR00Q.EMC", "MTR00E.EMC", "MTR00T.EMC",
+	    "MTA00S.EMC", "MTA00Q.EMC", "MTA00E.EMC", "MTA00T.EMC"};
 
 	int chat = talkScriptTable[chatType + _mainCharacter.facing * 4];
 	objectChatProcess(talkFilenameTable[chat]);
@@ -251,7 +249,7 @@ void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int
 	yPos -= lineNum * 10;
 	yPos = MAX(yPos, 0);
 	_text->_talkMessageY = yPos;
-	_text->_talkMessageH = lineNum*10;
+	_text->_talkMessageH = lineNum * 10;
 
 	int width = _text->getWidestLineWidth(lineNum);
 	_text->calcWidestLineBounds(xPos, yPos, width, xPos);
@@ -286,7 +284,7 @@ void KyraEngine_MR::objectChatPrintText(const char *str, int object) {
 	_text->calcWidestLineBounds(cX1, cX2, maxWidth, x);
 
 	for (int i = 0; i < lineNum; ++i) {
-		str = &_text->_talkSubstrings[i*_text->maxSubstringLen()];
+		str = &_text->_talkSubstrings[i * _text->maxSubstringLen()];
 
 		int y = _text->_talkMessageY + i * 10;
 		x = _text->getCenterStringX(str, cX1, cX2);
@@ -374,7 +372,7 @@ void KyraEngine_MR::badConscienceChat(const char *str, int vocHigh, int vocLow) 
 	_chatText = str;
 	_chatObject = 1;
 	badConscienceChatWaitToFinish();
-	updateSceneAnim(0x0E, _badConscienceFrameTable[_badConscienceAnim+16]);
+	updateSceneAnim(0x0E, _badConscienceFrameTable[_badConscienceAnim + 16]);
 	_text->restoreScreen();
 	update();
 	_chatText = 0;
@@ -393,12 +391,12 @@ void KyraEngine_MR::badConscienceChatWaitToFinish() {
 
 	uint32 nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(4, 8) * _tickLength;
 
-	int frame = _badConscienceFrameTable[_badConscienceAnim+24];
+	int frame = _badConscienceFrameTable[_badConscienceAnim + 24];
 	while (running && !shouldQuit()) {
 		if (nextFrame < _system->getMillis()) {
 			++frame;
-			if (_badConscienceFrameTable[_badConscienceAnim+32] < frame)
-				frame = _badConscienceFrameTable[_badConscienceAnim+24];
+			if (_badConscienceFrameTable[_badConscienceAnim + 32] < frame)
+				frame = _badConscienceFrameTable[_badConscienceAnim + 24];
 
 			updateSceneAnim(0x0E, frame);
 			updateWithText();
@@ -430,7 +428,7 @@ void KyraEngine_MR::goodConscienceChat(const char *str, int vocHigh, int vocLow)
 	_chatText = str;
 	_chatObject = 87;
 	goodConscienceChatWaitToFinish();
-	updateSceneAnim(0x0F, _goodConscienceFrameTable[_goodConscienceAnim+10]);
+	updateSceneAnim(0x0F, _goodConscienceFrameTable[_goodConscienceAnim + 10]);
 	_text->restoreScreen();
 	update();
 	_chatText = 0;
@@ -449,12 +447,12 @@ void KyraEngine_MR::goodConscienceChatWaitToFinish() {
 
 	uint32 nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(3, 6) * _tickLength;
 
-	int frame = _goodConscienceFrameTable[_goodConscienceAnim+15];
+	int frame = _goodConscienceFrameTable[_goodConscienceAnim + 15];
 	while (running && !shouldQuit()) {
 		if (nextFrame < _system->getMillis()) {
 			++frame;
-			if (_goodConscienceFrameTable[_goodConscienceAnim+20] < frame)
-				frame = _goodConscienceFrameTable[_goodConscienceAnim+15];
+			if (_goodConscienceFrameTable[_goodConscienceAnim + 20] < frame)
+				frame = _goodConscienceFrameTable[_goodConscienceAnim + 15];
 
 			updateSceneAnim(0x0F, frame);
 			updateWithText();
@@ -528,7 +526,7 @@ void KyraEngine_MR::albumChatInit(const char *str, int object, int vocHigh, int 
 	yPos -= lineNum * 10;
 	yPos = MAX(yPos, 0);
 	_text->_talkMessageY = yPos;
-	_text->_talkMessageH = lineNum*10;
+	_text->_talkMessageH = lineNum * 10;
 
 	int width = _text->getWidestLineWidth(lineNum);
 	_text->calcWidestLineBounds(xPos, yPos, width, xPos);
@@ -608,9 +606,9 @@ void KyraEngine_MR::malcolmSceneStartupChat() {
 	int vocHighBase = 0, vocHighIndex = 0, index1 = 0, index2 = 0;
 	loadDlgHeader(vocHighBase, vocHighIndex, index1, index2);
 
-	_cnvFile->seek(index1*6, SEEK_CUR);
-	_cnvFile->seek(index2*4, SEEK_CUR);
-	_cnvFile->seek(index*2, SEEK_CUR);
+	_cnvFile->seek(index1 * 6, SEEK_CUR);
+	_cnvFile->seek(index2 * 4, SEEK_CUR);
+	_cnvFile->seek(index * 2, SEEK_CUR);
 	_cnvFile->seek(_cnvFile->readUint16LE(), SEEK_SET);
 
 	_isStartupDialog = true;
@@ -661,9 +659,9 @@ void KyraEngine_MR::updateDlgIndex() {
 	uint16 dlgIndex = _mainCharacter.dlgIndex;
 
 	if (_currentChapter == 1) {
-		static const uint8 dlgIndexMoodNice[] = { 0x0C, 0x0E, 0x10, 0x0F, 0x11 };
-		static const uint8 dlgIndexMoodNormal[] = { 0x00, 0x02, 0x04, 0x03, 0x05 };
-		static const uint8 dlgIndexMoodEvil[] = { 0x06, 0x08, 0x0A, 0x09, 0x0B };
+		static const uint8 dlgIndexMoodNice[] = {0x0C, 0x0E, 0x10, 0x0F, 0x11};
+		static const uint8 dlgIndexMoodNormal[] = {0x00, 0x02, 0x04, 0x03, 0x05};
+		static const uint8 dlgIndexMoodEvil[] = {0x06, 0x08, 0x0A, 0x09, 0x0B};
 
 		if (_malcolmsMood == 0)
 			dlgIndex = dlgIndexMoodNice[_characterShapeFile];
@@ -716,12 +714,12 @@ void KyraEngine_MR::processDialog(int vocHighIndex, int vocHighBase, int funcNum
 			_cnvFile->read(_stringBuffer, strSize);
 			_stringBuffer[strSize] = 0;
 		} else {
-			vocHigh = _vocHighTable[vocHighIndex-1] + vocHighBase;
+			vocHigh = _vocHighTable[vocHighIndex - 1] + vocHighBase;
 			vocLow = _cnvFile->readUint16LE();
 			getTableEntry(_dlgBuffer, vocLow, _stringBuffer);
 
 			if (_isStartupDialog) {
-				delay(60*_tickLength, true);
+				delay(60 * _tickLength, true);
 				_isStartupDialog = false;
 			}
 
@@ -825,7 +823,7 @@ void KyraEngine_MR::npcChatSequence(const char *str, int object, int vocHigh, in
 	}
 	_text->restoreScreen();
 	_chatText = 0;
-	_chatObject= - 1;
+	_chatObject = -1;
 }
 
 void KyraEngine_MR::randomSceneChat() {
@@ -840,15 +838,15 @@ void KyraEngine_MR::randomSceneChat() {
 		index++;
 	_chatAltFlag = !_chatAltFlag;
 
-	_cnvFile->seek(index1*6, SEEK_CUR);
-	_cnvFile->seek(index*2, SEEK_CUR);
+	_cnvFile->seek(index1 * 6, SEEK_CUR);
+	_cnvFile->seek(index * 2, SEEK_CUR);
 	_cnvFile->seek(_cnvFile->readUint16LE(), SEEK_SET);
 
 	processDialog(vocHighIndex, vocHighBase, 0);
 }
 
 void KyraEngine_MR::doDialog(int dlgIndex, int funcNum) {
-	switch (_currentChapter-2) {
+	switch (_currentChapter - 2) {
 	case 0:
 		dlgIndex -= 34;
 		break;
@@ -880,10 +878,10 @@ void KyraEngine_MR::doDialog(int dlgIndex, int funcNum) {
 		_cnvFile->seek(offset, SEEK_CUR);
 		_conversationState[dlgIndex][vocHighBase] = 0;
 	} else if (convState == 0 || convState == 2) {
-		_cnvFile->seek(offset+2, SEEK_CUR);
+		_cnvFile->seek(offset + 2, SEEK_CUR);
 		_conversationState[dlgIndex][vocHighBase] = 1;
 	} else {
-		_cnvFile->seek(offset+4, SEEK_CUR);
+		_cnvFile->seek(offset + 4, SEEK_CUR);
 		_conversationState[dlgIndex][vocHighBase] = 2;
 	}
 

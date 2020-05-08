@@ -23,10 +23,10 @@
 #ifndef ULTIMA4_CORE_DEBUGGER_ACTIONS_H
 #define ULTIMA4_CORE_DEBUGGER_ACTIONS_H
 
-#include "ultima/ultima4/core/coords.h"
-#include "ultima/ultima4/game/spell.h"
-#include "ultima/ultima4/core/types.h"
 #include "ultima/shared/engine/debugger.h"
+#include "ultima/ultima4/core/coords.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/game/spell.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -47,6 +47,7 @@ private:
 	 * Check the levels of each party member while talking to Lord British
 	 */
 	void gameLordBritishCheckLevels();
+
 protected:
 	/**
 	 * Returns true if the debugger is active
@@ -79,6 +80,7 @@ protected:
 	 * Returns currently focused character in combat mode
 	 */
 	int getCombatFocus() const;
+
 public:
 	virtual ~DebuggerActions() {}
 
@@ -131,7 +133,6 @@ public:
 	bool openAt(const Coords &coords);
 
 	void gameCastSpell(uint spell, int caster, int param);
-
 
 	/**
 	 * Begins a conversation with the NPC at map coordinates x,y.  If no

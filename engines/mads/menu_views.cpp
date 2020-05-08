@@ -20,10 +20,10 @@
  *
  */
 
+#include "mads/menu_views.h"
 #include "common/scummsys.h"
 #include "mads/game.h"
 #include "mads/mads.h"
-#include "mads/menu_views.h"
 #include "mads/resources.h"
 #include "mads/scene.h"
 #include "mads/screen.h"
@@ -37,7 +37,7 @@ MenuView::MenuView(MADSEngine *vm) : FullScreenDialog(vm) {
 }
 
 void MenuView::show() {
- 	Scene &scene = _vm->_game->_scene;
+	Scene &scene = _vm->_game->_scene;
 	EventsManager &events = *_vm->_events;
 	_vm->_screenFade = SCREEN_FADE_FAST;
 
@@ -231,7 +231,7 @@ void TextView::processCommand() {
 		_vm->_sound->command(soundId);
 
 	} else if (!strncmp(commandStr, "COLOR", 5) && ((commandStr[5] == '0') ||
-			(commandStr[5] == '1'))) {
+	                                                (commandStr[5] == '1'))) {
 		// Set the text colors
 		int index = commandStr[5] - '0';
 		paramP = commandStr + 6;
@@ -256,7 +256,7 @@ void TextView::processCommand() {
 		_spareScreens[spareIndex].create(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 
 		sceneInfo->loadMadsV1Background(screenId, "", SCENEFLAG_TRANSLATE,
-			_spareScreens[spareIndex]);
+		                                _spareScreens[spareIndex]);
 		delete sceneInfo;
 
 	} else if (!strncmp(commandStr, "PAGE", 4)) {
@@ -310,7 +310,8 @@ void TextView::processText() {
 
 		// Delete the @ character and shift back the remainder of the string
 		char *p = centerP + 1;
-		if (*p == ' ') ++p;
+		if (*p == ' ')
+			++p;
 		strcpy(centerP, p);
 
 	} else {
@@ -353,7 +354,7 @@ void TextView::doFrame() {
 		byte *screenP = (byte *)dest.getBasePtr(0, 0);
 
 		for (int y = 0; y < MADS_SCENE_HEIGHT; ++y, srcP += MADS_SCREEN_WIDTH,
-			bgP += MADS_SCREEN_WIDTH, screenP += MADS_SCREEN_WIDTH) {
+		         bgP += MADS_SCREEN_WIDTH, screenP += MADS_SCREEN_WIDTH) {
 			*bgP = *srcP;
 			*screenP = *srcP;
 		}
@@ -409,7 +410,7 @@ void TextView::doFrame() {
 			}
 
 			Common::copy(linesTemp, linesTemp + _pan.y * MADS_SCREEN_WIDTH,
-				(byte *)scene._backgroundSurface.getPixels());
+			             (byte *)scene._backgroundSurface.getPixels());
 			delete[] linesTemp;
 		}
 
@@ -429,7 +430,7 @@ void TextView::doFrame() {
 			_textLines.remove_at(i);
 		} else {
 			tl._textDisplayIndex = scene._textDisplay.add(tl._pos.x, tl._pos.y,
-				0x605, -1, tl._line, _font);
+			                                              0x605, -1, tl._line, _font);
 		}
 	}
 
@@ -527,7 +528,7 @@ void AnimationView::display() {
 bool AnimationView::onEvent(Common::Event &event) {
 	// Wait for the Escape key or a mouse press
 	if (((event.type == Common::EVENT_KEYDOWN) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) ||
-			(event.type == Common::EVENT_LBUTTONUP)) {
+	    (event.type == Common::EVENT_LBUTTONUP)) {
 		scriptDone();
 		return true;
 	}
@@ -576,8 +577,7 @@ void AnimationView::loadNextResource() {
 	if (resEntry._bgFlag)
 		palette.resetGamePalette(1, 8);
 
-	palette._mainPalette[253 * 3] = palette._mainPalette[253 * 3 + 1]
-		= palette._mainPalette[253 * 3 + 2] = 0xb4;
+	palette._mainPalette[253 * 3] = palette._mainPalette[253 * 3 + 1] = palette._mainPalette[253 * 3 + 2] = 0xb4;
 	palette.setPalette(&palette._mainPalette[253 * 3], 253, 1);
 
 	// Free any previous messages
@@ -602,7 +602,7 @@ void AnimationView::loadNextResource() {
 	_currentAnimation = Animation::init(_vm, &scene);
 	int flags = ANIMFLAG_ANIMVIEW | (resEntry._bgFlag ? ANIMFLAG_LOAD_BACKGROUND : 0);
 	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface,
-		resEntry._resourceName, flags, &paletteCycles, _sceneInfo);
+	                        resEntry._resourceName, flags, &paletteCycles, _sceneInfo);
 
 	// Signal for a screen refresh
 	scene._spriteSlots.fullRefresh();
@@ -639,7 +639,7 @@ void AnimationView::loadNextResource() {
 	// Handle the palette and cycling palette
 	scene._cyclingActive = false;
 	Common::copy(&palette._mainPalette[0], &palette._mainPalette[PALETTE_SIZE],
-		&palette._cyclingPalette[0]);
+	             &palette._cyclingPalette[0]);
 
 	_vm->_game->_fx = (ScreenTransition)resEntry._fx;
 	_nextCyclingActive = paletteCycles.size() > 0;
@@ -706,7 +706,7 @@ void AnimationView::processLines() {
 
 				// Add resource into list along with any set state information
 				_resources.push_back(ResourceEntry(resName, _sfx, _soundFlag,
-					_bgLoadFlag, _showWhiteBars));
+				                                   _bgLoadFlag, _showWhiteBars));
 
 				// Fx resets between resource entries
 				_sfx = 0;
@@ -800,7 +800,6 @@ int AnimationView::getParameter() {
 
 void AnimationView::checkResource(const Common::String &resourceName) {
 	//bool hasSuffix = false;
-
 }
 
 int AnimationView::scanResourceIndex(const Common::String &resourceName) {

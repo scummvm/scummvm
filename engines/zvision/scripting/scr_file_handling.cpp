@@ -22,24 +22,24 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
-#include "zvision/scripting/puzzle.h"
 #include "zvision/scripting/actions.h"
-#include "zvision/scripting/controls/push_toggle_control.h"
-#include "zvision/scripting/controls/lever_control.h"
-#include "zvision/scripting/controls/slot_control.h"
-#include "zvision/scripting/controls/save_control.h"
-#include "zvision/scripting/controls/input_control.h"
-#include "zvision/scripting/controls/safe_control.h"
-#include "zvision/scripting/controls/hotmov_control.h"
 #include "zvision/scripting/controls/fist_control.h"
+#include "zvision/scripting/controls/hotmov_control.h"
+#include "zvision/scripting/controls/input_control.h"
+#include "zvision/scripting/controls/lever_control.h"
 #include "zvision/scripting/controls/paint_control.h"
+#include "zvision/scripting/controls/push_toggle_control.h"
+#include "zvision/scripting/controls/safe_control.h"
+#include "zvision/scripting/controls/save_control.h"
+#include "zvision/scripting/controls/slot_control.h"
 #include "zvision/scripting/controls/titler_control.h"
+#include "zvision/scripting/puzzle.h"
 
-#include "common/textconsole.h"
 #include "common/file.h"
+#include "common/textconsole.h"
 #include "common/tokenizer.h"
 
 namespace ZVision {
@@ -123,7 +123,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 	puzzle->addedBySetState = false;
 }
 
-bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList, uint32 key) const {
+bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry>> &criteriaList, uint32 key) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);

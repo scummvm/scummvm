@@ -50,8 +50,10 @@ public:
 class DialogueLoaders {
 private:
 	Common::HashMap<Common::String, DialogueLoader *> _loaders;
+
 public:
 	static DialogueLoader *getLoader(const Common::String &mimeType);
+
 public:
 	DialogueLoaders();
 	~DialogueLoaders();

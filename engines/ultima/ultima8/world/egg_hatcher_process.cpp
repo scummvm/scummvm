@@ -22,11 +22,11 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/egg_hatcher_process.h"
-#include "ultima/ultima8/world/egg.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/teleport_egg.h"
+#include "ultima/ultima8/world/egg.h"
+#include "ultima/ultima8/world/egg_hatcher_process.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/teleport_egg.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,7 +35,6 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(EggHatcherProcess, Process)
 
 EggHatcherProcess::EggHatcherProcess() {
 }
-
 
 EggHatcherProcess::~EggHatcherProcess() {
 }
@@ -57,7 +56,8 @@ void EggHatcherProcess::run() {
 	for (unsigned int i = 0; i < _eggs.size(); i++) {
 		uint16 eggid = _eggs[i];
 		Egg *egg = p_dynamic_cast<Egg *>(getObject(eggid));
-		if (!egg) continue; // egg gone
+		if (!egg)
+			continue; // egg gone
 
 		int32 x, y, z;
 		egg->getLocation(x, y, z);
@@ -81,25 +81,28 @@ void EggHatcherProcess::run() {
 		TeleportEgg *tegg = p_dynamic_cast<TeleportEgg *>(egg);
 
 		if (x1 <= ax && ax - axs < x2 && y1 <= ay && ay - ays < y2 &&
-		        z - 48 < az && az <= z + 48) { // CONSTANTS!
-			if (tegg && tegg->isTeleporter()) nearteleporter = true;
+		    z - 48 < az && az <= z + 48) { // CONSTANTS!
+			if (tegg && tegg->isTeleporter())
+				nearteleporter = true;
 
-			if (tegg && av->hasJustTeleported()) continue;
+			if (tegg && av->hasJustTeleported())
+				continue;
 
 			egg->hatch();
 		}
 	}
 
-	if (!nearteleporter) av->setJustTeleported(false); // clear flag
+	if (!nearteleporter)
+		av->setJustTeleported(false); // clear flag
 }
 
 void EggHatcherProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 }
 
-
 bool EggHatcherProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	// the _eggs will be re-added to the EggHatcherProcess when they're
 	// re-added to the CurrentMap

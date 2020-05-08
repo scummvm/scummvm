@@ -35,6 +35,7 @@ class CCaptainsWheel : public CBackground {
 	bool TurnOff(CTurnOff *msg);
 	bool TurnOn(CTurnOn *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	bool _stopEnabled;
 	int _actionNum;
@@ -42,6 +43,7 @@ public:
 	bool _cruiseEnabled;
 	bool _goEnabled;
 	int _fieldF4;
+
 public:
 	CLASSDEF;
 	CCaptainsWheel();

@@ -31,6 +31,7 @@ class CPickUpLemon : public CPickUp {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	CLASSDEF;
 

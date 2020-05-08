@@ -99,7 +99,6 @@ public:
 	uint16 getRandom(uint16 max);
 };
 
-
 } // End of namespace Lab
 
 #endif // LAB_UTILS_H

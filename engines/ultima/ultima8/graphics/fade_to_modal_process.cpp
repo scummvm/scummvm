@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/graphics/palette_fader_process.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/gumps/modal_gump.h"
+#include "ultima/ultima8/graphics/palette_fader_process.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/modal_gump.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -33,10 +33,8 @@ namespace Ultima8 {
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(FadeToModalProcess, Process)
 
-
 FadeToModalProcess::FadeToModalProcess(ModalGump *modal)
-	: _modal(modal), _nextState(FS_OpenFadeOut), _fader(nullptr)
-{
+    : _modal(modal), _nextState(FS_OpenFadeOut), _fader(nullptr) {
 	setRunPaused();
 }
 
@@ -55,44 +53,40 @@ void FadeToModalProcess::onWakeUp() {
 
 void FadeToModalProcess::run() {
 	switch (_nextState) {
-		case FS_OpenFadeOut:
-		{
-			_fader = new PaletteFaderProcess(0x00000000, false, 0x7FFF, 30, true);
-			Kernel::get_instance()->addProcess(_fader);
-			_fader->setRunPaused();
-			_nextState = FS_ShowGump;
-			waitFor(_fader);
-			break;
-		}
-		case FS_ShowGump:
-		{
-			// kernel will delete the fader object for us
-			_fader = nullptr;
-			_modal->InitGump(0);
-			_modal->setRelativePosition(Gump::CENTER);
-			_modal->CreateNotifier();
-			// Reset the palette before showing the modal
-			PaletteManager::get_instance()->untransformPalette(PaletteManager::Pal_Game);
-			_nextState = FS_CloseFadeIn;
-			waitFor(_modal->GetNotifyProcess());
-			break;
-		}
-		case FS_CloseFadeIn:
-		{
-			// Already created a new fader in onWakeUp..
-			Kernel::get_instance()->addProcess(_fader);
-			_fader->setRunPaused();
-			_nextState = FS_Finshed;
-			waitFor(_fader);
-			break;
-		}
-		case FS_Finshed:
-		{
-			// kernel will delete the fader object for us
-			_fader = nullptr;
-			terminate();
-			break;
-		}
+	case FS_OpenFadeOut: {
+		_fader = new PaletteFaderProcess(0x00000000, false, 0x7FFF, 30, true);
+		Kernel::get_instance()->addProcess(_fader);
+		_fader->setRunPaused();
+		_nextState = FS_ShowGump;
+		waitFor(_fader);
+		break;
+	}
+	case FS_ShowGump: {
+		// kernel will delete the fader object for us
+		_fader = nullptr;
+		_modal->InitGump(0);
+		_modal->setRelativePosition(Gump::CENTER);
+		_modal->CreateNotifier();
+		// Reset the palette before showing the modal
+		PaletteManager::get_instance()->untransformPalette(PaletteManager::Pal_Game);
+		_nextState = FS_CloseFadeIn;
+		waitFor(_modal->GetNotifyProcess());
+		break;
+	}
+	case FS_CloseFadeIn: {
+		// Already created a new fader in onWakeUp..
+		Kernel::get_instance()->addProcess(_fader);
+		_fader->setRunPaused();
+		_nextState = FS_Finshed;
+		waitFor(_fader);
+		break;
+	}
+	case FS_Finshed: {
+		// kernel will delete the fader object for us
+		_fader = nullptr;
+		terminate();
+		break;
+	}
 	}
 }
 

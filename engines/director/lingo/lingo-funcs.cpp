@@ -27,9 +27,9 @@
 
 #include "graphics/macgui/macwindowmanager.h"
 
+#include "director/cast.h"
 #include "director/director.h"
 #include "director/lingo/lingo.h"
-#include "director/cast.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/util.h"
@@ -55,22 +55,21 @@ struct MCIToken {
 	MCITokenType command; // Command this flag belongs to
 	MCITokenType flag;
 	const char *token;
-	int pos;  // Position of parameter to store. 0 is always filename. Negative parameters mean boolean
+	int pos; // Position of parameter to store. 0 is always filename. Negative parameters mean boolean
 } MCITokens[] = {
-	{ kMCITokenNone, kMCITokenOpen,   "open", 0 },
-	{ kMCITokenOpen, kMCITokenType,   "type", 1 },
-	{ kMCITokenOpen, kMCITokenAlias,  "alias", 2 },
-	{ kMCITokenOpen, kMCITokenBuffer, "buffer", 3 },
+    {kMCITokenNone, kMCITokenOpen, "open", 0},
+    {kMCITokenOpen, kMCITokenType, "type", 1},
+    {kMCITokenOpen, kMCITokenAlias, "alias", 2},
+    {kMCITokenOpen, kMCITokenBuffer, "buffer", 3},
 
-	{ kMCITokenNone, kMCITokenPlay,   "play", 0 },
-	{ kMCITokenPlay, kMCITokenFrom,   "from", 1 },
-	{ kMCITokenPlay, kMCITokenTo,     "to", 2 },
-	{ kMCITokenPlay, kMCITokenRepeat, "repeat", -3 }, // This is boolean parameter
+    {kMCITokenNone, kMCITokenPlay, "play", 0},
+    {kMCITokenPlay, kMCITokenFrom, "from", 1},
+    {kMCITokenPlay, kMCITokenTo, "to", 2},
+    {kMCITokenPlay, kMCITokenRepeat, "repeat", -3}, // This is boolean parameter
 
-	{ kMCITokenNone, kMCITokenWait,   "wait", 0 },
+    {kMCITokenNone, kMCITokenWait, "wait", 0},
 
-	{ kMCITokenNone, kMCITokenNone,   0, 0 }
-};
+    {kMCITokenNone, kMCITokenNone, 0, 0}};
 
 void Lingo::func_mci(Common::String &s) {
 	Common::String params[5];
@@ -94,34 +93,33 @@ void Lingo::func_mci(Common::String &s) {
 			token += *ptr++;
 
 		switch (state) {
-		case kMCITokenNone:
-			{
-				MCIToken *f = MCITokens;
+		case kMCITokenNone: {
+			MCIToken *f = MCITokens;
 
-				while (f->token) {
-					if (command == f->command && token == f->token)
-						break;
+			while (f->token) {
+				if (command == f->command && token == f->token)
+					break;
 
-					f++;
-				}
-
-				if (command == kMCITokenNone) { // We caught command
-					command = f->flag; // Switching to processing this command parameters
-				} else if (f->flag == kMCITokenNone) { // Unmatched token, storing as filename
-					if (!params[0].empty())
-						warning("Duplicate filename in MCI command: %s -> %s", params[0].c_str(), token.c_str());
-					params[0] = token;
-				} else { // This is normal parameter, storing next token to designated position
-					if (f->pos > 0) { // This is normal parameter
-						state = f->flag;
-						respos = f->pos;
-					} else { // This is boolean
-						params[-f->pos] = "true";
-						state = kMCITokenNone;
-					}
-				}
-				break;
+				f++;
 			}
+
+			if (command == kMCITokenNone) {        // We caught command
+				command = f->flag;                 // Switching to processing this command parameters
+			} else if (f->flag == kMCITokenNone) { // Unmatched token, storing as filename
+				if (!params[0].empty())
+					warning("Duplicate filename in MCI command: %s -> %s", params[0].c_str(), token.c_str());
+				params[0] = token;
+			} else {              // This is normal parameter, storing next token to designated position
+				if (f->pos > 0) { // This is normal parameter
+					state = f->flag;
+					respos = f->pos;
+				} else { // This is boolean
+					params[-f->pos] = "true";
+					state = kMCITokenNone;
+				}
+			}
+			break;
+		}
 		default:
 			params[respos] = token;
 			state = kMCITokenNone;
@@ -130,41 +128,37 @@ void Lingo::func_mci(Common::String &s) {
 	}
 
 	switch (command) {
-	case kMCITokenOpen:
-		{
-			warning("MCI open file: %s, type: %s, alias: %s buffer: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
+	case kMCITokenOpen: {
+		warning("MCI open file: %s, type: %s, alias: %s buffer: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
 
-			Common::File *file = new Common::File();
+		Common::File *file = new Common::File();
 
-			if (!file->open(params[0])) {
-				warning("Failed to open %s", params[0].c_str());
-				delete file;
-				return;
-			}
-
-			if (params[1] == "waveaudio") {
-				Audio::AudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-				_audioAliases[params[2]] = sound;
-			} else {
-				warning("Unhandled audio type %s", params[2].c_str());
-			}
+		if (!file->open(params[0])) {
+			warning("Failed to open %s", params[0].c_str());
+			delete file;
+			return;
 		}
-		break;
-	case kMCITokenPlay:
-		{
-			warning("MCI play file: %s, from: %s, to: %s, repeat: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
 
-			if (!_audioAliases.contains(params[0])) {
-				warning("Unknown alias %s", params[0].c_str());
-				return;
-			}
-
-			uint32 from = strtol(params[1].c_str(), 0, 10);
-			uint32 to = strtol(params[2].c_str(), 0, 10);
-
-			_vm->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
+		if (params[1] == "waveaudio") {
+			Audio::AudioStream *sound = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+			_audioAliases[params[2]] = sound;
+		} else {
+			warning("Unhandled audio type %s", params[2].c_str());
 		}
-		break;
+	} break;
+	case kMCITokenPlay: {
+		warning("MCI play file: %s, from: %s, to: %s, repeat: %s", params[0].c_str(), params[1].c_str(), params[2].c_str(), params[3].c_str());
+
+		if (!_audioAliases.contains(params[0])) {
+			warning("Unknown alias %s", params[0].c_str());
+			return;
+		}
+
+		uint32 from = strtol(params[1].c_str(), 0, 10);
+		uint32 to = strtol(params[2].c_str(), 0, 10);
+
+		_vm->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
+	} break;
 	default:
 		warning("Unhandled MCI command: %s", s.c_str());
 	}
@@ -193,7 +187,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 			for (const byte *p = (const byte *)movieFilename.c_str(); *p; p++)
 				if (*p >= 0x20 && *p <= 0x7f)
-					cleanedFilename += (char) *p;
+					cleanedFilename += (char)*p;
 
 			if (resMan.open(movieFilename)) {
 				fileExists = true;
@@ -214,7 +208,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		}
 
 		debug(1, "func_goto: '%s' -> '%s' -> '%s' -> '%s'", movie.u.s->c_str(), convertPath(*movie.u.s).c_str(),
-				movieFilename.c_str(), cleanedFilename.c_str());
+		      movieFilename.c_str(), cleanedFilename.c_str());
 
 		if (!fileExists) {
 			warning("Movie %s does not exist", movieFilename.c_str());
@@ -301,7 +295,7 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 			warning("Lingo::func_play: unknown symbol: #%s", frame.u.s->c_str());
 			return;
 		}
-		if (_vm->_movieStack.empty()) {	// No op if no nested movies
+		if (_vm->_movieStack.empty()) { // No op if no nested movies
 			return;
 		}
 		ref = _vm->_movieStack.back();
@@ -372,7 +366,7 @@ void Lingo::func_cursor(int c, int m) {
 			bool nocursor = false;
 
 			if (y >= score->_loadedCast->getVal(c)->_surface->h ||
-					y >= score->_loadedCast->getVal(m)->_surface->h )
+			    y >= score->_loadedCast->getVal(m)->_surface->h)
 				nocursor = true;
 
 			if (!nocursor) {
@@ -382,7 +376,7 @@ void Lingo::func_cursor(int c, int m) {
 
 			for (int x = 0; x < 16; x++) {
 				if (x >= score->_loadedCast->getVal(c)->_surface->w ||
-						x >= score->_loadedCast->getVal(m)->_surface->w )
+				    x >= score->_loadedCast->getVal(m)->_surface->w)
 					nocursor = true;
 
 				if (nocursor) {
@@ -436,7 +430,7 @@ void Lingo::func_beep(int repeats) {
 	}
 }
 
-int Lingo::func_marker(int m) 	{
+int Lingo::func_marker(int m) {
 	if (!_vm->getCurrentScore())
 		return 0;
 
@@ -454,4 +448,4 @@ int Lingo::func_marker(int m) 	{
 	return labelNumber;
 }
 
-}
+} // namespace Director

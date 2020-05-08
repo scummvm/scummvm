@@ -27,11 +27,11 @@
 
 #if defined(USE_SNDIO)
 
+#include "audio/mpu401.h"
+#include "audio/musicplugin.h"
 #include "common/error.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
 
 #include <sndio.h>
 
@@ -119,7 +119,6 @@ void MidiDriver_Sndio::sysEx(const byte *msg, uint16 length) {
 	mio_write(hdl, buf, length + 2);
 }
 
-
 // Plugin interface
 
 class SndioMusicPlugin : public MusicPluginObject {
@@ -149,9 +148,9 @@ Common::Error SndioMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriv
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(Sndio)
-	//REGISTER_PLUGIN_DYNAMIC(SNDIO, PLUGIN_TYPE_MUSIC, SndioMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(SNDIO, PLUGIN_TYPE_MUSIC, SndioMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(SNDIO, PLUGIN_TYPE_MUSIC, SndioMusicPlugin);
+REGISTER_PLUGIN_STATIC(SNDIO, PLUGIN_TYPE_MUSIC, SndioMusicPlugin);
 //#endif
 
 #endif

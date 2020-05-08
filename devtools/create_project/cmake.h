@@ -37,7 +37,6 @@ public:
 	CMakeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
 
 protected:
-
 	void createWorkspace(const BuildSetup &setup);
 
 	void createOtherBuildFiles(const BuildSetup &) {}
@@ -87,6 +86,6 @@ private:
 	const EngineDesc &findEngineDesc(const std::string &name, const EngineDescList &engines) const;
 };
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool
 
 #endif // TOOLS_CREATE_PROJECT_CMAKE_H

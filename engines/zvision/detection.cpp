@@ -26,18 +26,18 @@
 
 #include "engines/advancedDetector.h"
 
-#include "zvision/zvision.h"
 #include "zvision/file/save_manager.h"
 #include "zvision/scripting/script_manager.h"
+#include "zvision/zvision.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
-#include "common/translation.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 namespace ZVision {
 
@@ -89,22 +89,20 @@ public:
 };
 
 bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate) ||
+	       (f == kSavesSupportPlayTime) ||
+	       (f == kSimpleSavesNames);
 }
 
 bool ZVision::ZVision::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error ZVision::ZVision::loadGameState(int slot) {
@@ -353,7 +351,7 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ZVISION)
-	REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
+REGISTER_PLUGIN_STATIC(ZVISION, PLUGIN_TYPE_ENGINE, ZVisionMetaEngine);
 #endif

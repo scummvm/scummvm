@@ -21,10 +21,10 @@
  */
 
 #include "ultima/shared/engine/messages.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/early/game_base.h"
-#include "ultima/shared/gfx/screen.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/early/game_base.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/gfx/screen.h"
 
 namespace Ultima {
 namespace Shared {
@@ -74,10 +74,10 @@ bool CMessage::execute(const Common::String &target, const ClassDef *classDef, i
 const MSGMAP_ENTRY *CMessage::findMapEntry(const TreeItem *treeItem, const ClassDef &classDef) {
 	// Iterate through the class and any parent classes
 	for (const MSGMAP *msgMap = treeItem->getMessageMap(); msgMap->pFnGetBaseMap;
-		msgMap = msgMap->pFnGetBaseMap()) {
+	     msgMap = msgMap->pFnGetBaseMap()) {
 		// Iterate through the map entries for this class
 		for (const MSGMAP_ENTRY *entry = msgMap->lpEntries;
-			entry->_classDef != nullptr; ++entry) {
+		     entry->_classDef != nullptr; ++entry) {
 			// Check if the class or any of it's ancesotrs is handled by this entry
 			for (ClassDef def = (*entry->_classDef)(); def.hasParent(); def = def.parent()) {
 				if (def == classDef)

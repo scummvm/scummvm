@@ -25,8 +25,8 @@
 
 #include "ultima/shared/std/string.h"
 
-#include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/files/nuvie_io_file.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -41,30 +41,29 @@ private:
 	uint32 bmp_line_width;
 
 	struct {
-		uint16 type;                    /* Magic identifier            */
-		uint32 size;                    /* File size in bytes          */
+		uint16 type; /* Magic identifier            */
+		uint32 size; /* File size in bytes          */
 		uint16 reserved1, reserved2;
-		uint32 offset;                  /* Offset to image data, bytes */
+		uint32 offset; /* Offset to image data, bytes */
 	} header;
 
 #define NUVIEBMP_HEADER_SIZE 14
 
 	struct {
-		uint32 size;                    /* Header size in bytes      */
-		sint32 width, height;           /* Width and height of image */
-		uint16 planes;                  /* Number of colour planes   */
-		uint16 bits;                    /* Bits per pixel            */
-		uint32 compression;             /* Compression type          */
-		uint32 imagesize;               /* Image size in bytes       */
+		uint32 size;                     /* Header size in bytes      */
+		sint32 width, height;            /* Width and height of image */
+		uint16 planes;                   /* Number of colour planes   */
+		uint16 bits;                     /* Bits per pixel            */
+		uint32 compression;              /* Compression type          */
+		uint32 imagesize;                /* Image size in bytes       */
 		sint32 xresolution, yresolution; /* Pixels per meter          */
-		uint32 ncolours;                /* Number of colours         */
-		uint32 importantcolours;        /* Important colours         */
+		uint32 ncolours;                 /* Number of colours         */
+		uint32 importantcolours;         /* Important colours         */
 	} infoHeader;
 
 #define NUVIEBMP_INFOHEADER_SIZE 40
 
 public:
-
 	NuvieBmpFile();
 	~NuvieBmpFile();
 
@@ -79,7 +78,6 @@ public:
 	uint16 getHeight() {
 		return (uint16)infoHeader.height;
 	}
-
 
 	Tile *getTile();
 	unsigned char *getRawIndexedData();

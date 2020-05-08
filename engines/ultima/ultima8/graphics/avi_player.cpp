@@ -20,22 +20,22 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/avi_player.h"
+#include "common/stream.h"
+#include "common/system.h"
+#include "graphics/surface.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/ultima8.h"
-#include "graphics/surface.h"
-#include "common/system.h"
-#include "common/stream.h"
 #include "video/avi_decoder.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 AVIPlayer::AVIPlayer(Common::SeekableReadStream *rs, int width, int height)
-	: MoviePlayer(), _playing(false), _width(width), _height(height),
-	  _doubleSize(false) {
+    : MoviePlayer(), _playing(false), _width(width), _height(height),
+      _doubleSize(false) {
 	_decoder = new Video::AVIDecoder();
 	_decoder->loadStream(rs);
 	uint32 vidWidth = _decoder->getWidth();
@@ -68,8 +68,7 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 		_playing = false;
 		return;
 	}
-	if (_decoder->needsUpdate())
-	{
+	if (_decoder->needsUpdate()) {
 		const Graphics::Surface *frame = _decoder->decodeNextFrame();
 		if (!frame) {
 			// Some sort of decoding error?
@@ -89,11 +88,11 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 	if (_doubleSize) {
 		const Scaler *pointScaler = &Ultima8Engine::get_instance()->point_scaler;
 		surf->ScalerBlit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
-						_xoff, _yoff, _currentFrame.w * 2, _currentFrame.h * 2,
-						pointScaler, false);
+		                 _xoff, _yoff, _currentFrame.w * 2, _currentFrame.h * 2,
+		                 pointScaler, false);
 	} else {
 		surf->Blit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
-				   _xoff, _yoff);
+		           _xoff, _yoff);
 	}
 }
 

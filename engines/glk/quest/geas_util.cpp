@@ -35,13 +35,13 @@ int eval_int(String s) {
 	String tmp;
 	while (index < s.length() && Common::isSpace(s[index])) {
 		cerr << "  index == " << index << endl;
-		index ++;
+		index++;
 	}
 	if (index == s.length() || !Common::isDigit(s[index])) {
 		cerr << "Failed to match, returning 0" << endl;
 		return 0;
 	}
-	for (index2 = index; index2 < s.length() && Common::isDigit(s[index2]); index2 ++) {
+	for (index2 = index; index2 < s.length() && Common::isDigit(s[index2]); index2++) {
 		cerr << "  index2 == " << index2 << endl;
 	}
 	//;
@@ -55,7 +55,7 @@ int eval_int(String s) {
 	cerr << "arg1 == " << arg1 << endl;
 	index = index2;
 	while (index < s.length() && Common::isSpace(s[index]))
-		++ index;
+		++index;
 	if (index == s.length())
 		return arg1;
 
@@ -69,17 +69,17 @@ int eval_int(String s) {
 	if (String("+-*/").find(symbol) == (int)String::npos)
 		return arg1;
 
-	++ index;
+	++index;
 	while (index < s.length() && Common::isSpace(s[index]))
-		++ index;
-	if (index == s.length() || ! Common::isDigit(s[index])) {
+		++index;
+	if (index == s.length() || !Common::isDigit(s[index])) {
 		if (symbol == '*')
 			return 0;
 		return arg1;
 	}
 	index2 = index + 1;
 	while (index2 < s.length() && Common::isDigit(s[index2]))
-		++ index2;
+		++index2;
 	tmp = s.substr(index, index2 - index);
 	int arg2 = atoi(tmp.c_str());
 
@@ -125,10 +125,9 @@ String nonparam(String type, String var) {
 
 String string_geas_block(const GeasBlock &gb) {
 	ostringstream oss;
-	oss << gb;  // temporary removed TODO
+	oss << gb; // temporary removed TODO
 	return oss.str();
 }
-
 
 bool starts_with(String a, String b) {
 	return (a.length() >= b.length()) && (a.substr(0, b.length()) == b);
@@ -157,7 +156,7 @@ String pcase(String s) {
 }
 
 String ucase(String s) {
-	for (uint i = 0; i < s.length(); i ++)
+	for (uint i = 0; i < s.length(); i++)
 		s[i] = toupper(s[i]);
 	return s;
 }
@@ -165,7 +164,7 @@ String ucase(String s) {
 // There's a good chance s is already all-lowercase, in which case
 // the test will avoid making a copy
 String lcase(String s) {
-	for (uint i = 0; i < s.length(); i ++)
+	for (uint i = 0; i < s.length(); i++)
 		if (Common::isUpper(s[i]))
 			s[i] = tolower(s[i]);
 	return s;
@@ -188,7 +187,7 @@ Common::Array<String> split_param(String s) {
 
 Common::Array<String> split_f_args(String s) {
 	Common::Array<String> rv = split_param(s);
-	for (uint i = 0; i < rv.size(); i ++) {
+	for (uint i = 0; i < rv.size(); i++) {
 		String tmp = rv[i];
 		if (tmp[0] == '_')
 			rv[i][0] = ' ';
@@ -201,7 +200,7 @@ Common::Array<String> split_f_args(String s) {
 void show_split(String s) {
 	Common::Array<String> tmp = split_param(s);
 	cerr << "Splitting <" << s << ">: ";
-	for (uint i = 0; i < tmp.size(); i ++)
+	for (uint i = 0; i < tmp.size(); i++)
 		cerr << "<" << tmp[i] << ">, ";
 	cerr << "\n";
 }
@@ -209,7 +208,7 @@ void show_split(String s) {
 Logger::Nullstreambuf Logger::cnull;
 
 Logger::Logger() : logfilestr_(NULL) { //, cerrbuf_(NULL) {
-/*
+	/*
 	cerr.flush();
 
 	const char *const logfile = getenv("GEAS_LOGFILE");

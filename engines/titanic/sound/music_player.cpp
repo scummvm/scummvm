@@ -27,13 +27,13 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMusicPlayer, CGameObject)
-	ON_MESSAGE(StartMusicMsg)
-	ON_MESSAGE(StopMusicMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(CreateMusicPlayerMsg)
-	ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(StartMusicMsg)
+ON_MESSAGE(StopMusicMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(CreateMusicPlayerMsg)
+ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
 void CMusicPlayer::save(SimpleFile *file, int indent) {

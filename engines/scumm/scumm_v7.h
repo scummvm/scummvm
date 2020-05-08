@@ -36,10 +36,10 @@ class SmushPlayer;
 class ScummEngine_v7 : public ScummEngine_v6 {
 	friend class SmushPlayer;
 	friend class Insane;
+
 public:
 	ScummEngine_v7(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v7() override;
-
 
 protected:
 	int _smushFrameRate;
@@ -58,9 +58,8 @@ public:
 	SmushMixer *_smixer;
 	SmushPlayer *_splayer;
 
-
 	struct LangIndexNode {
-		char tag[12+1];
+		char tag[12 + 1];
 		int32 offset;
 	};
 
@@ -70,7 +69,7 @@ protected:
 	char *_languageBuffer;
 	LangIndexNode *_languageIndex;
 	int _languageIndexSize;
-	char _lastStringTag[12+1];
+	char _lastStringTag[12 + 1];
 
 #if defined(__SYMBIAN32__) // for some reason VC6 cannot find the base class TextObject
 	struct SubtitleText {
@@ -132,10 +131,8 @@ protected:
 
 	void drawVerb(int verb, int mode) override;
 
-
 	void o6_kernelSetFunctions() override;
 };
-
 
 } // End of namespace Scumm
 

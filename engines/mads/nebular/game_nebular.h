@@ -32,15 +32,19 @@ namespace MADS {
 
 namespace Nebular {
 
-enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
+enum StoryMode { STORYMODE_NAUGHTY = 1,
+	             STORYMODE_NICE = 2 };
 
 enum Difficulty {
-	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
+	DIFFICULTY_HARD = 1,
+	DIFFICULTY_MEDIUM = 2,
+	DIFFICULTY_EASY = 3
 };
 
-
 enum ProtectionResult {
-	PROTECTION_SUCCEED = 0, PROTECTION_FAIL = 1, PROTECTION_ESCAPE = 2
+	PROTECTION_SUCCEED = 0,
+	PROTECTION_FAIL = 1,
+	PROTECTION_ESCAPE = 2
 };
 
 enum InventoryObject {
@@ -103,8 +107,10 @@ enum InventoryObject {
 
 class GameNebular : public Game {
 	friend class Game;
+
 private:
 	ProtectionResult checkCopyProtection();
+
 protected:
 	GameNebular(MADSEngine *vm);
 
@@ -115,6 +121,7 @@ protected:
 	void setSectionHandler() override;
 
 	void checkShowDialog() override;
+
 public:
 	NebularGlobals _globals;
 	StoryMode _storyMode;

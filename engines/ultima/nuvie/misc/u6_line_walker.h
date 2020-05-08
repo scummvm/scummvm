@@ -48,7 +48,6 @@ public:
 
 	bool step();
 	bool next(uint32 *x, uint32 *y);
-
 };
 
 } // End of namespace Nuvie

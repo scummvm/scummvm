@@ -33,10 +33,10 @@ namespace Alan3 {
 
 extern void initArray(void *array);
 
-#define isEndOfArray(x) implementationOfIsEndOfList((Aword *) (x))
+#define isEndOfArray(x) implementationOfIsEndOfList((Aword *)(x))
 extern bool implementationOfIsEndOfList(Aword *adr);
 
-#define setEndOfArray(x) implementationOfSetEndOfArray((Aword *) (x))
+#define setEndOfArray(x) implementationOfSetEndOfArray((Aword *)(x))
 extern void implementationOfSetEndOfArray(Aword *adr);
 
 #define lengthOfArray(array) lengthOfArrayImplementation((array), sizeof(*(array)))

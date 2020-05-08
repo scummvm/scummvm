@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader_tlk.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/conversation/conversation.h"
+#include "ultima/ultima4/filesys/u4file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -84,18 +84,14 @@ Dialogue *U4TlkDialogueLoader::load(void *source) {
 	// ... and finally, a few characters in the game have descriptions
 	// that do not begin with a definite (the) or indefinite (a/an)
 	// article.  On those characters, insert the appropriate article.
-	if ((strings[0] == "Iolo")
-	        || (strings[0] == "Tracie")
-	        || (strings[0] == "Dupre")
-	        || (strings[0] == "Traveling Dan"))
+	if ((strings[0] == "Iolo") || (strings[0] == "Tracie") || (strings[0] == "Dupre") || (strings[0] == "Traveling Dan"))
 		strings[2] = Common::String("a ") + strings[2];
 
 	Common::String introBase = Common::String("\nYou meet ") + strings[2] + "\n";
 
 	dlg->setIntro(new Response(introBase + dlg->getPrompt()));
 	dlg->setLongIntro(new Response(introBase +
-	                               "\n" + dlg->getPronoun() + " says: I am " + dlg->getName() + "\n"
-	                               + dlg->getPrompt()));
+	                               "\n" + dlg->getPronoun() + " says: I am " + dlg->getName() + "\n" + dlg->getPrompt()));
 	dlg->setDefaultAnswer(new Response("That I cannot\nhelp thee with."));
 
 	Response *yes = new Response(strings[8]);

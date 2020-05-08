@@ -32,6 +32,7 @@ protected:
 	int _field0;
 	TTsentence *_sentence;
 	int _status;
+
 public:
 	TThist(TTsentence *sentence);
 	virtual ~TThist();

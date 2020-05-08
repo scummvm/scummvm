@@ -72,6 +72,6 @@ public:
 	bool getResInfo(uint32 fileRef, ResInfo &resInfo) override;
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_RESOURCE_H

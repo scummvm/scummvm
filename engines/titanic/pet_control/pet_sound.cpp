@@ -21,11 +21,11 @@
  */
 
 #include "titanic/pet_control/pet_sound.h"
+#include "common/config-manager.h"
+#include "titanic/game_manager.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_real_life.h"
-#include "titanic/game_manager.h"
 #include "titanic/titanic.h"
-#include "common/config-manager.h"
 
 namespace Titanic {
 
@@ -183,7 +183,7 @@ void CPetSound::draw2(CScreenManager *screenManager) {
 
 bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 	if (_musicVolume.checkThumb(pt) || _masterVolume.checkThumb(pt) ||
-		_speechVolume.checkThumb(pt))
+	    _speechVolume.checkThumb(pt))
 		return true;
 
 	if (_parrotVolume.checkThumb(pt)) {
@@ -199,7 +199,7 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 	rectLeft.translate(415, 379);
 	rectRight.translate(567, 378);
 
-	CPetSlider *sliders[4] = { &_masterVolume, &_musicVolume, &_parrotVolume, &_speechVolume };
+	CPetSlider *sliders[4] = {&_masterVolume, &_musicVolume, &_parrotVolume, &_speechVolume};
 	for (int idx = MASTER_SLIDER; idx <= SPEECH_SLIDER; ++idx) {
 		CPetSlider *slider = sliders[idx];
 		const bool isLeft = rectLeft.contains(pt);
@@ -229,7 +229,7 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 
 bool CPetSound::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (_masterVolume.resetThumbFocus()) {
-		_draggingSlider = &_masterVolume; 
+		_draggingSlider = &_masterVolume;
 		getOwner()->startDragging(this, msg);
 		_draggingSliderNum = MASTER_SLIDER;
 		return true;

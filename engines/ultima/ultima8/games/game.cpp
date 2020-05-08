@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/game.h"
-#include "ultima/ultima8/games/u8_game.h"
-#include "ultima/ultima8/games/remorse_game.h"
 #include "ultima/ultima8/conf/setting_manager.h"
+#include "ultima/ultima8/games/remorse_game.h"
+#include "ultima/ultima8/games/u8_game.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -42,7 +42,6 @@ Game::~Game() {
 	assert(_game == this);
 	_game = nullptr;
 }
-
 
 // static
 Game *Game::createGame(GameInfo *info) {

@@ -51,6 +51,7 @@ class CCallbackHandler {
 private:
 	CCamera *_owner;
 	FVector _vector;
+
 public:
 	CCallbackHandler(CCamera *owner, const FVector &v) : _owner(owner), _vector(v) {
 	}
@@ -71,9 +72,11 @@ protected:
 	double _rotationX;
 	double _rotationY;
 	double _rotationZ;
+
 public:
 	int _lockCounter;
 	CCallbackHandler *_callback;
+
 public:
 	CMotionControl(const CNavigationInfo *src);
 	virtual ~CMotionControl();
@@ -119,7 +122,7 @@ public:
 	 * position and orientation
 	 */
 	virtual void transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation) {}
+	                                         const FMatrix &oldOrientation, const FMatrix &newOrientation) {}
 
 	/**
 	 * Start a movement to a given specified destination

@@ -23,20 +23,19 @@
 #ifndef ULTIMA4_SOUND_MUSIC_H
 #define ULTIMA4_SOUND_MUSIC_H
 
-#include "ultima/shared/std/containers.h"
 #include "audio/audiostream.h"
 #include "audio/midiplayer.h"
 #include "audio/mixer.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-#define CAMP_FADE_OUT_TIME          1000
-#define CAMP_FADE_IN_TIME           0
-#define INN_FADE_OUT_TIME           1000
-#define INN_FADE_IN_TIME            5000
+#define CAMP_FADE_OUT_TIME 1000
+#define CAMP_FADE_IN_TIME 0
+#define INN_FADE_OUT_TIME 1000
+#define INN_FADE_IN_TIME 5000
 #define NLOOPS -1
-
 
 class Music : public Audio::MidiPlayer {
 public:
@@ -55,6 +54,7 @@ public:
 	};
 
 	Type _introMid;
+
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
@@ -64,9 +64,11 @@ private:
 	 * Play a given music file if is exists
 	 */
 	bool startMusic(const Common::String &filename);
+
 protected:
 	// Overload Audio::MidiPlayer method
 	void sendToChannel(byte channel, uint32 b) override;
+
 public:
 	Music(Audio::Mixer *mixer);
 	~Music() override;
@@ -87,7 +89,6 @@ public:
 	void playMapMusic();
 
 	void stop() override;
-
 
 	/**
 	 * Fade out the music

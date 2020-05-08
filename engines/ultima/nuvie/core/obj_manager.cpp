@@ -20,31 +20,30 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/core/egg_manager.h"
-#include "ultima/nuvie/core/tile_manager.h"
 #include "ultima/nuvie/core/obj_manager.h"
-#include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/u6_objects.h"
-#include "ultima/nuvie/misc/u6_llist.h"
-#include "ultima/nuvie/files/nuvie_io_file.h"
+#include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/egg_manager.h"
 #include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/core/u6_objects.h"
+#include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/script/script.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/usecode/usecode.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 static const int obj_egg_table[5] = {0,   // NUVIE_GAME_NONE
                                      335, // NUVIE_GAME_U6
-                                     466,   // NUVIE_GAME_MD
+                                     466, // NUVIE_GAME_MD
                                      0,
-                                     230
-                                    };  // NUVIE_GAME_SE
+                                     230}; // NUVIE_GAME_SE
 
 static iAVLKey get_iAVLKey(const void *item) {
 	return ((const ObjTreeNode *)item)->key;
@@ -79,15 +78,15 @@ ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em) {
 
 	config->value("config/GameType", game_type);
 
-//save the egg tile_num incase we want to switch egg display on again.
+	//save the egg tile_num incase we want to switch egg display on again.
 	egg_tile_num = get_obj_tile_num(obj_egg_table[game_type]);
 
 	show_eggs_key = config_get_game_key(config);
 	show_eggs_key.append("/show_eggs");
 
 	config->value(show_eggs_key, show_eggs);
-//if(!show_eggs)
-//  show_egg_objs(false);
+	//if(!show_eggs)
+	//  show_egg_objs(false);
 
 	Std::string custom_tile_str;
 	config->value(config_get_game_key(config) + "/custom_actor_tiles", custom_tile_str, "default");
@@ -153,7 +152,6 @@ bool ObjManager::load_weight_table() {
 	return true;
 }
 
-
 bool ObjManager::load_super_chunk(NuvieIO *chunk_buf, uint8 level, uint8 chunk_offset) {
 	NuvieIOFileRead file;
 	U6LList *list;
@@ -171,7 +169,7 @@ bool ObjManager::load_super_chunk(NuvieIO *chunk_buf, uint8 level, uint8 chunk_o
 	list = new U6LList();
 
 	num_objs = chunk_buf->read2();
-//DEBUG(0,LEVEL_DEBUGGING,"chunk %02d number of objects: %d\n", chunk_offset, num_objs);
+	//DEBUG(0,LEVEL_DEBUGGING,"chunk %02d number of objects: %d\n", chunk_offset, num_objs);
 
 	for (i = 0; i < num_objs; i++) {
 		obj = loadObj(chunk_buf);
@@ -197,13 +195,12 @@ bool ObjManager::load_super_chunk(NuvieIO *chunk_buf, uint8 level, uint8 chunk_o
 				addObjToContainer(list, obj);
 			} else {
 				add_obj(obj); // show remaining objects
-				/*         if(show_eggs || obj->obj_n != obj_egg_table[game_type]) // show remaining objects, hiding eggs if neccecary.
+				              /*         if(show_eggs || obj->obj_n != obj_egg_table[game_type]) // show remaining objects, hiding eggs if neccecary.
 				            {
 				             add_obj(obj);
 				            // print_obj(obj,false);
 				            }*/
 			}
-
 		}
 		//print_obj(obj,false);
 	}
@@ -234,7 +231,7 @@ bool ObjManager::save_super_chunk(NuvieIO *save_buf, uint8 level, uint8 chunk_of
 
 	start_pos = save_buf->position();
 
-//skip the 2 bytes for number of objects.
+	//skip the 2 bytes for number of objects.
 	save_buf->write2(0); // we'll fill this in later on.
 
 	obj_save_count = 0;
@@ -265,7 +262,7 @@ bool ObjManager::save_eggs(NuvieIO *save_buf) {
 
 	start_pos = save_buf->position();
 
-//skip number of objects we will fill that in at the end.
+	//skip number of objects we will fill that in at the end.
 	save_buf->write2(0);
 
 	egg_list = egg_manager->get_egg_list();
@@ -324,8 +321,8 @@ bool ObjManager::save_obj(NuvieIO *save_buf, Obj *obj, uint16 parent_objblk_n) {
 
 	if (obj->is_in_container()) { //obj is in a container
 		//obj->in_container(); // in container
-		obj->x = parent_objblk_n & 0x3ff; //save 10bits in x
-		obj->y &= 0xffc0; //clear lower 6 bits
+		obj->x = parent_objblk_n & 0x3ff;  //save 10bits in x
+		obj->y &= 0xffc0;                  //clear lower 6 bits
 		obj->y |= (parent_objblk_n >> 10); //save top 6bits
 	} else {
 		if (!obj->is_readied()) {
@@ -336,19 +333,19 @@ bool ObjManager::save_obj(NuvieIO *save_buf, Obj *obj, uint16 parent_objblk_n) {
 	if (obj->is_in_inventory(OBJ_DONT_CHECK_PARENT))
 		obj->x = obj->get_actor_holding_obj()->get_actor_num();
 
-//set original status location bits.
+	//set original status location bits.
 	obj->status &= OBJ_STATUS_MASK_SET;
 	switch (obj->get_engine_loc()) {
-	case OBJ_LOC_MAP :
+	case OBJ_LOC_MAP:
 		obj->status |= OBJ_STATUS_ON_MAP;
 		break;
-	case OBJ_LOC_CONT :
+	case OBJ_LOC_CONT:
 		obj->status |= OBJ_STATUS_IN_CONTAINER;
 		break;
-	case OBJ_LOC_INV :
+	case OBJ_LOC_INV:
 		obj->status |= OBJ_STATUS_IN_INVENTORY;
 		break;
-	case OBJ_LOC_READIED :
+	case OBJ_LOC_READIED:
 		obj->status |= OBJ_STATUS_READIED;
 		break;
 	}
@@ -403,7 +400,7 @@ void ObjManager::clean() {
 
 	clean_actor_inventories();
 
-// remove the temporary object list. The objects were deleted from the surface and dungeon trees.
+	// remove the temporary object list. The objects were deleted from the surface and dungeon trees.
 	temp_obj_list.clear();
 
 	for (Std::list<Obj *>::iterator it = tile_obj_list.begin(); it != tile_obj_list.end(); ++it) {
@@ -529,7 +526,7 @@ uint8 ObjManager::is_passable(uint16 x, uint16 y, uint8 level) {
 	uint16 x2 = WRAPPED_COORD((x + 1), level); // wrap on map edge
 	uint16 y2 = WRAPPED_COORD((y + 1), level);
 
-	for (i = x;; i = x2) { // only checks x and x2
+	for (i = x;; i = x2) {     // only checks x and x2
 		for (j = y;; j = y2) { // only checks y and y2
 			obj_list = get_obj_list(i, j, level);
 			if (i == x && j == y && obj_list) {
@@ -567,11 +564,15 @@ uint8 ObjManager::is_passable(uint16 x, uint16 y, uint8 level) {
 					}
 				}
 			}
-			if (j == y) j = y2;
-			else break;
+			if (j == y)
+				j = y2;
+			else
+				break;
 		}
-		if (i == x) i = x2;
-		else break;
+		if (i == x)
+			i = x2;
+		else
+			break;
 	}
 
 	if (object_at_location)
@@ -636,7 +637,7 @@ bool ObjManager::is_damaging(uint16 x, uint16 y, uint8 level) {
 }
 
 bool ObjManager::is_stackable(Obj *obj) {
-// Tile *tile;
+	// Tile *tile;
 
 	if (obj == NULL)
 		return false;
@@ -658,27 +659,27 @@ bool ObjManager::is_stackable(Obj *obj) {
 			} else {
 				return true;
 			}
-		case OBJ_U6_LOCK_PICK: // 0x3F, // lock pick
-		case OBJ_U6_GEM: // 0x4D, // gem
-		case OBJ_U6_ARROW: // 0x37, // arrow
-		case OBJ_U6_BOLT: // 0x38, // bolt
-		case OBJ_U6_BLACK_PEARL: // 0x41, // black pearl
-		case OBJ_U6_BLOOD_MOSS: // 0x42, // bit of blood moss
-		case OBJ_U6_GARLIC: // 0x43, // bulb of garlic
-		case OBJ_U6_GINSENG: // 0x44, // ginseng root
+		case OBJ_U6_LOCK_PICK:     // 0x3F, // lock pick
+		case OBJ_U6_GEM:           // 0x4D, // gem
+		case OBJ_U6_ARROW:         // 0x37, // arrow
+		case OBJ_U6_BOLT:          // 0x38, // bolt
+		case OBJ_U6_BLACK_PEARL:   // 0x41, // black pearl
+		case OBJ_U6_BLOOD_MOSS:    // 0x42, // bit of blood moss
+		case OBJ_U6_GARLIC:        // 0x43, // bulb of garlic
+		case OBJ_U6_GINSENG:       // 0x44, // ginseng root
 		case OBJ_U6_MANDRAKE_ROOT: // 0x45, // mandrake root
-		case OBJ_U6_NIGHTSHADE: // 0x46, // nightshade mushroom
-		case OBJ_U6_SPIDER_SILK: // 0x47, // strand of spidersilk
+		case OBJ_U6_NIGHTSHADE:    // 0x46, // nightshade mushroom
+		case OBJ_U6_SPIDER_SILK:   // 0x47, // strand of spidersilk
 		case OBJ_U6_SULFUROUS_ASH: // 0x48, // bit of sulfurous ash
-		case OBJ_U6_EFFECT: // 0x151, // effect
-		case OBJ_U6_BREAD: // 0x80, // loaf of bread
-		case OBJ_U6_MEAT_PORTION: // 0x81, // portion of meat
-		case OBJ_U6_FLASK_OF_OIL: // 0x53, // flask of oil
-		case OBJ_U6_EGG: // 0x14F, // egg
-		case OBJ_U6_GOLD_NUGGET: // 0x59, // gold nugget
-		case OBJ_U6_ZU_YLEM: // 0x5B, // Zu Ylem
-		case OBJ_U6_SNAKE_VENOM: // 0x5C, // silver snake venom
-		case OBJ_U6_GOLD: // 0x58  // Gold coin
+		case OBJ_U6_EFFECT:        // 0x151, // effect
+		case OBJ_U6_BREAD:         // 0x80, // loaf of bread
+		case OBJ_U6_MEAT_PORTION:  // 0x81, // portion of meat
+		case OBJ_U6_FLASK_OF_OIL:  // 0x53, // flask of oil
+		case OBJ_U6_EGG:           // 0x14F, // egg
+		case OBJ_U6_GOLD_NUGGET:   // 0x59, // gold nugget
+		case OBJ_U6_ZU_YLEM:       // 0x5B, // Zu Ylem
+		case OBJ_U6_SNAKE_VENOM:   // 0x5C, // silver snake venom
+		case OBJ_U6_GOLD:          // 0x58  // Gold coin
 			return true;
 		default:
 			return false;
@@ -821,43 +822,21 @@ bool ObjManager::can_store_obj(Obj *target, Obj *src) {
 		if (src->obj_n == OBJ_U6_TRAP)
 			return false;
 
-		if (target->obj_n == OBJ_U6_BAG
-		        || target->obj_n == OBJ_U6_BACKPACK
-		        || target->obj_n == OBJ_U6_BASKET
-		        || (target->obj_n == OBJ_U6_CRATE && target->frame_n == 0)
-		        || (target->obj_n == OBJ_U6_BARREL && target->frame_n == 0)
-		        || (target->obj_n == OBJ_U6_CHEST && target->frame_n == 0)
-		        || (target->obj_n == OBJ_U6_SPELLBOOK && src->obj_n == OBJ_U6_SPELL
-		            && !target->find_in_container(OBJ_U6_SPELL, src->quality)
-		            && !target->find_in_container(OBJ_U6_SPELL, 255)) // this quality contains all spells
-		        || (target->obj_n == OBJ_U6_VORTEX_CUBE && src->obj_n == OBJ_U6_MOONSTONE))
+		if (target->obj_n == OBJ_U6_BAG || target->obj_n == OBJ_U6_BACKPACK || target->obj_n == OBJ_U6_BASKET || (target->obj_n == OBJ_U6_CRATE && target->frame_n == 0) || (target->obj_n == OBJ_U6_BARREL && target->frame_n == 0) || (target->obj_n == OBJ_U6_CHEST && target->frame_n == 0) || (target->obj_n == OBJ_U6_SPELLBOOK && src->obj_n == OBJ_U6_SPELL && !target->find_in_container(OBJ_U6_SPELL, src->quality) && !target->find_in_container(OBJ_U6_SPELL, 255)) // this quality contains all spells
+		    || (target->obj_n == OBJ_U6_VORTEX_CUBE && src->obj_n == OBJ_U6_MOONSTONE))
 			return true;
 
-		if ((target->is_in_inventory() || Game::get_game()->doubleclick_opens_containers())
-		        && ((target->obj_n == OBJ_U6_CHEST && target->frame_n == 1)
-		            || target->obj_n == OBJ_U6_DEAD_BODY
-		            || target->obj_n == OBJ_U6_MOUSE
-		            || target->obj_n == OBJ_U6_REMAINS
-		            || target->obj_n == OBJ_U6_DRAKE
-		            || target->obj_n == OBJ_U6_MONGBAT))
+		if ((target->is_in_inventory() || Game::get_game()->doubleclick_opens_containers()) && ((target->obj_n == OBJ_U6_CHEST && target->frame_n == 1) || target->obj_n == OBJ_U6_DEAD_BODY || target->obj_n == OBJ_U6_MOUSE || target->obj_n == OBJ_U6_REMAINS || target->obj_n == OBJ_U6_DRAKE || target->obj_n == OBJ_U6_MONGBAT))
 			return true;
 
-		if (Game::get_game()->doubleclick_opens_containers()
-		        && (target->obj_n == OBJ_U6_DESK
-		            || target->obj_n == OBJ_U6_DRAWER
-		            || target->obj_n == OBJ_U6_GRAVE
-		            || target->obj_n == OBJ_U6_REAPER
-		            || target->obj_n == OBJ_U6_DEAD_GARGOYLE
-		            || target->obj_n == OBJ_U6_DEAD_CYCLOPS))
+		if (Game::get_game()->doubleclick_opens_containers() && (target->obj_n == OBJ_U6_DESK || target->obj_n == OBJ_U6_DRAWER || target->obj_n == OBJ_U6_GRAVE || target->obj_n == OBJ_U6_REAPER || target->obj_n == OBJ_U6_DEAD_GARGOYLE || target->obj_n == OBJ_U6_DEAD_CYCLOPS))
 			return true;
 	} else if (game_type == NUVIE_GAME_SE) {
 		if (src->has_container() || usecode->is_container(src))
 			return false;
-		if (target->obj_n == OBJ_SE_JUG || target->obj_n == OBJ_SE_POUCH
-		        || target->obj_n == OBJ_SE_BASKET || target->obj_n == OBJ_SE_POT)
+		if (target->obj_n == OBJ_SE_JUG || target->obj_n == OBJ_SE_POUCH || target->obj_n == OBJ_SE_BASKET || target->obj_n == OBJ_SE_POT)
 			return true;
-		if (target->obj_n == OBJ_SE_MORTAR || target->obj_n == OBJ_SE_GRINDING_STONE
-		        || target->obj_n == OBJ_SE_JAR) {
+		if (target->obj_n == OBJ_SE_MORTAR || target->obj_n == OBJ_SE_GRINDING_STONE || target->obj_n == OBJ_SE_JAR) {
 			switch (src->obj_n) {
 			case OBJ_SE_MAGNESIUM_RIBBON:
 			case OBJ_SE_CHOCOLATL:
@@ -871,7 +850,7 @@ bool ObjManager::can_store_obj(Obj *target, Obj *src) {
 			case OBJ_SE_GUNPOWDER:
 				if (target->obj_n == OBJ_SE_JAR) {
 					if (target->container_count_objects() == 0 || // only allow one object
-					        target->find_in_container(src->obj_n, src->quality))
+					    target->find_in_container(src->obj_n, src->quality))
 						return true;
 					else
 						return false;
@@ -923,9 +902,7 @@ bool ObjManager::can_get_obj(Obj *obj) {
 		return true;
 
 	float weight = get_obj_weight(obj, OBJ_WEIGHT_EXCLUDE_CONTAINER_ITEMS, OBJ_WEIGHT_DONT_SCALE, OBJ_WEIGHT_EXCLUDE_QTY);
-	if ((weight != 0 && weight != 255 && has_toptile(obj) == false
-	        && (!obj->is_on_map() || !Game::get_game()->get_map_window()->tile_is_black(obj->x, obj->y, obj)))
-	        || Game::get_game()->using_hackmove())
+	if ((weight != 0 && weight != 255 && has_toptile(obj) == false && (!obj->is_on_map() || !Game::get_game()->get_map_window()->tile_is_black(obj->x, obj->y, obj))) || Game::get_game()->using_hackmove())
 		return true;
 
 	return false;
@@ -933,17 +910,9 @@ bool ObjManager::can_get_obj(Obj *obj) {
 
 bool ObjManager::has_reduced_weight(uint16 obj_n) {
 	// FIXME: HERE BE HARDCODED VALUES! FIXME: not sure if this list is complete!
-	if (game_type == NUVIE_GAME_U6) { // luteijn: I only know about U6...
-		if ((obj_n == OBJ_U6_GOLD)
-		        || (obj_n == OBJ_U6_BLACK_PEARL) // not using range because don't want to depend on underlying magic numbers relations
-		        || (obj_n == OBJ_U6_BLOOD_MOSS)
-		        || (obj_n == OBJ_U6_GARLIC)
-		        || (obj_n == OBJ_U6_GINSENG)
-		        || (obj_n == OBJ_U6_MANDRAKE_ROOT)
-		        || (obj_n == OBJ_U6_NIGHTSHADE)
-		        || (obj_n == OBJ_U6_SPIDER_SILK)
-		        || (obj_n == OBJ_U6_SULFUROUS_ASH)
-		   ) {
+	if (game_type == NUVIE_GAME_U6) {                               // luteijn: I only know about U6...
+		if ((obj_n == OBJ_U6_GOLD) || (obj_n == OBJ_U6_BLACK_PEARL) // not using range because don't want to depend on underlying magic numbers relations
+		    || (obj_n == OBJ_U6_BLOOD_MOSS) || (obj_n == OBJ_U6_GARLIC) || (obj_n == OBJ_U6_GINSENG) || (obj_n == OBJ_U6_MANDRAKE_ROOT) || (obj_n == OBJ_U6_NIGHTSHADE) || (obj_n == OBJ_U6_SPIDER_SILK) || (obj_n == OBJ_U6_SULFUROUS_ASH)) {
 			return true;
 		}
 	} else if (game_type == NUVIE_GAME_SE) {
@@ -1042,7 +1011,7 @@ U6LList *ObjManager::get_obj_list(uint16 x, uint16 y, uint8 level) {
 }
 
 Tile *ObjManager::get_obj_tile(uint16 obj_n, uint8 frame_n) {
-	return  tile_manager->get_tile(get_obj_tile_num(obj_n) + frame_n);
+	return tile_manager->get_tile(get_obj_tile_num(obj_n) + frame_n);
 }
 
 Tile *ObjManager::get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj) {
@@ -1137,7 +1106,6 @@ Obj *ObjManager::get_obj(uint16 x, uint16 y, uint8 level, bool top_obj, bool inc
 			return obj;
 	}
 
-
 	return NULL;
 }
 
@@ -1177,7 +1145,6 @@ Obj *ObjManager::get_obj_of_type_from_location_inc_multi_tile(uint16 obj_n, sint
 	return NULL;
 }
 
-
 Obj *ObjManager::get_obj_of_type_from_location(uint16 obj_n, uint16 x, uint16 y, uint8 z) {
 	return get_obj_of_type_from_location(obj_n, -1, -1, x, y, z);
 }
@@ -1191,7 +1158,7 @@ Obj *ObjManager::get_obj_of_type_from_location(uint16 obj_n, sint16 quality, sin
 
 	if (obj_list == NULL)
 		return NULL;
-// start from the top of the stack
+	// start from the top of the stack
 	for (link = obj_list->end(); link != NULL; link = link->prev) {
 		obj = (Obj *)link->data;
 		if (obj->obj_n == obj_n) {
@@ -1341,7 +1308,7 @@ Obj *ObjManager::copy_obj(Obj *obj) {
 	 new_obj->y = obj->y;
 	 new_obj->z = obj->z;*/
 
-// should we copy container???
+	// should we copy container???
 	new_obj->container = 0;
 
 	return new_obj;
@@ -1415,7 +1382,7 @@ float ObjManager::get_obj_weight(Obj *obj, bool include_container_items, bool sc
 
 	if (obj->container != NULL && include_container_items == OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS) {
 		for (link = obj->container->start(); link != NULL; link = link->next)
-			/* weight += get_obj_weight(reinterpret_cast<Obj*>(link->data), false);*/ //don't scale container objects yet.
+			/* weight += get_obj_weight(reinterpret_cast<Obj*>(link->data), false);*/                                                 //don't scale container objects yet.
 			weight += get_obj_weight(reinterpret_cast<Obj *>(link->data), OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS, OBJ_WEIGHT_DONT_SCALE); //don't scale container objects yet. luteijn: and use the right flag to do so!
 	}
 
@@ -1436,8 +1403,8 @@ inline bool ObjManager::is_corpse(Obj *obj) {
 		case OBJ_U6_DEAD_BODY:
 		case OBJ_U6_DEAD_CYCLOPS:
 		case OBJ_U6_DEAD_GARGOYLE:
-		case OBJ_U6_DOG: // Kador id_n 135
-		case OBJ_U6_MOUSE: // Sherry id_n 9
+		case OBJ_U6_DOG:           // Kador id_n 135
+		case OBJ_U6_MOUSE:         // Sherry id_n 9
 		case OBJ_U6_HORSE_CARCASS: // Pushme Pullyu id 130, Smith id 132
 			return true;
 		default:
@@ -1451,7 +1418,7 @@ inline bool ObjManager::is_corpse(Obj *obj) {
 		}
 		*/
 	} else { // MD
-		/* TODO - add MD body obj numbers
+		     /* TODO - add MD body obj numbers
 		switch (obj->obj_n) {
 		default:
 			break;
@@ -1469,7 +1436,7 @@ uint16 ObjManager::get_obj_tile_num(Obj *obj) { //assume obj_num is < 1024 :)
 	uint16 obj_num = obj->obj_n;
 	// Savage Empire Tile Object (Get Tile from Map Location)
 	if (game_type == NUVIE_GAME_SE &&
-	        Game::get_game()->get_script()->call_is_tile_object(obj_num)) {
+	    Game::get_game()->get_script()->call_is_tile_object(obj_num)) {
 		return (Game::get_game()->get_game_map()->get_tile(obj->x, obj->y, obj->z)->tile_num);
 	}
 	return get_obj_tile_num(obj_num);
@@ -1491,7 +1458,6 @@ void ObjManager::animate_forwards(Obj *obj, uint32 loop_count) {
 void ObjManager::animate_backwards(Obj *obj, uint32 loop_count) {
 	tile_manager->set_anim_loop(get_obj_tile_num(obj->obj_n), loop_count, 1);
 }
-
 
 U6LList *ObjManager::get_actor_inventory(uint16 actor_num) {
 	if (actor_num >= 256)
@@ -1640,24 +1606,24 @@ Obj *ObjManager::loadObj(NuvieIO *buf) {
 	Obj *obj;
 
 	obj = new Obj();
-//obj->objblk_n = objblk_n;
+	//obj->objblk_n = objblk_n;
 
 	obj->status = buf->read1();
 
-//set new nuvie location bits.
+	//set new nuvie location bits.
 	switch (obj->status & OBJ_STATUS_MASK_GET) {
-	case OBJ_STATUS_ON_MAP :
+	case OBJ_STATUS_ON_MAP:
 		obj->set_on_map(NULL);
-		break;//obj->nuvie_status |= OBJ_LOC_MAP; break;
-	case OBJ_STATUS_IN_CONTAINER :
+		break; //obj->nuvie_status |= OBJ_LOC_MAP; break;
+	case OBJ_STATUS_IN_CONTAINER:
 		obj->set_in_container(NULL);
-		break;//obj->nuvie_status |= OBJ_LOC_CONT; break;
-	case OBJ_STATUS_IN_INVENTORY :
+		break; //obj->nuvie_status |= OBJ_LOC_CONT; break;
+	case OBJ_STATUS_IN_INVENTORY:
 		obj->set_in_inventory();
-		break;//obj->nuvie_status |= OBJ_LOC_INV; break;
-	case OBJ_STATUS_READIED :
+		break; //obj->nuvie_status |= OBJ_LOC_INV; break;
+	case OBJ_STATUS_READIED:
 		obj->readied();
-		break;//obj->nuvie_status |= OBJ_LOC_READIED; break;
+		break; //obj->nuvie_status |= OBJ_LOC_READIED; break;
 	}
 
 	obj->x = buf->read1(); // h
@@ -1682,12 +1648,11 @@ Obj *ObjManager::loadObj(NuvieIO *buf) {
 	if (is_stackable(obj))
 		obj->qty = (uint16)(obj->quality << 8) + obj->qty;
 
-//if(obj->qty == 0)
-//  obj->qty = 1;
+	//if(obj->qty == 0)
+	//  obj->qty = 1;
 
 	return obj;
 }
-
 
 iAVLTree *ObjManager::get_obj_tree(uint16 x, uint16 y, uint8 level) {
 	if (level == 0) {
@@ -1723,7 +1688,7 @@ void ObjManager::update(uint16 x, uint16 y, uint8 z, bool teleport) {
 	cur_blk_x = x >> 3; // x / 8;
 	cur_blk_y = y >> 3; // y / 8;
 
-// We're changing levels so clean out all temp objects on the current level.
+	// We're changing levels so clean out all temp objects on the current level.
 	if (last_obj_blk_z != z) {
 		if (last_obj_blk_z != OBJ_TEMP_INIT)
 			temp_obj_list_clean_level(last_obj_blk_z);
@@ -1737,14 +1702,13 @@ void ObjManager::update(uint16 x, uint16 y, uint8 z, bool teleport) {
 		return;
 	}
 
-//FIX for level change. we want to remove all temps on level change.
+	//FIX for level change. we want to remove all temps on level change.
 	if (cur_blk_x != last_obj_blk_x || cur_blk_y != last_obj_blk_y) {
 		last_obj_blk_x = cur_blk_x;
 		last_obj_blk_y = cur_blk_y;
 
 		temp_obj_list_clean_area(x, y);
 		egg_manager->spawn_eggs(x, y, z, teleport);
-
 	}
 
 	return;
@@ -1791,7 +1755,6 @@ void ObjManager::temp_obj_list_clean_level(uint8 z) {
 
 	return;
 }
-
 
 // Clean objects more than 19 tiles from position
 void ObjManager::temp_obj_list_clean_area(uint16 x, uint16 y) {
@@ -1898,22 +1861,22 @@ void ObjManager::print_obj(Obj *obj, bool in_container, uint8 indent) {
 
 	DEBUG(1, LEVEL_INFORMATIONAL, "engine loc: ");
 	switch (obj->get_engine_loc()) {
-	case OBJ_LOC_MAP :
+	case OBJ_LOC_MAP:
 		DEBUG(1, LEVEL_INFORMATIONAL, "MAP");
 		break;
-	case OBJ_LOC_CONT :
+	case OBJ_LOC_CONT:
 		DEBUG(1, LEVEL_INFORMATIONAL, "CONTAINER");
 		break;
-	case OBJ_LOC_INV :
+	case OBJ_LOC_INV:
 		DEBUG(1, LEVEL_INFORMATIONAL, "INVENTORY");
 		break;
-	case OBJ_LOC_READIED :
+	case OBJ_LOC_READIED:
 		DEBUG(1, LEVEL_INFORMATIONAL, "INVENTORY READIED");
 		break;
-	case OBJ_LOC_NONE :
+	case OBJ_LOC_NONE:
 		DEBUG(1, LEVEL_INFORMATIONAL, "NONE");
 		break;
-	default :
+	default:
 		DEBUG(1, LEVEL_INFORMATIONAL, "**UNKNOWN**");
 		break;
 	}
@@ -1923,24 +1886,24 @@ void ObjManager::print_obj(Obj *obj, bool in_container, uint8 indent) {
 
 	DEBUG(1, LEVEL_INFORMATIONAL, "parent (");
 	switch (obj->get_engine_loc()) {
-	case OBJ_LOC_MAP :
+	case OBJ_LOC_MAP:
 		DEBUG(1, LEVEL_INFORMATIONAL, "U6LList");
 		break;
-	case OBJ_LOC_CONT :
+	case OBJ_LOC_CONT:
 		DEBUG(1, LEVEL_INFORMATIONAL, "Obj");
 		break;
-	case OBJ_LOC_INV :
-	case OBJ_LOC_READIED :
+	case OBJ_LOC_INV:
+	case OBJ_LOC_READIED:
 		DEBUG(1, LEVEL_INFORMATIONAL, "Actor");
 		break;
-	default :
+	default:
 		DEBUG(1, LEVEL_INFORMATIONAL, "void");
 		break;
 	}
 	DEBUG(1, LEVEL_INFORMATIONAL, " *) %p\n", obj->parent);
 
 	print_indent(LEVEL_INFORMATIONAL, indent);
-// DEBUG(1,LEVEL_DEBUGGING,"objblk_n: %d\n", obj->objblk_n);
+	// DEBUG(1,LEVEL_DEBUGGING,"objblk_n: %d\n", obj->objblk_n);
 
 	print_indent(LEVEL_INFORMATIONAL, indent);
 	DEBUG(1, LEVEL_INFORMATIONAL, "obj_n: %d\n", obj->obj_n);
@@ -2071,8 +2034,7 @@ bool ObjManager::list_add_obj(U6LList *llist, Obj *obj, bool stack_objects, uint
 			stack_with = (Obj *)link->data;
 			link = link->next;
 
-			if (stack_with->obj_n == obj->obj_n && stack_with->frame_n == obj->frame_n
-			        && stack_with->quality == obj->quality && is_stackable(stack_with)) {
+			if (stack_with->obj_n == obj->obj_n && stack_with->frame_n == obj->frame_n && stack_with->quality == obj->quality && is_stackable(stack_with)) {
 				new_qty = obj->qty + stack_with->qty;
 				obj->qty = new_qty;
 				llist->addAtPos(llist->findPos(stack_with), obj);
@@ -2096,14 +2058,13 @@ bool ObjManager::list_add_obj(U6LList *llist, Obj *obj, bool stack_objects, uint
 void ObjManager::startObjs() {
 	uint8 i;
 
-//iterate through surface chunks.
+	//iterate through surface chunks.
 	for (i = 0; i < 64; i++)
 		start_obj_usecode(surface[i]);
 
-//iterate through dungeon chunks.
+	//iterate through dungeon chunks.
 	for (i = 0; i < 5; i++)
 		start_obj_usecode(dungeon[i]);
-
 }
 
 inline void ObjManager::start_obj_usecode(iAVLTree *obj_tree) {
@@ -2123,7 +2084,6 @@ inline void ObjManager::start_obj_usecode(iAVLTree *obj_tree) {
 		}
 	}
 }
-
 
 /* Subtract an object stack with quantity set to `count' from original object
  * stack `obj'.
@@ -2165,23 +2125,23 @@ bool ObjManager::unlink_from_engine(Obj *obj, bool run_usecode) {
 	Obj *cont_obj;
 
 	switch (obj->get_engine_loc()) {
-	case OBJ_LOC_NONE :
+	case OBJ_LOC_NONE:
 		break;
-	case OBJ_LOC_MAP :
+	case OBJ_LOC_MAP:
 		remove_obj_from_map(obj);
 		break;
-// inventory_remove_obj unreadies
-	case OBJ_LOC_READIED :/* a = (Actor *)obj->parent;
+		// inventory_remove_obj unreadies
+	case OBJ_LOC_READIED: /* a = (Actor *)obj->parent;
                            a->remove_readied_object(obj, run_usecode);
                            a->inventory_remove_obj(obj, run_usecode);
                            break;
 */
-	case OBJ_LOC_INV :
+	case OBJ_LOC_INV:
 		a = (Actor *)obj->parent;
 		a->inventory_remove_obj(obj, run_usecode);
 		break;
 
-	case OBJ_LOC_CONT :
+	case OBJ_LOC_CONT:
 		cont_obj = obj->get_container_obj();
 		if (cont_obj)
 			cont_obj->remove(obj); //remove from parent container.

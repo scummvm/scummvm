@@ -23,12 +23,12 @@
 #ifndef GUI_DIALOG_H
 #define GUI_DIALOG_H
 
+#include "common/keyboard.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/keyboard.h"
 
-#include "gui/object.h"
 #include "gui/ThemeEngine.h"
+#include "gui/object.h"
 
 namespace Common {
 struct Event;
@@ -42,26 +42,27 @@ class Widget;
 
 // Some "common" commands sent to handleCommand()
 enum {
-	kCloseWithResultCmd  = 'clsr',
-	kCloseCmd            = 'clos',
-	kOKCmd               = 'ok  '
+	kCloseWithResultCmd = 'clsr',
+	kCloseCmd = 'clos',
+	kOKCmd = 'ok  '
 };
 
 class Dialog : public GuiObject {
 	friend class GuiManager;
 	friend class EventRecorder;
 	friend class Tooltip;
+
 protected:
-	Widget	*_mouseWidget;
-	Widget  *_focusedWidget;
-	Widget  *_dragWidget;
-	Widget 	*_tickleWidget;
-	bool	_visible;
+	Widget *_mouseWidget;
+	Widget *_focusedWidget;
+	Widget *_dragWidget;
+	Widget *_tickleWidget;
+	bool _visible;
 
 	ThemeEngine::DialogBackground _backgroundType;
 
 private:
-	int		_result;
+	int _result;
 
 public:
 	Dialog(int x, int y, int w, int h);
@@ -69,10 +70,10 @@ public:
 
 	virtual int runModal();
 
-	bool	isVisible() const override	{ return _visible; }
+	bool isVisible() const override { return _visible; }
 
-	void	releaseFocus() override;
-	void	setFocusWidget(Widget *widget);
+	void releaseFocus() override;
+	void setFocusWidget(Widget *widget);
 	Widget *getFocusWidget() { return _focusedWidget; }
 
 	void setTickleWidget(Widget *widget) { _tickleWidget = widget; }
@@ -81,7 +82,10 @@ public:
 
 	void reflowLayout() override;
 	virtual void lostFocus();
-	virtual void receivedFocus(int x = -1, int y = -1) { if (x >= 0 && y >= 0) handleMouseMoved(x, y, 0); }
+	virtual void receivedFocus(int x = -1, int y = -1) {
+		if (x >= 0 && y >= 0)
+			handleMouseMoved(x, y, 0);
+	}
 
 protected:
 	virtual void open();

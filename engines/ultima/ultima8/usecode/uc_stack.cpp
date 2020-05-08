@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/uc_stack.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,7 +36,8 @@ void UCStack::save(Common::WriteStream *ws) {
 bool UCStack::load(Common::ReadStream *rs, uint32 version) {
 	_size = rs->readUint32LE();
 #ifdef USE_DYNAMIC_UCSTACK
-	if (_buf) delete[] _buf;
+	if (_buf)
+		delete[] _buf;
 	_buf = new uint8[_size];
 #else
 	if (_size > sizeof(_bufArray)) {

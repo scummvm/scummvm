@@ -155,10 +155,11 @@ void ComposerEngine::sync<OldScript *>(Common::Serializer &ser, OldScript *&data
 template<>
 void ComposerEngine::sync<QueuedScript>(Common::Serializer &ser, QueuedScript &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	ser.syncAsUint32LE(data._baseTime);
-	ser.syncAsUint32LE(data._duration);	
+	ser.syncAsUint32LE(data._duration);
 	ser.syncAsUint32LE(data._count);
 	ser.syncAsUint16LE(data._scriptId);
-	if (ser.isLoading()) data._baseTime += _timeDelta;
+	if (ser.isLoading())
+		data._baseTime += _timeDelta;
 }
 template<>
 void ComposerEngine::sync<Pipe *>(Common::Serializer &ser, Pipe *&data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
@@ -247,24 +248,23 @@ void ComposerEngine::sync<Animation *>(Common::Serializer &ser, Animation *&data
 }
 template<>
 void ComposerEngine::sync<Sprite>(Common::Serializer &ser, Sprite &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
-		ser.syncAsUint16LE(data._id);
-		ser.syncAsUint16LE(data._animId);
-		ser.syncAsSint16LE(data._pos.x);
-		ser.syncAsSint16LE(data._pos.y);
-		ser.syncAsUint16LE(data._surface.w);
-		ser.syncAsUint16LE(data._surface.h);
-		ser.syncAsUint16LE(data._surface.pitch);
-		ser.syncAsUint16LE(data._zorder);
-		if (ser.isLoading())
-			data._surface.setPixels(malloc(data._surface.h * data._surface.pitch));
-		byte *pix = static_cast<byte *>(data._surface.getPixels());
-		for (uint16 y = 0; y < data._surface.h; y++) {
-			for (uint16 x = 0; x < data._surface.w; x++) {
-				ser.syncAsByte(pix[x]);
-			}
-			pix += data._surface.pitch;
+	ser.syncAsUint16LE(data._id);
+	ser.syncAsUint16LE(data._animId);
+	ser.syncAsSint16LE(data._pos.x);
+	ser.syncAsSint16LE(data._pos.y);
+	ser.syncAsUint16LE(data._surface.w);
+	ser.syncAsUint16LE(data._surface.h);
+	ser.syncAsUint16LE(data._surface.pitch);
+	ser.syncAsUint16LE(data._zorder);
+	if (ser.isLoading())
+		data._surface.setPixels(malloc(data._surface.h * data._surface.pitch));
+	byte *pix = static_cast<byte *>(data._surface.getPixels());
+	for (uint16 y = 0; y < data._surface.h; y++) {
+		for (uint16 x = 0; x < data._surface.w; x++) {
+			ser.syncAsByte(pix[x]);
 		}
-
+		pix += data._surface.pitch;
+	}
 }
 
 Common::String ComposerEngine::getSaveStateName(int slot) const {
@@ -280,7 +280,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	Common::Serializer ser(in, NULL);
 	byte magic[4];
 	ser.syncBytes(magic, 4);
-	if (magic[0] != 'C' || magic[1] != 'M' || magic[2] != 'P' || magic[3] != 'S') 
+	if (magic[0] != 'C' || magic[1] != 'M' || magic[2] != 'P' || magic[3] != 'S')
 		return Common::kUnknownError;
 
 	ser.syncVersion(0);
@@ -297,9 +297,9 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 
 	// Unload all Libraries
 	Common::Array<uint16> libIds;
-	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++) 
+	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
 		libIds.push_back((*i)._id);
-	for (uint32 i = 0; i < libIds.size(); i++) 
+	for (uint32 i = 0; i < libIds.size(); i++)
 		unloadLibrary(libIds[i]);
 
 	syncListReverse<Library>(ser, _libraries);
@@ -413,7 +413,8 @@ Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc
 	ser.syncAsSint16LE(_currSoundPriority);
 	int16 audioBuffer[22050];
 	int32 numSamples = _audioStream->readBuffer(audioBuffer, 22050);
-	if (numSamples  == -1) numSamples = 0;
+	if (numSamples == -1)
+		numSamples = 0;
 	ser.syncAsSint32LE(numSamples);
 	for (int32 i = 0; i < numSamples; i++)
 		ser.syncAsSint16LE(audioBuffer[i]);

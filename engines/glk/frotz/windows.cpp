@@ -21,12 +21,12 @@
  */
 
 #include "glk/frotz/windows.h"
+#include "glk/conf.h"
 #include "glk/frotz/frotz.h"
-#include "glk/window_pair.h"
 #include "glk/window_graphics.h"
+#include "glk/window_pair.h"
 #include "glk/window_text_buffer.h"
 #include "glk/window_text_grid.h"
-#include "glk/conf.h"
 
 namespace Glk {
 namespace Frotz {
@@ -71,7 +71,6 @@ void Windows::setup(bool isVersion6) {
 		w[FONT_NUMBER] = TEXT_FONT;
 		w[FONT_SIZE] = (mi._cellH << 8) | mi._cellW;
 
-
 		PropFontInfo &pi = g_conf->_propInfo;
 		w._quotes = pi._quotes;
 		w._dashes = pi._quotes;
@@ -104,7 +103,7 @@ void Windows::showTextWindows() {
 /*--------------------------------------------------------------------------*/
 
 Window::Window() : _windows(nullptr), _win(nullptr), _quotes(0), _dashes(0), _spaces(0), _index(-1),
-		_currFont(TEXT_FONT), _prevFont(TEXT_FONT), _tempFont(TEXT_FONT), _currStyle(0), _oldStyle(0) {
+                   _currFont(TEXT_FONT), _prevFont(TEXT_FONT), _tempFont(TEXT_FONT), _currStyle(0), _oldStyle(0) {
 	Common::fill(_properties, _properties + TRUE_BG_COLOR + 1, 0);
 	_properties[Y_POS] = _properties[X_POS] = 1;
 	_properties[Y_CURSOR] = _properties[X_CURSOR] = 1;
@@ -131,7 +130,7 @@ void Window::update() {
 	_properties[RIGHT_MARGIN] = (win ? win->_radjw : 0) / cellW;
 	_properties[FONT_SIZE] = (g_conf->_monoInfo._cellH << 8) | g_conf->_monoInfo._cellW;
 }
- 
+
 Window &Window::operator=(winid_t win) {
 	_win = win;
 
@@ -229,7 +228,7 @@ void Window::setCursor(const Point &newPos) {
 void Window::setCursor() {
 	if (dynamic_cast<TextGridWindow *>(_win)) {
 		g_vm->glk_window_move_cursor(_win, (_properties[X_CURSOR] - 1) / g_vm->h_font_width,
-			(_properties[Y_CURSOR] - 1) / g_vm->h_font_height);
+		                             (_properties[Y_CURSOR] - 1) / g_vm->h_font_height);
 	}
 }
 
@@ -329,27 +328,27 @@ void Window::updateStyle() {
 
 	if (style & FIXED_WIDTH_STYLE) {
 		if (_currFont == GRAPHICS_FONT)
-			_win->_stream->setStyle(style_User1);			// character graphics
+			_win->_stream->setStyle(style_User1); // character graphics
 		else if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
-			_win->_stream->setStyle(style_BlockQuote);	// monoz
+			_win->_stream->setStyle(style_BlockQuote); // monoz
 		else if (style & EMPHASIS_STYLE)
-			_win->_stream->setStyle(style_Alert);			// monoi
+			_win->_stream->setStyle(style_Alert); // monoi
 		else if (style & BOLDFACE_STYLE)
-			_win->_stream->setStyle(style_Subheader);		// monob
+			_win->_stream->setStyle(style_Subheader); // monob
 		else
-			_win->_stream->setStyle(style_Preformatted);	// monor
+			_win->_stream->setStyle(style_Preformatted); // monor
 
 		MonoFontInfo &fi = g_vm->_conf->_monoInfo;
 		_properties[FONT_SIZE] = (fi._cellH << 8) | fi._cellW;
 	} else {
 		if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
-			_win->_stream->setStyle(style_Note);			// propz
+			_win->_stream->setStyle(style_Note); // propz
 		else if (style & EMPHASIS_STYLE)
-			_win->_stream->setStyle(style_Emphasized);	// propi
+			_win->_stream->setStyle(style_Emphasized); // propi
 		else if (style & BOLDFACE_STYLE)
-			_win->_stream->setStyle(style_Header);		// propb
+			_win->_stream->setStyle(style_Header); // propb
 		else
-			_win->_stream->setStyle(style_Normal);		// propr
+			_win->_stream->setStyle(style_Normal); // propr
 
 		PropFontInfo &fi = g_vm->_conf->_propInfo;
 		_properties[FONT_SIZE] = (fi._cellH << 8) | fi._cellW;
@@ -365,11 +364,11 @@ Rect Window::getBounds() const {
 
 	if (g_vm->h_version < V5)
 		return Rect((_properties[X_POS] - 1) * g_vm->h_font_width, (_properties[Y_POS] - 1) * g_vm->h_font_height,
-			(_properties[X_POS] - 1 + _properties[X_SIZE]) * g_vm->h_font_width,
-			(_properties[Y_POS] - 1 + _properties[Y_SIZE]) * g_vm->h_font_height);
+		            (_properties[X_POS] - 1 + _properties[X_SIZE]) * g_vm->h_font_width,
+		            (_properties[Y_POS] - 1 + _properties[Y_SIZE]) * g_vm->h_font_height);
 
 	return Rect(_properties[X_POS] - 1, _properties[Y_POS] - 1, _properties[X_POS] - 1 + _properties[X_SIZE],
-		_properties[Y_POS] - 1 + _properties[Y_SIZE]);
+	            _properties[Y_POS] - 1 + _properties[Y_SIZE]);
 }
 
 void Window::setReverseVideo(bool reverse) {
@@ -380,15 +379,15 @@ void Window::createGlkWindow() {
 	if (g_vm->h_version == V6)
 		_windows->showTextWindows();
 
-	// Create a new window	
+	// Create a new window
 	if (_index != 0 || (_currStyle & FIXED_WIDTH_STYLE)) {
 		// Text grid window
 		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
-			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextGrid, 0);
+		                             winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextGrid, 0);
 	} else {
 		// text buffer window
 		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
-			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextBuffer, 0);
+		                             winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextBuffer, 0);
 	}
 
 	updateStyle();

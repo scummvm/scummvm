@@ -50,4 +50,4 @@ HardcodedStrings &Assets::getHardcodedStrings() {
 	return _hardcodedStrings;
 }
 
-}
+} // namespace MutationOfJB

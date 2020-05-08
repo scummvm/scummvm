@@ -56,6 +56,6 @@ public:
 	bool _debugGodmodeStamina;
 	bool _debugNoclip;
 };
-}
+} // namespace DM
 
 #endif

@@ -20,21 +20,20 @@
  *
  */
 
+#include "mohawk/myst_stacks/demo.h"
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_graphics.h"
-#include "mohawk/myst_stacks/demo.h"
 
 #include "common/system.h"
 
 namespace Mohawk {
 namespace MystStacks {
 
-Demo::Demo(MohawkEngine_Myst *vm) :
-		Intro(vm, kDemoStack),
-		_returnToMenuRunning(false),
-		_returnToMenuStep(0),
-		_returnToMenuNextTime(0) {
+Demo::Demo(MohawkEngine_Myst *vm) : Intro(vm, kDemoStack),
+                                    _returnToMenuRunning(false),
+                                    _returnToMenuStep(0),
+                                    _returnToMenuNextTime(0) {
 	setupOpcodes();
 }
 

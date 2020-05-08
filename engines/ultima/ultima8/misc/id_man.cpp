@@ -20,21 +20,25 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 idMan::idMan(uint16 begin, uint16 maxEnd, uint16 startCount)
-	: _begin(begin), _maxEnd(maxEnd), _startCount(startCount) {
+    : _begin(begin), _maxEnd(maxEnd), _startCount(startCount) {
 	// 0 is always reserved, as is 65535
-	if (_begin == 0) _begin = 1;
-	if (_maxEnd == 65535) _maxEnd = 65534;
-	if (_startCount == 0) _startCount = _maxEnd - _begin + 1;
+	if (_begin == 0)
+		_begin = 1;
+	if (_maxEnd == 65535)
+		_maxEnd = 65534;
+	if (_startCount == 0)
+		_startCount = _maxEnd - _begin + 1;
 
 	_end = _begin + _startCount - 1;
-	if (_end > _maxEnd) _end = _maxEnd;
+	if (_end > _maxEnd)
+		_end = _maxEnd;
 
 	_ids.resize(_end + 1);
 	clearAll();
@@ -48,18 +52,20 @@ void idMan::clearAll(uint16 new_max) {
 		_maxEnd = new_max;
 
 	_end = _begin + _startCount - 1;
-	if (_end > _maxEnd) _end = _maxEnd;
+	if (_end > _maxEnd)
+		_end = _maxEnd;
 	_ids.resize(_end + 1);
 
 	_first = _begin;
-	_last  = _end;
+	_last = _end;
 	_usedCount = 0;
 
 	uint16 i;
-	for (i = 0; i < _first; i++) _ids[i] = 0;     // NPCs always used
-	for (; i < _last;  i++) _ids[i] = i + 1;       // Free IDs
-	_ids[_last] = 0;                              // Terminates the list
-
+	for (i = 0; i < _first; i++)
+		_ids[i] = 0; // NPCs always used
+	for (; i < _last; i++)
+		_ids[i] = i + 1; // Free IDs
+	_ids[_last] = 0;     // Terminates the list
 }
 
 uint16 idMan::getNewID() {
@@ -85,20 +91,22 @@ uint16 idMan::getNewID() {
 
 	// If there is no _first, there is no list, cause there's none left
 	// So clear the _last pointer
-	if (!_first) _last = 0;
+	if (!_first)
+		_last = 0;
 
 	_usedCount++;
 
 	return id;
-
 }
 
 void idMan::expand() {
-	if (_end == _maxEnd) return;
+	if (_end == _maxEnd)
+		return;
 
 	uint16 old_end = _end;
 	unsigned int new_end = _end * 2;
-	if (new_end > _maxEnd) new_end = _maxEnd;
+	if (new_end > _maxEnd)
+		new_end = _maxEnd;
 	_end = new_end;
 	_ids.resize(_end + 1);
 
@@ -137,7 +145,8 @@ bool idMan::reserveID(uint16 id) {
 	if (id == _first) {
 		_first = _ids[id];
 		_ids[id] = 0;
-		if (!_first) _last = 0;
+		if (!_first)
+			_last = 0;
 		return true;
 	}
 
@@ -164,8 +173,10 @@ void idMan::clearID(uint16 id) {
 		// If there is a _last, then set the _last's next to us
 		// or if there isn't a _last, obviously no list exists,
 		// so set the _first to us
-		if (_last) _ids[_last] = id;
-		else _first = id;
+		if (_last)
+			_ids[_last] = id;
+		else
+			_first = id;
 
 		// Set the _end to us
 		_last = id;

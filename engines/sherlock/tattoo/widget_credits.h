@@ -28,7 +28,7 @@
 
 namespace Sherlock {
 
-	class SherlockEngine;
+class SherlockEngine;
 
 namespace Tattoo {
 
@@ -38,8 +38,7 @@ struct CreditLine {
 	int _width;
 	Common::String _line, _line2;
 
-	CreditLine(const Common::String &line, const Common::Point &pt, int width) :
-		_line(line), _position(pt), _width(width), _xOffset(0) {}
+	CreditLine(const Common::String &line, const Common::Point &pt, int width) : _line(line), _position(pt), _width(width), _xOffset(0) {}
 };
 
 class WidgetCredits {
@@ -48,6 +47,7 @@ private:
 	Common::Array<CreditLine> _creditLines;
 	int _creditSpeed;
 	bool _creditsActive;
+
 public:
 	WidgetCredits(SherlockEngine *vm);
 

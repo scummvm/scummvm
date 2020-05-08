@@ -84,7 +84,7 @@ void Combat::change() {
 	}
 }
 
-bool Combat::isActive() const{
+bool Combat::isActive() const {
 	return _active;
 }
 
@@ -97,19 +97,19 @@ void Combat::disable() {
 }
 
 void Combat::setHitSound(int ammoType, int column, int soundId) {
-	_hitSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * ammoType + column] = soundId;
+	_hitSoundId[(kSoundCount / _vm->_settings->getAmmoTypesCount()) * ammoType + column] = soundId;
 }
 
 void Combat::setMissSound(int ammoType, int column, int soundId) {
-	_missSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * ammoType + column] = soundId;
+	_missSoundId[(kSoundCount / _vm->_settings->getAmmoTypesCount()) * ammoType + column] = soundId;
 }
 
 int Combat::getHitSound() const {
-	return _hitSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
+	return _hitSoundId[(kSoundCount / _vm->_settings->getAmmoTypesCount()) * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
 }
 
 int Combat::getMissSound() const {
-	return _missSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
+	return _missSoundId[(kSoundCount / _vm->_settings->getAmmoTypesCount()) * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
 }
 
 void Combat::shoot(int actorId, Vector3 &to, int screenX) {
@@ -178,7 +178,7 @@ void Combat::shoot(int actorId, Vector3 &to, int screenX) {
 	}
 }
 
-int Combat::findFleeWaypoint(int setId, int enemyId, const Vector3& position) const {
+int Combat::findFleeWaypoint(int setId, int enemyId, const Vector3 &position) const {
 	float min = -1.0f;
 	int result = -1;
 	for (int i = 0; i < (int)_fleeWaypoints.size(); ++i) {

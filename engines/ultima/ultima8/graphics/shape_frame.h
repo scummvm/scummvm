@@ -31,7 +31,6 @@ class RawShapeFrame;
 /** A decompressed version of the RawShapeFrame for easier rendering */
 class ShapeFrame {
 public:
-
 	ShapeFrame(const RawShapeFrame *rawframe);
 	~ShapeFrame();
 
@@ -41,9 +40,9 @@ public:
 	uint8 *_pixels;
 	uint8 *_mask;
 
-	bool hasPoint(int32 x, int32 y) const;  // Check to see if a point is in the frame
+	bool hasPoint(int32 x, int32 y) const; // Check to see if a point is in the frame
 
-	uint8 getPixelAtPoint(int32 x, int32 y) const;  // Get the pixel at the point
+	uint8 getPixelAtPoint(int32 x, int32 y) const; // Get the pixel at the point
 };
 
 } // End of namespace Ultima8

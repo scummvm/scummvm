@@ -36,51 +36,51 @@ namespace Tattoo {
 // Animation sequence identifiers for characters
 enum TattooSequences {
 	// Walk Sequences Numbers for NPCs
-	WALK_UP			= 0,
-	WALK_UPRIGHT		= 1,
-	WALK_RIGHT		= 2,
-	WALK_DOWNRIGHT	= 3,
-	WALK_DOWN		= 4,
-	WALK_DOWNLEFT	= 5,
-	WALK_LEFT		= 6,
-	WALK_UPLEFT		= 7,
+	WALK_UP = 0,
+	WALK_UPRIGHT = 1,
+	WALK_RIGHT = 2,
+	WALK_DOWNRIGHT = 3,
+	WALK_DOWN = 4,
+	WALK_DOWNLEFT = 5,
+	WALK_LEFT = 6,
+	WALK_UPLEFT = 7,
 
 	// Stop Sequences Numbers for NPCs
-	STOP_UP			= 8,
-	STOP_UPRIGHT		= 9,
-	STOP_RIGHT		= 10,
-	STOP_DOWNRIGHT	= 11,
-	STOP_DOWN		= 12,
-	STOP_DOWNLEFT	= 13,
-	STOP_LEFT		= 14,
-	STOP_UPLEFT		= 15,
+	STOP_UP = 8,
+	STOP_UPRIGHT = 9,
+	STOP_RIGHT = 10,
+	STOP_DOWNRIGHT = 11,
+	STOP_DOWN = 12,
+	STOP_DOWNLEFT = 13,
+	STOP_LEFT = 14,
+	STOP_UPLEFT = 15,
 
 	// NPC Talk Sequence Numbers
-	TALK_UPRIGHT		= 16,
-	TALK_RIGHT		= 17,
-	TALK_DOWNRIGHT	= 18,
-	TALK_DOWNLEFT	= 19,
-	TALK_LEFT		= 20,
-	TALK_UPLEFT		= 21,
+	TALK_UPRIGHT = 16,
+	TALK_RIGHT = 17,
+	TALK_DOWNRIGHT = 18,
+	TALK_DOWNLEFT = 19,
+	TALK_LEFT = 20,
+	TALK_UPLEFT = 21,
 
 	// NPC Listen Sequence Numbers
-	LISTEN_UPRIGHT	= 22,
-	LISTEN_RIGHT		= 23,
-	LISTEN_DOWNRIGHT	= 24,
-	LISTEN_DOWNLEFT	= 25,
-	LISTEN_LEFT		= 26,
-	LISTEN_UPLEFT	= 27
+	LISTEN_UPRIGHT = 22,
+	LISTEN_RIGHT = 23,
+	LISTEN_DOWNRIGHT = 24,
+	LISTEN_DOWNLEFT = 25,
+	LISTEN_LEFT = 26,
+	LISTEN_UPLEFT = 27
 };
 
 enum NpcPath {
-	NPCPATH_SET_DEST		= 1,
-	NPCPATH_PAUSE			= 2,
-	NPCPATH_SET_TALK_FILE	= 3,
-	NPCPATH_CALL_TALK_FILE	= 4,
-	NPCPATH_TAKE_NOTES		= 5,
-	NPCPATH_FACE_HOLMES		= 6,
-	NPCPATH_PATH_LABEL		= 7,
-	NPCPATH_GOTO_LABEL		= 8,
+	NPCPATH_SET_DEST = 1,
+	NPCPATH_PAUSE = 2,
+	NPCPATH_SET_TALK_FILE = 3,
+	NPCPATH_CALL_TALK_FILE = 4,
+	NPCPATH_TAKE_NOTES = 5,
+	NPCPATH_FACE_HOLMES = 6,
+	NPCPATH_PATH_LABEL = 7,
+	NPCPATH_GOTO_LABEL = 8,
 	NPCPATH_IFFLAG_GOTO_LABEL = 9
 };
 
@@ -94,12 +94,13 @@ struct SavedNPCPath {
 
 	SavedNPCPath();
 	SavedNPCPath(byte path[MAX_NPC_PATH], int npcIndex, int npcPause, const Point32 &position,
-		int npcFacing, bool lookHolmes);
+	             int npcFacing, bool lookHolmes);
 };
 
-class TattooPerson: public Person {
+class TattooPerson : public Person {
 private:
 	Point32 _nextDest;
+
 private:
 	bool checkCollision() const;
 
@@ -107,11 +108,13 @@ private:
 	 * Free the alternate graphics used by NPCs
 	 */
 	void freeAltGraphics();
+
 protected:
 	/**
 	 * Get the source position for a character potentially affected by scaling
 	 */
 	Common::Point getSourcePoint() const override;
+
 public:
 	Common::Stack<SavedNPCPath> _pathStack;
 	int _npcIndex;
@@ -126,6 +129,7 @@ public:
 	int _tempScaleVal;
 	bool _updateNPCPath;
 	bool _lookHolmes;
+
 public:
 	TattooPerson();
 	~TattooPerson() override;
@@ -175,7 +179,6 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Serializer &s);
-
 
 	/**
 	 * Walk Holmes to the NPC

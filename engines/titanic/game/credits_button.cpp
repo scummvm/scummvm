@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCreditsButton, CBackground)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
 CCreditsButton::CCreditsButton() : CBackground(), _fieldE0(1) {

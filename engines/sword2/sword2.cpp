@@ -37,20 +37,20 @@
 #include "engines/metaengine.h"
 #include "engines/util.h"
 
-#include "sword2/sword2.h"
-#include "sword2/defs.h"
-#include "sword2/header.h"
 #include "sword2/console.h"
 #include "sword2/controls.h"
+#include "sword2/defs.h"
+#include "sword2/header.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
 #include "sword2/mouse.h"
 #include "sword2/resman.h"
 #include "sword2/router.h"
+#include "sword2/saveload.h"
 #include "sword2/screen.h"
 #include "sword2/sound.h"
-#include "sword2/saveload.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -64,23 +64,21 @@ struct GameSettings {
 };
 
 static const GameSettings sword2_settings[] = {
-	/* Broken Sword II */
-	{"sword2", "Broken Sword II: The Smoking Mirror", 0, "players.clu" },
-	{"sword2alt", "Broken Sword II: The Smoking Mirror (alt)", 0, "r2ctlns.ocx" },
-	{"sword2psx", "Broken Sword II: The Smoking Mirror (PlayStation)", 0, "screens.clu"},
-	{"sword2psxdemo", "Broken Sword II: The Smoking Mirror (PlayStation/Demo)", Sword2::GF_DEMO, "screens.clu"},
-	{"sword2demo", "Broken Sword II: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu" },
-	{NULL, NULL, 0, NULL}
-};
+    /* Broken Sword II */
+    {"sword2", "Broken Sword II: The Smoking Mirror", 0, "players.clu"},
+    {"sword2alt", "Broken Sword II: The Smoking Mirror (alt)", 0, "r2ctlns.ocx"},
+    {"sword2psx", "Broken Sword II: The Smoking Mirror (PlayStation)", 0, "screens.clu"},
+    {"sword2psxdemo", "Broken Sword II: The Smoking Mirror (PlayStation/Demo)", Sword2::GF_DEMO, "screens.clu"},
+    {"sword2demo", "Broken Sword II: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu"},
+    {NULL, NULL, 0, NULL}};
 
 } // End of namespace Sword2
 
 static const ExtraGuiOption sword2ExtraGuiOption = {
-	_s("Show object labels"),
-	_s("Show labels for objects on mouse hover"),
-	"object_labels",
-	false
-};
+    _s("Show object labels"),
+    _s("Show labels for objects on mouse hover"),
+    "object_labels",
+    false};
 
 class Sword2MetaEngine : public MetaEngine {
 public:
@@ -108,19 +106,17 @@ public:
 };
 
 bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSimpleSavesNames);
 }
 
 bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsSubtitleOptions) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsLoadingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsSubtitleOptions) ||
+	       (f == kSupportsSavingDuringRuntime) ||
+	       (f == kSupportsLoadingDuringRuntime);
 }
 
 PlainGameList Sword2MetaEngine::getSupportedGames() const {
@@ -192,7 +188,7 @@ DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursion = fal
 					// Make sure that the sword2 demo is not mixed up with the
 					// full version, since they use the same filename for detection
 					if ((g->features == Sword2::GF_DEMO && isFullVersion) ||
-						(g->features == 0 && !isFullVersion))
+					    (g->features == 0 && !isFullVersion))
 						continue;
 
 					// Match found, add to list of candidates, then abort inner loop.
@@ -205,7 +201,6 @@ DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursion = fal
 			}
 		}
 	}
-
 
 	if (detectedGames.empty()) {
 		// Nothing found -- try to recurse into the 'clusters' subdirectory,
@@ -225,7 +220,6 @@ DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursion = fal
 			}
 		}
 	}
-
 
 	return detectedGames;
 }
@@ -298,9 +292,9 @@ Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) c
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD2)
-	REGISTER_PLUGIN_DYNAMIC(SWORD2, PLUGIN_TYPE_ENGINE, Sword2MetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SWORD2, PLUGIN_TYPE_ENGINE, Sword2MetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SWORD2, PLUGIN_TYPE_ENGINE, Sword2MetaEngine);
+REGISTER_PLUGIN_STATIC(SWORD2, PLUGIN_TYPE_ENGINE, Sword2MetaEngine);
 #endif
 
 namespace Sword2 {
@@ -493,7 +487,7 @@ Common::Error Sword2Engine::run() {
 				startGame();
 		}
 	} else if (!_bootParam && saveExists() && !isPsx()) { // Initial load/restart panel disabled in PSX
-		int32 pars[2] = { 221, FX_LOOP };                 // version because of missing panel resources
+		int32 pars[2] = {221, FX_LOOP};                   // version because of missing panel resources
 		bool result;
 
 		_mouse->setMouse(NORMAL_MOUSE_ID);
@@ -784,9 +778,9 @@ void Sword2Engine::startGame() {
 
 	if (!_bootParam) {
 		if (_logic->readVar(DEMO))
-			screen_manager_id = 19;		// DOCKS SECTION START
+			screen_manager_id = 19; // DOCKS SECTION START
 		else
-			screen_manager_id = 949;	// INTRO & PARIS START
+			screen_manager_id = 949; // INTRO & PARIS START
 	} else {
 		// FIXME this could be validated against startup.inf for valid
 		// numbers to stop people shooting themselves in the foot

@@ -210,9 +210,9 @@ void GraphicsManager::newShakePoint(int32 index1, int32 index2, int32 maxRadius)
 		double angle = (int32)(_vm->getRandomNumber(360 - 1) * 3.1415926535 / 180);
 		int32 radius = maxRadius;
 		_shakeOffsets[index3].x = (int32)(((_shakeOffsets[index1].x + _shakeOffsets[index2].x) >> 1) +
-				cos(angle) / 2 * radius);
+		                                  cos(angle) / 2 * radius);
 		_shakeOffsets[index3].y = (int32)(((_shakeOffsets[index1].y + _shakeOffsets[index2].y) >> 1) +
-				sin(angle) * radius);
+		                                  sin(angle) * radius);
 	}
 
 	if (index1 < index3 - 1)
@@ -290,7 +290,7 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 
 			// Now copy to the screen
 			g_system->copyRectToScreen((byte *)oldScreen.getBasePtr(srcOffsetX, srcOffsetY), oldScreen.pitch,
-					dstOffsetX, dstOffsetY, width, height);
+			                           dstOffsetX, dstOffsetY, width, height);
 			g_system->updateScreen();
 
 			lastOffset = thisOffset;

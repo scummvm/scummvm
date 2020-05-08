@@ -37,14 +37,13 @@ class CryOmni3DEngine;
 
 namespace Versailles {
 
-
 class Toolbar {
 public:
 	Toolbar() : _sprites(nullptr), _fontManager(nullptr), _inventory(nullptr),
-		_messages(nullptr), _engine(nullptr), _inventoryEnabled(true), _inventoryMaxOffset(0),
-		_inventoryOffset(0), _inventoryHovered(uint(-1)), _inventorySelected(uint(-1)), _backupSelectedObject(nullptr),
-		_mouseInOptions(false), _mouseInViewObject(false), _inventoryButtonDragging(false), _parentMustRedraw(false),
-		_shortExit(false), _position(60) { }
+	            _messages(nullptr), _engine(nullptr), _inventoryEnabled(true), _inventoryMaxOffset(0),
+	            _inventoryOffset(0), _inventoryHovered(uint(-1)), _inventorySelected(uint(-1)), _backupSelectedObject(nullptr),
+	            _mouseInOptions(false), _mouseInViewObject(false), _inventoryButtonDragging(false), _parentMustRedraw(false),
+	            _shortExit(false), _position(60) {}
 	~Toolbar();
 
 	void init(const Sprites *sprites, FontManager *fontManager,
@@ -58,7 +57,7 @@ public:
 	void setInventoryEnabled(bool enabled) { _inventoryEnabled = enabled; }
 
 private:
-	typedef uint(Toolbar::*ZoneCallback)(uint dragStatus);
+	typedef uint (Toolbar::*ZoneCallback)(uint dragStatus);
 	struct Zone {
 		Common::Rect rect;
 		uint16 imageMain;

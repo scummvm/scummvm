@@ -20,30 +20,30 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/winexe_pe.h"
-#include "common/config-manager.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 #include "graphics/wincursor.h"
 
-#include "pink/pink.h"
 #include "pink/console.h"
 #include "pink/director.h"
-#include "pink/objects/module.h"
 #include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/module.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
-	: Engine(system), _rnd("pink"), _exeResources(nullptr),
-	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
-	_module(nullptr), _director(nullptr), _pdaMgr(this) {
+    : Engine(system), _rnd("pink"), _exeResources(nullptr),
+      _desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
+      _module(nullptr), _director(nullptr), _pdaMgr(this) {
 
 	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
 	DebugMan.addDebugChannel(kPinkDebugLoadingResources, "loading_resources", "Loading resources data");
@@ -288,10 +288,9 @@ bool PinkEngine::canSaveGameStateCurrently() {
 }
 
 bool PinkEngine::hasFeature(Engine::EngineFeature f) const {
-	return
-		f == kSupportsRTL ||
-		f == kSupportsLoadingDuringRuntime ||
-		f == kSupportsSavingDuringRuntime;
+	return f == kSupportsRTL ||
+	       f == kSupportsLoadingDuringRuntime ||
+	       f == kSupportsSavingDuringRuntime;
 }
 
 void PinkEngine::pauseEngineIntern(bool pause) {
@@ -303,4 +302,4 @@ bool PinkEngine::isPeril() const {
 	return !strcmp(_desc->gameId, kPeril);
 }
 
-}
+} // namespace Pink

@@ -27,12 +27,12 @@
 #include "backends/fs/n64/n64-fs.h"
 #include "backends/fs/n64/romfsstream.h"
 
+#include <n64utils.h>
 #include <romfs.h>
 #include <sys/param.h>
 #include <unistd.h>
-#include <n64utils.h>
 
-#define	ROOT_PATH	"/"
+#define ROOT_PATH "/"
 
 N64FilesystemNode::N64FilesystemNode() {
 	_isDirectory = true;
@@ -77,7 +77,6 @@ bool N64FilesystemNode::isReadable() const {
 bool N64FilesystemNode::isWritable() const {
 	return false;
 }
-
 
 AbstractFSNode *N64FilesystemNode::getChild(const Common::String &n) const {
 	// FIXME: Pretty lame implementation! We do no error checking to speak
@@ -127,7 +126,7 @@ bool N64FilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 
 		// Honor the chosen mode
 		if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
-		        (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory)) {
+		    (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory)) {
 
 			free(dp);
 			continue;

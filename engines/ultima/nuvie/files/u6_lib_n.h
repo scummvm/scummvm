@@ -23,9 +23,9 @@
 #ifndef NUVIE_FILES_U6LIB_N_H
 #define NUVIE_FILES_U6LIB_N_H
 
+#include "common/stream.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
-#include "common/stream.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -45,9 +45,9 @@ struct U6LibItem {
 };
 
 class U6Lib_n {
-	uint32 filesize; // total size of file
-	uint8 game_type; // there are three types of lib files.
-	uint8 lib_size; // measured in bytes either 2 or 4
+	uint32 filesize;    // total size of file
+	uint8 game_type;    // there are three types of lib files.
+	uint8 lib_size;     // measured in bytes either 2 or 4
 	uint32 num_offsets; // number of items, size of lists
 	U6LibItem *items;
 	NuvieIO *data;
@@ -100,6 +100,5 @@ private:
 #endif
 } // End of namespace Nuvie
 } // End of namespace Ultima
-
 
 #endif

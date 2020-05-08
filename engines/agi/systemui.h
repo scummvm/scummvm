@@ -33,8 +33,8 @@ namespace Agi {
 
 struct SystemUISavedGameEntry {
 	int16 slotId;
-	bool  exists;
-	bool  isValid;
+	bool exists;
+	bool isValid;
 	char description[SYSTEMUI_SAVEDGAME_DESCRIPTION_LEN + 1]; // actual description
 	char displayText[SYSTEMUI_SAVEDGAME_DISPLAYTEXT_LEN + 1]; // modified description, meant for display purposes only
 };
@@ -42,10 +42,10 @@ typedef Common::Array<SystemUISavedGameEntry> SystemUISavedGameArray;
 
 struct SystemUIButtonEntry {
 	Common::Rect rect;
-	const char  *text;
-	int16        textWidth;
-	bool         active;
-	bool         isDefault;
+	const char *text;
+	int16 textWidth;
+	bool active;
+	bool isDefault;
 };
 typedef Common::Array<SystemUIButtonEntry> SystemUIButtonArray;
 
@@ -69,8 +69,6 @@ public:
 	bool quitDialog();
 
 private:
-
-
 public:
 	const char *getInventoryTextNothing();
 	const char *getInventoryTextYouAreCarrying();
@@ -84,23 +82,23 @@ public:
 
 	int16 askForSaveGameSlot();
 	int16 askForRestoreGameSlot();
-	bool  askForSaveGameDescription(int16 slotId, Common::String &newDescription);
+	bool askForSaveGameDescription(int16 slotId, Common::String &newDescription);
 
-	void  savedGameSlot_KeyPress(uint16 newKey);
+	void savedGameSlot_KeyPress(uint16 newKey);
 
 private:
 	int16 askForSavedGameSlot(const char *slotListText);
-	bool  askForSavedGameVerification(const char *verifyText, const char *verifyButton1, const char *verifyButton2, const char *actualDescription, int16 slotId);
+	bool askForSavedGameVerification(const char *verifyText, const char *verifyButton1, const char *verifyButton2, const char *actualDescription, int16 slotId);
 
-	bool  askForVerification(const char *verifyText, const char *button1Text, const char *button2Text, bool continueOnMessageBoxClick);
+	bool askForVerification(const char *verifyText, const char *button1Text, const char *button2Text, bool continueOnMessageBoxClick);
 
-	void  createSavedGameDisplayText(char *destDisplayText, const char *actualDescription, int16 slotId, bool fillUpWithSpaces);
-	void  clearSavedGameSlots();
-	void  readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot);
-	void  figureOutAutomaticSavedGameSlot(const char *automaticSaveDescription, int16 &matchedGameSlotId, int16 &freshGameSlotId);
+	void createSavedGameDisplayText(char *destDisplayText, const char *actualDescription, int16 slotId, bool fillUpWithSpaces);
+	void clearSavedGameSlots();
+	void readSavedGameSlots(bool filterNonexistant, bool withAutoSaveSlot);
+	void figureOutAutomaticSavedGameSlot(const char *automaticSaveDescription, int16 &matchedGameSlotId, int16 &freshGameSlotId);
 
-	void  drawSavedGameSlots();
-	void  drawSavedGameSlotSelector(bool active);
+	void drawSavedGameSlots();
+	void drawSavedGameSlotSelector(bool active);
 
 	SystemUISavedGameArray _savedGameArray;
 	int16 _savedGameUpmostSlotNr;
@@ -122,8 +120,8 @@ public:
 	void askForVerificationKeyPress(uint16 newKey);
 
 private:
-	bool  _askForVerificationContinueOnMessageBoxClick;
-	bool  _askForVerificationCancelled;
+	bool _askForVerificationContinueOnMessageBoxClick;
+	bool _askForVerificationCancelled;
 	int16 _askForVerificationMouseLockedButtonNr;
 	int16 _askForVerificationMouseActiveButtonNr;
 

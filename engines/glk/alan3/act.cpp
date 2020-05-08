@@ -54,8 +54,7 @@ static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
 	/* Now perform actions! First try any BEFORE or ONLY from inside out */
 	for (altIndex = lastAltInfoIndex(altInfos); altIndex >= 0; altIndex--) {
 		if (altInfos[altIndex].alt != 0) // TODO Can this ever be NULL? Why?
-			if (altInfos[altIndex].alt->qual == (Aword)Q_BEFORE
-			        || altInfos[altIndex].alt->qual == (Aword)Q_ONLY) {
+			if (altInfos[altIndex].alt->qual == (Aword)Q_BEFORE || altInfos[altIndex].alt->qual == (Aword)Q_ONLY) {
 				FUNC1(executedOk, flag, &altInfos[altIndex])
 				if (!flag)
 					CALL0(abortPlayerCommand)
@@ -85,7 +84,6 @@ static void executeCommand(CONTEXT, int verb, Parameter parameters[]) {
 	}
 }
 
-
 /*======================================================================
 
   action()
@@ -113,7 +111,7 @@ void action(CONTEXT, int verb, Parameter parameters[], Parameter multipleMatches
 				context._break = false;
 			if (context._break)
 				return;
-			
+
 			if (multipleMatches[i + 1].instance != EOD)
 				para();
 		}

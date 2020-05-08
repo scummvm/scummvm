@@ -55,8 +55,10 @@ class Weapons;
 class Ultima4Engine : public Shared::UltimaEngine {
 private:
 	int _saveSlotToLoad;
+
 private:
 	void startup();
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -67,6 +69,7 @@ protected:
 	 * Returns the data archive folder and version that's required
 	 */
 	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+
 public:
 	Armors *_armors;
 	Codex *_codex;
@@ -91,6 +94,7 @@ public:
 	TileSets *_tileSets;
 	Weapons *_weapons;
 	Std::vector<Common::String> _hawkwindText;
+
 public:
 	Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima4Engine() override;

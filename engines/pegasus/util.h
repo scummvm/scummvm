@@ -31,7 +31,7 @@
 #include "pegasus/types.h"
 
 namespace Common {
-	class RandomSource;
+class RandomSource;
 }
 
 namespace Pegasus {
@@ -51,7 +51,7 @@ private:
 #define BIT_INDEX_SHIFT (sizeof(Unit) + 2 - (sizeof(Unit)) / 3)
 #define BIT_INDEX_MASK (NUM_FLAGS - 1)
 
-template <typename Unit, uint32 kNumFlags>
+template<typename Unit, uint32 kNumFlags>
 class FlagsArray {
 public:
 	FlagsArray() { clearAllFlags(); }
@@ -59,7 +59,12 @@ public:
 	void setAllFlags() { memset(_flags, ~((Unit)0), sizeof(_flags)); }
 	void setFlag(uint32 flag) { _flags[flag >> BIT_INDEX_SHIFT] |= 1 << (flag & BIT_INDEX_MASK); }
 	void clearFlag(uint32 flag) { _flags[flag >> BIT_INDEX_SHIFT] &= ~(1 << (flag & BIT_INDEX_MASK)); }
-	void setFlag(uint32 flag, bool val) { if (val) setFlag(flag); else clearFlag(flag); }
+	void setFlag(uint32 flag, bool val) {
+		if (val)
+			setFlag(flag);
+		else
+			clearFlag(flag);
+	}
 	bool getFlag(uint32 flag) { return (_flags[flag >> BIT_INDEX_SHIFT] & (1 << (flag & BIT_INDEX_MASK))) != 0; }
 	bool anyFlagSet() {
 		for (uint32 i = 0; i < sizeof(_flags); i++)

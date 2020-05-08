@@ -149,4 +149,3 @@ void clearStackLib();
 } // End of namespace Sludge
 
 #endif
-

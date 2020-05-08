@@ -36,6 +36,7 @@ namespace Alan3 {
 class Alan3 : public GlkIO {
 public:
 	Common::String _advName;
+
 private:
 	/**
 	 * Initialization
@@ -46,6 +47,7 @@ private:
 	 * Deinitialization
 	 */
 	void deinitialize();
+
 public:
 	/**
 	 * Constructor

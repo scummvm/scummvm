@@ -21,23 +21,21 @@
  */
 
 #include "sherlock/inventory.h"
-#include "sherlock/sherlock.h"
 #include "sherlock/scalpel/scalpel_inventory.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/sherlock.h"
 #include "sherlock/tattoo/tattoo_inventory.h"
 
 namespace Sherlock {
 
 InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
-		const Common::String &description, const Common::String &examine) :
-		_requiredFlag(requiredFlag), _requiredFlag1(0), _name(name), _description(description),
-		_examine(examine), _lookFlag(0) {
+                             const Common::String &description, const Common::String &examine) : _requiredFlag(requiredFlag), _requiredFlag1(0), _name(name), _description(description),
+                                                                                                 _examine(examine), _lookFlag(0) {
 }
 
 InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
-		const Common::String &description, const Common::String &examine, const Common::String &verbName) :
-		_requiredFlag(requiredFlag), _requiredFlag1(0), _name(name), _description(description),
-		_examine(examine), _lookFlag(0) {
+                             const Common::String &description, const Common::String &examine, const Common::String &verbName) : _requiredFlag(requiredFlag), _requiredFlag1(0), _name(name), _description(description),
+                                                                                                                                 _examine(examine), _lookFlag(0) {
 	_verb._verb = verbName;
 }
 
@@ -239,7 +237,6 @@ void Inventory::synchronize(Serializer &s) {
 
 	for (uint idx = 0; idx < size(); ++idx) {
 		(*this)[idx].synchronize(s);
-
 	}
 }
 

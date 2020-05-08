@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCookie, CGameObject)
-	ON_MESSAGE(LeaveNodeMsg)
-	ON_MESSAGE(FreshenCookieMsg)
+ON_MESSAGE(LeaveNodeMsg)
+ON_MESSAGE(FreshenCookieMsg)
 END_MESSAGE_MAP()
 
 void CCookie::save(SimpleFile *file, int indent) {

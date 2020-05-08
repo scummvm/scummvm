@@ -27,9 +27,9 @@
  */
 
 #include "image/codecs/indeo/vlc.h"
-#include "image/codecs/indeo/mem.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "image/codecs/indeo/mem.h"
 
 namespace Image {
 namespace Indeo {
@@ -40,97 +40,103 @@ namespace Indeo {
  * to construct input that requires O(n^2) time but this is very unlikely to
  * happen with non constructed input.
  */
-#define AV_QSORT(p, num, type, cmp) do {\
-	void *stack[64][2];\
-	int sp = 1;\
-	stack[0][0] = p;\
-	stack[0][1] = (p)+(num)-1;\
-	while(sp){\
-		type *start = (type *)stack[--sp][0];\
-		type *end   = (type *)stack[  sp][1];\
-		while (start < end) {\
-			if (start < end-1) {\
-				int checksort = 0;\
-				type *right = end - 2;\
-				type *left  = start + 1;\
-				type *mid = start + ((end - start) >> 1);\
-				if(cmp(start, end) > 0) {\
-					if(cmp(  end, mid) > 0) SWAP(*start, *mid);\
-					else                    SWAP(*start, *end);\
-				} else {\
-					if(cmp(start, mid) > 0) SWAP(*start, *mid);\
-					else checksort = 1;\
-				}\
-				if (cmp(mid, end) > 0) { \
-					SWAP(*mid, *end);\
-					checksort = 0;\
-				}\
-				if(start == end - 2) break;\
-				SWAP(end[-1], *mid);\
-				while (left <= right) {\
-					while (left<=right && cmp(left, end - 1) < 0)\
-						left++;\
-					while (left<=right && cmp(right, end - 1) > 0)\
-						right--;\
-					if (left <= right) {\
-						SWAP(*left, *right);\
-						left++;\
-						right--;\
-					}\
-				}\
-				SWAP(end[-1], *left);\
-				if(checksort && (mid == left - 1 || mid == left)){\
-					mid= start;\
-					while(mid<end && cmp(mid, mid+1) <= 0)\
-						mid++;\
-					if(mid==end)\
-						break;\
-				}\
-				if (end - left < left - start){\
-					stack[sp  ][0] = start;\
-					stack[sp++][1] = right;\
-					start = left + 1;\
-				} else {\
-					stack[sp  ][0] = left+1;\
-					stack[sp++][1] = end;\
-					end = right;\
-				}\
-			} else {\
-				if (cmp(start, end) > 0)\
-					SWAP(*start, *end);\
-				break;\
-			}\
-		}\
-	}\
-} while (0)
+#define AV_QSORT(p, num, type, cmp)                                      \
+	do {                                                                 \
+		void *stack[64][2];                                              \
+		int sp = 1;                                                      \
+		stack[0][0] = p;                                                 \
+		stack[0][1] = (p) + (num)-1;                                     \
+		while (sp) {                                                     \
+			type *start = (type *)stack[--sp][0];                        \
+			type *end = (type *)stack[sp][1];                            \
+			while (start < end) {                                        \
+				if (start < end - 1) {                                   \
+					int checksort = 0;                                   \
+					type *right = end - 2;                               \
+					type *left = start + 1;                              \
+					type *mid = start + ((end - start) >> 1);            \
+					if (cmp(start, end) > 0) {                           \
+						if (cmp(end, mid) > 0)                           \
+							SWAP(*start, *mid);                          \
+						else                                             \
+							SWAP(*start, *end);                          \
+					} else {                                             \
+						if (cmp(start, mid) > 0)                         \
+							SWAP(*start, *mid);                          \
+						else                                             \
+							checksort = 1;                               \
+					}                                                    \
+					if (cmp(mid, end) > 0) {                             \
+						SWAP(*mid, *end);                                \
+						checksort = 0;                                   \
+					}                                                    \
+					if (start == end - 2)                                \
+						break;                                           \
+					SWAP(end[-1], *mid);                                 \
+					while (left <= right) {                              \
+						while (left <= right && cmp(left, end - 1) < 0)  \
+							left++;                                      \
+						while (left <= right && cmp(right, end - 1) > 0) \
+							right--;                                     \
+						if (left <= right) {                             \
+							SWAP(*left, *right);                         \
+							left++;                                      \
+							right--;                                     \
+						}                                                \
+					}                                                    \
+					SWAP(end[-1], *left);                                \
+					if (checksort && (mid == left - 1 || mid == left)) { \
+						mid = start;                                     \
+						while (mid < end && cmp(mid, mid + 1) <= 0)      \
+							mid++;                                       \
+						if (mid == end)                                  \
+							break;                                       \
+					}                                                    \
+					if (end - left < left - start) {                     \
+						stack[sp][0] = start;                            \
+						stack[sp++][1] = right;                          \
+						start = left + 1;                                \
+					} else {                                             \
+						stack[sp][0] = left + 1;                         \
+						stack[sp++][1] = end;                            \
+						end = right;                                     \
+					}                                                    \
+				} else {                                                 \
+					if (cmp(start, end) > 0)                             \
+						SWAP(*start, *end);                              \
+					break;                                               \
+				}                                                        \
+			}                                                            \
+		}                                                                \
+	} while (0)
 
-#define COPY(condition)\
-	for (i = 0; i < nbCodes; i++) {                                         \
-		buf[j].bits = getData(p_bits, i, bitsWrap, bitsSize);               \
-		if (!(condition))                                                   \
-			continue;                                                       \
-		if (buf[j].bits > (3 * nbBits) || buf[j].bits > 32) {               \
-			warning("Too long VLC (%d) in init_vlc", buf[j].bits);          \
-			if (!(flags & INIT_VLC_USE_NEW_STATIC))                         \
-				free(buf);                                                  \
-			return -1;                                                      \
-		}                                                                   \
-		buf[j].code = getData(codes, i, codesWrap, codesSize);              \
-		if (buf[j].code >= (1LL << buf[j].bits)) {                            \
-			warning("Invalid code %x for %d in init_vlc", buf[j].code, i);  \
-			if (!(flags & INIT_VLC_USE_NEW_STATIC))                         \
-				free(buf);                                                  \
-			return -1;                                                      \
-		}                                                                   \
-		if (flags & INIT_VLC_LE)                                            \
-			buf[j].code = bitswap32(buf[j].code);                           \
-		else                                                                \
-			buf[j].code <<= 32 - buf[j].bits;                               \
-		if (symbols)                                                        \
-			buf[j].symbol = getData(symbols, i, symbolsWrap, symbolsSize);  \
-		else                                                                \
-			buf[j].symbol = i;                                              \
-		j++;                                                                \
+#define COPY(condition)                                                    \
+	for (i = 0; i < nbCodes; i++) {                                        \
+		buf[j].bits = getData(p_bits, i, bitsWrap, bitsSize);              \
+		if (!(condition))                                                  \
+			continue;                                                      \
+		if (buf[j].bits > (3 * nbBits) || buf[j].bits > 32) {              \
+			warning("Too long VLC (%d) in init_vlc", buf[j].bits);         \
+			if (!(flags & INIT_VLC_USE_NEW_STATIC))                        \
+				free(buf);                                                 \
+			return -1;                                                     \
+		}                                                                  \
+		buf[j].code = getData(codes, i, codesWrap, codesSize);             \
+		if (buf[j].code >= (1LL << buf[j].bits)) {                         \
+			warning("Invalid code %x for %d in init_vlc", buf[j].code, i); \
+			if (!(flags & INIT_VLC_USE_NEW_STATIC))                        \
+				free(buf);                                                 \
+			return -1;                                                     \
+		}                                                                  \
+		if (flags & INIT_VLC_LE)                                           \
+			buf[j].code = bitswap32(buf[j].code);                          \
+		else                                                               \
+			buf[j].code <<= 32 - buf[j].bits;                              \
+		if (symbols)                                                       \
+			buf[j].symbol = getData(symbols, i, symbolsWrap, symbolsSize); \
+		else                                                               \
+			buf[j].symbol = i;                                             \
+		j++;                                                               \
 	}
 
 /*------------------------------------------------------------------------*/
@@ -139,14 +145,14 @@ VLC::VLC() : _bits(0), _tableSize(0), _tableAllocated(0), _table(nullptr) {
 }
 
 int VLC::init_vlc(int nbBits, int nbCodes, const void *bits, int bitsWrap, int bitsSize,
-		const void *codes, int codesWrap, int codesSize, int flags) {
+                  const void *codes, int codesWrap, int codesSize, int flags) {
 	return init_vlc(nbBits, nbCodes, bits, bitsWrap, bitsSize, codes, codesWrap,
-		codesSize, nullptr, 0, 0, flags);
+	                codesSize, nullptr, 0, 0, flags);
 }
 
 int VLC::init_vlc(int nbBits, int nbCodes, const void *p_bits, int bitsWrap,
-		int bitsSize, const void *codes, int codesWrap, int codesSize,
-		const void *symbols, int symbolsWrap, int symbolsSize, int flags) {
+                  int bitsSize, const void *codes, int codesWrap, int codesSize,
+                  const void *symbols, int symbolsWrap, int symbolsSize, int flags) {
 	VLCcode *buf;
 	int i, j, ret;
 	VLCcode localbuf[1500]; // the maximum currently needed is 1296 by rv34
@@ -208,12 +214,13 @@ int VLC::compareVlcSpec(const void *a, const void *b) {
 }
 
 int VLC::buildTable(int tableNbBits, int nbCodes,
-		VLCcode *codes, int flags) {
+                    VLCcode *codes, int flags) {
 	VLC *vlc = this;
 	int tableSize, tableIndex, index, codePrefix, symbol, subtableBits;
 	int i, j, k, n, nb, inc;
 	uint32 code;
-	VLC_TYPE (*table)[2];
+	VLC_TYPE(*table)
+	[2];
 
 	tableSize = 1 << tableNbBits;
 	if (tableNbBits > 30)
@@ -280,7 +287,7 @@ int VLC::buildTable(int tableNbBits, int nbCodes,
 				return index;
 
 			// note: realloc has been done, so reload tables
-			table = (VLC_TYPE (*)[2])&vlc->_table[tableIndex];
+			table = (VLC_TYPE(*)[2]) & vlc->_table[tableIndex];
 			table[j][0] = index; //code
 			i = k - 1;
 		}
@@ -320,7 +327,7 @@ int VLC::allocTable(int size, int useStatic) {
 uint VLC::getData(const void *table, uint idx, uint wrap, uint size) {
 	const uint8 *ptr = (const uint8 *)table + idx * wrap;
 
-	switch(size) {
+	switch (size) {
 	case 1:
 		return *(const uint8 *)ptr;
 

@@ -91,9 +91,9 @@ enum Sequence {
 	kick = 58,
 	startBlock = 59,
 	stopBlock = 60
-	            //61: unused
-	            //62: unused
-	            //63: unused
+	//61: unused
+	//62: unused
+	//63: unused
 };
 
 enum Result {

@@ -20,42 +20,40 @@
  *
  */
 
+#include "dragons/specialopcodes.h"
+#include "dragons/actor.h"
 #include "dragons/actorresource.h"
 #include "dragons/background.h"
+#include "dragons/credits.h"
 #include "dragons/cursor.h"
 #include "dragons/cutscene.h"
-#include "dragons/credits.h"
-#include "dragons/dragons.h"
 #include "dragons/dragonflg.h"
 #include "dragons/dragonini.h"
 #include "dragons/dragonobd.h"
+#include "dragons/dragons.h"
 #include "dragons/inventory.h"
-#include "dragons/specialopcodes.h"
-#include "dragons/scene.h"
-#include "dragons/sound.h"
-#include "dragons/actor.h"
 #include "dragons/minigame1.h"
-#include "dragons/talk.h"
-#include "dragons/screen.h"
 #include "dragons/minigame2.h"
 #include "dragons/minigame3.h"
 #include "dragons/minigame4.h"
 #include "dragons/minigame5.h"
-
+#include "dragons/scene.h"
+#include "dragons/screen.h"
+#include "dragons/sound.h"
+#include "dragons/talk.h"
 
 namespace Dragons {
 
 const int16 shakeTbl[16] = {
-	5,      2,     -2,     -5,
-	5,      2,     -2,     -5,
-	-1,      2,     -1,     -1,
-	2,     -1,      1,      0
-};
+    5, 2, -2, -5,
+    5, 2, -2, -5,
+    -1, 2, -1, -1,
+    2, -1, 1, 0};
 
 // SpecialOpcodes
 
 SpecialOpcodes::SpecialOpcodes(DragonsEngine *vm)
-	: _vm(vm), _specialOpCounter(0) {
+    : _vm(vm), _specialOpCounter(0) {
 	_dat_80083148 = 0;
 	_uint16_t_80083154 = 0;
 	initOpcodes();
@@ -73,7 +71,7 @@ void SpecialOpcodes::run(int16 op) {
 }
 
 typedef Common::Functor0Mem<void, SpecialOpcodes> SpecialOpcodeI;
-#define OPCODE(op, func) \
+#define OPCODE(op, func)                                            \
 	_opcodes[op] = new SpecialOpcodeI(this, &SpecialOpcodes::func); \
 	_opcodeNames[op] = #func;
 
@@ -306,7 +304,6 @@ void SpecialOpcodes::spcUnk9() {
 	_vm->getINI(1)->flags |= INI_FLAG_20;
 }
 
-
 void SpecialOpcodes::spcUnkA() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	flicker->flags &= ~INI_FLAG_20;
@@ -501,12 +498,12 @@ void SpecialOpcodes::spcDragonCatapultMiniGame() {
 }
 
 void SpecialOpcodes::spcStGeorgeDragonLanded() {
-//	DisableVSyncEvent();
+	//	DisableVSyncEvent();
 	DragonINI *ini121 = _vm->_dragonINIResource->getRecord(0x121);
 	Actor *origActor = ini121->actor;
 	ini121->actor = _vm->_actorManager->loadActor(0x48, 4, ini121->actor->_x_pos, ini121->actor->_y_pos);
 	origActor->reset_maybe();
-//TODO	reset_actor_maybe();
+	//TODO	reset_actor_maybe();
 	ini121->actor->setFlag(ACTOR_FLAG_80);
 	ini121->actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	ini121->actor->_priorityLayer = 2;
@@ -574,7 +571,6 @@ void SpecialOpcodes::spcStopMonksAtBarSceneLogic() {
 		_uint16_t_80083154 = 0;
 		_dat_80083148 = 0;
 	}
-
 }
 
 void SpecialOpcodes::spcFlameBedroomEscapeSceneLogic() {
@@ -589,7 +585,7 @@ void SpecialOpcodes::spcFlameBedroomEscapeSceneLogic() {
 
 void SpecialOpcodes::spcStopFlameBedroomEscapeSceneLogic() {
 	setSpecialOpCounter(0);
-//	TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
+	//	TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 	_uint16_t_80083154 = 0;
 	_dat_80083148 = 0;
 	_vm->_dragonINIResource->getRecord(0x96)->actor->updateSequence(0);
@@ -697,7 +693,7 @@ void SpecialOpcodes::spcZigmondFraudSceneLogic() {
 	sceneUpdater.numSteps[5] = 2;
 	sceneUpdater.numSteps[6] = 2;
 	sceneUpdater.numSteps[7] = 2;
-//TODO do we need this -> DAT_80072dc0 = 2;
+	//TODO do we need this -> DAT_80072dc0 = 2;
 	sceneUpdater.iniIDTbl[0][0] = 0x19E;
 	sceneUpdater.iniIDTbl[0][1] = 0x197;
 	sceneUpdater.iniIDTbl[1][0] = 0x19E;
@@ -936,7 +932,7 @@ void SpecialOpcodes::spcUnk65ScenePaletteRelated() {
 }
 
 void SpecialOpcodes::spcUnk66() {
-	uint16 var =_vm->getVar(2);
+	uint16 var = _vm->getVar(2);
 
 	uint16 bVar1 = (var & 1) == 0;
 	uint16 uVar9 = bVar1;
@@ -961,8 +957,8 @@ void SpecialOpcodes::spcTournamentCutScene() {
 
 void SpecialOpcodes::spcInsideBlackDragonUpdatePalette() {
 	memcpy(_vm->_scene->getPalette() + 0x180,
-			_vm->_dragonINIResource->getRecord(0x2b2)->actor->_actorResource->getPalette() + 0x180,
-			0x80);
+	       _vm->_dragonINIResource->getRecord(0x2b2)->actor->_actorResource->getPalette() + 0x180,
+	       0x80);
 	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
 }
 
@@ -982,10 +978,10 @@ void SpecialOpcodes::panCamera(int16 mode) {
 	if (mode == 1) {
 		_vm->getINI(0x2ab)->objectState = _vm->_scene->_camera.x;
 		_vm->_dragonINIResource->setFlickerRecord(nullptr);
-		iVar2 = (int) _vm->_scene->_camera.x;
+		iVar2 = (int)_vm->_scene->_camera.x;
 		iVar1 = iVar2;
 		while (iVar1 <= (_vm->_scene->getStageWidth() - 320)) {
-			_vm->_scene->_camera.x = (short) iVar2;
+			_vm->_scene->_camera.x = (short)iVar2;
 			_vm->waitForFrames(1);
 			iVar2 = iVar2 + 4;
 			iVar1 = iVar2 * 0x10000 >> 0x10;
@@ -993,10 +989,10 @@ void SpecialOpcodes::panCamera(int16 mode) {
 		_vm->_scene->_camera.x = _vm->_scene->getStageWidth() - 320;
 	}
 	if (mode == 2) {
-		iVar2 = (int) _vm->_scene->_camera.x;
+		iVar2 = (int)_vm->_scene->_camera.x;
 		iVar1 = iVar2;
 		while (-1 < iVar1) {
-			_vm->_scene->_camera.x = (short) iVar2;
+			_vm->_scene->_camera.x = (short)iVar2;
 			_vm->waitForFrames(1);
 			iVar2 = iVar2 + -3;
 			iVar1 = iVar2 * 0x10000;
@@ -1048,7 +1044,7 @@ void SpecialOpcodes::spcStopScreenShakeUpdater() {
 }
 
 void SpecialOpcodes::spcInsideBlackDragonScreenShake() {
-	for (int i = 0; i < 5; i ++) {
+	for (int i = 0; i < 5; i++) {
 		_vm->_screen->setScreenShakeOffset(0, shakeTbl[i]);
 		_vm->waitForFrames(1);
 	}
@@ -1085,8 +1081,8 @@ void SpecialOpcodes::spcUnk8b() {
 
 void SpecialOpcodes::spcHedgehogTest() {
 	if (_vm->_dragonINIResource->getRecord(0x168)->actor->_sequenceID == 4 &&
-			_vm->_dragonINIResource->getRecord(0x169)->actor->_sequenceID == 4 &&
-			_vm->_dragonINIResource->getRecord(0x16a)->actor->_sequenceID == 4) {
+	    _vm->_dragonINIResource->getRecord(0x169)->actor->_sequenceID == 4 &&
+	    _vm->_dragonINIResource->getRecord(0x16a)->actor->_sequenceID == 4) {
 		_vm->_dragonINIResource->getRecord(0x169)->objectState = 1;
 	} else {
 		_vm->_dragonINIResource->getRecord(0x169)->objectState = 0;
@@ -1146,40 +1142,40 @@ void SpecialOpcodes::spcFadeCreditsToBackStageScene() {
 }
 
 void SpecialOpcodes::spcRunCredits() {
-//	int iVar1;
-//	DAT_8006a440 = 0x1a;
-//	DAT_80087270 = 0x78;
+	//	int iVar1;
+	//	DAT_8006a440 = 0x1a;
+	//	DAT_80087270 = 0x78;
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_1);
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
-//	open_files_slot_number_tbl = 0;
-//	DAT_80072de4 = 0;
-//	buf2048bytes = actor_dictionary;
-//	DAT_8007273c = actor_dictionary;
+	//	open_files_slot_number_tbl = 0;
+	//	DAT_80072de4 = 0;
+	//	buf2048bytes = actor_dictionary;
+	//	DAT_8007273c = actor_dictionary;
 	_vm->_cursor->setActorFlag400();
 	_vm->clearFlags(ENGINE_FLAG_8);
 	_vm->setFlags(ENGINE_FLAG_8000000);
-//	iVar1 = file_read_to_buffer(strCredits_txt);
-//	DAT_800728ec = iVar1 + (int)DAT_8007273c;
-//	buf2048bytes = (int32 *)((iVar1 + 3U & 0xfffffffc) + (int)buf2048bytes);
-//	memcpy2((byte *)buf2048bytes, scrFileData_maybe, 0x200);
-//	buf2048bytes = buf2048bytes + 0x80;
+	//	iVar1 = file_read_to_buffer(strCredits_txt);
+	//	DAT_800728ec = iVar1 + (int)DAT_8007273c;
+	//	buf2048bytes = (int32 *)((iVar1 + 3U & 0xfffffffc) + (int)buf2048bytes);
+	//	memcpy2((byte *)buf2048bytes, scrFileData_maybe, 0x200);
+	//	buf2048bytes = buf2048bytes + 0x80;
 	_vm->_screen->loadPalette(0, _vm->_dragonINIResource->getRecord(0x2C8)->actor->_actorResource->getPalette());
 	_vm->_scene->setMgLayerPriority(0);
 	_vm->_scene->setFgLayerPriority(0);
-//	vsync_updater_function = creditsUpdateFunction;
+	//	vsync_updater_function = creditsUpdateFunction;
 	_vm->_credits->start();
 }
 
 void SpecialOpcodes::spcEndCreditsAndRestartGame() {
 	_vm->fadeToBlackExcludingFont();
-//	_volumeSFX = 0;
-//	setCDAVolumes();
+	//	_volumeSFX = 0;
+	//	setCDAVolumes();
 	while (_vm->_credits->isRunning()) {
 		_vm->waitForFrames(1);
 	}
-//	ReloadGameFlag = 2;
-//	Exec_FMV_RELOADTT();
-//TODO need to return to main menu here.
+	//	ReloadGameFlag = 2;
+	//	Exec_FMV_RELOADTT();
+	//TODO need to return to main menu here.
 }
 
 void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
@@ -1189,15 +1185,15 @@ void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
 	ini->actor->setFlag(ACTOR_FLAG_4);
 	ini->actorResourceId = 0xcd;
 	//DisableVSyncEvent();
-//	uVar17 = (uint)(uint16)dragon_ini_pointer[DAT_8006398c + -1].field_0x1c;
-//	uVar7 = load_actor_file(0xcc);
-//	file_read_to_buffer(s_s12a6.act_80011740, (&actor_dictionary)[(uVar7 & 0xffff) * 2]);
-//	actors[uVar17].﻿actorFileDictionaryIndex = (uint16_t)uVar7;
-//	actors[uVar17].﻿resourceID = 0xcd;
-//	iVar18 = DAT_8006398c;
-//	actors[uVar17]._flags = actors[uVar17]._flags | 4;
-//	dragon_ini_pointer[iVar18 + -1].x = 0xcd;
-//	LAB_8002ad94:
+	//	uVar17 = (uint)(uint16)dragon_ini_pointer[DAT_8006398c + -1].field_0x1c;
+	//	uVar7 = load_actor_file(0xcc);
+	//	file_read_to_buffer(s_s12a6.act_80011740, (&actor_dictionary)[(uVar7 & 0xffff) * 2]);
+	//	actors[uVar17].﻿actorFileDictionaryIndex = (uint16_t)uVar7;
+	//	actors[uVar17].﻿resourceID = 0xcd;
+	//	iVar18 = DAT_8006398c;
+	//	actors[uVar17]._flags = actors[uVar17]._flags | 4;
+	//	dragon_ini_pointer[iVar18 + -1].x = 0xcd;
+	//	LAB_8002ad94:
 	//EnableVSyncEvent();
 }
 
@@ -1273,12 +1269,12 @@ void SpecialOpcodes::clearSceneUpdateFunction() {
 }
 
 void SpecialOpcodes::setupTableBasedSceneUpdateFunction(uint16 initialCounter, uint16 numSequences,
-														uint16 sequenceDuration) {
+                                                        uint16 sequenceDuration) {
 	sceneUpdater.sequenceID = -1;
 	_uint16_t_80083154 = 0;
 	_dat_80083148 = 0;
-//TODO
-//	DAT_80072858 = 0;
+	//TODO
+	//	DAT_80072858 = 0;
 	sceneUpdater.curSequenceIndex = 0;
 	sceneUpdater.numTotalSequences = numSequences;
 	sceneUpdater.curSequence = _vm->getRand(numSequences);
@@ -1311,22 +1307,20 @@ void SpecialOpcodes::setSpecialOpCounter(int16 newValue) {
 
 void SpecialOpcodes::mapTransition(uint16 mode) {
 	const uint16 mapLookupTbl[26] = {
-			160,    100,     45,    100,
-			105,    170,     14,     87,
-			 83,     33,     86,    100,
-			 25,    180,    161,    156,
-			195,     47,    287,     35,
-			292,     80,    202,    182,
-			127,     78
-	};
+	    160, 100, 45, 100,
+	    105, 170, 14, 87,
+	    83, 33, 86, 100,
+	    25, 180, 161, 156,
+	    195, 47, 287, 35,
+	    292, 80, 202, 182,
+	    127, 78};
 
 	const uint16 mapSceneIdTbl[13] = {
-			0,
-			0xa, 0x15, 0x1a,
-			0x1b, 0x1c, 0x1e,
-			0x20, 0x23, 0x25,
-			0x2d, 0x30, 0x31
-	};
+	    0,
+	    0xa, 0x15, 0x1a,
+	    0x1b, 0x1c, 0x1e,
+	    0x20, 0x23, 0x25,
+	    0x2d, 0x30, 0x31};
 
 	uint16 targetLocation = _vm->getINI(0x1e)->objectState;
 	if (targetLocation == 0) {
@@ -1350,10 +1344,10 @@ void SpecialOpcodes::mapTransition(uint16 mode) {
 	int32 rightIncrement = (DRAGONS_SCREEN_WIDTH - cursorX) * 0x10000 >> 4;
 
 	if (mode == 0) { //Close map
-		FlatQuad *topQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0x140,0,0x140,0,0,0,1,4,0));
-		FlatQuad *bottomQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,200,0x140,200,0x140,200,0,200,1,4,0));
-		FlatQuad *leftQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0,0,0,200,0,200,1,4,0));
-		FlatQuad *rightQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0x140,0,0x140,0,0x140,200,0x140,200,1,4,0));
+		FlatQuad *topQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, 0, 0x140, 0, 0x140, 0, 0, 0, 1, 4, 0));
+		FlatQuad *bottomQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, 200, 0x140, 200, 0x140, 200, 0, 200, 1, 4, 0));
+		FlatQuad *leftQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, 0, 0, 0, 0, 200, 0, 200, 1, 4, 0));
+		FlatQuad *rightQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0x140, 0, 0x140, 0, 0x140, 200, 0x140, 200, 1, 4, 0));
 		int32 topY = topQuad->points[3].y << 0x10;
 		int32 bottomY = bottomQuad->points[0].y << 0x10;
 		int32 rightX = rightQuad->points[0].x << 0x10;
@@ -1377,10 +1371,10 @@ void SpecialOpcodes::mapTransition(uint16 mode) {
 
 		_vm->fadeToBlack();
 	} else if (mode == 1) { // Open map
-		FlatQuad *topQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0,0,0x140,0,0x140,cursorY,0,cursorY,1,4,0));
+		FlatQuad *topQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, 0, 0x140, 0, 0x140, cursorY, 0, cursorY, 1, 4, 0));
 		FlatQuad *bottomQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, cursorY, 0x140, cursorY, 0x140, 200, 0, 200, 1, 4, 0));
 		FlatQuad *leftQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(0, 0, cursorX, 0, cursorX, 200, 0, 200, 1, 4, 0));
-		FlatQuad *rightQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(cursorX,0,0x140,0,0x140,200,cursorX,200,1,4,0));
+		FlatQuad *rightQuad = _vm->_screen->getFlatQuad(_vm->_screen->addFlatQuad(cursorX, 0, 0x140, 0, 0x140, 200, cursorX, 200, 1, 4, 0));
 		int32 topY = topQuad->points[3].y << 0x10;
 		int32 bottomY = bottomQuad->points[0].y << 0x10;
 		int32 leftX = leftQuad->points[1].x << 0x10;
@@ -1432,7 +1426,7 @@ void pizzaUpdateFunction() {
 				}
 				if (actorf4->_sequenceID == 2) {
 					if ((actorf5->_sequenceID == 8) &&
-						(actorf5->isFlagSet(ACTOR_FLAG_4))) {
+					    (actorf5->isFlagSet(ACTOR_FLAG_4))) {
 						actorf5->_x_pos = -100;
 						actorf5->_y_pos = 100;
 						actorf4->updateSequence(3);
@@ -1471,8 +1465,8 @@ void tableBasedSceneUpdateFunction() {
 			if (spc->sceneUpdater.counter == 0) {
 				spc->sceneUpdater.sequenceID = spc->sceneUpdater.sequenceIDTbl[uVar3][spc->sceneUpdater.curSequenceIndex]; //*(int16_t *) (sceneUpdateSequenceTbl[uVar3].sequenceIdPtr + (uint) spc->sceneUpdater.curSequenceIndex);
 				spc->sceneUpdater.iniID = spc->sceneUpdater.iniIDTbl[uVar3][spc->sceneUpdater.curSequenceIndex] - 1;
-//						*(short *) (sceneUpdateSequenceTbl[uVar3].iniIdPtr + (uint) spc->sceneUpdater.curSequenceIndex) -
-//						1;
+				//						*(short *) (sceneUpdateSequenceTbl[uVar3].iniIdPtr + (uint) spc->sceneUpdater.curSequenceIndex) -
+				//						1;
 				if (spc->sceneUpdater.sequenceID != -1) {
 					Actor *actor = vm->getINI(spc->sceneUpdater.iniID)->actor;
 					uint16 originalSequenceID = actor->_sequenceID;
@@ -1482,9 +1476,9 @@ void tableBasedSceneUpdateFunction() {
 				vm->_talk->playDialogAudioDontWait(spc->sceneUpdater.textTbl[uVar3][spc->sceneUpdater.curSequenceIndex]);
 				spc->sceneUpdater.curSequenceIndex++;
 				spc->sceneUpdater.counter = 0x1e;
-				if (spc->sceneUpdater.numSteps[uVar3] <= (uint) spc->sceneUpdater.curSequenceIndex) {
+				if (spc->sceneUpdater.numSteps[uVar3] <= (uint)spc->sceneUpdater.curSequenceIndex) {
 					spc->sceneUpdater.curSequenceIndex = 0;
-					spc->sceneUpdater.curSequence = vm->getRand((uint) spc->sceneUpdater.numTotalSequences);
+					spc->sceneUpdater.curSequence = vm->getRand((uint)spc->sceneUpdater.numTotalSequences);
 					spc->sceneUpdater.counter = spc->sceneUpdater.sequenceDuration;
 				}
 			}
@@ -1527,8 +1521,7 @@ void shakeScreenUpdateFunction() {
 
 void ladyOfTheLakeCapturedUpdateFunction() {
 	const uint32 dialogTbl[3] = {
-			0x490C8, 0x490FC, 0x4913A
-	};
+	    0x490C8, 0x490FC, 0x4913A};
 	static int ladyofLakeCountdownTimer = 0x12c;
 	static uint8 ladyOfLakeDialogIndex = 0;
 	DragonsEngine *vm = getEngine();
@@ -1570,8 +1563,7 @@ void castleFogUpdateFunction() {
 
 void menInMinesSceneUpdateFunction() {
 	const uint32 sceneUpdateFuncDialogTbl[4] = {
-		0x4590A, 0x45994, 0x459F4, 0x45A60
-	};
+	    0x4590A, 0x45994, 0x459F4, 0x45A60};
 	DragonsEngine *vm = getEngine();
 	uint16 sequenceId;
 	Actor *actor = vm->_dragonINIResource->getRecord(0x293)->actor;
@@ -1600,14 +1592,12 @@ void menInMinesSceneUpdateFunction() {
 void monksAtBarSceneUpdateFunction() {
 	static uint8 monksAtBarCurrentState = 0;
 	static const uint32 sceneUpdateFuncDialogTbl[6] = {
-		0x37800, 0x37854, 0x378CA,
-		0x39152, 0x3919A, 0x3922C
-	};
+	    0x37800, 0x37854, 0x378CA,
+	    0x39152, 0x3919A, 0x3922C};
 	static const uint32 barKeeperTextIdTbl[10] = {
-		0x38C68, 0x38CE2, 0x38D4E, 0x38CE2,
-		0x38DC2, 0x38E0C, 0x38C68, 0x38E5C,
-		0x38ED0, 0x38CE2
-	};
+	    0x38C68, 0x38CE2, 0x38D4E, 0x38CE2,
+	    0x38DC2, 0x38E0C, 0x38C68, 0x38E5C,
+	    0x38ED0, 0x38CE2};
 	static const uint32 DAT_800832f0[4] = {0x38F2A, 0x39000, 0x39084, 0x390E8};
 
 	DragonsEngine *vm = getEngine();
@@ -1788,7 +1778,7 @@ void monksAtBarSceneUpdateFunction() {
 
 void flameEscapeSceneUpdateFunction() {
 	static const uint32 dialogTbl[6] = {
-		0x10458, 0x104A0, 0x10500, 0x10500, 0x10550, 0x10578 //TODO support multiple languages
+	    0x10458, 0x104A0, 0x10500, 0x10500, 0x10550, 0x10578 //TODO support multiple languages
 	};
 	static bool DAT_800634c0 = false;
 	DragonsEngine *vm = getEngine();
@@ -1857,8 +1847,7 @@ void caveOfDilemmaUpdateFunction() {
 
 void moatDrainedSceneUpdateFunction() {
 	static const uint32 moatDrainedTextIdTbl[4] = {
-		0x3C97A, 0x3C9AC, 0x3C9F8, 0x3CA48
-	};
+	    0x3C97A, 0x3C9AC, 0x3C9F8, 0x3CA48};
 	static uint16 moatDrainedUpdateCounter = 0;
 	static bool moatDrainedStatus = false;
 	DragonsEngine *vm = getEngine();
@@ -1868,7 +1857,7 @@ void moatDrainedSceneUpdateFunction() {
 	}
 	castleFogUpdateFunction();
 	if (((vm->_dragonINIResource->getRecord(0x208)->objectState2 == 2) &&
-		 !vm->isFlagSet(ENGINE_FLAG_8000))) {
+	     !vm->isFlagSet(ENGINE_FLAG_8000))) {
 		if (moatDrainedUpdateCounter != 0) {
 			moatDrainedUpdateCounter--;
 		}

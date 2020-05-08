@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/segmented_pool.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,7 +35,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(SegmentedPool, Pool)
 //			0xFFE2 + 0x8 - 1 = 0xFFE9;
 //			0xFFE9 & ~(0x8 - 0x1) -> 0xFFE9 & 0xFFF8 = 0xFFE8
 
-#define OFFSET_ALIGN(X) ( (X + sizeof(uintptr) - 1) & ~(sizeof(uintptr) - 1) )
+#define OFFSET_ALIGN(X) ((X + sizeof(uintptr) - 1) & ~(sizeof(uintptr) - 1))
 
 struct SegmentedPoolNode {
 	SegmentedPool *pool;
@@ -43,11 +43,10 @@ struct SegmentedPoolNode {
 	size_t size;
 };
 
-
 // We pad both the PoolNode and the memory to align it.
 
 SegmentedPool::SegmentedPool(size_t nodeCapacity_, uint32 nodes)
-	: Pool(), _nodes(nodes), _freeNodeCount(nodes) {
+    : Pool(), _nodes(nodes), _freeNodeCount(nodes) {
 	uint32 i;
 
 	// Give it its real capacity.
@@ -81,7 +80,7 @@ SegmentedPool::SegmentedPool(size_t nodeCapacity_, uint32 nodes)
 SegmentedPool::~SegmentedPool() {
 	assert(isEmpty());
 
-	delete [] _startOfPool;
+	delete[] _startOfPool;
 }
 
 void *SegmentedPool::allocate(size_t size) {
@@ -103,7 +102,7 @@ void *SegmentedPool::allocate(size_t size) {
 
 	node->nextFree = nullptr;
 
-//	debugN"Allocating Node 0x%08X\n", node);
+	//	debugN"Allocating Node 0x%08X\n", node);
 	uint8 *p = reinterpret_cast<uint8 *>(node) +
 	           OFFSET_ALIGN(sizeof(SegmentedPoolNode));
 
@@ -118,7 +117,7 @@ void SegmentedPool::deallocate(void *ptr) {
 		node->size = 0;
 		assert(node->pool == this);
 
-//	debugN"Free Node 0x%08X\n", node);
+		//	debugN"Free Node 0x%08X\n", node);
 		if (isFull()) {
 			_firstFree = node;
 			_lastFree = node;
@@ -136,11 +135,11 @@ void SegmentedPool::printInfo() const {
 	SegmentedPoolNode *node;
 
 	debug(MM_INFO, "start address 0x%p\tend address 0x%p\tnodeOffset 0x%x",
-		_startOfPool, _endOfPool, (uint32)_nodeOffset);
+	      _startOfPool, _endOfPool, (uint32)_nodeOffset);
 	debug(MM_INFO, "_nodeCapacity %u b\n   total _nodes %u\tfree _nodes %u",
-		(uint32)_nodeCapacity, _nodes, _freeNodeCount);
+	      (uint32)_nodeCapacity, _nodes, _freeNodeCount);
 	debug(MM_INFO, "total memory: %u\tfree memory: %u",
-		(uint32)(_nodeCapacity * _nodes), (uint32)(_nodeCapacity * _freeNodeCount));
+	      (uint32)(_nodeCapacity * _nodes), (uint32)(_nodeCapacity * _freeNodeCount));
 
 	max = 0;
 	min = _nodeCapacity;
@@ -157,7 +156,7 @@ void SegmentedPool::printInfo() const {
 
 	if (_nodes > _freeNodeCount) {
 		debug(MM_INFO, "smallest node: %u b\tlargest node: %u b\taverage size: %u b",
-			min, max, total / (_nodes - _freeNodeCount));
+		      min, max, total / (_nodes - _freeNodeCount));
 	} else {
 		debug(MM_INFO, "Empty pool!!!");
 	}

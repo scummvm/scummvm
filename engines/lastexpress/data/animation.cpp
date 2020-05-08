@@ -112,26 +112,26 @@ bool Animation::process() {
 
 	// Process all chunks until the current frame
 	while (!_changed && _currentChunk != NULL && currentFrame > _currentChunk->frame && !hasEnded()) {
-		switch(_currentChunk->type) {
+		switch (_currentChunk->type) {
 		//TODO: some info chunks are probably subtitle/sync related
 		case kChunkTypeUnknown1:
 		case kChunkTypeUnknown2:
 		case kChunkTypeUnknown5:
 			debugC(9, kLastExpressDebugGraphics | kLastExpressDebugUnknown, "  info chunk: type 0x%.4x (size %d)", _currentChunk->type, _currentChunk->size);
-			assert (_currentChunk->frame == 0);
+			assert(_currentChunk->frame == 0);
 			//TODO: _currentChunk->size?
 			break;
 
 		case kChunkTypeAudioInfo:
 			debugC(9, kLastExpressDebugGraphics, "  audio info: %d blocks", _currentChunk->size);
-			assert (_currentChunk->frame == 0);
+			assert(_currentChunk->frame == 0);
 			//TODO: save the size?
 			_audio = new AppendableSound();
 			break;
 
 		case kChunkTypeUnknown4:
 			debugC(9, kLastExpressDebugGraphics | kLastExpressDebugUnknown, "  info block 4");
-			assert (_currentChunk->frame == 0 && _currentChunk->size == 0);
+			assert(_currentChunk->frame == 0 && _currentChunk->size == 0);
 			//TODO unknown type of chunk
 			break;
 
@@ -143,7 +143,7 @@ bool Animation::process() {
 
 		case kChunkTypeSelectBackground1:
 			debugC(9, kLastExpressDebugGraphics, "  select background 1");
-			assert (_currentChunk->frame == 0 && _currentChunk->size == 0);
+			assert(_currentChunk->frame == 0 && _currentChunk->size == 0);
 			_backgroundCurrent = 1;
 			break;
 
@@ -155,7 +155,7 @@ bool Animation::process() {
 
 		case kChunkTypeSelectBackground2:
 			debugC(9, kLastExpressDebugGraphics, "  select background 2");
-			assert (_currentChunk->frame == 0 && _currentChunk->size == 0);
+			assert(_currentChunk->frame == 0 && _currentChunk->size == 0);
 			_backgroundCurrent = 2;
 			break;
 
@@ -168,7 +168,7 @@ bool Animation::process() {
 		case kChunkTypeUpdate:
 		case kChunkTypeUpdateTransition:
 			debugC(9, kLastExpressDebugGraphics, "  update%s: frame %d", _currentChunk->type == 15 ? "" : " with transition", _currentChunk->frame);
-			assert (_currentChunk->size == 0);
+			assert(_currentChunk->size == 0);
 			_changed = true;
 			break;
 
@@ -183,7 +183,7 @@ bool Animation::process() {
 
 		case kChunkTypeAudioEnd:
 			debugC(9, kLastExpressDebugGraphics, "  audio end: %d blocks", _currentChunk->frame);
-			assert (_currentChunk->size == 0);
+			assert(_currentChunk->size == 0);
 			_audio->finish();
 			//TODO: we need to start the linked sound (.LNK) after the audio from the animation ends
 			break;
@@ -220,7 +220,7 @@ Common::Rect Animation::draw(Graphics::Surface *surface) {
 }
 
 AnimFrame *Animation::processChunkFrame(Common::SeekableReadStream *in, const Chunk &c) const {
-	assert (c.frame == 0);
+	assert(c.frame == 0);
 
 	// Create a temporary chunk buffer
 	Common::SeekableReadStream *str = in->readStream(c.size);

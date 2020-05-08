@@ -21,8 +21,8 @@
  */
 
 #include "mutationofjb/commands/removeitemcommand.h"
-#include "mutationofjb/script.h"
 #include "mutationofjb/gamedata.h"
+#include "mutationofjb/script.h"
 
 /** @file
  * "DELITEM " <item>
@@ -50,4 +50,4 @@ Common::String RemoveItemCommand::debugString() const {
 	return Common::String::format("DELITEM '%s'", _item.c_str());
 }
 
-}
+} // namespace MutationOfJB

@@ -37,9 +37,9 @@ uint Glulxe::do_gestalt(uint val, uint val2) {
 	case gestulx_ResizeMem:
 #ifdef FIXED_MEMSIZE
 		return 0; /* The setmemsize opcodes are compiled out. */
-#else /* FIXED_MEMSIZE */
+#else             /* FIXED_MEMSIZE */
 		return 1; /* We can handle setmemsize. */
-#endif /* FIXED_MEMSIZE */
+#endif            /* FIXED_MEMSIZE */
 
 	case gestulx_Undo:
 		return 1; /* We can handle saveundo and restoreundo. */
@@ -65,9 +65,9 @@ uint Glulxe::do_gestalt(uint val, uint val2) {
 	case gestulx_MAlloc:
 #ifdef FIXED_MEMSIZE
 		return 0; /* The malloc opcodes are compiled out. */
-#else /* FIXED_MEMSIZE */
+#else             /* FIXED_MEMSIZE */
 		return 1; /* We can handle malloc/mfree. */
-#endif /* FIXED_MEMSIZE */
+#endif            /* FIXED_MEMSIZE */
 
 	case gestulx_MAllocHeap:
 		return heap_get_start();
@@ -83,9 +83,9 @@ uint Glulxe::do_gestalt(uint val, uint val2) {
 	case gestulx_Float:
 #ifdef FLOAT_SUPPORT
 		return 1; /* We can do floating-point operations. */
-#else /* FLOAT_SUPPORT */
+#else             /* FLOAT_SUPPORT */
 		return 0; /* The floating-point opcodes are not compiled in. */
-#endif /* FLOAT_SUPPORT */
+#endif            /* FLOAT_SUPPORT */
 
 #ifdef GLULX_EXTEND_GESTALT
 		GLULX_EXTEND_GESTALT
@@ -93,7 +93,6 @@ uint Glulxe::do_gestalt(uint val, uint val2) {
 
 	default:
 		return 0;
-
 	}
 }
 

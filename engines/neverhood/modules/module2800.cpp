@@ -20,21 +20,21 @@
  *
  */
 
+#include "neverhood/modules/module2800.h"
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/gamemodule.h"
-#include "neverhood/scene.h"
-#include "neverhood/smackerplayer.h"
 #include "neverhood/modules/module1000_sprites.h"
 #include "neverhood/modules/module1200_sprites.h"
 #include "neverhood/modules/module1700_sprites.h"
 #include "neverhood/modules/module2200_sprites.h"
-#include "neverhood/modules/module2800.h"
 #include "neverhood/modules/module2800_sprites.h"
+#include "neverhood/scene.h"
+#include "neverhood/smackerplayer.h"
 
 namespace Neverhood {
 
 Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _musicResource(NULL) {
+    : Module(vm, parentModule), _musicResource(NULL) {
 
 	_currentMusicFileHash = 0;
 	_vm->_soundMan->addMusic(0x64210814, 0xD2FA4D14);
@@ -49,7 +49,6 @@ Module2800::Module2800(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else {
 		createScene(0, 0);
 	}
-
 }
 
 Module2800::~Module2800() {
@@ -60,9 +59,9 @@ Module2800::~Module2800() {
 	_vm->_soundMan->deleteGroup(0x64210814);
 }
 
-#define statueCloseup(backgroundFileHash, cursorFileHash)	\
-		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);	\
-		createStaticScene(backgroundFileHash, cursorFileHash)
+#define statueCloseup(backgroundFileHash, cursorFileHash) \
+	_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);         \
+	createStaticScene(backgroundFileHash, cursorFileHash)
 
 void Module2800::createScene(int sceneNum, int which) {
 	debug(1, "Module2800::createScene(%d, %d)", sceneNum, which);
@@ -72,56 +71,56 @@ void Module2800::createScene(int sceneNum, int which) {
 		_vm->gameState().sceneNum = _sceneNum;
 
 	switch (_sceneNum) {
-	case 0:	// in front of radio
+	case 0: // in front of radio
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 		_childObject = new Scene2801(_vm, this, which);
 		break;
-	case 1:	// radio
+	case 1: // radio
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 		if (getGlobalVar(V_RADIO_ENABLED))
 			_childObject = new Scene2802(_vm, this, which);
 		else
 			createStaticScene(0x000C6444, 0xC6440008);
 		break;
-	case 2:	// outside shrink machine
+	case 2: // outside shrink machine
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		if (getGlobalVar(V_KLAYMEN_SMALL))
 			_childObject = new Scene2803Small(_vm, this, which);
 		else
 			_childObject = new Scene2803(_vm, this, which);
 		break;
-	case 3:	// glass cylinder with diamonds
+	case 3: // glass cylinder with diamonds
 		_childObject = new Scene2804(_vm, this, which);
 		break;
-	case 4:	// outside the transporter
+	case 4: // outside the transporter
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2805(_vm, this, which);
 		break;
-	case 5:	// left test tube room
+	case 5: // left test tube room
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2806(_vm, this, which);
 		break;
-	case 6:	// the three test tubes next to the window
+	case 6: // the three test tubes next to the window
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2807(_vm, this, which);
 		break;
-	case 7:	// left test tube room closeup
+	case 7: // left test tube room closeup
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2808(_vm, this, 0);
 		break;
-	case 8:	// right test tube room
+	case 8: // right test tube room
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2809(_vm, this, which);
 		break;
-	case 9:	// statue room
+	case 9: // statue room
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2810(_vm, this, which);
 		break;
-	case 10:	// right test tube room closeup
+	case 10: // right test tube room closeup
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2808(_vm, this, 1);
 		break;
-	case 11:	// disk player room (above the statue room)
+	case 11: // disk player room (above the statue room)
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2812(_vm, this, which);
 		break;
@@ -152,7 +151,7 @@ void Module2800::createScene(int sceneNum, int which) {
 	case 20:
 		statueCloseup(0x01C58000, 0x58004014);
 		break;
-	case 21:	// statue with ladder down button
+	case 21: // statue with ladder down button
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		_childObject = new Scene2822(_vm, this, which);
 		break;
@@ -165,18 +164,18 @@ void Module2800::createScene(int sceneNum, int which) {
 	case 24:
 		statueCloseup(0x04270A94, 0x70A9004A);
 		break;
-	case 25:	// window
+	case 25: // window
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
 		if (getGlobalVar(V_SHRINK_LIGHTS_ON))
 			createStaticScene(0x01600204, 0x0020001E);
 		else
 			createStaticScene(0x08611204, 0x1120008E);
 		break;
-	case 26:	// disk player
+	case 26: // disk player
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 2);
 		_childObject = new DiskplayerScene(_vm, this, 4);
 		break;
-	case 1001:	// tower rotation video
+	case 1001: // tower rotation video
 		_vm->_soundMan->stopMusic(0xD2FA4D14, 0, 0);
 		_musicResource->stop(0);
 		_currentMusicFileHash = 0;
@@ -358,11 +357,10 @@ void Module2800::updateMusic(bool halfVolume) {
 	} else {
 		_musicResource->stop(0);
 	}
-
 }
 
 Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	Sprite *_sprite1;
 	Sprite *_sprite2;
@@ -440,7 +438,6 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_palette->addPalette(_paletteHash, 0, 65, 0);
 		_palette->addBasePalette(_paletteHash, 0, 65, 0);
 	}
-
 }
 
 Scene2801::~Scene2801() {
@@ -471,7 +468,7 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2802::Scene2802(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _currTuneStatus(0), _countdown1(0), _countdown2(0) {
+    : Scene(vm, parentModule), _currTuneStatus(0), _countdown1(0), _countdown2(0) {
 
 	SetMessageHandler(&Scene2802::handleMessage);
 	SetUpdateHandler(&Scene2802::update);
@@ -560,7 +557,6 @@ void Scene2802::update() {
 		setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 0);
 		leaveScene(1);
 	}
-
 }
 
 uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -572,10 +568,10 @@ uint32 Scene2802::handleMessage(int messageNum, const MessageParam &param, Entit
 			leaveScene(0);
 		} else if (_currTuneStatus == 0) {
 			if (param.asPoint().x > 180 && param.asPoint().x < 300 &&
-				param.asPoint().y > 130 && param.asPoint().y < 310) {
+			    param.asPoint().y > 130 && param.asPoint().y < 310) {
 				_currTuneStatus = 4;
 			} else if (param.asPoint().x > 300 && param.asPoint().x < 400 &&
-				param.asPoint().y > 130 && param.asPoint().y < 310) {
+			           param.asPoint().y > 130 && param.asPoint().y < 310) {
 				_currTuneStatus = 1;
 			}
 			if (_currTuneStatus == 1 || _currTuneStatus == 4) {
@@ -626,25 +622,22 @@ void Scene2802::changeTuneStatus(int prevTuneStatus, int newTuneStatus) {
 		_vm->_soundMan->playSoundLooping(0x422630C2);
 		_vm->_soundMan->playSoundLooping(0x00632252);
 	}
-
 }
 
 Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _paletteArea(0) {
+    : Scene(vm, parentModule), _paletteArea(0) {
 
 	static const uint32 kScene2803FileHashes1[] = {
-		0,
-		0x081000F1,
-		0x08100171,
-		0x08100271
-	};
+	    0,
+	    0x081000F1,
+	    0x08100171,
+	    0x08100271};
 
 	static const uint32 kScene2803FileHashes2[] = {
-		0,
-		0x286800D4,
-		0x286806D4,
-		0x28680AD4
-	};
+	    0,
+	    0x286800D4,
+	    0x286806D4,
+	    0x28680AD4};
 
 	setGlobalVar(V_BEEN_SHRINKING_ROOM, 1);
 	_vm->gameModule()->initTestTubes1Puzzle();
@@ -663,27 +656,27 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertScreenMouse(0xA423A41A);
 
 	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) == 0) {
-		_asTestTubeOne = (StaticSprite*)insertStaticSprite(0x66121222, 100);
+		_asTestTubeOne = (StaticSprite *)insertStaticSprite(0x66121222, 100);
 	} else {
-		_asTestTubeOne = (StaticSprite*)insertSprite<AsScene2803TestTubeOne>(
-			kScene2803FileHashes1[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)],
-			kScene2803FileHashes2[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)]);
+		_asTestTubeOne = (StaticSprite *)insertSprite<AsScene2803TestTubeOne>(
+		    kScene2803FileHashes1[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)],
+		    kScene2803FileHashes2[getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0)]);
 	}
 
 	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) == 3)
-		_asTestTubeTwo = (StaticSprite*)insertStaticSprite(0x64330236, 100);
+		_asTestTubeTwo = (StaticSprite *)insertStaticSprite(0x64330236, 100);
 
 	if (getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2) == 3)
-		_asTestTubeThree = (StaticSprite*)insertStaticSprite(0x2E4A22A2, 100);
+		_asTestTubeThree = (StaticSprite *)insertStaticSprite(0x2E4A22A2, 100);
 
 	_asLightCord = insertSprite<AsScene2803LightCord>(this, 0x8FAD5932, 0x276E1A3D, 578, 200);
-	_sprite3 = (StaticSprite*)insertStaticSprite(0xA40EF2FB, 1100);
-	_sprite4 = (StaticSprite*)insertStaticSprite(0x0C03AA23, 1100);
-	_sprite5 = (StaticSprite*)insertStaticSprite(0x2A822E2E, 1100);
-	_sprite6 = (StaticSprite*)insertStaticSprite(0x2603A202, 1100);
-	_sprite7 = (StaticSprite*)insertStaticSprite(0x24320220, 1100);
-	_sprite8 = (StaticSprite*)insertStaticSprite(0x3C42022F, 1100);
-	_sprite9 = (StaticSprite*)insertStaticSprite(0x341A0237, 1100);
+	_sprite3 = (StaticSprite *)insertStaticSprite(0xA40EF2FB, 1100);
+	_sprite4 = (StaticSprite *)insertStaticSprite(0x0C03AA23, 1100);
+	_sprite5 = (StaticSprite *)insertStaticSprite(0x2A822E2E, 1100);
+	_sprite6 = (StaticSprite *)insertStaticSprite(0x2603A202, 1100);
+	_sprite7 = (StaticSprite *)insertStaticSprite(0x24320220, 1100);
+	_sprite8 = (StaticSprite *)insertStaticSprite(0x3C42022F, 1100);
+	_sprite9 = (StaticSprite *)insertStaticSprite(0x341A0237, 1100);
 	_sprite10 = insertStaticSprite(0x855820A3, 1200);
 
 	_clipRectsFloor[0].x1 = 0;
@@ -747,7 +740,6 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	changeBackground();
-
 }
 
 void Scene2803::upKlaymenStairs() {
@@ -899,15 +891,13 @@ void Scene2803::updatePaletteArea() {
 }
 
 Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _paletteArea(0) {
+    : Scene(vm, parentModule), _paletteArea(0) {
 
 	static const uint32 kScene2803SmallFileHashes1[] = {
-		0, 0x081000F1, 0x08100171, 0x08100271
-	};
+	    0, 0x081000F1, 0x08100171, 0x08100271};
 
 	static const uint32 kScene2803SmallFileHashes2[] = {
-		0, 0x286800D4, 0x286806D4, 0x28680AD4
-	};
+	    0, 0x286800D4, 0x286806D4, 0x28680AD4};
 
 	SetMessageHandler(&Scene2803Small::handleMessage);
 
@@ -994,7 +984,6 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 		_sprite6->setVisible(true);
 		_sprite7->setVisible(true);
 	}
-
 }
 
 uint32 Scene2803Small::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1149,8 +1138,8 @@ void Scene2803Small::updatePaletteArea(bool instantly) {
 }
 
 Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _countdown1(0), _countdown2(0), _countdown3(0),
-	_beamStatus(0), _isSolved(false), _isWorking(false) {
+    : Scene(vm, parentModule), _countdown1(0), _countdown2(0), _countdown3(0),
+      _beamStatus(0), _isSolved(false), _isWorking(false) {
 
 	_vm->gameModule()->initCrystalColorsPuzzle();
 
@@ -1187,7 +1176,6 @@ Scene2804::Scene2804(NeverhoodEngine *vm, Module *parentModule, int which)
 		_ssCrystalButtons[crystalIndex] = insertSprite<SsScene2804CrystalButton>(this, _asCrystals[crystalIndex], crystalIndex);
 		addCollisionSprite(_ssCrystalButtons[crystalIndex]);
 	}
-
 }
 
 uint32 Scene2804::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1258,11 +1246,10 @@ void Scene2804::update() {
 		else if (_beamStatus < 7)
 			_countdown3 = 4;
 	}
-
 }
 
 Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene2805::handleMessage);
 
@@ -1300,7 +1287,6 @@ Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, _sprite2->getDrawRect().x2(), 480);
-
 }
 
 uint32 Scene2805::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1322,7 +1308,7 @@ uint32 Scene2805::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -1392,7 +1378,6 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_pointIndex = -1;
 	findClosestPoint();
-
 }
 
 uint32 Scene2806::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1420,13 +1405,12 @@ void Scene2806::update() {
 void Scene2806::findClosestPoint() {
 
 	static const uint32 kScene2806PaletteFileHashes[] = {
-		0x48052508,
-		0x01139404,
-		0x01138C04,
-		0x01138004,
-		0x01138604,
-		0x086B8890
-	};
+	    0x48052508,
+	    0x01139404,
+	    0x01138C04,
+	    0x01138004,
+	    0x01138604,
+	    0x086B8890};
 
 	int16 x = MIN<int16>(_klaymen->getX(), 639);
 	int index = 1;
@@ -1439,11 +1423,10 @@ void Scene2806::findClosestPoint() {
 		_pointIndex = index;
 		_palette->addPalette(kScene2806PaletteFileHashes[index], 0, 64, 0);
 	}
-
 }
 
 Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene2807::handleMessage);
 
@@ -1474,7 +1457,6 @@ Scene2807::Scene2807(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x3E049A95);
 	setPalette(0x3E049A95);
 	insertPuzzleMouse(0x49A913E8, 20, 620);
-
 }
 
 uint32 Scene2807::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1492,17 +1474,15 @@ uint32 Scene2807::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 static const uint32 kScene2808FileHashes1[] = {
-	0x90B0392,
-	0x90B0192
-};
+    0x90B0392,
+    0x90B0192};
 
 static const uint32 kScene2808FileHashes2[] = {
-	0xB0396098,
-	0xB0196098
-};
+    0xB0396098,
+    0xB0196098};
 
 Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _countdown(0), _testTubeSetNum(which), _leaveResult(0), _isFlowing(false) {
+    : Scene(vm, parentModule), _countdown(0), _testTubeSetNum(which), _leaveResult(0), _isFlowing(false) {
 
 	Sprite *asHandle;
 
@@ -1531,7 +1511,6 @@ Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	insertScreenMouse(kScene2808FileHashes2[which]);
-
 }
 
 uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1578,27 +1557,24 @@ void Scene2808::update() {
 
 bool Scene2808::isMixtureGood() {
 	if (_testTubeSetNum == 0) {
-		return
-			_asTestTubes[0]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) &&
-			_asTestTubes[1]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) &&
-			_asTestTubes[2]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2);
+		return _asTestTubes[0]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0) &&
+		       _asTestTubes[1]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1) &&
+		       _asTestTubes[2]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2);
 	} else {
-		return
-			_asTestTubes[0]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0) &&
-			_asTestTubes[1]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1) &&
-			_asTestTubes[2]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2);
+		return _asTestTubes[0]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0) &&
+		       _asTestTubes[1]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1) &&
+		       _asTestTubes[2]->getFillLevel() == getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2);
 	}
 }
 
 bool Scene2808::isAnyTestTubeFilled() {
-	return
-		_asTestTubes[0]->getFillLevel() > 0 ||
-		_asTestTubes[1]->getFillLevel() > 0 ||
-		_asTestTubes[2]->getFillLevel() > 0;
+	return _asTestTubes[0]->getFillLevel() > 0 ||
+	       _asTestTubes[1]->getFillLevel() > 0 ||
+	       _asTestTubes[2]->getFillLevel() > 0;
 }
 
 Scene2809::Scene2809(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -1668,7 +1644,6 @@ Scene2809::Scene2809(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_pointIndex = -1;
 	findClosestPoint();
-
 }
 
 void Scene2809::update() {
@@ -1696,13 +1671,12 @@ uint32 Scene2809::handleMessage(int messageNum, const MessageParam &param, Entit
 void Scene2809::findClosestPoint() {
 
 	static const uint32 kScene2809PaletteFileHashes[] = {
-		0x04260848,
-		0x12970401,
-		0x128F0401,
-		0x12830401,
-		0x12850401,
-		0x6A8B9008
-	};
+	    0x04260848,
+	    0x12970401,
+	    0x128F0401,
+	    0x12830401,
+	    0x12850401,
+	    0x6A8B9008};
 
 	int16 x = MAX<int16>(_klaymen->getX(), 2);
 	int index = 1;
@@ -1715,11 +1689,10 @@ void Scene2809::findClosestPoint() {
 		_pointIndex = index;
 		_palette->addPalette(kScene2809PaletteFileHashes[index], 0, 64, 0);
 	}
-
 }
 
 Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	Sprite *tempSprite;
 
@@ -1856,7 +1829,6 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		_isRopingDown = false;
 		removeCollisionSprite(_asTape);
 	}
-
 }
 
 Scene2810::~Scene2810() {
@@ -1942,7 +1914,7 @@ uint32 Scene2810::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _paletteArea(0) {
+    : Scene(vm, parentModule), _paletteArea(0) {
 
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 3);
@@ -2009,7 +1981,6 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_asRope->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
-
 }
 
 void Scene2812::update() {
@@ -2098,7 +2069,7 @@ void Scene2812::updatePaletteArea(bool instantly) {
 }
 
 Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _countdown(0), _scrollIndex(0) {
+    : Scene(vm, parentModule), _countdown(0), _scrollIndex(0) {
 
 	SetMessageHandler(&Scene2822::handleMessage);
 	SetUpdateHandler(&Scene2822::update);
@@ -2115,8 +2086,7 @@ Scene2822::Scene2822(NeverhoodEngine *vm, Module *parentModule, int which)
 void Scene2822::update() {
 
 	static const int16 kScene2822BackgroundYPositions[] = {
-		0, -20, -5, -15, -8, -12, -9, -11, -10, 0
-	};
+	    0, -20, -5, -15, -8, -12, -9, -11, -10, 0};
 
 	Scene::update();
 
@@ -2142,7 +2112,6 @@ void Scene2822::update() {
 			}
 		}
 	}
-
 }
 
 uint32 Scene2822::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -2152,7 +2121,7 @@ uint32 Scene2822::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 			leaveScene(0);
 		} else if (param.asPoint().x >= 257 && param.asPoint().y >= 235 &&
-			param.asPoint().x <= 293 && param.asPoint().y <= 273) {
+		           param.asPoint().x <= 293 && param.asPoint().y <= 273) {
 			_ssButton->setVisible(true);
 			_countdownStatus = 0;
 			_countdown = 12;

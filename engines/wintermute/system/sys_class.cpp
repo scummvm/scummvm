@@ -26,12 +26,12 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/system/sys_instance.h"
 #include "engines/wintermute/system/sys_class.h"
-#include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/persistent.h"
+#include "engines/wintermute/system/sys_class_registry.h"
+#include "engines/wintermute/system/sys_instance.h"
 
 namespace Wintermute {
 
@@ -49,7 +49,6 @@ SystemClass::SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD
 	SystemClassRegistry::getInstance()->registerClass(this);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 SystemClass::~SystemClass() {
 	SystemClassRegistry::getInstance()->unregisterClass(this);
@@ -60,7 +59,7 @@ SystemClass::~SystemClass() {
 bool SystemClass::removeAllInstances() {
 	Instances::iterator it;
 	for (it = _instances.begin(); it != _instances.end(); ++it) {
-		delete(it->_value);
+		delete (it->_value);
 	}
 	_instances.clear();
 	_instanceMap.clear();
@@ -81,7 +80,6 @@ SystemInstance *SystemClass::addInstance(void *instance, int id, int savedId) {
 	return inst;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SystemClass::removeInstance(void *instance) {
 	InstanceMap::iterator mapIt = _instanceMap.find(instance);
@@ -91,7 +89,7 @@ bool SystemClass::removeInstance(void *instance) {
 
 	Instances::iterator it = _instances.find((mapIt->_value));
 	if (it != _instances.end()) {
-		delete(it->_value);
+		delete (it->_value);
 		_instances.erase(it);
 	}
 
@@ -177,7 +175,6 @@ void SystemClass::loadTable(BaseGame *gameRef, BasePersistenceManager *persistMg
 
 			addInstance(emptyObject, SystemClassRegistry::getInstance()->getNextID(), instID);
 		}
-
 	}
 }
 
@@ -199,7 +196,6 @@ void SystemClass::saveInstances(BaseGame *Game, BasePersistenceManager *persistM
 void SystemClass::loadInstance(void *instance, BasePersistenceManager *persistMgr) {
 	_load(instance, persistMgr);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void SystemClass::resetSavedIDs() {

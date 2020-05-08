@@ -31,7 +31,7 @@ class PDAMgr;
 
 class PDAPage : public Page {
 public:
-	PDAPage(const Common::String& name, PinkEngine* vm);
+	PDAPage(const Common::String &name, PinkEngine *vm);
 };
 
 } // End of namespace Pink

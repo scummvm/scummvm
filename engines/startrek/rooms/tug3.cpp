@@ -207,8 +207,7 @@ void Room::tug3UseKillPhaserOnElasi4() {
 void Room::tug3ElasiStunnedOrKilled() {
 	if (_awayMission->tug.bridgeWinMethod == 1)
 		return;
-	if (_awayMission->tug.bridgeElasi1Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_UP
-	        || _awayMission->tug.bridgeElasi3Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi4Status == GUARDSTAT_UP)
+	if (_awayMission->tug.bridgeElasi1Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi3Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi4Status == GUARDSTAT_UP)
 		return;
 
 	// BUGFIX: if the ship is deorbiting, the mission isn't won yet.
@@ -225,12 +224,11 @@ void Room::tug3TalkToElasi1() {
 	_awayMission->tug.talkedToCereth = true;
 
 	const TextRef choices[] = {
-		TX_SPEAKER_KIRK,
-		4,
-		3,
-		2,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    4,
+	    3,
+	    2,
+	    TX_BLANK};
 	int choice = showMultipleTexts(choices, true);
 
 	switch (choice) {
@@ -382,10 +380,7 @@ void Room::tug3UseCommunicator() {
 		// BUGFIX: if still fighting the elasi, the mission isn't done yet.
 		_awayMission->tug.orbitalDecayCounter = 0;
 		if (!_awayMission->tug.elasiSurrendered &&
-		        (_awayMission->tug.bridgeElasi1Status == GUARDSTAT_UP
-		         || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_UP
-		         || _awayMission->tug.bridgeElasi3Status == GUARDSTAT_UP
-		         || _awayMission->tug.bridgeElasi4Status == GUARDSTAT_UP))
+		    (_awayMission->tug.bridgeElasi1Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi2Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi3Status == GUARDSTAT_UP || _awayMission->tug.bridgeElasi4Status == GUARDSTAT_UP))
 			return;
 
 		tug3EndMission();
@@ -407,9 +402,9 @@ void Room::tug3UseCommunicator() {
 // One of the elasi shoots one of the crewmen
 void Room::tug3Timer0Expired() {
 	const char *beamAnims[][4] = {
-		{ "t3beem33", "t3beem35", "t3beem34", "t3beem32" },
-		{ "t3beem37", "t3beem39", "t3beem38", "t3beem36" },
-		{ "t3beem29", "t3beem31", "t3beem30", "t3beem28" },
+	    {"t3beem33", "t3beem35", "t3beem34", "t3beem32"},
+	    {"t3beem37", "t3beem39", "t3beem38", "t3beem36"},
+	    {"t3beem29", "t3beem31", "t3beem30", "t3beem28"},
 	};
 
 	int elasiShooter, elasiTarget;
@@ -494,4 +489,4 @@ void Room::tug3SecurityTeamBeamedIn() {
 	endMission(_awayMission->tug.missionScore, _awayMission->tug.field2b, _awayMission->tug.field2d);
 }
 
-}
+} // namespace StarTrek

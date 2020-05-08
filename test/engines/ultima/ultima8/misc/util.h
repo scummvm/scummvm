@@ -1,6 +1,6 @@
-#include <cxxtest/TestSuite.h>
 #include "engines/ultima/shared/std/string.h"
 #include "engines/ultima/ultima8/misc/util.h"
+#include <cxxtest/TestSuite.h>
 
 /**
  * Test suite for the functions in engines/ultima/ultima8/misc/util.h
@@ -8,7 +8,7 @@
 
 class U8UtilTestSuite : public CxxTest::TestSuite {
 
-	public:
+public:
 	U8UtilTestSuite() {
 	}
 

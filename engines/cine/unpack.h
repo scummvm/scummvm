@@ -23,7 +23,6 @@
 #ifndef CINE_UNPACK_H
 #define CINE_UNPACK_H
 
-
 #include "common/scummsys.h"
 
 namespace Cine {
@@ -47,6 +46,7 @@ public:
 	 * @return True if no errors were detected in the source data and unpacking was successful, otherwise false.
 	 */
 	bool unpack(const byte *src, uint srcLen, byte *dst, uint dstLen);
+
 private:
 	/**
 	 * Reads an unsigned big endian 32-bit integer from the source stream and goes backwards 4 bytes.
@@ -95,6 +95,7 @@ private:
 	 * @param numBytes Amount of bytes to copy
 	 */
 	void copyRelocatedBytes(uint offset, uint numBytes);
+
 private:
 	uint32 _crc;      ///< Error-detecting code (This should be zero after successful unpacking)
 	uint32 _chunk32b; ///< The current internal 32-bit chunk of source data

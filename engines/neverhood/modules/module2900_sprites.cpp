@@ -25,117 +25,110 @@
 namespace Neverhood {
 
 static const uint32 kSsScene2901LocationButtonFileHashes[] = {
-	0x2311326A,
-	0x212323AC,
-	0x10098138,
-	0x25213167,
-	0x1119A363,
-	0x94452612,
-	0x39464212,
-	0x01860450,
-	0x53002104,
-	0x58E68412,
-	0x18600300,
-	0xB650A890,
-	0x2452A7C4,
-	0xA0232748,
-	0x08862B02,
-	0x2491E648,
-	0x0010EB46,
-	0x214C8A11,
-	0x16A31921,
-	0x0AC33A00,
-	0x238028AA,
-	0x26737A21,
-	0x063039A8,
-	0x51286C60,
-	0x464006B4,
-	0x42242538,
-	0x20716010,
-	0x4A2000AE,
-	0x225124A6,
-	0x28E82E45,
-	0x58652C04,
-	0xC82210A4,
-	0x62A84060,
-	0xC0693CB4,
-	0x22212C64,
-	0x5034EA71
-};
+    0x2311326A,
+    0x212323AC,
+    0x10098138,
+    0x25213167,
+    0x1119A363,
+    0x94452612,
+    0x39464212,
+    0x01860450,
+    0x53002104,
+    0x58E68412,
+    0x18600300,
+    0xB650A890,
+    0x2452A7C4,
+    0xA0232748,
+    0x08862B02,
+    0x2491E648,
+    0x0010EB46,
+    0x214C8A11,
+    0x16A31921,
+    0x0AC33A00,
+    0x238028AA,
+    0x26737A21,
+    0x063039A8,
+    0x51286C60,
+    0x464006B4,
+    0x42242538,
+    0x20716010,
+    0x4A2000AE,
+    0x225124A6,
+    0x28E82E45,
+    0x58652C04,
+    0xC82210A4,
+    0x62A84060,
+    0xC0693CB4,
+    0x22212C64,
+    0x5034EA71};
 
 static const NPoint kSsScene2901LocationButtonPoints[] = {
-	{525, 120}, {576, 149}, {587, 205},
-	{538, 232}, {484, 205}, {479, 153}
-};
+    {525, 120}, {576, 149}, {587, 205}, {538, 232}, {484, 205}, {479, 153}};
 
 static const uint32 kSsScene2901LocationButtonLightFileHashes1[] = {
-	0x03136246,
-	0x2106216E,
-	0x4025A13A,
-	0x21816927,
-	0x110B2202,
-	0xCC0522B2,
-	0x3CC24258,
-	0x59C600F0,
-	0x534A2480,
-	0x50E61019,
-	0x34400150,
-	0x225BA090,
-	0xB059AFC4,
-	0xE093A741,
-	0x0086BF09,
-	0x3281E760,
-	0xA048AB42,
-	0x20649C01,
-	0x14611904,
-	0x26E33850,
-	0x23A52A68,
-	0xA2733024,
-	0x10203880,
-	0x1B2DE860,
-	0x0644A6EC,
-	0x426E20BC,
-	0x80292014,
-	0x4360B02E,
-	0x22742664,
-	0x98682705,
-	0x0925B82C,
-	0x5C2918A4,
-	0xD2284920,
-	0x41083CA6,
-	0x6824A864,
-	0x50266B10
-};
+    0x03136246,
+    0x2106216E,
+    0x4025A13A,
+    0x21816927,
+    0x110B2202,
+    0xCC0522B2,
+    0x3CC24258,
+    0x59C600F0,
+    0x534A2480,
+    0x50E61019,
+    0x34400150,
+    0x225BA090,
+    0xB059AFC4,
+    0xE093A741,
+    0x0086BF09,
+    0x3281E760,
+    0xA048AB42,
+    0x20649C01,
+    0x14611904,
+    0x26E33850,
+    0x23A52A68,
+    0xA2733024,
+    0x10203880,
+    0x1B2DE860,
+    0x0644A6EC,
+    0x426E20BC,
+    0x80292014,
+    0x4360B02E,
+    0x22742664,
+    0x98682705,
+    0x0925B82C,
+    0x5C2918A4,
+    0xD2284920,
+    0x41083CA6,
+    0x6824A864,
+    0x50266B10};
 
 static const uint32 kSsScene2901LocationButtonLightFileHashes2[] = {
-	0x43C46D4C,
-	0x43C4AD4C,
-	0x43C52D4C,
-	0x43C62D4C,
-	0x43C02D4C,
-	0x43CC2D4C
-};
+    0x43C46D4C,
+    0x43C4AD4C,
+    0x43C52D4C,
+    0x43C62D4C,
+    0x43C02D4C,
+    0x43CC2D4C};
 
 static const uint32 kSsScene2901BrokenButtonFileHashes[] = {
-	0x3081BD3A,
-	0xD3443003,
-	0x0786A320,
-	0xE3A22029,
-	0x61611814,
-	0x425848E2
-};
+    0x3081BD3A,
+    0xD3443003,
+    0x0786A320,
+    0xE3A22029,
+    0x61611814,
+    0x425848E2};
 
 static const uint32 kSsScene2901BigButtonFileHashes[] = {
-	0x010D7748,
-	0x9D02019A,
-	0x351A2F43,
-	0x448138E5,
-	0x02788CF0,
-	0x71718024
-};
+    0x010D7748,
+    0x9D02019A,
+    0x351A2F43,
+    0x448138E5,
+    0x02788CF0,
+    0x71718024};
 
 SsScene2901LocationButton::SsScene2901LocationButton(NeverhoodEngine *vm, Scene *parentScene, int which, uint index)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _index(index), _countdown1(0) {
+    : StaticSprite(vm, 900), _parentScene(parentScene), _index(index), _countdown1(0) {
 
 	const NPoint &pt = kSsScene2901LocationButtonPoints[_index];
 
@@ -173,7 +166,7 @@ uint32 SsScene2901LocationButton::handleMessage(int messageNum, const MessagePar
 }
 
 SsScene2901LocationButtonLight::SsScene2901LocationButtonLight(NeverhoodEngine *vm, int which, uint index)
-	: StaticSprite(vm, 900), _index(index) {
+    : StaticSprite(vm, 900), _index(index) {
 
 	loadSprite(kSsScene2901LocationButtonLightFileHashes1[which * 6 + index], kSLFDefDrawOffset | kSLFDefPosition, 900);
 	setVisible(false);
@@ -192,13 +185,13 @@ void SsScene2901LocationButtonLight::hide() {
 }
 
 SsScene2901BrokenButton::SsScene2901BrokenButton(NeverhoodEngine *vm, int which)
-	: StaticSprite(vm, 900) {
+    : StaticSprite(vm, 900) {
 
 	loadSprite(kSsScene2901BrokenButtonFileHashes[which], kSLFDefDrawOffset | kSLFDefPosition, 900);
 }
 
 SsScene2901BigButton::SsScene2901BigButton(NeverhoodEngine *vm, Scene *parentScene, int which)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _which(which), _countdown1(0) {
+    : StaticSprite(vm, 900), _parentScene(parentScene), _which(which), _countdown1(0) {
 
 	loadSprite(kSsScene2901BigButtonFileHashes[which], kSLFDefDrawOffset | kSLFDefPosition, 400);
 	_collisionBounds.set(62, 94, 322, 350);

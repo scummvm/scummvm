@@ -23,10 +23,10 @@
 #ifndef NUVIE_CONF_CONFIGURATION_H
 #define NUVIE_CONF_CONFIGURATION_H
 
-#include "ultima/shared/std/string.h"
+#include "ultima/detection.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/misc.h"
-#include "ultima/detection.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Shared {
@@ -62,14 +62,16 @@ class ConfigNode;
  */
 class Configuration {
 private:
-	Std::vector<Shared::XMLTree*> _trees;
-    Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
-        Common::IgnoreCase_EqualTo> _localKeys;
+	Std::vector<Shared::XMLTree *> _trees;
+	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
+	                Common::IgnoreCase_EqualTo>
+	    _localKeys;
 	Std::string _configFilename;
-    bool _configChanged;
+	bool _configChanged;
 
-    // Sets default configurations common to both enhanced and unhenaced
-    void setCommonDefaults(GameId gameType);
+	// Sets default configurations common to both enhanced and unhenaced
+	void setCommonDefaults(GameId gameType);
+
 public:
 	Configuration();
 	~Configuration();
@@ -77,14 +79,14 @@ public:
 	// read config file. Multiple files may be read. Order is important.
 	bool readConfigFile(Std::string fname, Std::string root, bool readonly = true);
 
-    // Returns true if default settings for game have previously been set
-    bool isDefaultsSet() const;
+	// Returns true if default settings for game have previously been set
+	bool isDefaultsSet() const;
 
-    // sets up unenhanced version defaults
-    void setUnenhancedDefaults(GameId gameType);
+	// sets up unenhanced version defaults
+	void setUnenhancedDefaults(GameId gameType);
 
-    // sets up enhanced version defaults
-    void setEnhancedDefaults(GameId gameType);
+	// sets up enhanced version defaults
+	void setEnhancedDefaults(GameId gameType);
 
 	// write all (writable) config files
 	void write();

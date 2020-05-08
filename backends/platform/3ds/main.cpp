@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 	cfguInit();
 	romfsInit();
 	osSetSpeedupEnable(true);
-// 	consoleInit(GFX_TOP, NULL);
+	// 	consoleInit(GFX_TOP, NULL);
 	gdbHioDevInit();
 	gdbHioDevRedirectStdStreams(true, true, true);
 

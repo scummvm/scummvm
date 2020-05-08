@@ -37,14 +37,14 @@ class Waypoints {
 	friend class Debugger;
 
 	struct Waypoint {
-		int     setId;
+		int setId;
 		Vector3 position;
-		bool    present;
+		bool present;
 	};
 
 	BladeRunnerEngine *_vm;
 
-	int                     _count;
+	int _count;
 	Common::Array<Waypoint> _waypoints;
 
 public:

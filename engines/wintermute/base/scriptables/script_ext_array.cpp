@@ -26,11 +26,11 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/system/sys_instance.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/persistent.h"
+#include "engines/wintermute/system/sys_instance.h"
 
 namespace Wintermute {
 
@@ -65,13 +65,11 @@ SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 	_values = new ScValue(_gameRef);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 SXArray::~SXArray() {
 	delete _values;
 	_values = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXArray::scToString() {
@@ -94,7 +92,6 @@ const char *SXArray::scToString() {
 	_strRep = dummy;
 	return _strRep.c_str();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
@@ -132,8 +129,8 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		}
 
 		return STATUS_OK;
-	} 
-	
+	}
+
 #ifdef ENABLE_FOXTAIL
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] Delete
@@ -148,7 +145,7 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		char paramNameFrom[20];
 		char paramNameTo[20];
 
-		for (int i = shiftPoint; i < _length - 1 ; i++) {
+		for (int i = shiftPoint; i < _length - 1; i++) {
 			sprintf(paramNameFrom, "%d", i + 1);
 			sprintf(paramNameTo, "%d", i);
 			_values->setProp(paramNameTo, _values->getProp(paramNameFrom), false);
@@ -165,7 +162,6 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXArray::scGetProperty(const Common::String &name) {
@@ -199,7 +195,6 @@ ScValue *SXArray::scGetProperty(const Common::String &name) {
 		}
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXArray::scSetProperty(const char *name, ScValue *value) {
@@ -237,7 +232,6 @@ bool SXArray::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXArray::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
@@ -247,7 +241,6 @@ bool SXArray::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXArray::validNumber(const char *origStr, char *outStr) {

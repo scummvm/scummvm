@@ -31,8 +31,7 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-GSpit::GSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackGspit, "gsliders.190", "gsliderbg.190") {
+GSpit::GSpit(MohawkEngine_Riven *vm) : DomeSpit(vm, kStackGspit, "gsliders.190", "gsliderbg.190") {
 
 	REGISTER_COMMAND(GSpit, xgresetpins);
 	REGISTER_COMMAND(GSpit, xgrotatepins);
@@ -97,8 +96,7 @@ void GSpit::xgrotatepins(const ArgumentArray &args) {
 	uint32 &pinPos = _vm->_vars["gpinpos"];
 
 	static const uint32 pinPosTimes[] = {
-			8416, 0, 1216, 2416, 3616, 4846, 6016, 7216
-	};
+	    8416, 0, 1216, 2416, 3616, 4846, 6016, 7216};
 
 	uint32 startTime = pinPosTimes[pinPos];
 	pinPos++;
@@ -135,25 +133,25 @@ void GSpit::xgpincontrols(const ArgumentArray &args) {
 	// Lastly, adjust it based on the rotational position
 	uint32 &pinPos = _vm->_vars["gpinpos"];
 	switch (pinPos) {
-		case 1:
-			mousePos.x = 5 - mousePos.x;
-			mousePos.y = (4 - mousePos.y) * 5;
-			break;
-		case 2:
-			mousePos.x = (4 - mousePos.x) * 5;
-			mousePos.y = 1 + mousePos.y;
-			break;
-		case 3:
-			mousePos.x = 1 + mousePos.x;
-			mousePos.y = mousePos.y * 5;
-			break;
-		case 4:
-			mousePos.x = mousePos.x * 5;
-			mousePos.y = 5 - mousePos.y;
-			break;
-		default:
-			// (Should never happen)
-			error("Bad pin pos");
+	case 1:
+		mousePos.x = 5 - mousePos.x;
+		mousePos.y = (4 - mousePos.y) * 5;
+		break;
+	case 2:
+		mousePos.x = (4 - mousePos.x) * 5;
+		mousePos.y = 1 + mousePos.y;
+		break;
+	case 3:
+		mousePos.x = 1 + mousePos.x;
+		mousePos.y = mousePos.y * 5;
+		break;
+	case 4:
+		mousePos.x = mousePos.x * 5;
+		mousePos.y = 5 - mousePos.y;
+		break;
+	default:
+		// (Should never happen)
+		error("Bad pin pos");
 	}
 
 	// Now check to see if this section of the island exists
@@ -167,12 +165,11 @@ void GSpit::xgpincontrols(const ArgumentArray &args) {
 	uint16 imagePos = mousePos.x + mousePos.y;
 
 	static const uint16 islandImages[5][11] = {
-			{ 1, 2, 6, 7 },
-			{ 11, 16, 21, 22 },
-			{ 12, 13, 14, 15, 17, 18, 19, 20, 23, 24, 25 },
-			{ 5 },
-			{ 3, 4, 8, 9, 10 }
-	};
+	    {1, 2, 6, 7},
+	    {11, 16, 21, 22},
+	    {12, 13, 14, 15, 17, 18, 19, 20, 23, 24, 25},
+	    {5},
+	    {3, 4, 8, 9, 10}};
 
 	// The scripts set gimagemax to hold the max pin array length in islandPins above
 	uint32 imageCount = _vm->_vars["gimagemax"];
@@ -198,7 +195,7 @@ void GSpit::xgpincontrols(const ArgumentArray &args) {
 	}
 
 	// Raise the pins by translating the position to the movie code
-	static const uint16 pinMovieCodes[] = { 1, 2, 1, 2, 1, 3, 4, 3, 4, 5, 1, 1, 2, 3, 4, 2, 5, 6, 7, 8, 3, 4, 9, 10, 11 };
+	static const uint16 pinMovieCodes[] = {1, 2, 1, 2, 1, 3, 4, 3, 4, 5, 1, 1, 2, 3, 4, 2, 5, 6, 7, 8, 3, 4, 9, 10, 11};
 
 	// Play the up sound
 	_vm->_sound->playSound(14);
@@ -262,7 +259,7 @@ void GSpit::xgwt900_scribe(const ArgumentArray &args) {
 		scribeVar = 2;
 }
 
-static const uint16 s_viewerTimeIntervals[] = { 0, 816, 1617, 2416, 3216, 4016, 4816, 5616, 6416, 7216, 8016, 8816 };
+static const uint16 s_viewerTimeIntervals[] = {0, 816, 1617, 2416, 3216, 4016, 4816, 5616, 6416, 7216, 8016, 8816};
 
 void GSpit::xgrviewer(const ArgumentArray &args) {
 	// This controls the viewer on the right side of the 'throne' on Garden Island
@@ -324,23 +321,23 @@ void GSpit::xgplaywhark(const ArgumentArray &args) {
 
 	// Activate the correct video based on the amount of times we've been visited
 	switch (wharkVisits) {
-		case 1:
-			_vm->getCard()->playMovie(3);
-			break;
-		case 2:
-			// One of two random videos
-			_vm->getCard()->playMovie(4 + _vm->_rnd->getRandomBit());
-			break;
-		case 3:
-			// One of two random videos
-			_vm->getCard()->playMovie(6 + _vm->_rnd->getRandomBit());
-			break;
-		case 4:
-			// Red alert! Shields online! Brace yourself for impact!
-			_vm->getCard()->playMovie(8);
-			break;
-		default:
-			break;
+	case 1:
+		_vm->getCard()->playMovie(3);
+		break;
+	case 2:
+		// One of two random videos
+		_vm->getCard()->playMovie(4 + _vm->_rnd->getRandomBit());
+		break;
+	case 3:
+		// One of two random videos
+		_vm->getCard()->playMovie(6 + _vm->_rnd->getRandomBit());
+		break;
+	case 4:
+		// Red alert! Shields online! Brace yourself for impact!
+		_vm->getCard()->playMovie(8);
+		break;
+	default:
+		break;
 	}
 
 	// For whatever reason the devs felt fit, code 31 is used for all of the videos
@@ -414,13 +411,13 @@ void GSpit::catherineViewerIdleTimer() {
 
 	// Choose a new movie
 	if (cathState == 1) {
-		static const int movieList[] = { 9, 10, 19, 19, 21, 21 };
+		static const int movieList[] = {9, 10, 19, 19, 21, 21};
 		movie = movieList[_vm->_rnd->getRandomNumber(5)];
 	} else if (cathState == 2) {
-		static const int movieList[] = { 18, 20, 22 };
+		static const int movieList[] = {18, 20, 22};
 		movie = movieList[_vm->_rnd->getRandomNumber(2)];
 	} else {
-		static const int movieList[] = { 11, 11, 12, 17, 17, 17, 17, 23 };
+		static const int movieList[] = {11, 11, 12, 17, 17, 17, 17, 23};
 		movie = movieList[_vm->_rnd->getRandomNumber(7)];
 	}
 

@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/hid_keys.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -32,245 +32,244 @@ struct KeyName {
 };
 
 static const KeyName keyNames[] = {
-	{HID_BACKSPACE, "Backspace"},
-	{HID_TAB, "Tab"},
+    {HID_BACKSPACE, "Backspace"},
+    {HID_TAB, "Tab"},
 
-	{HID_ENTER, "Enter"},
-	{HID_ENTER, "Return"},
+    {HID_ENTER, "Enter"},
+    {HID_ENTER, "Return"},
 
-	{HID_ESCAPE, "Escape"},
-	{HID_SPACE, "Space"},
+    {HID_ESCAPE, "Escape"},
+    {HID_SPACE, "Space"},
 
-	{HID_EXCLAIM, "Exclaim"},
-	{HID_SPACE, ""},
+    {HID_EXCLAIM, "Exclaim"},
+    {HID_SPACE, ""},
 
-	{HID_DOUBLEQUOTE, "Double-Quote"},
-	{HID_DOUBLEQUOTE, "\""},
+    {HID_DOUBLEQUOTE, "Double-Quote"},
+    {HID_DOUBLEQUOTE, "\""},
 
-	{HID_HASH, "Hash"},
-	{HID_HASH, "#"},
+    {HID_HASH, "Hash"},
+    {HID_HASH, "#"},
 
-	{HID_DOLLAR, "Dollar"},
-	{HID_DOLLAR, "$"},
+    {HID_DOLLAR, "Dollar"},
+    {HID_DOLLAR, "$"},
 
-	{HID_PERCENT, "Percent"},
-	{HID_PERCENT, "%"},
+    {HID_PERCENT, "Percent"},
+    {HID_PERCENT, "%"},
 
-	{HID_AMPERSAND, "Ampersand"},
-	{HID_AMPERSAND, "&"},
+    {HID_AMPERSAND, "Ampersand"},
+    {HID_AMPERSAND, "&"},
 
-	{HID_QUOTE, "Quote"},
-	{HID_QUOTE, "\'"},
+    {HID_QUOTE, "Quote"},
+    {HID_QUOTE, "\'"},
 
-	{HID_LEFTPAREN, "Left-Paren"},
-	{HID_LEFTPAREN, "("},
-	{HID_RIGHTPAREN, "Right-Paren"},
-	{HID_RIGHTPAREN, ")"},
+    {HID_LEFTPAREN, "Left-Paren"},
+    {HID_LEFTPAREN, "("},
+    {HID_RIGHTPAREN, "Right-Paren"},
+    {HID_RIGHTPAREN, ")"},
 
-	{HID_ASTERISK, "Asterisk"},
-	{HID_ASTERISK, "Star"},
-	{HID_ASTERISK, "*"},
+    {HID_ASTERISK, "Asterisk"},
+    {HID_ASTERISK, "Star"},
+    {HID_ASTERISK, "*"},
 
-	{HID_PLUS, "Plus"},
-	{HID_PLUS, "+"},
+    {HID_PLUS, "Plus"},
+    {HID_PLUS, "+"},
 
-	{HID_COMMA, "Comma"},
-	{HID_COMMA, ","},
+    {HID_COMMA, "Comma"},
+    {HID_COMMA, ","},
 
-	{HID_MINUS, "Minus"},
-	{HID_MINUS, "-"},
+    {HID_MINUS, "Minus"},
+    {HID_MINUS, "-"},
 
-	{HID_PERIOD, "Period"},
-	{HID_PERIOD, "."},
+    {HID_PERIOD, "Period"},
+    {HID_PERIOD, "."},
 
-	{HID_SLASH, "Slash"},
-	{HID_SLASH, "/"},
+    {HID_SLASH, "Slash"},
+    {HID_SLASH, "/"},
 
-	{HID_0, "0"},
-	{HID_1, "1"},
-	{HID_2, "2"},
-	{HID_3, "3"},
-	{HID_4, "4"},
-	{HID_5, "5"},
-	{HID_6, "6"},
-	{HID_7, "7"},
-	{HID_8, "8"},
-	{HID_9, "9"},
+    {HID_0, "0"},
+    {HID_1, "1"},
+    {HID_2, "2"},
+    {HID_3, "3"},
+    {HID_4, "4"},
+    {HID_5, "5"},
+    {HID_6, "6"},
+    {HID_7, "7"},
+    {HID_8, "8"},
+    {HID_9, "9"},
 
-	{HID_COLON, "Colon"},
-	{HID_COLON, ":"},
+    {HID_COLON, "Colon"},
+    {HID_COLON, ":"},
 
-	{HID_SEMICOLON, "Semicolon"},
-	{HID_SEMICOLON, ";"},
+    {HID_SEMICOLON, "Semicolon"},
+    {HID_SEMICOLON, ";"},
 
-	{HID_LEFTANGLE, "Left-Angle"},
-	{HID_LEFTANGLE, "Less"},
-	{HID_LEFTANGLE, "<"},
+    {HID_LEFTANGLE, "Left-Angle"},
+    {HID_LEFTANGLE, "Less"},
+    {HID_LEFTANGLE, "<"},
 
-	{HID_EQUALS, "Equals"},
-	{HID_EQUALS, "="},
+    {HID_EQUALS, "Equals"},
+    {HID_EQUALS, "="},
 
-	{HID_RIGHTANGLE, "Right-Angle"},
-	{HID_RIGHTANGLE, "Greater"},
-	{HID_RIGHTANGLE, ">"},
+    {HID_RIGHTANGLE, "Right-Angle"},
+    {HID_RIGHTANGLE, "Greater"},
+    {HID_RIGHTANGLE, ">"},
 
-	{HID_QUESTION, "Question"},
-	{HID_QUESTION, "?"},
+    {HID_QUESTION, "Question"},
+    {HID_QUESTION, "?"},
 
-	{HID_AT, "At"},
-	{HID_AT, "@"},
+    {HID_AT, "At"},
+    {HID_AT, "@"},
 
-	{HID_A, "A"},
-	{HID_B, "B"},
-	{HID_C, "C"},
-	{HID_D, "D"},
-	{HID_E, "E"},
-	{HID_F, "F"},
-	{HID_G, "G"},
-	{HID_H, "H"},
-	{HID_I, "I"},
-	{HID_J, "J"},
-	{HID_K, "K"},
-	{HID_L, "L"},
-	{HID_M, "M"},
-	{HID_N, "N"},
-	{HID_O, "O"},
-	{HID_P, "P"},
-	{HID_Q, "Q"},
-	{HID_R, "R"},
-	{HID_S, "S"},
-	{HID_T, "T"},
-	{HID_U, "U"},
-	{HID_V, "V"},
-	{HID_W, "W"},
-	{HID_X, "X"},
-	{HID_Y, "Y"},
-	{HID_Z, "Z"},
+    {HID_A, "A"},
+    {HID_B, "B"},
+    {HID_C, "C"},
+    {HID_D, "D"},
+    {HID_E, "E"},
+    {HID_F, "F"},
+    {HID_G, "G"},
+    {HID_H, "H"},
+    {HID_I, "I"},
+    {HID_J, "J"},
+    {HID_K, "K"},
+    {HID_L, "L"},
+    {HID_M, "M"},
+    {HID_N, "N"},
+    {HID_O, "O"},
+    {HID_P, "P"},
+    {HID_Q, "Q"},
+    {HID_R, "R"},
+    {HID_S, "S"},
+    {HID_T, "T"},
+    {HID_U, "U"},
+    {HID_V, "V"},
+    {HID_W, "W"},
+    {HID_X, "X"},
+    {HID_Y, "Y"},
+    {HID_Z, "Z"},
 
-	{HID_LEFTBRACKET, "Left-Bracket"},
-	{HID_LEFTBRACKET, "["},
+    {HID_LEFTBRACKET, "Left-Bracket"},
+    {HID_LEFTBRACKET, "["},
 
-	{HID_BACKSLASH, "Backslash"},
-	{HID_BACKSLASH, "\\"},
+    {HID_BACKSLASH, "Backslash"},
+    {HID_BACKSLASH, "\\"},
 
-	{HID_RIGHTBRACKET, "Right-Bracket"},
-	{HID_RIGHTBRACKET, "]"},
+    {HID_RIGHTBRACKET, "Right-Bracket"},
+    {HID_RIGHTBRACKET, "]"},
 
-	{HID_CARET, "Caret"},
-	{HID_CARET, "Hat"},
-	{HID_CARET, "^"},
+    {HID_CARET, "Caret"},
+    {HID_CARET, "Hat"},
+    {HID_CARET, "^"},
 
-	{HID_UNDERSCORE, "Underscore"},
-	{HID_UNDERSCORE, "_"},
+    {HID_UNDERSCORE, "Underscore"},
+    {HID_UNDERSCORE, "_"},
 
-	{HID_BACKQUOTE, "Backquote"},
-	{HID_BACKQUOTE, "Grave"},
-	{HID_BACKQUOTE, "`"},
+    {HID_BACKQUOTE, "Backquote"},
+    {HID_BACKQUOTE, "Grave"},
+    {HID_BACKQUOTE, "`"},
 
-	{HID_LEFTBRACE, "Left-Brace"},
-	{HID_LEFTBRACE, "{"},
+    {HID_LEFTBRACE, "Left-Brace"},
+    {HID_LEFTBRACE, "{"},
 
-	{HID_VERTICALBAR, "Vertical-Bar"},
-	{HID_VERTICALBAR, "Pipe"},
-	{HID_VERTICALBAR, "Bar"},
-	{HID_VERTICALBAR, "|"},
+    {HID_VERTICALBAR, "Vertical-Bar"},
+    {HID_VERTICALBAR, "Pipe"},
+    {HID_VERTICALBAR, "Bar"},
+    {HID_VERTICALBAR, "|"},
 
-	{HID_RIGHTBRACE, "Right-Brace"},
-	{HID_RIGHTBRACE, "}"},
+    {HID_RIGHTBRACE, "Right-Brace"},
+    {HID_RIGHTBRACE, "}"},
 
-	{HID_TILDE, "Tilde"},
-	{HID_TILDE, "~"},
+    {HID_TILDE, "Tilde"},
+    {HID_TILDE, "~"},
 
-	{HID_KP0, "Keypad0"},
-	{HID_KP1, "Keypad1"},
-	{HID_KP2, "Keypad2"},
-	{HID_KP3, "Keypad3"},
-	{HID_KP4, "Keypad4"},
-	{HID_KP5, "Keypad5"},
-	{HID_KP6, "Keypad6"},
-	{HID_KP7, "Keypad7"},
-	{HID_KP8, "Keypad8"},
-	{HID_KP9, "Keypad9"},
+    {HID_KP0, "Keypad0"},
+    {HID_KP1, "Keypad1"},
+    {HID_KP2, "Keypad2"},
+    {HID_KP3, "Keypad3"},
+    {HID_KP4, "Keypad4"},
+    {HID_KP5, "Keypad5"},
+    {HID_KP6, "Keypad6"},
+    {HID_KP7, "Keypad7"},
+    {HID_KP8, "Keypad8"},
+    {HID_KP9, "Keypad9"},
 
-	{HID_KP_PERIOD, "Keypad-Period"},
-	{HID_KP_SLASH, "Keypad-Slash"},
+    {HID_KP_PERIOD, "Keypad-Period"},
+    {HID_KP_SLASH, "Keypad-Slash"},
 
-	{HID_KP_ASTERISK, "Keypad-Asterisk"},
-	{HID_KP_ASTERISK, "Keypad-Star"},
+    {HID_KP_ASTERISK, "Keypad-Asterisk"},
+    {HID_KP_ASTERISK, "Keypad-Star"},
 
-	{HID_KP_MINUS, "Keypad-Minus"},
-	{HID_KP_PLUS, "Keypad-Plus"},
-	{HID_KP_ENTER, "Keypad-Enter"},
+    {HID_KP_MINUS, "Keypad-Minus"},
+    {HID_KP_PLUS, "Keypad-Plus"},
+    {HID_KP_ENTER, "Keypad-Enter"},
 
-	{HID_UP, "Up"},
-	{HID_DOWN, "Down"},
-	{HID_LEFT, "Left"},
-	{HID_RIGHT, "Right"},
-	{HID_INSERT, "Insert"},
-	{HID_DELETE, "Delete"},
-	{HID_HOME, "Home"},
-	{HID_END, "End"},
-	{HID_PAGEUP, "Page-Up"},
-	{HID_PAGEDOWN, "Page-Down"},
+    {HID_UP, "Up"},
+    {HID_DOWN, "Down"},
+    {HID_LEFT, "Left"},
+    {HID_RIGHT, "Right"},
+    {HID_INSERT, "Insert"},
+    {HID_DELETE, "Delete"},
+    {HID_HOME, "Home"},
+    {HID_END, "End"},
+    {HID_PAGEUP, "Page-Up"},
+    {HID_PAGEDOWN, "Page-Down"},
 
-	{HID_F1, "F1"},
-	{HID_F2, "F2"},
-	{HID_F3, "F3"},
-	{HID_F4, "F4"},
-	{HID_F5, "F5"},
-	{HID_F6, "F6"},
-	{HID_F7, "F7"},
-	{HID_F8, "F8"},
-	{HID_F9, "F9"},
-	{HID_F10, "F10"},
-	{HID_F11, "F11"},
-	{HID_F12, "F12"},
-	{HID_F13, "F13"},
-	{HID_F14, "F14"},
-	{HID_F15, "F15"},
+    {HID_F1, "F1"},
+    {HID_F2, "F2"},
+    {HID_F3, "F3"},
+    {HID_F4, "F4"},
+    {HID_F5, "F5"},
+    {HID_F6, "F6"},
+    {HID_F7, "F7"},
+    {HID_F8, "F8"},
+    {HID_F9, "F9"},
+    {HID_F10, "F10"},
+    {HID_F11, "F11"},
+    {HID_F12, "F12"},
+    {HID_F13, "F13"},
+    {HID_F14, "F14"},
+    {HID_F15, "F15"},
 
-	{HID_PRINT, "Print"},
-	{HID_NUM_LOCK, "Num-Lock"},
-	{HID_CAPS_LOCK, "Caps-Lock"},
-	{HID_SCROLL_LOCK, "Scroll-Lock"},
-	{HID_PAUSE, "Pause"},
+    {HID_PRINT, "Print"},
+    {HID_NUM_LOCK, "Num-Lock"},
+    {HID_CAPS_LOCK, "Caps-Lock"},
+    {HID_SCROLL_LOCK, "Scroll-Lock"},
+    {HID_PAUSE, "Pause"},
 
-	{HID_MOUSE1, "Mouse1"},
-	{HID_MOUSE2, "Mouse2"},
-	{HID_MOUSE3, "Mouse3"},
-	{HID_MOUSE4, "Mouse4"},
-	{HID_MOUSE5, "Mouse5"},
-	{HID_MOUSE6, "Mouse6"},
-	{HID_MOUSE7, "Mouse7"},
-	{HID_MOUSE8, "Mouse8"},
-	{HID_MOUSE9, "Mouse9"},
-	{HID_MOUSE10, "Mouse10"},
-	{HID_MOUSE11, "Mouse11"},
-	{HID_MOUSE12, "Mouse12"},
-	{HID_MOUSE13, "Mouse13"},
-	{HID_MOUSE14, "Mouse14"},
-	{HID_MOUSE15, "Mouse15"},
-	{HID_MOUSE16, "Mouse16"},
+    {HID_MOUSE1, "Mouse1"},
+    {HID_MOUSE2, "Mouse2"},
+    {HID_MOUSE3, "Mouse3"},
+    {HID_MOUSE4, "Mouse4"},
+    {HID_MOUSE5, "Mouse5"},
+    {HID_MOUSE6, "Mouse6"},
+    {HID_MOUSE7, "Mouse7"},
+    {HID_MOUSE8, "Mouse8"},
+    {HID_MOUSE9, "Mouse9"},
+    {HID_MOUSE10, "Mouse10"},
+    {HID_MOUSE11, "Mouse11"},
+    {HID_MOUSE12, "Mouse12"},
+    {HID_MOUSE13, "Mouse13"},
+    {HID_MOUSE14, "Mouse14"},
+    {HID_MOUSE15, "Mouse15"},
+    {HID_MOUSE16, "Mouse16"},
 
-	{HID_JOY1, "Joy1"},
-	{HID_JOY2, "Joy2"},
-	{HID_JOY3, "Joy3"},
-	{HID_JOY4, "Joy4"},
-	{HID_JOY5, "Joy5"},
-	{HID_JOY6, "Joy6"},
-	{HID_JOY7, "Joy7"},
-	{HID_JOY8, "Joy8"},
-	{HID_JOY9, "Joy9"},
-	{HID_JOY10, "Joy10"},
-	{HID_JOY11, "Joy11"},
-	{HID_JOY12, "Joy12"},
-	{HID_JOY13, "Joy13"},
-	{HID_JOY14, "Joy14"},
-	{HID_JOY15, "Joy15"},
-	{HID_JOY16, "Joy16"},
+    {HID_JOY1, "Joy1"},
+    {HID_JOY2, "Joy2"},
+    {HID_JOY3, "Joy3"},
+    {HID_JOY4, "Joy4"},
+    {HID_JOY5, "Joy5"},
+    {HID_JOY6, "Joy6"},
+    {HID_JOY7, "Joy7"},
+    {HID_JOY8, "Joy8"},
+    {HID_JOY9, "Joy9"},
+    {HID_JOY10, "Joy10"},
+    {HID_JOY11, "Joy11"},
+    {HID_JOY12, "Joy12"},
+    {HID_JOY13, "Joy13"},
+    {HID_JOY14, "Joy14"},
+    {HID_JOY15, "Joy15"},
+    {HID_JOY16, "Joy16"},
 
-	{HID_LAST, ""}
-};
+    {HID_LAST, ""}};
 
 struct EventName {
 	HID_Event event;
@@ -278,18 +277,17 @@ struct EventName {
 };
 
 static const EventName EVENT_NAMES[] = {
-	{ HID_EVENT_DEPRESS, "Depress" },
-	{ HID_EVENT_RELEASE, "Release" },
-	{ HID_EVENT_DOUBLE, "Double" },
-	{ HID_EVENT_CLICK, "Click" },
-	{ HID_EVENT_PREEMPT, "Preempt" },
-	{ HID_EVENT_LAST, "" },
-	{ HID_FLAGS_CTRL, "Ctrl" },
-	{ HID_FLAGS_ALT, "Alt" },
-	{ HID_FLAGS_SHIFT, "Shift" },
-	{ HID_FLAGS_META, "Meta" },
-	{ HID_FLAGS_LAST, "" }
-};
+    {HID_EVENT_DEPRESS, "Depress"},
+    {HID_EVENT_RELEASE, "Release"},
+    {HID_EVENT_DOUBLE, "Double"},
+    {HID_EVENT_CLICK, "Click"},
+    {HID_EVENT_PREEMPT, "Preempt"},
+    {HID_EVENT_LAST, ""},
+    {HID_FLAGS_CTRL, "Ctrl"},
+    {HID_FLAGS_ALT, "Alt"},
+    {HID_FLAGS_SHIFT, "Shift"},
+    {HID_FLAGS_META, "Meta"},
+    {HID_FLAGS_LAST, ""}};
 
 const char *HID_GetKeyName(HID_Key key) {
 	int i;
@@ -329,7 +327,7 @@ HID_Key HID_translateKey(Common::KeyCode key) {
 		return HID_HASH;
 	case Common::KEYCODE_DOLLAR:
 		return HID_DOLLAR;
-//		case : return HID_PERCENT;
+		//		case : return HID_PERCENT;
 	case Common::KEYCODE_AMPERSAND:
 		return HID_AMPERSAND;
 	case Common::KEYCODE_QUOTE:
@@ -448,10 +446,10 @@ HID_Key HID_translateKey(Common::KeyCode key) {
 		return HID_UNDERSCORE;
 	case Common::KEYCODE_BACKQUOTE:
 		return HID_BACKQUOTE;
-//		case : return HID_LEFTBRACE;
-//		case : return HID_VERTICALBAR;
-//		case : return HID_RIGHTBRACE;
-//		case : return HID_TILDE;
+		//		case : return HID_LEFTBRACE;
+		//		case : return HID_VERTICALBAR;
+		//		case : return HID_RIGHTBRACE;
+		//		case : return HID_TILDE;
 	case Common::KEYCODE_DELETE:
 		return HID_DELETE;
 	case Common::KEYCODE_INSERT:
@@ -655,11 +653,10 @@ const char *HID_GetEventsName(HID_Events events) {
 
 	int i;
 	for (i = 0; EVENT_NAMES[i].event != HID_FLAGS_LAST; ++i) {
-		if ((EVENT_NAMES[i].event <= HID_EVENT_LAST) ? (events & 0xff) == EVENT_NAMES[i].event :
-				(events & EVENT_NAMES[i].event) != 0) {
+		if ((EVENT_NAMES[i].event <= HID_EVENT_LAST) ? (events & 0xff) == EVENT_NAMES[i].event : (events & EVENT_NAMES[i].event) != 0) {
 			if (EVENT_NAMES[i].event == HID_EVENT_DEPRESS && events != HID_EVENT_DEPRESS)
 				continue;
-			
+
 			strcat(buffer, EVENT_NAMES[i].name);
 			strcat(buffer, ",");
 		}

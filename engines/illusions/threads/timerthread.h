@@ -32,13 +32,14 @@ class IllusionsEngine;
 class TimerThread : public Thread {
 public:
 	TimerThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
-		uint32 duration, bool isAbortable);
+	            uint32 duration, bool isAbortable);
 	int onUpdate() override;
 	void onSuspend() override;
 	void onNotify() override;
 	void onPause() override;
 	void onUnpause() override;
 	void onResume() override;
+
 public:
 	uint32 _startTime, _endTime;
 	uint32 _duration, _durationElapsed;

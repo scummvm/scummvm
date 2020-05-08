@@ -21,17 +21,16 @@
  */
 
 #include "titanic/star_control/motion_control_unmarked.h"
+#include "titanic/debugger.h"
 #include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/fpose.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fmatrix.h"
-#include "titanic/debugger.h"
+#include "titanic/star_control/fpose.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CMotionControlUnmarked::CMotionControlUnmarked(const CNavigationInfo *src) :
-		CMotionControl(src) {
+CMotionControlUnmarked::CMotionControlUnmarked(const CNavigationInfo *src) : CMotionControl(src) {
 }
 
 void CMotionControlUnmarked::moveTo(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
@@ -39,7 +38,7 @@ void CMotionControlUnmarked::moveTo(const FVector &srcV, const FVector &destV, c
 		decLockCount();
 
 	debugC(DEBUG_BASIC, kDebugStarfield, "Starfield move %s to %s", srcV.toString().c_str(),
-		destV.toString().c_str());
+	       destV.toString().c_str());
 	_autoMover.setPathOrient(srcV, destV, orientation);
 }
 

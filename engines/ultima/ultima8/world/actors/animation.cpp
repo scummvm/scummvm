@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -47,7 +47,7 @@ bool isCombatAnim(const Sequence anim) {
 Sequence checkWeapon(const Sequence nextanim,
                      const Sequence lastanim) {
 	Sequence anim = nextanim;
-	if (isCombatAnim(nextanim) && ! isCombatAnim(lastanim)) {
+	if (isCombatAnim(nextanim) && !isCombatAnim(lastanim)) {
 		anim = readyWeapon;
 	} else if (!isCombatAnim(nextanim) && isCombatAnim(lastanim)) {
 		anim = unreadyWeapon;

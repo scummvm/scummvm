@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/ bin / bash
 
 echo Quick script to make building all the time less painful.
 
-# Set the paths up here to support the build.
+#Set the paths up here to support the build.
 
 export PATH=/opt/open2x/gcc-4.1.1-glibc-2.3.6/arm-open2x-linux/bin:$PATH
 export PATH=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin:$PATH

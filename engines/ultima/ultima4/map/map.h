@@ -24,12 +24,12 @@
 #define ULTIMA4_MAP_MAP_H
 
 #include "ultima/ultima4/core/coords.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/sound/music.h"
-#include "ultima/ultima4/game/object.h"
-#include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/filesys/u4file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -56,9 +56,9 @@ typedef Std::vector<MapTile> MapData;
 #define FIRST_PERSON (1 << 2)
 
 /* mapTileAt flags */
-#define WITHOUT_OBJECTS     0
+#define WITHOUT_OBJECTS 0
 #define WITH_GROUND_OBJECTS 1
-#define WITH_OBJECTS        2
+#define WITH_OBJECTS 2
 
 /**
  * MapCoords class
@@ -76,7 +76,7 @@ public:
 	}
 	bool operator==(const MapCoords &a) const;
 	bool operator!=(const MapCoords &a) const;
-	bool operator<(const MapCoords &a)  const;
+	bool operator<(const MapCoords &a) const;
 
 	MapCoords &wrap(const class Map *map);
 	MapCoords &putInBounds(const class Map *map);
@@ -148,7 +148,6 @@ public:
 		BORDER_EXIT2PARENT,
 		BORDER_FIXED
 	};
-
 
 	class Source {
 	public:

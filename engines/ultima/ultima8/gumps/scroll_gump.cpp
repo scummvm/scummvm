@@ -20,17 +20,17 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/scroll_gump.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
-#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -40,12 +40,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ScrollGump, ModalGump)
 // TODO: Remove all the hacks
 
 ScrollGump::ScrollGump()
-	: ModalGump(), _textWidget(0) {
-
+    : ModalGump(), _textWidget(0) {
 }
 
-ScrollGump::ScrollGump(ObjId owner_, Std::string msg) :
-	ModalGump(0, 0, 100, 100, owner_), _text(msg), _textWidget(0) {
+ScrollGump::ScrollGump(ObjId owner_, Std::string msg) : ModalGump(0, 0, 100, 100, owner_), _text(msg), _textWidget(0) {
 }
 
 ScrollGump::~ScrollGump(void) {

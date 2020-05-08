@@ -44,10 +44,13 @@ public:
 class CParrotLobbyLinkUpdater : public CParrotLobbyObject {
 	DECLARE_MESSAGE_MAP;
 	bool ActMsg(CActMsg *msg);
+
 private:
 	LinkUpdatorEntries _entries[5];
+
 public:
 	int _fieldBC;
+
 public:
 	CLASSDEF;
 	CParrotLobbyLinkUpdater();

@@ -47,8 +47,8 @@
 
 // Includes
 #include "common/array.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "sword25/kernel/common.h"
-#include "common/debug.h"
 
 #endif

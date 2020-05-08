@@ -24,8 +24,8 @@
 #define NUVIE_CORE_ANIM_MANAGER_H
 
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/core/timed_event.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/misc/map_entity.h"
 #include "ultima/nuvie/misc/u6_line_walker.h"
@@ -54,7 +54,7 @@ typedef Std::list<NuvieAnim *>::iterator AnimIterator;
 class AnimManager {
 	MapWindow *map_window;
 	Screen *viewsurf;
-	Common::Rect viewport; // clip anims to location
+	Common::Rect viewport;            // clip anims to location
 	Std::list<NuvieAnim *> anim_list; // in paint order
 	uint32 next_id;
 
@@ -74,23 +74,23 @@ public:
 	void update();
 	void display(bool top_anims = false);
 
-	Screen *get_surface()            {
+	Screen *get_surface() {
 		return (viewsurf);
 	}
 	void set_surface(Screen *screen) {
 		viewsurf = screen;
 	}
-	void set_area(Common::Rect clipto)  {
+	void set_area(Common::Rect clipto) {
 		viewport = clipto;
 	}
-	void set_tile_pitch(uint8 p)     {
+	void set_tile_pitch(uint8 p) {
 		tile_pitch = p;
 	}
-	uint8 get_tile_pitch()           {
+	uint8 get_tile_pitch() {
 		return (tile_pitch);
 	}
 
-//new_anim(new ExplosiveAnim(speed));
+	//new_anim(new ExplosiveAnim(speed));
 	sint32 new_anim(NuvieAnim *new_anim);
 	void destroy_all();
 	bool destroy_anim(uint32 anim_id);
@@ -103,26 +103,25 @@ public:
 	void drawText(Font *font, const char *text, uint16 x, uint16 y);
 };
 
-
 /* Contains methods to support management, continuous display, and movement of
  * animation across viewport.
  */
 /* FIXME: The return of update() is not very useful. If an anim isn't
  * redrawn then it just disappears on next MapWindow::Display(). If you don't
  * want it to appear just delete it.*/
-class NuvieAnim: public CallBack {
+class NuvieAnim : public CallBack {
 protected:
 	friend class AnimManager;
 	AnimManager *anim_manager; // set by anim_manager when adding to list
 
 	uint32 id_n; // unique
 
-	sint32 vel_x, vel_y; // movement across viewport (pixels/second; min=10)
-	uint32 px, py; // location on surface
+	sint32 vel_x, vel_y;   // movement across viewport (pixels/second; min=10)
+	uint32 px, py;         // location on surface
 	uint32 last_move_time; // last time when update_position() moved (ticks)
 
 	bool safe_to_delete; // can animmgr delete me?
-	bool updated; // call display
+	bool updated;        // call display
 	bool running;
 	bool paused;
 	bool top_anim; //animate on top of mapwindow.
@@ -152,11 +151,11 @@ public:
 	virtual MapCoord get_location() {
 		return (MapCoord(px, py, 0));
 	}
-	uint32 get_id()                 {
+	uint32 get_id() {
 		return (id_n);
 	}
 
-	void set_safe_to_delete(bool val)       {
+	void set_safe_to_delete(bool val) {
 		safe_to_delete = val;
 	}
 	void set_velocity(sint32 sx, sint32 sy) {
@@ -165,16 +164,18 @@ public:
 	}
 	void set_velocity_for_speed(sint16 xdir, sint16 ydir, uint32 spd);
 
-	virtual void stop()                     {
+	virtual void stop() {
 		updated = running = false;
 	}
-	virtual void start()                    { }
+	virtual void start() {}
 	uint16 message(uint16 msg, void *msg_data = NULL, void *my_data = NULL) {
-		if (callback_target) return (CallBack::message(msg, msg_data, my_data));
-		else return (0);
+		if (callback_target)
+			return (CallBack::message(msg, msg_data, my_data));
+		else
+			return (0);
 	}
 
-	virtual void move(uint32 x, uint32 y, uint32 add_x = 0, uint32 add_y = 0)    {
+	virtual void move(uint32 x, uint32 y, uint32 add_x = 0, uint32 add_y = 0) {
 		px = x;
 		py = y;
 	}
@@ -183,20 +184,18 @@ public:
 		py += sy;
 	}
 
-//    void set_flags();
-// ANIM_ONTOP
-// ANIM_ONBOTTOM
+	//    void set_flags();
+	// ANIM_ONTOP
+	// ANIM_ONBOTTOM
 };
-
 
 /* Tile placement & data for TileAnim
  */
 typedef struct {
 	sint16 pos_x, pos_y; // map position relative to Anim tx,ty
-	uint16 px, py; // pixel offset from pos_x,pos_y
+	uint16 px, py;       // pixel offset from pos_x,pos_y
 	Tile *tile;
 } PositionedTile;
-
 
 /* Animation using game tiles
  */
@@ -204,7 +203,7 @@ class TileAnim : public NuvieAnim {
 protected:
 	MapWindow *map_window;
 	uint32 tx, ty, // location on surface: in increments of "tile_pitch"
-	       px, py; // location on surface: pixel offset from tx,ty
+	    px, py;    // location on surface: pixel offset from tx,ty
 
 	vector<PositionedTile *> tiles;
 
@@ -233,29 +232,29 @@ public:
 	void shift_tile(uint32 ptile_num, sint32 sx, sint32 sy);
 	void move_tile(PositionedTile *ptile, uint32 x, uint32 y);
 
-
 	PositionedTile *add_tile(Tile *tile, sint16 x, sint16 y, uint16 add_x = 0, uint16 add_y = 0);
 	void remove_tile(uint32 i = 0);
 	void remove_tile(PositionedTile *p_tile);
 };
 
-
 /* TileAnim using a timed event.
  */
-class TimedAnim: public TileAnim {
+class TimedAnim : public TileAnim {
 protected:
 	TimedCallback *timer;
+
 public:
-	TimedAnim()  {
+	TimedAnim() {
 		timer = NULL;
 	}
 	~TimedAnim() override {
 		stop_timer();
 	}
 	void start_timer(uint32 delay) {
-		if (!timer) timer = new TimedCallback(this, NULL, delay, true);
+		if (!timer)
+			timer = new TimedCallback(this, NULL, delay, true);
 	}
-	void stop_timer()              {
+	void stop_timer() {
 		if (timer) {
 			timer->clear_target();
 			timer = NULL;
@@ -268,11 +267,10 @@ public:
 	}
 };
 
-
 // OR these together to tell a TossAnim what to intercept
 #define TOSS_TO_BLOCKING 0x01
-#define TOSS_TO_ACTOR    0x02
-#define TOSS_TO_OBJECT   0x04
+#define TOSS_TO_ACTOR 0x02
+#define TOSS_TO_OBJECT 0x04
 
 /* A TileAnim that can intercept objects in the world. Start selected tile at
  * source, and move across viewport to target. The tile is rotated by the
@@ -287,14 +285,14 @@ protected:
 	MapCoord *src, *target;
 	uint32 start_px, start_py, target_px, target_py;
 	uint8 mapwindow_level; // level of map being viewed
-	uint16 speed; // movement speed in pixels per second (X and Y speed can't be set independently)
+	uint16 speed;          // movement speed in pixels per second (X and Y speed can't be set independently)
 
 	Tile *toss_tile;
-	uint8 blocking; // stop_flags
-	uint8 tile_center; // tile_pitch / 2
-	float tanS; // Ydiff/Xdiff, between src and target (for movement velocity)
-	sint16 old_relpos; // when moving diagonally, last relative position on minor axis
-	float x_left, y_left; // when unable to move in a call, fractional movement values are collected here
+	uint8 blocking;        // stop_flags
+	uint8 tile_center;     // tile_pitch / 2
+	float tanS;            // Ydiff/Xdiff, between src and target (for movement velocity)
+	sint16 old_relpos;     // when moving diagonally, last relative position on minor axis
+	float x_left, y_left;  // when unable to move in a call, fractional movement values are collected here
 	uint16 x_dist, y_dist; // distances from start->target on X-axis & Y-axis
 
 	bool update() override;
@@ -331,18 +329,18 @@ extern struct tossanim_tile_shifts_s tossanim_tile_shifts[];
 /* a line of fire */
 typedef struct {
 	PositionedTile *tile; // last associated sprite
-	MapCoord direction; // where the explosion sprites are going
-	uint32 travelled; // distance this fire line has travelled
+	MapCoord direction;   // where the explosion sprites are going
+	uint32 travelled;     // distance this fire line has travelled
 } ExplosiveAnimSegment;
 
 /* SuperBomberman! Toss fireballs in multiple directions from source out.
  */
 class ExplosiveAnim : public TimedAnim {
 	MapCoord center;
-	uint32 radius; // num. of spaces from center
+	uint32 radius;                      // num. of spaces from center
 	vector<ExplosiveAnimSegment> flame; // lines of fire from the center
-	uint16 exploding_tile_num; // fireball effect tile_num
-	vector<MapEntity> hit_items; // things the explosion has hit
+	uint16 exploding_tile_num;          // fireball effect tile_num
+	vector<MapEntity> hit_items;        // things the explosion has hit
 
 public:
 	ExplosiveAnim(MapCoord *start, uint32 size);
@@ -371,13 +369,14 @@ typedef struct {
 class ProjectileAnim : public TileAnim {
 	MapCoord src;
 	vector<ProjectileLine> line;
-	uint16 tile_num; // fireball effect tile_num
-	uint8 src_tile_y_offset; //amount to offset src_tile when rotating. Used by arrows and bolts
+	uint16 tile_num;             // fireball effect tile_num
+	uint8 src_tile_y_offset;     //amount to offset src_tile when rotating. Used by arrows and bolts
 	vector<MapEntity> hit_items; // things the projectile has hit
 	uint16 stopped_count;
 	uint8 speed; //number of pixels to move in a single update.
 
 	bool leaveTrailFlag;
+
 public:
 	ProjectileAnim(uint16 tileNum, MapCoord *start, vector<MapCoord> target, uint8 animSpeed, bool leaveTrailFlag = false, uint16 initialTileRotation = 0, uint16 rotationAmount = 0, uint8 src_y_offset = 0);
 	~ProjectileAnim() override;
@@ -388,7 +387,6 @@ public:
 protected:
 	void hit_entity(MapEntity entity);
 	bool already_hit(MapEntity ent);
-
 };
 
 class WingAnim : public TileAnim {
@@ -406,7 +404,6 @@ public:
 	~WingAnim() override;
 	void start() override;
 	bool update() override;
-
 };
 
 typedef struct {
@@ -433,7 +430,6 @@ public:
 
 protected:
 	sint8 find_free_hailstone();
-
 };
 
 /* Display hit effect over an actor or location for a certain duration.
@@ -462,7 +458,7 @@ public:
 	TextAnim(Std::string text, MapCoord loc, uint32 dur);
 	~TextAnim() override;
 	uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
-	void start() override                    {
+	void start() override {
 		start_timer(duration);
 	}
 
@@ -484,6 +480,7 @@ public:
 	~TileFadeAnim() override;
 
 	bool update() override;
+
 protected:
 	void init(uint16 speed);
 };

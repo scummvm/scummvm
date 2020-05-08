@@ -261,8 +261,8 @@ void MidiParser_QT::handleGeneralEvent(uint32 control) {
 		// percussion channel but QuickTime can have that anywhere.
 		definePart(part, READ_BE_UINT32(_position._playPos + 80));
 		break;
-	case 5: // Tune Difference
-	case 8: // MIDI Channel
+	case 5:  // Tune Difference
+	case 8:  // MIDI Channel
 	case 10: // No-op
 	case 11: // Used Notes
 		// Should be safe to skip these
@@ -416,8 +416,7 @@ Common::QuickTimeParser::SampleDesc *MidiParser_QT::readSampleDesc(Track *track,
 	return 0;
 }
 
-MidiParser_QT::MIDISampleDesc::MIDISampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) :
-		Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
+MidiParser_QT::MIDISampleDesc::MIDISampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag) : Common::QuickTimeParser::SampleDesc(parentTrack, codecTag) {
 }
 
 void MidiParser_QT::initFromContainerTracks() {

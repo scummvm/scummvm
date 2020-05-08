@@ -48,7 +48,7 @@ public:
 	void transfer();
 	void render();
 	void clear(uint32 color = 0);
-	void markDirty(){ dirtyPixels = true; }
+	void markDirty() { dirtyPixels = true; }
 
 	void setPosition(int x, int y);
 	void setOffset(uint16 x, uint16 y);
@@ -57,7 +57,7 @@ public:
 	float getScaleY() const { return scaleY; }
 	int getPosX() const { return posX; }
 	int getPosY() const { return posY; }
-	C3D_Mtx* getMatrix();
+	C3D_Mtx *getMatrix();
 
 	uint16 actualWidth;
 	uint16 actualHeight;
@@ -68,7 +68,7 @@ private:
 	bool dirtyMatrix;
 	C3D_Mtx modelview;
 	C3D_Tex texture;
-	vertex* vertices;
+	vertex *vertices;
 	int posX;
 	int posY;
 	uint16 offsetX;

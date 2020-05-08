@@ -21,13 +21,13 @@
  */
 
 #include "ultima/nuvie/misc/sdl_compat.h"
-#include "ultima/nuvie/core/events.h"
-#include "common/system.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/managed_surface.h"
 #include "image/bmp.h"
+#include "ultima/nuvie/core/events.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -50,7 +50,7 @@ uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b) {
 }
 
 int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *srcrect,
-		Graphics::ManagedSurface *dst, Common::Rect *dstrect) {
+                    Graphics::ManagedSurface *dst, Common::Rect *dstrect) {
 	Common::Rect srcRect = srcrect ? *srcrect : Common::Rect(0, 0, src->w, src->h);
 	Common::Point destPos = dstrect ? Common::Point(dstrect->left, dstrect->top) : Common::Point();
 
@@ -80,18 +80,18 @@ void SDL_UpdateRect(Graphics::ManagedSurface *surf, int x, int y, int w, int h) 
 void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *rects) {
 	while (count-- > 0)
 		g_system->copyRectToScreen(surf->getPixels(), surf->pitch, rects->left, rects->top,
-			rects->width(), rects->height());
+		                           rects->width(), rects->height());
 }
 
 Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
 	Common::File f;
 	Image::BitmapDecoder decoder;
-	
+
 	if (!f.open(filename))
 		error("Could not open file - %s", filename);
 	if (!decoder.loadStream(f))
 		error("Could not load bitmap - %s", filename);
-	
+
 	const Graphics::Surface *src = decoder.getSurface();
 	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, src->format);
 	dest->blitFrom(*src);
@@ -132,7 +132,7 @@ int SDL_UnlockSurface(Graphics::ManagedSurface *surface) {
 }
 
 Graphics::ManagedSurface *SDL_ConvertSurface(Graphics::ManagedSurface *src,
-		const Graphics::PixelFormat &fmt, uint32 flags) {
+                                             const Graphics::PixelFormat &fmt, uint32 flags) {
 	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, fmt);
 	dest->blitFrom(*src);
 

@@ -21,25 +21,24 @@
  */
 
 #include "ultima/ultima1/u1dialogs/tavern.h"
+#include "ultima/shared/core/str.h"
+#include "ultima/shared/engine/messages.h"
 #include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/shared/engine/messages.h"
-#include "ultima/shared/core/str.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Tavern, BuySellDialog)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
-Tavern::Tavern(Ultima1Game *game, Maps::MapCityCastle *map, int tavernNum) :
-		BuySellDialog(game, game->_res->TAVERN_NAMES[tavernNum]), _map(map),
-		_countdown(0), _tipNumber(0), _buyDisplay(INITIAL) {
+Tavern::Tavern(Ultima1Game *game, Maps::MapCityCastle *map, int tavernNum) : BuySellDialog(game, game->_res->TAVERN_NAMES[tavernNum]), _map(map),
+                                                                             _countdown(0), _tipNumber(0), _buyDisplay(INITIAL) {
 }
 
 void Tavern::setMode(BuySell mode) {
@@ -177,7 +176,8 @@ void Tavern::drawBuy() {
 		switch (_tipNumber) {
 		case 2:
 			centerText(Common::String::format(_game->_res->TAVERN_TIPS[3],
-				_game->_res->TAVERN_TIPS[c._sex == Shared::SEX_MALE ? 11 : 12]), 4);
+			                                  _game->_res->TAVERN_TIPS[c._sex == Shared::SEX_MALE ? 11 : 12]),
+			           4);
 			break;
 		case 8:
 			centerText(String(_game->_res->TAVERN_TIPS[_buyDisplay == TIP_PAGE1 ? 9 : 10]).split("\r\n"), 4);

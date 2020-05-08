@@ -23,8 +23,8 @@
 #ifndef SWORDS_H
 #define SWORDS_H
 
-#include "common/scummsys.h"
 #include "cc.h"
+#include "common/scummsys.h"
 
 extern void writeSwordsData(CCArchive &cc, const char *swordsDatName);
 

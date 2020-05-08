@@ -20,20 +20,20 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/slider_gump.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/graphics/fonts/font.h"
+#include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/gumps/widgets/sliding_widget.h"
-#include "ultima/ultima8/graphics/fonts/font.h"
-#include "ultima/ultima8/graphics/fonts/rendered_text.h"
-#include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
-#include "ultima/ultima8/usecode/uc_process.h"
+#include "ultima/ultima8/gumps/widgets/sliding_widget.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/usecode/uc_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -41,14 +41,13 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SliderGump, ModalGump)
 
 SliderGump::SliderGump() : ModalGump(), _renderedText(nullptr), _min(0), _max(0),
-		_delta(0), _value(0), _usecodeNotifyPID(0), _renderedValue(-1) {
+                           _delta(0), _value(0), _usecodeNotifyPID(0), _renderedValue(-1) {
 }
-
 
 SliderGump::SliderGump(int x, int y, int16 min, int16 max,
                        int16 value_, int16 delta)
-	: ModalGump(x, y, 5, 5), _min(min), _max(max), _delta(delta), _value(value_),
-	  _usecodeNotifyPID(0), _renderedText(nullptr), _renderedValue(-1) {
+    : ModalGump(x, y, 5, 5), _min(min), _max(max), _delta(delta), _value(value_),
+      _usecodeNotifyPID(0), _renderedText(nullptr), _renderedValue(-1) {
 }
 
 SliderGump::~SliderGump() {
@@ -86,8 +85,10 @@ int SliderGump::getSliderPos() {
 
 void SliderGump::setValueFromSlider(int sliderx) {
 	int val = (sliderx - sliderminx) * (_max - _min) / (slidermaxx - sliderminx) + _min;
-	if (val < _min) val = _min;
-	if (val > _max) val = _max;
+	if (val < _min)
+		val = _min;
+	if (val > _max)
+		val = _max;
 	_value = _min + _delta * (static_cast<int16>(val / _delta));
 }
 
@@ -119,15 +120,13 @@ void SliderGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 	drawText(surf);
 }
 
-
 void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	_shape = GameData::get_instance()->getGumps()->getShape(gumpshape);
 	UpdateDimsFromShape();
 
-	Shape *childshape = GameData::get_instance()->
-	                    getGumps()->getShape(slidershape);
+	Shape *childshape = GameData::get_instance()->getGumps()->getShape(slidershape);
 
 	// Create the SlidingWidget
 	Gump *widget = new SlidingWidget(getSliderPos(), slidery,
@@ -149,7 +148,6 @@ void SliderGump::InitGump(Gump *newparent, bool take_focus) {
 	widget->SetIndex(LEFT_INDEX);
 	widget->InitGump(this);
 
-
 	FrameID buttonright_up(GameData::GUMPS, rightshape, 0);
 	FrameID buttonright_down(GameData::GUMPS, rightshape, 1);
 
@@ -166,18 +164,19 @@ void SliderGump::ChildNotify(Gump *child, uint32 message) {
 			break;
 		case LEFT_INDEX:
 			_value -= _delta;
-			if (_value < _min) _value = _min;
+			if (_value < _min)
+				_value = _min;
 			setSliderPos();
 			break;
 		case RIGHT_INDEX:
 			_value += _delta;
-			if (_value > _max) _value = _max;
+			if (_value > _max)
+				_value = _max;
 			setSliderPos();
 			break;
 		}
 	}
 }
-
 
 void SliderGump::Close(bool no_del) {
 	_processResult = _value;
@@ -218,12 +217,14 @@ bool SliderGump::OnKeyDown(int key, int mod) {
 	switch (key) {
 	case Common::KEYCODE_LEFT:
 		_value -= _delta;
-		if (_value < _min) _value = _min;
+		if (_value < _min)
+			_value = _min;
 		setSliderPos();
 		break;
 	case Common::KEYCODE_RIGHT:
 		_value += _delta;
-		if (_value > _max) _value = _max;
+		if (_value > _max)
+			_value = _max;
 		setSliderPos();
 		break;
 	case Common::KEYCODE_RETURN:

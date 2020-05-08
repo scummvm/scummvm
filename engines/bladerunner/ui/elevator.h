@@ -34,24 +34,24 @@ class UIImagePicker;
 
 class Elevator {
 	BladeRunnerEngine *_vm;
-	bool               _isOpen;
-	VQAPlayer         *_vqaPlayer;
-	int                _buttonClicked;
-	Shapes            *_shapes;
-	UIImagePicker     *_imagePicker;
-	int                _actorId;
-	int                _sentenceId;
-	uint32             _timeSpeakDescriptionStart;
+	bool _isOpen;
+	VQAPlayer *_vqaPlayer;
+	int _buttonClicked;
+	Shapes *_shapes;
+	UIImagePicker *_imagePicker;
+	int _actorId;
+	int _sentenceId;
+	uint32 _timeSpeakDescriptionStart;
 
 public:
 	Elevator(BladeRunnerEngine *vm);
 	~Elevator();
 
-	int  activate(int elevatorId);
+	int activate(int elevatorId);
 	void open();
 	bool isOpen() const;
-	int  handleMouseUp(int x, int y);
-	int  handleMouseDown(int x, int y);
+	int handleMouseUp(int x, int y);
+	int handleMouseDown(int x, int y);
 	void tick();
 	void buttonClick(int buttonId);
 	void reset();

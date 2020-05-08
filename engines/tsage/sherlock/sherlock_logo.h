@@ -25,10 +25,10 @@
 #define TSAGE_SHERLOCK_LOGO_H
 
 #include "common/scummsys.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -42,7 +42,7 @@ public:
 	void setVisage(const Common::String &name);
 };
 
-class SherlockLogo: public Game {
+class SherlockLogo : public Game {
 public:
 	virtual void start();
 	virtual Scene *createScene(int sceneNumber);
@@ -57,11 +57,12 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList);
 };
 
-class SherlockLogoScene: public Scene {
+class SherlockLogoScene : public Scene {
 	class Action1 : public Action {
 	public:
 		virtual void signal();
 	};
+
 public:
 	ScenePalette _palette1, _palette2, _palette3;
 	Object _object1, _object2, _object3, _object4;

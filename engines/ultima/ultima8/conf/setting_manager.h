@@ -23,11 +23,10 @@
 #ifndef ULTIMA8_CONF_SETTINGMANAGER_H
 #define ULTIMA8_CONF_SETTINGMANAGER_H
 
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/misc/istring.h"
-#include "ultima/shared/std/string.h"
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,13 +44,13 @@ public:
 
 	enum Domain {
 		DOM_DEFAULTS = 0,
-		DOM_GLOBAL   = 1,
-		DOM_GAME     = 2,
-		DOM_CURRENT  = 100
+		DOM_GLOBAL = 1,
+		DOM_GAME = 2,
+		DOM_CURRENT = 100
 	};
 
 	typedef void (*ConfigCallback)(istring key);
-	typedef Std::map<Common::String, Std::vector<ConfigCallback>, Common::IgnoreCase_Hash > Callbacks;
+	typedef Std::map<Common::String, Std::vector<ConfigCallback>, Common::IgnoreCase_Hash> Callbacks;
 
 	//! read a config file. Multiple files may be read. Order is important.
 	//! \param fname The file to read
@@ -117,7 +116,6 @@ public:
 	KeyMap listDataValues(istring section);
 
 private:
-
 	bool findKeyDomain(istring key, Domain dom, Domain &keydom);
 	istring getConfigKey(istring key, Domain dom);
 	void callCallbacks(istring key);

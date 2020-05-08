@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -50,7 +50,7 @@ public:
 	Scene6xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
-class Scene601 : public Scene6xx{
+class Scene601 : public Scene6xx {
 public:
 	Scene601(MADSEngine *vm) : Scene6xx(vm) {}
 
@@ -60,7 +60,7 @@ public:
 	void actions() override;
 };
 
-class Scene602 : public Scene6xx{
+class Scene602 : public Scene6xx {
 private:
 	int _lastSpriteIdx;
 	int _lastSequenceIdx;
@@ -78,7 +78,7 @@ public:
 	void actions() override;
 };
 
-class Scene603 : public Scene6xx{
+class Scene603 : public Scene6xx {
 private:
 	int _compactCaseHotspotId;
 	int _noteHotspotId;
@@ -92,7 +92,7 @@ public:
 	void actions() override;
 };
 
-class Scene604 : public Scene6xx{
+class Scene604 : public Scene6xx {
 private:
 	int _timebombHotspotId;
 	int _bombMode;
@@ -115,7 +115,7 @@ public:
 	void actions() override;
 };
 
-class Scene605 : public Scene6xx{
+class Scene605 : public Scene6xx {
 public:
 	Scene605(MADSEngine *vm) : Scene6xx(vm) {}
 
@@ -125,7 +125,7 @@ public:
 	void actions() override;
 };
 
-class Scene607 : public Scene6xx{
+class Scene607 : public Scene6xx {
 private:
 	uint32 _dogTimer;
 	uint32 _lastFrameTime;
@@ -152,7 +152,7 @@ public:
 	void actions() override;
 };
 
-class Scene608 : public Scene6xx{
+class Scene608 : public Scene6xx {
 private:
 	int _carMode;
 	int _carFrame;
@@ -200,7 +200,7 @@ public:
 	void actions() override;
 };
 
-class Scene609 : public Scene6xx{
+class Scene609 : public Scene6xx {
 private:
 	int _videoDoorMode;
 
@@ -217,7 +217,7 @@ public:
 	void actions() override;
 };
 
-class Scene610 : public Scene6xx{
+class Scene610 : public Scene6xx {
 private:
 	int _handsetHotspotId;
 	int _checkVal;
@@ -237,7 +237,7 @@ public:
 	void actions() override;
 };
 
-class Scene611 : public Scene6xx{
+class Scene611 : public Scene6xx {
 private:
 	bool _seenRatFl;
 	bool _eyesRunningFl;
@@ -290,7 +290,7 @@ public:
 	void actions() override;
 };
 
-class Scene612 : public Scene6xx{
+class Scene612 : public Scene6xx {
 private:
 	int _actionMode;
 	int _cycleIndex;
@@ -307,14 +307,14 @@ public:
 	void actions() override;
 };
 
-class Scene620 : public Scene6xx{
+class Scene620 : public Scene6xx {
 public:
 	Scene620(MADSEngine *vm) : Scene6xx(vm) {}
 
 	void setup() override;
 	void enter() override;
 	void step() override;
-	void actions() override {};
+	void actions() override{};
 };
 } // End of namespace Nebular
 } // End of namespace MADS

@@ -20,23 +20,22 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/u6_objects.h"
 #include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/sound/adplug/emu_opl.h"
-#include "ultima/nuvie/sound/song_adplug.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/core/effect.h"
-#include "ultima/nuvie/sound/adplug/emu_opl.h"
-#include "ultima/nuvie/sound/adlib_sfx_manager.h"
-#include "ultima/nuvie/sound/pc_speaker_sfx_manager.h"
-#include "ultima/nuvie/sound/towns_sfx_manager.h"
-#include "ultima/nuvie/sound/custom_sfx_manager.h"
 #include "audio/mixer.h"
 #include "common/algorithm.h"
+#include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/core/u6_objects.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/sound/adlib_sfx_manager.h"
+#include "ultima/nuvie/sound/adplug/emu_opl.h"
+#include "ultima/nuvie/sound/custom_sfx_manager.h"
+#include "ultima/nuvie/sound/pc_speaker_sfx_manager.h"
+#include "ultima/nuvie/sound/song_adplug.h"
+#include "ultima/nuvie/sound/towns_sfx_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -49,14 +48,11 @@ struct ObjSfxLookup { // obj sfx lookup
 #define SOUNDMANANGER_OBJSFX_TBL_SIZE 5
 
 static const ObjSfxLookup u6_obj_lookup_tbl[] = {
-	{OBJ_U6_FOUNTAIN, NUVIE_SFX_FOUNTAIN},
-	{OBJ_U6_FIREPLACE, NUVIE_SFX_FIRE},
-	{OBJ_U6_CLOCK, NUVIE_SFX_CLOCK},
-	{OBJ_U6_PROTECTION_FIELD, NUVIE_SFX_PROTECTION_FIELD},
-	{OBJ_U6_WATER_WHEEL, NUVIE_SFX_WATER_WHEEL}
-};
-
-
+    {OBJ_U6_FOUNTAIN, NUVIE_SFX_FOUNTAIN},
+    {OBJ_U6_FIREPLACE, NUVIE_SFX_FIRE},
+    {OBJ_U6_CLOCK, NUVIE_SFX_CLOCK},
+    {OBJ_U6_PROTECTION_FIELD, NUVIE_SFX_PROTECTION_FIELD},
+    {OBJ_U6_WATER_WHEEL, NUVIE_SFX_WATER_WHEEL}};
 
 bool SoundManager::g_MusicFinished;
 
@@ -160,7 +156,7 @@ bool SoundManager::nuvieStartup(Configuration *config) {
 		return false;
 	}
 
-//  if(music_enabled)  // commented out to allow toggling
+	//  if(music_enabled)  // commented out to allow toggling
 	{
 		if (music_style == "native") {
 			if (game_type == NUVIE_GAME_U6)
@@ -173,7 +169,7 @@ bool SoundManager::nuvieStartup(Configuration *config) {
 		musicPlayFrom("random");
 	}
 
-//  if(sfx_enabled)  // commented out to allow toggling
+	//  if(sfx_enabled)  // commented out to allow toggling
 	{
 		//LoadObjectSamples(sound_dir);
 		//LoadTileSamples(sound_dir);
@@ -195,7 +191,7 @@ bool SoundManager::LoadNativeU6Songs() {
 
 	config_get_path(m_Config, "brit.m", filename);
 	song = new SongAdPlug(_mixer, opl);
-// loadSong(song, filename.c_str());
+	// loadSong(song, filename.c_str());
 	loadSong(song, filename.c_str(), "Rule Britannia");
 	groupAddSong("random", song);
 
@@ -258,7 +254,7 @@ bool SoundManager::LoadCustomSongs(string sound_dir) {
 		return false;
 
 	token1 = strtok(sz, seps);
-	for (; (token1 != NULL) && ((token2 = strtok(NULL, seps)) != NULL) ; token1 = strtok(NULL, seps)) {
+	for (; (token1 != NULL) && ((token2 = strtok(NULL, seps)) != NULL); token1 = strtok(NULL, seps)) {
 		build_path(sound_dir, token2, filename);
 
 		song = (Song *)SongExists(token2);
@@ -279,7 +275,7 @@ bool SoundManager::LoadCustomSongs(string sound_dir) {
 
 bool SoundManager::loadSong(Song *song, const char *filename) {
 	if (song->Init(filename)) {
-		m_Songs.push_back(song);       //add it to our global list
+		m_Songs.push_back(song); //add it to our global list
 		return true;
 	} else {
 		DEBUG(0, LEVEL_ERROR, "could not load %s\n", filename);
@@ -301,16 +297,16 @@ bool SoundManager::groupAddSong(const char *group, Song *song) {
 	if (song != NULL) {
 		//we have a valid song
 		SoundCollection *psc;
-		Std::map <Common::String, SoundCollection * >::iterator it;
+		Std::map<Common::String, SoundCollection *>::iterator it;
 		it = m_MusicMap.find(group);
 		if (it == m_MusicMap.end()) {
 			//is there already a collection for this entry?
-			psc = new SoundCollection();	// no, create a new sound collection
-			psc->m_Sounds.push_back(song);	// add this sound to the collection
-			m_MusicMap[group] = psc;		// insert this pair into the map
+			psc = new SoundCollection();   // no, create a new sound collection
+			psc->m_Sounds.push_back(song); // add this sound to the collection
+			m_MusicMap[group] = psc;       // insert this pair into the map
 		} else {
-			psc = (*it)._value;				// yes, get the existing
-			psc->m_Sounds.push_back(song);	// add this sound to the collection
+			psc = (*it)._value;            // yes, get the existing
+			psc->m_Sounds.push_back(song); // add this sound to the collection
 		}
 	}
 
@@ -446,15 +442,15 @@ bool SoundManager::LoadSfxManager(string sfx_style) {
 
 	if (sfx_style == "native") {
 		switch (game_type) {
-		case NUVIE_GAME_U6 :
+		case NUVIE_GAME_U6:
 			if (has_fmtowns_support(m_Config)) {
 				sfx_style = "towns";
 			} else {
 				sfx_style = "pcspeaker";
 			}
 			break;
-		case NUVIE_GAME_MD :
-		case NUVIE_GAME_SE :
+		case NUVIE_GAME_MD:
+		case NUVIE_GAME_SE:
 			sfx_style = "adlib";
 			break;
 		}
@@ -470,7 +466,7 @@ bool SoundManager::LoadSfxManager(string sfx_style) {
 	} else if (sfx_style == "custom") {
 		m_SfxManager = new CustomSfxManager(m_Config, _mixer);
 	}
-//FIXME what to do if unknown sfx_style is entered in config file.
+	//FIXME what to do if unknown sfx_style is entered in config file.
 	return true;
 }
 
@@ -485,7 +481,7 @@ void SoundManager::musicPlayFrom(string group) {
 }
 
 void SoundManager::musicPause() {
-//Mix_PauseMusic();
+	//Mix_PauseMusic();
 	if (m_pCurrentSong != NULL) {
 		m_pCurrentSong->Stop();
 	}
@@ -493,9 +489,9 @@ void SoundManager::musicPause() {
 
 /* don't call if audio or music is disabled */
 void SoundManager::musicPlay() {
-// Mix_ResumeMusic();
+	// Mix_ResumeMusic();
 
-// (SB-X) Get a new song if stopped.
+	// (SB-X) Get a new song if stopped.
 	if (m_pCurrentSong == NULL)
 		m_pCurrentSong = RequestSong(m_CurrentGroup);
 
@@ -503,7 +499,6 @@ void SoundManager::musicPlay() {
 		m_pCurrentSong->Play();
 		m_pCurrentSong->SetVolume(music_volume);
 	}
-
 }
 
 void SoundManager::musicPlay(const char *filename, uint16 song_num) {
@@ -528,7 +523,7 @@ void SoundManager::musicStop() {
 	m_pCurrentSong = NULL;
 }
 
-Std::list < SoundManagerSfx >::iterator SoundManagerSfx_find(Std::list < SoundManagerSfx >::iterator first, Std::list < SoundManagerSfx >::iterator last, const SfxIdType &value) {
+Std::list<SoundManagerSfx>::iterator SoundManagerSfx_find(Std::list<SoundManagerSfx>::iterator first, Std::list<SoundManagerSfx>::iterator last, const SfxIdType &value) {
 	for (; first != last; first++) {
 		if ((*first).sfx_id == value)
 			break;
@@ -548,8 +543,8 @@ void SoundManager::update_map_sfx() {
 	Player *p = Game::get_game()->get_player();
 	MapWindow *mw = Game::get_game()->get_map_window();
 
-	vector < SfxIdType >currentlyActiveSounds;
-	map < SfxIdType, float >volumeLevels;
+	vector<SfxIdType> currentlyActiveSounds;
+	map<SfxIdType, float> volumeLevels;
 
 	p->get_location(&x, &y, &l);
 
@@ -569,7 +564,7 @@ void SoundManager::update_map_sfx() {
 				vol = 0;
 			//sp->SetVolume(vol);
 			//need the map to adjust volume according to number of active elements
-			Std::map < SfxIdType, float >::iterator it;
+			Std::map<SfxIdType, float>::iterator it;
 			it = volumeLevels.find(sfx_id);
 			if (it != volumeLevels.end()) {
 				if (volumeLevels[sfx_id] < vol)
@@ -621,8 +616,8 @@ void SoundManager::update_map_sfx() {
 	//DEBUG(1,LEVEL_DEBUGGING,"\n");
 	//is this sound new? - activate it.
 	for (i = 0; i < currentlyActiveSounds.size(); i++) {
-		Std::list < SoundManagerSfx >::iterator it;
-		it = SoundManagerSfx_find(m_ActiveSounds.begin(), m_ActiveSounds.end(), currentlyActiveSounds[i]);          //is the sound already active?
+		Std::list<SoundManagerSfx>::iterator it;
+		it = SoundManagerSfx_find(m_ActiveSounds.begin(), m_ActiveSounds.end(), currentlyActiveSounds[i]); //is the sound already active?
 		if (it == m_ActiveSounds.end()) {
 			//this is a new sound, add it to the active list
 			//currentlyActiveSounds[i]->Play (true);
@@ -630,17 +625,17 @@ void SoundManager::update_map_sfx() {
 			SoundManagerSfx sfx;
 			sfx.sfx_id = currentlyActiveSounds[i];
 			if (m_SfxManager->playSfxLooping(sfx.sfx_id, &sfx.handle, 0)) {
-				m_ActiveSounds.push_back(sfx);//currentlyActiveSounds[i]);
+				m_ActiveSounds.push_back(sfx); //currentlyActiveSounds[i]);
 			}
 		}
 	}
 	//is this sound old? - deactivate it
-	Std::list < SoundManagerSfx >::iterator it;
+	Std::list<SoundManagerSfx>::iterator it;
 	it = m_ActiveSounds.begin();
 	while (it != m_ActiveSounds.end()) {
 		Std::vector<SfxIdType>::iterator fit;
 		SoundManagerSfx sfx = (*it);
-		fit = Common::find(currentlyActiveSounds.begin(), currentlyActiveSounds.end(), sfx.sfx_id);          //is the sound in the new active list?
+		fit = Common::find(currentlyActiveSounds.begin(), currentlyActiveSounds.end(), sfx.sfx_id); //is the sound in the new active list?
 		if (fit == currentlyActiveSounds.end()) {
 			//its not, stop this sound from playing.
 			//sfx_id->Stop ();
@@ -671,12 +666,10 @@ void SoundManager::update() {
 			m_pCurrentSong->SetVolume(music_volume);
 		}
 	}
-
 }
 
-
 Sound *SoundManager::SongExists(string name) {
-	Std::list < Sound * >::iterator it;
+	Std::list<Sound *>::iterator it;
 	for (it = m_Songs.begin(); it != m_Songs.end(); ++it) {
 		if ((*it)->GetName() == name)
 			return *it;
@@ -686,7 +679,7 @@ Sound *SoundManager::SongExists(string name) {
 }
 
 Sound *SoundManager::SampleExists(string name) {
-	Std::list < Sound * >::iterator it;
+	Std::list<Sound *>::iterator it;
 	for (it = m_Samples.begin(); it != m_Samples.end(); ++it) {
 		if ((*it)->GetName() == name)
 			return *it;
@@ -696,7 +689,7 @@ Sound *SoundManager::SampleExists(string name) {
 }
 
 Sound *SoundManager::RequestTileSound(int id) {
-	Std::map < int, SoundCollection * >::iterator it;
+	Std::map<int, SoundCollection *>::iterator it;
 	it = m_TileSampleMap.find(id);
 	if (it != m_TileSampleMap.end()) {
 		SoundCollection *psc;
@@ -707,7 +700,7 @@ Sound *SoundManager::RequestTileSound(int id) {
 }
 
 Sound *SoundManager::RequestObjectSound(int id) {
-	Std::map < int, SoundCollection * >::iterator it;
+	Std::map<int, SoundCollection *>::iterator it;
 	it = m_ObjectSampleMap.find(id);
 	if (it != m_ObjectSampleMap.end()) {
 		SoundCollection *psc;
@@ -729,7 +722,7 @@ uint16 SoundManager::RequestObjectSfxId(uint16 obj_n) {
 }
 
 Sound *SoundManager::RequestSong(string group) {
-	Std::map<Common::String, SoundCollection * >::iterator it;
+	Std::map<Common::String, SoundCollection *>::iterator it;
 	it = m_MusicMap.find(group);
 	if (it != m_MusicMap.end()) {
 		SoundCollection *psc;

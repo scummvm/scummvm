@@ -25,9 +25,9 @@
 
 #include "engines/metaengine.h"
 
-#include "gui/dialog.h"
-#include "common/str.h"
 #include "audio/mididrv.h"
+#include "common/str.h"
+#include "gui/dialog.h"
 
 #ifdef GUI_ENABLE_KEYSDIALOG
 #include "gui/KeysDialog.h"
@@ -75,7 +75,7 @@ public:
 	void handleTickle() override;
 	void handleOtherEvent(const Common::Event &event) override;
 
-	const Common::String& getDomain() const { return _domain; }
+	const Common::String &getDomain() const { return _domain; }
 
 	void reflowLayout() override;
 
@@ -90,7 +90,6 @@ protected:
 	virtual void build();
 	virtual void clean();
 	void rebuild();
-
 
 	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addKeyMapperControls(GuiObject *boss, const Common::String &prefix, const Common::Array<Common::Keymap *> &keymaps, const Common::String &domain);
@@ -124,7 +123,6 @@ protected:
 	int _pathsTabId;
 
 private:
-
 	//
 	// Control controls
 	//
@@ -243,7 +241,6 @@ protected:
 	Common::String _guioptionsString;
 };
 
-
 class GlobalOptionsDialog : public OptionsDialog, public CommandSender {
 public:
 	GlobalOptionsDialog(LauncherDialog *launcher);
@@ -272,14 +269,14 @@ protected:
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
 
 	StaticTextWidget *_savePath;
-	ButtonWidget	 *_savePathClearButton;
+	ButtonWidget *_savePathClearButton;
 	StaticTextWidget *_themePath;
-	ButtonWidget	 *_themePathClearButton;
+	ButtonWidget *_themePathClearButton;
 	StaticTextWidget *_extraPath;
-	ButtonWidget	 *_extraPathClearButton;
+	ButtonWidget *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES
 	StaticTextWidget *_pluginsPath;
-	ButtonWidget	 *_pluginsPathClearButton;
+	ButtonWidget *_pluginsPathClearButton;
 #endif
 
 	void addPathsControls(GuiObject *boss, const Common::String &prefix, bool lowres);
@@ -297,7 +294,6 @@ protected:
 	CheckboxWidget *_guiLanguageUseGameLanguageCheckbox;
 	CheckboxWidget *_useSystemDialogsCheckbox;
 
-
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;
 	PopUpWidget *_updatesPopUp;
@@ -312,9 +308,9 @@ protected:
 	//
 	uint32 _selectedStorageIndex;
 	StaticTextWidget *_storagePopUpDesc;
-	PopUpWidget      *_storagePopUp;
+	PopUpWidget *_storagePopUp;
 	StaticTextWidget *_storageDisabledHint;
-	ButtonWidget	 *_storageEnableButton;
+	ButtonWidget *_storageEnableButton;
 	StaticTextWidget *_storageUsernameDesc;
 	StaticTextWidget *_storageUsername;
 	StaticTextWidget *_storageUsedSpaceDesc;
@@ -322,20 +318,20 @@ protected:
 	StaticTextWidget *_storageSyncHint;
 	StaticTextWidget *_storageLastSyncDesc;
 	StaticTextWidget *_storageLastSync;
-	ButtonWidget	 *_storageSyncSavesButton;
+	ButtonWidget *_storageSyncSavesButton;
 	StaticTextWidget *_storageDownloadHint;
-	ButtonWidget	 *_storageDownloadButton;
+	ButtonWidget *_storageDownloadButton;
 	StaticTextWidget *_storageDisconnectHint;
-	ButtonWidget	 *_storageDisconnectButton;
+	ButtonWidget *_storageDisconnectButton;
 
 	bool _connectingStorage;
 	StaticTextWidget *_storageWizardNotConnectedHint;
 	StaticTextWidget *_storageWizardOpenLinkHint;
 	StaticTextWidget *_storageWizardLink;
 	StaticTextWidget *_storageWizardCodeHint;
-	EditTextWidget   *_storageWizardCodeBox;
-	ButtonWidget	 *_storageWizardPasteButton;
-	ButtonWidget	 *_storageWizardConnectButton;
+	EditTextWidget *_storageWizardCodeBox;
+	ButtonWidget *_storageWizardPasteButton;
+	ButtonWidget *_storageWizardConnectButton;
 	StaticTextWidget *_storageWizardConnectionStatusHint;
 	bool _redrawCloudTab;
 
@@ -352,14 +348,14 @@ protected:
 	//
 	// LAN controls
 	//
-	ButtonWidget	 *_runServerButton;
+	ButtonWidget *_runServerButton;
 	StaticTextWidget *_serverInfoLabel;
-	ButtonWidget	 *_rootPathButton;
+	ButtonWidget *_rootPathButton;
 	StaticTextWidget *_rootPath;
-	ButtonWidget	 *_rootPathClearButton;
+	ButtonWidget *_rootPathClearButton;
 	StaticTextWidget *_serverPortDesc;
-	EditTextWidget   *_serverPort;
-	ButtonWidget	 *_serverPortClearButton;
+	EditTextWidget *_serverPort;
+	ButtonWidget *_serverPortClearButton;
 	StaticTextWidget *_featureDescriptionLine1;
 	StaticTextWidget *_featureDescriptionLine2;
 	bool _serverWasRunning;
@@ -369,9 +365,9 @@ protected:
 #endif // USE_SDL_NET
 
 #endif // USE_CLOUD
-	//
-	// Accessibility controls
-	//
+	   //
+	   // Accessibility controls
+	   //
 #ifdef USE_TTS
 	bool _enableTTS;
 	CheckboxWidget *_ttsCheckbox;

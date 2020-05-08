@@ -20,14 +20,14 @@
  *
  */
 
-#include "pink/pda_mgr.h"
-#include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/pda_page.h"
+#include "pink/objects/actors/actor.h"
+#include "pink/pda_mgr.h"
 #include "pink/pink.h"
 
 namespace Pink {
 
-PDAPage::PDAPage(const Common::String& name, PinkEngine *vm) {
+PDAPage::PDAPage(const Common::String &name, PinkEngine *vm) {
 	_name = name;
 	_resMgr.init(vm, this);
 	init();

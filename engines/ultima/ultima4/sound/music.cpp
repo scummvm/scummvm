@@ -21,7 +21,10 @@
  */
 
 #include "ultima/ultima4/sound/music.h"
-#include "ultima/ultima4/sound/sound.h"
+#include "audio/decoders/mp3.h"
+#include "audio/midiparser.h"
+#include "audio/mods/mod_xm_s3m.h"
+#include "ultima/shared/core/file.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
@@ -29,19 +32,15 @@
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/shared/core/file.h"
-#include "audio/decoders/mp3.h"
-#include "audio/mods/mod_xm_s3m.h"
-#include "audio/midiparser.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 Music *g_music;
 
-Music::Music(Audio::Mixer *mixer) :
-		Audio::MidiPlayer(), _mixer(mixer), _introMid(TOWNS) {
+Music::Music(Audio::Mixer *mixer) : Audio::MidiPlayer(), _mixer(mixer), _introMid(TOWNS) {
 	g_music = this;
 	Audio::MidiPlayer::createDriver();
 
@@ -55,9 +54,8 @@ Music::Music(Audio::Mixer *mixer) :
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 
-
 	_filenames.reserve(MAX);
-	_filenames.push_back("");    // filename for MUSIC_NONE;
+	_filenames.push_back(""); // filename for MUSIC_NONE;
 
 	/*
 	 * load music track filenames from xml config file
@@ -111,12 +109,10 @@ void Music::playMusic(const Common::String &filename) {
 
 	// TODO: Since the player doesn't yet support xu4 .it files,
 	// try starting the file with other extensions - which some have
-	const char *const EXTENSIONS[2] = { ".mp3", ".mid" };
+	const char *const EXTENSIONS[2] = {".mp3", ".mid"};
 	for (int idx = 0; idx < 2; ++idx) {
 		size_t dotIndex = filename.findLastOf('.');
-		Common::String fname = (dotIndex != Common::String::npos) ?
-			Common::String(filename.c_str(), dotIndex) + EXTENSIONS[idx] :
-			filename + EXTENSIONS[idx];
+		Common::String fname = (dotIndex != Common::String::npos) ? Common::String(filename.c_str(), dotIndex) + EXTENSIONS[idx] : filename + EXTENSIONS[idx];
 		if (startMusic(fname))
 			return;
 	}
@@ -133,9 +129,9 @@ bool Music::startMusic(const Common::String &filename) {
 
 	if (filename.hasSuffixIgnoreCase(".mp3")) {
 		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(
-			musicFile.readStream(musicFile.size()), DisposeAfterUse::YES);
+		    musicFile.readStream(musicFile.size()), DisposeAfterUse::YES);
 		_mixer->playStream(Audio::Mixer::kMusicSoundType,
-			&_soundHandle, audioStream);
+		                   &_soundHandle, audioStream);
 		return true;
 
 	} else if (filename.hasSuffixIgnoreCase(".mid")) {
@@ -176,7 +172,7 @@ void Music::stop() {
 }
 
 void Music::introSwitch(int n) {
-	if (n > NONE &&n < MAX) {
+	if (n > NONE && n < MAX) {
 		_introMid = static_cast<Type>(n);
 		intro();
 	}

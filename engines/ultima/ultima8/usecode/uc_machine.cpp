@@ -20,21 +20,21 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/usecode/uc_process.h"
-#include "ultima/ultima8/usecode/usecode.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/bit_set.h"
 #include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/usecode/uc_process.h"
+#include "ultima/ultima8/usecode/usecode.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/world/world.h"
 
 #define INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
 #include "ultima/ultima8/convert/u8/convert_usecode_u8.h"
@@ -44,7 +44,11 @@ namespace Ultima {
 namespace Ultima8 {
 
 #ifdef DEBUG
-#define LOGPF(X) do { if (trace_show(trace_pid, trace_objid, trace_classid)) pout.Print X; } while (0)
+#define LOGPF(X)                                               \
+	do {                                                       \
+		if (trace_show(trace_pid, trace_objid, trace_classid)) \
+			pout.Print X;                                      \
+	} while (0)
 #else
 #define LOGPF(X)
 #endif
@@ -65,17 +69,16 @@ static const char *print_sp(const int16 offset) {
 }
 #endif
 
-
 //#define DUMPHEAP
 
 enum UCSegments {
-	SEG_STACK      = 0x0000,
+	SEG_STACK = 0x0000,
 	SEG_STACK_FIRST = 0x0001,
 	SEG_STACK_LAST = 0x7FFE,
-	SEG_STRING     = 0x8000,
-	SEG_LIST       = 0x8001, // I don't think this is used
-	SEG_OBJ        = 0x8002,
-	SEG_GLOBAL     = 0x8003
+	SEG_STRING = 0x8000,
+	SEG_LIST = 0x8001, // I don't think this is used
+	SEG_OBJ = 0x8002,
+	SEG_GLOBAL = 0x8003
 };
 
 UCMachine *UCMachine::_ucMachine = nullptr;
@@ -89,7 +92,7 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	_globals = new BitSet(0x1000);
 
 	_convUse = new ConvertUsecodeU8; //!...
-	loadIntrinsics(iset, icount); //!...
+	loadIntrinsics(iset, icount);    //!...
 
 	_listIDs = new idMan(1, 65534, 128);
 	_stringIDs = new idMan(1, 65534, 256);
@@ -99,7 +102,6 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 	_traceAll = false;
 #endif
 }
-
 
 UCMachine::~UCMachine() {
 	debugN(MM_INFO, "Destroying UCMachine...\n");
@@ -120,7 +122,7 @@ void UCMachine::reset() {
 	// clear strings, lists
 	Std::map<uint16, UCList *>::iterator iter;
 	for (iter = _listHeap.begin(); iter != _listHeap.end(); ++iter)
-		delete(iter->_value);
+		delete (iter->_value);
 	_listHeap.clear();
 	_stringHeap.clear();
 }
@@ -205,15 +207,15 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x03:
 			// 03 xx yy
 			// pop yy bytes into bp+xx
-		{
-			si8a = static_cast<int8>(cs.readByte());
-			uint8 size = cs.readByte();
-			uint8 buf[256];
-			p->_stack.pop(buf, size);
-			p->_stack.assign(p->_bp + si8a, buf, size);
-			LOGPF(("pop huge\t%s %i\n", print_bp(si8a), size));
-		}
-		break;
+			{
+				si8a = static_cast<int8>(cs.readByte());
+				uint8 size = cs.readByte();
+				uint8 buf[256];
+				p->_stack.pop(buf, size);
+				p->_stack.assign(p->_bp + si8a, buf, size);
+				LOGPF(("pop huge\t%s %i\n", print_bp(si8a), size));
+			}
+			break;
 
 		case 0x08:
 			// 08
@@ -228,39 +230,39 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x09:
 			// 09 xx yy zz
 			// pop yy bytes into an element of list bp+xx (or slist if zz set)
-		{
-			si8a = static_cast<int8>(cs.readByte());
-			ui32a = cs.readByte();
-			si8b = static_cast<int8>(cs.readByte());
-			LOGPF(("assign element\t%s (%02X) (slist==%02X)\n",
-			       print_bp(si8a), ui32a, si8b));
-			ui16a = p->_stack.pop2() - 1; // index
-			ui16b = p->_stack.access2(p->_bp + si8a);
-			UCList *l = getList(ui16b);
-			if (!l) {
-				perr << "assign element to an invalid list (" << ui16b << ")"
-				     << Std::endl;
-				error = true;
-				break;
-			}
-			if (si8b) { // slist?
-				// what special behaviour do we need here?
-				// probably just that the overwritten element has to be freed?
-				if (ui32a != 2) {
-					perr << "Unhandled operand " << ui32a << " to pop slist"
+			{
+				si8a = static_cast<int8>(cs.readByte());
+				ui32a = cs.readByte();
+				si8b = static_cast<int8>(cs.readByte());
+				LOGPF(("assign element\t%s (%02X) (slist==%02X)\n",
+				       print_bp(si8a), ui32a, si8b));
+				ui16a = p->_stack.pop2() - 1; // index
+				ui16b = p->_stack.access2(p->_bp + si8a);
+				UCList *l = getList(ui16b);
+				if (!l) {
+					perr << "assign element to an invalid list (" << ui16b << ")"
 					     << Std::endl;
-					error = true; // um?
+					error = true;
+					break;
 				}
-				l->assign(ui16a, p->_stack.access());
-				p->_stack.pop2(); // advance SP
-			} else {
-				l->assign(ui16a, p->_stack.access());
-				p->_stack.addSP(ui32a);
+				if (si8b) { // slist?
+					// what special behaviour do we need here?
+					// probably just that the overwritten element has to be freed?
+					if (ui32a != 2) {
+						perr << "Unhandled operand " << ui32a << " to pop slist"
+						     << Std::endl;
+						error = true; // um?
+					}
+					l->assign(ui16a, p->_stack.access());
+					p->_stack.pop2(); // advance SP
+				} else {
+					l->assign(ui16a, p->_stack.access());
+					p->_stack.addSP(ui32a);
+				}
 			}
-		}
-		break;
+			break;
 
-		// PUSH opcodes
+			// PUSH opcodes
 
 		case 0x0A:
 			// 0A xx
@@ -289,99 +291,93 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x0D:
 			// 0D xx xx yy ... yy 00
 			// push string (yy ... yy) of length xx xx onto the stack
-		{
-			ui16a = cs.readUint16LE();
-			char *str = new char[ui16a + 1];
-			cs.read(str, ui16a);
-			str[ui16a] = 0;
+			{
+				ui16a = cs.readUint16LE();
+				char *str = new char[ui16a + 1];
+				cs.read(str, ui16a);
+				str[ui16a] = 0;
 
-			// REALLY MAJOR HACK:
-			// see docs/u8bugs.txt and
-			// http://sourceforge.net/tracker/index.php?func=detail&aid=2025145&group_id=53819&atid=471706
-			if (GAME_IS_U8 && p->_classId == 0x7C) {
-				if (!strcmp(str, " Irgendetwas stimmt nicht!")) {
-					str[25] = '.'; // ! to .
+				// REALLY MAJOR HACK:
+				// see docs/u8bugs.txt and
+				// http://sourceforge.net/tracker/index.php?func=detail&aid=2025145&group_id=53819&atid=471706
+				if (GAME_IS_U8 && p->_classId == 0x7C) {
+					if (!strcmp(str, " Irgendetwas stimmt nicht!")) {
+						str[25] = '.'; // ! to .
+					}
 				}
-			}
 
-
-			LOGPF(("push string\t\"%s\"\n", str));
-			ui16b = cs.readByte();
-			if (ui16b != 0) {
-				perr << "Zero terminator missing in push string"
-				     << Std::endl;
-				error = true;
+				LOGPF(("push string\t\"%s\"\n", str));
+				ui16b = cs.readByte();
+				if (ui16b != 0) {
+					perr << "Zero terminator missing in push string"
+					     << Std::endl;
+					error = true;
+				}
+				p->_stack.push2(assignString(str));
+				delete[] str;
 			}
-			p->_stack.push2(assignString(str));
-			delete[] str;
-		}
-		break;
+			break;
 
 		case 0x0E:
 			// 0E xx yy
 			// pop yy values of size xx and push the resulting list
 			// (list is created in reverse order)
-		{
-			ui16a = cs.readByte();
-			ui16b = cs.readByte();
-			UCList *l = new UCList(ui16a, ui16b);
-			p->_stack.addSP(ui16a * (ui16b - 1));
-			for (unsigned int i = 0; i < ui16b; i++) {
-				l->append(p->_stack.access());
-				p->_stack.addSP(-ui16a);
+			{
+				ui16a = cs.readByte();
+				ui16b = cs.readByte();
+				UCList *l = new UCList(ui16a, ui16b);
+				p->_stack.addSP(ui16a * (ui16b - 1));
+				for (unsigned int i = 0; i < ui16b; i++) {
+					l->append(p->_stack.access());
+					p->_stack.addSP(-ui16a);
+				}
+				p->_stack.addSP(ui16a * (ui16b + 1));
+				p->_stack.push2(assignList(l));
+				LOGPF(("create list\t%02X (%02X)\n", ui16b, ui16a));
 			}
-			p->_stack.addSP(ui16a * (ui16b + 1));
-			p->_stack.push2(assignList(l));
-			LOGPF(("create list\t%02X (%02X)\n", ui16b, ui16a));
-		}
-		break;
+			break;
 
-		// Usecode function and intrinsic calls
-
+			// Usecode function and intrinsic calls
 
 		case 0x0F:
 			// 0F xx yyyy
 			// intrinsic call. xx is number of argument bytes
 			// (includes this pointer, if present)
 			// NB: do not actually pop these argument bytes
-		{
-			//! TODO
-			uint16 arg_bytes = cs.readByte();
-			uint16 func = cs.readUint16LE();
-			debug(MM_INFO, "calli\t\t%04Xh (%02Xh arg bytes) %s ", func, arg_bytes, _convUse->intrinsics()[func]);
+			{
+				//! TODO
+				uint16 arg_bytes = cs.readByte();
+				uint16 func = cs.readUint16LE();
+				debug(MM_INFO, "calli\t\t%04Xh (%02Xh arg bytes) %s ", func, arg_bytes, _convUse->intrinsics()[func]);
 
-			// !constants
-			if (func >= _intrinsicCount || _intrinsics[func] == 0) {
-				p->_temp32 = 0;
-				perr << "Unhandled intrinsic \'" << _convUse->intrinsics()[func] << "\' (" << Std::hex << func << Std::dec << ") called" << Std::endl;
-			} else {
-				//!! hackish
-				if (_intrinsics[func] == UCMachine::I_dummyProcess ||
-				        _intrinsics[func] == UCMachine::I_true) {
-//						perr << "Unhandled intrinsic \'" << _convUse->_intrinsics()[func] << "\' (" << Std::hex << func << Std::dec << ") called" << Std::endl;
+				// !constants
+				if (func >= _intrinsicCount || _intrinsics[func] == 0) {
+					p->_temp32 = 0;
+					perr << "Unhandled intrinsic \'" << _convUse->intrinsics()[func] << "\' (" << Std::hex << func << Std::dec << ") called" << Std::endl;
+				} else {
+					//!! hackish
+					if (_intrinsics[func] == UCMachine::I_dummyProcess ||
+					    _intrinsics[func] == UCMachine::I_true) {
+						//						perr << "Unhandled intrinsic \'" << _convUse->_intrinsics()[func] << "\' (" << Std::hex << func << Std::dec << ") called" << Std::endl;
+					}
+					uint8 *argbuf = new uint8[arg_bytes];
+					p->_stack.pop(argbuf, arg_bytes);
+					p->_stack.addSP(-arg_bytes); // don't really pop the args
+
+					p->_temp32 = _intrinsics[func](argbuf, arg_bytes);
+
+					delete[] argbuf;
 				}
-				uint8 *argbuf = new uint8[arg_bytes];
-				p->_stack.pop(argbuf, arg_bytes);
-				p->_stack.addSP(-arg_bytes); // don't really pop the args
 
-				p->_temp32 = _intrinsics[func](argbuf, arg_bytes);
-
-				delete[] argbuf;
+				// REALLY MAJOR HACK:
+				// see docs/u8bugs.txt and
+				// https://sourceforge.net/tracker/index.php?func=detail&aid=1018748&group_id=53819&atid=471709
+				if (GAME_IS_U8 && p->_classId == 0x48B && func == 0xD0) {
+					// 0xD0 = setAvatarInStasis
+					_globals->setBits(0, 1, 1);
+				}
 			}
-
-
-
-			// REALLY MAJOR HACK:
-			// see docs/u8bugs.txt and
-			// https://sourceforge.net/tracker/index.php?func=detail&aid=1018748&group_id=53819&atid=471709
-			if (GAME_IS_U8 && p->_classId == 0x48B && func == 0xD0) {
-				// 0xD0 = setAvatarInStasis
-				_globals->setBits(0, 1, 1);
-			}
-
-		}
-		break;
-
+			break;
 
 		case 0x11:
 			// 11 xx xx yy yy
@@ -389,27 +385,27 @@ void UCMachine::execProcess(UCProcess *p) {
 			// call the function at offset yy yy of class xx xx
 			// Crusader:
 			// call function number yy yy of class xx xx
-		{
-			uint16 new_classid = cs.readUint16LE();
-			uint16 new_offset = cs.readUint16LE();
-			LOGPF(("call\t\t%04X:%04X\n", new_classid, new_offset));
-			if (GAME_IS_CRUSADER) {
-				new_offset = p->_usecode->get_class_event(new_classid,
-				             new_offset);
+			{
+				uint16 new_classid = cs.readUint16LE();
+				uint16 new_offset = cs.readUint16LE();
+				LOGPF(("call\t\t%04X:%04X\n", new_classid, new_offset));
+				if (GAME_IS_CRUSADER) {
+					new_offset = p->_usecode->get_class_event(new_classid,
+					                                          new_offset);
+				}
+
+				p->_ip = static_cast<uint16>(cs.pos()); // Truncates!!
+				p->call(new_classid, new_offset);
+
+				// Update the code segment
+				uint32 base_ = p->_usecode->get_class_base_offset(p->_classId);
+				cs.load(p->_usecode->get_class(p->_classId) + base_,
+				        p->_usecode->get_class_size(p->_classId) - base_);
+				cs.seek(p->_ip);
+
+				// Resume execution
 			}
-
-			p->_ip = static_cast<uint16>(cs.pos());   // Truncates!!
-			p->call(new_classid, new_offset);
-
-			// Update the code segment
-			uint32 base_ = p->_usecode->get_class_base_offset(p->_classId);
-			cs.load(p->_usecode->get_class(p->_classId) + base_,
-			        p->_usecode->get_class_size(p->_classId) - base_);
-			cs.seek(p->_ip);
-
-			// Resume execution
-		}
-		break;
+			break;
 
 		case 0x12:
 			// 12
@@ -426,7 +422,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("pop long\t\ttemp = %08X\n", p->_temp32));
 			break;
 
-		// Arithmetic
+			// Arithmetic
 
 		case 0x14:
 			// 14
@@ -445,7 +441,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			p->_stack.push4(static_cast<uint32>(si32a + si32b));
 			LOGPF(("add long\n"));
 			break;
-
 
 		case 0x16:
 			// 16
@@ -468,41 +463,41 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 17
 			// pop two lists from the stack and push the 'sum' of the lists
 			// (freeing the originals)
-		{
-			ui16a = p->_stack.pop2();
-			ui16b = p->_stack.pop2();
-			UCList *listA = getList(ui16a);
-			UCList *listB = getList(ui16b);
+			{
+				ui16a = p->_stack.pop2();
+				ui16b = p->_stack.pop2();
+				UCList *listA = getList(ui16a);
+				UCList *listB = getList(ui16b);
 
-			if (listB && listA) {
-				if (listA->getElementSize() != listB->getElementSize()) {
-					perr << "Trying to append lists with different element "
-					     << "sizes (" << listB->getElementSize() << " != "
-					     << listA->getElementSize() << ")" << Std::endl;
-					error = true;
-				} else {
-					listB->appendList(*listA);
-				}
-				// CHECKME: do we allow appending a list to itself?
-				assert(ui16a != ui16b);
-				freeList(ui16a);
-				p->_stack.push2(ui16b);
-			} else {
-				// at least one of the lists didn't exist. Error or not?
-				// for now: if one exists, push that one.
-				// if neither exists, push 0.
-
-				if (listA) {
-					p->_stack.push2(ui16a);
-				} else if (listB) {
+				if (listB && listA) {
+					if (listA->getElementSize() != listB->getElementSize()) {
+						perr << "Trying to append lists with different element "
+						     << "sizes (" << listB->getElementSize() << " != "
+						     << listA->getElementSize() << ")" << Std::endl;
+						error = true;
+					} else {
+						listB->appendList(*listA);
+					}
+					// CHECKME: do we allow appending a list to itself?
+					assert(ui16a != ui16b);
+					freeList(ui16a);
 					p->_stack.push2(ui16b);
 				} else {
-					p->_stack.push2(0);
+					// at least one of the lists didn't exist. Error or not?
+					// for now: if one exists, push that one.
+					// if neither exists, push 0.
+
+					if (listA) {
+						p->_stack.push2(ui16a);
+					} else if (listB) {
+						p->_stack.push2(ui16b);
+					} else {
+						p->_stack.push2(0);
+					}
 				}
+				LOGPF(("append\n"));
 			}
-			LOGPF(("append\n"));
-		}
-		break;
+			break;
 
 		case 0x19: {
 			// 19 02
@@ -692,7 +687,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("cmp long\n"));
 			break;
 
-
 		case 0x26:
 			// 26
 			// compare two strings
@@ -707,7 +701,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			freeString(ui16b);
 			LOGPF(("strcmp\n"));
 			break;
-
 
 		case 0x28:
 			// 28
@@ -825,7 +818,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("not\n"));
 			break;
 
-
 		case 0x31:
 			// 31
 			// 32 bit boolean not (both input and output 32 bit?)
@@ -915,7 +907,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 			LOGPF(("ne long\n"));
 			break;
-
 
 		case 0x38: {
 			// 38 xx yy
@@ -1031,60 +1022,60 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 41 xx
 			// push the string local var xx
 			// duplicating the string?
-		{
-			si8a = static_cast<int8>(cs.readByte());
-			ui16a = p->_stack.access2(p->_bp + si8a);
-			p->_stack.push2(duplicateString(ui16a));
-			LOGPF(("push string\t%s\n", print_bp(si8a)));
-		}
-		break;
+			{
+				si8a = static_cast<int8>(cs.readByte());
+				ui16a = p->_stack.access2(p->_bp + si8a);
+				p->_stack.push2(duplicateString(ui16a));
+				LOGPF(("push string\t%s\n", print_bp(si8a)));
+			}
+			break;
 
 		case 0x42:
 			// 42 xx yy
 			// push the list (with yy size elements) at BP+xx
 			// duplicating the list?
-		{
-			si8a = static_cast<int8>(cs.readByte());
-			ui16a = cs.readByte();
-			ui16b = p->_stack.access2(p->_bp + si8a);
-			UCList *l = new UCList(ui16a);
-			if (getList(ui16b)) {
-				l->copyList(*getList(ui16b));
-			} else {
-				// trying to push non-existent list. Error or not?
-				// Not: for example, function 01E3::0080, offset 0112
-				// perr << "Pushing non-existent list" << Std::endl;
-				// error = true;
+			{
+				si8a = static_cast<int8>(cs.readByte());
+				ui16a = cs.readByte();
+				ui16b = p->_stack.access2(p->_bp + si8a);
+				UCList *l = new UCList(ui16a);
+				if (getList(ui16b)) {
+					l->copyList(*getList(ui16b));
+				} else {
+					// trying to push non-existent list. Error or not?
+					// Not: for example, function 01E3::0080, offset 0112
+					// perr << "Pushing non-existent list" << Std::endl;
+					// error = true;
+				}
+				uint16 newlistid = assignList(l);
+				p->_stack.push2(newlistid);
+				LOGPF(("push list\t%s (%04X, copy %04X, %d elements)\n",
+				       print_bp(si8a), ui16b, newlistid, l->getSize()));
 			}
-			uint16 newlistid = assignList(l);
-			p->_stack.push2(newlistid);
-			LOGPF(("push list\t%s (%04X, copy %04X, %d elements)\n",
-			       print_bp(si8a), ui16b, newlistid, l->getSize()));
-		}
-		break;
+			break;
 
 		case 0x43:
 			// 43 xx
 			// push the stringlist local var xx
 			// duplicating the list, duplicating the strings in the list
-		{
-			si8a = static_cast<int8>(cs.readByte());
-//!U8               ui16a = cs.readByte();
-			ui16a = 2;
-			ui16b = p->_stack.access2(p->_bp + si8a);
-			UCList *l = new UCList(ui16a);
-			if (getList(ui16b)) {
-				l->copyStringList(*getList(ui16b));
-			} else {
-				// trying to push non-existent list. Error or not?
-				// (Devon's talk code seems to use it; so no error for now)
-				// perr << "Pushing non-existent slist" << Std::endl;
-				// error = true;
+			{
+				si8a = static_cast<int8>(cs.readByte());
+				//!U8               ui16a = cs.readByte();
+				ui16a = 2;
+				ui16b = p->_stack.access2(p->_bp + si8a);
+				UCList *l = new UCList(ui16a);
+				if (getList(ui16b)) {
+					l->copyStringList(*getList(ui16b));
+				} else {
+					// trying to push non-existent list. Error or not?
+					// (Devon's talk code seems to use it; so no error for now)
+					// perr << "Pushing non-existent slist" << Std::endl;
+					// error = true;
+				}
+				p->_stack.push2(assignList(l));
+				LOGPF(("push slist\t%s\n", print_bp(si8a)));
 			}
-			p->_stack.push2(assignList(l));
-			LOGPF(("push slist\t%s\n", print_bp(si8a)));
-		}
-		break;
+			break;
 
 		case 0x44:
 			// 44 xx yy
@@ -1096,34 +1087,34 @@ void UCMachine::execProcess(UCProcess *p) {
 			// duplicate string if YY? yy = 1 only occurs
 			// in two places in U8: once it pops into temp afterwards,
 			// once it is indeed freed. So, guessing we should duplicate.
-		{
-			ui32a = cs.readByte();
-			ui32b = cs.readByte();
-			ui16a = p->_stack.pop2() - 1; // index
-			ui16b = p->_stack.pop2(); // list
-			UCList *l = getList(ui16b);
-			if (!l) {
-//				perr << "push element from invalid list (" << ui16b << ")"
-//					 << Std::endl;
-				// This is necessary for closing the backpack to work
-				p->_stack.push0(ui32a);
-//				error = true;
-			} else {
-				if (ui32b) {
-					uint16 s = l->getStringIndex(ui16a);
-					p->_stack.push2(duplicateString(s));
+			{
+				ui32a = cs.readByte();
+				ui32b = cs.readByte();
+				ui16a = p->_stack.pop2() - 1; // index
+				ui16b = p->_stack.pop2();     // list
+				UCList *l = getList(ui16b);
+				if (!l) {
+					//				perr << "push element from invalid list (" << ui16b << ")"
+					//					 << Std::endl;
+					// This is necessary for closing the backpack to work
+					p->_stack.push0(ui32a);
+					//				error = true;
 				} else {
-					if (ui16a < l->getSize()) {
-						p->_stack.push((*l)[ui16a], ui32a);
+					if (ui32b) {
+						uint16 s = l->getStringIndex(ui16a);
+						p->_stack.push2(duplicateString(s));
 					} else {
-						// WORKAROUND
-						warning("ignore 0x44 request to push %d from list len %d", ui16a, l->getSize());
+						if (ui16a < l->getSize()) {
+							p->_stack.push((*l)[ui16a], ui32a);
+						} else {
+							// WORKAROUND
+							warning("ignore 0x44 request to push %d from list len %d", ui16a, l->getSize());
+						}
 					}
 				}
+				LOGPF(("push element\t%02X slist==%02X\n", ui32a, ui32b));
 			}
-			LOGPF(("push element\t%02X slist==%02X\n", ui32a, ui32b));
-		}
-		break;
+			break;
 
 		case 0x45:
 			// 45 xx yy
@@ -1147,43 +1138,43 @@ void UCMachine::execProcess(UCProcess *p) {
 			// indirect push,
 			// pops a 32 bit pointer off the stack and pushes xx bytes
 			// from the location referenced by the pointer
-		{
-			ui16a = cs.readByte();
-			ui32a = p->_stack.pop4();
+			{
+				ui16a = cs.readByte();
+				ui32a = p->_stack.pop4();
 
-			p->_stack.addSP(-ui16a);
-			if (!dereferencePointer(ui32a,
-			                        p->_stack.access(),
-			                        ui16a))
-				error = true;
+				p->_stack.addSP(-ui16a);
+				if (!dereferencePointer(ui32a,
+				                        p->_stack.access(),
+				                        ui16a))
+					error = true;
 
-			LOGPF(("push indirect\t%02Xh bytes", ui16a));
-			if (!error && ui16a == 2) {
-				LOGPF((" = %04Xh\n", p->_stack.access2(p->_stack.getSP())));
-			} else {
-				LOGPF(("\n"));
+				LOGPF(("push indirect\t%02Xh bytes", ui16a));
+				if (!error && ui16a == 2) {
+					LOGPF((" = %04Xh\n", p->_stack.access2(p->_stack.getSP())));
+				} else {
+					LOGPF(("\n"));
+				}
 			}
-		}
-		break;
+			break;
 
 		case 0x4D:
 			// 4D xx
 			// indirect pop
 			// pops a 32 bit pointer off the stack and pushes xx bytes
 			// from the location referenced by the pointer
-		{
-			ui16a = cs.readByte();
-			ui32a = p->_stack.pop4();
+			{
+				ui16a = cs.readByte();
+				ui32a = p->_stack.pop4();
 
-			if (assignPointer(ui32a, p->_stack.access(), ui16a)) {
-				p->_stack.addSP(ui16a);
-			} else {
-				error = true;
+				if (assignPointer(ui32a, p->_stack.access(), ui16a)) {
+					p->_stack.addSP(ui16a);
+				} else {
+					error = true;
+				}
+
+				LOGPF(("pop indirect\t%02Xh bytes\n", ui16a));
 			}
-
-			LOGPF(("pop indirect\t%02Xh bytes\n", ui16a));
-		}
-		break;
+			break;
 
 		case 0x4E:
 			// 4E xx xx yy
@@ -1296,38 +1287,38 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 0x6D (push process result) only seems to occur soon after
 			// an 'implies'
 
-		{
-			cs.readUint16LE(); // skip the 01 01
-			ui16a = p->_stack.pop2();
-			ui16b = p->_stack.pop2();
-			p->_stack.push2(ui16a); //!! which _pid do we need to push!?
-			LOGPF(("implies\n"));
+			{
+				cs.readUint16LE(); // skip the 01 01
+				ui16a = p->_stack.pop2();
+				ui16b = p->_stack.pop2();
+				p->_stack.push2(ui16a); //!! which _pid do we need to push!?
+				LOGPF(("implies\n"));
 
-			Process *proc = Kernel::get_instance()->getProcess(ui16b);
-			Process *proc2 = Kernel::get_instance()->getProcess(ui16a);
-			if (proc && proc2) {
-				proc->waitFor(ui16a);
-			} else {
-				perr << "Non-existent process PID (";
-				if (!proc && !proc2) {
-					perr << ui16a << "," << ui16b;
-				} else if (!proc) {
-					perr << ui16b;
+				Process *proc = Kernel::get_instance()->getProcess(ui16b);
+				Process *proc2 = Kernel::get_instance()->getProcess(ui16a);
+				if (proc && proc2) {
+					proc->waitFor(ui16a);
 				} else {
-					perr << ui16a;
+					perr << "Non-existent process PID (";
+					if (!proc && !proc2) {
+						perr << ui16a << "," << ui16b;
+					} else if (!proc) {
+						perr << ui16b;
+					} else {
+						perr << ui16a;
+					}
+					perr << ") in implies." << Std::endl;
+					// This condition triggers in 057C:1090 when talking
+					// to a child (class 02C4), directly after the conversation
+					// Specifically, it occurs because there is no
+					// leaveFastArea usecode for class 02C4.
+					// So currently we only regard this as an error when the
+					// missing process wasn't PID 0.
+					if ((ui16a && !proc2) || (ui16b && !proc))
+						error = true;
 				}
-				perr << ") in implies." << Std::endl;
-				// This condition triggers in 057C:1090 when talking
-				// to a child (class 02C4), directly after the conversation
-				// Specifically, it occurs because there is no
-				// leaveFastArea usecode for class 02C4.
-				// So currently we only regard this as an error when the
-				// missing process wasn't PID 0.
-				if ((ui16a && !proc2) || (ui16b && !proc))
-					error = true;
 			}
-		}
-		break;
+			break;
 
 		case 0x57:
 			// 57 aa tt xx xx yy yy
@@ -1336,47 +1327,44 @@ void UCMachine::execProcess(UCProcess *p) {
 			// tt = sizeof this pointer object
 			// only remove the this pointer from stack (4 bytes)
 			// put PID of spawned process in temp
-		{
-			int arg_bytes = cs.readByte();
-			int this_size = cs.readByte();
-			uint16 classid = cs.readUint16LE();
-			uint16 offset = cs.readUint16LE();
+			{
+				int arg_bytes = cs.readByte();
+				int this_size = cs.readByte();
+				uint16 classid = cs.readUint16LE();
+				uint16 offset = cs.readUint16LE();
 
-			uint32 thisptr = p->_stack.pop4();
+				uint32 thisptr = p->_stack.pop4();
 
-			LOGPF(("spawn\t\t%02X %02X %04X:%04X\n",
-			       arg_bytes, this_size, classid, offset));
+				LOGPF(("spawn\t\t%02X %02X %04X:%04X\n",
+				       arg_bytes, this_size, classid, offset));
 
-			if (GAME_IS_CRUSADER) {
-				offset = p->_usecode->get_class_event(classid, offset);
-			}
+				if (GAME_IS_CRUSADER) {
+					offset = p->_usecode->get_class_event(classid, offset);
+				}
 
-			UCProcess *newproc = new UCProcess(classid, offset,
-			                                   thisptr,
-			                                   this_size,
-			                                   p->_stack.access(),
-			                                   arg_bytes);
-			p->_temp32 = Kernel::get_instance()->addProcessExec(newproc);
+				UCProcess *newproc = new UCProcess(classid, offset,
+				                                   thisptr,
+				                                   this_size,
+				                                   p->_stack.access(),
+				                                   arg_bytes);
+				p->_temp32 = Kernel::get_instance()->addProcessExec(newproc);
 
 #ifdef DEBUG
-			if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
-				pout << Std::hex << "(still) running process " << p->_pid
-				     << ", item " << p->_itemNum << ", type " << p->_type
-				     << ", class " << p->_classId << ", offset " << p->_ip
-				     << Std::dec << Std::endl;
-			}
+				if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
+					pout << Std::hex << "(still) running process " << p->_pid
+					     << ", item " << p->_itemNum << ", type " << p->_type
+					     << ", class " << p->_classId << ", offset " << p->_ip
+					     << Std::dec << Std::endl;
+				}
 #endif
 
+				// Note: order of execution of this process and the new one is
+				// relevant. Currently, the spawned processes is executed once
+				// immediately, after which the current process resumes
 
-			// Note: order of execution of this process and the new one is
-			// relevant. Currently, the spawned processes is executed once
-			// immediately, after which the current process resumes
-
-
-			// cede = true;
-		}
-		break;
-
+				// cede = true;
+			}
+			break;
 
 		case 0x58:
 			// 58 xx xx yy yy zz zz tt uu
@@ -1384,40 +1372,40 @@ void UCMachine::execProcess(UCProcess *p) {
 			// tt = size of this pointer
 			// uu = unknown (occurring values: 00, 02, 05)
 
-		{
-			uint16 classid = cs.readUint16LE();
-			uint16 offset = cs.readUint16LE();
-			uint16 delta = cs.readUint16LE();
-			int this_size = cs.readByte();
-			int unknown = cs.readByte(); // ??
+			{
+				uint16 classid = cs.readUint16LE();
+				uint16 offset = cs.readUint16LE();
+				uint16 delta = cs.readUint16LE();
+				int this_size = cs.readByte();
+				int unknown = cs.readByte(); // ??
 
-			debug(MM_INFO, "spawn inline\t%04X:%04X+%04X=%04X %02X %02X\n",
-				classid, offset, delta, offset + delta, this_size, unknown);
+				debug(MM_INFO, "spawn inline\t%04X:%04X+%04X=%04X %02X %02X\n",
+				      classid, offset, delta, offset + delta, this_size, unknown);
 
-			uint32 thisptr = 0;
-			if (this_size > 0)
-				thisptr = p->_stack.access4(p->_bp + 6);
-			UCProcess *newproc = new UCProcess(classid, offset + delta,
-			                                   thisptr, this_size);
+				uint32 thisptr = 0;
+				if (this_size > 0)
+					thisptr = p->_stack.access4(p->_bp + 6);
+				UCProcess *newproc = new UCProcess(classid, offset + delta,
+				                                   thisptr, this_size);
 
-			uint16 newpid = Kernel::get_instance()->addProcessExec(newproc);
+				uint16 newpid = Kernel::get_instance()->addProcessExec(newproc);
 
 #ifdef DEBUG
-			if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
-				pout << Std::hex << "(still) running process " << p->_pid
-				     << ", item " << p->_itemNum << ", class " << p->_classId
-				     << ", offset " << p->_ip << Std::dec << Std::endl;
-			}
+				if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
+					pout << Std::hex << "(still) running process " << p->_pid
+					     << ", item " << p->_itemNum << ", class " << p->_classId
+					     << ", offset " << p->_ip << Std::dec << Std::endl;
+				}
 #endif
 
-			// as with 'spawn', run execute the spawned process once
-			// immediately
+				// as with 'spawn', run execute the spawned process once
+				// immediately
 
-			p->_stack.push2(newpid); //! push _pid of newproc?
+				p->_stack.push2(newpid); //! push _pid of newproc?
 
-			// cede = true;
-		}
-		break;
+				// cede = true;
+			}
+			break;
 
 		case 0x59:
 			// 59
@@ -1433,7 +1421,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16a = cs.readByte();
 			LOGPF(("init\t\t%02X\n", ui16a));
 
-			if (ui16a & 1) ui16a++; // 16-bit align
+			if (ui16a & 1)
+				ui16a++; // 16-bit align
 			if (ui16a > 0) {
 				p->_stack.push0(ui16a);
 			}
@@ -1572,20 +1561,19 @@ void UCMachine::execProcess(UCProcess *p) {
 				const UCList *srclist = getList(ui16a);
 				if (!srclist) {
 					perr << "Warning: invalid src list passed to slist copy"
-						 << Std::endl;
+					     << Std::endl;
 					ui16b = 0;
 					delete l;
 					break;
 				}
 				l->copyStringList(*srclist);
 				ui16b = assignList(l);
-			}
-			break;
+			} break;
 			case 3: { // list
 				const UCList *l = getList(ui16a);
 				if (!l) {
 					perr << "Warning: invalid src list passed to list copy"
-						 << Std::endl;
+					     << Std::endl;
 					ui16b = 0;
 					break;
 				}
@@ -1593,8 +1581,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				UCList *l2 = new UCList(elementsize);
 				l2->copyList(*l);
 				ui16b = assignList(l2);
-			}
-			break;
+			} break;
 			default:
 				ui16b = 0;
 				perr << "Error: invalid param _pid change type (" << ui8a
@@ -1602,7 +1589,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				error = true;
 			}
 			p->_stack.assign2(p->_bp + si8a, ui16b); // assign new index
-			p->freeOnTerminate(ui16b, ui8a); // free new var when terminating
+			p->freeOnTerminate(ui16b, ui8a);         // free new var when terminating
 			break;
 
 		case 0x6D:
@@ -1623,7 +1610,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("move sp\t\t%s%02Xh\n", si8a < 0 ? "-" : "", si8a < 0 ? -si8a : si8a));
 			break;
 
-
 		case 0x6F:
 			// 6F xx
 			// push 32 pointer address of SP-xx
@@ -1632,210 +1618,215 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("push addr\t%s\n", print_sp(-si8a)));
 			break;
 
-		// loop-related opcodes
-		// 0x70 has different types:
-		//    02: search the area around an object
-		//    03: search the area around an object, recursing into containers
-		//    04: search a container
-		//    05: search a container, recursing into containers
-		//    06: something about looking for items on top of another (??)
-		// each of these types allocate a rather large area on the stack
-		// we expect SP to be at the end of that area when 0x73 is executed
-		// a 'loop script' (created by 0x74) is used to select items
+			// loop-related opcodes
+			// 0x70 has different types:
+			//    02: search the area around an object
+			//    03: search the area around an object, recursing into containers
+			//    04: search a container
+			//    05: search a container, recursing into containers
+			//    06: something about looking for items on top of another (??)
+			// each of these types allocate a rather large area on the stack
+			// we expect SP to be at the end of that area when 0x73 is executed
+			// a 'loop script' (created by 0x74) is used to select items
 
 		case 0x70:
 			// 70 xx yy zz
 			// loop something. Stores 'current object' in var xx
 			// yy == num bytes in string
 			// zz == type
-		{
-			si16a = cs.readSByte();
-			uint32 scriptsize = cs.readByte();
-			uint32 searchtype = cs.readByte();
+			{
+				si16a = cs.readSByte();
+				uint32 scriptsize = cs.readByte();
+				uint32 searchtype = cs.readByte();
 
-			ui16a = p->_stack.pop2();
-			ui16b = p->_stack.pop2();
+				ui16a = p->_stack.pop2();
+				ui16b = p->_stack.pop2();
 
-			//!! This may not be the way the original did things...
+				//!! This may not be the way the original did things...
 
-			// We'll first create a list of all matching items.
-			// Store the id of this list in the last two bytes
-			// of our stack area.
-			// Behind that we'll store an index into this list.
-			// This is followed by the variable in which to store the item
-			// After that we store the loopscript length followed by
-			// the loopscript itself.
-			//   (Note that this puts a limit on the max. size of the
-			//    loopscript of 0x20 bytes)
+				// We'll first create a list of all matching items.
+				// Store the id of this list in the last two bytes
+				// of our stack area.
+				// Behind that we'll store an index into this list.
+				// This is followed by the variable in which to store the item
+				// After that we store the loopscript length followed by
+				// the loopscript itself.
+				//   (Note that this puts a limit on the max. size of the
+				//    loopscript of 0x20 bytes)
 
-			if (scriptsize > 0x20) {
-				perr << "Loopscript too long" << Std::endl;
-				error = true;
-				break;
-			}
-
-			uint8 *script = new uint8[scriptsize];
-			p->_stack.pop(script, scriptsize);
-
-			uint32 stacksize = 0;
-			bool recurse = false;
-			// we'll put everything on the stack after stacksize is set
-
-			UCList *itemlist = new UCList(2);
-
-			World *world = World::get_instance();
-
-			switch (searchtype) {
-			case 2:
-			case 3: {
-				// area search (3 = recursive)
-				stacksize = 0x34;
-				if (GAME_IS_CRUSADER) stacksize = 0x3A;
-				if (searchtype == 3) recurse = true;
-
-				// ui16a = item, ui16b = range
-				Item *item = getItem(ui16a);
-
-				if (item) {
-					world->getCurrentMap()->areaSearch(itemlist, script,
-					                                   scriptsize, item,
-					                                   ui16b, recurse);
-				} else {
-					// return error or return empty list?
-					perr << "Warning: invalid item passed to area search"
-					     << Std::endl;
-				}
-				break;
-			}
-			case 4:
-			case 5: {
-				// container search (4 = recursive)
-				stacksize = 0x28;
-				if (GAME_IS_CRUSADER) stacksize = 0x2A;
-				if (searchtype == 5) {
-					stacksize += 2;
-					recurse = true;
+				if (scriptsize > 0x20) {
+					perr << "Loopscript too long" << Std::endl;
+					error = true;
+					break;
 				}
 
-				// ui16a = 0xFFFF (?), ui16b = container
-				Container *container = getContainer(ui16b);
+				uint8 *script = new uint8[scriptsize];
+				p->_stack.pop(script, scriptsize);
 
-				if (ui16a != 0xFFFF) {
-					perr << "Warning: non-FFFF value passed to "
-					     << "container search" << Std::endl;
+				uint32 stacksize = 0;
+				bool recurse = false;
+				// we'll put everything on the stack after stacksize is set
+
+				UCList *itemlist = new UCList(2);
+
+				World *world = World::get_instance();
+
+				switch (searchtype) {
+				case 2:
+				case 3: {
+					// area search (3 = recursive)
+					stacksize = 0x34;
+					if (GAME_IS_CRUSADER)
+						stacksize = 0x3A;
+					if (searchtype == 3)
+						recurse = true;
+
+					// ui16a = item, ui16b = range
+					Item *item = getItem(ui16a);
+
+					if (item) {
+						world->getCurrentMap()->areaSearch(itemlist, script,
+						                                   scriptsize, item,
+						                                   ui16b, recurse);
+					} else {
+						// return error or return empty list?
+						perr << "Warning: invalid item passed to area search"
+						     << Std::endl;
+					}
+					break;
+				}
+				case 4:
+				case 5: {
+					// container search (4 = recursive)
+					stacksize = 0x28;
+					if (GAME_IS_CRUSADER)
+						stacksize = 0x2A;
+					if (searchtype == 5) {
+						stacksize += 2;
+						recurse = true;
+					}
+
+					// ui16a = 0xFFFF (?), ui16b = container
+					Container *container = getContainer(ui16b);
+
+					if (ui16a != 0xFFFF) {
+						perr << "Warning: non-FFFF value passed to "
+						     << "container search" << Std::endl;
+					}
+
+					if (container) {
+						container->containerSearch(itemlist, script,
+						                           scriptsize, recurse);
+					} else {
+						// return error or return empty list?
+						perr << "Warning: invalid container passed to "
+						     << "container search" << Std::endl;
+					}
+					break;
+				}
+				case 6: {
+					// Surface search
+					stacksize = 0x3D;
+					if (GAME_IS_CRUSADER)
+						stacksize = 0x43;
+
+					bool above = ui16a != 0xFFFF;
+					bool below = ui16b != 0xFFFF;
+					Item *item = getItem(below ? ui16b : ui16a);
+
+					if (item) {
+						world->getCurrentMap()->surfaceSearch(itemlist, script,
+						                                      scriptsize, item,
+						                                      above, below);
+					} else {
+						// return error or return empty list?
+						perr << "Warning: invalid item passed to surface search"
+						     << Std::endl;
+					}
+					break;
+				}
+				default:
+					perr << "Unhandled search type " << searchtype << Std::endl;
+					error = true;
+					delete[] script;
+					script = nullptr;
+					break;
 				}
 
-				if (container) {
-					container->containerSearch(itemlist, script,
-					                           scriptsize, recurse);
-				} else {
-					// return error or return empty list?
-					perr << "Warning: invalid container passed to "
-					     << "container search" << Std::endl;
+				if (script != nullptr) {
+					p->_stack.push0(stacksize - scriptsize - 8); // filler
+					p->_stack.push(script, scriptsize);
+					p->_stack.push2(scriptsize);
+					p->_stack.push2(static_cast<uint16>(si16a));
+					p->_stack.push2(0);
+					uint16 itemlistID = assignList(itemlist);
+					p->_stack.push2(itemlistID);
+
+					delete[] script;
+
+					LOGPF(("loop\t\t%s %02X %02X\n", print_bp(si16a),
+					       scriptsize, searchtype));
 				}
-				break;
 			}
-			case 6: {
-				// Surface search
-				stacksize = 0x3D;
-				if (GAME_IS_CRUSADER) stacksize = 0x43;
-
-				bool above = ui16a != 0xFFFF;
-				bool below = ui16b != 0xFFFF;
-				Item *item = getItem(below ? ui16b : ui16a);
-
-				if (item) {
-					world->getCurrentMap()->surfaceSearch(itemlist, script,
-					                                      scriptsize, item,
-					                                      above, below);
-				} else {
-					// return error or return empty list?
-					perr << "Warning: invalid item passed to surface search"
-					     << Std::endl;
-				}
-				break;
-			}
-			default:
-				perr << "Unhandled search type " << searchtype << Std::endl;
-				error = true;
-				delete[] script;
-				script = nullptr;
-				break;
-			}
-
-			if (script != nullptr) {
-				p->_stack.push0(stacksize - scriptsize - 8); // filler
-				p->_stack.push(script, scriptsize);
-				p->_stack.push2(scriptsize);
-				p->_stack.push2(static_cast<uint16>(si16a));
-				p->_stack.push2(0);
-				uint16 itemlistID = assignList(itemlist);
-				p->_stack.push2(itemlistID);
-
-				delete[] script;
-
-				LOGPF(("loop\t\t%s %02X %02X\n", print_bp(si16a),
-					   scriptsize, searchtype));
-			}
-		}
-		// Intentional fall-through
+			// Intentional fall-through
 
 		case 0x73:
 			// 73
 			// next loop object. pushes false if end reached
-		{
-			unsigned int sp = p->_stack.getSP();
-			uint16 itemlistID = p->_stack.access2(sp);
-			UCList *itemlist = getList(itemlistID);
-			uint16 index = p->_stack.access2(sp + 2);
-			si16a = static_cast<int16>(p->_stack.access2(sp + 4));
+			{
+				unsigned int sp = p->_stack.getSP();
+				uint16 itemlistID = p->_stack.access2(sp);
+				UCList *itemlist = getList(itemlistID);
+				uint16 index = p->_stack.access2(sp + 2);
+				si16a = static_cast<int16>(p->_stack.access2(sp + 4));
 #if 0
 			uint16 scriptsize = p->_stack.access2(sp + 6);
 			const uint8 *loopscript = p->_stack.access(sp + 8);
 #endif
 
-			if (!itemlist) {
-				perr << "Invalid item list in loopnext!" << Std::endl;
-				error = true;
-				break;
-			}
-
-			// see if there are still valid items left
-			bool valid = false;
-			do {
-				if (index >= itemlist->getSize()) {
+				if (!itemlist) {
+					perr << "Invalid item list in loopnext!" << Std::endl;
+					error = true;
 					break;
 				}
 
-				p->_stack.assign(p->_bp + si16a, (*itemlist)[index], 2);
-				uint16 objid = p->_stack.access2(p->_bp + si16a);
-				Item *item = getItem(objid);
-				if (item) {
+				// see if there are still valid items left
+				bool valid = false;
+				do {
+					if (index >= itemlist->getSize()) {
+						break;
+					}
+
+					p->_stack.assign(p->_bp + si16a, (*itemlist)[index], 2);
+					uint16 objid = p->_stack.access2(p->_bp + si16a);
+					Item *item = getItem(objid);
+					if (item) {
 #if 0
 					valid = item->checkLoopScript(loopscript, scriptsize);
 #else
-					valid = true;
+						valid = true;
 #endif
+					}
+
+					if (!valid)
+						index++;
+
+				} while (!valid);
+
+				if (!valid) {
+					p->_stack.push2(0); // end of loop
+					freeList(itemlistID);
+				} else {
+					p->_stack.push2(1);
+					// increment index
+					p->_stack.assign2(sp + 2, index + 1);
 				}
 
-				if (!valid) index++;
-
-			} while (!valid);
-
-			if (!valid) {
-				p->_stack.push2(0); // end of loop
-				freeList(itemlistID);
-			} else {
-				p->_stack.push2(1);
-				// increment index
-				p->_stack.assign2(sp + 2, index + 1);
+				if (opcode == 0x73) { // because of the fall-through
+					LOGPF(("loopnext\n"));
+				}
 			}
-
-			if (opcode == 0x73) { // because of the fall-through
-				LOGPF(("loopnext\n"));
-			}
-		}
-		break;
+			break;
 
 		case 0x74:
 			// 74 xx
@@ -1886,8 +1877,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			// Strings are _not_ duplicated when putting them in the loopvar
 			// Lists _are_ freed afterwards
 
-			si8a = cs.readByte();  // loop variable
-			ui32a = cs.readByte(); // list size
+			si8a = cs.readByte();      // loop variable
+			ui32a = cs.readByte();     // list size
 			si16a = cs.readUint16LE(); // jump offset
 
 			ui16a = p->_stack.access2(p->_stack.getSP());     // Loop index
@@ -1906,8 +1897,10 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 
 			// Increment the counter
-			if (ui16a == 0xFFFF) ui16a = 0;
-			else ui16a++;
+			if (ui16a == 0xFFFF)
+				ui16a = 0;
+			else
+				ui16a++;
 
 			if (ui16a >= getList(ui16b)->getSize()) {
 				// loop done
@@ -1919,7 +1912,7 @@ void UCMachine::execProcess(UCProcess *p) {
 					freeStringList(ui16b);
 				}
 
-				p->_stack.addSP(4);  // Pop list and counter
+				p->_stack.addSP(4); // Pop list and counter
 
 				// jump out
 				ui16a = cs.pos() + si16a;
@@ -1955,8 +1948,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// set. If so, return from process.
 			LOGPF(("process exclude"));
 
-			if (Kernel::get_instance()->
-			        getNumProcesses(p->_itemNum, p->_type) > 1) {
+			if (Kernel::get_instance()->getNumProcesses(p->_itemNum, p->_type) > 1) {
 				// another process with this (object,type) is already running
 				p->terminateDeferred();
 				LOGPF(("\t(terminating)\n"));
@@ -1964,9 +1956,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				LOGPF(("\n"));
 			}
 
-
 			break;
-
 
 		case 0x79:
 		case 0x7A:
@@ -1991,7 +1981,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		// write back IP (but preserve IP if there was an error)
 		if (!error)
-			p->_ip = static_cast<uint16>(cs.pos());   // TRUNCATES!
+			p->_ip = static_cast<uint16>(cs.pos()); // TRUNCATES!
 
 		// check if we suspended ourselves
 		if ((p->_flags & Process::PROC_SUSPENDED) != 0)
@@ -2000,17 +1990,16 @@ void UCMachine::execProcess(UCProcess *p) {
 
 	if (error) {
 		perr.Print("Process %d caused an error at %04X:%04X. Killing process.\n",
-		            p->_pid, p->_classId, p->_ip);
+		           p->_pid, p->_classId, p->_ip);
 		p->terminateDeferred();
 	}
 }
-
 
 const Std::string &UCMachine::getString(uint16 str) const {
 	static Std::string emptystring("");
 
 	Std::map<uint16, Std::string>::const_iterator iter =
-            _stringHeap.find(str);
+	    _stringHeap.find(str);
 
 	if (iter != _stringHeap.end())
 		return iter->_value;
@@ -2027,11 +2016,10 @@ UCList *UCMachine::getList(uint16 l) {
 	return nullptr;
 }
 
-
-
 uint16 UCMachine::assignString(const char *str) {
 	uint16 id = _stringIDs->getNewID();
-	if (id == 0) return 0;
+	if (id == 0)
+		return 0;
 
 	_stringHeap[id] = str;
 
@@ -2042,10 +2030,10 @@ uint16 UCMachine::duplicateString(uint16 str) {
 	return assignString(_stringHeap[str].c_str());
 }
 
-
 uint16 UCMachine::assignList(UCList *l) {
 	uint16 id = _listIDs->getNewID();
-	if (id == 0) return 0;
+	if (id == 0)
+		return 0;
 	assert(_listHeap.find(id) == _listHeap.end());
 
 	_listHeap[id] = l;
@@ -2130,15 +2118,13 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 	// * stack pointers
 	// * global pointers
 
-
 	//! range checking...
 
 	uint16 segment = static_cast<uint16>(ptr >> 16);
 	uint16 offset = static_cast<uint16>(ptr & 0xFFFF);
 
 	if (segment >= SEG_STACK_FIRST && segment <= SEG_STACK_LAST) {
-		UCProcess *proc = p_dynamic_cast<UCProcess *>
-		                  (Kernel::get_instance()->getProcess(segment));
+		UCProcess *proc = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(segment));
 
 		// reference to the stack of _pid 'segment'
 		if (!proc) {
@@ -2167,15 +2153,13 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 	// * object pointers, as long as xx == 02. (i.e., get objref)
 	// * global pointers
 
-
 	//! range checking...
 
 	uint16 segment = static_cast<uint16>(ptr >> 16);
 	uint16 offset = static_cast<uint16>(ptr & 0xFFFF);
 
 	if (segment >= SEG_STACK_FIRST && segment <= SEG_STACK_LAST) {
-		UCProcess *proc = p_dynamic_cast<UCProcess *>
-		                  (Kernel::get_instance()->getProcess(segment));
+		UCProcess *proc = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(segment));
 
 		// reference to the stack of _pid 'segment'
 		if (!proc) {
@@ -2213,8 +2197,7 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 	uint16 segment = static_cast<uint16>(ptr >> 16);
 	uint16 offset = static_cast<uint16>(ptr);
 	if (segment >= SEG_STACK_FIRST && segment <= SEG_STACK_LAST) {
-		UCProcess *proc = p_dynamic_cast<UCProcess *>
-		                  (Kernel::get_instance()->getProcess(segment));
+		UCProcess *proc = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getProcess(segment));
 
 		// reference to the stack of _pid 'segment'
 		if (!proc) {
@@ -2257,13 +2240,14 @@ void UCMachine::usecodeStats() const {
 			g_debugger->debugPrintf("%d:", iterl->_key);
 
 			for (unsigned int i = 0; i < iterl->_value->getSize(); ++i) {
-				if (i > 0) g_debugger->debugPrintf(",");
+				if (i > 0)
+					g_debugger->debugPrintf(",");
 				g_debugger->debugPrintf("%d", iterl->_value->getuint16(i));
 			}
 			g_debugger->debugPrintf("\n");
 		} else {
 			g_debugger->debugPrintf("%d: %u elements of size %u\n",
-				iterl->_key, iterl->_value->getSize(), iterl->_value->getElementSize());
+			                        iterl->_key, iterl->_value->getSize(), iterl->_value->getElementSize());
 		}
 	}
 #endif
@@ -2301,7 +2285,8 @@ bool UCMachine::loadGlobals(Common::ReadStream *rs, uint32 version) {
 }
 
 bool UCMachine::loadStrings(Common::ReadStream *rs, uint32 version) {
-	if (!_stringIDs->load(rs, version)) return false;
+	if (!_stringIDs->load(rs, version))
+		return false;
 
 	uint32 stringcount = rs->readUint32LE();
 	for (unsigned int i = 0; i < stringcount; ++i) {
@@ -2322,21 +2307,22 @@ bool UCMachine::loadStrings(Common::ReadStream *rs, uint32 version) {
 }
 
 bool UCMachine::loadLists(Common::ReadStream *rs, uint32 version) {
-	if (!_listIDs->load(rs, version)) return false;
+	if (!_listIDs->load(rs, version))
+		return false;
 
 	uint32 listcount = rs->readUint32LE();
 	for (unsigned int i = 0; i < listcount; ++i) {
 		uint16 lid = rs->readUint16LE();
 		UCList *l = new UCList(2); // the "2" will be ignored by load()
 		bool ret = l->load(rs, version);
-		if (!ret) return false;
+		if (!ret)
+			return false;
 
 		_listHeap[lid] = l;
 	}
 
 	return true;
 }
-
 
 uint32 UCMachine::I_true(const uint8 * /*args*/, unsigned int /*argsize*/) {
 	return 1;
@@ -2364,7 +2350,8 @@ uint32 UCMachine::I_numToStr(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 UCMachine::I_urandom(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(num);
-	if (num <= 1) return 0;
+	if (num <= 1)
+		return 0;
 
 	// return random integer between 0 (incl.) to num (excl.)
 
@@ -2377,7 +2364,8 @@ uint32 UCMachine::I_rndRange(const uint8 *args, unsigned int /*argsize*/) {
 
 	// return random integer between lo (incl.) to hi (incl.)
 
-	if (hi <= lo) return lo;
+	if (hi <= lo)
+		return lo;
 
 	return (lo + (getRandom() % (hi - lo + 1)));
 }

@@ -107,7 +107,7 @@ void UCList::removeString(uint16 s, bool nodel) {
 
 			// remove string from list
 			_elements.erase(_elements.begin() + i * _elementSize,
-			               _elements.begin() + (i + 1)*_elementSize);
+			                _elements.begin() + (i + 1) * _elementSize);
 			_size--;
 			i--; // back up a bit
 		}
@@ -119,7 +119,6 @@ void UCList::save(Common::WriteStream *ws) const {
 	ws->writeUint32LE(_size);
 	ws->write(&(_elements[0]), _size * _elementSize);
 }
-
 
 bool UCList::load(Common::ReadStream *rs, uint32 version) {
 	_elementSize = rs->readUint32LE();

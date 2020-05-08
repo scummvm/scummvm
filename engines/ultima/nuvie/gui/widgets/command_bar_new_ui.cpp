@@ -22,25 +22,25 @@
 
 #include "ultima/nuvie/conf/configuration.h"
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/screen/screen.h"
+#include "common/events.h"
 #include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/core/tile_manager.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/gui/widgets/command_bar_new_ui.h"
-#include "ultima/nuvie/core/weather.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/save/obj_list.h"
+#include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/core/weather.h"
 #include "ultima/nuvie/files/nuvie_io.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/fonts/font_manager.h"
 #include "ultima/nuvie/gui/widgets/background.h"
+#include "ultima/nuvie/gui/widgets/command_bar_new_ui.h"
 #include "ultima/nuvie/keybinding/keys.h"
-#include "common/events.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/save/obj_list.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/nuvie/screen/screen.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -135,8 +135,6 @@ CommandBarNewUI::CommandBarNewUI(Game *g) : CommandBar() {
 CommandBarNewUI::~CommandBarNewUI() {
 }
 
-
-
 GUI_status CommandBarNewUI::MouseDown(int x, int y, Shared::MouseButton button) {
 	if (HitRect(x, y)) {
 		x -= area.left;
@@ -219,7 +217,7 @@ GUI_status CommandBarNewUI::KeyDown(const Common::KeyState &key) {
 		Hide();
 		break;
 
-	default :
+	default:
 		keybinder->handle_always_available_keys(a);
 		break;
 	}

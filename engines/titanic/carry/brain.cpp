@@ -27,11 +27,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBrain, CCarry)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(VisibleMsg)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(PassOnDragStartMsg)
-	ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(PassOnDragStartMsg)
+ON_MESSAGE(PETGainedObjectMsg)
 END_MESSAGE_MAP()
 
 CBrain::CBrain() : CCarry(), _pieceAdded(false), _perchGained(false) {
@@ -101,7 +101,7 @@ bool CBrain::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		moveToView();
 
 		setPosition(Point(msg->_mousePos.x - _bounds.width() / 2,
-			msg->_mousePos.y - _bounds.height() / 2));
+		                  msg->_mousePos.y - _bounds.height() / 2));
 	}
 
 	return CCarry::MouseDragStartMsg(msg);
@@ -116,7 +116,7 @@ bool CBrain::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		setVisible(true);
 		moveToView();
 		setPosition(Point(msg->_mousePos.x - _bounds.width() / 2,
-			msg->_mousePos.y - _bounds.height() / 2));
+		                  msg->_mousePos.y - _bounds.height() / 2));
 	}
 
 	return CCarry::PassOnDragStartMsg(msg);

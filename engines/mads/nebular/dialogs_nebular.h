@@ -24,22 +24,25 @@
 #define MADS_DIALOGS_NEBULAR_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
 #include "mads/dialogs.h"
+#include "mads/game.h"
 
 namespace MADS {
 
 namespace Nebular {
 
-enum CapitalizationMode { kUppercase = 0, kLowercase = 1, kUpperAndLower = 2 };
+enum CapitalizationMode { kUppercase = 0,
+	                      kLowercase = 1,
+	                      kUpperAndLower = 2 };
 
 class DialogsNebular : public Dialogs {
 	friend class Dialogs;
+
 private:
 	int _dialogWidth;
 	CapitalizationMode _capitalizationMode;
 
-	DialogsNebular(MADSEngine *vm): Dialogs(vm), _capitalizationMode(kUppercase), _dialogWidth(0) {}
+	DialogsNebular(MADSEngine *vm) : Dialogs(vm), _capitalizationMode(kUppercase), _dialogWidth(0) {}
 
 	Common::String getVocab(int vocabId) override;
 
@@ -75,6 +78,7 @@ private:
 	 * Get a random copy protection entry from the HOGANUS resource
 	 */
 	bool getHogAnusEntry(HOGANUS &entry);
+
 public:
 	/**
 	 * Constructor
@@ -96,21 +100,28 @@ private:
 	byte _palette[PALETTE_SIZE];
 	uint32 _palFlags[PALETTE_COUNT];
 	RGBList _rgbList;
+
 protected:
 	void save() override;
 
 	void restore() override;
+
 public:
 	PictureDialog(MADSEngine *vm, const Common::Point &pos, int maxChars, int objectId);
 
 	~PictureDialog() override;
 };
 
-enum DialogTextAlign { ALIGN_NONE = 0, ALIGN_CENTER = -1, ALIGN_AT_CENTER = -2, ALIGN_RIGHT = -3 };
+enum DialogTextAlign { ALIGN_NONE = 0,
+	                   ALIGN_CENTER = -1,
+	                   ALIGN_AT_CENTER = -2,
+	                   ALIGN_RIGHT = -3 };
 
-enum DialogState { DLGSTATE_UNSELECTED = 0, DLGSTATE_SELECTED = 1, DLGSTATE_FOCUSED = 2 };
+enum DialogState { DLGSTATE_UNSELECTED = 0,
+	               DLGSTATE_SELECTED = 1,
+	               DLGSTATE_FOCUSED = 2 };
 
-class GameDialog: public FullScreenDialog {
+class GameDialog : public FullScreenDialog {
 	struct DialogLine {
 		bool _active;
 		DialogState _state;
@@ -123,6 +134,7 @@ class GameDialog: public FullScreenDialog {
 		DialogLine();
 		DialogLine(const Common::String &s);
 	};
+
 protected:
 	Common::Array<DialogLine> _lines;
 	int _tempLine;
@@ -183,6 +195,7 @@ protected:
 	 * Refresh the display of the dialog's text
 	 */
 	void refreshText();
+
 public:
 	/**
 	 * Constructor
@@ -206,6 +219,7 @@ private:
 	 * Set the lines for the dialog
 	 */
 	void setLines();
+
 public:
 	DifficultyDialog(MADSEngine *vm);
 
@@ -226,6 +240,7 @@ private:
 	 * Set the lines for the dialog
 	 */
 	void setLines();
+
 public:
 	GameMenuDialog(MADSEngine *vm);
 
@@ -251,6 +266,7 @@ private:
 	 * Gets the quote to be shown for an option
 	 */
 	int getOptionQuote(int option);
+
 public:
 	OptionsDialog(MADSEngine *vm);
 

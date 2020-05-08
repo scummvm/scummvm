@@ -23,10 +23,10 @@
 #ifndef COMMON_ARRAY_H
 #define COMMON_ARRAY_H
 
-#include "common/scummsys.h"
 #include "common/algorithm.h"
-#include "common/textconsole.h" // For error()
 #include "common/memory.h"
+#include "common/scummsys.h"
+#include "common/textconsole.h" // For error()
 
 namespace Common {
 
@@ -149,15 +149,14 @@ public:
 	/** Returns a reference to the last element of the array. */
 	T &back() {
 		assert(_size > 0);
-		return _storage[_size-1];
+		return _storage[_size - 1];
 	}
 
 	/** Returns a reference to the last element of the array. */
 	const T &back() const {
 		assert(_size > 0);
-		return _storage[_size-1];
+		return _storage[_size - 1];
 	}
-
 
 	void insert_at(size_type idx, const T &element) {
 		assert(idx <= _size);
@@ -249,11 +248,11 @@ public:
 		return !(*this == other);
 	}
 
-	iterator       begin() {
+	iterator begin() {
 		return _storage;
 	}
 
-	iterator       end() {
+	iterator end() {
 		return _storage + _size;
 	}
 
@@ -386,7 +385,6 @@ protected:
 		}
 		return pos;
 	}
-
 };
 
 /**

@@ -32,7 +32,7 @@ namespace Common {
  */
 template<typename T>
 struct Hash<T *> {
-	uint operator()(T * const &v) const {
+	uint operator()(T *const &v) const {
 		uint x = static_cast<uint>(reinterpret_cast<uintptr>(v));
 		return x + (x >> 3);
 	}

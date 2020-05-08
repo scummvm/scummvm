@@ -23,9 +23,8 @@
 #ifndef NUVIE_CORE_CURSOR_H
 #define NUVIE_CORE_CURSOR_H
 
-#include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
-
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -40,7 +39,6 @@ typedef struct {
 	uint16 w, h;
 } MousePointer;
 
-
 /* Contains all mouse pointers, with hotspot and draw methods that work on the
  * active cursor.
  */
@@ -48,9 +46,9 @@ class Cursor {
 	friend class Screen;
 	Screen *screen;
 	Configuration *config;
-	sint32 cur_x, cur_y; // location on screen, unused normally
+	sint32 cur_x, cur_y;                 // location on screen, unused normally
 	Std::vector<MousePointer *> cursors; // pointer list
-	uint8 cursor_id; // which pointer is active
+	uint8 cursor_id;                     // which pointer is active
 
 	unsigned char *cleanup; // restore image behind cursor
 	Common::Rect cleanup_area;
@@ -66,7 +64,7 @@ class Cursor {
 
 public:
 	Cursor();
-	~Cursor()                              {
+	~Cursor() {
 		unload_all();
 	}
 	bool init(Configuration *c, Screen *s, nuvie_game_t game_type);
@@ -74,7 +72,7 @@ public:
 	void unload_all();
 	bool set_pointer(uint8 ptr_num);
 
-	void reset_position()           {
+	void reset_position() {
 		cur_x = -1;
 		cur_y = -1;
 	}
@@ -82,12 +80,12 @@ public:
 		cur_x = px;
 		cur_y = py;
 	}
-	void hide()                     {
+	void hide() {
 		hidden = true;
 		clear();
 		update();
 	}
-	void show()                     {
+	void show() {
 		hidden = false;
 	}
 
@@ -95,7 +93,7 @@ public:
 		x = cursors[cursor_id]->point_x;
 		y = cursors[cursor_id]->point_y;
 	}
-	bool display()                         {
+	bool display() {
 		return (display(cur_x, cur_y));
 	}
 	bool display(int px, int py);

@@ -20,12 +20,12 @@
  *
  */
 
-#include "scumm/scumm_v3.h"
 #include "scumm/actor.h"
+#include "scumm/scumm_v3.h"
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v3, x)
+#define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v3, x)
 
 void ScummEngine_v3::setupOpcodes() {
 	ScummEngine_v4::setupOpcodes();
@@ -80,7 +80,5 @@ void ScummEngine_v3::o3_waitForSentence() {
 	_scriptPointer--;
 	o5_breakHere();
 }
-
-
 
 } // End of namespace Scumm

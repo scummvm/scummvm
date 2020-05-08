@@ -23,20 +23,19 @@
 #ifndef SHERLOCK_SCALPEL_MAP_H
 #define SHERLOCK_SCALPEL_MAP_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
-#include "sherlock/surface.h"
 #include "sherlock/map.h"
 #include "sherlock/resources.h"
+#include "sherlock/surface.h"
 
 namespace Sherlock {
 
 class SherlockEngine;
 
 namespace Scalpel {
-
 
 struct MapEntry : Common::Point {
 	int _translate;
@@ -49,7 +48,7 @@ struct MapEntry : Common::Point {
 class MapPaths {
 private:
 	int _numLocations;
-	Common::Array< Common::Array<byte> > _paths;
+	Common::Array<Common::Array<byte>> _paths;
 
 public:
 	MapPaths();
@@ -65,9 +64,9 @@ public:
 	const byte *getPath(int srcLocation, int destLocation);
 };
 
-class ScalpelMap: public Map {
+class ScalpelMap : public Map {
 private:
-	Common::Array<MapEntry> _points;	// Map locations for each scene
+	Common::Array<MapEntry> _points; // Map locations for each scene
 	Common::StringArray _locationNames;
 	MapPaths _paths;
 	Common::Array<Common::Point> _pathPoints;
@@ -84,6 +83,7 @@ private:
 	int _cursorIndex;
 	bool _drawMap;
 	Surface _iconSave;
+
 protected:
 	/**
 	 * Load data  needed for the map
@@ -144,6 +144,7 @@ protected:
 	 * Handles highlighting map icons, showing their names
 	 */
 	void highlightIcon(const Common::Point &pt);
+
 public:
 	ScalpelMap(SherlockEngine *vm);
 	~ScalpelMap() override {}

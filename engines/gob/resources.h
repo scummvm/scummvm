@@ -36,12 +36,12 @@ class GobEngine;
 class Resource {
 public:
 	Resource(byte *data, int32 size, bool needFree = true,
-			int16 width = 0, int16 height = 0);
+	         int16 width = 0, int16 height = 0);
 	~Resource();
 
-	byte *getData  () const;
-	int32 getSize  () const;
-	int16 getWidth () const;
+	byte *getData() const;
+	int32 getSize() const;
+	int16 getWidth() const;
 	int16 getHeight() const;
 
 	Common::SeekableReadStream *stream() const;
@@ -51,7 +51,7 @@ private:
 	int32 _size;
 	int16 _width;
 	int16 _height;
-	bool  _needFree;
+	bool _needFree;
 
 	Common::SeekableReadStream *_stream;
 };
@@ -89,18 +89,18 @@ public:
 	byte *getTexts() const;
 
 	bool dumpResource(const Resource &resource,
-			const Common::String &fileName) const;
+	                  const Common::String &fileName) const;
 	bool dumpResource(const Resource &resource, uint16 id,
-			const Common::String &ext = "dmp") const;
+	                  const Common::String &ext = "dmp") const;
 
 private:
 	// Structure sizes in the files
-	static const int kTOTResItemSize   = 4 + 2 + 2 + 2;
-	static const int kTOTResTableSize  = 2 + 1;
-	static const int kEXTResItemSize   = 4 + 2 + 2 + 2;
-	static const int kEXTResTableSize  = 2 + 1;
+	static const int kTOTResItemSize = 4 + 2 + 2 + 2;
+	static const int kTOTResTableSize = 2 + 1;
+	static const int kEXTResItemSize = 4 + 2 + 2 + 2;
+	static const int kEXTResTableSize = 2 + 1;
 	static const int kTOTTextTableSize = 2;
-	static const int kTOTTextItemSize  = 2 + 2;
+	static const int kTOTTextItemSize = 2 + 2;
 
 	enum ResourceType {
 		kResourceTOT = 0,
@@ -184,7 +184,7 @@ private:
 
 	TOTResourceTable *_totResourceTable;
 	EXTResourceTable *_extResourceTable;
-	TOTTextTable     *_totTextTable;
+	TOTTextTable *_totTextTable;
 
 	bool loadTOTResourceTable();
 	bool loadEXTResourceTable();
@@ -200,9 +200,9 @@ private:
 	Resource *getEXTResource(uint16 id) const;
 
 	byte *getTOTData(TOTResourceItem &totItem) const;
-	byte *getIMData(TOTResourceItem &totItem)  const;
+	byte *getIMData(TOTResourceItem &totItem) const;
 	byte *getEXTData(EXTResourceItem &extItem, uint32 &size) const;
-	byte *getEXData(EXTResourceItem &extItem,  uint32 &size) const;
+	byte *getEXData(EXTResourceItem &extItem, uint32 &size) const;
 };
 
 } // End of namespace Gob

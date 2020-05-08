@@ -24,20 +24,19 @@
 
 #if (defined(GPH_DEVICE) || defined(DINGUX)) && defined(USE_SCALERS)
 
-#include "backends/graphics/downscalesdl/downscalesdl-graphics.h"
 #include "backends/events/sdl/sdl-events.h"
-#include "graphics/scaler/downscaler.h"
-#include "graphics/scaler/aspect.h"
+#include "backends/graphics/downscalesdl/downscalesdl-graphics.h"
 #include "common/mutex.h"
 #include "common/textconsole.h"
+#include "graphics/scaler/aspect.h"
+#include "graphics/scaler/downscaler.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Standard", GFX_NORMAL},
-	{0, 0, 0}
-};
+    {"1x", "Standard", GFX_NORMAL},
+    {0, 0, 0}};
 
 DownscaleSdlGraphicsManager::DownscaleSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
+    : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 const OSystem::GraphicsMode *DownscaleSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -98,7 +97,6 @@ void DownscaleSdlGraphicsManager::initSize(uint w, uint h, const Graphics::Pixel
 		_screenFormat = newFormat;
 	}
 #endif
-
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
@@ -214,7 +212,7 @@ void DownscaleSdlGraphicsManager::internUpdateScreen() {
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakeXOffset != _gameScreenShakeXOffset ||
-		(_cursorNeedsRedraw && _mouseBackup.x <= _currentShakeXOffset)) {
+	    (_cursorNeedsRedraw && _mouseBackup.x <= _currentShakeXOffset)) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_gameScreenShakeXOffset * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
@@ -227,7 +225,7 @@ void DownscaleSdlGraphicsManager::internUpdateScreen() {
 		_forceRedraw = true;
 	}
 	if (_currentShakeYOffset != _gameScreenShakeYOffset ||
-		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakeYOffset)) {
+	    (_cursorNeedsRedraw && _mouseBackup.y <= _currentShakeYOffset)) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeYOffset * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
@@ -300,8 +298,8 @@ void DownscaleSdlGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;    // Shift rect by one since 2xSai needs to access the data around
-			dst.y++;    // any pixel to scale it, and we want to avoid mem access crashes.
+			dst.x++; // Shift rect by one since 2xSai needs to access the data around
+			dst.y++; // any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -375,7 +373,7 @@ void DownscaleSdlGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
-				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
+				r->h = stretch200To240((uint8 *)_hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering);
 #endif
 		}
 		SDL_UnlockSurface(srcSurf);

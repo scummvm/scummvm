@@ -22,82 +22,75 @@
 
 #ifndef DISABLE_NES_APU
 
-#include "engines/engine.h"
 #include "scumm/players/player_nes.h"
-#include "scumm/scumm.h"
 #include "audio/mixer.h"
+#include "engines/engine.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
 static const byte channelMask[4] = {1, 2, 4, 8};
 
 static const uint16 freqTable[64] = {
-	0x07F0, 0x077E, 0x0712, 0x06AE, 0x064E, 0x05F3, 0x059E, 0x054D,
-	0x0501, 0x04B9, 0x0475, 0x0435, 0x03F8, 0x03BF, 0x0389, 0x0357,
-	0x0327, 0x02F9, 0x02CF, 0x02A6, 0x0280, 0x025C, 0x023A, 0x021A,
-	0x01FC, 0x01DF, 0x01C4, 0x01AB, 0x0193, 0x017C, 0x0167, 0x0152,
-	0x013F, 0x012D, 0x011C, 0x010C, 0x00FD, 0x00EE, 0x00E1, 0x00D4,
-	0x00C8, 0x00BD, 0x00B2, 0x00A8, 0x009F, 0x0096, 0x008D, 0x0085,
-	0x007E, 0x0076, 0x0070, 0x0069, 0x0063, 0x005E, 0x0058, 0x0053,
-	0x004F, 0x004A, 0x0046, 0x0042, 0x003E, 0x003A, 0x0037, 0x0034
-};
+    0x07F0, 0x077E, 0x0712, 0x06AE, 0x064E, 0x05F3, 0x059E, 0x054D,
+    0x0501, 0x04B9, 0x0475, 0x0435, 0x03F8, 0x03BF, 0x0389, 0x0357,
+    0x0327, 0x02F9, 0x02CF, 0x02A6, 0x0280, 0x025C, 0x023A, 0x021A,
+    0x01FC, 0x01DF, 0x01C4, 0x01AB, 0x0193, 0x017C, 0x0167, 0x0152,
+    0x013F, 0x012D, 0x011C, 0x010C, 0x00FD, 0x00EE, 0x00E1, 0x00D4,
+    0x00C8, 0x00BD, 0x00B2, 0x00A8, 0x009F, 0x0096, 0x008D, 0x0085,
+    0x007E, 0x0076, 0x0070, 0x0069, 0x0063, 0x005E, 0x0058, 0x0053,
+    0x004F, 0x004A, 0x0046, 0x0042, 0x003E, 0x003A, 0x0037, 0x0034};
 
 static const byte instChannel[16] = {
-	0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 1, 3, 3, 3
-};
+    0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 1, 3, 3, 3};
 static const byte startCmd[16] = {
-	0x05, 0x03, 0x06, 0x08, 0x0B, 0x01, 0x01, 0x1A,
-	0x16, 0x06, 0x04, 0x17, 0x02, 0x10, 0x0E, 0x0D
-};
+    0x05, 0x03, 0x06, 0x08, 0x0B, 0x01, 0x01, 0x1A,
+    0x16, 0x06, 0x04, 0x17, 0x02, 0x10, 0x0E, 0x0D};
 static const byte releaseCmd[16] = {
-	0x0F, 0x00, 0x00, 0x09, 0x00, 0x14, 0x15, 0x00,
-	0x00, 0x00, 0x1B, 0x1B, 0x0F, 0x0F, 0x0F, 0x0F
-};
-static const byte nextCmd[28] =	{
-	0xFF, 0xFF, 0xFF, 0xFF, 0x17, 0xFF, 0x07, 0xFF,
-	0xFF, 0x0A, 0x09, 0x0C, 0x00, 0x00, 0x00, 0x00,
-	0x11, 0x12, 0x11, 0x03, 0xFF, 0xFF, 0x18, 0x00,
-	0x19, 0x00, 0x00, 0x00
-};
+    0x0F, 0x00, 0x00, 0x09, 0x00, 0x14, 0x15, 0x00,
+    0x00, 0x00, 0x1B, 0x1B, 0x0F, 0x0F, 0x0F, 0x0F};
+static const byte nextCmd[28] = {
+    0xFF, 0xFF, 0xFF, 0xFF, 0x17, 0xFF, 0x07, 0xFF,
+    0xFF, 0x0A, 0x09, 0x0C, 0x00, 0x00, 0x00, 0x00,
+    0x11, 0x12, 0x11, 0x03, 0xFF, 0xFF, 0x18, 0x00,
+    0x19, 0x00, 0x00, 0x00};
 static const byte nextDelay[28] = {
-	0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x03, 0x00,
-	0x00, 0x05, 0x08, 0x03, 0x00, 0x00, 0x00, 0x00,
-	0x02, 0x02, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00,
-	0x03, 0x00, 0x00, 0x00
-};
+    0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x03, 0x00,
+    0x00, 0x05, 0x08, 0x03, 0x00, 0x00, 0x00, 0x00,
+    0x02, 0x02, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00,
+    0x03, 0x00, 0x00, 0x00};
 
 namespace APUe {
 
 static const byte LengthCounts[32] = {
-	0x0A,0xFE,
-	0x14,0x02,
-	0x28,0x04,
-	0x50,0x06,
-	0xA0,0x08,
-	0x3C,0x0A,
-	0x0E,0x0C,
-	0x1A,0x0E,
+    0x0A, 0xFE,
+    0x14, 0x02,
+    0x28, 0x04,
+    0x50, 0x06,
+    0xA0, 0x08,
+    0x3C, 0x0A,
+    0x0E, 0x0C,
+    0x1A, 0x0E,
 
-	0x0C,0x10,
-	0x18,0x12,
-	0x30,0x14,
-	0x60,0x16,
-	0xC0,0x18,
-	0x48,0x1A,
-	0x10,0x1C,
-	0x20,0x1E
-};
+    0x0C, 0x10,
+    0x18, 0x12,
+    0x30, 0x14,
+    0x60, 0x16,
+    0xC0, 0x18,
+    0x48, 0x1A,
+    0x10, 0x1C,
+    0x20, 0x1E};
 
 class SoundGen {
 protected:
 	byte wavehold;
-	uint32 freq;	// short
+	uint32 freq; // short
 	uint32 CurD;
 
 public:
 	byte Timer;
 	int32 Pos;
-	uint32 Cycles;	// short
+	uint32 Cycles; // short
 
 	inline byte GetTimer() const { return Timer; }
 };
@@ -121,11 +114,10 @@ public:
 };
 
 static const int8 Duties[4][8] = {
-	{-4,+4,-4,-4,-4,-4,-4,-4},
-	{-4,+4,+4,-4,-4,-4,-4,-4},
-	{-4,+4,+4,+4,+4,-4,-4,-4},
-	{+4,-4,-4,+4,+4,+4,+4,+4}
-};
+    {-4, +4, -4, -4, -4, -4, -4, -4},
+    {-4, +4, +4, -4, -4, -4, -4, -4},
+    {-4, +4, +4, +4, +4, -4, -4, -4},
+    {+4, -4, -4, +4, +4, +4, +4, +4}};
 
 void Square::Reset() {
 	memset(this, 0, sizeof(*this));
@@ -234,7 +226,6 @@ void Square::HalfFrame() {
 	CheckActive();
 }
 
-
 class Triangle : public SoundGen {
 protected:
 	byte linear;
@@ -253,11 +244,10 @@ public:
 };
 
 static const int8 TriDuty[32] = {
-	-8,-7,-6,-5,-4,-3,-2,-1,
-	+0,+1,+2,+3,+4,+5,+6,+7,
-	+7,+6,+5,+4,+3,+2,+1,+0,
-	-1,-2,-3,-4,-5,-6,-7,-8
-};
+    -8, -7, -6, -5, -4, -3, -2, -1,
+    +0, +1, +2, +3, +4, +5, +6, +7,
+    +7, +6, +5, +4, +3, +2, +1, +0,
+    -1, -2, -3, -4, -5, -6, -7, -8};
 
 void Triangle::Reset() {
 	memset(this, 0, sizeof(*this));
@@ -268,7 +258,7 @@ void Triangle::CheckActive() {
 	Active = Timer && LinCtr;
 
 	if (freq < 4)
-		Pos = 0;	// beyond hearing range
+		Pos = 0; // beyond hearing range
 	else
 		Pos = TriDuty[CurD] * 8;
 }
@@ -315,7 +305,7 @@ void Triangle::Run() {
 		CurD &= 0x1F;
 
 		if (freq < 4)
-			Pos = 0;	// beyond hearing range
+			Pos = 0; // beyond hearing range
 		else
 			Pos = TriDuty[CurD] * 8;
 	}
@@ -359,16 +349,14 @@ public:
 };
 
 static const uint32 NoiseFreq[16] = {
-	0x004,0x008,0x010,0x020,0x040,0x060,0x080,0x0A0,
-	0x0CA,0x0FE,0x17C,0x1FC,0x2FA,0x3F8,0x7F2,0xFE4
-};
+    0x004, 0x008, 0x010, 0x020, 0x040, 0x060, 0x080, 0x0A0,
+    0x0CA, 0x0FE, 0x17C, 0x1FC, 0x2FA, 0x3F8, 0x7F2, 0xFE4};
 
 void Noise::Reset() {
 	memset(this, 0, sizeof(*this));
 	CurD = 1;
 	Cycles = 1;
 	EnvCtr = 1;
-
 }
 
 void Noise::Write(int Reg, byte Val) {
@@ -407,7 +395,7 @@ void Noise::Write(int Reg, byte Val) {
 }
 
 void Noise::Run() {
-	Cycles = NoiseFreq[freq];	/* no + 1 here */
+	Cycles = NoiseFreq[freq]; /* no + 1 here */
 
 	if (datatype)
 		CurD = (CurD << 1) | (((CurD >> 14) ^ (CurD >> 8)) & 0x1);
@@ -445,8 +433,8 @@ void Noise::HalfFrame() {
 
 class APU {
 protected:
-	int	BufPos;
-	int	SampleRate;
+	int BufPos;
+	int SampleRate;
 
 	Square _square0;
 	Square _square1;
@@ -465,32 +453,65 @@ public:
 
 	void WriteReg(int Addr, byte Val);
 	byte Read4015();
-	void Reset ();
+	void Reset();
 	int16 GetSample();
 };
 
 void APU::WriteReg(int Addr, byte Val) {
 	switch (Addr) {
-	case 0x000:	_square0.Write(0,Val);	break;
-	case 0x001:	_square0.Write(1,Val);	break;
-	case 0x002:	_square0.Write(2,Val);	break;
-	case 0x003:	_square0.Write(3,Val);	break;
-	case 0x004:	_square1.Write(0,Val);	break;
-	case 0x005:	_square1.Write(1,Val);	break;
-	case 0x006:	_square1.Write(2,Val);	break;
-	case 0x007:	_square1.Write(3,Val);	break;
-	case 0x008:	_triangle.Write(0,Val);	break;
-	case 0x009:	_triangle.Write(1,Val);	break;
-	case 0x00A:	_triangle.Write(2,Val);	break;
-	case 0x00B:	_triangle.Write(3,Val);	break;
-	case 0x00C:	_noise.Write(0,Val);	break;
-	case 0x00D:	_noise.Write(1,Val);	break;
-	case 0x00E:	_noise.Write(2,Val);	break;
-	case 0x00F:	_noise.Write(3,Val);	break;
-	case 0x015:	_square0.Write(4,Val & 0x1);
-				_square1.Write(4,Val & 0x2);
-				_triangle.Write(4,Val & 0x4);
-				_noise.Write(4,Val & 0x8);
+	case 0x000:
+		_square0.Write(0, Val);
+		break;
+	case 0x001:
+		_square0.Write(1, Val);
+		break;
+	case 0x002:
+		_square0.Write(2, Val);
+		break;
+	case 0x003:
+		_square0.Write(3, Val);
+		break;
+	case 0x004:
+		_square1.Write(0, Val);
+		break;
+	case 0x005:
+		_square1.Write(1, Val);
+		break;
+	case 0x006:
+		_square1.Write(2, Val);
+		break;
+	case 0x007:
+		_square1.Write(3, Val);
+		break;
+	case 0x008:
+		_triangle.Write(0, Val);
+		break;
+	case 0x009:
+		_triangle.Write(1, Val);
+		break;
+	case 0x00A:
+		_triangle.Write(2, Val);
+		break;
+	case 0x00B:
+		_triangle.Write(3, Val);
+		break;
+	case 0x00C:
+		_noise.Write(0, Val);
+		break;
+	case 0x00D:
+		_noise.Write(1, Val);
+		break;
+	case 0x00E:
+		_noise.Write(2, Val);
+		break;
+	case 0x00F:
+		_noise.Write(3, Val);
+		break;
+	case 0x015:
+		_square0.Write(4, Val & 0x1);
+		_square1.Write(4, Val & 0x2);
+		_triangle.Write(4, Val & 0x4);
+		_noise.Write(4, Val & 0x8);
 		break;
 	default:
 		break;
@@ -499,14 +520,14 @@ void APU::WriteReg(int Addr, byte Val) {
 
 byte APU::Read4015() {
 	byte result =
-		(( _square0.GetTimer()) ? 0x01 : 0) |
-		(( _square1.GetTimer()) ? 0x02 : 0) |
-		((_triangle.GetTimer()) ? 0x04 : 0) |
-		((   _noise.GetTimer()) ? 0x08 : 0);
+	    ((_square0.GetTimer()) ? 0x01 : 0) |
+	    ((_square1.GetTimer()) ? 0x02 : 0) |
+	    ((_triangle.GetTimer()) ? 0x04 : 0) |
+	    ((_noise.GetTimer()) ? 0x08 : 0);
 	return result;
 }
 
-void APU::Reset () {
+void APU::Reset() {
 	BufPos = 0;
 
 	_square0.Reset();
@@ -568,13 +589,13 @@ int step(T &obj, int sampcycles, uint frame_Cycles, int frame_Num) {
 int16 APU::GetSample() {
 	int samppos = 0;
 
-	const int sampcycles = 1+(1789773-BufPos-1)/SampleRate;
+	const int sampcycles = 1 + (1789773 - BufPos - 1) / SampleRate;
 	BufPos = BufPos + sampcycles * SampleRate - 1789773;
 
-	samppos += step( _square0, sampcycles, Frame.Cycles, Frame.Num);
-	samppos += step( _square1, sampcycles, Frame.Cycles, Frame.Num);
+	samppos += step(_square0, sampcycles, Frame.Cycles, Frame.Num);
+	samppos += step(_square1, sampcycles, Frame.Cycles, Frame.Num);
 	samppos += step(_triangle, sampcycles, Frame.Cycles, Frame.Num);
-	samppos += step(   _noise, sampcycles, Frame.Cycles, Frame.Num);
+	samppos += step(_noise, sampcycles, Frame.Cycles, Frame.Num);
 
 	uint tmp = sampcycles;
 	while (tmp >= Frame.Cycles) {
@@ -638,7 +659,7 @@ Player_NES::~Player_NES() {
 	delete _apu;
 }
 
-void Player_NES::setMusicVolume (int vol) {
+void Player_NES::setMusicVolume(int vol) {
 	_maxvol = vol;
 }
 
@@ -732,7 +753,7 @@ void Player_NES::sound_play() {
 	playMusic();
 }
 
-void Player_NES::playSFX (int nr) {
+void Player_NES::playSFX(int nr) {
 	if (--_slot[nr].framesleft)
 		return;
 
@@ -779,7 +800,7 @@ void Player_NES::playMusic() {
 
 	wasSFXplaying = isSFXplaying;
 	if (!--_slot[2].framesleft) {
-top:
+	top:
 		int b = _slot[2].data[_slot[2].offset++];
 		if (b == 0xFF) {
 			_slot[2].id = -1;
@@ -924,7 +945,8 @@ top:
 				chainCommand(x);
 				break;
 
-			case 0x0B:	case 0x1A:
+			case 0x0B:
+			case 0x1A:
 				_mchan[x].envflags = 0x70;
 				_mchan[x].volume = 0x6F;
 				_mchan[x].voldelta = 0;

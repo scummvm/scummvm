@@ -20,72 +20,70 @@
  */
 
 #include "common/archive.h"
+#include "common/macresman.h"
 #include "common/stream.h"
 #include "common/unzip.h"
-#include "common/macresman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/fonts/ttf.h"
 
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Graphics {
 
 // Source: Apple IIGS Technical Note #41, "Font Family Numbers"
 // http://apple2.boldt.ca/?page=til/tn.iigs.041
 static const char *const fontNames[] = {
-	"Chicago",	// system font
-	"Geneva",	// application font
-	"New York",
-	NULL, // FIXME: "Geneva",
+    "Chicago", // system font
+    "Geneva",  // application font
+    "New York",
+    NULL, // FIXME: "Geneva",
 
-	"Monaco",
-	"Venice",
-	"London",
-	"Athens",
+    "Monaco",
+    "Venice",
+    "London",
+    "Athens",
 
-	"San Francisco",
-	"Toronto",
-	NULL,
-	"Cairo",
-	"Los Angeles", // 12
+    "San Francisco",
+    "Toronto",
+    NULL,
+    "Cairo",
+    "Los Angeles", // 12
 
-	"Zapf Dingbats",
-	"Bookman",
-	"Helvetica Narrow",
-	"Palatino",
-	NULL,
-	"Zapf Chancery",
-	NULL,
+    "Zapf Dingbats",
+    "Bookman",
+    "Helvetica Narrow",
+    "Palatino",
+    NULL,
+    "Zapf Chancery",
+    NULL,
 
-	"Times", // 20
-	"Helvetica",
-	"Courier",
-	"Symbol",
-	"Taliesin", // mobile?
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL, // 30
-	NULL,
-	NULL,
-	"Avant Garde",
-	"New Century Schoolbook"
-};
+    "Times", // 20
+    "Helvetica",
+    "Courier",
+    "Symbol",
+    "Taliesin", // mobile?
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL, // 30
+    NULL,
+    NULL,
+    "Avant Garde",
+    "New Century Schoolbook"};
 
 static const char *const fontStyleSuffixes[] = {
-	"",
-	"Bold",
-	"Italic",
-	"Underline",
-	"Outline",
-	"Shadow",
-	"Condense",
-	"Extend"
-};
+    "",
+    "Bold",
+    "Italic",
+    "Underline",
+    "Outline",
+    "Shadow",
+    "Condense",
+    "Extend"};
 
 int parseSlant(const Common::String fontname) {
 	int res = 0;
@@ -122,7 +120,7 @@ MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 }
 
 MacFontManager::~MacFontManager() {
-	for(Common::HashMap<int, const Graphics::Font *>::iterator it = _uniFonts.begin(); it != _uniFonts.end(); it++)
+	for (Common::HashMap<int, const Graphics::Font *>::iterator it = _uniFonts.begin(); it != _uniFonts.end(); it++)
 		delete it->_value;
 }
 
@@ -229,7 +227,7 @@ void MacFontManager::loadFonts(const Common::String &fileName) {
 }
 
 void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
-	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
+	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F', 'O', 'N', 'D'));
 	if (fonds.size() > 0) {
 		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
 			Common::SeekableReadStream *fond = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
@@ -250,7 +248,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 
 			for (uint i = 0; i < assoc->size(); i++) {
 				debug(8, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant,
-										(*assoc)[i]._fontID);
+				      (*assoc)[i]._fontID);
 
 				Common::SeekableReadStream *fontstream;
 				MacFont *macfont;
@@ -468,8 +466,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 			break;
 		}
 
-		if ((!candidate && sizes[i]->getSize() > macFont.getSize())
-				|| (candidate && sizes[i]->getSize() < candidate->getSize()))
+		if ((!candidate && sizes[i]->getSize() > macFont.getSize()) || (candidate && sizes[i]->getSize() < candidate->getSize()))
 			candidate = sizes[i];
 
 		if (sizes[i]->getSize() > maxSize->getSize())

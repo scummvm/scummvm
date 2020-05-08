@@ -24,8 +24,8 @@
 #define IMUSE_DRV_AMIGA_H
 
 #include "audio/mididrv.h"
-#include "audio/mods/paula.h"
 #include "audio/mixer.h"
+#include "audio/mods/paula.h"
 
 namespace Scumm {
 
@@ -34,7 +34,8 @@ class SoundChannel_Amiga;
 struct Instrument_Amiga;
 
 class IMuseDriver_Amiga : public MidiDriver, public Audio::Paula {
-friend class SoundChannel_Amiga;
+	friend class SoundChannel_Amiga;
+
 public:
 	IMuseDriver_Amiga(Audio::Mixer *mixer);
 	~IMuseDriver_Amiga() override;
@@ -68,7 +69,7 @@ private:
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	
+
 	int32 _ticker;
 	bool _isOpen;
 
@@ -80,6 +81,6 @@ private:
 	const uint8 _numParts;
 };
 
-}
+} // namespace Scumm
 
 #endif

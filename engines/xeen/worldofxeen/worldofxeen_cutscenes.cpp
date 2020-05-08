@@ -24,7 +24,9 @@
 #include "xeen/sound.h"
 #include "xeen/xeen.h"
 
-#define WAIT(TIME) if (_subtitles.wait(TIME)) return false
+#define WAIT(TIME)             \
+	if (_subtitles.wait(TIME)) \
+	return false
 
 namespace Xeen {
 namespace WorldOfXeen {
@@ -41,7 +43,7 @@ void WorldOfXeenCutscenes::showWorldOfXeenEnding(GooberState state, uint score) 
 
 	if (worldEnding1())
 		if (worldEnding2())
-				worldEnding3();
+			worldEnding3();
 
 	sound.stopAllAudio();
 	screen.fadeOut();
@@ -69,19 +71,16 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	screen.loadPage(1);
 
 	SpriteResource sc02("sc02.eg2"), tower1("tower1.eg2"), tower2("tower2.eg2"),
-		sc3a("sc3a.eg2"), sc06("sc06.eg2"), sc14("sc14.eg2"), sc13("sc13.eg2"),
-		sc17("sc17.eg2"), cube("cube.eg2"), hands("hands.eg2"),
-		sc10("sc10.eg2"), staff("staff.eg2");
+	    sc3a("sc3a.eg2"), sc06("sc06.eg2"), sc14("sc14.eg2"), sc13("sc13.eg2"),
+	    sc17("sc17.eg2"), cube("cube.eg2"), hands("hands.eg2"),
+	    sc10("sc10.eg2"), staff("staff.eg2");
 	SpriteResource sc3b[2] = {
-		SpriteResource("sc3b1.eg2"), SpriteResource("sc3b2.eg2")
-	};
+	    SpriteResource("sc3b1.eg2"), SpriteResource("sc3b2.eg2")};
 	SpriteResource sc20[4] = {
-		SpriteResource("sc20a.eg2"), SpriteResource("sc20b.eg2"),
-		SpriteResource("sc20c.eg2"), SpriteResource("sc20d.eg2")
-	};
+	    SpriteResource("sc20a.eg2"), SpriteResource("sc20b.eg2"),
+	    SpriteResource("sc20c.eg2"), SpriteResource("sc20d.eg2")};
 	SpriteResource sc22[2] = {
-		SpriteResource("sc22a.eg2"), SpriteResource("sc22b.eg2")
-	};
+	    SpriteResource("sc22a.eg2"), SpriteResource("sc22b.eg2")};
 
 	// Fade out the screen and the music
 	sound.songCommand(223);
@@ -448,11 +447,10 @@ bool WorldOfXeenCutscenes::worldEnding2() {
 	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	SpriteResource sc23[8] = {
-		SpriteResource("sc23a.eg2"), SpriteResource("sc23b.eg2"),
-		SpriteResource("sc23c.eg2"), SpriteResource("sc23d.eg2"),
-		SpriteResource("sc23e.eg2"), SpriteResource("sc23f.eg2"),
-		SpriteResource("sc23g.eg2"), SpriteResource("sc23h.eg2")
-	};
+	    SpriteResource("sc23a.eg2"), SpriteResource("sc23b.eg2"),
+	    SpriteResource("sc23c.eg2"), SpriteResource("sc23d.eg2"),
+	    SpriteResource("sc23e.eg2"), SpriteResource("sc23f.eg2"),
+	    SpriteResource("sc23g.eg2"), SpriteResource("sc23h.eg2")};
 	SpriteResource sc24("sc24.eg2");
 
 	screen.loadBackground("eg23prt2.raw");
@@ -496,10 +494,9 @@ bool WorldOfXeenCutscenes::worldEnding2() {
 
 	// Green power lines spreading to four corners of the top half of Xeen
 	SpriteResource sc25("sc25.eg2"), sc262("sc262.eg2"), sc263("sc263.eg2"),
-		sc264("sc264.eg2");
+	    sc264("sc264.eg2");
 	SpriteResource sc261[2] = {
-		SpriteResource("sc261a.eg2"), SpriteResource("sc261b.eg2")
-	};
+	    SpriteResource("sc261a.eg2"), SpriteResource("sc261b.eg2")};
 
 	screen.loadBackground("eg250001.raw");
 	screen.loadPalette("eg250001.pal");
@@ -599,13 +596,20 @@ bool WorldOfXeenCutscenes::worldEnding3() {
 
 	SpriteResource sc30("sc30.eg2");
 	SpriteResource sc28[14] = {
-		SpriteResource("sc28a.eg2", 2), SpriteResource("sc28b1.eg2", 2),
-		SpriteResource("sc28c.eg2", 2), SpriteResource("sc28d.eg2", 2),
-		SpriteResource("sc28e.eg2", 2), SpriteResource("sc28f.eg2", 2),
-		SpriteResource("sc28g.eg2", 2), SpriteResource("sc28h.eg2", 2),
-		SpriteResource("sc28i.eg2", 2), SpriteResource("sc28j.eg2", 2),
-		SpriteResource("sc28k.eg2", 2), SpriteResource("sc28l.eg2", 2),
-		SpriteResource("sc28m.eg2", 2), SpriteResource("sc28n.eg2", 2),
+	    SpriteResource("sc28a.eg2", 2),
+	    SpriteResource("sc28b1.eg2", 2),
+	    SpriteResource("sc28c.eg2", 2),
+	    SpriteResource("sc28d.eg2", 2),
+	    SpriteResource("sc28e.eg2", 2),
+	    SpriteResource("sc28f.eg2", 2),
+	    SpriteResource("sc28g.eg2", 2),
+	    SpriteResource("sc28h.eg2", 2),
+	    SpriteResource("sc28i.eg2", 2),
+	    SpriteResource("sc28j.eg2", 2),
+	    SpriteResource("sc28k.eg2", 2),
+	    SpriteResource("sc28l.eg2", 2),
+	    SpriteResource("sc28m.eg2", 2),
+	    SpriteResource("sc28n.eg2", 2),
 	};
 
 	// Transformation of Xeen into a globe
@@ -661,9 +665,7 @@ bool WorldOfXeenCutscenes::worldEnding3() {
 	Common::String gooberStr = Res.GOOBER[_goober];
 	Common::String congratsStr1 = Common::String::format(Res.WORLD_CONGRATULATIONS, _finalScore);
 	showPharaohEndText(congratsStr1.c_str(),
-		_goober == NON_GOOBER ? nullptr :
-		Common::String::format(Res.WORLD_CONGRATULATIONS2, gooberStr.c_str()).c_str()
-	);
+	                   _goober == NON_GOOBER ? nullptr : Common::String::format(Res.WORLD_CONGRATULATIONS2, gooberStr.c_str()).c_str());
 
 	return true;
 }
@@ -672,11 +674,13 @@ void WorldOfXeenCutscenes::setSubtitle(const Common::String &msg) {
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[28];
 
-	const char *const FORMAT1 = "\v000\t000\f38\x3""c%s";
+	const char *const FORMAT1 = "\v000\t000\f38\x3"
+	                            "c%s";
 	w.setBounds(Common::Rect(2, 157, SCREEN_WIDTH, 157 + 61));
 	w.writeString(Common::String::format(FORMAT1, msg.c_str()));
 
-	const char *const FORMAT2 = "\v000\t000\f39\x3""c%s";
+	const char *const FORMAT2 = "\v000\t000\f39\x3"
+	                            "c%s";
 	w.setBounds(Common::Rect(1, 156, SCREEN_WIDTH - 1, 156 + 60));
 	w.writeString(Common::String::format(FORMAT2, msg.c_str()));
 }
@@ -685,11 +689,13 @@ void WorldOfXeenCutscenes::setSubtitle2(const Common::String &msg) {
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[28];
 
-	const char *const FORMAT1 = "\v000\t000\f05\x3""c%s";
+	const char *const FORMAT1 = "\v000\t000\f05\x3"
+	                            "c%s";
 	w.setBounds(Common::Rect(2, 157, SCREEN_WIDTH, SCREEN_HEIGHT - 2));
 	w.writeString(Common::String::format(FORMAT1, msg.c_str()));
 
-	const char *const FORMAT2 = "\v000\t000\f11\x3""c%s";
+	const char *const FORMAT2 = "\v000\t000\f11\x3"
+	                            "c%s";
 	w.setBounds(Common::Rect(1, 156, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 4));
 	w.writeString(Common::String::format(FORMAT2, msg.c_str()));
 }

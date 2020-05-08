@@ -60,11 +60,9 @@ const File::SHA1Digest &AbstractFile::getSHA1() {
 	return sha1Digest;
 }
 
-ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize) : data(useData), size(useSize)
-{}
+ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize) : data(useData), size(useSize) {}
 
-ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize, const SHA1Digest &useSHA1Digest) : AbstractFile(useSHA1Digest), data(useData), size(useSize)
-{}
+ArrayFile::ArrayFile(const Bit8u *useData, size_t useSize, const SHA1Digest &useSHA1Digest) : AbstractFile(useSHA1Digest), data(useData), size(useSize) {}
 
 size_t ArrayFile::getSize() {
 	return size;

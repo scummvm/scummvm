@@ -22,11 +22,11 @@
 
 #include "kyra/engine/kyra_lok.h"
 #include "kyra/engine/sprites.h"
-#include "kyra/graphics/wsamovie.h"
-#include "kyra/graphics/animator_lok.h"
-#include "kyra/text/text.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/animator_lok.h"
+#include "kyra/graphics/wsamovie.h"
 #include "kyra/sound/sound.h"
+#include "kyra/text/text.h"
 
 #include "common/system.h"
 
@@ -49,15 +49,13 @@ int KyraEngine_LoK::o1_characterSays(EMCState *script) {
 
 		if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && _flags.lang == Common::JA_JPN) {
 			static const uint8 townsString1[] = {
-				0x83, 0x75, 0x83, 0x89, 0x83, 0x93, 0x83, 0x83, 0x93, 0x81,
-				0x41, 0x82, 0xDC, 0x82, 0xBD, 0x97, 0x88, 0x82, 0xBD, 0x82,
-				0xCC, 0x82, 0xA9, 0x81, 0x48, 0x00, 0x00, 0x00
-			};
+			    0x83, 0x75, 0x83, 0x89, 0x83, 0x93, 0x83, 0x83, 0x93, 0x81,
+			    0x41, 0x82, 0xDC, 0x82, 0xBD, 0x97, 0x88, 0x82, 0xBD, 0x82,
+			    0xCC, 0x82, 0xA9, 0x81, 0x48, 0x00, 0x00, 0x00};
 			static const uint8 townsString2[] = {
-				0x83, 0x75, 0x83, 0x89, 0x83, 0x93, 0x83, 0x5C, 0x83, 0x93,
-				0x81, 0x41, 0x82, 0xDC, 0x82, 0xBD, 0x97, 0x88, 0x82, 0xBD,
-				0x82, 0xCC, 0x82, 0xA9, 0x81, 0x48, 0x00, 0x00
-			};
+			    0x83, 0x75, 0x83, 0x89, 0x83, 0x93, 0x83, 0x5C, 0x83, 0x93,
+			    0x81, 0x41, 0x82, 0xDC, 0x82, 0xBD, 0x97, 0x88, 0x82, 0xBD,
+			    0x82, 0xCC, 0x82, 0xA9, 0x81, 0x48, 0x00, 0x00};
 
 			if (strncmp((const char *)townsString1, string, sizeof(townsString1)) == 0)
 				string = (const char *)townsString2;
@@ -520,7 +518,7 @@ int KyraEngine_LoK::o1_popBrandonIntoScene(EMCState *script) {
 		int animWidth = _animator->fetchAnimWidth(curAnim->sceneAnimPtr, _animator->_brandonScaleX) >> 1;
 		int animHeight = _animator->fetchAnimHeight(curAnim->sceneAnimPtr, _animator->_brandonScaleY);
 
-		animWidth = (xOffset * animWidth) /  width;
+		animWidth = (xOffset * animWidth) / width;
 		animHeight = (yOffset * animHeight) / height;
 
 		curAnim->x2 = curAnim->x1 += animWidth;
@@ -1140,7 +1138,7 @@ int KyraEngine_LoK::o1_findBrightestFireberry(EMCState *script) {
 	// return a glow value of "29" over here, when we are running a CD version.
 	if (_flags.isTalkie) {
 		if (_currentCharacter->sceneId == 133 || _currentCharacter->sceneId == 137 ||
-		        _currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
+		    _currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
 			return 29;
 	}
 
@@ -1206,7 +1204,9 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 			palIndex = 9;
 			break;
 
-	case 28: case 29: default:
+		case 28:
+		case 29:
+		default:
 			palIndex = 6;
 		}
 
@@ -1243,8 +1243,8 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 
 		if (_brandonStatusBit & 2) {
 			if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&
-			        _currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
-			        (_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
+			    _currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
+			    (_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
 				palIndex = 14;
 			}
 		}

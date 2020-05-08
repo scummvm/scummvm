@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/endian.h"
-#include "common/util.h"
 #include "scumm/imuse_digi/dimuse_codecs.h"
+#include "common/endian.h"
+#include "common/scummsys.h"
+#include "common/util.h"
 
 #include "audio/decoders/adpcm_intern.h"
 
@@ -43,9 +43,11 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
 		byte v2 = *src++;
 		byte v3 = *src++;
 		tmp = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
-		WRITE_BE_UINT16(ptr, tmp); ptr += 2;
+		WRITE_BE_UINT16(ptr, tmp);
+		ptr += 2;
 		tmp = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
-		WRITE_BE_UINT16(ptr, tmp); ptr += 2;
+		WRITE_BE_UINT16(ptr, tmp);
+		ptr += 2;
 	}
 	return s_size;
 }
@@ -65,44 +67,31 @@ static uint32 *_destImcTable2 = NULL;
 
 // This table is the "big brother" of Audio::ADPCMStream::_stepAdjustTable.
 static const byte imxOtherTable[6][64] = {
-	{
-		0xFF,
-		4
-	},
+    {0xFF,
+     4},
 
-	{
-		0xFF, 0xFF,
-		   2,    8
-	},
+    {0xFF, 0xFF,
+     2, 8},
 
-	{
-		0xFF, 0xFF, 0xFF, 0xFF,
-		   1,    2,    4,    6
-	},
+    {0xFF, 0xFF, 0xFF, 0xFF,
+     1, 2, 4, 6},
 
-	{
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-		   1,    2,    4,    6,    8,   12,   16,   32
-	},
+    {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+     1, 2, 4, 6, 8, 12, 16, 32},
 
-	{
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-		   1,    2,    4,    6,    8,   10,   12,   14,
-		  16,   18,   20,   22,   24,   26,   28,   32
-	},
+    {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+     1, 2, 4, 6, 8, 10, 12, 14,
+     16, 18, 20, 22, 24, 26, 28, 32},
 
-	{
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-		   1,    2,    3,    4,    5,    6,    7,    8,
-		   9,   10,   11,   12,   13,   14,   15,   16,
-		  17,   18,   19,   20,   21,   22,   23,   24,
-		  25,   26,   27,   28,   29,   30,   31,   32
-	}
-};
+    {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+     1, 2, 3, 4, 5, 6, 7, 8,
+     9, 10, 11, 12, 13, 14, 15, 16,
+     17, 18, 19, 20, 21, 22, 23, 24,
+     25, 26, 27, 28, 29, 30, 31, 32}};
 
 void releaseImcTables() {
 	free(_destImcTable);
@@ -114,8 +103,10 @@ void releaseImcTables() {
 void initializeImcTables() {
 	int pos;
 
-	if (!_destImcTable) _destImcTable = (byte *)calloc(89, sizeof(byte));
-	if (!_destImcTable2) _destImcTable2 = (uint32 *)calloc(89 * 64, sizeof(uint32));
+	if (!_destImcTable)
+		_destImcTable = (byte *)calloc(89, sizeof(byte));
+	if (!_destImcTable2)
+		_destImcTable2 = (uint32 *)calloc(89 * 64, sizeof(uint32));
 
 	for (pos = 0; pos <= 88; ++pos) {
 		byte put = 1;
@@ -269,10 +260,10 @@ int32 decompressADPCM(byte *compInput, byte *compOutput, int channels) {
 		destPos = chan * 2;
 
 		const int bound = (channels == 1)
-							? outputSamplesLeft
-							: ((chan == 0)
-								? (outputSamplesLeft+1) / 2
-								: outputSamplesLeft / 2);
+		                      ? outputSamplesLeft
+		                      : ((chan == 0)
+		                             ? (outputSamplesLeft + 1) / 2
+		                             : outputSamplesLeft / 2);
 		for (i = 0; i < bound; ++i) {
 			// Determine the size (in bits) of the next data packet
 			const int32 curTableEntryBitCount = _destImcTable[curTablePos];

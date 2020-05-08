@@ -20,57 +20,54 @@
  *
  */
 
-
-#include "scumm/scumm.h"
-#include "scumm/actor.h"
 #include "scumm/costume.h"
+#include "scumm/actor.h"
+#include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
 
 namespace Scumm {
 
 const byte smallCostumeScaleTable[256] = {
-	0xFF, 0xFD, 0x7D, 0xBD, 0x3D, 0xDD, 0x5D, 0x9D,
-	0x1D, 0xED, 0x6D, 0xAD, 0x2D, 0xCD, 0x4D, 0x8D,
-	0x0D, 0xF5, 0x75, 0xB5, 0x35, 0xD5, 0x55, 0x95,
-	0x15, 0xE5, 0x65, 0xA5, 0x25, 0xC5, 0x45, 0x85,
-	0x05, 0xF9, 0x79, 0xB9, 0x39, 0xD9, 0x59, 0x99,
-	0x19, 0xE9, 0x69, 0xA9, 0x29, 0xC9, 0x49, 0x89,
-	0x09, 0xF1, 0x71, 0xB1, 0x31, 0xD1, 0x51, 0x91,
-	0x11, 0xE1, 0x61, 0xA1, 0x21, 0xC1, 0x41, 0x81,
-	0x01, 0xFB, 0x7B, 0xBB, 0x3B, 0xDB, 0x5B, 0x9B,
-	0x1B, 0xEB, 0x6B, 0xAB, 0x2B, 0xCB, 0x4B, 0x8B,
-	0x0B, 0xF3, 0x73, 0xB3, 0x33, 0xD3, 0x53, 0x93,
-	0x13, 0xE3, 0x63, 0xA3, 0x23, 0xC3, 0x43, 0x83,
-	0x03, 0xF7, 0x77, 0xB7, 0x37, 0xD7, 0x57, 0x97,
-	0x17, 0xE7, 0x67, 0xA7, 0x27, 0xC7, 0x47, 0x87,
-	0x07, 0xEF, 0x6F, 0xAF, 0x2F, 0xCF, 0x4F, 0x8F,
-	0x0F, 0xDF, 0x5F, 0x9F, 0x1F, 0xBF, 0x3F, 0x7F,
-	0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
-	0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
-	0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8,
-	0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8,
-	0x04, 0x84, 0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4,
-	0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4,
-	0x0C, 0x8C, 0x4C, 0xCC, 0x2C, 0xAC, 0x6C, 0xEC,
-	0x1C, 0x9C, 0x5C, 0xDC, 0x3C, 0xBC, 0x7C, 0xFC,
-	0x02, 0x82, 0x42, 0xC2, 0x22, 0xA2, 0x62, 0xE2,
-	0x12, 0x92, 0x52, 0xD2, 0x32, 0xB2, 0x72, 0xF2,
-	0x0A, 0x8A, 0x4A, 0xCA, 0x2A, 0xAA, 0x6A, 0xEA,
-	0x1A, 0x9A, 0x5A, 0xDA, 0x3A, 0xBA, 0x7A, 0xFA,
-	0x06, 0x86, 0x46, 0xC6, 0x26, 0xA6, 0x66, 0xE6,
-	0x16, 0x96, 0x56, 0xD6, 0x36, 0xB6, 0x76, 0xF6,
-	0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE,
-	0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE
-};
+    0xFF, 0xFD, 0x7D, 0xBD, 0x3D, 0xDD, 0x5D, 0x9D,
+    0x1D, 0xED, 0x6D, 0xAD, 0x2D, 0xCD, 0x4D, 0x8D,
+    0x0D, 0xF5, 0x75, 0xB5, 0x35, 0xD5, 0x55, 0x95,
+    0x15, 0xE5, 0x65, 0xA5, 0x25, 0xC5, 0x45, 0x85,
+    0x05, 0xF9, 0x79, 0xB9, 0x39, 0xD9, 0x59, 0x99,
+    0x19, 0xE9, 0x69, 0xA9, 0x29, 0xC9, 0x49, 0x89,
+    0x09, 0xF1, 0x71, 0xB1, 0x31, 0xD1, 0x51, 0x91,
+    0x11, 0xE1, 0x61, 0xA1, 0x21, 0xC1, 0x41, 0x81,
+    0x01, 0xFB, 0x7B, 0xBB, 0x3B, 0xDB, 0x5B, 0x9B,
+    0x1B, 0xEB, 0x6B, 0xAB, 0x2B, 0xCB, 0x4B, 0x8B,
+    0x0B, 0xF3, 0x73, 0xB3, 0x33, 0xD3, 0x53, 0x93,
+    0x13, 0xE3, 0x63, 0xA3, 0x23, 0xC3, 0x43, 0x83,
+    0x03, 0xF7, 0x77, 0xB7, 0x37, 0xD7, 0x57, 0x97,
+    0x17, 0xE7, 0x67, 0xA7, 0x27, 0xC7, 0x47, 0x87,
+    0x07, 0xEF, 0x6F, 0xAF, 0x2F, 0xCF, 0x4F, 0x8F,
+    0x0F, 0xDF, 0x5F, 0x9F, 0x1F, 0xBF, 0x3F, 0x7F,
+    0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
+    0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
+    0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8,
+    0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8,
+    0x04, 0x84, 0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4,
+    0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4,
+    0x0C, 0x8C, 0x4C, 0xCC, 0x2C, 0xAC, 0x6C, 0xEC,
+    0x1C, 0x9C, 0x5C, 0xDC, 0x3C, 0xBC, 0x7C, 0xFC,
+    0x02, 0x82, 0x42, 0xC2, 0x22, 0xA2, 0x62, 0xE2,
+    0x12, 0x92, 0x52, 0xD2, 0x32, 0xB2, 0x72, 0xF2,
+    0x0A, 0x8A, 0x4A, 0xCA, 0x2A, 0xAA, 0x6A, 0xEA,
+    0x1A, 0x9A, 0x5A, 0xDA, 0x3A, 0xBA, 0x7A, 0xFA,
+    0x06, 0x86, 0x46, 0xC6, 0x26, 0xA6, 0x66, 0xE6,
+    0x16, 0x96, 0x56, 0xD6, 0x36, 0xB6, 0x76, 0xF6,
+    0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE,
+    0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE};
 
 static const int v1MMNESLookup[25] = {
-	0x00, 0x03, 0x01, 0x06, 0x08,
-	0x02, 0x00, 0x07, 0x0C, 0x04,
-	0x09, 0x0A, 0x12, 0x0B, 0x14,
-	0x0D, 0x11, 0x0F, 0x0E, 0x10,
-	0x17, 0x00, 0x01, 0x05, 0x16
-};
+    0x00, 0x03, 0x01, 0x06, 0x08,
+    0x02, 0x00, 0x07, 0x0C, 0x04,
+    0x09, 0x0A, 0x12, 0x0B, 0x14,
+    0x0D, 0x11, 0x0F, 0x0E, 0x10,
+    0x17, 0x00, 0x01, 0x05, 0x16};
 
 byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int i, skip = 0;
@@ -217,7 +214,6 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 
 		rect.top = v1.y;
 		rect.bottom = rect.top + _height;
-
 	}
 
 	v1.skip_width = _width;
@@ -319,20 +315,18 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 }
 
 static const int v1MMActorPalatte1[25] = {
-	8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
-};
+    8, 8, 8, 8, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8};
 static const int v1MMActorPalatte2[25] = {
-	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7
-};
+    0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7};
 
 #define MASK_AT(xoff) \
 	(mask && (mask[((v1.x + xoff) / 8)] & revBitMask((v1.x + xoff) & 7)))
-#define LINE(c,p) \
-	pcolor = (color >> c) & 3; \
-	if (pcolor) { \
-		if (!MASK_AT(p)) \
-			dst[p] = palette[pcolor]; \
-		if (!MASK_AT(p + 1)) \
+#define LINE(c, p)                        \
+	pcolor = (color >> c) & 3;            \
+	if (pcolor) {                         \
+		if (!MASK_AT(p))                  \
+			dst[p] = palette[pcolor];     \
+		if (!MASK_AT(p + 1))              \
 			dst[p + 1] = palette[pcolor]; \
 	}
 
@@ -355,7 +349,7 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 	v1.skip_width /= 8;
 
 	// Set up the palette data
-	byte palette[4] = { 0, 0, 0, 0 };
+	byte palette[4] = {0, 0, 0, 0};
 	if (_vm->getCurrentLights() & LIGHTMODE_actor_use_colors) {
 		if (_vm->_game.id == GID_MANIAC) {
 			palette[1] = v1MMActorPalatte1[actor];
@@ -387,9 +381,15 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 
 			if (0 <= y && y < _out.h && 0 <= v1.x && v1.x < _out.w) {
 				if (!_mirror) {
-					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
+					LINE(0, 0);
+					LINE(2, 2);
+					LINE(4, 4);
+					LINE(6, 6);
 				} else {
-					LINE(6, 0); LINE(4, 2); LINE(2, 4); LINE(0, 6);
+					LINE(6, 0);
+					LINE(4, 2);
+					LINE(2, 4);
+					LINE(0, 6);
 				}
 			}
 			dst += _out.pitch;
@@ -421,16 +421,16 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 #endif
 
 extern "C" int ClassicProc3RendererShadowARM(int _scaleY,
-                                        ClassicCostumeRenderer::Codec1 *v1,
-                                        Graphics::Surface *_out,
-                                        const byte *src,
-                                        int   height,
-                                        int _scaleX,
-                                        int _scaleIndexX,
-                                        byte *_shadow_table,
-                                        uint16 _palette[32],
-                                        int32 _numStrips,
-                                        int _scaleIndexY);
+                                             ClassicCostumeRenderer::Codec1 *v1,
+                                             Graphics::Surface *_out,
+                                             const byte *src,
+                                             int height,
+                                             int _scaleX,
+                                             int _scaleIndexX,
+                                             byte *_shadow_table,
+                                             uint16 _palette[32],
+                                             int32 _numStrips,
+                                             int _scaleIndexY);
 #endif
 
 void ClassicCostumeRenderer::proc3(Codec1 &v1) {
@@ -445,8 +445,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 #ifdef USE_ARM_COSTUME_ASM
 	if (((_shadow_mode & 0x20) == 0) &&
 	    (v1.mask_ptr != NULL) &&
-	    (_shadow_table != NULL))
-	{
+	    (_shadow_table != NULL)) {
 		_scaleIndexX = ClassicProc3RendererShadowARM(_scaleY,
 		                                             &v1,
 		                                             &_out,
@@ -604,7 +603,7 @@ static void PCESetCostumeData(byte block[16][16], int index, byte value) {
 	int plane = (index / 16) % 4;
 	int colOffset = (index < 64) ? 8 : 0;
 	for (int i = 0; i < 8; ++i) {
-		int bit = (value >> (7-i)) & 0x1;
+		int bit = (value >> (7 - i)) & 0x1;
 		block[row][i + colOffset] |= bit << plane;
 	}
 }
@@ -672,7 +671,7 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 					pcolor = block[row][col];
 					masked = (v1.y + yPos < 0 || v1.y + yPos >= _out.h) ||
 					         (v1.x + xPos < 0 || v1.x + xPos >= _out.w) ||
-							 (v1.mask_ptr && (mask[0] & maskbit));
+					         (v1.mask_ptr && (mask[0] & maskbit));
 
 					if (pcolor && !masked) {
 						WRITE_UINT16(dst, ((uint16 *)_palette)[pcolor]);
@@ -717,7 +716,7 @@ void ClassicCostumeLoader::loadCostume(int id) {
 	}
 
 	switch (_format) {
-	case 0x57:				// Only used in V1 games
+	case 0x57: // Only used in V1 games
 		_numColors = 0;
 		break;
 	case 0x58:
@@ -726,16 +725,15 @@ void ClassicCostumeLoader::loadCostume(int id) {
 	case 0x59:
 		_numColors = 32;
 		break;
-	case 0x60:				// New since version 6
+	case 0x60: // New since version 6
 		_numColors = 16;
 		break;
-	case 0x61:				// New since version 6
+	case 0x61: // New since version 6
 		_numColors = 32;
 		break;
 	default:
 		error("Costume %d with format 0x%X is invalid", id, _format);
 	}
-
 
 	// In GF_OLD_BUNDLE games, there is no actual palette, just a single color byte.
 	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
@@ -757,7 +755,7 @@ void ClassicCostumeLoader::loadCostume(int id) {
 }
 
 byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
-	const byte darkpalette[16] = { 0x2d,0x1d,0x2d,0x3d, 0x2d,0x1d,0x2d,0x3d, 0x2d,0x1d,0x2d,0x3d, 0x2d,0x1d,0x2d,0x3d };
+	const byte darkpalette[16] = {0x2d, 0x1d, 0x2d, 0x3d, 0x2d, 0x1d, 0x2d, 0x3d, 0x2d, 0x1d, 0x2d, 0x3d, 0x2d, 0x1d, 0x2d, 0x3d};
 	const CostumeData &cost = a->_cost;
 	const byte *palette, *src, *sprdata;
 	int anim, frameNum, frame, offset, numSprites;
@@ -846,7 +844,7 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	return 0;
 }
 
-#define PCE_SIGNED(a) (((a) & 0x80) ? -((a) & 0x7F) : (a))
+#define PCE_SIGNED(a) (((a)&0x80) ? -((a)&0x7F) : (a))
 
 byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int i;
@@ -914,7 +912,6 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	}
 
 	return 0;
-
 }
 
 void NESCostumeRenderer::setPalette(uint16 *palette) {
@@ -932,7 +929,7 @@ void NESCostumeRenderer::setCostume(int costume, int shadow) {
 
 #ifdef USE_RGB_COLOR
 void PCEngineCostumeRenderer::setPalette(uint16 *palette) {
-	const byte* ptr = _loaded._palette;
+	const byte *ptr = _loaded._palette;
 	byte rgb[45];
 	byte *rgbPtr = rgb;
 	_vm->readPCEPalette(&ptr, &rgbPtr, 15);
@@ -979,8 +976,7 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 	do {
 		if (mask & 0x8000) {
 			if ((_vm->_game.version <= 3) &&
-				!(_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine))
-			{
+			    !(_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine)) {
 				j = *r++;
 
 				if (j == 0xFF)
@@ -1017,7 +1013,7 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 		i++;
 		usemask <<= 1;
 		mask <<= 1;
-	} while (mask&0xFFFF);
+	} while (mask & 0xFFFF);
 }
 
 void ClassicCostumeRenderer::setPalette(uint16 *palette) {
@@ -1171,22 +1167,21 @@ byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
 }
 
 static const byte actorV0Colors[25] = {
-	0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7
-};
+    0, 7, 2, 6, 9, 1, 3, 7, 7, 1, 1, 9, 1, 4, 5, 5, 4, 1, 0, 5, 4, 2, 2, 7, 7};
 
 #define MASK_AT(xoff) \
 	(mask && (mask[((destX + xoff) / 8)] & revBitMask((destX + xoff) & 7)))
-#define LINE(c,p) \
-	pcolor = (color >> c) & 3; \
-	if (pcolor) { \
-		if (!MASK_AT(p)) \
-			dst[p] = palette[pcolor]; \
-		if (!MASK_AT(p + 1)) \
+#define LINE(c, p)                        \
+	pcolor = (color >> c) & 3;            \
+	if (pcolor) {                         \
+		if (!MASK_AT(p))                  \
+			dst[p] = palette[pcolor];     \
+		if (!MASK_AT(p + 1))              \
 			dst[p + 1] = palette[pcolor]; \
 	}
 
 byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
-	const Actor_v0* a0 = (const Actor_v0 *)a;
+	const Actor_v0 *a0 = (const Actor_v0 *)a;
 
 	if (limb >= 8)
 		return 0;
@@ -1206,17 +1201,17 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	// Get the frame ptr
 	byte ptrLow = _loaded._baseptr[frame];
 	byte ptrHigh = ptrLow + _loaded._dataOffsets[4];
-	int frameOffset = (_loaded._baseptr[ptrHigh] << 8) + _loaded._baseptr[ptrLow + 2];			// 0x23EF / 0x2400
+	int frameOffset = (_loaded._baseptr[ptrHigh] << 8) + _loaded._baseptr[ptrLow + 2]; // 0x23EF / 0x2400
 
 	const byte *data = _loaded._baseptr + frameOffset;
 
 	// Set up the palette data
-	byte palette[4] = { 0, 0, 0, 0 };
+	byte palette[4] = {0, 0, 0, 0};
 	if (_vm->getCurrentLights() & LIGHTMODE_actor_use_colors) {
 		palette[1] = 10;
 		palette[2] = actorV0Colors[_actorID];
 	} else {
-		palette[2] = (_vm->getCurrentLights() & LIGHTMODE_flashlight_on) ?  actorV0Colors[_actorID] : 11;
+		palette[2] = (_vm->getCurrentLights() & LIGHTMODE_flashlight_on) ? actorV0Colors[_actorID] : 11;
 		palette[3] = 11;
 	}
 
@@ -1248,9 +1243,15 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 				byte *dst = (byte *)_out.getBasePtr(destX, destY);
 				byte *mask = _vm->getMaskBuffer(0, destY, _zbuf);
 				if (a0->_limb_flipped[limb]) {
-					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
+					LINE(0, 0);
+					LINE(2, 2);
+					LINE(4, 4);
+					LINE(6, 6);
 				} else {
-					LINE(6, 0); LINE(4, 2); LINE(2, 4); LINE(0, 6);
+					LINE(6, 0);
+					LINE(4, 2);
+					LINE(2, 4);
+					LINE(0, 6);
 				}
 			}
 		}

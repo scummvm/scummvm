@@ -26,11 +26,11 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
+#include "tony/loc.h"
 #include "common/memstream.h"
 #include "common/scummsys.h"
-#include "tony/mpal/mpalutils.h"
 #include "tony/game.h"
-#include "tony/loc.h"
+#include "tony/mpal/mpalutils.h"
 #include "tony/tony.h"
 
 namespace Tony {
@@ -239,7 +239,7 @@ int RMPattern::update(uint32 hEndPattern, byte &bFlag, RMSfx *sfx) {
 RMPattern::RMPattern() {
 	_slots = NULL;
 	_speed = 0;
-	_bLoop  = 0;
+	_bLoop = 0;
 	_nSlots = 0;
 	_nCurSlot = 0;
 	_nCurSprite = 0;
@@ -400,7 +400,7 @@ RMGfxSourceBuffer *RMItem::newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE)
 	if (_cm == CM_256) {
 		RMGfxSourceBuffer8RLE *spr;
 
-		if (_FX == 2) {    // AB
+		if (_FX == 2) { // AB
 			spr = new RMGfxSourceBuffer8RLEWordAB;
 		} else if (_FX == 1) { // OMBRA+AA
 			if (dimx == -1 || dimx > 255)
@@ -426,7 +426,7 @@ RMGfxSourceBuffer *RMItem::newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE)
 		return new RMGfxSourceBuffer16;
 }
 
-bool RMItem::isIn(const RMPoint &pt, int *size)  {
+bool RMItem::isIn(const RMPoint &pt, int *size) {
 	RMRect rc;
 
 	if (!_bIsActive)
@@ -917,7 +917,7 @@ bool RMCharacter::findPath(short source, short destination) {
 	// Find the shortest path
 	while (!finish) {
 		short minCost = 32000; // Reset the minimum cost
-		error = true;       // Possible error
+		error = true;          // Possible error
 
 		// 1st cycle: explore possible new nodes
 		for (int i = 0; i < cur->_numbBox; i++) {
@@ -1005,7 +1005,8 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 	_walkCount = 0;
 
 	if (bReversed) {
-		while (0);
+		while (0)
+			;
 	}
 
 	int nPatt = getCurPattern();
@@ -1018,7 +1019,7 @@ void RMCharacter::goTo(CORO_PARAM, RMPoint destcoord, bool bReversed) {
 
 		// Change the pattern for the new direction
 		_bNeedToStop = true;
-		if ((_walkSpeed < 0 && !bReversed) || (_walkSpeed >= 0 && bReversed))  {
+		if ((_walkSpeed < 0 && !bReversed) || (_walkSpeed >= 0 && bReversed)) {
 			if (nPatt != PAT_WALKLEFT)
 				setPattern(PAT_WALKLEFT);
 		} else {
@@ -1147,7 +1148,7 @@ short RMCharacter::scanLine(const RMPoint &point) {
 	} else {
 		Lslope = Lfx / Lfy;
 		if (Lend._y < Lstart._y)
-			Lspeed = - Lspeed;
+			Lspeed = -Lspeed;
 		Lstatus = 0;
 	}
 
@@ -1177,7 +1178,7 @@ short RMCharacter::scanLine(const RMPoint &point) {
  */
 RMPoint RMCharacter::invScanLine(const RMPoint &point) {
 	RMPoint lStart = point; // Exchange!
-	RMPoint lEnd = _pos; // :-)
+	RMPoint lEnd = _pos;    // :-)
 	int lDx = lStart._x - lEnd._x;
 	int lDy = lStart._y - lEnd._y;
 	float lFx = lDx;
@@ -1783,7 +1784,7 @@ bool RMGameBoxes::isInBox(int nLoc, int nBox, const RMPoint &pt) {
 	RMBoxLoc *cur = getBoxes(nLoc);
 
 	if ((pt._x >= cur->_boxes[nBox]._left) && (pt._x <= cur->_boxes[nBox]._right) &&
-	    (pt._y >= cur->_boxes[nBox]._top)  && (pt._y <= cur->_boxes[nBox]._bottom))
+	    (pt._y >= cur->_boxes[nBox]._top) && (pt._y <= cur->_boxes[nBox]._bottom))
 		return true;
 	else
 		return false;
@@ -1798,7 +1799,7 @@ int RMGameBoxes::whichBox(int nLoc, const RMPoint &punto) {
 	for (int i = 0; i < cur->_numbBox; i++) {
 		if (cur->_boxes[i]._bActive) {
 			if ((punto._x >= cur->_boxes[i]._left) && (punto._x <= cur->_boxes[i]._right) &&
-			    (punto._y >= cur->_boxes[i]._top)  && (punto._y <= cur->_boxes[i]._bottom))
+			    (punto._y >= cur->_boxes[i]._top) && (punto._y <= cur->_boxes[i]._bottom))
 				return i;
 		}
 	}
@@ -1849,7 +1850,7 @@ void RMGameBoxes::loadState(byte *state) {
 		int nbox = READ_LE_UINT32(state);
 		state += 4;
 
-		for (int j = 0; j < nbox ; j++) {
+		for (int j = 0; j < nbox; j++) {
 			if (j < _allBoxes[i]->_numbBox)
 				_allBoxes[i]->_boxes[j]._bActive = *state;
 
@@ -1933,7 +1934,7 @@ bool RMLocation::load(Common::SeekableReadStream &ds) {
 	_cmode = (RMColorMode)cm;
 
 	// Initialize the source buffer and read the location
-	switch (_cmode)     {
+	switch (_cmode) {
 	case CM_256:
 		_buf = new RMGfxSourceBuffer8;
 		break;
@@ -1959,7 +1960,6 @@ bool RMLocation::load(Common::SeekableReadStream &ds) {
 	// Create and read in the objects
 	if (_nItems > 0)
 		_items = new RMItem[_nItems];
-
 
 	g_vm->freezeTime();
 	for (int i = 0; i < _nItems && !ds.err(); i++)
@@ -2012,8 +2012,8 @@ bool RMLocation::loadLOX(Common::SeekableReadStream &ds) {
  */
 void RMLocation::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
 	CORO_BEGIN_CONTEXT;
-		bool priorTracking;
-		bool hasChanges;
+	bool priorTracking;
+	bool hasChanges;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2167,7 +2167,6 @@ void RMLocation::setScrollPosition(const RMPoint &scroll) {
 	for (int i = 0; i < _nItems; i++)
 		_items[i].setScrollPosition(_curScroll);
 }
-
 
 void RMLocation::pauseSound(bool bPause) {
 	for (int i = 0; i < _nItems; i++)

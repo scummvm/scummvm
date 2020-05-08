@@ -47,30 +47,28 @@
 // simply do so by manually enable the USE_DEPRECATED_COREAUDIO_API switch (e.g.
 // by adding setting it suitably in CPPFLAGS).
 #if !defined(USE_DEPRECATED_COREAUDIO_API)
-	#if TARGET_CPU_PPC || TARGET_CPU_PPC64 || !defined(MAC_OS_X_VERSION_10_6)
-		#define USE_DEPRECATED_COREAUDIO_API 1
-	#else
-		#define USE_DEPRECATED_COREAUDIO_API 0
-	#endif
+#if TARGET_CPU_PPC || TARGET_CPU_PPC64 || !defined(MAC_OS_X_VERSION_10_6)
+#define USE_DEPRECATED_COREAUDIO_API 1
+#else
+#define USE_DEPRECATED_COREAUDIO_API 0
+#endif
 #endif
 
 #if USE_DEPRECATED_COREAUDIO_API
-	// Try to silence warnings about use of deprecated APIs
-	#undef DEPRECATED_ATTRIBUTE
-	#define DEPRECATED_ATTRIBUTE
+// Try to silence warnings about use of deprecated APIs
+#undef DEPRECATED_ATTRIBUTE
+#define DEPRECATED_ATTRIBUTE
 #endif
 
-
+#include "audio/mpu401.h"
+#include "audio/musicplugin.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
 
-#include <CoreServices/CoreServices.h>
 #include <AudioToolbox/AUGraph.h>
-
+#include <CoreServices/CoreServices.h>
 
 // Activating the following switch disables reverb support in the CoreAudio
 // midi backend. Reverb will suck away a *lot* of CPU time, so on slower
@@ -78,15 +76,13 @@
 // TODO: Maybe make this a config option?
 //#define COREAUDIO_DISABLE_REVERB
 
-
 // A macro to simplify error handling a bit.
-#define RequireNoErr(error)                                         \
-do {                                                                \
-	err = error;                                                    \
-	if (err != noErr)                                               \
-		goto bail;                                                  \
-} while (false)
-
+#define RequireNoErr(error) \
+	do {                    \
+		err = error;        \
+		if (err != noErr)   \
+			goto bail;      \
+	} while (false)
 
 /* CoreAudio MIDI driver
  * By Max Horn / Fingolfin
@@ -109,7 +105,7 @@ private:
 };
 
 MidiDriver_CORE::MidiDriver_CORE()
-	: _auGraph(0) {
+    : _auGraph(0) {
 }
 
 MidiDriver_CORE::~MidiDriver_CORE() {
@@ -181,10 +177,9 @@ int MidiDriver_CORE::open() {
 	// be painful on low end machines.
 	// TODO: Make this customizable via a config key?
 	UInt32 usesReverb = 0;
-	AudioUnitSetProperty (_synth, kMusicDeviceProperty_UsesInternalReverb,
-		kAudioUnitScope_Global, 0, &usesReverb, sizeof (usesReverb));
+	AudioUnitSetProperty(_synth, kMusicDeviceProperty_UsesInternalReverb,
+	                     kAudioUnitScope_Global, 0, &usesReverb, sizeof(usesReverb));
 #endif
-
 
 	// Finally: Start the graph!
 	RequireNoErr(AUGraphStart(_auGraph));
@@ -222,11 +217,10 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 			// SDK (which does not have that symbol).
 			if (err == noErr) {
 				err = AudioUnitSetProperty(
-					_synth,
-					/*kMusicDeviceProperty_SoundBankFSRef*/ 1012, kAudioUnitScope_Global,
-					0,
-					&fsref, sizeof(fsref)
-				);
+				    _synth,
+				    /*kMusicDeviceProperty_SoundBankFSRef*/ 1012, kAudioUnitScope_Global,
+				    0,
+				    &fsref, sizeof(fsref));
 			}
 		} else {
 			// In 10.2, only kMusicDeviceProperty_SoundBankFSSpec is available
@@ -237,11 +231,10 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 
 			if (err == noErr) {
 				err = AudioUnitSetProperty(
-					_synth,
-					kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
-					0,
-					&fsSpec, sizeof(fsSpec)
-				);
+				    _synth,
+				    kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
+				    0,
+				    &fsSpec, sizeof(fsSpec));
 			}
 		}
 	}
@@ -252,11 +245,10 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 
 	if (url) {
 		err = AudioUnitSetProperty(
-			_synth,
-			kMusicDeviceProperty_SoundBankURL, kAudioUnitScope_Global,
-			0,
-			&url, sizeof(url)
-		);
+		    _synth,
+		    kMusicDeviceProperty_SoundBankURL, kAudioUnitScope_Global,
+		    0,
+		    &url, sizeof(url));
 
 		CFRelease(url);
 	} else {
@@ -301,9 +293,8 @@ void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
 	buf[length + 1] = 0xF7;
 
 	// Send it
-	MusicDeviceSysEx(_synth, buf, length+2);
+	MusicDeviceSysEx(_synth, buf, length + 2);
 }
-
 
 // Plugin interface
 
@@ -334,9 +325,9 @@ Common::Error CoreAudioMusicPlugin::createInstance(MidiDriver **mididriver, Midi
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(COREAUDIO)
-	//REGISTER_PLUGIN_DYNAMIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
+REGISTER_PLUGIN_STATIC(COREAUDIO, PLUGIN_TYPE_MUSIC, CoreAudioMusicPlugin);
 //#endif
 
 #endif // MACOSX

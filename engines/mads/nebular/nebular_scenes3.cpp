@@ -20,11 +20,11 @@
  *
  */
 
+#include "mads/nebular/nebular_scenes3.h"
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
-#include "mads/nebular/nebular_scenes3.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -44,13 +44,7 @@ void Scene3xx::setPlayerSpritesPrefix() {
 	else
 		_game._player._spritesPrefix = "ROX";
 
-	if ((_scene->_nextSceneId == 313) || (_scene->_nextSceneId == 366)
-	|| ((_scene->_nextSceneId >= 301) && (_scene->_nextSceneId <= 303))
-	|| ((_scene->_nextSceneId == 304) && (_scene->_currentSceneId == 303))
-	|| ((_scene->_nextSceneId == 311) && (_scene->_currentSceneId == 304))
-	|| ((_scene->_nextSceneId >= 308) && (_scene->_nextSceneId <= 310))
-	|| ((_scene->_nextSceneId >= 319) && (_scene->_nextSceneId <= 322))
-	|| ((_scene->_nextSceneId >= 387) && (_scene->_nextSceneId <= 391))) {
+	if ((_scene->_nextSceneId == 313) || (_scene->_nextSceneId == 366) || ((_scene->_nextSceneId >= 301) && (_scene->_nextSceneId <= 303)) || ((_scene->_nextSceneId == 304) && (_scene->_currentSceneId == 303)) || ((_scene->_nextSceneId == 311) && (_scene->_currentSceneId == 304)) || ((_scene->_nextSceneId >= 308) && (_scene->_nextSceneId <= 310)) || ((_scene->_nextSceneId >= 319) && (_scene->_nextSceneId <= 322)) || ((_scene->_nextSceneId >= 387) && (_scene->_nextSceneId <= 391))) {
 		_game._player._spritesPrefix = "";
 		_game._player._spritesChanged = true;
 	}
@@ -411,8 +405,7 @@ void Scene304::step() {
 			_scene->_sequences.setDepth(sprIdx, 1);
 			_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
-			}
-			break;
+		} break;
 
 		case 71:
 			_scene->_kernelMessages.reset();
@@ -428,15 +421,13 @@ void Scene304::step() {
 			_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 			if (_game._storyMode == STORYMODE_NICE)
 				_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_SPRITE, 8, 78);
-			}
-			break;
+		} break;
 
 		case 73: {
 			int sprIdx = _scene->_sequences.addSpriteCycle(_explosionSpriteId, false, 8, 0, 0, 0);
 			_scene->_sequences.setAnimRange(sprIdx, -2, -2);
 			_scene->_sequences.setDepth(sprIdx, 1);
-			}
-			break;
+		} break;
 
 		case 74:
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
@@ -759,12 +750,12 @@ void Scene307::enter() {
 	_scene->changeVariant(1);
 
 	_game.loadQuoteSet(0xED, 0xEE, 0xEF, 0xF0, 0xF1, 0xF2, 0xF3, 0x10C, 0x104, 0x106, 0x107, 0x108, 0x105,
-		0x109, 0x10A, 0x10B, 0x10D, 0x10E, 0x10F, 0x110, 0x111, 0x112, 0x113, 0x114, 0x115, 0x116, 0x117,
-		0x118, 0x119, 0x11A, 0x11B, 0x11C, 0x11D, 0x11E, 0x11F, 0x120, 0x121, 0x122, 0x123, 0x124, 0x125,
-		0x126, 0x127, 0x128, 0x129, 0x12A, 0x12B, 0x12C, 0x12D, 0x12E, 0x12F, 0x130, 0x131, 0x132, 0x133,
-		0x134, 0x135, 0x136, 0x137, 0x138, 0x139, 0x13A, 0x13B, 0x13C, 0x13D, 0x13E, 0x13F, 0x140, 0x141,
-		0x142, 0x143, 0x144, 0x145, 0x146, 0x147, 0x148, 0x149, 0x14A, 0x14B, 0x14C, 0x14D, 0x14E, 0x14F,
-		0x150, 0x151, 0x152, 0x153, 0);
+	                   0x109, 0x10A, 0x10B, 0x10D, 0x10E, 0x10F, 0x110, 0x111, 0x112, 0x113, 0x114, 0x115, 0x116, 0x117,
+	                   0x118, 0x119, 0x11A, 0x11B, 0x11C, 0x11D, 0x11E, 0x11F, 0x120, 0x121, 0x122, 0x123, 0x124, 0x125,
+	                   0x126, 0x127, 0x128, 0x129, 0x12A, 0x12B, 0x12C, 0x12D, 0x12E, 0x12F, 0x130, 0x131, 0x132, 0x133,
+	                   0x134, 0x135, 0x136, 0x137, 0x138, 0x139, 0x13A, 0x13B, 0x13C, 0x13D, 0x13E, 0x13F, 0x140, 0x141,
+	                   0x142, 0x143, 0x144, 0x145, 0x146, 0x147, 0x148, 0x149, 0x14A, 0x14B, 0x14C, 0x14D, 0x14E, 0x14F,
+	                   0x150, 0x151, 0x152, 0x153, 0);
 
 	_dialog1.setup(0x3F, 0x113, 0x114, 0x115, -1);
 	_dialog2.setup(0x40, 0x11A, 0x11B, 0x11C, 0x11D, 0x11E, 0x11F, 0x120, 0x121, 0x122, 0);
@@ -773,7 +764,6 @@ void Scene307::enter() {
 		_dialog2.set(0x11A, 0x122, 0);
 	else if (_scene->_priorSceneId == 318)
 		_dialog2.write(0x11E, true);
-
 
 	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG) {
 		if (_grateOpenedFl)
@@ -875,8 +865,7 @@ void Scene307::step() {
 		}
 		_lastFrameTime = _scene->_frameStartTime;
 
-		if ((_guardTime > 3000) && !_duringPeeingFl && (_scene->_animation[0] == nullptr)
-		&& (_game._screenObjects._inputMode != kInputConversation) && _globals[kMetBuddyBeast] && !_activePrisonerFl) {
+		if ((_guardTime > 3000) && !_duringPeeingFl && (_scene->_animation[0] == nullptr) && (_game._screenObjects._inputMode != kInputConversation) && _globals[kMetBuddyBeast] && !_activePrisonerFl) {
 			if (!_game._objects.isInInventory(OBJ_SCALPEL) && !_grateOpenedFl) {
 				_game._player._stepEnabled = false;
 				_game._player.walk(Common::Point(151, 119), FACING_SOUTHEAST);
@@ -970,8 +959,7 @@ void Scene307::actions() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 2, 3);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
-			}
-			break;
+		} break;
 
 		case 3: {
 			int oldIdx = _globals._sequenceIndexes[5];
@@ -979,8 +967,7 @@ void Scene307::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldIdx);
 			_scene->_sequences.addTimer(48, 4);
-			}
-			break;
+		} break;
 
 		case 4:
 			_vm->_sound->command(26);
@@ -1009,8 +996,7 @@ void Scene307::actions() {
 			_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 			_game._objects.removeFromInventory(OBJ_SCALPEL, NOWHERE);
 			_scene->_kernelMessages.addQuote(0xF2, 7, 120);
-			}
-			break;
+		} break;
 
 		case 7:
 			_scene->_sprites.remove(_globals._spriteIndexes[5]);
@@ -1020,7 +1006,7 @@ void Scene307::actions() {
 		default:
 			break;
 		}
-	}else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
+	} else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
 		if (_grateOpenedFl) {
 			switch (_game._trigger) {
 			case 0:
@@ -1052,8 +1038,7 @@ void Scene307::actions() {
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 				_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldIdx);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
-				}
-				break;
+			} break;
 
 			case 3:
 				_scene->_sequences.remove(_globals._sequenceIndexes[4]);
@@ -1138,8 +1123,7 @@ void Scene307::actions() {
 				_scene->_kernelMessages.reset();
 				int idx = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 4, 120, _game.getQuote(237));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);
-				}
-				break;
+			} break;
 
 			case 4:
 				_game._player._stepEnabled = true;
@@ -1214,7 +1198,6 @@ void Scene308::synchronize(Common::Serializer &s) {
 	_forceField.synchronize(s);
 }
 
-
 void Scene308::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
@@ -1267,8 +1250,7 @@ void Scene308::step() {
 		int idx = _scene->_kernelMessages.add(Common::Point(171, 21), 0xFDFC, 0, 0, 120, _game.getQuote(244));
 		_scene->_kernelMessages.setQuoted(idx, 2, true);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-		}
-		break;
+	} break;
 
 	case 71: {
 		int seqIdx = _globals._sequenceIndexes[3];
@@ -1276,8 +1258,7 @@ void Scene308::step() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], seqIdx);
 		_scene->_sequences.addTimer(48, 72);
-		}
-		break;
+	} break;
 
 	case 72:
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -1294,8 +1275,7 @@ void Scene308::step() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], seqIdx);
 		_scene->_sequences.addTimer(48, 74);
-		}
-		break;
+	} break;
 
 	case 74: {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -1306,8 +1286,7 @@ void Scene308::step() {
 		int idx = _scene->_kernelMessages.add(Common::Point(171, 21), 0xFDFC, 0, 0, 120, _game.getQuote(245));
 		_scene->_kernelMessages.setQuoted(idx, 2, true);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
-		}
-		break;
+	} break;
 
 	case 75: {
 		int seqIdx = _globals._sequenceIndexes[3];
@@ -1316,8 +1295,7 @@ void Scene308::step() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], seqIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
-		}
-		break;
+	} break;
 
 	case 76: {
 		int seqIdx = _globals._sequenceIndexes[3];
@@ -1328,8 +1306,7 @@ void Scene308::step() {
 		int idx = _scene->_kernelMessages.add(Common::Point(171, 21), 0xFDFC, 0, 0, 120, _game.getQuote(246));
 		_scene->_kernelMessages.setQuoted(idx, 2, true);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], seqIdx);
-		}
-		break;
+	} break;
 
 	default:
 		break;
@@ -1460,8 +1437,7 @@ void Scene309::step() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, 3);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-			}
-			break;
+		} break;
 
 		case 71: {
 			int _oldIdx = _globals._sequenceIndexes[3];
@@ -1472,8 +1448,7 @@ void Scene309::step() {
 			int idx = _scene->_kernelMessages.add(Common::Point(85, 37), 0xFDFC, 0, 0, 120, _game.getQuote(248));
 			_scene->_kernelMessages.setQuoted(idx, 2, true);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
-			}
-			break;
+		} break;
 
 		case 72: {
 			int _oldIdx = _globals._sequenceIndexes[3];
@@ -1482,8 +1457,7 @@ void Scene309::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], _oldIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
-			}
-			break;
+		} break;
 
 		case 73: {
 			int _oldIdx = _globals._sequenceIndexes[3];
@@ -1494,8 +1468,7 @@ void Scene309::step() {
 			int idx = _scene->_kernelMessages.add(Common::Point(170, 49), 0xFDFC, 0, 0, 120, _game.getQuote(249));
 			_scene->_kernelMessages.setQuoted(idx, 2, true);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
-			}
-			break;
+		} break;
 
 		case 74: {
 			int _oldIdx = _globals._sequenceIndexes[3];
@@ -1504,8 +1477,7 @@ void Scene309::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], _oldIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 75);
-			}
-			break;
+		} break;
 
 		case 75: {
 			int _oldIdx = _globals._sequenceIndexes[3];
@@ -1514,8 +1486,7 @@ void Scene309::step() {
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], _oldIdx);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
-			}
-			break;
+		} break;
 
 		case 76: {
 			int _oldIdx = _globals._sequenceIndexes[3];
@@ -1524,8 +1495,7 @@ void Scene309::step() {
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], _oldIdx);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 77);
-			}
-			break;
+		} break;
 
 		case 77: {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 90, 0, 0, 0);
@@ -1534,8 +1504,7 @@ void Scene309::step() {
 			int idx = _scene->_kernelMessages.add(Common::Point(15, 46), 0xFDFC, 0, 0, 120, _game.getQuote(247));
 			_scene->_kernelMessages.setQuoted(idx, 2, true);
 			_scene->_sequences.addTimer(120, 78);
-			}
-			break;
+		} break;
 
 		default:
 			break;
@@ -1695,8 +1664,7 @@ void Scene311::step() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 			_scene->_sequences.addTimer(15, 76);
-			}
-			break;
+		} break;
 
 		case 76:
 			_scene->_sequences.setDone(_globals._sequenceIndexes[3]);
@@ -1794,8 +1762,7 @@ void Scene311::actions() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(165, 76));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], oldIdx);
-			}
-			break;
+		} break;
 
 		case 2: {
 			int oldIdx = _globals._sequenceIndexes[2];
@@ -1804,8 +1771,7 @@ void Scene311::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
-			}
-			break;
+		} break;
 
 		case 3: {
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -1819,8 +1785,7 @@ void Scene311::actions() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(167, 100));
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
 			_scene->_sequences.addTimer(15, 4);
-			}
-			break;
+		} break;
 
 		case 4:
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -1843,8 +1808,7 @@ void Scene311::actions() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(167, 100));
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
 			_scene->_sequences.addTimer(15, 6);
-			}
-			break;
+		} break;
 
 		case 6:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
@@ -2002,16 +1966,14 @@ void Scene316::handleRexInGrate() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
-		}
-		break;
+	} break;
 
 	case 3: {
 		int oldIdx = _globals._sequenceIndexes[3];
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
-		}
-		break;
+	} break;
 
 	case 4: {
 		int oldIdx = _globals._sequenceIndexes[4];
@@ -2025,8 +1987,7 @@ void Scene316::handleRexInGrate() {
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 5, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
-		}
-		break;
+	} break;
 
 	case 5: {
 		int oldIdx = _globals._sequenceIndexes[3];
@@ -2039,8 +2000,7 @@ void Scene316::handleRexInGrate() {
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], oldIdx);
 		_scene->_sequences.addTimer(15, 6);
-		}
-		break;
+	} break;
 
 	case 6:
 		_scene->_sequences.setDone(_globals._sequenceIndexes[4]);
@@ -2069,8 +2029,7 @@ void Scene316::handleRexInGrate() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], oldIdx);
 		_scene->_sequences.addTimer(15, 9);
-		}
-		break;
+	} break;
 
 	case 9:
 		_scene->_sequences.setDone(_globals._sequenceIndexes[4]);
@@ -2267,8 +2226,7 @@ void Scene316::step() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], synxIdx);
-			}
-			break;
+		} break;
 
 		case 72: {
 			int synxIdx = _globals._sequenceIndexes[6];
@@ -2277,8 +2235,7 @@ void Scene316::step() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[6], synxIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
-			}
-			break;
+		} break;
 
 		case 73:
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -2299,8 +2256,7 @@ void Scene316::step() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 12);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], synxIdx);
-			}
-			break;
+		} break;
 
 		case 75:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[6]);
@@ -2418,7 +2374,6 @@ void Scene316::actions() {
 
 	_action._inProgress = false;
 }
-
 
 /*------------------------------------------------------------------------*/
 
@@ -2566,7 +2521,6 @@ void Scene318::handleDialog() {
 			_dialog1.start();
 			_game._player._stepEnabled = true;
 		}
-
 	}
 }
 
@@ -2591,7 +2545,7 @@ void Scene318::handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 	else
 		posY = 2;
 
-	int curQuoteId= quoteId;
+	int curQuoteId = quoteId;
 
 	int maxWidth = 0;
 	for (int i = 0; i < quoteNum; i++) {
@@ -2665,22 +2619,23 @@ void Scene318::enter() {
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_dialogFl = false;
 		_internWalkingFl = false;
-		_counter= 0;
-		_internCounter= 0;
+		_counter = 0;
+		_internCounter = 0;
 		_internVisibleFl = true;
 		_explosionFl = false;
 	}
 
 	_game.loadQuoteSet(0x18C, 0x18D, 0x18E, 0x18F, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196,
-		0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19E, 0x19E, 0x1A0, 0x1A1, 0x1A2, 0x1A3,
-		0x1A4, 0x1A5, 0x1A6, 0x1A7, 0x1A8, 0x1A9, 0x1AA, 0x1AB, 0x1AC, 0x1AD, 0x1AE, 0x1AF,
-		0x1B0, 0x1B1, 0x1B2, 0x1B3, 0x1B4, 0x1B5, 0x1B6, 0x1B7, 0x1B8, 0x1B9, 0x1BA, 0x1BB,
-		0x1BC, 0x1BD, 0x1BE, 0x1BF, 0x1C0, 0x1C1, 0x1C2, 0x1C3, 0x1C4, 0x1C5, 0x1C6, 0x1C7,
-		0x1C8, 0x1C9, 0x1CA, 0x1CB, 0x1CC, 0x1CD, 0x1CE, 0x1CF, 0x1D0, 0x1D1, 0x1D2, 0x1D3,
-		0x190, 0x19D, 0);
+	                   0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19E, 0x19E, 0x1A0, 0x1A1, 0x1A2, 0x1A3,
+	                   0x1A4, 0x1A5, 0x1A6, 0x1A7, 0x1A8, 0x1A9, 0x1AA, 0x1AB, 0x1AC, 0x1AD, 0x1AE, 0x1AF,
+	                   0x1B0, 0x1B1, 0x1B2, 0x1B3, 0x1B4, 0x1B5, 0x1B6, 0x1B7, 0x1B8, 0x1B9, 0x1BA, 0x1BB,
+	                   0x1BC, 0x1BD, 0x1BE, 0x1BF, 0x1C0, 0x1C1, 0x1C2, 0x1C3, 0x1C4, 0x1C5, 0x1C6, 0x1C7,
+	                   0x1C8, 0x1C9, 0x1CA, 0x1CB, 0x1CC, 0x1CD, 0x1CE, 0x1CF, 0x1D0, 0x1D1, 0x1D2, 0x1D3,
+	                   0x190, 0x19D, 0);
 
 	if ((_scene->_priorSceneId == RETURNING_FROM_DIALOG) || (((_scene->_priorSceneId == 318) ||
-			(_scene->_priorSceneId == RETURNING_FROM_LOADING)) && (!_globals[kAfterHavoc]))) {
+	                                                          (_scene->_priorSceneId == RETURNING_FROM_LOADING)) &&
+	                                                         (!_globals[kAfterHavoc]))) {
 		if (!_globals[kAfterHavoc]) {
 			_game._player._visible = false;
 			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('g', -1));
@@ -2839,8 +2794,7 @@ void Scene318::step() {
 			_scene->loadAnimation(formAnimName('c', -1), 62);
 			_animMode = 3;
 		}
-	} else if ((_animMode == 2) && _explosionFl && _internVisibleFl && !_dialogFl
-			&& !_internWalkingFl && (_game._screenObjects._inputMode != kInputConversation)) {
+	} else if ((_animMode == 2) && _explosionFl && _internVisibleFl && !_dialogFl && !_internWalkingFl && (_game._screenObjects._inputMode != kInputConversation)) {
 		if ((diffFrame >= 0) && (diffFrame <= 4))
 			_internCounter += diffFrame;
 		else
@@ -2890,8 +2844,7 @@ void Scene318::actions() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 6, 8);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-			}
-			break;
+		} break;
 
 		case 1:
 			_game._player._stepEnabled = true;
@@ -2905,8 +2858,7 @@ void Scene318::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
-			}
-			break;
+		} break;
 
 		default:
 			break;
@@ -2945,8 +2897,7 @@ void Scene318::actions() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
 			_scene->_sequences.addTimer(60, 3);
-			}
-			break;
+		} break;
 
 		case 3:
 			_game._player._stepEnabled = true;
@@ -3160,10 +3111,10 @@ void Scene319::enter() {
 	}
 
 	_game.loadQuoteSet(0x15F, 0x160, 0x161, 0x162, 0x163, 0x164, 0x16B, 0x16C, 0x16D,
-		0x16E, 0x16F, 0x170, 0x177, 0x178, 0x178, 0x17A, 0x17B, 0x17C, 0x165, 0x166,
-		0x167, 0x168, 0x169, 0x16A, 0x171, 0x172, 0x173, 0x174, 0x175, 0x176, 0x17D,
-		0x17E, 0x17F, 0x180, 0x181, 0x182, 0x183, 0x184, 0x185, 0x186, 0x187, 0x188,
-		0x189, 0x18A, 0x18B, 0);
+	                   0x16E, 0x16F, 0x170, 0x177, 0x178, 0x178, 0x17A, 0x17B, 0x17C, 0x165, 0x166,
+	                   0x167, 0x168, 0x169, 0x16A, 0x171, 0x172, 0x173, 0x174, 0x175, 0x176, 0x17D,
+	                   0x17E, 0x17F, 0x180, 0x181, 0x182, 0x183, 0x184, 0x185, 0x186, 0x187, 0x188,
+	                   0x189, 0x18A, 0x18B, 0);
 
 	_vm->_palette->setEntry(252, 63, 30, 2);
 	_vm->_palette->setEntry(253, 45, 15, 1);
@@ -3382,7 +3333,7 @@ void Scene319::step() {
 		_vm->_palette->setColorFlags(0xFF, 0, 0);
 		_vm->_palette->setColorValues(0, 0, 0);
 		_vm->_palette->fadeOut(_vm->_palette->_mainPalette, nullptr, 18, 228,
-			248, 0, 1, 16);
+		                       248, 0, 1, 16);
 		_vm->_screen->_shakeCountdown = 1;
 		_scene->_reloadSceneFlag = true;
 		break;
@@ -3475,17 +3426,17 @@ void Scene319::actions() {
 		}
 
 		if ((_action._activeAction._verbId == 0x168) || (_action._activeAction._verbId == 0x174) ||
-			(_action._activeAction._verbId == 0x180) || (_action._activeAction._verbId == 0x169) ||
-			(_action._activeAction._verbId == 0x175) || (_action._activeAction._verbId == 0x181) ||
-			(_action._activeAction._verbId == 0x16A) || (_action._activeAction._verbId == 0x176) ||
-			(_action._activeAction._verbId == 0x182) || (_action._activeAction._verbId == 0x183) ||
-			(_action._activeAction._verbId == 0x167) || (_action._activeAction._verbId == 0x173) ||
-			(_action._activeAction._verbId == 0x17F)) {
+		    (_action._activeAction._verbId == 0x180) || (_action._activeAction._verbId == 0x169) ||
+		    (_action._activeAction._verbId == 0x175) || (_action._activeAction._verbId == 0x181) ||
+		    (_action._activeAction._verbId == 0x16A) || (_action._activeAction._verbId == 0x176) ||
+		    (_action._activeAction._verbId == 0x182) || (_action._activeAction._verbId == 0x183) ||
+		    (_action._activeAction._verbId == 0x167) || (_action._activeAction._verbId == 0x173) ||
+		    (_action._activeAction._verbId == 0x17F)) {
 
 			bool addDialogLine = !((_action._activeAction._verbId == 0x167) || (_action._activeAction._verbId == 0x173) ||
-					(_action._activeAction._verbId == 0x17F) || (_action._activeAction._verbId == 0x16A) ||
-					(_action._activeAction._verbId == 0x176) || (_action._activeAction._verbId == 0x182) ||
-					(_action._activeAction._verbId == 0x183));
+			                       (_action._activeAction._verbId == 0x17F) || (_action._activeAction._verbId == 0x16A) ||
+			                       (_action._activeAction._verbId == 0x176) || (_action._activeAction._verbId == 0x182) ||
+			                       (_action._activeAction._verbId == 0x183));
 
 			int addVerbId = _action._activeAction._verbId + 1;
 			if ((addVerbId == 0x182) && (_game._storyMode != STORYMODE_NAUGHTY))
@@ -3597,7 +3548,8 @@ void Scene320::setup() {
 }
 
 void Scene320::setRightView(int view) {
-	if (_rightItemId < 8) _scene->_sequences.remove(_globals._sequenceIndexes[10]);
+	if (_rightItemId < 8)
+		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 
 	int spriteNum;
 	switch (view) {
@@ -3645,7 +3597,7 @@ void Scene320::setLeftView(int view) {
 }
 
 void Scene320::handleButtons() {
-	switch(_action._activeAction._objectNameId) {
+	switch (_action._activeAction._objectNameId) {
 	case 0x2DD:
 		_buttonId = 5;
 		break;
@@ -3790,11 +3742,10 @@ void Scene320::actions() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(32011);
 	else if ((_action.isAction(VERB_PRESS) || _action.isAction(VERB_PUSH)) &&
-		(_action.isObject(NOUN_LEFT_1_KEY) || _action.isObject(NOUN_LEFT_2_KEY) || _action.isObject(NOUN_LEFT_3_KEY) || _action.isObject(NOUN_LEFT_4_KEY) ||
-		 _action.isObject(NOUN_GREEN_BUTTON) || _action.isObject(NOUN_RED_BUTTON) || _action.isObject(NOUN_RIGHT_1_KEY) || _action.isObject(NOUN_RIGHT_2_KEY) ||
-		 _action.isObject(NOUN_RIGHT_3_KEY) || _action.isObject(NOUN_RIGHT_4_KEY) || _action.isObject(NOUN_RIGHT_5_KEY) || _action.isObject(NOUN_RIGHT_6_KEY) ||
-		 _action.isObject(NOUN_RIGHT_7_KEY) || _action.isObject(NOUN_RIGHT_8_KEY)
-		)) {
+	         (_action.isObject(NOUN_LEFT_1_KEY) || _action.isObject(NOUN_LEFT_2_KEY) || _action.isObject(NOUN_LEFT_3_KEY) || _action.isObject(NOUN_LEFT_4_KEY) ||
+	          _action.isObject(NOUN_GREEN_BUTTON) || _action.isObject(NOUN_RED_BUTTON) || _action.isObject(NOUN_RIGHT_1_KEY) || _action.isObject(NOUN_RIGHT_2_KEY) ||
+	          _action.isObject(NOUN_RIGHT_3_KEY) || _action.isObject(NOUN_RIGHT_4_KEY) || _action.isObject(NOUN_RIGHT_5_KEY) || _action.isObject(NOUN_RIGHT_6_KEY) ||
+	          _action.isObject(NOUN_RIGHT_7_KEY) || _action.isObject(NOUN_RIGHT_8_KEY))) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -3979,13 +3930,7 @@ void Scene322::actions() {
 		_vm->_dialogs->show(32211);
 	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
 		_vm->_dialogs->show(32212);
-	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
+	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY) || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY) || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY) || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY) || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY) || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY) || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
 		_vm->_dialogs->show(32213);
 	else if (_action.isAction(VERB_LOOK, NOUN_DEVICE))
 		_vm->_dialogs->show(32214);
@@ -4227,8 +4172,7 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM2, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 		_scene->changeVariant(0);
-		}
-		break;
+	} break;
 
 	case 3:
 		_scene->_kernelMessages.reset();
@@ -4283,7 +4227,6 @@ void Scene352::enter() {
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RM302x3");
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('g', -1));
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('b', -1));
-
 
 	if (_globals[kSexOfRex] == REX_FEMALE) {
 		_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*ROXRC_7");
@@ -4419,8 +4362,7 @@ void Scene352::actions() {
 				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2);
 				_scene->_sequences.updateTimeout(_commonSequenceIdx, oldIdx);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-				}
-				break;
+			} break;
 
 			case 2:
 				_vm->_sound->command(22);
@@ -4539,8 +4481,7 @@ void Scene352::actions() {
 				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2);
 				_scene->_sequences.updateTimeout(_commonSequenceIdx, oldIdx);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-				}
-				break;
+			} break;
 
 			case 2:
 				_vm->_sound->command(23);
@@ -4549,7 +4490,6 @@ void Scene352::actions() {
 				_scene->_sequences.setAnimRange(_commonSequenceIdx, 1, 4);
 				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
-
 
 			case 3:
 				_scene->_sequences.updateTimeout(-1, _commonSequenceIdx);
@@ -4590,8 +4530,7 @@ void Scene352::actions() {
 				idx = _scene->_dynamicHotspots.add(NOUN_LAMP, VERB_WALKTO, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
 				_lampHostpotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
 				_game._player._stepEnabled = true;
-				}
-				break;
+			} break;
 
 			default:
 				break;
@@ -5206,8 +5145,7 @@ void Scene361::handleRexAction() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(165, 76));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], seqIdx);
-		}
-		break;
+	} break;
 
 	case 2: {
 		int seqIdx = _globals._sequenceIndexes[2];
@@ -5216,8 +5154,7 @@ void Scene361::handleRexAction() {
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], seqIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
-		}
-		break;
+	} break;
 
 	case 3: {
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -5231,8 +5168,7 @@ void Scene361::handleRexAction() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(167, 100));
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], seqIdx);
 		_scene->_sequences.addTimer(15, 4);
-		}
-		break;
+	} break;
 
 	case 4:
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -5255,8 +5191,7 @@ void Scene361::handleRexAction() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(167, 100));
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], seqIdx);
 		_scene->_sequences.addTimer(15, 6);
-		}
-		break;
+	} break;
 
 	case 6:
 		_scene->_sequences.setDone(_globals._sequenceIndexes[2]);
@@ -5300,8 +5235,7 @@ void Scene361::handleRoxAction() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(165, 76));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], tmpIdx);
-		}
-		break;
+	} break;
 
 	case 2: {
 		int tmpIdx = _globals._sequenceIndexes[4];
@@ -5310,8 +5244,7 @@ void Scene361::handleRoxAction() {
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], tmpIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
-		}
-		break;
+	} break;
 
 	case 3: {
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -5326,8 +5259,7 @@ void Scene361::handleRoxAction() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(167, 100));
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], tmpIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 4);
-		}
-		break;
+	} break;
 
 	case 4: {
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -5342,8 +5274,7 @@ void Scene361::handleRoxAction() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(167, 100));
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], tmpIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 5);
-		}
-		break;
+	} break;
 
 	case 5: {
 		int tmpIdx = _globals._sequenceIndexes[4];
@@ -5352,8 +5283,7 @@ void Scene361::handleRoxAction() {
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(167, 100));
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], tmpIdx);
 		_scene->_sequences.addTimer(48, 6);
-		}
-		break;
+	} break;
 
 	case 6:
 		_scene->_sequences.setDone(_globals._sequenceIndexes[4]);
@@ -5457,8 +5387,7 @@ void Scene361::step() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], seqIdx);
 			_scene->_sequences.addTimer(15, 75);
-			}
-			break;
+		} break;
 
 		case 75:
 			_scene->_sequences.setDone(_globals._sequenceIndexes[3]);
@@ -5710,8 +5639,8 @@ void Scene389::enter() {
 		_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('m', -1));
 		_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0], false, 6, 0, 0, 0);
 		_scene->_kernelMessages.initRandomMessages(1,
-			Common::Rect(88, 19, 177, 77), 13, 2, 0xFDFC, 60,
-			247, 248, 249, 0);
+		                                           Common::Rect(88, 19, 177, 77), 13, 2, 0xFDFC, 60,
+		                                           247, 248, 249, 0);
 	}
 
 	_vm->_palette->setEntry(252, 63, 37, 26);

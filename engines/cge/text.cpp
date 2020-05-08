@@ -25,12 +25,12 @@
  * Copyright (c) 1994-1995 Janusz B. Wisniewski and L.K. Avalon
  */
 
-#include "cge/general.h"
 #include "cge/text.h"
-#include "cge/talk.h"
-#include "cge/game.h"
-#include "cge/snail.h"
 #include "cge/cge_main.h"
+#include "cge/game.h"
+#include "cge/general.h"
+#include "cge/snail.h"
+#include "cge/talk.h"
 #include "common/str.h"
 
 namespace CGE {

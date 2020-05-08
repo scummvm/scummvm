@@ -39,7 +39,7 @@ private:
 	bool seek(int32 offs, int whence);
 
 public:
-	InPAKSave() : fd(NULL) { }
+	InPAKSave() : fd(NULL) {}
 
 	~InPAKSave() {
 		if (fd != NULL)
@@ -146,6 +146,5 @@ public:
 
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);
 };
-
 
 #endif

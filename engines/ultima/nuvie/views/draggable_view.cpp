@@ -20,14 +20,14 @@
  *
  */
 
+#include "ultima/nuvie/views/draggable_view.h"
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_button.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/views/view_manager.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/views/draggable_view.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -42,8 +42,7 @@ DraggableView::DraggableView(Configuration *cfg) : View(cfg) {
 	if (game->is_orig_style() || game->is_original_plus_cutoff_map()) {
 		need_full_redraw_when_moved = true;
 		always_need_full_redraw_when_moved = true;
-	} else if (game->get_game_width() < game->get_screen()->get_width()
-	           || game->get_game_height() < game->get_screen()->get_height()) {
+	} else if (game->get_game_width() < game->get_screen()->get_width() || game->get_game_height() < game->get_screen()->get_height()) {
 		need_full_redraw_when_moved = true;
 		always_need_full_redraw_when_moved = false;
 	} else // no need to set always_need_full_redraw_when_moved
@@ -107,7 +106,7 @@ GUI_status DraggableView::MouseMotion(int x, int y, uint8 state) {
 	button_y = y;
 
 	GUI::get_gui()->moveWidget(this, dx, dy);
-// Redraw();
+	// Redraw();
 
 	return (GUI_YUM);
 }
@@ -115,9 +114,7 @@ GUI_status DraggableView::MouseMotion(int x, int y, uint8 state) {
 void DraggableView::force_full_redraw_if_needed() {
 	if (need_full_redraw_when_moved) {
 		if (always_need_full_redraw_when_moved // or over background
-		        || (area.right > Game::get_game()->get_game_width() + Game::get_game()->get_game_x_offset()
-		            || area.left < Game::get_game()->get_game_x_offset() || area.top < Game::get_game()->get_game_y_offset()
-		            || area.bottom > Game::get_game()->get_game_height() + Game::get_game()->get_game_y_offset()))
+		    || (area.right > Game::get_game()->get_game_width() + Game::get_game()->get_game_x_offset() || area.left < Game::get_game()->get_game_x_offset() || area.top < Game::get_game()->get_game_y_offset() || area.bottom > Game::get_game()->get_game_height() + Game::get_game()->get_game_y_offset()))
 			GUI::get_gui()->force_full_redraw();
 	}
 }

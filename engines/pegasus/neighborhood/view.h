@@ -32,7 +32,7 @@
 #include "pegasus/constants.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Pegasus {
@@ -51,7 +51,7 @@ public:
 		Entry() { time = 0xffffffff; }
 		bool isEmpty() { return time == 0xffffffff; }
 
-		RoomID	room;
+		RoomID room;
 		DirectionConstant direction;
 		AlternateID altCode;
 		TimeValue time;

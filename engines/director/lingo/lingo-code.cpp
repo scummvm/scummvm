@@ -43,14 +43,14 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
-#include "director/director.h"
+#include "director/lingo/lingo-code.h"
 #include "director/cast.h"
+#include "director/director.h"
+#include "director/lingo/lingo-builtins.h"
+#include "director/lingo/lingo-the.h"
+#include "director/lingo/lingo.h"
 #include "director/score.h"
 #include "director/util.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-builtins.h"
-#include "director/lingo/lingo-code.h"
-#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -59,109 +59,108 @@ static struct FuncDescr {
 	const char *name;
 	const char *args;
 } funcDescr[] = {
-	{ 0,					"STOP",				""  },
-	{ LC::c_add,			"c_add",			"" },
-	{ LC::c_after,			"c_after",			"" },	// D3
-	{ LC::c_ampersand,		"c_ampersand",		"" },
-	{ LC::c_and,			"c_and",			"" },
-	{ LC::c_argcnoretpush,	"c_argcnoretpush",	"i" },
-	{ LC::c_argcpush,		"c_argcpush",		"i" },
-	{ LC::c_arraypush,		"c_arraypush",		"i" },
-	{ LC::c_assign,			"c_assign",			""  },
-	{ LC::c_before,			"c_before",			"" },	// D3
-	{ LC::c_call,			"c_call",			"si" },
-	{ LC::c_charOf,			"c_charOf",			"" },	// D3
-	{ LC::c_charToOf,		"c_charToOf",		"" },	// D3
-	{ LC::c_concat,			"c_concat",			"" },
-	{ LC::c_contains,		"c_contains",		"" },
-	{ LC::c_div,			"c_div",			"" },
-	{ LC::c_eq,				"c_eq",				"" },
-	{ LC::c_eval,			"c_eval",			"s" },
-	{ LC::c_exitRepeat,		"c_exitRepeat",		"" },
-	{ LC::c_floatpush,		"c_floatpush",		"f" },
-	{ LC::c_ge,				"c_ge",				"" },
-	{ LC::c_global,			"c_global",			"s" },
-	{ LC::c_goto,			"c_goto",			"" },
-	{ LC::c_gotoloop,		"c_gotoloop",		"" },
-	{ LC::c_gotonext,		"c_gotonext",		"" },
-	{ LC::c_gotoprevious,	"c_gotoprevious",	"" },
-	{ LC::c_gt,				"c_gt",				"" },
-	{ LC::c_hilite,			"c_hilite",			"" },
-	{ LC::c_ifcode,			"c_ifcode",			"oooi" },
-	{ LC::c_instance,		"c_instance",		"s" },	// D2
-	{ LC::c_intersects,		"c_intersects",		"" },
-	{ LC::c_intpush,		"c_intpush",		"i" },
-	{ LC::c_itemOf,			"c_itemOf",			"" },	// D3
-	{ LC::c_itemToOf,		"c_itemToOf",		"" },	// D3
-	{ LC::c_jump,			"c_jump",			"i" },
-	{ LC::c_jumpifz,		"c_jumpifz",		"i" },
-	{ LC::c_le,				"c_le",				"" },
-	{ LC::c_lineOf,			"c_lineOf",			"" },	// D3
-	{ LC::c_lineToOf,		"c_lineToOf",		"" },	// D3
-	{ LC::c_lt,				"c_lt",				"" },
-	{ LC::c_mod,			"c_mod",			"" },
-	{ LC::c_mul,			"c_mul",			"" },
-	{ LC::c_namepush,		"c_namepush",		"i" },
-	{ LC::c_negate,			"c_negate",			"" },
-	{ LC::c_neq,			"c_neq",			"" },
-	{ LC::c_nextRepeat,		"c_nextRepeat",		"" },
-	{ LC::c_not,			"c_not",			"" },
-	{ LC::c_objectfieldassign,"c_objectfieldassign","sF" },
-	{ LC::c_objectfieldpush,"c_objectfieldpush","sF" }, // object, field
-	{ LC::c_objectrefpush,	"c_objectrefpush",	"ss" }, // object, field
-	{ LC::c_of,				"c_of",				"" },
-	{ LC::c_open,			"c_open",			"" },
-	{ LC::c_or,				"c_or",				"" },
-	{ LC::c_play,			"c_play",			"" },
-	{ LC::c_printtop,		"c_printtop",		""  },
-	{ LC::c_procret,		"c_procret",		"" },
-	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
-	{ LC::c_property,		"c_property",		"s" },
-	{ LC::c_repeatwhilecode,"c_repeatwhilecode","oo" },
-	{ LC::c_repeatwithcode,	"c_repeatwithcode",	"ooooos" },
-	{ LC::c_setImmediate,	"c_setImmediate",	"i" },
-	{ LC::c_starts,			"c_starts",			"" },
-	{ LC::c_stringpush,		"c_stringpush",		"s" },
-	{ LC::c_sub,			"c_sub",			"" },
-	{ LC::c_swap,			"c_swap",			"" },
-	{ LC::c_symbolpush,		"c_symbolpush",		"s" },	// D3
-	{ LC::c_tell,			"c_tell",			"" },
-	{ LC::c_tellcode,		"c_tellcode",		"o" },
-	{ LC::c_telldone,		"c_telldone",		"" },
-	{ LC::c_theentityassign,"c_theentityassign","EF" },
-	{ LC::c_theentitypush,	"c_theentitypush",	"EF" }, // entity, field
-	{ LC::c_themenuentitypush,"c_themenuentitypush","EF" },
-	{ LC::c_themenuitementityassign,"c_themenuitementityassign","EF" },
-	{ LC::c_varpush,		"c_varpush",		"s" },
-	{ LC::c_voidpush,		"c_voidpush",		""  },
-	{ LC::c_whencode,		"c_whencode",		"os" },
-	{ LC::c_within,			"c_within",			"" },
-	{ LC::c_wordOf,			"c_wordOf",			"" },	// D3
-	{ LC::c_wordToOf,		"c_wordToOf",		"" },	// D3
-	{ LC::c_xpop,			"c_xpop",			""  },
-	{ LC::cb_call,			"cb_call",			"N" },
-	{ LC::cb_field,			"cb_field",			"" },
-	{ LC::cb_globalassign,	"cb_globalassign",	"i" },
-	{ LC::cb_globalpush,	"cb_globalpush",	"i" },
-	{ LC::cb_list,			"cb_list",			"" },
-	{ LC::cb_proplist,		"cb_proplist",		"" },
-	{ LC::cb_localcall,		"cb_localcall",		"i" },
-	{ LC::cb_methodcall,	"cb_methodcall",	"i" },
-	{ LC::cb_objectpush,	"cb_objectpush",	"i" },
-	{ LC::cb_unk,			"cb_unk",			"i" },
-	{ LC::cb_unk1,			"cb_unk1",			"ii" },
-	{ LC::cb_unk2,			"cb_unk2",			"iii" },
-	{ LC::cb_varassign,		"cb_varassign",		"i" },
-	{ LC::cb_varpush,		"cb_varpush",		"i" },
-	{ LC::cb_v4assign,		"cb_v4assign",		"i" },
-	{ LC::cb_v4theentitypush,"cb_v4theentitypush","i" },
-	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","i" },
-	{ LC::cb_v4theentityassign,"cb_v4theentityassign","i" },
-	{ LC::cb_zeropush,		"cb_zeropush",		"" },
-	{ LC::cb_stackpeek,		"cb_stackpeek",		"i" },
-	{ LC::cb_stackdrop,		"cb_stackdrop",		"i" },
-	{ 0, 0, 0 }
-};
+    {0, "STOP", ""},
+    {LC::c_add, "c_add", ""},
+    {LC::c_after, "c_after", ""}, // D3
+    {LC::c_ampersand, "c_ampersand", ""},
+    {LC::c_and, "c_and", ""},
+    {LC::c_argcnoretpush, "c_argcnoretpush", "i"},
+    {LC::c_argcpush, "c_argcpush", "i"},
+    {LC::c_arraypush, "c_arraypush", "i"},
+    {LC::c_assign, "c_assign", ""},
+    {LC::c_before, "c_before", ""}, // D3
+    {LC::c_call, "c_call", "si"},
+    {LC::c_charOf, "c_charOf", ""},     // D3
+    {LC::c_charToOf, "c_charToOf", ""}, // D3
+    {LC::c_concat, "c_concat", ""},
+    {LC::c_contains, "c_contains", ""},
+    {LC::c_div, "c_div", ""},
+    {LC::c_eq, "c_eq", ""},
+    {LC::c_eval, "c_eval", "s"},
+    {LC::c_exitRepeat, "c_exitRepeat", ""},
+    {LC::c_floatpush, "c_floatpush", "f"},
+    {LC::c_ge, "c_ge", ""},
+    {LC::c_global, "c_global", "s"},
+    {LC::c_goto, "c_goto", ""},
+    {LC::c_gotoloop, "c_gotoloop", ""},
+    {LC::c_gotonext, "c_gotonext", ""},
+    {LC::c_gotoprevious, "c_gotoprevious", ""},
+    {LC::c_gt, "c_gt", ""},
+    {LC::c_hilite, "c_hilite", ""},
+    {LC::c_ifcode, "c_ifcode", "oooi"},
+    {LC::c_instance, "c_instance", "s"}, // D2
+    {LC::c_intersects, "c_intersects", ""},
+    {LC::c_intpush, "c_intpush", "i"},
+    {LC::c_itemOf, "c_itemOf", ""},     // D3
+    {LC::c_itemToOf, "c_itemToOf", ""}, // D3
+    {LC::c_jump, "c_jump", "i"},
+    {LC::c_jumpifz, "c_jumpifz", "i"},
+    {LC::c_le, "c_le", ""},
+    {LC::c_lineOf, "c_lineOf", ""},     // D3
+    {LC::c_lineToOf, "c_lineToOf", ""}, // D3
+    {LC::c_lt, "c_lt", ""},
+    {LC::c_mod, "c_mod", ""},
+    {LC::c_mul, "c_mul", ""},
+    {LC::c_namepush, "c_namepush", "i"},
+    {LC::c_negate, "c_negate", ""},
+    {LC::c_neq, "c_neq", ""},
+    {LC::c_nextRepeat, "c_nextRepeat", ""},
+    {LC::c_not, "c_not", ""},
+    {LC::c_objectfieldassign, "c_objectfieldassign", "sF"},
+    {LC::c_objectfieldpush, "c_objectfieldpush", "sF"}, // object, field
+    {LC::c_objectrefpush, "c_objectrefpush", "ss"},     // object, field
+    {LC::c_of, "c_of", ""},
+    {LC::c_open, "c_open", ""},
+    {LC::c_or, "c_or", ""},
+    {LC::c_play, "c_play", ""},
+    {LC::c_printtop, "c_printtop", ""},
+    {LC::c_procret, "c_procret", ""},
+    {LC::c_proparraypush, "c_proparraypush", "i"},
+    {LC::c_property, "c_property", "s"},
+    {LC::c_repeatwhilecode, "c_repeatwhilecode", "oo"},
+    {LC::c_repeatwithcode, "c_repeatwithcode", "ooooos"},
+    {LC::c_setImmediate, "c_setImmediate", "i"},
+    {LC::c_starts, "c_starts", ""},
+    {LC::c_stringpush, "c_stringpush", "s"},
+    {LC::c_sub, "c_sub", ""},
+    {LC::c_swap, "c_swap", ""},
+    {LC::c_symbolpush, "c_symbolpush", "s"}, // D3
+    {LC::c_tell, "c_tell", ""},
+    {LC::c_tellcode, "c_tellcode", "o"},
+    {LC::c_telldone, "c_telldone", ""},
+    {LC::c_theentityassign, "c_theentityassign", "EF"},
+    {LC::c_theentitypush, "c_theentitypush", "EF"}, // entity, field
+    {LC::c_themenuentitypush, "c_themenuentitypush", "EF"},
+    {LC::c_themenuitementityassign, "c_themenuitementityassign", "EF"},
+    {LC::c_varpush, "c_varpush", "s"},
+    {LC::c_voidpush, "c_voidpush", ""},
+    {LC::c_whencode, "c_whencode", "os"},
+    {LC::c_within, "c_within", ""},
+    {LC::c_wordOf, "c_wordOf", ""},     // D3
+    {LC::c_wordToOf, "c_wordToOf", ""}, // D3
+    {LC::c_xpop, "c_xpop", ""},
+    {LC::cb_call, "cb_call", "N"},
+    {LC::cb_field, "cb_field", ""},
+    {LC::cb_globalassign, "cb_globalassign", "i"},
+    {LC::cb_globalpush, "cb_globalpush", "i"},
+    {LC::cb_list, "cb_list", ""},
+    {LC::cb_proplist, "cb_proplist", ""},
+    {LC::cb_localcall, "cb_localcall", "i"},
+    {LC::cb_methodcall, "cb_methodcall", "i"},
+    {LC::cb_objectpush, "cb_objectpush", "i"},
+    {LC::cb_unk, "cb_unk", "i"},
+    {LC::cb_unk1, "cb_unk1", "ii"},
+    {LC::cb_unk2, "cb_unk2", "iii"},
+    {LC::cb_varassign, "cb_varassign", "i"},
+    {LC::cb_varpush, "cb_varpush", "i"},
+    {LC::cb_v4assign, "cb_v4assign", "i"},
+    {LC::cb_v4theentitypush, "cb_v4theentitypush", "i"},
+    {LC::cb_v4theentitynamepush, "cb_v4theentitynamepush", "i"},
+    {LC::cb_v4theentityassign, "cb_v4theentityassign", "i"},
+    {LC::cb_zeropush, "cb_zeropush", ""},
+    {LC::cb_stackpeek, "cb_stackpeek", "i"},
+    {LC::cb_stackdrop, "cb_stackdrop", "i"},
+    {0, 0, 0}};
 
 void Lingo::initFuncs() {
 	Symbol sym;
@@ -183,7 +182,7 @@ void Lingo::pushVoid() {
 }
 
 Datum Lingo::pop(void) {
-	assert (_stack.size() != 0);
+	assert(_stack.size() != 0);
 
 	Datum ret = _stack.back();
 	_stack.pop_back();
@@ -192,7 +191,7 @@ Datum Lingo::pop(void) {
 }
 
 Datum Lingo::peek(uint offset) {
-	assert (_stack.size() > offset);
+	assert(_stack.size() > offset);
 
 	Datum ret = _stack[_stack.size() - 1 - offset];
 	return ret;
@@ -438,7 +437,7 @@ void LC::c_theentitypush() {
 	Datum id = g_lingo->pop();
 
 	int entity = g_lingo->readInt();
-	int field  = g_lingo->readInt();
+	int field = g_lingo->readInt();
 
 	Datum d = g_lingo->getTheEntity(entity, id, field);
 	g_lingo->push(d);
@@ -446,7 +445,7 @@ void LC::c_theentitypush() {
 
 void LC::c_themenuentitypush() {
 	int entity = g_lingo->readInt();
-	int field  = g_lingo->readInt();
+	int field = g_lingo->readInt();
 
 	Datum menuId = g_lingo->pop();
 	Datum menuItemId;
@@ -463,7 +462,7 @@ void LC::c_theentityassign() {
 	Datum id = g_lingo->pop();
 
 	int entity = g_lingo->readInt();
-	int field  = g_lingo->readInt();
+	int field = g_lingo->readInt();
 
 	Datum d = g_lingo->pop();
 	g_lingo->setTheEntity(entity, id, field, d);
@@ -471,7 +470,7 @@ void LC::c_theentityassign() {
 
 void LC::c_themenuitementityassign() {
 	int entity = g_lingo->readInt();
-	int field  = g_lingo->readInt();
+	int field = g_lingo->readInt();
 
 	Datum d = g_lingo->pop();
 	Datum menuId = g_lingo->pop();
@@ -486,7 +485,7 @@ void LC::c_themenuitementityassign() {
 
 void LC::c_objectfieldpush() {
 	Common::String object(g_lingo->readString());
-	int field  = g_lingo->readInt();
+	int field = g_lingo->readInt();
 
 	Datum d = g_lingo->getObjectField(object, field);
 	g_lingo->push(d);
@@ -494,7 +493,7 @@ void LC::c_objectfieldpush() {
 
 void LC::c_objectfieldassign() {
 	Common::String object(g_lingo->readString());
-	int field  = g_lingo->readInt();
+	int field = g_lingo->readInt();
 
 	Datum d = g_lingo->pop();
 
@@ -603,7 +602,7 @@ Datum LC::divData(Datum d1, Datum d2) {
 	}
 
 	if ((d2.type == INT && d2.u.i == 0) ||
-			(d2.type == FLOAT && d2.u.f == 0.0))
+	    (d2.type == FLOAT && d2.u.f == 0.0))
 		error("division by zero");
 
 	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
@@ -850,7 +849,7 @@ void LC::c_of() {
 		bool inWord = false;
 		while (pointer < result.size()) {
 			if ((result[pointer] == '\r') || (result[pointer] == '\t') ||
-				(result[pointer] == '\n') || (result[pointer] == ' ')) {
+			    (result[pointer] == '\n') || (result[pointer] == ' ')) {
 				if (inWord) {
 					inWord = false;
 					if (last == curWord) {
@@ -1063,7 +1062,7 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 
 Datum LC::eqData(Datum d1, Datum d2) {
 	if (d1.type == ARRAY || d2.type == ARRAY ||
-			d1.type == PARRAY || d2.type == PARRAY) {
+	    d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::eqData, d1, d2);
 	}
 	d1.u.i = (d1.compareTo(d2, true) == 0) ? 1 : 0;
@@ -1171,14 +1170,14 @@ void LC::c_repeatwhilecode(void) {
 	int savepc = g_lingo->_pc;
 
 	uint body = g_lingo->getInt(savepc);
-	uint end =  g_lingo->getInt(savepc + 1);
+	uint end = g_lingo->getInt(savepc + 1);
 
-	g_lingo->execute(savepc + 2);	/* condition */
+	g_lingo->execute(savepc + 2); /* condition */
 	d = g_lingo->pop();
 	d.makeInt();
 
 	while (d.u.i) {
-		g_lingo->execute(body + savepc - 1);	/* body */
+		g_lingo->execute(body + savepc - 1); /* body */
 		g_lingo->_nextRepeat = false;
 
 		if (g_lingo->_returning)
@@ -1189,7 +1188,7 @@ void LC::c_repeatwhilecode(void) {
 			break;
 		}
 
-		g_lingo->execute(savepc + 2);	/* condition */
+		g_lingo->execute(savepc + 2); /* condition */
 		d = g_lingo->pop();
 		d.makeInt();
 	}
@@ -1203,7 +1202,7 @@ void LC::c_repeatwithcode(void) {
 	int savepc = g_lingo->_pc;
 
 	uint init = g_lingo->getInt(savepc);
-	uint finish =  g_lingo->getInt(savepc + 1);
+	uint finish = g_lingo->getInt(savepc + 1);
 	uint body = g_lingo->getInt(savepc + 2);
 	int inc = (int32)g_lingo->getInt(savepc + 3);
 	uint end = g_lingo->getInt(savepc + 4);
@@ -1212,8 +1211,8 @@ void LC::c_repeatwithcode(void) {
 
 	if (finish == 0 && inc == 0) {
 		// Handle repeat with  X in ARRAY
-		g_lingo->execute(init + savepc -1); // eval the list
-		Datum array = g_lingo->pop(); // get the list from the stack
+		g_lingo->execute(init + savepc - 1); // eval the list
+		Datum array = g_lingo->pop();        // get the list from the stack
 
 		Datum loop_var;
 		loop_var.type = VAR;
@@ -1222,7 +1221,7 @@ void LC::c_repeatwithcode(void) {
 		uint arraySize = array.u.farr->size();
 		for (uint i = 0; i < arraySize; i++) {
 			g_lingo->varAssign(loop_var, array.u.farr->operator[](i));
-			g_lingo->execute(body + savepc -1);
+			g_lingo->execute(body + savepc - 1);
 			if (g_lingo->_returning) // handle return within the repeat with loop
 				return;
 			if (g_lingo->_exitRepeat) { // handle `exit repeat`
@@ -1238,14 +1237,14 @@ void LC::c_repeatwithcode(void) {
 		error("Cast ref used as index: %s", countername.c_str());
 	}
 
-	g_lingo->execute(init + savepc - 1);	/* condition */
+	g_lingo->execute(init + savepc - 1); /* condition */
 	d = g_lingo->pop();
 	d.makeInt();
 	counter->u.i = d.u.i;
 	counter->type = INT;
 
 	while (true) {
-		g_lingo->execute(body + savepc - 1);	/* body */
+		g_lingo->execute(body + savepc - 1); /* body */
 		g_lingo->_nextRepeat = false;
 
 		if (g_lingo->_returning)
@@ -1257,7 +1256,7 @@ void LC::c_repeatwithcode(void) {
 		}
 
 		counter->u.i += inc;
-		g_lingo->execute(finish + savepc - 1);	/* condition */
+		g_lingo->execute(finish + savepc - 1); /* condition */
 		d = g_lingo->pop();
 		d.makeInt();
 
@@ -1281,15 +1280,15 @@ void LC::c_exitRepeat(void) {
 
 void LC::c_ifcode(void) {
 	Datum d;
-	int savepc = g_lingo->_pc;	/* then part */
+	int savepc = g_lingo->_pc; /* then part */
 
-	uint then =    g_lingo->getInt(savepc);
-	uint elsep =   g_lingo->getInt(savepc+1);
-	uint end =     g_lingo->getInt(savepc+2);
-	uint skipEnd = g_lingo->getInt(savepc+3);
+	uint then = g_lingo->getInt(savepc);
+	uint elsep = g_lingo->getInt(savepc + 1);
+	uint end = g_lingo->getInt(savepc + 2);
+	uint skipEnd = g_lingo->getInt(savepc + 3);
 
 	debugC(8, kDebugLingoExec, "executing cond (have to %s end)", skipEnd ? "skip" : "execute");
-	g_lingo->execute(savepc + 4);	/* condition */
+	g_lingo->execute(savepc + 4); /* condition */
 
 	d = g_lingo->pop();
 
@@ -1359,7 +1358,6 @@ void LC::c_telldone() {
 	warning("STUB: c_telldone");
 }
 
-
 //************************
 // Built-in functions
 //************************
@@ -1418,7 +1416,7 @@ void LC::call(Common::String name, int nargs) {
 	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
 		Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 		if (s && s->type == OBJECT) {
-			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to %s", name.c_str(), s->u.s->c_str());
+			debugC(3, kDebugLingoExec, "Dereferencing object reference: %s to %s", name.c_str(), s->u.s->c_str());
 			name = *s->u.s;
 			sym = g_lingo->getHandler(name);
 		}
@@ -1434,8 +1432,7 @@ void LC::call(Symbol *sym, int nargs) {
 		warning("Call to undefined handler. Dropping %d stack items", nargs);
 		dropArgs = true;
 	} else {
-		if ((sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN)
-				&& sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
+		if ((sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN) && sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
 			if (sym->nargs == sym->maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", sym->name.c_str(), sym->nargs, nargs);
 			else
@@ -1457,7 +1454,7 @@ void LC::call(Symbol *sym, int nargs) {
 
 	if (sym->nargs != -1 && sym->maxArgs < nargs) {
 		warning("Incorrect number of arguments for function %s (%d, expected %d to %d). Dropping extra %d",
-					sym->name.c_str(), nargs, sym->nargs, sym->maxArgs, nargs - sym->nargs);
+		        sym->name.c_str(), nargs, sym->nargs, sym->maxArgs, nargs - sym->nargs);
 		for (int i = 0; i < nargs - sym->maxArgs; i++)
 			g_lingo->pop();
 	}
@@ -1640,9 +1637,9 @@ void LC::c_hilite() {
 	Datum cast_id = g_lingo->pop();
 
 	warning("STUB: c_hilite: %d %d %d %d %d %d %d %d %d",
-		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
-		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
-		cast_id.u.i);
+	        first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
+	        first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
+	        cast_id.u.i);
 }
 
-}
+} // namespace Director

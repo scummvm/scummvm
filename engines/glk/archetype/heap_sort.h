@@ -41,7 +41,6 @@ extern void drop_on_heap(Element e);
 extern void drop_str_on_heap(const String &s);
 extern void reinit_heap();
 
-
 } // End of namespace Archetype
 } // End of namespace Glk
 

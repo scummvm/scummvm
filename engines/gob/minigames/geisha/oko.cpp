@@ -29,26 +29,24 @@ namespace Gob {
 namespace Geisha {
 
 enum kOkoAnimation {
-	kOkoAnimationEnter   =  0,
-	kOkoAnimationSwim    =  1,
-	kOkoAnimationSink    =  8,
-	kOkoAnimationRaise   =  7,
-	kOkoAnimationBreathe =  2,
-	kOkoAnimationPick    =  3,
-	kOkoAnimationHurt    =  4,
-	kOkoAnimationDie0    = 17,
-	kOkoAnimationDie1    = 18,
-	kOkoAnimationDie2    = 19
+	kOkoAnimationEnter = 0,
+	kOkoAnimationSwim = 1,
+	kOkoAnimationSink = 8,
+	kOkoAnimationRaise = 7,
+	kOkoAnimationBreathe = 2,
+	kOkoAnimationPick = 3,
+	kOkoAnimationHurt = 4,
+	kOkoAnimationDie0 = 17,
+	kOkoAnimationDie1 = 18,
+	kOkoAnimationDie2 = 19
 };
 
 static const int16 kOkoPositionX = 110;
 
 static const uint kLevelCount = 3;
-static const int16 kLevelPositionX[kLevelCount] = { 44, 84, 124 };
+static const int16 kLevelPositionX[kLevelCount] = {44, 84, 124};
 
-
-Oko::Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe) :
-	ANIObject(ani), _sound(&sound), _breathe(&breathe), _state(kStateEnter), _level(0) {
+Oko::Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe) : ANIObject(ani), _sound(&sound), _breathe(&breathe), _state(kStateEnter), _level(0) {
 
 	setAnimation(kOkoAnimationEnter);
 	setVisible(true);
@@ -68,39 +66,39 @@ void Oko::advance() {
 	ANIObject::advance();
 
 	switch (_state) {
-		case kStateEnter:
-			if (wasLastFrame) {
-				setAnimation(kOkoAnimationSwim);
-				setPosition(kOkoPositionX, kLevelPositionX[_level]);
-				_state = kStateSwim;
-			}
-			break;
+	case kStateEnter:
+		if (wasLastFrame) {
+			setAnimation(kOkoAnimationSwim);
+			setPosition(kOkoPositionX, kLevelPositionX[_level]);
+			_state = kStateSwim;
+		}
+		break;
 
-		case kStateBreathe:
-			if ((getFrame() == 6) || (getFrame() == 23))
-				_sound->blasterPlay(_breathe, 1, 0);
-			// fall through
-		case kStateSink:
-		case kStateRaise:
-		case kStateHurt:
-			if (wasLastFrame) {
-				setAnimation(kOkoAnimationSwim);
-				setPosition(kOkoPositionX, kLevelPositionX[_level]);
-				_state = kStateSwim;
-			}
-			break;
+	case kStateBreathe:
+		if ((getFrame() == 6) || (getFrame() == 23))
+			_sound->blasterPlay(_breathe, 1, 0);
+		// fall through
+	case kStateSink:
+	case kStateRaise:
+	case kStateHurt:
+		if (wasLastFrame) {
+			setAnimation(kOkoAnimationSwim);
+			setPosition(kOkoPositionX, kLevelPositionX[_level]);
+			_state = kStateSwim;
+		}
+		break;
 
-		case kStatePick:
-			if (wasLastFrame) {
-				_level = 1;
-				setAnimation(kOkoAnimationSwim);
-				setPosition(kOkoPositionX, kLevelPositionX[_level]);
-				_state = kStateSwim;
-			}
-			break;
+	case kStatePick:
+		if (wasLastFrame) {
+			_level = 1;
+			setAnimation(kOkoAnimationSwim);
+			setPosition(kOkoPositionX, kLevelPositionX[_level]);
+			_state = kStateSwim;
+		}
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 }
 

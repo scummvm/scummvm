@@ -22,9 +22,9 @@
 #ifndef DRAGONS_DRAGONS_H
 #define DRAGONS_DRAGONS_H
 
-#include "gui/EventRecorder.h"
-#include "engines/engine.h"
 #include "dragons/specialopcodes.h"
+#include "engines/engine.h"
+#include "gui/EventRecorder.h"
 
 namespace Dragons {
 
@@ -68,19 +68,19 @@ enum Flags {
 	ENGINE_FLAG_400 = 0x400,
 	ENGINE_FLAG_800 = 0x800,
 	ENGINE_FLAG_1000_SUBTITLES_DISABLED = 0x1000,
-	ENGINE_FLAG_8000     =     0x8000, // speech dialog is playing.
+	ENGINE_FLAG_8000 = 0x8000, // speech dialog is playing.
 
-	ENGINE_FLAG_10000    =    0x10000,
-	ENGINE_FLAG_20000    =    0x20000,
-	ENGINE_FLAG_80000    =    0x80000,
-	ENGINE_FLAG_100000   =   0x100000,
-	ENGINE_FLAG_200000   =   0x200000,
-	ENGINE_FLAG_400000   =   0x400000,
-	ENGINE_FLAG_2000000  =  0x2000000,
-	ENGINE_FLAG_4000000  =  0x4000000,
-	ENGINE_FLAG_8000000  =  0x8000000,
+	ENGINE_FLAG_10000 = 0x10000,
+	ENGINE_FLAG_20000 = 0x20000,
+	ENGINE_FLAG_80000 = 0x80000,
+	ENGINE_FLAG_100000 = 0x100000,
+	ENGINE_FLAG_200000 = 0x200000,
+	ENGINE_FLAG_400000 = 0x400000,
+	ENGINE_FLAG_2000000 = 0x2000000,
+	ENGINE_FLAG_4000000 = 0x4000000,
+	ENGINE_FLAG_8000000 = 0x8000000,
 	ENGINE_FLAG_20000000 = 0x20000000,
-	ENGINE_FLAG_80000000 = 0x80000000   //Flicker idle animation running.
+	ENGINE_FLAG_80000000 = 0x80000000 //Flicker idle animation running.
 };
 
 enum UnkFlags {
@@ -219,8 +219,10 @@ private:
 
 	void (*_sceneUpdateFunction)();
 	void (*_vsyncUpdateFunction)();
+
 protected:
 	virtual bool hasFeature(EngineFeature f) const override;
+
 public:
 	DragonsEngine(OSystem *syst, const ADGameDescription *desc);
 	~DragonsEngine();
@@ -257,7 +259,6 @@ public:
 
 	void waitForFrames(uint16 numFrames);
 	void waitForFramesAllowSkip(uint16 numFrames);
-
 
 	void playOrStopSound(uint16 soundId);
 
@@ -319,6 +320,7 @@ public:
 	uint32 getSpeechTblOffsetFromDragonEXE();
 	uint32 getCutscenePaletteOffsetFromDragonEXE();
 	uint32 defaultResponseOffsetFromDragonEXE();
+
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
@@ -334,7 +336,6 @@ private:
 	uint16 getIniFromImg();
 	void runINIScripts();
 	void engineFlag0x20UpdateFunction();
-
 
 	bool isInputEnabled();
 	bool checkForInventoryButtonRelease();

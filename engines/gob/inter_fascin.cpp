@@ -22,27 +22,27 @@
 
 #include "common/endian.h"
 
-#include "gob/hotspots.h"
-#include "gob/gob.h"
-#include "gob/inter.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
-#include "gob/game.h"
 #include "gob/expression.h"
-#include "gob/script.h"
+#include "gob/game.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/hotspots.h"
+#include "gob/inter.h"
 #include "gob/palanim.h"
+#include "gob/script.h"
+#include "gob/sound/sound.h"
+#include "gob/util.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
-#include "gob/sound/sound.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_Fascination
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_Fascination::Inter_Fascination(GobEngine *vm) : Inter_v2(vm) {
 }
@@ -91,20 +91,20 @@ void Inter_Fascination::setupOpcodesFunc() {
 }
 
 void Inter_Fascination::setupOpcodesGob() {
-	OPCODEGOB(   1, oFascin_playTirb);
-	OPCODEGOB(   2, oFascin_playTira);
-	OPCODEGOB(   3, oFascin_loadExtasy);
-	OPCODEGOB(   4, oFascin_adlibPlay);
+	OPCODEGOB(1, oFascin_playTirb);
+	OPCODEGOB(2, oFascin_playTira);
+	OPCODEGOB(3, oFascin_loadExtasy);
+	OPCODEGOB(4, oFascin_adlibPlay);
 
-	OPCODEGOB(   5, oFascin_adlibStop);
-	OPCODEGOB(   6, oFascin_adlibUnload);
-	OPCODEGOB(   7, oFascin_loadMus1);
-	OPCODEGOB(   8, oFascin_loadMus2);
+	OPCODEGOB(5, oFascin_adlibStop);
+	OPCODEGOB(6, oFascin_adlibUnload);
+	OPCODEGOB(7, oFascin_loadMus1);
+	OPCODEGOB(8, oFascin_loadMus2);
 
-	OPCODEGOB(   9, oFascin_loadMus3);
-	OPCODEGOB(  10, oFascin_loadBatt1);
-	OPCODEGOB(  11, oFascin_loadBatt2);
-	OPCODEGOB(  12, oFascin_loadBatt3);
+	OPCODEGOB(9, oFascin_loadMus3);
+	OPCODEGOB(10, oFascin_loadBatt1);
+	OPCODEGOB(11, oFascin_loadBatt2);
+	OPCODEGOB(12, oFascin_loadBatt3);
 
 	OPCODEGOB(1000, oFascin_loadMod);
 	OPCODEGOB(1001, oFascin_playProtracker);
@@ -135,7 +135,7 @@ void Inter_Fascination::oFascin_repeatUntil(OpFuncParams &params) {
 		if (_vm->getPlatform() == Common::kPlatformDOS) {
 			if (((blockPos == 3533) && _vm->isCurrentTot("INTRO1.TOT")) ||
 			    ((blockPos == 3519) && _vm->isCurrentTot("INTRO2.TOT")) ||
-			    ((blockPos == 3265) && _vm->isCurrentTot("INTRO2.TOT")))  //PC Hebrew
+			    ((blockPos == 3265) && _vm->isCurrentTot("INTRO2.TOT"))) //PC Hebrew
 				_terminate = 1;
 		}
 	} while (!flag && !_break && !_terminate && !_vm->shouldQuit());
@@ -166,7 +166,7 @@ void Inter_Fascination::oFascin_assign(OpFuncParams &params) {
 		switch (destType) {
 		case TYPE_VAR_INT8:
 			if (srcType != TYPE_IMM_INT16) {
-				char* str = _vm->_game->_script->getResultStr();
+				char *str = _vm->_game->_script->getResultStr();
 				WRITE_VARO_STR(dest, str);
 			} else
 				WRITE_VARO_UINT8(dest + i, _vm->_game->_script->getResultInt());
@@ -215,12 +215,12 @@ void Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
 	VideoPlayer::Properties vidProps;
 
-	vidProps.type   = VideoPlayer::kVideoTypePreIMD;
+	vidProps.type = VideoPlayer::kVideoTypePreIMD;
 	vidProps.sprite = Draw::kFrontSurface;
-	vidProps.x      = 150;
-	vidProps.y      =  88;
-	vidProps.width  = 128;
-	vidProps.height =  80;
+	vidProps.x = 150;
+	vidProps.y = 88;
+	vidProps.width = 128;
+	vidProps.height = 80;
 
 	int vidSlot = _vm->_vidPlayer->openVideo(true, "tirb", vidProps);
 	if (vidSlot < 0)
@@ -233,12 +233,12 @@ void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
 void Inter_Fascination::oFascin_playTira(OpGobParams &params) {
 	VideoPlayer::Properties vidProps;
 
-	vidProps.type   = VideoPlayer::kVideoTypePreIMD;
+	vidProps.type = VideoPlayer::kVideoTypePreIMD;
 	vidProps.sprite = Draw::kFrontSurface;
-	vidProps.x      =  88;
-	vidProps.y      =  66;
-	vidProps.width  = 128;
-	vidProps.height =  80;
+	vidProps.x = 88;
+	vidProps.y = 66;
+	vidProps.width = 128;
+	vidProps.height = 80;
 
 	int vidSlot = _vm->_vidPlayer->openVideo(true, "tira", vidProps);
 	if (vidSlot < 0)
@@ -303,11 +303,11 @@ void Inter_Fascination::oFascin_loadMod(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_setWinSize() {
-	_vm->_draw->_winMaxWidth  = _vm->_game->_script->readUint16();
+	_vm->_draw->_winMaxWidth = _vm->_game->_script->readUint16();
 	_vm->_draw->_winMaxHeight = _vm->_game->_script->readUint16();
-	_vm->_draw->_winVarArrayLeft   = _vm->_game->_script->readVarIndex();
-	_vm->_draw->_winVarArrayTop    = _vm->_game->_script->readVarIndex();
-	_vm->_draw->_winVarArrayWidth  = _vm->_game->_script->readVarIndex();
+	_vm->_draw->_winVarArrayLeft = _vm->_game->_script->readVarIndex();
+	_vm->_draw->_winVarArrayTop = _vm->_game->_script->readVarIndex();
+	_vm->_draw->_winVarArrayWidth = _vm->_game->_script->readVarIndex();
 	_vm->_draw->_winVarArrayHeight = _vm->_game->_script->readVarIndex();
 	_vm->_draw->_winVarArrayStatus = _vm->_game->_script->readVarIndex();
 	_vm->_draw->_winVarArrayLimitsX = _vm->_game->_script->readVarIndex();
@@ -331,7 +331,7 @@ void Inter_Fascination::oFascin_openWin() {
 	int16 retVal, id;
 	_vm->_game->_script->evalExpr(&id);
 	retVal = _vm->_game->_script->readVarIndex();
-	WRITE_VAR((retVal / 4), (int32) _vm->_draw->openWin(id));
+	WRITE_VAR((retVal / 4), (int32)_vm->_draw->openWin(id));
 }
 
 void Inter_Fascination::oFascin_initCursorAnim() {

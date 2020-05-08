@@ -23,11 +23,11 @@
 #ifndef MADS_CONVERSATIONS_H
 #define MADS_CONVERSATIONS_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
-#include "mads/screen.h"
 #include "mads/dialogs.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
@@ -87,7 +87,6 @@ enum ConditionalOperation {
 	CONDOP_OR = 13,
 	CONDOP_ABORT = 0xff
 };
-
 
 struct ConversationVar {
 	bool _isPtr;
@@ -208,10 +207,10 @@ struct ConvDialog {
 		DialogCommand _command;
 	};
 
-	int16 _textLineIndex;	// 0-based
-	int16 _speechIndex;		// 1-based
-	uint16 _scriptOffset;	// offset of script entry
-	uint16 _scriptSize;		// size of script entry
+	int16 _textLineIndex; // 0-based
+	int16 _speechIndex;   // 1-based
+	uint16 _scriptOffset; // offset of script entry
+	uint16 _scriptSize;   // size of script entry
 
 	DialogScript _script;
 };
@@ -243,9 +242,9 @@ struct ConvMessage {
  * Represents the static, non-changing data for a conversation
  */
 struct ConversationData {
-	uint16 _nodeCount;		// conversation nodes, each one containing several dialog options and messages
-	uint16 _dialogCount;		// messages (non-selectable) + texts (selectable)
-	uint16 _messageCount;	// messages (non-selectable)
+	uint16 _nodeCount;    // conversation nodes, each one containing several dialog options and messages
+	uint16 _dialogCount;  // messages (non-selectable) + texts (selectable)
+	uint16 _messageCount; // messages (non-selectable)
 	uint16 _textLineCount;
 	uint16 _unk2;
 	uint16 _maxImports;
@@ -393,6 +392,7 @@ private:
 	 * Handle node changes
 	 */
 	bool scriptNode(ScriptEntry &scrEntry);
+
 public:
 	/**
 	 * Constructor

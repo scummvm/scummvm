@@ -20,34 +20,34 @@
  *
  */
 
+#include "ultima/ultima4/map/tileanim.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/map/tileanim.h"
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/tile.h"
+#include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 	TileAnimTransform *transform;
-	static const char *transformTypeEnumStrings[] = { "invert", "pixel", "scroll", "frame", "pixel_color", nullptr };
+	static const char *transformTypeEnumStrings[] = {"invert", "pixel", "scroll", "frame", "pixel_color", nullptr};
 
 	int type = conf.getEnum("type", transformTypeEnumStrings);
 
 	switch (type) {
 	case 0:
 		transform = new TileAnimInvertTransform(
-			conf.getInt("x"), conf.getInt("y"),
-			conf.getInt("width"), conf.getInt("height"));
+		    conf.getInt("x"), conf.getInt("y"),
+		    conf.getInt("width"), conf.getInt("height"));
 		break;
 
 	case 1: {
 		transform = new TileAnimPixelTransform(
-			conf.getInt("x"), conf.getInt("y"));
+		    conf.getInt("x"), conf.getInt("y"));
 
 		Std::vector<ConfigElement> children = conf.getChildren();
 		for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
@@ -69,8 +69,8 @@ TileAnimTransform *TileAnimTransform::create(const ConfigElement &conf) {
 
 	case 4: {
 		transform = new TileAnimPixelColorTransform(
-			conf.getInt("x"), conf.getInt("y"),
-			conf.getInt("width"), conf.getInt("height"));
+		    conf.getInt("x"), conf.getInt("y"),
+		    conf.getInt("width"), conf.getInt("height"));
 
 		Std::vector<ConfigElement> children = conf.getChildren();
 		for (Std::vector<ConfigElement>::iterator i = children.begin(); i != children.end(); i++) {
@@ -163,7 +163,6 @@ void TileAnimScrollTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 	tile->getImage()->drawSubRectOn(dest, 0, _current, 0, tile->getHeight() * mapTile._frame, tile->getWidth(), tile->getHeight() - _current);
 	if (_current != 0)
 		tile->getImage()->drawSubRectOn(dest, 0, 0, 0, (tile->getHeight() * mapTile._frame) + tile->getHeight() - _current, tile->getWidth(), _current);
-
 }
 
 bool TileAnimFrameTransform::drawsTile() const {
@@ -174,8 +173,6 @@ void TileAnimFrameTransform::draw(Image *dest, Tile *tile, MapTile &mapTile) {
 	if (++_currentFrame >= tile->getFrames())
 		_currentFrame = 0;
 	tile->getImage()->drawSubRectOn(dest, 0, 0, 0, _currentFrame * tile->getHeight(), tile->getWidth(), tile->getHeight());
-
-
 }
 
 TileAnimPixelColorTransform::TileAnimPixelColorTransform(int xp, int yp, int width, int height) {
@@ -205,8 +202,8 @@ void TileAnimPixelColorTransform::draw(Image *dest, Tile *tile, MapTile &mapTile
 
 			tileImage->getPixel(i, j + (mapTile._frame * tile->getHeight()), pixelAt.r, pixelAt.g, pixelAt.b, pixelAt.a);
 			if (pixelAt.r >= _start->r && pixelAt.r <= _end->r &&
-			        pixelAt.g >= _start->g && pixelAt.g <= _end->g &&
-			        pixelAt.b >= _start->b && pixelAt.b <= _end->b) {
+			    pixelAt.g >= _start->g && pixelAt.g <= _end->g &&
+			    pixelAt.b >= _start->b && pixelAt.b <= _end->b) {
 				dest->putPixel(i, j, _start->r + xu4_random(diff.r), _start->g + xu4_random(diff.g), _start->b + xu4_random(diff.b), pixelAt.a);
 			}
 		}
@@ -215,8 +212,8 @@ void TileAnimPixelColorTransform::draw(Image *dest, Tile *tile, MapTile &mapTile
 
 TileAnimContext *TileAnimContext::create(const ConfigElement &conf) {
 	TileAnimContext *context;
-	static const char *contextTypeEnumStrings[] = { "frame", "dir", nullptr };
-	static const char *dirEnumStrings[] = { "none", "west", "north", "east", "south", nullptr };
+	static const char *contextTypeEnumStrings[] = {"frame", "dir", nullptr};
+	static const char *dirEnumStrings[] = {"none", "west", "north", "east", "south", nullptr};
 
 	TileAnimContext::Type type = (TileAnimContext::Type)conf.getEnum("type", contextTypeEnumStrings);
 

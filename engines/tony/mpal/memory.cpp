@@ -20,9 +20,9 @@
  *
  */
 
+#include "tony/mpal/memory.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
-#include "tony/mpal/memory.h"
 
 namespace Tony {
 
@@ -61,7 +61,7 @@ void *MemoryManager::alloc(uint32 size, uint flags) {
 	return &item->_data[0];
 }
 
-#define OFFSETOF(type, field)    ((size_t) &(((type *) 0)->field))
+#define OFFSETOF(type, field) ((size_t) & (((type *)0)->field))
 
 /**
  * Returns a reference to the MemoryItem for a gien byte pointer

@@ -43,17 +43,17 @@
 namespace Made {
 
 enum MadeGameID {
-	GID_RTZ		= 0,
-	GID_MANHOLE	= 1,
-	GID_LGOP2	= 2,
-	GID_RODNEY	= 3
+	GID_RTZ = 0,
+	GID_MANHOLE = 1,
+	GID_LGOP2 = 2,
+	GID_RODNEY = 3
 };
 
 enum MadeGameFeatures {
-	GF_DEMO				= 1 << 0,
-	GF_CD				= 1 << 1,
-	GF_CD_COMPRESSED	= 1 << 2,
-	GF_FLOPPY			= 1 << 3
+	GF_DEMO = 1 << 0,
+	GF_CD = 1 << 1,
+	GF_CD_COMPRESSED = 1 << 2,
+	GF_FLOPPY = 1 << 3
 };
 
 const uint32 kTimerResolution = 40;
@@ -70,7 +70,6 @@ class MadeConsole;
 
 class MadeEngine : public ::Engine {
 protected:
-
 	// Engine APIs
 	Common::Error run() override;
 
@@ -121,7 +120,6 @@ public:
 	Common::String getSavegameFilename(int16 saveNum);
 
 	void handleEvents();
-
 };
 
 } // End of namespace Made

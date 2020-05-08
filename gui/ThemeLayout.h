@@ -42,6 +42,7 @@ class ThemeLayout {
 	friend class ThemeLayoutStacked;
 	friend class ThemeLayoutSpacing;
 	friend class ThemeLayoutWidget;
+
 public:
 	enum LayoutType {
 		kLayoutMain,
@@ -54,16 +55,15 @@ public:
 
 	/// Cross-direction alignment of layout children.
 	enum ItemAlign {
-		kItemAlignStart,   ///< Items are aligned to the left for vertical layouts or to the top for horizontal layouts
-		kItemAlignCenter,  ///< Items are centered in the container
-		kItemAlignEnd,     ///< Items are aligned to the right for vertical layouts or to the bottom for horizontal layouts
-		kItemAlignStretch  ///< Items are resized to match the size of the layout in the cross-direction
+		kItemAlignStart,  ///< Items are aligned to the left for vertical layouts or to the top for horizontal layouts
+		kItemAlignCenter, ///< Items are centered in the container
+		kItemAlignEnd,    ///< Items are aligned to the right for vertical layouts or to the bottom for horizontal layouts
+		kItemAlignStretch ///< Items are resized to match the size of the layout in the cross-direction
 	};
 
-	ThemeLayout(ThemeLayout *p) :
-		_parent(p), _x(0), _y(0), _w(-1), _h(-1),
-		_defaultW(-1), _defaultH(-1),
-		_textHAlign(Graphics::kTextAlignInvalid) {}
+	ThemeLayout(ThemeLayout *p) : _parent(p), _x(0), _y(0), _w(-1), _h(-1),
+	                              _defaultW(-1), _defaultH(-1),
+	                              _textHAlign(Graphics::kTextAlignInvalid) {}
 
 	virtual ~ThemeLayout() {
 		for (uint i = 0; i < _children.size(); ++i)
@@ -139,11 +139,10 @@ protected:
 
 class ThemeLayoutMain : public ThemeLayout {
 public:
-	ThemeLayoutMain(const Common::String &name, const Common::String &overlays, int16 width, int16 height, int inset) :
-			ThemeLayout(nullptr),
-			_name(name),
-			_overlays(overlays),
-			_inset(inset) {
+	ThemeLayoutMain(const Common::String &name, const Common::String &overlays, int16 width, int16 height, int inset) : ThemeLayout(nullptr),
+	                                                                                                                    _name(name),
+	                                                                                                                    _overlays(overlays),
+	                                                                                                                    _inset(inset) {
 		_w = _defaultW = width;
 		_h = _defaultH = height;
 		_x = _defaultX = -1;
@@ -161,7 +160,10 @@ public:
 
 protected:
 	LayoutType getLayoutType() const override { return kLayoutMain; }
-	ThemeLayout *makeClone(ThemeLayout *newParent) override { assert(!"Do not copy Main Layouts!"); return nullptr; }
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
+		assert(!"Do not copy Main Layouts!");
+		return nullptr;
+	}
 
 	int16 _defaultX;
 	int16 _defaultY;
@@ -173,8 +175,7 @@ protected:
 
 class ThemeLayoutStacked : public ThemeLayout {
 public:
-	ThemeLayoutStacked(ThemeLayout *p, LayoutType type, int spacing, ItemAlign itemAlign) :
-		ThemeLayout(p), _type(type), _itemAlign(itemAlign) {
+	ThemeLayoutStacked(ThemeLayout *p, LayoutType type, int spacing, ItemAlign itemAlign) : ThemeLayout(p), _type(type), _itemAlign(itemAlign) {
 		assert((type == kLayoutVertical) || (type == kLayoutHorizontal));
 		_spacing = spacing;
 	}
@@ -192,7 +193,8 @@ public:
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const {
 		return (_type == kLayoutVertical)
-			? "Vertical Layout" : "Horizontal Layout";
+		           ? "Vertical Layout"
+		           : "Horizontal Layout";
 	}
 #endif
 
@@ -252,8 +254,7 @@ class ThemeLayoutTabWidget : public ThemeLayoutWidget {
 	int _tabHeight;
 
 public:
-	ThemeLayoutTabWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, int tabHeight):
-		ThemeLayoutWidget(p, name, w, h, align) {
+	ThemeLayoutTabWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, int tabHeight) : ThemeLayoutWidget(p, name, w, h, align) {
 		_tabHeight = tabHeight;
 	}
 
@@ -310,6 +311,6 @@ protected:
 	}
 };
 
-}
+} // namespace GUI
 
 #endif

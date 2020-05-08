@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/pathfinder/party_path_finder.h"
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/pathfinder/seek_path.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/pathfinder/actor_path_finder.h"
-#include "ultima/nuvie/pathfinder/party_path_finder.h"
+#include "ultima/nuvie/pathfinder/seek_path.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -39,7 +39,6 @@ PartyPathFinder::PartyPathFinder(Party *p) {
 }
 
 PartyPathFinder::~PartyPathFinder() {
-
 }
 
 /* True if a member's target and leader are in roughly the same direction. */
@@ -50,10 +49,7 @@ bool PartyPathFinder::is_behind_target(uint32 member_num) {
 	MapCoord from = party->get_location(member_num);
 	MapCoord to = party->get_formation_coords(member_num); // target
 	sint8 to_x = to.x - from.x, to_y = to.y - from.y;
-	return (((ldir == NUVIE_DIR_N && to_y < 0)
-	         || (ldir == NUVIE_DIR_S && to_y > 0)
-	         || (ldir == NUVIE_DIR_E && to_x > 0)
-	         || (ldir == NUVIE_DIR_W && to_x < 0)));
+	return (((ldir == NUVIE_DIR_N && to_y < 0) || (ldir == NUVIE_DIR_S && to_y > 0) || (ldir == NUVIE_DIR_E && to_x > 0) || (ldir == NUVIE_DIR_W && to_x < 0)));
 }
 
 bool PartyPathFinder::is_at_target(uint32 p) {
@@ -68,7 +64,8 @@ bool PartyPathFinder::is_at_target(uint32 p) {
 bool PartyPathFinder::is_contiguous(uint32 member_num, MapCoord from) {
 	for (uint32 q = 0; q < member_num; q++) { // check lower-numbered members
 		Actor *actor = get_member(q).actor;
-		if (actor && actor->is_immobile() == true) continue;
+		if (actor && actor->is_immobile() == true)
+			continue;
 
 		MapCoord loc = party->get_location(q);
 		if (from.distance(loc) <= 1)
@@ -97,11 +94,11 @@ void PartyPathFinder::get_target_dir(uint32 p, sint8 &rel_x, sint8 &rel_y) {
 /* Returns in vec_x and vec_y the last direction the leader moved in. It's
  * derived from his facing direction so it's not as precise as get_last_move(). */
 void PartyPathFinder::get_forward_dir(sint8 &vec_x, sint8 &vec_y) {
-//    get_last_move(vec_x, vec_y);
+	//    get_last_move(vec_x, vec_y);
 	vec_x = 0;
 	vec_y = 0;
 	uint8 dir = (get_leader() >= 0) ? get_member(get_leader()).actor->get_direction() : NUVIE_DIR_N;
-	if (dir == NUVIE_DIR_N)      {
+	if (dir == NUVIE_DIR_N) {
 		vec_x = 0;
 		vec_y = -1;
 	} else if (dir == NUVIE_DIR_S) {
@@ -127,8 +124,7 @@ void PartyPathFinder::get_last_move(sint8 &vec_x, sint8 &vec_y) {
 /* Returns true if the leader moved before the last call to follow(). */
 bool PartyPathFinder::leader_moved() {
 	MapCoord leader_loc = party->get_leader_location();
-	return ((leader_loc.x - party->prev_leader_x)
-	        || (leader_loc.y - party->prev_leader_y));
+	return ((leader_loc.x - party->prev_leader_x) || (leader_loc.y - party->prev_leader_y));
 }
 
 /* Returns true if the leader moved far enough away from follower to pull him. */
@@ -142,8 +138,7 @@ bool PartyPathFinder::leader_moved_away(uint32 p) {
 /* Compares leader position with last known position. */
 bool PartyPathFinder::leader_moved_diagonally() {
 	MapCoord leader_loc = party->get_leader_location();
-	return (party->prev_leader_x != leader_loc.x
-	        && party->prev_leader_y != leader_loc.y);
+	return (party->prev_leader_x != leader_loc.x && party->prev_leader_y != leader_loc.y);
 }
 
 bool PartyPathFinder::follow_passA(uint32 p) {
@@ -273,7 +268,7 @@ bool PartyPathFinder::try_moving_to_target(uint32 p, bool avoid_damage_tiles) {
 			DirFinder::get_adjacent_dir(relx3, rely3, 1);
 			if (!(abs(relx2) == abs(dy) && abs(rely2) == abs(dx))) {
 				// first isn't perpendicular; swap directions
-				DirFinder::get_adjacent_dir(relx2, rely2, 2); // becomes clockwise
+				DirFinder::get_adjacent_dir(relx2, rely2, 2);  // becomes clockwise
 				DirFinder::get_adjacent_dir(relx3, rely3, -2); // counter-clockwise
 			}
 			if (!move_member(p, relx2, rely2))
@@ -298,9 +293,10 @@ bool PartyPathFinder::try_all_directions(uint32 p, MapCoord target_loc) {
 	sint8 to_leader_y = get_wrapped_rel_dir(leader_loc.y, member_loc.y, leader_loc.z);
 	// rotate direction, towards target
 	sint8 rot = DirFinder::get_turn_towards_dir(to_leader_x, to_leader_y,
-	            sint8(target_loc.x - member_loc.x),
-	            sint8(target_loc.y - member_loc.y));
-	if (rot == 0) rot = 1; // default clockwise
+	                                            sint8(target_loc.x - member_loc.x),
+	                                            sint8(target_loc.y - member_loc.y));
+	if (rot == 0)
+		rot = 1; // default clockwise
 
 	// check all directions, first only those adjacent to the real target
 	MapCoord real_target = party->get_formation_coords(p);
@@ -314,9 +310,7 @@ bool PartyPathFinder::try_all_directions(uint32 p, MapCoord target_loc) {
 	// than our target position is (unless we're already that far away)
 	for (uint32 dir = 0; dir < 8; dir++) {
 		MapCoord dest = member_loc.abs_coords(to_leader_x, to_leader_y);
-		if ((dest.distance(leader_loc) <= real_target.distance(leader_loc)
-		        || dest.distance(leader_loc) <= member_loc.distance(leader_loc))
-		        && move_member(p, to_leader_x, to_leader_y))
+		if ((dest.distance(leader_loc) <= real_target.distance(leader_loc) || dest.distance(leader_loc) <= member_loc.distance(leader_loc)) && move_member(p, to_leader_x, to_leader_y))
 			return true;
 		DirFinder::get_adjacent_dir(to_leader_x, to_leader_y, rot);
 	}
@@ -345,8 +339,7 @@ PartyPathFinder::get_neighbor_tiles(MapCoord &center, MapCoord &target) {
 		uint32 sorted = 0;
 		for (; sorted < neighbors.size(); sorted++, i++) {
 			MapCoord check_square = neighbors[sorted];
-			if (target.distance(this_square) < target.distance(check_square)
-			        && !party->is_anyone_at(check_square)) { // exclude squares with any other party member from being at the front of the list
+			if (target.distance(this_square) < target.distance(check_square) && !party->is_anyone_at(check_square)) { // exclude squares with any other party member from being at the front of the list
 				neighbors.insert(i, this_square);
 				break;
 			}
@@ -431,8 +424,7 @@ bool PartyPathFinder::move_member(uint32 member_num, sint16 relx, sint16 rely, b
 				blocking_member_num = party->get_member_num(blocking_actor);
 			if (blocking_member_num < sint32(member_num))
 				return false; // blocked by an actor not in the party
-			if (bump_member(uint32(blocking_member_num), member_num)
-			        && actor->move(target.x, target.y, target.z, flags | ACTOR_IGNORE_MOVES)) {
+			if (bump_member(uint32(blocking_member_num), member_num) && actor->move(target.x, target.y, target.z, flags | ACTOR_IGNORE_MOVES)) {
 				actor->set_direction(relx, rely);
 				return true;
 			}

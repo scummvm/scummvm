@@ -21,8 +21,8 @@
  */
 
 // Based off ffmpeg's msrledec.c
-#include "common/debug.h"
 #include "image/codecs/msrle4.h"
+#include "common/debug.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -52,7 +52,7 @@ void MSRLE4Decoder::decode4(Common::SeekableReadStream &stream) {
 	int x = 0;
 	int y = _surface->h - 1;
 
-	byte *output     = (byte *)_surface->getBasePtr(x, y);
+	byte *output = (byte *)_surface->getBasePtr(x, y);
 	byte *output_end = (byte *)_surface->getBasePtr(_surface->w, y);
 
 	while (!stream.eos()) {
@@ -131,7 +131,6 @@ void MSRLE4Decoder::decode4(Common::SeekableReadStream &stream) {
 				*output++ = color & 0x0f;
 			}
 		}
-
 	}
 
 	warning("MS RLE Codec: No end-of-picture code");

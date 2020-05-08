@@ -23,11 +23,11 @@
  *
  */
 
-#include "pegasus/cursor.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/delta/globegame.h"
+#include "pegasus/cursor.h"
+#include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/delta/noraddelta.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -36,7 +36,7 @@ static const TimeValue kDurationPerRow = kNumLongSlices * kDurationPerFrame;
 static const short kVerticalDuration = 16;
 
 GlobeTracker::GlobeTracker(Movie *globeMovie, Picture *leftHighlight, Picture *rightHighlight,
-		Picture *upHighlight, Picture *downHighlight) {
+                           Picture *upHighlight, Picture *downHighlight) {
 	_globeMovie = globeMovie;
 	_leftHighlight = leftHighlight;
 	_rightHighlight = rightHighlight;
@@ -313,73 +313,70 @@ void GlobeCountdown::draw(const Common::Rect &) {
 }
 
 const int16 GlobeGame::_siloCoords[kNumAllSilos][2] = {
-	{ 60, -151 }, // Anchorage, Alaska
-	{ 6, 39 },    // Addis Ababa, Ethiopia
-	{ -22, 44 },  // Antaro, Madagascar
-	{ 30, -83 },  // Atlanta, Georgia
-	{ -41, 173 }, // Auckland, New Zealand
-	{ 39, -78 },  // Baltimore, Maryland
-	{ 11, 101 },  // Bangkok, Thailand
-	{ 2, -75 },   // Bogota, Colombia
-	{ 46, 4 },    // Bonn, Germany
-	{ 51, -7 },   // Dublin, Ireland
-	{ 28, -1 },   // El Menia, Algeria
-	{ 67, -111 }, // Ellesmere, Canada
-	{ 43, -107 }, // Glasgow, Montana
-	{ 61, -48 },  // Godthab, Greenland
-	{ 19, -157 }, // Honolulu, Hawaii
-	{ 6, 5 },     // Ibadan, Nigeria
-	{ -29, 26 },  // Johannesburg, South Africa
-	{ 46, 92 },   // Kobdo, Mongolia
-	{ -15, -63 }, // La Paz, Bolivia
-	{ -35, -61 }, // La Plata, Argentina
-	{ -9, -76 },  // Lima, Peru
-	{ 38, -4 },   // Madrid, Spain
-	{ -8, -51 },  // Manaus, Brazil
-	{ 13, 120 },  // Manila, Phillipines
-	{ -35, 143 }, // Melbourne, Australia
-	{ 60, -161 }, // Nome, Alaska
-	{ -7, 142 },  // Papua, New Guinea
-	{ -32, 117 }, // Perth, West Australia
-	{ 34, -114 }, // Phoenix, Arizona
-	{ 18, -71 },  // Port-Au-Prince, Haiti
-	{ 42, -121 }, // Portland, Oregon
-	{ 61, -20 },  // Reykjavik, Iceland
-	{ -22, -46 }, // Rio de Janeiro
-	{ 27, -101 }, // San Antonio, Texas
-	{ 34, 126 },  // Seoul, Korea
-	{ 37, -87 },  // Saint Louis, Missouri
-	{ 60, 30 },   // Saint Petersberg, Russia
-	{ 56, 12 },   // Stockholm, Sweden
-	{ 51, 105 },  // Svortalsk, Siberia
-	{ 36, -96 }   // Tulsa, Oklahoma
+    {60, -151}, // Anchorage, Alaska
+    {6, 39},    // Addis Ababa, Ethiopia
+    {-22, 44},  // Antaro, Madagascar
+    {30, -83},  // Atlanta, Georgia
+    {-41, 173}, // Auckland, New Zealand
+    {39, -78},  // Baltimore, Maryland
+    {11, 101},  // Bangkok, Thailand
+    {2, -75},   // Bogota, Colombia
+    {46, 4},    // Bonn, Germany
+    {51, -7},   // Dublin, Ireland
+    {28, -1},   // El Menia, Algeria
+    {67, -111}, // Ellesmere, Canada
+    {43, -107}, // Glasgow, Montana
+    {61, -48},  // Godthab, Greenland
+    {19, -157}, // Honolulu, Hawaii
+    {6, 5},     // Ibadan, Nigeria
+    {-29, 26},  // Johannesburg, South Africa
+    {46, 92},   // Kobdo, Mongolia
+    {-15, -63}, // La Paz, Bolivia
+    {-35, -61}, // La Plata, Argentina
+    {-9, -76},  // Lima, Peru
+    {38, -4},   // Madrid, Spain
+    {-8, -51},  // Manaus, Brazil
+    {13, 120},  // Manila, Phillipines
+    {-35, 143}, // Melbourne, Australia
+    {60, -161}, // Nome, Alaska
+    {-7, 142},  // Papua, New Guinea
+    {-32, 117}, // Perth, West Australia
+    {34, -114}, // Phoenix, Arizona
+    {18, -71},  // Port-Au-Prince, Haiti
+    {42, -121}, // Portland, Oregon
+    {61, -20},  // Reykjavik, Iceland
+    {-22, -46}, // Rio de Janeiro
+    {27, -101}, // San Antonio, Texas
+    {34, 126},  // Seoul, Korea
+    {37, -87},  // Saint Louis, Missouri
+    {60, 30},   // Saint Petersberg, Russia
+    {56, 12},   // Stockholm, Sweden
+    {51, 105},  // Svortalsk, Siberia
+    {36, -96}   // Tulsa, Oklahoma
 };
 
 const int16 GlobeGame::_targetSilo[kNumTargetSilos] = {
-	14, 9, 1, 33, 6, 8, 34, 31, 38, 21
-};
+    14, 9, 1, 33, 6, 8, 34, 31, 38, 21};
 
 const short GlobeGame::_timeLimit[kNumTargetSilos] = {
-	120, 110, 100, 90, 80, 70, 60, 50, 40, 30
-};
+    120, 110, 100, 90, 80, 70, 60, 50, 40, 30};
 
 const TimeValue GlobeGame::_siloName[kNumTargetSilos][2] = {
-	{ kHonoluluIn, kHonoluluOut },
-	{ kDublinIn, kDublinOut },
-	{ kAddisAbabaIn, kAddisAbabaOut },
-	{ kSanAntonioIn, kSanAntonioOut },
-	{ kBangkokIn, kBangkokOut },
-	{ kBonnIn, kBonnOut },
-	{ kSeoulIn, kSeoulOut },
-	{ kReykjavikIn, kReykjavikOut },
-	{ kSvortalskIn, kSvortalskOut },
-	{ kMadridIn, kMadridOut }
-};
+    {kHonoluluIn, kHonoluluOut},
+    {kDublinIn, kDublinOut},
+    {kAddisAbabaIn, kAddisAbabaOut},
+    {kSanAntonioIn, kSanAntonioOut},
+    {kBangkokIn, kBangkokOut},
+    {kBonnIn, kBonnOut},
+    {kSeoulIn, kSeoulOut},
+    {kReykjavikIn, kReykjavikOut},
+    {kSvortalskIn, kSvortalskOut},
+    {kMadridIn, kMadridOut}};
 
 // From globe room models
 
-static const GlobeGame::Point3D kCameraLocation = { 0.53f, 4.4f, -0.86f };
-static const GlobeGame::Point3D kGlobeCenter = { -31.5f, 8.0f, 0.0f };
+static const GlobeGame::Point3D kCameraLocation = {0.53f, 4.4f, -0.86f};
+static const GlobeGame::Point3D kGlobeCenter = {-31.5f, 8.0f, 0.0f};
 static const float kGlobeRadius = 8.25f;
 static const int16 kDegreesPerLongSlice = 360 / kNumLongSlices;
 static const int16 kDegreesPerLatSlice = 25;
@@ -400,8 +397,8 @@ static const NotificationFlags kGlobeTimerExpired = kGlobeSplash1Finished << 1;
 static const NotificationFlags kMaxDeactivatedFinished = kGlobeTimerExpired << 1;
 
 static const NotificationFlags kGlobeNotificationFlags = kGlobeSplash1Finished |
-													kGlobeTimerExpired |
-													kMaxDeactivatedFinished;
+                                                         kGlobeTimerExpired |
+                                                         kMaxDeactivatedFinished;
 
 enum {
 	kSplash1End = 4,
@@ -451,16 +448,17 @@ float radiansToDegrees(float angle) {
 }
 
 GlobeGame::GlobeGame(Neighborhood *handler) : GameInteraction(kNoradGlobeGameInteractionID, handler),
-		_monitorMovie(kGlobeMonitorID), _globeMovie(kGlobeMovieID), _upperNamesMovie(kGlobeUpperNamesID),
-		_lowerNamesMovie(kGlobeLowerNamesID), _globeNotification(kNoradGlobeNotificationID, (PegasusEngine *)g_engine),
-		_globeCircleLeft(kGlobeCircleLeftID), _globeCircleRight(kGlobeCircleRightID),
-		_globeCircleUp(kGlobeCircleUpID), _globeCircleDown(kGlobeCircleDownID),
-		_motionHighlightLeft(kMotionHiliteLeftID), _motionHighlightRight(kMotionHiliteRightID),
-		_motionHighlightUp(kMotionHiliteUpID), _motionHighlightDown(kMotionHiliteDownID),
-		_targetHighlightUpperLeft(kTargetHiliteUpperLeftID), _targetHighlightUpperRight(kTargetHiliteUpperRightID),
-		_targetHighlightLowerLeft(kTargetHiliteLowerLeftID), _targetHighlightLowerRight(kTargetHiliteLowerRightID),
-		_globeTracker(&_globeMovie, &_motionHighlightLeft, &_motionHighlightRight, &_motionHighlightUp,
-				&_motionHighlightDown), _countdown(kGlobeCountdownID) {
+                                              _monitorMovie(kGlobeMonitorID), _globeMovie(kGlobeMovieID), _upperNamesMovie(kGlobeUpperNamesID),
+                                              _lowerNamesMovie(kGlobeLowerNamesID), _globeNotification(kNoradGlobeNotificationID, (PegasusEngine *)g_engine),
+                                              _globeCircleLeft(kGlobeCircleLeftID), _globeCircleRight(kGlobeCircleRightID),
+                                              _globeCircleUp(kGlobeCircleUpID), _globeCircleDown(kGlobeCircleDownID),
+                                              _motionHighlightLeft(kMotionHiliteLeftID), _motionHighlightRight(kMotionHiliteRightID),
+                                              _motionHighlightUp(kMotionHiliteUpID), _motionHighlightDown(kMotionHiliteDownID),
+                                              _targetHighlightUpperLeft(kTargetHiliteUpperLeftID), _targetHighlightUpperRight(kTargetHiliteUpperRightID),
+                                              _targetHighlightLowerLeft(kTargetHiliteLowerLeftID), _targetHighlightLowerRight(kTargetHiliteLowerRightID),
+                                              _globeTracker(&_globeMovie, &_motionHighlightLeft, &_motionHighlightRight, &_motionHighlightUp,
+                                                            &_motionHighlightDown),
+                                              _countdown(kGlobeCountdownID) {
 	_neighborhoodNotification = handler->getNeighborhoodNotification();
 }
 
@@ -650,7 +648,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 
 			_owner->requestDelay(1, 2, kFilterNoInput, 0);
 			_owner->requestSpotSound(kStrikeAuthorizedIn, kStrikeAuthorizedOut,
-					kFilterNoInput, kSpotSoundCompletedFlag);
+			                         kFilterNoInput, kSpotSoundCompletedFlag);
 			_gameState = kPlayingStrikeAuthorized;
 			break;
 		case kPlayingStrikeAuthorized:
@@ -670,7 +668,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 			_monitorMovie.setTime(kNewLaunchSiloTime * scale);
 			_monitorMovie.redrawMovieWorld();
 			_owner->requestSpotSound(kNewLaunchSiloIn, kNewLaunchSiloOut, kFilterNoInput,
-					kSpotSoundCompletedFlag);
+			                         kSpotSoundCompletedFlag);
 			_gameState = kPlayingNewSilo1;
 			break;
 		case kPlayingNewSilo1:
@@ -709,27 +707,27 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 			case 10:
 				_owner->requestDelay(1, 5, kFilterNoInput, 0);
 				_owner->requestSpotSound(kTenSecondsIn, kTenSecondsOut, kFilterNoInput,
-						kSpotSoundCompletedFlag);
+				                         kSpotSoundCompletedFlag);
 				break;
 			case 20:
 				_owner->requestDelay(1, 5, kFilterNoInput, 0);
 				_owner->requestSpotSound(kTwentySecondsIn, kTwentySecondsOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				                         kFilterNoInput, kSpotSoundCompletedFlag);
 				break;
 			case 30:
 				_owner->requestDelay(1, 5, kFilterNoInput, 0);
 				_owner->requestSpotSound(kThirtySecondsIn, kThirtySecondsOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				                         kFilterNoInput, kSpotSoundCompletedFlag);
 				break;
 			case 40:
 				_owner->requestDelay(1, 5, kFilterNoInput, 0);
 				_owner->requestSpotSound(kFortySecondsIn, kFortySecondsOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				                         kFilterNoInput, kSpotSoundCompletedFlag);
 				break;
 			case 50:
 				_owner->requestDelay(1, 5, kFilterNoInput, 0);
 				_owner->requestSpotSound(kFiftySecondsIn, kFiftySecondsOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				                         kFilterNoInput, kSpotSoundCompletedFlag);
 				break;
 			default:
 				break;
@@ -748,7 +746,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 				receiveNotification(notification, flags);
 			} else {
 				_owner->requestSpotSound(kToDeactivateIn, kToDeactivateOut, kFilterNoInput,
-						kSpotSoundCompletedFlag);
+				                         kSpotSoundCompletedFlag);
 				_playedInstructions = true;
 			}
 			break;
@@ -762,23 +760,23 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 			switch (_currentSiloIndex) {
 			case 3:
 				_owner->requestSpotSound(kYouCannotPossiblyIn, kYouCannotPossiblyOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				                         kFilterNoInput, kSpotSoundCompletedFlag);
 				break;
 			case 5:
 				_owner->requestSpotSound(kYouWillFailIn, kYouWillFailOut, kFilterNoInput,
-						kSpotSoundCompletedFlag);
+				                         kSpotSoundCompletedFlag);
 				break;
 			case 7:
 				_owner->requestSpotSound(kGiveUpHumanIn, kGiveUpHumanOut, kFilterNoInput,
-						kSpotSoundCompletedFlag);
+				                         kSpotSoundCompletedFlag);
 				break;
 			case 9:
 				_owner->requestSpotSound(kYouAreRunningIn, kYouAreRunningOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				                         kFilterNoInput, kSpotSoundCompletedFlag);
 				break;
 			default:
 				_owner->requestSpotSound(kNewLaunchSiloIn, kNewLaunchSiloOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				                         kFilterNoInput, kSpotSoundCompletedFlag);
 				_monitorMovie.setTime(kNewLaunchSiloTime * scale);
 				_monitorMovie.redrawMovieWorld();
 				_gameState = kPlayingNewSilo1;
@@ -847,7 +845,7 @@ void GlobeGame::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	Hotspot *spot = g_allHotspots.findHotspot(where);
 
 	if (((PegasusEngine *)g_engine)->_cursor->isVisible() && spot != 0 &&
-			spot->getObjectID() == kNorad79SiloAreaSpotID && findClickedSilo(input) != -1) {
+	    spot->getObjectID() == kNorad79SiloAreaSpotID && findClickedSilo(input) != -1) {
 		_targetHighlightUpperLeft.show();
 		_targetHighlightUpperRight.show();
 		_targetHighlightLowerLeft.show();
@@ -881,7 +879,7 @@ int16 GlobeGame::findClickedSilo(const Input &input) {
 
 		for (int16 i = 0; i < kNumAllSilos; i++)
 			if (_siloCoords[i][0] >= latitude - kLatError && _siloCoords[i][0] <= latitude + kLatError &&
-					_siloCoords[i][1] >= longitude - kLongError && _siloCoords[i][1] <= longitude + kLongError)
+			    _siloCoords[i][1] >= longitude - kLongError && _siloCoords[i][1] <= longitude + kLongError)
 				return i;
 	}
 
@@ -918,17 +916,17 @@ void GlobeGame::clickGlobe(const Input &input) {
 				_lowerNamesMovie.hide();
 				_countdown.hide();
 				_monitorMovie.setSegment(kMaxDeactivatedStart * _monitorMovie.getScale(),
-						kMaxDeactivatedStop * _monitorMovie.getScale());
+				                         kMaxDeactivatedStop * _monitorMovie.getScale());
 				_monitorMovie.setTime(kMaxDeactivatedStart * _monitorMovie.getScale());
 				_monitorCallBack.setCallBackFlag(kMaxDeactivatedFinished);
 				_monitorCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
 				_monitorMovie.start();
 				_owner->requestSpotSound(kMaximumDeactivationIn, kMaximumDeactivationOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				                         kFilterNoInput, kSpotSoundCompletedFlag);
 
 				// This sound was left out of the original.
 				_owner->requestSpotSound(kAllSilosDeactivatedIn, kAllSilosDeactivatedOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				                         kFilterNoInput, kSpotSoundCompletedFlag);
 
 				_gameState = kPlayerWon1;
 			} else {
@@ -1003,7 +1001,7 @@ void GlobeGame::globeMovieFrameToOrigin(int16 frameNum, int16 &latOrigin, int16 
 }
 
 void GlobeGame::globePointToLatLong(const GlobeGame::Point3D &pt, int16 latOrigin, int16 longOrigin,
-		int16 &latitude, int16 &longitude) {
+                                    int16 &latitude, int16 &longitude) {
 	Point3D scratch = pt;
 
 	// Translate globe center to origin.
@@ -1055,11 +1053,10 @@ bool GlobeGame::lineHitsGlobe(const GlobeGame::Line3D &line, GlobeGame::Point3D 
 	float k = line.pt2.z - line.pt1.z;
 	float a = i * i + j * j + k * k;
 	float b = 2 * i * (line.pt1.x - kGlobeCenter.x) + 2 * j * (line.pt1.y - kGlobeCenter.y) +
-			2 * k * (line.pt1.z - kGlobeCenter.z);
+	          2 * k * (line.pt1.z - kGlobeCenter.z);
 	float c = kGlobeCenter.x * kGlobeCenter.x + kGlobeCenter.y * kGlobeCenter.y +
-			kGlobeCenter.z * kGlobeCenter.z + line.pt1.x * line.pt1.x + line.pt1.y * line.pt1.y +
-			line.pt1.z * line.pt1.z + -2 * (kGlobeCenter.x * line.pt1.x + kGlobeCenter.y * line.pt1.y +
-			kGlobeCenter.z * line.pt1.z) - kGlobeRadius * kGlobeRadius;
+	          kGlobeCenter.z * kGlobeCenter.z + line.pt1.x * line.pt1.x + line.pt1.y * line.pt1.y +
+	          line.pt1.z * line.pt1.z + -2 * (kGlobeCenter.x * line.pt1.x + kGlobeCenter.y * line.pt1.y + kGlobeCenter.z * line.pt1.z) - kGlobeRadius * kGlobeRadius;
 
 	// Solve quadratic equation of a, b, c.
 	float t = b * b - 4 * a * c;
@@ -1077,7 +1074,7 @@ bool GlobeGame::lineHitsGlobe(const GlobeGame::Line3D &line, GlobeGame::Point3D 
 }
 
 bool GlobeGame::canSolve() {
-	return	_gameState != kPlayerWon1 && _gameState != kPlayerWon2 && _gameState != kPlayerLost1;
+	return _gameState != kPlayerWon1 && _gameState != kPlayerWon2 && _gameState != kPlayerLost1;
 }
 
 void GlobeGame::doSolve() {

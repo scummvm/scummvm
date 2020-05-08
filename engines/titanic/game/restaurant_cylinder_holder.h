@@ -36,6 +36,7 @@ class CRestaurantCylinderHolder : public CDropTarget {
 	bool QueryCylinderNameMsg(CQueryCylinderNameMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 	bool DropObjectMsg(CDropObjectMsg *msg);
+
 private:
 	bool _isOpen;
 	int _field11C;
@@ -44,6 +45,7 @@ private:
 	int _field130;
 	CString _ejectSoundName;
 	CursorId _defaultCursorId;
+
 public:
 	CLASSDEF;
 	CRestaurantCylinderHolder();

@@ -44,8 +44,8 @@
 */
 
 #include "glk/alan3/acode.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/params.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {

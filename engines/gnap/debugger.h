@@ -36,6 +36,7 @@ public:
 	 * Specifies whether to show the hotspot IDs
 	 */
 	bool _showHotspotNumber;
+
 protected:
 	/**
 	 * List the active hotspots during the current time period

@@ -31,7 +31,7 @@
 namespace Common {
 class ReadStream;
 class WriteStream;
-}
+} // namespace Common
 
 namespace Supernova {
 
@@ -47,8 +47,8 @@ struct RoomEntry {
 };
 
 class Room2 : public Room {
-	protected:
-		GameManager2 *_gm;
+protected:
+	GameManager2 *_gm;
 };
 
 class Intro2 : public Room2 {
@@ -72,7 +72,6 @@ class Airport : public Room2 {
 public:
 	Airport(SupernovaEngine *vm, GameManager2 *gm);
 	void onEntrance() override;
-
 };
 
 class TaxiStand : public Room2 {
@@ -81,7 +80,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Street : public Room2 {
@@ -90,7 +88,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Games : public Room2 {
@@ -98,7 +95,6 @@ public:
 	Games(SupernovaEngine *vm, GameManager2 *gm);
 	void onEntrance() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Cabin2 : public Room2 {
@@ -115,7 +111,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class CulturePalace : public Room2 {
@@ -147,7 +142,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class City2 : public Room2 {
@@ -156,7 +150,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Elevator2 : public Room2 {
@@ -176,7 +169,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Ship : public Room2 {
@@ -199,7 +191,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class PyrEntrance : public Room2 {
@@ -219,7 +210,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Downstairs1 : public Room2 {
@@ -228,7 +218,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class BottomRightDoor : public Room2 {
@@ -237,7 +226,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class BottomLeftDoor : public Room2 {
@@ -246,7 +234,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Upstairs2 : public Room2 {
@@ -255,7 +242,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Downstairs2 : public Room2 {
@@ -264,7 +250,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class UpperDoor : public Room2 {
@@ -273,7 +258,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class PuzzleFront : public Room2 {
@@ -282,7 +266,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class PuzzleBehind : public Room2 {
@@ -291,7 +274,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Formula1F : public Room2 {
@@ -300,7 +282,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Formula1N : public Room2 {
@@ -309,7 +290,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Formula2F : public Room2 {
@@ -318,7 +298,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Formula2N : public Room2 {
@@ -327,7 +306,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class TomatoF : public Room2 {
@@ -336,7 +314,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class TomatoN : public Room2 {
@@ -345,7 +322,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class MonsterF : public Room2 {
@@ -354,7 +330,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Monster1N : public Room2 {
@@ -363,7 +338,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Monster2N : public Room2 {
@@ -372,7 +346,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Upstairs3 : public Room2 {
@@ -381,7 +354,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Downstairs3 : public Room2 {
@@ -390,7 +362,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class LCorridor1 : public Room2 {
@@ -399,7 +370,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class LCorridor2 : public Room2 {
@@ -408,7 +378,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class HoleRoom : public Room2 {
@@ -417,7 +386,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class InHole : public Room2 {
@@ -426,7 +394,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Floordoor : public Room2 {
@@ -435,7 +402,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class FloordoorU : public Room2 {
@@ -444,7 +410,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class BstDoor : public Room2 {
@@ -464,7 +429,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class CoffinRoom : public Room2 {
@@ -473,7 +437,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mask : public Room2 {
@@ -482,7 +445,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Museum : public Room2 {
@@ -491,7 +453,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class MusEntrance : public Room2 {
@@ -500,7 +461,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus1 : public Room2 {
@@ -509,7 +469,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus2 : public Room2 {
@@ -518,7 +477,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus3 : public Room2 {
@@ -527,7 +485,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus4 : public Room2 {
@@ -536,7 +493,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus5 : public Room2 {
@@ -545,7 +501,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus6 : public Room2 {
@@ -554,7 +509,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus7 : public Room2 {
@@ -563,7 +517,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus8 : public Room2 {
@@ -572,7 +525,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus9 : public Room2 {
@@ -581,7 +533,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus10 : public Room2 {
@@ -590,7 +541,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus11 : public Room2 {
@@ -599,7 +549,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class MusRound : public Room2 {
@@ -608,7 +557,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus12 : public Room2 {
@@ -617,7 +565,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus13 : public Room2 {
@@ -626,7 +573,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus14 : public Room2 {
@@ -635,7 +581,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus15 : public Room2 {
@@ -644,7 +589,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus16 : public Room2 {
@@ -653,7 +597,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus17 : public Room2 {
@@ -662,7 +605,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus18 : public Room2 {
@@ -671,7 +613,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus19 : public Room2 {
@@ -680,7 +621,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus20 : public Room2 {
@@ -689,7 +629,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus21 : public Room2 {
@@ -698,7 +637,6 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
 class Mus22 : public Room2 {
@@ -707,8 +645,7 @@ public:
 	void onEntrance() override;
 	void animation() override;
 	bool interact(Action verb, Object &obj1, Object &obj2) override;
-
 };
 
-}
+} // namespace Supernova
 #endif // SUPERNOVA2_ROOMS_H

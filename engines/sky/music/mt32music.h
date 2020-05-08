@@ -33,6 +33,7 @@ class MT32Music : public MusicBase {
 public:
 	MT32Music(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk);
 	~MT32Music() override;
+
 private:
 	static void passTimerFunc(void *param);
 	void timerCall();

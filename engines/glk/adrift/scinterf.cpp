@@ -20,12 +20,12 @@
  *
  */
 
-#include "glk/adrift/adrift.h"
-#include "glk/adrift/scprotos.h"
-#include "glk/adrift/scgamest.h"
 #include "common/file.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
+#include "glk/adrift/adrift.h"
+#include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 
 namespace Glk {
 namespace Adrift {
@@ -37,7 +37,6 @@ static const sc_char NUL = '\0';
 
 /* Global tracing flags. */
 static sc_uint if_trace_flags = 0;
-
 
 /*
  * if_initialize()
@@ -60,7 +59,7 @@ static void if_initialize(void) {
 		} else if (sizeof(sc_uint) > 8 || sizeof(sc_int) > 8) {
 			sc_error("if_initialize: sizeof sc_uint or sc_int"
 			         " is more than 8, check compile options\n");
-		} else if (!((sc_uint) - 1 > 0)) {
+		} else if (!((sc_uint)-1 > 0)) {
 			sc_error("if_initialize: sc_uint appears not to be unsigned,"
 			         " check compile options\n");
 		}
@@ -68,7 +67,6 @@ static void if_initialize(void) {
 		initialized = TRUE;
 	}
 }
-
 
 /*
  * if_bool()
@@ -105,7 +103,6 @@ void sc_set_trace_flags(sc_uint trace_flags) {
 sc_bool if_get_trace_flag(sc_uint bitmask) {
 	return if_bool(if_trace_flags & bitmask);
 }
-
 
 /*
  * if_print_string_common()
@@ -157,7 +154,6 @@ void if_print_tag(sc_int tag, const sc_char *arg) {
 	os_print_tag(tag, arg);
 }
 
-
 /*
  * if_read_line_common()
  * if_read_line()
@@ -167,7 +163,7 @@ void if_print_tag(sc_int tag, const sc_char *arg) {
  * before returning it to the caller.
  */
 static void if_read_line_common(sc_char *buffer, sc_int length,
-		sc_bool(*read_line_function)(sc_char *, sc_int)) {
+                                sc_bool (*read_line_function)(sc_char *, sc_int)) {
 	sc_bool is_line_available;
 	sc_int last;
 	assert(buffer && length > 0);
@@ -185,8 +181,7 @@ static void if_read_line_common(sc_char *buffer, sc_int length,
 
 	/* Drop any trailing newline/return. */
 	last = strlen(buffer) - 1;
-	while (last >= 0
-	        && (buffer[last] == CARRIAGE_RETURN || buffer[last] == NEWLINE))
+	while (last >= 0 && (buffer[last] == CARRIAGE_RETURN || buffer[last] == NEWLINE))
 		buffer[last--] = NUL;
 }
 
@@ -198,7 +193,6 @@ void if_read_debug(sc_char *buffer, sc_int length) {
 	if_read_line_common(buffer, length, os_read_line_debug);
 }
 
-
 /*
  * if_confirm()
  *
@@ -207,7 +201,6 @@ void if_read_debug(sc_char *buffer, sc_int length) {
 sc_bool if_confirm(sc_int type) {
 	return os_confirm(type);
 }
-
 
 /*
  * if_open_saved_game()
@@ -237,7 +230,6 @@ void if_close_saved_game(void *opaque) {
 	os_close_file(opaque);
 }
 
-
 /*
  * if_display_hints()
  *
@@ -246,9 +238,8 @@ void if_close_saved_game(void *opaque) {
 void if_display_hints(sc_gameref_t game) {
 	assert(gs_is_game_valid(game));
 
-	os_display_hints((sc_game) game);
+	os_display_hints((sc_game)game);
 }
-
 
 /*
  * if_update_sound()
@@ -257,7 +248,7 @@ void if_display_hints(sc_gameref_t game) {
  * Call OS-specific sound and graphic handler functions.
  */
 void if_update_sound(const sc_char *filename, sc_int sound_offset, sc_int sound_length,
-		sc_bool is_looping) {
+                     sc_bool is_looping) {
 	if (strlen(filename) > 0)
 		os_play_sound(filename, sound_offset, sound_length, is_looping);
 	else
@@ -265,10 +256,9 @@ void if_update_sound(const sc_char *filename, sc_int sound_offset, sc_int sound_
 }
 
 void if_update_graphic(const sc_char *filename,
-                  sc_int graphic_offset, sc_int graphic_length) {
+                       sc_int graphic_offset, sc_int graphic_length) {
 	os_show_graphic(filename, graphic_offset, graphic_length);
 }
-
 
 /*
  * sc_scare_version()
@@ -285,7 +275,6 @@ sc_int sc_scare_emulation(void) {
 	if_initialize();
 	return SCARE_EMULATION;
 }
-
 
 /*
  * if_file_read_callback()
@@ -306,13 +295,12 @@ static sc_int if_file_read_callback(void *opaque, sc_byte *buffer, sc_int length
 }
 
 static void if_file_write_callback(void *opaque, const sc_byte *buffer, sc_int length) {
-	Common::WriteStream *stream = (Common::WriteStream *) opaque;
+	Common::WriteStream *stream = (Common::WriteStream *)opaque;
 
 	stream->write(buffer, length);
 	if (stream->err())
 		sc_error("if_file_write_callback: warning: write error\n");
 }
-
 
 /*
  * sc_game_from_filename()
@@ -355,7 +343,7 @@ sc_game sc_game_from_stream(Common::SeekableReadStream *stream) {
 	return run_create(if_file_read_callback, stream);
 }
 
-sc_game sc_game_from_callback(sc_int(*callback)(void *, sc_byte *, sc_int), void *opaque) {
+sc_game sc_game_from_callback(sc_int (*callback)(void *, sc_byte *, sc_int), void *opaque) {
 	if_initialize();
 	if (!callback) {
 		sc_error("sc_game_from_callback: nullptr callback\n");
@@ -364,7 +352,6 @@ sc_game sc_game_from_callback(sc_int(*callback)(void *, sc_byte *, sc_int), void
 
 	return run_create(callback, opaque);
 }
-
 
 /*
  * if_game_error()
@@ -385,7 +372,6 @@ static sc_bool if_game_error(const sc_gameref_t game, const sc_char *function_na
 	/* No game error. */
 	return FALSE;
 }
-
 
 /*
  * sc_interpret_game()
@@ -457,7 +443,6 @@ void sc_quit_game(CONTEXT, sc_game game) {
 	run_quit(context, game_);
 }
 
-
 /*
  * sc_save_game_to_filename()
  * sc_save_game_to_stream()
@@ -512,7 +497,7 @@ void sc_save_game_to_stream(sc_game game, Common::SeekableReadStream *stream) {
 }
 
 void sc_save_game_to_callback(sc_game game,
-		void (*callback)(void *, const sc_byte *, sc_int), void *opaque) {
+                              void (*callback)(void *, const sc_byte *, sc_int), void *opaque) {
 	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_save_game_to_callback"))
@@ -566,7 +551,7 @@ sc_bool sc_load_game_from_stream(CONTEXT, sc_game game, Common::SeekableReadStre
 }
 
 sc_bool sc_load_game_from_callback(CONTEXT, sc_game game,
-		sc_int(*callback)(void *, sc_byte *, sc_int), void *opaque) {
+                                   sc_int (*callback)(void *, sc_byte *, sc_int), void *opaque) {
 	const sc_gameref_t game_ = (sc_gameref_t)game;
 
 	if (if_game_error(game_, "sc_load_game_from_callback"))
@@ -579,7 +564,6 @@ sc_bool sc_load_game_from_callback(CONTEXT, sc_game game,
 
 	return run_restore(context, game_, callback, opaque);
 }
-
 
 /*
  * sc_free_game()
@@ -594,7 +578,6 @@ void sc_free_game(sc_game game) {
 
 	run_destroy(game_);
 }
-
 
 /*
  * sc_is_game_running()
@@ -789,7 +772,6 @@ sc_bool sc_is_game_undo_available(sc_game game) {
 	return run_is_undo_available(game_);
 }
 
-
 /*
  * sc_set_game_bold_room_names()
  * sc_set_game_verbose()
@@ -833,7 +815,6 @@ void sc_set_game_notify_score_change(sc_game game, sc_bool flag) {
 	run_set_attributes(game_, bold, verbose, flag);
 }
 
-
 /*
  * sc_does_game_use_sounds()
  * sc_does_game_use_graphics()
@@ -857,7 +838,6 @@ sc_bool sc_does_game_use_graphics(sc_game game) {
 
 	return res_has_graphics(game_);
 }
-
 
 /*
  * sc_get_first_game_hint()
@@ -933,7 +913,6 @@ const sc_char *sc_get_game_unsubtle_hint(sc_game game, sc_game_hint hint) {
 	return run_get_unsubtle_hint(game_, hint_);
 }
 
-
 /*
  * sc_set_game_debugger_enabled()
  * sc_is_game_debugger_enabled()
@@ -968,7 +947,6 @@ sc_bool sc_run_game_debugger_command(sc_game game, const sc_char *debug_command)
 	return debug_run_command(game_, debug_command);
 }
 
-
 /*
  * sc_set_locale()
  * sc_get_locale()
@@ -987,7 +965,6 @@ sc_bool sc_set_locale(const sc_char *name) {
 const sc_char *sc_get_locale(void) {
 	return loc_get_locale();
 }
-
 
 /*
  * sc_set_portable_random()

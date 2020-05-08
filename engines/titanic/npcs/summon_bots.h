@@ -31,10 +31,12 @@ class CSummonBots : public CRobotController {
 	DECLARE_MESSAGE_MAP;
 	bool SummonBotQueryMsg(CSummonBotQueryMsg *msg);
 	bool SummonBotMsg(CSummonBotMsg *msg);
+
 protected:
 	CString _string2;
 	int _fieldC8;
 	int _fieldCC;
+
 public:
 	CLASSDEF;
 	CSummonBots();

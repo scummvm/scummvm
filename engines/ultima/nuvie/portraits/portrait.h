@@ -45,10 +45,10 @@ protected:
 	uint8 avatar_portrait_num;
 	uint8 width;
 	uint8 height;
-public:
 
+public:
 	Portrait(Configuration *cfg);
-	virtual ~Portrait() {};
+	virtual ~Portrait(){};
 
 	virtual bool init() = 0;
 	virtual bool load(NuvieIO *objlist) = 0;
@@ -68,13 +68,10 @@ public:
 	uint8 get_avatar_portrait_num();
 
 protected:
-
 	unsigned char *get_wou_portrait_data(U6Lib_n *lib, uint8 num);
 
 private:
-
 	virtual uint8 get_portrait_num(Actor *actor) = 0;
-
 };
 
 } // End of namespace Nuvie

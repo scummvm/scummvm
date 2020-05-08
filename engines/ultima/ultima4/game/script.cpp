@@ -21,8 +21,7 @@
  */
 
 #include "ultima/ultima4/game/script.h"
-#include "ultima/ultima4/game/armor.h"
-#include "ultima/ultima4/game/context.h"
+#include "ultima/shared/conf/xml_tree.h"
 #include "ultima/ultima4/controllers/inn_controller.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/core/settings.h"
@@ -31,15 +30,16 @@
 #include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/game/armor.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/game/spell.h"
-#include "ultima/ultima4/views/stats.h"
+#include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/sound/music.h"
-#include "ultima/shared/conf/xml_tree.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -93,34 +93,34 @@ bool Script::Variable::isSet() const {
 }
 
 Script::Script() : _vendorScriptDoc(nullptr), _scriptNode(nullptr),
-		_debug(false), _state(STATE_UNLOADED), _currentScript(nullptr),
-		_currentItem(nullptr), _inputType(INPUT_CHOICE), _inputMaxLen(0),
-		_nounName("item"), _idPropName("id"), _iterator(0) {
-	_actionMap["context"]           = ACTION_SET_CONTEXT;
-	_actionMap["unset_context"]     = ACTION_UNSET_CONTEXT;
-	_actionMap["end"]               = ACTION_END;
-	_actionMap["redirect"]          = ACTION_REDIRECT;
+                   _debug(false), _state(STATE_UNLOADED), _currentScript(nullptr),
+                   _currentItem(nullptr), _inputType(INPUT_CHOICE), _inputMaxLen(0),
+                   _nounName("item"), _idPropName("id"), _iterator(0) {
+	_actionMap["context"] = ACTION_SET_CONTEXT;
+	_actionMap["unset_context"] = ACTION_UNSET_CONTEXT;
+	_actionMap["end"] = ACTION_END;
+	_actionMap["redirect"] = ACTION_REDIRECT;
 	_actionMap["wait_for_keypress"] = ACTION_WAIT_FOR_KEY;
-	_actionMap["wait"]              = ACTION_WAIT;
-	_actionMap["stop"]              = ACTION_STOP;
-	_actionMap["include"]           = ACTION_INCLUDE;
-	_actionMap["for"]               = ACTION_FOR_LOOP;
-	_actionMap["random"]            = ACTION_RANDOM;
-	_actionMap["move"]              = ACTION_MOVE;
-	_actionMap["sleep"]             = ACTION_SLEEP;
-	_actionMap["cursor"]            = ACTION_CURSOR;
-	_actionMap["pay"]               = ACTION_PAY;
-	_actionMap["if"]                = ACTION_IF;
-	_actionMap["input"]             = ACTION_INPUT;
-	_actionMap["add"]               = ACTION_ADD;
-	_actionMap["lose"]              = ACTION_LOSE;
-	_actionMap["heal"]              = ACTION_HEAL;
-	_actionMap["cast_spell"]        = ACTION_CAST_SPELL;
-	_actionMap["damage"]            = ACTION_DAMAGE;
-	_actionMap["karma"]             = ACTION_KARMA;
-	_actionMap["music"]             = ACTION_MUSIC;
-	_actionMap["var"]               = ACTION_SET_VARIABLE;
-	_actionMap["ztats"]             = ACTION_ZTATS;
+	_actionMap["wait"] = ACTION_WAIT;
+	_actionMap["stop"] = ACTION_STOP;
+	_actionMap["include"] = ACTION_INCLUDE;
+	_actionMap["for"] = ACTION_FOR_LOOP;
+	_actionMap["random"] = ACTION_RANDOM;
+	_actionMap["move"] = ACTION_MOVE;
+	_actionMap["sleep"] = ACTION_SLEEP;
+	_actionMap["cursor"] = ACTION_CURSOR;
+	_actionMap["pay"] = ACTION_PAY;
+	_actionMap["if"] = ACTION_IF;
+	_actionMap["input"] = ACTION_INPUT;
+	_actionMap["add"] = ACTION_ADD;
+	_actionMap["lose"] = ACTION_LOSE;
+	_actionMap["heal"] = ACTION_HEAL;
+	_actionMap["cast_spell"] = ACTION_CAST_SPELL;
+	_actionMap["damage"] = ACTION_DAMAGE;
+	_actionMap["karma"] = ACTION_KARMA;
+	_actionMap["music"] = ACTION_MUSIC;
+	_actionMap["var"] = ACTION_SET_VARIABLE;
+	_actionMap["ztats"] = ACTION_ZTATS;
 }
 
 Script::~Script() {
@@ -163,7 +163,7 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 	 * Open and parse the .xml file
 	 */
 	Shared::XMLTree *doc = new Shared::XMLTree(
-		Common::String::format("data/conf/%s", filename.c_str()));
+	    Common::String::format("data/conf/%s", filename.c_str()));
 	_vendorScriptDoc = root = doc->getTree();
 
 	if (!root->id().equalsIgnoreCase("scripts"))
@@ -239,7 +239,8 @@ bool Script::load(const Common::String &filename, const Common::String &baseId, 
 	} else {
 		if (subNodeName.empty())
 			error("Couldn't find script '%s' in %s", baseId.c_str(), filename.c_str());
-		else error("Couldn't find subscript '%s' where id='%s' in script '%s' in %s", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str(), filename.c_str());
+		else
+			error("Couldn't find subscript '%s' where id='%s' in script '%s' in %s", subNodeName.c_str(), subNodeId.c_str(), baseId.c_str(), filename.c_str());
 	}
 
 	_state = STATE_UNLOADED;
@@ -261,7 +262,8 @@ void Script::run(const Common::String &script) {
 	if (_variables.find(_idPropName) != _variables.end()) {
 		if (_variables[_idPropName]->isSet())
 			search_id = _variables[_idPropName]->getString();
-		else search_id = "null";
+		else
+			search_id = "null";
 	}
 
 	scriptNode = find(_scriptNode, script, search_id);
@@ -436,7 +438,8 @@ void Script::_continue() {
 	/* there's no target indicated, just start where we left off! */
 	if (_target.empty())
 		execute(_currentScript, _currentItem);
-	else run(_target);
+	else
+		run(_target);
 }
 
 void Script::resetState() {
@@ -469,7 +472,8 @@ void Script::unsetVar(const Common::String &name) {
 	// Ensure that the variable at least exists, but has no value
 	if (_variables.find(name) != _variables.end())
 		_variables[name]->unset();
-	else _variables[name] = new Variable();
+	else
+		_variables[name] = new Variable();
 }
 
 Script::State Script::getState() {
@@ -526,7 +530,7 @@ void Script::translate(Common::String *text) {
 		Common::String current = item;
 		while (true) {
 			uint open = current.findFirstOf("{"),
-			             close = current.findFirstOf("}");
+			     close = current.findFirstOf("}");
 
 			if (close == current.size())
 				error("Error: no closing } found in script.");
@@ -688,7 +692,8 @@ void Script::translate(Common::String *text) {
 				else if (funcName == "compare") {
 					if (compare(content))
 						prop = "true";
-					else prop = "false";
+					else
+						prop = "false";
 				}
 
 				/* make the Common::String upper case */
@@ -716,7 +721,8 @@ void Script::translate(Common::String *text) {
 				else if (funcName == "isempty") {
 					if (content.empty())
 						prop = "true";
-					else prop = "false";
+					else
+						prop = "false";
 				}
 			}
 		}
@@ -941,8 +947,8 @@ Script::ReturnCode Script::forLoop(Shared::XMLNode *script, Shared::XMLNode *cur
 		debug("\n<For Start=%d End=%d>", start, end);
 
 	for (i = start, _iterator = start;
-	        i <= end;
-	        i++, _iterator++) {
+	     i <= end;
+	     i++, _iterator++) {
 
 		if (_debug)
 			debug("%d: ", i);
@@ -1149,8 +1155,7 @@ Script::ReturnCode Script::add(Shared::XMLNode *script, Shared::XMLNode *current
 	} else if (type == "reagent") {
 		int reagent;
 		static const Common::String reagents[] = {
-			"ash", "ginseng", "garlic", "silk", "moss", "pearl", "mandrake", "nightshade", ""
-		};
+		    "ash", "ginseng", "garlic", "silk", "moss", "pearl", "mandrake", "nightshade", ""};
 
 		for (reagent = 0; reagents[reagent].size(); reagent++) {
 			if (reagents[reagent] == subtype)
@@ -1240,26 +1245,26 @@ Script::ReturnCode Script::karma(Shared::XMLNode *script, Shared::XMLNode *curre
 	static KarmaActionMap action_map;
 
 	if (action_map.size() == 0) {
-		action_map["found_item"]            = KA_FOUND_ITEM;
-		action_map["stole_chest"]           = KA_STOLE_CHEST;
-		action_map["gave_to_beggar"]        = KA_GAVE_TO_BEGGAR;
-		action_map["bragged"]               = KA_BRAGGED;
-		action_map["humble"]                = KA_HUMBLE;
-		action_map["hawkwind"]              = KA_HAWKWIND;
-		action_map["meditation"]            = KA_MEDITATION;
-		action_map["bad_mantra"]            = KA_BAD_MANTRA;
-		action_map["attacked_good"]         = KA_ATTACKED_GOOD;
-		action_map["fled_evil"]             = KA_FLED_EVIL;
-		action_map["fled_good"]             = KA_FLED_GOOD;
-		action_map["healthy_fled_evil"]     = KA_HEALTHY_FLED_EVIL;
-		action_map["killed_evil"]           = KA_KILLED_EVIL;
-		action_map["spared_good"]           = KA_SPARED_GOOD;
-		action_map["gave_blood"]            = KA_DONATED_BLOOD;
-		action_map["didnt_give_blood"]      = KA_DIDNT_DONATE_BLOOD;
-		action_map["cheated_merchant"]      = KA_CHEAT_REAGENTS;
-		action_map["honest_to_merchant"]    = KA_DIDNT_CHEAT_REAGENTS;
-		action_map["used_skull"]            = KA_USED_SKULL;
-		action_map["destroyed_skull"]       = KA_DESTROYED_SKULL;
+		action_map["found_item"] = KA_FOUND_ITEM;
+		action_map["stole_chest"] = KA_STOLE_CHEST;
+		action_map["gave_to_beggar"] = KA_GAVE_TO_BEGGAR;
+		action_map["bragged"] = KA_BRAGGED;
+		action_map["humble"] = KA_HUMBLE;
+		action_map["hawkwind"] = KA_HAWKWIND;
+		action_map["meditation"] = KA_MEDITATION;
+		action_map["bad_mantra"] = KA_BAD_MANTRA;
+		action_map["attacked_good"] = KA_ATTACKED_GOOD;
+		action_map["fled_evil"] = KA_FLED_EVIL;
+		action_map["fled_good"] = KA_FLED_GOOD;
+		action_map["healthy_fled_evil"] = KA_HEALTHY_FLED_EVIL;
+		action_map["killed_evil"] = KA_KILLED_EVIL;
+		action_map["spared_good"] = KA_SPARED_GOOD;
+		action_map["gave_blood"] = KA_DONATED_BLOOD;
+		action_map["didnt_give_blood"] = KA_DIDNT_DONATE_BLOOD;
+		action_map["cheated_merchant"] = KA_CHEAT_REAGENTS;
+		action_map["honest_to_merchant"] = KA_DIDNT_CHEAT_REAGENTS;
+		action_map["used_skull"] = KA_USED_SKULL;
+		action_map["destroyed_skull"] = KA_DESTROYED_SKULL;
 	}
 
 	KarmaActionMap::iterator ka = action_map.find(action);
@@ -1310,25 +1315,25 @@ Script::ReturnCode Script::setVar(Shared::XMLNode *script, Shared::XMLNode *curr
 }
 
 Script::ReturnCode Script::ztats(Shared::XMLNode *script, Shared::XMLNode *current) {
-	typedef Std::map<Common::String, StatsView/*, Std::less<Common::String>*/ > StatsViewMap;
+	typedef Std::map<Common::String, StatsView /*, Std::less<Common::String>*/> StatsViewMap;
 	static StatsViewMap view_map;
 
 	if (view_map.size() == 0) {
-		view_map["party"]       = STATS_PARTY_OVERVIEW;
-		view_map["party1"]      = STATS_CHAR1;
-		view_map["party2"]      = STATS_CHAR2;
-		view_map["party3"]      = STATS_CHAR3;
-		view_map["party4"]      = STATS_CHAR4;
-		view_map["party5"]      = STATS_CHAR5;
-		view_map["party6"]      = STATS_CHAR6;
-		view_map["party7"]      = STATS_CHAR7;
-		view_map["party8"]      = STATS_CHAR8;
-		view_map["weapons"]     = STATS_WEAPONS;
-		view_map["armor"]       = STATS_ARMOR;
-		view_map["equipment"]   = STATS_EQUIPMENT;
-		view_map["item"]        = STATS_ITEMS;
-		view_map["reagents"]    = STATS_REAGENTS;
-		view_map["mixtures"]    = STATS_MIXTURES;
+		view_map["party"] = STATS_PARTY_OVERVIEW;
+		view_map["party1"] = STATS_CHAR1;
+		view_map["party2"] = STATS_CHAR2;
+		view_map["party3"] = STATS_CHAR3;
+		view_map["party4"] = STATS_CHAR4;
+		view_map["party5"] = STATS_CHAR5;
+		view_map["party6"] = STATS_CHAR6;
+		view_map["party7"] = STATS_CHAR7;
+		view_map["party8"] = STATS_CHAR8;
+		view_map["weapons"] = STATS_WEAPONS;
+		view_map["armor"] = STATS_ARMOR;
+		view_map["equipment"] = STATS_EQUIPMENT;
+		view_map["item"] = STATS_ITEMS;
+		view_map["reagents"] = STATS_REAGENTS;
+		view_map["mixtures"] = STATS_MIXTURES;
 	}
 
 	if (current->hasProperty("screen")) {

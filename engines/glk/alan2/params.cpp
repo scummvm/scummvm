@@ -20,8 +20,8 @@
  *
  */
 
-#include "glk/alan2/types.h"
 #include "glk/alan2/params.h"
+#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -46,7 +46,8 @@ int lstlen(ParamElem a[]) {
 Boolean inlst(ParamElem l[], Aword e) {
 	int i;
 
-	for (i = 0; l[i].code != (Aword)EOD && l[i].code != e; i++);
+	for (i = 0; l[i].code != (Aword)EOD && l[i].code != e; i++)
+		;
 	return (l[i].code == e);
 }
 
@@ -63,14 +64,15 @@ void sublst(ParamElem a[], ParamElem b[]) {
 
 	for (i = 0; a[i].code != (Aword)EOD; i++)
 		if (inlst(b, a[i].code))
-			a[i].code = 0;        /* Mark empty */
+			a[i].code = 0; /* Mark empty */
 	compact(a);
 }
 
 void mrglst(ParamElem a[], ParamElem b[]) {
 	int i, last;
 
-	for (last = 0; a[last].code != (Aword)EOD; last++); /* Find end of list */
+	for (last = 0; a[last].code != (Aword)EOD; last++)
+		; /* Find end of list */
 	for (i = 0; b[i].code != (Aword)EOD; i++)
 		if (!inlst(a, b[i].code)) {
 			a[last++] = b[i];

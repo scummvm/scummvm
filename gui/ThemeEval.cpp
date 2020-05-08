@@ -94,15 +94,15 @@ ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String
 	ThemeLayoutWidget *widget;
 	if (type == "TabWidget")
 		widget = new ThemeLayoutTabWidget(_curLayout.top(), name,
-									typeW == -1 ? w : typeW,
-									typeH == -1 ? h : typeH,
-									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign,
-									getVar("Globals.TabWidget.Tab.Height", 0));
+		                                  typeW == -1 ? w : typeW,
+		                                  typeH == -1 ? h : typeH,
+		                                  typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign,
+		                                  getVar("Globals.TabWidget.Tab.Height", 0));
 	else
 		widget = new ThemeLayoutWidget(_curLayout.top(), name,
-									typeW == -1 ? w : typeW,
-									typeH == -1 ? h : typeH,
-									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign);
+		                               typeW == -1 ? w : typeW,
+		                               typeH == -1 ? h : typeH,
+		                               typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign);
 
 	_curLayout.top()->addChild(widget);
 
@@ -120,11 +120,10 @@ ThemeEval &ThemeEval::addDialog(const Common::String &name, const Common::String
 	_layouts[var] = layout;
 
 	layout->setPadding(
-		getVar("Globals.Padding.Left", 0),
-		getVar("Globals.Padding.Right", 0),
-		getVar("Globals.Padding.Top", 0),
-		getVar("Globals.Padding.Bottom", 0)
-		);
+	    getVar("Globals.Padding.Left", 0),
+	    getVar("Globals.Padding.Right", 0),
+	    getVar("Globals.Padding.Top", 0),
+	    getVar("Globals.Padding.Bottom", 0));
 
 	_curLayout.push(layout);
 	_curDialog = name;
@@ -143,11 +142,10 @@ ThemeEval &ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, Theme
 	assert(layout);
 
 	layout->setPadding(
-		getVar("Globals.Padding.Left", 0),
-		getVar("Globals.Padding.Right", 0),
-		getVar("Globals.Padding.Top", 0),
-		getVar("Globals.Padding.Bottom", 0)
-		);
+	    getVar("Globals.Padding.Left", 0),
+	    getVar("Globals.Padding.Right", 0),
+	    getVar("Globals.Padding.Top", 0),
+	    getVar("Globals.Padding.Bottom", 0));
 
 	_curLayout.top()->addChild(layout);
 	_curLayout.push(layout);

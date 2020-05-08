@@ -25,8 +25,8 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
-#include "sci/sci.h"
 #include "sci/graphics/helpers.h"
+#include "sci/sci.h"
 #include "sci/util.h"
 
 namespace Sci {
@@ -117,7 +117,7 @@ private:
 	GfxView *_zoomPicView;
 	byte _zoomColor;
 	byte _zoomMultiplier;
-	Common::SpanOwner<SciSpan<byte> > _cursorSurface;
+	Common::SpanOwner<SciSpan<byte>> _cursorSurface;
 
 	CursorCache _cachedCursors;
 

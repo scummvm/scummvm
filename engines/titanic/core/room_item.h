@@ -23,21 +23,23 @@
 #ifndef TITANIC_ROOM_ITEM_H
 #define TITANIC_ROOM_ITEM_H
 
-#include "titanic/support/rect.h"
 #include "titanic/core/list.h"
-#include "titanic/support/movie_clip.h"
 #include "titanic/core/named_item.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/support/movie_clip.h"
+#include "titanic/support/rect.h"
 
 namespace Titanic {
 
 class CRoomItem : public CNamedItem {
 	DECLARE_MESSAGE_MAP;
+
 private:
 	/**
 	 * Handles post-load processing
 	 */
 	void postLoad();
+
 public:
 	Rect _roomRect;
 	CMovieClipList _clipList;
@@ -45,6 +47,7 @@ public:
 	CResourceKey _transitionMovieKey;
 	CResourceKey _exitMovieKey;
 	double _roomDimensionX, _roomDimensionY;
+
 public:
 	CLASSDEF;
 	CRoomItem();

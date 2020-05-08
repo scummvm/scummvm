@@ -49,18 +49,13 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 }
 
 bool CBaseStarEntry::operator==(const CBaseStarEntry &s) const {
-	return _red == s._red && _green == s._green
-		&& _blue == s._blue && _thickness == s._thickness
-		&& _value == s._value && _position == s._position
-		&& _data[0] == s._data[0] && _data[1] == s._data[1]
-		&& _data[2] == s._data[2] && _data[3] == s._data[3]
-		&& _data[4] == s._data[4];
+	return _red == s._red && _green == s._green && _blue == s._blue && _thickness == s._thickness && _value == s._value && _position == s._position && _data[0] == s._data[0] && _data[1] == s._data[1] && _data[2] == s._data[2] && _data[3] == s._data[3] && _data[4] == s._data[4];
 }
 
 /*------------------------------------------------------------------------*/
 
 CBaseStars::CBaseStars() : _minVal(0.0), _maxVal(1.0), _range(0.0),
-		_value1(0.0), _value2(0.0), _value3(0.0), _value4(0.0) {
+                           _value1(0.0), _value2(0.0), _value3(0.0), _value4(0.0) {
 }
 
 void CBaseStars::clear() {
@@ -177,18 +172,17 @@ void CBaseStars::draw1(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup 
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &entry = _data[idx];
 		const FVector &vector = entry._position;
-		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z
-			+ vector._z * pose._row3._z + pose._vector._z;
+		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z + vector._z * pose._row3._z + pose._vector._z;
 		if (tempZ <= minVal)
 			continue;
 
 		tempY = vector._x * pose._row1._y + vector._y * pose._row2._y + vector._z * pose._row3._y + pose._vector._y;
 		tempX = vector._x * pose._row1._x + vector._y * pose._row2._x + vector._z * pose._row3._x + pose._vector._x;
-		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ; 
+		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
 			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
-				surfaceArea, camera);
+			              surfaceArea, camera);
 			continue;
 		}
 
@@ -262,8 +256,7 @@ void CBaseStars::draw2(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup 
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &entry = _data[idx];
 		const FVector &vector = entry._position;
-		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z
-			+ vector._z * pose._row3._z + pose._vector._z;
+		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z + vector._z * pose._row3._z + pose._vector._z;
 		if (tempZ <= minVal)
 			continue;
 
@@ -273,7 +266,7 @@ void CBaseStars::draw2(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup 
 
 		if (total2 < 1.0e12) {
 			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
-				surfaceArea, camera);
+			              surfaceArea, camera);
 			continue;
 		}
 
@@ -351,8 +344,7 @@ void CBaseStars::draw3(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup 
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &entry = _data[idx];
 		const FVector &vector = entry._position;
-		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z
-			+ vector._z * pose._row3._z + pose._vector._z;
+		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z + vector._z * pose._row3._z + pose._vector._z;
 		if (tempZ <= minVal)
 			continue;
 
@@ -362,7 +354,7 @@ void CBaseStars::draw3(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup 
 
 		if (total2 < 1.0e12) {
 			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
-				surfaceArea, camera);
+			              surfaceArea, camera);
 			continue;
 		}
 
@@ -458,8 +450,7 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup 
 		const CBaseStarEntry &entry = _data[idx];
 		const FVector &vector = entry._position;
 
-		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z
-			+ vector._z * pose._row3._z + pose._vector._z;
+		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z + vector._z * pose._row3._z + pose._vector._z;
 		if (tempZ <= minVal)
 			continue;
 
@@ -470,7 +461,7 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup 
 		if (total2 < 1.0e12) {
 			// We're in close proximity to the given star, so draw a closeup of it
 			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
-				surfaceArea, camera);
+			              surfaceArea, camera);
 			continue;
 		}
 
@@ -548,7 +539,7 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup 
 }
 
 int CBaseStars::findStar(CSurfaceArea *surfaceArea, CCamera *camera,
-		const Common::Point &pt) {
+                         const Common::Point &pt) {
 	CStarRef1 ref(this, pt);
 	ref.process(surfaceArea, camera);
 	return ref._index;

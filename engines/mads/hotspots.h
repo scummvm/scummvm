@@ -41,9 +41,9 @@ public:
 	Facing _facing;
 	int _descId;
 	int _verbId;
-	bool _valid;	// V2
+	bool _valid; // V2
 	int _articleNumber;
-	byte _syntax;	// V2
+	byte _syntax; // V2
 	CursorType _cursor;
 
 	/**
@@ -59,29 +59,31 @@ public:
 
 #define DYNAMIC_HOTSPOTS_SIZE 16
 
-#define SYNTAX_SINGULAR               0
-#define SYNTAX_PLURAL                 1
-#define SYNTAX_PARTITIVE              2
-#define SYNTAX_SINGULAR_MASC          3
-#define SYNTAX_SINGULAR_FEM           4
-#define SYNTAX_SINGULAR_LIVING        5
-#define SYNTAX_MASC_NOT_PROPER        6
-#define SYNTAX_FEM_NOT_PROPER         7
-#define MAX_SYNTAX                    8
+#define SYNTAX_SINGULAR 0
+#define SYNTAX_PLURAL 1
+#define SYNTAX_PARTITIVE 2
+#define SYNTAX_SINGULAR_MASC 3
+#define SYNTAX_SINGULAR_FEM 4
+#define SYNTAX_SINGULAR_LIVING 5
+#define SYNTAX_MASC_NOT_PROPER 6
+#define SYNTAX_FEM_NOT_PROPER 7
+#define MAX_SYNTAX 8
 
 class DynamicHotspots {
 private:
 	MADSEngine *_vm;
 	Common::Array<DynamicHotspot> _entries;
 	int _count;
+
 public:
 	bool _changed;
+
 public:
 	DynamicHotspots(MADSEngine *vm);
 
 	Common::Array<MADS::DynamicHotspot>::size_type size() const { return _entries.size(); }
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
-	int add(int descId, int verbId, byte syntax, int seqIndex, const Common::Rect &bounds);	// V2
+	int add(int descId, int verbId, byte syntax, int seqIndex, const Common::Rect &bounds); // V2
 	int add(int descId, int verbId, int seqIndex, const Common::Rect &bounds);
 	int setPosition(int index, const Common::Point &pos, Facing facing);
 	int setCursor(int index, CursorType cursor);
@@ -109,7 +111,7 @@ public:
 	Facing _facing;
 	int _articleNumber;
 	bool _active;
-	byte _syntax;	// V2
+	byte _syntax; // V2
 	CursorType _cursor;
 	int _vocabId;
 	int _verbId;
@@ -121,6 +123,7 @@ public:
 class Hotspots : public Common::Array<Hotspot> {
 private:
 	MADSEngine *_vm;
+
 public:
 	Hotspots(MADSEngine *vm) : _vm(vm) {}
 
@@ -133,9 +136,8 @@ public:
 	 * Sets the active state of a given hotspot if it includes a given position
 	 */
 	void activateAtPos(int vocabId, bool active, Common::Point pos);
-
 };
 
 } // End of namespace MADS
 
-#endif	/* MADS_HOTSPOTS_H */
+#endif /* MADS_HOTSPOTS_H */

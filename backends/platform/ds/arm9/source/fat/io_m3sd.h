@@ -20,6 +20,6 @@ u16 M3_SetChipReg(u32 Data);
 void M3_SelectSaver(u8 Bank);
 
 // export interface
-extern LPIO_INTERFACE M3SD_GetInterface(void) ;
+extern LPIO_INTERFACE M3SD_GetInterface(void);
 
 #endif

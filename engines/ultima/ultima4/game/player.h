@@ -23,13 +23,13 @@
 #ifndef ULTIMA4_GAME_PLAYER_H
 #define ULTIMA4_GAME_PLAYER_H
 
-#include "ultima/ultima4/game/creature.h"
-#include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/core/observable.h"
-#include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/game/script.h"
-#include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/game/creature.h"
+#include "ultima/ultima4/game/script.h"
+#include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/map/tile.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -238,7 +238,7 @@ public:
 	 * Returns the number of weapons left of that type, including the one in
 	 * the players hand
 	 */
-	int  loseWeapon();
+	int loseWeapon();
 
 	/**
 	 * Put the party member to sleep
@@ -275,7 +275,7 @@ public:
 		INVENTORY_ADDED
 	};
 
-	PartyEvent(Type type, PartyMember *partyMember) : _type(type), _player(partyMember) { }
+	PartyEvent(Type type, PartyMember *partyMember) : _type(type), _player(partyMember) {}
 
 	Type _type;
 	PartyMember *_player;
@@ -285,6 +285,7 @@ typedef Std::vector<PartyMember *> PartyMemberVector;
 
 class Party : public Observable<Party *, PartyEvent &>, public Script::Provider {
 	friend class PartyMember;
+
 public:
 	Party(SaveGame *saveGame);
 	virtual ~Party();
@@ -351,12 +352,12 @@ public:
 	/**
 	 * Adds a chest worth of gold to the party's inventory
 	 */
-	int  getChest();
+	int getChest();
 
 	/**
 	 * Returns the number of turns a currently lit torch will last (or 0 if no torch lit)
 	 */
-	int  getTorchDuration() const;
+	int getTorchDuration() const;
 
 	/**
 	 * Heals the ship's hull strength by 'pts' points

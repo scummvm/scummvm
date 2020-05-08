@@ -50,7 +50,6 @@ public:
 	void ChildNotify(Gump *child, uint32 message) override;
 
 protected:
-
 	virtual void selectEntry(int entry);
 };
 

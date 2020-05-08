@@ -47,6 +47,7 @@ public:
 
 	bool load(const Common::String &video);
 	void render(const Graphics::Surface &frame, uint32 frameNumber, byte color);
+
 protected:
 	ToonEngine *_vm;
 	Graphics::Surface *_subSurface;

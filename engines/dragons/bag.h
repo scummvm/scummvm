@@ -23,8 +23,8 @@
 #ifndef DRAGONS_BAG_H
 #define DRAGONS_BAG_H
 
-#include "graphics/surface.h"
 #include "common/rect.h"
+#include "graphics/surface.h"
 
 namespace Dragons {
 

@@ -36,7 +36,7 @@ extern void gln_initialize();
 extern void gln_main(const char *filename);
 extern int gln_startup_code(int argc, char *argv[]);
 
-} // End of namespace Alan2
+} // namespace Level9
 } // End of namespace Glk
 
 #endif

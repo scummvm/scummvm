@@ -23,10 +23,10 @@
 #ifndef SCUMM_PLAYERS_PLAYER_NES_H
 #define SCUMM_PLAYERS_PLAYER_NES_H
 
-#include "common/scummsys.h"
-#include "scumm/music.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/scummsys.h"
+#include "scumm/music.h"
 
 namespace Scumm {
 
@@ -51,7 +51,7 @@ public:
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int  getSoundStatus(int sound) const override;
+	int getSoundStatus(int sound) const override;
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;
@@ -60,7 +60,6 @@ public:
 	int getRate() const override { return _sampleRate; }
 
 private:
-
 	void sound_play();
 	void playSFX(int nr);
 	void playMusic();

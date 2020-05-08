@@ -37,9 +37,9 @@
 #include "audio/audiostream.h"
 
 namespace Common {
-	class SeekableReadStream;
-	class String;
-}
+class SeekableReadStream;
+class String;
+} // namespace Common
 
 namespace Audio {
 

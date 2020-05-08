@@ -34,7 +34,6 @@ namespace Alan3 {
 /* DATA */
 extern bool continued;
 
-
 /* FUNCTIONS */
 
 extern void forceNewPlayerInput();

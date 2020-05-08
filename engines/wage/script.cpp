@@ -45,9 +45,9 @@
  *
  */
 
-#include "wage/wage.h"
-#include "wage/entities.h"
 #include "wage/script.h"
+#include "wage/entities.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 #include "common/config-manager.h"
@@ -75,7 +75,7 @@ static Common::String toString(int16 val) {
 }
 
 Common::String Script::Operand::toString() const {
-	switch(_type) {
+	switch (_type) {
 	case NUMBER:
 		return Wage::toString(_value.number);
 	case STRING:
@@ -211,7 +211,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 
 		byte command = _data->readByte();
 
-		switch(command) {
+		switch (command) {
 		case 0x80: // IF
 			processIf();
 			break;
@@ -220,50 +220,50 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 
 			return true;
 		case 0x89: // MOVE
-			{
-				Scene *currentScene = _world->_player->_currentScene;
-				processMove();
-				if (_world->_player->_currentScene != currentScene)
-					return true;
-				break;
-			}
+		{
+			Scene *currentScene = _world->_player->_currentScene;
+			processMove();
+			if (_world->_player->_currentScene != currentScene)
+				return true;
+			break;
+		}
 		case 0x8B: // PRINT
-			{
-				Operand *op = readOperand();
-				// TODO check op type is string or number, or something good...
-				_handled = true;
-				_engine->appendText(op->toString().c_str());
-				delete op;
-				byte d = _data->readByte();
-				if (d != 0xFD)
-					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
-				break;
-			}
+		{
+			Operand *op = readOperand();
+			// TODO check op type is string or number, or something good...
+			_handled = true;
+			_engine->appendText(op->toString().c_str());
+			delete op;
+			byte d = _data->readByte();
+			if (d != 0xFD)
+				warning("Operand 0x8B (PRINT) End Byte != 0xFD");
+			break;
+		}
 		case 0x8C: // SOUND
-			{
-				Operand *op = readOperand();
-				// TODO check op type is string.
-				_handled = true;
-				_engine->playSound(op->toString());
-				delete op;
-				byte d = _data->readByte();
-				if (d != 0xFD)
-					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
-				break;
-			}
+		{
+			Operand *op = readOperand();
+			// TODO check op type is string.
+			_handled = true;
+			_engine->playSound(op->toString());
+			delete op;
+			byte d = _data->readByte();
+			if (d != 0xFD)
+				warning("Operand 0x8B (PRINT) End Byte != 0xFD");
+			break;
+		}
 		case 0x8E: // LET
 			processLet();
 			break;
 		case 0x95: // MENU
-			{
-				Operand *op = readStringOperand(); // allows empty menu
-				// TODO check op type is string.
-				_engine->setMenu(op->toString());
-				delete op;
-				byte d = _data->readByte();
-				if (d != 0xFD)
-					warning("Operand 0x8B (PRINT) End Byte != 0xFD");
-			}
+		{
+			Operand *op = readStringOperand(); // allows empty menu
+			// TODO check op type is string.
+			_engine->setMenu(op->toString());
+			delete op;
+			byte d = _data->readByte();
+			if (d != 0xFD)
+				warning("Operand 0x8B (PRINT) End Byte != 0xFD");
+		}
 		case 0x88: // END
 			break;
 		default:
@@ -317,7 +317,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 
 			delete weapons;
 		}
-	// TODO: weapons, offer, etc...
+		// TODO: weapons, offer, etc...
 	} else if (_inputClick->_classType == OBJ) {
 		Obj *obj = (Obj *)_inputClick;
 		if (obj->_type != Obj::IMMOBILE_OBJECT) {
@@ -367,16 +367,15 @@ Script::Operand *Script::readOperand() {
 		return new Operand(_loopCount, NUMBER);
 	case 0xB3: // VICTORY#
 		return new Operand(cont->_kills, NUMBER);
-	case 0xB4: // BADCOPY#
+	case 0xB4:                         // BADCOPY#
 		return new Operand(0, NUMBER); // \?\?\??
-	case 0xFF:
-		{
-			// user variable
-			int value = _data->readByte();
+	case 0xFF: {
+		// user variable
+		int value = _data->readByte();
 
-			// TODO: Verify that we're using the right index.
-			return new Operand(cont->_userVariables[value - 1], NUMBER);
-		}
+		// TODO: Verify that we're using the right index.
+		return new Operand(cont->_userVariables[value - 1], NUMBER);
+	}
 	case 0xD0:
 		return new Operand(cont->_statVariables[PHYS_STR_BAS], NUMBER);
 	case 0xD1:
@@ -418,7 +417,7 @@ Script::Operand *Script::readOperand() {
 			_data->seek(-1, SEEK_CUR);
 			return readStringOperand();
 		} else {
-			debug("Dunno what %x is (index=%d)!\n", operandType, _data->pos()-1);
+			debug("Dunno what %x is (index=%d)!\n", operandType, _data->pos() - 1);
 		}
 		return NULL;
 	}
@@ -486,7 +485,7 @@ void Script::assign(byte operandType, int uservar, uint16 value) {
 		cont->_statVariables[PHYS_SPE_CUR] = value;
 		break;
 	default:
-		debug("No idea what I'm supposed to assign! (%x at %d)!\n", operandType, _data->pos()-1);
+		debug("No idea what I'm supposed to assign! (%x at %d)!\n", operandType, _data->pos() - 1);
 	}
 }
 
@@ -616,16 +615,18 @@ void Script::skipBlock() {
 			if (nesting == 0) {
 				return;
 			}
-		} else switch (op) {
+		} else
+			switch (op) {
 			case 0x8B: // PRINT
 			case 0x8C: // SOUND
 			case 0x8E: // LET
 			case 0x95: // MENU
-				while (_data->readByte() != 0xFD);
+				while (_data->readByte() != 0xFD)
+					;
 				break;
 			default:
 				break;
-		}
+			}
 	}
 }
 
@@ -655,14 +656,13 @@ enum {
 };
 
 static const char *typeNames[] = {
-	"OBJ",
-	"CHR",
-	"SCENE",
-	"NUMBER",
-	"STRING",
-	"CLICK_INPUT",
-	"TEXT_INPUT"
-};
+    "OBJ",
+    "CHR",
+    "SCENE",
+    "NUMBER",
+    "STRING",
+    "CLICK_INPUT",
+    "TEXT_INPUT"};
 
 static const char *operandTypeToStr(int type) {
 	if (type < 0 || type > 6)
@@ -677,44 +677,43 @@ struct Comparator {
 	OperandType o2;
 	int cmp;
 } static comparators[] = {
-	{ '=', NUMBER, NUMBER, kCompEqNumNum },
-	{ '=', OBJ, SCENE, kCompEqObjScene },
-	{ '=', CHR, SCENE, kCompEqChrScene },
-	{ '=', OBJ, CHR, kCompEqObjChr },
-	{ '=', CHR, CHR, kCompEqChrChr },
-	{ '=', SCENE, SCENE, kCompEqSceneScene },
-	{ '=', STRING, TEXT_INPUT, kCompEqStringTextInput },
-	{ '=', TEXT_INPUT, STRING, kCompEqTextInputString },
-	{ '=', NUMBER, TEXT_INPUT, kCompEqNumberTextInput },
-	{ '=', TEXT_INPUT, NUMBER, kCompEqTextInputNumber },
+    {'=', NUMBER, NUMBER, kCompEqNumNum},
+    {'=', OBJ, SCENE, kCompEqObjScene},
+    {'=', CHR, SCENE, kCompEqChrScene},
+    {'=', OBJ, CHR, kCompEqObjChr},
+    {'=', CHR, CHR, kCompEqChrChr},
+    {'=', SCENE, SCENE, kCompEqSceneScene},
+    {'=', STRING, TEXT_INPUT, kCompEqStringTextInput},
+    {'=', TEXT_INPUT, STRING, kCompEqTextInputString},
+    {'=', NUMBER, TEXT_INPUT, kCompEqNumberTextInput},
+    {'=', TEXT_INPUT, NUMBER, kCompEqTextInputNumber},
 
-	{ '<', NUMBER, NUMBER, kCompLtNumNum },
-	{ '<', STRING, TEXT_INPUT, kCompLtStringTextInput },
-	{ '<', TEXT_INPUT, STRING, kCompLtTextInputString },
-	{ '<', OBJ, CHR, kCompLtObjChr },
-	{ '<', CHR, OBJ, kCompLtChrObj },
-	{ '<', OBJ, SCENE, kCompLtObjScene },
-	{ '<', CHR, CHR, kCompEqChrChr }, // Same logic as =
-	{ '<', SCENE, SCENE, kCompEqSceneScene },
-	{ '<', CHR, SCENE, kCompGtChrScene }, // Same logic as >
+    {'<', NUMBER, NUMBER, kCompLtNumNum},
+    {'<', STRING, TEXT_INPUT, kCompLtStringTextInput},
+    {'<', TEXT_INPUT, STRING, kCompLtTextInputString},
+    {'<', OBJ, CHR, kCompLtObjChr},
+    {'<', CHR, OBJ, kCompLtChrObj},
+    {'<', OBJ, SCENE, kCompLtObjScene},
+    {'<', CHR, CHR, kCompEqChrChr}, // Same logic as =
+    {'<', SCENE, SCENE, kCompEqSceneScene},
+    {'<', CHR, SCENE, kCompGtChrScene}, // Same logic as >
 
-	{ '>', NUMBER, NUMBER, kCompGtNumNum },
-	{ '>', TEXT_INPUT, STRING, kCompLtTextInputString }, // Same logic as <
-	//FIXME: this prevents the below cases from working due to exact
-	//matches taking precedence over conversions...
-	//{ '>', STRING, STRING, kCompGtStringString }, // Same logic as <
-	{ '>', OBJ, CHR, kCompLtObjChr }, // Same logic as <
-	{ '>', OBJ, SCENE, kCompLtObjScene }, // Same logic as <
-	{ '>', CHR, SCENE, kCompGtChrScene },
+    {'>', NUMBER, NUMBER, kCompGtNumNum},
+    {'>', TEXT_INPUT, STRING, kCompLtTextInputString}, // Same logic as <
+    //FIXME: this prevents the below cases from working due to exact
+    //matches taking precedence over conversions...
+    //{ '>', STRING, STRING, kCompGtStringString }, // Same logic as <
+    {'>', OBJ, CHR, kCompLtObjChr},     // Same logic as <
+    {'>', OBJ, SCENE, kCompLtObjScene}, // Same logic as <
+    {'>', CHR, SCENE, kCompGtChrScene},
 
-	{ 'M', OBJ, CHR, kMoveObjChr },
-	{ 'M', OBJ, SCENE, kMoveObjScene },
-	{ 'M', CHR, SCENE, kMoveChrScene },
-	{ 0, OBJ, OBJ, 0 }
-};
+    {'M', OBJ, CHR, kMoveObjChr},
+    {'M', OBJ, SCENE, kMoveObjScene},
+    {'M', CHR, SCENE, kMoveChrScene},
+    {0, OBJ, OBJ, 0}};
 
 bool Script::compare(Operand *o1, Operand *o2, int comparator) {
-	switch(comparator) {
+	switch (comparator) {
 	case kCompEqNumNum:
 		return o1->_value.number == o2->_value.number;
 	case kCompEqObjScene:
@@ -789,7 +788,7 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	case kMoveObjChr:
 		if (o1->_value.obj->_currentOwner != o2->_value.chr) {
 			_world->move(o1->_value.obj, o2->_value.chr);
-			_handled = true;  // TODO: Is this correct?
+			_handled = true; // TODO: Is this correct?
 		}
 		break;
 	case kMoveObjScene:
@@ -801,7 +800,7 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 		break;
 	case kMoveChrScene:
 		_world->move(o1->_value.chr, o2->_value.scene);
-		_handled = true;  // TODO: Is this correct?
+		_handled = true; // TODO: Is this correct?
 		break;
 	default:
 		break;
@@ -812,7 +811,7 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 
 bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 	debug(7, "HANDLING CASE: [lhs=%s/%s, op=%s rhs=%s/%s]",
-		operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
+	      operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
 
 	for (int cmp = 0; comparators[cmp].op != 0; cmp++) {
 		if (comparators[cmp].op != op[0])
@@ -829,12 +828,12 @@ bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 			continue;
 
 		if (comparators[cmp].o1 == lhs->_type &&
-				(c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
+		    (c2 = convertOperand(rhs, comparators[cmp].o2)) != NULL) {
 			bool res = compare(lhs, c2, comparators[cmp].cmp);
 			delete c2;
 			return res;
 		} else if (comparators[cmp].o2 == rhs->_type &&
-				(c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
+		           (c1 = convertOperand(lhs, comparators[cmp].o1)) != NULL) {
 			bool res = compare(c1, rhs, comparators[cmp].cmp);
 			delete c1;
 			return res;
@@ -861,7 +860,7 @@ bool Script::evaluatePair(Operand *lhs, const char *op, Operand *rhs) {
 	}
 
 	warning("UNHANDLED CASE: [lhs=%s/%s, op=%s rhs=%s/%s]",
-		operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
+	        operandTypeToStr(lhs->_type), lhs->toString().c_str(), op, operandTypeToStr(rhs->_type), rhs->toString().c_str());
 
 	return false;
 }
@@ -888,7 +887,7 @@ bool Script::eval(Operand *lhs, const char *op, Operand *rhs) {
 			}
 		} else {
 			error("UNHANDLED CASE: [lhs=%s/%s, rhs=%s/%s]",
-				operandTypeToStr(lhs->_type), lhs->toString().c_str(), operandTypeToStr(rhs->_type), rhs->toString().c_str());
+			      operandTypeToStr(lhs->_type), lhs->toString().c_str(), operandTypeToStr(rhs->_type), rhs->toString().c_str());
 		}
 		if (!strcmp(op, ">>")) {
 			result = !result;
@@ -1062,134 +1061,134 @@ struct Mapping {
 	const char *cmd;
 	int type;
 } static const mapping[] = {
-	{ "IF{", STATEMENT }, // 0x80
-	{ "=", OPERATOR },
-	{ "<", OPERATOR },
-	{ ">", OPERATOR },
-	{ "}AND{", OPCODE },
-	{ "}OR{", OPCODE },
-	{ "\?\?\?(0x86)", OPCODE },
-	{ "EXIT\n", BLOCK_END },
-	{ "END\n", BLOCK_END }, // 0x88
-	{ "MOVE{", STATEMENT },
-	{ "}TO{", OPCODE },
-	{ "PRINT{", STATEMENT },
-	{ "SOUND{", STATEMENT },
-	{ "\?\?\?(0x8d)", OPCODE },
-	{ "LET{", STATEMENT },
-	{ "+", OPERATOR },
-	{ "-", OPERATOR }, // 0x90
-	{ "*", OPERATOR },
-	{ "/", OPERATOR },
-	{ "==", OPERATOR },
-	{ ">>", OPERATOR },
-	{ "MENU{", STATEMENT },
-	{ "\?\?\?(0x96)", OPCODE },
-	{ "\?\?\?(0x97)", OPCODE },
-	{ "\?\?\?(0x98)", OPCODE }, // 0x98
-	{ "\?\?\?(0x99)", OPCODE },
-	{ "\?\?\?(0x9a)", OPCODE },
-	{ "\?\?\?(0x9b)", OPCODE },
-	{ "\?\?\?(0x9c)", OPCODE },
-	{ "\?\?\?(0x9d)", OPCODE },
-	{ "\?\?\?(0x9e)", OPCODE },
-	{ "\?\?\?(0x9f)", OPCODE },
-	{ "TEXT$", OPCODE }, // 0xa0
-	{ "CLICK$", OPCODE },
-	{ "\?\?\?(0xa2)", OPCODE },
-	{ "\?\?\?(0xa3)", OPCODE },
-	{ "\?\?\?(0xa4)", OPCODE },
-	{ "\?\?\?(0xa5)", OPCODE },
-	{ "\?\?\?(0xa6)", OPCODE },
-	{ "\?\?\?(0xa7)", OPCODE },
-	{ "\?\?\?(0xa8)", OPCODE }, // 0xa8
-	{ "\?\?\?(0xa9)", OPCODE },
-	{ "\?\?\?(0xaa)", OPCODE },
-	{ "\?\?\?(0xab)", OPCODE },
-	{ "\?\?\?(0xac)", OPCODE },
-	{ "\?\?\?(0xad)", OPCODE },
-	{ "\?\?\?(0xae)", OPCODE },
-	{ "\?\?\?(0xaf)", OPCODE },
-	{ "VISITS#", OPCODE }, // 0xb0 // The number of scenes the player has visited, including repeated visits.
-	{ "RANDOM#", OPCODE }, // RANDOM# for Star Trek, but VISITS# for some other games?
-	{ "LOOP#", OPCODE },   // The number of commands the player has given in the current scene.
-	{ "VICTORY#", OPCODE }, // The number of characters killed.
-	{ "BADCOPY#", OPCODE },
-	{ "RANDOM#", OPCODE }, // A random number between 1 and 100.
-	{ "\?\?\?(0xb6)", OPCODE },
-	{ "\?\?\?(0xb7)", OPCODE },
-	{ "\?\?\?(0xb8)", OPCODE }, // 0xb8
-	{ "\?\?\?(0xb9)", OPCODE },
-	{ "\?\?\?(0xba)", OPCODE },
-	{ "\?\?\?(0xbb)", OPCODE },
-	{ "\?\?\?(0xbc)", OPCODE },
-	{ "\?\?\?(0xbd)", OPCODE },
-	{ "\?\?\?(0xbe)", OPCODE },
-	{ "\?\?\?(0xbf)", OPCODE },
-	{ "STORAGE@", OPCODE }, // 0xc0
-	{ "SCENE@", OPCODE },
-	{ "PLAYER@", OPCODE },
-	{ "MONSTER@", OPCODE },
-	{ "RANDOMSCN@", OPCODE },
-	{ "RANDOMCHR@", OPCODE },
-	{ "RANDOMOBJ@", OPCODE },
-	{ "\?\?\?(0xc7)", OPCODE },
-	{ "\?\?\?(0xc8)", OPCODE }, // 0xc8
-	{ "\?\?\?(0xc9)", OPCODE },
-	{ "\?\?\?(0xca)", OPCODE },
-	{ "\?\?\?(0xcb)", OPCODE },
-	{ "\?\?\?(0xcc)", OPCODE },
-	{ "\?\?\?(0xcd)", OPCODE },
-	{ "\?\?\?(0xce)", OPCODE },
-	{ "\?\?\?(0xcf)", OPCODE },
-	{ "PHYS.STR.BAS#", OPCODE }, // 0xd0
-	{ "PHYS.HIT.BAS#", OPCODE },
-	{ "PHYS.ARM.BAS#", OPCODE },
-	{ "PHYS.ACC.BAS#", OPCODE },
-	{ "SPIR.STR.BAS#", OPCODE },
-	{ "SPIR.HIT.BAS#", OPCODE },
-	{ "SPIR.ARM.BAS#", OPCODE },
-	{ "SPIR.ACC.BAS#", OPCODE },
-	{ "PHYS.SPE.BAS#", OPCODE }, // 0xd8
-	{ "\?\?\?(0xd9)", OPCODE },
-	{ "\?\?\?(0xda)", OPCODE },
-	{ "\?\?\?(0xdb)", OPCODE },
-	{ "\?\?\?(0xdc)", OPCODE },
-	{ "\?\?\?(0xdd)", OPCODE },
-	{ "\?\?\?(0xde)", OPCODE },
-	{ "\?\?\?(0xdf)", OPCODE },
-	{ "PHYS.STR.CUR#", OPCODE }, // 0xe0
-	{ "PHYS.HIT.CUR#", OPCODE },
-	{ "PHYS.ARM.CUR#", OPCODE },
-	{ "PHYS.ACC.CUR#", OPCODE },
-	{ "SPIR.STR.CUR#", OPCODE },
-	{ "SPIR.HIT.CUR#", OPCODE },
-	{ "SPIR.ARM.CUR#", OPCODE },
-	{ "SPIR.ACC.CUR#", OPCODE },
-	{ "PHYS.SPE.CUR#", OPCODE }, // 0xe8
-	{ "\?\?\?(0xe9)", OPCODE },
-	{ "\?\?\?(0xea)", OPCODE },
-	{ "\?\?\?(0xeb)", OPCODE },
-	{ "\?\?\?(0xec)", OPCODE },
-	{ "\?\?\?(0xed)", OPCODE },
-	{ "\?\?\?(0xee)", OPCODE },
-	{ "\?\?\?(0xef)", OPCODE },
-	{ "\?\?\?(0xf0)", OPCODE },
-	{ "\?\?\?(0xf1)", OPCODE },
-	{ "\?\?\?(0xf2)", OPCODE },
-	{ "\?\?\?(0xf3)", OPCODE },
-	{ "\?\?\?(0xf4)", OPCODE },
-	{ "\?\?\?(0xf5)", OPCODE },
-	{ "\?\?\?(0xf6)", OPCODE },
-	{ "\?\?\?(0xf7)", OPCODE },
-	{ "\?\?\?(0xf8)", OPCODE }, // 0xf8
-	{ "\?\?\?(0xf9)", OPCODE },
-	{ "\?\?\?(0xfa)", OPCODE },
-	{ "\?\?\?(0xfb)", OPCODE },
-	{ "\?\?\?(0xfc)", OPCODE },
-	{ "}\n", OPCODE },
-	{ "}THEN\n", BLOCK_START },
-	{ "\?\?\?(0xff)", OPCODE } // Uservar
+    {"IF{", STATEMENT}, // 0x80
+    {"=", OPERATOR},
+    {"<", OPERATOR},
+    {">", OPERATOR},
+    {"}AND{", OPCODE},
+    {"}OR{", OPCODE},
+    {"\?\?\?(0x86)", OPCODE},
+    {"EXIT\n", BLOCK_END},
+    {"END\n", BLOCK_END}, // 0x88
+    {"MOVE{", STATEMENT},
+    {"}TO{", OPCODE},
+    {"PRINT{", STATEMENT},
+    {"SOUND{", STATEMENT},
+    {"\?\?\?(0x8d)", OPCODE},
+    {"LET{", STATEMENT},
+    {"+", OPERATOR},
+    {"-", OPERATOR}, // 0x90
+    {"*", OPERATOR},
+    {"/", OPERATOR},
+    {"==", OPERATOR},
+    {">>", OPERATOR},
+    {"MENU{", STATEMENT},
+    {"\?\?\?(0x96)", OPCODE},
+    {"\?\?\?(0x97)", OPCODE},
+    {"\?\?\?(0x98)", OPCODE}, // 0x98
+    {"\?\?\?(0x99)", OPCODE},
+    {"\?\?\?(0x9a)", OPCODE},
+    {"\?\?\?(0x9b)", OPCODE},
+    {"\?\?\?(0x9c)", OPCODE},
+    {"\?\?\?(0x9d)", OPCODE},
+    {"\?\?\?(0x9e)", OPCODE},
+    {"\?\?\?(0x9f)", OPCODE},
+    {"TEXT$", OPCODE}, // 0xa0
+    {"CLICK$", OPCODE},
+    {"\?\?\?(0xa2)", OPCODE},
+    {"\?\?\?(0xa3)", OPCODE},
+    {"\?\?\?(0xa4)", OPCODE},
+    {"\?\?\?(0xa5)", OPCODE},
+    {"\?\?\?(0xa6)", OPCODE},
+    {"\?\?\?(0xa7)", OPCODE},
+    {"\?\?\?(0xa8)", OPCODE}, // 0xa8
+    {"\?\?\?(0xa9)", OPCODE},
+    {"\?\?\?(0xaa)", OPCODE},
+    {"\?\?\?(0xab)", OPCODE},
+    {"\?\?\?(0xac)", OPCODE},
+    {"\?\?\?(0xad)", OPCODE},
+    {"\?\?\?(0xae)", OPCODE},
+    {"\?\?\?(0xaf)", OPCODE},
+    {"VISITS#", OPCODE},  // 0xb0 // The number of scenes the player has visited, including repeated visits.
+    {"RANDOM#", OPCODE},  // RANDOM# for Star Trek, but VISITS# for some other games?
+    {"LOOP#", OPCODE},    // The number of commands the player has given in the current scene.
+    {"VICTORY#", OPCODE}, // The number of characters killed.
+    {"BADCOPY#", OPCODE},
+    {"RANDOM#", OPCODE}, // A random number between 1 and 100.
+    {"\?\?\?(0xb6)", OPCODE},
+    {"\?\?\?(0xb7)", OPCODE},
+    {"\?\?\?(0xb8)", OPCODE}, // 0xb8
+    {"\?\?\?(0xb9)", OPCODE},
+    {"\?\?\?(0xba)", OPCODE},
+    {"\?\?\?(0xbb)", OPCODE},
+    {"\?\?\?(0xbc)", OPCODE},
+    {"\?\?\?(0xbd)", OPCODE},
+    {"\?\?\?(0xbe)", OPCODE},
+    {"\?\?\?(0xbf)", OPCODE},
+    {"STORAGE@", OPCODE}, // 0xc0
+    {"SCENE@", OPCODE},
+    {"PLAYER@", OPCODE},
+    {"MONSTER@", OPCODE},
+    {"RANDOMSCN@", OPCODE},
+    {"RANDOMCHR@", OPCODE},
+    {"RANDOMOBJ@", OPCODE},
+    {"\?\?\?(0xc7)", OPCODE},
+    {"\?\?\?(0xc8)", OPCODE}, // 0xc8
+    {"\?\?\?(0xc9)", OPCODE},
+    {"\?\?\?(0xca)", OPCODE},
+    {"\?\?\?(0xcb)", OPCODE},
+    {"\?\?\?(0xcc)", OPCODE},
+    {"\?\?\?(0xcd)", OPCODE},
+    {"\?\?\?(0xce)", OPCODE},
+    {"\?\?\?(0xcf)", OPCODE},
+    {"PHYS.STR.BAS#", OPCODE}, // 0xd0
+    {"PHYS.HIT.BAS#", OPCODE},
+    {"PHYS.ARM.BAS#", OPCODE},
+    {"PHYS.ACC.BAS#", OPCODE},
+    {"SPIR.STR.BAS#", OPCODE},
+    {"SPIR.HIT.BAS#", OPCODE},
+    {"SPIR.ARM.BAS#", OPCODE},
+    {"SPIR.ACC.BAS#", OPCODE},
+    {"PHYS.SPE.BAS#", OPCODE}, // 0xd8
+    {"\?\?\?(0xd9)", OPCODE},
+    {"\?\?\?(0xda)", OPCODE},
+    {"\?\?\?(0xdb)", OPCODE},
+    {"\?\?\?(0xdc)", OPCODE},
+    {"\?\?\?(0xdd)", OPCODE},
+    {"\?\?\?(0xde)", OPCODE},
+    {"\?\?\?(0xdf)", OPCODE},
+    {"PHYS.STR.CUR#", OPCODE}, // 0xe0
+    {"PHYS.HIT.CUR#", OPCODE},
+    {"PHYS.ARM.CUR#", OPCODE},
+    {"PHYS.ACC.CUR#", OPCODE},
+    {"SPIR.STR.CUR#", OPCODE},
+    {"SPIR.HIT.CUR#", OPCODE},
+    {"SPIR.ARM.CUR#", OPCODE},
+    {"SPIR.ACC.CUR#", OPCODE},
+    {"PHYS.SPE.CUR#", OPCODE}, // 0xe8
+    {"\?\?\?(0xe9)", OPCODE},
+    {"\?\?\?(0xea)", OPCODE},
+    {"\?\?\?(0xeb)", OPCODE},
+    {"\?\?\?(0xec)", OPCODE},
+    {"\?\?\?(0xed)", OPCODE},
+    {"\?\?\?(0xee)", OPCODE},
+    {"\?\?\?(0xef)", OPCODE},
+    {"\?\?\?(0xf0)", OPCODE},
+    {"\?\?\?(0xf1)", OPCODE},
+    {"\?\?\?(0xf2)", OPCODE},
+    {"\?\?\?(0xf3)", OPCODE},
+    {"\?\?\?(0xf4)", OPCODE},
+    {"\?\?\?(0xf5)", OPCODE},
+    {"\?\?\?(0xf6)", OPCODE},
+    {"\?\?\?(0xf7)", OPCODE},
+    {"\?\?\?(0xf8)", OPCODE}, // 0xf8
+    {"\?\?\?(0xf9)", OPCODE},
+    {"\?\?\?(0xfa)", OPCODE},
+    {"\?\?\?(0xfb)", OPCODE},
+    {"\?\?\?(0xfc)", OPCODE},
+    {"}\n", OPCODE},
+    {"}THEN\n", BLOCK_START},
+    {"\?\?\?(0xff)", OPCODE} // Uservar
 };
 
 void Script::convertToText() {
@@ -1199,7 +1198,7 @@ void Script::convertToText() {
 	ScriptText *scr = new ScriptText;
 	scr->offset = _data->pos();
 
-	while(true) {
+	while (true) {
 		int c = _data->readByte();
 
 		if (_data->eos())

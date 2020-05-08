@@ -23,9 +23,9 @@
 #include "prince/archive.h"
 #include "prince/decompress.h"
 
-#include "common/stream.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 
 namespace Prince {
 
@@ -51,9 +51,9 @@ bool PtcArchive::open(const Common::String &filename) {
 	if (!_stream)
 		return false;
 
-	_stream->readUint32LE(); // magic
+	_stream->readUint32LE();                                       // magic
 	uint32 fileTableOffset = _stream->readUint32LE() ^ 0x4D4F4B2D; // MOK-
-	uint32 fileTableSize = _stream->readUint32LE() ^ 0x534F4654; // SOFT
+	uint32 fileTableSize = _stream->readUint32LE() ^ 0x534F4654;   // SOFT
 
 	debug(8, "fileTableOffset : %08X", fileTableOffset);
 	debug(8, "fileTableSize: %08X", fileTableSize);
@@ -67,7 +67,7 @@ bool PtcArchive::open(const Common::String &filename) {
 
 	for (byte *fileItem = fileTable; fileItem < fileTableEnd; fileItem += 32) {
 		FileEntry item;
-		Common::String name = (const char*)fileItem;
+		Common::String name = (const char *)fileItem;
 		item._offset = READ_LE_UINT32(fileItem + 24);
 		item._size = READ_LE_UINT32(fileItem + 28);
 		debug(8, "%12s %8X %d", name.c_str(), item._offset, item._size);

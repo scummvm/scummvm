@@ -28,10 +28,10 @@ struct lua_State;
 namespace HDB {
 
 struct Global {
-	char	global[32];			// name of global variable
-	int		valueOrString;	// value = 0, string = 1
-	double	value;				// value
-	char	string[32];			// string
+	char global[32];   // name of global variable
+	int valueOrString; // value = 0, string = 1
+	double value;      // value
+	char string[32];   // string
 
 	Global() : valueOrString(0), value(0) {
 		global[0] = 0;
@@ -82,7 +82,7 @@ private:
 	lua_State *_state;
 	int _pcallErrorhandlerRegistryIndex;
 
-	Common::SeekableReadStream* _globalLuaStream;
+	Common::SeekableReadStream *_globalLuaStream;
 	int32 _globalLuaLength;
 	bool _systemInit;
 
@@ -95,6 +95,6 @@ private:
 
 void lua_printstack(lua_State *L);
 
-}
+} // namespace HDB
 
 #endif // !HDB_LUA_SCRIPT_H

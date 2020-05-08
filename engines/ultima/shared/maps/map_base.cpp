@@ -21,10 +21,10 @@
  */
 
 #include "ultima/shared/maps/map_base.h"
-#include "ultima/shared/maps/map_widget.h"
-#include "ultima/shared/maps/map.h"
 #include "ultima/shared/early/game.h"
 #include "ultima/shared/gfx/visual_item.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Shared {
@@ -127,7 +127,7 @@ Point MapBase::getDirectionDelta() const {
 
 Point MapBase::getDeltaPosition(const Point &delta) {
 	return _playerWidget->_position + delta;
-} 
+}
 
 void MapBase::resetViewport() {
 	// Reset the viewport, so it's position will get recalculated

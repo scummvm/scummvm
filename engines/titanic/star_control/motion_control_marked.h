@@ -23,8 +23,8 @@
 #ifndef TITANIC_MOTION_CONTROL_MARKED_H
 #define TITANIC_MOTION_CONTROL_MARKED_H
 
-#include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/flight_manager_marked.h"
+#include "titanic/star_control/motion_control.h"
 
 namespace Titanic {
 
@@ -34,6 +34,7 @@ class FVector;
 class CMotionControlMarked : public CMotionControl {
 private:
 	CMarkedAutoMover _autoMover;
+
 public:
 	CMotionControlMarked(const CNavigationInfo *src);
 	~CMotionControlMarked() override {}
@@ -43,7 +44,7 @@ public:
 	 * position and orientation
 	 */
 	void transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation) override;
+	                                 const FMatrix &oldOrientation, const FMatrix &newOrientation) override;
 
 	/**
 	 * Update the passed position and orientation matrix

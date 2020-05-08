@@ -154,4 +154,4 @@ void Inventory::saveLoadWithSerializer(Common::Serializer &sz) {
 	}
 }
 
-}
+} // namespace MutationOfJB

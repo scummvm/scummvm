@@ -34,9 +34,8 @@ class StaticANIObject;
 int handleObjectInteraction(StaticANIObject *subject, GameObject *object, int invId);
 bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId);
 
-
 class Interaction : public CObject {
- public:
+public:
 	int16 _objectId1;
 	int16 _objectId2;
 	int16 _objectId3;
@@ -52,7 +51,7 @@ class Interaction : public CObject {
 	uint _flags;
 	Common::String _actionName;
 
- public:
+public:
 	Interaction();
 	~Interaction() override;
 
@@ -68,11 +67,11 @@ public:
 	typedef ObList<Interaction> InteractionList;
 	bool _flag24;
 
- private:
+private:
 	InteractionList _interactions;
 	static bool compareInteractions(const Interaction *i1, const Interaction *i2);
 
- public:
+public:
 	InteractionController() : _flag24(true) {}
 	~InteractionController() override;
 

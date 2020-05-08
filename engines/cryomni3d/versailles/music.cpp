@@ -34,20 +34,24 @@ namespace CryOmni3D {
 namespace Versailles {
 
 const char *CryOmni3DEngine_Versailles::kMusicFiles[8][8] = {
-	{ "1amb", }, // Level 1
-	{ "2amb", "2amb2", "2amb1" }, // Level 2
-	{ "3amb", "3amb1", "3amb2" }, // Level 3
-	{ "4amb", "4amb1" }, // Level 4
-	{ "5amb1", "5amb2" }, // Level 5
-	{ "6amb1", "6amb2", "6amb3", "6amb4" }, // Level 6
-	{ "7amb", }, // Level 7
-	{ "3amb", "3amb1", "3amb2", "2amb", "2amb1", "2amb2", "4amb" }, // Level 8
+    {
+        "1amb",
+    },                                    // Level 1
+    {"2amb", "2amb2", "2amb1"},           // Level 2
+    {"3amb", "3amb1", "3amb2"},           // Level 3
+    {"4amb", "4amb1"},                    // Level 4
+    {"5amb1", "5amb2"},                   // Level 5
+    {"6amb1", "6amb2", "6amb3", "6amb4"}, // Level 6
+    {
+        "7amb",
+    },                                                            // Level 7
+    {"3amb", "3amb1", "3amb2", "2amb", "2amb1", "2amb2", "4amb"}, // Level 8
 };
 
 void CryOmni3DEngine_Versailles::musicUpdate() {
 	if (!_isPlaying || _currentLevel <= 0 ||
-	        _mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType) ||
-	        _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) == 0) {
+	    _mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType) ||
+	    _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) == 0) {
 		// No music in all of these cases
 		musicStop();
 		return;
@@ -140,7 +144,7 @@ bool CryOmni3DEngine_Versailles::musicWouldChange(uint level, uint placeId) cons
 }
 
 uint CryOmni3DEngine_Versailles::getMusicId(uint level,
-        uint placeId) const {
+                                            uint placeId) const {
 	// No need of place state
 	switch (level) {
 	case 1:
@@ -270,7 +274,6 @@ uint CryOmni3DEngine_Versailles::getMusicId(uint level,
 			return 6;
 		default:
 			return 0;
-
 		}
 	default:
 		error("Invalid level %d when choosing music", level);

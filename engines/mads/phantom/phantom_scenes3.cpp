@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/conversations.h"
-#include "mads/scene.h"
-#include "mads/phantom/phantom_scenes.h"
 #include "mads/phantom/phantom_scenes3.h"
+#include "common/scummsys.h"
+#include "mads/conversations.h"
+#include "mads/mads.h"
+#include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -1050,7 +1050,6 @@ void Scene304::enter() {
 		}
 	}
 
-
 	if ((_scene->_priorSceneId == RETURNING_FROM_LOADING) && !_globals[kRightDoorIsOpen504]) {
 		_scene->setAnimFrame(_globals._animationIndexes[0], 53);
 		_game._player._stepEnabled = true;
@@ -1244,109 +1243,109 @@ void Scene304::handlePhantomAnimation() {
 	int resetFrame = -1;
 
 	switch (_phantomFrame) {
-	 case 7:
-	 case 11:
-		 resetFrame = _vm->getRandomNumber(6, 7);
+	case 7:
+	case 11:
+		resetFrame = _vm->getRandomNumber(6, 7);
 
-		 if (_phantomStatus == 1)
-			 resetFrame = 7;
+		if (_phantomStatus == 1)
+			resetFrame = 7;
 
-		 break;
+		break;
 
-	 case 9:
-	 case 15:
-		 switch (_vm->getRandomNumber(1, 3)) {
-		 case 1:
-			 resetFrame = 8;
-			 break;
+	case 9:
+	case 15:
+		switch (_vm->getRandomNumber(1, 3)) {
+		case 1:
+			resetFrame = 8;
+			break;
 
-		 case 2:
-			 resetFrame = 9;
-			 break;
+		case 2:
+			resetFrame = 9;
+			break;
 
-		 case 3:
-			 resetFrame = 11;
-			 break;
+		case 3:
+			resetFrame = 11;
+			break;
 
 		default:
 			break;
-		 }
+		}
 
-		 if (_phantomStatus == 1)
-			 resetFrame = 11;
+		if (_phantomStatus == 1)
+			resetFrame = 11;
 
-		 break;
+		break;
 
-	 case 13:
-	 case 24:
-		 switch (_vm->getRandomNumber(1, 3)) {
-		 case 1:
-			 resetFrame = 12;
-			 break;
+	case 13:
+	case 24:
+		switch (_vm->getRandomNumber(1, 3)) {
+		case 1:
+			resetFrame = 12;
+			break;
 
-		 case 2:
-			 resetFrame = 13;
-			 break;
+		case 2:
+			resetFrame = 13;
+			break;
 
-		 case 3:
-			 resetFrame = 16;
-			 break;
+		case 3:
+			resetFrame = 16;
+			break;
 
 		default:
 			break;
-		 }
+		}
 
-		 if (_phantomStatus == 1)
-			 resetFrame = 16;
+		if (_phantomStatus == 1)
+			resetFrame = 16;
 
-		 break;
+		break;
 
-	 case 20:
-		 if (_vm->getRandomNumber(1, 2) == 1)
-			 resetFrame = 19;
-		 else
-			 resetFrame = 20;
+	case 20:
+		if (_vm->getRandomNumber(1, 2) == 1)
+			resetFrame = 19;
+		else
+			resetFrame = 20;
 
-		 if (_phantomStatus == 1)
-			 resetFrame = 24;
+		if (_phantomStatus == 1)
+			resetFrame = 24;
 
-		 break;
+		break;
 
-	 case 25:
-		 _vm->_gameConv->release();
-		 break;
+	case 25:
+		_vm->_gameConv->release();
+		break;
 
-	 case 47:
-		 _fightStatus = 0;
-		 break;
+	case 47:
+		_fightStatus = 0;
+		break;
 
-	 case 59:
-		 if (_phantomStatus == 2)
-			 resetFrame = 59;
-		 else
-			 resetFrame = 58;
-		 break;
+	case 59:
+		if (_phantomStatus == 2)
+			resetFrame = 59;
+		else
+			resetFrame = 58;
+		break;
 
-	 case 60:
-		 _game._player._stepEnabled = false;
-		 break;
+	case 60:
+		_game._player._stepEnabled = false;
+		break;
 
-	 case 80:
-		 _game._objects.setRoom(OBJ_SWORD, NOWHERE);
-		 break;
+	case 80:
+		_game._objects.setRoom(OBJ_SWORD, NOWHERE);
+		break;
 
-	 case 137:
-		 _game._player._playerPos.x = 100;
-		 _scene->_nextSceneId = 305;
-		 break;
+	case 137:
+		_game._player._playerPos.x = 100;
+		_scene->_nextSceneId = 305;
+		break;
 
-	 case 176:
-		 _game._player._playerPos.x = 200;
-		 _scene->_nextSceneId = 305;
-		 break;
+	case 176:
+		_game._player._playerPos.x = 200;
+		_scene->_nextSceneId = 305;
+		break;
 
-	 default:
-		 break;
+	default:
+		break;
 	}
 
 	if (resetFrame >= 0) {
@@ -1465,7 +1464,7 @@ void Scene305::enter() {
 
 void Scene305::step() {
 	if (_anim0ActvFl)
-		handle_animation_unmask ();
+		handle_animation_unmask();
 
 	if (_anim1ActvFl) {
 		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 53)
@@ -1746,8 +1745,7 @@ void Scene307::actions() {
 			_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[3], SYNC_SEQ, idx);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 14);
 			_scene->_sequences.addTimer(10, 73);
-			 }
-			 break;
+		} break;
 
 		case 72:
 			_game._player._visible = true;
@@ -2332,7 +2330,7 @@ void Scene309::enter() {
 
 void Scene309::step() {
 	if (_anim0ActvFl)
-		handleBoatAnimation ();
+		handleBoatAnimation();
 
 	switch (_game._trigger) {
 	case 65:
@@ -2406,8 +2404,7 @@ void Scene309::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 			_game._player.walk(Common::Point(0, 121), FACING_NORTHWEST);
 			_game._player.setWalkTrigger(63);
-			}
-			break;
+		} break;
 
 		case 62:
 			_game._player._visible = true;

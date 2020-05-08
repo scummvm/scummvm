@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CPetModeOn : public CToggleSwitch {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 	CPetModeOn();

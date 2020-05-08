@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/mainmenu.h"
+#include "avalanche/avalanche.h"
 
 #include "common/system.h"
 

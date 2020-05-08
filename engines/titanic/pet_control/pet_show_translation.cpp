@@ -26,12 +26,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPETShowTranslation, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(ArboretumGateMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(ArboretumGateMsg)
 END_MESSAGE_MAP()
-
 
 void CPETShowTranslation::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);

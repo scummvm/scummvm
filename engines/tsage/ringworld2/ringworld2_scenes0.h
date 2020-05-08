@@ -25,13 +25,13 @@
 
 #include "common/scummsys.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
-#include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
 #include "tsage/ringworld2/ringworld2_speakers.h"
+#include "tsage/scenes.h"
+#include "tsage/sound.h"
 
 namespace TsAGE {
 
@@ -39,9 +39,9 @@ namespace Ringworld2 {
 
 using namespace TsAGE;
 
-class Scene50: public SceneExt {
+class Scene50 : public SceneExt {
 
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
@@ -53,31 +53,31 @@ public:
 	void process(Event &event) override;
 };
 
-class Scene100: public SceneExt {
+class Scene100 : public SceneExt {
 	/* Objects */
-	class Door: public SceneActorExt {
+	class Door : public SceneActorExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Table: public SceneActor {
+	class Table : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class StasisNegator: public SceneActor {
+	class StasisNegator : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class DoorDisplay: public SceneActorExt {
+	class DoorDisplay : public SceneActorExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class SteppingDisks: public SceneActor {
+	class SteppingDisks : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
-	class Terminal: public NamedHotspot{
+	class Terminal : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
@@ -100,14 +100,14 @@ public:
 	void dispatch() override;
 };
 
-class Scene125: public SceneExt {
+class Scene125 : public SceneExt {
 	/* Objects */
-	class Food: public SceneActor {
+	class Food : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
-	class Icon: public SceneActor {
+	class Icon : public SceneActor {
 	public:
 		int _lookLineNum, _iconId;
 		bool _pressed;
@@ -126,7 +126,7 @@ class Scene125: public SceneExt {
 	};
 
 	/* Items */
-	class DiskSlot: public NamedHotspot {
+	class DiskSlot : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
@@ -138,7 +138,7 @@ public:
 	DiskSlot _diskSlot;
 	SceneActor _starchart1, _starchart2, _starchart3, _starchart4;
 	SceneActor _food, _foodDispenser, _infoDisk;
-	Icon _icon1, _icon2, _icon3, _icon4, _icon5,  _icon6;
+	Icon _icon1, _icon2, _icon3, _icon4, _icon5, _icon6;
 	SequenceManager _sequenceManager;
 	SceneText _sceneText;
 	int _consoleMode, _iconFontNumber, _logIndex, _databaseIndex, _infodiskIndex;
@@ -158,26 +158,29 @@ public:
 	Common::String parseMessage(const Common::String &msg);
 };
 
-class Scene150: public Scene100 {
+class Scene150 : public Scene100 {
 public:
 	SceneActor _emptyRoomTable;
+
 public:
 	void postInit(SceneObjectList *OwnerList = NULL) override;
 	void remove() override;
 	void signal() override;
 };
 
-class Scene160: public SceneExt {
-	class Action1: public Action {
+class Scene160 : public SceneExt {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	ASound _sound1;
 	Action1 _action1;
 	int _frameNumber, _yChange;
 	int _lineNum;
 	SynchronizedList<SceneText *> _creditsList;
+
 public:
 	Scene160();
 	void postInit(SceneObjectList *OwnerList = NULL) override;
@@ -186,16 +189,18 @@ public:
 	void process(Event &event) override;
 };
 
-class Scene175: public Scene150 {
+class Scene175 : public Scene150 {
 };
 
-class Scene180: public SceneExt {
-	class Action1: public Action {
+class Scene180 : public SceneExt {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
+
 private:
 	void setSceneDelay(int v);
+
 public:
 	SpeakerWebbster180 _webbsterSpeaker;
 	SpeakerDutyOfficer180 _dutyOfficerSpeaker;
@@ -213,6 +218,7 @@ public:
 	bool _helpEnabled;
 	int _frameInc;
 	int _fontNumber, _fontHeight;
+
 public:
 	Scene180();
 
@@ -225,30 +231,31 @@ public:
 	void restore() override;
 };
 
-class Scene200: public SceneExt {
+class Scene200 : public SceneExt {
 	/* Objects */
-	class NorthDoor: public SceneActor {
+	class NorthDoor : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class EastDoor: public SceneActor {
+	class EastDoor : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class WestDoor: public SceneActor {
+	class WestDoor : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Scene Exits */
-	class EastExit: public SceneExit {
+	class EastExit : public SceneExit {
 	public:
 		void changeScene() override;
 	};
-	class WestExit: public SceneExit {
+	class WestExit : public SceneExit {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background, _compartment, _westDoorDisplay, _eastDoorDisplay;
 	NorthDoor _northDoor;
@@ -262,26 +269,30 @@ public:
 	void signal() override;
 };
 
-class Star: public SceneObject {
+class Star : public SceneObject {
 public:
 	int _x100, _y100;
+
 public:
 	Common::String getClassName() override { return "Scene205_Star"; }
 };
 
-class Scene205: public SceneExt {
+class Scene205 : public SceneExt {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	private:
 		void textLoop();
+
 	public:
 		void signal() override;
 	};
+
 private:
 	void setup();
 	void processList(Star **ObjList, int count, const Common::Rect &bounds,
-					int xMultiply, int yMultiply, int xCenter, int yCenter);
+	                 int xMultiply, int yMultiply, int xCenter, int yCenter);
 	void handleText();
+
 public:
 	AnimationPlayer _animationPlayer;
 	int _fontHeight;
@@ -294,6 +305,7 @@ public:
 	int _yp;
 	int _textIndex, _lineNum;
 	Common::String _message;
+
 public:
 	Scene205();
 
@@ -304,26 +316,29 @@ public:
 	void dispatch() override;
 };
 
-class Scene205Demo: public SceneExt {
+class Scene205Demo : public SceneExt {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
+
 private:
 	void leaveScene();
+
 public:
 	VisualSpeaker _animationPlayer;
 	ASound _sound1;
 	Action1 _action1;
+
 public:
 	void postInit(SceneObjectList *OwnerList = NULL) override;
 	void remove() override;
 	void process(Event &event) override;
 };
 
-class Scene250: public SceneExt {
-	class Button: public SceneActor {
+class Scene250 : public SceneExt {
+	class Button : public SceneActor {
 	public:
 		int _floorNumber;
 		Button();
@@ -332,6 +347,7 @@ class Scene250: public SceneExt {
 		void synchronize(Serializer &s) override;
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	int _currButtonY, _destButtonY, _elevatorSpeed;
 	bool _skippingFl, _skippableFl;
@@ -341,6 +357,7 @@ public:
 	Button _floor6, _floor7, _floor8, _floor9;
 	ASoundExt _sound1;
 	SequenceManager _sequenceManager1;
+
 public:
 	Scene250();
 	void changeFloor(int floorNumber);
@@ -352,56 +369,57 @@ public:
 	void dispatch() override;
 };
 
-class Scene300: public SceneExt {
+class Scene300 : public SceneExt {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		void signal() override;
 	};
 
 	/* Items */
-	class QuinnWorkstation: public NamedHotspot {
+	class QuinnWorkstation : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class MirandaWorkstation: public NamedHotspot {
+	class MirandaWorkstation : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class SeekerWorkstation: public NamedHotspot {
+	class SeekerWorkstation : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class Miranda: public SceneActor {
+	class Miranda : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Seeker: public SceneActor {
+	class Seeker : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Quinn: public SceneActor {
+	class Quinn : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Doorway: public SceneActor {
+	class Doorway : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3, _sequenceManager4;
 	ASoundExt _sound1;
@@ -441,8 +459,8 @@ public:
 	void signal() override;
 };
 
-class Scene325: public SceneExt {
-	class Icon: public SceneActor {
+class Scene325 : public SceneExt {
+	class Icon : public SceneActor {
 	public:
 		int _lookLineNum, _iconId;
 		bool _pressed;
@@ -465,6 +483,7 @@ private:
 	void consoleAction(int id);
 	void setMessage(int resNum, int lineNum);
 	Common::String parseMessage(const Common::String &msg);
+
 public:
 	int _consoleAction, _iconFontNumber, _databasePage, _priorConsoleAction;
 	int _moveCounter, _yChange, _yDirection, _scannerLocation;
@@ -482,6 +501,7 @@ public:
 	ASoundExt _sound1;
 	SequenceManager _sequenceManager1;
 	SceneText _text1;
+
 public:
 	Scene325();
 
@@ -493,30 +513,31 @@ public:
 	void dispatch() override;
 };
 
-class Scene400: public SceneExt {
+class Scene400 : public SceneExt {
 	/* Items */
-	class Terminal: public NamedHotspot {
+	class Terminal : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class Door: public SceneActor {
+	class Door : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Reader: public SceneActor {
+	class Reader : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class SensorProbe: public SceneActor {
+	class SensorProbe : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class AttractorUnit: public SceneActor {
+	class AttractorUnit : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	NamedHotspot _background, _equipment1, _equipment2, _equipment3;
 	NamedHotspot _equipment4, _equipment5, _equipment6;
@@ -539,15 +560,16 @@ public:
 	void dispatch() override;
 };
 
-class Scene500: public SceneExt {
+class Scene500 : public SceneExt {
 	/* Dialogs */
-	class PanelDialog: public SceneAreaObject {
-		class Button: public SceneActor {
+	class PanelDialog : public SceneAreaObject {
+		class Button : public SceneActor {
 		private:
 			int _buttonId;
 			bool _buttonDown;
 
 			void doButtonPress();
+
 		public:
 			Button();
 			Common::String getClassName() override { return "Scene500_Button"; }
@@ -557,6 +579,7 @@ class Scene500: public SceneExt {
 
 			void setupButton(int buttonId);
 		};
+
 	public:
 		Button _button1, _button2, _button3;
 
@@ -566,52 +589,53 @@ class Scene500: public SceneExt {
 	};
 
 	/* Items */
-	class ControlPanel: public SceneHotspot {
+	class ControlPanel : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class Seeker: public SceneActor {
+	class Seeker : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Suit: public SceneActor {
+	class Suit : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Doorway: public SceneActor {
+	class Doorway : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class OxygenTanks: public SceneActor {
+	class OxygenTanks : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class AirLock: public SceneActor {
+	class AirLock : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class TransparentDoor: public SceneActor {
+	class TransparentDoor : public SceneActor {
 	public:
 		void draw() override;
 	};
-	class Aerosol: public SceneActor {
+	class Aerosol : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class SonicStunner: public SceneActor {
+	class SonicStunner : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Locker1: public SceneActor {
+	class Locker1 : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Locker2: public SceneActor {
+	class Locker2 : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	int _stripNumber;
 	SpeakerSeeker500 _seekerSpeaker;
@@ -632,13 +656,14 @@ public:
 	PanelDialog _panelDialog;
 	ASoundExt _sound1;
 	SequenceManager _sequenceManager1, _sequenceManager2;
+
 public:
 	void postInit(SceneObjectList *OwnerList = NULL) override;
 	void synchronize(Serializer &s) override;
 	void signal() override;
 };
 
-class Scene525: public SceneExt {
+class Scene525 : public SceneExt {
 public:
 	SceneActor _actor1;
 	SequenceManager _sequenceManager;
@@ -679,6 +704,7 @@ class Scene600 : public SceneExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	int _roomState;
 	CompartmentHotspot _quantumDrive;
@@ -709,7 +735,7 @@ public:
 	void synchronize(Serializer &s) override;
 };
 
-class Scene700: public SceneExt {
+class Scene700 : public SceneExt {
 	class Loft : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
@@ -739,6 +765,7 @@ class Scene700: public SceneExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	NamedHotspot _background;
 	NamedHotspot _debris1;
@@ -771,38 +798,39 @@ public:
 	void synchronize(Serializer &s) override;
 };
 
-class Scene800: public SceneExt {
+class Scene800 : public SceneExt {
 	/* Items */
-	class Button: public NamedHotspot {
+	class Button : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class CableJunction: public NamedHotspot {
+	class CableJunction : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class DeviceSlot: public NamedHotspot {
+	class DeviceSlot : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class Door: public SceneActor {
+	class Door : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Tray: public SceneActor {
+	class Tray : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class ComScanner: public SceneActor {
+	class ComScanner : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Cabinet: public SceneActor {
+	class Cabinet : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	NamedHotspot _background, _autoDoc, _diskSlot, _couch;
 	NamedHotspot _medicalDatabase, _dataConduits;
@@ -820,13 +848,14 @@ public:
 	void signal() override;
 };
 
-class Scene825: public SceneExt {
+class Scene825 : public SceneExt {
 	/* Objects */
-	class Button: public SceneObject {
+	class Button : public SceneObject {
 	public:
 		int _buttonId;
 		bool _buttonDown;
 		SceneText _sceneText;
+
 	public:
 		Button();
 		void setButton(int buttonId);
@@ -836,6 +865,7 @@ class Scene825: public SceneExt {
 		void process(Event &event) override;
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	NamedHotspot _background, _console;
 	SceneActor _vertLine1, _vertLine2, _vertLine3, _vertLine4, _vertLine5;
@@ -845,6 +875,7 @@ public:
 	SceneText _sceneText;
 	int _menuId, _frame1, _frame2;
 	const char *_autodocItems[11];
+
 public:
 	Scene825();
 	void synchronize(Serializer &s) override;
@@ -857,30 +888,31 @@ public:
 	void doButtonPress(int buttonId);
 };
 
-class Scene850: public SceneExt {
+class Scene850 : public SceneExt {
 	/* Items */
-	class Indicator: public NamedHotspot {
+	class Indicator : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class LiftDoor: public SceneActor {
+	class LiftDoor : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class SickBayDoor: public SceneActor {
+	class SickBayDoor : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Clamp: public SceneActor {
+	class Clamp : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Panel: public SceneActor {
+	class Panel : public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	NamedHotspot _background, _eastDoor, _compartment, _sickBayIndicator;
 	NamedHotspot _liftControls;
@@ -906,6 +938,7 @@ class Scene900 : public SceneExt {
 		void synchronize(Serializer &s) override;
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	int _controlsScreenNumber;
 	Common::Point _magnetChangeAmount;

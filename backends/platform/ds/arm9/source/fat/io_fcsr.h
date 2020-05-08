@@ -19,9 +19,9 @@
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE FCSR_GetInterface(void) ;
+extern LPIO_INTERFACE FCSR_GetInterface(void);
 
-#endif	// define IO_FCSR_H
+#endif // define IO_FCSR_H
 /*
 	io_fcsr.h
 
@@ -43,6 +43,6 @@ extern LPIO_INTERFACE FCSR_GetInterface(void) ;
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE FCSR_GetInterface(void) ;
+extern LPIO_INTERFACE FCSR_GetInterface(void);
 
-#endif	// define IO_FCSR_H
+#endif // define IO_FCSR_H

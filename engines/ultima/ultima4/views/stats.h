@@ -63,8 +63,7 @@ enum StatsView {
 	MIX_REAGENTS
 };
 
-class StatsArea : public Observer<Aura *>, public Observer<Party *, PartyEvent &>,
-		public Observer<Menu *, MenuEvent &>, public Observable<StatsArea *, Common::String> {
+class StatsArea : public Observer<Aura *>, public Observer<Party *, PartyEvent &>, public Observer<Menu *, MenuEvent &>, public Observable<StatsArea *, Common::String> {
 public:
 	StatsArea();
 

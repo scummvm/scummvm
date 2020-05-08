@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLongStick, CCarry)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(PuzzleSolvedMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(PuzzleSolvedMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 CLongStick::CLongStick() : CCarry() {

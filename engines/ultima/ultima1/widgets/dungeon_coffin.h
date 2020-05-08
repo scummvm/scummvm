@@ -38,6 +38,7 @@ private:
 	 * Spawns a monster from the coffin
 	 */
 	void spawnMonsterAt(const Point &newPos);
+
 public:
 	DECLARE_WIDGET(DungeonCoffin)
 

@@ -23,12 +23,12 @@
 #ifndef TSAGE_RINGWORLD2_AIRDUCT_H
 #define TSAGE_RINGWORLD2_AIRDUCT_H
 
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
-#include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/scenes.h"
+#include "tsage/sound.h"
 
 namespace TsAGE {
 
@@ -37,9 +37,12 @@ namespace Ringworld2 {
 using namespace TsAGE;
 
 class Scene1200 : public SceneExt {
-	enum CrawlDirection { CRAWL_EAST = 1, CRAWL_WEST = 2, CRAWL_SOUTH = 3, CRAWL_NORTH = 4 };
+	enum CrawlDirection { CRAWL_EAST = 1,
+		                  CRAWL_WEST = 2,
+		                  CRAWL_SOUTH = 3,
+		                  CRAWL_NORTH = 4 };
 
-	class LaserPanel: public ModalWindow {
+	class LaserPanel : public ModalWindow {
 	public:
 		class Jumper : public SceneActorExt {
 		public:

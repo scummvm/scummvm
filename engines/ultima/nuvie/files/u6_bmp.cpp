@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "ultima/nuvie/files/u6_bmp.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/files/u6_bmp.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-U6Bmp::U6Bmp(): U6Shape() {
+U6Bmp::U6Bmp() : U6Shape() {
 	data = NULL;
 }
 
@@ -38,7 +38,6 @@ U6Bmp::~U6Bmp() {
 
 	raw = NULL;
 }
-
 
 bool U6Bmp::load(Std::string filename) {
 	U6Lzw lzw;

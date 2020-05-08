@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/tt_sentence_node.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 

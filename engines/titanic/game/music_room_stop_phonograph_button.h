@@ -31,8 +31,10 @@ class CMusicRoomStopPhonographButton : public CEjectPhonographButton {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
+
 private:
 	uint _ticks;
+
 public:
 	CLASSDEF;
 	CMusicRoomStopPhonographButton() : CEjectPhonographButton(), _ticks(0) {}

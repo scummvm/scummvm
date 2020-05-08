@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/u8_music_process.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/audio/music_flex.h"
-#include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
+#include "ultima/ultima8/audio/midi_player.h"
+#include "ultima/ultima8/audio/music_flex.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,14 +34,14 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(U8MusicProcess, MusicProcess)
 
 U8MusicProcess::U8MusicProcess() : _midiPlayer(nullptr), _state(PLAYBACK_NORMAL),
-		_currentTrack(0), _combatMusicActive(false),
-		_savedTrackState(nullptr) {
+                                   _currentTrack(0), _combatMusicActive(false),
+                                   _savedTrackState(nullptr) {
 	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 }
 
 U8MusicProcess::U8MusicProcess(MidiPlayer *player) : _midiPlayer(player),
-		_state(PLAYBACK_NORMAL), _currentTrack(0), _combatMusicActive(false),
-		_savedTrackState(nullptr) {
+                                                     _state(PLAYBACK_NORMAL), _currentTrack(0), _combatMusicActive(false),
+                                                     _savedTrackState(nullptr) {
 	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 
 	_theMusicProcess = this;
@@ -143,7 +143,7 @@ void U8MusicProcess::playMusic_internal(int track) {
 
 		// No transition info, or invalid measure, so fast change
 		if (!info || (measure >= (uint32)info->_numMeasures) ||
-		        !info->_transitions[track] || !info->_transitions[track][measure]) {
+		    !info->_transitions[track] || !info->_transitions[track][measure]) {
 			_currentTrack = 0;
 			if (track == 0) {
 				_trackState._wanted = 0;
@@ -221,11 +221,11 @@ void U8MusicProcess::run() {
 #ifdef TODO
 			// TODO: support branches in tracks.
 			// Not clear how to do this with the scummvm xmidi parser..
-			if (song_branches[wanted_track] != -1)
-			 {
-				 XMidiEvent *event = list->findBranchEvent(song_branches[wanted_track]);
-				 if (!event) song_branches[wanted_track] = 0;
-			 }
+			if (song_branches[wanted_track] != -1) {
+				XMidiEvent *event = list->findBranchEvent(song_branches[wanted_track]);
+				if (!event)
+					song_branches[wanted_track] = 0;
+			}
 #endif
 
 			if (_midiPlayer) {
@@ -241,8 +241,7 @@ void U8MusicProcess::run() {
 			_currentTrack = _trackState._wanted = 0;
 		}
 		_state = PLAYBACK_NORMAL;
-	}
-	break;
+	} break;
 	}
 }
 
@@ -261,7 +260,8 @@ void U8MusicProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool U8MusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!MusicProcess::loadData(rs, version)) return false;
+	if (!MusicProcess::loadData(rs, version))
+		return false;
 
 	_trackState._wanted = static_cast<int32>(rs->readUint32LE());
 

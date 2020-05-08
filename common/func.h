@@ -75,6 +75,7 @@ class Binder1st : public UnaryFunction<typename Op::SecondArgumentType, typename
 private:
 	Op _op;
 	typename Op::FirstArgumentType _arg1;
+
 public:
 	Binder1st(const Op &op, typename Op::FirstArgumentType arg1) : _op(op), _arg1(arg1) {}
 
@@ -97,6 +98,7 @@ class Binder2nd : public UnaryFunction<typename Op::FirstArgumentType, typename 
 private:
 	Op _op;
 	typename Op::SecondArgumentType _arg2;
+
 public:
 	Binder2nd(const Op &op, typename Op::SecondArgumentType arg2) : _op(op), _arg2(arg2) {}
 
@@ -118,6 +120,7 @@ template<class Arg, class Result>
 class PointerToUnaryFunc : public UnaryFunction<Arg, Result> {
 private:
 	Result (*_func)(Arg);
+
 public:
 	typedef Result (*FuncType)(Arg);
 
@@ -131,6 +134,7 @@ template<class Arg1, class Arg2, class Result>
 class PointerToBinaryFunc : public BinaryFunction<Arg1, Arg2, Result> {
 private:
 	Result (*_func)(Arg1, Arg2);
+
 public:
 	typedef Result (*FuncType)(Arg1, Arg2);
 
@@ -160,6 +164,7 @@ template<class Result, class T>
 class MemFunc0 : public UnaryFunction<T *, Result> {
 private:
 	Result (T::*_func)();
+
 public:
 	typedef Result (T::*FuncType)();
 
@@ -173,6 +178,7 @@ template<class Result, class T>
 class ConstMemFunc0 : public UnaryFunction<T *, Result> {
 private:
 	Result (T::*_func)() const;
+
 public:
 	typedef Result (T::*FuncType)() const;
 
@@ -186,6 +192,7 @@ template<class Result, class Arg, class T>
 class MemFunc1 : public BinaryFunction<T *, Arg, Result> {
 private:
 	Result (T::*_func)(Arg);
+
 public:
 	typedef Result (T::*FuncType)(Arg);
 
@@ -199,6 +206,7 @@ template<class Result, class Arg, class T>
 class ConstMemFunc1 : public BinaryFunction<T *, Arg, Result> {
 private:
 	Result (T::*_func)(Arg) const;
+
 public:
 	typedef Result (T::*FuncType)(Arg) const;
 
@@ -254,6 +262,7 @@ template<class Result, class T>
 class MemFuncRef0 : public UnaryFunction<T &, Result> {
 private:
 	Result (T::*_func)();
+
 public:
 	typedef Result (T::*FuncType)();
 
@@ -267,6 +276,7 @@ template<class Result, class T>
 class ConstMemFuncRef0 : public UnaryFunction<T &, Result> {
 private:
 	Result (T::*_func)() const;
+
 public:
 	typedef Result (T::*FuncType)() const;
 
@@ -280,6 +290,7 @@ template<class Result, class Arg, class T>
 class MemFuncRef1 : public BinaryFunction<T &, Arg, Result> {
 private:
 	Result (T::*_func)(Arg);
+
 public:
 	typedef Result (T::*FuncType)(Arg);
 
@@ -293,6 +304,7 @@ template<class Result, class Arg, class T>
 class ConstMemFuncRef1 : public BinaryFunction<T &, Arg, Result> {
 private:
 	Result (T::*_func)(Arg) const;
+
 public:
 	typedef Result (T::*FuncType)(Arg) const;
 
@@ -387,6 +399,7 @@ public:
 	Res operator()() const {
 		return (_t->*_func)();
 	}
+
 private:
 	mutable T *_t;
 	const FuncType _func;
@@ -450,6 +463,7 @@ public:
 	Res operator()(Arg v1) const {
 		return (_t->*_func)(v1);
 	}
+
 private:
 	mutable T *_t;
 	const FuncType _func;
@@ -484,6 +498,7 @@ public:
 	Res operator()(Arg1 v1, Arg2 v2) const {
 		return (*_func)(v1, v2);
 	}
+
 private:
 	const FuncType _func;
 };
@@ -506,6 +521,7 @@ public:
 	Res operator()(Arg1 v1, Arg2 v2) const {
 		return (_t->*_func)(v1, v2);
 	}
+
 private:
 	mutable T *_t;
 	const FuncType _func;
@@ -515,11 +531,12 @@ private:
  * Base template for hash functor objects, used by HashMap.
  * This needs to be specialized for every type that you need to hash.
  */
-template<typename T> struct Hash;
+template<typename T>
+struct Hash;
 
-
-#define GENERATE_TRIVIAL_HASH_FUNCTOR(T) \
-	template<> struct Hash<T> : public UnaryFunction<T, uint> { \
+#define GENERATE_TRIVIAL_HASH_FUNCTOR(T)                   \
+	template<>                                             \
+	struct Hash<T> : public UnaryFunction<T, uint> {       \
 		uint operator()(T val) const { return (uint)val; } \
 	}
 

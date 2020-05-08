@@ -37,19 +37,23 @@ using Shared::CCharacterInputMsg;
 class Magic : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
 	bool CharacterInputMsg(CCharacterInputMsg &msg) override;
+
 private:
-//	uint _magicNum;
+	//	uint _magicNum;
 	uint _startIndex, _endIndex;
+
 private:
 	/**
 	 * Draws the Buy dialog content
 	 */
 	void drawBuy();
+
 protected:
 	/**
 	 * Set the mode
 	 */
 	void setMode(BuySell mode) override;
+
 public:
 	CLASSDEF;
 

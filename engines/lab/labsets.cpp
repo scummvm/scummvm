@@ -73,5 +73,4 @@ bool LargeSet::readInitialConditions(const Common::String fileName) {
 	return true;
 }
 
-
 } // End of namespace Lab

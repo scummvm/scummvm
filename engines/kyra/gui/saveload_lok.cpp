@@ -21,10 +21,10 @@
  */
 
 #include "kyra/engine/kyra_lok.h"
+#include "kyra/engine/timer.h"
 #include "kyra/graphics/animator_lok.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
-#include "kyra/engine/timer.h"
 
 #include "common/savefile.h"
 

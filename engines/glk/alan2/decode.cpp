@@ -20,41 +20,39 @@
  *
  */
 
-#include "glk/alan2/main.h"
 #include "glk/alan2/decode.h"
+#include "glk/alan2/main.h"
 
 namespace Glk {
 namespace Alan2 {
 
 /* Bit output */
-static int decodeBuffer;    /* Bits to be input */
-static int bitsToGo;        /* Bits still in buffer */
-static int garbageBits;     /* Bits past EOD */
+static int decodeBuffer; /* Bits to be input */
+static int bitsToGo;     /* Bits still in buffer */
+static int garbageBits;  /* Bits past EOD */
 
 static int inputBit() {
 	int bit;
 
-	if (!bitsToGo) {      /* More bits available ? */
+	if (!bitsToGo) {                       /* More bits available ? */
 		decodeBuffer = txtfil->readByte(); /* No, so get more */
 		if ((uint)decodeBuffer == EOD) {
 			garbageBits++;
 			if (garbageBits > VALUEBITS - 2)
 				syserr("Error in encoded data file.");
 		} else
-			bitsToGo = 8;     /* Another Char, 8 new bits */
+			bitsToGo = 8; /* Another Char, 8 new bits */
 	}
-	bit = decodeBuffer & 1;   /* Get next bit */
+	bit = decodeBuffer & 1;           /* Get next bit */
 	decodeBuffer = decodeBuffer >> 1; /* and remove it */
 	bitsToGo--;
 	return bit;
 }
 
-
 /* Current state of decoding */
 
-static CodeValue value;         /* Currently seen code value */
-static CodeValue low, high;     /* Current code region */
-
+static CodeValue value;     /* Currently seen code value */
+static CodeValue low, high; /* Current code region */
 
 void startDecoding() {
 	int i;
@@ -78,7 +76,8 @@ int decodeChar() {
 	f = (((long)(value - low) + 1) * freq[0] - 1) / range;
 
 	/* Find the symbol */
-	for (symbol = 1; (int)freq[symbol] > f; symbol++);
+	for (symbol = 1; (int)freq[symbol] > f; symbol++)
+		;
 
 	high = low + range * freq[symbol - 1] / freq[0] - 1;
 	low = low + range * freq[symbol] / freq[0];
@@ -105,8 +104,6 @@ int decodeChar() {
 	return symbol - 1;
 }
 
-
-
 /* Structure for saved decode info */
 typedef struct DecodeInfo {
 	long fpos;
@@ -116,7 +113,6 @@ typedef struct DecodeInfo {
 	CodeValue high;
 	CodeValue low;
 } DecodeInfo;
-
 
 /*======================================================================
 
@@ -129,7 +125,7 @@ typedef struct DecodeInfo {
 void *pushDecode() {
 	DecodeInfo *info;
 
-	info = (DecodeInfo *) allocate(sizeof(DecodeInfo));
+	info = (DecodeInfo *)allocate(sizeof(DecodeInfo));
 	info->fpos = txtfil->pos();
 	info->buffer = decodeBuffer;
 	info->bits = bitsToGo;
@@ -138,7 +134,6 @@ void *pushDecode() {
 	info->low = low;
 	return (info);
 }
-
 
 /*======================================================================
 
@@ -149,7 +144,7 @@ void *pushDecode() {
 
  */
 void popDecode(void *i) {
-	DecodeInfo *info = (DecodeInfo *) i;
+	DecodeInfo *info = (DecodeInfo *)i;
 	fseek(txtfil, info->fpos, 0);
 	decodeBuffer = info->buffer;
 	bitsToGo = info->bits;

@@ -39,22 +39,22 @@ class UISlider;
 class KIASectionSettings : public KIASectionBase {
 	static const char *kLeary;
 
-	UIContainer   *_uiContainer;
-	UISlider      *_musicVolume;
-	UISlider      *_soundEffectVolume;
-	UISlider      *_speechVolume;
+	UIContainer *_uiContainer;
+	UISlider *_musicVolume;
+	UISlider *_soundEffectVolume;
+	UISlider *_speechVolume;
 #if BLADERUNNER_ORIGINAL_SETTINGS
-	UISlider      *_ambientSoundVolume;
-	UISlider      *_gammaCorrection;
+	UISlider *_ambientSoundVolume;
+	UISlider *_gammaCorrection;
 #endif
-	UICheckBox    *_directorsCut;
-	UICheckBox    *_subtitlesEnable;
+	UICheckBox *_directorsCut;
+	UICheckBox *_subtitlesEnable;
 	UIImagePicker *_playerAgendaSelector;
 
-	int            _mouseX;
-	int            _mouseY;
+	int _mouseX;
+	int _mouseY;
 
-	int            _learyPos;
+	int _learyPos;
 
 public:
 	KIASectionSettings(BladeRunnerEngine *vm);

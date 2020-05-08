@@ -23,8 +23,8 @@
 #ifndef TITANIC_LIFTBOT_H
 #define TITANIC_LIFTBOT_H
 
-#include "titanic/npcs/true_talk_npc.h"
 #include "titanic/messages/messages.h"
+#include "titanic/npcs/true_talk_npc.h"
 
 namespace Titanic {
 
@@ -41,11 +41,14 @@ class CLiftBot : public CTrueTalkNPC {
 	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
 	bool NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 private:
 	static bool _flag;
 	static bool _enabled;
+
 private:
 	int _field108;
+
 public:
 	CLASSDEF;
 	CLiftBot();

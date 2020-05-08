@@ -31,8 +31,10 @@ class CSUBWrapper : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool SignalObject(CSignalObject *msg);
+
 public:
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CSUBWrapper() : CGameObject(), _flag(false) {}

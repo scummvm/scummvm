@@ -34,7 +34,7 @@
 namespace Lab {
 
 class LabEngine;
-#define CONTINUOUS      0xFFFF
+#define CONTINUOUS 0xFFFF
 
 struct DIFFHeader {
 	uint16 _width;
@@ -95,7 +95,7 @@ public:
 
 	uint16 getDIFFHeight();
 
-	bool isPlaying() const { return _isPlaying;  }
+	bool isPlaying() const { return _isPlaying; }
 };
 
 } // End of namespace Lab

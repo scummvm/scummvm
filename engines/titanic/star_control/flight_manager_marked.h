@@ -38,11 +38,12 @@ private:
 	 * with that same distance from the source.
 	 */
 	void getVectorOnPath(FVector &pos) const;
+
 public:
 	~CMarkedAutoMover() override {}
 
 	void setFlight(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation);
+	               const FMatrix &oldOrientation, const FMatrix &newOrientation);
 
 	/**
 	 * Applys speeds to the mover. More than one application is usually done for several transitions

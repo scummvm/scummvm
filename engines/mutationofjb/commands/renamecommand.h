@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_RENAMECOMMAND_H
 #define MUTATIONOFJB_RENAMECOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -45,6 +45,6 @@ private:
 	Common::String _newName;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

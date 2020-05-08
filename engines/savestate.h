@@ -24,8 +24,8 @@
 #define ENGINES_SAVESTATE_H
 
 #include "common/array.h"
-#include "common/str.h"
 #include "common/ptr.h"
+#include "common/str.h"
 
 namespace Graphics {
 struct Surface;
@@ -49,6 +49,7 @@ private:
 		kSaveTypeRegular,
 		kSaveTypeAutosave
 	};
+
 public:
 	SaveStateDescriptor();
 	SaveStateDescriptor(int s, const Common::String &d);
@@ -200,6 +201,7 @@ public:
 	 * Returns true whether the save is an autosave
 	 */
 	bool isAutosave() const;
+
 private:
 	/**
 	 * The saveslot id, as it would be passed to the "-x" command line switch.

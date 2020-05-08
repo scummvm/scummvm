@@ -23,8 +23,8 @@
 #ifndef ACCESS_AMAZON_ROOM_H
 #define ACCESS_AMAZON_ROOM_H
 
-#include "common/scummsys.h"
 #include "access/room.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -41,6 +41,7 @@ private:
 	const byte *_icon;
 
 	void roomSet();
+
 protected:
 	void loadRoom(int roomNumber) override;
 
@@ -55,6 +56,7 @@ protected:
 	void clearRoom() override;
 
 	void walkCursor() override;
+
 public:
 	AmazonRoom(AccessEngine *vm);
 

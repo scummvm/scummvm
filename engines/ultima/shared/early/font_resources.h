@@ -23,9 +23,9 @@
 #ifndef ULTIMA_SHARED_EARLY_FONT_RESOURCES_H
 #define ULTIMA_SHARED_EARLY_FONT_RESOURCES_H
 
-#include "ultima/shared/engine/resources.h"
-#include "ultima/shared/core/file.h"
 #include "common/memstream.h"
+#include "ultima/shared/core/file.h"
+#include "ultima/shared/engine/resources.h"
 
 namespace Ultima {
 namespace Shared {
@@ -36,9 +36,11 @@ protected:
 	 * Synchronize resource data
 	 */
 	void synchronize() override;
+
 public:
 	byte _font8x8[256][8];
 	byte _fontU6[256][8];
+
 public:
 	FontResources();
 	FontResources(Resources *resManager);

@@ -21,12 +21,12 @@
  * CD/drive handling functions
  */
 
-#include "common/textconsole.h"
 #include "tinsel/drives.h"
+#include "common/textconsole.h"
 #include "tinsel/scene.h"
-#include "tinsel/tinsel.h"
 #include "tinsel/sched.h"
 #include "tinsel/strres.h"
+#include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
@@ -39,7 +39,6 @@ static char g_nextCD = '\0';
 
 static uint32 g_lastTime = 0;
 extern LANGUAGE g_sampleLanguage;
-
 
 void CdCD(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
@@ -69,7 +68,7 @@ int GetCurrentCD() {
 	return (g_currentCD - '1' + 1);
 }
 
-static const uint32 cdFlags[] = { fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8 };
+static const uint32 cdFlags[] = {fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8};
 
 void SetCD(int flags) {
 	if (flags & cdFlags[g_currentCD - '1'])
@@ -136,7 +135,7 @@ bool GotoCD() {
 
 	g_currentCD = g_nextCD;
 
-/*	if (bNoCD)	{
+	/*	if (bNoCD)	{
 		strcpy(cdDirectory, hdDirectory);
 		cdLastBit[3] = currentCD;
 		strcat(cdDirectory, cdLastBit);
@@ -226,8 +225,5 @@ uint32 TinselFile::read(void *dataPtr, uint32 dataSize) {
 	assert(_stream);
 	return _stream->read(dataPtr, dataSize);
 }
-
-
-
 
 } // End of namespace Tinsel

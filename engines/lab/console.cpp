@@ -22,10 +22,10 @@
 
 #include "gui/debugger.h"
 
-#include "lab/lab.h"
 #include "lab/console.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
+#include "lab/lab.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
 #include "lab/resource.h"
@@ -33,9 +33,9 @@
 namespace Lab {
 
 Console::Console(LabEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("scene",			WRAP_METHOD(Console, Cmd_Scene));
-	registerCmd("scene_resources",  WRAP_METHOD(Console, Cmd_DumpSceneResources));
-	registerCmd("find_action",      WRAP_METHOD(Console, Cmd_FindAction));
+	registerCmd("scene", WRAP_METHOD(Console, Cmd_Scene));
+	registerCmd("scene_resources", WRAP_METHOD(Console, Cmd_DumpSceneResources));
+	registerCmd("find_action", WRAP_METHOD(Console, Cmd_FindAction));
 }
 
 Console::~Console() {
@@ -43,7 +43,7 @@ Console::~Console() {
 
 bool Console::Cmd_Scene(int argc, const char **argv) {
 	if (argc != 2) {
-		const char *directions[] = { "North", "South", "East", "West" };
+		const char *directions[] = {"North", "South", "East", "West"};
 		debugPrintf("Current scene is %d, direction: %s\n", _vm->_roomNum, directions[_vm->getDirection()]);
 		debugPrintf("Use %s <scene number> to change the current scene\n", argv[0]);
 		return true;
@@ -71,15 +71,14 @@ bool Console::Cmd_DumpSceneResources(int argc, const char **argv) {
 	_vm->_resource->readViews(scene);
 	RoomData *roomData = &_vm->_rooms[scene];
 	RuleList &rules = roomData->_rules;
-	const char *transitions[] = { "None", "Wipe", "ScrollWipe", "ScrollBlack", "ScrollBounce", "Transporter", "ReadFirstFrame", "ReadNextFrame" };
-	const char *ruleTypes[] = { "None", "Action", "Operate", "Go forward", "Conditions", "Turn", "Go main view", "Turn from to" };
-	const char *directions[] = { "", "North", "South", "East", "West" };
+	const char *transitions[] = {"None", "Wipe", "ScrollWipe", "ScrollBlack", "ScrollBounce", "Transporter", "ReadFirstFrame", "ReadNextFrame"};
+	const char *ruleTypes[] = {"None", "Action", "Operate", "Go forward", "Conditions", "Turn", "Go main view", "Turn from to"};
+	const char *directions[] = {"", "North", "South", "East", "West"};
 	const char *actionTypes[] = {
-		"", "PlaySound", "PlaySoundLooping", "ShowDiff", "ShowDiffLooping", "LoadDiff", "LoadBitmap", "ShowBitmap", "Transition", "NoUpdate", "ForceUpdate",
-		"ShowCurPict", "SetElement", "UnsetElement", "ShowMessage", "ShowMessages", "ChangeRoom", "SetCloseup", "MainView", "SubInv", "AddInv", "ShowDir",
-		"WaitSecs", "StopMusic", "StartMusic", "ChangeMusic", "ResetMusic", "FillMusic", "WaitSound", "ClearSound", "WinMusic", "WinGame", "LostGame",
-		"ResetBuffer", "SpecialCmd", "CShowMessage", "PlaySoundNoWait"
-	};
+	    "", "PlaySound", "PlaySoundLooping", "ShowDiff", "ShowDiffLooping", "LoadDiff", "LoadBitmap", "ShowBitmap", "Transition", "NoUpdate", "ForceUpdate",
+	    "ShowCurPict", "SetElement", "UnsetElement", "ShowMessage", "ShowMessages", "ChangeRoom", "SetCloseup", "MainView", "SubInv", "AddInv", "ShowDir",
+	    "WaitSecs", "StopMusic", "StartMusic", "ChangeMusic", "ResetMusic", "FillMusic", "WaitSound", "ClearSound", "WinMusic", "WinGame", "LostGame",
+	    "ResetBuffer", "SpecialCmd", "CShowMessage", "PlaySoundNoWait"};
 
 	debugPrintf("Room message: %s\n", roomData->_roomMsg.c_str());
 	debugPrintf("Transition: %s (%d)\n", transitions[roomData->_transitionType], roomData->_transitionType);
@@ -123,10 +122,10 @@ bool Console::Cmd_FindAction(int argc, const char **argv) {
 			ActionList::iterator action;
 			for (action = rule->_actionList.begin(); action != rule->_actionList.end(); ++action) {
 				if (action->_actionType == actionId &&
-					(action->_param1 == param1 || param1 == -1) &&
-					(action->_param2 == param2 || param2 == -1) &&
-					(action->_param3 == param3 || param3 == -1)) {
-						debugPrintf("Found at script %d\n", i);
+				    (action->_param1 == param1 || param1 == -1) &&
+				    (action->_param2 == param2 || param2 == -1) &&
+				    (action->_param3 == param3 || param3 == -1)) {
+					debugPrintf("Found at script %d\n", i);
 				}
 			}
 		}
@@ -135,4 +134,4 @@ bool Console::Cmd_FindAction(int argc, const char **argv) {
 	return true;
 }
 
-} // End of namespace Neverhood
+} // namespace Lab

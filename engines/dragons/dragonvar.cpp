@@ -24,7 +24,7 @@
 
 namespace Dragons {
 
-DragonVAR::DragonVAR(BigfileArchive *bigfileArchive): _bigfileArchive(bigfileArchive), _data(0) {
+DragonVAR::DragonVAR(BigfileArchive *bigfileArchive) : _bigfileArchive(bigfileArchive), _data(0) {
 	reset();
 }
 

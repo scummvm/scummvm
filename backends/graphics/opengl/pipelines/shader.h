@@ -48,7 +48,7 @@ protected:
 	GLint _texCoordAttribLocation;
 	GLint _colorAttribLocation;
 
-	GLfloat _colorAttributes[4*4];
+	GLfloat _colorAttributes[4 * 4];
 
 	Shader *const _activeShader;
 };

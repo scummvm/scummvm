@@ -26,8 +26,8 @@
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/networkreadstream.h"
-#include "common/json.h"
 #include "common/debug.h"
+#include "common/json.h"
 
 namespace Cloud {
 namespace Dropbox {
@@ -35,9 +35,8 @@ namespace Dropbox {
 #define DROPBOX_API_LIST_FOLDER "https://api.dropboxapi.com/2/files/list_folder"
 #define DROPBOX_API_LIST_FOLDER_CONTINUE "https://api.dropboxapi.com/2/files/list_folder/continue"
 
-DropboxListDirectoryRequest::DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive):
-	Networking::Request(nullptr, ecb), _requestedPath(path), _requestedRecursive(recursive), _listDirectoryCallback(cb),
-	_token(token), _workingRequest(nullptr), _ignoreCallback(false) {
+DropboxListDirectoryRequest::DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive) : Networking::Request(nullptr, ecb), _requestedPath(path), _requestedRecursive(recursive), _listDirectoryCallback(cb),
+                                                                                                                                                                                        _token(token), _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -120,9 +119,8 @@ void DropboxListDirectoryRequest::responseCallback(Networking::JsonResponse resp
 	if (responseObject.contains("entries")) {
 		if (!responseObject.getVal("entries")->isArray()) {
 			error.response = Common::String::format(
-				"\"entries\" found, but that's not an array!\n%s",
-				responseObject.getVal("entries")->stringify(true).c_str()
-				);
+			    "\"entries\" found, but that's not an array!\n%s",
+			    responseObject.getVal("entries")->stringify(true).c_str());
 			finishError(error);
 			delete json;
 			return;

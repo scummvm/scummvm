@@ -44,6 +44,6 @@ Common::String toRISCOS(Common::String path);
  */
 Common::String toUnix(Common::String path);
 
-}
+} // namespace RISCOS_Utils
 
 #endif

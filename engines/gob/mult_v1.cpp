@@ -23,16 +23,16 @@
 #include "common/endian.h"
 #include "common/stream.h"
 
-#include "gob/gob.h"
-#include "gob/mult.h"
-#include "gob/global.h"
-#include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/script.h"
-#include "gob/resources.h"
+#include "gob/global.h"
+#include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/mult.h"
+#include "gob/resources.h"
 #include "gob/scenery.h"
+#include "gob/script.h"
+#include "gob/util.h"
 
 namespace Gob {
 
@@ -333,17 +333,16 @@ void Mult_v1::drawStatics(bool &stop) {
 		stop = false;
 
 	for (_counter = 0; _counter < _multData->staticKeysCount; _counter++) {
-		if ((_multData->staticKeys[_counter].frame != _frame)
-		    || (_multData->staticKeys[_counter].layer == -1))
+		if ((_multData->staticKeys[_counter].frame != _frame) || (_multData->staticKeys[_counter].layer == -1))
 			continue;
 
 		_vm->_scenery->_curStaticLayer = _multData->staticKeys[_counter].layer;
 		for (_vm->_scenery->_curStatic = 0;
-				_vm->_scenery->_curStaticLayer >=
-					_vm->_scenery->getStaticLayersCount(_multData->staticIndices[_vm->_scenery->_curStatic]);
-				_vm->_scenery->_curStatic++) {
+		     _vm->_scenery->_curStaticLayer >=
+		     _vm->_scenery->getStaticLayersCount(_multData->staticIndices[_vm->_scenery->_curStatic]);
+		     _vm->_scenery->_curStatic++) {
 			_vm->_scenery->_curStaticLayer -=
-					_vm->_scenery->getStaticLayersCount(_multData->staticIndices[_vm->_scenery->_curStatic]);
+			    _vm->_scenery->getStaticLayersCount(_multData->staticIndices[_vm->_scenery->_curStatic]);
 		}
 
 		_vm->_scenery->_curStatic = _multData->staticIndices[_vm->_scenery->_curStatic];
@@ -422,9 +421,9 @@ void Mult_v1::newCycleAnim(Mult_Object &animObj) {
 	case 2:
 		animData.frame = 0;
 		animData.animation =
-				animData.newAnimation;
+		    animData.newAnimation;
 		animData.layer =
-				animData.newLayer;
+		    animData.newLayer;
 		break;
 
 	case 3:
@@ -494,17 +493,17 @@ void Mult_v1::animate() {
 
 			pNeedRedraw[i] = 1;
 			_vm->_scenery->updateAnim(animData.layer, animData.frame,
-				animData.animation, 0, *(animObj.pPosX), *(animObj.pPosY), 0);
+			                          animData.animation, 0, *(animObj.pPosX), *(animObj.pPosY), 0);
 
 			if (animObj.lastLeft != -1) {
 				pDirtyLefts[i] =
-				  MIN(animObj.lastLeft, _vm->_scenery->_toRedrawLeft);
+				    MIN(animObj.lastLeft, _vm->_scenery->_toRedrawLeft);
 				pDirtyTops[i] =
-				  MIN(animObj.lastTop, _vm->_scenery->_toRedrawTop);
+				    MIN(animObj.lastTop, _vm->_scenery->_toRedrawTop);
 				pDirtyRights[i] =
-				  MAX(animObj.lastRight, _vm->_scenery->_toRedrawRight);
+				    MAX(animObj.lastRight, _vm->_scenery->_toRedrawRight);
 				pDirtyBottoms[i] =
-				  MAX(animObj.lastBottom, _vm->_scenery->_toRedrawBottom);
+				    MAX(animObj.lastBottom, _vm->_scenery->_toRedrawBottom);
 			} else {
 				pDirtyLefts[i] = _vm->_scenery->_toRedrawLeft;
 				pDirtyTops[i] = _vm->_scenery->_toRedrawTop;
@@ -543,7 +542,7 @@ void Mult_v1::animate() {
 
 	// Find intersections
 	for (i = 0; i < _objCount; i++) {
-	Mult_AnimData &animData = *(_objects[i].pAnimData);
+		Mult_AnimData &animData = *(_objects[i].pAnimData);
 		animData.intersected = 200;
 
 		if (animData.isStatic)
@@ -604,8 +603,8 @@ void Mult_v1::animate() {
 			if (pNeedRedraw[i]) {
 				if (!animData.isStatic) {
 					_vm->_scenery->updateAnim(animData.layer, animData.frame,
-						animData.animation, 2, *(animObj.pPosX),
-						*(animObj.pPosY), 1);
+					                          animData.animation, 2, *(animObj.pPosX),
+					                          *(animObj.pPosY), 1);
 
 					if (_vm->_scenery->_toRedrawLeft != -12345) {
 						animObj.lastLeft = _vm->_scenery->_toRedrawLeft;
@@ -639,8 +638,8 @@ void Mult_v1::animate() {
 					_vm->_scenery->_toRedrawBottom = pDirtyBottoms[j];
 
 					_vm->_scenery->updateAnim(animData.layer, animData.frame,
-						animData.animation, 4, *(animObj.pPosX),
-						*(animObj.pPosY), 1);
+					                          animData.animation, 4, *(animObj.pPosX),
+					                          *(animObj.pPosY), 1);
 
 					_vm->_scenery->updateStatic(order + 1);
 				}

@@ -211,7 +211,7 @@ void LoLEngine::setMonsterMode(LoLMonster *monster, int mode) {
 }
 
 bool LoLEngine::updateMonsterAdjustBlocks(LoLMonster *monster) {
-	static const uint8 dims[] = { 0, 13, 9, 3 };
+	static const uint8 dims[] = {0, 13, 9, 3};
 	if (monster->properties->flags & 8)
 		return true;
 
@@ -325,7 +325,7 @@ int LoLEngine::calcMonsterDirection(uint16 x1, uint16 y1, uint16 x2, uint16 y2) 
 	f = (t1 > t2) ? 1 : 0;
 	r = (r << 1) | f;
 
-	static const uint8 retVal[] = { 1, 2, 1, 0, 7, 6, 7, 0, 3, 2, 3, 4, 5, 6, 5, 4};
+	static const uint8 retVal[] = {1, 2, 1, 0, 7, 6, 7, 0, 3, 2, 3, 4, 5, 6, 5, 4};
 	return retVal[r];
 }
 
@@ -581,8 +581,7 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 					fy += (shp[2] >> 2);
 
 			} else {
-				shp = (_itemProperties[i->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[i->itemPropertyIndex].shpIndex] :
-				      _itemShapes[_gameShapeMap[_itemProperties[i->itemPropertyIndex].shpIndex << 1]];
+				shp = (_itemProperties[i->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[i->itemPropertyIndex].shpIndex] : _itemShapes[_gameShapeMap[_itemProperties[i->itemPropertyIndex].shpIndex << 1]];
 			}
 
 			if (shp)
@@ -773,7 +772,7 @@ void LoLEngine::redrawSceneItem() {
 	assignVisibleBlocks(_currentBlock, _currentDirection);
 	_screen->fillRect(112, 0, 287, 119, 0);
 
-	static const uint8 sceneClickTileIndex[] = { 13, 16};
+	static const uint8 sceneClickTileIndex[] = {13, 16};
 
 	int16 x1 = 0;
 	int16 x2 = 0;
@@ -797,8 +796,7 @@ void LoLEngine::redrawSceneItem() {
 						if (item->flyingHeight > 1)
 							fy -= ((item->flyingHeight - 1) * 6);
 
-						uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[item->itemPropertyIndex].shpIndex] :
-						             _itemShapes[_gameShapeMap[_itemProperties[item->itemPropertyIndex].shpIndex << 1]];
+						uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[item->itemPropertyIndex].shpIndex] : _itemShapes[_gameShapeMap[_itemProperties[item->itemPropertyIndex].shpIndex << 1]];
 
 						drawItemOrMonster(shp, 0, item->x, item->y, fx, fy, 0, t, 0);
 						_screen->updateScreen();
@@ -1016,7 +1014,7 @@ int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int &x2, int &y2, uint
 }
 
 void LoLEngine::updateMonster(LoLMonster *monster) {
-	static const uint8 flags[] = { 1, 0, 1, 3, 3, 0, 0, 3, 4, 1, 0, 0, 4, 0, 0 };
+	static const uint8 flags[] = {1, 0, 1, 3, 3, 0, 0, 3, 4, 1, 0, 0, 4, 0, 0};
 	if (monster->mode > 14)
 		return;
 
@@ -1164,7 +1162,7 @@ void LoLEngine::updateMonster(LoLMonster *monster) {
 }
 
 void LoLEngine::moveMonster(LoLMonster *monster) {
-	static const int8 turnPos[] = { 0, 2, 6, 6, 0, 2, 4, 4, 2, 2, 4, 6, 0, 0, 4, 6, 0 };
+	static const int8 turnPos[] = {0, 2, 6, 6, 0, 2, 4, 4, 2, 2, 4, 6, 0, 0, 4, 6, 0};
 	if (monster->x != monster->destX || monster->y != monster->destY) {
 		walkMonster(monster);
 	} else if (monster->direction != monster->destDirection) {
@@ -1325,8 +1323,8 @@ void LoLEngine::chasePartyWithCloseAttacks(LoLMonster *monster) {
 }
 
 int LoLEngine::walkMonsterCalcNextStep(LoLMonster *monster) {
-	static const int8 walkMonsterTable1[] = { 7, -6, 5, -4, 3, -2, 1, 0 };
-	static const int8 walkMonsterTable2[] = { -7, 6, -5, 4, -3, 2, -1, 0 };
+	static const int8 walkMonsterTable1[] = {7, -6, 5, -4, 3, -2, 1, 0};
+	static const int8 walkMonsterTable2[] = {-7, 6, -5, 4, -3, 2, -1, 0};
 
 	if (++_monsterStepCounter > 10) {
 		_monsterStepCounter = 0;
@@ -1425,8 +1423,8 @@ int LoLEngine::walkMonsterCheckDest(int x, int y, LoLMonster *monster, int unk) 
 }
 
 void LoLEngine::getNextStepCoords(int16 srcX, int16 srcY, int &newX, int &newY, uint16 direction) {
-	static const int8 stepAdjustX[] = { 0, 32, 32, 32, 0, -32, -32, -32 };
-	static const int8 stepAdjustY[] = { -32, -32, 0, 32, 32, 32, 0, -32 };
+	static const int8 stepAdjustX[] = {0, 32, 32, 32, 0, -32, -32, -32};
+	static const int8 stepAdjustY[] = {-32, -32, 0, 32, 32, 32, 0, -32};
 
 	newX = (srcX + stepAdjustX[direction]) & 0x1FFF;
 	newY = (srcY + stepAdjustY[direction]) & 0x1FFF;

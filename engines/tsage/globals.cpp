@@ -21,7 +21,6 @@
  */
 
 #include "tsage/globals.h"
-#include "tsage/tsage.h"
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_logic.h"
@@ -29,6 +28,7 @@
 #include "tsage/ringworld2/ringworld2_scenes0.h"
 #include "tsage/sherlock/sherlock_logo.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -41,18 +41,28 @@ ResourceManager *g_resourceManager = NULL;
  * Instantiates a saved object that can be instantiated
  */
 static SavedObject *classFactoryProc(const Common::String &className) {
-	if (className == "ObjectMover") return new ObjectMover();
-	if (className == "NpcMover") return new NpcMover();
-	if (className == "ObjectMover2") return new ObjectMover2();
-	if (className == "ObjectMover3") return new ObjectMover3();
-	if (className == "PlayerMover") return new PlayerMover();
-	if (className == "SceneObjectWrapper") return new SceneObjectWrapper();
-	if (className == "PaletteRotation") return new PaletteRotation();
-	if (className == "PaletteFader") return new PaletteFader();
-	if (className == "SceneText") return new SceneText();
+	if (className == "ObjectMover")
+		return new ObjectMover();
+	if (className == "NpcMover")
+		return new NpcMover();
+	if (className == "ObjectMover2")
+		return new ObjectMover2();
+	if (className == "ObjectMover3")
+		return new ObjectMover3();
+	if (className == "PlayerMover")
+		return new PlayerMover();
+	if (className == "SceneObjectWrapper")
+		return new SceneObjectWrapper();
+	if (className == "PaletteRotation")
+		return new PaletteRotation();
+	if (className == "PaletteFader")
+		return new PaletteFader();
+	if (className == "SceneText")
+		return new SceneText();
 
 	// Return to Ringworld specific classes
-	if (className == "Scene205_Star") return new Ringworld2::Star();
+	if (className == "Scene205_Star")
+		return new Ringworld2::Star();
 
 	return NULL;
 }
@@ -60,7 +70,7 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 /*--------------------------------------------------------------------------*/
 
 Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screen),
-		_randomSource("tsage"), _color1(0), _color2(255), _color3(255) {
+                     _randomSource("tsage"), _color1(0), _color2(255), _color3(255) {
 	reset();
 	_stripNum = 0;
 	_gfxEdgeAdjust = 3;
@@ -88,7 +98,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screen),
 			_color2 = 18;
 			_color3 = 18;
 		} else {
-		// Floppy version
+			// Floppy version
 			_gfxFontNumber = 50;
 			_gfxColors.background = 53;
 			_gfxColors.foreground = 18;
@@ -167,7 +177,6 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screen),
 	default:
 		break;
 	}
-
 }
 
 Globals::~Globals() {
@@ -203,13 +212,16 @@ void Globals::synchronize(Serializer &s) {
 		s.syncAsByte(_color3);
 	}
 
-	s.syncAsSint16LE(_dialogCenter.x); s.syncAsSint16LE(_dialogCenter.y);
+	s.syncAsSint16LE(_dialogCenter.x);
+	s.syncAsSint16LE(_dialogCenter.y);
 	_sounds.synchronize(s);
 	for (int i = 0; i < 256; ++i)
 		s.syncAsByte(_flags[i]);
 
-	s.syncAsSint16LE(_sceneOffset.x); s.syncAsSint16LE(_sceneOffset.y);
-	s.syncAsSint16LE(_prevSceneOffset.x); s.syncAsSint16LE(_prevSceneOffset.y);
+	s.syncAsSint16LE(_sceneOffset.x);
+	s.syncAsSint16LE(_sceneOffset.y);
+	s.syncAsSint16LE(_prevSceneOffset.x);
+	s.syncAsSint16LE(_prevSceneOffset.y);
 	SYNC_POINTER(_scrollFollower);
 	s.syncAsSint32LE(_stripNum);
 
@@ -251,7 +263,7 @@ void TsAGE2Globals::synchronize(Serializer &s) {
 
 namespace BlueForce {
 
-BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
+BlueForceGlobals::BlueForceGlobals() : TsAGE2Globals() {
 	_hiddenDoorStatus = 0;
 	_nico910State = 0;
 	_stuart910State = 0;
@@ -591,7 +603,7 @@ void Ringworld2Globals::reset() {
 
 	// Reset junk/component data in scene 1550
 	Common::copy(&scene1550JunkLocationsDefault[0], &scene1550JunkLocationsDefault[508],
-		&_scene1550JunkLocations[0]);
+	             &_scene1550JunkLocations[0]);
 
 	// Reset fields stored in the player class
 	_player._characterIndex = R2_QUINN;

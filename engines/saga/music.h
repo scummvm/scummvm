@@ -26,8 +26,8 @@
 #define SAGA_MUSIC_H
 
 #include "audio/mididrv.h"
-#include "audio/midiplayer.h"
 #include "audio/midiparser.h"
+#include "audio/midiplayer.h"
 #include "audio/mixer.h"
 
 namespace Saga {
@@ -63,7 +63,6 @@ protected:
 
 class Music {
 public:
-
 	Music(SagaEngine *vm, Audio::Mixer *mixer);
 	~Music();
 	bool isPlaying();
@@ -96,7 +95,6 @@ private:
 
 	ResourceContext *_musicContext;
 	ResourceContext *_digitalMusicContext;
-
 
 	static void musicVolumeGaugeCallback(void *refCon);
 	static void onTimer(void *refCon);

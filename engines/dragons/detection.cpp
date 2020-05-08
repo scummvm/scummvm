@@ -20,79 +20,60 @@
  *
  */
 
-#include "dragons/dragons.h"
-#include "engines/advancedDetector.h"
+#include "base/plugins.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "base/plugins.h"
+#include "dragons/dragons.h"
+#include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
 static const PlainGameDescriptor dragonsGames[] = {
-		{ "dragons", "Blazing Dragons" },
-		{ 0, 0 }
-};
+    {"dragons", "Blazing Dragons"},
+    {0, 0}};
 
 namespace Dragons {
 
 static const DragonsGameDescription gameDescriptions[] = {
-	{
-			{
-					"dragons",
-					0,
-					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44990464),
-					Common::EN_USA,
-					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM,
-					GUIO0()
-			},
-			kGameIdDragons
-	},
-	{
-			{
-					"dragons",
-					0,
-					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44992512),
-					Common::EN_GRB,
-					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM,
-					GUIO0()
-			},
-			kGameIdDragons
-	},
-	{
-			{
-					"dragons",
-					0,
-					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45099008),
-					Common::DE_DEU,
-					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM,
-					GUIO0()
-			},
-			kGameIdDragons
-	},
-	{
-			{
-					"dragons",
-					0,
-					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45107200),
-					Common::FR_FRA,
-					Common::kPlatformPSX,
-					ADGF_DROPPLATFORM,
-					GUIO0()
-			},
-			kGameIdDragons
-	},
+    {{"dragons",
+      0,
+      AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44990464),
+      Common::EN_USA,
+      Common::kPlatformPSX,
+      ADGF_DROPPLATFORM,
+      GUIO0()},
+     kGameIdDragons},
+    {{"dragons",
+      0,
+      AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44992512),
+      Common::EN_GRB,
+      Common::kPlatformPSX,
+      ADGF_DROPPLATFORM,
+      GUIO0()},
+     kGameIdDragons},
+    {{"dragons",
+      0,
+      AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45099008),
+      Common::DE_DEU,
+      Common::kPlatformPSX,
+      ADGF_DROPPLATFORM,
+      GUIO0()},
+     kGameIdDragons},
+    {{"dragons",
+      0,
+      AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45107200),
+      Common::FR_FRA,
+      Common::kPlatformPSX,
+      ADGF_DROPPLATFORM,
+      GUIO0()},
+     kGameIdDragons},
 
-	{ AD_TABLE_END_MARKER, 0 }
-};
+    {AD_TABLE_END_MARKER, 0}};
 
 } // End of namespace Dragons
 
-static const char * const directoryGlobs[] = {
-	"resource",
-	0
-};
+static const char *const directoryGlobs[] = {
+    "resource",
+    0};
 
 class DragonsMetaEngine : public AdvancedMetaEngine {
 public:
@@ -122,13 +103,12 @@ public:
 };
 
 bool DragonsMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-			(f == kSupportsListSaves) ||
-			(f == kSupportsDeleteSave) ||
-			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSavesSupportMetaInfo) ||
-			(f == kSavesSupportThumbnail) ||
-			(f == kSavesSupportCreationDate);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate);
 }
 
 void DragonsMetaEngine::removeSaveState(const char *target, int slot) const {
@@ -204,7 +184,7 @@ bool DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DRAGONS)
-	REGISTER_PLUGIN_DYNAMIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
+REGISTER_PLUGIN_STATIC(DRAGONS, PLUGIN_TYPE_ENGINE, DragonsMetaEngine);
 #endif

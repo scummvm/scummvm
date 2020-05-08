@@ -20,18 +20,18 @@
  *
  */
 
-#include "common/system.h"
-#include "common/stack.h"
 #include "common/keyboard.h"
 #include "common/macresman.h"
+#include "common/stack.h"
+#include "common/system.h"
 #include "common/winexe_pe.h"
 
-#include "graphics/primitives.h"
 #include "graphics/font.h"
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/primitives.h"
 
 namespace Graphics {
 
@@ -85,12 +85,10 @@ struct MacMenuItem {
 
 	MacMenuSubMenu *submenu;
 
-	MacMenuItem(const Common::String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true) :
-			text(t), unicode(false), action(a), style(s), shortcut(sh),
-			shortcutPos(sp), enabled(e), submenu(nullptr) {}
-	MacMenuItem(const Common::U32String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true) :
-			unicodeText(t), unicode(true), action(a), style(s), shortcut(sh),
-			shortcutPos(sp), enabled(e), submenu(nullptr) {}
+	MacMenuItem(const Common::String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true) : text(t), unicode(false), action(a), style(s), shortcut(sh),
+	                                                                                                       shortcutPos(sp), enabled(e), submenu(nullptr) {}
+	MacMenuItem(const Common::U32String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true) : unicodeText(t), unicode(true), action(a), style(s), shortcut(sh),
+	                                                                                                          shortcutPos(sp), enabled(e), submenu(nullptr) {}
 
 	~MacMenuItem() {
 		if (submenu)
@@ -104,7 +102,7 @@ MacMenuSubMenu::~MacMenuSubMenu() {
 }
 
 MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
-		: BaseMacWindow(id, false, wm) {
+    : BaseMacWindow(id, false, wm) {
 	_font = getMenuFont();
 
 	_screen.create(bounds.width(), bounds.height(), PixelFormat::createFormatCLUT8());
@@ -187,7 +185,6 @@ static Common::U32String readUnicodeString(Common::SeekableReadStream *stream) {
 	}
 	return strData.empty() ? Common::U32String() : Common::U32String(strData.data(), strData.size());
 }
-
 
 MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources *exe, MacWindowManager *wm) {
 	Common::SeekableReadStream *menuData = exe->getResource(Common::kWinMenu, 128);
@@ -799,7 +796,6 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	if (_wm->_mode & kWMModalMenuMode)
 		g_system->copyRectToScreen(_screen.getBasePtr(_bbox.left, _bbox.top), _screen.pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
 
-
 	for (uint i = 0; i < _menustack.size(); i++) {
 		renderSubmenu(_menustack[i], (i == _menustack.size() - 1));
 	}
@@ -878,7 +874,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 				// fake it here
 				for (int ii = 0; ii < _tempSurface.h; ii++) {
 					const byte *src = (const byte *)_tempSurface.getBasePtr(0, ii);
-					byte *dst = (byte *)_screen.getBasePtr(x, y+ii);
+					byte *dst = (byte *)_screen.getBasePtr(x, y + ii);
 					byte pat = _wm->getPatterns()[kPatternCheckers2 - 1][ii % 8];
 					for (int j = 0; j < r->width(); j++) {
 						if (*src != kColorGreen && (pat & (1 << (7 - (x + j) % 8))))
@@ -1128,11 +1124,11 @@ bool MacMenu::mouseRelease(int x, int y) {
 			if (_menustack.back()->items[_activeSubItem]->unicode) {
 				if (checkCallback(true))
 					(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
-								  _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
+					                     _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
 			} else {
 				if (checkCallback())
 					(*_ccallback)(_menustack.back()->items[_activeSubItem]->action,
-								  _menustack.back()->items[_activeSubItem]->text, _cdata);
+					              _menustack.back()->items[_activeSubItem]->text, _cdata);
 			}
 		}
 
@@ -1165,7 +1161,7 @@ bool MacMenu::processMenuShortCut(byte flags, uint16 ascii) {
 						}
 						return true;
 					}
-		}
+			}
 	}
 
 	return false;

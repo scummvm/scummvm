@@ -22,11 +22,10 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/file.h"
+#include "engines/advancedDetector.h"
 
 #include "cryo/cryo.h"
-
 
 namespace Cryo {
 
@@ -34,99 +33,90 @@ const char *CryoEngine::getGameId() const { return _gameDescription->gameId; }
 bool CryoEngine::isDemo() const { return _gameDescription->flags & ADGF_DEMO; }
 Common::Platform CryoEngine::getPlatform() const { return _gameDescription->platform; }
 
-}
+} // namespace Cryo
 
 static const PlainGameDescriptor cryoGames[] = {
-	{"losteden", "Lost Eden"},
-	{0, 0}
-};
+    {"losteden", "Lost Eden"},
+    {0, 0}};
 
 namespace Cryo {
 
 static const ADGameDescription gameDescriptions[] = {
 
-	// Lost Eden PC non-interactive demo version
-	// Probably not worth it
-	{
-		"losteden",
-		0,
-		AD_ENTRY1s("EDEN6.HSQ", 0, 17093),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_DEMO | ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
+    // Lost Eden PC non-interactive demo version
+    // Probably not worth it
+    {
+        "losteden",
+        0,
+        AD_ENTRY1s("EDEN6.HSQ", 0, 17093),
+        Common::EN_ANY,
+        Common::kPlatformDOS,
+        ADGF_DEMO | ADGF_UNSTABLE,
+        GUIO1(GUIO_NOMIDI)},
 
-	// Lost Eden PC interactive demo version
-	{
-		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", 0, 205473728),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_DEMO | ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
+    // Lost Eden PC interactive demo version
+    {
+        "losteden",
+        0,
+        AD_ENTRY1s("EDEN.DAT", 0, 205473728),
+        Common::EN_ANY,
+        Common::kPlatformDOS,
+        ADGF_DEMO | ADGF_UNSTABLE,
+        GUIO1(GUIO_NOMIDI)},
 
-	// Lost Eden PC version
-	{
-		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", 0, 449853776),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
+    // Lost Eden PC version
+    {
+        "losteden",
+        0,
+        AD_ENTRY1s("EDEN.DAT", 0, 449853776),
+        Common::EN_ANY,
+        Common::kPlatformDOS,
+        ADGF_UNSTABLE,
+        GUIO1(GUIO_NOMIDI)},
 
-	// Lost Eden EN PC version
-	// Added by Strangerke
-	{
-		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", "2126f14fe38b47c7a132f7937c79a2f0", 451205552),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
+    // Lost Eden EN PC version
+    // Added by Strangerke
+    {
+        "losteden",
+        0,
+        AD_ENTRY1s("EDEN.DAT", "2126f14fe38b47c7a132f7937c79a2f0", 451205552),
+        Common::EN_ANY,
+        Common::kPlatformDOS,
+        ADGF_UNSTABLE,
+        GUIO1(GUIO_NOMIDI)},
 
-	// Lost Eden FR PC version
-	// Added by Strangerke
-	{
-		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", "378b1260ac400ecf35f8843357adcca6", 448040496),
-		Common::FR_FRA,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
+    // Lost Eden FR PC version
+    // Added by Strangerke
+    {
+        "losteden",
+        0,
+        AD_ENTRY1s("EDEN.DAT", "378b1260ac400ecf35f8843357adcca6", 448040496),
+        Common::FR_FRA,
+        Common::kPlatformDOS,
+        ADGF_UNSTABLE,
+        GUIO1(GUIO_NOMIDI)},
 
-	// Lost Eden DE PC version
-	{
-		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", 0, 457719104),
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
+    // Lost Eden DE PC version
+    {
+        "losteden",
+        0,
+        AD_ENTRY1s("EDEN.DAT", 0, 457719104),
+        Common::DE_DEU,
+        Common::kPlatformDOS,
+        ADGF_UNSTABLE,
+        GUIO1(GUIO_NOMIDI)},
 
-	// Lost Eden Mac version
-	{
-		"losteden",
-		0,
-		AD_ENTRY1s("EDEN.DAT", 0, 489739536),
-		Common::EN_ANY,
-		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
+    // Lost Eden Mac version
+    {
+        "losteden",
+        0,
+        AD_ENTRY1s("EDEN.DAT", 0, 489739536),
+        Common::EN_ANY,
+        Common::kPlatformMacintosh,
+        ADGF_UNSTABLE,
+        GUIO1(GUIO_NOMIDI)},
 
-	AD_TABLE_END_MARKER
-};
+    AD_TABLE_END_MARKER};
 
 } // End of namespace Cryo
 

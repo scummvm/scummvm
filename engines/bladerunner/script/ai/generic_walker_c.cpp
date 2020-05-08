@@ -26,8 +26,8 @@ namespace BladeRunner {
 enum kGenericWalkerCStates {
 	kGenericWalkerCStatesIdle = 0,
 	kGenericWalkerCStatesWalk = 1,
-	kGenericWalkerCStatesDie  = 2,
-	kGenericWalkerCStatesGun  = 3
+	kGenericWalkerCStatesDie = 2,
+	kGenericWalkerCStatesGun = 3
 };
 
 AIScriptGenericWalkerC::AIScriptGenericWalkerC(BladeRunnerEngine *vm) : AIScriptBase(vm) {
@@ -48,16 +48,16 @@ void AIScriptGenericWalkerC::Initialize() {
 
 bool AIScriptGenericWalkerC::Update() {
 	switch (Actor_Query_Goal_Number(kActorGenwalkerC)) {
-		case kGoalGenwalkerDefault:
-			if (prepareWalker()) {
-				return true;
-			}
-			break;
-		case kGoalGenwalkerMoving:
-			if (deltaX != 0.0f || deltaZ != 0.0f) {
-				movingUpdate();
-			}
-			break;
+	case kGoalGenwalkerDefault:
+		if (prepareWalker()) {
+			return true;
+		}
+		break;
+	case kGoalGenwalkerMoving:
+		if (deltaX != 0.0f || deltaZ != 0.0f) {
+			movingUpdate();
+		}
+		break;
 	}
 	return false;
 }
@@ -66,7 +66,7 @@ void AIScriptGenericWalkerC::TimerExpired(int timer) {
 	if (timer == kActorTimerAIScriptCustomTask2) {
 		AI_Countdown_Timer_Reset(kActorGenwalkerC, kActorTimerAIScriptCustomTask2);
 		Game_Flag_Reset(kFlagGenericWalkerWaiting);
-		return;// true;
+		return; // true;
 	}
 	//return false;
 }
@@ -226,9 +226,7 @@ bool AIScriptGenericWalkerC::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 6;
 			break;
 		}
-		if (!_vm->_cutContent
-		    || (Global_Variable_Query(kVariableGenericWalkerCModel) < 6 && Global_Variable_Query(kVariableGenericWalkerCModel) != 2)
-		) {
+		if (!_vm->_cutContent || (Global_Variable_Query(kVariableGenericWalkerCModel) < 6 && Global_Variable_Query(kVariableGenericWalkerCModel) != 2)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -275,8 +273,7 @@ bool AIScriptGenericWalkerC::UpdateAnimation(int *animation, int *frame) {
 		// probably for debug purposes
 		*animation = 874;
 		++_animationFrame;
-		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874))
-		{
+		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874)) {
 			_animationFrame = 0;
 			Actor_Set_Goal_Number(kActorGenwalkerC, kGoalGenwalkerDefault);
 			_animationState = kGenericWalkerCStatesIdle;
@@ -293,9 +290,7 @@ bool AIScriptGenericWalkerC::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		_animationState = kGenericWalkerCStatesIdle;
-		if (!_vm->_cutContent
-		    || (Global_Variable_Query(kVariableGenericWalkerCModel) < 6 && Global_Variable_Query(kVariableGenericWalkerCModel) != 2)
-		) {
+		if (!_vm->_cutContent || (Global_Variable_Query(kVariableGenericWalkerCModel) < 6 && Global_Variable_Query(kVariableGenericWalkerCModel) != 2)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -308,17 +303,17 @@ bool AIScriptGenericWalkerC::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptGenericWalkerC::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptGenericWalkerC::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptGenericWalkerC::ReachedMovementTrackWaypoint(int waypointId) {
@@ -382,7 +377,6 @@ bool AIScriptGenericWalkerC::prepareWalker() {
 		}
 		// this while loop ensures choosing a different model for Walker C than the Walker A or Walker B
 	} while (model == Global_Variable_Query(kVariableGenericWalkerAModel) || model == Global_Variable_Query(kVariableGenericWalkerBModel));
-
 
 	Global_Variable_Set(kVariableGenericWalkerCModel, model);
 	Game_Flag_Set(kFlagGenericWalkerWaiting);

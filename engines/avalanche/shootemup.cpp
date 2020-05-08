@@ -25,8 +25,8 @@
 * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
 */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/shootemup.h"
+#include "avalanche/avalanche.h"
 
 #include "common/random.h"
 #include "common/system.h"
@@ -40,7 +40,7 @@ const byte ShootEmUp::kFacingLeft = 93;
 const long int ShootEmUp::kFlag = -20047;
 const byte ShootEmUp::kFrameDelayMax = 2;
 const byte ShootEmUp::kAvvyY = 150;
-const byte ShootEmUp::kShooting[7] = { 86, 79, 80, 81, 80, 79, 86 };
+const byte ShootEmUp::kShooting[7] = {86, 79, 80, 81, 80, 79, 86};
 const byte ShootEmUp::kTimesASecond = 18;
 const byte ShootEmUp::kFlashTime = 20; // If flash_time is <= this, the word "time" will flash. Should be about 20.
 const byte ShootEmUp::kLeftMargin = 10;
@@ -358,10 +358,10 @@ void ShootEmUp::setup() {
 	}
 
 	// Set up status line:
-	_vm->_graphics->seuDrawPicture(0, 0, 16); // Score:
-	showScore(); // Value of score (00000 here).
+	_vm->_graphics->seuDrawPicture(0, 0, 16);   // Score:
+	showScore();                                // Value of score (00000 here).
 	_vm->_graphics->seuDrawPicture(110, 0, 19); // Time:
-	showTime(); // Value of time.
+	showTime();                                 // Value of time.
 
 	_vm->_graphics->refreshScreen();
 
@@ -486,16 +486,16 @@ void ShootEmUp::animate() {
 void ShootEmUp::collisionCheck() {
 	for (int i = 0; i < 99; i++) {
 		if ((_sprites[i]._x != kFlag) && (_sprites[i]._missile) &&
-			(_sprites[i]._y < 60) && (_sprites[i]._timeout == 1)) {
+		    (_sprites[i]._y < 60) && (_sprites[i]._timeout == 1)) {
 			int distFromSide = (_sprites[i]._x - 20) % 90;
 			int thisStock = (_sprites[i]._x - 20) / 90;
 			if ((!_hasEscaped[thisStock]) && (distFromSide > 17) && (distFromSide < 34)) {
 				_vm->_sound->playNote(999, 3);
 				_vm->_system->delayMillis(3);
 				define(_sprites[i]._x + 20, _sprites[i]._y, 25 + _vm->_rnd->getRandomNumber(1), 3, 1, 12, false, true); // Well done!
-				define(thisStock * 90 + 20, 30, 30, 0, 0, 7, false, false); // Face of man
-				defineCameo(thisStock * 90 + 20 + 10, 35, 40, 7); // Splat!
-				define(thisStock * 90 + 20 + 20, 50, 33 + _vm->_rnd->getRandomNumber(4), 0, 2, 9, false, true); // Oof!
+				define(thisStock * 90 + 20, 30, 30, 0, 0, 7, false, false);                                             // Face of man
+				defineCameo(thisStock * 90 + 20 + 10, 35, 40, 7);                                                       // Splat!
+				define(thisStock * 90 + 20 + 20, 50, 33 + _vm->_rnd->getRandomNumber(4), 0, 2, 9, false, true);         // Oof!
 				_stockStatus[thisStock] = 17;
 				gain(3); // Score for hitting a face.
 
@@ -539,7 +539,7 @@ void ShootEmUp::bumpFolk() {
 		if (_running[i]._x != kFlag) {
 			for (int j = i + 1; j < 4; j++) {
 				bool overlaps = overlap(_running[i]._x, _running[i]._y, _running[i]._x + 17, _running[i]._y + 24,
-										_running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
+				                        _running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
 				if ((_running[i]._x != kFlag) && overlaps) {
 					turnAround(i, false); // Opp. directions.
 					turnAround(j, false);
@@ -615,14 +615,14 @@ void ShootEmUp::hitPeople() {
 			for (int j = 0; j < 4; j++) {
 
 				bool overlaps = overlap(_sprites[i]._x, _sprites[i]._y, _sprites[i]._x + 7, _sprites[i]._y + 10,
-					_running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
+				                        _running[j]._x, _running[j]._y, _running[j]._x + 17, _running[j]._y + 24);
 
 				if ((_running[j]._x != kFlag) && (overlaps)) {
 					_vm->_sound->playNote(7177, 1);
 					_sprites[i]._x = kFlag;
 					gain(-5);
 					define(_running[j]._x + 20, _running[j]._y + 3, 33 + _vm->_rnd->getRandomNumber(5), 1, 3, 9, false, true); // Oof!
-					define(_sprites[i]._x, _sprites[i]._y, 82, 1, 0, 17, false, true); // Oops!
+					define(_sprites[i]._x, _sprites[i]._y, 82, 1, 0, 17, false, true);                                         // Oops!
 				}
 			}
 		}

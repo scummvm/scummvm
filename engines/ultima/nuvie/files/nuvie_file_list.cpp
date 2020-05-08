@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/gui/widgets/console.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/nuvie_file_list.h"
 #include "common/fs.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/widgets/console.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {

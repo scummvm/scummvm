@@ -206,8 +206,6 @@ bool U6LList::removeAll() {
 	return true;
 }
 
-
-
 uint32 U6LList::count() {
 	uint32 i;
 	U6Link *link;

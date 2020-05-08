@@ -29,10 +29,9 @@ namespace Kyra {
 
 int KyraEngine_LoK::findDuplicateItemShape(int shape) {
 	static const uint8 dupTable[] = {
-		0x48, 0x46, 0x49, 0x47, 0x4A, 0x46, 0x4B, 0x47,
-		0x4C, 0x46, 0x4D, 0x47, 0x5B, 0x5A, 0x5C, 0x5A,
-		0x5D, 0x5A, 0x5E, 0x5A, 0xFF, 0xFF
-	};
+	    0x48, 0x46, 0x49, 0x47, 0x4A, 0x46, 0x4B, 0x47,
+	    0x4C, 0x46, 0x4D, 0x47, 0x5B, 0x5A, 0x5C, 0x5A,
+	    0x5D, 0x5A, 0x5E, 0x5A, 0xFF, 0xFF};
 
 	int i = 0;
 
@@ -110,11 +109,9 @@ byte KyraEngine_LoK::findItemAtPos(int x, int y) {
 
 void KyraEngine_LoK::placeItemInGenericMapScene(int item, int index) {
 	static const uint16 itemMapSceneMinTable[] = {
-		0x0000, 0x0011, 0x006D, 0x0025, 0x00C7, 0x0000
-	};
+	    0x0000, 0x0011, 0x006D, 0x0025, 0x00C7, 0x0000};
 	static const uint16 itemMapSceneMaxTable[] = {
-		0x0010, 0x0024, 0x00C6, 0x006C, 0x00F5, 0x0000
-	};
+	    0x0010, 0x0024, 0x00C6, 0x006C, 0x00F5, 0x0000};
 
 	int minValue = itemMapSceneMinTable[index];
 	int maxValue = itemMapSceneMaxTable[index];
@@ -126,14 +123,38 @@ void KyraEngine_LoK::placeItemInGenericMapScene(int item, int index) {
 		bool placeItem = false;
 
 		switch (nameIndex) {
-		case 0:  case 1:   case 2:   case 3:
-		case 4:  case 5:   case 6:   case 11:
-		case 12: case 16:  case 17:  case 20:
-		case 22: case 23:  case 25:  case 26:
-		case 27: case 31:  case 33:  case 34:
-		case 36: case 37:  case 58:  case 59:
-		case 60: case 61:  case 83:  case 84:
-		case 85: case 104: case 105: case 106:
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 11:
+		case 12:
+		case 16:
+		case 17:
+		case 20:
+		case 22:
+		case 23:
+		case 25:
+		case 26:
+		case 27:
+		case 31:
+		case 33:
+		case 34:
+		case 36:
+		case 37:
+		case 58:
+		case 59:
+		case 60:
+		case 61:
+		case 83:
+		case 84:
+		case 85:
+		case 104:
+		case 105:
+		case 106:
 			placeItem = true;
 			break;
 
@@ -793,14 +814,11 @@ void KyraEngine_LoK::magicInMouseItem(int animIndex, int item, int itemPos) {
 
 void KyraEngine_LoK::specialMouseItemFX(int shape, int x, int y, int animIndex, int tableIndex, int loopStart, int maxLoops) {
 	static const uint8 table1[] = {
-		0x23, 0x45, 0x55, 0x72, 0x84, 0xCF, 0x00, 0x00
-	};
+	    0x23, 0x45, 0x55, 0x72, 0x84, 0xCF, 0x00, 0x00};
 	static const uint8 table2[] = {
-		0x73, 0xB5, 0x80, 0x21, 0x13, 0x39, 0x45, 0x55, 0x62, 0xB4, 0xCF, 0xD8
-	};
+	    0x73, 0xB5, 0x80, 0x21, 0x13, 0x39, 0x45, 0x55, 0x62, 0xB4, 0xCF, 0xD8};
 	static const uint8 table3[] = {
-		0x7C, 0xD0, 0x74, 0x84, 0x87, 0x00, 0x00, 0x00
-	};
+	    0x7C, 0xD0, 0x74, 0x84, 0x87, 0x00, 0x00, 0x00};
 	int tableValue = 0;
 	if (animIndex == 0)
 		tableValue = table1[tableIndex];

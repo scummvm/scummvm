@@ -21,15 +21,15 @@
  */
 
 #include "glk/alan2/alan2.h"
-#include "glk/alan2/exe.h"
-#include "glk/alan2/main.h"
-#include "glk/alan2/glkio.h"
-#include "common/system.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "common/error.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/system.h"
+#include "common/translation.h"
+#include "glk/alan2/exe.h"
+#include "glk/alan2/glkio.h"
+#include "glk/alan2/main.h"
 #include "glk/glk.h"
 #include "glk/streams.h"
 
@@ -39,7 +39,7 @@ namespace Alan2 {
 Alan2 *g_vm = nullptr;
 
 Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		vm_exited_cleanly(false), _restartFlag(false), _saveSlot(-1), _pendingLook(false) {
+                                                                  vm_exited_cleanly(false), _restartFlag(false), _saveSlot(-1), _pendingLook(false) {
 	g_vm = this;
 	txtfil = nullptr;
 	logfil = nullptr;
@@ -65,8 +65,7 @@ bool Alan2::initialize() {
 		::error("FATAL ERROR: Cannot open initial window");
 
 	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
-	glkStatusWin = g_vm->glk_window_open(glkMainWin, winmethod_Above |
-	                                     winmethod_Fixed, 1, wintype_TextGrid, 0);
+	glkStatusWin = g_vm->glk_window_open(glkMainWin, winmethod_Above | winmethod_Fixed, 1, wintype_TextGrid, 0);
 	g_vm->glk_set_window(glkMainWin);
 
 	// Set up the code file to point to the already opened game file

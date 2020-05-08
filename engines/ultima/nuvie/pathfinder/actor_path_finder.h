@@ -23,15 +23,15 @@
 #ifndef NUVIE_PATHFINDER_ACTOR_PATH_FINDER_H
 #define NUVIE_PATHFINDER_ACTOR_PATH_FINDER_H
 
-#include "ultima/nuvie/pathfinder/path_finder.h"
 #include "ultima/nuvie/pathfinder/dir_finder.h"
+#include "ultima/nuvie/pathfinder/path_finder.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 class Actor;
 
-class ActorPathFinder: public PathFinder, public DirFinder {
+class ActorPathFinder : public PathFinder, public DirFinder {
 protected:
 	Actor *actor;
 
@@ -41,7 +41,7 @@ public:
 	void set_actor(Actor *a);
 
 	virtual bool update_location(); /* get location from actor (use any time) */
-	virtual void actor_moved(); /* the actor moved ON PATH...
+	virtual void actor_moved();     /* the actor moved ON PATH...
                                    (use after get_next_move()) */
 
 	bool check_loc(const MapCoord &loc) override;

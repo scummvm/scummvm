@@ -38,7 +38,7 @@ Common::Array<ListingLine> Listing::getLines(uint begin, uint end) {
 }
 
 Common::Array<ListingLine> Listing::getLines(uint centre, uint before, uint after) {
-	uint begin = MAX(centre - before, (uint)1); // Line numbers start from 1
+	uint begin = MAX(centre - before, (uint)1);              // Line numbers start from 1
 	uint end = MIN(centre + after, (uint)(getLength() - 1)); // Line numbers start from 1
 	return getLines(begin, end);
 }

@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_archive.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -37,15 +37,14 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ButtonWidget, Gump)
 
 ButtonWidget::ButtonWidget() : Gump(), _shapeUp(nullptr), _shapeDown(nullptr),
-		_mouseOver(false), _origW(0), _origH(0), _frameNumUp(0),
-		_frameNumDown(0), _mouseOverBlendCol(0), _textWidget(0) {
+                               _mouseOver(false), _origW(0), _origH(0), _frameNumUp(0),
+                               _frameNumDown(0), _mouseOverBlendCol(0), _textWidget(0) {
 }
 
 ButtonWidget::ButtonWidget(int x, int y, Std::string txt, bool gamefont,
                            int font, uint32 mouseOverBlendCol,
-                           int w, int h, int32 layer) :
-	Gump(x, y, w, h, 0, 0, layer), _shapeUp(nullptr), _shapeDown(nullptr),
-	_mouseOver(false), _origW(w), _origH(h), _frameNumUp(0), _frameNumDown(0) {
+                           int w, int h, int32 layer) : Gump(x, y, w, h, 0, 0, layer), _shapeUp(nullptr), _shapeDown(nullptr),
+                                                        _mouseOver(false), _origW(w), _origH(h), _frameNumUp(0), _frameNumDown(0) {
 	TextWidget *widget = new TextWidget(0, 0, txt, gamefont, font, w, h);
 	_textWidget = widget->getObjId();
 	_mouseOverBlendCol = mouseOverBlendCol;
@@ -54,14 +53,13 @@ ButtonWidget::ButtonWidget(int x, int y, Std::string txt, bool gamefont,
 
 ButtonWidget::ButtonWidget(int x, int y, FrameID frame_up, FrameID frame_down,
                            bool mouseOver, int32 layer)
-	: Gump(x, y, 5, 5, 0, 0, layer), _textWidget(0), _mouseOver(mouseOver),
-		_origW(0), _origH(0), _mouseOverBlendCol(0) {
+    : Gump(x, y, 5, 5, 0, 0, layer), _textWidget(0), _mouseOver(mouseOver),
+      _origW(0), _origH(0), _mouseOverBlendCol(0) {
 	_shapeUp = GameData::get_instance()->getShape(frame_up);
 	_shapeDown = GameData::get_instance()->getShape(frame_down);
 	_frameNumUp = frame_up._frameNum;
 	_frameNumDown = frame_down._frameNum;
 }
-
 
 ButtonWidget::~ButtonWidget(void) {
 }
@@ -73,7 +71,7 @@ void ButtonWidget::InitGump(Gump *newparent, bool take_focus) {
 		Gump *widget = getGump(_textWidget);
 		assert(widget);
 		widget->InitGump(this);
-		widget->GetDims(_dims); // transfer child dimension to self
+		widget->GetDims(_dims);   // transfer child dimension to self
 		widget->Move(0, _dims.y); // move it to the correct height
 	} else {
 		assert(_shapeUp != nullptr);
@@ -129,7 +127,6 @@ uint16 ButtonWidget::TraceObjId(int32 mx, int32 my) {
 	else
 		return 0;
 }
-
 
 void ButtonWidget::OnMouseUp(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT) {
@@ -222,7 +219,8 @@ void ButtonWidget::saveData(Common::WriteStream *ws) {
 }
 
 bool ButtonWidget::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Gump::loadData(rs, version)) return false;
+	if (!Gump::loadData(rs, version))
+		return false;
 
 	_shapeUp = nullptr;
 	ShapeArchive *flex = GameData::get_instance()->getShapeFlex(rs->readUint16LE());
@@ -246,7 +244,7 @@ bool ButtonWidget::loadData(Common::ReadStream *rs, uint32 version) {
 	// HACK ALERT
 	if (_textWidget != 0) {
 		Gump *widget = getGump(_textWidget);
-		widget->GetDims(_dims); // transfer child dimension to self
+		widget->GetDims(_dims);   // transfer child dimension to self
 		widget->Move(0, _dims.y); // move it to the correct height
 	}
 

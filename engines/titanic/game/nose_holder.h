@@ -34,9 +34,11 @@ class CNoseHolder : public CDropTarget {
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 private:
 	CGameObject *_dragObject;
 	bool _draggingFeather;
+
 public:
 	CLASSDEF;
 	CNoseHolder();

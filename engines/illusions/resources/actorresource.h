@@ -23,9 +23,9 @@
 #ifndef ILLUSIONS_ACTORRESOURCE_H
 #define ILLUSIONS_ACTORRESOURCE_H
 
+#include "graphics/surface.h"
 #include "illusions/graphics.h"
 #include "illusions/resourcesystem.h"
-#include "graphics/surface.h"
 
 namespace Illusions {
 
@@ -37,6 +37,7 @@ public:
 	~ActorResourceLoader() override {}
 	void load(Resource *resource) override;
 	bool isFlag(int flag) override;
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -84,6 +85,7 @@ public:
 	void load(Resource *resource);
 	bool containsSequence(Sequence *sequence);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
+
 public:
 	uint32 _totalSize;
 	Common::Array<ActorType> _actorTypes;
@@ -99,11 +101,13 @@ public:
 	void unload() override;
 	void pause() override;
 	void unpause() override;
+
 public:
 	IllusionsEngine *_vm;
 	uint32 _sceneId;
 	int _pauseCtr;
 	ActorResource *_actorResource;
+
 protected:
 	void initActorTypes(int gameId);
 	void registerResources();
@@ -121,8 +125,9 @@ public:
 	FramesList *findSequenceFrames(Sequence *sequence);
 	ActorInstance *findActorByResource(ActorResource *actorResource);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
+
 protected:
-	typedef Common::List<ActorInstance*> Items;
+	typedef Common::List<ActorInstance *> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;
 	Items _items;

@@ -21,8 +21,8 @@
  */
 
 #include "glk/agt/agility.h"
-#include "glk/agt/interp.h"
 #include "glk/agt/exec.h"
+#include "glk/agt/interp.h"
 
 namespace Glk {
 namespace AGT {
@@ -48,7 +48,7 @@ static void d_moveobj(int obj, int dest)
 	}
 	if (obj != 1)
 		it_move(obj, dest);
-	else  {
+	else {
 		if (!troom(dest)) {
 			writeln("Player can only be moved to a room");
 			return;
@@ -66,7 +66,8 @@ static int print_objid(int obj) {
 	writestr(buff);
 	s = objname(obj);
 	for (n = 0; s[n] != 0; n++)
-		if (s[n] <= 8 || (uchar)s[n] == 0xFF) s[n] = ' '; /* Strip out format codes */
+		if (s[n] <= 8 || (uchar)s[n] == 0xFF)
+			s[n] = ' '; /* Strip out format codes */
 	writestr(s);
 	n = strlen(s);
 	rfree(s);
@@ -85,8 +86,8 @@ static void d_listroom() {
 	}
 }
 
-#define SEPLENG 27  /* Width between beginning of object column and
-               location column */
+#define SEPLENG 27 /* Width between beginning of object column and \
+	          location column */
 
 static void d_listnoun() {
 	int i;
@@ -108,7 +109,8 @@ static void d_listnoun() {
 	nounloop(i) {
 		len = print_objid(i + first_noun);
 		len = SEPLENG - len;
-		if (len > 0) padout(len);
+		if (len > 0)
+			padout(len);
 		writestr("[");
 		print_objid(noun[i].location);
 		writeln("]");
@@ -130,7 +132,8 @@ static void d_listcreat() {
 	creatloop(i) {
 		len = print_objid(i + first_creat);
 		len = SEPLENG - len;
-		if (len > 0) padout(len);
+		if (len > 0)
+			padout(len);
 		writestr("    [");
 		print_objid(creature[i].location);
 		writeln("]");
@@ -143,7 +146,8 @@ static void writetbl(const char *s, int width)
 {
 	writestr(s);
 	width = width - strlen(s);
-	if (width > 0) padout(width);
+	if (width > 0)
+		padout(width);
 }
 
 static void var_edit(int vtype)
@@ -220,13 +224,15 @@ static void var_edit(int vtype)
 			}
 			writestr(" (-1 to quit): ");
 			i = read_number();
-			if (i < 0) return;
+			if (i < 0)
+				return;
 			if (i <= imax) {
 				if (vtype != 2) {
 					if (vtype == 0)
 						sprintf(sbuff, "[Var%d]=%ld", i, (long)agt_var[i]);
-					else sprintf(sbuff, "[Cnt%d]=%ld (-1 means it's off)",
-						             i, (long)agt_counter[i]);
+					else
+						sprintf(sbuff, "[Cnt%d]=%ld (-1 means it's off)",
+						        i, (long)agt_counter[i]);
 					writestr(sbuff);
 					writestr("; new value = ");
 					n = read_number();
@@ -234,8 +240,10 @@ static void var_edit(int vtype)
 						agt_var[i] = n;
 					else if (n < -1 || n > (((long)1) << 15) - 1)
 						writeln("Invalid value for a counter.");
-					else agt_counter[i] = n;
-				} else flag[i] = !flag[i];
+					else
+						agt_counter[i] = n;
+				} else
+					flag[i] = !flag[i];
 				break;
 			} else
 				writeln("Invalid index.");
@@ -264,18 +272,21 @@ static void edit_str() {
 		}
 		writestr(" (0 to quit): ");
 		i = read_number();
-		if (i == 0) return;
+		if (i == 0)
+			return;
 		if (i > 0 && i <= MAX_USTR) {
 			writeln("Enter new string:");
 			tmpstr = agt_readline(3);
 			j = strlen(tmpstr) - 1;
-			if (j > 0 && tmpstr[j] == '\n') tmpstr[j] = 0;
+			if (j > 0 && tmpstr[j] == '\n')
+				tmpstr[j] = 0;
 			strncpy(userstr[i - 1], tmpstr, 80);
-		} else writeln("Invalid string number");
+		} else
+			writeln("Invalid string number");
 	}
 }
 
-static uchar attrcol;  /* Determines which column the attribute is put in */
+static uchar attrcol;   /* Determines which column the attribute is put in */
 static uchar attrwidth; /* Number of attribute columns */
 
 static void next_col() {
@@ -289,8 +300,10 @@ static void next_col() {
 static void writeattr(const char *attrname, rbool attrval) {
 	writestr(attrname);
 	padout(15 - strlen(attrname));
-	if (attrval) writestr("yes");
-	else writestr("no ");
+	if (attrval)
+		writestr("yes");
+	else
+		writestr("no ");
 	next_col();
 }
 
@@ -372,7 +385,8 @@ static long readval(const char *prompt, int type) {
 		writestr(prompt);
 		writestr(" ");
 		val = read_number();
-		if (argvalid(type, val)) return val;
+		if (argvalid(type, val))
+			return val;
 		writeln("Invalid value.");
 	}
 }
@@ -392,7 +406,7 @@ static uchar readgender() {
 		case 'n':
 		case 't':
 			return 0;
-		default: ;/* Do nothing */
+		default:; /* Do nothing */
 		}
 	}
 }
@@ -429,19 +443,23 @@ static void edit_objattr(int obj) {
 		}
 		writestr("Field to change (0 to return to main view)? ");
 		n = read_number();
-		if (n == 0) return;
-		if (n < 1 || n >= k) continue;
+		if (n == 0)
+			return;
+		if (n < 1 || n >= k)
+			continue;
 		k = 0;
 		if (n < kprop) { /* Attribute */
 			for (i = 0; i < oflag_cnt; i++)
 				if (have_objattr(0, obj, i))
-					if (n == ++k) break;
+					if (n == ++k)
+						break;
 			if (n == k && have_objattr(0, obj, i))
 				op_objflag(3, obj, i); /* Toggle it */
-		} else { /* Property */
+		} else {                       /* Property */
 			for (i = 0; i < oprop_cnt; i++)
 				if (have_objattr(1, obj, i))
-					if (n == ++k) break;
+					if (n == ++k)
+						break;
 			if (n == k && have_objattr(1, obj, i))
 				op_objprop(1, obj, i, readval("New value:", AGT_NUM));
 		}
@@ -474,8 +492,10 @@ static void room_edit(int i) {
 		writeln("EXITS:");
 		for (j = 0; j < 12; j++) {
 			n = writedir(j + 10, j, room[i].path[j]);
-			if (j % 4 == 3) writeln("");
-			else padout(15 - n);
+			if (j % 4 == 3)
+				writeln("");
+			else
+				padout(15 - n);
 		}
 		writeprop("22. SPECIAL:", room[i].path[12]);
 		writeflags("23. Room Flags:", room[i].flag_noun_bits);
@@ -485,7 +505,8 @@ static void room_edit(int i) {
 		/* writeln(""); */
 		writestr("Field to change (0 to exit)? ");
 		n = read_number();
-		if (n == 0) return;
+		if (n == 0)
+			return;
 		switch (n) {
 		case 1:
 			room[i].win = !room[i].win;
@@ -526,12 +547,17 @@ static void room_edit(int i) {
 		default:
 			if (n >= 10 && n < 22) { /* Direction */
 				room[i].path[n - 10] = readval(exitname[n - 10], AGT_NUM);
-			} else writeln("Invalid field");
+			} else
+				writeln("Invalid field");
 		}
 	}
 }
 
-#define tog(x) {x=!x;break;}
+#define tog(x)  \
+	{           \
+		x = !x; \
+		break;  \
+	}
 
 static void noun_edit(int i) {
 	int n;
@@ -584,7 +610,8 @@ static void noun_edit(int i) {
 		writeln("(Fields marked with an * are not saved or restored.)");
 		writestr("Field to change (0 to exit)? ");
 		n = read_number();
-		if (n == 0) return;
+		if (n == 0)
+			return;
 		switch (n) {
 		case 1:
 			tog(noun[i].pushable); /* tog() macro includes break */
@@ -694,7 +721,8 @@ static void creat_edit(int i) {
 		writeln("");
 		writestr("Field to change (0 to exit)? ");
 		n = read_number();
-		if (n == 0) return;
+		if (n == 0)
+			return;
 		switch (n) {
 		case 1:
 			tog(creature[i].hostile);
@@ -743,7 +771,6 @@ static void creat_edit(int i) {
 
 #undef tog
 
-
 static void obj_edit() {
 	int n;
 
@@ -752,18 +779,22 @@ static void obj_edit() {
 		do {
 			writestr("Enter object number (0 to exit)? ");
 			n = read_number();
-			if (n <= 0) return;
+			if (n <= 0)
+				return;
 		} while (!troom(n) && !tnoun(n) && !tcreat(n));
 
-		if (troom(n)) room_edit(n - first_room);
-		else if (tnoun(n)) noun_edit(n - first_noun);
-		else if (tcreat(n)) creat_edit(n - first_creat);
-		else writeln("[Not yet implemented]");
-
+		if (troom(n))
+			room_edit(n - first_room);
+		else if (tnoun(n))
+			noun_edit(n - first_noun);
+		else if (tcreat(n))
+			creat_edit(n - first_creat);
+		else
+			writeln("[Not yet implemented]");
 	}
 }
 
-static const char *yesnostr[] = { "No", "Yes" };
+static const char *yesnostr[] = {"No", "Yes"};
 
 static void set_debug_options() {
 	char buff[80];

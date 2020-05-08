@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/system.h"
 #include "sherlock/map.h"
-#include "sherlock/sherlock.h"
+#include "common/system.h"
 #include "sherlock/scalpel/scalpel_map.h"
+#include "sherlock/sherlock.h"
 #include "sherlock/tattoo/tattoo_map.h"
 
 namespace Sherlock {
@@ -47,6 +47,5 @@ void Map::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_overPos.y);
 	s.syncAsSint16LE(_oldCharPoint);
 }
-
 
 } // End of namespace Sherlock

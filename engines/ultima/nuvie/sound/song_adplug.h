@@ -24,8 +24,8 @@
 #define NUVIE_SOUND_SONG_ADPLUG_H
 
 #include "audio/mixer.h"
-#include "ultima/nuvie/sound/song.h"
 #include "ultima/nuvie/sound/decoder/u6_adplug_decoder_stream.h"
+#include "ultima/nuvie/sound/song.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -57,8 +57,6 @@ private:
 	CEmuopl *opl;
 	U6AdPlugDecoderStream *stream;
 	Audio::SoundHandle handle;
-
-
 };
 
 } // End of namespace Nuvie

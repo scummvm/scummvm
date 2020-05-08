@@ -23,11 +23,11 @@
 #ifndef ULTIMA8_WORLD_ITEM_H
 #define ULTIMA8_WORLD_ITEM_H
 
-#include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/graphics/shape_info.h"
+#include "ultima/ultima8/kernel/object.h"
 
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/box.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -379,22 +379,22 @@ public:
 	//! \return true if the item matches, false otherwise
 	bool checkLoopScript(const uint8 *script, uint32 scriptsize) const;
 
-	uint32 callUsecodeEvent_look();                             // event 0
-	uint32 callUsecodeEvent_use();                              // event 1
-	uint32 callUsecodeEvent_anim();                             // event 2
-	uint32 callUsecodeEvent_cachein();                          // event 4
-	uint32 callUsecodeEvent_hit(ObjId hitted, int16 hitforce);  // event 5
-	uint32 callUsecodeEvent_gotHit(ObjId hitter, int16 hitforce);// event 6
-	uint32 callUsecodeEvent_hatch();                            // event 7
-	uint32 callUsecodeEvent_schedule(uint32 time);              // event 8
-	uint32 callUsecodeEvent_release();                          // event 9
-	uint32 callUsecodeEvent_combine();                          // event C
-	uint32 callUsecodeEvent_enterFastArea();                    // event F
-	uint32 callUsecodeEvent_leaveFastArea();                    // event 10
-	uint32 callUsecodeEvent_cast(uint16 unk);                   // event 11
-	uint32 callUsecodeEvent_justMoved();                        // event 12
-	uint32 callUsecodeEvent_AvatarStoleSomething(uint16 unk);   // event 14
-	uint32 callUsecodeEvent_guardianBark(int16 unk);            // event 15
+	uint32 callUsecodeEvent_look();                               // event 0
+	uint32 callUsecodeEvent_use();                                // event 1
+	uint32 callUsecodeEvent_anim();                               // event 2
+	uint32 callUsecodeEvent_cachein();                            // event 4
+	uint32 callUsecodeEvent_hit(ObjId hitted, int16 hitforce);    // event 5
+	uint32 callUsecodeEvent_gotHit(ObjId hitter, int16 hitforce); // event 6
+	uint32 callUsecodeEvent_hatch();                              // event 7
+	uint32 callUsecodeEvent_schedule(uint32 time);                // event 8
+	uint32 callUsecodeEvent_release();                            // event 9
+	uint32 callUsecodeEvent_combine();                            // event C
+	uint32 callUsecodeEvent_enterFastArea();                      // event F
+	uint32 callUsecodeEvent_leaveFastArea();                      // event 10
+	uint32 callUsecodeEvent_cast(uint16 unk);                     // event 11
+	uint32 callUsecodeEvent_justMoved();                          // event 12
+	uint32 callUsecodeEvent_AvatarStoleSomething(uint16 unk);     // event 14
+	uint32 callUsecodeEvent_guardianBark(int16 unk);              // event 15
 
 	uint32 use();
 
@@ -534,7 +534,7 @@ public:
 	INTRINSIC(I_isCrusTypeNPC);
 
 private:
-	uint32 _shape;   // DO NOT modify this directly! Always use setShape()!
+	uint32 _shape; // DO NOT modify this directly! Always use setShape()!
 
 protected:
 	uint32 _frame;
@@ -554,23 +554,22 @@ protected:
 
 	// This is stuff that is used for displaying and interpolation
 	struct Lerped {
-		Lerped() : _x(0), _y(0), _z(0), _shape(0), _frame(0) {};
+		Lerped() : _x(0), _y(0), _z(0), _shape(0), _frame(0){};
 		int32 _x, _y, _z;
 		uint32 _shape, _frame;
 	};
 
-	Lerped  _lPrev;         // Previous state (relative to camera)
-	Lerped  _lNext;         // Next (current) state (relative to camera)
-	int32   _ix, _iy, _iz;  // Interpolated position in camera space
+	Lerped _lPrev;       // Previous state (relative to camera)
+	Lerped _lNext;       // Next (current) state (relative to camera)
+	int32 _ix, _iy, _iz; // Interpolated position in camera space
 
-	ObjId _gump;             // Item's gump
-	ProcId _gravityPid;      // Item's GravityTracker (or 0)
+	ObjId _gump;        // Item's gump
+	ProcId _gravityPid; // Item's GravityTracker (or 0)
 
 	//! save the actual Item data
 	void saveData(Common::WriteStream *ws) override;
 
 private:
-
 	//! Call a Usecode Event. Use the separate functions instead!
 	uint32 callUsecodeEvent(uint32 event, const uint8 *args = 0, int argsize = 0);
 
@@ -582,31 +581,31 @@ private:
 
 public:
 	enum statusflags {
-		FLG_DISPOSABLE   = 0x0002,  //!< Item is discarded on map change
-		FLG_OWNED        = 0x0004,  //!< Item is owned by avatar
-		FLG_CONTAINED    = 0x0008,  //!< Item is in a container
-		FLG_INVISIBLE    = 0x0010,  //!< Item is invisible
-		FLG_FLIPPED      = 0x0020,  //!< Item is flipped horizontally
-		FLG_IN_NPC_LIST  = 0x0040,  //!< Item is a NPC
-		FLG_FAST_ONLY    = 0x0080,  //!< Item is discarded when leaving fast area
-		FLG_GUMP_OPEN    = 0x0100,  //!< Item has a gump open
-		FLG_EQUIPPED     = 0x0200,  //!< Item is equipped
-		FLG_BOUNCING     = 0x0400,  //!< Item has bounced
-		FLG_ETHEREAL     = 0x0800,  //!< Item is in the ethereal list
-		FLG_HANGING      = 0x1000,  //!< Item is suspended in the air
-		FLG_FASTAREA     = 0x2000,  //!< Item is in the fast area
-		FLG_LOW_FRICTION = 0x4000   //!< Item has low friction
+		FLG_DISPOSABLE = 0x0002,  //!< Item is discarded on map change
+		FLG_OWNED = 0x0004,       //!< Item is owned by avatar
+		FLG_CONTAINED = 0x0008,   //!< Item is in a container
+		FLG_INVISIBLE = 0x0010,   //!< Item is invisible
+		FLG_FLIPPED = 0x0020,     //!< Item is flipped horizontally
+		FLG_IN_NPC_LIST = 0x0040, //!< Item is a NPC
+		FLG_FAST_ONLY = 0x0080,   //!< Item is discarded when leaving fast area
+		FLG_GUMP_OPEN = 0x0100,   //!< Item has a gump open
+		FLG_EQUIPPED = 0x0200,    //!< Item is equipped
+		FLG_BOUNCING = 0x0400,    //!< Item has bounced
+		FLG_ETHEREAL = 0x0800,    //!< Item is in the ethereal list
+		FLG_HANGING = 0x1000,     //!< Item is suspended in the air
+		FLG_FASTAREA = 0x2000,    //!< Item is in the fast area
+		FLG_LOW_FRICTION = 0x4000 //!< Item has low friction
 	};
 
 	enum extflags {
-		EXT_FIXED        = 0x0001,  //!< Item came from FIXED
-		EXT_INCURMAP     = 0x0002,  //!< Item is in a CurrentMap display list
-		EXT_LERP_NOPREV  = 0x0008,  //!< Item can't be lerped this frame
-		EXT_HIGHLIGHT    = 0x0010,  //!< Item should be Painted highlighted
-		EXT_CAMERA       = 0x0020,  //!< Item is being followed by the camera
-		EXT_SPRITE       = 0x0040,  //!< Item is a sprite
-		EXT_TRANSPARENT  = 0x0080,  //!< Item should be painted transparent
-		EXT_PERMANENT_NPC = 0x0100  //!< Item is a permanent NPC
+		EXT_FIXED = 0x0001,        //!< Item came from FIXED
+		EXT_INCURMAP = 0x0002,     //!< Item is in a CurrentMap display list
+		EXT_LERP_NOPREV = 0x0008,  //!< Item can't be lerped this frame
+		EXT_HIGHLIGHT = 0x0010,    //!< Item should be Painted highlighted
+		EXT_CAMERA = 0x0020,       //!< Item is being followed by the camera
+		EXT_SPRITE = 0x0040,       //!< Item is a sprite
+		EXT_TRANSPARENT = 0x0080,  //!< Item should be painted transparent
+		EXT_PERMANENT_NPC = 0x0100 //!< Item is a permanent NPC
 	};
 };
 

@@ -22,17 +22,17 @@
 
 #include "bladerunner/ui/spinner.h"
 
-#include "bladerunner/bladerunner.h"
 #include "bladerunner/actor.h"
-#include "bladerunner/audio_player.h"
 #include "bladerunner/ambient_sounds.h"
-#include "bladerunner/game_info.h"
-#include "bladerunner/subtitles.h"
+#include "bladerunner/audio_player.h"
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/game_constants.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/shape.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
 #include "bladerunner/ui/ui_image_picker.h"
@@ -95,7 +95,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	_vm->_mouse->setCursor(0);
 	// Determine which map we need to show to include the active destinations
 	uint8 mapmask = 0;
-	uint8 mapmaskv[kSpinnerDestinations] = { 1, 1, 1, 1, 1, 3, 3, 3, 7, 7 };
+	uint8 mapmaskv[kSpinnerDestinations] = {1, 1, 1, 1, 1, 3, 3, 3, 7, 7};
 	for (int i = 0; i != kSpinnerDestinations; ++i) {
 		if (_isDestinationSelectable[i]) {
 			mapmask |= mapmaskv[i];
@@ -127,7 +127,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 		return -1;
 	}
 
-	_vqaPlayer->setLoop(spinnerLoopId,     -1, kLoopSetModeImmediate, nullptr, nullptr);
+	_vqaPlayer->setLoop(spinnerLoopId, -1, kLoopSetModeImmediate, nullptr, nullptr);
 	_vqaPlayer->setLoop(spinnerLoopId + 1, -1, kLoopSetModeJustStart, nullptr, nullptr);
 
 	_shapes->load("SPINNER.SHP");
@@ -142,33 +142,30 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 		const char *tooltip = _vm->_textSpinnerDestinations->getText(dest->id);
 
 		_imagePicker->defineImage(
-			dest->id,
-			dest->rect,
-			_shapes->get(dest->shapeId),
-			_shapes->get(dest->shapeIdOver),
-			_shapes->get(dest->shapeIdOver),
-			tooltip
-		);
+		    dest->id,
+		    dest->rect,
+		    _shapes->get(dest->shapeId),
+		    _shapes->get(dest->shapeIdOver),
+		    _shapes->get(dest->shapeIdOver),
+		    tooltip);
 	}
 
 	if (_vm->_cutContent) {
 		_imagePicker->activate(
-			mouseInCallback,
-			mouseOutCallback,
-			mouseDownCallback,
-			mouseUpCallback,
-			this
-		);
+		    mouseInCallback,
+		    mouseOutCallback,
+		    mouseDownCallback,
+		    mouseUpCallback,
+		    this);
 		_vm->_actors[kActorAnsweringMachine]->speechPlay(480, false);
-		_vm->_ambientSounds->addSound(kSfxSPINAMB2,  5, 30, 30,  45,    0,   0, -101, -101, 0, 0);
+		_vm->_ambientSounds->addSound(kSfxSPINAMB2, 5, 30, 30, 45, 0, 0, -101, -101, 0, 0);
 	} else {
 		_imagePicker->activate(
-			nullptr,
-			nullptr,
-			nullptr,
-			mouseUpCallback,
-			this
-		);
+		    nullptr,
+		    nullptr,
+		    nullptr,
+		    mouseUpCallback,
+		    this);
 	}
 
 	_vm->_time->pause();
@@ -315,45 +312,42 @@ void Spinner::load(SaveFileReadStream &f) {
 
 const Spinner::Destination *Spinner::getDestinationsFar() {
 	static const Destination destinations[] = {
-		{  0, Common::Rect(220, 227, 246, 262), 26 , 36 },
-		{  1, Common::Rect(260, 252, 286, 279), 27 , 37 },
-		{  2, Common::Rect(286, 178, 302, 196), 28 , 38 },
-		{  3, Common::Rect(244, 178, 263, 195), 29 , 39 },
-		{  4, Common::Rect(288, 216, 306, 228), 30 , 40 },
-		{  5, Common::Rect(249,  77, 353, 124), 31 , 41 },
-		{  6, Common::Rect(190, 127, 208, 138), 32 , 42 },
-		{  7, Common::Rect(185, 149, 206, 170), 33 , 43 },
-		{  8, Common::Rect(398, 249, 419, 268), 34 , 44 },
-		{  9, Common::Rect(390, 218, 419, 236), 35 , 45 },
-		{ -1, Common::Rect(-1, -1, -1, -1), 0, 0 }
-	};
+	    {0, Common::Rect(220, 227, 246, 262), 26, 36},
+	    {1, Common::Rect(260, 252, 286, 279), 27, 37},
+	    {2, Common::Rect(286, 178, 302, 196), 28, 38},
+	    {3, Common::Rect(244, 178, 263, 195), 29, 39},
+	    {4, Common::Rect(288, 216, 306, 228), 30, 40},
+	    {5, Common::Rect(249, 77, 353, 124), 31, 41},
+	    {6, Common::Rect(190, 127, 208, 138), 32, 42},
+	    {7, Common::Rect(185, 149, 206, 170), 33, 43},
+	    {8, Common::Rect(398, 249, 419, 268), 34, 44},
+	    {9, Common::Rect(390, 218, 419, 236), 35, 45},
+	    {-1, Common::Rect(-1, -1, -1, -1), 0, 0}};
 	return destinations;
 }
 
 const Spinner::Destination *Spinner::getDestinationsMedium() {
 	static const Destination destinations[] = {
-		{  0, Common::Rect(252, 242, 279, 283), 10, 18 },
-		{  1, Common::Rect(301, 273, 328, 304), 11, 19 },
-		{  2, Common::Rect(319, 182, 336, 200), 12, 20 },
-		{  3, Common::Rect(269, 181, 293, 200), 13, 21 },
-		{  4, Common::Rect(325, 227, 345, 240), 14, 22 },
-		{  5, Common::Rect(259,  74, 380, 119), 15, 23 },
-		{  6, Common::Rect(203, 124, 224, 136), 16, 24 },
-		{  7, Common::Rect(200, 147, 222, 170), 17, 25 },
-		{ -1, Common::Rect(-1,-1,-1,-1), 0, 0 }
-	};
+	    {0, Common::Rect(252, 242, 279, 283), 10, 18},
+	    {1, Common::Rect(301, 273, 328, 304), 11, 19},
+	    {2, Common::Rect(319, 182, 336, 200), 12, 20},
+	    {3, Common::Rect(269, 181, 293, 200), 13, 21},
+	    {4, Common::Rect(325, 227, 345, 240), 14, 22},
+	    {5, Common::Rect(259, 74, 380, 119), 15, 23},
+	    {6, Common::Rect(203, 124, 224, 136), 16, 24},
+	    {7, Common::Rect(200, 147, 222, 170), 17, 25},
+	    {-1, Common::Rect(-1, -1, -1, -1), 0, 0}};
 	return destinations;
 }
 
 const Spinner::Destination *Spinner::getDestinationsNear() {
 	static const Destination destinations[] = {
-		{  0, Common::Rect(210, 263, 263, 332), 0, 5 },
-		{  1, Common::Rect(307, 330, 361, 381), 1, 6 },
-		{  2, Common::Rect(338, 137, 362, 169), 2, 7 },
-		{  3, Common::Rect(248, 135, 289, 168), 3, 8 },
-		{  4, Common::Rect(352, 222, 379, 238), 4, 9 },
-		{ -1, Common::Rect(-1,-1,-1,-1), 0, 0 }
-	};
+	    {0, Common::Rect(210, 263, 263, 332), 0, 5},
+	    {1, Common::Rect(307, 330, 361, 381), 1, 6},
+	    {2, Common::Rect(338, 137, 362, 169), 2, 7},
+	    {3, Common::Rect(248, 135, 289, 168), 3, 8},
+	    {4, Common::Rect(352, 222, 379, 238), 4, 9},
+	    {-1, Common::Rect(-1, -1, -1, -1), 0, 0}};
 	return destinations;
 }
 

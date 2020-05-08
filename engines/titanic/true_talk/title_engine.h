@@ -43,6 +43,7 @@ class CTitleEngine {
 public:
 	CScriptHandler *_scriptHandler;
 	TTscriptBase *_script;
+
 public:
 	CTitleEngine();
 	virtual ~CTitleEngine();
@@ -67,9 +68,11 @@ class STtitleEngine : public CTitleEngine {
 private:
 	Common::SeekableReadStream *_stream;
 	const TTresponse *_responseP;
+
 public:
 	Common::Array<uint> _indexes;
 	Common::Array<byte> _data;
+
 public:
 	STtitleEngine();
 	~STtitleEngine() override;

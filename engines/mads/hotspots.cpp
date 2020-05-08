@@ -20,8 +20,8 @@
  *
  */
 
-#include "mads/mads.h"
 #include "mads/hotspots.h"
+#include "mads/mads.h"
 
 namespace MADS {
 
@@ -31,15 +31,14 @@ DynamicHotspot::DynamicHotspot() {
 	_facing = FACING_NONE;
 	_descId = 0;
 	_verbId = 0;
-	_valid = false;	// V2
+	_valid = false; // V2
 	_articleNumber = 0;
-	_syntax = 0;	// V2
+	_syntax = 0; // V2
 	_cursor = CURSOR_NONE;
 	_active = false;
 }
 
 void DynamicHotspot::synchronize(Common::Serializer &s) {
-
 }
 
 /*------------------------------------------------------------------------*/
@@ -167,7 +166,7 @@ void DynamicHotspots::refresh() {
 	ScreenObjects &scrObjects = _vm->_game->_screenObjects;
 	scrObjects.resize(scrObjects._uiCount);
 
-	 bool isV2 = (_vm->getGameID() != GType_RexNebular);
+	bool isV2 = (_vm->getGameID() != GType_RexNebular);
 
 	// Loop through adding hotspots
 	for (uint i = 0; i < _entries.size(); ++i) {
@@ -233,7 +232,7 @@ Hotspot::Hotspot(Common::SeekableReadStream &f, bool isV2) {
 	_active = f.readByte() != 0;
 	_cursor = (CursorType)f.readByte();
 	if (isV2) {
-		f.skip(1);		// cursor
+		f.skip(1); // cursor
 		_syntax = f.readByte();
 	}
 	_vocabId = f.readUint16LE();

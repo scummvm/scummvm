@@ -20,13 +20,13 @@
  *
  */
 
+#include "ultima/shared/early/game_base.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/early/game_base.h"
 #include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/engine/messages.h"
-#include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/gfx/font.h"
 #include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/gfx/text_input.h"
@@ -35,9 +35,9 @@
 namespace Ultima {
 namespace Shared {
 
-GameBase::GameBase(): _currentView(nullptr), _pendingPopup(nullptr), _font(nullptr), _priorLeftDownTime(0),
-		_priorMiddleDownTime(0), _priorRightDownTime(0), _inputHandler(this), _inputTranslator(&_inputHandler),
-		_videoMode(0), _textCursor(nullptr) {
+GameBase::GameBase() : _currentView(nullptr), _pendingPopup(nullptr), _font(nullptr), _priorLeftDownTime(0),
+                       _priorMiddleDownTime(0), _priorRightDownTime(0), _inputHandler(this), _inputTranslator(&_inputHandler),
+                       _videoMode(0), _textCursor(nullptr) {
 }
 
 GameBase::~GameBase() {
@@ -50,7 +50,6 @@ int GameBase::getSavegameSlot() {
 }
 
 void GameBase::mouseChanged() {
-
 }
 
 void GameBase::onIdle() {
@@ -58,10 +57,9 @@ void GameBase::onIdle() {
 	update();
 }
 
-#define HANDLE_MESSAGE(METHOD) \
+#define HANDLE_MESSAGE(METHOD)                                             \
 	_inputTranslator.METHOD(g_vm->_events->getSpecialButtons(), mousePos); \
 	mouseChanged()
-
 
 void GameBase::mouseMove(const Point &mousePos) {
 	if (!isMouseControlEnabled())
@@ -204,7 +202,7 @@ void GameBase::update() {
 			showMsg.execute(_currentView);
 		}
 
-		 // Allow the text cursor to update
+		// Allow the text cursor to update
 		_textCursor->update();
 	}
 }

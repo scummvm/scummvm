@@ -32,8 +32,8 @@
 #ifndef SWORD25_LUASCRIPT_H
 #define SWORD25_LUASCRIPT_H
 
-#include "common/str.h"
 #include "common/str-array.h"
+#include "common/str.h"
 #include "sword25/kernel/common.h"
 #include "sword25/script/script.h"
 

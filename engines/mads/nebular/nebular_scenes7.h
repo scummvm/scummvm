@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -75,7 +75,7 @@ public:
 	void actions() override;
 };
 
-class Scene703 : public Scene7xx{
+class Scene703 : public Scene7xx {
 private:
 	int _monsterMode;
 	int _boatFrame;
@@ -106,7 +106,7 @@ public:
 	void actions() override;
 };
 
-class Scene704 : public Scene7xx{
+class Scene704 : public Scene7xx {
 private:
 	int _bottleHotspotId;
 	int _boatCurrentFrame;
@@ -131,7 +131,7 @@ public:
 	void actions() override;
 };
 
-class Scene705 : public Scene7xx{
+class Scene705 : public Scene7xx {
 private:
 	Conversation _dialog1;
 
@@ -149,7 +149,7 @@ public:
 	void actions() override;
 };
 
-class Scene706 : public Scene7xx{
+class Scene706 : public Scene7xx {
 private:
 	int _vaseHotspotId;
 	int _vaseMode;
@@ -202,7 +202,7 @@ public:
 	void actions() override;
 };
 
-class Scene751 : public Scene7xx{
+class Scene751 : public Scene7xx {
 private:
 	bool _rexHandingLine;
 

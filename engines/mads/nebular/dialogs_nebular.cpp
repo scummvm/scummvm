@@ -20,20 +20,20 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "common/util.h"
+#include "common/scummsys.h"
 #include "common/translation.h"
+#include "common/util.h"
 
 #include "gui/saveload.h"
 
 #include "mads/mads.h"
-#include "mads/screen.h"
 #include "mads/msurface.h"
-#include "mads/staticres.h"
 #include "mads/nebular/dialogs_nebular.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/menu_nebular.h"
+#include "mads/screen.h"
+#include "mads/staticres.h"
 
 namespace MADS {
 
@@ -260,7 +260,7 @@ bool DialogsNebular::textNoun(Common::String &dest, int nounId, const Common::St
 }
 
 bool DialogsNebular::commandCheck(const char *idStr, Common::String &valStr,
-		const Common::String &command) {
+                                  const Common::String &command) {
 	uint idLen = strlen(idStr);
 
 	valStr = (command.size() <= idLen) ? "" : Common::String(command.c_str() + idLen);
@@ -392,8 +392,7 @@ void DialogsNebular::showScummVMRestoreDialog() {
 
 /*------------------------------------------------------------------------*/
 
-CopyProtectionDialog::CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong) :
-TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
+CopyProtectionDialog::CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong) : TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 	getHogAnusEntry(_hogEntry);
 
 	if (priorAnswerWrong) {
@@ -420,7 +419,7 @@ TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 	wordWrap(line);
 
 	line = Common::String::format("Next, just turn to page %d. On line %d, find word number %d, ",
-		_hogEntry._pageNum, _hogEntry._lineNum, _hogEntry._wordNum);
+	                              _hogEntry._pageNum, _hogEntry._lineNum, _hogEntry._wordNum);
 	wordWrap(line);
 
 	wordWrap("and type it on the line below (we've even given you");
@@ -440,7 +439,7 @@ void CopyProtectionDialog::show() {
 	MSurface *origInput = new MSurface(inputArea.width(), inputArea.height());
 	_vm->_screen->frameRect(inputArea, TEXTDIALOG_BLACK);
 	origInput->blitFrom(*_vm->_screen, inputArea, Common::Point(0, 0));
-		_font->setColors(TEXTDIALOG_FE, TEXTDIALOG_FE, TEXTDIALOG_FE, TEXTDIALOG_FE);
+	_font->setColors(TEXTDIALOG_FE, TEXTDIALOG_FE, TEXTDIALOG_FE, TEXTDIALOG_FE);
 	_vm->_screen->update();
 
 	bool firstTime = true;
@@ -471,7 +470,7 @@ void CopyProtectionDialog::show() {
 
 		_vm->_screen->blitFrom(*origInput, Common::Point(inputArea.left, inputArea.top));
 		_font->writeString(_vm->_screen, _textInput,
-			Common::Point(inputArea.left + 2, inputArea.top + 1), 1);
+		                   Common::Point(inputArea.left + 2, inputArea.top + 1), 1);
 		_vm->_screen->update();
 	}
 
@@ -482,7 +481,6 @@ void CopyProtectionDialog::show() {
 bool CopyProtectionDialog::isCorrectAnswer() {
 	return _hogEntry._word == _textInput;
 }
-
 
 bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 	File f;
@@ -515,8 +513,7 @@ bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 /*------------------------------------------------------------------------*/
 
 PictureDialog::PictureDialog(MADSEngine *vm, const Common::Point &pos,
-		int maxChars, int objectId) :
-		TextDialog(vm, FONT_INTERFACE, pos, maxChars), _objectId(objectId) {
+                             int maxChars, int objectId) : TextDialog(vm, FONT_INTERFACE, pos, maxChars), _objectId(objectId) {
 	// Turn off cycling if active
 	Scene &scene = _vm->_game->_scene;
 	_cyclingActive = scene._cyclingActive;
@@ -548,7 +545,7 @@ void PictureDialog::save() {
 	uint32 *palFlagP = &palette._palFlags[0];
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx, ++palFlagP) {
 		if (idx < PALETTE_RESERVED_LOW_COUNT ||
-			idx >= (PALETTE_COUNT - PALETTE_RESERVED_HIGH_COUNT - 10)) {
+		    idx >= (PALETTE_COUNT - PALETTE_RESERVED_HIGH_COUNT - 10)) {
 			*palFlagP = 1;
 			map[idx] = idx;
 		} else {
@@ -562,7 +559,7 @@ void PictureDialog::save() {
 	// Fade the screen to grey
 	int numColors = PALETTE_COUNT - PALETTE_RESERVED_LOW_COUNT - PALETTE_RESERVED_HIGH_COUNT;
 	palette.fadeOut(palette._mainPalette, &map[PALETTE_RESERVED_LOW_COUNT],
-		PALETTE_RESERVED_LOW_COUNT, numColors, 248, 8, 1, 16);
+	                PALETTE_RESERVED_LOW_COUNT, numColors, 248, 8, 1, 16);
 
 	// Remap the greyed out screen to use the small greyscale range
 	// at the top end of the palette
@@ -581,7 +578,7 @@ void PictureDialog::save() {
 
 	// Draw the inventory picture
 	_vm->_screen->transBlitFrom(*frame, Common::Point(160 - frame->w / 2, 6),
-		frame->getTransparencyIndex());
+	                            frame->getTransparencyIndex());
 
 	// Adjust the dialog colors to use
 	TEXTDIALOG_CONTENT1 -= 10;
@@ -648,8 +645,8 @@ GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
 
 	chooseBackground();
 	game.loadQuoteSet(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-		17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
-		34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 0);
+	                  17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+	                  34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 0);
 	game._kernelMode = KERNEL_ROOM_PRELOAD;
 	_vm->_events->waitCursor();
 	scene.clearVocab();
@@ -706,20 +703,20 @@ void GameDialog::setClickableLines() {
 			int maxHeight = _lines[idx]._font->getHeight();
 
 			screenObjects.add(Common::Rect(pt.x, pt.y, pt.x + strWidth, pt.y + maxHeight - 1),
-				SCREENMODE_VGA, CAT_COMMAND, idx);
+			                  SCREENMODE_VGA, CAT_COMMAND, idx);
 		}
 	}
 
 	if (_vm->_dialogs->_pendingDialog == DIALOG_SAVE ||
-			_vm->_dialogs->_pendingDialog == DIALOG_RESTORE) {
+	    _vm->_dialogs->_pendingDialog == DIALOG_RESTORE) {
 		screenObjects.add(Common::Rect(293, 26, 312, 75), SCREENMODE_VGA, CAT_INV_LIST, 50);
 		screenObjects.add(Common::Rect(293, 78, 312, 127), SCREENMODE_VGA, CAT_INV_LIST, 51);
 	}
 }
 
 void GameDialog::addQuote(int id1, int id2, DialogTextAlign align,
-		const Common::Point &pt, Font *font) {
-	Common::String msg = _vm->_game->getQuote(id1).c_str();	// c_str() because we need a copy
+                          const Common::Point &pt, Font *font) {
+	Common::String msg = _vm->_game->getQuote(id1).c_str(); // c_str() because we need a copy
 
 	if (id2 > 0)
 		msg += _vm->_game->getQuote(id2);
@@ -728,7 +725,7 @@ void GameDialog::addQuote(int id1, int id2, DialogTextAlign align,
 }
 
 void GameDialog::addLine(const Common::String &msg, DialogTextAlign align,
-		const Common::Point &pt, Font *font) {
+                         const Common::Point &pt, Font *font) {
 	Scene &scene = _vm->_game->_scene;
 	DialogLine *line;
 
@@ -784,7 +781,7 @@ void GameDialog::addLine(const Common::String &msg, DialogTextAlign align,
 		const char *ch = strchr(msgP, '@');
 		if (ch) {
 			xOffset = (MADS_SCREEN_WIDTH / 2) - font->getWidth(
-				Common::String(msgP, ch), line->_widthAdjust);
+			                                        Common::String(msgP, ch), line->_widthAdjust);
 			line->_pos.x += xOffset;
 
 			Common::String newMsg = msg.c_str();
@@ -982,7 +979,7 @@ void GameDialog::refreshText() {
 
 			if (!skipFlag) {
 				_lines[i]._textDisplayIndex = scene._textDisplay.add(_lines[i]._pos.x, _lines[i]._pos.y,
-					fontColor, _lines[i]._widthAdjust, _lines[i]._msg, _lines[i]._font);
+				                                                     fontColor, _lines[i]._widthAdjust, _lines[i]._msg, _lines[i]._font);
 			}
 		}
 	}
@@ -1093,20 +1090,20 @@ int OptionsDialog::getOptionQuote(int option) {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 
 	switch (option) {
-	case 17:	// Music
-		return _vm->_musicFlag ? 24 : 25;	// 24: ON, 25: OFF
-	case 18:	// Sound
-		return _vm->_soundFlag ? 26 : 27;	// 26: ON, 27: OFF
-	case 19:	// Interface
-		return !_vm->_easyMouse ? 28 : 29;	// 28: Standard, 29: Easy
-	case 20:	// Inventory
-		return _vm->_invObjectsAnimated ? 30 : 31;	// 30: Spinning, 31: Still
-	case 21:	// Text window
-		return !_vm->_textWindowStill ? 32 : 33;	// 32: Animated, 33: Still
-	case 22:	// Screen fade
-		return 34 + _vm->_screenFade;	// 34: Smooth, 35: Medium, 36: Fast
-	case 23:	// Storyline
-		return (game._storyMode == STORYMODE_NAUGHTY) ? 37 : 38;	// 37: Naughty, 38: Nice
+	case 17:                                                     // Music
+		return _vm->_musicFlag ? 24 : 25;                        // 24: ON, 25: OFF
+	case 18:                                                     // Sound
+		return _vm->_soundFlag ? 26 : 27;                        // 26: ON, 27: OFF
+	case 19:                                                     // Interface
+		return !_vm->_easyMouse ? 28 : 29;                       // 28: Standard, 29: Easy
+	case 20:                                                     // Inventory
+		return _vm->_invObjectsAnimated ? 30 : 31;               // 30: Spinning, 31: Still
+	case 21:                                                     // Text window
+		return !_vm->_textWindowStill ? 32 : 33;                 // 32: Animated, 33: Still
+	case 22:                                                     // Screen fade
+		return 34 + _vm->_screenFade;                            // 34: Smooth, 35: Medium, 36: Fast
+	case 23:                                                     // Storyline
+		return (game._storyMode == STORYMODE_NAUGHTY) ? 37 : 38; // 37: Naughty, 38: Nice
 	default:
 		error("getOptionQuote: Unknown option");
 	}
@@ -1151,22 +1148,22 @@ void OptionsDialog::show() {
 		GameDialog::show();
 
 		switch (_selectedLine) {
-		case 1:	// Music
+		case 1: // Music
 			_vm->_musicFlag = _vm->_soundFlag = !_vm->_musicFlag;
 			break;
-		case 2:	// Sound
+		case 2: // Sound
 			_vm->_musicFlag = _vm->_soundFlag = !_vm->_musicFlag;
 			break;
-		case 3:	// Interface
+		case 3: // Interface
 			_vm->_easyMouse = !_vm->_easyMouse;
 			break;
-		case 4:	// Inventory
+		case 4: // Inventory
 			_vm->_invObjectsAnimated = !_vm->_invObjectsAnimated;
 			break;
-		case 5:	// Text window
+		case 5: // Text window
 			_vm->_textWindowStill = !_vm->_textWindowStill;
 			break;
-		case 6:	// Screen fade
+		case 6: // Screen fade
 			if (_vm->_screenFade == SCREEN_FADE_FAST)
 				_vm->_screenFade = SCREEN_FADE_MEDIUM;
 			else if (_vm->_screenFade == SCREEN_FADE_MEDIUM)
@@ -1174,7 +1171,7 @@ void OptionsDialog::show() {
 			else
 				_vm->_screenFade = SCREEN_FADE_FAST;
 			break;
-		case 7:	// Storyline
+		case 7: // Storyline
 			game._storyMode = (game._storyMode == STORYMODE_NAUGHTY) ? STORYMODE_NICE : STORYMODE_NAUGHTY;
 			break;
 		default:

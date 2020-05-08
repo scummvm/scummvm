@@ -26,7 +26,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CFloorIndicator, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 void CFloorIndicator::save(SimpleFile *file, int indent) {

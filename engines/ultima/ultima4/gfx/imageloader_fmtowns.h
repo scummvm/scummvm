@@ -31,6 +31,7 @@ namespace Ultima4 {
 class FMTOWNSImageLoader : public ImageLoader {
 protected:
 	int _offset;
+
 public:
 	FMTOWNSImageLoader(int offset) : _offset(offset) {}
 	virtual ~FMTOWNSImageLoader() {}

@@ -23,8 +23,8 @@
  *
  */
 
-#include "pegasus/pegasus.h"
 #include "pegasus/neighborhood/mars/reactor.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -41,7 +41,7 @@ static const CoordType kCurrentGuessTop = kNavAreaTop + 90;
 
 ReactorGuess::ReactorGuess(const DisplayElementID id) : DisplayElement(id) {
 	setBounds(kCurrentGuessLeft, kCurrentGuessTop, kCurrentGuessLeft + kCurrentGuessWidth,
-			kCurrentGuessTop + kCurrentGuessHeight);
+	          kCurrentGuessTop + kCurrentGuessHeight);
 	setDisplayOrder(kMonitorLayer);
 	_currentGuess[0] = -1;
 	_currentGuess[1] = -1;
@@ -85,13 +85,12 @@ static const CoordType kReactorChoiceHiliteWidth = 166;
 static const CoordType kReactorChoiceHiliteHeight = 26;
 
 static const CoordType kChoiceHiliteLefts[6] = {
-	0,
-	34,
-	34 + 34,
-	34 + 34 + 32,
-	34 + 34 + 32 + 34,
-	34 + 34 + 32 + 34 + 32
-};
+    0,
+    34,
+    34 + 34,
+    34 + 34 + 32,
+    34 + 34 + 32 + 34,
+    34 + 34 + 32 + 34 + 32};
 
 static const ResIDType kReactorChoiceHilitePICTID = 901;
 
@@ -100,7 +99,7 @@ static const CoordType kReactorChoiceHiliteTop = kNavAreaTop + 158;
 
 ReactorChoiceHighlight::ReactorChoiceHighlight(const DisplayElementID id) : DisplayElement(id) {
 	setBounds(kReactorChoiceHiliteLeft, kReactorChoiceHiliteTop, kReactorChoiceHiliteLeft + kReactorChoiceHiliteWidth,
-			kReactorChoiceHiliteTop + kReactorChoiceHiliteHeight);
+	          kReactorChoiceHiliteTop + kReactorChoiceHiliteHeight);
 	setDisplayOrder(kMonitorLayer);
 }
 
@@ -132,24 +131,22 @@ void ReactorChoiceHighlight::draw(const Common::Rect &) {
 static const CoordType kReactorHistoryWidth = 128;
 static const CoordType kReactorHistoryHeight = 168;
 
-static const CoordType kColorWidths[5] = { 24, 25, 25, 26, 27 };
-static const CoordType kColorHeights[5] = { 14, 15, 17, 17, 19};
+static const CoordType kColorWidths[5] = {24, 25, 25, 26, 27};
+static const CoordType kColorHeights[5] = {14, 15, 17, 17, 19};
 
 static const CoordType kHistoryLefts[5][3] = {
-	{ 302 + kNavAreaLeft, 329 + kNavAreaLeft, 357 + kNavAreaLeft },
-	{ 302 + kNavAreaLeft, 331 + kNavAreaLeft, 360 + kNavAreaLeft },
-	{ 303 + kNavAreaLeft, 333 + kNavAreaLeft, 363 + kNavAreaLeft },
-	{ 304 + kNavAreaLeft, 335 + kNavAreaLeft, 366 + kNavAreaLeft },
-	{ 305 + kNavAreaLeft, 337 + kNavAreaLeft, 369 + kNavAreaLeft }
-};
+    {302 + kNavAreaLeft, 329 + kNavAreaLeft, 357 + kNavAreaLeft},
+    {302 + kNavAreaLeft, 331 + kNavAreaLeft, 360 + kNavAreaLeft},
+    {303 + kNavAreaLeft, 333 + kNavAreaLeft, 363 + kNavAreaLeft},
+    {304 + kNavAreaLeft, 335 + kNavAreaLeft, 366 + kNavAreaLeft},
+    {305 + kNavAreaLeft, 337 + kNavAreaLeft, 369 + kNavAreaLeft}};
 
 static const CoordType kHistoryTops[5] = {
-	39 + kNavAreaTop,
-	61 + kNavAreaTop,
-	84 + kNavAreaTop,
-	110 + kNavAreaTop,
-	137 + kNavAreaTop
-};
+    39 + kNavAreaTop,
+    61 + kNavAreaTop,
+    84 + kNavAreaTop,
+    110 + kNavAreaTop,
+    137 + kNavAreaTop};
 
 static const CoordType kOneAnswerWidth = 35;
 static const CoordType kOneAnswerHeight = 27;
@@ -158,20 +155,18 @@ static const CoordType kDigitWidth = 16;
 static const CoordType kDigitHeight = 12;
 
 static const CoordType kCorrectCountLefts[5] = {
-	388 + kNavAreaLeft,
-	392 + kNavAreaLeft,
-	398 + kNavAreaLeft,
-	402 + kNavAreaLeft,
-	406 + kNavAreaLeft
-};
+    388 + kNavAreaLeft,
+    392 + kNavAreaLeft,
+    398 + kNavAreaLeft,
+    402 + kNavAreaLeft,
+    406 + kNavAreaLeft};
 
 static const CoordType kCorrectCountTops[5] = {
-	40 + kNavAreaTop,
-	62 + kNavAreaTop,
-	86 + kNavAreaTop,
-	112 + kNavAreaTop,
-	140 + kNavAreaTop
-};
+    40 + kNavAreaTop,
+    62 + kNavAreaTop,
+    86 + kNavAreaTop,
+    112 + kNavAreaTop,
+    140 + kNavAreaTop};
 
 static const ResIDType kReactorDigitsPICTID = 902;
 static const ResIDType kReactorHistoryPICTID = 903;
@@ -185,7 +180,7 @@ static const CoordType kAnswerTop = kNavAreaTop + 180;
 
 ReactorHistory::ReactorHistory(const DisplayElementID id) : DisplayElement(id) {
 	setBounds(kReactorHistoryLeft, kReactorHistoryTop, kReactorHistoryLeft + kReactorHistoryWidth,
-			kReactorHistoryTop + kReactorHistoryHeight);
+	          kReactorHistoryTop + kReactorHistoryHeight);
 	setDisplayOrder(kMonitorLayer);
 	_numGuesses = 0;
 	_answer[0] = -1;
@@ -242,11 +237,11 @@ bool ReactorHistory::isSolved() {
 
 void ReactorHistory::draw(const Common::Rect &) {
 	static const CoordType kColorTops[5] = {
-		0,
-		kColorHeights[0],
-		(CoordType)(kColorHeights[0] + kColorHeights[1]),
-		(CoordType)(kColorHeights[0] + kColorHeights[1] + kColorHeights[2]),
-		(CoordType)(kColorHeights[0] + kColorHeights[1] + kColorHeights[2] + kColorHeights[3]),
+	    0,
+	    kColorHeights[0],
+	    (CoordType)(kColorHeights[0] + kColorHeights[1]),
+	    (CoordType)(kColorHeights[0] + kColorHeights[1] + kColorHeights[2]),
+	    (CoordType)(kColorHeights[0] + kColorHeights[1] + kColorHeights[2] + kColorHeights[3]),
 	};
 
 	if (_colors.isSurfaceValid() && _digits.isSurfaceValid()) {

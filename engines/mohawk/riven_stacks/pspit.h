@@ -39,7 +39,7 @@ public:
 	void installCardTimer() override;
 
 	// External commands - Prison Elevator
-	void xpisland990_elevcombo(const ArgumentArray &args);	// Param1: button
+	void xpisland990_elevcombo(const ArgumentArray &args); // Param1: button
 
 	// External commands - Dome
 	void xpscpbtn(const ArgumentArray &args);

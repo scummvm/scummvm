@@ -22,20 +22,20 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/container.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/glob_egg.h"
+#include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/world/egg.h"
+#include "ultima/ultima8/world/glob_egg.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/monster_egg.h"
 #include "ultima/ultima8/world/teleport_egg.h"
-#include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -47,11 +47,11 @@ static Item *getItemForFamily(uint32 family) {
 	case ShapeInfo::SF_QUANTITY:
 	case ShapeInfo::SF_BREAKABLE:
 	case ShapeInfo::SF_REAGENT: // reagents need special handling too
-	case ShapeInfo::SF_10: // TODO: What's this? used in crusader levels
-	case ShapeInfo::SF_11: // TODO: What's this? used in crusader levels
-	case ShapeInfo::SF_12: // TODO: What's this? used in crusader levels
-	case ShapeInfo::SF_13: // TODO: What's this? used in crusader levels
-	case ShapeInfo::SF_15: // what's this?
+	case ShapeInfo::SF_10:      // TODO: What's this? used in crusader levels
+	case ShapeInfo::SF_11:      // TODO: What's this? used in crusader levels
+	case ShapeInfo::SF_12:      // TODO: What's this? used in crusader levels
+	case ShapeInfo::SF_13:      // TODO: What's this? used in crusader levels
+	case ShapeInfo::SF_15:      // what's this?
 		// 'simple' item
 		return new Item();
 
@@ -78,8 +78,7 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
                               uint16 flags, uint16 npcnum, uint16 mapnum,
                               uint32 extendedflags, bool _objId) {
 	// check what class to create
-	ShapeInfo *info = GameData::get_instance()->getMainShapes()->
-	                  getShapeInfo(shape);
+	ShapeInfo *info = GameData::get_instance()->getMainShapes()->getShapeInfo(shape);
 	if (info == nullptr)
 		return nullptr;
 

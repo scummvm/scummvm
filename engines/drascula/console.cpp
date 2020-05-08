@@ -21,13 +21,13 @@
  */
 
 #include "drascula/console.h"
-#include "gui/debugger.h"
 #include "drascula/drascula.h"
+#include "gui/debugger.h"
 
 namespace Drascula {
 
 Console::Console(DrasculaEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
 }
 
 Console::~Console() {

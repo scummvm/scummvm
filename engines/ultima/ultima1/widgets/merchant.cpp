@@ -21,9 +21,9 @@
  */
 
 #include "ultima/ultima1/widgets/merchant.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 
 namespace Ultima {
 namespace Ultima1 {

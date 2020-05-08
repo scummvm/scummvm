@@ -23,11 +23,11 @@
 // Disable symbol overrides for FILE as that is used in FLAC headers
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
-#include "dsmain.h"
 #include "cdaudio.h"
+#include "NDS/scummvm_ipc.h"
 #include "backends/fs/ds/ds-fs.h"
 #include "common/config-manager.h"
-#include "NDS/scummvm_ipc.h"
+#include "dsmain.h"
 
 #define WAV_FORMAT_IMA_ADPCM 0x14
 #define BUFFER_SIZE 8192
@@ -38,41 +38,41 @@ namespace CD {
 
 struct WaveHeader {
 
-	char		riff[4];		// 'RIFF'
-	u32			size;			// Size of the file
-	char		wave[4];		// 'WAVE'
+	char riff[4]; // 'RIFF'
+	u32 size;     // Size of the file
+	char wave[4]; // 'WAVE'
 
 	// fmt chunk
-	char		fmt[4];			// 'fmt '
-	u32			fmtSize;		// Chunk size
-	u16			fmtFormatTag;	// Format of this file
-	u16			fmtChannels;	// Num channels
-	u32			fmtSamPerSec;	// Samples per second
-	u32			fmtBytesPerSec; // Bytes per second
-	u16			fmtBlockAlign;	// Block alignment
-	u16			fmtBitsPerSam;	// Bits per sample
+	char fmt[4];        // 'fmt '
+	u32 fmtSize;        // Chunk size
+	u16 fmtFormatTag;   // Format of this file
+	u16 fmtChannels;    // Num channels
+	u32 fmtSamPerSec;   // Samples per second
+	u32 fmtBytesPerSec; // Bytes per second
+	u16 fmtBlockAlign;  // Block alignment
+	u16 fmtBitsPerSam;  // Bits per sample
 
-	u16			fmtExtraData;	// Number of extra fmt bytes
-	u16			fmtExtra;		// Samples per block (only for IMA-ADPCM files)
-} __attribute__ ((packed));
+	u16 fmtExtraData; // Number of extra fmt bytes
+	u16 fmtExtra;     // Samples per block (only for IMA-ADPCM files)
+} __attribute__((packed));
 
 struct chunkHeader {
-	char 		name[4];
-	u32			size;
-} __attribute__ ((packed));
+	char name[4];
+	u32 size;
+} __attribute__((packed));
 
 struct Header {
-	s16 		firstSample;
-	char		stepTableIndex;
-	char		reserved;
-} __attribute__ ((packed));
+	s16 firstSample;
+	char stepTableIndex;
+	char reserved;
+} __attribute__((packed));
 
 struct decoderFormat {
 	s16 initial;
 	unsigned char tableIndex;
 	unsigned char test;
-	unsigned char	sample[1024];
-} __attribute__ ((packed));
+	unsigned char sample[1024];
+} __attribute__((packed));
 
 static bool s_started = false;
 static bool s_active = false;
@@ -91,31 +91,28 @@ static int dataChunkStart;
 static int blocksLeft;
 static bool trackStartsAt2 = false;
 
-
 // These are from Microsoft's document on DVI ADPCM
-static const int stepTab[ 89 ] = {
-7, 8, 9, 10, 11, 12, 13, 14,
-16, 17, 19, 21, 23, 25, 28, 31,
-34, 37, 41, 45, 50, 55, 60, 66,
-73, 80, 88, 97, 107, 118, 130, 143,
-157, 173, 190, 209, 230, 253, 279, 307,
-337, 371, 408, 449, 494, 544, 598, 658,
-724, 796, 876, 963, 1060, 1166, 1282, 1411,
-1552, 1707, 1878, 2066, 2272, 2499, 2749, 3024,
-3327, 3660, 4026, 4428, 4871, 5358, 5894, 6484,
-7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
-15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794,
-32767 };
+static const int stepTab[89] = {
+    7, 8, 9, 10, 11, 12, 13, 14,
+    16, 17, 19, 21, 23, 25, 28, 31,
+    34, 37, 41, 45, 50, 55, 60, 66,
+    73, 80, 88, 97, 107, 118, 130, 143,
+    157, 173, 190, 209, 230, 253, 279, 307,
+    337, 371, 408, 449, 494, 544, 598, 658,
+    724, 796, 876, 963, 1060, 1166, 1282, 1411,
+    1552, 1707, 1878, 2066, 2272, 2499, 2749, 3024,
+    3327, 3660, 4026, 4428, 4871, 5358, 5894, 6484,
+    7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
+    15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794,
+    32767};
 
-static const int indexTab[ 16 ] = { -1, -1, -1, -1, 2, 4, 6, 8,
--1, -1, -1, -1, 2, 4, 6, 8 };
+static const int indexTab[16] = {-1, -1, -1, -1, 2, 4, 6, 8,
+                                 -1, -1, -1, -1, 2, 4, 6, 8};
 
 void playNextBlock();
 void decompressBlock();
 
-
 void allocBuffers() {
-
 }
 
 void setActive(bool active) {
@@ -136,8 +133,6 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	if (trackStartsAt2) {
 		track++;
 	}
-
-
 
 	char str[100];
 
@@ -161,7 +156,6 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 		return;
 	}
 
-
 	DS::std_fread(&waveHeader, sizeof(waveHeader), 1, s_file);
 
 	consolePrintf("File: %s\n", fname.c_str());
@@ -179,7 +173,7 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	}
 
 	for (int r = 0; r < 8; r++) {
-		IPC->adpcm.buffer[r] = (u8 * volatile) (decoderFormat *) malloc(waveHeader.fmtBlockAlign);
+		IPC->adpcm.buffer[r] = (u8 * volatile)(decoderFormat *)malloc(waveHeader.fmtBlockAlign);
 		IPC->adpcm.filled[r] = false;
 		IPC->adpcm.arm7Dirty[r] = false;
 	}
@@ -195,7 +189,6 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 
 	dataChunkStart = DS::std_ftell(s_file);
 
-
 	sampleNum = 0;
 	blockCount = 0;
 
@@ -205,18 +198,16 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	IPC->streamFillNeeded[3] = true;
 	if (!s_started) {
 		fillPos = 0;
-		audioBuffer = (s16 *) malloc(BUFFER_SIZE * 2);
-		decompressionBuffer = (s16 *) malloc(waveHeader.fmtExtra * 2);
+		audioBuffer = (s16 *)malloc(BUFFER_SIZE * 2);
+		decompressionBuffer = (s16 *)malloc(waveHeader.fmtExtra * 2);
 		s_started = true;
-//		consolePrintf("****Starting buffer*****\n");
+		//		consolePrintf("****Starting buffer*****\n");
 		memset(audioBuffer, 0, BUFFER_SIZE * 2);
 		memset(decompressionBuffer, 0, waveHeader.fmtExtra * 2);
 		DS::playSound(audioBuffer, BUFFER_SIZE * 2, false, false, waveHeader.fmtSamPerSec);
-
 	}
 	fillPos = (IPC->streamPlayingSection + 1) & 3;
 	isPlayingFlag = true;
-
 
 	// Startframe is a 75Hz timer.  Dunno why, since nothing else
 	// seems to run at that rate.
@@ -226,20 +217,18 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	int samples = (tenths * waveHeader.fmtSamPerSec) / 10;
 	int block = samples / waveHeader.fmtExtra;
 
-
 	if (duration == 0) {
 		blocksLeft = 0;
 	} else {
 		blocksLeft = ((((duration * 100) / 75) * (waveHeader.fmtSamPerSec)) / (waveHeader.fmtExtra) / 100) + 10;
 	}
-//	consolePrintf("Playing %d blocks (%d)\n\n", blocksLeft, duration);
+	//	consolePrintf("Playing %d blocks (%d)\n\n", blocksLeft, duration);
 
 	// No need to seek if we're starting from the beginning
 	if (block != 0) {
 		DS::std_fseek(s_file, dataChunkStart + block * waveHeader.fmtBlockAlign, SEEK_SET);
-//		consolePrintf("Startframe: %d  msec: %d (%d,%d)\n", startFrame, tenthssec, samples, block);
+		//		consolePrintf("Startframe: %d  msec: %d (%d,%d)\n", startFrame, tenthssec, samples, block);
 	}
-
 
 	//decompressBlock();
 	playNextBlock();
@@ -266,8 +255,8 @@ void decompressBlock() {
 
 	blockCount++;
 
-	if (blockCount < 10) return;
-
+	if (blockCount < 10)
+		return;
 
 	do {
 		DS::std_fread(&blockHeader, sizeof(blockHeader), 1, s_file);
@@ -276,7 +265,6 @@ void decompressBlock() {
 
 		if (DS::std_feof(s_file)) {
 			// Reached end of file, so loop
-
 
 			if ((s_numLoops == -1) || (s_numLoops > 1)) {
 				// Seek file to first packet
@@ -290,7 +278,7 @@ void decompressBlock() {
 				for (int r = 0; r < waveHeader.fmtExtra; r++) {
 					decompressionBuffer[r] = 0;
 				}
-//				consolePrintf("Stopping music\n");
+				//				consolePrintf("Stopping music\n");
 				stopTrack();
 				return;
 			}
@@ -301,10 +289,9 @@ void decompressBlock() {
 
 	} while (loop);
 
-
 	if (blocksLeft > 0) {
 		blocksLeft--;
-	//	consolePrintf("%d ", blocksLeft);
+		//	consolePrintf("%d ", blocksLeft);
 		if (blocksLeft == 0) {
 			stopTrack();
 			return;
@@ -324,7 +311,7 @@ void decompressBlock() {
 	int stepTableIndex = blockHeader.stepTableIndex;
 	int prevSample = blockHeader.firstSample;
 
-//	consolePrintf("Decompressing block step=%d fs=%d\n", stepTableIndex, prevSample);
+	//	consolePrintf("Decompressing block step=%d fs=%d\n", stepTableIndex, prevSample);
 
 	for (int r = 0; r < waveHeader.fmtExtra - 1; r++) {
 
@@ -380,8 +367,10 @@ void decompressBlock() {
 
 		int newSample = prevSample + diff;
 
-		if (newSample > 32767) newSample = 32767;
-		if (newSample < -32768) newSample = -32768;
+		if (newSample > 32767)
+			newSample = 32767;
+		if (newSample < -32768)
+			newSample = -32768;
 
 		decompressionBuffer[r + 1] = newSample;
 
@@ -389,10 +378,10 @@ void decompressBlock() {
 
 		stepTableIndex += indexTab[offset];
 
-		if (stepTableIndex > 88) stepTableIndex = 88;
-		if (stepTableIndex < 0) stepTableIndex = 0;
-
-
+		if (stepTableIndex > 88)
+			stepTableIndex = 88;
+		if (stepTableIndex < 0)
+			stepTableIndex = 0;
 	}
 #endif
 }
@@ -402,9 +391,10 @@ void playNextBlock() {
 		return;
 	int lastBlockId = -1;
 
-	while (IPC->adpcm.semaphore);		// Wait for buffer to become free if needed
-	IPC->adpcm.semaphore = true;		// Lock the buffer structure to prevent clashing with the ARM7
-//	DC_FlushAll();
+	while (IPC->adpcm.semaphore)
+		;                        // Wait for buffer to become free if needed
+	IPC->adpcm.semaphore = true; // Lock the buffer structure to prevent clashing with the ARM7
+	                             //	DC_FlushAll();
 
 	//-8644, 25088
 	for (int block = fillPos + 1; block < fillPos + 4; block++) {
@@ -414,9 +404,9 @@ void playNextBlock() {
 		if (IPC->streamFillNeeded[blockId]) {
 
 			IPC->streamFillNeeded[blockId] = false;
-//			DC_FlushAll();
+			//			DC_FlushAll();
 
-/*			if (!(REG_KEYINPUT & KEY_R)) {
+			/*			if (!(REG_KEYINPUT & KEY_R)) {
 				//consolePrintf("Align: %d First: %d  Step:%d  Res:%d\n", waveHeader.fmtBlockAlign, blockHeader.firstSample, blockHeader.stepTableIndex, blockHeader.reserved);
 				consolePrintf("Filling buffer %d\n", blockId);
 			}*/
@@ -432,21 +422,18 @@ void playNextBlock() {
 
 			lastBlockId = blockId;
 			IPC->streamFillNeeded[blockId] = false;
-//			DC_FlushAll();
-
+			//			DC_FlushAll();
 		}
 	}
 
-
-
 	if (lastBlockId != -1) {
 		fillPos = lastBlockId;
-/*		if (!(REG_KEYINPUT & KEY_R)) {
+		/*		if (!(REG_KEYINPUT & KEY_R)) {
 			consolePrintf("Frame fill done\n");
 		}*/
 	}
-	IPC->adpcm.semaphore = false;		// Release the buffer structure
-//	DC_FlushAll();
+	IPC->adpcm.semaphore = false; // Release the buffer structure
+	//	DC_FlushAll();
 }
 
 void stopTrack() {
@@ -464,10 +451,10 @@ void stopTrack() {
 	for (int r = 0; r < waveHeader.fmtExtra; r++) {
 		decompressionBuffer[r] = 0;
 	}
-//	DS::stopSound(1);
+	//	DS::stopSound(1);
 
-//	free(audioBuffer);
-//	free(decompressionBuffer);
+	//	free(audioBuffer);
+	//	free(decompressionBuffer);
 
 	DC_FlushAll();
 }
@@ -535,5 +522,5 @@ bool isPlaying() {
 	return isPlayingFlag;
 }
 
-}
+} // namespace CD
 } // End of namespace DS

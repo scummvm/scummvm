@@ -53,7 +53,7 @@ public:
 	int32 getWalkToX() const;
 	int32 getWalkToY() const;
 	TDirection getWalkToDir() const;
-	const char* getItemName() const;
+	const char *getItemName() const;
 
 #ifdef ENABLE_FOXTAIL
 	int32 getHintX() const;
@@ -66,6 +66,7 @@ public:
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
 	Common::String debuggerToString() const override;
+
 private:
 	int32 _walkToX;
 	int32 _walkToY;

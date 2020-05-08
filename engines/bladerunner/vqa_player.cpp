@@ -22,9 +22,9 @@
 
 #include "bladerunner/vqa_player.h"
 
+#include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/time.h"
-#include "bladerunner/audio_player.h"
 
 #include "audio/decoders/raw.h"
 
@@ -51,7 +51,7 @@ bool VQAPlayer::open() {
 	} else if (_name.equals("DR04OVER.VQA")) {
 		// smoke (overlay) after explosion of Dermo Labs in DR04
 		// This has still frames in the end that so it looked as if the smoke was "frozen"
-		_decoder._loopInfo.loops[0].end  = 58; // 59 up to 74 are still frames
+		_decoder._loopInfo.loops[0].end = 58; // 59 up to 74 are still frames
 	}
 //	else if (_name.equals("MA05_3.VQA")) {
 //		// loops[1] 60 up to 90 (it will be followed by loops[2] which will play from 30 to 90
@@ -83,7 +83,7 @@ bool VQAPlayer::open() {
 	} else {
 		_frameNext = 0;
 		// TODO? Removed as redundant
-//		setBeginAndEndFrame(0, _frameEnd, 0, kLoopSetModeJustStart, nullptr, nullptr);
+		//		setBeginAndEndFrame(0, _frameEnd, 0, kLoopSetModeJustStart, nullptr, nullptr);
 	}
 
 	return true;
@@ -217,12 +217,7 @@ bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopSetMode, void (*call
 }
 
 bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void (*callback)(void *, int, int), void *callbackData) {
-	if ( begin >= getFrameCount()
-	    || end >= getFrameCount()
-	    || begin >= end
-	    || loopSetMode < 0
-	    || loopSetMode >= 3
-	) {
+	if (begin >= getFrameCount() || end >= getFrameCount() || begin >= end || loopSetMode < 0 || loopSetMode >= 3) {
 		warning("VQAPlayer::setBeginAndEndFrame - Invalid arguments for video");
 		return false; // VQA_DECODER_ERROR_BAD_INPUT case
 	}

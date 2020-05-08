@@ -23,11 +23,11 @@
 #ifndef ULTIMA8_GUMPS_GUMP_H
 #define ULTIMA8_GUMPS_GUMP_H
 
-#include "ultima/ultima8/kernel/object.h"
-#include "ultima/ultima8/misc/rect.h"
-#include "ultima/ultima8/graphics/frame_id.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/graphics/frame_id.h"
+#include "ultima/ultima8/kernel/object.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/rect.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,27 +45,27 @@ class GumpNotifyProcess;
 
 class Gump : public Object {
 protected:
-	uint16 _owner;        // Owner item
-	Gump *_parent;        // Parent gump
-	int32 _x, _y;         // Gump's position in parent.
+	uint16 _owner; // Owner item
+	Gump *_parent; // Parent gump
+	int32 _x, _y;  // Gump's position in parent.
 	// Always the upper left corner!
 
-	Rect _dims;           // The dimensions/coord space of the gump
-	uint32 _flags;        // Gump flags
-	int32 _layer;         // gump ordering layer
+	Rect _dims;    // The dimensions/coord space of the gump
+	uint32 _flags; // Gump flags
+	int32 _layer;  // gump ordering layer
 
-	int32 _index;         // 'Index'
+	int32 _index; // 'Index'
 
-	Shape *_shape;        // The gumps shape (always painted at 0,0)
+	Shape *_shape; // The gumps shape (always painted at 0,0)
 	uint32 _frameNum;
 
 	//! The Gump list for this gump. This will contain all child gumps,
 	//! as well as all gump widgets.
-	Std::list<Gump *> _children;      // List of all gumps
-	Gump               *_focusChild;  // The child that has focus
+	Std::list<Gump *> _children; // List of all gumps
+	Gump *_focusChild;           // The child that has focus
 
-	uint16              _notifier;      // Process to notify when we're closing
-	uint32              _processResult; // Result for the notifier process
+	uint16 _notifier;      // Process to notify when we're closing
+	uint32 _processResult; // Result for the notifier process
 
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -75,14 +75,13 @@ public:
 	~Gump() override;
 
 public:
-
-	virtual void                CreateNotifier();
-	void                        SetNotifyProcess(GumpNotifyProcess *proc);
-	GumpNotifyProcess          *GetNotifyProcess();
-	inline uint32               GetResult() {
+	virtual void CreateNotifier();
+	void SetNotifyProcess(GumpNotifyProcess *proc);
+	GumpNotifyProcess *GetNotifyProcess();
+	inline uint32 GetResult() {
 		return _processResult;
 	}
-	void                        SetResult(uint32 res) {
+	void SetResult(uint32 res) {
 		_processResult = res;
 	}
 
@@ -92,13 +91,13 @@ public:
 		_frameNum = frameNum;
 	}
 
-	void                        SetShape(FrameID frame, bool adjustsize = false);
+	void SetShape(FrameID frame, bool adjustsize = false);
 
 	//! Update the width/height to match the gump's current shape frame
-	void 						UpdateDimsFromShape();
+	void UpdateDimsFromShape();
 
 	//! Set the Gump's frame
-	inline void                 Set_frameNum(uint32 frameNum) {
+	inline void Set_frameNum(uint32 frameNum) {
 		_frameNum = frameNum;
 	}
 
@@ -106,30 +105,31 @@ public:
 	//! When newparent is 0, this will call Ultima8Engine::addGump().
 	//! \param newparent The Gump's new parent or 0.
 	//! \param takefocus If true, set parent's _focusChild to this
-	virtual void                InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true);
 
 	//! Find a gump of the specified type (this or child)
 	//! \param t Type of gump to look for
 	//! \param recursive Recursively search through children?
 	//! \param no_inheritance Exactly this type, or is a subclass also allowed?
 	//! \return the desired Gump, or NULL if not found
-	virtual Gump               *FindGump(const RunTimeClassType &t,
-	                                     bool recursive = true,
-	                                     bool no_inheritance = false);
+	virtual Gump *FindGump(const RunTimeClassType &t,
+	                       bool recursive = true,
+	                       bool no_inheritance = false);
 
 	//! Find a gump of the specified type (this or child)
 	//! \param T Type of gump to look for
 	//! \param recursive Recursively search through children?
 	//! \param no_inheritance Exactly this type, or is a subclass also allowed?
 	//! \return the desired Gump, or NULL if not found
-	template<class T> Gump     *FindGump(bool recursive = true,
-	                                     bool no_inheritance = false) {
+	template<class T>
+	Gump *FindGump(bool recursive = true,
+	               bool no_inheritance = false) {
 		return FindGump(T::ClassType, recursive, no_inheritance);
 	}
 
 	//! Find gump (this, child or NULL) at parent coordinates (mx,my)
 	//! \return the Gump at these coordinates, or NULL if none
-	virtual Gump       *FindGump(int mx, int my);
+	virtual Gump *FindGump(int mx, int my);
 
 	//! Get the mouse cursor for position mx, my relative to parents position.
 	//! If this gump doesn't want to set the cursor, the gump list will
@@ -138,22 +138,22 @@ public:
 	virtual bool GetMouseCursor(int32 mx, int32 my, Shape &shape_, int32 &frame);
 
 	// Notify gumps the render surface changed.
-	virtual void        RenderSurfaceChanged();
+	virtual void RenderSurfaceChanged();
 
 	//! Run the gump
-	virtual void        run();
+	virtual void run();
 
 	//! Close item-dependent gumps (recursively).
 	//! Called when there is a map change (so the gumps can self terminate
 	//! among other things), or when backspace is pressed by the user.
-	virtual void        CloseItemDependents();
+	virtual void CloseItemDependents();
 
 	//! Paint the Gump (RenderSurface is relative to parent).
 	//! Calls PaintThis and PaintChildren
 	// \param surf The RenderSurface to paint to
 	// \param lerp_factor The lerp_factor to paint at (0-256)
 	// \param scaled Set if the gump is being drawn scaled.
-	virtual void        Paint(RenderSurface *surf, int32 lerp_factor, bool scaled);
+	virtual void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled);
 
 	//! Paint the unscaled compontents of the Gump with compositing (RenderSurface is relative to parent).
 	//! Calls PaintComposited on self and PaintCompositing on children
@@ -161,28 +161,27 @@ public:
 	// \param lerp_factor The lerp_factor to paint at (0-256)
 	// \param scalex Fixed point scaling factor for x coord
 	// \param scaley Fixed point scaling factor for y coord
-	virtual void        PaintCompositing(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley);
+	virtual void PaintCompositing(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley);
 
 protected:
-
 	//! Overloadable method to Paint just this Gump (RenderSurface is relative to this)
 	// \param surf The RenderSurface to paint to
 	// \param lerp_factor The lerp_factor to paint at (0-256)
 	// \param scaled Set if the gump is being drawn scaled.
-	virtual void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled);
 
 	//! Paint the Gumps Children (RenderSurface is relative to this)
 	// \param surf The RenderSurface to paint to
 	// \param lerp_factor The lerp_factor to paint at (0-256)
 	// \param scaled Set if the gump is being drawn scaled.
-	virtual void        PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled);
+	virtual void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled);
 
 	//! Overloadable method to Paint just this gumps unscaled components that require compositing (RenderSurface is relative to parent).
 	// \param surf The RenderSurface to paint to
 	// \param lerp_factor The lerp_factor to paint at (0-256)
 	// \param scalex Fixed point scaling factor for x coord
 	// \param scaley Fixed point scaling factor for y coord
-	virtual void        PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley);
+	virtual void PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley);
 
 	static inline int32 ScaleCoord(int32 c, int32 factor) {
 		return ((c * factor) + (1 << 15)) >> 16;
@@ -192,24 +191,23 @@ protected:
 	}
 
 public:
-
 	//! Close the gump
 	//! \param no_del If true, do not delete after closing
-	virtual void        Close(bool no_del = false);
+	virtual void Close(bool no_del = false);
 
 	//! Check to see if a Gump is Closing
-	bool                IsClosing() const {
+	bool IsClosing() const {
 		return (_flags & FLAG_CLOSING) != 0;
 	}
 
 	//! Move this gump
-	virtual void        Move(int32 x, int32 y) {
+	virtual void Move(int32 x, int32 y) {
 		_x = x;
 		_y = y;
 	}
 
 	//! Move this gump relative to its current position
-	virtual void        MoveRelative(int x, int y) {
+	virtual void MoveRelative(int x, int y) {
 		_x += x;
 		_y += y;
 	}
@@ -228,7 +226,7 @@ public:
 	// \param pos the postition on the parent gump
 	// \param xoffset an offset from the position on the x-axis
 	// \param yoffset an offset from the position on the y-axis
-	virtual void        setRelativePosition(Position pos, int xoffset = 0, int yoffset = 0);
+	virtual void setRelativePosition(Position pos, int xoffset = 0, int yoffset = 0);
 
 	//
 	// Points and Coords
@@ -258,27 +256,27 @@ public:
 
 	//! Convert a screen space point to a gump point
 	virtual void ScreenSpaceToGump(int32 &sx, int32 &sy,
-		PointRoundDir r = ROUND_TOPLEFT);
+	                               PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Convert a gump point to a screen space point
 	virtual void GumpToScreenSpace(int32 &gx, int32 &gy,
-		PointRoundDir r = ROUND_TOPLEFT);
+	                               PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Convert a parent relative point to a gump point
 	virtual void ParentToGump(int32 &px, int32 &py,
-		PointRoundDir r = ROUND_TOPLEFT);
+	                          PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Convert a gump point to parent relative point
 	virtual void GumpToParent(int32 &gx, int32 &gy,
-		PointRoundDir r = ROUND_TOPLEFT);
+	                          PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Transform a rectangle to screenspace from gumpspace
 	virtual void GumpRectToScreenSpace(int32 &gx, int32 &gy,
-		int32 &gw, int32 &gh, RectRoundDir r = ROUND_OUTSIDE);
+	                                   int32 &gw, int32 &gh, RectRoundDir r = ROUND_OUTSIDE);
 
 	//! Transform a rectangle to gumpspace from screenspace
 	virtual void ScreenSpaceToGumpRect(int32 &sx, int32 &sy,
-		int32 &sw, int32 &sh, RectRoundDir r = ROUND_OUTSIDE);
+	                                   int32 &sw, int32 &sh, RectRoundDir r = ROUND_OUTSIDE);
 
 	//! Trace a click, and return ObjId
 	virtual uint16 TraceObjId(int32 mx, int32 my);
@@ -286,8 +284,7 @@ public:
 	//! Get the location of an item in the gump (coords relative to this).
 	//! \return false on failure
 	virtual bool GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
-		int32 lerp_factor = 256);
-
+	                               int32 lerp_factor = 256);
 
 	//
 	// Some event handlers. In theory they 'should' be able to be mapped to
@@ -307,46 +304,45 @@ public:
 	//
 
 	// Return Gump that handled event
-	virtual Gump       *OnMouseDown(int button, int32 mx, int32 my);
-	virtual void        OnMouseUp(int button, int32 mx, int32 my) { }
-	virtual void        OnMouseClick(int button, int32 mx, int32 my) { }
-	virtual void        OnMouseDouble(int button, int32 mx, int32 my) { }
-	virtual Gump       *OnMouseMotion(int32 mx, int32 my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
+	virtual void OnMouseUp(int button, int32 mx, int32 my) {}
+	virtual void OnMouseClick(int button, int32 mx, int32 my) {}
+	virtual void OnMouseDouble(int button, int32 mx, int32 my) {}
+	virtual Gump *OnMouseMotion(int32 mx, int32 my);
 
 	// OnMouseOver is only call when the mouse first passes over the gump
 	// OnMouseLeft is call as the mouse leaves the gump.
-	virtual void        OnMouseOver() { };
-	virtual void        OnMouseLeft() { };
+	virtual void OnMouseOver(){};
+	virtual void OnMouseLeft(){};
 
 	// Keyboard input gets sent to the FocusGump. Or if there isn't one, it
 	// will instead get sent to the default key handler. TextInput requires
 	// that text mode be enabled. Return true if handled, false if not.
 	// Default, returns false, unless handled by focus child
-	virtual bool        OnKeyDown(int key, int mod);
-	virtual bool        OnKeyUp(int key);
-	virtual bool        OnTextInput(int unicode);
+	virtual bool OnKeyDown(int key, int mod);
+	virtual bool OnKeyUp(int key);
+	virtual bool OnTextInput(int unicode);
 
 	// This is for detecting focus changes for keyboard input. Gets called true
 	// when the this gump is being set as the focus focus gump. It is called
 	// false when focus is being taken away.
-	virtual void        OnFocus(bool /*gain*/) { }
+	virtual void OnFocus(bool /*gain*/) {}
 
 	// Makes this gump the focus
-	virtual void        MakeFocus();
+	virtual void MakeFocus();
 
 	// Is this gump the focus?
-	inline bool         IsFocus() {
+	inline bool IsFocus() {
 		return _parent ? _parent->_focusChild == this : false;
 	}
 
 	// Get the child in focus
-	inline Gump        *GetFocusChild() {
+	inline Gump *GetFocusChild() {
 		return _focusChild;
 	}
 
 	// Find a new Child to be the focus
-	void                FindNewFocusChild();
-
+	void FindNewFocusChild();
 
 	//
 	// Child gump related
@@ -371,7 +367,7 @@ public:
 
 	//! This function is used by our children to notifty us of 'something'
 	//! Think of it as a generic call back function
-	virtual void ChildNotify(Gump *child, uint32 message) { }
+	virtual void ChildNotify(Gump *child, uint32 message) {}
 	void SetIndex(int32 i) {
 		_index = i;
 	}
@@ -400,37 +396,36 @@ public:
 	}
 
 	//! Called when an item that was being dragged over the gump left the gump
-	virtual void DraggingItemLeftGump(Item *item) { }
+	virtual void DraggingItemLeftGump(Item *item) {}
 
 	//! Called when a drag operation finished.
 	//! This is called on the same gump that received StartDraggingItem
 	//! \param moved If true, the item was actually dragged somewhere else.
 	//!              If false, the drag was cancelled.
-	virtual void StopDraggingItem(Item *item, bool moved) { }
+	virtual void StopDraggingItem(Item *item, bool moved) {}
 
 	//! Called when an item has been dropped on a gump.
 	//! This is called after StopDraggingItem has been called, but possibly
 	//! on a different gump.
 	//! It's guaranteed that a gump will only receive a DropItem at a location
 	//! if a DraggingItem there returned true.
-	virtual void DropItem(Item *item, int mx, int my) { }
+	virtual void DropItem(Item *item, int mx, int my) {}
 
 public:
-
 	//
 	// Gump Flags
 	//
 	enum GumpFlags {
-		FLAG_DRAGGABLE      = 0x01,     // When set, the gump can be dragged
-		FLAG_HIDDEN         = 0x02,     // When set, the gump will not be drawn
-		FLAG_CLOSING        = 0x04,     // When set, the gump is closing
-		FLAG_CLOSE_AND_DEL  = 0x08,     // When set, the gump is closing and will be deleted
-		FLAG_ITEM_DEPENDENT = 0x10,     // When set, the gump will be deleted on MapChange
-		FLAG_DONT_SAVE      = 0x20,     // When set, don't save this gump.
+		FLAG_DRAGGABLE = 0x01,      // When set, the gump can be dragged
+		FLAG_HIDDEN = 0x02,         // When set, the gump will not be drawn
+		FLAG_CLOSING = 0x04,        // When set, the gump is closing
+		FLAG_CLOSE_AND_DEL = 0x08,  // When set, the gump is closing and will be deleted
+		FLAG_ITEM_DEPENDENT = 0x10, // When set, the gump will be deleted on MapChange
+		FLAG_DONT_SAVE = 0x20,      // When set, don't save this gump.
 		// Be very careful with this one!
-		FLAG_CORE_GUMP      = 0x40,     // core gump (only children are saved)
-		FLAG_KEEP_VISIBLE   = 0x80      // Keep this gump on-screen.
-		                      // (only for ItemRelativeGumps)
+		FLAG_CORE_GUMP = 0x40,   // core gump (only children are saved)
+		FLAG_KEEP_VISIBLE = 0x80 // Keep this gump on-screen.
+		                         // (only for ItemRelativeGumps)
 	};
 
 	inline bool IsHidden() const {
@@ -452,15 +447,16 @@ public:
 	// Gump Layers
 	//
 	enum GumpLayers {
-		LAYER_DESKTOP       = -16,      // Layer for Desktop 'bottom most'
-		LAYER_GAMEMAP       = -8,       // Layer for the World Gump
-		LAYER_NORMAL        = 0,        // Layer for Normal gumps
-		LAYER_ABOVE_NORMAL  = 8,        // Layer for Always on top Gumps
-		LAYER_MODAL         = 12,       // Layer for Modal Gumps
-		LAYER_CONSOLE       = 16        // Layer for the console
+		LAYER_DESKTOP = -16,    // Layer for Desktop 'bottom most'
+		LAYER_GAMEMAP = -8,     // Layer for the World Gump
+		LAYER_NORMAL = 0,       // Layer for Normal gumps
+		LAYER_ABOVE_NORMAL = 8, // Layer for Always on top Gumps
+		LAYER_MODAL = 12,       // Layer for Modal Gumps
+		LAYER_CONSOLE = 16      // Layer for the console
 	};
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

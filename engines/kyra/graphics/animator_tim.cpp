@@ -20,9 +20,9 @@
  *
  */
 
-#include "kyra/script/script_tim.h"
-#include "kyra/graphics/wsamovie.h"
 #include "kyra/graphics/screen_lol.h"
+#include "kyra/graphics/wsamovie.h"
+#include "kyra/script/script_tim.h"
 
 #ifdef ENABLE_LOL
 #include "kyra/engine/lol.h"
@@ -218,7 +218,7 @@ void TimAnimator::playPart(int animIndex, int firstFrame, int lastFrame, int del
 			anim->wsa->displayFrame(i - 1, 0, anim->x, anim->y, 0, 0, 0);
 			_screen->updateScreen();
 		}
-		int32 del  = (int32)(next - _system->getMillis());
+		int32 del = (int32)(next - _system->getMillis());
 		if (del > 0)
 			_vm->delay(del, true);
 	}

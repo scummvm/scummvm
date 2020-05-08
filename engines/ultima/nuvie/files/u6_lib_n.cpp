@@ -20,19 +20,18 @@
  *
  */
 
+#include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/files/u6_lib_n.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 U6Lib_n::U6Lib_n() : num_offsets(0), items(NULL), data(NULL),
-	del_data(false), filesize(0), game_type(NUVIE_GAME_U6), lib_size(0) {
+                     del_data(false), filesize(0), game_type(NUVIE_GAME_U6), lib_size(0) {
 }
-
 
 U6Lib_n::~U6Lib_n(void) {
 	close();
@@ -53,7 +52,6 @@ bool U6Lib_n::open(Std::string &filename, uint8 size, uint8 type) {
 
 	return open((NuvieIO *)file, size, type);
 }
-
 
 // load u6lib from opened stream
 bool U6Lib_n::open(NuvieIO *new_data, uint8 size, uint8 type) {
@@ -103,11 +101,9 @@ bool U6Lib_n::create(Std::string &filename, uint8 size, uint8 type) {
 	return (true);
 }
 
-
 uint32 U6Lib_n::get_num_items(void) {
 	return num_offsets;
 }
-
 
 /* Returns the location of `item_number' in the library file.
  */
@@ -123,7 +119,6 @@ uint32 U6Lib_n::get_item_size(uint32 item_number) {
 
 	return (items[item_number].uncomp_size);
 }
-
 
 // read and return item data
 unsigned char *U6Lib_n::get_item(uint32 item_number, unsigned char *ret_buf) {
@@ -160,10 +155,10 @@ bool U6Lib_n::is_compressed(uint32 item_number) {
 	uint32 i;
 
 	switch (items[item_number].flag) {
-	case 0x1 :
-	case 0x20 :
+	case 0x1:
+	case 0x20:
 		return true;
-	case 0xff :
+	case 0xff:
 		for (i = item_number; i < num_offsets; i++) {
 			if (items[i].flag != 0xff)
 				break;
@@ -217,7 +212,6 @@ void U6Lib_n::parse_lib() {
 	return;
 }
 
-
 // for reading, calculate item sizes based on offsets
 void U6Lib_n::calculate_item_sizes() {
 	uint32 i, next_offset = 0;
@@ -245,22 +239,22 @@ uint32 U6Lib_n::calculate_item_uncomp_size(U6LibItem *item) {
 	uint32 uncomp_size = 0;
 
 	switch (item->flag) {
-	case 0x01 : //compressed
-	case 0x20 : //MD fonts.lzc, MDD_MUS.LZC use this tag among others
+	case 0x01: //compressed
+	case 0x20: //MD fonts.lzc, MDD_MUS.LZC use this tag among others
 		data->seek(item->offset);
 		uncomp_size = data->read4();
 		break;
 
 	//FIX check this. uncompressed 4 byte item size header
-	case 0xc1 :
+	case 0xc1:
 		uncomp_size = item->size; // - 4;
 		break;
 
 	// uncompressed
-	case 0x0  :
-	case 0x2  :
-	case 0xe0 :
-	default   :
+	case 0x0:
+	case 0x2:
+	case 0xe0:
+	default:
 		uncomp_size = item->size;
 		break;
 	}
@@ -276,9 +270,8 @@ uint32 U6Lib_n::calculate_num_offsets(bool skip4) { //skip4 bytes of header.
 	if (skip4)
 		data->seek(0x4);
 
-
-// We assume the first data in the file is directly behind the offset table,
-// so we continue scanning until we hit a data block.
+	// We assume the first data in the file is directly behind the offset table,
+	// so we continue scanning until we hit a data block.
 	uint32 max_count = 0xffffffff;
 	for (i = 0; !data->is_end(); i++) {
 		if (i == max_count)
@@ -302,15 +295,14 @@ uint32 U6Lib_n::calculate_num_offsets(bool skip4) { //skip4 bytes of header.
 	return 0;
 }
 
-
 /* For writing multiple files to a lib, read in source filenames and offsets
  * from an opened index file. Offsets may be ignored when writing.
  */
 void U6Lib_n::load_index(Common::ReadStream *index_f) {
-	char input[256] = "", // input line
-	                  offset_str[9] = "", // listed offset
-	                                  name[256] = ""; // source file name
-	int in_len = 0, oc = 0; // length of input line, character in copy string
+	char input[256] = "",       // input line
+	    offset_str[9] = "",     // listed offset
+	    name[256] = "";         // source file name
+	int in_len = 0, oc = 0;     // length of input line, character in copy string
 	int c = 0, entry_count = 0; // character in input line, number of entries
 
 	if (!index_f)
@@ -318,12 +310,14 @@ void U6Lib_n::load_index(Common::ReadStream *index_f) {
 	while (strgets(input, 256, index_f)) {
 		in_len = strlen(input);
 		// skip spaces, read offset, break on #
-		for (c = 0; c < in_len && Common::isSpace(input[c]) && input[c] != '#'; c++);
+		for (c = 0; c < in_len && Common::isSpace(input[c]) && input[c] != '#'; c++)
+			;
 		for (oc = 0; c < in_len && !Common::isSpace(input[c]) && input[c] != '#'; c++)
 			offset_str[oc++] = input[c];
 		offset_str[oc] = '\0';
 		// skip spaces, read name, break on # or \n or \r
-		for (; c < in_len && Common::isSpace(input[c]) && input[c] != '#'; c++);
+		for (; c < in_len && Common::isSpace(input[c]) && input[c] != '#'; c++)
+			;
 		for (oc = 0; c < in_len && input[c] != '\n' && input[c] != '\r' && input[c] != '#'; c++)
 			name[oc++] = input[c];
 		name[oc] = '\0';
@@ -336,7 +330,6 @@ void U6Lib_n::load_index(Common::ReadStream *index_f) {
 		oc = 0;
 	}
 }
-
 
 /* Append an offset and a name to the library. The other fields are initialized.
  */
@@ -355,7 +348,6 @@ void U6Lib_n::add_item(uint32 offset32, const char *name) {
 	++num_offsets;
 }
 
-
 /* Returns the name of (filename associated with) `item_number'.
  */
 const char *U6Lib_n::get_item_name(uint32 item_number) {
@@ -364,7 +356,6 @@ const char *U6Lib_n::get_item_name(uint32 item_number) {
 	return (items[item_number].name ? items[item_number].name->c_str() : NULL);
 }
 
-
 /* Set data for an item, in preparation of writing or to cache the library.
  * Size & uncompressed size is set to source length.
  */
@@ -372,8 +363,8 @@ void U6Lib_n::set_item_data(uint32 item_number, unsigned char *src, uint32 src_l
 	unsigned char *dcopy = 0;
 	if (item_number >= num_offsets)
 		return;
-// FIXME: need a way to set an item as compressed or uncompressed so we know
-// which size to set
+	// FIXME: need a way to set an item as compressed or uncompressed so we know
+	// which size to set
 	items[item_number].size = src_len;
 	items[item_number].uncomp_size = src_len;
 	if (src_len) {
@@ -384,7 +375,6 @@ void U6Lib_n::set_item_data(uint32 item_number, unsigned char *src, uint32 src_l
 		items[item_number].data = 0;
 }
 
-
 /* For writing, (re)calculate item offsets from item sizes.
  */
 void U6Lib_n::calc_item_offsets() {
@@ -394,8 +384,8 @@ void U6Lib_n::calc_item_offsets() {
 		items[0].offset = (num_offsets * lib_size);
 	else
 		items[0].offset = 0; // 0 = no data, no affect on other items
-//    DEBUG(0,LEVEL_DEBUGGING,"calc_item_offsets: sizes[0] == %d\n", sizes[0]);
-//    DEBUG(0,LEVEL_DEBUGGING,"calc_item_offsets: offsets[0] == %d\n", offsets[0]);
+	                         //    DEBUG(0,LEVEL_DEBUGGING,"calc_item_offsets: sizes[0] == %d\n", sizes[0]);
+	                         //    DEBUG(0,LEVEL_DEBUGGING,"calc_item_offsets: offsets[0] == %d\n", offsets[0]);
 	for (uint32 i = 1; i < num_offsets; i++) {
 		if (items[i].size) {
 			// find previous item with non-zero offset
@@ -410,8 +400,8 @@ void U6Lib_n::calc_item_offsets() {
 				items[i].offset = (num_offsets * lib_size);
 		} else
 			items[i].offset = 0; // 0 = no data, no affect on other items
-//        DEBUG(0,LEVEL_DEBUGGING,"calc_item_offsets: sizes[%d] == %d\n", i, sizes[i]);
-//        DEBUG(0,LEVEL_DEBUGGING,"calc_item_offsets: offsets[%d] == %d\n", i, offsets[i]);
+		                         //        DEBUG(0,LEVEL_DEBUGGING,"calc_item_offsets: sizes[%d] == %d\n", i, sizes[i]);
+		                         //        DEBUG(0,LEVEL_DEBUGGING,"calc_item_offsets: offsets[%d] == %d\n", i, offsets[i]);
 	}
 }
 
@@ -449,7 +439,6 @@ void U6Lib_n::write_index() {
 	}
 }
 
-
 /* Write all item data to the library file at their respective offsets.
  */
 void U6Lib_n::write_items() {
@@ -457,13 +446,11 @@ void U6Lib_n::write_items() {
 		write_item(i);
 }
 
-
 /* Write item data to the library file at the indicated offset, unless the
  * offset is 0 (then the data is considered empty).
  */
 void U6Lib_n::write_item(uint32 item_number) {
-	if (item_number >= num_offsets
-	        || items[item_number].offset == 0 || items[item_number].size == 0)
+	if (item_number >= num_offsets || items[item_number].offset == 0 || items[item_number].size == 0)
 		return;
 	if (game_type == NUVIE_GAME_U6)
 		data->seek(items[item_number].offset);

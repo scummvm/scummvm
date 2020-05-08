@@ -26,8 +26,8 @@
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
-#include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/inventory.h"
+#include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/room.h"
 #include "mutationofjb/util.h"
 #include "mutationofjb/widgets/conversationwidget.h"
@@ -72,13 +72,12 @@ enum {
 	STATUS_BAR_HEIGHT = 8
 };
 
-
 GameScreen::GameScreen(Game &game, Graphics::Screen *screen)
-	: GuiScreen(game, screen),
-	  _inventoryWidget(nullptr),
-	  _conversationWidget(nullptr),
-	  _statusBarWidget(nullptr),
-	  _currentAction(ActionInfo::Walk) {}
+    : GuiScreen(game, screen),
+      _inventoryWidget(nullptr),
+      _conversationWidget(nullptr),
+      _statusBarWidget(nullptr),
+      _currentAction(ActionInfo::Walk) {}
 
 GameScreen::~GameScreen() {}
 
@@ -105,14 +104,14 @@ bool GameScreen::init() {
 	addWidget(_inventoryWidget);
 
 	const Common::Rect ButtonRects[] = {
-		Common::Rect(0, 148, 67, 158), // Walk
-		Common::Rect(0, 158, 67, 168), // Talk
-		Common::Rect(0, 168, 67, 178), // Look
-		Common::Rect(0, 178, 67, 188), // Use
-		Common::Rect(0, 188, 67, 198), // PickUp
-		Common::Rect(67, 149, 88, 174), // ScrollLeft
-		Common::Rect(67, 174, 88, 199), // ScrollRight
-		Common::Rect(301, 148, 320, 200) // Settings
+	    Common::Rect(0, 148, 67, 158),   // Walk
+	    Common::Rect(0, 158, 67, 168),   // Talk
+	    Common::Rect(0, 168, 67, 178),   // Look
+	    Common::Rect(0, 178, 67, 188),   // Use
+	    Common::Rect(0, 188, 67, 198),   // PickUp
+	    Common::Rect(67, 149, 88, 174),  // ScrollLeft
+	    Common::Rect(67, 174, 88, 199),  // ScrollRight
+	    Common::Rect(301, 148, 320, 200) // Settings
 	};
 
 	for (int i = 0; i < NUM_BUTTONS; ++i) {
@@ -232,6 +231,7 @@ public:
 	InventoryAnimationDecoderCallback(GameScreen &gui) : _gui(gui) {}
 	void onFrame(int frameNo, Graphics::Surface &surface) override;
 	void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+
 private:
 	GameScreen &_gui;
 };
@@ -259,11 +259,12 @@ public:
 	HudAnimationDecoderCallback(GameScreen &gui) : _gui(gui) {}
 	void onFrame(int frameNo, Graphics::Surface &surface) override;
 	void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+
 private:
 	GameScreen &_gui;
 };
 
-void HudAnimationDecoderCallback::onPaletteUpdated(byte [PALETTE_SIZE]) {
+void HudAnimationDecoderCallback::onPaletteUpdated(byte[PALETTE_SIZE]) {
 }
 
 void HudAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surface) {
@@ -420,4 +421,4 @@ void GameScreen::onGameEntityHovered(GameWidget *, const Common::String &entity)
 	updateStatusBarText(entity, false);
 }
 
-}
+} // namespace MutationOfJB

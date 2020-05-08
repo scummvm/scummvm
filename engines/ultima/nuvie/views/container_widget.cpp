@@ -20,22 +20,22 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_llist.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/screen/game_palette.h"
 #include "ultima/nuvie/views/container_widget.h"
 #include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/core/timed_event.h"
-#include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/core/timed_event.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/nuvie/screen/game_palette.h"
 #include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/usecode/usecode.h"
 #include "ultima/nuvie/views/inventory_font.h"
 #include "ultima/nuvie/views/view_manager.h"
 
@@ -46,8 +46,7 @@ namespace Nuvie {
 #define ACTION_BUTTON 3
 #define DRAG_BUTTON 1
 
-
-ContainerWidget::ContainerWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
+ContainerWidget::ContainerWidget(Configuration *cfg, GUI_CallBack *callback) : GUI_Widget(NULL, 0, 0, 0, 0) {
 	config = cfg;
 	callback_object = callback;
 
@@ -67,7 +66,6 @@ ContainerWidget::ContainerWidget(Configuration *cfg, GUI_CallBack *callback): GU
 }
 
 ContainerWidget::~ContainerWidget() {
-
 }
 
 bool ContainerWidget::init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, Font *f) {
@@ -117,7 +115,6 @@ void ContainerWidget::Display(bool full_redraw) {
 	screen->update(area.left, area.top, area.width(), area.height());
 }
 
-
 void ContainerWidget::display_inventory_list() {
 	const Tile *tile;
 	U6LList *objlist;
@@ -135,7 +132,7 @@ void ContainerWidget::display_inventory_list() {
 	else
 		link = objlist->start();
 
-//skip row_offset rows of objects.
+	//skip row_offset rows of objects.
 	skip_num = row_offset * cols;
 	for (i = 0; link != NULL && i < skip_num; link = link->next) {
 		obj = (Obj *)link->data;
@@ -202,18 +199,17 @@ void ContainerWidget::display_special_char(uint16 x, uint16 y, uint8 quality) {
 }
 
 GUI_status ContainerWidget::MouseDown(int x, int y, Shared::MouseButton button) {
-//Events *event = Game::get_game()->get_event();
-//MsgScroll *scroll = Game::get_game()->get_scroll();
+	//Events *event = Game::get_game()->get_event();
+	//MsgScroll *scroll = Game::get_game()->get_scroll();
 	x -= area.left;
 	y -= area.top;
 
-// ABOEING
-	if (/*actor && */(button == USE_BUTTON || button == ACTION_BUTTON || button == DRAG_BUTTON)) {
+	// ABOEING
+	if (/*actor && */ (button == USE_BUTTON || button == ACTION_BUTTON || button == DRAG_BUTTON)) {
 		Obj *obj; // FIXME: duplicating code in DollWidget
 		if ((obj = get_obj_at_location(x, y)) != NULL) {
 			// send to View
-			if (callback_object->callback(INVSELECT_CB, this, obj) == GUI_PASS
-			        && button == DRAG_BUTTON)
+			if (callback_object->callback(INVSELECT_CB, this, obj) == GUI_PASS && button == DRAG_BUTTON)
 				selected_obj = obj; // start dragging
 			return GUI_YUM;
 		}
@@ -235,9 +231,8 @@ Obj *ContainerWidget::get_obj_at_location(int x, int y) {
 	uint8 location;
 	U6LList *inventory;
 	U6Link *link;
-	Obj *obj =  NULL;
+	Obj *obj = NULL;
 	uint16 i;
-
 
 	location = get_list_position(x, y); //find the postion of the object we hit in the inventory
 
@@ -335,11 +330,11 @@ void ContainerWidget::drag_drop_success(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "ContainerWidget::drag_drop_success()\n");
 	dragging = false;
 
-// handled by drop target
-// if(container_obj)
-//   container_obj->container->remove(selected_obj);
-// else
-//   actor->inventory_remove_obj(selected_obj);
+	// handled by drop target
+	// if(container_obj)
+	//   container_obj->container->remove(selected_obj);
+	// else
+	//   actor->inventory_remove_obj(selected_obj);
 
 	selected_obj = NULL;
 	Redraw();
@@ -400,8 +395,7 @@ bool ContainerWidget::drag_accept_drop(int x, int y, int message, void *data) {
 		Actor *grabber = actor;
 		if (!grabber)
 			grabber = Game::get_game()->get_player()->get_actor();
-		if (container_obj && !container_obj->is_in_inventory()
-		        && !Game::get_game()->get_map_window()->can_get_obj(grabber, container_obj)) {
+		if (container_obj && !container_obj->is_in_inventory() && !Game::get_game()->get_map_window()->can_get_obj(grabber, container_obj)) {
 			Game::get_game()->get_scroll()->message("\n\nblocked\n\n");
 			return false;
 		}
@@ -417,7 +411,7 @@ bool ContainerWidget::drag_accept_drop(int x, int y, int message, void *data) {
 		}
 		UseCode *usecode = Game::get_game()->get_usecode();
 		if (usecode->is_chest(obj) && obj->frame_n == 0) //open chest
-			obj->frame_n = 1; //close the chest
+			obj->frame_n = 1;                            //close the chest
 
 		DEBUG(0, LEVEL_DEBUGGING, "Drop Accepted\n");
 		return true;
@@ -487,7 +481,6 @@ void ContainerWidget::drag_draw(int x, int y, int message, void *data) {
 	screen->update(nx, ny, 16, 16);
 }
 
-
 void ContainerWidget::try_click() {
 	Events *event = Game::get_game()->get_event();
 	UseCode *usecode = Game::get_game()->get_usecode();
@@ -541,8 +534,8 @@ GUI_status ContainerWidget::MouseDouble(int x, int y, Shared::MouseButton button
 	ready_obj = NULL;
 	selected_obj = NULL;
 
-//    if(!actor)
-//        return(GUI_YUM);
+	//    if(!actor)
+	//        return(GUI_YUM);
 	if (!obj)
 		return (MouseUp(x, y, button)); // probably hit an arrow
 	Game::get_game()->get_view_manager()->double_click_obj(obj);

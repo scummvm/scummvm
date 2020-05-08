@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/views/spell_view_gump.h"
 #include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/magic.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/files/nuvie_bmp_file.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_button.h"
-#include "ultima/nuvie/core/magic.h"
-#include "ultima/nuvie/views/spell_view_gump.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/files/nuvie_bmp_file.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -94,7 +94,6 @@ bool SpellViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 
 	return true;
 }
-
 
 uint8 SpellViewGump::fill_cur_spell_list() {
 	uint8 count = SpellView::fill_cur_spell_list();
@@ -170,13 +169,13 @@ void SpellViewGump::loadCircleString(Std::string datadir) {
 	}
 
 	switch (level) {
-	case 1 :
+	case 1:
 		loadCircleSuffix(datadir, "st.bmp");
 		break;
-	case 2 :
+	case 2:
 		loadCircleSuffix(datadir, "nd.bmp");
 		break;
-	case 3 :
+	case 3:
 		loadCircleSuffix(datadir, "rd.bmp");
 		break;
 	default:
@@ -196,7 +195,6 @@ void SpellViewGump::loadCircleSuffix(Std::string datadir, Std::string image) {
 	}
 }
 
-
 void SpellViewGump::printSpellQty(uint8 spellNum, uint16 x, uint16 y) {
 	Magic *m = Game::get_game()->get_magic();
 	char num_str[4];
@@ -213,8 +211,8 @@ void SpellViewGump::printSpellQty(uint8 spellNum, uint16 x, uint16 y) {
 }
 
 void SpellViewGump::Display(bool full_redraw) {
-//display_level_text();
-//display_spell_list_text();
+	//display_level_text();
+	//display_spell_list_text();
 	Common::Rect dst;
 	dst = area;
 	dst.setWidth(162);
@@ -272,7 +270,6 @@ sint16 SpellViewGump::getSpell(int x, int y) {
 	}
 
 	uint8 spell = (level - 1) * 16;
-
 
 	if (localx >= 89)
 		spell += 5;
@@ -353,7 +350,6 @@ GUI_status SpellViewGump::MouseUp(int x, int y, Shared::MouseButton button) {
 
 		return GUI_YUM;
 	}
-
 
 	return DraggableView::MouseUp(x, y, button);
 }

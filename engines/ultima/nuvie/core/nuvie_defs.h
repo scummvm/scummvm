@@ -35,25 +35,25 @@ typedef int32 sint32;
 
 typedef uint8 nuvie_game_t; // Game type (1=u6,2=md,4=se)
 
-#define NUVIE_GAME_NONE  0
-#define NUVIE_GAME_U6    1
-#define NUVIE_GAME_MD    2
-#define NUVIE_GAME_SE    4
+#define NUVIE_GAME_NONE 0
+#define NUVIE_GAME_U6 1
+#define NUVIE_GAME_MD 2
+#define NUVIE_GAME_SE 4
 
 #define NUVIE_CONFIG_NAME_U6 "ultima6"
 #define NUVIE_CONFIG_NAME_MD "martian"
 #define NUVIE_CONFIG_NAME_SE "savage"
 
 #define NUVIE_STYLE_ORIG 0
-#define NUVIE_STYLE_NEW  1
+#define NUVIE_STYLE_NEW 1
 #define NUVIE_STYLE_ORIG_PLUS_CUTOFF_MAP 2
-#define NUVIE_STYLE_ORIG_PLUS_FULL_MAP   3
+#define NUVIE_STYLE_ORIG_PLUS_FULL_MAP 3
 
-#define MAX(x, y)      ((x) > (y) ? (x) : (y))
-#define MIN(x, y)      ((x) < (y) ? (x) : (y))
-#define clamp_min(v, c)  (((v) < (c)) ? (c) : (v))
-#define clamp_max(v, c)  (((v) > (c)) ? (c) : (v))
-#define clamp(v, c1, c2) ( ((v) < (c1)) ? (c1) : (((v) > (c2)) ? (c2) : (v)) )
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#define clamp_min(v, c) (((v) < (c)) ? (c) : (v))
+#define clamp_max(v, c) (((v) > (c)) ? (c) : (v))
+#define clamp(v, c1, c2) (((v) < (c1)) ? (c1) : (((v) > (c2)) ? (c2) : (v)))
 
 #ifndef INT_MAX
 #define INT_MAX 0x7fffffff
@@ -66,8 +66,8 @@ typedef uint8 nuvie_game_t; // Game type (1=u6,2=md,4=se)
 #endif
 
 //FIXME fix for future maps which will probably be 1024 wide starting at level 6..
-#define WRAPPED_COORD(c,level) ((c)&((level)?255:1023))
-#define WRAP_COORD(c,level) ((c)&=((level)?255:1023))
+#define WRAPPED_COORD(c, level) ((c) & ((level) ? 255 : 1023))
+#define WRAP_COORD(c, level) ((c) &= ((level) ? 255 : 1023))
 
 #define MAP_SIDE_LENGTH(map_level) ((map_level > 0 && map_level < 6) ? 256 : 1024)
 
@@ -81,15 +81,15 @@ const uint16 map_pitch[2] = { 1024, 256 }; // width of 0:surface plane, and 1:al
 #define WRAP_COORD(c,level) ((c)&=(map_pitch[(level==0)?0:1]-1)) // modifies C
 */
 
-#define NUVIE_DIR_N    0
-#define NUVIE_DIR_E    1
-#define NUVIE_DIR_S    2
-#define NUVIE_DIR_W    3
+#define NUVIE_DIR_N 0
+#define NUVIE_DIR_E 1
+#define NUVIE_DIR_S 2
+#define NUVIE_DIR_W 3
 
-#define NUVIE_DIR_NE   4
-#define NUVIE_DIR_SE   5
-#define NUVIE_DIR_SW   6
-#define NUVIE_DIR_NW   7
+#define NUVIE_DIR_NE 4
+#define NUVIE_DIR_SE 5
+#define NUVIE_DIR_SW 6
+#define NUVIE_DIR_NW 7
 
 #define NUVIE_DIR_NONE 8
 

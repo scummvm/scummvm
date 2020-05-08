@@ -23,11 +23,11 @@
 #include "plumbers/plumbers.h"
 #include "plumbers/console.h"
 
-#include "audio/decoders/wave.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -46,8 +46,7 @@
 
 namespace Plumbers {
 
-PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _console(0), _image(0) {
+PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _console(0), _image(0) {
 	_timerInstalled = false;
 	_showScoreFl = false;
 	_setDurationFl = false;
@@ -69,28 +68,27 @@ PlumbersGame::~PlumbersGame() {
 }
 
 static const byte MOUSECURSOR_SCI[] = {
-	1,1,0,0,0,0,0,0,0,0,0,
-	1,2,1,0,0,0,0,0,0,0,0,
-	1,2,2,1,0,0,0,0,0,0,0,
-	1,2,2,2,1,0,0,0,0,0,0,
-	1,2,2,2,2,1,0,0,0,0,0,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,2,2,2,2,2,1,0,0,0,
-	1,2,2,2,2,2,2,2,1,0,0,
-	1,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,2,2,2,1,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,1,0,1,2,2,1,0,0,0,
-	1,1,0,0,1,2,2,1,0,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,1,2,2,1,0
-};
+    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+    1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+    1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
+    1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+    1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
+    1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+    1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+    1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+    1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+    1, 2, 1, 0, 1, 2, 2, 1, 0, 0, 0,
+    1, 1, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+    0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+    0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0};
 
 static const byte cursorPalette[] = {
-	0, 0, 0,           // Black / Transparent
-	0x80, 0x80, 0x80,  // Gray
-	0xff, 0xff, 0xff   // White
+    0, 0, 0,          // Black / Transparent
+    0x80, 0x80, 0x80, // Gray
+    0xff, 0xff, 0xff  // White
 };
 
 Common::Error PlumbersGame::run() {
@@ -310,7 +308,7 @@ void PlumbersGame::processTimer() {
 
 void PlumbersGame::onTimer(void *arg) {
 	g_system->getTimerManager()->removeTimerProc(onTimer);
-	((PlumbersGame*)arg)->processTimer();
+	((PlumbersGame *)arg)->processTimer();
 }
 
 void PlumbersGame::initTables() {

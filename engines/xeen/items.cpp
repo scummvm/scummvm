@@ -25,5 +25,4 @@
 
 namespace Xeen {
 
-
 } // End of namespace Xeen

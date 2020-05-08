@@ -24,8 +24,8 @@
 #define SHERLOCK_TATTOO_WIDGET_FILES_H
 
 #include "common/scummsys.h"
-#include "sherlock/tattoo/widget_base.h"
 #include "sherlock/saveload.h"
+#include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
 
@@ -33,9 +33,11 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-enum FilesRenderMode { RENDER_ALL, RENDER_NAMES, RENDER_NAMES_AND_SCROLLBAR };
+enum FilesRenderMode { RENDER_ALL,
+	                   RENDER_NAMES,
+	                   RENDER_NAMES_AND_SCROLLBAR };
 
-class WidgetFiles: public WidgetBase, public SaveManager {
+class WidgetFiles : public WidgetBase, public SaveManager {
 private:
 	SherlockEngine *_vm;
 	SaveMode _fileMode;
@@ -65,6 +67,7 @@ private:
 	 * Return the area of a widget that the scrollbar will be drawn in
 	 */
 	Common::Rect getScrollBarBounds() const override;
+
 public:
 	WidgetFiles(SherlockEngine *vm, const Common::String &target);
 

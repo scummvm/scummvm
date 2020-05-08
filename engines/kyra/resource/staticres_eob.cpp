@@ -26,7 +26,6 @@
 
 #include "common/memstream.h"
 
-
 namespace Kyra {
 
 #ifdef ENABLE_EOB
@@ -150,123 +149,108 @@ void StaticResource::freeEoBNpcData(void *&ptr, int &size) {
 }
 
 const ScreenDim Screen_EoB::_screenDimTable[] = {
-	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
-	{ 0x08, 0x48, 0x18, 0x38, 0x0E, 0x0C, 0x00, 0x00 },
-	{ 0x13, 0x40, 0x14, 0x80, 0x06, 0x0C, 0x00, 0x00 },
-	{ 0x1D, 0x78, 0x08, 0x40, 0x0F, 0x0D, 0x00, 0x00 },
-	{ 0x02, 0x18, 0x14, 0x78, 0x0F, 0x02, 0x03, 0x00 },
-	{ 0x00, 0x00, 0x16, 0x78, 0x0F, 0x0D, 0x00, 0x00 },
-	{ 0x0A, 0x6C, 0x15, 0x28, 0x0F, 0x00, 0x00, 0x00 },
-	{ 0x01, 0xB4, 0x22, 0x12, 0x0F, 0x0C, 0x00, 0x00 },
-	{ 0x02, 0x18, 0x14, 0x00, 0x0F, 0x02, 0x03, 0x00 },
-	{ 0x01, 0x7D, 0x26, 0x40, 0x0F, 0x00, 0x03, 0x00 },
-	{ 0x00, 0x00, 0x16, 0x90, 0x0F, 0x02, 0x00, 0x00 },
-	{ 0x01, 0x14, 0x14, 0x38, 0x0F, 0x02, 0x00, 0x00 },
-	{ 0x01, 0x04, 0x14, 0x9C, 0x0F, 0x02, 0x00, 0x00 },
-	{ 0x01, 0x19, 0x26, 0x64, 0x0F, 0x02, 0x00, 0x00 },
-	{ 0x01, 0x14, 0x14, 0x58, 0x0F, 0x02, 0x00, 0x00 },
-	{ 0x02, 0x06, 0x23, 0x78, 0x0F, 0x02, 0x00, 0x00 },
-	{ 0x09, 0x14, 0x16, 0x38, 0x0F, 0x02, 0x00, 0x00 },
-	{ 0x01, 0x96, 0x26, 0x32, 0x0F, 0x00, 0x00, 0x00 },
-	{ 0x01, 0x08, 0x26, 0x80, 0x0C, 0x0F, 0x00, 0x00 },
-	{ 0x01, 0x10, 0x26, 0x14, 0x00, 0x0F, 0x06, 0x00 },
-	{ 0x00, 0x10, 0x10, 0x0C, 0x00, 0x0F, 0x06, 0x00 },
-	{ 0x00, 0x10, 0x17, 0x00, 0x00, 0x0F, 0x06, 0x00 },
-	{ 0x00, 0x10, 0x10, 0x00, 0x00, 0x0F, 0x06, 0x00 },
-	{ 0x00, 0x10, 0x07, 0x04, 0x00, 0x0F, 0x06, 0x00 },
-	{ 0x00, 0x00, 0x11, 0x05, 0x00, 0x0F, 0x06, 0x00 },
-	{ 0x00, 0x00, 0x15, 0x05, 0x00, 0x0F, 0x06, 0x00 },
-	{ 0x00, 0x00, 0x11, 0x08, 0x00, 0x0F, 0x06, 0x00 },
-	{ 0x00, 0x00, 0x15, 0x03, 0x00, 0x0F, 0x06, 0x00 },
-	{ 0x0A, 0xA8, 0x15, 0x18, 0x0F, 0x0C, 0x00, 0x00 }
-};
+    {0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00},
+    {0x08, 0x48, 0x18, 0x38, 0x0E, 0x0C, 0x00, 0x00},
+    {0x13, 0x40, 0x14, 0x80, 0x06, 0x0C, 0x00, 0x00},
+    {0x1D, 0x78, 0x08, 0x40, 0x0F, 0x0D, 0x00, 0x00},
+    {0x02, 0x18, 0x14, 0x78, 0x0F, 0x02, 0x03, 0x00},
+    {0x00, 0x00, 0x16, 0x78, 0x0F, 0x0D, 0x00, 0x00},
+    {0x0A, 0x6C, 0x15, 0x28, 0x0F, 0x00, 0x00, 0x00},
+    {0x01, 0xB4, 0x22, 0x12, 0x0F, 0x0C, 0x00, 0x00},
+    {0x02, 0x18, 0x14, 0x00, 0x0F, 0x02, 0x03, 0x00},
+    {0x01, 0x7D, 0x26, 0x40, 0x0F, 0x00, 0x03, 0x00},
+    {0x00, 0x00, 0x16, 0x90, 0x0F, 0x02, 0x00, 0x00},
+    {0x01, 0x14, 0x14, 0x38, 0x0F, 0x02, 0x00, 0x00},
+    {0x01, 0x04, 0x14, 0x9C, 0x0F, 0x02, 0x00, 0x00},
+    {0x01, 0x19, 0x26, 0x64, 0x0F, 0x02, 0x00, 0x00},
+    {0x01, 0x14, 0x14, 0x58, 0x0F, 0x02, 0x00, 0x00},
+    {0x02, 0x06, 0x23, 0x78, 0x0F, 0x02, 0x00, 0x00},
+    {0x09, 0x14, 0x16, 0x38, 0x0F, 0x02, 0x00, 0x00},
+    {0x01, 0x96, 0x26, 0x32, 0x0F, 0x00, 0x00, 0x00},
+    {0x01, 0x08, 0x26, 0x80, 0x0C, 0x0F, 0x00, 0x00},
+    {0x01, 0x10, 0x26, 0x14, 0x00, 0x0F, 0x06, 0x00},
+    {0x00, 0x10, 0x10, 0x0C, 0x00, 0x0F, 0x06, 0x00},
+    {0x00, 0x10, 0x17, 0x00, 0x00, 0x0F, 0x06, 0x00},
+    {0x00, 0x10, 0x10, 0x00, 0x00, 0x0F, 0x06, 0x00},
+    {0x00, 0x10, 0x07, 0x04, 0x00, 0x0F, 0x06, 0x00},
+    {0x00, 0x00, 0x11, 0x05, 0x00, 0x0F, 0x06, 0x00},
+    {0x00, 0x00, 0x15, 0x05, 0x00, 0x0F, 0x06, 0x00},
+    {0x00, 0x00, 0x11, 0x08, 0x00, 0x0F, 0x06, 0x00},
+    {0x00, 0x00, 0x15, 0x03, 0x00, 0x0F, 0x06, 0x00},
+    {0x0A, 0xA8, 0x15, 0x18, 0x0F, 0x0C, 0x00, 0x00}};
 
 const int Screen_EoB::_screenDimTableCount = ARRAYSIZE(Screen_EoB::_screenDimTable);
 
-const uint8 EoBCoreEngine::_hpIncrPerLevel[] = { 10, 4, 8, 6, 10, 10, 9, 10, 9, 10, 9, 9, 3, 1, 2, 2, 3, 3 };
+const uint8 EoBCoreEngine::_hpIncrPerLevel[] = {10, 4, 8, 6, 10, 10, 9, 10, 9, 10, 9, 9, 3, 1, 2, 2, 3, 3};
 
-const uint8 EoBCoreEngine::_numLevelsPerClass[] = { 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 2, 2, 3, 2, 2 };
+const uint8 EoBCoreEngine::_numLevelsPerClass[] = {1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 2, 2, 3, 2, 2};
 
 const int8 EoBCoreEngine::_characterClassType[] = {
-	0, -1, -1, 5, -1, -1, 4, -1, -1, 1, -1, -1, 2, -1, -1, 3, -1, -1,  0,
-	2, -1, 0, 3, -1, 0, 1, -1, 0, 1, 3, 3, 1, -1, 2, 3, -1, 0, 2,  1,  5,
-	2, -1, 2, 1, -1
-};
+    0, -1, -1, 5, -1, -1, 4, -1, -1, 1, -1, -1, 2, -1, -1, 3, -1, -1, 0,
+    2, -1, 0, 3, -1, 0, 1, -1, 0, 1, 3, 3, 1, -1, 2, 3, -1, 0, 2, 1, 5,
+    2, -1, 2, 1, -1};
 
-const int16 EoBCoreEngine::_hpConstModifiers[] = { -1, -3, -2, -2, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 7, 7 };
+const int16 EoBCoreEngine::_hpConstModifiers[] = {-1, -3, -2, -2, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 7, 7};
 
 const uint8 EoBCoreEngine::_charClassModifier[] = {
-	0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x03, 0x02,
-	0x00, 0x00, 0x02
-};
+    0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x03, 0x02,
+    0x00, 0x00, 0x02};
 
 const uint8 EoBCoreEngine::_itemsOverlayCGA[] = {
-	0x00, 0x55, 0x55, 0xFF
-};
+    0x00, 0x55, 0x55, 0xFF};
 
 const uint8 EoBCoreEngine::_teleporterShapeDefs[] = {
-	0x0C, 0x58, 0x02, 0x0E,
-	0x0C, 0x67, 0x01, 0x07,
-	0x0C, 0x6F, 0x01, 0x07,
-	0x0C, 0x77, 0x01, 0x05,
-	0x0C, 0x7D, 0x01, 0x05,
-	0x0C, 0x83, 0x01, 0x03
-};
+    0x0C, 0x58, 0x02, 0x0E,
+    0x0C, 0x67, 0x01, 0x07,
+    0x0C, 0x6F, 0x01, 0x07,
+    0x0C, 0x77, 0x01, 0x05,
+    0x0C, 0x7D, 0x01, 0x05,
+    0x0C, 0x83, 0x01, 0x03};
 
 const uint8 EoBCoreEngine::_wallOfForceShapeDefs[] = {
-	0x00, 0x00, 0x04, 0x08,
-	0x00, 0x08, 0x04, 0x08,
-	0x04, 0x00, 0x04, 0x08,
-	0x04, 0x08, 0x04, 0x08,
-	0x08, 0x00, 0x05, 0x10,
-	0x0C, 0x00, 0x05, 0x10
-};
+    0x00, 0x00, 0x04, 0x08,
+    0x00, 0x08, 0x04, 0x08,
+    0x04, 0x00, 0x04, 0x08,
+    0x04, 0x08, 0x04, 0x08,
+    0x08, 0x00, 0x05, 0x10,
+    0x0C, 0x00, 0x05, 0x10};
 
 const uint8 EoBCoreEngine::_buttonList1[] = {
-	58, 0, 1, 2, 3, 90, 91, 4, 5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14,  15,  16,
-	80, 81, 17, 18, 19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, 255
-};
+    58, 0, 1, 2, 3, 90, 91, 4, 5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16,
+    80, 81, 17, 18, 19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, 255};
 
 const uint8 EoBCoreEngine::_buttonList2[] = {
-	58, 61, 62, 63, 64, 65, 93, 94, 66, 67, 68, 69, 70, 71, 76, 77, 88, 0, 1, 2, 3,
-	90, 91,  4,  5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16, 80, 81, 17, 18,
-	19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, 255
-};
+    58, 61, 62, 63, 64, 65, 93, 94, 66, 67, 68, 69, 70, 71, 76, 77, 88, 0, 1, 2, 3,
+    90, 91, 4, 5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16, 80, 81, 17, 18,
+    19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, 255};
 
 const uint8 EoBCoreEngine::_buttonList3[] = {
-	58, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-	40, 41, 42, 43, 44, 45, 84, 85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49,  50,
-	51, 52, 53, 54, 56, 57, 255
-};
+    58, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+    40, 41, 42, 43, 44, 45, 84, 85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50,
+    51, 52, 53, 54, 56, 57, 255};
 
 const uint8 EoBCoreEngine::_buttonList4[] = {
-	58, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, 255
-};
+    58, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, 255};
 
 const uint8 EoBCoreEngine::_buttonList5[] = {
-	58, 61, 62, 63, 64, 65, 93, 66, 67, 68, 69, 70, 71, 88, 21, 22, 23, 24, 25, 26,
-	27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 84,
-	85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, 255
-};
+    58, 61, 62, 63, 64, 65, 93, 66, 67, 68, 69, 70, 71, 88, 21, 22, 23, 24, 25, 26,
+    27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 84,
+    85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, 255};
 
 const uint8 EoBCoreEngine::_buttonList6[] = {
-	58, 61, 62, 63, 64, 65, 93, 66, 67, 68, 69, 70, 71, 88, 46, 47, 48, 60, 59, 92,
-	4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, 255
-};
+    58, 61, 62, 63, 64, 65, 93, 66, 67, 68, 69, 70, 71, 88, 46, 47, 48, 60, 59, 92,
+    4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, 255};
 
 const uint8 EoBCoreEngine::_buttonList7[] = {
-	17, 18, 19, 20, 82, 83, 55, 255
-};
+    17, 18, 19, 20, 82, 83, 55, 255};
 
 const uint8 EoBCoreEngine::_buttonList8[] = {
-	72, 73, 74, 75, 86, 87, 89, 255
-};
+    72, 73, 74, 75, 86, 87, 89, 255};
 
 const uint8 EoBCoreEngine::_clock2Timers[] = {
-	0x00, 0x01, 0x20, 0x21, 0x22, 0x22,
-	0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
-	0x04, 0x05, 0x06, 0x07
-};
+    0x00, 0x01, 0x20, 0x21, 0x22, 0x22,
+    0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
+    0x04, 0x05, 0x06, 0x07};
 
 const uint8 EoBCoreEngine::_numClock2Timers = ARRAYSIZE(EoBCoreEngine::_clock2Timers);
 
@@ -469,7 +453,7 @@ void EoBCoreEngine::initStaticResource() {
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		const char *const *map = _staticres->loadStrings(kEoBBaseSoundMap, temp2);
-		_amigaSoundMap = new const char*[temp2];
+		_amigaSoundMap = new const char *[temp2];
 		for (int i = 0; i < temp2; ++i) {
 			assert(map[i]);
 			_amigaSoundMap[i] = map[i][0] ? map[i] : 0;
@@ -511,7 +495,7 @@ void EoBCoreEngine::initStaticResource() {
 		SoundResourceInfo_PC finale(files, temp);
 		sndInfo_finale = &finale;
 	}
-	
+
 	_sound->initAudioResourceInfo(kMusicIngame, sndInfo_ingame);
 	_sound->initAudioResourceInfo(kMusicIntro, sndInfo_intro);
 	_sound->initAudioResourceInfo(kMusicFinale, sndInfo_finale);
@@ -521,20 +505,36 @@ void EoBCoreEngine::initStaticResource() {
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
 
 	static const char *const saveLoadStrings[5][4] = {
-		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
-		{   "Abbr.",    "Leerer Slot",		"Speichern",    "  Laden"       },
-		{	" < < ",	"Posizione Vuota",	"Salva",		"Carica"	    },
-		{   0,          0,					0,					0			},
-		{	0,          0,					0,					0			}
-	};
+	    {"Cancel", "Empty Slot", "Save Game", "Load Game"},
+	    {"Abbr.", "Leerer Slot", "Speichern", "  Laden"},
+	    {" < < ", "Posizione Vuota", "Salva", "Carica"},
+	    {0, 0, 0, 0},
+	    {0, 0, 0, 0}};
 
 	static const char *const errorSlotEmptyString[5] = {
-		"There is no game\rsaved in that slot!",
-		"Hier ist noch kein\rSpiel gespeichert!",
-		"Non c'\x0E alcun gioco\rsalvato in quella\rposizione!",
-		"\r ""\x82\xBB\x82\xCC\x83""X""\x83\x8D\x83""b""\x83""g""\x82\xC9\x82\xCD\x83""Q""\x81""[""\x83\x80\x82\xAA\x83""Z""\x81""[""\x83""u\r ""\x82\xB3\x82\xEA\x82\xC4\x82\xA2\x82\xDC\x82\xB9\x82\xF1\x81""B",
-		0
-	};
+	    "There is no game\rsaved in that slot!",
+	    "Hier ist noch kein\rSpiel gespeichert!",
+	    "Non c'\x0E alcun gioco\rsalvato in quella\rposizione!",
+	    "\r "
+	    "\x82\xBB\x82\xCC\x83"
+	    "X"
+	    "\x83\x8D\x83"
+	    "b"
+	    "\x83"
+	    "g"
+	    "\x82\xC9\x82\xCD\x83"
+	    "Q"
+	    "\x81"
+	    "["
+	    "\x83\x80\x82\xAA\x83"
+	    "Z"
+	    "\x81"
+	    "["
+	    "\x83"
+	    "u\r "
+	    "\x82\xB3\x82\xEA\x82\xC4\x82\xA2\x82\xDC\x82\xB9\x82\xF1\x81"
+	    "B",
+	    0};
 
 	if (_flags.lang == Common::EN_ANY) {
 		_saveLoadStrings = saveLoadStrings[0];
@@ -553,126 +553,124 @@ void EoBCoreEngine::initStaticResource() {
 	} else {
 		_saveLoadStrings = saveLoadStrings[4];
 		_errorSlotEmptyString = errorSlotEmptyString[4];
-	}	
+	}
 
 	_menuOkString = "OK";
 }
 
 void EoBCoreEngine::initButtonData() {
 	static const EoBGuiButtonDef buttonDefs[] = {
-		{ 112, 0, 0x1100, 184, 2, 63, 50, 0 },
-		{ 113, 0, 0x1100, 256, 2, 63, 50, 1 },
-		{ 114, 0, 0x1100, 184, 54, 63, 50, 2 },
-		{ 115, 0, 0x1100, 256, 54, 63, 50, 3 },
-		{ 48, 110, 0x1100, 289, 177, 31, 21, 0 },
-		{ 0, 0, 0x1100, 0, 102, 88, 18, 0 },
-		{ 0, 0, 0x1100, 89, 102, 88, 18, 1 },
-		{ 0, 0, 0x1100, 0, 72, 88, 29, 2 },
-		{ 0, 0, 0x1100, 89, 72, 88, 29, 3 },
-		{ 24, 0, 0x1100, 184, 10, 33, 33, 0 },
-		{ 0, 0, 0x1100, 256, 10, 33, 33, 1 },
-		{ 0, 0, 0x1100, 184, 62, 33, 33, 2 },
-		{ 0, 0, 0x1100, 256, 62, 33, 33, 3 },
-		{ 0, 0, 0x1100, 216, 10, 31, 33, 0 },
-		{ 0, 0, 0x1100, 288, 10, 31, 33, 1 },
-		{ 0, 0, 0x1100, 216, 62, 31, 33, 2 },
-		{ 0, 0, 0x1100, 288, 62, 31, 33, 3 },
-		{ 368, 0, 0x1000, 184, 2, 63, 8, 0 },
-		{ 369, 0, 0x1000, 256, 2, 63, 8, 1 },
-		{ 370, 0, 0x1000, 184, 54, 63, 8, 2 },
-		{ 371, 0, 0x1000, 256, 54, 63, 8, 3 },
-		{ 0, 0, 0x1100, 230, 116, 16, 16, 0 },
-		{ 0, 0, 0x1100, 278, 116, 16, 16, 1 },
-		{ 0, 0, 0x1100, 181, 40, 16, 16, 2 },
-		{ 0, 0, 0x1100, 199, 40, 16, 16, 3 },
-		{ 0, 0, 0x1100, 181, 58, 16, 16, 4 },
-		{ 0, 0, 0x1100, 199, 58, 16, 16, 5 },
-		{ 0, 0, 0x1100, 181, 76, 16, 16, 6 },
-		{ 0, 0, 0x1100, 199, 76, 16, 16, 7 },
-		{ 0, 0, 0x1100, 181, 94, 16, 16, 8 },
-		{ 0, 0, 0x1100, 199, 94, 16, 16, 9 },
-		{ 0, 0, 0x1100, 181, 112, 16, 16, 10 },
-		{ 0, 0, 0x1100, 199, 112, 16, 16, 11 },
-		{ 0, 0, 0x1100, 181, 130, 16, 16, 12 },
-		{ 0, 0, 0x1100, 199, 130, 16, 16, 13 },
-		{ 0, 0, 0x1100, 181, 148, 16, 16, 14 },
-		{ 0, 0, 0x1100, 199, 148, 16, 16, 15 },
-		{ 0, 0, 0x1100, 225, 55, 16, 16, 16 },
-		{ 0, 0, 0x1100, 224, 76, 16, 16, 17 },
-		{ 0, 0, 0x1100, 225, 96, 16, 16, 18 },
-		{ 0, 0, 0x1100, 298, 55, 16, 16, 19 },
-		{ 0, 0, 0x1100, 287, 75, 16, 16, 20 },
-		{ 0, 0, 0x1100, 277, 137, 16, 16, 21 },
-		{ 0, 0, 0x1100, 300, 94, 16, 16, 22 },
-		{ 0, 0, 0x1100, 300, 112, 16, 16, 23 },
-		{ 0, 0, 0x1100, 300, 130, 16, 16, 24 },
-		{ 0, 0, 0x1100, 236, 37, 31, 16, 25 },
-		{ 26, 0, 0x1100, 291, 149, 25, 17, 25 },
-		{ 110, 24, 0x1100, 181, 3, 32, 32, 25 },
-		{ 96, 352, 0x1100, 24, 128, 21, 16, 25 },
-		{ 98, 97, 0x1100, 24, 144, 21, 16, 25 },
-		{ 92, 348, 0x1100, 3, 144, 21, 16, 25 },
-		{ 102, 358, 0x1100, 45, 144, 21, 16, 25 },
-		{ 91, 0, 0x1100, 3, 128, 21, 16, 25 },
-		{ 101, 0, 0x1100, 45, 128, 21, 16, 25 },
-		{ 110, 0, 0x1100, 184, 0, 136, 120, 0 },
-		{ 0, 0, 0x1100, 0, 8, 88, 48, 0 },
-		{ 0, 0, 0x1100, 88, 8, 88, 48, 1 },
-		{ 0, 0, 0x1100, 24, 8, 128, 96, 1 },
-		{ 112, 113, 0x1100, 274, 35, 20, 15, 1 },
-		{ 114, 115, 0x1100, 297, 35, 20, 15, 1 },
-		{ 2, 0, 0x1100, 68, 121, 18, 10, 0 },
-		{ 3, 0, 0x1100, 86, 121, 18, 10, 1 },
-		{ 4, 0, 0x1100, 104, 121, 15, 10, 2 },
-		{ 5, 0, 0x1100, 122, 121, 15, 10, 3 },
-		{ 6, 0, 0x1100, 140, 121, 15, 10, 4 },
-		{ 0, 0, 0x1100, 75, 131, 97, 6, 0 },
-		{ 0, 0, 0x1100, 75, 137, 97, 6, 1 },
-		{ 0, 0, 0x1100, 75, 143, 97, 6, 2 },
-		{ 0, 0, 0x1100, 75, 149, 97, 6, 3 },
-		{ 0, 0, 0x1100, 75, 155, 97, 6, 4 },
-		{ 0, 0, 0x1100, 75, 161, 97, 6, 5 },
-		{ 112, 0, 0x1100, 184, 2, 63, 50, 0 },
-		{ 113, 0, 0x1100, 256, 2, 63, 50, 1 },
-		{ 114, 0, 0x1100, 184, 54, 63, 50, 2 },
-		{ 115, 0, 0x1100, 256, 54, 63, 50, 3 },
-		{ 53, 54, 0x1100, 320, 200, 0, 0, 6 },
-		{ 61, 0, 0x1100, 320, 200, 0, 0, 7 },
-		{ 0, 0, 0x1100, 184, 114, 33, 33, 4 },
-		{ 0, 0, 0x1100, 256, 114, 33, 33, 5 },
-		{ 0, 0, 0x1100, 216, 114, 31, 33, 4 },
-		{ 0, 0, 0x1100, 288, 114, 31, 33, 5 },
-		{ 372, 0, 0x1000, 184, 106, 63, 8, 4 },
-		{ 373, 0, 0x1000, 256, 106, 63, 8, 5 },
-		{ 0, 0, 0x1100, 227, 135, 10, 10, 25 },
-		{ 0, 0, 0x1100, 239, 135, 10, 10, 26 },
-		{ 116, 0, 0x1100, 184, 106, 63, 50, 4 },
-		{ 117, 0, 0x1100, 256, 106, 63, 50, 5 },
-		{ 110, 0, 0x1100, 68, 168, 78, 10, 0 },
-		{ 110, 0, 0x1100, 68, 168, 78, 10, 65535 },
-		{ 116, 0, 0x1100, 184, 106, 63, 50, 4 },
-		{ 117, 0, 0x1100, 256, 106, 63, 50, 5 },
-		{ 116, 117, 0x1100, 320, 200, 1, 1, 2 },
-		{ 7, 0, 0x1100, 158, 121, 15, 10, 5 },
-		{ 0, 0, 0x1100, 146, 168, 32, 10, 0 },
+	    {112, 0, 0x1100, 184, 2, 63, 50, 0},
+	    {113, 0, 0x1100, 256, 2, 63, 50, 1},
+	    {114, 0, 0x1100, 184, 54, 63, 50, 2},
+	    {115, 0, 0x1100, 256, 54, 63, 50, 3},
+	    {48, 110, 0x1100, 289, 177, 31, 21, 0},
+	    {0, 0, 0x1100, 0, 102, 88, 18, 0},
+	    {0, 0, 0x1100, 89, 102, 88, 18, 1},
+	    {0, 0, 0x1100, 0, 72, 88, 29, 2},
+	    {0, 0, 0x1100, 89, 72, 88, 29, 3},
+	    {24, 0, 0x1100, 184, 10, 33, 33, 0},
+	    {0, 0, 0x1100, 256, 10, 33, 33, 1},
+	    {0, 0, 0x1100, 184, 62, 33, 33, 2},
+	    {0, 0, 0x1100, 256, 62, 33, 33, 3},
+	    {0, 0, 0x1100, 216, 10, 31, 33, 0},
+	    {0, 0, 0x1100, 288, 10, 31, 33, 1},
+	    {0, 0, 0x1100, 216, 62, 31, 33, 2},
+	    {0, 0, 0x1100, 288, 62, 31, 33, 3},
+	    {368, 0, 0x1000, 184, 2, 63, 8, 0},
+	    {369, 0, 0x1000, 256, 2, 63, 8, 1},
+	    {370, 0, 0x1000, 184, 54, 63, 8, 2},
+	    {371, 0, 0x1000, 256, 54, 63, 8, 3},
+	    {0, 0, 0x1100, 230, 116, 16, 16, 0},
+	    {0, 0, 0x1100, 278, 116, 16, 16, 1},
+	    {0, 0, 0x1100, 181, 40, 16, 16, 2},
+	    {0, 0, 0x1100, 199, 40, 16, 16, 3},
+	    {0, 0, 0x1100, 181, 58, 16, 16, 4},
+	    {0, 0, 0x1100, 199, 58, 16, 16, 5},
+	    {0, 0, 0x1100, 181, 76, 16, 16, 6},
+	    {0, 0, 0x1100, 199, 76, 16, 16, 7},
+	    {0, 0, 0x1100, 181, 94, 16, 16, 8},
+	    {0, 0, 0x1100, 199, 94, 16, 16, 9},
+	    {0, 0, 0x1100, 181, 112, 16, 16, 10},
+	    {0, 0, 0x1100, 199, 112, 16, 16, 11},
+	    {0, 0, 0x1100, 181, 130, 16, 16, 12},
+	    {0, 0, 0x1100, 199, 130, 16, 16, 13},
+	    {0, 0, 0x1100, 181, 148, 16, 16, 14},
+	    {0, 0, 0x1100, 199, 148, 16, 16, 15},
+	    {0, 0, 0x1100, 225, 55, 16, 16, 16},
+	    {0, 0, 0x1100, 224, 76, 16, 16, 17},
+	    {0, 0, 0x1100, 225, 96, 16, 16, 18},
+	    {0, 0, 0x1100, 298, 55, 16, 16, 19},
+	    {0, 0, 0x1100, 287, 75, 16, 16, 20},
+	    {0, 0, 0x1100, 277, 137, 16, 16, 21},
+	    {0, 0, 0x1100, 300, 94, 16, 16, 22},
+	    {0, 0, 0x1100, 300, 112, 16, 16, 23},
+	    {0, 0, 0x1100, 300, 130, 16, 16, 24},
+	    {0, 0, 0x1100, 236, 37, 31, 16, 25},
+	    {26, 0, 0x1100, 291, 149, 25, 17, 25},
+	    {110, 24, 0x1100, 181, 3, 32, 32, 25},
+	    {96, 352, 0x1100, 24, 128, 21, 16, 25},
+	    {98, 97, 0x1100, 24, 144, 21, 16, 25},
+	    {92, 348, 0x1100, 3, 144, 21, 16, 25},
+	    {102, 358, 0x1100, 45, 144, 21, 16, 25},
+	    {91, 0, 0x1100, 3, 128, 21, 16, 25},
+	    {101, 0, 0x1100, 45, 128, 21, 16, 25},
+	    {110, 0, 0x1100, 184, 0, 136, 120, 0},
+	    {0, 0, 0x1100, 0, 8, 88, 48, 0},
+	    {0, 0, 0x1100, 88, 8, 88, 48, 1},
+	    {0, 0, 0x1100, 24, 8, 128, 96, 1},
+	    {112, 113, 0x1100, 274, 35, 20, 15, 1},
+	    {114, 115, 0x1100, 297, 35, 20, 15, 1},
+	    {2, 0, 0x1100, 68, 121, 18, 10, 0},
+	    {3, 0, 0x1100, 86, 121, 18, 10, 1},
+	    {4, 0, 0x1100, 104, 121, 15, 10, 2},
+	    {5, 0, 0x1100, 122, 121, 15, 10, 3},
+	    {6, 0, 0x1100, 140, 121, 15, 10, 4},
+	    {0, 0, 0x1100, 75, 131, 97, 6, 0},
+	    {0, 0, 0x1100, 75, 137, 97, 6, 1},
+	    {0, 0, 0x1100, 75, 143, 97, 6, 2},
+	    {0, 0, 0x1100, 75, 149, 97, 6, 3},
+	    {0, 0, 0x1100, 75, 155, 97, 6, 4},
+	    {0, 0, 0x1100, 75, 161, 97, 6, 5},
+	    {112, 0, 0x1100, 184, 2, 63, 50, 0},
+	    {113, 0, 0x1100, 256, 2, 63, 50, 1},
+	    {114, 0, 0x1100, 184, 54, 63, 50, 2},
+	    {115, 0, 0x1100, 256, 54, 63, 50, 3},
+	    {53, 54, 0x1100, 320, 200, 0, 0, 6},
+	    {61, 0, 0x1100, 320, 200, 0, 0, 7},
+	    {0, 0, 0x1100, 184, 114, 33, 33, 4},
+	    {0, 0, 0x1100, 256, 114, 33, 33, 5},
+	    {0, 0, 0x1100, 216, 114, 31, 33, 4},
+	    {0, 0, 0x1100, 288, 114, 31, 33, 5},
+	    {372, 0, 0x1000, 184, 106, 63, 8, 4},
+	    {373, 0, 0x1000, 256, 106, 63, 8, 5},
+	    {0, 0, 0x1100, 227, 135, 10, 10, 25},
+	    {0, 0, 0x1100, 239, 135, 10, 10, 26},
+	    {116, 0, 0x1100, 184, 106, 63, 50, 4},
+	    {117, 0, 0x1100, 256, 106, 63, 50, 5},
+	    {110, 0, 0x1100, 68, 168, 78, 10, 0},
+	    {110, 0, 0x1100, 68, 168, 78, 10, 65535},
+	    {116, 0, 0x1100, 184, 106, 63, 50, 4},
+	    {117, 0, 0x1100, 256, 106, 63, 50, 5},
+	    {116, 117, 0x1100, 320, 200, 1, 1, 2},
+	    {7, 0, 0x1100, 158, 121, 15, 10, 5},
+	    {0, 0, 0x1100, 146, 168, 32, 10, 0},
 
-		// EOB1 spellbook modifications
-		{ 2, 0, 0x1100, 71, 122, 20, 8, 0 },
-		{ 3, 0, 0x1100, 92, 122, 20, 8, 1 },
-		{ 4, 0, 0x1100, 113, 122, 20, 8, 2 },
-		{ 5, 0, 0x1100, 134, 122, 20, 8, 3 },
-		{ 6, 0, 0x1100, 155, 122, 20, 8, 4 },
-		{ 110, 0, 0x1100, 75, 168, 97, 6, 0 }
-	};
+	    // EOB1 spellbook modifications
+	    {2, 0, 0x1100, 71, 122, 20, 8, 0},
+	    {3, 0, 0x1100, 92, 122, 20, 8, 1},
+	    {4, 0, 0x1100, 113, 122, 20, 8, 2},
+	    {5, 0, 0x1100, 134, 122, 20, 8, 3},
+	    {6, 0, 0x1100, 155, 122, 20, 8, 4},
+	    {110, 0, 0x1100, 75, 168, 97, 6, 0}};
 
 	_buttonDefs = new EoBGuiButtonDef[ARRAYSIZE(buttonDefs)];
 	memcpy(_buttonDefs, buttonDefs, sizeof(buttonDefs));
-	
+
 	if (_flags.platform == Common::kPlatformFMTowns) {
 		static const uint16 keyCodesFMTowns[] = {
-			93, 94, 95, 96, 67, 27, 24, 349, 350, 351, 352, 80, 27, 24, 30, 0, 31, 0, 29, 0, 28, 0, 127, 18, 27, 93, 94, 95, 96,
-			49, 50, 51, 52, 53, 93, 94, 95, 96, 60, 62, 32, 353, 354, 97, 98, 27, 27, 97, 98, 97, 98, 54, 49, 50, 51, 52, 53, 27
-		};
+		    93, 94, 95, 96, 67, 27, 24, 349, 350, 351, 352, 80, 27, 24, 30, 0, 31, 0, 29, 0, 28, 0, 127, 18, 27, 93, 94, 95, 96,
+		    49, 50, 51, 52, 53, 93, 94, 95, 96, 60, 62, 32, 353, 354, 97, 98, 27, 27, 97, 98, 97, 98, 54, 49, 50, 51, 52, 53, 27};
 
 		const uint16 *c = keyCodesFMTowns;
 		for (int i = 0; i < ARRAYSIZE(buttonDefs); ++i) {
@@ -686,8 +684,15 @@ void EoBCoreEngine::initButtonData() {
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(ARRAYSIZE(buttonDefs));
 
-#define EOB_CBN(x, y) _buttonCallbacks.push_back(BUTTON_FUNCTOR(EoBCoreEngine, this, &EoBCoreEngine::y)); for (int l = 0; l < (x - 1); l++) { _buttonCallbacks.push_back(_buttonCallbacks[_buttonCallbacks.size() - 1 - l]); }
-#define EOB_CBI(x, y) for (int l = x; l; l--) { _buttonCallbacks.push_back(_buttonCallbacks[y]); }
+#define EOB_CBN(x, y)                                                                   \
+	_buttonCallbacks.push_back(BUTTON_FUNCTOR(EoBCoreEngine, this, &EoBCoreEngine::y)); \
+	for (int l = 0; l < (x - 1); l++) {                                                 \
+		_buttonCallbacks.push_back(_buttonCallbacks[_buttonCallbacks.size() - 1 - l]);  \
+	}
+#define EOB_CBI(x, y)                                    \
+	for (int l = x; l; l--) {                            \
+		_buttonCallbacks.push_back(_buttonCallbacks[y]); \
+	}
 	EOB_CBN(4, clickedCharPortraitDefault);
 	EOB_CBN(1, clickedCamp);
 	EOB_CBN(4, clickedSceneDropPickupItem);
@@ -732,74 +737,72 @@ void EoBCoreEngine::initButtonData() {
 
 void EoBCoreEngine::initMenus() {
 	static const EoBMenuButtonDef buttonDefs[] = {
-		{  2,   12,  20, 158,  14,  20,  3  },
-		{  3,   12,  37, 158,  14,  52,  3  },
-		{  4,   12,  54, 158,  14,  26,  3  },
-		{  5,   12,  71, 158,  14,  32,  3  },
-		{  6,   12,  88, 158,  14,   0,  3  },
-		{  7,   12, 105, 158,  14,  35,  3  },
-		{  8,  128, 122,  40,  14,  19,  7  },
-		{  9,   12,  20, 158,  14,  39,  3  },
-		{  10,  12,  37, 158,  14,  32,  3  },
-		{  11,  12,  54, 158,  14,  33,  3  },
-		{  12,  12,  71, 158,  14,  17,  3  },
-		{  8,  128, 122,  40,  14,  19,  7  },
-		{  18,  12,  20, 158,  14,  32,  3  },
-		{  19,  12,  37, 158,  14,  50,  3  },
-		{  8,  128, 122,  40,  14,  19,  7  },
-		{  8,  128, 122,  40,  14,  19,  5  },
-		{  0,  184,   0,  64,  48, 112,  0  },
-		{  0,  256,   0,  64,  48, 113,  0  },
-		{  0,  184,  56,  64,  48, 114,  0  },
-		{  0,  256,  56,  64,  48, 115,  0  },
-		{  0,  184, 112,  64,  48, 116,  0  },
-		{  0,  256, 112,  64,  48, 117,  0  },
-		{  36,   8, 126,  48,  14,  48,  5  },
-		{  8,  128, 126,  40,  14,  19,  5  },
-		{  0,    0,  50, 168,  72,  61,  0  },
-		{  31,  11,  16,  20,  18,   2,  5  },
-		{  32,  38,  16,  20,  18,   3,  5  },
-		{  33,  65,  16,  20,  18,   4,  5  },
-		{  34,  92,  16,  20,  18,   5,  5  },
-		{  35, 119,  16,  20,  18,   6,  5  },
-		{  60, 146,  16,  20,  18,   7,  5  },
-		{  61, 150,  16,  20,  18,   8,  5  },
-		{  38,  16,  57,  32,  14,  22,  7  },
-		{  39, 128,  57,  32,  14,  51,  7  },
-		{  8,  128, 126,  40,  14,  19,  7  },
-		{  0,    0,  50, 168,  72,  61,  0  },
-		// EOB 1 memorize/pray menu:
-		{  36,   8, 126,  48,  14,  48,  5  },
-		{  8,  128, 126,  40,  14,  19,  5  },
-		{  0,    0,  50, 168,  72,  61,  0  },
-		{  31,   8,  16,  24,  20,   2,  5  },
-		{  32,  40,  16,  24,  20,   3,  5  },
-		{  33,  72,  16,  24,  20,   4,  5  },
-		{  34, 104,  16,  24,  20,   5,  5  },
-		{  35, 136,  16,  24,  20,   6,  5  },
-		// FM-Towns options menu
-		{  18,  12,  20, 158,  14,  32,  3  },
-		{  19,  12,  37, 158,  14,  50,  3  },
-		{  20,  12,  54, 158,  14,  21,  3  },
-		{  8,  128, 122,  40,  14,  19,  7  },
-		// PC-98 options menu
-		{  17,  12,  20, 158,  14,  32,  3  },
-		{  18,  12,  37, 158,  14,  50,  3  },
-		{  19,  12,  54, 158,  14,  21,  3  },
-		{  8,  128, 122,  40,  14,  19,  7  }
-	};
+	    {2, 12, 20, 158, 14, 20, 3},
+	    {3, 12, 37, 158, 14, 52, 3},
+	    {4, 12, 54, 158, 14, 26, 3},
+	    {5, 12, 71, 158, 14, 32, 3},
+	    {6, 12, 88, 158, 14, 0, 3},
+	    {7, 12, 105, 158, 14, 35, 3},
+	    {8, 128, 122, 40, 14, 19, 7},
+	    {9, 12, 20, 158, 14, 39, 3},
+	    {10, 12, 37, 158, 14, 32, 3},
+	    {11, 12, 54, 158, 14, 33, 3},
+	    {12, 12, 71, 158, 14, 17, 3},
+	    {8, 128, 122, 40, 14, 19, 7},
+	    {18, 12, 20, 158, 14, 32, 3},
+	    {19, 12, 37, 158, 14, 50, 3},
+	    {8, 128, 122, 40, 14, 19, 7},
+	    {8, 128, 122, 40, 14, 19, 5},
+	    {0, 184, 0, 64, 48, 112, 0},
+	    {0, 256, 0, 64, 48, 113, 0},
+	    {0, 184, 56, 64, 48, 114, 0},
+	    {0, 256, 56, 64, 48, 115, 0},
+	    {0, 184, 112, 64, 48, 116, 0},
+	    {0, 256, 112, 64, 48, 117, 0},
+	    {36, 8, 126, 48, 14, 48, 5},
+	    {8, 128, 126, 40, 14, 19, 5},
+	    {0, 0, 50, 168, 72, 61, 0},
+	    {31, 11, 16, 20, 18, 2, 5},
+	    {32, 38, 16, 20, 18, 3, 5},
+	    {33, 65, 16, 20, 18, 4, 5},
+	    {34, 92, 16, 20, 18, 5, 5},
+	    {35, 119, 16, 20, 18, 6, 5},
+	    {60, 146, 16, 20, 18, 7, 5},
+	    {61, 150, 16, 20, 18, 8, 5},
+	    {38, 16, 57, 32, 14, 22, 7},
+	    {39, 128, 57, 32, 14, 51, 7},
+	    {8, 128, 126, 40, 14, 19, 7},
+	    {0, 0, 50, 168, 72, 61, 0},
+	    // EOB 1 memorize/pray menu:
+	    {36, 8, 126, 48, 14, 48, 5},
+	    {8, 128, 126, 40, 14, 19, 5},
+	    {0, 0, 50, 168, 72, 61, 0},
+	    {31, 8, 16, 24, 20, 2, 5},
+	    {32, 40, 16, 24, 20, 3, 5},
+	    {33, 72, 16, 24, 20, 4, 5},
+	    {34, 104, 16, 24, 20, 5, 5},
+	    {35, 136, 16, 24, 20, 6, 5},
+	    // FM-Towns options menu
+	    {18, 12, 20, 158, 14, 32, 3},
+	    {19, 12, 37, 158, 14, 50, 3},
+	    {20, 12, 54, 158, 14, 21, 3},
+	    {8, 128, 122, 40, 14, 19, 7},
+	    // PC-98 options menu
+	    {17, 12, 20, 158, 14, 32, 3},
+	    {18, 12, 37, 158, 14, 50, 3},
+	    {19, 12, 54, 158, 14, 21, 3},
+	    {8, 128, 122, 40, 14, 19, 7}};
 
 	_menuButtonDefs = buttonDefs;
 
 	static const EoBMenuDef menuDefs[] = {
-		{  1, 10,  0, 7,  9 },
-		{  1, 10,  7, 5,  9 },
-		{  1, 10, 12, 3,  9 },
-		{  0, 10, 15, 7, 15 },
-		{ 37, 10, 22, 9,  9 },
-		{  0, 11, 32, 2, 15 },
-		{ 48, 10, 34, 2,  9 }
-	};
+	    {1, 10, 0, 7, 9},
+	    {1, 10, 7, 5, 9},
+	    {1, 10, 12, 3, 9},
+	    {0, 10, 15, 7, 15},
+	    {37, 10, 22, 9, 9},
+	    {0, 11, 32, 2, 15},
+	    {48, 10, 34, 2, 9}};
 
 	delete[] _menuDefs;
 	_menuDefs = new EoBMenuDef[ARRAYSIZE(menuDefs)];
@@ -828,42 +831,57 @@ void EoBCoreEngine::initMenus() {
 	}
 }
 
-
 void EoBCoreEngine::initSpells() {
 #define mpn magicTimingParaAssign.push_back(0);
-#define mp1n if (_flags.gameID == GI_EOB1) magicTimingParaAssign.push_back(0);
-#define mp2n if (_flags.gameID == GI_EOB2) magicTimingParaAssign.push_back(0);
+#define mp1n                      \
+	if (_flags.gameID == GI_EOB1) \
+		magicTimingParaAssign.push_back(0);
+#define mp2n                      \
+	if (_flags.gameID == GI_EOB2) \
+		magicTimingParaAssign.push_back(0);
 #define mp(x) magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
-#define mp1(x) if (_flags.gameID == GI_EOB1) magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
-#define mp2(x) if (_flags.gameID == GI_EOB2) magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
+#define mp1(x)                    \
+	if (_flags.gameID == GI_EOB1) \
+		magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
+#define mp2(x)                    \
+	if (_flags.gameID == GI_EOB2) \
+		magicTimingParaAssign.push_back(&magicTimingPara[x << 2]);
 
 #define sc(x) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
-#define sc1(x) if (_flags.gameID == GI_EOB1) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
-#define sc2(x) if (_flags.gameID == GI_EOB2) startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
+#define sc1(x)                    \
+	if (_flags.gameID == GI_EOB1) \
+		startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
+#define sc2(x)                    \
+	if (_flags.gameID == GI_EOB2) \
+		startCallback.push_back(&EoBCoreEngine::spellCallback_start_##x);
 #define ec(x) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
-#define ec1(x) if (_flags.gameID == GI_EOB1) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
-#define ec2(x) if (_flags.gameID == GI_EOB2) endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
+#define ec1(x)                    \
+	if (_flags.gameID == GI_EOB1) \
+		endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
+#define ec2(x)                    \
+	if (_flags.gameID == GI_EOB2) \
+		endCallback.push_back(&EoBCoreEngine::spellCallback_end_##x);
 
 	static const uint16 magicTimingPara[] = {
-		0, 546, 2, 1, // 0 detect magic
-		0, 546, 5, 1, // 1 shield, detect invis, magical vestment
-		0, 546, 1, 1, // 2 shocking grasp, vamp touch, true seeing, prayer
-		3, 546, 1, 1, // 3 blur, haste
-		5, 546, 1, 1, // 4 imp invisibility
-		6, 546, 0, 1, // 5 bless
-		0, 546, 3, 1, // 6 prot from evil
-		1, 546, 1, 1, // 7 aid
-		4, 546, 1, 1, // 8 flame blade
-		0, 32760, 1, 1, // 9 slow poison
-		1, 546, 0, 1, // 10 mystic defense
+	    0, 546, 2, 1,   // 0 detect magic
+	    0, 546, 5, 1,   // 1 shield, detect invis, magical vestment
+	    0, 546, 1, 1,   // 2 shocking grasp, vamp touch, true seeing, prayer
+	    3, 546, 1, 1,   // 3 blur, haste
+	    5, 546, 1, 1,   // 4 imp invisibility
+	    6, 546, 0, 1,   // 5 bless
+	    0, 546, 3, 1,   // 6 prot from evil
+	    1, 546, 1, 1,   // 7 aid
+	    4, 546, 1, 1,   // 8 flame blade
+	    0, 32760, 1, 1, // 9 slow poison
+	    1, 546, 0, 1,   // 10 mystic defense
 	};
 
 	Common::Array<const uint16 *> magicTimingParaAssign;
 	mpn;
 	mpn;
 	mpn;
-	mp(0);  // Detect Magic
-	mpn;    // Magic Missile
+	mp(0); // Detect Magic
+	mpn;   // Magic Missile
 	mp1n;
 	mp(1);  // Shield
 	mp(2);  // Shocking Grasp
@@ -872,70 +890,70 @@ void EoBCoreEngine::initSpells() {
 	mp2n;   // Imp Identify
 	mpn;    // Invis
 	mp1n;
-	mpn;    // Melf
-	mp1n;   // Stinking Cloud
-	mpn;    // Dispel Magic
-	mpn;    // Fireball
-	mp1n;   // Flame Arrow
-	mp(3);  // Haste
-	mpn;    // Hold Person
-	mpn;    // Invisibility
-	mpn;    // Lightning Bolt
-	mp(2);  // Vampiric Touch
-	mpn;    // Fear
-	mpn;    // Ice Storm
-	mp1n;   // Stone Skin
-	mp1n;   // Cloud Kill
-	mp2(4); // Improved Invisibility
-	mp2n;   // remove Curse
-	mpn;    // Cone of Cold
-	mpn;    // Hold Monster
-	mp2n;   // Wall of Force
-	mp2n;   // Disintegrate
-	mp2n;   // Flesh To Stone
-	mp2n;   // Stone To Flesh
-	mp2(2); // True Seeing
-	mp2n;   // Finger of Death
-	mp2n;   // Power Word Stun
-	mp2n;   // Bigby's Fist
-	mp2n;   // empty
-	mp(5);  // Bless
-	mpn;                        // EOB1: cure, EOB2: cause
-	mpn;                        // EOB1: cause, EOB2: cure
-	mp(0);  // Detect Magic
-	mp(6);  // Prot from Evil
-	mp(7);  // Aid
-	mp(8);  // Flame Blad
-	mpn;    // Hold Person
-	mp(9);  // Slow Poison
-	mpn;    // Create Food
-	mpn;    // Dispel Magic
-	mp(1);  // Magical Vestment
-	mp(2);  // Prayer
-	mpn;    // Remove Paralysis
-	mpn;                        // EOB1: cure, EOB2: cause
-	mpn;                        // EOB1: cause, EOB2: cure
-	mpn;    // Neutral Poison
-	mp(6);  // Prot From Evil 10'
-	mp1n;   // Prot From Lightning
-	mpn;                        // EOB1: cure, EOB2: cause
-	mpn;                        // EOB1: cause, EOB2: cure
-	mpn;    // Flame Strike
-	mpn;    // Raise Dead
-	mp2n;   // Slay Living
-	mp2(2); // True Seeing
-	mp2n;   // Harm
-	mp2n;   // Heal
-	mp2n;   // Resurrect
-	mpn;    // Lay on Hands
-	mp2n;   // Turn Undead
-	mpn;    // Lightning Bolt (EOB1) / Fireball 1(EOB2) passive
-	mp2(10);// Mystic Defense
-	mp2n;   // Fireball 2 passive
-	mpn;    // death spell passive
-	mpn;    // disintegrate passive
-	mp2n;   // cause critical passive
-	mp2n;   // flesh to stone passive
+	mpn;     // Melf
+	mp1n;    // Stinking Cloud
+	mpn;     // Dispel Magic
+	mpn;     // Fireball
+	mp1n;    // Flame Arrow
+	mp(3);   // Haste
+	mpn;     // Hold Person
+	mpn;     // Invisibility
+	mpn;     // Lightning Bolt
+	mp(2);   // Vampiric Touch
+	mpn;     // Fear
+	mpn;     // Ice Storm
+	mp1n;    // Stone Skin
+	mp1n;    // Cloud Kill
+	mp2(4);  // Improved Invisibility
+	mp2n;    // remove Curse
+	mpn;     // Cone of Cold
+	mpn;     // Hold Monster
+	mp2n;    // Wall of Force
+	mp2n;    // Disintegrate
+	mp2n;    // Flesh To Stone
+	mp2n;    // Stone To Flesh
+	mp2(2);  // True Seeing
+	mp2n;    // Finger of Death
+	mp2n;    // Power Word Stun
+	mp2n;    // Bigby's Fist
+	mp2n;    // empty
+	mp(5);   // Bless
+	mpn;     // EOB1: cure, EOB2: cause
+	mpn;     // EOB1: cause, EOB2: cure
+	mp(0);   // Detect Magic
+	mp(6);   // Prot from Evil
+	mp(7);   // Aid
+	mp(8);   // Flame Blad
+	mpn;     // Hold Person
+	mp(9);   // Slow Poison
+	mpn;     // Create Food
+	mpn;     // Dispel Magic
+	mp(1);   // Magical Vestment
+	mp(2);   // Prayer
+	mpn;     // Remove Paralysis
+	mpn;     // EOB1: cure, EOB2: cause
+	mpn;     // EOB1: cause, EOB2: cure
+	mpn;     // Neutral Poison
+	mp(6);   // Prot From Evil 10'
+	mp1n;    // Prot From Lightning
+	mpn;     // EOB1: cure, EOB2: cause
+	mpn;     // EOB1: cause, EOB2: cure
+	mpn;     // Flame Strike
+	mpn;     // Raise Dead
+	mp2n;    // Slay Living
+	mp2(2);  // True Seeing
+	mp2n;    // Harm
+	mp2n;    // Heal
+	mp2n;    // Resurrect
+	mpn;     // Lay on Hands
+	mp2n;    // Turn Undead
+	mpn;     // Lightning Bolt (EOB1) / Fireball 1(EOB2) passive
+	mp2(10); // Mystic Defense
+	mp2n;    // Fireball 2 passive
+	mpn;     // death spell passive
+	mpn;     // disintegrate passive
+	mp2n;    // cause critical passive
+	mp2n;    // flesh to stone passive
 
 	Common::Array<SpellStartCallback> startCallback;
 	sc(empty);
@@ -951,7 +969,7 @@ void EoBCoreEngine::initSpells() {
 	sc2(improvedIdentify);
 	sc(empty);
 	sc(melfsAcidArrow);
-	sc1(empty);     // Stinking Cloud
+	sc1(empty); // Stinking Cloud
 	sc(dispelMagic);
 	sc(fireball);
 	sc1(flameArrow);
@@ -963,8 +981,8 @@ void EoBCoreEngine::initSpells() {
 	sc(fear);
 	sc(iceStorm);
 	sc1(stoneSkin); // stone skin
-	sc2(empty); // imp invisibility
-	sc1(empty); // Cloudkill
+	sc2(empty);     // imp invisibility
+	sc1(empty);     // Cloudkill
 	sc2(removeCurse);
 	sc(coneOfCold);
 	sc(holdMonster);
@@ -977,7 +995,7 @@ void EoBCoreEngine::initSpells() {
 	sc2(powerWordStun);
 	sc2(empty);
 	sc2(empty);
-	sc(empty);  // Bless
+	sc(empty); // Bless
 	sc2(causeLightWounds);
 	sc(cureLightWounds);
 	sc1(causeLightWounds);
@@ -1032,7 +1050,7 @@ void EoBCoreEngine::initSpells() {
 	ec2(empty);
 	ec2(empty);
 	ec(melfsAcidArrow);
-	ec1(empty);     // Stinking Cloud
+	ec1(empty); // Stinking Cloud
 	ec(empty);
 	ec(fireball);
 	ec1(flameArrow);
@@ -1043,8 +1061,8 @@ void EoBCoreEngine::initSpells() {
 	ec(vampiricTouch);
 	ec(empty);
 	ec(iceStorm);
-	ec(empty);      // EOB1: stone skin, EOB2: imp invisibility
-	ec(empty);      // EOB1: cloud kill, EOB2: remove curse
+	ec(empty); // EOB1: stone skin, EOB2: imp invisibility
+	ec(empty); // EOB1: cloud kill, EOB2: remove curse
 	ec(empty);
 	ec(holdMonster);
 	ec2(empty);
@@ -1056,7 +1074,7 @@ void EoBCoreEngine::initSpells() {
 	ec2(empty);
 	ec2(empty);
 	ec2(empty);
-	ec(empty);  // Bless
+	ec(empty); // Bless
 	ec(empty);
 	ec(empty);
 	ec(detectMagic);
@@ -1231,11 +1249,10 @@ void EoBEngine::initStaticResource() {
 	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
 
 	static const char *const errorSlotNoNameString[4] = {
-		" You must specify\r a name for your\r save game!",
-		" Spielstaende mues-\r sen einen Namen\r haben!",
-		"",
-		0
-	};
+	    " You must specify\r a name for your\r save game!",
+	    " Spielstaende mues-\r sen einen Namen\r haben!",
+	    "",
+	    0};
 
 	switch (_flags.lang) {
 	case Common::EN_ANY:
@@ -1262,59 +1279,59 @@ void EoBEngine::initSpells() {
 	};
 
 	static const FlagTableEntry flagTable[] = {
-		{ 0x0000, 0x000000, 0x00 }, // dummy
-		{ 0x0033, 0x000001, 0x00 }, // armor
-		{ 0x0100, 0x000000, 0x21 }, // burning hands
-		{ 0x004C, 0x000002, 0x00 }, // detect magic
-		{ 0x0100, 0x000000, 0x01 }, // magic missile
-		{ 0x0000, 0x000000, 0x00 }, // dummy
-		{ 0x008B, 0x000008, 0x00 }, // shield
-		{ 0x0488, 0x000000, 0x03 }, // shocking grasp
-		{ 0x0021, 0x000040, 0x00 }, // invisibility
-		{ 0x0000, 0x000000, 0x00 }, // dummy
-		{ 0x0100, 0x000000, 0x11 }, // melf's acid arrow
-		{ 0x0000, 0x000000, 0x00 }, // STINKING CLOUD
-		{ 0x00A0, 0x000000, 0x00 }, // dispel magic
-		{ 0x0100, 0x000000, 0x21 }, // fireball
-		{ 0x0100, 0x000000, 0x11 }, // FLAME ARROW
-		{ 0x0248, 0x010000, 0x00 }, // haste
-		{ 0x0100, 0x000000, 0x00 }, // hold person
-		{ 0x0240, 0x000040, 0x00 }, // inv 10'
-		{ 0x0100, 0x000000, 0x03 }, // lightning bolt
-		{ 0x0488, 0x000000, 0x01 }, // vampiric touch
-		{ 0x0100, 0x000000, 0x00 }, // fear
-		{ 0x0100, 0x000000, 0x41 }, // ice storm
-		{ 0x0033, 0x000001, 0x00 }, // STONE SKIN
-		{ 0x0000, 0x000000, 0x00 }, // CLOUD KILL
-		{ 0x0100, 0x000000, 0x41 }, // cone of cold
-		{ 0x0100, 0x000000, 0x00 }, // hold monster
-		{ 0x005C, 0x000400, 0x00 }, // bless
-		{ 0x0020, 0x000000, 0x00 }, // cure light wounds
-		{ 0x0100, 0x000000, 0x01 }, // cause light wounds
-		{ 0x004C, 0x000002, 0x00 }, // detect magic
-		{ 0x0029, 0x000800, 0x00 }, // prot from evil
-		{ 0x0039, 0x000000, 0x00 }, // aid
-		{ 0x2408, 0x000000, 0x21 }, // flame blade
-		{ 0x0100, 0x000000, 0x00 }, // hold person
-		{ 0x0028, 0x002000, 0x00 }, // slow poison
-		{ 0x0040, 0x000000, 0x00 }, // create food
-		{ 0x00A0, 0x000000, 0x00 }, // dispel magic
-		{ 0x0099, 0x004000, 0x00 }, // magical vestment
-		{ 0x004C, 0x008000, 0x00 }, // prayer
-		{ 0x0040, 0x000000, 0x00 }, // remove paralysis
-		{ 0x0020, 0x000000, 0x00 }, // cure serious
-		{ 0x0100, 0x000000, 0x01 }, // cause serious
-		{ 0x0020, 0x000000, 0x00 }, // neutralize poison
-		{ 0x0248, 0x000800, 0x00 }, // prot from evil 10'
-		{ 0x0000, 0x000000, 0x00 }, // PROT FROM LIGHTNING
-		{ 0x0020, 0x000000, 0x00 }, // cure critical
-		{ 0x0100, 0x000000, 0x01 }, // cause critical
-		{ 0x0100, 0x000000, 0x21 }, // flame strike
-		{ 0x0020, 0x000000, 0x00 }, // raise dead
-		{ 0x0020, 0x000000, 0x00 }, // lay on hands
-		{ 0x0000, 0x000000, 0x00 }, // obj hit passive
-		{ 0x0000, 0x000000, 0x00 }, // disintegrate passive
-		{ 0x0000, 0x000000, 0x00 }  // death spell passive
+	    {0x0000, 0x000000, 0x00}, // dummy
+	    {0x0033, 0x000001, 0x00}, // armor
+	    {0x0100, 0x000000, 0x21}, // burning hands
+	    {0x004C, 0x000002, 0x00}, // detect magic
+	    {0x0100, 0x000000, 0x01}, // magic missile
+	    {0x0000, 0x000000, 0x00}, // dummy
+	    {0x008B, 0x000008, 0x00}, // shield
+	    {0x0488, 0x000000, 0x03}, // shocking grasp
+	    {0x0021, 0x000040, 0x00}, // invisibility
+	    {0x0000, 0x000000, 0x00}, // dummy
+	    {0x0100, 0x000000, 0x11}, // melf's acid arrow
+	    {0x0000, 0x000000, 0x00}, // STINKING CLOUD
+	    {0x00A0, 0x000000, 0x00}, // dispel magic
+	    {0x0100, 0x000000, 0x21}, // fireball
+	    {0x0100, 0x000000, 0x11}, // FLAME ARROW
+	    {0x0248, 0x010000, 0x00}, // haste
+	    {0x0100, 0x000000, 0x00}, // hold person
+	    {0x0240, 0x000040, 0x00}, // inv 10'
+	    {0x0100, 0x000000, 0x03}, // lightning bolt
+	    {0x0488, 0x000000, 0x01}, // vampiric touch
+	    {0x0100, 0x000000, 0x00}, // fear
+	    {0x0100, 0x000000, 0x41}, // ice storm
+	    {0x0033, 0x000001, 0x00}, // STONE SKIN
+	    {0x0000, 0x000000, 0x00}, // CLOUD KILL
+	    {0x0100, 0x000000, 0x41}, // cone of cold
+	    {0x0100, 0x000000, 0x00}, // hold monster
+	    {0x005C, 0x000400, 0x00}, // bless
+	    {0x0020, 0x000000, 0x00}, // cure light wounds
+	    {0x0100, 0x000000, 0x01}, // cause light wounds
+	    {0x004C, 0x000002, 0x00}, // detect magic
+	    {0x0029, 0x000800, 0x00}, // prot from evil
+	    {0x0039, 0x000000, 0x00}, // aid
+	    {0x2408, 0x000000, 0x21}, // flame blade
+	    {0x0100, 0x000000, 0x00}, // hold person
+	    {0x0028, 0x002000, 0x00}, // slow poison
+	    {0x0040, 0x000000, 0x00}, // create food
+	    {0x00A0, 0x000000, 0x00}, // dispel magic
+	    {0x0099, 0x004000, 0x00}, // magical vestment
+	    {0x004C, 0x008000, 0x00}, // prayer
+	    {0x0040, 0x000000, 0x00}, // remove paralysis
+	    {0x0020, 0x000000, 0x00}, // cure serious
+	    {0x0100, 0x000000, 0x01}, // cause serious
+	    {0x0020, 0x000000, 0x00}, // neutralize poison
+	    {0x0248, 0x000800, 0x00}, // prot from evil 10'
+	    {0x0000, 0x000000, 0x00}, // PROT FROM LIGHTNING
+	    {0x0020, 0x000000, 0x00}, // cure critical
+	    {0x0100, 0x000000, 0x01}, // cause critical
+	    {0x0100, 0x000000, 0x21}, // flame strike
+	    {0x0020, 0x000000, 0x00}, // raise dead
+	    {0x0020, 0x000000, 0x00}, // lay on hands
+	    {0x0000, 0x000000, 0x00}, // obj hit passive
+	    {0x0000, 0x000000, 0x00}, // disintegrate passive
+	    {0x0000, 0x000000, 0x00}  // death spell passive
 	};
 
 	int temp;
@@ -1335,83 +1352,67 @@ void EoBEngine::initSpells() {
 }
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
-	{ 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 135, 130, 132, 180, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
-};
+    {9, 15, 95, 9, 2, 7, {285, 139}, {189, 162}, {31, 31}},
+    {135, 130, 132, 180, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12}};
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
-	{ 9, 15, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
-};
+    {9, 15, 95, 9, 2, 7, {285, 139}, {189, 162}, {31, 31}},
+    {13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12}};
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsPC98 = {
-	{ 9, 15, 95, 11, 1, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
-};
+    {9, 15, 95, 11, 1, 7, {285, 139}, {189, 162}, {31, 31}},
+    {13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 5, 4, 3, 12}};
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmiga = {
-	{ 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 18, 17, 10, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
-};
+    {28, 31, 95, 9, 2, 7, {285, 139}, {189, 162}, {31, 31}},
+    {18, 17, 10, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19}};
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsAmigaMainMenu = {
-	{ 28, 31, 95, 9, 2, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 22, 28, 30, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
-};
+    {28, 31, 95, 9, 2, 7, {285, 139}, {189, 162}, {31, 31}},
+    {22, 28, 30, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19}};
 
 const uint8 EoBEngine::_egaDefaultPalette[] = {
-	0, 5, 3, 2, 10, 14, 12, 6, 4, 11, 9, 1, 0, 8, 7, 15
-};
+    0, 5, 3, 2, 10, 14, 12, 6, 4, 11, 9, 1, 0, 8, 7, 15};
 
 const uint8 EoBEngine::_monsterAcHitChanceTbl1[] = {
-	3, 2, 1, 3
-};
+    3, 2, 1, 3};
 
 const uint8 EoBEngine::_monsterAcHitChanceTbl2[] = {
-	2, 1, 1, 1
-};
+    2, 1, 1, 1};
 
 const EoBEngine::RenderModePalFile EoBEngine::_renderModePalFiles[3] = {
-	{	Common::kRenderDefault, "EOBPAL.COL" },
-	{	Common::kRenderVGA, "EOBPAL.COL" },
-	{	-1, "" }
-};
+    {Common::kRenderDefault, "EOBPAL.COL"},
+    {Common::kRenderVGA, "EOBPAL.COL"},
+    {-1, ""}};
 
 const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[3] = {
-	{
-		Common::kPlatformDOS,
-		"INTRO",
-		_renderModePalFiles,
-		-1,
-		2,
-		false,
-		77, 165, 173, 29, 14, 13, 12,
-		76, 164, 175, 31, 14, 13, -1,
-		0
-	},
-	{
-		Common::kPlatformAmiga,
-		"TITLE",
-		&_renderModePalFiles[2],
-		-1,
-		1,
-		true,
-		75, 165, 177, 29, 22, 28, -1,
-		74, 164, 179, 31, 22, 28, -1,
-		0
-	},
-	{
-		Common::kPlatformPC98,
-		"EOBTITLE",
-		&_renderModePalFiles[2],
-		1,
-		2,
-		false,
-		77, 161, 173, 29, 1, 2, 12,
-		76, 160, 175, 31, 1, 2, -1,
-		-8
-	}
-};
+    {Common::kPlatformDOS,
+     "INTRO",
+     _renderModePalFiles,
+     -1,
+     2,
+     false,
+     77, 165, 173, 29, 14, 13, 12,
+     76, 164, 175, 31, 14, 13, -1,
+     0},
+    {Common::kPlatformAmiga,
+     "TITLE",
+     &_renderModePalFiles[2],
+     -1,
+     1,
+     true,
+     75, 165, 177, 29, 22, 28, -1,
+     74, 164, 179, 31, 22, 28, -1,
+     0},
+    {Common::kPlatformPC98,
+     "EOBTITLE",
+     &_renderModePalFiles[2],
+     1,
+     2,
+     false,
+     77, 161, 173, 29, 1, 2, 12,
+     76, 160, 175, 31, 1, 2, -1,
+     -8}};
 
 void DarkMoonEngine::initStaticResource() {
 	int temp;
@@ -1448,38 +1449,30 @@ void DarkMoonEngine::initStaticResource() {
 
 	_amigaSoundMapExtra = _staticres->loadStrings(kEoB2SoundMapExtra, temp);
 	_amigaSoundFiles2 = _staticres->loadStrings(kEoB2SoundFilesIngame2, temp);
-	_amigaSoundIndex1 = (const int8*)_staticres->loadRawData(kEoB2SoundIndex1, temp);
+	_amigaSoundIndex1 = (const int8 *)_staticres->loadRawData(kEoB2SoundIndex1, temp);
 	_amigaSoundIndex2 = _staticres->loadRawData(kEoB2SoundIndex2, temp);
 	_amigaSoundPatch = _staticres->loadRawData(kEoB2MonsterSoundPatchData, _amigaSoundPatchSize);
 
 	static const char *const errorSlotNoNameString[3] = {
-		" You must specify\r a name for your\r save game!",
-		" Spielst[nde m]ssen\r einen Namen haben!",
-		0
-	};
+	    " You must specify\r a name for your\r save game!",
+	    " Spielst[nde m]ssen\r einen Namen haben!",
+	    0};
 
 	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 
 	// ScummVM specific
 	static const char *const transferStringsScummVM[3][5] = {
-		{
-			"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
-			"Game ID",
-			"\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialogue.",
-			"Select File",
-			"\r\r   Please wait..."
-		},
-		{
-			"\r Kein EOB-Spielstand zu finden.\r Bitte Spielstandsdatei mit der\r zu ]bernehmenden Gruppe in das\r ScummVM Spielstands-Verzeichnis\r kopieren. Bei mehreren Spiel-\r stands-Verzeichnissen bitte\r den EOB-Spielstand in das\r EOB II-Spielstands-Verzeichnis\r kopieren. Nochmal versuchen?",
-			"Game ID",
-			"\r Wie es scheint, wurde Xanathar\r hier bereits besiegt. Soll die\r Gruppe, mit der das Spiel be-\r endet wurde, ]bernommen werden?\r Falls nicht, kann ein Spielstand\r aus der Spielstandsliste gew[hlt\r werden.",
-			"Spiel W[hlen",
-			"\r\r  Bitte warten..."
-		},
-		{
-			0, 0, 0, 0
-		}
-	};
+	    {"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
+	     "Game ID",
+	     "\r It seems that you have already\r defeated Xanathar here. Do you\r wish to transfer the party that\r finished the game? If not, you\r will be able to select a save\r game from the save game\r dialogue.",
+	     "Select File",
+	     "\r\r   Please wait..."},
+	    {"\r Kein EOB-Spielstand zu finden.\r Bitte Spielstandsdatei mit der\r zu ]bernehmenden Gruppe in das\r ScummVM Spielstands-Verzeichnis\r kopieren. Bei mehreren Spiel-\r stands-Verzeichnissen bitte\r den EOB-Spielstand in das\r EOB II-Spielstands-Verzeichnis\r kopieren. Nochmal versuchen?",
+	     "Game ID",
+	     "\r Wie es scheint, wurde Xanathar\r hier bereits besiegt. Soll die\r Gruppe, mit der das Spiel be-\r endet wurde, ]bernommen werden?\r Falls nicht, kann ein Spielstand\r aus der Spielstandsliste gew[hlt\r werden.",
+	     "Spiel W[hlen",
+	     "\r\r  Bitte warten..."},
+	    {0, 0, 0, 0}};
 
 	_transferStringsScummVM = transferStringsScummVM[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 }
@@ -1505,31 +1498,25 @@ void DarkMoonEngine::initSpells() {
 }
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
-	{ 9, 15, 95, 11, 1, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
-	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
-};
+    {9, 15, 95, 11, 1, 7, {221, 76}, {187, 162}, {95, 95}},
+    {186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12}};
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
-	{ 9, 15, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
-	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12 }
-};
+    {9, 15, 95, 9, 2, 7, {221, 76}, {189, 162}, {95, 95}},
+    {186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 5, 4, 3, 12}};
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsAmiga = {
-	{ 28, 31, 95, 9, 2, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
-	{ 18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
-};
+    {28, 31, 95, 9, 2, 7, {221, 76}, {189, 162}, {95, 95}},
+    {18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19}};
 
 const uint8 DarkMoonEngine::_egaDefaultPalette[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-};
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
 const uint8 DarkMoonEngine::_monsterAcHitChanceTbl1[] = {
-	1, 3, 3, 2
-};
+    1, 3, 3, 2};
 
 const uint8 DarkMoonEngine::_monsterAcHitChanceTbl2[] = {
-	1, 1, 2, 1
-};
+    1, 1, 2, 1};
 
 #endif // ENABLE_EOB
 

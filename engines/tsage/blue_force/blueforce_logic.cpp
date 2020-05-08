@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "common/config-manager.h"
 #include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/blue_force/blueforce_scenes1.h"
@@ -33,10 +33,10 @@
 #include "tsage/blue_force/blueforce_scenes7.h"
 #include "tsage/blue_force/blueforce_scenes8.h"
 #include "tsage/blue_force/blueforce_scenes9.h"
-#include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/graphics.h"
+#include "tsage/scenes.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -355,7 +355,7 @@ void BlueForceGame::restart() {
 
 /*--------------------------------------------------------------------------*/
 
-AObjectArray::AObjectArray(): EventHandler() {
+AObjectArray::AObjectArray() : EventHandler() {
 	_inUse = false;
 	clear();
 }
@@ -472,7 +472,7 @@ void Timer::set(uint32 delay, EventHandler *endHandler) {
 
 /*--------------------------------------------------------------------------*/
 
-TimerExt::TimerExt(): Timer() {
+TimerExt::TimerExt() : Timer() {
 	_action = nullptr;
 	_newAction = nullptr;
 }
@@ -557,7 +557,7 @@ bool NamedObject::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-CountdownObject::CountdownObject(): NamedObject() {
+CountdownObject::CountdownObject() : NamedObject() {
 	_countDown = 0;
 }
 
@@ -591,7 +591,7 @@ void CountdownObject::fixCountdown(int mode, ...) {
 
 /*--------------------------------------------------------------------------*/
 
-FollowerObject::FollowerObject(): NamedObject() {
+FollowerObject::FollowerObject() : NamedObject() {
 	_object = NULL;
 }
 
@@ -610,7 +610,7 @@ void FollowerObject::dispatch() {
 	assert(_object);
 
 	if ((_object->_flags & OBJFLAG_HIDE) || ((_object->_visage != 307) &&
-		((_object->_visage != 308) || (_object->_strip != 1)))) {
+	                                         ((_object->_visage != 308) || (_object->_strip != 1)))) {
 		hide();
 	} else if ((_object->_visage != 308) || (_object->_strip != 1)) {
 		show();
@@ -638,7 +638,7 @@ void FollowerObject::setup(SceneObject *object, int visage, int frameNum, int yD
 
 /*--------------------------------------------------------------------------*/
 
-FocusObject::FocusObject(): NamedObject() {
+FocusObject::FocusObject() : NamedObject() {
 	_img = surfaceFromRes(1, 5, 7);
 }
 
@@ -681,7 +681,7 @@ void FocusObject::process(Event &event) {
 			BF_GLOBALS._events.setCursor(BF_GLOBALS._events.getCursor());
 
 			if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
-					(event.btnState == BTNSHIFT_RIGHT)) {
+			    (event.btnState == BTNSHIFT_RIGHT)) {
 				BF_GLOBALS._events.setCursor(CURSOR_USE);
 				event.handled = true;
 			}
@@ -702,7 +702,7 @@ void FocusObject::process(Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-SceneExt::SceneExt(): Scene() {
+SceneExt::SceneExt() : Scene() {
 	_stripManager._onBegin = SceneExt::startStrip;
 	_stripManager._onEnd = SceneExt::endStrip;
 
@@ -864,7 +864,7 @@ void SceneExt::clearScreen() {
 
 /*--------------------------------------------------------------------------*/
 
-PalettedScene::PalettedScene(): SceneExt() {
+PalettedScene::PalettedScene() : SceneExt() {
 	_hasFader = false;
 }
 
@@ -882,7 +882,7 @@ void PalettedScene::remove() {
 	SceneExt::remove();
 	if (_hasFader) {
 		for (SynchronizedList<SceneObject *>::iterator i = BF_GLOBALS._sceneObjects->begin();
-				i != BF_GLOBALS._sceneObjects->end(); ++i)
+		     i != BF_GLOBALS._sceneObjects->end(); ++i)
 			(*i)->remove();
 
 		BF_GLOBALS._sceneObjects->draw();
@@ -911,13 +911,13 @@ void PalettedScene::transition(const byte *arrBufferRGB, int percent, int palett
 	_palette.loadPalette(2);
 	if (flag) {
 		for (int i = fromColor1; i <= fromColor2; i++) {
-			tmpPalette[(3 * i)]     = BF_GLOBALS._scenePalette._palette[(3 * i)];
+			tmpPalette[(3 * i)] = BF_GLOBALS._scenePalette._palette[(3 * i)];
 			tmpPalette[(3 * i) + 1] = BF_GLOBALS._scenePalette._palette[(3 * i) + 1];
 			tmpPalette[(3 * i) + 2] = BF_GLOBALS._scenePalette._palette[(3 * i) + 2];
 		}
 	} else {
 		for (int i = fromColor1; i <= fromColor2; i++) {
-			tmpPalette[(3 * i)]     = _palette._palette[(3 * i)];
+			tmpPalette[(3 * i)] = _palette._palette[(3 * i)];
 			tmpPalette[(3 * i) + 1] = _palette._palette[(3 * i) + 1];
 			tmpPalette[(3 * i) + 2] = _palette._palette[(3 * i) + 2];
 		}
@@ -931,7 +931,6 @@ void PalettedScene::transition(const byte *arrBufferRGB, int percent, int palett
 
 	BF_GLOBALS._scenePalette.addFader((const byte *)tmpPalette, 256, 100, action);
 }
-
 
 /*--------------------------------------------------------------------------*/
 
@@ -1000,75 +999,74 @@ void SceneHandlerExt::processEnd(Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-BlueForceInvObjectList::BlueForceInvObjectList():
-		_none(9, 5, 1),
-		_colt45(9, 1, 1),
-		_ammoClip(9, 4, 2),
-		_spareClip(9, 4, 3),
-		_handcuffs(9, 1, 4),
-		_greensGun(9, 1, 5),
-		_ticketBook(9, 1, 6),
-		_mirandaCard(9, 1, 7),
-		_forestRap(9, 1, 8),
-		_greenId(9, 1, 9),
-		_baseballCard(9, 1, 10),
-		_bookingGreen(9, 1, 11),
-		_flare(9, 1, 12),
-		_cobbRap(9, 1, 13),
-		_bullet22(9, 1, 14),
-		_autoRifle(9, 1, 15),
-		_wig(9, 1, 16),
-		_frankieId(9, 1, 17),
-		_tyroneId(9, 1, 18),
-		_snub22(9, 1, 19),
-		_bug(1, 1, 1),
-		_bookingFrankie(9, 2, 1),
-		_bookingGang(9, 2, 2),
-		_fbiTeletype(9, 2, 3),
-		_daNote(9, 2, 4),
-		_printOut(9, 2, 5),
-		_warehouseKeys(9, 2, 6),
-		_centerPunch(9, 2, 7),
-		_tranqGun(9, 2, 8),
-		_hook(9, 2, 9),
-		_rags(9, 2, 10),
-		_jar(9, 2, 11),
-		_screwdriver(9, 2, 12),
-		_dFloppy(9, 2, 13),
-		_blankDisk(9, 2, 14),
-		_stick(9, 2, 15),
-		_crate1(9, 2, 16),
-		_crate2(9, 2, 17),
-		_shoebox(9, 2, 18),
-		_badge(9, 2, 19),
-		_bug2(1, 1, 1),
-		_rentalCoupon(9, 3, 1),
-		_nickel(9, 3, 2),
-		_lyleCard(9, 3, 3),
-		_carterNote(9, 3, 4),
-		_mugshot(9, 3, 5),
-		_clipping(9, 3, 6),
-		_microfilm(9, 3, 7),
-		_waveKeys(9, 3, 8),
-		_rentalKeys(9, 3, 9),
-		_napkin(9, 3, 10),
-		_dmvPrintout(9, 3, 11),
-		_fishingNet(9, 3, 12),
-		_id(9, 3, 13),
-		_bullets9mm(9, 3, 14),
-		_schedule(9, 3, 15),
-		_grenades(9, 3, 16),
-		_yellowCord(9, 3, 17),
-		_halfYellowCord(9, 3, 18),
-		_blackCord(9, 3, 19),
-		_bug3(1, 1, 1),
-		_halfBlackCord(9, 4, 1),
-		_warrant(9, 4, 2),
-		_jacket(9, 4, 3),
-		_greensKnife(9, 4, 4),
-		_dogWhistle(9, 4, 5),
-		_ammoBelt(9, 1, 2),
-		_alleyCatKey(9, 4, 7) {
+BlueForceInvObjectList::BlueForceInvObjectList() : _none(9, 5, 1),
+                                                   _colt45(9, 1, 1),
+                                                   _ammoClip(9, 4, 2),
+                                                   _spareClip(9, 4, 3),
+                                                   _handcuffs(9, 1, 4),
+                                                   _greensGun(9, 1, 5),
+                                                   _ticketBook(9, 1, 6),
+                                                   _mirandaCard(9, 1, 7),
+                                                   _forestRap(9, 1, 8),
+                                                   _greenId(9, 1, 9),
+                                                   _baseballCard(9, 1, 10),
+                                                   _bookingGreen(9, 1, 11),
+                                                   _flare(9, 1, 12),
+                                                   _cobbRap(9, 1, 13),
+                                                   _bullet22(9, 1, 14),
+                                                   _autoRifle(9, 1, 15),
+                                                   _wig(9, 1, 16),
+                                                   _frankieId(9, 1, 17),
+                                                   _tyroneId(9, 1, 18),
+                                                   _snub22(9, 1, 19),
+                                                   _bug(1, 1, 1),
+                                                   _bookingFrankie(9, 2, 1),
+                                                   _bookingGang(9, 2, 2),
+                                                   _fbiTeletype(9, 2, 3),
+                                                   _daNote(9, 2, 4),
+                                                   _printOut(9, 2, 5),
+                                                   _warehouseKeys(9, 2, 6),
+                                                   _centerPunch(9, 2, 7),
+                                                   _tranqGun(9, 2, 8),
+                                                   _hook(9, 2, 9),
+                                                   _rags(9, 2, 10),
+                                                   _jar(9, 2, 11),
+                                                   _screwdriver(9, 2, 12),
+                                                   _dFloppy(9, 2, 13),
+                                                   _blankDisk(9, 2, 14),
+                                                   _stick(9, 2, 15),
+                                                   _crate1(9, 2, 16),
+                                                   _crate2(9, 2, 17),
+                                                   _shoebox(9, 2, 18),
+                                                   _badge(9, 2, 19),
+                                                   _bug2(1, 1, 1),
+                                                   _rentalCoupon(9, 3, 1),
+                                                   _nickel(9, 3, 2),
+                                                   _lyleCard(9, 3, 3),
+                                                   _carterNote(9, 3, 4),
+                                                   _mugshot(9, 3, 5),
+                                                   _clipping(9, 3, 6),
+                                                   _microfilm(9, 3, 7),
+                                                   _waveKeys(9, 3, 8),
+                                                   _rentalKeys(9, 3, 9),
+                                                   _napkin(9, 3, 10),
+                                                   _dmvPrintout(9, 3, 11),
+                                                   _fishingNet(9, 3, 12),
+                                                   _id(9, 3, 13),
+                                                   _bullets9mm(9, 3, 14),
+                                                   _schedule(9, 3, 15),
+                                                   _grenades(9, 3, 16),
+                                                   _yellowCord(9, 3, 17),
+                                                   _halfYellowCord(9, 3, 18),
+                                                   _blackCord(9, 3, 19),
+                                                   _bug3(1, 1, 1),
+                                                   _halfBlackCord(9, 4, 1),
+                                                   _warrant(9, 4, 2),
+                                                   _jacket(9, 4, 3),
+                                                   _greensKnife(9, 4, 4),
+                                                   _dogWhistle(9, 4, 5),
+                                                   _ammoBelt(9, 1, 2),
+                                                   _alleyCatKey(9, 4, 7) {
 
 	// Add the items to the list
 	_itemList.push_back(&_none);
@@ -1215,7 +1213,8 @@ void BlueForceInvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 	// Find the appropriate object
 	int num = objectNum;
 	SynchronizedList<InvObject *>::iterator i = _itemList.begin();
-	while (num-- > 0) ++i;
+	while (num-- > 0)
+		++i;
 	(*i)->_sceneNumber = sceneNumber;
 
 	// If the item is the currently active one, default back to the use cursor
@@ -1232,9 +1231,9 @@ void BlueForceInvObjectList::alterInventory(int mode) {
 	bool hasRags = getObjectScene(INV_RAGS) == 1;
 	bool hasJar = getObjectScene(INV_JAR) == 1;
 	bool hasNickel = getObjectScene(INV_NICKEL) == 1;
-	bool hasCrate1 = getObjectScene(INV_CRATE1) == 1;	//di
+	bool hasCrate1 = getObjectScene(INV_CRATE1) == 1; //di
 	bool hasForestRap = getObjectScene(INV_FOREST_RAP) == 1;
-	bool hasRentalCoupon = getObjectScene(INV_RENTAL_COUPON) == 1;	//si
+	bool hasRentalCoupon = getObjectScene(INV_RENTAL_COUPON) == 1; //si
 	bool hasWarehouseKeys = getObjectScene(INV_WAREHOUSE_KEYS) == 1;
 	bool hasCobbRap = getObjectScene(INV_COBB_RAP) == 1;
 	bool hasHook = getObjectScene(INV_HOOK) == 1;
@@ -1404,11 +1403,10 @@ void SceneMessage::signal() {
 
 void SceneMessage::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) ||
-		((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN))) {
+	    ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN))) {
 		signal();
 	}
 }
-
 
 void SceneMessage::draw() {
 	GfxSurface &surface = BF_GLOBALS._screen;
@@ -1426,7 +1424,7 @@ void SceneMessage::draw() {
 
 	// Write out the message
 	Rect textRect(0, UI_INTERFACE_Y / 2 - (font.getHeight() / 2), SCREEN_WIDTH,
-			UI_INTERFACE_Y / 2 + (font.getHeight() / 2));
+	              UI_INTERFACE_Y / 2 + (font.getHeight() / 2));
 	BF_GLOBALS._gfxManagerInstance._font.writeLines(_message.c_str(), textRect, ALIGN_CENTER);
 
 	// TODO: Ideally, saving and loading should be disabled here until the message display is complete
@@ -1445,7 +1443,7 @@ void SceneMessage::clear() {
 	g_globals->_sceneManager._hasPalette = true;
 }
 
-IntroSceneText::IntroSceneText(): SceneText() {
+IntroSceneText::IntroSceneText() : SceneText() {
 	_action = NULL;
 	_frameNumber = 0;
 	_diff = 0;

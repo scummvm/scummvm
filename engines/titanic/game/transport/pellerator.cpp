@@ -27,22 +27,20 @@
 namespace Titanic {
 
 static const char *const WAVE_NAMES_EN[10] = {
-	"z#465.wav", "z#456.wav", "z#455.wav", "z#453.wav",
-	"z#452.wav", "NoStandingInFunnyWays", "z#450.wav",
-	"z#449.wav", "z#435.wav", "z#434.wav"
-};
+    "z#465.wav", "z#456.wav", "z#455.wav", "z#453.wav",
+    "z#452.wav", "NoStandingInFunnyWays", "z#450.wav",
+    "z#449.wav", "z#435.wav", "z#434.wav"};
 
 static const char *const WAVE_NAMES_DE[10] = {
-	"z#202.wav", "z#193.wav", "z#192.wav", "z#190.wav",
-	"z#189.wav", "NoStandingInFunnyWays", "z#187.wav",
-	"z#186.wav", "z#180.wav", "z#179.wav"
-};
+    "z#202.wav", "z#193.wav", "z#192.wav", "z#190.wav",
+    "z#189.wav", "NoStandingInFunnyWays", "z#187.wav",
+    "z#186.wav", "z#180.wav", "z#179.wav"};
 
 BEGIN_MESSAGE_MAP(CPellerator, CTransport)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
 int CPellerator::_soundHandle;
@@ -80,8 +78,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 		playAmbientSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
 
 		CString name = getName();
-		changeView(name == "PelleratorObject2" ?
-			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
+		changeView(name == "PelleratorObject2" ? "Pellerator.Node 1.N" : "Pellerator.Node 1.S");
 
 		if (name == "PelleratorObject") {
 			for (; _destination < newDest; ++_destination) {
@@ -186,8 +183,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 		playAmbientSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
 
 		CString name = getName();
-		changeView(name == "PelleratorObject2" ?
-			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
+		changeView(name == "PelleratorObject2" ? "Pellerator.Node 1.N" : "Pellerator.Node 1.S");
 
 		if (name == "PelleratorObject") {
 			for (--_destination; _destination > newDest; --_destination) {
@@ -375,7 +371,8 @@ bool CPellerator::MovieEndMsg(CMovieEndMsg *msg) {
 bool CPellerator::TimerMsg(CTimerMsg *msg) {
 	if (compareRoomNameTo("Pellerator")) {
 		_soundHandle = queueSound(TRANSLATE(WAVE_NAMES_EN[getRandomNumber(9)],
-				WAVE_NAMES_DE[getRandomNumber(9)]), _soundHandle);
+		                                    WAVE_NAMES_DE[getRandomNumber(9)]),
+		                          _soundHandle);
 		addTimer(20000 + getRandomNumber(10000));
 	}
 

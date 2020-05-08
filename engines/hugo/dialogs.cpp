@@ -21,13 +21,13 @@
  */
 
 #include "common/substream.h"
-#include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
 #include "image/bmp.h"
 
-#include "hugo/hugo.h"
 #include "hugo/dialogs.h"
 #include "hugo/file.h"
+#include "hugo/hugo.h"
 #include "hugo/parser.h"
 #include "hugo/schedule.h"
 #include "hugo/sound.h"
@@ -273,7 +273,7 @@ EntryDialog::EntryDialog(const Common::String &title, const Common::String &butt
 	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
 		new GUI::StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
-								lines[i], Graphics::kTextAlignCenter);
+		                          lines[i], Graphics::kTextAlignCenter);
 	}
 
 	_text = new GUI::EditTextWidget(this, 10, 10 + lineCount * (kLineHeight + 1), _w - 20, kLineHeight, "", "", 0, kCmdFinishEdit);
@@ -283,8 +283,7 @@ EntryDialog::EntryDialog(const Common::String &title, const Common::String &butt
 
 	buttonPos = (_w - buttonWidth) / 2;
 
-	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, buttonLabel, 0, kCmdButton, Common::ASCII_RETURN);	// Confirm dialog
-
+	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, buttonLabel, 0, kCmdButton, Common::ASCII_RETURN); // Confirm dialog
 }
 
 EntryDialog::~EntryDialog() {

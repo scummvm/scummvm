@@ -41,12 +41,12 @@ namespace TADS2 {
  */
 
 /* OK and Cancel buttons */
-#define RESID_BTN_OK       1
-#define RESID_BTN_CANCEL   2
+#define RESID_BTN_OK 1
+#define RESID_BTN_CANCEL 2
 
 /* "Yes" and "No" buttons */
-#define RESID_BTN_YES      3
-#define RESID_BTN_NO       4
+#define RESID_BTN_YES 3
+#define RESID_BTN_NO 4
 
 /*
  *   Reply strings for the yorn() built-in function.  These strings are
@@ -59,8 +59,8 @@ namespace TADS2 {
  *   since the yorn() function will skip any leading spaces before
  *   performing the pattern match.  
  */
-#define RESID_YORN_YES     5
-#define RESID_YORN_NO      6
+#define RESID_YORN_YES 5
+#define RESID_YORN_NO 6
 
 } // End of namespace TADS2
 } // End of namespace TADS

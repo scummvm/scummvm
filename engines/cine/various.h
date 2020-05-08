@@ -23,7 +23,6 @@
 #ifndef CINE_VARIOUS_H
 #define CINE_VARIOUS_H
 
-
 #include "common/file.h"
 
 #include "cine/cine.h"

@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPickUpVisCentre, CPickUp)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 void CPickUpVisCentre::save(SimpleFile *file, int indent) {
@@ -42,7 +42,6 @@ void CPickUpVisCentre::load(SimpleFile *file) {
 	// that the vision center can be picked up
 	_cursorId = CURSOR_HAND;
 }
-
 
 bool CPickUpVisCentre::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	return true;

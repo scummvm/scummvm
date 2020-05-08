@@ -21,8 +21,8 @@
  */
 
 #include "sherlock/tattoo/tattoo_map.h"
-#include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 
 namespace Sherlock {
 
@@ -240,8 +240,7 @@ void TattooMap::loadData() {
 	for (uint idx = 0; idx < _data.size(); ++idx)
 		_data[idx].clear();
 
-	do
-	{
+	do {
 		// Find the start of the number
 		do {
 			c = stream->readByte();
@@ -307,7 +306,7 @@ void TattooMap::drawMapIcons() {
 			MapEntry &mapEntry = _data[idx];
 			ImageFrame &img = (*_iconImages)[mapEntry._iconNum];
 			screen._backBuffer1.SHtransBlitFrom(img._frame, Common::Point(mapEntry.x - img._width / 2,
-				mapEntry.y - img._height / 2));
+			                                                              mapEntry.y - img._height / 2));
 		}
 	}
 
@@ -327,7 +326,7 @@ void TattooMap::checkMapNames(bool slamIt) {
 			MapEntry &mapEntry = _data[idx];
 			ImageFrame &img = (*_iconImages)[mapEntry._iconNum];
 			Common::Rect r(mapEntry.x - img._width / 2, mapEntry.y - img._height / 2,
-				mapEntry.x + img._width / 2, mapEntry.y + img._height / 2);
+			               mapEntry.x + img._width / 2, mapEntry.y + img._height / 2);
 
 			if (r.contains(mapPos)) {
 				_bgFound = idx;
@@ -376,7 +375,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 
 	Point32 closeUp(_data[closeUpNum].x * 100, _data[closeUpNum].y * 100);
 	Point32 delta((SHERLOCK_SCREEN_WIDTH / 2 - closeUp.x / 100) * 100 / CLOSEUP_STEPS,
-		(SHERLOCK_SCREEN_HEIGHT / 2 - closeUp.y / 100) * 100 / CLOSEUP_STEPS);
+	              (SHERLOCK_SCREEN_HEIGHT / 2 - closeUp.y / 100) * 100 / CLOSEUP_STEPS);
 	Common::Rect oldBounds(closeUp.x / 100, closeUp.y / 100, closeUp.x / 100 + 1, closeUp.y / 100 + 1);
 	int size = 64;
 	int n = 256;
@@ -406,7 +405,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	for (int step = 0; step < CLOSEUP_STEPS; ++step) {
 		Common::Point picSize(pic[0].sDrawXSize(scaleVal), pic[0].sDrawYSize(scaleVal));
 		Common::Point pt(screen._currentScroll.x + closeUp.x / 100 - picSize.x / 2,
-			screen._currentScroll.y + closeUp.y / 100 - picSize.y / 2);
+		                 screen._currentScroll.y + closeUp.y / 100 - picSize.y / 2);
 
 		restoreArea(oldBounds);
 		screen._backBuffer1.SHtransBlitFrom(pic[0], pt, false, 0, scaleVal);
@@ -423,9 +422,9 @@ void TattooMap::showCloseUp(int closeUpNum) {
 
 	// Handle final drawing of closeup
 	Common::Rect r(screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2,
-		screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2,
-		screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2 + pic[0]._width,
-		screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2 + pic[0]._height);
+	               screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2,
+	               screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2 + pic[0]._width,
+	               screen._currentScroll.y + SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2 + pic[0]._height);
 
 	restoreArea(oldBounds);
 	screen._backBuffer1.SHtransBlitFrom(pic[0], Common::Point(r.left, r.top));

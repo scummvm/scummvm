@@ -41,82 +41,81 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/system_properties.h>
+#include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
 
-#include "common/util.h"
-#include "common/textconsole.h"
-#include "common/rect.h"
-#include "common/queue.h"
-#include "common/mutex.h"
-#include "common/events.h"
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/mutex.h"
+#include "common/queue.h"
+#include "common/rect.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
-#include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/keymapper-defaults.h"
+#include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
-#include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/graphics.h"
+#include "backends/platform/android/jni-android.h"
 
 const char *android_log_tag = "ScummVM";
 
 // This replaces the bionic libc assert functions with something that
 // actually prints the assertion failure before aborting.
 extern "C" {
-	void __assert(const char *file, int line, const char *expr) {
-		__android_log_assert(expr, android_log_tag,
-								"Assertion failure: '%s' in %s:%d",
-								 expr, file, line);
-	}
-
-	void __assert2(const char *file, int line, const char *func,
-					const char *expr) {
-		__android_log_assert(expr, android_log_tag,
-								"Assertion failure: '%s' in %s:%d (%s)",
-								 expr, file, line, func);
-	}
+void __assert(const char *file, int line, const char *expr) {
+	__android_log_assert(expr, android_log_tag,
+	                     "Assertion failure: '%s' in %s:%d",
+	                     expr, file, line);
 }
 
-OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
-	_audio_sample_rate(audio_sample_rate),
-	_audio_buffer_size(audio_buffer_size),
-	_screen_changeid(0),
-	_mixer(0),
-	_queuedEventTime(0),
-	_event_queue_lock(0),
-	_touch_pt_down(),
-	_touch_pt_scroll(),
-	_touch_pt_dt(),
-	_eventScaleX(100),
-	_eventScaleY(100),
-	// TODO put these values in some option dlg?
-	_touchpad_mode(true),
-	_touchpad_scale(66),
-	_dpad_scale(4),
-	_fingersDown(0),
-	_trackball_scale(2),
-	_joystick_scale(10) {
+void __assert2(const char *file, int line, const char *func,
+               const char *expr) {
+	__android_log_assert(expr, android_log_tag,
+	                     "Assertion failure: '%s' in %s:%d (%s)",
+	                     expr, file, line, func);
+}
+}
+
+OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) : _audio_sample_rate(audio_sample_rate),
+                                                                                 _audio_buffer_size(audio_buffer_size),
+                                                                                 _screen_changeid(0),
+                                                                                 _mixer(0),
+                                                                                 _queuedEventTime(0),
+                                                                                 _event_queue_lock(0),
+                                                                                 _touch_pt_down(),
+                                                                                 _touch_pt_scroll(),
+                                                                                 _touch_pt_dt(),
+                                                                                 _eventScaleX(100),
+                                                                                 _eventScaleY(100),
+                                                                                 // TODO put these values in some option dlg?
+                                                                                 _touchpad_mode(true),
+                                                                                 _touchpad_scale(66),
+                                                                                 _dpad_scale(4),
+                                                                                 _fingersDown(0),
+                                                                                 _trackball_scale(2),
+                                                                                 _joystick_scale(10) {
 
 	_fsFactory = new POSIXFilesystemFactory();
 
 	LOGI("Running on: [%s] [%s] [%s] [%s] [%s] SDK:%s ABI:%s",
-			getSystemProperty("ro.product.manufacturer").c_str(),
-			getSystemProperty("ro.product.model").c_str(),
-			getSystemProperty("ro.product.brand").c_str(),
-			getSystemProperty("ro.build.fingerprint").c_str(),
-			getSystemProperty("ro.build.display.id").c_str(),
-			getSystemProperty("ro.build.version.sdk").c_str(),
-			getSystemProperty("ro.product.cpu.abi").c_str());
+	     getSystemProperty("ro.product.manufacturer").c_str(),
+	     getSystemProperty("ro.product.model").c_str(),
+	     getSystemProperty("ro.product.brand").c_str(),
+	     getSystemProperty("ro.build.fingerprint").c_str(),
+	     getSystemProperty("ro.build.display.id").c_str(),
+	     getSystemProperty("ro.build.version.sdk").c_str(),
+	     getSystemProperty("ro.product.cpu.abi").c_str());
 }
 
 OSystem_Android::~OSystem_Android() {
@@ -320,7 +319,6 @@ void OSystem_Android::initBackend() {
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
-
 	if (!ConfMan.hasKey("browser_lastpath")) {
 		// TODO remove the debug message eventually
 		LOGD("Setting Browser Lastpath to root");
@@ -373,10 +371,10 @@ void OSystem_Android::initBackend() {
 
 bool OSystem_Android::hasFeature(Feature f) {
 	if (f == kFeatureVirtualKeyboard ||
-			f == kFeatureOpenUrl ||
-			f == kFeatureTouchpadMode ||
-			f == kFeatureOnScreenControl ||
-			f == kFeatureClipboardSupport) {
+	    f == kFeatureOpenUrl ||
+	    f == kFeatureTouchpadMode ||
+	    f == kFeatureOnScreenControl ||
+	    f == kFeatureClipboardSupport) {
 		return true;
 	}
 	return ModularBackend::hasFeature(f);
@@ -424,7 +422,7 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	// It is only checked here for compatibility with old config files
 	// where it may have been set as "true"
 	// TODO Why not just ignore it entirely anyway?
-	if (ConfMan.hasKey("swap_menu_and_back")  && ConfMan.getBool("swap_menu_and_back")) {
+	if (ConfMan.hasKey("swap_menu_and_back") && ConfMan.getBool("swap_menu_and_back")) {
 		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "AC_BACK");
 		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "MENU");
 		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "MENU");
@@ -443,7 +441,7 @@ uint32 OSystem_Android::getMillis(bool skipRecord) {
 	gettimeofday(&curTime, 0);
 
 	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) +
-			((curTime.tv_usec - _startTime.tv_usec) / 1000));
+	                ((curTime.tv_usec - _startTime.tv_usec) / 1000));
 }
 
 void OSystem_Android::delayMillis(uint msecs) {
@@ -521,8 +519,8 @@ void OSystem_Android::logMessage(LogMessageType::Type type, const char *message)
 
 Common::String OSystem_Android::getSystemLanguage() const {
 	return Common::String::format("%s_%s",
-							getSystemProperty("persist.sys.language").c_str(),
-							getSystemProperty("persist.sys.country").c_str());
+	                              getSystemProperty("persist.sys.language").c_str(),
+	                              getSystemProperty("persist.sys.country").c_str());
 }
 
 bool OSystem_Android::openUrl(const Common::String &url) {

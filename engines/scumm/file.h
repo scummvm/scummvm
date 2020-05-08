@@ -54,9 +54,9 @@ public:
 
 class ScummFile : public BaseScummFile {
 protected:
-	int32	_subFileStart;
-	int32	_subFileLen;
-	bool	_myEos; // Have we read past the end of the subfile?
+	int32 _subFileStart;
+	int32 _subFileLen;
+	bool _myEos; // Have we read past the end of the subfile?
 
 	void setSubfileRange(int32 start, int32 len);
 	void resetSubfile();
@@ -67,7 +67,10 @@ public:
 	bool open(const Common::String &filename) override;
 	bool openSubFile(const Common::String &filename) override;
 
-	void clearErr() override { _myEos = false; BaseScummFile::clearErr(); }
+	void clearErr() override {
+		_myEos = false;
+		BaseScummFile::clearErr();
+	}
 
 	bool eos() const override;
 	int32 pos() const override;
@@ -137,6 +140,7 @@ private:
 	const SteamIndexFile &_indexFile;
 
 	bool openWithSubRange(const Common::String &filename, int32 subFileStart, int32 subFileLen);
+
 public:
 	ScummSteamFile(const SteamIndexFile &indexFile) : ScummFile(), _indexFile(indexFile) {}
 

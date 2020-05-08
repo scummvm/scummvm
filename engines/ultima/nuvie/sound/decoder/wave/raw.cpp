@@ -25,20 +25,21 @@
 
 //#include <stdlib.h>
 //#include <string.h>
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/sound/mixer/types.h"
 #include "decoder/wave/endian.h"
 #include "decoder/wave/memstream.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/sound/mixer/types.h"
 
-#include "audiostream.h"
 #include "audio/mixer.h"
+#include "audiostream.h"
 #include "decoder/wave/raw.h"
 
 #ifdef MIN
 #undef MIN
 #endif
 
-template<typename T> inline T MIN(T a, T b)    {
+template<typename T>
+inline T MIN(T a, T b) {
 	return (a < b) ? a : b;
 }
 
@@ -52,9 +53,8 @@ namespace Audio {
 #define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
 	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
-
 #pragma mark -
-#pragma mark --- RawStream ---
+#pragma mark--- RawStream ---
 #pragma mark -
 
 /**
@@ -65,7 +65,7 @@ template<bool is16Bit, bool isUnsigned, bool isLE>
 class RawStream : public SeekableAudioStream {
 public:
 	RawStream(int rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream, const RawStreamBlockList &blocks)
-		: _rate(rate), _isStereo(stereo), _playtime(0, rate), _stream(stream), _disposeAfterUse(disposeStream), _blocks(blocks), _curBlock(_blocks.begin()), _blockLeft(0), _buffer(0) {
+	    : _rate(rate), _isStereo(stereo), _playtime(0, rate), _stream(stream), _disposeAfterUse(disposeStream), _blocks(blocks), _curBlock(_blocks.begin()), _blockLeft(0), _buffer(0) {
 
 		assert(_blocks.size() > 0);
 
@@ -104,14 +104,14 @@ public:
 
 	int readBuffer(sint16 *buffer, const int numSamples);
 
-	bool isStereo() const           {
+	bool isStereo() const {
 		return _isStereo;
 	}
-	bool endOfData() const          {
+	bool endOfData() const {
 		return (_curBlock == _blocks.end()) && (_blockLeft == 0);
 	}
 
-	int getRate() const         {
+	int getRate() const {
 		return _rate;
 	}
 	Timestamp getLength() const {
@@ -119,16 +119,17 @@ public:
 	}
 
 	bool seek(const Timestamp &where);
-private:
-	const int _rate;                               ///< Sample rate of stream
-	const bool _isStereo;                          ///< Whether this is an stereo stream
-	Timestamp _playtime;                           ///< Calculated total play time
-	Common::SeekableReadStream *_stream;           ///< Stream to read data from
-	const DisposeAfterUse::Flag _disposeAfterUse;  ///< Indicates whether the stream object should be deleted when this RawStream is destructed
-	const RawStreamBlockList _blocks;              ///< Audio block list
 
-	RawStreamBlockList::const_iterator _curBlock;  ///< Current audio block number
-	sint32 _blockLeft;                              ///< How many bytes are still left in the current block
+private:
+	const int _rate;                              ///< Sample rate of stream
+	const bool _isStereo;                         ///< Whether this is an stereo stream
+	Timestamp _playtime;                          ///< Calculated total play time
+	Common::SeekableReadStream *_stream;          ///< Stream to read data from
+	const DisposeAfterUse::Flag _disposeAfterUse; ///< Indicates whether the stream object should be deleted when this RawStream is destructed
+	const RawStreamBlockList _blocks;             ///< Audio block list
+
+	RawStreamBlockList::const_iterator _curBlock; ///< Current audio block number
+	sint32 _blockLeft;                            ///< How many bytes are still left in the current block
 
 	/**
 	 * Advance one block in the stream in case
@@ -136,7 +137,7 @@ private:
 	 */
 	void updateBlockIfNeeded();
 
-	uint8 *_buffer;                                 ///< Buffer used in readBuffer
+	uint8 *_buffer; ///< Buffer used in readBuffer
 	enum {
 		/**
 		 * How many samples we can buffer at once.
@@ -294,7 +295,7 @@ bool RawStream<is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
 }
 
 #pragma mark -
-#pragma mark --- Raw stream factories ---
+#pragma mark--- Raw stream factories ---
 #pragma mark -
 
 /* In the following, we use preprocessor / macro tricks to simplify the code
@@ -306,13 +307,13 @@ bool RawStream<is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
  * particular case it should actually help it :-)
  */
 
-#define MAKE_RAW_STREAM(UNSIGNED) \
-	if (is16Bit) { \
-		if (isLE) \
-			return new RawStream<true, UNSIGNED, true>(rate, isStereo, disposeAfterUse, stream, blockList); \
-		else  \
+#define MAKE_RAW_STREAM(UNSIGNED)                                                                            \
+	if (is16Bit) {                                                                                           \
+		if (isLE)                                                                                            \
+			return new RawStream<true, UNSIGNED, true>(rate, isStereo, disposeAfterUse, stream, blockList);  \
+		else                                                                                                 \
 			return new RawStream<true, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream, blockList); \
-	} else \
+	} else                                                                                                   \
 		return new RawStream<false, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream, blockList)
 
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
@@ -320,10 +321,10 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
                                    int rate,
                                    uint8 flags,
                                    DisposeAfterUse::Flag disposeAfterUse) {
-	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+	const bool isStereo = (flags & Audio::FLAG_STEREO) != 0;
+	const bool is16Bit = (flags & Audio::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Audio::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (flags & Audio::FLAG_LITTLE_ENDIAN) != 0;
+	const bool isLE = (flags & Audio::FLAG_LITTLE_ENDIAN) != 0;
 
 	if (blockList.empty()) {
 		DEBUG(0, LEVEL_WARNING, "Empty block list passed to makeRawStream");
@@ -346,8 +347,8 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 	RawStreamBlock block;
 	block.pos = 0;
 
-	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+	const bool isStereo = (flags & Audio::FLAG_STEREO) != 0;
+	const bool is16Bit = (flags & Audio::FLAG_16BITS) != 0;
 
 	assert(stream->size() % ((is16Bit ? 2 : 1) * (isStereo ? 2 : 1)) == 0);
 
@@ -357,7 +358,6 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 	return makeRawStream(stream, blocks, rate, flags, disposeAfterUse);
 }
 
-
 SeekableAudioStream *makeRawStream(const uint8 *buffer, uint32 size,
                                    int rate, uint8 flags,
                                    DisposeAfterUse::Flag disposeAfterUse) {
@@ -365,7 +365,7 @@ SeekableAudioStream *makeRawStream(const uint8 *buffer, uint32 size,
 }
 
 SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, RawStreamBlock *block, int numBlocks,
-        int rate, uint8 flags, DisposeAfterUse::Flag disposeStream) {
+                                           int rate, uint8 flags, DisposeAfterUse::Flag disposeStream) {
 	assert(numBlocks > 0);
 	RawStreamBlockList blocks;
 	for (int i = 0; i < numBlocks; ++i)

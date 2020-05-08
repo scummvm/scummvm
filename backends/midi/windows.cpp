@@ -30,12 +30,12 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include "audio/musicplugin.h"
 #include "audio/mpu401.h"
+#include "audio/musicplugin.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
-#include "common/textconsole.h"
 #include "common/error.h"
+#include "common/textconsole.h"
+#include "common/translation.h"
 #include <mmsystem.h>
 
 ////////////////////////////////////////
@@ -47,7 +47,7 @@
 class MidiDriver_WIN : public MidiDriver_MPU401 {
 private:
 	MIDIHDR _streamHeader;
-	byte _streamBuffer[266];	// SysEx blocks should be no larger than 266 bytes
+	byte _streamBuffer[266]; // SysEx blocks should be no larger than 266 bytes
 	HANDLE _streamEvent;
 	HMIDIOUT _mo;
 	bool _isOpen;
@@ -56,7 +56,7 @@ private:
 	void check_error(MMRESULT result);
 
 public:
-	MidiDriver_WIN(int deviceIndex) : _isOpen(false), _device(deviceIndex) { }
+	MidiDriver_WIN(int deviceIndex) : _isOpen(false), _device(deviceIndex) {}
 	int open();
 	bool isOpen() const { return _isOpen; }
 	void close();
@@ -108,17 +108,16 @@ void MidiDriver_WIN::send(uint32 b) {
 	check_error(midiOutShortMsg(_mo, u.dwData));
 }
 
-
 void MidiDriver_WIN::sysEx(const byte *msg, uint16 length) {
 	if (!_isOpen)
 		return;
 
-	if (WaitForSingleObject (_streamEvent, 2000) == WAIT_TIMEOUT) {
-		warning ("Could not send SysEx - MMSYSTEM is still trying to send data");
+	if (WaitForSingleObject(_streamEvent, 2000) == WAIT_TIMEOUT) {
+		warning("Could not send SysEx - MMSYSTEM is still trying to send data");
 		return;
 	}
 
-	assert(length+2 <= 266);
+	assert(length + 2 <= 266);
 
 	midiDriverCommonSysEx(msg, length);
 
@@ -127,7 +126,7 @@ void MidiDriver_WIN::sysEx(const byte *msg, uint16 length) {
 	// Add SysEx frame
 	_streamBuffer[0] = 0xF0;
 	memcpy(&_streamBuffer[1], msg, length);
-	_streamBuffer[length+1] = 0xF7;
+	_streamBuffer[length + 1] = 0xF7;
 
 	_streamHeader.lpData = (char *)_streamBuffer;
 	_streamHeader.dwBufferLength = length + 2;
@@ -137,7 +136,7 @@ void MidiDriver_WIN::sysEx(const byte *msg, uint16 length) {
 
 	MMRESULT result = midiOutPrepareHeader(_mo, &_streamHeader, sizeof(_streamHeader));
 	if (result != MMSYSERR_NOERROR) {
-		check_error (result);
+		check_error(result);
 		return;
 	}
 
@@ -157,7 +156,6 @@ void MidiDriver_WIN::check_error(MMRESULT result) {
 		warning("MM System Error '%s'", buf);
 	}
 }
-
 
 // Plugin interface
 
@@ -249,9 +247,9 @@ Common::Error WindowsMusicPlugin::createInstance(MidiDriver **mididriver, MidiDr
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(WINDOWS)
-	//REGISTER_PLUGIN_DYNAMIC(WINDOWS, PLUGIN_TYPE_MUSIC, WindowsMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(WINDOWS, PLUGIN_TYPE_MUSIC, WindowsMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(WINDOWS, PLUGIN_TYPE_MUSIC, WindowsMusicPlugin);
+REGISTER_PLUGIN_STATIC(WINDOWS, PLUGIN_TYPE_MUSIC, WindowsMusicPlugin);
 //#endif
 
 #endif

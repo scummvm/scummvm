@@ -23,8 +23,8 @@
 #ifndef ACCESS_MARTIAN_SCRIPTS_H
 #define ACCESS_MARTIAN_SCRIPTS_H
 
-#include "common/scummsys.h"
 #include "access/scripts.h"
+#include "common/scummsys.h"
 
 namespace Access {
 

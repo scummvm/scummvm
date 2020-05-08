@@ -23,23 +23,21 @@
 #ifndef NUVIE_SOUND_ADPLUG_U6M
 #define NUVIE_SOUND_ADPLUG_U6M
 
-#include "ultima/nuvie/sound/adplug/adplug_player.h"
 #include "common/stack.h"
+#include "ultima/nuvie/sound/adplug/adplug_player.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-class Cu6mPlayer: public CPlayer {
+class Cu6mPlayer : public CPlayer {
 public:
 	static CPlayer *factory(Copl *newopl);
 
 	Cu6mPlayer(Copl *newopl) : CPlayer(newopl), song_data(0), driver_active(0),
-		songend(0), song_pos(0), loop_position(0), read_delay(0) {
+	                           songend(0), song_pos(0), loop_position(0), read_delay(0) {
 	}
 
 	~Cu6mPlayer() override;
-
-
 
 	bool load(const Std::string &filename) override;
 	bool update() override;
@@ -50,9 +48,7 @@ public:
 		return Std::string("Ultima 6 Music");
 	};
 
-
 protected:
-
 	struct byte_pair {
 		unsigned char lo;
 		unsigned char hi;
@@ -69,19 +65,18 @@ protected:
 		unsigned char *data;
 	};
 
-
 	// class variables
 	long played_ticks;
 
-	unsigned char *song_data;   // the uncompressed .m file (the "song")
-	bool driver_active;         // flag to prevent reentrancy
-	bool songend;               // indicates song end
-	int song_pos;               // current offset within the song
-	int loop_position;          // position of the loop point
-	int read_delay;             // delay (in timer ticks) before further song data is read
+	unsigned char *song_data; // the uncompressed .m file (the "song")
+	bool driver_active;       // flag to prevent reentrancy
+	bool songend;             // indicates song end
+	int song_pos;             // current offset within the song
+	int loop_position;        // position of the loop point
+	int read_delay;           // delay (in timer ticks) before further song data is read
 	Common::Stack<subsong_info> subsong_stack;
 
-	int instrument_offsets[9];  // offsets of the adlib instrument data
+	int instrument_offsets[9]; // offsets of the adlib instrument data
 	// vibrato ("vb")
 	unsigned char vb_current_value[9];
 	unsigned char vb_double_amplitude[9];
@@ -93,7 +88,7 @@ protected:
 	unsigned char carrier_mf_mod_delay_backup[9];
 	unsigned char carrier_mf_mod_delay[9];
 	// frequency
-	byte_pair channel_freq[9];  // adlib freq settings for each channel
+	byte_pair channel_freq[9]; // adlib freq settings for each channel
 	signed char channel_freq_signed_delta[9];
 
 	// protected functions used by update()
@@ -128,7 +123,6 @@ protected:
 
 	void out_adlib(unsigned char adlib_register, unsigned char adlib_data);
 	void out_adlib_opcell(int channel, bool carrier, unsigned char adlib_register, unsigned char out_byte);
-
 };
 
 } // End of namespace Nuvie

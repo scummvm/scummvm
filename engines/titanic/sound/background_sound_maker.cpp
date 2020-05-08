@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBackgroundSoundMaker, CGameObject)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
 void CBackgroundSoundMaker::save(SimpleFile *file, int indent) {

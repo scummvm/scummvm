@@ -27,7 +27,7 @@ namespace Ultima {
 namespace Nuvie {
 
 CEmuopl::CEmuopl(int rate, bool bit16, bool usestereo)
-	: use16bit(bit16), stereo(usestereo), oplRate(rate) {
+    : use16bit(bit16), stereo(usestereo), oplRate(rate) {
 	YM3812Init(1, 3579545, rate);
 }
 
@@ -60,7 +60,7 @@ void CEmuopl::update(short *buf, int samples) {
 		for (i = 0; i < (stereo ? samples * 2 : samples); i++)
 			((char *)buf)[i] = (tempbuf[i] >> 8) ^ 0x80;
 
-		delete [] tempbuf;
+		delete[] tempbuf;
 	}
 }
 

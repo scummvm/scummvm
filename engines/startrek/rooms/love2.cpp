@@ -524,7 +524,6 @@ void Room::love2CrewmanUsedSynthesizer() {
 	}
 }
 
-
 void Room::love2SpockReachedGasFeeds() {
 	loadActorAnim2(OBJECT_SPOCK, "susehn", -1, -1, 18);
 }
@@ -553,7 +552,7 @@ void Room::love2UseSynthesizer() {
 
 			if (c1 == CANTYPE_O2 && c2 == CANTYPE_H2) {
 				switch (_awayMission->love.synthesizerContents) {
-				case SYNTHITEM_PBC: // Romulan Laughing Gas
+				case SYNTHITEM_PBC:                                               // Romulan Laughing Gas
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", -1, -1, 27); // -> love2ClosedSynthesizerDoorMakingRLG
 					playSoundEffectIndex(SND_DOOR1);
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
@@ -566,14 +565,14 @@ void Room::love2UseSynthesizer() {
 					goto closeSynthesizerDoor;
 
 				case SYNTHITEM_CURE_SAMPLE: // Wet goo
-wetGooFailure:
+				wetGooFailure:
 					showDescription(50, true);
 					showText(TX_SPEAKER_MCCOY, 21, true);
 					loadActorStandAnim(OBJECT_CURESAMPLE);
 					goto closeSynthesizerDoor;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-bottleFailure:
+				bottleFailure:
 					showText(TX_SPEAKER_SPOCK, 28, true);
 					break;
 
@@ -581,12 +580,12 @@ bottleFailure:
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_H2O;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle3");
-produceBottle:
+				produceBottle:
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 					playSoundEffectIndex(SND_DOOR1);
 					break;
 
-closeSynthesizerDoor:
+				closeSynthesizerDoor:
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 					playSoundEffectIndex(SND_DOOR1);
 					_awayMission->love.synthesizerContents = 0;
@@ -595,7 +594,7 @@ closeSynthesizerDoor:
 			} else if (c1 == CANTYPE_H2 && c2 == CANTYPE_N2) {
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
-inertMatterFailure:
+				inertMatterFailure:
 					showDescription(49, true);
 					showText(TX_SPEAKER_SPOCK, 39, true); // BUGFIX: original didn't play audio
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
@@ -721,7 +720,6 @@ void Room::love2CureSynthesized() {
 	showText(TX_SPEAKER_MCCOY, 20, true);
 }
 
-
 // Put polycarbonate in synthesizer
 void Room::love2UsePolyberylcarbonateOnSynthesizerDoor() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 6);
@@ -746,7 +744,6 @@ void Room::love2PutPolyberylcarbonateInSynthesizer() {
 	loseItem(OBJECT_IPBC);
 	_awayMission->love.synthesizerContents = SYNTHITEM_PBC;
 }
-
 
 // Put dish (virus sample) in synthesizer
 void Room::love2UseVirusSampleOnSynthesizerDoor() {
@@ -773,7 +770,6 @@ void Room::love2PutVirusSampleInSynthesizer() {
 	_awayMission->love.synthesizerContents = SYNTHITEM_VIRUS_SAMPLE;
 }
 
-
 // Put cure sample in synthesizer
 void Room::love2UseCureSampleOnSynthesizerDoor() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 8);
@@ -799,8 +795,6 @@ void Room::love2PutCureSampleInSynthesizer() {
 	_awayMission->love.synthesizerContents = SYNTHITEM_CURE_SAMPLE;
 }
 
-
-
 void Room::love2UseAnythingOnSynthesizerDoor() {
 	showText(TX_SPEAKER_MCCOY, 14, true);
 }
@@ -816,7 +810,6 @@ void Room::love2GetCanister() {
 		showText(TX_SPEAKER_FERRIS, 40, true);
 }
 
-
 // Get antigrav from cabinet
 void Room::love2GetAntigrav() {
 	walkCrewman(OBJECT_KIRK, 0x37, 0xb4, 9);
@@ -831,7 +824,6 @@ void Room::love2GotAntigrav() {
 	giveItem(OBJECT_IANTIGRA);
 	showDescription(42, true);
 }
-
 
 // Get polyberylcarbonate from synthesizer
 void Room::love2GetPolyberylcarbonate() {
@@ -852,7 +844,6 @@ void Room::love2GotPolyberylcarbonate() {
 	playSoundEffectIndex(SND_DOOR1);
 }
 
-
 // Get virus sample from synthesizer
 void Room::love2GetDishes() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 17);
@@ -872,7 +863,6 @@ void Room::love2GotDishes() {
 	playSoundEffectIndex(SND_DOOR1);
 }
 
-
 // Get cure sample from synthesizer
 void Room::love2GetSample() {
 	walkCrewman(OBJECT_KIRK, 0x85, 0xad, 19);
@@ -891,7 +881,6 @@ void Room::love2GotSample() {
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
 	playSoundEffectIndex(SND_DOOR1);
 }
-
 
 // Get synthesizer output
 void Room::love2GetSynthesizerOutput() {
@@ -964,4 +953,4 @@ void Room::love2GotCure() {
 	_awayMission->love.synthesizerContents = 0;
 }
 
-}
+} // namespace StarTrek

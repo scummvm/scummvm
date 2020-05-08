@@ -34,8 +34,8 @@ public:
 	explicit Console();
 	~Console(void) override {}
 
-	bool Cmd_allowSkip(int argc, const char** argv);
+	bool Cmd_allowSkip(int argc, const char **argv);
 };
-}
+} // namespace Plumbers
 
 #endif

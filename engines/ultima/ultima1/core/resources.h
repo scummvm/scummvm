@@ -36,6 +36,7 @@ protected:
 	 * Synchronize resource data
 	 */
 	void synchronize() override;
+
 public:
 	const char *TITLE_MESSAGES[13];
 	const char *MAIN_MENU_TEXT[7];

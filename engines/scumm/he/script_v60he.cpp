@@ -25,12 +25,12 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/imuse/imuse.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/he/sound_he.h"
+#include "scumm/imuse/imuse.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
-#include "scumm/he/sound_he.h"
 #include "scumm/usage_bits.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
@@ -60,7 +60,7 @@ static int virtScreenSavePack(byte *dst, byte *src, int len, int unk);
 //     transparency in akos.cpp
 //     negative size in file read/write
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v60he, x)
+#define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v60he, x)
 
 void ScummEngine_v60he::setupOpcodes() {
 	ScummEngine_v6::setupOpcodes();
@@ -323,7 +323,7 @@ void ScummEngine_v60he::o60_roomOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 172:		// SO_ROOM_SCROLL
+	case 172: // SO_ROOM_SCROLL
 		b = pop();
 		a = pop();
 		if (a < (_screenWidth / 2))
@@ -338,7 +338,7 @@ void ScummEngine_v60he::o60_roomOps() {
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
 
-	case 174:		// SO_ROOM_SCREEN
+	case 174: // SO_ROOM_SCREEN
 		b = pop();
 		a = pop();
 		if (_game.heversion >= 71)
@@ -347,7 +347,7 @@ void ScummEngine_v60he::o60_roomOps() {
 			initScreens(a, b);
 		break;
 
-	case 175:		// SO_ROOM_PALETTE
+	case 175: // SO_ROOM_PALETTE
 		d = pop();
 		c = pop();
 		b = pop();
@@ -355,28 +355,28 @@ void ScummEngine_v60he::o60_roomOps() {
 		setPalColor(d, a, b, c);
 		break;
 
-	case 176:		// SO_ROOM_SHAKE_ON
+	case 176: // SO_ROOM_SHAKE_ON
 		setShake(1);
 		break;
 
-	case 177:		// SO_ROOM_SHAKE_OFF
+	case 177: // SO_ROOM_SHAKE_OFF
 		setShake(0);
 		break;
 
-	case 179:		// SO_ROOM_INTENSITY
+	case 179: // SO_ROOM_INTENSITY
 		c = pop();
 		b = pop();
 		a = pop();
 		darkenPalette(a, a, a, b, c);
 		break;
 
-	case 180:		// SO_ROOM_SAVEGAME
+	case 180: // SO_ROOM_SAVEGAME
 		_saveTemporaryState = true;
 		_saveLoadSlot = pop();
 		_saveLoadFlag = pop();
 		break;
 
-	case 181:		// SO_ROOM_FADE
+	case 181: // SO_ROOM_FADE
 		a = pop();
 		if (_game.heversion >= 70) {
 			// Defaults to 1 but doesn't use fade effects
@@ -388,7 +388,7 @@ void ScummEngine_v60he::o60_roomOps() {
 		}
 		break;
 
-	case 182:		// SO_RGB_ROOM_INTENSITY
+	case 182: // SO_RGB_ROOM_INTENSITY
 		e = pop();
 		d = pop();
 		c = pop();
@@ -397,7 +397,7 @@ void ScummEngine_v60he::o60_roomOps() {
 		darkenPalette(a, b, c, d, e);
 		break;
 
-	case 183:		// SO_ROOM_SHADOW
+	case 183: // SO_ROOM_SHADOW
 		e = pop();
 		d = pop();
 		c = pop();
@@ -407,7 +407,7 @@ void ScummEngine_v60he::o60_roomOps() {
 			setShadowPalette(a, b, c, d, e, 0, 256);
 		break;
 
-	case 186:		// SO_ROOM_TRANSFORM
+	case 186: // SO_ROOM_TRANSFORM
 		d = pop();
 		c = pop();
 		b = pop();
@@ -415,14 +415,14 @@ void ScummEngine_v60he::o60_roomOps() {
 		palManipulateInit(a, b, c, d);
 		break;
 
-	case 187:		// SO_CYCLE_SPEED
+	case 187: // SO_CYCLE_SPEED
 		b = pop();
 		a = pop();
 		assertRange(1, a, 16, "o60_roomOps: 187: color cycle");
 		_colorCycle[a - 1].delay = (b != 0) ? 0x4000 / (b * 0x4C) : 0;
 		break;
 
-	case 213:		// SO_ROOM_NEW_PALETTE
+	case 213: // SO_ROOM_NEW_PALETTE
 		a = pop();
 		setCurrentPalette(a);
 		break;
@@ -446,12 +446,12 @@ void ScummEngine_v60he::o60_roomOps() {
 		_saveLoadSlot = 255;
 		_saveTemporaryState = true;
 		break;
-	case 234:		// HE 7.1
+	case 234: // HE 7.1
 		b = pop();
 		a = pop();
 		swapObjects(a, b);
 		break;
-	case 236:		// HE 7.1
+	case 236: // HE 7.1
 		b = pop();
 		a = pop();
 		setRoomPalette(a, b);
@@ -508,111 +508,111 @@ void ScummEngine_v60he::o60_actorOps() {
 		_actorClipOverride.top = pop();
 		_actorClipOverride.left = pop();
 		break;
-	case 76:		// SO_COSTUME
+	case 76: // SO_COSTUME
 		a->setActorCostume(pop());
 		break;
-	case 77:		// SO_STEP_DIST
+	case 77: // SO_STEP_DIST
 		j = pop();
 		i = pop();
 		a->setActorWalkSpeed(i, j);
 		break;
-	case 78:		// SO_SOUND
+	case 78: // SO_SOUND
 		k = getStackList(args, ARRAYSIZE(args));
 		for (i = 0; i < k; i++)
 			a->_sound[i] = args[i];
 		break;
-	case 79:		// SO_WALK_ANIMATION
+	case 79: // SO_WALK_ANIMATION
 		a->_walkFrame = pop();
 		break;
-	case 80:		// SO_TALK_ANIMATION
+	case 80: // SO_TALK_ANIMATION
 		a->_talkStopFrame = pop();
 		a->_talkStartFrame = pop();
 		break;
-	case 81:		// SO_STAND_ANIMATION
+	case 81: // SO_STAND_ANIMATION
 		a->_standFrame = pop();
 		break;
-	case 82:		// SO_ANIMATION
+	case 82: // SO_ANIMATION
 		// dummy case in scumm6
 		pop();
 		pop();
 		pop();
 		break;
-	case 83:		// SO_DEFAULT
+	case 83: // SO_DEFAULT
 		a->initActor(0);
 		break;
-	case 84:		// SO_ELEVATION
+	case 84: // SO_ELEVATION
 		a->setElevation(pop());
 		break;
-	case 85:		// SO_ANIMATION_DEFAULT
+	case 85: // SO_ANIMATION_DEFAULT
 		a->_initFrame = 1;
 		a->_walkFrame = 2;
 		a->_standFrame = 3;
 		a->_talkStartFrame = 4;
 		a->_talkStopFrame = 5;
 		break;
-	case 86:		// SO_PALETTE
+	case 86: // SO_PALETTE
 		j = pop();
 		i = pop();
 		assertRange(0, i, 255, "o60_actorOps: palette slot");
 		a->remapActorPaletteColor(i, j);
 		a->_needRedraw = true;
 		break;
-	case 87:		// SO_TALK_COLOR
+	case 87: // SO_TALK_COLOR
 		a->_talkColor = pop();
 		break;
-	case 88:		// SO_ACTOR_NAME
+	case 88: // SO_ACTOR_NAME
 		loadPtrToResource(rtActorName, a->_number, NULL);
 		break;
-	case 89:		// SO_INIT_ANIMATION
+	case 89: // SO_INIT_ANIMATION
 		a->_initFrame = pop();
 		break;
-	case 91:		// SO_ACTOR_WIDTH
+	case 91: // SO_ACTOR_WIDTH
 		a->_width = pop();
 		break;
-	case 92:		// SO_SCALE
+	case 92: // SO_SCALE
 		i = pop();
 		a->setScale(i, i);
 		break;
-	case 93:		// SO_NEVER_ZCLIP
+	case 93: // SO_NEVER_ZCLIP
 		a->_forceClip = 0;
 		break;
-	case 94:		// SO_ALWAYS_ZCLIP
+	case 94: // SO_ALWAYS_ZCLIP
 		a->_forceClip = pop();
 		break;
-	case 95:		// SO_IGNORE_BOXES
+	case 95: // SO_IGNORE_BOXES
 		a->_ignoreBoxes = 1;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
 			a->putActor();
 		break;
-	case 96:		// SO_FOLLOW_BOXES
+	case 96: // SO_FOLLOW_BOXES
 		a->_ignoreBoxes = 0;
 		a->_forceClip = 0;
 		if (a->isInCurrentRoom())
 			a->putActor();
 		break;
-	case 97:		// SO_ANIMATION_SPEED
+	case 97: // SO_ANIMATION_SPEED
 		a->setAnimSpeed(pop());
 		break;
-	case 98:		// SO_SHADOW
+	case 98: // SO_SHADOW
 		a->_shadowMode = pop();
 		a->_needRedraw = true;
 		break;
-	case 99:		// SO_TEXT_OFFSET
+	case 99: // SO_TEXT_OFFSET
 		a->_talkPosY = pop();
 		a->_talkPosX = pop();
 		break;
-	case 198:		// SO_ACTOR_VARIABLE
+	case 198: // SO_ACTOR_VARIABLE
 		i = pop();
 		a->setAnimVar(pop(), i);
 		break;
-	case 215:		// SO_ACTOR_IGNORE_TURNS_ON
+	case 215: // SO_ACTOR_IGNORE_TURNS_ON
 		a->_ignoreTurns = true;
 		break;
-	case 216:		// SO_ACTOR_IGNORE_TURNS_OFF
+	case 216: // SO_ACTOR_IGNORE_TURNS_OFF
 		a->_ignoreTurns = false;
 		break;
-	case 217:		// SO_ACTOR_NEW
+	case 217: // SO_ACTOR_NEW
 		a->initActor(2);
 		break;
 	case 218:
@@ -623,8 +623,7 @@ void ScummEngine_v60he::o60_actorOps() {
 		a->_needRedraw = true;
 		a->_needBgReset = true;
 		break;
-	case 225:
-		{
+	case 225: {
 		byte string[128];
 		copyScriptString(string);
 		int slot = pop();
@@ -636,7 +635,7 @@ void ScummEngine_v60he::o60_actorOps() {
 		a->_heTalkQueue[slot].posY = a->_talkPosY;
 		a->_heTalkQueue[slot].color = a->_talkColor;
 		break;
-		}
+	}
 	default:
 		error("o60_actorOps: default case %d", subOp);
 	}
@@ -720,7 +719,6 @@ uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
 	}
 	return decByte;
 }
-
 
 void ScummEngine_v60he::o60_kernelGetFunctions() {
 	int args[29];
@@ -877,7 +875,6 @@ void ScummEngine_v60he::o60_openFile() {
 
 		if (_hInFileTable[slot] == 0 && _hOutFileTable[slot] == 0)
 			slot = -1;
-
 	}
 	push(slot);
 }
@@ -1118,33 +1115,33 @@ void ScummEngine_v60he::decodeParseString(int m, int n) {
 	byte b = fetchScriptByte();
 
 	switch (b) {
-	case 65:		// SO_AT
+	case 65: // SO_AT
 		_string[m].ypos = pop();
 		_string[m].xpos = pop();
 		_string[m].overhead = false;
 		break;
-	case 66:		// SO_COLOR
+	case 66: // SO_COLOR
 		_string[m].color = pop();
 		break;
-	case 67:		// SO_CLIPPED
+	case 67: // SO_CLIPPED
 		_string[m].right = pop();
 		break;
-	case 69:		// SO_CENTER
+	case 69: // SO_CENTER
 		_string[m].center = true;
 		_string[m].overhead = false;
 		break;
-	case 71:		// SO_LEFT
+	case 71: // SO_LEFT
 		_string[m].center = false;
 		_string[m].overhead = false;
 		break;
-	case 72:		// SO_OVERHEAD
+	case 72: // SO_OVERHEAD
 		_string[m].overhead = true;
 		_string[m].no_talk_anim = false;
 		break;
-	case 74:		// SO_MUMBLE
+	case 74: // SO_MUMBLE
 		_string[m].no_talk_anim = true;
 		break;
-	case 75:		// SO_TEXTSTRING
+	case 75: // SO_TEXTSTRING
 		printString(m, _scriptPointer);
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		break;

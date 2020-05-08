@@ -42,10 +42,10 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/rate.h"
 #include "audio/mixer.h"
-#include "common/util.h"
+#include "audio/rate.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 //#define DEBUG_RATECONV
 
@@ -58,7 +58,7 @@ namespace Audio {
  * ARM routine we call doesn't respect those definitions.
  */
 #define FRAC_BITS 16
-#define FRAC_ONE  (1 << FRAC_BITS)
+#define FRAC_ONE (1 << FRAC_BITS)
 
 /**
  * The size of the intermediate input cache. Bigger values may increase
@@ -76,7 +76,7 @@ namespace Audio {
 enum {
 	FRAC_BITS_LOW = 15,
 	FRAC_ONE_LOW = (1L << FRAC_BITS_LOW),
-	FRAC_HALF_LOW = (1L << (FRAC_BITS_LOW-1))
+	FRAC_HALF_LOW = (1L << (FRAC_BITS_LOW - 1))
 };
 
 /**
@@ -102,7 +102,8 @@ typedef struct {
 template<bool stereo, bool reverseStereo>
 class SimpleRateConverter : public RateConverter {
 protected:
-	SimpleRateDetails  sr;
+	SimpleRateDetails sr;
+
 public:
 	SimpleRateConverter(st_rate_t inrate, st_rate_t outrate);
 	int flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r);
@@ -110,7 +111,6 @@ public:
 		return (ST_SUCCESS);
 	}
 };
-
 
 /*
  * Prepare processing.
@@ -144,34 +144,33 @@ SimpleRateConverter<stereo, reverseStereo>::SimpleRateConverter(st_rate_t inrate
 #endif
 
 extern "C" st_sample_t *ARM_SimpleRate_M(
-								AudioStream &input,
-								int (*fn)(Audio::AudioStream&,int16*,int),
-								SimpleRateDetails *sr,
-								st_sample_t *obuf,
-								st_size_t osamp,
-								st_volume_t vol_l,
-								st_volume_t vol_r);
+    AudioStream &input,
+    int (*fn)(Audio::AudioStream &, int16 *, int),
+    SimpleRateDetails *sr,
+    st_sample_t *obuf,
+    st_size_t osamp,
+    st_volume_t vol_l,
+    st_volume_t vol_r);
 
 extern "C" st_sample_t *ARM_SimpleRate_S(
-								AudioStream &input,
-								int (*fn)(Audio::AudioStream&,int16*,int),
-								SimpleRateDetails *sr,
-								st_sample_t *obuf,
-								st_size_t osamp,
-								st_volume_t vol_l,
-								st_volume_t vol_r);
+    AudioStream &input,
+    int (*fn)(Audio::AudioStream &, int16 *, int),
+    SimpleRateDetails *sr,
+    st_sample_t *obuf,
+    st_size_t osamp,
+    st_volume_t vol_l,
+    st_volume_t vol_r);
 
 extern "C" st_sample_t *ARM_SimpleRate_R(
-								AudioStream &input,
-								int (*fn)(Audio::AudioStream&,int16*,int),
-								SimpleRateDetails *sr,
-								st_sample_t *obuf,
-								st_size_t osamp,
-								st_volume_t vol_l,
-								st_volume_t vol_r);
+    AudioStream &input,
+    int (*fn)(Audio::AudioStream &, int16 *, int),
+    SimpleRateDetails *sr,
+    st_sample_t *obuf,
+    st_size_t osamp,
+    st_volume_t vol_l,
+    st_volume_t vol_r);
 
-extern "C" int SimpleRate_readFudge(Audio::AudioStream &input, int16 *a, int b)
-{
+extern "C" int SimpleRate_readFudge(Audio::AudioStream &input, int16 *a, int b) {
 #ifdef DEBUG_RATECONV
 	debug("Reading ptr=%x n%d", a, b);
 #endif
@@ -188,19 +187,19 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 	if (!stereo) {
 		obuf = ARM_SimpleRate_M(input,
-								&SimpleRate_readFudge,
-								&sr,
-								obuf, osamp, vol_l, vol_r);
+		                        &SimpleRate_readFudge,
+		                        &sr,
+		                        obuf, osamp, vol_l, vol_r);
 	} else if (reverseStereo) {
 		obuf = ARM_SimpleRate_R(input,
-								&SimpleRate_readFudge,
-								&sr,
-								obuf, osamp, vol_l, vol_r);
+		                        &SimpleRate_readFudge,
+		                        &sr,
+		                        obuf, osamp, vol_l, vol_r);
 	} else {
 		obuf = ARM_SimpleRate_S(input,
-								&SimpleRate_readFudge,
-								&sr,
-								obuf, osamp, vol_l, vol_r);
+		                        &SimpleRate_readFudge,
+		                        &sr,
+		                        obuf, osamp, vol_l, vol_r);
 	}
 
 	return (obuf - ostart) / 2;
@@ -246,31 +245,31 @@ extern "C" {
 }
 
 extern "C" st_sample_t *ARM_LinearRate_M(
-								AudioStream &input,
-								int (*fn)(Audio::AudioStream&,int16*,int),
-								LinearRateDetails *lr,
-								st_sample_t *obuf,
-								st_size_t osamp,
-								st_volume_t vol_l,
-								st_volume_t vol_r);
+    AudioStream &input,
+    int (*fn)(Audio::AudioStream &, int16 *, int),
+    LinearRateDetails *lr,
+    st_sample_t *obuf,
+    st_size_t osamp,
+    st_volume_t vol_l,
+    st_volume_t vol_r);
 
 extern "C" st_sample_t *ARM_LinearRate_S(
-								AudioStream &input,
-								int (*fn)(Audio::AudioStream&,int16*,int),
-								LinearRateDetails *lr,
-								st_sample_t *obuf,
-								st_size_t osamp,
-								st_volume_t vol_l,
-								st_volume_t vol_r);
+    AudioStream &input,
+    int (*fn)(Audio::AudioStream &, int16 *, int),
+    LinearRateDetails *lr,
+    st_sample_t *obuf,
+    st_size_t osamp,
+    st_volume_t vol_l,
+    st_volume_t vol_r);
 
 extern "C" st_sample_t *ARM_LinearRate_R(
-								AudioStream &input,
-								int (*fn)(Audio::AudioStream&,int16*,int),
-								LinearRateDetails *lr,
-								st_sample_t *obuf,
-								st_size_t osamp,
-								st_volume_t vol_l,
-								st_volume_t vol_r);
+    AudioStream &input,
+    int (*fn)(Audio::AudioStream &, int16 *, int),
+    LinearRateDetails *lr,
+    st_sample_t *obuf,
+    st_size_t osamp,
+    st_volume_t vol_l,
+    st_volume_t vol_r);
 
 template<bool stereo, bool reverseStereo>
 class LinearRateConverter : public RateConverter {
@@ -284,7 +283,6 @@ public:
 		return (ST_SUCCESS);
 	}
 };
-
 
 /*
  * Prepare processing.
@@ -335,26 +333,24 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 	if (!stereo) {
 		obuf = ARM_LinearRate_M(input,
-								&SimpleRate_readFudge,
-								&lr,
-								obuf, osamp, vol_l, vol_r);
+		                        &SimpleRate_readFudge,
+		                        &lr,
+		                        obuf, osamp, vol_l, vol_r);
 	} else if (reverseStereo) {
 		obuf = ARM_LinearRate_R(input,
-								&SimpleRate_readFudge,
-								&lr,
-								obuf, osamp, vol_l, vol_r);
+		                        &SimpleRate_readFudge,
+		                        &lr,
+		                        obuf, osamp, vol_l, vol_r);
 	} else {
 		obuf = ARM_LinearRate_S(input,
-								&SimpleRate_readFudge,
-								&lr,
-								obuf, osamp, vol_l, vol_r);
+		                        &SimpleRate_readFudge,
+		                        &lr,
+		                        obuf, osamp, vol_l, vol_r);
 	}
 	return (obuf - ostart) / 2;
 }
 
-
 #pragma mark -
-
 
 /**
  * Simple audio rate converter for the case that the inrate equals the outrate.
@@ -368,26 +364,25 @@ extern "C" {
 }
 
 extern "C" st_sample_t *ARM_CopyRate_M(
-								st_size_t len,
-								st_sample_t *obuf,
-								st_volume_t vol_l,
-								st_volume_t vol_r,
-								st_sample_t *_buffer);
+    st_size_t len,
+    st_sample_t *obuf,
+    st_volume_t vol_l,
+    st_volume_t vol_r,
+    st_sample_t *_buffer);
 
 extern "C" st_sample_t *ARM_CopyRate_S(
-								st_size_t len,
-								st_sample_t *obuf,
-								st_volume_t vol_l,
-								st_volume_t vol_r,
-								st_sample_t *_buffer);
+    st_size_t len,
+    st_sample_t *obuf,
+    st_volume_t vol_l,
+    st_volume_t vol_r,
+    st_sample_t *_buffer);
 
 extern "C" st_sample_t *ARM_CopyRate_R(
-								st_size_t len,
-								st_sample_t *obuf,
-								st_volume_t vol_l,
-								st_volume_t vol_r,
-								st_sample_t *_buffer);
-
+    st_size_t len,
+    st_sample_t *obuf,
+    st_volume_t vol_l,
+    st_volume_t vol_r,
+    st_sample_t *_buffer);
 
 template<bool stereo, bool reverseStereo>
 class CopyRateConverter : public RateConverter {
@@ -440,9 +435,7 @@ public:
 	}
 };
 
-
 #pragma mark -
-
 
 /**
  * Create and return a RateConverter object for the specified input and output rates.
@@ -465,7 +458,7 @@ RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stere
 					return new LinearRateConverter<true, false>(inrate, outrate);
 			} else
 				return new LinearRateConverter<false, false>(inrate, outrate);
-		 }
+		}
 	} else {
 		if (stereo) {
 			if (reverseStereo)

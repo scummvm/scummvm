@@ -20,14 +20,13 @@
  *
  */
 
-
 #ifndef KYRA_SOUND_PCDRIVER_H
 #define KYRA_SOUND_PCDRIVER_H
 
 #include "kyra/resource/resource.h"
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
 
 namespace Kyra {

@@ -35,10 +35,17 @@ zchar Processor::console_read_key(zword timeout) {
 }
 
 void Processor::scrollback_char(zchar c) {
-	if (c == ZC_INDENT)
-		{ scrollback_char (' '); scrollback_char (' '); scrollback_char (' '); return; }
-	if (c == ZC_GAP)
-		{ scrollback_char (' '); scrollback_char (' '); return; }
+	if (c == ZC_INDENT) {
+		scrollback_char(' ');
+		scrollback_char(' ');
+		scrollback_char(' ');
+		return;
+	}
+	if (c == ZC_GAP) {
+		scrollback_char(' ');
+		scrollback_char(' ');
+		return;
+	}
 
 	os_scrollback_char(c);
 }
@@ -58,10 +65,10 @@ void Processor::scrollback_write_input(const zchar *buf, zchar key) {
 	int i;
 
 	for (i = 0; buf[i] != 0; i++)
-		scrollback_char (buf[i]);
+		scrollback_char(buf[i]);
 
 	if (key == ZC_RETURN)
-		scrollback_char ('\n');
+		scrollback_char('\n');
 }
 
 void Processor::scrollback_erase_input(const zchar *buf) {
@@ -72,7 +79,6 @@ void Processor::scrollback_erase_input(const zchar *buf) {
 		width++;
 
 	os_scrollback_erase(width);
-
 }
 
 void Processor::stream_mssg_on() {
@@ -81,7 +87,7 @@ void Processor::stream_mssg_on() {
 	if (ostream_screen)
 		screen_mssg_on();
 	if (ostream_script && enable_scripting)
-	script_mssg_on();
+		script_mssg_on();
 
 	message = true;
 }
@@ -128,7 +134,7 @@ void Processor::stream_new_line() {
 		if (ostream_script && enable_scripting)
 			script_new_line();
 		if (enable_scripting)
-			os_scrollback_char ('\n');
+			os_scrollback_char('\n');
 	}
 }
 
@@ -163,7 +169,7 @@ continue_input:
 }
 
 zchar Processor::stream_read_input(int max, zchar *buf, zword timeout, zword routine,
-			  bool hot_keys, bool no_scripting) {
+                                   bool hot_keys, bool no_scripting) {
 	zchar key = ZC_BAD;
 	flush_buffer();
 
@@ -204,7 +210,7 @@ void Processor::script_open() {
 	h_flags &= ~SCRIPTING_FLAG;
 
 	frefid_t fref = glk_fileref_create_by_prompt(fileusage_Transcript,
-		filemode_WriteAppend);
+	                                             filemode_WriteAppend);
 	sfp = glk_stream_open_file(fref, filemode_WriteAppend);
 
 	if (sfp != nullptr) {
@@ -476,7 +482,6 @@ zchar Processor::replay_read_input(zchar *buf) {
 	}
 }
 
-
 void Processor::z_input_stream() {
 	flush_buffer();
 
@@ -489,14 +494,14 @@ void Processor::z_input_stream() {
 void Processor::z_output_stream() {
 	flush_buffer();
 
-	switch ((short) zargs[0]) {
+	switch ((short)zargs[0]) {
 	case 1:
 		ostream_screen = true;
 		break;
 	case -1:
 		ostream_screen = false;
 		break;
-	case  2:
+	case 2:
 		if (!ostream_script)
 			script_open();
 		break;
@@ -563,7 +568,7 @@ void Processor::z_save() {
 	if (zargc != 0) {
 		// Open auxilary file
 		frefid_t ref = glk_fileref_create_by_prompt(fileusage_Data | fileusage_BinaryMode,
-			filemode_Write, 0);
+		                                            filemode_Write, 0);
 		if (ref != nullptr) {
 			// Write data
 			strid_t f = glk_stream_open_file(ref, filemode_Write);
@@ -588,7 +593,7 @@ void Processor::z_restore() {
 
 	if (zargc != 0) {
 		frefid_t ref = glk_fileref_create_by_prompt(fileusage_Data | fileusage_BinaryMode,
-			filemode_Read, 0);
+		                                            filemode_Read, 0);
 		if (ref != nullptr) {
 			// Write data
 			strid_t f = glk_stream_open_file(ref, filemode_Read);

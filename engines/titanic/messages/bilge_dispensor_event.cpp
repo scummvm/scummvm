@@ -28,10 +28,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBilgeDispensorEvent, CAutoSoundEvent)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
 void CBilgeDispensorEvent::save(SimpleFile *file, int indent) {
@@ -60,7 +60,7 @@ bool CBilgeDispensorEvent::FrameMsg(CFrameMsg *msg) {
 	uint32 ticks = g_vm->_events->getTicksCount();
 
 	if ((_ticksDelayEnd && ticks >= _ticksDelayEnd) ||
-			_soundHandle == -1 || !isSoundActive(_soundHandle)) {
+	    _soundHandle == -1 || !isSoundActive(_soundHandle)) {
 		_soundHandle = -1;
 		_ticksDelayEnd = 0;
 

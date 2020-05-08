@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/u6_lib_n.h"
-#include "ultima/nuvie/files/u6_bmp.h"
-#include "ultima/nuvie/screen/dither.h"
 #include "ultima/nuvie/gui/widgets/background.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/files/u6_bmp.h"
+#include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/dither.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -45,7 +45,6 @@ Background::Background(Configuration *cfg) : GUI_Widget(NULL) {
 	x_off = Game::get_game()->get_game_x_offset();
 	y_off = Game::get_game()->get_game_y_offset();
 
-
 	Init(NULL, 0, 0, Game::get_game()->get_screen()->get_width(), Game::get_game()->get_screen()->get_height());
 }
 
@@ -59,9 +58,9 @@ bool Background::init() {
 
 	if (!Game::get_game()->is_new_style()) {
 		switch (game_type) {
-		case NUVIE_GAME_U6 :
+		case NUVIE_GAME_U6:
 			config_get_path(config, "paper.bmp", filename);
-			background = (U6Shape *) new U6Bmp();
+			background = (U6Shape *)new U6Bmp();
 			if (background->load(filename) == false)
 				return false;
 			if (Game::get_game()->is_original_plus()) {
@@ -71,7 +70,7 @@ bool Background::init() {
 			}
 			break;
 
-		case NUVIE_GAME_MD :
+		case NUVIE_GAME_MD:
 			background = new U6Shape();
 			background->load_WoU_background(config, game_type);
 			if (Game::get_game()->is_original_plus()) {
@@ -80,7 +79,7 @@ bool Background::init() {
 			}
 			break;
 
-		case NUVIE_GAME_SE :
+		case NUVIE_GAME_SE:
 			background = new U6Shape();
 			background->load_WoU_background(config, game_type);
 			if (Game::get_game()->is_original_plus()) {
@@ -105,16 +104,16 @@ void Background::Display(bool full_redraw) {
 			else if (full_redraw || update_display) { // need to clear null background when we have a game size smaller than the screen
 				uint16 game_width = Game::get_game()->get_game_width();
 				uint16 game_height = Game::get_game()->get_game_height();
-				if (x_off > 0) { // centered
-					screen->clear(area.left, area.top, x_off, area.height(), NULL); // left side
-					screen->clear(x_off + game_width, area.top, x_off, area.height(), NULL); // right side
-				} else if (area.width() > game_width) { // upper_left position
+				if (x_off > 0) {                                                                         // centered
+					screen->clear(area.left, area.top, x_off, area.height(), NULL);                      // left side
+					screen->clear(x_off + game_width, area.top, x_off, area.height(), NULL);             // right side
+				} else if (area.width() > game_width) {                                                  // upper_left position
 					screen->clear(game_width, area.top, area.width() - game_width, area.height(), NULL); // right side
 				}
-				if (y_off > 0) { // centered
-					screen->clear(area.left, area.top, area.width(), y_off, NULL); // top
-					screen->clear(area.left, y_off + game_height, area.width(), y_off, NULL); // bottom
-				} else if (area.height() > game_height) { // upper_left position
+				if (y_off > 0) {                                                                            // centered
+					screen->clear(area.left, area.top, area.width(), y_off, NULL);                          // top
+					screen->clear(area.left, y_off + game_height, area.width(), y_off, NULL);               // bottom
+				} else if (area.height() > game_height) {                                                   // upper_left position
 					screen->clear(area.left, game_height, area.width(), area.height() - game_height, NULL); // bottom
 				}
 			}
@@ -132,7 +131,7 @@ void Background::Display(bool full_redraw) {
 		} else {
 			screen->clear(area.left, area.top, area.width(), area.height(), NULL);
 			if (Game::get_game()->is_orig_style())
-				screen->blit(x_off, y_off, background->get_data(), 8,  bg_w, bg_h, bg_w, true);
+				screen->blit(x_off, y_off, background->get_data(), 8, bg_w, bg_h, bg_w, true);
 		}
 		update_display = false;
 		screen->update(0, 0, area.width(), area.height());
@@ -149,7 +148,7 @@ bool Background::drag_accept_drop(int x, int y, int message, void *data) {
 		if (!map_window) // should be initialized before drops occur but we will play it safe
 			return false;
 		if (Game::get_game()->get_game_width() > x - x_off && x >= x_off // make sure we are on the map window
-		        && Game::get_game()->get_game_height() > y - y_off && y >= y_off) {
+		    && Game::get_game()->get_game_height() > y - y_off && y >= y_off) {
 			if (x >= left_bg_x_off && y <= 200 + y_off) // over background image
 				return false;
 			return map_window->drag_accept_drop(x, y, message, data);

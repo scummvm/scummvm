@@ -23,9 +23,9 @@
 #ifndef HOPKINS_SOUND_H
 #define HOPKINS_SOUND_H
 
+#include "audio/mixer.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "audio/mixer.h"
 
 namespace Audio {
 class RewindableAudioStream;
@@ -117,6 +117,7 @@ public:
 	int _soundVolume;
 	int _voiceVolume;
 	int _specialSoundNum;
+
 public:
 	SoundManager(HopkinsEngine *vm);
 	~SoundManager();

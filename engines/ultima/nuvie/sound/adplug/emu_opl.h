@@ -23,29 +23,29 @@
 #ifndef NUVIE_SOUND_ADPLUG_EMU_OPL_H
 #define NUVIE_SOUND_ADPLUG_EMU_OPL_H
 
-#include "ultima/nuvie/sound/adplug/opl.h"
 #include "audio/fmopl.h"
+#include "ultima/nuvie/sound/adplug/opl.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-class CEmuopl: public Copl {
+class CEmuopl : public Copl {
 public:
-	CEmuopl(int rate, bool bit16, bool usestereo);  // rate = sample rate
+	CEmuopl(int rate, bool bit16, bool usestereo); // rate = sample rate
 	~CEmuopl() override;
 
 	int getRate() {
 		return oplRate;
 	}
 
-	void update(short *buf, int samples);   // fill buffer
+	void update(short *buf, int samples); // fill buffer
 
 	// template methods
 	void write(int reg, int val) override;
 	void init() override;
 
 private:
-	bool    use16bit, stereo;
+	bool use16bit, stereo;
 	int oplRate;
 };
 

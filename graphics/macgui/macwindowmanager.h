@@ -23,9 +23,9 @@
 #ifndef GRAPHICS_MACGUI_MACWINDOWMANAGER_H
 #define GRAPHICS_MACGUI_MACWINDOWMANAGER_H
 
+#include "common/events.h"
 #include "common/hashmap.h"
 #include "common/list.h"
-#include "common/events.h"
 
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -57,16 +57,16 @@ enum {
 };
 
 enum {
-	kWMModeNone         	= 0,
-	kWMModeNoDesktop    	= (1 << 0),
-	kWMModeAutohideMenu 	= (1 << 1),
-	kWMModalMenuMode 		= (1 << 2),
-	kWMModeForceBuiltinFonts= (1 << 3),
-	kWMModeUnicode			= (1 << 4),
-	kWMModeManualDrawWidgets= (1 << 5)
+	kWMModeNone = 0,
+	kWMModeNoDesktop = (1 << 0),
+	kWMModeAutohideMenu = (1 << 1),
+	kWMModalMenuMode = (1 << 2),
+	kWMModeForceBuiltinFonts = (1 << 3),
+	kWMModeUnicode = (1 << 4),
+	kWMModeManualDrawWidgets = (1 << 5)
 };
 
-}
+} // namespace MacGUIConstants
 using namespace MacGUIConstants;
 
 class ManagedSurface;
@@ -91,8 +91,7 @@ struct MacPlotData {
 	int thickness;
 	uint bgColor;
 
-	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, int t, uint bg) :
-		surface(s), mask(m), patterns(p), fillType(f), fillOriginX(fx), fillOriginY(fy), thickness(t), bgColor(bg) {
+	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, int t, uint bg) : surface(s), mask(m), patterns(p), fillType(f), fillOriginX(fx), fillOriginY(fy), thickness(t), bgColor(bg) {
 	}
 };
 
@@ -112,7 +111,11 @@ public:
 	 * Note that this method should be called as soon as the WM is created.
 	 * @param screen Surface on which the desktop will be drawn.
 	 */
-	void setScreen(ManagedSurface *screen) { _screen = screen; delete _screenCopy; _screenCopy = nullptr; }
+	void setScreen(ManagedSurface *screen) {
+		_screen = screen;
+		delete _screenCopy;
+		_screenCopy = nullptr;
+	}
 	/**
 	 * Create a window with the given parameters.
 	 * Note that this method allocates the necessary memory for the window.

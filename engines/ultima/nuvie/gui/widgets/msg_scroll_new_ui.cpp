@@ -20,21 +20,21 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/fonts/font_manager.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/portraits/portrait.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/fonts/conv_font.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll_new_ui.h"
 #include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/core/timed_event.h"
+#include "ultima/nuvie/fonts/conv_font.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -74,11 +74,9 @@ MsgScrollNewUI::MsgScrollNewUI(Configuration *cfg, Screen *s) {
 	cfg->value(new_scroll_cfg + "/height", c, 19);
 	scroll_height = clamp_max(c, scrollback_height);
 
-
-
 	uint16 x_off = Game::get_game()->get_game_x_offset();
 	uint16 y_off = Game::get_game()->get_game_y_offset();
-// need to accept clicks on whole game area
+	// need to accept clicks on whole game area
 	GUI_Widget::Init(NULL, x_off, y_off, Game::get_game()->get_game_width(), Game::get_game()->get_game_height());
 
 	cursor_wait = 0;
@@ -89,7 +87,6 @@ MsgScrollNewUI::MsgScrollNewUI(Configuration *cfg, Screen *s) {
 }
 
 MsgScrollNewUI::~MsgScrollNewUI() {
-
 }
 
 bool MsgScrollNewUI::can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token) {
@@ -171,13 +168,11 @@ uint16 MsgScrollNewUI::callback(uint16 msg, CallBack *caller, void *data) {
 		} else {
 			//roll up the message scroll so it's out of the way.
 			if (position < msg_buf.size()) {
-				if ((uint16)(position + 1) < msg_buf.size()
-				        || msg_buf.back()->total_length > 0) { //don't advance if on second last line and the last line is empty.
+				if ((uint16)(position + 1) < msg_buf.size() || msg_buf.back()->total_length > 0) { //don't advance if on second last line and the last line is empty.
 					position++;
 					new TimedCallback(this, NULL, 50);
 				}
 			}
-
 		}
 	}
 
@@ -215,14 +210,13 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 				screen->fill(border_color, area.left + scroll_width * 7 + 7, y + (i == 0 ? -4 : 4), 1, (i == 0 ? 18 : 10));
 			}
 
-			for (total_length = 0; iter1 != msg_line->text.end() ; iter1++) {
+			for (total_length = 0; iter1 != msg_line->text.end(); iter1++) {
 				token = *iter1;
 
 				total_length += token->font->drawString(screen, token->s.c_str(), area.left + 4 + 4 + total_length, y + 4, 0, 0); //FIX for hardcoded font height
 			}
 			y += 10;
 		}
-
 	}
 	if (input_char != 0)
 		font->drawChar(screen, get_char_from_input_char(), total_length + 8, y - 6);
@@ -263,7 +257,7 @@ GUI_status MsgScrollNewUI::MouseDown(int x, int y, Shared::MouseButton button) {
 
 GUI_status MsgScrollNewUI::scroll_movement_event(ScrollEventType event) {
 	switch (event) {
-	case SCROLL_UP :
+	case SCROLL_UP:
 		if (position > 0) {
 			timer = new TimedCallback(this, NULL, 2000);
 			position--;
@@ -271,13 +265,13 @@ GUI_status MsgScrollNewUI::scroll_movement_event(ScrollEventType event) {
 		}
 		return GUI_YUM;
 
-	case SCROLL_DOWN :
+	case SCROLL_DOWN:
 		timer = new TimedCallback(this, NULL, 2000);
 		if (position < msg_buf.size())
 			position++;
 		return (GUI_YUM);
 
-	default :
+	default:
 		release_focus();
 		new TimedCallback(this, NULL, 50);
 		break;

@@ -62,15 +62,15 @@ bool SceneScriptNR07::ClickedOnActor(int actorId) {
 		Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 		Dialogue_Menu_Clear_List();
 		if (Game_Flag_Query(kFlagNR07McCoyIsCop)) {
-			DM_Add_To_List_Never_Repeat_Once_Selected(1100, -1, 3, 8); // VOIGT-KAMPFF
-			DM_Add_To_List_Never_Repeat_Once_Selected(1110, 8, -1, -1); // CRYSTAL
-			if (Actor_Clue_Query(kActorMcCoy, kClueSuspectDektora)) { // cut content? clue is not obtainable
+			DM_Add_To_List_Never_Repeat_Once_Selected(1100, -1, 3, 8);    // VOIGT-KAMPFF
+			DM_Add_To_List_Never_Repeat_Once_Selected(1110, 8, -1, -1);   // CRYSTAL
+			if (Actor_Clue_Query(kActorMcCoy, kClueSuspectDektora)) {     // cut content? clue is not obtainable
 				DM_Add_To_List_Never_Repeat_Once_Selected(1120, 3, 6, 7); // MOONBUS
 			}
 			if (Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1130, 3, 5, 7); // BLACK SEDAN
 			}
-			if (Game_Flag_Query(kFlagNotUsed510)) { // cut content? flag is never set
+			if (Game_Flag_Query(kFlagNotUsed510)) {                       // cut content? flag is never set
 				DM_Add_To_List_Never_Repeat_Once_Selected(1140, 1, 4, 7); // SCORPIONS
 			}
 		} else {
@@ -161,9 +161,7 @@ void SceneScriptNR07::PlayerWalkedIn() {
 
 			if (!Actor_Clue_Query(kActorDektora, kClueMcCoyIsABladeRunner)) {
 				Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, 5);
-			} else if (Actor_Clue_Query(kActorMcCoy, kClueMcCoyWarnedIzo)
-			        || Actor_Clue_Query(kActorMcCoy, kClueMcCoyHelpedIzoIzoIsAReplicant)
-			) {
+			} else if (Actor_Clue_Query(kActorMcCoy, kClueMcCoyWarnedIzo) || Actor_Clue_Query(kActorMcCoy, kClueMcCoyHelpedIzoIzoIsAReplicant)) {
 				Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, 10);
 			}
 
@@ -183,7 +181,6 @@ void SceneScriptNR07::PlayerWalkedIn() {
 }
 
 void SceneScriptNR07::PlayerWalkedOut() {
-
 }
 
 void SceneScriptNR07::DialogueQueueFlushed(int a1) {
@@ -283,7 +280,7 @@ void SceneScriptNR07::talkAboutBelt1() {
 	Actor_Says(kActorMcCoy, 3630, 13);
 	Actor_Says_With_Pause(kActorDektora, 590, 1.0f, 30);
 	Actor_Says(kActorDektora, 600, 30);
-	Actor_Start_Speech_Sample(kActorMcCoy, 3640);  // Tell you the truth, I'm from the LPD. (...)
+	Actor_Start_Speech_Sample(kActorMcCoy, 3640); // Tell you the truth, I'm from the LPD. (...)
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, false);
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
@@ -292,9 +289,7 @@ void SceneScriptNR07::talkAboutBelt1() {
 	Actor_Clue_Acquire(kActorMcCoy, kClueDragonflyBelt, true, kActorDektora);
 
 	int friendliness = Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy);
-	if (!Game_Flag_Query(kFlagDektoraIsReplicant)
-	 &&  friendliness < 40
-	) {
+	if (!Game_Flag_Query(kFlagDektoraIsReplicant) && friendliness < 40) {
 		dektoraRunAway();
 		return;
 	}
@@ -308,9 +303,7 @@ void SceneScriptNR07::talkAboutBelt1() {
 }
 
 void SceneScriptNR07::talkAboutBelt2() {
-	if (Actor_Clue_Query(kActorDektora, kClueMcCoysDescription)
-	 && Actor_Clue_Query(kActorDektora, kClueMcCoyIsABladeRunner)
-	) {
+	if (Actor_Clue_Query(kActorDektora, kClueMcCoysDescription) && Actor_Clue_Query(kActorDektora, kClueMcCoyIsABladeRunner)) {
 		Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -1);
 	}
 
@@ -319,9 +312,7 @@ void SceneScriptNR07::talkAboutBelt2() {
 	Actor_Says(kActorDektora, 620, 30);
 
 	int friendliness = Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy);
-	if (!Game_Flag_Query(kFlagDektoraIsReplicant)
-	 &&  friendliness < 40
-	) {
+	if (!Game_Flag_Query(kFlagDektoraIsReplicant) && friendliness < 40) {
 		dektoraRunAway();
 		return;
 	}

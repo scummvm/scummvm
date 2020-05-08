@@ -23,8 +23,8 @@
 #ifndef GLK_ALAN3_CHECKENTRY
 #define GLK_ALAN3_CHECKENTRY
 
-#include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/types.h"
 #include "glk/jumps.h"
 
 namespace Glk {
@@ -36,17 +36,14 @@ namespace Alan3 {
 #define DONT_EXECUTE_CHECK_BODY_ON_FAIL FALSE
 #endif
 
-
 /* TYPES */
 struct CheckEntry { /* CHECK TABLE */
-	Aaddr exp;            /* ACODE address to expression code */
-	Aaddr stms;           /* ACODE address to statement code */
+	Aaddr exp;      /* ACODE address to expression code */
+	Aaddr stms;     /* ACODE address to statement code */
 };
-
 
 /* DATA */
 typedef CheckEntry CheckEntryArray[];
-
 
 /* FUNCTIONS */
 extern bool checksFailed(CONTEXT, Aaddr adr, bool execute);

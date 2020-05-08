@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/hashmap.h"
-#include "common/array.h"
 #include "sci/engine/vm_hooks.h"
-#include "sci/engine/vm.h"
-#include "sci/engine/state.h"
+#include "common/array.h"
+#include "common/hashmap.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/scriptdebug.h"
+#include "sci/engine/state.h"
+#include "sci/engine/vm.h"
 
 namespace Sci {
 
@@ -39,7 +39,6 @@ namespace Sci {
  *
  ******************************************************************************************************************/
 
-
 // solves the issue described at #9646:
 // "
 // When in room 58, and type "run", the hero will fall and his HP will decrease by 1 point. This can be repeated, but will never cause the hero to die.
@@ -51,21 +50,21 @@ namespace Sci {
 // and check the return value. if the hero should die, we kill him
 
 static const byte qfg1_die_after_running_on_ice[] = {
-	// if shouldn't die, jump to end
-	0x2f, 22,					   // bt +22
+    // if shouldn't die, jump to end
+    0x2f, 22, // bt +22
 
-	// should die - done according to the code at main.sc, proc0_29:
-	// 			(proc0_1 0 59 80 {Death from Overwork} 82 800 1 4)
-	0x39, 0x08,                    // pushi 8		-- num of parameters
-	0x39, 0x00,                    // pushi 0
-	0x39, 59,					   // pushi 59
-	0x39, 0,                       // pushi 0		-- modified, not using {Death from Overwork}
-	0x36,                          // push
-	0x39, 82,					   // pushi 82
-	0x38, 32,  3,				   // push 800
-	0x39, 1,                       // pushi 1
-	0x39, 4,                       // pushi 4
-	0x47, 0x00, 0x01, 0x10         // calle proc0_1
+    // should die - done according to the code at main.sc, proc0_29:
+    // 			(proc0_1 0 59 80 {Death from Overwork} 82 800 1 4)
+    0x39, 0x08,            // pushi 8		-- num of parameters
+    0x39, 0x00,            // pushi 0
+    0x39, 59,              // pushi 59
+    0x39, 0,               // pushi 0		-- modified, not using {Death from Overwork}
+    0x36,                  // push
+    0x39, 82,              // pushi 82
+    0x38, 32, 3,           // push 800
+    0x39, 1,               // pushi 1
+    0x39, 4,               // pushi 4
+    0x47, 0x00, 0x01, 0x10 // calle proc0_1
 };
 
 /** Write here all games hooks
@@ -77,10 +76,8 @@ static const byte qfg1_die_after_running_on_ice[] = {
  *		= in that case, if objName == "" it will be ignored, otherwise, it will be also used to match
  */
 static const GeneralHookEntry allGamesHooks[] = {
-	// GID, script, PC.offset, objName,  selector, externID, opcode,  hook array
-	{GID_QFG1, {58, 0x144d}, {"egoRuns", "changeState", -1 , "push0", HOOKARRAY(qfg1_die_after_running_on_ice)}}
-};
-
+    // GID, script, PC.offset, objName,  selector, externID, opcode,  hook array
+    {GID_QFG1, {58, 0x144d}, {"egoRuns", "changeState", -1, "push0", HOOKARRAY(qfg1_die_after_running_on_ice)}}};
 
 VmHooks::VmHooks() {
 	// build _hooksMap
@@ -98,7 +95,7 @@ uint64 HookHashKey::hash() {
 }
 
 //#ifndef REDUCE_MEMORY_USAGE
-extern const char* opcodeNames[];
+extern const char *opcodeNames[];
 //#endif
 
 // returns true if entry is matching to current state
@@ -117,14 +114,13 @@ bool hook_exec_match(Sci::EngineState *s, HookEntry entry) {
 		objMatch = strcmp(objName, entry.objName) == 0;
 
 	return objMatch && selector == entry.selector &&
-		s->xs->debugExportId == entry.exportId && strcmp(entry.opcodeName, opcodeNames[opcode]) == 0;
+	       s->xs->debugExportId == entry.exportId && strcmp(entry.opcodeName, opcodeNames[opcode]) == 0;
 }
-
 
 void VmHooks::vm_hook_before_exec(Sci::EngineState *s) {
 	Script *scr = s->_segMan->getScript(s->xs->addr.pc.getSegment());
 	int scriptNumber = scr->getScriptNumber();
-	HookHashKey key = { scriptNumber, s->xs->addr.pc.getOffset() };
+	HookHashKey key = {scriptNumber, s->xs->addr.pc.getOffset()};
 	if (_lastPc != s->xs->addr.pc && _hooksMap.contains(key)) {
 		_lastPc = s->xs->addr.pc;
 		HookEntry entry = _hooksMap[key];
@@ -159,6 +155,5 @@ void VmHooks::advance(int offset) {
 	} else
 		_location = newLocation;
 }
-
 
 } // End of namespace Sci

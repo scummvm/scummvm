@@ -20,17 +20,17 @@
  *
  */
 
+#include "ultima/nuvie/screen/dither.h"
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/screen/dither.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 //dither EGA to CGA
-static const uint8 dither_cga_tbl[0x10] =   {0, 3, 3, 3, 13, 13, 13, 3, 3, 13, 15, 3, 13, 13, 15, 15};
+static const uint8 dither_cga_tbl[0x10] = {0, 3, 3, 3, 13, 13, 13, 3, 3, 13, 15, 3, 13, 13, 15, 15};
 //static const uint8 dither_cga_tbl[0x10] = {0,1,1,1,2 ,2 ,2 ,1,1,2 ,3 ,1,2 ,2 ,3, 3};
 
 Dither::Dither(Configuration *cfg) {
@@ -55,7 +55,7 @@ bool Dither::load_data() {
 
 	config_get_path(config, "dither", path);
 	if (file.open(path) == false)
-		return false;//fixme better error handling
+		return false; //fixme better error handling
 
 	dither = (uint8 *)malloc(0x200);
 	if (dither == NULL)

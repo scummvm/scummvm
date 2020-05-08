@@ -26,11 +26,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CTitania, CCharacter)
-	ON_MESSAGE(AddHeadPieceMsg)
-	ON_MESSAGE(TakeHeadPieceMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(AddHeadPieceMsg)
+ON_MESSAGE(TakeHeadPieceMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
 CTitania::CTitania() : CCharacter() {
@@ -175,9 +175,7 @@ bool CTitania::ActMsg(CActMsg *msg) {
 			workingMsg3._value = _speechCentre ? "Working" : "Random";
 		}
 
-		if (_centralCore && _eye1 && _eye2 && _ear1 && _ear2 && _nose
-				&& _mouth && _visionCentre && _speechCentre
-				&& _olfactoryCentre && _auditoryCentre) {
+		if (_centralCore && _eye1 && _eye2 && _ear1 && _ear2 && _nose && _mouth && _visionCentre && _speechCentre && _olfactoryCentre && _auditoryCentre) {
 			CProximity prox(Audio::Mixer::kSpeechSoundType);
 			playSound(TRANSLATE("z#47.wav", "z#578.wav"), prox);
 

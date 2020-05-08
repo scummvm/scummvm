@@ -32,12 +32,14 @@ class CEnterExitView : public CGameObject {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	int _leaveEndFrame;
 	int _leaveStartFrame;
 	int _enterEndFrame;
 	int _enterStartFrame;
 	bool _visibleAfterMovie;
+
 public:
 	CLASSDEF;
 	CEnterExitView();

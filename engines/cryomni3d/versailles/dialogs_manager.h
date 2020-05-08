@@ -23,8 +23,8 @@
 #ifndef CRYOMNI3D_VERSAILLES_DIALOGS_MANAGER_H
 #define CRYOMNI3D_VERSAILLES_DIALOGS_MANAGER_H
 
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "graphics/managed_surface.h"
 
 #include "cryomni3d/dialogs_manager.h"

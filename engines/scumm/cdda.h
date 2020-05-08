@@ -49,9 +49,9 @@ namespace Scumm {
  * @return a new SeekableAudioStream, or NULL, if an error occurred
  */
 Audio::SeekableAudioStream *makeCDDAStream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse);
+    Common::SeekableReadStream *stream,
+    DisposeAfterUse::Flag disposeAfterUse);
 
-} // End of namespace Audio
+} // namespace Scumm
 
 #endif // #ifndef SCUMM_CDDA_H

@@ -48,7 +48,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate);
 /**
  * TODO: explain
  */
-                    
+
 int stretch200To240(uint8 *buf,
                     uint32 pitch,
                     int width,

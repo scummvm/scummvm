@@ -28,7 +28,7 @@
 namespace Common {
 
 GenericArchiveMember::GenericArchiveMember(const String &name, const Archive *parent)
-	: _parent(parent), _name(name) {
+    : _parent(parent), _name(name) {
 }
 
 String GenericArchiveMember::getName() const {
@@ -38,7 +38,6 @@ String GenericArchiveMember::getName() const {
 SeekableReadStream *GenericArchiveMember::createReadStream() const {
 	return _parent->createReadStreamForMember(_name);
 }
-
 
 int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern) const {
 	// Get all "names" (TODO: "files" ?)
@@ -59,8 +58,6 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
 
 	return matches;
 }
-
-
 
 SearchSet::ArchiveNodeList::iterator SearchSet::find(const String &name) {
 	ArchiveNodeList::iterator it = _list.begin();
@@ -103,7 +100,6 @@ void SearchSet::add(const String &name, Archive *archive, int priority, bool aut
 			delete archive;
 		warning("SearchSet::add: archive '%s' already present", name.c_str());
 	}
-
 }
 
 void SearchSet::addDirectory(const String &name, const String &directory, int priority, int depth, bool flat) {
@@ -264,7 +260,6 @@ SeekableReadStream *SearchSet::createReadStreamForMember(const String &name) con
 
 	return nullptr;
 }
-
 
 SearchManager::SearchManager() {
 	clear(); // Force a reset

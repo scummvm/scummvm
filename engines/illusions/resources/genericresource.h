@@ -36,6 +36,7 @@ public:
 	~GenericResourceLoader() override {}
 	void load(Resource *resource) override;
 	bool isFlag(int flag) override;
+
 protected:
 	IllusionsEngine *_vm;
 };

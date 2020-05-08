@@ -21,19 +21,19 @@
  */
 
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/macresman.h"
 #include "common/substream.h"
-#include "common/file.h"
 
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
 
-#include "director/director.h"
 #include "director/archive.h"
 #include "director/cast.h"
+#include "director/director.h"
+#include "director/lingo/lingo.h"
 #include "director/score.h"
 #include "director/util.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -142,7 +142,6 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 			stream->seek(riffOffset);
 			Common::String fname = Common::String::format("./dumps/%s", mmmFileName.c_str());
 
-
 			if (!out.open(fname.c_str())) {
 				warning("Can not open dump file %s", fname.c_str());
 				return;
@@ -155,7 +154,6 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 
 			free(buf);
 		}
-
 
 		_mainArchive = new RIFFArchive();
 
@@ -176,8 +174,8 @@ void DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
 	/* uint32 fontMapOffset = */ stream->readUint32LE();
 	/* uint32 resourceForkOffset1 = */ stream->readUint32LE();
 	/* uint32 resourceForkOffset2 = */ stream->readUint32LE();
-	stream->readUint32LE(); // graphics DLL offset
-	stream->readUint32LE(); // sound DLL offset
+	stream->readUint32LE();                              // graphics DLL offset
+	stream->readUint32LE();                              // sound DLL offset
 	/* uint32 rifxOffsetAlt = */ stream->readUint32LE(); // equivalent to rifxOffset
 	uint32 flags = stream->readUint32LE();
 
@@ -195,7 +193,7 @@ void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 	uint32 rifxOffset = stream->readUint32LE();
 	uint32 pflags = stream->readUint32LE();
 	uint32 flags = stream->readUint32LE();
-	stream->readUint16LE();	// x
+	stream->readUint16LE(); // x
 	stream->readUint16LE(); // y
 	stream->readUint16LE(); // screenWidth
 	stream->readUint16LE(); // screenHeight
@@ -308,23 +306,23 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		_wm->_fontMan->loadFonts(filename);
 	}
 
-	_sharedScore->loadConfig(*(r = sharedCast->getResource(MKTAG('V','W','C','F'), 1024)));
+	_sharedScore->loadConfig(*(r = sharedCast->getResource(MKTAG('V', 'W', 'C', 'F'), 1024)));
 	delete r;
 
 	if (getVersion() < 4) {
 		_sharedScore->_castIDoffset = sharedCast->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
-		_sharedScore->loadCastDataVWCR(*(r = sharedCast->getResource(MKTAG('V','W','C','R'), _sharedScore->_castIDoffset)));
+		_sharedScore->loadCastDataVWCR(*(r = sharedCast->getResource(MKTAG('V', 'W', 'C', 'R'), _sharedScore->_castIDoffset)));
 		delete r;
 	}
 
 	// Try to load script context
 	if (getVersion() >= 4) {
-		Common::Array<uint16> lctx = sharedCast->getResourceIDList(MKTAG('L','c','t','x'));
+		Common::Array<uint16> lctx = sharedCast->getResourceIDList(MKTAG('L', 'c', 't', 'x'));
 		if (lctx.size() > 0) {
 			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
 
 			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
-				_sharedScore->loadLingoContext(*(r = sharedCast->getResource(MKTAG('L','c','t','x'), *iterator)));
+				_sharedScore->loadLingoContext(*(r = sharedCast->getResource(MKTAG('L', 'c', 't', 'x'), *iterator)));
 				delete r;
 			}
 		}
@@ -332,7 +330,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	// Try to load script name lists
 	if (getVersion() >= 4) {
-		Common::Array<uint16> lnam = sharedCast->getResourceIDList(MKTAG('L','n','a','m'));
+		Common::Array<uint16> lnam = sharedCast->getResourceIDList(MKTAG('L', 'n', 'a', 'm'));
 		if (lnam.size() > 0) {
 
 			int maxLnam = -1;
@@ -340,7 +338,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 				maxLnam = MAX(maxLnam, (int)*iterator);
 			}
 			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
-			_sharedScore->loadLingoNames(*(r = sharedCast->getResource(MKTAG('L','n','a','m'), maxLnam)));
+			_sharedScore->loadLingoNames(*(r = sharedCast->getResource(MKTAG('L', 'n', 'a', 'm'), maxLnam)));
 			delete r;
 		}
 	}

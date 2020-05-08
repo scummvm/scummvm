@@ -62,7 +62,6 @@ private:
 	TestbedConfigManager *_testbedConfMan;
 
 public:
-
 	bool isRerunRequired();
 	void setRerunFlag(bool flag) { _rerunTests = flag; }
 
@@ -81,9 +80,9 @@ public:
 #endif
 
 	TestbedConfigManager *getTestbedConfigManager() { return _testbedConfMan; }
-	void setTestbedConfigManager(TestbedConfigManager* confMan) { _testbedConfMan = confMan; }
+	void setTestbedConfigManager(TestbedConfigManager *confMan) { _testbedConfMan = confMan; }
 
-	Common::String &getLogDirectory() {	return _logDirectory; }
+	Common::String &getLogDirectory() { return _logDirectory; }
 	void setLogDirectory(const Common::String &dirname) { _logDirectory = dirname; }
 	Common::String &getLogFilename() { return _logFilename; }
 	void setLogFilename(const Common::String &filename) { _logFilename = filename; }

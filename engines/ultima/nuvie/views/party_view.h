@@ -67,7 +67,6 @@ public:
 	}
 
 protected:
-
 	void display_surface_strip();
 	void display_dungeon_strip();
 	void display_arrows();

@@ -27,30 +27,40 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
-#define MAP_ACTION(NAME, ACTION_NUM, MAP_METHOD) \
-	using Shared::C##NAME##Msg; \
-	class NAME : public Action { DECLARE_MESSAGE_MAP; bool NAME##Msg(C##NAME##Msg &msg) { \
-	addInfoMsg(getRes()->ACTION_NAMES[ACTION_NUM], false); \
-	getMap()->MAP_METHOD(); \
-	return true; } \
-	public: \
-	CLASSDEF; \
-	NAME(TreeItem *parent) : Action(parent) {} \
-	}; \
-	BEGIN_MESSAGE_MAP(NAME, Action) ON_MESSAGE(NAME##Msg) END_MESSAGE_MAP()
+#define MAP_ACTION(NAME, ACTION_NUM, MAP_METHOD)                   \
+	using Shared::C##NAME##Msg;                                    \
+	class NAME : public Action {                                   \
+		DECLARE_MESSAGE_MAP;                                       \
+		bool NAME##Msg(C##NAME##Msg &msg) {                        \
+			addInfoMsg(getRes()->ACTION_NAMES[ACTION_NUM], false); \
+			getMap()->MAP_METHOD();                                \
+			return true;                                           \
+		}                                                          \
+                                                                   \
+	public:                                                        \
+		CLASSDEF;                                                  \
+		NAME(TreeItem *parent) : Action(parent) {}                 \
+	};                                                             \
+	BEGIN_MESSAGE_MAP(NAME, Action)                                \
+	ON_MESSAGE(NAME##Msg) END_MESSAGE_MAP()
 
-#define MAP_ACTION_END_TURN(NAME, ACTION_NUM, MAP_METHOD) \
-	using Shared::C##NAME##Msg; \
-	class NAME : public Action { DECLARE_MESSAGE_MAP; bool NAME##Msg(C##NAME##Msg &msg) { \
-	addInfoMsg(getRes()->ACTION_NAMES[ACTION_NUM], false); \
-	getMap()->MAP_METHOD(); \
-	endOfTurn(); \
-	return true; } \
-	public: \
-	CLASSDEF; \
-	NAME(TreeItem *parent) : Action(parent) {} \
-	}; \
-	BEGIN_MESSAGE_MAP(NAME, Action) ON_MESSAGE(NAME##Msg) END_MESSAGE_MAP()
+#define MAP_ACTION_END_TURN(NAME, ACTION_NUM, MAP_METHOD)          \
+	using Shared::C##NAME##Msg;                                    \
+	class NAME : public Action {                                   \
+		DECLARE_MESSAGE_MAP;                                       \
+		bool NAME##Msg(C##NAME##Msg &msg) {                        \
+			addInfoMsg(getRes()->ACTION_NAMES[ACTION_NUM], false); \
+			getMap()->MAP_METHOD();                                \
+			endOfTurn();                                           \
+			return true;                                           \
+		}                                                          \
+                                                                   \
+	public:                                                        \
+		CLASSDEF;                                                  \
+		NAME(TreeItem *parent) : Action(parent) {}                 \
+	};                                                             \
+	BEGIN_MESSAGE_MAP(NAME, Action)                                \
+	ON_MESSAGE(NAME##Msg) END_MESSAGE_MAP()
 
 } // End of namespace Actions
 } // End of namespace Ultima1

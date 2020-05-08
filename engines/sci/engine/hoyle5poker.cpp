@@ -20,8 +20,8 @@
  *
  */
 
-#include "sci/engine/features.h"
 #include "sci/engine/hoyle5poker.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"
 #include "sci/engine/selector.h"
@@ -43,10 +43,10 @@ enum Hoyle5PokerSuits {
 };
 
 enum Hoyle5Operations {
-	kCheckPlayerAction = 1,	// localproc_0df8
-	kCheckWinner = 2,	// localproc_3020
-	kCheckDiscard = 3,	// PokerHand::think
-	kCheckHand = 4		// PokerHand::whatAmI
+	kCheckPlayerAction = 1, // localproc_0df8
+	kCheckWinner = 2,       // localproc_3020
+	kCheckDiscard = 3,      // PokerHand::think
+	kCheckHand = 4          // PokerHand::whatAmI
 };
 
 enum Hoyle5PlayerActions {
@@ -74,8 +74,8 @@ enum Hoyle5PokerData {
 	kTotalBetPlayer3 = 14,
 	kTotalBetPlayer4 = 15,
 	// 16: related to the current bet
-	kCurrentPlayer = 17,	// hand number
-	kCurrentStage = 18,	// Stage 1: Card changes, 2: Betting
+	kCurrentPlayer = 17, // hand number
+	kCurrentStage = 18,  // Stage 1: Card changes, 2: Betting
 	kCard0 = 19,
 	kSuit0 = 20,
 	kCard1 = 21,
@@ -90,16 +90,16 @@ enum Hoyle5PokerData {
 	// 29 - 38: next clockwise player's cards (number + suit)
 	// 39 - 48: next clockwise player's cards (number + suit)
 	// 49 - 58: next clockwise player's cards (number + suit)
-	kUnkVar = 59,		  // set by localproc_0df8 to global 906
+	kUnkVar = 59, // set by localproc_0df8 to global 906
 	// ---- Return values - start ---------------------------
-	kPlayerAction = 60,    // flag, checked by localproc_0df8
+	kPlayerAction = 60,   // flag, checked by localproc_0df8
 	kWhatAmIResult = 61,  // bitmask, 0 - 128, checked by PokerHand::whatAmI. Determines what kind of card each player has
 	kWinningPlayers = 62, // bitmask, winning players (0000 - 1111 binary), checked by localproc_3020
-	kDiscardCard0 = 63,	  // flag, checked by PokerHand::think
-	kDiscardCard1 = 64,	  // flag, checked by PokerHand::think
-	kDiscardCard2 = 65,	  // flag, checked by PokerHand::think
-	kDiscardCard3 = 66,	  // flag, checked by PokerHand::think
-	kDiscardCard4 = 67,	  // flag, checked by PokerHand::think
+	kDiscardCard0 = 63,   // flag, checked by PokerHand::think
+	kDiscardCard1 = 64,   // flag, checked by PokerHand::think
+	kDiscardCard2 = 65,   // flag, checked by PokerHand::think
+	kDiscardCard3 = 66,   // flag, checked by PokerHand::think
+	kDiscardCard4 = 67,   // flag, checked by PokerHand::think
 	// ---- Return values - end -----------------------------
 	// 77 is a random number (0 - 32767)
 	kLastRaise1 = 78,
@@ -192,18 +192,18 @@ void debugInputData(SciArray* data) {
 #endif
 
 int getCardValue(int card) {
-	return card == 1 ? 14 : card;	// aces are the highest valued cards
+	return card == 1 ? 14 : card; // aces are the highest valued cards
 }
 
 int getCardTotal(SciArray *data, int player) {
 	int result = 0;
 
 	int cards[5] = {
-		getCardValue(data->getAsInt16(kCard0 + 10 * player)),
-		getCardValue(data->getAsInt16(kCard1 + 10 * player)),
-		getCardValue(data->getAsInt16(kCard2 + 10 * player)),
-		getCardValue(data->getAsInt16(kCard3 + 10 * player)),
-		getCardValue(data->getAsInt16(kCard4 + 10 * player)),
+	    getCardValue(data->getAsInt16(kCard0 + 10 * player)),
+	    getCardValue(data->getAsInt16(kCard1 + 10 * player)),
+	    getCardValue(data->getAsInt16(kCard2 + 10 * player)),
+	    getCardValue(data->getAsInt16(kCard3 + 10 * player)),
+	    getCardValue(data->getAsInt16(kCard4 + 10 * player)),
 	};
 
 	Common::sort(cards, cards + 5, Common::Less<int>());
@@ -227,8 +227,8 @@ int getCardTotal(SciArray *data, int player) {
 	}
 
 	bool isFullHouse =
-		(cards[0] == cards[1] && cards[1] == cards[2] && cards[3] == cards[4]) ||
-		(cards[0] == cards[1] && cards[2] == cards[3] && cards[3] == cards[4]);
+	    (cards[0] == cards[1] && cards[1] == cards[2] && cards[3] == cards[4]) ||
+	    (cards[0] == cards[1] && cards[2] == cards[3] && cards[3] == cards[4]);
 
 	if (isFullHouse || sameSuit == 5 || orderedCards == 5) {
 		result = 0;
@@ -243,19 +243,19 @@ int getCardTotal(SciArray *data, int player) {
 // Checks a player's hand, and returns its type using a bitmask
 int checkHand(SciArray *data, int player = 0) {
 	int cards[5] = {
-		data->getAsInt16(kCard0 + 10 * player),
-		data->getAsInt16(kCard1 + 10 * player),
-		data->getAsInt16(kCard2 + 10 * player),
-		data->getAsInt16(kCard3 + 10 * player),
-		data->getAsInt16(kCard4 + 10 * player),
+	    data->getAsInt16(kCard0 + 10 * player),
+	    data->getAsInt16(kCard1 + 10 * player),
+	    data->getAsInt16(kCard2 + 10 * player),
+	    data->getAsInt16(kCard3 + 10 * player),
+	    data->getAsInt16(kCard4 + 10 * player),
 	};
 
 	int suits[5] = {
-		data->getAsInt16(kSuit0 + 10 * player),
-		data->getAsInt16(kSuit1 + 10 * player),
-		data->getAsInt16(kSuit2 + 10 * player),
-		data->getAsInt16(kSuit3 + 10 * player),
-		data->getAsInt16(kSuit4 + 10 * player),
+	    data->getAsInt16(kSuit0 + 10 * player),
+	    data->getAsInt16(kSuit1 + 10 * player),
+	    data->getAsInt16(kSuit2 + 10 * player),
+	    data->getAsInt16(kSuit3 + 10 * player),
+	    data->getAsInt16(kSuit4 + 10 * player),
 	};
 
 	Common::sort(cards, cards + 5, Common::Less<int>());
@@ -280,29 +280,29 @@ int checkHand(SciArray *data, int player = 0) {
 	}
 
 	bool isFullHouse =
-		(cards[0] == cards[1] && cards[1] == cards[2] && cards[3] == cards[4]) ||
-		(cards[0] == cards[1] && cards[2] == cards[3] && cards[3] == cards[4]);
+	    (cards[0] == cards[1] && cards[1] == cards[2] && cards[3] == cards[4]) ||
+	    (cards[0] == cards[1] && cards[2] == cards[3] && cards[3] == cards[4]);
 
 	if (pairs == 1 && sameRank == 2)
-		return 1 << 0;	// 1, one pair
+		return 1 << 0; // 1, one pair
 	else if (pairs == 2 && !isFullHouse)
-		return 1 << 1;	// 2, two pairs
+		return 1 << 1; // 2, two pairs
 	else if (sameRank == 3 && !isFullHouse)
-		return 1 << 2;	// 4, three of a kind
+		return 1 << 2; // 4, three of a kind
 	else if (orderedCards == 5 && sameSuit < 5)
-		return 1 << 3;	// 8, straight
+		return 1 << 3; // 8, straight
 	else if (orderedCards < 5 && sameSuit == 5)
-		return 1 << 4;	// 16, flush
+		return 1 << 4; // 16, flush
 	else if (isFullHouse)
-		return 1 << 5;	// 32, full house
+		return 1 << 5; // 32, full house
 	else if (sameRank == 4)
-		return 1 << 6;	// 64, four of a kind
+		return 1 << 6; // 64, four of a kind
 	else if (orderedCards == 5 && sameSuit == 5)
-		return 1 << 7;	// straight flush
+		return 1 << 7; // straight flush
 	else if (sameRank == 5)
-		return 1 << 8;	// 256, five of a kind
+		return 1 << 8; // 256, five of a kind
 
-	return 0;	// high card
+	return 0; // high card
 }
 
 struct Hand {
@@ -318,11 +318,10 @@ struct WinningHand : public Common::BinaryFunction<Hand, Hand, bool> {
 
 int getWinner(SciArray *data) {
 	Hand playerHands[4] = {
-		Hand(0, checkHand(data, 0)),
-		Hand(1, checkHand(data, 1)),
-		Hand(2, checkHand(data, 2)),
-		Hand(3, checkHand(data, 3))
-	};
+	    Hand(0, checkHand(data, 0)),
+	    Hand(1, checkHand(data, 1)),
+	    Hand(2, checkHand(data, 2)),
+	    Hand(3, checkHand(data, 3))};
 
 	Common::sort(playerHands, playerHands + 4, WinningHand());
 
@@ -334,7 +333,7 @@ int getWinner(SciArray *data) {
 
 reg_t hoyle5PokerEngine(SciArray *data) {
 	int16 operation = data->getAsInt16(kOperation);
-	Common::RandomSource& rng = g_sci->getRNG();
+	Common::RandomSource &rng = g_sci->getRNG();
 
 	//debugInputData(data);
 
@@ -363,10 +362,10 @@ reg_t hoyle5PokerEngine(SciArray *data) {
 		error("Unknown Poker logic operation: %d", operation);
 		break;
 	}
-	
+
 	return TRUE_REG;
 }
 
 #endif
 
-}
+} // namespace Sci

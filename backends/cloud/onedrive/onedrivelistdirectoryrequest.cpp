@@ -21,9 +21,9 @@
  */
 
 #include "backends/cloud/onedrive/onedrivelistdirectoryrequest.h"
+#include "backends/cloud/iso8601.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
-#include "backends/cloud/iso8601.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/json.h"
@@ -34,10 +34,9 @@ namespace OneDrive {
 #define ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN "https://graph.microsoft.com/v1.0/drive/special/approot:/%s:/children"
 #define ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN_ROOT_ITSELF "https://graph.microsoft.com/v1.0/drive/special/approot/children"
 
-OneDriveListDirectoryRequest::OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive):
-	Networking::Request(nullptr, ecb),
-	_requestedPath(path), _requestedRecursive(recursive), _storage(storage), _listDirectoryCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+OneDriveListDirectoryRequest::OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive) : Networking::Request(nullptr, ecb),
+                                                                                                                                                                                              _requestedPath(path), _requestedRecursive(recursive), _storage(storage), _listDirectoryCallback(cb),
+                                                                                                                                                                                              _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -78,7 +77,8 @@ void OneDriveListDirectoryRequest::listNextDirectory() {
 	Common::String dir = _currentDirectory;
 	dir.deleteLastChar();
 	Common::String url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN, ConnMan.urlEncode(dir).c_str());
-	if (dir == "") url = Common::String(ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN_ROOT_ITSELF);
+	if (dir == "")
+		url = Common::String(ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN_ROOT_ITSELF);
 	makeRequest(url);
 }
 
@@ -132,14 +132,19 @@ void OneDriveListDirectoryRequest::listedDirectoryCallback(Networking::JsonRespo
 
 	Common::JSONArray items = object.getVal("value")->asArray();
 	for (uint32 i = 0; i < items.size(); ++i) {
-		if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "OneDriveListDirectoryRequest")) continue;
+		if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "OneDriveListDirectoryRequest"))
+			continue;
 
 		Common::JSONObject item = items[i]->asObject();
 
-		if (!Networking::CurlJsonRequest::jsonContainsAttribute(item, "folder", "OneDriveListDirectoryRequest", true)) continue;
-		if (!Networking::CurlJsonRequest::jsonContainsString(item, "name", "OneDriveListDirectoryRequest")) continue;
-		if (!Networking::CurlJsonRequest::jsonContainsIntegerNumber(item, "size", "OneDriveListDirectoryRequest")) continue;
-		if (!Networking::CurlJsonRequest::jsonContainsString(item, "lastModifiedDateTime", "OneDriveListDirectoryRequest")) continue;
+		if (!Networking::CurlJsonRequest::jsonContainsAttribute(item, "folder", "OneDriveListDirectoryRequest", true))
+			continue;
+		if (!Networking::CurlJsonRequest::jsonContainsString(item, "name", "OneDriveListDirectoryRequest"))
+			continue;
+		if (!Networking::CurlJsonRequest::jsonContainsIntegerNumber(item, "size", "OneDriveListDirectoryRequest"))
+			continue;
+		if (!Networking::CurlJsonRequest::jsonContainsString(item, "lastModifiedDateTime", "OneDriveListDirectoryRequest"))
+			continue;
 
 		Common::String path = _currentDirectory + item.getVal("name")->asString();
 		bool isDirectory = item.contains("folder");

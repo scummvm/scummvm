@@ -31,7 +31,6 @@ namespace Quest {
 
 void glk_put_cstring(const char *);
 
-
 winid_t mainglkwin;
 winid_t inputwin;
 winid_t bannerwin;
@@ -39,7 +38,7 @@ strid_t inputwinstream;
 
 const bool use_inputwindow = false;
 
-int ignore_lines;			// count of lines to ignore in game output
+int ignore_lines; // count of lines to ignore in game output
 
 void draw_banner() {
 	uint width;
@@ -125,7 +124,7 @@ String GeasGlkInterface::get_file(const String &fname) const {
 	// Read entirety of the file
 	char *buf = new char[f.size()];
 	f.read(buf, f.size());
-	
+
 	String result(buf, buf + f.size());
 	delete[] buf;
 
@@ -187,7 +186,7 @@ uint GeasGlkInterface::make_choice(String label, Common::Array<String> v) {
 	StringStream u;
 	u << choice;
 	u >> s;
-	s1 = "Chosen: " +  s + "\n";
+	s1 = "Chosen: " + s + "\n";
 	glk_put_cstring(s1.c_str());
 
 	return choice - 1;
@@ -207,7 +206,7 @@ String GeasGlkInterface::absolute_name(String rel_name, String parent) const {
 	while (dir_start < parent.length()) {
 		dir_end = dir_start;
 		while (dir_end < parent.length() && parent[dir_end] != '/')
-			dir_end ++;
+			dir_end++;
 		path.push_back(parent.substr(dir_start, dir_end - dir_start));
 		dir_start = dir_end + 1;
 	}
@@ -217,7 +216,7 @@ String GeasGlkInterface::absolute_name(String rel_name, String parent) const {
 	while (dir_start < rel_name.length()) {
 		dir_end = dir_start;
 		while (dir_end < rel_name.length() && rel_name[dir_end] != '/')
-			dir_end ++;
+			dir_end++;
 		tmp = rel_name.substr(dir_start, dir_end - dir_start);
 		dir_start = dir_end + 1;
 		if (tmp == ".")
@@ -228,7 +227,7 @@ String GeasGlkInterface::absolute_name(String rel_name, String parent) const {
 			path.push_back(tmp);
 	}
 	String rv;
-	for (uint i = 0; i < path.size(); i ++)
+	for (uint i = 0; i < path.size(); i++)
 		rv = rv + "/" + path[i];
 	cerr << " ---> " << rv << "\n";
 	return rv;

@@ -24,10 +24,10 @@
 #define TSAGE_RINGWORLD2_LOGIC_H
 
 #include "common/scummsys.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 
 namespace TsAGE {
 
@@ -42,13 +42,14 @@ public:
 	static Scene *createScene(int sceneNumber);
 };
 
-class SceneArea: public SceneItem {
+class SceneArea : public SceneItem {
 public:
 	bool _enabled;
 	bool _insideArea;
 	CursorType _cursorNum;
 	CursorType _savedCursorNum;
 	int _cursorState;
+
 public:
 	SceneArea();
 	void setDetails(const Rect &bounds, CursorType cursor);
@@ -61,11 +62,12 @@ public:
 	void doAction(int action) override {}
 };
 
-class SceneExit: public SceneArea {
+class SceneExit : public SceneArea {
 public:
 	bool _moving;
 	int _sceneNumber;
 	Common::Point _destPos;
+
 public:
 	SceneExit();
 	virtual void setDetails(const Rect &bounds, CursorType cursor, int sceneNumber);
@@ -76,10 +78,11 @@ public:
 	void process(Event &event) override;
 };
 
-class SceneExt: public Scene {
+class SceneExt : public Scene {
 private:
 	static void startStrip();
 	static void endStrip();
+
 public:
 	byte _shadowPaletteMap[256];
 	bool _savedPlayerEnabled;
@@ -89,6 +92,7 @@ public:
 
 	Visage _cursorVisage;
 	SynchronizedList<EventHandler *> _sceneAreas;
+
 public:
 	SceneExt();
 
@@ -109,7 +113,7 @@ public:
 	void loadBlankScene();
 };
 
-class SceneHandlerExt: public SceneHandler {
+class SceneHandlerExt : public SceneHandler {
 public:
 	void postInit(SceneObjectList *OwnerList = NULL) override;
 	void process(Event &event) override;
@@ -119,11 +123,11 @@ public:
 	void setupPaletteMaps();
 };
 
-
 class DisplayHotspot : public SceneObject {
 private:
 	Common::Array<int> _actions;
 	bool performAction(int action);
+
 public:
 	DisplayHotspot(int regionId, ...);
 
@@ -137,6 +141,7 @@ class DisplayObject : public SceneObject {
 private:
 	Common::Array<int> _actions;
 	bool performAction(int action);
+
 public:
 	DisplayObject(int firstAction, ...);
 
@@ -163,6 +168,7 @@ class Ringworld2InvObjectList : public InvObjectList {
 private:
 	static bool SelectItem(int objectNumber);
 	static void selectDefault(int obectNumber);
+
 public:
 	InvObject _none;
 	InvObject _optoDisk;
@@ -174,7 +180,7 @@ public:
 	InvObject _sonicStunner;
 	InvObject _cableHarness;
 	InvObject _comScanner;
-	InvObject _spentPowerCapsule;	// 10
+	InvObject _spentPowerCapsule; // 10
 	InvObject _chargedPowerCapsule;
 	InvObject _aerosol;
 	InvObject _remoteControl;
@@ -184,7 +190,7 @@ public:
 	InvObject _fuelCell;
 	InvObject _gyroscope;
 	InvObject _airbag;
-	InvObject _rebreatherTank;		// 20
+	InvObject _rebreatherTank; // 20
 	InvObject _reserveTank;
 	InvObject _guidanceModule;
 	InvObject _thrusterValve;
@@ -194,7 +200,7 @@ public:
 	InvObject _ignitor;
 	InvObject _diagnosticsDisplay;
 	InvObject _glassDome;
-	InvObject _wickLamp;			// 30
+	InvObject _wickLamp; // 30
 	InvObject _scrithKey;
 	InvObject _tannerMask;
 	InvObject _pureGrainAlcohol;
@@ -204,7 +210,7 @@ public:
 	InvObject _gunpowder;
 	InvObject _unused;
 	InvObject _comScanner2;
-	InvObject _superconductorWire;	// 40
+	InvObject _superconductorWire; // 40
 	InvObject _pillow;
 	InvObject _foodTray;
 	InvObject _laserHacksaw;
@@ -214,7 +220,7 @@ public:
 	InvObject _lightBulb;
 	InvObject _alcoholLamp1;
 	InvObject _alcoholLamp2;
-	InvObject _alocholLamp3;		// 50
+	InvObject _alocholLamp3; // 50
 	InvObject _brokenDisplay;
 	InvObject _toolbox;
 
@@ -227,7 +233,7 @@ public:
 
 #define RING2_INVENTORY (*((::TsAGE::Ringworld2::Ringworld2InvObjectList *)g_globals->_inventory))
 
-class Ringworld2Game: public Game {
+class Ringworld2Game : public Game {
 public:
 	void start() override;
 	void restartGame() override;
@@ -261,7 +267,7 @@ public:
 	}
 };
 
-class SceneActor: public SceneObject {
+class SceneActor : public SceneObject {
 public:
 	Common::String getClassName() override { return "SceneActor"; }
 	void postInit(SceneObjectList *OwnerList = NULL) override;
@@ -270,7 +276,7 @@ public:
 	GfxSurface getFrame() override;
 };
 
-class SceneActorExt: public SceneActor {
+class SceneActorExt : public SceneActor {
 public:
 	int _state;
 
@@ -283,13 +289,20 @@ public:
 	}
 };
 
-enum MazeDirection { MAZEDIR_NONE = 0, MAZEDIR_NORTH = 1, MAZEDIR_NORTHEAST = 2, MAZEDIR_EAST = 3,
-	MAZEDIR_SOUTHEAST = 4, MAZEDIR_SOUTH = 5, MAZEDIR_SOUTHWEST = 6, MAZEDIR_WEST = 7,
-	MAZEDIR_NORTHWEST = 8 };
+enum MazeDirection { MAZEDIR_NONE = 0,
+	                 MAZEDIR_NORTH = 1,
+	                 MAZEDIR_NORTHEAST = 2,
+	                 MAZEDIR_EAST = 3,
+	                 MAZEDIR_SOUTHEAST = 4,
+	                 MAZEDIR_SOUTH = 5,
+	                 MAZEDIR_SOUTHWEST = 6,
+	                 MAZEDIR_WEST = 7,
+	                 MAZEDIR_NORTHWEST = 8 };
 
-class MazeUI: public SceneObject {
+class MazeUI : public SceneObject {
 private:
 	void clear();
+
 public:
 	// The dimensions (in cells) of the entire maze map
 	Rect _mapBounds;
@@ -308,6 +321,7 @@ public:
 	int _frameCount;
 	int _resCount;
 	int _mapImagePitch;
+
 public:
 	MazeUI();
 	~MazeUI() override;
@@ -325,10 +339,11 @@ public:
 	void draw() override;
 };
 
-class SceneAreaObject: public SceneArea {
-	class Object1: public SceneActor {
+class SceneAreaObject : public SceneArea {
+	class Object1 : public SceneActor {
 	public:
 	};
+
 public:
 	Object1 _object1;
 	int _insetCount;
@@ -346,6 +361,7 @@ public:
 	int _sliceOffset;
 	int _drawMode;
 	int _secondaryIndex;
+
 public:
 	void load(Common::File &f);
 };
@@ -356,6 +372,7 @@ public:
 	int _dataSize2;
 	AnimationSlice _slices[4];
 	byte *_pixelData;
+
 public:
 	AnimationSlices();
 	~AnimationSlices();
@@ -378,6 +395,7 @@ public:
 	byte _palData[256 * 3];
 	int32 _totalSize;
 	AnimationSlices _slices;
+
 public:
 	void load(Common::File &f);
 };
@@ -389,18 +407,22 @@ public:
 	int _animSlicesSize;
 };
 
-enum AnimationPaletteMode { ANIMPALMODE_REPLACE_PALETTE = 0, ANIMPALMODE_CURR_PALETTE = 1,
-		ANIMPALMODE_NONE = 2 };
+enum AnimationPaletteMode { ANIMPALMODE_REPLACE_PALETTE = 0,
+	                        ANIMPALMODE_CURR_PALETTE = 1,
+	                        ANIMPALMODE_NONE = 2 };
 
-enum AnimationObjectMode { ANIMOBJMODE_1 = 1, ANIMOBJMODE_2 = 2, ANIMOBJMODE_42 = 42 };
+enum AnimationObjectMode { ANIMOBJMODE_1 = 1,
+	                       ANIMOBJMODE_2 = 2,
+	                       ANIMOBJMODE_42 = 42 };
 
-class AnimationPlayer: public EventHandler {
+class AnimationPlayer : public EventHandler {
 private:
 	void rleDecode(const byte *pSrc, byte *pDest, int size);
 
 	void drawFrame(int sliceIndex);
 	void nextSlices();
 	void getSlices();
+
 public:
 	AnimationData *_animData1, *_animData2;
 	AnimationData *_sliceCurrent;
@@ -423,6 +445,7 @@ public:
 	int _nextSlicesPosition;
 	uint _frameDelay;
 	uint32 _gameFrame;
+
 public:
 	AnimationPlayer();
 	~AnimationPlayer() override;
@@ -435,25 +458,26 @@ public:
 	virtual void changePane() {}
 	virtual void closing() {}
 
-
 	bool load(int animId, Action *endAction = NULL);
 	bool isCompleted();
 	void close();
 };
 
-class AnimationPlayerExt: public AnimationPlayer {
+class AnimationPlayerExt : public AnimationPlayer {
 public:
 	bool _isActive;
+
 public:
 	AnimationPlayerExt();
 
 	void synchronize(Serializer &s) override;
 };
 
-class ModalWindow: public SceneArea {
+class ModalWindow : public SceneArea {
 public:
 	SceneActor _object1;
 	int _insetCount;
+
 public:
 	ModalWindow();
 
@@ -465,14 +489,16 @@ public:
 	virtual void setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
-class ScannerDialog: public ModalWindow {
+class ScannerDialog : public ModalWindow {
 
-	class Button: public SceneActor {
+	class Button : public SceneActor {
 	private:
 		void reset();
+
 	public:
 		int _buttonId;
 		bool _buttonDown;
+
 	public:
 		Button();
 		void setup(int buttonId);
@@ -482,9 +508,10 @@ class ScannerDialog: public ModalWindow {
 		void process(Event &event) override;
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Slider: public SceneActor {
+	class Slider : public SceneActor {
 	private:
 		void update();
+
 	public:
 		int _initial;
 		int _xStart;
@@ -492,6 +519,7 @@ class ScannerDialog: public ModalWindow {
 		int _width;
 		int _xInc;
 		bool _sliderDown;
+
 	public:
 		Slider();
 		void setup(int initial, int xStart, int yp, int width, int xInc);
@@ -502,6 +530,7 @@ class ScannerDialog: public ModalWindow {
 		void process(Event &event) override;
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	Button _talkButton;
 	Button _scanButton;
@@ -510,6 +539,7 @@ public:
 	SceneActor _obj5;
 	SceneActor _obj6;
 	SceneActor _obj7;
+
 public:
 	ScannerDialog();
 

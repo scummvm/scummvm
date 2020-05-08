@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_SOFTRENDERSURFACE_H
 #define ULTIMA8_GRAPHICS_SOFTRENDERSURFACE_H
 
-#include "ultima/ultima8/graphics/base_soft_render_surface.h"
 #include "graphics/managed_surface.h"
+#include "ultima/ultima8/graphics/base_soft_render_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,13 +34,13 @@ namespace Ultima8 {
 //
 // Desc: The class for software rendering in Pentagram
 //
-template<class uintX> class SoftRenderSurface : public BaseSoftRenderSurface {
+template<class uintX>
+class SoftRenderSurface : public BaseSoftRenderSurface {
 protected:
 	// Create Generic surface
 	SoftRenderSurface(int w, int h, int bpp, int rsft, int gsft, int bsft, int asft);
 
 public:
-
 	// Create from a managed surface
 	SoftRenderSurface(Graphics::ManagedSurface *);
 
@@ -116,7 +116,6 @@ public:
 	// Draw a RGB Line
 	void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey) override;
 
-
 	//
 	// Basic Font Drawing
 	//
@@ -125,7 +124,6 @@ public:
 
 	// Draw a fixed width character from a FixedWidthFont
 	void PrintCharFixed(FixedWidthFont *, int character, int x, int y) override;
-
 
 	//
 	// Basic Texture Blitting

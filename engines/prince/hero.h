@@ -23,12 +23,12 @@
 #ifndef PRINCE_HERO_H
 #define PRINCE_HERO_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 
-#include "graphics/surface.h"
 #include "graphics/primitives.h"
+#include "graphics/surface.h"
 
 namespace Prince {
 
@@ -108,7 +108,10 @@ public:
 
 	Graphics::Surface *getSurface();
 
-	void setPos(int16 x, int16 y) { _middleX = x; _middleY = y; }
+	void setPos(int16 x, int16 y) {
+		_middleX = x;
+		_middleY = y;
+	}
 	void setVisible(bool flag) { _visible = flag; }
 
 	void showHero();
@@ -145,30 +148,30 @@ public:
 	int16 _drawY;
 	int16 _drawZ;
 
-	byte *_coords; // array of coordinates
-	byte *_dirTab; // array of directions
-	byte *_currCoords; // current coordinations
-	byte *_currDirTab; // current direction
+	byte *_coords;        // array of coordinates
+	byte *_dirTab;        // array of directions
+	byte *_currCoords;    // current coordinations
+	byte *_currDirTab;    // current direction
 	int16 _lastDirection; // previous move direction
 	int16 _destDirection;
 	int16 _leftRightMainDir; // left or right - dominant direction
-	int16 _upDownMainDir; // up or down - dominant direction
-	int32 _phase; // Phase animation phase
-	int16 _step; // Step x/y step size depends on direction
-	int16 _maxBoredom; // stand still timeout
-	int16 _boredomTime; // Boredom current boredom time in frames
-	uint16 _boreNum; // Bore anim frame
-	int16 _talkTime; // TalkTime time of talk anim
-	Animation *_specAnim; // additional anim
+	int16 _upDownMainDir;    // up or down - dominant direction
+	int32 _phase;            // Phase animation phase
+	int16 _step;             // Step x/y step size depends on direction
+	int16 _maxBoredom;       // stand still timeout
+	int16 _boredomTime;      // Boredom current boredom time in frames
+	uint16 _boreNum;         // Bore anim frame
+	int16 _talkTime;         // TalkTime time of talk anim
+	Animation *_specAnim;    // additional anim
 	Graphics::Surface *_zoomedHeroSurface;
 
 	uint16 _currHeight; // height of current anim phase
 
-	Common::Array<byte> _inventory; // Inventory array of items
+	Common::Array<byte> _inventory;  // Inventory array of items
 	Common::Array<byte> _inventory2; // Inventory2 array of items
 	// Font subtitiles font
-	int _color; // subtitles color
-	uint32 _animSetNr; // number of animation set
+	int _color;                          // subtitles color
+	uint32 _animSetNr;                   // number of animation set
 	Common::Array<Animation *> _moveSet; // MoveAnims MoveSet
 
 	uint32 _moveDelay;

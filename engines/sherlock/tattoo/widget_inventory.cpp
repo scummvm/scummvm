@@ -21,23 +21,22 @@
  */
 
 #include "sherlock/tattoo/widget_inventory.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
-#define INVENTORY_XSIZE 70			// Width of the box that surrounds inventory items
-#define INVENTORY_YSIZE 70			// Height of the box that surrounds inventory items
-#define MAX_INV_COMMANDS 10			// Maximum elements in dialog
-#define NUM_INV_PER_LINE 4			// Number of inentory items per line in the dialog
+#define INVENTORY_XSIZE 70  // Width of the box that surrounds inventory items
+#define INVENTORY_YSIZE 70  // Height of the box that surrounds inventory items
+#define MAX_INV_COMMANDS 10 // Maximum elements in dialog
+#define NUM_INV_PER_LINE 4  // Number of inentory items per line in the dialog
 
-WidgetInventoryTooltip::WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner) :
-		WidgetTooltipBase(vm), _owner(owner) {
+WidgetInventoryTooltip::WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner) : WidgetTooltipBase(vm), _owner(owner) {
 }
 
 void WidgetInventoryTooltip::setText(const Common::String &str) {
@@ -144,17 +143,17 @@ void WidgetInventoryTooltip::handleEvents() {
 
 						if (!_owner->_swapItems)
 							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), obj._description.c_str(),
-								inv[_owner->_invSelect]._name.c_str(), _owner->_verb.c_str());
+							                             inv[_owner->_invSelect]._name.c_str(), _owner->_verb.c_str());
 						else
 							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), inv[_owner->_invSelect]._name.c_str(),
-								obj._description.c_str(), _owner->_verb.c_str());
+							                             obj._description.c_str(), _owner->_verb.c_str());
 					} else {
 						if (_owner->_swapItems)
 							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), obj._description.c_str(), _owner->_action.c_str(),
-								inv[_owner->_invSelect]._name.c_str());
+							                             inv[_owner->_invSelect]._name.c_str());
 						else
 							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), inv[_owner->_invSelect]._name.c_str(),
-								_owner->_action.c_str(), obj._description.c_str());
+							                             _owner->_action.c_str(), obj._description.c_str());
 					}
 				}
 			} else {
@@ -164,18 +163,18 @@ void WidgetInventoryTooltip::handleEvents() {
 					if (_vm->getLanguage() == Common::GR_GRE) {
 						if (!_owner->_swapItems)
 							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), person._description.c_str(),
-								inv[_owner->_invSelect]._name.c_str(), _owner->_verb.c_str());
+							                             inv[_owner->_invSelect]._name.c_str(), _owner->_verb.c_str());
 						else
 							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), inv[_owner->_invSelect]._name.c_str(),
-								person._description.c_str(), _owner->_verb.c_str());
+							                             person._description.c_str(), _owner->_verb.c_str());
 					} else {
 
 						if (_owner->_swapItems)
 							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), person._description.c_str(),
-								_owner->_action.c_str(), inv[_owner->_invSelect]._name.c_str());
+							                             _owner->_action.c_str(), inv[_owner->_invSelect]._name.c_str());
 						else
 							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(),
-								inv[_owner->_invSelect]._name.c_str(), _owner->_action.c_str(), person._description.c_str());
+							                             inv[_owner->_invSelect]._name.c_str(), _owner->_action.c_str(), person._description.c_str());
 					}
 				}
 			}
@@ -185,8 +184,7 @@ void WidgetInventoryTooltip::handleEvents() {
 		Common::Rect r(b.left + 3, b.top + 3, b.right - 3 - BUTTON_SIZE, b.bottom - 3);
 
 		if (r.contains(mousePos)) {
-			select = (mousePos.x - r.left) / (INVENTORY_XSIZE + 3) + NUM_INVENTORY_SHOWN / 2 *
-				((mousePos.y - r.top) / (INVENTORY_YSIZE + 3)) + inv._invIndex;
+			select = (mousePos.x - r.left) / (INVENTORY_XSIZE + 3) + NUM_INVENTORY_SHOWN / 2 * ((mousePos.y - r.top) / (INVENTORY_YSIZE + 3)) + inv._invIndex;
 
 			if (select >= inv._holdings) {
 				select = -1;
@@ -202,18 +200,18 @@ void WidgetInventoryTooltip::handleEvents() {
 
 							if (!obj._description.empty() && !obj._description.hasPrefix(" "))
 								str = Common::String::format("%s %s %s %s", strUse.c_str(), inv[select]._name.c_str(),
-									strWith.c_str(), obj._description.c_str());
+								                             strWith.c_str(), obj._description.c_str());
 						} else {
 							Person &person = people[ui._activeObj - 1000];
 
 							if (!person._description.empty() && !person._description.hasPrefix(" "))
 								str = Common::String::format("%s %s %s %s", strUse.c_str(), inv[select]._name.c_str(),
-									strWith.c_str(), person._description.c_str());
+								                             strWith.c_str(), person._description.c_str());
 						}
 					} else {
 						if (_owner->_invVerbMode == 2)
 							str = Common::String::format("%s %s %s %s", strUse.c_str(), inv[_owner->_invSelect]._name.c_str(),
-								strWith.c_str(), inv[select]._name.c_str());
+							                             strWith.c_str(), inv[select]._name.c_str());
 						else
 							str = inv[select]._description.c_str();
 					}
@@ -249,8 +247,7 @@ void WidgetInventoryTooltip::handleEvents() {
 
 /*----------------------------------------------------------------*/
 
-WidgetInventoryVerbs::WidgetInventoryVerbs(SherlockEngine *vm, WidgetInventory *owner) :
-		WidgetBase(vm), _owner(owner) {
+WidgetInventoryVerbs::WidgetInventoryVerbs(SherlockEngine *vm, WidgetInventory *owner) : WidgetBase(vm), _owner(owner) {
 	_invVerbSelect = _oldInvVerbSelect = -1;
 }
 
@@ -276,7 +273,7 @@ void WidgetInventoryVerbs::load() {
 		if (obj._type != INVALID && obj._type != HIDDEN) {
 			for (int useNum = 0; useNum < 6; ++useNum) {
 				if (!obj._use[useNum]._verb.hasPrefix("*") &&
-					!obj._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._name)) {
+				    !obj._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._name)) {
 					// Make sure the Verb is not already in the list
 					bool found1 = false;
 					for (uint cmdNum = 0; cmdNum < _inventCommands.size() && !found1; ++cmdNum) {
@@ -306,7 +303,7 @@ void WidgetInventoryVerbs::load() {
 	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
 		for (int useNum = 0; useNum < 2; ++useNum) {
 			if (!people[idx]._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._name) &&
-				!people[idx]._use[useNum]._verb.empty() && !people[idx]._use[useNum]._verb.hasPrefix(" ")) {
+			    !people[idx]._use[useNum]._verb.empty() && !people[idx]._use[useNum]._verb.hasPrefix(" ")) {
 				bool found1 = false;
 				for (uint cmdNum = 0; cmdNum < _inventCommands.size() && !found1; ++cmdNum) {
 					if (!_inventCommands[cmdNum].compareToIgnoreCase(people[idx]._use[cmdNum]._verb))
@@ -333,7 +330,7 @@ void WidgetInventoryVerbs::load() {
 
 	// Set up bounds for the menu
 	_bounds = Common::Rect(width + _surface.widestChar() * 2 + 6,
-		(_surface.fontHeight() + 7) * _inventCommands.size() + 3);
+	                       (_surface.fontHeight() + 7) * _inventCommands.size() + 3);
 	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
 
 	// Create the surface
@@ -344,8 +341,7 @@ void WidgetInventoryVerbs::load() {
 	// Draw the Verb commands and the lines separating them
 	ImageFile &images = *ui._interfaceImages;
 	for (int idx = 0; idx < (int)_inventCommands.size(); ++idx) {
-		_surface.writeString(_inventCommands[idx], Common::Point((_bounds.width() -
-			_surface.stringWidth(_inventCommands[idx])) / 2, (_surface.fontHeight() + 7) * idx + 5), INFO_TOP);
+		_surface.writeString(_inventCommands[idx], Common::Point((_bounds.width() - _surface.stringWidth(_inventCommands[idx])) / 2, (_surface.fontHeight() + 7) * idx + 5), INFO_TOP);
 
 		if (idx < (int)_inventCommands.size() - 1) {
 			_surface.vLine(3, (_surface.fontHeight() + 7) * (idx + 1), _bounds.right - 4, INFO_TOP);
@@ -354,7 +350,7 @@ void WidgetInventoryVerbs::load() {
 
 			_surface.SHtransBlitFrom(images[4], Common::Point(0, (_surface.fontHeight() + 7) * (idx + 1)));
 			_surface.SHtransBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width,
-				(_surface.fontHeight() + 7) * (idx + 1) - 1));
+			                                                  (_surface.fontHeight() + 7) * (idx + 1) - 1));
 		}
 	}
 
@@ -391,9 +387,8 @@ void WidgetInventoryVerbs::handleEvents() {
 
 			// Check if they are trying to solve the Foolscap puzzle, or looking at the completed puzzle
 			bool doFoolscap = !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) &&
-				!_inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Solve));
-			doFoolscap |= (!inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv7)))
-				&& !_inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Look)) && vm.readFlags(299);
+			                  !_inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Solve));
+			doFoolscap |= (!inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_owner->_invSelect]._name.compareToIgnoreCase(FIXED(Inv7))) && !_inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Look)) && vm.readFlags(299);
 
 			if (doFoolscap) {
 				// Close the entire Inventory and return to Standard Mode
@@ -418,7 +413,7 @@ void WidgetInventoryVerbs::handleEvents() {
 
 				// See if the selected Verb with the selected Iventory Item, is to be used by itself
 				if (!_inventCommands[_invVerbSelect].compareToIgnoreCase(inv[_owner->_invSelect]._verb._verb) ||
-					!inv[_owner->_invSelect]._verb._target.compareToIgnoreCase("*SELF")) {
+				    !inv[_owner->_invSelect]._verb._target.compareToIgnoreCase("*SELF")) {
 					inv.freeInv();
 
 					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
@@ -461,9 +456,7 @@ void WidgetInventoryVerbs::highlightControls() {
 		// Draw the list again, with the new highlighting
 		for (int idx = 0; idx < (int)_inventCommands.size(); ++idx) {
 			byte color = (idx == _invVerbSelect) ? COMMAND_HIGHLIGHTED : INFO_TOP;
-			_surface.writeString(_inventCommands[idx], Common::Point(
-				(_bounds.width() - _surface.stringWidth(_inventCommands[idx])) / 2,
-				(_surface.fontHeight() + 7) * idx + 5), color);
+			_surface.writeString(_inventCommands[idx], Common::Point((_bounds.width() - _surface.stringWidth(_inventCommands[idx])) / 2, (_surface.fontHeight() + 7) * idx + 5), color);
 		}
 
 		_oldInvVerbSelect = _invVerbSelect;
@@ -473,7 +466,7 @@ void WidgetInventoryVerbs::highlightControls() {
 /*----------------------------------------------------------------*/
 
 WidgetInventory::WidgetInventory(SherlockEngine *vm) : WidgetBase(vm),
-		_tooltipWidget(vm, this), _verbList(vm, this) {
+                                                       _tooltipWidget(vm, this), _verbList(vm, this) {
 	_invMode = 0;
 	_invVerbMode = 0;
 	_invSelect = _oldInvSelect = -1;
@@ -503,7 +496,7 @@ void WidgetInventory::load(int mode) {
 		banishWindow();
 	} else {
 		_bounds = Common::Rect((INVENTORY_XSIZE + 3) * NUM_INVENTORY_SHOWN / 2 + BUTTON_SIZE + 6,
-			(INVENTORY_YSIZE + 3) * 2 + 3);
+		                       (INVENTORY_YSIZE + 3) * 2 + 3);
 		_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
 	}
 
@@ -556,7 +549,7 @@ void WidgetInventory::drawInventory() {
 	for (int idx = 0, itemId = inv._invIndex; idx < NUM_INVENTORY_SHOWN; ++idx, ++itemId) {
 		// Figure out the drawing position
 		Common::Point pt(3 + (INVENTORY_XSIZE + 3) * (idx % (NUM_INVENTORY_SHOWN / 2)),
-			3 + (INVENTORY_YSIZE + 3) * (idx / (NUM_INVENTORY_SHOWN / 2)));
+		                 3 + (INVENTORY_YSIZE + 3) * (idx / (NUM_INVENTORY_SHOWN / 2)));
 
 		// Draw the box to serve as the background for the item
 		_surface.hLine(pt.x + 1, pt.y, pt.x + INVENTORY_XSIZE - 2, TRANSPARENCY);
@@ -567,12 +560,12 @@ void WidgetInventory::drawInventory() {
 		if (itemId < inv._holdings) {
 			ImageFrame &img = (*inv._invShapes[idx])[0];
 			_surface.SHtransBlitFrom(img, Common::Point(pt.x + (INVENTORY_XSIZE - img._width) / 2,
-				pt.y + (INVENTORY_YSIZE - img._height) / 2));
+			                                            pt.y + (INVENTORY_YSIZE - img._height) / 2));
 		}
 	}
 
 	drawScrollBar(inv._invIndex / NUM_INV_PER_LINE, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE,
-		(inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
+	              (inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
 }
 
 void WidgetInventory::handleEvents() {
@@ -595,10 +588,10 @@ void WidgetInventory::handleEvents() {
 
 		ScrollHighlight oldHighlight = ui._scrollHighlight;
 		handleScrollbarEvents(invIndex, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE,
-			(inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
+		                      (inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
 
 		handleScrolling(invIndex, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE,
-			(inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
+		                (inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
 
 		if (oldScrollIndex != invIndex) {
 			// Starting visible item index has changed, so set the index and reload inventory graphics
@@ -645,7 +638,7 @@ void WidgetInventory::handleEvents() {
 
 						for (int idx = 0; idx < 2; ++idx) {
 							if (!person._use[idx]._verb.compareToIgnoreCase(_verb) &&
-								!person._use[idx]._target.compareToIgnoreCase(_invTarget)) {
+							    !person._use[idx]._target.compareToIgnoreCase(_invTarget)) {
 								ui.checkAction(person._use[idx], ui._bgFound);
 								found = true;
 							}
@@ -653,7 +646,7 @@ void WidgetInventory::handleEvents() {
 					} else {
 						for (int idx = 0; idx < 6; ++idx) {
 							if (!ui._bgShape->_use[idx]._verb.compareToIgnoreCase(_verb) &&
-									!ui._bgShape->_use[idx]._target.compareToIgnoreCase(_invTarget)) {
+							    !ui._bgShape->_use[idx]._target.compareToIgnoreCase(_invTarget)) {
 								ui.checkAction(ui._bgShape->_use[idx], ui._bgFound);
 								found = true;
 							}
@@ -719,8 +712,7 @@ void WidgetInventory::handleEvents() {
 						// They left clicked on an inventory item, so Look at it
 
 						// Check if they are looking at the solved Foolscap
-						if ((!inv[_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_invSelect]._name.compareToIgnoreCase(FIXED(Inv7)))
-								&& vm.readFlags(299)) {
+						if ((!inv[_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_invSelect]._name.compareToIgnoreCase(FIXED(Inv7))) && vm.readFlags(299)) {
 							banishWindow();
 							_tooltipWidget.erase();
 

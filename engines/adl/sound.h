@@ -34,9 +34,9 @@ class Speaker;
 
 struct Tone {
 	double freq; // Hz
-	double len; // ms
+	double len;  // ms
 
-	Tone(double frequency, double length) : freq(frequency), len(length) { }
+	Tone(double frequency, double length) : freq(frequency), len(length) {}
 };
 
 typedef Common::Array<Tone> Tones;
@@ -50,7 +50,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples) override;
 	bool isStereo() const override { return false; }
 	bool endOfData() const override;
-	int getRate() const override	{ return _rate; }
+	int getRate() const override { return _rate; }
 
 private:
 	const Tones &_tones;

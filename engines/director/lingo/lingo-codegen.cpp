@@ -43,12 +43,12 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
-#include "director/director.h"
 #include "director/cast.h"
-#include "director/score.h"
-#include "director/lingo/lingo.h"
+#include "director/director.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo.h"
+#include "director/score.h"
 
 #include "director/util.h"
 
@@ -110,63 +110,56 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 
 		while (*pars) {
 			switch (*pars++) {
-			case 'i':
-				{
-					i = (*sd)[pc++];
-					int v = READ_UINT32(&i);
+			case 'i': {
+				i = (*sd)[pc++];
+				int v = READ_UINT32(&i);
 
-					res += Common::String::format(" %d", v);
-					break;
-				}
-			case 'f':
-				{
-					Datum d;
-					i = (*sd)[pc++];
-					d.u.f = *(double *)(&i);
+				res += Common::String::format(" %d", v);
+				break;
+			}
+			case 'f': {
+				Datum d;
+				i = (*sd)[pc++];
+				d.u.f = *(double *)(&i);
 
-					res += Common::String::format(" %f", d.u.f);
-					break;
-				}
-			case 'o':
-				{
-					i = (*sd)[pc++];
-					int v = READ_UINT32(&i);
+				res += Common::String::format(" %f", d.u.f);
+				break;
+			}
+			case 'o': {
+				i = (*sd)[pc++];
+				int v = READ_UINT32(&i);
 
-					res += Common::String::format(" [%5d]", v + start - 1);
-					break;
-				}
-			case 's':
-				{
-					char *s = (char *)&(*sd)[pc];
-					pc += calcStringAlignment(s);
+				res += Common::String::format(" [%5d]", v + start - 1);
+				break;
+			}
+			case 's': {
+				char *s = (char *)&(*sd)[pc];
+				pc += calcStringAlignment(s);
 
-					res += Common::String::format(" \"%s\"", s);
-					break;
-				}
-			case 'E':
-				{
-					i = (*sd)[pc++];
-					int v = READ_UINT32(&i);
+				res += Common::String::format(" \"%s\"", s);
+				break;
+			}
+			case 'E': {
+				i = (*sd)[pc++];
+				int v = READ_UINT32(&i);
 
-					res += Common::String::format(" %s", entity2str(v));
-					break;
-				}
-			case 'F':
-				{
-					i = (*sd)[pc++];
-					int v = READ_UINT32(&i);
+				res += Common::String::format(" %s", entity2str(v));
+				break;
+			}
+			case 'F': {
+				i = (*sd)[pc++];
+				int v = READ_UINT32(&i);
 
-					res += Common::String::format(" %s", field2str(v));
-					break;
-				}
-			case 'N':
-				{
-					i = (*sd)[pc++];
-					int v = READ_UINT32(&i);
+				res += Common::String::format(" %s", field2str(v));
+				break;
+			}
+			case 'N': {
+				i = (*sd)[pc++];
+				int v = READ_UINT32(&i);
 
-					res += Common::String::format(" \"%s\"", getName(v).c_str());
-					break;
-				}
+				res += Common::String::format(" \"%s\"", getName(v).c_str());
+				break;
+			}
 			default:
 				warning("decodeInstruction: Unknown parameter type: %c", pars[-1]);
 			}
@@ -302,8 +295,8 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 		name = *prefix + "-" + name;
 
 	debugC(1, kDebugLingoCompile, "define(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
-			name.c_str(), _currentScript->size() - 1, start, nargs, (prefix ? prefix->c_str() : ""),
-			end, _currentEntityId);
+	       name.c_str(), _currentScript->size() - 1, start, nargs, (prefix ? prefix->c_str() : ""),
+	       end, _currentEntityId);
 
 	if (end == -1)
 		end = _currentScript->size();
@@ -316,7 +309,6 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 		for (int i = end - 1; i >= start; i--) {
 			_currentScript->remove_at(i);
 		}
-
 
 	return sym;
 }
@@ -445,7 +437,7 @@ void Lingo::codeLabel(int label) {
 
 void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
 	inst ielse1, iend;
-	int  else1 = 0;
+	int else1 = 0;
 
 	debugC(4, kDebugLingoCompile, "processIf(%d, %d, %d)", startlabel, endlabel, finalElse);
 
@@ -479,8 +471,8 @@ void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
 		debugC(4, kDebugLingoCompile, "processIf: %d: %d %d", label, else1 + label, endlabel + label);
 
 		WRITE_UINT32(&ielse1, else1);
-		(*_currentScript)[label + 2] = ielse1;    /* elsepart */
-		(*_currentScript)[label + 3] = iend;      /* end, if cond fails */
+		(*_currentScript)[label + 2] = ielse1; /* elsepart */
+		(*_currentScript)[label + 3] = iend;   /* end, if cond fails */
 
 		else1 = label;
 	}
@@ -532,8 +524,8 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		}
 
 		if (sym->type != INT && sym->type != VOID &&
-				sym->type != FLOAT && sym->type != STRING &&
-				sym->type != ARRAY && sym->type != PARRAY) {
+		    sym->type != FLOAT && sym->type != STRING &&
+		    sym->type != ARRAY && sym->type != PARRAY) {
 			warning("varAssign: assignment to non-variable '%s'", sym->name.c_str());
 			return;
 		}
@@ -659,7 +651,6 @@ Datum Lingo::varFetch(Datum &var) {
 				break;
 			}
 		}
-
 	}
 
 	return result;
@@ -680,4 +671,4 @@ void Lingo::codeFactory(Common::String &name) {
 	_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
 }
 
-}
+} // namespace Director

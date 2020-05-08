@@ -36,7 +36,7 @@ namespace CGE {
 class CGEEngine;
 class EncryptedStream;
 
-#define kMaxPath  128
+#define kMaxPath 128
 enum {
 	kBmpEOI = 0x0000,
 	kBmpSKP = 0x4000,
@@ -57,6 +57,7 @@ class Bitmap {
 	CGEEngine *_vm;
 	char *forceExt(char *buf, const char *name, const char *ext);
 	bool loadVBM(EncryptedStream *f);
+
 public:
 	uint16 _w;
 	uint16 _h;
@@ -78,7 +79,6 @@ public:
 	void xShow(int16 x, int16 y);
 	bool solidAt(int16 x, int16 y);
 };
-
 
 typedef Bitmap *BitmapPtr;
 

@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
-#include "ultima/ultima8/graphics/fonts/ttf_rendered_text.h"
-#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/graphics/fonts/ttf_rendered_text.h"
+#include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/misc/encoding.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
-#include "common/ustr.h"
 #include "common/system.h"
+#include "common/ustr.h"
 #include "graphics/managed_surface.h"
 
 //include iomanip
@@ -40,13 +40,11 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TTFont, Font)
 
 // various unicode characters which look like small black circles
-static const uint16 BULLETS[] = { 0x2022, 0x30FB, 0x25CF, 0 };
-
+static const uint16 BULLETS[] = {0x2022, 0x30FB, 0x25CF, 0};
 
 TTFont::TTFont(Graphics::Font *font, uint32 rgb, int borderSize,
-		bool antiAliased, bool SJIS) :
-		_borderSize(borderSize), _ttfFont(font), _antiAliased(antiAliased), _SJIS(SJIS),
-		_pixelFormat(Texture::getPixelFormat()) {
+               bool antiAliased, bool SJIS) : _borderSize(borderSize), _ttfFont(font), _antiAliased(antiAliased), _SJIS(SJIS),
+                                              _pixelFormat(Texture::getPixelFormat()) {
 	_color = _pixelFormat.RGBToColor((rgb >> 16) & 0xFF, (rgb >> 8) & 0xff, rgb & 0xff);
 
 	_bullet = 0;
@@ -66,7 +64,6 @@ TTFont::TTFont(Graphics::Font *font, uint32 rgb, int borderSize,
 }
 
 TTFont::~TTFont() {
-
 }
 
 int TTFont::getHeight() {
@@ -127,18 +124,17 @@ void TTFont::getTextSize(const Std::string &text,
 		                              resultWidth, resultHeight);
 }
 
-
 RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remaining,
-		int32 width, int32 height, TextAlign align, bool u8specials,
-		Std::string::size_type cursor) {
+                                 int32 width, int32 height, TextAlign align, bool u8specials,
+                                 Std::string::size_type cursor) {
 	int32 resultWidth, resultHeight, lineHeight;
 	Std::list<PositionedText> lines;
 	if (!_SJIS)
 		lines = typesetText<Traits>(this, text, remaining, width, height, align, u8specials,
-			resultWidth, resultHeight, cursor);
+		                            resultWidth, resultHeight, cursor);
 	else
 		lines = typesetText<SJISTraits>(this, text, remaining, width, height, align, u8specials,
-			resultWidth, resultHeight, cursor);
+		                                resultWidth, resultHeight, cursor);
 	lineHeight = _ttfFont->getFontHeight();
 
 	Texture *texture = new Texture();
@@ -178,16 +174,17 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 
 				if (!_antiAliased && surfrow[x] == 1) {
 					bufrow[iter->_dims.x + x + _borderSize] = _color | 0xFF000000;
-					if (_borderSize <= 0) continue;
+					if (_borderSize <= 0)
+						continue;
 					if (_borderSize == 1) {
 						// optimize common case
 						for (int dx = -1; dx <= 1; dx++) {
 							for (int dy = -1; dy <= 1; dy++) {
 								if (x + 1 + iter->_dims.x + dx >= 0 &&
-									    x + 1 + iter->_dims.x + dx < resultWidth &&
-									    y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
-									if (texBuf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] == 0) {
-										texBuf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = 0xFF000000;
+								    x + 1 + iter->_dims.x + dx < resultWidth &&
+								    y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
+									if (texBuf[(y + iter->_dims.y + dy + 1) * resultWidth + x + 1 + iter->_dims.x + dx] == 0) {
+										texBuf[(y + iter->_dims.y + dy + 1) * resultWidth + x + 1 + iter->_dims.x + dx] = 0xFF000000;
 									}
 								}
 							}
@@ -197,10 +194,10 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 					for (int dx = -_borderSize; dx <= _borderSize; dx++) {
 						for (int dy = -_borderSize; dy <= _borderSize; dy++) {
 							if (x + _borderSize + iter->_dims.x + dx >= 0 &&
-								    x + _borderSize + iter->_dims.x + dx < resultWidth &&
-								    y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
-								if (texBuf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] == 0) {
-									texBuf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = 0xFF000000;
+							    x + _borderSize + iter->_dims.x + dx < resultWidth &&
+							    y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
+								if (texBuf[(y + iter->_dims.y + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.x + dx] == 0) {
+									texBuf[(y + iter->_dims.y + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.x + dx] = 0xFF000000;
 								}
 							}
 						}
@@ -220,28 +217,30 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 						bufrow[iter->_dims.x + x + _borderSize] = TEX32_PACK_RGBA(pixR, pixG, pixB, 0xFF);
 
 						// optimize common case
-						if (_borderSize == 1) for (int dx = -1; dx <= 1; dx++) {
-							for (int dy = -1; dy <= 1; dy++) {
-								if (x + 1 + iter->_dims.x + dx >= 0 &&
-										x + 1 + iter->_dims.x + dx < resultWidth &&
-										y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
-									uint32 alpha = TEX32_A(texBuf[(y + iter->_dims.y + dy + 1) * resultWidth + x + 1 + iter->_dims.x + dx]);
-									if (alpha != 0xFF) {
-										alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-										texBuf[(y + iter->_dims.y + dy + 1)*resultWidth + x + 1 + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
+						if (_borderSize == 1)
+							for (int dx = -1; dx <= 1; dx++) {
+								for (int dy = -1; dy <= 1; dy++) {
+									if (x + 1 + iter->_dims.x + dx >= 0 &&
+									    x + 1 + iter->_dims.x + dx < resultWidth &&
+									    y + 1 + dy >= 0 && y + 1 + dy < resultHeight) {
+										uint32 alpha = TEX32_A(texBuf[(y + iter->_dims.y + dy + 1) * resultWidth + x + 1 + iter->_dims.x + dx]);
+										if (alpha != 0xFF) {
+											alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
+											texBuf[(y + iter->_dims.y + dy + 1) * resultWidth + x + 1 + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
+										}
 									}
 								}
 							}
-						} else {
+						else {
 							for (int dx = -_borderSize; dx <= _borderSize; dx++) {
 								for (int dy = -_borderSize; dy <= _borderSize; dy++) {
 									if (x + _borderSize + iter->_dims.x + dx >= 0 &&
-											x + _borderSize + iter->_dims.x + dx < resultWidth &&
-											y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
+									    x + _borderSize + iter->_dims.x + dx < resultWidth &&
+									    y + _borderSize + dy >= 0 && y + _borderSize + dy < resultHeight) {
 										uint32 alpha = TEX32_A(texBuf[(y + iter->_dims.y + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.x + dx]);
 										if (alpha != 0xFF) {
 											alpha = 255 - (((255 - alpha) * (255 - idx)) >> 8);
-											texBuf[(y + iter->_dims.y + dy + _borderSize)*resultWidth + x + _borderSize + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
+											texBuf[(y + iter->_dims.y + dy + _borderSize) * resultWidth + x + _borderSize + iter->_dims.x + dx] = alpha << TEX32_A_SHIFT;
 										}
 									}
 								}
@@ -261,14 +260,14 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			for (int y = 0; y < iter->_dims.h; y++) {
 				uint32 *bufrow = texBuf + (iter->_dims.y + y) * resultWidth;
 				bufrow[iter->_dims.x + w + _borderSize] = 0xFF000000;
-//				if (_borderSize > 0)
-//					bufrow[iter->_dims.x+w+_borderSize-1] = 0xFF000000;
+				//				if (_borderSize > 0)
+				//					bufrow[iter->_dims.x+w+_borderSize-1] = 0xFF000000;
 			}
 		}
 	}
 
 	return new TTFRenderedText(texture, resultWidth, resultHeight,
-		getBaselineSkip() - getHeight(), this);
+	                           getBaselineSkip() - getHeight(), this);
 }
 
 } // End of namespace Ultima8

@@ -29,7 +29,7 @@ namespace Common {
 class SeekableReadStream;
 class WriteStream;
 class String;
-}
+} // namespace Common
 
 namespace Made {
 
@@ -37,7 +37,6 @@ class MadeEngine;
 
 class Object {
 public:
-
 	Object();
 	virtual ~Object();
 
@@ -107,12 +106,10 @@ public:
 	bool isConstant() override {
 		return !(getFlags() & 1);
 	}
-
 };
 
 class GameDatabase {
 public:
-
 	GameDatabase(MadeEngine *vm);
 	virtual ~GameDatabase();
 
@@ -173,6 +170,7 @@ public:
 	bool getSavegameDescription(const char *filename, Common::String &description, int16 version) override;
 	int16 savegame(const char *filename, const char *description, int16 version) override;
 	int16 loadgame(const char *filename, int16 version) override;
+
 protected:
 	char *_gameText;
 	void load(Common::SeekableReadStream &sourceS) override;
@@ -187,6 +185,7 @@ public:
 	bool getSavegameDescription(const char *filename, Common::String &description, int16 version) override;
 	int16 savegame(const char *filename, const char *description, int16 version) override;
 	int16 loadgame(const char *filename, int16 version) override;
+
 protected:
 	char *_gameText;
 	uint32 _gameStateOffs;

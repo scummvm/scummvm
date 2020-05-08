@@ -20,13 +20,13 @@
  *
  */
 
-#include "fullpipe/fullpipe.h"
 #include "common/archive.h"
+#include "fullpipe/fullpipe.h"
 
+#include "common/bufferedstream.h"
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/memstream.h"
-#include "common/bufferedstream.h"
 #include "common/textconsole.h"
 
 #include "fullpipe/ngiarchive.h"
@@ -106,7 +106,7 @@ int NGIArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int matches = 0;
 
 	NgiHeadersMap::const_iterator it = _headers.begin();
-	for ( ; it != _headers.end(); ++it) {
+	for (; it != _headers.end(); ++it) {
 		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(it->_value->filename, this)));
 		matches++;
 	}

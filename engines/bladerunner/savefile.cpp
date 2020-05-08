@@ -119,10 +119,10 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 		header._name = s.readStringSz(kNameLength);
 	}
 
-	header._year   = s.readUint16LE();
-	header._month  = s.readUint16LE();
-	header._day    = s.readUint16LE();
-	header._hour   = s.readUint16LE();
+	header._year = s.readUint16LE();
+	header._month = s.readUint16LE();
+	header._day = s.readUint16LE();
+	header._hour = s.readUint16LE();
 	header._minute = s.readUint16LE();
 
 	header._playTime = 0;
@@ -135,15 +135,15 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 	// Early check of possible corrupted save file (missing thumbnail and other data)
 	int32 pos = s.pos();
 	int32 sizeOfSaveFile = s.size();
-	if (sizeOfSaveFile > 0 && sizeOfSaveFile < (int32) (pos + 4 + kThumbnailSize)) {
+	if (sizeOfSaveFile > 0 && sizeOfSaveFile < (int32)(pos + 4 + kThumbnailSize)) {
 		warning("Unexpected end of save file \"%s\" (%02d:%02d %02d/%02d/%04d) reached. Size of file was: %d bytes",
-		         header._name.c_str(),
-		         header._hour,
-		         header._minute,
-		         header._day,
-		         header._month,
-		         header._year,
-		         sizeOfSaveFile);
+		        header._name.c_str(),
+		        header._hour,
+		        header._minute,
+		        header._day,
+		        header._month,
+		        header._year,
+		        sizeOfSaveFile);
 		return false;
 	}
 
@@ -152,7 +152,7 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 
 		s.skip(4); //skip size;
 
-		uint16 *thumbnailData = (uint16*)malloc(kThumbnailSize); // freed by ScummVM's smartptr
+		uint16 *thumbnailData = (uint16 *)malloc(kThumbnailSize); // freed by ScummVM's smartptr
 		for (uint i = 0; i < kThumbnailSize / 2; ++i) {
 			thumbnailData[i] = s.readUint16LE();
 		}
@@ -320,7 +320,5 @@ BoundingBox SaveFileReadStream::readBoundingBox(bool serialized) {
 
 	return BoundingBox(x0, y0, z0, x1, y1, z1);
 }
-
-
 
 } // End of namespace BladeRunner

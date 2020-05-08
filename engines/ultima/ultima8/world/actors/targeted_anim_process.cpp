@@ -22,8 +22,8 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"
+#include "ultima/ultima8/world/actors/targeted_anim_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -32,11 +32,11 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetedAnimProcess, ActorAnimProcess)
 
 TargetedAnimProcess::TargetedAnimProcess() : ActorAnimProcess(),
-		_x(0), _y(0), _z(0) {
+                                             _x(0), _y(0), _z(0) {
 }
 
 TargetedAnimProcess::TargetedAnimProcess(Actor *actor_, Animation::Sequence action_, uint32 dir_, int32 coords[3]) : ActorAnimProcess(actor_, action_, dir_),
-		_x(coords[0]), _y(coords[1]), _z(coords[2]) {
+                                                                                                                     _x(coords[0]), _y(coords[1]), _z(coords[2]) {
 }
 
 bool TargetedAnimProcess::init() {
@@ -47,18 +47,17 @@ bool TargetedAnimProcess::init() {
 	return true;
 }
 
-
 void TargetedAnimProcess::saveData(Common::WriteStream *ws) {
 	ActorAnimProcess::saveData(ws);
 
 	ws->writeUint32LE(static_cast<uint32>(_x));
 	ws->writeUint32LE(static_cast<uint32>(_y));
 	ws->writeUint32LE(static_cast<uint32>(_z));
-
 }
 
 bool TargetedAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!ActorAnimProcess::loadData(rs, version)) return false;
+	if (!ActorAnimProcess::loadData(rs, version))
+		return false;
 
 	_x = rs->readUint32LE();
 	_y = rs->readUint32LE();

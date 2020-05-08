@@ -23,10 +23,10 @@
 #ifndef FULLPIPE_UTILS_H
 #define FULLPIPE_UTILS_H
 
-#include "common/hash-ptr.h"
-#include "common/hash-str.h"
 #include "common/array.h"
 #include "common/file.h"
+#include "common/hash-ptr.h"
+#include "common/hash-str.h"
 
 namespace Fullpipe {
 
@@ -59,7 +59,7 @@ public:
 	CObject *parseClass(bool *isCopyReturned);
 
 	/** ownership of returned object is passed to caller */
-	template <typename T>
+	template<typename T>
 	T *readClass() {
 		CObject *obj = readBaseClass();
 		if (!obj)
@@ -117,7 +117,7 @@ public:
 	bool loadFile(const Common::String &fname);
 };
 
-template <class T>
+template<class T>
 class ObList : public Common::List<T *>, public CObject {
 public:
 	bool load(MfcArchive &file) override {
@@ -141,7 +141,7 @@ class MemoryObject : CObject {
 	friend class Picture;
 	friend class Scene;
 
- protected:
+protected:
 	Common::String _memfilename;
 	int _mfield_8;
 	int _mfield_C;
@@ -152,7 +152,7 @@ class MemoryObject : CObject {
 	int _mflags;
 	NGIArchive *_libHandle;
 
- public:
+public:
 	MemoryObject();
 	~MemoryObject() override;
 
@@ -171,10 +171,10 @@ class MemoryObject : CObject {
 class MemoryObject2 : public MemoryObject {
 	friend class Picture;
 
- protected:
+protected:
 	byte **_rows;
 
- public:
+public:
 	MemoryObject2();
 	~MemoryObject2() override;
 	bool load(MfcArchive &file) override;
@@ -183,12 +183,12 @@ class MemoryObject2 : public MemoryObject {
 };
 
 class ObArray : public Common::Array<CObject>, public CObject {
- public:
+public:
 	bool load(MfcArchive &file) override;
 };
 
 class DWordArray : public Common::Array<int32>, public CObject {
- public:
+public:
 	bool load(MfcArchive &file) override;
 };
 

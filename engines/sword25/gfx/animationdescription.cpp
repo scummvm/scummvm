@@ -29,9 +29,9 @@
  *
  */
 
-#include "sword25/kernel/outputpersistenceblock.h"
-#include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/gfx/animationdescription.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
 namespace Sword25 {
 

@@ -21,16 +21,16 @@
  */
 
 #include "glk/frotz/mem.h"
-#include "glk/frotz/frotz.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "glk/frotz/frotz.h"
 
 namespace Glk {
 namespace Frotz {
 
 Mem::Mem() : story_fp(nullptr), story_size(0), first_undo(nullptr), last_undo(nullptr),
-		curr_undo(nullptr), undo_mem(nullptr), zmp(nullptr), pcp(nullptr), prev_zmp(nullptr),
-		undo_diff(nullptr), undo_count(0), reserve_mem(0) {
+             curr_undo(nullptr), undo_mem(nullptr), zmp(nullptr), pcp(nullptr), prev_zmp(nullptr),
+             undo_diff(nullptr), undo_count(0), reserve_mem(0) {
 }
 
 void Mem::initialize() {
@@ -122,7 +122,7 @@ zword Mem::get_header_extension(int entry) {
 	addr = h_extension_table + 2 * entry;
 	LOW_WORD(addr, val);
 
-	return val;   
+	return val;
 }
 
 void Mem::set_header_extension(int entry, zword val) {
@@ -252,7 +252,8 @@ long Mem::mem_diff(zbyte *a, zbyte *b, zword mem_size, zbyte *diff) {
 	for (;;) {
 		for (j = 0; size > 0 && (c = *a++ ^ *b++) == 0; j++)
 			size--;
-		if (size == 0) break;
+		if (size == 0)
+			break;
 		size--;
 		if (j > 0x8000) {
 			*p++ = 0;
@@ -288,7 +289,7 @@ void Mem::mem_undiff(zbyte *diff, long diff_length, zbyte *dest) {
 			unsigned runlen;
 
 			if (!diff_length)
-				return;  // Incomplete run
+				return; // Incomplete run
 			runlen = *diff++;
 			diff_length--;
 			if (runlen & 0x80) {

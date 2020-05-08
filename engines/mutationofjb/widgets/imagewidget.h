@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_IMAGEWIDGET_H
 #define MUTATIONOFJB_IMAGEWIDGET_H
 
-#include "mutationofjb/widgets/widget.h"
 #include "graphics/surface.h"
+#include "mutationofjb/widgets/widget.h"
 
 namespace MutationOfJB {
 
@@ -39,6 +39,6 @@ private:
 	Graphics::Surface _image;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

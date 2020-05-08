@@ -27,8 +27,8 @@
 
 /* Original name: HELPER	The help system unit. */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/help.h"
+#include "avalanche/avalanche.h"
 
 #include "common/scummsys.h"
 
@@ -83,13 +83,12 @@ void Help::switchPage(byte which) {
 	do {
 		Common::String line = getLine(file);
 		if (!line.empty()) {
-			if (line.compareTo(Common::String('!')) == 0)  // End of the help text is signalled with a '!'.
+			if (line.compareTo(Common::String('!')) == 0) // End of the help text is signalled with a '!'.
 				break;
 			if (line[0] == '\\') {
 				line.deleteChar(0);
 				_vm->_graphics->drawNormalText(line, _vm->_font, 8, 16, 41 + y * 10, kColorRed);
-			}
-			else
+			} else
 				_vm->_graphics->drawNormalText(line, _vm->_font, 8, 16, 41 + y * 10, kColorBlack);
 		}
 		y++;

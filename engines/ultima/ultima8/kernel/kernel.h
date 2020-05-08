@@ -37,9 +37,9 @@ typedef Process *(*ProcessLoadFunc)(Common::ReadStream *rs, uint32 version);
 typedef Std::list<Process *>::const_iterator ProcessIter;
 typedef Std::list<Process *>::iterator ProcessIterator;
 
-
 class Kernel {
 	friend class Debugger;
+
 public:
 	Kernel();
 	~Kernel();
@@ -127,11 +127,12 @@ public:
 
 	INTRINSIC(I_getNumProcesses);
 	INTRINSIC(I_resetRef);
+
 private:
 	Process *loadProcess(Common::ReadStream *rs, uint32 version);
 
 	Std::list<Process *> _processes;
-	idMan   *_pIDs;
+	idMan *_pIDs;
 
 	Std::list<Process *>::iterator current_process;
 

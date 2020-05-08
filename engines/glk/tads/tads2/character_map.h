@@ -37,20 +37,17 @@ struct errcxdef;
  */
 void cmap_init_default(void);
 
-
 /*
  *   Load a character map file.  Returns zero on success, non-zero on
  *   failure.  If filename is null, we'll use the default mapping.
  */
 int cmap_load(char *filename);
 
-
 /*
  *   Turn off character translation.  This overrides any game character
  *   set that we find and simply uses the default translation. 
  */
 void cmap_override(void);
-
 
 /*
  *   Set the game's internal character set.  This should be called when a
@@ -71,7 +68,6 @@ void cmap_set_game_charset(struct errcxdef *errctx,
                            char *internal_id, char *internal_ldesc,
                            char *argv0);
 
-
 /* ------------------------------------------------------------------------ */
 /*
  *   Mapping macros 
@@ -82,7 +78,6 @@ void cmap_set_game_charset(struct errcxdef *errctx,
 
 /* map an internal character into a native character (for display) */
 #define cmap_i2n(c) (G_cmap_output[(unsigned char)(c)])
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -106,14 +101,13 @@ extern unsigned char G_cmap_output[256];
 extern char G_cmap_id[5];
 
 /* the full name (for display purposes) of the loaded character set */
-#define CMAP_LDESC_MAX_LEN  40
+#define CMAP_LDESC_MAX_LEN 40
 extern char G_cmap_ldesc[CMAP_LDESC_MAX_LEN + 1];
 
 /*
  *   Maximum expansion for an HTML entity mapping 
  */
-#define CMAP_MAX_ENTITY_EXPANSION  50
-
+#define CMAP_MAX_ENTITY_EXPANSION 50
 
 /* ------------------------------------------------------------------------ */
 /* 
@@ -122,7 +116,7 @@ extern char G_cmap_ldesc[CMAP_LDESC_MAX_LEN + 1];
  */
 
 /* single-byte character map version 1.0.0 */
-#define CMAP_SIG_S100  "TADS2 charmap S100\n\r\01a"
+#define CMAP_SIG_S100 "TADS2 charmap S100\n\r\01a"
 
 } // End of namespace TADS2
 } // End of namespace TADS

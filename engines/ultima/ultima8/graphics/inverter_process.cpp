@@ -26,21 +26,19 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"
 
-
 namespace Ultima {
 namespace Ultima8 {
 
-static unsigned int states[] = { 0, 8, 63, 211, 493, 945, 1594, 2459, 3552,
-                                 4870, 6406, 8139, 10042, 12078, 14207, 16384,
-                                 18561, 20690, 22726, 24629, 26362, 27898,
-                                 29216, 30308, 31174, 31823, 32274, 32556,
-                                 32704, 32760, 32768,
-                                 32775, 32831, 32979, 33261, 33713, 34362,
-                                 35227, 36320, 37638, 39174, 40907, 42810,
-                                 44846, 46975, 49152, 51328, 53457, 55494,
-                                 57396, 59129, 60665, 61984, 63076, 63942,
-                                 64591, 65042, 65324, 65472, 65528, 65536
-                               };
+static unsigned int states[] = {0, 8, 63, 211, 493, 945, 1594, 2459, 3552,
+                                4870, 6406, 8139, 10042, 12078, 14207, 16384,
+                                18561, 20690, 22726, 24629, 26362, 27898,
+                                29216, 30308, 31174, 31823, 32274, 32556,
+                                32704, 32760, 32768,
+                                32775, 32831, 32979, 33261, 33713, 34362,
+                                35227, 36320, 37638, 39174, 40907, 42810,
+                                44846, 46975, 49152, 51328, 53457, 55494,
+                                57396, 59129, 60665, 61984, 63076, 63942,
+                                64591, 65042, 65324, 65472, 65528, 65536};
 
 InverterProcess *InverterProcess::_inverter = nullptr;
 
@@ -48,12 +46,11 @@ InverterProcess *InverterProcess::_inverter = nullptr;
 DEFINE_RUNTIME_CLASSTYPE_CODE(InverterProcess, Process)
 
 InverterProcess::InverterProcess()
-	: Process(), _targetState(0) {
-
+    : Process(), _targetState(0) {
 }
 
 InverterProcess::InverterProcess(unsigned int target)
-	: Process(), _targetState(target) {
+    : Process(), _targetState(target) {
 }
 
 InverterProcess::~InverterProcess(void) {
@@ -69,7 +66,8 @@ void InverterProcess::run() {
 		terminate();
 	} else {
 		unsigned int i = 0;
-		while (states[i] <= state) i++;
+		while (states[i] <= state)
+			i++;
 		app->setInversion(states[i]);
 	}
 }
@@ -81,7 +79,8 @@ void InverterProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool InverterProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_targetState = rs->readUint16LE();
 
@@ -99,12 +98,12 @@ ProcId InverterProcess::invertScreen() {
 		return _inverter->getPid();
 	} else {
 		unsigned int target = 0x8000;
-		if (Ultima8Engine::get_instance()->isInverted()) target = 0;
+		if (Ultima8Engine::get_instance()->isInverted())
+			target = 0;
 		_inverter = new InverterProcess(target);
 		return Kernel::get_instance()->addProcess(_inverter);
 	}
 }
-
 
 uint32 InverterProcess::I_invertScreen(const uint8 *args,
                                        unsigned int /*argsize*/) {

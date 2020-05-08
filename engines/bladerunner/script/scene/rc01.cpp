@@ -25,21 +25,21 @@
 namespace BladeRunner {
 
 enum kRC01Loops {
-	kRC01LoopInshotWithCrowd   = 0,
-	kRC01LoopWithCrowd         = 1,
+	kRC01LoopInshotWithCrowd = 0,
+	kRC01LoopWithCrowd = 1,
 	kRC01LoopDoorAnimWithCrowd = 3,
-	kRC01LoopOutshotWithCrowd  = 4,
-	kRC01LoopInshotNoCrowd     = 5,
-	kRC01LoopNoCrowd           = 6,
-	kRC01LoopDoorAnimNoCrowd   = 8,
-	kRC01LoopOutshotNoCrowd    = 9,
-	kRC01LoopNoCrowdNoSpinner  = 10
+	kRC01LoopOutshotWithCrowd = 4,
+	kRC01LoopInshotNoCrowd = 5,
+	kRC01LoopNoCrowd = 6,
+	kRC01LoopDoorAnimNoCrowd = 8,
+	kRC01LoopOutshotNoCrowd = 9,
+	kRC01LoopNoCrowdNoSpinner = 10
 };
 
 enum kRC01Exits {
-	kRC01ExitRC02    = 0,
+	kRC01ExitRC02 = 0,
 	kRC01ExitSpinner = 1,
-	kRC01ExitRC03    = 2
+	kRC01ExitRC03 = 2
 };
 
 enum kRC01Regions {
@@ -66,9 +66,7 @@ void SceneScriptRC01::InitializeScene() {
 	if (Game_Flag_Query(kFlagSpinnerAtRC01)) {
 		Scene_Exit_Add_2D_Exit(kRC01ExitSpinner, 482, 226, 639, 280, 2);
 	}
-	if (Global_Variable_Query(kVariableChapter) > 1
-	 && Game_Flag_Query(kFlagAR01Entered)
-	) {
+	if (Global_Variable_Query(kVariableChapter) > 1 && Game_Flag_Query(kFlagAR01Entered)) {
 		Scene_Exit_Add_2D_Exit(kRC01ExitRC03, 0, 0, 10, 479, 3);
 	}
 	if (!Game_Flag_Query(kFlagRC01PoliceDone)) {
@@ -96,11 +94,11 @@ void SceneScriptRC01::InitializeScene() {
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRCAMBR1, 60, 100, 1);
-	Ambient_Sounds_Add_Sound(kSfxRCCARBY1,  5, 30, 30, 50, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxRCCARBY2,  5, 30, 30, 55, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxRCCARBY3,  5, 30, 30, 50, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2A,   10, 50, 30, 50, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSIREN2,   20, 80, 20, 40, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRCCARBY1, 5, 30, 30, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRCCARBY2, 5, 30, 30, 55, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRCCARBY3, 5, 30, 30, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 10, 50, 30, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSIREN2, 20, 80, 20, 40, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 		if (!Game_Flag_Query(kFlagRC02toRC01) && !Game_Flag_Query(kFlagRC03toRC01)) {
@@ -236,15 +234,7 @@ bool SceneScriptRC01::MouseClick(int x, int y) {
 }
 
 bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
-	if (Object_Query_Click("BARICADE01", objectName)
-	 || Object_Query_Click("BARICADE03", objectName)
-	 || Object_Query_Click("BARICADE04", objectName)
-	 || Object_Query_Click("70_1", objectName)
-	 || Object_Query_Click("70_2", objectName)
-	 || Object_Query_Click("70_3", objectName)
-	 || Object_Query_Click("70_5", objectName)
-	 || Object_Query_Click("70_6", objectName)
-	) {
+	if (Object_Query_Click("BARICADE01", objectName) || Object_Query_Click("BARICADE03", objectName) || Object_Query_Click("BARICADE04", objectName) || Object_Query_Click("70_1", objectName) || Object_Query_Click("70_2", objectName) || Object_Query_Click("70_3", objectName) || Object_Query_Click("70_5", objectName) || Object_Query_Click("70_6", objectName)) {
 		interrogateCrowd();
 		return true;
 	}
@@ -267,15 +257,10 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("DOOR LEFT", objectName)) {
 		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "DOOR LEFT", 48, true, false)) {
 			Actor_Face_Object(kActorMcCoy, "DOOR LEFT", true);
-			if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2)
-			    && Actor_Query_In_Set(kActorOfficerLeary, kSetRC01)
-			    && Global_Variable_Query(kVariableChapter) > 0
-			) {
+			if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2) && Actor_Query_In_Set(kActorOfficerLeary, kSetRC01) && Global_Variable_Query(kVariableChapter) > 0) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-				bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation
-				                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd
-				                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
+				bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
 #endif // BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 				Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
@@ -291,10 +276,7 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-			else if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2)
-			         && !Actor_Clue_Query(kActorMcCoy, kClueDoorForced1)
-			         && !Actor_Query_In_Set(kActorOfficerLeary, kSetRC01)
-			         && Global_Variable_Query(kVariableChapter) == 1) {
+			else if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2) && !Actor_Clue_Query(kActorMcCoy, kClueDoorForced1) && !Actor_Query_In_Set(kActorOfficerLeary, kSetRC01) && Global_Variable_Query(kVariableChapter) == 1) {
 				if (_vm->_cutContent) {
 					// keep in mind, this line in only available in Act 1 (1.TLK) unless _vm->_cutContent is selected (provided that cut content now loads all TLKs)
 					Actor_Voice_Over(1870, kActorVoiceOver);
@@ -331,9 +313,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorOfficerLeary, 36, true, false)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-			bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation
-			                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd
-			                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
+			bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Face_Actor(kActorMcCoy, kActorOfficerLeary, true);
 			Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
@@ -345,10 +325,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 				Game_Flag_Set(kFlagRC01McCoyAndOfficerLearyTalking);
 				if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA) && !Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewA)) {
 					Actor_Face_Object(kActorOfficerLeary, "70_1", true);
-					if (_vm->_cutContent
-					    && (_vm->_language == Common::ES_ESP
-					        || _vm->_language == Common::IT_ITA)
-					) {
+					if (_vm->_cutContent && (_vm->_language == Common::ES_ESP || _vm->_language == Common::IT_ITA)) {
 						// Quote 110 is the second half of the sentence about Lucy hanging around with Zuben ("a fat guy")
 						// in ENG, DEU and FRA it is redundant, but it's needed in ESP and ITA
 						Actor_Says_With_Pause(kActorOfficerLeary, 100, 0.0f, 15);
@@ -413,9 +390,7 @@ bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemChromeDebris) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation
-		                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd
-		                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
+		bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemChromeDebris, 36, true, false)) {
@@ -497,9 +472,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 			Player_Loses_Control();
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.98f, -0.3f, 318.15f, 0, false, false, false);
-			if ( Game_Flag_Query(kFlagDNARowAvailable)
-			 && !Game_Flag_Query(kFlagDNARowAvailableTalk)
-			) {
+			if (Game_Flag_Query(kFlagDNARowAvailable) && !Game_Flag_Query(kFlagDNARowAvailableTalk)) {
 				Actor_Voice_Over(4310, kActorVoiceOver);
 				Actor_Voice_Over(4320, kActorVoiceOver);
 				Actor_Voice_Over(4330, kActorVoiceOver);
@@ -644,13 +617,8 @@ void SceneScriptRC01::interrogateCrowd() {
 	if (!Game_Flag_Query(kFlagRC01PoliceDone)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation
-		                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd
-		                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
-		if (officerLearyWasInterrogatingTheCrowd
-		    || (Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewA)
-		        && Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewB) )
-		) {
+		bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
+		if (officerLearyWasInterrogatingTheCrowd || (Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewA) && Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewB))) {
 			Actor_Says(kActorMcCoy, 8525, kAnimationModeTalk); // generic "hmph"
 			return;
 		}
@@ -705,10 +673,7 @@ void SceneScriptRC01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptRC01::PlayerWalkedIn() {
-	if (Game_Flag_Query(kFlagSpinnerAtRC01)
-	    && !Game_Flag_Query(kFlagRC02toRC01)
-	    && !Game_Flag_Query(kFlagRC03toRC01)
-	) {
+	if (Game_Flag_Query(kFlagSpinnerAtRC01) && !Game_Flag_Query(kFlagRC02toRC01) && !Game_Flag_Query(kFlagRC03toRC01)) {
 		walkToCenter();
 	}
 
@@ -725,9 +690,7 @@ void SceneScriptRC01::PlayerWalkedIn() {
 		Player_Gains_Control();
 		Game_Flag_Reset(kFlagRC02toRC01);
 
-		if ( Game_Flag_Query(kFlagRC02Entered)
-		 && !Game_Flag_Query(kFlagRC02Left)
-		) {
+		if (Game_Flag_Query(kFlagRC02Entered) && !Game_Flag_Query(kFlagRC02Left)) {
 			Actor_Voice_Over(1910, kActorVoiceOver);
 			Actor_Voice_Over(1920, kActorVoiceOver);
 			Actor_Voice_Over(1930, kActorVoiceOver);
@@ -741,9 +704,7 @@ void SceneScriptRC01::PlayerWalkedIn() {
 void SceneScriptRC01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	if (!Game_Flag_Query(kFlagRC01toRC02)
-	 && !Game_Flag_Query(kFlagRC01toRC03)
-	) {
+	if (!Game_Flag_Query(kFlagRC01toRC02) && !Game_Flag_Query(kFlagRC01toRC03)) {
 		if (Global_Variable_Query(kVariableChapter) == 1) {
 			if (_vm->_cutContent) {
 				Outtake_Play(kOuttakeAscent, true, -1);
@@ -756,7 +717,7 @@ void SceneScriptRC01::PlayerWalkedOut() {
 			// Acts 2, 3 - should still use a spinner fly-through transition
 			if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
 				// don't play this extra outtake when going to Tyrell Building
-				Outtake_Play(kOuttakeAway1, true, -1);    // available in Acts 2, 3
+				Outtake_Play(kOuttakeAway1, true, -1); // available in Acts 2, 3
 			}
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS

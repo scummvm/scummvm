@@ -23,11 +23,11 @@
 #ifndef ILLUSIONS_BACKGROUNDRESOURCE_H
 #define ILLUSIONS_BACKGROUNDRESOURCE_H
 
+#include "graphics/surface.h"
 #include "illusions/camera.h"
 #include "illusions/graphics.h"
 #include "illusions/pathfinder.h"
 #include "illusions/resourcesystem.h"
-#include "graphics/surface.h"
 
 #include "common/array.h"
 #include "common/file.h"
@@ -48,6 +48,7 @@ public:
 	~BackgroundResourceLoader() override {}
 	void load(Resource *resource) override;
 	bool isFlag(int flag) override;
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -74,6 +75,7 @@ class PriorityLayer {
 public:
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 	int getPriority(Common::Point pos);
+
 protected:
 	int16 _width, _height;
 	int16 _mapWidth, _mapHeight;
@@ -84,6 +86,7 @@ class ScaleLayer {
 public:
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 	int getScale(Common::Point pos);
+
 protected:
 	int16 _height;
 	byte *_values;
@@ -94,6 +97,7 @@ public:
 	void load(byte *dataStart, Common::SeekableReadStream &stream);
 	int getRegionIndex(Common::Point pos);
 	uint32 getRegionSequenceId(int regionIndex);
+
 protected:
 	uint32 _unk;
 	byte *_regionSequenceIds;
@@ -144,8 +148,8 @@ public:
 	PathWalkRects *getPathWalkRects(uint index);
 	Palette *getPalette(uint index);
 	bool findNamedPoint(uint32 namedPointId, Common::Point &pt);
-public:
 
+public:
 	uint _paletteIndex;
 
 	uint _bgInfosCount;
@@ -176,7 +180,6 @@ public:
 
 	uint _palettesCount;
 	Palette *_palettes;
-
 };
 
 const uint kMaxBackgroundItemSurfaces = 3;
@@ -188,6 +191,7 @@ public:
 	void unload() override;
 	void pause() override;
 	void unpause() override;
+
 public:
 	IllusionsEngine *_vm;
 	uint32 _sceneId;
@@ -220,9 +224,9 @@ public:
 	WidthHeight getMasterBgDimensions();
 	void refreshPan();
 	bool findActiveBackgroundNamedPoint(uint32 namedPointId, Common::Point &pt);
-//protected:
+	//protected:
 public:
-	typedef Common::List<BackgroundInstance*> Items;
+	typedef Common::List<BackgroundInstance *> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;
 	Items _items;

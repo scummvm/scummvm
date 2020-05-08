@@ -27,10 +27,10 @@
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -39,34 +39,34 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-class Scene900: public PalettedScene {
+class Scene900 : public PalettedScene {
 	/* Items */
-	class Exterior: public NamedHotspot {
+	class Exterior : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class WestExit: public NamedHotspot {
+	class WestExit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 	/* Objects */
-	class Gate: public NamedObject {
+	class Gate : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Door: public NamedObjectExt {
+	class Door : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Dog: public NamedObjectExt {
+	class Dog : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Lyle: public NamedObject {
+	class Lyle : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Body: public NamedObject {
+	class Body : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
@@ -121,7 +121,7 @@ public:
 	void synchronize(Serializer &s) override;
 };
 
-class Scene910: public PalettedScene {
+class Scene910 : public PalettedScene {
 	/* Actions */
 	class Action1 : public Action {
 	public:
@@ -132,45 +132,45 @@ class Scene910: public PalettedScene {
 		void signal() override;
 	};
 	/* Objects */
-	class Lyle: public NamedObject {
+	class Lyle : public NamedObject {
 	public:
 		int _field90;
 		void synchronize(Serializer &s) override;
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Nico: public NamedObject {
+	class Nico : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Stuart: public NamedObject {
+	class Stuart : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Forbes: public NamedObject {
+	class Forbes : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class PowerCord: public NamedObject {
+	class PowerCord : public NamedObject {
 	public:
 		int _field90, _field92;
 
 		void synchronize(Serializer &s) override;
 		bool startAction(CursorType action, Event &event) override;
 		void init(int val);
-
 	};
-	class BreakerBox: public NamedObject {
+	class BreakerBox : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class FakeWall: public NamedObject {
+	class FakeWall : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
-	class Object13: public NamedObject {
+	class Object13 : public NamedObject {
 	protected:
 		int _state, _mode;
+
 	public:
 		void setupBreaker(int x, int y, int mode, int8 frameNumber);
 		void synchronize(Serializer &s) override;
@@ -178,15 +178,16 @@ class Scene910: public PalettedScene {
 		void remove() override;
 	};
 
-	class BlackPlug: public Object13 {
+	class BlackPlug : public Object13 {
 	public:
 		void init(int x, int y, int arg8, int8 mode);
 		bool startAction(CursorType action, Event &event) override;
 		void remove() override;
 	};
 
-	class Object25: public NamedObject {
+	class Object25 : public NamedObject {
 		int _field90, _field92;
+
 	public:
 		Object25();
 		void setupHiddenSwitch(int x, int y, int arg8, int argA);
@@ -195,10 +196,11 @@ class Scene910: public PalettedScene {
 		void remove() override;
 	};
 
-	class BreakerBoxInset: public FocusObject {
+	class BreakerBoxInset : public FocusObject {
 		Object13 _object13, _object14, _object15, _object16, _object17, _object18;
 		Object13 _object19, _object20, _object21, _object22, _object23, _object24;
 		Object25 _object25, _object26;
+
 	public:
 		Object13 _object27;
 		BlackPlug _object28;
@@ -207,7 +209,7 @@ class Scene910: public PalettedScene {
 		void remove() override;
 	};
 
-	class PowerButton: public NamedObject {
+	class PowerButton : public NamedObject {
 	public:
 		NamedObject _object32;
 		void remove() override;
@@ -215,9 +217,10 @@ class Scene910: public PalettedScene {
 		void init(int frame);
 	};
 
-	class GeneratorInset: public FocusObject {
+	class GeneratorInset : public FocusObject {
 		BlackPlug _blackPlug;
 		PowerButton _powerButton;
+
 	public:
 		Common::String getClassName() override { return "Scene910_object29"; }
 		void postInit(SceneObjectList *OwnerList = NULL) override;
@@ -225,37 +228,38 @@ class Scene910: public PalettedScene {
 	};
 
 	/* Items */
-	class Generator: public NamedHotspot {
+	class Generator : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item2: public NamedHotspot {
+	class Item2 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item3: public NamedHotspot {
+	class Item3 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item9: public NamedHotspot {
+	class Item9 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item15: public NamedHotspot {
+	class Item15 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item16: public NamedHotspot {
+	class Item16 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item17: public NamedHotspot {
+	class Item17 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	int _sceneSubMode, _breakerButtonCtr, _field2DE0, _field2DE2, _field2DE4;
 	Common::Point _destPos;
+
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2;
 	SpeakerGameText _gameTextSpeaker;
@@ -271,7 +275,7 @@ public:
 	Nico _nico;
 	Stuart _stuart;
 	Forbes _forbes;
-	NamedObject _object5,  _vent, _shadow;
+	NamedObject _object5, _vent, _shadow;
 	PowerCord _blackCord, _yellowCord;
 	BreakerBox _breakerBox;
 	FakeWall _fakeWall;
@@ -281,7 +285,7 @@ public:
 	Generator _generator;
 	Item2 _item2;
 	Item3 _item3;
-	NamedHotspot _item4,  _item5,  _item6,  _item7,  _item8;
+	NamedHotspot _item4, _item5, _item6, _item7, _item8;
 	Item9 _item9, _item10;
 	NamedHotspot _item11, _backWall, _item13, _item14;
 	Item15 _item15;
@@ -300,13 +304,13 @@ public:
 	void closeHiddenDoor();
 };
 
-class Scene920: public SceneExt {
+class Scene920 : public SceneExt {
 	/* Items */
-	class Item1: public NamedHotspot {
+	class Item1 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item8: public NamedHotspot {
+	class Item8 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
@@ -336,32 +340,32 @@ public:
 	void synchronize(Serializer &s) override;
 };
 
-class Scene930: public PalettedScene {
+class Scene930 : public PalettedScene {
 	/* Objects */
-	class Object1: public NamedObject {
+	class Object1 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object2: public FocusObject {
+	class Object2 : public FocusObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object3: public NamedObject {
+	class Object3 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object4: public FocusObject {
+	class Object4 : public FocusObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 		void remove() override;
 	};
-	class Object5: public FocusObject {
+	class Object5 : public FocusObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 		void remove() override;
 	};
 	/* Items */
-	class Item1: public NamedHotspot {
+	class Item1 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
@@ -382,6 +386,7 @@ class Scene930: public PalettedScene {
 	void showBootInset();
 	void showBoxInset();
 	void showSoleInset();
+
 public:
 	SequenceManager _sequenceManager1;
 	Object1 _box;
@@ -427,7 +432,7 @@ public:
 	void synchronize(Serializer &s) override;
 };
 
-class Scene935: public PalettedScene {
+class Scene935 : public PalettedScene {
 	/* Actions */
 	class Action1 : public Action {
 	public:
@@ -448,9 +453,9 @@ public:
 	void dispatch() override;
 };
 
-class Scene940: public SceneExt {
+class Scene940 : public SceneExt {
 	/* Items */
-	class Item1: public NamedHotspot {
+	class Item1 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};

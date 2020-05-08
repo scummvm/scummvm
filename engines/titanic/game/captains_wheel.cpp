@@ -26,17 +26,17 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCaptainsWheel, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 CCaptainsWheel::CCaptainsWheel() : CBackground(),
-		_stopEnabled(false), _actionNum(0), _fieldE8(0),
-		_cruiseEnabled(false), _goEnabled(false), _fieldF4(0) {
+                                   _stopEnabled(false), _actionNum(0), _fieldE8(0),
+                                   _cruiseEnabled(false), _goEnabled(false), _fieldF4(0) {
 }
 
 void CCaptainsWheel::save(SimpleFile *file, int indent) {
@@ -139,9 +139,8 @@ bool CCaptainsWheel::TurnOff(CTurnOff *msg) {
 	signalMsg._numValue = 0;
 
 	static const char *const NAMES[8] = {
-		"WheelSpin", "SeagullHorn", "WheelStopButt", "StopHotSpot",
-		"WheelCruiseButt", "CruiseHotSpot", "WheelGoButt","GoHotSpot"
-	};
+	    "WheelSpin", "SeagullHorn", "WheelStopButt", "StopHotSpot",
+	    "WheelCruiseButt", "CruiseHotSpot", "WheelGoButt", "GoHotSpot"};
 	for (int idx = 0; idx < 8; ++idx)
 		signalMsg.execute(NAMES[idx]);
 

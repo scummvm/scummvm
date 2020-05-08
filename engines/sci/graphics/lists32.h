@@ -186,6 +186,7 @@ public:
 template<typename T>
 class FindByObject {
 	const reg_t &_object;
+
 public:
 	FindByObject(const reg_t &object) : _object(object) {}
 	bool operator()(const T entry) const {

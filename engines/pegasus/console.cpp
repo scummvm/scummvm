@@ -22,8 +22,8 @@
 
 #include "pegasus/console.h"
 #include "pegasus/interface.h"
-#include "pegasus/pegasus.h"
 #include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -50,8 +50,7 @@ bool PegasusConsole::Cmd_Die(int argc, const char **argv) {
 
 	if (!invalidReason && _vm->isDemo())
 		invalidReason = (reason != kDeathFallOffCliff) && (reason != kDeathEatenByDinosaur) &&
-				(reason != kDeathStranded) && (reason != kPlayerWonGame);
-
+		                (reason != kDeathStranded) && (reason != kPlayerWonGame);
 
 	if (invalidReason) {
 		debugPrintf("Invalid death reason %d\n", reason);
@@ -81,7 +80,7 @@ bool PegasusConsole::Cmd_Jump(int argc, const char **argv) {
 	DirectionConstant direction = (DirectionConstant)atoi(argv[3]);
 
 	if ((neighborhood < kCaldoriaID || neighborhood > kNoradDeltaID || neighborhood == kFinalTSAID) &&
-			neighborhood != kNoradSubChaseID) {
+	    neighborhood != kNoradSubChaseID) {
 		debugPrintf("Invalid neighborhood %d", neighborhood);
 		return true;
 	}

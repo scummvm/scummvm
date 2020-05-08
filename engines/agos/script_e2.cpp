@@ -20,248 +20,245 @@
  *
  */
 
-
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_Elvira2, x)
+#define OPCODE(x) _OPCODE(AGOSEngine_Elvira2, x)
 
 void AGOSEngine_Elvira2::setupOpcodes() {
 	static const OpcodeEntryElvira2 opcodes[] = {
-		/* 00 */
-		OPCODE(o_invalid),
-		OPCODE(o_at),
-		OPCODE(o_notAt),
-		OPCODE(o_invalid),
-		/* 04 */
-		OPCODE(o_invalid),
-		OPCODE(o_carried),
-		OPCODE(o_notCarried),
-		OPCODE(o_isAt),
-		/* 08 */
-		OPCODE(oe1_isNotAt),
-		OPCODE(oe1_sibling),
-		OPCODE(oe1_notSibling),
-		OPCODE(o_zero),
-		/* 12 */
-		OPCODE(o_notZero),
-		OPCODE(o_eq),
-		OPCODE(o_notEq),
-		OPCODE(o_gt),
-		/* 16 */
-		OPCODE(o_lt),
-		OPCODE(o_eqf),
-		OPCODE(o_notEqf),
-		OPCODE(o_ltf),
-		/* 20 */
-		OPCODE(o_gtf),
-		OPCODE(oe1_isIn),
-		OPCODE(oe1_isNotIn),
-		OPCODE(o_chance),
-		/* 24 */
-		OPCODE(oe1_isPlayer),
-		OPCODE(o_isRoom),
-		OPCODE(o_isObject),
-		OPCODE(o_state),
-		/* 28 */
-		OPCODE(o_oflag),
-		OPCODE(oe1_canPut),
-		OPCODE(o_invalid),
-		OPCODE(o_destroy),
-		/* 32 */
-		OPCODE(o_invalid),
-		OPCODE(o_place),
-		OPCODE(oe1_copyof),
-		OPCODE(oe1_copyfo),
-		/* 36 */
-		OPCODE(o_copyff),
-		OPCODE(oe1_whatO),
-		OPCODE(o_invalid),
-		OPCODE(oe1_weigh),
-		/* 40 */
-		OPCODE(o_invalid),
-		OPCODE(o_clear),
-		OPCODE(o_let),
-		OPCODE(o_add),
-		/* 44 */
-		OPCODE(o_sub),
-		OPCODE(o_addf),
-		OPCODE(o_subf),
-		OPCODE(o_mul),
-		/* 48 */
-		OPCODE(o_div),
-		OPCODE(o_mulf),
-		OPCODE(o_divf),
-		OPCODE(o_mod),
-		/* 52 */
-		OPCODE(o_modf),
-		OPCODE(o_random),
-		OPCODE(oe2_moveDirn),
-		OPCODE(o_goto),
-		/* 56 */
-		OPCODE(o_oset),
-		OPCODE(o_oclear),
-		OPCODE(o_putBy),
-		OPCODE(o_inc),
-		/* 60 */
-		OPCODE(o_dec),
-		OPCODE(o_setState),
-		OPCODE(o_print),
-		OPCODE(o_message),
-		/* 64 */
-		OPCODE(o_msg),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 68 */
-		OPCODE(o_end),
-		OPCODE(o_done),
-		OPCODE(o_invalid),
-		OPCODE(o_process),
-		/* 72 */
-		OPCODE(oe2_doClass),
-		OPCODE(oe2_pObj),
-		OPCODE(oe1_pName),
-		OPCODE(oe1_pcName),
-		/* 76 */
-		OPCODE(o_when),
-		OPCODE(o_if1),
-		OPCODE(o_if2),
-		OPCODE(oe2_isCalled),
-		/* 80 */
-		OPCODE(o_is),
-		OPCODE(o_invalid),
-		OPCODE(o_debug),
-		OPCODE(oe1_rescan),
-		/* 84 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_comment),
-		/* 88 */
-		OPCODE(o_invalid),
-		OPCODE(oe1_loadGame),
-		OPCODE(o_getParent),
-		OPCODE(o_getNext),
-		/* 92 */
-		OPCODE(o_getChildren),
-		OPCODE(o_invalid),
-		OPCODE(oe1_findMaster),
-		OPCODE(oe1_nextMaster),
-		/* 96 */
-		OPCODE(o_picture),
-		OPCODE(o_loadZone),
-		OPCODE(oe1_animate),
-		OPCODE(oe1_stopAnimate),
-		/* 100 */
-		OPCODE(o_killAnimate),
-		OPCODE(o_defWindow),
-		OPCODE(o_window),
-		OPCODE(o_cls),
-		/* 104 */
-		OPCODE(o_closeWindow),
-		OPCODE(oe2_menu),
-		OPCODE(o_invalid),
-		OPCODE(o_addBox),
-		/* 108 */
-		OPCODE(o_delBox),
-		OPCODE(o_enableBox),
-		OPCODE(o_disableBox),
-		OPCODE(o_moveBox),
-		/* 112 */
-		OPCODE(o_invalid),
-		OPCODE(oe2_drawItem),
-		OPCODE(o_doIcons),
-		OPCODE(o_isClass),
-		/* 116 */
-		OPCODE(o_setClass),
-		OPCODE(o_unsetClass),
-		OPCODE(o_invalid),
-		OPCODE(o_waitSync),
-		/* 120*/
-		OPCODE(o_sync),
-		OPCODE(o_defObj),
-		OPCODE(o_invalid),
-		OPCODE(oe1_setTime),
-		/* 124 */
-		OPCODE(oe1_ifTime),
-		OPCODE(o_here),
-		OPCODE(o_doClassIcons),
-		OPCODE(o_playTune),
-		/* 128 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_setAdjNoun),
-		OPCODE(o_invalid),
-		/* 132 */
-		OPCODE(o_saveUserGame),
-		OPCODE(o_loadUserGame),
-		OPCODE(o_invalid),
-		OPCODE(oe2_pauseGame),
-		/* 136 */
-		OPCODE(o_copysf),
-		OPCODE(o_restoreIcons),
-		OPCODE(o_freezeZones),
-		OPCODE(o_placeNoIcons),
-		/* 140 */
-		OPCODE(o_clearTimers),
-		OPCODE(o_setDollar),
-		OPCODE(o_isBox),
-		OPCODE(oe2_doTable),
-		/* 144 */
-		OPCODE(oe2_setDoorOpen),
-		OPCODE(oe2_setDoorClosed),
-		OPCODE(oe2_setDoorLocked),
-		OPCODE(oe2_setDoorClosed),
-		/* 148 */
-		OPCODE(oe2_ifDoorOpen),
-		OPCODE(oe2_ifDoorClosed),
-		OPCODE(oe2_ifDoorLocked),
-		OPCODE(oe2_storeItem),
-		/* 152 */
-		OPCODE(oe2_getItem),
-		OPCODE(oe2_bSet),
-		OPCODE(oe2_bClear),
-		OPCODE(oe2_bZero),
-		/* 156 */
-		OPCODE(oe2_bNotZero),
-		OPCODE(oe2_getOValue),
-		OPCODE(oe2_setOValue),
-		OPCODE(o_invalid),
-		/* 160 */
-		OPCODE(oe2_ink),
-		OPCODE(oe2_printStats),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 164 */
-		OPCODE(o_invalid),
-		OPCODE(oe2_setSuperRoom),
-		OPCODE(oe2_getSuperRoom),
-		OPCODE(oe2_setExitOpen),
-		/* 168 */
-		OPCODE(oe2_setExitClosed),
-		OPCODE(oe2_setExitLocked),
-		OPCODE(oe2_setExitClosed),
-		OPCODE(oe2_ifExitOpen),
-		/* 172 */
-		OPCODE(oe2_ifExitClosed),
-		OPCODE(oe2_ifExitLocked),
-		OPCODE(oe2_playEffect),
-		OPCODE(oe2_getDollar2),
-		/* 176 */
-		OPCODE(oe2_setSRExit),
-		OPCODE(oe2_printPlayerDamage),
-		OPCODE(oe2_printMonsterDamage),
-		OPCODE(oe2_isAdjNoun),
-		/* 180 */
-		OPCODE(oe2_b2Set),
-		OPCODE(oe2_b2Clear),
-		OPCODE(oe2_b2Zero),
-		OPCODE(oe2_b2NotZero)
-	};
+	    /* 00 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_at),
+	    OPCODE(o_notAt),
+	    OPCODE(o_invalid),
+	    /* 04 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_carried),
+	    OPCODE(o_notCarried),
+	    OPCODE(o_isAt),
+	    /* 08 */
+	    OPCODE(oe1_isNotAt),
+	    OPCODE(oe1_sibling),
+	    OPCODE(oe1_notSibling),
+	    OPCODE(o_zero),
+	    /* 12 */
+	    OPCODE(o_notZero),
+	    OPCODE(o_eq),
+	    OPCODE(o_notEq),
+	    OPCODE(o_gt),
+	    /* 16 */
+	    OPCODE(o_lt),
+	    OPCODE(o_eqf),
+	    OPCODE(o_notEqf),
+	    OPCODE(o_ltf),
+	    /* 20 */
+	    OPCODE(o_gtf),
+	    OPCODE(oe1_isIn),
+	    OPCODE(oe1_isNotIn),
+	    OPCODE(o_chance),
+	    /* 24 */
+	    OPCODE(oe1_isPlayer),
+	    OPCODE(o_isRoom),
+	    OPCODE(o_isObject),
+	    OPCODE(o_state),
+	    /* 28 */
+	    OPCODE(o_oflag),
+	    OPCODE(oe1_canPut),
+	    OPCODE(o_invalid),
+	    OPCODE(o_destroy),
+	    /* 32 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_place),
+	    OPCODE(oe1_copyof),
+	    OPCODE(oe1_copyfo),
+	    /* 36 */
+	    OPCODE(o_copyff),
+	    OPCODE(oe1_whatO),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_weigh),
+	    /* 40 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_clear),
+	    OPCODE(o_let),
+	    OPCODE(o_add),
+	    /* 44 */
+	    OPCODE(o_sub),
+	    OPCODE(o_addf),
+	    OPCODE(o_subf),
+	    OPCODE(o_mul),
+	    /* 48 */
+	    OPCODE(o_div),
+	    OPCODE(o_mulf),
+	    OPCODE(o_divf),
+	    OPCODE(o_mod),
+	    /* 52 */
+	    OPCODE(o_modf),
+	    OPCODE(o_random),
+	    OPCODE(oe2_moveDirn),
+	    OPCODE(o_goto),
+	    /* 56 */
+	    OPCODE(o_oset),
+	    OPCODE(o_oclear),
+	    OPCODE(o_putBy),
+	    OPCODE(o_inc),
+	    /* 60 */
+	    OPCODE(o_dec),
+	    OPCODE(o_setState),
+	    OPCODE(o_print),
+	    OPCODE(o_message),
+	    /* 64 */
+	    OPCODE(o_msg),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 68 */
+	    OPCODE(o_end),
+	    OPCODE(o_done),
+	    OPCODE(o_invalid),
+	    OPCODE(o_process),
+	    /* 72 */
+	    OPCODE(oe2_doClass),
+	    OPCODE(oe2_pObj),
+	    OPCODE(oe1_pName),
+	    OPCODE(oe1_pcName),
+	    /* 76 */
+	    OPCODE(o_when),
+	    OPCODE(o_if1),
+	    OPCODE(o_if2),
+	    OPCODE(oe2_isCalled),
+	    /* 80 */
+	    OPCODE(o_is),
+	    OPCODE(o_invalid),
+	    OPCODE(o_debug),
+	    OPCODE(oe1_rescan),
+	    /* 84 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_comment),
+	    /* 88 */
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_loadGame),
+	    OPCODE(o_getParent),
+	    OPCODE(o_getNext),
+	    /* 92 */
+	    OPCODE(o_getChildren),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_findMaster),
+	    OPCODE(oe1_nextMaster),
+	    /* 96 */
+	    OPCODE(o_picture),
+	    OPCODE(o_loadZone),
+	    OPCODE(oe1_animate),
+	    OPCODE(oe1_stopAnimate),
+	    /* 100 */
+	    OPCODE(o_killAnimate),
+	    OPCODE(o_defWindow),
+	    OPCODE(o_window),
+	    OPCODE(o_cls),
+	    /* 104 */
+	    OPCODE(o_closeWindow),
+	    OPCODE(oe2_menu),
+	    OPCODE(o_invalid),
+	    OPCODE(o_addBox),
+	    /* 108 */
+	    OPCODE(o_delBox),
+	    OPCODE(o_enableBox),
+	    OPCODE(o_disableBox),
+	    OPCODE(o_moveBox),
+	    /* 112 */
+	    OPCODE(o_invalid),
+	    OPCODE(oe2_drawItem),
+	    OPCODE(o_doIcons),
+	    OPCODE(o_isClass),
+	    /* 116 */
+	    OPCODE(o_setClass),
+	    OPCODE(o_unsetClass),
+	    OPCODE(o_invalid),
+	    OPCODE(o_waitSync),
+	    /* 120*/
+	    OPCODE(o_sync),
+	    OPCODE(o_defObj),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_setTime),
+	    /* 124 */
+	    OPCODE(oe1_ifTime),
+	    OPCODE(o_here),
+	    OPCODE(o_doClassIcons),
+	    OPCODE(o_playTune),
+	    /* 128 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_setAdjNoun),
+	    OPCODE(o_invalid),
+	    /* 132 */
+	    OPCODE(o_saveUserGame),
+	    OPCODE(o_loadUserGame),
+	    OPCODE(o_invalid),
+	    OPCODE(oe2_pauseGame),
+	    /* 136 */
+	    OPCODE(o_copysf),
+	    OPCODE(o_restoreIcons),
+	    OPCODE(o_freezeZones),
+	    OPCODE(o_placeNoIcons),
+	    /* 140 */
+	    OPCODE(o_clearTimers),
+	    OPCODE(o_setDollar),
+	    OPCODE(o_isBox),
+	    OPCODE(oe2_doTable),
+	    /* 144 */
+	    OPCODE(oe2_setDoorOpen),
+	    OPCODE(oe2_setDoorClosed),
+	    OPCODE(oe2_setDoorLocked),
+	    OPCODE(oe2_setDoorClosed),
+	    /* 148 */
+	    OPCODE(oe2_ifDoorOpen),
+	    OPCODE(oe2_ifDoorClosed),
+	    OPCODE(oe2_ifDoorLocked),
+	    OPCODE(oe2_storeItem),
+	    /* 152 */
+	    OPCODE(oe2_getItem),
+	    OPCODE(oe2_bSet),
+	    OPCODE(oe2_bClear),
+	    OPCODE(oe2_bZero),
+	    /* 156 */
+	    OPCODE(oe2_bNotZero),
+	    OPCODE(oe2_getOValue),
+	    OPCODE(oe2_setOValue),
+	    OPCODE(o_invalid),
+	    /* 160 */
+	    OPCODE(oe2_ink),
+	    OPCODE(oe2_printStats),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 164 */
+	    OPCODE(o_invalid),
+	    OPCODE(oe2_setSuperRoom),
+	    OPCODE(oe2_getSuperRoom),
+	    OPCODE(oe2_setExitOpen),
+	    /* 168 */
+	    OPCODE(oe2_setExitClosed),
+	    OPCODE(oe2_setExitLocked),
+	    OPCODE(oe2_setExitClosed),
+	    OPCODE(oe2_ifExitOpen),
+	    /* 172 */
+	    OPCODE(oe2_ifExitClosed),
+	    OPCODE(oe2_ifExitLocked),
+	    OPCODE(oe2_playEffect),
+	    OPCODE(oe2_getDollar2),
+	    /* 176 */
+	    OPCODE(oe2_setSRExit),
+	    OPCODE(oe2_printPlayerDamage),
+	    OPCODE(oe2_printMonsterDamage),
+	    OPCODE(oe2_isAdjNoun),
+	    /* 180 */
+	    OPCODE(oe2_b2Set),
+	    OPCODE(oe2_b2Clear),
+	    OPCODE(oe2_b2Zero),
+	    OPCODE(oe2_b2NotZero)};
 
 	_opcodesElvira2 = opcodes;
 	_numOpcodes = 184;
@@ -269,7 +266,7 @@ void AGOSEngine_Elvira2::setupOpcodes() {
 
 void AGOSEngine_Elvira2::executeOpcode(int opcode) {
 	OpcodeProcElvira2 op = _opcodesElvira2[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------
@@ -434,7 +431,7 @@ void AGOSEngine_Elvira2::oe2_ifDoorClosed() {
 
 void AGOSEngine_Elvira2::oe2_ifDoorLocked() {
 	// 150: if door locked
-	Item *i=getNextItemPtr();
+	Item *i = getNextItemPtr();
 	uint16 d = getVarOrByte();
 	setScriptCondition(getDoorState(i, d) == 3);
 }

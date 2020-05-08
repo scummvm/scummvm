@@ -22,12 +22,12 @@
  */
 
 #include "tinsel/graphics.h"
-#include "tinsel/handle.h"	// LockMem()
+#include "tinsel/handle.h" // LockMem()
 #include "tinsel/object.h"
 #include "tinsel/palette.h"
 #include "tinsel/scene.h"
-#include "tinsel/tinsel.h"
 #include "tinsel/scn.h"
+#include "tinsel/tinsel.h"
 
 #include "common/textconsole.h"
 
@@ -49,17 +49,17 @@ extern uint8 g_transPalette[MAX_COLORS];
  * Chunk type 0x0003 (CHUNK_CHARPTR) in PSX version of DW 1 & 2 is compressed (original code
  * calls the compression PJCRLE), thus we need to decompress it before passing data to drawing functions
  */
-uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
+uint8 *psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 	uint32 remainingBlocks = 0;
 
 	uint16 compressionType = 0; // Kind of decompression to apply
-	uint16 controlBits = 0; // Control bits used to calculate the number of decompressed indexes
-	uint16 baseIndex = 0; // Base index to be repeated / incremented.
+	uint16 controlBits = 0;     // Control bits used to calculate the number of decompressed indexes
+	uint16 baseIndex = 0;       // Base index to be repeated / incremented.
 
 	uint16 controlData;
 
-	uint8* dstIdx = nullptr;
-	uint8* destinationBuffer = nullptr;
+	uint8 *dstIdx = nullptr;
+	uint8 *destinationBuffer = nullptr;
 
 	if (!imageWidth || !imageHeight)
 		return NULL;
@@ -112,31 +112,31 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 
 		// Manage different compressions
 		switch (compressionType) {
-			case 0: // No compression, plain copy of indexes
-				while (decremTiles) {
-					WRITE_LE_UINT16(dstIdx, READ_16(srcIdx));
-					srcIdx += 2;
-					dstIdx += 2;
-					decremTiles--;
-				}
-				break;
-			case 1: // Compression type 1, repeat a base index
-				while (decremTiles) {
-					WRITE_LE_UINT16(dstIdx, baseIndex);
-					dstIdx += 2;
-					decremTiles--;
-				}
-				break;
-			case 2: // Compression type 2, increment a base index
-				while (decremTiles) {
-					WRITE_LE_UINT16(dstIdx, baseIndex);
-					baseIndex++;
-					dstIdx += 2;
-					decremTiles--;
-				}
-				break;
-			default:
-				break;
+		case 0: // No compression, plain copy of indexes
+			while (decremTiles) {
+				WRITE_LE_UINT16(dstIdx, READ_16(srcIdx));
+				srcIdx += 2;
+				dstIdx += 2;
+				decremTiles--;
+			}
+			break;
+		case 1: // Compression type 1, repeat a base index
+			while (decremTiles) {
+				WRITE_LE_UINT16(dstIdx, baseIndex);
+				dstIdx += 2;
+				decremTiles--;
+			}
+			break;
+		case 2: // Compression type 2, increment a base index
+			while (decremTiles) {
+				WRITE_LE_UINT16(dstIdx, baseIndex);
+				baseIndex++;
+				dstIdx += 2;
+				decremTiles--;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -165,7 +165,7 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 		int rightClip = applyClipping ? pObj->rightClip : 0;
 
 		// Horizontal loop
-		for (int x = 0; x < pObj->width; ) {
+		for (int x = 0; x < pObj->width;) {
 			uint32 numBytes = READ_LE_UINT32(srcP);
 			srcP += sizeof(uint32);
 			bool repeatFlag = (numBytes & 0x80000000L) != 0;
@@ -239,7 +239,7 @@ static void MacDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 		int rightClip = applyClipping ? pObj->rightClip : 0;
 
 		// Horizontal loop
-		for (int x = 0; x < pObj->width; ) {
+		for (int x = 0; x < pObj->width;) {
 			byte repeatBytes = *srcP++;
 
 			if (repeatBytes) {
@@ -278,16 +278,15 @@ static void MacDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 				x += runLength;
 				srcP += runLength + overflow;
 			}
-		}	// horizontal loop
+		} // horizontal loop
 
 		// Move to next line
 		if (yClip > 0)
 			--yClip;
 		else
 			destP += SCREEN_WIDTH;
-	}	// vertical loop
+	} // vertical loop
 }
-
 
 /**
  * Straight rendering with transparency support, PSX variant supporting also 4-BIT clut data
@@ -374,7 +373,7 @@ static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 				} else {
 					for (int xp = boxBounds.left; xp <= boxBounds.right; ++xp) {
 						// Extract pixel value from byte
-						byte pixValue =  (*(p + (xp / 2)) & ((xp % 2) ? 0xf0 : 0x0f)) >> ((xp % 2) ? 4 : 0);
+						byte pixValue = (*(p + (xp / 2)) & ((xp % 2) ? 0xf0 : 0x0f)) >> ((xp % 2) ? 4 : 0);
 						if (pixValue || !transparency)
 							*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = psxMapperTable[pixValue];
 					}
@@ -528,8 +527,7 @@ static void t2WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 
 	for (int y = 0; y < pObj->height; ++y) {
 		// Get the position to start writing out from
-		uint8 *tempP = !horizFlipped ? destP :
-			destP + (pObj->width - pObj->leftClip - pObj->rightClip) - 1;
+		uint8 *tempP = !horizFlipped ? destP : destP + (pObj->width - pObj->leftClip - pObj->rightClip) - 1;
 		int leftClip = applyClipping ? pObj->leftClip : 0;
 		int rightClip = applyClipping ? pObj->rightClip : 0;
 		if (horizFlipped)
@@ -544,7 +542,7 @@ static void t2WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 				numBytes &= 0x7f;
 				clipAmount = MIN(numBytes, leftClip);
 				leftClip -= clipAmount;
-				x+= clipAmount;
+				x += clipAmount;
 
 				int runLength = numBytes - clipAmount;
 				uint8 color = *srcP++;
@@ -671,7 +669,7 @@ static void WrtAll(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClippi
  * Renders a packed data stream with a variable sized palette
  */
 static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
-							 bool applyClipping, bool horizFlipped, int packingType) {
+                             bool applyClipping, bool horizFlipped, int packingType) {
 	uint8 numColors = 0;
 	uint8 *colorTable = nullptr;
 	int topClip = 0;
@@ -688,10 +686,9 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 		// WORKAROUND: One of Dibbler's frames in the end sequence has corrupt bytes in the Russian version
 		if (pObj->hBits == 33651742) {
 			uint8 correctBytes[40] = {
-				0x06, 0xc0, 0xd6, 0xc1, 0x09, 0xce, 0x0d, 0x24, 0x02, 0x12, 0x01, 0x00, 0x00, 0x23, 0x21, 0x32,
-				0x12, 0x00, 0x00, 0x20, 0x01, 0x11, 0x32, 0x12, 0x01, 0x00, 0x00, 0x1b, 0x02, 0x11, 0x34, 0x11,
-				0x00, 0x00, 0x18, 0x01, 0x11, 0x35, 0x21, 0x01
-			};
+			    0x06, 0xc0, 0xd6, 0xc1, 0x09, 0xce, 0x0d, 0x24, 0x02, 0x12, 0x01, 0x00, 0x00, 0x23, 0x21, 0x32,
+			    0x12, 0x00, 0x00, 0x20, 0x01, 0x11, 0x32, 0x12, 0x01, 0x00, 0x00, 0x1b, 0x02, 0x11, 0x34, 0x11,
+			    0x00, 0x00, 0x18, 0x01, 0x11, 0x35, 0x21, 0x01};
 			Common::copy(&correctBytes[0], &correctBytes[40], srcP);
 		}
 	}
@@ -710,8 +707,7 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 
 	for (int y = 0; y < pObj->height; ++y) {
 		// Get the position to start writing out from
-		uint8 *tempP = !horizFlipped ? destP :
-			destP + (pObj->width - pObj->leftClip - pObj->rightClip) - 1;
+		uint8 *tempP = !horizFlipped ? destP : destP + (pObj->width - pObj->leftClip - pObj->rightClip) - 1;
 		int leftClip = applyClipping ? pObj->leftClip : 0;
 		int rightClip = applyClipping ? pObj->rightClip : 0;
 		if (horizFlipped)
@@ -733,12 +729,15 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 					xOffset -= v;
 					leftClip -= v;
 
-					if (horizFlipped) tempP -= xOffset; else tempP += xOffset;
+					if (horizFlipped)
+						tempP -= xOffset;
+					else
+						tempP += xOffset;
 					xOffset = 0;
 				}
 
 				v = *srcP++;
-				numBytes = v & 0xf;	// No. bytes 1-15
+				numBytes = v & 0xf; // No. bytes 1-15
 				if (packingType == 3)
 					color = colorTable[v >> 4];
 				else
@@ -771,7 +770,10 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 			while (numBytes-- > 0) {
 				if ((topClip == 0) && (x < (pObj->width - rightClip))) {
 					*tempP = color;
-					if (horizFlipped) --tempP; else ++tempP;
+					if (horizFlipped)
+						--tempP;
+					else
+						++tempP;
 				}
 				++x;
 			}
@@ -813,7 +815,7 @@ void UpdateScreenRect(const Common::Rect &pClip) {
 	int yOffset = TinselV2 ? (g_system->getHeight() - SCREEN_HEIGHT) / 2 : 0;
 	byte *pSrc = (byte *)_vm->screen().getBasePtr(pClip.left, pClip.top);
 	g_system->copyRectToScreen(pSrc, _vm->screen().pitch, pClip.left, pClip.top + yOffset,
-		pClip.width(), pClip.height());
+	                           pClip.width(), pClip.height());
 }
 
 /**
@@ -825,8 +827,8 @@ void DrawObject(DRAWOBJECT *pObj) {
 	byte psxMapperTable[16];
 
 	bool psxFourBitClut = false; // Used by Tinsel PSX, true if an image using a 4bit CLUT is rendered
-	bool psxRLEindex = false; // Used by Tinsel PSX, true if an image is using PJCRLE compressed indexes
-	uint32 psxSkipBytes = 0; // Used by Tinsel PSX, number of bytes to skip before counting indexes for image tiles
+	bool psxRLEindex = false;    // Used by Tinsel PSX, true if an image is using PJCRLE compressed indexes
+	uint32 psxSkipBytes = 0;     // Used by Tinsel PSX, number of bytes to skip before counting indexes for image tiles
 
 	if ((pObj->width <= 0) || (pObj->height <= 0))
 		// Empty image, so return immediately
@@ -835,7 +837,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 	// If writing constant data, don't bother locking the data pointer and reading src details
 	if ((pObj->flags & DMA_CONST) == 0) {
 		if (TinselV2) {
-			srcPtr  = (byte *)LockMem(pObj->hBits);
+			srcPtr = (byte *)LockMem(pObj->hBits);
 			pObj->charBase = nullptr;
 			pObj->transOffset = 0;
 		} else {
@@ -847,53 +849,52 @@ void DrawObject(DRAWOBJECT *pObj) {
 
 			// Decompress block indexes for Discworld PSX
 			if (TinselV1PSX) {
-				uint8 paletteType = *(srcPtr); // if 0x88 we are using an 8bit palette type, if 0x44 we are using a 4 bit PSX CLUT
+				uint8 paletteType = *(srcPtr);   // if 0x88 we are using an 8bit palette type, if 0x44 we are using a 4 bit PSX CLUT
 				uint8 indexType = *(srcPtr + 1); // if 0xCC indexes for this image are compressed with PCJRLE, if 0xDD indexes are not compressed
 
 				switch (paletteType) {
-					case 0x88: // Normal 8-bit palette
-						psxFourBitClut = false;
-						psxSkipBytes = 0;
-						switch (indexType) {
-							case 0xDD: // Normal uncompressed indexes
-								psxRLEindex = false;
-								srcPtr += sizeof(uint16); // Get to the beginning of index data
-								break;
-							case 0xCC: // PJCRLE compressed indexes
-								psxRLEindex = true;
-								srcPtr = psxPJCRLEUnwinder(pObj->width, pObj->height, srcPtr + sizeof(uint16));
-								break;
-							default:
-								error("Unknown PSX index type 0x%.2X", indexType);
-								break;
-						}
+				case 0x88: // Normal 8-bit palette
+					psxFourBitClut = false;
+					psxSkipBytes = 0;
+					switch (indexType) {
+					case 0xDD: // Normal uncompressed indexes
+						psxRLEindex = false;
+						srcPtr += sizeof(uint16); // Get to the beginning of index data
 						break;
-					case 0x44: // PSX 4-bit CLUT
-						psxPaletteMapper(pObj->pPal, srcPtr + sizeof(uint16), psxMapperTable);
-
-						psxFourBitClut = true;
-						psxSkipBytes = READ_LE_UINT32(p + sizeof(uint32) * 5) << 4; // Fetch number of bytes we have to skip
-						switch (indexType) {
-							case 0xDD: // Normal uncompressed indexes
-								psxRLEindex = false;
-								srcPtr += sizeof(uint16) * 17; // Skip image type and clut, and get to beginning of index data
-								break;
-							case 0xCC: // PJCRLE compressed indexes
-								psxRLEindex = true;
-								srcPtr = psxPJCRLEUnwinder(pObj->width, pObj->height, srcPtr + sizeof(uint16) * 17);
-								break;
-							default:
-								error("Unknown PSX index type 0x%.2X", indexType);
-								break;
-						}
+					case 0xCC: // PJCRLE compressed indexes
+						psxRLEindex = true;
+						srcPtr = psxPJCRLEUnwinder(pObj->width, pObj->height, srcPtr + sizeof(uint16));
 						break;
 					default:
-						error("Unknown PSX palette type 0x%.2X", paletteType);
+						error("Unknown PSX index type 0x%.2X", indexType);
 						break;
+					}
+					break;
+				case 0x44: // PSX 4-bit CLUT
+					psxPaletteMapper(pObj->pPal, srcPtr + sizeof(uint16), psxMapperTable);
+
+					psxFourBitClut = true;
+					psxSkipBytes = READ_LE_UINT32(p + sizeof(uint32) * 5) << 4; // Fetch number of bytes we have to skip
+					switch (indexType) {
+					case 0xDD: // Normal uncompressed indexes
+						psxRLEindex = false;
+						srcPtr += sizeof(uint16) * 17; // Skip image type and clut, and get to beginning of index data
+						break;
+					case 0xCC: // PJCRLE compressed indexes
+						psxRLEindex = true;
+						srcPtr = psxPJCRLEUnwinder(pObj->width, pObj->height, srcPtr + sizeof(uint16) * 17);
+						break;
+					default:
+						error("Unknown PSX index type 0x%.2X", indexType);
+						break;
+					}
+					break;
+				default:
+					error("Unknown PSX palette type 0x%.2X", paletteType);
+					break;
 				}
 			}
 		}
-
 	}
 
 	// Get destination starting point
@@ -901,29 +902,29 @@ void DrawObject(DRAWOBJECT *pObj) {
 
 	// Handle various draw types
 	uint8 typeId = pObj->flags & 0xff;
-	int packType = pObj->flags >> 14;	// TinselV2
+	int packType = pObj->flags >> 14; // TinselV2
 
 	if (TinselV2 && packType != 0) {
 		// Color packing for TinselV2
 
 		if (packType == 1)
-			pObj->baseCol = 0xF0;	// 16 from 240
+			pObj->baseCol = 0xF0; // 16 from 240
 		else if (packType == 2)
-			pObj->baseCol = 0xE0;	// 16 from 224
+			pObj->baseCol = 0xE0; // 16 from 224
 		// 3 = variable color
 
 		PackedWrtNonZero(pObj, srcPtr, destPtr, (pObj->flags & DMA_CLIP) != 0,
-			(pObj->flags & DMA_FLIPH), packType);
+		                 (pObj->flags & DMA_FLIPH), packType);
 	} else {
 		switch (typeId) {
-		case 0x01:	// all versions, draw sprite without clipping
-		case 0x41:	// all versions, draw sprite with clipping
-		case 0x02:	// TinselV2, draw sprite without clipping
-		case 0x11:	// TinselV2, draw sprite without clipping, flipped horizontally
-		case 0x42:	// TinselV2, draw sprite with clipping
-		case 0x51:	// TinselV2, draw sprite with clipping, flipped horizontally
-		case 0x81:	// TinselV2, draw sprite with clipping
-		case 0xC1:	// TinselV2, draw sprite with clipping
+		case 0x01: // all versions, draw sprite without clipping
+		case 0x41: // all versions, draw sprite with clipping
+		case 0x02: // TinselV2, draw sprite without clipping
+		case 0x11: // TinselV2, draw sprite without clipping, flipped horizontally
+		case 0x42: // TinselV2, draw sprite with clipping
+		case 0x51: // TinselV2, draw sprite with clipping, flipped horizontally
+		case 0x81: // TinselV2, draw sprite with clipping
+		case 0xC1: // TinselV2, draw sprite with clipping
 			assert(TinselV2 || (typeId == 0x01 || typeId == 0x41));
 
 			if (TinselV2)
@@ -937,8 +938,8 @@ void DrawObject(DRAWOBJECT *pObj) {
 			else if (TinselV0)
 				t0WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
 			break;
-		case 0x08:	// draw background without clipping
-		case 0x48:	// draw background with clipping
+		case 0x08: // draw background without clipping
+		case 0x48: // draw background with clipping
 			if (TinselV2 || TinselV1Mac || TinselV0)
 				WrtAll(pObj, srcPtr, destPtr, typeId == 0x48);
 			else if (TinselV1PSX)
@@ -946,12 +947,12 @@ void DrawObject(DRAWOBJECT *pObj) {
 			else if (TinselV1)
 				WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x48);
 			break;
-		case 0x04:	// fill with constant color without clipping
-		case 0x44:	// fill with constant color with clipping
+		case 0x04: // fill with constant color without clipping
+		case 0x44: // fill with constant color with clipping
 			WrtConst(pObj, destPtr, typeId == 0x44);
 			break;
-		case 0x84:	// draw transparent surface without clipping
-		case 0xC4:	// draw transparent surface with clipping
+		case 0x84: // draw transparent surface without clipping
+		case 0xC4: // draw transparent surface with clipping
 			WrtTrans(pObj, destPtr, typeId == 0xC4);
 			break;
 		default:

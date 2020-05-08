@@ -23,8 +23,8 @@
 #ifndef NUVIE_CORE_MSG_SCROLL_NEW_UI_H
 #define NUVIE_CORE_MSG_SCROLL_NEW_UI_H
 
-#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
+#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
@@ -45,7 +45,7 @@ typedef enum {
 	SCROLL_ESCAPE
 } ScrollEventType;
 
-class MsgScrollNewUI: public MsgScroll {
+class MsgScrollNewUI : public MsgScroll {
 
 	CallBack *timer;
 
@@ -60,7 +60,6 @@ class MsgScrollNewUI: public MsgScroll {
 	Std::string trailing_whitespace;
 
 public:
-
 	MsgScrollNewUI(Configuration *cfg, Screen *s);
 	~MsgScrollNewUI() override;
 
@@ -94,14 +93,11 @@ public:
 	}
 
 protected:
-
-
 	MsgLine *add_new_line() override;
 
 private:
 	GUI_status scroll_movement_event(ScrollEventType event);
 	uint16 count_empty_lines(Std::string s);
-
 };
 
 } // End of namespace Nuvie

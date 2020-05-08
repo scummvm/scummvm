@@ -23,8 +23,8 @@
 #ifndef TESTBED_SPEECH_H
 #define TESTBED_SPEECH_H
 
-#include "testbed/testsuite.h"
 #include "common/text-to-speech.h"
+#include "testbed/testsuite.h"
 
 namespace Testbed {
 
@@ -73,9 +73,7 @@ public:
 	const char *getDescription() const override {
 		return "Speech Subsystem";
 	}
-
 };
-
 
 } // End of namespace Testbed
 

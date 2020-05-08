@@ -25,11 +25,11 @@
 #include "ultima/ultima8/graphics/wpn_ovlay_dat.h"
 
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/world/actors/weapon_overlay.h"
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
+#include "ultima/ultima8/world/actors/weapon_overlay.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -49,15 +49,14 @@ const AnimWeaponOverlay *WpnOvlayDat::getAnimOverlay(uint32 action) const {
 }
 
 const WeaponOverlayFrame *WpnOvlayDat::getOverlayFrame(uint32 action, int type,
-        int direction,
-        int frame) const {
+                                                       int direction,
+                                                       int frame) const {
 	if (action >= _overlay.size())
 		return nullptr;
 	if (!_overlay[action])
 		return nullptr;
 	return _overlay[action]->getFrame(type, direction, frame);
 }
-
 
 void WpnOvlayDat::load(RawArchive *overlaydat) {
 	WeaponOverlayFrame f;
@@ -95,8 +94,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 				for (unsigned int dir = 0; dir < dircount; dir++) {
 					awo->_overlay[type]._frames[dir].resize(animlength);
 					for (unsigned int frame = 0; frame < animlength; frame++) {
-						unsigned int offset = type * 8 * animlength
-						                      + dir * animlength + frame;
+						unsigned int offset = type * 8 * animlength + dir * animlength + frame;
 						rs->seek(4 * offset);
 						f._xOff = rs->readSByte();
 						f._yOff = rs->readSByte();

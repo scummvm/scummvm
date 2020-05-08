@@ -38,7 +38,7 @@
 namespace Common {
 class SeekableReadStream;
 class WriteStream;
-}
+} // namespace Common
 
 namespace Graphics {
 struct Surface;

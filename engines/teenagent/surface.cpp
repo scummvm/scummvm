@@ -24,8 +24,8 @@
 #include "teenagent/pack.h"
 #include "teenagent/teenagent.h"
 
-#include "common/stream.h"
 #include "common/debug.h"
+#include "common/stream.h"
 
 namespace TeenAgent {
 

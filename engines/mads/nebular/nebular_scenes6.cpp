@@ -20,11 +20,11 @@
  *
  */
 
+#include "mads/nebular/nebular_scenes6.h"
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
-#include "mads/nebular/nebular_scenes6.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -164,8 +164,7 @@ void Scene601::actions() {
 			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_game._player._visible = false;
@@ -180,8 +179,7 @@ void Scene601::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_nextSceneId = 504;
-			}
-			break;
+		} break;
 
 		default:
 			break;
@@ -339,7 +337,7 @@ void Scene602::handleSafeActions() {
 					_scene->_hotspots.activate(NOUN_DOOR_KEY, true);
 
 				_scene->_sequences.addSubEntry(_lastSequenceIdx,
-					SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+				                               SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 		} else {
 			_scene->_sequences.remove(_lastSequenceIdx);
@@ -371,7 +369,7 @@ void Scene602::handleSafeActions() {
 		} else
 			_scene->_sequences.addTimer(60, 4);
 		break;
-		}
+	}
 
 	case 3:
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
@@ -417,8 +415,7 @@ void Scene602::actions() {
 			_cycleIndex = -2;
 			handleSafeActions();
 		}
-	} else if ((_action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM)
-		|| _action.isAction(VERB_REFLECT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM) || _action.isAction(VERB_REFLECT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM)) && (_globals[kSafeStatus] == 0)) {
+	} else if ((_action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM) || _action.isAction(VERB_REFLECT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM) || _action.isAction(VERB_REFLECT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM)) && (_globals[kSafeStatus] == 0)) {
 		switch (_game._trigger) {
 		case 0:
 			_vm->_dialogs->show(60230);
@@ -442,8 +439,7 @@ void Scene602::actions() {
 			idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(80, 134), FACING_NORTHEAST);
 			_scene->_sequences.addTimer(60, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_scene->_kernelMessages.reset();
@@ -595,7 +591,7 @@ void Scene603::actions() {
 	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_LIVINGROOM))
 		_scene->_nextSceneId = 602;
 	else if (_action.isAction(VERB_TAKE, NOUN_COMPACT_CASE)) {
-		if ( _game._trigger || !_game._objects.isInInventory(OBJ_COMPACT_CASE)) {
+		if (_game._trigger || !_game._objects.isInInventory(OBJ_COMPACT_CASE)) {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
@@ -626,7 +622,7 @@ void Scene603::actions() {
 			}
 		}
 	} else if (_action.isAction(VERB_TAKE, NOUN_NOTE)) {
-		if ( _game._trigger || !_game._objects.isInInventory(OBJ_NOTE)) {
+		if (_game._trigger || !_game._objects.isInInventory(OBJ_NOTE)) {
 			if (_game._trigger == 0) {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
@@ -825,8 +821,7 @@ void Scene604::step() {
 				else
 					nextMonsterFrame = 114;
 
-				}
-				break;
+			} break;
 
 			case 84:
 				nextMonsterFrame = 14;
@@ -919,8 +914,7 @@ void Scene604::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_game._player._visible = false;
@@ -935,23 +929,19 @@ void Scene604::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_nextSceneId = 504;
-			}
-			break;
+		} break;
 
 		default:
 			break;
 		}
-	} else if ((_action.isAction(VERB_PUT, NOUN_LEDGE) || _action.isAction(VERB_PUT, NOUN_VIEWPORT) || _action.isAction(VERB_THROW, NOUN_VIEWPORT))
-		&& (_action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS)))
+	} else if ((_action.isAction(VERB_PUT, NOUN_LEDGE) || _action.isAction(VERB_PUT, NOUN_VIEWPORT) || _action.isAction(VERB_THROW, NOUN_VIEWPORT)) && (_action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS)))
 		_vm->_dialogs->show(60420);
 	else if (_action.isAction(VERB_PUT, NOUN_TIMEBOMB, NOUN_LEDGE) || _action.isAction(VERB_PUT, NOUN_TIMEBOMB, NOUN_VIEWPORT)) {
 		_bombMode = 1;
 		if ((_game._difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
 			handleBombActions();
 		else if (
-			(_game._objects.isInInventory(OBJ_POLYCEMENT) && (_game._objects.isInInventory(OBJ_CHICKEN) || _game._objects.isInInventory(OBJ_CHICKEN_BOMB)))
-			 && (_globals[kLineStatus] == LINE_TIED || (_game._difficulty == DIFFICULTY_EASY && !_globals[kBoatRaised]))
-			)
+		    (_game._objects.isInInventory(OBJ_POLYCEMENT) && (_game._objects.isInInventory(OBJ_CHICKEN) || _game._objects.isInInventory(OBJ_CHICKEN_BOMB))) && (_globals[kLineStatus] == LINE_TIED || (_game._difficulty == DIFFICULTY_EASY && !_globals[kBoatRaised])))
 			// The original can get in an impossible state at this point, if the player has
 			// combined the chicken with the bomb before placing the timer bomb on the ledge.
 			// Therefore, we also allow the player to place the bomb if the chicken bomb is
@@ -1166,8 +1156,7 @@ void Scene607::step() {
 		_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, true);
 	}
 
-	if (!_dogEatsRex && (_game._difficulty != DIFFICULTY_EASY) && !_animationActive && (_globals[kDogStatus] == DOG_PRESENT)
-	 && !_dogBarking && (_vm->getRandomNumber(1, 50) == 10)) {
+	if (!_dogEatsRex && (_game._difficulty != DIFFICULTY_EASY) && !_animationActive && (_globals[kDogStatus] == DOG_PRESENT) && !_dogBarking && (_vm->getRandomNumber(1, 50) == 10)) {
 		_dogBarking = true;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 5, 8, 0, 0);
@@ -1226,8 +1215,7 @@ void Scene607::step() {
 	if ((_game._player._special > 0) && (_game._difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == DOG_PRESENT) && _game._player._stepEnabled)
 		_game._player._stepEnabled = false;
 
-	if ((_game._difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == DOG_PRESENT) && (_game._player._playerPos == Common::Point(268, 72))
-	 && (_game._trigger || !_dogEatsRex)) {
+	if ((_game._difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == DOG_PRESENT) && (_game._player._playerPos == Common::Point(268, 72)) && (_game._trigger || !_dogEatsRex)) {
 		_dogEatsRex = true;
 		switch (_game._trigger) {
 		case 91:
@@ -1251,8 +1239,7 @@ void Scene607::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 61);
-			}
-			break;
+		} break;
 
 		case 61: {
 			int syncIdx = _globals._sequenceIndexes[4];
@@ -1261,8 +1248,7 @@ void Scene607::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 62);
-			}
-			break;
+		} break;
 
 		case 62: {
 			int syncIdx = _globals._sequenceIndexes[4];
@@ -1271,8 +1257,7 @@ void Scene607::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_sequences.addTimer(60, 63);
-			}
-			break;
+		} break;
 
 		case 63:
 			_vm->_dialogs->show(60729);
@@ -1366,8 +1351,7 @@ void Scene607::handleThrowingBone() {
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(quoteId));
 		_scene->_sequences.addTimer(60, 3);
-		}
-		break;
+	} break;
 
 	case 3:
 		_game._player._stepEnabled = true;
@@ -1413,8 +1397,7 @@ void Scene607::actions() {
 			_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_game._player._visible = false;
@@ -1429,8 +1412,7 @@ void Scene607::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_nextSceneId = 504;
-			}
-			break;
+		} break;
 
 		default:
 			break;
@@ -1444,8 +1426,7 @@ void Scene607::actions() {
 
 			handleThrowingBone();
 		}
-	} else if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_FENCE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FENCE)) && (_game._difficulty != DIFFICULTY_EASY)
-		 && ((_globals[kDogStatus] == DOG_PRESENT) || _game._trigger)) {
+	} else if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_FENCE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FENCE)) && (_game._difficulty != DIFFICULTY_EASY) && ((_globals[kDogStatus] == DOG_PRESENT) || _game._trigger)) {
 		_animationMode = 2;
 		if (_game._trigger == 0) {
 			_scene->_kernelMessages.reset();
@@ -1734,7 +1715,6 @@ void Scene608::enter() {
 	_checkFl = false;
 	_dogUnderCar = false;
 	_dogYelping = false;
-
 
 	if (!_game._visitedScenes._sceneRevisited)
 		_globals[kCarStatus] = CAR_UP;
@@ -2083,7 +2063,6 @@ void Scene608::step() {
 		}
 	}
 
-
 	if ((_carMode == 1) && (_scene->_animation[0] != nullptr)) {
 		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
 			_carFrame = _scene->_animation[0]->getCurrentFrame();
@@ -2117,8 +2096,7 @@ void Scene608::step() {
 	if (_game._player._special > 0 && (_game._difficulty == DIFFICULTY_HARD) && _dogActiveFl && _game._player._stepEnabled)
 		_game._player._stepEnabled = false;
 
-	if ((_game._difficulty == DIFFICULTY_HARD) && _dogActiveFl && (_game._player._playerPos == Common::Point(194, 142))
-	 && (_game._trigger || !_rexBeingEaten)) {
+	if ((_game._difficulty == DIFFICULTY_HARD) && _dogActiveFl && (_game._player._playerPos == Common::Point(194, 142)) && (_game._trigger || !_rexBeingEaten)) {
 		_rexBeingEaten = true;
 		switch (_game._trigger) {
 		case 0:
@@ -2149,8 +2127,7 @@ void Scene608::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 5);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], syncIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 82);
-			}
-			break;
+		} break;
 
 		case 82: {
 			int syncIdx = _globals._sequenceIndexes[9];
@@ -2159,8 +2136,7 @@ void Scene608::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 5);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], syncIdx);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
-			}
-			break;
+		} break;
 
 		case 83: {
 			_animationMode = 2;
@@ -2169,8 +2145,7 @@ void Scene608::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 5);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], syncIdx);
 			_scene->_sequences.addTimer(60, 84);
-			}
-			break;
+		} break;
 
 		case 84:
 			_rexBeingEaten = false;
@@ -2195,15 +2170,12 @@ void Scene608::step() {
 void Scene608::preActions() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 
-	if ((_action.isAction(VERB_THROW, NOUN_BONE, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_REAR_OF_GARAGE)
-		|| _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_FRONT_OF_GARAGE)
-		|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) && _dogActiveFl) {
+	if ((_action.isAction(VERB_THROW, NOUN_BONE, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) && _dogActiveFl) {
 		_game._player._stepEnabled = false;
 		_game._player.walk(Common::Point(56, 146), FACING_EAST);
 	}
 
-	if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_AREA_BEHIND_CAR)
-		|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_DANGER_ZONE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_DANGER_ZONE)) && _dogActiveFl) {
+	if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_DANGER_ZONE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_DANGER_ZONE)) && _dogActiveFl) {
 		_game._player._stepEnabled = false;
 		_game._player.walk(Common::Point(75, 136), FACING_EAST);
 	}
@@ -2336,14 +2308,12 @@ void Scene608::actions() {
 			int idx = _scene->_dynamicHotspots.add(NOUN_CAR, VERB_WALKTO, -1, Common::Rect(99, 69, 99 + 82, 69 + 25));
 			_carHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(96, 132), FACING_NORTHEAST);
 			_game._player._stepEnabled = true;
-			}
-			break;
+		} break;
 
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_THROW, NOUN_BONE, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_REAR_OF_GARAGE)
-					|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BONE, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) {
 		_game._player._stepEnabled = true;
 		if (_dogActiveFl) {
 			if (_game._trigger == 0) {
@@ -2365,8 +2335,7 @@ void Scene608::actions() {
 			handleThrowingBone();
 		} else
 			_vm->_dialogs->show(60841);
-	} else if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_AREA_BEHIND_CAR)
-					|| _action.isAction(VERB_THROW, NOUN_BONES, NOUN_DANGER_ZONE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_DANGER_ZONE)) {
+	} else if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_AREA_BEHIND_CAR) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_DANGER_ZONE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_DANGER_ZONE)) {
 		_game._player._stepEnabled = true;
 		if ((_globals[kCarStatus] == CAR_UP) && _dogActiveFl) {
 			if (_dogActiveFl) {
@@ -2443,11 +2412,9 @@ void Scene608::actions() {
 			_vm->_dialogs->show(60812);
 		else
 			_vm->_dialogs->show(60811);
-	} else if (_action.isAction(VERB_LOOK) && (_action.isObject(NOUN_MUFFLER) || _action.isObject(NOUN_CAR_SEAT) || _action.isObject(NOUN_HUBCAP)
-					|| _action.isObject(NOUN_COILS) || _action.isObject(NOUN_QUARTER_PANEL)))
+	} else if (_action.isAction(VERB_LOOK) && (_action.isObject(NOUN_MUFFLER) || _action.isObject(NOUN_CAR_SEAT) || _action.isObject(NOUN_HUBCAP) || _action.isObject(NOUN_COILS) || _action.isObject(NOUN_QUARTER_PANEL)))
 		_vm->_dialogs->show(60813);
-	else if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_MUFFLER) || _action.isObject(NOUN_CAR_SEAT) || _action.isObject(NOUN_HUBCAP)
-					|| _action.isObject(NOUN_COILS) || _action.isObject(NOUN_QUARTER_PANEL)))
+	else if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_MUFFLER) || _action.isObject(NOUN_CAR_SEAT) || _action.isObject(NOUN_HUBCAP) || _action.isObject(NOUN_COILS) || _action.isObject(NOUN_QUARTER_PANEL)))
 		_vm->_dialogs->show(60814);
 	else if (_action.isAction(VERB_LOOK, NOUN_GARAGE_FLOOR) || _action.isAction(VERB_LOOK, NOUN_FRONT_OF_GARAGE) || _action.isAction(VERB_LOOK, NOUN_REAR_OF_GARAGE)) {
 		if (_dogActiveFl)
@@ -2579,7 +2546,7 @@ void Scene609::step() {
 		break;
 
 	case 62:
-		_scene->_sequences.remove( _globals._sequenceIndexes[2]);
+		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, true);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
@@ -2783,8 +2750,7 @@ void Scene609::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 5);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_game._player._visible = false;
@@ -2799,8 +2765,7 @@ void Scene609::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_nextSceneId = 504;
-			}
-			break;
+		} break;
 
 		default:
 			break;
@@ -2923,7 +2888,7 @@ void Scene610::actions() {
 	if (_action.isAction(VERB_EXIT_FROM, NOUN_VIDEO_STORE))
 		_scene->_nextSceneId = 609;
 	else if (_action.isAction(VERB_TAKE, NOUN_PHONE_HANDSET)) {
-		if ( _game._trigger || !_game._objects.isInInventory(OBJ_PHONE_HANDSET)) {
+		if (_game._trigger || !_game._objects.isInInventory(OBJ_PHONE_HANDSET)) {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
@@ -3020,13 +2985,9 @@ void Scene610::actions() {
 		_vm->_dialogs->show(61027);
 	else if (_action.isAction(VERB_LOOK, NOUN_RETURN_SLOT))
 		_vm->_dialogs->show(61028);
-	else if (_action.isAction(VERB_PUT, NOUN_RETURN_SLOT)
-		&& _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
+	else if (_action.isAction(VERB_PUT, NOUN_RETURN_SLOT) && _game._objects.isInInventory(_game._objects.getIdFromDesc(_action._activeAction._objectNameId)))
 		_vm->_dialogs->show(61029);
-	else if ( _action.isObject(NOUN_CLASSIC_VIDEOS) || _action.isObject(NOUN_MORE_CLASSIC_VIDEOS) || _action.isObject(NOUN_DRAMA_VIDEOS)
-		|| _action.isObject(NOUN_NEW_RELEASE_VIDEOS) || _action.isObject(NOUN_PORNO_VIDEOS) || _action.isObject(NOUN_EDUCATIONAL_VIDEOS)
-		|| _action.isObject(NOUN_INSTRUCTIONAL_VIDEOS) || _action.isObject(NOUN_WORKOUT_VIDEOS) || _action.isObject(NOUN_FOREIGN_VIDEOS)
-		|| _action.isObject(NOUN_ADVENTURE_VIDEOS) || _action.isObject(NOUN_COMEDY_VIDEOS)) {
+	else if (_action.isObject(NOUN_CLASSIC_VIDEOS) || _action.isObject(NOUN_MORE_CLASSIC_VIDEOS) || _action.isObject(NOUN_DRAMA_VIDEOS) || _action.isObject(NOUN_NEW_RELEASE_VIDEOS) || _action.isObject(NOUN_PORNO_VIDEOS) || _action.isObject(NOUN_EDUCATIONAL_VIDEOS) || _action.isObject(NOUN_INSTRUCTIONAL_VIDEOS) || _action.isObject(NOUN_WORKOUT_VIDEOS) || _action.isObject(NOUN_FOREIGN_VIDEOS) || _action.isObject(NOUN_ADVENTURE_VIDEOS) || _action.isObject(NOUN_COMEDY_VIDEOS)) {
 		if (_action.isAction(VERB_LOOK))
 			_vm->_dialogs->show(61030);
 		else if (_action.isAction(VERB_TAKE))
@@ -3153,16 +3114,14 @@ void Scene611::setDialogNode(int node) {
 }
 
 bool Scene611::check2ChargedBatteries() {
-	if ((_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && !_game._objects.isInInventory(OBJ_PHONE_CELLS))
-		|| (!_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS)))
+	if ((_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && !_game._objects.isInInventory(OBJ_PHONE_CELLS)) || (!_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS)))
 		return true;
 
 	return false;
 }
 
 bool Scene611::check4ChargedBatteries() {
-	if (_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS)
-			&& _globals[kDurafailRecharged])
+	if (_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && _game._objects.isInInventory(OBJ_PHONE_CELLS) && _globals[kDurafailRecharged])
 		return true;
 
 	return false;
@@ -3327,8 +3286,7 @@ void Scene611::handleSubDialog1() {
 
 		_dialog1.write(0x293, false);
 		setDialogNode(0);
-		}
-		break;
+	} break;
 
 	case 0x294: {
 		bool hermitPleasedFl = false;
@@ -3367,8 +3325,7 @@ void Scene611::handleSubDialog1() {
 				_giveBatteriesFl = false;
 		}
 		_startTradingFl = true;
-		}
-		break;
+	} break;
 
 	case 0x296: {
 		_scene->_kernelMessages.reset();
@@ -3380,8 +3337,7 @@ void Scene611::handleSubDialog1() {
 
 		setDialogNode(0);
 		handleTalking(200);
-		}
-		break;
+	} break;
 
 	default:
 		break;
@@ -3416,8 +3372,7 @@ void Scene611::handleSubDialog2() {
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 14), 0xFDFC, 0, 0, 120, curQuote);
 		setDialogNode(0);
 		_dialog2.write(0x29F, false);
-		}
-		break;
+	} break;
 
 	default:
 		break;
@@ -3472,8 +3427,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		}
-		break;
+	} break;
 
 	case 2: {
 		Common::String curQuote = _game.getQuote(0x283);
@@ -3485,24 +3439,21 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		}
-		break;
+	} break;
 
 	case 3: {
 		Common::String curQuote = _game.getQuote(0x285);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		}
-		break;
+	} break;
 
 	case 4: {
 		Common::String curQuote = _game.getQuote(0x286);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		}
-		break;
+	} break;
 
 	case 5: {
 		Common::String curQuote = _game.getQuote(0x297);
@@ -3519,8 +3470,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		}
-		break;
+	} break;
 
 	case 6: {
 		Common::String curQuote = _game.getQuote(0x29A);
@@ -3532,8 +3482,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		}
-		break;
+	} break;
 
 	case 7: {
 		Common::String curQuote = _game.getQuote(0x2A0);
@@ -3545,8 +3494,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		}
-		break;
+	} break;
 
 	case 8: {
 		Common::String curQuote = _game.getQuote(0x2A2);
@@ -3563,8 +3511,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		}
-		break;
+	} break;
 
 	case 9: {
 		Common::String curQuote = _game.getQuote(0x2A5);
@@ -3576,8 +3523,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		}
-		break;
+	} break;
 
 	case 10: {
 		Common::String curQuote = _game.getQuote(0x2A8);
@@ -3594,8 +3540,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 11: {
 		Common::String curQuote = _game.getQuote(0x2AB);
@@ -3617,8 +3562,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 12: {
 		Common::String curQuote = _game.getQuote(0x2AF);
@@ -3640,8 +3584,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 13: {
 		Common::String curQuote = _game.getQuote(0x2B3);
@@ -3667,8 +3610,7 @@ void Scene611::displayHermitQuestions(int question) {
 		_scene->_kernelMessages.add(Common::Point(11, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x2B7));
 		_scene->_kernelMessages.add(Common::Point(11, _defaultDialogPos.y + 73), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x2B8));
 		_scene->_kernelMessages.add(Common::Point(11, _defaultDialogPos.y + 87), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x2B9));
-		 }
-		 break;
+	} break;
 
 	case 14: {
 		Common::String curQuote = _game.getQuote(0x2BA);
@@ -3690,8 +3632,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 15: {
 		Common::String curQuote = _game.getQuote(0x2BE);
@@ -3713,8 +3654,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 16: {
 		Common::String curQuote = _game.getQuote(0x2C2);
@@ -3741,8 +3681,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 17: {
 		Common::String curQuote = _game.getQuote(0x2C7);
@@ -3764,8 +3703,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 18: {
 		Common::String curQuote = _game.getQuote(0x2CB);
@@ -3782,8 +3720,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 19: {
 		Common::String curQuote = _game.getQuote(0x2CE);
@@ -3800,8 +3737,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 20: {
 		Common::String curQuote = _game.getQuote(0x2E1);
@@ -3828,8 +3764,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 21: {
 		Common::String curQuote = _game.getQuote(0x2D3);
@@ -3856,8 +3791,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, 800, curQuote);
-		}
-		break;
+	} break;
 
 	case 22: {
 		Common::String curQuote = _game.getQuote(0x2D8);
@@ -3879,8 +3813,7 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, 700, curQuote);
-		 }
-		 break;
+	} break;
 
 	case 23: {
 		Common::String curQuote = _game.getQuote(0x2DC);
@@ -3907,12 +3840,11 @@ void Scene611::displayHermitQuestions(int question) {
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, 700, curQuote);
-		}
-		break;
+	} break;
 
 	default:
 		break;
-	 }
+	}
 }
 
 void Scene611::enter() {
@@ -3921,17 +3853,17 @@ void Scene611::enter() {
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_9");
 
 	_game.loadQuoteSet(0x279, 0x27A, 0x27B, 0x27C, 0x27D, 0x27E, 0x27F, 0x280, 0x281, 0x282, 0x283, 0x284,
-		0x285, 0x286, 0x287, 0x288, 0x289, 0x28A, 0x28B, 0x28C, 0x28D, 0x28E, 0x28F, 0x290, 0x291, 0x292,
-		0x293, 0x294, 0x295, 0x296, 0x297, 0x298, 0x299, 0x29A, 0x29B, 0x29C, 0x29D, 0x29E, 0x29F, 0x2A0,
-		0x2A1, 0x2A2, 0x2A3, 0x2A4, 0x2A5, 0x2A6, 0x2A7, 0x2A8, 0x2A9, 0x2AA, 0x2AB, 0x2AC, 0x2AD, 0x2AE,
-		0x2AF, 0x2B0, 0x2B1, 0x2B2, 0x2B3, 0x2B4, 0x2B5, 0x2B6, 0x2B7, 0x2B8, 0x2B9, 0x2BA, 0x2BB, 0x2BC,
-		0x2BD, 0x2BE, 0x2BF, 0x2C0, 0x2C1, 0x2C2, 0x2C3, 0x2C4, 0x2C5, 0x2C6, 0x2C7, 0x2C8, 0x2C9, 0x2CA,
-		0x2CB, 0x2CC, 0x2CD, 0x2CE, 0x2CF, 0x2D0, 0x2D1, 0x2D2, 0x2D3, 0x2D4, 0x2D5, 0x2D6, 0x2D7, 0x2D8,
-		0x2D9, 0x2DA, 0x2DB, 0x2DC, 0x2DD, 0x2DE, 0x2DF, 0x2E0, 0x2E1, 0x2E2, 0x2E3, 0x2E4, 0x2E5, 0x2E6,
-		0x323, 0x324, 0);
+	                   0x285, 0x286, 0x287, 0x288, 0x289, 0x28A, 0x28B, 0x28C, 0x28D, 0x28E, 0x28F, 0x290, 0x291, 0x292,
+	                   0x293, 0x294, 0x295, 0x296, 0x297, 0x298, 0x299, 0x29A, 0x29B, 0x29C, 0x29D, 0x29E, 0x29F, 0x2A0,
+	                   0x2A1, 0x2A2, 0x2A3, 0x2A4, 0x2A5, 0x2A6, 0x2A7, 0x2A8, 0x2A9, 0x2AA, 0x2AB, 0x2AC, 0x2AD, 0x2AE,
+	                   0x2AF, 0x2B0, 0x2B1, 0x2B2, 0x2B3, 0x2B4, 0x2B5, 0x2B6, 0x2B7, 0x2B8, 0x2B9, 0x2BA, 0x2BB, 0x2BC,
+	                   0x2BD, 0x2BE, 0x2BF, 0x2C0, 0x2C1, 0x2C2, 0x2C3, 0x2C4, 0x2C5, 0x2C6, 0x2C7, 0x2C8, 0x2C9, 0x2CA,
+	                   0x2CB, 0x2CC, 0x2CD, 0x2CE, 0x2CF, 0x2D0, 0x2D1, 0x2D2, 0x2D3, 0x2D4, 0x2D5, 0x2D6, 0x2D7, 0x2D8,
+	                   0x2D9, 0x2DA, 0x2DB, 0x2DC, 0x2DD, 0x2DE, 0x2DF, 0x2E0, 0x2E1, 0x2E2, 0x2E3, 0x2E4, 0x2E5, 0x2E6,
+	                   0x323, 0x324, 0);
 
 	_dialog1.setup(kConvHermit1, 0x287, 0x288, 0x289, 0x28A, 0x28B, 0x28C, 0x28D, 0x28E, 0x28F, 0x290,
-		0x291, 0x292, 0x293, 0x294, 0x295, 0x296, 0);
+	               0x291, 0x292, 0x293, 0x294, 0x295, 0x296, 0);
 
 	_dialog2.setup(kConvHermit2, 0x29C, 0x29D, 0x29E, 0x29F, 0);
 
@@ -3984,21 +3916,21 @@ void Scene611::enter() {
 		_game._player._facing = FACING_NORTHEAST;
 
 		switch (_hermitDialogNode) {
-	case 0:
-		_scene->_userInterface.setup(kInputBuildingSentences);
-		_hermitDialogNode = 1;
-		break;
+		case 0:
+			_scene->_userInterface.setup(kInputBuildingSentences);
+			_hermitDialogNode = 1;
+			break;
 
-	case 1:
-		_dialog1.start();
-		break;
+		case 1:
+			_dialog1.start();
+			break;
 
-	case 2:
-		_dialog2.start();
-		break;
+		case 2:
+			_dialog2.start();
+			break;
 
-	default:
-		break;
+		default:
+			break;
 		}
 		displayHermitQuestions(_hermitDisplayedQuestion);
 	}
@@ -4539,8 +4471,7 @@ void Scene612::handleWinchMovement() {
 		_game._player._stepEnabled = true;
 
 		_vm->_dialogs->show(61217);
-		}
-		break;
+	} break;
 
 	default:
 		break;
@@ -4630,8 +4561,7 @@ void Scene612::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 3);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_game._player._visible = false;
@@ -4646,8 +4576,7 @@ void Scene612::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_nextSceneId = 504;
-			}
-			break;
+		} break;
 
 		default:
 			break;

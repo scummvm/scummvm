@@ -30,11 +30,11 @@ namespace Ultima0 {
 
 class Ultima0Game : public Shared::Game {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 	Ultima0Game();
 	~Ultima0Game() override {}
-
 };
 
 } // End of namespace Ultima0

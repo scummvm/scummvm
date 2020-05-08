@@ -27,12 +27,12 @@
 
 #define TRANSLATIONS_DAT_VER 3
 
-#include "common/translation.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #ifdef USE_TRANSLATION
 
@@ -135,14 +135,12 @@ const char *TranslationManager::getTranslation(const char *message, const char *
 			leftIndex = rightIndex = midIndex;
 			while (
 			    leftIndex > 0 &&
-			    _currentTranslationMessages[leftIndex - 1].msgid == m->msgid
-			) {
+			    _currentTranslationMessages[leftIndex - 1].msgid == m->msgid) {
 				--leftIndex;
 			}
 			while (
 			    rightIndex < (int)_currentTranslationMessages.size() - 1 &&
-			    _currentTranslationMessages[rightIndex + 1].msgid == m->msgid
-			) {
+			    _currentTranslationMessages[rightIndex + 1].msgid == m->msgid) {
 				++rightIndex;
 			}
 			// Find the context we want
@@ -235,8 +233,8 @@ bool TranslationManager::openTranslationsFile(File &inFile) {
 	ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "translations.dat");
 	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		ArchiveMember       const &m      = **it;
-		SeekableReadStream *const  stream = m.createReadStream();
+		ArchiveMember const &m = **it;
+		SeekableReadStream *const stream = m.createReadStream();
 		if (stream && inFile.open(stream, m.getName())) {
 			if (checkHeader(inFile))
 				return true;
@@ -273,7 +271,7 @@ bool TranslationManager::openTranslationsFile(const FSNode &node, File &inFile, 
 		return false;
 
 	for (FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
-		if (openTranslationsFile(*i, inFile, depth == -1 ? - 1 : depth - 1))
+		if (openTranslationsFile(*i, inFile, depth == -1 ? -1 : depth - 1))
 			return true;
 	}
 
@@ -427,7 +425,6 @@ void TranslationManager::loadLanguageDat(int index) {
 		for (int i = 0; i < 256; ++i)
 			_charmap[i] = in.readUint32BE();
 	}
-
 }
 
 bool TranslationManager::checkHeader(File &in) {
@@ -455,7 +452,7 @@ bool TranslationManager::checkHeader(File &in) {
 }
 
 String TranslationManager::convertBiDiString(const String &input) {
-	if (getCurrentLanguage() != "he")		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
+	if (getCurrentLanguage() != "he") //TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
 		return input;
 
 	if (getCurrentCharset() != "iso-8859-8") {
@@ -468,10 +465,10 @@ String TranslationManager::convertBiDiString(const String &input) {
 
 #ifdef USE_FRIBIDI
 String TranslationManager::convertBiDiString(const String &input, const Common::Language lang) {
-	if (lang != HE_ISR)		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
+	if (lang != HE_ISR) //TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
 		return input;
 
-	int buff_length = (input.size() + 2) * 2;		// it's more than enough, but it's better to be on the safe side
+	int buff_length = (input.size() + 2) * 2; // it's more than enough, but it's better to be on the safe side
 	FriBidiChar *input_unicode = (FriBidiChar *)malloc(buff_length * sizeof(FriBidiChar));
 	FriBidiChar *visual_str = (FriBidiChar *)malloc(buff_length * sizeof(FriBidiChar));
 	char *output = (char *)malloc(buff_length);
@@ -482,16 +479,16 @@ String TranslationManager::convertBiDiString(const String &input, const Common::
 	FriBidiStrIndex length = fribidi_charset_to_unicode(char_set, input.c_str(), input.size(), input_unicode);
 
 	if (!fribidi_log2vis(
-		/* input */
-		input_unicode,
-		length,
-		&pbase_dir,
-		/* output */
-		visual_str,
-		NULL,			// position_L_to_V_list,
-		NULL,			// position_V_to_L_list,
-		NULL			// embedding_level_list
-	)) {
+	        /* input */
+	        input_unicode,
+	        length,
+	        &pbase_dir,
+	        /* output */
+	        visual_str,
+	        NULL, // position_L_to_V_list,
+	        NULL, // position_V_to_L_list,
+	        NULL  // embedding_level_list
+	        )) {
 		warning("convertBiDiString: calling fribidi_log2vis failed");
 		free(input_unicode);
 		free(visual_str);
@@ -513,8 +510,6 @@ String TranslationManager::convertBiDiString(const String &input, const Common::
 	return input;
 }
 #endif
-
-
 
 } // End of namespace Common
 

@@ -31,11 +31,13 @@ class CEjectPhonographButton : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool CylinderHolderReadyMsg(CCylinderHolderReadyMsg *msg);
+
 public:
 	bool _ejected;
 	bool _readyFlag;
 	CString _soundName;
 	CString _readySoundName;
+
 public:
 	CLASSDEF;
 	CEjectPhonographButton() : CBackground(), _ejected(false), _readyFlag(false) {}

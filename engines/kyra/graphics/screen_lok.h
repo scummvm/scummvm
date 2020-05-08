@@ -86,6 +86,7 @@ public:
 	void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0) override;
 	void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) override;
 	int fadePalStep(const Palette &pal, int diff) override;
+
 private:
 	void updateDirtyRectsOvl();
 

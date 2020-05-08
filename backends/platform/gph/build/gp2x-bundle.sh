@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/ bin / sh
 
 echo Quick script to make building a distribution of the GP2X port more consistent.
 
-# Set the paths up here to support the build.
+#Set the paths up here to support the build.
 
 export PATH=/opt/open2x/gcc-4.1.1-glibc-2.3.6/arm-open2x-linux/bin:$PATH
 export PATH=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin:$PATH

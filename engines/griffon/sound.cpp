@@ -67,7 +67,6 @@ int GriffonEngine::playSound(DataChunk *chunk, bool looped) {
 #ifdef USE_VORBIS
 	Audio::SeekableAudioStream *audioStream = Audio::makeVorbisStream(new Common::MemoryReadStream(chunk->data, chunk->size), DisposeAfterUse::YES);
 
-
 	if (looped) {
 		Audio::AudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::YES);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handles[ch], loopingStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES, false, false);
@@ -243,6 +242,5 @@ void GriffonEngine::updateMusic() {
 		}
 	}
 }
-
 
 } // end of namespace Griffon

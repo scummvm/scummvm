@@ -27,8 +27,8 @@
 #define SAVE_VERSION_MINOR 0
 #define SAVE_VERSION (SAVE_VERSION_MAJOR * 256 + SAVE_VERSION_MINOR)
 
-#include "ultima/shared/std/string.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -45,6 +45,7 @@ class SaveGame {
 private:
 	Configuration *config;
 	NuvieIOBuffer objlist;
+
 protected:
 	bool load_objlist();
 	bool save_objlist();
@@ -53,6 +54,7 @@ protected:
 	void update_objlist_for_new_game_u6();
 	void update_objlist_for_new_game_se();
 	void update_objlist_for_new_game_md();
+
 public:
 	SaveGame(Configuration *cfg);
 	~SaveGame();

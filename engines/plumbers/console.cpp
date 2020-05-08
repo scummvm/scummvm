@@ -26,10 +26,10 @@ namespace Plumbers {
 
 Console::Console() {
 	_allowSkip = false;
-	 registerCmd("allowSkip", WRAP_METHOD(Console, Cmd_allowSkip));
+	registerCmd("allowSkip", WRAP_METHOD(Console, Cmd_allowSkip));
 }
 
-bool Console::Cmd_allowSkip(int argc, const char** argv) {
+bool Console::Cmd_allowSkip(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
 		debugPrintf("Enables/Disables the possibility to skip screen delays\n");

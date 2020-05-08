@@ -27,8 +27,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEmmaControl, CBackground)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
 void CEmmaControl::save(SimpleFile *file, int indent) {
@@ -59,7 +59,7 @@ bool CEmmaControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(_flag);
 	CChangeMusicMsg changeMsg(_flag ? _visibleSoundName : _hiddenSoundName, MUSIC_NONE);
 	changeMsg.execute(findRoom(), CAutoMusicPlayer::_type,
-		MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_CLASS_DEF);
+	                  MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_CLASS_DEF);
 	return true;
 }
 

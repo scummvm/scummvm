@@ -31,8 +31,10 @@ class CGondolierFace : public CGondolierBase {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CGondolierFace() : CGondolierBase(), _flag(true) {}

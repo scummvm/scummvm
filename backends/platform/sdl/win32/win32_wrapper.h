@@ -61,6 +61,6 @@ char *unicodeToAnsi(const wchar_t *s, uint codePage = CP_ACP);
 
 uint getCurrentCharset();
 
-}
+} // namespace Win32
 
 #endif

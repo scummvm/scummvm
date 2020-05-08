@@ -20,9 +20,9 @@
  *
  */
 
+#include "neverhood/modules/module1600.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1200_sprites.h"
-#include "neverhood/modules/module1600.h"
 #include "neverhood/modules/module1600_sprites.h"
 #include "neverhood/modules/module2200_sprites.h"
 #include "neverhood/modules/module3000_sprites.h"
@@ -30,12 +30,11 @@
 namespace Neverhood {
 
 static const uint32 kModule1600SoundList[] = {
-	0x90805C50, 0x90804450, 0xB4005E60,
-	0x91835066, 0x90E14440, 0
-};
+    0x90805C50, 0x90804450, 0xB4005E60,
+    0x91835066, 0x90E14440, 0};
 
 Module1600::Module1600(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+    : Module(vm, parentModule) {
 
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
@@ -53,7 +52,6 @@ Module1600::Module1600(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->addSoundList(0x1A008D8, kModule1600SoundList);
 	_vm->_soundMan->setSoundListParams(kModule1600SoundList, true, 50, 600, 5, 150);
 	_vm->_soundMan->playTwoSounds(0x1A008D8, 0x41861371, 0x43A2507F, 0);
-
 }
 
 Module1600::~Module1600() {
@@ -190,7 +188,7 @@ void Module1600::updateScene() {
 }
 
 Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _asCar(NULL), _countdown1(0) {
+    : Scene(vm, parentModule), _asCar(NULL), _countdown1(0) {
 
 	setGlobalVar(V_CAR_DELTA_X, 1);
 
@@ -323,7 +321,6 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_palette->addPalette("paKlayRed", 0, 64, 0);
-
 }
 
 Scene1608::~Scene1608() {
@@ -512,7 +509,7 @@ void Scene1608::updateKlaymenCliprect() {
 }
 
 Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _countdown1(1), _currentSymbolIndex(0), _symbolPosition(0), _changeCurrentSymbol(true), _isSolved(false) {
+    : Scene(vm, parentModule), _countdown1(1), _currentSymbolIndex(0), _symbolPosition(0), _changeCurrentSymbol(true), _isSolved(false) {
 
 	_vm->gameModule()->initCodeSymbolsPuzzle();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);
@@ -530,7 +527,6 @@ Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule)
 	_ssButton = insertSprite<SsScene3011Button>(this, true);
 	addCollisionSprite(_ssButton);
 	loadSound(0, 0x68E25540);
-
 }
 
 void Scene1609::update() {

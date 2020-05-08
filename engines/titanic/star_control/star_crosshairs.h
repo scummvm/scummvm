@@ -23,12 +23,12 @@
 #ifndef TITANIC_STAR_CROSSHAIRS_H
 #define TITANIC_STAR_CROSSHAIRS_H
 
+#include "common/array.h"
+#include "common/rect.h"
 #include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/support/video_surface.h"
-#include "common/array.h"
-#include "common/rect.h"
 
 namespace Titanic {
 
@@ -41,6 +41,7 @@ class CStarCrosshairs {
 private:
 	Common::Array<CStarPosition> _positions;
 	CStarPosition _entries[3];
+
 private:
 	/**
 	 * Allocates space in the _rects array
@@ -51,9 +52,11 @@ private:
 	 * Clears any current data
 	 */
 	void clear();
+
 public:
 	int _matchIndex;
 	int _entryIndex;
+
 public:
 	CStarCrosshairs();
 	~CStarCrosshairs() { clear(); }
@@ -74,7 +77,7 @@ public:
 	bool isEmpty() const { return _entryIndex == -1; }
 
 	void selectStar(int starNum, CVideoSurface *surface, CStarField *starField,
-		CStarMarkers *markers);
+	                CStarMarkers *markers);
 
 	void draw(CSurfaceArea *surfaceArea);
 

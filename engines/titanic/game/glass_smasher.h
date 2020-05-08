@@ -31,6 +31,7 @@ class CGlassSmasher : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	CLASSDEF;
 

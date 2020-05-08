@@ -20,78 +20,71 @@
  *
  */
 
-#include "glk/magnetic/magnetic_defs.h"
 #include "glk/magnetic/magnetic.h"
+#include "glk/magnetic/magnetic_defs.h"
 
 namespace Glk {
 namespace Magnetic {
 
 const gms_command_t Magnetic::GMS_COMMAND_TABLE[14] = {
-	{ &Magnetic::gms_command_summary,        "summary",        false, false },
-	{ &Magnetic::gms_command_undo,           "undo",           false, true },
-	{ &Magnetic::gms_command_script,         "script",         true,  false },
-	{ &Magnetic::gms_command_inputlog,       "inputlog",       true,  false },
-	{ &Magnetic::gms_command_readlog,        "readlog",        true,  false },
-	{ &Magnetic::gms_command_abbreviations,  "abbreviations",  true,  false },
-	{ &Magnetic::gms_command_graphics,       "graphics",       true,  false },
-	{ &Magnetic::gms_command_gamma,          "gamma",          true,  false },
-	{ &Magnetic::gms_command_animations,     "animations",     true,  false },
-	{ &Magnetic::gms_command_prompts,        "prompts",        true,  false },
-	{ &Magnetic::gms_command_version,        "version",        false, false },
-	{ &Magnetic::gms_command_commands,       "commands",       true,  false },
-	{ &Magnetic::gms_command_help,           "help",           true,  false },
+    {&Magnetic::gms_command_summary, "summary", false, false},
+    {&Magnetic::gms_command_undo, "undo", false, true},
+    {&Magnetic::gms_command_script, "script", true, false},
+    {&Magnetic::gms_command_inputlog, "inputlog", true, false},
+    {&Magnetic::gms_command_readlog, "readlog", true, false},
+    {&Magnetic::gms_command_abbreviations, "abbreviations", true, false},
+    {&Magnetic::gms_command_graphics, "graphics", true, false},
+    {&Magnetic::gms_command_gamma, "gamma", true, false},
+    {&Magnetic::gms_command_animations, "animations", true, false},
+    {&Magnetic::gms_command_prompts, "prompts", true, false},
+    {&Magnetic::gms_command_version, "version", false, false},
+    {&Magnetic::gms_command_commands, "commands", true, false},
+    {&Magnetic::gms_command_help, "help", true, false},
 
-	{ nullptr, nullptr, false, false}
-};
+    {nullptr, nullptr, false, false}};
 
 const gms_gamma_t Magnetic::GMS_GAMMA_TABLE[38] = {
-	{ "0.90", { 0,  29,  63,  99, 137, 175, 215, 255 }, true },
-	{ "0.95", { 0,  33,  68, 105, 141, 179, 217, 255 }, true },
-	{ "1.00", { 0,  36,  73, 109, 146, 182, 219, 255 }, false },
-	{ "1.05", { 0,  40,  77, 114, 150, 185, 220, 255 }, true },
-	{ "1.10", { 0,  43,  82, 118, 153, 188, 222, 255 }, true },
-	{ "1.15", { 0,  47,  86, 122, 157, 190, 223, 255 }, true },
-	{ "1.20", { 0,  50,  90, 126, 160, 193, 224, 255 }, true },
-	{ "1.25", { 0,  54,  94, 129, 163, 195, 225, 255 }, true },
-	{ "1.30", { 0,  57,  97, 133, 166, 197, 226, 255 }, true },
-	{ "1.35", { 0,  60, 101, 136, 168, 199, 227, 255 }, true },
-	{ "1.40", { 0,  64, 104, 139, 171, 201, 228, 255 }, true },
-	{ "1.45", { 0,  67, 107, 142, 173, 202, 229, 255 }, true },
-	{ "1.50", { 0,  70, 111, 145, 176, 204, 230, 255 }, true },
-	{ "1.55", { 0,  73, 114, 148, 178, 205, 231, 255 }, true },
-	{ "1.60", { 0,  76, 117, 150, 180, 207, 232, 255 }, true },
-	{ "1.65", { 0,  78, 119, 153, 182, 208, 232, 255 }, true },
-	{ "1.70", { 0,  81, 122, 155, 183, 209, 233, 255 }, true },
-	{ "1.75", { 0,  84, 125, 157, 185, 210, 233, 255 }, true },
-	{ "1.80", { 0,  87, 127, 159, 187, 212, 234, 255 }, true },
-	{ "1.85", { 0,  89, 130, 161, 188, 213, 235, 255 }, true },
-	{ "1.90", { 0,  92, 132, 163, 190, 214, 235, 255 }, true },
-	{ "1.95", { 0,  94, 134, 165, 191, 215, 236, 255 }, true },
-	{ "2.00", { 0,  96, 136, 167, 193, 216, 236, 255 }, true },
-	{ "2.05", { 0,  99, 138, 169, 194, 216, 237, 255 }, true },
-	{ "2.10", { 0, 101, 140, 170, 195, 217, 237, 255 }, true },
-	{ "2.15", { 0, 103, 142, 172, 197, 218, 237, 255 }, true },
-	{ "2.20", { 0, 105, 144, 173, 198, 219, 238, 255 }, true },
-	{ "2.25", { 0, 107, 146, 175, 199, 220, 238, 255 }, true },
-	{ "2.30", { 0, 109, 148, 176, 200, 220, 238, 255 }, true },
-	{ "2.35", { 0, 111, 150, 178, 201, 221, 239, 255 }, true },
-	{ "2.40", { 0, 113, 151, 179, 202, 222, 239, 255 }, true },
-	{ "2.45", { 0, 115, 153, 180, 203, 222, 239, 255 }, true },
-	{ "2.50", { 0, 117, 154, 182, 204, 223, 240, 255 }, true },
-	{ "2.55", { 0, 119, 156, 183, 205, 223, 240, 255 }, true },
-	{ "2.60", { 0, 121, 158, 184, 206, 224, 240, 255 }, true },
-	{ "2.65", { 0, 122, 159, 185, 206, 225, 241, 255 }, true },
-	{ "2.70", { 0, 124, 160, 186, 207, 225, 241, 255 }, true },
-	{ NULL,   { 0,   0,   0,   0,   0,   0,   0,   0 }, false }
-};
+    {"0.90", {0, 29, 63, 99, 137, 175, 215, 255}, true},
+    {"0.95", {0, 33, 68, 105, 141, 179, 217, 255}, true},
+    {"1.00", {0, 36, 73, 109, 146, 182, 219, 255}, false},
+    {"1.05", {0, 40, 77, 114, 150, 185, 220, 255}, true},
+    {"1.10", {0, 43, 82, 118, 153, 188, 222, 255}, true},
+    {"1.15", {0, 47, 86, 122, 157, 190, 223, 255}, true},
+    {"1.20", {0, 50, 90, 126, 160, 193, 224, 255}, true},
+    {"1.25", {0, 54, 94, 129, 163, 195, 225, 255}, true},
+    {"1.30", {0, 57, 97, 133, 166, 197, 226, 255}, true},
+    {"1.35", {0, 60, 101, 136, 168, 199, 227, 255}, true},
+    {"1.40", {0, 64, 104, 139, 171, 201, 228, 255}, true},
+    {"1.45", {0, 67, 107, 142, 173, 202, 229, 255}, true},
+    {"1.50", {0, 70, 111, 145, 176, 204, 230, 255}, true},
+    {"1.55", {0, 73, 114, 148, 178, 205, 231, 255}, true},
+    {"1.60", {0, 76, 117, 150, 180, 207, 232, 255}, true},
+    {"1.65", {0, 78, 119, 153, 182, 208, 232, 255}, true},
+    {"1.70", {0, 81, 122, 155, 183, 209, 233, 255}, true},
+    {"1.75", {0, 84, 125, 157, 185, 210, 233, 255}, true},
+    {"1.80", {0, 87, 127, 159, 187, 212, 234, 255}, true},
+    {"1.85", {0, 89, 130, 161, 188, 213, 235, 255}, true},
+    {"1.90", {0, 92, 132, 163, 190, 214, 235, 255}, true},
+    {"1.95", {0, 94, 134, 165, 191, 215, 236, 255}, true},
+    {"2.00", {0, 96, 136, 167, 193, 216, 236, 255}, true},
+    {"2.05", {0, 99, 138, 169, 194, 216, 237, 255}, true},
+    {"2.10", {0, 101, 140, 170, 195, 217, 237, 255}, true},
+    {"2.15", {0, 103, 142, 172, 197, 218, 237, 255}, true},
+    {"2.20", {0, 105, 144, 173, 198, 219, 238, 255}, true},
+    {"2.25", {0, 107, 146, 175, 199, 220, 238, 255}, true},
+    {"2.30", {0, 109, 148, 176, 200, 220, 238, 255}, true},
+    {"2.35", {0, 111, 150, 178, 201, 221, 239, 255}, true},
+    {"2.40", {0, 113, 151, 179, 202, 222, 239, 255}, true},
+    {"2.45", {0, 115, 153, 180, 203, 222, 239, 255}, true},
+    {"2.50", {0, 117, 154, 182, 204, 223, 240, 255}, true},
+    {"2.55", {0, 119, 156, 183, 205, 223, 240, 255}, true},
+    {"2.60", {0, 121, 158, 184, 206, 224, 240, 255}, true},
+    {"2.65", {0, 122, 159, 185, 206, 225, 241, 255}, true},
+    {"2.70", {0, 124, 160, 186, 207, 225, 241, 255}, true},
+    {NULL, {0, 0, 0, 0, 0, 0, 0, 0}, false}};
 
 static gms_abbreviation_t GMS_ABBREVIATIONS[] = {
-	{'c', "close"},    {'g', "again"},  {'i', "inventory"},
-	{'k', "attack"},   {'l', "look"},   {'p', "open"},
-	{'q', "quit"},     {'r', "drop"},   {'t', "take"},
-	{'x', "examine"},  {'y', "yes"},    {'z', "wait"},
-	{'\0', NULL}
-};
+    {'c', "close"}, {'g', "again"}, {'i', "inventory"}, {'k', "attack"}, {'l', "look"}, {'p', "open"}, {'q', "quit"}, {'r', "drop"}, {'t', "take"}, {'x', "examine"}, {'y', "yes"}, {'z', "wait"}, {'\0', NULL}};
 
 /*---------------------------------------------------------------------*/
 /*  Module constants                                                   */
@@ -139,7 +132,7 @@ static const glui32 GMS_GRAPHICS_TIMEOUT = 50;
  * seems okay.
  */
 static const int GMS_GRAPHICS_ANIMATION_WAIT = 2,
-GMS_GRAPHICS_REPAINT_WAIT = 10;
+                 GMS_GRAPHICS_REPAINT_WAIT = 10;
 
 /* Pixel size multiplier for image size scaling. */
 static const int GMS_GRAPHICS_PIXEL = 2;
@@ -154,10 +147,10 @@ static const glui32 GMS_GRAPHICS_PROPORTION = 60;
  * of shading fade.
  */
 static const glui32 GMS_GRAPHICS_DEFAULT_BACKGROUND = 0x00ffffff,
-	GMS_GRAPHICS_BORDER_COLOR = 0x00000000;
+                    GMS_GRAPHICS_BORDER_COLOR = 0x00000000;
 static const int GMS_GRAPHICS_BORDER = 1,
-	GMS_GRAPHICS_SHADING = 2,
-	GMS_GRAPHICS_SHADE_STEPS = 8;
+                 GMS_GRAPHICS_SHADING = 2,
+                 GMS_GRAPHICS_SHADE_STEPS = 8;
 
 /*
  * Guaranteed unused pixel value.  This value is used to fill the on-screen
@@ -171,18 +164,18 @@ static const int GMS_DEFAULT_STATUS_WIDTH = 74;
 
 /* Success and fail return codes from hint functions. */
 static const type8 GMS_HINT_SUCCESS = 1,
-GMS_HINT_ERROR = 0;
+                   GMS_HINT_ERROR = 0;
 
 /* Default window sizes for non-windowing Glk libraries. */
 static const glui32 GMS_HINT_DEFAULT_WIDTH = 72,
-GMS_HINT_DEFAULT_HEIGHT = 25;
+                    GMS_HINT_DEFAULT_HEIGHT = 25;
 
 /*
  * Special hint nodes indicating the root hint node, and a value to signal
  * quit from hints subsystem.
  */
 static const type16 GMS_HINT_ROOT_NODE = 0,
-GMS_HINTS_DONE = UINT16_MAX_VAL;
+                    GMS_HINTS_DONE = UINT16_MAX_VAL;
 
 /* Generic hint topic for the root hints node. */
 static const char *const GMS_GENERIC_TOPIC = "Hints Menu";
@@ -218,8 +211,8 @@ void Magnetic::gms_fatal(const char *str) {
 	glk_put_string(str);
 
 	glk_put_string("\n\nPlease record the details of this error, try to"
-	                     " note down everything you did to cause it, and email"
-	                     " this information to simon_baldwin@yahoo.com.\n\n");
+	               " note down everything you did to cause it, and email"
+	               " this information to simon_baldwin@yahoo.com.\n\n");
 }
 
 void *Magnetic::gms_malloc(size_t size) {
@@ -279,7 +272,7 @@ int Magnetic::gms_strcasecmp(const char *s1, const char *s2) {
 /*---------------------------------------------------------------------*/
 
 glui32 Magnetic::gms_get_buffer_crc(const void *void_buffer, size_t length) {
-	const char *buf = (const char *) void_buffer;
+	const char *buf = (const char *)void_buffer;
 	uint32 crc;
 	size_t index;
 
@@ -328,10 +321,9 @@ void Magnetic::gms_gameid_identify_game(const Common::String &text_file) {
 int Magnetic::gms_graphics_open() {
 	if (!gms_graphics_window) {
 		gms_graphics_window = glk_window_open(gms_main_window,
-		                      winmethod_Above
-		                      | winmethod_Proportional,
-		                      GMS_GRAPHICS_PROPORTION,
-		                      wintype_Graphics, 0);
+		                                      winmethod_Above | winmethod_Proportional,
+		                                      GMS_GRAPHICS_PROPORTION,
+		                                      wintype_Graphics, 0);
 	}
 
 	return gms_graphics_window != NULL;
@@ -408,7 +400,7 @@ void Magnetic::gms_graphics_restart() {
 }
 
 void Magnetic::gms_graphics_count_colors(type8 bitmap[], type16 width, type16 height,
-		int *color_count, long color_usage[]) {
+                                         int *color_count, long color_usage[]) {
 	int x, y, count;
 	long usage[GMS_PALETTE_SIZE], index_row;
 	assert(bitmap);
@@ -442,7 +434,7 @@ void Magnetic::gms_graphics_count_colors(type8 bitmap[], type16 width, type16 he
 }
 
 void Magnetic::gms_graphics_game_to_rgb_color(type16 color, gms_gammaref_t gamma,
-		gms_rgbref_t rgb_color) {
+                                              gms_rgbref_t rgb_color) {
 	assert(gamma && rgb_color);
 
 	/*
@@ -451,17 +443,17 @@ void Magnetic::gms_graphics_game_to_rgb_color(type16 color, gms_gammaref_t gamma
 	 * and gamma-corrects and rescales each to the range 0-255, using the given
 	 * correction.
 	 */
-	rgb_color->red   = gamma->table[(color & 0x700) >> 8];
+	rgb_color->red = gamma->table[(color & 0x700) >> 8];
 	rgb_color->green = gamma->table[(color & 0x070) >> 4];
-	rgb_color->blue  = gamma->table[(color & 0x007)];
+	rgb_color->blue = gamma->table[(color & 0x007)];
 }
 
 void Magnetic::gms_graphics_split_color(glui32 color, gms_rgbref_t rgb_color) {
 	assert(rgb_color);
 
-	rgb_color->red   = (color >> 16) & 0xff;
+	rgb_color->red = (color >> 16) & 0xff;
 	rgb_color->green = (color >> 8) & 0xff;
-	rgb_color->blue  = color & 0xff;
+	rgb_color->blue = color & 0xff;
 }
 
 glui32 Magnetic::gms_graphics_combine_color(gms_rgbref_t rgb_color) {
@@ -474,16 +466,14 @@ glui32 Magnetic::gms_graphics_combine_color(gms_rgbref_t rgb_color) {
 
 int Magnetic::gms_graphics_color_luminance(gms_rgbref_t rgb_color) {
 	/* Calculate the luminance and scale back by 1000 to 0-255 before return. */
-	long luminance = ((long) rgb_color->red   * (long) GMS_LUMINANCE_WEIGHTS.red
-	             + (long) rgb_color->green * (long) GMS_LUMINANCE_WEIGHTS.green
-	             + (long) rgb_color->blue  * (long) GMS_LUMINANCE_WEIGHTS.blue);
+	long luminance = ((long)rgb_color->red * (long)GMS_LUMINANCE_WEIGHTS.red + (long)rgb_color->green * (long)GMS_LUMINANCE_WEIGHTS.green + (long)rgb_color->blue * (long)GMS_LUMINANCE_WEIGHTS.blue);
 
 	assert(luminance_weighting > 0);
 	return (int)(luminance / luminance_weighting);
 }
 
 int Magnetic::gms_graphics_compare_luminance(const void *void_first,
-        const void *void_second) {
+                                             const void *void_second) {
 	long first = *(const long *)void_first;
 	long second = *(const long *)void_second;
 
@@ -491,11 +481,11 @@ int Magnetic::gms_graphics_compare_luminance(const void *void_first,
 }
 
 long Magnetic::gms_graphics_contrast_variance(type16 palette[],
-        long color_usage[], gms_gammaref_t gamma) {
+                                              long color_usage[], gms_gammaref_t gamma) {
 	int index, count, has_black, mean;
 	long sum;
 	int contrast[GMS_PALETTE_SIZE];
-	int luminance[GMS_PALETTE_SIZE + 1];  /* Luminance for each color,
+	int luminance[GMS_PALETTE_SIZE + 1]; /* Luminance for each color,
                                            plus one extra for black */
 
 	/* Calculate the luminance energy of each palette color at this gamma. */
@@ -578,7 +568,7 @@ gms_gammaref_t Magnetic::gms_graphics_equal_contrast_gamma(type16 palette[], lon
 }
 
 gms_gammaref_t Magnetic::gms_graphics_select_gamma(type8 bitmap[],
-        type16 width, type16 height, type16 palette[]) {
+                                                   type16 width, type16 height, type16 palette[]) {
 	long color_usage[GMS_PALETTE_SIZE];
 	int color_count;
 	gms_gammaref_t contrast_gamma;
@@ -618,7 +608,7 @@ gms_gammaref_t Magnetic::gms_graphics_select_gamma(type8 bitmap[],
 }
 
 void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
-        int x_offset, int y_offset, int pixel_size, type16 width, type16 height) {
+                                             int x_offset, int y_offset, int pixel_size, type16 width, type16 height) {
 	uint background;
 	glui32 fade_color, shading_color;
 	gms_rgb_t rgb_background, rgb_border, rgb_fade;
@@ -632,7 +622,7 @@ void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
 	 * background to it.  If we can't, we'll default the color to white.
 	 */
 	if (!glk_style_measure(gms_main_window,
-	                             style_Normal, stylehint_BackColor, &background)) {
+	                       style_Normal, stylehint_BackColor, &background)) {
 		/*
 		 * Unable to get the main window background, so assume, and default
 		 * graphics to white.
@@ -651,15 +641,14 @@ void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
 	 * For very small pictures, just border them, but don't try and do any
 	 * shading.  Failing this check is probably highly unlikely.
 	 */
-	if (width < 2 * GMS_GRAPHICS_SHADE_STEPS
-	        || height < 2 * GMS_GRAPHICS_SHADE_STEPS) {
+	if (width < 2 * GMS_GRAPHICS_SHADE_STEPS || height < 2 * GMS_GRAPHICS_SHADE_STEPS) {
 		/* Paint a rectangle bigger than the picture by border pixels. */
 		glk_window_fill_rect(glk_window,
-		                           GMS_GRAPHICS_BORDER_COLOR,
-		                           x_offset - GMS_GRAPHICS_BORDER,
-		                           y_offset - GMS_GRAPHICS_BORDER,
-		                           width * pixel_size + GMS_GRAPHICS_BORDER * 2,
-		                           height * pixel_size + GMS_GRAPHICS_BORDER * 2);
+		                     GMS_GRAPHICS_BORDER_COLOR,
+		                     x_offset - GMS_GRAPHICS_BORDER,
+		                     y_offset - GMS_GRAPHICS_BORDER,
+		                     width * pixel_size + GMS_GRAPHICS_BORDER * 2,
+		                     height * pixel_size + GMS_GRAPHICS_BORDER * 2);
 		return;
 	}
 
@@ -670,13 +659,11 @@ void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
 	 * picture will sit over this rectangle.
 	 */
 	glk_window_fill_rect(glk_window,
-	                           GMS_GRAPHICS_BORDER_COLOR,
-	                           x_offset - GMS_GRAPHICS_BORDER,
-	                           y_offset - GMS_GRAPHICS_BORDER,
-	                           width * pixel_size + GMS_GRAPHICS_BORDER * 2
-	                           + GMS_GRAPHICS_SHADING,
-	                           height * pixel_size + GMS_GRAPHICS_BORDER * 2
-	                           + GMS_GRAPHICS_SHADING);
+	                     GMS_GRAPHICS_BORDER_COLOR,
+	                     x_offset - GMS_GRAPHICS_BORDER,
+	                     y_offset - GMS_GRAPHICS_BORDER,
+	                     width * pixel_size + GMS_GRAPHICS_BORDER * 2 + GMS_GRAPHICS_SHADING,
+	                     height * pixel_size + GMS_GRAPHICS_BORDER * 2 + GMS_GRAPHICS_SHADING);
 
 	/*
 	 * Split the main window background color and the border color into
@@ -690,12 +677,9 @@ void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
 	 * assuming that the border is always darker than the main window
 	 * background (currently valid, as we're using black).
 	 */
-	rgb_fade.red = (rgb_background.red - rgb_border.red)
-	               / GMS_GRAPHICS_SHADE_STEPS;
-	rgb_fade.green = (rgb_background.green - rgb_border.green)
-	                 / GMS_GRAPHICS_SHADE_STEPS;
-	rgb_fade.blue = (rgb_background.blue - rgb_border.blue)
-	                / GMS_GRAPHICS_SHADE_STEPS;
+	rgb_fade.red = (rgb_background.red - rgb_border.red) / GMS_GRAPHICS_SHADE_STEPS;
+	rgb_fade.green = (rgb_background.green - rgb_border.green) / GMS_GRAPHICS_SHADE_STEPS;
+	rgb_fade.blue = (rgb_background.blue - rgb_border.blue) / GMS_GRAPHICS_SHADE_STEPS;
 
 	/* Combine RGB fade into a single incremental Glk color. */
 	fade_color = gms_graphics_combine_color(&rgb_fade);
@@ -705,15 +689,13 @@ void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
 	for (index = 0; index < GMS_GRAPHICS_SHADE_STEPS; index++) {
 		/* Shade the two border areas with this color. */
 		glk_window_fill_rect(glk_window, shading_color,
-		                           x_offset + width * pixel_size
-		                           + GMS_GRAPHICS_BORDER,
-		                           y_offset + index - GMS_GRAPHICS_BORDER,
-		                           GMS_GRAPHICS_SHADING, 1);
+		                     x_offset + width * pixel_size + GMS_GRAPHICS_BORDER,
+		                     y_offset + index - GMS_GRAPHICS_BORDER,
+		                     GMS_GRAPHICS_SHADING, 1);
 		glk_window_fill_rect(glk_window, shading_color,
-		                           x_offset + index - GMS_GRAPHICS_BORDER,
-		                           y_offset + height * pixel_size
-		                           + GMS_GRAPHICS_BORDER,
-		                           1, GMS_GRAPHICS_SHADING);
+		                     x_offset + index - GMS_GRAPHICS_BORDER,
+		                     y_offset + height * pixel_size + GMS_GRAPHICS_BORDER,
+		                     1, GMS_GRAPHICS_SHADING);
 
 		/* Update the shading color for the fade next iteration. */
 		shading_color -= fade_color;
@@ -721,7 +703,7 @@ void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
 }
 
 void Magnetic::gms_graphics_convert_palette(type16 ms_palette[], gms_gammaref_t gamma,
-        glui32 glk_palette[]) {
+                                            glui32 glk_palette[]) {
 	int index;
 	assert(ms_palette && gamma && glk_palette);
 
@@ -738,7 +720,7 @@ void Magnetic::gms_graphics_convert_palette(type16 ms_palette[], gms_gammaref_t 
 }
 
 void Magnetic::gms_graphics_position_picture(winid_t glk_window,
-        int pixel_size, type16 width, type16 height, int *x_offset, int *y_offset) {
+                                             int pixel_size, type16 width, type16 height, int *x_offset, int *y_offset) {
 	uint window_width, window_height;
 	assert(glk_window && x_offset && y_offset);
 
@@ -749,13 +731,13 @@ void Magnetic::gms_graphics_position_picture(winid_t glk_window,
 	 * Calculate and return an x and y offset to use on point plotting, so that
 	 * the image centers inside the graphical window.
 	 */
-	*x_offset = ((int) window_width - width * pixel_size) / 2;
-	*y_offset = ((int) window_height - height * pixel_size) / 2;
+	*x_offset = ((int)window_width - width * pixel_size) / 2;
+	*y_offset = ((int)window_height - height * pixel_size) / 2;
 }
 
 void Magnetic::gms_graphics_apply_animation_frame(type8 bitmap[],
-        type16 frame_width, type16 frame_height, type8 mask[], int frame_x, int frame_y,
-        type8 off_screen[], type16 width, type16 height) {
+                                                  type16 frame_width, type16 frame_height, type8 mask[], int frame_x, int frame_y,
+                                                  type8 off_screen[], type16 width, type16 height) {
 	int mask_width, x, y;
 	type8 mask_hibit;
 	long frame_row, buffer_row, mask_row;
@@ -869,7 +851,7 @@ int Magnetic::gms_graphics_animate(type8 off_screen[], type16 width, type16 heig
 
 #ifndef GARGLK
 int Magnetic::gms_graphics_is_vertex(type8 off_screen[], type16 width, type16 height,
-		int x, int y) {
+                                     int x, int y) {
 	type8 pixel;
 	int above, below, left, right;
 	long index_row;
@@ -889,7 +871,7 @@ int Magnetic::gms_graphics_is_vertex(type8 off_screen[], type16 width, type16 he
 	 */
 	above = (y == 0 || off_screen[index_row - width + x] != pixel);
 	below = (y == height - 1 || off_screen[index_row + width + x] != pixel);
-	left  = (x == 0 || off_screen[index_row + x - 1] != pixel);
+	left = (x == 0 || off_screen[index_row + x - 1] != pixel);
 	right = (x == width - 1 || off_screen[index_row + x + 1] != pixel);
 
 	/*
@@ -901,9 +883,9 @@ int Magnetic::gms_graphics_is_vertex(type8 off_screen[], type16 width, type16 he
 }
 
 int Magnetic::gms_graphics_compare_layering_inverted(const void *void_first,
-        const void *void_second) {
-	gms_layering_t *first = (gms_layering_t *) void_first;
-	gms_layering_t *second = (gms_layering_t *) void_second;
+                                                     const void *void_second) {
+	gms_layering_t *first = (gms_layering_t *)void_first;
+	gms_layering_t *second = (gms_layering_t *)void_second;
 
 	/*
 	 * Order by complexity first, then by usage, putting largest first.  Some
@@ -913,15 +895,12 @@ int Magnetic::gms_graphics_compare_layering_inverted(const void *void_first,
 	 * indexes so that colors that render complex shapes come first, non-empty,
 	 * but simpler shaped colors next, and finally all genuinely empty layers.
 	 */
-	return second->complexity > first->complexity ? 1 :
-	       first->complexity > second->complexity ? -1 :
-	       second->usage > first->usage ? 1 :
-	       first->usage > second->usage ? -1 : 0;
+	return second->complexity > first->complexity ? 1 : first->complexity > second->complexity ? -1 : second->usage > first->usage ? 1 : first->usage > second->usage ? -1 : 0;
 }
 
 void Magnetic::gms_graphics_assign_layers(type8 off_screen[], type8 on_screen[],
-                                       type16 width, type16 height,
-                                       int layers[], long layer_usage[]) {
+                                          type16 width, type16 height,
+                                          int layers[], long layer_usage[]) {
 	int index, x, y;
 	long index_row;
 	gms_layering_t layering[GMS_PALETTE_SIZE];
@@ -975,9 +954,9 @@ void Magnetic::gms_graphics_assign_layers(type8 off_screen[], type8 on_screen[],
 }
 
 void Magnetic::gms_graphics_paint_region(winid_t glk_window, glui32 palette[], int layers[],
-                                      type8 off_screen[], type8 on_screen[],
-                                      int x, int y, int x_offset, int y_offset,
-                                      int pixel_size, type16 width, type16 height) {
+                                         type8 off_screen[], type8 on_screen[],
+                                         int x, int y, int x_offset, int y_offset,
+                                         int pixel_size, type16 width, type16 height) {
 	type8 pixel;
 	int layer, x_min, x_max, y_min, y_max, x_index, y_index;
 	long index_row;
@@ -998,15 +977,13 @@ void Magnetic::gms_graphics_paint_region(winid_t glk_window, glui32 palette[], i
 	for (x_min = x; x_min - 1 >= 0; x_min--) {
 		long index = index_row + x_min - 1;
 
-		if (on_screen[index] == off_screen[index]
-		        && layers[off_screen[index]] != layer)
+		if (on_screen[index] == off_screen[index] && layers[off_screen[index]] != layer)
 			break;
 	}
 	for (x_max = x; x_max + 1 < width; x_max++) {
 		long index = index_row + x_max + 1;
 
-		if (on_screen[index] == off_screen[index]
-		        && layers[off_screen[index]] != layer)
+		if (on_screen[index] == off_screen[index] && layers[off_screen[index]] != layer)
 			break;
 	}
 
@@ -1019,24 +996,22 @@ void Magnetic::gms_graphics_paint_region(winid_t glk_window, glui32 palette[], i
 	 * As above, an index row removes multiplications from the loops.
 	 */
 	for (y_min = y, index_row = (y - 1) * width;
-	        y_min - 1 >= 0; y_min--, index_row -= width) {
+	     y_min - 1 >= 0; y_min--, index_row -= width) {
 		for (x_index = x_min; x_index <= x_max; x_index++) {
 			long index = index_row + x_index;
 
-			if (on_screen[index] == off_screen[index]
-			        && layers[off_screen[index]] != layer)
+			if (on_screen[index] == off_screen[index] && layers[off_screen[index]] != layer)
 				goto break_y_min;
 		}
 	}
 break_y_min:
 
 	for (y_max = y, index_row = (y + 1) * width;
-	        y_max + 1 < height; y_max++, index_row += width) {
+	     y_max + 1 < height; y_max++, index_row += width) {
 		for (x_index = x_min; x_index <= x_max; x_index++) {
 			long index = index_row + x_index;
 
-			if (on_screen[index] == off_screen[index]
-			        && layers[off_screen[index]] != layer)
+			if (on_screen[index] == off_screen[index] && layers[off_screen[index]] != layer)
 				goto break_y_max;
 		}
 	}
@@ -1044,10 +1019,10 @@ break_y_max:
 
 	/* Fill the region using Glk's rectangle fill. */
 	glk_window_fill_rect(glk_window, palette[pixel],
-	                           x_min * pixel_size + x_offset,
-	                           y_min * pixel_size + y_offset,
-	                           (x_max - x_min + 1) * pixel_size,
-	                           (y_max - y_min + 1) * pixel_size);
+	                     x_min * pixel_size + x_offset,
+	                     y_min * pixel_size + y_offset,
+	                     (x_max - x_min + 1) * pixel_size,
+	                     (y_max - y_min + 1) * pixel_size);
 
 	/*
 	 * Validate each pixel in the reference layer that was rendered by the
@@ -1081,47 +1056,47 @@ break_y_max:
 #endif
 
 void Magnetic::gms_graphics_paint_everything(winid_t glk_window,
-        glui32 palette[], type8 off_screen[], int x_offset, int y_offset,
-        type16 width, type16 height) {
-	type8       pixel;          /* Reference pixel color */
-	int     x, y;
+                                             glui32 palette[], type8 off_screen[], int x_offset, int y_offset,
+                                             type16 width, type16 height) {
+	type8 pixel; /* Reference pixel color */
+	int x, y;
 
 	for (y = 0; y < height; y++) {
-		for (x = 0; x < width; x ++) {
-			pixel = off_screen[ y * width + x ];
+		for (x = 0; x < width; x++) {
+			pixel = off_screen[y * width + x];
 			glk_window_fill_rect(glk_window,
-			                           palette[ pixel ],
-			                           x * GMS_GRAPHICS_PIXEL + x_offset,
-			                           y * GMS_GRAPHICS_PIXEL + y_offset,
-			                           GMS_GRAPHICS_PIXEL, GMS_GRAPHICS_PIXEL);
+			                     palette[pixel],
+			                     x * GMS_GRAPHICS_PIXEL + x_offset,
+			                     y * GMS_GRAPHICS_PIXEL + y_offset,
+			                     GMS_GRAPHICS_PIXEL, GMS_GRAPHICS_PIXEL);
 		}
 	}
 }
 
 void Magnetic::gms_graphics_timeout() {
-	static glui32 palette[GMS_PALETTE_SIZE];   /* Precomputed Glk palette */
+	static glui32 palette[GMS_PALETTE_SIZE]; /* Precomputed Glk palette */
 #ifndef GARGLK
 	static int layers[GMS_PALETTE_SIZE];       /* Assigned image layers */
 	static long layer_usage[GMS_PALETTE_SIZE]; /* Image layer occupancies */
 #endif
 
-	static int deferred_repaint = false;       /* Local delayed repaint flag */
-	static int ignore_counter;                 /* Count of calls ignored */
+	static int deferred_repaint = false; /* Local delayed repaint flag */
+	static int ignore_counter;           /* Count of calls ignored */
 
-	static int x_offset, y_offset;             /* Point plot offsets */
-	static int yield_counter;                  /* Yields in rendering */
+	static int x_offset, y_offset; /* Point plot offsets */
+	static int yield_counter;      /* Yields in rendering */
 #ifndef GARGLK
-	static int saved_layer;                    /* Saved current layer */
-	static int saved_x, saved_y;               /* Saved x,y coord */
-	static int total_regions;                  /* Debug statistic */
+	static int saved_layer;      /* Saved current layer */
+	static int saved_x, saved_y; /* Saved x,y coord */
+	static int total_regions;    /* Debug statistic */
 #endif
 
-	type8 *on_screen;                          /* On-screen image buffer */
-	type8 *off_screen;                         /* Off-screen image buffer */
-	long picture_size;                         /* Picture size in pixels */
-//  int layer;                                 /* Image layer iterator */
-//  int x, y;                                  /* Image iterators */
-//  int regions;                               /* Count of regions painted */
+	type8 *on_screen;  /* On-screen image buffer */
+	type8 *off_screen; /* Off-screen image buffer */
+	long picture_size; /* Picture size in pixels */
+	                   //  int layer;                                 /* Image layer iterator */
+	                   //  int x, y;                                  /* Image iterators */
+	                   //  int regions;                               /* Count of regions painted */
 
 	/* Ignore the call if the current graphics state is inactive. */
 	if (!gms_graphics_active)
@@ -1291,7 +1266,7 @@ void Magnetic::gms_graphics_timeout() {
 	 */
 	regions = 0;
 	for (layer = saved_layer;
-	        layer < GMS_PALETTE_SIZE && layer_usage[layer] > 0; layer++) {
+	     layer < GMS_PALETTE_SIZE && layer_usage[layer] > 0; layer++) {
 		long index_row;
 
 		/*
@@ -1312,8 +1287,7 @@ void Magnetic::gms_graphics_timeout() {
 				 * currently invalid (that is, ones whose on-screen represen-
 				 * tation matches the off-screen buffer).
 				 */
-				if (layers[off_screen[index]] == layer
-				        && on_screen[index] != off_screen[index]) {
+				if (layers[off_screen[index]] == layer && on_screen[index] != off_screen[index]) {
 					/*
 					 * Rather than painting just one pixel, here we try to
 					 * paint the maximal region we can for the layer of the
@@ -1365,12 +1339,11 @@ void Magnetic::gms_graphics_timeout() {
 	total_regions += regions;
 
 #else
-	gms_graphics_paint_everything
-	(gms_graphics_window,
-	 palette, off_screen,
-	 x_offset, y_offset,
-	 gms_graphics_width,
-	 gms_graphics_height);
+	gms_graphics_paint_everything(gms_graphics_window,
+	                              palette, off_screen,
+	                              x_offset, y_offset,
+	                              gms_graphics_width,
+	                              gms_graphics_height);
 #endif
 
 	/*
@@ -1499,10 +1472,7 @@ void Magnetic::ms_showpic(type32 picture, type8 mode) {
 	 * call.  Check for a change, and if we don't see one, and if graphics are
 	 * enabled and being displayed, we can safely ignore the call.
 	 */
-	if (width == gms_graphics_width
-	        && height == gms_graphics_height
-	        && crc == pic_current_crc
-	        && gms_graphics_enabled && gms_graphics_are_displayed())
+	if (width == gms_graphics_width && height == gms_graphics_height && crc == pic_current_crc && gms_graphics_enabled && gms_graphics_are_displayed())
 		return;
 
 	/*
@@ -1561,7 +1531,7 @@ int Magnetic::gms_graphics_get_picture_details(int *width, int *height, int *is_
 }
 
 int Magnetic::gms_graphics_get_rendering_details(const char **gamma,
-		int *color_count, int *is_active) {
+                                                 int *color_count, int *is_active) {
 	if (gms_graphics_enabled && gms_graphics_are_displayed()) {
 		/*
 		 * Return the string representing the gamma correction.  If racing
@@ -1685,9 +1655,7 @@ void Magnetic::gms_status_print() {
 	 * Do nothing if there is no status line to print, or if the status
 	 * line hasn't changed since last printed.
 	 */
-	if (gms_status_length == 0
-	        || (gms_status_length == length
-	            && strncmp(buffer_, gms_status_buffer, length)) == 0)
+	if (gms_status_length == 0 || (gms_status_length == length && strncmp(buffer_, gms_status_buffer, length)) == 0)
 		return;
 
 	/* Set fixed width font to try to preserve status line formatting. */
@@ -1748,7 +1716,7 @@ void Magnetic::gms_status_redraw() {
 		 */
 		parent = glk_window_get_parent(gms_status_window);
 		glk_window_set_arrangement(parent,
-		                                 winmethod_Above | winmethod_Fixed, 1, NULL);
+		                           winmethod_Above | winmethod_Fixed, 1, NULL);
 
 		gms_status_update();
 	}
@@ -1770,7 +1738,7 @@ void Magnetic::gms_output_provide_help_hint() {
 	if (gms_help_requested && !gms_help_hints_silenced) {
 		glk_set_style(style_Emphasized);
 		glk_put_string("[Try 'glk help' for help on special interpreter"
-		                     " commands]\n");
+		               " commands]\n");
 
 		gms_help_requested = false;
 		glk_set_style(style_Normal);
@@ -1796,7 +1764,7 @@ void Magnetic::gms_detect_game_prompt() {
 	 * is any non-space character on that line.
 	 */
 	for (index = gms_output_length - 1;
-	        index >= 0 && gms_output_buffer[index] != '\n'; index--) {
+	     index >= 0 && gms_output_buffer[index] != '\n'; index--) {
 		if (gms_output_buffer[index] != ' ') {
 			gms_output_prompt = true;
 			break;
@@ -1826,13 +1794,13 @@ void Magnetic::gms_output_flush() {
 			int index;
 
 			for (index = gms_output_length - 1;
-			        index >= 0 && gms_output_buffer[index] != '\n';)
+			     index >= 0 && gms_output_buffer[index] != '\n';)
 				index--;
 
 			glk_put_buffer(gms_output_buffer, index + 1);
 			gms_output_provide_help_hint();
 			glk_put_buffer(gms_output_buffer + index + 1,
-			                     gms_output_length - index - 1);
+			               gms_output_length - index - 1);
 		} else {
 			glk_put_buffer(gms_output_buffer, gms_output_length);
 			gms_output_provide_help_hint();
@@ -2006,8 +1974,8 @@ int Magnetic::gms_hint_open() {
 		 * change this later to suit the hint.
 		 */
 		gms_hint_menu_window = glk_window_open(gms_main_window,
-		                       winmethod_Above | winmethod_Fixed,
-		                       2, wintype_TextGrid, 0);
+		                                       winmethod_Above | winmethod_Fixed,
+		                                       2, wintype_TextGrid, 0);
 		if (!gms_hint_menu_window)
 			return false;
 
@@ -2016,9 +1984,8 @@ int Magnetic::gms_hint_open() {
 		 * of the main window, so should cover what remains of it completely.
 		 */
 		gms_hint_text_window = glk_window_open(gms_main_window,
-		                       winmethod_Above
-		                       | winmethod_Proportional,
-		                       100, wintype_TextBuffer, 0);
+		                                       winmethod_Above | winmethod_Proportional,
+		                                       100, wintype_TextBuffer, 0);
 		if (!gms_hint_text_window) {
 			glk_window_close(gms_hint_menu_window, NULL);
 			gms_hint_menu_window = NULL;
@@ -2045,7 +2012,7 @@ int Magnetic::gms_hint_windows_available() {
 }
 
 void Magnetic::gms_hint_menu_print(int line, int column, const char *string_,
-		glui32 width, glui32 height) {
+                                   glui32 width, glui32 height) {
 	assert(string_);
 
 	/* Ignore the call if the text position is outside the window. */
@@ -2058,14 +2025,14 @@ void Magnetic::gms_hint_menu_print(int line, int column, const char *string_,
 
 			/* Write until the end of the string_, or the end of the window. */
 			for (posn = column, index = 0;
-			        posn < (int)width && index < (int)strlen(string_); posn++, index++) {
+			     posn < (int)width && index < (int)strlen(string_); posn++, index++) {
 				glk_put_char(string_[index]);
 			}
 
 			glk_set_window(gms_main_window);
 		} else {
-			static int current_line = 0;    /* Retained line number */
-			static int current_column = 0;  /* Retained col number */
+			static int current_line = 0;   /* Retained line number */
+			static int current_column = 0; /* Retained col number */
 
 			int index;
 
@@ -2097,8 +2064,8 @@ void Magnetic::gms_hint_menu_print(int line, int column, const char *string_,
 			 * (self-imposed not-really-there) window.
 			 */
 			for (index = 0;
-			        current_column < (int)width && index < (int)strlen(string_);
-			        current_column++, index++) {
+			     current_column < (int)width && index < (int)strlen(string_);
+			     current_column++, index++) {
 				gms_normal_char(string_[index]);
 			}
 		}
@@ -2106,7 +2073,7 @@ void Magnetic::gms_hint_menu_print(int line, int column, const char *string_,
 }
 
 void Magnetic::gms_hint_menu_header(int line, const char *string_,
-		glui32 width, glui32 height) {
+                                    glui32 width, glui32 height) {
 	int posn, length;
 	assert(string_);
 
@@ -2117,7 +2084,7 @@ void Magnetic::gms_hint_menu_header(int line, const char *string_,
 }
 
 void Magnetic::gms_hint_menu_justify(int line, const char *left_string,
-		const char *right_string, glui32 width, glui32 height) {
+                                     const char *right_string, glui32 width, glui32 height) {
 	int posn, length;
 	assert(left_string && right_string);
 
@@ -2177,8 +2144,7 @@ void Magnetic::gms_hint_menutext_char_event(event_t *event) {
 		glk_request_char_event(gms_hint_text_window);
 
 		gms_event_wait(evtype_CharInput, event);
-		assert(event->window == gms_hint_menu_window
-		       || event->window == gms_hint_text_window);
+		assert(event->window == gms_hint_menu_window || event->window == gms_hint_text_window);
 
 		glk_cancel_char_event(gms_hint_menu_window);
 		glk_cancel_char_event(gms_hint_text_window);
@@ -2195,8 +2161,8 @@ void Magnetic::gms_hint_arrange_windows(int requested_lines, glui32 *width, glui
 		/* Resize the hint menu window to fit the current hint. */
 		parent = glk_window_get_parent(gms_hint_menu_window);
 		glk_window_set_arrangement(parent,
-		                                 winmethod_Above | winmethod_Fixed,
-		                                 requested_lines, NULL);
+		                           winmethod_Above | winmethod_Fixed,
+		                           requested_lines, NULL);
 
 		uint width_temp, height_temp;
 
@@ -2222,7 +2188,7 @@ void Magnetic::gms_hint_arrange_windows(int requested_lines, glui32 *width, glui
 }
 
 void Magnetic::gms_hint_display_folder(const ms_hint hints_[],
-		const int cursor[], type16 node) {
+                                       const int cursor[], type16 node) {
 	glui32 width, height;
 	int line, index;
 	assert(hints_ && cursor);
@@ -2246,7 +2212,8 @@ void Magnetic::gms_hint_display_folder(const ms_hint hints_[],
 	gms_hint_menu_justify(line++,
 	                      " RETURN = read subject  ",
 	                      node == GMS_HINT_ROOT_NODE
-	                      ? "  Q = resume game " : "  Q = previous menu ",
+	                          ? "  Q = resume game "
+	                          : "  Q = previous menu ",
 	                      width, height);
 
 	/*
@@ -2272,7 +2239,7 @@ void Magnetic::gms_hint_display_folder(const ms_hint hints_[],
 }
 
 void Magnetic::gms_hint_display_text(const ms_hint hints_[],
-		const int cursor[], type16 node) {
+                                     const int cursor[], type16 node) {
 	glui32 width, height;
 	int line, index;
 	assert(hints_ && cursor);
@@ -2305,7 +2272,8 @@ void Magnetic::gms_hint_display_text(const ms_hint hints_[],
 		gms_hint_text_print(buf);
 
 		gms_hint_text_print(index < cursor[node]
-		                    ? gms_get_hint_content(hints_, node, index) : "-");
+		                        ? gms_get_hint_content(hints_, node, index)
+		                        : "-");
 		gms_hint_text_print("\n");
 	}
 }
@@ -2329,7 +2297,7 @@ void Magnetic::gms_hint_display(const ms_hint hints_[], const int cursor[], type
 }
 
 type16 Magnetic::gms_hint_handle_folder(const ms_hint hints_[],
-		int cursor[], type16 node, glui32 keycode) {
+                                        int cursor[], type16 node, glui32 keycode) {
 	unsigned char response;
 	type16 next_node;
 	assert(hints_ && cursor);
@@ -2385,7 +2353,8 @@ type16 Magnetic::gms_hint_handle_folder(const ms_hint hints_[],
 	case 'Q':
 		/* If root, we're done; if not, next node is node's parent. */
 		next_node = node == GMS_HINT_ROOT_NODE
-		            ? GMS_HINTS_DONE : hints_[node].parent;
+		                ? GMS_HINTS_DONE
+		                : hints_[node].parent;
 		break;
 
 	default:
@@ -2396,7 +2365,7 @@ type16 Magnetic::gms_hint_handle_folder(const ms_hint hints_[],
 }
 
 type16 Magnetic::gms_hint_handle_text(const ms_hint hints_[],
-		int cursor[], type16 node, glui32 keycode) {
+                                      int cursor[], type16 node, glui32 keycode) {
 	unsigned char response;
 	type16 next_node;
 	assert(hints_ && cursor);
@@ -2441,7 +2410,7 @@ type16 Magnetic::gms_hint_handle_text(const ms_hint hints_[],
 }
 
 type16 Magnetic::gms_hint_handle(const ms_hint hints_[],
-		int cursor[], type16 node, glui32 keycode) {
+                                 int cursor[], type16 node, glui32 keycode) {
 	type16 next_node;
 	assert(hints_ && cursor);
 
@@ -2577,16 +2546,15 @@ void Magnetic::gms_command_script(const char *argument) {
 			return;
 		}
 
-		fileref = glk_fileref_create_by_prompt(fileusage_Transcript
-		          | fileusage_TextMode,
-		          filemode_WriteAppend, 0);
+		fileref = glk_fileref_create_by_prompt(fileusage_Transcript | fileusage_TextMode,
+		                                       filemode_WriteAppend, 0);
 		if (!fileref) {
 			gms_standout_string("Glk transcript failed.\n");
 			return;
 		}
 
 		gms_transcript_stream = glk_stream_open_file(fileref,
-		                        filemode_WriteAppend, 0);
+		                                             filemode_WriteAppend, 0);
 		glk_fileref_destroy(fileref);
 		if (!gms_transcript_stream) {
 			gms_standout_string("Glk transcript failed.\n");
@@ -2638,16 +2606,15 @@ void Magnetic::gms_command_inputlog(const char *argument) {
 			return;
 		}
 
-		fileref = glk_fileref_create_by_prompt(fileusage_InputRecord
-		          | fileusage_BinaryMode,
-		          filemode_WriteAppend, 0);
+		fileref = glk_fileref_create_by_prompt(fileusage_InputRecord | fileusage_BinaryMode,
+		                                       filemode_WriteAppend, 0);
 		if (!fileref) {
 			gms_standout_string("Glk input logging failed.\n");
 			return;
 		}
 
 		gms_inputlog_stream = glk_stream_open_file(fileref,
-		                      filemode_WriteAppend, 0);
+		                                           filemode_WriteAppend, 0);
 		glk_fileref_destroy(fileref);
 		if (!gms_inputlog_stream) {
 			gms_standout_string("Glk input logging failed.\n");
@@ -2695,9 +2662,8 @@ void Magnetic::gms_command_readlog(const char *argument) {
 			return;
 		}
 
-		fileref = glk_fileref_create_by_prompt(fileusage_InputRecord
-		          | fileusage_BinaryMode,
-		          filemode_Read, 0);
+		fileref = glk_fileref_create_by_prompt(fileusage_InputRecord | fileusage_BinaryMode,
+		                                       filemode_Read, 0);
 		if (!fileref) {
 			gms_standout_string("Glk read log failed.\n");
 			return;
@@ -2832,7 +2798,8 @@ void Magnetic::gms_command_graphics(const char *argument) {
 	else if (strlen(argument) == 0) {
 		gms_normal_string("Glk graphics are available,");
 		gms_normal_string(gms_graphics_enabled
-		                  ? " and enabled.\n" : " but disabled.\n");
+		                      ? " and enabled.\n"
+		                      : " but disabled.\n");
 
 		if (gms_graphics_picture_is_available()) {
 			int width, height, is_animated;
@@ -2920,8 +2887,7 @@ void Magnetic::gms_command_gamma(const char *argument) {
 		                  " now 'high'.\n");
 	}
 
-	else if (gms_strcasecmp(argument, "normal") == 0
-	         || gms_strcasecmp(argument, "on") == 0) {
+	else if (gms_strcasecmp(argument, "normal") == 0 || gms_strcasecmp(argument, "on") == 0) {
 		if (gms_gamma_mode == GAMMA_NORMAL) {
 			gms_normal_string("Glk automatic gamma correction mode is"
 			                  " already 'normal'.\n");
@@ -2935,8 +2901,7 @@ void Magnetic::gms_command_gamma(const char *argument) {
 		                  " now 'normal'.\n");
 	}
 
-	else if (gms_strcasecmp(argument, "none") == 0
-	         || gms_strcasecmp(argument, "off") == 0) {
+	else if (gms_strcasecmp(argument, "none") == 0 || gms_strcasecmp(argument, "off") == 0) {
 		if (gms_gamma_mode == GAMMA_OFF) {
 			gms_normal_string("Glk automatic gamma correction mode is"
 			                  " already 'off'.\n");
@@ -3083,9 +3048,9 @@ void Magnetic::gms_command_prompts(const char *argument) {
 
 void Magnetic::gms_command_print_version_number(glui32 version_) {
 	Common::String str = Common::String::format("%lu.%lu.%lu",
-	        (unsigned long)version_ >> 16,
-	        (unsigned long)(version_ >> 8) & 0xff,
-	        (unsigned long)version_ & 0xff);
+	                                            (unsigned long)version_ >> 16,
+	                                            (unsigned long)(version_ >> 8) & 0xff,
+	                                            (unsigned long)version_ & 0xff);
 	gms_normal_string(str.c_str());
 }
 
@@ -3139,9 +3104,7 @@ void Magnetic::gms_command_summary(const char *argument) {
 	 * prompting each to print its current setting.
 	 */
 	for (entry = GMS_COMMAND_TABLE; entry->command; entry++) {
-		if (entry->handler == &Magnetic::gms_command_summary
-		        || entry->handler == &Magnetic::gms_command_undo
-		        || entry->handler == &Magnetic::gms_command_help)
+		if (entry->handler == &Magnetic::gms_command_summary || entry->handler == &Magnetic::gms_command_undo || entry->handler == &Magnetic::gms_command_help)
 			continue;
 
 		(this->*entry->handler)("");
@@ -3422,8 +3385,7 @@ int Magnetic::gms_command_undo_special(const char *string_) {
 	end = posn + strcspn(string_ + posn, "\t ");
 
 	/* See if string_ contains an "undo" request, with nothing following. */
-	if (end - posn == (int)strlen("undo")
-	        && gms_strncasecmp(string_ + posn, "undo", end - posn) == 0) {
+	if (end - posn == (int)strlen("undo") && gms_strncasecmp(string_ + posn, "undo", end - posn) == 0) {
 		posn = end + strspn(string_ + end, "\t ");
 		if (string_[posn] == '\0')
 			return true;
@@ -3444,12 +3406,11 @@ void Magnetic::gms_expand_abbreviations(char *buffer_, int size) {
 
 	/* Ignore anything that isn't a single letter command. */
 	command = buffer_ + strspn(buffer_, "\t ");
-	if (!(strlen(command) == 1
-	        || (strlen(command) > 1 && Common::isSpace(command[1]))))
+	if (!(strlen(command) == 1 || (strlen(command) > 1 && Common::isSpace(command[1]))))
 		return;
 
 	/* Scan the abbreviations table for a match. */
-	abbreviation = glk_char_to_lower((unsigned char) command[0]);
+	abbreviation = glk_char_to_lower((unsigned char)command[0]);
 	expansion = NULL;
 	for (entry = GMS_ABBREVIATIONS; entry->expansion; entry++) {
 		if (entry->abbreviation == abbreviation) {
@@ -3510,7 +3471,7 @@ void Magnetic::gms_buffer_input() {
 
 		/* Get the next line from the log stream. */
 		chars = glk_get_line_stream(gms_readlog_stream,
-		                                  gms_input_buffer, sizeof(gms_input_buffer));
+		                            gms_input_buffer, sizeof(gms_input_buffer));
 		if (chars > 0) {
 			/* Echo the line just read in input style. */
 			glk_set_style(style_Input);
@@ -3535,7 +3496,7 @@ void Magnetic::gms_buffer_input() {
 	 * to normal line input; start by getting a new line from Glk.
 	 */
 	glk_request_line_event(gms_main_window,
-	                             gms_input_buffer, sizeof(gms_input_buffer) - 1, 0);
+	                       gms_input_buffer, sizeof(gms_input_buffer) - 1, 0);
 	gms_event_wait(evtype_LineInput, &event);
 	if (shouldQuit()) {
 		glk_cancel_line_event(gms_main_window, &event);
@@ -3596,8 +3557,7 @@ void Magnetic::gms_buffer_input() {
 				posn = strspn(gms_input_buffer, "\t ");
 				if (gms_strncasecmp(gms_input_buffer + posn,
 				                    "help", strlen("help")) == 0) {
-					if (strspn(gms_input_buffer + posn + strlen("help"), "\t ")
-					        == strlen(gms_input_buffer + posn + strlen("help"))) {
+					if (strspn(gms_input_buffer + posn + strlen("help"), "\t ") == strlen(gms_input_buffer + posn + strlen("help"))) {
 						gms_output_register_help_request();
 					}
 				}
@@ -3647,7 +3607,7 @@ type8 Magnetic::ms_getchar(type8 trans) {
 
 		if (shouldQuit())
 			return '\0';
-		
+
 		if (gms_undo_notification) {
 			/*
 			 * Clear the undo notification, and discard buffered input (usually
@@ -3709,15 +3669,15 @@ void Magnetic::gms_event_wait(glui32 wait_type, event_t *event) {
 int Magnetic::__wrap_toupper(int ch) {
 	unsigned char uch;
 
-	uch = glk_char_to_upper((unsigned char) ch);
-	return (int) uch;
+	uch = glk_char_to_upper((unsigned char)ch);
+	return (int)uch;
 }
 
 int Magnetic::__wrap_tolower(int ch) {
 	unsigned char lch;
 
-	lch = glk_char_to_lower((unsigned char) ch);
-	return (int) lch;
+	lch = glk_char_to_lower((unsigned char)ch);
+	return (int)lch;
 }
 
 /*---------------------------------------------------------------------*/
@@ -3735,9 +3695,7 @@ void Magnetic::gms_establish_filenames(const char *name, char **text, char **gra
 
 	/* If base has an extension .MAG, .GFX, or .HNT, remove it. */
 	if (strlen(base) > strlen(".XXX")) {
-		if (gms_strcasecmp(base + strlen(base) - strlen(".MAG"), ".MAG") == 0
-		        || gms_strcasecmp(base + strlen(base) - strlen(".GFX"), ".GFX") == 0
-		        || gms_strcasecmp(base + strlen(base) - strlen(".HNT"), ".HNT") == 0)
+		if (gms_strcasecmp(base + strlen(base) - strlen(".MAG"), ".MAG") == 0 || gms_strcasecmp(base + strlen(base) - strlen(".GFX"), ".GFX") == 0 || gms_strcasecmp(base + strlen(base) - strlen(".HNT"), ".HNT") == 0)
 			base[strlen(base) - strlen(".XXX")] = '\0';
 	}
 
@@ -3853,11 +3811,9 @@ void Magnetic::gms_main() {
 		 * the library can't offer both graphics and timers.  We need timers to
 		 * create the background "thread" for picture updates.
 		 */
-		gms_graphics_possible = glk_gestalt(gestalt_Graphics, 0)
-		                        && glk_gestalt(gestalt_Timer, 0);
+		gms_graphics_possible = glk_gestalt(gestalt_Graphics, 0) && glk_gestalt(gestalt_Timer, 0);
 	} else
 		gms_graphics_possible = false;
-
 
 	/*
 	 * If pictures are impossible, clear pictures enabled flag.  That is, act
@@ -3870,8 +3826,8 @@ void Magnetic::gms_main() {
 	/* Try to create a one-line status window.  We can live without it. */
 	glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
 	gms_status_window = glk_window_open(gms_main_window,
-	                    winmethod_Above | winmethod_Fixed,
-	                    1, wintype_TextGrid, 0);
+	                                    winmethod_Above | winmethod_Fixed,
+	                                    1, wintype_TextGrid, 0);
 
 	/*
 	 * Load the game.  If no graphics are possible, then passing the NULL to

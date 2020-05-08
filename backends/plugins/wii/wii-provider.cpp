@@ -27,8 +27,8 @@
 #include <malloc.h>
 #include <ogc/cache.h>
 
-#include "backends/plugins/wii/wii-provider.h"
 #include "backends/plugins/elf/ppc-loader.h"
+#include "backends/plugins/wii/wii-provider.h"
 
 class WiiDLObject : public PPCDLObject {
 protected:

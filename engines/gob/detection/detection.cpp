@@ -23,8 +23,8 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "gob/gob.h"
 #include "gob/dataio.h"
+#include "gob/gob.h"
 
 #include "gob/detection/tables.h"
 
@@ -53,8 +53,7 @@ private:
 	static const Gob::GOBGameDescription *detectOnceUponATime(const Common::FSList &fslist);
 };
 
-GobMetaEngine::GobMetaEngine() :
-	AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
+GobMetaEngine::GobMetaEngine() : AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
 
 	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 }
@@ -92,7 +91,7 @@ const Gob::GOBGameDescription *GobMetaEngine::detectOnceUponATime(const Common::
 		return 0;
 	}
 
-	Gob::OnceUponATime gameType         = Gob::kOnceUponATimeInvalid;
+	Gob::OnceUponATime gameType = Gob::kOnceUponATimeInvalid;
 	Gob::OnceUponATimePlatform platform = Gob::kOnceUponATimePlatformInvalid;
 
 	// If these animal files are present, it's Abracadabra
@@ -127,7 +126,7 @@ const Gob::GOBGameDescription *GobMetaEngine::detectOnceUponATime(const Common::
 		byte data[6];
 
 		if (villeDEC->read(data, 6) == 6) {
-			if        (!memcmp(data, "\000\000\000\001\000\007", 6)) {
+			if (!memcmp(data, "\000\000\000\001\000\007", 6)) {
 				// Big endian -> Amiga or Atari ST
 
 				if (dataIO.hasFile("mod.babayaga"))
@@ -167,8 +166,7 @@ bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool Gob::GobEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return (f == kSupportsRTL);
 }
 
 Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
@@ -184,11 +182,10 @@ bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	return gd != 0;
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(GOB)
-	REGISTER_PLUGIN_DYNAMIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
+REGISTER_PLUGIN_STATIC(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
 #endif
 
 namespace Gob {

@@ -29,8 +29,8 @@
 
 #include "backends/plugins/elf/elf32.h"
 
-#include "common/singleton.h"
 #include "common/list.h"
+#include "common/singleton.h"
 
 #define ShortsMan ShortSegmentManager::instance()
 
@@ -67,18 +67,17 @@ public:
 	class Segment {
 	private:
 		friend class ShortSegmentManager;
-		Segment(char *start, uint32 size, char *origAddr) :
-			_startAddress(start),
-			_size(size),
-			_origAddress(origAddr) {
+		Segment(char *start, uint32 size, char *origAddr) : _startAddress(start),
+		                                                    _size(size),
+		                                                    _origAddress(origAddr) {
 		}
 
 		virtual ~Segment() {
 		}
 
-		char *_startAddress;		// Start of shorts segment in memory
-		uint32 _size;				// Size of shorts segment
-		char *_origAddress;			// Original address this segment was supposed to be at
+		char *_startAddress; // Start of shorts segment in memory
+		uint32 _size;        // Size of shorts segment
+		char *_origAddress;  // Original address this segment was supposed to be at
 
 	public:
 		char *getStart() {

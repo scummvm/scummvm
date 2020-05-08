@@ -26,7 +26,7 @@
 
 #ifndef ScummHRH
 #define ScummHRH
-#if defined (UIQ3) || defined (S60V3)
+#if defined(UIQ3) || defined(S60V3)
 #ifdef SECOND_EXE
 #define ScummUid 0xA0000658
 #else

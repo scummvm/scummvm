@@ -22,40 +22,39 @@
 
 #include "base/plugins.h"
 
+#include "audio/mixer.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "audio/mixer.h"
 
 #include "engines/util.h"
 #include "graphics/surface.h"
 
-#include "fullpipe/fullpipe.h"
-#include "fullpipe/gameloader.h"
-#include "fullpipe/messages.h"
 #include "fullpipe/behavior.h"
-#include "fullpipe/modal.h"
-#include "fullpipe/input.h"
-#include "fullpipe/motion.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/scenes.h"
-#include "fullpipe/floaters.h"
 #include "fullpipe/console.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/floaters.h"
+#include "fullpipe/fullpipe.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/input.h"
+#include "fullpipe/messages.h"
+#include "fullpipe/modal.h"
+#include "fullpipe/motion.h"
+#include "fullpipe/scenes.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
 FullpipeEngine *g_fp = nullptr;
 Vars *g_vars = nullptr;
 
-FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) :
-	Engine(syst),
-	_gameDescription(gameDesc),
-	_rnd("fullpipe"),
-	_gameProject(nullptr),
-	_modalObject(nullptr),
-	_currSoundList1(),
-	_mapTable() {
+FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
+                                                                                   _gameDescription(gameDesc),
+                                                                                   _rnd("fullpipe"),
+                                                                                   _gameProject(nullptr),
+                                                                                   _modalObject(nullptr),
+                                                                                   _currSoundList1(),
+                                                                                   _mapTable() {
 	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
 	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
@@ -544,7 +543,7 @@ int FullpipeEngine::getObjectState(const Common::String &objname) {
 	if (var)
 		return var->getSubVarAsInt(objname);
 
-  return 0;
+	return 0;
 }
 
 void FullpipeEngine::setObjectState(const Common::String &name, int state) {
@@ -590,6 +589,5 @@ bool FullpipeEngine::isSaveAllowed() {
 
 	return allowed;
 }
-
 
 } // End of namespace Fullpipe

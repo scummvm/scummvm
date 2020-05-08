@@ -35,17 +35,17 @@ void SceneScriptNR09::InitializeScene() {
 		if (!Game_Flag_Query(kFlagNR10CameraDestroyed)) {
 			Ambient_Sounds_Add_Looping_Sound(kSfx35MM, 22, 100, 1);
 		}
-		Setup_Scene_Information(-704.07f, 0.35f, 663.04f,   0);
+		Setup_Scene_Information(-704.07f, 0.35f, 663.04f, 0);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 400, 100, 440, 280, 1);
 	Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 22, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   33, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,  2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,  2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,  2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5, 33, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);

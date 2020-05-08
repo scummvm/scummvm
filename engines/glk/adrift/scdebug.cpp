@@ -21,8 +21,8 @@
  */
 
 #include "glk/adrift/adrift.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 
 namespace Glk {
 namespace Adrift {
@@ -33,21 +33,49 @@ enum { DEBUG_BUFFER_SIZE = 256 };
 
 /* Debugging command and command argument type. */
 enum sc_command_t {
-	DEBUG_NONE = 0, DEBUG_CONTINUE, DEBUG_STEP, DEBUG_BUFFER, DEBUG_RESOURCES,
-	DEBUG_HELP, DEBUG_GAME,
-	DEBUG_PLAYER, DEBUG_ROOMS, DEBUG_OBJECTS, DEBUG_NPCS, DEBUG_EVENTS,
-	DEBUG_TASKS, DEBUG_VARIABLES,
-	DEBUG_OLDPLAYER, DEBUG_OLDROOMS, DEBUG_OLDOBJECTS, DEBUG_OLDNPCS,
-	DEBUG_OLDEVENTS, DEBUG_OLDTASKS, DEBUG_OLDVARIABLES,
-	DEBUG_WATCHPLAYER, DEBUG_WATCHOBJECTS, DEBUG_WATCHNPCS, DEBUG_WATCHEVENTS,
-	DEBUG_WATCHTASKS, DEBUG_WATCHVARIABLES,
-	DEBUG_CLEARPLAYER, DEBUG_CLEAROBJECTS, DEBUG_CLEARNPCS, DEBUG_CLEAREVENTS,
-	DEBUG_CLEARTASKS, DEBUG_CLEARVARIABLES,
-	DEBUG_WATCHALL, DEBUG_CLEARALL, DEBUG_RANDOM,
+	DEBUG_NONE = 0,
+	DEBUG_CONTINUE,
+	DEBUG_STEP,
+	DEBUG_BUFFER,
+	DEBUG_RESOURCES,
+	DEBUG_HELP,
+	DEBUG_GAME,
+	DEBUG_PLAYER,
+	DEBUG_ROOMS,
+	DEBUG_OBJECTS,
+	DEBUG_NPCS,
+	DEBUG_EVENTS,
+	DEBUG_TASKS,
+	DEBUG_VARIABLES,
+	DEBUG_OLDPLAYER,
+	DEBUG_OLDROOMS,
+	DEBUG_OLDOBJECTS,
+	DEBUG_OLDNPCS,
+	DEBUG_OLDEVENTS,
+	DEBUG_OLDTASKS,
+	DEBUG_OLDVARIABLES,
+	DEBUG_WATCHPLAYER,
+	DEBUG_WATCHOBJECTS,
+	DEBUG_WATCHNPCS,
+	DEBUG_WATCHEVENTS,
+	DEBUG_WATCHTASKS,
+	DEBUG_WATCHVARIABLES,
+	DEBUG_CLEARPLAYER,
+	DEBUG_CLEAROBJECTS,
+	DEBUG_CLEARNPCS,
+	DEBUG_CLEAREVENTS,
+	DEBUG_CLEARTASKS,
+	DEBUG_CLEARVARIABLES,
+	DEBUG_WATCHALL,
+	DEBUG_CLEARALL,
+	DEBUG_RANDOM,
 	DEBUG_QUIT
 };
 
-enum sc_command_type_t { COMMAND_QUERY = 0, COMMAND_RANGE, COMMAND_ONE, COMMAND_ALL };
+enum sc_command_type_t { COMMAND_QUERY = 0,
+	                     COMMAND_RANGE,
+	                     COMMAND_ONE,
+	                     COMMAND_ALL };
 
 /* Table connecting debugging command strings to commands. */
 struct sc_strings_t {
@@ -55,25 +83,7 @@ struct sc_strings_t {
 	const sc_command_t command;
 };
 static const sc_strings_t DEBUG_COMMANDS[] = {
-	{"continue", DEBUG_CONTINUE}, {"step", DEBUG_STEP}, {"buffer", DEBUG_BUFFER},
-	{"resources", DEBUG_RESOURCES}, {"help", DEBUG_HELP}, {"game", DEBUG_GAME},
-	{"player", DEBUG_PLAYER}, {"rooms", DEBUG_ROOMS}, {"objects", DEBUG_OBJECTS},
-	{"npcs", DEBUG_NPCS}, {"events", DEBUG_EVENTS}, {"tasks", DEBUG_TASKS},
-	{"variables", DEBUG_VARIABLES},
-	{"oldplayer", DEBUG_OLDPLAYER}, {"oldrooms", DEBUG_OLDROOMS},
-	{"oldobjects", DEBUG_OLDOBJECTS}, {"oldnpcs", DEBUG_OLDNPCS},
-	{"oldevents", DEBUG_OLDEVENTS}, {"oldtasks", DEBUG_OLDTASKS},
-	{"oldvariables", DEBUG_OLDVARIABLES},
-	{"watchplayer", DEBUG_WATCHPLAYER}, {"clearplayer", DEBUG_CLEARPLAYER},
-	{"watchobjects", DEBUG_WATCHOBJECTS}, {"watchnpcs", DEBUG_WATCHNPCS},
-	{"watchevents", DEBUG_WATCHEVENTS}, {"watchtasks", DEBUG_WATCHTASKS},
-	{"watchvariables", DEBUG_WATCHVARIABLES},
-	{"clearobjects", DEBUG_CLEAROBJECTS}, {"clearnpcs", DEBUG_CLEARNPCS},
-	{"clearevents", DEBUG_CLEAREVENTS}, {"cleartasks", DEBUG_CLEARTASKS},
-	{"clearvariables", DEBUG_CLEARVARIABLES}, {"watchall", DEBUG_WATCHALL},
-	{"clearall", DEBUG_CLEARALL}, {"random", DEBUG_RANDOM}, {"quit", DEBUG_QUIT},
-	{NULL, DEBUG_NONE}
-};
+    {"continue", DEBUG_CONTINUE}, {"step", DEBUG_STEP}, {"buffer", DEBUG_BUFFER}, {"resources", DEBUG_RESOURCES}, {"help", DEBUG_HELP}, {"game", DEBUG_GAME}, {"player", DEBUG_PLAYER}, {"rooms", DEBUG_ROOMS}, {"objects", DEBUG_OBJECTS}, {"npcs", DEBUG_NPCS}, {"events", DEBUG_EVENTS}, {"tasks", DEBUG_TASKS}, {"variables", DEBUG_VARIABLES}, {"oldplayer", DEBUG_OLDPLAYER}, {"oldrooms", DEBUG_OLDROOMS}, {"oldobjects", DEBUG_OLDOBJECTS}, {"oldnpcs", DEBUG_OLDNPCS}, {"oldevents", DEBUG_OLDEVENTS}, {"oldtasks", DEBUG_OLDTASKS}, {"oldvariables", DEBUG_OLDVARIABLES}, {"watchplayer", DEBUG_WATCHPLAYER}, {"clearplayer", DEBUG_CLEARPLAYER}, {"watchobjects", DEBUG_WATCHOBJECTS}, {"watchnpcs", DEBUG_WATCHNPCS}, {"watchevents", DEBUG_WATCHEVENTS}, {"watchtasks", DEBUG_WATCHTASKS}, {"watchvariables", DEBUG_WATCHVARIABLES}, {"clearobjects", DEBUG_CLEAROBJECTS}, {"clearnpcs", DEBUG_CLEARNPCS}, {"clearevents", DEBUG_CLEAREVENTS}, {"cleartasks", DEBUG_CLEARTASKS}, {"clearvariables", DEBUG_CLEARVARIABLES}, {"watchall", DEBUG_WATCHALL}, {"clearall", DEBUG_CLEARALL}, {"random", DEBUG_RANDOM}, {"quit", DEBUG_QUIT}, {NULL, DEBUG_NONE}};
 
 /*
  * Debugging control information structure.  The structure is created and
@@ -94,7 +104,6 @@ struct sc_debugger_s {
 };
 typedef sc_debugger_s sc_debugger_t;
 
-
 /*
  * debug_is_valid()
  *
@@ -103,7 +112,6 @@ typedef sc_debugger_s sc_debugger_t;
 static sc_bool debug_is_valid(sc_debuggerref_t debug) {
 	return debug && debug->magic == DEBUG_MAGIC;
 }
-
 
 /*
  * debug_get_debugger()
@@ -115,7 +123,6 @@ static sc_debuggerref_t debug_get_debugger(sc_gameref_t game) {
 
 	return game->debugger;
 }
-
 
 /*
  * debug_variable_count()
@@ -133,7 +140,6 @@ static sc_int debug_variable_count(sc_gameref_t game) {
 
 	return variable_count;
 }
-
 
 /*
  * debug_initialize()
@@ -153,16 +159,11 @@ static void debug_initialize(sc_gameref_t game) {
 	debug->elapsed_seconds = 0;
 
 	/* Allocate watchpoints for everything we can watch. */
-	debug->watch_objects = (sc_bool *)sc_malloc(gs_object_count(game)
-	                       * sizeof(*debug->watch_objects));
-	debug->watch_npcs = (sc_bool *)sc_malloc(gs_npc_count(game)
-	                    * sizeof(*debug->watch_npcs));
-	debug->watch_events = (sc_bool *)sc_malloc(gs_event_count(game)
-	                      * sizeof(*debug->watch_events));
-	debug->watch_tasks = (sc_bool *)sc_malloc(gs_task_count(game)
-	                     * sizeof(*debug->watch_tasks));
-	debug->watch_variables = (sc_bool *)sc_malloc(debug_variable_count(game)
-	                         * sizeof(*debug->watch_variables));
+	debug->watch_objects = (sc_bool *)sc_malloc(gs_object_count(game) * sizeof(*debug->watch_objects));
+	debug->watch_npcs = (sc_bool *)sc_malloc(gs_npc_count(game) * sizeof(*debug->watch_npcs));
+	debug->watch_events = (sc_bool *)sc_malloc(gs_event_count(game) * sizeof(*debug->watch_events));
+	debug->watch_tasks = (sc_bool *)sc_malloc(gs_task_count(game) * sizeof(*debug->watch_tasks));
+	debug->watch_variables = (sc_bool *)sc_malloc(debug_variable_count(game) * sizeof(*debug->watch_variables));
 
 	/* Clear all watchpoint arrays. */
 	memset(debug->watch_objects, FALSE,
@@ -180,7 +181,6 @@ static void debug_initialize(sc_gameref_t game) {
 	assert(!game->debugger);
 	game->debugger = debug;
 }
-
 
 /*
  * debug_finalize()
@@ -206,7 +206,6 @@ static void debug_finalize(sc_gameref_t game) {
 	/* Remove the debug reference from the game. */
 	game->debugger = NULL;
 }
-
 
 /*
  * debug_help()
@@ -518,7 +517,6 @@ static void debug_help(sc_command_t topic) {
 	}
 }
 
-
 /*
  * debug_print_quoted()
  * debug_print_player()
@@ -720,7 +718,6 @@ static void debug_print_variable(sc_gameref_t game, sc_int variable) {
 	debug_print_quoted(name);
 }
 
-
 /*
  * debug_game()
  *
@@ -867,7 +864,6 @@ static void debug_game(sc_gameref_t game, sc_command_type_t type) {
 	if_print_debug_character('\n');
 }
 
-
 /*
  * debug_player()
  *
@@ -922,7 +918,6 @@ static void debug_player(sc_gameref_t game, sc_command_t command, sc_command_typ
 	}
 }
 
-
 /*
  * debug_normalize_arguments()
  *
@@ -961,7 +956,6 @@ static sc_bool debug_normalize_arguments(sc_command_type_t type, sc_int *arg1, s
 	/* Input range is invalid. */
 	return FALSE;
 }
-
 
 /*
  * debug_filter_room()
@@ -1006,7 +1000,6 @@ static void debug_dump_room(sc_gameref_t game, sc_int room) {
 		}
 	}
 }
-
 
 /*
  * debug_filter_object()
@@ -1142,7 +1135,6 @@ static void debug_dump_object(sc_gameref_t game, sc_int object) {
 	}
 }
 
-
 /*
  * debug_filter_npc()
  * debug_dump_npc()
@@ -1208,7 +1200,6 @@ static void debug_dump_npc(sc_gameref_t game, sc_int npc) {
 	}
 }
 
-
 /*
  * debug_filter_event()
  * debug_dump_event()
@@ -1251,7 +1242,6 @@ static void debug_dump_event(sc_gameref_t game, sc_int event) {
 	if_print_debug(buffer);
 }
 
-
 /*
  * debug_filter_task()
  * debug_dump_task()
@@ -1279,7 +1269,6 @@ static void debug_dump_task(sc_gameref_t game, sc_int task) {
 	else
 		if_print_debug(", Not scored\n");
 }
-
 
 /*
  * debug_dump_variable()
@@ -1323,18 +1312,17 @@ static void debug_dump_variable(sc_gameref_t game, sc_int variable) {
 	if_print_debug_character('\n');
 }
 
-
 /*
  * debug_dump_common()
  *
  * Common handler for iterating dumps of classes.
  */
 static void debug_dump_common(sc_gameref_t game, sc_command_t command,
-		sc_command_type_t type, sc_int arg1, sc_int arg2) {
+                              sc_command_type_t type, sc_int arg1, sc_int arg2) {
 	sc_int low = arg1, high = arg2;
 	sc_int limit, index_;
 	const sc_char *class_;
-	sc_bool(*filter_function)(sc_gameref_t, sc_int);
+	sc_bool (*filter_function)(sc_gameref_t, sc_int);
 	void (*dumper_function)(sc_gameref_t, sc_int);
 	sc_bool printed = FALSE;
 
@@ -1438,8 +1426,7 @@ static void debug_dump_common(sc_gameref_t game, sc_command_t command,
 
 	/* Print each item of the class, filtering on query commands. */
 	for (index_ = low; index_ <= high; index_++) {
-		if (type == COMMAND_QUERY
-		        && filter_function && !filter_function(game, index_))
+		if (type == COMMAND_QUERY && filter_function && !filter_function(game, index_))
 			continue;
 
 		if (printed)
@@ -1455,7 +1442,6 @@ static void debug_dump_common(sc_gameref_t game, sc_command_t command,
 		if_print_debug(" *\" to show all items of this type.\n");
 	}
 }
-
 
 /*
  * debug_buffer()
@@ -1478,7 +1464,6 @@ static void debug_buffer(sc_gameref_t game, sc_command_type_t type) {
 		if_print_debug("There is no game text buffered.\n");
 }
 
-
 /*
  * debug_print_resource()
  *
@@ -1495,7 +1480,6 @@ static void debug_print_resource(const sc_resource_t *resource) {
 	sprintf(buffer, "%ld", resource->length);
 	if_print_debug(buffer);
 }
-
 
 /*
  * debug_resources()
@@ -1552,7 +1536,6 @@ static void debug_resources(sc_gameref_t game, sc_command_type_t type) {
 		if_print_debug("There is no game resource activity.\n");
 }
 
-
 /*
  * debug_random()
  *
@@ -1593,14 +1576,13 @@ static void debug_random(sc_command_type_t type, sc_int new_seed) {
 	if_print_debug(" random number generator.\n");
 }
 
-
 /*
  * debug_watchpoint_common()
  *
  * Common handler for setting and clearing watchpoints.
  */
 static void debug_watchpoint_common(sc_gameref_t game, sc_command_t command,
-		sc_command_type_t type, sc_int arg1, sc_int arg2) {
+                                    sc_command_type_t type, sc_int arg1, sc_int arg2) {
 	const sc_debuggerref_t debug = debug_get_debugger(game);
 	sc_int low = arg1, high = arg2;
 	sc_int limit, index_;
@@ -1760,7 +1742,6 @@ static void debug_watchpoint_common(sc_gameref_t game, sc_command_t command,
 		if_print_debug(" watchpoints.\n");
 }
 
-
 /*
  * debug_watchall_common()
  *
@@ -1811,7 +1792,6 @@ static void debug_watchall_common(sc_gameref_t game, sc_command_t command, sc_co
 	if_print_debug("Cleared all watchpoints.\n");
 }
 
-
 /*
  * debug_compare_object()
  *
@@ -1821,15 +1801,8 @@ static sc_bool debug_compare_object(sc_gameref_t from, sc_gameref_t with, sc_int
 	const sc_objectstate_t *from_object = from->objects + object;
 	const sc_objectstate_t *with_object = with->objects + object;
 
-	return from_object->unmoved == with_object->unmoved
-	       && from_object->static_unmoved == with_object->static_unmoved
-	       && from_object->position == with_object->position
-	       && from_object->parent == with_object->parent
-	       && from_object->openness == with_object->openness
-	       && from_object->state == with_object->state
-	       && from_object->seen == with_object->seen;
+	return from_object->unmoved == with_object->unmoved && from_object->static_unmoved == with_object->static_unmoved && from_object->position == with_object->position && from_object->parent == with_object->parent && from_object->openness == with_object->openness && from_object->state == with_object->state && from_object->seen == with_object->seen;
 }
-
 
 /*
  * debug_compare_npc()
@@ -1843,15 +1816,8 @@ static sc_bool debug_compare_npc(sc_gameref_t from, sc_gameref_t with, sc_int np
 	if (from_npc->walkstep_count != with_npc->walkstep_count)
 		sc_fatal("debug_compare_npc: walkstep count error\n");
 
-	return from_npc->location == with_npc->location
-	       && from_npc->position == with_npc->position
-	       && from_npc->parent == with_npc->parent
-	       && from_npc->seen == with_npc->seen
-	       && memcmp(from_npc->walksteps, with_npc->walksteps,
-	                 from_npc->walkstep_count
-	                 * sizeof(*from_npc->walksteps)) == 0;
+	return from_npc->location == with_npc->location && from_npc->position == with_npc->position && from_npc->parent == with_npc->parent && from_npc->seen == with_npc->seen && memcmp(from_npc->walksteps, with_npc->walksteps, from_npc->walkstep_count * sizeof(*from_npc->walksteps)) == 0;
 }
-
 
 /*
  * debug_compare_event()
@@ -1862,10 +1828,8 @@ static sc_bool debug_compare_event(sc_gameref_t from, sc_gameref_t with, sc_int 
 	const sc_eventstate_t *from_event = from->events + event;
 	const sc_eventstate_t *with_event = with->events + event;
 
-	return from_event->state == with_event->state
-	       && from_event->time == with_event->time;
+	return from_event->state == with_event->state && from_event->time == with_event->time;
 }
-
 
 /*
  * debug_compare_task()
@@ -1876,10 +1840,8 @@ static sc_bool debug_compare_task(sc_gameref_t from, sc_gameref_t with, sc_int t
 	const sc_taskstate_t *from_task = from->tasks + task;
 	const sc_taskstate_t *with_task = with->tasks + task;
 
-	return from_task->done == with_task->done
-	       && from_task->scored == with_task->scored;
+	return from_task->done == with_task->done && from_task->scored == with_task->scored;
 }
-
 
 /*
  * debug_compare_variable()
@@ -1904,8 +1866,7 @@ static sc_bool debug_compare_variable(sc_gameref_t from, sc_gameref_t with, sc_i
 	vt_key[2].string = "Name";
 	name = prop_get_string(bundle, "S<-sis", vt_key);
 
-	if (!var_get(from_var, name, &var_type, &vt_rvalue)
-	        || !var_get(with_var, name, &var_type2, &vt_rvalue2))
+	if (!var_get(from_var, name, &var_type, &vt_rvalue) || !var_get(with_var, name, &var_type2, &vt_rvalue2))
 		sc_fatal("debug_compare_variable: can't find variable %s\n", name);
 	else if (var_type != var_type2)
 		sc_fatal("debug_compare_variable: variable type mismatch %s\n", name);
@@ -1919,12 +1880,12 @@ static sc_bool debug_compare_variable(sc_gameref_t from, sc_gameref_t with, sc_i
 		break;
 	default:
 		sc_fatal("debug_compare_variable:"
-		         " invalid variable type, %ld\n", var_type);
+		         " invalid variable type, %ld\n",
+		         var_type);
 	}
 
 	return equal;
 }
-
 
 /*
  * debug_check_class()
@@ -1935,8 +1896,8 @@ static sc_bool debug_compare_variable(sc_gameref_t from, sc_gameref_t with, sc_i
  * if any differed.
  */
 static sc_bool debug_check_class(sc_gameref_t from, sc_gameref_t with, const sc_char *class_,
-		sc_int class_count, const sc_bool *watchpoints,
-		sc_bool(*const compare_function) (sc_gameref_t, sc_gameref_t, sc_int)) {
+                                 sc_int class_count, const sc_bool *watchpoints,
+                                 sc_bool (*const compare_function)(sc_gameref_t, sc_gameref_t, sc_int)) {
 	sc_int index_;
 	sc_bool triggered = FALSE;
 
@@ -1968,7 +1929,6 @@ static sc_bool debug_check_class(sc_gameref_t from, sc_gameref_t with, const sc_
 	return triggered;
 }
 
-
 /*
  * debug_check_watchpoints()
  *
@@ -1989,9 +1949,7 @@ static sc_bool debug_check_watchpoints(sc_gameref_t game) {
 	/* Check first for player watchpoint. */
 	triggered = FALSE;
 	if (debug->watch_player) {
-		if (gs_playerroom(game) != gs_playerroom(undo)
-		        || gs_playerposition(game) != gs_playerposition(undo)
-		        || gs_playerparent(game) != gs_playerparent(undo)) {
+		if (gs_playerroom(game) != gs_playerroom(undo) || gs_playerposition(game) != gs_playerposition(undo) || gs_playerparent(game) != gs_playerparent(undo)) {
 			if_print_debug("--- Player watchpoint triggered.\n");
 			triggered |= TRUE;
 		}
@@ -2018,7 +1976,6 @@ static sc_bool debug_check_watchpoints(sc_gameref_t game) {
 	return triggered;
 }
 
-
 /*
  * debug_parse_command()
  *
@@ -2027,7 +1984,7 @@ static sc_bool debug_check_watchpoints(sc_gameref_t game) {
  * fails.
  */
 static sc_command_t debug_parse_command(const sc_char *command_string,
-		sc_command_type_t *type, sc_int *arg1, sc_int *arg2, sc_command_t *help_topic) {
+                                        sc_command_type_t *type, sc_int *arg1, sc_int *arg2, sc_command_t *help_topic) {
 	sc_command_t return_command;
 	sc_command_type_t return_type;
 	sc_int val1, val2, converted, matches;
@@ -2133,14 +2090,13 @@ static sc_command_t debug_parse_command(const sc_char *command_string,
 	return is_help ? DEBUG_HELP : return_command;
 }
 
-
 /*
  * debug_dispatch()
  *
  * Dispatch a debugging command to the appropriate handler.
  */
 static void debug_dispatch(sc_gameref_t game, sc_command_t command, sc_command_type_t type,
-		sc_int arg1, sc_int arg2, sc_command_t help_topic) {
+                           sc_int arg1, sc_int arg2, sc_command_t help_topic) {
 	/* Demultiplex debugging command, and call handlers. */
 	switch (command) {
 	case DEBUG_HELP:
@@ -2200,7 +2156,6 @@ static void debug_dispatch(sc_gameref_t game, sc_command_t command, sc_command_t
 		sc_fatal("debug_dispatch: invalid debug command\n");
 	}
 }
-
 
 /*
  * debug_dialog()
@@ -2285,7 +2240,6 @@ static void debug_dialog(CONTEXT, sc_gameref_t game) {
 	debug->quit_pending = FALSE;
 }
 
-
 /*
  * debug_run_command()
  *
@@ -2307,9 +2261,7 @@ sc_bool debug_run_command(sc_gameref_t game, const sc_char *debug_command) {
 		 */
 		command = debug_parse_command(debug_command,
 		                              &type, &arg1, &arg2, &help_topic);
-		if (command == DEBUG_NONE
-		        || command == DEBUG_CONTINUE || command == DEBUG_STEP
-		        || command == DEBUG_QUIT)
+		if (command == DEBUG_NONE || command == DEBUG_CONTINUE || command == DEBUG_STEP || command == DEBUG_QUIT)
 			return FALSE;
 
 		/* Dispatch the remaining debugging commands, return successfully. */
@@ -2319,7 +2271,6 @@ sc_bool debug_run_command(sc_gameref_t game, const sc_char *debug_command) {
 
 	return FALSE;
 }
-
 
 /*
  * debug_cmd_debugger()
@@ -2345,7 +2296,6 @@ sc_bool debug_cmd_debugger(sc_gameref_t game) {
 	game->is_admin = TRUE;
 	return TRUE;
 }
-
 
 /*
  * debug_game_started()
@@ -2422,7 +2372,6 @@ void debug_game_ended(CONTEXT, sc_gameref_t game) {
 	}
 }
 
-
 /*
  * debug_turn_update()
  *
@@ -2452,7 +2401,6 @@ void debug_turn_update(CONTEXT, sc_gameref_t game) {
 		}
 	}
 }
-
 
 /*
  * debug_set_enabled()

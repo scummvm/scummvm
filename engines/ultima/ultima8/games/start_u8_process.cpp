@@ -22,20 +22,20 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/games/start_u8_process.h"
+#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/games/game.h"
-#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/games/start_u8_process.h"
+#include "ultima/ultima8/graphics/palette_fader_process.h"
+#include "ultima/ultima8/gumps/menu_gump.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/egg.h"
-#include "ultima/ultima8/world/camera_process.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/gumps/menu_gump.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/graphics/palette_fader_process.h"
+#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -44,9 +44,8 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process, Process)
 
 StartU8Process::StartU8Process(int saveSlot) : Process(),
-		_init(false), _saveSlot(saveSlot), _skipStart(saveSlot >= 0) {
+                                               _init(false), _saveSlot(saveSlot), _skipStart(saveSlot >= 0) {
 }
-
 
 void StartU8Process::run() {
 	if (!_skipStart && !_init) {
@@ -60,7 +59,7 @@ void StartU8Process::run() {
 	}
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid
-	if (_saveSlot >= 0 &&Ultima8Engine::get_instance()->loadGameState(_saveSlot).getCode() == Common::kNoError) {
+	if (_saveSlot >= 0 && Ultima8Engine::get_instance()->loadGameState(_saveSlot).getCode() == Common::kNoError) {
 		PaletteFaderProcess::I_fadeFromBlack(0, 0);
 		return;
 	}
@@ -106,7 +105,6 @@ void StartU8Process::run() {
 	else
 		Ultima8Engine::get_instance()->setAvatarInStasis(false);
 
-
 	terminate();
 }
 
@@ -117,7 +115,8 @@ void StartU8Process::saveData(Common::WriteStream *ws) {
 }
 
 bool StartU8Process::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	return true;
 }

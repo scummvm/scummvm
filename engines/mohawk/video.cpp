@@ -20,21 +20,20 @@
  *
  */
 
+#include "mohawk/video.h"
 #include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
-#include "mohawk/video.h"
 
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/events.h"
-#include "common/textconsole.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "video/qt_decoder.h"
-
 
 namespace Mohawk {
 
@@ -185,7 +184,7 @@ VideoEntryPtr VideoManager::playMovie(uint16 id) {
 bool VideoManager::updateMovies() {
 	bool updateScreen = false;
 
-	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ) {
+	for (VideoList::iterator it = _videos.begin(); it != _videos.end();) {
 		// Check of the video has reached the end
 		if ((*it)->endOfVideo()) {
 			if ((*it)->isLooping()) {

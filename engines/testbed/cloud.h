@@ -23,8 +23,8 @@
 #ifndef TESTBED_CLOUD_H
 #define TESTBED_CLOUD_H
 
-#include "testbed/testsuite.h"
 #include "backends/cloud/storage.h"
+#include "testbed/testsuite.h"
 
 // This file can be used as template for header files of other newer testsuites.
 
@@ -75,7 +75,6 @@ public:
 	const char *getDescription() const override {
 		return "CloudMan, Storage API tests";
 	}
-
 };
 
 } // End of namespace Testbed

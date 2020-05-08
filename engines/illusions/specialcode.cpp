@@ -20,9 +20,9 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/specialcode.h"
 #include "illusions/bbdou/bbdou_specialcode.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 

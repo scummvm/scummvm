@@ -26,15 +26,15 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
-#include "scumm/he/sound_he.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v70he, x)
+#define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v70he, x)
 
 void ScummEngine_v70he::setupOpcodes() {
 	ScummEngine_v60he::setupOpcodes();
@@ -58,48 +58,48 @@ void ScummEngine_v70he::o70_soundOps() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 9:		// SO_SOUND_SOFT?
+	case 9: // SO_SOUND_SOFT?
 		_heSndFlags |= HE_SND_SOFT_SOUND;
 		break;
-	case 23:	// SO_VARIABLE
+	case 23: // SO_VARIABLE
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
 		((SoundHE *)_sound)->setSoundVar(_heSndSoundId, var, value);
 		break;
-	case 25:	// SO_SOUND_VOLUME
+	case 25: // SO_SOUND_VOLUME
 		value = pop();
 		_heSndSoundId = pop();
 		_sound->addSoundToQueue(_heSndSoundId, 0, 0, HE_SND_VOL, 0, 0, value);
 		break;
-	case 56:	// SO_NOW
+	case 56: // SO_NOW
 		_heSndFlags |= HE_SND_QUICK_START;
 		break;
-	case 164:	// SO_SOUND_ADD
+	case 164: // SO_SOUND_ADD
 		_heSndFlags |= HE_SND_APPEND;
 		break;
 	case 222:
 		// WORKAROUND: For errors in room script 240 (room 4) of maze
 		break;
-	case 224:	// SO_SOUND_FREQUENCY
+	case 224: // SO_SOUND_FREQUENCY
 		_heSndSoundFreq = pop();
 		break;
-	case 230:	// SO_SOUND_CHANNEL
+	case 230: // SO_SOUND_CHANNEL
 		_heSndChannel = pop();
 		break;
-	case 231:	// SO_AT
+	case 231: // SO_AT
 		_heSndOffset = pop();
 		break;
-	case 232:	// SO_SOUND_START
+	case 232: // SO_SOUND_START
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
 		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		break;
-	case 245:	// SO_SOUND_LOOPING
+	case 245: // SO_SOUND_LOOPING
 		_heSndFlags |= HE_SND_LOOP;
 		break;
-	case 255:	// SO_END
+	case 255: // SO_END
 		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq);
 		_heSndFlags = 0;
 		break;
@@ -125,7 +125,7 @@ void ScummEngine_v70he::o70_pickupObject() {
 		markObjectRectAsDirty(obj);
 		clearDrawObjectQueue();
 	}
-	runInventoryScript(obj);									/* Difference */
+	runInventoryScript(obj); /* Difference */
 }
 
 void ScummEngine_v70he::o70_getActorRoom() {
@@ -144,76 +144,76 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 100:		// SO_LOAD_SCRIPT
+	case 100: // SO_LOAD_SCRIPT
 		resid = pop();
 		ensureResourceLoaded(rtScript, resid);
 		break;
-	case 101:		// SO_LOAD_SOUND
+	case 101: // SO_LOAD_SOUND
 		resid = pop();
 		ensureResourceLoaded(rtSound, resid);
 		break;
-	case 102:		// SO_LOAD_COSTUME
+	case 102: // SO_LOAD_COSTUME
 		resid = pop();
 		ensureResourceLoaded(rtCostume, resid);
 		break;
-	case 103:		// SO_LOAD_ROOM
+	case 103: // SO_LOAD_ROOM
 		resid = pop();
 		ensureResourceLoaded(rtRoomImage, resid);
 		ensureResourceLoaded(rtRoom, resid);
 		break;
-	case 104:		// SO_NUKE_SCRIPT
+	case 104: // SO_NUKE_SCRIPT
 		resid = pop();
 		_res->nukeResource(rtScript, resid);
 		break;
-	case 105:		// SO_NUKE_SOUND
+	case 105: // SO_NUKE_SOUND
 		resid = pop();
 		_res->nukeResource(rtSound, resid);
 		break;
-	case 106:		// SO_NUKE_COSTUME
+	case 106: // SO_NUKE_COSTUME
 		resid = pop();
 		_res->nukeResource(rtCostume, resid);
 		break;
-	case 107:		// SO_NUKE_ROOM
+	case 107: // SO_NUKE_ROOM
 		resid = pop();
 		_res->nukeResource(rtRoom, resid);
 		_res->nukeResource(rtRoomImage, resid);
 		break;
-	case 108:		// SO_LOCK_SCRIPT
+	case 108: // SO_LOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
 		_res->lock(rtScript, resid);
 		break;
-	case 109:		// SO_LOCK_SOUND
+	case 109: // SO_LOCK_SOUND
 		resid = pop();
 		_res->lock(rtSound, resid);
 		break;
-	case 110:		// SO_LOCK_COSTUME
+	case 110: // SO_LOCK_COSTUME
 		resid = pop();
 		_res->lock(rtCostume, resid);
 		break;
-	case 111:		// SO_LOCK_ROOM
+	case 111: // SO_LOCK_ROOM
 		resid = pop();
 		if (_game.heversion <= 71 && resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
 		_res->lock(rtRoom, resid);
 		_res->lock(rtRoomImage, resid);
 		break;
-	case 112:		// SO_UNLOCK_SCRIPT
+	case 112: // SO_UNLOCK_SCRIPT
 		resid = pop();
 		if (resid >= _numGlobalScripts)
 			break;
 		_res->unlock(rtScript, resid);
 		break;
-	case 113:		// SO_UNLOCK_SOUND
+	case 113: // SO_UNLOCK_SOUND
 		resid = pop();
 		_res->unlock(rtSound, resid);
 		break;
-	case 114:		// SO_UNLOCK_COSTUME
+	case 114: // SO_UNLOCK_COSTUME
 		resid = pop();
 		_res->unlock(rtCostume, resid);
 		break;
-	case 115:		// SO_UNLOCK_ROOM
+	case 115: // SO_UNLOCK_ROOM
 		resid = pop();
 		if (_game.heversion <= 71 && resid > 0x7F)
 			resid = _resourceMapper[resid & 0x7F];
@@ -223,21 +223,21 @@ void ScummEngine_v70he::o70_resourceRoutines() {
 	case 116:
 		// TODO: Clear Heap
 		break;
-	case 117:		// SO_LOAD_CHARSET
+	case 117: // SO_LOAD_CHARSET
 		resid = pop();
 		loadCharset(resid);
 		break;
-	case 118:		// SO_NUKE_CHARSET
+	case 118: // SO_NUKE_CHARSET
 		resid = pop();
 		nukeCharset(resid);
 		break;
-	case 119:		// SO_LOAD_OBJECT
-		{
-			int obj = pop();
-			int room = getObjectRoom(obj);
-			loadFlObject(obj, room);
-			break;
-		}
+	case 119: // SO_LOAD_OBJECT
+	{
+		int obj = pop();
+		int room = getObjectRoom(obj);
+		loadFlObject(obj, room);
+		break;
+	}
 	case 120:
 		resid = pop();
 		if (resid >= _numGlobalScripts)
@@ -465,7 +465,7 @@ void ScummEngine_v70he::o70_createDirectory() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	debug(1,"stub o70_createDirectory(%s)", directoryName);
+	debug(1, "stub o70_createDirectory(%s)", directoryName);
 }
 
 void ScummEngine_v70he::o70_setSystemMessage() {
@@ -480,13 +480,13 @@ void ScummEngine_v70he::o70_setSystemMessage() {
 
 	switch (subOp) {
 	case 240:
-		debug(1,"o70_setSystemMessage: (%d) %s", subOp, name);
+		debug(1, "o70_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	case 241: // Set Version
-		debug(1,"o70_setSystemMessage: (%d) %s", subOp, name);
+		debug(1, "o70_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	case 242:
-		debug(1,"o70_setSystemMessage: (%d) %s", subOp, name);
+		debug(1, "o70_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	case 243: // Set Window Caption
 		// TODO: The 'name' string can contain non-ASCII data. This can lead to

@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_FONTS_JPRENDEREDTEXT_H
 #define ULTIMA8_GRAPHICS_FONTS_JPRENDEREDTEXT_H
 
-#include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
+#include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {

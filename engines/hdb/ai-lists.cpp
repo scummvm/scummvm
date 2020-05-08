@@ -20,11 +20,11 @@
  *
  */
 
-#include "hdb/hdb.h"
-#include "hdb/ai.h"
 #include "hdb/ai-player.h"
+#include "hdb/ai.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
 #include "hdb/sound.h"
@@ -525,12 +525,11 @@ bool AI::autoActive(int x, int y) {
 }
 
 CallbackDef allCallbacks[] = {
-	{NO_FUNCTION, nullptr},
-	{AI_BARREL_EXPLOSION_END, aiBarrelExplosionEnd},
-	{CALLBACK_DOOR_OPEN_CLOSE, callbackDoorOpenClose},
-	{CALLBACK_AUTODOOR_OPEN_CLOSE, callbackAutoDoorOpenClose},
-	{CALLBACK_END, nullptr}
-};
+    {NO_FUNCTION, nullptr},
+    {AI_BARREL_EXPLOSION_END, aiBarrelExplosionEnd},
+    {CALLBACK_DOOR_OPEN_CLOSE, callbackDoorOpenClose},
+    {CALLBACK_AUTODOOR_OPEN_CLOSE, callbackAutoDoorOpenClose},
+    {CALLBACK_END, nullptr}};
 
 void AI::addCallback(CallbackType type, int x, int y, int delay) {
 	for (int i = kMaxCallbacks - 1; i >= 0; i--)
@@ -708,7 +707,7 @@ bool AI::checkTeleportList(AIEntity *e, int x, int y) {
 			}
 
 			// We must be exactly on the teleporter
-			if (abs(targetX*kTileWidth - e->x) > 2 || abs(targetY*kTileHeight - e->y) > 2)
+			if (abs(targetX * kTileWidth - e->x) > 2 || abs(targetY * kTileHeight - e->y) > 2)
 				return false;
 
 			// Can this teleporter be used?
@@ -862,4 +861,4 @@ void AI::killTrigger(const char *id) {
 	}
 }
 
-} // End of Namespace
+} // namespace HDB

@@ -27,7 +27,7 @@ namespace Titanic {
 int CAnnoyBarbot::_v1;
 
 BEGIN_MESSAGE_MAP(CAnnoyBarbot, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
 void CAnnoyBarbot::save(SimpleFile *file, int indent) {

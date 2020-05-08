@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 
-#include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
+#include "sci/engine/vm_types.h" // for reg_t
 
 namespace Sci {
 
@@ -37,49 +37,49 @@ struct SelectorCache {
 	}
 
 	// Statically defined selectors, (almost the) same in all SCI versions
-	Selector _info_;	///< Removed in SCI3
+	Selector _info_; ///< Removed in SCI3
 	Selector y;
 	Selector x;
-	Selector view, loop, cel; ///< Description of a specific image
-	Selector underBits; ///< Used by the graphics subroutines to store backupped BG pic data
+	Selector view, loop, cel;                  ///< Description of a specific image
+	Selector underBits;                        ///< Used by the graphics subroutines to store backupped BG pic data
 	Selector nsTop, nsLeft, nsBottom, nsRight; ///< View boundaries ('now seen')
 	Selector lsTop, lsLeft, lsBottom, lsRight; ///< Used by Animate() subfunctions and scroll list controls
-	Selector signal; ///< Used by Animate() to control a view's behavior
-	Selector illegalBits; ///< Used by CanBeHere
+	Selector signal;                           ///< Used by Animate() to control a view's behavior
+	Selector illegalBits;                      ///< Used by CanBeHere
 	Selector brTop, brLeft, brBottom, brRight; ///< Bounding Rectangle
 	// name, key, time
-	Selector text; ///< Used by controls
+	Selector text;     ///< Used by controls
 	Selector elements; ///< Used by SetSynonyms()
 	// color, back
 	Selector mode; ///< Used by text controls (-> DrawControl())
 	// style
-	Selector state, font, type;///< Used by controls
+	Selector state, font, type; ///< Used by controls
 	// window
 	Selector cursor; ///< Used by EditControl
-	Selector max; ///< Used by EditControl, removed in SCI3
-	Selector mark; //< Used by list controls (script internal, is needed by us for the QfG import rooms)
-	Selector sort; //< Used by list controls (script internal, is needed by us for QfG3 import room)
+	Selector max;    ///< Used by EditControl, removed in SCI3
+	Selector mark;   //< Used by list controls (script internal, is needed by us for the QfG import rooms)
+	Selector sort;   //< Used by list controls (script internal, is needed by us for QfG3 import room)
 	// who
 	Selector message; ///< Used by GetEvent
 	// edit
 	Selector play; ///< Play function (first function to be called)
 	Selector restore;
 	Selector number;
-	Selector handle;	///< Replaced by nodePtr in SCI1+
-	Selector nodePtr;	///< Replaces handle in SCI1+
-	Selector client; ///< The object that wants to be moved
-	Selector dx, dy; ///< Deltas
+	Selector handle;                                      ///< Replaced by nodePtr in SCI1+
+	Selector nodePtr;                                     ///< Replaces handle in SCI1+
+	Selector client;                                      ///< The object that wants to be moved
+	Selector dx, dy;                                      ///< Deltas
 	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; ///< Various Bresenham vars
-	Selector xStep, yStep; ///< BR adjustments
-	Selector xLast, yLast; ///< BR last position of client
-	Selector moveSpeed; ///< Used for DoBresen
-	Selector canBeHere; ///< Funcselector: Checks for movement validity in SCI0
-	Selector heading, mover; ///< Used in DoAvoider
-	Selector doit; ///< Called (!) by the Animate() system call
-	Selector isBlocked, looper;	///< Used in DoAvoider
+	Selector xStep, yStep;                                ///< BR adjustments
+	Selector xLast, yLast;                                ///< BR last position of client
+	Selector moveSpeed;                                   ///< Used for DoBresen
+	Selector canBeHere;                                   ///< Funcselector: Checks for movement validity in SCI0
+	Selector heading, mover;                              ///< Used in DoAvoider
+	Selector doit;                                        ///< Called (!) by the Animate() system call
+	Selector isBlocked, looper;                           ///< Used in DoAvoider
 	Selector priority;
 	Selector modifiers; ///< Used by GetEvent
-	Selector replay; ///< Replay function
+	Selector replay;    ///< Replay function
 	// setPri, at, next, done, width
 	Selector wordFail, syntaxFail; ///< Used by Parse()
 	// semanticFail, pragmaFail
@@ -95,9 +95,9 @@ struct SelectorCache {
 	Selector printLang; ///< Used for i18n
 	Selector subtitleLang;
 	Selector size;
-	Selector points; ///< Used by AvoidPath()
-	Selector palette;	///< Used by the SCI0-SCI1.1 animate code, unused in SCI2-SCI2.1, removed in SCI3
-	Selector dataInc;	///< Used to sync music with animations, removed in SCI3
+	Selector points;  ///< Used by AvoidPath()
+	Selector palette; ///< Used by the SCI0-SCI1.1 animate code, unused in SCI2-SCI2.1, removed in SCI3
+	Selector dataInc; ///< Used to sync music with animations, removed in SCI3
 	// handle (in SCI1)
 	Selector min; ///< SMPTE time format
 	Selector sec;
@@ -105,11 +105,11 @@ struct SelectorCache {
 	Selector vol;
 	Selector pri;
 	// perform
-	Selector moveDone;	///< used for DoBresen
+	Selector moveDone; ///< used for DoBresen
 
 	// SCI1 selectors which have been moved a bit in SCI1.1, but otherwise static
 	Selector cantBeHere; ///< Checks for movement avoidance in SCI1+. Replaces canBeHere
-	Selector topString; ///< SCI1 scroll lists use this instead of lsTop. Removed in SCI3
+	Selector topString;  ///< SCI1 scroll lists use this instead of lsTop. Removed in SCI3
 	Selector flags;
 
 	// SCI1+ audio sync related selectors, not static. They're used for lip syncing in
@@ -118,14 +118,14 @@ struct SelectorCache {
 	Selector syncTime;
 
 	// SCI1.1 specific selectors
-	Selector scaleSignal; //< Used by kAnimate() for cel scaling (SCI1.1+)
-	Selector scaleX, scaleY;	///< SCI1.1 view scaling
-	Selector maxScale;		///< SCI1.1 view scaling, limit for cel, when using global scaling
-	Selector vanishingX;	///< SCI1.1 view scaling, used by global scaling
-	Selector vanishingY;	///< SCI1.1 view scaling, used by global scaling
+	Selector scaleSignal;    //< Used by kAnimate() for cel scaling (SCI1.1+)
+	Selector scaleX, scaleY; ///< SCI1.1 view scaling
+	Selector maxScale;       ///< SCI1.1 view scaling, limit for cel, when using global scaling
+	Selector vanishingX;     ///< SCI1.1 view scaling, used by global scaling
+	Selector vanishingY;     ///< SCI1.1 view scaling, used by global scaling
 
 	// Used for auto detection purposes
-	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
+	Selector overlay; ///< Used to determine if a game is using old gfx functions or not
 
 	// SCI1.1 Mac icon bar selectors
 	Selector iconIndex; ///< Used to index icon bar objects
@@ -138,9 +138,9 @@ struct SelectorCache {
 	Selector owner;
 
 #ifdef ENABLE_SCI32
-	Selector data; // Used by Array()/String()
+	Selector data;    // Used by Array()/String()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures
-	Selector bitmap; // Used to hold the text bitmap for SCI32 texts
+	Selector bitmap;  // Used to hold the text bitmap for SCI32 texts
 
 	Selector plane;
 	Selector top, left, bottom, right;
@@ -165,44 +165,44 @@ struct SelectorCache {
 
 	Selector magnifier;
 	Selector frameOut;
-	Selector casts; // needed for sync'ing screen items/planes with scripts, when our save/restore code is patched in (see GfxFrameout::syncWithScripts)
-	Selector setVol; // for GK2 volume sync on restore
-	Selector reSyncVol; // for Torin volume sync on restore
-	Selector set; // for LSL6hires subtitle sync
-	Selector clear; // for LSL6hires subtitle sync
-	Selector curPos; // for LSL6hires volume sync
-	Selector update; // for LSL6hires volume sync
-	Selector show; // for GK1 volume sync
-	Selector position; // for GK1 volume sync
-	Selector musicVolume; // for GK1 volume sync
-	Selector soundVolume; // for GK1 volume sync
-	Selector initialOff; // for GK2 volume sync
-	Selector setPos; // for Torin volume sync
-	Selector setSize; // for PQ4 volume sync
-	Selector displayValue; // for PQ:SWAT volume sync
-	Selector new_; // for Torin/LSL7 save/load patching
-	Selector mainCel; // for MGDX volume sync
-	Selector move; // for Phant2 volume sync
+	Selector casts;         // needed for sync'ing screen items/planes with scripts, when our save/restore code is patched in (see GfxFrameout::syncWithScripts)
+	Selector setVol;        // for GK2 volume sync on restore
+	Selector reSyncVol;     // for Torin volume sync on restore
+	Selector set;           // for LSL6hires subtitle sync
+	Selector clear;         // for LSL6hires subtitle sync
+	Selector curPos;        // for LSL6hires volume sync
+	Selector update;        // for LSL6hires volume sync
+	Selector show;          // for GK1 volume sync
+	Selector position;      // for GK1 volume sync
+	Selector musicVolume;   // for GK1 volume sync
+	Selector soundVolume;   // for GK1 volume sync
+	Selector initialOff;    // for GK2 volume sync
+	Selector setPos;        // for Torin volume sync
+	Selector setSize;       // for PQ4 volume sync
+	Selector displayValue;  // for PQ:SWAT volume sync
+	Selector new_;          // for Torin/LSL7 save/load patching
+	Selector mainCel;       // for MGDX volume sync
+	Selector move;          // for Phant2 volume sync
 	Selector eachElementDo; // for Phant2 volume sync
-	Selector physicalBar; // for Phant2 volume sync
-	Selector init; // for Phant2 save/load patching
-	Selector scratch; // for Phant2 save/load patching
-	Selector num; // for Phant2 restore from launcher
+	Selector physicalBar;   // for Phant2 volume sync
+	Selector init;          // for Phant2 save/load patching
+	Selector scratch;       // for Phant2 save/load patching
+	Selector num;           // for Phant2 restore from launcher
 	Selector reallyRestore; // for Phant2 restore from launcher
-	Selector bookMark; // for Phant2 auto-save
-	Selector fileNumber; // for RAMA save/load
-	Selector description; // for RAMA save/load
-	Selector dispose; // for RAMA save/load save from launcher
-	Selector masterVolume; // for RAMA volume sync
-	Selector setCel; // for RAMA volume sync
-	Selector value; // for QFG4 import dialog
+	Selector bookMark;      // for Phant2 auto-save
+	Selector fileNumber;    // for RAMA save/load
+	Selector description;   // for RAMA save/load
+	Selector dispose;       // for RAMA save/load save from launcher
+	Selector masterVolume;  // for RAMA volume sync
+	Selector setCel;        // for RAMA volume sync
+	Selector value;         // for QFG4 import dialog
 #endif
 };
 
 /**
  * Map a selector name to a selector id. Shortcut for accessing the selector cache.
  */
-#define SELECTOR(_slc_)		(g_sci->getKernel()->_selectorCache._slc_)
+#define SELECTOR(_slc_) (g_sci->getKernel()->_selectorCache._slc_)
 
 /**
  * Retrieves a selector from an object.
@@ -232,7 +232,7 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
  * Invokes a selector from an object.
  */
 void invokeSelector(EngineState *s, reg_t object, int selectorId,
-	int k_argc, StackPtr k_argp, int argc = 0, const reg_t *argv = 0);
+                    int k_argc, StackPtr k_argp, int argc = 0, const reg_t *argv = 0);
 
 #ifdef ENABLE_SCI32
 /**

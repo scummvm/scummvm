@@ -23,15 +23,15 @@
 #ifndef ULTIMA4_VIEWS_TEXTVIEW_H
 #define ULTIMA4_VIEWS_TEXTVIEW_H
 
-#include "ultima/ultima4/views/view.h"
-#include "ultima/ultima4/gfx/image.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/views/view.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-#define PRINTF_LIKE(x,y)
+#define PRINTF_LIKE(x, y)
 
 #define CHAR_WIDTH 8
 #define CHAR_HEIGHT 8
@@ -45,14 +45,16 @@ class TextView : public View {
 		Option() : Common::Rect(), _key('\0') {}
 		Option(const Common::Rect &r, char key) : Common::Rect(r), _key(key) {}
 	};
+
 protected:
-	int _columns, _rows;         /**< size of the view in character cells  */
-	bool _cursorEnabled;         /**< whether the cursor is enabled */
-	bool _cursorFollowsText;     /**< whether the cursor is moved past the last character written */
-	int _cursorX, _cursorY;      /**< current position of cursor */
-	int _cursorPhase;            /**< the rotation state of the cursor */
-	static Image *_charset;      /**< image containing font */
+	int _columns, _rows;     /**< size of the view in character cells  */
+	bool _cursorEnabled;     /**< whether the cursor is enabled */
+	bool _cursorFollowsText; /**< whether the cursor is moved past the last character written */
+	int _cursorX, _cursorY;  /**< current position of cursor */
+	int _cursorPhase;        /**< the rotation state of the cursor */
+	static Image *_charset;  /**< image containing font */
 	Common::Array<Option> _options;
+
 public:
 	TextView(int x, int y, int columns, int rows);
 	virtual ~TextView();

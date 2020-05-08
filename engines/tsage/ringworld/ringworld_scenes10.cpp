@@ -22,8 +22,8 @@
 
 #include "tsage/ringworld/ringworld_scenes10.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -354,16 +354,16 @@ void Scene9200::process(Event &event) {
 }
 
 void Scene9200::dispatch() {
-//	Rect rect9200 = Rect(320, 175, 250, 154);
+	//	Rect rect9200 = Rect(320, 175, 250, 154);
 	Rect rect9200 = Rect(250, 154, 320, 175);
 
 	if (_action) {
 		_action->dispatch();
 	} else {
-		if ( (g_globals->_player._position.x <= 0) || ((g_globals->_player._position.x < 100) && (g_globals->_player._position.y > 199))) {
-				g_globals->_player.disableControl();
-				_sceneState = 9209;
-				setAction(&_sequenceManager, this, 9209, &g_globals->_player, &_object2, &_object3, NULL);
+		if ((g_globals->_player._position.x <= 0) || ((g_globals->_player._position.x < 100) && (g_globals->_player._position.y > 199))) {
+			g_globals->_player.disableControl();
+			_sceneState = 9209;
+			setAction(&_sequenceManager, this, 9209, &g_globals->_player, &_object2, &_object3, NULL);
 		} else {
 			if (rect9200.contains(g_globals->_player._position)) {
 				if (g_globals->getFlag(93)) {
@@ -545,7 +545,7 @@ void Scene9300::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene9350::signal() {
-	switch (_sceneState ++) {
+	switch (_sceneState++) {
 	case 0:
 	case 9352:
 	case 9353:
@@ -631,7 +631,7 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene9360::signal() {
-	switch (_sceneState ++) {
+	switch (_sceneState++) {
 	case 0:
 	case 9362:
 	case 9363:
@@ -736,7 +736,7 @@ void Scene9400::SceneHotspot8::doAction(int action) {
 }
 
 void Scene9400::signal() {
-	switch (_sceneState ++) {
+	switch (_sceneState++) {
 	case 0:
 		_object1._numFrames = 6;
 		_stripManager.start(9400, this);
@@ -765,7 +765,7 @@ void Scene9400::signal() {
 }
 
 void Scene9400::dispatch() {
-	if ((_object1._animateMode == 2) && (_object1._strip == 1) && (_object1._frame == 4)){
+	if ((_object1._animateMode == 2) && (_object1._strip == 1) && (_object1._frame == 4)) {
 		if (_hittingAnvil == false) {
 			_soundHandler.play(296);
 			_hittingAnvil = true;
@@ -1047,7 +1047,7 @@ void Scene9500::Hotspot2::doAction(int action) {
 void Scene9500::Hotspot3::doAction(int action) {
 	Scene9500 *scene = (Scene9500 *)g_globals->_sceneManager._scene;
 
-	if ((action == CURSOR_USE) && (RING_INVENTORY._candle._sceneNumber != 1)){
+	if ((action == CURSOR_USE) && (RING_INVENTORY._candle._sceneNumber != 1)) {
 		scene->_sceneMode = 9505;
 		g_globals->_player.disableControl();
 		g_globals->_sceneItems.remove(this);
@@ -1132,7 +1132,6 @@ void Scene9500::dispatch() {
 			setAction(&_sequenceManager, this, 9504, &g_globals->_player, NULL, NULL, NULL, NULL);
 		}
 	}
-
 }
 
 void Scene9500::process(Event &event) {
@@ -1237,7 +1236,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 void Scene9700::signal() {
-	switch (_sceneMode ++) {
+	switch (_sceneMode++) {
 	case 9703:
 		g_globals->setFlag(88);
 		// fall through
@@ -1311,7 +1310,7 @@ void Scene9700::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 void Scene9750::signal() {
-	switch (_sceneMode ++) {
+	switch (_sceneMode++) {
 	case 9751:
 		g_globals->_soundHandler.fadeOut(this);
 		break;
@@ -1340,7 +1339,6 @@ void Scene9750::postInit(SceneObjectList *OwnerList) {
 	_sceneMode = 9751;
 	setAction(&_sequenceManager, this, 9751, &g_globals->_player, &_object1, &_object2, NULL);
 }
-
 
 /*--------------------------------------------------------------------------
  * Scene 9850 - Castle: Dressing room
@@ -1498,7 +1496,7 @@ void Scene9850::Hotspot20::doAction(int action) {
 }
 
 void Scene9850::signal() {
-	switch (_sceneMode ++) {
+	switch (_sceneMode++) {
 	case 10:
 		// Hidden closet closed
 		if (RING_INVENTORY._scimitar._sceneNumber == 9850)
@@ -1776,16 +1774,16 @@ void Scene9900::strAction2::signal() {
 	}
 }
 void Scene9900::strAction2::dispatch() {
-//	if (this->_txtArray1[0]._textSurface != 0) {
-		int frameHeight = _txtArray1[0].getFrame().getBounds().height();
-		_txtArray2[0]._position.y = frameHeight + _txtArray1[0]._position.y;
-		_txtArray2[0]._flags |= OBJFLAG_PANES;
-//	}
-//	if (this->_txtArray1[1]._textSurface != 0) {
-		frameHeight = _txtArray1[1].getFrame().getBounds().height();
-		_txtArray2[1]._position.y = frameHeight + _txtArray1[1]._position.y;
-		_txtArray2[1]._flags |= OBJFLAG_PANES;
-//	}
+	//	if (this->_txtArray1[0]._textSurface != 0) {
+	int frameHeight = _txtArray1[0].getFrame().getBounds().height();
+	_txtArray2[0]._position.y = frameHeight + _txtArray1[0]._position.y;
+	_txtArray2[0]._flags |= OBJFLAG_PANES;
+	//	}
+	//	if (this->_txtArray1[1]._textSurface != 0) {
+	frameHeight = _txtArray1[1].getFrame().getBounds().height();
+	_txtArray2[1]._position.y = frameHeight + _txtArray1[1]._position.y;
+	_txtArray2[1]._flags |= OBJFLAG_PANES;
+	//	}
 	Action::dispatch();
 }
 
@@ -1858,7 +1856,7 @@ void Scene9900::signal() {
 	_object5.addMover(NULL);
 	_object6.addMover(NULL);
 
-	switch (_sceneMode){
+	switch (_sceneMode) {
 	case 150:
 		g_globals->_soundHandler.play(380);
 		_object8.postInit();
@@ -2087,7 +2085,6 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 		g_globals->_stripNum = 2121;
 
 	g_globals->_soundHandler.play(118);
-
 }
 
 } // End of namespace Ringworld

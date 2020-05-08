@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/core/map.h"
-#include "ultima/nuvie/core/timed_event.h"
-#include "ultima/nuvie/core/effect.h"
 #include "ultima/nuvie/core/effect_manager.h"
+#include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/timed_event.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -63,13 +63,15 @@ void EffectManager::add_effect(Effect *eff) {
 void EffectManager::update_effects() {
 	EffectIterator ei = effects.begin();
 	while (ei != effects.end()) {
-		if ((*ei)->is_defunct()/* && !has_message(*ei)*/) {
+		if ((*ei)->is_defunct() /* && !has_message(*ei)*/) {
 			signal_watch(*ei);
 			if ((*ei)->is_retained() == false) { //if no longer needed by other objects we can delete.
-				delete(*ei);
+				delete (*ei);
 				ei = effects.erase(ei);
-			} else ++ei;
-		} else ++ei;
+			} else
+				++ei;
+		} else
+			++ei;
 	}
 }
 
@@ -101,10 +103,10 @@ void EffectManager::unwatch_effect(CallBack *callback_target, Effect *watch) {
 	if (!watched.empty()) {
 		WatchIterator i = watched.begin();
 		while (i != watched.end())
-			if ((*i).watcher == callback_target
-			        && ((*i).effect == watch || watch == NULL)) {
+			if ((*i).watcher == callback_target && ((*i).effect == watch || watch == NULL)) {
 				i = watched.erase(i); // resume from next element
-			} else ++i;
+			} else
+				++i;
 	}
 }
 
@@ -127,7 +129,8 @@ EffectManager::EffectWatch *EffectManager::find_effect_watch(Effect *effect) {
 		while (i != watched.end())
 			if ((*i).effect == effect)
 				return (&(*i));
-			else ++i;
+			else
+				++i;
 	}
 	return (NULL);
 }

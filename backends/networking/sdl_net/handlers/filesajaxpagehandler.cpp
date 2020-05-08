@@ -48,7 +48,7 @@ Common::String encodeDoubleQuotesAndSlashes(Common::String s) {
 	return result;
 }
 
-}
+} // namespace
 
 /// public
 
@@ -67,7 +67,7 @@ void FilesAjaxPageHandler::handle(Client &client) {
 	replace(response, "{create_directory_button}", HandlerUtils::toUtf8(_("Create directory")));
 	replace(response, "{create_directory_button}", HandlerUtils::toUtf8(_("Create directory")));
 	replace(response, "{upload_files_button}", HandlerUtils::toUtf8(_("Upload files"))); //tab
-	replace(response, "{upload_file_button}", HandlerUtils::toUtf8(_("Upload files"))); //button in the tab
+	replace(response, "{upload_file_button}", HandlerUtils::toUtf8(_("Upload files")));  //button in the tab
 	replace(response, "{create_directory_desc}", HandlerUtils::toUtf8(_("Type new directory name:")));
 	replace(response, "{upload_file_desc}", HandlerUtils::toUtf8(_("Select a file to upload:")));
 	replace(response, "{or_upload_directory_desc}", HandlerUtils::toUtf8(_("Or select a directory (works in Chrome only):")));

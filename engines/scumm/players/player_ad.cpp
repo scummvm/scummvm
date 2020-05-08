@@ -22,21 +22,21 @@
 
 #include "scumm/players/player_ad.h"
 #include "scumm/imuse/imuse.h"
-#include "scumm/scumm.h"
 #include "scumm/resource.h"
+#include "scumm/scumm.h"
 
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
 
-#include "common/textconsole.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 
 namespace Scumm {
 
 #define AD_CALLBACK_FREQUENCY 472
 
 Player_AD::Player_AD(ScummEngine *scumm)
-	: _vm(scumm) {
+    : _vm(scumm) {
 	_opl2 = OPL::Config::create();
 	if (!_opl2->init()) {
 		error("Could not initialize OPL2 emulator");
@@ -203,8 +203,7 @@ void Player_AD::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.getVersion() >= VER(96)) {
 		int32 res[4] = {
-			_musicResource, _sfx[0].resource, _sfx[1].resource, _sfx[2].resource
-		};
+		    _musicResource, _sfx[0].resource, _sfx[1].resource, _sfx[2].resource};
 
 		// The first thing we save is a list of sound resources being played
 		// at the moment.
@@ -334,10 +333,9 @@ void Player_AD::limitHWChannels(int newCount) {
 }
 
 const int Player_AD::_operatorOffsetToChannel[22] = {
-	 0,  1,  2,  0,  1,  2, -1, -1,
-	 3,  4,  5,  3,  4,  5, -1, -1,
-	 6,  7,  8,  6,  7,  8
-};
+    0, 1, 2, 0, 1, 2, -1, -1,
+    3, 4, 5, 3, 4, 5, -1, -1,
+    6, 7, 8, 6, 7, 8};
 
 void Player_AD::writeReg(int r, int v) {
 	if (r >= 0 && r < ARRAYSIZE(_registerBackUpTable)) {
@@ -419,12 +417,11 @@ void Player_AD::setupOperator(const uint opr, const byte *&instrOffset) {
 }
 
 const int Player_AD::_operatorOffsetTable[18] = {
-	 0,  3,  1,  4,
-	 2,  5,  8, 11,
-	 9, 12, 10, 13,
-	16, 19, 17, 20,
-	18, 21
-};
+    0, 3, 1, 4,
+    2, 5, 8, 11,
+    9, 12, 10, 13,
+    16, 19, 17, 20,
+    18, 21};
 
 // Music
 
@@ -725,22 +722,18 @@ void Player_AD::musicSeekTo(const uint position) {
 }
 
 const uint Player_AD::_noteFrequencies[12] = {
-	0x200, 0x21E, 0x23F, 0x261,
-	0x285, 0x2AB, 0x2D4, 0x300,
-	0x32E, 0x35E, 0x390, 0x3C7
-};
+    0x200, 0x21E, 0x23F, 0x261,
+    0x285, 0x2AB, 0x2D4, 0x300,
+    0x32E, 0x35E, 0x390, 0x3C7};
 
 const uint Player_AD::_mdvdrTable[6] = {
-	0x00, 0x10, 0x08, 0x04, 0x02, 0x01
-};
+    0x00, 0x10, 0x08, 0x04, 0x02, 0x01};
 
 const uint Player_AD::_rhythmOperatorTable[6] = {
-	0x00, 0x00, 0x14, 0x12, 0x15, 0x11
-};
+    0x00, 0x00, 0x14, 0x12, 0x15, 0x11};
 
 const uint Player_AD::_rhythmChannelTable[6] = {
-	0x00, 0x00, 0x07, 0x08, 0x08, 0x07
-};
+    0x00, 0x00, 0x07, 0x08, 0x08, 0x07};
 
 // SFX
 
@@ -1146,51 +1139,41 @@ uint8 Player_AD::getRnd() {
 }
 
 const uint Player_AD::_noteBiasTable[7] = {
-	0x00, 0x00, 0x3F, 0x00, 0x3F, 0x00, 0x00
-};
+    0x00, 0x00, 0x3F, 0x00, 0x3F, 0x00, 0x00};
 
 const uint Player_AD::_numStepsTable[16] = {
-	    1,    4,    6,    8,
-	   10,   14,   18,   24,
-	   36,   64,  100,  160,
-	  240,  340,  600, 1200
-};
+    1, 4, 6, 8,
+    10, 14, 18, 24,
+    36, 64, 100, 160,
+    240, 340, 600, 1200};
 
 const uint Player_AD::_noteAdjustScaleTable[7] = {
-	255,   7,  63,  15,  63,  15,  63
-};
+    255, 7, 63, 15, 63, 15, 63};
 
 const uint Player_AD::_noteAdjustTable[16] = {
-	    0,  4369,  8738, 13107,
-	17476, 21845, 26214, 30583,
-	34952, 39321, 43690, 48059,
-	52428, 56797, 61166, 65535
-};
+    0, 4369, 8738, 13107,
+    17476, 21845, 26214, 30583,
+    34952, 39321, 43690, 48059,
+    52428, 56797, 61166, 65535};
 
 const bool Player_AD::_useOperatorTable[7] = {
-	false, false, true, true, true, true, false
-};
+    false, false, true, true, true, true, false};
 
 const uint Player_AD::_channelOffsetTable[11] = {
-	 0,  1,  2,  3,
-	 4,  5,  6,  7,
-	 8,  8,  7
-};
+    0, 1, 2, 3,
+    4, 5, 6, 7,
+    8, 8, 7};
 
 const uint Player_AD::_channelOperatorOffsetTable[7] = {
-	0, 0, 1, 1, 0, 0, 0
-};
+    0, 0, 1, 1, 0, 0, 0};
 
 const uint Player_AD::_baseRegisterTable[7] = {
-	0xA0, 0xC0, 0x40, 0x20, 0x40, 0x20, 0x00
-};
+    0xA0, 0xC0, 0x40, 0x20, 0x40, 0x20, 0x00};
 
 const uint Player_AD::_registerMaskTable[7] = {
-	0xFF, 0x0E, 0x3F, 0x0F, 0x3F, 0x0F, 0x00
-};
+    0xFF, 0x0E, 0x3F, 0x0F, 0x3F, 0x0F, 0x00};
 
 const uint Player_AD::_registerShiftTable[7] = {
-	0, 1, 0, 0, 0, 0, 0
-};
+    0, 1, 0, 0, 0, 0, 0};
 
 } // End of namespace Scumm

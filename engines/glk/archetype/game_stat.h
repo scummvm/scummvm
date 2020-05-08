@@ -31,8 +31,8 @@
  * need to save any more.
  */
 
-#include "glk/archetype/array.h"
 #include "common/stream.h"
+#include "glk/archetype/array.h"
 
 namespace Glk {
 namespace Archetype {

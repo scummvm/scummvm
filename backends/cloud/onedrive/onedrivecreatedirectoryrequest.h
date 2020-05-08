@@ -24,15 +24,15 @@
 #define BACKENDS_CLOUD_ONEDRIVE_ONEDRIVECREATEDIRECTORYREQUEST_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/request.h"
 
 namespace Cloud {
 namespace OneDrive {
 
 class OneDriveStorage;
 
-class OneDriveCreateDirectoryRequest: public Networking::Request {
+class OneDriveCreateDirectoryRequest : public Networking::Request {
 	OneDriveStorage *_storage;
 	Common::String _path;
 	Storage::BoolCallback _boolCallback;
@@ -44,6 +44,7 @@ class OneDriveCreateDirectoryRequest: public Networking::Request {
 	void responseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);
 	void finishCreation(bool success);
+
 public:
 	OneDriveCreateDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
 	virtual ~OneDriveCreateDirectoryRequest();

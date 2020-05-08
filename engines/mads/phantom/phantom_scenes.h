@@ -25,10 +25,9 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/phantom/game_phantom.h"
+#include "mads/scene.h"
 //#include "mads/phantom/globals_phantom.h"
-
 
 namespace MADS {
 
@@ -462,6 +461,7 @@ protected:
 	 * Plays appropriate sound for entering varous rooms
 	 */
 	void lowRoomsEntrySound();
+
 public:
 	/**
 	 * Constructor
@@ -473,6 +473,7 @@ public:
 
 class SceneInfoPhantom : public SceneInfo {
 	friend class SceneInfo;
+
 protected:
 	void loadCodes(BaseSurface &depthSurface, int variant) override;
 

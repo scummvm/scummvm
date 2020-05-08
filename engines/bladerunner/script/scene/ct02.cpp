@@ -25,8 +25,8 @@
 namespace BladeRunner {
 
 enum kCT02Loops {
-	kCT02LoopMainLoop      = 0,
-	kCT02LoopTippingPot    = 2,
+	kCT02LoopMainLoop = 0,
+	kCT02LoopTippingPot = 2,
 	kCT02LoopMainPotTipped = 3
 };
 
@@ -50,12 +50,9 @@ void SceneScriptCT02::InitializeScene() {
 		Setup_Scene_Information(-117.43f, -145.11f, 262.36f, 768);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
-	if (_vm->_cutContent
-	    && Global_Variable_Query(kVariableChapter) == 1
-	    && Game_Flag_Query(kFlagCT02McCoyShouldCommentOnDumpedSoup)
-	) {
-		Scene_2D_Region_Add(0, 115, 350, 430, 420);// dumped soup
-		Scene_2D_Region_Add(1, 180, 235, 255, 315);// use a region for the pot too (there's an object but it's better to have a region)
+	if (_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 1 && Game_Flag_Query(kFlagCT02McCoyShouldCommentOnDumpedSoup)) {
+		Scene_2D_Region_Add(0, 115, 350, 430, 420); // dumped soup
+		Scene_2D_Region_Add(1, 180, 235, 255, 315); // use a region for the pot too (there's an object but it's better to have a region)
 	}
 
 	Scene_Exit_Add_2D_Exit(kCT02ExitCT01, 590, 0, 639, 479, 1);
@@ -64,14 +61,14 @@ void SceneScriptCT02::InitializeScene() {
 	} else {
 		Overlay_Play("ct02over", 0, true, false, 0);
 	}
-	Ambient_Sounds_Add_Looping_Sound(kSfxKTCHRAIN, 25,   0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  38, 100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 32,   0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxKTCHRAIN, 25, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 38, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 32, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfxDISH1, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH2, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH3, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH4, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
@@ -151,9 +148,7 @@ void SceneScriptCT02::dialogueWithZuben() {
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(270, 8, 5, 3); // LUCY PHOTO
 	}
-	if ( Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueLucy)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA) && !Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(280, 8, 5, 3); // LUCY
 	}
 	int evidenceCount = 0;
@@ -205,7 +200,7 @@ void SceneScriptCT02::dialogueWithZuben() {
 	if (evidenceCount > 3) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(290, 0, 4, 8); // VOIGT-KAMPFF
 	}
-#endif // BLADERUNNER_ORIGINAL_BUGS
+#endif                                   // BLADERUNNER_ORIGINAL_BUGS
 	Dialogue_Menu_Add_DONE_To_List(300); // DONE
 
 	Dialogue_Menu_Appear(320, 240);
@@ -313,11 +308,7 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptCT02::ClickedOn2DRegion(int region) {
-	if (_vm->_cutContent
-	    && Global_Variable_Query(kVariableChapter) == 1
-	    && Game_Flag_Query(kFlagCT02McCoyShouldCommentOnDumpedSoup)
-	    && (region == 0 || region == 1)
-	) {
+	if (_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 1 && Game_Flag_Query(kFlagCT02McCoyShouldCommentOnDumpedSoup) && (region == 0 || region == 1)) {
 		Game_Flag_Reset(kFlagCT02McCoyShouldCommentOnDumpedSoup);
 		Scene_2D_Region_Remove(0);
 		Scene_2D_Region_Remove(1);

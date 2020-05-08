@@ -29,8 +29,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CShowMsg;
 using Shared::CCharacterInputMsg;
+using Shared::CShowMsg;
 
 /**
  * Implements the Ready dialog
@@ -40,9 +40,14 @@ class Ready : public FullScreenDialog {
 	bool ShowMsg(CShowMsg &msg);
 	bool CharacterInputMsg(CCharacterInputMsg &msg);
 
-	enum Mode { SELECT, READY_WEAPON, READY_armour, READY_SPELL };
+	enum Mode { SELECT,
+		        READY_WEAPON,
+		        READY_armour,
+		        READY_SPELL };
+
 private:
 	Mode _mode;
+
 private:
 	/**
 	 * Sets the mode
@@ -73,6 +78,7 @@ private:
 	 * Draw the ready spell display
 	 */
 	void drawReadySpell();
+
 public:
 	CLASSDEF;
 

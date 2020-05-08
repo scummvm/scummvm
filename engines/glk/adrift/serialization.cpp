@@ -21,8 +21,8 @@
  */
 
 #include "glk/adrift/serialization.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 
 namespace Glk {
 namespace Adrift {
@@ -113,8 +113,7 @@ void SaveSerializer::save() {
 		if (startertype == 3) {
 			vt_key[2].string = "TaskNum";
 			task = prop_get_integer(bundle, "I<-sis", vt_key);
-		}
-		else
+		} else
 			task = 0;
 
 		/* Save event details. */
@@ -231,7 +230,9 @@ void SaveSerializer::writeBool(sc_bool boolean) {
 
 /*--------------------------------------------------------------------------*/
 
-#define CHECK if (context._break) goto ser_tas_error
+#define CHECK           \
+	if (context._break) \
+	goto ser_tas_error
 
 bool LoadSerializer::load() {
 	const sc_filterref_t filter = gs_get_filter(_game);
@@ -263,11 +264,7 @@ bool LoadSerializer::load() {
 		goto ser_tas_error;
 
 	// Read and verify the counts in the saved _game.
-	if ((readInt(context) != gs_room_count(_game) || context._break)
-		|| (readInt(context) != gs_object_count(_game) || context._break)
-		|| (readInt(context) != gs_task_count(_game) || context._break)
-		|| (readInt(context) != gs_event_count(_game) || context._break)
-		|| (readInt(context) != gs_npc_count(_game) || context._break))
+	if ((readInt(context) != gs_room_count(_game) || context._break) || (readInt(context) != gs_object_count(_game) || context._break) || (readInt(context) != gs_task_count(_game) || context._break) || (readInt(context) != gs_event_count(_game) || context._break) || (readInt(context) != gs_npc_count(_game) || context._break))
 		goto ser_tas_error;
 
 	// Create a variables set and _game to restore into.
@@ -278,24 +275,34 @@ bool LoadSerializer::load() {
 	// All set to load TAF (TAS) data into the new _game.
 
 	// Restore the score and player information.
-	new_game->score = readInt(context); CHECK;
-	gs_set_playerroom(new_game, readInt(context) - 1); CHECK;
-	gs_set_playerparent(new_game, readInt(context)); CHECK;
-	gs_set_playerposition(new_game, readInt(context)); CHECK;
+	new_game->score = readInt(context);
+	CHECK;
+	gs_set_playerroom(new_game, readInt(context) - 1);
+	CHECK;
+	gs_set_playerparent(new_game, readInt(context));
+	CHECK;
+	gs_set_playerposition(new_game, readInt(context));
+	CHECK;
 
 	// Skip player gender.
-	(void)readInt(context); CHECK;
+	(void)readInt(context);
+	CHECK;
 
 	// Skip encumbrance details, not currently maintained by the _game.
-	(void)readInt(context); CHECK;
-	(void)readInt(context); CHECK;
-	(void)readInt(context); CHECK;
-	(void)readInt(context); CHECK;
+	(void)readInt(context);
+	CHECK;
+	(void)readInt(context);
+	CHECK;
+	(void)readInt(context);
+	CHECK;
+	(void)readInt(context);
+	CHECK;
 
 	// Restore rooms information
 	count = gs_room_count(new_game);
 	for (index_ = 0; index_ < count; ++index_) {
-		gs_set_room_seen(new_game, index_, readBool(context)); CHECK;
+		gs_set_room_seen(new_game, index_, readBool(context));
+		CHECK;
 	}
 
 	// Restore objects information
@@ -304,28 +311,36 @@ bool LoadSerializer::load() {
 		sc_int openable, currentstate;
 
 		// Bypass mutators for position and parent.  Fix later?
-		new_game->objects[index_].position = readInt(context); CHECK;
-		gs_set_object_seen(new_game, index_, readBool(context)); CHECK;
-		new_game->objects[index_].parent = readInt(context); CHECK;
+		new_game->objects[index_].position = readInt(context);
+		CHECK;
+		gs_set_object_seen(new_game, index_, readBool(context));
+		CHECK;
+		new_game->objects[index_].parent = readInt(context);
+		CHECK;
 
 		vt_key[0].string = "Objects";
 		vt_key[1].integer = index_;
 		vt_key[2].string = "Openable";
 		openable = prop_get_integer(bundle, "I<-sis", vt_key);
-		gs_set_object_openness(new_game, index_, openable != 0 ? readInt(context) : 0); CHECK;
+		gs_set_object_openness(new_game, index_, openable != 0 ? readInt(context) : 0);
+		CHECK;
 
 		vt_key[2].string = "CurrentState";
 		currentstate = prop_get_integer(bundle, "I<-sis", vt_key);
 		gs_set_object_state(new_game, index_,
-			currentstate != 0 ? readInt(context) : 0); CHECK;
+		                    currentstate != 0 ? readInt(context) : 0);
+		CHECK;
 
-		gs_set_object_unmoved(new_game, index_, readBool(context)); CHECK;
+		gs_set_object_unmoved(new_game, index_, readBool(context));
+		CHECK;
 	}
 
 	// Restore tasks information.
 	for (index_ = 0; index_ < gs_task_count(new_game); index_++) {
-		gs_set_task_done(new_game, index_, readBool(context)); CHECK;
-		gs_set_task_scored(new_game, index_, readBool(context)); CHECK;
+		gs_set_task_done(new_game, index_, readBool(context));
+		CHECK;
+		gs_set_task_scored(new_game, index_, readBool(context));
+		CHECK;
 	}
 
 	// Restore events information
@@ -334,9 +349,12 @@ bool LoadSerializer::load() {
 		sc_int startertype, task;
 
 		// Restore first event details.
-		gs_set_event_time(new_game, index_, readInt(context)); CHECK;
-		task = readInt(context); CHECK;
-		gs_set_event_state(new_game, index_, readInt(context) + 1); CHECK;
+		gs_set_event_time(new_game, index_, readInt(context));
+		CHECK;
+		task = readInt(context);
+		CHECK;
+		gs_set_event_state(new_game, index_, readInt(context) + 1);
+		CHECK;
 
 		// Verify and restore the starter task, if any.
 		if (task > 0) {
@@ -348,9 +366,11 @@ bool LoadSerializer::load() {
 				goto ser_tas_error;
 
 			// Restore task state.
-			gs_set_task_done(new_game, task - 1, readBool(context)); CHECK;
+			gs_set_task_done(new_game, task - 1, readBool(context));
+			CHECK;
 		} else {
-			(void)readBool(context); CHECK;
+			(void)readBool(context);
+			CHECK;
 		}
 	}
 
@@ -359,10 +379,13 @@ bool LoadSerializer::load() {
 	for (index_ = 0; index_ < count; index_++) {
 		sc_int walk;
 
-		gs_set_npc_location(new_game, index_, readInt(context)); CHECK;
-		gs_set_npc_seen(new_game, index_, readBool(context)); CHECK;
+		gs_set_npc_location(new_game, index_, readInt(context));
+		CHECK;
+		gs_set_npc_seen(new_game, index_, readBool(context));
+		CHECK;
 		for (walk = 0; walk < gs_npc_walkstep_count(new_game, index_); walk++) {
-			gs_set_npc_walkstep(new_game, index_, walk, readInt(context)); CHECK;
+			gs_set_npc_walkstep(new_game, index_, walk, readInt(context));
+			CHECK;
 		}
 	}
 
@@ -383,11 +406,13 @@ bool LoadSerializer::load() {
 
 		switch (var_type) {
 		case TAFVAR_NUMERIC:
-			var_put_integer(new_vars, name, readInt(context)); CHECK;
+			var_put_integer(new_vars, name, readInt(context));
+			CHECK;
 			break;
 
 		case TAFVAR_STRING:
-			var_put_string(new_vars, name, readString(context)); CHECK;
+			var_put_string(new_vars, name, readString(context));
+			CHECK;
 			break;
 
 		default:
@@ -396,10 +421,12 @@ bool LoadSerializer::load() {
 	}
 
 	// Restore timing information.
-	var_set_elapsed_seconds(new_vars, readUint(context)); CHECK;
+	var_set_elapsed_seconds(new_vars, readUint(context));
+	CHECK;
 
 	// Restore turns count.
-	new_game->turns = (sc_int)readUint(context); CHECK;
+	new_game->turns = (sc_int)readUint(context);
+	CHECK;
 
 	/* Resources tweak -- set requested to match those in the current _game so that they remain
 	 * unchanged by the gs_copy() of new_game onto game.  This way, both the requested and the

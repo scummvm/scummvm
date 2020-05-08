@@ -21,10 +21,9 @@
  */
 
 #include "audio/musicplugin.h"
-#include "common/translation.h"
 #include "common/error.h"
 #include "common/system.h"
-
+#include "common/translation.h"
 
 class TownsEmuMusicPlugin : public MusicPluginObject {
 public:
@@ -77,9 +76,9 @@ Common::Error PC98EmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDr
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(TOWNS)
-	//REGISTER_PLUGIN_DYNAMIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
-	//REGISTER_PLUGIN_DYNAMIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
-	REGISTER_PLUGIN_STATIC(PC98, PLUGIN_TYPE_MUSIC, PC98EmuMusicPlugin);
+REGISTER_PLUGIN_STATIC(TOWNS, PLUGIN_TYPE_MUSIC, TownsEmuMusicPlugin);
+REGISTER_PLUGIN_STATIC(PC98, PLUGIN_TYPE_MUSIC, PC98EmuMusicPlugin);
 //#endif

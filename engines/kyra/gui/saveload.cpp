@@ -20,20 +20,20 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/engine/util.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
 #define CURRENT_SAVE_VERSION 18
 
-#define GF_FLOPPY  (1 <<  0)
-#define GF_TALKIE  (1 <<  1)
-#define GF_FMTOWNS (1 <<  2)
+#define GF_FLOPPY (1 << 0)
+#define GF_TALKIE (1 << 1)
+#define GF_FMTOWNS (1 << 2)
 
 namespace Kyra {
 
@@ -53,7 +53,7 @@ WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHea
 		header.gameID = in->readByte();
 	} else {
 		// try checking for original save header
-		const int descriptionSize[3] = { 30, 80, 60 };
+		const int descriptionSize[3] = {30, 80, 60};
 		char descriptionBuffer[81];
 
 		bool saveOk = false;
@@ -80,10 +80,10 @@ WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHea
 				header.description = descriptionBuffer;
 				header.gameID = GI_KYRA3;
 				break;
-			} else if (type == MKTAG('C','D','0','4')) {
+			} else if (type == MKTAG('C', 'D', '0', '4')) {
 				header.version = in->readUint32BE();
 				// We don't check the minor version, since the original doesn't do that either and it isn't required.
-				if (header.version != MKTAG(' ','C','D','1'))
+				if (header.version != MKTAG(' ', 'C', 'D', '1'))
 					continue;
 				saveOk = true;
 				header.description = descriptionBuffer;

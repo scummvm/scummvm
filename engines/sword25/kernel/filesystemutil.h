@@ -45,9 +45,9 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "common/system.h"
-#include "common/str.h"
 #include "common/str-array.h"
+#include "common/str.h"
+#include "common/system.h"
 #include "sword25/kernel/common.h"
 
 namespace Sword25 {
@@ -58,7 +58,6 @@ namespace Sword25 {
 
 class FileSystemUtil {
 public:
-
 	/**
 	 * This function returns the name of the directory in which all user data is to be stored.
 	 *
@@ -70,7 +69,7 @@ public:
 	/**
 	 * @return              Returns the path seperator
 	 */
-	static Common::String  getPathSeparator();
+	static Common::String getPathSeparator();
 
 	/**
 	 * @param Filename      The path to a file.

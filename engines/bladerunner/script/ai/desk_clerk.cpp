@@ -43,24 +43,11 @@ void AIScriptDeskClerk::Initialize() {
 }
 
 bool AIScriptDeskClerk::Update() {
-	if (Actor_Query_Goal_Number(kActorDeskClerk) == kGoalDeskClerkKnockedOut
-	 && Player_Query_Current_Set() != kSetCT01_CT12
-	 && Player_Query_Current_Set() != kSetCT03_CT04
-	 && Player_Query_Current_Set() != kSetCT08_CT51_UG12
-	 && Player_Query_Current_Set() != kSetCT02
-	 && Player_Query_Current_Set() != kSetCT05
-	 && Player_Query_Current_Set() != kSetCT06
-	 && Player_Query_Current_Set() != kSetCT07
-	 && Player_Query_Current_Set() != kSetCT09
-	 && Player_Query_Current_Set() != kSetCT10
-	 && Player_Query_Current_Set() != kSetCT11
-	) {
+	if (Actor_Query_Goal_Number(kActorDeskClerk) == kGoalDeskClerkKnockedOut && Player_Query_Current_Set() != kSetCT01_CT12 && Player_Query_Current_Set() != kSetCT03_CT04 && Player_Query_Current_Set() != kSetCT08_CT51_UG12 && Player_Query_Current_Set() != kSetCT02 && Player_Query_Current_Set() != kSetCT05 && Player_Query_Current_Set() != kSetCT06 && Player_Query_Current_Set() != kSetCT07 && Player_Query_Current_Set() != kSetCT09 && Player_Query_Current_Set() != kSetCT10 && Player_Query_Current_Set() != kSetCT11) {
 		Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkRecovered);
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorDeskClerk) < kGoalDeskClerkGone
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorDeskClerk) < kGoalDeskClerkGone) {
 		Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkGone);
 	}
 
@@ -157,9 +144,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	// that have this buggy state stored.
 	// We also include the rest of the problematic states that are missing animations in Act 4
 	// (ie. all _animationState >= 6)
-	if (Global_Variable_Query(kVariableChapter) > 3
-	    && _animationState >= 6
-	) {
+	if (Global_Variable_Query(kVariableChapter) > 3 && _animationState >= 6) {
 		Actor_Change_Animation_Mode(kActorDeskClerk, kAnimationModeIdle);
 		*animation = 661;
 		_animationFrame = 0;
@@ -199,9 +184,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 1:
 		*animation = 663;
 
-		if (_animationFrame == 0
-		 && _flag2
-		) {
+		if (_animationFrame == 0 && _flag2) {
 			*animation = 661;
 			_animationState = 0;
 			_flag1 = false;
@@ -264,9 +247,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 7:
 		*animation = 669;
 
-		if (_animationFrame == 0
-		 && _flag2
-		) {
+		if (_animationFrame == 0 && _flag2) {
 			Actor_Change_Animation_Mode(kActorDeskClerk, 72);
 			*animation = 668;
 			_animationState = 6;
@@ -379,17 +360,17 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptDeskClerk::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptDeskClerk::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptDeskClerk::ReachedMovementTrackWaypoint(int waypointId) {

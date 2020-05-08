@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/spells/steal.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {

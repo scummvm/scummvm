@@ -20,21 +20,21 @@
  *
  */
 
-#include "common/system.h"
 #include "common/frac.h"
+#include "common/system.h"
 #include "common/tokenizer.h"
 
-#include "gui/widgets/list.h"
-#include "gui/widgets/scrollbar.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
+#include "gui/widgets/list.h"
+#include "gui/widgets/scrollbar.h"
 
 #include "gui/ThemeEval.h"
 
 namespace GUI {
 
 ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, uint32 cmd)
-	: EditableWidget(boss, name, tooltip), _cmd(cmd) {
+    : EditableWidget(boss, name, tooltip), _cmd(cmd) {
 
 	_entriesPerPage = 0;
 
@@ -71,7 +71,7 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, ui
 }
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
-	: EditableWidget(boss, x, y, w, h, tooltip), _cmd(cmd) {
+    : EditableWidget(boss, x, y, w, h, tooltip), _cmd(cmd) {
 
 	_entriesPerPage = 0;
 
@@ -258,14 +258,13 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	// caret accordingly.
 	// See _editScrollOffset and EditTextWidget::handleMouseDown.
 	markAsDirty();
-
 }
 
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
 	if (clickCount == 2 && (_selectedItem == findItem(x, y)) &&
-		_selectedItem >= 0) {
+	    _selectedItem >= 0) {
 		sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 	}
 }
@@ -286,12 +285,11 @@ void ListWidget::handleMouseMoved(int x, int y, int button) {
 	int item = findItem(x, y);
 
 	if (item != -1) {
-		if(_lastRead != item) {
+		if (_lastRead != item) {
 			read(_dataList[item]);
 			_lastRead = item;
 		}
-	}
-	else
+	} else
 		_lastRead = -1;
 }
 
@@ -299,12 +297,12 @@ void ListWidget::handleMouseLeft(int button) {
 	_lastRead = -1;
 }
 
-
 int ListWidget::findItem(int x, int y) const {
-	if (y < _topPadding) return -1;
+	if (y < _topPadding)
+		return -1;
 	int item = (y - _topPadding) / kLineHeight + _currentPos;
 	if (item >= _currentPos && item < _currentPos + _entriesPerPage &&
-		item < (int)_list.size())
+	    item < (int)_list.size())
 		return item;
 	else
 		return -1;
@@ -340,7 +338,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		} else {
 			_quickSelectStr += (char)state.ascii;
 		}
-		_quickSelectTime = time + 300;	// TODO: Turn this into a proper constant (kQuickSelectDelay ?)
+		_quickSelectTime = time + 300; // TODO: Turn this into a proper constant (kQuickSelectDelay ?)
 
 		if (_quickSelect) {
 			// FIXME: This is bad slow code (it scans the list linearly each time a
@@ -384,10 +382,10 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			break;
 
-		// Keypad & special keys
-		//   - if num lock is set, we do not handle the keypress
-		//   - if num lock is not set, we either fall down to the special key case
-		//     or ignore the key press for 0, 4, 5 and 6
+			// Keypad & special keys
+			//   - if num lock is set, we do not handle the keypress
+			//   - if num lock is not set, we either fall down to the special key case
+			//     or ignore the key press for 0, 4, 5 and 6
 
 		case Common::KEYCODE_KP_PERIOD:
 			if (state.flags & Common::KBD_NUM) {
@@ -416,7 +414,6 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			_selectedItem = _list.size() - 1;
 			break;
 
-
 		case Common::KEYCODE_KP2:
 			if (state.flags & Common::KBD_NUM) {
 				handled = false;
@@ -436,7 +433,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			// fall through
 		case Common::KEYCODE_PAGEDOWN:
 			_selectedItem += _entriesPerPage - 1;
-			if (_selectedItem >= (int)_list.size() )
+			if (_selectedItem >= (int)_list.size())
 				_selectedItem = _list.size() - 1;
 			break;
 
@@ -613,7 +610,7 @@ void ListWidget::scrollToCurrent() {
 	if (_selectedItem < _currentPos) {
 		// it's above our view
 		_currentPos = _selectedItem;
-	} else if (_selectedItem >= _currentPos + _entriesPerPage ) {
+	} else if (_selectedItem >= _currentPos + _entriesPerPage) {
 		// it's below our view
 		_currentPos = _selectedItem - _entriesPerPage + 1;
 	}
@@ -639,7 +636,7 @@ void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
 		setEditString(_list[_selectedItem]);
-		_caretPos = _editString.size();	// Force caret to the *end* of the selection.
+		_caretPos = _editString.size(); // Force caret to the *end* of the selection.
 		if (_listColors.empty()) {
 			_editColor = ThemeEngine::kFontColorNormal;
 		} else {

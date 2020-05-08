@@ -23,9 +23,9 @@
 #ifndef WINTERMUTE_WINTERMUTE_H
 #define WINTERMUTE_WINTERMUTE_H
 
+#include "common/fs.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
-#include "common/fs.h"
 
 namespace Wintermute {
 
@@ -41,17 +41,17 @@ const int INT_MAX_VALUE = 0x7fffffff;
 enum {
 	kWintermuteDebugLog = 1 << 0, // The debug-logs from the original engine
 	kWintermuteDebugSaveGame = 1 << 1,
-	kWintermuteDebugFont = 1 << 2, // next new channel must be 1 << 2 (4)
+	kWintermuteDebugFont = 1 << 2,       // next new channel must be 1 << 2 (4)
 	kWintermuteDebugFileAccess = 1 << 3, // the current limitation is 32 debug channels (1 << 31 is the last one)
 	kWintermuteDebugAudio = 1 << 4,
 	kWintermuteDebugGeneral = 1 << 5
 };
 
 enum WintermuteGameFeatures {
- 	/** A game with low-spec resources. */
- 	GF_LOWSPEC_ASSETS       = 1 << 0,
- 	GF_IGNORE_SD_FILES      = 1 << 1,
- 	GF_IGNORE_HD_FILES      = 1 << 2
+	/** A game with low-spec resources. */
+	GF_LOWSPEC_ASSETS = 1 << 0,
+	GF_IGNORE_SD_FILES = 1 << 1,
+	GF_IGNORE_HD_FILES = 1 << 2
 };
 
 class WintermuteEngine : public Engine {
@@ -71,6 +71,7 @@ public:
 	bool canSaveGameStateCurrently() override;
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
+
 private:
 	int init();
 	void deinit();

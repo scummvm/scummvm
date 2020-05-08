@@ -20,12 +20,12 @@
  *
  */
 
+#include "sludge/freeze.h"
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/cursors.h"
 #include "sludge/event.h"
 #include "sludge/fonttext.h"
-#include "sludge/freeze.h"
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
@@ -34,8 +34,8 @@
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/speech.h"
-#include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
+#include "sludge/sprites.h"
 #include "sludge/statusba.h"
 #include "sludge/zbuffer.h"
 
@@ -168,7 +168,6 @@ void GraphicsManager::unfreeze(bool killImage) {
 		killMe->lightMapSurface.free();
 	delete killMe;
 	killMe = NULL;
-
 }
 
 } // End of namespace Sludge

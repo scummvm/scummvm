@@ -25,13 +25,13 @@
 
 #include "common/scummsys.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
-#include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
 #include "tsage/ringworld2/ringworld2_speakers.h"
+#include "tsage/scenes.h"
+#include "tsage/sound.h"
 
 namespace TsAGE {
 
@@ -39,11 +39,11 @@ namespace Ringworld2 {
 
 using namespace TsAGE;
 
-
 class Scene3100 : public SceneExt {
 	class Guard : public SceneActor {
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	bool _fadeSound;
 	SpeakerGuard _guardSpeaker;
@@ -83,6 +83,7 @@ class Scene3125 : public SceneExt {
 	class Door : public SceneActor {
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	bool _soundPlayed;
 	Background _background;
@@ -132,6 +133,7 @@ class Scene3150 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background;
 	NamedHotspot _bed;
@@ -167,6 +169,7 @@ class Scene3175 : public SceneExt {
 	class Corpse : public SceneActor {
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	RoomItem _background;
 	RoomItem _table;
@@ -265,6 +268,7 @@ class Scene3250 : public SceneExt {
 	class Door : public SceneActor {
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	Item _background;
 	Item _tnuctipunShip;
@@ -310,10 +314,11 @@ class Scene3260 : public SceneExt {
 		bool startAction(CursorType action, Event &event) override;
 	};
 
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	NamedHotspot _background;
 	SceneActor _sceeen1;
@@ -358,6 +363,7 @@ class Scene3275 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background;
 	NamedHotspot _emptyCell1;
@@ -467,7 +473,7 @@ class Scene3385 : public SceneExt {
 		void changeScene() override;
 	};
 
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
@@ -509,7 +515,7 @@ class Scene3395 : public SceneExt {
 		bool startAction(CursorType action, Event &event) override;
 	};
 
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
@@ -562,7 +568,7 @@ public:
 };
 
 class Scene3500 : public SceneExt {
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		int _direction;
 		bool _headingRightFl;
@@ -575,7 +581,7 @@ class Scene3500 : public SceneExt {
 		void signal() override;
 		void dispatch() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		int _direction;
 
@@ -623,6 +629,7 @@ class Scene3500 : public SceneExt {
 		int getCellFromMapXY(Common::Point pt);
 		bool setMazePosition2(Common::Point &p);
 	};
+
 public:
 	Action1 _action1;
 	Action2 _action2;
@@ -672,7 +679,7 @@ public:
 };
 
 class Scene3600 : public SceneExt {
-	class Action3600: public ActionExt {
+	class Action3600 : public ActionExt {
 	public:
 		bool _part2Fl;
 		int _fadePct;
@@ -681,7 +688,7 @@ class Scene3600 : public SceneExt {
 		void synchronize(Serializer &s) override;
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
@@ -694,6 +701,7 @@ class Scene3600 : public SceneExt {
 	class Protector : public SceneActorExt {
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	Action3600 _action1;
 	Action2 _action2;
@@ -823,6 +831,7 @@ class Scene3900 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	SceneActor _quinnShadow;
 	NamedHotspot _background;

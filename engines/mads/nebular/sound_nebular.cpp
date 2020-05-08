@@ -20,10 +20,10 @@
  *
  */
 
+#include "mads/nebular/sound_nebular.h"
 #include "audio/fmopl.h"
 #include "common/algorithm.h"
 #include "common/md5.h"
-#include "mads/nebular/sound_nebular.h"
 
 namespace Audio {
 class Mixer;
@@ -219,22 +219,21 @@ ASound::~ASound() {
 
 	Common::List<CachedDataEntry>::iterator i;
 	for (i = _dataCache.begin(); i != _dataCache.end(); ++i)
-		delete[] (*i)._data;
+		delete[](*i)._data;
 }
 
 void ASound::validate() {
 	Common::File f;
 	static const char *const MD5[] = {
-		"205398468de2c8873b7d4d73d5be8ddc",
-		"f9b2d944a2fb782b1af5c0ad592306d3",
-		"7431f8dad77d6ddfc24e6f3c0c4ac7df",
-		"eb1f3f5a4673d3e73d8ac1818c957cf4",
-		"f936dd853073fa44f3daac512e91c476",
-		"3dc139d3e02437a6d9b732072407c366",
-		"af0edab2934947982e9a405476702e03",
-		"8cbc25570b50ba41c9b5361cad4fbedc",
-		"a31e4783e098f633cbb6689adb41dd4f"
-	};
+	    "205398468de2c8873b7d4d73d5be8ddc",
+	    "f9b2d944a2fb782b1af5c0ad592306d3",
+	    "7431f8dad77d6ddfc24e6f3c0c4ac7df",
+	    "eb1f3f5a4673d3e73d8ac1818c957cf4",
+	    "f936dd853073fa44f3daac512e91c476",
+	    "3dc139d3e02437a6d9b732072407c366",
+	    "af0edab2934947982e9a405476702e03",
+	    "8cbc25570b50ba41c9b5361cad4fbedc",
+	    "a31e4783e098f633cbb6689adb41dd4f"};
 
 	for (int i = 1; i <= 9; ++i) {
 		Common::String filename = Common::String::format("ASOUND.00%d", i);
@@ -589,7 +588,7 @@ void ASound::pollActiveChannel() {
 						break;
 
 					case 8:
-						chan->_field1D = (int8)*++pSrc;
+						chan->_field1D = (int8) * ++pSrc;
 						chan->_pSrc += 2;
 						break;
 
@@ -685,14 +684,13 @@ void ASound::pollActiveChannel() {
 }
 
 void ASound::updateOctave() {
- 	int reg = 0xB0 + _activeChannelNumber;
+	int reg = 0xB0 + _activeChannelNumber;
 	write2(8, reg, _ports[reg] & 0xDF);
 }
 
 static int _vList1[] = {
-	0x200, 0x21E, 0x23F, 0x261, 0x285, 0x2AB,
-	0x2D4, 0x2FF, 0x32D, 0x35D, 0x390, 0x3C7
-};
+    0x200, 0x21E, 0x23F, 0x261, 0x285, 0x2AB,
+    0x2D4, 0x2FF, 0x32D, 0x35D, 0x390, 0x3C7};
 
 void ASound::updateChannelState() {
 	updateActiveChannel();
@@ -741,11 +739,9 @@ void ASound::updateChannelState() {
 }
 
 static const int outputIndexes[] = {
-	0, 3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 13, 16, 14, 17
-};
+    0, 3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 13, 16, 14, 17};
 static const int outputChannels[] = {
-	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21, 0
-};
+    0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21, 0};
 
 void ASound::updateActiveChannel() {
 	int reg = 0x40 + outputChannels[outputIndexes[_activeChannelNumber * 2 + 1]];
@@ -784,7 +780,7 @@ void ASound::processSample() {
 	// Write out vib flags and split point
 	write2(8, 0x40 + _v11, 0x3F);
 	int depthRhythm = (_ports[0xBD] & 0x3F) | (_amDep ? 0x80 : 0) |
-		(_vibDep ? 0x40 : 0);
+	                  (_vibDep ? 0x40 : 0);
 	write2(8, 0xBD, depthRhythm);
 	write2(8, 8, _splitPoint ? 0x40 : 0);
 
@@ -801,9 +797,7 @@ void ASound::processSample() {
 	write2(8, 0x80 + _v11, val);
 
 	// Write out misc flags
-	val = (_samplePtr->_ampMod ? 0x80 : 0) | (_samplePtr->_vib ? 0x40 : 0)
-		| (_samplePtr->_egTyp ? 0x20 : 0) | (_samplePtr->_ksr ? 0x10 : 0)
-		| (_samplePtr->_freqMultiple & 0xF);
+	val = (_samplePtr->_ampMod ? 0x80 : 0) | (_samplePtr->_vib ? 0x40 : 0) | (_samplePtr->_egTyp ? 0x20 : 0) | (_samplePtr->_ksr ? 0x10 : 0) | (_samplePtr->_freqMultiple & 0xF);
 	write2(8, 0x20 + _v11, val);
 
 	// Write out waveform select
@@ -942,21 +936,20 @@ int ASound::command8() {
 /*-----------------------------------------------------------------------*/
 
 const ASound1::CommandPtr ASound1::_commandList[42] = {
-	&ASound1::command0, &ASound1::command1, &ASound1::command2, &ASound1::command3,
-	&ASound1::command4, &ASound1::command5, &ASound1::command6, &ASound1::command7,
-	&ASound1::command8, &ASound1::command9, &ASound1::command10, &ASound1::command11,
-	&ASound1::command12, &ASound1::command13, &ASound1::command14, &ASound1::command15,
-	&ASound1::command16, &ASound1::command17, &ASound1::command18, &ASound1::command19,
-	&ASound1::command20, &ASound1::command21, &ASound1::command22, &ASound1::command23,
-	&ASound1::command24, &ASound1::command25, &ASound1::command26, &ASound1::command27,
-	&ASound1::command28, &ASound1::command29, &ASound1::command30, &ASound1::command31,
-	&ASound1::command32, &ASound1::command33, &ASound1::command34, &ASound1::command35,
-	&ASound1::command36, &ASound1::command37, &ASound1::command38, &ASound1::command39,
-	&ASound1::command40, &ASound1::command41
-};
+    &ASound1::command0, &ASound1::command1, &ASound1::command2, &ASound1::command3,
+    &ASound1::command4, &ASound1::command5, &ASound1::command6, &ASound1::command7,
+    &ASound1::command8, &ASound1::command9, &ASound1::command10, &ASound1::command11,
+    &ASound1::command12, &ASound1::command13, &ASound1::command14, &ASound1::command15,
+    &ASound1::command16, &ASound1::command17, &ASound1::command18, &ASound1::command19,
+    &ASound1::command20, &ASound1::command21, &ASound1::command22, &ASound1::command23,
+    &ASound1::command24, &ASound1::command25, &ASound1::command26, &ASound1::command27,
+    &ASound1::command28, &ASound1::command29, &ASound1::command30, &ASound1::command31,
+    &ASound1::command32, &ASound1::command33, &ASound1::command34, &ASound1::command35,
+    &ASound1::command36, &ASound1::command37, &ASound1::command38, &ASound1::command39,
+    &ASound1::command40, &ASound1::command41};
 
 ASound1::ASound1(Audio::Mixer *mixer, OPL::OPL *opl)
-	: ASound(mixer, opl, "asound.001", 0x1520) {
+    : ASound(mixer, opl, "asound.001", 0x1520) {
 	_cmd23Toggle = false;
 
 	// Load sound samples
@@ -1239,22 +1232,20 @@ int ASound1::command2627293032() {
 	return (_commandParam > 0x40) ? _commandParam - 0x40 : _commandParam & 0xff00;
 }
 
-
 /*-----------------------------------------------------------------------*/
 
 const ASound2::CommandPtr ASound2::_commandList[44] = {
-	&ASound2::command0, &ASound2::command1, &ASound2::command2, &ASound2::command3,
-	&ASound2::command4, &ASound2::command5, &ASound2::command6, &ASound2::command7,
-	&ASound2::command8, &ASound2::command9, &ASound2::command10, &ASound2::command11,
-	&ASound2::command12, &ASound2::command13, &ASound2::command14, &ASound2::command15,
-	&ASound2::command16, &ASound2::command17, &ASound2::command18, &ASound2::command19,
-	&ASound2::command20, &ASound2::command21, &ASound2::command22, &ASound2::command23,
-	&ASound2::command24, &ASound2::command25, &ASound2::command26, &ASound2::command27,
-	&ASound2::command28, &ASound2::command29, &ASound2::command30, &ASound2::command31,
-	&ASound2::command32, &ASound2::command33, &ASound2::command34, &ASound2::command35,
-	&ASound2::command36, &ASound2::command37, &ASound2::command38, &ASound2::command39,
-	&ASound2::command40, &ASound2::command41, &ASound2::command42, &ASound2::command43
-};
+    &ASound2::command0, &ASound2::command1, &ASound2::command2, &ASound2::command3,
+    &ASound2::command4, &ASound2::command5, &ASound2::command6, &ASound2::command7,
+    &ASound2::command8, &ASound2::command9, &ASound2::command10, &ASound2::command11,
+    &ASound2::command12, &ASound2::command13, &ASound2::command14, &ASound2::command15,
+    &ASound2::command16, &ASound2::command17, &ASound2::command18, &ASound2::command19,
+    &ASound2::command20, &ASound2::command21, &ASound2::command22, &ASound2::command23,
+    &ASound2::command24, &ASound2::command25, &ASound2::command26, &ASound2::command27,
+    &ASound2::command28, &ASound2::command29, &ASound2::command30, &ASound2::command31,
+    &ASound2::command32, &ASound2::command33, &ASound2::command34, &ASound2::command35,
+    &ASound2::command36, &ASound2::command37, &ASound2::command38, &ASound2::command39,
+    &ASound2::command40, &ASound2::command41, &ASound2::command42, &ASound2::command43};
 
 ASound2::ASound2(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
 	_command12Param = 0xFD;
@@ -1405,11 +1396,7 @@ int ASound2::command17() {
 }
 
 static const int command18_list[16][2] = {
-	{ 0x337C, 28 }, { 0x3398, 26 }, { 0x33B2, 26 }, { 0x33CC, 26 },
-	{ 0x33E6, 56 }, { 0x341E, 46 }, { 0x344C, 56 }, { 0x3484, 22 },
-	{ 0x349A, 38 }, { 0x34C0, 62 }, { 0x34FE, 26 }, { 0x3518, 26 },
-	{ 0x3532, 26 }, { 0x354C, 26 }, { 0x3566, 32 }, { 0x3586, 24 }
-};
+    {0x337C, 28}, {0x3398, 26}, {0x33B2, 26}, {0x33CC, 26}, {0x33E6, 56}, {0x341E, 46}, {0x344C, 56}, {0x3484, 22}, {0x349A, 38}, {0x34C0, 62}, {0x34FE, 26}, {0x3518, 26}, {0x3532, 26}, {0x354C, 26}, {0x3566, 32}, {0x3586, 24}};
 
 int ASound2::command18() {
 	if (_channels[3]._activeCount == 0) {
@@ -1609,23 +1596,22 @@ int ASound2::command43() {
 /*-----------------------------------------------------------------------*/
 
 const ASound3::CommandPtr ASound3::_commandList[61] = {
-	&ASound3::command0, &ASound3::command1, &ASound3::command2, &ASound3::command3,
-	&ASound3::command4, &ASound3::command5, &ASound3::command6, &ASound3::command7,
-	&ASound3::command8, &ASound3::command9, &ASound3::command10, &ASound3::command11,
-	&ASound3::nullCommand, &ASound3::command13, &ASound3::command14, &ASound3::command15,
-	&ASound3::command16, &ASound3::command17, &ASound3::command18, &ASound3::command19,
-	&ASound3::command20, &ASound3::command21, &ASound3::command22, &ASound3::command23,
-	&ASound3::command24, &ASound3::command25, &ASound3::command26, &ASound3::command27,
-	&ASound3::command28, &ASound3::command29, &ASound3::command30, &ASound3::command31,
-	&ASound3::command32, &ASound3::command33, &ASound3::command34, &ASound3::command35,
-	&ASound3::command36, &ASound3::command37, &ASound3::command38, &ASound3::command39,
-	&ASound3::command40, &ASound3::command41, &ASound3::command42, &ASound3::command43,
-	&ASound3::command44, &ASound3::command45, &ASound3::command46, &ASound3::command47,
-	&ASound3::nullCommand, &ASound3::command49, &ASound3::command50, &ASound3::command51,
-	&ASound3::nullCommand, &ASound3::nullCommand, &ASound3::nullCommand, &ASound3::nullCommand,
-	&ASound3::nullCommand, &ASound3::command57, &ASound3::nullCommand, &ASound3::command59,
-	&ASound3::command60
-};
+    &ASound3::command0, &ASound3::command1, &ASound3::command2, &ASound3::command3,
+    &ASound3::command4, &ASound3::command5, &ASound3::command6, &ASound3::command7,
+    &ASound3::command8, &ASound3::command9, &ASound3::command10, &ASound3::command11,
+    &ASound3::nullCommand, &ASound3::command13, &ASound3::command14, &ASound3::command15,
+    &ASound3::command16, &ASound3::command17, &ASound3::command18, &ASound3::command19,
+    &ASound3::command20, &ASound3::command21, &ASound3::command22, &ASound3::command23,
+    &ASound3::command24, &ASound3::command25, &ASound3::command26, &ASound3::command27,
+    &ASound3::command28, &ASound3::command29, &ASound3::command30, &ASound3::command31,
+    &ASound3::command32, &ASound3::command33, &ASound3::command34, &ASound3::command35,
+    &ASound3::command36, &ASound3::command37, &ASound3::command38, &ASound3::command39,
+    &ASound3::command40, &ASound3::command41, &ASound3::command42, &ASound3::command43,
+    &ASound3::command44, &ASound3::command45, &ASound3::command46, &ASound3::command47,
+    &ASound3::nullCommand, &ASound3::command49, &ASound3::command50, &ASound3::command51,
+    &ASound3::nullCommand, &ASound3::nullCommand, &ASound3::nullCommand, &ASound3::nullCommand,
+    &ASound3::nullCommand, &ASound3::command57, &ASound3::nullCommand, &ASound3::command59,
+    &ASound3::command60};
 
 ASound3::ASound3(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.003", 0x15B0) {
 	_command39Flag = false;
@@ -2013,23 +1999,22 @@ int ASound3::command60() {
 /*-----------------------------------------------------------------------*/
 
 const ASound4::CommandPtr ASound4::_commandList[61] = {
-	&ASound4::command0, &ASound4::command1, &ASound4::command2, &ASound4::command3,
-	&ASound4::command4, &ASound4::command5, &ASound4::command6, &ASound4::command7,
-	&ASound4::command8, &ASound4::nullCommand, &ASound4::command10, &ASound4::nullCommand,
-	&ASound4::command12, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command19,
-	&ASound4::command20, &ASound4::command21, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::command24, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command27,
-	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command30, &ASound4::nullCommand,
-	&ASound4::command32, &ASound4::command33, &ASound4::command34, &ASound4::command35,
-	&ASound4::command36, &ASound4::command37, &ASound4::command38, &ASound4::nullCommand,
-	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command43,
-	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::command52, &ASound4::command53, &ASound4::command54, &ASound4::command55,
-	&ASound4::command56, &ASound4::command57, &ASound4::command58, &ASound4::command59,
-	&ASound4::command60
-};
+    &ASound4::command0, &ASound4::command1, &ASound4::command2, &ASound4::command3,
+    &ASound4::command4, &ASound4::command5, &ASound4::command6, &ASound4::command7,
+    &ASound4::command8, &ASound4::nullCommand, &ASound4::command10, &ASound4::nullCommand,
+    &ASound4::command12, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
+    &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command19,
+    &ASound4::command20, &ASound4::command21, &ASound4::nullCommand, &ASound4::nullCommand,
+    &ASound4::command24, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command27,
+    &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command30, &ASound4::nullCommand,
+    &ASound4::command32, &ASound4::command33, &ASound4::command34, &ASound4::command35,
+    &ASound4::command36, &ASound4::command37, &ASound4::command38, &ASound4::nullCommand,
+    &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command43,
+    &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
+    &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
+    &ASound4::command52, &ASound4::command53, &ASound4::command54, &ASound4::command55,
+    &ASound4::command56, &ASound4::command57, &ASound4::command58, &ASound4::command59,
+    &ASound4::command60};
 
 ASound4::ASound4(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.004", 0x14F0) {
 	// Load sound samples
@@ -2270,22 +2255,20 @@ void ASound4::method1() {
 	}
 }
 
-
 /*-----------------------------------------------------------------------*/
 
 const ASound5::CommandPtr ASound5::_commandList[42] = {
-	&ASound5::command0, &ASound5::command1, &ASound5::command2, &ASound5::command3,
-	&ASound5::command4, &ASound5::command5, &ASound5::command6, &ASound5::command7,
-	&ASound5::command8, &ASound5::command9, &ASound5::command10, &ASound5::command11,
-	&ASound5::command11, &ASound5::command13, &ASound5::command14, &ASound5::command15,
-	&ASound5::command16, &ASound5::command17, &ASound5::command18, &ASound5::command19,
-	&ASound5::command20, &ASound5::command21, &ASound5::command22, &ASound5::command23,
-	&ASound5::command11, &ASound5::command11, &ASound5::command26, &ASound5::command27,
-	&ASound5::command28, &ASound5::command29, &ASound5::command30, &ASound5::command31,
-	&ASound5::command32, &ASound5::command33, &ASound5::command34, &ASound5::command35,
-	&ASound5::command36, &ASound5::command37, &ASound5::command38, &ASound5::command39,
-	&ASound5::command40, &ASound5::command41
-};
+    &ASound5::command0, &ASound5::command1, &ASound5::command2, &ASound5::command3,
+    &ASound5::command4, &ASound5::command5, &ASound5::command6, &ASound5::command7,
+    &ASound5::command8, &ASound5::command9, &ASound5::command10, &ASound5::command11,
+    &ASound5::command11, &ASound5::command13, &ASound5::command14, &ASound5::command15,
+    &ASound5::command16, &ASound5::command17, &ASound5::command18, &ASound5::command19,
+    &ASound5::command20, &ASound5::command21, &ASound5::command22, &ASound5::command23,
+    &ASound5::command11, &ASound5::command11, &ASound5::command26, &ASound5::command27,
+    &ASound5::command28, &ASound5::command29, &ASound5::command30, &ASound5::command31,
+    &ASound5::command32, &ASound5::command33, &ASound5::command34, &ASound5::command35,
+    &ASound5::command36, &ASound5::command37, &ASound5::command38, &ASound5::command39,
+    &ASound5::command40, &ASound5::command41};
 
 ASound5::ASound5(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
 	// Load sound samples
@@ -2518,15 +2501,14 @@ int ASound5::command41() {
 /*-----------------------------------------------------------------------*/
 
 const ASound6::CommandPtr ASound6::_commandList[30] = {
-	&ASound6::command0, &ASound6::command1, &ASound6::command2, &ASound6::command3,
-	&ASound6::command4, &ASound6::command5, &ASound6::command6, &ASound6::command7,
-	&ASound6::command8, &ASound6::command9, &ASound6::command10, &ASound6::command11,
-	&ASound6::command11, &ASound6::command13, &ASound6::command14, &ASound6::command15,
-	&ASound6::command16, &ASound6::command17, &ASound6::command18, &ASound6::command19,
-	&ASound6::command20, &ASound6::command21, &ASound6::command22, &ASound6::command23,
-	&ASound6::command11, &ASound6::command11, &ASound6::nullCommand, &ASound6::nullCommand,
-	&ASound6::nullCommand, &ASound6::command29
-};
+    &ASound6::command0, &ASound6::command1, &ASound6::command2, &ASound6::command3,
+    &ASound6::command4, &ASound6::command5, &ASound6::command6, &ASound6::command7,
+    &ASound6::command8, &ASound6::command9, &ASound6::command10, &ASound6::command11,
+    &ASound6::command11, &ASound6::command13, &ASound6::command14, &ASound6::command15,
+    &ASound6::command16, &ASound6::command17, &ASound6::command18, &ASound6::command19,
+    &ASound6::command20, &ASound6::command21, &ASound6::command22, &ASound6::command23,
+    &ASound6::command11, &ASound6::command11, &ASound6::nullCommand, &ASound6::nullCommand,
+    &ASound6::nullCommand, &ASound6::command29};
 
 ASound6::ASound6(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.006", 0x1390) {
 	// Load sound samples
@@ -2672,17 +2654,16 @@ int ASound6::command29() {
 /*-----------------------------------------------------------------------*/
 
 const ASound7::CommandPtr ASound7::_commandList[38] = {
-	&ASound7::command0, &ASound7::command1, &ASound7::command2, &ASound7::command3,
-	&ASound7::command4, &ASound7::command5, &ASound7::command6, &ASound7::command7,
-	&ASound7::command8, &ASound7::command9, &ASound7::nullCommand, &ASound7::nullCommand,
-	&ASound7::nullCommand, &ASound7::nullCommand, &ASound7::nullCommand, &ASound7::command15,
-	&ASound7::command16, &ASound7::command16, &ASound7::command18, &ASound7::command19,
-	&ASound7::command20, &ASound7::command21, &ASound7::command22, &ASound7::command23,
-	&ASound7::command24, &ASound7::command25, &ASound7::command26, &ASound7::command27,
-	&ASound7::command28, &ASound7::nullCommand, &ASound7::command30, &ASound7::nullCommand,
-	&ASound7::command32, &ASound7::command33, &ASound7::command34, &ASound7::command35,
-	&ASound7::command36, &ASound7::command37
-};
+    &ASound7::command0, &ASound7::command1, &ASound7::command2, &ASound7::command3,
+    &ASound7::command4, &ASound7::command5, &ASound7::command6, &ASound7::command7,
+    &ASound7::command8, &ASound7::command9, &ASound7::nullCommand, &ASound7::nullCommand,
+    &ASound7::nullCommand, &ASound7::nullCommand, &ASound7::nullCommand, &ASound7::command15,
+    &ASound7::command16, &ASound7::command16, &ASound7::command18, &ASound7::command19,
+    &ASound7::command20, &ASound7::command21, &ASound7::command22, &ASound7::command23,
+    &ASound7::command24, &ASound7::command25, &ASound7::command26, &ASound7::command27,
+    &ASound7::command28, &ASound7::nullCommand, &ASound7::command30, &ASound7::nullCommand,
+    &ASound7::command32, &ASound7::command33, &ASound7::command34, &ASound7::command35,
+    &ASound7::command36, &ASound7::command37};
 
 ASound7::ASound7(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.007", 0x1460) {
 	// Load sound samples
@@ -2878,17 +2859,16 @@ int ASound7::command37() {
 /*-----------------------------------------------------------------------*/
 
 const ASound8::CommandPtr ASound8::_commandList[38] = {
-	&ASound8::command0, &ASound8::command1, &ASound8::command2, &ASound8::command3,
-	&ASound8::command4, &ASound8::command5, &ASound8::command6, &ASound8::command7,
-	&ASound8::command8, &ASound8::command9, &ASound8::command10, &ASound8::command11,
-	&ASound8::command12, &ASound8::command13, &ASound8::command14, &ASound8::command15,
-	&ASound8::command16, &ASound8::command16, &ASound8::command18, &ASound8::command19,
-	&ASound8::command20, &ASound8::command21, &ASound8::command22, &ASound8::command23,
-	&ASound8::command24, &ASound8::command25, &ASound8::command26, &ASound8::command27,
-	&ASound8::command28, &ASound8::command29, &ASound8::command30, &ASound8::command31,
-	&ASound8::command32, &ASound8::command33, &ASound8::command34, &ASound8::command35,
-	&ASound8::command36, &ASound8::command37
-};
+    &ASound8::command0, &ASound8::command1, &ASound8::command2, &ASound8::command3,
+    &ASound8::command4, &ASound8::command5, &ASound8::command6, &ASound8::command7,
+    &ASound8::command8, &ASound8::command9, &ASound8::command10, &ASound8::command11,
+    &ASound8::command12, &ASound8::command13, &ASound8::command14, &ASound8::command15,
+    &ASound8::command16, &ASound8::command16, &ASound8::command18, &ASound8::command19,
+    &ASound8::command20, &ASound8::command21, &ASound8::command22, &ASound8::command23,
+    &ASound8::command24, &ASound8::command25, &ASound8::command26, &ASound8::command27,
+    &ASound8::command28, &ASound8::command29, &ASound8::command30, &ASound8::command31,
+    &ASound8::command32, &ASound8::command33, &ASound8::command34, &ASound8::command35,
+    &ASound8::command36, &ASound8::command37};
 
 ASound8::ASound8(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.008", 0x1490) {
 	// Load sound samples
@@ -3131,20 +3111,19 @@ int ASound8::command37() {
 /*-----------------------------------------------------------------------*/
 
 const ASound9::CommandPtr ASound9::_commandList[52] = {
-	&ASound9::command0, &ASound9::command1, &ASound9::command2, &ASound9::command3,
-	&ASound9::command4, &ASound9::command5, &ASound9::command6, &ASound9::command7,
-	&ASound9::command8, &ASound9::command9, &ASound9::command10, &ASound9::command11,
-	&ASound9::command12, &ASound9::command13, &ASound9::command14, &ASound9::command15,
-	&ASound9::command16, &ASound9::command17, &ASound9::command18, &ASound9::command19,
-	&ASound9::command20, &ASound9::command21, &ASound9::command22, &ASound9::command23,
-	&ASound9::command24, &ASound9::command25, &ASound9::command26, &ASound9::command27,
-	&ASound9::command28, &ASound9::command29, &ASound9::command30, &ASound9::command31,
-	&ASound9::command32, &ASound9::command33, &ASound9::command34, &ASound9::command35,
-	&ASound9::command36, &ASound9::command37, &ASound9::command38, &ASound9::command39,
-	&ASound9::command40, &ASound9::command41, &ASound9::command42, &ASound9::command43,
-	&ASound9::command44_46, &ASound9::command45, &ASound9::command44_46, &ASound9::command47,
-	&ASound9::command48, &ASound9::command49, &ASound9::command50, &ASound9::command51
-};
+    &ASound9::command0, &ASound9::command1, &ASound9::command2, &ASound9::command3,
+    &ASound9::command4, &ASound9::command5, &ASound9::command6, &ASound9::command7,
+    &ASound9::command8, &ASound9::command9, &ASound9::command10, &ASound9::command11,
+    &ASound9::command12, &ASound9::command13, &ASound9::command14, &ASound9::command15,
+    &ASound9::command16, &ASound9::command17, &ASound9::command18, &ASound9::command19,
+    &ASound9::command20, &ASound9::command21, &ASound9::command22, &ASound9::command23,
+    &ASound9::command24, &ASound9::command25, &ASound9::command26, &ASound9::command27,
+    &ASound9::command28, &ASound9::command29, &ASound9::command30, &ASound9::command31,
+    &ASound9::command32, &ASound9::command33, &ASound9::command34, &ASound9::command35,
+    &ASound9::command36, &ASound9::command37, &ASound9::command38, &ASound9::command39,
+    &ASound9::command40, &ASound9::command41, &ASound9::command42, &ASound9::command43,
+    &ASound9::command44_46, &ASound9::command45, &ASound9::command44_46, &ASound9::command47,
+    &ASound9::command48, &ASound9::command49, &ASound9::command50, &ASound9::command51};
 
 ASound9::ASound9(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.009", 0x16F0) {
 	_v1 = _v2 = 0;
@@ -3433,7 +3412,6 @@ int ASound9::command51() {
 	_channels[5].load(loadData(0x587C, 2538));
 	return 0;
 }
-
 
 } // End of namespace Nebular
 

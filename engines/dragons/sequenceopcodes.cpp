@@ -20,9 +20,9 @@
  *
  */
 
-#include "dragons/dragons.h"
 #include "dragons/sequenceopcodes.h"
 #include "dragons/actor.h"
+#include "dragons/dragons.h"
 
 namespace Dragons {
 // OpCall
@@ -50,7 +50,7 @@ uint32 OpCall::readUint32() {
 // SequenceOpcodes
 
 SequenceOpcodes::SequenceOpcodes(DragonsEngine *vm)
-	: _vm(vm) {
+    : _vm(vm) {
 	initOpcodes();
 }
 
@@ -66,8 +66,8 @@ void SequenceOpcodes::execOpcode(Actor *control, OpCall &opCall) {
 	(*_opcodes[opCall._op])(control, opCall);
 }
 
-typedef Common::Functor2Mem<Actor*, OpCall&, void, SequenceOpcodes> SequenceOpcodeI;
-#define OPCODE(op, func) \
+typedef Common::Functor2Mem<Actor *, OpCall &, void, SequenceOpcodes> SequenceOpcodeI;
+#define OPCODE(op, func)                                              \
 	_opcodes[op] = new SequenceOpcodeI(this, &SequenceOpcodes::func); \
 	_opcodeNames[op] = #func;
 
@@ -96,7 +96,6 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(17, opPlaySound);
 	OPCODE(18, opSetXY);
 	OPCODE(19, opSetXYAndStop);
-
 }
 
 #undef OPCODE
@@ -210,7 +209,7 @@ void SequenceOpcodes::opPlaySound(Actor *actor, OpCall &opCall) {
 	ARG_INT16(soundId);
 	debug(5, "opPlaySound actorId: %d soundId: %d", actor->_actorID, soundId);
 
-	_vm->playOrStopSound((uint16) soundId);
+	_vm->playOrStopSound((uint16)soundId);
 	updateReturn(opCall, 1);
 }
 
@@ -226,10 +225,6 @@ void SequenceOpcodes::opSetXYAndStop(Actor *actor, OpCall &opCall) {
 	opSetXY(actor, opCall);
 	opCall._result = 0;
 }
-
-
-
-
 
 //void SequenceOpcodes::opYield(Control *control, OpCall &opCall) {
 //	opCall._result = 2;

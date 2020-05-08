@@ -29,10 +29,10 @@
  *
  */
 
+#include "sword25/kernel/filesystemutil.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
-#include "sword25/kernel/filesystemutil.h"
 #include "sword25/kernel/persistenceservice.h"
 
 namespace Sword25 {

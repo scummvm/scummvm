@@ -33,9 +33,9 @@
 #define SWORD25_RESOURCESERVICE_H
 
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/service.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/kernel/resmanager.h"
+#include "sword25/kernel/service.h"
 
 namespace Sword25 {
 
@@ -62,7 +62,6 @@ public:
 	 * @return          Returns true if the resource can be loaded.
 	 */
 	virtual bool canLoadResource(const Common::String &fileName) = 0;
-
 };
 
 } // End of namespace Sword25

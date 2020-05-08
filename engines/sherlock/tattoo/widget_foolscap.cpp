@@ -21,10 +21,10 @@
  */
 
 #include "sherlock/tattoo/widget_foolscap.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -92,7 +92,7 @@ void WidgetFoolscap::show() {
 	ImageFrame &paperFrame = (*_images)[0];
 	_bounds = Common::Rect(paperFrame._width, paperFrame._height);
 	_bounds.moveTo(screen._currentScroll.x + (SHERLOCK_SCREEN_WIDTH - paperFrame._width) / 2,
-		(SHERLOCK_SCREEN_HEIGHT - paperFrame._height) / 2);
+	               (SHERLOCK_SCREEN_HEIGHT - paperFrame._height) / 2);
 
 	// Clear answer data and set correct solution strings
 	for (int idx = 0; idx < 3; ++idx)
@@ -116,8 +116,7 @@ void WidgetFoolscap::show() {
 				char c = _solutions[line][idx];
 
 				Common::String str = Common::String::format("%c", c);
-				_surface.writeString(str, Common::Point(cursorPos.x + screen.widestChar() / 2
-					- screen.charWidth(c) / 2, cursorPos.y), 0);
+				_surface.writeString(str, Common::Point(cursorPos.x + screen.widestChar() / 2 - screen.charWidth(c) / 2, cursorPos.y), 0);
 			}
 		}
 	}
@@ -147,12 +146,12 @@ void WidgetFoolscap::handleEvents() {
 				if (_blinkFlag) {
 					// Draw the caret
 					_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _cursorPos.x + screen.widestChar() - 1,
-						_cursorPos.y + screen.fontHeight() - 1), cursorColor);
+					                               _cursorPos.y + screen.fontHeight() - 1),
+					                  cursorColor);
 
 					if (_answers[_lineNum][_charNum]) {
 						Common::String str = Common::String::format("%c", _answers[_lineNum][_charNum]);
-						_surface.writeString(str, Common::Point(_cursorPos.x + screen.widestChar() / 2
-							- screen.charWidth(_answers[_lineNum][_charNum]) / 2, _cursorPos.y), 0);
+						_surface.writeString(str, Common::Point(_cursorPos.x + screen.widestChar() / 2 - screen.charWidth(_answers[_lineNum][_charNum]) / 2, _cursorPos.y), 0);
 					}
 				} else {
 					// Restore background
@@ -161,8 +160,7 @@ void WidgetFoolscap::handleEvents() {
 					// Draw the character at that position if there is one
 					if (_answers[_lineNum][_charNum]) {
 						Common::String str = Common::String::format("%c", _answers[_lineNum][_charNum]);
-						_surface.writeString(str, Common::Point(_cursorPos.x + screen.widestChar() / 2
-							- screen.charWidth(_answers[_lineNum][_charNum]) / 2, _cursorPos.y), 0);
+						_surface.writeString(str, Common::Point(_cursorPos.x + screen.widestChar() / 2 - screen.charWidth(_answers[_lineNum][_charNum]) / 2, _cursorPos.y), 0);
 					}
 				}
 			}
@@ -195,8 +193,7 @@ void WidgetFoolscap::handleKeyboardEvents() {
 
 	if (_answers[_lineNum][_charNum]) {
 		Common::String str = Common::String::format("%c", _answers[_lineNum][_charNum]);
-		_surface.writeString(str, Common::Point(_cursorPos.x + screen.widestChar() / 2
-			- screen.charWidth(_answers[_lineNum][_charNum]) / 2, _cursorPos.y), 0);
+		_surface.writeString(str, Common::Point(_cursorPos.x + screen.widestChar() / 2 - screen.charWidth(_answers[_lineNum][_charNum]) / 2, _cursorPos.y), 0);
 	}
 
 	switch (keyState.keycode) {
@@ -255,8 +252,7 @@ void WidgetFoolscap::handleKeyboardEvents() {
 	_cursorPos.y = _lines[_lineNum].y - screen.fontHeight() - 2;
 
 	// See if all of their anwers are correct
-	if (!scumm_stricmp(_answers[0], _solutions[0]) && !scumm_stricmp(_answers[1], _solutions[1])
-			&& !scumm_stricmp(_answers[2], _solutions[2])) {
+	if (!scumm_stricmp(_answers[0], _solutions[0]) && !scumm_stricmp(_answers[1], _solutions[1]) && !scumm_stricmp(_answers[2], _solutions[2])) {
 		_solved = true;
 		close();
 	}
@@ -265,8 +261,7 @@ void WidgetFoolscap::handleKeyboardEvents() {
 void WidgetFoolscap::restoreChar() {
 	Screen &screen = *_vm->_screen;
 	ImageFrame &bgFrame = (*_images)[0];
-	_surface.SHblitFrom(bgFrame, _cursorPos, Common::Rect(_cursorPos.x, _cursorPos.y,
-		_cursorPos.x + screen.widestChar(), _cursorPos.y + screen.fontHeight()));
+	_surface.SHblitFrom(bgFrame, _cursorPos, Common::Rect(_cursorPos.x, _cursorPos.y, _cursorPos.x + screen.widestChar(), _cursorPos.y + screen.fontHeight()));
 }
 
 void WidgetFoolscap::close() {

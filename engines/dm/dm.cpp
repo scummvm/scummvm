@@ -31,18 +31,18 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
 
-#include "common/file.h"
-#include "common/events.h"
-#include "common/array.h"
 #include "common/algorithm.h"
+#include "common/array.h"
+#include "common/events.h"
+#include "common/file.h"
 #include "common/translation.h"
 
-#include "engines/util.h"
 #include "engines/engine.h"
+#include "engines/util.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -50,22 +50,22 @@
 
 #include "gui/saveload.h"
 
+#include "dm/champion.h"
+#include "dm/dialog.h"
 #include "dm/dm.h"
-#include "dm/gfx.h"
 #include "dm/dungeonman.h"
 #include "dm/eventman.h"
-#include "dm/menus.h"
-#include "dm/champion.h"
-#include "dm/loadsave.h"
-#include "dm/objectman.h"
-#include "dm/inventory.h"
-#include "dm/text.h"
-#include "dm/movesens.h"
+#include "dm/gfx.h"
 #include "dm/group.h"
-#include "dm/timeline.h"
+#include "dm/inventory.h"
+#include "dm/loadsave.h"
+#include "dm/menus.h"
+#include "dm/movesens.h"
+#include "dm/objectman.h"
 #include "dm/projexpl.h"
-#include "dm/dialog.h"
 #include "dm/sounds.h"
+#include "dm/text.h"
+#include "dm/timeline.h"
 
 namespace DM {
 
@@ -120,14 +120,12 @@ int16 DMEngine::getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) 
 	return ABS(mapx1 - mapx2) + ABS(mapy1 - mapy2);
 }
 
-DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : 
-			Engine(syst), _console(nullptr), _gameVersion(desc),
-			_thingNone(0), _thingEndOfList(0xFFFE), _thingFirstExplosion(0xFF80),
-			_thingExplFireBall(0xFF80), _thingExplSlime(0xFF81), _thingExplLightningBolt(0xFF82),
-			_thingExplHarmNonMaterial(0xFF83), _thingExplOpenDoor(0xFF84), _thingExplPoisonBolt(0xFF86),
-			_thingExplPoisonCloud(0xFF87), _thingExplSmoke(0xFFA8), _thingExplFluxcage(0xFFB2),
-			_thingExplRebirthStep1(0xFFE4), _thingExplRebirthStep2(0xFFE5), _thingParty(0xFFFF)
-	{
+DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : Engine(syst), _console(nullptr), _gameVersion(desc),
+                                                                     _thingNone(0), _thingEndOfList(0xFFFE), _thingFirstExplosion(0xFF80),
+                                                                     _thingExplFireBall(0xFF80), _thingExplSlime(0xFF81), _thingExplLightningBolt(0xFF82),
+                                                                     _thingExplHarmNonMaterial(0xFF83), _thingExplOpenDoor(0xFF84), _thingExplPoisonBolt(0xFF86),
+                                                                     _thingExplPoisonCloud(0xFF87), _thingExplSmoke(0xFFA8), _thingExplFluxcage(0xFFB2),
+                                                                     _thingExplRebirthStep1(0xFFE4), _thingExplRebirthStep2(0xFFE5), _thingParty(0xFFFF) {
 	// register random source
 	_rnd = new Common::RandomSource("dm");
 
@@ -209,9 +207,8 @@ DMEngine::~DMEngine() {
 }
 
 bool DMEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsLoadingDuringRuntime);
+	return (f == kSupportsSavingDuringRuntime) ||
+	       (f == kSupportsLoadingDuringRuntime);
 }
 
 Common::Error DMEngine::loadGameState(int slot) {
@@ -303,7 +300,7 @@ void DMEngine::initMemoryManager() {
 }
 
 void DMEngine::startGame() {
-	static Box boxScreenTop(0, 319, 0, 32); // @ G0061_s_Graphic562_Box_ScreenTop
+	static Box boxScreenTop(0, 319, 0, 32);       // @ G0061_s_Graphic562_Box_ScreenTop
 	static Box boxScreenRight(224, 319, 33, 169); // @ G0062_s_Graphic562_Box_ScreenRight
 	static Box boxScreenBottom(0, 319, 169, 199); // @ G0063_s_Graphic562_Box_ScreenBottom
 
@@ -418,7 +415,6 @@ void DMEngine::gameloop() {
 
 		for (;;) {
 
-
 			if (_newPartyMapIndex != kDMMapIndexNone) {
 				processNewPartyMap(_newPartyMapIndex);
 				_moveSens->getMoveResult(_thingParty, kDMMapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
@@ -440,7 +436,6 @@ void DMEngine::gameloop() {
 				_eventMan->showMouse();
 				_eventMan->setPointerToObject(_objectMan->_objectIconForMousePointer);
 				_eventMan->hideMouse();
-
 			}
 			if (_eventMan->_refreshMousePointerInMainLoop) {
 				_eventMan->_refreshMousePointerInMainLoop = false;
@@ -669,7 +664,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 			_engineShouldQuit = true;
 			return;
 		}
-T0444017:
+	T0444017:
 		_displayMan->fillScreen(kDMColorBlack);
 		_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxTheEnd), &theEndBox, k40_byteWidth, kDMColorNoTransparency, 14);
 		for (uint16 i = 0; i < 16; ++i)
@@ -746,7 +741,6 @@ T0444017:
 	return;
 }
 
-
 void DMEngine::drawEntrance() {
 	static Box doorsUpperHalfBox = Box(0, 231, 0, 80);
 	static Box doorsLowerHalfBox = Box(0, 231, 81, 160);
@@ -770,7 +764,7 @@ void DMEngine::drawEntrance() {
 		microDungeonSquares[i] = Square(kDMElementTypeWall, 0);
 
 	for (int16 idx = 0; idx < 5; idx++) {
-		microDungeonCurrentMapData[idx] = (byte*)&microDungeonSquares[idx * 5];
+		microDungeonCurrentMapData[idx] = (byte *)&microDungeonSquares[idx * 5];
 		microDungeonSquares[idx + 10] = Square(kDMElementTypeCorridor, 0);
 	}
 	microDungeonSquares[7] = Square(kDMElementTypeCorridor, 0);
@@ -811,9 +805,9 @@ void DMEngine::openEntranceDoors() {
 
 		_displayMan->blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kDMColorNoTransparency, 200);
 		_displayMan->blitToBitmap(leftDoorBitmap, _displayMan->_bitmapScreen, leftDoorBox, leftDoorBlitFrom, 0, 64, k160_byteWidthScreen,
-								  kDMColorNoTransparency, 161, k200_heightScreen);
+		                          kDMColorNoTransparency, 161, k200_heightScreen);
 		_displayMan->blitToBitmap(rightDoorBitmap, _displayMan->_bitmapScreen, rightDoorBox, 0, 0, 64, k160_byteWidthScreen,
-								  kDMColorNoTransparency, 161, k200_heightScreen);
+		                          kDMColorNoTransparency, 161, k200_heightScreen);
 		_eventMan->discardAllInput();
 		_displayMan->updateScreen();
 
@@ -860,7 +854,7 @@ void DMEngine::drawTittle() {
 	bitmapTitle = bitmapDungeonChaos;
 	uint16 destinationHeight = 12;
 	int16 destinationPixelWidth = 48;
-	byte *shrinkedTitle[20]; /* Only the first 18 entries are actually used */
+	byte *shrinkedTitle[20];      /* Only the first 18 entries are actually used */
 	int16 blitCoordinates[20][5]; /* Only the first 18 entries are actually used */
 	for (int16 i = 0; i < 18; i++) {
 		shrinkedTitle[i] = titleSteps;
@@ -926,7 +920,7 @@ void DMEngine::fuseSequence() {
 	lordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_partyDir];
 	lordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_partyDir];
 	Thing lordChaosThing = _groupMan->groupGetThing(lordChaosMapX, lordChaosMapY);
-	Group *lordGroup = (Group*)_dungeonMan->getThingData(lordChaosThing);
+	Group *lordGroup = (Group *)_dungeonMan->getThingData(lordChaosThing);
 	lordGroup->_health[0] = 10000;
 	_dungeonMan->setGroupCells(lordGroup, kDMCreatureTypeSingleCenteredCreature, _dungeonMan->_partyMapIndex);
 	_dungeonMan->setGroupDirections(lordGroup, returnOppositeDir(_dungeonMan->_partyDir), _dungeonMan->_partyMapIndex);
@@ -939,7 +933,7 @@ void DMEngine::fuseSequence() {
 		Thing curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
 		while (curThing != _thingEndOfList) {
 			if (curThing.getType() == kDMThingTypeExplosion) {
-				Explosion *curExplosion = (Explosion*)_dungeonMan->getThingData(curThing);
+				Explosion *curExplosion = (Explosion *)_dungeonMan->getThingData(curThing);
 				if (curExplosion->getType() == kDMExplosionTypeFluxcage) {
 					_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
 					curExplosion->setNextThing(_thingNone);

@@ -46,8 +46,8 @@ void SpotTable::loadFromStream(Common::SeekableReadStream *stream) {
 		_entries[i].dstFlags = stream->readByte();
 		stream->readByte(); // alignment
 		debug(0, "Spot[%d]: %d %d %d %d %d %d %d", i, _entries[i].room, _entries[i].direction,
-				_entries[i].srcFlags, _entries[i].altCode, _entries[i].movieStart,
-				_entries[i].movieEnd, _entries[i].dstFlags);
+		      _entries[i].srcFlags, _entries[i].altCode, _entries[i].movieStart,
+		      _entries[i].movieEnd, _entries[i].dstFlags);
 	}
 }
 

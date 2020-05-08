@@ -51,15 +51,15 @@ typedef struct MapEntity_s {
 		Obj *obj;
 		NuvieAnim *anim;
 	};
-	MapEntity_s()             {
+	MapEntity_s() {
 		entity_type = ENT_NOTHING;
 		data = NULL;
 	}
-	MapEntity_s(Actor *a)     {
+	MapEntity_s(Actor *a) {
 		entity_type = ENT_ACTOR;
 		actor = a;
 	}
-	MapEntity_s(Obj *o)       {
+	MapEntity_s(Obj *o) {
 		entity_type = ENT_OBJ;
 		obj = o;
 	}

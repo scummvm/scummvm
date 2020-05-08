@@ -41,7 +41,7 @@ namespace Audio {
 class AACDecoder : public Codec {
 public:
 	AACDecoder(Common::SeekableReadStream *extraData,
-	          DisposeAfterUse::Flag disposeExtraData);
+	           DisposeAfterUse::Flag disposeExtraData);
 	~AACDecoder();
 
 	AudioStream *decodeFrame(Common::SeekableReadStream &stream);

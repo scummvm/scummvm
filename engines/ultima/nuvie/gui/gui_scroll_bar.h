@@ -23,8 +23,6 @@
 #ifndef NUVIE_GUI_GUI_SCROLLBAR_H
 #define NUVIE_GUI_GUI_SCROLLBAR_H
 
-
-
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/screen/screen.h"
 
@@ -37,11 +35,11 @@ namespace Nuvie {
 
 // Callback message types
 
-#define SCROLLBAR_CB_DOWN_BUTTON  0x1
-#define SCROLLBAR_CB_UP_BUTTON    0x2
+#define SCROLLBAR_CB_DOWN_BUTTON 0x1
+#define SCROLLBAR_CB_UP_BUTTON 0x2
 #define SCROLLBAR_CB_SLIDER_MOVED 0x3
-#define SCROLLBAR_CB_PAGE_DOWN    0x4
-#define SCROLLBAR_CB_PAGE_UP      0x5
+#define SCROLLBAR_CB_PAGE_DOWN 0x4
+#define SCROLLBAR_CB_PAGE_UP 0x5
 
 class GUI_Button;
 

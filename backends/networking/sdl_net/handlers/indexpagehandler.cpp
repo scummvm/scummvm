@@ -27,7 +27,7 @@
 
 namespace Networking {
 
-IndexPageHandler::IndexPageHandler(): CommandSender(nullptr) {}
+IndexPageHandler::IndexPageHandler() : CommandSender(nullptr) {}
 
 IndexPageHandler::~IndexPageHandler() {}
 
@@ -36,14 +36,12 @@ IndexPageHandler::~IndexPageHandler() {}
 void IndexPageHandler::handle(Client &client) {
 	// redirect to "/filesAJAX"
 	HandlerUtils::setMessageHandler(
-		client,
-		Common::String::format(
-			"%s<br/><a href=\"files\">%s</a>",
-			HandlerUtils::toUtf8(_("This is a local webserver index page.")).c_str(),
-			HandlerUtils::toUtf8(_("Open Files manager")).c_str()
-		),
-		"/filesAJAX"
-	);
+	    client,
+	    Common::String::format(
+	        "%s<br/><a href=\"files\">%s</a>",
+	        HandlerUtils::toUtf8(_("This is a local webserver index page.")).c_str(),
+	        HandlerUtils::toUtf8(_("Open Files manager")).c_str()),
+	    "/filesAJAX");
 }
 
 bool IndexPageHandler::minimalModeSupported() {

@@ -31,7 +31,7 @@ class Palette;
 
 class Movie {
 public:
-	Movie(KyraEngine_v1 *vm) : _vm(vm), _screen(vm->screen()), _opened(false),  _x(-1), _y(-1), _drawPage(-1) {}
+	Movie(KyraEngine_v1 *vm) : _vm(vm), _screen(vm->screen()), _opened(false), _x(-1), _y(-1), _drawPage(-1) {}
 	virtual ~Movie() {}
 
 	virtual bool opened() { return _opened; }
@@ -104,6 +104,7 @@ public:
 	void close() override;
 
 	void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) override;
+
 private:
 	void processFrame(int frameNum, uint8 *dst) override;
 
@@ -124,6 +125,7 @@ public:
 
 	void setWidth(int w) { _width = w; }
 	void setHeight(int h) { _height = h; }
+
 protected:
 	int16 _xAdd;
 	int16 _yAdd;

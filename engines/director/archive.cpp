@@ -22,11 +22,11 @@
 
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/substream.h"
 #include "common/macresman.h"
+#include "common/substream.h"
 
-#include "director/director.h"
 #include "director/archive.h"
+#include "director/director.h"
 
 namespace Director {
 
@@ -397,8 +397,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	uint32 rifxType = subStream.readUint32();
 
 	if (rifxType != MKTAG('M', 'V', '9', '3') &&
-		rifxType != MKTAG('A', 'P', 'P', 'L') &&
-		rifxType != MKTAG('M', 'C', '9', '5'))
+	    rifxType != MKTAG('A', 'P', 'P', 'L') &&
+	    rifxType != MKTAG('M', 'C', '9', '5'))
 		return false;
 
 	if (subStream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
@@ -420,7 +420,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	subStream.readUint16(); // unknown
 	subStream.readUint32(); // resCount + empty entries
 	uint32 resCount = subStream.readUint32();
-	subStream.skip(8); // all 0xFF
+	subStream.skip(8);      // all 0xFF
 	subStream.readUint32(); // unknown
 
 	Common::Array<Resource> resources;
@@ -439,7 +439,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		uint32 unk2 = subStream.readUint32();
 
 		debug(3, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x unk2: %x",
-			i, tag2str(tag), size, offset, offset, flags, unk1, unk2);
+		      i, tag2str(tag), size, offset, offset, flags, unk1, unk2);
 
 		Resource res;
 		res.offset = offset;
@@ -458,15 +458,15 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			casRes = &resources.back();
 		// or the children of
 		else if (tag == MKTAG('S', 'T', 'X', 'T') ||
-				 tag == MKTAG('B', 'I', 'T', 'D') ||
-				 tag == MKTAG('D', 'I', 'B', ' ') ||
-				 tag == MKTAG('R', 'T', 'E', '0') ||
-				 tag == MKTAG('R', 'T', 'E', '1') ||
-				 tag == MKTAG('R', 'T', 'E', '2') ||
-				 tag == MKTAG('s', 'n', 'd', ' ') ||
-				 tag == MKTAG('L', 'c', 't', 'x') ||
-				 tag == MKTAG('L', 'n', 'a', 'm') ||
-				 tag == MKTAG('L', 's', 'c', 'r'))
+		         tag == MKTAG('B', 'I', 'T', 'D') ||
+		         tag == MKTAG('D', 'I', 'B', ' ') ||
+		         tag == MKTAG('R', 'T', 'E', '0') ||
+		         tag == MKTAG('R', 'T', 'E', '1') ||
+		         tag == MKTAG('R', 'T', 'E', '2') ||
+		         tag == MKTAG('s', 'n', 'd', ' ') ||
+		         tag == MKTAG('L', 'c', 't', 'x') ||
+		         tag == MKTAG('L', 'n', 'a', 'm') ||
+		         tag == MKTAG('L', 's', 'c', 'r'))
 			_types[tag][i] = res;
 	}
 
@@ -502,8 +502,6 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			out.close();
 		}
 	}
-
-
 
 	// We need to have found the 'File' resource already
 	if (rifxType == MKTAG('A', 'P', 'P', 'L')) {
@@ -606,6 +604,5 @@ Resource RIFXArchive::getResourceDetail(uint32 tag, uint16 id) {
 
 	return resMap[id];
 }
-
 
 } // End of namespace Director

@@ -88,4 +88,4 @@ bool ConversationLineList::parseFile(const Common::String &fileName) {
 	return true;
 }
 
-}
+} // namespace MutationOfJB

@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/fonts/wou_font.h"
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/screen/screen.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/u6_lzw.h"
 #include "ultima/nuvie/files/u6_shape.h"
-#include "ultima/nuvie/fonts/wou_font.h"
-#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/screen/screen.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -103,7 +103,6 @@ uint16 WOUFont::getCharWidth(uint8 c) {
 
 	return font_data[0x4 + get_char_num(c)];
 }
-
 
 uint16 WOUFont::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
                          uint8 color) {

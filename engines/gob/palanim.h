@@ -30,7 +30,7 @@ namespace Gob {
 class PalAnim {
 public:
 	bool fadeStep(int16 oper); // 0: all colors, 1: red, 2: green, 3: blue
-	void fade(Video::PalDesc * palDesc, int16 fade, int16 all);
+	void fade(Video::PalDesc *palDesc, int16 fade, int16 all);
 
 	PalAnim(GobEngine *vm);
 

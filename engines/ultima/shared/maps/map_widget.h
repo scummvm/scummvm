@@ -34,13 +34,19 @@ namespace Ultima {
 namespace Shared {
 
 class Game;
-	
+
 namespace Maps {
 
 enum Direction {
 	DIR_NONE = 0,
-	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4,
-	DIR_WEST = 1, DIR_EAST = 2, DIR_NORTH = 3, DIR_SOUTH = 4
+	DIR_LEFT = 1,
+	DIR_RIGHT = 2,
+	DIR_UP = 3,
+	DIR_DOWN = 4,
+	DIR_WEST = 1,
+	DIR_EAST = 2,
+	DIR_NORTH = 3,
+	DIR_SOUTH = 4
 };
 
 class MapBase;
@@ -50,18 +56,20 @@ class MapBase;
  */
 class MapWidget : public MessageTarget {
 	DECLARE_MESSAGE_MAP;
+
 protected:
-	Game *_game;						// Game reference
-	MapBase *_map;						// Map reference
+	Game *_game;   // Game reference
+	MapBase *_map; // Map reference
 public:
-	Point _position;					// Position within the map
-	Direction _direction;				// Direction
-	Common::String _name;				// Name of widget
+	Point _position;      // Position within the map
+	Direction _direction; // Direction
+	Common::String _name; // Name of widget
 public:
 	/**
 	 * Support method to get a direction from a keycode
 	 */
 	static Direction directionFromKey(Common::KeyCode keycode);
+
 public:
 	CLASSDEF;
 
@@ -70,8 +78,7 @@ public:
 	 */
 	MapWidget(Game *game, MapBase *map) : _game(game), _map(map) {}
 	MapWidget(Game *game, MapBase *map, const Point &pt, Direction dir = DIR_NONE) : _game(game), _map(map), _position(pt), _direction(dir) {}
-	MapWidget(Game *game, MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) :
-		_game(game), _map(map), _name(name), _position(pt), _direction(dir) {}
+	MapWidget(Game *game, MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) : _game(game), _map(map), _name(name), _position(pt), _direction(dir) {}
 
 	/**
 	 * Destructor
@@ -113,7 +120,9 @@ public:
 	 */
 	virtual void update(bool isPreUpdate) {}
 
-	enum CanMove { UNSET = 0, YES = 1, NO = 2 };
+	enum CanMove { UNSET = 0,
+		           YES = 1,
+		           NO = 2 };
 
 	/**
 	 * Returns true if the given widget can move to a given position on the map

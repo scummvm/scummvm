@@ -50,13 +50,13 @@
 
 #include "common/str-array.h"
 #include "graphics/font.h"
-#include "graphics/managed_surface.h"
-#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/mactext.h"
 #include "graphics/macgui/mactextwindow.h"
 #include "graphics/macgui/macwindow.h"
-#include "graphics/macgui/mactext.h"
-#include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/macwindowborder.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/managed_surface.h"
 
 #include "common/events.h"
 #include "common/rect.h"

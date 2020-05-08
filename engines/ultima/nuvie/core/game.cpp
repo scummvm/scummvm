@@ -20,51 +20,51 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/core/converse.h"
+#include "ultima/nuvie/core/effect_manager.h"
+#include "ultima/nuvie/core/egg_manager.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/fonts/font_manager.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/widgets/console.h"
-#include "ultima/nuvie/screen/dither.h"
-#include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/script/script.h"
-#include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/core/egg_manager.h"
-#include "ultima/nuvie/core/obj_manager.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/core/converse.h"
 #include "ultima/nuvie/gui/widgets/converse_gump.h"
 #include "ultima/nuvie/gui/widgets/converse_gump_wou.h"
-#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/dither.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/nuvie/screen/screen.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/sound/sound_manager.h"
 #include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/core/effect_manager.h"
 
-#include "ultima/nuvie/core/magic.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll_new_ui.h"
-#include "ultima/nuvie/core/map.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/core/book.h"
+#include "ultima/nuvie/core/cursor.h"
 #include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/magic.h"
+#include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/weather.h"
+#include "ultima/nuvie/files/utils.h"
 #include "ultima/nuvie/gui/widgets/background.h"
 #include "ultima/nuvie/gui/widgets/command_bar.h"
 #include "ultima/nuvie/gui/widgets/command_bar_new_ui.h"
-#include "ultima/nuvie/views/party_view.h"
-#include "ultima/nuvie/views/actor_view.h"
-#include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/usecode/u6_usecode.h"
-#include "ultima/nuvie/core/cursor.h"
-#include "ultima/nuvie/core/weather.h"
-#include "ultima/nuvie/core/book.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll_new_ui.h"
 #include "ultima/nuvie/keybinding/keys.h"
-#include "ultima/nuvie/files/utils.h"
-#include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/nuvie.h"
+#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/usecode/u6_usecode.h"
+#include "ultima/nuvie/usecode/usecode.h"
+#include "ultima/nuvie/views/actor_view.h"
+#include "ultima/nuvie/views/party_view.h"
 
 #include "common/system.h"
 
@@ -77,7 +77,7 @@ Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t ty
 	game = this;
 	config = cfg;
 	event = evt;
-	
+
 	gui = g;
 
 	screen = scr;
@@ -174,32 +174,55 @@ Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t ty
 Game::~Game() {
 	// note: don't delete objects that are added to the GUI object via
 	// AddWidget()!
-	if (dither) delete dither;
-	if (tile_manager) delete tile_manager;
-	if (obj_manager) delete obj_manager;
-	if (palette) delete palette;
-	if (font_manager) delete font_manager;
+	if (dither)
+		delete dither;
+	if (tile_manager)
+		delete tile_manager;
+	if (obj_manager)
+		delete obj_manager;
+	if (palette)
+		delete palette;
+	if (font_manager)
+		delete font_manager;
 	//delete scroll;
-	if (game_map) delete game_map;
-	if (actor_manager) delete actor_manager;
+	if (game_map)
+		delete game_map;
+	if (actor_manager)
+		delete actor_manager;
 	//delete map_window;
-	if (player) delete player;
+	if (player)
+		delete player;
 	//delete background;
-	if (converse) delete converse;
-	if (clock) delete clock;
-	if (party) delete party;
-	if (portrait) delete portrait;
-	if (view_manager) delete view_manager;
-	if (sound_manager) delete sound_manager;
-	if (gui) delete gui;
-	if (usecode) delete usecode;
-	if (effect_manager) delete effect_manager;
-	if (cursor) delete cursor;
-	if (egg_manager) delete egg_manager;
-	if (weather) delete weather;
-	if (magic) delete magic;
-	if (book) delete book;
-	if (keybinder) delete keybinder;
+	if (converse)
+		delete converse;
+	if (clock)
+		delete clock;
+	if (party)
+		delete party;
+	if (portrait)
+		delete portrait;
+	if (view_manager)
+		delete view_manager;
+	if (sound_manager)
+		delete sound_manager;
+	if (gui)
+		delete gui;
+	if (usecode)
+		delete usecode;
+	if (effect_manager)
+		delete effect_manager;
+	if (cursor)
+		delete cursor;
+	if (egg_manager)
+		delete egg_manager;
+	if (weather)
+		delete weather;
+	if (magic)
+		delete magic;
+	if (book)
+		delete book;
+	if (keybinder)
+		delete keybinder;
 }
 
 bool Game::shouldQuit() const {
@@ -216,7 +239,6 @@ bool Game::loadGame(Script *s) {
 	palette = new GamePalette(screen, config);
 
 	clock = new GameClock(config, game_type);
-
 
 	background = new Background(config);
 	background->init();
@@ -252,14 +274,14 @@ bool Game::loadGame(Script *s) {
 
 	// Correct usecode class for each game
 	switch (game_type) {
-	case NUVIE_GAME_U6 :
-		usecode = (UseCode *) new U6UseCode(this, config);
+	case NUVIE_GAME_U6:
+		usecode = (UseCode *)new U6UseCode(this, config);
 		break;
-	case NUVIE_GAME_MD :
-		usecode = (UseCode *) new UseCode(this, config);
+	case NUVIE_GAME_MD:
+		usecode = (UseCode *)new UseCode(this, config);
 		break;
-	case NUVIE_GAME_SE :
-		usecode = (UseCode *) new UseCode(this, config);
+	case NUVIE_GAME_SE:
+		usecode = (UseCode *)new UseCode(this, config);
 		break;
 	}
 
@@ -285,7 +307,7 @@ bool Game::loadGame(Script *s) {
 
 	weather = new Weather(config, clock, game_type);
 
-//   if(!is_new_style()) // Everyone always uses original style command bar now.
+	//   if(!is_new_style()) // Everyone always uses original style command bar now.
 	{
 		command_bar = new CommandBar(this);
 		bool using_new_command_bar;
@@ -294,11 +316,10 @@ bool Game::loadGame(Script *s) {
 			init_new_command_bar();
 		}
 	}
-//   else
-//	   command_bar = new CommandBarNewUI(this);
+	//   else
+	//	   command_bar = new CommandBarNewUI(this);
 	command_bar->Hide();
 	gui->AddWidget(command_bar);
-
 
 	player = new Player(config);
 	party = new Party(config);
@@ -314,15 +335,12 @@ bool Game::loadGame(Script *s) {
 	scroll->Hide();
 	gui->AddWidget(scroll);
 
-
 	//map_window->set_windowSize(11,11);
 
 	init_converse_gump_settings();
 	init_converse();
 
 	usecode->init(obj_manager, game_map, player, scroll);
-
-
 
 	if (game_type == NUVIE_GAME_U6) {
 		magic = new Magic();
@@ -342,7 +360,7 @@ bool Game::loadGame(Script *s) {
 	//ConsolePause();
 	ConsoleHide();
 
-//   if(!is_new_style())
+	//   if(!is_new_style())
 	{
 		if (is_orig_style())
 			command_bar->Show();
@@ -399,7 +417,7 @@ void Game::init_converse_gump_settings() {
 		if (width_str == "default") {
 			int map_width = get_game_width();
 			if (is_original_plus())
-				map_width += - background->get_border_width() - 1;
+				map_width += -background->get_border_width() - 1;
 			if (map_width > min_converse_gump_width * 1.5) // big enough that we probably don't want to take up the whole screen
 				gump_w = min_converse_gump_width;
 			else if (game->is_original_plus() && map_width >= min_converse_gump_width) // big enough to draw without going over the UI
@@ -414,8 +432,7 @@ void Game::init_converse_gump_settings() {
 	}
 	converse_gump_width = (uint16)gump_w;
 
-	if ((is_original_plus_cutoff_map() && get_game_width() - background->get_border_width() < min_converse_gump_width)
-	        || game->is_orig_style())
+	if ((is_original_plus_cutoff_map() && get_game_width() - background->get_border_width() < min_converse_gump_width) || game->is_orig_style())
 		force_solid_converse_bg = true;
 	else
 		force_solid_converse_bg = false;
@@ -437,7 +454,6 @@ void Game::init_converse() {
 		gui->AddWidget(gump);
 		converse->init(config, game_type, gump, actor_manager, clock, player, view_manager, obj_manager);
 	}
-
 }
 
 void Game::set_converse_gump_type(uint8 new_type) {
@@ -489,7 +505,6 @@ void Game::init_game_style() {
 		game_style = NUVIE_STYLE_ORIG_PLUS_FULL_MAP;
 	else
 		game_style = NUVIE_STYLE_ORIG;
-
 }
 
 bool Game::doubleclick_opens_containers() {
@@ -521,7 +536,7 @@ void Game::set_pause_flags(GamePauseState state) {
 }
 
 void Game::unpause_all() {
-//	 DEBUG(0, LEVEL_DEBUGGING,"Unpause ALL!\n");
+	//	 DEBUG(0, LEVEL_DEBUGGING,"Unpause ALL!\n");
 	unpause_user();
 	unpause_anims();
 	unpause_world();
@@ -534,15 +549,13 @@ void Game::unpause_user() {
 	if (pause_user_count == 0) {
 		set_pause_flags((GamePauseState)(pause_flags & ~PAUSE_USER));
 
-
 		//if(event->get_mode() == WAIT_MODE)
 		//    event->endAction(); // change to MOVE_MODE, hide cursors
 		if (gui->get_block_input())
 			gui->unblock();
-
 	}
 
-//    DEBUG(0, LEVEL_DEBUGGING, "unpause user count=%d!\n", pause_user_count);
+	//    DEBUG(0, LEVEL_DEBUGGING, "unpause user count=%d!\n", pause_user_count);
 }
 
 void Game::unpause_anims() {
@@ -552,7 +565,7 @@ void Game::unpause_anims() {
 void Game::unpause_world() {
 	set_pause_flags((GamePauseState)(pause_flags & ~PAUSE_WORLD));
 
-	if (actor_manager->get_update() == false) // ActorMgr is not running
+	if (actor_manager->get_update() == false)        // ActorMgr is not running
 		game->get_actor_manager()->set_update(true); // resume
 
 	//if(clock->get_active() == false) // start time
@@ -573,7 +586,7 @@ void Game::pause_user() {
 
 	pause_user_count++;
 
-//    DEBUG(0, LEVEL_DEBUGGING, "Pause user count=%d!\n", pause_user_count);
+	//    DEBUG(0, LEVEL_DEBUGGING, "Pause user count=%d!\n", pause_user_count);
 }
 
 void Game::pause_anims() {
@@ -583,20 +596,18 @@ void Game::pause_anims() {
 void Game::pause_world() {
 	set_pause_flags((GamePauseState)(pause_flags | PAUSE_WORLD));
 
-	if (actor_manager->get_update() == true) // ActorMgr is running
+	if (actor_manager->get_update() == true)          // ActorMgr is running
 		game->get_actor_manager()->set_update(false); // pause
 
 	//if(clock->get_active() == true) // stop time
 	//    clock->set_active(false);
 }
 
-
 void Game::dont_wait_for_interval() {
 	if (ignore_event_delay < 255)
 		++ignore_event_delay;
 	event->set_ignore_timeleft(true);
 }
-
 
 void Game::wait_for_interval() {
 	if (ignore_event_delay > 0)
@@ -605,11 +616,10 @@ void Game::wait_for_interval() {
 		event->set_ignore_timeleft(false);
 }
 
-
 void Game::time_changed() {
 	if (!is_new_style()) {
-		if (game->is_orig_style()) // others constantly update
-			get_command_bar()->update(); // date & wind
+		if (game->is_orig_style())                      // others constantly update
+			get_command_bar()->update();                // date & wind
 		get_view_manager()->get_party_view()->update(); // sky
 	}
 	get_map_window()->updateAmbience();
@@ -622,7 +632,6 @@ void Game::stats_changed() {
 		get_view_manager()->get_party_view()->update();
 	}
 }
-
 
 void Game::play() {
 	pause_flags = PAUSE_UNPAUSED;
@@ -640,7 +649,8 @@ void Game::play() {
 	map_window->updateBlacking();
 
 	while (!shouldQuit()) {
-		if (cursor) cursor->clear(); // restore cursor area before GUI events
+		if (cursor)
+			cursor->clear(); // restore cursor area before GUI events
 
 		event->update();
 		if (clock->get_timer(GAMECLOCK_TIMER_U6_TIME_STOP) == 0) {
@@ -656,7 +666,8 @@ void Game::play() {
 		effect_manager->update_effects();
 
 		gui->Display();
-		if (cursor) cursor->display();
+		if (cursor)
+			cursor->display();
 
 		screen->preformUpdate();
 		sound_manager->update();
@@ -677,7 +688,8 @@ void Game::update_once(bool process_gui_input) {
 }
 
 void Game::update_once(bool process_gui_input, bool run_converse) {
-	if (cursor) cursor->clear(); // restore cursor area before GUI events
+	if (cursor)
+		cursor->clear(); // restore cursor area before GUI events
 
 	event->update_timers();
 
@@ -701,7 +713,8 @@ void Game::update_once(bool process_gui_input, bool run_converse) {
 
 void Game::update_once_display() {
 	gui->Display();
-	if (cursor) cursor->display();
+	if (cursor)
+		cursor->display();
 
 	screen->preformUpdate();
 	sound_manager->update();

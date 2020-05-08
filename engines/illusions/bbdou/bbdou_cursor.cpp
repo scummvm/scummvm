@@ -20,10 +20,10 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_cursor.h"
-#include "illusions/bbdou/bbdou_specialcode.h"
 #include "illusions/actor.h"
+#include "illusions/bbdou/bbdou_specialcode.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/camera.h"
 #include "illusions/dictionary.h"
 #include "illusions/input.h"
@@ -36,7 +36,7 @@ namespace Illusions {
 // BbdouCursor
 
 BbdouCursor::BbdouCursor(IllusionsEngine_BBDOU *vm, BbdouSpecialCode *bbdou)
-	: _vm(vm), _bbdou(bbdou) {
+    : _vm(vm), _bbdou(bbdou) {
 }
 
 BbdouCursor::~BbdouCursor() {
@@ -78,7 +78,6 @@ void BbdouCursor::init(uint32 objectId, uint32 progResKeywordId) {
 	resetActiveVerbs();
 
 	control->setActorIndexTo1();
-
 }
 
 void BbdouCursor::enable(uint32 objectId) {
@@ -320,9 +319,8 @@ uint BbdouCursor::calcTrackingCursorIndex(uint trackingFlags) {
 
 bool BbdouCursor::getTrackingCursorSequenceId(Control *control, uint32 &outSequenceId) {
 	static const uint32 kTrackingCursorSequenceIds[] = {
-		0, 0x000609BF, 0x00060018, 0x000609C0, 0x00060016,
-		0, 0x00060017, 0x000609C1, 0x00060019, 0x000609C2
-	};
+	    0, 0x000609BF, 0x00060018, 0x000609C0, 0x00060016,
+	    0, 0x00060017, 0x000609C1, 0x00060019, 0x000609C2};
 	Common::Point trackingLimits = _vm->_camera->getTrackingLimits();
 	uint trackingFlags = calcTrackingFlags(control->_actor->_position, trackingLimits);
 	uint cursorIndex = calcTrackingCursorIndex(trackingFlags);

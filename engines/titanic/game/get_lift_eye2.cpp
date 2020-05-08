@@ -21,17 +21,17 @@
  */
 
 #include "titanic/game/get_lift_eye2.h"
-#include "titanic/game/transport/lift.h"
 #include "titanic/core/project_item.h"
+#include "titanic/game/transport/lift.h"
 #include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGetLiftEye2, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(VisibleMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 CString *CGetLiftEye2::_destObject;

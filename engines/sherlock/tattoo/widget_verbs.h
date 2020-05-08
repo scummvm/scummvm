@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_TATTOO_WIDGET_VERBS_H
 #define SHERLOCK_TATTOO_WIDGET_VERBS_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "sherlock/tattoo/widget_base.h"
 
@@ -34,7 +34,7 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetVerbs: public WidgetBase {
+class WidgetVerbs : public WidgetBase {
 private:
 	int _selector, _oldSelector;
 	bool _outsideMenu;
@@ -48,8 +48,10 @@ private:
 	 * Renders the window on an internal surface for later drawing on-screen
 	 */
 	void render();
+
 public:
 	Common::StringArray _verbCommands;
+
 public:
 	WidgetVerbs(SherlockEngine *vm);
 	~WidgetVerbs() override {}

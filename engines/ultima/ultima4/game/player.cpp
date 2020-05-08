@@ -21,14 +21,14 @@
  */
 
 #include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/weapon.h"
-#include "ultima/ultima4/controllers/combat_controller.h"
-#include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
@@ -46,10 +46,9 @@ bool isPartyMember(Object *punknown) {
 		return false;
 }
 
-PartyMember::PartyMember(Party *p, SaveGamePlayerRecord *pr) :
-	Creature(tileForClass(pr->_class)),
-	_player(pr),
-	_party(p) {
+PartyMember::PartyMember(Party *p, SaveGamePlayerRecord *pr) : Creature(tileForClass(pr->_class)),
+                                                               _player(pr),
+                                                               _party(p) {
 	/* FIXME: we need to rename movement behaviors */
 	setMovementBehavior(MOVEMENT_ATTACK_AVATAR);
 	this->_ranged = g_weapons->get(pr->_weapon)->getRange() ? 1 : 0;
@@ -103,15 +102,18 @@ Common::String PartyMember::translate(Std::vector<Common::String> &parts) {
 			if (parts[1] == "cure") {
 				if (getStatus() == STAT_POISONED)
 					return "true";
-				else return "false";
+				else
+					return "false";
 			} else if (parts[1] == "heal" || parts[1] == "fullheal") {
 				if (getHp() < getMaxHp())
 					return "true";
-				else return "false";
+				else
+					return "false";
 			} else if (parts[1] == "resurrect") {
 				if (getStatus() == STAT_DEAD)
 					return "true";
-				else return "false";
+				else
+					return "false";
 			}
 		}
 	}
@@ -126,25 +128,25 @@ int PartyMember::getMaxMp() const {
 	int max_mp = -1;
 
 	switch (_player->_class) {
-	case CLASS_MAGE:            /*  mage: 200% of int */
+	case CLASS_MAGE: /*  mage: 200% of int */
 		max_mp = _player->_intel * 2;
 		break;
 
-	case CLASS_DRUID:           /* druid: 150% of int */
+	case CLASS_DRUID: /* druid: 150% of int */
 		max_mp = _player->_intel * 3 / 2;
 		break;
 
-	case CLASS_BARD:            /* bard, paladin, ranger: 100% of int */
+	case CLASS_BARD: /* bard, paladin, ranger: 100% of int */
 	case CLASS_PALADIN:
 	case CLASS_RANGER:
 		max_mp = _player->_intel;
 		break;
 
-	case CLASS_TINKER:          /* tinker: 50% of int */
+	case CLASS_TINKER: /* tinker: 50% of int */
 		max_mp = _player->_intel / 2;
 		break;
 
-	case CLASS_FIGHTER:         /* fighter, shepherd: no mp at all */
+	case CLASS_FIGHTER: /* fighter, shepherd: no mp at all */
 	case CLASS_SHEPHERD:
 		max_mp = 0;
 		break;
@@ -224,13 +226,16 @@ void PartyMember::advanceLevel() {
 	_player->_hp = _player->_hpMax;
 
 	/* improve stats by 1-8 each */
-	_player->_str   += xu4_random(8) + 1;
-	_player->_dex   += xu4_random(8) + 1;
+	_player->_str += xu4_random(8) + 1;
+	_player->_dex += xu4_random(8) + 1;
 	_player->_intel += xu4_random(8) + 1;
 
-	if (_player->_str > 50) _player->_str = 50;
-	if (_player->_dex > 50) _player->_dex = 50;
-	if (_player->_intel > 50) _player->_intel = 50;
+	if (_player->_str > 50)
+		_player->_str = 50;
+	if (_player->_dex > 50)
+		_player->_dex = 50;
+	if (_player->_intel > 50)
+		_player->_intel = 50;
 
 	if (_party) {
 		_party->setChanged();
@@ -293,7 +298,7 @@ bool PartyMember::heal(HealType type) {
 
 	case HT_FULLHEAL:
 		if (getStatus() == STAT_DEAD ||
-		        _player->_hp == _player->_hpMax)
+		    _player->_hp == _player->_hpMax)
 			return false;
 		_player->_hp = _player->_hpMax;
 		break;
@@ -306,7 +311,7 @@ bool PartyMember::heal(HealType type) {
 
 	case HT_HEAL:
 		if (getStatus() == STAT_DEAD ||
-		        _player->_hp == _player->_hpMax)
+		    _player->_hp == _player->_hpMax)
 			return false;
 
 		_player->_hp += 75 + (xu4_random(0x100) % 0x19);
@@ -314,14 +319,14 @@ bool PartyMember::heal(HealType type) {
 
 	case HT_CAMPHEAL:
 		if (getStatus() == STAT_DEAD ||
-		        _player->_hp == _player->_hpMax)
+		    _player->_hp == _player->_hpMax)
 			return false;
 		_player->_hp += 99 + (xu4_random(0x100) & 0x77);
 		break;
 
 	case HT_INNHEAL:
 		if (getStatus() == STAT_DEAD ||
-		        _player->_hp == _player->_hpMax)
+		    _player->_hp == _player->_hpMax)
 			return false;
 		_player->_hp += 100 + (xu4_random(50) * 2);
 		break;
@@ -480,7 +485,9 @@ bool PartyMember::isDead() {
 
 bool PartyMember::isDisabled() {
 	return (getStatus() == STAT_GOOD ||
-	        getStatus() == STAT_POISONED) ? false : true;
+	        getStatus() == STAT_POISONED)
+	           ? false
+	           : true;
 }
 
 int PartyMember::loseWeapon() {
@@ -770,14 +777,16 @@ void Party::adjustKarma(KarmaAction action) {
 	 * return to u4dos compatibility and handle losing of eighths
 	 */
 	for (v = 0; v < VIRT_MAX; v++) {
-		if (maxVal[v] == 100) { /* already an avatar */
+		if (maxVal[v] == 100) {      /* already an avatar */
 			if (newKarma[v] < 100) { /* but lost it */
 				_saveGame->_karma[v] = newKarma[v];
 				setChanged();
 				PartyEvent event(PartyEvent::LOST_EIGHTH, 0);
 				notifyObservers(event);
-			} else _saveGame->_karma[v] = 0; /* return to u4dos compatibility */
-		} else _saveGame->_karma[v] = newKarma[v];
+			} else
+				_saveGame->_karma[v] = 0; /* return to u4dos compatibility */
+		} else
+			_saveGame->_karma[v] = newKarma[v];
 	}
 }
 
@@ -827,7 +836,7 @@ void Party::burnTorch(int turns) {
 }
 
 bool Party::canEnterShrine(Virtue virtue) {
-	if (_saveGame->_runes & (1 << (int) virtue))
+	if (_saveGame->_runes & (1 << (int)virtue))
 		return true;
 	else
 		return false;
@@ -842,7 +851,7 @@ bool Party::canPersonJoin(Common::String name, Virtue *v) {
 	for (i = 1; i < 8; i++) {
 		if (name == _saveGame->_players[i]._name) {
 			if (v)
-				*v = (Virtue) _saveGame->_players[i]._class;
+				*v = (Virtue)_saveGame->_players[i]._class;
 			return true;
 		}
 	}
@@ -864,7 +873,8 @@ bool Party::donate(int quantity) {
 	adjustGold(-quantity);
 	if (_saveGame->_gold > 0)
 		adjustKarma(KA_GAVE_TO_BEGGAR);
-	else adjustKarma(KA_GAVE_ALL_TO_BEGGAR);
+	else
+		adjustKarma(KA_GAVE_ALL_TO_BEGGAR);
 
 	return true;
 }
@@ -996,7 +1006,7 @@ CannotJoinError Party::join(Common::String name) {
 
 			/* ensure character has enough karma */
 			if ((_saveGame->_karma[_saveGame->_players[i]._class] > 0) &&
-			        (_saveGame->_karma[_saveGame->_players[i]._class] < 40))
+			    (_saveGame->_karma[_saveGame->_players[i]._class] < 40))
 				return JOIN_NOT_VIRTUOUS;
 
 			tmp = _saveGame->_players[_saveGame->_members];
@@ -1073,7 +1083,8 @@ void Party::setTransport(MapTile tile) {
 		g_context->_transportContext = TRANSPORT_SHIP;
 	else if (tile.getTileType()->isBalloon())
 		g_context->_transportContext = TRANSPORT_BALLOON;
-	else g_context->_transportContext = TRANSPORT_FOOT;
+	else
+		g_context->_transportContext = TRANSPORT_FOOT;
 
 	notifyOfChange();
 }

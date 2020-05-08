@@ -24,12 +24,12 @@
 #define TSAGE_RINGWORLD_SCENES6_H
 
 #include "common/scummsys.h"
+#include "tsage/core.h"
+#include "tsage/events.h"
+#include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
-#include "tsage/events.h"
-#include "tsage/core.h"
 #include "tsage/scenes.h"
-#include "tsage/globals.h"
 
 namespace TsAGE {
 
@@ -78,6 +78,7 @@ class Scene5000 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	ASound _soundHandler;
@@ -166,6 +167,7 @@ class Scene5100 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	ASound _soundHandler;
@@ -230,6 +232,7 @@ class Scene5200 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	ASound _soundHandler;
 	SpeakerFLL _speakerFLL;
@@ -295,6 +298,7 @@ class Scene5300 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	ASound _soundHandler;
 	SequenceManager _sequenceManager;

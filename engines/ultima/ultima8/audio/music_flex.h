@@ -29,7 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-
 class MusicFlex : public Archive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -38,18 +37,17 @@ public:
 		SongInfo();
 		~SongInfo();
 
-		char        _filename[16];
-		int         _numMeasures;
-		int         _loopJump;
-		int         *_transitions[128];
+		char _filename[16];
+		int _numMeasures;
+		int _loopJump;
+		int *_transitions[128];
 	};
 
 	struct XMidiData {
-		XMidiData(byte *data, uint32 size) : _data(data), _size(size)
-		{}
+		XMidiData(byte *data, uint32 size) : _data(data), _size(size) {}
 
-		byte 	*_data;
-		uint32 	_size;
+		byte *_data;
+		uint32 _size;
 	};
 
 	MusicFlex(Common::SeekableReadStream *rs);
@@ -73,11 +71,11 @@ public:
 	}
 
 private:
-	SongInfo   *_info[128];
-	XMidiData  **_songs;
+	SongInfo *_info[128];
+	XMidiData **_songs;
 
 	//! Load the song info
-	void       loadSongInfo();
+	void loadSongInfo();
 };
 
 } // End of namespace Ultima8

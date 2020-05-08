@@ -237,7 +237,7 @@ void Items::spinInWorld(int itemId) {
 
 int Items::findTargetUnderMouse(int mouseX, int mouseY) const {
 	int setId = _vm->_scene->getSetId();
-	for (int i = 0 ; i < (int)_items.size(); ++i) {
+	for (int i = 0; i < (int)_items.size(); ++i) {
 		if (_items[i]->_setId == setId && _items[i]->isTarget() && _items[i]->isUnderMouse(mouseX, mouseY)) {
 			return _items[i]->_itemId;
 		}

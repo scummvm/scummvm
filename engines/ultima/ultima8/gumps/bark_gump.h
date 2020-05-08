@@ -46,13 +46,13 @@ public:
 	~BarkGump() override;
 
 	// Run the gump (decrement the counter)
-	void        run() override;
+	void run() override;
 
 	// Got to the next page on mouse click
-	Gump       *OnMouseDown(int button, int32 mx, int32 my) override;
+	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
 
 	// Init the gump, call after construction
-	void        InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 protected:
 	//! show next text.
@@ -63,6 +63,7 @@ protected:
 
 public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

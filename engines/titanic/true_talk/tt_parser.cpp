@@ -22,6 +22,8 @@
 
 #include "titanic/true_talk/tt_parser.h"
 #include "titanic/support/files_manager.h"
+#include "titanic/titanic.h"
+#include "titanic/translation.h"
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/true_talk/tt_action.h"
@@ -29,14 +31,12 @@
 #include "titanic/true_talk/tt_picture.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_word.h"
-#include "titanic/titanic.h"
-#include "titanic/translation.h"
 
 namespace Titanic {
 
 TTparser::TTparser(CScriptHandler *owner) : _owner(owner), _sentenceConcept(nullptr),
-		_sentence(nullptr), _fieldC(0), _field10(0), _field14(0),
-		_currentWordP(nullptr), _nodesP(nullptr), _conceptP(nullptr) {
+                                            _sentence(nullptr), _fieldC(0), _field10(0), _field14(0),
+                                            _currentWordP(nullptr), _nodesP(nullptr), _conceptP(nullptr) {
 	loadArrays();
 }
 
@@ -322,23 +322,23 @@ bool TTparser::normalizeContraction(const TTstring &srcLine, int &srcIndex, TTst
 	case 't':
 		if (srcLine[srcIndex - 1] == 'n' && srcIndex >= 3) {
 			if (srcLine[srcIndex - 3] == 'c' && srcLine[srcIndex - 2] == 'a' &&
-				(srcIndex == 3 || srcLine[srcIndex - 4])) {
+			    (srcIndex == 3 || srcLine[srcIndex - 4])) {
 				// can't -> can not
 				destLine += 'n';
 			} else if (srcLine[srcIndex - 3] == 'w' && srcLine[srcIndex - 2] == 'o' &&
-				(srcIndex == 3 || srcLine[srcIndex - 4])) {
+			           (srcIndex == 3 || srcLine[srcIndex - 4])) {
 				// won't -> will not
 				destLine.deleteLastChar();
 				destLine.deleteLastChar();
 				destLine += "ill";
 			} else if (srcLine[srcIndex - 3] == 'a' && srcLine[srcIndex - 2] == 'i' &&
-				(srcIndex == 3 || srcLine[srcIndex - 4])) {
+			           (srcIndex == 3 || srcLine[srcIndex - 4])) {
 				// ain't -> am not
 				destLine.deleteLastChar();
 				destLine.deleteLastChar();
 				destLine += "m";
 			} else if (srcLine.hasSuffix(" sha") ||
-					(srcIndex == 4 && srcLine.hasSuffix("sha"))) {
+			           (srcIndex == 4 && srcLine.hasSuffix("sha"))) {
 				// shan't -> shall not
 				destLine.deleteLastChar();
 				destLine += "ll";
@@ -385,7 +385,7 @@ int TTparser::searchAndReplace(TTstring &line, int startIndex, const StringArray
 			if (c == ' ' || c == '\0') {
 				// Replace the text in the line with it's replacement
 				line = CString(line.c_str(), line.c_str() + startIndex) + replacementStr +
-					CString(line.c_str() + startIndex + origStr.size());
+				       CString(line.c_str() + startIndex + origStr.size());
 				lineSize = line.size();
 
 				startIndex += replacementStr.size();
@@ -459,10 +459,9 @@ int TTparser::replaceNumbers(TTstring &line, int startIndex) {
 
 	CString numStr = CString::format("%d", total);
 	line = CString::format("%s%s%s",
-		CString(line.c_str(), line.c_str() + startIndex).c_str(),
-		numStr.c_str(),
-		(index == -1) ? "" : line.c_str() + index - 1
-	);
+	                       CString(line.c_str(), line.c_str() + startIndex).c_str(),
+	                       numStr.c_str(),
+	                       (index == -1) ? "" : line.c_str() + index - 1);
 
 	index = startIndex + numStr.size();
 	return index;
@@ -482,7 +481,7 @@ const NumberEntry *TTparser::replaceNumbers2(TTstring &line, int *startIndex) {
 		NumberEntry &ne = _numbers[idx];
 		if (!strncmp(line.c_str() + index, ne._text.c_str(), ne._text.size())) {
 			if ((ne._flags & NF_10) || (index + (int)ne._text.size()) >= lineSize ||
-					line[index + ne._text.size()] == ' ') {
+			    line[index + ne._text.size()] == ' ') {
 				*startIndex += ne._text.size();
 				numEntry = &ne;
 				break;
@@ -714,8 +713,7 @@ int TTparser::loadRequests(TTword *word) {
 				_sentenceConcept->_field1C = 1;
 				_sentenceConcept = _sentenceConcept->addSibling();
 				addNode(CHECK_COMMAND_FORM);
-			}
-			else {
+			} else {
 				addNode(WORD_TYPE_IS_SENTENCE_TYPE);
 				addNode(SEEK_STATE);
 				addNode(CHECK_COMMAND_FORM);
@@ -769,11 +767,11 @@ int TTparser::considerRequests(TTword *word) {
 	bool modifierFlag = false;
 	int seekVal = 0;
 
-	for (TTparserNode *nodeP = _nodesP; nodeP; ) {
+	for (TTparserNode *nodeP = _nodesP; nodeP;) {
 		switch (nodeP->_tag) {
 		case CHECK_COMMAND_FORM:
 			if (_sentenceConcept->_concept1P && _sentence->_category == 1 &&
-					!_sentenceConcept->_concept0P) {
+			    !_sentenceConcept->_concept0P) {
 				TTconcept *newConcept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
 				_sentenceConcept->_concept0P = newConcept;
 				_sentenceConcept->_field18 = 3;
@@ -801,8 +799,8 @@ int TTparser::considerRequests(TTword *word) {
 			if (!_sentenceConcept->_concept0P) {
 				flag = filterConcepts(5, 0);
 			} else if (_sentenceConcept->_concept0P->compareTo("?") &&
-						(_sentenceConcept->_concept1P && isWordId(_sentenceConcept->_concept1P, 113)) &&
-						word->_wordClass == WC_THING) {
+			           (_sentenceConcept->_concept1P && isWordId(_sentenceConcept->_concept1P, 113)) &&
+			           word->_wordClass == WC_THING) {
 				TTconcept *oldConcept = _sentenceConcept->_concept0P;
 				_sentenceConcept->_concept0P = nullptr;
 				flag = filterConcepts(5, 2);
@@ -826,10 +824,10 @@ int TTparser::considerRequests(TTword *word) {
 				if (flag)
 					delete oldConcept;
 			} else if (!_sentenceConcept->_concept3P &&
-					(!_sentenceConcept->_concept1P || (getWordId(_sentenceConcept->_concept1P) != 113 &&
-					getWordId(_sentenceConcept->_concept1P) != 112)) &&
-					_sentenceConcept->_concept2P->checkWordId1() &&
-					(word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN)) {
+			           (!_sentenceConcept->_concept1P || (getWordId(_sentenceConcept->_concept1P) != 113 &&
+			                                              getWordId(_sentenceConcept->_concept1P) != 112)) &&
+			           _sentenceConcept->_concept2P->checkWordId1() &&
+			           (word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN)) {
 				_sentenceConcept->changeConcept(0, &_sentenceConcept->_concept2P, 3);
 
 				if (_conceptP && isWordId(_conceptP, word->_id)) {
@@ -853,8 +851,8 @@ int TTparser::considerRequests(TTword *word) {
 
 		case SEEK_OBJECT_OVERRIDE:
 			if ((word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN) &&
-					_sentence->fn2(2, TTstring("thePlayer"), _sentenceConcept) &&
-					!_sentenceConcept->_concept3P) {
+			    _sentence->fn2(2, TTstring("thePlayer"), _sentenceConcept) &&
+			    !_sentenceConcept->_concept3P) {
 				_sentenceConcept->_concept3P = _sentenceConcept->_concept2P;
 				_sentenceConcept->_concept2P = nullptr;
 
@@ -937,7 +935,7 @@ int TTparser::considerRequests(TTword *word) {
 		case SEEK_STATE:
 			if (_sentenceConcept->_concept5P) {
 				if (_sentenceConcept->_concept5P->findByWordId(306) ||
-						_sentenceConcept->_concept5P->findByWordId(904)) {
+				    _sentenceConcept->_concept5P->findByWordId(904)) {
 					TTconcept *oldConcept = _sentenceConcept->_concept5P;
 					_sentenceConcept->_concept5P = nullptr;
 					flag = filterConcepts(9, 5);
@@ -993,7 +991,7 @@ int TTparser::considerRequests(TTword *word) {
 					if (word->_id == 906) {
 						for (TTconcept *currP = _conceptP; currP; currP = currP->_nextP) {
 							if (_sentence->isFrameSlotClass(1, WC_ACTION) ||
-									_sentence->isFrameSlotClass(1, WC_THING))
+							    _sentence->isFrameSlotClass(1, WC_THING))
 								currP->_field34 = 1;
 						}
 					} else {
@@ -1049,7 +1047,7 @@ int TTparser::considerRequests(TTword *word) {
 			if (!_sentenceConcept->_concept5P) {
 				addToConceptList(word);
 			} else if (_sentenceConcept->concept5WordId() == 113 ||
-					_sentenceConcept->concept5WordId() == 112) {
+			           _sentenceConcept->concept5WordId() == 112) {
 				_sentenceConcept->createConcept(1, 2, word);
 			} else {
 				addToConceptList(word);
@@ -1060,7 +1058,7 @@ int TTparser::considerRequests(TTword *word) {
 
 		case SET_ACTION:
 			if (_sentence->fn4(1, 104, _sentenceConcept) ||
-					_sentence->fn4(1, 107, _sentenceConcept)) {
+			    _sentence->fn4(1, 107, _sentenceConcept)) {
 				concept = _sentenceConcept->_concept1P;
 				_sentenceConcept->_concept1P = nullptr;
 				addNode(SEEK_NEW_FRAME);
@@ -1174,7 +1172,7 @@ int TTparser::considerRequests(TTword *word) {
 				TTstring wordStr = word->getText();
 				if (wordStr == "do" || wordStr == "doing" || wordStr == "does" || wordStr == "done") {
 					TTaction *verbP = new TTaction(TTstring("do"), WC_ACTION, 112, 0,
-						_sentenceConcept->get18());
+					                               _sentenceConcept->get18());
 					status = _sentenceConcept->createConcept(1, 1, verbP);
 					delete verbP;
 					flag = true;
@@ -1445,7 +1443,7 @@ int TTparser::checkForAction() {
 		}
 
 		if (word->_text == "do" || word->_text == "doing" || word->_text == "does" ||
-				word->_text == "done") {
+		    word->_text == "done") {
 			TTstring doStr("do");
 			TTaction *action = new TTaction(doStr, WC_ACTION, 112, 0, _sentenceConcept->get18());
 
@@ -1499,11 +1497,11 @@ int TTparser::checkForAction() {
 	}
 
 	if (_sentence->fn2(2, TTstring("thePlayer"), _sentenceConcept) &&
-			_sentenceConcept->concept1WordId() == 101 && flag)
+	    _sentenceConcept->concept1WordId() == 101 && flag)
 		_sentence->_category = 17;
 
 	if (!_sentenceConcept->_concept0P && !_sentenceConcept->_concept1P &&
-			!_sentenceConcept->_concept2P && !_sentenceConcept->_concept5P && !flag) {
+	    !_sentenceConcept->_concept2P && !_sentenceConcept->_concept5P && !flag) {
 		if (_conceptP)
 			filterConcepts(5, 2);
 
@@ -1529,7 +1527,7 @@ int TTparser::checkForAction() {
 	}
 
 	if (_sentence->_category == 1 && _sentenceConcept->_concept5P &&
-			_sentenceConcept->_concept2P) {
+	    _sentenceConcept->_concept2P) {
 		if (_sentence->fn4(1, 113, nullptr)) {
 			if (_sentence->fn2(2, TTstring("targetNpc"), nullptr)) {
 				_sentence->_category = 20;
@@ -1540,7 +1538,7 @@ int TTparser::checkForAction() {
 			}
 		}
 	} else if (!_sentenceConcept->_concept0P && !_sentenceConcept->_concept1P &&
-			!_sentenceConcept->_concept2P && !_sentenceConcept->_concept5P) {
+	           !_sentenceConcept->_concept2P && !_sentenceConcept->_concept5P) {
 		if (_conceptP)
 			filterConcepts(5, 2);
 
@@ -1622,7 +1620,7 @@ bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
 		if (_sentenceConcept->_concept2P) {
 			if (!_sentenceConcept->_concept2P->checkWordId2() || !concept->checkWordId2()) {
 				return _sentenceConcept->_concept2P->checkWordClass() &&
-					concept->checkWordClass();
+				       concept->checkWordClass();
 			}
 		}
 		break;
@@ -1677,7 +1675,7 @@ int TTparser::processModifiers(int modifier, TTword *word) {
 	// Cycles through each word
 	for (TTword *currP = _currentWordP; currP && currP != word; currP = _currentWordP) {
 		if ((modifier == 2 && currP->_wordClass == WC_ADJECTIVE) ||
-				(modifier == 1 && currP->_wordClass == WC_ADVERB)) {
+		    (modifier == 1 && currP->_wordClass == WC_ADVERB)) {
 			newConcept->_string2 += ' ';
 			newConcept->_string2 += _currentWordP->getText();
 		} else if (word->_id == 113 && currP->_wordClass == WC_ADJECTIVE) {
@@ -1755,9 +1753,8 @@ int TTparser::processModifiers(int modifier, TTword *word) {
 
 void TTparser::preprocessGerman(TTstring &line) {
 	static const char *const SUFFIXES[12] = {
-		" ", "est ", "em ", "en ", "er ", "es ",
-		"et ", "st ", "s ", "e ", "n ", "t "
-	};
+	    " ", "est ", "em ", "en ", "er ", "es ",
+	    "et ", "st ", "s ", "e ", "n ", "t "};
 
 	for (uint idx = 0; idx < _replacements4.size(); ++idx) {
 		if (!line.hasSuffix(_replacements4[idx]))
@@ -1776,10 +1773,9 @@ void TTparser::preprocessGerman(TTstring &line) {
 				// Form a new line with the replacement word
 				const char *nextWordP = wordEndP + strlen(suffixP);
 				line = Common::String::format("%s %s %s",
-					Common::String(lineP, p).c_str(),
-					_replacements4[idx + 1].c_str(),
-					nextWordP
-					);
+				                              Common::String(lineP, p).c_str(),
+				                              _replacements4[idx + 1].c_str(),
+				                              nextWordP);
 				return;
 			}
 		}

@@ -22,9 +22,9 @@
 #ifndef DRAGONS_SCREEN_H
 #define DRAGONS_SCREEN_H
 
-#include "graphics/surface.h"
-#include "graphics/pixelformat.h"
 #include "common/rect.h"
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Dragons {
 #define DRAGONS_NUM_PALETTES 5
@@ -37,10 +37,10 @@ namespace Dragons {
 
 enum AlphaBlendMode {
 	NONE,
-	NORMAL,       // 50% x Back + 50% x Sprite
-	ADDITIVE,     // 100% x Back + 100% x Sprite
-	ADDITIVE_50,  // 100% x Back + 50% x Sprite
-	SUBTRACTIVE   // 100% x Back - 100% x Sprite
+	NORMAL,      // 50% x Back + 50% x Sprite
+	ADDITIVE,    // 100% x Back + 100% x Sprite
+	ADDITIVE_50, // 100% x Back + 50% x Sprite
+	SUBTRACTIVE  // 100% x Back - 100% x Sprite
 };
 
 struct FlatQuad {
@@ -63,6 +63,7 @@ private:
 	byte _palettes[DRAGONS_NUM_PALETTES][512];
 	Common::Point _screenShakeOffset;
 	FlatQuad _flatQuads[DRAGONS_NUM_FLAT_QUADS];
+
 public:
 	virtual ~Screen();
 
@@ -95,7 +96,7 @@ public:
 
 private:
 	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha);
-	void copyRectToSurface8bpp(const void *buffer, const byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha);
+	void copyRectToSurface8bpp(const void *buffer, const byte *palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha);
 	void drawScaledSprite(Graphics::Surface *destSurface, const byte *source, int sourceWidth, int sourceHeight, int destX, int destY, int destWidth, int destHeight, const byte *palette, bool flipX, uint8 alpha);
 };
 

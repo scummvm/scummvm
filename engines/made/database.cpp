@@ -23,11 +23,11 @@
 #include "made/database.h"
 #include "made/redreader.h"
 
-#include "common/endian.h"
-#include "common/stream.h"
 #include "common/debug.h"
+#include "common/endian.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "common/stream.h"
 #include "common/system.h"
 
 namespace Made {
@@ -50,7 +50,7 @@ Object::~Object() {
 
 const char *Object::getString() {
 	if (getClass() == 0x7FFF)
-		return (const char*)getData();
+		return (const char *)getData();
 	else
 		return NULL;
 }
@@ -81,7 +81,7 @@ int16 Object::getVectorSize() {
 	} else {
 		// should never reach here
 		error("Unknown object class");
-		return 0;	// for compilers that don't support NORETURN
+		return 0; // for compilers that don't support NORETURN
 	}
 }
 
@@ -95,7 +95,7 @@ int16 Object::getVectorItem(int16 index) {
 	} else {
 		// should never reach here
 		error("Unknown object class");
-		return 0;	// for compilers that don't support NORETURN
+		return 0; // for compilers that don't support NORETURN
 	}
 }
 
@@ -143,7 +143,6 @@ int ObjectV2::load(Common::SeekableReadStream &source) {
 	source.read(_objData + 4, _objSize - 4);
 
 	return _objSize;
-
 }
 
 int ObjectV2::load(byte *source) {
@@ -206,7 +205,6 @@ int ObjectV3::load(Common::SeekableReadStream &source) {
 	_objData = new byte[_objSize];
 	source.read(_objData, _objSize);
 	return _objSize;
-
 }
 
 int ObjectV3::load(byte *source) {
@@ -249,8 +247,6 @@ byte ObjectV3::getCount2() {
 byte *ObjectV3::getData() {
 	return _objData + 6;
 }
-
-
 
 GameDatabase::GameDatabase(MadeEngine *vm) : _vm(vm) {
 	_gameState = nullptr;
@@ -352,7 +348,6 @@ int16 GameDatabase::getObjectProperty(int16 objectIndex, int16 propertyId) {
 	} else {
 		return 0;
 	}
-
 }
 
 int16 GameDatabase::setObjectProperty(int16 objectIndex, int16 propertyId, int16 value) {
@@ -369,20 +364,18 @@ int16 GameDatabase::setObjectProperty(int16 objectIndex, int16 propertyId, int16
 			WRITE_LE_UINT16(property, value);
 		} else {
 			warning("GameDatabase::setObjectProperty(%04X, %04X, %04X) Trying to set constant property",
-				objectIndex, propertyId, value);
+			        objectIndex, propertyId, value);
 		}
 		return value;
 	} else {
 		return 0;
 	}
-
 }
 
 void GameDatabase::dumpObject(int16 index) {
 	Object *obj = getObject(index);
 	obj->dump(Common::String::format("obj%04X.0", index));
 }
-
 
 /* GameDatabaseV2 */
 
@@ -404,13 +397,13 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 	char header[6];
 	sourceS.read(header, 6);
 	if (strncmp(header, "ADVSYS", 6))
-		warning ("Unexpected database header, expected ADVSYS");
+		warning("Unexpected database header, expected ADVSYS");
 
 	uint32 textOffs = 0, objectsOffs = 0, objectsSize = 0, textSize;
 	uint16 objectCount = 0, varObjectCount = 0;
 
 	sourceS.readUint16LE(); // skip sub-version
-	sourceS.skip(18); // skip program name
+	sourceS.skip(18);       // skip program name
 
 	if (version == 40) {
 		sourceS.readUint16LE(); // skip unused
@@ -420,7 +413,7 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 		textOffs = sourceS.readUint16LE() * 512;
 		_mainCodeObjectIndex = sourceS.readUint16LE();
 		varObjectCount = 0; // unused in V1
-		objectsSize = 0; // unused in V1
+		objectsSize = 0;    // unused in V1
 	} else if (version == 54) {
 		textOffs = sourceS.readUint16LE() * 512;
 		objectCount = sourceS.readUint16LE();
@@ -478,7 +471,6 @@ void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {
 			_objects.push_back(obj);
 		}
 	}
-
 }
 
 void GameDatabaseV2::reloadFromStream(Common::SeekableReadStream &sourceS) {
@@ -520,7 +512,7 @@ int16 GameDatabaseV2::loadgame(const char *filename, int16 version) {
 	}
 	delete in;
 
-	_objectPropertyCache.clear();	// make sure to clear cache
+	_objectPropertyCache.clear(); // make sure to clear cache
 	return result;
 }
 
@@ -584,18 +576,15 @@ int16 *GameDatabaseV2::findObjectProperty(int16 objectIndex, int16 propertyId, i
 		}
 
 		parentObjectIndex = obj->getClass();
-
 	}
 
 	debug(1, "findObjectProperty(%04X, %04X) Property not found", objectIndex, propertyId);
 	return NULL;
-
 }
 
 const char *GameDatabaseV2::getString(uint16 offset) {
-	return (const char*)&_gameText[offset * 4];
+	return (const char *)&_gameText[offset * 4];
 }
-
 
 /* GameDatabaseV3 */
 
@@ -608,9 +597,9 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 	char header[6];
 	sourceS.read(header, 6);
 	if (strncmp(header, "ADVSYS", 6))
-		warning ("Unexpected database header, expected ADVSYS");
+		warning("Unexpected database header, expected ADVSYS");
 
-	/*uint32 unk = */sourceS.readUint32LE();
+	/*uint32 unk = */ sourceS.readUint32LE();
 
 	sourceS.skip(20);
 
@@ -646,14 +635,13 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 		}
 		_objects.push_back(obj);
 	}
-
 }
 
 void GameDatabaseV3::reloadFromStream(Common::SeekableReadStream &sourceS) {
 	sourceS.seek(_gameStateOffs);
 	sourceS.read(_gameState, _gameStateSize);
 
-	_objectPropertyCache.clear();	// make sure to clear cache
+	_objectPropertyCache.clear(); // make sure to clear cache
 }
 
 bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String &description, int16 version) {
@@ -665,7 +653,7 @@ bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String
 	}
 
 	uint32 header = in->readUint32BE();
-	if (header != MKTAG('S','G','A','M')) {
+	if (header != MKTAG('S', 'G', 'A', 'M')) {
 		warning("Save game header missing");
 		delete in;
 		return false;
@@ -703,7 +691,7 @@ int16 GameDatabaseV3::savegame(const char *filename, const char *description, in
 		return 6;
 	}
 	Common::strlcpy(desc, description, 64);
-	out->writeUint32BE(MKTAG('S','G','A','M'));
+	out->writeUint32BE(MKTAG('S', 'G', 'A', 'M'));
 	out->writeUint32LE(size);
 	out->writeUint16LE(version);
 	out->write(desc, 64);
@@ -723,7 +711,7 @@ int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 	}
 
 	uint32 header = in->readUint32BE();
-	if (header != MKTAG('S','G','A','M')) {
+	if (header != MKTAG('S', 'G', 'A', 'M')) {
 		warning("Save game header missing");
 		delete in;
 		return 1;
@@ -748,7 +736,7 @@ int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 	in->read(_gameState, _gameStateSize);
 	delete in;
 
-	_objectPropertyCache.clear();	// make sure to clear cache
+	_objectPropertyCache.clear(); // make sure to clear cache
 
 	return 0;
 }
@@ -827,11 +815,9 @@ int16 *GameDatabaseV3::findObjectProperty(int16 objectIndex, int16 propertyId, i
 		}
 
 		parentObjectIndex = obj->getClass();
-
 	}
 
 	return NULL;
-
 }
 
 const char *GameDatabaseV3::getString(uint16 offset) {

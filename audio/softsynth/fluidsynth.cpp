@@ -31,14 +31,14 @@
 // prior scummsys.h inclusion and thus forbidden.h
 #include <fluidsynth.h>
 
-#include "common/scummsys.h"
+#include "audio/mpu401.h"
+#include "audio/musicplugin.h"
+#include "audio/softsynth/emumidi.h"
 #include "common/config-manager.h"
 #include "common/error.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
-#include "audio/softsynth/emumidi.h"
 #if defined(IPHONE_IOS7) && defined(IPHONE_SANDBOXED)
 #include "backends/platform/ios7/ios7_common.h"
 #endif
@@ -77,7 +77,7 @@ public:
 // MidiDriver method implementations
 
 MidiDriver_FluidSynth::MidiDriver_FluidSynth(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer) {
+    : MidiDriver_Emulated(mixer) {
 
 	for (int i = 0; i < ARRAYSIZE(_midiChannels); i++) {
 		_midiChannels[i].init(this, i);
@@ -230,32 +230,32 @@ void MidiDriver_FluidSynth::send(uint32 b) {
 	midiDriverCommonSend(b);
 
 	//byte param3 = (byte) ((b >> 24) & 0xFF);
-	uint param2 = (byte) ((b >> 16) & 0xFF);
-	uint param1 = (byte) ((b >>  8) & 0xFF);
-	byte cmd    = (byte) (b & 0xF0);
-	byte chan   = (byte) (b & 0x0F);
+	uint param2 = (byte)((b >> 16) & 0xFF);
+	uint param1 = (byte)((b >> 8) & 0xFF);
+	byte cmd = (byte)(b & 0xF0);
+	byte chan = (byte)(b & 0x0F);
 
 	switch (cmd) {
-	case 0x80:	// Note Off
+	case 0x80: // Note Off
 		fluid_synth_noteoff(_synth, chan, param1);
 		break;
-	case 0x90:	// Note On
+	case 0x90: // Note On
 		fluid_synth_noteon(_synth, chan, param1, param2);
 		break;
-	case 0xA0:	// Aftertouch
+	case 0xA0: // Aftertouch
 		break;
-	case 0xB0:	// Control Change
+	case 0xB0: // Control Change
 		fluid_synth_cc(_synth, chan, param1, param2);
 		break;
-	case 0xC0:	// Program Change
+	case 0xC0: // Program Change
 		fluid_synth_program_change(_synth, chan, param1);
 		break;
-	case 0xD0:	// Channel Pressure
+	case 0xD0: // Channel Pressure
 		break;
-	case 0xE0:	// Pitch Bend
+	case 0xE0: // Pitch Bend
 		fluid_synth_pitch_bend(_synth, chan, (param2 << 7) | param1);
 		break;
-	case 0xF0:	// SysEx
+	case 0xF0: // SysEx
 		// We should never get here! SysEx information has to be
 		// sent via high-level semantic methods.
 		warning("MidiDriver_FluidSynth: Receiving SysEx command on a send() call");
@@ -281,7 +281,6 @@ MidiChannel *MidiDriver_FluidSynth::getPercussionChannel() {
 void MidiDriver_FluidSynth::generateSamples(int16 *data, int len) {
 	fluid_synth_write_s16(_synth, len, data, 0, 2, data, 1, 2);
 }
-
 
 // Plugin interface
 
@@ -312,9 +311,9 @@ Common::Error FluidSynthMusicPlugin::createInstance(MidiDriver **mididriver, Mid
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(FLUIDSYNTH)
-	//REGISTER_PLUGIN_DYNAMIC(FLUIDSYNTH, PLUGIN_TYPE_MUSIC, FluidSynthMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(FLUIDSYNTH, PLUGIN_TYPE_MUSIC, FluidSynthMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(FLUIDSYNTH, PLUGIN_TYPE_MUSIC, FluidSynthMusicPlugin);
+REGISTER_PLUGIN_STATIC(FLUIDSYNTH, PLUGIN_TYPE_MUSIC, FluidSynthMusicPlugin);
 //#endif
 
 #endif

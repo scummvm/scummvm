@@ -45,8 +45,7 @@ class UCList {
 	unsigned int _size;
 
 public:
-	UCList(unsigned int elementSize, unsigned int capacity = 0) :
-		_elementSize(elementSize), _size(0) {
+	UCList(unsigned int elementSize, unsigned int capacity = 0) : _elementSize(elementSize), _size(0) {
 		if (capacity > 0)
 			_elements.reserve(_elementSize * capacity);
 	}
@@ -86,7 +85,7 @@ public:
 				equal = equal && (_elements[i * _elementSize + j] == e[j]);
 			if (equal) {
 				_elements.erase(_elements.begin() + i * _elementSize,
-				               _elements.begin() + (i + 1)*_elementSize);
+				                _elements.begin() + (i + 1) * _elementSize);
 				_size--;
 				i--; // back up a bit
 			}
@@ -146,7 +145,7 @@ public:
 	}
 
 	void freeStrings();
-	void copyStringList(const UCList &l) ;
+	void copyStringList(const UCList &l);
 	void unionStringList(UCList &l);
 	void subtractStringList(const UCList &l);
 	bool stringInList(uint16 str) const;

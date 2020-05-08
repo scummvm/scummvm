@@ -76,6 +76,7 @@ private:
 	 * This will load a specified close up and zoom it up to the middle of the screen
 	 */
 	void showCloseUp(int closeUpNum);
+
 public:
 	TattooMap(SherlockEngine *vm);
 	~TattooMap() override {}

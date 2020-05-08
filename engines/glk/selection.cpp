@@ -21,10 +21,10 @@
  */
 
 #include "glk/selection.h"
+#include "common/system.h"
 #include "glk/conf.h"
 #include "glk/glk.h"
 #include "glk/windows.h"
-#include "common/system.h"
 
 namespace Glk {
 
@@ -114,10 +114,7 @@ void WindowMask::putHyperlink(uint linkval, uint x0, uint y0, uint x1, uint y1) 
 		return;
 	}
 
-	if (tx0 >= _hor
-			|| tx1 >= _hor
-			|| ty0 >= _ver || ty1 >= _ver
-			|| !_links[tx0] || !_links[tx1]) {
+	if (tx0 >= _hor || tx1 >= _hor || ty0 >= _ver || ty1 >= _ver || !_links[tx0] || !_links[tx1]) {
 		warning("putHyperlink: invalid range given");
 		return;
 	}
@@ -191,7 +188,7 @@ void Selection::clearSelection() {
 
 bool Selection::checkSelection(const Rect &r) const {
 	Rect select(MIN(_select.left, _select.right), MIN(_select.top, _select.bottom),
-		MAX(_select.left, _select.right), MAX(_select.top, _select.bottom));
+	            MAX(_select.left, _select.right), MAX(_select.top, _select.bottom));
 	if (select.isEmpty())
 		return false;
 
@@ -218,8 +215,7 @@ bool Selection::getSelection(const Rect &r, int *rx0, int *rx1) const {
 
 	row_selected = false;
 
-	if ((cy0 >= upper && cy0 <= lower)
-			|| (cy1 >= upper && cy1 <= lower))
+	if ((cy0 >= upper && cy0 <= lower) || (cy1 >= upper && cy1 <= lower))
 		row_selected = true;
 
 	if (row >= cy0 && row <= cy1)

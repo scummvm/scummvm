@@ -28,7 +28,7 @@
 
 namespace Networking {
 
-class ListAjaxHandler: public FilesBaseHandler {
+class ListAjaxHandler : public FilesBaseHandler {
 	enum ItemType {
 		IT_DIRECTORY,
 		IT_PARENT_DIRECTORY,

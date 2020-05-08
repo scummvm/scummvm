@@ -34,7 +34,7 @@ namespace BladeRunner {
 
 // Note: Speech samples here should be from A.TLK file
 const int kSpeechSamplesNumber = 23;
-const int AudioSpeech::kSpeechSamples[kSpeechSamplesNumber] = { 65, 355, 490, 465, 480, 485, 505, 760, 7655, 7770, 7740, 8170, 2705, 7200, 6460, 5560, 4870, 4555, 3880, 3525, 3595, 3250, 3070 };
+const int AudioSpeech::kSpeechSamples[kSpeechSamplesNumber] = {65, 355, 490, 465, 480, 485, 505, 760, 7655, 7770, 7740, 8170, 2705, 7200, 6460, 5560, 4870, 4555, 3880, 3525, 3595, 3250, 3070};
 
 void AudioSpeech::ended() {
 	//Common::StackLock lock(_mutex);
@@ -97,15 +97,15 @@ bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
 	AudStream *audioStream = new AudStream(_data, _vm->_shortyMode ? 33000 : -1);
 
 	_channel = _vm->_audioMixer->play(
-		Audio::Mixer::kSpeechSoundType,
-		audioStream,
-		100,
-		false,
-		_speechVolume,
-		pan,
-		mixerChannelEnded,
-		this,
-		audioStream->getLength());
+	    Audio::Mixer::kSpeechSoundType,
+	    audioStream,
+	    100,
+	    false,
+	    _speechVolume,
+	    pan,
+	    mixerChannelEnded,
+	    this,
+	    audioStream->getLength());
 
 	_isActive = true;
 
@@ -142,11 +142,11 @@ int AudioSpeech::getVolume() const {
 
 void AudioSpeech::playSample() {
 #if BLADERUNNER_ORIGINAL_BUGS
-	_vm->_playerActor->speechPlay(kSpeechSamples[_vm->_rnd.getRandomNumber(kSpeechSamplesNumber-1)], true);
+	_vm->_playerActor->speechPlay(kSpeechSamples[_vm->_rnd.getRandomNumber(kSpeechSamplesNumber - 1)], true);
 #else
 	if (_vm->openArchive("A.TLK")) {
 		// load sample speech even when in initial KIA screen (upon launch - but before loading a game)
-		_vm->_playerActor->speechPlay(kSpeechSamples[_vm->_rnd.getRandomNumber(kSpeechSamplesNumber-1)], true);
+		_vm->_playerActor->speechPlay(kSpeechSamples[_vm->_rnd.getRandomNumber(kSpeechSamplesNumber - 1)], true);
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 }

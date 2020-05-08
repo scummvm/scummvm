@@ -25,10 +25,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CShipSettingButton, CGameObject)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 CShipSettingButton::CShipSettingButton() : CGameObject(), _pressed(false), _enabled(false) {

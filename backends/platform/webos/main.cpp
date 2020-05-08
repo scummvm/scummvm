@@ -22,15 +22,15 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
+#include "base/main.h"
 #include "backends/platform/webos/webos.h"
 #include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
 
 #if defined(WEBOS)
 
 #include <unistd.h>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 	g_system = new OSystem_SDL_WebOS();
 	assert(g_system);
 

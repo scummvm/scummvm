@@ -20,15 +20,15 @@
  *
  */
 
+#include "mohawk/myst_stacks/channelwood.h"
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
-#include "mohawk/myst_state.h"
 #include "mohawk/myst_sound.h"
+#include "mohawk/myst_state.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/channelwood.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -37,14 +37,13 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Channelwood::Channelwood(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm, kChannelwoodStack),
-		_state(vm->_gameState->_channelwood),
-		_valveVar(0),
-		_siriusDrawerState(0),
-		_doorOpened(0),
-		_leverPulled(false),
-		_leverAction(nullptr) {
+Channelwood::Channelwood(MohawkEngine_Myst *vm) : MystScriptParser(vm, kChannelwoodStack),
+                                                  _state(vm->_gameState->_channelwood),
+                                                  _valveVar(0),
+                                                  _siriusDrawerState(0),
+                                                  _doorOpened(0),
+                                                  _leverPulled(false),
+                                                  _leverAction(nullptr) {
 	setupOpcodes();
 }
 
@@ -93,15 +92,13 @@ void Channelwood::setupOpcodes() {
 }
 
 void Channelwood::disablePersistentScripts() {
-
 }
 
 void Channelwood::runPersistentScripts() {
-
 }
 
 uint16 Channelwood::getVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 1: // Water Pump Bridge Raised
 		return _state.waterPumpBridgeState;
 	case 2: // Lower Walkway to Upper Walkway Elevator Raised
@@ -166,9 +163,9 @@ uint16 Channelwood::getVar(uint16 var) {
 		// 0 -> keep sound.
 		// 1 -> not flowing.
 		// 2 --> flowing.
-		if ((_state.waterValveStates & 0xe2) == 0x82)	// From left.
+		if ((_state.waterValveStates & 0xe2) == 0x82) // From left.
 			return 2;
-		if ((_state.waterValveStates & 0xf4) == 0xa0)	// From right.
+		if ((_state.waterValveStates & 0xf4) == 0xa0) // From right.
 			return 1;
 
 		return 0;
@@ -188,7 +185,7 @@ uint16 Channelwood::getVar(uint16 var) {
 		}
 	case 102: // Sirrus's Desk Drawer / Red Page State
 		if (_siriusDrawerState) {
-			if(!(_globals.redPagesInBook & 16) && (_globals.heldPage != kRedChannelwoodPage))
+			if (!(_globals.redPagesInBook & 16) && (_globals.heldPage != kRedChannelwoodPage))
 				return 2; // Drawer Open, Red Page Present
 			else
 				return 1; // Drawer Open, Red Page Taken
@@ -203,7 +200,7 @@ uint16 Channelwood::getVar(uint16 var) {
 }
 
 void Channelwood::toggleVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 1: // Water Pump Bridge Raised
 		_state.waterPumpBridgeState ^= 1;
 		break;
@@ -350,7 +347,6 @@ void Channelwood::o_drawImageChangeCardAndVolume(uint16 var, const ArgumentsArra
 		_vm->_sound->changeBackgroundVolume(volume);
 	}
 }
-
 
 void Channelwood::o_waterTankValveOpen(uint16 var, const ArgumentsArray &args) {
 	Common::Rect rect = getInvokingResource<MystArea>()->getRect();

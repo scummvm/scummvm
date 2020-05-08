@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "tsage/ringworld/ringworld_scenes5.h"
+#include "common/config-manager.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -811,16 +811,15 @@ void Scene4000::Hotspot23::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene4000::Scene4000() :
-	_forceField(0, CURSOR_LOOK, 4000, 14, CURSOR_USE, 4000, 32, OBJECT_STUNNER, 4000, 33,
-		OBJECT_SCANNER, 4000, 19, LIST_END),
-	_hotspot19(0, CURSOR_LOOK, 4000, 7, LIST_END),
-	_hotspot20(0, CURSOR_LOOK, 4000, 3, LIST_END),
-	_hotspot21(0, CURSOR_LOOK, 4000, 1, LIST_END),
-	_hotspot22(0, CURSOR_LOOK, 4000, 8, LIST_END),
-	_hotspot24(0, CURSOR_LOOK, 4000, 11, LIST_END),
-	_hotspot25(0, CURSOR_LOOK, 4000, 4, LIST_END),
-	_hotspot26(0, CURSOR_LOOK, 4000, 0, LIST_END) {
+Scene4000::Scene4000() : _forceField(0, CURSOR_LOOK, 4000, 14, CURSOR_USE, 4000, 32, OBJECT_STUNNER, 4000, 33,
+                                     OBJECT_SCANNER, 4000, 19, LIST_END),
+                         _hotspot19(0, CURSOR_LOOK, 4000, 7, LIST_END),
+                         _hotspot20(0, CURSOR_LOOK, 4000, 3, LIST_END),
+                         _hotspot21(0, CURSOR_LOOK, 4000, 1, LIST_END),
+                         _hotspot22(0, CURSOR_LOOK, 4000, 8, LIST_END),
+                         _hotspot24(0, CURSOR_LOOK, 4000, 11, LIST_END),
+                         _hotspot25(0, CURSOR_LOOK, 4000, 4, LIST_END),
+                         _hotspot26(0, CURSOR_LOOK, 4000, 0, LIST_END) {
 }
 
 void Scene4000::postInit(SceneObjectList *OwnerList) {
@@ -880,7 +879,7 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 	_smoke2.animate(ANIM_MODE_2, NULL);
 
 	if (RING_INVENTORY._ladder._sceneNumber != 4000) {
-	// if ladder is not in the scene, activate the hotspot on the wall
+		// if ladder is not in the scene, activate the hotspot on the wall
 		_hotspot8.postInit();
 		_hotspot8.setVisage(4018);
 		_hotspot8.setObjectWrapper(new SceneObjectWrapper());
@@ -1177,8 +1176,8 @@ void Scene4000::postInit(SceneObjectList *OwnerList) {
 	}
 
 	g_globals->_sceneItems.addItems(&_hotspot8, &_hotspot17, &_hotspot18, &_hotspot14, &_hotspot15,
-		&_hotspot16, &_theTech, &_hotspot13, &_hotspot21, &_hotspot20, &_hotspot22, &_hotspot23,
-		&_hotspot24, &_hotspot25, &_hotspot19, &_hotspot26, NULL);
+	                                &_hotspot16, &_theTech, &_hotspot13, &_hotspot21, &_hotspot20, &_hotspot22, &_hotspot23,
+	                                &_hotspot24, &_hotspot25, &_hotspot19, &_hotspot26, NULL);
 }
 
 void Scene4000::signal() {
@@ -1274,7 +1273,7 @@ void Scene4000::dispatch() {
 
 	if (!_action) {
 		if ((RING_INVENTORY._peg._sceneNumber == 1) && g_globals->getFlag(34) &&
-				g_globals->getFlag(37) && !g_globals->getFlag(40)) {
+		    g_globals->getFlag(37) && !g_globals->getFlag(40)) {
 			g_globals->_player.disableControl();
 			_soundHandler1.play(177);
 			g_globals->_soundHandler.play(178);
@@ -1652,7 +1651,7 @@ void Scene4025::postInit(SceneObjectList *OwnerList) {
 	_armHotspot.setFrame(4);
 
 	g_globals->_sceneItems.addItems(&_hole1, &_hole2, &_hole3, &_hole4, &_hole5,
-		&_peg1, &_peg2, &_peg3, &_peg4, &_peg5, NULL);
+	                                &_peg1, &_peg2, &_peg3, &_peg4, &_peg5, NULL);
 
 	g_globals->_player._uiEnabled = true;
 	g_globals->_player.disableControl();
@@ -1699,7 +1698,7 @@ void Scene4025::process(Event &event) {
 
 void Scene4025::dispatch() {
 	if (!_action && (_peg1._armStrip == 7) && (_peg2._armStrip == 4) && (_peg3._armStrip == 8) &&
-			(_peg4._armStrip == 5) && (_peg5._armStrip == 6))
+	    (_peg4._armStrip == 5) && (_peg5._armStrip == 6))
 		setAction(&_action3);
 
 	Scene::dispatch();
@@ -1891,16 +1890,15 @@ void Scene4045::Necklace::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene4045::Scene4045() :
-	_flame(0, CURSOR_LOOK, 4045, 1, CURSOR_USE, 4100, 21, LIST_END),
-	_hotspot7(9, CURSOR_LOOK, 4045, 0, CURSOR_USE, 4045, 15, LIST_END),
-	_hotspot8(10, CURSOR_LOOK, 4045, 2, LIST_END),
-	_hotspot9(11, CURSOR_LOOK, 4045, 3, CURSOR_USE, 4045, 15, LIST_END),
-	_hotspot10(12, CURSOR_LOOK, 4045, 4, CURSOR_USE, 4100, 19, LIST_END),
-	_hotspot11(13, CURSOR_LOOK, 4045, 6, CURSOR_USE, 4045, 15, LIST_END),
-	_hotspot12(14, CURSOR_LOOK, 4045, 7, CURSOR_USE, 4150, 29, LIST_END),
-	_hotspot13(15, CURSOR_LOOK, 4045, 8, CURSOR_USE, 4100, 19, LIST_END),
-	_hotspot14(0, CURSOR_LOOK, 4045, 10, LIST_END) {
+Scene4045::Scene4045() : _flame(0, CURSOR_LOOK, 4045, 1, CURSOR_USE, 4100, 21, LIST_END),
+                         _hotspot7(9, CURSOR_LOOK, 4045, 0, CURSOR_USE, 4045, 15, LIST_END),
+                         _hotspot8(10, CURSOR_LOOK, 4045, 2, LIST_END),
+                         _hotspot9(11, CURSOR_LOOK, 4045, 3, CURSOR_USE, 4045, 15, LIST_END),
+                         _hotspot10(12, CURSOR_LOOK, 4045, 4, CURSOR_USE, 4100, 19, LIST_END),
+                         _hotspot11(13, CURSOR_LOOK, 4045, 6, CURSOR_USE, 4045, 15, LIST_END),
+                         _hotspot12(14, CURSOR_LOOK, 4045, 7, CURSOR_USE, 4150, 29, LIST_END),
+                         _hotspot13(15, CURSOR_LOOK, 4045, 8, CURSOR_USE, 4100, 19, LIST_END),
+                         _hotspot14(0, CURSOR_LOOK, 4045, 10, LIST_END) {
 
 	_hotspot14.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
@@ -2011,7 +2009,7 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 	}
 
 	g_globals->_sceneItems.addItems(&_olloStand, &_hotspot7, &_hotspot8, &_hotspot9, &_hotspot10,
-		&_hotspot13, &_hotspot11, &_hotspot12, &_hotspot14, NULL);
+	                                &_hotspot13, &_hotspot11, &_hotspot12, &_hotspot14, NULL);
 }
 
 void Scene4045::stripCallback(int v) {
@@ -2292,20 +2290,19 @@ void Scene4050::Hotspot17::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene4050::Scene4050() :
-		_hotspot1(0, CURSOR_LOOK, 4050, 0, LIST_END),
-		_hotspot2(0, CURSOR_LOOK, 4050, 1, CURSOR_USE, 4050, 15, LIST_END),
-		_hotspot3(0, CURSOR_LOOK, 4050, 2, CURSOR_USE, 4050, 16, LIST_END),
-		_hotspot4(0, CURSOR_LOOK, 4050, 4, LIST_END),
-		_hotspot5(0, CURSOR_LOOK, 4050, 5, LIST_END),
-		_hotspot6(0, CURSOR_LOOK, 4050, 5, LIST_END),
-		_hotspot7(0, CURSOR_LOOK, 4050, 6, CURSOR_USE, 4050, 18, LIST_END),
-		_hotspot8(0, CURSOR_LOOK, 4050, 7, CURSOR_USE, 4050, 19, LIST_END),
-		_hotspot9(0, CURSOR_LOOK, 4050, 8, CURSOR_USE, 4050, 20, LIST_END),
-		_hotspot10(0, CURSOR_LOOK, 4050, 9, CURSOR_USE, 4050, 21, LIST_END),
-		_hotspot11(0, CURSOR_LOOK, 4050, 10, CURSOR_USE, 4050, 22, LIST_END),
-		_hotspot12(0, CURSOR_LOOK, 4050, 11, CURSOR_USE, 4050, 23, LIST_END),
-		_hotspot13(0, CURSOR_LOOK, 4050, 3, CURSOR_USE, 4050, 17, LIST_END) {
+Scene4050::Scene4050() : _hotspot1(0, CURSOR_LOOK, 4050, 0, LIST_END),
+                         _hotspot2(0, CURSOR_LOOK, 4050, 1, CURSOR_USE, 4050, 15, LIST_END),
+                         _hotspot3(0, CURSOR_LOOK, 4050, 2, CURSOR_USE, 4050, 16, LIST_END),
+                         _hotspot4(0, CURSOR_LOOK, 4050, 4, LIST_END),
+                         _hotspot5(0, CURSOR_LOOK, 4050, 5, LIST_END),
+                         _hotspot6(0, CURSOR_LOOK, 4050, 5, LIST_END),
+                         _hotspot7(0, CURSOR_LOOK, 4050, 6, CURSOR_USE, 4050, 18, LIST_END),
+                         _hotspot8(0, CURSOR_LOOK, 4050, 7, CURSOR_USE, 4050, 19, LIST_END),
+                         _hotspot9(0, CURSOR_LOOK, 4050, 8, CURSOR_USE, 4050, 20, LIST_END),
+                         _hotspot10(0, CURSOR_LOOK, 4050, 9, CURSOR_USE, 4050, 21, LIST_END),
+                         _hotspot11(0, CURSOR_LOOK, 4050, 10, CURSOR_USE, 4050, 22, LIST_END),
+                         _hotspot12(0, CURSOR_LOOK, 4050, 11, CURSOR_USE, 4050, 23, LIST_END),
+                         _hotspot13(0, CURSOR_LOOK, 4050, 3, CURSOR_USE, 4050, 17, LIST_END) {
 }
 
 void Scene4050::postInit(SceneObjectList *OwnerList) {
@@ -2390,8 +2387,8 @@ void Scene4050::postInit(SceneObjectList *OwnerList) {
 	_hotspot12.setBounds(Rect(258, 154, 307, 180));
 
 	g_globals->_sceneItems.addItems(&_hotspot17, &_hotspot12, &_hotspot11, &_hotspot10, &_hotspot13,
-		&_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5, &_hotspot6, &_hotspot8, &_hotspot9,
-		&_hotspot7, &_hotspot1, NULL);
+	                                &_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5, &_hotspot6, &_hotspot8, &_hotspot9,
+	                                &_hotspot7, &_hotspot1, NULL);
 }
 
 void Scene4050::signal() {
@@ -2472,7 +2469,6 @@ void Scene4100::Action2::signal() {
 		break;
 	}
 }
-
 
 void Scene4100::Action3::signal() {
 	Scene4100 *scene = (Scene4100 *)g_globals->_sceneManager._scene;
@@ -2565,7 +2561,6 @@ void Scene4100::Action5::signal() {
 	}
 }
 
-
 void Scene4100::Action6::signal() {
 	Scene4100 *scene = (Scene4100 *)g_globals->_sceneManager._scene;
 
@@ -2586,7 +2581,7 @@ void Scene4100::Action6::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene4100::Hotspot1::doAction(int action)  {
+void Scene4100::Hotspot1::doAction(int action) {
 	Scene4100 *scene = (Scene4100 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2631,7 +2626,7 @@ void Scene4100::Hotspot1::doAction(int action)  {
 	}
 }
 
-void Scene4100::Hotspot2::doAction(int action)  {
+void Scene4100::Hotspot2::doAction(int action) {
 	switch (action) {
 	case CURSOR_LOOK:
 		error("*** The Chief's daughter... WOW!");
@@ -2642,7 +2637,7 @@ void Scene4100::Hotspot2::doAction(int action)  {
 	}
 }
 
-void Scene4100::Miranda::doAction(int action)  {
+void Scene4100::Miranda::doAction(int action) {
 	Scene4100 *scene = (Scene4100 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2659,7 +2654,7 @@ void Scene4100::Miranda::doAction(int action)  {
 	}
 }
 
-void Scene4100::Ladder::doAction(int action)  {
+void Scene4100::Ladder::doAction(int action) {
 	Scene4100 *scene = (Scene4100 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2684,7 +2679,7 @@ void Scene4100::Ladder::doAction(int action)  {
 /**
  Exit hotspot, South
  */
-void Scene4100::Hotspot14::doAction(int action)  {
+void Scene4100::Hotspot14::doAction(int action) {
 	Scene4100 *scene = (Scene4100 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
@@ -2701,19 +2696,17 @@ void Scene4100::Hotspot14::doAction(int action)  {
 	}
 }
 
-
 /*--------------------------------------------------------------------------*/
 
-Scene4100::Scene4100() :
-		_hotspot3(0, CURSOR_LOOK, 4100, 10, CURSOR_USE, 4100, 21, LIST_END),
-		_hotspot4(0, CURSOR_LOOK, 4100, 8, LIST_END),
-		_hotspot7(0, CURSOR_USE, 4100, 3, CURSOR_USE, 4150, 29, LIST_END),
-		_hotspot8(0, CURSOR_LOOK, 4100, 5, LIST_END),
-		_hotspot9(0, CURSOR_LOOK, 4100, 6, CURSOR_USE, 4100, 20, LIST_END),
-		_hotspot10(0, CURSOR_LOOK, 4100, 7, CURSOR_USE, 4100, 19, LIST_END),
-		_hotspot11(0, CURSOR_LOOK, 4100, 8, CURSOR_USE, 4100, 18, LIST_END),
-		_hotspot12(0, CURSOR_LOOK, 4100, 9, LIST_END),
-		_hotspot13(0, CURSOR_LOOK, 4100, 11, CURSOR_USE, 4100, 17, LIST_END) {
+Scene4100::Scene4100() : _hotspot3(0, CURSOR_LOOK, 4100, 10, CURSOR_USE, 4100, 21, LIST_END),
+                         _hotspot4(0, CURSOR_LOOK, 4100, 8, LIST_END),
+                         _hotspot7(0, CURSOR_USE, 4100, 3, CURSOR_USE, 4150, 29, LIST_END),
+                         _hotspot8(0, CURSOR_LOOK, 4100, 5, LIST_END),
+                         _hotspot9(0, CURSOR_LOOK, 4100, 6, CURSOR_USE, 4100, 20, LIST_END),
+                         _hotspot10(0, CURSOR_LOOK, 4100, 7, CURSOR_USE, 4100, 19, LIST_END),
+                         _hotspot11(0, CURSOR_LOOK, 4100, 8, CURSOR_USE, 4100, 18, LIST_END),
+                         _hotspot12(0, CURSOR_LOOK, 4100, 9, LIST_END),
+                         _hotspot13(0, CURSOR_LOOK, 4100, 11, CURSOR_USE, 4100, 17, LIST_END) {
 }
 
 void Scene4100::postInit(SceneObjectList *OwnerList) {
@@ -2786,7 +2779,7 @@ void Scene4100::postInit(SceneObjectList *OwnerList) {
 	_hotspot13.setBounds(Rect(255, 152, 286, 183));
 
 	g_globals->_sceneItems.addItems(&_hotspot3, &_hotspot1, &_hotspot13, &_hotspot12, &_hotspot4,
-		&_hotspot11, &_hotspot9, &_hotspot7, &_hotspot10, &_hotspot8, &_hotspot14, NULL);
+	                                &_hotspot11, &_hotspot9, &_hotspot7, &_hotspot10, &_hotspot8, &_hotspot14, NULL);
 
 	if (g_globals->_sceneManager._previousScene == 4150) {
 		g_globals->_soundHandler.play(155);
@@ -3075,26 +3068,24 @@ void Scene4150::Hotspot3::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene4150::Scene4150() :
-		_hotspot1(0, CURSOR_LOOK, 4150, 17, CURSOR_USE, 4150, 21, CURSOR_TALK, 4150, 21,
-				OBJECT_SCANNER, 4150, 22, OBJECT_STUNNER, 4150, 23, LIST_END),
-		_hotspot2(0, CURSOR_LOOK, 4150, 4, CURSOR_USE, 4150, 24, LIST_END),
-		_hotspot7(0, CURSOR_LOOK, 4150, 1, CURSOR_USE, 4150, 25, OBJECT_ROPE, 4150, 26, LIST_END),
-		_hotspot8(0, CURSOR_LOOK, 4150, 1, CURSOR_USE, 4150, 25, OBJECT_ROPE, 4150, 26, LIST_END),
-		_hotspot9(0, CURSOR_LOOK, 4150, 2, CURSOR_USE, 4150, 27, OBJECT_SCANNER, 4150, 28,
-				OBJECT_STUNNER, 4150, 32, LIST_END),
-		_hotspot10(0, CURSOR_LOOK, 4150, 5, CURSOR_USE, 4150, 29, LIST_END),
-		_hotspot11(0, CURSOR_LOOK, 4150, 6, CURSOR_USE, 4150, 29, LIST_END),
-		_hotspot12(0, CURSOR_LOOK, 4150, 7, CURSOR_USE, 4150, 29, LIST_END),
-		_hotspot17(0, CURSOR_LOOK, 4150, 10, CURSOR_USE, 4150, 27, OBJECT_STUNNER, 4150, 32, LIST_END),
-		_hotspot18(0, CURSOR_LOOK, 4150, 11, CURSOR_USE, 4150, 27, OBJECT_STUNNER, 4150, 32, LIST_END),
-		_hotspot19(0, CURSOR_LOOK, 4150, 12, CURSOR_USE, 4150, 29, LIST_END),
-		_hotspot20(0, CURSOR_LOOK, 4150, 13, CURSOR_USE, 4150, 29, LIST_END),
-		_hotspot21(0, CURSOR_LOOK, 4150, 13, CURSOR_USE, 4150, 29, LIST_END),
-		_hotspot22(0, CURSOR_LOOK, 4150, 13, CURSOR_USE, 4150, 29, LIST_END),
-		_hotspot23(0, CURSOR_LOOK, 4150, 14, CURSOR_USE, 4150, 27, OBJECT_STUNNER, 4150, 32, LIST_END),
-		_hotspot24(0, CURSOR_LOOK, 4150, 14, CURSOR_USE, 4150, 27, OBJECT_STUNNER, 4150, 32, LIST_END)
-		{
+Scene4150::Scene4150() : _hotspot1(0, CURSOR_LOOK, 4150, 17, CURSOR_USE, 4150, 21, CURSOR_TALK, 4150, 21,
+                                   OBJECT_SCANNER, 4150, 22, OBJECT_STUNNER, 4150, 23, LIST_END),
+                         _hotspot2(0, CURSOR_LOOK, 4150, 4, CURSOR_USE, 4150, 24, LIST_END),
+                         _hotspot7(0, CURSOR_LOOK, 4150, 1, CURSOR_USE, 4150, 25, OBJECT_ROPE, 4150, 26, LIST_END),
+                         _hotspot8(0, CURSOR_LOOK, 4150, 1, CURSOR_USE, 4150, 25, OBJECT_ROPE, 4150, 26, LIST_END),
+                         _hotspot9(0, CURSOR_LOOK, 4150, 2, CURSOR_USE, 4150, 27, OBJECT_SCANNER, 4150, 28,
+                                   OBJECT_STUNNER, 4150, 32, LIST_END),
+                         _hotspot10(0, CURSOR_LOOK, 4150, 5, CURSOR_USE, 4150, 29, LIST_END),
+                         _hotspot11(0, CURSOR_LOOK, 4150, 6, CURSOR_USE, 4150, 29, LIST_END),
+                         _hotspot12(0, CURSOR_LOOK, 4150, 7, CURSOR_USE, 4150, 29, LIST_END),
+                         _hotspot17(0, CURSOR_LOOK, 4150, 10, CURSOR_USE, 4150, 27, OBJECT_STUNNER, 4150, 32, LIST_END),
+                         _hotspot18(0, CURSOR_LOOK, 4150, 11, CURSOR_USE, 4150, 27, OBJECT_STUNNER, 4150, 32, LIST_END),
+                         _hotspot19(0, CURSOR_LOOK, 4150, 12, CURSOR_USE, 4150, 29, LIST_END),
+                         _hotspot20(0, CURSOR_LOOK, 4150, 13, CURSOR_USE, 4150, 29, LIST_END),
+                         _hotspot21(0, CURSOR_LOOK, 4150, 13, CURSOR_USE, 4150, 29, LIST_END),
+                         _hotspot22(0, CURSOR_LOOK, 4150, 13, CURSOR_USE, 4150, 29, LIST_END),
+                         _hotspot23(0, CURSOR_LOOK, 4150, 14, CURSOR_USE, 4150, 27, OBJECT_STUNNER, 4150, 32, LIST_END),
+                         _hotspot24(0, CURSOR_LOOK, 4150, 14, CURSOR_USE, 4150, 27, OBJECT_STUNNER, 4150, 32, LIST_END) {
 }
 
 void Scene4150::postInit(SceneObjectList *OwnerList) {
@@ -3176,10 +3167,10 @@ void Scene4150::postInit(SceneObjectList *OwnerList) {
 	_hotspot26.setBounds(Rect(98, 169, 238, 198));
 
 	g_globals->_sceneItems.addItems(&_hotspot24, &_hotspot23, &_hotspot13, &_hotspot25,
-		&_hotspot26, &_hotspot19, &_hotspot22, &_hotspot20, &_hotspot17, &_hotspot16,
-		&_hotspot15, &_hotspot11, &_hotspot14, &_hotspot18, &_hotspot21, &_hotspot12,
-		&_hotspot10, &_hotspot9, &_hotspot8, &_hotspot7, &_hotspot6, &_hotspot2,
-		&_hotspot5, NULL);
+	                                &_hotspot26, &_hotspot19, &_hotspot22, &_hotspot20, &_hotspot17, &_hotspot16,
+	                                &_hotspot15, &_hotspot11, &_hotspot14, &_hotspot18, &_hotspot21, &_hotspot12,
+	                                &_hotspot10, &_hotspot9, &_hotspot8, &_hotspot7, &_hotspot6, &_hotspot2,
+	                                &_hotspot5, NULL);
 
 	g_globals->_soundHandler.play(165);
 	_soundHandler.play(311);
@@ -3402,7 +3393,7 @@ void Scene4250::Hotspot1::doAction(int action) {
 				scene->setAction(&scene->_sequenceManager, scene, 4265, this, NULL);
 			} else {
 				scene->setAction(&scene->_sequenceManager, scene,
-					g_globals->_sceneObjects->contains(&scene->_hotspot6) ? 4260 : 4262, this, NULL);
+				                 g_globals->_sceneObjects->contains(&scene->_hotspot6) ? 4260 : 4262, this, NULL);
 			}
 		}
 		break;
@@ -3486,7 +3477,7 @@ void Scene4250::Hotspot4::doAction(int action) {
 				scene->setAction(&scene->_sequenceManager, scene, 4266, this, NULL);
 			} else {
 				scene->setAction(&scene->_sequenceManager, scene,
-					(RING_INVENTORY._concentrator._sceneNumber == 1) ? 4255 : 4254, NULL);
+				                 (RING_INVENTORY._concentrator._sceneNumber == 1) ? 4255 : 4254, NULL);
 			}
 		}
 		break;
@@ -3602,7 +3593,7 @@ void Scene4250::Hotspot8::doAction(int action) {
 		g_globals->_player.disableControl();
 		scene->_sceneMode = 4270;
 		scene->setAction(&scene->_sequenceManager, scene,
-			(RING_INVENTORY._helmet._sceneNumber == 4250) ? 4270 : 4271, NULL);
+		                 (RING_INVENTORY._helmet._sceneNumber == 4250) ? 4270 : 4271, NULL);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -3612,8 +3603,7 @@ void Scene4250::Hotspot8::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene4250::Scene4250() :
-		_hotspot7(0, CURSOR_LOOK, 4250, 0, LIST_END) {
+Scene4250::Scene4250() : _hotspot7(0, CURSOR_LOOK, 4250, 0, LIST_END) {
 }
 
 void Scene4250::postInit(TsAGE::SceneObjectList *OwnerList) {
@@ -3920,7 +3910,6 @@ void Scene4300::Action2::signal() {
 	}
 }
 
-
 /*--------------------------------------------------------------------------*/
 
 void Scene4300::Hotspot8::doAction(int action) {
@@ -3955,14 +3944,14 @@ void Scene4300::Hotspot9::doAction(int action) {
 	switch (action) {
 	case CURSOR_LOOK:
 		if ((RING_INVENTORY._stasisBox2._sceneNumber == 4300) ||
-			(RING_INVENTORY._concentrator._sceneNumber == 1))
+		    (RING_INVENTORY._concentrator._sceneNumber == 1))
 			SceneItem::display2(4300, 7);
 		else
 			SceneItem::display2(4300, 1);
 		break;
 	case CURSOR_USE:
 		if ((RING_INVENTORY._stasisBox2._sceneNumber == 4300) ||
-			(RING_INVENTORY._concentrator._sceneNumber == 1))
+		    (RING_INVENTORY._concentrator._sceneNumber == 1))
 			SceneItem::display2(4300, 7);
 		else
 			SceneItem::display2(4300, 3);
@@ -3972,7 +3961,7 @@ void Scene4300::Hotspot9::doAction(int action) {
 		break;
 	case OBJECT_SCANNER:
 		if ((RING_INVENTORY._stasisBox2._sceneNumber == 4300) ||
-			(RING_INVENTORY._concentrator._sceneNumber != 1))
+		    (RING_INVENTORY._concentrator._sceneNumber != 1))
 			SceneItem::display2(4300, 22);
 		else
 			SceneItem::display2(4300, 23);
@@ -4020,7 +4009,7 @@ void Scene4300::Hotspot15::signal() {
 
 	_strip = (g_globals->_randomSource.getRandomNumber(6) < 2) ? 2 : 1;
 	if ((RING_INVENTORY._stasisBox2._sceneNumber == 4300) ||
-			(RING_INVENTORY._concentrator._sceneNumber == 1)) {
+	    (RING_INVENTORY._concentrator._sceneNumber == 1)) {
 		setStrip(1);
 		setFrame(1);
 		animate(ANIM_MODE_NONE, NULL);
@@ -4038,7 +4027,7 @@ void Scene4300::Hotspot16::doAction(int action) {
 		break;
 	case CURSOR_USE:
 		if ((RING_INVENTORY._stasisBox2._sceneNumber != 4300) &&
-				(RING_INVENTORY._concentrator._sceneNumber != 4300)) {
+		    (RING_INVENTORY._concentrator._sceneNumber != 4300)) {
 			SceneItem::display2(4300, 16);
 		} else {
 			scene->_sceneMode = 4302;
@@ -4106,7 +4095,7 @@ void Scene4300::Hotspot19::doAction(int action) {
 		break;
 	case CURSOR_USE:
 		if ((RING_INVENTORY._stasisBox2._sceneNumber != 4300) &&
-				(RING_INVENTORY._concentrator._sceneNumber != 4300))
+		    (RING_INVENTORY._concentrator._sceneNumber != 4300))
 			SceneItem::display2(4300, 10);
 		else
 			SceneItem::display2(4300, 29);
@@ -4119,8 +4108,7 @@ void Scene4300::Hotspot19::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene4300::Scene4300() :
-		_hotspot18(0, CURSOR_LOOK, 4300, 0, LIST_END) {
+Scene4300::Scene4300() : _hotspot18(0, CURSOR_LOOK, 4300, 0, LIST_END) {
 }
 
 void Scene4300::postInit(SceneObjectList *OwnerList) {
@@ -4444,7 +4432,7 @@ void Scene4301::Action1::process(Event &event) {
 		scene->_soundHandler.play(336);
 
 		int buttonIndex = ((event.mousePos.y - buttonsRect.top) / 33) * 3 +
-			((event.mousePos.x - buttonsRect.left) / 33);
+		                  ((event.mousePos.x - buttonsRect.left) / 33);
 
 		_buttonList[_state].postInit();
 		_buttonList[_state].setVisage(4303);
@@ -4460,7 +4448,7 @@ void Scene4301::Action1::process(Event &event) {
 		if (_state == 6) {
 			// Six buttons pressed
 			if ((_indexList[0] == 2) && (_indexList[1] == 3) && (_indexList[2] == 0) &&
-				(_indexList[3] == 4) && (_indexList[4] == 1) && (_indexList[5] == 5)) {
+			    (_indexList[3] == 4) && (_indexList[4] == 1) && (_indexList[5] == 5)) {
 				// Entered the correct full combination
 				_state = 0;
 				_actionIndex = 20;

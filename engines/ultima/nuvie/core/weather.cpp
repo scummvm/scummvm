@@ -20,21 +20,21 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/call_back.h"
-#include "ultima/nuvie/files/nuvie_io.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/misc/u6_llist.h"
 #include "ultima/nuvie/core/weather.h"
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/save/obj_list.h"
-#include "ultima/nuvie/core/timed_event.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/timed_event.h"
+#include "ultima/nuvie/files/nuvie_io.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/call_back.h"
+#include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/save/obj_list.h"
 #include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -80,7 +80,7 @@ MapCoord Weather::get_moonstone(uint8 moonstone) {
 	return MapCoord(0, 0, 0);
 }
 bool Weather::set_moonstone(uint8 moonstone, MapCoord where) {
-	if (moonstone < 8) { // FIXME: hardcoded constant
+	if (moonstone < 8) {                                                              // FIXME: hardcoded constant
 		Game::get_game()->get_script()->call_moonstone_set_loc(moonstone + 1, where); //phase starts at 1 in script.
 		return true;
 	}
@@ -94,15 +94,14 @@ void Weather::update_moongates() {
 
 uint8 Weather::load_wind(NuvieIO *objlist) {
 	const uint8 wind_tbl[8] = {
-		NUVIE_DIR_N,
-		NUVIE_DIR_NE,
-		NUVIE_DIR_E,
-		NUVIE_DIR_SE,
-		NUVIE_DIR_S,
-		NUVIE_DIR_SW,
-		NUVIE_DIR_W,
-		NUVIE_DIR_NW
-	};
+	    NUVIE_DIR_N,
+	    NUVIE_DIR_NE,
+	    NUVIE_DIR_E,
+	    NUVIE_DIR_SE,
+	    NUVIE_DIR_S,
+	    NUVIE_DIR_SW,
+	    NUVIE_DIR_W,
+	    NUVIE_DIR_NW};
 
 	uint8 objlist_wind;
 
@@ -121,7 +120,6 @@ void Weather::clear_wind() {
 		wind_timer = NULL;
 	}
 
-
 	wind_dir = NUVIE_DIR_NONE;
 
 	return;
@@ -137,16 +135,15 @@ bool Weather::save(NuvieIO *objlist) {
 
 bool Weather::save_wind(NuvieIO *objlist) {
 	const uint8 wind_tbl[] = {
-		OBJLIST_U6_WIND_DIR_N,
-		OBJLIST_U6_WIND_DIR_S,
-		OBJLIST_U6_WIND_DIR_E,
-		OBJLIST_U6_WIND_DIR_W,
-		OBJLIST_U6_WIND_DIR_NE,
-		OBJLIST_U6_WIND_DIR_SE,
-		OBJLIST_U6_WIND_DIR_SW,
-		OBJLIST_U6_WIND_DIR_NW,
-		OBJLIST_U6_WIND_DIR_C
-	};
+	    OBJLIST_U6_WIND_DIR_N,
+	    OBJLIST_U6_WIND_DIR_S,
+	    OBJLIST_U6_WIND_DIR_E,
+	    OBJLIST_U6_WIND_DIR_W,
+	    OBJLIST_U6_WIND_DIR_NE,
+	    OBJLIST_U6_WIND_DIR_SE,
+	    OBJLIST_U6_WIND_DIR_SW,
+	    OBJLIST_U6_WIND_DIR_NW,
+	    OBJLIST_U6_WIND_DIR_C};
 
 	objlist->seek(OBJLIST_OFFSET_U6_WIND_DIR);
 	objlist->write1(wind_tbl[wind_dir]);
@@ -247,16 +244,15 @@ bool Weather::add_wind_change_notification_callback(CallBack *caller) {
 	return true;
 }
 
-
 uint16 Weather::callback(uint16 msg, CallBack *caller, void *data) {
 	uint8 *cb_msgid = (uint8 *)callback_user_data;
 
 	switch (*cb_msgid) {
-	case WEATHER_CB_CHANGE_WIND_DIR :
+	case WEATHER_CB_CHANGE_WIND_DIR:
 		wind_timer = NULL;
 		change_wind_dir();
 		break;
-	default :
+	default:
 		DEBUG(0, LEVEL_ERROR, "Weather: Unknown callback!\n");
 		break;
 	}

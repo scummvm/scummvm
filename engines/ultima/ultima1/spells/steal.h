@@ -45,7 +45,7 @@ public:
 	void dungeonCast(Maps::MapDungeon *map) override;
 };
 
-} // End of  namespace U1Dialogs
+} // namespace Spells
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

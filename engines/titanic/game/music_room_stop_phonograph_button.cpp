@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMusicRoomStopPhonographButton, CEjectPhonographButton)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
 void CMusicRoomStopPhonographButton::save(SimpleFile *file, int indent) {

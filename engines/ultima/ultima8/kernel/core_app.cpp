@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/shared/std/misc.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/conf/setting_manager.h"
+#include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/misc/args.h"
 #include "ultima/ultima8/games/game_info.h"
-#include "ultima/shared/std/misc.h"
+#include "ultima/ultima8/misc/args.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -41,8 +41,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(CoreApp)
 CoreApp *CoreApp::_application = nullptr;
 
 CoreApp::CoreApp(const Ultima::UltimaGameDescription *gameDesc)
-		: _gameDesc(gameDesc), _isRunning(false), _gameInfo(nullptr), _fileSystem(nullptr),
-		_configFileMan(nullptr), _settingMan(nullptr) {
+    : _gameDesc(gameDesc), _isRunning(false), _gameInfo(nullptr), _fileSystem(nullptr),
+      _configFileMan(nullptr), _settingMan(nullptr) {
 	_application = this;
 }
 
@@ -141,7 +141,7 @@ GameInfo *CoreApp::getDefaultGame() {
 
 	Std::string defaultgame;
 	bool defaultset = _settingMan->get("defaultgame", defaultgame,
-	                                  SettingManager::DOM_GLOBAL);
+	                                   SettingManager::DOM_GLOBAL);
 	if (defaultset) {
 		// default game specified in config file
 		gamename = defaultgame;
@@ -160,7 +160,8 @@ GameInfo *CoreApp::getDefaultGame() {
 }
 
 bool CoreApp::setupGame(GameInfo *info) {
-	if (!info) return false;
+	if (!info)
+		return false;
 	assert(info->_name != "");
 
 	_gameInfo = info;
@@ -192,7 +193,6 @@ void CoreApp::killGame() {
 
 	_gameInfo = nullptr;
 }
-
 
 bool CoreApp::getGameInfo(istring &game, GameInfo *ginfo) {
 	// first try getting the information from the config file

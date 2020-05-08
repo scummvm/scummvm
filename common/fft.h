@@ -29,8 +29,8 @@
 #ifndef COMMON_FFT_H
 #define COMMON_FFT_H
 
-#include "common/scummsys.h"
 #include "common/math.h"
+#include "common/scummsys.h"
 
 namespace Common {
 

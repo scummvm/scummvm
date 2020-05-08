@@ -23,9 +23,8 @@
 #ifndef LURE_SURFACE_H
 #define LURE_SURFACE_H
 
-
-#include "common/str.h"
 #include "common/ptr.h"
+#include "common/str.h"
 #include "lure/disk.h"
 #include "lure/luredefs.h"
 
@@ -40,6 +39,7 @@ private:
 
 	void egaCreateDialog(bool blackFlag);
 	void vgaCreateDialog(bool blackFlag);
+
 public:
 	Surface(MemoryBlock *src, uint16 width, uint16 height);
 	Surface(uint16 width, uint16 height);
@@ -47,7 +47,7 @@ public:
 	static uint16 textX();
 	static uint16 textY();
 	static void getDialogBounds(Common::Point &size, int charWidth, int numLines,
-		bool squashedLines = true);
+	                            bool squashedLines = true);
 
 	static void initialize();
 	static void deinitialize();
@@ -60,14 +60,14 @@ public:
 	void loadScreen(MemoryBlock *data);
 	int writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int color);
 	void writeString(uint16 x, uint16 y, Common::String line, bool transparent,
-		int color = DEFAULT_TEXT_COLOR, bool varLength = true);
+	                 int color = DEFAULT_TEXT_COLOR, bool varLength = true);
 	void writeSubstring(uint16 x, uint16 y, Common::String line, int len,
-		bool transparent, int color = DEFAULT_TEXT_COLOR, bool varLength = true);
+	                    bool transparent, int color = DEFAULT_TEXT_COLOR, bool varLength = true);
 	void transparentCopyTo(Surface *dest);
 	void copyTo(Surface *dest);
 	void copyTo(Surface *dest, uint16 x, uint16 y);
 	void copyTo(Surface *dest, const Common::Rect &srcBounds, uint16 destX, uint16 destY,
-		int transparentColor = -1);
+	            int transparentColor = -1);
 	void copyFrom(MemoryBlock *src) { _data->copyFrom(src); }
 	void copyFrom(MemoryBlock *src, uint32 destOffset);
 	void empty() { _data->empty(); }
@@ -79,7 +79,7 @@ public:
 	static uint16 textWidth(const char *s, int numChars = 0);
 	static void wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines);
 	static Surface *newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength = true,
-		int color = DEFAULT_TEXT_COLOR, bool squashedLines = true);
+	                          int color = DEFAULT_TEXT_COLOR, bool squashedLines = true);
 	static Surface *newDialog(uint16 width, const char *lines, int color = DEFAULT_TEXT_COLOR);
 	static Surface *getScreen(uint16 resourceId);
 	bool getString(Common::String &line, int maxSize, bool isNumeric, bool varLength, int16 x, int16 y);
@@ -108,6 +108,7 @@ private:
 
 	int getArticle(uint16 msgId, uint16 objId);
 	void vgaTalkDialog(Surface *s);
+
 public:
 	TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId);
 	~TalkDialog();
@@ -124,6 +125,7 @@ public:
 class SaveRestoreDialog {
 private:
 	static void toggleHightlight(int xs, int xe, int ys, int ye);
+
 public:
 	static bool show(bool saveDialog);
 };
@@ -135,11 +137,12 @@ public:
 
 class CopyProtectionDialog {
 private:
-	typedef Common::List<Common::SharedPtr<Hotspot> > HotspotsList;
+	typedef Common::List<Common::SharedPtr<Hotspot>> HotspotsList;
 	HotspotsList _hotspots;
 	int _charIndex;
 
 	void chooseCharacters();
+
 public:
 	CopyProtectionDialog();
 	bool show();

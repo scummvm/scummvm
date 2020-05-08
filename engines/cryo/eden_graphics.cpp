@@ -20,12 +20,12 @@
  *
  */
 
+#include "cryo/eden_graphics.h"
 #include "cryo/cryo.h"
-#include "cryo/platdefs.h"
 #include "cryo/cryolib.h"
 #include "cryo/eden.h"
+#include "cryo/platdefs.h"
 #include "cryo/sound.h"
-#include "cryo/eden_graphics.h"
 #include "cryo/video.h"
 
 namespace Cryo {
@@ -33,7 +33,7 @@ namespace Cryo {
 EdenGraphics::EdenGraphics(EdenGame *game, HnmPlayer *video) : _game(game), _video(video) {
 	_glowH = _glowW = _glowY = _glowX = 0;
 	_showVideoSubtitle = false;
-	_showBlackBars = false;	
+	_showBlackBars = false;
 	_mainView = nullptr;
 	_mainViewBuf = nullptr;
 	_hnmView = nullptr;
@@ -131,17 +131,15 @@ void EdenGraphics::drawSprite(int16 index, int16 x, int16 y, bool withBlack, boo
 						if (fill == 0 && !withBlack) {
 							scr += 128 + 1;
 							ww -= 128 + 1;
-						}
-						else {
+						} else {
 							byte runVal;
-							*scr++ = fill;  //TODO: wha?
+							*scr++ = fill; //TODO: wha?
 							*scr++ = fill;
 							ww -= 128 + 1;
 							for (runVal = 127; runVal--;)
 								*scr++ = fill;
 						}
-					}
-					else {
+					} else {
 						byte fill = *pix++;
 						byte runVal = 255 - c + 2;
 						ww -= runVal;
@@ -151,8 +149,7 @@ void EdenGraphics::drawSprite(int16 index, int16 x, int16 y, bool withBlack, boo
 							for (; runVal--;)
 								*scr++ = fill;
 					}
-				}
-				else {
+				} else {
 					byte runVal = c + 1;
 					ww -= runVal;
 					for (; runVal--;) {
@@ -166,8 +163,7 @@ void EdenGraphics::drawSprite(int16 index, int16 x, int16 y, bool withBlack, boo
 			}
 			scr += width - w;
 		}
-	}
-	else {
+	} else {
 		// uncompressed
 		for (; h--;) {
 			for (int16 ww = w; ww--;) {
@@ -195,38 +191,38 @@ View *EdenGraphics::getSubtitlesView() {
 }
 
 void EdenGraphics::loadMouthRectFromCurChar() {
-	_rect_src.left   = _curCharacterRect->left;
-	_rect_src.top    = _curCharacterRect->top;
-	_rect_src.right  = _curCharacterRect->right;
+	_rect_src.left = _curCharacterRect->left;
+	_rect_src.top = _curCharacterRect->top;
+	_rect_src.right = _curCharacterRect->right;
 	_rect_src.bottom = _curCharacterRect->bottom;
-	_rect_dst.left   = _curCharacterRect->left  + 320;
-	_rect_dst.top    = _curCharacterRect->top;
-	_rect_dst.right  = _curCharacterRect->right + 320;
+	_rect_dst.left = _curCharacterRect->left + 320;
+	_rect_dst.top = _curCharacterRect->top;
+	_rect_dst.right = _curCharacterRect->right + 320;
 	_rect_dst.bottom = _curCharacterRect->bottom;
 }
 
 void EdenGraphics::paneltobuf() {
 	setSrcRect(0, 16, 320 - 1, 169 - 1);
 	setDestRect(320, 16, 640 - 1, 169 - 1);
-	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);
 }
 
 void EdenGraphics::cursbuftopanel() {
 	setSrcRect(434, 40, 525 - 1, 111 - 1);
 	setDestRect(114, 40, 205 - 1, 111 - 1);
-	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);
 }
 
 void EdenGraphics::langbuftopanel() {
 	setSrcRect(328, 42, 407 - 1, 97 - 1);
-	setDestRect(8, 42,  87 - 1, 97 - 1);
-	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+	setDestRect(8, 42, 87 - 1, 97 - 1);
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);
 }
 
 // Original name: sauvefondbouche
 void EdenGraphics::saveMouthBackground() {
 	loadMouthRectFromCurChar();
-	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);
 }
 
 // Original name: restaurefondbouche
@@ -247,7 +243,7 @@ void EdenGraphics::setGlowY(int16 value) {
 	_glowY = value;
 }
 
-void EdenGraphics::setCurCharRect(Common::Rect * charRect) {
+void EdenGraphics::setCurCharRect(Common::Rect *charRect) {
 	_curCharacterRect = charRect;
 }
 
@@ -262,13 +258,14 @@ void EdenGraphics::sundcurs(int16 x, int16 y) {
 			*keep++ = *scr++;
 		scr += 640 - 48;
 	}
-	_game->setCursorSaved(true);;
+	_game->setCursorSaved(true);
+	;
 }
 
 void EdenGraphics::rundcurs() {
 	byte *keep = _game->getCurKeepBuf();
 	byte *scr = _mainViewBuf + _cursKeepPos.x + _cursKeepPos.y * 640;
-	if (!_game->getCursorSaved() || (_cursKeepPos == Common::Point(-1, -1)))  //TODO ...
+	if (!_game->getCursorSaved() || (_cursKeepPos == Common::Point(-1, -1))) //TODO ...
 		return;
 
 	for (int16 h = 48; h--;) {
@@ -278,7 +275,7 @@ void EdenGraphics::rundcurs() {
 	}
 }
 
-byte * EdenGraphics::getHnmViewBuf() {
+byte *EdenGraphics::getHnmViewBuf() {
 	return _hnmViewBuf;
 }
 
@@ -299,7 +296,7 @@ void EdenGraphics::getglow(int16 x, int16 y, int16 w, int16 h) {
 void EdenGraphics::unglow() {
 	byte *gl = _game->getGlowBuffer();
 	byte *scr = _mainViewBuf + _glowX + _glowY * 640;
-	if (_glowX < 0 || _glowY < 0)   //TODO: move it up
+	if (_glowX < 0 || _glowY < 0) //TODO: move it up
 		return;
 	for (; _glowH--;) {
 		for (int16 ww = _glowW; ww--;)
@@ -337,8 +334,7 @@ void EdenGraphics::glow(int16 index) {
 	if (x < 0) {
 		dx = -x;
 		x = 0;
-	}
-	else if (x + w > ex)
+	} else if (x + w > ex)
 		dx = x + w - ex;
 	else
 		dx = 0;
@@ -347,8 +343,7 @@ void EdenGraphics::glow(int16 index) {
 	if (y < 16) {
 		dy = 16 - y;
 		y = 16;
-	}
-	else if (y + h > 175)
+	} else if (y + h > 175)
 		dy = y + h - 175;
 
 	int16 pstride = dx;
@@ -412,7 +407,7 @@ void EdenGraphics::hideBars() {
 	_underBottomBarScreenRect.left = _underTopBarScreenRect.left;
 	_underBottomBarScreenRect.right = _underTopBarScreenRect.right;
 	CLBlitter_CopyViewRect(_mainView, _underBarsView, &_underBottomBarScreenRect, &_underBottomBarBackupRect);
-	int16 r19 = 14;   // TODO - init in decl?
+	int16 r19 = 14; // TODO - init in decl?
 	int16 r20 = 176;
 	int16 r25 = 14;
 	int16 r24 = 21;
@@ -476,7 +471,7 @@ void EdenGraphics::hideBars() {
 void EdenGraphics::initRects() {
 	_underTopBarScreenRect = Common::Rect(0, 0, 320 - 1, 16 - 1);
 	_underTopBarBackupRect = Common::Rect(0, 0, 320 - 1, 16 - 1);
-	_underBottomBarScreenRect = Common::Rect(0, 176, 320 - 1, 200 - 1);  //TODO: original bug? this cause crash in copyrect (this, underBottomBarBackupRect)
+	_underBottomBarScreenRect = Common::Rect(0, 176, 320 - 1, 200 - 1); //TODO: original bug? this cause crash in copyrect (this, underBottomBarBackupRect)
 	_underBottomBarBackupRect = Common::Rect(0, 16, 320 - 1, 40 - 1);
 }
 
@@ -552,7 +547,7 @@ void EdenGraphics::displayImage() {
 		int16 h = *pix++;
 		byte mode = *pix++;
 		if (mode != 0xFF && mode != 0xFE)
-			continue;   //TODO: enclosing block?
+			continue; //TODO: enclosing block?
 		if (h1 & 0x80) {
 			// compressed
 			for (; h-- > 0;) {
@@ -564,17 +559,15 @@ void EdenGraphics::displayImage() {
 							if (fill == 0) {
 								scr += 128 + 1;
 								ww -= 128 + 1;
-							}
-							else {
+							} else {
 								byte runVal;
-								*scr++ = fill;  //TODO: wha?
+								*scr++ = fill; //TODO: wha?
 								*scr++ = fill;
 								ww -= 128 + 1;
 								for (runVal = 127; runVal--;)
 									*scr++ = fill;
 							}
-						}
-						else {
+						} else {
 							byte fill = *pix++;
 							byte runVal = 255 - c + 2;
 							ww -= runVal;
@@ -585,8 +578,7 @@ void EdenGraphics::displayImage() {
 									*scr++ = fill;
 							}
 						}
-					}
-					else {
+					} else {
 						byte runVal = c + 1;
 						ww -= runVal;
 						for (; runVal--;) {
@@ -600,8 +592,7 @@ void EdenGraphics::displayImage() {
 				}
 				scr += 640 - w;
 			}
-		}
-		else {
+		} else {
 			// uncompressed
 			for (; h--;) {
 				for (int16 ww = w; ww--;) {
@@ -627,8 +618,7 @@ void EdenGraphics::displaySubtitles() {
 		if ((_game->_globals->_drawFlags & DrawFlags::drDrawMenu) && _game->getNumTextLines() == 1)
 			y = 167;
 		dst += 640 * (y - _game->getNumTextLines() * FONT_HEIGHT) + _subtitlesXScrMargin;
-	}
-	else {
+	} else {
 		y = 174;
 		dst += 640 * (y - _game->getNumTextLines() * FONT_HEIGHT) + _game->getScrollPos() + _subtitlesXScrMargin;
 	}
@@ -657,7 +647,7 @@ void EdenGraphics::displaySingleRoom(Room *room) {
 		if (index == -1)
 			break;
 		if (index > 0) {
-			int16 x = *ptr++ | (((b1 & 0x2) >> 1) << 8);      //TODO: check me
+			int16 x = *ptr++ | (((b1 & 0x2) >> 1) << 8); //TODO: check me
 			int16 y = *ptr++;
 			ptr++;
 			index &= 0x1FF;
@@ -675,19 +665,16 @@ void EdenGraphics::displaySingleRoom(Room *room) {
 				if (b0 < 4) {
 					if (_game->_globals->_roomPtr->_exits[b0])
 						addIcon = true;
-				}
-				else if (b0 > 229) {
+				} else if (b0 > 229) {
 					if (_game->_globals->_partyOutside & (1 << (b0 - 230)))
 						addIcon = true;
-				}
-				else if (b0 >= 100) {
+				} else if (b0 >= 100) {
 					debug("add object %d", b0 - 100);
 					if (_game->isObjectHere(b0 - 100)) {
 						addIcon = true;
 						_game->_globals->_varF7 = 1;
 					}
-				}
-				else
+				} else
 					addIcon = true;
 				if (addIcon) {
 					icon->_actionId = b0;
@@ -718,14 +705,11 @@ void EdenGraphics::displaySingleRoom(Room *room) {
 					icon->ey = ey;
 					_game->_globals->_nextRoomIcon = ++icon;
 					icon->sx = -1;
-				}
-				else
+				} else
 					ptr += 8;
-			}
-			else
+			} else
 				ptr += 8;
-		}
-		else
+		} else
 			ptr += 8;
 	}
 }
@@ -745,7 +729,7 @@ void EdenGraphics::saveTopFrieze(int16 x) { // Save top bar
 }
 
 // Original name: sauvefrisesbas
-void EdenGraphics::saveBottomFrieze() {         // Save bottom bar
+void EdenGraphics::saveBottomFrieze() { // Save bottom bar
 	_underBottomBarScreenRect.left = 0;
 	_underBottomBarScreenRect.right = 320 - 1;
 	CLBlitter_CopyViewRect(getMainView(), _underBarsView, &_underBottomBarScreenRect, &_underBottomBarBackupRect);
@@ -772,11 +756,9 @@ void EdenGraphics::displayRoom() {
 			displaySingleRoom(room);
 			_game->_globals->_roomBaseX = 320;
 			displaySingleRoom(room + 1);
-		}
-		else
+		} else
 			displaySingleRoom(room);
-	}
-	else {
+	} else {
 		//TODO: roomImgBank is garbage here!
 		debug("displayRoom: room 0x%X using bank %d", _game->_globals->_roomNum, _game->_globals->_roomImgBank);
 		_game->useBank(_game->_globals->_roomImgBank);
@@ -810,8 +792,8 @@ void EdenGraphics::openWindow() {
 	_mainView->centerIn(_game->_vm->_screenView);
 	_mainViewBuf = _mainView->_bufferPtr;
 
-	_game->setMouseCenterX(_mainView->_normal._dstLeft + _mainView->_normal._width  / 2);
-	_game->setMouseCenterY(_mainView->_normal._dstTop  + _mainView->_normal._height / 2);
+	_game->setMouseCenterX(_mainView->_normal._dstLeft + _mainView->_normal._width / 2);
+	_game->setMouseCenterY(_mainView->_normal._dstTop + _mainView->_normal._height / 2);
 	_game->_vm->setMousePosition(_game->getMouseCenterX(), _game->getMouseCenterY());
 	_game->_vm->hideMouse();
 
@@ -864,10 +846,10 @@ void EdenGraphics::displayEffect1() {
 
 // Original name: effet2
 void EdenGraphics::displayEffect2() {
-	static int16 pattern1[] = { 0, 1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4, 5, 6, 10, 9 };
-	static int16 pattern2[] = { 0, 15, 1, 14, 2, 13, 3, 12, 7, 8, 11, 4, 5, 10, 6, 9 };
-	static int16 pattern3[] = { 0, 2, 5, 7, 8, 10, 13, 15, 1, 3, 4, 6, 9, 11, 12, 14 };
-	static int16 pattern4[] = { 0, 3, 15, 12, 1, 7, 14, 8, 2, 11, 13, 4, 5, 6, 10, 9 };
+	static int16 pattern1[] = {0, 1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4, 5, 6, 10, 9};
+	static int16 pattern2[] = {0, 15, 1, 14, 2, 13, 3, 12, 7, 8, 11, 4, 5, 10, 6, 9};
+	static int16 pattern3[] = {0, 2, 5, 7, 8, 10, 13, 15, 1, 3, 4, 6, 9, 11, 12, 14};
+	static int16 pattern4[] = {0, 3, 15, 12, 1, 7, 14, 8, 2, 11, 13, 4, 5, 6, 10, 9};
 
 	static int eff2pat = 0;
 	if (_game->_globals->_var103 == 69) {
@@ -932,9 +914,9 @@ void EdenGraphics::displayEffect4() {
 		scr += (y + 16) * ww + x;
 		pix = _mainView->_bufferPtr + 16 * 640;
 		r17 = 320 / i;
-		r23 = 320 - 320 / i * i;  //TODO: 320 % i ?
+		r23 = 320 - 320 / i * i; //TODO: 320 % i ?
 		r16 = 160 / i;
-		r18 = 160 - 160 / i * i;  //TODO: 160 % i ?
+		r18 = 160 - 160 / i * i; //TODO: 160 % i ?
 		for (r19 = r16; r19 > 0; r19--) {
 			r24 = scr;
 			r25 = pix;
@@ -1034,7 +1016,7 @@ void EdenGraphics::colimacon(int16 pattern[16]) {
 		r27 = p % 4 + p / 4 * ww;
 		for (int16 j = 0; j < 320 * 160 / 16; j++)
 			scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] =
-			pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
+			    pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
 		CLBlitter_UpdateScreen();
 		_game->wait(1);
 	}
@@ -1109,7 +1091,7 @@ void EdenGraphics::setDestRect(int16 sx, int16 sy, int16 ex, int16 ey) {
 }
 
 void EdenGraphics::effetpix() {
-	uint16 r25, r18, r31, r30;  //TODO: change to xx/yy
+	uint16 r25, r18, r31, r30; //TODO: change to xx/yy
 
 	uint16 ww = _game->_vm->_screenView->_pitch;
 	r25 = ww * 80;
@@ -1119,7 +1101,7 @@ void EdenGraphics::effetpix() {
 	int y = _mainView->_normal._dstTop;
 	byte *scr = _game->_vm->_screenView->_bufferPtr;
 	scr += (y + 16) * ww + x;
-	int16 r20 = 0x4400;   //TODO
+	int16 r20 = 0x4400; //TODO
 	int16 r27 = 1;
 	int16 r26 = 0;
 	do {
@@ -1186,7 +1168,7 @@ void EdenGraphics::showMovie(char arg1) {
 	_hnmViewBuf = _hnmView->_bufferPtr;
 	if (arg1) {
 		_hnmView->_normal._height = 160;
-		_hnmView->_zoom._height = 320;   //TODO: width??
+		_hnmView->_zoom._height = 320; //TODO: width??
 		_hnmView->_normal._dstTop = _mainView->_normal._dstTop + 16;
 		_hnmView->_zoom._dstTop = _mainView->_zoom._dstTop + 32;
 	}
@@ -1209,8 +1191,7 @@ void EdenGraphics::showMovie(char arg1) {
 					_game->setMouseHeld();
 					_videoCanceledFlag = true;
 				}
-			}
-			else
+			} else
 				_game->setMouseNotHeld();
 		}
 	} while (playing && !_videoCanceledFlag);
@@ -1260,7 +1241,8 @@ void EdenGraphics::playHNM(int16 num) {
 		showMovie(1);
 	_cursKeepPos = Common::Point(-1, -1);
 	if (_game->getSpecialTextMode()) {
-		_game->setMusicFade(3);;
+		_game->setMusicFade(3);
+		;
 		_game->musicspy();
 		_game->_globals->_characterPtr = perso;
 		_game->_globals->_dialogType = oldDialogType;
@@ -1289,7 +1271,7 @@ void EdenGraphics::initGlobals() {
 	_underSubtitlesBackupRect.top = 0;
 	_underSubtitlesBackupRect.left = _subtitlesXScrMargin;
 	_underSubtitlesBackupRect.right = _subtitlesXScrMargin + _subtitlesXWidth - 1;
-	_underSubtitlesBackupRect.bottom = 60 - 1;	
+	_underSubtitlesBackupRect.bottom = 60 - 1;
 }
 
 // Original name: sauvefondbulle
@@ -1337,58 +1319,53 @@ void EdenGraphics::handleHNMSubtitles() {
 	(start), (end) | 0x8000
 
 	static uint16 kFramesVid170[] = {
-		SUB_LINE(68, 120),
-		SUB_LINE(123, 196),
-		SUB_LINE(199, 274),
-		SUB_LINE(276, 370),
-		SUB_LINE(799, 885),
-		SUB_LINE(888, 940),
-		SUB_LINE(947, 1000),
-		SUB_LINE(1319, 1378),
-		SUB_LINE(1380, 1440),
-		SUB_LINE(1854, 1898),
-		SUB_LINE(1900, 1960),
-		SUB_LINE(2116, 2184),
-		SUB_LINE(2186, 2252),
-		SUB_LINE(2254, 2320),
-		SUB_LINE(3038, 3094),
-		SUB_LINE(3096, 3160),
-		0xFFFF
-	};
+	    SUB_LINE(68, 120),
+	    SUB_LINE(123, 196),
+	    SUB_LINE(199, 274),
+	    SUB_LINE(276, 370),
+	    SUB_LINE(799, 885),
+	    SUB_LINE(888, 940),
+	    SUB_LINE(947, 1000),
+	    SUB_LINE(1319, 1378),
+	    SUB_LINE(1380, 1440),
+	    SUB_LINE(1854, 1898),
+	    SUB_LINE(1900, 1960),
+	    SUB_LINE(2116, 2184),
+	    SUB_LINE(2186, 2252),
+	    SUB_LINE(2254, 2320),
+	    SUB_LINE(3038, 3094),
+	    SUB_LINE(3096, 3160),
+	    0xFFFF};
 
 	static uint16 kFramesVid83[] = {
-		SUB_LINE(99, 155),
-		SUB_LINE(157, 256),
-		0xFFFF
-	};
+	    SUB_LINE(99, 155),
+	    SUB_LINE(157, 256),
+	    0xFFFF};
 
 	static uint16 kFramesVid88[] = {
-		SUB_LINE(106, 173),
-		SUB_LINE(175, 244),
-		SUB_LINE(246, 350),
-		SUB_LINE(352, 467),
-		0xFFFF
-	};
+	    SUB_LINE(106, 173),
+	    SUB_LINE(175, 244),
+	    SUB_LINE(246, 350),
+	    SUB_LINE(352, 467),
+	    0xFFFF};
 
 	static uint16 kFramesVid89[] = {
-		SUB_LINE(126, 176),
-		SUB_LINE(178, 267),
-		SUB_LINE(269, 342),
-		SUB_LINE(344, 398),
-		SUB_LINE(400, 458),
-		SUB_LINE(460, 558),
-		0xFFFF
-	};
+	    SUB_LINE(126, 176),
+	    SUB_LINE(178, 267),
+	    SUB_LINE(269, 342),
+	    SUB_LINE(344, 398),
+	    SUB_LINE(400, 458),
+	    SUB_LINE(460, 558),
+	    0xFFFF};
 
 	static uint16 kFramesVid94[] = {
-		SUB_LINE(101, 213),
-		SUB_LINE(215, 353),
-		SUB_LINE(355, 455),
-		SUB_LINE(457, 518),
-		SUB_LINE(520, 660),
-		SUB_LINE(662, 768),
-		0xFFFF
-	};
+	    SUB_LINE(101, 213),
+	    SUB_LINE(215, 353),
+	    SUB_LINE(355, 455),
+	    SUB_LINE(457, 518),
+	    SUB_LINE(520, 660),
+	    SUB_LINE(662, 768),
+	    0xFFFF};
 
 #undef SUB_LINE
 
@@ -1417,7 +1394,7 @@ void EdenGraphics::handleHNMSubtitles() {
 
 	perso = _game->personSubtitles();
 
-	assert(perso  != nullptr);
+	assert(perso != nullptr);
 	assert(frames != nullptr);
 
 	uint16 *frames_start = frames;
@@ -1445,4 +1422,4 @@ void EdenGraphics::handleHNMSubtitles() {
 		displayHNMSubtitle();
 }
 
-}   // namespace Cryo
+} // namespace Cryo

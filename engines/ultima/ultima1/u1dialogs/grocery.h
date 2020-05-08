@@ -38,13 +38,16 @@ using Shared::CTextInputMsg;
 class Grocery : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
 	bool TextInputMsg(CTextInputMsg &msg);
+
 private:
 	uint _costPerPack;
+
 protected:
 	/**
 	 * Set the mode
 	 */
 	void setMode(BuySell mode) override;
+
 public:
 	CLASSDEF;
 

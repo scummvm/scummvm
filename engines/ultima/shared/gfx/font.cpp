@@ -27,11 +27,10 @@ namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-Font::Font(const byte *data, size_t startingChar, size_t charCount) :
-	_data(data), _startingChar(startingChar), _endingChar(startingChar + charCount - 1) {}
+Font::Font(const byte *data, size_t startingChar, size_t charCount) : _data(data), _startingChar(startingChar), _endingChar(startingChar + charCount - 1) {}
 
 int Font::writeString(Graphics::ManagedSurface &surface, const Common::String &msg, Point &pt,
-		byte color, byte bgColor) {
+                      byte color, byte bgColor) {
 	int total = 0;
 	int xs = pt.x;
 
@@ -45,12 +44,12 @@ int Font::writeString(Graphics::ManagedSurface &surface, const Common::String &m
 			writeChar(surface, (unsigned char)*msgP, pt, color, bgColor);
 		}
 	}
-	
+
 	return total;
 }
 
 void Font::writeChar(Graphics::ManagedSurface &surface, unsigned char c, Point &pt,
-		byte color, byte bgColor) {
+                     byte color, byte bgColor) {
 	assert(c >= _startingChar && c <= _endingChar);
 	const byte *charP = _data + (c - _startingChar) * 8;
 	Graphics::Surface s = surface.getSubArea(Common::Rect(pt.x, pt.y, pt.x + 8, pt.y + 8));

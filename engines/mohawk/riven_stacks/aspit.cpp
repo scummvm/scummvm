@@ -31,17 +31,16 @@
 
 #include "common/translation.h"
 
-#include "graphics/fonts/ttf.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/fonts/ttf.h"
 
 #include "gui/message.h"
 
 namespace Mohawk {
 namespace RivenStacks {
 
-ASpit::ASpit(MohawkEngine_Riven *vm) :
-		RivenStack(vm, kStackAspit) {
+ASpit::ASpit(MohawkEngine_Riven *vm) : RivenStack(vm, kStackAspit) {
 
 	REGISTER_COMMAND(ASpit, xastartupbtnhide);
 	REGISTER_COMMAND(ASpit, xasetupcomplete);
@@ -75,16 +74,15 @@ struct MenuItemText {
 	int language;
 	const char *items[7];
 } static const menuItems[] = {
-	{ Common::EN_ANY, { "SETUP",      "START NEW GAME",  "START SAVED GAME",     "SAVE GAME",       "RESUME",     "OPTIONS",  "QUIT" } },
-	{ Common::DE_DEU, { "SETUP",      "SPIELEN",         "SPIELSTAND LADEN",     "SPIEL SPEICHERN", "FORTSETZEN", "OPTIONEN", "BEENDEN" } },
-	{ Common::ES_ESP, { "IMAGEN",     "IR A RIVEN",      "CARGAR JUEGO",         "GUARDAR JUEGO",   "CONTINUAR",  "OPCIONES", "SALIR" } },
-	{ Common::FR_FRA, { "CONFIG",     "NOUVELLE PARTIE", "CHARGER",              "ENREGISTRER",     "REPRENDRE",  "OPTIONS",  "QUITTER" } },
-	{ Common::IT_ITA, { "CONF.",      "GIOCA",           "CARICA GIOCO",         "SALVA IL GIOCO",  "SEGUITARE",  "OPZIONI",  "ECSI" } },
-	{ Common::RU_RUS, { "УСТАНОВКИ",  "СТАРТ",           "ПРОДОЛЖИТЬ ИГРУ",      "СОХРАНИТЬ ИГРУ",  "ПРОДОЛЖИТЬ", "ОПЦИИ",    "ВЫЙТИ" } },
-	{ Common::JA_JPN, { "セットアップ", "RIVENを演奏する",   "保存したゲームを開始する", "ゲームを保存する",  "持続する",     "オプション","やめる" } },
-	{ Common::PL_POL, { "USTAWIENIA", "GRAJ W RIVEN",    "ZAŁADUJ GRĘ",          "ZAPISZ GRĘ",      "POWRÓT",     "OPCJE",    "WYJŚCIE" } },
-	{ -1, { 0 } }
-};
+    {Common::EN_ANY, {"SETUP", "START NEW GAME", "START SAVED GAME", "SAVE GAME", "RESUME", "OPTIONS", "QUIT"}},
+    {Common::DE_DEU, {"SETUP", "SPIELEN", "SPIELSTAND LADEN", "SPIEL SPEICHERN", "FORTSETZEN", "OPTIONEN", "BEENDEN"}},
+    {Common::ES_ESP, {"IMAGEN", "IR A RIVEN", "CARGAR JUEGO", "GUARDAR JUEGO", "CONTINUAR", "OPCIONES", "SALIR"}},
+    {Common::FR_FRA, {"CONFIG", "NOUVELLE PARTIE", "CHARGER", "ENREGISTRER", "REPRENDRE", "OPTIONS", "QUITTER"}},
+    {Common::IT_ITA, {"CONF.", "GIOCA", "CARICA GIOCO", "SALVA IL GIOCO", "SEGUITARE", "OPZIONI", "ECSI"}},
+    {Common::RU_RUS, {"УСТАНОВКИ", "СТАРТ", "ПРОДОЛЖИТЬ ИГРУ", "СОХРАНИТЬ ИГРУ", "ПРОДОЛЖИТЬ", "ОПЦИИ", "ВЫЙТИ"}},
+    {Common::JA_JPN, {"セットアップ", "RIVENを演奏する", "保存したゲームを開始する", "ゲームを保存する", "持続する", "オプション", "やめる"}},
+    {Common::PL_POL, {"USTAWIENIA", "GRAJ W RIVEN", "ZAŁADUJ GRĘ", "ZAPISZ GRĘ", "POWRÓT", "OPCJE", "WYJŚCIE"}},
+    {-1, {0}}};
 
 void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	// The original game hides the start/setup buttons depending on an ini entry.
@@ -112,13 +110,13 @@ void ASpit::xastartupbtnhide(const ArgumentArray &args) {
 	};
 
 	MenuItem items[] = {
-		{ 22, false }, // Setup
-		{ 16, false }, // New game
-		{ 23, false }, // Load game
-		{ 24, true  }, // Save game
-		{ 25, true  }, // Resume
-		{ 26, false }, // Options
-		{ 27, false }  // Quit
+	    {22, false}, // Setup
+	    {16, false}, // New game
+	    {23, false}, // Load game
+	    {24, true},  // Save game
+	    {25, true},  // Resume
+	    {26, false}, // Options
+	    {27, false}  // Quit
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(items); i++) {
@@ -238,7 +236,7 @@ void ASpit::xacathopenbook(const ArgumentArray &args) {
 	cathBookDrawPage(page);
 }
 
-void ASpit::cathBookDrawPage(uint32 page) {// Draw the image of the page
+void ASpit::cathBookDrawPage(uint32 page) { // Draw the image of the page
 	_vm->getCard()->drawPicture(page);
 
 	// Draw the white page edges
@@ -252,7 +250,7 @@ void ASpit::cathBookDrawPage(uint32 page) {// Draw the image of the page
 	}
 }
 
-void ASpit::cathBookDrawTelescopeCombination() {// Draw the telescope combination
+void ASpit::cathBookDrawTelescopeCombination() { // Draw the telescope combination
 	// The images for the numbers are tBMP's 13 through 17.
 	// The start point is at (156, 247)
 	uint32 teleCombo = _vm->_vars["tcorrectorder"];
@@ -262,11 +260,11 @@ void ASpit::cathBookDrawTelescopeCombination() {// Draw the telescope combinatio
 	static const uint16 kDstY = 247;
 
 	for (byte i = 0; i < 5; i++) {
-			uint16 offset = (getComboDigit(teleCombo, i) - 1) * kNumberWidth;
-			Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
-			Common::Rect dstRect = Common::Rect(i * kNumberWidth + kDstX, kDstY, (i + 1) * kNumberWidth + kDstX, kDstY + kNumberHeight);
-			_vm->_gfx->drawImageRect(i + 13, srcRect, dstRect);
-		}
+		uint16 offset = (getComboDigit(teleCombo, i) - 1) * kNumberWidth;
+		Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
+		Common::Rect dstRect = Common::Rect(i * kNumberWidth + kDstX, kDstY, (i + 1) * kNumberWidth + kDstX, kDstY + kNumberHeight);
+		_vm->_gfx->drawImageRect(i + 13, srcRect, dstRect);
+	}
 }
 
 void ASpit::xacathbookback(const ArgumentArray &args) {
@@ -376,13 +374,13 @@ void ASpit::xaNewGame(const ArgumentArray &args) {
 	_vm->startNewGame();
 
 	RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(2,
-	                  kRivenCommandTransition,  1, kRivenTransitionBlend,
-	                  kRivenCommandChangeCard,  1, 2);
+	                                                              kRivenCommandTransition, 1, kRivenTransitionBlend,
+	                                                              kRivenCommandChangeCard, 1, 2);
 
 	script->addCommand(RivenCommandPtr(new RivenStackChangeCommand(_vm, 0, 0x6E9A, false, false)));
 
 	script += _vm->_scriptMan->createScriptFromData(1,
-	                  kRivenCommandStopSound,   1, 2);
+	                                                kRivenCommandStopSound, 1, 2);
 
 	_vm->_scriptMan->runScript(script, false);
 }
@@ -394,7 +392,7 @@ bool ASpit::showConfirmationDialog(const char *message, const char *confirmButto
 
 	GUI::MessageDialog dialog(message, confirmButton, cancelButton);
 
-	return dialog.runModal() !=0;
+	return dialog.runModal() != 0;
 }
 
 void ASpit::xadisablemenureturn(const ArgumentArray &args) {
@@ -427,10 +425,10 @@ void ASpit::xalaunchbrowser(const ArgumentArray &args) {
 	// [YES] [NO]
 
 	GUI::MessageDialog dialog(_("At this point, the Riven Demo would\n"
-			                          "ask if you would like to open a web browser\n"
-			                          "to bring you to the Red Orb store to buy\n"
-			                          "the game. ScummVM cannot do that and\n"
-			                          "the site no longer exists."));
+	                            "ask if you would like to open a web browser\n"
+	                            "to bring you to the Red Orb store to buy\n"
+	                            "the game. ScummVM cannot do that and\n"
+	                            "the site no longer exists."));
 	dialog.runModal();
 }
 

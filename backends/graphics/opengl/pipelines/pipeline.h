@@ -83,12 +83,11 @@ public:
 	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates) = 0;
 
 	void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
-		const GLfloat coordinates[4*2] = {
-			x,     y,
-			x + w, y,
-			x,     y + h,
-			x + w, y + h
-		};
+		const GLfloat coordinates[4 * 2] = {
+		    x, y,
+		    x + w, y,
+		    x, y + h,
+		    x + w, y + h};
 		drawTexture(texture, coordinates);
 	}
 

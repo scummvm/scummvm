@@ -25,13 +25,13 @@
  * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
-#include "common/system.h"
-#include "common/str.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
-#include "common/memstream.h"
-#include "cge2/cge2.h"
 #include "cge2/fileio.h"
+#include "cge2/cge2.h"
+#include "common/debug-channels.h"
+#include "common/debug.h"
+#include "common/memstream.h"
+#include "common/str.h"
+#include "common/system.h"
 
 namespace CGE2 {
 
@@ -150,7 +150,7 @@ BtKeypack *ResourceManager::find(const char *key) {
 			int i;
 			for (i = 0; i < pg->_header._count; i++) {
 				// Does this work, or does it have to compare the entire buffer?
-				if (scumm_strnicmp((const char *)key, (const char*)pg->_inner[i]._key, kBtKeySize) < 0)
+				if (scumm_strnicmp((const char *)key, (const char *)pg->_inner[i]._key, kBtKeySize) < 0)
 					break;
 			}
 			nxt = (i) ? pg->_inner[i - 1]._down : pg->_header._down;
@@ -273,10 +273,9 @@ EncryptedStream::~EncryptedStream() {
 }
 
 const char *EncryptedStream::kIdTab[] = {
-	"[near]", "[mtake]", "[ftake]", "[phase]", "[seq]",
-	"Name", "Type", "Front", "East",
-	"Portable", "Transparent",
-	nullptr
-};
+    "[near]", "[mtake]", "[ftake]", "[phase]", "[seq]",
+    "Name", "Type", "Front", "East",
+    "Portable", "Transparent",
+    nullptr};
 
 } // End of namespace CGE2

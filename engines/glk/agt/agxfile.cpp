@@ -329,220 +329,209 @@ Mandatory blocks are marked with astericks.
     etc.
 */
 
-
-
-
 /* ------------------------------------------------------------- */
 /*        AGX Block Descriptions                                 */
 /* ------------------------------------------------------------- */
-
 
 static integer old_base_verb;
 
 /* AGX file info blocks */
 
-#define g(ft,dt,var) {ft,dt,&var,0}
-#define r(ft,dt,str,f) {ft,dt,NULL,offsetof(str,f)}
-#define dptype {FT_DESCPTR,DT_DESCPTR,NULL,0}
+#define g(ft, dt, var) \
+	{ ft, dt, &var, 0 }
+#define r(ft, dt, str, f) \
+	{ ft, dt, NULL, offsetof(str, f) }
+#define dptype \
+	{ FT_DESCPTR, DT_DESCPTR, NULL, 0 }
 #define xx DT_DEFAULT
 #define u16 FT_UINT16
 #define u32 FT_UINT32
-#define bb  FT_BOOL
+#define bb FT_BOOL
 #define i16 FT_INT16
 
 static file_info fi_gameinfo[] = {
-	/* 0  */
-	g(FT_VERSION, xx, aver), /* FT_VERSION converter also sets ver */
-	g(u32, DT_LONG, game_sig),
-	/* 6 */
-	g(bb, xx, debug_mode), g(bb, xx, freeze_mode), g(bb, xx, milltime_mode),
-	g(bb, xx, bold_mode), g(bb, xx, have_meta), g(bb, xx, mars_fix),
-	g(bb, xx, intro_first), g(bb, xx, box_title),
-	/* 7 */
-	g(FT_BYTE, xx, score_mode), g(FT_BYTE, xx, statusmode),
-	g(i16, xx, max_lives), g(u32, DT_LONG, max_score),
-	/* 15 */
-	g(i16, xx, startup_time), g(i16, xx, delta_time),
-	/* 19 */
-	g(FT_DESCPTR, xx, intro_ptr), g(FT_DESCPTR, xx, title_ptr),
-	g(FT_DESCPTR, xx, ins_ptr),
-	/* 43 */
-	g(i16, xx, treas_room),
-	g(i16, xx, start_room), g(i16, xx, resurrect_room),
-	g(i16, xx, first_room),  g(i16, xx, first_noun),
-	g(i16, xx, first_creat), g(i16, xx, FLAG_NUM),
-	g(i16, xx, CNT_NUM), g(i16, xx, VAR_NUM),
-	g(i16, xx, old_base_verb),
-	/* 63 */
-	g(FT_CFG, xx, PURE_ANSWER), g(FT_CFG, xx, PURE_ROOMTITLE),
-	g(FT_CFG, xx, PURE_AND), g(FT_CFG, xx, PURE_METAVERB),
-	g(FT_CFG, xx, PURE_SYN), g(FT_CFG, xx, PURE_NOUN), g(FT_CFG, xx, PURE_ADJ),
-	g(FT_CFG, xx, PURE_DUMMY), g(FT_CFG, xx, PURE_SUBNAME),
-	g(FT_CFG, xx, PURE_PROSUB), g(FT_CFG, xx, PURE_HOSTILE),
-	g(FT_CFG, xx, PURE_GETHOSTILE), g(FT_CFG, xx, PURE_DISAMBIG),
-	g(FT_CFG, xx, PURE_ALL),
-	g(FT_CFG, xx, irun_mode), g(FT_CFG, xx, verboseflag),
-	g(FT_CFG, xx, PURE_TIME),    /* Ext R0-1 */
-	g(FT_CFG, xx, PURE_OBJ_DESC), /* Ext R0-1 */
-	/* 81 */
-	g(i16, xx, exitmsg_base),         /* Ext R0-1 */
-	/* 83 */
-	g(FT_CFG, xx, PURE_GRAMMAR),   /* Ext R1-3 */
-	g(bb, xx, TWO_CYCLE),          /* Ext R1-4 */
-	g(bb, xx, PURE_AFTER),         /* Ext R1-5 */
-	g(i16, xx, min_ver),           /* Ext R1-5 */
-	g(FT_BYTE, xx, font_status),   /* Ext R1-5 */
-	g(i16, xx, num_rflags), g(i16, xx, num_nflags), g(i16, xx, num_cflags), /* Ext R1-7 */
-	g(i16, xx, num_rprops), g(i16, xx, num_nprops), g(i16, xx, num_cprops), /* Ext R1-7 */
-	endrec
-};
+    /* 0  */
+    g(FT_VERSION, xx, aver), /* FT_VERSION converter also sets ver */
+    g(u32, DT_LONG, game_sig),
+    /* 6 */
+    g(bb, xx, debug_mode), g(bb, xx, freeze_mode), g(bb, xx, milltime_mode),
+    g(bb, xx, bold_mode), g(bb, xx, have_meta), g(bb, xx, mars_fix),
+    g(bb, xx, intro_first), g(bb, xx, box_title),
+    /* 7 */
+    g(FT_BYTE, xx, score_mode), g(FT_BYTE, xx, statusmode),
+    g(i16, xx, max_lives), g(u32, DT_LONG, max_score),
+    /* 15 */
+    g(i16, xx, startup_time), g(i16, xx, delta_time),
+    /* 19 */
+    g(FT_DESCPTR, xx, intro_ptr), g(FT_DESCPTR, xx, title_ptr),
+    g(FT_DESCPTR, xx, ins_ptr),
+    /* 43 */
+    g(i16, xx, treas_room),
+    g(i16, xx, start_room), g(i16, xx, resurrect_room),
+    g(i16, xx, first_room), g(i16, xx, first_noun),
+    g(i16, xx, first_creat), g(i16, xx, FLAG_NUM),
+    g(i16, xx, CNT_NUM), g(i16, xx, VAR_NUM),
+    g(i16, xx, old_base_verb),
+    /* 63 */
+    g(FT_CFG, xx, PURE_ANSWER), g(FT_CFG, xx, PURE_ROOMTITLE),
+    g(FT_CFG, xx, PURE_AND), g(FT_CFG, xx, PURE_METAVERB),
+    g(FT_CFG, xx, PURE_SYN), g(FT_CFG, xx, PURE_NOUN), g(FT_CFG, xx, PURE_ADJ),
+    g(FT_CFG, xx, PURE_DUMMY), g(FT_CFG, xx, PURE_SUBNAME),
+    g(FT_CFG, xx, PURE_PROSUB), g(FT_CFG, xx, PURE_HOSTILE),
+    g(FT_CFG, xx, PURE_GETHOSTILE), g(FT_CFG, xx, PURE_DISAMBIG),
+    g(FT_CFG, xx, PURE_ALL),
+    g(FT_CFG, xx, irun_mode), g(FT_CFG, xx, verboseflag),
+    g(FT_CFG, xx, PURE_TIME),     /* Ext R0-1 */
+    g(FT_CFG, xx, PURE_OBJ_DESC), /* Ext R0-1 */
+    /* 81 */
+    g(i16, xx, exitmsg_base), /* Ext R0-1 */
+    /* 83 */
+    g(FT_CFG, xx, PURE_GRAMMAR),                                            /* Ext R1-3 */
+    g(bb, xx, TWO_CYCLE),                                                   /* Ext R1-4 */
+    g(bb, xx, PURE_AFTER),                                                  /* Ext R1-5 */
+    g(i16, xx, min_ver),                                                    /* Ext R1-5 */
+    g(FT_BYTE, xx, font_status),                                            /* Ext R1-5 */
+    g(i16, xx, num_rflags), g(i16, xx, num_nflags), g(i16, xx, num_cflags), /* Ext R1-7 */
+    g(i16, xx, num_rprops), g(i16, xx, num_nprops), g(i16, xx, num_cprops), /* Ext R1-7 */
+    endrec};
 
 static file_info fi_room[] = {
-	dptype, /* help */
-	dptype, /* desc */
-	dptype, /* special */
-	r(FT_STR, xx, room_rec, name),
-	r(FT_INT32, xx, room_rec, flag_noun_bits),
-	r(FT_INT32, xx, room_rec, PIX_bits),
-	r(FT_SLIST, xx, room_rec, replacing_word),
-	r(FT_WORD, xx, room_rec, replace_word),
-	r(FT_WORD, xx, room_rec, autoverb),
-	r(FT_PATHARRAY, xx, room_rec, path),
-	r(FT_INT16, xx, room_rec, key),
-	r(FT_INT16, xx, room_rec, points),
-	r(FT_INT16, xx, room_rec, light),
-	r(FT_INT16, xx, room_rec, pict),
-	r(FT_INT16, xx, room_rec, initdesc),
-	r(bb, xx, room_rec, seen), r(bb, xx, room_rec, locked_door),
-	r(bb, xx, room_rec, end), r(bb, xx, room_rec, win), r(bb, xx, room_rec, killplayer),
-	r(bb, xx, room_rec, unused),    /* Ext R1-2: Can add here since rbool */
-	r(FT_INT16, xx, room_rec, oclass), /* Ext R1-1 */
-	endrec
-};
+    dptype, /* help */
+    dptype, /* desc */
+    dptype, /* special */
+    r(FT_STR, xx, room_rec, name),
+    r(FT_INT32, xx, room_rec, flag_noun_bits),
+    r(FT_INT32, xx, room_rec, PIX_bits),
+    r(FT_SLIST, xx, room_rec, replacing_word),
+    r(FT_WORD, xx, room_rec, replace_word),
+    r(FT_WORD, xx, room_rec, autoverb),
+    r(FT_PATHARRAY, xx, room_rec, path),
+    r(FT_INT16, xx, room_rec, key),
+    r(FT_INT16, xx, room_rec, points),
+    r(FT_INT16, xx, room_rec, light),
+    r(FT_INT16, xx, room_rec, pict),
+    r(FT_INT16, xx, room_rec, initdesc),
+    r(bb, xx, room_rec, seen), r(bb, xx, room_rec, locked_door),
+    r(bb, xx, room_rec, end), r(bb, xx, room_rec, win), r(bb, xx, room_rec, killplayer),
+    r(bb, xx, room_rec, unused),       /* Ext R1-2: Can add here since rbool */
+    r(FT_INT16, xx, room_rec, oclass), /* Ext R1-1 */
+    endrec};
 
 static file_info fi_noun[] = {
-	dptype, /* Noun */
-	dptype, /* Text */
-	dptype, dptype, dptype, dptype, /* Turn, push, pull, play */
-	r(FT_STR, xx, noun_rec, shortdesc),
-	r(FT_STR, xx, noun_rec, position),
-	r(FT_SLIST, xx, noun_rec, syns),
-	r(FT_WORD, xx, noun_rec, name),  r(FT_WORD, xx, noun_rec, adj),
-	/* r(FT_WORD,xx,noun_rec,pos_prep),  r(FT_WORD,xx,noun_rec,pos_name),*/
-	r(FT_INT16, xx, noun_rec, nearby_noun),
-	r(FT_INT16, xx, noun_rec, num_shots), r(FT_INT16, xx, noun_rec, points),
-	r(FT_INT16, xx, noun_rec, weight), r(FT_INT16, xx, noun_rec, size),
-	r(FT_INT16, xx, noun_rec, key),
-	r(FT_INT16, xx, noun_rec, initdesc), r(FT_INT16, xx, noun_rec, pict),
-	r(FT_INT16, xx, noun_rec, location),
-	r(bb, xx, noun_rec, plural),
-	r(bb, xx, noun_rec, something_pos_near_noun),
-	r(bb, xx, noun_rec, has_syns),
-	r(bb, xx, noun_rec, pushable),  r(bb, xx, noun_rec, pullable),
-	r(bb, xx, noun_rec, turnable),  r(bb, xx, noun_rec, playable),
-	r(bb, xx, noun_rec, readable),  r(bb, xx, noun_rec, on),
-	r(bb, xx, noun_rec, closable),  r(bb, xx, noun_rec, open),
-	r(bb, xx, noun_rec, lockable),  r(bb, xx, noun_rec, locked),
-	r(bb, xx, noun_rec, edible),  r(bb, xx, noun_rec, wearable),
-	r(bb, xx, noun_rec, drinkable),  r(bb, xx, noun_rec, poisonous),
-	r(bb, xx, noun_rec, movable),  r(bb, xx, noun_rec, light),
-	r(bb, xx, noun_rec, shootable),  r(bb, xx, noun_rec, win),
-	r(bb, xx, noun_rec, unused),  /* Ext R1-2: Can add here since packed rbool*/
-	r(bb, xx, noun_rec, isglobal), /* Ext R1-4: ditto (&room for 1 more). */
-	r(FT_WORD, xx, noun_rec, related_name), /* Ext R0-1 */
-	r(FT_INT16, xx, noun_rec, oclass), /* Ext R1-1 */
-	r(FT_INT16, xx, noun_rec, flagnum), /* Ext R1-4 */
-	r(bb, xx, noun_rec, seen),       /* Ext R1-6 */
-	r(bb, xx, noun_rec, proper),     /* Ext R2-1 */
-	endrec
-};
+    dptype,                         /* Noun */
+    dptype,                         /* Text */
+    dptype, dptype, dptype, dptype, /* Turn, push, pull, play */
+    r(FT_STR, xx, noun_rec, shortdesc),
+    r(FT_STR, xx, noun_rec, position),
+    r(FT_SLIST, xx, noun_rec, syns),
+    r(FT_WORD, xx, noun_rec, name), r(FT_WORD, xx, noun_rec, adj),
+    /* r(FT_WORD,xx,noun_rec,pos_prep),  r(FT_WORD,xx,noun_rec,pos_name),*/
+    r(FT_INT16, xx, noun_rec, nearby_noun),
+    r(FT_INT16, xx, noun_rec, num_shots), r(FT_INT16, xx, noun_rec, points),
+    r(FT_INT16, xx, noun_rec, weight), r(FT_INT16, xx, noun_rec, size),
+    r(FT_INT16, xx, noun_rec, key),
+    r(FT_INT16, xx, noun_rec, initdesc), r(FT_INT16, xx, noun_rec, pict),
+    r(FT_INT16, xx, noun_rec, location),
+    r(bb, xx, noun_rec, plural),
+    r(bb, xx, noun_rec, something_pos_near_noun),
+    r(bb, xx, noun_rec, has_syns),
+    r(bb, xx, noun_rec, pushable), r(bb, xx, noun_rec, pullable),
+    r(bb, xx, noun_rec, turnable), r(bb, xx, noun_rec, playable),
+    r(bb, xx, noun_rec, readable), r(bb, xx, noun_rec, on),
+    r(bb, xx, noun_rec, closable), r(bb, xx, noun_rec, open),
+    r(bb, xx, noun_rec, lockable), r(bb, xx, noun_rec, locked),
+    r(bb, xx, noun_rec, edible), r(bb, xx, noun_rec, wearable),
+    r(bb, xx, noun_rec, drinkable), r(bb, xx, noun_rec, poisonous),
+    r(bb, xx, noun_rec, movable), r(bb, xx, noun_rec, light),
+    r(bb, xx, noun_rec, shootable), r(bb, xx, noun_rec, win),
+    r(bb, xx, noun_rec, unused),            /* Ext R1-2: Can add here since packed rbool*/
+    r(bb, xx, noun_rec, isglobal),          /* Ext R1-4: ditto (&room for 1 more). */
+    r(FT_WORD, xx, noun_rec, related_name), /* Ext R0-1 */
+    r(FT_INT16, xx, noun_rec, oclass),      /* Ext R1-1 */
+    r(FT_INT16, xx, noun_rec, flagnum),     /* Ext R1-4 */
+    r(bb, xx, noun_rec, seen),              /* Ext R1-6 */
+    r(bb, xx, noun_rec, proper),            /* Ext R2-1 */
+    endrec};
 
 static file_info fi_creat[] = {
-	dptype,  /* Creature */
-	dptype, dptype,  /* Talk, ask */
-	r(FT_STR, xx, creat_rec, shortdesc),
-	r(FT_SLIST, xx, creat_rec, syns),
-	r(FT_WORD, xx, creat_rec, name), r(FT_WORD, xx, creat_rec, adj),
-	r(FT_INT16, xx, creat_rec, location),
-	r(FT_INT16, xx, creat_rec, weapon), r(FT_INT16, xx, creat_rec, points),
-	r(FT_INT16, xx, creat_rec, counter), r(FT_INT16, xx, creat_rec, threshold),
-	r(FT_INT16, xx, creat_rec, timethresh), r(FT_INT16, xx, creat_rec, timecounter),
-	r(FT_INT16, xx, creat_rec, pict), r(FT_INT16, xx, creat_rec, initdesc),
-	r(bb, xx, creat_rec, has_syns), r(bb, xx, creat_rec, groupmemb),
-	r(bb, xx, creat_rec, hostile),
-	r(bb, xx, creat_rec, unused),    /* Ext R1-2: Can add since packed rbool */
-	r(bb, xx, creat_rec, isglobal),  /* Ext R1-4: ditto (& space for 3 more) */
-	r(FT_BYTE, xx, creat_rec, gender),
-	r(FT_INT16, xx, creat_rec, oclass), /* Ext R1-1 */
-	r(FT_INT16, xx, creat_rec, flagnum), /* Ext R1-4 */
-	r(bb, xx, creat_rec, seen),       /* Ext R1-6 */
-	r(bb, xx, creat_rec, proper),     /* Ext R2-1 */
-	endrec
-};
+    dptype,         /* Creature */
+    dptype, dptype, /* Talk, ask */
+    r(FT_STR, xx, creat_rec, shortdesc),
+    r(FT_SLIST, xx, creat_rec, syns),
+    r(FT_WORD, xx, creat_rec, name), r(FT_WORD, xx, creat_rec, adj),
+    r(FT_INT16, xx, creat_rec, location),
+    r(FT_INT16, xx, creat_rec, weapon), r(FT_INT16, xx, creat_rec, points),
+    r(FT_INT16, xx, creat_rec, counter), r(FT_INT16, xx, creat_rec, threshold),
+    r(FT_INT16, xx, creat_rec, timethresh), r(FT_INT16, xx, creat_rec, timecounter),
+    r(FT_INT16, xx, creat_rec, pict), r(FT_INT16, xx, creat_rec, initdesc),
+    r(bb, xx, creat_rec, has_syns), r(bb, xx, creat_rec, groupmemb),
+    r(bb, xx, creat_rec, hostile),
+    r(bb, xx, creat_rec, unused),   /* Ext R1-2: Can add since packed rbool */
+    r(bb, xx, creat_rec, isglobal), /* Ext R1-4: ditto (& space for 3 more) */
+    r(FT_BYTE, xx, creat_rec, gender),
+    r(FT_INT16, xx, creat_rec, oclass),  /* Ext R1-1 */
+    r(FT_INT16, xx, creat_rec, flagnum), /* Ext R1-4 */
+    r(bb, xx, creat_rec, seen),          /* Ext R1-6 */
+    r(bb, xx, creat_rec, proper),        /* Ext R2-1 */
+    endrec};
 
 static file_info fi_cmdhead[] = {
-	{FT_CMDPTR, DT_CMDPTR, NULL, 0},
-	r(FT_INT16, xx, cmd_rec, actor),
-	r(FT_WORD, xx, cmd_rec, verbcmd), r(FT_WORD, xx, cmd_rec, nouncmd),
-	r(FT_WORD, xx, cmd_rec, objcmd), r(FT_WORD, xx, cmd_rec, prep),
-	r(FT_INT16, xx, cmd_rec, cmdsize),
-	r(FT_WORD, xx, cmd_rec, noun_adj), r(FT_WORD, xx, cmd_rec, obj_adj), /* Ext R0-1*/
-	r(FT_INT16, xx, cmd_rec, noun_obj), /* Ext R2-2 */
-	r(FT_INT16, xx, cmd_rec, obj_obj), /* Ext R2-2 */
-	endrec
-};
+    {FT_CMDPTR, DT_CMDPTR, NULL, 0},
+    r(FT_INT16, xx, cmd_rec, actor),
+    r(FT_WORD, xx, cmd_rec, verbcmd),
+    r(FT_WORD, xx, cmd_rec, nouncmd),
+    r(FT_WORD, xx, cmd_rec, objcmd),
+    r(FT_WORD, xx, cmd_rec, prep),
+    r(FT_INT16, xx, cmd_rec, cmdsize),
+    r(FT_WORD, xx, cmd_rec, noun_adj),
+    r(FT_WORD, xx, cmd_rec, obj_adj),   /* Ext R0-1*/
+    r(FT_INT16, xx, cmd_rec, noun_obj), /* Ext R2-2 */
+    r(FT_INT16, xx, cmd_rec, obj_obj),  /* Ext R2-2 */
+    endrec};
 
 static file_info fi_verbentry[] = {
-	r(FT_WORD, xx, verbentry_rec, verb),
-	r(FT_WORD, xx, verbentry_rec, prep),
-	r(FT_INT16, xx, verbentry_rec, objnum),
-	endrec
-};
-
+    r(FT_WORD, xx, verbentry_rec, verb),
+    r(FT_WORD, xx, verbentry_rec, prep),
+    r(FT_INT16, xx, verbentry_rec, objnum),
+    endrec};
 
 static file_info fi_descptr[] = {
-	r(FT_INT32, xx, descr_ptr, start),
-	r(FT_INT32, xx, descr_ptr, size),
-	endrec
-};
+    r(FT_INT32, xx, descr_ptr, start),
+    r(FT_INT32, xx, descr_ptr, size),
+    endrec};
 
 static file_info fi_tline[] = {
-	{FT_TLINE, xx, NULL, 0},
-	endrec
-};
+    {FT_TLINE, xx, NULL, 0},
+    endrec};
 
-static file_info fi_attrrec[] = { /* Ext R1-R7 */
-	r(FT_INT32, xx, attrdef_rec, r),
-	r(FT_INT32, xx, attrdef_rec, n),
-	r(FT_INT32, xx, attrdef_rec, c),
-	r(FT_BYTE, xx, attrdef_rec, rbit),
-	r(FT_BYTE, xx, attrdef_rec, nbit),
-	r(FT_BYTE, xx, attrdef_rec, cbit),
-	r(FT_STR, xx, attrdef_rec, ystr), /* Ext R2-R2 */
-	r(FT_STR, xx, attrdef_rec, nstr), /* Ext R2-R2 */
-	endrec
-};
+static file_info fi_attrrec[] = {/* Ext R1-R7 */
+                                 r(FT_INT32, xx, attrdef_rec, r),
+                                 r(FT_INT32, xx, attrdef_rec, n),
+                                 r(FT_INT32, xx, attrdef_rec, c),
+                                 r(FT_BYTE, xx, attrdef_rec, rbit),
+                                 r(FT_BYTE, xx, attrdef_rec, nbit),
+                                 r(FT_BYTE, xx, attrdef_rec, cbit),
+                                 r(FT_STR, xx, attrdef_rec, ystr), /* Ext R2-R2 */
+                                 r(FT_STR, xx, attrdef_rec, nstr), /* Ext R2-R2 */
+                                 endrec};
 
-static file_info fi_proprec[] = {   /* Ext R1-R7 */
-	r(FT_INT32, xx, propdef_rec, r),
-	r(FT_INT32, xx, propdef_rec, n),
-	r(FT_INT32, xx, propdef_rec, c),
-	r(FT_INT32, xx, propdef_rec, str_cnt), /* Ext R2-R2 */
-	r(FT_INT32, xx, propdef_rec, str_list), /* Ext R2-R2 */
-	endrec
-};
+static file_info fi_proprec[] = {/* Ext R1-R7 */
+                                 r(FT_INT32, xx, propdef_rec, r),
+                                 r(FT_INT32, xx, propdef_rec, n),
+                                 r(FT_INT32, xx, propdef_rec, c),
+                                 r(FT_INT32, xx, propdef_rec, str_cnt),  /* Ext R2-R2 */
+                                 r(FT_INT32, xx, propdef_rec, str_list), /* Ext R2-R2 */
+                                 endrec};
 
-static file_info fi_varrec[] = {        /* Ext R2-R2 */
-	r(FT_INT32, xx, vardef_rec, str_cnt),
-	r(FT_INT32, xx, vardef_rec, str_list),
-	endrec
-};
+static file_info fi_varrec[] = {/* Ext R2-R2 */
+                                r(FT_INT32, xx, vardef_rec, str_cnt),
+                                r(FT_INT32, xx, vardef_rec, str_list),
+                                endrec};
 
-static file_info fi_flagrec[] = { /* Ext R2-R2 */
-	r(FT_STR, xx, flagdef_rec, ystr),
-	r(FT_STR, xx, flagdef_rec, nstr),
-	endrec
-};
+static file_info fi_flagrec[] = {/* Ext R2-R2 */
+                                 r(FT_STR, xx, flagdef_rec, ystr),
+                                 r(FT_STR, xx, flagdef_rec, nstr),
+                                 endrec};
 
 #undef g
 #undef r
@@ -575,9 +564,10 @@ const char base_yesstr[] = "yes";
 const char base_nostr[] = "no";
 
 static void conv_fstr(const char **s, rbool yes, rbool to_intern) {
-	if (to_intern) {  /* Convert to internal form */
+	if (to_intern) { /* Convert to internal form */
 		assert(*s != NULL);
-		if (*s == static_str) *s = yes ? base_yesstr : base_nostr;
+		if (*s == static_str)
+			*s = yes ? base_yesstr : base_nostr;
 	} else { /* convert to external form */
 		if (*s == NULL || *s == base_yesstr || *s == base_nostr)
 			*s = static_str;
@@ -601,7 +591,6 @@ static void fix_objflag_str(rbool to_intern) {
 /*        AGX Reading Code                                       */
 /* ------------------------------------------------------------- */
 
-
 static long descr_ofs;
 
 void agx_close_descr(void) {
@@ -616,7 +605,8 @@ descr_line *agx_read_descr(long start, long size) {
 	descr_line *txt;
 	char *buff;
 
-	if (size <= 0) return NULL;
+	if (size <= 0)
+		return NULL;
 
 	if (mem_descr == NULL && descr_ofs != -1)
 		buff = (char *)read_recblock(NULL, FT_CHAR, size,
@@ -626,7 +616,8 @@ descr_line *agx_read_descr(long start, long size) {
 
 	len = 0;
 	for (i = 0; i < size; i++) /* Count the number of lines */
-		if (buff[i] == 0) len++;
+		if (buff[i] == 0)
+			len++;
 	txt = (descr_line *)rmalloc(sizeof(descr_line) * (len + 1));
 	txt[0] = buff;
 	i = 0;
@@ -636,7 +627,6 @@ descr_line *agx_read_descr(long start, long size) {
 	txt[len] = NULL; /* Mark the end of the array */
 	return txt;
 }
-
 
 /* We need to read in command text and use cmd_rec[] values to
    rebuild command[].data. We are guaranteed that cmd_rec[] is in
@@ -650,16 +640,17 @@ static void read_command(long cmdcnt, long cmdofs, rbool diag) {
 		read_recblock(command[i].data, FT_INT16, command[i].cmdsize,
 		              cmdofs + 2 * cmd_ptr[i], 2 * command[i].cmdsize);
 	}
-	if (!diag) rfree(cmd_ptr);
+	if (!diag)
+		rfree(cmd_ptr);
 }
-
 
 /* Correct for differences between old_base_verb and BASE_VERB.
    This means that the interpreter's set of built-inv verbs has changed
    since the file was created. */
 static void correct_synlist(void) {
 	int i;
-	if (BASE_VERB == old_base_verb) return; /* Nothing needs to be done */
+	if (BASE_VERB == old_base_verb)
+		return; /* Nothing needs to be done */
 
 	/* Need to move everything >= old_base_verb to BASE_VERB */
 	memmove(synlist + BASE_VERB, synlist + old_base_verb,
@@ -673,8 +664,6 @@ static void correct_synlist(void) {
 		synlist[i] = synptr;
 	addsyn(-1);
 }
-
-
 
 static void set_roomdesc(file_info fi[]) {
 	fi[0].ptr = help_ptr = (descr_ptr *)rmalloc(sizeof(descr_ptr) * (maxroom - first_room + 1));
@@ -726,8 +715,7 @@ static void wset_cmdptr(file_info *fi) {
 	fi[0].ptr = cmd_ptr;
 }
 
-
-typedef struct {  /* Entries in the index header of the AGX file */
+typedef struct { /* Entries in the index header of the AGX file */
 	uint32 file_offset;
 	uint32 blocksize;
 	uint32 numrec;
@@ -735,13 +723,11 @@ typedef struct {  /* Entries in the index header of the AGX file */
 } index_rec;
 
 static file_info fi_index[] = {
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, file_offset)},
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, blocksize)},
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, numrec)},
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, recsize)},
-	endrec
-};
-
+    {FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, file_offset)},
+    {FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, blocksize)},
+    {FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, numrec)},
+    {FT_UINT32, DT_DEFAULT, NULL, offsetof(index_rec, recsize)},
+    endrec};
 
 /*
    uint32 File ID ['....' 4 bytes]
@@ -751,47 +737,44 @@ static file_info fi_index[] = {
    byte Extension 0
    */
 
-struct file_head_rec  {
+struct file_head_rec {
 	uint32 fileid;
 	uint32 res1; /* Reserved for future use */
 	uchar res2;
-	uchar eol_chk1;  /* Catch non-binary upload errors */
+	uchar eol_chk1; /* Catch non-binary upload errors */
 	uchar eol_chk2;
 	uchar ver_own;
 	uchar version;
 	uchar ext_own;
 	uchar extnum;
-	uchar fallback_ext;  /* For non-'R' extensions, this is the 'R' extension
+	uchar fallback_ext; /* For non-'R' extensions, this is the 'R' extension
               to fall back to. */
 };
 
 static file_info fi_header[] = {
-	{FT_UINT32, DT_LONG, NULL, offsetof(file_head_rec, fileid)}, /* File ID */
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, ver_own)}, /* Owner */
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, version)}, /* Version */
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, ext_own)}, /*Ext owner*/
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, extnum)}, /* Ext vers */
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, eol_chk1)},
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, eol_chk2)},
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, fallback_ext)},
-	{FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, res2)},
-	{FT_UINT32, DT_DEFAULT, NULL, offsetof(file_head_rec, res1)},
-	endrec
-};
+    {FT_UINT32, DT_LONG, NULL, offsetof(file_head_rec, fileid)},   /* File ID */
+    {FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, ver_own)}, /* Owner */
+    {FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, version)}, /* Version */
+    {FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, ext_own)}, /*Ext owner*/
+    {FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, extnum)},  /* Ext vers */
+    {FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, eol_chk1)},
+    {FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, eol_chk2)},
+    {FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, fallback_ext)},
+    {FT_BYTE, DT_DEFAULT, NULL, offsetof(file_head_rec, res2)},
+    {FT_UINT32, DT_DEFAULT, NULL, offsetof(file_head_rec, res1)},
+    endrec};
 
 static const char *block_name[AGX_NUMBLOCK] = {
-	"Index", "Game Info", "Room(DA2)", "Noun(DA3)", "Creature(DA4)",
-	"Command Header(DA5)", "Error Message(STD)", "Message",
-	"Question", "Answer", "User String", "Description Text(D$$)",
-	"Command Tokens(DA6)", "Static String", "Subroutine ID",
-	"Verb Synonym", "RoomPIX", "Global Noun", "Flag Noun", "Word Lists(Syntbl)",
-	"Dictionary Text", "Dictionary Index", "OPT",
-	"Picture Filename", "RoomPIX Filename", "Font Filename", "Sound Filename",
-	"Menu(VOC)", "Multi-word Verb", "Preposition", "ObjFlag", "ObjProp",
-	"Attrtable", "PropTable", "PropStr", "Itemized Variables",
-	"Itemized Flags"
-};
-
+    "Index", "Game Info", "Room(DA2)", "Noun(DA3)", "Creature(DA4)",
+    "Command Header(DA5)", "Error Message(STD)", "Message",
+    "Question", "Answer", "User String", "Description Text(D$$)",
+    "Command Tokens(DA6)", "Static String", "Subroutine ID",
+    "Verb Synonym", "RoomPIX", "Global Noun", "Flag Noun", "Word Lists(Syntbl)",
+    "Dictionary Text", "Dictionary Index", "OPT",
+    "Picture Filename", "RoomPIX Filename", "Font Filename", "Sound Filename",
+    "Menu(VOC)", "Multi-word Verb", "Preposition", "ObjFlag", "ObjProp",
+    "Attrtable", "PropTable", "PropStr", "Itemized Variables",
+    "Itemized Flags"};
 
 /* Return 0 on failure, 1 on success */
 int read_agx(fc_type fc, rbool diag) {
@@ -846,15 +829,13 @@ int read_agx(fc_type fc, rbool diag) {
 		if (filehead.eol_chk1 != '\n' || filehead.eol_chk2 != '\r')
 			fatal("File apparently downloaded as non-binary file.");
 	}
-	if (filehead.ext_own != 'R'
-	        || (filehead.version == 0 && filehead.extnum > 1)
-	        || (filehead.version == 1 && filehead.extnum > 7)
-	        || (filehead.version == 2 && filehead.extnum > 2))
+	if (filehead.ext_own != 'R' || (filehead.version == 0 && filehead.extnum > 1) || (filehead.version == 1 && filehead.extnum > 7) || (filehead.version == 2 && filehead.extnum > 2))
 		agtwarn("Unrecognized extension to AGX file format.", 0);
 	if (filehead.ext_own != 'R') { /* Assume lowest common denomenator */
 		if (filehead.version < 2)
 			fatal("Extensions of AGX beta versions not supported.");
-		if (filehead.fallback_ext < 1) filehead.fallback_ext = 1;
+		if (filehead.fallback_ext < 1)
+			filehead.fallback_ext = 1;
 	}
 
 	/* Now read master index */
@@ -869,7 +850,7 @@ int read_agx(fc_type fc, rbool diag) {
 	   file's index */
 	if (AGX_NUMBLOCK > index[0].numrec)
 		memset(index + index[0].numrec, 0,
-		       (AGX_NUMBLOCK - index[0].numrec)*sizeof(index_rec));
+		       (AGX_NUMBLOCK - index[0].numrec) * sizeof(index_rec));
 
 	if (DIAG) {
 		rprintf("\n");
@@ -895,16 +876,15 @@ int read_agx(fc_type fc, rbool diag) {
 	}
 
 	/* Check for mandatory fields */
-	if (!index[0].numrec    /* File index */
-	        || !index[1].numrec /* Game header */
-	        || !index[13].numrec /* Static string block */
-	        || !index[15].numrec /* Synonym list */
-	        || !index[19].numrec /* Syntbl */
-	        || !index[20].numrec /* Dictionary text */
-	        || !index[21].numrec /* Dictionary index */
-	   )
+	if (!index[0].numrec     /* File index */
+	    || !index[1].numrec  /* Game header */
+	    || !index[13].numrec /* Static string block */
+	    || !index[15].numrec /* Synonym list */
+	    || !index[19].numrec /* Syntbl */
+	    || !index[20].numrec /* Dictionary text */
+	    || !index[21].numrec /* Dictionary index */
+	)
 		fatal("AGX file missing mandatory block.");
-
 
 	read_globalrec(fi_gameinfo, "Game Info", index[1].file_offset,
 	               index[1].blocksize);
@@ -919,7 +899,8 @@ int read_agx(fc_type fc, rbool diag) {
 	}
 	if (filehead.version == 0 || (filehead.version == 1 && filehead.extnum < 5)) {
 		if (aver >= AGT182 && aver <= AGT18MAX) {
-			if (filehead.extnum < 4) TWO_CYCLE = 1;
+			if (filehead.extnum < 4)
+				TWO_CYCLE = 1;
 		} else
 			PURE_AFTER = 1;
 	}
@@ -995,7 +976,8 @@ int read_agx(fc_type fc, rbool diag) {
 		index[16].blocksize = index[16].recsize * index[16].numrec;
 	}
 	maxpix = index[16].numrec;
-	for (i = 0; i < MAX_PIX; i++) pix_name[i] = 0; /* In case there are less than
+	for (i = 0; i < MAX_PIX; i++)
+		pix_name[i] = 0; /* In case there are less than
                        MAX_PIX names */
 	read_recblock(pix_name, FT_WORD, index[16].numrec, index[16].file_offset,
 	              index[16].blocksize);
@@ -1010,11 +992,10 @@ int read_agx(fc_type fc, rbool diag) {
 		index[18].blocksize = index[18].recsize * index[18].numrec;
 	}
 
-	for (i = 0; i < MAX_FLAG_NOUN; i++) flag_noun[i] = 0;
+	for (i = 0; i < MAX_FLAG_NOUN; i++)
+		flag_noun[i] = 0;
 	read_recblock(flag_noun, FT_WORD, index[18].numrec, index[18].file_offset,
 	              index[18].blocksize);
-
-
 
 	DVERB = index[15].numrec - old_base_verb - MAX_SUB;
 	synlist = (slist *)read_recblock(NULL, FT_SLIST, index[15].numrec, index[15].file_offset,
@@ -1040,9 +1021,11 @@ int read_agx(fc_type fc, rbool diag) {
 	                              index[21].blocksize);
 
 	have_opt = (index[22].numrec != 0);
-	for (i = 0; i < 14; i++) opt_data[i] = 0;
+	for (i = 0; i < 14; i++)
+		opt_data[i] = 0;
 	if (have_opt) {
-		if (index[22].numrec > 14) index[22].numrec = 14;
+		if (index[22].numrec > 14)
+			index[22].numrec = 14;
 		read_recblock(opt_data, FT_BYTE, index[22].numrec, index[22].file_offset,
 		              index[22].blocksize);
 	}
@@ -1062,8 +1045,8 @@ int read_agx(fc_type fc, rbool diag) {
 
 	vm_size = index[27].numrec;
 	verbinfo = (verbentry_rec *)read_recarray(NULL, sizeof(verbentry_rec), index[27].numrec,
-	           fi_verbentry, "Menu Vocabulary", index[27].file_offset,
-	           index[27].blocksize);
+	                                          fi_verbentry, "Menu Vocabulary", index[27].file_offset,
+	                                          index[27].blocksize);
 
 	/* Check that objflag and objprop fields are of correct size */
 	if (index[30].numrec != (uint32)objextsize(0))
@@ -1079,21 +1062,21 @@ int read_agx(fc_type fc, rbool diag) {
 
 	oflag_cnt = index[32].numrec;
 	attrtable = (attrdef_rec *)read_recarray(NULL, sizeof(attrdef_rec), index[32].numrec,
-	            fi_attrrec, "Object Flag Table",
-	            index[32].file_offset,
-	            index[32].blocksize);
+	                                         fi_attrrec, "Object Flag Table",
+	                                         index[32].file_offset,
+	                                         index[32].blocksize);
 	/* Objflags are converted to internal form later, after
 	   block 36 has been read in. */
 
 	oprop_cnt = index[33].numrec;
 	proptable = (propdef_rec *)read_recarray(NULL, sizeof(propdef_rec), index[33].numrec,
-	            fi_proprec, "Object Property Table",
-	            index[33].file_offset,
-	            index[33].blocksize);
+	                                         fi_proprec, "Object Property Table",
+	                                         index[33].file_offset,
+	                                         index[33].blocksize);
 
 	if (filehead.ext_own != 'R' && filehead.fallback_ext <= 1) {
 		/* Non-standard extension */
-//    int i;
+		//    int i;
 		for (i = 0; i < oflag_cnt; i++) /* These are converted later */
 			attrtable[i].ystr = NULL;
 		attrtable[i].nstr = NULL;
@@ -1118,13 +1101,12 @@ int read_agx(fc_type fc, rbool diag) {
 		if (index[36].numrec && index[36].numrec != (uint32)FLAG_NUM + 1)
 			fatal("AGX file corrupted: flag itemization table size mismatch.");
 		flagtable = (flagdef_rec *)read_recarray(NULL, sizeof(flagdef_rec), index[36].numrec,
-		            fi_flagrec, "Flag Itemization Table",
-		            index[36].file_offset,
-		            index[36].blocksize);
+		                                         fi_flagrec, "Flag Itemization Table",
+		                                         index[36].file_offset,
+		                                         index[36].blocksize);
 	}
 
 	fix_objflag_str(1); /* Convert flags and objflags to internal form */
-
 
 	/* Block 12: Command text */
 	read_command(index[12].numrec, index[12].file_offset, diag);
@@ -1146,15 +1128,11 @@ int read_agx(fc_type fc, rbool diag) {
 	return 1;
 }
 
-
-
-
 /* ------------------------------------------------------------- */
 /*        AGX Writing Code                                       */
 /* ------------------------------------------------------------- */
 
 static index_rec *gindex;
-
 
 /* This patches the block descriptions to create AGiliTy-0.8
    compatible files. This is just a quick hack to solve a short-term
@@ -1164,7 +1142,6 @@ void patch_08(void) {
 	set_endrec(fi_noun, 45);
 	set_endrec(fi_creat, 23);
 }
-
 
 /* This writes the file header; it needs to be called near the
    end */
@@ -1195,7 +1172,8 @@ void write_header(void) {
 	   break pre-0.8.8 interpreters. */
 	simple = 1;
 	for (i = 30; i < AGX_NUMBLOCK; i++)
-		if (gindex[i].numrec != 0) simple = 0;
+		if (gindex[i].numrec != 0)
+			simple = 0;
 	if (simple) {
 		gindex[0].numrec = 30; /* 0.8.7 compatibility */
 		gindex[0].blocksize = gindex[0].recsize * gindex[0].numrec;
@@ -1204,7 +1182,6 @@ void write_header(void) {
 	}
 	write_recarray(&filehead, sizeof(file_head_rec), 1, fi_header, 0);
 }
-
 
 static void agx_compute_index(void)
 /* This computes the blocksize and offset values for all blocks */
@@ -1223,7 +1200,6 @@ static void agx_compute_index(void)
 		else if (i != 11 && i != 12)
 			gindex[i].file_offset = gindex[i - 1].file_offset + gindex[i - 1].blocksize;
 }
-
 
 /* Create the preliminary gindex for the new file and set it up so we can
  write descriptions to the new file */
@@ -1253,19 +1229,19 @@ void agx_create(fc_type fc) {
 	gindex[4].recsize = compute_recsize(fi_creat);
 	gindex[5].recsize = compute_recsize(fi_cmdhead);
 	gindex[6].recsize = gindex[7].recsize = gindex[8].recsize =
-	        gindex[9].recsize = compute_recsize(fi_descptr);
+	    gindex[9].recsize = compute_recsize(fi_descptr);
 	gindex[10].recsize = ft_leng[FT_TLINE];
 	gindex[11].recsize = ft_leng[FT_CHAR];
 	gindex[12].recsize = ft_leng[FT_INT16];
 	gindex[13].recsize = gindex[20].recsize = ft_leng[FT_CHAR];
 	gindex[14].recsize = gindex[16].recsize = gindex[17].recsize =
-	                         gindex[18].recsize = ft_leng[FT_WORD];
+	    gindex[18].recsize = ft_leng[FT_WORD];
 	gindex[15].recsize = ft_leng[FT_SLIST];
 	gindex[19].recsize = ft_leng[FT_WORD];
 	gindex[21].recsize = ft_leng[FT_DICTPTR];
 	gindex[22].recsize = ft_leng[FT_BYTE];
 	gindex[23].recsize = gindex[24].recsize = gindex[25].recsize =
-	                         gindex[26].recsize = ft_leng[FT_STR];
+	    gindex[26].recsize = ft_leng[FT_STR];
 	gindex[27].recsize = compute_recsize(fi_verbentry);
 	gindex[28].recsize = ft_leng[FT_SLIST];
 	gindex[29].recsize = ft_leng[FT_SLIST];
@@ -1278,12 +1254,11 @@ void agx_create(fc_type fc) {
 	gindex[36].recsize = compute_recsize(fi_flagrec);
 
 	agx_compute_index(); /* Only the first 10 blocks will be correct */
-	/* The important thing is to get the offset of block 11, the desciption
+	                     /* The important thing is to get the offset of block 11, the desciption
 	   text block, so we can write to it. */
-	/* Block 11 is the description block; it doesn't get written by agxwrite()
+	                     /* Block 11 is the description block; it doesn't get written by agxwrite()
 	   but by its own routines. */
 }
-
 
 static void agx_finish_index(void) {
 	/* Still have 11, 27-29 */
@@ -1299,7 +1274,8 @@ static void agx_finish_index(void) {
 	gindex[8].numrec = gindex[9].numrec = MaxQuestion;
 	if (userstr != NULL)
 		gindex[10].numrec = MAX_USTR;
-	else gindex[10].numrec = 0;
+	else
+		gindex[10].numrec = 0;
 	gindex[13].numrec = ss_end;
 	gindex[14].numrec = MAX_SUB;
 	gindex[15].numrec = TOTAL_VERB;
@@ -1320,7 +1296,7 @@ static void agx_finish_index(void) {
 	gindex[32].numrec = oflag_cnt;
 	gindex[33].numrec = oprop_cnt;
 	gindex[34].numrec = propstr_size;
-	gindex[35].numrec = (vartable ?  VAR_NUM + 1 : 0);
+	gindex[35].numrec = (vartable ? VAR_NUM + 1 : 0);
 	gindex[36].numrec = (flagtable ? FLAG_NUM + 1 : 0);
 
 	/* These may also be zero (?) */
@@ -1330,8 +1306,6 @@ static void agx_finish_index(void) {
 	agx_compute_index(); /* This time it will be complete except for
             the VOC-TTL-INS blocks at the end */
 }
-
-
 
 /* The following routine writes a description to disk,
    and stores the size and length in dp */
@@ -1348,7 +1322,7 @@ void write_descr(descr_ptr *dp_, descr_line *txt) {
 	}
 
 	for (i = 0; txt[i] != NULL; i++) /* Compute size */
-		size += strlen(txt[i]) + 1; /* Remember trailing \0 */
+		size += strlen(txt[i]) + 1;  /* Remember trailing \0 */
 	buff = (char *)rmalloc(sizeof(char) * size);
 
 	buffptr = buff;
@@ -1379,9 +1353,6 @@ static long write_command(long cmdofs) {
 	}
 	return cnt;
 }
-
-
-
 
 /* Write the bulk of the AGX file. This requires that the descriptions,
    etc. have already been written */
@@ -1464,7 +1435,6 @@ void agx_write(void) {
 	fix_objflag_str(1); /* Restore to internal form */
 }
 
-
 /* Write header and master gindex and then close AGX file */
 void agx_wclose(void) {
 	write_header();
@@ -1472,7 +1442,6 @@ void agx_wclose(void) {
 	bw_close();
 	rfree(gindex);
 }
-
 
 void agx_wabort(void) {
 	bw_abort();

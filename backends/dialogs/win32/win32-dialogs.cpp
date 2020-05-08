@@ -20,8 +20,8 @@
  *
  */
 
- // We cannot use common/scummsys.h directly as it will include
- // windows.h and we need to do it by hand to allow excluded functions
+// We cannot use common/scummsys.h directly as it will include
+// windows.h and we need to do it by hand to allow excluded functions
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
 #endif
@@ -46,10 +46,10 @@
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 #include "backends/dialogs/win32/mingw-compat.h"
 #else
-	// We use functionality introduced with Vista in this file.
-	// To assure that including the respective system headers gives us all
-	// required definitions we set Vista as minimum version we target.
-	// See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx#macros_for_conditional_declarations
+// We use functionality introduced with Vista in this file.
+// To assure that including the respective system headers gives us all
+// required definitions we set Vista as minimum version we target.
+// See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx#macros_for_conditional_declarations
 #include <sdkddkver.h>
 #undef _WIN32_WINNT
 #define _WIN32_WINNT _WIN32_WINNT_VISTA
@@ -63,8 +63,8 @@
 #include "common/scummsys.h"
 
 #include "backends/dialogs/win32/win32-dialogs.h"
-#include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "backends/platform/sdl/win32/win32-window.h"
+#include "backends/platform/sdl/win32/win32_wrapper.h"
 
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -79,7 +79,7 @@ Win32DialogManager::~Win32DialogManager() {
 
 // Wrapper for old Windows versions
 HRESULT winCreateItemFromParsingName(PCWSTR pszPath, IBindCtx *pbc, REFIID riid, void **ppv) {
-	typedef HRESULT(WINAPI *SHFunc)(PCWSTR, IBindCtx *, REFIID, void **);
+	typedef HRESULT(WINAPI * SHFunc)(PCWSTR, IBindCtx *, REFIID, void **);
 
 	SHFunc func = (SHFunc)GetProcAddress(GetModuleHandle(TEXT("shell32.dll")), "SHCreateItemFromParsingName");
 	if (func == NULL)
@@ -109,10 +109,10 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 
 	IFileOpenDialog *dialog = NULL;
 	HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog,
-		NULL,
-		CLSCTX_INPROC_SERVER,
-		IID_IFileOpenDialog,
-		reinterpret_cast<void **> (&(dialog)));
+	                              NULL,
+	                              CLSCTX_INPROC_SERVER,
+	                              IID_IFileOpenDialog,
+	                              reinterpret_cast<void **>(&(dialog)));
 
 	if (SUCCEEDED(hr)) {
 		beginDialog();
@@ -141,7 +141,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 		if (ConfMan.hasKey("browser_lastpath")) {
 			str = Win32::ansiToUnicode(ConfMan.get("browser_lastpath").c_str());
 			IShellItem *item = NULL;
-			hr = winCreateItemFromParsingName(str, NULL, IID_IShellItem, reinterpret_cast<void **> (&(item)));
+			hr = winCreateItemFromParsingName(str, NULL, IID_IShellItem, reinterpret_cast<void **>(&(item)));
 			if (SUCCEEDED(hr)) {
 				hr = dialog->SetDefaultFolder(item);
 			}
@@ -176,8 +176,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const ch
 				}
 				lastFolder->Release();
 			}
-		}
-		else if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+		} else if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
 			result = kDialogCancel;
 		}
 

@@ -20,30 +20,28 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
+#include "ultima/ultima8/graphics/fonts/shape_rendered_text.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/fonts/shape_rendered_text.h"
+#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE_MULTI2(ShapeFont, Font, Shape)
 
-
 ShapeFont::ShapeFont(const uint8 *data_, uint32 size_,
                      const ConvertShapeFormat *format,
                      const uint16 flexId_, const uint32 shapeNum_)
-	: Font(), Shape(data_, size_, format, flexId_, shapeNum_),
-	  _height(0), _baseLine(0), _vLead(-1), _hLead(0) {
+    : Font(), Shape(data_, size_, format, flexId_, shapeNum_),
+      _height(0), _baseLine(0), _vLead(-1), _hLead(0) {
 	_crusaderCharMap = GAME_IS_CRUSADER && shapeNum_ == 1;
 }
 
 ShapeFont::~ShapeFont() {
 }
-
 
 int ShapeFont::getWidth(char c) {
 	const ShapeFrame *frame = getFrame(charToFrameNum(c));
@@ -61,7 +59,8 @@ int ShapeFont::getHeight() {
 				continue;
 			int h = frame->_height;
 
-			if (h > _height) _height = h;
+			if (h > _height)
+				_height = h;
 		}
 	}
 
@@ -73,7 +72,8 @@ int ShapeFont::getBaseline() {
 		for (uint32 i = 0; i < frameCount(); i++) {
 			int b = getFrame(i)->_yoff;
 
-			if (b > _baseLine) _baseLine = b;
+			if (b > _baseLine)
+				_baseLine = b;
 		}
 	}
 

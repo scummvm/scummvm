@@ -20,25 +20,25 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/views/doll_view_gump.h"
+#include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_button.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/views/view_manager.h"
+#include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/views/container_view_gump.h"
 #include "ultima/nuvie/views/doll_widget.h"
-#include "ultima/nuvie/views/doll_view_gump.h"
-#include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 DollViewGump::DollViewGump(Configuration *cfg) : DraggableView(cfg),
-	gump_button(NULL), combat_button(NULL), heart_button(NULL), party_button(NULL), inventory_button(NULL),
-	doll_widget(NULL), font(NULL), actor(NULL), cursor_tile(NULL) {
+                                                 gump_button(NULL), combat_button(NULL), heart_button(NULL), party_button(NULL), inventory_button(NULL),
+                                                 doll_widget(NULL), font(NULL), actor(NULL), cursor_tile(NULL) {
 	bg_image = NULL;
 	actor_doll = NULL;
 	is_avatar = false;
@@ -223,7 +223,7 @@ GUI_status DollViewGump::set_cursor_pos(gumpCursorPos pos) {
 		cursor_yoff = 109;
 		return GUI_YUM;
 	case CURSOR_INVENTORY:
-	default :
+	default:
 		cursor_xoff = 74;
 		cursor_yoff = 109;
 		return GUI_YUM;
@@ -231,8 +231,8 @@ GUI_status DollViewGump::set_cursor_pos(gumpCursorPos pos) {
 }
 
 void DollViewGump::Display(bool full_redraw) {
-//display_level_text();
-//display_spell_list_text();
+	//display_level_text();
+	//display_spell_list_text();
 	Common::Rect dst;
 	dst = area;
 	dst.setWidth(108);
@@ -253,7 +253,7 @@ void DollViewGump::Display(bool full_redraw) {
 	displayCombatMode();
 	if (show_cursor)
 		screen->blit(area.left + cursor_xoff, area.top + cursor_yoff,
-			(const unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
+		             (const unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
 	update_display = false;
 	screen->update(area.left, area.top, area.width(), area.height());
 
@@ -589,8 +589,8 @@ GUI_status DollViewGump::moveCursorRelative(uint8 direction) {
 }
 
 GUI_status DollViewGump::KeyDown(const Common::KeyState &key) {
-// I was restricting numpad keys when in numlock but there shouldn't be any needed number input
-//	bool numlock = (key.flags & Common::KBD_NUM); // SDL doesn't get the proper num lock state in Windows
+	// I was restricting numpad keys when in numlock but there shouldn't be any needed number input
+	//	bool numlock = (key.flags & Common::KBD_NUM); // SDL doesn't get the proper num lock state in Windows
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -663,8 +663,7 @@ void DollViewGump::activate_combat_button() {
 	if (actor->is_in_party() && party->get_member_num(actor) != 0) {
 		set_combat_mode(actor);
 		update_display = true;
-	} else if (event->get_mode() != INPUT_MODE && event->get_mode() != CAST_MODE
-	           && event->get_mode() != ATTACK_MODE)
+	} else if (event->get_mode() != INPUT_MODE && event->get_mode() != CAST_MODE && event->get_mode() != ATTACK_MODE)
 		event->newAction(COMBAT_MODE);
 }
 

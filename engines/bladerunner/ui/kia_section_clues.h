@@ -44,23 +44,23 @@ class KIASectionClues : public KIASectionBase {
 		int flags;
 	};
 
-	UIContainer        *_uiContainer;
-	UIImagePicker      *_buttons;
-	UIScrollBox        *_cluesScrollBox;
-	UIScrollBox        *_filterScrollBox;
+	UIContainer *_uiContainer;
+	UIImagePicker *_buttons;
+	UIScrollBox *_cluesScrollBox;
+	UIScrollBox *_filterScrollBox;
 
-	bool                _isOpen;
-	bool                _debugIntangible;
-	int                 _debugNop;
-	ActorClues         *_clues;
+	bool _isOpen;
+	bool _debugIntangible;
+	int _debugNop;
+	ActorClues *_clues;
 
-	int                 _assetTypeFilterCount;
-	int                 _crimeFilterCount;
-	int                 _filterCount;
+	int _assetTypeFilterCount;
+	int _crimeFilterCount;
+	int _filterCount;
 	Common::Array<bool> _filters;
 
-	int                 _mouseX;
-	int                 _mouseY;
+	int _mouseX;
+	int _mouseY;
 
 public:
 	KIASectionClues(BladeRunnerEngine *vm, ActorClues *clues);

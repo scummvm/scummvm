@@ -21,16 +21,16 @@
  */
 
 #include "ultima/ultima1/actions/stats.h"
-#include "ultima/ultima1/u1dialogs/stats.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/u1dialogs/stats.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
 BEGIN_MESSAGE_MAP(Stats, Action)
-	ON_MESSAGE(StatsMsg)
+ON_MESSAGE(StatsMsg)
 END_MESSAGE_MAP()
 
 bool Stats::StatsMsg(CStatsMsg &msg) {

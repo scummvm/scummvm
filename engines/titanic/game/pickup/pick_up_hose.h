@@ -33,10 +33,12 @@ class CPickUpHose : public CPickUp {
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 private:
 	static bool _v1;
 
 	CString _target;
+
 public:
 	CLASSDEF;
 

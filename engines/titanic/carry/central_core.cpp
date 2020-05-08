@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCentralCore, CBrain)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(DropZoneLostObjectMsg)
-	ON_MESSAGE(DropZoneGotObjectMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(DropZoneLostObjectMsg)
+ON_MESSAGE(DropZoneGotObjectMsg)
 END_MESSAGE_MAP()
 
 void CCentralCore::save(SimpleFile *file, int indent) {

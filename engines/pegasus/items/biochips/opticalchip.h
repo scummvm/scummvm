@@ -27,8 +27,8 @@
 #define PEGASUS_ITEMS_BIOCHIPS_OPTICALCHIP_H
 
 #include "pegasus/hotspot.h"
-#include "pegasus/util.h"
 #include "pegasus/items/biochips/biochipitem.h"
+#include "pegasus/util.h"
 
 namespace Pegasus {
 

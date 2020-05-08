@@ -43,8 +43,8 @@ enum Direction {
 /*
  * Tables to map a Direction to x/y deltas
  */
-const int x_fact[] = {  0, +1, +1, +1,  0, -1, -1, -1 };
-const int y_fact[] = { -1, -1,  0, +1, +1, +1,  0, -1 };
+const int x_fact[] = {0, +1, +1, +1, 0, -1, -1, -1};
+const int y_fact[] = {-1, -1, 0, +1, +1, +1, 0, -1};
 
 /*
  *  Return the direction for a given slope (0-7).
@@ -61,23 +61,19 @@ inline Direction Get_direction(int deltay, int deltax) {
 	int dydx = (1024 * deltay) / deltax; // Figure 1024*tan.
 	if (dydx >= 0)
 		if (deltax > 0) // Top-right
-			return dydx <= 424 ? northeast : dydx <= 2472 ? north
-			       : northwest;
-		else            // Bottom-left.
-			return dydx <= 424 ? southwest : dydx <= 2472 ? south
-			       : southeast;
+			return dydx <= 424 ? northeast : dydx <= 2472 ? north : northwest;
+		else // Bottom-left.
+			return dydx <= 424 ? southwest : dydx <= 2472 ? south : southeast;
 	else if (deltax > 0) // Bottom-right.
-		return dydx >= -424 ? northeast : dydx >= -2472 ? east
-		       : southeast;
-	else            // Top-left
-		return dydx >= -424 ? southwest : dydx >= -2472 ? west
-		       : northwest;
+		return dydx >= -424 ? northeast : dydx >= -2472 ? east : southeast;
+	else // Top-left
+		return dydx >= -424 ? southwest : dydx >= -2472 ? west : northwest;
 }
-
 
 inline Direction Get_WorldDirection(int deltay, int deltax) {
 	if (deltax == 0) {
-		if (deltay == 0) return northeast; // for better compatibility with U8
+		if (deltay == 0)
+			return northeast; // for better compatibility with U8
 		return deltay > 0 ? south : north;
 	}
 	int dydx = (1024 * deltay) / deltax;
@@ -85,11 +81,11 @@ inline Direction Get_WorldDirection(int deltay, int deltax) {
 	if (dydx >= 0)
 		if (deltax > 0) // south-east
 			return dydx <= 424 ? east : dydx <= 2472 ? southeast : south;
-		else            // north-west
+		else // north-west
 			return dydx <= 424 ? west : dydx <= 2472 ? northwest : north;
 	else if (deltax > 0) // north-east
 		return dydx >= -424 ? east : dydx >= -2472 ? northeast : north;
-	else            // south-west
+	else // south-west
 		return dydx >= -424 ? west : dydx >= -2472 ? southwest : south;
 }
 

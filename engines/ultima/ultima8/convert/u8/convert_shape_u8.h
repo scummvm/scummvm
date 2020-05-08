@@ -29,16 +29,16 @@ namespace Ultima {
 namespace Ultima8 {
 
 // Shape format configuration for Ultima 8
-extern const ConvertShapeFormat		U8ShapeFormat;
+extern const ConvertShapeFormat U8ShapeFormat;
 
 // Shape format configuration for Ultima 8 2D
-extern const ConvertShapeFormat		U82DShapeFormat;
+extern const ConvertShapeFormat U82DShapeFormat;
 
 // Shape format configuration for Ultima 8 SKF file shapes
-extern const ConvertShapeFormat		U8SKFShapeFormat;
+extern const ConvertShapeFormat U8SKFShapeFormat;
 
 // Shape format configuration for Compressed Ultima 8 shapes
-extern const ConvertShapeFormat		U8CMPShapeFormat;
+extern const ConvertShapeFormat U8CMPShapeFormat;
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

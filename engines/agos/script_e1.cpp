@@ -20,373 +20,371 @@
  *
  */
 
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 #include "agos/vga.h"
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_Elvira1, x)
+#define OPCODE(x) _OPCODE(AGOSEngine_Elvira1, x)
 
 void AGOSEngine_Elvira1::setupOpcodes() {
 	static const OpcodeEntryElvira1 opcodes[] = {
-		/* 00 */
-		OPCODE(o_at),
-		OPCODE(o_notAt),
-		OPCODE(oe1_present),
-		OPCODE(oe1_notPresent),
-		/* 04 */
-		OPCODE(oe1_worn),
-		OPCODE(oe1_notWorn),
-		OPCODE(o_carried),
-		OPCODE(o_notCarried),
-		/* 08 */
-		OPCODE(o_isAt),
-		OPCODE(oe1_isNotAt),
-		OPCODE(oe1_sibling),
-		OPCODE(oe1_notSibling),
-		/* 12 */
-		OPCODE(o_zero),
-		OPCODE(o_notZero),
-		OPCODE(o_eq),
-		OPCODE(o_notEq),
-		/* 16 */
-		OPCODE(o_gt),
-		OPCODE(o_lt),
-		OPCODE(o_eqf),
-		OPCODE(o_notEqf),
-		/* 20 */
-		OPCODE(o_ltf),
-		OPCODE(o_gtf),
-		OPCODE(oe1_isIn),
-		OPCODE(oe1_isNotIn),
-		/* 24 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 28 */
-		OPCODE(o_invalid),
-		OPCODE(o_chance),
-		OPCODE(oe1_isPlayer),
-		OPCODE(o_invalid),
-		/* 32 */
-		OPCODE(o_isRoom),
-		OPCODE(o_isObject),
-		OPCODE(o_state),
-		OPCODE(o_invalid),
-		/* 36 */
-		OPCODE(o_oflag),
-		OPCODE(oe1_canPut),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 40 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 44 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(oe1_create),
-		/* 48 */
-		OPCODE(o_destroy),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_place),
-		/* 52 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(oe1_copyof),
-		OPCODE(oe1_copyfo),
-		/* 56 */
-		OPCODE(o_copyff),
-		OPCODE(oe1_whatO),
-		OPCODE(o_invalid),
-		OPCODE(oe1_weigh),
-		/* 60 */
-		OPCODE(oe1_setFF),
-		OPCODE(o_clear),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 64 */
-		OPCODE(o_let),
-		OPCODE(o_add),
-		OPCODE(o_sub),
-		OPCODE(o_addf),
-		/* 68 */
-		OPCODE(o_subf),
-		OPCODE(o_mul),
-		OPCODE(o_div),
-		OPCODE(o_mulf),
-		/* 72 */
-		OPCODE(o_divf),
-		OPCODE(o_mod),
-		OPCODE(o_modf),
-		OPCODE(o_random),
-		/* 76 */
-		OPCODE(oe1_moveDirn),
-		OPCODE(o_goto),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 80 */
-		OPCODE(o_oset),
-		OPCODE(o_oclear),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 84 */
-		OPCODE(o_putBy),
-		OPCODE(o_inc),
-		OPCODE(o_dec),
-		OPCODE(o_setState),
-		/* 88 */
-		OPCODE(o_invalid),
-		OPCODE(o_print),
-		OPCODE(oe1_score),
-		OPCODE(o_message),
-		/* 92 */
-		OPCODE(o_msg),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 96 */
-		OPCODE(oe1_look),
-		OPCODE(o_end),
-		OPCODE(o_done),
-		OPCODE(o_invalid),
-		/* 100 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 104 */
-		OPCODE(o_invalid),
-		OPCODE(o_process),
-		OPCODE(oe1_doClass),
-		OPCODE(o_invalid),
-		/* 108 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 112*/
-		OPCODE(oe1_pObj),
-		OPCODE(o_invalid),
-		OPCODE(oe1_pName),
-		OPCODE(oe1_pcName),
-		/* 116 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_when),
-		/* 120 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 124 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 128 */
-		OPCODE(o_if1),
-		OPCODE(o_if2),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 132 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(oe1_isCalled),
-		/* 136 */
-		OPCODE(o_is),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 140 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 144 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 148 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 152 */
-		OPCODE(o_debug),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 156 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 160 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(oe1_cFlag),
-		OPCODE(o_invalid),
-		/* 164 */
-		OPCODE(oe1_rescan),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 168 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 172 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 176 */
-		OPCODE(oe1_setUserItem),
-		OPCODE(oe1_getUserItem),
-		OPCODE(oe1_clearUserItem),
-		OPCODE(o_invalid),
-		/* 180 */
-		OPCODE(oe1_whereTo),
-		OPCODE(oe1_doorExit),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 184 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 188 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 192 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 196 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_comment),
-		OPCODE(o_invalid),
-		/* 200 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(oe1_loadGame),
-		OPCODE(o_invalid),
-		/* 204 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_getParent),
-		OPCODE(o_getNext),
-		/* 208 */
-		OPCODE(o_getChildren),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 212 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 216 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(oe1_findMaster),
-		/* 220 */
-		OPCODE(oe1_nextMaster),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 224 */
-		OPCODE(o_picture),
-		OPCODE(o_loadZone),
-		OPCODE(oe1_animate),
-		OPCODE(oe1_stopAnimate),
-		/* 228 */
-		OPCODE(o_killAnimate),
-		OPCODE(o_defWindow),
-		OPCODE(o_window),
-		OPCODE(o_cls),
-		/* 232 */
-		OPCODE(o_closeWindow),
-		OPCODE(oe1_menu),
-		OPCODE(o_invalid),
-		OPCODE(oe1_addBox),
-		/* 236 */
-		OPCODE(o_delBox),
-		OPCODE(o_enableBox),
-		OPCODE(o_disableBox),
-		OPCODE(o_moveBox),
-		/* 240 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_doIcons),
-		OPCODE(o_isClass),
-		/* 244 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 248 */
-		OPCODE(o_invalid),
-		OPCODE(o_setClass),
-		OPCODE(o_unsetClass),
-		OPCODE(oe1_bitClear),
-		/* 252 */
-		OPCODE(oe1_bitSet),
-		OPCODE(oe1_bitTest),
-		OPCODE(o_invalid),
-		OPCODE(o_waitSync),
-		/* 256 */
-		OPCODE(o_sync),
-		OPCODE(o_defObj),
-		OPCODE(oe1_enableInput),
-		OPCODE(oe1_setTime),
-		/* 260 */
-		OPCODE(oe1_ifTime),
-		OPCODE(o_here),
-		OPCODE(o_doClassIcons),
-		OPCODE(oe1_playTune),
-		/* 264 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_setAdjNoun),
-		OPCODE(oe1_zoneDisk),
-		/* 268 */
-		OPCODE(o_saveUserGame),
-		OPCODE(o_loadUserGame),
-		OPCODE(oe1_printStats),
-		OPCODE(oe1_stopTune),
-		/* 272 */
-		OPCODE(oe1_printPlayerDamage),
-		OPCODE(oe1_printMonsterDamage),
-		OPCODE(oe1_pauseGame),
-		OPCODE(o_copysf),
-		/* 276 */
-		OPCODE(o_restoreIcons),
-		OPCODE(oe1_printPlayerHit),
-		OPCODE(oe1_printMonsterHit),
-		OPCODE(o_freezeZones),
-		/* 280 */
-		OPCODE(o_placeNoIcons),
-		OPCODE(o_clearTimers),
-		OPCODE(o_setDollar),
-		OPCODE(o_isBox)
-	};
+	    /* 00 */
+	    OPCODE(o_at),
+	    OPCODE(o_notAt),
+	    OPCODE(oe1_present),
+	    OPCODE(oe1_notPresent),
+	    /* 04 */
+	    OPCODE(oe1_worn),
+	    OPCODE(oe1_notWorn),
+	    OPCODE(o_carried),
+	    OPCODE(o_notCarried),
+	    /* 08 */
+	    OPCODE(o_isAt),
+	    OPCODE(oe1_isNotAt),
+	    OPCODE(oe1_sibling),
+	    OPCODE(oe1_notSibling),
+	    /* 12 */
+	    OPCODE(o_zero),
+	    OPCODE(o_notZero),
+	    OPCODE(o_eq),
+	    OPCODE(o_notEq),
+	    /* 16 */
+	    OPCODE(o_gt),
+	    OPCODE(o_lt),
+	    OPCODE(o_eqf),
+	    OPCODE(o_notEqf),
+	    /* 20 */
+	    OPCODE(o_ltf),
+	    OPCODE(o_gtf),
+	    OPCODE(oe1_isIn),
+	    OPCODE(oe1_isNotIn),
+	    /* 24 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 28 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_chance),
+	    OPCODE(oe1_isPlayer),
+	    OPCODE(o_invalid),
+	    /* 32 */
+	    OPCODE(o_isRoom),
+	    OPCODE(o_isObject),
+	    OPCODE(o_state),
+	    OPCODE(o_invalid),
+	    /* 36 */
+	    OPCODE(o_oflag),
+	    OPCODE(oe1_canPut),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 40 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 44 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_create),
+	    /* 48 */
+	    OPCODE(o_destroy),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_place),
+	    /* 52 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_copyof),
+	    OPCODE(oe1_copyfo),
+	    /* 56 */
+	    OPCODE(o_copyff),
+	    OPCODE(oe1_whatO),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_weigh),
+	    /* 60 */
+	    OPCODE(oe1_setFF),
+	    OPCODE(o_clear),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 64 */
+	    OPCODE(o_let),
+	    OPCODE(o_add),
+	    OPCODE(o_sub),
+	    OPCODE(o_addf),
+	    /* 68 */
+	    OPCODE(o_subf),
+	    OPCODE(o_mul),
+	    OPCODE(o_div),
+	    OPCODE(o_mulf),
+	    /* 72 */
+	    OPCODE(o_divf),
+	    OPCODE(o_mod),
+	    OPCODE(o_modf),
+	    OPCODE(o_random),
+	    /* 76 */
+	    OPCODE(oe1_moveDirn),
+	    OPCODE(o_goto),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 80 */
+	    OPCODE(o_oset),
+	    OPCODE(o_oclear),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 84 */
+	    OPCODE(o_putBy),
+	    OPCODE(o_inc),
+	    OPCODE(o_dec),
+	    OPCODE(o_setState),
+	    /* 88 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_print),
+	    OPCODE(oe1_score),
+	    OPCODE(o_message),
+	    /* 92 */
+	    OPCODE(o_msg),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 96 */
+	    OPCODE(oe1_look),
+	    OPCODE(o_end),
+	    OPCODE(o_done),
+	    OPCODE(o_invalid),
+	    /* 100 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 104 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_process),
+	    OPCODE(oe1_doClass),
+	    OPCODE(o_invalid),
+	    /* 108 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 112*/
+	    OPCODE(oe1_pObj),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_pName),
+	    OPCODE(oe1_pcName),
+	    /* 116 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_when),
+	    /* 120 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 124 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 128 */
+	    OPCODE(o_if1),
+	    OPCODE(o_if2),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 132 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_isCalled),
+	    /* 136 */
+	    OPCODE(o_is),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 140 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 144 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 148 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 152 */
+	    OPCODE(o_debug),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 156 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 160 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_cFlag),
+	    OPCODE(o_invalid),
+	    /* 164 */
+	    OPCODE(oe1_rescan),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 168 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 172 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 176 */
+	    OPCODE(oe1_setUserItem),
+	    OPCODE(oe1_getUserItem),
+	    OPCODE(oe1_clearUserItem),
+	    OPCODE(o_invalid),
+	    /* 180 */
+	    OPCODE(oe1_whereTo),
+	    OPCODE(oe1_doorExit),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 184 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 188 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 192 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 196 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_comment),
+	    OPCODE(o_invalid),
+	    /* 200 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_loadGame),
+	    OPCODE(o_invalid),
+	    /* 204 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_getParent),
+	    OPCODE(o_getNext),
+	    /* 208 */
+	    OPCODE(o_getChildren),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 212 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 216 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_findMaster),
+	    /* 220 */
+	    OPCODE(oe1_nextMaster),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 224 */
+	    OPCODE(o_picture),
+	    OPCODE(o_loadZone),
+	    OPCODE(oe1_animate),
+	    OPCODE(oe1_stopAnimate),
+	    /* 228 */
+	    OPCODE(o_killAnimate),
+	    OPCODE(o_defWindow),
+	    OPCODE(o_window),
+	    OPCODE(o_cls),
+	    /* 232 */
+	    OPCODE(o_closeWindow),
+	    OPCODE(oe1_menu),
+	    OPCODE(o_invalid),
+	    OPCODE(oe1_addBox),
+	    /* 236 */
+	    OPCODE(o_delBox),
+	    OPCODE(o_enableBox),
+	    OPCODE(o_disableBox),
+	    OPCODE(o_moveBox),
+	    /* 240 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_doIcons),
+	    OPCODE(o_isClass),
+	    /* 244 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 248 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_setClass),
+	    OPCODE(o_unsetClass),
+	    OPCODE(oe1_bitClear),
+	    /* 252 */
+	    OPCODE(oe1_bitSet),
+	    OPCODE(oe1_bitTest),
+	    OPCODE(o_invalid),
+	    OPCODE(o_waitSync),
+	    /* 256 */
+	    OPCODE(o_sync),
+	    OPCODE(o_defObj),
+	    OPCODE(oe1_enableInput),
+	    OPCODE(oe1_setTime),
+	    /* 260 */
+	    OPCODE(oe1_ifTime),
+	    OPCODE(o_here),
+	    OPCODE(o_doClassIcons),
+	    OPCODE(oe1_playTune),
+	    /* 264 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_setAdjNoun),
+	    OPCODE(oe1_zoneDisk),
+	    /* 268 */
+	    OPCODE(o_saveUserGame),
+	    OPCODE(o_loadUserGame),
+	    OPCODE(oe1_printStats),
+	    OPCODE(oe1_stopTune),
+	    /* 272 */
+	    OPCODE(oe1_printPlayerDamage),
+	    OPCODE(oe1_printMonsterDamage),
+	    OPCODE(oe1_pauseGame),
+	    OPCODE(o_copysf),
+	    /* 276 */
+	    OPCODE(o_restoreIcons),
+	    OPCODE(oe1_printPlayerHit),
+	    OPCODE(oe1_printMonsterHit),
+	    OPCODE(o_freezeZones),
+	    /* 280 */
+	    OPCODE(o_placeNoIcons),
+	    OPCODE(o_clearTimers),
+	    OPCODE(o_setDollar),
+	    OPCODE(o_isBox)};
 
 	_opcodesElvira1 = opcodes;
 	_numOpcodes = 284;
@@ -394,7 +392,7 @@ void AGOSEngine_Elvira1::setupOpcodes() {
 
 void AGOSEngine_Elvira1::executeOpcode(int opcode) {
 	OpcodeProcElvira1 op = _opcodesElvira1[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------
@@ -505,7 +503,7 @@ void AGOSEngine_Elvira1::oe1_whatO() {
 	int a = getVarOrWord();
 
 	if (a == 1)
-		_subjectItem = findMaster(_scriptAdj1,_scriptNoun1);
+		_subjectItem = findMaster(_scriptAdj1, _scriptNoun1);
 	else
 		_objectItem = findMaster(_scriptAdj2, _scriptNoun2);
 }
@@ -559,7 +557,7 @@ void AGOSEngine_Elvira1::oe1_look() {
 
 	Item *l = derefItem(i->child);
 	if (l) {
-		lobjFunc(l, "You can see ");	/* Show objects */
+		lobjFunc(l, "You can see "); /* Show objects */
 	}
 }
 
@@ -912,7 +910,7 @@ restart:
 	window->textColumn = 0;
 	window->textRow = 0;
 	window->textColumnOffset = 0;
-	window->textLength = 0;		// Difference
+	window->textLength = 0; // Difference
 
 	switch (_language) {
 	case Common::FR_FRA:
@@ -943,7 +941,7 @@ restart:
 		window->textColumn = 0;
 		window->textRow = 0;
 		window->textColumnOffset = 0;
-		window->textLength = 0;		// Difference
+		window->textLength = 0; // Difference
 
 		switch (_language) {
 		case Common::FR_FRA:
@@ -1012,7 +1010,8 @@ int16 AGOSEngine::moreText(Item *i) {
 			goto l1;
 		if (i != me())
 			return 1;
-	l1:	i = derefItem(i->next);
+	l1:
+		i = derefItem(i->next);
 	}
 
 	return 0;
@@ -1039,7 +1038,8 @@ void AGOSEngine::lobjFunc(Item *i, const char *f) {
 				showMessageFormat(" and ");
 		}
 		showMessageFormat("%s", (const char *)getStringPtrByID(i->itemName));
-l1:		i = derefItem(i->next);
+	l1:
+		i = derefItem(i->next);
 	}
 	if (f) {
 		if (n == 1)

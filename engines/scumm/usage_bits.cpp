@@ -20,9 +20,8 @@
  *
  */
 
-
-#include "scumm/scumm.h"
 #include "scumm/usage_bits.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
@@ -64,7 +63,7 @@ bool ScummEngine::testGfxUsageBit(int strip, int bit) {
 
 bool ScummEngine::testGfxAnyUsageBits(int strip) {
 	// Exclude the DIRTY and RESTORED bits from the test
-	uint32 bitmask[3] = { 0xFFFFFFFF, 0xFFFFFFFF, 0x3FFFFFFF };
+	uint32 bitmask[3] = {0xFFFFFFFF, 0xFFFFFFFF, 0x3FFFFFFF};
 	int i;
 
 	assert(strip >= 0 && strip < ARRAYSIZE(gfxUsageBits) / 3);
@@ -77,7 +76,7 @@ bool ScummEngine::testGfxAnyUsageBits(int strip) {
 
 bool ScummEngine::testGfxOtherUsageBits(int strip, int bit) {
 	// Don't exclude the DIRTY and RESTORED bits from the test
-	uint32 bitmask[3] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF };
+	uint32 bitmask[3] = {0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 	int i;
 
 	assert(strip >= 0 && strip < ARRAYSIZE(gfxUsageBits) / 3);

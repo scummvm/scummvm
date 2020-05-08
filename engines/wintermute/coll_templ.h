@@ -38,7 +38,7 @@ namespace Wintermute {
 template<typename TYPE>
 class BaseArrayBase : public Common::Array<TYPE> {
 public:
-// TODO: Might want to make sure that destructors are called when replacing/deleting/getting destructed
+	// TODO: Might want to make sure that destructors are called when replacing/deleting/getting destructed
 	int add(TYPE newElement) {
 		Common::Array<TYPE>::push_back(newElement);
 		return Common::Array<TYPE>::size() - 1;
@@ -60,9 +60,9 @@ public:
 	}
 };
 
-template <typename TYPE>
+template<typename TYPE>
 class BaseArray : public BaseArrayBase<TYPE> {
-	public:
+public:
 	bool persist(BasePersistenceManager *persistMgr) {
 		int32 j;
 		if (persistMgr->getIsSaving()) {
@@ -86,9 +86,9 @@ class BaseArray : public BaseArrayBase<TYPE> {
 	}
 };
 
-template <>
+template<>
 class BaseArray<char *> : public BaseArrayBase<char *> {
-	public:
+public:
 	bool persist(BasePersistenceManager *persistMgr) {
 		int32 j;
 		if (persistMgr->getIsSaving()) {
@@ -96,14 +96,14 @@ class BaseArray<char *> : public BaseArrayBase<char *> {
 			persistMgr->transferSint32("ArraySize", &j);
 			Common::Array<char *>::const_iterator it = Common::Array<char *>::begin();
 			for (; it != Common::Array<char *>::end(); ++it) {
-				char * obj = *it;
+				char *obj = *it;
 				persistMgr->transferCharPtr("", &obj);
 			}
 		} else {
 			Common::Array<char *>::clear();
 			persistMgr->transferSint32("ArraySize", &j);
 			for (int i = 0; i < j; i++) {
-				char * obj = nullptr;
+				char *obj = nullptr;
 				persistMgr->transferCharPtr("", &obj);
 				add(obj);
 			}
@@ -112,7 +112,7 @@ class BaseArray<char *> : public BaseArrayBase<char *> {
 	}
 };
 
-template <>
+template<>
 class BaseArray<const char *> : public BaseArrayBase<const char *> {
 public:
 	bool persist(BasePersistenceManager *persistMgr) {
@@ -122,14 +122,14 @@ public:
 			persistMgr->transferSint32("ArraySize", &j);
 			Common::Array<const char *>::const_iterator it = Common::Array<const char *>::begin();
 			for (; it != Common::Array<const char *>::end(); ++it) {
-				const char * obj = *it;
+				const char *obj = *it;
 				persistMgr->transferConstChar("", &obj);
 			}
 		} else {
 			Common::Array<const char *>::clear();
 			persistMgr->transferSint32("ArraySize", &j);
 			for (int i = 0; i < j; i++) {
-				const char * obj = nullptr;
+				const char *obj = nullptr;
 				persistMgr->transferConstChar("", &obj);
 				add(obj);
 			}

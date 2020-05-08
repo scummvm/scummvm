@@ -37,6 +37,7 @@ private:
 	void execute();
 
 	void loadButtons();
+
 public:
 	static void show(XeenEngine *vm);
 };

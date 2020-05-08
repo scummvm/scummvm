@@ -31,9 +31,11 @@ class CEnterExitMiniLift : public CSGTNavigation {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 private:
 	int _fieldBC;
 	int _destRoomNum;
+
 public:
 	CLASSDEF;
 	CEnterExitMiniLift() : CSGTNavigation(), _fieldBC(0), _destRoomNum(1) {}

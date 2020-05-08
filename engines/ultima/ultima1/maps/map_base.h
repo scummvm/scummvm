@@ -43,8 +43,10 @@ private:
 	 * Default unknown/question mark display
 	 */
 	void unknownAction();
+
 protected:
 	Ultima1Game *_game;
+
 public:
 	/**
 	 * Constructor
@@ -66,10 +68,11 @@ public:
 	 */
 	Shared::Maps::MapWidget *createWidget(const Common::String &name) override;
 
-	/**
+/**
 	 * Default implementation for actions
 	 */
-	#define DEFAULT_ACTION(NAME) virtual void NAME() { unknownAction(); }
+#define DEFAULT_ACTION(NAME) \
+	virtual void NAME() { unknownAction(); }
 	DEFAULT_ACTION(drop)
 	DEFAULT_ACTION(enter)
 	DEFAULT_ACTION(get)

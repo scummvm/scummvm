@@ -22,11 +22,10 @@
 
 #include "common/file.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/resource.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
-
 
 /* ArchiveReader */
 
@@ -118,7 +117,6 @@ Resource *ResourceCache::load(uint resIndex) {
 		_cache[resIndex] = resItem;
 
 		return resItem;
-
 	}
 }
 

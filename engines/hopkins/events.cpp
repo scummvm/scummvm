@@ -431,7 +431,7 @@ void EventsManager::refreshScreenAndEvents() {
 			}
 			if (innerLoopFl || _vm->_globals->_speed != 2)
 				break;
-			if (externalLoopFl ||_rateCounter > 9) {
+			if (externalLoopFl || _rateCounter > 9) {
 				externalLoopFl = true;
 				break;
 			}
@@ -477,7 +477,7 @@ void EventsManager::refreshScreenAndEvents() {
 void EventsManager::updateCursor() {
 	// Backup the current sprite clipping bounds and reset them
 	Common::Rect clipBounds(_vm->_graphicsMan->_minX, _vm->_graphicsMan->_minY,
-		_vm->_graphicsMan->_maxX, _vm->_graphicsMan->_maxY);
+	                        _vm->_graphicsMan->_maxX, _vm->_graphicsMan->_maxY);
 	_vm->_graphicsMan->_minX = _vm->_graphicsMan->_minY = 0;
 	_vm->_graphicsMan->_maxX = _vm->_objectsMan->getObjectWidth();
 	_vm->_graphicsMan->_maxY = _vm->_objectsMan->getObjectHeight();
@@ -523,7 +523,7 @@ void EventsManager::updateCursor() {
 	// Set the ScummVM cursor from the surface
 	CursorMan.replaceCursorPalette(cursorPalette, 0, PALETTE_SIZE - 1);
 	CursorMan.replaceCursor(cursorSurface, _vm->_objectsMan->getObjectWidth(), _vm->_objectsMan->getObjectHeight(),
-		xOffset, 0, 0, true);
+	                        xOffset, 0, 0, true);
 
 	// Delete the cursor surface and palette
 	delete[] cursorPalette;

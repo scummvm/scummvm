@@ -25,11 +25,11 @@
 
 #include "common/scummsys.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/scenes.h"
 
 namespace TsAGE {
 
@@ -51,9 +51,11 @@ public:
 	int _numFrames;
 	int _voiceDelayAmount;
 	uint32 _voiceFrameNumber;
+
 private:
 	void setFrame(int numFrames);
 	void setVoiceFrame(int numFrames);
+
 public:
 	VisualSpeaker();
 
@@ -654,7 +656,7 @@ public:
 	void animateSpeaker() override;
 };
 
-class SpeakerDutyOfficer180: public VisualSpeaker {
+class SpeakerDutyOfficer180 : public VisualSpeaker {
 public:
 	SpeakerDutyOfficer180();
 

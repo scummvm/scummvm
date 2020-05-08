@@ -22,14 +22,15 @@
 #ifndef ULTIMA8_WORLD_EGG_H
 #define ULTIMA8_WORLD_EGG_H
 
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 class Egg : public Item {
 	friend class ItemFactory;
+
 public:
 	Egg();
 	~Egg() override;

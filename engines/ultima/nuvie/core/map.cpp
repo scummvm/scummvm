@@ -25,11 +25,11 @@
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 
+#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/core/tile_manager.h"
-#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/tile_manager.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
 
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -64,7 +64,6 @@ Map::~Map() {
 	if (roof_surface)
 		free(roof_surface);
 }
-
 
 unsigned char *Map::get_map_data(uint8 level) {
 	if (level == 0)
@@ -122,7 +121,7 @@ bool Map::is_passable(uint16 x, uint16 y, uint8 level) {
 		return false;
 	}
 
-//special case for bridges, hacked doors and dungeon entrances etc.
+	//special case for bridges, hacked doors and dungeon entrances etc.
 	if (obj_status != OBJ_NO_OBJ && obj_manager->is_forced_passable(x, y, level))
 		return true;
 
@@ -160,7 +159,7 @@ bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir) {
 		return false;
 	}
 
-//special case for bridges, hacked doors and dungeon entrances etc.
+	//special case for bridges, hacked doors and dungeon entrances etc.
 	if (obj_status != OBJ_NO_OBJ && obj_manager->is_forced_passable(x, y, level))
 		return true;
 
@@ -169,21 +168,21 @@ bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir) {
 
 	if (!map_tile->passable && !(map_tile->flags1 & TILEFLAG_WALL)) {
 		switch (dir) {
-		case NUVIE_DIR_W :
+		case NUVIE_DIR_W:
 			return (map_tile->flags1 & TILEFLAG_WALL_WEST);
-		case NUVIE_DIR_S :
+		case NUVIE_DIR_S:
 			return (map_tile->flags1 & TILEFLAG_WALL_SOUTH);
-		case NUVIE_DIR_E :
+		case NUVIE_DIR_E:
 			return (map_tile->flags1 & TILEFLAG_WALL_EAST);
-		case NUVIE_DIR_N :
+		case NUVIE_DIR_N:
 			return (map_tile->flags1 & TILEFLAG_WALL_NORTH);
-		case NUVIE_DIR_NE :
+		case NUVIE_DIR_NE:
 			return !(!(map_tile->flags1 & TILEFLAG_WALL_NORTH) || !(map_tile->flags1 & TILEFLAG_WALL_EAST));
-		case NUVIE_DIR_NW :
+		case NUVIE_DIR_NW:
 			return !(!(map_tile->flags1 & TILEFLAG_WALL_NORTH) || !(map_tile->flags1 & TILEFLAG_WALL_WEST));
-		case NUVIE_DIR_SE :
+		case NUVIE_DIR_SE:
 			return !(!(map_tile->flags1 & TILEFLAG_WALL_SOUTH) || !(map_tile->flags1 & TILEFLAG_WALL_EAST));
-		case NUVIE_DIR_SW :
+		case NUVIE_DIR_SW:
 			return !(!(map_tile->flags1 & TILEFLAG_WALL_SOUTH) || !(map_tile->flags1 & TILEFLAG_WALL_WEST));
 		}
 	}
@@ -289,7 +288,7 @@ bool Map::can_put_obj(uint16 x, uint16 y, uint8 level) {
 
 			Tile *obj_tile = obj_manager->get_obj_tile(lt.hitObj->obj_n, lt.hitObj->frame_n);
 			if ((obj_tile->flags3 & TILEFLAG_CAN_PLACE_ONTOP) ||
-			        (obj_tile->passable && !is_boundary(lt.hit_x, lt.hit_y, lt.hit_level))) {
+			    (obj_tile->passable && !is_boundary(lt.hit_x, lt.hit_y, lt.hit_level))) {
 				return true;
 			} else {
 				return false;
@@ -358,7 +357,6 @@ Actor *Map::get_actor(uint16 x, uint16 y, uint8 z, bool inc_surrounding_objs) {
 	return (actor_manager->get_actor(x, y, z, inc_surrounding_objs));
 }
 
-
 const char *Map::look(uint16 x, uint16 y, uint8 level) {
 	unsigned char *ptr;
 	uint16 tile_num;
@@ -374,16 +372,15 @@ const char *Map::look(uint16 x, uint16 y, uint8 level) {
 	WRAP_COORD(y, level);
 	obj = obj_manager->get_obj(x, y, level);
 	if (obj != NULL && !(obj->status & OBJ_STATUS_INVISIBLE) //only show visible objects.
-	        && !Game::get_game()->get_map_window()->tile_is_black(obj->x, obj->y, obj)) {
+	    && !Game::get_game()->get_map_window()->tile_is_black(obj->x, obj->y, obj)) {
 		//      tile = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n)+obj->frame_n);
 		//      tile_num = tile->tile_num;
 		//      qty = obj->qty;
 		return obj_manager->look_obj(obj);
 	}
-	tile_num =  ptr[y * get_width(level) + x];
+	tile_num = ptr[y * get_width(level) + x];
 	return tile_manager->lookAtTile(tile_num, qty, true);
 }
-
 
 bool Map::loadMap(TileManager *tm, ObjManager *om) {
 	Std::string filename;
@@ -622,7 +619,6 @@ void Map::insertSurfaceChunk(unsigned char *chunk, uint16 x, uint16 y) {
 		map_ptr += 1024;
 		chunk += 8;
 	}
-
 }
 
 void Map::insertDungeonSuperChunk(unsigned char *schunk, unsigned char *chunk_data, uint8 level) {
@@ -653,14 +649,12 @@ void Map::insertDungeonChunk(unsigned char *chunk, uint16 x, uint16 y, uint8 lev
 		map_ptr += 256;
 		chunk += 8;
 	}
-
 }
-
 
 /* Get absolute coordinates for relative destination from MapCoord.
  */
 MapCoord MapCoord::abs_coords(sint16 dx, sint16 dy) {
-//    uint16 pitch = Map::get_width(z); cannot call function without object
+	//    uint16 pitch = Map::get_width(z); cannot call function without object
 	uint16 pitch = (z == 0) ? 1024 : 256;
 	dx += x;
 	dy += y;
@@ -676,13 +670,11 @@ MapCoord MapCoord::abs_coords(sint16 dx, sint16 dy) {
 	return (MapCoord(dx, dy, z));
 }
 
-
 /* Returns true if this map coordinate is visible in the game window.
  */
 bool MapCoord::is_visible() {
 	return (Game::get_game()->get_map_window()->in_window(x, y, z));
 }
-
 
 bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResult &Result, Obj *excluded_obj) {
 	/* more checks added, may need more testing (SB-X) */
@@ -710,9 +702,9 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 	if (flags & LT_HitUnpassable) {
 		if (!is_passable(x, y, level)) {
 			Obj *obj_hit = obj_manager->get_obj(x, y, level);
-			if (!obj_hit  || !excluded_obj || obj_hit  != excluded_obj) {
+			if (!obj_hit || !excluded_obj || obj_hit != excluded_obj) {
 				Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
-				return  true;
+				return true;
 			}
 		}
 	}
@@ -720,21 +712,21 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 	if (flags & LT_HitMissileBoundary) {
 		if (is_missile_boundary(x, y, level, excluded_obj)) {
 			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
-			return  true;
+			return true;
 		}
 	}
 
 	if (flags & LT_HitForcedPassable) {
 		if (obj_manager->is_forced_passable(x, y, level)) {
 			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
-			return  true;
+			return true;
 		}
 	}
 
 	if (flags & LT_HitActors) {
 		if (actor_manager->get_actor(x, y, level)) {
 			Result.init(x, y, level, actor_manager->get_actor(x, y, level), NULL);
-			return  true;
+			return true;
 		}
 	}
 
@@ -743,18 +735,18 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 			Result.init(x, y, level, NULL, NULL);
 			Result.loc_to_hit->z = level;
 			Result.hitLoc = Result.loc_to_hit;
-			return  true;
+			return true;
 		}
 	}
 
 	if (flags & LT_HitObjects) {
 		if (obj_manager->get_obj(x, y, level)) {
 			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
-			return  true;
+			return true;
 		}
 	}
 
-	return  false;
+	return false;
 #endif
 }
 
@@ -773,7 +765,6 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 	int yinc1, yinc2;
 	int dinc1, dinc2;
 	uint32 count;
-
 
 	if (deltax >= deltay) {
 		d = (deltay << 1) - deltax;
@@ -809,7 +800,7 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 	for (uint32 i = 0; i < count; i++) {
 		//  test the current location
 		if ((i >= skip) && (testIntersection(x, y, level, flags, Result, excluded_obj) == true))
-			return  true;
+			return true;
 
 		if (d < 0) {
 			d += dinc1;
@@ -822,7 +813,7 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 		}
 	}
 
-	return  false;
+	return false;
 }
 
 } // End of namespace Nuvie

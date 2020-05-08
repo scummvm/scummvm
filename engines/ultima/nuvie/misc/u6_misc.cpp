@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/misc.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/conf/configuration.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/str.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -43,9 +43,9 @@ void Tokenise(const Std::string &str, Std::vector<Std::string> &tokens, char del
 	// Skip delimiters at beginning.
 	string::size_type lastPos = str.findFirstNotOf(delimiters, 0);
 
-	for (string::size_type pos = str.findFirstOf(delimiters, lastPos) ;
-	        string::npos != pos || string::npos != lastPos ;
-	        pos = str.findFirstOf(delimiters, lastPos)) {
+	for (string::size_type pos = str.findFirstOf(delimiters, lastPos);
+	     string::npos != pos || string::npos != lastPos;
+	     pos = str.findFirstOf(delimiters, lastPos)) {
 		// Found a token, add it to the vector.
 		tokens.push_back(str.substr(lastPos, pos - lastPos));
 		// Skip delimiters.  Note the "not_of"
@@ -66,11 +66,11 @@ Std::string config_get_game_key(Configuration *config) {
 
 const char *get_game_tag(int game_type) {
 	switch (game_type) {
-	case NUVIE_GAME_U6 :
+	case NUVIE_GAME_U6:
 		return "U6";
-	case NUVIE_GAME_MD :
+	case NUVIE_GAME_MD:
 		return "MD";
-	case NUVIE_GAME_SE :
+	case NUVIE_GAME_SE:
 		return "SE";
 	}
 
@@ -280,11 +280,9 @@ void print_indent(DebugLevelType level, uint8 indent) {
 	return;
 }
 
-
 void print_bool(DebugLevelType level, bool state, const char *yes, const char *no) {
 	DEBUG(1, level, "%s", state ? yes : no);
 }
-
 
 void print_flags(DebugLevelType level, uint8 num, const char *f[8]) {
 	Std::string complete_flags = "";
@@ -299,7 +297,6 @@ void print_flags(DebugLevelType level, uint8 num, const char *f[8]) {
 	DEBUG(1, level, "%s", complete_flags.c_str());
 }
 
-
 /* Where rect1 and rect2 merge, subtract and copy that rect to sub_rect.
  * Returns false if the rectangles don't intersect.
  */
@@ -308,10 +305,7 @@ bool subtract_rect(Common::Rect *rect1, Common::Rect *rect2, Common::Rect *sub_r
 	uint16 rect2_x2 = rect2->right, rect2_y2 = rect2->bottom;
 	uint16 x1, x2, y1, y2;
 
-	if (line_in_rect(rect1->left, rect1->top, rect1_x2, rect1->top, rect2)
-	        || line_in_rect(rect1_x2, rect1->top, rect1_x2, rect1_y2, rect2)
-	        || line_in_rect(rect1->left, rect1->top, rect1->left, rect1_y2, rect2)
-	        || line_in_rect(rect1->left, rect1_y2, rect1_x2, rect1_y2, rect2)) {
+	if (line_in_rect(rect1->left, rect1->top, rect1_x2, rect1->top, rect2) || line_in_rect(rect1_x2, rect1->top, rect1_x2, rect1_y2, rect2) || line_in_rect(rect1->left, rect1->top, rect1->left, rect1_y2, rect2) || line_in_rect(rect1->left, rect1_y2, rect1_x2, rect1_y2, rect2)) {
 		x1 = rect2->left >= rect1->left ? rect2->left : rect1->left;
 		y1 = rect2->top >= rect1->top ? rect2->top : rect1->top;
 		x2 = rect2_x2 <= rect1_x2 ? rect2_x2 : rect1_x2;
@@ -462,26 +456,26 @@ uint8 get_direction_code(sint16 rel_x, sint16 rel_y) {
 
 uint8 get_reverse_direction(uint8 dir) {
 	switch (dir) {
-	case  NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		return NUVIE_DIR_S;
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		return NUVIE_DIR_W;
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		return NUVIE_DIR_N;
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		return NUVIE_DIR_E;
 
-	case NUVIE_DIR_NE :
+	case NUVIE_DIR_NE:
 		return NUVIE_DIR_SW;
-	case NUVIE_DIR_SE :
+	case NUVIE_DIR_SE:
 		return NUVIE_DIR_NW;
-	case NUVIE_DIR_SW :
+	case NUVIE_DIR_SW:
 		return NUVIE_DIR_NE;
-	case NUVIE_DIR_NW :
+	case NUVIE_DIR_NW:
 		return NUVIE_DIR_SE;
 
-	case NUVIE_DIR_NONE :
-	default :
+	case NUVIE_DIR_NONE:
+	default:
 		break;
 	}
 
@@ -490,42 +484,42 @@ uint8 get_reverse_direction(uint8 dir) {
 
 void get_relative_dir(uint8 dir, sint16 *rel_x, sint16 *rel_y) {
 	switch (dir) {
-	case  NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		*rel_x = 0;
 		*rel_y = -1;
 		break;
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		*rel_x = 1;
 		*rel_y = 0;
 		break;
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		*rel_x = 0;
 		*rel_y = 1;
 		break;
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		*rel_x = -1;
 		*rel_y = 0;
 		break;
 
-	case NUVIE_DIR_NE :
+	case NUVIE_DIR_NE:
 		*rel_x = 1;
 		*rel_y = -1;
 		break;
-	case NUVIE_DIR_SE :
+	case NUVIE_DIR_SE:
 		*rel_x = 1;
 		*rel_y = 1;
 		break;
-	case NUVIE_DIR_SW :
+	case NUVIE_DIR_SW:
 		*rel_x = -1;
 		*rel_y = 1;
 		break;
-	case NUVIE_DIR_NW :
+	case NUVIE_DIR_NW:
 		*rel_x = -1;
 		*rel_y = -1;
 		break;
 
-	case NUVIE_DIR_NONE :
-	default :
+	case NUVIE_DIR_NONE:
+	default:
 		*rel_x = 0;
 		*rel_y = 0;
 		break;
@@ -559,7 +553,7 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 	int yinc = 1;
 
 	if (sx == ex) {
-		sx --;
+		sx--;
 		if (sy > ey) {
 			yinc = -1;
 			sy--;
@@ -589,20 +583,27 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 	int height = h;
 	bool no_clip = true;
 
-	if (sx >= width && ex >= width) return;
-	if (sy >= height && ey >= height) return;
-	if (sx < 0 && ex < 0) return;
-	if (sy < 0 && ey < 0) return;
+	if (sx >= width && ex >= width)
+		return;
+	if (sy >= height && ey >= height)
+		return;
+	if (sx < 0 && ex < 0)
+		return;
+	if (sy < 0 && ey < 0)
+		return;
 
-	if (sy < 0 || sy >= height || sx < 0 || sx >= width) no_clip = false;
-	if (ey < 0 || ey >= height || ex < 0 || ex >= width) no_clip = false;
+	if (sy < 0 || sy >= height || sx < 0 || sx >= width)
+		no_clip = false;
+	if (ey < 0 || ey >= height || ex < 0 || ex >= width)
+		no_clip = false;
 
 	// vertical
 	if (sx == ex) {
 		//Std::cout << "Vertical" << Std::endl;
 		// start is below end
 		while (pixptr != pixend) {
-			if (no_clip || (cury >= 0 && cury < height)) *pixptr = col;
+			if (no_clip || (cury >= 0 && cury < height))
+				*pixptr = col;
 			pixptr += pitch;
 			cury += yinc;
 		}
@@ -611,7 +612,8 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 	else if (sy == ey) {
 		//Std::cout << "Horizontal" << Std::endl;
 		while (pixptr != pixend) {
-			if (no_clip || (curx >= 0 && curx < width)) *pixptr = col;
+			if (no_clip || (curx >= 0 && curx < width))
+				*pixptr = col;
 			pixptr += xinc;
 			curx += xinc;
 		}
@@ -622,19 +624,20 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 		uint32 fraction = Std::labs((LINE_FRACTION * (sy - ey)) / (sx - ex));
 		uint32 ycounter = 0;
 
-		for (; ;) {
+		for (;;) {
 			if ((no_clip || (cury >= 0 && cury < height && curx >= 0 && curx < width)))
 				*pixptr = col;
 			pixptr += xinc;
-			if (curx == ex) break;
-			curx  += xinc;
+			if (curx == ex)
+				break;
+			curx += xinc;
 			ycounter += fraction;
 
 			// Need to work out if we need to change line
 			if (ycounter > LINE_FRACTION) {
 				ycounter -= LINE_FRACTION;
 				pixptr += pitch;
-				cury  += yinc;
+				cury += yinc;
 			}
 		}
 	}
@@ -644,12 +647,13 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 		uint32 fraction = Std::labs((LINE_FRACTION * (sx - ex)) / (sy - ey));
 		uint32 xcounter = 0;
 
-		for (; ;) {
+		for (;;) {
 			if ((no_clip || (cury >= 0 && cury < height && curx >= 0 && curx < width)))
 				*pixptr = col;
 			pixptr += pitch;
-			if (cury == ey) break;
-			cury  += yinc;
+			if (cury == ey)
+				break;
+			cury += yinc;
 			xcounter += fraction;
 
 			// Need to work out if we need to change line
@@ -660,7 +664,6 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 			}
 		}
 	}
-
 }
 
 bool string_i_compare(const Std::string &s1, const Std::string &s2) {
@@ -673,7 +676,6 @@ void *nuvie_realloc(void *ptr, size_t size) {
 		free(ptr);
 	return new_ptr;
 }
-
 
 uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
 	int bpp = surface->format.bytesPerPixel;
@@ -698,10 +700,9 @@ uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
 		break;
 
 	default:
-		return 0;       /* shouldn't happen, but avoids warnings */
+		return 0; /* shouldn't happen, but avoids warnings */
 	}
 }
-
 
 void scaleLine8Bit(unsigned char *Target, unsigned char *Source, int SrcWidth, int TgtWidth) {
 	int NumPixels = TgtWidth;
@@ -717,7 +718,7 @@ void scaleLine8Bit(unsigned char *Target, unsigned char *Source, int SrcWidth, i
 			E -= TgtWidth;
 			Source++;
 		} /* if */
-	} /* while */
+	}     /* while */
 }
 
 //Coarse 2D scaling from http://www.compuphase.com/graphic/scale.htm
@@ -743,12 +744,12 @@ void scale_rect_8bit(unsigned char *Source, unsigned char *Target, int SrcWidth,
 			E -= TgtHeight;
 			Source += SrcWidth;
 		} /* if */
-	} /* while */
+	}     /* while */
 }
 
 bool has_file_extension(const char *filename, const char *extension) {
 	if (strlen(filename) > strlen(extension) &&
-			scumm_stricmp((const char *)&filename[strlen(filename) - 4], extension) == 0)
+	    scumm_stricmp((const char *)&filename[strlen(filename) - 4], extension) == 0)
 		return true;
 
 	return false;
@@ -776,7 +777,7 @@ sint8 get_wrapped_rel_dir(sint16 p1, sint16 p2, uint8 level) {
 }
 
 Std::string encode_xml_entity(const Std::string &s) {
-	string  ret;
+	string ret;
 
 	for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
 		switch (*it) {

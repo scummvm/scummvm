@@ -23,8 +23,8 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_WIDGET_H
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_WIDGET_H
 
-#include "ultima/shared/maps/map.h"
 #include "ultima/shared/maps/dungeon_widget.h"
+#include "ultima/shared/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -38,13 +38,37 @@ class MapBase;
 namespace Widgets {
 
 enum DungeonWidgetId {
-	MONSTER_NONE = -1, MONSTER_RANGER = 0, MONSTER_SKELETON = 1, MONSTER_THIEF = 2, MONSTER_GIANT_RAT = 3,
-	MONSTER_RAT = 4, MONSTER_SPIDER = 5, MONSTER_VIPER = 6, MONSTER_ORC = 7, MONSTER_CYCLOPS = 8,
-	MONSTER_GELATINOUS_CUBE = 9, MONSTER_ETTIN = 10, MONSTER_MIMIC = 11, MONSTER_LIZARD_MAN = 12,
-	MONSTER_MINOTAUR = 13, MONSTER_CARRION_CREEPER = 14, MONSTER_TANGLER = 15, MONSTER_GREMLIN = 16,
-	MONSTER_WANDERING_EYES = 17, MONSTER_WRAITH = 18, MONSTER_LICH = 19, MONSTER_INVISIBLE_SEEKER = 20,
-	MONSTER_MIND_WHIPPER = 21, MONSTER_ZORN = 22, MONSTER_DAEMON = 23, MONSTER_BALRON = 24, UITEM_COFFIN = 25,
-	UITEM_HOLE_UP = 26, UITEM_HOLE_DOWN = 27, UITEM_LADDER_UP = 28, UITEM_LADDER_DOWN = 29
+	MONSTER_NONE = -1,
+	MONSTER_RANGER = 0,
+	MONSTER_SKELETON = 1,
+	MONSTER_THIEF = 2,
+	MONSTER_GIANT_RAT = 3,
+	MONSTER_RAT = 4,
+	MONSTER_SPIDER = 5,
+	MONSTER_VIPER = 6,
+	MONSTER_ORC = 7,
+	MONSTER_CYCLOPS = 8,
+	MONSTER_GELATINOUS_CUBE = 9,
+	MONSTER_ETTIN = 10,
+	MONSTER_MIMIC = 11,
+	MONSTER_LIZARD_MAN = 12,
+	MONSTER_MINOTAUR = 13,
+	MONSTER_CARRION_CREEPER = 14,
+	MONSTER_TANGLER = 15,
+	MONSTER_GREMLIN = 16,
+	MONSTER_WANDERING_EYES = 17,
+	MONSTER_WRAITH = 18,
+	MONSTER_LICH = 19,
+	MONSTER_INVISIBLE_SEEKER = 20,
+	MONSTER_MIND_WHIPPER = 21,
+	MONSTER_ZORN = 22,
+	MONSTER_DAEMON = 23,
+	MONSTER_BALRON = 24,
+	UITEM_COFFIN = 25,
+	UITEM_HOLE_UP = 26,
+	UITEM_HOLE_DOWN = 27,
+	UITEM_LADDER_UP = 28,
+	UITEM_LADDER_DOWN = 29
 };
 
 /**
@@ -53,6 +77,7 @@ enum DungeonWidgetId {
 class DungeonWidget : public Shared::Maps::DungeonWidget {
 protected:
 	DungeonWidgetId _widgetId;
+
 private:
 	/**
 	 * Get the drawing data table
@@ -63,6 +88,7 @@ private:
 	 * Extracts a drawing position
 	 */
 	static void getPos(const byte *&data, int bitShift, Point &pt);
+
 protected:
 	/**
 	 * Gets the Ultima 1 game
@@ -73,8 +99,9 @@ protected:
 	 * Gets the Ultima 1 map
 	 */
 	Maps::MapBase *getMap() const;
+
 public:
-	Common::String _name;			// Name of item
+	Common::String _name; // Name of item
 public:
 	/**
 	 * Constructor

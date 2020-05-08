@@ -23,8 +23,8 @@
 #ifndef ULTIMA_ULTIMA1_GFX_VIEW_GAME_H
 #define ULTIMA_ULTIMA1_GFX_VIEW_GAME_H
 
-#include "ultima/shared/gfx/visual_container.h"
 #include "ultima/shared/gfx/bitmap.h"
+#include "ultima/shared/gfx/visual_container.h"
 
 namespace Ultima {
 
@@ -36,16 +36,16 @@ namespace Actions {
 class Action;
 } // End of namespace Actions
 } // End of namespace Shared
-	
+
 namespace Ultima1 {
 namespace U1Gfx {
 
 class Status;
 class ViewportMap;
-using Shared::CShowMsg;
+using Shared::CCharacterInputMsg;
 using Shared::CEndOfTurnMsg;
 using Shared::CFrameMsg;
-using Shared::CCharacterInputMsg;
+using Shared::CShowMsg;
 
 /**
  * This class implements a standard view screen that shows a status and log area, as well as either
@@ -57,6 +57,7 @@ class ViewGame : public Shared::Gfx::VisualContainer {
 	bool EndOfTurnMsg(CEndOfTurnMsg &msg);
 	bool FrameMsg(CFrameMsg &msg);
 	bool CharacterInputMsg(CCharacterInputMsg &msg);
+
 private:
 	Shared::Info *_info;
 	Shared::ViewportDungeon *_viewportDungeon;
@@ -64,6 +65,7 @@ private:
 	Status *_status;
 	Common::Array<Shared::Actions::Action *> _actions;
 	int _frameCtr;
+
 private:
 	/**
 	 * Draws level & direction indicators when in a dungeon
@@ -74,6 +76,7 @@ private:
 	 * Handle movement keys
 	 */
 	bool checkMovement(const Common::KeyState &keyState);
+
 public:
 	CLASSDEF;
 	ViewGame(TreeItem *parent = nullptr);
@@ -86,7 +89,7 @@ public:
 };
 
 } // End of namespace U1Gfx
-} // End of namespace Shared
+} // namespace Ultima1
 } // End of namespace Ultima
 
 #endif

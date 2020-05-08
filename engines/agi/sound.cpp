@@ -25,11 +25,11 @@
 #include "agi/sound_2gs.h"
 #include "agi/sound_coco3.h"
 #include "agi/sound_midi.h"
-#include "agi/sound_sarien.h"
 #include "agi/sound_pcjr.h"
+#include "agi/sound_sarien.h"
 
-#include "common/textconsole.h"
 #include "audio/mixer.h"
+#include "common/textconsole.h"
 
 namespace Agi {
 
@@ -75,8 +75,8 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, i
 }
 
 PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum) : AgiSound() {
-	_data = data; // Save the resource pointer
-	_len  = len;  // Save the resource's length
+	_data = data;                 // Save the resource pointer
+	_len = len;                   // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
 
 	// Detect V1 sound resources

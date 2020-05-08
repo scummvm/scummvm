@@ -29,11 +29,9 @@
 namespace Ultima {
 namespace Nuvie {
 
-class SEActor: public WOUActor {
+class SEActor : public WOUActor {
 protected:
-
 public:
-
 	SEActor(Map *m, ObjManager *om, GameClock *c);
 	~SEActor() override;
 

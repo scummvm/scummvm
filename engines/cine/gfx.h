@@ -23,11 +23,11 @@
 #ifndef CINE_GFX_H
 #define CINE_GFX_H
 
+#include "cine/bg_list.h"
+#include "cine/object.h"
 #include "common/noncopyable.h"
 #include "common/rect.h"
 #include "common/stack.h"
-#include "cine/object.h"
-#include "cine/bg_list.h"
 
 namespace Cine {
 
@@ -38,9 +38,9 @@ static const int kCollisionPageBgIdxAlias = 8;
  * Background with palette
  */
 struct palBg {
-	byte *bg; ///< Background data
+	byte *bg;          ///< Background data
 	Cine::Palette pal; ///< Background color palette
-	char name[15]; ///< Background filename
+	char name[15];     ///< Background filename
 
 	/** @brief Default constructor. */
 	palBg() : bg(NULL), pal(), name() {
@@ -77,6 +77,7 @@ public:
 	Type getType() const { return _type; }
 
 	virtual void drawMenu(FWRenderer &r, bool top) = 0;
+
 private:
 	const Type _type;
 };
@@ -90,6 +91,7 @@ public:
 	void setSelection(int selection);
 
 	void drawMenu(FWRenderer &r, bool top) override;
+
 private:
 	const Common::Point _pos;
 	const int _width;
@@ -105,6 +107,7 @@ public:
 	void setInput(const char *input, int cursor);
 
 	void drawMenu(FWRenderer &r, bool top) override;
+
 private:
 	const Common::Point _pos;
 	const int _width;
@@ -123,23 +126,24 @@ class FWRenderer : public Common::NonCopyable {
 	// TODO: Consider getting rid of this
 	friend class SelectionMenu;
 	friend class TextInputMenu;
+
 private:
 	byte *_background; ///< Current background
-	char _bgName[13]; ///< Background filename
+	char _bgName[13];  ///< Background filename
 
 	Common::String _cmd; ///< Player command string
 
 protected:
 	static const int _screenSize = 320 * 200; ///< Screen size
-	static const int _screenWidth = 320; ///< Screen width
-	static const int _screenHeight = 200; ///< Screen height
+	static const int _screenWidth = 320;      ///< Screen width
+	static const int _screenHeight = 200;     ///< Screen height
 
-	byte *_backBuffer; ///< Screen backbuffer
-	Cine::Palette _backupPal; ///< The backup color palette
-	Cine::Palette _activePal; ///< The active color palette
+	byte *_backBuffer;                ///< Screen backbuffer
+	Cine::Palette _backupPal;         ///< The backup color palette
+	Cine::Palette _activePal;         ///< The active color palette
 	Common::Stack<Menu *> _menuStack; ///< All displayed menus
-	int _changePal; ///< Load active palette to video backend on next frame
-	bool _showCollisionPage; ///< Should we show the collision page instead of the back buffer? Used for debugging.
+	int _changePal;                   ///< Load active palette to video backend on next frame
+	bool _showCollisionPage;          ///< Should we show the collision page instead of the back buffer? Used for debugging.
 
 	void fillSprite(const ObjectStruct &obj, uint8 color = 0);
 	void drawMaskedSprite(const ObjectStruct &obj, const byte *mask);
@@ -164,7 +168,7 @@ protected:
 
 public:
 	uint16 _messageBg; ///< Message box background color
-	uint16 _cmdY; ///< Player command string position on screen
+	uint16 _cmdY;      ///< Player command string position on screen
 
 	FWRenderer();
 	virtual ~FWRenderer();
@@ -218,12 +222,11 @@ public:
 class OSRenderer : public FWRenderer {
 private:
 	Common::Array<palBg> _bgTable; ///< Table of backgrounds loaded into renderer (Maximum is 9)
-	unsigned int _currentBg; ///< Current background
-	unsigned int _scrollBg; ///< Current scroll background
-	unsigned int _bgShift; ///< Background shift
+	unsigned int _currentBg;       ///< Current background
+	unsigned int _scrollBg;        ///< Current scroll background
+	unsigned int _bgShift;         ///< Background shift
 
 protected:
-
 	void drawSprite(const ObjectStruct &obj) override;
 	void drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp);
 	int drawChar(char character, int x, int y) override;
@@ -260,7 +263,6 @@ public:
 	void restorePalette(Common::SeekableReadStream &fHandle, int version) override;
 	void savePalette(Common::OutSaveFile &fHandle) override;
 	void transformPalette(int first, int last, int r, int g, int b) override;
-
 };
 
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);

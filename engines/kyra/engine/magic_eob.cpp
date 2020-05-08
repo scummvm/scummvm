@@ -22,9 +22,9 @@
 
 #ifdef ENABLE_EOB
 
+#include "common/system.h"
 #include "kyra/engine/eobcommon.h"
 #include "kyra/resource/resource.h"
-#include "common/system.h"
 
 namespace Kyra {
 
@@ -387,7 +387,7 @@ void EoBCoreEngine::sparkEffectDefensive(int charIndex) {
 		first = 0;
 		last = 5;
 	}
-	
+
 	if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga)
 		snd_playSoundEffect(104);
 
@@ -799,8 +799,8 @@ void EoBCoreEngine::spellCallback_start_armor() {
 }
 
 void EoBCoreEngine::spellCallback_start_burningHands() {
-	static const int16 bX[] = { 0, 152, 24, 120, 56, 88 };
-	static const int8 bY[] = { 64, 64, 56, 56, 56, 56 };
+	static const int16 bX[] = {0, 152, 24, 120, 56, 88};
+	static const int8 bY[] = {64, 64, 56, 56, 56, 56};
 
 	for (int i = 0; i < 6; i++)
 		drawBlockObject(i & 1, 0, _firebeamShapes[(5 - i) >> 1], bX[i], bY[i], 0);
@@ -996,7 +996,7 @@ void EoBCoreEngine::spellCallback_start_iceStorm() {
 
 bool EoBCoreEngine::spellCallback_end_iceStorm(void *obj) {
 	EoBFlyingObject *fo = (EoBFlyingObject *)obj;
-	static int8 blockAdv[] = { -32, 32, 1, -1 };
+	static int8 blockAdv[] = {-32, 32, 1, -1};
 	bool res = magicObjectDamageHit(fo, 1, 6, 0, getMageLevel(fo->attackerId));
 	if (res) {
 		for (int i = 0; i < 4; i++) {
@@ -1022,7 +1022,7 @@ void EoBCoreEngine::spellCallback_start_removeCurse() {
 }
 
 void EoBCoreEngine::spellCallback_start_coneOfCold() {
-	const int8 *dirTables[] = { _coneOfColdDest1, _coneOfColdDest2, _coneOfColdDest3, _coneOfColdDest4 };
+	const int8 *dirTables[] = {_coneOfColdDest1, _coneOfColdDest2, _coneOfColdDest3, _coneOfColdDest4};
 
 	int cl = getMageLevel(_openBookChar);
 

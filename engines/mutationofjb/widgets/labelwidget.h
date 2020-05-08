@@ -45,6 +45,6 @@ private:
 	Common::String _text;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

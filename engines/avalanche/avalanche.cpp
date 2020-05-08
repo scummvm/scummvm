@@ -82,7 +82,7 @@ AvalancheEngine::~AvalancheEngine() {
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
-			if (_also[i][j] != nullptr)  {
+			if (_also[i][j] != nullptr) {
 				delete _also[i][j];
 				_also[i][j] = nullptr;
 			}
@@ -324,7 +324,6 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 		sz.syncAsByte(_timer->_times[i]._action);
 		sz.syncAsByte(_timer->_times[i]._reason);
 	}
-
 }
 
 bool AvalancheEngine::canSaveGameStateCurrently() {
@@ -438,9 +437,9 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 	_background->update();
 
 	Common::String tmpStr = Common::String::format("%cLoaded: %c%s.ASG%c%c%c%s%c%csaved on %s.",
-		kControlItalic, kControlRoman, description.c_str(), kControlCenter, kControlNewLine,
-		kControlNewLine, _roomnName.c_str(), kControlNewLine, kControlNewLine,
-		expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
+	                                               kControlItalic, kControlRoman, description.c_str(), kControlCenter, kControlNewLine,
+	                                               kControlNewLine, _roomnName.c_str(), kControlNewLine, kControlNewLine,
+	                                               expandDate(t.tm_mday, t.tm_mon, t.tm_year).c_str());
 	_dialogs->displayText(tmpStr);
 
 	AnimationType *avvy = _animation->_sprites[0];
@@ -452,8 +451,7 @@ bool AvalancheEngine::loadGame(const int16 slot) {
 
 Common::String AvalancheEngine::expandDate(int d, int m, int y) {
 	static const char months[12][10] = {
-		"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-	};
+	    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 	Common::String month = Common::String(months[m]);
 	Common::String day = intToStr(d);

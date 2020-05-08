@@ -25,77 +25,76 @@
 #include <unistd.h>
 
 #include <ogc/conf.h>
-#include <ogc/mutex.h>
 #include <ogc/lwp_watchdog.h>
+#include <ogc/mutex.h>
 
-#include "common/config-manager.h"
-#include "common/textconsole.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+#include "common/config-manager.h"
+#include "common/textconsole.h"
 
-#include "osystem.h"
 #include "options.h"
+#include "osystem.h"
 
-OSystem_Wii::OSystem_Wii() :
-	_startup_time(0),
+OSystem_Wii::OSystem_Wii() : _startup_time(0),
 
-	_cursorDontScale(true),
-	_cursorPaletteDisabled(true),
-	_cursorPalette(NULL),
-	_cursorPaletteDirty(false),
+                             _cursorDontScale(true),
+                             _cursorPaletteDisabled(true),
+                             _cursorPalette(NULL),
+                             _cursorPaletteDirty(false),
 
-	_gameRunning(false),
-	_gameWidth(0),
-	_gameHeight(0),
-	_gamePixels(NULL),
-	_gameDirty(false),
+                             _gameRunning(false),
+                             _gameWidth(0),
+                             _gameHeight(0),
+                             _gamePixels(NULL),
+                             _gameDirty(false),
 
-	_overlayVisible(true),
-	_overlayWidth(0),
-	_overlayHeight(0),
-	_overlaySize(0),
-	_overlayPixels(NULL),
-	_overlayDirty(false),
+                             _overlayVisible(true),
+                             _overlayWidth(0),
+                             _overlayHeight(0),
+                             _overlaySize(0),
+                             _overlayPixels(NULL),
+                             _overlayDirty(false),
 
-	_lastScreenUpdate(0),
-	_currentWidth(0),
-	_currentHeight(0),
-	_currentXScale(1),
-	_currentYScale(1),
+                             _lastScreenUpdate(0),
+                             _currentWidth(0),
+                             _currentHeight(0),
+                             _currentXScale(1),
+                             _currentYScale(1),
 
-	_configGraphicsMode(0),
-	_actualGraphicsMode(0),
-	_bilinearFilter(false),
+                             _configGraphicsMode(0),
+                             _actualGraphicsMode(0),
+                             _bilinearFilter(false),
 #ifdef USE_RGB_COLOR
-	_pfRGB565(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
-	_pfRGB3444(Graphics::PixelFormat(2, 4, 4, 4, 3, 8, 4, 0, 12)),
-	_pfGame(Graphics::PixelFormat::createFormatCLUT8()),
-	_pfGameTexture(Graphics::PixelFormat::createFormatCLUT8()),
-	_pfCursor(Graphics::PixelFormat::createFormatCLUT8()),
+                             _pfRGB565(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
+                             _pfRGB3444(Graphics::PixelFormat(2, 4, 4, 4, 3, 8, 4, 0, 12)),
+                             _pfGame(Graphics::PixelFormat::createFormatCLUT8()),
+                             _pfGameTexture(Graphics::PixelFormat::createFormatCLUT8()),
+                             _pfCursor(Graphics::PixelFormat::createFormatCLUT8()),
 #endif
 
-	_optionsDlgActive(false),
-	_consoleVisible(false),
-	_fullscreen(false),
-	_arCorrection(false),
+                             _optionsDlgActive(false),
+                             _consoleVisible(false),
+                             _fullscreen(false),
+                             _arCorrection(false),
 
-	_mouseVisible(false),
-	_mouseX(0),
-	_mouseY(0),
-	_mouseHotspotX(0),
-	_mouseHotspotY(0),
-	_mouseKeyColor(0),
+                             _mouseVisible(false),
+                             _mouseX(0),
+                             _mouseY(0),
+                             _mouseHotspotX(0),
+                             _mouseHotspotY(0),
+                             _mouseKeyColor(0),
 
-	_kbd_active(false),
+                             _kbd_active(false),
 
-	_event_quit(false),
+                             _event_quit(false),
 
-	_lastPadCheck(0),
-	_padSensitivity(16),
-	_padAcceleration(4),
+                             _lastPadCheck(0),
+                             _padSensitivity(16),
+                             _padAcceleration(4),
 
-	_mixer(NULL) {
+                             _mixer(NULL) {
 }
 
 OSystem_Wii::~OSystem_Wii() {
@@ -123,9 +122,9 @@ void OSystem_Wii::initBackend() {
 
 #ifdef USE_WII_SMB
 	fsf.setSMBLoginData(ConfMan.get("wii_smb_server"),
-						ConfMan.get("wii_smb_share"),
-						ConfMan.get("wii_smb_username"),
-						ConfMan.get("wii_smb_password"));
+	                    ConfMan.get("wii_smb_share"),
+	                    ConfMan.get("wii_smb_username"),
+	                    ConfMan.get("wii_smb_password"));
 #endif
 
 	fsf.asyncInit();
@@ -174,9 +173,9 @@ void OSystem_Wii::engineDone() {
 
 bool OSystem_Wii::hasFeature(Feature f) {
 	return (f == kFeatureFullscreenMode) ||
-			(f == kFeatureAspectRatioCorrection) ||
-			(f == kFeatureCursorPalette) ||
-			(f == kFeatureOverlaySupportsAlpha);
+	       (f == kFeatureAspectRatioCorrection) ||
+	       (f == kFeatureCursorPalette) ||
+	       (f == kFeatureOverlaySupportsAlpha);
 }
 
 void OSystem_Wii::setFeatureState(Feature f, bool enable) {
@@ -222,7 +221,7 @@ void OSystem_Wii::delayMillis(uint msecs) {
 }
 
 OSystem::MutexRef OSystem_Wii::createMutex() {
-	mutex_t *mutex = (mutex_t *) malloc(sizeof(mutex_t));
+	mutex_t *mutex = (mutex_t *)malloc(sizeof(mutex_t));
 	s32 res = LWP_MutexInit(mutex, true);
 
 	if (res) {
@@ -231,7 +230,7 @@ OSystem::MutexRef OSystem_Wii::createMutex() {
 		return NULL;
 	}
 
-	return (MutexRef) mutex;
+	return (MutexRef)mutex;
 }
 
 void OSystem_Wii::lockMutex(MutexRef mutex) {
@@ -287,7 +286,7 @@ void OSystem_Wii::showOptionsDialog() {
 		return;
 
 	bool ds = (_actualGraphicsMode == gmDoubleStrike) ||
-				(_actualGraphicsMode == gmDoubleStrikeFiltered);
+	          (_actualGraphicsMode == gmDoubleStrikeFiltered);
 
 	_optionsDlgActive = true;
 	WiiOptionsDialog dlg(ds);
@@ -313,19 +312,19 @@ void OSystem_Wii::logMessage(LogMessageType::Type type, const char *message) {
 #ifndef GAMECUBE
 Common::String OSystem_Wii::getSystemLanguage() const {
 	const char *wiiCountries[] = {
-		"JP", // CONF_AREA_JPN Japan
-		"US", // CONF_AREA_USA United States of America
-		"",   // CONF_AREA_EUR Europe?
-		"AU", // CONF_AREA_AUS Australia, Commonwealth of
-		"BR", // CONF_AREA_BRA Brazil, Federative Republic of
-		"TW", // CONF_AREA_TWN Taiwan, Province of China
-		"",   // CONF_AREA_ROC Republic of China (Taiwan)
-		"KR", // CONF_AREA_KOR Korea, Republic of
-		"HK", // CONF_AREA_HKG Hong Kong, Special Administrative Region of China
-		"",   // CONF_AREA_ASI Asia?
-		"",   // CONF_AREA_LTN Lithuania?
-		"",   // CONF_AREA_SAF South-Africa?
-		"CN"  // CONF_AREA_CHN China, People's Republic of
+	    "JP", // CONF_AREA_JPN Japan
+	    "US", // CONF_AREA_USA United States of America
+	    "",   // CONF_AREA_EUR Europe?
+	    "AU", // CONF_AREA_AUS Australia, Commonwealth of
+	    "BR", // CONF_AREA_BRA Brazil, Federative Republic of
+	    "TW", // CONF_AREA_TWN Taiwan, Province of China
+	    "",   // CONF_AREA_ROC Republic of China (Taiwan)
+	    "KR", // CONF_AREA_KOR Korea, Republic of
+	    "HK", // CONF_AREA_HKG Hong Kong, Special Administrative Region of China
+	    "",   // CONF_AREA_ASI Asia?
+	    "",   // CONF_AREA_LTN Lithuania?
+	    "",   // CONF_AREA_SAF South-Africa?
+	    "CN"  // CONF_AREA_CHN China, People's Republic of
 	};
 
 	// Start by detecting the country, since we can deduce some languages not
@@ -348,18 +347,17 @@ Common::String OSystem_Wii::getSystemLanguage() const {
 		warning("WII: Unknown system area: %d", areaID);
 	}
 
-
 	const char *wiiLanguages[] = {
-		"ja", // CONF_LANG_JAPANESE     Japanese
-		"en", // CONF_LANG_ENGLISH      English
-		"de", // CONF_LANG_GERMAN       German
-		"fr", // CONF_LANG_FRENCH       French
-		"es", // CONF_LANG_SPANISH      Spanish
-		"it", // CONF_LANG_ITALIAN      Italian
-		"nl", // CONF_LANG_DUTCH        Dutch
-		"zh", // CONF_LANG_SIMP_CHINESE Simplified Chinese
-		"zh", // CONF_LANG_TRAD_CHINESE Traditional Chinese
-		"ko"  // CONF_LANG_KOREAN       Korean
+	    "ja", // CONF_LANG_JAPANESE     Japanese
+	    "en", // CONF_LANG_ENGLISH      English
+	    "de", // CONF_LANG_GERMAN       German
+	    "fr", // CONF_LANG_FRENCH       French
+	    "es", // CONF_LANG_SPANISH      Spanish
+	    "it", // CONF_LANG_ITALIAN      Italian
+	    "nl", // CONF_LANG_DUTCH        Dutch
+	    "zh", // CONF_LANG_SIMP_CHINESE Simplified Chinese
+	    "zh", // CONF_LANG_TRAD_CHINESE Traditional Chinese
+	    "ko"  // CONF_LANG_KOREAN       Korean
 	};
 
 	// Now let's read the system language.

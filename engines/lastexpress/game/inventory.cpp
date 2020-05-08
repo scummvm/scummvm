@@ -43,8 +43,8 @@
 namespace LastExpress {
 
 Inventory::Inventory(LastExpressEngine *engine) : _engine(engine), _selectedItem(kItemNone), _highlightedItemIndex(0), _itemsShown(0),
-	_showingHourGlass(false), _blinkingDirection(1), _blinkingBrightness(0),
-	_useMagnifier(false), _portraitHighlighted(false), _isOpened(false), _eggHightlighted(false), _itemScene(NULL) {
+                                                  _showingHourGlass(false), _blinkingDirection(1), _blinkingBrightness(0),
+                                                  _useMagnifier(false), _portraitHighlighted(false), _isOpened(false), _eggHightlighted(false), _itemScene(NULL) {
 
 	//_inventoryRect = Common::Rect(0, 0, 32, 32);
 	_menuEggRect = Common::Rect(608, 448, 640, 480);
@@ -216,9 +216,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 			}
 
 			// Magnifier
-			if (_selectedItem != kItemNone
-			 && get(_selectedItem)->scene != kSceneNone
-			 && _selectedItemRect.contains(ev.mouse)) {
+			if (_selectedItem != kItemNone && get(_selectedItem)->scene != kSceneNone && _selectedItemRect.contains(ev.mouse)) {
 
 				if (!getState()->sceneUseBackup || (getState()->sceneBackup2 && getFirstExaminableItem() == _selectedItem))
 					_useMagnifier = true;
@@ -342,10 +340,7 @@ void Inventory::handleMouseEvent(const Common::Event &ev) {
 	}
 
 	//
-	if (!getProgress().field_84
-	 && getEntityData(kEntityPlayer)->location != kLocationOutsideTrain
-	 && getProgress().field_18 != 4
-	 && (_selectedItem == kItemNone || get(_selectedItem)->floating || getState()->sceneUseBackup)) {
+	if (!getProgress().field_84 && getEntityData(kEntityPlayer)->location != kLocationOutsideTrain && getProgress().field_18 != 4 && (_selectedItem == kItemNone || get(_selectedItem)->floating || getState()->sceneUseBackup)) {
 
 		// Draw inventory contents when clicking on portrait
 		if (ev.type == Common::EVENT_LBUTTONDOWN) {
@@ -550,7 +545,7 @@ InventoryItem Inventory::getFirstExaminableItem() const {
 bool Inventory::isItemSceneParameter(InventoryItem item) const {
 	Scene *scene = getScenes()->get(getState()->scene);
 
-	switch(scene->type) {
+	switch (scene->type) {
 	default:
 		return false;
 
@@ -631,9 +626,7 @@ void Inventory::drawBlinkingEgg(uint ticks) {
 	globalTimer = globalTimer <= ticks ? 0 : globalTimer - ticks;
 	setGlobalTimer(globalTimer);
 
-	if (getFlags()->flag_0
-	|| (globalTimer % 5) == 0
-	|| (globalTimer <= 500 && (globalTimer % ((globalTimer + 100) / 100)) == 0))
+	if (getFlags()->flag_0 || (globalTimer % 5) == 0 || (globalTimer <= 500 && (globalTimer % ((globalTimer + 100) / 100)) == 0))
 		blinkEgg();
 
 	if (globalTimer < 90) {

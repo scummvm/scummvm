@@ -32,9 +32,8 @@ namespace Cloud {
 
 BaseStorage::BaseStorage() {}
 
-BaseStorage::BaseStorage(Common::String token, Common::String refreshToken, bool enabled):
-	_token(token), _refreshToken(refreshToken) {
-	_isEnabled = enabled; 
+BaseStorage::BaseStorage(Common::String token, Common::String refreshToken, bool enabled) : _token(token), _refreshToken(refreshToken) {
+	_isEnabled = enabled;
 }
 
 BaseStorage::~BaseStorage() {}
@@ -95,7 +94,7 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, Networkin
 	if (success) {
 		oauth = result.getVal("oauth")->asObject();
 		if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::codeFlowComplete") ||
-			!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::codeFlowComplete", !requiresRefreshToken)) {
+		    !Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::codeFlowComplete", !requiresRefreshToken)) {
 			warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
 			debug(9, "%s", json->stringify(true).c_str());
 			success = false;
@@ -133,7 +132,8 @@ void BaseStorage::codeFlowFailed(Networking::ErrorCallback callback, Networking:
 void BaseStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (_refreshToken == "") {
 		warning("BaseStorage: no refresh token available to get new access token.");
-		if (callback) (*callback)(BoolResponse(nullptr, false));
+		if (callback)
+			(*callback)(BoolResponse(nullptr, false));
 		return;
 	}
 
@@ -189,9 +189,9 @@ void BaseStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse
 	Common::JSONObject oauth;
 	bool requiresRefreshToken = !canReuseRefreshToken();
 	if (success) {
-		oauth = result.getVal("oauth")->asObject();		
+		oauth = result.getVal("oauth")->asObject();
 		if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::tokenRefreshed") ||
-			!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::tokenRefreshed", !requiresRefreshToken)) {
+		    !Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::tokenRefreshed", !requiresRefreshToken)) {
 			warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
 			debug(9, "%s", json->stringify(true).c_str());
 			success = false;

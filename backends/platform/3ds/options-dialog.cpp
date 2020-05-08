@@ -27,9 +27,9 @@
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/list.h"
+#include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
 #include "osystem.h"
-#include "gui/widgets/popup.h"
 
 #include "common/translation.h"
 
@@ -93,7 +93,7 @@ void OptionsDialog::reflowLayout() {
 }
 
 void OptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch(cmd) {
+	switch (cmd) {
 	case GUI::kOKCmd:
 		setResult(1);
 		// Fall through

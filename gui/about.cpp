@@ -20,17 +20,17 @@
  *
  */
 
-#include "engines/metaengine.h"
+#include "gui/about.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/util.h"
+#include "engines/metaengine.h"
 #include "graphics/managed_surface.h"
-#include "gui/about.h"
-#include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "gui/gui-manager.h"
 
 namespace GUI {
 
@@ -64,29 +64,36 @@ enum {
 // TODO: Allow color change in the middle of a line...
 
 static const char *copyright_text[] = {
-"",
-"C0""Copyright (C) 2001-2020 The ScummVM Team",
-"C0""https://www.scummvm.org",
-"",
-"C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
-"",
+    "",
+    "C0"
+    "Copyright (C) 2001-2020 The ScummVM Team",
+    "C0"
+    "https://www.scummvm.org",
+    "",
+    "C0"
+    "ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
+    "",
 };
 
 static const char *gpl_text[] = {
-"",
-"C0""This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
-"C0""",
-"C0""This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.",
-"",
-"C0""You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.",
-"",
+    "",
+    "C0"
+    "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
+    "C0"
+    "",
+    "C0"
+    "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.",
+    "",
+    "C0"
+    "You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.",
+    "",
 };
 
 #include "gui/credits.h"
 
 AboutDialog::AboutDialog()
-	: Dialog(10, 20, 300, 174),
-	_scrollPos(0), _scrollTime(0), _willClose(false) {
+    : Dialog(10, 20, 300, 174),
+      _scrollPos(0), _scrollTime(0), _willClose(false) {
 
 	reflowLayout();
 
@@ -95,7 +102,8 @@ AboutDialog::AboutDialog()
 	for (i = 0; i < 1; i++)
 		_lines.push_back("");
 
-	Common::String version("C0""ScummVM ");
+	Common::String version("C0"
+	                       "ScummVM ");
 	version += gScummVMVersion;
 	_lines.push_back(version);
 
@@ -174,7 +182,6 @@ void AboutDialog::addLine(const char *str) {
 		}
 	}
 }
-
 
 void AboutDialog::open() {
 	_scrollTime = g_system->getMillis() + kScrollStartDelay;
@@ -320,7 +327,7 @@ void AboutDialog::reflowLayout() {
 	_lineHeight = g_gui.getFontHeight() + 3;
 
 	// Heuristic to compute 'optimal' dialog width
-	int maxW = _w - 2*_xOff;
+	int maxW = _w - 2 * _xOff;
 	_w = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i]) + 5;
@@ -328,31 +335,37 @@ void AboutDialog::reflowLayout() {
 			_w = tmp;
 		}
 	}
-	_w += 2*_xOff;
+	_w += 2 * _xOff;
 
 	// Center the dialog
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
 }
 
-
 ////////////////////////////////
 //// Here we go
 ////////////////////////////////
 
 enum {
-	kDirUp, kDirLeft, kDirRight
+	kDirUp,
+	kDirLeft,
+	kDirRight
 };
 
 enum {
-	kModeMenu, kModePlay, kModePause
+	kModeMenu,
+	kModePlay,
+	kModePause
 };
 
-enum { kPlComp, kPlHuman };
+enum { kPlComp,
+	   kPlHuman };
 
-enum { kSndPoint, kSndHit, kSndLoss };
+enum { kSndPoint,
+	   kSndHit,
+	   kSndLoss };
 
-class EE  {
+class EE {
 public:
 	EE();
 	~EE();
@@ -368,7 +381,7 @@ private:
 	bool _soundEnabled;
 	bool _shouldQuit;
 
-	int _rcnt; //last 20 cycles of round
+	int _rcnt;   //last 20 cycles of round
 	int _winner; //who wins the point or serving
 	int _tvelx, _tvely;
 
@@ -445,7 +458,7 @@ EE::EE() {
 	_format = g_system->getOverlayFormat();
 	_back.create(MIN<int>(g_system->getOverlayWidth(), 320), MIN<int>(g_system->getOverlayHeight(), 200), _format);
 
-	_colorBlue   = _format.RGBToColor(5 * 16, 7 * 16, 8 * 16);
+	_colorBlue = _format.RGBToColor(5 * 16, 7 * 16, 8 * 16);
 	_colorOrange = _format.RGBToColor(15 * 16, 7 * 16, 8 * 16);
 
 	init();
@@ -499,17 +512,32 @@ void EE::run() {
 }
 
 enum {
-	kSpL1, kSpL2, kSpL3,
-	kSpR1, kSpR2, kSpR3,
-	kSpB1, kSpB2, kSpB3, kSpB4,
-	kSp0, kSp1, kSp2, kSp3, kSp4,
-	kSp5, kSp6, kSp7, kSp8, kSp9,
+	kSpL1,
+	kSpL2,
+	kSpL3,
+	kSpR1,
+	kSpR2,
+	kSpR3,
+	kSpB1,
+	kSpB2,
+	kSpB3,
+	kSpB4,
+	kSp0,
+	kSp1,
+	kSp2,
+	kSp3,
+	kSp4,
+	kSp5,
+	kSp6,
+	kSp7,
+	kSp8,
+	kSp9,
 	kSpSt
 };
 
 const int polecol[] = {0, 1, 2, 3, 3, 4, 6, 7, 9, 14};
 const int jump[] = {-4, -4, -3, -3, -3, -3, -2, -2, -2, -2, -2, -1, -1, -1, -1, -1, -1, 0, 0,
-					0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4};
+                    0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4};
 
 void EE::loadSounds() {
 #if 0
@@ -562,7 +590,7 @@ void EE::processKeyDown(Common::Event &e) {
 		_keymove[1][kDirRight] = 2;
 		break;
 	case Common::KEYCODE_UP: // top
-		_keymove[1][kDirUp]= 1;
+		_keymove[1][kDirUp] = 1;
 		break;
 	case Common::KEYCODE_a: //a
 		_keymove[0][kDirLeft] = -2;
@@ -730,16 +758,23 @@ bool EE::moveball() {
 	bool hitfloor;
 
 	if (!reset) {
-		_bx = 4096; _by = 8640; _bvelx = 125; _bvely = -259;
+		_bx = 4096;
+		_by = 8640;
+		_bvelx = 125;
+		_bvely = -259;
 		reset = true;
 	}
 
 	rbvelx = _bvelx;
 	rbvely = _bvely;
-	if (rbvelx > 319) rbvelx = 319;
-	if (rbvelx < -319) rbvelx = -319;
-	if (rbvely > 319) rbvely = 319;
-	if (rbvely < -319) rbvely = -319;
+	if (rbvelx > 319)
+		rbvelx = 319;
+	if (rbvelx < -319)
+		rbvelx = -319;
+	if (rbvely > 319)
+		rbvely = 319;
+	if (rbvely < -319)
+		rbvely = -319;
 	_pbx = _tbx;
 	_pby = _tby;
 	_bx += rbvelx;
@@ -782,7 +817,7 @@ bool EE::moveball() {
 	//if (rbvely > 0) // Checked with original, this is how it is
 	//	rbvely += 1;
 	//else
-		rbvely += 1;
+	rbvely += 1;
 
 	_tbx = _bx >> 6;
 	_tby = _by >> 6;
@@ -847,25 +882,29 @@ void EE::docollisions() {
 			else
 				_bvelx = abs(_bvelx);
 		} else if ((_tbx > 147 && 161 - _tbx >= polecol[91 - _tby]) ||
-				   (_tbx < 148 && _tbx - 133 >= polecol[91 - _tby])) {
+		           (_tbx < 148 && _tbx - 133 >= polecol[91 - _tby])) {
 			if (_bvely > 0) {
 				dx = _tbx - 145;
-				if (dx < -5) _bvelx = -abs(_bvelx);
-				if (dx > 5) _bvelx = abs(_bvelx);
+				if (dx < -5)
+					_bvelx = -abs(_bvelx);
+				if (dx > 5)
+					_bvelx = abs(_bvelx);
 				_bvely = -abs(_bvely);
 			}
-			if (abs(_bvelx) > 32) _bvelx = _bvelx >> 1;
-			if (abs(_bvely) > 32) _bvely = _bvely >> 1;
+			if (abs(_bvelx) > 32)
+				_bvelx = _bvelx >> 1;
+			if (abs(_bvely) > 32)
+				_bvely = _bvely >> 1;
 		}
 	}
 }
-
 
 void EE::computer0() {
 	int ystep, destx, dx, rndoff, dest = 0;
 
 	_keymove[0][kDirUp] = 0;
-	if (_tby < _bytop) _bytop = _tby;
+	if (_tby < _bytop)
+		_bytop = _tby;
 	rndoff = 5 - _rnd % 10;
 	if (_serve && ((_server & 1) == 0)) {
 		switch (_compserve) {
@@ -952,7 +991,8 @@ void EE::computer1() {
 	int ystep, destx, dx, rndoff, dest = 0;
 
 	_keymove[1][kDirUp] = 0;
-	if (_tby < _bytop) _bytop = _tby;
+	if (_tby < _bytop)
+		_bytop = _tby;
 	rndoff = 5 - _rnd % 10;
 	if (_serve && ((_server & 1) == 1)) {
 		switch (_compserve) {
@@ -1098,16 +1138,16 @@ void EE::drawStatus(Common::String str, int x, uint32 color, int y, int color2, 
 void EE::draw(int sn, int x, int y) {
 	_back.transBlitFrom(_sp[sn], Common::Point(x, y), 0);
 	g_system->copyRectToOverlay(_back.getBasePtr(x, y),
-	                           _back.pitch,
-	                           MIN<int>(_windowX + x, g_system->getOverlayWidth()),
-	                           MIN<int>(_windowY + y, g_system->getOverlayHeight()),
-	                           MIN<int>(_sp[sn].w, g_system->getOverlayWidth() - MIN<int>(_windowX + x, g_system->getOverlayWidth())),
-	                           MIN<int>(_sp[sn].h, g_system->getOverlayHeight() - MIN<int>(_windowY + y, g_system->getOverlayHeight()) ));
+	                            _back.pitch,
+	                            MIN<int>(_windowX + x, g_system->getOverlayWidth()),
+	                            MIN<int>(_windowY + y, g_system->getOverlayHeight()),
+	                            MIN<int>(_sp[sn].w, g_system->getOverlayWidth() - MIN<int>(_windowX + x, g_system->getOverlayWidth())),
+	                            MIN<int>(_sp[sn].h, g_system->getOverlayHeight() - MIN<int>(_windowY + y, g_system->getOverlayHeight())));
 }
 
 const char *codes =
-"Dvhgkm#Ztrsm|ffrs(#$%&'#$%&O}pes&}{1$M{tiq$%&'#$M{tiq${y5(Fsrv||hv%&'#$"
-"Hutxxxjx'~v2%N|udr%&'#Gtsw}wiw&}{1$Hutxxxjx'#$%&'(#$%W|qw$%&'(#$%&'";
+    "Dvhgkm#Ztrsm|ffrs(#$%&'#$%&O}pes&}{1$M{tiq$%&'#$M{tiq${y5(Fsrv||hv%&'#$"
+    "Hutxxxjx'~v2%N|udr%&'#Gtsw}wiw&}{1$Hutxxxjx'#$%&'(#$%W|qw$%&'(#$%&'";
 
 void EE::putshapes() {
 	int sprite;
@@ -1120,19 +1160,19 @@ void EE::putshapes() {
 		                            MIN<int>(_windowX + _obx, g_system->getOverlayWidth()),
 		                            MIN<int>(_windowY + _oby, g_system->getOverlayHeight()),
 		                            MIN<int>(_sp[kSpB1].w, g_system->getOverlayWidth() - MIN<int>(_windowX + _obx, g_system->getOverlayWidth())),
-		                            MIN<int>(_sp[kSpB1].h, g_system->getOverlayHeight() - MIN<int>(_windowY + _oby, g_system->getOverlayHeight()) ));
+		                            MIN<int>(_sp[kSpB1].h, g_system->getOverlayHeight() - MIN<int>(_windowY + _oby, g_system->getOverlayHeight())));
 		g_system->copyRectToOverlay(_back.getBasePtr(_olx, _oly),
 		                            _back.pitch,
 		                            MIN<int>(_windowX + _olx, g_system->getOverlayWidth()),
 		                            MIN<int>(_windowY + _oly, g_system->getOverlayHeight()),
 		                            MIN<int>(_sp[kSpL1].w, g_system->getOverlayWidth() - MIN<int>(_windowX + _olx, g_system->getOverlayWidth())),
-		                            MIN<int>(_sp[kSpL1].h, g_system->getOverlayHeight() - MIN<int>(_windowY + _oly, g_system->getOverlayHeight()) ));
+		                            MIN<int>(_sp[kSpL1].h, g_system->getOverlayHeight() - MIN<int>(_windowY + _oly, g_system->getOverlayHeight())));
 		g_system->copyRectToOverlay(_back.getBasePtr(_orx, _ory),
 		                            _back.pitch,
 		                            MIN<int>(_windowX + _orx, g_system->getOverlayWidth()),
 		                            MIN<int>(_windowY + _ory, g_system->getOverlayHeight()),
 		                            MIN<int>(_sp[kSpR1].w, g_system->getOverlayWidth() - MIN<int>(_windowX + _orx, g_system->getOverlayWidth())),
-		                            MIN<int>(_sp[kSpR1].h, g_system->getOverlayHeight() - MIN<int>(_windowY + _ory, g_system->getOverlayHeight()) ));
+		                            MIN<int>(_sp[kSpR1].h, g_system->getOverlayHeight() - MIN<int>(_windowY + _ory, g_system->getOverlayHeight())));
 	}
 
 	sprite = kSpB1 + (_tbx / 16) % 4;
@@ -1167,13 +1207,12 @@ void EE::putshapes() {
 	_oCoords = true;
 
 	const int frames[] = {
-		153, 106, 160, 200,
-		4, 13, 6, 200,
-		310, 13, 312, 200,
-		4, 13, 312, 14,
-		4, 199, 312, 200,
-		154, 107, 159, 199
-	};
+	    153, 106, 160, 200,
+	    4, 13, 6, 200,
+	    310, 13, 312, 200,
+	    4, 13, 312, 14,
+	    4, 199, 312, 200,
+	    154, 107, 159, 199};
 
 	uint32 color1 = _back.format.RGBToColor(5 * 16, 7 * 16, 8 * 16);
 	uint32 color2 = _back.format.RGBToColor(6 * 16, 8 * 16, 12 * 16);
@@ -1187,7 +1226,7 @@ void EE::putshapes() {
 		                            MIN<int>(_windowX + ptr[0], g_system->getOverlayWidth()),
 		                            MIN<int>(_windowY + ptr[1], g_system->getOverlayHeight()),
 		                            MIN<int>(r.width(), g_system->getOverlayWidth() - MIN<int>(_windowX + ptr[0], g_system->getOverlayWidth())),
-		                            MIN<int>(r.height(), g_system->getOverlayHeight() - MIN<int>(_windowY + ptr[1], g_system->getOverlayHeight()) ));
+		                            MIN<int>(r.height(), g_system->getOverlayHeight() - MIN<int>(_windowY + ptr[1], g_system->getOverlayHeight())));
 	}
 
 	int startx = 32;
@@ -1230,7 +1269,7 @@ void EE::putshapes() {
 	                            MIN<int>(_windowX, g_system->getOverlayWidth()),
 	                            MIN<int>(_windowY, g_system->getOverlayHeight()),
 	                            MIN<int>(320, g_system->getOverlayWidth() - MIN<int>(_windowX, g_system->getOverlayWidth())),
-	                            MIN<int>(10, g_system->getOverlayHeight() - MIN<int>(_windowY, g_system->getOverlayHeight()) ));
+	                            MIN<int>(10, g_system->getOverlayHeight() - MIN<int>(_windowY, g_system->getOverlayHeight())));
 
 	if (_mode == kModeMenu) {
 		g_system->copyRectToOverlay(_back.getBasePtr(92, 30),
@@ -1238,7 +1277,7 @@ void EE::putshapes() {
 		                            MIN<int>(_windowX + 92, g_system->getOverlayWidth()),
 		                            MIN<int>(_windowY + 30, g_system->getOverlayHeight()),
 		                            MIN<int>(135, g_system->getOverlayWidth() - MIN<int>(_windowX + 92, g_system->getOverlayWidth())),
-		                            MIN<int>(5 * 10, g_system->getOverlayHeight() - MIN<int>(_windowY + 30, g_system->getOverlayHeight()) ));
+		                            MIN<int>(5 * 10, g_system->getOverlayHeight() - MIN<int>(_windowY + 30, g_system->getOverlayHeight())));
 	}
 }
 
@@ -1315,38 +1354,34 @@ void EE::playSound(int sound) {
 }
 
 static const uint32 ball[21] = {
-	0x0000fd00, 0x00074ac0, 0x000afde0, 0x001703e8, 0x0038f7d8, 0x0056f73c,
-	0x00aef6fc, 0x00cf79fb, 0x01afbbf7, 0x01b7bdcd, 0x0077dd3a, 0x013beef3,
-	0x01bbef6a, 0x015df78b, 0x00defbea, 0x00ef7dd8, 0x00779eb4, 0x0029ef68,
-	0x001ef4a0, 0x000673c0, 0x0000ae00
-};
+    0x0000fd00, 0x00074ac0, 0x000afde0, 0x001703e8, 0x0038f7d8, 0x0056f73c,
+    0x00aef6fc, 0x00cf79fb, 0x01afbbf7, 0x01b7bdcd, 0x0077dd3a, 0x013beef3,
+    0x01bbef6a, 0x015df78b, 0x00defbea, 0x00ef7dd8, 0x00779eb4, 0x0029ef68,
+    0x001ef4a0, 0x000673c0, 0x0000ae00};
 
 static const uint32 head[38] = {
-	0xbb400000, 0x0000000f, 0xea650000, 0x000003af, 0xfaaa6000, 0x00000e7f,
-	0xfea5a400, 0x03ff2af0, 0x3eaa6900, 0x3ea969c0, 0x3ea99940, 0xeaaa69c8,
-	0x3a669540, 0xea995540, 0x5a555550, 0xa9aa999a, 0x65a65550, 0x2aa69a5a,
-	0x59555650, 0x02aaaa55, 0x6aa66550, 0x000aa950, 0x6a569950, 0x000a9500,
-	0xa9595580, 0x00015001, 0xa9a55540, 0x00000015, 0xa9a9a500, 0x0000015a,
-	0x59695800, 0x00001659, 0x65659000, 0x00000a96, 0xa65a8000, 0x000002aa,
-	0xa6500000, 0x0000002a
-};
+    0xbb400000, 0x0000000f, 0xea650000, 0x000003af, 0xfaaa6000, 0x00000e7f,
+    0xfea5a400, 0x03ff2af0, 0x3eaa6900, 0x3ea969c0, 0x3ea99940, 0xeaaa69c8,
+    0x3a669540, 0xea995540, 0x5a555550, 0xa9aa999a, 0x65a65550, 0x2aa69a5a,
+    0x59555650, 0x02aaaa55, 0x6aa66550, 0x000aa950, 0x6a569950, 0x000a9500,
+    0xa9595580, 0x00015001, 0xa9a55540, 0x00000015, 0xa9a9a500, 0x0000015a,
+    0x59695800, 0x00001659, 0x65659000, 0x00000a96, 0xa65a8000, 0x000002aa,
+    0xa6500000, 0x0000002a};
 
 static const uint32 legs[42] = {
-	0xa0000000, 0x00000000, 0x80000000, 0x00000002, 0x80000000, 0x00000002,0xa0000000,
-	0x00000000, 0x50000000, 0x00000000, 0xf0000000, 0x00000003, 0xfc000000, 0x000003ff,
+    0xa0000000, 0x00000000, 0x80000000, 0x00000002, 0x80000000, 0x00000002, 0xa0000000,
+    0x00000000, 0x50000000, 0x00000000, 0xf0000000, 0x00000003, 0xfc000000, 0x000003ff,
 
-	0xa0000000, 0x00000002, 0x0a000000, 0x0000000a, 0x02400000, 0x00000028, 0x00700000,
-	0x00000028, 0x00fc0000, 0x00000014, 0x03c00000, 0x000000fc, 0x0f000000, 0x0000ffff,
+    0xa0000000, 0x00000002, 0x0a000000, 0x0000000a, 0x02400000, 0x00000028, 0x00700000,
+    0x00000028, 0x00fc0000, 0x00000014, 0x03c00000, 0x000000fc, 0x0f000000, 0x0000ffff,
 
-	0xa0000000, 0x00000000, 0x80000000, 0x00000002, 0xa8000000, 0x00000002, 0x29c00000,
-	0x00000000, 0x01f00000, 0x00000000, 0x0fc00000, 0x00000000, 0xfc000000, 0x00000000
-};
+    0xa0000000, 0x00000000, 0x80000000, 0x00000002, 0xa8000000, 0x00000002, 0x29c00000,
+    0x00000000, 0x01f00000, 0x00000000, 0x0fc00000, 0x00000000, 0xfc000000, 0x00000000};
 
 static const int spcolors[10 * 3] = {
-	0, 0, 0,  8, 15,  8,  6, 12, 6, 12, 13, 12,
-	0, 0, 0, 15,  8,  8, 12,  6, 6, 13, 12, 12,
-	0, 0, 0, 12, 12, 12
-};
+    0, 0, 0, 8, 15, 8, 6, 12, 6, 12, 13, 12,
+    0, 0, 0, 15, 8, 8, 12, 6, 6, 13, 12, 12,
+    0, 0, 0, 12, 12, 12};
 
 void EE::genSprites() {
 	uint32 palette[12];
@@ -1357,13 +1392,19 @@ void EE::genSprites() {
 		_sp[kSpB1 + s].create(25, 21, g_system->getOverlayFormat());
 
 		int posy = 0, dy = 1;
-		if (s & 2) { posy = 20; dy = -1; }
+		if (s & 2) {
+			posy = 20;
+			dy = -1;
+		}
 
 		for (int y = 0; y < 21; y++, posy += dy) {
 			uint32 pixels = ball[y];
 
 			int posx = 0, dx = 1;
-			if (s & 1) { posx = 24; dx = -1; }
+			if (s & 1) {
+				posx = 24;
+				dx = -1;
+			}
 
 			for (int x = 0; x < 25; x++, posx += dx) {
 				int color = pixels & 1;
@@ -1386,7 +1427,10 @@ void EE::genSprites() {
 			uint32 pixels = *ptr++;
 
 			int posx = 0, dx = 1;
-			if (s > 2) { posx = 31; dx = -1; }
+			if (s > 2) {
+				posx = 31;
+				dx = -1;
+			}
 
 			for (int x = 0; x < 32; x++, posx += dx) {
 				int color = pixels & 3;

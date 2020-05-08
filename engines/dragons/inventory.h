@@ -47,6 +47,7 @@ enum InventoryState {
 class Inventory {
 public:
 	InventoryState _previousState;
+
 private:
 	DragonsEngine *_vm;
 	int32 _sequenceId;

@@ -28,7 +28,7 @@
 #include "common/rect.h"
 
 namespace Common {
-	struct Event;
+struct Event;
 }
 
 namespace Graphics {

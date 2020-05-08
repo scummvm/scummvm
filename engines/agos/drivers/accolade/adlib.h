@@ -77,18 +77,18 @@ private:
 
 	// from INSTR.DAT/MUSIC.DRV - adlib instrument data
 	InstrumentEntry *_instrumentTable;
-	byte            _instrumentCount;
+	byte _instrumentCount;
 
 	struct ChannelEntry {
-		const  InstrumentEntry *currentInstrumentPtr;
-		byte   currentNote;
-		byte   currentA0hReg;
-		byte   currentB0hReg;
-		int16  volumeAdjust;
-		byte   velocity;
+		const InstrumentEntry *currentInstrumentPtr;
+		byte currentNote;
+		byte currentA0hReg;
+		byte currentB0hReg;
+		int16 volumeAdjust;
+		byte velocity;
 
 		ChannelEntry() : currentInstrumentPtr(NULL), currentNote(0),
-						currentA0hReg(0), currentB0hReg(0), volumeAdjust(0), velocity(0) { }
+		                 currentA0hReg(0), currentB0hReg(0), volumeAdjust(0), velocity(0) {}
 	};
 
 	byte _percussionReg;

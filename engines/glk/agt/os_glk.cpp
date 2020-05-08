@@ -21,8 +21,8 @@
  */
 
 #include "glk/agt/agility.h"
-#include "glk/agt/interp.h"
 #include "glk/agt/agt.h"
+#include "glk/agt/interp.h"
 
 namespace Glk {
 namespace AGT {
@@ -55,12 +55,11 @@ namespace AGT {
  * normally from stdio.h or one of it's cousins.
  */
 #ifndef FALSE
-# define FALSE 0
+#define FALSE 0
 #endif
 #ifndef TRUE
-# define TRUE (!FALSE)
+#define TRUE (!FALSE)
 #endif
-
 
 /*---------------------------------------------------------------------*/
 /*  Module variables, miscellaneous externals not in header files      */
@@ -81,7 +80,6 @@ static void gagt_event_wait_2(glui32 wait_type_1,
  * through the wrapper instead.
  */
 static void gagt_exit();
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port utility functions                                         */
@@ -116,7 +114,6 @@ static void gagt_fatal(const char *string) {
 	                     " this information to simon_baldwin@yahoo.com.\n\n");
 }
 
-
 /*
  * gagt_malloc()
  * gagt_realloc()
@@ -147,7 +144,6 @@ static void *gagt_realloc(void *ptr, size_t size) {
 
 	return pointer;
 }
-
 
 /*
  * gagt_strncasecmp()
@@ -184,7 +180,6 @@ static int gagt_strcasecmp(const char *s1, const char *s2) {
 		return s1len < s2len ? -1 : s1len > s2len ? 1 : 0;
 }
 
-
 /*
  * gagt_debug()
  *
@@ -210,7 +205,6 @@ static void gagt_debug(const char *function, const char *format, ...) {
 	}
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Functions not ported - functionally unchanged from os_none.c       */
 /*---------------------------------------------------------------------*/
@@ -223,7 +217,6 @@ static void gagt_debug(const char *function, const char *format, ...) {
 void agt_tone(int hz, int ms) {
 	gagt_debug("agt_tone", "hz=%d, ms=%d", hz, ms);
 }
-
 
 /*
  * agt_rand()
@@ -239,7 +232,6 @@ int agt_rand(int a, int b) {
 	gagt_debug("agt_rand", "a=%d, b=%d -> %d", a, b, result);
 	return result;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Workrounds for bugs in core AGiliTy.                               */
@@ -270,7 +262,6 @@ static void gagt_workround_menus() {
 	menu_mode = 0;
 }
 
-
 /*
  * gagt_workround_fileexist()
  *
@@ -296,16 +287,15 @@ static int gagt_workround_fileexist(fc_type fc, filetype ft) {
 	return FALSE;
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  I/O interface start and stop functions.                            */
 /*---------------------------------------------------------------------*/
 
 /* AGiliTy font_status values that indicate what font may be used. */
 enum {
-	GAGT_FIXED_REQUIRED = 1, GAGT_PROPORTIONAL_OKAY = 2
+	GAGT_FIXED_REQUIRED = 1,
+	GAGT_PROPORTIONAL_OKAY = 2
 };
-
 
 /*
  * start_interface()
@@ -343,7 +333,6 @@ void close_interface() {
 	gagt_debug("close_interface", "");
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Code page 437 to ISO 8859 Latin-1 translations                     */
 /*---------------------------------------------------------------------*/
@@ -367,185 +356,184 @@ void close_interface() {
  * just in case it's useful at some future date.
  */
 typedef const struct {
-	const unsigned char cp437;      /* Code page 437 character. */
-	const unsigned char iso8859_1;  /* ISO 8859 Latin-1 character. */
+	const unsigned char cp437;     /* Code page 437 character. */
+	const unsigned char iso8859_1; /* ISO 8859 Latin-1 character. */
 } gagt_char_t;
 typedef gagt_char_t *gagt_charref_t;
 
 static gagt_char_t GAGT_CHAR_TABLE[] = {
-	/*
+    /*
 	 * Low characters -- those below 0x20.   These are the really odd code
 	 * page 437 characters, rarely used by AGT games.  Low characters are
 	 * omitted from the reverse lookup, and participate only in the forwards
 	 * lookup from code page 437 to ISO 8859 Latin-1.
 	 */
-	{0x01,  '@'},     /* 263a White smiling face */
-	{0x02,  '@'},     /* 263b Black smiling face */
-	{0x03,  '?'},     /* 2665 Black heart suit */
-	{0x04,  '?'},     /* 2666 Black diamond suit */
-	{0x05,  '?'},     /* 2663 Black club suit */
-	{0x06,  '?'},     /* 2660 Black spade suit */
-	{0x07, 0xb7},     /* 2022 Bullet */
-	{0x08, 0xb7},     /* 25d8 Inverse bullet */
-	{0x09, 0xb7},     /* 25e6 White bullet */
-	{0x0a, 0xb7},     /* 25d9 Inverse white circle */
-	{0x0b,  '?'},     /* 2642 Male sign */
-	{0x0c,  '?'},     /* 2640 Female sign */
-	{0x0d,  '?'},     /* 266a Eighth note */
-	{0x0e,  '?'},     /* 266b Beamed eighth notes */
-	{0x0f, 0xa4},     /* 263c White sun with rays */
-	{0x10,  '>'},     /* 25b6 Black right-pointing triangle */
-	{0x11,  '<'},     /* 25c0 Black left-pointing triangle */
-	{0x12, 0xa6},     /* 2195 Up down arrow */
-	{0x13,  '!'},     /* 203c Double exclamation mark */
-	{0x14, 0xb6},     /* 00b6 Pilcrow sign */
-	{0x15, 0xa7},     /* 00a7 Section sign */
-	{0x16,  '#'},     /* 25ac Black rectangle */
-	{0x17, 0xa6},     /* 21a8 Up down arrow with base */
-	{0x18,  '^'},     /* 2191 Upwards arrow */
-	{0x19,  'v'},     /* 2193 Downwards arrow */
-	{0x1a,  '>'},     /* 2192 Rightwards arrow */
-	{0x1b,  '<'},     /* 2190 Leftwards arrow */
-	{0x1c,  '?'},     /* 2310 Reversed not sign */
-	{0x1d,  '-'},     /* 2194 Left right arrow */
-	{0x1e,  '^'},     /* 25b2 Black up-pointing triangle */
-	{0x1f,  'v'},     /* 25bc Black down-pointing triangle */
+    {0x01, '@'},  /* 263a White smiling face */
+    {0x02, '@'},  /* 263b Black smiling face */
+    {0x03, '?'},  /* 2665 Black heart suit */
+    {0x04, '?'},  /* 2666 Black diamond suit */
+    {0x05, '?'},  /* 2663 Black club suit */
+    {0x06, '?'},  /* 2660 Black spade suit */
+    {0x07, 0xb7}, /* 2022 Bullet */
+    {0x08, 0xb7}, /* 25d8 Inverse bullet */
+    {0x09, 0xb7}, /* 25e6 White bullet */
+    {0x0a, 0xb7}, /* 25d9 Inverse white circle */
+    {0x0b, '?'},  /* 2642 Male sign */
+    {0x0c, '?'},  /* 2640 Female sign */
+    {0x0d, '?'},  /* 266a Eighth note */
+    {0x0e, '?'},  /* 266b Beamed eighth notes */
+    {0x0f, 0xa4}, /* 263c White sun with rays */
+    {0x10, '>'},  /* 25b6 Black right-pointing triangle */
+    {0x11, '<'},  /* 25c0 Black left-pointing triangle */
+    {0x12, 0xa6}, /* 2195 Up down arrow */
+    {0x13, '!'},  /* 203c Double exclamation mark */
+    {0x14, 0xb6}, /* 00b6 Pilcrow sign */
+    {0x15, 0xa7}, /* 00a7 Section sign */
+    {0x16, '#'},  /* 25ac Black rectangle */
+    {0x17, 0xa6}, /* 21a8 Up down arrow with base */
+    {0x18, '^'},  /* 2191 Upwards arrow */
+    {0x19, 'v'},  /* 2193 Downwards arrow */
+    {0x1a, '>'},  /* 2192 Rightwards arrow */
+    {0x1b, '<'},  /* 2190 Leftwards arrow */
+    {0x1c, '?'},  /* 2310 Reversed not sign */
+    {0x1d, '-'},  /* 2194 Left right arrow */
+    {0x1e, '^'},  /* 25b2 Black up-pointing triangle */
+    {0x1f, 'v'},  /* 25bc Black down-pointing triangle */
 
-	/*
+    /*
 	 * High characters -- those above 0x7f.  These are more often used by AGT
 	 * games, particularly for box drawing.
 	 */
-	{0x80, 0xc7},     /* 00c7 Latin capital letter c with cedilla */
-	{0x81, 0xfc},     /* 00fc Latin small letter u with diaeresis */
-	{0x82, 0xe9},     /* 00e9 Latin small letter e with acute */
-	{0x83, 0xe2},     /* 00e2 Latin small letter a with circumflex */
-	{0x84, 0xe4},     /* 00e4 Latin small letter a with diaeresis */
-	{0x85, 0xe0},     /* 00e0 Latin small letter a with grave */
-	{0x86, 0xe5},     /* 00e5 Latin small letter a with ring above */
-	{0x87, 0xe7},     /* 00e7 Latin small letter c with cedilla */
-	{0x88, 0xea},     /* 00ea Latin small letter e with circumflex */
-	{0x89, 0xeb},     /* 00eb Latin small letter e with diaeresis */
-	{0x8a, 0xe8},     /* 00e8 Latin small letter e with grave */
-	{0x8b, 0xef},     /* 00ef Latin small letter i with diaeresis */
-	{0x8c, 0xee},     /* 00ee Latin small letter i with circumflex */
-	{0x8d, 0xec},     /* 00ec Latin small letter i with grave */
-	{0x8e, 0xc4},     /* 00c4 Latin capital letter a with diaeresis */
-	{0x8f, 0xc5},     /* 00c5 Latin capital letter a with ring above */
-	{0x90, 0xc9},     /* 00c9 Latin capital letter e with acute */
-	{0x91, 0xe6},     /* 00e6 Latin small ligature ae */
-	{0x92, 0xc6},     /* 00c6 Latin capital ligature ae */
-	{0x93, 0xf4},     /* 00f4 Latin small letter o with circumflex */
-	{0x94, 0xf6},     /* 00f6 Latin small letter o with diaeresis */
-	{0x95, 0xf2},     /* 00f2 Latin small letter o with grave */
-	{0x96, 0xfb},     /* 00fb Latin small letter u with circumflex */
-	{0x97, 0xf9},     /* 00f9 Latin small letter u with grave */
-	{0x98, 0xff},     /* 00ff Latin small letter y with diaeresis */
-	{0x99, 0xd6},     /* 00d6 Latin capital letter o with diaeresis */
-	{0x9a, 0xdc},     /* 00dc Latin capital letter u with diaeresis */
-	{0x9b, 0xa2},     /* 00a2 Cent sign */
-	{0x9c, 0xa3},     /* 00a3 Pound sign */
-	{0x9d, 0xa5},     /* 00a5 Yen sign */
-	{0x9e,  'p'},     /* 20a7 Peseta sign */
-	{0x9f,  'f'},     /* 0192 Latin small letter f with hook */
-	{0xa0, 0xe1},     /* 00e1 Latin small letter a with acute */
-	{0xa1, 0xed},     /* 00ed Latin small letter i with acute */
-	{0xa2, 0xf3},     /* 00f3 Latin small letter o with acute */
-	{0xa3, 0xfa},     /* 00fa Latin small letter u with acute */
-	{0xa4, 0xf1},     /* 00f1 Latin small letter n with tilde */
-	{0xa5, 0xd1},     /* 00d1 Latin capital letter n with tilde */
-	{0xa6, 0xaa},     /* 00aa Feminine ordinal indicator */
-	{0xa7, 0xba},     /* 00ba Masculine ordinal indicator */
-	{0xa8, 0xbf},     /* 00bf Inverted question mark */
-	{0xa9,  '.'},     /* 2310 Reversed not sign */
-	{0xaa, 0xac},     /* 00ac Not sign */
-	{0xab, 0xbd},     /* 00bd Vulgar fraction one half */
-	{0xac, 0xbc},     /* 00bc Vulgar fraction one quarter */
-	{0xad, 0xa1},     /* 00a1 Inverted exclamation mark */
-	{0xae, 0xab},     /* 00ab Left-pointing double angle quotation mark */
-	{0xaf, 0xbb},     /* 00bb Right-pointing double angle quotation mark */
-	{0xb0,  '#'},     /* 2591 Light shade */
-	{0xb1,  '#'},     /* 2592 Medium shade */
-	{0xb2,  '#'},     /* 2593 Dark shade */
-	{0xb3,  '|'},     /* 2502 Box light vertical */
-	{0xb4,  '+'},     /* 2524 Box light vertical and left */
-	{0xb5,  '+'},     /* 2561 Box vertical single and left double */
-	{0xb6,  '|'},     /* 2562 Box vertical double and left single */
-	{0xb7,  '+'},     /* 2556 Box down double and left single */
-	{0xb8,  '+'},     /* 2555 Box down single and left double */
-	{0xb9,  '+'},     /* 2563 Box double vertical and left */
-	{0xba,  '|'},     /* 2551 Box double vertical */
-	{0xbb, '\\'},     /* 2557 Box double down and left */
-	{0xbc,  '/'},     /* 255d Box double up and left */
-	{0xbd,  '+'},     /* 255c Box up double and left single */
-	{0xbe,  '+'},     /* 255b Box up single and left double */
-	{0xbf, '\\'},     /* 2510 Box light down and left */
-	{0xc0, '\\'},     /* 2514 Box light up and right */
-	{0xc1,  '+'},     /* 2534 Box light up and horizontal */
-	{0xc2,  '+'},     /* 252c Box light down and horizontal */
-	{0xc3,  '+'},     /* 251c Box light vertical and right */
-	{0xc4,  '-'},     /* 2500 Box light horizontal */
-	{0xc5,  '+'},     /* 253c Box light vertical and horizontal */
-	{0xc6,  '|'},     /* 255e Box vertical single and right double */
-	{0xc7,  '|'},     /* 255f Box vertical double and right single */
-	{0xc8, '\\'},     /* 255a Box double up and right */
-	{0xc9,  '/'},     /* 2554 Box double down and right */
-	{0xca,  '+'},     /* 2569 Box double up and horizontal */
-	{0xcb,  '+'},     /* 2566 Box double down and horizontal */
-	{0xcc,  '+'},     /* 2560 Box double vertical and right */
-	{0xcd,  '='},     /* 2550 Box double horizontal */
-	{0xce,  '+'},     /* 256c Box double vertical and horizontal */
-	{0xcf,  '='},     /* 2567 Box up single and horizontal double */
-	{0xd0,  '+'},     /* 2568 Box up double and horizontal single */
-	{0xd1,  '='},     /* 2564 Box down single and horizontal double */
-	{0xd2,  '+'},     /* 2565 Box down double and horizontal single */
-	{0xd3,  '+'},     /* 2559 Box up double and right single */
-	{0xd4,  '+'},     /* 2558 Box up single and right double */
-	{0xd5,  '+'},     /* 2552 Box down single and right double */
-	{0xd6,  '+'},     /* 2553 Box down double and right single */
-	{0xd7,  '+'},     /* 256b Box vertical double and horizontal single */
-	{0xd8,  '+'},     /* 256a Box vertical single and horizontal double */
-	{0xd9,  '/'},     /* 2518 Box light up and left */
-	{0xda,  '/'},     /* 250c Box light down and right */
-	{0xdb,  '@'},     /* 2588 Full block */
-	{0xdc,  '@'},     /* 2584 Lower half block */
-	{0xdd,  '@'},     /* 258c Left half block */
-	{0xde,  '@'},     /* 2590 Right half block */
-	{0xdf,  '@'},     /* 2580 Upper half block */
-	{0xe0,  'a'},     /* 03b1 Greek small letter alpha */
-	{0xe1, 0xdf},     /* 00df Latin small letter sharp s */
-	{0xe2,  'G'},     /* 0393 Greek capital letter gamma */
-	{0xe3,  'p'},     /* 03c0 Greek small letter pi */
-	{0xe4,  'S'},     /* 03a3 Greek capital letter sigma */
-	{0xe5,  's'},     /* 03c3 Greek small letter sigma */
-	{0xe6, 0xb5},     /* 00b5 Micro sign */
-	{0xe7,  't'},     /* 03c4 Greek small letter tau */
-	{0xe8,  'F'},     /* 03a6 Greek capital letter phi */
-	{0xe9,  'T'},     /* 0398 Greek capital letter theta */
-	{0xea,  'O'},     /* 03a9 Greek capital letter omega */
-	{0xeb,  'd'},     /* 03b4 Greek small letter delta */
-	{0xec,  '.'},     /* 221e Infinity */
-	{0xed,  'f'},     /* 03c6 Greek small letter phi */
-	{0xee,  'e'},     /* 03b5 Greek small letter epsilon */
-	{0xef,  '^'},     /* 2229 Intersection */
-	{0xf0,  '='},     /* 2261 Identical to */
-	{0xf1, 0xb1},     /* 00b1 Plus-minus sign */
-	{0xf2,  '>'},     /* 2265 Greater-than or equal to */
-	{0xf3,  '<'},     /* 2264 Less-than or equal to */
-	{0xf4,  'f'},     /* 2320 Top half integral */
-	{0xf5,  'j'},     /* 2321 Bottom half integral */
-	{0xf6, 0xf7},     /* 00f7 Division sign */
-	{0xf7,  '='},     /* 2248 Almost equal to */
-	{0xf8, 0xb0},     /* 00b0 Degree sign */
-	{0xf9, 0xb7},     /* 2219 Bullet operator */
-	{0xfa, 0xb7},     /* 00b7 Middle dot */
-	{0xfb,  '/'},     /* 221a Square root */
-	{0xfc,  'n'},     /* 207f Superscript latin small letter n */
-	{0xfd, 0xb2},     /* 00b2 Superscript two */
-	{0xfe,  '#'},     /* 25a0 Black square */
-	{0xff, 0xa0},     /* 00a0 No-break space */
-	{0, 0}            /* 0000 [END OF TABLE] */
+    {0x80, 0xc7}, /* 00c7 Latin capital letter c with cedilla */
+    {0x81, 0xfc}, /* 00fc Latin small letter u with diaeresis */
+    {0x82, 0xe9}, /* 00e9 Latin small letter e with acute */
+    {0x83, 0xe2}, /* 00e2 Latin small letter a with circumflex */
+    {0x84, 0xe4}, /* 00e4 Latin small letter a with diaeresis */
+    {0x85, 0xe0}, /* 00e0 Latin small letter a with grave */
+    {0x86, 0xe5}, /* 00e5 Latin small letter a with ring above */
+    {0x87, 0xe7}, /* 00e7 Latin small letter c with cedilla */
+    {0x88, 0xea}, /* 00ea Latin small letter e with circumflex */
+    {0x89, 0xeb}, /* 00eb Latin small letter e with diaeresis */
+    {0x8a, 0xe8}, /* 00e8 Latin small letter e with grave */
+    {0x8b, 0xef}, /* 00ef Latin small letter i with diaeresis */
+    {0x8c, 0xee}, /* 00ee Latin small letter i with circumflex */
+    {0x8d, 0xec}, /* 00ec Latin small letter i with grave */
+    {0x8e, 0xc4}, /* 00c4 Latin capital letter a with diaeresis */
+    {0x8f, 0xc5}, /* 00c5 Latin capital letter a with ring above */
+    {0x90, 0xc9}, /* 00c9 Latin capital letter e with acute */
+    {0x91, 0xe6}, /* 00e6 Latin small ligature ae */
+    {0x92, 0xc6}, /* 00c6 Latin capital ligature ae */
+    {0x93, 0xf4}, /* 00f4 Latin small letter o with circumflex */
+    {0x94, 0xf6}, /* 00f6 Latin small letter o with diaeresis */
+    {0x95, 0xf2}, /* 00f2 Latin small letter o with grave */
+    {0x96, 0xfb}, /* 00fb Latin small letter u with circumflex */
+    {0x97, 0xf9}, /* 00f9 Latin small letter u with grave */
+    {0x98, 0xff}, /* 00ff Latin small letter y with diaeresis */
+    {0x99, 0xd6}, /* 00d6 Latin capital letter o with diaeresis */
+    {0x9a, 0xdc}, /* 00dc Latin capital letter u with diaeresis */
+    {0x9b, 0xa2}, /* 00a2 Cent sign */
+    {0x9c, 0xa3}, /* 00a3 Pound sign */
+    {0x9d, 0xa5}, /* 00a5 Yen sign */
+    {0x9e, 'p'},  /* 20a7 Peseta sign */
+    {0x9f, 'f'},  /* 0192 Latin small letter f with hook */
+    {0xa0, 0xe1}, /* 00e1 Latin small letter a with acute */
+    {0xa1, 0xed}, /* 00ed Latin small letter i with acute */
+    {0xa2, 0xf3}, /* 00f3 Latin small letter o with acute */
+    {0xa3, 0xfa}, /* 00fa Latin small letter u with acute */
+    {0xa4, 0xf1}, /* 00f1 Latin small letter n with tilde */
+    {0xa5, 0xd1}, /* 00d1 Latin capital letter n with tilde */
+    {0xa6, 0xaa}, /* 00aa Feminine ordinal indicator */
+    {0xa7, 0xba}, /* 00ba Masculine ordinal indicator */
+    {0xa8, 0xbf}, /* 00bf Inverted question mark */
+    {0xa9, '.'},  /* 2310 Reversed not sign */
+    {0xaa, 0xac}, /* 00ac Not sign */
+    {0xab, 0xbd}, /* 00bd Vulgar fraction one half */
+    {0xac, 0xbc}, /* 00bc Vulgar fraction one quarter */
+    {0xad, 0xa1}, /* 00a1 Inverted exclamation mark */
+    {0xae, 0xab}, /* 00ab Left-pointing double angle quotation mark */
+    {0xaf, 0xbb}, /* 00bb Right-pointing double angle quotation mark */
+    {0xb0, '#'},  /* 2591 Light shade */
+    {0xb1, '#'},  /* 2592 Medium shade */
+    {0xb2, '#'},  /* 2593 Dark shade */
+    {0xb3, '|'},  /* 2502 Box light vertical */
+    {0xb4, '+'},  /* 2524 Box light vertical and left */
+    {0xb5, '+'},  /* 2561 Box vertical single and left double */
+    {0xb6, '|'},  /* 2562 Box vertical double and left single */
+    {0xb7, '+'},  /* 2556 Box down double and left single */
+    {0xb8, '+'},  /* 2555 Box down single and left double */
+    {0xb9, '+'},  /* 2563 Box double vertical and left */
+    {0xba, '|'},  /* 2551 Box double vertical */
+    {0xbb, '\\'}, /* 2557 Box double down and left */
+    {0xbc, '/'},  /* 255d Box double up and left */
+    {0xbd, '+'},  /* 255c Box up double and left single */
+    {0xbe, '+'},  /* 255b Box up single and left double */
+    {0xbf, '\\'}, /* 2510 Box light down and left */
+    {0xc0, '\\'}, /* 2514 Box light up and right */
+    {0xc1, '+'},  /* 2534 Box light up and horizontal */
+    {0xc2, '+'},  /* 252c Box light down and horizontal */
+    {0xc3, '+'},  /* 251c Box light vertical and right */
+    {0xc4, '-'},  /* 2500 Box light horizontal */
+    {0xc5, '+'},  /* 253c Box light vertical and horizontal */
+    {0xc6, '|'},  /* 255e Box vertical single and right double */
+    {0xc7, '|'},  /* 255f Box vertical double and right single */
+    {0xc8, '\\'}, /* 255a Box double up and right */
+    {0xc9, '/'},  /* 2554 Box double down and right */
+    {0xca, '+'},  /* 2569 Box double up and horizontal */
+    {0xcb, '+'},  /* 2566 Box double down and horizontal */
+    {0xcc, '+'},  /* 2560 Box double vertical and right */
+    {0xcd, '='},  /* 2550 Box double horizontal */
+    {0xce, '+'},  /* 256c Box double vertical and horizontal */
+    {0xcf, '='},  /* 2567 Box up single and horizontal double */
+    {0xd0, '+'},  /* 2568 Box up double and horizontal single */
+    {0xd1, '='},  /* 2564 Box down single and horizontal double */
+    {0xd2, '+'},  /* 2565 Box down double and horizontal single */
+    {0xd3, '+'},  /* 2559 Box up double and right single */
+    {0xd4, '+'},  /* 2558 Box up single and right double */
+    {0xd5, '+'},  /* 2552 Box down single and right double */
+    {0xd6, '+'},  /* 2553 Box down double and right single */
+    {0xd7, '+'},  /* 256b Box vertical double and horizontal single */
+    {0xd8, '+'},  /* 256a Box vertical single and horizontal double */
+    {0xd9, '/'},  /* 2518 Box light up and left */
+    {0xda, '/'},  /* 250c Box light down and right */
+    {0xdb, '@'},  /* 2588 Full block */
+    {0xdc, '@'},  /* 2584 Lower half block */
+    {0xdd, '@'},  /* 258c Left half block */
+    {0xde, '@'},  /* 2590 Right half block */
+    {0xdf, '@'},  /* 2580 Upper half block */
+    {0xe0, 'a'},  /* 03b1 Greek small letter alpha */
+    {0xe1, 0xdf}, /* 00df Latin small letter sharp s */
+    {0xe2, 'G'},  /* 0393 Greek capital letter gamma */
+    {0xe3, 'p'},  /* 03c0 Greek small letter pi */
+    {0xe4, 'S'},  /* 03a3 Greek capital letter sigma */
+    {0xe5, 's'},  /* 03c3 Greek small letter sigma */
+    {0xe6, 0xb5}, /* 00b5 Micro sign */
+    {0xe7, 't'},  /* 03c4 Greek small letter tau */
+    {0xe8, 'F'},  /* 03a6 Greek capital letter phi */
+    {0xe9, 'T'},  /* 0398 Greek capital letter theta */
+    {0xea, 'O'},  /* 03a9 Greek capital letter omega */
+    {0xeb, 'd'},  /* 03b4 Greek small letter delta */
+    {0xec, '.'},  /* 221e Infinity */
+    {0xed, 'f'},  /* 03c6 Greek small letter phi */
+    {0xee, 'e'},  /* 03b5 Greek small letter epsilon */
+    {0xef, '^'},  /* 2229 Intersection */
+    {0xf0, '='},  /* 2261 Identical to */
+    {0xf1, 0xb1}, /* 00b1 Plus-minus sign */
+    {0xf2, '>'},  /* 2265 Greater-than or equal to */
+    {0xf3, '<'},  /* 2264 Less-than or equal to */
+    {0xf4, 'f'},  /* 2320 Top half integral */
+    {0xf5, 'j'},  /* 2321 Bottom half integral */
+    {0xf6, 0xf7}, /* 00f7 Division sign */
+    {0xf7, '='},  /* 2248 Almost equal to */
+    {0xf8, 0xb0}, /* 00b0 Degree sign */
+    {0xf9, 0xb7}, /* 2219 Bullet operator */
+    {0xfa, 0xb7}, /* 00b7 Middle dot */
+    {0xfb, '/'},  /* 221a Square root */
+    {0xfc, 'n'},  /* 207f Superscript latin small letter n */
+    {0xfd, 0xb2}, /* 00b2 Superscript two */
+    {0xfe, '#'},  /* 25a0 Black square */
+    {0xff, 0xa0}, /* 00a0 No-break space */
+    {0, 0}        /* 0000 [END OF TABLE] */
 };
-
 
 /*
  * gagt_cp_to_iso()
@@ -574,7 +562,7 @@ static void gagt_cp_to_iso(const unsigned char *from_string, unsigned char *to_s
 			cp437 = entry->cp437;
 			iso8859_1 = entry->iso8859_1;
 
-//			assert(cp437 < 0x20 || (cp437 > INT8_MAX_VAL && cp437 <= BYTE_MAX_VAL));
+			//			assert(cp437 < 0x20 || (cp437 > INT8_MAX_VAL && cp437 <= BYTE_MAX_VAL));
 			table[cp437] = iso8859_1;
 		}
 		for (index = 0; index <= INT8_MAX_VAL; index++) {
@@ -594,7 +582,6 @@ static void gagt_cp_to_iso(const unsigned char *from_string, unsigned char *to_s
 
 	to_string[index] = '\0';
 }
-
 
 /*
  * gagt_iso_to_cp()
@@ -649,7 +636,6 @@ static void gagt_iso_to_cp(const unsigned char *from_string, unsigned char *to_s
 	to_string[index] = '\0';
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port status line functions                                     */
 /*---------------------------------------------------------------------*/
@@ -661,7 +647,7 @@ static void gagt_iso_to_cp(const unsigned char *from_string, unsigned char *to_s
  * status buffer printed for non-windowing Glk libraries, for comparison.
  */
 static char *gagt_status_buffer = NULL,
-             *gagt_status_buffer_printed = NULL;
+            *gagt_status_buffer_printed = NULL;
 
 /*
  * Indication that we are in mid-delay.  The delay is silent, and can look
@@ -669,7 +655,6 @@ static char *gagt_status_buffer = NULL,
  * window show something about it.
  */
 static int gagt_inside_delay = FALSE;
-
 
 /*
  * agt_statline()
@@ -686,7 +671,6 @@ void agt_statline(const char *cp_string) {
 
 	gagt_debug("agt_statline", "string='%s'", cp_string);
 }
-
 
 /*
  * gagt_status_update_extended()
@@ -735,7 +719,6 @@ static void gagt_status_update_extended() {
 	}
 }
 
-
 /*
  * gagt_status_update()
  *
@@ -775,7 +758,8 @@ static void gagt_status_update() {
 			 * second line if extended status enabled.
 			 */
 			print_width = width < strlen(gagt_status_buffer)
-			              ? width : strlen(gagt_status_buffer);
+			                  ? width
+			                  : strlen(gagt_status_buffer);
 			g_vm->glk_put_buffer(gagt_status_buffer, print_width);
 
 			if (g_vm->gagt_extended_status_enabled)
@@ -791,7 +775,6 @@ static void gagt_status_update() {
 		g_vm->glk_set_window(g_vm->gagt_main_window);
 	}
 }
-
 
 /*
  * gagt_status_print()
@@ -812,9 +795,7 @@ static void gagt_status_print() {
 	 * Do no more if there is no status line to print, or if the status
 	 * line hasn't changed since last printed.
 	 */
-	if (!gagt_status_buffer
-	        || (gagt_status_buffer_printed
-	            && strcmp(gagt_status_buffer, gagt_status_buffer_printed) == 0))
+	if (!gagt_status_buffer || (gagt_status_buffer_printed && strcmp(gagt_status_buffer, gagt_status_buffer_printed) == 0))
 		return;
 
 	/* Set fixed width font to try to preserve status line formatting. */
@@ -835,7 +816,6 @@ static void gagt_status_print() {
 	strcpy(gagt_status_buffer_printed, gagt_status_buffer);
 }
 
-
 /*
  * gagt_status_notify()
  *
@@ -853,7 +833,6 @@ static void gagt_status_notify() {
 			gagt_status_print();
 	}
 }
-
 
 /*
  * gagt_status_redraw()
@@ -899,7 +878,6 @@ static void gagt_status_redraw() {
 	}
 }
 
-
 /*
  * gagt_status_in_delay()
  *
@@ -920,7 +898,6 @@ static void gagt_status_in_delay(int inside_delay) {
 	}
 }
 
-
 /*
  * gagt_status_cleanup()
  *
@@ -934,7 +911,6 @@ static void gagt_status_cleanup() {
 	free(gagt_status_buffer_printed);
 	gagt_status_buffer_printed = NULL;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port color and text attribute handling                         */
@@ -967,19 +943,18 @@ enum {
  * render the full range in all Glk's anyway.  Nevertheless...
  */
 struct gagt_attrset_t {
-	int color;     /* Text color. */
-	int blink;     /* Text blinking flag. */
-	int fixed;     /* Text fixed font flag. */
-	int emphasis;  /* Text emphasized flag. */
+	int color;    /* Text color. */
+	int blink;    /* Text blinking flag. */
+	int fixed;    /* Text fixed font flag. */
+	int emphasis; /* Text emphasized flag. */
 };
 
 /*
  * Attributes as currently set by AGiliTy.  The default values set up here
  * correspond to AGT_NORMAL.
  */
-static gagt_attrset_t gagt_current_attribute_set = { AGT_WHITE, FALSE,
-                                                     FALSE, FALSE
-                                                   };
+static gagt_attrset_t gagt_current_attribute_set = {AGT_WHITE, FALSE,
+                                                    FALSE, FALSE};
 
 /*
  * An extra flag to indicate if we have coerced fixed font override.  On
@@ -1002,7 +977,6 @@ static const unsigned char GAGT_COLOR_MASK = 0x0f,
 
 /* Forward declaration of message function. */
 static void gagt_standout_string(const char *message);
-
 
 /*
  * agt_textcolor()
@@ -1081,7 +1055,6 @@ void agt_textcolor(int color) {
 	           gagt_current_attribute_set.emphasis ? " bold" : "");
 }
 
-
 /*
  * gagt_coerce_fixed_font()
  *
@@ -1093,7 +1066,6 @@ void agt_textcolor(int color) {
 static void gagt_coerce_fixed_font(int coerce) {
 	gagt_coerced_fixed = coerce;
 }
-
 
 /*
  * gagt_pack_attributes()
@@ -1122,7 +1094,6 @@ static unsigned char gagt_pack_attributes(const gagt_attrset_t *attribute_set, i
 	return packed;
 }
 
-
 /*
  * gagt_unpack_attributes()
  *
@@ -1139,7 +1110,6 @@ static void gagt_unpack_attributes(unsigned char packed, gagt_attrset_t *attribu
 	attribute_set->emphasis = (packed & GAGT_EMPHASIS_MASK) != 0;
 }
 
-
 /*
  * gagt_pack_current_attributes()
  *
@@ -1149,7 +1119,6 @@ static void gagt_unpack_attributes(unsigned char packed, gagt_attrset_t *attribu
 static unsigned char gagt_pack_current_attributes() {
 	return gagt_pack_attributes(&gagt_current_attribute_set, gagt_coerced_fixed);
 }
-
 
 /*
  * gagt_init_user_styles()
@@ -1181,7 +1150,6 @@ static void gagt_init_user_styles() {
 	g_vm->glk_stylehint_set(wintype_TextBuffer, style_User2, stylehint_Oblique, 1);
 }
 
-
 /*
  * gagt_confirm_appearance()
  *
@@ -1209,7 +1177,6 @@ static int gagt_confirm_appearance(glui32 style, glui32 stylehint, glui32 expect
 	return FALSE;
 }
 
-
 /*
  * gagt_is_style_fixed()
  * gagt_is_style_bold()
@@ -1230,7 +1197,6 @@ static int gagt_is_style_bold(glui32 style) {
 static int gagt_is_style_oblique(glui32 style) {
 	return gagt_confirm_appearance(style, stylehint_Oblique, 1);
 }
-
 
 /*
  * gagt_select_style()
@@ -1293,8 +1259,7 @@ static glui32 gagt_select_style(gagt_attrset_t *attribute_set) {
 			 * If Subheader isn't guaranteed fixed width, nor is User1, we're
 			 * cornered into Preformatted.
 			 */
-			if (gagt_is_style_fixed(style_User1)
-			        && gagt_is_style_bold(style_User1))
+			if (gagt_is_style_fixed(style_User1) && gagt_is_style_bold(style_User1))
 				style = style_User1;
 
 			else if (gagt_is_style_fixed(style_Subheader))
@@ -1320,8 +1285,7 @@ static glui32 gagt_select_style(gagt_attrset_t *attribute_set) {
 			 * settling for Preformatted if neither of these two looks any
 			 * better.
 			 */
-			if (gagt_is_style_fixed(style_User2)
-			        && gagt_is_style_oblique(style_User2))
+			if (gagt_is_style_fixed(style_User2) && gagt_is_style_oblique(style_User2))
 				style = style_User2;
 
 			else if (gagt_is_style_fixed(style_Emphasized))
@@ -1349,7 +1313,6 @@ static glui32 gagt_select_style(gagt_attrset_t *attribute_set) {
 
 	return style;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port output buffering functions                                */
@@ -1399,10 +1362,10 @@ static const unsigned int GAGT_LINE_MAGIC = 0x5bc14482;
  * null terminator -- not needed since we retain length.
  */
 typedef struct {
-	unsigned char *data;        /* Buffered character data. */
-	unsigned char *attributes;  /* Parallel character attributes, packed. */
-	int allocation;             /* Bytes allocated to each of the above. */
-	int length;                 /* Amount of data actually buffered. */
+	unsigned char *data;       /* Buffered character data. */
+	unsigned char *attributes; /* Parallel character attributes, packed. */
+	int allocation;            /* Bytes allocated to each of the above. */
+	int length;                /* Amount of data actually buffered. */
 } gagt_string_t;
 typedef gagt_string_t *gagt_stringref_t;
 
@@ -1416,21 +1379,21 @@ typedef struct gagt_line_s *gagt_lineref_t;
 typedef struct gagt_paragraph_s *gagt_paragraphref_t;
 
 struct gagt_line_s {
-	unsigned int magic;             /* Assertion check dog-tag. */
+	unsigned int magic; /* Assertion check dog-tag. */
 
-	gagt_string_t buffer;           /* Buffered line string data. */
+	gagt_string_t buffer; /* Buffered line string data. */
 
-	int indent;                     /* Line indentation. */
-	int outdent;                    /* Trailing line whitespace. */
-	int real_length;                /* Real line length. */
-	int is_blank;                   /* Line blank flag. */
-	int is_hyphenated;              /* Line hyphenated flag. */
+	int indent;        /* Line indentation. */
+	int outdent;       /* Trailing line whitespace. */
+	int real_length;   /* Real line length. */
+	int is_blank;      /* Line blank flag. */
+	int is_hyphenated; /* Line hyphenated flag. */
 
-	gagt_paragraphref_t paragraph;  /* Paragraph containing the line. */
-	gagt_font_hint_t font_hint;     /* Line's font hint. */
+	gagt_paragraphref_t paragraph; /* Paragraph containing the line. */
+	gagt_font_hint_t font_hint;    /* Line's font hint. */
 
-	gagt_lineref_t next;            /* List next element. */
-	gagt_lineref_t prior;           /* List prior element. */
+	gagt_lineref_t next;  /* List next element. */
+	gagt_lineref_t prior; /* List prior element. */
 };
 
 /*
@@ -1444,7 +1407,7 @@ static gagt_lineref_t gagt_page_head = NULL,
  * Definition of the current output line; this one is appended to on
  * agt_puts(), and transferred into the page buffer on agt_newline().
  */
-static gagt_string_t gagt_current_buffer = { NULL, NULL, 0, 0 };
+static gagt_string_t gagt_current_buffer = {NULL, NULL, 0, 0};
 
 /*
  * gagt_string_append()
@@ -1492,7 +1455,6 @@ static void gagt_string_free(gagt_stringref_t buffer) {
 	buffer->allocation = buffer->length = 0;
 }
 
-
 /*
  * gagt_get_string_indent()
  * gagt_get_string_outdent()
@@ -1507,8 +1469,8 @@ static int gagt_get_string_indent(const gagt_stringref_t buffer) {
 
 	indent = 0;
 	for (index = 0;
-	        index < buffer->length && isspace(buffer->data[index]);
-	        index++)
+	     index < buffer->length && isspace(buffer->data[index]);
+	     index++)
 		indent++;
 
 	return indent;
@@ -1519,12 +1481,11 @@ static int gagt_get_string_outdent(const gagt_stringref_t buffer) {
 
 	outdent = 0;
 	for (index = buffer->length - 1;
-	        index >= 0 && isspace(buffer->data[index]); index--)
+	     index >= 0 && isspace(buffer->data[index]); index--)
 		outdent++;
 
 	return outdent;
 }
-
 
 static int gagt_get_string_real_length(const gagt_stringref_t buffer) {
 	int indent, outdent;
@@ -1544,8 +1505,7 @@ static int gagt_is_string_hyphenated(const gagt_stringref_t buffer) {
 
 	is_hyphenated = FALSE;
 
-	if (!gagt_is_string_blank(buffer)
-	        && gagt_get_string_real_length(buffer) > 1) {
+	if (!gagt_is_string_blank(buffer) && gagt_get_string_real_length(buffer) > 1) {
 		int last;
 
 		last = buffer->length - gagt_get_string_outdent(buffer) - 1;
@@ -1558,7 +1518,6 @@ static int gagt_is_string_hyphenated(const gagt_stringref_t buffer) {
 
 	return is_hyphenated;
 }
-
 
 /*
  * gagt_output_delete()
@@ -1583,7 +1542,6 @@ static void gagt_output_delete() {
 
 	gagt_string_free(&gagt_current_buffer);
 }
-
 
 /*
  * agt_puts()
@@ -1620,7 +1578,6 @@ void agt_puts(const char *cp_string) {
 		gagt_debug("agt_puts", "string='%s'", cp_string);
 	}
 }
-
 
 /*
  * agt_newline()
@@ -1671,7 +1628,6 @@ void agt_newline() {
 	}
 }
 
-
 /*
  * gagt_get_first_page_line()
  * gagt_get_next_page_line()
@@ -1708,7 +1664,6 @@ static gagt_lineref_t gagt_get_prior_page_line(const gagt_lineref_t line) {
 	return prior_line;
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port paragraphing functions and data                           */
 /*---------------------------------------------------------------------*/
@@ -1724,16 +1679,16 @@ typedef const struct gagt_special_s *gagt_specialref_t;
  * pointer to the first line buffer in the paragraph.
  */
 struct gagt_paragraph_s {
-	unsigned int magic;             /* Assertion check dog-tag. */
+	unsigned int magic; /* Assertion check dog-tag. */
 
-	gagt_lineref_t first_line;      /* First line in the paragraph. */
-	gagt_specialref_t special;      /* Special paragraph entry. */
+	gagt_lineref_t first_line; /* First line in the paragraph. */
+	gagt_specialref_t special; /* Special paragraph entry. */
 
-	int line_count;                 /* Number of lines in the paragraph. */
-	int id;                         /* Paragraph id, sequence, for debug only. */
+	int line_count; /* Number of lines in the paragraph. */
+	int id;         /* Paragraph id, sequence, for debug only. */
 
-	gagt_paragraphref_t next;       /* List next element. */
-	gagt_paragraphref_t prior;      /* List prior element. */
+	gagt_paragraphref_t next;  /* List next element. */
+	gagt_paragraphref_t prior; /* List prior element. */
 };
 
 /*
@@ -1763,7 +1718,6 @@ static void gagt_paragraphs_delete() {
 	gagt_paragraphs_head = gagt_paragraphs_tail = NULL;
 }
 
-
 /*
  * gagt_find_paragraph_start()
  *
@@ -1787,7 +1741,6 @@ static gagt_lineref_t gagt_find_paragraph_start(const gagt_lineref_t begin) {
 
 	return match;
 }
-
 
 /*
  * gagt_find_block_end()
@@ -1829,7 +1782,6 @@ static gagt_lineref_t gagt_find_blank_line_block_end(const gagt_lineref_t begin)
 	return gagt_find_block_end(begin, -1);
 }
 
-
 /*
  * gagt_find_paragraph_end()
  *
@@ -1856,8 +1808,7 @@ static gagt_lineref_t gagt_find_paragraph_end(const gagt_lineref_t first_line) {
 	 * If either line is grossly indented, forget about trying to infer
 	 * anything from this, and just break the paragraph on the next blank line.
 	 */
-	if (first_line->indent > screen_width / 4
-	        || second_line->indent > screen_width / 4) {
+	if (first_line->indent > screen_width / 4 || second_line->indent > screen_width / 4) {
 		return gagt_find_blank_line_block_end(second_line);
 	}
 
@@ -1905,8 +1856,7 @@ static gagt_lineref_t gagt_find_paragraph_end(const gagt_lineref_t first_line) {
 		}
 
 		/* As above, give up on gross indentation. */
-		if (second_line->indent > screen_width / 4
-		        || third_line->indent > screen_width / 4) {
+		if (second_line->indent > screen_width / 4 || third_line->indent > screen_width / 4) {
 			return gagt_find_blank_line_block_end(third_line);
 		}
 
@@ -1936,7 +1886,6 @@ static gagt_lineref_t gagt_find_paragraph_end(const gagt_lineref_t first_line) {
 		return gagt_find_blank_line_block_end(second_line);
 	}
 }
-
 
 /*
  * gagt_paragraph_page()
@@ -1980,7 +1929,7 @@ static void gagt_paragraph_page() {
 		 * and increment the paragraph's line count.
 		 */
 		for (line = start;
-		        line != end; line = gagt_get_next_page_line(line)) {
+		     line != end; line = gagt_get_next_page_line(line)) {
 			line->paragraph = paragraph;
 			paragraph->line_count++;
 		}
@@ -1997,7 +1946,6 @@ static void gagt_paragraph_page() {
 			start = NULL;
 	}
 }
-
 
 /*
  * gagt_get_first_paragraph()
@@ -2021,7 +1969,6 @@ static gagt_paragraphref_t gagt_get_next_paragraph(const gagt_paragraphref_t par
 	assert(!next_paragraph || next_paragraph->magic == GAGT_PARAGRAPH_MAGIC);
 	return next_paragraph;
 }
-
 
 /*
  * gagt_get_first_paragraph_line()
@@ -2066,7 +2013,6 @@ static gagt_lineref_t gagt_get_prior_paragraph_line(const gagt_lineref_t line) {
 		return NULL;
 }
 
-
 /*
  * gagt_get_paragraph_line_count()
  *
@@ -2077,7 +2023,6 @@ static int gagt_get_paragraph_line_count(const gagt_paragraphref_t paragraph) {
 
 	return paragraph->line_count;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port page buffer analysis functions                            */
@@ -2092,7 +2037,6 @@ static int gagt_get_paragraph_line_count(const gagt_paragraphref_t paragraph) {
 static const int GAGT_THRESHOLD = 4,
                  GAGT_COMMON_THRESHOLD = 8;
 static const char *const GAGT_COMMON_PUNCTUATION = ".!?";
-
 
 /*
  * gagt_line_is_standout()
@@ -2115,7 +2059,7 @@ static int gagt_line_is_standout(const gagt_lineref_t line) {
 	all_formatted = TRUE;
 	upper_count = lower_count = 0;
 	for (index = line->indent;
-	        index < line->buffer.length - line->outdent; index++) {
+	     index < line->buffer.length - line->outdent; index++) {
 		gagt_attrset_t attribute_set;
 		unsigned char character;
 
@@ -2126,8 +2070,7 @@ static int gagt_line_is_standout(const gagt_lineref_t line) {
 		 * If no AGT attribute is set for this character, then not all of the
 		 * line is standout text.  In this case, reset the all_formatted flag.
 		 */
-		if (!(attribute_set.blink
-		        || attribute_set.fixed || attribute_set.emphasis))
+		if (!(attribute_set.blink || attribute_set.fixed || attribute_set.emphasis))
 			all_formatted = FALSE;
 
 		/* Count upper and lower case characters. */
@@ -2143,7 +2086,6 @@ static int gagt_line_is_standout(const gagt_lineref_t line) {
 	 */
 	return all_formatted || (upper_count > 0 && lower_count == 0);
 }
-
 
 /*
  * gagt_set_font_hint_proportional()
@@ -2178,13 +2120,9 @@ static void gagt_set_font_hint_proportional_newline(gagt_lineref_t line) {
 
 static void gagt_set_font_hint_fixed_width(gagt_lineref_t line) {
 	/* Fixed width font is the strongest hint. */
-	if (line->font_hint == HINT_NONE
-	        || line->font_hint == HINT_PROPORTIONAL
-	        || line->font_hint == HINT_PROPORTIONAL_NEWLINE
-	        || line->font_hint == HINT_PROPORTIONAL_NEWLINE_STANDOUT)
+	if (line->font_hint == HINT_NONE || line->font_hint == HINT_PROPORTIONAL || line->font_hint == HINT_PROPORTIONAL_NEWLINE || line->font_hint == HINT_PROPORTIONAL_NEWLINE_STANDOUT)
 		line->font_hint = HINT_FIXED_WIDTH;
 }
-
 
 /*
  * gagt_assign_paragraph_font_hints()
@@ -2216,7 +2154,8 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 			 */
 			if (ispunct(character)) {
 				threshold[character] = strchr(GAGT_COMMON_PUNCTUATION, character)
-				                       ? GAGT_COMMON_THRESHOLD : GAGT_THRESHOLD;
+				                           ? GAGT_COMMON_THRESHOLD
+				                           : GAGT_THRESHOLD;
 			}
 		}
 
@@ -2239,9 +2178,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 	 * interpreter parser.  In this case, set the line for proportional with
 	 * newline, and return immediately.
 	 */
-	if (gagt_get_first_paragraph() == paragraph
-	        && !gagt_get_next_paragraph(paragraph)
-	        && !gagt_get_next_paragraph_line(first_line)) {
+	if (gagt_get_first_paragraph() == paragraph && !gagt_get_next_paragraph(paragraph) && !gagt_get_next_paragraph_line(first_line)) {
 		/*
 		 * Set the first paragraph line for proportional with a newline, and
 		 * return.
@@ -2261,7 +2198,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 	 */
 	is_table = FALSE;
 	for (line = first_line;
-	        line && !is_table; line = gagt_get_next_paragraph_line(line)) {
+	     line && !is_table; line = gagt_get_next_paragraph_line(line)) {
 		int index, counts[BYTE_MAX_VAL + 1], total_counts;
 
 		/*
@@ -2277,7 +2214,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 		 * and outdent.
 		 */
 		for (index = line->indent;
-		        index < line->buffer.length - line->outdent && !is_table; index++) {
+		     index < line->buffer.length - line->outdent && !is_table; index++) {
 			int character;
 			character = line->buffer.data[index];
 
@@ -2315,7 +2252,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 	 */
 	if (!is_table) {
 		for (line = first_line;
-		        line && !is_table; line = gagt_get_next_paragraph_line(line)) {
+		     line && !is_table; line = gagt_get_next_paragraph_line(line)) {
 			int index, count;
 
 			/*
@@ -2324,8 +2261,8 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 			 */
 			count = 0;
 			for (index = line->indent;
-			        index < line->buffer.length - line->outdent && !is_table;
-			        index++) {
+			     index < line->buffer.length - line->outdent && !is_table;
+			     index++) {
 				int character;
 				character = line->buffer.data[index];
 
@@ -2344,7 +2281,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 	 */
 	if (is_table && gagt_get_next_paragraph_line(first_line)) {
 		for (line = first_line;
-		        line; line = gagt_get_next_paragraph_line(line)) {
+		     line; line = gagt_get_next_paragraph_line(line)) {
 			gagt_set_font_hint_fixed_width(line);
 		}
 
@@ -2363,8 +2300,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 	 * portionally with a newline, and don't consider it as a further part of
 	 * the paragraph.
 	 */
-	if (gagt_line_is_standout(first_line)
-	        || first_line->real_length < screen_width / 2) {
+	if (gagt_line_is_standout(first_line) || first_line->real_length < screen_width / 2) {
 		/* Set the first paragraph line for a newline. */
 		gagt_set_font_hint_proportional_newline(first_line);
 
@@ -2392,7 +2328,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 	 */
 	in_list = FALSE;
 	for (line = first_line;
-	        line; line = gagt_get_next_paragraph_line(line)) {
+	     line; line = gagt_get_next_paragraph_line(line)) {
 		gagt_lineref_t next_line;
 
 		next_line = gagt_get_next_paragraph_line(line);
@@ -2449,7 +2385,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 
 	/* ... then deal with the rest of the lines, looking for standouts. */
 	for (line = gagt_get_next_paragraph_line(first_line);
-	        line; line = gagt_get_next_paragraph_line(line)) {
+	     line; line = gagt_get_next_paragraph_line(line)) {
 		if (gagt_line_is_standout(line)) {
 			gagt_lineref_t prior_line;
 
@@ -2484,8 +2420,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 		 * is more than three quarters width.  If it is, set newline as
 		 * significant for the first paragraph line.
 		 */
-		if (first_line->real_length < screen_width / 2
-		        && next_line->real_length > screen_width * 3 / 4) {
+		if (first_line->real_length < screen_width / 2 && next_line->real_length > screen_width * 3 / 4) {
 			gagt_set_font_hint_proportional_newline(first_line);
 		}
 	}
@@ -2501,7 +2436,7 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 
 		all_short = TRUE;
 		for (line = first_line;
-		        line; line = gagt_get_next_paragraph_line(line)) {
+		     line; line = gagt_get_next_paragraph_line(line)) {
 			/* Clear flag if this line isn't 'short'. */
 			if (line->real_length >= screen_width / 2) {
 				all_short = FALSE;
@@ -2515,13 +2450,12 @@ static void gagt_assign_paragraph_font_hints(const gagt_paragraphref_t paragraph
 		 */
 		if (all_short) {
 			for (line = first_line;
-			        line; line = gagt_get_next_paragraph_line(line)) {
+			     line; line = gagt_get_next_paragraph_line(line)) {
 				gagt_set_font_hint_proportional_newline(line);
 			}
 		}
 	}
 }
-
 
 /*
  * gagt_assign_font_hints()
@@ -2534,12 +2468,11 @@ static void gagt_assign_font_hints() {
 	gagt_paragraphref_t paragraph;
 
 	for (paragraph = gagt_get_first_paragraph();
-	        paragraph; paragraph = gagt_get_next_paragraph(paragraph)) {
+	     paragraph; paragraph = gagt_get_next_paragraph(paragraph)) {
 		if (!paragraph->special)
 			gagt_assign_paragraph_font_hints(paragraph);
 	}
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port special paragraph functions and data                      */
@@ -2573,144 +2506,111 @@ typedef const struct gagt_special_s {
  */
 static gagt_special_t GAGT_SPECIALS[] = {
 
-	/* Initial screen AGT game type line. */
-	{
-		1,
-		{"[Created with Malmberg and Welch's Adventure Game Toolkit]"},
-		"|ECreated with Malmberg and Welch's Adventure Game Toolkit|N\n"
-	},
+    /* Initial screen AGT game type line. */
+    {
+        1,
+        {"[Created with Malmberg and Welch's Adventure Game Toolkit]"},
+        "|ECreated with Malmberg and Welch's Adventure Game Toolkit|N\n"},
 
-	/* Normal version of initial interpreter information block. */
-	{
-		4,
-		{
-			"This game is being executed by",
-			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.1.1",
-			"Copyright (C) 1996-99,2001 by Robert Masenten",
-			"Glk version"
-		},
-		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
-		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
-		"    |EGlk version|N\n"
-	},
+    /* Normal version of initial interpreter information block. */
+    {
+        4,
+        {"This game is being executed by",
+         "AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.1.1",
+         "Copyright (C) 1996-99,2001 by Robert Masenten",
+         "Glk version"},
+        "This game is being executed by:\n\n"
+        "    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+        "    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
+        "    |EGlk version|N\n"},
 
-	/* AGiliTy "information" screen header block. */
-	{
-		5,
-		{
-			"AGiliTy",
-			"The (Mostly) Universal AGT Interpreter, version 1.1.1.1",
-			"Copyright (C) 1996-1999,2001 by Robert Masenten",
-			"[Glk version]",
-			"-----------------------------------------------------------"
-		},
-		"|SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
-		"|ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
-		"|EGlk version|N\n"
-	},
+    /* AGiliTy "information" screen header block. */
+    {
+        5,
+        {"AGiliTy",
+         "The (Mostly) Universal AGT Interpreter, version 1.1.1.1",
+         "Copyright (C) 1996-1999,2001 by Robert Masenten",
+         "[Glk version]",
+         "-----------------------------------------------------------"},
+        "|SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+        "|ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
+        "|EGlk version|N\n"},
 
-	/* "HIT ANY KEY" message, usually displayed after a game's introduction. */
-	{
-		1,
-		{"--- HIT ANY KEY ---"},
-		"|E[Press any key...]|N"
-	},
+    /* "HIT ANY KEY" message, usually displayed after a game's introduction. */
+    {
+        1,
+        {"--- HIT ANY KEY ---"},
+        "|E[Press any key...]|N"},
 
-	/* Alternative, shrunken version of initial interpreter information block. */
-	{
-		2,
-		{
-			"Being run by AGiliTy  version 1.1.1.1, Copyright (C) 1996-99,2001"
-			" Robert Masenten",
-			"Glk version"
-		},
-		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
-		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
-		"    |EGlk version|N\n"
-	},
+    /* Alternative, shrunken version of initial interpreter information block. */
+    {
+        2,
+        {"Being run by AGiliTy  version 1.1.1.1, Copyright (C) 1996-99,2001"
+         " Robert Masenten",
+         "Glk version"},
+        "This game is being executed by:\n\n"
+        "    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+        "    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
+        "    |EGlk version|N\n"},
 
-	/* Alternative, minimal version of initial interpreter information block. */
-	{
-		1,
-		{
-			"Being run by AGiliTy  version 1.1.1.1, Copyright (C) 1996-99,2001"
-			" Robert Masenten"
-		},
-		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
-		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
-		"    |EGlk version|N\n"
-	},
+    /* Alternative, minimal version of initial interpreter information block. */
+    {
+        1,
+        {"Being run by AGiliTy  version 1.1.1.1, Copyright (C) 1996-99,2001"
+         " Robert Masenten"},
+        "This game is being executed by:\n\n"
+        "    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+        "    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
+        "    |EGlk version|N\n"},
 
-	/* Lengthy version of the "Created with..." message. */
-	{
-		2,
-		{
-			"This game was created with Malmberg and Welch's Adventure Game Toolkit;"
-			" it is",
-			"being executed by"
-		},
-		"|ECreated with Malmberg and Welch's Adventure Game Toolkit|N\n"
-	},
+    /* Lengthy version of the "Created with..." message. */
+    {
+        2,
+        {"This game was created with Malmberg and Welch's Adventure Game Toolkit;"
+         " it is",
+         "being executed by"},
+        "|ECreated with Malmberg and Welch's Adventure Game Toolkit|N\n"},
 
-	/* Three-line version of initial interpreter information block. */
-	{
-		3,
-		{
-			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.1.1",
-			"Copyright (C) 1996-99,2001 by Robert Masenten",
-			"Glk version"
-		},
-		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
-		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
-		"    |EGlk version|N\n"
-	},
+    /* Three-line version of initial interpreter information block. */
+    {
+        3,
+        {"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.1.1",
+         "Copyright (C) 1996-99,2001 by Robert Masenten",
+         "Glk version"},
+        "This game is being executed by:\n\n"
+        "    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+        "    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
+        "    |EGlk version|N\n"},
 
-	/*
+    /*
 	 * Assorted special verb output messages, with the extra icky quality that
 	 * we have to spot messages that wrap because we forced screen_width to 80.
 	 */
-	{
-		2,
-		{
-			"[Now in BRIEF mode (room descriptions will only be printed"
-			" when they are entered",
-			"the first time)]"
-		},
-		"|E[Now in BRIEF mode: Room descriptions will only be printed"
-		" when rooms are entered for the first time.]|N\n"
-	},
+    {
+        2,
+        {"[Now in BRIEF mode (room descriptions will only be printed"
+         " when they are entered",
+         "the first time)]"},
+        "|E[Now in BRIEF mode: Room descriptions will only be printed"
+        " when rooms are entered for the first time.]|N\n"},
 
-	{
-		2,
-		{
-			"[Now in VERBOSE mode (room descriptions will be printed"
-			" every time you enter a",
-			"room)]"
-		},
-		"|E[Now in VERBOSE mode: Room descriptions will be printed"
-		" every time you enter a room.]|N\n"
-	},
+    {2,
+     {"[Now in VERBOSE mode (room descriptions will be printed"
+      " every time you enter a",
+      "room)]"},
+     "|E[Now in VERBOSE mode: Room descriptions will be printed"
+     " every time you enter a room.]|N\n"},
 
-	{
-		1,
-		{"[LISTEXIT mode on: room exits will be listed.]"},
-		"|E[LISTEXIT mode on: Room exits will be listed.]|N\n"
-	},
+    {1,
+     {"[LISTEXIT mode on: room exits will be listed.]"},
+     "|E[LISTEXIT mode on: Room exits will be listed.]|N\n"},
 
-	{
-		1,
-		{"[LISTEXIT mode off: room exits will not be listed.]"},
-		"|E[LISTEXIT mode off: Room exits will not be listed.]|N\n"
-	},
+    {1,
+     {"[LISTEXIT mode off: room exits will not be listed.]"},
+     "|E[LISTEXIT mode off: Room exits will not be listed.]|N\n"},
 
-	/* End of table sentinel entry.  Do not delete. */
-	{0, {NULL}, NULL}
-};
-
+    /* End of table sentinel entry.  Do not delete. */
+    {0, {NULL}, NULL}};
 
 /*
  * gagt_compare_special_line()
@@ -2726,14 +2626,13 @@ static int gagt_compare_special_line(const char *compare, const gagt_lineref_t l
 	 * Return true if the lengths match, and the real line data (excluding
 	 * indent and outdent) also matches, ignoring case.
 	 */
-	return (int)strlen(compare) == line->real_length
-	       && gagt_strncasecmp(compare,
-	                           (const char *)line->buffer.data + line->indent,
-	                           line->real_length) == 0;
+	return (int)strlen(compare) == line->real_length && gagt_strncasecmp(compare,
+	                                                                     (const char *)line->buffer.data + line->indent,
+	                                                                     line->real_length) == 0;
 }
 
 static int gagt_compare_special_paragraph(const gagt_specialref_t special,
-        const gagt_paragraphref_t paragraph) {
+                                          const gagt_paragraphref_t paragraph) {
 	/* If the line counts match, compare line by line. */
 	if (special->line_count == gagt_get_paragraph_line_count(paragraph)) {
 		gagt_lineref_t line;
@@ -2741,8 +2640,8 @@ static int gagt_compare_special_paragraph(const gagt_specialref_t special,
 
 		is_match = TRUE;
 		for (index = 0, line = gagt_get_first_paragraph_line(paragraph);
-		        index < special->line_count && line;
-		        index++, line = gagt_get_next_paragraph_line(line)) {
+		     index < special->line_count && line;
+		     index++, line = gagt_get_next_paragraph_line(line)) {
 			if (!gagt_compare_special_line(special->compare[index], line)) {
 				is_match = FALSE;
 				break;
@@ -2755,7 +2654,6 @@ static int gagt_compare_special_paragraph(const gagt_specialref_t special,
 	/* Line count mismatch; return FALSE. */
 	return FALSE;
 }
-
 
 /*
  * gagt_find_equivalent_special()
@@ -2777,7 +2675,6 @@ static gagt_specialref_t gagt_find_equivalent_special(gagt_paragraphref_t paragr
 
 	return match;
 }
-
 
 /*
  * gagt_mark_specials()
@@ -2818,12 +2715,11 @@ static void gagt_mark_specials() {
 		gagt_paragraphref_t paragraph;
 
 		for (paragraph = gagt_get_first_paragraph();
-		        paragraph; paragraph = gagt_get_next_paragraph(paragraph)) {
+		     paragraph; paragraph = gagt_get_next_paragraph(paragraph)) {
 			paragraph->special = gagt_find_equivalent_special(paragraph);
 		}
 	}
 }
-
 
 /*
  * gagt_display_special()
@@ -2893,7 +2789,6 @@ static glui32 gagt_display_special(const gagt_specialref_t special, glui32 curre
 	return set_style;
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port output functions                                          */
 /*---------------------------------------------------------------------*/
@@ -2933,7 +2828,6 @@ static glui32 gagt_display_provide_help_hint(glui32 current_style) {
 
 	return current_style;
 }
-
 
 /*
  * gagt_display_text_element()
@@ -2992,7 +2886,6 @@ static glui32 gagt_display_text_element(const char *string, const unsigned char 
 	return set_style;
 }
 
-
 /*
  * gagt_display_line()
  *
@@ -3034,7 +2927,6 @@ static glui32 gagt_display_line(const gagt_lineref_t line, glui32 current_style,
 
 	return set_style;
 }
-
 
 /*
  * gagt_display_hinted_line()
@@ -3105,7 +2997,6 @@ static glui32 gagt_display_hinted_line(const gagt_lineref_t line, glui32 current
 	return style;
 }
 
-
 /*
  * gagt_display_auto()
  *
@@ -3123,7 +3014,7 @@ static void gagt_display_auto() {
 
 	/* Handle each paragraph. */
 	for (paragraph = gagt_get_first_paragraph();
-	        paragraph; paragraph = gagt_get_next_paragraph(paragraph)) {
+	     paragraph; paragraph = gagt_get_next_paragraph(paragraph)) {
 		/* If a special paragraph, output replacement text instead. */
 		if (paragraph->special) {
 			style = gagt_display_special(paragraph->special, style);
@@ -3139,8 +3030,7 @@ static void gagt_display_auto() {
 			 * Output a blank line where the first line of the first paragraph
 			 * is standout; this sets it apart from the prompt.
 			 */
-			if (paragraph == gagt_get_first_paragraph()
-			        && line == gagt_get_first_paragraph_line(paragraph)) {
+			if (paragraph == gagt_get_first_paragraph() && line == gagt_get_first_paragraph_line(paragraph)) {
 				if (line->font_hint == HINT_PROPORTIONAL_NEWLINE_STANDOUT)
 					g_vm->glk_put_char('\n');
 			}
@@ -3173,7 +3063,6 @@ static void gagt_display_auto() {
 	                                  gagt_current_buffer.length, style, FALSE);
 }
 
-
 /*
  * gagt_display_manual()
  *
@@ -3188,7 +3077,7 @@ static void gagt_display_manual(int fixed_width) {
 	g_vm->glk_set_style(style);
 
 	for (line = gagt_get_first_page_line();
-	        line; line = gagt_get_next_page_line(line)) {
+	     line; line = gagt_get_next_page_line(line)) {
 		gagt_paragraphref_t paragraph;
 
 		paragraph = line->paragraph;
@@ -3217,7 +3106,6 @@ static void gagt_display_manual(int fixed_width) {
 	                                  style, fixed_width);
 }
 
-
 /*
  * gagt_display_debug()
  *
@@ -3230,7 +3118,7 @@ static void gagt_display_debug() {
 
 	g_vm->glk_set_style(style_Preformatted);
 	for (line = gagt_get_first_page_line();
-	        line; line = gagt_get_next_page_line(line)) {
+	     line; line = gagt_get_next_page_line(line)) {
 		gagt_paragraphref_t paragraph;
 
 		paragraph = line->paragraph;
@@ -3239,16 +3127,13 @@ static void gagt_display_debug() {
 		        paragraph ? paragraph->id + 1 : 0,
 		        paragraph ? paragraph->line_count : 0,
 		        paragraph && paragraph->special
-		        ? paragraph->special - GAGT_SPECIALS + 1 : 0,
+		            ? paragraph->special - GAGT_SPECIALS + 1
+		            : 0,
 		        line->buffer.allocation, line->buffer.length,
 		        line->indent, line->outdent,
 		        line->real_length,
 		        line->is_hyphenated ? 'h' : '_',
-		        line->is_blank ? 'b' :
-		        line->font_hint == HINT_PROPORTIONAL ? 'P' :
-		        line->font_hint == HINT_PROPORTIONAL_NEWLINE ? 'N' :
-		        line->font_hint == HINT_PROPORTIONAL_NEWLINE_STANDOUT ? 'S' :
-		        line->font_hint == HINT_FIXED_WIDTH ? 'F' : '_');
+		        line->is_blank ? 'b' : line->font_hint == HINT_PROPORTIONAL ? 'P' : line->font_hint == HINT_PROPORTIONAL_NEWLINE ? 'N' : line->font_hint == HINT_PROPORTIONAL_NEWLINE_STANDOUT ? 'S' : line->font_hint == HINT_FIXED_WIDTH ? 'F' : '_');
 		g_vm->glk_put_string(buffer);
 
 		g_vm->glk_put_buffer((const char *)line->buffer.data, line->buffer.length);
@@ -3267,7 +3152,6 @@ static void gagt_display_debug() {
 
 	gagt_help_requested = FALSE;
 }
-
 
 /*
  * gagt_output_flush()
@@ -3318,7 +3202,6 @@ static void gagt_output_flush() {
 	gagt_output_delete();
 }
 
-
 /*
  * agt_clrscr()
  *
@@ -3342,7 +3225,6 @@ void agt_clrscr() {
 		gagt_debug("agt_clrscr", "");
 	}
 }
-
 
 /*
  * gagt_styled_string()
@@ -3392,7 +3274,6 @@ static void gagt_header_string(const char *message) {
 	gagt_styled_string(style_Header, message);
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port delay functions                                           */
 /*---------------------------------------------------------------------*/
@@ -3419,7 +3300,6 @@ static const char GAGT_DELAY_SUSPEND = ' ';
  */
 static int gagt_delays_suspended = FALSE;
 
-
 /*
  * agt_delay()
  *
@@ -3439,9 +3319,7 @@ void agt_delay(int seconds) {
 	 * ignore delays, if a zero or negative delay was specified, or if delays
 	 * are currently temporarily suspended.
 	 */
-	if (!g_vm->glk_gestalt(gestalt_Timer, 0)
-	        || g_vm->gagt_delay_mode == DELAY_OFF
-	        || seconds <= 0 || gagt_delays_suspended)
+	if (!g_vm->glk_gestalt(gestalt_Timer, 0) || g_vm->gagt_delay_mode == DELAY_OFF || seconds <= 0 || gagt_delays_suspended)
 		return;
 
 	/* Flush any pending buffered output, and refresh status to show waiting. */
@@ -3449,8 +3327,7 @@ void agt_delay(int seconds) {
 	gagt_status_in_delay(TRUE);
 
 	/* Calculate the number of milliseconds to delay. */
-	milliseconds = (seconds * GAGT_MS_PER_SEC)
-	               / (g_vm->gagt_delay_mode == DELAY_SHORT ? 2 : 1);
+	milliseconds = (seconds * GAGT_MS_PER_SEC) / (g_vm->gagt_delay_mode == DELAY_SHORT ? 2 : 1);
 
 	/* Request timer events, and let a keypress cancel the delay. */
 	g_vm->glk_request_char_event(g_vm->gagt_main_window);
@@ -3493,7 +3370,6 @@ void agt_delay(int seconds) {
 	           delay_completed ? "completed" : "canceled");
 }
 
-
 /*
  * gagt_delay_resume()
  *
@@ -3505,7 +3381,6 @@ static void gagt_delay_resume() {
 	gagt_delays_suspended = FALSE;
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port box drawing functions                                     */
 /*---------------------------------------------------------------------*/
@@ -3516,7 +3391,6 @@ static int gagt_box_busy = FALSE,
            gagt_box_width = 0,
            gagt_box_height = 0,
            gagt_box_startx = 0;
-
 
 /*
  * gagt_box_rule()
@@ -3550,7 +3424,6 @@ static void gagt_box_position(int indent) {
 	agt_puts(spaces);
 	free(spaces);
 }
-
 
 /*
  * agt_makebox()
@@ -3652,7 +3525,6 @@ void agt_endbox() {
 	gagt_debug("agt_endbox", "");
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk command escape functions                                       */
 /*---------------------------------------------------------------------*/
@@ -3673,16 +3545,15 @@ static void gagt_command_script(const char *argument) {
 			return;
 		}
 
-		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_Transcript
-		          | fileusage_TextMode,
-		          filemode_WriteAppend, 0);
+		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_Transcript | fileusage_TextMode,
+		                                             filemode_WriteAppend, 0);
 		if (!fileref) {
 			gagt_standout_string("Glk transcript failed.\n");
 			return;
 		}
 
 		g_vm->gagt_transcript_stream = g_vm->glk_stream_open_file(fileref,
-		                         filemode_WriteAppend, 0);
+		                                                          filemode_WriteAppend, 0);
 		g_vm->glk_fileref_destroy(fileref);
 		if (!g_vm->gagt_transcript_stream) {
 			gagt_standout_string("Glk transcript failed.\n");
@@ -3723,7 +3594,6 @@ static void gagt_command_script(const char *argument) {
 	}
 }
 
-
 /*
  * gagt_command_inputlog()
  *
@@ -3740,16 +3610,15 @@ static void gagt_command_inputlog(const char *argument) {
 			return;
 		}
 
-		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord
-		          | fileusage_BinaryMode,
-		          filemode_WriteAppend, 0);
+		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord | fileusage_BinaryMode,
+		                                             filemode_WriteAppend, 0);
 		if (!fileref) {
 			gagt_standout_string("Glk input logging failed.\n");
 			return;
 		}
 
 		g_vm->gagt_inputlog_stream = g_vm->glk_stream_open_file(fileref,
-		                       filemode_WriteAppend, 0);
+		                                                        filemode_WriteAppend, 0);
 		g_vm->glk_fileref_destroy(fileref);
 		if (!g_vm->gagt_inputlog_stream) {
 			gagt_standout_string("Glk input logging failed.\n");
@@ -3786,7 +3655,6 @@ static void gagt_command_inputlog(const char *argument) {
 	}
 }
 
-
 /*
  * gagt_command_readlog()
  *
@@ -3803,9 +3671,8 @@ static void gagt_command_readlog(const char *argument) {
 			return;
 		}
 
-		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord
-		          | fileusage_BinaryMode,
-		          filemode_Read, 0);
+		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord | fileusage_BinaryMode,
+		                                             filemode_Read, 0);
 		if (!fileref) {
 			gagt_standout_string("Glk read log failed.\n");
 			return;
@@ -3854,7 +3721,6 @@ static void gagt_command_readlog(const char *argument) {
 	}
 }
 
-
 /*
  * gagt_command_abbreviations()
  *
@@ -3898,7 +3764,6 @@ static void gagt_command_abbreviations(const char *argument) {
 	}
 }
 
-
 /*
  * gagt_command_fonts()
  *
@@ -3921,8 +3786,7 @@ static void gagt_command_fonts(const char *argument) {
 		gagt_normal_string("Glk font control is now 'fixed'.\n");
 	}
 
-	else if (gagt_strcasecmp(argument, "variable") == 0
-	         || gagt_strcasecmp(argument, "proportional") == 0) {
+	else if (gagt_strcasecmp(argument, "variable") == 0 || gagt_strcasecmp(argument, "proportional") == 0) {
 		if (g_vm->gagt_font_mode == FONT_PROPORTIONAL) {
 			gagt_normal_string("Glk font control is already 'proportional'.\n");
 			return;
@@ -3932,8 +3796,7 @@ static void gagt_command_fonts(const char *argument) {
 		gagt_normal_string("Glk font control is now 'proportional'.\n");
 	}
 
-	else if (gagt_strcasecmp(argument, "auto") == 0
-	         || gagt_strcasecmp(argument, "automatic") == 0) {
+	else if (gagt_strcasecmp(argument, "auto") == 0 || gagt_strcasecmp(argument, "automatic") == 0) {
 		if (g_vm->gagt_font_mode == FONT_AUTOMATIC) {
 			gagt_normal_string("Glk font control is already 'automatic'.\n");
 			return;
@@ -3991,7 +3854,6 @@ static void gagt_command_fonts(const char *argument) {
 	}
 }
 
-
 /*
  * gagt_command_delays()
  *
@@ -4006,8 +3868,7 @@ static void gagt_command_delays(const char *argument) {
 		return;
 	}
 
-	if (gagt_strcasecmp(argument, "full") == 0
-	        || gagt_strcasecmp(argument, "on") == 0) {
+	if (gagt_strcasecmp(argument, "full") == 0 || gagt_strcasecmp(argument, "on") == 0) {
 		if (g_vm->gagt_delay_mode == DELAY_FULL) {
 			gagt_normal_string("Glk delay mode is already 'full'.\n");
 			return;
@@ -4017,8 +3878,7 @@ static void gagt_command_delays(const char *argument) {
 		gagt_normal_string("Glk delay mode is now 'full'.\n");
 	}
 
-	else if (gagt_strcasecmp(argument, "short") == 0
-	         || gagt_strcasecmp(argument, "half") == 0) {
+	else if (gagt_strcasecmp(argument, "short") == 0 || gagt_strcasecmp(argument, "half") == 0) {
 		if (g_vm->gagt_delay_mode == DELAY_SHORT) {
 			gagt_normal_string("Glk delay mode is already 'short'.\n");
 			return;
@@ -4028,8 +3888,7 @@ static void gagt_command_delays(const char *argument) {
 		gagt_normal_string("Glk delay mode is now 'short'.\n");
 	}
 
-	else if (gagt_strcasecmp(argument, "none") == 0
-	         || gagt_strcasecmp(argument, "off") == 0) {
+	else if (gagt_strcasecmp(argument, "none") == 0 || gagt_strcasecmp(argument, "off") == 0) {
 		if (g_vm->gagt_delay_mode == DELAY_OFF) {
 			gagt_normal_string("Glk delay mode is already 'none'.\n");
 			return;
@@ -4072,7 +3931,6 @@ static void gagt_command_delays(const char *argument) {
 	}
 }
 
-
 /*
  * gagt_command_width()
  *
@@ -4102,7 +3960,6 @@ static void gagt_command_width(const char *argument) {
 	gagt_normal_string(status_width == 1 ? " character" : " characters");
 	gagt_normal_string(".\n");
 }
-
 
 /*
  * gagt_command_replacements()
@@ -4147,7 +4004,6 @@ static void gagt_command_replacements(const char *argument) {
 	}
 }
 
-
 /*
  * gagt_command_statusline()
  *
@@ -4161,8 +4017,7 @@ static void gagt_command_statusline(const char *argument) {
 		return;
 	}
 
-	if (gagt_strcasecmp(argument, "extended") == 0
-	        || gagt_strcasecmp(argument, "full") == 0) {
+	if (gagt_strcasecmp(argument, "extended") == 0 || gagt_strcasecmp(argument, "full") == 0) {
 		if (g_vm->gagt_extended_status_enabled) {
 			gagt_normal_string("Glk status line mode is already 'extended'.\n");
 			return;
@@ -4176,8 +4031,7 @@ static void gagt_command_statusline(const char *argument) {
 		gagt_normal_string("Glk status line mode is now 'extended'.\n");
 	}
 
-	else if (gagt_strcasecmp(argument, "short") == 0
-	         || gagt_strcasecmp(argument, "normal") == 0) {
+	else if (gagt_strcasecmp(argument, "short") == 0 || gagt_strcasecmp(argument, "normal") == 0) {
 		if (!g_vm->gagt_extended_status_enabled) {
 			gagt_normal_string("Glk status line mode is already 'short'.\n");
 			return;
@@ -4206,7 +4060,6 @@ static void gagt_command_statusline(const char *argument) {
 	}
 }
 
-
 /*
  * gagt_command_print_version_number()
  * gagt_command_version()
@@ -4234,7 +4087,6 @@ static void gagt_command_version(const char *argument) {
 	gagt_command_print_version_number(version);
 	gagt_normal_string(".\n");
 }
-
 
 /*
  * gagt_command_commands()
@@ -4271,32 +4123,30 @@ static void gagt_command_commands(const char *argument) {
 
 /* Glk subcommands and handler functions. */
 struct gagt_command_t {
-	const char *const command;                      /* Glk subcommand. */
-	void (* const handler)(const char *argument);   /* Subcommand handler. */
-	const int takes_argument;                       /* Argument flag. */
-} ;
+	const char *const command;                   /* Glk subcommand. */
+	void (*const handler)(const char *argument); /* Subcommand handler. */
+	const int takes_argument;                    /* Argument flag. */
+};
 typedef const gagt_command_t *gagt_commandref_t;
 
 static void gagt_command_summary(const char *argument);
 static void gagt_command_help(const char *argument);
 
 static gagt_command_t GAGT_COMMAND_TABLE[] = {
-	{"summary",        gagt_command_summary,        FALSE},
-	{"script",         gagt_command_script,         TRUE},
-	{"inputlog",       gagt_command_inputlog,       TRUE},
-	{"readlog",        gagt_command_readlog,        TRUE},
-	{"abbreviations",  gagt_command_abbreviations,  TRUE},
-	{"fonts",          gagt_command_fonts,          TRUE},
-	{"delays",         gagt_command_delays,         TRUE},
-	{"width",          gagt_command_width,          FALSE},
-	{"replacements",   gagt_command_replacements,   TRUE},
-	{"statusline",     gagt_command_statusline,     TRUE},
-	{"version",        gagt_command_version,        FALSE},
-	{"commands",       gagt_command_commands,       TRUE},
-	{"help",           gagt_command_help,           TRUE},
-	{NULL, NULL, FALSE}
-};
-
+    {"summary", gagt_command_summary, FALSE},
+    {"script", gagt_command_script, TRUE},
+    {"inputlog", gagt_command_inputlog, TRUE},
+    {"readlog", gagt_command_readlog, TRUE},
+    {"abbreviations", gagt_command_abbreviations, TRUE},
+    {"fonts", gagt_command_fonts, TRUE},
+    {"delays", gagt_command_delays, TRUE},
+    {"width", gagt_command_width, FALSE},
+    {"replacements", gagt_command_replacements, TRUE},
+    {"statusline", gagt_command_statusline, TRUE},
+    {"version", gagt_command_version, FALSE},
+    {"commands", gagt_command_commands, TRUE},
+    {"help", gagt_command_help, TRUE},
+    {NULL, NULL, FALSE}};
 
 /*
  * gagt_command_summary()
@@ -4312,14 +4162,12 @@ static void gagt_command_summary(const char *argument) {
 	 * prompting each to print its current setting.
 	 */
 	for (entry = GAGT_COMMAND_TABLE; entry->command; entry++) {
-		if (entry->handler == gagt_command_summary
-		        || entry->handler == gagt_command_help)
+		if (entry->handler == gagt_command_summary || entry->handler == gagt_command_help)
 			continue;
 
 		entry->handler("");
 	}
 }
-
 
 /*
  * gagt_command_help()
@@ -4503,7 +4351,6 @@ static void gagt_command_help(const char *cmd) {
 		                   "  Sorry.\n");
 }
 
-
 /*
  * gagt_command_escape()
  *
@@ -4600,7 +4447,6 @@ static int gagt_command_escape(const char *string) {
 	return TRUE;
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port input functions                                           */
 /*---------------------------------------------------------------------*/
@@ -4610,19 +4456,13 @@ enum { GAGT_INPUTBUFFER_LENGTH = 256 };
 
 /* Table of single-character command abbreviations. */
 typedef const struct {
-	const char abbreviation;       /* Abbreviation character. */
-	const char *const expansion;   /* Expansion string. */
+	const char abbreviation;     /* Abbreviation character. */
+	const char *const expansion; /* Expansion string. */
 } gagt_abbreviation_t;
 typedef gagt_abbreviation_t *gagt_abbreviationref_t;
 
 static gagt_abbreviation_t GAGT_ABBREVIATIONS[] = {
-	{'c', "close"},    {'g', "again"},  {'i', "inventory"},
-	{'k', "attack"},   {'l', "look"},   {'p', "open"},
-	{'q', "quit"},     {'r', "drop"},   {'t', "take"},
-	{'x', "examine"},  {'y', "yes"},    {'z', "wait"},
-	{'\0', NULL}
-};
-
+    {'c', "close"}, {'g', "again"}, {'i', "inventory"}, {'k', "attack"}, {'l', "look"}, {'p', "open"}, {'q', "quit"}, {'r', "drop"}, {'t', "take"}, {'x', "examine"}, {'y', "yes"}, {'z', "wait"}, {'\0', NULL}};
 
 /*
  * gagt_expand_abbreviations()
@@ -4638,12 +4478,11 @@ static void gagt_expand_abbreviations(char *buffer, int size) {
 
 	/* Ignore anything that isn't a single letter command_. */
 	command_ = buffer + strspn(buffer, "\t ");
-	if (!(strlen(command_) == 1
-	        || (strlen(command_) > 1 && isspace(command_[1]))))
+	if (!(strlen(command_) == 1 || (strlen(command_) > 1 && isspace(command_[1]))))
 		return;
 
 	/* Scan the abbreviations table for a match. */
-	abbreviation = g_vm->glk_char_to_lower((unsigned char) command_[0]);
+	abbreviation = g_vm->glk_char_to_lower((unsigned char)command_[0]);
 	expansion = NULL;
 	for (entry = GAGT_ABBREVIATIONS; entry->expansion; entry++) {
 		if (entry->abbreviation == abbreviation) {
@@ -4670,7 +4509,6 @@ static void gagt_expand_abbreviations(char *buffer, int size) {
 		gagt_standout_string("]\n");
 	}
 }
-
 
 /*
  * agt_input()
@@ -4782,8 +4620,7 @@ char *agt_input(int in_type) {
 
 				posn = strspn(buffer, "\t ");
 				if (gagt_strncasecmp(buffer + posn, "help", strlen("help")) == 0) {
-					if (strspn(buffer + posn + strlen("help"), "\t ")
-					        == strlen(buffer + posn + strlen("help"))) {
+					if (strspn(buffer + posn + strlen("help"), "\t ") == strlen(buffer + posn + strlen("help"))) {
 						gagt_display_register_help_request();
 					}
 				}
@@ -4817,7 +4654,6 @@ char *agt_input(int in_type) {
 	gagt_debug("agt_input", "in_type=%d -> '%s'", in_type, buffer);
 	return buffer;
 }
-
 
 /*
  * agt_getkey()
@@ -4933,7 +4769,6 @@ char agt_getkey(rbool echo_char) {
 	return buffer[0];
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port event functions                                           */
 /*---------------------------------------------------------------------*/
@@ -4979,7 +4814,6 @@ static void gagt_event_wait(glui32 wait_type, event_t *event) {
 	gagt_event_wait_2(wait_type, evtype_None, event);
 }
 
-
 /*
  * gagt_event_in_glk_select()
  *
@@ -4989,7 +4823,6 @@ static void gagt_event_wait(glui32 wait_type, event_t *event) {
 static int gagt_event_in_glk_select() {
 	return gagt_in_glk_select;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Miscellaneous Glk port startup and options functions               */
@@ -5002,7 +4835,6 @@ static int gagt_event_in_glk_select() {
 static const int GAGT_DEFAULT_SCREEN_WIDTH = 80,
                  GAGT_DEFAULT_SCREEN_HEIGHT = 25,
                  GAGT_DEFAULT_STATUS_WIDTH = 76;
-
 
 /*
  * agt_option()
@@ -5022,7 +4854,6 @@ rbool agt_option(int optnum, char *optstr[], rbool setflag) {
 	return 0;
 }
 
-
 /*
  * agt_globalfile()
  *
@@ -5033,7 +4864,6 @@ genfile agt_globalfile(int fid) {
 	gagt_debug("agt_globalfile", "fid=%d", fid);
 	return badfile(fCFG);
 }
-
 
 /*
  * init_interface()
@@ -5100,8 +4930,8 @@ void init_interface() {
 	status_height = g_vm->gagt_extended_status_enabled ? 2 : 1;
 	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
 	g_vm->gagt_status_window = g_vm->glk_window_open(g_vm->gagt_main_window,
-	                     winmethod_Above | winmethod_Fixed,
-	                     status_height, wintype_TextGrid, 0);
+	                                                 winmethod_Above | winmethod_Fixed,
+	                                                 status_height, wintype_TextGrid, 0);
 	if (g_vm->gagt_status_window) {
 		/*
 		 * Call gagt_status_redraw() to set the interpreter's status_width
@@ -5123,7 +4953,6 @@ void init_interface() {
 	agt_clrscr();
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Replacement interface.c functions                                  */
 /*---------------------------------------------------------------------*/
@@ -5139,7 +4968,6 @@ enum {
 
 /* Longest acceptable filename. */
 enum { GAGT_MAX_PATH = 1024 };
-
 
 #ifdef GLK_ANSI_ONLY
 /*
@@ -5181,7 +5009,6 @@ gagt_confirm(const char *prompt) {
 	return response == 'Y';
 }
 #endif
-
 
 /*
  * gagt_get_user_file()
@@ -5383,7 +5210,6 @@ static genfile gagt_get_user_file(glui32 usage, glui32 fmode, const char *fdtype
 }
 #endif
 
-
 /*
  * get_user_file()
  *
@@ -5442,7 +5268,6 @@ genfile get_user_file(int type) {
 	return retfile;
 }
 
-
 /*
  * set_default_filenames()
  *
@@ -5455,7 +5280,6 @@ void set_default_filenames(fc_type fc) {
 	 */
 	gagt_debug("set_default_filenames", "fc=%p", fc);
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Functions intercepted by link-time wrappers                        */
@@ -5478,17 +5302,16 @@ void set_default_filenames(fc_type fc) {
 int __wrap_toupper(int ch) {
 	unsigned char uch;
 
-	uch = g_vm->glk_char_to_upper((unsigned char) ch);
-	return (int) uch;
+	uch = g_vm->glk_char_to_upper((unsigned char)ch);
+	return (int)uch;
 }
 
 int __wrap_tolower(int ch) {
 	unsigned char lch;
 
-	lch = g_vm->glk_char_to_lower((unsigned char) ch);
-	return (int) lch;
+	lch = g_vm->glk_char_to_lower((unsigned char)ch);
+	return (int)lch;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Replacements for AGiliTy main() and options parsing                */
@@ -5496,7 +5319,6 @@ int __wrap_tolower(int ch) {
 
 /* External declaration of interface.c's set default options function. */
 extern void set_default_options();
-
 
 /*
  * gagt_startup_code()
@@ -5541,8 +5363,7 @@ static void gagt_main() {
 	 * in run_game().
 	 */
 	fc = init_file_context(g_vm->gagt_gamefile, fDA1);
-	if (!(gagt_workround_fileexist(fc, fAGX)
-	        || gagt_workround_fileexist(fc, fDA1))) {
+	if (!(gagt_workround_fileexist(fc, fAGX) || gagt_workround_fileexist(fc, fDA1))) {
 		if (g_vm->gagt_status_window)
 			g_vm->glk_window_close(g_vm->gagt_status_window, NULL);
 		gagt_header_string("Glk AGiliTy Error\n\n");
@@ -5587,7 +5408,6 @@ static void gagt_main() {
 	}
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Linkage between Glk entry/exit calls and the AGiliTy interpreter   */
 /*---------------------------------------------------------------------*/
@@ -5606,7 +5426,6 @@ static int gagt_startup_called = FALSE,
  * and when not.
  */
 static int gagt_agility_running = FALSE;
-
 
 /*
  * gagt_finalizer()
@@ -5689,7 +5508,6 @@ void gagt_finalizer() {
 	}
 }
 
-
 /*
  * gagt_exit()
  *
@@ -5708,7 +5526,6 @@ static void gagt_exit() {
 	gagt_output_delete();
 	g_vm->glk_exit();
 }
-
 
 /*
  * __wrap_exit()
@@ -5753,7 +5570,6 @@ void __wrap_exit(int status) {
 	g_vm->glk_exit();
 }
 
-
 /*
  * glk_main)
  *
@@ -5783,7 +5599,6 @@ void glk_main() {
 	gagt_main();
 	gagt_agility_running = FALSE;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk linkage relevant only to the UNIX platform                     */

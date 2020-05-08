@@ -21,16 +21,15 @@
  */
 
 #include "ultima/ultima1/widgets/dungeon_chest.h"
-#include "ultima/ultima1/maps/map_dungeon.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-DungeonChest::DungeonChest(Ultima1Game *game, Maps::MapBase *map, const Point &pt) :
-		DungeonItem(game, map, MONSTER_MIMIC, pt) {
+DungeonChest::DungeonChest(Ultima1Game *game, Maps::MapBase *map, const Point &pt) : DungeonItem(game, map, MONSTER_MIMIC, pt) {
 	_name = game->_res->DUNGEON_ITEM_NAMES[0];
 }
 

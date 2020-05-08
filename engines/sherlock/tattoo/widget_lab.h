@@ -24,8 +24,8 @@
 #define SHERLOCK_TATTOO_WIDGET_LAB_H
 
 #include "common/scummsys.h"
-#include "sherlock/tattoo/widget_base.h"
 #include "sherlock/objects.h"
+#include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
 
@@ -33,7 +33,7 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetLab: public WidgetBase {
+class WidgetLab : public WidgetBase {
 private:
 	Object *_labObject;
 
@@ -42,8 +42,10 @@ private:
 	 * object is currently over
 	 */
 	void displayLabNames();
+
 public:
 	Common::String _remainingText;
+
 public:
 	WidgetLab(SherlockEngine *vm);
 	~WidgetLab() override {}

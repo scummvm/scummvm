@@ -21,12 +21,12 @@
  */
 
 #include "common/debug.h"
+#include "common/algorithm.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/algorithm.h"
 
-#include <stdarg.h>	// For va_list etc.
+#include <stdarg.h> // For va_list etc.
 
 // TODO: Move gDebugLevel into namespace Common.
 int gDebugLevel = -1;
@@ -142,7 +142,6 @@ bool debugChannelSet(int level, uint32 debugChannels) {
 	return true;
 }
 
-
 #ifndef DISABLE_TEXT_CONSOLE
 
 static void debugHelper(const char *s, va_list va, bool caret = true) {
@@ -177,7 +176,6 @@ void debug(int level, const char *s, ...) {
 	va_start(va, s);
 	debugHelper(s, va);
 	va_end(va);
-
 }
 
 void debugN(const char *s, ...) {

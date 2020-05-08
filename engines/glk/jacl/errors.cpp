@@ -22,16 +22,16 @@
 
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
 
-extern struct function_type     *executing_function;
-extern const char               *word[];
+extern struct function_type *executing_function;
+extern const char *word[];
 
-extern char                     error_buffer[];
+extern char error_buffer[];
 
 void badparrun() {
 	sprintf(error_buffer, BAD_PARENT, executing_function->name);

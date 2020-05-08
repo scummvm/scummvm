@@ -80,7 +80,7 @@ public:
 	void setFadeTable(const uint8 *table);
 	void createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
 	void createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16 rootColor, uint8 weight);
-	
+
 	const uint16 *getCGADitheringTable(int index);
 	const uint8 *getEGADitheringTable();
 
@@ -135,7 +135,7 @@ private:
 	const uint8 *_gfxMaxY;
 
 	int16 _dsX1, _dsX2, _dsY1, _dsY2;
-	
+
 	bool _dsBackgroundFading;
 	int16 _dsBackgroundFadingXOffs;
 	uint8 _shapeOverlay[16];
@@ -294,7 +294,7 @@ private:
 * OldDOSFont variant used in EOB I PC-98. It uses the same drawing routine, but has a different loader. It contains
 * ASCII and Katakana characters and requires several conversion tables to display these. It gets drawn on the SJIS overlay.
 */
-class Font12x12PC98 : public OldDOSFont{
+class Font12x12PC98 : public OldDOSFont {
 public:
 	Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable);
 	~Font12x12PC98() override;

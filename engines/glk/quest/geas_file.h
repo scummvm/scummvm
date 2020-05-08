@@ -23,11 +23,11 @@
 #ifndef GLK_QUEST_GEAS_FILE
 #define GLK_QUEST_GEAS_FILE
 
-#include "glk/quest/string.h"
 #include "common/algorithm.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/stream.h"
+#include "glk/quest/string.h"
 
 namespace Glk {
 namespace Quest {
@@ -69,7 +69,7 @@ struct GeasFile {
 
 	//vector<GeasBlock> rooms, objects, textblocks, functions, procedures, types;
 	//GeasBlock synonyms, game;
-	Common::Array <GeasBlock> blocks;
+	Common::Array<GeasBlock> blocks;
 
 	//Common::Array<GeasBlock> rooms, objects, textblocks, functions, procedures,
 	//  types, synonyms, game, variables, timers, choices;
@@ -82,8 +82,6 @@ struct GeasFile {
 	uint size(String type) const;
 
 	void read_into(const Common::Array<String> &, String, uint, bool, const reserved_words &, const reserved_words &);
-
-
 
 	GeasFile() : gi(nullptr) {}
 	explicit GeasFile(const Common::Array<String> &in_data,

@@ -24,17 +24,17 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <errno.h>
 #include <unistd.h>
 
-#include "osystem.h"
 #include "backends/plugins/wii/wii-provider.h"
+#include "osystem.h"
 
-#include <ogc/machine/processor.h>
-#include <ogc/libversion.h>
 #include <fat.h>
+#include <ogc/libversion.h>
+#include <ogc/machine/processor.h>
 #ifndef GAMECUBE
 #include <wiiuse/wpad.h>
 #endif
@@ -53,9 +53,9 @@ extern "C" {
 bool reset_btn_pressed = false;
 bool power_btn_pressed = false;
 
-#if ((_V_MAJOR_ > 1) || \
-        (_V_MAJOR_ == 1 && _V_MINOR_ > 8 ) || \
-        (_V_MAJOR_ == 1 && _V_MINOR_ == 8 && _V_PATCH_ >= 18))
+#if ((_V_MAJOR_ > 1) ||                   \
+     (_V_MAJOR_ == 1 && _V_MINOR_ > 8) || \
+     (_V_MAJOR_ == 1 && _V_MINOR_ == 8 && _V_PATCH_ >= 18))
 void reset_cb(u32, void *) {
 #else
 void reset_cb(void) {
@@ -143,10 +143,9 @@ s32 reset_func(s32 final) {
 }
 
 static sys_resetinfo resetinfo = {
-	{ NULL, NULL },
-	reset_func,
-	1
-};
+    {NULL, NULL},
+    reset_func,
+    1};
 
 #ifdef DEBUG_WII_MEMSTATS
 void wii_memstats(void) {
@@ -156,10 +155,10 @@ void wii_memstats(void) {
 
 	_CPU_ISR_Disable(level);
 #ifdef GAMECUBE
-	temp_free = (u32) SYS_GetArenaHi() - (u32) SYS_GetArenaLo();
+	temp_free = (u32)SYS_GetArenaHi() - (u32)SYS_GetArenaLo();
 #else
-	temp_free = (u32) SYS_GetArena1Hi() - (u32) SYS_GetArena1Lo() +
-				(u32) SYS_GetArena2Hi() - (u32) SYS_GetArena2Lo();
+	temp_free = (u32)SYS_GetArena1Hi() - (u32)SYS_GetArena1Lo() +
+	            (u32)SYS_GetArena2Hi() - (u32)SYS_GetArena2Lo();
 #endif
 	_CPU_ISR_Restore(level);
 

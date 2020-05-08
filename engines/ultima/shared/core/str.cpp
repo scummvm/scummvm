@@ -38,7 +38,7 @@ int String::indexOf(const String &chars) const {
 		if (charIndex != -1 && charIndex < (int)minIndex)
 			minIndex = charIndex;
 	}
-	
+
 	return minIndex == size() ? -1 : minIndex;
 }
 

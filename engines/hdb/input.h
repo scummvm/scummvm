@@ -28,20 +28,19 @@
 namespace HDB {
 
 enum Button {
-	kButtonUp		= 2 << 0,
-	kButtonDown		= 2 << 1,
-	kButtonLeft		= 2 << 2,
-	kButtonRight	= 2 << 3,
-	kButtonA		= 2 << 4,
-	kButtonB		= 2 << 5,
-	kButtonC		= 2 << 6,
-	kButtonD		= 2 << 7,
-	kButtonExit		= 2 << 8
+	kButtonUp = 2 << 0,
+	kButtonDown = 2 << 1,
+	kButtonLeft = 2 << 2,
+	kButtonRight = 2 << 3,
+	kButtonA = 2 << 4,
+	kButtonB = 2 << 5,
+	kButtonC = 2 << 6,
+	kButtonD = 2 << 7,
+	kButtonExit = 2 << 8
 };
 
 class Input {
 public:
-
 	void init();
 
 	void setButtons(uint16 b);
@@ -63,18 +62,28 @@ public:
 
 	void assignKey(int whichKey, Common::KeyCode keyPressed) {
 		switch (whichKey) {
-		case 0: _keyUp = keyPressed; return;
-		case 1: _keyDown = keyPressed; return;
-		case 2: _keyLeft = keyPressed; return;
-		case 3: _keyRight = keyPressed; return;
-		case 4: _keyUse = keyPressed; return;
-		default: break;
+		case 0:
+			_keyUp = keyPressed;
+			return;
+		case 1:
+			_keyDown = keyPressed;
+			return;
+		case 2:
+			_keyLeft = keyPressed;
+			return;
+		case 3:
+			_keyRight = keyPressed;
+			return;
+		case 4:
+			_keyUse = keyPressed;
+			return;
+		default:
+			break;
 		}
 	}
 
 private:
-
-	uint16 _buttons;	// Flags for buttons
+	uint16 _buttons; // Flags for buttons
 	bool _stylusDown;
 	int _stylusDownX, _stylusDownY;
 	int _mouseX, _mouseY;
@@ -86,6 +95,6 @@ private:
 	Common::KeyCode _keyQuit;
 };
 
-} // End of Namespace
+} // namespace HDB
 
 #endif // !HDB_INPUT_H

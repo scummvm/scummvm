@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/ bin / sh
 
 echo Quick script to make running configure all the time less painful
 echo and let all the build work be done from the backend/build folder.
@@ -8,14 +8,14 @@ echo and let all the build work be done from the backend/build folder.
 CROSS_COMPILE=arm-angstrom-linux-gnueabi-
 export CROSS_COMPILE
 
-# Export the tool names for cross-compiling
+#Export the tool names for cross - compiling
 export CXX=arm-angstrom-linux-gnueabi-g++
 export CPPFLAGS=-I/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr/include
 export LDFLAGS=-L/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr/lib
 
 export DEFINES=-DNDEBUG
 
-# Edit the configure line to suit.
+#Edit the configure line to suit.
 cd ../../../..
 ./configure --backend=openpandora --host=openpandora --disable-nasm \
   --with-sdl-prefix=/usr/local/angstrom/arm/arm-angstrom-linux-gnueabi/usr/bin \

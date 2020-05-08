@@ -22,8 +22,8 @@
 
 #include "tsage/blue_force/blueforce_scenes8.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -67,7 +67,7 @@ bool Scene800::Doorway::startAction(CursorType action, Event &event) {
 		else if (BF_GLOBALS._dayNumber < 2)
 			SceneItem::display2(800, BF_GLOBALS.getFlag(onDuty) ? 6 : 15);
 		else if (((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) && (BF_GLOBALS._dayNumber == 3)) ||
-				(BF_GLOBALS._bookmark == bDoneWithIsland))
+		         (BF_GLOBALS._bookmark == bDoneWithIsland))
 			SceneItem::display2(800, 5);
 		else {
 			if (BF_GLOBALS.getFlag(fWithLyle)) {
@@ -217,7 +217,6 @@ void Scene800::Action1::signal() {
 	default:
 		break;
 	}
-
 }
 
 /*--------------------------------------------------------------------------*/
@@ -577,7 +576,7 @@ bool Scene810::Lyle::startAction(CursorType action, Event &event) {
 					scene->_sceneMode = 8121;
 				}
 			} else if (BF_GLOBALS.getFlag(onDuty)) {
-				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))){
+				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))) {
 					scene->_sceneMode = 8141;
 				} else {
 					scene->_sceneMode = 8144;
@@ -672,7 +671,7 @@ bool Scene810::FaxMachineInset::startAction(CursorType action, Event &event) {
 
 				scene->_sceneMode = 8109;
 				scene->setAction(&scene->_sequenceManager1, scene, 8109, &BF_GLOBALS._player,
-					&scene->_object6, &scene->_object5, NULL);
+				                 &scene->_object6, &scene->_object5, NULL);
 				scene->_fieldA74 = 1;
 				remove();
 			} else {
@@ -687,7 +686,7 @@ bool Scene810::FaxMachineInset::startAction(CursorType action, Event &event) {
 
 				scene->_sceneMode = 8109;
 				scene->setAction(&scene->_sequenceManager1, scene, 8109, &BF_GLOBALS._player,
-					&scene->_object6, &scene->_object5, NULL);
+				                 &scene->_object6, &scene->_object5, NULL);
 				scene->_fieldA74 = 1;
 				remove();
 			} else {
@@ -806,10 +805,10 @@ bool Scene810::FaxMachine::startAction(CursorType action, Event &event) {
 
 			if (BF_GLOBALS._sceneObjects->contains(&scene->_lyle)) {
 				scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8108 : 8105,
-					&BF_GLOBALS._player, &scene->_object6, NULL);
+				                 &BF_GLOBALS._player, &scene->_object6, NULL);
 			} else {
 				scene->setAction(&scene->_sequenceManager1, scene, 8111, &BF_GLOBALS._player,
-					&scene->_object6, NULL);
+				                 &scene->_object6, NULL);
 			}
 		}
 		return true;
@@ -959,7 +958,7 @@ bool Scene810::Exit::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene810::Scene810(): SceneExt() {
+Scene810::Scene810() : SceneExt() {
 	_fieldA70 = _fieldA74 = 0;
 	_rect1 = Rect(68, 12, 120, 22);
 	_rect2 = Rect(59, 27, 117, 37);
@@ -1123,7 +1122,7 @@ void Scene810::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._sceneItems.push_back(&_item12);
 
 	BF_GLOBALS._sceneItems.addItems(&_microficheReader, &_map, &_window, &_bookcase, &_garbageCan,
-		&_fileCabinets, &_coffeeMaker, &_shelves, &_background, NULL);
+	                                &_fileCabinets, &_coffeeMaker, &_shelves, &_background, NULL);
 	_background.setBounds(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y));
 }
 
@@ -1278,7 +1277,7 @@ void Scene810::dispatch() {
 	}
 
 	if (BF_GLOBALS._sceneObjects->contains(&_faxMachineInset) && (BF_GLOBALS._player._position.x != 67) &&
-			(BF_GLOBALS._player._position.y != 111)) {
+	    (BF_GLOBALS._player._position.y != 111)) {
 		_faxMachineInset.remove();
 	}
 
@@ -1296,7 +1295,7 @@ void Scene810::dispatch() {
 				BF_GLOBALS._walkRegions.enableRegion(13);
 
 				_sceneMode = 8112;
-				setAction(&_sequenceManager1, this, 8112, &BF_GLOBALS._player,  &_lyle, NULL);
+				setAction(&_sequenceManager1, this, 8112, &BF_GLOBALS._player, &_lyle, NULL);
 			}
 		}
 
@@ -1343,7 +1342,7 @@ bool Scene820::PowerButton::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._scenePalette.refresh();
 
 			SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0,
-				SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
+			                   SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
 		} else {
 			BF_GLOBALS._scenePalette.loadPalette(820);
 			BF_GLOBALS._scenePalette.refresh();
@@ -1390,7 +1389,7 @@ bool Scene820::BackButton::startAction(CursorType action, Event &event) {
 		}
 
 		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0,
-			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
+		                   SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
 		return true;
 	default:
 		return NamedObject::startAction(action, event);
@@ -1421,7 +1420,7 @@ bool Scene820::ForwardButton::startAction(CursorType action, Event &event) {
 			++scene->_pageNumber;
 
 		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0,
-			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
+		                   SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
 
 		if (scene->_pageNumber == 4) {
 			scene->_object4.show();
@@ -1436,7 +1435,7 @@ bool Scene820::ForwardButton::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene820::Scene820(): SceneExt() {
+Scene820::Scene820() : SceneExt() {
 	_pageNumber = 0;
 }
 
@@ -1627,7 +1626,7 @@ bool Scene830::NoteBoard::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene830::Scene830(): PalettedScene() {
+Scene830::Scene830() : PalettedScene() {
 	_field18A4 = _field18A6 = _field18A8 = _field18AA = _field18AC = 0;
 }
 
@@ -1688,7 +1687,7 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 	switch (BF_GLOBALS._dayNumber) {
 	case 1:
 		if ((BF_GLOBALS._bookmark >= bEndOfWorkDayOne) && (BF_INVENTORY.getObjectScene(INV_CARTER_NOTE) != 1) &&
-				(BF_INVENTORY.getObjectScene(INV_CARTER_NOTE) != 3)) {
+		    (BF_INVENTORY.getObjectScene(INV_CARTER_NOTE) != 3)) {
 			_object6.postInit();
 			_object6.setVisage(830);
 			_object6.setStrip(4);
@@ -1708,11 +1707,11 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 		break;
 	case 5:
 		if ((BF_GLOBALS._sceneManager._previousScene == 840) && (BF_INVENTORY.getObjectScene(INV_RENTAL_KEYS) == 1) &&
-					!BF_GLOBALS.getFlag(fWithLyle)) {
+		    !BF_GLOBALS.getFlag(fWithLyle)) {
 			_field18A4 = 0;
 
 			_lyle.postInit();
-//			_lyle._flags = OBJFLAG_CHECK_REGION;
+			//			_lyle._flags = OBJFLAG_CHECK_REGION;
 			_lyle.setVisage(835);
 			_lyle.setObjectWrapper(new SceneObjectWrapper());
 			_lyle.animate(ANIM_MODE_1, NULL);
@@ -1830,7 +1829,9 @@ void Scene830::signal() {
 	case 831:
 	case 8306:
 		BF_GLOBALS._sceneManager.changeScene((BF_GLOBALS._bookmark < bStartOfGame) ||
-			(BF_GLOBALS._bookmark >= bCalledToDomesticViolence) ? 342 : 340);
+		                                             (BF_GLOBALS._bookmark >= bCalledToDomesticViolence)
+		                                         ? 342
+		                                         : 340);
 		break;
 	case 832:
 		BF_GLOBALS._sceneManager.changeScene(840);
@@ -1890,7 +1891,7 @@ void Scene830::signal() {
 
 void Scene830::process(Event &event) {
 	if (BF_GLOBALS._player._enabled && (event.eventType == EVENT_BUTTON_DOWN) &&
-			(BF_GLOBALS._events.getCursor() == CURSOR_WALK) && !_field18A4) {
+	    (BF_GLOBALS._events.getCursor() == CURSOR_WALK) && !_field18A4) {
 		_stripManager.start(8306, &BF_GLOBALS._stripProxy);
 		event.handled = true;
 	}
@@ -2207,7 +2208,7 @@ bool Scene840::Coins::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 8404;
 		scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8415 : 8404,
-			&BF_GLOBALS._player, NULL);
+		                 &BF_GLOBALS._player, NULL);
 		return true;
 	default:
 		return NamedHotspot::startAction(action, event);
@@ -2221,7 +2222,7 @@ bool Scene840::Exit::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene840::Scene840(): PalettedScene() {
+Scene840::Scene840() : PalettedScene() {
 	_field1ABC = 1;
 	_field1ABE = 0;
 	_field1AC0 = 0;
@@ -2447,7 +2448,7 @@ void Scene840::signal() {
 		break;
 	case 8407:
 		if (((BF_GLOBALS._dayNumber == 4) && (BF_GLOBALS._bookmark >= bEndDayThree)) ||
-				(BF_INVENTORY.getObjectScene(INV_WAVE_KEYS) == 1)) {
+		    (BF_INVENTORY.getObjectScene(INV_WAVE_KEYS) == 1)) {
 			_sceneMode = 8416;
 			setAction(&_sequenceManager1, this, 8416, &BF_GLOBALS._player, NULL);
 		} else {
@@ -2647,7 +2648,7 @@ void Scene860::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene860::Scene860(): SceneExt() {
+Scene860::Scene860() : SceneExt() {
 	_field87E = _field880 = 0;
 	_destPos.x = _destPos.y = 0;
 	_field886 = _field888 = 0;
@@ -2874,7 +2875,7 @@ void Scene870::CrateInset::postInit(SceneObjectList *OwnerList) {
 	setPosition(Common::Point(160, 130));
 	fixPriority(250);
 
-	if (scene->_field1662  == 3) {
+	if (scene->_field1662 == 3) {
 		initContents();
 	}
 }
@@ -2889,7 +2890,7 @@ void Scene870::CrateInset::initContents() {
 		_jar.setStrip(4);
 		_jar.setFrame(5);
 		_jar.setPosition(Common::Point(scene->_crateInset._position.x + 5,
-			scene->_crateInset._position.y - 26));
+		                               scene->_crateInset._position.y - 26));
 		_jar.fixPriority(251);
 		_jar.setDetails(870, 39, 40, 41, 1, (SceneItem *)NULL);
 		BF_GLOBALS._sceneItems.remove(&_jar);
@@ -2903,7 +2904,7 @@ void Scene870::CrateInset::initContents() {
 		_rags.setStrip(4);
 		_rags.setFrame(6);
 		_rags.setPosition(Common::Point(scene->_crateInset._position.x - 18,
-			scene->_crateInset._position.y - 18));
+		                                scene->_crateInset._position.y - 18));
 		_rags.fixPriority(251);
 		_rags.setDetails(870, 42, 43, 44, 1, (SceneItem *)NULL);
 		BF_GLOBALS._sceneItems.remove(&_rags);
@@ -3028,7 +3029,7 @@ void Scene870::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene870::Scene870(): SceneExt() {
+Scene870::Scene870() : SceneExt() {
 	_field1662 = 1;
 	_field1664 = 0;
 }
@@ -3072,7 +3073,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 
 	if (BF_GLOBALS._dayNumber == 5) {
 		if (!BF_GLOBALS.getFlag(fLyleOnIsland) && (BF_GLOBALS._bookmark != bFinishedWGreen) &&
-				(!BF_GLOBALS.getFlag(fTookTrailerAmmo) || (BF_GLOBALS._bookmark >= bInvestigateBoat))) {
+		    (!BF_GLOBALS.getFlag(fTookTrailerAmmo) || (BF_GLOBALS._bookmark >= bInvestigateBoat))) {
 			_lyle.postInit();
 			_lyle.setVisage(835);
 			_lyle.setObjectWrapper(new SceneObjectWrapper());
@@ -3089,7 +3090,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 		_yacht.setDetails(870, 30, 31, 32, 1, (SceneItem *)NULL);
 
 		if ((BF_INVENTORY.getObjectScene(INV_RAGS) == 0) && (BF_INVENTORY.getObjectScene(INV_FLARE) == 0) &&
-				(BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 355)) {
+		    (BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 355)) {
 			_green.postInit();
 			_green.setVisage(870);
 			_green.setStrip(7);
@@ -3132,7 +3133,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 		}
 
 		if ((BF_INVENTORY.getObjectScene(INV_HANDCUFFS) != 1) &&
-				(BF_INVENTORY.getObjectScene(INV_GRENADES) == 355)) {
+		    (BF_INVENTORY.getObjectScene(INV_GRENADES) == 355)) {
 			_object4.postInit();
 			_object4.hide();
 			_object5.postInit();
@@ -3142,7 +3143,7 @@ void Scene870::postInit(SceneObjectList *OwnerList) {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 2;
 			setAction(&_sequenceManager, this, 8703, &BF_GLOBALS._player, &_lyle, &_green,
-				&_object4, &_object5, NULL);
+			          &_object4, &_object5, NULL);
 		} else {
 			BF_GLOBALS._player.changeAngle(135);
 			BF_GLOBALS._player.setPosition(Common::Point(214, 139));
@@ -3332,7 +3333,7 @@ bool Scene880::SouthEastExit::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene880::Scene880(): SceneExt() {
+Scene880::Scene880() : SceneExt() {
 	_seqNumber = 0;
 }
 
@@ -3366,7 +3367,7 @@ void Scene880::postInit(SceneObjectList *OwnerList) {
 		_object1.hide();
 
 		if ((BF_GLOBALS._bookmark != bFinishedWGreen) && (BF_GLOBALS._bookmark >= bInvestigateBoat) &&
-				BF_GLOBALS.getFlag(fTookTrailerAmmo)) {
+		    BF_GLOBALS.getFlag(fTookTrailerAmmo)) {
 			BF_GLOBALS.setFlag(fLyleOnIsland);
 		}
 

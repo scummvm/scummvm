@@ -23,10 +23,10 @@
 #ifndef NUVIE_VIEWS_SCROLL_WIDGET_GUMP_H
 #define NUVIE_VIEWS_SCROLL_WIDGET_GUMP_H
 
-#include "ultima/nuvie/misc/call_back.h"
+#include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
@@ -34,7 +34,6 @@ namespace Ultima {
 namespace Nuvie {
 
 using Std::list;
-
 
 class Configuration;
 class Actor;
@@ -53,7 +52,7 @@ typedef enum {
 #define SCROLLWIDGETGUMP_W 200
 #define SCROLLWIDGETGUMP_H 100
 
-class ScrollWidgetGump: public MsgScroll {
+class ScrollWidgetGump : public MsgScroll {
 
 	Font *font_normal;
 	Font *font_garg;
@@ -68,7 +67,6 @@ class ScrollWidgetGump: public MsgScroll {
 	bool show_down_arrow;
 
 public:
-
 	ScrollWidgetGump(Configuration *cfg, Screen *s);
 	~ScrollWidgetGump() override;
 
@@ -94,7 +92,7 @@ public:
 	GUI_status KeyDown(const Common::KeyState &key) override;
 	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
 	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override {
-		return GUI_YUM;    // otherwise we do Msgscroll::MouseUp
+		return GUI_YUM; // otherwise we do Msgscroll::MouseUp
 	}
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
@@ -106,10 +104,6 @@ public:
 	}
 
 protected:
-
-
-
-
 private:
 	const Common::Rect arrow_up_rect;
 	const Common::Rect arrow_down_rect;

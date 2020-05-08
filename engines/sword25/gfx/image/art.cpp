@@ -66,15 +66,22 @@ int art_svp_seg_compare(const void *s1, const void *s2) {
 	const ArtSVPSeg *seg1 = (const ArtSVPSeg *)s1;
 	const ArtSVPSeg *seg2 = (const ArtSVPSeg *)s2;
 
-	if (seg1->points[0].y - EPSILON > seg2->points[0].y) return 1;
-	else if (seg1->points[0].y + EPSILON < seg2->points[0].y) return -1;
-	else if (seg1->points[0].x - EPSILON > seg2->points[0].x) return 1;
-	else if (seg1->points[0].x + EPSILON < seg2->points[0].x) return -1;
+	if (seg1->points[0].y - EPSILON > seg2->points[0].y)
+		return 1;
+	else if (seg1->points[0].y + EPSILON < seg2->points[0].y)
+		return -1;
+	else if (seg1->points[0].x - EPSILON > seg2->points[0].x)
+		return 1;
+	else if (seg1->points[0].x + EPSILON < seg2->points[0].x)
+		return -1;
 	else if ((seg1->points[1].x - seg1->points[0].x) *
-	         (seg2->points[1].y - seg2->points[0].y) -
-	         (seg1->points[1].y - seg1->points[0].y) *
-	         (seg2->points[1].x - seg2->points[0].x) > 0) return 1;
-	else return -1;
+	                 (seg2->points[1].y - seg2->points[0].y) -
+	             (seg1->points[1].y - seg1->points[0].y) *
+	                 (seg2->points[1].x - seg2->points[0].x) >
+	         0)
+		return 1;
+	else
+		return -1;
 }
 
 /**
@@ -94,7 +101,7 @@ int art_svp_seg_compare(const void *s1, const void *s2) {
  * desired.
  **/
 void art_vpath_add_point(ArtVpath **p_vpath, int *pn_points, int *pn_points_max,
-                    ArtPathcode code, double x, double y) {
+                         ArtPathcode code, double x, double y) {
 	int i;
 
 	i = (*pn_points)++;
@@ -150,7 +157,7 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 	n_segs = 0;
 	n_segs_max = 16;
 	svp = (ArtSVP *)malloc(sizeof(ArtSVP) +
-	                          (n_segs_max - 1) * sizeof(ArtSVPSeg));
+	                       (n_segs_max - 1) * sizeof(ArtSVPSeg));
 	if (!svp)
 		error("[art_svp_from_vpath] Cannot allocate memory");
 
@@ -160,7 +167,7 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 	points = NULL;
 	i = 0;
 
-	x = y = 0; /* unnecessary, given "first code must not be LINETO" invariant,
+	x = y = 0;         /* unnecessary, given "first code must not be LINETO" invariant,
         but it makes gcc -Wall -ansi -pedantic happier */
 	x_min = x_max = 0; /* same */
 
@@ -170,8 +177,8 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 				if (n_segs == n_segs_max) {
 					n_segs_max <<= 1;
 					ArtSVP *tmp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-					                                    (n_segs_max - 1) *
-					                                    sizeof(ArtSVPSeg));
+					                                         (n_segs_max - 1) *
+					                                             sizeof(ArtSVPSeg));
 
 					if (!tmp)
 						error("Cannot reallocate memory in art_svp_from_vpath()");
@@ -204,7 +211,9 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 			dir = 0;
 		} else { /* must be LINETO */
 			new_dir = (vpath[i].y > y ||
-			           (vpath[i].y == y && vpath[i].x > x)) ? 1 : -1;
+			           (vpath[i].y == y && vpath[i].x > x))
+			              ? 1
+			              : -1;
 			if (dir && dir != new_dir) {
 				/* new segment */
 				x = points[n_points - 1].x;
@@ -212,8 +221,8 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 				if (n_segs == n_segs_max) {
 					n_segs_max <<= 1;
 					ArtSVP *tmp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-					                                     (n_segs_max - 1) *
-					                                     sizeof(ArtSVPSeg));
+					                                         (n_segs_max - 1) *
+					                                             sizeof(ArtSVPSeg));
 
 					if (!tmp)
 						error("Cannot reallocate memory in art_svp_from_vpath()");
@@ -245,8 +254,10 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 					art_expand(points, ArtPoint, n_points_max);
 				points[n_points].x = x = vpath[i].x;
 				points[n_points].y = y = vpath[i].y;
-				if (x < x_min) x_min = x;
-				else if (x > x_max) x_max = x;
+				if (x < x_min)
+					x_min = x;
+				else if (x > x_max)
+					x_max = x;
 				n_points++;
 			}
 			dir = new_dir;
@@ -259,8 +270,8 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 			if (n_segs == n_segs_max) {
 				n_segs_max <<= 1;
 				ArtSVP *tmp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-				                                     (n_segs_max - 1) *
-				                                      sizeof(ArtSVPSeg));
+				                                         (n_segs_max - 1) *
+				                                             sizeof(ArtSVPSeg));
 
 				if (!tmp)
 					error("Cannot reallocate memory in art_svp_from_vpath()");
@@ -287,7 +298,6 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 
 	return svp;
 }
-
 
 /* Basic constructors and operations for bezier paths */
 
@@ -323,11 +333,11 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
  * rendering.
 **/
 static void art_vpath_render_bez(ArtVpath **p_vpath, int *pn, int *pn_max,
-                     double x0, double y0,
-                     double x1, double y1,
-                     double x2, double y2,
-                     double x3, double y3,
-                     double flatness) {
+                                 double x0, double y0,
+                                 double x1, double y1,
+                                 double x2, double y2,
+                                 double x3, double y3,
+                                 double flatness) {
 	/* It's possible to optimize this routine a fair amount.
 
 	   First, once the _dot conditions are met, they will also be met in
@@ -365,8 +375,7 @@ static void art_vpath_render_bez(ArtVpath **p_vpath, int *pn, int *pn_max,
 		 * the other two control points are the same as the start point,
 		 * too.
 		 */
-		if (!(hypot(x1 - x0, y1 - y0) < 0.001
-		        && hypot(x2 - x0, y2 - y0) < 0.001))
+		if (!(hypot(x1 - x0, y1 - y0) < 0.001 && hypot(x2 - x0, y2 - y0) < 0.001))
 			subDivide = true;
 	} else {
 		/* we can avoid subdivision if:
@@ -495,7 +504,6 @@ ArtVpath *art_bez_path_to_vec(const ArtBpath *bez, double flatness) {
 	return vec;
 }
 
-
 #define EPSILON_6 1e-6
 #define EPSILON_2 1e-12
 
@@ -507,11 +515,11 @@ ArtVpath *art_bez_path_to_vec(const ArtBpath *bez, double flatness) {
    curve to the right.
 */
 static void art_svp_vpath_stroke_arc(ArtVpath **p_vpath, int *pn, int *pn_max,
-                         double xc, double yc,
-                         double x0, double y0,
-                         double x1, double y1,
-                         double radius,
-                         double flatness) {
+                                     double xc, double yc,
+                                     double x0, double y0,
+                                     double x1, double y1,
+                                     double radius,
+                                     double flatness) {
 	double theta;
 	double th_0, th_1;
 	int n_pts;
@@ -524,11 +532,13 @@ static void art_svp_vpath_stroke_arc(ArtVpath **p_vpath, int *pn, int *pn_max,
 	th_1 = atan2(y1, x1);
 	if (radius > 0) {
 		/* curve to the left */
-		if (th_0 < th_1) th_0 += M_PI * 2;
+		if (th_0 < th_1)
+			th_0 += M_PI * 2;
 		n_pts = (int)ceil((th_0 - th_1) / theta);
 	} else {
 		/* curve to the right */
-		if (th_1 < th_0) th_1 += M_PI * 2;
+		if (th_1 < th_0)
+			th_1 += M_PI * 2;
 		n_pts = (int)ceil((th_1 - th_0) / theta);
 	}
 	art_vpath_add_point(p_vpath, pn, pn_max,
@@ -557,10 +567,10 @@ static void art_svp_vpath_stroke_arc(ArtVpath **p_vpath, int *pn, int *pn_max,
    Precondition: no zero-length vectors, otherwise a divide by
    zero will happen.  */
 static void render_seg(ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
-           ArtVpath **p_rev, int *pn_rev, int *pn_rev_max,
-           ArtVpath *vpath, int i0, int i1, int i2,
-           ArtPathStrokeJoinType join,
-           double line_width, double miter_limit, double flatness) {
+                       ArtVpath **p_rev, int *pn_rev, int *pn_rev_max,
+                       ArtVpath *vpath, int i0, int i1, int i2,
+                       ArtPathStrokeJoinType join,
+                       double line_width, double miter_limit, double flatness) {
 	double dx0, dy0;
 	double dx1, dy1;
 	double dlx0, dly0;
@@ -600,7 +610,7 @@ static void render_seg(ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
 	dmr2 = dmx * dmx + dmy * dmy;
 
 	if (join == ART_PATH_STROKE_JOIN_MITER &&
-	        dmr2 * miter_limit * miter_limit < line_width * line_width)
+	    dmr2 * miter_limit * miter_limit < line_width * line_width)
 		join = ART_PATH_STROKE_JOIN_BEVEL;
 
 	/* the case when dmr2 is zero or very small bothers me
@@ -614,7 +624,7 @@ static void render_seg(ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
 		dmy *= scale;
 	}
 
-	if (cross *cross < EPSILON_2 && dx0 *dx1 + dy0 *dy1 >= 0) {
+	if (cross * cross < EPSILON_2 && dx0 * dx1 + dy0 * dy1 >= 0) {
 		/* going straight */
 		art_vpath_add_point(p_forw, pn_forw, pn_forw_max,
 		                    ART_LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
@@ -712,14 +722,13 @@ static void render_seg(ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
 			                         dlx1, dly1,
 			                         -line_width,
 			                         flatness);
-
 	}
 }
 
 /* caps i1, under the assumption of a vector from i0 */
 static void render_cap(ArtVpath **p_result, int *pn_result, int *pn_result_max,
-           ArtVpath *vpath, int i0, int i1,
-           ArtPathStrokeCapType cap, double line_width, double flatness) {
+                       ArtVpath *vpath, int i0, int i1,
+                       ArtPathStrokeCapType cap, double line_width, double flatness) {
 	double dx0, dy0;
 	double dlx0, dly0;
 	double scale;
@@ -791,11 +800,11 @@ static void render_cap(ArtVpath **p_result, int *pn_result, int *pn_result_max,
  * Return value: Resulting raw stroked outline in svp format.
  **/
 ArtVpath *art_svp_vpath_stroke_raw(ArtVpath *vpath,
-                         ArtPathStrokeJoinType join,
-                         ArtPathStrokeCapType cap,
-                         double line_width,
-                         double miter_limit,
-                         double flatness) {
+                                   ArtPathStrokeJoinType join,
+                                   ArtPathStrokeCapType cap,
+                                   double line_width,
+                                   double miter_limit,
+                                   double flatness) {
 	int begin_idx, end_idx;
 	int i;
 	ArtVpath *forw, *rev;
@@ -861,8 +870,8 @@ ArtVpath *art_svp_vpath_stroke_raw(ArtVpath *vpath,
 				      semantics (i.e. explicit closepath code rather than
 				      just the fact that end of the path is the beginning) */
 				if (closed &&
-				        vpath[this_].x == vpath[begin_idx].x &&
-				        vpath[this_].y == vpath[begin_idx].y) {
+				    vpath[this_].x == vpath[begin_idx].x &&
+				    vpath[this_].y == vpath[begin_idx].y) {
 					int j;
 
 					/* path is closed, render join to beginning */
@@ -930,7 +939,6 @@ ArtVpath *art_svp_vpath_stroke_raw(ArtVpath *vpath,
 	return result;
 }
 
-
 /* Render a vector path into a stroked outline.
 
    Status of this routine:
@@ -989,11 +997,11 @@ ArtVpath *art_svp_vpath_stroke_raw(ArtVpath *vpath,
  * Return value: Resulting stroked outline in svp format.
  **/
 ArtSVP *art_svp_vpath_stroke(ArtVpath *vpath,
-                     ArtPathStrokeJoinType join,
-                     ArtPathStrokeCapType cap,
-                     double line_width,
-                     double miter_limit,
-                     double flatness) {
+                             ArtPathStrokeJoinType join,
+                             ArtPathStrokeCapType cap,
+                             double line_width,
+                             double miter_limit,
+                             double flatness) {
 	ArtVpath *vpath_stroke;
 	ArtSVP *svp, *svp2;
 	ArtSvpWriter *swr;
@@ -1010,7 +1018,6 @@ ArtSVP *art_svp_vpath_stroke(ArtVpath *vpath,
 	art_svp_free(svp);
 	return svp2;
 }
-
 
 /* Testbed implementation of the new intersection code.
 */
@@ -1083,8 +1090,8 @@ static void art_pri_sift_down_from_root(ArtPriQ *pq, ArtPriPoint *missing) {
 
 	while (child < n) {
 		if (items[child - 1]->y < items[child]->y ||
-		        (items[child - 1]->y == items[child]->y &&
-		         items[child - 1]->x < items[child]->x))
+		    (items[child - 1]->y == items[child]->y &&
+		     items[child - 1]->x < items[child]->x))
 			child--;
 		items[vacant] = items[child];
 		vacant = child;
@@ -1123,7 +1130,7 @@ struct _ArtSvpWriterRewind {
 };
 
 static int art_svp_writer_rewind_add_segment(ArtSvpWriter *self, int wind_left,
-                                  int delta_wind, double x, double y) {
+                                             int delta_wind, double x, double y) {
 	ArtSvpWriterRewind *swr = (ArtSvpWriterRewind *)self;
 	ArtSVP *svp;
 	ArtSVPSeg *seg;
@@ -1162,11 +1169,11 @@ static int art_svp_writer_rewind_add_segment(ArtSvpWriter *self, int wind_left,
 	if (swr->n_segs_max == seg_num) {
 		swr->n_segs_max <<= 1;
 		svp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-		                            (swr->n_segs_max - 1) *
-		                            sizeof(ArtSVPSeg));
+		                                 (swr->n_segs_max - 1) *
+		                                     sizeof(ArtSVPSeg));
 		swr->svp = svp;
 		int *tmp = art_renew(swr->n_points_max, int,
-		                                        swr->n_segs_max);
+		                     swr->n_segs_max);
 
 		if (!tmp)
 			error("Cannot reallocate memory in art_svp_writer_rewind_add_segment()");
@@ -1191,7 +1198,7 @@ static int art_svp_writer_rewind_add_segment(ArtSvpWriter *self, int wind_left,
 }
 
 static void art_svp_writer_rewind_add_point(ArtSvpWriter *self, int seg_id,
-                                double x, double y) {
+                                            double x, double y) {
 	ArtSvpWriterRewind *swr = (ArtSvpWriterRewind *)self;
 	ArtSVPSeg *seg;
 	int n_points;
@@ -1239,7 +1246,7 @@ ArtSvpWriter *art_svp_writer_rewind_new(ArtWindRule rule) {
 	result->rule = rule;
 	result->n_segs_max = 16;
 	result->svp = (ArtSVP *)malloc(sizeof(ArtSVP) +
-	                                  (result->n_segs_max - 1) * sizeof(ArtSVPSeg));
+	                               (result->n_segs_max - 1) * sizeof(ArtSVPSeg));
 	if (!result->svp)
 		error("[art_svp_writer_rewind_new] Cannot allocate memory");
 
@@ -1385,7 +1392,7 @@ static void art_svp_intersect_add_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg)
 	for (place = *pp; place != NULL && (place->horiz_x > seg->horiz_x ||
 	                                    (place->horiz_x == seg->horiz_x &&
 	                                     place->b < seg->b));
-	        place = *pp) {
+	     place = *pp) {
 		place_right = place;
 		pp = &place->horiz_left;
 	}
@@ -1399,7 +1406,7 @@ static void art_svp_intersect_add_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg)
 }
 
 static void art_svp_intersect_push_pt(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
-                          double x, double y) {
+                                      double x, double y) {
 	ArtPriPoint *pri_pt;
 	int n_stack = seg->n_stack;
 
@@ -1436,7 +1443,7 @@ typedef enum {
  * Return value: x coordinate of break point.
  */
 static double art_svp_intersect_break(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
-                        double x_ref, double y, ArtBreakFlags break_flags) {
+                                      double x_ref, double y, ArtBreakFlags break_flags) {
 	double x0, y0, x1, y1;
 	const ArtSVPSeg *in_seg = seg->in_seg;
 	int in_curs = seg->in_curs;
@@ -1448,7 +1455,7 @@ static double art_svp_intersect_break(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 	y1 = in_seg->points[in_curs].y;
 	x = x0 + (x1 - x0) * ((y - y0) / (y1 - y0));
 	if ((break_flags == ART_BREAK_LEFT && x > x_ref) ||
-	        (break_flags == ART_BREAK_RIGHT && x < x_ref)) {
+	    (break_flags == ART_BREAK_RIGHT && x < x_ref)) {
 	}
 
 	/* I think we can count on min(x0, x1) <= x <= max(x0, x1) with sane
@@ -1477,7 +1484,7 @@ static double art_svp_intersect_break(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
  * NULL if the new point is leftmost.
  **/
 static ArtActiveSeg *art_svp_intersect_add_point(ArtIntersectCtx *ctx, double x, double y,
-                            ArtActiveSeg *seg, ArtBreakFlags break_flags) {
+                                                 ArtActiveSeg *seg, ArtBreakFlags break_flags) {
 	ArtActiveSeg *left, *right;
 	double x_min = x, x_max = x;
 	bool left_live, right_live;
@@ -1496,9 +1503,9 @@ static ArtActiveSeg *art_svp_intersect_add_point(ArtIntersectCtx *ctx, double x,
 	while (left_live || right_live) {
 		if (left_live) {
 			if (x <= left->x[left->flags & ART_ACTIVE_FLAGS_BNEG] &&
-			        /* It may be that one of these conjuncts turns out to be always
+			    /* It may be that one of these conjuncts turns out to be always
 			              true. We test both anyway, to be defensive. */
-			        y != left->y0 && y < left->y1) {
+			    y != left->y0 && y < left->y1) {
 				d = x_min * left->a + y * left->b + left->c;
 				if (d < EPSILON_A) {
 					new_x = art_svp_intersect_break(ctx, left, x_min, y,
@@ -1516,9 +1523,9 @@ static ArtActiveSeg *art_svp_intersect_add_point(ArtIntersectCtx *ctx, double x,
 				left_live = false;
 		} else if (right_live) {
 			if (x >= right->x[(right->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] &&
-			        /* It may be that one of these conjuncts turns out to be always
+			    /* It may be that one of these conjuncts turns out to be always
 			              true. We test both anyway, to be defensive. */
-			        y != right->y0 && y < right->y1) {
+			    y != right->y0 && y < right->y1) {
 				d = x_max * right->a + y * right->b + right->c;
 				if (d > -EPSILON_A) {
 					new_x = art_svp_intersect_break(ctx, right, x_max, y,
@@ -1566,7 +1573,7 @@ static ArtActiveSeg *art_svp_intersect_add_point(ArtIntersectCtx *ctx, double x,
 }
 
 static void art_svp_intersect_swap_active(ArtIntersectCtx *ctx,
-                              ArtActiveSeg *left_seg, ArtActiveSeg *right_seg) {
+                                          ArtActiveSeg *left_seg, ArtActiveSeg *right_seg) {
 	right_seg->left = left_seg->left;
 	if (right_seg->left != NULL)
 		right_seg->left->right = right_seg;
@@ -1593,8 +1600,8 @@ static void art_svp_intersect_swap_active(ArtIntersectCtx *ctx,
  * scan line, indicating further iteration is needed.
  **/
 static bool art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
-                             ArtActiveSeg *left_seg, ArtActiveSeg *right_seg,
-                             ArtBreakFlags break_flags) {
+                                         ArtActiveSeg *left_seg, ArtActiveSeg *right_seg,
+                                         ArtBreakFlags break_flags) {
 	double left_x0, left_y0, left_x1;
 	double left_y1 = left_seg->y1;
 	double right_y1 = right_seg->y1;
@@ -1617,7 +1624,7 @@ static bool art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 
 			if (left_x1 <
 			        right_seg->x[(right_seg->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] ||
-			        left_y1 == right_seg->y0)
+			    left_y1 == right_seg->y0)
 				return false;
 			d = left_x1 * right_seg->a + left_y1 * right_seg->b + right_seg->c;
 			if (d < -EPSILON_A)
@@ -1625,8 +1632,8 @@ static bool art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 			else if (d < EPSILON_A) {
 				/* I'm unsure about the break flags here. */
 				double right_x1 = art_svp_intersect_break(ctx, right_seg,
-				                  left_x1, left_y1,
-				                  ART_BREAK_RIGHT);
+				                                          left_x1, left_y1,
+				                                          ART_BREAK_RIGHT);
 				if (left_x1 <= right_x1)
 					return false;
 			}
@@ -1635,7 +1642,7 @@ static bool art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 			double right_x1 = right_seg->x[1];
 
 			if (right_x1 > left_seg->x[left_seg->flags & ART_ACTIVE_FLAGS_BNEG] ||
-			        right_y1 == left_seg->y0)
+			    right_y1 == left_seg->y0)
 				return false;
 			d = right_x1 * left_seg->a + right_y1 * left_seg->b + left_seg->c;
 			if (d > EPSILON_A)
@@ -1643,8 +1650,8 @@ static bool art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 			else if (d > -EPSILON_A) {
 				/* See above regarding break flags. */
 				left_x1 = art_svp_intersect_break(ctx, left_seg,
-				                 right_x1, right_y1,
-				                 ART_BREAK_LEFT);
+				                                  right_x1, right_y1,
+				                                  ART_BREAK_LEFT);
 				if (left_x1 <= right_x1)
 					return false;
 			}
@@ -1665,15 +1672,15 @@ static bool art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 
 		if (left_x1 <
 		        right_seg->x[(right_seg->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] ||
-		        left_y1 == right_seg->y0)
+		    left_y1 == right_seg->y0)
 			return false;
 		d = left_x1 * right_seg->a + left_y1 * right_seg->b + right_seg->c;
 		if (d < -EPSILON_A)
 			return false;
 		else if (d < EPSILON_A) {
 			double right_x1 = art_svp_intersect_break(ctx, right_seg,
-			                  left_x1, left_y1,
-			                  ART_BREAK_RIGHT);
+			                                          left_x1, left_y1,
+			                                          ART_BREAK_RIGHT);
 			if (left_x1 <= right_x1)
 				return false;
 		}
@@ -1682,15 +1689,15 @@ static bool art_svp_intersect_test_cross(ArtIntersectCtx *ctx,
 		double right_x1 = right_seg->x[1];
 
 		if (right_x1 > left_seg->x[left_seg->flags & ART_ACTIVE_FLAGS_BNEG] ||
-		        right_y1 == left_seg->y0)
+		    right_y1 == left_seg->y0)
 			return false;
 		d = right_x1 * left_seg->a + right_y1 * left_seg->b + left_seg->c;
 		if (d > EPSILON_A)
 			return false;
 		else if (d > -EPSILON_A) {
 			left_x1 = art_svp_intersect_break(ctx, left_seg,
-			                 right_x1, right_y1,
-			                 ART_BREAK_LEFT);
+			                                  right_x1, right_y1,
+			                                  ART_BREAK_LEFT);
 			if (left_x1 <= right_x1)
 				return false;
 		}
@@ -1824,7 +1831,7 @@ static void art_svp_intersect_active_free(ArtActiveSeg *seg) {
  * Precondition: the line in @seg is not purely horizontal.
  **/
 static void art_svp_intersect_insert_cross(ArtIntersectCtx *ctx,
-                               ArtActiveSeg *seg) {
+                                           ArtActiveSeg *seg) {
 	ArtActiveSeg *left = seg, *right = seg;
 
 	for (;;) {
@@ -1835,8 +1842,8 @@ static void art_svp_intersect_insert_cross(ArtIntersectCtx *ctx,
 				if (!(leftc->flags & ART_ACTIVE_FLAGS_DEL))
 					break;
 			if (leftc != NULL &&
-			        art_svp_intersect_test_cross(ctx, leftc, left,
-			                                     ART_BREAK_LEFT)) {
+			    art_svp_intersect_test_cross(ctx, leftc, left,
+			                                 ART_BREAK_LEFT)) {
 				if (left == right || right == NULL)
 					right = left->right;
 			} else {
@@ -1849,8 +1856,8 @@ static void art_svp_intersect_insert_cross(ArtIntersectCtx *ctx,
 				if (!(rightc->flags & ART_ACTIVE_FLAGS_DEL))
 					break;
 			if (rightc != NULL &&
-			        art_svp_intersect_test_cross(ctx, right, rightc,
-			                                     ART_BREAK_RIGHT)) {
+			    art_svp_intersect_test_cross(ctx, right, rightc,
+			                                 ART_BREAK_RIGHT)) {
 				if (left == right || left == NULL)
 					left = right->left;
 			} else {
@@ -1872,7 +1879,7 @@ static void art_svp_intersect_insert_cross(ArtIntersectCtx *ctx,
  * location of @seg to @x1.
  **/
 static void art_svp_intersect_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
-                        double x0, double x1) {
+                                    double x0, double x1) {
 	ArtActiveSeg *hs;
 
 	if (x0 == x1)
@@ -1916,7 +1923,7 @@ static void art_svp_intersect_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 			if (left->x[left_bneg] <= x1)
 				break;
 			if (left->x[left_bneg ^ 1] <= x1 &&
-			        x1 *left->a + ctx->y *left->b + left->c >= 0)
+			    x1 * left->a + ctx->y * left->b + left->c >= 0)
 				break;
 			if (left->y0 != ctx->y && left->y1 != ctx->y) {
 				art_svp_intersect_break(ctx, left, x1, ctx->y, ART_BREAK_LEFT);
@@ -1938,7 +1945,7 @@ static void art_svp_intersect_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 			if (right->x[right_bneg ^ 1] >= x1)
 				break;
 			if (right->x[right_bneg] >= x1 &&
-			        x1 *right->a + ctx->y *right->b + right->c <= 0)
+			    x1 * right->a + ctx->y * right->b + right->c <= 0)
 				break;
 			if (right->y0 != ctx->y && right->y1 != ctx->y) {
 				art_svp_intersect_break(ctx, right, x1, ctx->y,
@@ -1978,7 +1985,7 @@ static void art_svp_intersect_insert_line(ArtIntersectCtx *ctx, ArtActiveSeg *se
 }
 
 static void art_svp_intersect_process_intersection(ArtIntersectCtx *ctx,
-                                       ArtActiveSeg *seg) {
+                                                   ArtActiveSeg *seg) {
 	int n_stack = --seg->n_stack;
 	seg->x[1] = seg->stack[n_stack - 1].x;
 	seg->y1 = seg->stack[n_stack - 1].y;
@@ -1989,7 +1996,7 @@ static void art_svp_intersect_process_intersection(ArtIntersectCtx *ctx,
 }
 
 static void art_svp_intersect_advance_cursor(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
-                                 ArtPriPoint *pri_pt) {
+                                             ArtPriPoint *pri_pt) {
 	const ArtSVPSeg *in_seg = seg->in_seg;
 	int in_curs = seg->in_curs;
 	ArtSvpWriter *swr = seg->flags & ART_ACTIVE_FLAGS_OUT ? ctx->out : NULL;
@@ -2121,7 +2128,7 @@ static void art_svp_intersect_horiz_commit(ArtIntersectCtx *ctx) {
 		/* Find first active segment in cluster. */
 
 		for (curs = seg; curs != NULL && curs->horiz_x == x;
-		        curs = curs->horiz_right)
+		     curs = curs->horiz_right)
 			if (!(curs->flags & ART_ACTIVE_FLAGS_DEL))
 				break;
 
@@ -2140,7 +2147,7 @@ static void art_svp_intersect_horiz_commit(ArtIntersectCtx *ctx) {
 
 			do {
 				if (!(curs->flags & ART_ACTIVE_FLAGS_OUT) ||
-				        curs->wind_left != winding_number) {
+				    curs->wind_left != winding_number) {
 					ArtSvpWriter *swr = ctx->out;
 
 					if (curs->flags & ART_ACTIVE_FLAGS_OUT) {
@@ -2255,7 +2262,6 @@ void art_svp_intersector(const ArtSVP *in, ArtSvpWriter *out) {
 	free(ctx);
 }
 
-
 /* The spiffy antialiased renderer for sorted vector paths. */
 
 typedef double artfloat;
@@ -2276,7 +2282,7 @@ struct ArtSVPRenderAAIter {
 };
 
 static void art_svp_render_insert_active(int i, int *active_segs, int n_active_segs,
-                             artfloat *seg_x, artfloat *seg_dx) {
+                                         artfloat *seg_x, artfloat *seg_dx) {
 	int j;
 	artfloat x;
 	int tmp1, tmp2;
@@ -2349,7 +2355,7 @@ static void art_svp_render_delete_active(int *active_segs, int j, int n_active_s
 */
 
 ArtSVPRenderAAIter *art_svp_render_aa_iter(const ArtSVP *svp,
-                       int x0, int y0, int x1, int y1) {
+                                           int x0, int y0, int x1, int y1) {
 	ArtSVPRenderAAIter *iter = art_new(ArtSVPRenderAAIter, 1);
 	if (!iter)
 		error("[art_svp_render_aa_iter] Cannot allocate memory");
@@ -2370,34 +2376,34 @@ ArtSVPRenderAAIter *art_svp_render_aa_iter(const ArtSVP *svp,
 	return iter;
 }
 
-#define ADD_STEP(xpos, xdelta)                            \
-	/* stereotype code fragment for adding a step */      \
-	if (n_steps == 0 || steps[n_steps - 1].x < xpos) {    \
-		sx = n_steps;                                     \
-		steps[sx].x = xpos;                               \
-		steps[sx].delta = xdelta;                         \
-		n_steps++;                                        \
-	} else {                                              \
-		for (sx = n_steps; sx > 0; sx--) {                \
-			if (steps[sx - 1].x == xpos) {                \
-				steps[sx - 1].delta += xdelta;            \
-				sx = n_steps;                             \
-				break;                                    \
-			} else if (steps[sx - 1].x < xpos) {          \
-				break;                                    \
-			}                                             \
-		}                                                 \
-		if (sx < n_steps) {                               \
-			memmove (&steps[sx + 1], &steps[sx],          \
-			         (n_steps - sx) * sizeof(steps[0]));  \
-			steps[sx].x = xpos;                           \
-			steps[sx].delta = xdelta;                     \
-			n_steps++;                                    \
-		}                                                 \
+#define ADD_STEP(xpos, xdelta)                          \
+	/* stereotype code fragment for adding a step */    \
+	if (n_steps == 0 || steps[n_steps - 1].x < xpos) {  \
+		sx = n_steps;                                   \
+		steps[sx].x = xpos;                             \
+		steps[sx].delta = xdelta;                       \
+		n_steps++;                                      \
+	} else {                                            \
+		for (sx = n_steps; sx > 0; sx--) {              \
+			if (steps[sx - 1].x == xpos) {              \
+				steps[sx - 1].delta += xdelta;          \
+				sx = n_steps;                           \
+				break;                                  \
+			} else if (steps[sx - 1].x < xpos) {        \
+				break;                                  \
+			}                                           \
+		}                                               \
+		if (sx < n_steps) {                             \
+			memmove(&steps[sx + 1], &steps[sx],         \
+			        (n_steps - sx) * sizeof(steps[0])); \
+			steps[sx].x = xpos;                         \
+			steps[sx].delta = xdelta;                   \
+			n_steps++;                                  \
+		}                                               \
 	}
 
 void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
-                            ArtSVPRenderAAStep **p_steps, int *p_n_steps) {
+                                 ArtSVPRenderAAStep **p_steps, int *p_n_steps) {
 	const ArtSVP *svp = iter->svp;
 	int *active_segs = iter->active_segs;
 	int n_active_segs = iter->n_active_segs;
@@ -2432,7 +2438,7 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 	/* insert new active segments */
 	for (; i < svp->n_segs && svp->segs[i].bbox.y0 < y + 1; i++) {
 		if (svp->segs[i].bbox.y1 > y &&
-		        svp->segs[i].bbox.x0 < x1) {
+		    svp->segs[i].bbox.x0 < x1) {
 			seg = &svp->segs[i];
 			/* move cursor to topmost vector which overlaps [y,y+1) */
 			for (curs = 0; seg->points[curs + 1].y < y; curs++)
@@ -2461,7 +2467,7 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 		seg = &svp->segs[seg_index];
 		curs = cursor[seg_index];
 		while (curs != seg->n_points - 1 &&
-		        seg->points[curs].y < y + 1) {
+		       seg->points[curs].y < y + 1) {
 			y_top = y;
 			if (y_top < seg->points[curs].y)
 				y_top = seg->points[curs].y;
@@ -2504,7 +2510,7 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 					drslope = delta * rslope;
 					last =
 					    (int)(drslope * 0.5 *
-					    (ix_min + 1 - x_min) * (ix_min + 1 - x_min));
+					          (ix_min + 1 - x_min) * (ix_min + 1 - x_min));
 					xdelta = last;
 					if (ix_min >= x0) {
 						ADD_STEP(ix_min, xdelta)
@@ -2518,7 +2524,7 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 						ix_max = x1;
 					for (; x < ix_max; x++) {
 						this_ = (int)((seg->dir ? 16711680.0 : -16711680.0) * rslope *
-						        (x + 0.5 - x_min));
+						              (x + 0.5 - x_min));
 						xdelta = this_ - last;
 						last = this_;
 
@@ -2527,8 +2533,8 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 					if (x < x1) {
 						this_ =
 						    (int)(delta * (1 - 0.5 *
-						             (x_max - ix_max) * (x_max - ix_max) *
-						             rslope));
+						                           (x_max - ix_max) * (x_max - ix_max) *
+						                           rslope));
 						xdelta = this_ - last;
 						last = this_;
 
@@ -2544,11 +2550,12 @@ void art_svp_render_aa_iter_step(ArtSVPRenderAAIter *iter, int *p_start,
 			}
 			curs++;
 			if (curs != seg->n_points - 1 &&
-			        seg->points[curs].y < y + 1) {
+			    seg->points[curs].y < y + 1) {
 				dy = seg->points[curs + 1].y - seg->points[curs].y;
 				if (fabs(dy) >= EPSILON_6)
 					seg_dx[seg_index] = (seg->points[curs + 1].x -
-					                     seg->points[curs].x) / dy;
+					                     seg->points[curs].x) /
+					                    dy;
 				else
 					seg_dx[seg_index] = 1e12;
 				seg_x[seg_index] = seg->points[curs].x +
@@ -2623,12 +2630,12 @@ void art_svp_render_aa_iter_done(ArtSVPRenderAAIter *iter) {
  *
  **/
 void art_svp_render_aa(const ArtSVP *svp,
-                  int x0, int y0, int x1, int y1,
-                  void (*callback)(void *callback_data,
-                                   int y,
-                                   int start,
-                                   ArtSVPRenderAAStep *steps, int n_steps),
-                  void *callback_data) {
+                       int x0, int y0, int x1, int y1,
+                       void (*callback)(void *callback_data,
+                                        int y,
+                                        int start,
+                                        ArtSVPRenderAAStep *steps, int n_steps),
+                       void *callback_data) {
 	ArtSVPRenderAAIter *iter;
 	int y;
 	int start;
@@ -2636,7 +2643,6 @@ void art_svp_render_aa(const ArtSVP *svp,
 	int n_steps;
 
 	iter = art_svp_render_aa_iter(svp, x0, y0, x1, y1);
-
 
 	for (y = y0; y < y1; y++) {
 		art_svp_render_aa_iter_step(iter, &start, &steps, &n_steps);

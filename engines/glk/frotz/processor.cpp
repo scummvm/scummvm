@@ -21,8 +21,8 @@
  */
 
 #include "glk/frotz/processor.h"
-#include "glk/frotz/frotz.h"
 #include "glk/conf.h"
+#include "glk/frotz/frotz.h"
 
 namespace Glk {
 namespace Frotz {
@@ -31,151 +31,146 @@ namespace Frotz {
 zword save_undo() { return 0; }
 zword restore_undo() { return 0; }
 
-
 Opcode Processor::var_opcodes[64] = {
-	&Processor::__illegal__,
-	&Processor::z_je,
-	&Processor::z_jl,
-	&Processor::z_jg,
-	&Processor::z_dec_chk,
-	&Processor::z_inc_chk,
-	&Processor::z_jin,
-	&Processor::z_test,
-	&Processor::z_or,
-	&Processor::z_and,
-	&Processor::z_test_attr,
-	&Processor::z_set_attr,
-	&Processor::z_clear_attr,
-	&Processor::z_store,
-	&Processor::z_insert_obj,
-	&Processor::z_loadw,
-	&Processor::z_loadb,
-	&Processor::z_get_prop,
-	&Processor::z_get_prop_addr,
-	&Processor::z_get_next_prop,
-	&Processor::z_add,
-	&Processor::z_sub,
-	&Processor::z_mul,
-	&Processor::z_div,
-	&Processor::z_mod,
-	&Processor::z_call_s,
-	&Processor::z_call_n,
-	&Processor::z_set_colour,
-	&Processor::z_throw,
-	&Processor::__illegal__,
-	&Processor::__illegal__,
-	&Processor::__illegal__,
-	&Processor::z_call_s,
-	&Processor::z_storew,
-	&Processor::z_storeb,
-	&Processor::z_put_prop,
-	&Processor::z_read,
-	&Processor::z_print_char,
-	&Processor::z_print_num,
-	&Processor::z_random,
-	&Processor::z_push,
-	&Processor::z_pull,
-	&Processor::z_split_window,
-	&Processor::z_set_window,
-	&Processor::z_call_s,
-	&Processor::z_erase_window,
-	&Processor::z_erase_line,
-	&Processor::z_set_cursor,
-	&Processor::z_get_cursor,
-	&Processor::z_set_text_style,
-	&Processor::z_buffer_mode,
-	&Processor::z_output_stream,
-	&Processor::z_input_stream,
-	&Processor::z_sound_effect,
-	&Processor::z_read_char,
-	&Processor::z_scan_table,
-	&Processor::z_not,
-	&Processor::z_call_n,
-	&Processor::z_call_n,
-	&Processor::z_tokenise,
-	&Processor::z_encode_text,
-	&Processor::z_copy_table,
-	&Processor::z_print_table,
-	&Processor::z_check_arg_count
-};
+    &Processor::__illegal__,
+    &Processor::z_je,
+    &Processor::z_jl,
+    &Processor::z_jg,
+    &Processor::z_dec_chk,
+    &Processor::z_inc_chk,
+    &Processor::z_jin,
+    &Processor::z_test,
+    &Processor::z_or,
+    &Processor::z_and,
+    &Processor::z_test_attr,
+    &Processor::z_set_attr,
+    &Processor::z_clear_attr,
+    &Processor::z_store,
+    &Processor::z_insert_obj,
+    &Processor::z_loadw,
+    &Processor::z_loadb,
+    &Processor::z_get_prop,
+    &Processor::z_get_prop_addr,
+    &Processor::z_get_next_prop,
+    &Processor::z_add,
+    &Processor::z_sub,
+    &Processor::z_mul,
+    &Processor::z_div,
+    &Processor::z_mod,
+    &Processor::z_call_s,
+    &Processor::z_call_n,
+    &Processor::z_set_colour,
+    &Processor::z_throw,
+    &Processor::__illegal__,
+    &Processor::__illegal__,
+    &Processor::__illegal__,
+    &Processor::z_call_s,
+    &Processor::z_storew,
+    &Processor::z_storeb,
+    &Processor::z_put_prop,
+    &Processor::z_read,
+    &Processor::z_print_char,
+    &Processor::z_print_num,
+    &Processor::z_random,
+    &Processor::z_push,
+    &Processor::z_pull,
+    &Processor::z_split_window,
+    &Processor::z_set_window,
+    &Processor::z_call_s,
+    &Processor::z_erase_window,
+    &Processor::z_erase_line,
+    &Processor::z_set_cursor,
+    &Processor::z_get_cursor,
+    &Processor::z_set_text_style,
+    &Processor::z_buffer_mode,
+    &Processor::z_output_stream,
+    &Processor::z_input_stream,
+    &Processor::z_sound_effect,
+    &Processor::z_read_char,
+    &Processor::z_scan_table,
+    &Processor::z_not,
+    &Processor::z_call_n,
+    &Processor::z_call_n,
+    &Processor::z_tokenise,
+    &Processor::z_encode_text,
+    &Processor::z_copy_table,
+    &Processor::z_print_table,
+    &Processor::z_check_arg_count};
 
 Opcode Processor::ext_opcodes[64] = {
-	&Processor::z_save,
-	&Processor::z_restore,
-	&Processor::z_log_shift,
-	&Processor::z_art_shift,
-	&Processor::z_set_font,
-	&Processor::z_draw_picture,
-	&Processor::z_picture_data,
-	&Processor::z_erase_picture,
-	&Processor::z_set_margins,
-	&Processor::z_save_undo,
-	&Processor::z_restore_undo,
-	&Processor::z_print_unicode,
-	&Processor::z_check_unicode,
-	&Processor::z_set_true_colour,	// spec 1.1
-	&Processor::__illegal__,
-	&Processor::__illegal__,
-	&Processor::z_move_window,
-	&Processor::z_window_size,
-	&Processor::z_window_style,
-	&Processor::z_get_wind_prop,
-	&Processor::z_scroll_window,
-	&Processor::z_pop_stack,
-	&Processor::z_read_mouse,
-	&Processor::z_mouse_window,
-	&Processor::z_push_stack,
-	&Processor::z_put_wind_prop,
-	&Processor::z_print_form,
-	&Processor::z_make_menu,
-	&Processor::z_picture_table,
-	&Processor::z_buffer_screen		// spec 1.1
+    &Processor::z_save,
+    &Processor::z_restore,
+    &Processor::z_log_shift,
+    &Processor::z_art_shift,
+    &Processor::z_set_font,
+    &Processor::z_draw_picture,
+    &Processor::z_picture_data,
+    &Processor::z_erase_picture,
+    &Processor::z_set_margins,
+    &Processor::z_save_undo,
+    &Processor::z_restore_undo,
+    &Processor::z_print_unicode,
+    &Processor::z_check_unicode,
+    &Processor::z_set_true_colour, // spec 1.1
+    &Processor::__illegal__,
+    &Processor::__illegal__,
+    &Processor::z_move_window,
+    &Processor::z_window_size,
+    &Processor::z_window_style,
+    &Processor::z_get_wind_prop,
+    &Processor::z_scroll_window,
+    &Processor::z_pop_stack,
+    &Processor::z_read_mouse,
+    &Processor::z_mouse_window,
+    &Processor::z_push_stack,
+    &Processor::z_put_wind_prop,
+    &Processor::z_print_form,
+    &Processor::z_make_menu,
+    &Processor::z_picture_table,
+    &Processor::z_buffer_screen // spec 1.1
 };
 
-Processor::Processor(OSystem *syst, const GlkGameDescription &gameDesc) :
-		GlkInterface(syst, gameDesc),
-		_finished(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
-		zargc(0), _decoded(nullptr), _encoded(nullptr), _resolution(0),
-		_randomInterval(0), _randomCtr(0), first_restart(true), script_valid(false),
-		_bufPos(0), _locked(false), _prevC('\0'), script_width(0),
-		sfp(nullptr), rfp(nullptr), pfp(nullptr), ostream_screen(true), ostream_script(false),
-		ostream_memory(false), ostream_record(false), istream_replay(false), message(false) {
+Processor::Processor(OSystem *syst, const GlkGameDescription &gameDesc) : GlkInterface(syst, gameDesc),
+                                                                          _finished(0), _sp(nullptr), _fp(nullptr), _frameCount(0),
+                                                                          zargc(0), _decoded(nullptr), _encoded(nullptr), _resolution(0),
+                                                                          _randomInterval(0), _randomCtr(0), first_restart(true), script_valid(false),
+                                                                          _bufPos(0), _locked(false), _prevC('\0'), script_width(0),
+                                                                          sfp(nullptr), rfp(nullptr), pfp(nullptr), ostream_screen(true), ostream_script(false),
+                                                                          ostream_memory(false), ostream_record(false), istream_replay(false), message(false) {
 	static const Opcode OP0_OPCODES[16] = {
-		&Processor::z_rtrue,
-		&Processor::z_rfalse,
-		&Processor::z_print,
-		&Processor::z_print_ret,
-		&Processor::z_nop,
-		&Processor::z_save,
-		&Processor::z_restore,
-		&Processor::z_restart,
-		&Processor::z_ret_popped,
-		&Processor::z_catch,
-		&Processor::z_quit,
-		&Processor::z_new_line,
-		&Processor::z_show_status,
-		&Processor::z_verify,
-		&Processor::__extended__,
-		&Processor::z_piracy
-	};
+	    &Processor::z_rtrue,
+	    &Processor::z_rfalse,
+	    &Processor::z_print,
+	    &Processor::z_print_ret,
+	    &Processor::z_nop,
+	    &Processor::z_save,
+	    &Processor::z_restore,
+	    &Processor::z_restart,
+	    &Processor::z_ret_popped,
+	    &Processor::z_catch,
+	    &Processor::z_quit,
+	    &Processor::z_new_line,
+	    &Processor::z_show_status,
+	    &Processor::z_verify,
+	    &Processor::__extended__,
+	    &Processor::z_piracy};
 	static const Opcode OP1_OPCODES[16] = {
-		&Processor::z_jz,
-		&Processor::z_get_sibling,
-		&Processor::z_get_child,
-		&Processor::z_get_parent,
-		&Processor::z_get_prop_len,
-		&Processor::z_inc,
-		&Processor::z_dec,
-		&Processor::z_print_addr,
-		&Processor::z_call_s,
-		&Processor::z_remove_obj,
-		&Processor::z_print_obj,
-		&Processor::z_ret,
-		&Processor::z_jump,
-		&Processor::z_print_paddr,
-		&Processor::z_load,
-		&Processor::z_call_n
-	};
+	    &Processor::z_jz,
+	    &Processor::z_get_sibling,
+	    &Processor::z_get_child,
+	    &Processor::z_get_parent,
+	    &Processor::z_get_prop_len,
+	    &Processor::z_inc,
+	    &Processor::z_dec,
+	    &Processor::z_print_addr,
+	    &Processor::z_call_s,
+	    &Processor::z_remove_obj,
+	    &Processor::z_print_obj,
+	    &Processor::z_ret,
+	    &Processor::z_jump,
+	    &Processor::z_print_paddr,
+	    &Processor::z_load,
+	    &Processor::z_call_n};
 
 	op0_opcodes.resize(16);
 	op1_opcodes.resize(16);
@@ -266,17 +261,16 @@ void Processor::interpret() {
 			// 0OP opcodes
 			(*this.*op0_opcodes[opcode - 0xb0])();
 
-
 		} else {
 			// VAR opcodes
 			zbyte specifier1;
 			zbyte specifier2;
 
-			if (opcode == 0xec || opcode == 0xfa) {	// opcodes 0xec
-				CODE_BYTE(specifier1);			// and 0xfa are
-				CODE_BYTE(specifier2);          // call opcodes
-				load_all_operands(specifier1);	// with up to 8
-				load_all_operands(specifier2);	// arguments
+			if (opcode == 0xec || opcode == 0xfa) { // opcodes 0xec
+				CODE_BYTE(specifier1);              // and 0xfa are
+				CODE_BYTE(specifier2);              // call opcodes
+				load_all_operands(specifier1);      // with up to 8
+				load_all_operands(specifier2);      // arguments
 			} else {
 				CODE_BYTE(specifier1);
 				load_all_operands(specifier1);
@@ -342,15 +336,15 @@ void Processor::call(zword routine, int argc, zword *args, int ct) {
 		runtimeError(ERR_STK_OVF);
 
 	if (_quetzal)
-		_fp[0] |= (zword)count << 8;	// Save local var count for Quetzal.
+		_fp[0] |= (zword)count << 8; // Save local var count for Quetzal.
 
 	value = 0;
 
 	for (i = 0; i < count; i++) {
-		if (h_version <= V4)		// V1 to V4 games provide default
-			CODE_WORD(value);		// values for all local variables
+		if (h_version <= V4)  // V1 to V4 games provide default
+			CODE_WORD(value); // values for all local variables
 
-			*--_sp = (zword)((argc-- > 0) ? args[i] : value);
+		*--_sp = (zword)((argc-- > 0) ? args[i] : value);
 	}
 
 	// Start main loop for direct calls
@@ -401,7 +395,7 @@ void Processor::branch(bool flag) {
 
 	if (!(specifier & 0x40)) {
 		// it's a long branch
-		if (off1 & 0x20)		// propagate sign bit
+		if (off1 & 0x20) // propagate sign bit
 			off1 |= 0xc0;
 
 		CODE_BYTE(off2);
@@ -491,8 +485,8 @@ void Processor::__extended__() {
 
 	load_all_operands(specifier);
 
-	if (opcode < 0x1e)					// extended opcodes from 0x1e on
-		(*this.*ext_opcodes[opcode])();	// are reserved for future spec'
+	if (opcode < 0x1e)                  // extended opcodes from 0x1e on
+		(*this.*ext_opcodes[opcode])(); // are reserved for future spec'
 }
 
 void Processor::__illegal__() {
@@ -577,9 +571,9 @@ void Processor::z_rtrue() {
 }
 
 void Processor::z_random() {
-	if ((short) zargs[0] <= 0) {
+	if ((short)zargs[0] <= 0) {
 		// set random seed
-		seed_random(- (short) zargs[0]);
+		seed_random(-(short)zargs[0]);
 		store(0);
 
 	} else {
@@ -639,10 +633,10 @@ void Processor::z_sound_effect() {
 			start_sample(number, lo(volume), hi(volume), (zargc == 4) ? zargs[3] : 0);
 			break;
 		case EFFECT_STOP:
-			os_stop_sample (number);
+			os_stop_sample(number);
 			break;
 		case EFFECT_FINISH_WITH:
-			os_finish_with_sample (number);
+			os_finish_with_sample(number);
 			break;
 		default:
 			break;

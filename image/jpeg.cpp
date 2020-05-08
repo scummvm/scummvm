@@ -38,17 +38,16 @@
 // its header files are included in a C++ environment. To avoid any linking
 // issues we need to add it on our own.
 extern "C" {
-#include <jpeglib.h>
 #include <jerror.h>
+#include <jpeglib.h>
 }
 #endif
 
 namespace Image {
 
-JPEGDecoder::JPEGDecoder() :
-		_surface(),
-		_colorSpace(kColorSpaceRGB),
-		_requestedPixelFormat(getByteOrderRgbPixelFormat()) {
+JPEGDecoder::JPEGDecoder() : _surface(),
+                             _colorSpace(kColorSpaceRGB),
+                             _requestedPixelFormat(getByteOrderRgbPixelFormat()) {
 }
 
 JPEGDecoder::~JPEGDecoder() {
@@ -140,7 +139,6 @@ void skipInputData(j_decompress_ptr cinfo, long numBytes) {
 			source->next_input_byte += (size_t)numBytes;
 			source->bytes_in_buffer -= (size_t)numBytes;
 		}
-
 	}
 }
 
@@ -156,13 +154,13 @@ void jpeg_scummvm_src(j_decompress_ptr cinfo, Common::SeekableReadStream *stream
 	}
 
 	source = (StreamSource *)cinfo->src;
-	source->init_source       = &initSource;
+	source->init_source = &initSource;
 	source->fill_input_buffer = &fillInputBuffer;
-	source->skip_input_data   = &skipInputData;
+	source->skip_input_data = &skipInputData;
 	source->resync_to_restart = &jpeg_resync_to_restart;
-	source->term_source       = &termSource;
-	source->bytes_in_buffer   = 0;
-	source->next_input_byte   = NULL;
+	source->term_source = &termSource;
+	source->bytes_in_buffer = 0;
+	source->next_input_byte = NULL;
 
 	source->stream = stream;
 }
@@ -193,21 +191,21 @@ J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
 
 	static const PixelFormatMapping mappings[] = {
 #ifdef JCS_EXTENSIONS
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16,  8,  0), JCS_EXT_RGBX, JCS_EXT_XBGR },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  0,  8, 16, 24), JCS_EXT_XBGR, JCS_EXT_RGBX },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 16,  8,  0, 24), JCS_EXT_XRGB, JCS_EXT_BGRX },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  8, 16, 24,  0), JCS_EXT_BGRX, JCS_EXT_XRGB },
-		{ Graphics::PixelFormat(3, 8, 8, 8, 0, 16,  8,  0,  0), JCS_EXT_RGB,  JCS_EXT_BGR  },
-		{ Graphics::PixelFormat(3, 8, 8, 8, 0,  0,  8, 16,  0), JCS_EXT_BGR,  JCS_EXT_RGB  }
+		{Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0), JCS_EXT_RGBX, JCS_EXT_XBGR},
+		{Graphics::PixelFormat(4, 8, 8, 8, 0, 0, 8, 16, 24), JCS_EXT_XBGR, JCS_EXT_RGBX},
+		{Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 24), JCS_EXT_XRGB, JCS_EXT_BGRX},
+		{Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0), JCS_EXT_BGRX, JCS_EXT_XRGB},
+		{Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0), JCS_EXT_RGB, JCS_EXT_BGR},
+		{Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), JCS_EXT_BGR, JCS_EXT_RGB}
 #endif
 #if defined(JCS_EXTENSIONS) && defined(JCS_ALPHA_EXTENSIONS)
 		,
 #endif
 #ifdef JCS_ALPHA_EXTENSIONS
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), JCS_EXT_RGBA, JCS_EXT_ABGR },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), JCS_EXT_ABGR, JCS_EXT_RGBA },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24), JCS_EXT_ARGB, JCS_EXT_BGRA },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), JCS_EXT_BGRA, JCS_EXT_ARGB }
+		{Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), JCS_EXT_RGBA, JCS_EXT_ABGR},
+		{Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), JCS_EXT_ABGR, JCS_EXT_RGBA},
+		{Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), JCS_EXT_ARGB, JCS_EXT_BGRA},
+		{Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0), JCS_EXT_BGRA, JCS_EXT_ARGB}
 #endif
 	};
 
@@ -324,4 +322,4 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #endif
 }
 
-} // End of Graphics namespace
+} // namespace Image

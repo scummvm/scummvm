@@ -29,8 +29,8 @@
 
 #include <stddef.h>
 
-#include "backends/plugins/elf/elf32.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "backends/plugins/elf/elf32.h"
 
 #include "common/stream.h"
 

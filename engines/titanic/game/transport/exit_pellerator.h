@@ -31,6 +31,7 @@ class CPellerator : public CTransport {
 private:
 	static int _v1;
 	static int _v2;
+
 public:
 	CLASSDEF;
 

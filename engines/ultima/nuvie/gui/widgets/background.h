@@ -31,7 +31,7 @@ namespace Nuvie {
 class Configuration;
 class U6Shape;
 
-class Background: public GUI_Widget {
+class Background : public GUI_Widget {
 	Configuration *config;
 	int game_type;
 
@@ -40,7 +40,6 @@ class Background: public GUI_Widget {
 	uint16 x_off, y_off, right_bg_x_off, left_bg_x_off, border_width;
 
 public:
-
 	Background(Configuration *cfg);
 	~Background() override;
 
@@ -49,7 +48,7 @@ public:
 		return border_width;
 	}
 	void Display(bool full_redraw) override;
-	bool drag_accept_drop(int x, int y, int message, void *data) override; // needed for original+_full_map
+	bool drag_accept_drop(int x, int y, int message, void *data) override;  // needed for original+_full_map
 	void drag_perform_drop(int x, int y, int message, void *data) override; // needed for original+_full_map
 	U6Shape *get_bg_shape() {
 		return background;

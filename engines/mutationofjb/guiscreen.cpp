@@ -29,8 +29,8 @@
 namespace MutationOfJB {
 
 GuiScreen::GuiScreen(Game &game, Graphics::Screen *screen)
-	: _game(game),
-	  _screen(screen) {}
+    : _game(game),
+      _screen(screen) {}
 
 GuiScreen::~GuiScreen() {
 	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
@@ -75,4 +75,4 @@ const GuiScreen::Widgets &GuiScreen::getWidgets() const {
 	return _widgets;
 }
 
-}
+} // namespace MutationOfJB

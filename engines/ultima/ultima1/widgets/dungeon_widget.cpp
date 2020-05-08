@@ -21,17 +21,17 @@
  */
 
 #include "ultima/ultima1/widgets/dungeon_widget.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map_base.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map_base.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 DungeonWidget::DungeonWidget(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId,
-		const Point &pt) : Shared::Maps::DungeonWidget(game, map, pt), _widgetId(widgetId) {
+                             const Point &pt) : Shared::Maps::DungeonWidget(game, map, pt), _widgetId(widgetId) {
 }
 
 DungeonWidget::DungeonWidget(Ultima1Game *game, Maps::MapBase *map) : Shared::Maps::DungeonWidget(game, map), _widgetId(MONSTER_NONE) {
@@ -45,8 +45,9 @@ Maps::MapBase *DungeonWidget::getMap() const {
 	return static_cast<Maps::MapBase *>(_map);
 }
 
-const byte OFFSET_Y[5] = { 139, 112, 96, 88, 84 };
-enum { POINT_AT = 126, END_OF_DRAW = 127 };
+const byte OFFSET_Y[5] = {139, 112, 96, 88, 84};
+enum { POINT_AT = 126,
+	   END_OF_DRAW = 127 };
 
 void DungeonWidget::drawWidget(Graphics::ManagedSurface &s, DungeonWidgetId widgetId, uint distance, byte color) {
 	Point pt, priorPt;

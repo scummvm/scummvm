@@ -50,6 +50,7 @@ private:
 	CGameObject *_homePhotoMask;
 	bool _stereoPair;
 	bool _showingPhoto;
+
 private:
 	/**
 	 * Take a photograph of a view specified by the camera
@@ -75,7 +76,8 @@ private:
 	 * Handles resizing the surface
 	 */
 	void resizeSurface(CScreenManager *scrManager, int width, int height,
-		CVideoSurface **surface);
+	                   CVideoSurface **surface);
+
 public:
 	CStarView();
 	~CStarView();

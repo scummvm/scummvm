@@ -48,9 +48,9 @@ public:
 	void playClawMonitorIntro() override;
 
 	void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID,
-			HotSpotID &pinchClawSpotID, HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
-			HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID, HotSpotID &clawCCWSpotID,
-			HotSpotID &clawCWSpotID, uint32 &, const uint32 *&) override;
+	                 HotSpotID &pinchClawSpotID, HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
+	                 HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID, HotSpotID &clawCCWSpotID,
+	                 HotSpotID &clawCWSpotID, uint32 &, const uint32 *&) override;
 
 	void playerBeatRobotWithClaw();
 	void playerBeatRobotWithDoor();

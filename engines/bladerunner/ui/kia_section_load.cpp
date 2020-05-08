@@ -24,12 +24,12 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/ui_container.h"
 #include "bladerunner/ui/ui_scroll_box.h"
@@ -41,7 +41,7 @@ namespace BladeRunner {
 
 KIASectionLoad::KIASectionLoad(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
-	_scrollBox   = new UIScrollBox(_vm, scrollBoxCallback, this, 1025, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
+	_scrollBox = new UIScrollBox(_vm, scrollBoxCallback, this, 1025, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
 	_uiContainer->add(_scrollBox);
 
 	_timeLast = 0u;
@@ -79,10 +79,10 @@ void KIASectionLoad::open() {
 	_newGameMediumLineId = _saveList.size() + 1;
 	_newGameHardLineId = _saveList.size() + 2;
 
-	_scrollBox->addLine(_vm->_textOptions->getText(37), -1, 4); // New game:
-	_scrollBox->addLine(_vm->_textOptions->getText(20), _newGameEasyLineId, 0); // Easy
+	_scrollBox->addLine(_vm->_textOptions->getText(37), -1, 4);                   // New game:
+	_scrollBox->addLine(_vm->_textOptions->getText(20), _newGameEasyLineId, 0);   // Easy
 	_scrollBox->addLine(_vm->_textOptions->getText(28), _newGameMediumLineId, 0); // Medium
-	_scrollBox->addLine(_vm->_textOptions->getText(29), _newGameHardLineId, 0); // Hard
+	_scrollBox->addLine(_vm->_textOptions->getText(29), _newGameHardLineId, 0);   // Hard
 
 	_hoveredLineId = -1;
 	_timeLast = _vm->_time->currentSystem();

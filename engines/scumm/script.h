@@ -55,13 +55,12 @@ struct OpcodeEntry : Common::NonCopyable {
 	}
 };
 
-
 // This is to help devices with small memory (PDA, smartphones, ...)
 // to save abit of memory used by opcode names in the Scumm engine.
 #ifndef REDUCE_MEMORY_USAGE
-#	define _OPCODE(ver, x)	setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), #x)
+#define _OPCODE(ver, x) setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), #x)
 #else
-#	define _OPCODE(ver, x)	setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), "")
+#define _OPCODE(ver, x) setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), "")
 #endif
 
 /**

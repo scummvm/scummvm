@@ -33,10 +33,12 @@ class CBottomOfWellMonitor : public CGameObject {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 public:
 	static bool _tvPresent;
 	static bool _headPresent;
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CBottomOfWellMonitor() : _flag(true) {}

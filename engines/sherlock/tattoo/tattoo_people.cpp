@@ -21,10 +21,10 @@
  */
 
 #include "sherlock/tattoo/tattoo_people.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -42,52 +42,48 @@ struct AdjustWalk {
 };
 
 static const AdjustWalk ADJUST_WALKS[NUM_ADJUSTED_WALKS] = {
-	{ "TUPRIGHT", -7, -19, 6 },
-	{ "TRIGHT", 8, -14, 0 },
-	{ "TDOWNRG", 14, -12, 0 },
-	{ "TWUPRIGH", 12, 4, 2 },
-	{ "TWRIGHT", 31, -14, 0 },
-	{ "TWDOWNRG", 6, -24, 0 },
-	{ "HTUPRIGH", 2, -20, 0 },
-	{ "HTRIGHT", 28, -20, 0 },
-	{ "HTDOWNRG", 8, -2, 0 },
-	{ "GTUPRIGH", 4, -12, 0 },
-	{ "GTRIGHT", 12, -16, 0 },
-	{ "GTDOWNRG", 10, -18, 0 },
-	{ "JTUPRIGH", 8, -10, 0 },
-	{ "JTRIGHT", 22, -6, 0 },
-	{ "JTDOWNRG", 4, -20, 0 },
-	{ "CTUPRIGH", 10, 0, 0 },
-	{ "CTRIGHT", 26, -22, 0 },
-	{ "CTDOWNRI", 16, 4, 0 },
-	{ "ITUPRIGH", 0, 0, 0 },
-	{ "ITRIGHT", 20, 0, 0 },
-	{ "ITDOWNRG", 8, 0, 0 }
-};
+    {"TUPRIGHT", -7, -19, 6},
+    {"TRIGHT", 8, -14, 0},
+    {"TDOWNRG", 14, -12, 0},
+    {"TWUPRIGH", 12, 4, 2},
+    {"TWRIGHT", 31, -14, 0},
+    {"TWDOWNRG", 6, -24, 0},
+    {"HTUPRIGH", 2, -20, 0},
+    {"HTRIGHT", 28, -20, 0},
+    {"HTDOWNRG", 8, -2, 0},
+    {"GTUPRIGH", 4, -12, 0},
+    {"GTRIGHT", 12, -16, 0},
+    {"GTDOWNRG", 10, -18, 0},
+    {"JTUPRIGH", 8, -10, 0},
+    {"JTRIGHT", 22, -6, 0},
+    {"JTDOWNRG", 4, -20, 0},
+    {"CTUPRIGH", 10, 0, 0},
+    {"CTRIGHT", 26, -22, 0},
+    {"CTDOWNRI", 16, 4, 0},
+    {"ITUPRIGH", 0, 0, 0},
+    {"ITRIGHT", 20, 0, 0},
+    {"ITDOWNRG", 8, 0, 0}};
 
 static const int WALK_SPEED_X[99] = {
-	90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 98, 90, 90, 90, 90, 90, 91, 90, 90,
-	90, 90,100, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,100, 90,
-	90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,103, 90, 90, 90, 90, 90, 90, 90,
-	90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,
-	90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90
-};
+    90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 98, 90, 90, 90, 90, 90, 91, 90, 90,
+    90, 90, 100, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 100, 90,
+    90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 103, 90, 90, 90, 90, 90, 90, 90,
+    90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,
+    90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90};
 
 static const int WALK_SPEED_Y[99] = {
-	28, 28, 28, 28, 28, 28, 28, 28, 28, 32, 32, 32, 28, 28, 28, 28, 28, 26, 28, 28,
-	28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
-	32, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 31, 28, 28, 28, 28, 28, 28, 28,
-	28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
-	28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28
-};
+    28, 28, 28, 28, 28, 28, 28, 28, 28, 32, 32, 32, 28, 28, 28, 28, 28, 26, 28, 28,
+    28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
+    32, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 31, 28, 28, 28, 28, 28, 28, 28,
+    28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
+    28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28};
 
 static const int WALK_SPEED_DIAG_X[99] = {
-	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 90, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
-};
+    50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+    50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+    50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+    50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 90, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+    50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50};
 
 /*----------------------------------------------------------------*/
 
@@ -100,8 +96,8 @@ SavedNPCPath::SavedNPCPath() {
 }
 
 SavedNPCPath::SavedNPCPath(byte path[MAX_NPC_PATH], int npcIndex, int npcPause, const Point32 &position,
-	int npcFacing, bool lookHolmes) : _npcIndex(npcIndex), _npcPause(npcPause), _position(position),
-		_npcFacing(npcFacing), _lookHolmes(lookHolmes) {
+                           int npcFacing, bool lookHolmes) : _npcIndex(npcIndex), _npcPause(npcPause), _position(position),
+                                                             _npcFacing(npcFacing), _lookHolmes(lookHolmes) {
 	Common::copy(&path[0], &path[MAX_NPC_PATH], &_path[0]);
 }
 
@@ -197,7 +193,7 @@ void TattooPerson::adjustSprite() {
 	// See if the player has come to a stop after clicking on an Arrow zone to leave the scene.
 	// If so, this will set up the exit information for the scene transition
 	if (!_walkCount && ui._exitZone != -1 && scene._walkedInScene && scene._goToScene == -1 &&
-			!_description.compareToIgnoreCase(people[HOLMES]._description)) {
+	    !_description.compareToIgnoreCase(people[HOLMES]._description)) {
 		Exit &exit = scene._exits[ui._exitZone];
 		scene._goToScene = exit._scene;
 
@@ -306,15 +302,32 @@ void TattooPerson::gotoStand() {
 		_sequenceNumber = people[npc]._npcFacing;
 	} else {
 		switch (_sequenceNumber) {
-		case WALK_UP: _sequenceNumber = STOP_UP;			break;
-		case WALK_UPRIGHT: _sequenceNumber = STOP_UPRIGHT;	break;
-		case WALK_RIGHT: _sequenceNumber = STOP_RIGHT;		break;
-		case WALK_DOWNRIGHT: _sequenceNumber = STOP_DOWNRIGHT; break;
-		case WALK_DOWN: _sequenceNumber = STOP_DOWN;		break;
-		case WALK_DOWNLEFT: _sequenceNumber = STOP_DOWNLEFT;break;
-		case WALK_LEFT: _sequenceNumber = STOP_LEFT;		break;
-		case WALK_UPLEFT: _sequenceNumber = STOP_UPLEFT;	break;
-		default: break;
+		case WALK_UP:
+			_sequenceNumber = STOP_UP;
+			break;
+		case WALK_UPRIGHT:
+			_sequenceNumber = STOP_UPRIGHT;
+			break;
+		case WALK_RIGHT:
+			_sequenceNumber = STOP_RIGHT;
+			break;
+		case WALK_DOWNRIGHT:
+			_sequenceNumber = STOP_DOWNRIGHT;
+			break;
+		case WALK_DOWN:
+			_sequenceNumber = STOP_DOWN;
+			break;
+		case WALK_DOWNLEFT:
+			_sequenceNumber = STOP_DOWNLEFT;
+			break;
+		case WALK_LEFT:
+			_sequenceNumber = STOP_LEFT;
+			break;
+		case WALK_UPLEFT:
+			_sequenceNumber = STOP_UPLEFT;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -353,9 +366,9 @@ void TattooPerson::setWalking() {
 	// Set speed to use horizontal and vertical movement
 	int scaleVal = scene.getScaleVal(_position);
 	Common::Point speed(MAX(WALK_SPEED_X[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2),
-		MAX(WALK_SPEED_Y[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2));
+	                    MAX(WALK_SPEED_Y[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2));
 	Common::Point diagSpeed(MAX(WALK_SPEED_DIAG_X[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2),
-		MAX((WALK_SPEED_Y[scene._currentScene - 1] - 2) * SCALE_THRESHOLD / scaleVal, 2));
+	                        MAX((WALK_SPEED_Y[scene._currentScene - 1] - 2) * SCALE_THRESHOLD / scaleVal, 2));
 
 	// If the player is already close to the given destination that no walking is needed,
 	// move to the next  straight line segment in the overall walking route, if there is one
@@ -364,7 +377,7 @@ void TattooPerson::setWalking() {
 			// Since we want the player to be centered on the ultimate destination, and the player
 			// is drawn from the left side, move the cursor half the width of the player to center it
 			delta = Common::Point(_position.x / FIXED_INT_MULTIPLIER - _walkDest.x,
-				_position.y / FIXED_INT_MULTIPLIER - _walkDest.y);
+			                      _position.y / FIXED_INT_MULTIPLIER - _walkDest.y);
 
 			int dir;
 			if (ABS(delta.x) > ABS(delta.y))
@@ -373,14 +386,13 @@ void TattooPerson::setWalking() {
 				dir = (delta.y < 0) ? WALK_UP : WALK_DOWN;
 
 			scaleVal = scene.getScaleVal(Point32(_walkDest.x * FIXED_INT_MULTIPLIER,
-				_walkDest.y * FIXED_INT_MULTIPLIER));
+			                                     _walkDest.y * FIXED_INT_MULTIPLIER));
 			_walkDest.x -= _stopFrames[dir]->sDrawXSize(scaleVal) / 2;
 		}
 
 		delta = Common::Point(
-			ABS(_position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
-			ABS(_position.y / FIXED_INT_MULTIPLIER - _walkDest.y)
-			);
+		    ABS(_position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
+		    ABS(_position.y / FIXED_INT_MULTIPLIER - _walkDest.y));
 
 		// If we're ready to move a sufficient distance, that's it. Otherwise,
 		// move onto the next portion of the walk path, if there is one
@@ -542,7 +554,7 @@ void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
 
 	// Only move the person if they're going an appreciable distance
 	if (ABS(_walkDest.x - (_position.x / FIXED_INT_MULTIPLIER)) > 8 ||
-			ABS(_walkDest.y - (_position.y / FIXED_INT_MULTIPLIER)) > 4) {
+	    ABS(_walkDest.y - (_position.y / FIXED_INT_MULTIPLIER)) > 4) {
 		goAllTheWay();
 
 		do {
@@ -637,13 +649,13 @@ void TattooPerson::updateNPC() {
 		// Now see if we need to update the NPC's frame sequence so that he faces Holmes
 		if (_lookHolmes) {
 			// See where Holmes is with respect to the NPC (x coordinate)
-			_npcFacing =  (people[HOLMES]._position.x < _position.x) ? STOP_LEFT : STOP_RIGHT;
+			_npcFacing = (people[HOLMES]._position.x < _position.x) ? STOP_LEFT : STOP_RIGHT;
 
 			// See where Holmes is with respect to the NPC (y coordinate)
 			if (people[HOLMES]._position.y < (_position.y - 10 * FIXED_INT_MULTIPLIER)) {
 				// Holmes is above the NPC so reset the facing to a diagonal up
 				_npcFacing = (_npcFacing == STOP_RIGHT) ? STOP_UPRIGHT : STOP_UPLEFT;
-			} else  if (people[HOLMES]._position.y > (_position.y + 10 * FIXED_INT_MULTIPLIER)) {
+			} else if (people[HOLMES]._position.y > (_position.y + 10 * FIXED_INT_MULTIPLIER)) {
 				// Holmes is below the NPC so reset the facing to a diagonal down
 				_npcFacing = (_npcFacing == STOP_RIGHT) ? STOP_DOWNRIGHT : STOP_DOWNLEFT;
 			}
@@ -744,7 +756,7 @@ void TattooPerson::updateNPC() {
 					_npcIndex += 3;
 					break;
 
-				//case NPCPATH_PATH_LABEL:		// No implementation needed here
+					//case NPCPATH_PATH_LABEL:		// No implementation needed here
 
 				case NPCPATH_GOTO_LABEL: {
 					// Goto NPC Path Label
@@ -799,10 +811,8 @@ void TattooPerson::updateNPC() {
 					if (_vm->readFlags(flag & 16383) == flagVal) {
 						_npcIndex = 0;
 						bool found = false;
-						while (!found)
-						{
-							switch (_npcPath[_npcIndex])
-							{
+						while (!found) {
+							switch (_npcPath[_npcIndex]) {
 							case NPCPATH_SET_DEST:
 								_npcIndex += 6;
 								break;
@@ -885,7 +895,8 @@ Common::Point TattooPerson::getSourcePoint() const {
 	int scaleVal = scene.getScaleVal(_position);
 
 	return Common::Point(_position.x / FIXED_INT_MULTIPLIER +
-		(_imageFrame ? _imageFrame->sDrawXSize(scaleVal) / 2 : 0), _position.y / FIXED_INT_MULTIPLIER);
+	                         (_imageFrame ? _imageFrame->sDrawXSize(scaleVal) / 2 : 0),
+	                     _position.y / FIXED_INT_MULTIPLIER);
 }
 
 void TattooPerson::setObjTalkSequence(int seq) {
@@ -917,7 +928,7 @@ void TattooPerson::checkWalkGraphics() {
 
 	for (int idx = 0; idx < NUM_ADJUSTED_WALKS; ++idx) {
 		if (!scumm_strnicmp(_walkSequences[_sequenceNumber]._vgsName.c_str(), ADJUST_WALKS[idx]._vgsName,
-			strlen(ADJUST_WALKS[idx]._vgsName))) {
+		                    strlen(ADJUST_WALKS[idx]._vgsName))) {
 			if (_walkSequences[_sequenceNumber]._horizFlip)
 				_adjust.x = ADJUST_WALKS[idx]._flipXAdjust;
 			else
@@ -1051,7 +1062,7 @@ void TattooPerson::walkHolmesToNPC() {
 		holmes._walkDest.x = MAX(_position.x / FIXED_INT_MULTIPLIER - imgFrame.sDrawXSize(scaleVal), 0);
 	} else {
 		holmes._walkDest.x = MIN(_position.x / FIXED_INT_MULTIPLIER + imgFrame.sDrawXSize(scaleVal) * 2,
-			screen._backBuffer1.width() - 1);
+		                         screen._backBuffer1.width() - 1);
 	}
 
 	// See where Holmes is with respect to the NPC (y coords)
@@ -1061,7 +1072,7 @@ void TattooPerson::walkHolmesToNPC() {
 		if (holmes._position.y > (_position.y + imgFrame.sDrawXSize(scaleVal) * 500)) {
 			// Holmes is below the NPC
 			holmes._walkDest.y = MIN(_position.y / FIXED_INT_MULTIPLIER + imgFrame.sDrawXSize(scaleVal) / 2,
-				SHERLOCK_SCREEN_HEIGHT - 1);
+			                         SHERLOCK_SCREEN_HEIGHT - 1);
 		} else {
 			// Holmes is roughly on the same Y as the NPC
 			holmes._walkDest.y = _position.y / FIXED_INT_MULTIPLIER;
@@ -1177,7 +1188,7 @@ void TattooPerson::centerScreenOnPerson() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	ui._targetScroll.x = CLIP(_position.x / FIXED_INT_MULTIPLIER - SHERLOCK_SCREEN_WIDTH / 2,
-		0, screen._backBuffer1.width() - SHERLOCK_SCREEN_WIDTH);
+	                          0, screen._backBuffer1.width() - SHERLOCK_SCREEN_WIDTH);
 	screen._currentScroll = ui._targetScroll;
 
 	// Reset the default look position to the center of the screen
@@ -1260,7 +1271,7 @@ void TattooPeople::setListenSequence(int speaker, int sequenceNum) {
 		// See if the NPC's Seq has to wait for an Abort Talk Code
 		if (person.hasAborts()) {
 			person._gotoSeq = newDir;
-		}  else {
+		} else {
 			if (person._seqTo) {
 				// Reset to previous value
 				person._walkSequences[person._sequenceNumber]._sequences[person._frameNumber] = person._seqTo;
@@ -1360,7 +1371,6 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 		}
 	}
 }
-
 
 int TattooPeople::findSpeaker(int speaker) {
 	speaker &= 0x7f;
@@ -1471,7 +1481,6 @@ bool TattooPeople::loadWalk() {
 	return result;
 }
 
-
 void TattooPeople::pullNPCPaths() {
 	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
 		TattooPerson &p = (*this)[idx];
@@ -1505,7 +1514,6 @@ const Common::Point TattooPeople::restrictToZone(int zoneId, const Common::Point
 		return Common::Point(r.right, (destPos.y <= r.top) ? r.top : r.bottom);
 	}
 }
-
 
 } // End of namespace Tattoo
 

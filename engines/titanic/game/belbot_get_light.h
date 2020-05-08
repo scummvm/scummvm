@@ -33,8 +33,10 @@ class CBelbotGetLight : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool MovieFrameMsg(CMovieFrameMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 private:
 	CString _value;
+
 public:
 	CLASSDEF;
 

@@ -22,10 +22,10 @@
 
 #include "common/debug.h"
 
-#include "toon/audio.h"
+#include "audio/decoders/adpcm_intern.h"
 #include "common/memstream.h"
 #include "common/substream.h"
-#include "audio/decoders/adpcm_intern.h"
+#include "toon/audio.h"
 
 namespace Toon {
 
@@ -105,9 +105,7 @@ void AudioManager::playMusic(const Common::String &dir, const Common::String &mu
 		if (_channels[_currentMusicChannel]->getPlayedSampleCount() < 500) {
 			_channels[_currentMusicChannel]->stop(false);
 			_currentMusicChannel = 1 - _currentMusicChannel;
-		}
-		else
-		{
+		} else {
 			_channels[_currentMusicChannel]->stop(true);
 		}
 	}
@@ -150,10 +148,9 @@ void AudioManager::playVoice(int32 id, bool genericVoice) {
 	_channels[2] = new AudioStreamInstance(this, _mixer, stream, false, true);
 	_channels[2]->play(false, Audio::Mixer::kSpeechSoundType);
 	_channels[2]->setVolume(_voiceMuted ? 0 : 255);
-
 }
 
-int32 AudioManager::playSFX(int32 id, int volume , bool genericSFX) {
+int32 AudioManager::playSFX(int32 id, int volume, bool genericSFX) {
 	debugC(4, kDebugAudio, "playSFX(%d, %d)", id, (genericSFX) ? 1 : 0);
 
 	// find a free SFX channel
@@ -225,7 +222,7 @@ void AudioManager::stopMusic() {
 		_channels[1]->stop(true);
 }
 
-AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream , bool looping, bool deleteFileStreamAtEnd) {
+AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream, bool looping, bool deleteFileStreamAtEnd) {
 	_compBufferSize = 0;
 	_buffer = NULL;
 	_bufferSize = 0;
@@ -526,8 +523,7 @@ Common::SeekableReadStream *AudioStreamPackage::getStream(int32 id, bool ownMemo
 	}
 }
 
-void AudioManager::startAmbientSFX(int32 id, int32 delay, int32 mode, int32 volume)
-{
+void AudioManager::startAmbientSFX(int32 id, int32 delay, int32 mode, int32 volume) {
 	int32 found = -1;
 	for (int32 i = 0; i < 4; i++) {
 		if (!_ambientSFXs[i]._enabled) {
@@ -546,12 +542,11 @@ void AudioManager::startAmbientSFX(int32 id, int32 delay, int32 mode, int32 volu
 	_ambientSFXs[found]._volume = volume;
 	_ambientSFXs[found]._id = id;
 	updateAmbientSFX();
-
 }
 
 void AudioManager::setAmbientSFXVolume(int32 id, int volume) {
 	for (int32 i = 0; i < 4; i++) {
-		AudioAmbientSFX* ambient = &_ambientSFXs[i];
+		AudioAmbientSFX *ambient = &_ambientSFXs[i];
 		if (ambient->_id == id && ambient->_enabled) {
 			ambient->_volume = volume;
 			if (ambient->_channel >= 0 && _channels[ambient->_channel] && _channels[ambient->_channel]->isPlaying()) {
@@ -562,10 +557,9 @@ void AudioManager::setAmbientSFXVolume(int32 id, int volume) {
 	}
 }
 
-void AudioManager::killAmbientSFX(int32 id)
-{
+void AudioManager::killAmbientSFX(int32 id) {
 	for (int32 i = 0; i < 4; i++) {
-		AudioAmbientSFX* ambient = &_ambientSFXs[i];
+		AudioAmbientSFX *ambient = &_ambientSFXs[i];
 		if (ambient->_id == id && ambient->_enabled) {
 			ambient->_enabled = false;
 			ambient->_id = -1;
@@ -574,14 +568,12 @@ void AudioManager::killAmbientSFX(int32 id)
 				_channels[ambient->_channel]->stop(false);
 			}
 		}
-
 	}
 }
 
-void AudioManager::killAllAmbientSFX()
-{
+void AudioManager::killAllAmbientSFX() {
 	for (int32 i = 0; i < 4; i++) {
-		AudioAmbientSFX* ambient = &_ambientSFXs[i];
+		AudioAmbientSFX *ambient = &_ambientSFXs[i];
 		if (ambient->_enabled) {
 			ambient->_enabled = false;
 			ambient->_id = -1;
@@ -593,15 +585,14 @@ void AudioManager::killAllAmbientSFX()
 	}
 }
 
-void AudioManager::updateAmbientSFX()
-{
+void AudioManager::updateAmbientSFX() {
 	if (_vm->getMoviePlayer()->isPlaying())
 		return;
 
 	for (int32 i = 0; i < 4; i++) {
-		AudioAmbientSFX* ambient = &_ambientSFXs[i];
+		AudioAmbientSFX *ambient = &_ambientSFXs[i];
 		if (ambient->_enabled && (ambient->_channel < 0 || !(_channels[ambient->_channel] && _channels[ambient->_channel]->isPlaying()))) {
-			if  (ambient->_mode == 1) {
+			if (ambient->_mode == 1) {
 				if (_vm->randRange(0, 32767) < ambient->_delay) {
 					ambient->_channel = playSFX(ambient->_id, ambient->_volume, false);
 				}

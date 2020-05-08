@@ -20,16 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/filesys/flex_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(FlexFile, ArchiveFile)
-
-
 
 FlexFile::FlexFile(Common::SeekableReadStream *rs_) : _rs(rs_), _count(0) {
 	_valid = isFlexFile(_rs);
@@ -52,12 +50,14 @@ bool FlexFile::isFlexFile(Common::SeekableReadStream *_rs) {
 	_rs->read(buf, 0x52);
 
 	for (i = 0; i < 0x52; ++i) {
-		if (buf[i] == 0x1A) break;
+		if (buf[i] == 0x1A)
+			break;
 	}
 
 	if (i < 0x52) {
 		for (++i; i < 0x52; ++i) {
-			if (buf[i] != 0x1A) return false;
+			if (buf[i] != 0x1A)
+				return false;
 		}
 		return true;
 	}
@@ -83,13 +83,15 @@ uint8 *FlexFile::getObject(uint32 index, uint32 *sizep) {
 	_rs->seek(offset);
 	_rs->read(object, size);
 
-	if (sizep) *sizep = size;
+	if (sizep)
+		*sizep = size;
 
 	return object;
 }
 
 uint32 FlexFile::getSize(uint32 index) const {
-	if (index >= _count) return 0;
+	if (index >= _count)
+		return 0;
 
 	_rs->seek(0x84 + 8 * index);
 	uint32 length = _rs->readUint32LE();

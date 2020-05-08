@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "scumm/base-costume.h"
 #include "scumm/costume.h"
 

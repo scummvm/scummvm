@@ -28,6 +28,4 @@
 
 #define VERSION 3
 
-
-
 #endif // CREATE_SUPERNOVA_H

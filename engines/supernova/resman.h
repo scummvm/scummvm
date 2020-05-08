@@ -31,7 +31,6 @@
 #include "supernova/sound.h"
 #include "supernova/supernova.h"
 
-
 namespace Common {
 class MemoryReadStream;
 }
@@ -86,6 +85,6 @@ private:
 	byte _cursorWait[256];
 };
 
-}
+} // namespace Supernova
 
 #endif

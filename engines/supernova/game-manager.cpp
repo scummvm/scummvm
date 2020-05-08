@@ -25,16 +25,15 @@
 #include "graphics/palette.h"
 #include "gui/message.h"
 
+#include "supernova/game-manager.h"
 #include "supernova/screen.h"
 #include "supernova/supernova.h"
-#include "supernova/game-manager.h"
 
 namespace Supernova {
 
 bool GameManager::serialize(Common::WriteStream *out) {
 	return false;
 }
-
 
 bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	return false;
@@ -91,16 +90,8 @@ Object *Inventory::get(ObjectId id) const {
 	return _nullObject;
 }
 
-
 GuiElement::GuiElement()
-	: _isHighlighted(false)
-	, _bgColorNormal(kColorWhite25)
-	, _bgColorHighlighted(kColorWhite44)
-	, _bgColor(kColorWhite25)
-	, _textColorNormal(kColorGreen)
-	, _textColorHighlighted(kColorLightGreen)
-	, _textColor(kColorGreen)
-{
+    : _isHighlighted(false), _bgColorNormal(kColorWhite25), _bgColorHighlighted(kColorWhite44), _bgColor(kColorWhite25), _textColorNormal(kColorGreen), _textColorHighlighted(kColorLightGreen), _textColor(kColorGreen) {
 	memset(_text, 0, sizeof(_text));
 }
 
@@ -141,20 +132,15 @@ void GuiElement::setHighlight(bool isHighlighted_) {
 }
 
 int GameManager::guiCommands[] = {
-	kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
-	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive
-};
+    kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
+    kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive};
 
 int GameManager::guiStatusCommands[] = {
-	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
-	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive
-};
+    kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
+    kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive};
 
 GameManager::GameManager(SupernovaEngine *vm, Sound *sound)
-	: _inventory(&_nullObject, _inventoryScroll)
-	, _vm(vm)
-    , _sound(sound)
-    , _mouseClickType(Common::EVENT_INVALID) {
+    : _inventory(&_nullObject, _inventoryScroll), _vm(vm), _sound(sound), _mouseClickType(Common::EVENT_INVALID) {
 	initGui();
 }
 
@@ -185,7 +171,7 @@ void GameManager::initState() {
 	_messageDuration = 0;
 	_animationTimer = 0;
 	_currentSentence = -1;
-	for (int i = 0 ; i < 6 ; ++i) {
+	for (int i = 0; i < 6; ++i) {
 		_sentenceNumber[i] = -1;
 		_texts[i] = kNoString;
 		_rows[i] = 0;
@@ -381,7 +367,7 @@ void GameManager::processInput() {
 				return;
 		}
 
-		switch(mouseLocation) {
+		switch (mouseLocation) {
 		case onObject:
 		case onInventory:
 			// Fallthrough
@@ -468,14 +454,15 @@ void GameManager::processInput() {
 		} else {
 			/* normal item */
 			for (int i = 0; (_currentRoom->getObject(i)->_id != INVALIDOBJECT) &&
-							(field == -1) && i < kMaxObject; i++) {
+			                (field == -1) && i < kMaxObject;
+			     i++) {
 				click = _currentRoom->getObject(i)->_click;
 				const MSNImage *image = _vm->_screen->getCurrentImage();
 				if (click != 255 && image) {
 					const MSNImage::ClickField *clickField = image->_clickField;
 					do {
 						if ((_mouseX >= clickField[click].x1) && (_mouseX <= clickField[click].x2) &&
-							(_mouseY >= clickField[click].y1) && (_mouseY <= clickField[click].y2))
+						    (_mouseY >= clickField[click].y1) && (_mouseY <= clickField[click].y2))
 							field = i;
 
 						click = clickField[click].next;
@@ -630,7 +617,7 @@ int GameManager::dialog(int num, byte rowLength[6], int text[6], int number) {
 
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 
-	for (int i = 0; i < 6 ; ++i)
+	for (int i = 0; i < 6; ++i)
 		_sentenceNumber[i] = -1;
 
 	int r = 0, rq = 0;
@@ -692,9 +679,9 @@ void GameManager::drawCommandBox() {
 		_vm->renderBox(_guiCommandButton[i]);
 		int space = (_guiCommandButton[i].width() - Screen::textWidth(_guiCommandButton[i].getText())) / 2;
 		_vm->renderText(_guiCommandButton[i].getText(),
-						_guiCommandButton[i].getTextPos().x + space,
-						_guiCommandButton[i].getTextPos().y,
-						_guiCommandButton[i].getTextColor());
+		                _guiCommandButton[i].getTextPos().x + space,
+		                _guiCommandButton[i].getTextPos().y,
+		                _guiCommandButton[i].getTextColor());
 	}
 }
 
@@ -702,9 +689,9 @@ void GameManager::drawInventory() {
 	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
 		_vm->renderBox(_guiInventory[i]);
 		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name,
-						_guiInventory[i].getTextPos().x,
-						_guiInventory[i].getTextPos().y,
-						_guiInventory[i].getTextColor());
+		                _guiInventory[i].getTextPos().x,
+		                _guiInventory[i].getTextPos().y,
+		                _guiInventory[i].getTextColor());
 	}
 
 	_vm->renderBox(_guiInventoryArrow[0]);
@@ -769,7 +756,7 @@ bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
 			return true;
 		} else if (_mouseClicked)
 			return true;
-	} while (_time < end  && !_vm->shouldQuit());
+	} while (_time < end && !_vm->shouldQuit());
 	return false;
 }
 
@@ -837,12 +824,12 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	Color background = kColorBlack;
 
 	if (_vm->_MSPart == 1) {
-		overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
-						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
+		overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ? kScreenWidth - x : (length + 1) * (kFontWidth + 2);
 		background = kColorDarkBlue;
 	} else if (_vm->_MSPart == 2) {
-		overdrawWidth = ((int)((length + 1) * (kFontWidth2 + 2)) > (kScreenWidth - x)) 
-			? kScreenWidth - x : (length + 1) * (kFontWidth2 + 2);
+		overdrawWidth = ((int)((length + 1) * (kFontWidth2 + 2)) > (kScreenWidth - x))
+		                    ? kScreenWidth - x
+		                    : (length + 1) * (kFontWidth2 + 2);
 		background = kColorWhite35;
 	}
 	_guiEnabled = false;
@@ -854,7 +841,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 			// Draw char highlight depending on cursor position
 			if (i == cursorIndex) {
 				_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1,
-							   Screen::textWidth(input[i]), 9, kColorWhite99);
+				               Screen::textWidth(input[i]), 9, kColorWhite99);
 				_vm->_screen->setTextCursorColor(background);
 				_vm->renderText((uint16)input[i]);
 				_vm->_screen->setTextCursorColor(kColorWhite99);
@@ -989,4 +976,4 @@ void GameManager::drawGUI() {
 	drawCommandBox();
 }
 
-}
+} // namespace Supernova

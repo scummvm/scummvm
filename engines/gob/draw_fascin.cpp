@@ -58,7 +58,7 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 			_destSpriteX += _backDeltaX;
 			_destSpriteY += _backDeltaY;
 			if ((operation == DRAW_DRAWLINE) ||
-			   ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS))) {
+			    ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS))) {
 				_spriteRight += _backDeltaX;
 				_spriteBottom += _backDeltaY;
 			}
@@ -71,7 +71,6 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 			return;
 		}
 	}
-
 
 	int16 spriteLeft = _spriteLeft;
 	int16 spriteTop = _spriteTop;
@@ -86,7 +85,7 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 		if ((_destSpriteY >= _vm->_video->_splitStart)) {
 			_destSpriteY -= _vm->_video->_splitStart;
 			if ((operation == DRAW_DRAWLINE) ||
-				 ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS)))
+			    ((operation >= DRAW_DRAWBAR) && (operation <= DRAW_FILLRECTABS)))
 				_spriteBottom -= _vm->_video->_splitStart;
 
 			_destSurface += 4;
@@ -97,7 +96,6 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 			if (_destSurface < 24)
 				_destSurface += 4;
 		}
-
 	}
 
 	adjustCoords(0, &_destSpriteX, &_destSpriteY);
@@ -144,13 +142,13 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 			break;
 
 		_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],
-				_spriteLeft, spriteTop,
-				_spriteLeft + _spriteRight - 1,
-				_spriteTop + _spriteBottom - 1,
-				_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+		                                  _spriteLeft, spriteTop,
+		                                  _spriteLeft + _spriteRight - 1,
+		                                  _spriteTop + _spriteBottom - 1,
+		                                  _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+		            _destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 		break;
 
 	case DRAW_PUTPIXEL:
@@ -161,41 +159,41 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 
 	case DRAW_FILLRECT:
 		_spritesArray[_destSurface]->fillRect(destSpriteX,
-				_destSpriteY, _destSpriteX + _spriteRight - 1,
-				_destSpriteY + _spriteBottom - 1, _backColor);
+		                                      _destSpriteY, _destSpriteX + _spriteRight - 1,
+		                                      _destSpriteY + _spriteBottom - 1, _backColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+		            _destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 		break;
 
 	case DRAW_DRAWLINE:
 		_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-		    _spriteRight, _spriteBottom, _frontColor);
+		                                      _spriteRight, _spriteBottom, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
 
 	case DRAW_INVALIDATE:
 		_spritesArray[_destSurface]->drawCircle(_destSpriteX,
-				_destSpriteY, _spriteRight, _frontColor);
+		                                        _destSpriteY, _spriteRight, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,
-				_destSpriteX + _spriteRight, _destSpriteY + _spriteBottom);
+		            _destSpriteX + _spriteRight, _destSpriteY + _spriteBottom);
 		break;
 
 	case DRAW_LOADSPRITE:
-		resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
-			                                             &_spriteRight, &_spriteBottom);
+		resource = _vm->_game->_resources->getResource((uint16)_spriteLeft,
+		                                               &_spriteRight, &_spriteBottom);
 
 		if (!resource)
 			break;
 
 		_vm->_video->drawPackedSprite(resource->getData(),
-				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
-				_transparency, *_spritesArray[_destSurface]);
+		                              _spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
+		                              _transparency, *_spritesArray[_destSurface]);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+		            _destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 
 		delete resource;
 		break;
@@ -212,75 +210,72 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 			}
 
 			if (font->isMonospaced()) {
-				if (((int8) _textToPrint[0]) == -1) {
+				if (((int8)_textToPrint[0]) == -1) {
 					_vm->validateLanguage();
 
 					byte *dataBuf = _vm->_game->_resources->getTexts() + _textToPrint[1] + 1;
 					len = *dataBuf++;
 					for (int i = 0; i < len; i++, dataBuf += 2) {
 						font->drawLetter(*_spritesArray[_destSurface], READ_LE_UINT16(dataBuf),
-								_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
+						                 _destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
 					}
 				} else {
 					font->drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
-							_backColor, _transparency, *_spritesArray[_destSurface]);
+					                 _backColor, _transparency, *_spritesArray[_destSurface]);
 					_destSpriteX += len * font->getCharWidth();
 				}
 			} else {
 				for (int i = 0; i < len; i++) {
 					font->drawLetter(*_spritesArray[_destSurface], _textToPrint[i],
-							_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
+					                 _destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
 					_destSpriteX += font->getCharWidth(_textToPrint[i]);
 				}
 			}
 
 		} else {
 			sourceSurf = _spritesArray[_fontToSprite[_fontIndex].sprite];
-			ratio = ((sourceSurf == _frontSurface) || (sourceSurf == _backSurface)) ?
-				320 : sourceSurf->getWidth();
+			ratio = ((sourceSurf == _frontSurface) || (sourceSurf == _backSurface)) ? 320 : sourceSurf->getWidth();
 			ratio /= _fontToSprite[_fontIndex].width;
 			for (int i = 0; i < len; i++) {
-				y = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) / ratio)
-					* _fontToSprite[_fontIndex].height;
-				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) % ratio)
-					* _fontToSprite[_fontIndex].width;
+				y = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) / ratio) * _fontToSprite[_fontIndex].height;
+				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) % ratio) * _fontToSprite[_fontIndex].width;
 				_spritesArray[_destSurface]->blit(*_spritesArray[_fontToSprite[_fontIndex].sprite], x, y,
-						x + _fontToSprite[_fontIndex].width - 1,
-						y + _fontToSprite[_fontIndex].height - 1,
-						_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+				                                  x + _fontToSprite[_fontIndex].width - 1,
+				                                  y + _fontToSprite[_fontIndex].height - 1,
+				                                  _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 				_destSpriteX += _fontToSprite[_fontIndex].width;
 			}
 		}
 
 		dirtiedRect(_destSurface, left, _destSpriteY,
-				_destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1);
+		            _destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1);
 		break;
 
 	case DRAW_DRAWBAR:
 		if (_needAdjust != 2) {
 			_spritesArray[_destSurface]->fillRect(_destSpriteX, _spriteBottom - 1,
-					_spriteRight, _spriteBottom, _frontColor);
+			                                      _spriteRight, _spriteBottom, _frontColor);
 
-			_spritesArray[_destSurface]->fillRect( _destSpriteX, _destSpriteY,
-					_destSpriteX + 1, _spriteBottom, _frontColor);
+			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
+			                                      _destSpriteX + 1, _spriteBottom, _frontColor);
 
-			_spritesArray[_destSurface]->fillRect( _spriteRight - 1, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
+			_spritesArray[_destSurface]->fillRect(_spriteRight - 1, _destSpriteY,
+			                                      _spriteRight, _spriteBottom, _frontColor);
 
-			_spritesArray[_destSurface]->fillRect( _destSpriteX, _destSpriteY,
-					_spriteRight, _destSpriteY + 1, _frontColor);
+			_spritesArray[_destSurface]->fillRect(_destSpriteX, _destSpriteY,
+			                                      _spriteRight, _destSpriteY + 1, _frontColor);
 		} else {
 			_spritesArray[_destSurface]->drawLine(_destSpriteX, _spriteBottom,
-					_spriteRight, _spriteBottom, _frontColor);
+			                                      _spriteRight, _spriteBottom, _frontColor);
 
 			_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-					_destSpriteX, _spriteBottom, _frontColor);
+			                                      _destSpriteX, _spriteBottom, _frontColor);
 
 			_spritesArray[_destSurface]->drawLine(_spriteRight, _destSpriteY,
-					_spriteRight, _spriteBottom, _frontColor);
+			                                      _spriteRight, _spriteBottom, _frontColor);
 
 			_spritesArray[_destSurface]->drawLine(_destSpriteX, _destSpriteY,
-					_spriteRight, _destSpriteY, _frontColor);
+			                                      _spriteRight, _destSpriteY, _frontColor);
 		}
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
@@ -354,14 +349,14 @@ void Draw_Fascination::drawWin(int16 fct) {
 				_destSpriteX += _fascinWin[_vm->_global->_curWinId].left;
 				_destSpriteY += _fascinWin[_vm->_global->_curWinId].top;
 				if (fct == 3 || (fct >= 7 && fct <= 9)) {
-					_spriteRight  += _fascinWin[_vm->_global->_curWinId].left;
+					_spriteRight += _fascinWin[_vm->_global->_curWinId].left;
 					_spriteBottom += _fascinWin[_vm->_global->_curWinId].top;
 				}
 			}
 		}
 
 		left = _destSpriteX;
-		top  = _destSpriteY;
+		top = _destSpriteY;
 
 	} else {
 		if (_vm->_global->_curWinId) {
@@ -369,26 +364,26 @@ void Draw_Fascination::drawWin(int16 fct) {
 				return;
 			else {
 				_spriteLeft += _fascinWin[_vm->_global->_curWinId].left;
-				_spriteTop  += _fascinWin[_vm->_global->_curWinId].top;
+				_spriteTop += _fascinWin[_vm->_global->_curWinId].top;
 			}
 		}
 
 		left = _spriteLeft;
-		top  = _spriteTop;
+		top = _spriteTop;
 	}
 
 	for (int i = 0; i < 10; i++)
 		table[i] = 0;
 
 	switch (fct) {
-	case DRAW_BLITSURF:    // 0 - move
-	case DRAW_FILLRECT:    // 2 - fill rectangle
-		width  = left + _spriteRight  - 1;
-		height = top  + _spriteBottom - 1;
+	case DRAW_BLITSURF: // 0 - move
+	case DRAW_FILLRECT: // 2 - fill rectangle
+		width = left + _spriteRight - 1;
+		height = top + _spriteBottom - 1;
 		break;
 
-	case DRAW_PUTPIXEL:    // 1 - put a pixel
-		width  = _destSpriteX;
+	case DRAW_PUTPIXEL: // 1 - put a pixel
+		width = _destSpriteX;
 		height = _destSpriteY;
 		break;
 
@@ -396,51 +391,51 @@ void Draw_Fascination::drawWin(int16 fct) {
 	case DRAW_DRAWBAR:     // 7 - draw border
 	case DRAW_CLEARRECT:   // 8 - clear rectangle
 	case DRAW_FILLRECTABS: // 9 - fill rectangle, with other coordinates
-		width  = _spriteRight;
+		width = _spriteRight;
 		height = _spriteBottom;
 		break;
 
-	case DRAW_INVALIDATE:  // 4 - Draw a circle
-		left   = _destSpriteX - _spriteRight;
-		top    = _destSpriteY - _spriteRight;
-		width  = _destSpriteX + _spriteRight;
+	case DRAW_INVALIDATE: // 4 - Draw a circle
+		left = _destSpriteX - _spriteRight;
+		top = _destSpriteY - _spriteRight;
+		width = _destSpriteX + _spriteRight;
 		height = _destSpriteY + _spriteBottom;
 		break;
 
-	case DRAW_LOADSPRITE:  // 5 - Uncompress and load a sprite
+	case DRAW_LOADSPRITE: // 5 - Uncompress and load a sprite
 		resource = _vm->_game->_resources->getResource((_spriteLeft & 0x3FFF),
-				&_spriteRight, &_spriteBottom);
+		                                               &_spriteRight, &_spriteBottom);
 
 		if (!resource) {
-			width  = 0;
+			width = 0;
 			height = 0;
 			break;
 		}
 
 		_vm->_video->drawPackedSprite(resource->getData(),
-				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
-				_transparency, *_spritesArray[_destSurface]);
+		                              _spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
+		                              _transparency, *_spritesArray[_destSurface]);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+		            _destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 
 		delete resource;
 
-		width  = _destSpriteX + _spriteRight  - 1;
+		width = _destSpriteX + _spriteRight - 1;
 		height = _destSpriteY + _spriteBottom - 1;
 		break;
 
-	case DRAW_PRINTTEXT:  // 6 - Display string
-		width  = _destSpriteX - 1 + strlen(_textToPrint) * _fonts[_fontIndex]->getCharWidth();
+	case DRAW_PRINTTEXT: // 6 - Display string
+		width = _destSpriteX - 1 + strlen(_textToPrint) * _fonts[_fontIndex]->getCharWidth();
 		height = _destSpriteY - 1 + _fonts[_fontIndex]->getCharHeight();
 		break;
 
 	case DRAW_DRAWLETTER: // 10 - Display a character
 		if (_fontToSprite[_fontIndex].sprite == -1) {
-			width  = _destSpriteX - 1 + _fonts[_fontIndex]->getCharWidth();
+			width = _destSpriteX - 1 + _fonts[_fontIndex]->getCharWidth();
 			height = _destSpriteY - 1 + _fonts[_fontIndex]->getCharHeight();
 		} else {
-			width  = _destSpriteX + _fontToSprite[_fontIndex].width  - 1;
+			width = _destSpriteX + _fontToSprite[_fontIndex].width - 1;
 			height = _destSpriteY + _fontToSprite[_fontIndex].height - 1;
 		}
 		break;
@@ -452,9 +447,9 @@ void Draw_Fascination::drawWin(int16 fct) {
 
 	for (int i = 0; i < 10; i++) {
 		if ((i != _vm->_global->_curWinId) && (_fascinWin[i].id != -1)) {
-			if (!_vm->_global->_curWinId || _fascinWin[i].id>_fascinWin[_vm->_global->_curWinId].id) {
-				if ((_fascinWin[i].left + _fascinWin[i].width  > left) && (width  >= _fascinWin[i].left) &&
-				    (_fascinWin[i].top  + _fascinWin[i].height > top ) && (height >= _fascinWin[i].top)) {
+			if (!_vm->_global->_curWinId || _fascinWin[i].id > _fascinWin[_vm->_global->_curWinId].id) {
+				if ((_fascinWin[i].left + _fascinWin[i].width > left) && (width >= _fascinWin[i].left) &&
+				    (_fascinWin[i].top + _fascinWin[i].height > top) && (height >= _fascinWin[i].top)) {
 					found = true;
 					table[_fascinWin[i].id] = i;
 				}
@@ -464,8 +459,8 @@ void Draw_Fascination::drawWin(int16 fct) {
 
 	if ((_sourceSurface == kBackSurface) && (fct == 0)) {
 		_spritesArray[_destSurface]->blit(*_spritesArray[_sourceSurface],
-								_spriteLeft, _spriteTop, _spriteLeft + _spriteRight - 1,
-								_spriteTop + _spriteBottom - 1, _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+		                                  _spriteLeft, _spriteTop, _spriteLeft + _spriteRight - 1,
+		                                  _spriteTop + _spriteBottom - 1, _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 		if (!found)
 			return;
 
@@ -476,10 +471,10 @@ void Draw_Fascination::drawWin(int16 fct) {
 		for (int i = 9; i >= j; i--) {
 			if (table[i])
 				_spritesArray[_destSurface]->blit(*_fascinWin[table[i]].savedSurface,
-										 _fascinWin[table[i]].left & 7, 0,
-										(_fascinWin[table[i]].left & 7) + _fascinWin[table[i]].width - 1,
-										 _fascinWin[table[i]].height - 1, _fascinWin[table[i]].left - _spriteLeft + _destSpriteX,
-										 _fascinWin[table[i]].top - _spriteTop + _destSpriteY);
+				                                  _fascinWin[table[i]].left & 7, 0,
+				                                  (_fascinWin[table[i]].left & 7) + _fascinWin[table[i]].width - 1,
+				                                  _fascinWin[table[i]].height - 1, _fascinWin[table[i]].left - _spriteLeft + _destSpriteX,
+				                                  _fascinWin[table[i]].top - _spriteTop + _destSpriteY);
 		}
 		return;
 	}
@@ -495,58 +490,58 @@ void Draw_Fascination::drawWin(int16 fct) {
 		for (int i = 9; i >= max; i--) {
 			if (table[i])
 				tempSrf->blit(*_fascinWin[table[i]].savedSurface,
-										 _fascinWin[table[i]].left & 7, 0,
-										(_fascinWin[table[i]].left & 7) + _fascinWin[table[i]].width - 1,
-										 _fascinWin[table[i]].height - 1,
-										 _fascinWin[table[i]].left  - left,
-										 _fascinWin[table[i]].top   - top);
+				              _fascinWin[table[i]].left & 7, 0,
+				              (_fascinWin[table[i]].left & 7) + _fascinWin[table[i]].width - 1,
+				              _fascinWin[table[i]].height - 1,
+				              _fascinWin[table[i]].left - left,
+				              _fascinWin[table[i]].top - top);
 		}
 
 		invalidateRect(left, top, width, height);
 
 		switch (fct) {
-		case DRAW_BLITSURF:    // 0 - move
+		case DRAW_BLITSURF: // 0 - move
 			tempSrf->blit(*_spritesArray[_sourceSurface],
-									_spriteLeft, _spriteTop, _spriteLeft + _spriteRight - 1,
-									_spriteTop + _spriteBottom - 1, 0, 0, (_transparency == 0) ? -1 : 0);
+			              _spriteLeft, _spriteTop, _spriteLeft + _spriteRight - 1,
+			              _spriteTop + _spriteBottom - 1, 0, 0, (_transparency == 0) ? -1 : 0);
 			break;
 
-		case DRAW_PUTPIXEL:    // 1 - put a pixel
+		case DRAW_PUTPIXEL: // 1 - put a pixel
 			tempSrf->putPixel(0, 0, _frontColor);
 			break;
 
-		case DRAW_FILLRECT:    // 2 - fill rectangle
+		case DRAW_FILLRECT: // 2 - fill rectangle
 			tempSrf->fillRect(0, 0, _spriteRight - 1, _spriteBottom - 1, _backColor);
 			break;
 
-		case DRAW_DRAWLINE:    // 3 - draw line
+		case DRAW_DRAWLINE: // 3 - draw line
 			tempSrf->drawLine(0, 0, _spriteRight - _destSpriteX, _spriteBottom - _destSpriteY, _frontColor);
 			break;
 
-		case DRAW_INVALIDATE:  // 4 - Draw a circle
+		case DRAW_INVALIDATE: // 4 - Draw a circle
 			tempSrf->drawCircle(_spriteRight, _spriteRight, _spriteRight, _frontColor);
 			break;
 
-		case DRAW_LOADSPRITE:  // 5 - Uncompress and load a sprite
+		case DRAW_LOADSPRITE: // 5 - Uncompress and load a sprite
 			decompWin(0, 0, tempSrf);
 			break;
 
-		case DRAW_PRINTTEXT:   // 6 - Display string
+		case DRAW_PRINTTEXT: // 6 - Display string
 			len = strlen(_textToPrint);
 			for (int j = 0; j < len; j++)
 				_fonts[_fontIndex]->drawLetter(*tempSrf, _textToPrint[j],
-						j * _fonts[_fontIndex]->getCharWidth(), 0, _frontColor, _backColor, _transparency);
+				                               j * _fonts[_fontIndex]->getCharWidth(), 0, _frontColor, _backColor, _transparency);
 			_destSpriteX += len * _fonts[_fontIndex]->getCharWidth();
 			break;
 
-		case DRAW_DRAWBAR:     // 7 - draw border
+		case DRAW_DRAWBAR: // 7 - draw border
 			tempSrf->drawLine(0, _spriteBottom - _destSpriteY, _spriteRight - _destSpriteX, _spriteBottom - _destSpriteY, _frontColor);
 			tempSrf->drawLine(0, 0, 0, _spriteBottom - _destSpriteY, _frontColor);
 			tempSrf->drawLine(_spriteRight - _destSpriteX, 0, _spriteRight - _destSpriteX, _spriteBottom - _destSpriteY, _frontColor);
 			tempSrf->drawLine(0, 0, _spriteRight - _destSpriteX, 0, _frontColor);
 			break;
 
-		case DRAW_CLEARRECT:   // 8 - clear rectangle
+		case DRAW_CLEARRECT: // 8 - clear rectangle
 			if (_backColor < 16)
 				tempSrf->fillRect(0, 0, _spriteRight - _destSpriteX, _spriteBottom - _destSpriteY, _backColor);
 			break;
@@ -555,7 +550,7 @@ void Draw_Fascination::drawWin(int16 fct) {
 			tempSrf->fillRect(0, 0, _spriteRight - _destSpriteX, _spriteBottom - _destSpriteY, _backColor);
 			break;
 
-		case DRAW_DRAWLETTER:  // 10 - Display a character
+		case DRAW_DRAWLETTER: // 10 - Display a character
 			if (_fontToSprite[_fontIndex].sprite == -1) {
 
 				if (_letterToPrint)
@@ -566,8 +561,8 @@ void Draw_Fascination::drawWin(int16 fct) {
 				yy = ((_letterToPrint - _fontToSprite[_fontIndex].base) / nn) * _fontToSprite[_fontIndex].height;
 				xx = ((_letterToPrint - _fontToSprite[_fontIndex].base) % nn) * _fontToSprite[_fontIndex].width;
 				tempSrf->blit(*_spritesArray[_fontToSprite[_fontIndex].sprite],
-										 xx, yy, xx + _fontToSprite[_fontIndex].width - 1,
-										 yy + _fontToSprite[_fontIndex].height - 1, 0, 0, (_transparency == 0) ? -1 : 0);
+				              xx, yy, xx + _fontToSprite[_fontIndex].width - 1,
+				              yy + _fontToSprite[_fontIndex].height - 1, 0, 0, (_transparency == 0) ? -1 : 0);
 			}
 			break;
 
@@ -584,34 +579,31 @@ void Draw_Fascination::drawWin(int16 fct) {
 			if (table[i]) {
 				int k = table[i];
 				_fascinWin[k].savedSurface->blit(*tempSrf,
-										0, 0, width - left, height - top,
-										left - _fascinWin[k].left + (_fascinWin[k].left & 7),
-										top  - _fascinWin[k].top);
+				                                 0, 0, width - left, height - top,
+				                                 left - _fascinWin[k].left + (_fascinWin[k].left & 7),
+				                                 top - _fascinWin[k].top);
 				// Shift skipped as always set to zero (?)
 				tempSrf->blit(*_frontSurface,
-										MAX(left  , _fascinWin[k].left),
-										MAX(top   , _fascinWin[k].top),
-										MIN(width , (int16) (_fascinWin[k].left + _fascinWin[k].width  - 1)),
-										MIN(height, (int16) (_fascinWin[k].top  + _fascinWin[k].height - 1)),
-										MAX(left  , _fascinWin[k].left) - left,
-										MAX(top   , _fascinWin[k].top)  - top);
+				              MAX(left, _fascinWin[k].left),
+				              MAX(top, _fascinWin[k].top),
+				              MIN(width, (int16)(_fascinWin[k].left + _fascinWin[k].width - 1)),
+				              MIN(height, (int16)(_fascinWin[k].top + _fascinWin[k].height - 1)),
+				              MAX(left, _fascinWin[k].left) - left,
+				              MAX(top, _fascinWin[k].top) - top);
 				if (_cursorIndex != -1)
 					tempSrf->blit(*_cursorSpritesBack,
-											0, 0, _cursorWidth - 1, _cursorHeight - 1,
-											_cursorX - left, _cursorY - top);
+					              0, 0, _cursorWidth - 1, _cursorHeight - 1,
+					              _cursorX - left, _cursorY - top);
 				for (int j = 9; j > i; j--) {
 					if (table[j] && overlapWin(k, table[j])) {
 						int l = table[j];
 						tempSrf->blit(*_fascinWin[l].savedSurface,
-												MAX(_fascinWin[l].left, _fascinWin[k].left)
-												  - _fascinWin[l].left + (_fascinWin[l].left & 7),
-												MAX(_fascinWin[l].top , _fascinWin[k].top ) - _fascinWin[l].top,
-												MIN(_fascinWin[l].left + _fascinWin[l].width  - 1, _fascinWin[k].left + _fascinWin[k].width - 1)
-												  - _fascinWin[l].left + (_fascinWin[l].left & 7),
-												MIN(_fascinWin[l].top  + _fascinWin[l].height - 1, _fascinWin[k].top  + _fascinWin[k].height - 1)
-												  - _fascinWin[l].top,
-												MAX(_fascinWin[l].left, _fascinWin[k].left) - left,
-												MAX(_fascinWin[l].top , _fascinWin[k].top ) - top);
+						              MAX(_fascinWin[l].left, _fascinWin[k].left) - _fascinWin[l].left + (_fascinWin[l].left & 7),
+						              MAX(_fascinWin[l].top, _fascinWin[k].top) - _fascinWin[l].top,
+						              MIN(_fascinWin[l].left + _fascinWin[l].width - 1, _fascinWin[k].left + _fascinWin[k].width - 1) - _fascinWin[l].left + (_fascinWin[l].left & 7),
+						              MIN(_fascinWin[l].top + _fascinWin[l].height - 1, _fascinWin[k].top + _fascinWin[k].height - 1) - _fascinWin[l].top,
+						              MAX(_fascinWin[l].left, _fascinWin[k].left) - left,
+						              MAX(_fascinWin[l].top, _fascinWin[k].top) - top);
 					}
 				}
 			}
@@ -621,51 +613,51 @@ void Draw_Fascination::drawWin(int16 fct) {
 	} else {
 		invalidateRect(left, top, width, height);
 		switch (fct) {
-		case DRAW_BLITSURF:    // 0 - move
+		case DRAW_BLITSURF: // 0 - move
 			_backSurface->blit(*_spritesArray[_sourceSurface],
-									 _spriteLeft, _spriteTop,
-									 _spriteLeft + _spriteRight  - 1,
-									 _spriteTop  + _spriteBottom - 1,
-									 _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+			                   _spriteLeft, _spriteTop,
+			                   _spriteLeft + _spriteRight - 1,
+			                   _spriteTop + _spriteBottom - 1,
+			                   _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 			break;
-		case DRAW_PUTPIXEL:    // 1 - put a pixel
+		case DRAW_PUTPIXEL: // 1 - put a pixel
 			_backSurface->putPixel(_destSpriteX, _destSpriteY, _frontColor);
 			break;
 
-		case DRAW_FILLRECT:    // 2 - fill rectangle
+		case DRAW_FILLRECT: // 2 - fill rectangle
 			_backSurface->fillRect(_destSpriteX, _destSpriteY, _destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1, _backColor);
 			break;
 
-		case DRAW_DRAWLINE:    // 3 - draw line
+		case DRAW_DRAWLINE: // 3 - draw line
 			_backSurface->drawLine(_destSpriteX, _destSpriteY, _spriteRight, _spriteBottom, _frontColor);
 			break;
 
-		case DRAW_INVALIDATE:  // 4 - Draw a circle
+		case DRAW_INVALIDATE: // 4 - Draw a circle
 			_backSurface->drawCircle(_spriteRight, _spriteRight, _spriteRight, _frontColor);
 			break;
 
-		case DRAW_LOADSPRITE:  // 5 - Uncompress and load a sprite
+		case DRAW_LOADSPRITE: // 5 - Uncompress and load a sprite
 			decompWin(_destSpriteX, _destSpriteY, _backSurface);
 			break;
 
-		case DRAW_PRINTTEXT:   // 6 - Display string
+		case DRAW_PRINTTEXT: // 6 - Display string
 			len = strlen(_textToPrint);
 			for (int j = 0; j < len; j++)
 				_fonts[_fontIndex]->drawLetter(*_backSurface, _textToPrint[j],
-						_destSpriteX + j * _fonts[_fontIndex]->getCharWidth(), _destSpriteY,
-						_frontColor, _backColor, _transparency);
+				                               _destSpriteX + j * _fonts[_fontIndex]->getCharWidth(), _destSpriteY,
+				                               _frontColor, _backColor, _transparency);
 			_destSpriteX += len * _fonts[_fontIndex]->getCharWidth();
 			break;
 
-		case DRAW_DRAWBAR:     // 7 - draw border
+		case DRAW_DRAWBAR: // 7 - draw border
 			_backSurface->drawLine(_destSpriteX, _spriteBottom, _spriteRight, _spriteBottom, _frontColor);
-			_backSurface->drawLine(_destSpriteX, _destSpriteY,  _destSpriteX, _spriteBottom, _frontColor);
-			_backSurface->drawLine(_spriteRight, _destSpriteY,  _spriteRight, _spriteBottom, _frontColor);
-			_backSurface->drawLine(_destSpriteX, _destSpriteY,  _spriteRight, _destSpriteY,  _frontColor);
+			_backSurface->drawLine(_destSpriteX, _destSpriteY, _destSpriteX, _spriteBottom, _frontColor);
+			_backSurface->drawLine(_spriteRight, _destSpriteY, _spriteRight, _spriteBottom, _frontColor);
+			_backSurface->drawLine(_destSpriteX, _destSpriteY, _spriteRight, _destSpriteY, _frontColor);
 			break;
 
-		case DRAW_CLEARRECT:   // 8 - clear rectangle
-		if (_backColor < 16)
+		case DRAW_CLEARRECT: // 8 - clear rectangle
+			if (_backColor < 16)
 				_backSurface->fillRect(_destSpriteX, _destSpriteY, _spriteRight, _spriteBottom, _backColor);
 			break;
 
@@ -673,21 +665,21 @@ void Draw_Fascination::drawWin(int16 fct) {
 			_backSurface->fillRect(_destSpriteX, _destSpriteY, _spriteRight, _spriteBottom, _backColor);
 			break;
 
-		case DRAW_DRAWLETTER:  // 10 - Display a character
+		case DRAW_DRAWLETTER: // 10 - Display a character
 			if (_fontToSprite[_fontIndex].sprite == -1) {
 				if (_letterToPrint)
 					_fonts[_fontIndex]->drawLetter(*_spritesArray[_destSurface], _letterToPrint,
-							_destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
+					                               _destSpriteX, _destSpriteY, _frontColor, _backColor, _transparency);
 			} else {
 				int xx, yy, nn;
 				nn = _spritesArray[_fontToSprite[_fontIndex].sprite]->getWidth() / _fontToSprite[_fontIndex].width;
 				yy = ((_letterToPrint - _fontToSprite[_fontIndex].base) / nn) * _fontToSprite[_fontIndex].height;
 				xx = ((_letterToPrint - _fontToSprite[_fontIndex].base) % nn) * _fontToSprite[_fontIndex].width;
 				_spritesArray[_destSurface]->blit(*_spritesArray[_fontToSprite[_fontIndex].sprite],
-										xx, yy,
-										xx + _fontToSprite[_fontIndex].width  - 1,
-										yy + _fontToSprite[_fontIndex].height - 1,
-										_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+				                                  xx, yy,
+				                                  xx + _fontToSprite[_fontIndex].width - 1,
+				                                  yy + _fontToSprite[_fontIndex].height - 1,
+				                                  _destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
 			}
 			break;
 
@@ -716,14 +708,14 @@ void Draw_Fascination::drawWin(int16 fct) {
 
 void Draw_Fascination::decompWin(int16 x, int16 y, SurfacePtr destPtr) {
 	Resource *resource;
-	resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
+	resource = _vm->_game->_resources->getResource((uint16)_spriteLeft,
 	                                               &_spriteRight, &_spriteBottom);
 
 	if (!resource)
 		return;
 
 	_vm->_video->drawPackedSprite(resource->getData(),
-			_spriteRight, _spriteBottom, x, y, _transparency, *destPtr);
+	                              _spriteRight, _spriteBottom, x, y, _transparency, *destPtr);
 
 	delete resource;
 	return;
@@ -734,9 +726,9 @@ int16 Draw_Fascination::openWin(int16 id) {
 		return 0;
 
 	_fascinWin[id].id = _winCount++;
-	_fascinWin[id].left   = VAR((_winVarArrayLeft   / 4) + id);
-	_fascinWin[id].top    = VAR((_winVarArrayTop    / 4) + id);
-	_fascinWin[id].width  = VAR((_winVarArrayWidth  / 4) + id);
+	_fascinWin[id].left = VAR((_winVarArrayLeft / 4) + id);
+	_fascinWin[id].top = VAR((_winVarArrayTop / 4) + id);
+	_fascinWin[id].width = VAR((_winVarArrayWidth / 4) + id);
 	_fascinWin[id].height = VAR((_winVarArrayHeight / 4) + id);
 
 	_fascinWin[id].savedSurface = _vm->_video->initSurfDesc(_winMaxWidth + 7, _winMaxHeight);
@@ -756,14 +748,14 @@ int16 Draw_Fascination::getWinFromCoord(int16 &dx, int16 &dy) {
 	for (int i = 0; i < 10; i++) {
 		if (_fascinWin[i].id != -1) {
 			if ((_vm->_global->_inter_mouseX >= _fascinWin[i].left) &&
-			    (_vm->_global->_inter_mouseX <  _fascinWin[i].left + _fascinWin[i].width) &&
+			    (_vm->_global->_inter_mouseX < _fascinWin[i].left + _fascinWin[i].width) &&
 			    (_vm->_global->_inter_mouseY >= _fascinWin[i].top) &&
-			    (_vm->_global->_inter_mouseY <  _fascinWin[i].top  + _fascinWin[i].height)) {
+			    (_vm->_global->_inter_mouseY < _fascinWin[i].top + _fascinWin[i].height)) {
 
 				if (_fascinWin[i].id == _winCount - 1) {
 					dx = _fascinWin[i].left;
 					dy = _fascinWin[i].top;
-					return(i);
+					return (i);
 				} else {
 					if (_fascinWin[i].id > bestMatch)
 						bestMatch = _fascinWin[i].id;
@@ -773,9 +765,9 @@ int16 Draw_Fascination::getWinFromCoord(int16 &dx, int16 &dy) {
 	}
 
 	if (bestMatch != -1)
-		return(0);
+		return (0);
 	else
-		return(-1);
+		return (-1);
 }
 
 void Draw_Fascination::closeWin(int16 id) {
@@ -799,13 +791,13 @@ int16 Draw_Fascination::handleCurWin() {
 	for (int i = 0; i < 10; i++) {
 		if (_fascinWin[i].id != -1) {
 			if ((_vm->_global->_inter_mouseX >= _fascinWin[i].left) &&
-			    (_vm->_global->_inter_mouseX <  _fascinWin[i].left + _fascinWin[i].width) &&
+			    (_vm->_global->_inter_mouseX < _fascinWin[i].left + _fascinWin[i].width) &&
 			    (_vm->_global->_inter_mouseY >= _fascinWin[i].top) &&
-			    (_vm->_global->_inter_mouseY <  _fascinWin[i].top  + _fascinWin[i].height)) {
+			    (_vm->_global->_inter_mouseY < _fascinWin[i].top + _fascinWin[i].height)) {
 
 				if (_fascinWin[i].id == _winCount - 1) {
 					if ((_vm->_global->_inter_mouseX < _fascinWin[i].left + 12) &&
-					    (_vm->_global->_inter_mouseY < _fascinWin[i].top  + 12) &&
+					    (_vm->_global->_inter_mouseY < _fascinWin[i].top + 12) &&
 					    (VAR(_winVarArrayStatus / 4 + i) & 2)) {
 
 						blitCursor();
@@ -816,7 +808,7 @@ int16 Draw_Fascination::handleCurWin() {
 					}
 
 					if ((_vm->_global->_inter_mouseX >= _fascinWin[i].left + _fascinWin[i].width - 12) &&
-					    (_vm->_global->_inter_mouseY <  _fascinWin[i].top  + 12) &&
+					    (_vm->_global->_inter_mouseY < _fascinWin[i].top + 12) &&
 					    (VAR(_winVarArrayStatus / 4 + i) & 4) &&
 					    (_vm->_global->_mousePresent) &&
 					    (_vm->_global->_videoMode != 0x07)) {
@@ -849,34 +841,34 @@ int16 Draw_Fascination::handleCurWin() {
 
 void Draw_Fascination::moveWin(int16 id) {
 	int oldLeft = _fascinWin[id].left;
-	int oldTop  = _fascinWin[id].top;
+	int oldTop = _fascinWin[id].top;
 
 	restoreWin(id);
 
 	_fascinWin[id].left = _vm->_global->_inter_mouseX;
-	_fascinWin[id].top  = _vm->_global->_inter_mouseY;
+	_fascinWin[id].top = _vm->_global->_inter_mouseY;
 
 	WRITE_VAR((_winVarArrayLeft / 4) + id, _fascinWin[id].left);
-	WRITE_VAR((_winVarArrayTop  / 4) + id, _fascinWin[id].top);
+	WRITE_VAR((_winVarArrayTop / 4) + id, _fascinWin[id].top);
 
 	saveWin(id);
 
 	// Shift skipped as always set to zero (?)
 	_backSurface->blit(*_frontSurface,
-							oldLeft, oldTop,
-							oldLeft + _fascinWin[id].width  - 1,
-							oldTop  + _fascinWin[id].height - 1,
-							_fascinWin[id].left, _fascinWin[id].top);
+	                   oldLeft, oldTop,
+	                   oldLeft + _fascinWin[id].width - 1,
+	                   oldTop + _fascinWin[id].height - 1,
+	                   _fascinWin[id].left, _fascinWin[id].top);
 	invalidateRect(_fascinWin[id].left, _fascinWin[id].top,
-				   _fascinWin[id].left + _fascinWin[id].width  - 1,
-				   _fascinWin[id].top  + _fascinWin[id].height - 1);
+	               _fascinWin[id].left + _fascinWin[id].width - 1,
+	               _fascinWin[id].top + _fascinWin[id].height - 1);
 }
 
 bool Draw_Fascination::overlapWin(int16 idWin1, int16 idWin2) {
-	if ((_fascinWin[idWin1].left + _fascinWin[idWin1].width  <= _fascinWin[idWin2].left) ||
-		(_fascinWin[idWin2].left + _fascinWin[idWin2].width  <= _fascinWin[idWin1].left) ||
-		(_fascinWin[idWin1].top  + _fascinWin[idWin1].height <= _fascinWin[idWin2].top ) ||
-		(_fascinWin[idWin2].top  + _fascinWin[idWin2].height <= _fascinWin[idWin1].top ))
+	if ((_fascinWin[idWin1].left + _fascinWin[idWin1].width <= _fascinWin[idWin2].left) ||
+	    (_fascinWin[idWin2].left + _fascinWin[idWin2].width <= _fascinWin[idWin1].left) ||
+	    (_fascinWin[idWin1].top + _fascinWin[idWin1].height <= _fascinWin[idWin2].top) ||
+	    (_fascinWin[idWin2].top + _fascinWin[idWin2].height <= _fascinWin[idWin1].top))
 		return false;
 
 	return true;
@@ -894,7 +886,7 @@ void Draw_Fascination::activeWin(int16 id) {
 	blitInvalidated();
 
 	for (int i = 0; i < 10; i++) {
-		t[i]  = -1;
+		t[i] = -1;
 		t2[i] = -1;
 		oldSrf[i].reset();
 	}
@@ -908,15 +900,15 @@ void Draw_Fascination::activeWin(int16 id) {
 
 	if (found) {
 		int nextId = -1;
-		int oldId  = -1;
+		int oldId = -1;
 		for (int i = 9; i >= 0; i--) {
 			if (t[i] != -1) {
 				if (nextId != -1)
 					_fascinWin[nextId].savedSurface->blit(*_backSurface,
-											_fascinWin[t[i]].left, _fascinWin[t[i]].top,
-											_fascinWin[t[i]].left + _fascinWin[t[i]].width  - 1,
-											_fascinWin[t[i]].top  + _fascinWin[t[i]].height - 1,
-											_fascinWin[t[i]].left & 7, 0);
+					                                      _fascinWin[t[i]].left, _fascinWin[t[i]].top,
+					                                      _fascinWin[t[i]].left + _fascinWin[t[i]].width - 1,
+					                                      _fascinWin[t[i]].top + _fascinWin[t[i]].height - 1,
+					                                      _fascinWin[t[i]].left & 7, 0);
 				t2[i] = nextId;
 				restoreWin(t[i]);
 				nextId = t[i];
@@ -925,61 +917,61 @@ void Draw_Fascination::activeWin(int16 id) {
 
 		oldId = nextId;
 		_fascinWin[nextId].savedSurface->blit(*_backSurface,
-								 _fascinWin[id].left, _fascinWin[id].top,
-								 _fascinWin[id].left + _fascinWin[id].width  - 1,
-								 _fascinWin[id].top  + _fascinWin[id].height - 1,
-								 _fascinWin[id].left & 7, 0);
+		                                      _fascinWin[id].left, _fascinWin[id].top,
+		                                      _fascinWin[id].left + _fascinWin[id].width - 1,
+		                                      _fascinWin[id].top + _fascinWin[id].height - 1,
+		                                      _fascinWin[id].left & 7, 0);
 		restoreWin(id);
 		nextId = id;
 
 		for (int i = 0; i < 10; i++) {
 			if (t[i] != -1) {
 				_fascinWin[nextId].savedSurface->blit(*_backSurface,
-										_fascinWin[t[i]].left, _fascinWin[t[i]].top,
-										_fascinWin[t[i]].left + _fascinWin[t[i]].width  - 1,
-										_fascinWin[t[i]].top  + _fascinWin[t[i]].height - 1,
-										_fascinWin[t[i]].left & 7, 0);
+				                                      _fascinWin[t[i]].left, _fascinWin[t[i]].top,
+				                                      _fascinWin[t[i]].left + _fascinWin[t[i]].width - 1,
+				                                      _fascinWin[t[i]].top + _fascinWin[t[i]].height - 1,
+				                                      _fascinWin[t[i]].left & 7, 0);
 				oldSrf[t[i]] = _fascinWin[nextId].savedSurface;
 				if (t2[i] != -1)
 					_backSurface->blit(*_fascinWin[t2[i]].savedSurface,
-											 _fascinWin[t[i]].left & 7, 0,
-											(_fascinWin[t[i]].left & 7) + _fascinWin[t[i]].width - 1,
-											 _fascinWin[t[i]].height - 1, _fascinWin[t[i]].left,
-											 _fascinWin[t[i]].top);
+					                   _fascinWin[t[i]].left & 7, 0,
+					                   (_fascinWin[t[i]].left & 7) + _fascinWin[t[i]].width - 1,
+					                   _fascinWin[t[i]].height - 1, _fascinWin[t[i]].left,
+					                   _fascinWin[t[i]].top);
 				else {
 					// Shift skipped as always set to zero (?)
 					_backSurface->blit(*_frontSurface,
-											 _fascinWin[t[i]].left, _fascinWin[t[i]].top,
-											 _fascinWin[t[i]].left + _fascinWin[t[i]].width  - 1,
-											 _fascinWin[t[i]].top  + _fascinWin[t[i]].height - 1,
-											 _fascinWin[t[i]].left, _fascinWin[t[i]].top);
+					                   _fascinWin[t[i]].left, _fascinWin[t[i]].top,
+					                   _fascinWin[t[i]].left + _fascinWin[t[i]].width - 1,
+					                   _fascinWin[t[i]].top + _fascinWin[t[i]].height - 1,
+					                   _fascinWin[t[i]].left, _fascinWin[t[i]].top);
 				}
 				invalidateRect(_fascinWin[t[i]].left, _fascinWin[t[i]].top,
-							_fascinWin[t[i]].left + _fascinWin[t[i]].width  - 1,
-							_fascinWin[t[i]].top  + _fascinWin[t[i]].height - 1);
+				               _fascinWin[t[i]].left + _fascinWin[t[i]].width - 1,
+				               _fascinWin[t[i]].top + _fascinWin[t[i]].height - 1);
 				nextId = t2[i];
 			}
 		}
 
 		tempSrf = _vm->_video->initSurfDesc(_winMaxWidth + 7, _winMaxHeight);
 		tempSrf->blit(*_backSurface,
-								 _fascinWin[id].left, _fascinWin[id].top,
-								 _fascinWin[id].left + _fascinWin[id].width  - 1,
-								 _fascinWin[id].top  + _fascinWin[id].height - 1,
-								 _fascinWin[id].left & 7, 0);
+		              _fascinWin[id].left, _fascinWin[id].top,
+		              _fascinWin[id].left + _fascinWin[id].width - 1,
+		              _fascinWin[id].top + _fascinWin[id].height - 1,
+		              _fascinWin[id].left & 7, 0);
 		_backSurface->blit(*_fascinWin[oldId].savedSurface,
-								 _fascinWin[id].left & 7, 0,
-								(_fascinWin[id].left & 7) + _fascinWin[id].width - 1,
-								 _fascinWin[id].height - 1,
-								 _fascinWin[id].left, _fascinWin[id].top);
+		                   _fascinWin[id].left & 7, 0,
+		                   (_fascinWin[id].left & 7) + _fascinWin[id].width - 1,
+		                   _fascinWin[id].height - 1,
+		                   _fascinWin[id].left, _fascinWin[id].top);
 
 		_fascinWin[oldId].savedSurface.reset();
 		_fascinWin[oldId].savedSurface = tempSrf;
 		oldSrf[id] = _fascinWin[oldId].savedSurface;
 
 		invalidateRect(_fascinWin[id].left, _fascinWin[id].top,
-					_fascinWin[id].left + _fascinWin[id].width  - 1,
-					_fascinWin[id].top  + _fascinWin[id].height - 1);
+		               _fascinWin[id].left + _fascinWin[id].width - 1,
+		               _fascinWin[id].top + _fascinWin[id].height - 1);
 		nextId = id;
 
 		for (int j = 0; j < 10; j++) {
@@ -1005,27 +997,27 @@ void Draw_Fascination::closeAllWin() {
 
 void Draw_Fascination::saveWin(int16 id) {
 	_fascinWin[id].savedSurface->blit(*_backSurface,
-							_fascinWin[id].left,  _fascinWin[id].top,
-							_fascinWin[id].left + _fascinWin[id].width  - 1,
-							_fascinWin[id].top  + _fascinWin[id].height - 1,
-							_fascinWin[id].left & 7, 0);
+	                                  _fascinWin[id].left, _fascinWin[id].top,
+	                                  _fascinWin[id].left + _fascinWin[id].width - 1,
+	                                  _fascinWin[id].top + _fascinWin[id].height - 1,
+	                                  _fascinWin[id].left & 7, 0);
 }
 
 void Draw_Fascination::restoreWin(int16 id) {
 	_backSurface->blit(*_fascinWin[id].savedSurface,
-							 _fascinWin[id].left & 7, 0,
-							(_fascinWin[id].left & 7) + _fascinWin[id].width - 1, _fascinWin[id].height - 1,
-							 _fascinWin[id].left, _fascinWin[id].top);
+	                   _fascinWin[id].left & 7, 0,
+	                   (_fascinWin[id].left & 7) + _fascinWin[id].width - 1, _fascinWin[id].height - 1,
+	                   _fascinWin[id].left, _fascinWin[id].top);
 	invalidateRect(_fascinWin[id].left, _fascinWin[id].top,
-				_fascinWin[id].left + _fascinWin[id].width  - 1,
-				_fascinWin[id].top  + _fascinWin[id].height - 1);
+	               _fascinWin[id].left + _fascinWin[id].width - 1,
+	               _fascinWin[id].top + _fascinWin[id].height - 1);
 }
 
 void Draw_Fascination::drawWinTrace(int16 left, int16 top, int16 width, int16 height) {
 	int16 right, bottom;
 
-	right  = left + width  - 1;
-	bottom = top  + height - 1;
+	right = left + width - 1;
+	bottom = top + height - 1;
 
 	Pixel pixelTop = _frontSurface->get(left, top);
 	Pixel pixelBottom = _frontSurface->get(left, bottom);

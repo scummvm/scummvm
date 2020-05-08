@@ -48,7 +48,7 @@ protected:
 
 	virtual AudioCDManager *createAudioCDManager() override;
 
-	bool launchBrowser(const Common::String& client, const Common::String &url);
+	bool launchBrowser(const Common::String &client, const Common::String &url);
 };
 
 #endif

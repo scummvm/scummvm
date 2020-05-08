@@ -23,8 +23,8 @@
 #ifndef NUVIE_VIEWS_SPELL_VIEW_GUMP_H
 #define NUVIE_VIEWS_SPELL_VIEW_GUMP_H
 
-#include "ultima/nuvie/views/spell_view.h"
 #include "ultima/nuvie/files/nuvie_bmp_file.h"
+#include "ultima/nuvie/views/spell_view.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -46,6 +46,7 @@ class SpellViewGump : public SpellView {
 	sint16 selected_spell;
 	GUI_Font *font;
 	NuvieBmpFile bmp;
+
 public:
 	SpellViewGump(Configuration *cfg);
 	~SpellViewGump() override;
@@ -64,10 +65,9 @@ public:
 		return DraggableView::MoveRelative(dx, dy);
 	}
 
-
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
-protected:
 
+protected:
 	sint16 getSpell(int x, int y);
 
 	uint8 fill_cur_spell_list() override;

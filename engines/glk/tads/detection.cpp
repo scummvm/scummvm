@@ -21,12 +21,12 @@
  */
 
 #include "glk/tads/detection.h"
-#include "glk/tads/detection_tables.h"
-#include "glk/blorb.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/blorb.h"
+#include "glk/tads/detection_tables.h"
 
 namespace Glk {
 namespace TADS {
@@ -59,7 +59,7 @@ GameDescriptor TADSMetaEngine::findGame(const char *gameId) {
 }
 
 bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".gam", ".t3", nullptr };
+	const char *const EXTENSIONS[] = {".gam", ".t3", nullptr};
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {

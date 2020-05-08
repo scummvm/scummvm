@@ -44,6 +44,6 @@ private:
 	GameManager *_gm;
 };
 
-}
+} // namespace Supernova
 
 #endif

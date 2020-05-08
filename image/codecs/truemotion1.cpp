@@ -22,16 +22,16 @@
 
 // Based on the TrueMotion 1 decoder by Alex Beregszaszi & Mike Melanson in FFmpeg
 
-#include "common/scummsys.h"
 #include "image/codecs/truemotion1.h"
+#include "common/scummsys.h"
 
 #ifdef IMAGE_CODECS_TRUEMOTION1_H
 
-#include "image/codecs/truemotion1data.h"
+#include "common/rect.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "common/rect.h"
 #include "common/util.h"
+#include "image/codecs/truemotion1data.h"
 
 namespace Image {
 
@@ -60,34 +60,33 @@ enum {
 // { valid for metatype }, algorithm, num of deltas, vert res, horiz res
 struct CompressionType {
 	int algorithm;
-	int blockWidth; // vres
+	int blockWidth;  // vres
 	int blockHeight; // hres
 	int blockType;
 };
 
 static const CompressionType compressionTypes[17] = {
-	{ ALGO_NOP,	0, 0, 0 },
+    {ALGO_NOP, 0, 0, 0},
 
-	{ ALGO_RGB16V, 4, 4, BLOCK_4x4 },
-	{ ALGO_RGB16H, 4, 4, BLOCK_4x4 },
-	{ ALGO_RGB16V, 4, 2, BLOCK_4x2 },
-	{ ALGO_RGB16H, 4, 2, BLOCK_4x2 },
+    {ALGO_RGB16V, 4, 4, BLOCK_4x4},
+    {ALGO_RGB16H, 4, 4, BLOCK_4x4},
+    {ALGO_RGB16V, 4, 2, BLOCK_4x2},
+    {ALGO_RGB16H, 4, 2, BLOCK_4x2},
 
-	{ ALGO_RGB16V, 2, 4, BLOCK_2x4 },
-	{ ALGO_RGB16H, 2, 4, BLOCK_2x4 },
-	{ ALGO_RGB16V, 2, 2, BLOCK_2x2 },
-	{ ALGO_RGB16H, 2, 2, BLOCK_2x2 },
+    {ALGO_RGB16V, 2, 4, BLOCK_2x4},
+    {ALGO_RGB16H, 2, 4, BLOCK_2x4},
+    {ALGO_RGB16V, 2, 2, BLOCK_2x2},
+    {ALGO_RGB16H, 2, 2, BLOCK_2x2},
 
-	{ ALGO_NOP,	4, 4, BLOCK_4x4 },
-	{ ALGO_RGB24H, 4, 4, BLOCK_4x4 },
-	{ ALGO_NOP,	4, 2, BLOCK_4x2 },
-	{ ALGO_RGB24H, 4, 2, BLOCK_4x2 },
+    {ALGO_NOP, 4, 4, BLOCK_4x4},
+    {ALGO_RGB24H, 4, 4, BLOCK_4x4},
+    {ALGO_NOP, 4, 2, BLOCK_4x2},
+    {ALGO_RGB24H, 4, 2, BLOCK_4x2},
 
-	{ ALGO_NOP,	2, 4, BLOCK_2x4 },
-	{ ALGO_RGB24H, 2, 4, BLOCK_2x4 },
-	{ ALGO_NOP,	2, 2, BLOCK_2x2 },
-	{ ALGO_RGB24H, 2, 2, BLOCK_2x2 }
-};
+    {ALGO_NOP, 2, 4, BLOCK_2x4},
+    {ALGO_RGB24H, 2, 4, BLOCK_2x4},
+    {ALGO_NOP, 2, 2, BLOCK_2x2},
+    {ALGO_RGB24H, 2, 2, BLOCK_2x2}};
 
 TrueMotion1Decoder::TrueMotion1Decoder() {
 	_surface = 0;
@@ -164,7 +163,7 @@ void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream &stream) {
 	_buf = new byte[stream.size()];
 	stream.read(_buf, stream.size());
 
-	byte headerBuffer[128];  // logical maximum size of the header
+	byte headerBuffer[128]; // logical maximum size of the header
 	const byte *selVectorTable;
 
 	_header.headerSize = ((_buf[0] >> 5) | (_buf[0] << 3)) & 0x7f;
@@ -260,48 +259,48 @@ void TrueMotion1Decoder::decodeHeader(Common::SeekableReadStream &stream) {
 	_blockType = compressionTypes[_header.compression].blockType;
 }
 
-#define GET_NEXT_INDEX() \
-do { \
-	if (indexStreamIndex >= _indexStreamSize) \
-		error("TrueMotion1 decoder went out of bounds"); \
-	index = _indexStream[indexStreamIndex++] * 4; \
-} while (0) \
+#define GET_NEXT_INDEX()                                     \
+	do {                                                     \
+		if (indexStreamIndex >= _indexStreamSize)            \
+			error("TrueMotion1 decoder went out of bounds"); \
+		index = _indexStream[indexStreamIndex++] * 4;        \
+	} while (0)
 
-#define APPLY_C_PREDICTOR() \
-	predictor_pair = _cPredictorTable[index].color; \
-	horizPred += predictor_pair; \
-	if (_cPredictorTable[index].getNextIndex) { \
-		GET_NEXT_INDEX(); \
-		if (!index) { \
-			GET_NEXT_INDEX(); \
+#define APPLY_C_PREDICTOR()                                 \
+	predictor_pair = _cPredictorTable[index].color;         \
+	horizPred += predictor_pair;                            \
+	if (_cPredictorTable[index].getNextIndex) {             \
+		GET_NEXT_INDEX();                                   \
+		if (!index) {                                       \
+			GET_NEXT_INDEX();                               \
 			predictor_pair = _cPredictorTable[index].color; \
-			horizPred += predictor_pair * 5; \
-			if (_cPredictorTable[index].getNextIndex) \
-				GET_NEXT_INDEX(); \
-			else \
-				index++; \
-		} \
-	} else \
+			horizPred += predictor_pair * 5;                \
+			if (_cPredictorTable[index].getNextIndex)       \
+				GET_NEXT_INDEX();                           \
+			else                                            \
+				index++;                                    \
+		}                                                   \
+	} else                                                  \
 		index++
 
-#define APPLY_Y_PREDICTOR() \
-	predictor_pair = _yPredictorTable[index].color; \
-	horizPred += predictor_pair; \
-	if (_yPredictorTable[index].getNextIndex) { \
-		GET_NEXT_INDEX(); \
-		if (!index) { \
-			GET_NEXT_INDEX(); \
+#define APPLY_Y_PREDICTOR()                                 \
+	predictor_pair = _yPredictorTable[index].color;         \
+	horizPred += predictor_pair;                            \
+	if (_yPredictorTable[index].getNextIndex) {             \
+		GET_NEXT_INDEX();                                   \
+		if (!index) {                                       \
+			GET_NEXT_INDEX();                               \
 			predictor_pair = _yPredictorTable[index].color; \
-			horizPred += predictor_pair * 5; \
-			if (_yPredictorTable[index].getNextIndex) \
-				GET_NEXT_INDEX(); \
-			else \
-				index++; \
-		} \
-	} else \
+			horizPred += predictor_pair * 5;                \
+			if (_yPredictorTable[index].getNextIndex)       \
+				GET_NEXT_INDEX();                           \
+			else                                            \
+				index++;                                    \
+		}                                                   \
+	} else                                                  \
 		index++
 
-#define OUTPUT_PIXEL_PAIR() \
+#define OUTPUT_PIXEL_PAIR()                    \
 	*currentPixelPair = *vertPred + horizPred; \
 	*vertPred++ = *currentPixelPair++
 

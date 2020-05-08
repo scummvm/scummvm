@@ -23,13 +23,13 @@
 #ifndef GUI_DEBUGGER_H
 #define GUI_DEBUGGER_H
 
-#include "common/func.h"
-#include "common/ptr.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
 #include "common/array.h"
-#include "common/str.h"
+#include "common/func.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/ptr.h"
 #include "common/str-array.h"
+#include "common/str.h"
 
 namespace GUI {
 
@@ -76,7 +76,7 @@ public:
 protected:
 	typedef Common::Functor2<int, const char **, bool> Debuglet;
 
-	/**
+/**
 	 * Convenience macro that makes it easier to register a method
 	 * of a debugger subclass as a command.
 	 * Usage example:
@@ -84,8 +84,8 @@ protected:
 	 * would register the method MyDebugger::myCmd(int, const char **)
 	 * under the command name "COMMAND".
 	 */
-	#define WRAP_METHOD(cls, method) \
-		new Common::Functor2Mem<int, const char **, bool, cls>(this, &cls::method)
+#define WRAP_METHOD(cls, method) \
+	new Common::Functor2Mem<int, const char **, bool, cls>(this, &cls::method)
 
 	enum VarType {
 		DVAR_BYTE,
@@ -135,7 +135,6 @@ protected:
 	}
 
 	void registerCmd(const Common::String &cmdname, Debuglet *debuglet);
-
 
 private:
 	/**
@@ -242,7 +241,6 @@ private:
 public:
 	char *readlineComplete(const char *input, int state);
 #endif
-
 };
 
 } // End of namespace GUI

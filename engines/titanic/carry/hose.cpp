@@ -27,11 +27,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CHose, CCarry)
-	ON_MESSAGE(DropZoneGotObjectMsg)
-	ON_MESSAGE(PumpingMsg)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(HoseConnectedMsg)
-	ON_MESSAGE(DropZoneLostObjectMsg)
+ON_MESSAGE(DropZoneGotObjectMsg)
+ON_MESSAGE(PumpingMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(HoseConnectedMsg)
+ON_MESSAGE(DropZoneLostObjectMsg)
 END_MESSAGE_MAP()
 
 CHoseStatics *CHose::_statics;

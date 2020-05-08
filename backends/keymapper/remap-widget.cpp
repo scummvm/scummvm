@@ -29,27 +29,26 @@
 #include "backends/keymapper/keymapper.h"
 
 #include "common/system.h"
+#include "common/translation.h"
+#include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/scrollcontainer.h"
-#include "gui/ThemeEval.h"
-#include "common/translation.h"
 
 namespace Common {
 
 enum {
-	kRemapCmd        = 'REMP',
-	kClearCmd        = 'CLER',
-	kResetActionCmd  = 'RTAC',
-	kResetKeymapCmd  = 'RTKM',
-	kCloseCmd        = 'CLOS'
+	kRemapCmd = 'REMP',
+	kClearCmd = 'CLER',
+	kResetActionCmd = 'RTAC',
+	kResetKeymapCmd = 'RTKM',
+	kCloseCmd = 'CLOS'
 };
 
-RemapWidget::RemapWidget(GuiObject *boss, const Common::String &name, const KeymapArray &keymaps) :
-		OptionsContainerWidget(boss, name, "", true, ""),
-		_keymapTable(keymaps),
-		_remapKeymap(nullptr),
-		_remapAction(nullptr),
-		_remapTimeout(0) {
+RemapWidget::RemapWidget(GuiObject *boss, const Common::String &name, const KeymapArray &keymaps) : OptionsContainerWidget(boss, name, "", true, ""),
+                                                                                                    _keymapTable(keymaps),
+                                                                                                    _remapKeymap(nullptr),
+                                                                                                    _remapAction(nullptr),
+                                                                                                    _remapTimeout(0) {
 
 	Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	assert(keymapper);

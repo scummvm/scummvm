@@ -22,10 +22,10 @@
 
 #include "common/endian.h"
 
+#include "gob/draw.h"
+#include "gob/global.h"
 #include "gob/gob.h"
 #include "gob/init.h"
-#include "gob/global.h"
-#include "gob/draw.h"
 #include "gob/video.h"
 
 namespace Gob {
@@ -47,7 +47,7 @@ void Init_v2::initVideo() {
 
 	_vm->_global->_colorCount = 16;
 	if (!_vm->isEGA() &&
-	   ((_vm->getPlatform() == Common::kPlatformDOS) ||
+	    ((_vm->getPlatform() == Common::kPlatformDOS) ||
 	     (_vm->getPlatform() == Common::kPlatformMacintosh) ||
 	     (_vm->getPlatform() == Common::kPlatformWindows)) &&
 	    ((_vm->_global->_videoMode == 0x13) ||
@@ -61,9 +61,9 @@ void Init_v2::initVideo() {
 
 	_vm->_video->initSurfDesc(_vm->_video->_surfWidth, _vm->_video->_surfHeight, PRIMARY_SURFACE);
 
-	_vm->_draw->_cursorWidth       = 16;
-	_vm->_draw->_cursorHeight      = 16;
-	_vm->_draw->_transparentCursor =  1;
+	_vm->_draw->_cursorWidth = 16;
+	_vm->_draw->_cursorHeight = 16;
+	_vm->_draw->_transparentCursor = 1;
 }
 
 } // End of namespace Gob

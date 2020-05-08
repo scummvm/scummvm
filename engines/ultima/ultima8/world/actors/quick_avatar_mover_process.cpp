@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -37,7 +37,7 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(QuickAvatarMoverProcess, Process)
 
-ProcId QuickAvatarMoverProcess::_amp[6] = { 0, 0, 0, 0, 0, 0 };
+ProcId QuickAvatarMoverProcess::_amp[6] = {0, 0, 0, 0, 0, 0};
 bool QuickAvatarMoverProcess::_clipping = false;
 bool QuickAvatarMoverProcess::_quarter = false;
 
@@ -45,7 +45,7 @@ QuickAvatarMoverProcess::QuickAvatarMoverProcess() : Process(1), _dx(0), _dy(0),
 }
 
 QuickAvatarMoverProcess::QuickAvatarMoverProcess(int x, int y, int z, int dir) : Process(1),
-		_dx(x), _dy(y), _dz(z), _dir(dir) {
+                                                                                 _dx(x), _dy(y), _dz(z), _dir(dir) {
 	QuickAvatarMoverProcess::terminateMover(dir);
 	assert(_dir < 6);
 	_amp[_dir] = getPid();
@@ -77,8 +77,10 @@ void QuickAvatarMoverProcess::run() {
 		dyv = this->_dy;
 		dzv = this->_dz;
 
-		if (j == 1) dxv = 0;
-		else if (j == 2) dyv = 0;
+		if (j == 1)
+			dxv = 0;
+		else if (j == 2)
+			dyv = 0;
 
 		if (_quarter) {
 			dxv /= 4;
@@ -94,7 +96,7 @@ void QuickAvatarMoverProcess::run() {
 			if (!_clipping || cm->isValidPosition(x + dxv, y + dyv, z + dzv, ixd, iyd, izd, _flags, 1, 0, 0)) {
 				if (_clipping && !dzv) {
 					if (cm->isValidPosition(x + dxv, y + dyv, z - 8, ixd, iyd, izd, _flags, 1, 0, 0) &&
-					        !cm->isValidPosition(x, y, z - 8, ixd, iyd, izd, _flags, 1, 0, 0)) {
+					    !cm->isValidPosition(x, y, z - 8, ixd, iyd, izd, _flags, 1, 0, 0)) {
 						dzv = -8;
 					} else if (cm->isValidPosition(x + dxv, y + dyv, z - 16, ixd, iyd, izd, _flags, 1, 0, 0) &&
 					           !cm->isValidPosition(x, y, z - 16, ixd, iyd, izd, _flags, 1, 0, 0)) {
@@ -118,12 +120,12 @@ void QuickAvatarMoverProcess::run() {
 			dyv /= 2;
 			dzv /= 2;
 		}
-		if (ok) break;
+		if (ok)
+			break;
 	}
 
 	// Yes, i know, not entirely correct
 	avatar->collideMove(x + dxv, y + dyv, z + dzv, false, true);
-
 
 	// Prevent avatar from running an idle animation while moving around
 	Ultima8Engine::get_instance()->getAvatarMoverProcess()->resetIdleTime();
@@ -148,7 +150,7 @@ void QuickAvatarMoverProcess::terminateMover(int dir) {
 
 void QuickAvatarMoverProcess::startMover(int x, int y, int z, int dir) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
-	if (! g->isAvatarInStasis()) {
+	if (!g->isAvatarInStasis()) {
 		Process *p = new QuickAvatarMoverProcess(x, y, z, dir);
 		Kernel::get_instance()->addProcess(p);
 	} else {
@@ -164,7 +166,8 @@ void QuickAvatarMoverProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool QuickAvatarMoverProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	// small safety precaution
 	_dir = rs->readUint32LE();

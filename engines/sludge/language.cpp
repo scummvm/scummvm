@@ -50,12 +50,12 @@ void LanguageManager::init() {
 
 void LanguageManager::kill() {
 	if (_languageTable) {
-		delete []_languageTable;
+		delete[] _languageTable;
 		_languageTable = nullptr;
 	}
 
 	if (_languageNames) {
-		delete []_languageNames;
+		delete[] _languageNames;
 		_languageNames = nullptr;
 	}
 }
@@ -63,7 +63,7 @@ void LanguageManager::kill() {
 void LanguageManager::createTable(Common::File *fp) {
 	// get number of languages
 	_numLanguages =
-				(gameVersion >= VERSION(1, 3)) ? (fp->readByte()) : 0;
+	    (gameVersion >= VERSION(1, 3)) ? (fp->readByte()) : 0;
 	debugC(2, kSludgeDebugDataLoad, "numLanguages : %c", _numLanguages);
 
 	// make language table

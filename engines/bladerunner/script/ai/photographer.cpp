@@ -42,9 +42,7 @@ void AIScriptPhotographer::Initialize() {
 }
 
 bool AIScriptPhotographer::Update() {
-	if ( Game_Flag_Query(kFlagTB02ElevatorToTB05)
-	 && !Game_Flag_Query(kFlagTB06Photographer)
-	) {
+	if (Game_Flag_Query(kFlagTB02ElevatorToTB05) && !Game_Flag_Query(kFlagTB06Photographer)) {
 		Actor_Put_In_Set(kActorPhotographer, kSetFreeSlotC);
 		Actor_Set_At_Waypoint(kActorPhotographer, 35, 0);
 		Game_Flag_Set(kFlagTB06Photographer);
@@ -86,10 +84,7 @@ void AIScriptPhotographer::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptPhotographer::ClickedByPlayer() {
-	if ( Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueVictimInformation)
-	 && !Game_Flag_Query(kFlagTB06PhotographTalk1)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring) && !Actor_Clue_Query(kActorMcCoy, kClueVictimInformation) && !Game_Flag_Query(kFlagTB06PhotographTalk1)) {
 		AI_Movement_Track_Pause(kActorPhotographer);
 		Actor_Face_Actor(kActorMcCoy, kActorPhotographer, true);
 		Actor_Says(kActorMcCoy, 5300, 14);
@@ -216,9 +211,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 747;
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _flag) {
 			*animation = 745;
 			_animationState = 0;
 			_var2 = 0;
@@ -348,24 +341,21 @@ bool AIScriptPhotographer::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptPhotographer::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptPhotographer::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptPhotographer::ReachedMovementTrackWaypoint(int waypointId) {
-	if (waypointId == 276
-	 || waypointId == 278
-	 || waypointId == 280
-	) {
+	if (waypointId == 276 || waypointId == 278 || waypointId == 280) {
 		ChangeAnimationMode(43);
 	}
 

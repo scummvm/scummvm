@@ -27,7 +27,6 @@
 #include "startrek/graphics.h"
 #include "startrek/room.h"
 
-
 namespace StarTrek {
 
 const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, int lineWidth) {
@@ -108,7 +107,6 @@ void StarTrekEngine::drawTextLineToBitmap(const char *text, int textLen, int x, 
 			drawRect.bottom = bitmapRect.bottom - destRect.top;
 			if (drawRect.bottom > destRect.bottom - destRect.top)
 				drawRect.bottom = destRect.bottom - destRect.top;
-
 
 			int16 destX = destRect.left - bitmapRect.left;
 			if (destX < bitmapRect.right - bitmapRect.right)
@@ -286,14 +284,12 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 
 	int choiceIndex = 0;
 	int scrollOffset = 0;
-	if (tmpTextDisplayMode != TEXTDISPLAY_WAIT && tmpTextDisplayMode != TEXTDISPLAY_SUBTITLES
-	        && numChoices == 1 && _sfxEnabled && !_sfxWorking)
+	if (tmpTextDisplayMode != TEXTDISPLAY_WAIT && tmpTextDisplayMode != TEXTDISPLAY_SUBTITLES && numChoices == 1 && _sfxEnabled && !_sfxWorking)
 		_textboxHasMultipleChoices = false;
 	else
 		_textboxHasMultipleChoices = true;
 
-	if (tmpTextDisplayMode >= TEXTDISPLAY_WAIT && tmpTextDisplayMode <= TEXTDISPLAY_NONE
-	        && _sfxEnabled && !_sfxWorking)
+	if (tmpTextDisplayMode >= TEXTDISPLAY_WAIT && tmpTextDisplayMode <= TEXTDISPLAY_NONE && _sfxEnabled && !_sfxWorking)
 		_textboxVar6 = true;
 	else
 		_textboxVar6 = false;
@@ -389,7 +385,7 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
 				goto readjustScroll;
 
-readjustScroll:
+			readjustScroll:
 				textboxSprite.bitmapChanged = true;
 				drawMainText(
 				    textBitmap,
@@ -405,8 +401,7 @@ readjustScroll:
 					choiceIndex--;
 					if (!loopChoices && choiceIndex == 0) {
 						disableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
-					}
-					else {
+					} else {
 						if (choiceIndex < 0)
 							choiceIndex = numChoices - 1;
 					}
@@ -416,8 +411,7 @@ readjustScroll:
 					choiceIndex++;
 					if (!loopChoices && choiceIndex == numChoices - 1) {
 						disableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
-					}
-					else {
+					} else {
 						choiceIndex %= numChoices;
 					}
 				}
@@ -517,7 +511,7 @@ TextBitmap *StarTrekEngine::initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byt
 	*sprite = Sprite();
 	sprite->drawPriority = 15;
 	sprite->drawPriority2 = 8;
-	sprite->bitmap = SharedPtr<TextBitmap>(bitmap);	// This is deallocated explicitly at the end of showText()
+	sprite->bitmap = SharedPtr<TextBitmap>(bitmap); // This is deallocated explicitly at the end of showText()
 	sprite->textColor = textColor;
 
 	memset(bitmap->pixels, ' ', textHeight * TEXTBOX_WIDTH);
@@ -611,8 +605,7 @@ String StarTrekEngine::readLineFormattedText(TextGetterFunc textGetter, uintptr 
 		text = playTextAudio(text);
 		if (oldSize != text.size())
 			_textboxHasMultipleChoices = true;
-	} else if ((_textDisplayMode == TEXTDISPLAY_WAIT || _textDisplayMode == TEXTDISPLAY_SUBTITLES)
-	           && _sfxEnabled && _sfxWorking) {
+	} else if ((_textDisplayMode == TEXTDISPLAY_WAIT || _textDisplayMode == TEXTDISPLAY_SUBTITLES) && _sfxEnabled && _sfxWorking) {
 		text = playTextAudio(text);
 	} else {
 		text = skipTextAudioPrompt(text);
@@ -848,7 +841,6 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 	const int16 width = headerLen * 8 + 8;
 	const int16 height = row * 8 + 8;
 
-
 	_textInputSprite.bitmap = SharedPtr<Bitmap>(new Bitmap(width, height));
 
 	_textInputSprite.bitmap->xoffset = width / 2;
@@ -861,15 +853,15 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 
 	int16 xPos = 1;
 	while (xPos < width - 1) {
-		_textInputSprite.bitmap->pixels[1 * width + xPos] = 0x78;	// Top border
-		_textInputSprite.bitmap->pixels[(height - 2) * width + xPos] = 0x78;	// Bottom border
+		_textInputSprite.bitmap->pixels[1 * width + xPos] = 0x78;            // Top border
+		_textInputSprite.bitmap->pixels[(height - 2) * width + xPos] = 0x78; // Bottom border
 		xPos++;
 	}
 
 	int16 yPos = 1;
 	while (yPos < height - 1) {
-		_textInputSprite.bitmap->pixels[yPos * width + 1] = 0x78;	// Left border
-		_textInputSprite.bitmap->pixels[yPos * width + (width - 2)] = 0x78;	// Right border
+		_textInputSprite.bitmap->pixels[yPos * width + 1] = 0x78;           // Left border
+		_textInputSprite.bitmap->pixels[yPos * width + (width - 2)] = 0x78; // Right border
 		yPos++;
 	}
 

@@ -25,66 +25,54 @@
 namespace Bbvs {
 
 static const int kLoogieOffY[16] = {
-	0, 1, 1, 2, 2, 3, 3, 4,
-	4, 5, 5, 6, 6, 7, 7, 0
-};
+    0, 1, 1, 2, 2, 3, 3, 4,
+    4, 5, 5, 6, 6, 7, 7, 0};
 
 static const int kSquirrelOffX[] = {
-	-43, -43, -38, -33, -33, -27, -23, -23,
-	-23, -23, -23, -23, -18, -14,  -8,  -4,
-	  2,   8,  12,  18,  20,  20,  26,  31,
-	 37,  37,  37,  37,  37,  37,  37,  32,
-	 29,  26,  21,  14,  10,   6,   6,   6,
-	  6,   6,   6,   6,   0,  -6, -15, -20,
-	-27, -37, -41, -41, -41, -41
-};
+    -43, -43, -38, -33, -33, -27, -23, -23,
+    -23, -23, -23, -23, -18, -14, -8, -4,
+    2, 8, 12, 18, 20, 20, 26, 31,
+    37, 37, 37, 37, 37, 37, 37, 32,
+    29, 26, 21, 14, 10, 6, 6, 6,
+    6, 6, 6, 6, 0, -6, -15, -20,
+    -27, -37, -41, -41, -41, -41};
 
 static const int kPlaneOffX[] = {
-	0, -1, -1, -1, 0, 1, 1, 1
-};
+    0, -1, -1, -1, 0, 1, 1, 1};
 
 static const int kPlaneOffY[] = {
-	-1, -1, 0, 1, 1, 1, 0, -1
-};
+    -1, -1, 0, 1, 1, 1, 0, -1};
 
 static const int kLevelScores[] = {
-	20, 50, 90, 140, 200, 270, 350, 440, 540, 10000
-};
+    20, 50, 90, 140, 200, 270, 350, 440, 540, 10000};
 
 static const int kLevelTimes[] = {
-	120, 110, 100, 90, 80, 70, 60, 50, 40, 30
-};
+    120, 110, 100, 90, 80, 70, 60, 50, 40, 30};
 
 static const uint kBeavisSounds1[] = {
-	14, 15, 19, 20, 22, 23, 24, 26
-};
+    14, 15, 19, 20, 22, 23, 24, 26};
 
 static const uint kButtheadSounds1[] = {
-	16, 14, 15, 22, 23
-};
+    16, 14, 15, 22, 23};
 
 static const uint kBeavisSounds2[] = {
-	9, 3, 4, 5, 7, 14, 15, 19, 20, 22, 23, 24, 26
-};
+    9, 3, 4, 5, 7, 14, 15, 19, 20, 22, 23, 24, 26};
 
 static const uint kButtheadSounds2[] = {
-	9, 3, 4, 5, 7, 16, 14, 15, 22, 23
-};
+    9, 3, 4, 5, 7, 16, 14, 15, 22, 23};
 
 static const uint kPrincipalSounds[] = {
-	3, 4, 5, 7
-};
+    3, 4, 5, 7};
 
-static const char * const kSoundFilenames[] = {
-	"loog1.aif", "loog2.aif", "loog3.aif", "loog4.aif", "loog5.aif",
-	"loog6.aif", "loog7.aif", "loog8.aif", "loog9.aif", "loog10.aif",
-	"loog11.aif", "loog12.aif", "loog13.aif", "loog14.aif", "loog15.aif",
-	"loog16.aif", "loog17.aif", "loog18.aif", "loog19.aif", "loog20.aif",
-	"loog21.aif", "loog22.aif", "loog23.aif", "loog24.aif", "loog25.aif",
-	"loog26.aif", "loog27.aif", "meghoker.aif", "spit1.aif", "megaloog.aif",
-	"megaspit.aif", "gamemuse.aif", "bing.aif", "carhit.aif", "bikehit.aif",
-	"squirhit.aif", "planehit.aif", "bing2.aif"
-};
+static const char *const kSoundFilenames[] = {
+    "loog1.aif", "loog2.aif", "loog3.aif", "loog4.aif", "loog5.aif",
+    "loog6.aif", "loog7.aif", "loog8.aif", "loog9.aif", "loog10.aif",
+    "loog11.aif", "loog12.aif", "loog13.aif", "loog14.aif", "loog15.aif",
+    "loog16.aif", "loog17.aif", "loog18.aif", "loog19.aif", "loog20.aif",
+    "loog21.aif", "loog22.aif", "loog23.aif", "loog24.aif", "loog25.aif",
+    "loog26.aif", "loog27.aif", "meghoker.aif", "spit1.aif", "megaloog.aif",
+    "megaspit.aif", "gamemuse.aif", "bing.aif", "carhit.aif", "bikehit.aif",
+    "squirhit.aif", "planehit.aif", "bing2.aif"};
 
 static const uint kSoundFilenamesCount = ARRAYSIZE(kSoundFilenames);
 
@@ -161,7 +149,6 @@ void MinigameBbLoogie::buildDrawList1(DrawList &drawList) {
 
 	for (int i = 0; i < _megaLoogieCount; ++i)
 		drawList.add(getAnimation(19)->frameIndices[0], 20 + i * 25, 236, 2000);
-
 }
 
 void MinigameBbLoogie::buildDrawList2(DrawList &drawList) {
@@ -178,7 +165,6 @@ void MinigameBbLoogie::buildDrawList2(DrawList &drawList) {
 		int numberX2 = drawNumber(drawList, _nextLevelScore, 170, 92);
 		drawList.add(getAnimation(11)->frameIndices[0], numberX2, 80, 2000);
 	}
-
 }
 
 void MinigameBbLoogie::buildDrawList3(DrawList &drawList) {
@@ -208,7 +194,6 @@ void MinigameBbLoogie::buildDrawList3(DrawList &drawList) {
 	drawList.add(getAnimation(13)->frameIndices[0], 95, 95, 2000);
 
 	drawNumber(drawList, _hiScore, 210, 109);
-
 }
 
 void MinigameBbLoogie::drawSprites() {
@@ -467,7 +452,7 @@ bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 	}
 
 	if ((mouseButtons & kLeftButtonDown) &&
-		(_objects[3].kind != 0 || _objects[4].kind != 0)) {
+	    (_objects[3].kind != 0 || _objects[4].kind != 0)) {
 		if (_objects[4].kind != 0) {
 			// Beavis
 			_playerKind = 0;
@@ -477,7 +462,8 @@ bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 			_playerSounds2 = kBeavisSounds2;
 			_playerSounds2Count = 13;
 			playSound(15);
-			while (isSoundPlaying(15)) { }
+			while (isSoundPlaying(15)) {
+			}
 		} else {
 			// Butt-head
 			_playerKind = 1;
@@ -487,7 +473,8 @@ bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 			_playerSounds2 = kButtheadSounds2;
 			_playerSounds2Count = 10;
 			playSound(23);
-			while (isSoundPlaying(23)) { }
+			while (isSoundPlaying(23)) {
+			}
 		}
 		_gameState = _fromMainGame ? kGSMainGame : kGSStandaloneGame;
 		initObjects1();
@@ -514,8 +501,8 @@ bool MinigameBbLoogie::updateStatus1(int mouseX, int mouseY, uint mouseButtons) 
 		_objects->x = CLIP(mouseX, 0, 319);
 		_objects->y = 240;
 		if (!_principalAngry &&
-			((mouseButtons & kLeftButtonDown) || ((mouseButtons & kRightButtonDown) && _megaLoogieCount)) &&
-			_objects[0].status == 0 && mouseX != 32512 && mouseY != 32512) {
+		    ((mouseButtons & kLeftButtonDown) || ((mouseButtons & kRightButtonDown) && _megaLoogieCount)) &&
+		    _objects[0].status == 0 && mouseX != 32512 && mouseY != 32512) {
 			_objects[0].ticks = _playerAnim->frameTicks[13];
 			_objects[0].frameIndex = 14;
 			_objects[0].status = 1;
@@ -715,7 +702,6 @@ void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 		_principalFirstFrameIndex = 11;
 		_principalLastFrameIndex = 16;
 	}
-
 }
 
 void MinigameBbLoogie::updatePlayer(int objIndex, uint mouseButtons) {
@@ -732,8 +718,8 @@ void MinigameBbLoogie::updatePlayer(int objIndex, uint mouseButtons) {
 			}
 		}
 		if ((((mouseButtons & kLeftButtonDown) && _doubleScore == 0) ||
-			((mouseButtons & kRightButtonDown) && _doubleScore == 17))
-			&& obj->unk2 != 61) {
+		     ((mouseButtons & kRightButtonDown) && _doubleScore == 17)) &&
+		    obj->unk2 != 61) {
 			++obj->unk2;
 		} else {
 			obj->status = 2;
@@ -807,7 +793,6 @@ void MinigameBbLoogie::updatePlayer(int objIndex, uint mouseButtons) {
 	default:
 		break;
 	}
-
 }
 
 void MinigameBbLoogie::updateObjKind2(int objIndex) {
@@ -821,7 +806,6 @@ void MinigameBbLoogie::updateObjKind2(int objIndex) {
 		if (obj->frameIndex++ >= 7)
 			obj->frameIndex = 0;
 	}
-
 }
 
 void MinigameBbLoogie::updateLoogie(int objIndex) {
@@ -841,7 +825,6 @@ void MinigameBbLoogie::updateLoogie(int objIndex) {
 			obj->frameIndex = 0;
 		}
 	}
-
 }
 
 void MinigameBbLoogie::updateCar(int objIndex) {
@@ -876,7 +859,6 @@ void MinigameBbLoogie::updateCar(int objIndex) {
 			loogieObj = findLoogieObj(loogieObjIndex++);
 		}
 	}
-
 }
 
 void MinigameBbLoogie::updateBike(int objIndex) {
@@ -911,7 +893,6 @@ void MinigameBbLoogie::updateBike(int objIndex) {
 			loogieObj = findLoogieObj(loogieObjIndex++);
 		}
 	}
-
 }
 
 void MinigameBbLoogie::updateSquirrel(int objIndex) {
@@ -920,7 +901,7 @@ void MinigameBbLoogie::updateSquirrel(int objIndex) {
 	if (obj->ticks-- == 0) {
 		++obj->frameIndex;
 		if (obj->frameIndex == 29 || obj->frameIndex == 54 ||
-			obj->frameIndex == 58 || obj->frameIndex == 62) {
+		    obj->frameIndex == 58 || obj->frameIndex == 62) {
 			obj->kind = 0;
 			obj->anim = getAnimation(6);
 			obj->frameIndex = 0;
@@ -945,8 +926,7 @@ void MinigameBbLoogie::updateSquirrel(int objIndex) {
 			}
 			loogieObj = findLoogieObj(loogieObjIndex++);
 		}
-  	}
-
+	}
 }
 
 void MinigameBbLoogie::updatePaperPlane(int objIndex) {
@@ -979,7 +959,6 @@ void MinigameBbLoogie::updatePaperPlane(int objIndex) {
 			loogieObj = findLoogieObj(loogieObjIndex++);
 		}
 	}
-
 }
 
 void MinigameBbLoogie::updateIndicator(int objIndex) {
@@ -1009,7 +988,6 @@ void MinigameBbLoogie::updateIndicator(int objIndex) {
 		obj->kind = 0;
 		obj->anim = getAnimation(6);
 	}
-
 }
 
 void MinigameBbLoogie::updatePrincipal(int objIndex) {
@@ -1254,7 +1232,6 @@ void MinigameBbLoogie::updatePrincipal(int objIndex) {
 			loogieObj = findLoogieObj(loogieObjIndex++);
 		}
 	}
-
 }
 
 void MinigameBbLoogie::incNumberOfHits() {
@@ -1312,7 +1289,7 @@ bool MinigameBbLoogie::run(bool fromMainGame) {
 
 	playSound(32, true);
 
-	while (!_vm->shouldQuit() &&!_gameDone) {
+	while (!_vm->shouldQuit() && !_gameDone) {
 		_vm->updateEvents();
 		update();
 	}
@@ -1360,7 +1337,6 @@ void MinigameBbLoogie::update() {
 	drawSprites();
 
 	_vm->_system->delayMillis(10);
-
 }
 
 void MinigameBbLoogie::loadSounds() {

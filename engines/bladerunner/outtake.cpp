@@ -25,8 +25,8 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/chapters.h"
 #include "bladerunner/subtitles.h"
-#include "bladerunner/vqa_player.h"
 #include "bladerunner/time.h"
+#include "bladerunner/vqa_player.h"
 
 #include "common/debug.h"
 #include "common/events.h"
@@ -79,7 +79,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 
 		int frame = vqaPlayer.update();
 		blit(_surfaceVideo, _vm->_surfaceFront); // This helps to make subtitles disappear properly, if the video is rendered in separate surface and then pushed to the front surface
-		if (frame == -3) { // end of video
+		if (frame == -3) {                       // end of video
 			break;
 		}
 

@@ -23,10 +23,10 @@
 #ifndef TITANIC_PET_ROOMS_H
 #define TITANIC_PET_ROOMS_H
 
-#include "titanic/pet_control/pet_section.h"
+#include "titanic/game_location.h"
 #include "titanic/gfx/text_control.h"
 #include "titanic/pet_control/pet_rooms_glyphs.h"
-#include "titanic/game_location.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
@@ -50,6 +50,7 @@ private:
 	int _sublevel;
 	int _wellEntry;
 	bool _elevatorBroken;
+
 private:
 	/**
 	 * Setup the control
@@ -70,6 +71,7 @@ private:
 	 * Adds a glyph to the list
 	 */
 	CPetRoomsGlyph *addGlyph(uint roomFlags, bool highlight);
+
 public:
 	CPetRooms();
 

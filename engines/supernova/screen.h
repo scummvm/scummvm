@@ -41,30 +41,30 @@ class Room;
 class MSNImage;
 class Screen;
 
-const int kScreenWidth  = 320;
+const int kScreenWidth = 320;
 const int kScreenHeight = 200;
 const int kFontWidth = 5;
 const int kFontWidth2 = 4;
 const int kFontHeight = 8;
 
 enum Color {
-	kColorBlack       =  0,
-	kColorWhite25     =  1,
-	kColorWhite35     =  2,
-	kColorWhite44     =  3,
-	kColorWhite99     =  4,
-	kColorDarkGreen   =  5,
-	kColorGreen       =  6,
-	kColorDarkRed     =  7,
-	kColorRed         =  8,
-	kColorDarkBlue    =  9,
-	kColorBlue        = 10,
-	kColorWhite63     = 11,
-	kColorLightBlue   = 12,
-	kColorLightGreen  = 13,
+	kColorBlack = 0,
+	kColorWhite25 = 1,
+	kColorWhite35 = 2,
+	kColorWhite44 = 3,
+	kColorWhite99 = 4,
+	kColorDarkGreen = 5,
+	kColorGreen = 6,
+	kColorDarkRed = 7,
+	kColorRed = 8,
+	kColorDarkBlue = 9,
+	kColorBlue = 10,
+	kColorWhite63 = 11,
+	kColorLightBlue = 12,
+	kColorLightGreen = 13,
 	kColorLightYellow = 14,
-	kColorLightRed    = 15,
-	kColorPurple      = 16,
+	kColorLightRed = 15,
+	kColorPurple = 16,
 	kColorCursorTransparent = kColorWhite25
 };
 
@@ -162,7 +162,7 @@ public:
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal, int positionX = -1, int positionY = -1);
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
 	void renderMessage(int stringId, MessagePosition position = kMessageNormal,
-					   Common::String var1 = "", Common::String var2 = "");
+	                   Common::String var1 = "", Common::String var2 = "");
 	void removeMessage();
 	void renderText(const uint16 character);
 	void renderText(const char *text);
@@ -193,14 +193,14 @@ private:
 	ScreenBufferStack _screenBuffer;
 	int _screenWidth;
 	int _screenHeight;
-	int  _textCursorX;
-	int  _textCursorY;
-	int  _textColor;
+	int _textCursorX;
+	int _textCursorY;
+	int _textColor;
 	byte _viewportBrightness;
 	byte _guiBrightness;
 	bool _messageShown;
 };
 
-}
+} // namespace Supernova
 
 #endif

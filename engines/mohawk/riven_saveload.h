@@ -23,10 +23,10 @@
 #ifndef MOHAWK_SAVELOAD_H
 #define MOHAWK_SAVELOAD_H
 
-#include "common/serializer.h"
-#include "common/savefile.h"
-#include "common/str.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
+#include "common/str.h"
 
 #include "engines/savestate.h"
 
@@ -59,7 +59,7 @@ struct RivenSaveMetadata {
 
 class RivenSaveLoad {
 public:
-	RivenSaveLoad(MohawkEngine_Riven*, Common::SaveFileManager*);
+	RivenSaveLoad(MohawkEngine_Riven *, Common::SaveFileManager *);
 	~RivenSaveLoad();
 
 	Common::Error loadGame(const int slot);

@@ -29,10 +29,9 @@
 #ifndef WINTERMUTE_BASE_FILE_H
 #define WINTERMUTE_BASE_FILE_H
 
-
-#include "engines/wintermute/base/base.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "engines/wintermute/base/base.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -44,6 +43,7 @@ class BaseFile {
 protected:
 	uint32 _pos;
 	uint32 _size;
+
 public:
 	virtual uint32 getSize() const {
 		return _size;

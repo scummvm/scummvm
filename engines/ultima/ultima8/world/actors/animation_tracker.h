@@ -72,7 +72,7 @@ public:
 	}
 
 	void getInterpolatedPosition(int32 &x_, int32 &y_, int32 &z_, int fc)
-            const;
+	    const;
 
 	//! get the difference between current position and previous position
 	void getSpeed(int32 &dx, int32 &dy, int32 &dz) const;

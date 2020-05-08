@@ -244,13 +244,14 @@ struct EoBMenuButtonDef {
 class EoBInfProcessor;
 
 class EoBCoreEngine : public KyraRpgEngine {
-friend class TextDisplayer_rpg;
-friend class GUI_EoB;
-friend class Debugger_EoB;
-friend class EoBInfProcessor;
-friend class DarkmoonSequenceHelper;
-friend class CharacterGenerator;
-friend class TransferPartyWiz;
+	friend class TextDisplayer_rpg;
+	friend class GUI_EoB;
+	friend class Debugger_EoB;
+	friend class EoBInfProcessor;
+	friend class DarkmoonSequenceHelper;
+	friend class CharacterGenerator;
+	friend class TransferPartyWiz;
+
 public:
 	EoBCoreEngine(OSystem *system, const GameFlags &flags);
 	~EoBCoreEngine() override;
@@ -358,7 +359,7 @@ protected:
 	void timerUpdateMonsterIdleAnim(int timerNum);
 
 	uint8 getClock2Timer(int index) override { return index < _numClock2Timers ? _clock2Timers[index] : 0; }
-	uint8 getNumClock2Timers() override  { return _numClock2Timers; }
+	uint8 getNumClock2Timers() override { return _numClock2Timers; }
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
@@ -464,7 +465,7 @@ protected:
 	char **_itemNames;
 	uint16 _numItemNames;
 	int _numItemNamesPC98;
-	const char * const *_itemNamesPC98;
+	const char *const *_itemNamesPC98;
 	uint32 _partyEffectFlags;
 	Item _lastUsedItem;
 
@@ -1189,7 +1190,7 @@ protected:
 
 	// sound
 	void snd_playSong(int id);
-	void snd_playSoundEffect(int id, int volume=0xFF) override;
+	void snd_playSoundEffect(int id, int volume = 0xFF) override;
 	void snd_stopSound();
 	void snd_fadeOut(int del = 160);
 	virtual void snd_loadAmigaSounds(int level, int sub) = 0;

@@ -50,6 +50,7 @@ private:
 	 * Handle a single action
 	 */
 	bool singleAction();
+
 public:
 	/**
 	 * Constructor

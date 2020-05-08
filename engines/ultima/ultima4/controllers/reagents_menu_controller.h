@@ -36,7 +36,7 @@ class Ingredients;
  */
 class ReagentsMenuController : public MenuController {
 public:
-	ReagentsMenuController(Menu *menu, Ingredients *i, TextView *view) : MenuController(menu, view), _ingredients(i) { }
+	ReagentsMenuController(Menu *menu, Ingredients *i, TextView *view) : MenuController(menu, view), _ingredients(i) {}
 
 	/**
 	 * Handles spell mixing for the Ultima V-style menu-system

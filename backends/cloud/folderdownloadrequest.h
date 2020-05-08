@@ -23,13 +23,13 @@
 #ifndef BACKENDS_CLOUD_FOLDERDOWNLOADREQUEST_H
 #define BACKENDS_CLOUD_FOLDERDOWNLOADREQUEST_H
 
-#include "backends/networking/curl/request.h"
 #include "backends/cloud/storage.h"
+#include "backends/networking/curl/request.h"
 #include "gui/object.h"
 
 namespace Cloud {
 
-class FolderDownloadRequest: public Networking::Request, public GUI::CommandSender {
+class FolderDownloadRequest : public Networking::Request, public GUI::CommandSender {
 	Storage *_storage;
 	Storage::FileArrayCallback _fileArrayCallback;
 	Common::String _remoteDirectoryPath, _localDirectoryPath;
@@ -48,6 +48,7 @@ class FolderDownloadRequest: public Networking::Request, public GUI::CommandSend
 	void fileDownloadedErrorCallback(Networking::ErrorResponse error);
 	void downloadNextFile();
 	void finishDownload(Common::Array<StorageFile> &files);
+
 public:
 	FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive);
 	virtual ~FolderDownloadRequest();

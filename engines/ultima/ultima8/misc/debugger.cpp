@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/debugger.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/conf/setting_manager.h"
@@ -30,26 +29,27 @@
 #include "ultima/ultima8/graphics/inverter_process.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
-#include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/kernel/allocator.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/misc/id_man.h"
 #include "ultima/ultima8/misc/util.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/usecode/bit_set.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
+#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -174,7 +174,6 @@ Debugger::~Debugger() {
 	pperr = nullptr;
 }
 
-
 void Debugger::executeCommand(const ArgsType &args) {
 	ArgvType argv;
 	StringToArgv(args, argv);
@@ -205,7 +204,6 @@ void Debugger::executeCommand(const ArgvType &argv) {
 	if (keepRunning)
 		attach();
 }
-
 
 bool Debugger::cmdSaveGame(int argc, const char **argv) {
 	if (argc == 2) {
@@ -245,7 +243,6 @@ bool Debugger::cmdEngineStats(int argc, const char **argv) {
 	ObjectManager::get_instance()->objectStats();
 	UCMachine::get_instance()->usecodeStats();
 	World::get_instance()->worldStats();
-
 
 	return true;
 }
@@ -387,7 +384,6 @@ bool Debugger::cmdMemberVar(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Debugger::cmdListSFX(int argc, const char **argv) {
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (!ap) {
@@ -397,10 +393,10 @@ bool Debugger::cmdListSFX(int argc, const char **argv) {
 		Std::list<AudioProcess::SampleInfo>::const_iterator it;
 		for (it = ap->_sampleInfo.begin(); it != ap->_sampleInfo.end(); ++it) {
 			debugPrintf("Sample: num %d, obj %d, loop %d, prio %d",
-				it->_sfxNum, it->_objId, it->_loops, it->_priority);
+			            it->_sfxNum, it->_objId, it->_loops, it->_priority);
 			if (!it->_barked.empty()) {
 				debugPrintf(", speech: \"%s\"",
-					it->_barked.substr(it->_curSpeechStart, it->_curSpeechEnd - it->_curSpeechStart).c_str());
+				            it->_barked.substr(it->_curSpeechStart, it->_curSpeechEnd - it->_curSpeechStart).c_str());
 			}
 			debugPrintf("\n");
 		}
@@ -441,7 +437,6 @@ bool Debugger::cmdPlaySFX(int argc, const char **argv) {
 	}
 }
 
-
 bool Debugger::cmdToggleCheatMode(int argc, const char **argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->setCheatMode(!g->areCheatsEnabled());
@@ -475,9 +470,11 @@ bool Debugger::cmdCheatItems(int argc, const char **argv) {
 		return true;
 	}
 	MainActor *av = getMainActor();
-	if (!av) return true;
+	if (!av)
+		return true;
 	Container *backpack = getContainer(av->getEquip(7)); // CONSTANT!
-	if (!backpack) return true;
+	if (!backpack)
+		return true;
 
 	// obsidian
 	Item *money = ItemFactory::createItem(143, 7, 500, 0, 0, 0, 0, true);
@@ -576,7 +573,6 @@ bool Debugger::cmdCheatItems(int argc, const char **argv) {
 	bagitem->moveToContainer(backpack);
 	bagitem->setGumpLocation(0, 30);
 
-
 	// oil flasks
 	Item *flask = ItemFactory::createItem(579, 0, 0, 0, 0, 0, 0, true);
 	flask->moveToContainer(backpack);
@@ -624,9 +620,11 @@ bool Debugger::cmdCheatEquip(int argc, const char **argv) {
 		return true;
 	}
 	MainActor *av = getMainActor();
-	if (!av) return false;
+	if (!av)
+		return false;
 	Container *backpack = getContainer(av->getEquip(7)); // CONSTANT!
-	if (!backpack) return false;
+	if (!backpack)
+		return false;
 
 	Item *item;
 
@@ -698,7 +696,6 @@ bool Debugger::cmdToggleInvincibility(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
 	GameMapGump::Set_highlightItems(!GameMapGump::is_highlightItems());
 	return false;
@@ -707,7 +704,8 @@ bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
 bool Debugger::cmdDumpMap(int argc, const char **argv) {
 #ifdef TODO
 	// We only support 32 bits per pixel for now
-	if (RenderSurface::_format.s_bpp != 32) return;
+	if (RenderSurface::_format.s_bpp != 32)
+		return;
 
 	// Save because we're going to potentially break the game by enlarging
 	// the fast area and available object IDs.
@@ -736,7 +734,7 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	for (int32 y = 0; y < 64; y++) {
 		for (int32 x = 0; x < 64; x++) {
 			const Std::list<Item *> *list =
-				World::get_instance()->getCurrentMap()->getItemList(x, y);
+			    World::get_instance()->getCurrentMap()->getItemList(x, y);
 
 			// Should iterate the items!
 			// (items could extend outside of this chunk and they have height)
@@ -748,15 +746,20 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 
 				t -= 256; // approx. adjustment for height of items in chunk
 
-				if (l < left) left = l;
-				if (r > right) right = r;
-				if (t < top) top = t;
-				if (b > bot) bot = b;
+				if (l < left)
+					left = l;
+				if (r > right)
+					right = r;
+				if (t < top)
+					top = t;
+				if (b > bot)
+					bot = b;
 			}
 		}
 	}
 
-	if (right == -16384) return;
+	if (right == -16384)
+		return;
 
 	// camera height
 	bot += camheight;
@@ -776,7 +779,6 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	int32 twidth = bwidth / 8;
 	int32 theight = bheight;
 
-
 	Debugger *g = new Debugger(0, 0, twidth, theight);
 
 	// HACK: Setting both INVISIBLE and TRANSPARENT flags on the Avatar
@@ -786,11 +788,10 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	World::get_instance()->getCurrentMap()->setWholeMapFast();
 
 	RenderSurface *s = RenderSurface::CreateSecondaryRenderSurface(bwidth,
-		bheight);
+	                                                               bheight);
 	Texture *t = s->GetSurfaceAsTexture();
 	// clear buffer
 	Std::memset(t->buffer, 0, 4 * bwidth * bheight);
-
 
 	// Write tga header
 	Std::string filename = "@home/mapdump";
@@ -817,9 +818,8 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 
 			s->SetOrigin(x, y % bheight);
 			CameraProcess::SetCameraProcess(
-				new CameraProcess(wx + 4 * camheight, wy + 4 * camheight, camheight));
+			    new CameraProcess(wx + 4 * camheight, wy + 4 * camheight, camheight));
 			g->Paint(s, 256, false);
-
 		}
 
 		// Write out the current buffer
@@ -872,7 +872,6 @@ bool Debugger::cmdDecrementSortOrder(int argc, const char **argv) {
 	return false;
 }
 
-
 bool Debugger::cmdProcessTypes(int argc, const char **argv) {
 	Kernel::get_instance()->processTypes();
 	return true;
@@ -891,7 +890,7 @@ bool Debugger::cmdListProcesses(int argc, const char **argv) {
 			debugPrintf("Processes:\n");
 		}
 		for (ProcessIterator it = kern->_processes.begin();
-			it != kern->_processes.end(); ++it) {
+		     it != kern->_processes.end(); ++it) {
 			Process *p = *it;
 			if (argc == 1 || p->_itemNum == item)
 				p->dumpInfo();
@@ -944,7 +943,6 @@ bool Debugger::cmdAdvanceFrame(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Debugger::cmdTeleport(int argc, const char **argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		debugPrintf("Cheats are disabled\n");
@@ -956,23 +954,23 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 	switch (argc - 1) {
 	case 1:
 		mainActor->teleport(curmap,
-			strtol(argv[1], 0, 0));
+		                    strtol(argv[1], 0, 0));
 		break;
 	case 2:
 		mainActor->teleport(strtol(argv[1], 0, 0),
-			strtol(argv[2], 0, 0));
+		                    strtol(argv[2], 0, 0));
 		break;
 	case 3:
 		mainActor->teleport(curmap,
-			strtol(argv[1], 0, 0),
-			strtol(argv[2], 0, 0),
-			strtol(argv[3], 0, 0));
+		                    strtol(argv[1], 0, 0),
+		                    strtol(argv[2], 0, 0),
+		                    strtol(argv[3], 0, 0));
 		break;
 	case 4:
 		mainActor->teleport(strtol(argv[1], 0, 0),
-			strtol(argv[2], 0, 0),
-			strtol(argv[3], 0, 0),
-			strtol(argv[4], 0, 0));
+		                    strtol(argv[2], 0, 0),
+		                    strtol(argv[3], 0, 0),
+		                    strtol(argv[4], 0, 0));
 		break;
 	default:
 		debugPrintf("teleport usage:\n");
@@ -1044,7 +1042,7 @@ bool Debugger::cmdListMarks(int argc, const char **argv) {
 	Std::vector<istring> marks;
 	marks = settings->listDataKeys("marks");
 	for (Std::vector<istring>::const_iterator iter = marks.begin();
-		iter != marks.end(); ++iter) {
+	     iter != marks.end(); ++iter) {
 		debugPrintf("%s\n", iter->c_str());
 	}
 
@@ -1179,7 +1177,6 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 	return true;
 }
 
-
 bool Debugger::cmdStartMoveUp(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::startMover(-64, -64, 0, 0);
@@ -1279,13 +1276,12 @@ bool Debugger::cmdToggleClipping(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->areCheatsEnabled()) {
 		QuickAvatarMoverProcess::toggleClipping();
 		debugPrintf("QuickAvatarMoverProcess::_clipping = %s\n",
-			strBool(QuickAvatarMoverProcess::isClipping()));
+		            strBool(QuickAvatarMoverProcess::isClipping()));
 	} else {
 		debugPrintf("Cheats aren't enabled\n");
 	}
 	return true;
 }
-
 
 bool Debugger::cmdGetGlobal(int argc, const char **argv) {
 	UCMachine *uc = UCMachine::get_instance();
@@ -1400,7 +1396,6 @@ bool Debugger::cmdStopTrace(int argc, const char **argv) {
 }
 
 #endif
-
 
 bool Debugger::cmdVerifyQuit(int argc, const char **argv) {
 	QuitGump::verifyQuit();

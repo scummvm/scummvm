@@ -34,13 +34,12 @@ void new_list(ListType &the_list) {
 
 void dispose_list(ListType &the_list) {
 	NodePtr theNode, axe;
-	for (theNode = the_list->next; theNode != the_list; ) {
+	for (theNode = the_list->next; theNode != the_list;) {
 		axe = theNode;
 		theNode = theNode->next;
 		add_bytes(-(int)sizeof(*axe));
 		delete axe;
 	}
-
 }
 
 bool iterate_list(ListType &the_list, NodePtr &index) {
@@ -75,7 +74,8 @@ NodePtr index_list(ListType &the_list, int number) {
 
 void insert_item(ListType &the_list, NodePtr the_item) {
 	NodePtr p;
-	for (p = the_list; p->next != the_list && p->next->key > the_item->key; p = p->next) {}
+	for (p = the_list; p->next != the_list && p->next->key > the_item->key; p = p->next) {
+	}
 
 	the_item->next = p->next;
 	p->next = the_item;
@@ -83,8 +83,9 @@ void insert_item(ListType &the_list, NodePtr the_item) {
 
 NodePtr find_item(ListType &the_list, int the_key) {
 	NodePtr p;
-	for (p = the_list->next; p != the_list && the_key < p->key; p = p->next) {}
-	
+	for (p = the_list->next; p != the_list && the_key < p->key; p = p->next) {
+	}
+
 	return (p == the_list || the_key != p->key) ? nullptr : p;
 }
 

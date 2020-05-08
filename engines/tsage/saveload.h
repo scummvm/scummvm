@@ -23,10 +23,10 @@
 #ifndef TSAGE_SAVELOAD_H
 #define TSAGE_SAVELOAD_H
 
-#include "common/scummsys.h"
 #include "common/list.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 
 namespace TsAGE {
@@ -50,13 +50,17 @@ struct tSageSavegameHeader {
 
 // FIXME: workaround to suppress spurious strict-alias warnings on older GCC
 // versions. this should be resolved with the savegame rewrite
-#define SYNC_POINTER(x) do { \
-	SavedObject **y = (SavedObject **)((void *)&x); \
-	s.syncPointer(y); \
-} while (false)
+#define SYNC_POINTER(x)                                 \
+	do {                                                \
+		SavedObject **y = (SavedObject **)((void *)&x); \
+		s.syncPointer(y);                               \
+	} while (false)
 
-#define SYNC_ENUM(FIELD, TYPE) int v_##FIELD = (int)FIELD; s.syncAsUint16LE(v_##FIELD); \
-	if (s.isLoading()) FIELD = (TYPE)v_##FIELD;
+#define SYNC_ENUM(FIELD, TYPE)   \
+	int v_##FIELD = (int)FIELD;  \
+	s.syncAsUint16LE(v_##FIELD); \
+	if (s.isLoading())           \
+		FIELD = (TYPE)v_##FIELD;
 
 /**
  * Derived serializer class with extra synchronization types
@@ -72,11 +76,11 @@ public:
 	void setSaveVersion(byte version) { _version = version; }
 
 	void syncPointer(SavedObject **ptr, Common::Serializer::Version minVersion = 0,
-		Common::Serializer::Version maxVersion = kLastVersion);
+	                 Common::Serializer::Version maxVersion = kLastVersion);
 	void validate(const Common::String &s, Common::Serializer::Version minVersion = 0,
-		Common::Serializer::Version maxVersion = kLastVersion);
+	              Common::Serializer::Version maxVersion = kLastVersion);
 	void validate(int v, Common::Serializer::Version minVersion = 0,
-		Common::Serializer::Version maxVersion = kLastVersion);
+	              Common::Serializer::Version maxVersion = kLastVersion);
 	void syncAsDouble(double &v);
 };
 
@@ -141,13 +145,16 @@ public:
 
 	void addBefore(T existingItem, T newItem) {
 		typename SynchronizedList<T>::iterator i = this->begin();
-		while ((i != this->end()) && (*i != existingItem)) ++i;
+		while ((i != this->end()) && (*i != existingItem))
+			++i;
 		this->insert(i, newItem);
 	}
 	void addAfter(T existingItem, T newItem) {
 		typename SynchronizedList<T>::iterator i = this->begin();
-		while ((i != this->end()) && (*i != existingItem)) ++i;
-		if (i != this->end()) ++i;
+		while ((i != this->end()) && (*i != existingItem))
+			++i;
+		if (i != this->end())
+			++i;
 		this->insert(i, newItem);
 	}
 
@@ -195,13 +202,14 @@ public:
 	int _objIndex;
 
 	SavedObjectRef() : _savedObject(NULL), _objIndex(-1) {}
-	SavedObjectRef(SavedObject **so, int objIndex) : _savedObject(so),  _objIndex(objIndex) {}
+	SavedObjectRef(SavedObject **so, int objIndex) : _savedObject(so), _objIndex(objIndex) {}
 };
 
 typedef SavedObject *(*SavedObjectFactory)(const Common::String &className);
 
 class Saver {
 	typedef Common::List<SavedObject *> DynObjects;
+
 private:
 	Common::List<SavedObject *> _objList;
 	FunctionList<bool> _saveNotifiers;
@@ -215,6 +223,7 @@ private:
 	bool _macroRestoreFlag;
 
 	void resolveLoadPointers(DynObjects &dynObjects);
+
 public:
 	Saver();
 	~Saver();

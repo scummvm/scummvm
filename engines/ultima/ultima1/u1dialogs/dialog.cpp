@@ -83,5 +83,5 @@ void Dialog::hide() {
 }
 
 } // End of namespace U1Dialogs
-} // End of namespace Gfx
+} // namespace Ultima1
 } // End of namespace Ultima

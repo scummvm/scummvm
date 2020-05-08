@@ -40,6 +40,7 @@ private:
 	sc_write_callbackref_t _callback;
 	void *_opaque;
 	Common::MemoryWriteStreamDynamic _buffer;
+
 private:
 	/**
 	 * Flush pending buffer contents
@@ -80,12 +81,12 @@ private:
 	 * Write a boolean
 	 */
 	void writeBool(sc_bool boolean);
+
 public:
 	/**
 	 * Constructor
 	 */
-	SaveSerializer(sc_gameref_t game, sc_write_callbackref_t callback, void *opaque) :
-		_game(game), _callback(callback), _opaque(opaque), _buffer(DisposeAfterUse::YES) {
+	SaveSerializer(sc_gameref_t game, sc_write_callbackref_t callback, void *opaque) : _game(game), _callback(callback), _opaque(opaque), _buffer(DisposeAfterUse::YES) {
 		assert(callback);
 	}
 
@@ -105,6 +106,7 @@ private:
 	void *_opaque;
 	sc_tafref_t ser_tas;
 	sc_int ser_tasline;
+
 private:
 	/**
 	 * Reads a string
@@ -125,12 +127,12 @@ private:
 	 * Read a boolean
 	 */
 	sc_bool readBool(CONTEXT);
+
 public:
 	/**
 	 * Constructor
 	 */
-	LoadSerializer(sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) :
-			_game(game), _callback(callback), _opaque(opaque), ser_tas(nullptr), ser_tasline(0) {
+	LoadSerializer(sc_gameref_t game, sc_read_callbackref_t callback, void *opaque) : _game(game), _callback(callback), _opaque(opaque), ser_tas(nullptr), ser_tasline(0) {
 		assert(callback);
 	}
 

@@ -520,12 +520,12 @@ GameScoreType GameStateManager::getGandhiScore() {
 }
 
 GameScoreType GameStateManager::getTotalScore() {
-	return	getCaldoriaTSAScore() +
-			getPrehistoricScore() +
-			getMarsScore() +
-			getNoradScore() +
-			getWSCScore() +
-			getGandhiScore();
+	return getCaldoriaTSAScore() +
+	       getPrehistoricScore() +
+	       getMarsScore() +
+	       getNoradScore() +
+	       getWSCScore() +
+	       getGandhiScore();
 }
 
 /////////////////////////////////////////////

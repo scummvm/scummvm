@@ -24,38 +24,37 @@
 
 namespace Prince {
 
-const int heroSetBack[7] = { 0, 0, 10, 0, 6, 0, 0 };
+const int heroSetBack[7] = {0, 0, 10, 0, 6, 0, 0};
 
 typedef const char *HeroSetAnimNames[26];
 
 static HeroSetAnimNames heroSet5 = {
-	"SL_DIAB.ANI",
-	"SR_DIAB.ANI",
-	"SU_DIAB.ANI",
-	"SD_DIAB.ANI",
-	nullptr,
-	nullptr,
-	"MU_DIAB.ANI",
-	"MD_DIAB.ANI",
-	"TL_DIAB.ANI",
-	"TR_DIAB.ANI",
-	"TU_DIAB.ANI",
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr
-};
+    "SL_DIAB.ANI",
+    "SR_DIAB.ANI",
+    "SU_DIAB.ANI",
+    "SD_DIAB.ANI",
+    nullptr,
+    nullptr,
+    "MU_DIAB.ANI",
+    "MD_DIAB.ANI",
+    "TL_DIAB.ANI",
+    "TR_DIAB.ANI",
+    "TU_DIAB.ANI",
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr};
 
 static HeroSetAnimNames heroSet1 = {
     "SL_HERO1.ANI",
@@ -83,8 +82,7 @@ static HeroSetAnimNames heroSet1 = {
     nullptr,
     nullptr,
     "KSI_KURZ.ANI",
-    "KS_WLOSY.ANI"
-};
+    "KS_WLOSY.ANI"};
 
 static HeroSetAnimNames heroSet2 = {
     "SL_HERO2.ANI",
@@ -112,8 +110,7 @@ static HeroSetAnimNames heroSet2 = {
     nullptr,
     nullptr,
     "KSI_KU_S.ANI",
-    "KS_WLO_S.ANI"
-};
+    "KS_WLO_S.ANI"};
 
 static HeroSetAnimNames heroSet3 = {
     "SL_BEAR.ANI",
@@ -199,8 +196,7 @@ static HeroSetAnimNames shanSet2 = {
     nullptr,
     nullptr,
     "B1_SHAN2.ANI",
-    "B2_SHAN2.ANI"
-};
+    "B2_SHAN2.ANI"};
 
 static HeroSetAnimNames arivSet1 = {
     "SL_ARIV.ANI",
@@ -228,17 +224,16 @@ static HeroSetAnimNames arivSet1 = {
     nullptr,
     nullptr,
     nullptr,
-    nullptr
-};
+    nullptr};
 
 const HeroSetAnimNames *heroSetTable[7] = {
-	&heroSet1,
-	&heroSet2,
-	&heroSet3,
-	&shanSet1,
-	&arivSet1,
-	&heroSet5,
-	&shanSet2,
+    &heroSet1,
+    &heroSet2,
+    &heroSet3,
+    &shanSet1,
+    &arivSet1,
+    &heroSet5,
+    &shanSet2,
 };
 
 } // End of namespace Prince

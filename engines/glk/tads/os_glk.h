@@ -45,10 +45,10 @@ namespace TADS {
 #define DBG_OFF
 
 /* maximum width (in characters) of a line of text */
-#define OS_MAXWIDTH  255
+#define OS_MAXWIDTH 255
 
 /* round a size to worst-case alignment boundary */
-#define osrndsz(s) (((s)+3) & ~3)
+#define osrndsz(s) (((s) + 3) & ~3)
 
 /* round a pointer to worst-case alignment boundary */
 #define osrndpt(p) ((uchar *)((((unsigned long)(p)) + 3) & ~3))
@@ -113,10 +113,10 @@ typedef uint32 uint32_t;
  *   macros in terms of those compiler-specific 64-bit names.
  */
 #ifndef os_time_t
-# define os_time_t        int64
-# define os_gmtime(t)     gmtime(t)
-# define os_localtime(t)  localtime(t)
-# define os_time(t)       time(t)
+#define os_time_t int64
+#define os_gmtime(t) gmtime(t)
+#define os_localtime(t) localtime(t)
+#define os_time(t) time(t)
 #endif
 
 /*
@@ -202,7 +202,7 @@ int os_get_zoneinfo_key(char *buf, size_t buflen);
  *   changes between standard time and daylight time, if applicable.
  */
 struct os_tzrule_t {
-    /* 
+	/* 
      *   Day of year, 1-365, NEVER counting Feb 29; set to 0 if not used.
      *   Corresponds to the "J" format in Unix TZ strings.  (Called "Julian
      *   day" in the POSIX docs, thus the "J", even though it's a bit of a
@@ -213,9 +213,9 @@ struct os_tzrule_t {
      *   date, rather than foisting that work on each platform
      *   implementation.)
      */
-    int jday;
+	int jday;
 
-    /*
+	/*
      *   Day of year, 1-366, counting Feb 29 on leap years; set to 0 if not
      *   used; ignored if 'jday' is nonzero.  This corresponds to the Julian
      *   day sans "J" in TZ strings (almost - that TZ format uses 0-365 as
@@ -238,9 +238,9 @@ struct os_tzrule_t {
      *   noticed the fiddly leap year behavior.  But for the sake of
      *   completeness...
      */
-    int yday;
-    
-    /* 
+	int yday;
+
+	/* 
      *   The month (1-12), week of the month, and day of the week (1-7 for
      *   Sunday to Saturday).  Week 1 is the first week in which 'day'
      *   occurs, week 2 is the second, etc.; week 5 is the last occurrence of
@@ -248,15 +248,15 @@ struct os_tzrule_t {
      *   March" types of rules.  Set these to zero if they're not used;
      *   they're ignored in any case if 'jday' or 'yday' are non-zero.
      */
-    int month;
-    int week;
-    int day;
+	int month;
+	int week;
+	int day;
 
-    /* time of day, in seconds after midnight (e.g., 2AM is 120 == 2*60*60) */
-    int time;
+	/* time of day, in seconds after midnight (e.g., 2AM is 120 == 2*60*60) */
+	int time;
 };
 struct os_tzinfo_t {
-    /*
+	/*
      *   The local offset from GMT, in seconds, for standard time and
      *   daylight time in this zone.  These values are positive for zones
      *   east of GMT and negative for zones west: New York standard time
@@ -273,10 +273,10 @@ struct os_tzinfo_t {
      *   current offset.  This information isn't available from the standard
      *   C library, and many OS APIs also lack it.  
      */
-    int32_t std_ofs;
-    int32_t dst_ofs;
+	int32_t std_ofs;
+	int32_t dst_ofs;
 
-    /*
+	/*
      *   The abbreviations for the local zone's standard time and daylight
      *   time, respectively, when displaying date/time values.  E.g., "EST"
      *   and "EDT" for US Eastern Time.  If the zone doesn't observe daylight
@@ -287,20 +287,20 @@ struct os_tzinfo_t {
      *   string if it's only possible to determine the one that's currently
      *   in effect.
      */
-    char std_abbr[16];
-    char dst_abbr[16];
+	char std_abbr[16];
+	char dst_abbr[16];
 
-    /*
+	/*
      *   The ongoing rules for switching between daylight and standard time
      *   in this zone, if available.  'dst_start' is the date when daylight
      *   savings starts, 'dst_end' is the date when standard time resumes.
      *   Set all fields to 0 if the start/stop dates aren't available, or the
      *   zone is on standard time year round.
      */
-    struct os_tzrule_t dst_start;
-    struct os_tzrule_t dst_end;
+	struct os_tzrule_t dst_start;
+	struct os_tzrule_t dst_end;
 
-    /* 
+	/* 
      *   True -> the zone is CURRENTLY on daylight savings time; false means
      *   it's currently on standard time.
      *   
@@ -311,10 +311,9 @@ struct os_tzinfo_t {
      *   will use only be able to use the offset and abbreviation for the
      *   current mode and will have to ignore the other one.
      */
-    int is_dst;
+	int is_dst;
 };
 int os_get_timezone_info(struct os_tzinfo_t *info);
-
 
 /*
  *   Get the current system high-precision timer.  This function returns a
@@ -365,7 +364,6 @@ int os_get_timezone_info(struct os_tzinfo_t *info);
  *   time(0)*1000 will almost certainly not fit in 32 bits in most cases.  
  */
 long os_get_sys_clock_ms();
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -479,7 +477,6 @@ long os_get_sys_clock_ms();
 #define oswp1(p, b) (*(unsigned char *)(p) = (b))
 #define oswp1s(p, b) (*(signed char *)(p) = (b))
 
-
 /* ------------------------------------------------------------------------ */
 /*
  *   varargs va_copy() extension.
@@ -506,16 +503,14 @@ long os_get_sys_clock_ms();
  *   define the private __va_copy macro, which also has the same semantics.
  */
 #ifdef va_copy
-# define os_va_copy(dst, src) va_copy(dst, src)
-# define os_va_copy_end(dst)  va_end(dst)
+#define os_va_copy(dst, src) va_copy(dst, src)
+#define os_va_copy_end(dst) va_end(dst)
 #else
-# if defined(__GNUC__) && defined(__va_copy)
-#  define os_va_copy(dst, src) __va_copy(dst, src)
-#  define os_va_copy_end(dst)  va_end(dst)
-# endif
+#if defined(__GNUC__) && defined(__va_copy)
+#define os_va_copy(dst, src) __va_copy(dst, src)
+#define os_va_copy_end(dst) va_end(dst)
 #endif
-
-
+#endif
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -532,7 +527,6 @@ long os_get_sys_clock_ms();
  *   this string is "MS-DOS".  
  */
 
-
 /* ------------------------------------------------------------------------ */
 /*
  *   Message Linking Configuration.  You should #define ERR_LINK_MESSAGES
@@ -540,7 +534,6 @@ long os_get_sys_clock_ms();
  *   the application.  Leave this symbol undefined if you want an external
  *   message file. 
  */
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -551,7 +544,6 @@ long os_get_sys_clock_ms();
  *   OSEXSUCC - successful completion.  Usually defined to 0.
  *.  OSEXFAIL - failure.  Usually defined to 1.  
  */
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -606,7 +598,6 @@ long os_get_sys_clock_ms();
  */
 /* void *osrealloc(void *block, size_t siz); */
 
-
 /* ------------------------------------------------------------------------ */
 /*
  *   Basic file I/O interface.  These functions are merely documented here,
@@ -644,7 +635,6 @@ long os_get_sys_clock_ms();
  *   success indications, then the write has definitely succeeded.  
  */
 
-
 /*
  *   Define the following values in your OS header to indicate local
  *   file/path syntax conventions:
@@ -678,7 +668,6 @@ long os_get_sys_clock_ms();
  */
 /* typedef FILE osfildef; */
 
-
 /*
  *   File types.
  *   
@@ -701,7 +690,6 @@ long os_get_sys_clock_ms();
  *   
  *   For the list of file types, see osifctyp.h 
  */
-
 
 /*
  *   Local newline convention.
@@ -743,7 +731,6 @@ long os_get_sys_clock_ms();
  *   octal codes to be unambiguous: \012 for LF and \015 for CR.)  
  */
 /* #define OS_NEWLINE_SEQ  "\r\n" */
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -855,34 +842,33 @@ long os_get_sys_clock_ms();
 /* #define OSFATTR_WRITE   - the file is writable by this process */
 
 struct os_file_stat_t {
-    /* 
+	/* 
      *   Size of the file, in bytes.  For platforms lacking 64-bit types, we
      *   split this into high and low 32-bit portions.  Platforms where the
      *   native stat() or equivalent only returns a 32-bit file size can
      *   simply set sizehi to zero, since sizelo can hold the entire size
      *   value.
      */
-    uint32_t sizelo;
-    uint32_t sizehi;
+	uint32_t sizelo;
+	uint32_t sizehi;
 
-    /* 
+	/* 
      *   Creation time, modification time, and last access time.  If the file
      *   system doesn't keep information on one or more of these, use
      *   (os_time_t)0 to indicate that the timestamp isn't available.  It's
      *   fine to return any subset of these.  Per the standard C stat(),
      *   these should be expressed as seconds after the Unix Epoch.
      */
-    os_time_t cre_time;
-    os_time_t mod_time;
-    os_time_t acc_time;
+	os_time_t cre_time;
+	os_time_t mod_time;
+	os_time_t acc_time;
 
-    /* file mode, using the same flags as returned from osfmode() */
-    unsigned long mode;
+	/* file mode, using the same flags as returned from osfmode() */
+	unsigned long mode;
 
-    /* file attributes, using the same flags as returned from osfmode() */
-    unsigned long attrs;
+	/* file attributes, using the same flags as returned from osfmode() */
+	unsigned long attrs;
 };
-
 
 /*
  *   Get stat() information.  This fills in the portable os_file_stat
@@ -909,7 +895,6 @@ int os_file_stat(const char *fname, int follow_links, os_file_stat_t *s);
  *   iterate until the returned path doesn't refer to a link.
  */
 int os_resolve_symlink(const char *fname, char *target, size_t target_size);
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -953,7 +938,6 @@ int os_resolve_symlink(const char *fname, char *target, size_t target_size);
  */
 size_t os_get_root_dirs(char *buf, size_t buflen);
 
-
 /* ------------------------------------------------------------------------ */
 /*
  *   Open a directory.  This begins an enumeration of a directory's contents.
@@ -966,7 +950,7 @@ size_t os_get_root_dirs(char *buf, size_t buflen);
  *   to release the resources associated with the handle.
  */
 /* typedef <local system type> osdirhdl_t; */
-int os_open_dir(const char *dirname, /*OUT*/osdirhdl_t *handle);
+int os_open_dir(const char *dirname, /*OUT*/ osdirhdl_t *handle);
 
 /*
  *   Read the next file in a directory.  'handle' is a handle value obtained
@@ -1011,7 +995,6 @@ int os_read_dir(osdirhdl_t handle, char *fname, size_t fname_size);
  *   so no more calls to os_read_dir() may be made with the handle.
  */
 void os_close_dir(osdirhdl_t handle);
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -1128,7 +1111,6 @@ void *os_find_first_file(const char *dir,
  *   return null.  
  */
 
-
 /*
  *   Find the next matching file, continuing a search started with
  *   os_find_first_file().  Returns null if no more files were found, in
@@ -1163,23 +1145,22 @@ void os_find_close(void *ctx);
 /*
  *   Special filename classification 
  */
-enum os_specfile_t
-{
-    /* not a special file */
-    OS_SPECFILE_NONE,
+enum os_specfile_t {
+	/* not a special file */
+	OS_SPECFILE_NONE,
 
-    /* 
+	/* 
      *   current directory link - this is a file like the "." file on Unix
      *   or DOS, which is a special link that simply refers to itself 
      */
-    OS_SPECFILE_SELF,
+	OS_SPECFILE_SELF,
 
-    /* 
+	/* 
      *   parent directory link - this is a file like the ".." file on Unix
      *   or DOS, which is a special link that refers to the parent
      *   directory 
      */
-    OS_SPECFILE_PARENT
+	OS_SPECFILE_PARENT
 };
 
 /*
@@ -1197,7 +1178,6 @@ enum os_specfile_t os_is_special_file(const char *fname);
  *   Convert string to all-lowercase. 
  */
 char *os_strlwr(char *s);
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -1225,7 +1205,6 @@ char *os_strlwr(char *s);
 /* int os_squote(int c); */
 /* int os_dquote(int c); */
 /* int os_qmatch(int a, int b); */
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -1299,20 +1278,20 @@ void os_get_special_path(char *buf, size_t buflen,
  *   TADS 3 system resource path.  This path is used to load system
  *   resources, such as character mapping files and error message files.  
  */
-#define OS_GSP_T3_RES       1
+#define OS_GSP_T3_RES 1
 
 /* 
  *   TADS 3 compiler - system headers.  This is the #include path for the
  *   header files included with the compiler. 
  */
-#define OS_GSP_T3_INC       2
+#define OS_GSP_T3_INC 2
 
 /*
  *   TADS 3 compiler - system library source code.  This is the path to the
  *   library source files that the compiler includes in every compilation by
  *   default (such as _main.t). 
  */
-#define OS_GSP_T3_LIB       3
+#define OS_GSP_T3_LIB 3
 
 /*
  *   TADS 3 compiler - user library path list.  This is a list of directory
@@ -1344,7 +1323,7 @@ void os_get_special_path(char *buf, size_t buflen,
  *   store these files in the install directory containing the intepreter
  *   binary.  
  */
-#define OS_GSP_T3_SYSCONFIG  6
+#define OS_GSP_T3_SYSCONFIG 6
 
 /*
  *   System log files.  This is the directory for system-level status, debug,
@@ -1353,8 +1332,7 @@ void os_get_special_path(char *buf, size_t buflen,
  *   to files selected by the user via a save-file dialog, so these don't
  *   need a special location.)
  */
-#define OS_GSP_LOGFILE  7
-
+#define OS_GSP_LOGFILE 7
 
 /* 
  *   Seek to the resource file embedded in the current executable file,
@@ -1370,7 +1348,6 @@ void os_get_special_path(char *buf, size_t buflen,
  *   compiled GAM file.  
  */
 osfildef *os_exeseek(const char *argv0, const char *typ);
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -1396,7 +1373,6 @@ osfildef *os_exeseek(const char *argv0, const char *typ);
  *   "res.h" defines the resource ID's.  
  */
 int os_get_str_rsc(int id, char *buf, size_t buflen);
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -1457,7 +1433,6 @@ void os_rand(long *val);
  *   better sources of true randomness than an application does.  
  */
 void os_gen_rand_bytes(unsigned char *buf, size_t len);
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -1575,7 +1550,6 @@ void os_dbg_vprintf(const char *fmt, va_list args);
 /* int os_asprintf(char **bufptr, const char *fmt, ...); */
 int os_vasprintf(char **bufptr, const char *fmt, va_list ap);
 
-
 /* 
  *   Set the status line mode.  There are three possible settings:
  *   
@@ -1649,7 +1623,6 @@ void os_flush(void);
  */
 void os_update_display();
 
-
 /* ------------------------------------------------------------------------ */
 /*
  *   Set text attributes.  Text subsequently displayed through os_print() and
@@ -1661,10 +1634,10 @@ void os_update_display();
 void os_set_text_attr(int attr);
 
 /* attribute code: bold-face */
-#define OS_ATTR_BOLD     0x0001
+#define OS_ATTR_BOLD 0x0001
 
 /* attribute code: italic */
-#define OS_ATTR_ITALIC   0x0002
+#define OS_ATTR_ITALIC 0x0002
 
 /*
  *   Abstract attribute codes.  Each platform can choose a custom rendering
@@ -1686,19 +1659,18 @@ void os_set_text_attr(int attr);
  *   TADS2 "\( \)" sequence.  
  */
 #ifndef OS_ATTR_HILITE
-# define OS_ATTR_HILITE  OS_ATTR_BOLD
+#define OS_ATTR_HILITE OS_ATTR_BOLD
 #endif
 
 /* HTML <em> attribute - by default, map this to bold-face */
 #ifndef OS_ATTR_EM
-# define OS_ATTR_EM      OS_ATTR_BOLD
+#define OS_ATTR_EM OS_ATTR_BOLD
 #endif
 
 /* HTML <strong> attribute - by default, this has no effect */
 #ifndef OS_ATTR_STRONG
-# define OS_ATTR_STRONG  0
+#define OS_ATTR_STRONG 0
 #endif
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -1733,12 +1705,12 @@ typedef unsigned long os_color_t;
  *   color (one of the OS_COLOR_xxx values), false if it's given as an
  *   absolute RGB value.  
  */
-#define os_color_is_param(color) (((color) & 0xFF000000) != 0)
+#define os_color_is_param(color) (((color)&0xFF000000) != 0)
 
 /* get the red/green/blue components of an os_color_t value */
 #define os_color_get_r(color) ((int)(((color) >> 16) & 0xFF))
 #define os_color_get_g(color) ((int)(((color) >> 8) & 0xFF))
-#define os_color_get_b(color) ((int)((color) & 0xFF))
+#define os_color_get_b(color) ((int)((color)&0xFF))
 
 /*
  *   Parameterized color codes.  These are os_color_t values that indicate
@@ -1752,19 +1724,19 @@ typedef unsigned long os_color_t;
 #define OS_COLOR_P_TRANSPARENT ((os_color_t)0x01000000)
 
 /* "normal text" color (as set via user preferences, if applicable) */
-#define OS_COLOR_P_TEXT        ((os_color_t)0x02000000)
+#define OS_COLOR_P_TEXT ((os_color_t)0x02000000)
 
 /* normal text background color (from user preferences) */
-#define OS_COLOR_P_TEXTBG      ((os_color_t)0x03000000)
+#define OS_COLOR_P_TEXTBG ((os_color_t)0x03000000)
 
 /* "status line" text color (as set via user preferences, if applicable) */
-#define OS_COLOR_P_STATUSLINE  ((os_color_t)0x04000000)
+#define OS_COLOR_P_STATUSLINE ((os_color_t)0x04000000)
 
 /* status line background color (from user preferences) */
-#define OS_COLOR_P_STATUSBG    ((os_color_t)0x05000000)
+#define OS_COLOR_P_STATUSBG ((os_color_t)0x05000000)
 
 /* input text color (as set via user preferences, if applicable) */
-#define OS_COLOR_P_INPUT       ((os_color_t)0x06000000)
+#define OS_COLOR_P_INPUT ((os_color_t)0x06000000)
 
 /*
  *   Set the text foreground and background colors.  This sets the text
@@ -1801,7 +1773,6 @@ void os_set_text_color(os_color_t fg, os_color_t bg);
  *   screen color on a screen color change.  
  */
 void os_set_screen_color(os_color_t color);
-
 
 /* ------------------------------------------------------------------------ */
 /* 
@@ -1877,7 +1848,6 @@ void os_more_prompt();
  *   you want.)  
  */
 /* #define USE_HTML */
-
 
 /*
  *   Enter HTML mode.  This is only used when the run-time is compiled
@@ -1980,7 +1950,6 @@ void os_nonstop_mode(int flag);
 void os_csr_busy(int flag);
 #endif
 
-
 /* ------------------------------------------------------------------------ */
 /*
  *   User Input Routines
@@ -2011,7 +1980,7 @@ int os_askfile(const char *prompt, char *fname_buf, int fname_buf_len,
  */
 
 /* success */
-#define OS_AFE_SUCCESS  0 
+#define OS_AFE_SUCCESS 0
 
 /* 
  *   Generic failure - this is largely provided for compatibility with
@@ -2022,10 +1991,10 @@ int os_askfile(const char *prompt, char *fname_buf, int fname_buf_len,
  *   used to indicate any other error for which there is no more specific
  *   error code.  
  */
-#define OS_AFE_FAILURE  1
+#define OS_AFE_FAILURE 1
 
 /* user cancelled */
-#define OS_AFE_CANCEL   2
+#define OS_AFE_CANCEL 2
 
 /* 
  *   os_askfile prompt types
@@ -2034,9 +2003,8 @@ int os_askfile(const char *prompt, char *fname_buf, int fname_buf_len,
  *   values can be used by games, so they must be the same on all
  *   platforms.  
  */
-#define OS_AFP_OPEN    1     /* choose an existing file to open for reading */
-#define OS_AFP_SAVE    2          /* choose a filename for saving to a file */
-
+#define OS_AFP_OPEN 1 /* choose an existing file to open for reading */
+#define OS_AFP_SAVE 2 /* choose a filename for saving to a file */
 
 /* 
  *   Read a string of input.  Fills in the buffer with a null-terminated
@@ -2202,7 +2170,6 @@ int os_getc(void);
  */
 int os_getc_raw(void);
 
-
 /* wait for a character to become available from the keyboard */
 void os_waitc(void);
 
@@ -2219,41 +2186,40 @@ void os_waitc(void);
  *   and the other raw, os_getc() should always return the translated
  *   version of the key, and os_getc_raw() should return the raw version.
  */
-#define CMD_UP    1                        /* move up/up arrow (translated) */
-#define CMD_DOWN  2                    /* move down/down arrow (translated) */
-#define CMD_RIGHT 3                  /* move right/right arrow (translated) */
-#define CMD_LEFT  4                    /* move left/left arrow (translated) */
-#define CMD_END   5              /* move cursor to end of line (translated) */
-#define CMD_HOME  6            /* move cursor to start of line (translated) */
-#define CMD_DEOL  7                   /* delete to end of line (translated) */
-#define CMD_KILL  8                      /* delete entire line (translated) */
-#define CMD_DEL   9                /* delete current character (translated) */
-#define CMD_SCR   10                 /* toggle scrollback mode (translated) */
-#define CMD_PGUP  11                                /* page up (translated) */
-#define CMD_PGDN  12                              /* page down (translated) */
-#define CMD_TOP   13                            /* top of file (translated) */
-#define CMD_BOT   14                         /* bottom of file (translated) */
-#define CMD_F1    15                               /* function key F1 (raw) */
-#define CMD_F2    16                               /* function key F2 (raw) */
-#define CMD_F3    17                               /* function key F3 (raw) */
-#define CMD_F4    18                               /* function key F4 (raw) */
-#define CMD_F5    19                               /* function key F5 (raw) */
-#define CMD_F6    20                               /* function key F6 (raw) */
-#define CMD_F7    21                               /* function key F7 (raw) */
-#define CMD_F8    22                               /* function key F8 (raw) */
-#define CMD_F9    23                               /* function key F9 (raw) */
-#define CMD_F10   24                              /* function key F10 (raw) */
-#define CMD_CHOME 25                                  /* control-home (raw) */
-#define CMD_TAB   26                                    /* tab (translated) */
-#define CMD_SF2   27                                      /* shift-F2 (raw) */
+#define CMD_UP 1     /* move up/up arrow (translated) */
+#define CMD_DOWN 2   /* move down/down arrow (translated) */
+#define CMD_RIGHT 3  /* move right/right arrow (translated) */
+#define CMD_LEFT 4   /* move left/left arrow (translated) */
+#define CMD_END 5    /* move cursor to end of line (translated) */
+#define CMD_HOME 6   /* move cursor to start of line (translated) */
+#define CMD_DEOL 7   /* delete to end of line (translated) */
+#define CMD_KILL 8   /* delete entire line (translated) */
+#define CMD_DEL 9    /* delete current character (translated) */
+#define CMD_SCR 10   /* toggle scrollback mode (translated) */
+#define CMD_PGUP 11  /* page up (translated) */
+#define CMD_PGDN 12  /* page down (translated) */
+#define CMD_TOP 13   /* top of file (translated) */
+#define CMD_BOT 14   /* bottom of file (translated) */
+#define CMD_F1 15    /* function key F1 (raw) */
+#define CMD_F2 16    /* function key F2 (raw) */
+#define CMD_F3 17    /* function key F3 (raw) */
+#define CMD_F4 18    /* function key F4 (raw) */
+#define CMD_F5 19    /* function key F5 (raw) */
+#define CMD_F6 20    /* function key F6 (raw) */
+#define CMD_F7 21    /* function key F7 (raw) */
+#define CMD_F8 22    /* function key F8 (raw) */
+#define CMD_F9 23    /* function key F9 (raw) */
+#define CMD_F10 24   /* function key F10 (raw) */
+#define CMD_CHOME 25 /* control-home (raw) */
+#define CMD_TAB 26   /* tab (translated) */
+#define CMD_SF2 27   /* shift-F2 (raw) */
 /* not used (obsolete) - 28 */
-#define CMD_WORD_LEFT  29      /* word left (ctrl-left on dos) (translated) */
-#define CMD_WORD_RIGHT 30    /* word right (ctrl-right on dos) (translated) */
-#define CMD_WORDKILL 31                   /* delete word right (translated) */
-#define CMD_EOF   32                                   /* end-of-file (raw) */
-#define CMD_BREAK 33     /* break (Ctrl-C or local equivalent) (translated) */
-#define CMD_INS   34                                    /* insert key (raw) */
-
+#define CMD_WORD_LEFT 29  /* word left (ctrl-left on dos) (translated) */
+#define CMD_WORD_RIGHT 30 /* word right (ctrl-right on dos) (translated) */
+#define CMD_WORDKILL 31   /* delete word right (translated) */
+#define CMD_EOF 32        /* end-of-file (raw) */
+#define CMD_BREAK 33      /* break (Ctrl-C or local equivalent) (translated) */
+#define CMD_INS 34        /* insert key (raw) */
 
 /*
  *   ALT-keys - add alphabetical code to CMD_ALT: ALT-A == CMD_ALT + 0,
@@ -2261,8 +2227,7 @@ void os_waitc(void);
  *   
  *   These keys are all raw (untranslated).  
  */
-#define CMD_ALT   128                                  /* start of ALT keys */
-
+#define CMD_ALT 128 /* start of ALT keys */
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -2270,9 +2235,8 @@ void os_waitc(void);
  *   member should be filled in, depending on the type of event that
  *   occurs. 
  */
-union os_event_info_t
-{
-    /* 
+union os_event_info_t {
+	/* 
      *   OS_EVT_KEY - this returns the one or two characters of the
      *   keystroke.  If the key is an extended key, so that os_getc() would
      *   return a two-character sequence for the keystroke, the first
@@ -2297,16 +2261,16 @@ union os_event_info_t
      *   treat multi-byte characters as though they were sequences of
      *   one-byte characters.  
      */
-    int key[2];
+	int key[2];
 
-    /*
+	/*
      *   OS_EVT_HREF - this returns the text of the HREF as a
      *   null-terminated string.  
      */
-    char href[256];
+	char href[256];
 
-    /* command ID (for OS_EVT_COMMAND) */
-    int cmd_id;
+	/* command ID (for OS_EVT_COMMAND) */
+	int cmd_id;
 };
 typedef union os_event_info_t os_event_info_t;
 
@@ -2315,19 +2279,19 @@ typedef union os_event_info_t os_event_info_t;
  */
 
 /* invalid/no event */
-#define OS_EVT_NONE      0x0000
+#define OS_EVT_NONE 0x0000
 
 /* OS_EVT_KEY - user typed a key on the keyboard */
-#define OS_EVT_KEY       0x0001
+#define OS_EVT_KEY 0x0001
 
 /* OS_EVT_TIMEOUT - no event occurred before the timeout elapsed */
-#define OS_EVT_TIMEOUT   0x0002
+#define OS_EVT_TIMEOUT 0x0002
 
 /* 
  *   OS_EVT_HREF - user clicked on a <A HREF> link.  This only applies to
  *   the HTML-enabled run-time. 
  */
-#define OS_EVT_HREF      0x0003
+#define OS_EVT_HREF 0x0003
 
 /* 
  *   OS_EVT_NOTIMEOUT - caller requested a timeout, but timeout is not
@@ -2340,14 +2304,13 @@ typedef union os_event_info_t os_event_info_t;
  *   means that the application is quitting or we can no longer read from
  *   the keyboard or terminal. 
  */
-#define OS_EVT_EOF       0x0005
+#define OS_EVT_EOF 0x0005
 
 /* 
  *   OS_EVT_LINE - user entered a line of text on the keyboard.  This event
  *   is not returned from os_get_event(), but rather from os_gets_timeout().
  */
-#define OS_EVT_LINE      0x0006
-
+#define OS_EVT_LINE 0x0006
 
 /*
  *   Get an input event.  The event types are shown above.  If use_timeout is
@@ -2373,7 +2336,6 @@ typedef union os_event_info_t os_event_info_t;
 int os_get_event(unsigned long timeout_in_milliseconds, int use_timeout,
                  os_event_info_t *info);
 
-
 /* ------------------------------------------------------------------------ */
 /*
  *   Extended os_get_event() codes.
@@ -2396,20 +2358,19 @@ int os_get_event(unsigned long timeout_in_milliseconds, int use_timeout,
  *   returns this event code, with the menu ID stored in the cmd_id field of
  *   the event structure.  
  */
-#define OS_EVT_COMMAND   0x0100
+#define OS_EVT_COMMAND 0x0100
 
 /* command IDs for OS_EVT_COMMAND */
-#define OS_CMD_NONE      0x0000     /* invalid command ID, for internal use */
-#define OS_CMD_SAVE      0x0001                                /* save game */
-#define OS_CMD_RESTORE   0x0002                             /* restore game */
-#define OS_CMD_UNDO      0x0003                           /* undo last turn */
-#define OS_CMD_QUIT      0x0004                                /* quit game */
-#define OS_CMD_CLOSE     0x0005                    /* close the game window */
-#define OS_CMD_HELP      0x0006                           /* show game help */
+#define OS_CMD_NONE 0x0000    /* invalid command ID, for internal use */
+#define OS_CMD_SAVE 0x0001    /* save game */
+#define OS_CMD_RESTORE 0x0002 /* restore game */
+#define OS_CMD_UNDO 0x0003    /* undo last turn */
+#define OS_CMD_QUIT 0x0004    /* quit game */
+#define OS_CMD_CLOSE 0x0005   /* close the game window */
+#define OS_CMD_HELP 0x0006    /* show game help */
 
 /* highest command ID used in this version of the interface */
-#define OS_CMD_LAST      0x0006
-
+#define OS_CMD_LAST 0x0006
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -2482,35 +2443,35 @@ int os_input_dialog(int icon_id, const char *prompt, int standard_button_set,
  */
 
 /* OK */
-#define OS_INDLG_OK            1
+#define OS_INDLG_OK 1
 
 /* OK, Cancel */
-#define OS_INDLG_OKCANCEL      2
+#define OS_INDLG_OKCANCEL 2
 
 /* Yes, No */
-#define OS_INDLG_YESNO         3
+#define OS_INDLG_YESNO 3
 
 /* Yes, No, Cancel */
-#define OS_INDLG_YESNOCANCEL   4
+#define OS_INDLG_YESNOCANCEL 4
 
 /*
  *   Dialog icons 
  */
 
 /* no icon */
-#define OS_INDLG_ICON_NONE     0
+#define OS_INDLG_ICON_NONE 0
 
 /* warning */
-#define OS_INDLG_ICON_WARNING  1
+#define OS_INDLG_ICON_WARNING 1
 
 /* information */
-#define OS_INDLG_ICON_INFO     2
+#define OS_INDLG_ICON_INFO 2
 
 /* question */
 #define OS_INDLG_ICON_QUESTION 3
 
 /* error */
-#define OS_INDLG_ICON_ERROR    4
+#define OS_INDLG_ICON_ERROR 4
 
 /*
  *   OBSOLETE - Get filename from startup parameter, if possible; returns
@@ -2734,7 +2695,6 @@ void os_set_save_ext(const char *ext);
  */
 const char *os_get_save_ext();
 
-
 /* ------------------------------------------------------------------------*/
 /*
  *   Translate a character from the HTML 4 Unicode character set to the
@@ -2766,10 +2726,10 @@ const char *os_get_save_ext();
  *   mapping file present, but other systems are not required to do this.  
  */
 #ifndef os_xlat_html4
-# ifndef OS_XLAT_HTML4_DEFINED
+#ifndef OS_XLAT_HTML4_DEFINED
 void os_xlat_html4(unsigned int html4_char,
                    char *result, size_t result_buf_len);
-# endif
+#endif
 #endif
 
 /*
@@ -2876,7 +2836,7 @@ void os_get_charmap(char *mapname, int charmap_id);
  *   is the character set which is used for input read from the keyboard,
  *   and for output displayed on the monitor or terminal.  
  */
-#define OS_CHARMAP_DISPLAY     1
+#define OS_CHARMAP_DISPLAY 1
 
 /* 
  *   Character map for mapping filename strings.  This should identify the
@@ -2891,7 +2851,7 @@ void os_get_charmap(char *mapname, int charmap_id);
  *   running applications on terminals that display different character
  *   sets.  
  */
-#define OS_CHARMAP_FILENAME    2
+#define OS_CHARMAP_FILENAME 2
 
 /*
  *   Default character map for file contents.  On most systems, this will
@@ -2903,14 +2863,14 @@ void os_get_charmap(char *mapname, int charmap_id);
  *   character set for any arbitrary file; it's simply meant to be a good
  *   guess that most files on this system are likely to use.  
  */
-#define OS_CHARMAP_FILECONTENTS  3
+#define OS_CHARMAP_FILECONTENTS 3
 
 /*
  *   Default character map for the command line.  This is the maping we use
  *   to interpret command line arguments passed to our main() or equivalent.
  *   On most systems, this will be the same as the display character set.
  */
-#define OS_CHARMAP_CMDLINE     4
+#define OS_CHARMAP_CMDLINE 4
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -2924,13 +2884,13 @@ void os_get_charmap(char *mapname, int charmap_id);
 int os_get_sysinfo(int code, void *param, long *result);
 
 /* determine if systemInfo is supported - os_get_sysinfo never gets this */
-#define SYSINFO_SYSINFO   1
+#define SYSINFO_SYSINFO 1
 
 /* get interpreter version number - os_get_sysinfo never gets this */
-#define SYSINFO_VERSION   2
+#define SYSINFO_VERSION 2
 
 /* get operating system name - os_get_sysinfo never gets this */
-#define SYSINFO_OS_NAME   3
+#define SYSINFO_OS_NAME 3
 
 /* 
  *   Can the system process HTML directives?  returns 1 if so, 0 if not.
@@ -2938,25 +2898,25 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   JPEG to LINKS are implicitly false as well, since TADS can only use
  *   images, sounds, and links through HTML. 
  */
-#define SYSINFO_HTML      4
+#define SYSINFO_HTML 4
 
 /* can the system display JPEG's?  1 if yes, 0 if no */
-#define SYSINFO_JPEG      5
+#define SYSINFO_JPEG 5
 
 /* can the system display PNG's?  1 if yes, 0 if no */
-#define SYSINFO_PNG       6
+#define SYSINFO_PNG 6
 
 /* can the system play WAV's?  1 if yes, 0 if no */
-#define SYSINFO_WAV       7
+#define SYSINFO_WAV 7
 
 /* can the system play MIDI's?  1 if yes, 0 if no */
-#define SYSINFO_MIDI      8
+#define SYSINFO_MIDI 8
 
 /* can the system play MIDI and WAV's simultaneously?  yes=1, no=0 */
-#define SYSINFO_WAV_MIDI_OVL  9
+#define SYSINFO_WAV_MIDI_OVL 9
 
 /* can the system play multiple WAV's simultaneously?  yes=1, no=0 */
-#define SYSINFO_WAV_OVL   10
+#define SYSINFO_WAV_OVL 10
 
 /*
  *   GENERAL NOTES ON PREFERENCE SETTINGS:
@@ -3005,7 +2965,7 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   
  *   See the general notes on preferences queries above.  
  */
-#define SYSINFO_PREF_IMAGES  11
+#define SYSINFO_PREF_IMAGES 11
 
 /*
  *   Get digitized sound effect (WAV) preference setting - 1 = sounds can be
@@ -3014,7 +2974,7 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   
  *   See the general notes on preferences queries above.  
  */
-#define SYSINFO_PREF_SOUNDS  12
+#define SYSINFO_PREF_SOUNDS 12
 
 /*
  *   Get music (MIDI) preference setting - 1 = music can be played, 0 = music
@@ -3023,7 +2983,7 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   
  *   See the general notes on preferences queries above.  
  */
-#define SYSINFO_PREF_MUSIC   13
+#define SYSINFO_PREF_MUSIC 13
 
 /*
  *   Get link display preference setting - 0 = links are not being displayed
@@ -3035,21 +2995,21 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   
  *   See the general note on preferences queries above.  
  */
-#define SYSINFO_PREF_LINKS   14
+#define SYSINFO_PREF_LINKS 14
 
 /* can the system play MPEG sounds of any kind? */
-#define SYSINFO_MPEG         15
+#define SYSINFO_MPEG 15
 
 /* can the system play MPEG audio 2.0 layer I/II/III sounds? */
-#define SYSINFO_MPEG1        16
-#define SYSINFO_MPEG2        17
-#define SYSINFO_MPEG3        18
+#define SYSINFO_MPEG1 16
+#define SYSINFO_MPEG2 17
+#define SYSINFO_MPEG3 18
 
 /* 
  *   is the system *currently* in HTML mode?  os_get_sysinfo never gets
  *   this code, since the portable output layer keeps track of this 
  */
-#define SYSINFO_HTML_MODE    19
+#define SYSINFO_HTML_MODE 19
 
 /* 
  *   Does the system allow following external URL links of the various
@@ -3062,32 +3022,32 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   followed by the user, but rather whether the system has the
  *   capability to follow these types of links at all.  
  */
-#define SYSINFO_LINKS_HTTP   20
-#define SYSINFO_LINKS_FTP    21
-#define SYSINFO_LINKS_NEWS   22
+#define SYSINFO_LINKS_HTTP 20
+#define SYSINFO_LINKS_FTP 21
+#define SYSINFO_LINKS_NEWS 22
 #define SYSINFO_LINKS_MAILTO 23
 #define SYSINFO_LINKS_TELNET 24
 
 /* is PNG transparency supported? */
-#define SYSINFO_PNG_TRANS    25
+#define SYSINFO_PNG_TRANS 25
 
 /* is PNG alpha blending supported? */
-#define SYSINFO_PNG_ALPHA    26
+#define SYSINFO_PNG_ALPHA 26
 
 /* is the Ogg Vorbis audio format supported? */
-#define SYSINFO_OGG          27
+#define SYSINFO_OGG 27
 
 /* can the system display MNG's? */
-#define SYSINFO_MNG          28
+#define SYSINFO_MNG 28
 
 /* can the system display MNG's with transparency? */
-#define SYSINFO_MNG_TRANS    29
+#define SYSINFO_MNG_TRANS 29
 
 /* can the system display MNG's with alpha blending? */
-#define SYSINFO_MNG_ALPHA    30
+#define SYSINFO_MNG_ALPHA 30
 
 /* can we display highlighted text in its own appearance? */
-#define SYSINFO_TEXT_HILITE  31
+#define SYSINFO_TEXT_HILITE 31
 
 /* 
  *   Can we display text colors?  This returns a SYSINFO_TXC_xxx code
@@ -3097,28 +3057,28 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   colors; however, HTML-enabled interpreters generally support full RGB
  *   colors, so we call this out as a separate level.  
  */
-#define SYSINFO_TEXT_COLORS  32
+#define SYSINFO_TEXT_COLORS 32
 
 /* no text color support */
-#define SYSINFO_TXC_NONE      0
+#define SYSINFO_TXC_NONE 0
 
 /* parameterized color names only (OS_COLOR_P_TEXT, etc) */
-#define SYSINFO_TXC_PARAM     1
+#define SYSINFO_TXC_PARAM 1
 
 /* 
  *   we support only the basic ANSI colors, foreground control only (white,
  *   black, blue, red, green, yellow, cyan, magenta) 
  */
-#define SYSINFO_TXC_ANSI_FG   2
+#define SYSINFO_TXC_ANSI_FG 2
 
 /* ANSI colors, foreground and background */
 #define SYSINFO_TXC_ANSI_FGBG 3
 
 /* full RGB support */
-#define SYSINFO_TXC_RGB       4
+#define SYSINFO_TXC_RGB 4
 
 /* are the os_banner_xxx() interfaces supported? */
-#define SYSINFO_BANNERS      33
+#define SYSINFO_BANNERS 33
 
 /* Interpreter Class - this returns one of the SYSINFO_ICLASS_xxx codes */
 #define SYSINFO_INTERP_CLASS 34
@@ -3128,7 +3088,7 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   use a single, fixed-pitch font to display all text, and use the
  *   text-only HTML subset, and cannot display graphics.
  */
-#define SYSINFO_ICLASS_TEXT    1
+#define SYSINFO_ICLASS_TEXT 1
 
 /* 
  *   Interpreter class: Text-Only GUI.  Interpreters of this class are
@@ -3149,7 +3109,7 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   proportional fonts, and support the full HTML TADS markup language for
  *   formatting.  
  */
-#define SYSINFO_ICLASS_HTML    3
+#define SYSINFO_ICLASS_HTML 3
 
 /*
  *   Audio fade information.
@@ -3166,18 +3126,17 @@ int os_get_sysinfo(int code, void *param, long *result);
  *   a combination of SYSINFO_AUDIOFADE_xxx flags indicating which formats
  *   can be used with cross-fades.  
  */
-#define SYSINFO_AUDIO_FADE       35
-#define SYSINFO_AUDIO_CROSSFADE  36
+#define SYSINFO_AUDIO_FADE 35
+#define SYSINFO_AUDIO_CROSSFADE 36
 
 /* 
  *   Specific audio fading features.  These are bit flags that can be
  *   combined to indicate the fading capabilities of the interpreter.  
  */
-#define SYSINFO_AUDIOFADE_MPEG  0x0001          /* supported for MPEG audio */
-#define SYSINFO_AUDIOFADE_OGG   0x0002          /* supported for Ogg Vorbis */
-#define SYSINFO_AUDIOFADE_WAV   0x0004                 /* supported for WAV */
-#define SYSINFO_AUDIOFADE_MIDI  0x0008                /* supported for MIDI */
-
+#define SYSINFO_AUDIOFADE_MPEG 0x0001 /* supported for MPEG audio */
+#define SYSINFO_AUDIOFADE_OGG 0x0002  /* supported for Ogg Vorbis */
+#define SYSINFO_AUDIOFADE_WAV 0x0004  /* supported for WAV */
+#define SYSINFO_AUDIOFADE_MIDI 0x0008 /* supported for MIDI */
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -3213,8 +3172,8 @@ int os_get_sysinfo(int code, void *param, long *result);
 
 /* standard definitions for any ANSI compiler */
 #ifndef OS_NON_ANSI_DIVIDE
-#define os_divide_long(a, b)     ((a) / (b))
-#define os_remainder_long(a, b)  ((a) % (b))
+#define os_divide_long(a, b) ((a) / (b))
+#define os_remainder_long(a, b) ((a) % (b))
 #endif
 
 int memicmp(const char *s1, const char *s2, int len);

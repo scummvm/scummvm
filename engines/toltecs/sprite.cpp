@@ -20,10 +20,10 @@
  *
  */
 
-#include "toltecs/toltecs.h"
 #include "toltecs/palette.h"
 #include "toltecs/render.h"
 #include "toltecs/resource.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
@@ -72,6 +72,7 @@ public:
 		_source = source;
 		_curHeight++;
 	}
+
 protected:
 	byte *_source;
 	int16 _curWidth, _curHeight;
@@ -121,6 +122,7 @@ public:
 		}
 		return kSrsPixelsLeft;
 	}
+
 protected:
 	SpriteReader *_reader;
 	int16 _xerror, _yerror;
@@ -170,6 +172,7 @@ public:
 		}
 		return kSrsPixelsLeft;
 	}
+
 protected:
 	SpriteReader *_reader;
 	byte *_sourcep;
@@ -265,7 +268,6 @@ bool Screen::createSpriteDrawItem(const DrawRequest &drawRequest, SpriteDrawItem
 			xoffs -= (xoffs * scaleValue) / 100;
 			yoffs -= (yoffs * scaleValue) / 100;
 		}
-
 	}
 
 	sprite.x -= xoffs;
@@ -335,7 +337,6 @@ bool Screen::createSpriteDrawItem(const DrawRequest &drawRequest, SpriteDrawItem
 				}
 			}
 		}
-
 	}
 
 	if (sprite.y + sprite.height - _vm->_cameraY - _vm->_cameraHeight > 0)
@@ -387,10 +388,10 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 void Screen::drawSprite(const SpriteDrawItem &sprite) {
 
 	debug(0, "Screen::drawSprite() x = %d; y = %d; flags = %04X; resIndex = %d; offset = %08X; drawX = %d; drawY = %d",
-		sprite.x, sprite.y, sprite.flags, sprite.resIndex, sprite.offset,
-		sprite.x - _vm->_cameraX, sprite.y - _vm->_cameraY);
+	      sprite.x, sprite.y, sprite.flags, sprite.resIndex, sprite.offset,
+	      sprite.x - _vm->_cameraX, sprite.y - _vm->_cameraY);
 	debug(0, "Screen::drawSprite() width = %d; height = %d; origWidth = %d; origHeight = %d",
-		sprite.width, sprite.height, sprite.origWidth, sprite.origHeight);
+	      sprite.width, sprite.height, sprite.origWidth, sprite.origHeight);
 
 	byte *source = _vm->_res->load(sprite.resIndex)->data + sprite.offset;
 	byte *dest = _frontScreen + sprite.x + sprite.y * 640;
@@ -425,7 +426,6 @@ void Screen::drawSprite(const SpriteDrawItem &sprite) {
 	}
 
 	debug(0, "Screen::drawSprite() ok");
-
 }
 
 void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, const SpriteDrawItem &sprite) {
@@ -468,9 +468,8 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, const SpriteDrawIt
 		w -= packet.count;
 
 		if (((sprite.flags & 0x40) && (packet.pixel != 0)) ||
-			((sprite.flags & 0x10) && (packet.pixel != 0xFF)) ||
-			(!(sprite.flags & 0x10) && (packet.pixel != 0)))
-		{
+		    ((sprite.flags & 0x10) && (packet.pixel != 0xFF)) ||
+		    (!(sprite.flags & 0x10) && (packet.pixel != 0))) {
 			if (sprite.flags & 0x40) {
 				while (packet.count--) {
 					*dest = _vm->_palette->getColorTransPixel(*dest);
@@ -505,7 +504,6 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, const SpriteDrawIt
 		}
 
 	} while (status != kSrsEndOfSprite && h > 0);
-
 }
 
 } // End of namespace Toltecs

@@ -22,10 +22,10 @@
 
 #include "common/endian.h"
 
+#include "gob/dataio.h"
+#include "gob/global.h"
 #include "gob/gob.h"
 #include "gob/init.h"
-#include "gob/global.h"
-#include "gob/dataio.h"
 
 namespace Gob {
 
@@ -40,19 +40,18 @@ void Init_v6::initGame() {
 
 	if (_vm->getGameType() == kGameTypeUrban) {
 		if (Common::File::exists("cd1.itk") && Common::File::exists("cd2.itk") &&
-				Common::File::exists("cd3.itk") && Common::File::exists("cd4.itk")) {
+		    Common::File::exists("cd3.itk") && Common::File::exists("cd4.itk")) {
 
 			_vm->_global->_noCd = true;
 
-		// WORKAROUND: The CD number detection in Urban Runner is quite daft
-		// (it checks CD1.ITK - CD4.ITK and the first that's found determines
-		// the CD number), while its NO_CD mode wants everything in CD1.ITK.
-		// So we just open the other ITKs, too.
+			// WORKAROUND: The CD number detection in Urban Runner is quite daft
+			// (it checks CD1.ITK - CD4.ITK and the first that's found determines
+			// the CD number), while its NO_CD mode wants everything in CD1.ITK.
+			// So we just open the other ITKs, too.
 			_vm->_dataIO->openArchive("CD2.ITK", false);
 			_vm->_dataIO->openArchive("CD3.ITK", false);
 			_vm->_dataIO->openArchive("CD4.ITK", false);
 		}
-
 	}
 
 	Init::initGame();

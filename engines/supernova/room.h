@@ -30,7 +30,7 @@
 namespace Common {
 class ReadStream;
 class WriteStream;
-}
+} // namespace Common
 
 namespace Supernova {
 
@@ -74,5 +74,5 @@ private:
 	bool _seen;
 };
 
-}
+} // namespace Supernova
 #endif // SUPERNOVA_ROOM_H

@@ -21,9 +21,9 @@
  */
 
 #include "kyra/engine/kyra_hof.h"
+#include "kyra/engine/timer.h"
 #include "kyra/graphics/screen_v2.h"
 #include "kyra/sound/sound.h"
-#include "kyra/engine/timer.h"
 
 #include "common/savefile.h"
 #include "common/substream.h"

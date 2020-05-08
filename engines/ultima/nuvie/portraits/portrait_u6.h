@@ -23,8 +23,8 @@
 #ifndef NUVIE_PORTRAIT_PORTRAIT_U6_H
 #define NUVIE_PORTRAIT_PORTRAIT_U6_H
 
-#include "ultima/nuvie/portraits/portrait.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
+#include "ultima/nuvie/portraits/portrait.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -39,18 +39,15 @@ class PortraitU6 : public Portrait {
 	U6Lib_n portrait_z;
 
 public:
-
-	PortraitU6(Configuration *cfg) : Portrait(cfg) {};
-	~PortraitU6() override {};
+	PortraitU6(Configuration *cfg) : Portrait(cfg){};
+	~PortraitU6() override{};
 
 	bool init() override;
 	bool load(NuvieIO *objlist) override;
 	unsigned char *get_portrait_data(Actor *actor) override;
 
 private:
-
 	uint8 get_portrait_num(Actor *actor) override;
-
 };
 
 } // End of namespace Nuvie

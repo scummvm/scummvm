@@ -24,8 +24,8 @@
 #define ULTIMA8_GUMPS_TARGETGUMP_H
 
 #include "ultima/ultima8/gumps/modal_gump.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -50,6 +50,7 @@ public:
 	INTRINSIC(I_target);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 

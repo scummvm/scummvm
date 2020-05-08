@@ -43,7 +43,7 @@ void WidgetQuit::show() {
 
 	// Set up the display area
 	_bounds = Common::Rect(_surface.stringWidth(FIXED(AreYouSureYou)) + _surface.widestChar() * 2,
-		(_surface.fontHeight() + 7) * 4);
+	                       (_surface.fontHeight() + 7) * 4);
 	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
 
 	// Create the surface
@@ -53,8 +53,7 @@ void WidgetQuit::show() {
 
 	// Draw the message text
 	_surface.writeString(FIXED(AreYouSureYou), Common::Point((_surface.width() - _surface.stringWidth(FIXED(AreYouSureYou))) / 2, 5), INFO_TOP);
-	_surface.writeString(FIXED(WishToQuit), Common::Point((_surface.width() - _surface.stringWidth(FIXED(WishToQuit))) / 2,
-		_surface.fontHeight() + 9), INFO_TOP);
+	_surface.writeString(FIXED(WishToQuit), Common::Point((_surface.width() - _surface.stringWidth(FIXED(WishToQuit))) / 2, _surface.fontHeight() + 9), INFO_TOP);
 
 	// Draw the horizontal bars seperating the commands and the message
 	int yp = (_surface.fontHeight() + 4) * 2 + 3;
@@ -79,9 +78,9 @@ void WidgetQuit::handleEvents() {
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
 	Common::Rect yesRect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + 3, _bounds.right,
-		_bounds.top + (_surface.fontHeight() + 4) * 2 + 3 + _surface.fontHeight() + 7);
+	                     _bounds.top + (_surface.fontHeight() + 4) * 2 + 3 + _surface.fontHeight() + 7);
 	Common::Rect noRect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + _surface.fontHeight() + 10,
-		_bounds.right, _bounds.top + (_surface.fontHeight() + 4) * 2 + 10 + _surface.fontHeight() * 2 + 7);
+	                    _bounds.right, _bounds.top + (_surface.fontHeight() + 4) * 2 + 10 + _surface.fontHeight() * 2 + 7);
 
 	if (talk._talkToAbort)
 		return;
@@ -100,14 +99,11 @@ void WidgetQuit::handleEvents() {
 		case Common::KEYCODE_TAB:
 			// If the mouse is not over any of the options, move the mouse so that it points to the first option
 			if (_select == -1)
-				events.warpMouse(Common::Point(_bounds.right - 10, _bounds.top + (_surface.fontHeight() + 4) * 2
-					+ 3 + _surface.fontHeight() + 1));
+				events.warpMouse(Common::Point(_bounds.right - 10, _bounds.top + (_surface.fontHeight() + 4) * 2 + 3 + _surface.fontHeight() + 1));
 			else if (_select == 1)
-				events.warpMouse(Common::Point(mousePos.x, _bounds.top + (_surface.fontHeight() + 4) * 2
-					+ 3 + _surface.fontHeight() * 2 + 11));
+				events.warpMouse(Common::Point(mousePos.x, _bounds.top + (_surface.fontHeight() + 4) * 2 + 3 + _surface.fontHeight() * 2 + 11));
 			else
-				events.warpMouse(Common::Point(mousePos.x, _bounds.top + (_surface.fontHeight() + 4) * 2
-					+ 3 + _surface.fontHeight() + 1));
+				events.warpMouse(Common::Point(mousePos.x, _bounds.top + (_surface.fontHeight() + 4) * 2 + 3 + _surface.fontHeight() + 1));
 			break;
 
 		case Common::KEYCODE_ESCAPE:

@@ -40,7 +40,6 @@ BaseNamedObject::BaseNamedObject() : BaseClass() {
 	_name = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseNamedObject::BaseNamedObject(TDynamicConstructor, TDynamicConstructor) {
 	_name = nullptr;
@@ -52,7 +51,6 @@ BaseNamedObject::~BaseNamedObject(void) {
 	_name = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseNamedObject::setName(const char *name) {
 	delete[] _name;
@@ -62,7 +60,7 @@ void BaseNamedObject::setName(const char *name) {
 		return;
 	}
 
-	_name = new char [strlen(name) + 1];
+	_name = new char[strlen(name) + 1];
 	if (_name != nullptr) {
 		strcpy(_name, name);
 	}

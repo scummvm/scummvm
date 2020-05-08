@@ -27,28 +27,30 @@
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/rect.h"
-#include "common/str.h"
 #include "common/str-array.h"
+#include "common/str.h"
 
 namespace CryOmni3D {
 
 class DialogsManager {
 public:
 	struct SubtitlesSettings {
-		SubtitlesSettings() { }
+		SubtitlesSettings() {}
 		SubtitlesSettings(int16 textLeft, int16 textTop, int16 textRight, int16 textBottom,
-		                  int16 drawLeft, int16 drawTop, int16 drawRight, int16 drawBottom) :
-			textRect(textLeft, textTop, textRight, textBottom), drawRect(drawLeft, drawTop, drawRight,
-			        drawBottom) { }
+		                  int16 drawLeft, int16 drawTop, int16 drawRight, int16 drawBottom) : textRect(textLeft, textTop, textRight, textBottom), drawRect(drawLeft, drawTop, drawRight,
+		                                                                                                                                                   drawBottom) {}
 		Common::Rect textRect;
 		Common::Rect drawRect;
 	};
 
 	DialogsManager() : _gtoBuffer(nullptr), _gtoEnd(nullptr),
-		_ignoreNoEndOfConversation(false) { }
+	                   _ignoreNoEndOfConversation(false) {}
 	virtual ~DialogsManager();
 
-	void init(uint arraySize, const Common::String &endOfConversationText) { _dialogsVariables.resize(arraySize); _endOfConversationText = endOfConversationText; }
+	void init(uint arraySize, const Common::String &endOfConversationText) {
+		_dialogsVariables.resize(arraySize);
+		_endOfConversationText = endOfConversationText;
+	}
 	void loadGTO(const Common::String &gtoFile);
 
 	void setupVariable(uint id, const Common::String &variable) { _dialogsVariables[id] = DialogVariable(variable, 'N'); }

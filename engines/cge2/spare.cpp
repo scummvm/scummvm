@@ -82,7 +82,7 @@ Sprite *Spare::take(int ref) {
 
 void Spare::takeScene(int cav) {
 	int bakRef = cav << 8;
-	Common::Array<Sprite*> tempCont = _container;
+	Common::Array<Sprite *> tempCont = _container;
 	for (uint i = 0; i < tempCont.size(); ++i) {
 		Sprite *spr = tempCont[i];
 		int c = spr->_scene;

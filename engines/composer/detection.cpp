@@ -68,20 +68,19 @@ bool ComposerEngine::loadDetectedConfigFile(Common::INIFile &configFile) const {
 	return configFile.loadFromFile("book.ini") || configFile.loadFromFile("book.mac");
 }
 
-}
+} // namespace Composer
 
 static const PlainGameDescriptor composerGames[] = {
-	{"babayaga", "Magic Tales: Baba Yaga and the Magic Geese"},
-	{"darby", "Darby the Dragon"},
-	{"gregory", "Gregory and the Hot Air Balloon"},
-	{"imoking", "Magic Tales: Imo and the King"},
-	{"liam", "Magic Tales: Liam Finds a Story"},
-	{"littlesamurai", "Magic Tales: The Little Samurai"},
-	{"magictales", "Magic Tales"},
-	{"princess", "Magic Tales: The Princess and the Crab"},
-	{"sleepingcub", "Magic Tales: Sleeping Cub's Test of Courage"},
-	{0, 0}
-};
+    {"babayaga", "Magic Tales: Baba Yaga and the Magic Geese"},
+    {"darby", "Darby the Dragon"},
+    {"gregory", "Gregory and the Hot Air Balloon"},
+    {"imoking", "Magic Tales: Imo and the King"},
+    {"liam", "Magic Tales: Liam Finds a Story"},
+    {"littlesamurai", "Magic Tales: The Little Samurai"},
+    {"magictales", "Magic Tales"},
+    {"princess", "Magic Tales: The Princess and the Crab"},
+    {"sleepingcub", "Magic Tales: Sleeping Cub's Test of Courage"},
+    {0, 0}};
 
 #include "composer/detection_tables.h"
 
@@ -89,13 +88,12 @@ using namespace Composer;
 
 // we match from data too, to stop detection from a non-top-level directory
 static const char *directoryGlobs[] = {
-	"data",
-	"liam",
-	"programs",
-	"princess",
-	"sleepcub",
-	0
-};
+    "data",
+    "liam",
+    "programs",
+    "princess",
+    "sleepcub",
+    0};
 
 class ComposerMetaEngine : public AdvancedMetaEngine {
 public:
@@ -119,7 +117,7 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 	int getMaximumSaveSlot() const override;
-	SaveStateList listSaves(const char* target) const override;
+	SaveStateList listSaves(const char *target) const override;
 };
 
 bool ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -174,13 +172,11 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 }
 
 bool Composer::ComposerEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL
-		|| f == kSupportsSavingDuringRuntime
-		|| f == kSupportsLoadingDuringRuntime);
+	return (f == kSupportsRTL || f == kSupportsSavingDuringRuntime || f == kSupportsLoadingDuringRuntime);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(COMPOSER)
-	REGISTER_PLUGIN_DYNAMIC(COMPOSER, PLUGIN_TYPE_ENGINE, ComposerMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(COMPOSER, PLUGIN_TYPE_ENGINE, ComposerMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(COMPOSER, PLUGIN_TYPE_ENGINE, ComposerMetaEngine);
+REGISTER_PLUGIN_STATIC(COMPOSER, PLUGIN_TYPE_ENGINE, ComposerMetaEngine);
 #endif

@@ -26,12 +26,12 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/base/base_engine.h"
+#include "common/system.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/system/sys_class_registry.h"
-#include "common/system.h"
+#include "engines/wintermute/wintermute.h"
 namespace Common {
 DECLARE_SINGLETON(Wintermute::BaseEngine);
 }

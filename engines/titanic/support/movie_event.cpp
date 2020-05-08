@@ -26,7 +26,7 @@
 namespace Titanic {
 
 CMovieEvent::CMovieEvent() : ListItem(), _type(MET_PLAY), _startFrame(0),
-	_endFrame(0), _initialFrame(0), _gameObject(nullptr) {
+                             _endFrame(0), _initialFrame(0), _gameObject(nullptr) {
 }
 
 CMovieEvent::CMovieEvent(const CMovieEvent *src) {

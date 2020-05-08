@@ -30,7 +30,7 @@ namespace Common {
 class SeekableReadStream;
 struct Point;
 class WriteStream;
-}
+} // namespace Common
 
 namespace ZVision {
 
@@ -43,7 +43,6 @@ class ZVision;
  */
 class Control {
 public:
-
 	enum ControlType {
 		CONTROL_UNKNOW,
 		CONTROL_INPUT,
@@ -133,11 +132,12 @@ protected:
 	int32 _venusId;
 
 	void getParams(const Common::String &inputStr, Common::String &parameter, Common::String &values);
-// Static member functions
+	// Static member functions
 public:
 	static void parseFlatControl(ZVision *engine);
 	static void parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream);
 	static void parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream);
+
 private:
 	ControlType _type;
 };

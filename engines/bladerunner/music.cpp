@@ -22,12 +22,12 @@
 
 #include "bladerunner/music.h"
 
-#include "bladerunner/audio_mixer.h"
 #include "bladerunner/aud_stream.h"
+#include "bladerunner/audio_mixer.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
-#include "bladerunner/game_constants.h"
 
 #include "common/timer.h"
 namespace BladeRunner {
@@ -146,7 +146,7 @@ void Music::stop(uint32 delay) {
 
 void Music::adjust(int volume, int pan, uint32 delay) {
 	if (volume != -1) {
-		adjustVolume(_musicVolume * volume/ 100, delay);
+		adjustVolume(_musicVolume * volume / 100, delay);
 	}
 	if (pan != -101) {
 		adjustPan(pan, delay);
@@ -219,12 +219,12 @@ void Music::load(SaveFileReadStream &f) {
 	if (_isPlaying) {
 		if (_channel == -1) {
 			play(_current.name,
-				_current.volume,
-				_current.pan,
-				_current.timeFadeIn,
-				_current.timePlay,
-				_current.loop,
-				_current.timeFadeOut);
+			     _current.volume,
+			     _current.pan,
+			     _current.timeFadeIn,
+			     _current.timePlay,
+			     _current.loop,
+			     _current.timeFadeOut);
 		} else {
 			_isNextPresent = true;
 			_next.name = _current.name;

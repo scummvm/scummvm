@@ -43,6 +43,6 @@ private:
 	TaskPtrs _tasks;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

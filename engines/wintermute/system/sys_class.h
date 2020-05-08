@@ -29,11 +29,11 @@
 #ifndef WINTERMUTE_SYSCLASS_H
 #define WINTERMUTE_SYSCLASS_H
 
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/dctypes.h"
-#include "common/hashmap.h"
 #include "common/func.h"
+#include "common/hashmap.h"
 #include "common/stream.h"
+#include "engines/wintermute/dctypes.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 class SystemInstance;
@@ -41,25 +41,27 @@ class BaseGame;
 class BasePersistenceManager;
 class SystemClass;
 
-}
+} // namespace Wintermute
 
 namespace Common {
-template<typename T> struct Hash;
+template<typename T>
+struct Hash;
 
-template<> struct Hash<void *> : public UnaryFunction<void *, uint> {
+template<>
+struct Hash<void *> : public UnaryFunction<void *, uint> {
 	uint operator()(void *val) const {
 		return (uint)((size_t)val);
 	}
 };
 
-template<> struct Hash<Wintermute::SystemInstance *> : public UnaryFunction<Wintermute::SystemInstance *, uint> {
+template<>
+struct Hash<Wintermute::SystemInstance *> : public UnaryFunction<Wintermute::SystemInstance *, uint> {
 	uint operator()(Wintermute::SystemInstance *val) const {
 		return (uint)((size_t)val);
 	}
 };
 
-
-}
+} // namespace Common
 
 namespace Wintermute {
 

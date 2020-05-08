@@ -20,20 +20,20 @@
  *
  */
 
+#include "engines/advancedDetector.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/util.h"
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/md5.h"
-#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/util.h"
+#include "engines/obsolete.h"
 #include "gui/EventRecorder.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
-#include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 
 static Common::String sanitizeName(const char *name) {
 	Common::String res;
@@ -145,7 +145,6 @@ bool cleanupPirated(ADDetectedGames &matched) {
 
 	return false;
 }
-
 
 DetectedGames AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 	FileMap allFiles;
@@ -305,10 +304,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	showTestingWarning = true;
 #endif
 
-	if (((gameDescriptor.gameSupportLevel == kUnstableGame
-			|| (gameDescriptor.gameSupportLevel == kTestingGame
-					&& showTestingWarning)))
-			&& !Engine::warnUserAboutUnsupportedGame())
+	if (((gameDescriptor.gameSupportLevel == kUnstableGame || (gameDescriptor.gameSupportLevel == kTestingGame && showTestingWarning))) && !Engine::warnUserAboutUnsupportedGame())
 		return Common::kUserCanceled;
 
 	debug(2, "Running %s", gameDescriptor.description.c_str());
@@ -336,7 +332,7 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 				continue;
 
 			bool matched = false;
-			for (const char * const *glob = _directoryGlobs; *glob; glob++)
+			for (const char *const *glob = _directoryGlobs; *glob; glob++)
 				if (file->getName().matchString(*glob, true)) {
 					matched = true;
 					break;
@@ -355,7 +351,7 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 		if (tstr.lastChar() == '.')
 			tstr.deleteLastChar();
 
-		allFiles[tstr] = *file;	// Record the presence of this file
+		allFiles[tstr] = *file; // Record the presence of this file
 	}
 }
 
@@ -431,9 +427,8 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 
 		// Do not even bother to look at entries which do not have matching
 		// language and platform (if specified).
-		if ((language != Common::UNK_LANG && g->language != Common::UNK_LANG && g->language != language
-			 && !(language == Common::EN_ANY && (g->flags & ADGF_ADDENGLISH))) ||
-			(platform != Common::kPlatformUnknown && g->platform != Common::kPlatformUnknown && g->platform != platform)) {
+		if ((language != Common::UNK_LANG && g->language != Common::UNK_LANG && g->language != language && !(language == Common::EN_ANY && (g->flags & ADGF_ADDENGLISH))) ||
+		    (platform != Common::kPlatformUnknown && g->platform != Common::kPlatformUnknown && g->platform != platform)) {
 			continue;
 		}
 
@@ -490,13 +485,13 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 
 		if (allFilesPresent && !game.hasUnknownFiles) {
 			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
-			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
+			      getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 
 			if (curFilesMatched > maxFilesMatched) {
 				debug(2, " ... new best match, removing all previous candidates");
 				maxFilesMatched = curFilesMatched;
 
-				matched.clear();	// Remove any prior, lower ranked matches.
+				matched.clear(); // Remove any prior, lower ranked matches.
 				matched.push_back(game);
 			} else if (curFilesMatched == maxFilesMatched) {
 				matched.push_back(game);
@@ -507,7 +502,7 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 			gotAnyMatchesWithAllFiles = true;
 		} else {
 			debug(5, "Skipping game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
-			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
+			      getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 		}
 	}
 
@@ -516,7 +511,7 @@ ADDetectedGames AdvancedMetaEngine::detectGame(const Common::FSNode &parent, con
 
 ADDetectedGame AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, const Common::FSList &fslist, const ADFileBasedFallback *fileBasedFallback) const {
 	const ADFileBasedFallback *ptr;
-	const char* const* filenames;
+	const char *const *filenames;
 
 	int maxNumMatchedFiles = 0;
 	ADDetectedGame result;
@@ -577,8 +572,8 @@ PlainGameDescriptor AdvancedMetaEngine::findGame(const char *gameId) const {
 }
 
 AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions)
-	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameIds(gameIds),
-	  _extraGuiOptions(extraGuiOptions) {
+    : _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameIds(gameIds),
+      _extraGuiOptions(extraGuiOptions) {
 
 	_md5Bytes = 5000;
 	_flags = 0;

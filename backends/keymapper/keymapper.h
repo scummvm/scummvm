@@ -44,7 +44,6 @@ class KeymapperDefaultBindings;
 
 class Keymapper : public Common::EventMapper {
 public:
-
 	Keymapper(EventManager *eventMan);
 	~Keymapper();
 
@@ -139,7 +138,7 @@ private:
 	};
 
 	enum {
-		kJoyAxisPressedTreshold   = Common::JOYAXIS_MAX / 2,
+		kJoyAxisPressedTreshold = Common::JOYAXIS_MAX / 2,
 		kJoyAxisUnpressedTreshold = Common::JOYAXIS_MAX / 4
 	};
 
@@ -174,7 +173,7 @@ private:
 	struct DelayedEventsEntry {
 		const uint32 timerOffset;
 		const Event event;
-		DelayedEventsEntry(const uint32 offset, const Event ev) : timerOffset(offset), event(ev) { }
+		DelayedEventsEntry(const uint32 offset, const Event ev) : timerOffset(offset), event(ev) {}
 	};
 
 	Queue<DelayedEventsEntry> _delayedEvents;

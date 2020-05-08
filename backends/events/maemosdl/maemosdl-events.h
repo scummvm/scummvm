@@ -37,6 +37,7 @@ public:
 	MaemoSdlEventSource();
 
 	bool toggleClickMode();
+
 protected:
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
@@ -50,6 +51,7 @@ public:
 	MaemoSdlEventObserver(MaemoSdlEventSource *eventSource);
 
 	virtual bool notifyEvent(const Common::Event &event);
+
 private:
 	MaemoSdlEventSource *_eventSource;
 };

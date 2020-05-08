@@ -31,7 +31,7 @@ namespace Glk {
 namespace Alan3 {
 
 /* DATA */
-extern Aword *freq;     /* Cumulated character frequencies for text decoding */
+extern Aword *freq; /* Cumulated character frequencies for text decoding */
 
 /* FUNCTIONS */
 

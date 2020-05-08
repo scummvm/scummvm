@@ -59,6 +59,6 @@ private:
 	uint32 getResourceId(const char *filename);
 };
 
-} // End of namespace dragons
+} // namespace Dragons
 
 #endif //DRAGONS_BIGFILE_H

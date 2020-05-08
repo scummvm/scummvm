@@ -22,21 +22,20 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
-const int ventsInit[9] = { 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+const int ventsInit[9] = {0, 0, 1, 0, 0, 1, 0, 0, 1};
 
 void scene33_initScene(Scene *sc) {
 	g_vars->scene33_mug = sc->getStaticANIObject1ById(ANI_MUG_33, -1);
@@ -50,7 +49,6 @@ void scene33_initScene(Scene *sc) {
 
 		mq->sendNextCommand();
 	}
-
 
 	for (int i = 0; i < 9; i++) {
 		g_vars->scene33_ventsX[i] = sc->getStaticANIObject1ById(ANI_VENT_33, i)->_ox;
@@ -112,9 +110,8 @@ void sceneHandler33_switchVent(StaticANIObject *ani) {
 
 void sceneHandler33_processVents() {
 	for (int i = 0; i < 9; i++)
-		if (((g_vars->scene33_cubeX < g_vars->scene33_ventsX[i]) != (g_vars->scene33_cube->_ox < g_vars->scene33_ventsX[i]))
-			&& g_vars->scene33_ventsState[i] != ventsInit[i])
-				sceneHandler33_switchVent(g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, i));
+		if (((g_vars->scene33_cubeX < g_vars->scene33_ventsX[i]) != (g_vars->scene33_cube->_ox < g_vars->scene33_ventsX[i])) && g_vars->scene33_ventsState[i] != ventsInit[i])
+			sceneHandler33_switchVent(g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, i));
 
 	g_vars->scene33_cubeX = g_vars->scene33_cube->_ox;
 }
@@ -155,11 +152,11 @@ void sceneHandler33_pour() {
 }
 
 void sceneHandler33_handleDown() {
-  if (!g_vars->scene33_handleIsDown && !g_vars->scene33_jettie->_movement && !g_vars->scene33_jettie->getMessageQueue() ) {
-	  chainQueue(QU_SC33_STARTWATER, 0);
+	if (!g_vars->scene33_handleIsDown && !g_vars->scene33_jettie->_movement && !g_vars->scene33_jettie->getMessageQueue()) {
+		chainQueue(QU_SC33_STARTWATER, 0);
 
-	  g_vars->scene33_handleIsDown = true;
-  }
+		g_vars->scene33_handleIsDown = true;
+	}
 }
 
 void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
@@ -266,26 +263,24 @@ int sceneHandler33(ExCommand *cmd) {
 		sceneHandler33_handleDown();
 		break;
 
-	case 29:
-		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
+	case 29: {
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
-				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
+		if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
+			int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (pic && pic->_id == PIC_SC33_ZONES) {
-					sceneHandler33_clickZones(cmd);
-					break;
-				}
+			if (pic && pic->_id == PIC_SC33_ZONES) {
+				sceneHandler33_clickZones(cmd);
+				break;
+			}
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
-					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
-						g_fp->processArcade(cmd);
-				}
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
+				if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
+					g_fp->processArcade(cmd);
 			}
 		}
-		break;
+	} break;
 
 	case 33:
 		if (g_fp->_aniMan2) {

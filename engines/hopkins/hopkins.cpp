@@ -21,22 +21,22 @@
  */
 
 #include "hopkins/hopkins.h"
-#include "hopkins/graphics.h"
 #include "hopkins/files.h"
+#include "hopkins/graphics.h"
 #include "hopkins/saveload.h"
 #include "hopkins/sound.h"
 #include "hopkins/talk.h"
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 
 namespace Hopkins {
 
 HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("Hopkins") {
+                                                                                      _gameDescription(gameDesc), _randomSource("Hopkins") {
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 	_animMan = new AnimationManager(this);
@@ -88,8 +88,7 @@ bool HopkinsEngine::canLoadGameStateCurrently() {
  * Returns true if it is currently okay to save the game
  */
 bool HopkinsEngine::canSaveGameStateCurrently() {
-	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl
-		&& _globals->_curRoomNum != 0 && !isUnderwaterSubScene();
+	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl && _globals->_curRoomNum != 0 && !isUnderwaterSubScene();
 }
 
 /**
@@ -287,9 +286,9 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_characterMaxPosY = 440;
 			_linesMan->setMaxLineIdx(20);
 			if (_globals->_saveData->_data[svBombDisarmedFl])
-			  _objectsMan->sceneControl2("IM09", "IM09", "ANIM09", "IM09", 10, true);
+				_objectsMan->sceneControl2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
-			  bombExplosion();
+				bombExplosion();
 			break;
 
 		case 10:
@@ -578,7 +577,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 455;
 			if (_globals->_saveData->_data[svFreedHostageFl] == 1)
-					_objectsMan->sceneControl2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+				_objectsMan->sceneControl2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			else
 				_objectsMan->sceneControl2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			break;
@@ -847,7 +846,6 @@ bool HopkinsEngine::runFull() {
 
 	_globals->_exitId = 0;
 
-
 	if (_startGameSlot != -1) {
 		_soundMan->playSound(28);
 		_saveLoad->loadGame(_startGameSlot);
@@ -925,8 +923,7 @@ bool HopkinsEngine::runFull() {
 
 				if (getPlatform() != Common::kPlatformLinux) {
 					// Copy the end of the animation into the secondary buffer and fade out the screen
-					Common::fill(_graphicsMan->_frontBuffer, _graphicsMan->_frontBuffer +
-						SCREEN_WIDTH * 2 * SCREEN_HEIGHT, 0);
+					Common::fill(_graphicsMan->_frontBuffer, _graphicsMan->_frontBuffer + SCREEN_WIDTH * 2 * SCREEN_HEIGHT, 0);
 					_graphicsMan->fadeOutLong();
 				}
 
@@ -1207,7 +1204,7 @@ bool HopkinsEngine::runFull() {
 				_soundMan->removeSample(1);
 			}
 			break;
-			}
+		}
 
 		case 50:
 			// Flight cut scene
@@ -1563,7 +1560,7 @@ bool HopkinsEngine::runFull() {
 			_globals->_eventMode = EVENTMODE_IGNORE;
 			_soundMan->stopSound();
 			_soundMan->playSound(23);
-			_globals->_exitId = handleBaseMap();	// Handles the base map (non-Windows)
+			_globals->_exitId = handleBaseMap(); // Handles the base map (non-Windows)
 			//_globals->_exitId = WBASE();	// Handles the 3D Doom level (Windows)
 			_soundMan->stopSound();
 			_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
@@ -2051,7 +2048,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_animMan->loadAnim("ANIM92");
 	_graphicsMan->displayAllBob();
 	_objectsMan->loadLinkFile("IM92");
-/*
+	/*
 	for (int cpt = 0; cpt <= 4 && !shouldQuit(); cpt++)
 		_eventsManager->refreshScreenAndEvents();
 */
@@ -2268,7 +2265,7 @@ void HopkinsEngine::playPlaneCutscene() {
 }
 
 void HopkinsEngine::loadBaseMap() {
-	Common::String filename	= Common::String::format("%s.PCX", "PBASE");
+	Common::String filename = Common::String::format("%s.PCX", "PBASE");
 	Common::File f;
 
 	if (f.exists(filename)) {
@@ -2285,13 +2282,12 @@ void HopkinsEngine::drawBaseMap() {
 
 	// List of rectangle areas to draw for exit points
 	const int rects[] = {
-		181, 66, 181 + 16, 66 + 22,
-		353, 116, 353 + 22, 116 + 16,
-		483, 250, 483 + 20, 250 + 25,
-		471, 326, 471 + 27, 326 + 20,
-		162, 365, 162 + 21, 365 + 23,
-		106, 267, 106 + 20, 267 + 26
-	};
+	    181, 66, 181 + 16, 66 + 22,
+	    353, 116, 353 + 22, 116 + 16,
+	    483, 250, 483 + 20, 250 + 25,
+	    471, 326, 471 + 27, 326 + 20,
+	    162, 365, 162 + 21, 365 + 23,
+	    106, 267, 106 + 20, 267 + 26};
 
 	// Loop through displaying
 	const int *rectP = &rects[0];
@@ -2443,7 +2439,7 @@ void HopkinsEngine::loadCredits() {
 			_globals->_creditsItem[idxLines]._linePosY = _globals->_creditsPosY + idxLines * _globals->_creditsStep;
 
 			int idxBuf = 0;
-			for(; idxBuf < 49; idxBuf++) {
+			for (; idxBuf < 49; idxBuf++) {
 				byte curChar = curPtr[idxBuf + 3];
 				if (curChar == '%' || curChar == 10)
 					break;

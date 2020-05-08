@@ -20,8 +20,8 @@
  *
  */
 
-#include "mohawk/cstime.h"
 #include "mohawk/cstime_graphics.h"
+#include "mohawk/cstime.h"
 #include "mohawk/resource.h"
 
 #include "common/system.h"

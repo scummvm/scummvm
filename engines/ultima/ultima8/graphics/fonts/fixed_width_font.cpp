@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/fonts/fixed_width_font.h"
-#include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {

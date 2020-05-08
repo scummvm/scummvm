@@ -29,14 +29,14 @@
 #ifndef WINTERMUTE_BASE_GAME_H
 #define WINTERMUTE_BASE_GAME_H
 
-#include "engines/wintermute/base/base_object.h"
-#include "engines/wintermute/base/timer.h"
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/debugger.h"
 #include "common/events.h"
 #include "common/random.h"
+#include "engines/wintermute/base/base_object.h"
+#include "engines/wintermute/base/timer.h"
+#include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/debugger.h"
+#include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/persistent.h"
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #endif
@@ -67,7 +67,7 @@ class VideoPlayer;
 class VideoTheoraPlayer;
 class SaveThumbHelper;
 
-class BaseGame: public BaseObject {
+class BaseGame : public BaseObject {
 public:
 	DECLARE_PERSISTENT(BaseGame, BaseObject)
 
@@ -186,11 +186,11 @@ public:
 	// compatibility bits
 	bool _compatKillMethodThreads;
 
-	const char* getGameTargetName() const { return _targetName.c_str(); }
-	void setGameTargetName(const Common::String& targetName) { _targetName = targetName; }
+	const char *getGameTargetName() const { return _targetName.c_str(); }
+	void setGameTargetName(const Common::String &targetName) { _targetName = targetName; }
 	uint32 _surfaceGCCycleTime;
 	bool _smartCache; // RO
-	bool _subtitles; // RO
+	bool _subtitles;  // RO
 
 	int32 _scheduledLoadSlot;
 
@@ -231,9 +231,11 @@ public:
 
 	const Timer *getTimer() const { return &_timerNormal; }
 	const Timer *getLiveTimer() const { return &_timerLive; }
+
 private:
 	Timer _timerNormal;
 	Timer _timerLive;
+
 public:
 	BaseObject *_capturedObject;
 	Point32 _mousePos;
@@ -266,6 +268,7 @@ public:
 	bool _constrainedMemory;
 
 	bool stopVideo();
+
 protected:
 	BaseFont *_systemFont;
 	BaseFont *_videoFont;
@@ -280,6 +283,7 @@ protected:
 	int32 _freezeLevel;
 	VideoPlayer *_videoPlayer;
 	VideoTheoraPlayer *_theoraPlayer;
+
 private:
 	bool _debugShowFPS;
 	bool _bilinearFiltering;
@@ -358,9 +362,8 @@ private:
 	bool isDoubleClick(int32 buttonIndex);
 	uint32 _usedMem;
 
-// TODO: This should be expanded into a proper class eventually:
+	// TODO: This should be expanded into a proper class eventually:
 	Common::String readRegistryString(const Common::String &key, const Common::String &initValue) const;
-
 
 protected:
 	// WME Lite specific
@@ -377,9 +380,8 @@ private:
 	Common::RandomSource *_rndHc;
 
 	// HeroCraft games specific checksum function, used in Papa's Daughters 2 selfcheck
-	uint8 getFilePartChecksumHc(const char *filename, uint32 begin, uint32 end);	
+	uint8 getFilePartChecksumHc(const char *filename, uint32 begin, uint32 end);
 #endif
-
 };
 
 } // End of namespace Wintermute

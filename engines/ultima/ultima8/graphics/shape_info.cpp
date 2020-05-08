@@ -45,7 +45,7 @@ bool ShapeInfo::getTypeFlagU8(int typeFlag) {
 
 	// So what we do is split the flag up into the bits
 
-	if (typeFlag <= 11) {       // flags        Byte 0, 1:0-3   Bits  0-11
+	if (typeFlag <= 11) { // flags        Byte 0, 1:0-3   Bits  0-11
 		return (_flags >> typeFlag) & 1;
 	} else if (typeFlag <= 15) { // family       Byte 1:4-7      Bits 11-15
 		return (_family >> (typeFlag - 12)) & 1;
@@ -75,7 +75,7 @@ bool ShapeInfo::getTypeFlagU8(int typeFlag) {
 }
 
 bool ShapeInfo::getTypeFlagCrusader(int typeFlag) {
-	if (typeFlag <= 11) {       // _flags        Byte 0, 1:0-3   Bits  0-11
+	if (typeFlag <= 11) { // _flags        Byte 0, 1:0-3   Bits  0-11
 		return (_flags >> typeFlag) & 1;
 	} else if (typeFlag <= 16) { // _family       Byte 1:4-7,2:0  Bits 12-16
 		return (_family >> (typeFlag - 12)) & 1;

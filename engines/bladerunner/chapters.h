@@ -30,8 +30,8 @@ class BladeRunnerEngine;
 class Chapters {
 	BladeRunnerEngine *_vm;
 
-	int  _chapter;
-	int  _resourceIds[6];
+	int _chapter;
+	int _resourceIds[6];
 	bool _hasOpenResources;
 
 public:
@@ -53,7 +53,7 @@ public:
 	void closeResources();
 
 	bool hasOpenResources() { return _hasOpenResources; }
-	int  currentResourceId() { return _chapter ? _resourceIds[_chapter] : -1; }
+	int currentResourceId() { return _chapter ? _resourceIds[_chapter] : -1; }
 };
 
 } // End of namespace BladeRunner

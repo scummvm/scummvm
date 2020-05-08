@@ -20,23 +20,23 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/u8_save_gump.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/gumps/desktop_gump.h"
-#include "ultima/ultima8/gumps/widgets/edit_widget.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/filesys/savegame.h"
-#include "ultima/ultima8/gumps/paged_gump.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
 #include "common/savefile.h"
 #include "common/translation.h"
+#include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/ultima8/filesys/savegame.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/gumps/desktop_gump.h"
+#include "ultima/ultima8/gumps/paged_gump.h"
+#include "ultima/ultima8/gumps/widgets/edit_widget.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -46,12 +46,11 @@ static const int entryfont = 4;
 DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveGump, Gump)
 
 U8SaveGump::U8SaveGump(bool saveMode, int page)
-	: Gump(0, 0, 5, 5), _save(saveMode), _page(page) {
+    : Gump(0, 0, 5, 5), _save(saveMode), _page(page) {
 }
 
 U8SaveGump::~U8SaveGump() {
 }
-
 
 // gumps: 36/0-11: number 1-12
 //        46/0: "Entry"
@@ -78,7 +77,6 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 
 	for (int i = 0; i < 6; ++i) {
 		int index_ = _page * 6 + i;
-
 
 		int xbase = 3;
 		int yi = i;
@@ -146,11 +144,11 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 				widget->InitGump(this, false);
 			}
 		}
-
 	}
 
 	// remove focus from children (just in case)
-	if (_focusChild) _focusChild->OnFocus(false);
+	if (_focusChild)
+		_focusChild->OnFocus(false);
 	_focusChild = 0;
 }
 
@@ -172,9 +170,9 @@ Gump *U8SaveGump::OnMouseDown(int button, int32 mx, int32 my) {
 	return this;
 }
 
-
 void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
-	if (button != Shared::BUTTON_LEFT) return;
+	if (button != Shared::BUTTON_LEFT)
+		return;
 
 	ParentToGump(mx, my);
 
@@ -202,7 +200,8 @@ void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
 	if (_save && !_focusChild && _editWidgets[i]) {
 		_editWidgets[i]->MakeFocus();
 		PagedGump *p = p_dynamic_cast<PagedGump *>(_parent);
-		if (p) p->enableButtons(false);
+		if (p)
+			p->enableButtons(false);
 	}
 
 	if (!_save) {
@@ -211,7 +210,8 @@ void U8SaveGump::OnMouseClick(int button, int32 mx, int32 my) {
 		GumpNotifyProcess *p = _parent->GetNotifyProcess();
 		if (p) {
 			// Do nothing in this case
-			if (index_ != 1 && _descriptions[i].empty()) return;
+			if (index_ != 1 && _descriptions[i].empty())
+				return;
 
 			_parent->SetResult(index_);
 			_parent->Close(); // close PagedGump (and us)
@@ -231,7 +231,8 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		assert(widget);
 
 		Std::string name = widget->getText();
-		if (name.empty()) return;
+		if (name.empty())
+			return;
 
 		if (savegame(widget->GetIndex() + 6 * _page, name))
 			_parent->Close(); // close PagedGump (and us)
@@ -244,11 +245,13 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		assert(_save);
 
 		// remove focus
-		if (_focusChild) _focusChild->OnFocus(false);
+		if (_focusChild)
+			_focusChild->OnFocus(false);
 		_focusChild = 0;
 
 		PagedGump *p = p_dynamic_cast<PagedGump *>(_parent);
-		if (p) p->enableButtons(true);
+		if (p)
+			p->enableButtons(true);
 
 		EditWidget *widget = p_dynamic_cast<EditWidget *>(child);
 		assert(widget);
@@ -256,11 +259,11 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 
 		return;
 	}
-
 }
 
 bool U8SaveGump::OnKeyDown(int key, int mod) {
-	if (Gump::OnKeyDown(key, mod)) return true;
+	if (Gump::OnKeyDown(key, mod))
+		return true;
 
 	return false;
 }
@@ -277,20 +280,21 @@ bool U8SaveGump::loadgame(int saveIndex) {
 bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
 	pout << "Save " << saveIndex << ": \"" << name << "\"" << Std::endl;
 
-	if (name.empty()) return false;
+	if (name.empty())
+		return false;
 
 	Ultima8Engine::get_instance()->saveGame(saveIndex, name, true);
 	return true;
 }
 
 void U8SaveGump::loadDescriptions() {
-	_descriptions.resize( 6);
+	_descriptions.resize(6);
 
 	for (int i = 0; i < 6; ++i) {
 		int saveIndex = 6 * _page + i + 1;
 
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-			Ultima8Engine::get_instance()->getSaveStateName(saveIndex));
+		    Ultima8Engine::get_instance()->getSaveStateName(saveIndex));
 		if (!saveFile)
 			continue;
 
@@ -340,7 +344,6 @@ Gump *U8SaveGump::showLoadSaveGump(Gump *parent, bool save) {
 		s->InitGump(gump, false);
 		gump->addPage(s);
 	}
-
 
 	gump->setRelativePosition(CENTER);
 

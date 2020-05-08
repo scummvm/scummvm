@@ -28,11 +28,9 @@
 namespace Ultima {
 namespace Nuvie {
 
-class MDActor: public WOUActor {
+class MDActor : public WOUActor {
 protected:
-
 public:
-
 	MDActor(Map *m, ObjManager *om, GameClock *c);
 	~MDActor() override;
 
@@ -50,7 +48,6 @@ public:
 	uint16 get_downward_facing_tile_num() override;
 	void set_direction(uint8 d) override;
 	bool is_passable() override;
-
 };
 
 } // End of namespace Nuvie

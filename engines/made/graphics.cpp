@@ -22,9 +22,9 @@
 
 #include "made/graphics.h"
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
-#include "common/debug.h"
 #include "common/util.h"
 
 #include "graphics/surface.h"
@@ -67,11 +67,10 @@ void ValueReader::resetNibbleSwitch() {
 void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize, byte cmdFlags, byte pixelFlags, byte maskFlags, bool deltaFrame) {
 
 	const int offsets[] = {
-		0, 1, 2, 3,
-		320, 321, 322, 323,
-		640, 641, 642, 643,
-		960, 961, 962, 963
-	};
+	    0, 1, 2, 3,
+	    320, 321, 322, 323,
+	    640, 641, 642, 643,
+	    960, 961, 962, 963};
 
 	uint16 width = surface.w;
 	uint16 height = surface.h;
@@ -164,9 +163,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 				}
 
 				drawDestOfs += 4;
-
 			}
-
 		}
 
 		if (deltaFrame) {
@@ -183,9 +180,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 				destPtr += width;
 			}
 		}
-
 	}
-
 }
 
 void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, uint16 pixelOffs, uint16 maskOffs, uint16 lineSize) {
@@ -287,15 +282,11 @@ void decompressMovieImage(byte *source, Graphics::Surface &surface, uint16 cmdOf
 					bx = 0;
 					by += 4;
 				}
-
 			}
-
 		}
 
 		height -= 4;
-
 	}
-
 }
 
 } // End of namespace Made

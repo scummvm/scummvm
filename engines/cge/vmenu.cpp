@@ -26,8 +26,8 @@
  */
 
 #include "cge/vmenu.h"
-#include "cge/events.h"
 #include "cge/cge_main.h"
+#include "cge/events.h"
 
 namespace CGE {
 
@@ -63,7 +63,7 @@ Vmenu *Vmenu::_addr = NULL;
 int Vmenu::_recent = -1;
 
 Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
-	: Talk(vm, VMGather(list), kTBRect), _menu(list), _bar(NULL), _vmgt(NULL), _vm(vm) {
+    : Talk(vm, VMGather(list), kTBRect), _menu(list), _bar(NULL), _vmgt(NULL), _vm(vm) {
 	Choice *cp;
 
 	_addr = this;
@@ -87,7 +87,7 @@ Vmenu::~Vmenu() {
 	_addr = NULL;
 }
 
-#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
+#define CALL_MEMBER_FN(object, ptrToMember) ((object).*(ptrToMember))
 
 void Vmenu::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	if (!_items)
@@ -103,7 +103,7 @@ void Vmenu::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	if (y >= 0) {
 		n = y / h;
 		if (n < _items)
-			ok = (x >= kTextHMargin && x < _w - kTextHMargin/* && y % h < FONT_HIG*/);
+			ok = (x >= kTextHMargin && x < _w - kTextHMargin /* && y % h < FONT_HIG*/);
 		else
 			n = _items - 1;
 	}
@@ -115,7 +115,8 @@ void Vmenu::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 		_vm->_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, this);
 		_recent = n;
 		assert(_menu[n].Proc);
-		CALL_MEMBER_FN(*_vm, _menu[n].Proc)();
+		CALL_MEMBER_FN(*_vm, _menu[n].Proc)
+		();
 	}
 }
 

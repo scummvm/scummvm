@@ -104,9 +104,9 @@ bool GameFeatures::autoDetectSoundType() {
 			uint16 kFuncNum = opparams[0];
 
 			// Late SCI1 games call kIsObject before kDoSound
-			if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
+			if (kFuncNum == 6) { // kIsObject (SCI0-SCI11)
 				foundTarget = true;
-			} else if (kFuncNum == 45) {	// kDoSound (SCI1)
+			} else if (kFuncNum == 45) { // kDoSound (SCI1)
 				// First, check which DoSound function is called by the play
 				// method of the Sound object
 				switch (intParam) {
@@ -133,7 +133,7 @@ bool GameFeatures::autoDetectSoundType() {
 		}
 	}
 
-	return false;	// not found
+	return false; // not found
 }
 
 SciVersion GameFeatures::detectDoSoundType() {
@@ -144,11 +144,11 @@ SciVersion GameFeatures::detectDoSoundType() {
 			_doSoundType = g_sci->getResMan()->detectEarlySound() ? SCI_VERSION_0_EARLY : SCI_VERSION_0_LATE;
 #ifdef ENABLE_SCI32
 		} else if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE &&
-				   g_sci->getGameId() != GID_SQ6 &&
-				   // Assuming MGDX uses SCI2.1early sound mode since SQ6 does
-				   // and it was released earlier, but not verified (Phar Lap
-				   // Windows-only release)
-				   g_sci->getGameId() != GID_MOTHERGOOSEHIRES) {
+		           g_sci->getGameId() != GID_SQ6 &&
+		           // Assuming MGDX uses SCI2.1early sound mode since SQ6 does
+		           // and it was released earlier, but not verified (Phar Lap
+		           // Windows-only release)
+		           g_sci->getGameId() != GID_MOTHERGOOSEHIRES) {
 			_doSoundType = SCI_VERSION_2_1_MIDDLE;
 		} else if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
 			_doSoundType = SCI_VERSION_2_1_EARLY;
@@ -187,7 +187,7 @@ SciVersion GameFeatures::detectSetCursorType() {
 		} else if (getSciVersion() >= SCI_VERSION_1_1) {
 			// SCI1.1 games always use cursor views
 			_setCursorType = SCI_VERSION_1_1;
-		} else {	// SCI1 late game, detect cursor semantics
+		} else { // SCI1 late game, detect cursor semantics
 			// If the Cursor object doesn't exist, we're using the SCI0 early
 			// kSetCursor semantics.
 			if (_segMan->findObjectByName("Cursor") == NULL_REG) {
@@ -269,7 +269,7 @@ bool GameFeatures::autoDetectLofsType(Common::String gameSuperClassName, int met
 		}
 	}
 
-	return false;	// not found
+	return false; // not found
 }
 
 SciVersion GameFeatures::detectLofsType() {
@@ -350,7 +350,7 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 			uint16 kFuncNum = opparams[0];
 			uint16 argc = opparams[1];
 
-			if (kFuncNum == 8) {	// kDrawPic	(SCI0 - SCI11)
+			if (kFuncNum == 8) { // kDrawPic	(SCI0 - SCI11)
 				// If kDrawPic is called with 6 parameters from the overlay
 				// selector, the game is using old graphics functions.
 				// Otherwise, if it's called with 8 parameters (e.g. SQ3) or 4 parameters
@@ -361,7 +361,7 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 		}
 	}
 
-	return false;	// not found
+	return false; // not found
 }
 
 SciVersion GameFeatures::detectGfxFunctionsType() {
@@ -372,7 +372,7 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 		} else if (getSciVersion() >= SCI_VERSION_01) {
 			// SCI01 and newer games always used new graphics functions
 			_gfxFunctionsType = SCI_VERSION_0_LATE;
-		} else {	// SCI0 late
+		} else { // SCI0 late
 			// Check if the game is using an overlay
 			bool searchRoomObj = false;
 			reg_t rmObjAddr = _segMan->findObjectByName("Rm");
@@ -530,7 +530,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		}
 	}
 
-	return false;	// not found
+	return false; // not found
 }
 
 SciVersion GameFeatures::detectSci21KernelType() {
@@ -635,7 +635,7 @@ int GameFeatures::detectPlaneIdBase() {
 	else
 		return 20000;
 }
-	
+
 bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Motion", SELECTOR(doit));
@@ -671,7 +671,7 @@ bool GameFeatures::autoDetectMoveCountType() {
 		}
 	}
 
-	return false;	// not found
+	return false; // not found
 }
 
 MoveCountType GameFeatures::detectMoveCountType() {
@@ -698,10 +698,10 @@ bool GameFeatures::useAltWinGMSound() {
 	if (g_sci && g_sci->getPlatform() == Common::kPlatformWindows && g_sci->isCD() && !_forceDOSTracks) {
 		SciGameId id = g_sci->getGameId();
 		return (id == GID_ECOQUEST ||
-				id == GID_JONES ||
-				id == GID_KQ5 ||
-				//id == GID_FREDDYPHARKAS ||	// Has alternate tracks, but handles them differently
-				id == GID_SQ4);
+		        id == GID_JONES ||
+		        id == GID_KQ5 ||
+		        //id == GID_FREDDYPHARKAS ||	// Has alternate tracks, but handles them differently
+		        id == GID_SQ4);
 	} else {
 		return false;
 	}
@@ -722,10 +722,10 @@ bool GameFeatures::generalMidiOnly() {
 		return (sound.exists() && sound.getTrackByType(/* AdLib */ 0) == nullptr);
 	}
 	default:
-		 if (g_sci->getPlatform() == Common::kPlatformMacintosh && 
-			 getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
-			 return true;
-		 }
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh &&
+		    getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
+			return true;
+		}
 		break;
 	}
 #endif

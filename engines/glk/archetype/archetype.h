@@ -25,12 +25,12 @@
 #ifndef ARCHETYPE_ARCHETYPE
 #define ARCHETYPE_ARCHETYPE
 
-#include "glk/glk_api.h"
 #include "glk/archetype/array.h"
 #include "glk/archetype/interpreter.h"
 #include "glk/archetype/semantic.h"
 #include "glk/archetype/statement.h"
 #include "glk/archetype/string.h"
+#include "glk/glk_api.h"
 
 namespace Glk {
 namespace Archetype {
@@ -50,6 +50,7 @@ private:
 	int _saveSlot;
 	winid_t _mainWindow;
 	String _lastOutputText;
+
 public:
 	// keywords.cpp
 	XArrayType Literals, Vocabulary;
@@ -66,6 +67,7 @@ public:
 	XArrayType Type_List, Object_List;
 	ListType Overlooked;
 	StringPtr NullStr;
+
 private:
 	/**
 	 * Engine initialization
@@ -107,7 +109,7 @@ private:
 	 * @returns true if the recipient handles the message; false if it doesn't
 	 */
 	bool send_message(int transport, int message_sent, int recipient, ResultType &result,
-		ContextType &context);
+	                  ContextType &context);
 
 	/**
 	 * Evaluates the given expression
@@ -129,6 +131,7 @@ private:
 	 *						of a compound statement
 	 */
 	void exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType &context);
+
 public:
 	/**
 	 * Constructor

@@ -60,6 +60,7 @@ private:
 	 * Get time in seconds from the structure
 	 */
 	TimeSeconds getTime() const;
+
 public:
 	/**
 	 * Constructor

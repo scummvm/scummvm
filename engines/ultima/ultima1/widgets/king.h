@@ -34,11 +34,13 @@ namespace Widgets {
  */
 class King : public Person {
 	DECLARE_MESSAGE_MAP;
+
 protected:
 	/**
 	 * Handles moving creatures
 	 */
 	void movement() override;
+
 public:
 	DECLARE_WIDGET(King)
 	CLASSDEF;
@@ -46,8 +48,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	King(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 20, hitPoints) {}
+	King(Ultima1Game *game, Maps::MapBase *map, int hitPoints) : Person(game, map, 20, hitPoints) {}
 
 	/**
 	 * Constructor

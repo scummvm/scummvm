@@ -26,14 +26,14 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CChevPanel, CGameObject)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(MouseDragMoveMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(SetChevPanelBitMsg)
-	ON_MESSAGE(MouseDragEndMsg)
-	ON_MESSAGE(ClearChevPanelBits)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(SetChevPanelButtonsMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseDragMoveMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(SetChevPanelBitMsg)
+ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(ClearChevPanelBits)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(SetChevPanelButtonsMsg)
 END_MESSAGE_MAP()
 
 void CChevPanel::save(SimpleFile *file, int indent) {
@@ -57,7 +57,7 @@ void CChevPanel::load(SimpleFile *file) {
 bool CChevPanel::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (checkStartDragging(msg)) {
 		_startPos = Point(msg->_mousePos.x - _bounds.left,
-			msg->_mousePos.y - _bounds.top);
+		                  msg->_mousePos.y - _bounds.top);
 		CChildDragStartMsg dragMsg(_startPos);
 		dragMsg.execute(this, nullptr, MSGFLAG_SCAN);
 	}

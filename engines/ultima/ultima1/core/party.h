@@ -38,15 +38,31 @@ namespace Ultima {
 namespace Ultima1 {
 
 enum WeaponType {
-	WEAPON_HANDS = 0, WEAPON_DAGGER = 1, WEAPON_MACE = 2, WEAPON_AXE = 3, WEAPON_ROPE_SPIKES = 4,
-	WEAPON_SWORD = 5, WEAPON_GREAT_SWORD = 6, WEAPON_BOW_ARROWS = 7, WEAPON_AMULET = 8,
-	WEAPON_WAND = 9, WEAPON_STAFF = 10, WEAPON_TRIANGLE = 11, WEAPON_PISTOL = 12,
-	WEAPON_LIGHT_SWORD = 13, WEAPON_PHAZOR = 14, WEAPON_BLASTER = 15
+	WEAPON_HANDS = 0,
+	WEAPON_DAGGER = 1,
+	WEAPON_MACE = 2,
+	WEAPON_AXE = 3,
+	WEAPON_ROPE_SPIKES = 4,
+	WEAPON_SWORD = 5,
+	WEAPON_GREAT_SWORD = 6,
+	WEAPON_BOW_ARROWS = 7,
+	WEAPON_AMULET = 8,
+	WEAPON_WAND = 9,
+	WEAPON_STAFF = 10,
+	WEAPON_TRIANGLE = 11,
+	WEAPON_PISTOL = 12,
+	WEAPON_LIGHT_SWORD = 13,
+	WEAPON_PHAZOR = 14,
+	WEAPON_BLASTER = 15
 };
 
 enum ArmorType {
-	ARMOR_SKIN = 0, ARMOR_LEATHER_armour = 1, ARMOR_CHAIN_MAIL = 2, ARMOR_PLATE_MAIL = 3,
-	ARMOR_VACUUM_SUIT = 4, ARMOR_REFLECT_SUIT = 5
+	ARMOR_SKIN = 0,
+	ARMOR_LEATHER_armour = 1,
+	ARMOR_CHAIN_MAIL = 2,
+	ARMOR_PLATE_MAIL = 3,
+	ARMOR_VACUUM_SUIT = 4,
+	ARMOR_REFLECT_SUIT = 5
 };
 
 class Ultima1Game;
@@ -60,7 +76,8 @@ private:
 	Ultima1Game *_game;
 	Character *_character;
 	WeaponType _type;
-public:	
+
+public:
 	/**
 	 * Constructor
 	 */
@@ -95,10 +112,11 @@ public:
  */
 class Armour : public Shared::Armour {
 private:
-//	Ultima1Game *_game;
+	//	Ultima1Game *_game;
 	Character *_character;
 	ArmorType _type;
-public:	
+
+public:
 	/**
 	 * Constructor
 	 */
@@ -123,13 +141,12 @@ public:
 	uint getSellCost() const;
 };
 
-
 /**
  * Implements the data for a playable character within the game
  */
 class Character : public Shared::Character {
 private:
-//	Ultima1Game *_game;
+	//	Ultima1Game *_game;
 
 	Weapon _weaponHands;
 	Weapon _weaponDagger;
@@ -166,6 +183,7 @@ private:
 	Spells::Prayer _spellPrayer;
 	Spells::Steal _spellSteal;
 	Spells::Unlock _spellUnlock;
+
 public:
 	/**
 	 * Constructor

@@ -23,8 +23,8 @@
 #ifndef COMMON_QUEUE_H
 #define COMMON_QUEUE_H
 
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 
 namespace Common {
 
@@ -33,8 +33,8 @@ namespace Common {
  */
 template<class T>
 class Queue {
-//public:
-//	typedef T value_type;
+	//public:
+	//	typedef T value_type;
 
 public:
 	Queue<T>() : _impl() {}
@@ -79,7 +79,7 @@ public:
 	}
 
 private:
-	List<T>	_impl;
+	List<T> _impl;
 };
 
 } // End of namespace Common

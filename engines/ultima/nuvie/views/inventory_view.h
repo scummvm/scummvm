@@ -94,7 +94,6 @@ public:
 	}
 
 protected:
-
 	void display_name();
 	void add_command_icons(Screen *tmp_screen, void *view_manager);
 	void display_inventory_weights();

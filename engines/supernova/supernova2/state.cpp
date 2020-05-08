@@ -83,7 +83,6 @@ bool GameManager2::serialize(Common::WriteStream *out) {
 	return !out->err();
 }
 
-
 bool GameManager2::deserialize(Common::ReadStream *in, int version) {
 	if (in->err())
 		return false;
@@ -145,7 +144,7 @@ bool GameManager2::deserialize(Common::ReadStream *in, int version) {
 }
 
 GameManager2::GameManager2(SupernovaEngine *vm, Sound *sound)
-	: GameManager(vm, sound) {
+    : GameManager(vm, sound) {
 	initRooms();
 	changeRoom(INTRO2);
 	initState();
@@ -267,7 +266,7 @@ void GameManager2::initState() {
 	for (int i = 0; i < 15; i++)
 		_state._puzzleTab[i] = startPuzzleTab[i];
 
-	for (int i = 0 ; i < 6 ; ++i) {
+	for (int i = 0; i < 6; ++i) {
 		_dials[i] = 1;
 	}
 }
@@ -428,7 +427,7 @@ void GameManager2::drawMapExits() {
 	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
 
 	if ((_currentRoom->getId() >= PYR_ENTRANCE && _currentRoom->getId() <= HOLE_ROOM) ||
-		(_currentRoom->getId() >= FLOORDOOR && _currentRoom->getId() <= BST_DOOR))
+	    (_currentRoom->getId() >= FLOORDOOR && _currentRoom->getId() <= BST_DOOR))
 		compass();
 	else {
 		for (int i = 0; i < 25; i++) {
@@ -469,10 +468,10 @@ bool GameManager2::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				_currentRoom->getObject(0)->_type = EXIT;
 				drawMapExits();
 			}
-		} else if (_currentRoom == _rooms[STREET]	      ||
-				   _currentRoom == _rooms[CULTURE_PALACE] ||
-				   _currentRoom == _rooms[CITY1]          ||
-				   _currentRoom == _rooms[CITY2]) {
+		} else if (_currentRoom == _rooms[STREET] ||
+		           _currentRoom == _rooms[CULTURE_PALACE] ||
+		           _currentRoom == _rooms[CITY1] ||
+		           _currentRoom == _rooms[CITY2]) {
 			Common::String t = _vm->getGameString(kStringTaxiArrives);
 			_vm->renderMessage(t);
 			wait((t.size() + 20) * _vm->_textSpeed / 10, true);
@@ -512,8 +511,7 @@ bool GameManager2::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		if (!(o2->_type & CARRIED))
 			_vm->renderMessage(kStringMustBuyFirst);
 		else {
-			if (!(o1->_type & CARRIED))
-			{
+			if (!(o1->_type & CARRIED)) {
 				_vm->renderImage(1);
 				_vm->renderImage(2 + kSectionInvert);
 				_currentRoom->getObject(0)->_click = 255;
@@ -569,7 +567,7 @@ bool GameManager2::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderMessage(kStringNoChip);
 		}
 	} else if ((verb == ACTION_OPEN || verb == ACTION_USE) &&
-			   obj1._id == BOTTLE && (obj1._type & CARRIED)) {
+	           obj1._id == BOTTLE && (obj1._type & CARRIED)) {
 		_vm->renderMessage(kStringTipsy);
 		_state._tipsy = true;
 		_state._eventTime = g_system->getMillis() + 60000;
@@ -592,7 +590,7 @@ void GameManager2::playCD() {
 	CursorMan.showMouse(false);
 	_vm->playSound(kMusicMadMonkeys);
 	Common::KeyCode k = Common::KEYCODE_INVALID;
-	while(_vm->_sound->isPlaying())
+	while (_vm->_sound->isPlaying())
 		if (waitOnInput(1, k))
 			break;
 	_vm->_sound->stop();
@@ -656,7 +654,7 @@ void GameManager2::handleInput() {
 				_vm->renderImage(_inputObject[0]->_section);
 				_inputObject[0]->setProperty(OPENED);
 				byte i = _inputObject[0]->_click;
-				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click = _inputObject[0]->_click2;
 				_inputObject[0]->_click2 = i;
 				_vm->_sound->play(kAudioTaxiOpen);
 			}
@@ -664,8 +662,8 @@ void GameManager2::handleInput() {
 
 		case ACTION_CLOSE:
 			if (!_inputObject[0]->hasProperty(OPENABLE) ||
-				(_inputObject[0]->hasProperty(CLOSED) &&
-				 _inputObject[0]->hasProperty(OPENED))) {
+			    (_inputObject[0]->hasProperty(CLOSED) &&
+			     _inputObject[0]->hasProperty(OPENED))) {
 				// This can't be closed.
 				_vm->renderMessage(kStringGenericInteract10);
 			} else if (!_inputObject[0]->hasProperty(OPENED)) {
@@ -675,7 +673,7 @@ void GameManager2::handleInput() {
 				_vm->renderImage(invertSection(_inputObject[0]->_section));
 				_inputObject[0]->disableProperty(OPENED);
 				byte i = _inputObject[0]->_click;
-				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click = _inputObject[0]->_click2;
 				_inputObject[0]->_click2 = i;
 				_vm->_sound->play(kAudioElevator1);
 			}
@@ -766,9 +764,8 @@ void GameManager2::taxiUnknownDestination() {
 
 void GameManager2::taxiPayment(int price, int destination) {
 	static int answers[] = {
-		kStringPay,
-		kStringLeaveTaxi
-	};
+	    kStringPay,
+	    kStringLeaveTaxi};
 	if (dialog(2, _dials, answers, 0)) {
 		leaveTaxi();
 	} else if (_state._money < price) {
@@ -788,7 +785,7 @@ void GameManager2::taxiPayment(int price, int destination) {
 		Common::String t = _vm->getGameString(kStringTaxiAccelerating);
 		_vm->renderMessage(t);
 		_vm->playSound(kAudioTaxiLeaving);
-		while(_vm->_sound->isPlaying())
+		while (_vm->_sound->isPlaying())
 			wait(1);
 		wait((t.size() + 20) * _vm->_textSpeed / 10, true);
 		_vm->removeMessage();
@@ -802,7 +799,7 @@ void GameManager2::taxiPayment(int price, int destination) {
 		Common::String t2 = _vm->getGameString(kString5MinutesLater);
 		_vm->renderMessage(t2);
 		_vm->playSound(kAudioTaxiArriving);
-		while(_vm->_sound->isPlaying())
+		while (_vm->_sound->isPlaying())
 			wait(1);
 		wait((t2.size() + 20) * _vm->_textSpeed / 10, true);
 		_vm->removeMessage();
@@ -833,13 +830,12 @@ void GameManager2::taxiPayment(int price, int destination) {
 void GameManager2::taxi() {
 	_vm->_allowSaveGame = false;
 	static int dest[] = {
-		kStringAirport,
-		kStringDowntown,
-		kStringCulturePalace,
-		kStringEarth,
-		kStringPrivateApartment,
-		kStringLeaveTaxi
-	};
+	    kStringAirport,
+	    kStringDowntown,
+	    kStringCulturePalace,
+	    kStringEarth,
+	    kStringPrivateApartment,
+	    kStringLeaveTaxi};
 	Common::String input;
 	int possibility = _state._taxiPossibility;
 
@@ -850,9 +846,12 @@ void GameManager2::taxi() {
 	_vm->renderImage(1);
 	_vm->renderImage(2);
 
-	if (_state._previousRoom == _rooms[TAXISTAND]) possibility += 1;
-	else if (_state._previousRoom == _rooms[STREET]) possibility += 2;
-	else if (_state._previousRoom == _rooms[CULTURE_PALACE]) possibility += 4;
+	if (_state._previousRoom == _rooms[TAXISTAND])
+		possibility += 1;
+	else if (_state._previousRoom == _rooms[STREET])
+		possibility += 2;
+	else if (_state._previousRoom == _rooms[CULTURE_PALACE])
+		possibility += 4;
 	int answer;
 	do {
 		_currentRoom->removeSentenceByMask(possibility, 1);
@@ -912,10 +911,9 @@ void GameManager2::taxi() {
 			taxiPayment(8, answer);
 			break;
 		}
-	_rooms[INTRO2]->addAllSentences(1);
-	} while(answer == 3 && !_vm->shouldQuit());
+		_rooms[INTRO2]->addAllSentences(1);
+	} while (answer == 3 && !_vm->shouldQuit());
 	_vm->_allowSaveGame = true;
-
 }
 
 void GameManager2::playerTakeOut() {
@@ -931,11 +929,11 @@ void GameManager2::sober() {
 
 bool GameManager2::talk(int mod1, int mod2, int rest, MessagePosition pos, int id) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
-	const Common::String& text = _vm->getGameString(id);
+	const Common::String &text = _vm->getGameString(id);
 
 	_vm->renderMessage(text, pos);
 	int animation_count = (text.size() + 20) * (10 - rest) * _vm->_textSpeed / 400;
-	_restTime =  (text.size() + 20) * rest * _vm->_textSpeed / 400;
+	_restTime = (text.size() + 20) * rest * _vm->_textSpeed / 400;
 
 	while (animation_count) {
 		if (mod1)
@@ -993,39 +991,38 @@ void GameManager2::pyramidEnd() {
 
 void GameManager2::passageConstruction() {
 	static ConstructionEntry constructionTab[9] = {
-		{0, 4, 10, 2, 13},
-		{0, 4, 9,  2, 14},
-		{0, 4, 8,  3,  2},
-		{1, 4, 7,  3,  1},
-		{1, 5, 7,  3,  3},
-		{1, 6, 7,  3,  5},
-		{1, 4, 7,  1,  2},
-		{1, 2, 5,  1,  1},
-		{0, 4, 9,  2, 20}
-	};
+	    {0, 4, 10, 2, 13},
+	    {0, 4, 9, 2, 14},
+	    {0, 4, 8, 3, 2},
+	    {1, 4, 7, 3, 1},
+	    {1, 5, 7, 3, 3},
+	    {1, 6, 7, 3, 5},
+	    {1, 4, 7, 1, 2},
+	    {1, 2, 5, 1, 1},
+	    {0, 4, 9, 2, 20}};
 
 	changeRoom(PYR_ENTRANCE);
-	_rooms[PYR_ENTRANCE]->setSectionVisible(1, 
-			!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 0, -1));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(2, 
-			!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 0,  1));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(7, 
-			wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1,  0));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(1,
+	                                        !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 0, -1));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(2,
+	                                        !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 0, 1));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(7,
+	                                        wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1, 0));
 
 	if (!_rooms[PYR_ENTRANCE]->isSectionVisible(7)) {
 		_rooms[PYR_ENTRANCE]->getObject(3)->_type = EXIT;
 		_rooms[PYR_ENTRANCE]->getObject(3)->_click = 0;
-		_rooms[PYR_ENTRANCE]->setSectionVisible(3, 
-				!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1, -1));
-		_rooms[PYR_ENTRANCE]->setSectionVisible(4, 
-				!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1,  1));
-		_rooms[PYR_ENTRANCE]->setSectionVisible(8, 
-				wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2,  0));
+		_rooms[PYR_ENTRANCE]->setSectionVisible(3,
+		                                        !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1, -1));
+		_rooms[PYR_ENTRANCE]->setSectionVisible(4,
+		                                        !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1, 1));
+		_rooms[PYR_ENTRANCE]->setSectionVisible(8,
+		                                        wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2, 0));
 		if (!_rooms[PYR_ENTRANCE]->isSectionVisible(8)) {
-			_rooms[PYR_ENTRANCE]->setSectionVisible(5, 
-				   !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2, -1));
-			_rooms[PYR_ENTRANCE]->setSectionVisible(6, 
-				   !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2,  1));
+			_rooms[PYR_ENTRANCE]->setSectionVisible(5,
+			                                        !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2, -1));
+			_rooms[PYR_ENTRANCE]->setSectionVisible(6,
+			                                        !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2, 1));
 		} else {
 			_rooms[PYR_ENTRANCE]->setSectionVisible(5, kShownFalse);
 			_rooms[PYR_ENTRANCE]->setSectionVisible(6, kShownFalse);
@@ -1039,9 +1036,9 @@ void GameManager2::passageConstruction() {
 	}
 	for (int i = 0; i < 9; i++) {
 		bool b = (_state._pyraE == constructionTab[i]._e &&
-			 _state._pyraS == constructionTab[i]._s &&
-			 _state._pyraZ == constructionTab[i]._z &&
-			 _state._pyraDirection == constructionTab[i]._r);
+		          _state._pyraS == constructionTab[i]._s &&
+		          _state._pyraZ == constructionTab[i]._z &&
+		          _state._pyraDirection == constructionTab[i]._r);
 		if (constructionTab[i]._a > 12)
 			_rooms[PYR_ENTRANCE]->setSectionVisible(constructionTab[i]._a, b);
 		else if (b)
@@ -1071,80 +1068,70 @@ void GameManager2::passageConstruction() {
 			break;
 		}
 	}
-	_rooms[PYR_ENTRANCE]->setSectionVisible(9, 
-			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &&
-			!_rooms[PYR_ENTRANCE]->isSectionVisible(1));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(10, 
-			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &&
-			!_rooms[PYR_ENTRANCE]->isSectionVisible(2));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(11, 
-			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &&
-			!_rooms[PYR_ENTRANCE]->isSectionVisible(3));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(12, 
-			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &&
-			!_rooms[PYR_ENTRANCE]->isSectionVisible(4));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(9,
+	                                        _rooms[PYR_ENTRANCE]->isSectionVisible(7) &&
+	                                            !_rooms[PYR_ENTRANCE]->isSectionVisible(1));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(10,
+	                                        _rooms[PYR_ENTRANCE]->isSectionVisible(7) &&
+	                                            !_rooms[PYR_ENTRANCE]->isSectionVisible(2));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(11,
+	                                        _rooms[PYR_ENTRANCE]->isSectionVisible(8) &&
+	                                            !_rooms[PYR_ENTRANCE]->isSectionVisible(3));
+	_rooms[PYR_ENTRANCE]->setSectionVisible(12,
+	                                        _rooms[PYR_ENTRANCE]->isSectionVisible(8) &&
+	                                            !_rooms[PYR_ENTRANCE]->isSectionVisible(4));
 }
 
 byte GameManager2::wall(int s, int z, int direction, int stepsForward, int stepsRight) {
 	static char vertical[2][12][11] = {
-		{
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,1,0,0,0,0,0,0,0,0,0},
-			{1,0,1,0,0,0,0,0,0,0,0},
-			{1,0,1,0,1,0,0,0,0,0,0},
-			{0,1,0,0,1,0,0,1,0,0,0},
-			{0,0,1,0,0,0,1,0,1,0,0},
-			{0,0,0,1,1,0,1,0,0,0,0},
-			{0,0,0,1,1,0,0,1,0,0,0},
-			{0,0,0,0,0,1,0,1,0,0,0},
-			{0,0,0,0,0,1,1,0,1,0,0},
-			{0,0,0,0,1,0,0,0,1,0,0},
-			{0,0,0,0,1,0,0,0,0,0,0}
-		},
-		{
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,1,0,0,0,0,0,0},
-			{0,0,0,0,1,0,0,0,0,0,0},
-			{0,1,0,1,0,0,0,0,0,0,0},
-			{0,1,0,1,1,0,0,0,0,0,0},
-			{1,0,0,0,1,0,0,0,0,0,0},
-			{0,0,0,0,0,1,0,0,1,0,0},
-			{0,0,0,0,0,0,1,1,0,0,1},
-			{0,0,0,0,0,1,0,1,0,0,1},
-			{0,0,0,0,1,0,1,0,1,1,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0}
-		}
-	};
+	    {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
+	     {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0},
+	     {0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0},
+	     {0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0},
+	     {0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0},
+	     {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
+	     {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}},
+	    {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+	     {0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0},
+	     {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0},
+	     {0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1},
+	     {0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1},
+	     {0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0},
+	     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}};
 
 	static char horizontal[2][11][12] = {
-		{
-			{0,1,1,0,0,0,0,0,0,0,0,0},
-			{0,0,1,0,0,0,0,0,0,0,0,0},
-			{0,1,0,1,1,0,0,0,0,0,0,0},
-			{0,1,1,0,0,0,0,0,0,0,0,0},
-			{0,0,1,0,0,1,1,0,1,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,1,0,0,0,0},
-			{0,0,0,0,1,1,0,0,0,0,0,0},
-			{0,0,0,0,0,1,0,1,1,0,0,0},
-			{0,0,0,0,0,1,1,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0}
-		},
-		{
-			{0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,1,0,0,1,0,0,0,0,0,0,0},
-			{0,0,0,0,1,0,0,0,0,0,0,0},
-			{0,0,1,1,0,0,0,0,0,0,0,0},
-			{0,1,1,0,0,1,0,0,0,0,0,0},
-			{0,0,0,0,0,0,1,0,1,0,0,0},
-			{0,0,0,0,0,1,1,0,0,0,0,0},
-			{0,0,0,0,0,1,0,1,1,0,1,0},
-			{0,0,0,0,0,1,1,0,0,1,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0}
-		}
-	};
+	    {{0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+	    {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+	     {0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0},
+	     {0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0},
+	     {0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0},
+	     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}};
 	if (stepsRight) {
 		int newR;
 		if (stepsRight > 0)
@@ -1168,11 +1155,11 @@ byte GameManager2::wall(int s, int z, int direction, int stepsForward, int steps
 	}
 	switch (direction) {
 	case 0:
-		return vertical  [_state._pyraE][z + 1 - stepsForward][s] == 0;
+		return vertical[_state._pyraE][z + 1 - stepsForward][s] == 0;
 	case 2:
-		return vertical  [_state._pyraE][z     + stepsForward][s] == 0;
+		return vertical[_state._pyraE][z + stepsForward][s] == 0;
 	case 1:
-		return horizontal[_state._pyraE][z][s     + stepsForward] == 0;
+		return horizontal[_state._pyraE][z][s + stepsForward] == 0;
 	case 3:
 		return horizontal[_state._pyraE][z][s + 1 - stepsForward] == 0;
 	default:
@@ -1184,20 +1171,20 @@ byte GameManager2::wall(int s, int z, int direction, int stepsForward, int steps
 bool GameManager2::move(Action verb, Object &obj) {
 	if (verb == ACTION_WALK && obj._id == CORRIDOR) {
 		switch (_state._pyraDirection) {
-			case 0:
-				_state._pyraZ--;
-				break;
-			case 1:
-				_state._pyraS++;
-				break;
-			case 2:
-				_state._pyraZ++;
-				break;
-			case 3:
-				_state._pyraS--;
-				break;
-			default:
-				break;
+		case 0:
+			_state._pyraZ--;
+			break;
+		case 1:
+			_state._pyraS++;
+			break;
+		case 2:
+			_state._pyraZ++;
+			break;
+		case 3:
+			_state._pyraS--;
+			break;
+		default:
+			break;
 		}
 	} else if (verb == ACTION_WALK && obj._id == G_RIGHT) {
 		_state._pyraDirection++;
@@ -1212,18 +1199,17 @@ bool GameManager2::move(Action verb, Object &obj) {
 
 void GameManager2::compass() {
 	static int dirs[7] = {
-		kStringDirection1,
-		kStringDirection2,
-		kStringDirection3,
-		kStringDirection4,
-		kStringDirection1,
-		kStringDirection2,
-		kStringDirection3
-	};
+	    kStringDirection1,
+	    kStringDirection2,
+	    kStringDirection3,
+	    kStringDirection4,
+	    kStringDirection1,
+	    kStringDirection2,
+	    kStringDirection3};
 	_vm->renderBox(281, 161, 39, 39, kColorWhite63);
-	_vm->renderBox(295, 180, 13,  3, kColorWhite44);
-	_vm->renderBox(300, 175,  3, 13, kColorWhite44);
-	_vm->renderText(dirs[_state._pyraDirection    ], 299, 163, kColorBlack);
+	_vm->renderBox(295, 180, 13, 3, kColorWhite44);
+	_vm->renderBox(300, 175, 3, 13, kColorWhite44);
+	_vm->renderText(dirs[_state._pyraDirection], 299, 163, kColorBlack);
 	_vm->renderText(dirs[_state._pyraDirection + 1], 312, 179, kColorBlack);
 	_vm->renderText(dirs[_state._pyraDirection + 2], 299, 191, kColorBlack);
 	_vm->renderText(dirs[_state._pyraDirection + 3], 283, 179, kColorBlack);
@@ -1232,7 +1218,7 @@ void GameManager2::compass() {
 void GameManager2::puzzleConstruction() {
 	_vm->setCurrentImage(12);
 	MSNImage *image = _vm->_screen->getCurrentImage();
-	for (int i = 0; i < 16; i ++) {
+	for (int i = 0; i < 16; i++) {
 		_puzzleField[i] = 255;
 	}
 	for (int i = 0; i < 15; i++) {
@@ -1259,28 +1245,28 @@ void GameManager2::alarm() {
 void GameManager2::caught() {
 	if (_vm->_screen->isMessageShown())
 		_vm->removeMessage();
-	if        (_currentRoom->getId() <  MUS1) {
+	if (_currentRoom->getId() < MUS1) {
 	} else if (_currentRoom->getId() <= MUS2) {
-		_vm->renderImage( 8); 
+		_vm->renderImage(8);
 		_vm->renderImage(18);
 	} else if (_currentRoom->getId() == MUS3) {
-		_vm->renderImage(12); 
+		_vm->renderImage(12);
 		_vm->renderImage(30);
 	} else if (_currentRoom->getId() == MUS4) {
-		_vm->renderImage( 8); 
+		_vm->renderImage(8);
 		_vm->renderImage(18);
 	} else if (_currentRoom->getId() == MUS5) {
-		_vm->renderImage( 9); 
+		_vm->renderImage(9);
 		_vm->renderImage(29);
 	} else if (_currentRoom->getId() <= MUS7) {
-		_vm->renderImage( 7); 
+		_vm->renderImage(7);
 		_vm->renderImage(17);
 	} else if (_currentRoom->getId() <= MUS9) {
-		_vm->renderImage( 1); 
-		_vm->renderImage( 7);
+		_vm->renderImage(1);
+		_vm->renderImage(7);
 	} else if (_currentRoom->getId() <= MUS11) {
-		_vm->renderImage( 2); 
-		_vm->renderImage( 8);
+		_vm->renderImage(2);
+		_vm->renderImage(8);
 	}
 	caught2();
 }
@@ -1327,19 +1313,20 @@ void GameManager2::drawClock() {
 	}
 	for (int i = 0; i < 3; i++) {
 		Object *o = r->getObject(i);
-		if ((o->_id == DOOR || o->_id == ENCRYPTED_DOOR || o->_id == SMALL_DOOR) && 
-				(o->_type & OPENED) && ! _state._alarmOn)
+		if ((o->_id == DOOR || o->_id == ENCRYPTED_DOOR || o->_id == SMALL_DOOR) &&
+		    (o->_type & OPENED) && !_state._alarmOn)
 			alarm();
 	}
-	if (!_state._alarmOn && _currentRoom == _rooms[MUS4] && 
-			second >= 21 && second <= 40)
+	if (!_state._alarmOn && _currentRoom == _rooms[MUS4] &&
+	    second >= 21 && second <= 40)
 		alarm();
 	if (_currentRoom == _rooms[MUS_ENTRANCE] && second >= 22 && second <= 29) {
 		if (!_steps && !_state._alarmCracked) {
 			_steps = true;
 			_vm->renderMessage(kStringMuseum6);
 		}
-	} else _steps = false;
+	} else
+		_steps = false;
 }
 
 void GameManager2::crack(int time) {
@@ -1383,28 +1370,27 @@ void GameManager2::museumDoorInteract(Action verb, Object &obj1, Object &obj2) {
 		int _r2;
 		int _o2;
 	} doorTab[11] = {
-		{MUS1, 0, MUS2, 0},
-		{MUS2, 1, MUS3, 0},
-		{MUS3, 1, MUS10, 0},
-		{MUS10, 1, MUS11, 0},
-		{MUS11, 1, MUS7, 1},
-		{MUS7, 0, MUS6, 1},
-		{MUS6, 0, MUS5, 1},
-		{MUS5, 0, MUS4, 0},
-		{MUS5, 2, MUS9, 1},
-		{MUS9, 0, MUS8, 1},
-		{MUS8, 0, MUS1, 1}
-	};
+	    {MUS1, 0, MUS2, 0},
+	    {MUS2, 1, MUS3, 0},
+	    {MUS3, 1, MUS10, 0},
+	    {MUS10, 1, MUS11, 0},
+	    {MUS11, 1, MUS7, 1},
+	    {MUS7, 0, MUS6, 1},
+	    {MUS6, 0, MUS5, 1},
+	    {MUS5, 0, MUS4, 0},
+	    {MUS5, 2, MUS9, 1},
+	    {MUS9, 0, MUS8, 1},
+	    {MUS8, 0, MUS1, 1}};
 	Room *r;
 	if (verb == ACTION_OPEN && obj1._id == DOOR) {
 		for (int i = 0; i < 11; i++) {
 			if ((_currentRoom == _rooms[doorTab[i]._r1]) &&
-				 &obj1 == _currentRoom->getObject(doorTab[i]._o1)) {
+			    &obj1 == _currentRoom->getObject(doorTab[i]._o1)) {
 				r = _rooms[doorTab[i]._r2];
 				r->getObject(doorTab[i]._o2)->_type |= OPENED;
 				r->setSectionVisible(r->getObject(doorTab[i]._o2)->_section, kShownTrue);
 			} else if ((_currentRoom == _rooms[doorTab[i]._r2]) &&
-				 &obj1 == _currentRoom->getObject(doorTab[i]._o2)) {
+			           &obj1 == _currentRoom->getObject(doorTab[i]._o2)) {
 				r = _rooms[doorTab[i]._r1];
 				r->getObject(doorTab[i]._o1)->_type |= OPENED;
 				r->setSectionVisible(r->getObject(doorTab[i]._o1)->_section, kShownTrue);
@@ -1413,12 +1399,12 @@ void GameManager2::museumDoorInteract(Action verb, Object &obj1, Object &obj2) {
 	} else if (verb == ACTION_CLOSE && obj1._id == DOOR) {
 		for (int i = 0; i < 11; i++) {
 			if ((_currentRoom == _rooms[doorTab[i]._r1]) &&
-				 &obj1 == _currentRoom->getObject(doorTab[i]._o1)) {
+			    &obj1 == _currentRoom->getObject(doorTab[i]._o1)) {
 				r = _rooms[doorTab[i]._r2];
 				r->getObject(doorTab[i]._o2)->_type &= ~OPENED;
 				r->setSectionVisible(r->getObject(doorTab[i]._o2)->_section, kShownFalse);
 			} else if ((_currentRoom == _rooms[doorTab[i]._r2]) &&
-				 &obj1 == _currentRoom->getObject(doorTab[i]._o2)) {
+			           &obj1 == _currentRoom->getObject(doorTab[i]._o2)) {
 				r = _rooms[doorTab[i]._r1];
 				r->getObject(doorTab[i]._o1)->_type &= ~OPENED;
 				r->setSectionVisible(r->getObject(doorTab[i]._o1)->_section, kShownFalse);
@@ -1433,25 +1419,25 @@ void GameManager2::securityEntrance() {
 		int _a1;
 		int _a2;
 	} securityList[11] = {
-		{MUS1 ,11,31},
-		{MUS2 , 7,17},
-		{MUS3 , 7,17},
-		{MUS10, 1, 7},
-		{MUS11, 1, 7},
-		{MUS7 ,10,32},
-		{MUS6 , 8,18},
-		{MUS5 , 8,18},
-		{MUS9 , 2, 8},
-		{MUS8 , 2, 8},
-		{MUS1 , 0, 0}
-	};
+	    {MUS1, 11, 31},
+	    {MUS2, 7, 17},
+	    {MUS3, 7, 17},
+	    {MUS10, 1, 7},
+	    {MUS11, 1, 7},
+	    {MUS7, 10, 32},
+	    {MUS6, 8, 18},
+	    {MUS5, 8, 18},
+	    {MUS9, 2, 8},
+	    {MUS8, 2, 8},
+	    {MUS1, 0, 0}};
 
 	int time = (g_system->getMillis() - _state._startTime) / 600;
 	int second = time % 100;
 
 	if (_rooms[_securityTab[second / 10]] == _currentRoom) {
 		int i;
-		for (i = 0; _currentRoom != _rooms[securityList[i]._r]; i++) {}
+		for (i = 0; _currentRoom != _rooms[securityList[i]._r]; i++) {
+		}
 		if (_lastRoom == _rooms[securityList[i + 1]._r]) {
 			_vm->renderImage(securityList[i]._a1);
 			_vm->renderImage(securityList[i]._a2);
@@ -1468,14 +1454,13 @@ void GameManager2::pressureAlarmEntrance() {
 
 void GameManager2::pressureAlarmCount() {
 	if (!(_state._alarmOn ||
-			(_currentRoom == _rooms[MUS22] && _currentRoom->isSectionVisible(6)))) {
+	      (_currentRoom == _rooms[MUS22] && _currentRoom->isSectionVisible(6)))) {
 		_state._pressureCounter++;
-		if ((_currentRoom->getId() >= MUS12 && _state._pressureCounter > 8) || 
-				_state._pressureCounter > 16)
+		if ((_currentRoom->getId() >= MUS12 && _state._pressureCounter > 8) ||
+		    _state._pressureCounter > 16)
 			alarm();
 	}
 	setAnimationTimer(11);
 }
 
-}
-
+} // namespace Supernova

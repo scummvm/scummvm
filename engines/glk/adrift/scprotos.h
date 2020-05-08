@@ -31,21 +31,21 @@ namespace Adrift {
 
 /* Runtime version and emulated version, for %version% variable and so on. */
 #ifndef SCARE_VERSION
-# define SCARE_VERSION "1.3.10"
+#define SCARE_VERSION "1.3.10"
 #endif
 #ifndef SCARE_PATCH_LEVEL
-# define SCARE_PATCH_LEVEL ""
+#define SCARE_PATCH_LEVEL ""
 #endif
 #ifndef SCARE_EMULATION
-# define SCARE_EMULATION 4046
+#define SCARE_EMULATION 4046
 #endif
 
 /* True and false, unless already defined. */
 #ifndef FALSE
-# define FALSE 0
+#define FALSE 0
 #endif
 #ifndef TRUE
-# define TRUE (!FALSE)
+#define TRUE (!FALSE)
 #endif
 
 /* Vartype typedef, supports relaxed typing. */
@@ -58,7 +58,7 @@ typedef union {
 } sc_vartype_t;
 
 /* Standard reader and writer callback function typedefs. */
-typedef sc_int(*sc_read_callbackref_t)(void *, sc_byte *, sc_int);
+typedef sc_int (*sc_read_callbackref_t)(void *, sc_byte *, sc_int);
 typedef void (*sc_write_callbackref_t)(void *, const sc_byte *, sc_int);
 
 /*
@@ -68,11 +68,11 @@ typedef void (*sc_write_callbackref_t)(void *, const sc_byte *, sc_int);
  */
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95)
 extern void sc_trace(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
+    __attribute__((__format__(__printf__, 1, 2)));
 extern void sc_error(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
+    __attribute__((__format__(__printf__, 1, 2)));
 extern void sc_fatal(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
+    __attribute__((__format__(__printf__, 1, 2)));
 #else
 extern void sc_trace(const sc_char *format, ...);
 extern void sc_error(const sc_char *format, ...);
@@ -213,11 +213,11 @@ extern void var_debug_dump(sc_var_setref_t vars);
 
 /* Expression evaluation functions. */
 extern sc_bool expr_eval_numeric_expression(const sc_char *expression,
-        sc_var_setref_t vars,
-        sc_int *rvalue);
+                                            sc_var_setref_t vars,
+                                            sc_int *rvalue);
 extern sc_bool expr_eval_string_expression(const sc_char *expression,
-        sc_var_setref_t vars,
-        sc_char **rvalue);
+                                           sc_var_setref_t vars,
+                                           sc_char **rvalue);
 
 /* Print filtering opaque typedef and functions. */
 typedef struct sc_filter_s *sc_filterref_t;
@@ -315,7 +315,7 @@ extern void gs_set_object_seen(sc_gameref_t gs, sc_int object, sc_bool seen);
 extern void gs_set_object_unmoved(sc_gameref_t gs,
                                   sc_int object, sc_bool unmoved);
 extern void gs_set_object_static_unmoved(sc_gameref_t gs,
-        sc_int object, sc_bool unmoved);
+                                         sc_int object, sc_bool unmoved);
 extern sc_int gs_object_openness(sc_gameref_t gs, sc_int object);
 extern sc_int gs_object_state(sc_gameref_t gs, sc_int object);
 extern sc_bool gs_object_seen(sc_gameref_t gs, sc_int object);
@@ -653,11 +653,11 @@ extern void run_set_attributes(sc_gameref_t game,
                                sc_bool notify_score_change);
 extern sc_hintref_t run_hint_iterate(sc_gameref_t game, sc_hintref_t hint);
 extern const sc_char *run_get_hint_question(sc_gameref_t game,
-        sc_hintref_t hint);
+                                            sc_hintref_t hint);
 extern const sc_char *run_get_subtle_hint(sc_gameref_t game,
-        sc_hintref_t hint);
+                                          sc_hintref_t hint);
 extern const sc_char *run_get_unsubtle_hint(sc_gameref_t game,
-        sc_hintref_t hint);
+                                            sc_hintref_t hint);
 
 /* Event functions. */
 extern sc_bool evt_can_see_event(sc_gameref_t game, sc_int event);
@@ -670,17 +670,17 @@ extern const sc_char *task_get_hint_question(sc_gameref_t game, sc_int task);
 extern const sc_char *task_get_hint_subtle(sc_gameref_t game, sc_int task);
 extern const sc_char *task_get_hint_unsubtle(sc_gameref_t game, sc_int task);
 extern sc_bool task_can_run_task_directional(sc_gameref_t game,
-        sc_int task, sc_bool forwards);
+                                             sc_int task, sc_bool forwards);
 extern sc_bool task_can_run_task(sc_gameref_t game, sc_int task);
 extern sc_bool task_run_task(sc_gameref_t game, sc_int task, sc_bool forwards);
 extern void task_debug_trace(sc_bool flag);
 
 /* Task restriction functions. */
 extern sc_bool restr_pass_task_object_state(sc_gameref_t game,
-        sc_int var1, sc_int var2);
+                                            sc_int var1, sc_int var2);
 extern sc_bool restr_eval_task_restrictions(sc_gameref_t game,
-        sc_int task, sc_bool *pass,
-        const sc_char **fail_message);
+                                            sc_int task, sc_bool *pass,
+                                            const sc_char **fail_message);
 extern void restr_debug_trace(sc_bool flag);
 
 /* NPC gender enumeration and functions. */
@@ -773,7 +773,7 @@ extern void *if_open_saved_game(sc_bool is_save);
 extern void if_close_saved_game(void *opaque);
 extern void if_display_hints(sc_gameref_t game);
 extern void if_update_sound(const sc_char *filepath, sc_int sound_offset,
-		sc_int sound_length, sc_bool is_looping);
+                            sc_int sound_length, sc_bool is_looping);
 extern void if_update_graphic(const sc_char *filepath, sc_int graphic_offset, sc_int graphic_length);
 
 #endif

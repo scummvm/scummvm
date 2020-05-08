@@ -21,42 +21,41 @@
  */
 
 #include "glk/frotz/config.h"
-#include "glk/frotz/detection.h"
-#include "glk/glk.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "glk/frotz/detection.h"
+#include "glk/glk.h"
 
 namespace Glk {
 namespace Frotz {
 
 const Header::StoryEntry Header::RECORDS[26] = {
-	{       SHERLOCK,  21, "871214" },
-	{       SHERLOCK,  26, "880127" },
-	{    BEYOND_ZORK,  47, "870915" },
-	{    BEYOND_ZORK,  49, "870917" },
-	{    BEYOND_ZORK,  51, "870923" },
-	{    BEYOND_ZORK,  57, "871221" },
-	{      ZORK_ZERO, 296, "881019" },
-	{      ZORK_ZERO, 366, "890323" },
-	{      ZORK_ZERO, 383, "890602" },
-	{      ZORK_ZERO, 393, "890714" },
-	{         SHOGUN, 292, "890314" },
-	{         SHOGUN, 295, "890321" },
-	{         SHOGUN, 311, "890510" },
-	{         SHOGUN, 322, "890706" },
-	{         ARTHUR,  54, "890606" },
-	{         ARTHUR,  63, "890622" },
-	{         ARTHUR,  74, "890714" },
-	{        JOURNEY,  26, "890316" },
-	{        JOURNEY,  30, "890322" },
-	{        JOURNEY,  77, "890616" },
-	{        JOURNEY,  83, "890706" },
-	{ LURKING_HORROR, 203, "870506" },
-	{ LURKING_HORROR, 219, "870912" },
-	{ LURKING_HORROR, 221, "870918" },
-	{      MILLIWAYS, 184, "890412" },
-	{        UNKNOWN,   0, "------" }
-};
+    {SHERLOCK, 21, "871214"},
+    {SHERLOCK, 26, "880127"},
+    {BEYOND_ZORK, 47, "870915"},
+    {BEYOND_ZORK, 49, "870917"},
+    {BEYOND_ZORK, 51, "870923"},
+    {BEYOND_ZORK, 57, "871221"},
+    {ZORK_ZERO, 296, "881019"},
+    {ZORK_ZERO, 366, "890323"},
+    {ZORK_ZERO, 383, "890602"},
+    {ZORK_ZERO, 393, "890714"},
+    {SHOGUN, 292, "890314"},
+    {SHOGUN, 295, "890321"},
+    {SHOGUN, 311, "890510"},
+    {SHOGUN, 322, "890706"},
+    {ARTHUR, 54, "890606"},
+    {ARTHUR, 63, "890622"},
+    {ARTHUR, 74, "890714"},
+    {JOURNEY, 26, "890316"},
+    {JOURNEY, 30, "890322"},
+    {JOURNEY, 77, "890616"},
+    {JOURNEY, 83, "890706"},
+    {LURKING_HORROR, 203, "870506"},
+    {LURKING_HORROR, 219, "870912"},
+    {LURKING_HORROR, 221, "870918"},
+    {MILLIWAYS, 184, "890412"},
+    {UNKNOWN, 0, "------"}};
 
 static uint getConfigBool(const Common::String &profileName, bool defaultVal = false) {
 	return ConfMan.hasKey(profileName) ? ConfMan.getBool(profileName) : defaultVal;
@@ -71,20 +70,19 @@ static uint getConfigInt(const Common::String &profileName, uint defaultVal, uin
 }
 
 Header::Header() : h_version(0), h_config(0), h_release(0), h_resident_size(0), h_start_pc(0),
-		h_dictionary(0), h_objects(0), h_globals(0), h_dynamic_size(0), h_flags(0),
-		h_abbreviations(0), h_file_size(0), h_checksum(0),
-		h_interpreter_version(0), h_screen_rows(0), h_screen_cols(0), h_screen_width(0),
-		h_screen_height(0), h_font_height(1), h_font_width(1), h_functions_offset(0),
-		h_strings_offset(0), h_default_background(0), h_default_foreground(0),
-		h_terminating_keys(0), h_line_width(0), h_standard_high(1), h_standard_low(1),
-		h_alphabet(0), h_extension_table(0),
-		hx_table_size(0), hx_mouse_x(0), hx_mouse_y(0), hx_unicode_table(0),
-		hx_flags(0), hx_fore_colour(0), hx_back_colour(0), _storyId(UNKNOWN) {
+                   h_dictionary(0), h_objects(0), h_globals(0), h_dynamic_size(0), h_flags(0),
+                   h_abbreviations(0), h_file_size(0), h_checksum(0),
+                   h_interpreter_version(0), h_screen_rows(0), h_screen_cols(0), h_screen_width(0),
+                   h_screen_height(0), h_font_height(1), h_font_width(1), h_functions_offset(0),
+                   h_strings_offset(0), h_default_background(0), h_default_foreground(0),
+                   h_terminating_keys(0), h_line_width(0), h_standard_high(1), h_standard_low(1),
+                   h_alphabet(0), h_extension_table(0),
+                   hx_table_size(0), hx_mouse_x(0), hx_mouse_y(0), hx_unicode_table(0),
+                   hx_flags(0), hx_fore_colour(0), hx_back_colour(0), _storyId(UNKNOWN) {
 	Common::fill(&h_serial[0], &h_serial[6], '\0');
 	Common::fill(&h_user_name[0], &h_user_name[8], '\0');
 
 	h_interpreter_number = getConfigInt("interpreter_number", INTERP_AMIGA, INTERP_TANDY);
-	
 
 	if (ConfMan.hasKey("username")) {
 		Common::String username = ConfMan.get("username");
@@ -112,7 +110,7 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 	h_dynamic_size = f.readUint16BE();
 	h_flags = f.readUint16BE();
 	f.read(h_serial, 6);
-	
+
 	/* Auto-detect buggy story files that need special fixes */
 	_storyId = UNKNOWN;
 
@@ -128,7 +126,7 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 	h_abbreviations = f.readUint16BE();
 	h_file_size = f.readUint16BE();
 	h_checksum = f.readUint16BE();
-	
+
 	f.seek(H_FUNCTIONS_OFFSET);
 	h_functions_offset = f.readUint16BE();
 	h_strings_offset = f.readUint16BE();
@@ -138,7 +136,6 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 	h_alphabet = f.readUint16BE();
 	h_extension_table = f.readUint16BE();
 
-
 	// Zork Zero Macintosh doesn't have the graphics flag set
 	if (_storyId == ZORK_ZERO && h_release == 296)
 		h_flags |= GRAPHICS_FLAG;
@@ -147,8 +144,8 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 /*--------------------------------------------------------------------------*/
 
 UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true), _quetzal(true), _color_enabled(false),
-	_err_report_mode(ERR_REPORT_ONCE), _ignore_errors(false), _expand_abbreviations(false), _tandyBit(false),
-	_piracy(false), _script_cols(0), _left_margin(0), _right_margin(0), _defaultBackground(0), _defaultForeground(0) {
+                             _err_report_mode(ERR_REPORT_ONCE), _ignore_errors(false), _expand_abbreviations(false), _tandyBit(false),
+                             _piracy(false), _script_cols(0), _left_margin(0), _right_margin(0), _defaultBackground(0), _defaultForeground(0) {
 }
 
 void UserOptions::initialize(uint hVersion, uint storyId) {

@@ -26,10 +26,10 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/utils/string_util.h"
 #include "common/language.h"
 #include "common/tokenizer.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/utils/convert_utf.h"
 
 namespace Wintermute {

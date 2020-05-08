@@ -27,10 +27,10 @@
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -39,27 +39,27 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-class Scene710: public SceneExt {
+class Scene710 : public SceneExt {
 	// Actions
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
 	// Timers
-	class Timer1: public Timer {
+	class Timer1 : public Timer {
 	public:
 		void signal() override;
 	};
 	// Objects
-	class Object3: public NamedObject {
+	class Object3 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object4: public NamedObject {
+	class Object4 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object5: public NamedObject {
+	class Object5 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};

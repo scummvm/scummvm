@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/fonts/shape_rendered_text.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/render_surface.h"
@@ -31,11 +31,10 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeRenderedText, RenderedText)
 
-
 ShapeRenderedText::ShapeRenderedText(const Std::list<PositionedText> &lines,
                                      int width, int height, int vLead,
                                      ShapeFont *font)
-	: _lines(lines), _font(font) {
+    : _lines(lines), _font(font) {
 	_width = width;
 	_height = height;
 	_vLead = vLead;
@@ -92,7 +91,6 @@ void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 			                        line_x, line_y, false, false, col);
 			line_x += _font->getWidth(iter->_text[i]) - _font->getHlead();
 		}
-
 	}
 }
 

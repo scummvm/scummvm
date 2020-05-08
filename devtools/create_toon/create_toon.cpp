@@ -35,8 +35,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 
 #include "create_toon.h"
 #include "staticdata.h"

@@ -23,7 +23,7 @@
 #include "audio/mpu401.h"
 #include "common/system.h"
 #include "common/timer.h"
-#include "common/util.h"	// for ARRAYSIZE
+#include "common/util.h" // for ARRAYSIZE
 
 void MidiChannel_MPU401::init(MidiDriver *owner, byte channel) {
 	_owner = owner;
@@ -78,22 +78,20 @@ void MidiChannel_MPU401::sysEx_customInstrument(uint32 type, const byte *instr) 
 
 const char *MidiDriver::getErrorName(int error_code) {
 	static const char *const midi_errors[] = {
-		"No error",
-		"Cannot connect",
-		"Streaming not available",
-		"Device not available",
-		"Driver already open"
-	};
+	    "No error",
+	    "Cannot connect",
+	    "Streaming not available",
+	    "Device not available",
+	    "Driver already open"};
 
 	if ((uint)error_code >= ARRAYSIZE(midi_errors))
 		return "Unknown Error";
 	return midi_errors[error_code];
 }
 
-MidiDriver_MPU401::MidiDriver_MPU401() :
-	MidiDriver(),
-	_timer_proc(0),
-	_channel_mask(0xFFFF) // Permit all 16 channels by default
+MidiDriver_MPU401::MidiDriver_MPU401() : MidiDriver(),
+                                         _timer_proc(0),
+                                         _channel_mask(0xFFFF) // Permit all 16 channels by default
 {
 
 	uint i;

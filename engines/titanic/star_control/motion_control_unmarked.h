@@ -23,8 +23,8 @@
 #ifndef TITANIC_MOTION_CONTROL_UNMARKED_H
 #define TITANIC_MOTION_CONTROL_UNMARKED_H
 
-#include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/flight_manager_unmarked.h"
+#include "titanic/star_control/motion_control.h"
 
 namespace Titanic {
 
@@ -34,6 +34,7 @@ class FVector;
 class CMotionControlUnmarked : public CMotionControl {
 private:
 	CFlightManagerUnmarked _autoMover;
+
 public:
 	CMotionControlUnmarked(const CNavigationInfo *src);
 	~CMotionControlUnmarked() override {}

@@ -23,8 +23,8 @@
 #ifndef TESTBED_ENCODING_H
 #define TESTBED_ENCODING_H
 
-#include "testbed/testsuite.h"
 #include "common/encoding.h"
+#include "testbed/testsuite.h"
 
 namespace Testbed {
 
@@ -62,9 +62,7 @@ public:
 	const char *getDescription() const override {
 		return "Encoding conversion";
 	}
-
 };
-
 
 } // End of namespace Testbed
 

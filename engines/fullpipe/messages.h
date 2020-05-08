@@ -23,11 +23,11 @@
 #ifndef FULLPIPE_MESSAGEQUEUE_H
 #define FULLPIPE_MESSAGEQUEUE_H
 
-#include "fullpipe/utils.h"
-#include "fullpipe/inventory.h"
 #include "fullpipe/gfx.h"
-#include "fullpipe/sound.h"
+#include "fullpipe/inventory.h"
 #include "fullpipe/scene.h"
+#include "fullpipe/sound.h"
+#include "fullpipe/utils.h"
 
 namespace Fullpipe {
 
@@ -36,7 +36,7 @@ enum QueueFlags {
 };
 
 class Message : public CObject {
- public:
+public:
 	int _messageKind;
 	int16 _parentId;
 	int _x;
@@ -51,14 +51,14 @@ class Message : public CObject {
 	int _field_30;
 	int _field_34;
 
- public:
+public:
 	Message();
 
 	Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, int sceneClickX, int sceneClickY, int a10);
 };
 
 class ExCommand : public Message {
- public:
+public:
 	int _messageNum;
 	int _field_3C;
 	int _excFlags;
@@ -83,7 +83,7 @@ class ExCommand : public Message {
 };
 
 class ExCommand2 : public ExCommand {
- public:
+public:
 	PointList _points;
 
 	ExCommand2(int messageKind, int parentId, const PointList &points);
@@ -93,11 +93,11 @@ class ExCommand2 : public ExCommand {
 };
 
 class ObjstateCommand : public ExCommand {
- public:
+public:
 	Common::String _objCommandName;
 	int _value;
 
- public:
+public:
 	ObjstateCommand();
 	ObjstateCommand(ObjstateCommand *src);
 
@@ -107,7 +107,7 @@ class ObjstateCommand : public ExCommand {
 };
 
 class MessageQueue : public CObject {
-  public:
+public:
 	int _id;
 	int _flags;
 	Common::String _queueName;
@@ -119,10 +119,10 @@ class MessageQueue : public CObject {
 	int _parId;
 	int _flag1;
 
-  private:
+private:
 	Common::List<ExCommand *> _exCommands;
 
- public:
+public:
 	MessageQueue();
 	MessageQueue(int dataId);
 	MessageQueue(MessageQueue *src, int parId, int field_38);

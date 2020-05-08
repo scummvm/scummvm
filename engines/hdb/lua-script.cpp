@@ -21,15 +21,15 @@
  */
 
 #include "common/file.h"
-#include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
+#include "common/lua/lua.h"
 #include "common/lua/lualib.h"
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/file-manager.h"
-#include "hdb/lua-script.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
+#include "hdb/lua-script.h"
 #include "hdb/map.h"
 #include "hdb/mpc.h"
 #include "hdb/sound.h"
@@ -42,66 +42,65 @@ struct ScriptPatch {
 	const char *search;
 	const char *replace;
 } scriptPatches[] = {
-	{"GLOBAL", "return gsub( s, \"\\n\", \"\\\\\\n\" )", "return string.gsub( s, \"\\n\", \"\\\\\\n\" )"}, // line 10
-	{"GLOBAL", "strsub(", "string.sub("}, // line 15
-	{"GLOBAL", "function save( i,v, nest )", "function func_namelookup(func)\nfor i,v in pairs(_G) do\nif type(v) == 'function' and v == func then\nreturn i\nend\nend\nend\nfunction save( i,v, nest )"}, // line 13
-	{"GLOBAL", "if type(v) == 'userdata' or type(v) == 'function' then return end", "if type(v) == 'userdata' or i == 'package' or i == 'os' or i == 'io' or i == 'string' or i == 'table' or i == 'debug' or i == 'math' or i == 'coroutine' then return end" }, // Line 16
-	{"GLOBAL", "local t=type(v)", "local t=type(v)\nif (t == 'function' and nest == 0) then return end"}, // line 18
-	{"GLOBAL", "then write_record(v, nest + 1)", "then write_record(v, nest + 1)\nelseif t=='function'    then write(savefile, func_namelookup(v)) if nest > 0 then write(savefile, ',' ) end"}, // line 32
-	{"GLOBAL", "for i,v in t do", "for i,v in pairs(t) do"},  // line 43
-	{"GLOBAL", "for i,v in globals() do", "for i,v in pairs(_G) do"}, // line 52
-	{"GLOBAL", "for npcname,npcdata in npcs do", "for npcname,npcdata in pairs(npcs) do"}, // Line 66
-	{"GLOBAL", "for dlgname,dlgdata in npcdata.dialog do", "for dlgname,dlgdata in pairs(npcdata.dialog) do"}, // Line 67
-	{"GLOBAL", "s = format( \"npcs.%s.dialog.%s.counter", "s = string.format( \"npcs.%s.dialog.%s.counter"}, // Line 68
-	{"GLOBAL", "s = format( \"npcs.%s.dialog.%s.finished = ", "s = string.format( \"npcs.%s.dialog.%s.finished = "}, // line 70
-	{"GLOBAL", "if( getglobal( \"map\"..tostring(v1)..\"_complete\" ) ) then", "if( _G[\"map\"..tostring(v1)..\"_complete\"] ) then"}, // line 219
-	{"GLOBAL", "local mapname = format( \"MAP", "local mapname = string.format( \"MAP"}, // line 225
-	{"GLOBAL", "if( dtable.counter < getn(dtable) ) then", "if( dtable.counter < #dtable ) then"}, // line 254
-	{"GLOBAL", "closefunc = getglobal( npcdef.codename..\"_use\" )", "closefunc = _G[npcdef.codename..\"_use\"]"}, // line 272
-	{"GLOBAL", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( %npcdef ) end )", "_G[npcdef.codename .. \"_init\"] = function() return NPC_Init( npcdef ) end"}, // line 317
-	{"GLOBA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( %npcdef, x, y, v1, v2 ) end )", "_G[npcdef.codename .. \"_use\"] = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"}, // line 318
-	{"GLOBAL", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"}, // 323
+    {"GLOBAL", "return gsub( s, \"\\n\", \"\\\\\\n\" )", "return string.gsub( s, \"\\n\", \"\\\\\\n\" )"},                                                                                                                                                       // line 10
+    {"GLOBAL", "strsub(", "string.sub("},                                                                                                                                                                                                                        // line 15
+    {"GLOBAL", "function save( i,v, nest )", "function func_namelookup(func)\nfor i,v in pairs(_G) do\nif type(v) == 'function' and v == func then\nreturn i\nend\nend\nend\nfunction save( i,v, nest )"},                                                       // line 13
+    {"GLOBAL", "if type(v) == 'userdata' or type(v) == 'function' then return end", "if type(v) == 'userdata' or i == 'package' or i == 'os' or i == 'io' or i == 'string' or i == 'table' or i == 'debug' or i == 'math' or i == 'coroutine' then return end"}, // Line 16
+    {"GLOBAL", "local t=type(v)", "local t=type(v)\nif (t == 'function' and nest == 0) then return end"},                                                                                                                                                        // line 18
+    {"GLOBAL", "then write_record(v, nest + 1)", "then write_record(v, nest + 1)\nelseif t=='function'    then write(savefile, func_namelookup(v)) if nest > 0 then write(savefile, ',' ) end"},                                                                 // line 32
+    {"GLOBAL", "for i,v in t do", "for i,v in pairs(t) do"},                                                                                                                                                                                                     // line 43
+    {"GLOBAL", "for i,v in globals() do", "for i,v in pairs(_G) do"},                                                                                                                                                                                            // line 52
+    {"GLOBAL", "for npcname,npcdata in npcs do", "for npcname,npcdata in pairs(npcs) do"},                                                                                                                                                                       // Line 66
+    {"GLOBAL", "for dlgname,dlgdata in npcdata.dialog do", "for dlgname,dlgdata in pairs(npcdata.dialog) do"},                                                                                                                                                   // Line 67
+    {"GLOBAL", "s = format( \"npcs.%s.dialog.%s.counter", "s = string.format( \"npcs.%s.dialog.%s.counter"},                                                                                                                                                     // Line 68
+    {"GLOBAL", "s = format( \"npcs.%s.dialog.%s.finished = ", "s = string.format( \"npcs.%s.dialog.%s.finished = "},                                                                                                                                             // line 70
+    {"GLOBAL", "if( getglobal( \"map\"..tostring(v1)..\"_complete\" ) ) then", "if( _G[\"map\"..tostring(v1)..\"_complete\"] ) then"},                                                                                                                           // line 219
+    {"GLOBAL", "local mapname = format( \"MAP", "local mapname = string.format( \"MAP"},                                                                                                                                                                         // line 225
+    {"GLOBAL", "if( dtable.counter < getn(dtable) ) then", "if( dtable.counter < #dtable ) then"},                                                                                                                                                               // line 254
+    {"GLOBAL", "closefunc = getglobal( npcdef.codename..\"_use\" )", "closefunc = _G[npcdef.codename..\"_use\"]"},                                                                                                                                               // line 272
+    {"GLOBAL", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( %npcdef ) end )", "_G[npcdef.codename .. \"_init\"] = function() return NPC_Init( npcdef ) end"},                                                                             // line 317
+    {"GLOBA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( %npcdef, x, y, v1, v2 ) end )", "_G[npcdef.codename .. \"_use\"] = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"},                              // line 318
+    {"GLOBAL", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"},                                                                                                                                                                                           // 323
 
-	{"MAP00", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"}, // line 924
-	{"MAP00", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"}, // line 926
+    {"MAP00", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},                                                              // line 924
+    {"MAP00", "tempfunc = function() emptybed_use( %x, %y, %v1, %v2 ) end", "tempfunc = function() emptybed_use(x, y, v1, v2) end"}, // line 926
 
-	{"MAP01", "strsub(", "string.sub("}, // line 23
-	{"MAP01", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"}, // line 766
-	{"MAP01", "if( chiste_index < getn( chiste_dialog ) )then", "if( chiste_index < #chiste_dialog ) then"}, // 845
+    {"MAP01", "strsub(", "string.sub("},                                                                     // line 23
+    {"MAP01", "if( covert_index < getn(covert_dialog) ) then", "if( covert_index < #covert_dialog ) then"},  // line 766
+    {"MAP01", "if( chiste_index < getn( chiste_dialog ) )then", "if( chiste_index < #chiste_dialog ) then"}, // 845
 
-	{"MAP10", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"}, // line 119
-	{"MAP10", "emptybed_use( %x, %y, %v1, %v2 )", "emptybed_use( x, y, v1, v2 )"}, // line 121
+    {"MAP10", "if( getn( beds ) == 0 ) then", "if( #beds == 0 ) then"},            // line 119
+    {"MAP10", "emptybed_use( %x, %y, %v1, %v2 )", "emptybed_use( x, y, v1, v2 )"}, // line 121
 
-	{"MAP15", "function cop5_5b()", "function cop5_4b()"}, // line 112
-	{"MAP15", "function cop5_5c()", "function cop5_4c()"}, // line 115
-	{"MAP15", "function cop5_5d()", "function cop5_4d()"}, // line 118
-	{"MAP15", "function cop5_5e()", "function cop5_4e()"}, // line 121
-	{"MAP15", "function cop5_5f()", "function cop5_4f()"}, // line 124
+    {"MAP15", "function cop5_5b()", "function cop5_4b()"}, // line 112
+    {"MAP15", "function cop5_5c()", "function cop5_4c()"}, // line 115
+    {"MAP15", "function cop5_5d()", "function cop5_4d()"}, // line 118
+    {"MAP15", "function cop5_5e()", "function cop5_4e()"}, // line 121
+    {"MAP15", "function cop5_5f()", "function cop5_4f()"}, // line 124
 
-	{"MAP19", "func = getglobal( \"frustrato_nice\"..tostring(frustrato_stage) )", "func = _G[ \"frustrato_nice\"..tostring(frustrato_stage) ]"}, // line 296
-	{"MAP19", "func = getglobal( \"frustrato_choice\"..tostring(frustrato_stage + 1) )", "func = _G[ \"frustrato_choice\"..tostring(frustrato_stage + 1) ]"}, // line 298
+    {"MAP19", "func = getglobal( \"frustrato_nice\"..tostring(frustrato_stage) )", "func = _G[ \"frustrato_nice\"..tostring(frustrato_stage) ]"},             // line 296
+    {"MAP19", "func = getglobal( \"frustrato_choice\"..tostring(frustrato_stage + 1) )", "func = _G[ \"frustrato_choice\"..tostring(frustrato_stage + 1) ]"}, // line 298
 
-	{"MAP11", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 51
+    {"MAP11", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 51
 
-	{"MAP21", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 105
+    {"MAP21", "mapstring = strsub( LASTMAP, 1, 5 )", "mapstring = string.sub( LASTMAP, 1, 5 )"}, // line 105
 
-	{"MAP29", "Message( format( \"", "Message( string.format( \""}, // line 195
+    {"MAP29", "Message( format( \"", "Message( string.format( \""}, // line 195
 
-	{"MAP30", "rots = 19 + random( 6 )", "rots = 19 + math.random( 6 )"}, // line 208
-	{"MAP30", "if i1 > getn(tiles)", "if i1 > #tiles"}, // line 211
-	{"MAP30", "if i2 > getn(tiles)", "if i2 > #tiles"}, // line 212
-	{"MAP30", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 213
-	{"MAP30", "rots = 13 + random( 4 )", "rots = 13 + math.random( 4 )"}, // line 234
-	{"MAP30", "if i2 > getn(tiles)", "if i2 > #tiles"}, // line 237
-	{"MAP30", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 238
-	{"MAP30", "rots = 13 + random( 4 )", "rots = 13 + math.random( 4 )"}, // line 258
-	{"MAP30", "if i3 > getn(tiles)", "if i3 > #tiles"}, // line 261
+    {"MAP30", "rots = 19 + random( 6 )", "rots = 19 + math.random( 6 )"}, // line 208
+    {"MAP30", "if i1 > getn(tiles)", "if i1 > #tiles"},                   // line 211
+    {"MAP30", "if i2 > getn(tiles)", "if i2 > #tiles"},                   // line 212
+    {"MAP30", "if i3 > getn(tiles)", "if i3 > #tiles"},                   // line 213
+    {"MAP30", "rots = 13 + random( 4 )", "rots = 13 + math.random( 4 )"}, // line 234
+    {"MAP30", "if i2 > getn(tiles)", "if i2 > #tiles"},                   // line 237
+    {"MAP30", "if i3 > getn(tiles)", "if i3 > #tiles"},                   // line 238
+    {"MAP30", "rots = 13 + random( 4 )", "rots = 13 + math.random( 4 )"}, // line 258
+    {"MAP30", "if i3 > getn(tiles)", "if i3 > #tiles"},                   // line 261
 
-	// Jump straight to credits
-	//{"CINE_OUTRO", "-- delegate", "-- delegate\nCine_FadeOutBlack( 40 )\nCredits()"},
+    // Jump straight to credits
+    //{"CINE_OUTRO", "-- delegate", "-- delegate\nCine_FadeOutBlack( 40 )\nCredits()"},
 
-	{nullptr, nullptr, nullptr}
-};
+    {nullptr, nullptr, nullptr}};
 
 LuaScript::LuaScript() {
 
@@ -109,13 +108,12 @@ LuaScript::LuaScript() {
 		_cameraXOff = 0;
 		_cameraYOff = 0;
 	} else {
-		_cameraXOff = (32 * 3 + 24);	// 3.75 Tiles Extra
-		_cameraYOff = (32 * 2 + 16);	// 2.50 Tiles Extra
+		_cameraXOff = (32 * 3 + 24); // 3.75 Tiles Extra
+		_cameraYOff = (32 * 2 + 16); // 2.50 Tiles Extra
 	}
 
 	_state = nullptr;
 	_systemInit = false;
-
 
 	_pcallErrorhandlerRegistryIndex = 0;
 	_globalLuaStream = nullptr;
@@ -311,7 +309,7 @@ static int cineFadeInBlack(lua_State *L) {
 
 	lua_pop(L, 1);
 
-	g_hdb->_ai->cineFadeIn(false, (int) steps);
+	g_hdb->_ai->cineFadeIn(false, (int)steps);
 
 	return 0;
 }
@@ -382,7 +380,7 @@ static int cineSetCamera(lua_State *L) {
 
 	lua_pop(L, 2);
 
-	g_hdb->_ai->cineSetCamera((int) x, (int) y);
+	g_hdb->_ai->cineSetCamera((int)x, (int)y);
 
 	return 0;
 }
@@ -400,7 +398,7 @@ static int cineMoveCamera(lua_State *L) {
 	g_hdb->_lua->checkParameters("cineMoveCamera", 3);
 
 	lua_pop(L, 3);
-	g_hdb->_ai->cineMoveCamera((int) x, (int) y, (int) speed);
+	g_hdb->_ai->cineMoveCamera((int)x, (int)y, (int)speed);
 
 	return 0;
 }
@@ -411,7 +409,7 @@ static int cineWait(lua_State *L) {
 	g_hdb->_lua->checkParameters("cineWait", 1);
 
 	lua_pop(L, 1);
-	g_hdb->_ai->cineWait((int) seconds);
+	g_hdb->_ai->cineWait((int)seconds);
 	return 0;
 }
 
@@ -566,11 +564,11 @@ static int cineDrawMaskedPic(lua_State *L) {
 static int cineMovePic(lua_State *L) {
 	const char *id = lua_tostring(L, 1);
 	const char *pic = lua_tostring(L, 2);
-	double	x1 = lua_tonumber(L, 3);
-	double	y1 = lua_tonumber(L, 4);
-	double	x2 = lua_tonumber(L, 5);
-	double	y2 = lua_tonumber(L, 6);
-	double	speed = lua_tonumber(L, 7);
+	double x1 = lua_tonumber(L, 3);
+	double y1 = lua_tonumber(L, 4);
+	double x2 = lua_tonumber(L, 5);
+	double y2 = lua_tonumber(L, 6);
+	double speed = lua_tonumber(L, 7);
 
 	g_hdb->_lua->checkParameters("cineMovePic", 7);
 
@@ -589,11 +587,11 @@ static int cineMovePic(lua_State *L) {
 static int cineMoveMaskedPic(lua_State *L) {
 	const char *id = lua_tostring(L, 1);
 	const char *pic = lua_tostring(L, 2);
-	double	x1 = lua_tonumber(L, 3);
-	double	y1 = lua_tonumber(L, 4);
-	double	x2 = lua_tonumber(L, 5);
-	double	y2 = lua_tonumber(L, 6);
-	double	speed = lua_tonumber(L, 7);
+	double x1 = lua_tonumber(L, 3);
+	double y1 = lua_tonumber(L, 4);
+	double x2 = lua_tonumber(L, 5);
+	double y2 = lua_tonumber(L, 6);
+	double speed = lua_tonumber(L, 7);
 
 	g_hdb->_lua->checkParameters("cineMoveMaskedPic", 7);
 
@@ -610,27 +608,27 @@ static int cineMoveMaskedPic(lua_State *L) {
 }
 
 static int cineSpawnEntity(lua_State *L) {
-	double type = lua_tonumber( L, 1 );
-	double dir = lua_tonumber( L, 2 );
-	double x = lua_tonumber( L, 3 );
-	double y = lua_tonumber( L, 4 );
-	const char *func_init = lua_tostring( L, 5 );
-	const char *func_action = lua_tostring( L, 6 );
-	const char *func_use = lua_tostring( L, 7 );
-	double dir2 =  lua_tonumber( L, 8 );
-	double level =  lua_tonumber( L, 9 );
-	double value1 = lua_tonumber( L, 10 );
-	double value2 = lua_tonumber( L, 11 );
+	double type = lua_tonumber(L, 1);
+	double dir = lua_tonumber(L, 2);
+	double x = lua_tonumber(L, 3);
+	double y = lua_tonumber(L, 4);
+	const char *func_init = lua_tostring(L, 5);
+	const char *func_action = lua_tostring(L, 6);
+	const char *func_use = lua_tostring(L, 7);
+	double dir2 = lua_tonumber(L, 8);
+	double level = lua_tonumber(L, 9);
+	double value1 = lua_tonumber(L, 10);
+	double value2 = lua_tonumber(L, 11);
 
-	int t = (int) type;
-	int d = (int) dir;
-	int d2 = (int) dir2;
+	int t = (int)type;
+	int d = (int)dir;
+	int d2 = (int)dir2;
 
 	g_hdb->_lua->checkParameters("Cine_SpawnEntity", 11);
 
 	lua_pop(L, 11);
 	g_hdb->_ai->cineSpawnEntity((AIType)t, (AIDir)d, (int)x, (int)y, func_init, func_action, func_use,
-			(AIDir)d2, (int)level, (int)value1, (int)value2);
+	                            (AIDir)d2, (int)level, (int)value1, (int)value2);
 	return 0;
 }
 
@@ -754,7 +752,7 @@ static int completeDelivery(lua_State *L) {
 }
 
 static int deliveriesLeft(lua_State *L) {
-	double	value = (double)g_hdb->_ai->getDeliveriesAmount();
+	double value = (double)g_hdb->_ai->getDeliveriesAmount();
 	lua_pushnumber(L, value);
 	return 1;
 }
@@ -808,7 +806,7 @@ static int setEntDir(lua_State *L) {
 	AIEntity *e = g_hdb->_ai->locateEntity(entName);
 
 	if (e) {
-		int	dd = (int)d;
+		int dd = (int)d;
 		e->dir = (AIDir)dd;
 	} else {
 		Common::String entMessageString = Common::String::format("Could not SetEntDir on '%s'", entName);
@@ -844,14 +842,14 @@ static int animEntity(lua_State *L) {
 
 static int setAnimFrame(lua_State *L) {
 	const char *entName = lua_tostring(L, 1);
-	double	state = lua_tonumber(L, 2);
-	double	frame = lua_tonumber(L, 3);
+	double state = lua_tonumber(L, 2);
+	double frame = lua_tonumber(L, 3);
 
 	g_hdb->_lua->checkParameters("setAnimFrame", 3);
 
 	lua_pop(L, 3);
 
-	int	s = (int)state;
+	int s = (int)state;
 	g_hdb->_ai->setLuaAnimFrame(entName, (AIState)s, (int)frame);
 
 	return 0;
@@ -947,9 +945,9 @@ static int dialogChoice(lua_State *L) {
 	const char *title = lua_tostring(L, 1);
 	const char *text = lua_tostring(L, 2);
 	const char *func = lua_tostring(L, 3);
-	const char *choice[10] = {0,0,0,0,0,0,0,0,0,0};
+	const char *choice[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-	int	amount = lua_gettop(L) - 3;
+	int amount = lua_gettop(L) - 3;
 	if (amount > 9)
 		amount = 9;
 
@@ -1136,14 +1134,14 @@ static int removeInv(lua_State *L) {
 
 static int removeInvItem(lua_State *L) {
 	// get the passed-in type value
-	double	search = lua_tonumber(L, 1);
-	double	number = lua_tonumber(L, 2);
+	double search = lua_tonumber(L, 1);
+	double number = lua_tonumber(L, 2);
 
 	g_hdb->_lua->checkParameters("removeInvItem", 2);
 
 	lua_pop(L, 2);
 
-	int	s = (int)search;
+	int s = (int)search;
 	// call the function & get return value
 	int result = (int)g_hdb->_ai->removeInvItemType((AIType)s, (int)number);
 	// send the return value back to Lua
@@ -1290,9 +1288,9 @@ static int purgeGlobals(lua_State *L) {
 
 static int textOut(lua_State *L) {
 	const char *string = lua_tostring(L, 1);
-	double	x = lua_tonumber(L, 2);
-	double	y = lua_tonumber(L, 3);
-	double	timer = lua_tonumber(L, 4);
+	double x = lua_tonumber(L, 2);
+	double y = lua_tonumber(L, 3);
+	double timer = lua_tonumber(L, 4);
 
 	g_hdb->_lua->checkParameters("textOut", 4);
 
@@ -1303,8 +1301,8 @@ static int textOut(lua_State *L) {
 
 static int centerTextOut(lua_State *L) {
 	const char *string = lua_tostring(L, 1);
-	double	y = lua_tonumber(L, 2);
-	double	timer = lua_tonumber(L, 3);
+	double y = lua_tonumber(L, 2);
+	double timer = lua_tonumber(L, 3);
 
 	g_hdb->_lua->checkParameters("centerTextOut", 3);
 
@@ -1329,7 +1327,7 @@ static int gotoMenu(lua_State *L) {
 }
 
 static int setInfobarDark(lua_State *L) {
-	double	value = lua_tonumber(L, 1);
+	double value = lua_tonumber(L, 1);
 
 	g_hdb->_lua->checkParameters("setInfobarDark", 1);
 
@@ -1341,7 +1339,7 @@ static int setInfobarDark(lua_State *L) {
 }
 
 static int setPointerState(lua_State *L) {
-	double	value = lua_tonumber(L, 1);
+	double value = lua_tonumber(L, 1);
 
 	g_hdb->_lua->checkParameters("setPointerState", 1);
 
@@ -1445,307 +1443,319 @@ struct VarInit {
 	const char *realName;
 	const char *luaName;
 } luaGlobalStrings[] = {
-	{ "Map00",	"MAP00"},
-	{ TILE_TELEPORT1,					"TILE_TELEPORT1"	},
-	{ TILE_SKY_STARS,					"TILE_SKY_STARS"	},
-	{ TILE_HOLDER1,						"TILE_HOLDER1"		},
-	{ TILE_HOLDERFULL,					"TILE_HOLDERFULL"	},
-	{ TILE_SWITCH1,						"TILE_SWITCH1"		},
-	{ TILE_1SWITCH1,					"TILE_1SWITCH1"		},
-	{ TILE_DOOR_N,						"TILE_DOOR_N"		},
-	{ TILE_DOOR_P,						"TILE_DOOR_P"		},
-	{ TILE_DOOR_S,						"TILE_DOOR_S"		},
-	{ TILE_ASKCOMP1,					"TILE_ASKCOMP1"		},
-	{ TILE_SWITCH_ON,					"TILE_SWITCH_ON"	},
-	{ TILE_1SWITCH_ON,					"TILE_1SWITCH_ON"	},
-	{ TILE_FLOORSHOCK,					"TILE_FLOORSHOCK"	},
-	{ TILE_DOOR_NV,						"TILE_DOOR_NV"		},
-	{ TILE_DOOR_PV,						"TILE_DOOR_PV"		},
-	{ TILE_DOOR_SV,						"TILE_DOOR_SV"		},
-	{ TILE_MAILSORT,					"TILE_MAILSORT"		},
-	{ TILE_BEDR_OPEN,					"TILE_BEDR_OPEN"	},
-	{ TILE_BEDL_OPEN,					"TILE_BEDL_OPEN"	},
-	{ TILE_BEDR_CLOSED,					"TILE_BEDR_CLOSED"	},
-	{ TILE_BEDL_CLOSED,					"TILE_BEDL_CLOSED"	},
-	{ TILE_FERRET,						"TILE_FERRET"		},
-	{ TILE_CABOPEN_T,					"TILE_CABOPEN_T"	},
-	{ TILE_CABOPEN_B,					"TILE_CABOPEN_B"	},
-	{ GROUP_ENT_ENVELOPE_WHITE_SIT"01",	"TILE_ENV_WHITE"	},
-	{ GROUP_ENT_ENVELOPE_BLUE_SIT"01",	"TILE_ENV_BLUE"		},
-	{ GROUP_ENT_ENVELOPE_RED_SIT"01",	"TILE_ENV_RED" 		},
-	{ GROUP_ENT_ENVELOPE_GREEN_SIT"01",	"TILE_ENV_GREEN"	},
-	{ GROUP_ENT_TRANSCEIVER_SIT"01",	"TILE_TRANSCEIVER"	},
-	{ TILE_HEAD_SCIENTIST,				"TILE_HEAD_SCIENTIST" },
-	{ TILE_HEAD_SPACEDUDE,				"TILE_HEAD_SPACEDUDE" },
-	{ TILE_HEAD_WORKER,					"TILE_HEAD_WORKER" },
-	{ TILE_HEAD_ACCOUNTANT,				"TILE_HEAD_ACCOUNTANT" },
-	{ TILE_HEAD_DOLLY,					"TILE_HEAD_DOLLY" },
-	{ TILE_HEAD_SARGE,					"TILE_HEAD_SARGE" },
-	{ TILE_BTUNNEL_BLOCK_B,				"TILE_BTUNNEL_BLOCK_B" },
-	{ TILE_BTUNNEL_BLOCK_L,				"TILE_BTUNNEL_BLOCK_L" },
-	{ TILE_BTUNNEL_BLOCK_R,				"TILE_BTUNNEL_BLOCK_R" },
-	{ TILE_BTUNNEL_BLOCK_T,				"TILE_BTUNNEL_BLOCK_T" },
-	{ TILE_BTUNNEL_DONE_B,				"TILE_BTUNNEL_DONE_B" },
-	{ TILE_BTUNNEL_DONE_L,				"TILE_BTUNNEL_DONE_L" },
-	{ TILE_BTUNNEL_DONE_R,				"TILE_BTUNNEL_DONE_R" },
-	{ TILE_BTUNNEL_DONE_T,				"TILE_BTUNNEL_DONE_T" },
-	{ GROUP_ENT_ROUTER_SIT"01",			"TILE_ROUTER" },
-	{ GROUP_ENT_NOTE_SIT"01",			"TILE_NOTE" },
-	{ TILE_INBOX,						"TILE_INBOX" },
-	{ TILE_MEMOS,						"TILE_MEMOS" },
-	{ TILE_A,							"TILE_A" },
-	{ TILE_B,							"TILE_B" },
-	{ TILE_C,							"TILE_C" },
-	{ TILE_D,							"TILE_D" },
-	{ TILE_E,							"TILE_E" },
-	{ TILE_F,							"TILE_F" },
-	{ TILE_G,							"TILE_G" },
-	{ TILE_H,							"TILE_H" },
-	{ TILE_I,							"TILE_I" },
-	{ TILE_J,							"TILE_J" },
-	{ TILE_K,							"TILE_K" },
-	{ TILE_L,							"TILE_L" },
-	{ TILE_M,							"TILE_M" },
-	{ TILE_N,							"TILE_N" },
-	{ TILE_O,							"TILE_O" },
-	{ TILE_P,							"TILE_P" },
-	{ TILE_Q,							"TILE_Q" },
-	{ TILE_R,							"TILE_R" },
-	{ TILE_S,							"TILE_S" },
-	{ TILE_T,							"TILE_T" },
-	{ TILE_U,							"TILE_U" },
-	{ TILE_V,							"TILE_V" },
-	{ TILE_W,							"TILE_W" },
-	{ TILE_X,							"TILE_X" },
-	{ TILE_Y,							"TILE_Y" },
-	{ TILE_Z,							"TILE_Z" },
-	{ TILE_SNOWDOOR_B,					"TILE_SNOWDOOR_B" },
-	{ TILE_PACKAGE,						"TILE_PACKAGE" },
-	{ TILE_TYRANIUM,					"TILE_TYRANIUM" },
-	{ TILE_CHAIR,						"TILE_CHAIR" },
-	{ TILE_ROUTER_HOLDER,				"TILE_ROUTER_HOLDER" },
-	{ TILE_PHAR_CARPET,					"TILE_PHAR_CARPET" },
-	{ TILE_WASTEBASKET,					"TILE_WASTEBASKET" },
-	{ TILE_PIZZA,						"TILE_PIZZA" },
-	{ TILE_HEADSTATUE,					"TILE_HEADSTATUE" },
-	{ TILE_SLOT_GOOD1,					"TILE_SLOT_GOOD1" },
-	{ TILE_SLOT_GOOD2,					"TILE_SLOT_GOOD2" },
-	{ TILE_SLOT_GOOD3,					"TILE_SLOT_GOOD3" },
-	{ TILE_SLOT_GOOD4,					"TILE_SLOT_GOOD4" },
-	{ TILE_SLOT_GOOD5,					"TILE_SLOT_GOOD5" },
-	{ TILE_SLOT_GOOD6,					"TILE_SLOT_GOOD6" },
-	{ TILE_SLOT_BAD,					"TILE_SLOT_BAD" },
-	{ GEM_BLUE_GFX,						"TILE_GEM_BLUE" },
-	{ GEM_RED_GFX,						"TILE_GEM_RED" },
-	{ GEM_GREEN_GFX,					"TILE_GEM_GREEN" },
-	{ TITLE_EPISODE1,					"PIC_TITLE_EPISODE1"	},
-	{ TITLE_EPISODE2,					"PIC_TITLE_EPISODE2"	},
-	{ TITLE_EPISODE3,					"PIC_TITLE_EPISODE3"	},
-	{ PIC_FROG_STATUE,					"PIC_FROG_STATUE" },
-	{ PIC_JENKINS,						"PIC_JENKINS" },
-	{ GEM_WHITE,						"TILE_GEM_WHITE" },
+    {"Map00", "MAP00"},
+    {TILE_TELEPORT1, "TILE_TELEPORT1"},
+    {TILE_SKY_STARS, "TILE_SKY_STARS"},
+    {TILE_HOLDER1, "TILE_HOLDER1"},
+    {TILE_HOLDERFULL, "TILE_HOLDERFULL"},
+    {TILE_SWITCH1, "TILE_SWITCH1"},
+    {TILE_1SWITCH1, "TILE_1SWITCH1"},
+    {TILE_DOOR_N, "TILE_DOOR_N"},
+    {TILE_DOOR_P, "TILE_DOOR_P"},
+    {TILE_DOOR_S, "TILE_DOOR_S"},
+    {TILE_ASKCOMP1, "TILE_ASKCOMP1"},
+    {TILE_SWITCH_ON, "TILE_SWITCH_ON"},
+    {TILE_1SWITCH_ON, "TILE_1SWITCH_ON"},
+    {TILE_FLOORSHOCK, "TILE_FLOORSHOCK"},
+    {TILE_DOOR_NV, "TILE_DOOR_NV"},
+    {TILE_DOOR_PV, "TILE_DOOR_PV"},
+    {TILE_DOOR_SV, "TILE_DOOR_SV"},
+    {TILE_MAILSORT, "TILE_MAILSORT"},
+    {TILE_BEDR_OPEN, "TILE_BEDR_OPEN"},
+    {TILE_BEDL_OPEN, "TILE_BEDL_OPEN"},
+    {TILE_BEDR_CLOSED, "TILE_BEDR_CLOSED"},
+    {TILE_BEDL_CLOSED, "TILE_BEDL_CLOSED"},
+    {TILE_FERRET, "TILE_FERRET"},
+    {TILE_CABOPEN_T, "TILE_CABOPEN_T"},
+    {TILE_CABOPEN_B, "TILE_CABOPEN_B"},
+    {GROUP_ENT_ENVELOPE_WHITE_SIT "01", "TILE_ENV_WHITE"},
+    {GROUP_ENT_ENVELOPE_BLUE_SIT "01", "TILE_ENV_BLUE"},
+    {GROUP_ENT_ENVELOPE_RED_SIT "01", "TILE_ENV_RED"},
+    {GROUP_ENT_ENVELOPE_GREEN_SIT "01", "TILE_ENV_GREEN"},
+    {GROUP_ENT_TRANSCEIVER_SIT "01", "TILE_TRANSCEIVER"},
+    {TILE_HEAD_SCIENTIST, "TILE_HEAD_SCIENTIST"},
+    {TILE_HEAD_SPACEDUDE, "TILE_HEAD_SPACEDUDE"},
+    {TILE_HEAD_WORKER, "TILE_HEAD_WORKER"},
+    {TILE_HEAD_ACCOUNTANT, "TILE_HEAD_ACCOUNTANT"},
+    {TILE_HEAD_DOLLY, "TILE_HEAD_DOLLY"},
+    {TILE_HEAD_SARGE, "TILE_HEAD_SARGE"},
+    {TILE_BTUNNEL_BLOCK_B, "TILE_BTUNNEL_BLOCK_B"},
+    {TILE_BTUNNEL_BLOCK_L, "TILE_BTUNNEL_BLOCK_L"},
+    {TILE_BTUNNEL_BLOCK_R, "TILE_BTUNNEL_BLOCK_R"},
+    {TILE_BTUNNEL_BLOCK_T, "TILE_BTUNNEL_BLOCK_T"},
+    {TILE_BTUNNEL_DONE_B, "TILE_BTUNNEL_DONE_B"},
+    {TILE_BTUNNEL_DONE_L, "TILE_BTUNNEL_DONE_L"},
+    {TILE_BTUNNEL_DONE_R, "TILE_BTUNNEL_DONE_R"},
+    {TILE_BTUNNEL_DONE_T, "TILE_BTUNNEL_DONE_T"},
+    {GROUP_ENT_ROUTER_SIT "01", "TILE_ROUTER"},
+    {GROUP_ENT_NOTE_SIT "01", "TILE_NOTE"},
+    {TILE_INBOX, "TILE_INBOX"},
+    {TILE_MEMOS, "TILE_MEMOS"},
+    {TILE_A, "TILE_A"},
+    {TILE_B, "TILE_B"},
+    {TILE_C, "TILE_C"},
+    {TILE_D, "TILE_D"},
+    {TILE_E, "TILE_E"},
+    {TILE_F, "TILE_F"},
+    {TILE_G, "TILE_G"},
+    {TILE_H, "TILE_H"},
+    {TILE_I, "TILE_I"},
+    {TILE_J, "TILE_J"},
+    {TILE_K, "TILE_K"},
+    {TILE_L, "TILE_L"},
+    {TILE_M, "TILE_M"},
+    {TILE_N, "TILE_N"},
+    {TILE_O, "TILE_O"},
+    {TILE_P, "TILE_P"},
+    {TILE_Q, "TILE_Q"},
+    {TILE_R, "TILE_R"},
+    {TILE_S, "TILE_S"},
+    {TILE_T, "TILE_T"},
+    {TILE_U, "TILE_U"},
+    {TILE_V, "TILE_V"},
+    {TILE_W, "TILE_W"},
+    {TILE_X, "TILE_X"},
+    {TILE_Y, "TILE_Y"},
+    {TILE_Z, "TILE_Z"},
+    {TILE_SNOWDOOR_B, "TILE_SNOWDOOR_B"},
+    {TILE_PACKAGE, "TILE_PACKAGE"},
+    {TILE_TYRANIUM, "TILE_TYRANIUM"},
+    {TILE_CHAIR, "TILE_CHAIR"},
+    {TILE_ROUTER_HOLDER, "TILE_ROUTER_HOLDER"},
+    {TILE_PHAR_CARPET, "TILE_PHAR_CARPET"},
+    {TILE_WASTEBASKET, "TILE_WASTEBASKET"},
+    {TILE_PIZZA, "TILE_PIZZA"},
+    {TILE_HEADSTATUE, "TILE_HEADSTATUE"},
+    {TILE_SLOT_GOOD1, "TILE_SLOT_GOOD1"},
+    {TILE_SLOT_GOOD2, "TILE_SLOT_GOOD2"},
+    {TILE_SLOT_GOOD3, "TILE_SLOT_GOOD3"},
+    {TILE_SLOT_GOOD4, "TILE_SLOT_GOOD4"},
+    {TILE_SLOT_GOOD5, "TILE_SLOT_GOOD5"},
+    {TILE_SLOT_GOOD6, "TILE_SLOT_GOOD6"},
+    {TILE_SLOT_BAD, "TILE_SLOT_BAD"},
+    {GEM_BLUE_GFX, "TILE_GEM_BLUE"},
+    {GEM_RED_GFX, "TILE_GEM_RED"},
+    {GEM_GREEN_GFX, "TILE_GEM_GREEN"},
+    {TITLE_EPISODE1, "PIC_TITLE_EPISODE1"},
+    {TITLE_EPISODE2, "PIC_TITLE_EPISODE2"},
+    {TITLE_EPISODE3, "PIC_TITLE_EPISODE3"},
+    {PIC_FROG_STATUE, "PIC_FROG_STATUE"},
+    {PIC_JENKINS, "PIC_JENKINS"},
+    {GEM_WHITE, "TILE_GEM_WHITE"},
 
-	{ CINE_INTROSHIP,					"PIC_CINE_INTROSHIP"	},
-	{ CINE_LITTLE_MBOT,					"PIC_CINE_LITTLE_MBOT"	},
-	{ CINE_CLOCK,						"PIC_CINE_CLOCK"		},
-	{ MONKEYLOGOSCREEN,					"PIC_MONKEYLOGOSCREEN"	},
-	{ MONKEYLOGO_OOHOOH,				"PIC_MONKEYLOGO_OOHOOH" },
-	{ MONKEYLOGO_SMILE,					"PIC_MONKEYLOGO_SMILE"	},
-	{ PIC_DEMOSCREEN,					"PIC_DEMOSCREEN" },
-	{ PIC_DEMOSCREEN2,					"PIC_DEMOSCREEN2" },
-	{ PIC_ENV_WHITE,					"PIC_ENV_WHITE" },
-	{ PIC_TEAM_BRIAN,					"PIC_TEAM_BRIAN" },
-	{ PIC_TEAM_STEVIE,					"PIC_TEAM_STEVIE" },
-	{ PIC_TEAM_JOSH,					"PIC_TEAM_JOSH" },
-	{ PIC_TEAM_TOM,						"PIC_TEAM_TOM" },
-	{ PIC_TEAM_JOHN,					"PIC_TEAM_JOHN" },
-	{ PIC_TEAM_LUCAS,					"PIC_TEAM_LUCAS" },
+    {CINE_INTROSHIP, "PIC_CINE_INTROSHIP"},
+    {CINE_LITTLE_MBOT, "PIC_CINE_LITTLE_MBOT"},
+    {CINE_CLOCK, "PIC_CINE_CLOCK"},
+    {MONKEYLOGOSCREEN, "PIC_MONKEYLOGOSCREEN"},
+    {MONKEYLOGO_OOHOOH, "PIC_MONKEYLOGO_OOHOOH"},
+    {MONKEYLOGO_SMILE, "PIC_MONKEYLOGO_SMILE"},
+    {PIC_DEMOSCREEN, "PIC_DEMOSCREEN"},
+    {PIC_DEMOSCREEN2, "PIC_DEMOSCREEN2"},
+    {PIC_ENV_WHITE, "PIC_ENV_WHITE"},
+    {PIC_TEAM_BRIAN, "PIC_TEAM_BRIAN"},
+    {PIC_TEAM_STEVIE, "PIC_TEAM_STEVIE"},
+    {PIC_TEAM_JOSH, "PIC_TEAM_JOSH"},
+    {PIC_TEAM_TOM, "PIC_TEAM_TOM"},
+    {PIC_TEAM_JOHN, "PIC_TEAM_JOHN"},
+    {PIC_TEAM_LUCAS, "PIC_TEAM_LUCAS"},
 
-	{ PIC_RANK1,						"PIC_RANK1" },
-	{ PIC_RANK2,						"PIC_RANK2" },
-	{ PIC_RANK3,						"PIC_RANK3" },
-	{ PIC_RANK4,						"PIC_RANK4" },
-	{ PIC_RANK5,						"PIC_RANK5" },
-	{nullptr, nullptr}
-};
+    {PIC_RANK1, "PIC_RANK1"},
+    {PIC_RANK2, "PIC_RANK2"},
+    {PIC_RANK3, "PIC_RANK3"},
+    {PIC_RANK4, "PIC_RANK4"},
+    {PIC_RANK5, "PIC_RANK5"},
+    {nullptr, nullptr}};
 
 // For AI States, to be implemented
 struct NumberInit {
 	int value;
 	const char *luaName;
 } luaGlobalValues[] = {
-	{ DIR_NONE,			"DIR_NONE"	},
-	{ DIR_DOWN,			"DIR_DOWN"	},
-	{ DIR_UP,			"DIR_UP"	},
-	{ DIR_LEFT,			"DIR_LEFT"	},
-	{ DIR_RIGHT,		"DIR_RIGHT"	},
+    {DIR_NONE, "DIR_NONE"},
+    {DIR_DOWN, "DIR_DOWN"},
+    {DIR_UP, "DIR_UP"},
+    {DIR_LEFT, "DIR_LEFT"},
+    {DIR_RIGHT, "DIR_RIGHT"},
 
-	{ STATE_NONE,			"STATE_NONE"			},
-	{ STATE_STANDDOWN,		"STATE_STANDDOWN"		},
-	{ STATE_STANDUP,		"STATE_STANDUP"			},
-	{ STATE_STANDLEFT,		"STATE_STANDLEFT"		},
-	{ STATE_STANDRIGHT,		"STATE_STANDRIGHT"		},
-	{ STATE_BLINK,			"STATE_BLINK"			},
-	{ STATE_MOVEUP,			"STATE_MOVEUP"			},
-	{ STATE_MOVEDOWN,		"STATE_MOVEDOWN"		},
-	{ STATE_MOVELEFT,		"STATE_MOVELEFT"		},
-	{ STATE_MOVERIGHT,		"STATE_MOVERIGHT"		},
-	{ STATE_DYING,			"STATE_DYING"			},
-	{ STATE_DEAD,			"STATE_DEAD"			},
-	{ STATE_GOODJOB,		"STATE_GOODJOB"			},
-	{ STATE_HORRIBLE1,		"STATE_HORRIBLE1"		},
-	{ STATE_HORRIBLE2,		"STATE_HORRIBLE2"		},
-	{ STATE_HORRIBLE3,		"STATE_HORRIBLE3"		},
-	{ STATE_HORRIBLE4,		"STATE_HORRIBLE4"		},
-	{ STATE_PUSHUP,			"STATE_PUSHUP"			},
-	{ STATE_PUSHDOWN,		"STATE_PUSHDOWN"		},
-	{ STATE_PUSHLEFT,		"STATE_PUSHLEFT"		},
-	{ STATE_PUSHRIGHT,		"STATE_PUSHRIGHT"		},
-	{ STATE_GRABUP,			"STATE_GRABUP"			},
-	{ STATE_GRABDOWN,		"STATE_GRABDOWN"		},
-	{ STATE_GRABLEFT,		"STATE_GRABLEFT"		},
-	{ STATE_GRABRIGHT,		"STATE_GRABRIGHT"		},
-	{ STATE_ATK_CLUB_UP,	"STATE_ATK_CLUB_UP"		},
-	{ STATE_ATK_CLUB_DOWN,	"STATE_ATK_CLUB_DOWN"	},
-	{ STATE_ATK_CLUB_LEFT,	"STATE_ATK_CLUB_LEFT"	},
-	{ STATE_ATK_CLUB_RIGHT,	"STATE_ATK_CLUB_RIGHT"	},
-	{ STATE_ATK_STUN_DOWN,	"STATE_ATK_STUN_DOWN"	},
-	{ STATE_ATK_STUN_UP,	"STATE_ATK_STUN_UP"		},
-	{ STATE_ATK_STUN_LEFT,	"STATE_ATK_STUN_LEFT"	},
-	{ STATE_ATK_STUN_RIGHT,	"STATE_ATK_STUN_RIGHT"	},
-	{ STATE_ATK_SLUG_DOWN,	"STATE_ATK_SLUG_DOWN"	},
-	{ STATE_ATK_SLUG_UP,	"STATE_ATK_SLUG_UP"		},
-	{ STATE_ATK_SLUG_LEFT,	"STATE_ATK_SLUG_LEFT"	},
-	{ STATE_ATK_SLUG_RIGHT,	"STATE_ATK_SLUG_RIGHT"	},
-	{ STATE_FLOATING,		"STATE_FLOATING"		},
-	{ STATE_FLOATDOWN,		"STATE_FLOATDOWN"		},
-	{ STATE_FLOATUP,		"STATE_FLOATUP"			},
-	{ STATE_FLOATLEFT,		"STATE_FLOATLEFT"		},
-	{ STATE_FLOATRIGHT,		"STATE_FLOATRIGHT"		},
-	{ STATE_MELTED,			"STATE_MELTED"			},
-	{ STATE_SLIDING,		"STATE_SLIDING"			},
-	{ STATE_SHOCKING,		"STATE_SHOCKING"		},
-	{ STATE_EXPLODING,		"STATE_EXPLODING"		},
-	{ STATE_USEDOWN,		"STATE_USEDOWN"			},
-	{ STATE_USEUP,			"STATE_USEUP"			},
-	{ STATE_USELEFT,		"STATE_USELEFT"			},
-	{ STATE_USERIGHT,		"STATE_USERIGHT"		},
-	{ STATE_MEER_MOVE,		"STATE_MEER_MOVE"		},
-	{ STATE_MEER_APPEAR,	"STATE_MEER_APPEAR"		},
-	{ STATE_MEER_BITE,		"STATE_MEER_BITE"		},
-	{ STATE_MEER_DISAPPEAR,	"STATE_MEER_DISAPPEAR"	},
-	{ STATE_MEER_LOOK,		"STATE_MEER_LOOK"		},
-	{ STATE_ICEP_PEEK,		"STATE_ICEP_PEEK"		},
-	{ STATE_ICEP_APPEAR,	"STATE_ICEP_APPEAR"		},
-	{ STATE_ICEP_THROWDOWN,	"STATE_ICEP_THROWDOWN"	},
-	{ STATE_ICEP_THROWRIGHT,"STATE_ICEP_THROWRIGHT"	},
-	{ STATE_ICEP_THROWLEFT,	"STATE_ICEP_THROWLEFT"	},
-	{ STATE_ICEP_DISAPPEAR,	"STATE_ICEP_DISAPPEAR"	},
-	{ STATE_ANGRY,			"STATE_ANGRY"			},
-	{ STATE_PANIC,			"STATE_PANIC"			},
-	{ STATE_LAUGH,			"STATE_LAUGH"			},
-	{ STATE_KISSLEFT,		"STATE_KISSLEFT"		},
-	{ STATE_KISSRIGHT,		"STATE_KISSRIGHT"		},
-	{ STATE_DOLLYUSERIGHT,	"STATE_DOLLYUSERIGHT"	},
-	{ STATE_YELL,			"STATE_YELL"			},
+    {STATE_NONE, "STATE_NONE"},
+    {STATE_STANDDOWN, "STATE_STANDDOWN"},
+    {STATE_STANDUP, "STATE_STANDUP"},
+    {STATE_STANDLEFT, "STATE_STANDLEFT"},
+    {STATE_STANDRIGHT, "STATE_STANDRIGHT"},
+    {STATE_BLINK, "STATE_BLINK"},
+    {STATE_MOVEUP, "STATE_MOVEUP"},
+    {STATE_MOVEDOWN, "STATE_MOVEDOWN"},
+    {STATE_MOVELEFT, "STATE_MOVELEFT"},
+    {STATE_MOVERIGHT, "STATE_MOVERIGHT"},
+    {STATE_DYING, "STATE_DYING"},
+    {STATE_DEAD, "STATE_DEAD"},
+    {STATE_GOODJOB, "STATE_GOODJOB"},
+    {STATE_HORRIBLE1, "STATE_HORRIBLE1"},
+    {STATE_HORRIBLE2, "STATE_HORRIBLE2"},
+    {STATE_HORRIBLE3, "STATE_HORRIBLE3"},
+    {STATE_HORRIBLE4, "STATE_HORRIBLE4"},
+    {STATE_PUSHUP, "STATE_PUSHUP"},
+    {STATE_PUSHDOWN, "STATE_PUSHDOWN"},
+    {STATE_PUSHLEFT, "STATE_PUSHLEFT"},
+    {STATE_PUSHRIGHT, "STATE_PUSHRIGHT"},
+    {STATE_GRABUP, "STATE_GRABUP"},
+    {STATE_GRABDOWN, "STATE_GRABDOWN"},
+    {STATE_GRABLEFT, "STATE_GRABLEFT"},
+    {STATE_GRABRIGHT, "STATE_GRABRIGHT"},
+    {STATE_ATK_CLUB_UP, "STATE_ATK_CLUB_UP"},
+    {STATE_ATK_CLUB_DOWN, "STATE_ATK_CLUB_DOWN"},
+    {STATE_ATK_CLUB_LEFT, "STATE_ATK_CLUB_LEFT"},
+    {STATE_ATK_CLUB_RIGHT, "STATE_ATK_CLUB_RIGHT"},
+    {STATE_ATK_STUN_DOWN, "STATE_ATK_STUN_DOWN"},
+    {STATE_ATK_STUN_UP, "STATE_ATK_STUN_UP"},
+    {STATE_ATK_STUN_LEFT, "STATE_ATK_STUN_LEFT"},
+    {STATE_ATK_STUN_RIGHT, "STATE_ATK_STUN_RIGHT"},
+    {STATE_ATK_SLUG_DOWN, "STATE_ATK_SLUG_DOWN"},
+    {STATE_ATK_SLUG_UP, "STATE_ATK_SLUG_UP"},
+    {STATE_ATK_SLUG_LEFT, "STATE_ATK_SLUG_LEFT"},
+    {STATE_ATK_SLUG_RIGHT, "STATE_ATK_SLUG_RIGHT"},
+    {STATE_FLOATING, "STATE_FLOATING"},
+    {STATE_FLOATDOWN, "STATE_FLOATDOWN"},
+    {STATE_FLOATUP, "STATE_FLOATUP"},
+    {STATE_FLOATLEFT, "STATE_FLOATLEFT"},
+    {STATE_FLOATRIGHT, "STATE_FLOATRIGHT"},
+    {STATE_MELTED, "STATE_MELTED"},
+    {STATE_SLIDING, "STATE_SLIDING"},
+    {STATE_SHOCKING, "STATE_SHOCKING"},
+    {STATE_EXPLODING, "STATE_EXPLODING"},
+    {STATE_USEDOWN, "STATE_USEDOWN"},
+    {STATE_USEUP, "STATE_USEUP"},
+    {STATE_USELEFT, "STATE_USELEFT"},
+    {STATE_USERIGHT, "STATE_USERIGHT"},
+    {STATE_MEER_MOVE, "STATE_MEER_MOVE"},
+    {STATE_MEER_APPEAR, "STATE_MEER_APPEAR"},
+    {STATE_MEER_BITE, "STATE_MEER_BITE"},
+    {STATE_MEER_DISAPPEAR, "STATE_MEER_DISAPPEAR"},
+    {STATE_MEER_LOOK, "STATE_MEER_LOOK"},
+    {STATE_ICEP_PEEK, "STATE_ICEP_PEEK"},
+    {STATE_ICEP_APPEAR, "STATE_ICEP_APPEAR"},
+    {STATE_ICEP_THROWDOWN, "STATE_ICEP_THROWDOWN"},
+    {STATE_ICEP_THROWRIGHT, "STATE_ICEP_THROWRIGHT"},
+    {STATE_ICEP_THROWLEFT, "STATE_ICEP_THROWLEFT"},
+    {STATE_ICEP_DISAPPEAR, "STATE_ICEP_DISAPPEAR"},
+    {STATE_ANGRY, "STATE_ANGRY"},
+    {STATE_PANIC, "STATE_PANIC"},
+    {STATE_LAUGH, "STATE_LAUGH"},
+    {STATE_KISSLEFT, "STATE_KISSLEFT"},
+    {STATE_KISSRIGHT, "STATE_KISSRIGHT"},
+    {STATE_DOLLYUSERIGHT, "STATE_DOLLYUSERIGHT"},
+    {STATE_YELL, "STATE_YELL"},
 
-	{ STATE_NONE, nullptr }
-};
+    {STATE_NONE, nullptr}};
 
 struct FuncInit {
 	const char *luaName;
-	int (*function) (lua_State *L);
+	int (*function)(lua_State *L);
 } luaFuncs[] = {
-	{  "Dialog",				dialog				},
-	{  "DialogChoice",			dialogChoice		},
-	{  "Message",				message				},
-	{  "QueryInv",				queryInv			},
-	{  "QueryInvItem",			queryInvItem		},
-	{  "RemoveInv",				removeInv			},
-	{  "RemoveInvItem",			removeInvItem		},
-	{  "AddInvItem",			addInvItem			},
-	{  "KeepInvItem",			keepInvItem			},
-	{  "PurgeInv",				purgeInv			},
-	{  "StartMusic",			startMusic			},
-	{  "StopMusic",				stopMusic			},
-	{  "FadeInMusic",			fadeInMusic			},
-	{  "FadeOutMusic",			fadeOutMusic		},
-	{  "RegisterSound",			registerSound		},
-	{  "PlaySound",				playSound			},
-	{  "FreeSound",				freeSound			},
-	{  "StartMap",				startMap			},
-	{  "Tile_ClearFG",			clearForeground		},
-	{  "Tile_SetFG",			setForeground		},
-	{  "Tile_SetBG",			setBackground		},
-	{  "GetEntityXY",			getEntityXY			},
-	{  "UseEntity",				useEntity			},
-	{  "SetEntity",				setEntity			},
-	{  "SetEntDir",				setEntDir			},
-	{  "RemoveEntity",			removeEntity		},
-	{  "AnimEntity",			animEntity			},
-	{  "SetAnimFrame",			setAnimFrame		},
-	{  "EntityFace",			entityFace			},
-	{  "KillTrigger",			killTrigger			},
-	{  "SpawnEntity",			spawnEntity			},
-	{  "Animation",				animation			},
-	{  "NewDelivery",			newDelivery			},
-	{  "CompleteDelivery",		completeDelivery	},
-	{  "DeliveriesLeft",		deliveriesLeft		},
-	{  "SaveGlobal",			saveGlobal			},
-	{  "LoadGlobal",			loadGlobal			},
-	{  "PurgeGlobals",			purgeGlobals		},
-	{  "TextOut",				textOut				},
-	{  "CenterTextOut",			centerTextOut		},
-	{  "SnowOn",				turnOnSnow			},
-	{  "SnowOff",				turnOffSnow			},
-	{  "GotoMenu",				gotoMenu			},
-	{  "SetInfobarDark",		setInfobarDark		},
-	{  "SetPointerState",		setPointerState		},
-	{  "PlayVoice",				playVoice			},
+    {"Dialog", dialog},
+    {"DialogChoice", dialogChoice},
+    {"Message", message},
+    {"QueryInv", queryInv},
+    {"QueryInvItem", queryInvItem},
+    {"RemoveInv", removeInv},
+    {"RemoveInvItem", removeInvItem},
+    {"AddInvItem", addInvItem},
+    {"KeepInvItem", keepInvItem},
+    {"PurgeInv", purgeInv},
+    {"StartMusic", startMusic},
+    {"StopMusic", stopMusic},
+    {"FadeInMusic", fadeInMusic},
+    {"FadeOutMusic", fadeOutMusic},
+    {"RegisterSound", registerSound},
+    {"PlaySound", playSound},
+    {"FreeSound", freeSound},
+    {"StartMap", startMap},
+    {"Tile_ClearFG", clearForeground},
+    {"Tile_SetFG", setForeground},
+    {"Tile_SetBG", setBackground},
+    {"GetEntityXY", getEntityXY},
+    {"UseEntity", useEntity},
+    {"SetEntity", setEntity},
+    {"SetEntDir", setEntDir},
+    {"RemoveEntity", removeEntity},
+    {"AnimEntity", animEntity},
+    {"SetAnimFrame", setAnimFrame},
+    {"EntityFace", entityFace},
+    {"KillTrigger", killTrigger},
+    {"SpawnEntity", spawnEntity},
+    {"Animation", animation},
+    {"NewDelivery", newDelivery},
+    {"CompleteDelivery", completeDelivery},
+    {"DeliveriesLeft", deliveriesLeft},
+    {"SaveGlobal", saveGlobal},
+    {"LoadGlobal", loadGlobal},
+    {"PurgeGlobals", purgeGlobals},
+    {"TextOut", textOut},
+    {"CenterTextOut", centerTextOut},
+    {"SnowOn", turnOnSnow},
+    {"SnowOff", turnOffSnow},
+    {"GotoMenu", gotoMenu},
+    {"SetInfobarDark", setInfobarDark},
+    {"SetPointerState", setPointerState},
+    {"PlayVoice", playVoice},
 
-	{  "Cine_StartCine",		cineStart			},
-	{  "Cine_StopCine",			cineStop			},
-	{  "Cine_StartMap",			cineStartMap		},
-	{  "Cine_LockPlayer",		cineLockPlayer		},
-	{  "Cine_UnlockPlayer",		cineUnlockPlayer	},
-	{  "Cine_SetCamera",		cineSetCamera		},
-	{  "Cine_ResetCamera",		cineResetCamera		},
-	{  "Cine_MoveCamera",		cineMoveCamera		},
-	{  "Cine_Wait",				cineWait			},
-	{  "Cine_WaitUntilDone",	cineWaitUntilDone	},
-	{  "Cine_UseEntity",		cineUseEntity		},
-	{  "Cine_SetEntity",		cineSetEntity		},
-	{  "Cine_RemoveEntity",		cineRemoveEntity	},
-	{  "Cine_EntityFace",		cineEntityFace		},
-	{  "Cine_MoveEntity",		cineMoveEntity		},
-	{  "Cine_AnimEntity",		cineAnimEntity		},
-	{  "Cine_SetAnimFrame",		cineSetAnimFrame	},
-	{  "Cine_Dialog",			cineDialog			},
-	{  "Cine_DrawPic",			cineDrawPic			},
-	{  "Cine_DrawMaskedPic",	cineDrawMaskedPic	},
-	{  "Cine_MovePic",			cineMovePic			},
-	{  "Cine_MoveMaskedPic",	cineMoveMaskedPic	},
-	{  "Cine_FadeOutBlack",		cineFadeOutBlack	},
-	{  "Cine_FadeInBlack",		cineFadeInBlack		},
-	{  "Cine_FadeOutWhite",		cineFadeOutWhite	},
-	{  "Cine_FadeInWhite",		cineFadeInWhite		},
-	{  "Cine_SpawnEntity",		cineSpawnEntity		},
-	{  "Cine_PlaySound",		cinePlaySound		},
-	{  "Cine_Tile_ClearFG",		cineClearForeground },
-	{  "Cine_Tile_SetFG",		cineSetForeground	},
-	{  "Cine_Tile_SetBG",		cineSetBackground	},
-	{  "Cine_Function",			cineFunction		},
-	{  "Cine_TextOut",			cineTextOut			},
-	{  "Cine_CenterTextOut",	cineCenterTextOut	},
-	{  "Cine_PlayVoice",		cinePlayVoice		},
+    {"Cine_StartCine", cineStart},
+    {"Cine_StopCine", cineStop},
+    {"Cine_StartMap", cineStartMap},
+    {"Cine_LockPlayer", cineLockPlayer},
+    {"Cine_UnlockPlayer", cineUnlockPlayer},
+    {"Cine_SetCamera", cineSetCamera},
+    {"Cine_ResetCamera", cineResetCamera},
+    {"Cine_MoveCamera", cineMoveCamera},
+    {"Cine_Wait", cineWait},
+    {"Cine_WaitUntilDone", cineWaitUntilDone},
+    {"Cine_UseEntity", cineUseEntity},
+    {"Cine_SetEntity", cineSetEntity},
+    {"Cine_RemoveEntity", cineRemoveEntity},
+    {"Cine_EntityFace", cineEntityFace},
+    {"Cine_MoveEntity", cineMoveEntity},
+    {"Cine_AnimEntity", cineAnimEntity},
+    {"Cine_SetAnimFrame", cineSetAnimFrame},
+    {"Cine_Dialog", cineDialog},
+    {"Cine_DrawPic", cineDrawPic},
+    {"Cine_DrawMaskedPic", cineDrawMaskedPic},
+    {"Cine_MovePic", cineMovePic},
+    {"Cine_MoveMaskedPic", cineMoveMaskedPic},
+    {"Cine_FadeOutBlack", cineFadeOutBlack},
+    {"Cine_FadeInBlack", cineFadeInBlack},
+    {"Cine_FadeOutWhite", cineFadeOutWhite},
+    {"Cine_FadeInWhite", cineFadeInWhite},
+    {"Cine_SpawnEntity", cineSpawnEntity},
+    {"Cine_PlaySound", cinePlaySound},
+    {"Cine_Tile_ClearFG", cineClearForeground},
+    {"Cine_Tile_SetFG", cineSetForeground},
+    {"Cine_Tile_SetBG", cineSetBackground},
+    {"Cine_Function", cineFunction},
+    {"Cine_TextOut", cineTextOut},
+    {"Cine_CenterTextOut", cineCenterTextOut},
+    {"Cine_PlayVoice", cinePlayVoice},
 
-	{	"openfile",				openFile,			},
-	{	"write",				write,				},
-	{	"closefile",			closeFile,			},
-	{	"dofile",				dofile,				},
-	{	"writeto",				writeto,			},
-	{ nullptr, nullptr }
-};
+    {
+        "openfile",
+        openFile,
+    },
+    {
+        "write",
+        write,
+    },
+    {
+        "closefile",
+        closeFile,
+    },
+    {
+        "dofile",
+        dofile,
+    },
+    {
+        "writeto",
+        writeto,
+    },
+    {nullptr, nullptr}};
 
 namespace {
 int panicCB(lua_State *L) {
@@ -1759,7 +1769,7 @@ void debugHook(lua_State *L, lua_Debug *ar) {
 
 	debug("LUA: %s %s: %s %d", ar->namewhat, ar->name, ar->short_src, ar->currentline);
 }
-}
+} // namespace
 
 bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scriptName, int32 length) {
 	if (_state != nullptr) {
@@ -1819,10 +1829,10 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 	// Error handler for lua_pcall calls
 	// The code below contains a local error handler function
 	const char errorHandlerCode[] =
-		"local function ErrorHandler(message) "
-		"   return message .. '\\n' .. debug.traceback('', 2) "
-		"end "
-		"return ErrorHandler";
+	    "local function ErrorHandler(message) "
+	    "   return message .. '\\n' .. debug.traceback('', 2) "
+	    "end "
+	    "return ErrorHandler";
 
 	// Compile the code
 	if (luaL_loadbuffer(_state, errorHandlerCode, strlen(errorHandlerCode), "PCALL ERRORHANDLER") != 0) {
@@ -2102,7 +2112,7 @@ void LuaScript::checkParameters(const char *func, int params) {
 
 void lua_printstack(lua_State *L) {
 	int n = lua_gettop(L);
-	for (int i = 1; i <= n; i++)  {
+	for (int i = 1; i <= n; i++) {
 		debug(1, "STACK %d %s %s", i, lua_tostring(L, i), luaL_typename(L, i));
 	}
 }
@@ -2117,4 +2127,4 @@ const char *LuaScript::getStringOffStack() {
 	return string;
 }
 
-}
+} // namespace HDB

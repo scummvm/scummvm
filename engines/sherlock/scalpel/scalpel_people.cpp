@@ -90,7 +90,7 @@ void ScalpelPerson::adjustSprite() {
 		++_frameNumber;
 
 	if (_frameNumber >= (int)_walkSequences[_sequenceNumber]._sequences.size() ||
-			_walkSequences[_sequenceNumber][_frameNumber] == 0) {
+	    _walkSequences[_sequenceNumber][_frameNumber] == 0) {
 		switch (_sequenceNumber) {
 		case STOP_UP:
 		case STOP_DOWN:
@@ -119,7 +119,7 @@ void ScalpelPerson::adjustSprite() {
 	// Check to see if character has entered an exit zone
 	if (!_walkCount && scene._walkedInScene && scene._goToScene == -1) {
 		Common::Rect charRect(_position.x / FIXED_INT_MULTIPLIER - 5, _position.y / FIXED_INT_MULTIPLIER - 2,
-			_position.x / FIXED_INT_MULTIPLIER + 5, _position.y / FIXED_INT_MULTIPLIER + 2);
+		                      _position.x / FIXED_INT_MULTIPLIER + 5, _position.y / FIXED_INT_MULTIPLIER + 2);
 		Exit *exit = scene.checkForExit(charRect);
 
 		if (exit) {
@@ -219,9 +219,8 @@ void ScalpelPerson::setWalking() {
 			_walkDest.x -= temp;
 
 		delta = Common::Point(
-			ABS(_position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
-			ABS(_position.y / FIXED_INT_MULTIPLIER - _walkDest.y)
-		);
+		    ABS(_position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
+		    ABS(_position.y / FIXED_INT_MULTIPLIER - _walkDest.y));
 
 		// If we're ready to move a sufficient distance, that's it. Otherwise,
 		// move onto the next portion of the walk path, if there is one
@@ -371,7 +370,7 @@ void ScalpelPerson::walkToCoords(const Point32 &destPos, int destDir) {
 
 Common::Point ScalpelPerson::getSourcePoint() const {
 	return Common::Point(_position.x / FIXED_INT_MULTIPLIER + frameWidth() / 2,
-		_position.y / FIXED_INT_MULTIPLIER);
+	                     _position.y / FIXED_INT_MULTIPLIER);
 }
 
 void ScalpelPerson::synchronize(Serializer &s) {
@@ -521,7 +520,7 @@ const Common::Point ScalpelPeople::restrictToZone(int zoneId, const Common::Poin
 	// the destination, to find the point at which the zone will be left
 	const Common::Rect &destRect = scene._zones[zoneId];
 	const Common::Point destCenter((destRect.left + destRect.right) / 2,
-		(destRect.top + destRect.bottom) / 2);
+	                               (destRect.top + destRect.bottom) / 2);
 	const Common::Point delta = walkDest - destCenter;
 	Point32 pt(destCenter.x * FIXED_INT_MULTIPLIER, destCenter.y * FIXED_INT_MULTIPLIER);
 
@@ -533,7 +532,7 @@ const Common::Point ScalpelPeople::restrictToZone(int zoneId, const Common::Poin
 	// Set the new walk destination to the last point that was in the
 	// zone just before it was left
 	return Common::Point((pt.x - delta.x * 2) / FIXED_INT_MULTIPLIER,
-		(pt.y - delta.y * 2) / FIXED_INT_MULTIPLIER);
+	                     (pt.y - delta.y * 2) / FIXED_INT_MULTIPLIER);
 }
 
 void ScalpelPeople::setListenSequence(int speaker, int sequenceNum) {
@@ -555,7 +554,7 @@ void ScalpelPeople::setListenSequence(int speaker, int sequenceNum) {
 				for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
 					obj._sequences[idx] = people._characters[speaker]._stillSequences[idx];
 					if (idx > 0 && !people._characters[speaker]._talkSequences[idx] &&
-						!people._characters[speaker]._talkSequences[idx - 1])
+					    !people._characters[speaker]._talkSequences[idx - 1])
 						break;
 				}
 

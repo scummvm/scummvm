@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/pathfinder/u6_astar_path.h"
 #include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/pathfinder/u6_astar_path.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -52,7 +52,7 @@ sint32 U6AStarPath::step_cost(MapCoord &c1, MapCoord &c2) {
 		c += 2;
 	}
 	// add cost of *original* step
-//    c += game->get_game_map()->get_impedance(c1.x, c1.y, c1.z);
+	//    c += game->get_game_map()->get_impedance(c1.x, c1.y, c1.z);
 
 	if (c1.x != c2.x && c1.y != c2.y) // prefer non-diagonal
 		c *= 2;

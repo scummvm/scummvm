@@ -41,5 +41,5 @@ void Creature::update(bool isPreUpdate) {
 	}
 }
 
-} // End of namespace Ultima1
+} // namespace Shared
 } // End of namespace Ultima

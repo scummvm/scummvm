@@ -36,9 +36,9 @@ bool SliceAnimations::open(const Common::String &name) {
 	if (!file.open(_vm->getResourceStream(name), name))
 		return false;
 
-	_timestamp    = file.readUint32LE();
-	_pageSize     = file.readUint32LE();
-	_pageCount    = file.readUint32LE();
+	_timestamp = file.readUint32LE();
+	_pageSize = file.readUint32LE();
+	_pageCount = file.readUint32LE();
 	_paletteCount = file.readUint32LE();
 
 	if (_timestamp != 0x3457b6f6) // Timestamp: Wed, 29 Oct 1997 22:21:42 GMT
@@ -59,7 +59,8 @@ bool SliceAnimations::open(const Common::String &name) {
 			_palettes[i].color[j].b = color_b;
 
 			const int bladeToScummVmConstant = 256 / 32; // 5 bits to 8 bits
-			_palettes[i].value[j] = screenFormat.RGBToColor(color_r * bladeToScummVmConstant, color_g * bladeToScummVmConstant, color_b * bladeToScummVmConstant);;
+			_palettes[i].value[j] = screenFormat.RGBToColor(color_r * bladeToScummVmConstant, color_g * bladeToScummVmConstant, color_b * bladeToScummVmConstant);
+			;
 		}
 	}
 
@@ -67,14 +68,14 @@ bool SliceAnimations::open(const Common::String &name) {
 	_animations.resize(animationCount);
 
 	for (uint32 i = 0; i != animationCount; ++i) {
-		_animations[i].frameCount       = file.readUint32LE();
-		_animations[i].frameSize        = file.readUint32LE();
-		_animations[i].fps              = file.readFloatLE();
+		_animations[i].frameCount = file.readUint32LE();
+		_animations[i].frameSize = file.readUint32LE();
+		_animations[i].fps = file.readFloatLE();
 		_animations[i].positionChange.x = file.readFloatLE();
 		_animations[i].positionChange.y = file.readFloatLE();
 		_animations[i].positionChange.z = file.readFloatLE();
-		_animations[i].facingChange     = file.readFloatLE();
-		_animations[i].offset           = file.readUint32LE();
+		_animations[i].facingChange = file.readFloatLE();
+		_animations[i].offset = file.readUint32LE();
 	}
 
 	_pages.resize(_pageCount);
@@ -150,15 +151,11 @@ bool SliceAnimations::openFrames(int fileNumber) {
 		// So that all animation resources are available at all times as if we just had the single HDFRAMES.DAT file
 		for (uint i = 1; i < 5; ++i) {
 			_framesPageFile.close(i);
-			if (i == 1
-			    && (!_framesPageFile.open("CDFRAMES.DAT", i))
-			    && (!_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i))
-			) {
+			if (i == 1 && (!_framesPageFile.open("CDFRAMES.DAT", i)) && (!_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i))) {
 				// For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
 				return false;
 			} else if (i != 1 &&
-			          !_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i)
-			) {
+			           !_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", i), i)) {
 				return false;
 			}
 		}
@@ -176,8 +173,7 @@ bool SliceAnimations::PageFile::open(const Common::String &name, int8 fileIdx) {
 	if (timestamp != _sliceAnimations->_timestamp)
 		return false;
 
-	if (!_sliceAnimations->_vm->_cutContent
-		|| (_pageOffsets.size() < _sliceAnimations->_pageCount) ) {
+	if (!_sliceAnimations->_vm->_cutContent || (_pageOffsets.size() < _sliceAnimations->_pageCount)) {
 		_pageOffsets.resize(_sliceAnimations->_pageCount);
 		_pageOffsetsFileIdx.resize(_sliceAnimations->_pageCount);
 		for (uint32 i = 0; i != _sliceAnimations->_pageCount; ++i) {
@@ -186,7 +182,7 @@ bool SliceAnimations::PageFile::open(const Common::String &name, int8 fileIdx) {
 		}
 	}
 
-	uint32 pageCount  = _files[fileIdx].readUint32LE();
+	uint32 pageCount = _files[fileIdx].readUint32LE();
 	uint32 dataOffset = 8 + 4 * pageCount;
 
 	for (uint32 i = 0; i != pageCount; ++i) {
@@ -211,10 +207,7 @@ void SliceAnimations::PageFile::close(int8 fileIdx) {
 }
 
 void *SliceAnimations::PageFile::loadPage(uint32 pageNumber) {
-	if (_pageOffsets.size() < _sliceAnimations->_pageCount
-	    || _pageOffsetsFileIdx.size() < _sliceAnimations->_pageCount
-	    || _pageOffsets[pageNumber] == -1
-	    || _pageOffsetsFileIdx[pageNumber] == -1) {
+	if (_pageOffsets.size() < _sliceAnimations->_pageCount || _pageOffsetsFileIdx.size() < _sliceAnimations->_pageCount || _pageOffsets[pageNumber] == -1 || _pageOffsetsFileIdx[pageNumber] == -1) {
 		return nullptr;
 	}
 
@@ -255,14 +248,14 @@ void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
 	uint32 frameOffset = _animations[animation].offset + frame * _animations[animation].frameSize;
-	uint32 page        = frameOffset / _pageSize;
-	uint32 pageOffset  = frameOffset % _pageSize;
+	uint32 page = frameOffset / _pageSize;
+	uint32 pageOffset = frameOffset % _pageSize;
 
-	if (_pages[page]._data == nullptr) {                          // if not cached already
-		_pages[page]._data = _coreAnimPageFile.loadPage(page);    // look in COREANIM first
+	if (_pages[page]._data == nullptr) {                       // if not cached already
+		_pages[page]._data = _coreAnimPageFile.loadPage(page); // look in COREANIM first
 
-		if (_pages[page]._data == nullptr) {                      // if not in COREAMIM
-			_pages[page]._data = _framesPageFile.loadPage(page);  // Look in CDFRAMES or HDFRAMES loaded data
+		if (_pages[page]._data == nullptr) {                     // if not in COREAMIM
+			_pages[page]._data = _framesPageFile.loadPage(page); // Look in CDFRAMES or HDFRAMES loaded data
 
 			if (_pages[page]._data == nullptr) {
 				error("Unable to locate page %d for animation %d frame %d", page, animation, frame);

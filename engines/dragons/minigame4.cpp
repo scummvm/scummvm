@@ -21,12 +21,12 @@
  */
 #include "dragons/minigame4.h"
 #include "dragons/actor.h"
-#include "dragons/dragons.h"
 #include "dragons/dragonini.h"
-#include "dragons/talk.h"
+#include "dragons/dragons.h"
 #include "dragons/inventory.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
+#include "dragons/talk.h"
 
 namespace Dragons {
 
@@ -111,9 +111,9 @@ void Minigame4::run() {
 	// EnableVSyncEvent();
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
 	_vm->_inventory->setState(uVar3);
-//	_vm->_screen->loadPalette(4, (uint)*(uint16 *)
-//					(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10)
-//			   + *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
+	//	_vm->_screen->loadPalette(4, (uint)*(uint16 *)
+	//					(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10)
+	//			   + *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 	_vm->_screen->updatePaletteTransparency(4, 1, 0xff, true);
 	_vm->_scene->setSceneId(uVar1);
 	_vm->setAllFlags(uVar4);
@@ -145,14 +145,14 @@ void Minigame4::actorDialog(Actor *actorId, uint16 param_2, uint32 textIndex) {
 }
 
 uint16 Minigame4::runDanceBattle() {
-	uint16 auStack2192 [1000];
+	uint16 auStack2192[1000];
 	uint16 currentStep;
-	uint16 round1StepPositionTbl [12];
-	uint16 round1DurationTbl [12];
-	uint16 round2StepPositionTbl [12];
-	uint16 round2DurationTbl [12];
-	uint16 round3StepPositionTbl [20];
-	uint16 round3DurationTbl [20];
+	uint16 round1StepPositionTbl[12];
+	uint16 round1DurationTbl[12];
+	uint16 round2StepPositionTbl[12];
+	uint16 round2DurationTbl[12];
+	uint16 round3StepPositionTbl[20];
+	uint16 round3DurationTbl[20];
 
 	Common::File *fd = new Common::File();
 	if (!fd->open("arc4.bin")) {
@@ -208,10 +208,10 @@ uint16 Minigame4::runDanceBattle() {
 			_vm->waitForFrames(0x10a);
 			_bruteActor->updateSequence(8);
 			//TODO
-//			if ((((DAT_8008e7e8 != 0) || (DAT_8008e848 != 0)) || (DAT_8008e844 != 0)) ||
-//				(DAT_8008e874 != 0)) {
-//				clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
-//			}
+			//			if ((((DAT_8008e7e8 != 0) || (DAT_8008e848 != 0)) || (DAT_8008e844 != 0)) ||
+			//				(DAT_8008e874 != 0)) {
+			//				clearTextDialog((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
+			//			}
 			_flickerActor->waitUntilFlag8SetThenSet1000AndWaitFor4();
 			_flickerActor->updateSequence(7);
 			actorTalk(_flickerActor, 0, 0x4CC8);
@@ -227,11 +227,11 @@ uint16 Minigame4::runDanceBattle() {
 	return 1;
 }
 
-const static uint16 xDancePosTbl[6] = { 0xAC, 0xB5, 0xBC, 0xB3, 0xB4, 0xAF };
-const static uint16 yDancePosTbl[6] = { 0x1C, 0x23, 0x1A, 0x14, 0x12, 0xF };
+const static uint16 xDancePosTbl[6] = {0xAC, 0xB5, 0xBC, 0xB3, 0xB4, 0xAF};
+const static uint16 yDancePosTbl[6] = {0x1C, 0x23, 0x1A, 0x14, 0x12, 0xF};
 
-const static uint16 uint16_ARRAY_80090400[6] = { 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F };
-const static uint16 uint16_ARRAY_800903e8[6] = { 1, 2, 3, 4, 5, 6 };
+const static uint16 uint16_ARRAY_80090400[6] = {0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F};
+const static uint16 uint16_ARRAY_800903e8[6] = {1, 2, 3, 4, 5, 6};
 
 uint16 Minigame4::singleDanceRound(uint16 currentDancePosition, uint16 duration) {
 	_dat_80090438->_x_pos = xDancePosTbl[(uint)currentDancePosition];
@@ -240,7 +240,7 @@ uint16 Minigame4::singleDanceRound(uint16 currentDancePosition, uint16 duration)
 	_ps1ControllerActor->updateSequence(uint16_ARRAY_80090400[(uint)currentDancePosition]);
 	_bruteActor->updateSequence(uint16_ARRAY_800903e8[(uint)currentDancePosition]);
 	while ((_flickerActor->_sequenceID != uint16_ARRAY_800903e8[(uint)currentDancePosition] &&
-			(duration = duration + -1, duration != 0))) {
+	        (duration = duration + -1, duration != 0))) {
 		_vm->waitForFrames(1);
 		updateFlickerFromInput();
 	}
@@ -266,13 +266,13 @@ void Minigame4::resetActors() {
 	while (_bruteActor->_sequenceID != 0 || _flickerActor->_sequenceID != 0) {
 		_vm->waitForFrames(1);
 		if (_bruteActor->_sequenceID != 0 &&
-			_bruteActor->isFlagSet(ACTOR_FLAG_4) &&
-			_bruteActor->isFlagSet(ACTOR_FLAG_8)) {
+		    _bruteActor->isFlagSet(ACTOR_FLAG_4) &&
+		    _bruteActor->isFlagSet(ACTOR_FLAG_8)) {
 			_bruteActor->updateSequence(0);
 		}
 		if (_flickerActor->_sequenceID != 0 &&
-			_flickerActor->isFlagSet(ACTOR_FLAG_4) &&
-			_flickerActor->isFlagSet(ACTOR_FLAG_8)) {
+		    _flickerActor->isFlagSet(ACTOR_FLAG_4) &&
+		    _flickerActor->isFlagSet(ACTOR_FLAG_8)) {
 			_flickerActor->updateSequence(0);
 		}
 	}
@@ -330,6 +330,5 @@ void videoUpdaterFunction() {
 	vm->_scene->setLayerOffset(0, Common::Point(layer0XOffset, 0));
 	layer0XOffset = (layer0XOffset + 4) % 512;
 }
-
 
 } // End of namespace Dragons

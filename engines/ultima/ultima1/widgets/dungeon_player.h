@@ -23,9 +23,9 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_PLAYER_H
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_PLAYER_H
 
+#include "ultima/shared/early/game.h"
 #include "ultima/shared/maps/dungeon_widget.h"
 #include "ultima/shared/maps/map_widget.h"
-#include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -40,8 +40,7 @@ public:
 	 */
 	DungeonPlayer(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::DungeonWidget(game, map) {}
 	DungeonPlayer(Shared::Game *game, Shared::Maps::MapBase *map, const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) : Shared::Maps::DungeonWidget(game, map, pt, dir) {}
-	DungeonPlayer(Shared::Game *game, Shared::Maps::MapBase *map, const Common::String &name, const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) :
-		Shared::Maps::DungeonWidget(game, map, name, pt, dir) {}
+	DungeonPlayer(Shared::Game *game, Shared::Maps::MapBase *map, const Common::String &name, const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) : Shared::Maps::DungeonWidget(game, map, name, pt, dir) {}
 
 	/**
 	 * Destructor
@@ -64,4 +63,3 @@ public:
 } // End of namespace Ultima
 
 #endif
-

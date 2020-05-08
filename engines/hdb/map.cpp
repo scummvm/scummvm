@@ -20,11 +20,11 @@
  *
  */
 
-#include "hdb/hdb.h"
+#include "hdb/map.h"
 #include "hdb/ai.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
-#include "hdb/map.h"
+#include "hdb/hdb.h"
 
 namespace HDB {
 
@@ -316,13 +316,13 @@ bool Map::load(Common::SeekableReadStream *stream) {
 	_backgroundOffset = stream->readUint32LE();
 	_foregroundOffset = stream->readUint32LE();
 	_iconNum = stream->readUint16LE();
-	_infoNum = stream->readUint16LE();            // not used in the original
+	_infoNum = stream->readUint16LE(); // not used in the original
 	_iconListOffset = stream->readUint32LE();
-	_infoListOffset = stream->readUint32LE();     // not used in the original
+	_infoListOffset = stream->readUint32LE(); // not used in the original
 
 	debug(5, "map: w: %d(%x), h: %d(%x) bg: %x fg: %x icon#: %d(%x) icon: %x info#: %d(%x) info: %x",
-			_width, _width, _height, _height, _backgroundOffset, _foregroundOffset, _iconNum, _iconNum,
-			_iconListOffset, _infoNum, _infoNum, _infoListOffset);
+	      _width, _width, _height, _height, _backgroundOffset, _foregroundOffset, _iconNum, _iconNum,
+	      _iconListOffset, _infoNum, _infoNum, _infoListOffset);
 
 	uint size = _width * _height;
 	// Reading Background
@@ -385,264 +385,263 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		AIType type;
 		AIDir dir;
 	} aiInfo[] = {
-		{ AI_GUY,			DIR_DOWN },
-		{ AI_GUY,			DIR_UP },
-		{ AI_GUY,			DIR_RIGHT },
-		{ AI_GUY,			DIR_LEFT },
+	    {AI_GUY, DIR_DOWN},
+	    {AI_GUY, DIR_UP},
+	    {AI_GUY, DIR_RIGHT},
+	    {AI_GUY, DIR_LEFT},
 
-		{ ITEM_ENV_WHITE,	DIR_NONE },
-		{ ITEM_ENV_BLUE,	DIR_NONE },
-		{ ITEM_ENV_RED,		DIR_NONE },
-		{ ITEM_ENV_GREEN,	DIR_NONE },
+	    {ITEM_ENV_WHITE, DIR_NONE},
+	    {ITEM_ENV_BLUE, DIR_NONE},
+	    {ITEM_ENV_RED, DIR_NONE},
+	    {ITEM_ENV_GREEN, DIR_NONE},
 
-		{ AI_LASER,			DIR_RIGHT },
-		{ AI_LASER,			DIR_DOWN },
-		{ AI_LASER,			DIR_LEFT },
-		{ AI_LASER,			DIR_UP },
+	    {AI_LASER, DIR_RIGHT},
+	    {AI_LASER, DIR_DOWN},
+	    {AI_LASER, DIR_LEFT},
+	    {AI_LASER, DIR_UP},
 
-		{ AI_DIVERTER,		DIR_DOWN },
-		{ AI_DIVERTER,		DIR_UP },
-		{ AI_DIVERTER,		DIR_RIGHT },
-		{ AI_DIVERTER,		DIR_LEFT },
+	    {AI_DIVERTER, DIR_DOWN},
+	    {AI_DIVERTER, DIR_UP},
+	    {AI_DIVERTER, DIR_RIGHT},
+	    {AI_DIVERTER, DIR_LEFT},
 
-		{ AI_FOURFIRER,		DIR_RIGHT },
-		{ AI_FOURFIRER,		DIR_DOWN},
-		{ AI_FOURFIRER,		DIR_LEFT },
-		{ AI_FOURFIRER,		DIR_UP },
+	    {AI_FOURFIRER, DIR_RIGHT},
+	    {AI_FOURFIRER, DIR_DOWN},
+	    {AI_FOURFIRER, DIR_LEFT},
+	    {AI_FOURFIRER, DIR_UP},
 
-		{ INFO_ARROW_TURN,	DIR_DOWN },
-		{ INFO_ARROW_TURN,	DIR_UP },
-		{ INFO_ARROW_TURN,	DIR_RIGHT },
-		{ INFO_ARROW_TURN,	DIR_LEFT },
+	    {INFO_ARROW_TURN, DIR_DOWN},
+	    {INFO_ARROW_TURN, DIR_UP},
+	    {INFO_ARROW_TURN, DIR_RIGHT},
+	    {INFO_ARROW_TURN, DIR_LEFT},
 
-		{ INFO_ARROW_STOP,	DIR_DOWN },
-		{ INFO_ARROW_STOP,	DIR_UP },
-		{ INFO_ARROW_STOP,	DIR_RIGHT },
-		{ INFO_ARROW_STOP,	DIR_LEFT },
+	    {INFO_ARROW_STOP, DIR_DOWN},
+	    {INFO_ARROW_STOP, DIR_UP},
+	    {INFO_ARROW_STOP, DIR_RIGHT},
+	    {INFO_ARROW_STOP, DIR_LEFT},
 
-		{ ITEM_CELL,		DIR_NONE },
+	    {ITEM_CELL, DIR_NONE},
 
-		{ AI_CRATE,			DIR_NONE },
-		{ AI_LIGHTBARREL,	DIR_NONE },
-		{ AI_HEAVYBARREL,	DIR_NONE },
-		{ AI_BOOMBARREL,	DIR_NONE },
+	    {AI_CRATE, DIR_NONE},
+	    {AI_LIGHTBARREL, DIR_NONE},
+	    {AI_HEAVYBARREL, DIR_NONE},
+	    {AI_BOOMBARREL, DIR_NONE},
 
-		{ ITEM_TRANSCEIVER, DIR_NONE },
-		{ ITEM_CLUB,		DIR_NONE },
-		{ ITEM_ROBOSTUNNER, DIR_NONE },
-		{ ITEM_SLUGSLINGER, DIR_NONE },
+	    {ITEM_TRANSCEIVER, DIR_NONE},
+	    {ITEM_CLUB, DIR_NONE},
+	    {ITEM_ROBOSTUNNER, DIR_NONE},
+	    {ITEM_SLUGSLINGER, DIR_NONE},
 
-		{ AI_SCIENTIST,		DIR_DOWN },
-		{ AI_SCIENTIST,		DIR_UP },
-		{ AI_SCIENTIST,		DIR_RIGHT },
-		{ AI_SCIENTIST,		DIR_LEFT },
+	    {AI_SCIENTIST, DIR_DOWN},
+	    {AI_SCIENTIST, DIR_UP},
+	    {AI_SCIENTIST, DIR_RIGHT},
+	    {AI_SCIENTIST, DIR_LEFT},
 
-		{ AI_WORKER,		DIR_DOWN },
-		{ AI_WORKER,		DIR_UP },
-		{ AI_WORKER,		DIR_RIGHT },
-		{ AI_WORKER,		DIR_LEFT },
+	    {AI_WORKER, DIR_DOWN},
+	    {AI_WORKER, DIR_UP},
+	    {AI_WORKER, DIR_RIGHT},
+	    {AI_WORKER, DIR_LEFT},
 
-		{ AI_SHOCKBOT,		DIR_DOWN },
-		{ AI_SHOCKBOT,		DIR_UP },
-		{ AI_SHOCKBOT,		DIR_RIGHT },
-		{ AI_SHOCKBOT,		DIR_LEFT },
+	    {AI_SHOCKBOT, DIR_DOWN},
+	    {AI_SHOCKBOT, DIR_UP},
+	    {AI_SHOCKBOT, DIR_RIGHT},
+	    {AI_SHOCKBOT, DIR_LEFT},
 
-		{ AI_RIGHTBOT,		DIR_DOWN },
-		{ AI_RIGHTBOT,		DIR_UP },
-		{ AI_RIGHTBOT,		DIR_RIGHT },
-		{ AI_RIGHTBOT,		DIR_LEFT },
+	    {AI_RIGHTBOT, DIR_DOWN},
+	    {AI_RIGHTBOT, DIR_UP},
+	    {AI_RIGHTBOT, DIR_RIGHT},
+	    {AI_RIGHTBOT, DIR_LEFT},
 
-		{ AI_PUSHBOT,		DIR_DOWN },
-		{ AI_PUSHBOT,		DIR_UP },
-		{ AI_PUSHBOT,		DIR_RIGHT },
-		{ AI_PUSHBOT,		DIR_LEFT },
+	    {AI_PUSHBOT, DIR_DOWN},
+	    {AI_PUSHBOT, DIR_UP},
+	    {AI_PUSHBOT, DIR_RIGHT},
+	    {AI_PUSHBOT, DIR_LEFT},
 
-		{ AI_LISTENBOT,		DIR_DOWN },
-		{ AI_LISTENBOT,		DIR_UP },
-		{ AI_LISTENBOT,		DIR_RIGHT },
-		{ AI_LISTENBOT,		DIR_LEFT },
+	    {AI_LISTENBOT, DIR_DOWN},
+	    {AI_LISTENBOT, DIR_UP},
+	    {AI_LISTENBOT, DIR_RIGHT},
+	    {AI_LISTENBOT, DIR_LEFT},
 
-		{ ITEM_MONKEYSTONE, DIR_NONE },
+	    {ITEM_MONKEYSTONE, DIR_NONE},
 
-		{ INFO_TELEPORTER1,	DIR_NONE },
-		{ INFO_TELEPORTER2,	DIR_NONE },
-		{ INFO_TELEPORTER3,	DIR_NONE },
-		{ INFO_TELEPORTER4,	DIR_NONE },
-		{ INFO_TELEPORTER5,	DIR_NONE },
-		{ INFO_TELEPORTER6,	DIR_NONE },
-		{ INFO_TELEPORTER7,	DIR_NONE },
-		{ INFO_TELEPORTER8,	DIR_NONE },
-		{ INFO_TELEPORTER9,	DIR_NONE },
-		{ INFO_TELEPORTER10,	DIR_NONE },
-		{ INFO_TELEPORTER11,	DIR_NONE },
-		{ INFO_TELEPORTER12,	DIR_NONE },
-		{ INFO_TELEPORTER13,	DIR_NONE },
-		{ INFO_TELEPORTER14,	DIR_NONE },
-		{ INFO_TELEPORTER15,	DIR_NONE },
-		{ INFO_TELEPORTER16,	DIR_NONE },
-		{ INFO_TELEPORTER17,	DIR_NONE },
-		{ INFO_TELEPORTER18,	DIR_NONE },
-		{ INFO_TELEPORTER19,	DIR_NONE },
-		{ INFO_TELEPORTER20,	DIR_NONE },
+	    {INFO_TELEPORTER1, DIR_NONE},
+	    {INFO_TELEPORTER2, DIR_NONE},
+	    {INFO_TELEPORTER3, DIR_NONE},
+	    {INFO_TELEPORTER4, DIR_NONE},
+	    {INFO_TELEPORTER5, DIR_NONE},
+	    {INFO_TELEPORTER6, DIR_NONE},
+	    {INFO_TELEPORTER7, DIR_NONE},
+	    {INFO_TELEPORTER8, DIR_NONE},
+	    {INFO_TELEPORTER9, DIR_NONE},
+	    {INFO_TELEPORTER10, DIR_NONE},
+	    {INFO_TELEPORTER11, DIR_NONE},
+	    {INFO_TELEPORTER12, DIR_NONE},
+	    {INFO_TELEPORTER13, DIR_NONE},
+	    {INFO_TELEPORTER14, DIR_NONE},
+	    {INFO_TELEPORTER15, DIR_NONE},
+	    {INFO_TELEPORTER16, DIR_NONE},
+	    {INFO_TELEPORTER17, DIR_NONE},
+	    {INFO_TELEPORTER18, DIR_NONE},
+	    {INFO_TELEPORTER19, DIR_NONE},
+	    {INFO_TELEPORTER20, DIR_NONE},
 
-		{ INFO_LEVELEXIT,	DIR_NONE },
+	    {INFO_LEVELEXIT, DIR_NONE},
 
-		{ INFO_ACTION1,		DIR_NONE },
-		{ INFO_ACTION2,		DIR_NONE },
-		{ INFO_ACTION3,		DIR_NONE },
-		{ INFO_ACTION4,		DIR_NONE },
-		{ INFO_ACTION5,		DIR_NONE },
-		{ INFO_ACTION6,		DIR_NONE },
-		{ INFO_ACTION7,		DIR_NONE },
-		{ INFO_ACTION8,		DIR_NONE },
-		{ INFO_ACTION9,		DIR_NONE },
-		{ INFO_ACTION10,	DIR_NONE },
-		{ INFO_ACTION11,	DIR_NONE },
-		{ INFO_ACTION12,	DIR_NONE },
-		{ INFO_ACTION13,	DIR_NONE },
-		{ INFO_ACTION14,	DIR_NONE },
-		{ INFO_ACTION15,	DIR_NONE },
-		{ INFO_ACTION16,	DIR_NONE },
-		{ INFO_ACTION17,	DIR_NONE },
-		{ INFO_ACTION18,	DIR_NONE },
-		{ INFO_ACTION19,	DIR_NONE },
-		{ INFO_ACTION20,	DIR_NONE },
+	    {INFO_ACTION1, DIR_NONE},
+	    {INFO_ACTION2, DIR_NONE},
+	    {INFO_ACTION3, DIR_NONE},
+	    {INFO_ACTION4, DIR_NONE},
+	    {INFO_ACTION5, DIR_NONE},
+	    {INFO_ACTION6, DIR_NONE},
+	    {INFO_ACTION7, DIR_NONE},
+	    {INFO_ACTION8, DIR_NONE},
+	    {INFO_ACTION9, DIR_NONE},
+	    {INFO_ACTION10, DIR_NONE},
+	    {INFO_ACTION11, DIR_NONE},
+	    {INFO_ACTION12, DIR_NONE},
+	    {INFO_ACTION13, DIR_NONE},
+	    {INFO_ACTION14, DIR_NONE},
+	    {INFO_ACTION15, DIR_NONE},
+	    {INFO_ACTION16, DIR_NONE},
+	    {INFO_ACTION17, DIR_NONE},
+	    {INFO_ACTION18, DIR_NONE},
+	    {INFO_ACTION19, DIR_NONE},
+	    {INFO_ACTION20, DIR_NONE},
 
-		{ AI_SPACEDUDE,		DIR_DOWN },
-		{ AI_SPACEDUDE,		DIR_UP },
-		{ AI_SPACEDUDE,		DIR_RIGHT },
-		{ AI_SPACEDUDE,		DIR_LEFT },
+	    {AI_SPACEDUDE, DIR_DOWN},
+	    {AI_SPACEDUDE, DIR_UP},
+	    {AI_SPACEDUDE, DIR_RIGHT},
+	    {AI_SPACEDUDE, DIR_LEFT},
 
-		{ AI_SERGEANT,		DIR_DOWN },
-		{ AI_SERGEANT,		DIR_UP },
-		{ AI_SERGEANT,		DIR_RIGHT },
-		{ AI_SERGEANT,		DIR_LEFT },
+	    {AI_SERGEANT, DIR_DOWN},
+	    {AI_SERGEANT, DIR_UP},
+	    {AI_SERGEANT, DIR_RIGHT},
+	    {AI_SERGEANT, DIR_LEFT},
 
-		{ AI_MAINTBOT,		DIR_DOWN },
-		{ AI_MAINTBOT,		DIR_UP },
-		{ AI_MAINTBOT,		DIR_RIGHT },
-		{ AI_MAINTBOT,		DIR_LEFT },
+	    {AI_MAINTBOT, DIR_DOWN},
+	    {AI_MAINTBOT, DIR_UP},
+	    {AI_MAINTBOT, DIR_RIGHT},
+	    {AI_MAINTBOT, DIR_LEFT},
 
-		{ INFO_ACTION_AUTO,	DIR_NONE },
+	    {INFO_ACTION_AUTO, DIR_NONE},
 
-		{ ITEM_GEM_WHITE,	DIR_NONE },
-		{ ITEM_GEM_BLUE,	DIR_NONE },
-		{ ITEM_GEM_RED,		DIR_NONE },
-		{ ITEM_GEM_GREEN,	DIR_NONE },
+	    {ITEM_GEM_WHITE, DIR_NONE},
+	    {ITEM_GEM_BLUE, DIR_NONE},
+	    {ITEM_GEM_RED, DIR_NONE},
+	    {ITEM_GEM_GREEN, DIR_NONE},
 
-		{ INFO_SET_MUSIC,	DIR_NONE },
-		{ INFO_LUA,			DIR_NONE },
-		{ INFO_HERE,		DIR_NONE },
+	    {INFO_SET_MUSIC, DIR_NONE},
+	    {INFO_LUA, DIR_NONE},
+	    {INFO_HERE, DIR_NONE},
 
-		{ AI_VORTEXIAN,		DIR_DOWN },
+	    {AI_VORTEXIAN, DIR_DOWN},
 
-		{ AI_CHICKEN,		DIR_DOWN },
-		{ AI_CHICKEN,		DIR_UP },
-		{ AI_CHICKEN,		DIR_RIGHT },
-		{ AI_CHICKEN,		DIR_LEFT },
+	    {AI_CHICKEN, DIR_DOWN},
+	    {AI_CHICKEN, DIR_UP},
+	    {AI_CHICKEN, DIR_RIGHT},
+	    {AI_CHICKEN, DIR_LEFT},
 
-		{ ITEM_GOO_CUP,		DIR_NONE },
-		{ ITEM_TEACUP,		DIR_NONE },
-		{ ITEM_COOKIE,		DIR_NONE },
-		{ ITEM_BURGER,		DIR_NONE },
-		{ ITEM_PDA,			DIR_NONE },
-		{ ITEM_BOOK,		DIR_NONE },
-		{ ITEM_CLIPBOARD,	DIR_NONE },
-		{ ITEM_NOTE,		DIR_NONE },
-		{ ITEM_KEYCARD_WHITE,	DIR_NONE },
-		{ ITEM_KEYCARD_BLUE,	DIR_NONE },
-		{ ITEM_KEYCARD_RED,		DIR_NONE },
-		{ ITEM_KEYCARD_GREEN,	DIR_NONE },
-		{ ITEM_KEYCARD_PURPLE,	DIR_NONE },
-		{ ITEM_KEYCARD_BLACK,	DIR_NONE },
-		{ AI_MAGIC_EGG,		DIR_NONE },
-		{ AI_ICE_BLOCK,		DIR_NONE },
-		{ ITEM_CABKEY,		DIR_NONE },
+	    {ITEM_GOO_CUP, DIR_NONE},
+	    {ITEM_TEACUP, DIR_NONE},
+	    {ITEM_COOKIE, DIR_NONE},
+	    {ITEM_BURGER, DIR_NONE},
+	    {ITEM_PDA, DIR_NONE},
+	    {ITEM_BOOK, DIR_NONE},
+	    {ITEM_CLIPBOARD, DIR_NONE},
+	    {ITEM_NOTE, DIR_NONE},
+	    {ITEM_KEYCARD_WHITE, DIR_NONE},
+	    {ITEM_KEYCARD_BLUE, DIR_NONE},
+	    {ITEM_KEYCARD_RED, DIR_NONE},
+	    {ITEM_KEYCARD_GREEN, DIR_NONE},
+	    {ITEM_KEYCARD_PURPLE, DIR_NONE},
+	    {ITEM_KEYCARD_BLACK, DIR_NONE},
+	    {AI_MAGIC_EGG, DIR_NONE},
+	    {AI_ICE_BLOCK, DIR_NONE},
+	    {ITEM_CABKEY, DIR_NONE},
 
-		{ AI_DEADWORKER,	DIR_NONE },
-		{ AI_OMNIBOT,		DIR_DOWN },
-		{ AI_OMNIBOT,		DIR_UP },
-		{ AI_OMNIBOT,		DIR_RIGHT },
-		{ AI_OMNIBOT,		DIR_LEFT },
-		{ AI_TURNBOT,		DIR_DOWN },
-		{ AI_TURNBOT,		DIR_UP },
-		{ AI_TURNBOT,		DIR_RIGHT },
-		{ AI_TURNBOT,		DIR_LEFT },
-		{ AI_DOLLY,			DIR_DOWN },
-		{ AI_DOLLY,			DIR_UP },
-		{ AI_DOLLY,			DIR_RIGHT },
-		{ AI_DOLLY,			DIR_LEFT },
+	    {AI_DEADWORKER, DIR_NONE},
+	    {AI_OMNIBOT, DIR_DOWN},
+	    {AI_OMNIBOT, DIR_UP},
+	    {AI_OMNIBOT, DIR_RIGHT},
+	    {AI_OMNIBOT, DIR_LEFT},
+	    {AI_TURNBOT, DIR_DOWN},
+	    {AI_TURNBOT, DIR_UP},
+	    {AI_TURNBOT, DIR_RIGHT},
+	    {AI_TURNBOT, DIR_LEFT},
+	    {AI_DOLLY, DIR_DOWN},
+	    {AI_DOLLY, DIR_UP},
+	    {AI_DOLLY, DIR_RIGHT},
+	    {AI_DOLLY, DIR_LEFT},
 
-		{ INFO_TRIGGER,		DIR_NONE },
+	    {INFO_TRIGGER, DIR_NONE},
 
-		{ ITEM_DOLLYTOOL1,	DIR_NONE },
-		{ ITEM_DOLLYTOOL2,	DIR_NONE },
-		{ ITEM_DOLLYTOOL3,	DIR_NONE },
-		{ ITEM_DOLLYTOOL4,	DIR_NONE },
+	    {ITEM_DOLLYTOOL1, DIR_NONE},
+	    {ITEM_DOLLYTOOL2, DIR_NONE},
+	    {ITEM_DOLLYTOOL3, DIR_NONE},
+	    {ITEM_DOLLYTOOL4, DIR_NONE},
 
-		{ AI_RAILRIDER_ON,	DIR_UP },
-		{ AI_RAILRIDER_ON,	DIR_DOWN },
-		{ AI_RAILRIDER_ON,	DIR_LEFT },
-		{ AI_RAILRIDER_ON,	DIR_RIGHT },
-		{ AI_RAILRIDER,		DIR_UP },
-		{ AI_RAILRIDER,		DIR_DOWN },
-		{ AI_RAILRIDER,		DIR_LEFT },
-		{ AI_RAILRIDER,		DIR_RIGHT },
+	    {AI_RAILRIDER_ON, DIR_UP},
+	    {AI_RAILRIDER_ON, DIR_DOWN},
+	    {AI_RAILRIDER_ON, DIR_LEFT},
+	    {AI_RAILRIDER_ON, DIR_RIGHT},
+	    {AI_RAILRIDER, DIR_UP},
+	    {AI_RAILRIDER, DIR_DOWN},
+	    {AI_RAILRIDER, DIR_LEFT},
+	    {AI_RAILRIDER, DIR_RIGHT},
 
-		{ ITEM_SODA,		DIR_NONE },
-		{ INFO_ARROW_4WAY,	DIR_NONE },
-		{ AI_DEADEYE,		DIR_DOWN },
-		{ AI_DEADEYE,		DIR_UP },
-		{ AI_DEADEYE,		DIR_RIGHT },
-		{ AI_DEADEYE,		DIR_LEFT },
-		{ AI_MEERKAT,		DIR_NONE },
-		{ AI_FATFROG,		DIR_DOWN },
-		{ AI_FATFROG,		DIR_RIGHT },
-		{ AI_FATFROG,		DIR_LEFT },
-		{ AI_GOODFAIRY,		DIR_DOWN },
-		{ AI_GOODFAIRY,		DIR_UP },
-		{ AI_GOODFAIRY,		DIR_RIGHT },
-		{ AI_GOODFAIRY,		DIR_LEFT },
-		{ AI_BADFAIRY,		DIR_DOWN },
-		{ AI_BADFAIRY,		DIR_UP },
-		{ AI_BADFAIRY,		DIR_RIGHT },
-		{ AI_BADFAIRY,		DIR_LEFT },
-		{ AI_ACCOUNTANT,	DIR_DOWN },
-		{ AI_ACCOUNTANT,	DIR_UP },
-		{ AI_ACCOUNTANT,	DIR_RIGHT },
-		{ AI_ACCOUNTANT,	DIR_LEFT },
-		{ AI_ICEPUFF,		DIR_NONE },
-		{ AI_DRAGON,		DIR_NONE },
-		{ AI_BUZZFLY,		DIR_DOWN },
-		{ AI_BUZZFLY,		DIR_UP },
-		{ AI_BUZZFLY,		DIR_RIGHT },
-		{ AI_BUZZFLY,		DIR_LEFT },
+	    {ITEM_SODA, DIR_NONE},
+	    {INFO_ARROW_4WAY, DIR_NONE},
+	    {AI_DEADEYE, DIR_DOWN},
+	    {AI_DEADEYE, DIR_UP},
+	    {AI_DEADEYE, DIR_RIGHT},
+	    {AI_DEADEYE, DIR_LEFT},
+	    {AI_MEERKAT, DIR_NONE},
+	    {AI_FATFROG, DIR_DOWN},
+	    {AI_FATFROG, DIR_RIGHT},
+	    {AI_FATFROG, DIR_LEFT},
+	    {AI_GOODFAIRY, DIR_DOWN},
+	    {AI_GOODFAIRY, DIR_UP},
+	    {AI_GOODFAIRY, DIR_RIGHT},
+	    {AI_GOODFAIRY, DIR_LEFT},
+	    {AI_BADFAIRY, DIR_DOWN},
+	    {AI_BADFAIRY, DIR_UP},
+	    {AI_BADFAIRY, DIR_RIGHT},
+	    {AI_BADFAIRY, DIR_LEFT},
+	    {AI_ACCOUNTANT, DIR_DOWN},
+	    {AI_ACCOUNTANT, DIR_UP},
+	    {AI_ACCOUNTANT, DIR_RIGHT},
+	    {AI_ACCOUNTANT, DIR_LEFT},
+	    {AI_ICEPUFF, DIR_NONE},
+	    {AI_DRAGON, DIR_NONE},
+	    {AI_BUZZFLY, DIR_DOWN},
+	    {AI_BUZZFLY, DIR_UP},
+	    {AI_BUZZFLY, DIR_RIGHT},
+	    {AI_BUZZFLY, DIR_LEFT},
 
-		{ AI_FROGSTATUE,	DIR_NONE },
-		{ ITEM_SLICER,		DIR_NONE },
-		{ INFO_FAIRY_SRC,	DIR_NONE },
-		{ INFO_FAIRY_SRC2,	DIR_NONE },
-		{ INFO_FAIRY_SRC3,	DIR_NONE },
-		{ INFO_FAIRY_SRC4,	DIR_NONE },
-		{ INFO_FAIRY_SRC5,	DIR_NONE },
-		{ INFO_FAIRY_DEST,	DIR_NONE },
-		{ INFO_FAIRY_DEST2,	DIR_NONE },
-		{ INFO_FAIRY_DEST3,	DIR_NONE },
-		{ INFO_FAIRY_DEST4,	DIR_NONE },
-		{ INFO_FAIRY_DEST5,	DIR_NONE },
-		{ INFO_QMARK,		DIR_NONE },
-		{ INFO_DEBUG,		DIR_NONE },
-		{ AI_NONE,			DIR_NONE },
+	    {AI_FROGSTATUE, DIR_NONE},
+	    {ITEM_SLICER, DIR_NONE},
+	    {INFO_FAIRY_SRC, DIR_NONE},
+	    {INFO_FAIRY_SRC2, DIR_NONE},
+	    {INFO_FAIRY_SRC3, DIR_NONE},
+	    {INFO_FAIRY_SRC4, DIR_NONE},
+	    {INFO_FAIRY_SRC5, DIR_NONE},
+	    {INFO_FAIRY_DEST, DIR_NONE},
+	    {INFO_FAIRY_DEST2, DIR_NONE},
+	    {INFO_FAIRY_DEST3, DIR_NONE},
+	    {INFO_FAIRY_DEST4, DIR_NONE},
+	    {INFO_FAIRY_DEST5, DIR_NONE},
+	    {INFO_QMARK, DIR_NONE},
+	    {INFO_DEBUG, DIR_NONE},
+	    {AI_NONE, DIR_NONE},
 
-		{ AI_NONE,			DIR_NONE }
-	};
+	    {AI_NONE, DIR_NONE}};
 
 	// Scan all icons and init all Entities
 	g_hdb->setupProgressBar(_iconNum);
 	for (int i = 0; i < _iconNum; i++) {
 		debug(5, "%s, %d,%d,%s,%s,%s,%d,%d,%d,%d", AIType2Str(aiInfo[_iconList[i].icon].type), _iconList[i].x, _iconList[i].y, _iconList[i].funcInit,
-				_iconList[i].funcAction, _iconList[i].funcUse, _iconList[i].dir, _iconList[i].level,
-				_iconList[i].value1, _iconList[i].value2);
+		      _iconList[i].funcAction, _iconList[i].funcUse, _iconList[i].dir, _iconList[i].level,
+		      _iconList[i].value1, _iconList[i].value2);
 
 		g_hdb->makeProgress();
 
@@ -650,7 +649,7 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		if (!g_hdb->getActionMode()) {
 			switch (aiInfo[_iconList[i].icon].type) {
 			case AI_DEADEYE:
-				if (_iconList[i].value1 == 1)	// For non-moving DeadEyes
+				if (_iconList[i].value1 == 1) // For non-moving DeadEyes
 					break;
 				// fall through
 			case AI_FOURFIRER:
@@ -668,43 +667,39 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		switch (aiInfo[_iconList[i].icon].type) {
 		default:
 			g_hdb->_ai->spawn(
-				aiInfo[_iconList[i].icon].type,
-				aiInfo[_iconList[i].icon].dir,
-				_iconList[i].x,
-				_iconList[i].y,
-				_iconList[i].funcInit,
-				_iconList[i].funcAction,
-				_iconList[i].funcUse,
-				(AIDir)_iconList[i].dir,
-				_iconList[i].level,
-				_iconList[i].value1,
-				_iconList[i].value2,
-				0
-			);
+			    aiInfo[_iconList[i].icon].type,
+			    aiInfo[_iconList[i].icon].dir,
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    _iconList[i].funcInit,
+			    _iconList[i].funcAction,
+			    _iconList[i].funcUse,
+			    (AIDir)_iconList[i].dir,
+			    _iconList[i].level,
+			    _iconList[i].value1,
+			    _iconList[i].value2,
+			    0);
 			break;
 		case INFO_ARROW_4WAY:
 			g_hdb->_ai->addToPathList(
-				_iconList[i].x,
-				_iconList[i].y,
-				2,
-				aiInfo[_iconList[i].icon].dir
-			);
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    2,
+			    aiInfo[_iconList[i].icon].dir);
 			break;
 		case INFO_ARROW_TURN:
 			g_hdb->_ai->addToPathList(
-				_iconList[i].x,
-				_iconList[i].y,
-				1,
-				aiInfo[_iconList[i].icon].dir
-			);
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    1,
+			    aiInfo[_iconList[i].icon].dir);
 			break;
 		case INFO_ARROW_STOP:
 			g_hdb->_ai->addToPathList(
-				_iconList[i].x,
-				_iconList[i].y,
-				0,
-				aiInfo[_iconList[i].icon].dir
-			);
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    0,
+			    aiInfo[_iconList[i].icon].dir);
 			break;
 
 		case INFO_ACTION1:
@@ -728,20 +723,18 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		case INFO_ACTION19:
 		case INFO_ACTION20:
 			g_hdb->_ai->addToActionList(
-				aiInfo[_iconList[i].icon].type - INFO_ACTION1,
-				_iconList[i].x,
-				_iconList[i].y,
-				_iconList[i].funcInit,
-				_iconList[i].funcUse
-			);
+			    aiInfo[_iconList[i].icon].type - INFO_ACTION1,
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    _iconList[i].funcInit,
+			    _iconList[i].funcUse);
 			break;
 		case INFO_ACTION_AUTO:
 			g_hdb->_ai->addToAutoList(
-				_iconList[i].x,
-				_iconList[i].y,
-				_iconList[i].funcInit,
-				_iconList[i].funcUse
-			);
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    _iconList[i].funcInit,
+			    _iconList[i].funcUse);
 			break;
 
 		case INFO_TELEPORTER1:
@@ -776,15 +769,14 @@ bool Map::load(Common::SeekableReadStream *stream) {
 			}
 
 			g_hdb->_ai->addToTeleportList(
-				aiInfo[_iconList[i].icon].type - INFO_TELEPORTER1,
-				_iconList[i].x,
-				_iconList[i].y,
-				_iconList[i].dir,
-				_iconList[i].level,
-				_iconList[i].value1,
-				_iconList[i].value2,
-				_iconList[i].funcUse
-			);
+			    aiInfo[_iconList[i].icon].type - INFO_TELEPORTER1,
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    _iconList[i].dir,
+			    _iconList[i].level,
+			    _iconList[i].value1,
+			    _iconList[i].value2,
+			    _iconList[i].funcUse);
 			break;
 
 		case INFO_SET_MUSIC:
@@ -794,32 +786,29 @@ bool Map::load(Common::SeekableReadStream *stream) {
 
 		case INFO_LUA:
 			g_hdb->_ai->addToLuaList(
-				_iconList[i].x,
-				_iconList[i].y,
-				_iconList[i].value1,
-				_iconList[i].value2,
-				_iconList[i].funcInit,
-				_iconList[i].funcAction,
-				_iconList[i].funcUse
-			);
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    _iconList[i].value1,
+			    _iconList[i].value2,
+			    _iconList[i].funcInit,
+			    _iconList[i].funcAction,
+			    _iconList[i].funcUse);
 			break;
 		case INFO_HERE:
 			g_hdb->_ai->addToHereList(
-				_iconList[i].funcInit,
-				_iconList[i].x,
-				_iconList[i].y
-			);
+			    _iconList[i].funcInit,
+			    _iconList[i].x,
+			    _iconList[i].y);
 			break;
 		case INFO_TRIGGER:
 			g_hdb->_ai->addToTriggerList(
-				_iconList[i].funcInit,
-				_iconList[i].funcUse,
-				_iconList[i].x,
-				_iconList[i].y,
-				_iconList[i].value1,
-				_iconList[i].value2,
-				_iconList[i].funcAction
-			);
+			    _iconList[i].funcInit,
+			    _iconList[i].funcUse,
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    _iconList[i].value1,
+			    _iconList[i].value2,
+			    _iconList[i].funcAction);
 			break;
 
 		case INFO_FAIRY_SRC:
@@ -828,11 +817,10 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		case INFO_FAIRY_SRC4:
 		case INFO_FAIRY_SRC5:
 			g_hdb->_ai->addToFairystones(
-				aiInfo[_iconList[i].icon].type - INFO_FAIRY_SRC,
-				_iconList[i].x,
-				_iconList[i].y,
-				0
-			);
+			    aiInfo[_iconList[i].icon].type - INFO_FAIRY_SRC,
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    0);
 			break;
 
 		case INFO_FAIRY_DEST:
@@ -841,11 +829,10 @@ bool Map::load(Common::SeekableReadStream *stream) {
 		case INFO_FAIRY_DEST4:
 		case INFO_FAIRY_DEST5:
 			g_hdb->_ai->addToFairystones(
-				aiInfo[_iconList[i].icon].type - INFO_FAIRY_DEST,
-				_iconList[i].x,
-				_iconList[i].y,
-				1
-			);
+			    aiInfo[_iconList[i].icon].type - INFO_FAIRY_DEST,
+			    _iconList[i].x,
+			    _iconList[i].y,
+			    1);
 			break;
 		}
 	}
@@ -1229,4 +1216,4 @@ bool Map::checkOneTileExistInRange(int tileIndex, int count) {
 	return true;
 }
 
-}
+} // namespace HDB

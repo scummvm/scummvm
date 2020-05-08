@@ -23,14 +23,14 @@
 #ifndef ULTIMA4_GAME_CONTEXT_H
 #define ULTIMA4_GAME_CONTEXT_H
 
-#include "ultima/ultima4/map/location.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/aura.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/script.h"
-#include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/map/location.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -42,12 +42,12 @@ class Script;
 class StatsArea;
 
 enum TransportContext {
-	TRANSPORT_FOOT      = 0x1,
-	TRANSPORT_HORSE     = 0x2,
-	TRANSPORT_SHIP      = 0x4,
-	TRANSPORT_BALLOON       = 0x8,
+	TRANSPORT_FOOT = 0x1,
+	TRANSPORT_HORSE = 0x2,
+	TRANSPORT_SHIP = 0x4,
+	TRANSPORT_BALLOON = 0x8,
 	TRANSPORT_FOOT_OR_HORSE = TRANSPORT_FOOT | TRANSPORT_HORSE,
-	TRANSPORT_ANY           = 0xffff
+	TRANSPORT_ANY = 0xffff
 };
 
 /**
@@ -72,6 +72,7 @@ public:
 	TransportContext _transportContext;
 	uint32 _lastCommandTime;
 	Object *_lastShip;
+
 public:
 	/**
 	 * Provides scripts with information

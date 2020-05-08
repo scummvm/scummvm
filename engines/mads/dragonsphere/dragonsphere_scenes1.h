@@ -25,9 +25,9 @@
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
+#include "mads/dragonsphere/dragonsphere_scenes.h"
 #include "mads/game.h"
 #include "mads/scene.h"
-#include "mads/dragonsphere/dragonsphere_scenes.h"
 
 namespace MADS {
 
@@ -49,6 +49,7 @@ protected:
 	 * Updates the prefix used for getting player sprites for the scene
 	 */
 	void setPlayerSpritesPrefix();
+
 public:
 	Scene1xx(MADSEngine *vm) : DragonsphereScene(vm) {}
 };

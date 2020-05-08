@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/spells/prayer.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/widgets/overworld_monster.h"
 
 namespace Ultima {
@@ -30,7 +30,7 @@ namespace Ultima1 {
 namespace Spells {
 
 Prayer::Prayer(Ultima1Game *game, Character *c) : Spell(game, c, SPELL_PRAYER) {
-	_quantity = 0xffff;			// Prayer has unlimited uses
+	_quantity = 0xffff; // Prayer has unlimited uses
 }
 
 void Prayer::cast(Maps::MapBase *map) {

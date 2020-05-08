@@ -31,6 +31,7 @@ class CHammer : public CCarry {
 	DECLARE_MESSAGE_MAP;
 	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+
 public:
 	CLASSDEF;
 	CHammer();

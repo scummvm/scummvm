@@ -23,8 +23,8 @@
 #ifndef NUVIE_CORE_EGG_MANAGER_H
 #define NUVIE_CORE_EGG_MANAGER_H
 
-#include "ultima/shared/std/string.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -53,7 +53,6 @@ class EggManager {
 	Std::list<Egg *> egg_list;
 
 public:
-
 	EggManager(Configuration *cfg, nuvie_game_t type, Map *m);
 	~EggManager();
 
@@ -82,7 +81,6 @@ public:
 	}
 
 protected:
-
 	uint8 get_worktype(Obj *embryo);
 	bool not_spawning_actors;
 };

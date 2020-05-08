@@ -27,8 +27,7 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-void lstadv(uchar **lstp, uint *sizp)
-{
+void lstadv(uchar **lstp, uint *sizp) {
 	uint siz;
 
 	siz = datsiz(**lstp, (*lstp) + 1) + 1;

@@ -60,6 +60,7 @@ private:
 	void showCursor(bool flag);
 
 	bool expandStat(int attrib, const Character &c);
+
 public:
 	static void show(XeenEngine *vm, int charIndex);
 };

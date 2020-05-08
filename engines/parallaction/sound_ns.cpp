@@ -24,21 +24,19 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 #include "audio/midiparser.h"
 #include "audio/midiplayer.h"
+#include "audio/mixer.h"
 #include "audio/mods/protracker.h"
-#include "audio/decoders/raw.h"
 
-#include "parallaction/sound.h"
 #include "parallaction/parallaction.h"
-
+#include "parallaction/sound.h"
 
 namespace Parallaction {
 
 class MidiPlayer : public Audio::MidiPlayer {
 public:
-
 	MidiPlayer();
 
 	void play(Common::SeekableReadStream *stream);
@@ -51,7 +49,7 @@ private:
 };
 
 MidiPlayer::MidiPlayer()
-	: _paused(false) {
+    : _paused(false) {
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driver = MidiDriver::createMidi(dev);
@@ -117,7 +115,7 @@ DosSoundMan_ns::~DosSoundMan_ns() {
 bool DosSoundMan_ns::isLocationSilent(const char *locationName) {
 
 	// these are the prefixes for location names with no background midi music
-	const char *noMusicPrefix[] = { "museo", "intgrottadopo", "caveau", "estgrotta", "plaza1", "endtgz", "common", 0 };
+	const char *noMusicPrefix[] = {"museo", "intgrottadopo", "caveau", "estgrotta", "plaza1", "endtgz", "common", 0};
 	Common::String s(locationName);
 
 	for (int i = 0; noMusicPrefix[i]; i++) {
@@ -171,11 +169,9 @@ void DosSoundMan_ns::playCharacterMusic(const char *character) {
 
 	if (!scumm_stricmp(name, g_dinoName)) {
 		newMusicFile = "dino";
-	} else
-	if (!scumm_stricmp(name, g_donnaName)) {
+	} else if (!scumm_stricmp(name, g_donnaName)) {
 		newMusicFile = "donna";
-	} else
-	if (!scumm_stricmp(name, g_doughName)) {
+	} else if (!scumm_stricmp(name, g_doughName)) {
 		newMusicFile = "nuts";
 	} else {
 		warning("unknown character '%s' in DosSoundMan_ns_ns::playCharacterMusic", character);
@@ -195,8 +191,7 @@ void DosSoundMan_ns::playLocationMusic(const char *location) {
 		setMusicFile("soft");
 		playMusic();
 		debugC(2, kDebugExec, "changeLocation: started music 'soft'");
-	} else
-	if (isLocationSilent(location)) {
+	} else if (isLocationSilent(location)) {
 		stopMusic();
 		debugC(2, kDebugExec, "changeLocation: music stopped");
 	} else {
@@ -204,18 +199,13 @@ void DosSoundMan_ns::playLocationMusic(const char *location) {
 	}
 }
 
-
-
-
 #pragma mark Amiga sound manager code
 
-
-#define AMIGABEEP_SIZE	16
-#define NUM_REPEATS		60
+#define AMIGABEEP_SIZE 16
+#define NUM_REPEATS 60
 
 static int8 res_amigaBeep[AMIGABEEP_SIZE] = {
-	0, 20, 40, 60, 80, 60, 40, 20, 0, -20, -40, -60, -80, -60, -40, -20
-};
+    0, 20, 40, 60, 80, 60, 40, 20, 0, -20, -40, -60, -80, -60, -40, -20};
 
 AmigaSoundMan_ns::AmigaSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm) {
 	_musicStream = 0;
@@ -228,7 +218,6 @@ AmigaSoundMan_ns::AmigaSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm) {
 		memcpy(odata, res_amigaBeep, AMIGABEEP_SIZE);
 		odata += AMIGABEEP_SIZE;
 	}
-
 }
 
 AmigaSoundMan_ns::~AmigaSoundMan_ns() {
@@ -320,7 +309,6 @@ void AmigaSoundMan_ns::playCharacterMusic(const char *character) {
 void AmigaSoundMan_ns::playLocationMusic(const char *location) {
 }
 
-
 SoundMan_ns::SoundMan_ns(Parallaction_ns *vm) : _vm(vm) {
 	_mixer = _vm->_mixer;
 	_sfxLooping = false;
@@ -344,9 +332,12 @@ void SoundMan_ns::execute(int command, const char *parm = 0) {
 
 	switch (command) {
 	case SC_PLAYMUSIC:
-		if (_musicType == MUSIC_CHARACTER) playCharacterMusic(parm);
-		else if (_musicType == MUSIC_LOCATION) playLocationMusic(parm);
-		else playMusic();
+		if (_musicType == MUSIC_CHARACTER)
+			playCharacterMusic(parm);
+		else if (_musicType == MUSIC_LOCATION)
+			playLocationMusic(parm);
+		else
+			playMusic();
 		break;
 	case SC_STOPMUSIC:
 		stopMusic();

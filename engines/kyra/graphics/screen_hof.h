@@ -30,13 +30,14 @@ namespace Kyra {
 class KyraEngine_HoF;
 
 class Screen_HoF : public Screen_v2 {
-friend class Debugger_v2;
+	friend class Debugger_v2;
+
 public:
 	Screen_HoF(KyraEngine_HoF *vm, OSystem *system);
 
 	// sequence player
 	void generateGrayOverlay(const Palette &pal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);
-	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage,	int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);
+	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage, int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);
 
 private:
 	KyraEngine_HoF *_vm;

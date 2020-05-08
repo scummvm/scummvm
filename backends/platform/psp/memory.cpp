@@ -20,9 +20,9 @@
  *
  */
 
+#include "backends/platform/psp/psppixelformat.h"
 #include "common/scummsys.h"
 #include "common/singleton.h"
-#include "backends/platform/psp/psppixelformat.h"
 #define PSP_INCLUDE_SWAP
 #include "backends/platform/psp/memory.h"
 
@@ -48,12 +48,12 @@ void PspMemory::copy(byte *dst, const byte *src, uint32 bytes) {
 	uint32 prefixDst = (((uint32)dst) & 0x3);
 
 	if (prefixDst) {
-		prefixDst = 4 - prefixDst;				// prefix only if we have address % 4 != 0
+		prefixDst = 4 - prefixDst; // prefix only if we have address % 4 != 0
 		PSP_DEBUG_PRINT("prefixDst[%d]\n", prefixDst);
 
-		bytes -= prefixDst;						// remember we assume bytes >= 4
+		bytes -= prefixDst; // remember we assume bytes >= 4
 
-		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY) {	// check if it's worthwhile to continue
+		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY) { // check if it's worthwhile to continue
 			copy8(dst, src, bytes + prefixDst);
 #ifdef TEST_MEMORY_COPY
 			testCopy(debugDst, debugSrc, debugBytes);
@@ -69,7 +69,7 @@ void PspMemory::copy(byte *dst, const byte *src, uint32 bytes) {
 	// check the source pointer alignment now
 	uint32 alignSrc = (((uint32)src) & 0x3);
 
-	if (alignSrc) {						// we'll need to realign our reads
+	if (alignSrc) { // we'll need to realign our reads
 		copy32Misaligned((uint32 *)dst, src, bytes, alignSrc);
 	} else {
 		copy32Aligned((uint32 *)dst, (const uint32 *)src, bytes);
@@ -127,7 +127,7 @@ void PspMemory::copy32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes) 
 		src32 += 4;
 	}
 
-	int bytesLeft = (bytes & 0xF);	// only look at bytes left after we did the above
+	int bytesLeft = (bytes & 0xF); // only look at bytes left after we did the above
 	int wordsLeft = bytesLeft >> 2;
 
 	// now just do single words
@@ -136,7 +136,7 @@ void PspMemory::copy32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes) 
 		wordsLeft--;
 	}
 
-	bytesLeft = bytes & 0x3;	// get remaining bytes
+	bytesLeft = bytes & 0x3; // get remaining bytes
 
 	PSP_DEBUG_PRINT("bytesLeft[%d]\n", bytesLeft);
 
@@ -153,7 +153,7 @@ void PspMemory::copy32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes) 
 void PspMemory::copy32Misaligned(uint32 *dst32, const byte *src, uint32 bytes, uint32 alignSrc) {
 	PSP_DEBUG_PRINT("copy32Misaligned: dst32[%p], src[%p], bytes[%d], alignSrc[%d]\n", dst32, src, bytes, alignSrc);
 
-	uint32 *src32 = (uint32 *)(((uint32)src) & 0xFFFFFFFC);	// remove misalignment
+	uint32 *src32 = (uint32 *)(((uint32)src) & 0xFFFFFFFC); // remove misalignment
 	uint32 shiftValue, lastShiftValue;
 
 	switch (alignSrc) {
@@ -176,7 +176,7 @@ void PspMemory::copy32Misaligned(uint32 *dst32, const byte *src, uint32 bytes, u
 	// Try to do groups of 4 words
 	uint32 words4 = bytes >> 4;
 
-	srcWord = *src32;		// preload 1st word so we read ahead
+	srcWord = *src32; // preload 1st word so we read ahead
 
 	for (; words4; words4--) {
 		dstWord = srcWord >> shiftValue;
@@ -199,26 +199,26 @@ void PspMemory::copy32Misaligned(uint32 *dst32, const byte *src, uint32 bytes, u
 		dst32 += 4;
 	}
 
-	uint32 words = (bytes & 0xF) >> 2;	// now get remaining words
+	uint32 words = (bytes & 0xF) >> 2; // now get remaining words
 
 	// we read one word ahead of what we write
 	// setup the first read
 
-	for (; words ;words--) {
+	for (; words; words--) {
 		dstWord = srcWord >> shiftValue;
-		srcWord = src32[1];				// we still go one ahead
+		srcWord = src32[1]; // we still go one ahead
 		src32++;
 		dstWord |= srcWord << lastShiftValue;
 		*dst32++ = dstWord;
 	}
 
-	uint32 bytesLeft = bytes & 3;	// and remaining bytes
+	uint32 bytesLeft = bytes & 3; // and remaining bytes
 
 	if (bytesLeft) {
 		byte *dst8 = (byte *)dst32;
-		byte *src8 = ((byte *)src32) + ((uint32)src & 0x3);	// get exact location we should be at
+		byte *src8 = ((byte *)src32) + ((uint32)src & 0x3); // get exact location we should be at
 
-		for(; bytesLeft; bytesLeft--) {
+		for (; bytesLeft; bytesLeft--) {
 			*dst8++ = *src8++;
 		}
 	}
@@ -257,10 +257,10 @@ void PspMemorySwap::swap(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPi
 #endif
 
 	// align the destination pointer first
-	uint32 prefixDst = (((uint32)dst16) & 0x3);	// for swap, we can only have 2 or 0 as our prefix
+	uint32 prefixDst = (((uint32)dst16) & 0x3); // for swap, we can only have 2 or 0 as our prefix
 
 	if (prefixDst) {
-		bytes -= prefixDst;						// remember we assume bytes > 4
+		bytes -= prefixDst; // remember we assume bytes > 4
 		*dst16++ = format.swapRedBlue16(*src16++);
 
 		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY) { // check if it's worthwhile to continue
@@ -276,7 +276,7 @@ void PspMemorySwap::swap(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPi
 	// check the source pointer alignment now
 	uint32 alignSrc = (((uint32)src16) & 0x3);
 
-	if (alignSrc) {						// we'll need to realign our reads
+	if (alignSrc) { // we'll need to realign our reads
 		PSP_DEBUG_PRINT("misaligned copy of %u bytes from %p to %p\n", bytes, src16, dst16);
 		swap32Misaligned((uint32 *)dst16, src16, bytes, format);
 	} else {
@@ -286,7 +286,6 @@ void PspMemorySwap::swap(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPi
 #ifdef TEST_MEMORY_COPY
 	testSwap(debugDst, debugSrc, debugBytes, format);
 #endif
-
 }
 
 void PspMemorySwap::testSwap(const uint16 *debugDst, const uint16 *debugSrc, uint32 debugBytes, PSPPixelFormat &format) {
@@ -303,7 +302,7 @@ void PspMemorySwap::testSwap(const uint16 *debugDst, const uint16 *debugSrc, uin
 				PSP_INFO_PRINT("dst[%p], src[%p], bytes[%u]\n", debugDst, debugSrc, debugBytes);
 				mismatch = true;
 			}
-			PSP_INFO_PRINT("[%d]%x!=%x ", i<<1, format.swapRedBlue16(debugSrc[i]), debugDst[i]);
+			PSP_INFO_PRINT("[%d]%x!=%x ", i << 1, format.swapRedBlue16(debugSrc[i]), debugDst[i]);
 		}
 	}
 	if (mismatch) {
@@ -342,7 +341,7 @@ void PspMemorySwap::swap32Aligned(uint32 *dst32, const uint32 *src32, uint32 byt
 
 	bytesLeft = bytes & 0x3;
 
-	if (bytesLeft) {	// for swap, can only be 1 short left
+	if (bytesLeft) { // for swap, can only be 1 short left
 		*((uint16 *)dst32) = format.swapRedBlue16(*((const uint16 *)src32));
 	}
 }
@@ -353,11 +352,11 @@ void PspMemorySwap::swap32Misaligned(uint32 *dst32, const uint16 *src16, uint32 
 	DEBUG_ENTER_FUNC();
 
 	const uint32 shiftValue = 16;
-	uint32 *src32 = (uint32 *)(((uint32)src16) & 0xFFFFFFFC);	// remove misalignment
+	uint32 *src32 = (uint32 *)(((uint32)src16) & 0xFFFFFFFC); // remove misalignment
 
 	// Try to do groups of 4 words
 	uint32 words4 = bytes >> 4;
-	uint32 srcWord = src32[0];	// preload
+	uint32 srcWord = src32[0]; // preload
 
 	while (words4--) {
 		uint32 dstWord = srcWord >> shiftValue;
@@ -386,7 +385,7 @@ void PspMemorySwap::swap32Misaligned(uint32 *dst32, const uint16 *src16, uint32 
 	// setup the first read
 	if (words) {
 		//srcWord = *src32++;	// don't need this. already loaded
-		src32++;	// we already have the value loaded in
+		src32++; // we already have the value loaded in
 
 		while (words--) {
 			uint32 dstWord = srcWord >> shiftValue;
@@ -398,7 +397,7 @@ void PspMemorySwap::swap32Misaligned(uint32 *dst32, const uint16 *src16, uint32 
 
 	uint32 bytesLeft = bytes & 3;
 
-	if (bytesLeft) {	// for swap, can only be 1 short left
+	if (bytesLeft) { // for swap, can only be 1 short left
 		*((uint16 *)dst32) = format.swapRedBlue16((uint16)(srcWord >> shiftValue));
 	}
 }

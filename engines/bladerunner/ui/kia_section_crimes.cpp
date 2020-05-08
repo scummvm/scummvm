@@ -29,8 +29,8 @@
 #include "bladerunner/font.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
-#include "bladerunner/shape.h"
 #include "bladerunner/script/kia_script.h"
+#include "bladerunner/shape.h"
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/kia.h"
@@ -59,7 +59,7 @@ KIASectionCrimes::KIASectionCrimes(BladeRunnerEngine *vm, ActorClues *clues) : K
 
 	_acquiredClueCount = 0;
 	for (int i = 0; i < kClueCount; ++i) {
-		_acquiredClues[i].clueId  = -1;
+		_acquiredClues[i].clueId = -1;
 		_acquiredClues[i].actorId = -1;
 	}
 
@@ -88,14 +88,14 @@ KIASectionCrimes::~KIASectionCrimes() {
 
 void KIASectionCrimes::reset() {
 	_acquiredClueCount = 0;
-    _crimesFoundCount = 0;
-    _suspectsFoundCount = 0;
-    _mouseX = 0;
-    _mouseY = 0;
-    _suspectSelected = -1;
-    _crimeSelected = -1;
-    _suspectPhotoShapeId = -1;
-    _suspectPhotoNotUsed = -1;
+	_crimesFoundCount = 0;
+	_suspectsFoundCount = 0;
+	_mouseX = 0;
+	_mouseY = 0;
+	_suspectSelected = -1;
+	_crimeSelected = -1;
+	_suspectPhotoShapeId = -1;
+	_suspectPhotoNotUsed = -1;
 }
 
 void KIASectionCrimes::open() {
@@ -213,12 +213,12 @@ void KIASectionCrimes::handleMouseScroll(int direction) {
 }
 
 void KIASectionCrimes::saveToLog() {
-	int data[] = { _crimeSelected, _suspectSelected };
+	int data[] = {_crimeSelected, _suspectSelected};
 	_vm->_kia->_log->add(2, sizeof(data), &data);
 }
 
 void KIASectionCrimes::loadFromLog() {
-	const int *data = (const int*)_vm->_kia->_log->getCurrentData();
+	const int *data = (const int *)_vm->_kia->_log->getCurrentData();
 	_crimeSelected = data[0];
 	_suspectSelected = data[1];
 	populateSuspects();
@@ -342,9 +342,7 @@ void KIASectionCrimes::populateSuspects() {
 
 	for (int i = 0; i < suspectCount; ++i) {
 		for (int j = 0; j < _acquiredClueCount; ++j) {
-			if (_vm->_crimesDatabase->getCrime(_acquiredClues[j].clueId) == _crimeSelected
-			 && _vm->_suspectsDatabase->get(i)->hasClue(_acquiredClues[j].clueId)
-			) {
+			if (_vm->_crimesDatabase->getCrime(_acquiredClues[j].clueId) == _crimeSelected && _vm->_suspectsDatabase->get(i)->hasClue(_acquiredClues[j].clueId)) {
 				if (firstSuspect == -1) {
 					firstSuspect = i;
 				}
@@ -376,10 +374,7 @@ void KIASectionCrimes::populateVisibleClues() {
 	if (_crimeSelected != -1) {
 		for (int i = 0; i < kClueCount; ++i) {
 			int clueId = i;
-			if (_vm->_crimesDatabase->getAssetType(clueId) != -1
-			 && _vm->_crimesDatabase->getCrime(clueId) == _crimeSelected
-			 && _clues->isAcquired(clueId)
-			) {
+			if (_vm->_crimesDatabase->getAssetType(clueId) != -1 && _vm->_crimesDatabase->getCrime(clueId) == _crimeSelected && _clues->isAcquired(clueId)) {
 				int flags = 0x30;
 				if (_clues->isPrivate(clueId)) {
 					flags = 0x08;
@@ -405,7 +400,7 @@ void KIASectionCrimes::updateSuspectPhoto() {
 	_suspectPhotoNotUsed = -1;
 	int photoCluesCount = suspect->getPhotoCount();
 	if (photoCluesCount > 0) {
-		for (int i = 0 ; i < photoCluesCount; ++i) {
+		for (int i = 0; i < photoCluesCount; ++i) {
 			//TODO: weird stuff going on here... original game is using internal clue index instead id
 			if (_clues->isAcquired(suspect->getPhotoClueId(i))) {
 				_suspectPhotoShapeId = suspect->getPhotoShapeId(i);

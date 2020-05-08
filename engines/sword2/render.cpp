@@ -22,15 +22,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/endian.h"
 #include "common/system.h"
 
 #include "graphics/primitives.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -38,8 +37,8 @@ namespace Sword2 {
 
 void Screen::updateRect(Common::Rect *r) {
 	_vm->_system->copyRectToScreen(_buffer + r->top * _screenWide + r->left,
-		_screenWide, r->left, r->top, r->right - r->left,
-		r->bottom - r->top);
+	                               _screenWide, r->left, r->top, r->right - r->left,
+	                               r->bottom - r->top);
 }
 
 void Screen::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *clipRect) {
@@ -248,7 +247,7 @@ void Screen::plotPoint(int x, int y, uint8 color) {
 
 static void plot(int x, int y, int color, void *data) {
 	Screen *screen = (Screen *)data;
-	screen->plotPoint(x, y, (uint8) color);
+	screen->plotPoint(x, y, (uint8)color);
 }
 
 /**
@@ -361,7 +360,7 @@ void Screen::startRenderCycle() {
 
 	_startTime = _vm->_system->getMillis();
 
-	if (_startTime + _renderAverageTime >= _totalTime)	{
+	if (_startTime + _renderAverageTime >= _totalTime) {
 		_scrollX = _scrollXTarget;
 		_scrollY = _scrollYTarget;
 		_renderTooSlow = true;
@@ -384,7 +383,7 @@ void Screen::startRenderCycle() {
  */
 
 bool Screen::endRenderCycle() {
-	static int32 renderTimeLog[4] = { 60, 60, 60, 60 };
+	static int32 renderTimeLog[4] = {60, 60, 60, 60};
 	static int32 renderCountIndex = 0;
 	int32 time;
 
@@ -614,7 +613,7 @@ int32 Screen::initializePsxBackgroundLayer(byte *parallax) {
 	// Calculate TRUE resolution of background, must be
 	// a multiple of 64
 
-	trueXres = (bgXres % 64) ? ((bgXres/64) + 1) * 64 : bgXres;
+	trueXres = (bgXres % 64) ? ((bgXres / 64) + 1) * 64 : bgXres;
 	totStripes = trueXres / 64;
 
 	_xBlocks[_layer] = (bgXres + BLOCKWIDTH - 1) / BLOCKWIDTH;

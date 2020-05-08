@@ -1,5 +1,5 @@
-#include <cxxtest/TestSuite.h>
 #include "common/hash-str.h"
+#include <cxxtest/TestSuite.h>
 
 /**
  * Test suite for common/hash-str.h
@@ -9,7 +9,7 @@
  */
 class HashStrTestSuite : public CxxTest::TestSuite {
 
-	public:
+public:
 	void test_case_sensitive_string_equal_to() {
 
 		// Name says it all.
@@ -113,8 +113,7 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_DIFFERS(ic_h(spaced), ic_h(doublespaced));
 	}
 
-	void test_cpp_string_hash()
-	{
+	void test_cpp_string_hash() {
 		// We run the same tests with Hash<String>,
 		// a template specialization of Hash, also a functor.
 		// It is supposed to be case sensitive.
@@ -135,8 +134,7 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_DIFFERS(h(spaced), h(doublespaced));
 	}
 
-	void test_c_style_string_hash()
-	{
+	void test_c_style_string_hash() {
 		// Same as test_cpp_string_hash but with Hash<const char*>,
 		// a template specialization of Hash, also a functor,
 		// that works with C-Style strings.
@@ -157,8 +155,5 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_DIFFERS(h(spaced), h(mixedspaced));
 		TS_ASSERT_DIFFERS(h(tabbed), h(spaced));
 		TS_ASSERT_DIFFERS(h(spaced), h(doublespaced));
-
 	}
-
-
 };

@@ -109,12 +109,10 @@ private:
 
 	Std::list<Section> _sections;
 
-
 	bool stripRoot(istring &key);
 	Section *getSection(istring section);
 	bool splitKey(istring key, istring &section,
 	              istring &sectionkey);
-
 };
 
 } // End of namespace Ultima8

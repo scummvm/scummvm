@@ -20,19 +20,19 @@
  *
  */
 
-#include "graphics/cursorman.h"
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/ultima8.h"
+#include "graphics/cursorman.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/rect.h"
-#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -40,8 +40,8 @@ namespace Ultima8 {
 Mouse *Mouse::_instance;
 
 Mouse::Mouse() : _flashingCursorTime(0), _mouseOverGump(0), _defaultMouse(nullptr),
-		_dragging(DRAG_NOT), _dragging_objId(0), _draggingItem_startGump(0),
-		_draggingItem_lastGump(0) {
+                 _dragging(DRAG_NOT), _dragging_objId(0), _draggingItem_startGump(0),
+                 _draggingItem_lastGump(0) {
 	_instance = this;
 }
 
@@ -84,7 +84,8 @@ bool Mouse::buttonDown(Shared::MouseButton button) {
 			if (gump) {
 				int32 mx2 = _mousePos.x, my2 = _mousePos.y;
 				Gump *parent = gump->GetParent();
-				if (parent) parent->ScreenSpaceToGump(mx2, my2);
+				if (parent)
+					parent->ScreenSpaceToGump(mx2, my2);
 				gump->OnMouseDouble(button, mx2, my2);
 			}
 			mbutton.setState(MBS_HANDLED);
@@ -207,7 +208,6 @@ int Mouse::getMouseFrame() {
 			_flashingCursorTime = 0;
 	}
 
-
 	switch (cursor) {
 	case MOUSE_NORMAL: {
 		bool combat = false;
@@ -230,7 +230,7 @@ int Mouse::getMouseFrame() {
 			offset = 25;
 		return frame + offset;
 	}
-					 //!! constants...
+		//!! constants...
 	case MOUSE_NONE:
 		return -1;
 	case MOUSE_POINTER:
@@ -295,8 +295,8 @@ void Mouse::setMouseCoords(int mx, int my) {
 
 		// strip common prefix from lists
 		while (olditer != oldgumplist.end() &&
-			newiter != newgumplist.end() &&
-			*olditer == *newiter) {
+		       newiter != newgumplist.end() &&
+		       *olditer == *newiter) {
 			++olditer;
 			++newiter;
 		}
@@ -316,7 +316,7 @@ void Mouse::setMouseCoords(int mx, int my) {
 			int startx = _mouseButton[Shared::BUTTON_LEFT]._downPoint.x;
 			int starty = _mouseButton[Shared::BUTTON_LEFT]._downPoint.y;
 			if (ABS(startx - mx) > 2 ||
-				ABS(starty - my) > 2) {
+			    ABS(starty - my) > 2) {
 				startDragging(startx, starty);
 			}
 		}
@@ -373,7 +373,7 @@ void Mouse::startDragging(int startx, int starty) {
 		int32 gx = startx, gy = starty;
 		gump->ScreenSpaceToGump(gx, gy);
 		bool ok = !Ultima8Engine::get_instance()->isAvatarInStasis() &&
-			gump->StartDraggingItem(item, gx, gy);
+		          gump->StartDraggingItem(item, gx, gy);
 		if (!ok) {
 			_dragging = DRAG_INVALID;
 		} else {
@@ -430,7 +430,8 @@ void Mouse::moveDragging(int mx, int my) {
 			if (gump->getObjId() != _draggingItem_lastGump) {
 				// item switched gump, so notify previous gump item left
 				Gump *last = getGump(_draggingItem_lastGump);
-				if (last) last->DraggingItemLeftGump(item);
+				if (last)
+					last->DraggingItemLeftGump(item);
 			}
 			_draggingItem_lastGump = gump->getObjId();
 			int32 gx = mx, gy = my;
@@ -450,7 +451,6 @@ void Mouse::moveDragging(int mx, int my) {
 		setMouseCursor(MOUSE_CROSS);
 	}
 }
-
 
 void Mouse::stopDragging(int mx, int my) {
 	//	perr << "Dropping object " << _dragging_objId << Std::endl;
@@ -501,7 +501,7 @@ void Mouse::stopDragging(int mx, int my) {
 void Mouse::handleDelayedEvents() {
 	for (int button = 0; button < Shared::MOUSE_LAST; ++button) {
 		if (!(_mouseButton[button]._state & (MBS_HANDLED | MBS_DOWN)) &&
-			!_mouseButton[button].lastWithinDblClkTimeout()) {
+		    !_mouseButton[button].lastWithinDblClkTimeout()) {
 			Gump *gump = getGump(_mouseButton[button]._downGump);
 			if (gump) {
 				int32 mx = _mouseButton[button]._downPoint.x;
@@ -509,7 +509,7 @@ void Mouse::handleDelayedEvents() {
 				Gump *parent = gump->GetParent();
 				if (parent)
 					parent->ScreenSpaceToGump(mx, my);
-				
+
 				gump->OnMouseClick(button, mx, my);
 			}
 

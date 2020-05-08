@@ -23,10 +23,10 @@
 #ifndef BACKENDS_TIMER_DEFAULT_H
 #define BACKENDS_TIMER_DEFAULT_H
 
-#include "common/str.h"
 #include "common/hash-str.h"
-#include "common/timer.h"
 #include "common/mutex.h"
+#include "common/str.h"
+#include "common/timer.h"
 
 struct TimerSlot;
 

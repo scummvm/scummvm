@@ -82,7 +82,6 @@ bool WidgetBase::active() const {
 	return false;
 }
 
-
 void WidgetBase::erase() {
 	Screen &screen = *_vm->_screen;
 
@@ -146,8 +145,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		const char *lineStartP = strP;
 
 		// Find how many characters will fit on the next line
-		while (width < maxWidth && *strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] ||
-				(byte)*strP == talk._opcodes[OP_NULL])) {
+		while (width < maxWidth && *strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] || (byte)*strP == talk._opcodes[OP_NULL])) {
 			width += _surface.charWidth(*strP);
 
 			// Keep track of the last space
@@ -167,8 +165,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		// Move the string ahead to the next line
 		if (*strP == ' ' || *strP == 13)
 			++strP;
-	} while (*strP && (lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER]
-			|| (byte)*strP == talk._opcodes[OP_NULL]));
+	} while (*strP && (lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] || (byte)*strP == talk._opcodes[OP_NULL]));
 
 	// Return any remaining text left over
 	return *strP ? Common::String(strP) : Common::String();
@@ -203,19 +200,19 @@ void WidgetBase::makeInfoArea(Surface &s) {
 	s.hLine(images[0]._width, 2, s.width() - images[1]._width, INFO_BOTTOM);
 
 	// Draw the bottom of the Info Box
-	s.hLine(images[0]._width, s.height()- 3, s.width() - images[1]._width, INFO_TOP);
-	s.hLine(images[0]._width, s.height()- 2, s.width() - images[1]._width, INFO_MIDDLE);
-	s.hLine(images[0]._width, s.height()- 1, s.width() - images[1]._width, INFO_BOTTOM);
+	s.hLine(images[0]._width, s.height() - 3, s.width() - images[1]._width, INFO_TOP);
+	s.hLine(images[0]._width, s.height() - 2, s.width() - images[1]._width, INFO_MIDDLE);
+	s.hLine(images[0]._width, s.height() - 1, s.width() - images[1]._width, INFO_BOTTOM);
 
 	// Draw the left Side of the Info Box
-	s.vLine(0, images[0]._height, s.height()- images[2]._height, INFO_TOP);
-	s.vLine(1, images[0]._height, s.height()- images[2]._height, INFO_MIDDLE);
-	s.vLine(2, images[0]._height, s.height()- images[2]._height, INFO_BOTTOM);
+	s.vLine(0, images[0]._height, s.height() - images[2]._height, INFO_TOP);
+	s.vLine(1, images[0]._height, s.height() - images[2]._height, INFO_MIDDLE);
+	s.vLine(2, images[0]._height, s.height() - images[2]._height, INFO_BOTTOM);
 
 	// Draw the right Side of the Info Box
-	s.vLine(s.width() - 3, images[0]._height, s.height()- images[2]._height, INFO_TOP);
-	s.vLine(s.width() - 2, images[0]._height, s.height()- images[2]._height, INFO_MIDDLE);
-	s.vLine(s.width() - 1, images[0]._height, s.height()- images[2]._height, INFO_BOTTOM);
+	s.vLine(s.width() - 3, images[0]._height, s.height() - images[2]._height, INFO_TOP);
+	s.vLine(s.width() - 2, images[0]._height, s.height() - images[2]._height, INFO_MIDDLE);
+	s.vLine(s.width() - 1, images[0]._height, s.height() - images[2]._height, INFO_BOTTOM);
 }
 
 void WidgetBase::makeInfoArea() {
@@ -266,8 +263,7 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 	// Draw the scroll position bar
 	int barHeight = (r.height() - BUTTON_SIZE * 2) * pageSize / count;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
-	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE +
-		(r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
+	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE + (r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
 
 	_surface.fillRect(Common::Rect(r.left + 2, barY + 2, r.right - 2, barY + barHeight - 3), INFO_MIDDLE);
 	ui.drawDialogRect(_surface, Common::Rect(r.left, barY, r.right, barY + barHeight), true);
@@ -293,8 +289,7 @@ void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 	// Calculate the Scroll Position bar
 	int barHeight = (r.height() - BUTTON_SIZE * 2) * pageSize / count;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
-	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE +
-		(r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
+	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE + (r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
 
 	if (Common::Rect(r.left, r.top, r.right, r.top + BUTTON_SIZE).contains(mousePos))
 		// Mouse on scroll up button
@@ -322,9 +317,7 @@ void WidgetBase::handleScrolling(int &scrollIndex, int pageSize, int max) {
 	Common::Rect r = getScrollBarBounds();
 	r.translate(_bounds.left, _bounds.top);
 
-	if (ui._scrollHighlight != SH_NONE || keycode == Common::KEYCODE_HOME || keycode == Common::KEYCODE_END
-		|| keycode == Common::KEYCODE_PAGEUP || keycode == Common::KEYCODE_PAGEDOWN
-		|| keycode == Common::KEYCODE_UP || keycode == Common::KEYCODE_DOWN) {
+	if (ui._scrollHighlight != SH_NONE || keycode == Common::KEYCODE_HOME || keycode == Common::KEYCODE_END || keycode == Common::KEYCODE_PAGEUP || keycode == Common::KEYCODE_PAGEDOWN || keycode == Common::KEYCODE_UP || keycode == Common::KEYCODE_DOWN) {
 		// Check for the scrollbar
 		if (ui._scrollHighlight == SH_THUMBNAIL) {
 			int yp = mousePos.y;
@@ -351,10 +344,9 @@ void WidgetBase::handleScrolling(int &scrollIndex, int pageSize, int max) {
 				scrollIndex -= pageSize;
 
 			// Check for Page Down
-			else if ((ui._scrollHighlight == SH_PAGE_DOWN || keycode == Common::KEYCODE_PAGEDOWN)
-				&& (scrollIndex + pageSize < max)) {
+			else if ((ui._scrollHighlight == SH_PAGE_DOWN || keycode == Common::KEYCODE_PAGEDOWN) && (scrollIndex + pageSize < max)) {
 				scrollIndex += pageSize;
-				if (scrollIndex + pageSize >max)
+				if (scrollIndex + pageSize > max)
 					scrollIndex = max - pageSize;
 			}
 

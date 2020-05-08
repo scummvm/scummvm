@@ -28,7 +28,8 @@
 namespace Glk {
 namespace Archetype {
 
-enum TargetListType { PARSER_VERBLIST, PARSER_NOUNLIST };
+enum TargetListType { PARSER_VERBLIST,
+	                  PARSER_NOUNLIST };
 
 /**
  * Given a string, creates a string with one and only one space between each word

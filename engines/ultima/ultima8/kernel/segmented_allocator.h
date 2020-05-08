@@ -23,15 +23,15 @@
 #ifndef ULTIMA8_KERNEL_SEGMENTED_ALLOCATOR_H
 #define ULTIMA8_KERNEL_SEGMENTED_ALLOCATOR_H
 
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/kernel/allocator.h"
 #include "ultima/ultima8/kernel/segmented_pool.h"
-#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class SegmentedAllocator: public Allocator {
+class SegmentedAllocator : public Allocator {
 public:
 	SegmentedAllocator(size_t nodeCapacity, uint32 nodes);
 	~SegmentedAllocator() override;

@@ -43,11 +43,11 @@ struct InventoryPoolItem {
 typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
 
 class Inventory : public CObject {
- protected:
+protected:
 	int16 _sceneId;
 	InventoryPoolItems _itemsPool;
 
- public:
+public:
 	Inventory() { _sceneId = 0; }
 
 	bool load(MfcArchive &file) override;
@@ -91,7 +91,7 @@ class Inventory2 : public Inventory {
 	Scene *_scene;
 	BigPicture *_picture;
 
- public:
+public:
 	Inventory2();
 	~Inventory2() override;
 

@@ -29,7 +29,7 @@
 namespace Cloud {
 namespace OneDrive {
 
-class OneDriveStorage: public Cloud::BaseStorage {
+class OneDriveStorage : public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
 	OneDriveStorage(Common::String token, Common::String refreshToken, bool enabled);
 

@@ -95,10 +95,11 @@ public:
 	FrameID translate(FrameID frame);
 
 	enum ShapeFlexId {
-		OTHER       = 0,
-		MAINSHAPES  = 1,
-		GUMPS       = 2
+		OTHER = 0,
+		MAINSHAPES = 1,
+		GUMPS = 2
 	};
+
 private:
 	void loadTranslation();
 	void setupTTFOverrides(const char *configkey, bool SJIS);

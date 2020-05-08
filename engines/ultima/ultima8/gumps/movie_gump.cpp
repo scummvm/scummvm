@@ -20,17 +20,17 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/graphics/avi_player.h"
-#include "ultima/ultima8/graphics/skf_player.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/graphics/skf_player.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/ultima8.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
 
@@ -40,15 +40,14 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MovieGump, ModalGump)
 
 MovieGump::MovieGump() : ModalGump(), _player(0) {
-
 }
 
 MovieGump::MovieGump(int width, int height, Common::SeekableReadStream *rs,
                      bool introMusicHack, uint32 flags, int32 layer)
-		: ModalGump(50, 50, width, height, 0, flags, layer) {
+    : ModalGump(50, 50, width, height, 0, flags, layer) {
 	uint32 stream_id = rs->readUint32BE();
 	rs->seek(-4, SEEK_CUR);
-	if (stream_id == 0x52494646) {// 'RIFF' - crusader AVIs
+	if (stream_id == 0x52494646) { // 'RIFF' - crusader AVIs
 		_player = new AVIPlayer(rs, width, height);
 	} else {
 		_player = new SKFPlayer(rs, width, height, introMusicHack);
@@ -91,8 +90,7 @@ bool MovieGump::OnKeyDown(int key, int mod) {
 	switch (key) {
 	case Common::KEYCODE_ESCAPE: {
 		Close();
-	}
-	break;
+	} break;
 	default:
 		break;
 	}
@@ -112,9 +110,7 @@ ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool 
 		FadeToModalProcess *p = new FadeToModalProcess(gump);
 		Kernel::get_instance()->addProcess(p);
 		return p->getPid();
-	}
-	else
-	{
+	} else {
 		gump->InitGump(0);
 		gump->setRelativePosition(CENTER);
 		gump->CreateNotifier();
@@ -127,7 +123,6 @@ bool MovieGump::loadData(Common::ReadStream *rs) {
 }
 
 void MovieGump::saveData(Common::WriteStream *ws) {
-
 }
 
 } // End of namespace Ultima8

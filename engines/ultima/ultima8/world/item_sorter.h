@@ -32,24 +32,26 @@ class RenderSurface;
 struct SortItem;
 
 class ItemSorter {
-	MainShapeArchive    *_shapes;
-	RenderSurface   *_surf;
+	MainShapeArchive *_shapes;
+	RenderSurface *_surf;
 
-	SortItem    *_items;
-	SortItem    *_itemsTail;
-	SortItem    *_itemsUnused;
-	int32       _sortLimit;
+	SortItem *_items;
+	SortItem *_itemsTail;
+	SortItem *_itemsUnused;
+	int32 _sortLimit;
 
-	int32       _orderCounter;
+	int32 _orderCounter;
 
-	int32       _camSx, _camSy;
+	int32 _camSx, _camSy;
 
 public:
 	ItemSorter();
 	~ItemSorter();
 
 	enum HitFace {
-		X_FACE, Y_FACE, Z_FACE
+		X_FACE,
+		Y_FACE,
+		Z_FACE
 	};
 
 	// Begin creating the display list
@@ -57,9 +59,9 @@ public:
 	                      int32 camx, int32 camy, int32 camz);
 
 	void AddItem(int32 x, int32 y, int32 z, uint32 shape_num, uint32 frame_num, uint32 item_flags, uint32 ext_flags, uint16 item_num = 0);
-	void AddItem(const Item *);                   // Add an Item. SetupLerp() MUST have been called
+	void AddItem(const Item *); // Add an Item. SetupLerp() MUST have been called
 
-	void PaintDisplayList(bool item_highlight = false);             // Finishes the display list and Paints
+	void PaintDisplayList(bool item_highlight = false); // Finishes the display list and Paints
 
 	// Trace and find an object. Returns objid.
 	// If face is non-NULL, also return the face of the 3d bbox (x,y) is on
@@ -69,7 +71,8 @@ public:
 		_sortLimit++;
 	}
 	void DecSortLimit() {
-		if (_sortLimit > 0) _sortLimit--;
+		if (_sortLimit > 0)
+			_sortLimit--;
 	}
 
 private:

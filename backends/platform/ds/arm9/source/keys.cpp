@@ -71,11 +71,10 @@
 #include <stdlib.h>
 
 #include <NDS/scummvm_ipc.h>
-#include <nds/system.h>
 #include <nds/arm9/input.h>
+#include <nds/system.h>
 
-
-#define KEYS_CUR (( ((~REG_KEYINPUT)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
+#define KEYS_CUR ((((~REG_KEYINPUT) & 0x3ff) | (((~IPC->buttons) & 3) << 10) | (((~IPC->buttons) << 6) & (KEY_TOUCH | KEY_LID))) ^ KEY_LID)
 
 namespace DS {
 
@@ -94,17 +93,17 @@ void scanKeys(void) {
 
 	oldx = IPC->touchXpx;
 	oldy = IPC->touchYpx;
-    if (delay != 0) {
-        if (keys != keysold) {
-            count = delay;
-            keysrepeat = keysDown();
-        }
-        count--;
-        if (count == 0) {
-            count = repeat;
-            keysrepeat = keys;
-        }
-    }
+	if (delay != 0) {
+		if (keys != keysold) {
+			count = delay;
+			keysrepeat = keysDown();
+		}
+		count--;
+		if (count == 0) {
+			count = repeat;
+			keysrepeat = keys;
+		}
+	}
 }
 
 uint32 keysHeld(void) {
@@ -117,20 +116,19 @@ uint32 keysDown(void) {
 
 uint32 keysDownRepeat(void) {
 	uint32 tmp = keysrepeat;
-    keysrepeat = 0;
-    return tmp;
+	keysrepeat = 0;
+	return tmp;
 }
 
-void keysSetRepeat( u8 setDelay, u8 setRepeat ) {
-    delay = setDelay;
-    repeat = setRepeat;
-    count = delay;
-    keysrepeat = 0;
+void keysSetRepeat(u8 setDelay, u8 setRepeat) {
+	delay = setDelay;
+	repeat = setRepeat;
+	count = delay;
+	keysrepeat = 0;
 }
 
 uint32 keysUp(void) {
 	return (keys ^ keysold) & (~keys);
 }
-
 
 } // End of namespace DS

@@ -33,11 +33,10 @@
 
 namespace MutationOfJB {
 
-GameWidget::GameWidget(GuiScreen &gui) :
-	Widget(gui, Common::Rect(GAME_NORMAL_AREA_WIDTH, GAME_NORMAL_AREA_HEIGHT)),
-	_currentMapObjectId(0),
-	_nextMapObjectId(0),
-	_callback(nullptr) {}
+GameWidget::GameWidget(GuiScreen &gui) : Widget(gui, Common::Rect(GAME_NORMAL_AREA_WIDTH, GAME_NORMAL_AREA_HEIGHT)),
+                                         _currentMapObjectId(0),
+                                         _nextMapObjectId(0),
+                                         _callback(nullptr) {}
 
 void GameWidget::handleEvent(const Common::Event &event) {
 	if (!_enabled)
@@ -180,4 +179,4 @@ void GameWidget::handleMapScene(const Common::Event &event) {
 	}
 }
 
-}
+} // namespace MutationOfJB

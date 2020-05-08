@@ -20,9 +20,9 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/resources/genericresource.h"
 #include "illusions/dictionary.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -33,8 +33,7 @@ void GenericResourceLoader::load(Resource *resource) {
 }
 
 bool GenericResourceLoader::isFlag(int flag) {
-	return
-		flag == kRlfLoadFile;
+	return flag == kRlfLoadFile;
 }
 
 } // End of namespace Illusions

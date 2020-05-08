@@ -22,12 +22,12 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/gfx.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/interaction.h"
 #include "fullpipe/gameloader.h"
+#include "fullpipe/gfx.h"
+#include "fullpipe/interaction.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/statics.h"
 
 #include "common/memstream.h"
 #include "graphics/transparent_surface.h"
@@ -236,7 +236,7 @@ GameObject::GameObject(GameObject *src) {
 
 Common::String GameObject::toXML() {
 	return Common::String::format("id=\"%s\" name=\"%s\" x=%d y=%d priority=%d f8=%d",
-		g_fp->gameIdToStr(_id).c_str(), transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
+	                              g_fp->gameIdToStr(_id).c_str(), transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
 }
 
 bool GameObject::load(MfcArchive &file) {
@@ -399,14 +399,13 @@ bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
 	return false;
 }
 
-Picture::Picture() :
-	_x(0),
-	_y(0),
-	_field_44(0),
-	_field_54(0),
-	_alpha(-1),
-	_width(0),
-	_height(0) {}
+Picture::Picture() : _x(0),
+                     _y(0),
+                     _field_44(0),
+                     _field_54(0),
+                     _alpha(-1),
+                     _width(0),
+                     _height(0) {}
 
 Picture::~Picture() {
 	freePicture();
@@ -471,7 +470,7 @@ bool Picture::load(MfcArchive &file) {
 	getData();
 
 	debugC(5, kDebugLoading, "Picture::load: loaded memobject=\"%s\" x=%d y=%d f44=%d width=%d height=%d alpha=%d memobject2=\"%s\"", _memfilename.c_str(),
-				_x, _y, _field_44, _width, _height, _alpha, _memoryObject2->_memfilename.c_str());
+	       _x, _y, _field_44, _width, _height, _alpha, _memoryObject2->_memfilename.c_str());
 
 	return true;
 }
@@ -680,8 +679,8 @@ int Picture::getPixelAtPosEx(int x, int y) {
 
 	// TODO: It looks like this doesn't really work.
 	if (x < (g_fp->_pictureScale + _width - 1) / g_fp->_pictureScale &&
-			y < (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale &&
-			_memoryObject2 != 0 && _memoryObject2->_rows != 0)
+	    y < (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale &&
+	    _memoryObject2 != 0 && _memoryObject2->_rows != 0)
 		return _memoryObject2->_rows[x][2 * y];
 
 	return 0;
@@ -1125,8 +1124,7 @@ void Shadows::init() {
 	StaticANIObject *st;
 	Movement *mov;
 
-	if (scene && (st = scene->getStaticANIObject1ById(_staticAniObjectId, -1)) != 0
-		&& ((mov = st->getMovementById(_movementId)) != 0))
+	if (scene && (st = scene->getStaticANIObject1ById(_staticAniObjectId, -1)) != 0 && ((mov = st->getMovementById(_movementId)) != 0))
 		initMovement(mov);
 }
 
@@ -1178,9 +1176,9 @@ void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alph
 		for (int x = x1; x < x2; x++) {
 			uint32 color = *ptr;
 			color = (((color >> 24) & 0xff) * alpha / 0xff) << 24 |
-					(((color >> 16) & 0xff) * alpha / 0xff) << 16 |
-					(((color >>  8) & 0xff) * alpha / 0xff) <<  8 |
-					(color & 0xff);
+			        (((color >> 16) & 0xff) * alpha / 0xff) << 16 |
+			        (((color >> 8) & 0xff) * alpha / 0xff) << 8 |
+			        (color & 0xff);
 			*ptr = color;
 			ptr++;
 		}

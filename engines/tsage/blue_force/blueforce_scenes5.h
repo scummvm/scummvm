@@ -27,10 +27,10 @@
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -39,26 +39,27 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-class Scene550: public SceneExt {
+class Scene550 : public SceneExt {
 	/* Objects */
-	class Lyle: public NamedObject {
+	class Lyle : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class CaravanDoor: public NamedObject {
+	class CaravanDoor : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Vechile: public NamedObject {
+	class Vechile : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Lyle _lyle;
@@ -74,49 +75,50 @@ public:
 	void signal() override;
 };
 
-class Scene551: public Scene550 {
+class Scene551 : public Scene550 {
 	/* Objects */
-	class Vechile: public NamedObject {
+	class Vechile : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class DrunkStanding: public NamedObjectExt {
+	class DrunkStanding : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Drunk: public NamedObjectExt {
+	class Drunk : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class PatrolCarTrunk: public NamedObject {
+	class PatrolCarTrunk : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class TrunkInset: public FocusObject {
+	class TrunkInset : public FocusObject {
 	public:
 		void remove() override;
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class TrunkKits: public NamedObject {
+	class TrunkKits : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Harrison: public NamedObjectExt {
+	class Harrison : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
-	class Item4: public SceneHotspot {
+	class Item4 : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	SpeakerDrunk _drunkSpeaker;
 	SpeakerJakeUniform _jakeUniformSpeaker;
@@ -141,22 +143,23 @@ public:
 	void dispatch() override;
 };
 
-class Scene560: public SceneExt {
+class Scene560 : public SceneExt {
 	/* Objects */
-	class DeskChair: public NamedObject {
+	class DeskChair : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Box: public NamedObjectExt {
+	class Box : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class SafeInset: public FocusObject {
+	class SafeInset : public FocusObject {
 		/* Items */
-		class Item: public NamedHotspotExt {
+		class Item : public NamedHotspotExt {
 		public:
 			bool startAction(CursorType action, Event &event) override;
 		};
+
 	public:
 		NamedObject _digit0, _digit1, _digit2;
 		Item _item1, _item2, _item3, _item4, _item5, _item6;
@@ -168,16 +171,17 @@ class Scene560: public SceneExt {
 		void signal() override;
 		void process(Event &event) override;
 	};
-	class Nickel: public NamedObject {
+	class Nickel : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class BoxInset: public FocusObject {
+	class BoxInset : public FocusObject {
 		/* Items */
-		class Item1: public NamedHotspot {
+		class Item1 : public NamedHotspot {
 		public:
 			bool startAction(CursorType action, Event &event) override;
 		};
+
 	public:
 		Item1 _item1;
 
@@ -187,31 +191,32 @@ class Scene560: public SceneExt {
 	};
 
 	/* Item groups */
-	class PicturePart: public NamedHotspotExt {
+	class PicturePart : public NamedHotspotExt {
 	public:
 		Common::String getClassName() override { return "Scene560_PicturePart"; }
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
-	class Computer: public NamedHotspot {
+	class Computer : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	Action1 _action1;
 	Action2 _action2;
@@ -239,11 +244,12 @@ public:
 	void dispatch() override;
 };
 
-class Scene570: public SceneExt {
+class Scene570 : public SceneExt {
 	/* Custom classes */
-	class PasswordEntry: public EventHandler {
+	class PasswordEntry : public EventHandler {
 	private:
 		void checkPassword();
+
 	public:
 		SceneText _passwordText, _entryText;
 		Common::String _passwordStr, _entryBuffer;
@@ -254,7 +260,7 @@ class Scene570: public SceneExt {
 		void postInit(SceneObjectList *OwnerList = NULL) override;
 		void process(Event &event) override;
 	};
-	class Icon: public NamedObject {
+	class Icon : public NamedObject {
 	public:
 		SceneText _sceneText;
 		int _iconId, _folderId, _parentFolderId;
@@ -268,7 +274,7 @@ class Scene570: public SceneExt {
 
 		void setDetails(int iconId, int folderId, int parentFolderId, const Common::String &msg);
 	};
-	class IconManager: public EventHandler {
+	class IconManager : public EventHandler {
 	public:
 		NamedObject _object1;
 		SynchronizedList<Icon *> _list;
@@ -284,24 +290,25 @@ class Scene570: public SceneExt {
 	};
 
 	/* Objects */
-	class PowerSwitch: public NamedObject {
+	class PowerSwitch : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class PrinterIcon: public NamedObject {
+	class PrinterIcon : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object3: public FocusObject {
+	class Object3 : public FocusObject {
 	public:
 		void remove() override;
 	};
 
 	/* Items */
-	class FloppyDrive: public NamedHotspot {
+	class FloppyDrive : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SpeakerGameText _gameTextSpeaker;
@@ -324,20 +331,21 @@ public:
 	void process(Event &event) override;
 };
 
-class Scene580: public SceneExt {
+class Scene580 : public SceneExt {
 	/* Objects */
-	class Vechile: public NamedObject {
+	class Vechile : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Door: public NamedObject {
+	class Door : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Lyle: public NamedObject {
+	class Lyle : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Vechile _vechile;
@@ -351,32 +359,33 @@ public:
 	void process(Event &event) override;
 };
 
-class Scene590: public PalettedScene {
+class Scene590 : public PalettedScene {
 	/* Objects */
-	class Laura: public NamedObject {
+	class Laura : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Skip: public NamedObject {
+	class Skip : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
-	class Exit: public NamedHotspot {
+	class Exit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Laura _laura;

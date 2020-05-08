@@ -31,24 +31,27 @@
 namespace Glk {
 namespace Level9 {
 
-enum L9GameTypes { L9_V1, L9_V2, L9_V3, L9_V4 };
+enum L9GameTypes { L9_V1,
+	               L9_V2,
+	               L9_V3,
+	               L9_V4 };
 
 struct gln_game_table_t {
-	const size_t length;        ///< Datafile length in bytes
-	const byte checksum;        ///< 8-bit checksum, last datafile byte
-	const uint16 crc;           ///< 16-bit CRC, L9cut-internal
-	const char *const gameId;   ///< Game Id
-	const char *const name;     ///< Game title
-	const char *const extra;    ///< Disk number, platform, etc.
+	const size_t length;      ///< Datafile length in bytes
+	const byte checksum;      ///< 8-bit checksum, last datafile byte
+	const uint16 crc;         ///< 16-bit CRC, L9cut-internal
+	const char *const gameId; ///< Game Id
+	const char *const name;   ///< Game title
+	const char *const extra;  ///< Disk number, platform, etc.
 };
 typedef const gln_game_table_t *gln_game_tableref_t;
 
 struct gln_patch_table_t {
-	const size_t length;        ///< Datafile length in bytes
-	const byte orig_checksum;   ///< 8-bit checksum, last datafile byte
-	const uint16 orig_crc;      ///< 16-bit CRC, L9cut-internal
-	const byte patch_checksum;  ///< 8-bit checksum, last datafile byte
-	const uint16 patch_crc;     ///< 16-bit CRC, L9cut-internal
+	const size_t length;       ///< Datafile length in bytes
+	const byte orig_checksum;  ///< 8-bit checksum, last datafile byte
+	const uint16 orig_crc;     ///< 16-bit CRC, L9cut-internal
+	const byte patch_checksum; ///< 8-bit checksum, last datafile byte
+	const uint16 patch_crc;    ///< 16-bit CRC, L9cut-internal
 };
 typedef const gln_patch_table_t *gln_patch_tableref_t;
 
@@ -77,9 +80,11 @@ private:
 private:
 	byte **_dictData;
 	byte **_aCodePtr;
+
 public:
 	L9GameTypes _gameType;
 	int _l9V1Game;
+
 public:
 	Scanner() : _dictData(nullptr), _aCodePtr(nullptr), _gameType(L9_V1), _l9V1Game(-1) {}
 
@@ -87,7 +92,7 @@ public:
 	 * Scan passed file for a valid game, and if found return it's offset
 	 */
 	long scanner(byte *StartFile, uint32 size, byte **dictData = nullptr,
-		byte **aCodePtr = nullptr);
+	             byte **aCodePtr = nullptr);
 
 	/**
 	 * Returns the info for a V1 game
@@ -104,8 +109,10 @@ private:
 	uint32 &_fileSize;
 	bool _crcInitialized;
 	uint16 _crcTable[256];
+
 public:
 	const char *_gameName;
+
 public:
 	/**
 	 * Constructor

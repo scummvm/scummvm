@@ -23,9 +23,9 @@
 #ifndef TOON_ANIM_H
 #define TOON_ANIM_H
 
-#include "common/stream.h"
 #include "common/array.h"
 #include "common/func.h"
+#include "common/stream.h"
 #include "graphics/surface.h"
 
 #include "toon/script.h"
@@ -74,6 +74,7 @@ public:
 	int16 getWidth() const;
 	int16 getHeight() const;
 	Common::Rect getRect();
+
 protected:
 	ToonEngine *_vm;
 };
@@ -159,11 +160,11 @@ public:
 	AnimationInstance *createNewInstance(AnimationInstanceType type);
 	void addInstance(AnimationInstance *instance);
 	void removeInstance(AnimationInstance *instance);
-	void updateInstance(AnimationInstance* instance);
+	void updateInstance(AnimationInstance *instance);
 	void removeAllInstances(AnimationInstanceType type);
 	void render();
 	void update(int32 timeIncrement);
-	bool hasInstance(AnimationInstance* instance);
+	bool hasInstance(AnimationInstance *instance);
 
 protected:
 	ToonEngine *_vm;

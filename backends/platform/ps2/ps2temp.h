@@ -52,12 +52,12 @@ inline PS2Device _getDev(const char *s) {
 		return ERR_DEV; // -1;
 }
 
-inline PS2Device _getDev(Common::String& cs) {
+inline PS2Device _getDev(Common::String &cs) {
 	const char *s = cs.c_str();
 	return _getDev(s);
 }
 
-inline PS2Device _getDev(Common::FSNode& n) {
+inline PS2Device _getDev(Common::FSNode &n) {
 	const char *s = n.getPath().c_str();
 	return _getDev(s);
 }

@@ -29,7 +29,7 @@
 namespace Common {
 struct Point;
 struct Rect;
-}
+} // namespace Common
 
 namespace CryOmni3D {
 

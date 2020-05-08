@@ -53,9 +53,9 @@ class PortraitView : public View {
 	uint8 portrait_width;
 	uint8 portrait_height;
 
-	bool waiting; // waiting for input, then will return to previous view
+	bool waiting;     // waiting for input, then will return to previous view
 	bool show_cursor; // indicate waiting for input
-// uint16 cursor_x, cursor_y;
+	                  // uint16 cursor_x, cursor_y;
 
 	DollWidget *doll_widget;
 	bool display_doll;
@@ -73,17 +73,15 @@ public:
 		show_cursor = state;
 	}
 	void set_waiting(bool state);
-	bool get_waiting()     {
+	bool get_waiting() {
 		return (waiting);
 	}
 
 protected:
-
 	void display_name(uint16 y_offset);
 
 private:
 	void load_background(const char *filename, uint8 lib_offset);
-
 };
 
 } // End of namespace Nuvie

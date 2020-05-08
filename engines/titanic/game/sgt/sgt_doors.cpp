@@ -26,10 +26,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSGTDoors, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
 void CSGTDoors::save(SimpleFile *file, int indent) {
@@ -55,12 +55,12 @@ bool CSGTDoors::EnterViewMsg(CEnterViewMsg *msg) {
 
 	if (pet) {
 		int roomNum = pet->getRoomsRoomNum();
-		static const int START_FRAMES[7] = { 0, 26, 30, 34, 38, 42, 46 };
-		static const int END_FRAMES[7] = { 12, 29, 33, 37, 41, 45, 49 };
+		static const int START_FRAMES[7] = {0, 26, 30, 34, 38, 42, 46};
+		static const int END_FRAMES[7] = {12, 29, 33, 37, 41, 45, 49};
 
 		if (pet->getRoomsSublevel() == 1)
 			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		else
 			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
@@ -84,12 +84,12 @@ bool CSGTDoors::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 	if (pet) {
 		int roomNum = pet->getRoomsRoomNum();
-		static const int START_FRAMES[7] = { 12, 69, 65, 61, 57, 53, 49 };
-		static const int END_FRAMES[7] = { 25, 72, 68, 64, 60, 56, 52 };
+		static const int START_FRAMES[7] = {12, 69, 65, 61, 57, 53, 49};
+		static const int END_FRAMES[7] = {25, 72, 68, 64, 60, 56, 52};
 
 		if (pet->getRoomsSublevel() == 1)
 			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
-				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			          MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		else
 			playMovie(12, 25, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}

@@ -45,7 +45,7 @@ public:
 
 	void killRobotShip();
 
-	bool pointInShuttle(Common::Point&);
+	bool pointInShuttle(Common::Point &);
 
 	void hitByEnergyBeam(Common::Point impactPoint);
 	void hitByGravitonCannon(Common::Point impactPoint);

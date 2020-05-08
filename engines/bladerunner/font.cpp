@@ -36,7 +36,7 @@ Font::~Font() {
 	close();
 }
 
-Font* Font::load(BladeRunnerEngine *vm, const Common::String &fileName, int spacing, bool useFontColor) {
+Font *Font::load(BladeRunnerEngine *vm, const Common::String &fileName, int spacing, bool useFontColor) {
 	Font *font = new Font();
 	font->_spacing = spacing;
 	font->_useFontColor = useFontColor;

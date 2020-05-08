@@ -41,6 +41,7 @@ public:
 	DuckmanCredits(IllusionsEngine_Duckman *vm);
 	~DuckmanCredits();
 	void start();
+
 public:
 	typedef Common::Array<CreditsItem> CreditsItems;
 	IllusionsEngine_Duckman *_vm;
@@ -54,7 +55,6 @@ public:
 	char *readNextLine();
 	Common::Point getItemPosition(int index);
 	void charToWChar(char *text, uint16 *wtext, uint size);
-
 };
 
 } // End of namespace Illusions

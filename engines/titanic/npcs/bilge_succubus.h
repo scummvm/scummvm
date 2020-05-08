@@ -40,11 +40,13 @@ class CBilgeSuccUBus : public CSuccUBus {
 	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
+
 public:
 	int _sneezing2StartFrame;
 	int _sneezing2EndFrame;
 	int _sneezing1StartFrame;
 	int _sneezing1EndFrame;
+
 public:
 	CLASSDEF;
 	CBilgeSuccUBus();

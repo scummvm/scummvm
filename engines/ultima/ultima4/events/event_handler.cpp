@@ -21,16 +21,16 @@
  */
 
 #include "ultima/ultima4/events/event_handler.h"
+#include "common/events.h"
+#include "common/system.h"
 #include "ultima/ultima4/controllers/wait_controller.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/views/textview.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/location.h"
-#include "common/events.h"
-#include "common/system.h"
+#include "ultima/ultima4/views/textview.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -41,7 +41,7 @@ bool EventHandler::_ended = false;
 EventHandler *EventHandler::_instance = nullptr;
 
 EventHandler::EventHandler() : _timer(settings._eventTimerGranularity),
-		_updateScreen(nullptr), _isRightButtonDown(false) {
+                               _updateScreen(nullptr), _isRightButtonDown(false) {
 }
 
 EventHandler *EventHandler::getInstance() {
@@ -124,7 +124,8 @@ Controller *EventHandler::getController() const {
 }
 
 void EventHandler::setController(Controller *c) {
-	while (popController() != nullptr) {}
+	while (popController() != nullptr) {
+	}
 	pushController(c);
 }
 
@@ -255,7 +256,7 @@ void EventHandler::handleMouseMotionEvent(const Common::Event &event) {
 
 		if (_isRightButtonDown) {
 			int xd = (event.mouse.x / settings._scale) - 96,
-				yd = (event.mouse.y / settings._scale) - 96;
+			    yd = (event.mouse.y / settings._scale) - 96;
 			double dist = sqrt((double)(xd * xd + yd * yd));
 			_walk.setDelta(area->_direction, (int)dist);
 		}
@@ -302,14 +303,14 @@ void EventHandler::handleKeyDownEvent(const Common::Event &event, Controller *co
 	int key;
 	bool processed;
 
-	key = (event.kbd.ascii != 0 && event.kbd.ascii < 128) ?
-		event.kbd.ascii : event.kbd.keycode;
+	key = (event.kbd.ascii != 0 && event.kbd.ascii < 128) ? event.kbd.ascii : event.kbd.keycode;
 
 	key += (event.kbd.flags & (Common::KBD_CTRL |
-		Common::KBD_ALT | Common::KBD_META)) << 16;
+	                           Common::KBD_ALT | Common::KBD_META))
+	       << 16;
 
 	debug(1, "key event: sym = %d, mod = %d; translated = %d",
-		event.kbd.keycode, event.kbd.flags, key);
+	      event.kbd.keycode, event.kbd.flags, key);
 
 	// handle the keypress
 	processed = controller->notifyKeyPressed(key);
@@ -370,7 +371,6 @@ KeybindingAction WalkTrigger::getAction() {
 
 	return KEYBIND_NONE;
 }
-
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

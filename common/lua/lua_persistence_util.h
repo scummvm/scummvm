@@ -43,10 +43,8 @@
  * for Mobile Lua (http://luaos.net/pages/mobile-lua.php)
  */
 
-
 #ifndef LUA_PERISTENCE_UTIL_H
 #define LUA_PERISTENCE_UTIL_H
-
 
 struct lua_State;
 
@@ -60,7 +58,7 @@ namespace Lua {
 #define lua_reallocv(luaState, block, on, n, e) lua_realloc(luaState, block, (on) * (e), (n) * (e))
 #define lua_reallocvector(luaState, vec, oldn, n, T) ((vec) = (T *)(lua_reallocv(luaState, vec, oldn, n, sizeof(T))))
 #define lua_newVector(luaState, num, T) ((T *)lua_reallocv(luaState, nullptr, 0, num, sizeof(T)))
-#define lua_new(luaState,T) (T *)lua_malloc(luaState, sizeof(T))
+#define lua_new(luaState, T) (T *)lua_malloc(luaState, sizeof(T))
 
 void *lua_realloc(lua_State *luaState, void *block, size_t osize, size_t nsize);
 
@@ -73,7 +71,7 @@ StkId getObject(lua_State *luaState, int stackpos);
 
 void lua_linkObjToGC(lua_State *luaState, GCObject *obj, lu_byte type);
 
-#define sizeLclosure(n) ((sizeof(LClosure)) + sizeof(TValue *) * ((n) - 1))
+#define sizeLclosure(n) ((sizeof(LClosure)) + sizeof(TValue *) * ((n)-1))
 
 Closure *lua_newLclosure(lua_State *luaState, int numElements, Table *elementTable);
 void pushClosure(lua_State *luaState, Closure *closure);
@@ -102,7 +100,7 @@ void GCUnlink(lua_State *luaState, GCObject *gco);
 
 TString *lua_newlstr(lua_State *luaState, const char *str, size_t len);
 void lua_link(lua_State *luaState, GCObject *o, lu_byte tt);
-Proto *lua_newproto(lua_State *luaState) ;
+Proto *lua_newproto(lua_State *luaState);
 
 UpVal *makeUpValue(lua_State *luaState, int stackPos);
 /**

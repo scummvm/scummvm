@@ -23,12 +23,11 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/eobcommon.h"
-#include "kyra/script/script_eob.h"
-#include "kyra/resource/resource.h"
 #include "kyra/engine/timer.h"
+#include "kyra/resource/resource.h"
+#include "kyra/script/script_eob.h"
 
 #include "common/system.h"
-
 
 namespace Kyra {
 
@@ -81,7 +80,7 @@ void EoBCoreEngine::releaseMonsterShapes(int first, int num) {
 
 uint8 *EoBCoreEngine::loadTownsShape(Common::SeekableReadStream *stream) {
 	uint32 size = stream->readUint32LE();
-	uint8 *shape= new uint8[size];
+	uint8 *shape = new uint8[size];
 	stream->read(shape, size);
 	if (shape[0] == 1)
 		shape[0]++;
@@ -257,7 +256,7 @@ bool EoBCoreEngine::isMonsterOnPos(EoBMonsterInPlay *m, uint16 block, int pos, i
 }
 
 const int16 *EoBCoreEngine::findBlockMonsters(uint16 block, int pos, int dir, int blockDamage, int singleTargetCheckAdjacent) {
-	static const uint8 cpos4[] = { 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1 };
+	static const uint8 cpos4[] = {0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1};
 	int include4 = (pos < 4) ? cpos4[(dir << 2) + pos] : 1;
 	int16 *dst = _foundMonstersArray;
 
@@ -307,7 +306,7 @@ void EoBCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, i
 	const ScreenDim *d = _screen->getScreenDim(sd);
 	if (_flags.gameID == GI_EOB1)
 		x &= ~1;
-	
+
 	_screen->drawShape(page, shape, x - (d->sx << 3), y - d->sy, sd, flipped | (ovl ? 2 : 0), ovl);
 }
 
@@ -329,7 +328,7 @@ void EoBCoreEngine::flashMonsterShape(EoBMonsterInPlay *m) {
 	_flashShapeTimer = 0;
 	drawScene(1);
 	m->flags &= 0xFD;
-	_flashShapeTimer  = _system->getMillis() + _tickLength;
+	_flashShapeTimer = _system->getMillis() + _tickLength;
 	enableSysTimer(2);
 
 	_sceneUpdateRequired = true;
@@ -367,8 +366,8 @@ void EoBCoreEngine::drawBlockItems(int index) {
 
 	uint16 o2 = o = _items[o].next;
 	bool forceLoop = true;
-	static const int8 itemPosYNiche[] = { 0x25, 0x31, 0x38, 0x00 };
-	static const int8 itemPosFin[] = { 0, -2, 1, -1, 2, 0, 1, -1 };
+	static const int8 itemPosYNiche[] = {0x25, 0x31, 0x38, 0x00};
+	static const int8 itemPosFin[] = {0, -2, 1, -1, 2, 0, 1, -1};
 	int tile2 = 0;
 
 	while (o != o2 || forceLoop) {
@@ -446,8 +445,8 @@ void EoBCoreEngine::drawDoor(int index) {
 }
 
 void EoBCoreEngine::drawMonsters(int index) {
-	static const uint8 distMap[] = { 2, 1, 0, 4 };
-	static const uint8 yAdd[] = { 20, 12, 4, 4, 2, 0, 0 };
+	static const uint8 distMap[] = {2, 1, 0, 4};
+	static const uint8 yAdd[] = {20, 12, 4, 4, 2, 0, 0};
 
 	int blockDistance = distMap[_dscDimMap[index]];
 
@@ -646,7 +645,7 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 		}
 
 		x -= (shp[2] << 2);
-		y -= (y == 44 ? (shp[1]  >> 1) : shp[1]);
+		y -= (y == 44 ? (shp[1] >> 1) : shp[1]);
 
 		drawBlockObject(flipped, 2, shp, x, y, 5);
 		_screen->setShapeFadingLevel(0);
@@ -654,8 +653,8 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 }
 
 void EoBCoreEngine::drawTeleporter(int index) {
-	static const uint8 telprtX[] = { 0x28, 0x1C, 0x12 };
-	static const uint8 telprtY[] = { 0x0D, 0x15, 0x1A };
+	static const uint8 telprtX[] = {0x28, 0x1C, 0x12};
+	static const uint8 telprtY[] = {0x0D, 0x15, 0x1A};
 
 	int t = 2 - _dscDimMap[index];
 	if (t < 0)

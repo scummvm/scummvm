@@ -23,10 +23,10 @@
 #ifndef SKYCPT_TEXTFILE_H
 #define SKYCPT_TEXTFILE_H
 
+#include "KmpSearch.h"
 #include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "KmpSearch.h"
 
 class TextFile {
 public:
@@ -34,6 +34,7 @@ public:
 	~TextFile(void);
 	char *giveLine(uint32 num);
 	int32 findLine(KmpSearch *kmp, uint32 fromLine = 0);
+
 private:
 	void read(FILE *inf);
 	char **_lines;

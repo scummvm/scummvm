@@ -88,7 +88,6 @@ private:
 	                                   uint8 r, uint8 g, uint8 b) const;
 	const char **getButtonCaptions() const;
 	void resetButtons();
-
 };
 
 } // End of namespace MystStacks

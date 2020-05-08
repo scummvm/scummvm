@@ -25,14 +25,13 @@
  * Copyright (c) 1994-1995 Janusz B. Wisniewski and L.K. Avalon
  */
 
-#include "gui/saveload.h"
-#include "common/config-manager.h"
 #include "common/events.h"
-#include "engines/advancedDetector.h"
-#include "cge/events.h"
+#include "cge/cge_main.h"
 #include "cge/events.h"
 #include "cge/text.h"
-#include "cge/cge_main.h"
+#include "common/config-manager.h"
+#include "engines/advancedDetector.h"
+#include "gui/saveload.h"
 
 namespace CGE {
 
@@ -112,9 +111,9 @@ void Keyboard::newKeyboard(Common::Event &event) {
 		CGEEvent &evt = _vm->_eventManager->getNextEvent();
 		evt._x = 0;
 		evt._y = 0;
-		evt._keyCode = event.kbd.keycode;   // Keycode
-		evt._mask = kEventKeyb;             // Event mask
-		evt._spritePtr = _client;           // Sprite pointer
+		evt._keyCode = event.kbd.keycode; // Keycode
+		evt._mask = kEventKeyb;           // Event mask
+		evt._spritePtr = _client;         // Sprite pointer
 	}
 }
 
@@ -131,9 +130,8 @@ Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0)
 	_flags._kill = false;
 
 	const Seq ms[] = {
-		{ 0, 0, 0, 0, 1 },
-		{ 1, 1, 0, 0, 1 }
-	};
+	    {0, 0, 0, 0, 1},
+	    {1, 1, 0, 0, 1}};
 	Seq *seq = (Seq *)malloc(2 * sizeof(Seq));
 	Common::copy(ms, ms + 2, seq);
 	setSeq(seq);
@@ -211,7 +209,7 @@ void Mouse::newMouse(Common::Event &event) {
 
 /*----------------- EventManager interface -----------------*/
 
-EventManager::EventManager(CGEEngine *vm) : _vm(vm){
+EventManager::EventManager(CGEEngine *vm) : _vm(vm) {
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
 	for (uint16 k = 0; k < kEventMax; k++) {

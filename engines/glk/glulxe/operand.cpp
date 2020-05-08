@@ -28,41 +28,42 @@ namespace Glulxe {
 /**
  * The actual immutable structures which lookup_operandlist() returns.
  */
-static const operandlist_t list_none = { 0, 4, nullptr };
+static const operandlist_t list_none = {0, 4, nullptr};
 
-static const int array_S[1] = { modeform_Store };
-static const operandlist_t list_S = { 1, 4, &array_S[0] };
-static const int array_LS[2] = { modeform_Load, modeform_Store };
-static const operandlist_t list_LS = { 2, 4, &array_LS[0] };
-static const int array_LLS[3] = { modeform_Load, modeform_Load, modeform_Store };
-static const operandlist_t list_LLS = { 3, 4, &array_LLS[0] };
-static const int array_LLLS[4] = { modeform_Load, modeform_Load, modeform_Load, modeform_Store };
-static const operandlist_t list_LLLS = { 4, 4, &array_LLLS[0] };
-static const int array_LLLLS[5] = { modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Store };
-static const operandlist_t list_LLLLS = { 5, 4, &array_LLLLS[0] };
+static const int array_S[1] = {modeform_Store};
+static const operandlist_t list_S = {1, 4, &array_S[0]};
+static const int array_LS[2] = {modeform_Load, modeform_Store};
+static const operandlist_t list_LS = {2, 4, &array_LS[0]};
+static const int array_LLS[3] = {modeform_Load, modeform_Load, modeform_Store};
+static const operandlist_t list_LLS = {3, 4, &array_LLS[0]};
+static const int array_LLLS[4] = {modeform_Load, modeform_Load, modeform_Load, modeform_Store};
+static const operandlist_t list_LLLS = {4, 4, &array_LLLS[0]};
+static const int array_LLLLS[5] = {modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Store};
+static const operandlist_t list_LLLLS = {5, 4, &array_LLLLS[0]};
 /* static const int array_LLLLLS[6] = { modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Store };
-static const operandlist_t list_LLLLLS = { 6, 4, &array_LLLLLS }; */ /* not currently used */
-static const int array_LLLLLLS[7] = { modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Store };
-static const operandlist_t list_LLLLLLS = { 7, 4, &array_LLLLLLS[0] };
-static const int array_LLLLLLLS[8] = { modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Store };
-static const operandlist_t list_LLLLLLLS = { 8, 4, &array_LLLLLLLS[0] };
+static const operandlist_t list_LLLLLS = { 6, 4, &array_LLLLLS }; */
+/* not currently used */
+static const int array_LLLLLLS[7] = {modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Store};
+static const operandlist_t list_LLLLLLS = {7, 4, &array_LLLLLLS[0]};
+static const int array_LLLLLLLS[8] = {modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Load, modeform_Store};
+static const operandlist_t list_LLLLLLLS = {8, 4, &array_LLLLLLLS[0]};
 
-static const int array_L[1] = { modeform_Load };
-static const operandlist_t list_L = { 1, 4, &array_L[0] };
-static const int array_LL[2] = { modeform_Load, modeform_Load };
-static const operandlist_t list_LL = { 2, 4, &array_LL[0] };
-static const int array_LLL[3] = { modeform_Load, modeform_Load, modeform_Load };
-static const operandlist_t list_LLL = { 3, 4, &array_LLL[0] };
-static const operandlist_t list_2LS = { 2, 2, &array_LS[0] };
-static const operandlist_t list_1LS = { 2, 1, &array_LS[0] };
-static const int array_LLLL[4] = { modeform_Load, modeform_Load, modeform_Load, modeform_Load };
-static const operandlist_t list_LLLL = { 4, 4, &array_LLLL[0] };
-static const int array_SL[2] = { modeform_Store, modeform_Load };
-static const operandlist_t list_SL = { 2, 4, &array_SL[0] };
-static const int array_SS[2] = { modeform_Store, modeform_Store };
-static const operandlist_t list_SS = { 2, 4, &array_SS[0] };
-static const int array_LLSS[4] = { modeform_Load, modeform_Load, modeform_Store, modeform_Store };
-static const operandlist_t list_LLSS = { 4, 4, &array_LLSS[0] };
+static const int array_L[1] = {modeform_Load};
+static const operandlist_t list_L = {1, 4, &array_L[0]};
+static const int array_LL[2] = {modeform_Load, modeform_Load};
+static const operandlist_t list_LL = {2, 4, &array_LL[0]};
+static const int array_LLL[3] = {modeform_Load, modeform_Load, modeform_Load};
+static const operandlist_t list_LLL = {3, 4, &array_LLL[0]};
+static const operandlist_t list_2LS = {2, 2, &array_LS[0]};
+static const operandlist_t list_1LS = {2, 1, &array_LS[0]};
+static const int array_LLLL[4] = {modeform_Load, modeform_Load, modeform_Load, modeform_Load};
+static const operandlist_t list_LLLL = {4, 4, &array_LLLL[0]};
+static const int array_SL[2] = {modeform_Store, modeform_Load};
+static const operandlist_t list_SL = {2, 4, &array_SL[0]};
+static const int array_SS[2] = {modeform_Store, modeform_Store};
+static const operandlist_t list_SS = {2, 4, &array_SS[0]};
+static const int array_LLSS[4] = {modeform_Load, modeform_Load, modeform_Store, modeform_Store};
+static const operandlist_t list_LLSS = {4, 4, &array_LLSS[0]};
 
 void Glulxe::init_operands() {
 	for (int ix = 0; ix < 0x80; ix++)
@@ -375,7 +376,7 @@ void Glulxe::parse_operands(oparg_t *args, const operandlist_t *oplist) {
 				pc++;
 				/* fall through */
 
-MainMemAddr:
+			MainMemAddr:
 				/* cases 5, 6, 7, 13, 14, 15 all wind up here. */
 				if (argsize == 4) {
 					value = Mem4(addr);
@@ -401,7 +402,7 @@ MainMemAddr:
 				pc++;
 				/* fall through */
 
-LocalsAddr:
+			LocalsAddr:
 				/* cases 9, 10, 11 all wind up here. It's illegal for addr to not
 				   be four-byte aligned, but we don't check this explicitly.
 				   A "strict mode" interpreter probably should. It's also illegal
@@ -470,7 +471,7 @@ LocalsAddr:
 				pc++;
 				/* fall through */
 
-WrMainMemAddr:
+			WrMainMemAddr:
 				/* cases 5, 6, 7 all wind up here. */
 				curarg->desttype = 1;
 				curarg->value = addr;
@@ -491,7 +492,7 @@ WrMainMemAddr:
 				pc++;
 				/* fall through */
 
-WrLocalsAddr:
+			WrLocalsAddr:
 				/* cases 9, 10, 11 all wind up here. It's illegal for addr to not
 				   be four-byte aligned, but we don't check this explicitly.
 				   A "strict mode" interpreter probably should. It's also illegal
@@ -542,7 +543,6 @@ void Glulxe::store_operand(uint desttype, uint destaddr, uint storeval) {
 
 	default:
 		fatal_error("Unknown destination type in store operand.");
-
 	}
 }
 
@@ -573,7 +573,6 @@ void Glulxe::store_operand_s(uint desttype, uint destaddr, uint storeval) {
 
 	default:
 		fatal_error("Unknown destination type in store operand.");
-
 	}
 }
 
@@ -604,7 +603,6 @@ void Glulxe::store_operand_b(uint desttype, uint destaddr, uint storeval) {
 
 	default:
 		fatal_error("Unknown destination type in store operand.");
-
 	}
 }
 

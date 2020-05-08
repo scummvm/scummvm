@@ -23,10 +23,10 @@
 #ifndef GLK_QUEST_GEAS_STATE
 #define GLK_QUEST_GEAS_STATE
 
-#include "glk/quest/string.h"
 #include "common/array.h"
-#include "common/stream.h"
 #include "common/serializer.h"
+#include "common/stream.h"
+#include "glk/quest/string.h"
 
 namespace Glk {
 namespace Quest {
@@ -48,7 +48,6 @@ struct ObjectRecord {
 	bool hidden, invisible;
 
 	//ObjectRecord (String in_name, String in_parent) : name (in_name), parent (in_parent), hidden (false), concealed (false) {}
-
 };
 
 struct ExitRecord {
@@ -67,6 +66,7 @@ struct TimerRecord {
 struct SVarRecord {
 private:
 	Common::Array<String> data;
+
 public:
 	String name;
 
@@ -81,11 +81,13 @@ public:
 		return size() - 1;
 	}
 	void set(uint i, String val) {
-		if (i >= size()) data.resize(i + 1);
+		if (i >= size())
+			data.resize(i + 1);
 		data[i] = val;
 	}
 	String get(uint i) const {
-		if (i < size()) return data[i];
+		if (i < size())
+			return data[i];
 		return "!";
 	}
 	void set(String val) {
@@ -101,6 +103,7 @@ public:
 struct IVarRecord {
 private:
 	Common::Array<int> data;
+
 public:
 	String name;
 
@@ -115,12 +118,15 @@ public:
 		return size() - 1;
 	}
 	void set(uint i, int val) {
-		if (i >= size()) data.resize(i + 1);
+		if (i >= size())
+			data.resize(i + 1);
 		data[i] = val;
 	}
 	int get(uint i) const {
-		if (i < size()) return data[i];
-		else return -32767;
+		if (i < size())
+			return data[i];
+		else
+			return -32767;
 	}
 	void set(int val) {
 		data[0] = val;
@@ -146,7 +152,8 @@ public:
 	void sync(IVarRecord &ivr);
 	void sync(GeasState &gs);
 
-	template <class T> void sync(Common::Array<T> &v) {
+	template<class T>
+	void sync(Common::Array<T> &v) {
 		uint count = v.size();
 		syncAsUint32LE(count);
 		if (isLoading())

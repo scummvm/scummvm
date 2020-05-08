@@ -23,9 +23,9 @@
 #ifndef GOB_INICONFIG_H
 #define GOB_INICONFIG_H
 
-#include "common/str.h"
-#include "common/ini-file.h"
 #include "common/hashmap.h"
+#include "common/ini-file.h"
+#include "common/str.h"
 
 namespace Gob {
 
@@ -35,11 +35,11 @@ public:
 	~INIConfig();
 
 	bool getValue(Common::String &result, const Common::String &file,
-			const Common::String &section, const Common::String &key,
-			const Common::String &def = "");
+	              const Common::String &section, const Common::String &key,
+	              const Common::String &def = "");
 
 	bool setValue(const Common::String &file, const Common::String &section,
-			const Common::String &key, const Common::String &value);
+	              const Common::String &key, const Common::String &value);
 
 private:
 	struct Config {

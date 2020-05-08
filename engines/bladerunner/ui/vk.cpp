@@ -43,9 +43,9 @@
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
 
-#include "common/str.h"
-#include "common/keyboard.h"
 #include "bladerunner/debugger.h"
+#include "common/keyboard.h"
+#include "common/str.h"
 
 namespace BladeRunner {
 
@@ -77,11 +77,11 @@ void VK::open(int actorId, int calibrationRatio) {
 	}
 
 	_volumeAmbient = _vm->_ambientSounds->getVolume();
-	_volumeMusic   = _vm->_music->getVolume();
+	_volumeMusic = _vm->_music->getVolume();
 
-	_actorId          = actorId;
+	_actorId = actorId;
 	_calibrationRatio = calibrationRatio;
-	_calibration      = 0;
+	_calibration = 0;
 
 	_buttons = new UIImagePicker(_vm, 8);
 
@@ -151,7 +151,6 @@ void VK::close() {
 	delete _script;
 	_script = nullptr;
 
-
 	if (_buttons) {
 		_buttons->deactivate();
 		_buttons->resetImages();
@@ -192,12 +191,7 @@ void VK::tick() {
 
 	draw();
 
-	if ( _vm->_debugger->_showStatsVk
-		&& !_vm->_actors[_actorId]->isSpeeching()
-		&& !_vm->_actors[kActorMcCoy]->isSpeeching()
-		&& !_vm->_actors[kActorAnsweringMachine]->isSpeeching()
-		&& !_isClosing
-	) {
+	if (_vm->_debugger->_showStatsVk && !_vm->_actors[_actorId]->isSpeeching() && !_vm->_actors[kActorMcCoy]->isSpeeching() && !_vm->_actors[kActorAnsweringMachine]->isSpeeching() && !_isClosing) {
 		_vm->_subtitles->setGameSubsText(Common::String::format("Adjustment: %03d Calibration: %02d Ratio: %02d\nAnxiety: %02d%% Replicant: %02d%% Human: %02d%%", _adjustment, _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
 		_vm->_subtitles->show();
 	}
@@ -259,8 +253,8 @@ void VK::playSpeechLine(int actorId, int sentenceId, float duration) {
 	}
 
 	if (duration > 0.0f && !_vm->_actorSpeakStopIsRequested) {
-		uint32  timeStart = _vm->_time->current();
-		uint32  timeUntil = duration * 1000.0f;
+		uint32 timeStart = _vm->_time->current();
+		uint32 timeUntil = duration * 1000.0f;
 		while ((_vm->_time->current() - timeStart < timeUntil) && _vm->_gameIsRunning) {
 			_vm->gameTick();
 		}
@@ -272,11 +266,11 @@ void VK::playSpeechLine(int actorId, int sentenceId, float duration) {
 }
 
 void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, int anxiety) {
-	humanResponse     = CLIP(humanResponse, -20, 20);
+	humanResponse = CLIP(humanResponse, -20, 20);
 	replicantResponse = CLIP(replicantResponse, -20, 20);
 
 	uint32 timeNow = _vm->_time->current();
-	bool closeVK   = false;
+	bool closeVK = false;
 
 	if (intensity > 0) {
 		_needleValueTarget = 78 * intensity / 100;
@@ -289,12 +283,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 		// debug("Human probability is %d, human response is %d, calibration is %d", _humanProbability, humanResponse,_calibration);
 		if (_humanProbability >= 80 && !_isClosing) {
 			closeVK = false;
-			if (_vm->_debugger->_playFullVk
-			    && intensity == 5
-			    && (humanResponse == 0 || humanResponse == 20 )
-			    && replicantResponse == 0
-			    && anxiety == 100
-			) {	// only close if 5, 0, 0, 100 argument (the actual anxiety ending of VK)
+			if (_vm->_debugger->_playFullVk && intensity == 5 && (humanResponse == 0 || humanResponse == 20) && replicantResponse == 0 && anxiety == 100) { // only close if 5, 0, 0, 100 argument (the actual anxiety ending of VK)
 				// force Human result
 				_replicantProbability = 0;
 				closeVK = true;
@@ -320,12 +309,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 		// debug("Replicant probability is %d, replicant response is %d, calibration is %d", _replicantProbability, replicantResponse, _calibration);
 		if (_replicantProbability >= 80 && !_isClosing) {
 			closeVK = false;
-			if (_vm->_debugger->_playFullVk
-			    && intensity == 5
-			    && humanResponse == 0
-			    && (replicantResponse == 0 || replicantResponse == 20 )
-			    && anxiety == 100
-			) { // only close if 5, 0, 0, 100 argument (the actual anxiety ending of VK)
+			if (_vm->_debugger->_playFullVk && intensity == 5 && humanResponse == 0 && (replicantResponse == 0 || replicantResponse == 20) && anxiety == 100) { // only close if 5, 0, 0, 100 argument (the actual anxiety ending of VK)
 				// force Rep result
 				_humanProbability = 0;
 				closeVK = true;
@@ -347,12 +331,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 	}
 
 	closeVK = false;
-	if (_vm->_debugger->_playFullVk
-	    && intensity == 5
-	    && humanResponse == 0
-	    && replicantResponse == 0
-	    && anxiety == 100 && !_isClosing
-	) {
+	if (_vm->_debugger->_playFullVk && intensity == 5 && humanResponse == 0 && replicantResponse == 0 && anxiety == 100 && !_isClosing) {
 		closeVK = true;
 	} else if (!_vm->_debugger->_playFullVk) {
 		_anxiety = CLIP(_anxiety + anxiety, 0, 100);
@@ -432,10 +411,10 @@ void VK::loopEnded(void *callbackData, int frame, int loopId) {
 void VK::reset() {
 	_actorId = -1;
 
-	_buttons       = nullptr;
+	_buttons = nullptr;
 	_vqaPlayerMain = nullptr;
-	_vqaPlayerEye  = nullptr;
-	_vqaFrameMain  = -1;
+	_vqaPlayerEye = nullptr;
+	_vqaFrameMain = -1;
 
 	_script = nullptr;
 
@@ -444,62 +423,62 @@ void VK::reset() {
 	_shapes->unload();
 
 	_volumeAmbient = 0;
-	_volumeMusic   = 0;
+	_volumeMusic = 0;
 
-	_calibrationRatio   = 0;
+	_calibrationRatio = 0;
 	_calibrationCounter = 0;
 	_calibrationStarted = false;
-	_calibration        = 0;
+	_calibration = 0;
 
 	_testStarted = false;
 
-	_needleValue             = 0;
-	_needleValueTarget       = 0;
-	_needleValueDelta        = 0;
-	_needleValueMax          = 0;
+	_needleValue = 0;
+	_needleValueTarget = 0;
+	_needleValueDelta = 0;
+	_needleValueMax = 0;
 
-	_timeNextNeedleStepStart      = 0u;
-	_timeNeedleReturnStart        = 0u;
+	_timeNextNeedleStepStart = 0u;
+	_timeNeedleReturnStart = 0u;
 	_timeNextNeedleOscillateStart = 0u;
 
-	_humanProbability                = 0;
-	_humanGauge                      = 0;
-	_humanGaugeTarget                = 0;
-	_humanGaugeDelta                 = 0;
-	_timeNextHumanGaugeStepDiff      = 0u;
-	_timeNextHumanGaugeStepStart     = 0u;
+	_humanProbability = 0;
+	_humanGauge = 0;
+	_humanGaugeTarget = 0;
+	_humanGaugeDelta = 0;
+	_timeNextHumanGaugeStepDiff = 0u;
+	_timeNextHumanGaugeStepStart = 0u;
 
-	_replicantProbability            = 0;
-	_replicantGauge                  = 0;
-	_replicantGaugeTarget            = 0;
-	_replicantGaugeDelta             = 0;
-	_timeNextReplicantGaugeStepDiff  = 0u;
+	_replicantProbability = 0;
+	_replicantGauge = 0;
+	_replicantGaugeTarget = 0;
+	_replicantGaugeDelta = 0;
+	_timeNextReplicantGaugeStepDiff = 0u;
 	_timeNextReplicantGaugeStepStart = 0u;
 
 	_anxiety = 0;
 
-	_blinkState               = 0;
-	_timeNextBlinkStart       = 0u;
+	_blinkState = 0;
+	_timeNextBlinkStart = 0u;
 	_timeNextGaugesBlinkStart = 0u;
 
-	_isClosing      = false;
+	_isClosing = false;
 	_timeCloseStart = 0u;
 
-	_isAdjusting                  = false;
-	_adjustment                   = 154;
-	_adjustmentTarget             = 154;
-	_adjustmentDelta              = 0;
+	_isAdjusting = false;
+	_adjustment = 154;
+	_adjustmentTarget = 154;
+	_adjustmentDelta = 0;
 	_timeNextAdjustementStepStart = 0u;
 
-	_eyeLineSelected           = 1;
-	_eyeLineX                  = 315;
-	_eyeLineXLast              = 315;
-	_eyeLineY                  = 281;
-	_eyeLineYLast              = 281;
-	_eyeLineXDelta             = 8;
-	_eyeLineYDelta             = 8;
-	_timeNextEyeLineStepStart  = 0u;
-	_timeNextEyeLineStart      = 0u;
+	_eyeLineSelected = 1;
+	_eyeLineX = 315;
+	_eyeLineXLast = 315;
+	_eyeLineY = 281;
+	_eyeLineYLast = 281;
+	_eyeLineXDelta = 8;
+	_eyeLineYDelta = 8;
+	_timeNextEyeLineStepStart = 0u;
+	_timeNextEyeLineStart = 0u;
 
 	_soundTrackId1 = -1;
 	_soundTrackId2 = -1;
@@ -513,14 +492,14 @@ void VK::init() {
 	_vm->_mouse->disable();
 
 	_buttons->activate(nullptr, nullptr, mouseDownCallback, mouseUpCallback, this);
-	_buttons->defineImage(0, Common::Rect(191, 364, 218, 373), nullptr,         _shapes->get(2),  _shapes->get(3),  _vm->_textVK->getText(1));
-	_buttons->defineImage(1, Common::Rect(154, 258, 161, 265), _shapes->get(4), _shapes->get(4),  _shapes->get(5),  _vm->_textVK->getText(2));
-	_buttons->defineImage(2, Common::Rect(515, 368, 538, 398), nullptr,         _shapes->get(6),  _shapes->get(7),  nullptr);
-	_buttons->defineImage(3, Common::Rect(548, 368, 571, 398), nullptr,         _shapes->get(8),  _shapes->get(9),  nullptr);
-	_buttons->defineImage(4, Common::Rect(581, 368, 604, 398), nullptr,         _shapes->get(10), _shapes->get(11), nullptr);
-	_buttons->defineImage(5, Common::Rect( 31, 363,  65, 392), nullptr,         _shapes->get(0),  _shapes->get(1),  _vm->_textVK->getText(0));
-	_buttons->defineImage(6, Common::Rect( 59, 262,  87, 277), nullptr,         nullptr,          nullptr,          _vm->_textVK->getText(6));
-	_buttons->defineImage(7, Common::Rect( 59, 306,  87, 322), nullptr,         nullptr,          nullptr,          _vm->_textVK->getText(7));
+	_buttons->defineImage(0, Common::Rect(191, 364, 218, 373), nullptr, _shapes->get(2), _shapes->get(3), _vm->_textVK->getText(1));
+	_buttons->defineImage(1, Common::Rect(154, 258, 161, 265), _shapes->get(4), _shapes->get(4), _shapes->get(5), _vm->_textVK->getText(2));
+	_buttons->defineImage(2, Common::Rect(515, 368, 538, 398), nullptr, _shapes->get(6), _shapes->get(7), nullptr);
+	_buttons->defineImage(3, Common::Rect(548, 368, 571, 398), nullptr, _shapes->get(8), _shapes->get(9), nullptr);
+	_buttons->defineImage(4, Common::Rect(581, 368, 604, 398), nullptr, _shapes->get(10), _shapes->get(11), nullptr);
+	_buttons->defineImage(5, Common::Rect(31, 363, 65, 392), nullptr, _shapes->get(0), _shapes->get(1), _vm->_textVK->getText(0));
+	_buttons->defineImage(6, Common::Rect(59, 262, 87, 277), nullptr, nullptr, nullptr, _vm->_textVK->getText(6));
+	_buttons->defineImage(7, Common::Rect(59, 306, 87, 322), nullptr, nullptr, nullptr, _vm->_textVK->getText(7));
 
 	_script->initialize(_actorId);
 
@@ -604,8 +583,7 @@ void VK::draw() {
 		if (_humanGaugeDelta != 0 && timeNow - _timeNextHumanGaugeStepStart >= _timeNextHumanGaugeStepDiff) {
 			_humanGauge += _humanGaugeDelta;
 
-			if ((_humanGaugeDelta > 0 && _humanGauge >= _humanGaugeTarget)
-			 || (_humanGaugeDelta < 0 && _humanGauge <= _humanGaugeTarget)) {
+			if ((_humanGaugeDelta > 0 && _humanGauge >= _humanGaugeTarget) || (_humanGaugeDelta < 0 && _humanGauge <= _humanGaugeTarget)) {
 				_humanGauge = _humanGaugeTarget;
 			}
 
@@ -613,13 +591,13 @@ void VK::draw() {
 				if (_humanGaugeTarget != 0) {
 					_humanGaugeTarget = 0;
 					_humanGaugeDelta = -_humanGaugeDelta;
-					_timeNextHumanGaugeStepDiff  = 500u;
+					_timeNextHumanGaugeStepDiff = 500u;
 					_timeNextHumanGaugeStepStart = timeNow;
 				} else {
 					_humanGaugeDelta = 0;
 				}
 			} else {
-				_timeNextHumanGaugeStepDiff  = 66u;
+				_timeNextHumanGaugeStepDiff = 66u;
 				_timeNextHumanGaugeStepStart = timeNow;
 			}
 		}
@@ -629,8 +607,7 @@ void VK::draw() {
 		if (_replicantGaugeDelta != 0 && timeNow - _timeNextReplicantGaugeStepStart >= _timeNextReplicantGaugeStepDiff) {
 			_replicantGauge += _replicantGaugeDelta;
 
-			if ((_replicantGaugeDelta > 0 && _replicantGauge >= _replicantGaugeTarget)
-			 || (_replicantGaugeDelta < 0 && _replicantGauge <= _replicantGaugeTarget)) {
+			if ((_replicantGaugeDelta > 0 && _replicantGauge >= _replicantGaugeTarget) || (_replicantGaugeDelta < 0 && _replicantGauge <= _replicantGaugeTarget)) {
 				_replicantGauge = _replicantGaugeTarget;
 			}
 
@@ -638,13 +615,13 @@ void VK::draw() {
 				if (_replicantGaugeTarget != 0) {
 					_replicantGaugeTarget = 0;
 					_replicantGaugeDelta = -_replicantGaugeDelta;
-					_timeNextReplicantGaugeStepDiff  = 500u;
+					_timeNextReplicantGaugeStepDiff = 500u;
 					_timeNextReplicantGaugeStepStart = timeNow;
 				} else {
 					_replicantGaugeDelta = 0;
 				}
 			} else {
-				_timeNextReplicantGaugeStepDiff  = 66u;
+				_timeNextReplicantGaugeStepDiff = 66u;
 				_timeNextReplicantGaugeStepStart = timeNow;
 			}
 		}
@@ -758,12 +735,12 @@ void VK::drawNeedle(Graphics::Surface &surface) {
 	uint32 color1 = surface.format.RGBToColor(56 - 48 * colorIntensity, 144 - 64 * colorIntensity, 184 - 96 * colorIntensity);
 	uint32 color2 = surface.format.RGBToColor(56 - 24 * colorIntensity, 144 - 32 * colorIntensity, 184 - 48 * colorIntensity);
 
-	surface.drawLine(203, 324, x - 2, y,     color1);
-	surface.drawLine(203, 324, x + 2, y,     color1);
-	surface.drawLine(203, 324, x - 1, y,     color2);
-	surface.drawLine(203, 324, x + 1, y,     color2);
-	surface.drawLine(203, 324, x,     y - 1, color2);
-	surface.drawLine(203, 324, x,     y,     surface.format.RGBToColor(56, 144, 184));
+	surface.drawLine(203, 324, x - 2, y, color1);
+	surface.drawLine(203, 324, x + 2, y, color1);
+	surface.drawLine(203, 324, x - 1, y, color2);
+	surface.drawLine(203, 324, x + 1, y, color2);
+	surface.drawLine(203, 324, x, y - 1, color2);
+	surface.drawLine(203, 324, x, y, surface.format.RGBToColor(56, 144, 184));
 }
 
 void VK::drawEye(Graphics::Surface &surface) {
@@ -772,19 +749,19 @@ void VK::drawEye(Graphics::Surface &surface) {
 }
 
 void VK::drawEyeCrosshair(Graphics::Surface &surface, uint32 timeNow) {
-	surface.drawLine(315,                                        _eyeLineY,     486,                                        _eyeLineY,     surface.format.RGBToColor(16, 16, 64));
-	surface.drawLine(315,                                        _eyeLineY - 1, 486,                                        _eyeLineY - 1, surface.format.RGBToColor(16, 16, 64));
-	surface.drawLine(315,                                        _eyeLineY,     _vm->_rnd.getRandomNumberRng(10, 20) + 315, _eyeLineY,     surface.format.RGBToColor(16, 16, 80));
-	surface.drawLine(486 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineY,     486,                                        _eyeLineY,     surface.format.RGBToColor(16, 16, 80));
-	surface.drawLine(486 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineY - 1, 486,                                        _eyeLineY - 1, surface.format.RGBToColor(16, 16, 48));
-	surface.drawLine(315,                                        _eyeLineY - 1, _vm->_rnd.getRandomNumberRng(10, 20) + 315, _eyeLineY - 1, surface.format.RGBToColor(16, 16, 48));
+	surface.drawLine(315, _eyeLineY, 486, _eyeLineY, surface.format.RGBToColor(16, 16, 64));
+	surface.drawLine(315, _eyeLineY - 1, 486, _eyeLineY - 1, surface.format.RGBToColor(16, 16, 64));
+	surface.drawLine(315, _eyeLineY, _vm->_rnd.getRandomNumberRng(10, 20) + 315, _eyeLineY, surface.format.RGBToColor(16, 16, 80));
+	surface.drawLine(486 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineY, 486, _eyeLineY, surface.format.RGBToColor(16, 16, 80));
+	surface.drawLine(486 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineY - 1, 486, _eyeLineY - 1, surface.format.RGBToColor(16, 16, 48));
+	surface.drawLine(315, _eyeLineY - 1, _vm->_rnd.getRandomNumberRng(10, 20) + 315, _eyeLineY - 1, surface.format.RGBToColor(16, 16, 48));
 
-	surface.drawLine(_eyeLineX,     281,                                        _eyeLineX,     396,                                        surface.format.RGBToColor(16, 16, 64));
-	surface.drawLine(_eyeLineX - 1, 281,                                        _eyeLineX - 1, 396,                                        surface.format.RGBToColor(16, 16, 64));
-	surface.drawLine(_eyeLineX,     281,                                        _eyeLineX,     _vm->_rnd.getRandomNumberRng(10, 20) + 281, surface.format.RGBToColor(16, 16, 48));
-	surface.drawLine(_eyeLineX,     396 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineX,     396,                                        surface.format.RGBToColor(16, 16, 48));
-	surface.drawLine(_eyeLineX - 1, 396 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineX - 1, 396,                                        surface.format.RGBToColor(16, 16, 80));
-	surface.drawLine(_eyeLineX - 1, 281,                                        _eyeLineX - 1, _vm->_rnd.getRandomNumberRng(10, 20) + 281, surface.format.RGBToColor(16, 16, 80));
+	surface.drawLine(_eyeLineX, 281, _eyeLineX, 396, surface.format.RGBToColor(16, 16, 64));
+	surface.drawLine(_eyeLineX - 1, 281, _eyeLineX - 1, 396, surface.format.RGBToColor(16, 16, 64));
+	surface.drawLine(_eyeLineX, 281, _eyeLineX, _vm->_rnd.getRandomNumberRng(10, 20) + 281, surface.format.RGBToColor(16, 16, 48));
+	surface.drawLine(_eyeLineX, 396 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineX, 396, surface.format.RGBToColor(16, 16, 48));
+	surface.drawLine(_eyeLineX - 1, 396 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineX - 1, 396, surface.format.RGBToColor(16, 16, 80));
+	surface.drawLine(_eyeLineX - 1, 281, _eyeLineX - 1, _vm->_rnd.getRandomNumberRng(10, 20) + 281, surface.format.RGBToColor(16, 16, 80));
 
 	// unsigned difference is intentional
 	if (timeNow - _timeNextEyeLineStart >= 1000u) {
@@ -817,7 +794,7 @@ void VK::drawEyeCrosshair(Graphics::Surface &surface, uint32 timeNow) {
 			// unsigned difference is intentional
 			if (timeNow - _timeNextEyeLineStepStart >= 50u) {
 				_eyeLineX += _eyeLineXDelta;
-				if ( _eyeLineXDelta > 0) {
+				if (_eyeLineXDelta > 0) {
 					if (_eyeLineX >= 486) {
 						_eyeLineX = 486;
 						_eyeLineXDelta = -_eyeLineXDelta;
@@ -851,7 +828,7 @@ void VK::drawMouse(Graphics::Surface &surface) {
 }
 
 void VK::drawGauge(Graphics::Surface &surface, int value, int x, int y, int width) {
-	_shapes->get(12)->draw(surface, x + (width / 2) * value / 20 , y);
+	_shapes->get(12)->draw(surface, x + (width / 2) * value / 20, y);
 }
 
 void VK::drawHumanGauge(Graphics::Surface &surface) {
@@ -958,16 +935,14 @@ void VK::setAdjustmentFromMouse() {
 * It will search through all questions to find a related question Id and its intensity
 */
 void VK::findRelatedQuestionBySentenceId(int inSentenceId, int &outRelatedQuestionId, int &outRelatedIntensity) {
-    outRelatedQuestionId = -1;
-    outRelatedIntensity  = -1;
+	outRelatedQuestionId = -1;
+	outRelatedIntensity = -1;
 
 	for (int intensity = 0; intensity < 3; ++intensity) {
 		for (int i = 0; i < (int)_questions[intensity].size(); ++i) {
-			if (_questions[intensity][i].isPresent
-				&& _questions[intensity][i].sentenceId == inSentenceId
-			) {
+			if (_questions[intensity][i].isPresent && _questions[intensity][i].sentenceId == inSentenceId) {
 				outRelatedQuestionId = i;
-				outRelatedIntensity  = intensity;
+				outRelatedIntensity = intensity;
 				return;
 			}
 		}
@@ -985,7 +960,7 @@ void VK::askQuestion(int intensity) {
 		return;
 	}
 
-	int foundQuestionIndex     = -1;
+	int foundQuestionIndex = -1;
 	int foundQuestionIndexLast = -1;
 
 	if (_vm->_debugger->_playFullVk) {
@@ -997,7 +972,7 @@ void VK::askQuestion(int intensity) {
 				// We also assign the new question id deterministically from an intensity "pack"
 				// we don't use randomness here
 				foundQuestionIndexLast = i;
-				foundQuestionIndex     = i;
+				foundQuestionIndex = i;
 			}
 		}
 	} else {
@@ -1050,9 +1025,7 @@ void VK::askQuestion(int intensity) {
 		_script->mcCoyAsksQuestion(_actorId, _questions[intensity][foundQuestionIndex].sentenceId);
 		_script->questionAsked(_actorId, _questions[intensity][foundQuestionIndex].sentenceId);
 		_vm->_mouse->enable();
-	} else if (!_isClosing && !_script->isInsideScript()
-	           && !_vm->_debugger->_playFullVk
-	) {
+	} else if (!_isClosing && !_script->isInsideScript() && !_vm->_debugger->_playFullVk) {
 		_isClosing = true;
 		_vm->_mouse->disable();
 		_timeCloseStart = _vm->_time->current();

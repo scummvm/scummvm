@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-#define CAMP_HEAL_INTERVAL  100   /* Number of moves before camping will heal the party */
+#define CAMP_HEAL_INTERVAL 100 /* Number of moves before camping will heal the party */
 
 class CampController : public CombatController {
 public:

@@ -23,7 +23,6 @@
 #ifndef STARTREK_SOUNDEFFECTS_H
 #define STARTREK_SOUNDEFFECTS_H
 
-
 // Sound effects for "playSoundEffectIndex" function
 enum SoundEffects {
 	SND_TRICORDER = 4,
@@ -46,7 +45,6 @@ enum SoundEffects {
 	SND_REDALERT = 0x28,
 	SND_WARP = 0x29
 };
-
 
 enum MidiTracks {
 	MIDITRACK_0,

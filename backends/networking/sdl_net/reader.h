@@ -23,14 +23,14 @@
 #ifndef BACKENDS_NETWORKING_SDL_NET_READER_H
 #define BACKENDS_NETWORKING_SDL_NET_READER_H
 
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/str.h"
 
 namespace Common {
 class MemoryReadWriteStream;
 class WriteStream;
-}
+} // namespace Common
 
 namespace Networking {
 
@@ -94,9 +94,9 @@ class Reader {
 
 	void cleanup();
 
-	bool readAndHandleFirstHeaders(); //true when ended reading
+	bool readAndHandleFirstHeaders();                             //true when ended reading
 	bool readBlockHeadersIntoStream(Common::WriteStream *stream); //true when ended reading
-	bool readContentIntoStream(Common::WriteStream *stream); //true when ended reading
+	bool readContentIntoStream(Common::WriteStream *stream);      //true when ended reading
 
 	void handleFirstHeaders(Common::MemoryReadWriteStream *headers);
 	void parseFirstLine(const Common::String &headers);
@@ -118,7 +118,7 @@ public:
 
 	Reader &operator=(Reader &r);
 
-	bool readFirstHeaders(); //true when ended reading
+	bool readFirstHeaders();                            //true when ended reading
 	bool readFirstContent(Common::WriteStream *stream); //true when ended reading
 	bool readBlockHeaders(Common::WriteStream *stream); //true when ended reading
 	bool readBlockContent(Common::WriteStream *stream); //true when ended reading

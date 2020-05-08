@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/widgets/console.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -32,7 +32,7 @@ namespace Nuvie {
 static Console *g_console = NULL;
 
 Console::Console(Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16 w, uint16 h)
-	: GUI_Console(x, y, w, h) {
+    : GUI_Console(x, y, w, h) {
 	config = c;
 	screen = s;
 	gui = g;
@@ -47,7 +47,6 @@ Console::Console(Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16
 }
 
 Console::~Console() {
-
 }
 
 void Console::AddLine(Std::string line) {
@@ -65,7 +64,7 @@ void ConsoleInit(Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h) {
 	//uint16 x_off = config_get_video_x_offset(c);
 	//uint16 y_off = config_get_video_y_offset(c);
 
-	g_console = new Console(c, s, gui, 0, 0, s->get_width(), s->get_height());//x_off, y_off, w, h);
+	g_console = new Console(c, s, gui, 0, 0, s->get_width(), s->get_height()); //x_off, y_off, w, h);
 }
 
 void ConsoleDelete() {

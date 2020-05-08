@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima4/controllers/controller.h"
-#include "ultima/ultima4/events/event_handler.h"
 #include "engines/engine.h"
+#include "ultima/ultima4/events/event_handler.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -45,7 +45,6 @@ bool Controller::notifyKeyPressed(int key) {
 bool Controller::notifyMousePress(const Common::Point &mousePos) {
 	return mousePressed(mousePos);
 }
-
 
 int Controller::getTimerInterval() {
 	return _timerInterval;

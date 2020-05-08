@@ -35,7 +35,6 @@ void implementationOfSetEndOfArray(Aword *adr) {
 	*adr = EOD;
 }
 
-
 bool implementationOfIsEndOfList(Aword *adr) {
 	return *adr == EOD;
 }
@@ -56,7 +55,7 @@ void addElementImplementation(void *array_of_any_type, void *element, int elemen
 	int length = lengthOfArray(array);
 	int element_size_in_words = element_size_in_bytes / sizeof(Aword);
 	memcpy(&array[length * element_size_in_words], element, element_size_in_bytes);
-	setEndOfArray(&array[(length + 1)*element_size_in_words]);
+	setEndOfArray(&array[(length + 1) * element_size_in_words]);
 }
 
 } // End of namespace Alan3

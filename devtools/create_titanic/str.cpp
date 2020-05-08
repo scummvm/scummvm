@@ -20,11 +20,11 @@
  *
  */
 
+#include "common/str.h"
 #include "common/hash-str.h"
 #include "common/list.h"
-#include "memorypool.h"
-#include "common/str.h"
 #include "common/util.h"
+#include "memorypool.h"
 
 namespace Common {
 
@@ -63,7 +63,7 @@ void String::initWithCStr(const char *str, uint32 len) {
 
 	if (len >= _builtinCapacity) {
 		// Not enough internal storage, so allocate more
-		_extern._capacity = computeCapacity(len+1);
+		_extern._capacity = computeCapacity(len + 1);
 		_extern._refCount = 0;
 		_str = new char[_extern._capacity];
 		assert(_str != 0);
@@ -144,7 +144,7 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 		if (new_size < curCapacity)
 			newCapacity = curCapacity;
 		else
-			newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
+			newCapacity = MAX(curCapacity * 2, computeCapacity(new_size + 1));
 
 		// Allocate new storage
 		newStorage = new char[newCapacity];
@@ -367,7 +367,7 @@ void String::erase(uint32 p, uint32 len) {
 		return;
 	}
 
-	for ( ; p + len <= _size; p++) {
+	for (; p + len <= _size; p++) {
 		_str[p] = _str[p + len];
 	}
 	_size -= len;
@@ -469,7 +469,7 @@ String String::vformat(const char *fmt, va_list args) {
 		// vsnprintf didn't have enough space, so grow buffer
 		output.ensureCapacity(len, false);
 		scumm_va_copy(va, args);
-		int len2 = vsnprintf(output._str, len+1, fmt, va);
+		int len2 = vsnprintf(output._str, len + 1, fmt, va);
 		va_end(va);
 		assert(len == len2);
 		output._size = len2;
@@ -477,7 +477,6 @@ String String::vformat(const char *fmt, va_list args) {
 
 	return output;
 }
-
 
 #pragma mark -
 
@@ -494,7 +493,7 @@ bool String::operator!=(const String &x) const {
 	return !equals(x);
 }
 
-bool String::operator !=(const char *x) const {
+bool String::operator!=(const char *x) const {
 	assert(x != 0);
 	return !equals(x);
 }
@@ -517,11 +516,11 @@ bool String::operator>=(const String &x) const {
 
 #pragma mark -
 
-bool operator==(const char* y, const String &x) {
+bool operator==(const char *y, const String &x) {
 	return (x == y);
 }
 
-bool operator!=(const char* y, const String &x) {
+bool operator!=(const char *y, const String &x) {
 	return x != y;
 }
 
@@ -600,7 +599,7 @@ String lastPathComponent(const String &path, const char sep) {
 	const char *last = str + path.size();
 
 	// Skip over trailing slashes
-	while (last > str && *(last-1) == sep)
+	while (last > str && *(last - 1) == sep)
 		--last;
 
 	// Path consisted of only slashes -> return empty string
@@ -673,7 +672,7 @@ String normalizePath(const String &path, const char sep) {
 size_t strlcpy(char *dst, const char *src, size_t size) {
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
-	const char * const srcStart = src;
+	const char *const srcStart = src;
 
 	// In case a non-empty size was specified we
 	// copy over (size - 1) bytes at max.
@@ -711,11 +710,11 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
-	const char * const srcStart = src;
+	const char *const srcStart = src;
 
 	// Our backup of the destination's start, we need
 	// this to calculate the destination's length.
-	const char * const dstStart = dst;
+	const char *const dstStart = dst;
 
 	// Search the end of the destination, but do not
 	// move past the terminating zero.
@@ -773,7 +772,7 @@ int scumm_strnicmp(const char *s1, const char *s2, uint n) {
 	byte l1, l2;
 	do {
 		if (n-- == 0)
-			return 0;	// no difference found so far -> signal equality
+			return 0; // no difference found so far -> signal equality
 
 		// Don't use ++ inside tolower, in case the macro uses its
 		// arguments more than once.

@@ -146,4 +146,3 @@ void shutdownTTF();
 #endif
 
 #endif
-

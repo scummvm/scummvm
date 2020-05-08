@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_SCALPEL_H
 #define SHERLOCK_SCALPEL_H
 
-#include "sherlock/sherlock.h"
 #include "sherlock/scalpel/scalpel_darts.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
@@ -103,6 +103,7 @@ private:
 	 * Transition to show an image
 	 */
 	void showLBV(const Common::String &filename);
+
 protected:
 	/**
 	 * Game initialization
@@ -118,6 +119,7 @@ protected:
 	 * Starting a scene within the game
 	 */
 	void startScene() override;
+
 public:
 	ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	~ScalpelEngine() override;

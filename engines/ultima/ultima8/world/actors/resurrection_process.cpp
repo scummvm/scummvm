@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/resurrection_process.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
@@ -32,7 +32,6 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ResurrectionProcess, Process)
 
 ResurrectionProcess::ResurrectionProcess() : Process() {
-
 }
 
 ResurrectionProcess::ResurrectionProcess(Actor *actor) {
@@ -84,7 +83,8 @@ void ResurrectionProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool ResurrectionProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	return true;
 }

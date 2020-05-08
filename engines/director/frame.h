@@ -24,16 +24,16 @@
 #define DIRECTOR_FRAME_H
 
 namespace Image {
-	class ImageDecoder;
+class ImageDecoder;
 }
 
 namespace Graphics {
-	class ManagedSurface;
-	struct Surface;
-}
+class ManagedSurface;
+struct Surface;
+} // namespace Graphics
 
 namespace Common {
-	class ReadStreamEndian;
+class ReadStreamEndian;
 }
 
 namespace Director {
@@ -63,7 +63,6 @@ struct FrameEntity {
 	uint16 spriteId;
 	Common::Rect rect;
 };
-
 
 class Frame {
 public:

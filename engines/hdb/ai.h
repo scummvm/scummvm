@@ -23,12 +23,12 @@
 #ifndef HDB_AI_H
 #define HDB_AI_H
 
-#define STARS_MONKEYSTONE_7			0xfe257d	// magic value in the config file for the unlocking of the Monkeystone secret #7
-#define STARS_MONKEYSTONE_7_FAKE	0x11887e	// fake value that means it hasn't been unlocked
-#define STARS_MONKEYSTONE_14		0x3341fe	// <same> for the Monkeystone #14
-#define STARS_MONKEYSTONE_14_FAKE	0x1cefd0	// fake value that means it hasn't been unlocked
-#define STARS_MONKEYSTONE_21		0x77ace3	// <same> for the Monkeystone #21
-#define STARS_MONKEYSTONE_21_FAKE	0x3548fe	// fake value that means it hasn't been unlocked
+#define STARS_MONKEYSTONE_7 0xfe257d       // magic value in the config file for the unlocking of the Monkeystone secret #7
+#define STARS_MONKEYSTONE_7_FAKE 0x11887e  // fake value that means it hasn't been unlocked
+#define STARS_MONKEYSTONE_14 0x3341fe      // <same> for the Monkeystone #14
+#define STARS_MONKEYSTONE_14_FAKE 0x1cefd0 // fake value that means it hasn't been unlocked
+#define STARS_MONKEYSTONE_21 0x77ace3      // <same> for the Monkeystone #21
+#define STARS_MONKEYSTONE_21_FAKE 0x3548fe // fake value that means it hasn't been unlocked
 
 namespace HDB {
 
@@ -255,15 +255,15 @@ enum AIState {
 	STATE_GOODJOB,
 	STATE_PLUMMET,
 
-	STATE_PUSHUP,				// these are only used for the player
+	STATE_PUSHUP, // these are only used for the player
 	STATE_PUSHDOWN,
 	STATE_PUSHLEFT,
 	STATE_PUSHRIGHT,
-	STATE_GRABUP,				// player grabbing something
+	STATE_GRABUP, // player grabbing something
 	STATE_GRABDOWN,
 	STATE_GRABLEFT,
 	STATE_GRABRIGHT,
-	STATE_ATK_CLUB_UP,			// player attacking frames
+	STATE_ATK_CLUB_UP, // player attacking frames
 	STATE_ATK_CLUB_DOWN,
 	STATE_ATK_CLUB_LEFT,
 	STATE_ATK_CLUB_RIGHT,
@@ -276,51 +276,51 @@ enum AIState {
 	STATE_ATK_SLUG_LEFT,
 	STATE_ATK_SLUG_RIGHT,
 
-	STATE_FLOATING,				// floating in stuff (can walk on)
+	STATE_FLOATING, // floating in stuff (can walk on)
 	STATE_FLOATDOWN,
 	STATE_FLOATUP,
 	STATE_FLOATLEFT,
 	STATE_FLOATRIGHT,
-	STATE_MELTED,				// melted into slag (can walk on)
-	STATE_SLIDING,				// sliding across a floor
-	STATE_SHOCKING,				// for Shockbot floor-shock anim
-	STATE_EXPLODING,			// boom barrel explosion!
+	STATE_MELTED,    // melted into slag (can walk on)
+	STATE_SLIDING,   // sliding across a floor
+	STATE_SHOCKING,  // for Shockbot floor-shock anim
+	STATE_EXPLODING, // boom barrel explosion!
 
-	STATE_USEDOWN,				// crazy maintenance bot!
+	STATE_USEDOWN, // crazy maintenance bot!
 	STATE_USEUP,
 	STATE_USELEFT,
 	STATE_USERIGHT,
 
-	STATE_MEER_MOVE,			// for the Meerkat
+	STATE_MEER_MOVE, // for the Meerkat
 	STATE_MEER_APPEAR,
 	STATE_MEER_BITE,
 	STATE_MEER_DISAPPEAR,
 	STATE_MEER_LOOK,
 
-	STATE_ICEP_PEEK,			// for the Icepuff
+	STATE_ICEP_PEEK, // for the Icepuff
 	STATE_ICEP_APPEAR,
 	STATE_ICEP_THROWDOWN,
 	STATE_ICEP_THROWRIGHT,
 	STATE_ICEP_THROWLEFT,
 	STATE_ICEP_DISAPPEAR,
 
-	STATE_LICKDOWN,				// for the Fatfrog
+	STATE_LICKDOWN, // for the Fatfrog
 	STATE_LICKLEFT,
 	STATE_LICKRIGHT,
 
-	STATE_DIVERTER_BL,			// for Diverters
+	STATE_DIVERTER_BL, // for Diverters
 	STATE_DIVERTER_BR,
 	STATE_DIVERTER_TL,
 	STATE_DIVERTER_TR,
 
-	STATE_KISSRIGHT,			// for Dolly
+	STATE_KISSRIGHT, // for Dolly
 	STATE_KISSLEFT,
 	STATE_ANGRY,
 	STATE_PANIC,
 	STATE_LAUGH,
 	STATE_DOLLYUSERIGHT,
 
-	STATE_YELL,					// for Sarge
+	STATE_YELL, // for Sarge
 
 	STATE_ENDSTATES
 };
@@ -388,37 +388,37 @@ struct AIEntity {
 	AIState state;
 	AIDir dir;
 
-	Tile *draw;											// Current frame to draw
+	Tile *draw; // Current frame to draw
 
-	void (*aiInit)(AIEntity *e);						// func ptr to init routine
-	void (*aiInit2)(AIEntity *e);						// func ptr to init2 routine - graphic init only (this for LoadGame functionality)
-	void (*aiAction)(AIEntity *e);						// func ptr to action routine
-	void (*aiUse)(AIEntity *e);							// func ptr to use routine
-	void (*aiDraw)(AIEntity *e, int x, int y);			// func ptr to extra drawing routine (only for special stuff) - pass in mapx, mapy
+	void (*aiInit)(AIEntity *e);               // func ptr to init routine
+	void (*aiInit2)(AIEntity *e);              // func ptr to init2 routine - graphic init only (this for LoadGame functionality)
+	void (*aiAction)(AIEntity *e);             // func ptr to action routine
+	void (*aiUse)(AIEntity *e);                // func ptr to use routine
+	void (*aiDraw)(AIEntity *e, int x, int y); // func ptr to extra drawing routine (only for special stuff) - pass in mapx, mapy
 
-	char		luaFuncInit[32];						// Lua function for Init (always called after entity's init). These are ptrs into the map header.
-	char		luaFuncAction[32];						// Lua function for Action
-	char		luaFuncUse[32];							// Lua function for Use
-	int16		level;									// which floor level we're on
-	int16		value1, value2;							// extra values we might need
-	AIDir		dir2;									// this is from TED
+	char luaFuncInit[32];   // Lua function for Init (always called after entity's init). These are ptrs into the map header.
+	char luaFuncAction[32]; // Lua function for Action
+	char luaFuncUse[32];    // Lua function for Use
+	int16 level;            // which floor level we're on
+	int16 value1, value2;   // extra values we might need
+	AIDir dir2;             // this is from TED
 
-	int16		x, y;
-	int16		drawXOff, drawYOff;					// might need a drawing offset
-	int16		onScreen;								// FLAG: is this entity onscreen?
-	int16		moveSpeed;								// movement speed of this entity
-	int16		xVel, yVel;								// movement values
-	int16		tileX, tileY;
-	int16		goalX, goalY;							// where we're trying to go - TILE COORDS
-	int16		touchpX, touchpY, touchpTile, touchpWait;		// ACTION index a touchplate is using, which you're on
-	int32		stunnedWait;							// if we're stunned, this is the delay before being normal again
-	int16		sequence;								// to use for specially-coded sequences
-	char		entityName[32];						// the name of the entity, as registered by the Lua init function for the entity
-	char		printedName[32];						// the name of the entity/item, the way it should be printed
+	int16 x, y;
+	int16 drawXOff, drawYOff; // might need a drawing offset
+	int16 onScreen;           // FLAG: is this entity onscreen?
+	int16 moveSpeed;          // movement speed of this entity
+	int16 xVel, yVel;         // movement values
+	int16 tileX, tileY;
+	int16 goalX, goalY;                             // where we're trying to go - TILE COORDS
+	int16 touchpX, touchpY, touchpTile, touchpWait; // ACTION index a touchplate is using, which you're on
+	int32 stunnedWait;                              // if we're stunned, this is the delay before being normal again
+	int16 sequence;                                 // to use for specially-coded sequences
+	char entityName[32];                            // the name of the entity, as registered by the Lua init function for the entity
+	char printedName[32];                           // the name of the entity/item, the way it should be printed
 
-	int16		animFrame;								// which frame we're on
-	int16		animDelay;								// changes every frame; based on anim_cycle at start
-	int16		animCycle;								// delay between frame animations
+	int16 animFrame; // which frame we're on
+	int16 animDelay; // changes every frame; based on anim_cycle at start
+	int16 animCycle; // delay between frame animations
 
 	union {
 		uint16 blinkFrames;
@@ -432,29 +432,29 @@ struct AIEntity {
 	};
 	Tile *special1Gfx[kMaxAnimFrames];
 
-	int16		standdownFrames;
-	Tile		*standdownGfx[kMaxAnimFrames];
+	int16 standdownFrames;
+	Tile *standdownGfx[kMaxAnimFrames];
 
-	int16		standupFrames;
-	Tile		*standupGfx[kMaxAnimFrames];
+	int16 standupFrames;
+	Tile *standupGfx[kMaxAnimFrames];
 
-	int16		standleftFrames;
-	Tile		*standleftGfx[kMaxAnimFrames];
+	int16 standleftFrames;
+	Tile *standleftGfx[kMaxAnimFrames];
 
-	int16		standrightFrames;
-	Tile		*standrightGfx[kMaxAnimFrames];
+	int16 standrightFrames;
+	Tile *standrightGfx[kMaxAnimFrames];
 
-	int16		moveupFrames;
-	Tile		*moveupGfx[kMaxAnimFrames];
+	int16 moveupFrames;
+	Tile *moveupGfx[kMaxAnimFrames];
 
-	int16		movedownFrames;
-	Tile		*movedownGfx[kMaxAnimFrames];
+	int16 movedownFrames;
+	Tile *movedownGfx[kMaxAnimFrames];
 
-	int16		moveleftFrames;
-	Tile		*moveleftGfx[kMaxAnimFrames];
+	int16 moveleftFrames;
+	Tile *moveleftGfx[kMaxAnimFrames];
 
-	int16		moverightFrames;
-	Tile		*moverightGfx[kMaxAnimFrames];
+	int16 moverightFrames;
+	Tile *moverightGfx[kMaxAnimFrames];
 
 	void reset() {
 		luaFuncInit[0] = 0;
@@ -556,8 +556,8 @@ struct AIEntity {
 };
 
 // Structs for Function Table Lookup for SaveGames
-typedef void(*FuncPtr)(AIEntity *);
-typedef void(*EntFuncPtr)(AIEntity *, int, int);
+typedef void (*FuncPtr)(AIEntity *);
+typedef void (*EntFuncPtr)(AIEntity *, int, int);
 
 struct AIEntTypeInfo {
 	AIType type;
@@ -568,7 +568,7 @@ struct AIEntTypeInfo {
 };
 
 struct FuncLookUp {
-	void(*function)(AIEntity *e);
+	void (*function)(AIEntity *e);
 	const char *funcName;
 };
 
@@ -580,7 +580,7 @@ struct AIEntLevel2 {
 	uint16 y;
 	Tile *draw;
 	AIEntity *e;
-	void(*aiDraw)(AIEntity *e, int x, int y);
+	void (*aiDraw)(AIEntity *e, int x, int y);
 	uint32 stunnedWait;
 
 	AIEntLevel2() : x(0), y(0), draw(nullptr), e(nullptr), aiDraw(nullptr), stunnedWait(0) {}
@@ -750,7 +750,7 @@ struct Trigger {
 
 struct CallbackDef {
 	CallbackType type;
-	void(*function)(int x, int y);
+	void (*function)(int x, int y);
 };
 
 struct Callback {
@@ -793,8 +793,8 @@ struct CineCommand {
 	double x2, y2;
 	double xv, yv;
 	int start, end;
-	uint32	delay;
-	int	speed;
+	uint32 delay;
+	int speed;
 	const char *title;
 	const char *string;
 	const char *id;
@@ -802,7 +802,7 @@ struct CineCommand {
 	Picture *pic;
 
 	CineCommand() : cmdType(C_NO_COMMAND), x(0.0), y(0.0), x2(0.0), y2(0.0), xv(0.0), yv(0.0),
-				start(0), end(0), delay(0), speed(0), title(nullptr), string(nullptr), id(nullptr), e(nullptr), pic(nullptr) {}
+	                start(0), end(0), delay(0), speed(0), title(nullptr), string(nullptr), id(nullptr), e(nullptr), pic(nullptr) {}
 };
 
 struct CineBlit {
@@ -815,19 +815,18 @@ struct CineBlit {
 	CineBlit() : x(0), y(0), pic(nullptr), name(nullptr), id(nullptr), masked(false) {}
 };
 
-#define onEvenTile(x, y)		( !(x & 31) && !(y & 31) )
-#define hitPlayer(x, y)			( e->onScreen && g_hdb->_ai->checkPlayerCollision( x, y, 4 ) && !g_hdb->_ai->playerDead() )
-#define cycleFrames( e, max ) \
-	{ \
-		if ( e->animDelay-- < 1 ) \
-		{ \
+#define onEvenTile(x, y) (!(x & 31) && !(y & 31))
+#define hitPlayer(x, y) (e->onScreen && g_hdb->_ai->checkPlayerCollision(x, y, 4) && !g_hdb->_ai->playerDead())
+#define cycleFrames(e, max)              \
+	{                                    \
+		if (e->animDelay-- < 1) {        \
 			e->animDelay = e->animCycle; \
-			e->animFrame++; \
-			if ( e->animFrame >= max ) \
-				e->animFrame = 0; \
-		} \
+			e->animFrame++;              \
+			if (e->animFrame >= max)     \
+				e->animFrame = 0;        \
+		}                                \
 	}
-#define spawnBlocking(x, y, level)	g_hdb->_ai->spawn(AI_NONE, DIR_NONE, x, y, nullptr, nullptr, nullptr, DIR_NONE, level, 0, 0, 0)
+#define spawnBlocking(x, y, level) g_hdb->_ai->spawn(AI_NONE, DIR_NONE, x, y, nullptr, nullptr, nullptr, DIR_NONE, level, 0, 0, 0)
 
 class AI {
 public:
@@ -837,7 +836,7 @@ public:
 	void init();
 	void clearPersistent();
 	void restartSystem();
-	const char *funcLookUp(void(*function)(AIEntity *e));
+	const char *funcLookUp(void (*function)(AIEntity *e));
 	FuncPtr funcLookUp(const char *function);
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
@@ -1033,7 +1032,7 @@ public:
 	void cineSetEntity(const char *entName, int x, int y, int level);
 	void cineMoveEntity(const char *entName, int x, int y, int level, int speed);
 	void cineSpawnEntity(AIType t, AIDir d, int x, int y, const char *func_init, const char *func_action,
-					const char *func_use, AIDir d2, int level, int value1, int value2);
+	                     const char *func_use, AIDir d2, int level, int value1, int value2);
 	void cineRemoveEntity(const char *entName);
 	void cineAnimEntity(const char *entName, AIState state, int loop);
 	void cineSetAnimFrame(const char *entName, AIState state, int frame);
@@ -1130,76 +1129,76 @@ public:
 
 	// Player Variables
 	bool _playerDead;
-	bool _playerInvisible;	// While on RailRider for example
+	bool _playerInvisible; // While on RailRider for example
 	bool _playerOnIce;
 	bool _playerEmerging;
 	bool _playerRunning;
 
-	uint16		_pushupFrames;
-	Tile		*_pushupGfx[kMaxAnimFrames];
+	uint16 _pushupFrames;
+	Tile *_pushupGfx[kMaxAnimFrames];
 
-	uint16		_pushdownFrames;
-	Tile		*_pushdownGfx[kMaxAnimFrames];
+	uint16 _pushdownFrames;
+	Tile *_pushdownGfx[kMaxAnimFrames];
 
-	uint16		_pushleftFrames;
-	Tile		*_pushleftGfx[kMaxAnimFrames];
+	uint16 _pushleftFrames;
+	Tile *_pushleftGfx[kMaxAnimFrames];
 
-	uint16		_pushrightFrames;
-	Tile		*_pushrightGfx[kMaxAnimFrames];
+	uint16 _pushrightFrames;
+	Tile *_pushrightGfx[kMaxAnimFrames];
 
-	Tile		*_getGfx[5];			// only 1 frame in each direction (+1 for DIR_NONE at start)
+	Tile *_getGfx[5]; // only 1 frame in each direction (+1 for DIR_NONE at start)
 
-	uint16		_dyingFrames;
-	Tile		*_dyingGfx[kMaxDeathFrames];
+	uint16 _dyingFrames;
+	Tile *_dyingGfx[kMaxDeathFrames];
 
-	Tile		*_goodjobGfx;			// only 1 frame
+	Tile *_goodjobGfx; // only 1 frame
 
-	uint16		_horrible1Frames;
-	Tile		*_horrible1Gfx[kMaxDeathFrames];
-	uint16		_horrible2Frames;
-	Tile		*_horrible2Gfx[kMaxDeathFrames];
-	uint16		_horrible3Frames;
-	Tile		*_horrible3Gfx[kMaxDeathFrames];
-	uint16		_horrible4Frames;
-	Tile		*_horrible4Gfx[kMaxDeathFrames];
-	uint16		_plummetFrames;
-	Tile		*_plummetGfx[kMaxDeathFrames];
+	uint16 _horrible1Frames;
+	Tile *_horrible1Gfx[kMaxDeathFrames];
+	uint16 _horrible2Frames;
+	Tile *_horrible2Gfx[kMaxDeathFrames];
+	uint16 _horrible3Frames;
+	Tile *_horrible3Gfx[kMaxDeathFrames];
+	uint16 _horrible4Frames;
+	Tile *_horrible4Gfx[kMaxDeathFrames];
+	uint16 _plummetFrames;
+	Tile *_plummetGfx[kMaxDeathFrames];
 
-	uint16		_clubUpFrames;
-	Picture		*_clubUpGfx[kMaxAnimFrames];
-	uint16		_clubDownFrames;
-	Picture		*_clubDownGfx[kMaxAnimFrames];
-	uint16		_clubLeftFrames;
-	Picture		*_clubLeftGfx[kMaxAnimFrames];
-	uint16		_clubRightFrames;
-	Picture		*_clubRightGfx[kMaxAnimFrames];
+	uint16 _clubUpFrames;
+	Picture *_clubUpGfx[kMaxAnimFrames];
+	uint16 _clubDownFrames;
+	Picture *_clubDownGfx[kMaxAnimFrames];
+	uint16 _clubLeftFrames;
+	Picture *_clubLeftGfx[kMaxAnimFrames];
+	uint16 _clubRightFrames;
+	Picture *_clubRightGfx[kMaxAnimFrames];
 
-	uint16		_stunUpFrames;
-	Tile		*_stunUpGfx[kMaxAnimFrames];
-	uint16		_stunDownFrames;
-	Tile		*_stunDownGfx[kMaxAnimFrames];
-	uint16		_stunLeftFrames;
-	Tile		*_stunLeftGfx[kMaxAnimFrames];
-	uint16		_stunRightFrames;
-	Tile		*_stunRightGfx[kMaxAnimFrames];
-	Tile		*_stunLightningGfx[kMaxAnimFrames];
-	Tile		*_stunnedGfx[kMaxAnimFrames];
+	uint16 _stunUpFrames;
+	Tile *_stunUpGfx[kMaxAnimFrames];
+	uint16 _stunDownFrames;
+	Tile *_stunDownGfx[kMaxAnimFrames];
+	uint16 _stunLeftFrames;
+	Tile *_stunLeftGfx[kMaxAnimFrames];
+	uint16 _stunRightFrames;
+	Tile *_stunRightGfx[kMaxAnimFrames];
+	Tile *_stunLightningGfx[kMaxAnimFrames];
+	Tile *_stunnedGfx[kMaxAnimFrames];
 
-	uint16		_slugUpFrames;
-	Tile		*_slugUpGfx[kMaxAnimFrames];
-	uint16		_slugDownFrames;
-	Tile		*_slugDownGfx[kMaxAnimFrames];
-	uint16		_slugLeftFrames;
-	Tile		*_slugLeftGfx[kMaxAnimFrames];
-	uint16		_slugRightFrames;
-	Tile		*_slugRightGfx[kMaxAnimFrames];
+	uint16 _slugUpFrames;
+	Tile *_slugUpGfx[kMaxAnimFrames];
+	uint16 _slugDownFrames;
+	Tile *_slugDownGfx[kMaxAnimFrames];
+	uint16 _slugLeftFrames;
+	Tile *_slugLeftGfx[kMaxAnimFrames];
+	uint16 _slugRightFrames;
+	Tile *_slugRightGfx[kMaxAnimFrames];
 
-	uint16		_slugAttackFrames;
-	Picture		*_slugAttackGfx[kMaxAnimFrames];
+	uint16 _slugAttackFrames;
+	Picture *_slugAttackGfx[kMaxAnimFrames];
 
-	Tile		*_weaponSelGfx;
-	Tile		*_weaponGfx;
-	AIType		_weaponSelected;
+	Tile *_weaponSelGfx;
+	Tile *_weaponGfx;
+	AIType _weaponSelected;
 
 	// Player Resources and Deliveries
 
@@ -1211,71 +1210,71 @@ public:
 	// These variables hold the tile-indices set
 	// in ai-init.cpp
 
-	int	_useSwitchOff;		// the door opening switch
-	int	_useSwitchOn;		// state, when opened
-	int	_useHolderEmpty;	// cell holding switch
-	int	_useHolderFull;		// state, when full
-	int	_useSwitch2Off;		// another switch
-	int	_useSwitch2On;		// state, when opened
-	int	_useMailsorter;		// mailsorter entity
-	int	_useAskcomp;		// askcomp entitiy
-	int	_useTeleporter;		// teleporter entity
-	int	_useHandswitchOn;	// 2-sided handswitch
-	int	_useHandswitchOff;	// 2-sided handswitch
+	int _useSwitchOff;     // the door opening switch
+	int _useSwitchOn;      // state, when opened
+	int _useHolderEmpty;   // cell holding switch
+	int _useHolderFull;    // state, when full
+	int _useSwitch2Off;    // another switch
+	int _useSwitch2On;     // state, when opened
+	int _useMailsorter;    // mailsorter entity
+	int _useAskcomp;       // askcomp entitiy
+	int _useTeleporter;    // teleporter entity
+	int _useHandswitchOn;  // 2-sided handswitch
+	int _useHandswitchOff; // 2-sided handswitch
 
-	int	_targetDoorN;		// horz SILVER door
-	int	_targetDoorP;		// horz BLUE door
-	int	_targetDoorS;		// horz RED door
-	int	_targetDoorNv;		// vert SILVER door
-	int	_targetDoorPv;		// vert BLUE door
-	int	_targetDoorSv;		// vert RED door
+	int _targetDoorN;  // horz SILVER door
+	int _targetDoorP;  // horz BLUE door
+	int _targetDoorS;  // horz RED door
+	int _targetDoorNv; // vert SILVER door
+	int _targetDoorPv; // vert BLUE door
+	int _targetDoorSv; // vert RED door
 
-	int	_targetDoor2N;		// horz SILVER door
-	int	_targetDoor2P;		// horz BLUE door
-	int	_targetDoor2S;		// horz RED door
-	int	_targetDoor2Nv;		// vert SILVER door
-	int	_targetDoor2Pv;		// vert BLUE door
-	int	_targetDoor2Sv;		// vert RED door
+	int _targetDoor2N;  // horz SILVER door
+	int _targetDoor2P;  // horz BLUE door
+	int _targetDoor2S;  // horz RED door
+	int _targetDoor2Nv; // vert SILVER door
+	int _targetDoor2Pv; // vert BLUE door
+	int _targetDoor2Sv; // vert RED door
 
-	int	_target2DoorN;		// horz SILVER door
-	int	_target2DoorP;		// horz BLUE door
-	int	_target2DoorS;		// horz RED door
-	int	_target2DoorNv;		// vert SILVER door
-	int	_target2DoorPv;		// vert BLUE door
-	int	_target2DoorSv;		// vert RED door
+	int _target2DoorN;  // horz SILVER door
+	int _target2DoorP;  // horz BLUE door
+	int _target2DoorS;  // horz RED door
+	int _target2DoorNv; // vert SILVER door
+	int _target2DoorPv; // vert BLUE door
+	int _target2DoorSv; // vert RED door
 
-	int	_target3DoorN;		// horz SILVER door
-	int	_target3DoorP;		// horz BLUE door
-	int	_target3DoorS;		// horz RED door
-	int	_target3DoorNv;		// vert SILVER door
-	int	_target3DoorPv;		// vert BLUE door
-	int	_target3DoorSv;		// vert RED door
+	int _target3DoorN;  // horz SILVER door
+	int _target3DoorP;  // horz BLUE door
+	int _target3DoorS;  // horz RED door
+	int _target3DoorNv; // vert SILVER door
+	int _target3DoorPv; // vert BLUE door
+	int _target3DoorSv; // vert RED door
 
-	int	_targetBridgeU;		// bridge extending UP
-	int	_targetBridgeD;		// bridge extending DOWN
-	int	_targetBridgeL;		// bridge extending LEFT
-	int	_targetBridgeR;		// bridge extending RIGHT
+	int _targetBridgeU; // bridge extending UP
+	int _targetBridgeD; // bridge extending DOWN
+	int _targetBridgeL; // bridge extending LEFT
+	int _targetBridgeR; // bridge extending RIGHT
 
-	int	_targetBridgeMidLR;	// bridge grating plank LEFT/RIGHT
-	int	_targetBridgeMidUD;	// bridge grating plank UP/DOWN
-	int	_touchplateOn;		// touchplate ON
-	int	_touchplateOff;
-	int	_templeTouchpOn;	// touchplate ON
-	int	_templeTouchpOff;
-	int	_blockpole;			// blockpole
+	int _targetBridgeMidLR; // bridge grating plank LEFT/RIGHT
+	int _targetBridgeMidUD; // bridge grating plank UP/DOWN
+	int _touchplateOn;      // touchplate ON
+	int _touchplateOff;
+	int _templeTouchpOn; // touchplate ON
+	int _templeTouchpOff;
+	int _blockpole; // blockpole
 
-	int	_kcHolderWhiteOff;	// keycard holders
-	int	_kcHolderWhiteOn;
-	int	_kcHolderBlueOff;
-	int	_kcHolderBlueOn;
-	int	_kcHolderRedOff;
-	int	_kcHolderRedOn;
-	int	_kcHolderGreenOff;
-	int	_kcHolderGreenOn;
-	int	_kcHolderPurpleOff;
-	int	_kcHolderPurpleOn;
-	int	_kcHolderBlackOff;
-	int	_kcHolderBlackOn;
+	int _kcHolderWhiteOff; // keycard holders
+	int _kcHolderWhiteOn;
+	int _kcHolderBlueOff;
+	int _kcHolderBlueOn;
+	int _kcHolderRedOff;
+	int _kcHolderRedOn;
+	int _kcHolderGreenOff;
+	int _kcHolderGreenOn;
+	int _kcHolderPurpleOff;
+	int _kcHolderPurpleOn;
+	int _kcHolderBlackOff;
+	int _kcHolderBlackOn;
 
 	AIEntLevel2 _entsLevel2[kMaxLevel2Ents];
 	int _numLevel2Ents;
@@ -1329,9 +1328,9 @@ public:
 
 	// Bots Gfx
 
-	Picture *_icepSnowballGfxDown;		// ICEPUFF's snowball moving down
-	Picture *_icepSnowballGfxLeft;		// ICEPUFF's snowball moving left
-	Picture *_icepSnowballGfxRight;		// ICEPUFF's snowball moving right
+	Picture *_icepSnowballGfxDown;  // ICEPUFF's snowball moving down
+	Picture *_icepSnowballGfxLeft;  // ICEPUFF's snowball moving left
+	Picture *_icepSnowballGfxRight; // ICEPUFF's snowball moving right
 
 	Tile *_tileFroglickMiddleUD;
 	Tile *_tileFroglickWiggleUD[3];
@@ -1351,7 +1350,6 @@ public:
 	Tile *_gfxLaserbeamLRRight[4];
 
 private:
-
 	// Action Functions
 
 	// Checks for the existence of a closed/open door
@@ -1397,12 +1395,11 @@ private:
 	bool _playerLock;
 	bool _cameraLock;
 	double _cameraX, _cameraY;
-
 };
 
 const char *AIType2Str(AIType v);
 const char *AIState2Str(AIState v);
 
-} // End of Namespace
+} // namespace HDB
 
 #endif // !HDB_AI_H

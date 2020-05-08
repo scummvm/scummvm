@@ -20,12 +20,12 @@
  *
  */
 
+#include "ultima/ultima4/views/textview.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
-#include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/views/textview.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -42,7 +42,7 @@ TextView::TextView(int x, int y, int columns, int rows) : View(x, y, columns * C
 	this->_cursorPhase = 0;
 	if (_charset == nullptr)
 		_charset = imageMgr->get(BKGD_CHARSET)->_image;
-	eventHandler->getTimer()->add(&cursorTimer, /*SCR_CYCLE_PER_SECOND*/4, this);
+	eventHandler->getTimer()->add(&cursorTimer, /*SCR_CYCLE_PER_SECOND*/ 4, this);
 }
 
 TextView::~TextView() {
@@ -214,11 +214,10 @@ void TextView::optionAt(int x, int y, char key, const char *fmt, ...) {
 
 	if (key) {
 		Common::Rect r(
-			SCALED(_bounds.left + (x * CHAR_WIDTH)),
-			SCALED(_bounds.top + (y * CHAR_HEIGHT)),
-			SCALED(_bounds.left + (x + strlen(buffer) - offset) * CHAR_WIDTH),
-			SCALED(_bounds.top + (y + 1) * CHAR_HEIGHT)
-		);
+		    SCALED(_bounds.left + (x * CHAR_WIDTH)),
+		    SCALED(_bounds.top + (y * CHAR_HEIGHT)),
+		    SCALED(_bounds.left + (x + strlen(buffer) - offset) * CHAR_WIDTH),
+		    SCALED(_bounds.top + (y + 1) * CHAR_HEIGHT));
 
 		_options.push_back(Option(r, key));
 	}
@@ -302,11 +301,10 @@ void TextView::clearOptions() {
 
 Common::Rect TextView::getTextBounds(int x, int y, int textWidth) const {
 	return Common::Rect(
-		SCALED(_bounds.left + (x * CHAR_WIDTH)),
-		SCALED(_bounds.top + (y * CHAR_HEIGHT)),
-		SCALED(_bounds.left + (x + textWidth * CHAR_WIDTH)),
-		SCALED(_bounds.top + (y + 1) * CHAR_HEIGHT)
-	);
+	    SCALED(_bounds.left + (x * CHAR_WIDTH)),
+	    SCALED(_bounds.top + (y * CHAR_HEIGHT)),
+	    SCALED(_bounds.left + (x + textWidth * CHAR_WIDTH)),
+	    SCALED(_bounds.top + (y + 1) * CHAR_HEIGHT));
 }
 
 } // End of namespace Ultima4

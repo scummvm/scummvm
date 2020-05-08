@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/actor.h"
 
 namespace Ultima {
@@ -36,7 +36,7 @@ void AnimAction::getAnimRange(unsigned int lastanim, int lastdir,
 	if (_flags & AAF_TWOSTEP) {
 		// two-step animation?
 		if (firststep) {
-			if (_flags & (AAF_LOOPING | AAF_LOOPING2)) {// CHECKME: unknown flag
+			if (_flags & (AAF_LOOPING | AAF_LOOPING2)) { // CHECKME: unknown flag
 				// for a looping animation, start at the end to
 				// make things more fluid
 				startframe = _size - 1;
@@ -47,7 +47,7 @@ void AnimAction::getAnimRange(unsigned int lastanim, int lastdir,
 		} else {
 			// second step starts halfway
 			startframe = _size / 2;
-			if (_flags & (AAF_LOOPING | AAF_LOOPING2)) {// CHECKME: unknown flag
+			if (_flags & (AAF_LOOPING | AAF_LOOPING2)) { // CHECKME: unknown flag
 				endframe = _size - 1;
 			}
 		}

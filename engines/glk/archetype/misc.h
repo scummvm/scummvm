@@ -35,8 +35,18 @@ namespace Archetype {
 #define NEWLINE_CH '\r'
 
 enum AclType {
-	RESERVED, IDENT, MESSAGE, OPER, TEXT_LIT, QUOTE_LIT, NUMERIC, PUNCTUATION,
-	STR_PTR, ATTR_PTR, BAD_TOKEN, NEWLINE
+	RESERVED,
+	IDENT,
+	MESSAGE,
+	OPER,
+	TEXT_LIT,
+	QUOTE_LIT,
+	NUMERIC,
+	PUNCTUATION,
+	STR_PTR,
+	ATTR_PTR,
+	BAD_TOKEN,
+	NEWLINE
 };
 
 /**
@@ -46,24 +56,25 @@ enum AclType {
  */
 class progfile {
 private:
-	Common::File _file;	// The physical file
+	Common::File _file; // The physical file
 public:
-	String filename;					// to do with error tracking
+	String filename; // to do with error tracking
 	String line_buffer;
 	int file_line;
 	int line_pos;
 
-	bool newlines;						// having to do with the tokenizer context
+	bool newlines; // having to do with the tokenizer context
 	char last_ch;
 	bool consumed;
 	AclType ttype;
 	int tnum;
+
 public:
 	/**
 	 * Constructor
 	 */
 	progfile() : file_line(0), line_pos(0), newlines(false), last_ch(NULL_CH),
-		consumed(false), ttype(RESERVED), tnum(0) {}
+	             consumed(false), ttype(RESERVED), tnum(0) {}
 
 	/**
 	 * Opens an Archetype program source file.
@@ -101,11 +112,15 @@ public:
 	void sourcePos();
 };
 
-enum ClassifyType { TYPE_ID, OBJECT_ID, ATTRIBUTE_ID, ENUMERATE_ID, UNDEFINED_ID };
+enum ClassifyType { TYPE_ID,
+	                OBJECT_ID,
+	                ATTRIBUTE_ID,
+	                ENUMERATE_ID,
+	                UNDEFINED_ID };
 
 extern const char *const VERSION_STUB;
 extern const double VERSION_NUM;
-extern size_t Bytes;		// Bytes consumed by allocated memory
+extern size_t Bytes; // Bytes consumed by allocated memory
 extern bool KeepLooking;
 extern bool AllErrors;
 

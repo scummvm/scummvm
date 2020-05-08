@@ -21,12 +21,12 @@
  */
 
 #include "glk/quest/geas_runner.h"
-#include "glk/quest/read_file.h"
+#include "glk/quest/geas_impl.h"
 #include "glk/quest/geas_state.h"
 #include "glk/quest/geas_util.h"
-#include "glk/quest/reserved_words.h"
-#include "glk/quest/geas_impl.h"
 #include "glk/quest/quest.h"
+#include "glk/quest/read_file.h"
+#include "glk/quest/reserved_words.h"
 #include "glk/quest/streams.h"
 #include "glk/quest/string.h"
 
@@ -39,20 +39,18 @@ static const char *dir_names[] = {"north", "south", "east", "west", "northeast",
 static const char *short_dir_names[] = {"n", "s", "e", "w", "ne", "nw", "se", "sw", "u", "d", "out"};
 
 const ObjectRecord *get_obj_record(const Common::Array<ObjectRecord> &v, const String &name) {
-	for (uint i = 0; i < v.size(); i ++)
+	for (uint i = 0; i < v.size(); i++)
 		if (ci_equal(v[i].name, name))
 			return &v[i];
 	return nullptr;
 }
-
-
 
 GeasRunner *GeasRunner::get_runner(GeasInterface *gi) {
 	return new geas_implementation(gi);
 }
 
 bool geas_implementation::find_ivar(String name, uint &rv) const {
-	for (uint n = 0; n < state.ivars.size(); n ++)
+	for (uint n = 0; n < state.ivars.size(); n++)
 		if (ci_equal(state.ivars[n].name, name)) {
 			rv = n;
 			return true;
@@ -62,7 +60,7 @@ bool geas_implementation::find_ivar(String name, uint &rv) const {
 
 bool geas_implementation::find_svar(String name, uint &rv) const {
 	//name = lcase (name);
-	for (uint n = 0; n < state.svars.size(); n ++)
+	for (uint n = 0; n < state.svars.size(); n++)
 		if (ci_equal(state.svars[n].name, name)) {
 			rv = n;
 			return true;
@@ -82,7 +80,7 @@ void geas_implementation::set_svar(String varname, String varval) {
 	String arrayname = varname.substr(0, i1);
 	String indextext = varname.substr(i1 + 1, varname.length() - i1 - 2);
 	cerr << "set_svar(" << varname << ") --> set_svar (" << arrayname << ", " << indextext << ")\n";
-	for (uint c3 = 0; c3 < indextext.size(); c3 ++)
+	for (uint c3 = 0; c3 < indextext.size(); c3++)
 		if (indextext[c3] < '0' || indextext[c3] > '9') {
 			set_svar(arrayname, get_ivar(indextext), varval);
 			return;
@@ -105,12 +103,12 @@ void geas_implementation::set_svar(String varname, uint index, String varval) {
 	}
 	state.svars[n].set(index, varval);
 	if (index == 0) {
-		for (uint varn = 0; varn < gf.size("variable"); varn ++) {
+		for (uint varn = 0; varn < gf.size("variable"); varn++) {
 			const GeasBlock &go(gf.block("variable", varn));
 			if (ci_equal(go.name, varname)) {
 				String script = "";
 				uint c1, c2;
-				for (uint j = 0; j < go.data.size(); j ++)
+				for (uint j = 0; j < go.data.size(); j++)
 					// SENSITIVE ?
 					if (first_token(go.data[j], c1, c2) == "onchange")
 						script = trim(go.data[j].substr(c2 + 1));
@@ -132,13 +130,13 @@ String geas_implementation::get_svar(String varname) const {
 	String arrayname = varname.substr(0, i1);
 	String indextext = varname.substr(i1 + 1, varname.length() - i1 - 2);
 	cerr << "get_svar(" << varname << ") --> get_svar (" << arrayname << ", " << indextext << ")\n";
-	for (uint c3 = 0; c3 < indextext.size(); c3 ++)
+	for (uint c3 = 0; c3 < indextext.size(); c3++)
 		if (indextext[c3] < '0' || indextext[c3] > '9')
 			return get_svar(arrayname, get_ivar(indextext));
 	return get_svar(arrayname, parse_int(indextext));
 }
 String geas_implementation::get_svar(String varname, uint index) const {
-	for (uint i = 0; i < state.svars.size(); i ++) {
+	for (uint i = 0; i < state.svars.size(); i++) {
 		if (ci_equal(state.svars[i].name, varname))
 			return state.svars[i].get(index);
 	}
@@ -158,13 +156,13 @@ int geas_implementation::get_ivar(String varname) const {
 	String arrayname = varname.substr(0, i1);
 	String indextext = varname.substr(i1 + 1, varname.length() - i1 - 2);
 	cerr << "get_ivar(" << varname << ") --> get_ivar (" << arrayname << ", " << indextext << ")\n";
-	for (uint c3 = 0; c3 < indextext.size(); c3 ++)
+	for (uint c3 = 0; c3 < indextext.size(); c3++)
 		if (indextext[c3] < '0' || indextext[c3] > '9')
 			return get_ivar(arrayname, get_ivar(indextext));
 	return get_ivar(arrayname, parse_int(indextext));
 }
 int geas_implementation::get_ivar(String varname, uint index) const {
-	for (uint i = 0; i < state.ivars.size(); i ++)
+	for (uint i = 0; i < state.ivars.size(); i++)
 		if (ci_equal(state.ivars[i].name, varname))
 			return state.ivars[i].get(index);
 	gi->debug_print("get_ivar: Tried to read undefined int '" + varname +
@@ -182,7 +180,7 @@ void geas_implementation::set_ivar(String varname, int varval) {
 	String arrayname = varname.substr(0, i1);
 	String indextext = varname.substr(i1 + 1, varname.length() - i1 - 2);
 	cerr << "set_svar(" << varname << ") --> set_svar (" << arrayname << ", " << indextext << ")\n";
-	for (uint c3 = 0; c3 < indextext.size(); c3 ++)
+	for (uint c3 = 0; c3 < indextext.size(); c3++)
 		if (indextext[c3] < '0' || indextext[c3] > '9') {
 			set_ivar(arrayname, get_ivar(indextext), varval);
 			return;
@@ -204,13 +202,13 @@ void geas_implementation::set_ivar(String varname, uint index, int varval) {
 	}
 	state.ivars[n].set(index, varval);
 	if (index == 0) {
-		for (uint varn = 0; varn < gf.size("variable"); varn ++) {
+		for (uint varn = 0; varn < gf.size("variable"); varn++) {
 			const GeasBlock &go(gf.block("variable", varn));
 			//if (go.lname == varname)
 			if (ci_equal(go.name, varname)) {
 				String script = "";
 				uint c1, c2;
-				for (uint j = 0; j < go.data.size(); j ++)
+				for (uint j = 0; j < go.data.size(); j++)
 					// SENSITIVE?
 					if (first_token(go.data[j], c1, c2) == "onchange")
 						script = trim(go.data[j].substr(c2 + 1));
@@ -220,8 +218,6 @@ void geas_implementation::set_ivar(String varname, uint index, int varval) {
 		}
 	}
 }
-
-
 
 Common::WriteStream &operator<<(Common::WriteStream &o, const match_binding &mb) {
 	o << "MB['" << mb.var_name << "' == '" << mb.var_text << "' @ "
@@ -237,7 +233,7 @@ String match_binding::tostring() {
 
 Common::WriteStream &operator<<(Common::WriteStream &o, const Set<String> &s) {
 	o << "{ ";
-	for (Set<String>::const_iterator i = s.begin(); i != s.end(); i ++) {
+	for (Set<String>::const_iterator i = s.begin(); i != s.end(); i++) {
 		if (i != s.begin())
 			o << ", ";
 		o << (*i);
@@ -251,16 +247,15 @@ bool geas_implementation::has_obj_action(String obj, String prop) const {
 	return get_obj_action(obj, prop, tmp);
 }
 
-
 bool geas_implementation::get_obj_action(String objname, String actname,
-        String &rv) const {
+                                         String &rv) const {
 	//String backup_object = this_object;
 	//this_object = objname;
 
 	cerr << "get_obj_action (" << objname << ", " << actname << ")\n";
 	String tok;
 	uint c1, c2;
-	for (uint i = state.props.size() - 1; i + 1 > 0; i --)
+	for (uint i = state.props.size() - 1; i + 1 > 0; i--)
 		if (state.props[i].name == objname) {
 			String line = state.props[i].data;
 			// SENSITIVE?
@@ -285,10 +280,10 @@ bool geas_implementation::has_obj_property(String obj, String prop) const {
 }
 
 bool geas_implementation::get_obj_property(String obj, String prop,
-        String &string_rv) const {
+                                           String &string_rv) const {
 	String is_prop = "properties " + prop;
 	String not_prop = "properties not " + prop;
-	for (uint i = state.props.size() - 1; i + 1 > 0; i --)
+	for (uint i = state.props.size() - 1; i + 1 > 0; i--)
 		if (ci_equal(state.props[i].name, obj)) {
 			String dat = state.props[i].data;
 			//cerr << "In looking for " << obj << ":" << prop << ", got line "
@@ -315,7 +310,7 @@ bool geas_implementation::get_obj_property(String obj, String prop,
 void geas_implementation::set_obj_property(String obj, String prop) {
 	state.props.push_back(PropertyRecord(obj, "properties " + prop));
 	if (ci_equal(prop, "hidden") || ci_equal(prop, "not hidden") ||
-	        ci_equal(prop, "invisible") || ci_equal(prop, "not invisible")) {
+	    ci_equal(prop, "invisible") || ci_equal(prop, "not invisible")) {
 		gi->update_sidebars();
 		regen_var_objects();
 	}
@@ -326,7 +321,7 @@ void geas_implementation::set_obj_action(String obj, String act) {
 }
 
 void geas_implementation::move(String obj, String dest) {
-	for (uint i = 0; i < state.objs.size(); i ++)
+	for (uint i = 0; i < state.objs.size(); i++)
 		if (ci_equal(state.objs[i].name, obj)) {
 			state.objs[i].parent = dest;
 			gi->update_sidebars();
@@ -339,7 +334,7 @@ void geas_implementation::move(String obj, String dest) {
 
 String geas_implementation::get_obj_parent(String obj) {
 	//obj = lcase (obj);
-	for (uint i = 0; i < state.objs.size(); i ++)
+	for (uint i = 0; i < state.objs.size(); i++)
 		if (ci_equal(state.objs[i].name, obj))
 			return state.objs[i].parent;
 	gi->debug_print("Tried to find parent of nonexistent object " + obj);
@@ -381,7 +376,7 @@ void geas_implementation::display_error(String errorname, String obj) {
 	assert(game != NULL);
 	String tok;
 	uint c1, c2;
-	for (uint i = 0; i < game->data.size(); i ++) {
+	for (uint i = 0; i < game->data.size(); i++) {
 		String line = game->data[i];
 		tok = first_token(line, c1, c2);
 		// SENSITIVE?
@@ -459,7 +454,7 @@ String geas_implementation::displayed_name(String obj) const {
 	if (get_obj_property(obj, "alias", tmp))
 		rv = tmp;
 	else {
-		for (uint i = 0; i < gf.blocks.size(); i ++)
+		for (uint i = 0; i < gf.blocks.size(); i++)
 			if (ci_equal(gf.blocks[i].name, obj)) {
 				rv = gf.blocks[i].name;
 				break;
@@ -475,8 +470,8 @@ String geas_implementation::displayed_name(String obj) const {
  * - destination, internal format
  * - script (optional)
  */
-Common::Array<Common::Array<String> > geas_implementation::get_places(String room) {
-	Common::Array<Common::Array<String> > rv;
+Common::Array<Common::Array<String>> geas_implementation::get_places(String room) {
+	Common::Array<Common::Array<String>> rv;
 
 	const GeasBlock *gb = gf.find_by_name("room", room);
 	if (gb == NULL)
@@ -484,7 +479,7 @@ Common::Array<Common::Array<String> > geas_implementation::get_places(String roo
 
 	String line, tok;
 	uint c1, c2;
-	for (uint i = 0; i < gb->data.size(); i ++) {
+	for (uint i = 0; i < gb->data.size(); i++) {
 		line = gb->data[i];
 		tok = first_token(line, c1, c2);
 		if (tok == "place") {
@@ -523,7 +518,7 @@ Common::Array<Common::Array<String> > geas_implementation::get_places(String roo
 		}
 	}
 
-	for (uint i = 0; i < state.exits.size(); i ++) {
+	for (uint i = 0; i < state.exits.size(); i++) {
 		if (state.exits[i].src != room)
 			continue;
 		line = state.exits[i].dest;
@@ -553,14 +548,12 @@ Common::Array<Common::Array<String> > geas_implementation::get_places(String roo
 			assert(tok == "exit");
 			tok = next_token(line, c1, c2);
 
-			for (v2string::iterator j = rv.begin(); j != rv.end(); j ++)
+			for (v2string::iterator j = rv.begin(); j != rv.end(); j++)
 				if ((*j)[3] == tok) {
 					rv.erase(j);
 					break;
 				}
 		}
-
-
 	}
 
 	cerr << "get_places (" << room << ") -> " << rv << "\n";
@@ -572,7 +565,7 @@ String geas_implementation::exit_dest(String room, String dir, bool *is_script) 
 	String tok;
 	if (is_script != NULL)
 		*is_script = false;
-	for (uint i = state.exits.size() - 1; i + 1 > 0; i --)
+	for (uint i = state.exits.size() - 1; i + 1 > 0; i--)
 		if (state.exits[i].src == room) {
 			String line = state.exits[i].dest;
 			cerr << "Processing exit line '" << state.exits[i].dest << "'\n";
@@ -613,7 +606,7 @@ String geas_implementation::exit_dest(String room, String dir, bool *is_script) 
 		return "";
 	}
 	// TODO: what's the priority on this?
-	for (uint i = 0; i < gb->data.size(); i ++) {
+	for (uint i = 0; i < gb->data.size(); i++) {
 		String line = gb->data[i];
 		tok = first_token(line, c1, c2);
 		if (tok == dir) {
@@ -684,7 +677,7 @@ void geas_implementation::set_game(const String &fname) {
 
 	state.running = true;
 
-	for (uint gline = 0; gline < gf.block("game", 0).data.size(); gline ++) {
+	for (uint gline = 0; gline < gf.block("game", 0).data.size(); gline++) {
 		String s = gf.block("game", 0).data[gline];
 		String tok = first_token(s, tok_start, tok_end);
 		// SENSITIVE?
@@ -692,13 +685,13 @@ void geas_implementation::set_game(const String &fname) {
 			String ver = next_token(s, tok_start, tok_end);
 			if (!is_param(ver)) {
 				gi->debug_print("Version " + s + " has invalid version " +
-					            ver);
+				                ver);
 				continue;
 			}
 			int vernum = parse_int(param_contents(ver));
 			if (vernum < 311 || vernum > 353)
 				gi->debug_print("Warning: Geas only supports ASL "
-					            " versions 3.11 to 3.53");
+				                " versions 3.11 to 3.53");
 		}
 		// SENSITIVE?
 		else if (tok == "background") {
@@ -770,7 +763,7 @@ void geas_implementation::set_game(const String &fname) {
 	/* TODO do I run the startscript or print the opening text first? */
 	run_script("displaytext <intro>");
 
-	for (uint i = 0; i < game.data.size(); i ++)
+	for (uint i = 0; i < game.data.size(); i++)
 		// SENSITIVE?
 		if (first_token(game.data[i], c1, c2) == "startscript") {
 			run_script_as("game", game.data[i].substr(c2 + 1));
@@ -789,19 +782,19 @@ void geas_implementation::set_game(const String &fname) {
 
 void geas_implementation::regen_var_objects() {
 	String tmp;
-	Common::Array <String> objs;
-	for (uint i = 0; i < state.objs.size(); i ++) {
+	Common::Array<String> objs;
+	for (uint i = 0; i < state.objs.size(); i++) {
 		//cerr << "r_v_o: Checking '" << state.objs[i].name << "' (" << state.objs[i].parent << "): " << ((state.objs[i].parent == state.location) ? "YES" : "NO") << endl;
 		if (ci_equal(state.objs[i].parent, state.location) &&
-		        !get_obj_property(state.objs[i].name, "hidden", tmp) &&
-		        !get_obj_property(state.objs[i].name, "invisible", tmp))
+		    !get_obj_property(state.objs[i].name, "hidden", tmp) &&
+		    !get_obj_property(state.objs[i].name, "invisible", tmp))
 			//!state.objs[i].hidden &&
 			//!state.objs[i].invisible)
 			objs.push_back(state.objs[i].name);
 	}
 	String qobjs = "", qfobjs = "";
 	String objname, prefix, main, suffix, propval, print1, print2;
-	for (uint i = 0; i < objs.size(); i ++) {
+	for (uint i = 0; i < objs.size(); i++) {
 		objname = objs[i];
 		if (!get_obj_property(objname, "alias", main))
 			main = objname;
@@ -885,7 +878,6 @@ void geas_implementation::regen_var_room() {
 	*/
 }
 
-
 void geas_implementation::regen_var_look() {
 	String look_tag;
 	if (!get_obj_property(state.location, "look", look_tag))
@@ -893,18 +885,17 @@ void geas_implementation::regen_var_look() {
 	set_svar("quest.lookdesc", look_tag);
 }
 
-
 void geas_implementation::regen_var_dirs() {
-	Common::Array <String> dirs;
+	Common::Array<String> dirs;
 	// the -1 is so that it skips 'out'
-	for (uint i = 0; i < ARRAYSIZE(dir_names) - 1; i ++)
+	for (uint i = 0; i < ARRAYSIZE(dir_names) - 1; i++)
 		if (exit_dest(state.location, dir_names[i]) != "")
 			dirs.push_back(dir_names[i]);
 	String exits = "";
 	if (dirs.size() == 1)
 		exits = "|b" + dirs[0] + "|xb";
 	else if (dirs.size() > 1) {
-		for (uint i = 0; i < dirs.size(); i ++) {
+		for (uint i = 0; i < dirs.size(); i++) {
 			exits = exits + "|b" + dirs[i] + "|xb";
 			if (i < dirs.size() - 2)
 				exits = exits + ", ";
@@ -960,7 +951,7 @@ void geas_implementation::regen_var_dirs() {
 	//set_svar ("quest.doorways.places", "");
 	current_places = get_places(state.location);
 	String printed_places = "";
-	for (uint i = 0; i < current_places.size(); i ++) {
+	for (uint i = 0; i < current_places.size(); i++) {
 		if (i == 0)
 			printed_places = current_places[i][0];
 		else if (i < current_places.size() - 1)
@@ -973,8 +964,6 @@ void geas_implementation::regen_var_dirs() {
 	set_svar("quest.doorways.places", printed_places);
 }
 
-
-
 // TODO:  SENSITIVE???
 String geas_implementation::substitute_synonyms(String s) const {
 	String orig = s;
@@ -984,7 +973,7 @@ String geas_implementation::substitute_synonyms(String s) const {
 		/* TODO: exactly in what order does it try synonyms?
 		 * Does it have to be flanked by whitespace?
 		 */
-		for (uint i = 0; i < gb->data.size(); i ++) {
+		for (uint i = 0; i < gb->data.size(); i++) {
 			String line = gb->data[i];
 			int index = line.find('=');
 			if (index == -1)
@@ -993,7 +982,7 @@ String geas_implementation::substitute_synonyms(String s) const {
 			String rhs = trim(line.substr(index + 1));
 			if (rhs == "")
 				continue;
-			for (uint j = 0; j < words.size(); j ++) {
+			for (uint j = 0; j < words.size(); j++) {
 				String lhs = words[j];
 				if (lhs == "")
 					continue;
@@ -1001,11 +990,11 @@ String geas_implementation::substitute_synonyms(String s) const {
 				while ((k = s.find(lhs, k)) != -1) {
 					uint end_index = k + lhs.length();
 					if ((k == 0 || s[k - 1] == ' ') &&
-					        (end_index == s.length() || s[end_index] == ' ')) {
+					    (end_index == s.length() || s[end_index] == ' ')) {
 						s = s.substr(0, k) + rhs + s.substr(k + lhs.length());
 						k = k + rhs.length();
 					} else
-						k ++;
+						k++;
 				}
 			}
 		}
@@ -1030,21 +1019,21 @@ String geas_implementation::get_banner() {
 		if (is_param(tok)) {
 			banner = eval_param(tok);
 
-			for (uint i = 0; i < gb->data.size(); i ++) {
+			for (uint i = 0; i < gb->data.size(); i++) {
 				line = gb->data[i];
 				if (first_token(line, c1, c2) == "game" &&
-				        next_token(line, c1, c2) == "version" &&
-				        is_param(tok = next_token(line, c1, c2))) {
+				    next_token(line, c1, c2) == "version" &&
+				    is_param(tok = next_token(line, c1, c2))) {
 					banner += ", v";
 					banner += eval_param(tok);
 				}
 			}
 
-			for (uint i = 0; i < gb->data.size(); i ++) {
+			for (uint i = 0; i < gb->data.size(); i++) {
 				line = gb->data[i];
 				if (first_token(line, c1, c2) == "game" &&
-				        next_token(line, c1, c2) == "author" &&
-				        is_param(tok = next_token(line, c1, c2))) {
+				    next_token(line, c1, c2) == "author" &&
+				    is_param(tok = next_token(line, c1, c2))) {
 					banner += " | ";
 					banner += eval_param(tok);
 				}
@@ -1106,7 +1095,7 @@ void geas_implementation::run_command(String s) {
 	if (gb != NULL) {
 		String line, tok;
 		uint c1, c2;
-		for (uint i = 0; i < gb->data.size(); i ++) {
+		for (uint i = 0; i < gb->data.size(); i++) {
 			line = gb->data[i];
 			tok = first_token(line, c1, c2);
 			// SENSITIVE?
@@ -1131,7 +1120,7 @@ void geas_implementation::run_command(String s) {
 		if (gb != NULL) {
 			String line, tok;
 			uint c1, c2;
-			for (uint i = 0; i < gb->data.size(); i ++) {
+			for (uint i = 0; i < gb->data.size(); i++) {
 				line = gb->data[i];
 				tok = first_token(line, c1, c2);
 				// SENSITIVE?
@@ -1166,7 +1155,7 @@ void geas_implementation::run_command(String s) {
 	if (gb != NULL) {
 		String line, tok;
 		uint c1, c2;
-		for (uint i = 0; i < gb->data.size(); i ++) {
+		for (uint i = 0; i < gb->data.size(); i++) {
 			line = gb->data[i];
 			tok = first_token(line, c1, c2);
 			// SENSITIVE?
@@ -1189,7 +1178,7 @@ void geas_implementation::run_command(String s) {
 		if (gb != NULL) {
 			String line, tok;
 			uint c1, c2;
-			for (uint i = 0; i < gb->data.size(); i ++) {
+			for (uint i = 0; i < gb->data.size(); i++) {
 				line = gb->data[i];
 				tok = first_token(line, c1, c2);
 				// SENSITIVE?
@@ -1213,7 +1202,7 @@ void geas_implementation::run_command(String s) {
 		undo_buffer.push(state);
 }
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const match_rv &rv) {
+Common::WriteStream &operator<<(Common::WriteStream &o, const match_rv &rv) {
 	//o << "match_rv {" << (rv.success ? "TRUE" : "FALSE") << ": " << rv.bindings << "}";
 	o << "match_rv {" << (rv.success ? "TRUE" : "FALSE") << ": [";
 	//o << rv.bindings.size();
@@ -1241,18 +1230,18 @@ match_rv geas_implementation::match_command(String input, uint ichar, String act
 		}
 		if (action[achar] == '#') {
 
-			achar ++;
+			achar++;
 			String varname;
 			while (achar != action.length() && action[achar] != '#') {
 				varname += action[achar];
-				achar ++;
+				achar++;
 			}
 			if (achar == action.length())
 				error("Unpaired hashes in command String %s", action.c_str());
 			//rv.bindings.push_back (varname);
 			int index = rv.bindings.size();
 			rv.bindings.push_back(match_binding(varname, ichar));
-			achar ++;
+			achar++;
 			varname = "";
 			//rv.bindings.push_back (varname);
 			rv.bindings[index].set(varname, ichar);
@@ -1261,7 +1250,7 @@ match_rv geas_implementation::match_command(String input, uint ichar, String act
 				if (tmp.success)
 					return tmp;
 				varname += input[ichar];
-				ichar ++;
+				ichar++;
 				//rv.bindings[index] = varname;
 				rv.bindings[index].set(varname, ichar);
 			}
@@ -1271,26 +1260,25 @@ match_rv geas_implementation::match_command(String input, uint ichar, String act
 		if (ichar == input.length() || !c_equal_i(input[ichar], action[achar]))
 			return match_rv();
 		//cerr << "Matched " << input[ichar] << " to " << action[achar] << endl;
-		++ achar;
-		++ ichar;
+		++achar;
+		++ichar;
 	}
 }
 
 bool match_object_alts(String text, const Common::Array<String> &alts, bool is_internal) {
-	for (uint i = 0; i < alts.size(); i ++) {
+	for (uint i = 0; i < alts.size(); i++) {
 		cerr << "m_o_a: Checking '" << text << "' v. alt '" << alts[i] << "'.\n";
 		if (starts_with(text, alts[i])) {
 			uint len = alts[i].length();
 			if (text.length() == len)
 				return true;
-			if (text.length() > len  &&  text[len] == ' '  &&
-			        match_object_alts(text.substr(len + 1), alts, is_internal))
+			if (text.length() > len && text[len] == ' ' &&
+			    match_object_alts(text.substr(len + 1), alts, is_internal))
 				return true;
 		}
 	}
 	return false;
 }
-
 
 bool geas_implementation::match_object(String text, String name, bool is_internal) const {
 	cerr << "* * * match_object (" << text << ", " << name << ", "
@@ -1298,16 +1286,17 @@ bool geas_implementation::match_object(String text, String name, bool is_interna
 
 	String alias, alt_list, prefix, suffix;
 
-	if (is_internal && ci_equal(text, name)) return true;
+	if (is_internal && ci_equal(text, name))
+		return true;
 
 	if (get_obj_property(name, "prefix", prefix) &&
-	        starts_with(text, prefix + " ") &&
-	        match_object(text.substr(prefix.length() + 1), name, false))
+	    starts_with(text, prefix + " ") &&
+	    match_object(text.substr(prefix.length() + 1), name, false))
 		return true;
 
 	if (get_obj_property(name, "suffix", suffix) &&
-	        ends_with(text, " " + suffix) &&
-	        match_object(text.substr(0, text.length() - suffix.length() - 1), name, false))
+	    ends_with(text, " " + suffix) &&
+	    match_object(text.substr(0, text.length() - suffix.length() - 1), name, false))
 		return true;
 
 	if (!get_obj_property(name, "alias", alias))
@@ -1319,7 +1308,7 @@ bool geas_implementation::match_object(String text, String name, bool is_interna
 	if (gb != NULL) {
 		String tok, line;
 		uint c1, c2;
-		for (uint ln = 0; ln < gb->data.size(); ln ++) {
+		for (uint ln = 0; ln < gb->data.size(); ln++) {
 			line = gb->data[ln];
 			tok = first_token(line, c1, c2);
 			// SENSITIVE?
@@ -1339,7 +1328,6 @@ bool geas_implementation::match_object(String text, String name, bool is_interna
 	return false;
 }
 
-
 bool geas_implementation::dereference_vars(Common::Array<match_binding> &bindings, bool is_internal) const {
 	/* TODO */
 	Common::Array<String> where;
@@ -1350,7 +1338,7 @@ bool geas_implementation::dereference_vars(Common::Array<match_binding> &binding
 
 bool geas_implementation::dereference_vars(Common::Array<match_binding> &bindings, const Common::Array<String> &where, bool is_internal) const {
 	bool rv = true;
-	for (uint i = 0; i < bindings.size(); i ++)
+	for (uint i = 0; i < bindings.size(); i++)
 		if (bindings[i].var_name[0] == '@') {
 			String obj_name = get_obj_name(bindings[i].var_text, where, is_internal);
 			if (obj_name == "!") {
@@ -1366,9 +1354,9 @@ bool geas_implementation::dereference_vars(Common::Array<match_binding> &binding
 
 String geas_implementation::get_obj_name(String name, const Common::Array<String> &where, bool is_internal) const {
 	Common::Array<String> objs, printed_objs;
-	for (uint objnum = 0; objnum < state.objs.size(); objnum ++) {
+	for (uint objnum = 0; objnum < state.objs.size(); objnum++) {
 		bool is_used = false;
-		for (uint j = 0; j < where.size(); j ++) {
+		for (uint j = 0; j < where.size(); j++) {
 			cerr << "Object #" << objnum << ": " << state.objs[objnum].name
 			     << "@" << state.objs[objnum].parent << " vs. "
 			     << where[j] << endl;
@@ -1377,7 +1365,7 @@ String geas_implementation::get_obj_name(String name, const Common::Array<String
 				is_used = true;
 		}
 		if (is_used && !has_obj_property(state.objs[objnum].name, "hidden") &&
-		        match_object(name, state.objs[objnum].name, is_internal)) {
+		    match_object(name, state.objs[objnum].name, is_internal)) {
 			String printed_name, tmp, oname = state.objs[objnum].name;
 			objs.push_back(oname);
 			if (!get_obj_property(oname, "alias", printed_name))
@@ -1402,12 +1390,10 @@ String geas_implementation::get_obj_name(String name, const Common::Array<String
 	return "!";
 }
 
-
 void geas_implementation::set_vars(const Common::Array<match_binding> &v) {
-	for (uint i = 0; i < v.size(); i ++)
+	for (uint i = 0; i < v.size(); i++)
 		set_svar(v[i].var_name, v[i].var_text);
 }
-
 
 bool geas_implementation::run_commands(String cmd, const GeasBlock *room, bool is_internal) {
 	uint c1, c2;
@@ -1462,12 +1448,12 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 
 	if (!is_normal) {
 		if (run_commands(cmd, gf.find_by_name("room", state.location)) ||
-		        run_commands(cmd, gf.find_by_name("game", "game")))
+		    run_commands(cmd, gf.find_by_name("game", "game")))
 			return true;
 	}
 
 	if ((match = match_command(cmd, "look at #@object#")) ||
-	        (match = match_command(cmd, "look #@object#"))) {
+	    (match = match_command(cmd, "look #@object#"))) {
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
 
@@ -1485,7 +1471,7 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 	}
 
 	if ((match = match_command(cmd, "examine #@object#")) ||
-	        (match = match_command(cmd, "x #@object#"))) {
+	    (match = match_command(cmd, "x #@object#"))) {
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
 
@@ -1514,7 +1500,7 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
 		String script, first = match.bindings[0].var_text, second = match.bindings[1].var_text;
-		if (! ci_equal(get_obj_parent(first), "inventory"))
+		if (!ci_equal(get_obj_parent(first), "inventory"))
 			display_error("noitem", first);
 		else if (get_obj_action(second, "give " + first, script))
 			run_script(second, script);
@@ -1544,11 +1530,11 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 	}
 
 	if ((match = match_command(cmd, "use #@first# on #@second#")) ||
-	        (match = match_command(cmd, "use #@first# with #@second#"))) {
+	    (match = match_command(cmd, "use #@first# with #@second#"))) {
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
 		String script, first = match.bindings[0].var_text, second = match.bindings[1].var_text;
-		if (! ci_equal(get_obj_parent(first), "inventory"))
+		if (!ci_equal(get_obj_parent(first), "inventory"))
 			display_error("noitem", first);
 		else if (get_obj_action(second, "use " + first, script)) {
 			//set_svar ("quest.use.object", first);
@@ -1588,9 +1574,8 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		return true;
 	}
 
-
 	if ((match = match_command(cmd, "take #@object#")) ||
-	        (match = match_command(cmd, "get #@object#"))) {
+	    (match = match_command(cmd, "get #@object#"))) {
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
 
@@ -1620,7 +1605,6 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		return true;
 	}
 
-
 	if ((match = match_command(cmd, "drop #@object#"))) {
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
@@ -1634,7 +1618,7 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		const GeasBlock *gb = gf.find_by_name("object", obj);
 		if (gb != NULL) {
 			uint c1, c2, script_begins;
-			for (uint i = 0; i < gb->data.size(); i ++) {
+			for (uint i = 0; i < gb->data.size(); i++) {
 				line = gb->data[i];
 				tok = first_token(line, c1, c2);
 				// SENSITIVE?
@@ -1671,9 +1655,9 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 	}
 
 	if ((match = match_command(cmd, "speak to #@object#")) ||
-	        (match = match_command(cmd, "speak #@object#")) ||
-	        (match = match_command(cmd, "talk to #@object#")) ||
-	        (match = match_command(cmd, "talk #@object#"))) {
+	    (match = match_command(cmd, "speak #@object#")) ||
+	    (match = match_command(cmd, "talk to #@object#")) ||
+	    (match = match_command(cmd, "talk #@object#"))) {
 		//print_formatted ("Talk to <" + String (match.bindings[0]) + ">");
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
@@ -1699,7 +1683,7 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		int c1 = -1, c2 = -1;
 		uint uc1, uc2;
 		// TODO: Use the first matching line or the last?
-		for (uint i = 0; i < gb->data.size(); i ++) {
+		for (uint i = 0; i < gb->data.size(); i++) {
 			if (first_token(gb->data[i], uc1, uc2) == "out")
 				line = gb->data[i];
 			c1 = uc1;
@@ -1739,9 +1723,9 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		return true;
 	}
 
-	for (uint i = 0; i < ARRAYSIZE(dir_names); i ++)
+	for (uint i = 0; i < ARRAYSIZE(dir_names); i++)
 		if (cmd == dir_names[i] || cmd == (String("go ") + dir_names[i]) ||
-		        cmd == short_dir_names[i] || cmd == (String("go ") + short_dir_names[i])) {
+		    cmd == short_dir_names[i] || cmd == (String("go ") + short_dir_names[i])) {
 			bool is_script = false;
 			//print_formatted ("Trying to go " + dir_names[i]);
 			if ((tok = exit_dest(state.location, dir_names[i], &is_script)) == "") {
@@ -1763,12 +1747,12 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		}
 
 	if ((match = match_command(cmd, "go to #@room#")) ||
-	        (match = match_command(cmd, "go #@room#"))) {
+	    (match = match_command(cmd, "go #@room#"))) {
 		assert(match.bindings.size() == 1);
 		String destination = match.bindings[0].var_text;
-		for (uint i = 0; i < current_places.size(); i ++) {
+		for (uint i = 0; i < current_places.size(); i++) {
 			if (ci_equal(destination, current_places[i][1]) ||
-			        ci_equal(destination, current_places[i][2])) {
+			    ci_equal(destination, current_places[i][2])) {
 				if (current_places[i].size() == 5)
 					run_script_as(state.location, current_places[i][4]);
 				//run_script (current_places[i][4]);
@@ -1782,12 +1766,12 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 	}
 
 	if (ci_equal(cmd, "inventory") || ci_equal(cmd, "i")) {
-		Common::Array<Common::Array<String> > inv = get_inventory();
+		Common::Array<Common::Array<String>> inv = get_inventory();
 		if (inv.size() == 0)
 			print_formatted("You are carrying nothing.");
 		else
 			print_formatted("You are carrying:");
-		for (uint i = 0; i < inv.size(); i ++) {
+		for (uint i = 0; i < inv.size(); i++) {
 			print_normal(inv[i][0]);
 			print_newline();
 		}
@@ -1808,46 +1792,45 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		uint c1, c2;
 		//print_formatted ("Game name: ");
 		line = gb->data[0];
-		tok = first_token(line, c1, c2);  // game
+		tok = first_token(line, c1, c2); // game
 		tok = next_token(line, c1, c2);  // name
 		tok = next_token(line, c1, c2);  // <whatever>
 		if (is_param(tok))
 			print_formatted("Game name: " + eval_param(tok));
 
-
-		for (uint i = 0; i < gb->data.size(); i ++) {
+		for (uint i = 0; i < gb->data.size(); i++) {
 			line = gb->data[i];
 			// SENSITIVE?
 			if (first_token(line, c1, c2) == "game" &&
-			        next_token(line, c1, c2) == "version" &&
-			        is_param(tok = next_token(line, c1, c2)))
+			    next_token(line, c1, c2) == "version" &&
+			    is_param(tok = next_token(line, c1, c2)))
 				print_formatted("Version " + eval_param(tok));
 		}
 
-		for (uint i = 0; i < gb->data.size(); i ++) {
+		for (uint i = 0; i < gb->data.size(); i++) {
 			line = gb->data[i];
 			// SENSITIVE?
 			if (first_token(line, c1, c2) == "game" &&
-			        next_token(line, c1, c2) == "author" &&
-			        is_param(tok = next_token(line, c1, c2)))
+			    next_token(line, c1, c2) == "author" &&
+			    is_param(tok = next_token(line, c1, c2)))
 				print_formatted("Author: " + eval_param(tok));
 		}
 
-		for (uint i = 0; i < gb->data.size(); i ++) {
+		for (uint i = 0; i < gb->data.size(); i++) {
 			line = gb->data[i];
 			// SENSITIVE?
 			if (first_token(line, c1, c2) == "game" &&
-			        next_token(line, c1, c2) == "copyright" &&
-			        is_param(tok = next_token(line, c1, c2)))
+			    next_token(line, c1, c2) == "copyright" &&
+			    is_param(tok = next_token(line, c1, c2)))
 				print_formatted("Copyright: " + eval_param(tok));
 		}
 
-		for (uint i = 0; i < gb->data.size(); i ++) {
+		for (uint i = 0; i < gb->data.size(); i++) {
 			line = gb->data[i];
 			// SENSITIVE?
 			if (first_token(line, c1, c2) == "game" &&
-			        next_token(line, c1, c2) == "info" &&
-			        is_param(tok = next_token(line, c1, c2)))
+			    next_token(line, c1, c2) == "info" &&
+			    is_param(tok = next_token(line, c1, c2)))
 				print_formatted(eval_param(tok));
 		}
 
@@ -1883,11 +1866,12 @@ void geas_implementation::run_script(String s, String &rv) {
 
 	tok = first_token(s, c1, c2);
 
-	if (tok == "") return;
+	if (tok == "")
+		return;
 
 	if (tok[0] == '{') {
 		uint brace1 = c1 + 1, brace2;
-		for (brace2 = s.length() - 1; brace2 >= brace1 && s[brace2] != '}'; brace2 --)
+		for (brace2 = s.length() - 1; brace2 >= brace1 && s[brace2] != '}'; brace2--)
 			;
 		if (brace2 >= brace1)
 			run_script(s.substr(brace1, brace2 - brace1));
@@ -1940,7 +1924,7 @@ void geas_implementation::run_script(String s, String &rv) {
 		}
 		String question, line;
 		Common::Array<String> choices, actions;
-		for (uint ln = 0; ln < gb->data.size(); ln ++) {
+		for (uint ln = 0; ln < gb->data.size(); ln++) {
 			line = gb->data[ln];
 			tok = first_token(line, c1, c2);
 			// SENSITIVE?
@@ -2012,11 +1996,11 @@ void geas_implementation::run_script(String s, String &rv) {
 		}
 		// SENSITIVE?
 		else if (tok == "object") { // create object
-			/* TODO */
+			                        /* TODO */
 		}
 		// SENSITIVE?
 		else if (tok == "room") { // create room
-			/* TODO */
+			                      /* TODO */
 		} else
 			gi->debug_print("Bad create line " + s);
 		return;
@@ -2066,7 +2050,7 @@ void geas_implementation::run_script(String s, String &rv) {
 		}
 		const GeasBlock *gb = gf.find_by_name("text", param_contents(tok));
 		if (gb != NULL) {
-			for (uint i = 0; i < gb->data.size(); i ++) {
+			for (uint i = 0; i < gb->data.size(); i++) {
 				print_formatted(gb->data[i]);
 				print_newline();
 			}
@@ -2190,7 +2174,7 @@ void geas_implementation::run_script(String s, String &rv) {
 		if (tok == "each") {
 			// SENSITIVE?
 			if (next_token(s, c1, c2) == "object" &&
-			        next_token(s, c1, c2) == "in") {
+			    next_token(s, c1, c2) == "in") {
 				tok = next_token(s, c1, c2);
 				// SENSITIVE?
 				if (tok == "game") {
@@ -2198,7 +2182,7 @@ void geas_implementation::run_script(String s, String &rv) {
 					/* It should just do the objects. */
 					String script = s.substr(c2);
 					// Start at 1 to skip game
-					for (uint i = 1; i < state.objs.size(); i ++) {
+					for (uint i = 1; i < state.objs.size(); i++) {
 						cerr << "  quest.thing -> " + state.objs[i].name + "\n";
 						set_svar("quest.thing", state.objs[i].name);
 						run_script(script);
@@ -2207,7 +2191,7 @@ void geas_implementation::run_script(String s, String &rv) {
 				} else if (is_param(tok)) {
 					tok = trim(eval_param(tok));
 					String script = s.substr(c2);
-					for (uint i = 0; i < state.objs.size(); i ++)
+					for (uint i = 0; i < state.objs.size(); i++)
 						if (state.objs[i].parent == tok) {
 							set_svar("quest.thing", state.objs[i].name);
 							run_script(script);
@@ -2225,7 +2209,7 @@ void geas_implementation::run_script(String s, String &rv) {
 			if (args.size() > 3)
 				step = parse_int(args[3]);
 			for (set_ivar(varname, startindex); get_ivar(varname) < endindex;
-			        set_ivar(varname, get_ivar(varname) + step))
+			     set_ivar(varname, get_ivar(varname) + step))
 				run_script(script);
 			return;
 		}
@@ -2317,15 +2301,14 @@ void geas_implementation::run_script(String s, String &rv) {
 		int brace_count = 0;
 		do {
 			tok = next_token(s, c1, c2);
-			for (uint i = 0; i < tok.length(); i ++)
+			for (uint i = 0; i < tok.length(); i++)
 				if (tok[i] == '{')
-					brace_count ++;
+					brace_count++;
 				else if (tok[i] == '}')
-					brace_count --;
+					brace_count--;
 			// SENSITIVE?
 		} while (tok != "" && !(brace_count == 0 && tok == "else"));
 		end_then = c1;
-
 
 		if (eval_conds(cond_str))
 			run_script(s.substr(begin_then, end_then - begin_then), rv);
@@ -2439,7 +2422,8 @@ void geas_implementation::run_script(String s, String &rv) {
 	else if (tok == "pause") {
 		tok = next_token(s, c1, c2);
 		if (!is_param(tok)) {
-			gi->debug_print("Expected parameter after pause in " + s);;
+			gi->debug_print("Expected parameter after pause in " + s);
+			;
 			return;
 		}
 		int i = eval_int(param_contents(tok));
@@ -2478,7 +2462,7 @@ void geas_implementation::run_script(String s, String &rv) {
 			return;
 		}
 		Common::Array<String> args = split_param(eval_param(tok));
-		for (uint i = 1; i < args.size(); i ++) {
+		for (uint i = 1; i < args.size(); i++) {
 			String val = args[i];
 			/*
 			if (val[0] == '[' && val[val.length() - 1] == ']')
@@ -2579,7 +2563,7 @@ void geas_implementation::run_script(String s, String &rv) {
 			String timer_name = trim(tok.substr(0, index));
 			uint time_val = parse_int(trim(tok.substr(index + 1)));
 
-			for (uint i = 0; i < state.timers.size(); i ++)
+			for (uint i = 0; i < state.timers.size(); i++)
 				if (state.timers[i].name == timer_name) {
 					state.timers[i].interval = time_val;
 					return;
@@ -2605,13 +2589,13 @@ void geas_implementation::run_script(String s, String &rv) {
 		//String varname = lcase (trim (tok.substr (0, index)));
 		String varname = trim(tok.substr(0, index));
 		if (vartype == "") {
-			for (uint varn = 0; varn < state.ivars.size(); varn ++)
+			for (uint varn = 0; varn < state.ivars.size(); varn++)
 				if (state.ivars[varn].name == varname) {
 					vartype = "numeric";
 					break;
 				}
 			if (vartype == "")
-				for (uint varn = 0; varn < state.svars.size(); varn ++)
+				for (uint varn = 0; varn < state.svars.size(); varn++)
 					if (state.svars[varn].name == varname) {
 						vartype = "String";
 						break;
@@ -2690,7 +2674,7 @@ void geas_implementation::run_script(String s, String &rv) {
 		tok = next_token(s, c1, c2);
 		if (is_param(tok)) {
 			tok = eval_param(tok);
-			for (uint i = 0; i < state.timers.size(); i ++)
+			for (uint i = 0; i < state.timers.size(); i++)
 				if (state.timers[i].name == tok) {
 					if (running)
 						state.timers[i].timeleft = state.timers[i].interval;
@@ -2734,7 +2718,8 @@ bool geas_implementation::eval_conds(String s) {
 	uint c1, c2;
 	String tok = first_token(s, c1, c2);
 
-	if (tok == "") return true;
+	if (tok == "")
+		return true;
 
 	bool rv = eval_cond(s);
 
@@ -2797,14 +2782,14 @@ bool geas_implementation::eval_cond(String s) {
 		}
 		Common::Array<String> args = split_param(eval_param(tok));
 		bool do_report = false;
-		for (uint i = 1; i < args.size(); i ++)
+		for (uint i = 1; i < args.size(); i++)
 			// SENSITIVE?
 			if (args[i] == "report")
 				do_report = true;
 			else
 				gi->debug_print("Got modifier " + args[i] + " after exists");
 		//args[0] = lcase (args[0]);
-		for (uint i = 0; i < state.objs.size(); i ++)
+		for (uint i = 0; i < state.objs.size(); i++)
 			if (ci_equal(state.objs[i].name, args[0]))
 				return state.objs[i].parent != "";
 		if (do_report)
@@ -2830,7 +2815,7 @@ bool geas_implementation::eval_cond(String s) {
 		}
 		//tok = lcase (trim (eval_param (tok)));
 		tok = trim(eval_param(tok));
-		for (uint i = 0; i < state.objs.size(); i ++)
+		for (uint i = 0; i < state.objs.size(); i++)
 			if (ci_equal(state.objs[i].name, tok))
 				return ci_equal(state.objs[i].parent, "inventory");
 		gi->debug_print("No object " + tok + " found while evaling " + s);
@@ -2845,7 +2830,7 @@ bool geas_implementation::eval_cond(String s) {
 		}
 		//tok = lcase (trim (eval_param (tok)));
 		tok = trim(eval_param(tok));
-		for (uint i = 0; i < state.objs.size(); i ++)
+		for (uint i = 0; i < state.objs.size(); i++)
 			if (ci_equal(state.objs[i].name, tok)) {
 				//return (ci_equal (state.objs[i].parent, state.location) &&
 				//    !has_obj_property (tok, "invisible"));
@@ -2868,7 +2853,7 @@ bool geas_implementation::eval_cond(String s) {
 		if ((index = tok.find("!=;")) != -1) {
 			uint index1 = index;
 			do {
-				-- index1;
+				--index1;
 			} while (index1 > 0 && tok[index1] != ';');
 
 			cerr << "Comparing <" << trim_braces(trim(tok.substr(0, index1)))
@@ -2881,18 +2866,14 @@ bool geas_implementation::eval_cond(String s) {
 			cerr << "Comparing <" << trim_braces(trim(tok.substr(0, index)))
 			     << "> < <" << trim_braces(trim(tok.substr(index + 4)))
 			     << ">\n";
-			return eval_int(tok.substr(0, index - 1))
-			       <= eval_int(tok.substr(index + 4));
+			return eval_int(tok.substr(0, index - 1)) <= eval_int(tok.substr(index + 4));
 		}
 		if ((index = tok.find("gt=;")) != -1)
-			return eval_int(tok.substr(0, index))
-			       >= eval_int(tok.substr(index + 4));
+			return eval_int(tok.substr(0, index)) >= eval_int(tok.substr(index + 4));
 		if ((index = tok.find("lt;")) != -1)
-			return eval_int(tok.substr(0, index))
-			       < eval_int(tok.substr(index + 3));
+			return eval_int(tok.substr(0, index)) < eval_int(tok.substr(index + 3));
 		if ((index = tok.find("gt;")) != -1)
-			return eval_int(tok.substr(0, index))
-			       > eval_int(tok.substr(index + 3));
+			return eval_int(tok.substr(0, index)) > eval_int(tok.substr(index + 3));
 		if ((index = tok.find(";")) != -1) {
 			cerr << "Comparing <" << trim_braces(trim(tok.substr(0, index)))
 			     << "> == <" << trim_braces(trim(tok.substr(index + 1)))
@@ -2929,14 +2910,14 @@ bool geas_implementation::eval_cond(String s) {
 		}
 		Common::Array<String> args = split_param(eval_param(tok));
 		bool do_report = false;
-		for (uint i = 1; i < args.size(); i ++)
+		for (uint i = 1; i < args.size(); i++)
 			// SENSITIVE?
 			if (args[i] == "report")
 				do_report = true;
 			else
 				gi->debug_print("Got modifier " + args[i] + " after exists");
 		//args[0] = lcase (args[0]);
-		for (uint i = 0; i < state.objs.size(); i ++)
+		for (uint i = 0; i < state.objs.size(); i++)
 			if (ci_equal(state.objs[i].name, args[0]))
 				return true;
 		if (do_report)
@@ -2971,11 +2952,11 @@ void geas_implementation::run_procedure(String pname, Common::Array<String> args
 }
 
 void geas_implementation::run_procedure(String pname) {
-	for (uint i = 0; i < gf.size("procedure"); i ++)
+	for (uint i = 0; i < gf.size("procedure"); i++)
 		if (ci_equal(gf.block("procedure", i).name, pname)) {
 			const GeasBlock &proc = gf.block("procedure", i);
 			//cerr << "Running procedure " << proc << endl;
-			for (uint j = 0; j < proc.data.size(); j ++) {
+			for (uint j = 0; j < proc.data.size(); j++) {
 				//cerr << "  Running line #" << j << ": " << proc.data[j] << endl;
 				run_script(proc.data[j]);
 			}
@@ -2990,8 +2971,7 @@ String geas_implementation::run_function(String pname, Common::Array<String> arg
 	// SENSITIVE?
 	if (pname == "parameter") {
 		if (args.size() != 1) {
-			gi->debug_print("parameter called with " + string_int(args.size())
-			                + " args");
+			gi->debug_print("parameter called with " + string_int(args.size()) + " args");
 			return "";
 		}
 		uint num = parse_int(args[0]);
@@ -3004,7 +2984,7 @@ String geas_implementation::run_function(String pname, Common::Array<String> arg
 	}
 	Common::Array<String> backup = function_args;
 	function_args = args;
-	for (uint i = 0; i < args.size(); i ++)
+	for (uint i = 0; i < args.size(); i++)
 		set_svar("quest.function.parameter." + string_int(i + 1), args[i]);
 	String rv = run_function(pname);
 	function_args = backup;
@@ -3026,7 +3006,7 @@ String geas_implementation::run_function(String pname) {
 			return bad_arg_count(pname);
 		//return get_obj_name (function_args);
 		Common::Array<String> where;
-		for (uint i = 1; i < function_args.size(); i ++)
+		for (uint i = 1; i < function_args.size(); i++)
 			where.push_back(function_args[i]);
 		if (where.size() == 0) {
 			where.push_back(state.location);
@@ -3064,7 +3044,7 @@ String geas_implementation::run_function(String pname) {
 
 		//String timername = lcase (function_args[0]);
 		String timername = function_args[0];
-		for (uint i = 0; i < state.timers.size(); i ++)
+		for (uint i = 0; i < state.timers.size(); i++)
 			if (state.timers[i].name == timername)
 				return state.timers[i].is_running ? "1" : "0";
 		return "!";
@@ -3107,7 +3087,7 @@ String geas_implementation::run_function(String pname) {
 			return bad_arg_count(pname);
 
 		String rv = function_args[0];
-		for (uint i = 0; i < rv.size(); i ++)
+		for (uint i = 0; i < rv.size(); i++)
 			rv[i] = tolower(rv[i]);
 		return rv;
 	}
@@ -3164,7 +3144,7 @@ String geas_implementation::run_function(String pname) {
 			return bad_arg_count(pname);
 
 		String rv = function_args[0];
-		for (uint i = 0; i < rv.length(); i ++)
+		for (uint i = 0; i < rv.length(); i++)
 			rv[i] = toupper(rv[i]);
 		return rv;
 	}
@@ -3211,11 +3191,11 @@ String geas_implementation::run_function(String pname) {
 
 	String rv = "";
 
-	for (uint i = 0; i < gf.size("function"); i ++)
+	for (uint i = 0; i < gf.size("function"); i++)
 		if (ci_equal(gf.block("function", i).name, pname)) {
 			const GeasBlock &proc = gf.block("function", i);
 			cerr << "Running function " << proc << endl;
-			for (uint j = 0; j < proc.data.size(); j ++) {
+			for (uint j = 0; j < proc.data.size(); j++) {
 				cerr << "  Running line #" << j << ": " << proc.data[j] << endl;
 				run_script(proc.data[j], rv);
 			}
@@ -3224,8 +3204,6 @@ String geas_implementation::run_function(String pname) {
 	gi->debug_print("No function " + pname + " found.");
 	return "";
 }
-
-
 
 v2string geas_implementation::get_inventory() {
 	return get_room_contents("inventory");
@@ -3238,11 +3216,11 @@ v2string geas_implementation::get_room_contents() {
 v2string geas_implementation::get_room_contents(String room) {
 	v2string rv;
 	String objname;
-	for (uint i = 0; i < state.objs.size(); i ++)
+	for (uint i = 0; i < state.objs.size(); i++)
 		if (state.objs[i].parent == room) {
 			objname = state.objs[i].name;
 			if (!has_obj_property(objname, "invisible") &&
-			        !has_obj_property(objname, "hidden")) {
+			    !has_obj_property(objname, "hidden")) {
 				vstring tmp;
 
 				String print_name, temp_str;
@@ -3272,7 +3250,7 @@ vstring geas_implementation::get_status_vars() {
 	String tok, line;
 	uint c1, c2;
 
-	for (uint i = 0; i < gf.size("variable"); i ++) {
+	for (uint i = 0; i < gf.size("variable"); i++) {
 		const GeasBlock &gb = gf.block("variable", i);
 
 		bool nozero = false;
@@ -3281,7 +3259,7 @@ vstring geas_implementation::get_status_vars() {
 
 		cerr << "g_s_v: " << gb << endl;
 
-		for (uint j = 0; j < gb.data.size(); j ++) {
+		for (uint j = 0; j < gb.data.size(); j++) {
 			line = gb.data[j];
 			cerr << "  g_s_v:  " << line << endl;
 			tok = first_token(line, c1, c2);
@@ -3312,7 +3290,7 @@ vstring geas_implementation::get_status_vars() {
 		if (!(is_numeric && nozero && get_ivar(gb.name) == 0) && disp != "") {
 			disp = param_contents(disp);
 			String outval = "";
-			for (uint j = 0; j < disp.length(); j ++)
+			for (uint j = 0; j < disp.length(); j++)
 				if (disp[j] == '!') {
 					if (is_numeric)
 						outval = outval + string_int(get_ivar(gb.name));
@@ -3322,7 +3300,7 @@ vstring geas_implementation::get_status_vars() {
 					//outval = outval + get_svar (gb.lname);
 				} else if (disp[j] == '*') {
 					uint k;
-					for (k = j + 1; k < disp.length() && disp[k] != '*'; k ++)
+					for (k = j + 1; k < disp.length() && disp[k] != '*'; k++)
 						;
 					//if (!is_numeric || get_ivar (gb.lname) != 1)
 					if (!is_numeric || get_ivar(gb.name) != 1)
@@ -3367,11 +3345,12 @@ String geas_implementation::eval_string(String s) {
 	String rv;
 	uint i, j;
 	bool do_print = (s.find('$') != -1);
-	if (do_print) cerr << "eval_string (" << s << ")\n";
-	for (i = 0; i < s.length(); i ++) {
+	if (do_print)
+		cerr << "eval_string (" << s << ")\n";
+	for (i = 0; i < s.length(); i++) {
 		//if (do_print) cerr << "e_s: i == " << i << ", s[i] == '" << s[i] << "'\n";
 		if (i + 1 < s.length() && s[i] == '#' && s[i + 1] == '@') {
-			for (j = i + 1; j < s.length() && s[j] != '#'; j ++)
+			for (j = i + 1; j < s.length() && s[j] != '#'; j++)
 				;
 			if (j == s.length()) {
 				gi->debug_print("eval_string: Unmatched hash in " + s);
@@ -3381,14 +3360,14 @@ String geas_implementation::eval_string(String s) {
 			rv = rv + displayed_name(get_svar(s.substr(i + 2, j - i - 2)));
 			i = j;
 		} else if (s[i] == '#') {
-			for (j = i + 1; j < s.length() && s[j] != '#'; j ++)
+			for (j = i + 1; j < s.length() && s[j] != '#'; j++)
 				;
 			if (j == s.length()) {
 				gi->debug_print("eval_string: Unmatched hash in " + s);
 				break;
 			}
 			uint k;
-			for (k = i + 1; k < j && s[k] != ':'; k ++)
+			for (k = i + 1; k < j && s[k] != ':'; k++)
 				;
 			if (k == j && j == i + 1)
 				rv += "#";
@@ -3414,7 +3393,8 @@ String geas_implementation::eval_string(String s) {
 						rv += tmp;
 					else
 						gi->debug_print("e_s: Evaluating nonexistent object prop "
-						                "{" + objname + "}:{" + propname + "}");
+						                "{" +
+						                objname + "}:{" + propname + "}");
 				} else {
 					String objname = s.substr(i + 1, k - i - 1);
 					/*
@@ -3430,7 +3410,7 @@ String geas_implementation::eval_string(String s) {
 			}
 			i = j;
 		} else if (s[i] == '%') {
-			for (j = i + 1; j < s.length() && s[j] != '%'; j ++)
+			for (j = i + 1; j < s.length() && s[j] != '%'; j++)
 				;
 			if (j == s.length()) {
 				gi->debug_print("e_s: Unmatched %s in " + s);
@@ -3486,7 +3466,6 @@ String geas_implementation::eval_string(String s) {
 			rv += s[i];
 	}
 
-
 	//cerr << "eval_string (" << s << ") -> <" << rv << ">\n";
 	return rv;
 }
@@ -3495,14 +3474,14 @@ void geas_implementation::tick_timers() {
 	if (!state.running)
 		return;
 	//cerr << "tick_timers()\n";
-	for (uint i = 0; i < state.timers.size(); i ++) {
+	for (uint i = 0; i < state.timers.size(); i++) {
 		TimerRecord &tr = state.timers[i];
 		//cerr << "  Examining " << tr << "\n";
 		if (tr.is_running) {
 			//cerr << "    Advancing " << tr.name << ": " << tr.timeleft
 			//     << " / " << tr.interval << "\n";
 			if (tr.timeleft != 0)
-				tr.timeleft --;
+				tr.timeleft--;
 			else {
 				tr.is_running = false;
 				tr.timeleft = tr.interval;
@@ -3511,7 +3490,7 @@ void geas_implementation::tick_timers() {
 					//cout << "Running it!\n";
 					String tok, line;
 					uint c1, c2;
-					for (uint j = 0; j < gb->data.size(); j ++) {
+					for (uint j = 0; j < gb->data.size(); j++) {
 						line = gb->data[j];
 						tok = first_token(line, c1, c2);
 						// SENSITIVE?
@@ -3536,13 +3515,12 @@ void geas_implementation::tick_timers() {
  *                                 *
  ***********************************/
 
-
 GeasResult GeasInterface::print_formatted(String s, bool with_newline) {
 	unsigned int i, j;
 
 	cerr << "print_formatted (" << s << ", " << with_newline << ")" << endl;
 
-	for (i = 0; i < s.length(); i ++) {
+	for (i = 0; i < s.length(); i++) {
 		//std::cerr << "i == " << i << std::endl;
 		if (s[i] == '|') {
 			// changed indicated whether cur_style has been changed
@@ -3550,7 +3528,7 @@ GeasResult GeasInterface::print_formatted(String s, bool with_newline) {
 			// it is true unless cleared (by |n or |w).
 			bool changed = true;
 			j = i;
-			i ++;
+			i++;
 			if (i == s.length())
 				continue;
 
@@ -3560,13 +3538,13 @@ GeasResult GeasInterface::print_formatted(String s, bool with_newline) {
 				cur_style.is_underlined = true;
 				break;
 			case 'i':
-				cur_style.is_italic     = true;
+				cur_style.is_italic = true;
 				break;
 			case 'b':
-				cur_style.is_bold       = true;
+				cur_style.is_bold = true;
 				break;
 			case 'c':
-				i ++;
+				i++;
 
 				if (i == s.length()) {
 					clear_screen();
@@ -3597,10 +3575,10 @@ GeasResult GeasInterface::print_formatted(String s, bool with_newline) {
 				break;
 
 			case 's': {
-				i ++;
+				i++;
 				if (i == s.length() || !(s[i] >= '0' && s[i] <= '9'))
 					continue;
-				i ++;
+				i++;
 				if (i == s.length() || !(s[i] >= '0' && s[i] <= '9'))
 					continue;
 
@@ -3609,18 +3587,20 @@ GeasResult GeasInterface::print_formatted(String s, bool with_newline) {
 					cur_style.size = newsize;
 				else
 					cur_style.size = default_size;
-			}
-			break;
+			} break;
 
 			case 'j':
-				i ++;
+				i++;
 
 				if (i == s.length() ||
-				        !(s[i] == 'l' || s[i] == 'c' || s[i] == 'r'))
+				    !(s[i] == 'l' || s[i] == 'c' || s[i] == 'r'))
 					continue;
-				if (s[i] == 'l') cur_style.justify = JUSTIFY_LEFT;
-				else if (s[i] == 'r') cur_style.justify = JUSTIFY_RIGHT;
-				else if (s[i] == 'c') cur_style.justify = JUSTIFY_CENTER;
+				if (s[i] == 'l')
+					cur_style.justify = JUSTIFY_LEFT;
+				else if (s[i] == 'r')
+					cur_style.justify = JUSTIFY_RIGHT;
+				else if (s[i] == 'c')
+					cur_style.justify = JUSTIFY_CENTER;
 				break;
 
 			case 'n':
@@ -3634,7 +3614,7 @@ GeasResult GeasInterface::print_formatted(String s, bool with_newline) {
 				break;
 
 			case 'x':
-				i ++;
+				i++;
 
 				if (s[i] == 'b')
 					cur_style.is_bold = false;
@@ -3653,11 +3633,11 @@ GeasResult GeasInterface::print_formatted(String s, bool with_newline) {
 			if (changed)
 				update_style();
 		} else {
-			for (j = i; i != s.length() && s[i] != '|'; i ++)
+			for (j = i; i != s.length() && s[i] != '|'; i++)
 				;
 			print_normal(s.substr(j, i - j));
 			if (i != s.length() && s[i] == '|')
-				-- i;
+				--i;
 		}
 	}
 	if (with_newline)

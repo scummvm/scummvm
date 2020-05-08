@@ -20,82 +20,82 @@
  *
  */
 
+#include "audio/mididrv.h"
+#include "audio/musicplugin.h"
 #include "common/config-manager.h"
 #include "common/error.h"
+#include "common/file.h"
 #include "common/gui_options.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/util.h"
-#include "common/file.h"
 #include "gui/message.h"
-#include "audio/mididrv.h"
-#include "audio/musicplugin.h"
 
 const byte MidiDriver::_mt32ToGm[128] = {
-//	  0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
-	  0,   1,   0,   2,   4,   4,   5,   3,  16,  17,  18,  16,  16,  19,  20,  21, // 0x
-	  6,   6,   6,   7,   7,   7,   8, 112,  62,  62,  63,  63,  38,  38,  39,  39, // 1x
-	 88,  95,  52,  98,  97,  99,  14,  54, 102,  96,  53, 102,  81, 100,  14,  80, // 2x
-	 48,  48,  49,  45,  41,  40,  42,  42,  43,  46,  45,  24,  25,  28,  27, 104, // 3x
-	 32,  32,  34,  33,  36,  37,  35,  35,  79,  73,  72,  72,  74,  75,  64,  65, // 4x
-	 66,  67,  71,  71,  68,  69,  70,  22,  56,  59,  57,  57,  60,  60,  58,  61, // 5x
-	 61,  11,  11,  98,  14,   9,  14,  13,  12, 107, 107,  77,  78,  78,  76,  76, // 6x
-	 47, 117, 127, 118, 118, 116, 115, 119, 115, 112,  55, 124, 123,   0,  14, 117  // 7x
+    //	  0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
+    0, 1, 0, 2, 4, 4, 5, 3, 16, 17, 18, 16, 16, 19, 20, 21,                   // 0x
+    6, 6, 6, 7, 7, 7, 8, 112, 62, 62, 63, 63, 38, 38, 39, 39,                 // 1x
+    88, 95, 52, 98, 97, 99, 14, 54, 102, 96, 53, 102, 81, 100, 14, 80,        // 2x
+    48, 48, 49, 45, 41, 40, 42, 42, 43, 46, 45, 24, 25, 28, 27, 104,          // 3x
+    32, 32, 34, 33, 36, 37, 35, 35, 79, 73, 72, 72, 74, 75, 64, 65,           // 4x
+    66, 67, 71, 71, 68, 69, 70, 22, 56, 59, 57, 57, 60, 60, 58, 61,           // 5x
+    61, 11, 11, 98, 14, 9, 14, 13, 12, 107, 107, 77, 78, 78, 76, 76,          // 6x
+    47, 117, 127, 118, 118, 116, 115, 119, 115, 112, 55, 124, 123, 0, 14, 117 // 7x
 };
 
 const byte MidiDriver::_gmToMt32[128] = {
-//	  0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
-	  5,   1,   2,   7,   3,   5,  16,  21,  22, 101, 101,  97, 104, 103, 102,  20, // 0x
-	  8,   9,  11,  12,  14,  15,  87,  15,  59,  60,  61,  62,  67,  44,  79,  23, // 1x
-	 64,  67,  66,  70,  68,  69,  28,  31,  52,  54,  55,  56,  49,  51,  57, 112, // 2x
-	 48,  50,  45,  26,  34,  35,  45, 122,  89,  90,  94,  81,  92,  95,  24,  25, // 3x
-	 80,  78,  79,  78,  84,  85,  86,  82,  74,  72,  76,  77, 110, 107, 108,  76, // 4x
-	 47,  44, 111,  45,  44,  34,  44,  30,  32,  33,  88,  34,  35,  35,  38,  33, // 5x
-	 41,  36, 100,  37,  40,  34,  43,  40,  63,  21,  99, 105, 103,  86,  55,  84, // 6x
-	101, 103, 100, 120, 117, 113,  99, 128, 128, 128, 128, 124, 123, 128, 128, 128, // 7x
+    //	  0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
+    5, 1, 2, 7, 3, 5, 16, 21, 22, 101, 101, 97, 104, 103, 102, 20,                 // 0x
+    8, 9, 11, 12, 14, 15, 87, 15, 59, 60, 61, 62, 67, 44, 79, 23,                  // 1x
+    64, 67, 66, 70, 68, 69, 28, 31, 52, 54, 55, 56, 49, 51, 57, 112,               // 2x
+    48, 50, 45, 26, 34, 35, 45, 122, 89, 90, 94, 81, 92, 95, 24, 25,               // 3x
+    80, 78, 79, 78, 84, 85, 86, 82, 74, 72, 76, 77, 110, 107, 108, 76,             // 4x
+    47, 44, 111, 45, 44, 34, 44, 30, 32, 33, 88, 34, 35, 35, 38, 33,               // 5x
+    41, 36, 100, 37, 40, 34, 43, 40, 63, 21, 99, 105, 103, 86, 55, 84,             // 6x
+    101, 103, 100, 120, 117, 113, 99, 128, 128, 128, 128, 124, 123, 128, 128, 128, // 7x
 };
 
-// This is the drum map for the Roland Sound Canvas SC-55 v1.xx. It had a fallback mechanism 
-// to correct invalid drumkit selections. Some games rely on this mechanism to select the 
+// This is the drum map for the Roland Sound Canvas SC-55 v1.xx. It had a fallback mechanism
+// to correct invalid drumkit selections. Some games rely on this mechanism to select the
 // correct Roland GS drumkit. Use this map to emulate this mechanism.
 // E.g. correct invalid drumkit 50: _gsDrumkitFallbackMap[50] == 48
 const uint8 MidiDriver::_gsDrumkitFallbackMap[128] = {
-	 0,  0,  0,  0,  0,  0,  0,  0, // STANDARD
-	 8,  8,  8,  8,  8,  8,  8,  8, // ROOM
-	16, 16, 16, 16, 16, 16, 16, 16, // POWER
-	24, 25, 24, 24, 24, 24, 24, 24, // ELECTRONIC; TR-808 (25)
-	32, 32, 32, 32, 32, 32, 32, 32, // JAZZ
-	40, 40, 40, 40, 40, 40, 40, 40, // BRUSH
-	48, 48, 48, 48, 48, 48, 48, 48, // ORCHESTRA
-	56, 56, 56, 56, 56, 56, 56, 56, // SFX
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined (fall back to STANDARD)
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
-	 0,  0,  0,  0,  0,  0,  0, 127 // No drumkit defined; CM-64/32L (127)
+    0, 0, 0, 0, 0, 0, 0, 0,         // STANDARD
+    8, 8, 8, 8, 8, 8, 8, 8,         // ROOM
+    16, 16, 16, 16, 16, 16, 16, 16, // POWER
+    24, 25, 24, 24, 24, 24, 24, 24, // ELECTRONIC; TR-808 (25)
+    32, 32, 32, 32, 32, 32, 32, 32, // JAZZ
+    40, 40, 40, 40, 40, 40, 40, 40, // BRUSH
+    48, 48, 48, 48, 48, 48, 48, 48, // ORCHESTRA
+    56, 56, 56, 56, 56, 56, 56, 56, // SFX
+    0, 0, 0, 0, 0, 0, 0, 0,         // No drumkit defined (fall back to STANDARD)
+    0, 0, 0, 0, 0, 0, 0, 0,         // No drumkit defined
+    0, 0, 0, 0, 0, 0, 0, 0,         // No drumkit defined
+    0, 0, 0, 0, 0, 0, 0, 0,         // No drumkit defined
+    0, 0, 0, 0, 0, 0, 0, 0,         // No drumkit defined
+    0, 0, 0, 0, 0, 0, 0, 0,         // No drumkit defined
+    0, 0, 0, 0, 0, 0, 0, 0,         // No drumkit defined
+    0, 0, 0, 0, 0, 0, 0, 127        // No drumkit defined; CM-64/32L (127)
 };
 
 static const struct {
-	uint32      type;
+	uint32 type;
 	const char *guio;
 } GUIOMapping[] = {
-	{ MT_PCSPK,		GUIO_MIDIPCSPK },
-	{ MT_CMS,		GUIO_MIDICMS },
-	{ MT_PCJR,		GUIO_MIDIPCJR },
-	{ MT_ADLIB,		GUIO_MIDIADLIB },
-	{ MT_C64,		GUIO_MIDIC64 },
-	{ MT_AMIGA,	    GUIO_MIDIAMIGA },
-	{ MT_APPLEIIGS,	GUIO_MIDIAPPLEIIGS },
-	{ MT_TOWNS,		GUIO_MIDITOWNS },
-	{ MT_PC98,		GUIO_MIDIPC98 },
-	{ MT_GM,		GUIO_MIDIGM },
-	{ MT_MT32,		GUIO_MIDIMT32 },
-	{ 0,			0 },
+    {MT_PCSPK, GUIO_MIDIPCSPK},
+    {MT_CMS, GUIO_MIDICMS},
+    {MT_PCJR, GUIO_MIDIPCJR},
+    {MT_ADLIB, GUIO_MIDIADLIB},
+    {MT_C64, GUIO_MIDIC64},
+    {MT_AMIGA, GUIO_MIDIAMIGA},
+    {MT_APPLEIIGS, GUIO_MIDIAPPLEIIGS},
+    {MT_TOWNS, GUIO_MIDITOWNS},
+    {MT_PC98, GUIO_MIDIPC98},
+    {MT_GM, GUIO_MIDIGM},
+    {MT_MT32, GUIO_MIDIMT32},
+    {0, 0},
 };
 
 Common::String MidiDriver::musicType2GUIO(uint32 musicType) {
@@ -432,17 +432,16 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 }
 
 void MidiDriver::sendMT32Reset() {
-	static const byte resetSysEx[] = { 0x41, 0x10, 0x16, 0x12, 0x7F, 0x00, 0x00, 0x01, 0x00 };
+	static const byte resetSysEx[] = {0x41, 0x10, 0x16, 0x12, 0x7F, 0x00, 0x00, 0x01, 0x00};
 	sysEx(resetSysEx, sizeof(resetSysEx));
 	g_system->delayMillis(100);
 }
 
 void MidiDriver::sendGMReset() {
-	static const byte resetSysEx[] = { 0x7E, 0x7F, 0x09, 0x01 };
+	static const byte resetSysEx[] = {0x7E, 0x7F, 0x09, 0x01};
 	sysEx(resetSysEx, sizeof(resetSysEx));
 	g_system->delayMillis(100);
 }
-
 
 void MidiDriver_BASE::midiDumpInit() {
 	g_system->displayMessageOnOSD(_("Starting MIDI dump"));
@@ -507,7 +506,7 @@ void MidiDriver_BASE::midiDumpSysEx(const byte *msg, uint16 length) {
 	midiDumpDelta();
 	_midiDumpCache.push_back(0xf0);
 	debugN("0xf0, length(");
-	midiDumpVarLength(length + 1);		// +1 because of closing 0xf7
+	midiDumpVarLength(length + 1); // +1 because of closing 0xf7
 	debugN("), sysex[");
 	for (int i = 0; i < length; i++) {
 		debugN("0x%x, ", msg[i]);
@@ -517,23 +516,22 @@ void MidiDriver_BASE::midiDumpSysEx(const byte *msg, uint16 length) {
 	_midiDumpCache.push_back(0xf7);
 }
 
-
 void MidiDriver_BASE::midiDumpFinish() {
 	Common::DumpFile *midiDumpFile = new Common::DumpFile();
 	midiDumpFile->open("dump.mid");
-	midiDumpFile->write("MThd\0\0\0\x6\0\x1\0\x2", 12);		// standard MIDI file header, with two tracks
-	midiDumpFile->write("\x1\xf4", 2);						// division - 500 ticks per beat, i.e. a quarter note. Each tick is 1ms
-	midiDumpFile->write("MTrk", 4);							// start of first track - doesn't contain real data, it's just common practice to use two tracks
-	midiDumpFile->writeUint32BE(4);							// first track size
-	midiDumpFile->write("\0\xff\x2f\0", 4);			    	// meta event - end of track
-	midiDumpFile->write("MTrk", 4);							// start of second track
-	midiDumpFile->writeUint32BE(_midiDumpCache.size() + 4);	// track size (+4 because of the 'end of track' event)
-	midiDumpFile->write(_midiDumpCache.data(), _midiDumpCache.size());	
-	midiDumpFile->write("\0\xff\x2f\0", 4);			    	// meta event - end of track
+	midiDumpFile->write("MThd\0\0\0\x6\0\x1\0\x2", 12);     // standard MIDI file header, with two tracks
+	midiDumpFile->write("\x1\xf4", 2);                      // division - 500 ticks per beat, i.e. a quarter note. Each tick is 1ms
+	midiDumpFile->write("MTrk", 4);                         // start of first track - doesn't contain real data, it's just common practice to use two tracks
+	midiDumpFile->writeUint32BE(4);                         // first track size
+	midiDumpFile->write("\0\xff\x2f\0", 4);                 // meta event - end of track
+	midiDumpFile->write("MTrk", 4);                         // start of second track
+	midiDumpFile->writeUint32BE(_midiDumpCache.size() + 4); // track size (+4 because of the 'end of track' event)
+	midiDumpFile->write(_midiDumpCache.data(), _midiDumpCache.size());
+	midiDumpFile->write("\0\xff\x2f\0", 4); // meta event - end of track
 	midiDumpFile->finalize();
 	midiDumpFile->close();
 	const char msg[] = "Ending MIDI dump, created 'dump.mid'";
-	g_system->displayMessageOnOSD(_(msg));		//TODO: why it doesn't appear?
+	g_system->displayMessageOnOSD(_(msg)); //TODO: why it doesn't appear?
 	debug("%s", msg);
 }
 
@@ -565,5 +563,3 @@ void MidiDriver::midiDriverCommonSysEx(const byte *msg, uint16 length) {
 		midiDumpSysEx(msg, length);
 	}
 }
-
-

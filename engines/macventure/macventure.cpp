@@ -28,11 +28,11 @@
  * Used with explicit permission from the author
  */
 
-#include "common/system.h"
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/debug.h"
 #include "common/error.h"
-#include "common/config-manager.h"
+#include "common/system.h"
 #include "engines/util.h"
 
 #include "macventure/macventure.h"
@@ -251,7 +251,7 @@ void MacVentureEngine::setInitialFlags() {
 void MacVentureEngine::setNewGameState() {
 	_cmdReady = true;
 	ObjID playerParent = _world->getObjAttr(1, kAttrParentObject);
-	_currentSelection.push_back(playerParent);// Push the parent of the player
+	_currentSelection.push_back(playerParent); // Push the parent of the player
 	_world->setObjAttr(playerParent, kAttrContainerOpen, 1);
 }
 
@@ -439,8 +439,8 @@ void MacVentureEngine::handleObjectDrop(ObjID objID, Common::Point delta, ObjID 
 
 void MacVentureEngine::setDeltaPoint(Common::Point newPos) {
 	debugC(4, kMVDebugMain, "Update delta: Old(%d, %d), New(%d, %d)",
-		_deltaPoint.x, _deltaPoint.y,
-		newPos.x, newPos.y);
+	       _deltaPoint.x, _deltaPoint.y,
+	       newPos.x, newPos.y);
 	_deltaPoint = newPos;
 }
 
@@ -471,7 +471,6 @@ Common::String MacVentureEngine::getUserInput() {
 	return _userInput;
 }
 
-
 Common::String MacVentureEngine::getStartGameFileName() {
 	Common::SeekableReadStream *res;
 	res = _resourceManager->getResource(MKTAG('S', 'T', 'R', ' '), kStartGameFilenameID);
@@ -492,7 +491,7 @@ Common::String MacVentureEngine::getStartGameFileName() {
 	return result;
 }
 
-const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
+const GlobalSettings &MacVentureEngine::getGlobalSettings() const {
 	return *_globalSettings;
 }
 
@@ -709,7 +708,6 @@ void MacVentureEngine::unselectObject(ObjID objID) {
 	}
 }
 
-
 void MacVentureEngine::updateExits() {
 	_gui->clearExits();
 	_gui->unselectExits();
@@ -717,7 +715,6 @@ void MacVentureEngine::updateExits() {
 	Common::Array<ObjID> exits = _world->getChildren(_world->getObjAttr(1, kAttrParentObject), true);
 	for (uint i = 0; i < exits.size(); i++)
 		_gui->updateExit(exits[i]);
-
 }
 
 int MacVentureEngine::findObjectInArray(ObjID objID, const Common::Array<ObjID> &list) {
@@ -762,7 +759,7 @@ void MacVentureEngine::selectPrimaryObject(ObjID objID) {
 	int idx;
 	debugC(4, kMVDebugMain, "Select primary object (%d)", objID);
 	if (_destObject > 0 &&
-		(idx = findObjectInArray(_destObject, _currentSelection)) != -1) {
+	    (idx = findObjectInArray(_destObject, _currentSelection)) != -1) {
 		unselectAll();
 	}
 	_destObject = objID;
@@ -783,10 +780,10 @@ void MacVentureEngine::focusObjectWindow(ObjID objID) {
 
 void MacVentureEngine::openObject(ObjID objID) {
 	debugC(3, kMVDebugMain, "Open Object[%d] parent[%d] x[%d] y[%d]",
-		objID,
-		_world->getObjAttr(objID, kAttrParentObject),
-		_world->getObjAttr(objID, kAttrPosX),
-		_world->getObjAttr(objID, kAttrPosY));
+	       objID,
+	       _world->getObjAttr(objID, kAttrParentObject),
+	       _world->getObjAttr(objID, kAttrPosX),
+	       _world->getObjAttr(objID, kAttrPosY));
 
 	if (getObjWindow(objID)) {
 		return;
@@ -796,7 +793,7 @@ void MacVentureEngine::openObject(ObjID objID) {
 		_gui->updateWindow(kMainGameWindow, _world->getObjAttr(objID, kAttrContainerOpen));
 		updateExits();
 		_gui->setWindowTitle(kMainGameWindow, _world->getText(objID, objID, objID)); // it ignores source and target in the original
-	} else { // Open inventory window
+	} else {                                                                         // Open inventory window
 		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
 		WindowReference invID = _gui->createInventoryWindow(objID);
 		_gui->setWindowTitle(invID, _world->getText(objID, objID, objID));
@@ -813,22 +810,22 @@ void MacVentureEngine::closeObject(ObjID objID) {
 void MacVentureEngine::checkObject(QueuedObject old) {
 	bool hasChanged = false;
 	debugC(3, kMVDebugMain, "Check Object[%d] parent[%d] x[%d] y[%d]",
-		old.object,
-		old.parent,
-		old.x,
-		old.y);
+	       old.object,
+	       old.parent,
+	       old.x,
+	       old.y);
 	ObjID id = old.object;
 	if (id == 1) {
 		if (old.parent != _world->getObjAttr(id, kAttrParentObject)) {
 			enqueueObject(kSetToPlayerParent, id);
 		}
 		if (old.offscreen != !!_world->getObjAttr(id, kAttrInvisible) ||
-			old.invisible != !!_world->getObjAttr(id, kAttrUnclickable)) {
+		    old.invisible != !!_world->getObjAttr(id, kAttrUnclickable)) {
 			updateWindow(findParentWindow(id));
 		}
 	} else if (old.parent != _world->getObjAttr(id, kAttrParentObject) ||
-				old.x != _world->getObjAttr(id, kAttrPosX) ||
-				old.y != _world->getObjAttr(id, kAttrPosY)) {
+	           old.x != _world->getObjAttr(id, kAttrPosX) ||
+	           old.y != _world->getObjAttr(id, kAttrPosY)) {
 		WindowReference oldWin = getObjWindow(old.parent);
 		if (oldWin) {
 			_gui->removeChild(oldWin, id);
@@ -841,21 +838,21 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 			hasChanged = true;
 		}
 	} else if (old.offscreen != !!_world->getObjAttr(id, kAttrInvisible) ||
-				old.invisible != !!_world->getObjAttr(id, kAttrUnclickable)) {
+	           old.invisible != !!_world->getObjAttr(id, kAttrUnclickable)) {
 		updateWindow(findParentWindow(id));
 	}
 
 	if (_world->getObjAttr(id, kAttrIsExit)) {
 		if (hasChanged ||
-			old.hidden != !!_world->getObjAttr(id, kAttrHiddenExit) ||
-			old.exitx != _world->getObjAttr(id, kAttrExitX) ||
-			old.exity != _world->getObjAttr(id, kAttrExitY))
+		    old.hidden != !!_world->getObjAttr(id, kAttrHiddenExit) ||
+		    old.exitx != _world->getObjAttr(id, kAttrExitX) ||
+		    old.exity != _world->getObjAttr(id, kAttrExitY))
 			_gui->updateExit(id);
 	}
 	WindowReference win = getObjWindow(id);
 	ObjID cur = id;
 	ObjID root = _world->getObjAttr(1, kAttrParentObject);
-	while (cur != root)	{
+	while (cur != root) {
 		if (cur == 0 || !_world->getObjAttr(cur, kAttrContainerOpen)) {
 			break;
 		}
@@ -885,7 +882,7 @@ void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
 	WindowReference to = getObjWindow(toID);
 	WindowReference tmp = to;
 	debugC(3, kMVDebugMain, "Swap Object[%d] to Object[%d], from win[%d] to win[%d] ",
-		fromID, toID, from, to);
+	       fromID, toID, from, to);
 
 	if (!to) {
 		tmp = from;
@@ -929,7 +926,7 @@ bool MacVentureEngine::isGameRunning() {
 ControlAction MacVenture::MacVentureEngine::referenceToAction(ControlType id) {
 	switch (id) {
 	case MacVenture::kControlExitBox:
-		return kActivateObject;//?? Like this in the original
+		return kActivateObject; //?? Like this in the original
 	case MacVenture::kControlExamine:
 		return kExamine;
 	case MacVenture::kControlOpen:
@@ -1030,7 +1027,7 @@ Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
 	Common::Point pos = getObjPosition(objID);
 
 	WindowReference win = findParentWindow(objID);
-	if (win != kNoWindow) { // If it's not in a window YET, we don't really care about the border
+	if (win != kNoWindow) {                                                // If it's not in a window YET, we don't really care about the border
 		BorderBounds bounds = borderBounds(_gui->getWindowData(win).type); // HACK
 		pos.x += bounds.leftOffset;
 		pos.y += bounds.topOffset;
@@ -1044,13 +1041,13 @@ Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
 uint MacVentureEngine::getOverlapPercent(ObjID one, ObjID other) {
 	// If it's not the same parent, there's 0 overlap
 	if (_world->getObjAttr(one, kAttrParentObject) !=
-		_world->getObjAttr(other, kAttrParentObject))
+	    _world->getObjAttr(other, kAttrParentObject))
 		return 0;
 
 	Common::Rect oneBounds = getObjBounds(one);
 	Common::Rect otherBounds = getObjBounds(other);
 	if (otherBounds.intersects(oneBounds) ||
-		oneBounds.intersects(otherBounds)) {
+	    oneBounds.intersects(otherBounds)) {
 		uint areaOne = oneBounds.width() * oneBounds.height();
 		uint areaOther = otherBounds.width() * otherBounds.height();
 		return (areaOne != 0) ? (areaOther * 100 / areaOne) : 0;
@@ -1149,7 +1146,6 @@ GlobalSettings::GlobalSettings() {
 }
 
 GlobalSettings::~GlobalSettings() {
-
 }
 
 void GlobalSettings::loadSettings(Common::SeekableReadStream *dataStream) {

@@ -48,7 +48,6 @@ namespace Indeo {
  */
 extern void avFreeP(void *arg);
 
-
 /**
  * Allocate, reallocate, or free a block of memory.
  *
@@ -99,7 +98,7 @@ inline unsigned avClipUintp2(int a, int p) {
 	if (a & ~((1 << p) - 1))
 		return -a >> 31 & ((1 << p) - 1);
 	else
-		return  a;
+		return a;
 }
 
 extern const uint8 ffZigZagDirect[64];

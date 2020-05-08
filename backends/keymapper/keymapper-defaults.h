@@ -23,10 +23,10 @@
 #ifndef KEYMAPPER_DEFAULTS_H
 #define KEYMAPPER_DEFAULTS_H
 
-#include "common/scummsys.h"
-#include "common/hashmap.h"
-#include "common/str.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Common {
 

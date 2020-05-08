@@ -221,7 +221,7 @@ void Room::love0MccoyAccessedConsole() {
 		showText(TX_SPEAKER_MCCOY, 24, true);
 		showText(TX_SPEAKER_SPOCK, 35, true);
 		showText(TX_SPEAKER_MCCOY, 23, true);
-		showText(TX_SPEAKER_KIRK,  4, true);
+		showText(TX_SPEAKER_KIRK, 4, true);
 		showText(TX_SPEAKER_MCCOY, 9, true);
 		_awayMission->love.knowAboutVirus = true;
 	}
@@ -230,15 +230,14 @@ void Room::love0MccoyAccessedConsole() {
 // Interact with computer console, by selecting topics for the computer to talk about
 void Room::love0InteractWithConsole() {
 	const TextRef choices[] = {
-		TX_SPEAKER_COMPUTER,
-		TX_COMPA190,
-		TX_COMPA193,
-		TX_COMPA189,
-		TX_COMPA186,
-		TX_COMPA187,
-		TX_COMPA191,
-		TX_BLANK
-	};
+	    TX_SPEAKER_COMPUTER,
+	    TX_COMPA190,
+	    TX_COMPA193,
+	    TX_COMPA189,
+	    TX_COMPA186,
+	    TX_COMPA187,
+	    TX_COMPA191,
+	    TX_BLANK};
 
 	while (true) {
 		showText(TX_SPEAKER_COMPUTER, TX_COMPU192);
@@ -280,4 +279,4 @@ void Room::love0GetDoorOrConsole() {
 	//showText(TX_SPEAKER_SPOCK, TX_LOV0_030);
 }
 
-}
+} // namespace StarTrek

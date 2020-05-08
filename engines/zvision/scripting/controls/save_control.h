@@ -45,9 +45,7 @@ private:
 	bool _saveControl;
 
 public:
-
 	bool process(uint32 deltaTimeInMillis) override;
-
 };
 
 } // End of namespace ZVision

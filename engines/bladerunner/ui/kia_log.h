@@ -39,9 +39,9 @@ class KIALog {
 	BladeRunnerEngine *_vm;
 
 	Entry _entries[kSize];
-	int   _firstIndex;
-	int   _lastIndex;
-	int   _currentIndex;
+	int _firstIndex;
+	int _lastIndex;
+	int _currentIndex;
 
 public:
 	KIALog(BladeRunnerEngine *vm);
@@ -55,8 +55,8 @@ public:
 	void clearFuture();
 	bool hasPrev() const;
 	bool hasNext() const;
-	int  getPrevType() const;
-	int  getNextType() const;
+	int getPrevType() const;
+	int getNextType() const;
 	const void *getCurrentData() const;
 };
 

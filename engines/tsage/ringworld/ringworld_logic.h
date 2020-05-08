@@ -24,10 +24,10 @@
 #define TSAGE_RINGWORLD_LOGIC_H
 
 #include "common/scummsys.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 
 namespace TsAGE {
 
@@ -44,6 +44,7 @@ class DisplayHotspot : public SceneObject {
 private:
 	Common::Array<int> _actions;
 	bool performAction(int action);
+
 public:
 	DisplayHotspot(int regionId, ...);
 
@@ -57,6 +58,7 @@ class DisplayObject : public SceneObject {
 private:
 	Common::Array<int> _actions;
 	bool performAction(int action);
+
 public:
 	DisplayObject(int firstAction, ...);
 
@@ -87,6 +89,7 @@ public:
 	int _subNum;
 	int _actionId;
 	Rect _bounds;
+
 public:
 	SceneArea();
 	~SceneArea() override;
@@ -138,6 +141,7 @@ public:
 	InvObject _bone;
 	InvObject _jar;
 	InvObject _emptyJar;
+
 public:
 	RingworldInvObjectList();
 
@@ -146,7 +150,7 @@ public:
 
 #define RING_INVENTORY (*((::TsAGE::Ringworld::RingworldInvObjectList *)g_globals->_inventory))
 
-class RingworldGame: public Game {
+class RingworldGame : public Game {
 public:
 	void start() override;
 	void restart() override;

@@ -37,7 +37,7 @@ int add_ident(const String &id_str) {
 	int hasher;
 	IdRecPtr p, new_rec;
 
-	hasher = (int)(toupper(id_str[1])) - 65;	// A..Z => 65..90 => 0..25
+	hasher = (int)(toupper(id_str[1])) - 65; // A..Z => 65..90 => 0..25
 	if (hasher < 0 || hasher > 25)
 		hasher = 26;
 
@@ -49,11 +49,11 @@ int add_ident(const String &id_str) {
 		new_rec = new IdRecType();
 		append_to_xarray(h_index, new_rec);
 
-		new_rec->id_kind    = DefaultClassification;
-		new_rec->id_index   = h_index.size();
+		new_rec->id_kind = DefaultClassification;
+		new_rec->id_index = h_index.size();
 		new_rec->id_integer = new_rec->id_index;
-		new_rec->id_name    = NewConstStr(id_str);
-		new_rec->next       = p->next;
+		new_rec->id_name = NewConstStr(id_str);
+		new_rec->next = p->next;
 
 		p->next = new_rec;
 		return h_index.size();

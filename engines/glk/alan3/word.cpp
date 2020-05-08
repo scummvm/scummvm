@@ -21,10 +21,10 @@
  */
 
 #include "glk/alan3/word.h"
-#include "glk/alan3/types.h"
+#include "glk/alan3/lists.h"
 #include "glk/alan3/memory.h"
 #include "glk/alan3/syserr.h"
-#include "glk/alan3/lists.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -33,20 +33,18 @@ namespace Alan3 {
 
 /* List of parsed words, index into dictionary */
 Word *playerWords = NULL;
-int currentWordIndex; /* An index into the list of playerWords */
-int firstWord, lastWord;  /* Index for the first and last words for this command */
+int currentWordIndex;    /* An index into the list of playerWords */
+int firstWord, lastWord; /* Index for the first and last words for this command */
 
 /* Some variable for dynamically allocating the playerWords, which will happen in scan() */
 static int playerWordsLength = 0;
 #define PLAYER_WORDS_EXTENT 20
 
 /* What did the user say? */
-int verbWord; /* The word he used as a verb, dictionary index */
+int verbWord;     /* The word he used as a verb, dictionary index */
 int verbWordCode; /* The code for that verb */
 
-
 /* PRIVATE TYPES & DATA */
-
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -61,7 +59,6 @@ void ensureSpaceForPlayerWords(int size) {
 	}
 }
 
-
 /*======================================================================*/
 char *playerWordsAsCommandString(void) {
 	char *commandString;
@@ -71,7 +68,6 @@ char *playerWordsAsCommandString(void) {
 	commandString[size] = '\0';
 	return commandString;
 }
-
 
 /*======================================================================*/
 void clearWordList(Word list[]) {

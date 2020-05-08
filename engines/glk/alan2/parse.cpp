@@ -20,6 +20,7 @@
  *
  */
 
+#include "glk/alan2/parse.h"
 #include "glk/alan2/alan2.h"
 #include "glk/alan2/debug.h"
 #include "glk/alan2/exe.h"
@@ -27,7 +28,6 @@
 #include "glk/alan2/inter.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/params.h"
-#include "glk/alan2/parse.h"
 #include "glk/alan2/types.h"
 
 namespace Glk {
@@ -35,30 +35,27 @@ namespace Alan2 {
 
 #define LISTLEN 100
 
-
 /* PUBLIC DATA */
 
-Aword wrds[LISTLEN / 2] = {EOD};  // List of parsed words
-int wrdidx;				// and an index into it
+Aword wrds[LISTLEN / 2] = {EOD}; // List of parsed words
+int wrdidx;                      // and an index into it
 
 Boolean plural = FALSE;
 
-
 /* Syntax Parameters */
-int paramidx;           /* Index in params */
-ParamElem *params;      /* List of params */
-static ParamElem *pparams;  /* Previous parameter list */
-static ParamElem *mlst;     /* Multiple objects list */
-static ParamElem *pmlst;    /* Previous multiple list */
+int paramidx;              /* Index in params */
+ParamElem *params;         /* List of params */
+static ParamElem *pparams; /* Previous parameter list */
+static ParamElem *mlst;    /* Multiple objects list */
+static ParamElem *pmlst;   /* Previous multiple list */
 
 /* Literals */
 LitElem litValues[MAXPARAMS + 1];
 int litCount;
 
 /* What did the user say? */
-int vrbwrd;         /* The word he used */
-int vrbcode;            /* The code for that verb */
-
+int vrbwrd;  /* The word he used */
+int vrbcode; /* The code for that verb */
 
 /*----------------------------------------------------------------------*\
 
@@ -76,15 +73,12 @@ int vrbcode;            /* The code for that verb */
 
 \*----------------------------------------------------------------------*/
 
-
 /* PRIVATE DATA */
 
-static char buf[LISTLEN + 1]; /* The input buffer */
+static char buf[LISTLEN + 1];    /* The input buffer */
 static char isobuf[LISTLEN + 1]; /* The input buffer in ISO */
 
-
-static Boolean eol = TRUE;  /* Looking at End of line? Yes, initially */
-
+static Boolean eol = TRUE; /* Looking at End of line? Yes, initially */
 
 static void unknown(CONTEXT, char token[]) {
 	char *str = (char *)allocate((int)strlen(token) + 4);
@@ -98,15 +92,13 @@ static void unknown(CONTEXT, char token[]) {
 	CALL1(error, M_UNKNOWN_WORD)
 }
 
-
 static char *token;
-
 
 static int lookup(CONTEXT, char wrd[]) {
 	int i;
 
 	for (i = 0; !endOfTable(&dict[i]); i++) {
-		if (strcmp(wrd, (char *) addrTo(dict[i].wrd)) == 0)
+		if (strcmp(wrd, (char *)addrTo(dict[i].wrd)) == 0)
 			return (i);
 	}
 	R0CALL1(unknown, wrd)
@@ -129,15 +121,19 @@ static char *gettoken(char *tokBuf) {
 		*marker = oldch;
 	else
 		marker = tokBuf;
-	while (*marker != '\0' && isSpace(*marker) && *marker != '\n') marker++;
+	while (*marker != '\0' && isSpace(*marker) && *marker != '\n')
+		marker++;
 	tokBuf = marker;
 	if (isISOLetter(*marker))
-		while (*marker && (isISOLetter(*marker) || Common::isDigit(*marker) || *marker == '\'')) marker++;
+		while (*marker && (isISOLetter(*marker) || Common::isDigit(*marker) || *marker == '\''))
+			marker++;
 	else if (Common::isDigit(*marker))
-		while (Common::isDigit(*marker)) marker++;
+		while (Common::isDigit(*marker))
+			marker++;
 	else if (*marker == '\"') {
 		marker++;
-		while (*marker != '\"') marker++;
+		while (*marker != '\"')
+			marker++;
 		marker++;
 	} else if (*marker == '\0' || *marker == '\n')
 		return NULL;
@@ -193,12 +189,12 @@ static void scan(CONTEXT) {
 	wrds[0] = 0;
 	for (i = 0; i < litCount; i++)
 		if (litValues[i].type == TYPSTR && litValues[i].value != 0)
-			free((char *) litValues[i].value);
+			free((char *)litValues[i].value);
 	i = 0;
 	litCount = 0;
 	do {
 		if (isISOLetter(token[0])) {
-			(void) stringLower(token);
+			(void)stringLower(token);
 			FUNC1(lookup, w, token);
 
 			if (!isNoise(w))
@@ -217,7 +213,7 @@ static void scan(CONTEXT) {
 			/* Remove the string quotes while copying */
 			str = scumm_strdup(&token[1]);
 			str[strlen(token) - 2] = '\0';
-			litValues[litCount++].value = (Aptr) str;
+			litValues[litCount++].value = (Aptr)str;
 		} else if (token[0] == ',') {
 			wrds[i++] = conjWord;
 		} else {
@@ -227,7 +223,6 @@ static void scan(CONTEXT) {
 		eol = (token = gettoken(NULL)) == NULL;
 	} while (!eol);
 }
-
 
 /*----------------------------------------------------------------------*\
 
@@ -245,8 +240,7 @@ static void scan(CONTEXT) {
 
 \*---------------------------------------------------------------------- */
 
-static int allLength;       /* No. of objects matching 'all' */
-
+static int allLength; /* No. of objects matching 'all' */
 
 static void nonverb(CONTEXT) {
 	if (isDir(wrds[wrdidx])) {
@@ -296,16 +290,17 @@ static void unambig(CONTEXT, ParamElem plst[]) {
 	if (isLiteral(wrds[wrdidx])) {
 		/* Transform the word into a reference to the literal value */
 		plst[0].code = wrds[wrdidx++] - dictsize + LITMIN;
-		plst[0].firstWord = EOD;    /* No words used! */
+		plst[0].firstWord = EOD; /* No words used! */
 		plst[1].code = EOD;
 		return;
 	}
 
-	plst[0].code = EOD;       /* Make empty */
+	plst[0].code = EOD; /* Make empty */
 	if (isIt(wrds[wrdidx])) {
 		wrdidx++;
 		/* Use last object in previous command! */
-		for (i = lstlen(pparams) - 1; i >= 0 && (pparams[i].code == 0 || pparams[i].code >= LITMIN); i--);
+		for (i = lstlen(pparams) - 1; i >= 0 && (pparams[i].code == 0 || pparams[i].code >= LITMIN); i--)
+			;
 		if (i < 0) {
 			CALL1(error, M_WHAT_IT)
 		}
@@ -316,7 +311,7 @@ static void unambig(CONTEXT, ParamElem plst[]) {
 			CALL1(error, M_NO_SUCH)
 		}
 		plst[0] = pparams[i];
-		plst[0].firstWord = EOD;    /* No words used! */
+		plst[0].firstWord = EOD; /* No words used! */
 		plst[1].code = EOD;
 		return;
 	}
@@ -327,7 +322,7 @@ static void unambig(CONTEXT, ParamElem plst[]) {
 		if (isNoun(wrds[wrdidx]) && (wrds[wrdidx + 1] == EOD || !isNoun(wrds[wrdidx + 1])))
 			break;
 		cpyrefs(refs, (Aword *)addrTo(dict[wrds[wrdidx]].adjrefs));
-		lstcpy(savlst, plst);   /* To save it for backtracking */
+		lstcpy(savlst, plst); /* To save it for backtracking */
 		if (found)
 			isect(plst, refs);
 		else {
@@ -372,10 +367,10 @@ static void unambig(CONTEXT, ParamElem plst[]) {
 	}
 
 	if (lstlen(plst) > 1 || (found && lstlen(plst) == 0)) {
-		params[0].code = 0;     /* Just make it anything != EOD */
+		params[0].code = 0;              /* Just make it anything != EOD */
 		params[0].firstWord = firstWord; /* Remember words for errors below */
 		params[0].lastWord = lastWord;
-		params[1].code = EOD;   /* But be sure to terminate */
+		params[1].code = EOD; /* But be sure to terminate */
 		if (lstlen(plst) > 1) {
 			CALL1(error, M_WHICH_ONE)
 		} else if (found && lstlen(plst) == 0) {
@@ -394,7 +389,7 @@ static void simple(CONTEXT, ParamElem olst[]) {
 	int i;
 
 	if (tlst == NULL)
-		tlst = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
+		tlst = (ParamElem *)allocate(sizeof(ParamElem) * (MAXENTITY + 1));
 	tlst[0].code = EOD;
 
 	for (;;) {
@@ -409,12 +404,12 @@ static void simple(CONTEXT, ParamElem olst[]) {
 			}
 
 			lstcpy(olst, pmlst);
-			olst[0].firstWord = EOD;  /* No words used */
+			olst[0].firstWord = EOD; /* No words used */
 			wrdidx++;
 		} else {
 			// Look for unambigous noun phrase
 			CALL1(unambig, olst)
-			if (lstlen(olst) == 0) {  /* Failed! */
+			if (lstlen(olst) == 0) { /* Failed! */
 				lstcpy(olst, tlst);
 				wrdidx = savidx;
 				plural = savplur;
@@ -422,9 +417,8 @@ static void simple(CONTEXT, ParamElem olst[]) {
 			}
 		}
 		mrglst(tlst, olst);
-		if (wrds[wrdidx] != EOD
-		        && (isConj(wrds[wrdidx]) &&
-		            (isAdj(wrds[wrdidx + 1]) || isNoun(wrds[wrdidx + 1])))) {
+		if (wrds[wrdidx] != EOD && (isConj(wrds[wrdidx]) &&
+		                            (isAdj(wrds[wrdidx + 1]) || isNoun(wrds[wrdidx + 1])))) {
 			/* More parameters in a conjunction separated list ? */
 			savplur = plural;
 			savidx = wrdidx;
@@ -436,7 +430,6 @@ static void simple(CONTEXT, ParamElem olst[]) {
 		}
 	}
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -451,7 +444,7 @@ static void complex(CONTEXT, ParamElem olst[]) {
 	static ParamElem *alst = NULL;
 
 	if (alst == NULL)
-		alst = (ParamElem *) allocate((MAXENTITY + 1) * sizeof(ParamElem));
+		alst = (ParamElem *)allocate((MAXENTITY + 1) * sizeof(ParamElem));
 
 	if (isAll(wrds[wrdidx])) {
 		plural = TRUE;
@@ -495,7 +488,6 @@ static Boolean claCheck(ClaElem *cla /* IN - The cla elem to check */) {
 	return ok;
 }
 
-
 /*----------------------------------------------------------------------
 
   resolve()
@@ -507,31 +499,32 @@ static Boolean claCheck(ClaElem *cla /* IN - The cla elem to check */) {
 static void resolve(CONTEXT, ParamElem plst[]) {
 	int i;
 
-	if (allLength > 0) return;    /* ALL has already done this */
+	if (allLength > 0)
+		return; /* ALL has already done this */
 
 	/* Resolve ambiguities by presence */
 	for (i = 0; plst[i].code != EOD; i++)
-		if (plst[i].code < LITMIN)  /* Literals are always 'here' */
+		if (plst[i].code < LITMIN) /* Literals are always 'here' */
 			if (!isHere(plst[i].code)) {
-				params[0] = plst[i];    /* Copy error param as first one for message */
-				params[1].code = EOD;   /* But be sure to terminate */
+				params[0] = plst[i];  /* Copy error param as first one for message */
+				params[1].code = EOD; /* But be sure to terminate */
 				CALL1(error, M_NO_SUCH)
 			}
 }
 
 /* OUT - List of params allowed by multiple */
 static void tryMatch(CONTEXT, ParamElem matchLst[]) {
-	ElmElem *elms;        /* Pointer to element list */
-	StxElem *stx;         /* Pointer to syntax list */
-	ClaElem *cla;         /* Pointer to class definitions */
-	Boolean anyPlural = FALSE;    /* Any parameter that was plural? */
+	ElmElem *elms;             /* Pointer to element list */
+	StxElem *stx;              /* Pointer to syntax list */
+	ClaElem *cla;              /* Pointer to class definitions */
+	Boolean anyPlural = FALSE; /* Any parameter that was plural? */
 	int i, p;
-	static ParamElem *tlst = NULL; /* List of params found by complex() */
+	static ParamElem *tlst = NULL;  /* List of params found by complex() */
 	static Boolean *checked = NULL; /* Corresponding parameter checked? */
 
 	if (tlst == NULL) {
-		tlst = (ParamElem *) allocate((MAXENTITY + 1) * sizeof(ParamElem));
-		checked = (Boolean *) allocate((MAXENTITY + 1) * sizeof(Boolean));
+		tlst = (ParamElem *)allocate((MAXENTITY + 1) * sizeof(ParamElem));
+		checked = (Boolean *)allocate((MAXENTITY + 1) * sizeof(Boolean));
 	}
 
 	for (stx = stxs; !endOfTable(stx); stx++)
@@ -541,7 +534,7 @@ static void tryMatch(CONTEXT, ParamElem matchLst[]) {
 		CALL1(error, M_WHAT)
 	}
 
-	elms = (ElmElem *) addrTo(stx->elms);
+	elms = (ElmElem *)addrTo(stx->elms);
 
 	while (TRUE) {
 		/* End of input? */
@@ -597,7 +590,7 @@ static void tryMatch(CONTEXT, ParamElem matchLst[]) {
 					params[paramidx++] = tlst[0];
 				params[paramidx].code = EOD;
 			}
-			elms = (ElmElem *) addrTo(elms->next);
+			elms = (ElmElem *)addrTo(elms->next);
 		}
 	}
 
@@ -609,7 +602,7 @@ static void tryMatch(CONTEXT, ParamElem matchLst[]) {
 
 	for (p = 0; params[p].code != EOD; p++) /* Mark all parameters unchecked */
 		checked[p] = FALSE;
-	for (cla = (ClaElem *) addrTo(elms->next); !endOfTable(cla); cla++) {
+	for (cla = (ClaElem *)addrTo(elms->next); !endOfTable(cla); cla++) {
 		if (params[cla->code - 1].code == 0) {
 			/* This was a multiple parameter, so check all and remove failing */
 			for (i = 0; matchLst[i].code != EOD; i++) {
@@ -622,12 +615,12 @@ static void tryMatch(CONTEXT, ParamElem matchLst[]) {
 						   It wasn't ALL, we need to say something about it, so
 						   prepare a printout with $1/2/3
 						 */
-						sprintf(marker, "($%ld)", (unsigned long) cla->code);
+						sprintf(marker, "($%ld)", (unsigned long)cla->code);
 						output(marker);
 						interpret(cla->stms);
 						para();
 					}
-					matchLst[i].code = 0;   /* In any case remove it from the list */
+					matchLst[i].code = 0; /* In any case remove it from the list */
 				}
 			}
 			params[cla->code - 1].code = 0;
@@ -655,19 +648,20 @@ static void tryMatch(CONTEXT, ParamElem matchLst[]) {
 		}
 
 	/* Set verb code */
-	cur.vrb = ((Aword *) cla)[1]; /* Take first word after end of table! */
+	cur.vrb = ((Aword *)cla)[1]; /* Take first word after end of table! */
 
 	/* Finally, if ALL was used, try to find out what was applicable */
 	if (allLength > 0) {
-		for (p = 0; params[p].code != 0; p++); /* Find multiple marker */
+		for (p = 0; params[p].code != 0; p++)
+			; /* Find multiple marker */
 		for (i = 0; i < allLength; i++) {
-			if (matchLst[i].code != 0) {  /* Already empty? */
+			if (matchLst[i].code != 0) { /* Already empty? */
 				params[p] = matchLst[i];
 				if (!possible())
 					matchLst[i].code = 0; /* Remove this from list */
 			}
 		}
-		params[p].code = 0;     /* Restore multiple marker */
+		params[p].code = 0; /* Restore multiple marker */
 		compact(matchLst);
 		if (lstlen(matchLst) == 0) {
 			params[0].code = EOD;
@@ -680,7 +674,7 @@ static void tryMatch(CONTEXT, ParamElem matchLst[]) {
 			/* word, assuming we have already said enough */
 			CALL1(error, MSGMAX)
 	}
-	plural = anyPlural;       /* Remember that we found plural objects */
+	plural = anyPlural; /* Remember that we found plural objects */
 }
 
 /* OUT - List of params allowed by multiple */
@@ -690,18 +684,18 @@ static void match(CONTEXT, ParamElem *matchLst) {
 	if (wrds[wrdidx] != EOD && !isConj(wrds[wrdidx])) {
 		CALL1(error, M_WHAT)
 	}
-	if (wrds[wrdidx] != EOD)  /* More on this line? */
-		wrdidx++;           /* If so skip the AND */
+	if (wrds[wrdidx] != EOD) /* More on this line? */
+		wrdidx++;            /* If so skip the AND */
 }
 
 void parse(CONTEXT) {
-	if (mlst == NULL) {       /* Allocate large enough paramlists */
-		mlst = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
+	if (mlst == NULL) { /* Allocate large enough paramlists */
+		mlst = (ParamElem *)allocate(sizeof(ParamElem) * (MAXENTITY + 1));
 		mlst[0].code = EOD;
-		pmlst = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
-		params = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
+		pmlst = (ParamElem *)allocate(sizeof(ParamElem) * (MAXENTITY + 1));
+		params = (ParamElem *)allocate(sizeof(ParamElem) * (MAXENTITY + 1));
 		params[0].code = EOD;
-		pparams = (ParamElem *) allocate(sizeof(ParamElem) * (MAXENTITY + 1));
+		pparams = (ParamElem *)allocate(sizeof(ParamElem) * (MAXENTITY + 1));
 	}
 
 	if (wrds[wrdidx] == EOD) {

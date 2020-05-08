@@ -30,8 +30,9 @@ public:
 	PspTimerManager(uint32 interval = 10);
 	~PspTimerManager() { _init = false; }
 
-	static int thread(SceSize, void *__this);		// static thread to use as bridge
+	static int thread(SceSize, void *__this); // static thread to use as bridge
 	void timerThread();
+
 private:
 	uint32 _interval;
 	int _threadId;

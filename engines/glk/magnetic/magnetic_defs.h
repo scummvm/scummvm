@@ -53,9 +53,9 @@ enum { INT32_MAX_VAL = 0x7fffffff };
 #define MAX_POSITIONS 20
 #define MAX_ANIMS 200
 #define MAX_FRAMES 20
-#define MAX_STRING_SIZE  0xFF00
+#define MAX_STRING_SIZE 0xFF00
 #define MAX_PICTURE_SIZE 0xC800
-#define MAX_MUSIC_SIZE   0x4E20
+#define MAX_MUSIC_SIZE 0x4E20
 #define MAX_HITEMS 25
 
 /****************************************************************************\
@@ -90,7 +90,9 @@ enum { GMS_INPUTBUFFER_LENGTH = 256 };
 enum { GMS_STATBUFFER_LENGTH = 1024 };
 
 enum GammaMode {
-	GAMMA_OFF, GAMMA_NORMAL, GAMMA_HIGH
+	GAMMA_OFF,
+	GAMMA_NORMAL,
+	GAMMA_HIGH
 };
 
 /* Hint type definitions. */

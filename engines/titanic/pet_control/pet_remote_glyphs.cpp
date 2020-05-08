@@ -253,9 +253,7 @@ bool CEntertainmentDeviceGlyph::MouseButtonDownMsg(const Point &pt) {
 	if (viewName == "SGTState.Node 1.S") {
 		return elementMouseButtonDownMsg(pt, 4);
 	} else if (viewName == "SGTState.Node 4.E") {
-		return _toggle->MouseButtonDownMsg(pt)
-			|| _up->MouseButtonDownMsg(pt)
-			|| _down->MouseButtonDownMsg(pt);
+		return _toggle->MouseButtonDownMsg(pt) || _up->MouseButtonDownMsg(pt) || _down->MouseButtonDownMsg(pt);
 	}
 
 	return false;
@@ -312,11 +310,7 @@ void COperateLightsGlyph::draw2(CScreenManager *screenManager) {
 }
 
 bool COperateLightsGlyph::MouseButtonDownMsg(const Point &pt) {
-	if (_left->MouseButtonDownMsg(pt)
-			|| _right->MouseButtonDownMsg(pt)
-			|| _up->MouseButtonDownMsg(pt)
-			|| _down->MouseButtonDownMsg(pt)
-			|| _activate->MouseButtonDownMsg(pt))
+	if (_left->MouseButtonDownMsg(pt) || _right->MouseButtonDownMsg(pt) || _up->MouseButtonDownMsg(pt) || _down->MouseButtonDownMsg(pt) || _activate->MouseButtonDownMsg(pt))
 		return true;
 	return true;
 }
@@ -351,7 +345,6 @@ bool CDeployFloralGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 void CDeployFloralGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_FLORAL_ENHANCEMENT);
 }
-
 
 /*------------------------------------------------------------------------*/
 
@@ -493,8 +486,7 @@ void CSuccubusDeliveryGlyph::draw2(CScreenManager *screenManager) {
 }
 
 bool CSuccubusDeliveryGlyph::MouseButtonDownMsg(const Point &pt) {
-	return _send->MouseButtonDownMsg(pt)
-		|| _receive->MouseButtonDownMsg(pt);
+	return _send->MouseButtonDownMsg(pt) || _receive->MouseButtonDownMsg(pt);
 }
 
 bool CSuccubusDeliveryGlyph::MouseButtonUpMsg(const Point &pt) {
@@ -568,61 +560,61 @@ void CNavigationControllerGlyph::getTooltip(CTextControl *text) {
 /*------------------------------------------------------------------------*/
 
 CSummonElevatorGlyph::CSummonElevatorGlyph() : CBasicRemoteGlyph(
-		"3PetLift", g_vm->_strings[SUMMON_ELEVATOR], "Lift") {
+                                                   "3PetLift", g_vm->_strings[SUMMON_ELEVATOR], "Lift") {
 }
 
 /*------------------------------------------------------------------------*/
 
 CSummonPelleratorGlyph::CSummonPelleratorGlyph() : CBasicRemoteGlyph(
-		"3PetPellerator", g_vm->_strings[SUMMON_PELLERATOR], "Pellerator") {
+                                                       "3PetPellerator", g_vm->_strings[SUMMON_PELLERATOR], "Pellerator") {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoBottomOfWellGlyph::CGotoBottomOfWellGlyph() : CRemoteGotoGlyph("3PetBotOfWell",
-		g_vm->_strings[GO_TO_BOTTOM_OF_WELL], 10) {
+                                                                    g_vm->_strings[GO_TO_BOTTOM_OF_WELL], 10) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoTopOfWellGlyph::CGotoTopOfWellGlyph() : CRemoteGotoGlyph("3PetTopOfWell",
-		g_vm->_strings[GO_TO_TOP_OF_WELL], 32) {
+                                                              g_vm->_strings[GO_TO_TOP_OF_WELL], 32) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoStateroomGlyph::CGotoStateroomGlyph() : CRemoteGotoGlyph("3PetRoom",
-		g_vm->_strings[GO_TO_STATEROOM], 33) {
+                                                              g_vm->_strings[GO_TO_STATEROOM], 33) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoBarGlyph::CGotoBarGlyph() : CRemoteGotoGlyph("3PetBar",
-		g_vm->_strings[GO_TO_BAR], 7) {
+                                                  g_vm->_strings[GO_TO_BAR], 7) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoPromenadeDeckGlyph::CGotoPromenadeDeckGlyph() : CRemoteGotoGlyph("3PetPromDeck",
-		g_vm->_strings[GO_TO_PROMENADE_DECK], 23) {
+                                                                      g_vm->_strings[GO_TO_PROMENADE_DECK], 23) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoArboretumGlyph::CGotoArboretumGlyph() : CRemoteGotoGlyph("3PetArboretum",
-		g_vm->_strings[GO_TO_ARBORETUM], 5) {
+                                                              g_vm->_strings[GO_TO_ARBORETUM], 5) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoMusicRoomGlyph::CGotoMusicRoomGlyph() : CRemoteGotoGlyph("3PetMusicRoom",
-		g_vm->_strings[GO_TO_MUSIC_ROOM], 20) {
+                                                              g_vm->_strings[GO_TO_MUSIC_ROOM], 20) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoRestaurantGlyph::CGotoRestaurantGlyph() : CRemoteGotoGlyph("3Pet1stClassRest",
-		g_vm->_strings[GO_TO_1ST_CLASS_RESTAURANT], 1) {
+                                                                g_vm->_strings[GO_TO_1ST_CLASS_RESTAURANT], 1) {
 }
 
 /*------------------------------------------------------------------------*/

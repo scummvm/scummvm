@@ -20,28 +20,28 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/map/maploader.h"
-#include "ultima/ultima4/map/city.h"
+#include "common/system.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
-#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/filesys/filesystem.h"
-#include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/map/maploader.h"
-#include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/map/tilemap.h"
-#include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
-#include "common/system.h"
+#include "ultima/ultima4/map/city.h"
+#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/map/map.h"
+#include "ultima/ultima4/map/maploader.h"
+#include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/map/tilemap.h"
+#include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -161,7 +161,7 @@ bool CityMapLoader::load(Map *map) {
 		people[i]->setPrevTile(map->translateFromRawTileIndex(u4fgetc(ult)));
 
 	for (i = 0; i < CITY_MAX_PERSONS * 2; i++)
-		u4fgetc(ult);           // Read redundant startx/starty
+		u4fgetc(ult); // Read redundant startx/starty
 
 	for (i = 0; i < CITY_MAX_PERSONS; i++) {
 		byte c = u4fgetc(ult);

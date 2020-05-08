@@ -20,78 +20,69 @@
  *
  */
 
+#include "xeen/combat.h"
 #include "common/algorithm.h"
 #include "common/rect.h"
 #include "xeen/character.h"
-#include "xeen/combat.h"
 #include "xeen/interface.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
 static const int MONSTER_GRID_X[48] = {
-	1, 1, 1, 0, -1, -1, -1, 1, 1, 1, 0, -1,
-	-1, -1, 1, 1, 1, 0, -1, -1, -1, 1, 1, 1,
-	0, -1, -1, -1, 1, 1, 1, 0, -1, -1, -1, 1,
-	1, 1, 0, -1, -1, -1, 1, 1, 1, 0, -1, -1
-};
+    1, 1, 1, 0, -1, -1, -1, 1, 1, 1, 0, -1,
+    -1, -1, 1, 1, 1, 0, -1, -1, -1, 1, 1, 1,
+    0, -1, -1, -1, 1, 1, 1, 0, -1, -1, -1, 1,
+    1, 1, 0, -1, -1, -1, 1, 1, 1, 0, -1, -1};
 
 static const int MONSTER_GRID_Y[48] = {
-	0, 0, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0,
-	0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
-	0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0
-};
+    0, 0, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0,
+    0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0};
 
 static const int MONSTER_GRID3[48] = {
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	- 1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1,
-	0, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1,
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-};
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1,
+    0, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 static const int MONSTER_GRID_BITINDEX1[48] = {
-	1, 1, 1, 2, 3, 3, 3, 1, 1, 1, 2, 3,
-	3, 3, 1, 1, 1, 2, 3, 3, 3, 1, 1, 1,
-	0, 3, 3, 3, 1, 1, 1, 0, 3, 3, 3, 1,
-	1, 1, 0, 3, 3, 3, 1, 1, 1, 0, 3, 3
-};
+    1, 1, 1, 2, 3, 3, 3, 1, 1, 1, 2, 3,
+    3, 3, 1, 1, 1, 2, 3, 3, 3, 1, 1, 1,
+    0, 3, 3, 3, 1, 1, 1, 0, 3, 3, 3, 1,
+    1, 1, 0, 3, 3, 3, 1, 1, 1, 0, 3, 3};
 
 static const int MONSTER_GRID_BITINDEX2[48] = {
-	2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1,
-	0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1,
+    0, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 static const int ATTACK_TYPE_FX[23] = {
-	49, 18, 13, 14, 15, 17, 16, 0, 6, 1, 2, 3,
-	4, 5, 4, 9, 27, 29, 44, 51, 53, 61, 71
-};
+    49, 18, 13, 14, 15, 17, 16, 0, 6, 1, 2, 3,
+    4, 5, 4, 9, 27, 29, 44, 51, 53, 61, 71};
 
-static const PowType MONSTER_SHOOT_POW[7] = { 
-	POW_MAGIC_ARROW, POW_SPARKLES, POW_FIREBALL,
-	POW_MEGAVOLTS, POW_COLD_RAY, POW_SPRAY, POW_ENERGY_BLAST
-};
+static const PowType MONSTER_SHOOT_POW[7] = {
+    POW_MAGIC_ARROW, POW_SPARKLES, POW_FIREBALL,
+    POW_MEGAVOLTS, POW_COLD_RAY, POW_SPRAY, POW_ENERGY_BLAST};
 
-static const int COMBAT_SHOOTING[4] = { 1, 1, 2, 3 };
+static const int COMBAT_SHOOTING[4] = {1, 1, 2, 3};
 
 static const int DAMAGE_TYPE_EFFECTS[19] = {
-	3, 10, 4, 11, 1, 2, 5, 9, 5, 14, 5, 14, 10, 8, 3, 9, 2, 2, 3
-};
+    3, 10, 4, 11, 1, 2, 5, 9, 5, 14, 5, 14, 10, 8, 3, 9, 2, 2, 3};
 
 static const int POW_WEAPON_VOCS[35] = {
-	0, 5, 4, 5, 5, 5, 5, 2, 4, 5, 3, 5, 4, 2, 3, 2, 2, 4, 5, 5,
-	5, 5, 5, 1, 3, 2, 5, 1, 1, 1, 0, 0, 0, 2, 2
-};
+    0, 5, 4, 5, 5, 5, 5, 2, 4, 5, 3, 5, 4, 2, 3, 2, 2, 4, 5, 5,
+    5, 5, 5, 1, 3, 2, 5, 1, 1, 1, 0, 0, 0, 2, 2};
 
-static const int MONSTER_ITEM_RANGES[6] = { 10, 20, 50, 100, 100, 100 };
+static const int MONSTER_ITEM_RANGES[6] = {10, 20, 50, 100, 100, 100};
 
 #define monsterSavingThrow(MONINDEX) (_vm->getRandomNumber(1, 50 + (MONINDEX)) <= (MONINDEX))
 
 /*------------------------------------------------------------------------*/
 
-Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
+Combat::Combat(XeenEngine *vm) : _vm(vm), _missVoc("miss.voc") {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[26], 0);
 	Common::fill(&_shootingRow[0], &_shootingRow[MAX_PARTY_COUNT], 0);
 	Common::fill(&_monsterMap[0][0], &_monsterMap[32][32], 0);
@@ -173,7 +164,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	for (;;) {
 		for (; charIndex < (_combatTarget ? endIndex : (int)party._activeParty.size()); ++charIndex) {
 			Character &c = party._activeParty[charIndex];
-			c._conditions[ASLEEP] = 0;	// Force attacked character to be awake
+			c._conditions[ASLEEP] = 0; // Force attacked character to be awake
 
 			int frame = 0, fx = 0;
 			switch (attackType) {
@@ -281,7 +272,6 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 	int damage = 0;
 	for (int idx = 0; idx < monsterData._strikes; ++idx)
 		damage += _vm->getRandomNumber(1, monsterData._dmgPerStrike);
-
 
 	int fx = 29, frame = 0;
 	if (monsterData._attackType != DT_PHYSICAL) {
@@ -481,13 +471,10 @@ void Combat::moveMonsters() {
 
 					if (pt == monster._position) {
 						_dangerPresent = true;
-						if ((monster._isAttacking || _vm->_mode == MODE_SLEEPING)
-								&& !_monsterMoved[idx]) {
+						if ((monster._isAttacking || _vm->_mode == MODE_SLEEPING) && !_monsterMoved[idx]) {
 							if (party._mazePosition.x == pt.x || party._mazePosition.y == pt.y) {
 								// Check for range attacks
-								if (monsterData._rangeAttack && !_rangeAttacking[idx]
-									&& _attackMonsters[0] != idx && _attackMonsters[1] != idx
-									&& _attackMonsters[2] != idx && monster._damageType == DT_PHYSICAL) {
+								if (monsterData._rangeAttack && !_rangeAttacking[idx] && _attackMonsters[0] != idx && _attackMonsters[1] != idx && _attackMonsters[2] != idx && monster._damageType == DT_PHYSICAL) {
 									// Setup monster for attacking
 									setupMonsterAttack(monster._spriteId, pt);
 									_rangeAttacking[idx] = true;
@@ -498,14 +485,14 @@ void Combat::moveMonsters() {
 							case DIR_NORTH:
 							case DIR_SOUTH:
 								if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
-										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
+								                   MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
 									// Move the monster
 									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 								} else {
 									if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
-										arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
-										arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
-										idx)) {
+									                   arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
+									                   arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
+									                   idx)) {
 										if (arrIndex >= 21 && arrIndex <= 27) {
 											moveMonster(idx, Common::Point(MONSTER_GRID3[arrIndex], 0));
 										} else {
@@ -518,16 +505,16 @@ void Combat::moveMonsters() {
 							case DIR_EAST:
 							case DIR_WEST:
 								if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
-									arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
-									arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
-									idx)) {
+								                   arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
+								                   arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
+								                   idx)) {
 									if (arrIndex >= 21 && arrIndex <= 27) {
 										moveMonster(idx, Common::Point(MONSTER_GRID3[arrIndex], 0));
 									} else {
 										moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
 									}
 								} else if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
-										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
+								                          MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
 									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 								}
 
@@ -930,10 +917,9 @@ void Combat::doMonsterTurn(int monsterId, int charNum) {
 				// Critical failure
 				doCharDamage(c, charNum, monsterId);
 			v += monsterData._hitChance / 4 + _vm->getRandomNumber(1,
-				monsterData._hitChance);
+			                                                       monsterData._hitChance);
 
-			int ac = c.getArmorClass() + (!_charsBlocked[charNum] ? 10 :
-				c.getCurrentLevel() / 2 + 15);
+			int ac = c.getArmorClass() + (!_charsBlocked[charNum] ? 10 : c.getCurrentLevel() / 2 + 15);
 			if (ac > v) {
 				sound.playFX(6);
 			} else {
@@ -1114,9 +1100,7 @@ void Combat::setSpeedTable() {
 }
 
 bool Combat::allHaveGone() const {
-	int monsCount = (_attackMonsters[0] != -1 ? 1 : 0)
-		+ (_attackMonsters[1] != -1 ? 1 : 0)
-		+ (_attackMonsters[2] != -1 ? 1 : 0);
+	int monsCount = (_attackMonsters[0] != -1 ? 1 : 0) + (_attackMonsters[1] != -1 ? 1 : 0) + (_attackMonsters[2] != -1 ? 1 : 0);
 
 	for (uint idx = 0; idx < (_combatParty.size() + monsCount); ++idx) {
 		if (!_charsGone[idx]) {
@@ -1156,7 +1140,7 @@ Common::String Combat::getMonsterDescriptions() {
 			Common::String format = "\n\v020\f%2u%s\fd";
 			format.setChar('2' + idx, 3);
 			lines[idx] = Common::String::format(format.c_str(), textColor,
-				monsterData._name.c_str());
+			                                    monsterData._name.c_str());
 		}
 	}
 
@@ -1170,7 +1154,7 @@ Common::String Combat::getMonsterDescriptions() {
 	}
 
 	return Common::String::format(Res.COMBAT_DETAILS, lines[0].c_str(),
-		lines[1].c_str(), lines[2].c_str());
+	                              lines[1].c_str(), lines[2].c_str());
 }
 
 void Combat::attack(Character &c, RangeType rangeType) {
@@ -1189,7 +1173,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 	if (rangeType != RT_SINGLE) {
 		if (_shootType != ST_1 || _damageType == DT_MAGIC_ARROW) {
 			if (!monsterData._magicResistence || monsterData._magicResistence <=
-					_vm->getRandomNumber(1, 100 + _oldCharacter->getCurrentLevel())) {
+			                                         _vm->getRandomNumber(1, 100 + _oldCharacter->getCurrentLevel())) {
 				if (_monsterDamage != 0) {
 					attack2(damage, rangeType);
 				} else {
@@ -1201,8 +1185,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 						}
 						break;
 					case DT_FINGEROFDEATH:
-						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
-							&& !monsterSavingThrow(monsterDataIndex)) {
+						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID) && !monsterSavingThrow(monsterDataIndex)) {
 							damage = MIN(monster._hp, 50);
 							attack2(damage, RT_ALL);
 						}
@@ -1223,8 +1206,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 						attack2(damage, rangeType);
 						break;
 					case DT_BEASTMASTER:
-						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
-							&& !monsterSavingThrow(monsterDataIndex)) {
+						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID) && !monsterSavingThrow(monsterDataIndex)) {
 							monster._damageType = DT_BEASTMASTER;
 						}
 						break;
@@ -1238,8 +1220,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 						}
 						break;
 					case DT_HYPNOTIZE:
-						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
-							&& !monsterSavingThrow(monsterDataIndex)) {
+						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID) && !monsterSavingThrow(monsterDataIndex)) {
 							monster._damageType = _damageType;
 						}
 						break;
@@ -1341,7 +1322,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 					if (monsterData._monsterType == MONSTER_DRAGON)
 						damage *= 3;
 					break;
-				case EFFECTIVE_UNDEAD	:
+				case EFFECTIVE_UNDEAD:
 					if (monsterData._monsterType == MONSTER_UNDEAD)
 						damage *= 3;
 					break;
@@ -1619,7 +1600,7 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 	int divisor = 0;
 
 	switch (c._class) {
-	case CLASS_PALADIN :
+	case CLASS_PALADIN:
 	case CLASS_ARCHER:
 	case CLASS_ROBBER:
 	case CLASS_NINJA:
@@ -1791,8 +1772,7 @@ void Combat::giveExperience(int experience) {
 	// Two loops: first to figure out how many active characters there are,
 	// and the second to distribute the experience between them
 	for (int loopNum = 0; loopNum < 2; ++loopNum) {
-		for (uint charIndex = 0; charIndex < (inCombat ? _combatParty.size() :
-				party._activeParty.size()); ++charIndex) {
+		for (uint charIndex = 0; charIndex < (inCombat ? _combatParty.size() : party._activeParty.size()); ++charIndex) {
 			Character &c = inCombat ? *_combatParty[charIndex] : party._activeParty[charIndex];
 			Condition condition = c.worstCondition();
 

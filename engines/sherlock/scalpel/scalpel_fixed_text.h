@@ -180,7 +180,7 @@ enum FixedTextId {
 
 struct FixedTextActionEntry {
 	const char *const *fixedTextArray;
-	int   fixedTextArrayCount;
+	int fixedTextArrayCount;
 };
 
 struct FixedTextLanguageEntry {
@@ -189,9 +189,10 @@ struct FixedTextLanguageEntry {
 	const FixedTextActionEntry *actionArray;
 };
 
-class ScalpelFixedText: public FixedText {
+class ScalpelFixedText : public FixedText {
 private:
 	const FixedTextLanguageEntry *_curLanguageEntry;
+
 public:
 	ScalpelFixedText(SherlockEngine *vm);
 	~ScalpelFixedText() override {}

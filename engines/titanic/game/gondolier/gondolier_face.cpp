@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGondolierFace, CGondolierBase)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
 void CGondolierFace::save(SimpleFile *file, int indent) {

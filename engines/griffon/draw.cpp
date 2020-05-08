@@ -42,49 +42,43 @@ namespace Griffon {
 
 // map in inventory menu
 const int invmap[4][7][13] = {
-	// map 0
-	{
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 43, 44, 45, 46, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	},
-	// map 1
-	{
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 19, 20, 21, 22, 0, 0, 0, 27, 0, 0, 0},
-		{0, 0, 16, 17, 18, 0, 0, 0, 29, 30, 31, 0, 0},
-		{0, 0, 12, 0, 13, 14, 0, 32, 33, 34, 35, 36, 0},
-		{0, 8, 7, 6, 9, 10, 0, 37, 38, 39, 40, 41, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	},
-	// map 2
-	{
-		{0, 0, 0, 0, 0, 0, 67, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 63, 64, 65, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 58, 59, 60, 61, 62, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 55, 56, 57, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 50, 51, 52, 53, 54, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 48, 47, 49, 0, 0, 0, 0, 0}
-	},
+    // map 0
+    {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 43, 44, 45, 46, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+    // map 1
+    {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 19, 20, 21, 22, 0, 0, 0, 27, 0, 0, 0},
+        {0, 0, 16, 17, 18, 0, 0, 0, 29, 30, 31, 0, 0},
+        {0, 0, 12, 0, 13, 14, 0, 32, 33, 34, 35, 36, 0},
+        {0, 8, 7, 6, 9, 10, 0, 37, 38, 39, 40, 41, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+    // map 2
+    {
+        {0, 0, 0, 0, 0, 0, 67, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 63, 64, 65, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 58, 59, 60, 61, 62, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 55, 56, 57, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 50, 51, 52, 53, 54, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 48, 47, 49, 0, 0, 0, 0, 0}},
 
-	// map 3
-	{
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 79, 80, 81, 0, 74, 72, 0, 0, 0, 0},
-		{0, 0, 0, 78, 0, 0, 0, 73, 70, 69, 68, 0, 0},
-		{0, 0, 77, 76, 75, 0, 0, 0, 71, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-	}
-};
-
+    // map 3
+    {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 79, 80, 81, 0, 74, 72, 0, 0, 0, 0},
+        {0, 0, 0, 78, 0, 0, 0, 73, 70, 69, 68, 0, 0},
+        {0, 0, 77, 76, 75, 0, 0, 0, 71, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}};
 
 void game_fillrect(Graphics::TransparentSurface *surface, int x, int y, int w, int h, int color) {
 	surface->fillRect(Common::Rect(x, y, x + w, y + h), color);
@@ -492,7 +486,6 @@ void GriffonEngine::drawNPCs(int mode) {
 
 						_animsAttack[sprite]->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
-
 				}
 
 				// onewing
@@ -509,7 +502,6 @@ void GriffonEngine::drawNPCs(int mode) {
 
 						_anims[2]->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
-
 				}
 
 				// twowing
@@ -530,9 +522,7 @@ void GriffonEngine::drawNPCs(int mode) {
 
 						_anims[9]->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
-
 				}
-
 
 				//  boss 1
 				if (_npcInfo[i].spriteset == kMonsterBoss1) {
@@ -551,7 +541,6 @@ void GriffonEngine::drawNPCs(int mode) {
 					rcDest.top = npy - 24;
 
 					_anims[3]->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
-
 				}
 
 				// black knight
@@ -571,7 +560,6 @@ void GriffonEngine::drawNPCs(int mode) {
 
 					_anims[4]->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				}
-
 
 				// firehydra
 				if (_npcInfo[i].spriteset == kMonsterFireHydra) {
@@ -616,9 +604,7 @@ void GriffonEngine::drawNPCs(int mode) {
 							_spellImg->setAlpha(192, true);
 							_anims[5]->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 						}
-
 					}
-
 				}
 
 				// red dragon
@@ -689,7 +675,6 @@ void GriffonEngine::drawNPCs(int mode) {
 					_anims[sprite]->blit(*_videoBuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				}
 
-
 				// dragon2
 				if (_npcInfo[i].spriteset == kMonsterDragon2) {
 					if (!_npcInfo[i].attacking) {
@@ -755,7 +740,6 @@ void GriffonEngine::drawNPCs(int mode) {
 					while (_npcInfo[i].floating >= 16)
 						_npcInfo[i].floating = _npcInfo[i].floating - 16;
 
-
 					float frame = _npcInfo[i].frame2;
 
 					frame += 0.5 * _fpsr;
@@ -814,9 +798,7 @@ void GriffonEngine::drawNPCs(int mode) {
 										setChannelVolume(snd, config.effectsVol);
 									}
 								}
-
 							}
-
 
 							rcDest.left = (float)(sx + 36 - ii * 8 + ii * cos(3.14159 * 2 * (fr3 - ii) / 16) * 2);
 							rcDest.top = (float)(sy + 16 + ii * sin(3.14159 * 2 * (fr3 - ii) / 16) * 3 - ii); //  * 4
@@ -922,13 +904,11 @@ void GriffonEngine::drawNPCs(int mode) {
 				rcDest.left = npx + 5;
 				rcDest.top = npy + 23;
 
-
 				int ww = 14 * _npcInfo[i].hp / _npcInfo[i].maxhp;
 				ww = CLIP(ww, 1, 14);
 
 				rcDest.setWidth(ww);
 				rcDest.setHeight(2);
-
 
 				_videoBuffer->fillRect(rcDest, ccc);
 
@@ -1205,9 +1185,7 @@ void GriffonEngine::swash() {
 
 	} while (y <= 10);
 
-
 	_videoBuffer->setAlpha(255);
 }
-
 
 } // end of namespace Griffon

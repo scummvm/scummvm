@@ -22,10 +22,10 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
 #include "fullpipe/behavior.h"
-#include "fullpipe/statics.h"
 #include "fullpipe/messages.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -114,7 +114,6 @@ void BehaviorManager::updateBehaviors() {
 					beh._subIndex = j;
 					break;
 				}
-
 		}
 	}
 }

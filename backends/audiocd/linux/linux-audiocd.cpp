@@ -53,17 +53,17 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "common/array.h"
 #include "common/config-manager.h"
-#include "common/str.h"
 #include "common/debug.h"
+#include "common/str.h"
 
 #include <errno.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <linux/cdrom.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/sysmacros.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 enum {
 	kLeadoutTrack = 0xAA
@@ -122,8 +122,7 @@ private:
 	const cdrom_tocentry &_startEntry, &_endEntry;
 };
 
-LinuxAudioCDStream::LinuxAudioCDStream(int fd, const cdrom_tocentry &startEntry, const cdrom_tocentry &endEntry) :
-	_fd(fd), _startEntry(startEntry), _endEntry(endEntry) {
+LinuxAudioCDStream::LinuxAudioCDStream(int fd, const cdrom_tocentry &startEntry, const cdrom_tocentry &endEntry) : _fd(fd), _startEntry(startEntry), _endEntry(endEntry) {
 	// We fill the buffer here already to prevent any out of sync issues due
 	// to the CD not yet having spun up.
 	startTimer(true);
@@ -172,7 +171,6 @@ uint LinuxAudioCDStream::getEndFrame() const {
 	return getFrameCount(_endEntry.cdte_addr.msf);
 }
 
-
 class LinuxAudioCDManager : public DefaultAudioCDManager {
 public:
 	LinuxAudioCDManager();
@@ -181,7 +179,7 @@ public:
 	bool open() override;
 	void close() override;
 	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-			Audio::Mixer::SoundType soundType) override;
+	          Audio::Mixer::SoundType soundType) override;
 
 protected:
 	bool openCD(int drive) override;
@@ -287,7 +285,7 @@ bool LinuxAudioCDManager::openCD(const Common::String &drive) {
 }
 
 bool LinuxAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-		Audio::Mixer::SoundType soundType) {
+                               Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
 	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;

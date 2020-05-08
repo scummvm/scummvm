@@ -19,12 +19,12 @@
 
 #include "internals.h"
 
-#include "TVP.h"
 #include "Part.h"
 #include "Partial.h"
 #include "Poly.h"
 #include "Synth.h"
 #include "TVA.h"
+#include "TVP.h"
 
 namespace MT32Emu {
 
@@ -40,16 +40,15 @@ static Bit16s pitchKeyfollowMult[] = {-8192, -4096, -2048, 0, 1024, 2048, 3072, 
 // Note: Keys < 60 use keyToPitchTable[60 - key], keys >= 60 use keyToPitchTable[key - 60].
 // FIXME: This table could really be shorter, since we never use e.g. key 127.
 static Bit16u keyToPitchTable[] = {
-	    0,   341,   683,  1024,  1365,  1707,  2048,  2389,
-	 2731,  3072,  3413,  3755,  4096,  4437,  4779,  5120,
-	 5461,  5803,  6144,  6485,  6827,  7168,  7509,  7851,
-	 8192,  8533,  8875,  9216,  9557,  9899, 10240, 10581,
-	10923, 11264, 11605, 11947, 12288, 12629, 12971, 13312,
-	13653, 13995, 14336, 14677, 15019, 15360, 15701, 16043,
-	16384, 16725, 17067, 17408, 17749, 18091, 18432, 18773,
-	19115, 19456, 19797, 20139, 20480, 20821, 21163, 21504,
-	21845, 22187, 22528, 22869
-};
+    0, 341, 683, 1024, 1365, 1707, 2048, 2389,
+    2731, 3072, 3413, 3755, 4096, 4437, 4779, 5120,
+    5461, 5803, 6144, 6485, 6827, 7168, 7509, 7851,
+    8192, 8533, 8875, 9216, 9557, 9899, 10240, 10581,
+    10923, 11264, 11605, 11947, 12288, 12629, 12971, 13312,
+    13653, 13995, 14336, 14677, 15019, 15360, 15701, 16043,
+    16384, 16725, 17067, 17408, 17749, 18091, 18432, 18773,
+    19115, 19456, 19797, 20139, 20480, 20821, 21163, 21504,
+    21845, 22187, 22528, 22869};
 
 // We want to do processing 4000 times per second. FIXME: This is pretty arbitrary.
 static const int NOMINAL_PROCESS_TIMER_PERIOD_SAMPLES = SAMPLE_RATE / 4000;
@@ -58,8 +57,7 @@ static const int NOMINAL_PROCESS_TIMER_PERIOD_SAMPLES = SAMPLE_RATE / 4000;
 // We multiply by 8 to get rid of the fraction and deal with just integers.
 static const int PROCESS_TIMER_INCREMENT_x8 = 8 * 500000 / SAMPLE_RATE;
 
-TVP::TVP(const Partial *usePartial) :
-	partial(usePartial), system(&usePartial->getSynth()->mt32ram.system) {
+TVP::TVP(const Partial *usePartial) : partial(usePartial), system(&usePartial->getSynth()->mt32ram.system) {
 }
 
 static Bit16s keyToPitch(unsigned int key) {
@@ -208,8 +206,7 @@ void TVP::targetPitchOffsetReached() {
 
 	switch (phase) {
 	case 3:
-	case 4:
-	{
+	case 4: {
 		int newLFOPitchOffset = (part->getModulation() * partialParam->pitchLFO.modSensitivity) >> 7;
 		newLFOPitchOffset = (newLFOPitchOffset + partialParam->pitchLFO.depth) << 1;
 		if (pitchOffsetChangePerBigTick > 0) {
@@ -270,9 +267,9 @@ void TVP::setupPitchChange(int targetPitchOffset, Bit8u changeDuration) {
 	// We want to maximise the number of bits of the Bit16s "pitchOffsetChangePerBigTick" we use in order to get the best possible precision later
 	Bit32u absPitchOffsetDelta = pitchOffsetDelta << 16;
 	Bit8u normalisationShifts = normalise(absPitchOffsetDelta); // FIXME: Double-check: normalisationShifts is usually between 0 and 15 here, unless the delta is 0, in which case it's 31
-	absPitchOffsetDelta = absPitchOffsetDelta >> 1; // Make room for the sign bit
+	absPitchOffsetDelta = absPitchOffsetDelta >> 1;             // Make room for the sign bit
 
-	changeDuration--; // changeDuration's now between 0 and 111
+	changeDuration--;                                 // changeDuration's now between 0 and 111
 	unsigned int upperDuration = changeDuration >> 3; // upperDuration's now between 0 and 13
 	shifts = normalisationShifts + upperDuration + 2;
 	Bit16u divisor = lowerDurationToDivisor[changeDuration & 7];

@@ -20,9 +20,9 @@
  *
  */
 
+#include "mads/rails.h"
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/rails.h"
 
 namespace MADS {
 
@@ -62,7 +62,6 @@ void Rails::load(const WalkNodeList &nodes, DepthSurface *depthSurface, int dept
 	_nodes.push_back(WalkNode());
 	_nodes.push_back(WalkNode());
 }
-
 
 void Rails::setupRoute(bool bitFlag, const Common::Point &srcPos, const Common::Point &destPos) {
 	// Reset the nodes in as being inactive
@@ -122,7 +121,6 @@ void Rails::setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int route
 
 	currentNode._active = false;
 }
-
 
 int Rails::scanPath(const Common::Point &srcPos, const Common::Point &destPos) {
 	// For compressed depth surfaces, always return 0

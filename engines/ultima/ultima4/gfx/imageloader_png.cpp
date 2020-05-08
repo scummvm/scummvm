@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/ultima4/gfx/image.h"
-#include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_png.h"
 #include "common/memstream.h"
 #include "image/png.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/imageloader.h"
 
 namespace Ultima {
 namespace Ultima4 {

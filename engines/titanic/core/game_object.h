@@ -26,45 +26,54 @@
 #include "audio/mixer.h"
 #include "common/stream.h"
 #include "titanic/core/named_item.h"
+#include "titanic/game_state.h"
+#include "titanic/gfx/text_control.h"
+#include "titanic/pet_control/pet_section.h"
 #include "titanic/sound/proximity.h"
 #include "titanic/sound/sound_manager.h"
-#include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
+#include "titanic/support/mouse_cursor.h"
+#include "titanic/support/movie_clip.h"
 #include "titanic/support/movie_range_info.h"
 #include "titanic/support/rect.h"
 #include "titanic/support/strings.h"
-#include "titanic/support/movie_clip.h"
-#include "titanic/pet_control/pet_section.h"
-#include "titanic/gfx/text_control.h"
-#include "titanic/game_state.h"
 
 namespace Titanic {
 
-enum Find { FIND_GLOBAL = 1, FIND_ROOM = 2, FIND_PET = 4, FIND_MAILMAN = 8 };
-enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FOUND_MAILMAN = 4 };
-enum RoomFlagsComparison { RFC_LOCATION = 1, RFC_CLASS_ELEVATOR = 2, RFC_TITANIA = 3 };
+enum Find { FIND_GLOBAL = 1,
+	        FIND_ROOM = 2,
+	        FIND_PET = 4,
+	        FIND_MAILMAN = 8 };
+enum Found { FOUND_NONE = 0,
+	         FOUND_GLOBAL = 1,
+	         FOUND_ROOM = 2,
+	         FOUND_PET = 3,
+	         FOUND_MAILMAN = 4 };
+enum RoomFlagsComparison { RFC_LOCATION = 1,
+	                       RFC_CLASS_ELEVATOR = 2,
+	                       RFC_TITANIA = 3 };
 
 enum StarControlAction {
-	STAR_SHOW = 0,			///< Show the starfield
-	STAR_HIDE,				///< Hide the starfield
-	STAR_VIEW_EARTH,		///< View the solar system
-	STAR_VIEW_FROM_EARTH,	///< View from the solar system
-	STAR_VIEW_BOUNDARIES,		///< Turn on constellation boundaries
-	STAR_VIEW_CONSTELLATIONS,	///< Turn on the constellation lines
-	STAR_VIEW_RANDOM_STAR,		///< Look at a random star
-	STAR_FULL_SPEED,			///< Accellerate to full speed
-	STAR_TOGGLE_STEREO_PAIR,	///< Enable stero pair vision	
-	STAR_TOGGLE_HOME_PHOTO,		///< Turn on/off the home photo
-	STAR_TOGGLE_SOLAR_RENDERING,///< Turn on/off the solar object rendering
-	STAR_TOGGLE_POS_FRAME,		///< Turn on/off the pilot's position frame
-	STAR_STEREO_PAIR_ON,		///< Turn on Stereo Pair imaging
-	STAR_STEREO_PAIR_OFF,		///< Turn off Stero Pair imaging
-	STAR_SET_REFERENCE,			///< Take a photo of the current star line
-	STAR_FADE_IN,				///< Fade in
-	STAR_FADE_OUT,				///< Fade out
-	LOCK_STAR,					///< Lock in the currently selected sar
-	UNLOCK_STAR,				///< Unlock the last locked star
-	STAR_CLEAR_MODIFIED			///< Clear the modified flag
+	STAR_SHOW = 0,               ///< Show the starfield
+	STAR_HIDE,                   ///< Hide the starfield
+	STAR_VIEW_EARTH,             ///< View the solar system
+	STAR_VIEW_FROM_EARTH,        ///< View from the solar system
+	STAR_VIEW_BOUNDARIES,        ///< Turn on constellation boundaries
+	STAR_VIEW_CONSTELLATIONS,    ///< Turn on the constellation lines
+	STAR_VIEW_RANDOM_STAR,       ///< Look at a random star
+	STAR_FULL_SPEED,             ///< Accellerate to full speed
+	STAR_TOGGLE_STEREO_PAIR,     ///< Enable stero pair vision
+	STAR_TOGGLE_HOME_PHOTO,      ///< Turn on/off the home photo
+	STAR_TOGGLE_SOLAR_RENDERING, ///< Turn on/off the solar object rendering
+	STAR_TOGGLE_POS_FRAME,       ///< Turn on/off the pilot's position frame
+	STAR_STEREO_PAIR_ON,         ///< Turn on Stereo Pair imaging
+	STAR_STEREO_PAIR_OFF,        ///< Turn off Stero Pair imaging
+	STAR_SET_REFERENCE,          ///< Take a photo of the current star line
+	STAR_FADE_IN,                ///< Fade in
+	STAR_FADE_OUT,               ///< Fade out
+	LOCK_STAR,                   ///< Lock in the currently selected sar
+	UNLOCK_STAR,                 ///< Unlock the last locked star
+	STAR_CLEAR_MODIFIED          ///< Clear the modified flag
 };
 
 class CDontSaveFileItem;
@@ -80,8 +89,10 @@ class OSMovie;
 class CGameObject : public CNamedItem {
 	friend class OSMovie;
 	DECLARE_MESSAGE_MAP;
+
 private:
 	static int _soundHandles[4];
+
 private:
 	/**
 	 * Load a visual resource for the object
@@ -98,8 +109,10 @@ private:
 	 * a common intersection
 	 */
 	bool clipRect(const Rect &rect1, Rect &rect2) const;
+
 protected:
 	static CCreditText *_credits;
+
 protected:
 	double _unused1;
 	double _unused2;
@@ -117,6 +130,7 @@ protected:
 	CVideoSurface *_surface;
 	CString _resource;
 	int _unused4;
+
 protected:
 	/**
 	 * Saves the current position the object is located at
@@ -142,7 +156,7 @@ protected:
 	 * Parses a view into it's components of room, node, and view,
 	 * and locates the designated view
 	 */
-	CViewItem * parseView(const CString &viewString);
+	CViewItem *parseView(const CString &viewString);
 
 	/**
 	 * Loads a movie
@@ -249,7 +263,7 @@ protected:
 	 * @param repeated		If true, sound will repeat indefinitely
 	 */
 	int queueSound(const CString &name, uint priorHandle, uint volume = 100, int balance = 0,
-		bool repeated = false, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	               bool repeated = false, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 
 	/**
 	 * Stop a sound
@@ -281,7 +295,7 @@ protected:
 	 * @param soundType		Specifies whether the sound is a sound effect or music
 	 */
 	void playAmbientSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
-		int handleIndex, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
+	                      int handleIndex, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 
 	/**
 	 * Stops playing an ambient sound
@@ -547,6 +561,7 @@ protected:
 	 * Gets a new random number
 	 */
 	int getRandomNumber(int max, int *oldVal = nullptr);
+
 public:
 	Rect _bounds;
 	bool _isPendingMail;
@@ -555,6 +570,7 @@ public:
 	bool _handleMouseFlag;
 	CursorId _cursorId;
 	bool _visible;
+
 public:
 	/**
 	 * Initializes statics
@@ -565,6 +581,7 @@ public:
 	 * Deinitializes statics
 	 */
 	static void deinit();
+
 public:
 	CLASSDEF;
 	CGameObject();
@@ -1020,7 +1037,6 @@ public:
 	 * Start a conversation with the NPC
 	 */
 	void setTalking(CTrueTalkNPC *npc, bool viewFlag, CViewItem *view = nullptr);
-
 
 	/**
 	 * Sets a dial region for a given NPC

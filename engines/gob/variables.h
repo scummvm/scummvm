@@ -62,7 +62,6 @@ public:
 
 	void readOffString(uint32 offset, char *value, uint32 length);
 
-
 	const uint8 *getAddressVar8(uint32 var) const;
 	uint8 *getAddressVar8(uint32 var);
 
@@ -74,7 +73,6 @@ public:
 
 	const char *getAddressOffString(uint32 offset) const;
 	char *getAddressOffString(uint32 offset);
-
 
 	bool copyTo(uint32 offset, byte *variables, uint32 n) const;
 	bool copyFrom(uint32 offset, const byte *variables, uint32 n);
@@ -129,7 +127,7 @@ class VariableReference {
 public:
 	VariableReference();
 	VariableReference(Variables &vars, uint32 offset,
-			Variables::Type type = Variables::kVariableType32);
+	                  Variables::Type type = Variables::kVariableType32);
 	~VariableReference();
 
 	void set(Variables &vars, uint32 offset, Variables::Type type = Variables::kVariableType32);

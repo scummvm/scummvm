@@ -46,17 +46,17 @@ struct TalkDialogEntry {
 	bool hasText;
 };
 
-
 class Talk {
 public:
 	uint32 _dat_8008e7e8_dialogBox_x1;
 	uint32 _dat_8008e844_dialogBox_y1;
 	uint32 _dat_8008e848_dialogBox_x2;
 	uint32 _dat_8008e874_dialogBox_y2;
+
 private:
 	DragonsEngine *_vm;
 	BigfileArchive *_bigfileArchive;
-	Common::Array<TalkDialogEntry*> _dialogEntries;
+	Common::Array<TalkDialogEntry *> _dialogEntries;
 	uint32 _defaultResponseTbl[45];
 
 	uint8 _dat_800726ec_tfont_field0;
@@ -95,8 +95,8 @@ public:
 private:
 	void copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength);
 	uint32 wideStrLen(uint16 *text);
-	TalkDialogEntry *displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries);
-	void exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDialogEntry*> dialogEntries);
+	TalkDialogEntry *displayTalkDialogMenu(Common::Array<TalkDialogEntry *> dialogEntries);
+	void exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDialogEntry *> dialogEntries);
 	uint32 getDefaultResponseTextIndex();
 	void initDefaultResponseTable();
 	uint32 strlenUTF16(uint16 *text);

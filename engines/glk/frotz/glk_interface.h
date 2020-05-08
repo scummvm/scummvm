@@ -23,23 +23,23 @@
 #ifndef GLK_FROTZ_GLK_INTERFACE
 #define GLK_FROTZ_GLK_INTERFACE
 
-#include "glk/glk_api.h"
 #include "glk/frotz/mem.h"
 #include "glk/frotz/windows.h"
+#include "glk/glk_api.h"
 
 namespace Glk {
 namespace Frotz {
 
 #define zB(i) ((((i >> 10) & 0x1F) << 3) | (((i >> 10) & 0x1F) >> 2))
-#define zG(i) ((((i >>  5) & 0x1F) << 3) | (((i >>  5) & 0x1F) >> 2))
-#define zR(i) ((((i      ) & 0x1F) << 3) | (((i      ) & 0x1F) >> 2))
+#define zG(i) ((((i >> 5) & 0x1F) << 3) | (((i >> 5) & 0x1F) >> 2))
+#define zR(i) ((((i)&0x1F) << 3) | (((i)&0x1F) >> 2))
 #define zRGB(i) _screen->format.RGBToColor(zR(i), zG(i), zB(i))
-#define zcolor_NUMCOLORS    (13)
+#define zcolor_NUMCOLORS (13)
 
 enum SoundEffect {
-	EFFECT_PREPARE     = 1,
-	EFFECT_PLAY        = 2,
-	EFFECT_STOP        = 3,
+	EFFECT_PREPARE = 1,
+	EFFECT_PLAY = 2,
+	EFFECT_STOP = 3,
 	EFFECT_FINISH_WITH = 4
 };
 
@@ -58,6 +58,7 @@ class Pics;
 class GlkInterface : public GlkAPI, public virtual UserOptions, public virtual Mem {
 private:
 	bool _reverseVideo;
+
 public:
 	Pics *_pics;
 	zchar statusline[256];
@@ -92,6 +93,7 @@ public:
 
 	bool _soundLocked;
 	bool _soundPlaying;
+
 private:
 	/**
 	 * Loads the pictures file for Infocom V6 games
@@ -112,6 +114,7 @@ private:
 	 * Do a rounding division, rounding to even if fraction part is 1/2.
 	 */
 	uint roundDiv(uint x, uint y);
+
 protected:
 	/**
 	 * Return the length of the character in screen units.
@@ -237,6 +240,7 @@ protected:
 	 * Waits for the user to type an input line
 	 */
 	zchar os_read_line(int max, zchar *buf, int timeout, int width, int continued);
+
 public:
 	/**
 	 * Constructor

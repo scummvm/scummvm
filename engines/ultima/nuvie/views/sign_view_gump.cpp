@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/fonts/bmp_font.h"
-#include "ultima/nuvie/views/view_manager.h"
 #include "ultima/nuvie/views/sign_view_gump.h"
+#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/fonts/bmp_font.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -97,7 +97,6 @@ bool SignViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party *
 	return true;
 }
 
-
 void SignViewGump::Display(bool full_redraw) {
 	Common::Rect dst;
 	dst = area;
@@ -105,12 +104,11 @@ void SignViewGump::Display(bool full_redraw) {
 
 	DisplayChildren(full_redraw);
 
-//font->textOut(screen->get_sdl_surface(), area.left + 29, area.top + 6, "This is a test sign");
+	//font->textOut(screen->get_sdl_surface(), area.left + 29, area.top + 6, "This is a test sign");
 
 	font->drawString(screen, sign_text, strlen(sign_text), area.left + (area.width() - font->getStringWidth(sign_text)) / 2, area.top + (area.height() - 19) / 2, 0, 0);
 	update_display = false;
 	screen->update(area.left, area.top, area.width(), area.height());
-
 
 	return;
 }

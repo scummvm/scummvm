@@ -1,6 +1,6 @@
-#include <cxxtest/TestSuite.h>
-#include "common/util.h"
 #include "common/tokenizer.h"
+#include "common/util.h"
+#include <cxxtest/TestSuite.h>
 
 class TokenizerTestSuite : public CxxTest::TestSuite {
 public:
@@ -53,5 +53,4 @@ public:
 		strTokenizer.nextToken(); //test
 		TS_ASSERT(strTokenizer.empty());
 	}
-
 };

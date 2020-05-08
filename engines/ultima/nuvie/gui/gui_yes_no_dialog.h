@@ -35,7 +35,7 @@ class GUI_Button;
 // Callback message types
 
 #define YESNODIALOG_CB_YES 0x1
-#define YESNODIALOG_CB_NO  0x2
+#define YESNODIALOG_CB_NO 0x2
 
 class GUI_YesNoDialog : public GUI_Dialog {
 private:
@@ -46,7 +46,7 @@ private:
 
 public:
 	GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const char *msg,
-        CallBack *yesCallback, CallBack *noCallback);
+	                CallBack *yesCallback, CallBack *noCallback);
 	~GUI_YesNoDialog() override;
 
 	GUI_status KeyDown(const Common::KeyState &key) override;

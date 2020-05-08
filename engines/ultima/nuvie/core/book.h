@@ -35,7 +35,6 @@ class Book {
 	U6Lib_n *books;
 
 public:
-
 	Book(Configuration *cfg);
 	~Book();
 

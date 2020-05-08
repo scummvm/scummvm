@@ -23,9 +23,9 @@
 #ifndef NUVIE_CORE_CONVERSE_SPEECH_H
 #define NUVIE_CORE_CONVERSE_SPEECH_H
 
+#include "audio/mixer.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
-#include "audio/mixer.h"
 
 namespace Ultima {
 namespace Nuvie {

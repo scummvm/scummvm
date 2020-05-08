@@ -27,9 +27,8 @@
 
 #include "draci/draci.h"
 #include "draci/screen.h"
-#include "draci/surface.h"
 #include "draci/sprite.h"
-
+#include "draci/surface.h"
 
 namespace Draci {
 
@@ -113,7 +112,7 @@ void Screen::copyToScreen() {
 		byte *ptr = (byte *)_surface->getPixels();
 
 		_vm->_system->copyRectToScreen(ptr, kScreenWidth,
-			0, 0, kScreenWidth, kScreenHeight);
+		                               0, 0, kScreenWidth, kScreenHeight);
 	} else {
 		// Otherwise, update only the dirty rectangles
 
@@ -123,7 +122,7 @@ void Screen::copyToScreen() {
 			byte *ptr = (byte *)_surface->getBasePtr(it->left, it->top);
 
 			_vm->_system->copyRectToScreen(ptr, kScreenWidth,
-				it->left, it->top, it->width(), it->height());
+			                               it->left, it->top, it->width(), it->height());
 		}
 	}
 

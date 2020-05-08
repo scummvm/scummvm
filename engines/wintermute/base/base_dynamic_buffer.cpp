@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_engine.h"
 
 namespace Wintermute {
 
@@ -44,12 +44,10 @@ BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 g
 	_initialized = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseDynamicBuffer::~BaseDynamicBuffer() {
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::cleanup() {
@@ -63,12 +61,10 @@ void BaseDynamicBuffer::cleanup() {
 	_initialized = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseDynamicBuffer::getSize() const {
 	return _size;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseDynamicBuffer::init(uint32 initSize) {
@@ -89,7 +85,6 @@ bool BaseDynamicBuffer::init(uint32 initSize) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseDynamicBuffer::putBytes(const byte *buffer, uint32 size) {
@@ -113,7 +108,6 @@ bool BaseDynamicBuffer::putBytes(const byte *buffer, uint32 size) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseDynamicBuffer::getBytes(byte *buffer, uint32 size) {
 	if (!_initialized) {
@@ -131,12 +125,10 @@ bool BaseDynamicBuffer::getBytes(byte *buffer, uint32 size) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putDWORD(uint32 val) {
 	putBytes((byte *)&val, sizeof(uint32));
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseDynamicBuffer::getDWORD() {
@@ -144,7 +136,6 @@ uint32 BaseDynamicBuffer::getDWORD() {
 	getBytes((byte *)&ret, sizeof(uint32));
 	return ret;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putString(const char *val) {
@@ -155,7 +146,6 @@ void BaseDynamicBuffer::putString(const char *val) {
 		putBytes((const byte *)val, strlen(val) + 1);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 char *BaseDynamicBuffer::getString() {
@@ -170,7 +160,6 @@ char *BaseDynamicBuffer::getString() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putText(const char *fmt, ...) {
 	va_list va;
@@ -178,9 +167,7 @@ void BaseDynamicBuffer::putText(const char *fmt, ...) {
 	va_start(va, fmt);
 	putTextForm(fmt, va);
 	va_end(va);
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putTextIndent(int indent, const char *fmt, ...) {
@@ -192,7 +179,6 @@ void BaseDynamicBuffer::putTextIndent(int indent, const char *fmt, ...) {
 	putTextForm(fmt, va);
 	va_end(va);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseDynamicBuffer::putTextForm(const char *format, va_list argptr) {

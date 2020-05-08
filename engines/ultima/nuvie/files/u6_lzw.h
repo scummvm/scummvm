@@ -65,7 +65,6 @@ class U6LzwDict {
 	int contains;
 
 public:
-
 	U6LzwDict();
 
 	void reset(void);
@@ -79,7 +78,6 @@ class U6Lzw {
 	U6LzwDict *dict;
 	const char *errstr; // error string
 public:
-
 	U6Lzw(void);
 	~U6Lzw(void);
 
@@ -89,10 +87,10 @@ public:
 	unsigned char *compress_buffer(unsigned char *src, uint32 src_len,
 	                               uint32 &dest_len);
 	const char *strerror() {
-		return (const char *)errstr;    // get error string
+		return (const char *)errstr; // get error string
 	}
-protected:
 
+protected:
 	bool is_valid_lzw_file(NuvieIOFileRead *input_file);
 	bool is_valid_lzw_buffer(unsigned char *buf, uint32 length);
 

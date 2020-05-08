@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSeasonBarrel, CBackground)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 void CSeasonBarrel::save(SimpleFile *file, int indent) {

@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_GFX_IMAGEMGR_H
 #define ULTIMA4_GFX_IMAGEMGR_H
 
-#include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/core/observer.h"
+#include "ultima/ultima4/gfx/image.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -103,12 +103,12 @@ public:
 	int _width, _height, _depth;
 	int _prescale;
 	Common::String _filetype;
-	int _tiles;                  /**< used to scale the without bleeding colors between adjacent tiles */
-	bool _introOnly;             /**< whether can be freed after the intro */
-	int _transparentIndex;       /**< color index to consider transparent */
-	bool _xu4Graphic;            /**< an original xu4 graphic not part of u4dos or the VGA upgrade */
-	ImageFixup _fixup;           /**< a routine to do miscellaneous fixes to the image */
-	Image *_image;               /**< the image we're describing */
+	int _tiles;            /**< used to scale the without bleeding colors between adjacent tiles */
+	bool _introOnly;       /**< whether can be freed after the intro */
+	int _transparentIndex; /**< color index to consider transparent */
+	bool _xu4Graphic;      /**< an original xu4 graphic not part of u4dos or the VGA upgrade */
+	ImageFixup _fixup;     /**< a routine to do miscellaneous fixes to the image */
+	Image *_image;         /**< the image we're describing */
 	Std::map<Common::String, SubImage *> _subImages;
 
 	bool hasBlackBackground();

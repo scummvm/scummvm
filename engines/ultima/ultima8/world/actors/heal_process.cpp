@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/heal_process.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -85,13 +85,15 @@ void HealProcess::feedAvatar(uint16 food) {
 	if (food > _hungerCounter)
 		food = _hungerCounter;
 
-	if (food == 0) return;
+	if (food == 0)
+		return;
 
 	uint16 oldCounter = _hungerCounter;
 	_hungerCounter -= food;
 
 	uint16 hp = avatar->getHP() - (_hungerCounter / 4) + (oldCounter / 4);
-	if (hp > avatar->getMaxHP()) hp = avatar->getMaxHP();
+	if (hp > avatar->getMaxHP())
+		hp = avatar->getMaxHP();
 
 	avatar->setHP(hp);
 }
@@ -111,7 +113,6 @@ uint32 HealProcess::I_feedAvatar(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
-
 void HealProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
@@ -120,7 +121,8 @@ void HealProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool HealProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_healCounter = rs->readUint16LE();
 	_hungerCounter = rs->readUint16LE();

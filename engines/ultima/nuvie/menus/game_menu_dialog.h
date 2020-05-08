@@ -23,8 +23,8 @@
 #ifndef NUVIE_MENUS_GAME_MENU_DIALOG_H
 #define NUVIE_MENUS_GAME_MENU_DIALOG_H
 
-#include "ultima/nuvie/gui/gui_dialog.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/gui_dialog.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -41,7 +41,7 @@ protected:
 	sint8 b_index_num;
 	CallBack *callback_object;
 	GUI_Button *load_button, *save_button, *video_button, *audio_button, *input_button,
-		*gameplay_button, *cheats_button, *continue_button, *quit_button;
+	    *gameplay_button, *cheats_button, *continue_button, *quit_button;
 	GUI_Button *button_index[9]; // add to here when you add a button. Keep buttons in order by height
 public:
 	GameMenuDialog(CallBack *callback);

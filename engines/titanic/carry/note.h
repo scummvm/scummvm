@@ -31,9 +31,11 @@ namespace Titanic {
 class CNote : public CCarry {
 	DECLARE_MESSAGE_MAP;
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+
 private:
 	CString _string6;
 	int _field138;
+
 public:
 	CLASSDEF;
 	CNote();

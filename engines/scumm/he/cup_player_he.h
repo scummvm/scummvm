@@ -20,7 +20,6 @@
  *
  */
 
-
 #if !defined(SCUMM_HE_CUP_PLAYER_HE_H) && defined(ENABLE_HE)
 #define SCUMM_HE_CUP_PLAYER_HE_H
 
@@ -41,9 +40,8 @@ struct CUP_SfxChannel {
 
 class CUP_Player {
 public:
-
 	enum {
-		kSfxFlagLoop    = 1 << 0,
+		kSfxFlagLoop = 1 << 0,
 		kSfxFlagRestart = 1 << 1
 	};
 
@@ -77,7 +75,6 @@ public:
 	void handleTOIL(Common::SeekableReadStream &dataStream, uint32 dataSize);
 
 protected:
-
 	ScummEngine_vCUPhe *_vm;
 	Audio::Mixer *_mixer;
 	OSystem *_system;

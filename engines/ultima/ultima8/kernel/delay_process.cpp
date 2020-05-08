@@ -20,17 +20,15 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "ultima/shared/std/string.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(DelayProcess, Process)
-
-
 
 DelayProcess::DelayProcess(int count) : Process(), _count(count) {
 }
@@ -48,9 +46,9 @@ void DelayProcess::dumpInfo() const {
 	pout << "Frames left: " << _count << Std::endl;
 }
 
-
 bool DelayProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_count = static_cast<int>(rs->readUint32LE());
 

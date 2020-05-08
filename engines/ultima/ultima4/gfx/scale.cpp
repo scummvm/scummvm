@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/scale.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/gfx/image.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -140,11 +140,10 @@ Image *scale2xBilinear(Image *src, int scale, int n) {
 }
 
 int colorEqual(RGBA a, RGBA b) {
-	return
-	    a.r == b.r &&
-	    a.g == b.g &&
-	    a.b == b.b &&
-	    a.a == b.a;
+	return a.r == b.r &&
+	       a.g == b.g &&
+	       a.b == b.b &&
+	       a.a == b.a;
 }
 
 RGBA colorAverage(RGBA a, RGBA b) {
@@ -160,12 +159,18 @@ int _2xSaI_GetResult1(RGBA a, RGBA b, RGBA c, RGBA d) {
 	int x = 0;
 	int y = 0;
 	int r = 0;
-	if (colorEqual(a, c)) x++;
-	else if (colorEqual(b, c)) y++;
-	if (colorEqual(a, d)) x++;
-	else if (colorEqual(b, d)) y++;
-	if (x <= 1) r++;
-	if (y <= 1) r--;
+	if (colorEqual(a, c))
+		x++;
+	else if (colorEqual(b, c))
+		y++;
+	if (colorEqual(a, d))
+		x++;
+	else if (colorEqual(b, d))
+		y++;
+	if (x <= 1)
+		r++;
+	if (y <= 1)
+		r--;
 	return r;
 }
 
@@ -173,12 +178,18 @@ int _2xSaI_GetResult2(RGBA a, RGBA b, RGBA c, RGBA d) {
 	int x = 0;
 	int y = 0;
 	int r = 0;
-	if (colorEqual(a, c)) x++;
-	else if (colorEqual(b, c)) y++;
-	if (colorEqual(a, d)) x++;
-	else if (colorEqual(b, d)) y++;
-	if (x <= 1) r--;
-	if (y <= 1) r++;
+	if (colorEqual(a, c))
+		x++;
+	else if (colorEqual(b, c))
+		y++;
+	if (colorEqual(a, d))
+		x++;
+	else if (colorEqual(b, d))
+		y++;
+	if (x <= 1)
+		r--;
+	if (y <= 1)
+		r++;
 	return r;
 }
 
@@ -227,7 +238,6 @@ Image *scale2xSaI(Image *src, int scale, int N) {
 				yoff2 = 2;
 			}
 
-
 			for (x = 0; x < src->width(); x++) {
 				if (x == 0)
 					xoff0 = 0;
@@ -266,13 +276,13 @@ Image *scale2xSaI(Image *src, int scale, int N) {
 
 				if (colorEqual(a, d) && !colorEqual(b, c)) {
 					if ((colorEqual(a, e) && colorEqual(b, l)) ||
-					        (colorEqual(a, c) && colorEqual(a, f) && !colorEqual(b, e) && colorEqual(b, j)))
+					    (colorEqual(a, c) && colorEqual(a, f) && !colorEqual(b, e) && colorEqual(b, j)))
 						prod0 = a;
 					else
 						prod0 = colorAverage(a, b);
 
 					if ((colorEqual(a, g) && colorEqual(c, o)) ||
-					        (colorEqual(a, b) && colorEqual(a, h) && !colorEqual(g, c) && colorEqual(c, m)))
+					    (colorEqual(a, b) && colorEqual(a, h) && !colorEqual(g, c) && colorEqual(c, m)))
 						prod1 = a;
 					else
 						prod1 = colorAverage(a, c);
@@ -280,13 +290,13 @@ Image *scale2xSaI(Image *src, int scale, int N) {
 					prod2 = a;
 				} else if (colorEqual(b, c) && !colorEqual(a, d)) {
 					if ((colorEqual(b, f) && colorEqual(a, h)) ||
-					        (colorEqual(b, e) && colorEqual(b, d) && !colorEqual(a, f) && colorEqual(a, i)))
+					    (colorEqual(b, e) && colorEqual(b, d) && !colorEqual(a, f) && colorEqual(a, i)))
 						prod0 = b;
 					else
 						prod0 = colorAverage(a, b);
 
 					if ((colorEqual(c, h) && colorEqual(a, f)) ||
-					        (colorEqual(c, g) && colorEqual(c, d) && !colorEqual(a, h) && colorEqual(a, i)))
+					    (colorEqual(c, g) && colorEqual(c, d) && !colorEqual(a, h) && colorEqual(a, i)))
 						prod1 = c;
 					else
 						prod1 = colorAverage(a, c);
@@ -443,7 +453,6 @@ Image *scaleScale2x(Image *src, int scale, int n) {
 					dest->putPixel(x * 3, y * 3 + 2, e2.r, e2.g, e2.b, e2.a);
 					dest->putPixel(x * 3 + 1, y * 3 + 2, e7.r, e7.g, e7.b, e7.a);
 					dest->putPixel(x * 3 + 2, y * 3 + 2, e3.r, e3.g, e3.b, e3.a);
-
 				}
 			}
 		}

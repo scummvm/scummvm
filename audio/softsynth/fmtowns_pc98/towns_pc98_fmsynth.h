@@ -25,9 +25,9 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "common/mutex.h"
-#include "common/func.h"
 #include "common/array.h"
+#include "common/func.h"
+#include "common/mutex.h"
 
 #ifdef __DS__
 /* This disables the rhythm channel when emulating the PC-98 type 86 sound card.
@@ -36,7 +36,7 @@
  * (very rare) PC-98 versions of Legend of Kyrandia 2 and Lands of Lore. Music will
  * still be okay, just missing a couple of rhythm instruments.
  */
-#define		DISABLE_PC98_RHYTHM_CHANNEL
+#define DISABLE_PC98_RHYTHM_CHANNEL
 #endif
 
 /* Experimental code for emulation of the chip's busy flag wait cycle.
@@ -199,7 +199,7 @@ private:
 	const int _internalRate;
 	const int _outputRate;
 
-#ifdef	ENABLE_SNDTOWNS98_WAITCYCLES
+#ifdef ENABLE_SNDTOWNS98_WAITCYCLES
 	int _waitCycleRemainder;
 	const int _samplesPerWaitCycle;
 

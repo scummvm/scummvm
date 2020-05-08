@@ -22,9 +22,9 @@
 
 #include "ultima/shared/actions/action.h"
 #include "ultima/shared/early/game.h"
-#include "ultima/shared/maps/map.h"
-#include "ultima/shared/gfx/visual_item.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/visual_item.h"
+#include "ultima/shared/maps/map.h"
 
 namespace Ultima {
 namespace Shared {
@@ -59,4 +59,3 @@ void Action::endOfTurn() {
 } // End of namespace Actions
 } // End of namespace Shared
 } // End of namespace Ultima
-

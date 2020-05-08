@@ -20,22 +20,22 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_llist.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/screen/game_palette.h"
 #include "ultima/nuvie/views/inventory_widget.h"
 #include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/core/timed_event.h"
-#include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/core/timed_event.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/widgets/command_bar.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/nuvie/usecode/usecode.h"
 #include "ultima/nuvie/views/inventory_font.h"
 #include "ultima/nuvie/views/view_manager.h"
 
@@ -46,7 +46,7 @@ namespace Nuvie {
 #define ACTION_BUTTON 3
 #define DRAG_BUTTON 1
 
-InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
+InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback) : GUI_Widget(NULL, 0, 0, 0, 0) {
 	config = cfg;
 	callback_object = callback;
 
@@ -69,7 +69,6 @@ InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback): GU
 }
 
 InventoryWidget::~InventoryWidget() {
-
 }
 
 bool InventoryWidget::init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, Font *f) {
@@ -92,7 +91,7 @@ bool InventoryWidget::init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjMan
 
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6) {
 		empty_tile = tile_manager->get_tile(410);
-		GUI_Widget::Init(NULL, x, y, 72, 64); //72 =  4 * 16 + 8
+		GUI_Widget::Init(NULL, x, y, 72, 64);                        //72 =  4 * 16 + 8
 	} else if (Game::get_game()->get_game_type() == NUVIE_GAME_MD) { // FIXME: different depending on npc
 		empty_tile = tile_manager->get_tile(273);
 		GUI_Widget::Init(NULL, x, y, 64, 82);
@@ -134,15 +133,15 @@ void InventoryWidget::set_prev_container() {
 
 void InventoryWidget::Display(bool full_redraw) {
 	if (full_redraw || update_display) {
-//   screen->fill(bg_color, area.left, area.top, area.width(), area.height());
+		//   screen->fill(bg_color, area.left, area.top, area.width(), area.height());
 		display_inventory_container();
 		if (Game::get_game()->get_game_type() == NUVIE_GAME_U6)
 			display_arrows();
 	}
 	//screen->blit(area.left+40,area.top+16,portrait_data,8,56,64,56,false);
 
-//clear the screen first inventory icons, 4 x 3 tiles
-// screen->fill(bg_color, area.left +objlist_offset_x, area.top + objlist_offset_y, 16 * 4, 16 * 3); // doesn't seem to be needed
+	//clear the screen first inventory icons, 4 x 3 tiles
+	// screen->fill(bg_color, area.left +objlist_offset_x, area.top + objlist_offset_y, 16 * 4, 16 * 3); // doesn't seem to be needed
 	display_inventory_list();
 
 	if (full_redraw || update_display) {
@@ -151,7 +150,6 @@ void InventoryWidget::Display(bool full_redraw) {
 	} else {
 		screen->update(area.left + objlist_offset_x, area.top + 16, area.width() - objlist_offset_x, area.height() - 16); // update only the inventory list
 	}
-
 }
 
 //either an Actor or an object container.
@@ -187,17 +185,13 @@ void InventoryWidget::display_inventory_list() {
 	else
 		link = inventory->start();
 
-//skip row_offset rows of objects.
+	//skip row_offset rows of objects.
 	skip_num = row_offset * 4;
 	for (i = 0; link != NULL && i < skip_num; link = link->next) {
 		obj = (Obj *)link->data;
 		if (obj->is_readied() == false)
 			i++;
 	}
-
-
-
-
 
 	for (i = 0; i < max_rows; i++) {
 		for (j = 0; j < 4; j++) {
@@ -289,13 +283,11 @@ GUI_status InventoryWidget::MouseDown(int x, int y, Shared::MouseButton button) 
 
 	Obj *obj = get_obj_at_location(x, y);
 
-	if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE
-	        && command_bar->get_selected_action() > 0) { // Exclude attack mode too
-		if (command_bar->try_selected_action() == false) // start new action
-			return GUI_PASS; // false if new event doesn't need target
+	if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE && command_bar->get_selected_action() > 0) { // Exclude attack mode too
+		if (command_bar->try_selected_action() == false)                                                       // start new action
+			return GUI_PASS;                                                                                   // false if new event doesn't need target
 	}
-	if (button == ACTION_BUTTON && command_bar->get_selected_action() > 0
-	        && event->get_mode() == INPUT_MODE) {
+	if (button == ACTION_BUTTON && command_bar->get_selected_action() > 0 && event->get_mode() == INPUT_MODE) {
 		if (obj)
 			event->select_obj(obj); // the returned location
 		else {
@@ -303,15 +295,14 @@ GUI_status InventoryWidget::MouseDown(int x, int y, Shared::MouseButton button) 
 			event->endAction(true);
 			event->set_mode(MOVE_MODE);
 		}
-		return  GUI_PASS;
+		return GUI_PASS;
 	}
 
-// ABOEING
+	// ABOEING
 	if (actor && (button == USE_BUTTON || button == ACTION_BUTTON || button == DRAG_BUTTON)) {
 		if (obj) { // FIXME: duplicating code in DollWidget
 			// send to View
-			if (callback_object->callback(INVSELECT_CB, this, obj) == GUI_PASS
-			        && button == DRAG_BUTTON)
+			if (callback_object->callback(INVSELECT_CB, this, obj) == GUI_PASS && button == DRAG_BUTTON)
 				selected_obj = obj; // start dragging
 			return GUI_YUM;
 		}
@@ -332,7 +323,7 @@ Obj *InventoryWidget::get_obj_at_location(int x, int y) {
 	uint8 location;
 	U6LList *inventory;
 	U6Link *link;
-	Obj *obj =  NULL;
+	Obj *obj = NULL;
 	uint16 i;
 
 	if (x >= objlist_offset_x && y >= objlist_offset_y) {
@@ -388,17 +379,16 @@ GUI_status InventoryWidget::MouseUp(int x, int y, Shared::MouseButton button) {
 
 	CommandBar *command_bar = Game::get_game()->get_command_bar();
 
-	if (button == USE_BUTTON || (button == ACTION_BUTTON
-	                             && command_bar->get_selected_action() > 0)) { // Exclude attack mode too
+	if (button == USE_BUTTON || (button == ACTION_BUTTON && command_bar->get_selected_action() > 0)) { // Exclude attack mode too
 		x -= area.left;
 		y -= area.top;
 		if (x >= icon_x && x <= icon_x + 15 && // hit top icon either actor or container
-		        y >= 0 && y <= 15) {
+		    y >= 0 && y <= 15) {
 			Events *event = Game::get_game()->get_event();
 
 			if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE) {
 				if (command_bar->try_selected_action() == false) // start new action
-					return GUI_PASS; // false if new event doesn't need target
+					return GUI_PASS;                             // false if new event doesn't need target
 			}
 
 			if (event->can_target_icon()) {
@@ -481,11 +471,11 @@ void InventoryWidget::drag_drop_success(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "InventoryWidget::drag_drop_success()\n");
 	dragging = false;
 
-// handled by drop target
-// if(container_obj)
-//   container_obj->container->remove(selected_obj);
-// else
-//   actor->inventory_remove_obj(selected_obj);
+	// handled by drop target
+	// if(container_obj)
+	//   container_obj->container->remove(selected_obj);
+	// else
+	//   actor->inventory_remove_obj(selected_obj);
 
 	selected_obj = NULL;
 	Redraw();
@@ -534,18 +524,14 @@ bool InventoryWidget::drag_accept_drop(int x, int y, int message, void *data) {
 		} else
 			Game::get_game()->get_event()->display_move_text(actor, obj);
 
-		if (!obj->is_in_inventory()
-		        && !Game::get_game()->get_map_window()->can_get_obj(actor, obj)) {
+		if (!obj->is_in_inventory() && !Game::get_game()->get_map_window()->can_get_obj(actor, obj)) {
 			Game::get_game()->get_scroll()->message("\n\nblocked\n\n");
 			return false;
 		}
-		if ((Game::get_game()->get_usecode()->has_getcode(obj)
-		        && !Game::get_game()->get_usecode()->get_obj(obj, actor))
-		        || !Game::get_game()->get_event()->can_move_obj_between_actors(obj, src_actor, actor)) {
+		if ((Game::get_game()->get_usecode()->has_getcode(obj) && !Game::get_game()->get_usecode()->get_obj(obj, actor)) || !Game::get_game()->get_event()->can_move_obj_between_actors(obj, src_actor, actor)) {
 			Game::get_game()->get_scroll()->message("\n\n");
 			return false;
-		} else if (!obj->is_in_inventory()
-		           && obj_manager->obj_is_damaging(obj, Game::get_game()->get_player()->get_actor())) {
+		} else if (!obj->is_in_inventory() && obj_manager->obj_is_damaging(obj, Game::get_game()->get_player()->get_actor())) {
 			Game::get_game()->get_player()->subtract_movement_points(3);
 			return false;
 		} else if (src_actor != actor || !obj->is_in_inventory())
@@ -558,7 +544,7 @@ bool InventoryWidget::drag_accept_drop(int x, int y, int message, void *data) {
 
 		UseCode *usecode = Game::get_game()->get_usecode();
 		if (usecode->is_chest(obj) && obj->frame_n == 0) //open chest
-			obj->frame_n = 1; //close the chest
+			obj->frame_n = 1;                            //close the chest
 
 		DEBUG(0, LEVEL_DEBUGGING, "Drop Accepted\n");
 		return true;

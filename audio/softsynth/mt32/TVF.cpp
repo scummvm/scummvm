@@ -17,11 +17,11 @@
 
 #include "internals.h"
 
-#include "TVF.h"
 #include "LA32Ramp.h"
 #include "Partial.h"
 #include "Poly.h"
 #include "Synth.h"
+#include "TVF.h"
 #include "Tables.h"
 
 namespace MT32Emu {
@@ -70,16 +70,16 @@ static int calcBaseCutoff(const TimbreParam::PartialParam *partialParam, Bit32u 
 		// biasPoint range here: 0 to 63
 		int bias = biasPoint + 33 - key; // bias range here: -75 to 84
 		if (bias > 0) {
-			bias = -bias; // bias range here: -1 to -84
+			bias = -bias;                                                          // bias range here: -1 to -84
 			baseCutoff += bias * biasLevelToBiasMult[partialParam->tvf.biasLevel]; // Calculation range: -7140 to 7140
-			// baseCutoff range now: -10164 to 10164
+			                                                                       // baseCutoff range now: -10164 to 10164
 		}
 	} else {
 		// biasPoint range here: 64 to 127
 		int bias = biasPoint - 31 - key; // bias range here: -75 to 84
 		if (bias < 0) {
 			baseCutoff += bias * biasLevelToBiasMult[partialParam->tvf.biasLevel]; // Calculation range: -6375 to 6375
-			// baseCutoff range now: -9399 to 9399
+			                                                                       // baseCutoff range now: -9399 to 9399
 		}
 	}
 	// baseCutoff range now: -10164 to 10164
@@ -108,8 +108,7 @@ static int calcBaseCutoff(const TimbreParam::PartialParam *partialParam, Bit32u 
 	return Bit8u(baseCutoff);
 }
 
-TVF::TVF(const Partial *usePartial, LA32Ramp *useCutoffModifierRamp) :
-	partial(usePartial), cutoffModifierRamp(useCutoffModifierRamp) {
+TVF::TVF(const Partial *usePartial, LA32Ramp *useCutoffModifierRamp) : partial(usePartial), cutoffModifierRamp(useCutoffModifierRamp) {
 }
 
 void TVF::startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase) {
@@ -201,7 +200,7 @@ void TVF::nextPhase() {
 		// FIXME: Afaict newPhase should never be PHASE_RELEASE here. And if it were, this is an odd way to handle it.
 		if (!partial->getPoly()->canSustain()) {
 			phase = newPhase; // FIXME: Correct?
-			startDecay(); // FIXME: This should actually start decay even if phase is already 6. Does that matter?
+			startDecay();     // FIXME: This should actually start decay even if phase is already 6. Does that matter?
 			return;
 		}
 		startRamp((levelMult * partialParam->tvf.envLevel[3]) >> 8, 0, newPhase);

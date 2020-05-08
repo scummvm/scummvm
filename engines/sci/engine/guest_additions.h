@@ -41,11 +41,11 @@ enum {
 	// heard if the game audio is at the same level as movies. The game normally
 	// sets defaults so that the in-game volume is 85 and movies are 127, so we
 	// will just use 85 as the maximum volume.
-	kPhant2VolumeMax       = 85,
+	kPhant2VolumeMax = 85,
 
-	kRamaVolumeMax         = 16,
-	kLSL6HiresUIVolumeMax  = 13,
-	kHoyle5VolumeMax       = 8,
+	kRamaVolumeMax = 16,
+	kLSL6HiresUIVolumeMax = 13,
+	kHoyle5VolumeMax = 8,
 	kLSL6HiresSubtitleFlag = 105
 };
 #endif

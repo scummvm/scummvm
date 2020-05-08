@@ -205,63 +205,63 @@
 
 #include "backends/platform/android/portdefs.h"
 
-#include <errno.h>	/* For ERANGE and errno. */
-#include <limits.h>	/* For *_MAX. */
-#include <float.h>	/* For *DBL_{MIN,MAX}_10_EXP. */
+#include <errno.h>  /* For ERANGE and errno. */
+#include <float.h>  /* For *DBL_{MIN,MAX}_10_EXP. */
+#include <limits.h> /* For *_MAX. */
 
 #if HAVE_INTTYPES_H
-#include <inttypes.h>	/* For intmax_t (if not defined in <stdint.h>). */
-#endif	/* HAVE_INTTYPES_H */
+#include <inttypes.h> /* For intmax_t (if not defined in <stdint.h>). */
+#endif                /* HAVE_INTTYPES_H */
 #if HAVE_LOCALE_H
-#include <locale.h>	/* For localeconv(3). */
-#endif	/* HAVE_LOCALE_H */
+#include <locale.h> /* For localeconv(3). */
+#endif              /* HAVE_LOCALE_H */
 #if HAVE_STDDEF_H
-#include <stddef.h>	/* For ptrdiff_t. */
-#endif	/* HAVE_STDDEF_H */
+#include <stddef.h> /* For ptrdiff_t. */
+#endif              /* HAVE_STDDEF_H */
 #if HAVE_STDINT_H
-#include <stdint.h>	/* For intmax_t. */
-#endif	/* HAVE_STDINT_H */
+#include <stdint.h> /* For intmax_t. */
+#endif              /* HAVE_STDINT_H */
 
 /* Support for unsigned long long int.  We may also need ULLONG_MAX. */
-#ifndef ULONG_MAX	/* We may need ULONG_MAX as a fallback. */
+#ifndef ULONG_MAX /* We may need ULONG_MAX as a fallback. */
 #ifdef UINT_MAX
 #define ULONG_MAX UINT_MAX
 #else
 #define ULONG_MAX INT_MAX
-#endif	/* defined(UINT_MAX) */
-#endif	/* !defined(ULONG_MAX) */
+#endif /* defined(UINT_MAX) */
+#endif /* !defined(ULONG_MAX) */
 #ifdef ULLONG
 #undef ULLONG
-#endif	/* defined(ULLONG) */
+#endif /* defined(ULLONG) */
 #if HAVE_UNSIGNED_LONG_LONG_INT
 #define ULLONG unsigned long long int
 #ifndef ULLONG_MAX
 #define ULLONG_MAX ULONG_MAX
-#endif	/* !defined(ULLONG_MAX) */
+#endif /* !defined(ULLONG_MAX) */
 #else
 #define ULLONG unsigned long int
 #ifdef ULLONG_MAX
 #undef ULLONG_MAX
-#endif	/* defined(ULLONG_MAX) */
+#endif /* defined(ULLONG_MAX) */
 #define ULLONG_MAX ULONG_MAX
-#endif	/* HAVE_LONG_LONG_INT */
+#endif /* HAVE_LONG_LONG_INT */
 
 /* Support for uintmax_t.  We also need UINTMAX_MAX. */
 #ifdef UINTMAX_T
 #undef UINTMAX_T
-#endif	/* defined(UINTMAX_T) */
+#endif /* defined(UINTMAX_T) */
 #if HAVE_UINTMAX_T || defined(uintmax_t)
 #define UINTMAX_T uintmax_t
 #ifndef UINTMAX_MAX
 #define UINTMAX_MAX ULLONG_MAX
-#endif	/* !defined(UINTMAX_MAX) */
+#endif /* !defined(UINTMAX_MAX) */
 #else
 #define UINTMAX_T ULLONG
 #ifdef UINTMAX_MAX
 #undef UINTMAX_MAX
-#endif	/* defined(UINTMAX_MAX) */
+#endif /* defined(UINTMAX_MAX) */
 #define UINTMAX_MAX ULLONG_MAX
-#endif	/* HAVE_UINTMAX_T || defined(uintmax_t) */
+#endif /* HAVE_UINTMAX_T || defined(uintmax_t) */
 
 /* Support for long double. */
 #ifndef LDOUBLE
@@ -273,8 +273,8 @@
 #define LDOUBLE double
 #define LDOUBLE_MIN_10_EXP DBL_MIN_10_EXP
 #define LDOUBLE_MAX_10_EXP DBL_MAX_10_EXP
-#endif	/* HAVE_LONG_DOUBLE */
-#endif	/* !defined(LDOUBLE) */
+#endif /* HAVE_LONG_DOUBLE */
+#endif /* !defined(LDOUBLE) */
 
 /* Support for long long int. */
 #ifndef LLONG
@@ -282,8 +282,8 @@
 #define LLONG long long int
 #else
 #define LLONG long int
-#endif	/* HAVE_LONG_LONG_INT */
-#endif	/* !defined(LLONG) */
+#endif /* HAVE_LONG_LONG_INT */
+#endif /* !defined(LLONG) */
 
 /* Support for intmax_t. */
 #ifndef INTMAX_T
@@ -291,8 +291,8 @@
 #define INTMAX_T intmax_t
 #else
 #define INTMAX_T LLONG
-#endif	/* HAVE_INTMAX_T || defined(intmax_t) */
-#endif	/* !defined(INTMAX_T) */
+#endif /* HAVE_INTMAX_T || defined(intmax_t) */
+#endif /* !defined(INTMAX_T) */
 
 /* Support for uintptr_t. */
 #ifndef UINTPTR_T
@@ -300,8 +300,8 @@
 #define UINTPTR_T uintptr_t
 #else
 #define UINTPTR_T unsigned long int
-#endif	/* HAVE_UINTPTR_T || defined(uintptr_t) */
-#endif	/* !defined(UINTPTR_T) */
+#endif /* HAVE_UINTPTR_T || defined(uintptr_t) */
+#endif /* !defined(UINTPTR_T) */
 
 /* Support for ptrdiff_t. */
 #ifndef PTRDIFF_T
@@ -309,8 +309,8 @@
 #define PTRDIFF_T ptrdiff_t
 #else
 #define PTRDIFF_T long int
-#endif	/* HAVE_PTRDIFF_T || defined(ptrdiff_t) */
-#endif	/* !defined(PTRDIFF_T) */
+#endif /* HAVE_PTRDIFF_T || defined(ptrdiff_t) */
+#endif /* !defined(PTRDIFF_T) */
 
 /*
  * We need an unsigned integer type corresponding to ptrdiff_t (cf. C99:
@@ -319,7 +319,7 @@
  */
 #ifndef UPTRDIFF_T
 #define UPTRDIFF_T PTRDIFF_T
-#endif	/* !defined(UPTRDIFF_T) */
+#endif /* !defined(UPTRDIFF_T) */
 
 /*
  * We need a signed integer type corresponding to size_t (cf. C99: 7.19.6.1, 7).
@@ -328,8 +328,7 @@
  */
 #ifndef SSIZE_T
 #define SSIZE_T size_t
-#endif	/* !defined(SSIZE_T) */
-
+#endif /* !defined(SSIZE_T) */
 
 /*
  * Buffer size to hold the octal string representation of UINT128_MAX without
@@ -337,65 +336,65 @@
  */
 #ifdef MAX_CONVERT_LENGTH
 #undef MAX_CONVERT_LENGTH
-#endif	/* defined(MAX_CONVERT_LENGTH) */
-#define MAX_CONVERT_LENGTH      43
+#endif /* defined(MAX_CONVERT_LENGTH) */
+#define MAX_CONVERT_LENGTH 43
 
 /* Format read states. */
-#define PRINT_S_DEFAULT         0
-#define PRINT_S_FLAGS           1
-#define PRINT_S_WIDTH           2
-#define PRINT_S_DOT             3
-#define PRINT_S_PRECISION       4
-#define PRINT_S_MOD             5
-#define PRINT_S_CONV            6
+#define PRINT_S_DEFAULT 0
+#define PRINT_S_FLAGS 1
+#define PRINT_S_WIDTH 2
+#define PRINT_S_DOT 3
+#define PRINT_S_PRECISION 4
+#define PRINT_S_MOD 5
+#define PRINT_S_CONV 6
 
 /* Format flags. */
-#define PRINT_F_MINUS           (1 << 0)
-#define PRINT_F_PLUS            (1 << 1)
-#define PRINT_F_SPACE           (1 << 2)
-#define PRINT_F_NUM             (1 << 3)
-#define PRINT_F_ZERO            (1 << 4)
-#define PRINT_F_QUOTE           (1 << 5)
-#define PRINT_F_UP              (1 << 6)
-#define PRINT_F_UNSIGNED        (1 << 7)
-#define PRINT_F_TYPE_G          (1 << 8)
-#define PRINT_F_TYPE_E          (1 << 9)
+#define PRINT_F_MINUS (1 << 0)
+#define PRINT_F_PLUS (1 << 1)
+#define PRINT_F_SPACE (1 << 2)
+#define PRINT_F_NUM (1 << 3)
+#define PRINT_F_ZERO (1 << 4)
+#define PRINT_F_QUOTE (1 << 5)
+#define PRINT_F_UP (1 << 6)
+#define PRINT_F_UNSIGNED (1 << 7)
+#define PRINT_F_TYPE_G (1 << 8)
+#define PRINT_F_TYPE_E (1 << 9)
 
 /* Conversion flags. */
-#define PRINT_C_CHAR            1
-#define PRINT_C_SHORT           2
-#define PRINT_C_LONG            3
-#define PRINT_C_LLONG           4
-#define PRINT_C_LDOUBLE         5
-#define PRINT_C_SIZE            6
-#define PRINT_C_PTRDIFF         7
-#define PRINT_C_INTMAX          8
+#define PRINT_C_CHAR 1
+#define PRINT_C_SHORT 2
+#define PRINT_C_LONG 3
+#define PRINT_C_LLONG 4
+#define PRINT_C_LDOUBLE 5
+#define PRINT_C_SIZE 6
+#define PRINT_C_PTRDIFF 7
+#define PRINT_C_INTMAX 8
 
 #ifndef MAX
 #define MAX(x, y) ((x >= y) ? x : y)
-#endif	/* !defined(MAX) */
+#endif /* !defined(MAX) */
 #ifndef CHARTOINT
 #define CHARTOINT(ch) (ch - '0')
-#endif	/* !defined(CHARTOINT) */
+#endif /* !defined(CHARTOINT) */
 #ifndef ISDIGIT
 #define ISDIGIT(ch) ('0' <= (unsigned char)ch && (unsigned char)ch <= '9')
-#endif	/* !defined(ISDIGIT) */
+#endif /* !defined(ISDIGIT) */
 #ifndef ISNAN
 #define ISNAN(x) (x != x)
-#endif	/* !defined(ISNAN) */
+#endif /* !defined(ISNAN) */
 #ifndef ISINF
 #define ISINF(x) ((x < -1 || x > 1) && x + x == x)
-#endif	/* !defined(ISINF) */
+#endif /* !defined(ISINF) */
 
 #ifdef OUTCHAR
 #undef OUTCHAR
-#endif	/* defined(OUTCHAR) */
-#define OUTCHAR(str, len, size, ch)                                          \
-do {                                                                         \
-	if (len + 1 < size)                                                  \
-		str[len] = ch;                                               \
-	(len)++;                                                             \
-} while (/* CONSTCOND */ 0)
+#endif /* defined(OUTCHAR) */
+#define OUTCHAR(str, len, size, ch) \
+	do {                            \
+		if (len + 1 < size)         \
+			str[len] = ch;          \
+		(len)++;                    \
+	} while (/* CONSTCOND */ 0)
 
 static void fmtstr(char *, size_t *, size_t, const char *, int, int, int);
 static void fmtint(char *, size_t *, size_t, INTMAX_T, int, int, int, int);
@@ -475,7 +474,7 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 				flags |= PRINT_F_ZERO;
 				ch = *format++;
 				break;
-			case '\'':	/* SUSv2 flag (not in C99). */
+			case '\'': /* SUSv2 flag (not in C99). */
 				flags |= PRINT_F_QUOTE;
 				ch = *format++;
 				break;
@@ -543,7 +542,7 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 			switch (ch) {
 			case 'h':
 				ch = *format++;
-				if (ch == 'h') {	/* It's a char. */
+				if (ch == 'h') { /* It's a char. */
 					ch = *format++;
 					cflags = PRINT_C_CHAR;
 				} else
@@ -551,7 +550,7 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 				break;
 			case 'l':
 				ch = *format++;
-				if (ch == 'l') {	/* It's a long long. */
+				if (ch == 'l') { /* It's a long long. */
 					ch = *format++;
 					cflags = PRINT_C_LLONG;
 				} else
@@ -608,7 +607,7 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 					break;
 				}
 				fmtint(str, &len, size, value, 10, width,
-				    precision, flags);
+				       precision, flags);
 				break;
 			case 'X':
 				flags |= PRINT_F_UP;
@@ -627,11 +626,11 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 				switch (cflags) {
 				case PRINT_C_CHAR:
 					value = (unsigned char)va_arg(args,
-					    unsigned int);
+					                              unsigned int);
 					break;
 				case PRINT_C_SHORT:
 					value = (unsigned short int)va_arg(args,
-					    unsigned int);
+					                                   unsigned int);
 					break;
 				case PRINT_C_LONG:
 					value = va_arg(args, unsigned long int);
@@ -653,7 +652,7 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 					break;
 				}
 				fmtint(str, &len, size, value, base, width,
-				    precision, flags);
+				       precision, flags);
 				break;
 			case 'A':
 				/* Not yet supported, we'll use "%F". */
@@ -686,7 +685,7 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 				else
 					fvalue = va_arg(args, double);
 				fmtflt(str, &len, size, fvalue, width,
-				    precision, flags, &overflow);
+				       precision, flags, &overflow);
 				if (overflow)
 					goto out;
 				break;
@@ -697,7 +696,7 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 			case 's':
 				strvalue = va_arg(args, char *);
 				fmtstr(str, &len, size, strvalue, width,
-				    precision, flags);
+				       precision, flags);
 				break;
 			case 'p':
 				/*
@@ -712,7 +711,7 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 					 * "0x0", SysV "0".
 					 */
 					fmtstr(str, &len, size, "(nil)", width,
-					    -1, flags);
+					       -1, flags);
 				else {
 					/*
 					 * We use the BSD/glibc format.  SysV
@@ -722,8 +721,8 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 					flags |= PRINT_F_NUM;
 					flags |= PRINT_F_UNSIGNED;
 					fmtint(str, &len, size,
-					    (UINTPTR_T)strvalue, 16, width,
-					    precision, flags);
+					       (UINTPTR_T)strvalue, 16, width,
+					       precision, flags);
 				}
 				break;
 			case 'n':
@@ -769,10 +768,10 @@ int rpl_vsnprintf(char *str, size_t size, const char *format, va_list args) {
 					break;
 				}
 				break;
-			case '%':	/* Print a "%" character verbatim. */
+			case '%': /* Print a "%" character verbatim. */
 				OUTCHAR(str, len, size, ch);
 				break;
-			default:	/* Skip other characters. */
+			default: /* Skip other characters. */
 				break;
 			}
 			ch = *format++;
@@ -795,23 +794,24 @@ out:
 }
 
 static void fmtstr(char *str, size_t *len, size_t size, const char *value, int width, int precision, int flags) {
-	int padlen, strln;	/* Amount to pad. */
+	int padlen, strln; /* Amount to pad. */
 	int noprecision = (precision == -1);
 
-	if (value == NULL)	/* We're forgiving. */
+	if (value == NULL) /* We're forgiving. */
 		value = "(null)";
 
 	/* If a precision was specified, don't read the string past it. */
 	for (strln = 0; value[strln] != '\0' &&
-	    (noprecision || strln < precision); strln++)
+	                (noprecision || strln < precision);
+	     strln++)
 		continue;
 
 	if ((padlen = width - strln) < 0)
 		padlen = 0;
-	if (flags & PRINT_F_MINUS)	/* Left justify. */
+	if (flags & PRINT_F_MINUS) /* Left justify. */
 		padlen = -padlen;
 
-	while (padlen > 0) {	/* Leading spaces. */
+	while (padlen > 0) { /* Leading spaces. */
 		OUTCHAR(str, *len, size, ' ');
 		padlen--;
 	}
@@ -819,7 +819,7 @@ static void fmtstr(char *str, size_t *len, size_t size, const char *value, int w
 		OUTCHAR(str, *len, size, *value);
 		value++;
 	}
-	while (padlen < 0) {	/* Trailing spaces. */
+	while (padlen < 0) { /* Trailing spaces. */
 		OUTCHAR(str, *len, size, ' ');
 		padlen++;
 	}
@@ -830,8 +830,8 @@ static void fmtint(char *str, size_t *len, size_t size, INTMAX_T value, int base
 	char iconvert[MAX_CONVERT_LENGTH];
 	char sign = 0;
 	char hexprefix = 0;
-	int spadlen = 0;	/* Amount to space pad. */
-	int zpadlen = 0;	/* Amount to zero pad. */
+	int spadlen = 0; /* Amount to space pad. */
+	int zpadlen = 0; /* Amount to zero pad. */
 	int pos;
 	int separators = (flags & PRINT_F_QUOTE);
 	int noprecision = (precision == -1);
@@ -842,14 +842,14 @@ static void fmtint(char *str, size_t *len, size_t size, INTMAX_T value, int base
 		uvalue = (value >= 0) ? value : -value;
 		if (value < 0)
 			sign = '-';
-		else if (flags & PRINT_F_PLUS)	/* Do a sign. */
+		else if (flags & PRINT_F_PLUS) /* Do a sign. */
 			sign = '+';
 		else if (flags & PRINT_F_SPACE)
 			sign = ' ';
 	}
 
 	pos = convert(uvalue, iconvert, sizeof(iconvert), base,
-	    flags & PRINT_F_UP);
+	              flags & PRINT_F_UP);
 
 	if (flags & PRINT_F_NUM && uvalue != 0) {
 		/*
@@ -871,15 +871,15 @@ static void fmtint(char *str, size_t *len, size_t size, INTMAX_T value, int base
 		}
 	}
 
-	if (separators)	/* Get the number of group separators we'll print. */
+	if (separators) /* Get the number of group separators we'll print. */
 		separators = getnumsep(pos);
 
 	zpadlen = precision - pos - separators;
 	spadlen = width                         /* Minimum field width. */
-	    - separators                        /* Number of separators. */
-	    - MAX(precision, pos)               /* Number of integer digits. */
-	    - ((sign != 0) ? 1 : 0)             /* Will we print a sign? */
-	    - ((hexprefix != 0) ? 2 : 0);       /* Will we print a prefix? */
+	          - separators                  /* Number of separators. */
+	          - MAX(precision, pos)         /* Number of integer digits. */
+	          - ((sign != 0) ? 1 : 0)       /* Will we print a sign? */
+	          - ((hexprefix != 0) ? 2 : 0); /* Will we print a prefix? */
 
 	if (zpadlen < 0)
 		zpadlen = 0;
@@ -891,33 +891,33 @@ static void fmtint(char *str, size_t *len, size_t size, INTMAX_T value, int base
 	 * ignored.  For `d', `i', `o', `u', `x', and `X' conversions, if a
 	 * precision is specified, the `0' flag is ignored." (7.19.6.1, 6)
 	 */
-	if (flags & PRINT_F_MINUS)	/* Left justify. */
+	if (flags & PRINT_F_MINUS) /* Left justify. */
 		spadlen = -spadlen;
 	else if (flags & PRINT_F_ZERO && noprecision) {
 		zpadlen += spadlen;
 		spadlen = 0;
 	}
-	while (spadlen > 0) {	/* Leading spaces. */
+	while (spadlen > 0) { /* Leading spaces. */
 		OUTCHAR(str, *len, size, ' ');
 		spadlen--;
 	}
-	if (sign != 0)	/* Sign. */
+	if (sign != 0) /* Sign. */
 		OUTCHAR(str, *len, size, sign);
-	if (hexprefix != 0) {	/* A "0x" or "0X" prefix. */
+	if (hexprefix != 0) { /* A "0x" or "0X" prefix. */
 		OUTCHAR(str, *len, size, '0');
 		OUTCHAR(str, *len, size, hexprefix);
 	}
-	while (zpadlen > 0) {	/* Leading zeros. */
+	while (zpadlen > 0) { /* Leading zeros. */
 		OUTCHAR(str, *len, size, '0');
 		zpadlen--;
 	}
-	while (pos > 0) {	/* The actual digits. */
+	while (pos > 0) { /* The actual digits. */
 		pos--;
 		OUTCHAR(str, *len, size, iconvert[pos]);
 		if (separators > 0 && pos > 0 && pos % 3 == 0)
 			printsep(str, len, size);
 	}
-	while (spadlen < 0) {	/* Trailing spaces. */
+	while (spadlen < 0) { /* Trailing spaces. */
 		OUTCHAR(str, *len, size, ' ');
 		spadlen++;
 	}
@@ -931,7 +931,7 @@ static void fmtflt(char *str, size_t *len, size_t size, LDOUBLE fvalue, int widt
 	const char *infnan = NULL;
 	char iconvert[MAX_CONVERT_LENGTH];
 	char fconvert[MAX_CONVERT_LENGTH];
-	char econvert[5];	/* "e-300" (without nul-termination). */
+	char econvert[5]; /* "e-300" (without nul-termination). */
 	char esign = 0;
 	char sign = 0;
 	int leadfraczeros = 0;
@@ -947,7 +947,7 @@ static void fmtflt(char *str, size_t *len, size_t size, LDOUBLE fvalue, int widt
 	int estyle = (flags & PRINT_F_TYPE_E);
 #if HAVE_LOCALECONV && HAVE_LCONV_DECIMAL_POINT
 	struct lconv *lc = localeconv();
-#endif	/* HAVE_LOCALECONV && HAVE_LCONV_DECIMAL_POINT */
+#endif /* HAVE_LOCALECONV && HAVE_LCONV_DECIMAL_POINT */
 
 	/*
 	 * AIX' man page says the default is 0, but C99 and at least Solaris'
@@ -959,7 +959,7 @@ static void fmtflt(char *str, size_t *len, size_t size, LDOUBLE fvalue, int widt
 
 	if (fvalue < 0.0)
 		sign = '-';
-	else if (flags & PRINT_F_PLUS)	/* Do a sign. */
+	else if (flags & PRINT_F_PLUS) /* Do a sign. */
 		sign = '+';
 	else if (flags & PRINT_F_SPACE)
 		sign = ' ';
@@ -1035,7 +1035,7 @@ again:
 	}
 
 	ufvalue = (fvalue >= 0.0) ? fvalue : -fvalue;
-	if (estyle)	/* We want exactly one integer digit. */
+	if (estyle) /* We want exactly one integer digit. */
 		ufvalue /= mypow10(exponent);
 
 	if ((intpart = cast(ufvalue)) == UINTMAX_MAX) {
@@ -1125,16 +1125,16 @@ again:
 
 	/* Convert the integer part and the fractional part. */
 	ipos = convert(intpart, iconvert, sizeof(iconvert), 10, 0);
-	if (fracpart != 0)	/* convert() would return 1 if fracpart == 0. */
+	if (fracpart != 0) /* convert() would return 1 if fracpart == 0. */
 		fpos = convert(fracpart, fconvert, sizeof(fconvert), 10, 0);
 
 	leadfraczeros = precision - fpos;
 
 	if (omitzeros) {
-		if (fpos > 0)	/* Omit trailing fractional part zeros. */
+		if (fpos > 0) /* Omit trailing fractional part zeros. */
 			while (omitcount < fpos && fconvert[omitcount] == '0')
 				omitcount++;
-		else {	/* The fractional part is zero, omit it completely. */
+		else { /* The fractional part is zero, omit it completely. */
 			omitcount = precision;
 			leadfraczeros = 0;
 		}
@@ -1147,16 +1147,16 @@ again:
 	 */
 	if (precision > 0 || flags & PRINT_F_NUM)
 		emitpoint = 1;
-	if (separators)	/* Get the number of group separators we'll print. */
+	if (separators) /* Get the number of group separators we'll print. */
 		separators = getnumsep(ipos);
 
-	padlen = width                  /* Minimum field width. */
-	    - ipos                      /* Number of integer digits. */
-	    - epos                      /* Number of exponent characters. */
-	    - precision                 /* Number of fractional digits. */
-	    - separators                /* Number of group separators. */
-	    - (emitpoint ? 1 : 0)       /* Will we print a decimal point? */
-	    - ((sign != 0) ? 1 : 0);    /* Will we print a sign character? */
+	padlen = width                    /* Minimum field width. */
+	         - ipos                   /* Number of integer digits. */
+	         - epos                   /* Number of exponent characters. */
+	         - precision              /* Number of fractional digits. */
+	         - separators             /* Number of group separators. */
+	         - (emitpoint ? 1 : 0)    /* Will we print a decimal point? */
+	         - ((sign != 0) ? 1 : 0); /* Will we print a sign character? */
 
 	if (padlen < 0)
 		padlen = 0;
@@ -1165,51 +1165,51 @@ again:
 	 * C99 says: "If the `0' and `-' flags both appear, the `0' flag is
 	 * ignored." (7.19.6.1, 6)
 	 */
-	if (flags & PRINT_F_MINUS)	/* Left justifty. */
+	if (flags & PRINT_F_MINUS) /* Left justifty. */
 		padlen = -padlen;
 	else if (flags & PRINT_F_ZERO && padlen > 0) {
-		if (sign != 0) {	/* Sign. */
+		if (sign != 0) { /* Sign. */
 			OUTCHAR(str, *len, size, sign);
 			sign = 0;
 		}
-		while (padlen > 0) {	/* Leading zeros. */
+		while (padlen > 0) { /* Leading zeros. */
 			OUTCHAR(str, *len, size, '0');
 			padlen--;
 		}
 	}
-	while (padlen > 0) {	/* Leading spaces. */
+	while (padlen > 0) { /* Leading spaces. */
 		OUTCHAR(str, *len, size, ' ');
 		padlen--;
 	}
-	if (sign != 0)	/* Sign. */
+	if (sign != 0) /* Sign. */
 		OUTCHAR(str, *len, size, sign);
-	while (ipos > 0) {	/* Integer part. */
+	while (ipos > 0) { /* Integer part. */
 		ipos--;
 		OUTCHAR(str, *len, size, iconvert[ipos]);
 		if (separators > 0 && ipos > 0 && ipos % 3 == 0)
 			printsep(str, len, size);
 	}
-	if (emitpoint) {	/* Decimal point. */
+	if (emitpoint) { /* Decimal point. */
 #if HAVE_LOCALECONV && HAVE_LCONV_DECIMAL_POINT
 		if (lc->decimal_point != NULL && *lc->decimal_point != '\0')
 			OUTCHAR(str, *len, size, *lc->decimal_point);
-		else	/* We'll always print some decimal point character. */
-#endif	/* HAVE_LOCALECONV && HAVE_LCONV_DECIMAL_POINT */
+		else /* We'll always print some decimal point character. */
+#endif       /* HAVE_LOCALECONV && HAVE_LCONV_DECIMAL_POINT */
 			OUTCHAR(str, *len, size, '.');
 	}
-	while (leadfraczeros > 0) {	/* Leading fractional part zeros. */
+	while (leadfraczeros > 0) { /* Leading fractional part zeros. */
 		OUTCHAR(str, *len, size, '0');
 		leadfraczeros--;
 	}
-	while (fpos > omitcount) {	/* The remaining fractional part. */
+	while (fpos > omitcount) { /* The remaining fractional part. */
 		fpos--;
 		OUTCHAR(str, *len, size, fconvert[fpos]);
 	}
-	while (epos > 0) {	/* Exponent. */
+	while (epos > 0) { /* Exponent. */
 		epos--;
 		OUTCHAR(str, *len, size, econvert[epos]);
 	}
-	while (padlen < 0) {	/* Trailing spaces. */
+	while (padlen < 0) { /* Trailing spaces. */
 		OUTCHAR(str, *len, size, ' ');
 		padlen++;
 	}
@@ -1224,13 +1224,12 @@ static void printsep(char *str, size_t *len, size_t size) {
 		for (i = 0; lc->thousands_sep[i] != '\0'; i++)
 			OUTCHAR(str, *len, size, lc->thousands_sep[i]);
 	else
-#endif	/* HAVE_LOCALECONV && HAVE_LCONV_THOUSANDS_SEP */
+#endif /* HAVE_LOCALECONV && HAVE_LCONV_THOUSANDS_SEP */
 		OUTCHAR(str, *len, size, ',');
 }
 
 static int
-getnumsep(int digits)
-{
+getnumsep(int digits) {
 	int separators = (digits - ((digits % 3 == 0) ? 1 : 0)) / 3;
 #if HAVE_LOCALECONV && HAVE_LCONV_THOUSANDS_SEP
 	int strln;
@@ -1242,7 +1241,7 @@ getnumsep(int digits)
 			continue;
 		separators *= strln;
 	}
-#endif	/* HAVE_LOCALECONV && HAVE_LCONV_THOUSANDS_SEP */
+#endif /* HAVE_LOCALECONV && HAVE_LCONV_THOUSANDS_SEP */
 	return separators;
 }
 

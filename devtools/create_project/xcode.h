@@ -35,7 +35,6 @@ public:
 	XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
 
 protected:
-
 	void createWorkspace(const BuildSetup &setup);
 
 	void createOtherBuildFiles(const BuildSetup &setup);
@@ -47,13 +46,14 @@ protected:
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
+
 private:
 	enum {
-		kSettingsAsList        = 0x01,
-		kSettingsSingleItem    = 0x02,
-		kSettingsNoQuote       = 0x04,
+		kSettingsAsList = 0x01,
+		kSettingsSingleItem = 0x02,
+		kSettingsNoQuote = 0x04,
 		kSettingsQuoteVariable = 0x08,
-		kSettingsNoValue       = 0x10
+		kSettingsNoValue = 0x10
 	};
 
 	// File properties
@@ -65,7 +65,7 @@ private:
 		std::string _sourceTree;
 
 		FileProperty(const std::string &fileType = "", const std::string &name = "", const std::string &path = "", const std::string &source = "")
-				: _fileEncoding(""), _lastKnownFileType(fileType), _fileName(name), _filePath(path), _sourceTree(source) {
+		    : _fileEncoding(""), _lastKnownFileType(fileType), _fileName(name), _filePath(path), _sourceTree(source) {
 		}
 	};
 
@@ -151,12 +151,12 @@ private:
 	// be overkill since we only have to generate a single project
 	struct Object {
 	public:
-		std::string _id;                // Unique identifier for this object
-		std::string _name;              // Name (may not be unique - for ex. configuration entries)
-		std::string _refType;           // Type of object this references (if any)
-		std::string _comment;           // Main comment (empty for no comment)
+		std::string _id;      // Unique identifier for this object
+		std::string _name;    // Name (may not be unique - for ex. configuration entries)
+		std::string _refType; // Type of object this references (if any)
+		std::string _comment; // Main comment (empty for no comment)
 
-		PropertyList _properties;       // List of object properties, including output configuration
+		PropertyList _properties; // List of object properties, including output configuration
 
 		// Constructs an object and add a default type property
 		Object(XcodeProvider *objectParent, std::string objectId, std::string objectName, std::string objectType, std::string objectRefType = "", std::string objectComment = "")
@@ -203,6 +203,7 @@ private:
 		// Slight hack, to allow Group access to parent.
 	protected:
 		XcodeProvider *_parent;
+
 	private:
 		// Returns the type property (should always be the first in the properties map)
 		std::string getType() {
@@ -266,6 +267,7 @@ private:
 		std::map<std::string, Group *> _childGroups;
 		std::string _treeName;
 		void addChildInternal(const std::string &id, const std::string &comment);
+
 	public:
 		Group(XcodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path);
 		void addChildFile(const std::string &name);
@@ -325,7 +327,7 @@ private:
 	void setupDefines(const BuildSetup &setup); // Setup the list of defines to be used on build configurations
 
 	// Retrieve information
-	ValueList& getResourceFiles() const;
+	ValueList &getResourceFiles() const;
 
 	// Hash generation
 	std::string getHash(std::string key);
@@ -340,6 +342,6 @@ private:
 	std::string writeSetting(const std::string &variable, const Setting &setting) const;
 };
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool
 
 #endif // TOOLS_CREATE_PROJECT_XCODE_H

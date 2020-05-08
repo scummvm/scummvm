@@ -31,24 +31,24 @@ namespace Alan2 {
 typedef int64 Time;
 
 struct Version {
-	const char  *string;
-	int    version;
-	int    revision;
-	int    correction;
-	Time   time;
-	const char  *state;
+	const char *string;
+	int version;
+	int revision;
+	int correction;
+	Time time;
+	const char *state;
 };
 
 struct Product {
-	const char   *name;
-	const char   *slogan;
-	const char   *shortHeader;
-	const char   *longHeader;
-	const char   *date;
-	const char   *time;
-	const char   *user;
-	const char   *host;
-	const char   *ostype;
+	const char *name;
+	const char *slogan;
+	const char *shortHeader;
+	const char *longHeader;
+	const char *date;
+	const char *time;
+	const char *user;
+	const char *host;
+	const char *ostype;
 	const Version version;
 };
 

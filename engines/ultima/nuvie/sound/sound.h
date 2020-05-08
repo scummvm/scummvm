@@ -24,20 +24,20 @@
 #define NUVIE_SOUND_SOUND_H
 
 #include "ultima/nuvie/core/game.h"
-#include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-using Std::string;
 using Std::list;
 using Std::map;
+using Std::string;
 using Std::vector;
 
 class Sound {
 public:
-	virtual ~Sound() {};
+	virtual ~Sound(){};
 	virtual bool Play(bool looping = false) = 0;
 	virtual bool Stop() = 0;
 	virtual bool FadeOut(float seconds) = 0;
@@ -45,15 +45,16 @@ public:
 	string GetName() {
 		return m_Filename;
 	}
+
 protected:
 	string m_Filename;
-//	static SoundManager *gpSM;
+	//	static SoundManager *gpSM;
 };
 
 class SoundCollection {
 public:
 	Sound *Select() {
-		int i = NUVIE_RAND()  % m_Sounds.size();
+		int i = NUVIE_RAND() % m_Sounds.size();
 		return m_Sounds[i];
 	}; //randomly select one from the list
 	vector<Sound *> m_Sounds;

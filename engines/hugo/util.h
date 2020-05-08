@@ -38,10 +38,10 @@ enum seqTextUtil {
 
 namespace Utils {
 
-int   firstBit(byte data);
-int   lastBit(byte data);
+int firstBit(byte data);
+int lastBit(byte data);
 
-void  reverseByte(byte *data);
+void reverseByte(byte *data);
 
 /**
  * Show a dialog notifying the user about something, with

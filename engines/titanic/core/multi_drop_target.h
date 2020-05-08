@@ -30,9 +30,11 @@ namespace Titanic {
 class CMultiDropTarget : public CDropTarget {
 	DECLARE_MESSAGE_MAP;
 	bool DropObjectMsg(CDropObjectMsg *msg);
+
 public:
 	CString _dropFrames;
 	CString _dropNames;
+
 public:
 	CLASSDEF;
 	CMultiDropTarget() : CDropTarget(), _dropFrames("1,2") {}

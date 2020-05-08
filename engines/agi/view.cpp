@@ -92,26 +92,26 @@ void AgiEngine::updateView(ScreenObjEntry *screenObj) {
 int AgiEngine::decodeView(byte *resourceData, uint16 resourceSize, int16 viewNr) {
 	AgiView *viewData = &_game.views[viewNr];
 	uint16 headerId = 0;
-	byte   headerStepSize = 0;
-	byte   headerCycleTime = 0;
-	byte   headerLoopCount = 0;
+	byte headerStepSize = 0;
+	byte headerCycleTime = 0;
+	byte headerLoopCount = 0;
 	uint16 headerDescriptionOffset = 0;
-	bool   isAGI256Data = false;
+	bool isAGI256Data = false;
 
 	AgiViewLoop *loopData = nullptr;
 	uint16 loopOffset = 0;
-	byte   loopHeaderCelCount = 0;
+	byte loopHeaderCelCount = 0;
 
 	AgiViewCel *celData = nullptr;
 	uint16 celOffset = 0;
-	byte   celHeaderWidth = 0;
-	byte   celHeaderHeight = 0;
-	byte   celHeaderTransparencyMirror = 0;
-	byte   celHeaderClearKey = 0;
-	bool   celHeaderMirrored = false;
-	byte   celHeaderMirrorLoop = 0;
+	byte celHeaderWidth = 0;
+	byte celHeaderHeight = 0;
+	byte celHeaderTransparencyMirror = 0;
+	byte celHeaderClearKey = 0;
+	bool celHeaderMirrored = false;
+	byte celHeaderMirrorLoop = 0;
 
-	byte  *celCompressedData = nullptr;
+	byte *celCompressedData = nullptr;
 	uint16 celCompressedSize = 0;
 
 	debugC(5, kDebugLevelResources, "decode_view(%d)", viewNr);
@@ -263,7 +263,7 @@ void AgiEngine::unpackViewCelData(AgiViewCel *celData, byte *compressedData, uin
 	byte *rawBitmap = new byte[celData->width * celData->height];
 	int16 remainingHeight = celData->height;
 	int16 remainingWidth = celData->width;
-	bool  isMirrored = celData->mirrored;
+	bool isMirrored = celData->mirrored;
 	byte curByte;
 	byte curColor;
 	byte curChunkLen;
@@ -552,10 +552,10 @@ void AgiEngine::setCel(ScreenObjEntry *screenObj, int16 celNr) {
 	screenObj->currentCelNr = celNr;
 
 	AgiViewCel *curViewCel;
-	curViewCel         = &curViewLoop->cel[celNr];
+	curViewCel = &curViewLoop->cel[celNr];
 	screenObj->celData = curViewCel;
-	screenObj->xSize   = curViewCel->width;
-	screenObj->ySize   = curViewCel->height;
+	screenObj->xSize = curViewCel->width;
+	screenObj->ySize = curViewCel->height;
 
 	// If position isn't appropriate, update it accordingly
 	clipViewCoordinates(screenObj);
@@ -583,7 +583,6 @@ void AgiEngine::clipViewCoordinates(ScreenObjEntry *screenObj) {
 	if (getVersion() < 0x2000) {
 		screenObj->flags |= fDontupdate;
 	}
-
 }
 
 /**
@@ -615,12 +614,10 @@ void AgiEngine::stopUpdate(ScreenObjEntry *viewPtr) {
 // loops to use according to direction and number of loops in
 // the view resource
 static int loopTable2[] = {
-	0x04, 0x04, 0x00, 0x00, 0x00, 0x04, 0x01, 0x01, 0x01
-};
+    0x04, 0x04, 0x00, 0x00, 0x00, 0x04, 0x01, 0x01, 0x01};
 
 static int loopTable4[] = {
-	0x04, 0x03, 0x00, 0x00, 0x00, 0x02, 0x01, 0x01, 0x01
-};
+    0x04, 0x03, 0x00, 0x00, 0x00, 0x02, 0x01, 0x01, 0x01};
 
 /**
  * Update view table entries.

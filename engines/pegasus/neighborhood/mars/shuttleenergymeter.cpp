@@ -23,14 +23,14 @@
  *
  */
 
-#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/mars/shuttleenergymeter.h"
+#include "pegasus/neighborhood/mars/constants.h"
 
 namespace Pegasus {
 
 ShuttleEnergyMeter::ShuttleEnergyMeter() : FaderAnimation(kNoDisplayElement) {
 	setBounds(kShuttleEnergyLeft, kShuttleEnergyTop, kShuttleEnergyLeft + kShuttleEnergyWidth,
-			kShuttleEnergyTop + kShuttleEnergyHeight);
+	          kShuttleEnergyTop + kShuttleEnergyHeight);
 	setDisplayOrder(kShuttleStatusOrder);
 	setFaderValue(0);
 }

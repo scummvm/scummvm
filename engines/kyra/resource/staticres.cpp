@@ -20,17 +20,17 @@
  *
  */
 
-#include "kyra/resource/resource.h"
-#include "kyra/engine/kyra_lok.h"
 #include "kyra/engine/kyra_hof.h"
+#include "kyra/engine/kyra_lok.h"
 #include "kyra/engine/kyra_mr.h"
 #include "kyra/graphics/screen.h"
-#include "kyra/graphics/screen_lok.h"
 #include "kyra/graphics/screen_hof.h"
+#include "kyra/graphics/screen_lok.h"
 #include "kyra/graphics/screen_mr.h"
-#include "kyra/gui/gui_lok.h"
 #include "kyra/gui/gui_hof.h"
+#include "kyra/gui/gui_lok.h"
 #include "kyra/gui/gui_mr.h"
+#include "kyra/resource/resource.h"
 #include "kyra/sequence/sequences_hof.h"
 #include "kyra/sound/sound_intern.h"
 
@@ -73,42 +73,39 @@ struct IndexTable {
 };
 
 const IndexTable iGameTable[] = {
-	{ GI_KYRA1, 0 },
-	{ GI_KYRA2, 1 },
-	{ GI_KYRA3, 2 },
-	{ GI_EOB1, 3 },
-	{ GI_EOB2, 4 },
-	{ GI_LOL, 5 },
-	{ -1, -1 }
-};
+    {GI_KYRA1, 0},
+    {GI_KYRA2, 1},
+    {GI_KYRA3, 2},
+    {GI_EOB1, 3},
+    {GI_EOB2, 4},
+    {GI_LOL, 5},
+    {-1, -1}};
 
 byte getGameID(const GameFlags &flags) {
 	return Common::find(iGameTable, ARRAYEND(iGameTable) - 1, flags.gameID)->value;
 }
 
 const IndexTable iLanguageTable[] = {
-	{ Common::EN_ANY, 1 },
-	{ Common::FR_FRA, 2 },
-	{ Common::DE_DEU, 3 },
-	{ Common::ES_ESP, 4 },
-	{ Common::IT_ITA, 5 },
-	{ Common::JA_JPN, 6 },
-	{ Common::RU_RUS, 7 },
-	{ -1, -1 }
-};
+    {Common::EN_ANY, 1},
+    {Common::FR_FRA, 2},
+    {Common::DE_DEU, 3},
+    {Common::ES_ESP, 4},
+    {Common::IT_ITA, 5},
+    {Common::JA_JPN, 6},
+    {Common::RU_RUS, 7},
+    {-1, -1}};
 
 byte getLanguageID(const GameFlags &flags) {
 	return Common::find(iLanguageTable, ARRAYEND(iLanguageTable) - 1, flags.lang)->value;
 }
 
 const IndexTable iPlatformTable[] = {
-	{ Common::kPlatformDOS, 0 },
-	{ Common::kPlatformAmiga, 1 },
-	{ Common::kPlatformFMTowns, 2 },
-	{ Common::kPlatformPC98, 3 },
-	{ Common::kPlatformMacintosh, 0 }, // HACK: Should be type "4", but as long as we can't extract Macintosh data, we need to use DOS data.
-	{ -1, -1 }
-};
+    {Common::kPlatformDOS, 0},
+    {Common::kPlatformAmiga, 1},
+    {Common::kPlatformFMTowns, 2},
+    {Common::kPlatformPC98, 3},
+    {Common::kPlatformMacintosh, 0}, // HACK: Should be type "4", but as long as we can't extract Macintosh data, we need to use DOS data.
+    {-1, -1}};
 
 byte getPlatformID(const GameFlags &flags) {
 	return Common::find(iPlatformTable, ARRAYEND(iPlatformTable) - 1, flags.platform)->value;
@@ -146,7 +143,8 @@ bool StaticResource::loadStaticResourceFile() {
 			continue;
 		}
 
-		delete file; file = 0;
+		delete file;
+		file = 0;
 
 		if (!res->loadPakFile(staticDataFilename(), *i))
 			continue;
@@ -240,44 +238,44 @@ bool StaticResource::tryKyraDatLoad() {
 bool StaticResource::init() {
 #define proc(x) &StaticResource::x
 	static const FileType fileTypeTable[] = {
-		{ kStringList, proc(loadStringTable), proc(freeStringTable) },
-		{ StaticResource::kRoomList, proc(loadRoomTable), proc(freeRoomTable) },
-		{ kShapeList, proc(loadShapeTable), proc(freeShapeTable) },
-		{ kAmigaSfxTable, proc(loadAmigaSfxTable), proc(freeAmigaSfxTable) },
-		{ kRawData, proc(loadRawData), proc(freeRawData) },
+		{kStringList, proc(loadStringTable), proc(freeStringTable)},
+		{StaticResource::kRoomList, proc(loadRoomTable), proc(freeRoomTable)},
+		{kShapeList, proc(loadShapeTable), proc(freeShapeTable)},
+		{kAmigaSfxTable, proc(loadAmigaSfxTable), proc(freeAmigaSfxTable)},
+		{kRawData, proc(loadRawData), proc(freeRawData)},
 
-		{ k2SeqData, proc(loadHoFSequenceData), proc(freeHoFSequenceData) },
-		{ k2SeqItemAnimData, proc(loadHoFSeqItemAnimData), proc(freeHoFSeqItemAnimData) },
-		{ k2ItemAnimDefinition, proc(loadItemAnimDefinition), proc(freeItemAnimDefinition) },
+		{k2SeqData, proc(loadHoFSequenceData), proc(freeHoFSequenceData)},
+		{k2SeqItemAnimData, proc(loadHoFSeqItemAnimData), proc(freeHoFSeqItemAnimData)},
+		{k2ItemAnimDefinition, proc(loadItemAnimDefinition), proc(freeItemAnimDefinition)},
 
 #ifdef ENABLE_LOL
-		{ kLoLCharData, proc(loadCharData), proc(freeCharData) },
-		{ kLoLSpellData, proc(loadSpellData), proc(freeSpellData) },
-		{ kLoLCompassData, proc(loadCompassData), proc(freeCompassData) },
-		{ kLoLFlightShpData, proc(loadFlyingObjectData), proc(freeFlyingObjectData) },
+		{kLoLCharData, proc(loadCharData), proc(freeCharData)},
+		{kLoLSpellData, proc(loadSpellData), proc(freeSpellData)},
+		{kLoLCompassData, proc(loadCompassData), proc(freeCompassData)},
+		{kLoLFlightShpData, proc(loadFlyingObjectData), proc(freeFlyingObjectData)},
 #else
-		{ kLoLCharData, proc(loadDummy), proc(freeDummy) },
-		{ kLoLSpellData, proc(loadDummy), proc(freeDummy) },
-		{ kLoLCompassData, proc(loadDummy), proc(freeDummy) },
-		{ kLoLFlightShpData, proc(loadDummy), proc(freeDummy) },
+		{kLoLCharData, proc(loadDummy), proc(freeDummy)},
+		{kLoLSpellData, proc(loadDummy), proc(freeDummy)},
+		{kLoLCompassData, proc(loadDummy), proc(freeDummy)},
+		{kLoLFlightShpData, proc(loadDummy), proc(freeDummy)},
 #endif
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
-		{ kRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
-		{ kRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
+		{kRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16)},
+		{kRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32)},
 #endif
 #ifdef ENABLE_LOL
-		{ kLoLButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
+		{kLoLButtonData, proc(loadButtonDefs), proc(freeButtonDefs)},
 #else
-		{ kLoLButtonData, proc(loadDummy), proc(freeDummy) },
+		{kLoLButtonData, proc(loadDummy), proc(freeDummy)},
 #endif
 
 #ifdef ENABLE_EOB
-		{ kEoB2SequenceData, proc(loadEoB2SeqData), proc(freeEoB2SeqData) },
-		{ kEoB2ShapeData, proc(loadEoB2ShapeData), proc(freeEoB2ShapeData) },
-		{ kEoBNpcData, proc(loadEoBNpcData), proc(freeEoBNpcData) },
+		{kEoB2SequenceData, proc(loadEoB2SeqData), proc(freeEoB2SeqData)},
+		{kEoB2ShapeData, proc(loadEoB2ShapeData), proc(freeEoB2ShapeData)},
+		{kEoBNpcData, proc(loadEoBNpcData), proc(freeEoBNpcData)},
 #endif
 
-		{ 0, 0, 0 }
+		{0, 0, 0}
 	};
 #undef proc
 	_fileLoader = fileTypeTable;
@@ -522,7 +520,8 @@ bool StaticResource::loadHoFSequenceData(Common::SeekableReadStream &stream, voi
 	size = sizeof(HoFSeqData) + numSeq * (sizeof(HoFSequence) + 28);
 
 	for (int i = 0; i < numSeq; i++) {
-		stream.seek(offset, SEEK_SET); offset += 2;
+		stream.seek(offset, SEEK_SET);
+		offset += 2;
 		stream.seek(stream.readUint16BE(), SEEK_SET);
 
 		tmp_s[i].flags = stream.readUint16BE();
@@ -542,13 +541,15 @@ bool StaticResource::loadHoFSequenceData(Common::SeekableReadStream &stream, voi
 		tmp_s[i].timeout = stream.readUint16BE();
 	}
 
-	stream.seek(offset, SEEK_SET); offset += 2;
+	stream.seek(offset, SEEK_SET);
+	offset += 2;
 	int numSeqN = stream.readUint16BE();
 	HoFNestedSequence *tmp_n = new HoFNestedSequence[numSeqN];
 	size += (numSeqN * (sizeof(HoFNestedSequence) + 14));
 
 	for (int i = 0; i < numSeqN; i++) {
-		stream.seek(offset, SEEK_SET); offset += 2;
+		stream.seek(offset, SEEK_SET);
+		offset += 2;
 		stream.seek(stream.readUint16BE(), SEEK_SET);
 
 		tmp_n[i].flags = stream.readUint16BE();
@@ -903,20 +904,19 @@ void KyraEngine_LoK::loadItems() {
 		_shapes[shape] = _screen->encodeShape((shape - 330) * 32, 102, 32, 17, 0);
 
 	for (shape = 335; shape <= 339; shape++)
-		_shapes[shape] = _screen->encodeShape((shape - 335) * 32, 17,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 335) * 32, 17, 32, 17, 0);
 
 	for (shape = 340; shape <= 344; shape++)
-		_shapes[shape] = _screen->encodeShape((shape - 340) * 32, 34,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 340) * 32, 34, 32, 17, 0);
 
 	for (shape = 345; shape <= 349; shape++)
-		_shapes[shape] = _screen->encodeShape((shape - 345) * 32, 51,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 345) * 32, 51, 32, 17, 0);
 
 	for (shape = 350; shape <= 354; shape++)
-		_shapes[shape] = _screen->encodeShape((shape - 350) * 32, 68,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 350) * 32, 68, 32, 17, 0);
 
 	for (shape = 355; shape <= 359; shape++)
-		_shapes[shape] = _screen->encodeShape((shape - 355) * 32, 85,  32, 17, 0);
-
+		_shapes[shape] = _screen->encodeShape((shape - 355) * 32, 85, 32, 17, 0);
 
 	_screen->loadBitmap("ITEMS.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
@@ -977,14 +977,14 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 void KyraEngine_HoF::initStaticResource() {
 	_ingamePakList = _staticres->loadStrings(k2IngamePakFiles, _ingamePakListSize);
 	_ingameSoundList = _staticres->loadStrings(k2IngameSfxFiles, _ingameSoundListSize);
-	_ingameSoundIndex = (const int16*)_staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
+	_ingameSoundIndex = (const int16 *)_staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
 	_musicFileListIntro = _staticres->loadStrings(k2SeqplayIntroTracks, _musicFileListIntroSize);
 	_musicFileListIngame = _staticres->loadStrings(k2IngameTracks, _musicFileListIngameSize);
 	_musicFileListFinale = _staticres->loadStrings(k2SeqplayFinaleTracks, _musicFileListFinaleSize);
 	_cdaTrackTableIntro = _staticres->loadRawData(k2SeqplayIntroCDA, _cdaTrackTableIntroSize);
 	_cdaTrackTableIngame = _staticres->loadRawData(k2IngameCDA, _cdaTrackTableIngameSize);
 	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
-	_ingameTalkObjIndex = (const uint16*)_staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
+	_ingameTalkObjIndex = (const uint16 *)_staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
 	_itemAnimDefinition = _staticres->loadItemAnimDefinition(k2IngameShapeAnimData, _itemAnimDefinitionSize);
 
@@ -997,9 +997,9 @@ void KyraEngine_HoF::initStaticResource() {
 		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
-		SoundResourceInfo_TownsPC98V2 resInfoIntro(0, 0, "intro%d.twn", (const uint16*)_cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1);
-		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "km%02d.twn", (const uint16*)_cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1);
-		SoundResourceInfo_TownsPC98V2 resInfoFinale(0, 0, "finale%d.twn", (const uint16*)_cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(0, 0, "intro%d.twn", (const uint16 *)_cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "km%02d.twn", (const uint16 *)_cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(0, 0, "finale%d.twn", (const uint16 *)_cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1);
 		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
 		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
@@ -1026,79 +1026,70 @@ void KyraEngine_MR::initStaticResource() {
 }
 
 const uint8 Screen_LoK_16::_palette16[48] = {
-	0x00, 0x00, 0x00, 0x02, 0x07, 0x0B, 0x0C, 0x06, 0x04,
-	0x0E, 0x09, 0x07, 0x00, 0x06, 0x03, 0x00, 0x0C, 0x07,
-	0x0A, 0x0A, 0x0A, 0x08, 0x03, 0x03, 0x02, 0x02, 0x02,
-	0x08, 0x0B, 0x0E, 0x0D, 0x00, 0x00, 0x00, 0x00, 0x0A,
-	0x05, 0x05, 0x05, 0x00, 0x0F, 0x0F, 0x0F, 0x0D, 0x00,
-	0x0F, 0x0F, 0x0F
-};
+    0x00, 0x00, 0x00, 0x02, 0x07, 0x0B, 0x0C, 0x06, 0x04,
+    0x0E, 0x09, 0x07, 0x00, 0x06, 0x03, 0x00, 0x0C, 0x07,
+    0x0A, 0x0A, 0x0A, 0x08, 0x03, 0x03, 0x02, 0x02, 0x02,
+    0x08, 0x0B, 0x0E, 0x0D, 0x00, 0x00, 0x00, 0x00, 0x0A,
+    0x05, 0x05, 0x05, 0x00, 0x0F, 0x0F, 0x0F, 0x0D, 0x00,
+    0x0F, 0x0F, 0x0F};
 
 const ScreenDim Screen_LoK::_screenDimTable[] = {
-	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
-	{ 0x08, 0x48, 0x18, 0x38, 0x0F, 0x0C, 0x00, 0x00 },
-	{ 0x01, 0x08, 0x26, 0x80, 0x0F, 0x0C, 0x00, 0x00 },
-	{ 0x00, 0xC2, 0x28, 0x06, 0x0F, 0x0C, 0x00, 0x00 },
-	{ 0x00, 0x90, 0x28, 0x38, 0x04, 0x0C, 0x00, 0x00 },
-	{ 0x01, 0x94, 0x26, 0x30, 0x04, 0x1B, 0x00, 0x00 },
-	{ 0x00, 0x90, 0x28, 0x38, 0x0F, 0x0D, 0x00, 0x00 },
-	{ 0x01, 0x96, 0x26, 0x32, 0x0F, 0x0D, 0x00, 0x00 },
-	{ 0x00, 0x00, 0x28, 0x88, 0x0F, 0x0C, 0x00, 0x00 },
-	{ 0x01, 0x20, 0x26, 0x80, 0x0F, 0x0C, 0x00, 0x00 },
-	{ 0x03, 0x28, 0x22, 0x46, 0x0F, 0x0D, 0x00, 0x00 }
-};
+    {0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00},
+    {0x08, 0x48, 0x18, 0x38, 0x0F, 0x0C, 0x00, 0x00},
+    {0x01, 0x08, 0x26, 0x80, 0x0F, 0x0C, 0x00, 0x00},
+    {0x00, 0xC2, 0x28, 0x06, 0x0F, 0x0C, 0x00, 0x00},
+    {0x00, 0x90, 0x28, 0x38, 0x04, 0x0C, 0x00, 0x00},
+    {0x01, 0x94, 0x26, 0x30, 0x04, 0x1B, 0x00, 0x00},
+    {0x00, 0x90, 0x28, 0x38, 0x0F, 0x0D, 0x00, 0x00},
+    {0x01, 0x96, 0x26, 0x32, 0x0F, 0x0D, 0x00, 0x00},
+    {0x00, 0x00, 0x28, 0x88, 0x0F, 0x0C, 0x00, 0x00},
+    {0x01, 0x20, 0x26, 0x80, 0x0F, 0x0C, 0x00, 0x00},
+    {0x03, 0x28, 0x22, 0x46, 0x0F, 0x0D, 0x00, 0x00}};
 
 const int Screen_LoK::_screenDimTableCount = ARRAYSIZE(Screen_LoK::_screenDimTable);
 
 const ScreenDim Screen_HoF::_screenDimTable[] = {
-	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },
-	{ 0x08, 0x48, 0x18, 0x38, 0xC7, 0xCF, 0x00, 0x00 },
-	{ 0x00, 0x00, 0x28, 0x90, 0xC7, 0xCF, 0x00, 0x00 },
-	{ 0x00, 0xC2, 0x28, 0x06, 0xC7, 0xCF, 0x00, 0x00 },
-	{ 0x00, 0x90, 0x28, 0x38, 0x96, 0xCF, 0x00, 0x00 },
-	{ 0x01, 0x94, 0x26, 0x30, 0x96, 0x1B, 0x00, 0x00 },
-	{ 0x00, 0x90, 0x28, 0x38, 0xC7, 0xCC, 0x00, 0x00 },
-	{ 0x01, 0x96, 0x26, 0x32, 0xC7, 0xCC, 0x00, 0x00 },
-	{ 0x00, 0x00, 0x28, 0x88, 0xC7, 0xCF, 0x00, 0x00 },
-	{ 0x00, 0x08, 0x28, 0xB8, 0xC7, 0xCF, 0x00, 0x00 },
-	{ 0x01, 0x28, 0x26, 0x46, 0xC7, 0xCC, 0x00, 0x00 },
-	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }  // menu, just present for current menu code
+    {0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00},
+    {0x08, 0x48, 0x18, 0x38, 0xC7, 0xCF, 0x00, 0x00},
+    {0x00, 0x00, 0x28, 0x90, 0xC7, 0xCF, 0x00, 0x00},
+    {0x00, 0xC2, 0x28, 0x06, 0xC7, 0xCF, 0x00, 0x00},
+    {0x00, 0x90, 0x28, 0x38, 0x96, 0xCF, 0x00, 0x00},
+    {0x01, 0x94, 0x26, 0x30, 0x96, 0x1B, 0x00, 0x00},
+    {0x00, 0x90, 0x28, 0x38, 0xC7, 0xCC, 0x00, 0x00},
+    {0x01, 0x96, 0x26, 0x32, 0xC7, 0xCC, 0x00, 0x00},
+    {0x00, 0x00, 0x28, 0x88, 0xC7, 0xCF, 0x00, 0x00},
+    {0x00, 0x08, 0x28, 0xB8, 0xC7, 0xCF, 0x00, 0x00},
+    {0x01, 0x28, 0x26, 0x46, 0xC7, 0xCC, 0x00, 0x00},
+    {0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00} // menu, just present for current menu code
 };
 
 const int Screen_HoF::_screenDimTableCount = ARRAYSIZE(Screen_HoF::_screenDimTable);
 
 const ScreenDim Screen_MR::_screenDimTable[] = {
-	{ 0x00, 0x00, 0x28, 0xC8, 0xFF, 0xF0, 0x00, 0x00 },
-	{ 0x08, 0x48, 0x18, 0x38, 0xFF, 0xF0, 0x00, 0x00 },
-	{ 0x00, 0x00, 0x28, 0xBC, 0xFF, 0xF0, 0x00, 0x00 },
-	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }
-};
+    {0x00, 0x00, 0x28, 0xC8, 0xFF, 0xF0, 0x00, 0x00},
+    {0x08, 0x48, 0x18, 0x38, 0xFF, 0xF0, 0x00, 0x00},
+    {0x00, 0x00, 0x28, 0xBC, 0xFF, 0xF0, 0x00, 0x00},
+    {0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00}};
 
 const int Screen_MR::_screenDimTableCount = ARRAYSIZE(Screen_MR::_screenDimTable);
 
 const int8 KyraEngine_v1::_addXPosTable[] = {
-	 4,  4,  0, -4, -4, -4,  0,  4
-};
+    4, 4, 0, -4, -4, -4, 0, 4};
 
 const int8 KyraEngine_v1::_addYPosTable[] = {
-	 0, -2, -2, -2,  0,  2,  2,  2
-};
+    0, -2, -2, -2, 0, 2, 2, 2};
 
 const int8 KyraEngine_v1::_charAddXPosTable[] = {
-	 0,  4,  4,  4,  0, -4, -4, -4
-};
+    0, 4, 4, 4, 0, -4, -4, -4};
 
 const int8 KyraEngine_v1::_charAddYPosTable[] = {
-	-2, -2,  0,  2,  2,  2,  0, -2
-};
+    -2, -2, 0, 2, 2, 2, 0, -2};
 
 const uint16 KyraEngine_LoK::_itemPosX[] = {
-	95, 115, 135, 155, 175, 95, 115, 135, 155, 175
-};
+    95, 115, 135, 155, 175, 95, 115, 135, 155, 175};
 
 const uint8 KyraEngine_LoK::_itemPosY[] = {
-	160, 160, 160, 160, 160, 181, 181, 181, 181, 181
-};
+    160, 160, 160, 160, 160, 181, 181, 181, 181, 181};
 
 void GUI_LoK::initStaticResource() {
 	GUI_V1_BUTTON(_scrollUpButton, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0F, 0);
@@ -1124,7 +1115,7 @@ void GUI_LoK::initStaticResource() {
 	GUI_V1_MENU_ITEM(_menu[0].item[1], 1, 0, 0, 0, -1, -1, 0x2F, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[0].item[2], 1, 0, 0, 0, -1, -1, 0x40, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[0].item[3], 1, 0, 0, 0, -1, -1, 0x51, 0xDC, 0x0F, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, -1,  0, 0x6E, 0xDC, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, -1, 0, 0x6E, 0xDC, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[0].item[0].callback = loadGameMenuFunctor;
 	_menu[0].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGameMenu);
 	_menu[0].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::gameControlsMenu);
@@ -1164,7 +1155,7 @@ void GUI_LoK::initStaticResource() {
 	GUI_V1_MENU_ITEM(_menu[5].item[2], 1, 0, 0, 0, 0xA5, 0, 0x40, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x42, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[5].item[3], 1, 0, 0, 0, 0xA5, 0, 0x51, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x53, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[5].item[4], 1, 0, 0, 0, 0xA5, 0, 0x62, 0x80, 0x0F, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x65, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0,   -1, 0, 0x7F, 0x6C, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0, -1, 0, 0x7F, 0x6C, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[5].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeMusic);
 	_menu[5].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeSounds);
 	_menu[5].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeWalk);
@@ -1229,270 +1220,253 @@ void KyraEngine_LoK::setupButtonData() {
 }
 
 const uint8 KyraEngine_LoK::_magicMouseItemStartFrame[] = {
-	0xAD, 0xB7, 0xBE, 0x00
-};
+    0xAD, 0xB7, 0xBE, 0x00};
 
 const uint8 KyraEngine_LoK::_magicMouseItemEndFrame[] = {
-	0xB1, 0xB9, 0xC2, 0x00
-};
+    0xB1, 0xB9, 0xC2, 0x00};
 
 const uint8 KyraEngine_LoK::_magicMouseItemStartFrame2[] = {
-	0xB2, 0xBA, 0xC3, 0x00
-};
+    0xB2, 0xBA, 0xC3, 0x00};
 
 const uint8 KyraEngine_LoK::_magicMouseItemEndFrame2[] = {
-	0xB6, 0xBD, 0xC8, 0x00
-};
+    0xB6, 0xBD, 0xC8, 0x00};
 
-const uint16 KyraEngine_LoK::_amuletX[] = { 231, 275, 253, 253 };
-const uint16 KyraEngine_LoK::_amuletY[] = { 170, 170, 159, 181 };
+const uint16 KyraEngine_LoK::_amuletX[] = {231, 275, 253, 253};
+const uint16 KyraEngine_LoK::_amuletY[] = {170, 170, 159, 181};
 
-const uint16 KyraEngine_LoK::_amuletX2[] = { 0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000 };
-const uint16 KyraEngine_LoK::_amuletY2[] = { 0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000 };
+const uint16 KyraEngine_LoK::_amuletX2[] = {0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000};
+const uint16 KyraEngine_LoK::_amuletY2[] = {0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000};
 
 const int8 KyraEngine_LoK::_dosTrackMap[] = {
-	-1,   0,  -1,   1,   0,   3,   0,   2,
-	 0,   4,   1,   2,   1,   3,   1,   4,
-	 1,  92,   1,   6,   1,   7,   2,   2,
-	 2,   3,   2,   4,   2,   5,   2,   6,
-	 2,   7,   3,   3,   3,   4,   1,   8,
-	 1,   9,   4,   2,   4,   3,   4,   4,
-	 4,   5,   4,   6,   4,   7,   4,   8,
-	 1,  11,   1,  12,   1,  14,   1,  13,
-	 4,   9,   5,  12,   6,   2,   6,   6,
-	 6,   7,   6,   8,   6,   9,   6,   3,
-	 6,   4,   6,   5,   7,   2,   7,   3,
-	 7,   4,   7,   5,   7,   6,   7,   7,
-	 7,   8,   7,   9,   8,   2,   8,   3,
-	 8,   4,   8,   5,   6,  11,   5,  11
-};
+    -1, 0, -1, 1, 0, 3, 0, 2,
+    0, 4, 1, 2, 1, 3, 1, 4,
+    1, 92, 1, 6, 1, 7, 2, 2,
+    2, 3, 2, 4, 2, 5, 2, 6,
+    2, 7, 3, 3, 3, 4, 1, 8,
+    1, 9, 4, 2, 4, 3, 4, 4,
+    4, 5, 4, 6, 4, 7, 4, 8,
+    1, 11, 1, 12, 1, 14, 1, 13,
+    4, 9, 5, 12, 6, 2, 6, 6,
+    6, 7, 6, 8, 6, 9, 6, 3,
+    6, 4, 6, 5, 7, 2, 7, 3,
+    7, 4, 7, 5, 7, 6, 7, 7,
+    7, 8, 7, 9, 8, 2, 8, 3,
+    8, 4, 8, 5, 6, 11, 5, 11};
 
 const int KyraEngine_LoK::_dosTrackMapSize = ARRAYSIZE(KyraEngine_LoK::_dosTrackMap);
 
 const int8 KyraEngine_LoK::_amigaTrackMap[] = {
-	 0,  1, 32, 26, 31, 30, 33, 33,
-	32, 17, 27, 32, 25, 29, 25, 24,
-	23, 26, 26, 30, 28, 21, 21, 15,
-	 3, 15, 23, 25, 33, 21, 30, 22,
-	15,  3, 33, 11, 12, 13, 14, 22,
-	22, 22,  3,  3,  3, 23,  3,  3,
-	23,  3,  3,  3,  3,  3,  3, 33
-};
+    0, 1, 32, 26, 31, 30, 33, 33,
+    32, 17, 27, 32, 25, 29, 25, 24,
+    23, 26, 26, 30, 28, 21, 21, 15,
+    3, 15, 23, 25, 33, 21, 30, 22,
+    15, 3, 33, 11, 12, 13, 14, 22,
+    22, 22, 3, 3, 3, 23, 3, 3,
+    23, 3, 3, 3, 3, 3, 3, 33};
 
 const int KyraEngine_LoK::_amigaTrackMapSize = ARRAYSIZE(KyraEngine_LoK::_amigaTrackMap);
 
 // kyra engine v2 static data
 
 const int GUI_v2::_sliderBarsPosition[] = {
-	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52
-};
+    0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52};
 
 // kyra 2 static res
 
 const char *const KyraEngine_HoF::_languageExtension[] = {
-	"ENG",
-	"FRE",
-	"GER",/*,
+    "ENG",
+    "FRE",
+    "GER", /*,
 	"ITA",      Italian and Spanish were never included
 	"SPA"*/
-	"JPN",
+    "JPN",
 };
 
 const char *const KyraEngine_HoF::_scriptLangExt[] = {
-	"EMC",
-	"FMC",
-	"GMC",/*,
+    "EMC",
+    "FMC",
+    "GMC", /*,
 	"IMC",      Italian and Spanish were never included
 	"SMC"*/
-	"JMC"
-};
+    "JMC"};
 
 const uint8 KyraEngine_HoF::_characterFrameTable[] = {
-	0x19, 0x09, 0x09, 0x12, 0x12, 0x12, 0x09, 0x09
-};
+    0x19, 0x09, 0x09, 0x12, 0x12, 0x12, 0x09, 0x09};
 
 const int KyraEngine_HoF::_inventoryX[] = {
-	0x4F, 0x63, 0x77, 0x8B, 0x9F, 0x4F, 0x63, 0x77, 0x8B, 0x9F
-};
+    0x4F, 0x63, 0x77, 0x8B, 0x9F, 0x4F, 0x63, 0x77, 0x8B, 0x9F};
 
 const int KyraEngine_HoF::_inventoryY[] = {
-	0x95, 0x95, 0x95, 0x95, 0x95, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA
-};
+    0x95, 0x95, 0x95, 0x95, 0x95, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA};
 
 const byte KyraEngine_HoF::_itemStringMap[] = {
-	2,    2,    0,    0,    2,    2,    2,    0,
-	2,    2,    0,    0,    0,    2,    0,    0,
-	0,    0,    0,    0,    2,    0,    0,    0,
-	0,    1,    0,    2,    2,    2,    2,    0,
-	3,    0,    3,    2,    2,    2,    3,    2,
-	2,    2,    0,    0,    0,    0,    0,    0,
-	0,    0,    0,    0,    2,    0,    0,    0,
-	0,    0,    0,    0,    0,    2,    0,    0,
-	2,    0,    0,    0,    0,    0,    0,    2,
-	2,    0,    0,    0,    2,    2,    2,    2,
-	2,    2,    2,    2,    2,    2,    2,    2,
-	2,    2,    2,    2,    2,    2,    2,    0,
-	2,    2,    2,    0,    0,    1,    3,    2,
-	2,    2,    2,    2,    2,    0,    0,    0,
-	0,    2,    2,    1,    0,    1,    2,    0,
-	0,    0,    0,    0,    0,    2,    2,    2,
-	2,    2,    2,    2,    0,    2,    2,    2,
-	2,    3,    2,    0,    0,    0,    0,    1,
-	2,    0,    0,    0,    0,    0,    0,    0,
-	0,    0,    0,    0,    0,    0,    0,    0,
-	2,    2,    0,    0,    0,    0,    0,    2,
-	0,    2,    0,    0,    0,    0,    0,    0
-};
+    2, 2, 0, 0, 2, 2, 2, 0,
+    2, 2, 0, 0, 0, 2, 0, 0,
+    0, 0, 0, 0, 2, 0, 0, 0,
+    0, 1, 0, 2, 2, 2, 2, 0,
+    3, 0, 3, 2, 2, 2, 3, 2,
+    2, 2, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 0, 0, 0,
+    0, 0, 0, 0, 0, 2, 0, 0,
+    2, 0, 0, 0, 0, 0, 0, 2,
+    2, 0, 0, 0, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 0,
+    2, 2, 2, 0, 0, 1, 3, 2,
+    2, 2, 2, 2, 2, 0, 0, 0,
+    0, 2, 2, 1, 0, 1, 2, 0,
+    0, 0, 0, 0, 0, 2, 2, 2,
+    2, 2, 2, 2, 0, 2, 2, 2,
+    2, 3, 2, 0, 0, 0, 0, 1,
+    2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    2, 2, 0, 0, 0, 0, 0, 2,
+    0, 2, 0, 0, 0, 0, 0, 0};
 
 const int KyraEngine_HoF::_itemStringMapSize = ARRAYSIZE(KyraEngine_HoF::_itemStringMap);
 
 const int8 KyraEngine_HoF::_dosTrackMap[] = {
-	-1,    0,   -1,    1,    9,    6,    5,    4,
-	 8,    3,   -2,    0,   -2,    0,    2,    3,
-	-2,    0,   -2,    0,   -2,    0,   -2,    0,
-	 0,    2,    0,    3,    1,    2,    1,    3,
-	 2,    2,    2,    0,    3,    2,    3,    3,
-	 3,    4,    4,    2,    5,    2,    5,    3,
-	 5,    4,    6,    2,    6,    3,    6,    4,
-	 6,    5,    6,    6,    6,    7,    6,    8,
-	 6,    0,    6,    9,    7,    2,    7,    3,
-	 7,    4,    7,    5,    8,    6,    7,    6,
-	 7,    7,    7,    8,    7,    9,    8,    2,
-	14,    2,    8,    4,    8,    7,    8,    8,
-	 8,    9,    9,    2,    9,    3,    9,    4,
-	 9,    5,    9,    7,    9,    8,    9,    9,
-	10,    2,   10,    3,   10,    4,   10,    5,
-	10,    6,   10,    7,   11,    2,   11,    3,
-	11,    4,   11,    5,   11,    6,   11,    7,
-	11,    8,   11,    9,   12,    2,   12,    3,
-	12,    4,   12,    5,   12,    6,   12,    7,
-	12,    8,   12,    9,   13,    2,    4,    7,
-	14,    3,   14,    4,   14,    5,    4,    2,
-	 4,    3,    4,    4,    4,    5,    4,    6
-};
+    -1, 0, -1, 1, 9, 6, 5, 4,
+    8, 3, -2, 0, -2, 0, 2, 3,
+    -2, 0, -2, 0, -2, 0, -2, 0,
+    0, 2, 0, 3, 1, 2, 1, 3,
+    2, 2, 2, 0, 3, 2, 3, 3,
+    3, 4, 4, 2, 5, 2, 5, 3,
+    5, 4, 6, 2, 6, 3, 6, 4,
+    6, 5, 6, 6, 6, 7, 6, 8,
+    6, 0, 6, 9, 7, 2, 7, 3,
+    7, 4, 7, 5, 8, 6, 7, 6,
+    7, 7, 7, 8, 7, 9, 8, 2,
+    14, 2, 8, 4, 8, 7, 8, 8,
+    8, 9, 9, 2, 9, 3, 9, 4,
+    9, 5, 9, 7, 9, 8, 9, 9,
+    10, 2, 10, 3, 10, 4, 10, 5,
+    10, 6, 10, 7, 11, 2, 11, 3,
+    11, 4, 11, 5, 11, 6, 11, 7,
+    11, 8, 11, 9, 12, 2, 12, 3,
+    12, 4, 12, 5, 12, 6, 12, 7,
+    12, 8, 12, 9, 13, 2, 4, 7,
+    14, 3, 14, 4, 14, 5, 4, 2,
+    4, 3, 4, 4, 4, 5, 4, 6};
 
 const int KyraEngine_HoF::_dosTrackMapSize = ARRAYSIZE(KyraEngine_HoF::_dosTrackMap);
 
 const int8 KyraEngine_HoF::_mt32SfxMap[] = {
-	-1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-	-1,   -1,   -1,   49,   27,    5,   36,   13,
-	-1,   -1,   68,   55,   37,   73,   43,   61,
-	49,   -1,   56,   -1,   62,   38,   -1,   -1,
-	61,   -1,   -1,   31,   70,    2,   45,   -1,
-	45,   -1,   -1,   -1,   10,   14,   24,   25,
-	-1,   -1,   59,    9,   26,   -1,   71,   79,
-	12,    9,   -1,   -1,   61,   -1,   -1,   65,
-	66,   50,   27,   24,   29,   29,   15,   16,
-	17,   18,   19,   20,   21,   57,   -1,   -1,
-	34,    3,   -1,   56,   56,   -1,   -1,   50,
-	43,   68,   32,   33,   67,   25,   60,   40,
-	39,   11,   24,    2,   60,    3,   46,   54,
-	 1,    8,   -1,   -1,   41,   42,   37,   74,
-	69,   62,   58,   27,   -1,   -1,   -1,   -1,
-	48,    4,   -1,   25,   39,   40,   24,   58,
-	35,    4,    4,    4,   -1,   50,   -1,    6,
-	 8,   -1,   -1,   -1,   -1,   -1,   53,   52,
-	-1,   63,   47,   -1,   -1,   -1,   53,   -1,
-	29,   -1,   -1,   79,   -1,   41,   12,   -1,
-	-1,   -1,   26,   -1,    7,   27,   72,   51,
-	23,   51,   64,   -1,   -1,   -1,   27,   76,
-	77,   78,   28,   47,   -1,   -1,   53,   -1,
-	-1,   -1,   -1,   -1,    2,   22,   -1,   51,
-	58,   -1,   -1,   30,   -1,   79,   -1,   -1,
-	22,   36,    1,   -1,   12,    1,   -1,   -1,
-	41,   -1,   76,   77,   47
-};
+    -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, 49, 27, 5, 36, 13,
+    -1, -1, 68, 55, 37, 73, 43, 61,
+    49, -1, 56, -1, 62, 38, -1, -1,
+    61, -1, -1, 31, 70, 2, 45, -1,
+    45, -1, -1, -1, 10, 14, 24, 25,
+    -1, -1, 59, 9, 26, -1, 71, 79,
+    12, 9, -1, -1, 61, -1, -1, 65,
+    66, 50, 27, 24, 29, 29, 15, 16,
+    17, 18, 19, 20, 21, 57, -1, -1,
+    34, 3, -1, 56, 56, -1, -1, 50,
+    43, 68, 32, 33, 67, 25, 60, 40,
+    39, 11, 24, 2, 60, 3, 46, 54,
+    1, 8, -1, -1, 41, 42, 37, 74,
+    69, 62, 58, 27, -1, -1, -1, -1,
+    48, 4, -1, 25, 39, 40, 24, 58,
+    35, 4, 4, 4, -1, 50, -1, 6,
+    8, -1, -1, -1, -1, -1, 53, 52,
+    -1, 63, 47, -1, -1, -1, 53, -1,
+    29, -1, -1, 79, -1, 41, 12, -1,
+    -1, -1, 26, -1, 7, 27, 72, 51,
+    23, 51, 64, -1, -1, -1, 27, 76,
+    77, 78, 28, 47, -1, -1, 53, -1,
+    -1, -1, -1, -1, 2, 22, -1, 51,
+    58, -1, -1, 30, -1, 79, -1, -1,
+    22, 36, 1, -1, 12, 1, -1, -1,
+    41, -1, 76, 77, 47};
 
 const int KyraEngine_HoF::_mt32SfxMapSize = ARRAYSIZE(KyraEngine_HoF::_mt32SfxMap);
 
 const int8 KyraEngine_HoF::_gmSfxMap[] = {
-	-1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-	-1,   -1,   -1,   31,   25,   19,   12,    4,
-	-1,   -1,   46,   18,   -1,   21,   15,   -1,
-	31,   -1,   -1,   -1,   -1,   -1,   47,   -1,
-	33,   -1,   36,   -1,   -1,   23,   48,   -1,
-	48,   -1,   -1,   49,   -1,   50,   22,   24,
-	51,   -1,   52,   20,   -1,   -1,   22,   53,
-	 3,   20,   47,   54,   33,   -1,   55,   56,
-	57,   33,   -1,   51,   58,   -1,    5,    6,
-	 7,    8,    9,   10,   11,   22,   -1,   -1,
-	-1,   24,   -1,   26,   17,   -1,   -1,   33,
-	15,   -1,   23,   23,   -1,   22,   -1,   23,
-	24,   21,   22,   -1,   -1,   24,   16,   -1,
-	 1,   48,   -1,   -1,   13,   14,   -1,   29,
-	64,   -1,   -1,   25,   -1,   -1,   -1,   -1,
-	-1,    2,   13,   24,   23,   23,   22,   -1,
-	60,    2,    2,    2,   -1,   33,   -1,   61,
-	48,   62,   -1,   39,   -1,   -1,   28,   63,
-	33,   -1,   17,   -1,   45,   45,   28,   55,
-	34,   -1,   -1,   34,   55,   13,   -1,   47,
-	54,   -1,   -1,   33,   44,   25,   -1,   -1,
-	-1,   32,   -1,   -1,   -1,   -1,   25,   37,
-	37,   37,   26,   43,   -1,   42,   24,   -1,
-	-1,   -1,   -1,   -1,   23,   32,   -1,   32,
-	-1,   -1,   -1,   27,   41,   34,   -1,   40,
-	32,   -1,   16,   40,   -1,   16,   38,   39,
-	13,   -1,   37,   28,   33
-};
+    -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, 31, 25, 19, 12, 4,
+    -1, -1, 46, 18, -1, 21, 15, -1,
+    31, -1, -1, -1, -1, -1, 47, -1,
+    33, -1, 36, -1, -1, 23, 48, -1,
+    48, -1, -1, 49, -1, 50, 22, 24,
+    51, -1, 52, 20, -1, -1, 22, 53,
+    3, 20, 47, 54, 33, -1, 55, 56,
+    57, 33, -1, 51, 58, -1, 5, 6,
+    7, 8, 9, 10, 11, 22, -1, -1,
+    -1, 24, -1, 26, 17, -1, -1, 33,
+    15, -1, 23, 23, -1, 22, -1, 23,
+    24, 21, 22, -1, -1, 24, 16, -1,
+    1, 48, -1, -1, 13, 14, -1, 29,
+    64, -1, -1, 25, -1, -1, -1, -1,
+    -1, 2, 13, 24, 23, 23, 22, -1,
+    60, 2, 2, 2, -1, 33, -1, 61,
+    48, 62, -1, 39, -1, -1, 28, 63,
+    33, -1, 17, -1, 45, 45, 28, 55,
+    34, -1, -1, 34, 55, 13, -1, 47,
+    54, -1, -1, 33, 44, 25, -1, -1,
+    -1, 32, -1, -1, -1, -1, 25, 37,
+    37, 37, 26, 43, -1, 42, 24, -1,
+    -1, -1, -1, -1, 23, 32, -1, 32,
+    -1, -1, -1, 27, 41, 34, -1, 40,
+    32, -1, 16, 40, -1, 16, 38, 39,
+    13, -1, 37, 28, 33};
 
 const int KyraEngine_HoF::_gmSfxMapSize = ARRAYSIZE(KyraEngine_HoF::_gmSfxMap);
 
 const int8 KyraEngine_HoF::_pcSpkSfxMap[] = {
-	-1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-	-1,   -1,   -1,    0,    1,    2,    3,    4,
-	 5,    6,   -1,    7,    8,    9,   10,   -1,
-	 6,   -1,   -1,   11,   -1,   12,   -1,   -1,
-	-1,   -1,   -1,   13,   -1,   39,   14,   15,
-	 3,   16,   16,   -1,   -1,   -1,   17,   18,
-	 5,   -1,   -1,   -1,   -1,   -1,   19,   20,
-	21,   -1,   22,   23,   -1,   -1,   -1,   -1,
-	-1,   -1,   39,   -1,   24,   24,   25,   26,
-	27,   28,   29,   30,   31,   32,   -1,   -1,
-	-1,    2,   -1,   -1,   -1,   -1,   -1,   21,
-	10,   -1,   -1,   -1,   -1,   17,   -1,   17,
-	40,   -1,   18,   38,   -1,   40,   33,   -1,
-	34,   35,   36,   37,   38,   39,   40,   41,
-	-1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-	-1,   -1,   42,   43,   44,   45,   -1,   -1,
-	-1,   -1,   -1,   -1,   46,   -1,    5,   47,
-	48,   -1,   -1,   -1,   -1,   -1,   49,   50,
-	-1,   40,   -1,   24,   -1,   -1,   43,   -1,
-	-1,   38,   -1,   -1,   -1,   51,   -1,   -1,
-	-1,   -1,   -1,   -1,   -1,    9,   -1,   52,
-	53,   40,   -1,   -1,   -1,   -1,   -1,   -1,
-	-1,   -1,   50,   -1,   -1,   -1,   11,   54,
-	 5,   -1,   -1,   -1,   -1,   11,    7,   55,
-	 8,   36,   -1,   -1,   -1,   -1,   -1,   -1,
-	11,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-	-1,   -1,   -1,   -1,   24
-};
+    -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, 0, 1, 2, 3, 4,
+    5, 6, -1, 7, 8, 9, 10, -1,
+    6, -1, -1, 11, -1, 12, -1, -1,
+    -1, -1, -1, 13, -1, 39, 14, 15,
+    3, 16, 16, -1, -1, -1, 17, 18,
+    5, -1, -1, -1, -1, -1, 19, 20,
+    21, -1, 22, 23, -1, -1, -1, -1,
+    -1, -1, 39, -1, 24, 24, 25, 26,
+    27, 28, 29, 30, 31, 32, -1, -1,
+    -1, 2, -1, -1, -1, -1, -1, 21,
+    10, -1, -1, -1, -1, 17, -1, 17,
+    40, -1, 18, 38, -1, 40, 33, -1,
+    34, 35, 36, 37, 38, 39, 40, 41,
+    -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, 42, 43, 44, 45, -1, -1,
+    -1, -1, -1, -1, 46, -1, 5, 47,
+    48, -1, -1, -1, -1, -1, 49, 50,
+    -1, 40, -1, 24, -1, -1, 43, -1,
+    -1, 38, -1, -1, -1, 51, -1, -1,
+    -1, -1, -1, -1, -1, 9, -1, 52,
+    53, 40, -1, -1, -1, -1, -1, -1,
+    -1, -1, 50, -1, -1, -1, 11, 54,
+    5, -1, -1, -1, -1, 11, 7, 55,
+    8, 36, -1, -1, -1, -1, -1, -1,
+    11, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, 24};
 
 const int KyraEngine_HoF::_pcSpkSfxMapSize = ARRAYSIZE(KyraEngine_HoF::_pcSpkSfxMap);
 
 const int16 KyraEngine_HoF::_keyboardSounds[190] = {
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1, 201,  -1, 184,  73,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, 201, -1, 184, 73,
 
-	 74, 212,  78, 184, 104, 185,  99, 102,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1, 121, 108,  20,
+    74, 212, 78, 184, 104, 185, 99, 102, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, 121, 108, 20,
 
-	 22,  25, 168, 171, 207, 174,  38,  39,  40,  41,
-	 44, 109,  46, 178, 180,  53, 181,  56, 106, 182,
-	 59,  62,  183, -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+    22, 25, 168, 171, 207, 174, 38, 39, 40, 41,
+    44, 109, 46, 178, 180, 53, 181, 56, 106, 182,
+    59, 62, 183, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-	 -1,  -1,  -1,  -1,  92,  15, 107, 191,  -1, 134,
-	 -1, 197,  -1, 205, 152, 139,  -1,  -1,  -1,  -1
-};
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, 92, 15, 107, 191, -1, 134,
+    -1, 197, -1, 205, 152, 139, -1, -1, -1, -1};
 
 void KyraEngine_HoF::initInventoryButtonList() {
 	delete[] _inventoryButtons;
@@ -1682,140 +1656,130 @@ void GUI_HoF::initStaticData() {
 }
 
 const uint16 GUI_HoF::_menuStringsTalkie[] = {
-	0x001, 0x002, 0x003, 0x023, 0x004, 0x025, 0x005, 0x006, // Main Menu String IDs
-	0x025, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000, // Options Menu String IDs
-	0x007, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000, // Audio Menu String IDs
-	0x000, 0x014, 0x013, 0x000, 0x000, 0x000, 0x000, 0x000, // Menu3 Menu String IDs
-	0x008, 0x029, 0x02A, 0x02B, 0x02C, 0x02D, 0x00B, 0x000, // Load Menu String IDs
-	0x009, 0x029, 0x02A, 0x02B, 0x02C, 0x02D, 0x00B, 0x000, // Save Menu String IDs
-	0x00C, 0x00D, 0x00B, 0x000, 0x000, 0x000, 0x000, 0x000, // Menu6 Menu String IDs
-	0x00E, 0x002, 0x005, 0x000, 0x000, 0x000, 0x000, 0x000  // Death Menu String IDs
+    0x001, 0x002, 0x003, 0x023, 0x004, 0x025, 0x005, 0x006, // Main Menu String IDs
+    0x025, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000, // Options Menu String IDs
+    0x007, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000, // Audio Menu String IDs
+    0x000, 0x014, 0x013, 0x000, 0x000, 0x000, 0x000, 0x000, // Menu3 Menu String IDs
+    0x008, 0x029, 0x02A, 0x02B, 0x02C, 0x02D, 0x00B, 0x000, // Load Menu String IDs
+    0x009, 0x029, 0x02A, 0x02B, 0x02C, 0x02D, 0x00B, 0x000, // Save Menu String IDs
+    0x00C, 0x00D, 0x00B, 0x000, 0x000, 0x000, 0x000, 0x000, // Menu6 Menu String IDs
+    0x00E, 0x002, 0x005, 0x000, 0x000, 0x000, 0x000, 0x000  // Death Menu String IDs
 };
 
 const uint16 GUI_HoF::_menuStringsOther[] = {
-	0x009, 0x00A, 0x00B, 0x001, 0x00C, 0x00D, 0x00E, 0x000, // Main Menu String IDs
-	0x00F, 0x02B, 0x02C, 0x02D, 0x02E, 0x018, 0x000, 0x000, // Options Menu String IDs
-	0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, // Dummy
-	0x000, 0x01C, 0x01B, 0x000, 0x000, 0x000, 0x000, 0x000, // Menu3 Menu String IDs
-	0x010, 0x02F, 0x030, 0x031, 0x032, 0x033, 0x013, 0x000, // Load Menu String IDs
-	0x011, 0x02F, 0x030, 0x031, 0x032, 0x033, 0x013, 0x000, // Save Menu String IDs
-	0x014, 0x015, 0x013, 0x3E8, 0x000, 0x000, 0x000, 0x000, // Menu6 String IDs
-	0x016, 0x00A, 0x00D, 0x000, 0x000, 0x000, 0x000, 0x000  // Death Menu String IDs
+    0x009, 0x00A, 0x00B, 0x001, 0x00C, 0x00D, 0x00E, 0x000, // Main Menu String IDs
+    0x00F, 0x02B, 0x02C, 0x02D, 0x02E, 0x018, 0x000, 0x000, // Options Menu String IDs
+    0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, // Dummy
+    0x000, 0x01C, 0x01B, 0x000, 0x000, 0x000, 0x000, 0x000, // Menu3 Menu String IDs
+    0x010, 0x02F, 0x030, 0x031, 0x032, 0x033, 0x013, 0x000, // Load Menu String IDs
+    0x011, 0x02F, 0x030, 0x031, 0x032, 0x033, 0x013, 0x000, // Save Menu String IDs
+    0x014, 0x015, 0x013, 0x3E8, 0x000, 0x000, 0x000, 0x000, // Menu6 String IDs
+    0x016, 0x00A, 0x00D, 0x000, 0x000, 0x000, 0x000, 0x000  // Death Menu String IDs
 };
 
 const uint16 KyraEngine_HoF::_itemMagicTable[] = {
-	0x0D,  0x0A,  0x0B,    0,
-	0x0D,  0x0B,  0x0A,    0,
-	0x0D,  0x38,  0x37,    0,
-	0x0D,  0x37,  0x38,    0,
-	0x0D,  0x35,  0x36,    0,
-	0x0D,  0x36,  0x35,    0,
-	0x34,  0x27,  0x33,    0,
-	0x41,  0x29,  0x49,    0,
-	0x45,  0x29,  0x4A,    1,
-	0x46,  0x29,  0x4A,    1,
-	0x3C,  0x29,  0x4B,    1,
-	0x34,  0x29,  0x4C,    0,
-	0x3C,  0x49,  0x3B,    1,
-	0x41,  0x4B,  0x3B,    0,
-	0x3C,  0x4A,  0x3B,    1,
-	0x34,  0x49,  0x3B,    0,
-	0x41,  0x4C,  0x3B,    0,
-	0x45,  0x4C,  0x3B,    1,
-	0x46,  0x4C,  0x3B,    1,
-	0x34,  0x4A,  0x3B,    0,
-	0x0D,  0x67,  0x68,    0,
-	0x0D,  0x68,  0x67,    0,
-	0x0D,  0x69,  0x6A,    0,
-	0x0D,  0x6A,  0x69,    0,
-	0x0D,  0x6B,  0x6C,    0,
-	0x0D,  0x6C,  0x6B,    0,
-	0x0D,  0x88,  0x87,    0,
-	0x0D,  0x87,  0x88,    0,
-	0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF
-};
+    0x0D, 0x0A, 0x0B, 0,
+    0x0D, 0x0B, 0x0A, 0,
+    0x0D, 0x38, 0x37, 0,
+    0x0D, 0x37, 0x38, 0,
+    0x0D, 0x35, 0x36, 0,
+    0x0D, 0x36, 0x35, 0,
+    0x34, 0x27, 0x33, 0,
+    0x41, 0x29, 0x49, 0,
+    0x45, 0x29, 0x4A, 1,
+    0x46, 0x29, 0x4A, 1,
+    0x3C, 0x29, 0x4B, 1,
+    0x34, 0x29, 0x4C, 0,
+    0x3C, 0x49, 0x3B, 1,
+    0x41, 0x4B, 0x3B, 0,
+    0x3C, 0x4A, 0x3B, 1,
+    0x34, 0x49, 0x3B, 0,
+    0x41, 0x4C, 0x3B, 0,
+    0x45, 0x4C, 0x3B, 1,
+    0x46, 0x4C, 0x3B, 1,
+    0x34, 0x4A, 0x3B, 0,
+    0x0D, 0x67, 0x68, 0,
+    0x0D, 0x68, 0x67, 0,
+    0x0D, 0x69, 0x6A, 0,
+    0x0D, 0x6A, 0x69, 0,
+    0x0D, 0x6B, 0x6C, 0,
+    0x0D, 0x6C, 0x6B, 0,
+    0x0D, 0x88, 0x87, 0,
+    0x0D, 0x87, 0x88, 0,
+    0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 
 const int KyraEngine_HoF::_bookPageYOffset[] = {
-	0, 0, 2, 2,
-	0, 0, 2, 2,
-	0, 0, 2, 2
-};
+    0, 0, 2, 2,
+    0, 0, 2, 2,
+    0, 0, 2, 2};
 
 const byte KyraEngine_HoF::_bookTextColorMap[] = {
-	0x00, 0xC7, 0xCF, 0x00
-};
+    0x00, 0xC7, 0xCF, 0x00};
 
 const int16 KyraEngine_HoF::_cauldronProtectedItems[] = {
-	0x07, 0x0D, 0x47, 0x48,
-	0x29, 0x1A, 0x1C, 0x6D,
-	0x4D, 0x3A, 0x0E, 0x0F,
-	0x10, 0x11, 0x26, 0x3E,
-	0x35, 0x40, 0x42, 0xA6,
-	0xA4, 0xA5, 0x91, 0x95,
-	0x99, 0xAC, 0xAE, 0xAF,
-	0x8A, 0x79, 0x61, -1
-};
+    0x07, 0x0D, 0x47, 0x48,
+    0x29, 0x1A, 0x1C, 0x6D,
+    0x4D, 0x3A, 0x0E, 0x0F,
+    0x10, 0x11, 0x26, 0x3E,
+    0x35, 0x40, 0x42, 0xA6,
+    0xA4, 0xA5, 0x91, 0x95,
+    0x99, 0xAC, 0xAE, 0xAF,
+    0x8A, 0x79, 0x61, -1};
 
 const int16 KyraEngine_HoF::_cauldronBowlTable[] = {
-	0x0027, 0x0029,
-	0x0028, 0x0029,
-	0x0033, 0x0029,
-	0x0049, 0x0029,
-	0x004A, 0x0029,
-	0x004B, 0x0029,
-	0x004C, 0x0029,
-	0x003B, 0x0029,
-	0x0034, 0x0034,
-	-1, -1
-};
+    0x0027, 0x0029,
+    0x0028, 0x0029,
+    0x0033, 0x0029,
+    0x0049, 0x0029,
+    0x004A, 0x0029,
+    0x004B, 0x0029,
+    0x004C, 0x0029,
+    0x003B, 0x0029,
+    0x0034, 0x0034,
+    -1, -1};
 
 const int16 KyraEngine_HoF::_cauldronMagicTable[] = {
-	0x0, 0x16, 0x2, 0x1A,
-	0x7, 0xA4, 0x5, 0x4D,
-	0x1, 0xA5, 0x3, 0xA6,
-	0x6, 0x6D, 0x4, 0x91,
-	0xA, 0x99, 0xC, 0x95,
-	0x9, 0xAC, -1, -1
-};
+    0x0, 0x16, 0x2, 0x1A,
+    0x7, 0xA4, 0x5, 0x4D,
+    0x1, 0xA5, 0x3, 0xA6,
+    0x6, 0x6D, 0x4, 0x91,
+    0xA, 0x99, 0xC, 0x95,
+    0x9, 0xAC, -1, -1};
 
 const int16 KyraEngine_HoF::_cauldronMagicTableScene77[] = {
-	0x0, 0x16, 0x2, 0x1A,
-	0x7, 0xAB, 0x5, 0x4D,
-	0x1, 0xAE, 0x3, 0xAF,
-	0x6, 0x6D, 0x4, 0x91,
-	0xA, 0x99, 0xC, 0x95,
-	0x9, 0xAC, -1, -1
-};
+    0x0, 0x16, 0x2, 0x1A,
+    0x7, 0xAB, 0x5, 0x4D,
+    0x1, 0xAE, 0x3, 0xAF,
+    0x6, 0x6D, 0x4, 0x91,
+    0xA, 0x99, 0xC, 0x95,
+    0x9, 0xAC, -1, -1};
 
 const uint8 KyraEngine_HoF::_cauldronStateTable[] = {
-	3, 1, 3, 1, 1, 4, 4, 2,
-	3, 1, 1, 3, 1, 3, 3, 3,
-	3, 3, 3, 3, 3, 3, 3
-};
+    3, 1, 3, 1, 1, 4, 4, 2,
+    3, 1, 1, 3, 1, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3};
 
 const Item KyraEngine_HoF::_flaskTable[] = {
-	0x19, 0x14, 0x15, 0x16, 0x17, 0x18, 0x34,
-	0x1B, 0x39, 0x1A, 0x3A, 0x4D, 0x72, kItemNone
-};
+    0x19, 0x14, 0x15, 0x16, 0x17, 0x18, 0x34,
+    0x1B, 0x39, 0x1A, 0x3A, 0x4D, 0x72, kItemNone};
 
 const uint8 KyraEngine_HoF::_rainbowRoomData[] = {
-	0x02, 0xA9, 0x9E, 0x75, 0x73, 0x17, 0x00, 0xA0,
-	0x08, 0x01, 0x19, 0x9F, 0x66, 0x05, 0x22, 0x7D,
-	0x20, 0x25, 0x1D, 0x64, 0xA0, 0x78, 0x85, 0x3B,
-	0x3C, 0x5E, 0x38, 0x45, 0x8F, 0x61, 0xA1, 0x71,
-	0x47, 0x77, 0x86, 0x41, 0xA2, 0x5F, 0x03, 0x72,
-	0x83, 0x9E, 0x84, 0x8E, 0xAD, 0xA8, 0x04, 0x79,
-	0xAA, 0xA3, 0x06, 0x27, 0x8F, 0x9F, 0x0A, 0x76,
-	0x46, 0x1E, 0x24, 0x63, 0x18, 0x69, 0x39, 0x1F,
-	0x7E, 0xAD, 0x28, 0x60, 0x67, 0x21, 0x84, 0x34
-};
+    0x02, 0xA9, 0x9E, 0x75, 0x73, 0x17, 0x00, 0xA0,
+    0x08, 0x01, 0x19, 0x9F, 0x66, 0x05, 0x22, 0x7D,
+    0x20, 0x25, 0x1D, 0x64, 0xA0, 0x78, 0x85, 0x3B,
+    0x3C, 0x5E, 0x38, 0x45, 0x8F, 0x61, 0xA1, 0x71,
+    0x47, 0x77, 0x86, 0x41, 0xA2, 0x5F, 0x03, 0x72,
+    0x83, 0x9E, 0x84, 0x8E, 0xAD, 0xA8, 0x04, 0x79,
+    0xAA, 0xA3, 0x06, 0x27, 0x8F, 0x9F, 0x0A, 0x76,
+    0x46, 0x1E, 0x24, 0x63, 0x18, 0x69, 0x39, 0x1F,
+    0x7E, 0xAD, 0x28, 0x60, 0x67, 0x21, 0x84, 0x34};
 
 // kyra 3 static res
 
 const char *const KyraEngine_MR::_languageExtension[] = {
-	"TRE",
-	"TRF",
-	"TRG"/*,
+    "TRE",
+    "TRF",
+    "TRG" /*,
 	"TRI",      Italian and Spanish were never included, the supported fan translations are using
 	"TRS"       English/French extensions thus overwriting these languages */
 };
@@ -1823,102 +1787,88 @@ const char *const KyraEngine_MR::_languageExtension[] = {
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
 
 const char *const KyraEngine_MR::_mainMenuSpanishFan[] = {
-	"Nueva Partida",
-	"Ver Intro",
-	"Restaurar",
-	"Finalizar"
-};
+    "Nueva Partida",
+    "Ver Intro",
+    "Restaurar",
+    "Finalizar"};
 
 const char *const KyraEngine_MR::_mainMenuItalianFan[] = {
-	"Nuova Partita",
-	"Introduzione",
-	"Carica una partita",
-	"Esci dal gioco"
-};
+    "Nuova Partita",
+    "Introduzione",
+    "Carica una partita",
+    "Esci dal gioco"};
 
 const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {
-	{ 57, 91, -31, -82 },
-	{ 57, 91, -31, -82 },
-	{ 57, 91, -31, -82 },
-	{ 57, 91, -31, -82 },
-	{ 57, 91, -31, -82 },
-	{ 82, 96, -43, -86 },
-	{ 57, 91, -31, -82 },
-	{ 57, 91, -31, -82 },
-	{ 57, 91, -31, -82 },
-	{ 69, 91, -31, -82 },
-	{ 57, 91, -31, -82 },
-	{ 57, 91, -31, -82 }
-};
+    {57, 91, -31, -82},
+    {57, 91, -31, -82},
+    {57, 91, -31, -82},
+    {57, 91, -31, -82},
+    {57, 91, -31, -82},
+    {82, 96, -43, -86},
+    {57, 91, -31, -82},
+    {57, 91, -31, -82},
+    {57, 91, -31, -82},
+    {69, 91, -31, -82},
+    {57, 91, -31, -82},
+    {57, 91, -31, -82}};
 
 const int KyraEngine_MR::_shapeDescsSize = ARRAYSIZE(KyraEngine_MR::_shapeDescs);
 
 const uint8 KyraEngine_MR::_characterFrameTable[] = {
-	0x36, 0x35, 0x35, 0x33, 0x32, 0x32, 0x34, 0x34
-};
+    0x36, 0x35, 0x35, 0x33, 0x32, 0x32, 0x34, 0x34};
 
 const uint8 KyraEngine_MR::_badConscienceFrameTable[] = {
-	0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
-	0x13, 0x13, 0x13, 0x10, 0x13, 0x13, 0x13, 0x13,
-	0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
-	0x15, 0x15, 0x14, 0x18, 0x14, 0x14, 0x14, 0x14,
-	0x24, 0x24, 0x24, 0x24, 0x24, 0x1D, 0x1D, 0x1D
-};
+    0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
+    0x13, 0x13, 0x13, 0x10, 0x13, 0x13, 0x13, 0x13,
+    0x13, 0x13, 0x13, 0x18, 0x13, 0x13, 0x13, 0x13,
+    0x15, 0x15, 0x14, 0x18, 0x14, 0x14, 0x14, 0x14,
+    0x24, 0x24, 0x24, 0x24, 0x24, 0x1D, 0x1D, 0x1D};
 
 const uint8 KyraEngine_MR::_goodConscienceFrameTable[] = {
-	0x13, 0x13, 0x13, 0x13, 0x13,
-	0x13, 0x13, 0x13, 0x13, 0x13,
-	0x13, 0x13, 0x13, 0x13, 0x13,
-	0x15, 0x15, 0x15, 0x15, 0x15,
-	0x1E, 0x1E, 0x1E, 0x1E, 0x1E
-};
+    0x13, 0x13, 0x13, 0x13, 0x13,
+    0x13, 0x13, 0x13, 0x13, 0x13,
+    0x13, 0x13, 0x13, 0x13, 0x13,
+    0x15, 0x15, 0x15, 0x15, 0x15,
+    0x1E, 0x1E, 0x1E, 0x1E, 0x1E};
 
 const uint8 KyraEngine_MR::_chapterLowestScene[] = {
-	0x00, 0x00, 0x19, 0x2B, 0x33, 0x3B
-};
+    0x00, 0x00, 0x19, 0x2B, 0x33, 0x3B};
 
 const uint8 KyraEngine_MR::_vocHighTable[] = {
-	0x64, 0x76, 0x82, 0x83, 0x92
-};
+    0x64, 0x76, 0x82, 0x83, 0x92};
 
 const uint8 KyraEngine_MR::_inventoryX[] = {
-	0x45, 0x61, 0x7D, 0x99, 0xB5,
-	0x45, 0x61, 0x7D, 0x99, 0xB5
-};
+    0x45, 0x61, 0x7D, 0x99, 0xB5,
+    0x45, 0x61, 0x7D, 0x99, 0xB5};
 
 const uint8 KyraEngine_MR::_inventoryY[] = {
-	0x9C, 0x9C, 0x9C, 0x9C, 0x9C,
-	0xB2, 0xB2, 0xB2, 0xB2, 0xB2
-};
+    0x9C, 0x9C, 0x9C, 0x9C, 0x9C,
+    0xB2, 0xB2, 0xB2, 0xB2, 0xB2};
 
 const Item KyraEngine_MR::_trashItemList[] = {
-	0x1E, 0x1D, 0x1C, 0x1F, 0x0F, 0x05, 0x04, 0x00,
-	0x03, 0x22, 0x0B, 0x20, 0x21, 0x10, 0x11, 0x3A,
-	0x39, 0x40, 0x3E, 0x3D, 0x3C, 0x3F, kItemNone
-};
+    0x1E, 0x1D, 0x1C, 0x1F, 0x0F, 0x05, 0x04, 0x00,
+    0x03, 0x22, 0x0B, 0x20, 0x21, 0x10, 0x11, 0x3A,
+    0x39, 0x40, 0x3E, 0x3D, 0x3C, 0x3F, kItemNone};
 
 const uint8 KyraEngine_MR::_itemStringPickUp[] = {
-	0x4, 0x7, 0x0, 0xA
-};
+    0x4, 0x7, 0x0, 0xA};
 
 const uint8 KyraEngine_MR::_itemStringDrop[] = {
-	0x5, 0x8, 0x1, 0xB
-};
+    0x5, 0x8, 0x1, 0xB};
 
 const uint8 KyraEngine_MR::_itemStringInv[] = {
-	0x6, 0x9, 0x2, 0xC
-};
+    0x6, 0x9, 0x2, 0xC};
 
 void KyraEngine_MR::initMainButtonList(bool disable) {
 	if (!_mainButtonListInitialized) {
 		_mainButtonData = new Button[14];
 		assert(_mainButtonData);
 
-		GUI_V2_BUTTON(_mainButtonData[0], 1, 0, 0, 4, 4, 4, 0x4487, 0,   5, 162, 50, 25, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		GUI_V2_BUTTON(_mainButtonData[0], 1, 0, 0, 4, 4, 4, 0x4487, 0, 5, 162, 50, 25, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 		_mainButtonData[0].buttonCallback = BUTTON_FUNCTOR(GUI_MR, _gui, &GUI_MR::optionsButton);
 		GUI_V2_BUTTON(_mainButtonData[1], 2, 0, 0, 1, 1, 1, 0x4487, 0, 245, 156, 69, 33, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 		_mainButtonData[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonMoodChange);
-		GUI_V2_BUTTON(_mainButtonData[2], 3, 0, 0, 1, 1, 1, 0x4487, 0, 215, 191, 24,  9, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		GUI_V2_BUTTON(_mainButtonData[2], 3, 0, 0, 1, 1, 1, 0x4487, 0, 215, 191, 24, 9, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 		_mainButtonData[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonShowScore);
 		GUI_V2_BUTTON(_mainButtonData[3], 4, 0, 0, 1, 1, 1, 0x4487, 0, 215, 155, 25, 36, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 		_mainButtonData[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonJesterStaff);
@@ -2059,13 +2009,11 @@ void GUI_MR::initStaticData() {
 }
 
 const int8 KyraEngine_MR::_albumWSAX[] = {
-	 0, 77, -50, 99, -61, 82, -58, 85,
-	-64, 80, -63, 88, -63, 88, -64,  0
-};
+    0, 77, -50, 99, -61, 82, -58, 85,
+    -64, 80, -63, 88, -63, 88, -64, 0};
 
 const int8 KyraEngine_MR::_albumWSAY[] = {
-	 0, -1, 3, 0, -1,  0, -2, 0,
-	-1, -2, 2, 2, -6, -6, -6, 0
-};
+    0, -1, 3, 0, -1, 0, -2, 0,
+    -1, -2, 2, 2, -6, -6, -6, 0};
 
 } // End of namespace Kyra

@@ -25,8 +25,8 @@
 #ifndef NUVIE_GUI_GUI_BUTTON_H
 #define NUVIE_GUI_GUI_BUTTON_H
 
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/gui/gui_font.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -64,7 +64,7 @@ const uint8 BI2_R = 0, BI2_G = 0, BI2_B = 0;
 #define GUI_BUTTON_DONT_FREE_SURFACES false
 
 /* This is the definition of the "I've been activated" callback */
-typedef GUI_status(*GUI_ActiveProc)(void *data);
+typedef GUI_status (*GUI_ActiveProc)(void *data);
 
 class GUI_Button : public GUI_Widget {
 

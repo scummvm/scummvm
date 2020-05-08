@@ -26,39 +26,38 @@
 namespace Common {
 
 const PlatformDescription g_platforms[] = {
-	{ "2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
-	{ "apple2", "apple2", "apple2", "Apple II", kPlatformApple2 },
-	{ "3do", "3do", "3do", "3DO", kPlatform3DO },
-	{ "acorn", "acorn", "acorn", "Acorn", kPlatformAcorn },
-	{ "amiga", "ami", "amiga", "Amiga", kPlatformAmiga },
-	{ "atari8", "atari8", "atari8", "Atari 8-bit", kPlatformAtari8Bit },
-	{ "atari", "atari-st", "st", "Atari ST", kPlatformAtariST },
-	{ "c64", "c64", "c64", "Commodore 64", kPlatformC64 },
-	{ "pc", "dos", "ibm", "DOS", kPlatformDOS },
-	{ "pc98", "pc98", "pc98", "PC-98", kPlatformPC98 },
-	{ "wii", "wii", "wii", "Nintendo Wii", kPlatformWii },
-	{ "coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3 },
+    {"2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS},
+    {"apple2", "apple2", "apple2", "Apple II", kPlatformApple2},
+    {"3do", "3do", "3do", "3DO", kPlatform3DO},
+    {"acorn", "acorn", "acorn", "Acorn", kPlatformAcorn},
+    {"amiga", "ami", "amiga", "Amiga", kPlatformAmiga},
+    {"atari8", "atari8", "atari8", "Atari 8-bit", kPlatformAtari8Bit},
+    {"atari", "atari-st", "st", "Atari ST", kPlatformAtariST},
+    {"c64", "c64", "c64", "Commodore 64", kPlatformC64},
+    {"pc", "dos", "ibm", "DOS", kPlatformDOS},
+    {"pc98", "pc98", "pc98", "PC-98", kPlatformPC98},
+    {"wii", "wii", "wii", "Nintendo Wii", kPlatformWii},
+    {"coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3},
 
-	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
-	// However, on the net many variations can be seen, like "FMTOWNS",
-	// "FM TOWNS", "FmTowns", etc.
-	{ "fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns },
+    // The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
+    // However, on the net many variations can be seen, like "FMTOWNS",
+    // "FM TOWNS", "FmTowns", etc.
+    {"fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns},
 
-	{ "linux", "linux", "linux", "Linux", kPlatformLinux },
-	{ "macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh },
-	{ "pce", "pce", "pce", "PC-Engine", kPlatformPCEngine },
-	{ "nes", "nes", "nes", "NES", kPlatformNES },
-	{ "segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD },
-	{ "windows", "win", "win", "Windows", kPlatformWindows },
-	{ "playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX },
-	{ "cdi", "cdi", "cdi", "Philips CD-i", kPlatformCDi },
-	{ "ios", "ios", "ios", "Apple iOS", kPlatformIOS },
-	{ "os2", "os2", "os2", "OS/2", kPlatformOS2 },
-	{ "beos", "beos", "beos", "BeOS", kPlatformBeOS },
-	{ "ppc", "ppc", "ppc", "PocketPC", kPlatformPocketPC },
+    {"linux", "linux", "linux", "Linux", kPlatformLinux},
+    {"macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh},
+    {"pce", "pce", "pce", "PC-Engine", kPlatformPCEngine},
+    {"nes", "nes", "nes", "NES", kPlatformNES},
+    {"segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD},
+    {"windows", "win", "win", "Windows", kPlatformWindows},
+    {"playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX},
+    {"cdi", "cdi", "cdi", "Philips CD-i", kPlatformCDi},
+    {"ios", "ios", "ios", "Apple iOS", kPlatformIOS},
+    {"os2", "os2", "os2", "OS/2", kPlatformOS2},
+    {"beos", "beos", "beos", "BeOS", kPlatformBeOS},
+    {"ppc", "ppc", "ppc", "PocketPC", kPlatformPocketPC},
 
-	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
-};
+    {nullptr, nullptr, nullptr, "Default", kPlatformUnknown}};
 
 Platform parsePlatform(const String &str) {
 	if (str.empty())
@@ -81,7 +80,6 @@ Platform parsePlatform(const String &str) {
 
 	return kPlatformUnknown;
 }
-
 
 const char *getPlatformCode(Platform id) {
 	const PlatformDescription *l = g_platforms;

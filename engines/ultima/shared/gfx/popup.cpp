@@ -28,7 +28,7 @@ namespace Shared {
 namespace Gfx {
 
 BEGIN_MESSAGE_MAP(Popup, VisualItem)
-	ON_MESSAGE(ShowMsg)
+ON_MESSAGE(ShowMsg)
 END_MESSAGE_MAP()
 
 Popup::Popup(GameBase *game) : VisualItem(nullptr), _game(game), _respondTo(nullptr) {
@@ -49,7 +49,6 @@ void Popup::show(TreeItem *respondTo) {
 	_game->setPopup(this);
 	setDirty();
 }
-
 
 void Popup::hide() {
 	CPopupHiddenMsg hiddenMsg(this);

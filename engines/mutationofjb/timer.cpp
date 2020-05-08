@@ -53,4 +53,4 @@ void Timer::update() {
 	}
 }
 
-}
+} // namespace MutationOfJB

@@ -20,28 +20,28 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/misc/u6_llist.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/u6_bmp.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/gui_button.h"
-#include "ultima/nuvie/views/doll_widget.h"
-#include "ultima/nuvie/views/inventory_widget.h"
 #include "ultima/nuvie/views/spell_view.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/magic.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/u6_objects.h"
+#include "ultima/nuvie/files/u6_bmp.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/gui_button.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/script/script.h"
-#include "ultima/nuvie/core/u6_objects.h"
-#include "ultima/nuvie/core/magic.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/screen.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/usecode/usecode.h"
+#include "ultima/nuvie/views/doll_widget.h"
+#include "ultima/nuvie/views/inventory_widget.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -85,7 +85,6 @@ bool SpellView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y,
 	return true;
 }
 
-
 void SpellView::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 	GUI_Widget::PlaceOnScreen(s, dm, x, y);
 }
@@ -102,7 +101,6 @@ void SpellView::set_spell_caster(Actor *actor, Obj *s_container, bool eventMode)
 	level = (spell_container->quality / 16) + 1;
 	spell_num = spell_container->quality - (16 * level);
 
-
 	if (Game::get_game()->has_unlimited_casting() || spell_container->find_in_container(OBJ_U6_SPELL, MAGIC_ALL_SPELLS, OBJ_MATCH_QUALITY))
 		all_spells_mode = true;
 	else
@@ -117,14 +115,14 @@ void SpellView::Display(bool full_redraw) {
 	if (full_redraw || update_display) {
 		screen->fill(bg_color, area.left, area.top + NEWMAGIC_BMP_H, area.width(), area.height() - NEWMAGIC_BMP_H);
 
-		screen->blit(area.left, area.top, background->get_data(), 8,  NEWMAGIC_BMP_W, NEWMAGIC_BMP_H, NEWMAGIC_BMP_W, true);
+		screen->blit(area.left, area.top, background->get_data(), 8, NEWMAGIC_BMP_W, NEWMAGIC_BMP_H, NEWMAGIC_BMP_W, true);
 	}
 
 	display_level_text();
 	display_spell_list_text();
 
 	DisplayChildren(full_redraw);
-#if 1 // FIXME: This shouldn't need to be in the loop
+#if 1                 // FIXME: This shouldn't need to be in the loop
 	update_buttons(); // It doesn't seem to hurt speed though
 	screen->update(area.left, area.top, area.width(), area.height());
 #else
@@ -165,7 +163,6 @@ void SpellView::set_prev_level() {
 
 	uint8 old_level = level;
 
-
 	uint8 num_spells = 0;
 	for (; num_spells == 0;) {
 		level--;
@@ -193,7 +190,6 @@ void SpellView::set_next_level() {
 		return;
 
 	uint8 old_level = level;
-
 
 	uint8 num_spells = 0;
 	for (; num_spells == 0;) {
@@ -342,7 +338,6 @@ void SpellView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 	button_image2 = tmp_screen->create_sdl_surface_from(tile->data, 8, 16, 16, 16);
 	right_button = new GUI_Button(this, 3 * 16, NEWMAGIC_BMP_H, button_image, button_image2, this);
 	this->AddWidget(right_button);
-
 }
 
 void SpellView::event_mode_select_spell() {
@@ -371,10 +366,10 @@ GUI_status SpellView::KeyDown(const Common::KeyState &key) {
 		move_right();
 		break;
 	case HOME_KEY:
-// TODO - add going to first viable page
+		// TODO - add going to first viable page
 		break;
 	case END_KEY:
-// TODO - add going to last viable page
+		// TODO - add going to last viable page
 		break;
 	case DO_ACTION_KEY:
 		if (Game::get_game()->get_event()->is_looking_at_spellbook()) {
@@ -389,7 +384,7 @@ GUI_status SpellView::KeyDown(const Common::KeyState &key) {
 		return GUI_PASS;
 	case CANCEL_ACTION_KEY:
 		return cancel_spell();
-	case TOGGLE_CURSOR_KEY :
+	case TOGGLE_CURSOR_KEY:
 
 		break;
 
@@ -462,7 +457,7 @@ GUI_status SpellView::MouseDown(int x, int y, Shared::MouseButton button) {
 		return cancel_spell();
 	if (doing_nothing) // do nothing
 		return GUI_YUM;
-// selecting spell index
+	// selecting spell index
 
 	sint8 index = get_selected_index();
 
@@ -488,13 +483,17 @@ GUI_status SpellView::MouseDown(int x, int y, Shared::MouseButton button) {
 }
 
 void SpellView::hide_buttons() {
-	if (left_button) left_button->Hide();
-	if (right_button) right_button->Hide();
+	if (left_button)
+		left_button->Hide();
+	if (right_button)
+		right_button->Hide();
 }
 
 void SpellView::show_buttons() {
-	if (left_button) left_button->Show();
-	if (right_button) right_button->Show();
+	if (left_button)
+		left_button->Show();
+	if (right_button)
+		right_button->Show();
 }
 
 void SpellView::update_buttons() {
@@ -515,8 +514,7 @@ void SpellView::update_buttons() {
 	level = old_level;
 	fill_cur_spell_list();
 
-	if (right_button && ((level < 8 && num_spells == 0) || level == 8)
-	        && cur_spells[num_spells_per_page * (1 + index / num_spells_per_page)] == -1)
+	if (right_button && ((level < 8 && num_spells == 0) || level == 8) && cur_spells[num_spells_per_page * (1 + index / num_spells_per_page)] == -1)
 		right_button->Hide();
 }
 

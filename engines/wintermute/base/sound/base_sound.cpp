@@ -28,8 +28,8 @@
 
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
+#include "engines/wintermute/base/sound/base_sound_manager.h"
 
 namespace Wintermute {
 

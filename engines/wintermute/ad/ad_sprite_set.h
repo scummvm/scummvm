@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_ADSPRITESET_H
 #define WINTERMUTE_ADSPRITESET_H
 
-
 #include "engines/wintermute/base/base_object.h"
 
 namespace Wintermute {

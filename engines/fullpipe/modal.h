@@ -42,12 +42,11 @@ struct FileInfo {
 };
 
 class BaseModalObject {
- public:
-
+public:
 	BaseModalObject *_parentObj;
 	ObjType _objtype;
 
- public:
+public:
 	BaseModalObject() : _parentObj(0) { _objtype = kObjTypeDefault; }
 	virtual ~BaseModalObject() {}
 
@@ -68,7 +67,7 @@ class ModalIntro : public BaseModalObject {
 	int _stillRunning;
 	int _sfxVolume;
 
- public:
+public:
 	ModalIntro();
 	~ModalIntro() override;
 
@@ -88,7 +87,7 @@ class ModalIntroDemo : public BaseModalObject {
 	int _stillRunning;
 	int _sfxVolume;
 
- public:
+public:
 	ModalIntroDemo();
 	~ModalIntroDemo() override;
 
@@ -103,7 +102,6 @@ class ModalIntroDemo : public BaseModalObject {
 
 class ModalVideoPlayer : public BaseModalObject {
 public:
-
 	bool pollEvent() override { return true; }
 	bool handleMessage(ExCommand *message) override { return true; }
 	bool init(int counterdiff) override { return false; }
@@ -133,7 +131,7 @@ class ModalMap : public BaseModalObject {
 	int _hotSpotDelay;
 	Common::Rect _rect2;
 
- public:
+public:
 	ModalMap();
 	~ModalMap() override;
 
@@ -161,7 +159,7 @@ class ModalFinal : public BaseModalObject {
 	int _counter;
 	int _sfxVolume;
 
- public:
+public:
 	ModalFinal();
 	~ModalFinal() override;
 
@@ -185,7 +183,7 @@ class ModalCredits : public BaseModalObject {
 	int _currY;
 	int _maxY;
 
- public:
+public:
 	ModalCredits();
 	~ModalCredits() override;
 
@@ -275,14 +273,12 @@ public:
 	bool create(Scene *sc, Scene *bgScene, int picId);
 	int getQueryResult() { return _queryResult; }
 
-
 private:
 	Scene *_bgScene;
 	PictureObject *_bg;
 	PictureObject *_okBtn;
 	PictureObject *_cancelBtn;
 	int _queryResult;
-
 };
 
 class ModalSaveGame : public BaseModalObject {
@@ -320,9 +316,9 @@ public:
 	Scene *_menuScene;
 	int _mode;
 	ModalQuery *_queryDlg;
-	Common::Array <FileInfo> _files;
-	Common::Array <PictureObject *> _arrayL;
-	Common::Array <PictureObject *> _arrayD;
+	Common::Array<FileInfo> _files;
+	Common::Array<PictureObject *> _arrayL;
+	Common::Array<PictureObject *> _arrayD;
 	int _queryRes;
 };
 
@@ -334,7 +330,7 @@ class ModalDemo : public BaseModalObject {
 	int _countdown;
 	Scene *_scene;
 
- public:
+public:
 	ModalDemo();
 	~ModalDemo() override;
 
@@ -347,7 +343,6 @@ class ModalDemo : public BaseModalObject {
 	void update() override;
 	void saveload() override {}
 };
-
 
 } // End of namespace Fullpipe
 

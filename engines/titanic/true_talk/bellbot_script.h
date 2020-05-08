@@ -37,6 +37,7 @@ private:
 	int _array[150];
 	bool _responseFlag;
 	bool _room107First;
+
 private:
 	/**
 	 * Setup sentence data
@@ -83,9 +84,10 @@ private:
 	 * Adds a description of the room to the conversation response
 	 */
 	bool addRoomDescription(const TTroomScript *roomScript);
+
 public:
 	BellbotScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2);
+	              const char *charName, int v3, int val2);
 
 	/**
 	 * Does NPC specific processing of the parsed sentence
@@ -98,7 +100,7 @@ public:
 	ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id) override;
 
 	int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder) override;
+	                uint tag1, uint tag2, uint remainder) override;
 
 	/**
 	 * Handles updating NPC state based on specified dialogue Ids and dial positions

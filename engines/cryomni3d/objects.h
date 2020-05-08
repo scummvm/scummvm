@@ -36,13 +36,13 @@ public:
 	typedef Common::Functor0<void> *ViewCallback;
 
 	Object() : _valid(false), _idCA(uint(-1)), _idCl(uint(-1)), _idSA(uint(-1)), _idSl(uint(-1)),
-		_idOBJ(uint(-1)),
-		_viewCallback(nullptr) {}
+	           _idOBJ(uint(-1)),
+	           _viewCallback(nullptr) {}
 
 	Object(const Sprites &sprites, uint id_CA, uint id_OBJ) : _idCA(id_CA),
-		_idCl(sprites.calculateSpriteId(id_CA, 1)), _idSA(sprites.calculateSpriteId(id_CA, 2)),
-		_idSl(sprites.calculateSpriteId(id_CA, 3)),
-		_valid(true), _idOBJ(id_OBJ), _viewCallback(nullptr) {}
+	                                                          _idCl(sprites.calculateSpriteId(id_CA, 1)), _idSA(sprites.calculateSpriteId(id_CA, 2)),
+	                                                          _idSl(sprites.calculateSpriteId(id_CA, 3)),
+	                                                          _valid(true), _idOBJ(id_OBJ), _viewCallback(nullptr) {}
 
 	~Object() { delete _viewCallback; }
 
@@ -72,14 +72,18 @@ class Objects : public Common::Array<Object> {
 public:
 	Object *findObjectByNameID(uint nameID);
 	Object *findObjectByIconID(uint iconID);
+
 private:
 };
 
 class Inventory : public Common::Array<Object *> {
 public:
-	Inventory() : _selectedObject(nullptr), _changeCallback(nullptr) { }
+	Inventory() : _selectedObject(nullptr), _changeCallback(nullptr) {}
 	~Inventory() { delete _changeCallback; }
-	void init(uint count, Common::Functor1<uint, void> *changeCallback) { _changeCallback = changeCallback; resize(count); }
+	void init(uint count, Common::Functor1<uint, void> *changeCallback) {
+		_changeCallback = changeCallback;
+		resize(count);
+	}
 
 	void clear();
 	void add(Object *);
@@ -101,4 +105,3 @@ private:
 } // End of namespace CryOmni3D
 
 #endif
-

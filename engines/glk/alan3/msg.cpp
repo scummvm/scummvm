@@ -21,23 +21,22 @@
  */
 
 #include "glk/alan3/msg.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/inter.h"
 #include "glk/alan3/exe.h"
+#include "glk/alan3/inter.h"
 #include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA */
-MessageEntry *msgs;         /* Message table pointer */
+MessageEntry *msgs; /* Message table pointer */
 
 /*======================================================================*/
-void printMessage(MsgKind msg) {    /* IN - message number */
+void printMessage(MsgKind msg) { /* IN - message number */
 	Context ctx;
 	interpret(ctx, msgs[msg].stms);
 }
-
 
 static void (*errorHandler)(MsgKind msg) = NULL;
 
@@ -46,7 +45,6 @@ void setErrorHandler(void (*handler)(MsgKind msg)) { /* IN - The error message n
 	// N.B. The error handler must not return because the standard handler does not...
 	errorHandler = handler;
 }
-
 
 /*======================================================================*/
 void error(CONTEXT, MsgKind msgno) { /* IN - The error message number */
@@ -60,12 +58,10 @@ void error(CONTEXT, MsgKind msgno) { /* IN - The error message number */
 	}
 }
 
-
 /*======================================================================*/
 void abortPlayerCommand(CONTEXT) {
 	error(context, NO_MSG);
 }
-
 
 /*======================================================================*/
 void printMessageWithInstanceParameter(MsgKind message, int instanceId) {
@@ -75,7 +71,6 @@ void printMessageWithInstanceParameter(MsgKind message, int instanceId) {
 	freeParameterArray(parameters);
 }
 
-
 /*======================================================================*/
 void printMessageUsing2InstanceParameters(MsgKind message, int instance1, int instance2) {
 	ParameterArray parameters = newParameterArray();
@@ -84,7 +79,6 @@ void printMessageUsing2InstanceParameters(MsgKind message, int instance1, int in
 	printMessageWithParameters(message, parameters);
 	freeParameterArray(parameters);
 }
-
 
 /*======================================================================*/
 void printMessageWithParameters(MsgKind msg, Parameter *messageParameters) {

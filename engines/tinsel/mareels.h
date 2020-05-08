@@ -20,27 +20,27 @@
  *
  */
 
-#ifndef TINSEL_MAREELS_H	// prevent multiple includes
+#ifndef TINSEL_MAREELS_H // prevent multiple includes
 #define TINSEL_MAREELS_H
 
-#include "tinsel/dw.h"	// for SCNHANDLE
+#include "tinsel/dw.h" // for SCNHANDLE
 #include "tinsel/rince.h"
 
 namespace Tinsel {
 
 void SetWalkReels(PMOVER pMover, int scale,
-		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
+                  SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
 
 void SetStandReels(PMOVER pMover, int scale,
-		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
+                   SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
 
 void SetTalkReels(PMOVER pMover, int scale,
-		SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
+                  SCNHANDLE al, SCNHANDLE ar, SCNHANDLE af, SCNHANDLE aa);
 
 SCNHANDLE GetMoverTalkReel(PMOVER pActor, TFTYPE dirn);
 
 void SetScalingReels(int actor, int scale, int direction,
-		SCNHANDLE left, SCNHANDLE right, SCNHANDLE forward, SCNHANDLE away);
+                     SCNHANDLE left, SCNHANDLE right, SCNHANDLE forward, SCNHANDLE away);
 
 SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRECTION reel);
 

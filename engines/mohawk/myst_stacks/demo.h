@@ -53,7 +53,7 @@ private:
 	DECLARE_OPCODE(o_returnToMenu_init);
 
 	bool _returnToMenuRunning;
-	uint16 _returnToMenuStep; // 42
+	uint16 _returnToMenuStep;     // 42
 	uint32 _returnToMenuNextTime; // 6
 
 	void returnToMenu_run();

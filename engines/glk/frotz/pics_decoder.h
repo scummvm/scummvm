@@ -23,8 +23,8 @@
 #ifndef GLK_FROTZ_PICS_DECODER_H
 #define GLK_FROTZ_PICS_DECODER_H
 
-#include "common/stream.h"
 #include "common/array.h"
+#include "common/stream.h"
 
 namespace Glk {
 namespace Frotz {
@@ -37,6 +37,7 @@ class PictureDecoder {
 private:
 	byte *_tableVal;
 	uint16 *_tableRef;
+
 public:
 	/**
 	 * Constructor
@@ -52,7 +53,7 @@ public:
 	 * Decode method
 	 */
 	Common::SeekableReadStream *decode(Common::ReadStream &src, uint flags,
-		const Common::Array<byte> &palette, uint display, size_t width, size_t height);
+	                                   const Common::Array<byte> &palette, uint display, size_t width, size_t height);
 };
 
 } // End of namespace Frotz

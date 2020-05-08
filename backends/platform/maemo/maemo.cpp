@@ -24,24 +24,23 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/scummsys.h"
 
-#include "backends/platform/maemo/maemo.h"
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "backends/graphics/maemosdl/maemosdl-graphics.h"
 #include "backends/keymapper/action.h"
-#include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/keymapper-defaults.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/platform/maemo/maemo.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
 namespace Maemo {
 
 OSystem_SDL_Maemo::OSystem_SDL_Maemo()
-	:
-	_eventObserver(0),
-	OSystem_POSIX() {
+    : _eventObserver(0),
+      OSystem_POSIX() {
 }
 
 OSystem_SDL_Maemo::~OSystem_SDL_Maemo() {
@@ -92,9 +91,11 @@ void OSystem_SDL_Maemo::setXWindowName(const char *caption) {
 		Display *dpy = info.info.x11.display;
 		Window win;
 		win = info.info.x11.fswindow;
-		if (win) XStoreName(dpy, win, caption);
+		if (win)
+			XStoreName(dpy, win, caption);
 		win = info.info.x11.wmwindow;
-		if (win) XStoreName(dpy, win, caption);
+		if (win)
+			XStoreName(dpy, win, caption);
 	}
 }
 
@@ -121,13 +122,12 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 }
 
 static const Model models[] = {
-	{"SU-18", kModelType770, "770", false, true},
-	{"RX-34", kModelTypeN800, "N800", false, true},
-	{"RX-44", kModelTypeN810, "N810", true, true},
-	{"RX-48", kModelTypeN810, "N810W", true, true},
-	{"RX-51", kModelTypeN900, "N900", true, false},
-	{0, kModelTypeInvalid, 0, true, true}
-};
+    {"SU-18", kModelType770, "770", false, true},
+    {"RX-34", kModelTypeN800, "N800", false, true},
+    {"RX-44", kModelTypeN810, "N810", true, true},
+    {"RX-48", kModelTypeN810, "N810W", true, true},
+    {"RX-51", kModelTypeN900, "N900", true, false},
+    {0, kModelTypeInvalid, 0, true, true}};
 
 const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 	Common::String deviceHwId = Common::String(getenv("SCUMMVM_MAEMO_DEVICE"));
@@ -140,15 +140,14 @@ const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 }
 
 static const Common::KeyTableEntry maemoKeys[] = {
-	// Function keys
-	{"MENU", Common::KEYCODE_F11, "Menu"},
-	{"HOME", Common::KEYCODE_F12, "Home"},
-	{"FULLSCREEN", Common::KEYCODE_F13, "FullScreen"},
-	{"ZOOMPLUS", Common::KEYCODE_F14, "Zoom+"},
-	{"ZOOMMINUS", Common::KEYCODE_F15, "Zoom-"},
+    // Function keys
+    {"MENU", Common::KEYCODE_F11, "Menu"},
+    {"HOME", Common::KEYCODE_F12, "Home"},
+    {"FULLSCREEN", Common::KEYCODE_F13, "FullScreen"},
+    {"ZOOMPLUS", Common::KEYCODE_F14, "Zoom+"},
+    {"ZOOMMINUS", Common::KEYCODE_F15, "Zoom-"},
 
-	{0, Common::KEYCODE_INVALID, 0}
-};
+    {0, Common::KEYCODE_INVALID, 0}};
 
 Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
 	Common::CompositeHardwareInputSet *inputSet = new Common::CompositeHardwareInputSet();
@@ -207,7 +206,7 @@ Common::KeymapperDefaultBindings *OSystem_SDL_Maemo::getKeymapperDefaultBindings
 		keymapperDefaultBindings->setDefaultBinding("global", "VIRT", "FULLSCREEN");
 	}
 
-	if (_model.hasMenuKey )
+	if (_model.hasMenuKey)
 		keymapperDefaultBindings->setDefaultBinding("global", "MENU", "MENU");
 	else
 		keymapperDefaultBindings->setDefaultBinding("global", "MENU", "S+C+M");

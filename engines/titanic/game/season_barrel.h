@@ -31,9 +31,11 @@ class CSeasonBarrel : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 public:
 	int _unused;
 	int _startFrame;
+
 public:
 	CLASSDEF;
 	CSeasonBarrel() : CBackground(), _unused(0), _startFrame(7) {}

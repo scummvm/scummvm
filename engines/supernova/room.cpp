@@ -21,12 +21,12 @@
  */
 
 #include "common/system.h"
-#include "graphics/palette.h"
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 
+#include "supernova/game-manager.h"
 #include "supernova/screen.h"
 #include "supernova/supernova.h"
-#include "supernova/game-manager.h"
 
 namespace Supernova {
 
@@ -52,7 +52,7 @@ bool Room::serialize(Common::WriteStream *out) {
 	out->writeSint32LE(_id);
 	for (int i = 0; i < kMaxSection; ++i)
 		out->writeByte(_shown[i]);
-	for (int i = 0; i < kMaxDialog ; ++i)
+	for (int i = 0; i < kMaxDialog; ++i)
 		out->writeByte(_sentenceRemoved[i]);
 
 	int numObjects = 0;
@@ -90,7 +90,7 @@ bool Room::deserialize(Common::ReadStream *in, int version) {
 	// Prior to version 3, _sentenceRemoved was part of _shown (the last two values)
 	// But on the other hand dialog was not implemented anyway, so we don't even try to
 	// recover it.
-	for (int i = 0; i < kMaxDialog ; ++i)
+	for (int i = 0; i < kMaxDialog; ++i)
 		_sentenceRemoved[i] = version < 3 ? 0 : in->readByte();
 
 	int numObjects = in->readSint32LE();
@@ -167,7 +167,7 @@ bool Room::sentenceRemoved(int sentence, int number) {
 bool Room::allSentencesRemoved(int maxSentence, int number) {
 	if (number <= 0)
 		return false;
-	for (int i = 0, flag = 1 ; i < maxSentence ; ++i, flag <<= 1)
+	for (int i = 0, flag = 1; i < maxSentence; ++i, flag <<= 1)
 		if (!(_sentenceRemoved[number - 1] & flag))
 			return false;
 	return true;
@@ -187,4 +187,4 @@ bool Room::interact(Action verb, Object &obj1, Object &obj2) {
 	return false;
 }
 
-}
+} // namespace Supernova

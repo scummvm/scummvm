@@ -35,12 +35,14 @@ class CCallPellerator : public CGameObject {
 	bool PETActivateMsg(CPETActivateMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 private:
 	/**
 	 * Switches to the PET Remote tab, and selects the 'Call Pellerator'
 	 * glyph by default
 	 */
 	void showCallPellerator();
+
 public:
 	CLASSDEF;
 

@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/file.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/str-array.h"
 
-#include "director/director.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-code.h"
 #include "director/cast.h"
+#include "director/director.h"
 #include "director/frame.h"
+#include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
@@ -128,7 +128,7 @@ Lingo::~Lingo() {
 
 ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
 	if (type >= ARRAYSIZE(_archives[_archiveIndex].scriptContexts) ||
-			!_archives[_archiveIndex].scriptContexts[type].contains(id)) {
+	    !_archives[_archiveIndex].scriptContexts[type].contains(id)) {
 		return NULL;
 	}
 
@@ -184,7 +184,8 @@ const char *Lingo::findNextDefinition(const char *s) {
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	debugC(1, kDebugLingoCompile, "Add code for type %s(%d) with id %d\n"
-			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
+	                              "***********\n%s\n\n***********",
+	       scriptType2str(type), type, id, code);
 
 	if (getScriptContext(type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
@@ -377,7 +378,6 @@ int Lingo::alignTypes(Datum &d1, Datum &d2) {
 		}
 	}
 
-
 	if (d1.type == FLOAT || d2.type == FLOAT) {
 		opType = FLOAT;
 		d1.makeFloat();
@@ -396,30 +396,27 @@ int Datum::makeInt() {
 	case REFERENCE:
 		makeString();
 		// fallthrough
-	case STRING:
-		{
-			char *endPtr = 0;
-			int result = strtol(u.s->c_str(), &endPtr, 10);
-			if (*endPtr == 0) {
-				u.i = result;
-			} else {
-				warning("Invalid int '%s'", u.s->c_str());
-				u.i = 0;
-			}
+	case STRING: {
+		char *endPtr = 0;
+		int result = strtol(u.s->c_str(), &endPtr, 10);
+		if (*endPtr == 0) {
+			u.i = result;
+		} else {
+			warning("Invalid int '%s'", u.s->c_str());
+			u.i = 0;
 		}
-		break;
+	} break;
 	case VOID:
 		u.i = 0;
 		break;
 	case INT:
 		// no-op
 		break;
-	case FLOAT:
-		{
-			int tmp = (int)u.f;
-			u.i = tmp;
-			break;
-		}
+	case FLOAT: {
+		int tmp = (int)u.f;
+		u.i = tmp;
+		break;
+	}
 	default:
 		warning("Incorrect operation makeInt() for type: %s", type2str());
 	}
@@ -434,27 +431,23 @@ double Datum::makeFloat() {
 	case REFERENCE:
 		makeString();
 		// fallthrough
-	case STRING:
-		{
-			char *endPtr = 0;
-			double result = strtod(u.s->c_str(), &endPtr);
-			if (*endPtr == 0) {
-				u.f = result;
-			} else {
-				warning("Invalid float '%s'", u.s->c_str());
-				u.f = 0.0;
-			}
+	case STRING: {
+		char *endPtr = 0;
+		double result = strtod(u.s->c_str(), &endPtr);
+		if (*endPtr == 0) {
+			u.f = result;
+		} else {
+			warning("Invalid float '%s'", u.s->c_str());
+			u.f = 0.0;
 		}
-		break;
+	} break;
 	case VOID:
 		u.f = 0.0;
 		break;
-	case INT:
-		{
-			double tmp = (double)u.i;
-			u.f = tmp;
-		}
-		break;
+	case INT: {
+		double tmp = (double)u.i;
+		u.f = tmp;
+	} break;
 	case FLOAT:
 		// no-op
 		break;
@@ -482,7 +475,7 @@ Common::String *Datum::makeString(bool printonly) {
 	case FLOAT:
 		*s = Common::String::format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
 		if (printonly)
-			*s += "f";		// 0.0f
+			*s += "f"; // 0.0f
 		break;
 	case STRING:
 		if (!printonly) {
@@ -511,34 +504,32 @@ Common::String *Datum::makeString(bool printonly) {
 	case VAR:
 		*s = Common::String::format("var: #%s", u.sym->name.c_str());
 		break;
-	case REFERENCE:
-		{
-			int idx = u.i;
-			Score *score = g_director->getCurrentScore();
+	case REFERENCE: {
+		int idx = u.i;
+		Score *score = g_director->getCurrentScore();
 
-			if (!score) {
-				warning("makeString(): No score");
+		if (!score) {
+			warning("makeString(): No score");
+			*s = "";
+			break;
+		}
+
+		if (!score->_loadedCast->contains(idx)) {
+			if (!score->_loadedCast->contains(idx - score->_castIDoffset)) {
+				warning("makeString(): Unknown REFERENCE %d", idx);
 				*s = "";
 				break;
-			}
-
-			if (!score->_loadedCast->contains(idx)) {
-				if (!score->_loadedCast->contains(idx - score->_castIDoffset)) {
-					warning("makeString(): Unknown REFERENCE %d", idx);
-					*s = "";
-					break;
-				} else {
-					idx -= 1024;
-				}
-			}
-
-			if (!printonly) {
-				*s = ((TextCast *)score->_loadedCast->getVal(idx))->getText();
 			} else {
-				*s = Common::String::format("reference: \"%s\"", ((TextCast *)score->_loadedCast->getVal(idx))->getText().c_str());
+				idx -= 1024;
 			}
 		}
-		break;
+
+		if (!printonly) {
+			*s = ((TextCast *)score->_loadedCast->getVal(idx))->getText();
+		} else {
+			*s = Common::String::format("reference: \"%s\"", ((TextCast *)score->_loadedCast->getVal(idx))->getText().c_str());
+		}
+	} break;
 	case ARRAY:
 		*s = "[";
 
@@ -660,7 +651,7 @@ void Lingo::runTests() {
 	int counter = 1;
 
 	for (uint i = 0; i < fileList.size(); i++) {
-		Common::SeekableReadStream *const  stream = SearchMan.createReadStreamForMember(fileList[i]);
+		Common::SeekableReadStream *const stream = SearchMan.createReadStreamForMember(fileList[i]);
 		if (stream) {
 			uint size = stream->size();
 

@@ -23,8 +23,8 @@
 #ifndef NUVIE_CORE_MAP_H
 #define NUVIE_CORE_MAP_H
 
-#include "ultima/shared/std/string.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -40,12 +40,12 @@ class Screen;
 #define MAP_ORIGINAL_TILE true
 
 enum LineTestFlags {
-	LT_HitActors            = (1 << 0),
-	LT_HitUnpassable        = (1 << 1),
-	LT_HitForcedPassable        = (1 << 2),
-	LT_HitLocation          = (1 << 3), /* hit location in Result */
-	LT_HitObjects           = (1 << 4), /* hit any object */
-	LT_HitMissileBoundary           = (1 << 5)
+	LT_HitActors = (1 << 0),
+	LT_HitUnpassable = (1 << 1),
+	LT_HitForcedPassable = (1 << 2),
+	LT_HitLocation = (1 << 3), /* hit location in Result */
+	LT_HitObjects = (1 << 4),  /* hit any object */
+	LT_HitMissileBoundary = (1 << 5)
 };
 
 class LineTestResult {
@@ -59,7 +59,7 @@ public:
 		hitLoc = NULL;
 		loc_to_hit = NULL;
 	}
-	void    init(int x, int y, uint8 level, Actor *actorHit, Obj *objHit) {
+	void init(int x, int y, uint8 level, Actor *actorHit, Obj *objHit) {
 		hit_x = x;
 		hit_y = y;
 		hit_level = level;
@@ -67,13 +67,13 @@ public:
 		hitObj = objHit;
 	}
 
-	int     hit_x;      // x coord where object / actor was hit
-	int     hit_y;      // y coord where object / actor was hit
-	uint8   hit_level;  // map level where object / actor was hit
-	Actor  *hitActor;
-	Obj    *hitObj;
-	MapCoord   *hitLoc;
-	MapCoord   *loc_to_hit; // set hitLoc if hit x,y (z changes)
+	int hit_x;       // x coord where object / actor was hit
+	int hit_y;       // y coord where object / actor was hit
+	uint8 hit_level; // map level where object / actor was hit
+	Actor *hitActor;
+	Obj *hitObj;
+	MapCoord *hitLoc;
+	MapCoord *loc_to_hit; // set hitLoc if hit x,y (z changes)
 };
 
 //typedef   (*LineTestFilter)(int x, int y, int level, LineTestResult &Result);
@@ -102,7 +102,7 @@ public:
 		y = obj->y;
 		z = obj->z;
 	}
-	MapCoord() : x(0), y(0), z(0) { }
+	MapCoord() : x(0), y(0), z(0) {}
 
 	uint32 xdistance(MapCoord &c2) {
 		uint32 dist = abs(c2.x - x);
@@ -139,9 +139,8 @@ public:
 	bool operator!=(MapCoord &c2) {
 		return (!(*this == c2));
 	}
-//    MapCoord operator+(MapCoord &c2) { return(abs_coords(c2)); }
+	//    MapCoord operator+(MapCoord &c2) { return(abs_coords(c2)); }
 };
-
 
 class Map {
 	Configuration *config;
@@ -156,7 +155,6 @@ class Map {
 	uint16 *roof_surface;
 
 public:
-
 	Map(Configuration *cfg);
 	~Map();
 
@@ -203,9 +201,7 @@ protected:
 	void insertDungeonSuperChunk(unsigned char *schunk_ptr, unsigned char *chunk_data, uint8 level);
 	void insertDungeonChunk(unsigned char *chunk, uint16 x, uint16 y, uint8 level);
 
-
 	void loadRoofData();
-
 };
 
 } // End of namespace Nuvie

@@ -21,10 +21,10 @@
  */
 
 #include "ultima/ultima4/game/armor.h"
+#include "common/algorithm.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/map/tile.h"
-#include "common/algorithm.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -59,7 +59,6 @@ const Armor *Armors::get(const Common::String &name) {
 	return nullptr;
 }
 
-
 void Armors::loadConf() {
 	if (!_confLoaded)
 		_confLoaded = true;
@@ -80,8 +79,7 @@ void Armors::loadConf() {
 
 /*-------------------------------------------------------------------*/
 
-Armor::Armor(ArmorType armorType, const ConfigElement &conf) :
-		_type(armorType), _canUse(0xff), _mask(0) {
+Armor::Armor(ArmorType armorType, const ConfigElement &conf) : _type(armorType), _canUse(0xff), _mask(0) {
 	_name = conf.getString("name");
 	_defense = conf.getInt("defense");
 
@@ -100,7 +98,7 @@ Armor::Armor(ArmorType armorType, const ConfigElement &conf) :
 			useMask = 0xFF;
 		if (useMask == 0) {
 			error("malformed armor.xml file: constraint has unknown class %s",
-			           i->getString("class").c_str());
+			      i->getString("class").c_str());
 		}
 		if (i->getBool("canuse"))
 			_canUse |= useMask;

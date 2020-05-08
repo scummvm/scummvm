@@ -85,10 +85,9 @@ StuffItArchive::~StuffItArchive() {
 // Some known values of StuffIt FourCC's
 // 11H Mac in particular uses ST46
 static const uint32 s_magicNumbers[] = {
-	MKTAG('S', 'I', 'T', '!'), MKTAG('S', 'T', '6', '5'), MKTAG('S', 'T', '5', '0'),
-	MKTAG('S', 'T', '6', '0'), MKTAG('S', 'T', 'i', 'n'), MKTAG('S', 'T', 'i', '2'),
-	MKTAG('S', 'T', 'i', '3'), MKTAG('S', 'T', 'i', '4'), MKTAG('S', 'T', '4', '6')
-};
+    MKTAG('S', 'I', 'T', '!'), MKTAG('S', 'T', '6', '5'), MKTAG('S', 'T', '5', '0'),
+    MKTAG('S', 'T', '6', '0'), MKTAG('S', 'T', 'i', 'n'), MKTAG('S', 'T', 'i', '2'),
+    MKTAG('S', 'T', 'i', '3'), MKTAG('S', 'T', 'i', '4'), MKTAG('S', 'T', '4', '6')};
 
 bool StuffItArchive::open(const Common::String &filename) {
 	close();
@@ -196,7 +195,8 @@ bool StuffItArchive::open(const Common::String &filename) {
 }
 
 void StuffItArchive::close() {
-	delete _stream; _stream = 0;
+	delete _stream;
+	_stream = 0;
 	_map.clear();
 }
 
@@ -300,7 +300,7 @@ struct SIT14Data {
 // Realign to a byte boundary
 #define ALIGN_BITS(b) \
 	if (b->pos() & 7) \
-		b->skip(8 - (b->pos() & 7))
+	b->skip(8 - (b->pos() & 7))
 
 void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uint16 codesize, uint16 *result) const {
 	uint32 i, l, n;
@@ -315,7 +315,7 @@ void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uin
 		// requirements for this call: dat->buff[32], dat->code[32], dat->freq[32*2]
 		readTree14(bits, dat, size, dat->freq);
 
-		for (i = 0; i < codesize; ) {
+		for (i = 0; i < codesize;) {
 			l = 0;
 
 			do {
@@ -331,7 +331,7 @@ void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uin
 
 					do {
 						l = dat->freq[l + bits->getBit()];
-						n = size <<  1;
+						n = size << 1;
 					} while (n > l);
 
 					l += 3 - n;
@@ -348,11 +348,11 @@ void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uin
 			}
 		}
 	} else {
-		for (i = 0; i < codesize; ) {
+		for (i = 0; i < codesize;) {
 			l = bits->getBits(j);
 
 			if (k != l) {
-				if  (l == m) {
+				if (l == m) {
 					l = bits->getBits(j) + 3;
 
 					while (l--) {
@@ -360,7 +360,7 @@ void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uin
 						++i;
 					}
 				} else {
-					dat->code[i++] = l+o;
+					dat->code[i++] = l + o;
 				}
 			} else {
 				dat->code[i++] = 0;
@@ -382,7 +382,8 @@ void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uin
 		if (i)
 			j <<= (dat->codecopy[i] - dat->codecopy[i - 1]);
 
-		k = dat->codecopy[i]; m = 0;
+		k = dat->codecopy[i];
+		m = 0;
 
 		for (l = j; k--; l >>= 1)
 			m = (m << 1) | (l & 1);
@@ -420,8 +421,8 @@ void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uin
 	ALIGN_BITS(bits);
 }
 
-#define OUTPUT_VAL(x) \
-	out.writeByte(x); \
+#define OUTPUT_VAL(x)     \
+	out.writeByte(x);     \
 	dat->window[j++] = x; \
 	j &= 0x3FFFF
 
@@ -445,7 +446,7 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 		dat->var8[i] = i;
 
 	for (m = 1, l = 4; i < 0x4000; m <<= 1) // i is 4
-		for (n = l+4; l < n; ++l)
+		for (n = l + 4; l < n; ++l)
 			for (j = 0; j < m; ++j)
 				dat->var8[i++] = l;
 
@@ -463,7 +464,7 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 				dat->var6[i++] = l;
 
 	m = bits->getBits(16); // number of blocks
-	j = 0; // window position
+	j = 0;                 // window position
 
 	while (m-- && !bits->eos()) {
 		bits->getBits(16); // skip crunched block size
@@ -484,7 +485,7 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 				--n;
 			} else {
 				i -= 0x100;
-				k = dat->var2[i]+4;
+				k = dat->var2[i] + 4;
 				i = dat->var1[i];
 
 				if (i)

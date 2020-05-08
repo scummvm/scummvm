@@ -28,8 +28,7 @@
 namespace Gob {
 
 MUSPlayer::MUSPlayer() : AdLib(60),
-	_songData(0), _songDataSize(0), _playPos(0), _songID(0) {
-
+                         _songData(0), _songDataSize(0), _playPos(0), _songID(0) {
 }
 
 MUSPlayer::~MUSPlayer() {
@@ -91,7 +90,7 @@ uint32 MUSPlayer::pollMusic(bool first) {
 			if ((type1 == 0x7F) && (type2 == 0)) {
 				// Tempo change, as a fraction of the base tempo
 
-				uint32 num   = *_playPos++;
+				uint32 num = *_playPos++;
 				uint32 denom = *_playPos++;
 
 				_tempo = _baseTempo * num + ((_baseTempo * denom) >> 7);
@@ -102,7 +101,7 @@ uint32 MUSPlayer::pollMusic(bool first) {
 
 				// Unsupported global command, skip it
 				_playPos -= 2;
-				while(*_playPos++ != 0xF7)
+				while (*_playPos++ != 0xF7)
 					;
 			}
 
@@ -130,7 +129,7 @@ uint32 MUSPlayer::pollMusic(bool first) {
 			break;
 
 		case 0x90: // Note on
-			note   = *_playPos++;
+			note = *_playPos++;
 			volume = *_playPos++;
 
 			if (volume) {
@@ -157,7 +156,7 @@ uint32 MUSPlayer::pollMusic(bool first) {
 			break;
 
 		case 0xE0: // Pitch bend
-			pitch  = *_playPos++;
+			pitch = *_playPos++;
 			pitch += *_playPos++ << 7;
 			bendVoicePitch(voice, pitch);
 			break;
@@ -183,7 +182,7 @@ uint32 MUSPlayer::pollMusic(bool first) {
 
 void MUSPlayer::rewind() {
 	_playPos = _songData;
-	_tempo   = _baseTempo;
+	_tempo = _baseTempo;
 
 	_lastCommand = 0;
 
@@ -212,7 +211,7 @@ bool MUSPlayer::readString(Common::SeekableReadStream &stream, Common::String &s
 
 	buffer[size] = '\0';
 
-	string = (char *) buffer;
+	string = (char *)buffer;
 
 	return true;
 }
@@ -235,7 +234,7 @@ bool MUSPlayer::readSNDHeader(Common::SeekableReadStream &snd, int &timbreCount,
 
 	// Number of timbres and where they start
 	timbreCount = snd.readUint16LE();
-	timbrePos   = snd.readUint16LE();
+	timbrePos = snd.readUint16LE();
 
 	const uint16 minTimbrePos = 6 + timbreCount * 9;
 
@@ -246,7 +245,7 @@ bool MUSPlayer::readSNDHeader(Common::SeekableReadStream &snd, int &timbreCount,
 	}
 
 	const uint32 timbreParametersSize = snd.size() - timbrePos;
-	const uint32 paramSize            = kOperatorsPerVoice * kParamCount * sizeof(uint16);
+	const uint32 paramSize = kOperatorsPerVoice * kParamCount * sizeof(uint16);
 
 	// Sanity check
 	if (timbreParametersSize != (timbreCount * paramSize)) {
@@ -319,7 +318,7 @@ bool MUSPlayer::readMUSHeader(Common::SeekableReadStream &mus) {
 		return false;
 	}
 
-	_ticksPerBeat    = mus.readByte();
+	_ticksPerBeat = mus.readByte();
 	_beatsPerMeasure = mus.readByte();
 
 	mus.skip(4); // Length of song in ticks
@@ -329,9 +328,9 @@ bool MUSPlayer::readMUSHeader(Common::SeekableReadStream &mus) {
 	mus.skip(4); // Number of commands
 	mus.skip(8); // Unused
 
-	_soundMode      = mus.readByte();
+	_soundMode = mus.readByte();
 	_pitchBendRange = mus.readByte();
-	_baseTempo      = mus.readUint16LE();
+	_baseTempo = mus.readUint16LE();
 
 	mus.skip(8); // Unused
 
@@ -363,7 +362,7 @@ void MUSPlayer::unloadSND() {
 void MUSPlayer::unloadMUS() {
 	delete[] _songData;
 
-	_songData     = 0;
+	_songData = 0;
 	_songDataSize = 0;
 
 	_playPos = 0;

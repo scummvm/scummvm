@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "tsage/ringworld/ringworld_scenes2.h"
+#include "common/config-manager.h"
 #include "tsage/dialogs.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -69,7 +69,6 @@ void Scene1000::Action1::signal() {
 	default:
 		break;
 	}
-
 }
 
 void Scene1000::Action2::signal() {
@@ -80,7 +79,7 @@ void Scene1000::Action2::signal() {
 		break;
 	case 1:
 		SceneItem::display(1000, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1,
-				SET_EXT_BGCOLOR, 35, SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, LIST_END);
+		                   SET_EXT_BGCOLOR, 35, SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(180);
 		break;
 	case 2:
@@ -538,7 +537,6 @@ void Scene1001::postInit(SceneObjectList *OwnerList) {
 	setAction(&_action1);
 }
 
-
 /*--------------------------------------------------------------------------
  * Scene 1250 -
  *
@@ -703,7 +701,7 @@ void Scene1400::Action1::signal() {
 	}
 	case 3:
 		SceneItem::display(1400, 2, SET_X, 60, SET_Y, g_globals->_sceneManager._scene->_sceneBounds.bottom - 80,
-			SET_FONT, 2, SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+		                   SET_FONT, 2, SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(420);
 		break;
 	case 4:
@@ -712,7 +710,7 @@ void Scene1400::Action1::signal() {
 		break;
 	case 5:
 		SceneItem::display(1400, 3, SET_X, 60, SET_Y, g_globals->_sceneManager._scene->_sceneBounds.bottom - 80,
-			SET_FONT, 2, SET_FG_COLOR, 23, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+		                   SET_FONT, 2, SET_FG_COLOR, 23, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(360);
 		break;
 	case 6:
@@ -738,7 +736,7 @@ void Scene1400::Action1::signal() {
 		g_globals->_player.animate(ANIM_MODE_2, NULL);
 
 		SceneItem::display(1400, 4, SET_X, 30, SET_Y, g_globals->_player._position.y + 10, SET_FONT, 2,
-			SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
+		                   SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(300);
 		break;
 	case 9: {

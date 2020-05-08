@@ -25,8 +25,8 @@
 
 #include "common/algorithm.h"
 #include "common/array.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/list.h"
 #include "common/queue.h"
 #include "common/stack.h"
@@ -52,6 +52,7 @@ public:
 	private:
 		vector<T> *_owner;
 		int _index;
+
 	public:
 		reverse_iterator(vector<T> *owner, int index) : _owner(owner), _index(index) {}
 		reverse_iterator() : _owner(0), _index(-1) {}
@@ -75,6 +76,7 @@ public:
 	private:
 		const vector<T> *_owner;
 		int _index;
+
 	public:
 		const_reverse_iterator(const vector<T> *owner, int index) : _owner(owner), _index(index) {
 		}
@@ -97,6 +99,7 @@ public:
 			return !operator==(rhs);
 		}
 	};
+
 public:
 	typedef T reference;
 	typedef const T const_reference;
@@ -114,7 +117,7 @@ public:
 	}
 
 	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator first,
-			typename Common::Array<T>::iterator last) {
+	                                          typename Common::Array<T>::iterator last) {
 		Common::copy(last, this->_storage + this->_size, first);
 
 		int count = (last - first);
@@ -181,9 +184,11 @@ class set {
 			SWAP(this->_storage, arr._storage);
 		}
 	};
+
 private:
 	Items _items;
 	Comparitor _comparitor;
+
 public:
 	typedef T *iterator;
 	typedef const T *const_iterator;
@@ -229,7 +234,8 @@ public:
 	 */
 	iterator find(const T item) {
 		iterator it = begin();
-		for (; it != end() && *it != item; ++it) {}
+		for (; it != end() && *it != item; ++it) {
+		}
 		return it;
 	}
 	const_iterator find(const T item) const {
@@ -250,7 +256,7 @@ struct PointerHash {
 };
 
 template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-         class EqualFunc = Common::EqualTo<Key> >
+         class EqualFunc = Common::EqualTo<Key>>
 class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
 public:
 	void insert(Std::pair<Key, Val> elem) {
@@ -263,7 +269,7 @@ class deque : public Common::List<VAL> {
 public:
 	VAL operator[](uint index) {
 		for (typename Common::List<VAL>::iterator it = this->begin();
-				it != this->end() && index >= 0; ++it, --index) {
+		     it != this->end() && index >= 0; ++it, --index) {
 			if (index == 0)
 				return *it;
 		}
@@ -278,6 +284,7 @@ public:
 	struct reverse_iterator {
 	private:
 		typename Common::List<T>::iterator _it;
+
 	public:
 		reverse_iterator(typename Common::List<T>::iterator it) : _it(it) {}
 		reverse_iterator() {}
@@ -292,9 +299,10 @@ public:
 		bool operator==(const reverse_iterator &rhs) { return _it == rhs._it; }
 		bool operator!=(const reverse_iterator &rhs) { return _it != rhs._it; }
 	};
+
 public:
 	typename Common::List<T>::iterator insert(typename Common::List<T>::iterator pos,
-			const T &element) {
+	                                          const T &element) {
 		Common::List<T>::insert(pos, element);
 		return pos;
 	}
@@ -320,7 +328,7 @@ class queue : public Common::Queue<T> {
  * NOTE: Unlike in the C std library, we have to provde a comparitor that sorts
  * the array so that the smallest priority comes last
  */
-template <class _Ty, class _Container, class _Pr>
+template<class _Ty, class _Container, class _Pr>
 class priority_queue {
 public:
 	priority_queue() : c(), comp() {}
@@ -331,18 +339,18 @@ public:
 		make_heap(c.begin(), c.end(), comp);
 	}
 
-	template <class _InIt>
+	template<class _InIt>
 	priority_queue(_InIt _First, _InIt _Last, const _Pr &_Pred, const _Container &_Cont) : c(_Cont), comp(_Pred) {
 		c.insert(c.end(), _First, _Last);
 		make_heap(c.begin(), c.end(), comp);
 	}
 
-	template <class _InIt>
+	template<class _InIt>
 	priority_queue(_InIt _First, _InIt _Last) : c(_First, _Last), comp() {
 		make_heap(c.begin(), c.end(), comp);
 	}
 
-	template <class _InIt>
+	template<class _InIt>
 	priority_queue(_InIt _First, _InIt _Last, const _Pr &_Pred) : c(_First, _Last), comp(_Pred) {
 		make_heap(c.begin(), c.end(), comp);
 	}

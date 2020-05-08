@@ -36,6 +36,7 @@ public:
 	CString _string4;
 	int _field40;
 	int _field44;
+
 public:
 	CLASSDEF;
 	CVariableListItem() : ListItem(), _field18(0), _field40(0), _field44(0) {}
@@ -51,11 +52,10 @@ public:
 	void load(SimpleFile *file) override;
 };
 
-
 /**
  * Movie clip list
  */
-class CVariableList: public List<CVariableListItem> {
+class CVariableList : public List<CVariableListItem> {
 };
 
 } // End of namespace Titanic

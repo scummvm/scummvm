@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CVisionCentre, CBrain)
-	ON_MESSAGE(PuzzleSolvedMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(PuzzleSolvedMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 void CVisionCentre::save(SimpleFile *file, int indent) {

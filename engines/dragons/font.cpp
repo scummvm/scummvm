@@ -19,14 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "dragons/font.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "dragons/bigfile.h"
 #include "dragons/cursor.h"
-#include "dragons/font.h"
+#include "dragons/dragons.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
-#include "dragons/dragons.h"
 
 namespace Dragons {
 
@@ -85,7 +85,7 @@ void Font::renderToSurface(Graphics::Surface *surface, int16 x, int16 y, uint16 
 	}
 }
 
-FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive): _vm(vm), _screen(screen), _numTextEntries(0) {
+FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive) : _vm(vm), _screen(screen), _numTextEntries(0) {
 	uint32 fileSize;
 	byte *data = bigfileArchive->load("fntfiles.dat", fileSize);
 	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
@@ -124,7 +124,7 @@ void FontManager::addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 f
 }
 
 void FontManager::draw() {
-	if(_numTextEntries > 0) {
+	if (_numTextEntries > 0) {
 		_screen->copyRectToSurface8bpp(*_surface, _screen->getPalette(2), 0, 0, Common::Rect(_surface->w, _surface->h), false, NORMAL);
 	}
 }
@@ -140,7 +140,7 @@ Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
 		error("Failed to open dragon.exe");
 	}
 	fd.seek(_vm->getFontOffsetFromDragonEXE());
-	fd.skip((index * 2)  * 28);
+	fd.skip((index * 2) * 28);
 
 	fd.skip(16); //filename
 	uint32 mapOffset = fd.readUint32LE();
@@ -159,7 +159,7 @@ Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
 
 void updatePalEntry(uint16 *pal, uint16 index, uint16 newValue) {
 	newValue = (uint16)(((uint16)newValue & 0x1f) << 10) | (uint16)(((uint16)newValue & 0x7c00) >> 10) |
-			(newValue & 0x3e0) | (newValue & 0x8000);
+	           (newValue & 0x3e0) | (newValue & 0x8000);
 	WRITE_LE_INT16(pal + index, newValue);
 }
 
@@ -236,9 +236,9 @@ void FontManager::drawTextDialogBox(uint32 x1, uint32 y1, uint32 x2, uint32 y2) 
 
 void FontManager::clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2) {
 	debug("Clear text (%d,%d) -> (%d,%d)", x1, y1, x2, y2);
-//	assert(x1 > 0);
-//	assert(y1 > 0);
-	_surface->fillRect(Common::Rect((x1-1) * 8, (y1-1) * 8, (x2 + 1) * 8 + 1, (y2 + 1) * 8 + 1), 0);
+	//	assert(x1 > 0);
+	//	assert(y1 > 0);
+	_surface->fillRect(Common::Rect((x1 - 1) * 8, (y1 - 1) * 8, (x2 + 1) * 8 + 1, (y2 + 1) * 8 + 1), 0);
 	if (_numTextEntries > 0) {
 		_numTextEntries--; //TODO need a better way to check if we should still draw the font surface.
 	}

@@ -22,11 +22,11 @@
 
 #if defined(MAEMO)
 
+#include "base/main.h"
 #include "backends/platform/maemo/maemo.h"
 #include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 	g_system = new Maemo::OSystem_SDL_Maemo();
 	assert(g_system);
 

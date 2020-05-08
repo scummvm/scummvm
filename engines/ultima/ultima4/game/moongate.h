@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_GAME_MOONGATE_H
 #define ULTIMA4_GAME_MOONGATE_H
 
-#include "ultima/ultima4/core/coords.h"
 #include "common/hashmap.h"
+#include "ultima/ultima4/core/coords.h"
 
 namespace Ultima {
 namespace Ultima4 {

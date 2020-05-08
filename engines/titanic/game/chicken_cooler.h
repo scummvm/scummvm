@@ -32,9 +32,11 @@ class CChickenCooler : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 private:
 	int _newTemperature;
 	bool _triggerOnRoomEntry;
+
 public:
 	CLASSDEF;
 	CChickenCooler() : CGameObject(), _newTemperature(0), _triggerOnRoomEntry(false) {}

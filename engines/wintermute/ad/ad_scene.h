@@ -46,7 +46,6 @@ class AdRotLevel;
 class AdPathPoint;
 class AdScene : public BaseObject {
 public:
-
 	BaseObject *getNextAccessObject(BaseObject *currObject);
 	BaseObject *getPrevAccessObject(BaseObject *currObject);
 	bool getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly);
@@ -173,7 +172,6 @@ private:
 
 	int32 _offsetTop;
 	int32 _offsetLeft;
-
 };
 
 } // End of namespace Wintermute

@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_HARDCODEDSTRINGS_H
 #define MUTATIONOFJB_HARDCODEDSTRINGS_H
 
-#include "common/language.h"
 #include "common/hashmap.h"
+#include "common/language.h"
 
 namespace MutationOfJB {
 
@@ -102,6 +102,6 @@ private:
 	StringArray _strings;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

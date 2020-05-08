@@ -20,21 +20,21 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/misc/u6_llist.h"
-#include "ultima/nuvie/gui/gui_button.h"
-#include "ultima/nuvie/views/doll_widget.h"
-#include "ultima/nuvie/views/inventory_widget.h"
 #include "ultima/nuvie/views/inventory_view.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/gui/gui_button.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/views/view_manager.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/nuvie/screen/screen.h"
+#include "ultima/nuvie/usecode/usecode.h"
+#include "ultima/nuvie/views/doll_widget.h"
+#include "ultima/nuvie/views/inventory_widget.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -42,10 +42,10 @@ namespace Nuvie {
 static const char combat_mode_tbl[][8] = {"COMMAND", " FRONT", "  REAR", " FLANK", "BERSERK", "RETREAT", "ASSAULT"};
 static const char combat_mode_tbl_se[][6] = {"CMND", "RANGE", "FLEE", "CLOSE"};
 static const char combat_mode_tbl_md[][6] = {"CMND", "RANGE", "FLEE", "ATTK"};
-#define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
+#define MD Game::get_game()->get_game_type() == NUVIE_GAME_MD
 
 InventoryView::InventoryView(Configuration *cfg) : View(cfg),
-	doll_widget(NULL), inventory_widget(NULL), combat_button(NULL) {
+                                                   doll_widget(NULL), inventory_widget(NULL), combat_button(NULL) {
 	cursor_pos.area = INVAREA_LIST;
 	cursor_pos.x = cursor_pos.y = 0;
 	cursor_pos.px = cursor_pos.py = 0;
@@ -67,8 +67,7 @@ bool InventoryView::set_party_member(uint8 party_member) {
 
 	picking_pocket = false;
 
-	if (View::set_party_member(party_member)
-	        && !Game::get_game()->get_event()->using_control_cheat()) {
+	if (View::set_party_member(party_member) && !Game::get_game()->get_event()->using_control_cheat()) {
 		is_party_member = true;
 		if (doll_widget)
 			doll_widget->set_actor(party->get_actor(cur_party_member));
@@ -89,7 +88,8 @@ bool InventoryView::set_party_member(uint8 party_member) {
 	is_party_member = false;
 	hide_buttons();
 
-	if (actor_button) actor_button->Show();
+	if (actor_button)
+		actor_button->Show();
 
 	return false;
 }
@@ -111,7 +111,8 @@ bool InventoryView::set_actor(Actor *actor, bool pickpocket) {
 		inventory_widget->set_actor(actor);
 
 	if (picking_pocket) {
-		if (actor_button) actor_button->Hide();
+		if (actor_button)
+			actor_button->Hide();
 	}
 	hide_buttons();
 
@@ -138,16 +139,13 @@ bool InventoryView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 
 	cursor_tile = tile_manager->get_cursor_tile();
 
-
 	return true;
 }
-
 
 void InventoryView::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 	GUI_Widget::PlaceOnScreen(s, dm, x, y);
 	update_cursor(); // initial position; uses area
 }
-
 
 void InventoryView::Display(bool full_redraw) {
 	full_redraw = true;
@@ -207,7 +205,7 @@ void InventoryView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 		y = 80;
 	Graphics::ManagedSurface *button_image;
 	Graphics::ManagedSurface *button_image2;
-//FIX need to handle clicked button image, check image free on destruct.
+	//FIX need to handle clicked button image, check image free on destruct.
 
 	tile = tile_manager->get_tile(MD ? 282 : 387); //left arrow icon
 	button_image = tmp_screen->create_sdl_surface_from(tile->data, 8, 16, 16, 16);
@@ -243,7 +241,6 @@ void InventoryView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 	button_image2 = tmp_screen->create_sdl_surface_from(tile->data, 8, 16, 16, 16);
 	combat_button = new GUI_Button(this, 4 * 16, y, button_image, button_image2, this); //FIX combat
 	this->AddWidget(combat_button);
-
 }
 
 void InventoryView::display_inventory_weights() {
@@ -285,7 +282,7 @@ void InventoryView::display_combat_mode() {
 			y_off = 100;
 		Tile *tile;
 
-// Avatar combat text background (where command button is for other party members)
+		// Avatar combat text background (where command button is for other party members)
 		if (actor->get_actor_num() == 1 || actor->get_actor_num() == 0) {
 			if (MD)
 				tile = tile_manager->get_tile(284);
@@ -356,19 +353,18 @@ GUI_status InventoryView::KeyDown(const Common::KeyState &key) {
 	case DO_ACTION_KEY:
 		select_objAtCursor();
 		break;
-	case TOGGLE_CURSOR_KEY :
+	case TOGGLE_CURSOR_KEY:
 		if (is_party_member) { // when in pickpocket mode we don't want to allow tabing to map window.
 			set_show_cursor(false);
 			return GUI_PASS;
 		}
 		break;
 	default:
-//            set_show_cursor(false); // newAction() can move cursor here
+		//            set_show_cursor(false); // newAction() can move cursor here
 		return GUI_PASS;
 	}
 	return (GUI_YUM);
 }
-
 
 /* Put cursor over one of the readied-item slots. */
 void InventoryView::moveCursorToSlot(uint8 slot_num) {
@@ -439,32 +435,32 @@ void InventoryView::moveCursorRelative(sint8 new_x, sint8 new_y) {
 		// the rest move between readied items
 		else if (x == 0)
 			moveCursorToSlot((new_x < 0) ? 1
-			                 : (new_x > 0) ? 2
-			                 : (new_y > 0) ? 7 : 0);
+			                             : (new_x > 0) ? 2
+			                                           : (new_y > 0) ? 7 : 0);
 		else if (x == 7)
 			moveCursorToSlot((new_x < 0) ? 5
-			                 : (new_x > 0) ? 6
-			                 : (new_y < 0) ? 0 : 7);
+			                             : (new_x > 0) ? 6
+			                                           : (new_y < 0) ? 0 : 7);
 		else if (x == 1)
 			moveCursorToSlot((new_x > 0) ? 0
-			                 : (new_y > 0) ? 3 : 1);
+			                             : (new_y > 0) ? 3 : 1);
 		else if (x == 3)
 			moveCursorToSlot((new_x > 0) ? 4
-			                 : (new_y < 0) ? 1
-			                 : (new_y > 0) ? 5 : 3);
+			                             : (new_y < 0) ? 1
+			                                           : (new_y > 0) ? 5 : 3);
 		else if (x == 5)
 			moveCursorToSlot((new_x > 0) ? 7
-			                 : (new_y < 0) ? 3 : 5);
+			                             : (new_y < 0) ? 3 : 5);
 		else if (x == 2)
 			moveCursorToSlot((new_x < 0) ? 0
-			                 : (new_y > 0) ? 4 : 2);
+			                             : (new_y > 0) ? 4 : 2);
 		else if (x == 4)
 			moveCursorToSlot((new_x < 0) ? 3
-			                 : (new_y < 0) ? 2
-			                 : (new_y > 0) ? 6 : 4);
+			                             : (new_y < 0) ? 2
+			                                           : (new_y > 0) ? 6 : 4);
 		else if (x == 6)
 			moveCursorToSlot((new_x < 0) ? 7
-			                 : (new_y < 0) ? 4 : 6);
+			                             : (new_y < 0) ? 4 : 6);
 	} else if (cursor_pos.area == INVAREA_COMMAND) {
 		if (new_y < 0) {
 			if (x == 0)
@@ -487,7 +483,6 @@ void InventoryView::moveCursorRelative(sint8 new_x, sint8 new_y) {
 		}
 	update_cursor();
 }
-
 
 /* Update on-screen location (px,py) of cursor.
  */
@@ -528,23 +523,29 @@ void InventoryView::set_show_cursor(bool state) {
 	ViewManager *vm = Game::get_game()->get_view_manager();
 	if (state == true && vm->get_current_view() != this) // second comparison prevents endless loop
 		vm->set_inventory_mode();
-
 }
 
 void InventoryView::hide_buttons() {
-	if (left_button) left_button->Hide();
-	if (right_button) right_button->Hide();
-//	if(actor_button) actor_button->Hide();
-	if (party_button) party_button->Hide();
-	if (combat_button) combat_button->Hide();
+	if (left_button)
+		left_button->Hide();
+	if (right_button)
+		right_button->Hide();
+	//	if(actor_button) actor_button->Hide();
+	if (party_button)
+		party_button->Hide();
+	if (combat_button)
+		combat_button->Hide();
 }
 
 void InventoryView::show_buttons() {
-//	if(left_button) left_button->Show(); //   these two shouldn't be needed
-//	if(right_button) right_button->Show(); // and cause problems
-	if (actor_button) actor_button->Show();
-	if (party_button) party_button->Show();
-	if (combat_button) combat_button->Show();
+	//	if(left_button) left_button->Show(); //   these two shouldn't be needed
+	//	if(right_button) right_button->Show(); // and cause problems
+	if (actor_button)
+		actor_button->Show();
+	if (party_button)
+		party_button->Show();
+	if (combat_button)
+		combat_button->Show();
 }
 
 /* Returns pointer to object at cursor position, or NULL.
@@ -561,7 +562,6 @@ Obj *InventoryView::get_objAtCursor() {
 	return (NULL);
 }
 
-
 /* Do an action with the object under the cursor, or call the function for a
    selected button. This is called when pressing ENTER. */
 void InventoryView::select_objAtCursor() {
@@ -572,8 +572,7 @@ void InventoryView::select_objAtCursor() {
 	if (cursor_pos.area == INVAREA_TOP && event->can_target_icon()) {
 		if (inventory_widget->is_showing_container() && event->get_last_mode() != PUSH_MODE)
 			select_obj((Obj *)inventory_widget->get_container());
-		else if (inventory_widget->is_showing_container()
-		         &&  inventory_widget->get_container()->get_engine_loc() == OBJ_LOC_CONT)
+		else if (inventory_widget->is_showing_container() && inventory_widget->get_container()->get_engine_loc() == OBJ_LOC_CONT)
 			select_obj((Obj *)inventory_widget->get_container()->parent);
 		else
 			event->select_actor(inventory_widget->get_actor());
@@ -607,7 +606,6 @@ void InventoryView::select_objAtCursor() {
 	if (cursor_pos.area == INVAREA_DOLL || cursor_pos.area == INVAREA_LIST)
 		select_obj(obj); // do action with an object
 }
-
 
 /* Ready an object or pass it to Events. Pass NULL if an empty space is selected.
  * Returns true if the object was "used". The caller is free to handle the

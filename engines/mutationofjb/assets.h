@@ -23,10 +23,10 @@
 #ifndef MUTATIONOFJB_ASSETS_H
 #define MUTATIONOFJB_ASSETS_H
 
-#include "mutationofjb/font.h"
 #include "mutationofjb/conversationlinelist.h"
-#include "mutationofjb/inventoryitemdefinitionlist.h"
+#include "mutationofjb/font.h"
 #include "mutationofjb/hardcodedstrings.h"
+#include "mutationofjb/inventoryitemdefinitionlist.h"
 
 namespace MutationOfJB {
 
@@ -66,6 +66,7 @@ public:
 	 * @return Hardcoded strings.
 	 */
 	HardcodedStrings &getHardcodedStrings();
+
 private:
 	SystemFont _systemFont;
 	SpeechFont _speechFont;
@@ -75,6 +76,6 @@ private:
 	HardcodedStrings _hardcodedStrings;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

@@ -24,8 +24,8 @@
 
 #include "common/archive.h"
 #include "common/file.h"
-#include "common/textconsole.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
 #include "sci/util.h"
@@ -33,7 +33,7 @@
 namespace Sci {
 
 AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, const Common::String &name, ResourceSource *map, int volNum)
-	: VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
+    : VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
 
 	_audioCompressionType = 0;
 
@@ -50,9 +50,9 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 	fileStream->seek(0, SEEK_SET);
 	const uint32 compressionType = fileStream->readUint32BE();
 	switch (compressionType) {
-	case MKTAG('M','P','3',' '):
-	case MKTAG('O','G','G',' '):
-	case MKTAG('F','L','A','C'): {
+	case MKTAG('M', 'P', '3', ' '):
+	case MKTAG('O', 'G', 'G', ' '):
+	case MKTAG('F', 'L', 'A', 'C'): {
 		_audioCompressionType = compressionType;
 		const uint32 numEntries = fileStream->readUint32LE();
 		if (!numEntries) {
@@ -73,8 +73,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		}
 
 		lastEntry->size = fileStream->size() - lastEntry->offset;
-		}
-		break;
+	} break;
 	default:
 		break;
 	}
@@ -97,7 +96,7 @@ bool Resource::loadFromWaveFile(Common::SeekableReadStream *file) {
 bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	// Check for WAVE files here
 	uint32 riffTag = file->readUint32BE();
-	if (riffTag == MKTAG('R','I','F','F')) {
+	if (riffTag == MKTAG('R', 'I', 'F', 'F')) {
 		_size = file->readUint32LE() + 8;
 		file->seek(-8, SEEK_CUR);
 		return loadFromWaveFile(file);
@@ -108,8 +107,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	if (getType() != kResourceTypeRave) {
 		ResourceType type = _resMan->convertResType(file->readByte());
 
-		if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
-			|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
+		if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio)) || ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
 			warning("Resource type mismatch loading %s", _id.toString().c_str());
 			unalloc();
 			return false;
@@ -506,20 +504,20 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			// assets seem to be able to load successfully from one of the later
 			// CDs, so just ignore the map on this disc
 			if (g_sci->getGameId() == GID_PQSWAT &&
-				g_sci->getLanguage() == Common::EN_ANY &&
-				map->_volumeNumber == 1 &&
-				map->_mapNumber == 405) {
+			    g_sci->getLanguage() == Common::EN_ANY &&
+			    map->_volumeNumber == 1 &&
+			    map->_mapNumber == 405) {
 				continue;
 			}
 
-			// GK2 has invalid audio36 map entries on CD 1 of the German 
+			// GK2 has invalid audio36 map entries on CD 1 of the German
 			//  version and CD 6 of all versions. All are safe to ignore
 			//  because their content doesn't apply to the disc's chapter.
 			if (g_sci->getGameId() == GID_GK2) {
 				// Map 2020 on CD 1 only exists in localized versions and
 				//  contains inventory messages from later chapters.
 				if (map->_volumeNumber == 1 &&
-					map->_mapNumber == 2020) {
+				    map->_mapNumber == 2020) {
 					continue;
 				}
 
@@ -528,17 +526,17 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				//  These messages are for Grace's notebook and castle
 				//  secret passage rooms which aren't in chapter 6.
 				if (map->_volumeNumber == 6 &&
-					(map->_mapNumber == 22 || map->_mapNumber == 160)) {
+				    (map->_mapNumber == 22 || map->_mapNumber == 160)) {
 					continue;
 				}
 			}
-			
+
 			// Lighthouse German has invalid audio36 map entries for
 			//  content that was cut from the game. These resources
 			//  existed in the English version even though they were
 			//  inaccessible.
 			if (g_sci->getGameId() == GID_LIGHTHOUSE &&
-				map->_mapNumber == 800) {
+			    map->_mapNumber == 800) {
 				continue;
 			}
 
@@ -546,7 +544,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			//  message that was cut from the game. This resource existed
 			//  in the English version even though it was inaccessible.
 			if (g_sci->getGameId() == GID_LSL7 &&
-				map->_mapNumber == 999) {
+			    map->_mapNumber == 999) {
 				continue;
 			}
 
@@ -556,7 +554,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			// match. Since the content was never used, just ignore these maps
 			// everywhere
 			if (g_sci->getGameId() == GID_PHANTASMAGORIA2 &&
-				(map->_mapNumber == 800 || map->_mapNumber == 4176)) {
+			    (map->_mapNumber == 800 || map->_mapNumber == 4176)) {
 				continue;
 			}
 
@@ -604,12 +602,12 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 		byte volume_nr;
 
 		if (oldFormat) {
-			n &= 0x07ff; // Mask out resource type
+			n &= 0x07ff;              // Mask out resource type
 			volume_nr = offset >> 25; // most significant 7 bits
-			offset &= 0x01ffffff; // least significant 25 bits
+			offset &= 0x01ffffff;     // least significant 25 bits
 		} else {
 			volume_nr = offset >> 28; // most significant 4 bits
-			offset &= 0x0fffffff; // least significant 28 bits
+			offset &= 0x0fffffff;     // least significant 28 bits
 		}
 
 		ResourceSource *src = findVolume(map, volume_nr);
@@ -720,8 +718,7 @@ bool ResourceManager::isGMTrackIncluded() {
 	return result;
 }
 
-SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : 
-	_resMan(resMan), _soundVersion(soundVersion), _trackCount(0), _tracks(nullptr), _soundPriority(0xFF) {
+SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion), _trackCount(0), _tracks(nullptr), _soundPriority(0xFF) {
 	_resource = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), true);
 	if (!_resource)
 		return;
@@ -834,7 +831,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 					channel->poly = channel->data[1] & 0x0F;
 					channel->prio = channel->data[1] >> 4;
 					channel->time = channel->prev = 0;
-					channel->data += 2; // skip over header
+					channel->data += 2;            // skip over header
 					if (channel->number == 0xFE) { // Digital channel
 						_tracks[trackNr].digitalChannelNr = channelNr;
 						_tracks[trackNr].digitalSampleRate = channel->data.getUint16LEAt(0);
@@ -1018,8 +1015,8 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 	// the resource type checking in loadFromAudioVolumeSCI11 (since
 	// loadFromAudioVolumeSCI1 does nothing more than read raw data)
 	if (_audioCompressionType != 0 &&
-		(res->getType() == kResourceTypeAudio ||
-		 res->getType() == kResourceTypeAudio36)) {
+	    (res->getType() == kResourceTypeAudio ||
+	     res->getType() == kResourceTypeAudio36)) {
 		res->loadFromAudioVolumeSCI1(fileStream);
 	} else if (getSciVersion() < SCI_VERSION_1_1)
 		res->loadFromAudioVolumeSCI1(fileStream);
@@ -1100,7 +1097,7 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 		}
 	}
 
-	for (SourcesList::iterator it = _sources.begin(); it != _sources.end(); ) {
+	for (SourcesList::iterator it = _sources.begin(); it != _sources.end();) {
 		IntMapResourceSource *mapSource = dynamic_cast<IntMapResourceSource *>(*it);
 		if (mapSource && mapSource->_mapNumber != 65535) {
 			delete *it;

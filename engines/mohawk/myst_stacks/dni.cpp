@@ -20,28 +20,27 @@
  *
  */
 
-#include "mohawk/myst.h"
+#include "mohawk/myst_stacks/dni.h"
 #include "mohawk/cursors.h"
 #include "mohawk/graphics.h"
+#include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/dni.h"
 
 #include "common/system.h"
 
 namespace Mohawk {
 namespace MystStacks {
 
-Dni::Dni(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm, kDniStack),
-		_notSeenAtrus(true),
-		_atrusRunning(false),
-		_waitForLoop(false),
-		_atrusLeft(false),
-		_atrusLeftTime(0),
-		_loopStart(0),
-		_loopEnd(0) {
+Dni::Dni(MohawkEngine_Myst *vm) : MystScriptParser(vm, kDniStack),
+                                  _notSeenAtrus(true),
+                                  _atrusRunning(false),
+                                  _waitForLoop(false),
+                                  _atrusLeft(false),
+                                  _atrusLeftTime(0),
+                                  _loopStart(0),
+                                  _loopEnd(0) {
 	setupOpcodes();
 }
 
@@ -78,7 +77,7 @@ void Dni::runPersistentScripts() {
 }
 
 uint16 Dni::getVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 0: // Atrus Gone (from across room)
 		return _globals.ending == kAtrusLeaves;
 	case 1: // Myst Book Status
@@ -86,7 +85,7 @@ uint16 Dni::getVar(uint16 var) {
 			return _globals.ending == kForgotPage;
 		else
 			return 2; // Linkable
-	case 2: // Music Type
+	case 2:           // Music Type
 		if (_notSeenAtrus) {
 			_notSeenAtrus = false;
 			return _globals.ending != kBooksDestroyed && _globals.heldPage != kWhitePage;

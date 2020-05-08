@@ -35,7 +35,7 @@ void Processor::z_copy_table() {
 		// zero table
 		for (i = 0; i < size; i++)
 			storeb((zword)(zargs[0] + i), 0);
-	} else if ((short) size < 0 || zargs[0] > zargs[1])	{
+	} else if ((short)size < 0 || zargs[0] > zargs[1]) {
 		// copy forwards
 		for (i = 0; i < (((short)size < 0) ? -(short)size : size); i++) {
 			addr = zargs[0] + i;
@@ -76,7 +76,7 @@ void Processor::z_scan_table() {
 
 	// Supply default arguments
 	if (zargc < 4)
-	zargs[3] = 0x82;
+		zargs[3] = 0x82;
 
 	// Scan byte or word array
 	for (i = 0; i < zargs[2]; i++) {

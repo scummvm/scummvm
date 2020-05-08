@@ -33,12 +33,14 @@ class CAutoMusicPlayerBase : public CGameObject {
 	bool TimerMsg(CTimerMsg *msg);
 	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 	bool ChangeMusicMsg(CChangeMusicMsg *msg);
+
 protected:
 	CString _filename;
 	bool _initialMute;
 	bool _isEnabled;
 	VolumeMode _volumeMode;
 	int _transition;
+
 public:
 	CLASSDEF;
 	CAutoMusicPlayerBase();

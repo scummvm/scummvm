@@ -33,6 +33,7 @@ class UCList;
 
 class AskGump : public ItemRelativeGump {
 	UCList *_answers;
+
 public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -42,11 +43,12 @@ public:
 	~AskGump() override;
 
 	// Init the gump, call after construction
-	void        InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	void        ChildNotify(Gump *child, uint32 message) override;
+	void ChildNotify(Gump *child, uint32 message) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

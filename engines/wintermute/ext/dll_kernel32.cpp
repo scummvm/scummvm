@@ -29,8 +29,8 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
@@ -67,7 +67,7 @@ bool EmulateKernel32ExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *thi
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(function->name, "FreeLibrary") == 0) {
 		stack->correctParams(1);
-		/*int dllId =*/ stack->pop()->getInt();
+		/*int dllId =*/stack->pop()->getInt();
 
 		// do nothing
 
@@ -86,8 +86,8 @@ bool EmulateKernel32ExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *thi
 	else if (strcmp(function->name, "GetEnvironmentVariableA") == 0) {
 		stack->correctParams(3);
 		const char *name = stack->pop()->getString();
-		/*ScValue *buf =*/ stack->pop();
-		/*int bufMaxLen =*/ stack->pop()->getInt();
+		/*ScValue *buf =*/stack->pop();
+		/*int bufMaxLen =*/stack->pop()->getInt();
 
 		warning("Assuming variable \"%s\" is not set", name);
 

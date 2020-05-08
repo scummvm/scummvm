@@ -20,10 +20,10 @@
  *
  */
 
-#include "glk/magnetic/magnetic_defs.h"
-#include "glk/magnetic/magnetic.h"
 #include "common/file.h"
 #include "common/textconsole.h"
+#include "glk/magnetic/magnetic.h"
+#include "glk/magnetic/magnetic_defs.h"
 
 namespace Glk {
 namespace Magnetic {
@@ -75,19 +75,19 @@ type8 *Magnetic::effective(type32 ptr) {
 }
 
 void Magnetic::write_l(type8 *ptr, type32 val) {
-	ptr[3] = (type8) val;
+	ptr[3] = (type8)val;
 	val >>= 8;
-	ptr[2] = (type8) val;
+	ptr[2] = (type8)val;
 	val >>= 8;
-	ptr[1] = (type8) val;
+	ptr[1] = (type8)val;
 	val >>= 8;
-	ptr[0] = (type8) val;
+	ptr[0] = (type8)val;
 }
 
 void Magnetic::write_w(type8 *ptr, type16 val) {
-	ptr[1] = (type8) val;
+	ptr[1] = (type8)val;
 	val >>= 8;
-	ptr[0] = (type8) val;
+	ptr[0] = (type8)val;
 }
 
 type32 Magnetic::rand_emu() {
@@ -308,15 +308,14 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 		sd = (type8)((dict_size != 0L) ? 1 : 0); /* if (sd) => separate dict */
 
 		if (!(code = (type8 *)malloc(mem_size)) || !(string2 = (type8 *)malloc(string2_size)) ||
-		        !(restart = (type8 *)malloc(undo_size)) || (sd &&
-		                !(dict = (type8 *)malloc(dict_size)))) {
+		    !(restart = (type8 *)malloc(undo_size)) || (sd && !(dict = (type8 *)malloc(dict_size)))) {
 			ms_freemem();
 			fp.close();
 			return 0;
 		}
 		if (string_size > MAX_STRING_SIZE) {
 			if (!(string = (type8 *)malloc(MAX_STRING_SIZE)) ||
-			        !(string3 = (type8 *)malloc(string_size - MAX_STRING_SIZE))) {
+			    !(string3 = (type8 *)malloc(string_size - MAX_STRING_SIZE))) {
 				ms_freemem();
 				fp.close();
 				return 0;
@@ -338,7 +337,7 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 			fp.close();
 			return 0;
 		}
-		memcpy(restart, code, undo_size);   /* fast restarts */
+		memcpy(restart, code, undo_size); /* fast restarts */
 		if (string_size > MAX_STRING_SIZE) {
 			if (fp.read(string, MAX_STRING_SIZE) != MAX_STRING_SIZE) {
 				ms_freemem();
@@ -362,7 +361,7 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 			fp.close();
 			return 0;
 		}
-		if (sd && fp.read(dict, dict_size) != dict_size)  {
+		if (sd && fp.read(dict, dict_size) != dict_size) {
 			ms_freemem();
 			fp.close();
 			return 0;
@@ -381,14 +380,14 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 
 	for (i = 0; i < 8; i++)
 		dreg[i] = areg[i] = 0;
-	write_reg(8 + 7, 2, 0xfffe);    /* Stack-pointer, -2 due to MS-DOS segments */
+	write_reg(8 + 7, 2, 0xfffe); /* Stack-pointer, -2 due to MS-DOS segments */
 	pc = 0;
 	zflag = nflag = cflag = vflag = 0;
 	i_count = 0;
 	running = 1;
 
 	if (!name)
-		return (type8)(gfx_buf ? 2 : 1);    /* Restarted */
+		return (type8)(gfx_buf ? 2 : 1); /* Restarted */
 
 	if (version == 4) {
 		/* Try loading a hint file */
@@ -415,7 +414,8 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 						out2("\nBlock No. %d\n", i);
 #endif
 						/* Read number of elements */
-						if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos()) return 0;
+						if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos())
+							return 0;
 						elcnt = read_w2(buf);
 #ifdef LOGHNT
 						out2("Elements: %d\n", elcnt);
@@ -423,7 +423,8 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 						hints[i].elcount = elcnt;
 
 						/* Read node type */
-						if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos()) return 0;
+						if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos())
+							return 0;
 						ntype = read_w2(buf);
 #ifdef LOGHNT
 						if (ntype == 1)
@@ -437,9 +438,11 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 						out2("Elements:\n");
 #endif
 						for (j = 0; j < elcnt; j++) {
-							if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos()) return 0;
+							if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos())
+								return 0;
 							elsize = read_w2(buf);
-							if (hnt_fp.read(hint_contents + conidx, elsize) != elsize && !hnt_fp.eos()) return 0;
+							if (hnt_fp.read(hint_contents + conidx, elsize) != elsize && !hnt_fp.eos())
+								return 0;
 							hint_contents[conidx + elsize - 1] = '\0';
 #ifdef LOGHNT
 							out2("%s\n", hint_contents + conidx);
@@ -453,7 +456,8 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 							out2("Jump to block:\n");
 #endif
 							for (j = 0; j < elcnt; j++) {
-								if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos()) return 0;
+								if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos())
+									return 0;
 								hints[i].links[j] = read_w2(buf);
 #ifdef LOGHNT
 								out2("%d\n", hints[i].links[j]);
@@ -462,7 +466,8 @@ type8 Magnetic::ms_init(const char *name, const char *gfxname, const char *hntna
 						}
 
 						/* Read the parent block */
-						if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos()) return 0;
+						if (hnt_fp.read(&buf, 2) != 2 && !hnt_fp.eos())
+							return 0;
 						hints[i].parent = read_w2(buf);
 #ifdef LOGHNT
 						out2("Parent: %d\n", hints[i].parent);
@@ -587,8 +592,10 @@ type8 *Magnetic::ms_extract1(type8 pic, type16 *w, type16 *h, type16 *pal) {
 #ifdef SAVEMEM
 	free(buf);
 #endif
-	for (; h[0] > 0 && is_blank((type16)(h[0] - 1), w[0]); h[0]--);
-	for (i = 0; h[0] > 0 && is_blank((type16)i, w[0]); h[0]--, i++);
+	for (; h[0] > 0 && is_blank((type16)(h[0] - 1), w[0]); h[0]--)
+		;
+	for (i = 0; h[0] > 0 && is_blank((type16)i, w[0]); h[0]--, i++)
+		;
 	return gfx_buf + i * w[0];
 }
 
@@ -1035,7 +1042,7 @@ void Magnetic::save_undo() {
 	type8 *tmp, i;
 	type32 tmp32;
 
-	tmp = undo[0];  /* swap buffers */
+	tmp = undo[0]; /* swap buffers */
 	undo[0] = undo[1];
 	undo[1] = tmp;
 
@@ -1051,7 +1058,7 @@ void Magnetic::save_undo() {
 		undo_regs[1][8 + i] = areg[i];
 	}
 	undo_regs[1][16] = i_count;
-	undo_regs[1][17] = pc;  /* status flags intentionally omitted */
+	undo_regs[1][17] = pc; /* status flags intentionally omitted */
 
 	undo_stat[0] = undo_stat[1];
 	undo_stat[1] = 1;
@@ -1071,7 +1078,7 @@ type8 Magnetic::ms_undo() {
 		areg[i] = undo_regs[0][8 + i];
 	}
 	i_count = undo_regs[0][16];
-	pc = undo_regs[0][17];  /* status flags intentionally omitted */
+	pc = undo_regs[0][17]; /* status flags intentionally omitted */
 	return 1;
 }
 
@@ -1095,13 +1102,13 @@ void Magnetic::ms_status() {
 
 	Common::String s = "D0:";
 	for (j = 0; j < 8; j++)
-		s += Common::String::format(" %8.8lx", (long) read_reg(j, 3));
+		s += Common::String::format(" %8.8lx", (long)read_reg(j, 3));
 	s += "\nA0:";
 
 	for (j = 0; j < 8; j++)
-		s += Common::String::format(" %8.8lx", (long) read_reg(8 + j, 3));
+		s += Common::String::format(" %8.8lx", (long)read_reg(8 + j, 3));
 	s += Common::String::format("\nPC=%5.5lx ZCNV=%d%d%d%d - %ld instructions\n",
-	                            (long) pc, zflag & 1, cflag & 1, nflag & 1, vflag & 1, (long) i_count);
+	                            (long)pc, zflag & 1, cflag & 1, nflag & 1, vflag & 1, (long)i_count);
 	warning("%s", s.c_str());
 }
 
@@ -1121,9 +1128,9 @@ type32 Magnetic::read_reg(int i, int s) {
 		return 0;
 	}
 	if (i < 8)
-		ptr = (type8 *) & dreg[i];
+		ptr = (type8 *)&dreg[i];
 	else
-		ptr = (type8 *) & areg[i - 8];
+		ptr = (type8 *)&areg[i - 8];
 
 	switch (s) {
 	case 0:
@@ -1143,9 +1150,9 @@ void Magnetic::write_reg(int i, int s, type32 val) {
 		return;
 	}
 	if (i < 8)
-		ptr = (type8 *) & dreg[i];
+		ptr = (type8 *)&dreg[i];
 	else
-		ptr = (type8 *) & areg[i - 8];
+		ptr = (type8 *)&areg[i - 8];
 
 	switch (s) {
 	case 0:
@@ -1258,27 +1265,27 @@ void Magnetic::set_arg1() {
 	is_reversible = 1;
 	switch (admode) {
 	case 0:
-		arg1 = reg_align((type8 *) & dreg[regnr], opsize);  /* Dx */
+		arg1 = reg_align((type8 *)&dreg[regnr], opsize); /* Dx */
 		is_reversible = 0;
 #ifdef LOGEMU
 		out(" d%.1d", regnr);
 #endif
 		break;
 	case 1:
-		arg1 = reg_align((type8 *) & areg[regnr], opsize);  /* Ax */
+		arg1 = reg_align((type8 *)&areg[regnr], opsize); /* Ax */
 		is_reversible = 0;
 #ifdef LOGEMU
 		out(" a%.1d", regnr);
 #endif
 		break;
 	case 2:
-		arg1i = read_reg(8 + regnr, 2);     /* (Ax) */
+		arg1i = read_reg(8 + regnr, 2); /* (Ax) */
 #ifdef LOGEMU
 		out(" (a%.1d)", regnr);
 #endif
 		break;
 	case 3:
-		arg1i = read_reg(8 + regnr, 2);     /* (Ax)+ */
+		arg1i = read_reg(8 + regnr, 2); /* (Ax)+ */
 		write_reg(8 + regnr, 2, read_reg(8 + regnr, 2) + (1 << opsize));
 #ifdef LOGEMU
 		out(" (a%.1d)+", regnr);
@@ -1286,30 +1293,29 @@ void Magnetic::set_arg1() {
 		break;
 	case 4:
 		write_reg(8 + regnr, 2, read_reg(8 + regnr, 2) - (1 << opsize));
-		arg1i = read_reg(8 + regnr, 2);     /* -(Ax) */
+		arg1i = read_reg(8 + regnr, 2); /* -(Ax) */
 #ifdef LOGEMU
 		out(" -(a%.1d)", regnr);
 #endif
 		break;
 	case 5: {
-		type16s i = (type16s) read_w(effective(pc));
+		type16s i = (type16s)read_w(effective(pc));
 		arg1i = read_reg(8 + regnr, 2) + i;
-		pc += 2;    /* offset.w(Ax) */
+		pc += 2; /* offset.w(Ax) */
 #ifdef LOGEMU
 		out(" %X(a%.1d)", i, regnr);
 #endif
-		}
-		break;
+	} break;
 	default:
 		break;
 	case 6:
 		tmp[0] = byte1;
 		tmp[1] = byte2;
-		read_word();    /* offset.b(Ax, Dx/Ax) [1d1c] */
+		read_word(); /* offset.b(Ax, Dx/Ax) [1d1c] */
 #ifdef LOGEMU
-		out(" %.2X(a%.1d,", (int) byte2, regnr);
+		out(" %.2X(a%.1d,", (int)byte2, regnr);
 #endif
-		arg1i = read_reg(regnr + 8, 2) + (type8s) byte2;
+		arg1i = read_reg(regnr + 8, 2) + (type8s)byte2;
 #ifdef LOGEMU
 		if ((byte1 >> 4) > 8)
 			out("a%.1d", (byte1 >> 4) - 8);
@@ -1320,51 +1326,51 @@ void Magnetic::set_arg1() {
 #ifdef LOGEMU
 			out(".l)");
 #endif
-			arg1i += (type32s) read_reg((byte1 >> 4), 2);
+			arg1i += (type32s)read_reg((byte1 >> 4), 2);
 		} else {
 #ifdef LOGEMU
 			out(".w)");
 #endif
-			arg1i += (type16s) read_reg((byte1 >> 4), 1);
+			arg1i += (type16s)read_reg((byte1 >> 4), 1);
 		}
 		byte1 = tmp[0];
 		byte2 = tmp[1];
 		break;
-	case 7:     /* specials */
+	case 7: /* specials */
 		switch (regnr) {
 		case 0:
-			arg1i = read_w(effective(pc));  /* $xxxx.W */
+			arg1i = read_w(effective(pc)); /* $xxxx.W */
 			pc += 2;
 #ifdef LOGEMU
 			out(" %.4X.w", arg1i);
 #endif
 			break;
 		case 1:
-			arg1i = read_l(effective(pc));  /* $xxxx */
+			arg1i = read_l(effective(pc)); /* $xxxx */
 			pc += 4;
 #ifdef LOGEMU
 			out(" %.4X", arg1i);
 #endif
 			break;
 		case 2:
-			arg1i = (type16s) read_w(effective(pc)) + pc;   /* $xxxx(PC) */
+			arg1i = (type16s)read_w(effective(pc)) + pc; /* $xxxx(PC) */
 			pc += 2;
 #ifdef LOGEMU
 			out(" %.4X(pc)", arg1i);
 #endif
 			break;
 		case 3:
-			l1c = effective(pc)[0];     /* $xx(PC,A/Dx) */
+			l1c = effective(pc)[0]; /* $xx(PC,A/Dx) */
 #ifdef LOGEMU
 			out(" ???2", arg1i);
 #endif
 			if (l1c & 0x08)
-				arg1i = pc + (type32s) read_reg((l1c >> 4), 2);
+				arg1i = pc + (type32s)read_reg((l1c >> 4), 2);
 			else
-				arg1i = pc + (type16s) read_reg((l1c >> 4), 1);
+				arg1i = pc + (type16s)read_reg((l1c >> 4), 1);
 			l1c = effective(pc)[1];
 			pc += 2;
-			arg1i += (type8s) l1c;
+			arg1i += (type8s)l1c;
 			break;
 		case 4:
 			arg1i = pc; /* #$xxxx */
@@ -1388,9 +1394,9 @@ void Magnetic::set_arg1() {
 
 void Magnetic::set_arg2_nosize(int use_dx, type8 b) {
 	if (use_dx)
-		arg2 = (type8 *) dreg;
+		arg2 = (type8 *)dreg;
 	else
-		arg2 = (type8 *) areg;
+		arg2 = (type8 *)areg;
 	arg2 += (b & 0x0e) << 1;
 }
 
@@ -1505,9 +1511,9 @@ int Magnetic::condition(type8 b) {
 
 void Magnetic::branch(type8 b) {
 	if (b == 0)
-		pc += (type16s) read_w(effective(pc));
+		pc += (type16s)read_w(effective(pc));
 	else
-		pc += (type8s) b;
+		pc += (type8s)b;
 #ifdef LOGEMU
 	out(" %.4X", pc);
 #endif
@@ -1516,11 +1522,11 @@ void Magnetic::branch(type8 b) {
 void Magnetic::do_add(type8 adda) {
 	if (adda) {
 		if (opsize == 0)
-			write_l(arg1, read_l(arg1) + (type8s) arg2[0]);
+			write_l(arg1, read_l(arg1) + (type8s)arg2[0]);
 		if (opsize == 1)
-			write_l(arg1, read_l(arg1) + (type16s) read_w(arg2));
+			write_l(arg1, read_l(arg1) + (type16s)read_w(arg2));
 		if (opsize == 2)
-			write_l(arg1, read_l(arg1) + (type32s) read_l(arg2));
+			write_l(arg1, read_l(arg1) + (type32s)read_l(arg2));
 	} else {
 		cflag = 0;
 		if (opsize == 0) {
@@ -1549,11 +1555,11 @@ void Magnetic::do_add(type8 adda) {
 void Magnetic::do_sub(type8 suba) {
 	if (suba) {
 		if (opsize == 0)
-			write_l(arg1, read_l(arg1) - (type8s) arg2[0]);
+			write_l(arg1, read_l(arg1) - (type8s)arg2[0]);
 		if (opsize == 1)
-			write_l(arg1, read_l(arg1) - (type16s) read_w(arg2));
+			write_l(arg1, read_l(arg1) - (type16s)read_w(arg2));
 		if (opsize == 2)
-			write_l(arg1, read_l(arg1) - (type32s) read_l(arg2));
+			write_l(arg1, read_l(arg1) - (type32s)read_l(arg2));
 	} else {
 		cflag = 0;
 		if (opsize == 0) {
@@ -1609,7 +1615,7 @@ void Magnetic::do_or() {
 	if (opsize == 2)
 		write_l(arg1, read_l(arg1) | read_l(arg2));
 	cflag = vflag = 0;
-	set_flags();    /* [1c2b] */
+	set_flags(); /* [1c2b] */
 }
 
 void Magnetic::do_cmp() {
@@ -1655,7 +1661,7 @@ type8 Magnetic::do_btst(type8 a) {
 
 void Magnetic::do_bop(type8 b, type8 a) {
 #ifdef LOGEMU
-	out("bop (%.2x,%.2x) ", (int) b, (int) a);
+	out("bop (%.2x,%.2x) ", (int)b, (int)a);
 #endif
 	b = b & 0xc0;
 	a = do_btst(a);
@@ -1664,19 +1670,19 @@ void Magnetic::do_bop(type8 b, type8 a) {
 		out("no bop???");
 #endif
 	if (b == 0x40) {
-		arg1[0] ^= (1 << a);    /* bchg */
+		arg1[0] ^= (1 << a); /* bchg */
 #ifdef LOGEMU
 		out("bchg");
 #endif
 	}
 	if (b == 0x80) {
-		arg1[0] &= ((1 << a) ^ 0xff);   /* bclr */
+		arg1[0] &= ((1 << a) ^ 0xff); /* bclr */
 #ifdef LOGEMU
 		out("bclr");
 #endif
 	}
 	if (b == 0xc0) {
-		arg1[0] |= (1 << a);    /* bset */
+		arg1[0] |= (1 << a); /* bset */
 #ifdef LOGEMU
 		out("bset");
 #endif
@@ -1782,18 +1788,18 @@ void Magnetic::dict_lookup() {
 	   adjlist=A0.W ;adjlist <L1E>
 	 */
 
-	dtab = (type16)read_reg(8 + 5, 1);  /* used by version>0 */
+	dtab = (type16)read_reg(8 + 5, 1); /* used by version>0 */
 	output = (type16)read_reg(8 + 2, 1);
 	write_reg(8 + 5, 1, read_reg(8 + 6, 1));
 	doff = (type16)read_reg(8 + 3, 1);
 	adjlist = (type16)read_reg(8 + 0, 1);
 
-	bank = (type16)read_reg(6, 0);  /* l2d */
-	flag = 0;       /* l2c */
-	word = 0;       /* l26 */
-	matchlen = 0;       /* l2e */
-	longest = 0;        /* 30e2 */
-	write_reg(0, 1, 0); /* apostroph */
+	bank = (type16)read_reg(6, 0); /* l2d */
+	flag = 0;                      /* l2c */
+	word = 0;                      /* l26 */
+	matchlen = 0;                  /* l2e */
+	longest = 0;                   /* 30e2 */
+	write_reg(0, 1, 0);            /* apostroph */
 
 	while ((c = sd ? dict[doff] : effective(doff)[0]) != 0x81) {
 		if (c >= 0x80) {
@@ -1853,9 +1859,11 @@ void Magnetic::dict_lookup() {
 			flag = matchlen = 0;
 			word++;
 			if (sd)
-				while (dict[doff++] < 0x80);
+				while (dict[doff++] < 0x80)
+					;
 			else
-				while (effective(doff++)[0] < 0x80);
+				while (effective(doff++)[0] < 0x80)
+					;
 			restartFlag = 0;
 		}
 	}
@@ -1863,7 +1871,7 @@ void Magnetic::dict_lookup() {
 
 	if (version) {
 		/* version > 0 */
-		output_bak = output;    /* check synonyms */
+		output_bak = output; /* check synonyms */
 		while ((c = effective(output)[1]) != 0xff) {
 			if (c == 0x0b) {
 				if (sd)
@@ -1886,17 +1894,18 @@ void Magnetic::dict_lookup() {
 	output_bak = output;
 	output2 = output;
 	while ((bank = effective(output2)[1]) != 0xff) {
-		obj_adj = (type16)read_reg(8 + 1, 1);   /* A1.W - obj_adj, ie. adjs for this word */
-		write_reg(1, 0, 0); /* D1.B=0 */
-		flag = effective(output2)[0];   /* flag */
-		word = read_w(effective(output2 + 2));  /* wordnumber */
-		output2 += 4;   /* next match */
+		obj_adj = (type16)read_reg(8 + 1, 1);  /* A1.W - obj_adj, ie. adjs for this word */
+		write_reg(1, 0, 0);                    /* D1.B=0 */
+		flag = effective(output2)[0];          /* flag */
+		word = read_w(effective(output2 + 2)); /* wordnumber */
+		output2 += 4;                          /* next match */
 		if ((read_w(effective(obj_adj))) && (bank == 6)) {
 			/* Any adjectives? */
 			if ((i = word) != 0) {
 				/* Find list of valid adjs */
 				do {
-					while (effective(adjlist++)[0]);
+					while (effective(adjlist++)[0])
+						;
 				} while (--i > 0);
 			}
 			adjlist_bak = adjlist;
@@ -1905,7 +1914,8 @@ void Magnetic::dict_lookup() {
 				c2 = effective(obj_adj)[1]; /* given adjective */
 				if ((tmp16 = read_w(effective(obj_adj))) != 0) {
 					obj_adj += 2;
-					while ((c = effective(adjlist++)[0]) && (c - 3 != c2));
+					while ((c = effective(adjlist++)[0]) && (c - 3 != c2))
+						;
 					if (c - 3 != c2)
 						write_reg(1, 0, 1); /* invalid adjective */
 				}
@@ -2177,13 +2187,13 @@ void Magnetic::do_line_a() {
 	 */
 #endif
 	if ((byte2 < 0xdd) || (version < 4 && byte2 < 0xe4) || (version < 2 && byte2 < 0xed)) {
-		ms_flush(); /* flush output-buffer */
-		rand_emu(); /* Increase game randomness */
-		l1c = ms_getchar(1);    /* 0 means UNDO */
+		ms_flush();          /* flush output-buffer */
+		rand_emu();          /* Increase game randomness */
+		l1c = ms_getchar(1); /* 0 means UNDO */
 		if (l1c == 1)
 			return;
 		if (l1c)
-			write_reg(1, 2, l1c);   /* d1=getkey() */
+			write_reg(1, 2, l1c); /* d1=getkey() */
 		else {
 			if ((l1c = ms_undo()) != 0)
 				output_text(undo_ok);
@@ -2198,7 +2208,7 @@ void Magnetic::do_line_a() {
 		case 0: /* A0DD - Won't probably be needed at all */
 			break;
 
-		case 1: /* A0DE */
+		case 1:                 /* A0DE */
 			write_reg(1, 0, 1); /* Should remove the manual check */
 			break;
 
@@ -2366,22 +2376,23 @@ void Magnetic::do_line_a() {
 			break;
 
 		case 16:
-			ms_stop();  /* infinite loop A0ED */
+			ms_stop(); /* infinite loop A0ED */
 			break;
 		case 17:
 			if (!ms_init(nullptr, nullptr, nullptr, nullptr))
-				ms_stop();  /* restart game ie. pc, sp etc. A0EE */
+				ms_stop(); /* restart game ie. pc, sp etc. A0EE */
 			break;
-		case 18:    /* printer A0EF */
+		case 18: /* printer A0EF */
 			break;
 		case 19:
-			ms_showpic(read_reg(0, 0), (type8)read_reg(1, 0));  /* Do_picture(D0) A0F0 */
+			ms_showpic(read_reg(0, 0), (type8)read_reg(1, 0)); /* Do_picture(D0) A0F0 */
 			break;
 		case 20:
-			ptr = (type16)read_reg(8 + 1, 1);   /* A1=nth_string(A1,D0) A0F1 */
+			ptr = (type16)read_reg(8 + 1, 1); /* A1=nth_string(A1,D0) A0F1 */
 			tmp32 = read_reg(0, 1);
 			while (tmp32-- > 0) {
-				while (effective(ptr++)[0]);
+				while (effective(ptr++)[0])
+					;
 			}
 			write_reg(8 + 1, 1, ptr);
 			break;
@@ -2406,19 +2417,17 @@ void Magnetic::do_line_a() {
 			break;
 
 		case 22:
-			char_out((type8)read_reg(1, 0));    /* A0F3 */
+			char_out((type8)read_reg(1, 0)); /* A0F3 */
 			break;
 
 		case 23: /* D7=Save_(filename A0) D1 bytes starting from A1  A0F4 */
 			str = (version < 4) ? (char *)effective(read_reg(8 + 0, 1)) : nullptr;
-			write_reg(7, 0, ms_save_file(str, effective(read_reg(8 + 1, 1)),
-			                             (type16)read_reg(1, 1)));
+			write_reg(7, 0, ms_save_file(str, effective(read_reg(8 + 1, 1)), (type16)read_reg(1, 1)));
 			break;
 
 		case 24: /* D7=Load_(filename A0) D1 bytes starting from A1  A0F5 */
 			str = (version < 4) ? (char *)effective(read_reg(8 + 0, 1)) : nullptr;
-			write_reg(7, 0, ms_load_file(str, effective(read_reg(8 + 1, 1)),
-			                             (type16)read_reg(1, 1)));
+			write_reg(7, 0, ms_load_file(str, effective(read_reg(8 + 1, 1)), (type16)read_reg(1, 1)));
 			break;
 
 		case 25: /* D1=Random(0..D1-1) [3748] A0F6 */
@@ -2442,19 +2451,19 @@ void Magnetic::do_line_a() {
 				write_reg(0, 1, ptr);
 				do {
 					do_findprop();
-					ptr2 = (type16)read_reg(8 + 0, 1);  /* object properties */
+					ptr2 = (type16)read_reg(8 + 0, 1); /* object properties */
 					if ((effective(ptr2)[5]) & 1)
-						break;  /* is_described or so */
-					l1c = effective(ptr2)[6];   /* some_flags */
-					tmp16 = read_w(effective(ptr2 + 8));    /* parent_object */
+						break;                           /* is_described or so */
+					l1c = effective(ptr2)[6];            /* some_flags */
+					tmp16 = read_w(effective(ptr2 + 8)); /* parent_object */
 					if (!l1c) {
 						/* ordinary object? */
 						if (!tmp16)
-							zflag = 0xff;   /* return if parent()=player */
-						break;  /* otherwise try next */
+							zflag = 0xff; /* return if parent()=player */
+						break;            /* otherwise try next */
 					}
 					if (l1c & 0xcc)
-						break;  /* skip worn, bodypart, room, hidden */
+						break; /* skip worn, bodypart, room, hidden */
 					if (tmp16 == 0) {
 						/* return if parent()=player? */
 						zflag = 0xff;
@@ -2493,9 +2502,11 @@ void Magnetic::do_line_a() {
 			ptr = (type16)read_reg(8 + 1, 1);
 			do {
 				if (dict)
-					while (dict[ptr++] < 0x80);
+					while (dict[ptr++] < 0x80)
+						;
 				else
-					while (effective(ptr++)[0] < 0x80);
+					while (effective(ptr++)[0] < 0x80)
+						;
 				write_reg(2, 1, read_reg(2, 1) - 1);
 			} while (read_reg(2, 1));
 			write_reg(8 + 1, 1, ptr);
@@ -2506,10 +2517,13 @@ void Magnetic::do_line_a() {
 			ptr2 = (type16)read_reg(8 + 1, 1);
 			do {
 				if (dict)
-					while (dict[ptr++] < 0x80);
+					while (dict[ptr++] < 0x80)
+						;
 				else
-					while (effective(ptr++)[0] < 0x80);
-				while (effective(ptr2++)[0]);
+					while (effective(ptr++)[0] < 0x80)
+						;
+				while (effective(ptr2++)[0])
+					;
 				write_reg(0, 1, read_reg(0, 1) - 1);
 			} while (read_reg(0, 1));
 			write_reg(8 + 0, 1, ptr);
@@ -2774,7 +2788,7 @@ type8 Magnetic::ms_rungame() {
 		do_move();
 		break;
 
-	/* 40-4F various commands */
+		/* 40-4F various commands */
 
 	case 0x20:
 		if (byte1 == 0x40) {
@@ -2833,7 +2847,7 @@ type8 Magnetic::ms_rungame() {
 #ifdef LOGEMU
 				out("neg");
 #endif
-				set_info(byte2);    /* NEG */
+				set_info(byte2); /* NEG */
 				set_arg1();
 				cflag = 0xff;
 				if (opsize == 0) {
@@ -2863,7 +2877,7 @@ type8 Magnetic::ms_rungame() {
 #ifdef LOGEMU
 				out("not");
 #endif
-				set_info(byte2);    /* NOT */
+				set_info(byte2); /* NOT */
 				set_arg1();
 				tmparg[0] = tmparg[1] = tmparg[2] = tmparg[3] = 0xff;
 				arg2 = tmparg;
@@ -2917,14 +2931,14 @@ type8 Magnetic::ms_rungame() {
 #ifdef LOGEMU
 				out("pea");
 #endif
-				set_info((type8)((byte2 & 0x3f) | 0x80));   /* PEA */
+				set_info((type8)((byte2 & 0x3f) | 0x80)); /* PEA */
 				set_arg1();
 				if (is_reversible)
 					push(arg1i);
 				else
 					ms_fatal("illegal addressing mode for PEA");
 			} else {
-				check_movem();  /* MOVEM */
+				check_movem(); /* MOVEM */
 			}
 		} else
 			check_lea();
@@ -2950,9 +2964,9 @@ type8 Magnetic::ms_rungame() {
 
 	case 0x26:
 		if (byte1 == 0x4c)
-			check_movem2();     /* [3350] MOVEM.L (Ax)+,A/Dx */
+			check_movem2(); /* [3350] MOVEM.L (Ax)+,A/Dx */
 		else
-			check_lea();    /* LEA */
+			check_lea(); /* LEA */
 		break;
 
 	case 0x27:
@@ -2984,7 +2998,7 @@ type8 Magnetic::ms_rungame() {
 #ifdef LOGEMU
 				out("jsr");
 #endif
-				set_info((type8)(byte2 | 0xc0));        /* indir JSR */
+				set_info((type8)(byte2 | 0xc0)); /* indir JSR */
 				set_arg1();
 				push(pc);
 				if (is_reversible)
@@ -2995,7 +3009,7 @@ type8 Magnetic::ms_rungame() {
 				ms_fatal("unimplemented instructions 0x4EXX");
 			}
 		} else
-			check_lea();    /* LEA */
+			check_lea(); /* LEA */
 		break;
 
 	/* 50-5F [2ed5] ADDQ/SUBQ/Scc/DBcc */
@@ -3017,7 +3031,7 @@ type8 Magnetic::ms_rungame() {
 				out("dbcc");
 #endif
 				if (condition(byte1) == 0) {
-					arg1 = (arg1 - (type8 *) areg) + (type8 *) dreg - 1;
+					arg1 = (arg1 - (type8 *)areg) + (type8 *)dreg - 1;
 					write_w(arg1, (type16)(read_w(arg1) - 1));
 					if (read_w(arg1) != 0xffff)
 						branch(0);
@@ -3045,13 +3059,13 @@ type8 Magnetic::ms_rungame() {
 				type32s outnum = 0;
 				switch (opsize) {
 				case 0:
-					outnum = (type8s) arg2[0];
+					outnum = (type8s)arg2[0];
 					break;
 				case 1:
-					outnum = (type16s) read_w(arg2);
+					outnum = (type16s)read_w(arg2);
 					break;
 				case 2:
-					outnum = (type32s) read_l(arg2);
+					outnum = (type32s)read_l(arg2);
 					break;
 				}
 #endif
@@ -3059,18 +3073,18 @@ type8 Magnetic::ms_rungame() {
 #ifdef LOGEMU
 					out("subq #%.8X", outnum);
 #endif
-					do_sub(0);  /* SUBQ */
+					do_sub(0); /* SUBQ */
 				} else {
 #ifdef LOGEMU
 					out("addq #%.8X", outnum);
 #endif
-					do_add(0);  /* ADDQ */
+					do_add(0); /* ADDQ */
 				}
 			}
 		}
 		break;
 
-	/* 60-6F [26ba] Bcc */
+		/* 60-6F [26ba] Bcc */
 
 	case 0x30:
 		if (byte1 == 0x61) {
@@ -3129,7 +3143,7 @@ type8 Magnetic::ms_rungame() {
 #ifdef LOGEMU
 		out("moveq");
 #endif
-		arg1 = (type8 *) & dreg[byte1 >> 1 & 0x07];
+		arg1 = (type8 *)&dreg[byte1 >> 1 & 0x07];
 		if (byte2 > 127)
 			nflag = arg1[0] = arg1[1] = arg1[2] = 0xff;
 		else
@@ -3198,11 +3212,11 @@ type8 Magnetic::ms_rungame() {
 		}
 		break;
 
-	/* A0-AF various special commands [LINE_A] */
+		/* A0-AF various special commands [LINE_A] */
 
 	case 0x50:
 	case 0x56:
-	case 0x57:        /* [2521] */
+	case 0x57: /* [2521] */
 		do_line_a();
 #ifdef LOGEMU
 		out("LINE_A A0%.2X", byte2);
@@ -3221,7 +3235,7 @@ type8 Magnetic::ms_rungame() {
 		out("bsr");
 #endif
 		if (byte2 == 0)
-			push(pc + 2);   /* BSR */
+			push(pc + 2); /* BSR */
 		else
 			push(pc);
 		branch(byte2);
@@ -3271,7 +3285,7 @@ type8 Magnetic::ms_rungame() {
 			set_arg1();
 			set_arg2(0, byte1);
 			swap_args();
-			do_cmp();   /* CMP */
+			do_cmp(); /* CMP */
 		} else {
 			if ((byte1 & 0x01) == 0) {
 #ifdef LOGEMU
@@ -3281,7 +3295,7 @@ type8 Magnetic::ms_rungame() {
 				set_arg1();
 				set_arg2(1, byte1);
 				swap_args();
-				do_cmp();   /* CMP */
+				do_cmp(); /* CMP */
 			} else {
 #ifdef LOGEMU
 				out("eor");
@@ -3289,7 +3303,7 @@ type8 Magnetic::ms_rungame() {
 				set_info(byte2);
 				set_arg1();
 				set_arg2(1, byte1);
-				do_eor();   /* EOR */
+				do_eor(); /* EOR */
 			}
 		}
 		break;
@@ -3415,9 +3429,9 @@ type8 Magnetic::ms_rungame() {
 		out("lsr,asl,ror,rol");
 #endif
 		if ((byte2 & 0xc0) == 0xc0) {
-			set_info((type8)(byte2 & 0xbf));        /* OP Dx */
+			set_info((type8)(byte2 & 0xbf)); /* OP Dx */
 			set_arg1();
-			l1c = 1;    /* steps=1 */
+			l1c = 1; /* steps=1 */
 			byte2 = (byte1 >> 1) & 0x03;
 		} else {
 			set_info((type8)(byte2 & 0xc7));
@@ -3445,32 +3459,32 @@ type8 Magnetic::ms_rungame() {
 					cflag = read_w(arg1) & 0x01 ? 0xff : 0;
 					write_w(arg1, (type16)(read_w(arg1) >> 1));
 					if (cflag && (byte2 == 3))
-						write_w(arg1, (type16)(read_w(arg1) | ((type16) 1 << 15)));
+						write_w(arg1, (type16)(read_w(arg1) | ((type16)1 << 15)));
 				}
 				if (opsize == 2) {
 					cflag = read_l(arg1) & 0x01 ? 0xff : 0;
 					write_l(arg1, read_l(arg1) >> 1);
 					if (cflag && (byte2 == 3))
-						write_l(arg1, read_l(arg1) | ((type32) 1 << 31));
+						write_l(arg1, read_l(arg1) | ((type32)1 << 31));
 				}
 			}
 		} else {
 			/* left */
 			while (l1c-- > 0) {
 				if (opsize == 0) {
-					cflag = arg1[0] & 0x80 ? 0xff : 0;  /* [3527] */
+					cflag = arg1[0] & 0x80 ? 0xff : 0; /* [3527] */
 					arg1[0] <<= 1;
 					if (cflag && (byte2 == 3))
 						arg1[0] |= 0x01;
 				}
 				if (opsize == 1) {
-					cflag = read_w(arg1) & ((type16) 1 << 15) ? 0xff : 0;
+					cflag = read_w(arg1) & ((type16)1 << 15) ? 0xff : 0;
 					write_w(arg1, (type16)(read_w(arg1) << 1));
 					if (cflag && (byte2 == 3))
 						write_w(arg1, (type16)(read_w(arg1) | 0x01));
 				}
 				if (opsize == 2) {
-					cflag = read_l(arg1) & ((type32) 1 << 31) ? 0xff : 0;
+					cflag = read_l(arg1) & ((type32)1 << 31) ? 0xff : 0;
 					write_l(arg1, read_l(arg1) << 1);
 					if (cflag && (byte2 == 3))
 						write_l(arg1, read_l(arg1) | 0x01);
@@ -3508,7 +3522,7 @@ type8 Magnetic::ms_rungame() {
 					push(pc);
 				ptr = byte1 << 8 | byte2 | 0x0800;
 				ptr = fl_tab + 2 * (ptr ^ 0xffff);
-				pc = (type32) ptr + (type16s) read_w(effective(ptr));
+				pc = (type32)ptr + (type16s)read_w(effective(ptr));
 			} else {
 				push(pc);
 				pc = fl_sub;

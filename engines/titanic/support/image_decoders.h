@@ -25,8 +25,8 @@
 
 #include "image/jpeg.h"
 #include "image/tga.h"
-#include "titanic/support/string.h"
 #include "titanic/support/simple_file.h"
+#include "titanic/support/string.h"
 #include "titanic/support/video_surface.h"
 
 namespace Titanic {

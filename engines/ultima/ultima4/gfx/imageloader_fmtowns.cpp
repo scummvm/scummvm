@@ -20,11 +20,11 @@
  *
  */
 
+#include "ultima/ultima4/gfx/imageloader_fmtowns.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
-#include "ultima/ultima4/gfx/imageloader_fmtowns.h"
 #include "ultima/ultima4/gfx/imageloader_u4.h"
 
 namespace Ultima {
@@ -39,7 +39,7 @@ Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int b
 
 	int rawLen = file->size() - _offset;
 	file->seek(_offset, 0);
-	byte *raw = (byte *) malloc(rawLen);
+	byte *raw = (byte *)malloc(rawLen);
 	file->read(raw, rawLen);
 
 	int requiredLength = (width * height * bpp / 8);
@@ -61,20 +61,19 @@ Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int b
 		U4PaletteLoader pal;
 		image->setPalette(pal.loadEgaPalette(), 16);
 		setFromRawData(image, width, height, bpp, raw);
-//      if (width % 2)
-//          error("FMTOWNS 4bit images cannot handle widths not divisible by 2!");
-//      byte nibble_mask = 0x0F;
-//        for (int y = 0; y < height; y++)
-// {
-//            for (int x = 0; x < width; x+=2)
-// {
-//              int byte = raw[(y * width + x) / 2];
-//              image->putPixelIndex(x  ,y,(byte & nibble_mask)  << 4);
-//              image->putPixelIndex(x+1,y,(byte              )      );
-//            }
-//        }
+		//      if (width % 2)
+		//          error("FMTOWNS 4bit images cannot handle widths not divisible by 2!");
+		//      byte nibble_mask = 0x0F;
+		//        for (int y = 0; y < height; y++)
+		// {
+		//            for (int x = 0; x < width; x+=2)
+		// {
+		//              int byte = raw[(y * width + x) / 2];
+		//              image->putPixelIndex(x  ,y,(byte & nibble_mask)  << 4);
+		//              image->putPixelIndex(x+1,y,(byte              )      );
+		//            }
+		//        }
 	}
-
 
 	if (bpp == 16) {
 
@@ -84,11 +83,11 @@ Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int b
 		//Masks
 		//------------------------  //  0000000011111111    --Byte 0 and 1
 		//------------------------  //  RRRRRGGGGGBBBBB?
-		byte low5 = 0x1F;          //  11111000--------    low5
-		byte high6 = (byte)~3U;    //  --------00111111    high6
-		byte high3 = (byte)~31U;   //  00000111--------    high3
-		byte low2 = 3;             //  --------11000000    low2
-		byte lastbit = 128;        //  --------00000001    low2
+		byte low5 = 0x1F;        //  11111000--------    low5
+		byte high6 = (byte)~3U;  //  --------00111111    high6
+		byte high3 = (byte)~31U; //  00000111--------    high3
+		byte low2 = 3;           //  --------11000000    low2
+		byte lastbit = 128;      //  --------00000001    low2
 		// Warning, this diagram is left-to-right, not standard right-to-left
 
 		for (int y = 0; y < height; y++) {
@@ -109,11 +108,10 @@ Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int b
 				// TODO: Previously r & b were reversed. See if this proper
 				// order is correct, and if not properly swap value calculations
 				image->putPixel(x, y, r, g, b,
-					lastbit & byte1 ? IM_TRANSPARENT : IM_OPAQUE);
+				                lastbit & byte1 ? IM_TRANSPARENT : IM_OPAQUE);
 			}
 		}
 	}
-
 
 	free(raw);
 

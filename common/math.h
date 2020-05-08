@@ -43,21 +43,21 @@
 // be ok...
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #undef setjmp
-#define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#define setjmp(a) FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #undef longjmp
-#define longjmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#define longjmp(a, b) FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 #endif
 
 #ifndef FLT_MIN
-	#define FLT_MIN 1E-37
+#define FLT_MIN 1E-37
 #endif
 
 #ifndef FLT_MAX
-	#define FLT_MAX 1E+37
+#define FLT_MAX 1E+37
 #endif
 
 namespace Common {
@@ -92,10 +92,9 @@ inline int intLog2(uint32 v) {
 // See http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogLookup
 static const char LogTable256[256] = {
 #define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
-	-1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
-	LT(4), LT(5), LT(5), LT(6), LT(6), LT(6), LT(6),
-	LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
-};
+    -1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+    LT(4), LT(5), LT(5), LT(6), LT(6), LT(6), LT(6),
+    LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)};
 
 inline int intLog2(uint32 v) {
 	uint32 t, tt;
@@ -103,7 +102,7 @@ inline int intLog2(uint32 v) {
 	if ((tt = v >> 16))
 		return (t = tt >> 8) ? 24 + LogTable256[t] : 16 + LogTable256[tt];
 	else
-		return (t =  v >> 8) ?  8 + LogTable256[t] : LogTable256[v];
+		return (t = v >> 8) ? 8 + LogTable256[t] : LogTable256[v];
 }
 #endif
 
@@ -111,56 +110,56 @@ inline int intLog2(uint32 v) {
 // Input and Output type can be different
 template<class InputT, class OutputT>
 inline OutputT trunc(InputT x) {
-    return (x > 0) ? floor(x) : ceil(x);
+	return (x > 0) ? floor(x) : ceil(x);
 }
 
 // Round a number towards zero
 // Input and Output type are the same
 template<class T>
 inline T trunc(T x) {
-	return trunc<T,T>(x);
+	return trunc<T, T>(x);
 }
 
 // Convert radians to degrees
 // Input and Output type can be different
 // Upconvert everything to floats
-template<class InputT, class OutputT> 
+template<class InputT, class OutputT>
 inline OutputT rad2deg(InputT rad) {
-	return (OutputT)( (float)rad * (float)57.2957795130823); // 180.0/M_PI = 57.2957795130823
+	return (OutputT)((float)rad * (float)57.2957795130823); // 180.0/M_PI = 57.2957795130823
 }
 
 // Handle the case differently when the input type is double
-template<class OutputT> 
+template<class OutputT>
 inline OutputT rad2deg(double rad) {
-	return (OutputT)( rad * 57.2957795130823);
+	return (OutputT)(rad * 57.2957795130823);
 }
 
 // Convert radians to degrees
 // Input and Output type are the same
-template<class T> 
+template<class T>
 inline T rad2deg(T rad) {
-	return rad2deg<T,T>(rad);
+	return rad2deg<T, T>(rad);
 }
 
 // Convert degrees to radians
 // Input and Output type can be different
 // Upconvert everything to floats
-template<class InputT, class OutputT> 
+template<class InputT, class OutputT>
 inline OutputT deg2rad(InputT deg) {
-	return (OutputT)( (float)deg * (float)0.0174532925199433); // M_PI/180.0 = 0.0174532925199433
+	return (OutputT)((float)deg * (float)0.0174532925199433); // M_PI/180.0 = 0.0174532925199433
 }
 
 // Handle the case differently when the input type is double
-template<class OutputT> 
+template<class OutputT>
 inline OutputT deg2rad(double deg) {
-	return (OutputT)( deg * 0.0174532925199433);
+	return (OutputT)(deg * 0.0174532925199433);
 }
 
 // Convert degrees to radians
 // Input and Output type are the same
-template<class T> 
+template<class T>
 inline T deg2rad(T deg) {
-	return deg2rad<T,T>(deg);
+	return deg2rad<T, T>(deg);
 }
 
 } // End of namespace Common

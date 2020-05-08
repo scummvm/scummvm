@@ -23,10 +23,10 @@
  *
  */
 
-#include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/mars/shuttlehud.h"
 #include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/mars/robotship.h"
-#include "pegasus/neighborhood/mars/shuttlehud.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -54,46 +54,44 @@ enum {
 };
 
 static const uint16 s_RS232Data[] = {
-	0xF0E1, 0xCE70,
-	0xF9E1, 0xEF78,
-	0x4900, 0x2108,
-	0x79C0, 0xE738,
-	0x70E1, 0xC770,
-	0x5821, 0x0140,
-	0x4DE1, 0xEF78,
-	0x45C1, 0xEE78
-};
+    0xF0E1, 0xCE70,
+    0xF9E1, 0xEF78,
+    0x4900, 0x2108,
+    0x79C0, 0xE738,
+    0x70E1, 0xC770,
+    0x5821, 0x0140,
+    0x4DE1, 0xEF78,
+    0x45C1, 0xEE78};
 
 static const uint16 s_lockData[] = {
-	0xE007, 0xFE1F, 0xF8E0, 0x7000,
-	0xE00F, 0xFF3F, 0xFCE0, 0xE000,
-	0xE00E, 0x0738, 0x1CE1, 0xC000,
-	0xE00E, 0x0738, 0x00FF, 0x8000,
-	0xE00E, 0x0738, 0x00FF, 0x0000,
-	0xE00E, 0x0738, 0x00E3, 0x8000,
-	0xE00E, 0x0738, 0x1CE1, 0xC000,
-	0xFFCF, 0xFF3F, 0xFCE0, 0xE000,
-	0xFFC7, 0xFE1F, 0xF8E0, 0x7000
-};
+    0xE007, 0xFE1F, 0xF8E0, 0x7000,
+    0xE00F, 0xFF3F, 0xFCE0, 0xE000,
+    0xE00E, 0x0738, 0x1CE1, 0xC000,
+    0xE00E, 0x0738, 0x00FF, 0x8000,
+    0xE00E, 0x0738, 0x00FF, 0x0000,
+    0xE00E, 0x0738, 0x00E3, 0x8000,
+    0xE00E, 0x0738, 0x1CE1, 0xC000,
+    0xFFCF, 0xFF3F, 0xFCE0, 0xE000,
+    0xFFC7, 0xFE1F, 0xF8E0, 0x7000};
 
-#define drawHUDLockLine(x1, y1, x2, y2, penX, penY, color) \
+#define drawHUDLockLine(x1, y1, x2, y2, penX, penY, color)         \
 	screen->drawThickLine((x1) + kHUDLockLeft, (y1) + kHUDLockTop, \
-			(x2) + kHUDLockLeft, (y2) + kHUDLockTop, penX, penY, color)
+	                      (x2) + kHUDLockLeft, (y2) + kHUDLockTop, penX, penY, color)
 
-#define drawHUDLockArrows(offset, color) \
-	drawHUDLockLine(63, 0 + (offset), 68, 5 + (offset), 1, 3, color); \
-	drawHUDLockLine(71, 8 + (offset), 77, 14 + (offset), 1, 3, color); \
-	drawHUDLockLine(78, 14 + (offset), 84, 8 + (offset), 1, 3, color); \
-	drawHUDLockLine(87, 5 + (offset), 92, 0 + (offset), 1, 3, color); \
+#define drawHUDLockArrows(offset, color)                                  \
+	drawHUDLockLine(63, 0 + (offset), 68, 5 + (offset), 1, 3, color);     \
+	drawHUDLockLine(71, 8 + (offset), 77, 14 + (offset), 1, 3, color);    \
+	drawHUDLockLine(78, 14 + (offset), 84, 8 + (offset), 1, 3, color);    \
+	drawHUDLockLine(87, 5 + (offset), 92, 0 + (offset), 1, 3, color);     \
 	drawHUDLockLine(63, 121 - (offset), 68, 116 - (offset), 1, 3, color); \
 	drawHUDLockLine(71, 113 - (offset), 77, 107 - (offset), 1, 3, color); \
 	drawHUDLockLine(78, 107 - (offset), 84, 113 - (offset), 1, 3, color); \
 	drawHUDLockLine(87, 116 - (offset), 92, 121 - (offset), 1, 3, color); \
-\
-	drawHUDLockLine(13 + (offset), 47, 18 + (offset), 52, 3, 1, color); \
-	drawHUDLockLine(21 + (offset), 55, 27 + (offset), 61, 3, 1, color); \
-	drawHUDLockLine(27 + (offset), 62, 21 + (offset), 68, 3, 1, color); \
-	drawHUDLockLine(18 + (offset), 71, 13 + (offset), 76, 3, 1, color); \
+                                                                          \
+	drawHUDLockLine(13 + (offset), 47, 18 + (offset), 52, 3, 1, color);   \
+	drawHUDLockLine(21 + (offset), 55, 27 + (offset), 61, 3, 1, color);   \
+	drawHUDLockLine(27 + (offset), 62, 21 + (offset), 68, 3, 1, color);   \
+	drawHUDLockLine(18 + (offset), 71, 13 + (offset), 76, 3, 1, color);   \
 	drawHUDLockLine(142 - (offset), 47, 137 - (offset), 52, 3, 1, color); \
 	drawHUDLockLine(134 - (offset), 55, 128 - (offset), 61, 3, 1, color); \
 	drawHUDLockLine(128 - (offset), 62, 134 - (offset), 68, 3, 1, color); \
@@ -107,7 +105,7 @@ ShuttleHUD::ShuttleHUD() : DisplayElement(kNoDisplayElement) {
 
 	_targetLocked = false;
 	setBounds(kShuttleWindowLeft, kShuttleWindowTop, kShuttleWindowLeft + kShuttleWindowWidth,
-			kShuttleWindowTop + kShuttleWindowHeight);
+	          kShuttleWindowTop + kShuttleWindowHeight);
 	setDisplayOrder(kShuttleHUDOrder);
 }
 
@@ -220,15 +218,13 @@ void ShuttleHUD::draw(const Common::Rect &) {
 		}
 	}
 
-	drawOneBitImageOr(screen, s_RS232Data, 2, Common::Rect(kHUDRS232Left, kHUDRS232Top,
-			kHUDRS232Left + 29, kHUDRS232Top + 8), _gridDarkGreen);
+	drawOneBitImageOr(screen, s_RS232Data, 2, Common::Rect(kHUDRS232Left, kHUDRS232Top, kHUDRS232Left + 29, kHUDRS232Top + 8), _gridDarkGreen);
 
 	if (_targetLocked) {
 		drawHUDLockArrows(0, _lockDarkGreen2);
 		drawHUDLockArrows(12, _lockDarkGreen1);
 		drawHUDLockArrows(24, _lightGreen);
-		drawOneBitImageOr(screen, s_lockData, 4, Common::Rect(kHUDLockLeft, kHUDLockTop + 115,
-				kHUDLockLeft + 52, kHUDLockTop + 115 + 9), _lightGreen);
+		drawOneBitImageOr(screen, s_lockData, 4, Common::Rect(kHUDLockLeft, kHUDLockTop + 115, kHUDLockLeft + 52, kHUDLockTop + 115 + 9), _lightGreen);
 	}
 }
 

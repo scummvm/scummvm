@@ -22,22 +22,22 @@
 
 // FIX need to subclass this class for U6, MD & SE
 #include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_shape.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/views/doll_widget.h"
+#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/files/nuvie_bmp_file.h"
 #include "ultima/nuvie/gui/widgets/command_bar.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/nuvie/views/doll_widget.h"
 #include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/files/nuvie_bmp_file.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -47,44 +47,42 @@ namespace Nuvie {
 #define DRAG_BUTTON 1
 
 static const byte gump_blocked_tile_data[] = {
-	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
-	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
-	170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,
-	170, 170, 170, 64, 55, 168, 64, 170, 170, 64, 168, 55, 64, 170, 170, 170,
-	170, 170, 64, 55, 64, 170, 170, 170, 170, 170, 12, 12, 55, 64, 170, 170,
-	170, 170, 178, 130, 170, 170, 170, 170, 170, 12, 12, 12, 168, 178, 170, 170,
-	170, 170, 55, 64, 170, 170, 170, 170, 12, 12, 12, 170, 64, 55, 170, 170,
-	170, 170, 54, 170, 170, 170, 170, 12, 12, 12, 170, 170, 170, 54, 170, 170,
-	170, 170, 54, 170, 170, 170, 12, 12, 12, 170, 170, 170, 170, 54, 170, 170,
-	170, 170, 55, 64, 170, 12, 12, 12, 170, 170, 170, 170, 64, 55, 170, 170,
-	170, 170, 178, 168, 12, 12, 12, 170, 170, 170, 170, 170, 168, 178, 170, 170,
-	170, 170, 64, 55, 12, 12, 170, 170, 170, 170, 170, 64, 55, 64, 170, 170,
-	170, 170, 170, 64, 55, 168, 64, 170, 170, 64, 168, 55, 64, 170, 170, 170,
-	170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,
-	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
-	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170
-};
+    170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
+    170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
+    170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,
+    170, 170, 170, 64, 55, 168, 64, 170, 170, 64, 168, 55, 64, 170, 170, 170,
+    170, 170, 64, 55, 64, 170, 170, 170, 170, 170, 12, 12, 55, 64, 170, 170,
+    170, 170, 178, 130, 170, 170, 170, 170, 170, 12, 12, 12, 168, 178, 170, 170,
+    170, 170, 55, 64, 170, 170, 170, 170, 12, 12, 12, 170, 64, 55, 170, 170,
+    170, 170, 54, 170, 170, 170, 170, 12, 12, 12, 170, 170, 170, 54, 170, 170,
+    170, 170, 54, 170, 170, 170, 12, 12, 12, 170, 170, 170, 170, 54, 170, 170,
+    170, 170, 55, 64, 170, 12, 12, 12, 170, 170, 170, 170, 64, 55, 170, 170,
+    170, 170, 178, 168, 12, 12, 12, 170, 170, 170, 170, 170, 168, 178, 170, 170,
+    170, 170, 64, 55, 12, 12, 170, 170, 170, 170, 170, 64, 55, 64, 170, 170,
+    170, 170, 170, 64, 55, 168, 64, 170, 170, 64, 168, 55, 64, 170, 170, 170,
+    170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,
+    170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
+    170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170};
 
 static const byte gump_empty_tile_data[] = {
-	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
-	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
-	170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,
-	170, 170, 170, 64, 55, 168, 64, 170, 170, 64, 168, 55, 64, 170, 170, 170,
-	170, 170, 64, 55, 64, 170, 170, 170, 170, 170, 170, 64, 55, 64, 170, 170,
-	170, 170, 178, 130, 170, 170, 170, 170, 170, 170, 170, 170, 168, 178, 170, 170,
-	170, 170, 55, 64, 170, 170, 170, 170, 170, 170, 170, 170, 64, 55, 170, 170,
-	170, 170, 54, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 54, 170, 170,
-	170, 170, 54, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 54, 170, 170,
-	170, 170, 55, 64, 170, 170, 170, 170, 170, 170, 170, 170, 64, 55, 170, 170,
-	170, 170, 178, 168, 170, 170, 170, 170, 170, 170, 170, 170, 168, 178, 170, 170,
-	170, 170, 64, 55, 64, 170, 170, 170, 170, 170, 170, 64, 55, 64, 170, 170,
-	170, 170, 170, 64, 55, 168, 64, 170, 170, 64, 168, 55, 64, 170, 170, 170,
-	170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,
-	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
-	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170
-};
+    170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
+    170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
+    170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,
+    170, 170, 170, 64, 55, 168, 64, 170, 170, 64, 168, 55, 64, 170, 170, 170,
+    170, 170, 64, 55, 64, 170, 170, 170, 170, 170, 170, 64, 55, 64, 170, 170,
+    170, 170, 178, 130, 170, 170, 170, 170, 170, 170, 170, 170, 168, 178, 170, 170,
+    170, 170, 55, 64, 170, 170, 170, 170, 170, 170, 170, 170, 64, 55, 170, 170,
+    170, 170, 54, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 54, 170, 170,
+    170, 170, 54, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 54, 170, 170,
+    170, 170, 55, 64, 170, 170, 170, 170, 170, 170, 170, 170, 64, 55, 170, 170,
+    170, 170, 178, 168, 170, 170, 170, 170, 170, 170, 170, 170, 168, 178, 170, 170,
+    170, 170, 64, 55, 64, 170, 170, 170, 170, 170, 170, 64, 55, 64, 170, 170,
+    170, 170, 170, 64, 55, 168, 64, 170, 170, 64, 168, 55, 64, 170, 170, 170,
+    170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,
+    170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
+    170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170};
 
-DollWidget::DollWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
+DollWidget::DollWidget(Configuration *cfg, GUI_CallBack *callback) : GUI_Widget(NULL, 0, 0, 0, 0) {
 	config = cfg;
 	callback_object = callback;
 
@@ -106,12 +104,12 @@ DollWidget::DollWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(N
 	md_doll_shp = NULL;
 
 	// Set up hit rects
-	item_hit_rects[0] = Common::Rect(24, 0,  24 + 16,  0 + 16); // ACTOR_HEAD
-	item_hit_rects[1] = Common::Rect(0, 8,   0 + 16,  8 + 16);  // ACTOR_NECK
-	item_hit_rects[2] = Common::Rect(48, 8,  48 + 16,  8 + 16); // ACTOR_BODY
-	item_hit_rects[3] = Common::Rect(0, 24,  0 + 16, 24 + 16);  // ACTOR_ARM
+	item_hit_rects[0] = Common::Rect(24, 0, 24 + 16, 0 + 16);   // ACTOR_HEAD
+	item_hit_rects[1] = Common::Rect(0, 8, 0 + 16, 8 + 16);     // ACTOR_NECK
+	item_hit_rects[2] = Common::Rect(48, 8, 48 + 16, 8 + 16);   // ACTOR_BODY
+	item_hit_rects[3] = Common::Rect(0, 24, 0 + 16, 24 + 16);   // ACTOR_ARM
 	item_hit_rects[4] = Common::Rect(48, 24, 48 + 16, 24 + 16); // ACTOR_ARM_2
-	item_hit_rects[5] = Common::Rect(0, 40,  0 + 16, 40 + 16);  // ACTOR_HAND
+	item_hit_rects[5] = Common::Rect(0, 40, 0 + 16, 40 + 16);   // ACTOR_HAND
 	item_hit_rects[6] = Common::Rect(48, 40, 48 + 16, 40 + 16); // ACTOR_HAND_2
 	item_hit_rects[7] = Common::Rect(24, 48, 24 + 16, 48 + 16); // ACTOR_FOOT
 }
@@ -132,19 +130,19 @@ bool DollWidget::init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager 
 	is_in_portrait_view = in_portrait_view;
 	if (!Game::get_game()->is_new_style() || is_in_portrait_view) {
 		switch (Game::get_game()->get_game_type()) {
-		case NUVIE_GAME_U6 :
+		case NUVIE_GAME_U6:
 			blocked_tile = tile_manager->get_tile(TILE_U6_BLOCKED_EQUIP);
 			empty_tile = tile_manager->get_tile(TILE_U6_EQUIP);
 			break;
 
-		case NUVIE_GAME_SE :
+		case NUVIE_GAME_SE:
 			blocked_tile = tile_manager->get_tile(TILE_SE_BLOCKED_EQUIP);
 			empty_tile = tile_manager->get_tile(TILE_SE_EQUIP);
 			break;
 
-		case NUVIE_GAME_MD :
+		case NUVIE_GAME_MD:
 			blocked_tile = tile_manager->get_tile(TILE_MD_BLOCKED_EQUIP); // FIXME: different depending on npc
-			empty_tile = tile_manager->get_tile(TILE_MD_EQUIP); // FIXME: different depending on npc
+			empty_tile = tile_manager->get_tile(TILE_MD_EQUIP);           // FIXME: different depending on npc
 			break;
 		}
 	} else {
@@ -256,17 +254,15 @@ Common::Rect *DollWidget::get_item_hit_rect(uint8 location) {
 	return (NULL);
 }
 
-
 void DollWidget::Display(bool full_redraw) {
-//if(full_redraw || update_display)
-// {
+	//if(full_redraw || update_display)
+	// {
 	update_display = false;
 
 	if (actor != NULL)
 		display_doll();
 	screen->update(area.left, area.top, area.width(), area.height());
-//  }
-
+	//  }
 }
 
 inline void DollWidget::display_new_doll() {
@@ -287,15 +283,14 @@ inline void DollWidget::display_old_doll() {
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_MD) // FIXME: different depending on npc - Also needs npc doll info code
 		tilenum = 275;
 	else if (Game::get_game()->get_game_type() == NUVIE_GAME_SE) {
-		if (actor->get_obj_n() == 310 || actor->get_obj_n() == 311
-		        || actor->get_obj_n() == 312)
+		if (actor->get_obj_n() == 310 || actor->get_obj_n() == 311 || actor->get_obj_n() == 312)
 			tilenum = 404;
 		else if (actor->get_obj_n() == 318)
 			tilenum = 408;
 		else
 			tilenum = 400;
 	}
-//	 screen->fill(bg_color, area.left, area.top, area.width(), area.height()); // should be taken care of by the main view
+	//	 screen->fill(bg_color, area.left, area.top, area.width(), area.height()); // should be taken care of by the main view
 	for (i = 0; i < 2; i++) {
 		for (j = 0; j < 2; j++) { // draw doll
 			tile = tile_manager->get_tile(tilenum + i * 2 + j);
@@ -357,10 +352,9 @@ GUI_status DollWidget::MouseDown(int x, int y, Shared::MouseButton button) {
 	y -= area.top;
 
 	CommandBar *command_bar = Game::get_game()->get_command_bar();
-	if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE
-	        && command_bar->get_selected_action() > 0) { // Exclude attack mode too
-		if (command_bar->try_selected_action() == false) // start new action
-			return GUI_YUM; // false if new event doesn't need target
+	if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE && command_bar->get_selected_action() > 0) { // Exclude attack mode too
+		if (command_bar->try_selected_action() == false)                                                       // start new action
+			return GUI_YUM;                                                                                    // false if new event doesn't need target
 	}
 
 	if (actor && selected_obj == NULL && (button == USE_BUTTON || button == ACTION_BUTTON || button == DRAG_BUTTON)) {
@@ -368,8 +362,7 @@ GUI_status DollWidget::MouseDown(int x, int y, Shared::MouseButton button) {
 			if (HitRect(x, y, item_hit_rects[location])) { // FIXME: duplicating code in InventoryWidget
 				DEBUG(0, LEVEL_DEBUGGING, "Hit %d\n", location);
 				obj = actor->inventory_get_readied_object(location);
-				if (button == ACTION_BUTTON && command_bar->get_selected_action() > 0
-				        && event->get_mode() == INPUT_MODE) {
+				if (button == ACTION_BUTTON && command_bar->get_selected_action() > 0 && event->get_mode() == INPUT_MODE) {
 					if (obj) {
 						event->select_obj(obj, actor);
 						return GUI_YUM;
@@ -383,10 +376,9 @@ GUI_status DollWidget::MouseDown(int x, int y, Shared::MouseButton button) {
 				}
 				if (obj) {
 
-					if ((event->get_mode() == MOVE_MODE || event->get_mode() == EQUIP_MODE)
-					        && button == DRAG_BUTTON)
+					if ((event->get_mode() == MOVE_MODE || event->get_mode() == EQUIP_MODE) && button == DRAG_BUTTON)
 						selected_obj = obj; // start dragging
-					else // send to View
+					else                    // send to View
 						callback_object->callback(INVSELECT_CB, this, obj);
 				}
 				return GUI_YUM;
@@ -401,7 +393,7 @@ GUI_status DollWidget::MouseDown(int x, int y, Shared::MouseButton button) {
 GUI_status DollWidget::MouseUp(int x, int y, Shared::MouseButton button) {
 	Events *event = Game::get_game()->get_event();
 
-// only act now if double-click is disabled
+	// only act now if double-click is disabled
 	if (selected_obj && !Game::get_game()->get_map_window()->is_doubleclick_enabled()) {
 		event->unready(selected_obj);
 		Redraw();
@@ -434,9 +426,9 @@ GUI_status DollWidget::MouseMotion(int x, int y, uint8 state) {
 void DollWidget::drag_drop_success(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "DollWidget::drag_drop_success()\n");
 	dragging = false;
-// handled by drop target
-// actor->remove_readied_object(selected_obj);
-// actor->inventory_remove_obj(selected_obj);
+	// handled by drop target
+	// actor->remove_readied_object(selected_obj);
+	// actor->inventory_remove_obj(selected_obj);
 	selected_obj = NULL;
 	Redraw();
 }
@@ -467,8 +459,7 @@ bool DollWidget::drag_accept_drop(int x, int y, int message, void *data) {
 				}
 			}
 		}
-		if (obj->get_actor_holding_obj() == actor
-		        || Game::get_game()->get_map_window()->can_get_obj(actor, obj)) {
+		if (obj->get_actor_holding_obj() == actor || Game::get_game()->get_map_window()->can_get_obj(actor, obj)) {
 			DEBUG(0, LEVEL_DEBUGGING, "Drop Accepted\n");
 			return true;
 		} else {
@@ -497,11 +488,11 @@ void DollWidget::drag_perform_drop(int x, int y, int message, void *data) {
 			// event->newAction(GET_MODE);
 			Game::get_game()->get_scroll()->display_string("Get-");
 			can_equip = Game::get_game()->get_event()->perform_get(obj, NULL, actor);
-//       if(!can_equip)
-//       {
-//        assert(!(obj->status & OBJ_STATUS_IN_CONTAINER));
-//        obj_manager->add_obj(obj); // add back to map
-//       }
+			//       if(!can_equip)
+			//       {
+			//        assert(!(obj->status & OBJ_STATUS_IN_CONTAINER));
+			//        obj_manager->add_obj(obj); // add back to map
+			//       }
 		} else
 			obj_manager->moveto_inventory(obj, actor);
 		if (can_equip) { // ready
@@ -538,7 +529,6 @@ void DollWidget::drag_draw(int x, int y, int message, void *data) {
 	screen->blit(nx, ny, tile->data, 8, 16, 16, 16, true);
 	screen->update(nx, ny, 16, 16);
 }
-
 
 /* Use object.
  */

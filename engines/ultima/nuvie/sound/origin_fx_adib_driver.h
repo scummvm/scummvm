@@ -23,8 +23,8 @@
 #ifndef NUVIE_SOUND_ORIGIN_FX_ADLIB_DRIVER_H
 #define NUVIE_SOUND_ORIGIN_FX_ADLIB_DRIVER_H
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -38,7 +38,6 @@ public:
 	~OriginFXAdLibDriver();
 
 private:
-
 	Configuration *config;
 	Copl *opl;
 

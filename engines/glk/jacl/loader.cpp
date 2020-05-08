@@ -22,8 +22,8 @@
 
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 #include "glk/jacl/version.h"
 
 namespace Glk {
@@ -31,33 +31,32 @@ namespace JACL {
 
 /* INDICATES THAT THE CURRENT '.j2' FILE BEING WORKED
  * WITH IS ENCRYPTED */
-int                 encrypted = FALSE;
+int encrypted = FALSE;
 
-extern char         text_buffer[];
-extern char         temp_buffer[];
-extern char         prefix[];
-extern char         error_buffer[];
-extern const char   *word[];
-extern int          quoted[];
-extern int          punctuated[];
-extern int          wp;
+extern char text_buffer[];
+extern char temp_buffer[];
+extern char prefix[];
+extern char error_buffer[];
+extern const char *word[];
+extern int quoted[];
+extern int punctuated[];
+extern int wp;
 
-extern schanid_t                sound_channel[];
+extern schanid_t sound_channel[];
 
-extern struct object_type       *object[];
-extern struct integer_type      *integer_table;
-extern struct integer_type      *integer[];
-extern struct cinteger_type     *cinteger_table;
-extern struct string_type       *string_table;
-extern struct string_type       *cstring_table;
-extern struct attribute_type    *attribute_table;
-extern struct function_type     *function_table;
-extern struct function_type     *executing_function;
-extern struct command_type      *completion_list;
-extern struct word_type         *grammar_table;
-extern struct synonym_type      *synonym_table;
-extern struct filter_type       *filter_table;
-
+extern struct object_type *object[];
+extern struct integer_type *integer_table;
+extern struct integer_type *integer[];
+extern struct cinteger_type *cinteger_table;
+extern struct string_type *string_table;
+extern struct string_type *cstring_table;
+extern struct attribute_type *attribute_table;
+extern struct function_type *function_table;
+extern struct function_type *executing_function;
+extern struct command_type *completion_list;
+extern struct word_type *grammar_table;
+extern struct synonym_type *synonym_table;
+extern struct filter_type *filter_table;
 
 struct string_type *current_string = NULL;
 struct integer_type *current_integer = NULL;
@@ -66,36 +65,36 @@ struct integer_type *last_system_integer = NULL;
 extern struct string_type *current_cstring;
 extern struct cinteger_type *current_cinteger;
 
-extern strid_t                  game_stream;
+extern strid_t game_stream;
 
-extern int                      objects;
-extern int                      integers;
-extern int                      functions;
-extern int                      strings;
-extern int                      player;
+extern int objects;
+extern int integers;
+extern int functions;
+extern int strings;
+extern int player;
 
-extern int                      it;
-extern int                      them[];
-extern int                      her;
-extern int                      him;
-extern int                      parent;
+extern int it;
+extern int them[];
+extern int her;
+extern int him;
+extern int parent;
 
-extern int                      noun[];
+extern int noun[];
 
-int                             value_resolved;
+int value_resolved;
 
 void read_gamefile() {
-	int             index,
-	                counter,
-	                errors;
-	int             result;
-	int             location_count = 0;
-	int             object_count = 0;
-	int             line = 0;
-	int             self_parent = 0;
+	int index,
+	    counter,
+	    errors;
+	int result;
+	int location_count = 0;
+	int object_count = 0;
+	int line = 0;
+	int self_parent = 0;
 
-	long            start_of_file = 0;
-	long            bit_mask;
+	long start_of_file = 0;
+	long bit_mask;
 
 	filter_type *current_filter = NULL;
 	filter_type *new_filter = NULL;
@@ -107,7 +106,7 @@ void read_gamefile() {
 	function_type *current_function = NULL;
 	name_type *current_name = NULL;
 
-	char            function_name[81];
+	char function_name[81];
 
 	// CREATE SOME SYSTEM VARIABLES
 
@@ -235,7 +234,7 @@ void read_gamefile() {
 	/* CREATE A DUMMY FUNCTION TO BE USED WHEN AN ERROR MESSAGE
 	   IS PRINTED AS A RESULT OF CODE CALLED BY THE INTERPRETER */
 	if ((function_table = (struct function_type *)
-	                      malloc(sizeof(struct function_type))) == NULL)
+	         malloc(sizeof(struct function_type))) == NULL)
 		outofmem();
 	else {
 		current_function = function_table;
@@ -256,33 +255,36 @@ void read_gamefile() {
 	strings = 0;
 
 	g_vm->glk_stream_set_position(game_stream, start_of_file, seekmode_Start);
-	result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+	result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 
 	line++;
 
 	if (!encrypted && strstr(text_buffer, "#encrypted")) {
 		encrypted = TRUE;
 
-		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 		line++;
 	}
 
-	if (encrypted) jacl_decrypt(text_buffer);
+	if (encrypted)
+		jacl_decrypt(text_buffer);
 
 	while (result) {
 		encapsulate();
-		if (word[0] == NULL);
+		if (word[0] == NULL)
+			;
 		else if (text_buffer[0] == '{') {
 			while (result) {
-				result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+				result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 				line++;
 
 				if (!encrypted && strstr(text_buffer, "#encrypted")) {
 					encrypted = TRUE;
-					result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+					result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 					line++;
 				}
-				if (encrypted) jacl_decrypt(text_buffer);
+				if (encrypted)
+					jacl_decrypt(text_buffer);
 				if (text_buffer[0] == '}')
 					break;
 			}
@@ -294,7 +296,7 @@ void read_gamefile() {
 				} else {
 					if (grammar_table == NULL) {
 						if ((grammar_table = (struct word_type *)
-						                     malloc(sizeof(struct word_type))) == NULL)
+						         malloc(sizeof(struct word_type))) == NULL)
 							outofmem();
 						else {
 							strncpy(grammar_table->word, word[wp], 40);
@@ -306,8 +308,7 @@ void read_gamefile() {
 					} else
 						build_grammar_table(grammar_table);
 				}
-			} else if (!strcmp(word[0], "object")
-			           || !strcmp(word[0], "location")) {
+			} else if (!strcmp(word[0], "object") || !strcmp(word[0], "location")) {
 				if (word[1] == NULL) {
 					noproperr(line);
 					errors++;
@@ -322,7 +323,7 @@ void read_gamefile() {
 						return;
 					} else {
 						if ((object[objects] = (struct object_type *)
-						                       malloc(sizeof(struct object_type))) == NULL)
+						         malloc(sizeof(struct object_type))) == NULL)
 							outofmem();
 
 						strncpy(object[objects]->label, word[1], 40);
@@ -348,7 +349,7 @@ void read_gamefile() {
 					errors++;
 				} else {
 					if ((new_synonym = (struct synonym_type *)
-					                   malloc(sizeof(struct synonym_type))) == NULL)
+					         malloc(sizeof(struct synonym_type))) == NULL)
 						outofmem();
 					else {
 						if (synonym_table == NULL) {
@@ -376,7 +377,7 @@ void read_gamefile() {
 					errors++;
 				} else {
 					if ((new_parameter = (struct parameter_type *)
-					                     malloc(sizeof(struct parameter_type))) == NULL)
+					         malloc(sizeof(struct parameter_type))) == NULL)
 						outofmem();
 					else {
 						if (parameter_table == NULL) {
@@ -407,7 +408,6 @@ void read_gamefile() {
 						current_parameter->low = -65535;
 						current_parameter->high = 65535;
 					}
-
 				}
 #else
 				warning("parameter");
@@ -432,7 +432,7 @@ void read_gamefile() {
 							if (legal_label_check(word[1], line, CINT_TYPE)) {
 								errors++;
 							} else {
-								create_cinteger(word[1], value_of(word[index])/*, FALSE */);
+								create_cinteger(word[1], value_of(word[index]) /*, FALSE */);
 								if (!value_resolved) {
 									unkvalerr(line, index);
 									errors++;
@@ -453,7 +453,7 @@ void read_gamefile() {
 					errors++;
 				} else {
 					if ((new_attribute = (struct attribute_type *)
-					                     malloc(sizeof(struct attribute_type))) == NULL)
+					         malloc(sizeof(struct attribute_type))) == NULL)
 						outofmem();
 					else {
 						if (attribute_table == NULL) {
@@ -480,7 +480,7 @@ void read_gamefile() {
 							errors++;
 						} else {
 							if ((new_attribute = (struct attribute_type *)
-							                     malloc(sizeof(struct attribute_type))) == NULL)
+							         malloc(sizeof(struct attribute_type))) == NULL)
 								outofmem();
 							else {
 								current_attribute->next_attribute = new_attribute;
@@ -518,7 +518,7 @@ void read_gamefile() {
 					errors++;
 				} else {
 					if ((new_filter = (struct filter_type *)
-					                  malloc(sizeof(struct filter_type))) == NULL)
+					         malloc(sizeof(struct filter_type))) == NULL)
 						outofmem();
 					else {
 						if (filter_table == NULL) {
@@ -601,15 +601,16 @@ void read_gamefile() {
 			}
 		}
 
-		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 		line++;
 
 		if (!encrypted && strstr(text_buffer, "#encrypted")) {
 			encrypted = TRUE;
-			result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+			result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 			line++;
 		}
-		if (encrypted) jacl_decrypt(text_buffer);
+		if (encrypted)
+			jacl_decrypt(text_buffer);
 	}
 
 	if (errors) {
@@ -648,22 +649,24 @@ void read_gamefile() {
 
 	line = 0;
 	g_vm->glk_stream_set_position(game_stream, start_of_file, seekmode_Start);
-	result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+	result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 
 	line++;
 
 	if (!encrypted && strstr(text_buffer, "#encrypted")) {
 		encrypted = TRUE;
-		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 		line++;
 	}
-	if (encrypted) jacl_decrypt(text_buffer);
+	if (encrypted)
+		jacl_decrypt(text_buffer);
 
 	while (result) {
 		encapsulate();
-		if (word[0] == NULL);
+		if (word[0] == NULL)
+			;
 		else if (text_buffer[0] == '{') {
-			word[wp]++;         /* MOVE THE START OF THE FIRST WORD ONLY
+			word[wp]++; /* MOVE THE START OF THE FIRST WORD ONLY
                                  * TO PAST THE '{'. */
 			if (word[wp][0] == 0) {
 				nofnamerr(line);
@@ -701,7 +704,7 @@ void read_gamefile() {
 					}
 					if (function_table == NULL) {
 						if ((function_table = (struct function_type *)
-						                      malloc(sizeof(struct function_type))) == NULL)
+						         malloc(sizeof(struct function_type))) == NULL)
 							outofmem();
 						else {
 							// STORE THE NUMBER OF FUNCTION DEFINED TO
@@ -719,8 +722,8 @@ void read_gamefile() {
 						}
 					} else {
 						if ((current_function->next_function =
-						            (struct function_type *)
-						            malloc(sizeof(struct function_type))) == NULL)
+						         (struct function_type *)
+						             malloc(sizeof(struct function_type))) == NULL)
 							outofmem();
 						else {
 							// STORE THE NUMBER OF FUNCTION DEFINED TO
@@ -742,20 +745,20 @@ void read_gamefile() {
 			}
 
 			while (result) {
-				result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+				result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 				line++;
 
 				if (!encrypted && strstr(text_buffer, "#encrypted")) {
 					encrypted = TRUE;
-					result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+					result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 					line++;
 				}
-				if (encrypted) jacl_decrypt(text_buffer);
+				if (encrypted)
+					jacl_decrypt(text_buffer);
 				if (text_buffer[0] == '}')
 					break;
 			}
-		}
-		else if (!strcmp(word[0], "string_array")) {
+		} else if (!strcmp(word[0], "string_array")) {
 		} else if (!strcmp(word[0], "integer_array")) {
 			if (word[2] == NULL) {
 				noproperr(line);
@@ -799,13 +802,20 @@ void read_gamefile() {
 
 			/* CONSUME ALL THESE KEYWORDS TO AVOID AN UNKNOWN KEYWORD */
 			/* ERROR DURING THE SECOND PASS (ALL WORK DONE IN FIRST PASS) */
-		} else if (!strcmp(word[0], "constant"));
-		else if (!strcmp(word[0], "string"));
-		else if (!strcmp(word[0], "attribute"));
-		else if (!strcmp(word[0], "parameter"));
-		else if (!strcmp(word[0], "synonym"));
-		else if (!strcmp(word[0], "grammar"));
-		else if (!strcmp(word[0], "filter"));
+		} else if (!strcmp(word[0], "constant"))
+			;
+		else if (!strcmp(word[0], "string"))
+			;
+		else if (!strcmp(word[0], "attribute"))
+			;
+		else if (!strcmp(word[0], "parameter"))
+			;
+		else if (!strcmp(word[0], "synonym"))
+			;
+		else if (!strcmp(word[0], "grammar"))
+			;
+		else if (!strcmp(word[0], "filter"))
+			;
 		else if (!strcmp(word[0], "has")) {
 			if (word[1] == NULL) {
 				noproperr(line);
@@ -825,8 +835,7 @@ void read_gamefile() {
 					}
 				}
 			}
-		} else if (!strcmp(word[0], "object")
-		           || !strcmp(word[0], "location")) {
+		} else if (!strcmp(word[0], "object") || !strcmp(word[0], "location")) {
 			object_count++;
 
 			if (!strcmp(word[0], "object")) {
@@ -842,10 +851,8 @@ void read_gamefile() {
 				    object[object_count]->attributes | LOCATION;
 			}
 
-
 			if ((object[object_count]->first_name =
-			            (struct name_type *) malloc(sizeof(struct name_type)))
-			        == NULL)
+			         (struct name_type *)malloc(sizeof(struct name_type))) == NULL)
 				outofmem();
 			else {
 				current_name = object[object_count]->first_name;
@@ -862,7 +869,7 @@ void read_gamefile() {
 
 			while (word[wp] != NULL && wp < MAX_WORDS) {
 				if ((current_name->next_name = (struct name_type *)
-				                               malloc(sizeof(struct name_type))) == NULL)
+				         malloc(sizeof(struct name_type))) == NULL)
 					outofmem();
 				else {
 					current_name = current_name->next_name;
@@ -878,8 +885,7 @@ void read_gamefile() {
 				errors++;
 			} else {
 				if ((object[object_count]->first_plural =
-				            (struct name_type *) malloc(sizeof(struct name_type)))
-				        == NULL)
+				         (struct name_type *)malloc(sizeof(struct name_type))) == NULL)
 					outofmem();
 				else {
 					current_name = object[object_count]->first_plural;
@@ -892,7 +898,7 @@ void read_gamefile() {
 
 				while (word[wp] != NULL && wp < MAX_WORDS) {
 					if ((current_name->next_name = (struct name_type *)
-					                               malloc(sizeof(struct name_type))) == NULL)
+					         malloc(sizeof(struct name_type))) == NULL)
 						outofmem();
 					else {
 						current_name = current_name->next_name;
@@ -972,15 +978,16 @@ void read_gamefile() {
 			errors++;
 		}
 
-		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+		result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 		line++;
 
 		if (!encrypted && strstr(text_buffer, "#encrypted")) {
 			encrypted = TRUE;
-			result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+			result = glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 			line++;
 		}
-		if (encrypted) jacl_decrypt(text_buffer);
+		if (encrypted)
+			jacl_decrypt(text_buffer);
 	}
 
 	/* CREATE THE CONSTANT THE RECORDS THE TOTAL NUMBER OF OBJECTS */
@@ -1006,8 +1013,7 @@ void build_grammar_table(struct word_type *pointer) {
 		if (!strcmp(word[wp], pointer->word)) {
 			if (pointer->first_child == NULL && word[wp + 1] != NULL) {
 				if ((pointer->first_child = (struct word_type *)
-				                            malloc(sizeof(struct word_type)))
-				        == NULL)
+				         malloc(sizeof(struct word_type))) == NULL)
 					outofmem();
 				else {
 					pointer = pointer->first_child;
@@ -1023,8 +1029,7 @@ void build_grammar_table(struct word_type *pointer) {
 		} else {
 			if (pointer->next_sibling == NULL) {
 				if ((pointer->next_sibling = (struct word_type *)
-				                             malloc(sizeof(struct word_type)))
-				        == NULL)
+				         malloc(sizeof(struct word_type))) == NULL)
 					outofmem();
 				else {
 					pointer = pointer->next_sibling;
@@ -1049,20 +1054,20 @@ int legal_label_check(const char *label_word, int line, int type) {
 	int index;
 
 	if (!strcmp(label_word, "here") ||
-	        !strcmp(label_word, "player") ||
-	        !strcmp(label_word, "integer") ||
-	        !strcmp(label_word, "arg") ||
-	        !strcmp(label_word, "string_arg") ||
-	        !strcmp(label_word, "arg") ||
-	        !strcmp(label_word, "$label_word") ||
-	        !strcmp(label_word, "self") ||
-	        !strcmp(label_word, "this") ||
-	        !strcmp(label_word, "noun1") ||
-	        !strcmp(label_word, "noun2") ||
-	        !strcmp(label_word, "noun3") ||
-	        !strcmp(label_word, "noun4") ||
-	        !strcmp(label_word, "objects") ||
-	        validate(label_word)) {
+	    !strcmp(label_word, "player") ||
+	    !strcmp(label_word, "integer") ||
+	    !strcmp(label_word, "arg") ||
+	    !strcmp(label_word, "string_arg") ||
+	    !strcmp(label_word, "arg") ||
+	    !strcmp(label_word, "$label_word") ||
+	    !strcmp(label_word, "self") ||
+	    !strcmp(label_word, "this") ||
+	    !strcmp(label_word, "noun1") ||
+	    !strcmp(label_word, "noun2") ||
+	    !strcmp(label_word, "noun3") ||
+	    !strcmp(label_word, "noun4") ||
+	    !strcmp(label_word, "objects") ||
+	    validate(label_word)) {
 		sprintf(error_buffer, ILLEGAL_LABEL, line, label_word);
 		log_error(error_buffer, PLUS_STDERR);
 
@@ -1087,7 +1092,6 @@ int legal_label_check(const char *label_word, int line, int type) {
 		} else
 			integer_pointer = integer_pointer->next_integer;
 	}
-
 
 	while (cinteger_pointer != NULL && type != CINT_TYPE) {
 		if (!strcmp(label_word, cinteger_pointer->name)) {
@@ -1144,7 +1148,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 }
 
 void restart_game() {
-	int             index;
+	int index;
 
 	integer_type *curr_integer;
 	integer_type *previous_integer;
@@ -1364,7 +1368,7 @@ void create_cinteger(const char *name, int value) {
 	struct cinteger_type *new_cinteger = NULL;
 
 	if ((new_cinteger = (struct cinteger_type *)
-	                    malloc(sizeof(struct cinteger_type))) == NULL) {
+	         malloc(sizeof(struct cinteger_type))) == NULL) {
 		outofmem();
 	} else {
 		if (cinteger_table == NULL) {
@@ -1385,7 +1389,7 @@ void create_integer(const char *name, int value) {
 	struct integer_type *new_integer = NULL;
 
 	if ((new_integer = (struct integer_type *)
-	                   malloc(sizeof(struct integer_type))) == NULL) {
+	         malloc(sizeof(struct integer_type))) == NULL) {
 		outofmem();
 	} else {
 		/* KEEP A COUNT OF HOW MANY INTEGERS ARE DEFINED TO
@@ -1409,7 +1413,7 @@ void create_string(const char *name, const char *value) {
 	struct string_type *new_string = NULL;
 
 	if ((new_string = (struct string_type *)
-	                  malloc(sizeof(struct string_type))) == NULL) {
+	         malloc(sizeof(struct string_type))) == NULL) {
 		outofmem();
 	} else {
 		/* KEEP A COUNT OF HOW MANY STRINGS ARE DEFINED TO
@@ -1442,7 +1446,7 @@ void create_cstring(const char *name, const char *value) {
 	struct string_type *new_string = NULL;
 
 	if ((new_string = (struct string_type *)
-	                  malloc(sizeof(struct string_type))) == NULL) {
+	         malloc(sizeof(struct string_type))) == NULL) {
 		outofmem();
 	} else {
 		if (cstring_table == NULL) {

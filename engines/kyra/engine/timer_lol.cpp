@@ -157,8 +157,7 @@ void LoLEngine::timerRegeneratePoints(int timerNum) {
 		// check for Duble ring
 		int hInc = (_characters[i].flags & 8) ? 0 : (itemEquipped(i, 228) ? 4 : 1);
 		// check for Talba ring
-		int mInc = _drainMagic ? ((_characters[i].magicPointsMax >> 5) * -1) :
-		           ((_characters[i].flags & 8) ? 0 : (itemEquipped(i, 227) ? (_characters[i].magicPointsMax / 10) : 1));
+		int mInc = _drainMagic ? ((_characters[i].magicPointsMax >> 5) * -1) : ((_characters[i].flags & 8) ? 0 : (itemEquipped(i, 227) ? (_characters[i].magicPointsMax / 10) : 1));
 
 		_characters[i].magicPointsCur = CLIP<int16>(_characters[i].magicPointsCur + mInc, 0, _characters[i].magicPointsMax);
 

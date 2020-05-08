@@ -20,20 +20,19 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/fonts/ttf_rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(TTFRenderedText, RenderedText)
 
-
 TTFRenderedText::TTFRenderedText(Texture *texture_, int width, int height,
-		int vLead, TTFont *font) : _texture(texture_), _font(font) {
+                                 int vLead, TTFont *font) : _texture(texture_), _font(font) {
 	_width = width;
 	_height = height;
 	_vLead = vLead;
@@ -46,20 +45,20 @@ TTFRenderedText::~TTFRenderedText() {
 void TTFRenderedText::draw(RenderSurface *surface, int x, int y, bool destmasked) {
 	if (!destmasked)
 		surface->Blit(_texture, 0, 0, _width, _height, x, y - _font->getBaseline(),
-			_font->isAntialiased());
+		              _font->isAntialiased());
 	else
 		surface->MaskedBlit(_texture, 0, 0, _width, _height,
-			x, y - _font->getBaseline(), 0, _font->isAntialiased());
+		                    x, y - _font->getBaseline(), 0, _font->isAntialiased());
 }
 
 void TTFRenderedText::drawBlended(RenderSurface *surface, int x, int y,
-		uint32 col, bool destmasked) {
+                                  uint32 col, bool destmasked) {
 	if (!destmasked)
 		surface->FadedBlit(_texture, 0, 0, _width, _height,
-			x, y - _font->getBaseline(), col, _font->isAntialiased());
+		                   x, y - _font->getBaseline(), col, _font->isAntialiased());
 	else
 		surface->MaskedBlit(_texture, 0, 0, _width, _height,
-			x, y - _font->getBaseline(), col, _font->isAntialiased());
+		                    x, y - _font->getBaseline(), col, _font->isAntialiased());
 }
 
 } // End of namespace Ultima8

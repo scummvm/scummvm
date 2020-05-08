@@ -28,28 +28,27 @@
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 
-#include "dm/inventory.h"
 #include "dm/dungeonman.h"
 #include "dm/eventman.h"
-#include "dm/group.h"
-#include "dm/menus.h"
 #include "dm/gfx.h"
-#include "dm/text.h"
+#include "dm/group.h"
+#include "dm/inventory.h"
+#include "dm/menus.h"
 #include "dm/objectman.h"
-#include "dm/timeline.h"
 #include "dm/projexpl.h"
 #include "dm/sounds.h"
-
+#include "dm/text.h"
+#include "dm/timeline.h"
 
 namespace DM {
 
 void InventoryMan::initConstants() {
-	static const char* skillLevelNamesEN[15] = {"NEOPHYTE", "NOVICE", "APPRENTICE", "JOURNEYMAN", "CRAFTSMAN",
-		"ARTISAN", "ADEPT", "EXPERT", "` MASTER", "a MASTER","b MASTER", "c MASTER", "d MASTER", "e MASTER", "ARCHMASTER"};
-	static const char* skillLevelNamesDE[15] = {"ANFAENGER", "NEULING", "LEHRLING", "ARBEITER", "GESELLE", "HANDWERKR", "FACHMANN",
-		"EXPERTE", "` MEISTER", "a MEISTER", "b MEISTER", "c MEISTER", "d MEISTER", "e MEISTER", "ERZMEISTR"};
-	static const char* skillLevelNamesFR[15] = {"NEOPHYTE", "NOVICE", "APPRENTI", "COMPAGNON", "ARTISAN", "PATRON",
-		"ADEPTE", "EXPERT", "MAITRE '", "MAITRE a", "MAITRE b", "MAITRE c", "MAITRE d", "MAITRE e", "SUR-MAITRE"};
+	static const char *skillLevelNamesEN[15] = {"NEOPHYTE", "NOVICE", "APPRENTICE", "JOURNEYMAN", "CRAFTSMAN",
+	                                            "ARTISAN", "ADEPT", "EXPERT", "` MASTER", "a MASTER", "b MASTER", "c MASTER", "d MASTER", "e MASTER", "ARCHMASTER"};
+	static const char *skillLevelNamesDE[15] = {"ANFAENGER", "NEULING", "LEHRLING", "ARBEITER", "GESELLE", "HANDWERKR", "FACHMANN",
+	                                            "EXPERTE", "` MEISTER", "a MEISTER", "b MEISTER", "c MEISTER", "d MEISTER", "e MEISTER", "ERZMEISTR"};
+	static const char *skillLevelNamesFR[15] = {"NEOPHYTE", "NOVICE", "APPRENTI", "COMPAGNON", "ARTISAN", "PATRON",
+	                                            "ADEPTE", "EXPERT", "MAITRE '", "MAITRE a", "MAITRE b", "MAITRE c", "MAITRE d", "MAITRE e", "SUR-MAITRE"};
 	const char **translatedSkillLevel;
 	switch (_vm->getGameLanguage()) { // localized
 	default:
@@ -204,8 +203,8 @@ void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
 }
 
 void InventoryMan::drawPanelFoodWaterPoisoned() {
-	static Box boxFood(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
-	static Box boxWater(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
+	static Box boxFood(112, 159, 60, 68);       // @ G0035_s_Graphic562_Box_Food
+	static Box boxWater(112, 159, 83, 91);      // @ G0036_s_Graphic562_Box_Water
 	static Box boxPoisoned(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
 	Champion &champ = _vm->_championMan->_champions[_inventoryChampionOrdinal];
@@ -232,7 +231,7 @@ void InventoryMan::drawPanelFoodWaterPoisoned() {
 
 	if (champ._poisonEventCount)
 		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPoisionedLabel),
-								   boxPoisoned, k48_byteWidth, kDMColorDarkestGray, 15);
+		                       boxPoisoned, k48_byteWidth, kDMColorDarkestGray, 15);
 
 	drawPanelFoodOrWaterBar(champ._food, 69, kDMColorLightBrown);
 	drawPanelFoodOrWaterBar(champ._water, 92, kDMColorBlue);
@@ -243,7 +242,7 @@ void InventoryMan::drawPanelResurrectReincarnate() {
 
 	_panelContent = kDMPanelContentResurrectReincarnate;
 	display.blitToViewport(display.getNativeBitmapOrGraphic(kDMGraphicIdxPanelResurectReincarnate),
-										 _boxPanel, k72_byteWidth, kDMColorDarkGreen, 73);
+	                       _boxPanel, k72_byteWidth, kDMColorDarkGreen, 73);
 }
 
 void InventoryMan::drawPanel() {
@@ -324,7 +323,7 @@ void InventoryMan::drawPanelScroll(Scroll *scroll) {
 
 	*charRed = '\0';
 	dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPanelOpenScroll),
-							   _boxPanel, k72_byteWidth, kDMColorRed, 73);
+	                       _boxPanel, k72_byteWidth, kDMColorRed, 73);
 	int16 lineCount = 1;
 	charRed++;
 	char *charGreen = charRed; // first char of the second line
@@ -376,7 +375,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool is
 		objMan.drawIconInSlotBox(kDMSlotBoxInventoryActionHand, kDMIconIndiceContainerChestOpen);
 	}
 	dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPanelOpenChest),
-							   _boxPanel, k72_byteWidth, kDMColorRed, 73);
+	                       _boxPanel, k72_byteWidth, kDMColorRed, 73);
 	int16 chestSlotIndex = 0;
 	Thing thing = chest->getSlot();
 	int16 thingCount = 0;
@@ -427,9 +426,15 @@ void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 a
 
 				switch (_vm->getGameLanguage()) { // localized
 				default:
-				case Common::EN_ANY: strcat(destString, " AND "); break;
-				case Common::DE_DEU: strcat(destString, " UND "); break;
-				case Common::FR_FRA: strcat(destString, " ET "); break;
+				case Common::EN_ANY:
+					strcat(destString, " AND ");
+					break;
+				case Common::DE_DEU:
+					strcat(destString, " UND ");
+					break;
+				case Common::FR_FRA:
+					strcat(destString, " ET ");
+					break;
 				}
 			}
 		}
@@ -479,7 +484,7 @@ void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
 
 	DisplayMan &dispMan = *_vm->_displayMan;
 	dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(pressingEye ? kDMGraphicIdxEyeForObjectDescription : kDMGraphicIdxArrowForChestContent),
-							   boxArrowOrEye, k8_byteWidth, kDMColorRed, 9);
+	                       boxArrowOrEye, k8_byteWidth, kDMColorRed, 9);
 }
 
 void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
@@ -504,9 +509,9 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	else {
 		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
 		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPanelEmpty),
-								   _boxPanel, k72_byteWidth, kDMColorRed, 73);
+		                       _boxPanel, k72_byteWidth, kDMColorRed, 73);
 		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxObjectDescCircle),
-								   boxObjectDescCircle, k16_byteWidth, kDMColorDarkestGray, 27);
+		                       boxObjectDescCircle, k16_byteWidth, kDMColorDarkestGray, 27);
 
 		Common::String descString;
 		Common::String str;
@@ -522,9 +527,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			}
 
 			descString = str;
-		} else if ((thingType == kDMThingTypePotion)
-				   && (iconIndex != kDMIconIndicePotionWaterFlask)
-				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), kDMSkillPriest) > 1)) {
+		} else if ((thingType == kDMThingTypePotion) && (iconIndex != kDMIconIndicePotionWaterFlask) && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), kDMSkillPriest) > 1)) {
 			str = ('_' + ((Potion *)rawThingPtr)->getPower() / 40);
 			str += " ";
 			str += objMan._objectNames[iconIndex];
@@ -536,7 +539,6 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		textMan.printToViewport(134, 68, kDMColorLightestGray, descString.c_str());
 		drawIconToViewport(iconIndex, 111, 59);
 
-
 		_objDescTextYpos = 87;
 
 		uint16 potentialAttribMask = 0;
@@ -546,9 +548,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			potentialAttribMask = kDMDescriptionMaskCursed | kDMDescriptionMaskPoisoned | kDMDescriptionMaskBroken;
 			Weapon *weapon = (Weapon *)rawThingPtr;
 			actualAttribMask = (weapon->getCursed() << 3) | (weapon->getPoisoned() << 1) | (weapon->getBroken() << 2);
-			if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit)
-				&& (iconIndex <= kDMIconIndiceWeaponTorchLit)
-				&& (weapon->getChargeCount() == 0)) {
+			if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit) && (iconIndex <= kDMIconIndiceWeaponTorchLit) && (weapon->getChargeCount() == 0)) {
 
 				switch (_vm->getGameLanguage()) { // localized
 				default:
@@ -704,7 +704,7 @@ void InventoryMan::setDungeonViewPalette() {
 			while (slotIndex--) {
 				Thing slotThing = curChampion->_slots[slotIndex];
 				if ((_vm->_objectMan->getObjectType(slotThing) >= kDMIconIndiceWeaponTorchUnlit) &&
-					(_vm->_objectMan->getObjectType(slotThing) <= kDMIconIndiceWeaponTorchLit)) {
+				    (_vm->_objectMan->getObjectType(slotThing) <= kDMIconIndiceWeaponTorchLit)) {
 					Weapon *curWeapon = (Weapon *)dungeon.getThingData(slotThing);
 					*curTorchLightPower = curWeapon->getChargeCount();
 				} else {
@@ -882,20 +882,19 @@ void InventoryMan::drawStopPressingEye() {
 
 void InventoryMan::clickOnMouth() {
 	static int16 foodAmounts[8] = {
-		500,    /* Apple */
-		600,    /* Corn */
-		650,    /* Bread */
-		820,    /* Cheese */
-		550,    /* Screamer Slice */
-		350,    /* Worm round */
-		990,    /* Drumstick / Shank */
-		1400    /* Dragon steak */
+	    500, /* Apple */
+	    600, /* Corn */
+	    650, /* Bread */
+	    820, /* Cheese */
+	    550, /* Screamer Slice */
+	    350, /* Worm round */
+	    990, /* Drumstick / Shank */
+	    1400 /* Dragon steak */
 	};
 
 	DisplayMan &display = *_vm->_displayMan;
 	ChampionMan &championMan = *_vm->_championMan;
 	DungeonMan &dungeon = *_vm->_dungeonMan;
-
 
 	if (championMan._leaderEmptyHanded) {
 		if (_panelContent == kDMPanelContentFoodWaterPoisoned)
@@ -984,16 +983,14 @@ void InventoryMan::clickOnMouth() {
 			newEvent._Bu._defense = adjustedPotionPower;
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			setFlag(curChampion->_attributes, kDMAttributeStatusBox);
-			}
-			break;
+		} break;
 		case kDMPotionTypeEe: {
 			uint16 mana = MIN(900, (curChampion->_currMana + adjustedPotionPower) + (adjustedPotionPower - 8));
 			if (mana > curChampion->_maxMana)
 				mana -= (mana - MAX(curChampion->_currMana, curChampion->_maxMana)) >> 1;
 
 			curChampion->_currMana = mana;
-			}
-			break;
+		} break;
 		case kDMPotionTypeVi: {
 			uint16 healWoundIterationCount = MAX(1, (((Potion *)junkData)->getPower() / 42));
 			curChampion->_currHealth += curChampion->_maxHealth / counter;
@@ -1008,8 +1005,7 @@ void InventoryMan::clickOnMouth() {
 				} while ((wounds == curChampion->_wounds) && --counter); /* Loop until at least one wound is healed or there are no more heal iterations */
 			}
 			setFlag(curChampion->_attributes, kDMAttributeLoad | kDMAttributeWounds);
-			}
-			break;
+		} break;
 		case kDMPotionTypeWaterFlask:
 			curChampion->_water = MIN(curChampion->_water + 1600, 2048);
 			break;
@@ -1093,4 +1089,4 @@ void InventoryMan::clickOnEye() {
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 }
 
-}
+} // namespace DM

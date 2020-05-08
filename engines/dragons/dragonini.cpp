@@ -19,14 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "dragons/dragonini.h"
 #include "common/debug.h"
 #include "common/memstream.h"
-#include "dragons/dragonini.h"
 
 namespace Dragons {
 
 #define DRAGON_INI_STRUCT_SIZE 0x22
-DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive): _bigfileArchive(bigfileArchive), _dragonINI(0) {
+DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive) : _bigfileArchive(bigfileArchive), _dragonINI(0) {
 	reset();
 }
 
@@ -69,7 +69,7 @@ void DragonINIResource::reset() {
 }
 
 DragonINI *DragonINIResource::getRecord(uint16 index) {
-	assert (index < _count);
+	assert(index < _count);
 
 	return &_dragonINI[index];
 }
@@ -81,6 +81,5 @@ void DragonINIResource::setFlickerRecord(DragonINI *dragonINI) {
 bool DragonINIResource::isFlicker(uint16 index) {
 	return _flickerINI && _flickerINI->id == index;
 }
-
 
 } // End of namespace Dragons

@@ -46,33 +46,30 @@ void SceneScriptBB09::InitializeScene() {
 	// kFlagBB11SadikFight is set after Sadik exits this room in Chapter 2
 	// (and his goal is set to kGoalSadikBB11Wait)
 	// this flag will be reset before Act 3, when McCoy is ambushed at the BB roof
-	if ((Global_Variable_Query(kVariableChapter) == 2
-	       && Game_Flag_Query(kFlagBB11SadikFight))
-	    || (Global_Variable_Query(kVariableChapter) > 2)
-	) {
+	if ((Global_Variable_Query(kVariableChapter) == 2 && Game_Flag_Query(kFlagBB11SadikFight)) || (Global_Variable_Query(kVariableChapter) > 2)) {
 		Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
-	Scene_Exit_Add_2D_Exit(1,  75, 450, 480, 479, 2);
+	Scene_Exit_Add_2D_Exit(1, 75, 450, 480, 479, 2);
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  20, 100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40,   0, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 50,  55, 1);
-	Ambient_Sounds_Add_Sound(kSfxRADIATR2, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxRADIATR3, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxRADIATR4, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY4,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY5,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY6,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY7,   2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN1,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN2,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE1,  5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE2,  5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBBMOVE3,  5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT1,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHAUNT2,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 20, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 50, 55, 1);
+	Ambient_Sounds_Add_Sound(kSfxRADIATR2, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRADIATR3, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxRADIATR4, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY7, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT1, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT2, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
 
 	// Original: // Don't kill Sadik yet, game cannot continue.
 	// This is an original bug - fixed in ScummVM in Sadik's AI script (method ShotAtAndHit() )

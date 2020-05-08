@@ -61,11 +61,9 @@ double SampleRateConverter::getSupportedOutputSampleRate(double desiredSampleRat
 #endif
 }
 
-SampleRateConverter::SampleRateConverter(Synth &useSynth, double targetSampleRate, SamplerateConversionQuality useQuality) :
-	synthInternalToTargetSampleRateRatio(SAMPLE_RATE / targetSampleRate),
-	useSynthDelegate(useSynth.getStereoOutputSampleRate() == targetSampleRate),
-	srcDelegate(useSynthDelegate ? &useSynth : createDelegate(useSynth, targetSampleRate, useQuality))
-{}
+SampleRateConverter::SampleRateConverter(Synth &useSynth, double targetSampleRate, SamplerateConversionQuality useQuality) : synthInternalToTargetSampleRateRatio(SAMPLE_RATE / targetSampleRate),
+                                                                                                                             useSynthDelegate(useSynth.getStereoOutputSampleRate() == targetSampleRate),
+                                                                                                                             srcDelegate(useSynthDelegate ? &useSynth : createDelegate(useSynth, targetSampleRate, useQuality)) {}
 
 SampleRateConverter::~SampleRateConverter() {
 	if (!useSynthDelegate) {

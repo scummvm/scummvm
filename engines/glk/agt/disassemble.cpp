@@ -36,7 +36,6 @@ void dbgprintf(const char *fmt, ...) {
 	debugout(buff);
 }
 
-
 static void print_msg(descr_ptr dptr) {
 	int j;
 	descr_line *txt;
@@ -51,14 +50,13 @@ static void print_msg(descr_ptr dptr) {
 	free_descr(txt);
 }
 
-
 static char *getname(int inum)
 /* Name should be 20 chars or less */
 {
-	if (inum == 0) return rstrdup("* 0 *");
+	if (inum == 0)
+		return rstrdup("* 0 *");
 	return objname(inum);
 }
-
 
 extern integer dobj, iobj, actor;
 
@@ -93,14 +91,20 @@ void print_special_obj(int i)
 	rfree(s);
 }
 
-#define printval(str,index,ptr) {dbgprintf("[%s%d",str,index);\
-		if (ptr==NULL) dbgprintf("]");\
-		else dbgprintf("=%ld]",(long)ptr[index]);}
+#define printval(str, index, ptr)                 \
+	{                                             \
+		dbgprintf("[%s%d", str, index);           \
+		if (ptr == NULL)                          \
+			dbgprintf("]");                       \
+		else                                      \
+			dbgprintf("=%ld]", (long)ptr[index]); \
+	}
 
 int argout(int dtype, int dval, int optype) {
 	char *s;
 
-	if (dtype & AGT_VAR) dtype = AGT_VAR;
+	if (dtype & AGT_VAR)
+		dtype = AGT_VAR;
 
 	if ((optype & 3) == 1) /* variable */
 		dtype = AGT_VAR;
@@ -110,7 +114,7 @@ int argout(int dtype, int dval, int optype) {
 		if (optype == 2)
 			print_special_obj(0); /* NOUN */
 		else
-			print_special_obj(1);  /* OBJECT */
+			print_special_obj(1); /* OBJECT */
 		return 0;
 	}
 
@@ -133,20 +137,21 @@ int argout(int dtype, int dval, int optype) {
 				print_tos();
 			else
 				printval("Var", dval, dbgvarptr);
-		} else switch (dtype) {
+		} else
+			switch (dtype) {
 			case AGT_TIME:
 				dbgprintf("%2d:%2d", dval / 100, dval % 100);
 				break;
-			case AGT_NUM:  /* Numeric */
+			case AGT_NUM: /* Numeric */
 				dbgprintf("%d", dval);
 				break;
-			case AGT_FLAG:  /* Flag */
+			case AGT_FLAG: /* Flag */
 				printval("Flg", dval, dbgflagptr);
 				break;
 			case AGT_ROOMFLAG: /* Roomflag */
 				dbgprintf("RoomFlag%d", dval);
 				break;
-			case AGT_QUEST:  /* Question */
+			case AGT_QUEST: /* Question */
 				if (dval <= MaxQuestion && dval >= 1 && question != NULL) {
 					dbgprintf("\nQ%d:%s\n", dval, question[dval - 1]);
 					dbgprintf("[A:%s]", answer[dval - 1]);
@@ -187,7 +192,8 @@ int argout(int dtype, int dval, int optype) {
 			case AGT_DIR: /* Direction */
 				if (dval >= 1 && dval <= 13)
 					dbgprintf("%s", exitname[dval - 1]);
-				else dbgprintf("ILL_DIR(%d)", dval);
+				else
+					dbgprintf("ILL_DIR(%d)", dval);
 				break;
 			case AGT_SUB: /* Subroutine */
 				dbgprintf("Subroutine %d", dval);
@@ -199,7 +205,7 @@ int argout(int dtype, int dval, int optype) {
 			case AGT_FONT: /* Font */
 				dbgprintf("Font #%d", dval);
 				break;
-			case AGT_SONG:  /* Song */
+			case AGT_SONG: /* Song */
 				dbgprintf("Song #%d", dval);
 				break;
 			case AGT_OBJFLAG:
@@ -233,17 +239,15 @@ int argout(int dtype, int dval, int optype) {
 	return 1;
 }
 
-
 void debug_newline(integer op, rbool first_nl) {
 	rbool early_nl;
 
-	if (!dbg_nomsg) return;
-	early_nl = (op == 1008 || op == 1027 || op == 1083 || op == 1105
-	            || (op >= 1126 && op <= 1131));
+	if (!dbg_nomsg)
+		return;
+	early_nl = (op == 1008 || op == 1027 || op == 1083 || op == 1105 || (op >= 1126 && op <= 1131));
 	if (early_nl == first_nl)
 		debugout("\n");
 }
-
 
 void debug_cmd_out(int ip, integer op, int arg1, int arg2, int optype) {
 	int j;
@@ -257,16 +261,18 @@ void debug_cmd_out(int ip, integer op, int arg1, int arg2, int optype) {
 	if (opdata == &illegal_def)
 		dbgprintf("ILLEGAL %d\n", op);
 	else {
-		if (op >= END_ACT) dbgprintf("!"); /* "Terminal" Actions */
-		else if (op <= MAX_COND) dbgprintf("?"); /* Condition */
-		if (op == 1063) { /* RandomMessage needs special handling */
+		if (op >= END_ACT)
+			dbgprintf("!"); /* "Terminal" Actions */
+		else if (op <= MAX_COND)
+			dbgprintf("?"); /* Condition */
+		if (op == 1063) {   /* RandomMessage needs special handling */
 			save_dbg_nomsg = dbg_nomsg;
 			dbg_nomsg = 1;
 		}
 		dbgprintf("%s", opdata->opcode);
 		for (j = 0; j < opdata->argnum; j++) {
 			dbgprintf("\t");
-			argout(j == 0 ? opdata->arg1 : opdata->arg2 , j == 0 ? arg1 : arg2,
+			argout(j == 0 ? opdata->arg1 : opdata->arg2, j == 0 ? arg1 : arg2,
 			       optype >> 2);
 			optype <<= 2;
 		}
@@ -276,14 +282,14 @@ void debug_cmd_out(int ip, integer op, int arg1, int arg2, int optype) {
 	debug_newline(op, 1);
 }
 
-
 void debug_head(int i) {
 	int v, w, a;
 
 	v = verb_code(command[i].verbcmd);
 	if (v >= BASE_VERB && v < BASE_VERB + DUMB_VERB && syntbl[synlist[v]] != 0)
 		w = syntbl[synlist[v]];
-	else w = command[i].verbcmd;
+	else
+		w = command[i].verbcmd;
 	if (command[i].actor > 0) {
 		dbgprintf("CMD %d: ", i);
 		a = command[i].actor;
@@ -310,7 +316,6 @@ void debug_head(int i) {
 	if (command[i].obj_adj != 0)
 		dbgprintf("%s ", gdict(command[i].obj_adj));
 	dbgprintf("%s\n", gdict(command[i].objcmd));
-
 }
 
 } // End of namespace AGT

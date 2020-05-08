@@ -23,11 +23,11 @@
 #ifndef PRINCE_RESOURCE_H
 #define PRINCE_RESOURCE_H
 
-#include "common/stream.h"
-#include "common/memstream.h"
 #include "common/archive.h"
 #include "common/debug-channels.h"
+#include "common/memstream.h"
 #include "common/ptr.h"
+#include "common/stream.h"
 
 #include "prince/decompress.h"
 
@@ -37,7 +37,7 @@ namespace Resource {
 
 Common::SeekableReadStream *getDecompressedStream(Common::SeekableReadStream *stream);
 
-template <typename T>
+template<typename T>
 bool loadFromStream(T &resource, Common::SeekableReadStream &stream) {
 	return resource.loadStream(stream);
 }
@@ -56,7 +56,7 @@ bool loadResource(T *resource, const char *resourceName, bool required) {
 	return loadFromStream(*resource, *stream);
 }
 
-template <typename T>
+template<typename T>
 bool loadResource(Common::Array<T> &array, Common::SeekableReadStream &stream, bool required = true) {
 	T t;
 	while (t.loadFromStream(stream))
@@ -65,8 +65,7 @@ bool loadResource(Common::Array<T> &array, Common::SeekableReadStream &stream, b
 	return true;
 }
 
-
-template <typename T>
+template<typename T>
 bool loadResource(Common::Array<T> &array, const char *resourceName, bool required = true) {
 	Common::SeekableReadStream *stream_(SearchMan.createReadStreamForMember(resourceName));
 	if (!stream_) {
@@ -80,7 +79,7 @@ bool loadResource(Common::Array<T> &array, const char *resourceName, bool requir
 	return loadResource(array, *stream, required);
 }
 
-template <typename T>
+template<typename T>
 bool loadResource(Common::Array<T *> &array, const char *resourceName, bool required = true) {
 
 	Common::SeekableReadStream *stream_(SearchMan.createReadStreamForMember(resourceName));
@@ -94,7 +93,7 @@ bool loadResource(Common::Array<T *> &array, const char *resourceName, bool requ
 
 	// FIXME: This is stupid. Maybe loadFromStream should be helper method that returns initialized object
 	while (true) {
-		T* t = new T();
+		T *t = new T();
 		if (!t->loadFromStream(*stream)) {
 			delete t;
 			break;
@@ -104,7 +103,7 @@ bool loadResource(Common::Array<T *> &array, const char *resourceName, bool requ
 	return true;
 }
 
-}
+} // namespace Resource
 
 } // End of namespace Prince
 

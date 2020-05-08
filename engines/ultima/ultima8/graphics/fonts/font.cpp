@@ -32,10 +32,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Font)
 Font::Font() : _highRes(false) {
 }
 
-
 Font::~Font() {
 }
-
 
 void Font::getTextSize(const Std::string &text,
                        int32 &resultwidth, int32 &resultheight,
@@ -48,14 +46,12 @@ void Font::getTextSize(const Std::string &text,
 	                          resultwidth, resultheight);
 }
 
-
 //static
 bool Font::Traits::canBreakAfter(Std::string::const_iterator &i) {
 	// It's not really relevant what we do here, because this probably will
 	// not be used at normal font sizes.
 	return true;
 }
-
 
 //static
 bool Font::SJISTraits::canBreakAfter(Std::string::const_iterator &i) {
@@ -140,7 +136,7 @@ bool Font::SJISTraits::canBreakAfter(Std::string::const_iterator &i) {
 
 	// Also don't allow breaking between roman characters
 	if (((u1 >= 'A' && u1 <= 'Z') || (u1 >= 'a' && u1 <= 'z')) &&
-	        ((u2 >= 'A' && u2 <= 'Z') || (u2 >= 'a' && u2 <= 'z'))) {
+	    ((u2 >= 'A' && u2 <= 'Z') || (u2 >= 'a' && u2 <= 'z'))) {
 		return false;
 	}
 	return true;
@@ -150,7 +146,8 @@ template<class T>
 static void findWordEnd(const Std::string &text,
                         Std::string::const_iterator &iter, bool u8specials) {
 	while (iter != text.end()) {
-		if (T::isSpace(iter, u8specials)) return;
+		if (T::isSpace(iter, u8specials))
+			return;
 		T::advance(iter);
 	}
 }
@@ -159,14 +156,12 @@ template<class T>
 static void passSpace(const Std::string &text,
                       Std::string::const_iterator &iter, bool u8specials) {
 	while (iter != text.end()) {
-		if (!T::isSpace(iter, u8specials)) return;
+		if (!T::isSpace(iter, u8specials))
+			return;
 		T::advance(iter);
 	}
 	return;
 }
-
-
-
 
 /*
   Special characters in U8:
@@ -181,9 +176,9 @@ CHECKME: any others? (page breaks for books?)
 
 template<class T>
 Std::list<PositionedText> typesetText(Font *font,
-	const Std::string &text, unsigned int &remaining, int32 width, int32 height,
-	Font::TextAlign align, bool u8specials, int32 &resultwidth,
-	int32 &resultheight, Std::string::size_type cursor) {
+                                      const Std::string &text, unsigned int &remaining, int32 width, int32 height,
+                                      Font::TextAlign align, bool u8specials, int32 &resultwidth,
+                                      int32 &resultheight, Std::string::size_type cursor) {
 #if 0
 	pout << "typeset (" << width << "," << height << ") : "
 	     << text << Std::endl;
@@ -202,7 +197,8 @@ Std::list<PositionedText> typesetText(Font *font,
 
 	Std::string::const_iterator iter = text.begin();
 	Std::string::const_iterator cursoriter = text.begin();
-	if (cursor != Std::string::npos) cursoriter += cursor;
+	if (cursor != Std::string::npos)
+		cursoriter += cursor;
 	Std::string::const_iterator curlinestart = text.begin();
 
 	bool breakhere = false;
@@ -218,7 +214,7 @@ Std::list<PositionedText> typesetText(Font *font,
 			line._text = curline;
 			line._cursor = Std::string::npos;
 			if (cursor != Std::string::npos && cursoriter >= curlinestart &&
-			        (cursoriter < iter || (!breakhere && cursoriter == iter))) {
+			    (cursoriter < iter || (!breakhere && cursoriter == iter))) {
 				line._cursor = cursoriter - curlinestart;
 				if (line._dims.w == 0) {
 					stringwidth = line._dims.w = 2;
@@ -226,7 +222,8 @@ Std::list<PositionedText> typesetText(Font *font,
 			}
 			lines.push_back(line);
 
-			if (stringwidth > totalwidth) totalwidth = stringwidth;
+			if (stringwidth > totalwidth)
+				totalwidth = stringwidth;
 			totalheight += font->getBaselineSkip();
 
 			curline = "";
@@ -267,7 +264,8 @@ Std::list<PositionedText> typesetText(Font *font,
 					spaces.append(" ");
 				}
 			}
-			if (foundLF) continue;
+			if (foundLF)
+				continue;
 
 			// process word
 			Std::string::const_iterator endofnextword = iter;
@@ -286,7 +284,7 @@ Std::list<PositionedText> typesetText(Font *font,
 					// FIXME: this is rather inefficient; binary search?
 					// FIXME: clean up...
 					iter = nextword;
-					Std::string::const_iterator saveiter = nextword;	// Dummy initialization
+					Std::string::const_iterator saveiter = nextword; // Dummy initialization
 					Std::string::const_iterator saveiter_fail;
 					Std::string curline_fail;
 					newline = spaces;
@@ -301,7 +299,8 @@ Std::list<PositionedText> typesetText(Font *font,
 						curline_fail = newline;
 						saveiter_fail = iter;
 
-						if (iter == text.end()) break;
+						if (iter == text.end())
+							break;
 
 						breakok = T::canBreakAfter(iter);
 
@@ -333,7 +332,8 @@ Std::list<PositionedText> typesetText(Font *font,
 		width = totalwidth;
 	}
 
-	if (width != 0) totalwidth = width;
+	if (width != 0)
+		totalwidth = width;
 
 	// adjust total height
 	totalheight -= font->getBaselineSkip();
@@ -365,21 +365,16 @@ Std::list<PositionedText> typesetText(Font *font,
 	return lines;
 }
 
-
 // explicit instantiations
-template
-Std::list<PositionedText> typesetText<Font::Traits>
-(Font *font, const Std::string &text,
- unsigned int &remaining, int32 width, int32 height,
- Font::TextAlign align, bool u8specials,
- int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
+template Std::list<PositionedText> typesetText<Font::Traits>(Font *font, const Std::string &text,
+                                                             unsigned int &remaining, int32 width, int32 height,
+                                                             Font::TextAlign align, bool u8specials,
+                                                             int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
 
-template
-Std::list<PositionedText> typesetText<Font::SJISTraits>
-(Font *font, const Std::string &text,
- unsigned int &remaining, int32 width, int32 height,
- Font::TextAlign align, bool u8specials,
- int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
+template Std::list<PositionedText> typesetText<Font::SJISTraits>(Font *font, const Std::string &text,
+                                                                 unsigned int &remaining, int32 width, int32 height,
+                                                                 Font::TextAlign align, bool u8specials,
+                                                                 int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

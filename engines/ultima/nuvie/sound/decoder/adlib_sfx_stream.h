@@ -23,16 +23,15 @@
 #ifndef NUVIE_SOUND_MIXER_DECODER_ADLIB_SFX_STREAM_H
 #define NUVIE_SOUND_MIXER_DECODER_ADLIB_SFX_STREAM_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/sound/adplug/opl_class.h"
 #include "audio/audiostream.h"
+#include "ultima/nuvie/sound/adplug/opl_class.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 class OriginFXAdLibDriver;
 class Configuration;
-
 
 using Std::string;
 
@@ -79,8 +78,8 @@ public:
 	uint32 getLengthInMsec() {
 		return (uint32)(duration / (getRate() / 1000.0f));
 	}
-protected:
 
+protected:
 	OplClass *opl;
 	OriginFXAdLibDriver *driver;
 	uint32 duration;

@@ -54,8 +54,8 @@ public:
 
 } // End of namespace Shared
 
-using Shared::Rect;
 using Shared::Point;
+using Shared::Rect;
 using Shared::TextPoint;
 using Shared::TextRect;
 

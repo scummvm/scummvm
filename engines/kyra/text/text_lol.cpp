@@ -24,8 +24,8 @@
 
 #include "kyra/text/text_lol.h"
 #include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/screen_lol.h"
 #include "kyra/sound/sound.h"
 
 #include "common/system.h"
@@ -33,7 +33,7 @@
 namespace Kyra {
 
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL) : TextDisplayer_rpg(engine, screenLoL),
-	_vm(engine), _screen(screenLoL), _scriptTextParameter(0) {
+                                                                                 _vm(engine), _screen(screenLoL), _scriptTextParameter(0) {
 
 	memset(_stringParameters, 0, 15 * sizeof(char *));
 	_buffer = new char[600];
@@ -174,9 +174,9 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 }
 
 void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
-	static const uint8 textColors256[] = { 0xFE, 0xA2, 0x84, 0x97, 0x9F };
-	static const uint8 textColors16[] = { 0x33, 0xAA, 0x88, 0x55, 0x99 };
-	static const uint8 soundEffect[] = { 0x0B, 0x00, 0x2B, 0x1B, 0x00 };
+	static const uint8 textColors256[] = {0xFE, 0xA2, 0x84, 0x97, 0x9F};
+	static const uint8 textColors16[] = {0x33, 0xAA, 0x88, 0x55, 0x99};
+	static const uint8 soundEffect[] = {0x0B, 0x00, 0x2B, 0x1B, 0x00};
 
 	const uint8 *textColors = _vm->gameFlags().use16ColorMode ? textColors16 : textColors256;
 

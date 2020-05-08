@@ -28,7 +28,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit		//Needed for IRIX's unistd.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit //Needed for IRIX's unistd.h
 #define FORBIDDEN_SYMBOL_EXCEPTION_random
 #define FORBIDDEN_SYMBOL_EXCEPTION_srandom
 
@@ -47,9 +47,9 @@
 #else
 #include <dirent.h>
 #endif
-#include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdio.h>
 #include <unistd.h>
 
 #ifdef __OS2__
@@ -111,8 +111,8 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 	// slash.
 	if (!(_path.size() == 3 && _path.hasSuffix(":/")))
 #endif
-	// Normalize the path (that is, remove unneeded slashes etc.)
-	_path = Common::normalizePath(_path, '/');
+		// Normalize the path (that is, remove unneeded slashes etc.)
+		_path = Common::normalizePath(_path, '/');
 	_displayName = Common::lastPathComponent(_path, '/');
 
 	// TODO: should we turn relative paths into absolute ones?
@@ -169,7 +169,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 				char drive_root[] = "A:/";
 				drive_root[0] += i;
 
-                POSIXFilesystemNode *entry = new POSIXFilesystemNode();
+				POSIXFilesystemNode *entry = new POSIXFilesystemNode();
 				entry->_isDirectory = true;
 				entry->_isValid = true;
 				entry->_path = drive_root;
@@ -268,7 +268,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 
 		// Honor the chosen mode
 		if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
-			(mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
+		    (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
 
 		myList.push_back(new POSIXFilesystemNode(entry));
@@ -280,12 +280,12 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 
 AbstractFSNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
-		return 0;	// The filesystem root has no parent
+		return 0; // The filesystem root has no parent
 
 #ifdef __OS2__
 	if (_path.size() == 3 && _path.hasSuffix(":/"))
 		// This is a root directory of a drive
-		return makeNode("/");   // return a virtual root for a list of drives
+		return makeNode("/"); // return a virtual root for a list of drives
 #endif
 #ifdef PSP2
 	if (_path.hasSuffix(":"))
@@ -297,7 +297,7 @@ AbstractFSNode *POSIXFilesystemNode::getParent() const {
 
 	// Strip of the last component. We make use of the fact that at this
 	// point, _path is guaranteed to be normalized
-	while (end > start && *(end-1) != '/')
+	while (end > start && *(end - 1) != '/')
 		end--;
 
 	if (end == start) {

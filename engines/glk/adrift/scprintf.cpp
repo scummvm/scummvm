@@ -47,7 +47,7 @@ static const sc_char GREATERTHAN = '>';
 static const sc_char PERCENT = '%';
 static const sc_char *const ENTITY_LESSTHAN = "&lt;",
                             *const ENTITY_GREATERTHAN = "&gt;",
-                                   *const ENTITY_PERCENT = "+percent+";
+                            *const ENTITY_PERCENT = "+percent+";
 enum {
 	ENTITY_LENGTH = 4,
 	PERCENT_LENGTH = 9
@@ -57,7 +57,6 @@ static const sc_char *const WHITESPACE = "\t\n\v\f\r ";
 
 /* Trace flag, set before running. */
 static sc_bool pf_trace = FALSE;
-
 
 /*
  * Table tying HTML-like tag strings to enumerated tag types.  Since it's
@@ -72,19 +71,7 @@ struct sc_html_tags_t {
 };
 
 static const sc_html_tags_t HTML_TAGS_TABLE[] = {
-	{"bgcolour", 8, SC_TAG_BGCOLOR}, {"bgcolor", 7, SC_TAG_BGCOLOR},
-	{"waitkey", 7, SC_TAG_WAITKEY},
-	{"center", 6, SC_TAG_CENTER}, {"/center", 7, SC_TAG_ENDCENTER},
-	{"centre", 6, SC_TAG_CENTER}, {"/centre", 7, SC_TAG_ENDCENTER},
-	{"right", 5, SC_TAG_RIGHT}, {"/right", 6, SC_TAG_ENDRIGHT},
-	{"font", 4, SC_TAG_FONT}, {"/font", 5, SC_TAG_ENDFONT},
-	{"wait", 4, SC_TAG_WAIT}, {"cls", 3, SC_TAG_CLS},
-	{"i", 1, SC_TAG_ITALICS}, {"/i", 2, SC_TAG_ENDITALICS},
-	{"b", 1, SC_TAG_BOLD}, {"/b", 2, SC_TAG_ENDBOLD},
-	{"u", 1, SC_TAG_UNDERLINE}, {"/u", 2, SC_TAG_ENDUNDERLINE},
-	{"c", 1, SC_TAG_COLOR}, {"/c", 2, SC_TAG_ENDCOLOR},
-	{NULL, 0, SC_TAG_UNKNOWN}
-};
+    {"bgcolour", 8, SC_TAG_BGCOLOR}, {"bgcolor", 7, SC_TAG_BGCOLOR}, {"waitkey", 7, SC_TAG_WAITKEY}, {"center", 6, SC_TAG_CENTER}, {"/center", 7, SC_TAG_ENDCENTER}, {"centre", 6, SC_TAG_CENTER}, {"/centre", 7, SC_TAG_ENDCENTER}, {"right", 5, SC_TAG_RIGHT}, {"/right", 6, SC_TAG_ENDRIGHT}, {"font", 4, SC_TAG_FONT}, {"/font", 5, SC_TAG_ENDFONT}, {"wait", 4, SC_TAG_WAIT}, {"cls", 3, SC_TAG_CLS}, {"i", 1, SC_TAG_ITALICS}, {"/i", 2, SC_TAG_ENDITALICS}, {"b", 1, SC_TAG_BOLD}, {"/b", 2, SC_TAG_ENDBOLD}, {"u", 1, SC_TAG_UNDERLINE}, {"/u", 2, SC_TAG_ENDUNDERLINE}, {"c", 1, SC_TAG_COLOR}, {"/c", 2, SC_TAG_ENDCOLOR}, {NULL, 0, SC_TAG_UNKNOWN}};
 
 /*
  * Printfilter structure definition.  It defines a buffer for output,
@@ -102,7 +89,6 @@ struct sc_filter_s {
 };
 typedef sc_filter_s sc_filter_t;
 
-
 /*
  * pf_is_valid()
  *
@@ -111,7 +97,6 @@ typedef sc_filter_s sc_filter_t;
 static sc_bool pf_is_valid(sc_filterref_t filter) {
 	return filter && filter->magic == PRINTFILTER_MAGIC;
 }
-
 
 /*
  * pf_create()
@@ -129,7 +114,7 @@ sc_filterref_t pf_create(void) {
 
 		/* Compare table lengths with string lengths. */
 		for (entry = HTML_TAGS_TABLE; entry->name; entry++) {
-			if (entry->length != (sc_int) strlen(entry->name)) {
+			if (entry->length != (sc_int)strlen(entry->name)) {
 				sc_fatal("pf_create:"
 				         " table string length is wrong for \"%s\"\n",
 				         entry->name);
@@ -152,7 +137,6 @@ sc_filterref_t pf_create(void) {
 	return filter;
 }
 
-
 /*
  * pf_destroy()
  *
@@ -166,7 +150,6 @@ void pf_destroy(sc_filterref_t filter) {
 	memset(filter, 0xaa, sizeof(*filter));
 	sc_free(filter);
 }
-
 
 /*
  * pf_interpolate_vars()
@@ -198,7 +181,7 @@ static sc_char *pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars)
 	/* Run through the string looking for variables. */
 	marker = string;
 	for (cursor = (const sc_char *)strchr(marker, PERCENT);
-	        cursor; cursor = (const sc_char *)strchr(marker, PERCENT)) {
+	     cursor; cursor = (const sc_char *)strchr(marker, PERCENT)) {
 		sc_int type;
 		sc_vartype_t vt_rvalue;
 		sc_char close;
@@ -224,9 +207,7 @@ static sc_char *pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars)
 		 * Get the variable name, and from that, the value.  If we encounter a
 		 * mismatched '%' or unknown variable, skip it.
 		 */
-		if (sscanf(cursor, "%%%[^%]%c", name, &close) != 2
-		        || close != PERCENT
-		        || !var_get(vars, name, &type, &vt_rvalue)) {
+		if (sscanf(cursor, "%%%[^%]%c", name, &close) != 2 || close != PERCENT || !var_get(vars, name, &type, &vt_rvalue)) {
 			buffer = (sc_char *)sc_realloc(buffer, strlen(buffer) + 2);
 			strncat(buffer, cursor, 1);
 			marker = cursor + 1;
@@ -280,7 +261,6 @@ static sc_char *pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars)
 	return buffer;
 }
 
-
 /*
  * pf_replace_alr()
  *
@@ -307,7 +287,7 @@ static sc_bool pf_replace_alr(const sc_char *string, sc_char **buffer, sc_int al
 	/* Run through the marker string looking for things to replace. */
 	marker = string;
 	for (cursor = strstr(marker, original);
-	        cursor; cursor = strstr(marker, original)) {
+	     cursor; cursor = strstr(marker, original)) {
 		/* Optimize by retrieving the replacement string only on demand. */
 		if (!replacement) {
 			vt_key[2].string = "Replacement";
@@ -325,7 +305,7 @@ static sc_bool pf_replace_alr(const sc_char *string, sc_char **buffer, sc_int al
 			strcat(buffer_, replacement);
 		} else {
 			buffer_ = (sc_char *)sc_realloc(buffer_, strlen(buffer_) +
-			                                cursor - marker + strlen(replacement) + 1);
+			                                             cursor - marker + strlen(replacement) + 1);
 			strncat(buffer_, marker, cursor - marker);
 			strcat(buffer_, replacement);
 		}
@@ -345,7 +325,6 @@ static sc_bool pf_replace_alr(const sc_char *string, sc_char **buffer, sc_int al
 	return replacement != NULL;
 }
 
-
 /*
  * pf_replace_alrs()
  *
@@ -354,7 +333,7 @@ static sc_bool pf_replace_alr(const sc_char *string, sc_char **buffer, sc_int al
  * otherwise returns NULL.
  */
 static sc_char *pf_replace_alrs(const sc_char *string, sc_prop_setref_t bundle,
-		sc_bool alr_applied[], sc_int alr_count) {
+                                sc_bool alr_applied[], sc_int alr_count) {
 	sc_int index_;
 	sc_char *buffer1, *buffer2, **buffer;
 	const sc_char *marker;
@@ -424,7 +403,6 @@ static sc_char *pf_replace_alrs(const sc_char *string, sc_prop_setref_t bundle,
 		return NULL;
 }
 
-
 /*
  * pf_output_text()
  *
@@ -436,9 +414,7 @@ static void pf_output_text(const sc_char *string) {
 	sc_char *buffer;
 
 	/* Optimize away the allocation and copy if possible. */
-	if (!(strstr(string, ENTITY_LESSTHAN)
-	        || strstr(string, ENTITY_GREATERTHAN)
-	        || strstr(string, ENTITY_PERCENT))) {
+	if (!(strstr(string, ENTITY_LESSTHAN) || strstr(string, ENTITY_GREATERTHAN) || strstr(string, ENTITY_PERCENT))) {
 		if_print_string(string);
 		return;
 	}
@@ -451,7 +427,7 @@ static void pf_output_text(const sc_char *string) {
 	 */
 	buffer = (sc_char *)sc_malloc(strlen(string) + 1);
 	for (index_ = 0, b_index = 0;
-	        string[index_] != NUL; index_++, b_index++) {
+	     string[index_] != NUL; index_++, b_index++) {
 		if (sc_strncasecmp(string + index_,
 		                   ENTITY_LESSTHAN, ENTITY_LENGTH) == 0) {
 			buffer[b_index] = LESSTHAN;
@@ -473,7 +449,6 @@ static void pf_output_text(const sc_char *string) {
 	if_print_string(buffer);
 	sc_free(buffer);
 }
-
 
 /*
  * pf_output_tag()
@@ -500,8 +475,7 @@ static void pf_output_tag(const sc_char *contents) {
 			sc_char next;
 
 			next = contents[entry->length];
-			if (next == NUL || sc_isspace(next)
-			        || (entry->tag == SC_TAG_BGCOLOR && next == '='))
+			if (next == NUL || sc_isspace(next) || (entry->tag == SC_TAG_BGCOLOR && next == '='))
 				break;
 		}
 	}
@@ -524,7 +498,6 @@ static void pf_output_tag(const sc_char *contents) {
 	if_print_tag(entry->tag, argument);
 }
 
-
 /*
  * pf_output_untagged()
  *
@@ -541,10 +514,7 @@ static void pf_output_untagged(const sc_char *string) {
 	 * here both for tags and for entities; only if neither occurs is it safe
 	 * to output the string directly.
 	 */
-	if (!strchr(string, LESSTHAN)
-	        && !(strstr(string, ENTITY_LESSTHAN)
-	             || strstr(string, ENTITY_GREATERTHAN)
-	             || strstr(string, ENTITY_PERCENT))) {
+	if (!strchr(string, LESSTHAN) && !(strstr(string, ENTITY_LESSTHAN) || strstr(string, ENTITY_GREATERTHAN) || strstr(string, ENTITY_PERCENT))) {
 		if_print_string(string);
 		return;
 	}
@@ -559,7 +529,7 @@ static void pf_output_untagged(const sc_char *string) {
 	/* Run through the string looking for <...> tags. */
 	marker = string;
 	for (cursor = (const sc_char *)strchr(marker, LESSTHAN);
-	        cursor; cursor = (const sc_char *)strchr(marker, LESSTHAN)) {
+	     cursor; cursor = (const sc_char *)strchr(marker, LESSTHAN)) {
 		sc_char close;
 
 		/* Handle characters up to the tag start; untagged text. */
@@ -578,8 +548,7 @@ static void pf_output_untagged(const sc_char *string) {
 		 * fails, allow the remainder of the line to be delivered as a tag;
 		 * unknown, probably.
 		 */
-		if (sscanf(cursor, "<%[^>]%c", contents, &close) != 2
-		        || close != GREATERTHAN) {
+		if (sscanf(cursor, "<%[^>]%c", contents, &close) != 2 || close != GREATERTHAN) {
 			if (sscanf(cursor, "<%[^>]", contents) != 1) {
 				sc_error("pf_output_untagged: mismatched '%c'\n", LESSTHAN);
 				if_print_character(LESSTHAN);
@@ -599,7 +568,6 @@ static void pf_output_untagged(const sc_char *string) {
 	pf_output_text(marker);
 	sc_free(temporary);
 }
-
 
 /*
  * pf_filter_internal()
@@ -671,7 +639,7 @@ static sc_char *pf_filter_internal(const sc_char *string, sc_var_setref_t vars, 
 		initial = current;
 
 		for (inner_iteration = 0;
-		        inner_iteration < ITERATION_LIMIT; inner_iteration++) {
+		     inner_iteration < ITERATION_LIMIT; inner_iteration++) {
 			/*
 			 * Interpolate variables.  If any changes were made, advance current
 			 * to the interpolated version, and free the old current if required.
@@ -724,7 +692,6 @@ static sc_char *pf_filter_internal(const sc_char *string, sc_var_setref_t vars, 
 	return current;
 }
 
-
 /*
  * pf_filter()
  *
@@ -746,7 +713,6 @@ sc_char *pf_filter(const sc_char *string, sc_var_setref_t vars, sc_prop_setref_t
 
 	return current;
 }
-
 
 /*
  * pf_filter_for_info()
@@ -770,7 +736,6 @@ sc_char *pf_filter_for_info(const sc_char *string, sc_var_setref_t vars) {
 
 	return current;
 }
-
 
 /*
  * pf_flush()
@@ -812,7 +777,6 @@ void pf_flush(sc_filterref_t filter, sc_var_setref_t vars, sc_prop_setref_t bund
 	filter->is_muted = FALSE;
 }
 
-
 /*
  * pf_append_string()
  *
@@ -833,8 +797,7 @@ static void pf_append_string(sc_filterref_t filter, const sc_char *string) {
 		sc_int new_allocation;
 
 		/* Calculate the new malloc size, in increment chunks. */
-		new_allocation = ((required + BUFFER_GROW_INCREMENT - 1)
-		                  / BUFFER_GROW_INCREMENT) * BUFFER_GROW_INCREMENT;
+		new_allocation = ((required + BUFFER_GROW_INCREMENT - 1) / BUFFER_GROW_INCREMENT) * BUFFER_GROW_INCREMENT;
 
 		/* Grow the buffer. */
 		filter->buffer = (sc_char *)sc_realloc(filter->buffer, new_allocation);
@@ -849,7 +812,6 @@ static void pf_append_string(sc_filterref_t filter, const sc_char *string) {
 	strcat(filter->buffer, string);
 	filter->buffer_length += length;
 }
-
 
 /*
  * pf_checkpoint()
@@ -886,7 +848,6 @@ void pf_checkpoint(sc_filterref_t filter, sc_var_setref_t vars, sc_prop_setref_t
 		filter->needs_filtering = FALSE;
 	}
 }
-
 
 /*
  * pf_get_buffer()
@@ -942,7 +903,6 @@ sc_char *pf_transfer_buffer(sc_filterref_t filter) {
 		return NULL;
 }
 
-
 /*
  * pf_empty()
  *
@@ -960,7 +920,6 @@ void pf_empty(sc_filterref_t filter) {
 	filter->is_muted = FALSE;
 	filter->needs_filtering = FALSE;
 }
-
 
 /*
  * pf_buffer_string()
@@ -999,7 +958,6 @@ void pf_buffer_character(sc_filterref_t filter, sc_char character) {
 	buffer[1] = NUL;
 	pf_buffer_string(filter, buffer);
 }
-
 
 /*
  * pf_prepend_string()
@@ -1048,7 +1006,6 @@ void pf_prepend_string(sc_filterref_t filter, const sc_char *string) {
 	}
 }
 
-
 /*
  * pf_new_sentence()
  *
@@ -1061,7 +1018,6 @@ void pf_new_sentence(sc_filterref_t filter) {
 	if (!filter->is_muted)
 		filter->new_sentence = TRUE;
 }
-
 
 /*
  * pf_mute()
@@ -1080,7 +1036,6 @@ void pf_clear_mute(sc_filterref_t filter) {
 
 	filter->is_muted = FALSE;
 }
-
 
 /*
  * pf_buffer_tag()
@@ -1107,7 +1062,6 @@ void pf_buffer_tag(sc_filterref_t filter, sc_int tag) {
 		sc_error("pf_buffer_tag: invalid tag, %ld\n", tag);
 }
 
-
 /*
  * pf_strip_tags_common()
  *
@@ -1122,7 +1076,7 @@ static void pf_strip_tags_common(sc_char *string, sc_bool allow_newlines) {
 	/* Run through the string looking for <...> tags. */
 	marker = string;
 	for (cursor = strchr(marker, LESSTHAN);
-	        cursor; cursor = strchr(marker, LESSTHAN)) {
+	     cursor; cursor = strchr(marker, LESSTHAN)) {
 		sc_char *tag_end;
 
 		/* Locate tag end, and break if unterminated. */
@@ -1132,8 +1086,7 @@ static void pf_strip_tags_common(sc_char *string, sc_bool allow_newlines) {
 
 		/* If the tag is <br>, replace with newline if requested. */
 		if (allow_newlines) {
-			if (tag_end - cursor == 3
-			        && sc_strncasecmp(cursor + 1, "br", 2) == 0)
+			if (tag_end - cursor == 3 && sc_strncasecmp(cursor + 1, "br", 2) == 0)
 				*cursor++ = '\n';
 		}
 
@@ -1142,7 +1095,6 @@ static void pf_strip_tags_common(sc_char *string, sc_bool allow_newlines) {
 		marker = cursor;
 	}
 }
-
 
 /*
  * pf_strip_tags()
@@ -1158,7 +1110,6 @@ void pf_strip_tags(sc_char *string) {
 void pf_strip_tags_for_hints(sc_char *string) {
 	pf_strip_tags_common(string, TRUE);
 }
-
 
 /*
  * pf_escape()
@@ -1181,7 +1132,7 @@ sc_char *pf_escape(const sc_char *string) {
 	/* Run through the string looking for <, >, %, or other escapes. */
 	marker = string;
 	for (cursor = marker + strcspn(marker, ESCAPES);
-	        cursor[0] != NUL; cursor = marker + strcspn(marker, ESCAPES)) {
+	     cursor[0] != NUL; cursor = marker + strcspn(marker, ESCAPES)) {
 		const sc_char *escape;
 		sc_char escape_buffer[3];
 
@@ -1207,11 +1158,11 @@ sc_char *pf_escape(const sc_char *string) {
 			 */
 			escape_buffer[0] = cursor[0];
 			if (sc_strncasecmp(cursor,
-			                   ENTITY_LESSTHAN, ENTITY_LENGTH) == 0
-			        || sc_strncasecmp(cursor,
-			                          ENTITY_GREATERTHAN, ENTITY_LENGTH) == 0
-			        || sc_strncasecmp(cursor,
-			                          ENTITY_PERCENT, PERCENT_LENGTH) == 0) {
+			                   ENTITY_LESSTHAN, ENTITY_LENGTH) == 0 ||
+			    sc_strncasecmp(cursor,
+			                   ENTITY_GREATERTHAN, ENTITY_LENGTH) == 0 ||
+			    sc_strncasecmp(cursor,
+			                   ENTITY_PERCENT, PERCENT_LENGTH) == 0) {
 				escape_buffer[1] = ' ';
 				escape_buffer[2] = NUL;
 			} else
@@ -1236,7 +1187,6 @@ sc_char *pf_escape(const sc_char *string) {
 
 	return buffer;
 }
-
 
 /*
  * pf_compare_words()
@@ -1289,7 +1239,6 @@ static sc_int pf_compare_words(const sc_char *string, const sc_char *words) {
 	/* More text after the match, so it's not quite a match. */
 	return 0;
 }
-
 
 /*
  * pf_filter_input()
@@ -1406,7 +1355,6 @@ sc_char *pf_filter_input(const sc_char *string, sc_prop_setref_t bundle) {
 	/* Return the final string, or NULL if no synonym replacements. */
 	return buffer;
 }
-
 
 /*
  * pf_debug_trace()

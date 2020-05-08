@@ -112,7 +112,7 @@ void Scene1200::LaserPanel::Jumper::init(int state) {
 		break;
 	}
 
-	setDetails(1200, 12, -1, -1, 2, (SceneItem *) NULL);
+	setDetails(1200, 12, -1, -1, 2, (SceneItem *)NULL);
 }
 
 bool Scene1200::LaserPanel::Jumper::startAction(CursorType action, Event &event) {
@@ -527,30 +527,14 @@ void Scene1200::process(Event &event) {
 			break;
 		case CURSOR_USE:
 			if (cellId > 36) {
-				if ( ((cellPos.x == 3)  && (cellPos.y == 33))
-					|| ((cellPos.x == 7)  && (cellPos.y == 33))
-					|| ((cellPos.x == 33) && (cellPos.y == 41))
-					|| ((cellPos.x == 5)  && (cellPos.y == 5))
-					|| ((cellPos.x == 13) && (cellPos.y == 21))
-					|| ((cellPos.x == 17) && (cellPos.y == 21))
-					|| ((cellPos.x == 17) && (cellPos.y == 5))
-					|| ((cellPos.x == 17) && (cellPos.y == 9))
-					|| ((cellPos.x == 29) && (cellPos.y == 17))
-					|| ((cellPos.x == 33) && (cellPos.y == 17))
-					|| ((cellPos.x == 35) && (cellPos.y == 17))
-					|| ((cellPos.x == 41) && (cellPos.y == 21)) ) {
+				if (((cellPos.x == 3) && (cellPos.y == 33)) || ((cellPos.x == 7) && (cellPos.y == 33)) || ((cellPos.x == 33) && (cellPos.y == 41)) || ((cellPos.x == 5) && (cellPos.y == 5)) || ((cellPos.x == 13) && (cellPos.y == 21)) || ((cellPos.x == 17) && (cellPos.y == 21)) || ((cellPos.x == 17) && (cellPos.y == 5)) || ((cellPos.x == 17) && (cellPos.y == 9)) || ((cellPos.x == 29) && (cellPos.y == 17)) || ((cellPos.x == 33) && (cellPos.y == 17)) || ((cellPos.x == 35) && (cellPos.y == 17)) || ((cellPos.x == 41) && (cellPos.y == 21))) {
 					_laserPanel.postInit();
 					event.handled = true;
 				}
 			}
 
 			if ((cellId == 1) || (cellId == 4) || (cellId == 11) || (cellId == 14)) {
-				if ( ((cellPos.x == 3)  && (cellPos.y == 9))
-				  || ((cellPos.x == 11)  && (cellPos.y == 27))
-				  || ((cellPos.x == 17)  && (cellPos.y == 7))
-				  || ((cellPos.x == 17)  && (cellPos.y == 27))
-				  || ((cellPos.x == 17)  && (cellPos.y == 33))
-				  || (cellPos.x == 33) ) {
+				if (((cellPos.x == 3) && (cellPos.y == 9)) || ((cellPos.x == 11) && (cellPos.y == 27)) || ((cellPos.x == 17) && (cellPos.y == 7)) || ((cellPos.x == 17) && (cellPos.y == 27)) || ((cellPos.x == 17) && (cellPos.y == 33)) || (cellPos.x == 33)) {
 					switch (cellPos.x) {
 					case 3:
 						R2_GLOBALS._sceneManager.changeScene(3150);
@@ -578,8 +562,8 @@ void Scene1200::process(Event &event) {
 					SceneItem::display(1200, 8, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 					break;
 				case 9:
-						R2_GLOBALS._sceneManager.changeScene(3240);
-						break;
+					R2_GLOBALS._sceneManager.changeScene(3240);
+					break;
 				case 11:
 					if (cellPos.y == 27)
 						R2_GLOBALS._sceneManager.changeScene(3210);
@@ -691,7 +675,7 @@ void Scene1200::dispatch() {
 		//_mazeUI.draw();
 
 		if (_field416 != 0) {
-			switch(_nextCrawlDirection) {
+			switch (_nextCrawlDirection) {
 			case CRAWL_EAST:
 				R2_GLOBALS._player.setPosition(Common::Point(R2_GLOBALS._player._position.x - 2, R2_GLOBALS._player._position.y));
 				break;
@@ -727,12 +711,7 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 
 	switch (dir) {
 	case CRAWL_EAST:
-		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(200, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(200, 88)) > 36))
-			&& ( ((cellPos.x == 3) && (cellPos.y == 33) && (_field418 != 4))
-				|| ((cellPos.x == 13) && (cellPos.y == 21) && (_field418 != 2))
-				|| ((cellPos.x == 29) && (cellPos.y == 17) && (_field418 != 1))
-				|| ((cellPos.x == 33) && (cellPos.y == 41)) )
-				)	{
+		if (((_mazeUI.getCellFromPixelXY(Common::Point(200, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(200, 88)) > 36)) && (((cellPos.x == 3) && (cellPos.y == 33) && (_field418 != 4)) || ((cellPos.x == 13) && (cellPos.y == 21) && (_field418 != 2)) || ((cellPos.x == 29) && (cellPos.y == 17) && (_field418 != 1)) || ((cellPos.x == 33) && (cellPos.y == 41)))) {
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1200;
 			setAction(&_sequenceManager, this, 1200, &_actor1, NULL);
@@ -771,12 +750,7 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 		}
 		break;
 	case CRAWL_WEST:
-		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(120, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(120, 88)) > 36))
-			&& ( ((cellPos.x == 7) && (cellPos.y == 33) && (_field418 != 4))
-				|| ((cellPos.x == 17) && (cellPos.y == 21) && (_field418 != 2))
-				|| ((cellPos.x == 33) && (cellPos.y == 17) && (_field418 != 1))
-				|| ((cellPos.x == 5) && (cellPos.y == 5)) )
-				)	{
+		if (((_mazeUI.getCellFromPixelXY(Common::Point(120, 50)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(120, 88)) > 36)) && (((cellPos.x == 7) && (cellPos.y == 33) && (_field418 != 4)) || ((cellPos.x == 17) && (cellPos.y == 21) && (_field418 != 2)) || ((cellPos.x == 33) && (cellPos.y == 17) && (_field418 != 1)) || ((cellPos.x == 5) && (cellPos.y == 5)))) {
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1201;
 			setAction(&_sequenceManager, this, 1201, &_actor1, NULL);
@@ -815,10 +789,7 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 		}
 		break;
 	case CRAWL_SOUTH:
-		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(140, 110)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 110)) > 36))
-			&& ( ((cellPos.x == 17) && (cellPos.y == 5) && (_field418 != 3))
-				|| ((cellPos.x == 41) && (cellPos.y == 21)) )
-				)	{
+		if (((_mazeUI.getCellFromPixelXY(Common::Point(140, 110)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 110)) > 36)) && (((cellPos.x == 17) && (cellPos.y == 5) && (_field418 != 3)) || ((cellPos.x == 41) && (cellPos.y == 21)))) {
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1203;
 			setAction(&_sequenceManager, this, 1203, &_actor1, NULL);
@@ -857,10 +828,7 @@ void Scene1200::startCrawling(CrawlDirection dir) {
 		}
 		break;
 	case CRAWL_NORTH:
-		if ( ((_mazeUI.getCellFromPixelXY(Common::Point(140, 30)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 30)) > 36))
-			&& ( ((cellPos.x == 17) && (cellPos.y == 9) && (_field418 != 3))
-				|| ((cellPos.x == 35) && (cellPos.y == 17)) )
-				)	{
+		if (((_mazeUI.getCellFromPixelXY(Common::Point(140, 30)) > 36) || (_mazeUI.getCellFromPixelXY(Common::Point(178, 30)) > 36)) && (((cellPos.x == 17) && (cellPos.y == 9) && (_field418 != 3)) || ((cellPos.x == 35) && (cellPos.y == 17)))) {
 			R2_GLOBALS._player.disableControl();
 			_sceneMode = 1202;
 			setAction(&_sequenceManager, this, 1202, &_actor1, NULL);

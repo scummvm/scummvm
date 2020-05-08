@@ -31,6 +31,7 @@ class DragonsEngine;
 class Minigame1 {
 private:
 	DragonsEngine *_vm;
+
 public:
 	Minigame1(DragonsEngine *vm);
 

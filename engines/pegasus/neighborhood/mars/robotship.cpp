@@ -23,13 +23,13 @@
  *
  */
 
+#include "pegasus/neighborhood/mars/robotship.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
 #include "pegasus/neighborhood/mars/hermite.h"
 #include "pegasus/neighborhood/mars/mars.h"
-#include "pegasus/neighborhood/mars/robotship.h"
 #include "pegasus/neighborhood/mars/spacechase3d.h"
 #include "pegasus/neighborhood/mars/spacejunk.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -58,7 +58,7 @@ RobotShip *g_robotShip = 0;
 RobotShip::RobotShip() : _spritesMovie(kNoDisplayElement) {
 	g_robotShip = this;
 	_shipRange = Common::Rect(kShuttleWindowLeft, kShuttleWindowTop, kShuttleWindowLeft + kShuttleWindowWidth,
-			kShuttleWindowTop + kShuttleWindowHeight);
+	                          kShuttleWindowTop + kShuttleWindowHeight);
 	setScale(kRovingScale);
 	_currentLocation.x = 0;
 	_currentLocation.y = 0;
@@ -107,7 +107,7 @@ void RobotShip::startMoving() {
 	}
 
 	makeVelocityVector(_p4.x, _p4.y, kShuttleWindowLeft + kShuttleWindowWidth / 2,
-			kShuttleWindowTop + kShuttleWindowHeight / 2, _r4);
+	                   kShuttleWindowTop + kShuttleWindowHeight / 2, _r4);
 	newDestination();
 	setUpNextDropTime();
 }
@@ -158,7 +158,7 @@ void RobotShip::newDestination() {
 	}
 
 	makeVelocityVector(_p4.x, _p4.y, kShuttleWindowLeft + kShuttleWindowWidth / 2,
-			kShuttleWindowTop + kShuttleWindowHeight / 2, _r4);
+	                   kShuttleWindowTop + kShuttleWindowHeight / 2, _r4);
 	stop();
 	_duration = kRovingTime + ((PegasusEngine *)g_engine)->getRandomNumber(kRovingSlop - 1);
 	setSegment(0, _duration);

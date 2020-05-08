@@ -24,14 +24,14 @@
 #define BACKENDS_CLOUD_DROPBOX_DROPBOXLISTDIRECTORYREQUEST_H
 
 #include "backends/cloud/storage.h"
+#include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/request.h"
 #include "common/callback.h"
-#include "backends/networking/curl/curljsonrequest.h"
 
 namespace Cloud {
 namespace Dropbox {
 
-class DropboxListDirectoryRequest: public Networking::Request {
+class DropboxListDirectoryRequest : public Networking::Request {
 	Common::String _requestedPath;
 	bool _requestedRecursive;
 
@@ -46,6 +46,7 @@ class DropboxListDirectoryRequest: public Networking::Request {
 	void responseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);
 	void finishListing(Common::Array<StorageFile> &files);
+
 public:
 	DropboxListDirectoryRequest(Common::String token, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
 	virtual ~DropboxListDirectoryRequest();

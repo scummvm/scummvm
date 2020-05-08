@@ -31,8 +31,8 @@
 #include "avalanche/enums.h"
 
 #include "common/events.h"
-#include "common/str.h"
 #include "common/serializer.h"
+#include "common/str.h"
 
 namespace Avalanche {
 class AvalancheEngine;
@@ -43,7 +43,7 @@ public:
 	static const int16 kFirstPassword = 88;   // words[kFirstPassword] should equal "TIROS".
 	static const byte kPardon = 254;          // Didn't understand / wasn't given.
 	static const byte kNothing = 250;
-	static const byte kMoved = 0;             // This word was moved. (Usually because it was the subject of conversation.)
+	static const byte kMoved = 0; // This word was moved. (Usually because it was the subject of conversation.)
 
 	struct VocabEntry {
 		byte _number;

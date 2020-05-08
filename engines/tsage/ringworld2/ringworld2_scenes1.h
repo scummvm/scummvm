@@ -25,13 +25,13 @@
 
 #include "common/scummsys.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
-#include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
 #include "tsage/ringworld2/ringworld2_speakers.h"
+#include "tsage/scenes.h"
+#include "tsage/sound.h"
 
 namespace TsAGE {
 
@@ -48,6 +48,7 @@ public:
 
 	int _animCounter;
 	bool _forceCheckAnimationFl;
+
 public:
 	Scene1000();
 
@@ -111,7 +112,7 @@ public:
 	SceneActor _shotImpact4;
 	SceneActor _shotImpact5;
 	SceneActor _laserShot;
-	SceneActor _animation;	// Used for cliff collapse and ship theft
+	SceneActor _animation; // Used for cliff collapse and ship theft
 	SceneActor _leftImpacts;
 	SceneActor _runningGuy1;
 	SceneActor _runningGuy2;
@@ -209,6 +210,7 @@ class Scene1550 : public SceneExt {
 
 			bool startAction(CursorType action, Event &event) override;
 		};
+
 	public:
 		byte _field20;
 		SceneActor _areaActor;
@@ -269,7 +271,7 @@ public:
 	SpeakerSeeker _seekerSpeaker;
 	WorkingShip _intactHull1, _intactHull2;
 	SceneHotspot _background;
-	SceneActor _wreckage2;	// also used for Lance of Truth landing strut
+	SceneActor _wreckage2; // also used for Lance of Truth landing strut
 	SceneActor _wreckage3;
 	SceneActor _wreckage4;
 	SceneActor _walkway;
@@ -284,9 +286,9 @@ public:
 	Dish _dish;
 	Junk _junk[8];
 	Wall _wallCorner1;
-	Wall _northWall;	// Is also reused for landing strip
+	Wall _northWall; // Is also reused for landing strip
 	Wall _wallCorner2;
-	Wall _westWall;		// Is also reused for left hand space
+	Wall _westWall; // Is also reused for left hand space
 	Wall _eastWall;
 	Wall _southWall;
 	ShipComponent _shipComponents[8];
@@ -324,6 +326,7 @@ class Scene1575 : public SceneExt {
 		void process(Event &event) override;
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	int _field412;
 	int _field414;
@@ -398,6 +401,7 @@ class Scene1580 : public SceneExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
@@ -426,6 +430,7 @@ class Scene1625 : public SceneExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SpeakerMiranda1625 _mirandaSpeaker;
 	SpeakerTeal1625 _tealSpeaker;
@@ -471,6 +476,7 @@ class Scene1700 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
@@ -590,6 +596,7 @@ class Scene1800 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	int _locationMode;
 	SpeakerQuinn _quinnSpeaker;
@@ -685,6 +692,7 @@ class Scene1875 : public SceneExt {
 		void synchronize(Serializer &s) override;
 		void process(Event &event) override;
 	};
+
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
@@ -718,6 +726,7 @@ class Scene1900 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	SpeakerSeeker1900 _seekerSpeaker;
 	NamedHotspot _background;
@@ -762,6 +771,7 @@ class Scene1925 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background;
 	Button _button;
@@ -808,6 +818,7 @@ class Scene1945 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _hole;
 	NamedHotspot _ice2;

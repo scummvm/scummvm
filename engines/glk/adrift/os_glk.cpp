@@ -20,15 +20,15 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/textconsole.h"
+#include "common/translation.h"
 #include "glk/adrift/adrift.h"
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
 #include "glk/glk.h"
 #include "glk/streams.h"
 #include "glk/windows.h"
-#include "common/config-manager.h"
-#include "common/textconsole.h"
-#include "common/translation.h"
 
 namespace Glk {
 namespace Adrift {
@@ -40,7 +40,7 @@ namespace Adrift {
  *   and so forth, and minimal effort to set fonts and other style effects.
  */
 
-#undef _WIN32   /* Gargoyle */
+#undef _WIN32 /* Gargoyle */
 
 /*
  * True and false definitions -- usually defined in glkstart.h, but we need
@@ -48,12 +48,11 @@ namespace Adrift {
  * normally from stdio.h or one of it's cousins.
  */
 #ifndef FALSE
-# define FALSE 0
+#define FALSE 0
 #endif
 #ifndef TRUE
-# define TRUE (!FALSE)
+#define TRUE (!FALSE)
 #endif
-
 
 /*---------------------------------------------------------------------*/
 /*  Module variables, miscellaneous other stuff                        */
@@ -76,7 +75,7 @@ static strid_t gsc_readlog_stream = nullptr;
 
 /* Options that may be turned off or set by command line flags. */
 static int gsc_commands_enabled = TRUE, gsc_abbreviations_enabled = TRUE,
-	gsc_unicode_enabled = TRUE;
+           gsc_unicode_enabled = TRUE;
 
 /* Adrift game to interpret. */
 sc_game gsc_game = nullptr;
@@ -84,14 +83,13 @@ sc_game gsc_game = nullptr;
 /* Special out-of-band os_confirm() options used locally with os_glk. */
 static const sc_int GSC_CONF_SUBTLE_HINT = INTEGER_MAX,
                     GSC_CONF_UNSUBTLE_HINT = INTEGER_MAX - 1,
-                   GSC_CONF_CONTINUE_HINTS = INTEGER_MAX - 2;
+                    GSC_CONF_CONTINUE_HINTS = INTEGER_MAX - 2;
 
 /* Forward declaration of event wait functions, and a short delay. */
 static void gsc_event_wait_2(glui32 wait_type_1,
                              glui32 wait_type_2, event_t *event);
 static void gsc_event_wait(glui32 wait_type, event_t *event);
 static void gsc_short_delay();
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port utility functions                                         */
@@ -127,7 +125,6 @@ static void gsc_fatal(const char *string) {
 	                     " this information to simon_baldwin@yahoo.com.\n\n");
 }
 
-
 /*
  * gsc_malloc()
  *
@@ -144,7 +141,6 @@ static void *gsc_malloc(size_t size) {
 
 	return pointer;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port locale data                                               */
@@ -177,7 +173,6 @@ struct gsc_locale_t {
 	const gsc_codepages_t alternate;
 };
 
-
 /*
  * Locale for Latin1 -- cp1252 and cp850.
  *
@@ -188,129 +183,119 @@ struct gsc_locale_t {
  * character that might be recognizable as what it's trying to emulate.
  */
 static const gsc_locale_t GSC_LATIN1_LOCALE = {
-	"Latin1",
-	/* cp1252 to unicode. */
-	{	{
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x000a, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0020, 0x0021, 0x0022, 0x0023,
-			0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002a, 0x002b, 0x002c,
-			0x002d, 0x002e, 0x002f, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035,
-			0x0036, 0x0037, 0x0038, 0x0039, 0x003a, 0x003b, 0x003c, 0x003d, 0x003e,
-			0x003f, 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
-			0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f, 0x0050,
-			0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059,
-			0x005a, 0x005b, 0x005c, 0x005d, 0x005e, 0x005f, 0x0060, 0x0061, 0x0062,
-			0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006a, 0x006b,
-			0x006c, 0x006d, 0x006e, 0x006f, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074,
-			0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007a, 0x007b, 0x007c, 0x007d,
-			0x007e, 0x0000, 0x20ac, 0x0000, 0x201a, 0x0192, 0x201e, 0x2026, 0x2020,
-			0x2021, 0x02c6, 0x2030, 0x0160, 0x2039, 0x0152, 0x0000, 0x017d, 0x0000,
-			0x0000, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014, 0x02dc,
-			0x2122, 0x0161, 0x203a, 0x0153, 0x0000, 0x017e, 0x0178, 0x00a0, 0x00a1,
-			0x00a2, 0x00a3, 0x00a4, 0x00a5, 0x00a6, 0x00a7, 0x00a8, 0x00a9, 0x00aa,
-			0x00ab, 0x00ac, 0x00ad, 0x00ae, 0x00af, 0x00b0, 0x00b1, 0x00b2, 0x00b3,
-			0x00b4, 0x00b5, 0x00b6, 0x00b7, 0x00b8, 0x00b9, 0x00ba, 0x00bb, 0x00bc,
-			0x00bd, 0x00be, 0x00bf, 0x00c0, 0x00c1, 0x00c2, 0x00c3, 0x00c4, 0x00c5,
-			0x00c6, 0x00c7, 0x00c8, 0x00c9, 0x00ca, 0x00cb, 0x00cc, 0x00cd, 0x00ce,
-			0x00cf, 0x00d0, 0x00d1, 0x00d2, 0x00d3, 0x00d4, 0x00d5, 0x00d6, 0x00d7,
-			0x00d8, 0x00d9, 0x00da, 0x00db, 0x00dc, 0x00dd, 0x00de, 0x00df, 0x00e0,
-			0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7, 0x00e8, 0x00e9,
-			0x00ea, 0x00eb, 0x00ec, 0x00ed, 0x00ee, 0x00ef, 0x00f0, 0x00f1, 0x00f2,
-			0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x00fa, 0x00fb,
-			0x00fc, 0x00fd, 0x00fe, 0x00ff
-		},
-		/* cp1252 to ascii. */
-		{
-			nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  "        ",
-			"\n",  nullptr,  nullptr,  "\n",  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,
-			nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,
-			" ",   "!",   "\"",  "#",   "$",   "%",   "&",   "'",   "(",   ")",   "*",
-			"+",   ",",   "-",   ".",   "/",   "0",   "1",   "2",   "3",   "4",   "5",
-			"6",   "7",   "8",   "9",   ":",   ";",   "<",   "=",   ">",   "?",   "@",
-			"A",   "B",   "C",   "D",   "E",   "F",   "G",   "H",   "I",   "J",   "K",
-			"L",   "M",   "N",   "O",   "P",   "Q",   "R",   "S",   "T",   "U",   "V",
-			"W",   "X",   "Y",   "Z",   "[",   "\\",  "]",   "^",   "_",   "`",   "a",
-			"b",   "c",   "d",   "e",   "f",   "g",   "h",   "i",   "j",   "k",   "l",
-			"m",   "n",   "o",   "p",   "q",   "r",   "s",   "t",   "u",   "v",   "w",
-			"x",   "y",   "z",   "{",   "|",   "}",   "~",   nullptr,  "E",   nullptr,  ",",
-			"f",   ",,",  "...", "+",   "#",   "^",   "%",   "S",   "<",   "OE",  nullptr,
-			"Z",   nullptr,  nullptr,  "'",   "'",   "\"",  "\"",  "*",   "-",   "-",   "~",
-			"[TM]", "s",   ">",   "oe",  nullptr,  "z",   "Y",   " ",   "!",   "c",   "GBP",
-			"*",   "Y",   "|",   "S",   "\"",  "(C)", "a",   "<<",  "-",   "-",   "(R)",
-			"-",   "o",   "+/-", "2",   "3",   "'",   "u",   "P",   "*",   ",",   "1",
-			"o",   ">>",  "1/4", "1/2", "3/4", "?",   "A",   "A",   "A",   "A",   "A",
-			"A",   "AE",  "C",   "E",   "E",   "E",   "E",   "I",   "I",   "I",   "I",
-			"D",   "N",   "O",   "O",   "O",   "O",   "O",   "x",   "O",   "U",   "U",
-			"U",   "U",   "Y",   "p",   "ss",  "a",   "a",   "a",   "a",   "a",   "a",
-			"ae",  "c",   "e",   "e",   "e",   "e",   "i",   "i",   "i",   "i",   "d",
-			"n",   "o",   "o",   "o",   "o",   "o",   "/",   "o",   "u",   "u",   "u",
-			"u",   "y",   "P",   "y"
-		}
-	},
-	/* cp850 to unicode. */
-	{	{
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x000a, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0020, 0x0021, 0x0022, 0x0023,
-			0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002a, 0x002b, 0x002c,
-			0x002d, 0x002e, 0x002f, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035,
-			0x0036, 0x0037, 0x0038, 0x0039, 0x003a, 0x003b, 0x003c, 0x003d, 0x003e,
-			0x003f, 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
-			0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f, 0x0050,
-			0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059,
-			0x005a, 0x005b, 0x005c, 0x005d, 0x005e, 0x005f, 0x0060, 0x0061, 0x0062,
-			0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006a, 0x006b,
-			0x006c, 0x006d, 0x006e, 0x006f, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074,
-			0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007a, 0x007b, 0x007c, 0x007d,
-			0x007e, 0x0000, 0x00c7, 0x00fc, 0x00e9, 0x00e2, 0x00e4, 0x00e0, 0x00e5,
-			0x00e7, 0x00ea, 0x00eb, 0x00e8, 0x00ef, 0x00ee, 0x00ec, 0x00c4, 0x00c5,
-			0x00c9, 0x00e6, 0x00c6, 0x00f4, 0x00f6, 0x00f2, 0x00fb, 0x00f9, 0x00ff,
-			0x00d6, 0x00dc, 0x00f8, 0x00a3, 0x00d8, 0x00d7, 0x0192, 0x00e1, 0x00ed,
-			0x00f3, 0x00fa, 0x00f1, 0x00d1, 0x00aa, 0x00ba, 0x00bf, 0x00ae, 0x00ac,
-			0x00bd, 0x00bc, 0x00a1, 0x00ab, 0x00bb, 0x2591, 0x2592, 0x2593, 0x2502,
-			0x2524, 0x00c1, 0x00c2, 0x00c0, 0x00a9, 0x2563, 0x2551, 0x2557, 0x255d,
-			0x00a2, 0x00a5, 0x2510, 0x2514, 0x2534, 0x252c, 0x251c, 0x2500, 0x253c,
-			0x00e3, 0x00c3, 0x255a, 0x2554, 0x2569, 0x2566, 0x2560, 0x2550, 0x256c,
-			0x00a4, 0x00f0, 0x00d0, 0x00ca, 0x00cb, 0x00c8, 0x0131, 0x00cd, 0x00ce,
-			0x00cf, 0x2518, 0x250c, 0x2588, 0x2584, 0x00a6, 0x00cc, 0x2580, 0x00d3,
-			0x00df, 0x00d4, 0x00d2, 0x00f5, 0x00d5, 0x00b5, 0x00fe, 0x00de, 0x00da,
-			0x00db, 0x00d9, 0x00fd, 0x00dd, 0x00af, 0x00b4, 0x00ad, 0x00b1, 0x2017,
-			0x00be, 0x00b6, 0x00a7, 0x00f7, 0x00b8, 0x00b0, 0x00a8, 0x00b7, 0x00b9,
-			0x00b3, 0x00b2, 0x25a0, 0x00a0
-		},
-		/* cp850 to ascii. */
-		{
-			nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  "        ",
-			"\n",  nullptr,  nullptr,  "\n",  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,
-			nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,
-			" ",   "!",   "\"",  "#",   "$",   "%",   "&",   "'",   "(",   ")",   "*",
-			"+",   ",",   "-",   ".",   "/",   "0",   "1",   "2",   "3",   "4",   "5",
-			"6",   "7",   "8",   "9",   ":",   ";",   "<",   "=",   ">",   "?",   "@",
-			"A",   "B",   "C",   "D",   "E",   "F",   "G",   "H",   "I",   "J",   "K",
-			"L",   "M",   "N",   "O",   "P",   "Q",   "R",   "S",   "T",   "U",   "V",
-			"W",   "X",   "Y",   "Z",   "[",   "\\",  "]",   "^",   "_",   "`",   "a",
-			"b",   "c",   "d",   "e",   "f",   "g",   "h",   "i",   "j",   "k",   "l",
-			"m",   "n",   "o",   "p",   "q",   "r",   "s",   "t",   "u",   "v",   "w",
-			"x",   "y",   "z",   "{",   "|",   "}",   "~",   nullptr,  "C",   "u",   "e",
-			"a",   "a",   "a",   "a",   "c",   "e",   "e",   "e",   "i",   "i",   "i",
-			"A",   "A",   "E",   "ae",  "AE",  "o",   "o",   "o",   "u",   "u",   "y",
-			"O",   "U",   "o",   "GBP", "O",   "x",   "f",   "a",   "i",   "o",   "u",
-			"n",   "N",   "a",   "o",   "?",   "(R)", "-",   "1/2", "1/4", "i",   "<<",
-			">>",  "#",   "#",   "#",   "|",   "+",   "A",   "A",   "A",   "(C)", "+",
-			"|",   "+",   "+",   "c",   "Y",   "+",   "+",   "+",   "+",   "+",   "-",
-			"+",   "a",   "A",   "+",   "+",   "+",   "+",   "+",   "=",   "+",   "*",
-			"d",   "D",   "E",   "E",   "E",   "i",   "I",   "I",   "I",   "+",   "+",
-			".",   ".",   "|",   "I",   ".",   "O",   "ss",  "O",   "O",   "o",   "O",
-			"u",   "p",   "P",   "U",   "U",   "U",   "y",   "Y",   "-",   "'",   "-",
-			"+/-", "=",   "3/4", "P",   "S",   "/",   ",",   "deg", "\"",  "*",   "1",
-			"3",   "2",   ".",   " "
-		}
-	}
-};
-
+    "Latin1",
+    /* cp1252 to unicode. */
+    {{0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x000a, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0020, 0x0021, 0x0022, 0x0023,
+      0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002a, 0x002b, 0x002c,
+      0x002d, 0x002e, 0x002f, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035,
+      0x0036, 0x0037, 0x0038, 0x0039, 0x003a, 0x003b, 0x003c, 0x003d, 0x003e,
+      0x003f, 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
+      0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f, 0x0050,
+      0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059,
+      0x005a, 0x005b, 0x005c, 0x005d, 0x005e, 0x005f, 0x0060, 0x0061, 0x0062,
+      0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006a, 0x006b,
+      0x006c, 0x006d, 0x006e, 0x006f, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074,
+      0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007a, 0x007b, 0x007c, 0x007d,
+      0x007e, 0x0000, 0x20ac, 0x0000, 0x201a, 0x0192, 0x201e, 0x2026, 0x2020,
+      0x2021, 0x02c6, 0x2030, 0x0160, 0x2039, 0x0152, 0x0000, 0x017d, 0x0000,
+      0x0000, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014, 0x02dc,
+      0x2122, 0x0161, 0x203a, 0x0153, 0x0000, 0x017e, 0x0178, 0x00a0, 0x00a1,
+      0x00a2, 0x00a3, 0x00a4, 0x00a5, 0x00a6, 0x00a7, 0x00a8, 0x00a9, 0x00aa,
+      0x00ab, 0x00ac, 0x00ad, 0x00ae, 0x00af, 0x00b0, 0x00b1, 0x00b2, 0x00b3,
+      0x00b4, 0x00b5, 0x00b6, 0x00b7, 0x00b8, 0x00b9, 0x00ba, 0x00bb, 0x00bc,
+      0x00bd, 0x00be, 0x00bf, 0x00c0, 0x00c1, 0x00c2, 0x00c3, 0x00c4, 0x00c5,
+      0x00c6, 0x00c7, 0x00c8, 0x00c9, 0x00ca, 0x00cb, 0x00cc, 0x00cd, 0x00ce,
+      0x00cf, 0x00d0, 0x00d1, 0x00d2, 0x00d3, 0x00d4, 0x00d5, 0x00d6, 0x00d7,
+      0x00d8, 0x00d9, 0x00da, 0x00db, 0x00dc, 0x00dd, 0x00de, 0x00df, 0x00e0,
+      0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7, 0x00e8, 0x00e9,
+      0x00ea, 0x00eb, 0x00ec, 0x00ed, 0x00ee, 0x00ef, 0x00f0, 0x00f1, 0x00f2,
+      0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x00fa, 0x00fb,
+      0x00fc, 0x00fd, 0x00fe, 0x00ff},
+     /* cp1252 to ascii. */
+     {
+         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, "        ",
+         "\n", nullptr, nullptr, "\n", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+         " ", "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*",
+         "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5",
+         "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@",
+         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+         "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`", "a",
+         "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+         "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
+         "x", "y", "z", "{", "|", "}", "~", nullptr, "E", nullptr, ",",
+         "f", ",,", "...", "+", "#", "^", "%", "S", "<", "OE", nullptr,
+         "Z", nullptr, nullptr, "'", "'", "\"", "\"", "*", "-", "-", "~",
+         "[TM]", "s", ">", "oe", nullptr, "z", "Y", " ", "!", "c", "GBP",
+         "*", "Y", "|", "S", "\"", "(C)", "a", "<<", "-", "-", "(R)",
+         "-", "o", "+/-", "2", "3", "'", "u", "P", "*", ",", "1",
+         "o", ">>", "1/4", "1/2", "3/4", "?", "A", "A", "A", "A", "A",
+         "A", "AE", "C", "E", "E", "E", "E", "I", "I", "I", "I",
+         "D", "N", "O", "O", "O", "O", "O", "x", "O", "U", "U",
+         "U", "U", "Y", "p", "ss", "a", "a", "a", "a", "a", "a",
+         "ae", "c", "e", "e", "e", "e", "i", "i", "i", "i", "d",
+         "n", "o", "o", "o", "o", "o", "/", "o", "u", "u", "u",
+         "u", "y", "P", "y"}},
+    /* cp850 to unicode. */
+    {{0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x000a, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0020, 0x0021, 0x0022, 0x0023,
+      0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002a, 0x002b, 0x002c,
+      0x002d, 0x002e, 0x002f, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035,
+      0x0036, 0x0037, 0x0038, 0x0039, 0x003a, 0x003b, 0x003c, 0x003d, 0x003e,
+      0x003f, 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
+      0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f, 0x0050,
+      0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059,
+      0x005a, 0x005b, 0x005c, 0x005d, 0x005e, 0x005f, 0x0060, 0x0061, 0x0062,
+      0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006a, 0x006b,
+      0x006c, 0x006d, 0x006e, 0x006f, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074,
+      0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007a, 0x007b, 0x007c, 0x007d,
+      0x007e, 0x0000, 0x00c7, 0x00fc, 0x00e9, 0x00e2, 0x00e4, 0x00e0, 0x00e5,
+      0x00e7, 0x00ea, 0x00eb, 0x00e8, 0x00ef, 0x00ee, 0x00ec, 0x00c4, 0x00c5,
+      0x00c9, 0x00e6, 0x00c6, 0x00f4, 0x00f6, 0x00f2, 0x00fb, 0x00f9, 0x00ff,
+      0x00d6, 0x00dc, 0x00f8, 0x00a3, 0x00d8, 0x00d7, 0x0192, 0x00e1, 0x00ed,
+      0x00f3, 0x00fa, 0x00f1, 0x00d1, 0x00aa, 0x00ba, 0x00bf, 0x00ae, 0x00ac,
+      0x00bd, 0x00bc, 0x00a1, 0x00ab, 0x00bb, 0x2591, 0x2592, 0x2593, 0x2502,
+      0x2524, 0x00c1, 0x00c2, 0x00c0, 0x00a9, 0x2563, 0x2551, 0x2557, 0x255d,
+      0x00a2, 0x00a5, 0x2510, 0x2514, 0x2534, 0x252c, 0x251c, 0x2500, 0x253c,
+      0x00e3, 0x00c3, 0x255a, 0x2554, 0x2569, 0x2566, 0x2560, 0x2550, 0x256c,
+      0x00a4, 0x00f0, 0x00d0, 0x00ca, 0x00cb, 0x00c8, 0x0131, 0x00cd, 0x00ce,
+      0x00cf, 0x2518, 0x250c, 0x2588, 0x2584, 0x00a6, 0x00cc, 0x2580, 0x00d3,
+      0x00df, 0x00d4, 0x00d2, 0x00f5, 0x00d5, 0x00b5, 0x00fe, 0x00de, 0x00da,
+      0x00db, 0x00d9, 0x00fd, 0x00dd, 0x00af, 0x00b4, 0x00ad, 0x00b1, 0x2017,
+      0x00be, 0x00b6, 0x00a7, 0x00f7, 0x00b8, 0x00b0, 0x00a8, 0x00b7, 0x00b9,
+      0x00b3, 0x00b2, 0x25a0, 0x00a0},
+     /* cp850 to ascii. */
+     {
+         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, "        ",
+         "\n", nullptr, nullptr, "\n", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+         " ", "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*",
+         "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5",
+         "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@",
+         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+         "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`", "a",
+         "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+         "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
+         "x", "y", "z", "{", "|", "}", "~", nullptr, "C", "u", "e",
+         "a", "a", "a", "a", "c", "e", "e", "e", "i", "i", "i",
+         "A", "A", "E", "ae", "AE", "o", "o", "o", "u", "u", "y",
+         "O", "U", "o", "GBP", "O", "x", "f", "a", "i", "o", "u",
+         "n", "N", "a", "o", "?", "(R)", "-", "1/2", "1/4", "i", "<<",
+         ">>", "#", "#", "#", "|", "+", "A", "A", "A", "(C)", "+",
+         "|", "+", "+", "c", "Y", "+", "+", "+", "+", "+", "-",
+         "+", "a", "A", "+", "+", "+", "+", "+", "=", "+", "*",
+         "d", "D", "E", "E", "E", "i", "I", "I", "I", "+", "+",
+         ".", ".", "|", "I", ".", "O", "ss", "O", "O", "o", "O",
+         "u", "p", "P", "U", "U", "U", "y", "Y", "-", "'", "-",
+         "+/-", "=", "3/4", "P", "S", "/", ",", "deg", "\"", "*", "1",
+         "3", "2", ".", " "}}};
 
 /*
  * Locale for Cyrillic -- cp1251 and cp866.
@@ -324,129 +309,119 @@ static const gsc_locale_t GSC_LATIN1_LOCALE = {
  * the general appearance and shape of the character being emulated is used.
  */
 static const gsc_locale_t GSC_CYRILLIC_LOCALE = {
-	"Cyrillic",
-	/* cp1251 to unicode. */
-	{	{
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x000a, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0020, 0x0021, 0x0022, 0x0023,
-			0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002a, 0x002b, 0x002c,
-			0x002d, 0x002e, 0x002f, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035,
-			0x0036, 0x0037, 0x0038, 0x0039, 0x003a, 0x003b, 0x003c, 0x003d, 0x003e,
-			0x003f, 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
-			0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f, 0x0050,
-			0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059,
-			0x005a, 0x005b, 0x005c, 0x005d, 0x005e, 0x005f, 0x0060, 0x0061, 0x0062,
-			0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006a, 0x006b,
-			0x006c, 0x006d, 0x006e, 0x006f, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074,
-			0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007a, 0x007b, 0x007c, 0x007d,
-			0x007e, 0x0000, 0x0402, 0x0403, 0x201a, 0x0453, 0x201e, 0x2026, 0x2020,
-			0x2021, 0x20ac, 0x2030, 0x0409, 0x2039, 0x040a, 0x040c, 0x040b, 0x040f,
-			0x0452, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014, 0x0000,
-			0x2122, 0x0459, 0x203a, 0x045a, 0x045c, 0x045b, 0x045f, 0x00a0, 0x040e,
-			0x045e, 0x0408, 0x00a4, 0x0490, 0x00a6, 0x00a7, 0x0401, 0x00a9, 0x0404,
-			0x00ab, 0x00ac, 0x00ad, 0x00ae, 0x0407, 0x00b0, 0x00b1, 0x0406, 0x0456,
-			0x0491, 0x00b5, 0x00b6, 0x00b7, 0x0451, 0x2116, 0x0454, 0x00bb, 0x0458,
-			0x0405, 0x0455, 0x0457, 0x0410, 0x0411, 0x0412, 0x0413, 0x0414, 0x0415,
-			0x0416, 0x0417, 0x0418, 0x0419, 0x041a, 0x041b, 0x041c, 0x041d, 0x041e,
-			0x041f, 0x0420, 0x0421, 0x0422, 0x0423, 0x0424, 0x0425, 0x0426, 0x0427,
-			0x0428, 0x0429, 0x042a, 0x042b, 0x042c, 0x042d, 0x042e, 0x042f, 0x0430,
-			0x0431, 0x0432, 0x0433, 0x0434, 0x0435, 0x0436, 0x0437, 0x0438, 0x0439,
-			0x043a, 0x043b, 0x043c, 0x043d, 0x043e, 0x043f, 0x0440, 0x0441, 0x0442,
-			0x0443, 0x0444, 0x0445, 0x0446, 0x0447, 0x0448, 0x0449, 0x044a, 0x044b,
-			0x044c, 0x044d, 0x044e, 0x044f
-		},
-		/* cp1251 to gost 16876-71 ascii. */
-		{
-			nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  "        ",
-			"\n",  nullptr,  nullptr,  "\n",  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,
-			nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,
-			" ",   "!",   "\"",  "#",   "$",   "%",   "&",   "'",   "(",   ")",   "*",
-			"+",   ",",   "-",   ".",   "/",   "0",   "1",   "2",   "3",   "4",   "5",
-			"6",   "7",   "8",   "9",   ":",   ";",   "<",   "=",   ">",   "?",   "@",
-			"A",   "B",   "C",   "D",   "E",   "F",   "G",   "H",   "I",   "J",   "K",
-			"L",   "M",   "N",   "O",   "P",   "Q",   "R",   "S",   "T",   "U",   "V",
-			"W",   "X",   "Y",   "Z",   "[",   "\\",  "]",   "^",   "_",   "`",   "a",
-			"b",   "c",   "d",   "e",   "f",   "g",   "h",   "i",   "j",   "k",   "l",
-			"m",   "n",   "o",   "p",   "q",   "r",   "s",   "t",   "u",   "v",   "w",
-			"x",   "y",   "z",   "{",   "|",   "}",   "~",   nullptr,  nullptr,  nullptr,  ",",
-			nullptr,  ",,",  "...", "+",   "#",   "E",   "%",   nullptr,  "<",   nullptr,  nullptr,
-			nullptr,  nullptr,  nullptr,  "'",   "'",   "\"",  "\"",  "*",   "-",   "-",   nullptr,
-			"[TM]", nullptr,  ">",   nullptr,  nullptr,  nullptr,  nullptr,  " ",   nullptr,  nullptr,  nullptr,
-			"*",   "G",   "|",   "S",   "Jo",  "(C)", "Je",  "<<",  "-",   "-",   "(R)",
-			"Ji",  "o",   "+/-", "I",   "i",   "g",   "u",   "P",   "*",   "jo",  nullptr,
-			"je",  ">>",  "j",   "S",   "s",   "ji",  "A",   "B",   "V",   "G",   "D",
-			"E",   "Zh",  "Z",   "I",   "Jj",  "K",   "L",   "M",   "N",   "O",   "P",
-			"R",   "S",   "T",   "U",   "F",   "Kh",  "C",   "Ch",  "Sh",  "Shh", "\"",
-			"Y",   "'",   "Eh",  "Ju",  "Ja",  "a",   "b",   "v",   "g",   "d",   "e",
-			"zh",  "z",   "i",   "jj",  "k",   "l",   "m",   "n",   "o",   "p",   "r",
-			"s",   "t",   "u",   "f",   "kh",  "c",   "ch",  "sh",  "shh", "\"",  "y",
-			"'",   "eh",  "ju",  "ja"
-		}
-	},
-	/* cp866 to unicode. */
-	{	{
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x000a, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-			0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0020, 0x0021, 0x0022, 0x0023,
-			0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002a, 0x002b, 0x002c,
-			0x002d, 0x002e, 0x002f, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035,
-			0x0036, 0x0037, 0x0038, 0x0039, 0x003a, 0x003b, 0x003c, 0x003d, 0x003e,
-			0x003f, 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
-			0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f, 0x0050,
-			0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059,
-			0x005a, 0x005b, 0x005c, 0x005d, 0x005e, 0x005f, 0x0060, 0x0061, 0x0062,
-			0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006a, 0x006b,
-			0x006c, 0x006d, 0x006e, 0x006f, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074,
-			0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007a, 0x007b, 0x007c, 0x007d,
-			0x007e, 0x0000, 0x0410, 0x0411, 0x0412, 0x0413, 0x0414, 0x0415, 0x0416,
-			0x0417, 0x0418, 0x0419, 0x041a, 0x041b, 0x041c, 0x041d, 0x041e, 0x041f,
-			0x0420, 0x0421, 0x0422, 0x0423, 0x0424, 0x0425, 0x0426, 0x0427, 0x0428,
-			0x0429, 0x042a, 0x042b, 0x042c, 0x042d, 0x042e, 0x042f, 0x0430, 0x0431,
-			0x0432, 0x0433, 0x0434, 0x0435, 0x0436, 0x0437, 0x0438, 0x0439, 0x043a,
-			0x043b, 0x043c, 0x043d, 0x043e, 0x043f, 0x2591, 0x2592, 0x2593, 0x2502,
-			0x2524, 0x2561, 0x2562, 0x2556, 0x2555, 0x2563, 0x2551, 0x2557, 0x255d,
-			0x255c, 0x255b, 0x2510, 0x2514, 0x2534, 0x252c, 0x251c, 0x2500, 0x253c,
-			0x255e, 0x255f, 0x255a, 0x2554, 0x2569, 0x2566, 0x2560, 0x2550, 0x256c,
-			0x2567, 0x2568, 0x2564, 0x2565, 0x2559, 0x2558, 0x2552, 0x2553, 0x256b,
-			0x256a, 0x2518, 0x250c, 0x2588, 0x2584, 0x258c, 0x2590, 0x2580, 0x0440,
-			0x0441, 0x0442, 0x0443, 0x0444, 0x0445, 0x0446, 0x0447, 0x0448, 0x0449,
-			0x044a, 0x044b, 0x044c, 0x044d, 0x044e, 0x044f, 0x0401, 0x0451, 0x0404,
-			0x0454, 0x0407, 0x0457, 0x040e, 0x045e, 0x00b0, 0x2022, 0x00b7, 0x221a,
-			0x2116, 0x00a4, 0x25a0, 0x00a0
-		},
-		/* cp866 to gost 16876-71 ascii. */
-		{
-			nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  "        ",
-			"\n",  nullptr,  nullptr,  "\n",  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,
-			nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr,
-			" ",   "!",   "\"",  "#",   "$",   "%",   "&",   "'",   "(",   ")",   "*",
-			"+",   ",",   "-",   ".",   "/",   "0",   "1",   "2",   "3",   "4",   "5",
-			"6",   "7",   "8",   "9",   ":",   ";",   "<",   "=",   ">",   "?",   "@",
-			"A",   "B",   "C",   "D",   "E",   "F",   "G",   "H",   "I",   "J",   "K",
-			"L",   "M",   "N",   "O",   "P",   "Q",   "R",   "S",   "T",   "U",   "V",
-			"W",   "X",   "Y",   "Z",   "[",   "\\",  "]",   "^",   "_",   "`",   "a",
-			"b",   "c",   "d",   "e",   "f",   "g",   "h",   "i",   "j",   "k",   "l",
-			"m",   "n",   "o",   "p",   "q",   "r",   "s",   "t",   "u",   "v",   "w",
-			"x",   "y",   "z",   "{",   "|",   "}",   "~",   nullptr,  "A",   "B",   "V",
-			"G",   "D",   "E",   "Zh",  "Z",   "I",   "Jj",  "K",   "L",   "M",   "N",
-			"O",   "P",   "R",   "S",   "T",   "U",   "F",   "Kh",  "C",   "Ch",  "Sh",
-			"Shh", "\"",  "Y",   "'",   "Eh",  "Ju",  "Ja",  "a",   "b",   "v",   "g",
-			"d",   "e",   "zh",  "z",   "i",   "jj",  "k",   "l",   "m",   "n",   "o",
-			"p",   "#",   "#",   "#",   "|",   "+",   "+",   "+",   "+",   "+",   "+",
-			"|",   "+",   "+",   "+",   "+",   "+",   "+",   "+",   "+",   "+",   "-",
-			"+",   "+",   "+",   "+",   "+",   "+",   "+",   "+",   "|",   "+",   "+",
-			"+",   "+",   "+",   "+",   "+",   "+",   "+",   "+",   "+",   "+",   "+",
-			"+",   ".",   ".",   ".",   ".",   "r",   "s",   "t",   "u",   "f",   "kh",
-			"c",   "ch",  "sh",  "shh", "\"",  "y",   "'",   "eh",  "ju",  "ja",  "Jo",
-			"jo",  "Je",  "je",  "Ji",  "ji",  nullptr,  nullptr,  "deg", "*",    "*",  nullptr,
-			nullptr,  "*",   ".",   " "
-		}
-	}
-};
-
+    "Cyrillic",
+    /* cp1251 to unicode. */
+    {{0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x000a, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0020, 0x0021, 0x0022, 0x0023,
+      0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002a, 0x002b, 0x002c,
+      0x002d, 0x002e, 0x002f, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035,
+      0x0036, 0x0037, 0x0038, 0x0039, 0x003a, 0x003b, 0x003c, 0x003d, 0x003e,
+      0x003f, 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
+      0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f, 0x0050,
+      0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059,
+      0x005a, 0x005b, 0x005c, 0x005d, 0x005e, 0x005f, 0x0060, 0x0061, 0x0062,
+      0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006a, 0x006b,
+      0x006c, 0x006d, 0x006e, 0x006f, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074,
+      0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007a, 0x007b, 0x007c, 0x007d,
+      0x007e, 0x0000, 0x0402, 0x0403, 0x201a, 0x0453, 0x201e, 0x2026, 0x2020,
+      0x2021, 0x20ac, 0x2030, 0x0409, 0x2039, 0x040a, 0x040c, 0x040b, 0x040f,
+      0x0452, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014, 0x0000,
+      0x2122, 0x0459, 0x203a, 0x045a, 0x045c, 0x045b, 0x045f, 0x00a0, 0x040e,
+      0x045e, 0x0408, 0x00a4, 0x0490, 0x00a6, 0x00a7, 0x0401, 0x00a9, 0x0404,
+      0x00ab, 0x00ac, 0x00ad, 0x00ae, 0x0407, 0x00b0, 0x00b1, 0x0406, 0x0456,
+      0x0491, 0x00b5, 0x00b6, 0x00b7, 0x0451, 0x2116, 0x0454, 0x00bb, 0x0458,
+      0x0405, 0x0455, 0x0457, 0x0410, 0x0411, 0x0412, 0x0413, 0x0414, 0x0415,
+      0x0416, 0x0417, 0x0418, 0x0419, 0x041a, 0x041b, 0x041c, 0x041d, 0x041e,
+      0x041f, 0x0420, 0x0421, 0x0422, 0x0423, 0x0424, 0x0425, 0x0426, 0x0427,
+      0x0428, 0x0429, 0x042a, 0x042b, 0x042c, 0x042d, 0x042e, 0x042f, 0x0430,
+      0x0431, 0x0432, 0x0433, 0x0434, 0x0435, 0x0436, 0x0437, 0x0438, 0x0439,
+      0x043a, 0x043b, 0x043c, 0x043d, 0x043e, 0x043f, 0x0440, 0x0441, 0x0442,
+      0x0443, 0x0444, 0x0445, 0x0446, 0x0447, 0x0448, 0x0449, 0x044a, 0x044b,
+      0x044c, 0x044d, 0x044e, 0x044f},
+     /* cp1251 to gost 16876-71 ascii. */
+     {
+         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, "        ",
+         "\n", nullptr, nullptr, "\n", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+         " ", "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*",
+         "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5",
+         "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@",
+         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+         "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`", "a",
+         "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+         "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
+         "x", "y", "z", "{", "|", "}", "~", nullptr, nullptr, nullptr, ",",
+         nullptr, ",,", "...", "+", "#", "E", "%", nullptr, "<", nullptr, nullptr,
+         nullptr, nullptr, nullptr, "'", "'", "\"", "\"", "*", "-", "-", nullptr,
+         "[TM]", nullptr, ">", nullptr, nullptr, nullptr, nullptr, " ", nullptr, nullptr, nullptr,
+         "*", "G", "|", "S", "Jo", "(C)", "Je", "<<", "-", "-", "(R)",
+         "Ji", "o", "+/-", "I", "i", "g", "u", "P", "*", "jo", nullptr,
+         "je", ">>", "j", "S", "s", "ji", "A", "B", "V", "G", "D",
+         "E", "Zh", "Z", "I", "Jj", "K", "L", "M", "N", "O", "P",
+         "R", "S", "T", "U", "F", "Kh", "C", "Ch", "Sh", "Shh", "\"",
+         "Y", "'", "Eh", "Ju", "Ja", "a", "b", "v", "g", "d", "e",
+         "zh", "z", "i", "jj", "k", "l", "m", "n", "o", "p", "r",
+         "s", "t", "u", "f", "kh", "c", "ch", "sh", "shh", "\"", "y",
+         "'", "eh", "ju", "ja"}},
+    /* cp866 to unicode. */
+    {{0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x000a, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0020, 0x0021, 0x0022, 0x0023,
+      0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002a, 0x002b, 0x002c,
+      0x002d, 0x002e, 0x002f, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035,
+      0x0036, 0x0037, 0x0038, 0x0039, 0x003a, 0x003b, 0x003c, 0x003d, 0x003e,
+      0x003f, 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047,
+      0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f, 0x0050,
+      0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059,
+      0x005a, 0x005b, 0x005c, 0x005d, 0x005e, 0x005f, 0x0060, 0x0061, 0x0062,
+      0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006a, 0x006b,
+      0x006c, 0x006d, 0x006e, 0x006f, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074,
+      0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007a, 0x007b, 0x007c, 0x007d,
+      0x007e, 0x0000, 0x0410, 0x0411, 0x0412, 0x0413, 0x0414, 0x0415, 0x0416,
+      0x0417, 0x0418, 0x0419, 0x041a, 0x041b, 0x041c, 0x041d, 0x041e, 0x041f,
+      0x0420, 0x0421, 0x0422, 0x0423, 0x0424, 0x0425, 0x0426, 0x0427, 0x0428,
+      0x0429, 0x042a, 0x042b, 0x042c, 0x042d, 0x042e, 0x042f, 0x0430, 0x0431,
+      0x0432, 0x0433, 0x0434, 0x0435, 0x0436, 0x0437, 0x0438, 0x0439, 0x043a,
+      0x043b, 0x043c, 0x043d, 0x043e, 0x043f, 0x2591, 0x2592, 0x2593, 0x2502,
+      0x2524, 0x2561, 0x2562, 0x2556, 0x2555, 0x2563, 0x2551, 0x2557, 0x255d,
+      0x255c, 0x255b, 0x2510, 0x2514, 0x2534, 0x252c, 0x251c, 0x2500, 0x253c,
+      0x255e, 0x255f, 0x255a, 0x2554, 0x2569, 0x2566, 0x2560, 0x2550, 0x256c,
+      0x2567, 0x2568, 0x2564, 0x2565, 0x2559, 0x2558, 0x2552, 0x2553, 0x256b,
+      0x256a, 0x2518, 0x250c, 0x2588, 0x2584, 0x258c, 0x2590, 0x2580, 0x0440,
+      0x0441, 0x0442, 0x0443, 0x0444, 0x0445, 0x0446, 0x0447, 0x0448, 0x0449,
+      0x044a, 0x044b, 0x044c, 0x044d, 0x044e, 0x044f, 0x0401, 0x0451, 0x0404,
+      0x0454, 0x0407, 0x0457, 0x040e, 0x045e, 0x00b0, 0x2022, 0x00b7, 0x221a,
+      0x2116, 0x00a4, 0x25a0, 0x00a0},
+     /* cp866 to gost 16876-71 ascii. */
+     {
+         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, "        ",
+         "\n", nullptr, nullptr, "\n", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+         " ", "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*",
+         "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5",
+         "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@",
+         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+         "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`", "a",
+         "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+         "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
+         "x", "y", "z", "{", "|", "}", "~", nullptr, "A", "B", "V",
+         "G", "D", "E", "Zh", "Z", "I", "Jj", "K", "L", "M", "N",
+         "O", "P", "R", "S", "T", "U", "F", "Kh", "C", "Ch", "Sh",
+         "Shh", "\"", "Y", "'", "Eh", "Ju", "Ja", "a", "b", "v", "g",
+         "d", "e", "zh", "z", "i", "jj", "k", "l", "m", "n", "o",
+         "p", "#", "#", "#", "|", "+", "+", "+", "+", "+", "+",
+         "|", "+", "+", "+", "+", "+", "+", "+", "+", "+", "-",
+         "+", "+", "+", "+", "+", "+", "+", "+", "|", "+", "+",
+         "+", "+", "+", "+", "+", "+", "+", "+", "+", "+", "+",
+         "+", ".", ".", ".", ".", "r", "s", "t", "u", "f", "kh",
+         "c", "ch", "sh", "shh", "\"", "y", "'", "eh", "ju", "ja", "Jo",
+         "jo", "Je", "je", "Ji", "ji", nullptr, nullptr, "deg", "*", "*", nullptr,
+         nullptr, "*", ".", " "}}};
 
 /*---------------------------------------------------------------------*/
 /*  Glk port locale control and conversion functions                   */
@@ -488,13 +463,11 @@ static void glk_request_line_event_uni(winid_t win,
 static const glui32 GSC_MIN_PRINTABLE = ' ',
                     GSC_MAX_PRINTABLE = '~';
 
-
 /* List of pointers to supported and available locales, nullptr terminated. */
 static const gsc_locale_t *const GSC_AVAILABLE_LOCALES[] = {
-	&GSC_LATIN1_LOCALE,
-	&GSC_CYRILLIC_LOCALE,
-	nullptr
-};
+    &GSC_LATIN1_LOCALE,
+    &GSC_CYRILLIC_LOCALE,
+    nullptr};
 
 /*
  * The locale for the game, set below explicitly or on game startup, and
@@ -502,7 +475,6 @@ static const gsc_locale_t *const GSC_AVAILABLE_LOCALES[] = {
  */
 static const gsc_locale_t *gsc_locale = nullptr;
 static const gsc_locale_t *const gsc_fallback_locale = &GSC_LATIN1_LOCALE;
-
 
 /*
  * gsc_set_locale()
@@ -532,7 +504,6 @@ static void gsc_set_locale(const sc_char *name) {
 		gsc_locale = matched;
 }
 
-
 /*
  * gsc_put_char_uni()
  *
@@ -557,7 +528,6 @@ static void gsc_put_char_uni(glui32 unicode, const char *ascii) {
 	}
 }
 
-
 /*
  * gsc_put_char_locale()
  *
@@ -575,7 +545,7 @@ static void gsc_put_char_locale(sc_char ch, const gsc_locale_t *locale, sc_bool 
 	 * retrieve the unicode and ascii representations of the character.
 	 */
 	codepage = is_alternate ? &locale->alternate : &locale->main;
-	character = (unsigned char) ch;
+	character = (unsigned char)ch;
 	unicode = codepage->unicode[character];
 	ascii = codepage->ascii[character];
 
@@ -596,11 +566,8 @@ static void gsc_put_char_locale(sc_char ch, const gsc_locale_t *locale, sc_bool 
 			 * guaranteed printable characters, since some Glk libraries don't
 			 * return the correct values for gestalt_CharOutput for these.
 			 */
-			if (unicode == '\n'
-			        || (unicode >= GSC_MIN_PRINTABLE && unicode <= GSC_MAX_PRINTABLE)
-			        || g_vm->glk_gestalt(gestalt_CharOutput,
-			                             unicode) == gestalt_CharOutput_ExactPrint) {
-				g_vm->glk_put_char((unsigned char) unicode);
+			if (unicode == '\n' || (unicode >= GSC_MIN_PRINTABLE && unicode <= GSC_MAX_PRINTABLE) || g_vm->glk_gestalt(gestalt_CharOutput, unicode) == gestalt_CharOutput_ExactPrint) {
+				g_vm->glk_put_char((unsigned char)unicode);
 				return;
 			}
 		}
@@ -637,7 +604,6 @@ static void gsc_put_char_locale(sc_char ch, const gsc_locale_t *locale, sc_bool 
 	/* No apparent way to output this character, so print a '?'. */
 	g_vm->glk_put_char('?');
 }
-
 
 /*
  * gsc_put_char()
@@ -688,7 +654,6 @@ static void gsc_put_string_alternate(const sc_char *string) {
 	gsc_put_buffer_using(string, strlen(string), gsc_put_char_alternate);
 }
 
-
 /*
  * gsc_unicode_to_locale()
  * gsc_unicode_buffer_to_locale()
@@ -714,17 +679,16 @@ static sc_char gsc_unicode_to_locale(glui32 unicode, const gsc_locale_t *locale)
 	}
 
 	/* Return the character translation, or '?' if none. */
-	return character < GSC_TABLE_SIZE ? (sc_char) character : '?';
+	return character < GSC_TABLE_SIZE ? (sc_char)character : '?';
 }
 
 static void gsc_unicode_buffer_to_locale(const glui32 *unicode, sc_int length,
-		sc_char *buffer, const gsc_locale_t *locale) {
+                                         sc_char *buffer, const gsc_locale_t *locale) {
 	sc_int index_;
 
 	for (index_ = 0; index_ < length; index_++)
 		buffer[index_] = gsc_unicode_to_locale(unicode[index_], locale);
 }
-
 
 /*
  * gsc_read_line_locale()
@@ -766,7 +730,6 @@ static sc_int gsc_read_line_locale(sc_char *buffer, sc_int length, const gsc_loc
 	return event.val1;
 }
 
-
 /*
  * gsc_read_line()
  *
@@ -778,7 +741,6 @@ static sc_int gsc_read_line(sc_char *buffer, sc_int length) {
 	locale = gsc_locale ? gsc_locale : gsc_fallback_locale;
 	return gsc_read_line_locale(buffer, length, locale);
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port status line functions                                     */
@@ -796,7 +758,6 @@ enum { GSC_STATUS_BUFFER_LENGTH = 74 };
 
 /* Whitespace characters, used to detect empty status elements. */
 static const sc_char *const GSC_WHITESPACE = "\t\n\v\f\r ";
-
 
 /*
  * gsc_is_string_usable()
@@ -818,7 +779,6 @@ static sc_bool gsc_is_string_usable(const sc_char *string) {
 	/* nullptr, or no characters other than whitespace. */
 	return FALSE;
 }
-
 
 /*
  * gsc_status_update()
@@ -884,7 +844,6 @@ static void gsc_status_update() {
 	}
 }
 
-
 /*
  * gsc_status_safe_strcat()
  *
@@ -900,7 +859,6 @@ static void gsc_status_safe_strcat(char *dest, size_t length, const char *src) {
 	if (available > 0)
 		strncat(dest, src, src_length < available ? src_length : available);
 }
-
 
 /*
  * gsc_status_print()
@@ -949,7 +907,6 @@ static void gsc_status_print() {
 	}
 }
 
-
 /*
  * gsc_status_notify()
  *
@@ -962,7 +919,6 @@ static void gsc_status_notify() {
 	else
 		gsc_status_print();
 }
-
 
 /*
  * gsc_status_redraw()
@@ -991,7 +947,6 @@ static void gsc_status_redraw() {
 		gsc_status_update();
 	}
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port output functions                                          */
@@ -1035,7 +990,6 @@ static const sc_int GSC_HINT_REFUSAL_LIMIT = 5;
 static const glui32 GSC_CANCEL_WAIT_1 = ' ',
                     GSC_CANCEL_WAIT_2 = keycode_Return;
 
-
 /*
  * gsc_output_register_help_request()
  * gsc_output_silence_help_hints()
@@ -1062,7 +1016,6 @@ static void gsc_output_provide_help_hint() {
 		g_vm->glk_set_style(style_Normal);
 	}
 }
-
 
 /*
  * gsc_set_glk_style()
@@ -1108,9 +1061,7 @@ static void gsc_set_glk_style() {
 			 */
 			if (gsc_attribute_bold > 0)
 				g_vm->glk_set_style(style_Subheader);
-			else if (gsc_attribute_italic > 0
-			         || gsc_attribute_underline > 0
-			         || gsc_attribute_secondary_color > 0)
+			else if (gsc_attribute_italic > 0 || gsc_attribute_underline > 0 || gsc_attribute_secondary_color > 0)
 				g_vm->glk_set_style(style_Emphasized);
 			else {
 				/*
@@ -1122,7 +1073,6 @@ static void gsc_set_glk_style() {
 		}
 	}
 }
-
 
 /*
  * gsc_handle_font_tag()
@@ -1160,8 +1110,7 @@ static void gsc_handle_font_tag(const sc_char *argument) {
 			 * There may be plenty of monospaced fonts, but we do only courier
 			 * and terminal.
 			 */
-			is_monospaced = strncmp(face, "face=\"courier\"", 14) == 0
-			                || strncmp(face, "face=\"terminal\"", 15) == 0;
+			is_monospaced = strncmp(face, "face=\"courier\"", 14) == 0 || strncmp(face, "face=\"terminal\"", 15) == 0;
 		}
 
 		/* Find the size= portion of the tag argument. */
@@ -1170,11 +1119,9 @@ static void gsc_handle_font_tag(const sc_char *argument) {
 			sc_uint value;
 
 			/* Deal with incremental and absolute sizes. */
-			if (strncmp(size, "size=+", 6) == 0
-			        && sscanf(size, "size=+%lu", &value) == 1)
+			if (strncmp(size, "size=+", 6) == 0 && sscanf(size, "size=+%lu", &value) == 1)
 				font_size += value;
-			else if (strncmp(size, "size=-", 6) == 0
-			         && sscanf(size, "size=-%lu", &value) == 1)
+			else if (strncmp(size, "size=-", 6) == 0 && sscanf(size, "size=-%lu", &value) == 1)
 				font_size -= value;
 			else if (sscanf(size, "size=%lu", &value) == 1)
 				font_size = value;
@@ -1199,7 +1146,6 @@ static void gsc_handle_endfont_tag() {
 		gsc_set_glk_style();
 	}
 }
-
 
 /*
  * gsc_handle_attribute_tag()
@@ -1258,7 +1204,6 @@ static void gsc_handle_endattribute_tag(sc_int tag) {
 	gsc_set_glk_style();
 }
 
-
 /*
  * gsc_handle_wait_tag()
  *
@@ -1299,8 +1244,7 @@ static void gsc_handle_wait_tag(const sc_char *argument) {
 				gsc_event_wait_2(evtype_CharInput, evtype_Timer, &event);
 				if (event.type == evtype_CharInput) {
 					/* Cancel the delay, or reissue the input request. */
-					if (event.val1 == GSC_CANCEL_WAIT_1
-					        || event.val1 == GSC_CANCEL_WAIT_2) {
+					if (event.val1 == GSC_CANCEL_WAIT_1 || event.val1 == GSC_CANCEL_WAIT_2) {
 						is_completed = FALSE;
 						break;
 					} else
@@ -1315,7 +1259,6 @@ static void gsc_handle_wait_tag(const sc_char *argument) {
 		}
 	}
 }
-
 
 /*
  * gsc_reset_glk_style()
@@ -1332,7 +1275,6 @@ static void gsc_reset_glk_style() {
 	gsc_attribute_secondary_color = 0;
 	gsc_set_glk_style();
 }
-
 
 /*
  * os_print_tag()
@@ -1420,7 +1362,6 @@ void os_print_tag(sc_int tag, const sc_char *argument) {
 	}
 }
 
-
 /*
  * os_print_string()
  *
@@ -1446,13 +1387,11 @@ void os_print_string(const sc_char *string) {
 	 * so we never be attempting monospaced output to the status window.
 	 * Nevertheless, check anyway.
 	 */
-	if (is_monospaced
-	        && g_vm->glk_stream_get_current() == g_vm->glk_window_get_stream(gsc_main_window))
+	if (is_monospaced && g_vm->glk_stream_get_current() == g_vm->glk_window_get_stream(gsc_main_window))
 		gsc_put_string_alternate(string);
 	else
 		gsc_put_string(string);
 }
-
 
 /*
  * os_print_string_debug()
@@ -1466,7 +1405,6 @@ void os_print_string_debug(const sc_char *string) {
 
 	gsc_put_string(string);
 }
-
 
 /*
  * gsc_styled_string()
@@ -1516,7 +1454,6 @@ static void gsc_header_string(const char *message) {
 	gsc_styled_string(style_Header, message);
 }
 
-
 /*
  * os_display_hints()
  *
@@ -1531,7 +1468,7 @@ void os_display_hints(sc_game game) {
 	/* For each hint, print the question, and confirm hint display. */
 	refused = 0;
 	for (hint = sc_get_first_game_hint(game);
-	        hint; hint = sc_get_next_game_hint(game, hint)) {
+	     hint; hint = sc_get_next_game_hint(game, hint)) {
 		const sc_char *hint_question, *hint_text;
 
 		/* If enough refusals, offer a way out of the loop. */
@@ -1573,7 +1510,6 @@ void os_display_hints(sc_game game) {
 	}
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk resource handling functions                                    */
 /*---------------------------------------------------------------------*/
@@ -1585,7 +1521,7 @@ void os_display_hints(sc_game game) {
  * Stub functions.  The unused variables defeat gcc warnings.
  */
 void os_play_sound(const sc_char *filepath, sc_int offset, sc_int length, sc_bool is_looping) {
-/*
+	/*
 	const sc_char *unused1;
 	sc_int unused2, unused3;
 	sc_bool unused4;
@@ -1598,7 +1534,6 @@ void os_play_sound(const sc_char *filepath, sc_int offset, sc_int length, sc_boo
 
 void os_stop_sound() {
 }
-
 
 /*
  * os_show_graphic()
@@ -1618,8 +1553,7 @@ void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 	const sc_char *unused1;
 	unused1 = filepath;
 
-	if (length > 0
-	        && gsclinux_graphics_enabled && g_vm->glk_gestalt(gestalt_Graphics, 0)) {
+	if (length > 0 && gsclinux_graphics_enabled && g_vm->glk_gestalt(gestalt_Graphics, 0)) {
 		sc_char *buffer;
 
 		/*
@@ -1632,7 +1566,7 @@ void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 		assert(gsclinux_game_file);
 		buffer = gsc_malloc(strlen(gsclinux_game_file) + 128);
 		sprintf(buffer, "dd if=%s ibs=1c skip=%ld count=%ld obs=100k"
-		        " of=/tmp/scare.jpg 2>/dev/null",
+		                " of=/tmp/scare.jpg 2>/dev/null",
 		        gsclinux_game_file, offset, length);
 		system(buffer);
 		free(buffer);
@@ -1642,7 +1576,7 @@ void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 }
 #else
 void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
-/*
+	/*
 	const sc_char *unused1;
 	sc_int unused2, unused3;
 	unused1 = filepath;
@@ -1651,7 +1585,6 @@ void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 */
 }
 #endif
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk command escape functions                                       */
@@ -1673,16 +1606,15 @@ static void gsc_command_script(const char *argument) {
 			return;
 		}
 
-		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_Transcript
-		          | fileusage_TextMode,
-		          filemode_WriteAppend, 0);
+		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_Transcript | fileusage_TextMode,
+		                                             filemode_WriteAppend, 0);
 		if (!fileref) {
 			gsc_standout_string("Glk transcript failed.\n");
 			return;
 		}
 
 		gsc_transcript_stream = g_vm->glk_stream_open_file(fileref,
-		                        filemode_WriteAppend, 0);
+		                                                   filemode_WriteAppend, 0);
 		g_vm->glk_fileref_destroy(fileref);
 		if (!gsc_transcript_stream) {
 			gsc_standout_string("Glk transcript failed.\n");
@@ -1723,7 +1655,6 @@ static void gsc_command_script(const char *argument) {
 	}
 }
 
-
 /*
  * gsc_command_inputlog()
  *
@@ -1740,16 +1671,15 @@ static void gsc_command_inputlog(const char *argument) {
 			return;
 		}
 
-		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord
-		          | fileusage_BinaryMode,
-		          filemode_WriteAppend, 0);
+		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord | fileusage_BinaryMode,
+		                                             filemode_WriteAppend, 0);
 		if (!fileref) {
 			gsc_standout_string("Glk input logging failed.\n");
 			return;
 		}
 
 		gsc_inputlog_stream = g_vm->glk_stream_open_file(fileref,
-		                      filemode_WriteAppend, 0);
+		                                                 filemode_WriteAppend, 0);
 		g_vm->glk_fileref_destroy(fileref);
 		if (!gsc_inputlog_stream) {
 			gsc_standout_string("Glk input logging failed.\n");
@@ -1786,7 +1716,6 @@ static void gsc_command_inputlog(const char *argument) {
 	}
 }
 
-
 /*
  * gsc_command_readlog()
  *
@@ -1803,9 +1732,8 @@ static void gsc_command_readlog(const char *argument) {
 			return;
 		}
 
-		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord
-		          | fileusage_BinaryMode,
-		          filemode_Read, 0);
+		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord | fileusage_BinaryMode,
+		                                             filemode_Read, 0);
 		if (!fileref) {
 			gsc_standout_string("Glk read log failed.\n");
 			return;
@@ -1854,7 +1782,6 @@ static void gsc_command_readlog(const char *argument) {
 	}
 }
 
-
 /*
  * gsc_command_abbreviations()
  *
@@ -1898,7 +1825,6 @@ static void gsc_command_abbreviations(const char *argument) {
 	}
 }
 
-
 /*
  * gsc_command_print_version_number()
  * gsc_command_version()
@@ -1909,9 +1835,9 @@ static void gsc_command_print_version_number(glui32 version) {
 	char buffer[64];
 
 	sprintf(buffer, "%lu.%lu.%lu",
-	        (unsigned long) version >> 16,
+	        (unsigned long)version >> 16,
 	        (unsigned long)(version >> 8) & 0xff,
-	        (unsigned long) version & 0xff);
+	        (unsigned long)version & 0xff);
 	gsc_normal_string(buffer);
 }
 
@@ -1928,7 +1854,6 @@ static void gsc_command_version(const char *argument) {
 	gsc_command_print_version_number(version);
 	gsc_normal_string(".\n");
 }
-
 
 /*
  * gsc_command_commands()
@@ -1963,7 +1888,6 @@ static void gsc_command_commands(const char *argument) {
 	}
 }
 
-
 /*
  * gsc_command_license()
  *
@@ -1997,12 +1921,11 @@ static void gsc_command_license(const char *argument) {
 	gsc_normal_string(".\n");
 }
 
-
 /* Glk subcommands and handler functions. */
 struct gsc_command_t {
-	const char *const command;                      /* Glk subcommand. */
-	void (* const handler)(const char *argument);   /* Subcommand handler. */
-	const int takes_argument;                       /* Argument flag. */
+	const char *const command;                   /* Glk subcommand. */
+	void (*const handler)(const char *argument); /* Subcommand handler. */
+	const int takes_argument;                    /* Argument flag. */
 };
 typedef gsc_command_t *gsc_commandref_t;
 
@@ -2010,18 +1933,16 @@ static void gsc_command_summary(const char *argument);
 static void gsc_command_help(const char *argument);
 
 static gsc_command_t GSC_COMMAND_TABLE[] = {
-	{"summary",        gsc_command_summary,        FALSE},
-	{"script",         gsc_command_script,         TRUE},
-	{"inputlog",       gsc_command_inputlog,       TRUE},
-	{"readlog",        gsc_command_readlog,        TRUE},
-	{"abbreviations",  gsc_command_abbreviations,  TRUE},
-	{"version",        gsc_command_version,        FALSE},
-	{"commands",       gsc_command_commands,       TRUE},
-	{"license",        gsc_command_license,        FALSE},
-	{"help",           gsc_command_help,           TRUE},
-	{nullptr, nullptr, FALSE}
-};
-
+    {"summary", gsc_command_summary, FALSE},
+    {"script", gsc_command_script, TRUE},
+    {"inputlog", gsc_command_inputlog, TRUE},
+    {"readlog", gsc_command_readlog, TRUE},
+    {"abbreviations", gsc_command_abbreviations, TRUE},
+    {"version", gsc_command_version, FALSE},
+    {"commands", gsc_command_commands, TRUE},
+    {"license", gsc_command_license, FALSE},
+    {"help", gsc_command_help, TRUE},
+    {nullptr, nullptr, FALSE}};
 
 /*
  * gsc_command_summary()
@@ -2037,15 +1958,12 @@ static void gsc_command_summary(const char *argument) {
 	 * prompting each to print its current setting.
 	 */
 	for (entry = GSC_COMMAND_TABLE; entry->command; entry++) {
-		if (entry->handler == gsc_command_summary
-		        || entry->handler == gsc_command_license
-		        || entry->handler == gsc_command_help)
+		if (entry->handler == gsc_command_summary || entry->handler == gsc_command_license || entry->handler == gsc_command_help)
 			continue;
 
 		entry->handler("");
 	}
 }
-
 
 /*
  * gsc_command_help()
@@ -2172,7 +2090,6 @@ static void gsc_command_help(const char *command) {
 		                  "  Sorry.\n");
 }
 
-
 /*
  * gsc_command_escape()
  *
@@ -2269,7 +2186,6 @@ static int gsc_command_escape(const char *string) {
 	return TRUE;
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port input functions                                           */
 /*---------------------------------------------------------------------*/
@@ -2277,22 +2193,15 @@ static int gsc_command_escape(const char *string) {
 /* Quote used to suppress abbreviation expansion and local commands. */
 static const char GSC_QUOTED_INPUT = '\'';
 
-
 /* Table of single-character command abbreviations. */
 typedef const struct {
-	const char abbreviation;      /* Abbreviation character. */
-	const char *const expansion;  /* Expansion string. */
+	const char abbreviation;     /* Abbreviation character. */
+	const char *const expansion; /* Expansion string. */
 } gsc_abbreviation_t;
 typedef gsc_abbreviation_t *gsc_abbreviationref_t;
 
 static gsc_abbreviation_t GSC_ABBREVIATIONS[] = {
-	{'c', "close"},    {'g', "again"},  {'i', "inventory"},
-	{'k', "attack"},   {'l', "look"},   {'p', "open"},
-	{'q', "quit"},     {'r', "drop"},   {'t', "take"},
-	{'x', "examine"},  {'y', "yes"},    {'z', "wait"},
-	{'\0', nullptr}
-};
-
+    {'c', "close"}, {'g', "again"}, {'i', "inventory"}, {'k', "attack"}, {'l', "look"}, {'p', "open"}, {'q', "quit"}, {'r', "drop"}, {'t', "take"}, {'x', "examine"}, {'y', "yes"}, {'z', "wait"}, {'\0', nullptr}};
 
 /*
  * gsc_expand_abbreviations()
@@ -2308,12 +2217,11 @@ static void gsc_expand_abbreviations(char *buffer, int size) {
 
 	/* Ignore anything that isn't a single letter command. */
 	command = buffer + strspn(buffer, "\t ");
-	if (!(strlen(command) == 1
-	        || (strlen(command) > 1 && Common::isSpace(command[1]))))
+	if (!(strlen(command) == 1 || (strlen(command) > 1 && Common::isSpace(command[1]))))
 		return;
 
 	/* Scan the abbreviations table for a match. */
-	abbreviation = g_vm->glk_char_to_lower((unsigned char) command[0]);
+	abbreviation = g_vm->glk_char_to_lower((unsigned char)command[0]);
 	expansion = nullptr;
 	for (entry = GSC_ABBREVIATIONS; entry->expansion; entry++) {
 		if (entry->abbreviation == abbreviation) {
@@ -2327,7 +2235,7 @@ static void gsc_expand_abbreviations(char *buffer, int size) {
 	 * expansion string.
 	 */
 	if (expansion) {
-		if (strlen(buffer) + strlen(expansion) - 1 >= (unsigned int) size)
+		if (strlen(buffer) + strlen(expansion) - 1 >= (unsigned int)size)
 			return;
 
 		memmove(command + strlen(expansion) - 1, command, strlen(command) + 1);
@@ -2340,7 +2248,6 @@ static void gsc_expand_abbreviations(char *buffer, int size) {
 		gsc_standout_string("]\n");
 	}
 }
-
 
 /*
  * os_read_line()
@@ -2427,8 +2334,7 @@ sc_bool os_read_line(sc_char *buffer, sc_int length) {
 
 				posn = strspn(buffer, "\t ");
 				if (sc_strncasecmp(buffer + posn, "help", strlen("help")) == 0) {
-					if (strspn(buffer + posn + strlen("help"), "\t ")
-					        == strlen(buffer + posn + strlen("help"))) {
+					if (strspn(buffer + posn + strlen("help"), "\t ") == strlen(buffer + posn + strlen("help"))) {
 						gsc_output_register_help_request();
 					}
 				}
@@ -2454,7 +2360,6 @@ sc_bool os_read_line(sc_char *buffer, sc_int length) {
 	return TRUE;
 }
 
-
 /*
  * os_read_line_debug()
  *
@@ -2469,7 +2374,6 @@ sc_bool os_read_line_debug(sc_char *buffer, sc_int length) {
 	return os_read_line(buffer, length);
 }
 
-
 /*
  * os_confirm()
  *
@@ -2483,8 +2387,7 @@ sc_bool os_confirm(sc_int type) {
 	 * input log, allow everything no matter what, on the assumption that the
 	 * user knows what they are doing.
 	 */
-	if (gsc_readlog_stream
-	        || type == SC_CONF_SAVE || type == SC_CONF_VIEW_HINTS)
+	if (gsc_readlog_stream || type == SC_CONF_SAVE || type == SC_CONF_VIEW_HINTS)
 		return TRUE;
 
 	/* Ensure back to normal style, and update status. */
@@ -2549,7 +2452,6 @@ sc_bool os_confirm(sc_int type) {
 	return (response == 'Y');
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port event functions                                           */
 /*---------------------------------------------------------------------*/
@@ -2580,7 +2482,6 @@ static void gsc_short_delay() {
 		g_vm->glk_request_timer_events(0);
 	}
 }
-
 
 /*
  * gsc_event_wait_2()
@@ -2618,7 +2519,6 @@ static void gsc_event_wait(glui32 wait_type, event_t *event) {
 	gsc_event_wait_2(wait_type, evtype_None, event);
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port file functions                                            */
 /*---------------------------------------------------------------------*/
@@ -2652,7 +2552,6 @@ void *os_open_file(sc_bool is_save) {
 	return stream;
 }
 
-
 /*
  * os_write_file()
  * os_read_file()
@@ -2660,19 +2559,18 @@ void *os_open_file(sc_bool is_save) {
  * Write/read the given buffered data to/from the open Glk stream.
  */
 void os_write_file(void *opaque, const sc_byte *buffer, sc_int length) {
-	strid_t stream = (strid_t) opaque;
+	strid_t stream = (strid_t)opaque;
 	assert(opaque && buffer);
 
 	g_vm->glk_put_buffer_stream(stream, (const char *)buffer, length);
 }
 
 sc_int os_read_file(void *opaque, sc_byte *buffer, sc_int length) {
-	strid_t stream = (strid_t) opaque;
+	strid_t stream = (strid_t)opaque;
 	assert(opaque && buffer);
 
 	return g_vm->glk_get_buffer_stream(stream, (char *)buffer, length);
 }
-
 
 /*
  * os_close_file()
@@ -2680,12 +2578,11 @@ sc_int os_read_file(void *opaque, sc_byte *buffer, sc_int length) {
  * Close the opened Glk stream.
  */
 void os_close_file(void *opaque) {
-	strid_t stream = (strid_t) opaque;
+	strid_t stream = (strid_t)opaque;
 	assert(opaque);
 
 	g_vm->glk_stream_close(stream, nullptr);
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  main() and options parsing                                         */
@@ -2695,14 +2592,15 @@ void os_close_file(void *opaque) {
 static const glui32 GSC_LOADING_TIMEOUT = 100;
 
 /* Enumerated game end options. */
-enum gsc_end_option { GAME_RESTART, GAME_UNDO, GAME_QUIT };
+enum gsc_end_option { GAME_RESTART,
+	                  GAME_UNDO,
+	                  GAME_QUIT };
 
 /*
  * The following value needs to be passed between the startup_code and main
  * functions.
  */
 static const char *gsc_game_message;
-
 
 /*
  * gsc_callback()
@@ -2717,7 +2615,6 @@ static sc_int gsc_callback(void *opaque, sc_byte *buffer, sc_int length) {
 
 	return stream->read(buffer, length);
 }
-
 
 /*
  * gsc_get_ending_option()
@@ -2736,12 +2633,10 @@ static enum gsc_end_option gsc_get_ending_option() {
 	g_vm->glk_put_string("\nWould you like to RESTART, UNDO a turn, or QUIT? ");
 
 	/* Loop until 'restart', 'undo' or 'quit'. */
-	do
-	{
+	do {
 		event_t event;
 
-		do
-		{
+		do {
 			g_vm->glk_request_char_event(gsc_main_window);
 			gsc_event_wait(evtype_CharInput, &event);
 		} while (event.val1 > BYTE_MAX);
@@ -2784,7 +2679,6 @@ static enum gsc_end_option gsc_get_ending_option() {
 	return GAME_QUIT;
 }
 
-
 /*
  * gsc_startup_code()
  * gsc_main
@@ -2795,7 +2689,7 @@ static enum gsc_end_option gsc_get_ending_option() {
  * does the real work of running the game.
  */
 static int gsc_startup_code(Common::SeekableReadStream *game_stream, int restore_slot,
-		sc_uint trace_flags, sc_bool enable_debugger, sc_bool stable_random, const sc_char *locale) {
+                            sc_uint trace_flags, sc_bool enable_debugger, sc_bool stable_random, const sc_char *locale) {
 	winid_t window;
 	assert(game_stream);
 
@@ -2885,7 +2779,7 @@ static int gsc_startup_code(Common::SeekableReadStream *game_stream, int restore
 	if (window)
 		g_vm->glk_window_close(window, nullptr);
 
-	/* Set title of game */
+		/* Set title of game */
 #ifdef GARGLK
 	g_vm->garglk_set_story_name(sc_get_game_name(gsc_game));
 #endif
@@ -2899,9 +2793,7 @@ static void gsc_main() {
 	Context context;
 
 	/* Ensure SCARE internal types have the right sizes. */
-	if (!(sizeof(sc_byte) == 1 && sizeof(sc_char) == 1
-	        && sizeof(sc_uint) >= 4 && sizeof(sc_int) >= 4
-	        && sizeof(sc_uint) <= 8 && sizeof(sc_int) <= 8)) {
+	if (!(sizeof(sc_byte) == 1 && sizeof(sc_char) == 1 && sizeof(sc_uint) >= 4 && sizeof(sc_int) >= 4 && sizeof(sc_uint) <= 8 && sizeof(sc_int) <= 8)) {
 		gsc_fatal("GLK: Types sized incorrectly, recompilation is needed");
 		g_vm->glk_exit();
 	}
@@ -2928,8 +2820,8 @@ static void gsc_main() {
 	/* Try to create a one-line status window.  We can live without it. */
 	g_vm->glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
 	gsc_status_window = g_vm->glk_window_open(gsc_main_window,
-	                    winmethod_Above | winmethod_Fixed,
-	                    1, wintype_TextGrid, 0);
+	                                          winmethod_Above | winmethod_Fixed,
+	                                          1, wintype_TextGrid, 0);
 
 	/* Repeat the game until no more restarts requested. */
 	is_running = TRUE;
@@ -3009,7 +2901,6 @@ static void gsc_main() {
 	}
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Linkage between Glk entry/exit calls and the real interpreter      */
 /*---------------------------------------------------------------------*/
@@ -3034,7 +2925,6 @@ void adrift_main() {
 	/* Call the generic interpreter main function. */
 	gsc_main();
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk linkage relevant only to the UNIX platform                     */

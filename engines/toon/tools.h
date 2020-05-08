@@ -23,11 +23,11 @@
 #ifndef TOON_TOOLS_H
 #define TOON_TOOLS_H
 
-#include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
 
-#define RNC1_SIGNATURE   0x524E4301 // "RNC\001"
-#define RNC2_SIGNATURE   0x524E4302 // "RNC\002"
+#define RNC1_SIGNATURE 0x524E4301 // "RNC\001"
+#define RNC2_SIGNATURE 0x524E4302 // "RNC\002"
 
 namespace Toon {
 

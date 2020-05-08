@@ -45,7 +45,6 @@ void Party::synchronize(Common::Serializer &s) {
 		_characters[idx]->synchronize(s);
 }
 
-
 bool Party::isDead() const {
 	for (uint idx = 0; idx < _characters.size(); ++idx) {
 		if ((*this)[idx]._hitPoints > 0)

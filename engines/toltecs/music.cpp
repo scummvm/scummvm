@@ -24,9 +24,9 @@
 #include "audio/miles.h"
 #include "common/textconsole.h"
 
-#include "toltecs/toltecs.h"
 #include "toltecs/music.h"
 #include "toltecs/resource.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
@@ -134,7 +134,7 @@ void Music::playSequence(int16 sequenceResIndex) {
 	_arc->closeResource();
 
 	if (!memcmp(data, "FORM", 4))
-		playMIDI(data, resourceSize, true);	// music tracks are always looping
+		playMIDI(data, resourceSize, true); // music tracks are always looping
 	else
 		// Sanity check: this should never occur
 		error("playSequence: resource %d isn't XMIDI", sequenceResIndex);
@@ -158,4 +158,4 @@ void Music::loadState(Common::ReadStream *in) {
 		playSequence(_sequenceResIndex);
 }
 
-} // End of namespace Made
+} // namespace Toltecs

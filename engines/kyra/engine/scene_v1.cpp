@@ -25,9 +25,14 @@
 namespace Kyra {
 
 int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
-	x &= 0xFFFC; toX &= 0xFFFC;
-	y &= 0xFFFE; toY &= 0xFFFE;
-	x = (int16)x; y = (int16)y; toX = (int16)toX; toY = (int16)toY;
+	x &= 0xFFFC;
+	toX &= 0xFFFC;
+	y &= 0xFFFE;
+	toY &= 0xFFFE;
+	x = (int16)x;
+	y = (int16)y;
+	toX = (int16)toX;
+	toY = (int16)toY;
 
 	if (x == toY && y == toY) {
 		moveTable[0] = 8;
@@ -141,11 +146,11 @@ int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end) {
 	// only used for debug specific code
 	//static uint16 unkTable[] = { 8, 5 };
-	static const int8 facingTable1[] = {  7,  0,  1,  2,  3,  4,  5,  6,  1,  2,  3,  4,  5,  6,  7,  0 };
-	static const int8 facingTable2[] = { -1,  0, -1,  2, -1,  4, -1,  6, -1,  2, -1,  4, -1,  6, -1,  0 };
-	static const int8 facingTable3[] = {  2,  4,  4,  6,  6,  0,  0,  2,  6,  6,  0,  0,  2,  2,  4,  4 };
-	static const int8 addPosTableX[] = { -1,  0, -1,  4, -1,  0, -1, -4, -1, -4, -1,  0, -1,  4, -1,  0 };
-	static const int8 addPosTableY[] = { -1,  2, -1,  0, -1, -2, -1,  0, -1,  0, -1,  2, -1,  0, -1, -2 };
+	static const int8 facingTable1[] = {7, 0, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 7, 0};
+	static const int8 facingTable2[] = {-1, 0, -1, 2, -1, 4, -1, 6, -1, 2, -1, 4, -1, 6, -1, 0};
+	static const int8 facingTable3[] = {2, 4, 4, 6, 6, 0, 0, 2, 6, 6, 0, 0, 2, 2, 4, 4};
+	static const int8 addPosTableX[] = {-1, 0, -1, 4, -1, 0, -1, -4, -1, -4, -1, 0, -1, 4, -1, 0};
+	static const int8 addPosTableY[] = {-1, 2, -1, 0, -1, -2, -1, 0, -1, 0, -1, 2, -1, 0, -1, -2};
 
 	// debug specific
 	/*++unkTable[start];
@@ -208,8 +213,7 @@ int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, i
 
 int KyraEngine_v1::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
 	static const int facingTable[] = {
-		1, 0, 1, 2, 3, 4, 3, 2, 7, 0, 7, 6, 5, 4, 5, 6
-	};
+	    1, 0, 1, 2, 3, 4, 3, 2, 7, 0, 7, 6, 5, 4, 5, 6};
 
 	int facingEntry = 0;
 	int ydiff = y - toY;
@@ -248,7 +252,6 @@ int KyraEngine_v1::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
 	return facingTable[facingEntry];
 }
 
-
 int KyraEngine_v1::getOppositeFacingDirection(int dir) {
 	switch (dir) {
 	case 0:
@@ -282,18 +285,16 @@ int KyraEngine_v1::getMoveTableSize(int *moveTable) {
 		return 0;
 
 	static const int facingTable[] = {
-		4, 5, 6, 7, 0, 1, 2, 3
-	};
+	    4, 5, 6, 7, 0, 1, 2, 3};
 	static const int unkTable[] = {
-		-1, -1,  1,  2, -1,  6,  7, -1,
-		-1, -1, -1, -1,  2, -1,  0, -1,
-		 1, -1, -1, -1,  3,  4, -1,  0,
-		 2, -1, -1, -1, -1, -1,  4, -1,
-		-1,  2,  3, -1, -1, -1,  5,  6,
-		 6, -1,  4, -1, -1, -1, -1, -1,
-		 7,  0, -1,  4,  5, -1, -1, -1,
-		-1, -1,  0, -1,  6, -1, -1, -1
-	};
+	    -1, -1, 1, 2, -1, 6, 7, -1,
+	    -1, -1, -1, -1, 2, -1, 0, -1,
+	    1, -1, -1, -1, 3, 4, -1, 0,
+	    2, -1, -1, -1, -1, -1, 4, -1,
+	    -1, 2, 3, -1, -1, -1, 5, 6,
+	    6, -1, 4, -1, -1, -1, -1, -1,
+	    7, 0, -1, 4, 5, -1, -1, -1,
+	    -1, -1, 0, -1, 6, -1, -1, -1};
 
 	int *oldPosition = moveTable;
 	int *tempPosition = moveTable;

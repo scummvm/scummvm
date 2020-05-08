@@ -122,13 +122,13 @@ int Screen_MR::getDrawLayer2(int x, int y, int height) {
 void Screen_MR::drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2, uint8 c3) {
 	fillRect(x1, y1, x2, y2, c1);
 
-	fillRect(x1, y1, x2, y1+1, c2);
-	fillRect(x2-1, y1, x2, y2, c2);
+	fillRect(x1, y1, x2, y1 + 1, c2);
+	fillRect(x2 - 1, y1, x2, y2, c2);
 
 	drawClippedLine(x1, y1, x1, y2, c3);
-	drawClippedLine(x1+1, y1+1, x1+1, y2-2, c3);
+	drawClippedLine(x1 + 1, y1 + 1, x1 + 1, y2 - 2, c3);
 	drawClippedLine(x1, y2, x2, y2, c3);
-	drawClippedLine(x1, y2-1, x2-1, y2-1, c3);
+	drawClippedLine(x1, y2 - 1, x2 - 1, y2 - 1, c3);
 }
 
 } // End of namespace Kyra

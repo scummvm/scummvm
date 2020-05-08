@@ -24,8 +24,8 @@
 #define TSAGE_RINGWORLD_SCENES5_H
 
 #include "common/scummsys.h"
-#include "tsage/core.h"
 #include "tsage/converse.h"
+#include "tsage/core.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
 
@@ -98,6 +98,7 @@ class Scene4000 : public Scene {
 	class Hotspot8 : public SceneObject {
 	private:
 		int _ctr;
+
 	public:
 		Hotspot8();
 		void synchronize(Serializer &s) override {
@@ -138,6 +139,7 @@ class Scene4000 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
 	ASound _soundHandler1, _soundHandler2;
@@ -219,7 +221,10 @@ class Scene4025 : public Scene {
 		int _pegId;
 		int _armStrip;
 
-		Peg() : SceneObject() { _pegId = 0; _armStrip = 3; }
+		Peg() : SceneObject() {
+			_pegId = 0;
+			_armStrip = 3;
+		}
 		void synchronize(Serializer &s) override;
 		void doAction(int action) override;
 	};
@@ -237,6 +242,7 @@ class Scene4025 : public Scene {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	GfxButton _gfxButton;
@@ -341,6 +347,7 @@ class Scene4050 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SpeakerPText _speakerPText;
 	SpeakerQText _speakerQText;
@@ -411,6 +418,7 @@ class Scene4100 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SpeakerMText _speakerMText;
@@ -618,6 +626,7 @@ class Scene4300 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	ASound _soundHandler1, _soundHandler2;
 	SequenceManager _sequenceManager;

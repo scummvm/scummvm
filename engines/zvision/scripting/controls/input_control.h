@@ -24,13 +24,13 @@
 #define ZVISION_INPUT_CONTROL_H
 
 #include "zvision/scripting/control.h"
-#include "zvision/text/text.h"
 #include "zvision/text/string_manager.h"
+#include "zvision/text/text.h"
 
 #include "common/rect.h"
 
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace ZVision {

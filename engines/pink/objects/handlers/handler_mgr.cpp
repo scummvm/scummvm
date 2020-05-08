@@ -20,11 +20,11 @@
  *
  */
 
-#include "pink/archive.h"
-#include "pink/pink.h"
-#include "pink/objects/inventory.h"
-#include "pink/objects/handlers/handler.h"
 #include "pink/objects/handlers/handler_mgr.h"
+#include "pink/archive.h"
+#include "pink/objects/handlers/handler.h"
+#include "pink/objects/inventory.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -59,13 +59,12 @@ bool HandlerMgr::isLeftClickHandler(const Actor *actor) const {
 bool HandlerMgr::isUseClickHandler(const Actor *actor, const Common::String &itemName) const {
 	for (uint i = 0; i < _useClickHandlers.size(); ++i) {
 		if (itemName == _useClickHandlers[i]->getInventoryItem() &&
-			_useClickHandlers[i]->isSuitable(actor))
+		    _useClickHandlers[i]->isSuitable(actor))
 			return true;
 	}
 
 	return false;
 }
-
 
 void HandlerMgr::onTimerMessage(Actor *actor) {
 	Handler *handler = findSuitableHandlerTimer(actor);

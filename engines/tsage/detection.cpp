@@ -21,8 +21,8 @@
  */
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 
 #include "engines/advancedDetector.h"
 
@@ -58,12 +58,11 @@ Common::String TSageEngine::getPrimaryFilename() const {
 } // End of namespace TsAGE
 
 static const PlainGameDescriptor tSageGameTitles[] = {
-	{ "ringworld", "Ringworld: Revenge of the Patriarch" },
-	{ "blueforce", "Blue Force" },
-	{ "ringworld2", "Return to Ringworld" },
-	{ "sherlock-logo", "The Lost Files of Sherlock Holmes (Logo)" },
-	{ 0, 0 }
-};
+    {"ringworld", "Ringworld: Revenge of the Patriarch"},
+    {"blueforce", "Blue Force"},
+    {"ringworld2", "Return to Ringworld"},
+    {"sherlock-logo", "The Lost Files of Sherlock Holmes (Logo)"},
+    {0, 0}};
 
 #include "engines/tsage/detection_tables.h"
 
@@ -156,7 +155,7 @@ public:
 
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
-			generateGameStateFileName(target, slot));
+		    generateGameStateFileName(target, slot));
 
 		if (f) {
 			TsAGE::tSageSavegameHeader header;
@@ -182,7 +181,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TSAGE)
-	REGISTER_PLUGIN_DYNAMIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
+REGISTER_PLUGIN_STATIC(TSAGE, PLUGIN_TYPE_ENGINE, TSageMetaEngine);
 #endif

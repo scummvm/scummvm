@@ -34,18 +34,18 @@ namespace BladeRunner {
 class AudioCache;
 
 class AudStream : public Audio::RewindableAudioStream {
-	byte       *_data;
-	byte       *_p;
-	byte       *_end;
+	byte *_data;
+	byte *_p;
+	byte *_end;
 	AudioCache *_cache;
-	int32       _hash;
-	uint16      _deafBlockRemain;
-	uint16      _frequency;
-	uint32      _size;
-	uint32      _sizeDecompressed;
-	byte        _flags;
-	byte        _compressionType;
-	int         _overrideFrequency;
+	int32 _hash;
+	uint16 _deafBlockRemain;
+	uint16 _frequency;
+	uint32 _size;
+	uint32 _sizeDecompressed;
+	byte _flags;
+	byte _compressionType;
+	int _overrideFrequency;
 
 	ADPCMWestwoodDecoder _decoder;
 

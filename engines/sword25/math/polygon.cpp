@@ -29,11 +29,11 @@
  *
  */
 
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
-#include "sword25/math/polygon.h"
 #include "sword25/math/line.h"
+#include "sword25/math/polygon.h"
 
 namespace Sword25 {
 
@@ -124,7 +124,7 @@ int Polygon::findLRVertexIndex() const {
 
 		for (int i = 1; i < vertexCount; i++) {
 			if (vertices[i].y > maxY ||
-			        (vertices[i].y == maxY && vertices[i].x > maxX)) {
+			    (vertices[i].y == maxY && vertices[i].x > maxX)) {
 				maxX = vertices[i].x;
 				maxY = vertices[i].y;
 				curIndex = i;

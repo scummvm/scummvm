@@ -31,18 +31,19 @@
 namespace Common {
 class ReadStream;
 class WriteStream;
-}
+} // namespace Common
 
 namespace Supernova {
 
 class GameManager1;
 class SupernovaEngine;
 
-class Room1: public Room {
-	public:
-		Room1();
-	protected:
-		GameManager1 *_gm;
+class Room1 : public Room {
+public:
+	Room1();
+
+protected:
+	GameManager1 *_gm;
 	int _dialogsX[6];
 };
 
@@ -55,9 +56,9 @@ public:
 private:
 	bool animate(int section1, int section2, int duration);
 	bool animate(int section1, int section2, int duration, MessagePosition position,
-				 int text);
+	             int text);
 	bool animate(int section1, int section2, int section3, int section4, int duration,
-				 MessagePosition position, int text);
+	             MessagePosition position, int text);
 
 	void titleScreen();
 	void titleFadeIn();
@@ -78,7 +79,7 @@ public:
 private:
 };
 
-class ShipHall: public Room1 {
+class ShipHall : public Room1 {
 public:
 	ShipHall(SupernovaEngine *vm, GameManager1 *gm);
 
@@ -87,7 +88,7 @@ public:
 private:
 };
 
-class ShipSleepCabin: public Room1 {
+class ShipSleepCabin : public Room1 {
 public:
 	ShipSleepCabin(SupernovaEngine *vm, GameManager1 *gm);
 
@@ -111,7 +112,7 @@ private:
 	byte _color;
 };
 
-class ShipCabinL1: public Room1 {
+class ShipCabinL1 : public Room1 {
 public:
 	ShipCabinL1(SupernovaEngine *vm, GameManager1 *gm);
 
@@ -160,7 +161,7 @@ public:
 private:
 };
 
-class ShipCabinBathroom : public Room1  {
+class ShipCabinBathroom : public Room1 {
 public:
 	ShipCabinBathroom(SupernovaEngine *vm, GameManager1 *gm);
 
@@ -211,7 +212,6 @@ public:
 
 private:
 };
-
 
 // Arsano
 class ArsanoRocks : public Room1 {
@@ -322,7 +322,6 @@ private:
 	int _dialog3[2];
 };
 
-
 // Axacuss
 class AxacussCell : public Room1 {
 public:
@@ -390,7 +389,6 @@ private:
 	int _dialog3[4];
 
 	byte _rows[6];
-
 };
 
 class AxacussCorridor6 : public Room1 {
@@ -539,12 +537,12 @@ public:
 private:
 	void animate(int filenumber, int section1, int section2, int duration);
 	void animate(int filenumber, int section1, int section2, int duration, MessagePosition position,
-				 const char *text);
+	             const char *text);
 	void animate(int filenumber, int section1, int section2, int section3, int section4, int duration,
-				 MessagePosition position, const char *text);
+	             MessagePosition position, const char *text);
 
 	Common::String _outroText;
 };
 
-}
+} // namespace Supernova
 #endif // SUPERNOVA_ROOMS_H

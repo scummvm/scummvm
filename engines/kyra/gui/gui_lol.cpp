@@ -24,14 +24,14 @@
 
 #include "kyra/gui/gui_lol.h"
 #include "kyra/engine/lol.h"
+#include "kyra/engine/util.h"
 #include "kyra/graphics/screen_lol.h"
 #include "kyra/resource/resource.h"
-#include "kyra/engine/util.h"
 #include "kyra/sound/sound.h"
 
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/config-manager.h"
 
 #include "graphics/scaler.h"
 
@@ -46,7 +46,7 @@ void LoLEngine::gui_drawPlayField() {
 
 	if (_flagsTable[31] & 0x40) {
 		// copy compass shape
-		static const int cx[] = { 112, 152, 224 };
+		static const int cx[] = {112, 152, 224};
 		_screen->copyRegion(cx[_flags.isTalkie ? _lang : 0], 32, 288, 0, 32, 32, 2, 2, Screen::CR_NO_P_CHECK);
 		_compassDirection = -1;
 	}
@@ -91,7 +91,7 @@ void LoLEngine::gui_drawInventory() {
 }
 
 void LoLEngine::gui_drawInventoryItem(int index) {
-	static const uint16 inventoryXpos[] = { 0x6A, 0x7F, 0x94, 0xA9, 0xBE, 0xD3, 0xE8, 0xFD, 0x112 };
+	static const uint16 inventoryXpos[] = {0x6A, 0x7F, 0x94, 0xA9, 0xBE, 0xD3, 0xE8, 0xFD, 0x112};
 	int x = inventoryXpos[index];
 	int item = _inventoryCurItem + index;
 	if (item > 47)
@@ -150,7 +150,7 @@ void LoLEngine::gui_highlightSelectedSpell(bool mode) {
 }
 
 void LoLEngine::gui_displayCharInventory(int charNum) {
-	static const uint8 inventoryTypes[] = { 0, 1, 2, 6, 3, 1, 1, 3, 5, 4 };
+	static const uint8 inventoryTypes[] = {0, 1, 2, 6, 3, 1, 1, 3, 5, 4};
 
 	int cp = _screen->setCurPage(2);
 	LoLCharacter *l = &_characters[charNum];
@@ -185,7 +185,7 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 	_screen->fprintString("%s", 182, 103, _flags.use16ColorMode ? 0xBB : 172, 0, 5, getLangString(0x4033));
 	_screen->setFont(of);
 
-	static const uint16 statusFlags[] = { 0x0080, 0x0000, 0x1000, 0x0002, 0x100, 0x0001, 0x0000, 0x0000 };
+	static const uint16 statusFlags[] = {0x0080, 0x0000, 0x1000, 0x0002, 0x100, 0x0001, 0x0000, 0x0000};
 
 	memset(_charStatusFlags, 0xFF, sizeof(_charStatusFlags));
 	int x = 0;
@@ -321,7 +321,7 @@ void LoLEngine::gui_changeCharacterStats(int charNum) {
 }
 
 void LoLEngine::gui_drawCharInventoryItem(int itemIndex) {
-	static const uint8 slotShapes[] = { 0x30, 0x34, 0x30, 0x34, 0x2E, 0x2F, 0x32, 0x33, 0x31, 0x35, 0x35 };
+	static const uint8 slotShapes[] = {0x30, 0x34, 0x30, 0x34, 0x2E, 0x2F, 0x32, 0x33, 0x31, 0x35, 0x35};
 	//2Eh, 32h, 2Eh, 32h, 2Ch, 2Dh, 30h, 31h, 2Fh, 33h, 33h
 	const uint8 *coords = &_charInvDefs[_charInvIndex[_characters[_selectedCharacter].raceClassSex] * 22 + itemIndex * 2];
 	uint8 x = *coords++;
@@ -380,8 +380,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	int spellLevels = 0;
 	if (_availableSpells[_selectedSpell] != -1) {
 		for (int i = 0; i < 4; i++) {
-			if (_spellProperties[_availableSpells[_selectedSpell]].mpRequired[i] <= _characters[charNum].magicPointsCur
-			    && _spellProperties[_availableSpells[_selectedSpell]].hpRequired[i] <= _characters[charNum].hitPointsCur)
+			if (_spellProperties[_availableSpells[_selectedSpell]].mpRequired[i] <= _characters[charNum].magicPointsCur && _spellProperties[_availableSpells[_selectedSpell]].hpRequired[i] <= _characters[charNum].hitPointsCur)
 				spellLevels++;
 		}
 	}
@@ -399,7 +398,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 				handIndex = _itemsInPlay[_characters[charNum].items[0]].itemPropertyIndex;
 		}
 
-		handIndex =  _gameShapeMap[(_itemProperties[handIndex].shpIndex << 1) + 1];
+		handIndex = _gameShapeMap[(_itemProperties[handIndex].shpIndex << 1) + 1];
 		if (handIndex == _gameShapeMap[1]) { // draw raceClassSex specific hand shape
 			handIndex = _characters[charNum].raceClassSex - 1;
 			if (handIndex < 0)
@@ -525,10 +524,10 @@ void LoLEngine::calcCharPortraitXpos() {
 }
 
 void LoLEngine::gui_drawMoneyBox(int pageNum) {
-	static const uint16 moneyX256[] = { 0x128, 0x134, 0x12B, 0x131, 0x12E};
-	static const uint16 moneyY256[] = { 0x73, 0x73, 0x74, 0x74, 0x75};
-	static const uint16 moneyX16[] = { 0x127, 0x133, 0x12A, 0x130, 0x12D};
-	static const uint16 moneyY16[] = { 0x74, 0x74, 0x75, 0x75, 0x76};
+	static const uint16 moneyX256[] = {0x128, 0x134, 0x12B, 0x131, 0x12E};
+	static const uint16 moneyY256[] = {0x73, 0x73, 0x74, 0x74, 0x75};
+	static const uint16 moneyX16[] = {0x127, 0x133, 0x12A, 0x130, 0x12D};
+	static const uint16 moneyY16[] = {0x74, 0x74, 0x75, 0x75, 0x76};
 
 	int backupPage = _screen->_curPage;
 	_screen->_curPage = pageNum;
@@ -656,8 +655,8 @@ int LoLEngine::gui_disableControls(int controlMode) {
 }
 
 void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
-	static const int16 buttonX[] = { 0x0056, 0x0128, 0x000C, 0x0021, 0x0122, 0x000C, 0x0021, 0x0036, 0x000C, 0x0021, 0x0036 };
-	static const int16 buttonY[] = { 0x00B4, 0x00B4, 0x00B4, 0x00B4, 0x0020, 0x0084, 0x0084, 0x0084, 0x0096, 0x0096, 0x0096 };
+	static const int16 buttonX[] = {0x0056, 0x0128, 0x000C, 0x0021, 0x0122, 0x000C, 0x0021, 0x0036, 0x000C, 0x0021, 0x0036};
+	static const int16 buttonY[] = {0x00B4, 0x00B4, 0x00B4, 0x00B4, 0x0020, 0x0084, 0x0084, 0x0084, 0x0096, 0x0096, 0x0096};
 
 	int swtch = 76;
 	int subst = 72;
@@ -1263,8 +1262,8 @@ int LoLEngine::clickedExitCharInventory(Button *button) {
 }
 
 int LoLEngine::clickedSceneDropItem(Button *button) {
-	static const uint8 offsX[] = { 0x40, 0xC0, 0x40, 0xC0 };
-	static const uint8 offsY[] = { 0x40, 0x40, 0xC0, 0xC0 };
+	static const uint8 offsX[] = {0x40, 0xC0, 0x40, 0xC0};
+	static const uint8 offsY[] = {0x40, 0x40, 0xC0, 0xC0};
 
 	if ((_updateFlags & 1) || !_itemInHand)
 		return 0;
@@ -1289,8 +1288,8 @@ int LoLEngine::clickedSceneDropItem(Button *button) {
 }
 
 int LoLEngine::clickedScenePickupItem(Button *button) {
-	static const int8 checkX[] = { 0, 0, 1, 0, -1, -1, 1, 1, -1, 0, 2, 0, -2, -1, 1, 2, 2, 1, -1, -2, -2 };
-	static const int8 checkY[] = { 0, -1, 0, 1, 0, -1, -1, 1, 1, -2, 0, 2, 0, -2, -2, -1, 1, 2, 2, 1, -1 };
+	static const int8 checkX[] = {0, 0, 1, 0, -1, -1, 1, 1, -1, 0, 2, 0, -2, -1, 1, 2, 2, 1, -1, -2, -2};
+	static const int8 checkY[] = {0, -1, 0, 1, 0, -1, -1, 1, 1, -2, 0, 2, 0, -2, -2, -1, 1, 2, 2, 1, -1};
 	static const int len = ARRAYSIZE(checkX);
 
 	if ((_updateFlags & 1) || _itemInHand)
@@ -1344,7 +1343,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 	int hItem = _itemInHand;
 
 	if ((_itemsInPlay[hItem].itemPropertyIndex == 281 || _itemsInPlay[slotItem].itemPropertyIndex == 281) &&
-	        (_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
+	    (_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
 		// merge ruby of truth
 
 		WSAMovie_v2 *wsa = new WSAMovie_v2(this);
@@ -1975,7 +1974,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 
 	uint16 flags = 0;
 
-	if (1/*!_screen_cursorDisable*/) {
+	if (1 /*!_screen_cursorDisable*/) {
 		uint16 inFlags = inputFlag & 0xFF;
 		uint16 temp = 0;
 
@@ -2070,7 +2069,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 		bool progressSwitch = false;
 		if (!_specialProcessButton) {
 			progressSwitch = progress;
-		} else  {
+		} else {
 			if (_specialProcessButton->flags & 0x40)
 				progressSwitch = (_specialProcessButton == buttonList);
 			else
@@ -2089,9 +2088,8 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 				combinedFlags >>= 8;
 
 				static const uint16 flagTable[] = {
-					0x000, 0x100, 0x200, 0x100, 0x400, 0x100, 0x400, 0x100, 0x800, 0x100,
-					0x200, 0x100, 0x400, 0x100, 0x400, 0x100
-				};
+				    0x000, 0x100, 0x200, 0x100, 0x400, 0x100, 0x400, 0x100, 0x800, 0x100,
+				    0x200, 0x100, 0x400, 0x100, 0x400, 0x100};
 
 				assert(combinedFlags < ARRAYSIZE(flagTable));
 
@@ -2313,8 +2311,8 @@ int GUI_LoL::runMenu(Menu &menu) {
 		}
 
 		if (hasSpecialButtons == 2) {
-			static const uint8 oX[] = { 0, 10, 124 };
-			static const uint8 oW[] = { 10, 114, 10 };
+			static const uint8 oX[] = {0, 10, 124};
+			static const uint8 oW[] = {10, 114, 10};
 
 			for (int i = 1; i < 4; ++i) {
 				int tX = _currentMenu->x + _currentMenu->item[i].x;
@@ -2354,7 +2352,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 				printMenuText(getMenuItemLabel(_currentMenu->item[i]), _currentMenu->x + _currentMenu->item[i].labelX, _currentMenu->y + _currentMenu->item[i].labelY, _currentMenu->item[i].textColor, 0, 10);
 
 				int volume = _vm->getVolume((KyraEngine_v1::kVolumeEntry)(i - 1));
-				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[85], tX , tY, 0, 0x10);
+				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[85], tX, tY, 0, 0x10);
 				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[87], tX + 2 + oX[1], tY, 0, 0x10);
 				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[86], tX + oX[1] + volume, tY, 0, 0x10);
 			}
@@ -2508,7 +2506,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 		slotOffs = 1;
 	}
 
-	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3)  - _screen->getCharWidth('W');
+	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3) - _screen->getCharWidth('W');
 
 	for (int i = startSlot; i < num && _savegameOffset + i - slotOffs < _savegameListSize; ++i) {
 		if (_savegameList[i + _savegameOffset - slotOffs]) {
@@ -2517,7 +2515,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 			// Trim long GMM save descriptions to fit our save slots
 			int fC = _screen->getTextWidth(s);
 			while (s[0] && fC >= saveSlotMaxLen) {
-				s[strlen(s) - 1]  = 0;
+				s[strlen(s) - 1] = 0;
 				fC = _screen->getTextWidth(s);
 			}
 
@@ -2543,7 +2541,7 @@ void GUI_LoL::sortSaveSlots() {
 }
 
 void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags) {
-	_screen->fprintString("%s", x, y, c0, c1, _vm->gameFlags().use16ColorMode ? (flags & 3) : flags , str);
+	_screen->fprintString("%s", x, y, c0, c1, _vm->gameFlags().use16ColorMode ? (flags & 3) : flags, str);
 }
 
 int GUI_LoL::getMenuCenterStringX(const char *str, int x1, int x2) {

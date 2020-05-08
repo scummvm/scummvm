@@ -21,8 +21,8 @@
  */
 
 #include "titanic/star_control/star_closeup.h"
-#include "titanic/star_control/error_code.h"
 #include "titanic/star_control/camera.h"
+#include "titanic/star_control/error_code.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/titanic.h"
 
@@ -30,7 +30,7 @@
 
 namespace Titanic {
 
-#define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
+#define MKTAG_BE(a3, a2, a1, a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 
 void CStarCloseup::SubEntry::clear() {
 	_data1.clear();
@@ -55,11 +55,7 @@ CStarCloseup::CStarCloseup() : _flag(true), _multiplier(0) {
 }
 
 bool CStarCloseup::setup() {
-	bool success = setupEntry(5, 5, 4, 1024.0)
-		&& setupEntry(7, 7, 3, 1024.0)
-		&& setupEntry(8, 8, 2, 1024.0)
-		&& setupEntry(16, 16, 1, 1024.0)
-		&& setupEntry(24, 24, 0, 1024.0);
+	bool success = setupEntry(5, 5, 4, 1024.0) && setupEntry(7, 7, 3, 1024.0) && setupEntry(8, 8, 2, 1024.0) && setupEntry(16, 16, 1, 1024.0) && setupEntry(24, 24, 0, 1024.0);
 	if (success)
 		success = setup2(24, 24);
 
@@ -67,13 +63,12 @@ bool CStarCloseup::setup() {
 }
 
 bool CStarCloseup::setup2(int val1, int val2) {
-	const int VALUES1[] = { 0x800, 0xC00, 0x1000, 0x1400, 0x1800 };
+	const int VALUES1[] = {0x800, 0xC00, 0x1000, 0x1400, 0x1800};
 	const int VALUES2[] = {
-		0xF95BCD, 0xA505A0, 0xFFAD43, 0x98F4EB, 0xF3EFA5, 0,
-		0xFFFFFF, 0x81EEF5, 0x5FFD3, 0x4EE4FA, 0x11C3FF, 0x28F3F4,
-		0x36FCF2, 0x29F1FD, 0x29BCFD, 0x98E3F4, 0xBBF3D9, 0x8198F5,
-		0x5BE4F9, 0x0D6E2, 0x74EEF6, 0x68DEF8
-	};
+	    0xF95BCD, 0xA505A0, 0xFFAD43, 0x98F4EB, 0xF3EFA5, 0,
+	    0xFFFFFF, 0x81EEF5, 0x5FFD3, 0x4EE4FA, 0x11C3FF, 0x28F3F4,
+	    0x36FCF2, 0x29F1FD, 0x29BCFD, 0x98E3F4, 0xBBF3D9, 0x8198F5,
+	    0x5BE4F9, 0x0D6E2, 0x74EEF6, 0x68DEF8};
 
 	Entry *e = &_entries[0];
 	for (int idx = 0; idx < 256; ++idx) {
@@ -168,8 +163,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 			e->_field14 = 1 / 256.0;
 		} else {
 			for (int ctr = 0; ctr < 5; ++ctr) {
-				e->_field0 = static_cast<int>(g_vm->getRandomFloat() * 1350.0
-					- 675.0) + VALUES1[ctr];
+				e->_field0 = static_cast<int>(g_vm->getRandomFloat() * 1350.0 - 675.0) + VALUES1[ctr];
 				int val = VALUES2[g_vm->getRandomNumber(15)];
 				e->_pixel1 = val & 0xff;
 				e->_pixel2 = (val >> 8) & 0xff;
@@ -177,8 +171,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 				e->_field8 = g_vm->getRandomNumber(3) + 3;
 				e->_fieldC = g_vm->getRandomNumber(255);
 				e->_field10 = Common::deg2rad<double>((double)g_vm->getRandomNumber(15));
-				e->_field14 = ((float)g_vm->getRandomNumber(0xfffffffe)
-					* 50.0 / 65536.0) / 256.0;
+				e->_field14 = ((float)g_vm->getRandomNumber(0xfffffffe) * 50.0 / 65536.0) / 256.0;
 			}
 		}
 	}
@@ -192,8 +185,8 @@ bool CStarCloseup::setup2(int val1, int val2) {
 }
 
 void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector &vector2,
-		CSurfaceArea *surfaceArea, CCamera *camera) {
-	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
+                        CSurfaceArea *surfaceArea, CCamera *camera) {
+	const int VALUES[] = {0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4};
 	float val1 = camera->getFrontClip();
 	StarColor starColor = camera->getStarColor();
 	if (!_flag)
@@ -262,15 +255,9 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			_sub2._row3._y = f20 * pose._row1._y + f21 * pose._row3._y;
 			_sub2._row3._z = f20 * pose._row1._z + f21 * pose._row3._z;
 
-			_sub2._vector._x = pose._row1._x * _sub1._vector._x
-				+ pose._row3._x * _sub1._vector._z
-				+ pose._row2._x * _sub1._vector._y + pose._vector._x;
-			_sub2._vector._y = pose._row2._y * _sub1._vector._y
-				+ pose._row3._y * _sub1._vector._z
-				+ pose._row1._y * _sub1._vector._x + pose._vector._y;
-			_sub2._vector._z = pose._row3._z * _sub1._vector._z
-				+ pose._row1._z * _sub1._vector._x
-				+ pose._row2._z * _sub1._vector._y + pose._vector._z;
+			_sub2._vector._x = pose._row1._x * _sub1._vector._x + pose._row3._x * _sub1._vector._z + pose._row2._x * _sub1._vector._y + pose._vector._x;
+			_sub2._vector._y = pose._row2._y * _sub1._vector._y + pose._row3._y * _sub1._vector._z + pose._row1._y * _sub1._vector._x + pose._vector._y;
+			_sub2._vector._z = pose._row3._z * _sub1._vector._z + pose._row1._z * _sub1._vector._x + pose._row2._z * _sub1._vector._y + pose._vector._z;
 
 			size2 = (int)_array[1]._data2.size();
 			size1 = (int)_array[1]._data1.size();
@@ -280,15 +267,9 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 					FVector &currVector = _array[1]._data2[ctr2];
 					GridEntry &gridEntry = _grid[ctr2];
 
-					gridEntry._x = currVector._z * _sub2._row3._x
-						+ currVector._y * _sub2._row2._x
-						+ currVector._x * _sub2._row1._x + _sub2._vector._x;
-					gridEntry._y = currVector._z * _sub2._row3._y
-						+ currVector._y * _sub2._row2._y
-						+ currVector._x * _sub2._row1._y + _sub2._vector._y;
-					gridEntry._z = currVector._z * _sub2._row3._z
-						+ currVector._y * _sub2._row2._z
-						+ currVector._x * _sub2._row1._z + _sub2._vector._z;
+					gridEntry._x = currVector._z * _sub2._row3._x + currVector._y * _sub2._row2._x + currVector._x * _sub2._row1._x + _sub2._vector._x;
+					gridEntry._y = currVector._z * _sub2._row3._y + currVector._y * _sub2._row2._y + currVector._x * _sub2._row1._y + _sub2._vector._y;
+					gridEntry._z = currVector._z * _sub2._row3._z + currVector._y * _sub2._row2._z + currVector._x * _sub2._row1._z + _sub2._vector._z;
 				}
 			}
 
@@ -296,7 +277,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			case WHITE:
 				surfaceArea->setMode(SA_SOLID);
 				surfaceArea->_pixel = MKTAG_BE(entryP->_pixel1, entryP->_pixel2,
-					entryP->_pixel3, 0);
+				                               entryP->_pixel3, 0);
 				surfaceArea->setColorFromPixel();
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
@@ -313,7 +294,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 					if (grid1._z > val1 && grid2._z > val1) {
 						surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
-							grid2._position._x, grid2._position._y));
+						                            grid2._position._x, grid2._position._y));
 					}
 				}
 				break;
@@ -336,7 +317,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 					if (grid1._z > val1 && grid2._z > val1) {
 						surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
-							grid2._position._x, grid2._position._y));
+						                            grid2._position._x, grid2._position._y));
 					}
 				}
 
@@ -358,7 +339,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 					if (grid1._z > val1 && grid2._z > val1) {
 						surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
-							grid2._position._x, grid2._position._y));
+						                            grid2._position._x, grid2._position._y));
 					}
 				}
 				break;
@@ -394,15 +375,12 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 		const FVector &d2v = entry._data2[ctr];
 		FVector newV = d2v + vector;
 
-		gridEntry._x = pose._row1._x * newV._x + pose._row3._x * newV._z
-			+ pose._row2._x * newV._y + pose._vector._x;
-		gridEntry._y = newV._y * pose._row2._y + newV._z * pose._row3._y
-			+ newV._x * pose._row1._y + pose._vector._y;
-		gridEntry._z = newV._z * pose._row3._z + newV._y * pose._row2._z
-			+ newV._x * pose._row1._z + pose._vector._z;
+		gridEntry._x = pose._row1._x * newV._x + pose._row3._x * newV._z + pose._row2._x * newV._y + pose._vector._x;
+		gridEntry._y = newV._y * pose._row2._y + newV._z * pose._row3._y + newV._x * pose._row1._y + pose._vector._y;
+		gridEntry._z = newV._z * pose._row3._z + newV._y * pose._row2._z + newV._x * pose._row1._z + pose._vector._z;
 	}
 
-	switch(starColor) {
+	switch (starColor) {
 	case WHITE:
 		surfaceArea->setMode(SA_SOLID);
 		surfaceArea->_pixel = pixel1;
@@ -422,7 +400,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 			if (grid2._z > val1 && grid1._z > val1) {
 				surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
-					grid2._position._x, grid2._position._y));
+				                            grid2._position._x, grid2._position._y));
 			}
 		}
 		break;
@@ -445,7 +423,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 			if (grid2._z > val1 && grid1._z > val1) {
 				surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
-					grid2._position._x, grid2._position._y));
+				                            grid2._position._x, grid2._position._y));
 			}
 		}
 
@@ -467,7 +445,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 			if (grid2._z > val1 && grid1._z > val1) {
 				surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
-					grid2._position._x, grid2._position._y));
+				                            grid2._position._x, grid2._position._y));
 			}
 		}
 		break;

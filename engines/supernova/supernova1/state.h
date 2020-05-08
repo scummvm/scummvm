@@ -25,46 +25,46 @@
 
 #include "common/error.h"
 #include "common/events.h"
-#include "common/rect.h"
 #include "common/keyboard.h"
-#include "supernova/supernova1/rooms.h"
+#include "common/rect.h"
+#include "supernova/game-manager.h"
 #include "supernova/room.h"
 #include "supernova/sound.h"
-#include "supernova/game-manager.h"
+#include "supernova/supernova1/rooms.h"
 
 namespace Supernova {
 
 class GameManager;
 
 class GameState {
-	public:
-		int32  _timeSleep;
-		int32  _timeAlarm;
-		int32  _eventTime;
-		EventFunction _eventCallback;
-		int32  _arrivalDaysLeft;
-		int32  _shipEnergyDaysLeft;
-		int32  _landingModuleEnergyDaysLeft;
-		uint16 _greatFlag;
-		int16  _timeRobot;
-		int16  _money;
-		byte   _coins;
-		byte   _shoes;
-		byte   _origin;
-		byte   _destination;
-		byte   _language;
-		bool   _corridorSearch;
-		bool   _alarmOn;
-		bool   _terminalStripConnected;
-		bool   _terminalStripWire;
-		bool   _cableConnected;
-		bool   _powerOff;
-		bool   _dream;
-		bool   _nameSeen[4];
-		bool   _playerHidden;
+public:
+	int32 _timeSleep;
+	int32 _timeAlarm;
+	int32 _eventTime;
+	EventFunction _eventCallback;
+	int32 _arrivalDaysLeft;
+	int32 _shipEnergyDaysLeft;
+	int32 _landingModuleEnergyDaysLeft;
+	uint16 _greatFlag;
+	int16 _timeRobot;
+	int16 _money;
+	byte _coins;
+	byte _shoes;
+	byte _origin;
+	byte _destination;
+	byte _language;
+	bool _corridorSearch;
+	bool _alarmOn;
+	bool _terminalStripConnected;
+	bool _terminalStripWire;
+	bool _cableConnected;
+	bool _powerOff;
+	bool _dream;
+	bool _nameSeen[4];
+	bool _playerHidden;
 };
 
-class GameManager1: public GameManager {
+class GameManager1 : public GameManager {
 public:
 	GameManager1(SupernovaEngine *vm, Sound *sound);
 	~GameManager1() override;
@@ -119,6 +119,6 @@ private:
 	int _prevImgId;
 };
 
-}
+} // namespace Supernova
 
 #endif // SUPERNOVA_STATE_H

@@ -37,13 +37,13 @@ public:
 
 	GumpShapeArchive(uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(id_, pal_, format_) { }
+	    : ShapeArchive(id_, pal_, format_) {}
 	GumpShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(af, id_, pal_, format_) { }
+	    : ShapeArchive(af, id_, pal_, format_) {}
 	GumpShapeArchive(Common::SeekableReadStream *rs, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(rs, id_, pal_, format_) { }
+	    : ShapeArchive(rs, id_, pal_, format_) {}
 
 	~GumpShapeArchive() override;
 

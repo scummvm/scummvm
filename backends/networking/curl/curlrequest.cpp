@@ -22,17 +22,16 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/networking/curl/curlrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/textconsole.h"
+#include <curl/curl.h>
 
 namespace Networking {
 
-CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url):
-	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr),
-	_bytesBufferSize(0), _uploading(false), _usingPatch(false), _keepAlive(false), _keepAliveIdle(120), _keepAliveInterval(60) {}
+CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url) : Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr),
+                                                                                   _bytesBufferSize(0), _uploading(false), _usingPatch(false), _keepAlive(false), _keepAliveIdle(120), _keepAliveInterval(60) {}
 
 CurlRequest::~CurlRequest() {
 	delete _stream;
@@ -48,7 +47,8 @@ NetworkReadStream *CurlRequest::makeStream() {
 }
 
 void CurlRequest::handle() {
-	if (!_stream) _stream = makeStream();
+	if (!_stream)
+		_stream = makeStream();
 
 	if (_stream && _stream->eos()) {
 		if (_stream->httpResponseCode() != 200) {

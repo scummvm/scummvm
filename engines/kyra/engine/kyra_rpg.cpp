@@ -165,7 +165,7 @@ Common::Error KyraRpgEngine::init() {
 
 	_levelDecorationProperties = new LevelDecorationProperty[100];
 	memset(_levelDecorationProperties, 0, 100 * sizeof(LevelDecorationProperty));
-	_levelDecorationShapes = new uint8*[400];
+	_levelDecorationShapes = new uint8 *[400];
 	memset(_levelDecorationShapes, 0, 400 * sizeof(uint8 *));
 	_levelBlockProperties = new LevelBlockProperty[1025];
 	memset(_levelBlockProperties, 0, 1025 * sizeof(LevelBlockProperty));
@@ -198,15 +198,15 @@ Common::Error KyraRpgEngine::init() {
 
 	if (_vcnBpp == 2)
 		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_hiCol),
-			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_hiCol));
+		                                         new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_hiCol));
 	else if (_flags.platform == Common::kPlatformAmiga || (_flags.gameID == GI_EOB1 && _flags.use16ColorMode))
 		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_planar), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_planar),
-			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_planar), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_planar));
+		                                         new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_planar), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_planar));
 	else
 		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_4bit),
-			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_4bit));
+		                                         new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_4bit));
 
-	_doorShapes = new uint8*[6];
+	_doorShapes = new uint8 *[6];
 	memset(_doorShapes, 0, 6 * sizeof(uint8 *));
 
 	initStaticResource();

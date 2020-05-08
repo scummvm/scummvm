@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -48,11 +48,12 @@ protected:
 	 * Common scene enter code used by multiple scenes
 	 */
 	void sceneEntrySound();
+
 public:
 	Scene8xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
-class Scene801 : public Scene8xx{
+class Scene801 : public Scene8xx {
 private:
 	bool _walkThroughDoor;
 
@@ -67,7 +68,7 @@ public:
 	void actions() override;
 };
 
-class Scene802 : public Scene8xx{
+class Scene802 : public Scene8xx {
 public:
 	Scene802(MADSEngine *vm) : Scene8xx(vm) {}
 
@@ -78,7 +79,7 @@ public:
 	void actions() override;
 };
 
-class Scene803 : public Scene8xx{
+class Scene803 : public Scene8xx {
 public:
 	Scene803(MADSEngine *vm) : Scene8xx(vm) {}
 
@@ -111,7 +112,7 @@ public:
 	void actions() override;
 };
 
-class Scene805 : public Scene8xx{
+class Scene805 : public Scene8xx {
 public:
 	Scene805(MADSEngine *vm) : Scene8xx(vm) {}
 
@@ -132,7 +133,7 @@ public:
 	void actions() override;
 };
 
-class Scene808 : public Scene8xx{
+class Scene808 : public Scene8xx {
 private:
 	bool _goingTo803;
 
@@ -145,7 +146,7 @@ public:
 	void actions() override;
 };
 
-class Scene810 : public Scene8xx{
+class Scene810 : public Scene8xx {
 private:
 	bool _moveAllowed;
 
@@ -156,7 +157,7 @@ public:
 	void setup() override;
 	void enter() override;
 	void step() override;
-	void actions() override {};
+	void actions() override{};
 };
 
 } // End of namespace Nebular

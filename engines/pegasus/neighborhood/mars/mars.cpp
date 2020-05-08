@@ -26,15 +26,15 @@
 #include "common/events.h"
 #include "video/qt_decoder.h"
 
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/cursor.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/shieldchip.h"
 #include "pegasus/items/inventory/airmask.h"
 #include "pegasus/neighborhood/mars/mars.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -49,8 +49,8 @@ static const NotificationFlags kExplosionFinishedFlag = kTimeForCanyonChaseFlag 
 static const NotificationFlags kTimeToTransportFlag = kExplosionFinishedFlag << 1;
 
 static const NotificationFlags kMarsNotificationFlags = kTimeForCanyonChaseFlag |
-													kExplosionFinishedFlag |
-													kTimeToTransportFlag;
+                                                        kExplosionFinishedFlag |
+                                                        kTimeToTransportFlag;
 
 static const TimeValue kLittleExplosionStart = 0 * 40;
 static const TimeValue kLittleExplosionStop = 24 * 40;
@@ -90,23 +90,23 @@ void MarsTimerEvent::fire() {
 }
 
 Mars::Mars(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "Mars", kMarsID),
-		_guessObject(kNoDisplayElement), _undoPict(kNoDisplayElement), _guessHistory(kNoDisplayElement),
-		_choiceHighlight(kNoDisplayElement), _shuttleInterface1(kNoDisplayElement), _shuttleInterface2(kNoDisplayElement),
-		_shuttleInterface3(kNoDisplayElement), _shuttleInterface4(kNoDisplayElement), _canyonChaseMovie(kNoDisplayElement),
-		_leftShuttleMovie(kNoDisplayElement), _rightShuttleMovie(kNoDisplayElement), _lowerLeftShuttleMovie(kNoDisplayElement),
-		_lowerRightShuttleMovie(kNoDisplayElement), _centerShuttleMovie(kNoDisplayElement),
-		_upperLeftShuttleMovie(kNoDisplayElement), _upperRightShuttleMovie(kNoDisplayElement),
-		_leftDamageShuttleMovie(kNoDisplayElement), _rightDamageShuttleMovie(kNoDisplayElement), _explosions(kNoDisplayElement),
-		_planetMovie(kNoDisplayElement), _junk(kNoDisplayElement), _energyChoiceSpot(kShuttleEnergySpotID),
-		_gravitonChoiceSpot(kShuttleGravitonSpotID), _tractorChoiceSpot(kShuttleTractorSpotID),
-		_shuttleViewSpot(kShuttleViewSpotID), _shuttleTransportSpot(kShuttleTransportSpotID) {
+                                                              _guessObject(kNoDisplayElement), _undoPict(kNoDisplayElement), _guessHistory(kNoDisplayElement),
+                                                              _choiceHighlight(kNoDisplayElement), _shuttleInterface1(kNoDisplayElement), _shuttleInterface2(kNoDisplayElement),
+                                                              _shuttleInterface3(kNoDisplayElement), _shuttleInterface4(kNoDisplayElement), _canyonChaseMovie(kNoDisplayElement),
+                                                              _leftShuttleMovie(kNoDisplayElement), _rightShuttleMovie(kNoDisplayElement), _lowerLeftShuttleMovie(kNoDisplayElement),
+                                                              _lowerRightShuttleMovie(kNoDisplayElement), _centerShuttleMovie(kNoDisplayElement),
+                                                              _upperLeftShuttleMovie(kNoDisplayElement), _upperRightShuttleMovie(kNoDisplayElement),
+                                                              _leftDamageShuttleMovie(kNoDisplayElement), _rightDamageShuttleMovie(kNoDisplayElement), _explosions(kNoDisplayElement),
+                                                              _planetMovie(kNoDisplayElement), _junk(kNoDisplayElement), _energyChoiceSpot(kShuttleEnergySpotID),
+                                                              _gravitonChoiceSpot(kShuttleGravitonSpotID), _tractorChoiceSpot(kShuttleTractorSpotID),
+                                                              _shuttleViewSpot(kShuttleViewSpotID), _shuttleTransportSpot(kShuttleTransportSpotID) {
 
-	_reactorStage  = 0;
-	_nextGuess  = 0;
-	_attackingItem  = nullptr;
-	_marsEvent.mars  = nullptr;
-	_marsEvent.event  = kMarsLaunchTubeReached;
-	_weaponSelection  = kNoWeapon;
+	_reactorStage = 0;
+	_nextGuess = 0;
+	_attackingItem = nullptr;
+	_marsEvent.mars = nullptr;
+	_marsEvent.event = kMarsLaunchTubeReached;
+	_weaponSelection = kNoWeapon;
 
 	_noAirFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::airStageExpired));
 	setIsItemTaken(kMarsCard);
@@ -170,7 +170,7 @@ AirMaskCondition::AirMaskCondition(const uint32 airThreshold) {
 
 bool AirMaskCondition::fireCondition() {
 	bool result = g_airMask && g_airMask->isAirMaskOn() &&
-			g_airMask->getAirLeft() <= _airThreshold && _lastAirLevel > _airThreshold;
+	              g_airMask->getAirLeft() <= _airThreshold && _lastAirLevel > _airThreshold;
 
 	_lastAirLevel = g_airMask->getAirLeft();
 	return result;
@@ -842,27 +842,27 @@ void Mars::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &co
 		break;
 	case kMars52Extend:
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), entry.movieStart, kMars52Compass,
-				entry.movieEnd, kMars52Compass + kMarsShieldPanelOffsetAngle);
+		                                 entry.movieEnd, kMars52Compass + kMarsShieldPanelOffsetAngle);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 10, kMars52Compass);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 60, kMars52Compass + kMarsShieldPanelOffsetAngle);
 		break;
 	case kMars53Retract:
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), entry.movieStart,
-				kMars52Compass + kMarsShieldPanelOffsetAngle, entry.movieEnd, kMars52Compass);
+		                                 kMars52Compass + kMarsShieldPanelOffsetAngle, entry.movieEnd, kMars52Compass);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 10, kMars52Compass + kMarsShieldPanelOffsetAngle);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 60, kMars52Compass);
 		break;
 	case kMars56ExtendWithBomb:
 	case kMars56ExtendNoBomb:
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), entry.movieStart, kMars56Compass,
-				entry.movieEnd, kMars56Compass - kMarsShieldPanelOffsetAngle);
+		                                 entry.movieEnd, kMars56Compass - kMarsShieldPanelOffsetAngle);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 10, kMars56Compass);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 60, kMars56Compass - kMarsShieldPanelOffsetAngle);
 		break;
 	case kMars57RetractWithBomb:
 	case kMars57RetractNoBomb:
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), entry.movieStart,
-				kMars56Compass - kMarsShieldPanelOffsetAngle, entry.movieEnd, kMars56Compass);
+		                                 kMars56Compass - kMarsShieldPanelOffsetAngle, entry.movieEnd, kMars56Compass);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 10, kMars56Compass - kMarsShieldPanelOffsetAngle);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 60, kMars56Compass);
 		break;
@@ -878,7 +878,7 @@ void Mars::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &co
 		break;
 	case kMars56SpinLeft:
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), entry.movieStart, kMars56Compass,
-				entry.movieEnd, kMars58Compass + 360);
+		                                 entry.movieEnd, kMars58Compass + 360);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 10, kMars56Compass);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 110, kMars58Compass + 360);
 		break;
@@ -889,13 +889,13 @@ void Mars::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &co
 		break;
 	case kMars58SpinLeft:
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), entry.movieStart, kMars58Compass,
-				entry.movieEnd, kMars52Compass);
+		                                 entry.movieEnd, kMars52Compass);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 10, kMars58Compass);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 110, kMars52Compass);
 		break;
 	case kMars58SpinRight:
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), entry.movieStart,
-				kMars58Compass + 360, entry.movieEnd, kMars56Compass);
+		                                 kMars58Compass + 360, entry.movieEnd, kMars56Compass);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 10, kMars58Compass + 360);
 		compassMove.insertFaderKnot(entry.movieStart + kMarsFrameDuration * 110, kMars56Compass);
 		break;
@@ -1963,8 +1963,8 @@ void Mars::pickedUpItem(Item *item) {
 		break;
 	case kMapBiochip:
 		if (_privateFlags.getFlag(kMarsPrivateGotMapChipFlag) &&
-				_privateFlags.getFlag(kMarsPrivateGotShieldChipFlag) &&
-				_privateFlags.getFlag(kMarsPrivateGotOpticalChipFlag)) {
+		    _privateFlags.getFlag(kMarsPrivateGotShieldChipFlag) &&
+		    _privateFlags.getFlag(kMarsPrivateGotOpticalChipFlag)) {
 			GameState.setMarsFinished(true);
 			GameState.setScoringMarsGandhi();
 			startExtraSequence(kMarsRobotHeadClose, kExtraCompletedFlag, kFilterNoInput);
@@ -1972,8 +1972,8 @@ void Mars::pickedUpItem(Item *item) {
 		break;
 	case kShieldBiochip:
 		if (_privateFlags.getFlag(kMarsPrivateGotMapChipFlag) &&
-				_privateFlags.getFlag(kMarsPrivateGotShieldChipFlag) &&
-				_privateFlags.getFlag(kMarsPrivateGotOpticalChipFlag)) {
+		    _privateFlags.getFlag(kMarsPrivateGotShieldChipFlag) &&
+		    _privateFlags.getFlag(kMarsPrivateGotOpticalChipFlag)) {
 			GameState.setMarsFinished(true);
 			GameState.setScoringMarsGandhi();
 			startExtraSequence(kMarsRobotHeadClose, kExtraCompletedFlag, kFilterNoInput);
@@ -1984,8 +1984,8 @@ void Mars::pickedUpItem(Item *item) {
 		GameState.setScoringGotMarsOpMemChip();
 
 		if (_privateFlags.getFlag(kMarsPrivateGotMapChipFlag) &&
-				_privateFlags.getFlag(kMarsPrivateGotShieldChipFlag) &&
-				_privateFlags.getFlag(kMarsPrivateGotOpticalChipFlag)) {
+		    _privateFlags.getFlag(kMarsPrivateGotShieldChipFlag) &&
+		    _privateFlags.getFlag(kMarsPrivateGotOpticalChipFlag)) {
 			GameState.setMarsFinished(true);
 			GameState.setScoringMarsGandhi();
 			startExtraSequence(kMarsRobotHeadClose, kExtraCompletedFlag, kFilterNoInput);
@@ -2161,7 +2161,7 @@ void Mars::receiveNotification(Notification *notification, const NotificationFla
 			arriveAt(kMars08, kNorth);
 			if (!GameState.getMarsHeardUpperPodMessage()) {
 				playSpotSoundSync(kMarsPodDepartedUpperPlatformIn,
-											kMarsPodDepartedUpperPlatformOut);
+				                  kMarsPodDepartedUpperPlatformOut);
 				GameState.setMarsHeardUpperPodMessage(true);
 			}
 			break;
@@ -2474,16 +2474,16 @@ void Mars::doCanyonChase() {
 		return;
 
 	initOnePicture(&_shuttleInterface1, "Images/Mars/MCmain1.pict", kShuttleBackgroundOrder, kShuttle1Left,
-							kShuttle1Top, true);
+	               kShuttle1Top, true);
 	initOnePicture(&_shuttleInterface2, "Images/Mars/MCmain2.pict", kShuttleBackgroundOrder, kShuttle2Left,
-							kShuttle2Top, true);
+	               kShuttle2Top, true);
 	initOnePicture(&_shuttleInterface3, "Images/Mars/MCmain3.pict", kShuttleBackgroundOrder, kShuttle3Left,
-							kShuttle3Top, true);
+	               kShuttle3Top, true);
 	initOnePicture(&_shuttleInterface4, "Images/Mars/MCmain4.pict", kShuttleBackgroundOrder, kShuttle4Left,
-							kShuttle4Top, true);
+	               kShuttle4Top, true);
 
 	initOneMovie(&_canyonChaseMovie, "Images/Mars/Canyon.movie",
-						kShuttleMonitorOrder, kShuttleWindowLeft, kShuttleWindowTop, true);
+	             kShuttleMonitorOrder, kShuttleWindowLeft, kShuttleWindowTop, true);
 	_canyonChaseMovie.setVolume(_vm->getSoundFXLevel());
 
 	loadLoopSound1("Sounds/Mars/Inside Cockpit.22K.8.AIFF");
@@ -2492,31 +2492,31 @@ void Mars::doCanyonChase() {
 	playMovieSegment(&_canyonChaseMovie, kShuttleSwingStart, kShuttleSwingStop);
 
 	initOneMovie(&_leftShuttleMovie, "Images/Mars/Left Shuttle.movie",
-			kShuttleMonitorOrder, kShuttleLeftLeft, kShuttleLeftTop, false);
+	             kShuttleMonitorOrder, kShuttleLeftLeft, kShuttleLeftTop, false);
 
 	initOneMovie(&_rightShuttleMovie, "Images/Mars/Right Shuttle.movie",
-			kShuttleMonitorOrder, kShuttleRightLeft, kShuttleRightTop, false);
+	             kShuttleMonitorOrder, kShuttleRightLeft, kShuttleRightTop, false);
 
 	initOneMovie(&_lowerLeftShuttleMovie, "Images/Mars/Lower Left Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleLowerLeftLeft, kShuttleLowerLeftTop, false);
+	             kShuttleLowerLeftLeft, kShuttleLowerLeftTop, false);
 
 	initOneMovie(&_lowerRightShuttleMovie, "Images/Mars/Lower Right Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleLowerRightLeft, kShuttleLowerRightTop, false);
+	             kShuttleLowerRightLeft, kShuttleLowerRightTop, false);
 
 	initOneMovie(&_centerShuttleMovie, "Images/Mars/Center Shuttle.movie",
-			kShuttleMonitorOrder, kShuttleCenterLeft, kShuttleCenterTop, false);
+	             kShuttleMonitorOrder, kShuttleCenterLeft, kShuttleCenterTop, false);
 
 	initOneMovie(&_upperLeftShuttleMovie, "Images/Mars/Upper Left Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleUpperLeftLeft, kShuttleUpperLeftTop, false);
+	             kShuttleUpperLeftLeft, kShuttleUpperLeftTop, false);
 
 	initOneMovie(&_upperRightShuttleMovie, "Images/Mars/Upper Right Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleUpperRightLeft, kShuttleUpperRightTop, false);
+	             kShuttleUpperRightLeft, kShuttleUpperRightTop, false);
 
 	initOneMovie(&_leftDamageShuttleMovie, "Images/Mars/Left Damage Shuttle.movie",
-			kShuttleStatusOrder, kShuttleLeftEnergyLeft, kShuttleLeftEnergyTop, false);
+	             kShuttleStatusOrder, kShuttleLeftEnergyLeft, kShuttleLeftEnergyTop, false);
 
 	initOneMovie(&_rightDamageShuttleMovie, "Images/Mars/Right Damage Shuttle.movie",
-			kShuttleStatusOrder, kShuttleRightEnergyLeft, kShuttleRightEnergyTop, false);
+	             kShuttleStatusOrder, kShuttleRightEnergyLeft, kShuttleRightEnergyTop, false);
 
 	_centerShuttleMovie.show();
 	_centerShuttleMovie.setTime(kShuttleCenterBoardingTime);
@@ -2603,40 +2603,40 @@ void Mars::startUpFromFinishedSpaceChase() {
 	throwAwayInterface();
 
 	initOnePicture(&_shuttleInterface1, "Images/Mars/MCmain1.pict", kShuttleBackgroundOrder, kShuttle1Left,
-							kShuttle1Top, true);
+	               kShuttle1Top, true);
 	initOnePicture(&_shuttleInterface2, "Images/Mars/MCmain2.pict", kShuttleBackgroundOrder, kShuttle2Left,
-							kShuttle2Top, true);
+	               kShuttle2Top, true);
 	initOnePicture(&_shuttleInterface3, "Images/Mars/MCmain3.pict", kShuttleBackgroundOrder, kShuttle3Left,
-							kShuttle3Top, true);
+	               kShuttle3Top, true);
 	initOnePicture(&_shuttleInterface4, "Images/Mars/MCmain4.pict", kShuttleBackgroundOrder, kShuttle4Left,
-							kShuttle4Top, true);
+	               kShuttle4Top, true);
 
 	initOneMovie(&_leftShuttleMovie, "Images/Mars/Left Shuttle.movie",
-			kShuttleMonitorOrder, kShuttleLeftLeft, kShuttleLeftTop, false);
+	             kShuttleMonitorOrder, kShuttleLeftLeft, kShuttleLeftTop, false);
 
 	initOneMovie(&_rightShuttleMovie, "Images/Mars/Right Shuttle.movie",
-			kShuttleMonitorOrder, kShuttleRightLeft, kShuttleRightTop, false);
+	             kShuttleMonitorOrder, kShuttleRightLeft, kShuttleRightTop, false);
 
 	initOneMovie(&_lowerLeftShuttleMovie, "Images/Mars/Lower Left Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleLowerLeftLeft, kShuttleLowerLeftTop, false);
+	             kShuttleLowerLeftLeft, kShuttleLowerLeftTop, false);
 
 	initOneMovie(&_lowerRightShuttleMovie, "Images/Mars/Lower Right Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleLowerRightLeft, kShuttleLowerRightTop, false);
+	             kShuttleLowerRightLeft, kShuttleLowerRightTop, false);
 
 	initOneMovie(&_centerShuttleMovie, "Images/Mars/Center Shuttle.movie",
-			kShuttleMonitorOrder, kShuttleCenterLeft, kShuttleCenterTop, false);
+	             kShuttleMonitorOrder, kShuttleCenterLeft, kShuttleCenterTop, false);
 
 	initOneMovie(&_upperLeftShuttleMovie, "Images/Mars/Upper Left Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleUpperLeftLeft, kShuttleUpperLeftTop, false);
+	             kShuttleUpperLeftLeft, kShuttleUpperLeftTop, false);
 
 	initOneMovie(&_upperRightShuttleMovie, "Images/Mars/Upper Right Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleUpperRightLeft, kShuttleUpperRightTop, false);
+	             kShuttleUpperRightLeft, kShuttleUpperRightTop, false);
 
 	initOneMovie(&_leftDamageShuttleMovie, "Images/Mars/Left Damage Shuttle.movie",
-			kShuttleStatusOrder, kShuttleLeftEnergyLeft, kShuttleLeftEnergyTop, false);
+	             kShuttleStatusOrder, kShuttleLeftEnergyLeft, kShuttleLeftEnergyTop, false);
 
 	initOneMovie(&_rightDamageShuttleMovie, "Images/Mars/Right Damage Shuttle.movie",
-			kShuttleStatusOrder, kShuttleRightEnergyLeft, kShuttleRightEnergyTop, false);
+	             kShuttleStatusOrder, kShuttleRightEnergyLeft, kShuttleRightEnergyTop, false);
 
 	_centerShuttleMovie.show();
 
@@ -2658,7 +2658,7 @@ void Mars::startUpFromFinishedSpaceChase() {
 	loadLoopSound1("Sounds/Mars/Space Ambient.22K.8.AIFF");
 
 	initOneMovie(&_junk, "Images/Mars/Junk.movie", kShuttleJunkOrder, kShuttleJunkLeft,
-			kShuttleJunkTop, false);
+	             kShuttleJunkTop, false);
 
 	initOneMovie(&_explosions, "Images/Mars/Explosions.movie", kShuttleWeaponFrontOrder, 0, 0, false);
 	_explosions.setVolume(_vm->getSoundFXLevel());
@@ -2699,7 +2699,7 @@ void Mars::startUpFromFinishedSpaceChase() {
 	_lowerRightShuttleMovie.redrawMovieWorld();
 
 	initOneMovie(&_canyonChaseMovie, "Images/Mars/M98EAS.movie", kShuttleTractorBeamMovieOrder,
-			kShuttleWindowLeft, kShuttleWindowTop, true);
+	             kShuttleWindowLeft, kShuttleWindowTop, true);
 	_canyonChaseMovie.setVolume(_vm->getSoundFXLevel());
 	_canyonChaseMovie.setTime(_canyonChaseMovie.getDuration());
 	_canyonChaseMovie.redrawMovieWorld();
@@ -2714,40 +2714,40 @@ void Mars::startUpFromSpaceChase() {
 	_spotSounds.setVolume(_vm->getSoundFXLevel());
 
 	initOnePicture(&_shuttleInterface1, "Images/Mars/MCmain1.pict", kShuttleBackgroundOrder, kShuttle1Left,
-							kShuttle1Top, true);
+	               kShuttle1Top, true);
 	initOnePicture(&_shuttleInterface2, "Images/Mars/MCmain2.pict", kShuttleBackgroundOrder, kShuttle2Left,
-							kShuttle2Top, true);
+	               kShuttle2Top, true);
 	initOnePicture(&_shuttleInterface3, "Images/Mars/MCmain3.pict", kShuttleBackgroundOrder, kShuttle3Left,
-							kShuttle3Top, true);
+	               kShuttle3Top, true);
 	initOnePicture(&_shuttleInterface4, "Images/Mars/MCmain4.pict", kShuttleBackgroundOrder, kShuttle4Left,
-							kShuttle4Top, true);
+	               kShuttle4Top, true);
 
 	initOneMovie(&_leftShuttleMovie, "Images/Mars/Left Shuttle.movie",
-			kShuttleMonitorOrder, kShuttleLeftLeft, kShuttleLeftTop, false);
+	             kShuttleMonitorOrder, kShuttleLeftLeft, kShuttleLeftTop, false);
 
 	initOneMovie(&_rightShuttleMovie, "Images/Mars/Right Shuttle.movie",
-			kShuttleMonitorOrder, kShuttleRightLeft, kShuttleRightTop, false);
+	             kShuttleMonitorOrder, kShuttleRightLeft, kShuttleRightTop, false);
 
 	initOneMovie(&_lowerLeftShuttleMovie, "Images/Mars/Lower Left Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleLowerLeftLeft, kShuttleLowerLeftTop, false);
+	             kShuttleLowerLeftLeft, kShuttleLowerLeftTop, false);
 
 	initOneMovie(&_lowerRightShuttleMovie, "Images/Mars/Lower Right Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleLowerRightLeft, kShuttleLowerRightTop, false);
+	             kShuttleLowerRightLeft, kShuttleLowerRightTop, false);
 
 	initOneMovie(&_centerShuttleMovie, "Images/Mars/Center Shuttle.movie",
-			kShuttleMonitorOrder, kShuttleCenterLeft, kShuttleCenterTop, false);
+	             kShuttleMonitorOrder, kShuttleCenterLeft, kShuttleCenterTop, false);
 
 	initOneMovie(&_upperLeftShuttleMovie, "Images/Mars/Upper Left Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleUpperLeftLeft, kShuttleUpperLeftTop, false);
+	             kShuttleUpperLeftLeft, kShuttleUpperLeftTop, false);
 
 	initOneMovie(&_upperRightShuttleMovie, "Images/Mars/Upper Right Shuttle.movie", kShuttleMonitorOrder,
-			kShuttleUpperRightLeft, kShuttleUpperRightTop, false);
+	             kShuttleUpperRightLeft, kShuttleUpperRightTop, false);
 
 	initOneMovie(&_leftDamageShuttleMovie, "Images/Mars/Left Damage Shuttle.movie",
-			kShuttleStatusOrder, kShuttleLeftEnergyLeft, kShuttleLeftEnergyTop, false);
+	             kShuttleStatusOrder, kShuttleLeftEnergyLeft, kShuttleLeftEnergyTop, false);
 
 	initOneMovie(&_rightDamageShuttleMovie, "Images/Mars/Right Damage Shuttle.movie",
-			kShuttleStatusOrder, kShuttleRightEnergyLeft, kShuttleRightEnergyTop, false);
+	             kShuttleStatusOrder, kShuttleRightEnergyLeft, kShuttleRightEnergyTop, false);
 
 	_centerShuttleMovie.show();
 
@@ -2769,11 +2769,11 @@ void Mars::startUpFromSpaceChase() {
 	loadLoopSound1("Sounds/Mars/Space Ambient.22K.8.AIFF");
 
 	initOneMovie(&_planetMovie, "Images/Mars/Planet.movie", kShuttlePlanetOrder,
-			kPlanetStartLeft, kPlanetStartTop, true);
+	             kPlanetStartLeft, kPlanetStartTop, true);
 	_planetMovie.setFlags(kLoopTimeBase);
 
 	initOneMovie(&_junk, "Images/Mars/Junk.movie", kShuttleJunkOrder, kShuttleJunkLeft,
-			kShuttleJunkTop, false);
+	             kShuttleJunkTop, false);
 
 	initOneMovie(&_explosions, "Images/Mars/Explosions.movie", kShuttleWeaponFrontOrder, 0, 0, false);
 	_explosions.setVolume(_vm->getSoundFXLevel());
@@ -2825,7 +2825,7 @@ void Mars::startUpFromSpaceChase() {
 	_tractorChoiceSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
 	_vm->getAllHotspots().push_back(&_tractorChoiceSpot);
 	_shuttleViewSpot.setArea(kShuttleWindowLeft, kShuttleWindowTop,
-			kShuttleWindowLeft + kShuttleWindowWidth, kShuttleWindowTop + kShuttleWindowHeight);
+	                         kShuttleWindowLeft + kShuttleWindowWidth, kShuttleWindowTop + kShuttleWindowHeight);
 	_shuttleViewSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
 	_vm->getAllHotspots().push_back(&_shuttleViewSpot);
 	_shuttleTransportSpot.setArea(kShuttleTransportBounds);
@@ -2841,7 +2841,7 @@ void Mars::setSoundFXLevel(const uint16 level) {
 	Neighborhood::setSoundFXLevel(level);
 
 	if (GameState.getCurrentRoomAndView() == MakeRoomView(kMars48, kEast) &&
-			!GameState.getMarsAvoidedReactorRobot())
+	    !GameState.getMarsAvoidedReactorRobot())
 		_loop2Fader.setMasterVolume(level);
 
 	if (_canyonChaseMovie.isMovieValid())
@@ -2965,7 +2965,7 @@ void Mars::marsTimerExpired(MarsTimerEvent &event) {
 		_tractorChoiceSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
 		_vm->getAllHotspots().push_back(&_tractorChoiceSpot);
 		_shuttleViewSpot.setArea(kShuttleWindowLeft, kShuttleWindowTop,
-				kShuttleWindowLeft + kShuttleWindowWidth, kShuttleWindowTop + kShuttleWindowHeight);
+		                         kShuttleWindowLeft + kShuttleWindowWidth, kShuttleWindowTop + kShuttleWindowHeight);
 		_shuttleViewSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
 		_vm->getAllHotspots().push_back(&_shuttleViewSpot);
 		_shuttleTransportSpot.setArea(kShuttleTransportBounds);
@@ -3004,7 +3004,7 @@ void Mars::marsTimerExpired(MarsTimerEvent &event) {
 		y = _vm->getRandomNumber(19);
 
 		r = Common::Rect(kShuttleWindowMidH - x, kShuttleWindowMidV - y,
-				kShuttleWindowMidH - x + 20, kShuttleWindowMidV - y + 20);
+		                 kShuttleWindowMidH - x + 20, kShuttleWindowMidV - y + 20);
 		showBigExplosion(r, kShuttleAlienShipOrder);
 
 		while (_explosions.isRunning()) {
@@ -3229,7 +3229,7 @@ void Mars::spaceChaseClick(const Input &input, const HotSpotID id) {
 
 					// Shameless reuse of a variable :P
 					initOneMovie(&_canyonChaseMovie, "Images/Mars/M98EAS.movie", kShuttleTractorBeamMovieOrder,
-							kShuttleWindowLeft, kShuttleWindowTop, true);
+					             kShuttleWindowLeft, kShuttleWindowTop, true);
 					_canyonChaseMovie.setVolume(_vm->getSoundFXLevel());
 					_canyonChaseMovie.redrawMovieWorld();
 					playMovieSegment(&_canyonChaseMovie, 0, _canyonChaseMovie.getDuration());
@@ -3796,7 +3796,7 @@ bool Mars::inColorMatchingGame() {
 
 bool Mars::canSolve() {
 	return GameState.getCurrentRoomAndView() == MakeRoomView(kMars56, kEast) && (getCurrentActivation() == kActivateReactorReadyForNitrogen ||
-			getCurrentActivation() == kActivateReactorReadyForCrowBar || inColorMatchingGame());
+	                                                                             getCurrentActivation() == kActivateReactorReadyForCrowBar || inColorMatchingGame());
 }
 
 void Mars::doSolve() {

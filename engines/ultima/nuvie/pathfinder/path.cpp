@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/pathfinder/path.h"
+#include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 Path::Path()
-	: path(0), step_count(0), path_size(0), pf(0) {
+    : path(0), step_count(0), path_size(0), pf(0) {
 }
 
 Path::~Path() {
@@ -56,9 +56,11 @@ uint32 Path::get_max_score(uint32 cost) {
  */
 uint32 Path::path_cost_est(MapCoord &s, MapCoord &g) {
 	uint32 major = (s.xdistance(g) >= s.ydistance(g))
-	               ? s.xdistance(g) : s.ydistance(g);
+	                   ? s.xdistance(g)
+	                   : s.ydistance(g);
 	uint32 minor = (s.xdistance(g) >= s.ydistance(g))
-	               ? s.ydistance(g) : s.xdistance(g);
+	                   ? s.ydistance(g)
+	                   : s.xdistance(g);
 	return (2 * major + minor);
 }
 

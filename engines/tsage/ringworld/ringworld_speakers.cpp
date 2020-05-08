@@ -21,10 +21,10 @@
  */
 
 #include "tsage/ringworld/ringworld_speakers.h"
-#include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/graphics.h"
+#include "tsage/scenes.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -71,7 +71,7 @@ SpeakerPOR::SpeakerPOR() {
 	_color1 = 41;
 }
 
-void SpeakerPOR::SpeakerAction1::signal(){
+void SpeakerPOR::SpeakerAction1::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(g_globals->_randomSource.getRandomNumber(60) + 60);

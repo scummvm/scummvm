@@ -29,11 +29,9 @@
 namespace Ultima {
 namespace Ultima4 {
 
-
-KeyHandler::KeyHandler(Callback func, void *d, bool asyncronous) :
-	_handler(func),
-	_async(asyncronous),
-	_data(d) {
+KeyHandler::KeyHandler(Callback func, void *d, bool asyncronous) : _handler(func),
+                                                                   _async(asyncronous),
+                                                                   _data(d) {
 }
 
 bool KeyHandler::globalHandler(int key) {

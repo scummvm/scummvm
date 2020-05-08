@@ -20,22 +20,22 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "xeen/saves.h"
 #include "common/algorithm.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 #include "common/substream.h"
 #include "common/translation.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
-#include "xeen/saves.h"
 #include "xeen/files.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-SavesManager::SavesManager(const Common::String &targetName): _targetName(targetName),
-		_wonWorld(false), _wonDarkSide(false) {
+SavesManager::SavesManager(const Common::String &targetName) : _targetName(targetName),
+                                                               _wonWorld(false), _wonDarkSide(false) {
 	File::_xeenSave = nullptr;
 	File::_darkSave = nullptr;
 }
@@ -100,7 +100,7 @@ void SavesManager::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHea
 	screen.getPalette(thumbPalette);
 	Graphics::Surface saveThumb;
 	::createThumbnail(&saveThumb, (const byte *)screen.getPixels(),
-		screen.w, screen.h, thumbPalette);
+	                  screen.w, screen.h, thumbPalette);
 	Graphics::saveThumbnail(*out, saveThumb);
 	saveThumb.free();
 
@@ -130,7 +130,7 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc, 
 	writeSavegameHeader(out, header);
 
 	// Loop through saving the sides' save archives
-	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
+	SaveArchive *archives[2] = {File::_xeenSave, File::_darkSave};
 	for (int idx = 0; idx < 2; ++idx) {
 		if (archives[idx]) {
 			archives[idx]->save(*out);
@@ -158,7 +158,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 	Party &party = *g_vm->_party;
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		g_vm->getSaveStateName(slot));
+	    g_vm->getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kReadingFailed;
 
@@ -171,14 +171,14 @@ Common::Error SavesManager::loadGameState(int slot) {
 	events.setPlayTime(header._totalFrames);
 
 	// Loop through loading the sides' save archives
-	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
+	SaveArchive *archives[2] = {File::_xeenSave, File::_darkSave};
 	for (int idx = 0; idx < 2; ++idx) {
 		uint fileSize = saveFile->readUint32LE();
 
 		if (archives[idx]) {
 			if (fileSize) {
 				Common::SeekableSubReadStream arcStream(saveFile, saveFile->pos(),
-					saveFile->pos() + fileSize);
+				                                        saveFile->pos() + fileSize);
 				archives[idx]->load(arcStream);
 			} else {
 				archives[idx]->reset((idx == 1) ? File::_darkCc : File::_xeenCc);
@@ -226,8 +226,7 @@ void SavesManager::newGame() {
 		File::_xeenSave->reset(File::_xeenCc);
 	}
 
-	File::_currentSave = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
-		File::_darkSave : File::_xeenSave;
+	File::_currentSave = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ? File::_darkSave : File::_xeenSave;
 	assert(File::_currentSave);
 
 	// Load the character roster and party

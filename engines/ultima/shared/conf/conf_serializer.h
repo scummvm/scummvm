@@ -34,6 +34,7 @@ namespace Shared {
 class ConfSerializer {
 private:
 	bool _isSaving;
+
 public:
 	/**
 	 * Constructor
@@ -66,7 +67,7 @@ public:
 	 * Syncs a string
 	 */
 	void syncAsString(const Common::String &key, Common::String &value,
-			const char *defaultValue = nullptr) {
+	                  const char *defaultValue = nullptr) {
 		if (_isSaving)
 			ConfMan.set(key, value);
 		else
@@ -77,7 +78,7 @@ public:
 	 * Syncs a boolean
 	 */
 	void syncAsBool(const Common::String &key, bool &value,
-			bool defaultValue = false) {
+	                bool defaultValue = false) {
 		if (_isSaving)
 			ConfMan.setBool(key, value);
 		else

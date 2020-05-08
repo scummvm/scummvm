@@ -18,10 +18,10 @@
 #ifndef MT32EMU_LA32_FLOAT_WAVE_GENERATOR_H
 #define MT32EMU_LA32_FLOAT_WAVE_GENERATOR_H
 
+#include "LA32WaveGenerator.h"
+#include "Types.h"
 #include "globals.h"
 #include "internals.h"
-#include "Types.h"
-#include "LA32WaveGenerator.h"
 
 namespace MT32Emu {
 
@@ -79,7 +79,7 @@ public:
 	void initSynth(const bool sawtoothWaveform, const Bit8u pulseWidth, const Bit8u resonance);
 
 	// Initialise the WG engine for generation of PCM partial samples and set up the invariant parameters
-	void initPCM(const Bit16s * const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped, const bool pcmWaveInterpolated);
+	void initPCM(const Bit16s *const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped, const bool pcmWaveInterpolated);
 
 	// Update parameters with respect to TVP, TVA and TVF, and generate next sample
 	float generateNextSample(const Bit32u amp, const Bit16u pitch, const Bit32u cutoff);
@@ -112,7 +112,7 @@ public:
 	void initSynth(const PairType master, const bool sawtoothWaveform, const Bit8u pulseWidth, const Bit8u resonance);
 
 	// Initialise the WG engine for generation of PCM partial samples and set up the invariant parameters
-	void initPCM(const PairType master, const Bit16s * const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped);
+	void initPCM(const PairType master, const Bit16s *const pcmWaveAddress, const Bit32u pcmWaveLength, const bool pcmWaveLooped);
 
 	// Update parameters with respect to TVP, TVA and TVF, and generate next sample
 	void generateNextSample(const PairType master, const Bit32u amp, const Bit16u pitch, const Bit32u cutoff);

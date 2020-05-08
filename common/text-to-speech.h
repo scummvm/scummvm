@@ -30,38 +30,37 @@
 #include "common/array.h"
 namespace Common {
 
-
 /**
  * Text to speech voice class.
  */
 class TTSVoice {
 	friend class TextToSpeechManager;
 
-	public:
-		enum Gender {
-			MALE,
-			FEMALE,
-			UNKNOWN_GENDER
-		};
+public:
+	enum Gender {
+		MALE,
+		FEMALE,
+		UNKNOWN_GENDER
+	};
 
-		enum Age {
-			CHILD,
-			ADULT,
-			UNKNOWN_AGE
-		};
+	enum Age {
+		CHILD,
+		ADULT,
+		UNKNOWN_AGE
+	};
 
-	public:
-		TTSVoice();
+public:
+	TTSVoice();
 
-		TTSVoice(Gender gender, Age age, void *data, String description) ;
+	TTSVoice(Gender gender, Age age, void *data, String description);
 
-		TTSVoice(const TTSVoice& voice);
+	TTSVoice(const TTSVoice &voice);
 
-		~TTSVoice();
+	~TTSVoice();
 
-		TTSVoice& operator=(const TTSVoice& voice);
+	TTSVoice &operator=(const TTSVoice &voice);
 
-		/**
+	/**
 		 * Returns the gender of the used voice.
 		 *
 		 * @note The gender information is really platform specific, it may not be
@@ -69,15 +68,15 @@ class TTSVoice {
 		 * the user in the TTS engine configuration and so the information might be
 		 * wrong
 		 */
-		Gender getGender() { return _gender; };
+	Gender getGender() { return _gender; };
 
-		/**
+	/**
 		 * Sets the voice gender, should probably be used only by the backends
 		 * that are directly communicating with the TTS engine.
 		 */
-		void setGender(Gender gender) { _gender = gender; };
+	void setGender(Gender gender) { _gender = gender; };
 
-		/**
+	/**
 		 * Returns the age of the used voice.
 		 *
 		 * @note The age information is really platform specific, it may not be
@@ -85,40 +84,40 @@ class TTSVoice {
 		 * the user in the TTS engine configuration and so the information might be
 		 * wrong
 		 */
-		Age getAge() { return _age; };
+	Age getAge() { return _age; };
 
-		/**
+	/**
 		 * Sets the voice age, should probably be used only by the backends
 		 * that are directly communicating with the TTS engine.
 		 */
-		void setAge(Age age) { _age = age; };
+	void setAge(Age age) { _age = age; };
 
-		/**
+	/**
 		 * Returns the data about the voice, this is engine specific variable,
 		 * it has close to no value for anything else then communicating
 		 * directly with the TTS engine, which should probably be done only by
 		 * the backends.
 		 */
-		void *getData() { return _data; };
+	void *getData() { return _data; };
 
-		/**
+	/**
 		 * Sets the voice data, should probably be used only by the backends
 		 * that are directly communicating with the TTS engine.
 		 */
-		void setData(void *data) { _data = data; };
+	void setData(void *data) { _data = data; };
 
-		/**
+	/**
 		 * Returns the voice description. This description is really tts engine
 		 * specific and might be not be available with some tts engines.
 		 */
-		String getDescription() { return _description; };
+	String getDescription() { return _description; };
 
-	protected:
-		Gender _gender; ///< Gender of the voice
-		Age _age; ///< Age of the voice
-		void *_data; ///< Pointer to tts engine specific data about the voice
-		String _description; ///< Description of the voice (gets displayed in GUI)
-		int *_refCount; ///< Reference count (serves for proper feeing of _data)
+protected:
+	Gender _gender;      ///< Gender of the voice
+	Age _age;            ///< Age of the voice
+	void *_data;         ///< Pointer to tts engine specific data about the voice
+	String _description; ///< Description of the voice (gets displayed in GUI)
+	int *_refCount;      ///< Reference count (serves for proper feeing of _data)
 };
 
 struct TTSState {
@@ -291,7 +290,7 @@ public:
 	 *
 	 * @return Array of indices into _availableVoices
 	 */
-	Array<int> getVoiceIndicesByGender (TTSVoice::Gender gender);
+	Array<int> getVoiceIndicesByGender(TTSVoice::Gender gender);
 
 	/**
 	 * Pushes the current state of the TTS
@@ -312,7 +311,7 @@ protected:
 	TTSState *_ttsState;
 
 	void clearState();
-	virtual void updateVoices() {};
+	virtual void updateVoices(){};
 };
 
 } // End of namespace Common

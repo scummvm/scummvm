@@ -23,12 +23,12 @@
 #ifndef TSAGE_RINGWORLD_DIALOGS_H
 #define TSAGE_RINGWORLD_DIALOGS_H
 
-#include "tsage/dialogs.h"
-#include "tsage/events.h"
-#include "tsage/graphics.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/system.h"
+#include "tsage/dialogs.h"
+#include "tsage/events.h"
+#include "tsage/graphics.h"
 
 namespace TsAGE {
 
@@ -37,6 +37,7 @@ namespace Ringworld {
 class RightClickButton : public GfxButton {
 private:
 	GfxSurface *_savedButton;
+
 public:
 	int _buttonIndex;
 
@@ -54,6 +55,7 @@ private:
 	RightClickButton _walkButton, _lookButton, _useButton, _talkButton, _inventoryButton, _optionsButton;
 
 	RightClickButton *findButton(const Common::Point &pt);
+
 public:
 	RightClickDialog();
 	~RightClickDialog() override;
@@ -69,6 +71,7 @@ private:
 	GfxButton _btnQuit, _btnResume;
 	GfxButton _btnSound;
 	GfxMessage _gfxMessage;
+
 public:
 	OptionsDialog();
 	~OptionsDialog() override {}
@@ -82,6 +85,7 @@ public:
 class GfxInvImage : public GfxImage {
 public:
 	InvObject *_invObject;
+
 public:
 	GfxInvImage() : GfxImage(), _invObject(NULL) {}
 
@@ -94,6 +98,7 @@ class InventoryDialog : public ModalDialog {
 private:
 	Common::Array<GfxInvImage *> _images;
 	GfxButton _btnOk, _btnLook;
+
 public:
 	InventoryDialog();
 	~InventoryDialog() override;

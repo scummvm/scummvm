@@ -76,6 +76,6 @@ private:
 	int _hoveredItemPos;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

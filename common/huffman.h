@@ -37,7 +37,7 @@ inline uint32 REVERSEBITS(uint32 x) {
 	x = (((x & ~0x0F0F0F0F) >> 4) | ((x & 0x0F0F0F0F) << 4));
 	x = (((x & ~0x00FF00FF) >> 8) | ((x & 0x00FF00FF) << 8));
 
-	return((x >> 16) | (x << 16));
+	return ((x >> 16) | (x << 16));
 }
 
 /**
@@ -79,7 +79,7 @@ private:
 	/** Prefix lookup table used to speed up the decoding of short codes. */
 	struct PrefixEntry {
 		uint32 symbol;
-		uint8  length;
+		uint8 length;
 
 		PrefixEntry() : length(0xFF) {}
 	};
@@ -88,7 +88,7 @@ private:
 	PrefixEntry _prefixTable[1 << _prefixTableBits];
 };
 
-template <class BITSTREAM>
+template<class BITSTREAM>
 Huffman<BITSTREAM>::Huffman(uint8 maxLength, uint32 codeCount, const uint32 *codes, const uint8 *lengths, const uint32 *symbols) {
 	assert(codeCount > 0);
 
@@ -134,7 +134,7 @@ Huffman<BITSTREAM>::Huffman(uint8 maxLength, uint32 codeCount, const uint32 *cod
 	}
 }
 
-template <class BITSTREAM>
+template<class BITSTREAM>
 uint32 Huffman<BITSTREAM>::getSymbol(BITSTREAM &bits) const {
 	uint32 code = bits.peekBits(_prefixTableBits);
 

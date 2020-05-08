@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_WORLD_EGGHATCHERPROCESS_H
 #define ULTIMA8_WORLD_EGGHATCHERPROCESS_H
 
-#include "ultima/ultima8/kernel/process.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/kernel/process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,6 +45,7 @@ public:
 	void addEgg(uint16 egg);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 private:
 	void saveData(Common::WriteStream *ws) override;
 

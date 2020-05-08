@@ -47,35 +47,44 @@ public:
 
 	uint32 readX(uint32 num_bytes) {
 		assert(num_bytes > 0 && num_bytes <= 4);
-		if (num_bytes == 1) return readByte();
-		else if (num_bytes == 2) return readUint16LE();
-		else if (num_bytes == 3) return readUint24LE();
-		else return readUint32LE();
+		if (num_bytes == 1)
+			return readByte();
+		else if (num_bytes == 2)
+			return readUint16LE();
+		else if (num_bytes == 3)
+			return readUint24LE();
+		else
+			return readUint32LE();
 	}
 
 	int32 readXS(uint32 num_bytes) {
 		assert(num_bytes > 0 && num_bytes <= 4);
-		if (num_bytes == 1) return static_cast<int8>(readByte());
-		else if (num_bytes == 2) return static_cast<int16>(readUint16LE());
-		else if (num_bytes == 3) return (((static_cast<int32>(readUint24LE())) << 8) >> 8);
-		else return static_cast<int32>(readUint32LE());
+		if (num_bytes == 1)
+			return static_cast<int8>(readByte());
+		else if (num_bytes == 2)
+			return static_cast<int16>(readUint16LE());
+		else if (num_bytes == 3)
+			return (((static_cast<int32>(readUint24LE())) << 8) >> 8);
+		else
+			return static_cast<int32>(readUint32LE());
 	}
 
 	void readline(Std::string &str) {
 		str.clear();
 		while (!eos()) {
-			char character =  static_cast<char>(readByte());
+			char character = static_cast<char>(readByte());
 
-			if (character == '\r') continue;    // Skip cr
-			else if (character == '\n') break;  // break on line feed
+			if (character == '\r')
+				continue; // Skip cr
+			else if (character == '\n')
+				break; // break on line feed
 
 			str += character;
 		}
 	}
 };
 
-
-class IFileDataSource: public IDataSource {
+class IFileDataSource : public IDataSource {
 private:
 	Common::SeekableReadStream *_in;
 
@@ -145,7 +154,8 @@ public:
 	}
 
 	uint32 read(void *str, uint32 num_bytes) override {
-		if (_bufPtr >= _buf + _size) return 0;
+		if (_bufPtr >= _buf + _size)
+			return 0;
 		uint32 count = num_bytes;
 		if (_bufPtr + num_bytes > _buf + _size)
 			count = static_cast<int32>(_buf - _bufPtr + _size);

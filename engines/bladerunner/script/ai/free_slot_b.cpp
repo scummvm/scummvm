@@ -39,7 +39,7 @@ void AIScriptFreeSlotB::Initialize() {
 	_var1 = 0;
 	_var2 = 1;
 
-	World_Waypoint_Set(527, kSetKP02,  -468.46f, -616.58f, 2840.60f);
+	World_Waypoint_Set(527, kSetKP02, -468.46f, -616.58f, 2840.60f);
 	// TODO: A bug? world waypoints 528, 529 are unused
 	World_Waypoint_Set(528, kSetKP02, -1024.46f, -615.49f, 2928.60f);
 	World_Waypoint_Set(529, kSetKP02, -1024.46f, -615.49f, 2788.60f);
@@ -59,15 +59,11 @@ bool AIScriptFreeSlotB::Update() {
 
 		case kGoalFreeSlotBAct4WalkAround:
 #if BLADERUNNER_ORIGINAL_BUGS
-			if (Actor_Query_Which_Set_In(kActorFreeSlotB) == Player_Query_Current_Set()
-			    && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotB, kActorMcCoy) <= 48
-			) {
+			if (Actor_Query_Which_Set_In(kActorFreeSlotB) == Player_Query_Current_Set() && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotB, kActorMcCoy) <= 48) {
 				Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct4AttackMcCoy);
 			}
 #else
-			if (Actor_Query_Which_Set_In(kActorFreeSlotB) == Player_Query_Current_Set()
-			    && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotB, kActorMcCoy) <= 54
-			) {
+			if (Actor_Query_Which_Set_In(kActorFreeSlotB) == Player_Query_Current_Set() && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotB, kActorMcCoy) <= 54) {
 				Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct4AttackMcCoy);
 			}
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -98,9 +94,7 @@ bool AIScriptFreeSlotB::Update() {
 		Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct5Default);
 		return true;
 	} else {
-		if (Actor_Query_Goal_Number(kActorFreeSlotB) != kGoalFreeSlotBAct5Prepare
-		    || Actor_Query_Which_Set_In(kActorMcCoy) != kSetKP02
-		) {
+		if (Actor_Query_Goal_Number(kActorFreeSlotB) != kGoalFreeSlotBAct5Prepare || Actor_Query_Which_Set_In(kActorMcCoy) != kSetKP02) {
 			if (Actor_Query_Goal_Number(kActorFreeSlotB) == kGoalFreeSlotBGone) {
 				if (Actor_Query_Which_Set_In(kActorFreeSlotB) != Player_Query_Current_Set()) {
 					Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
@@ -121,7 +115,7 @@ void AIScriptFreeSlotB::TimerExpired(int timer) {
 }
 
 void AIScriptFreeSlotB::CompletedMovementTrack() {
-//	debug("Rat B completed move with Goal: %d", Actor_Query_Goal_Number(kActorFreeSlotB));
+	//	debug("Rat B completed move with Goal: %d", Actor_Query_Goal_Number(kActorFreeSlotB));
 	switch (Actor_Query_Goal_Number(kActorFreeSlotB)) {
 	case kGoalFreeSlotBAct4Default:
 		Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct4WalkAround);
@@ -157,7 +151,7 @@ void AIScriptFreeSlotB::ClickedByPlayer() {
 	Actor_Face_Actor(kActorMcCoy, kActorFreeSlotB, true);
 	if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnHoodooRats)) {
 		Game_Flag_Set(kFlagMcCoyCommentsOnHoodooRats);
-		Actor_Voice_Over(1060, kActorVoiceOver);  // Hoodoo rats
+		Actor_Voice_Over(1060, kActorVoiceOver); // Hoodoo rats
 		// Note: Quote 1070 is *boop* in ENG version.
 		// However, it is similar to 1060 quote in FRA, DEU, ESP and ITA versions
 		//          with the only difference being not mentioning the "Hoodoo Rats" name.
@@ -193,7 +187,7 @@ void AIScriptFreeSlotB::OtherAgentExitedThisSet(int otherActorId) {
 	}
 
 #endif // BLADERUNNER_ORIGINAL_BUGS
-	// return false;
+	   // return false;
 }
 
 void AIScriptFreeSlotB::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
@@ -217,7 +211,7 @@ int AIScriptFreeSlotB::GetFriendlinessModifierIfGetsClue(int otherActorId, int c
 }
 
 bool AIScriptFreeSlotB::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-//	debug("Rat B goal changed from %d to: %d", currentGoalNumber, newGoalNumber);
+	//	debug("Rat B goal changed from %d to: %d", currentGoalNumber, newGoalNumber);
 	switch (newGoalNumber) {
 	case kGoalFreeSlotBAct4Default:
 		// kSetFreeSlotG
@@ -447,17 +441,17 @@ bool AIScriptFreeSlotB::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptFreeSlotB::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptFreeSlotB::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptFreeSlotB::ReachedMovementTrackWaypoint(int waypointId) {
@@ -485,14 +479,14 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 			AI_Movement_Track_Append(kActorFreeSlotB, 450, 0);
 			break;
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
-		// fall through
+#endif // BLADERUNNER_ORIGINAL_BUGS \
+       // fall through
 	case 2:
 		// kSetUG01
 #if BLADERUNNER_ORIGINAL_BUGS
 		World_Waypoint_Set(466, kSetUG01, 144.98f, -50.13f, -175.75f);
-		World_Waypoint_Set(547, kSetUG01, 105.6f,  -50.13f, -578.46f);
-		World_Waypoint_Set(548, kSetUG01,  62.0f,  -50.13f, -574.0f);
+		World_Waypoint_Set(547, kSetUG01, 105.6f, -50.13f, -578.46f);
+		World_Waypoint_Set(548, kSetUG01, 62.0f, -50.13f, -574.0f);
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
 		AI_Movement_Track_Append(kActorFreeSlotB, 547, 1);
 		AI_Movement_Track_Append(kActorFreeSlotB, 548, 5);
@@ -502,30 +496,30 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 		// Don't put rats in UG01 when Lucy is also here
 		if (!Actor_Query_In_Set(kActorLucy, kSetUG01)) {
 			World_Waypoint_Set(466, kSetUG01, 144.98f, -50.13f, -175.75f);
-			World_Waypoint_Set(547, kSetUG01, 105.6f,  -50.13f, -578.46f);
-			World_Waypoint_Set(548, kSetUG01,  62.0f,  -50.13f, -574.0f);
+			World_Waypoint_Set(547, kSetUG01, 105.6f, -50.13f, -578.46f);
+			World_Waypoint_Set(548, kSetUG01, 62.0f, -50.13f, -574.0f);
 			AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
 			AI_Movement_Track_Append(kActorFreeSlotB, 547, 1);
 			AI_Movement_Track_Append(kActorFreeSlotB, 548, 5);
 			AI_Movement_Track_Append(kActorFreeSlotB, 466, 5);
 			break;
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
-		// fall through
+#endif // BLADERUNNER_ORIGINAL_BUGS \
+       // fall through
 	case 3:
 		// kSetUG04
 		AI_Movement_Track_Append(kActorFreeSlotB, 446, 15);
-		AI_Movement_Track_Append(kActorFreeSlotB, 447,  1);
-		AI_Movement_Track_Append(kActorFreeSlotB, 449,  1);
-		AI_Movement_Track_Append(kActorFreeSlotB, 448,  2);
-		AI_Movement_Track_Append(kActorFreeSlotB, 449,  0);
+		AI_Movement_Track_Append(kActorFreeSlotB, 447, 1);
+		AI_Movement_Track_Append(kActorFreeSlotB, 449, 1);
+		AI_Movement_Track_Append(kActorFreeSlotB, 448, 2);
+		AI_Movement_Track_Append(kActorFreeSlotB, 449, 0);
 		break;
 
 	case 4:
 		// kSetUG04
-		World_Waypoint_Set(466, kSetUG04, -22.70f,  6.39f,    33.12f);
-		World_Waypoint_Set(547, kSetUG04,  -6.70f, -1.74f,  -362.88f);
-		World_Waypoint_Set(548, kSetUG04, 164.0f,  11.87f, -1013.0f);
+		World_Waypoint_Set(466, kSetUG04, -22.70f, 6.39f, 33.12f);
+		World_Waypoint_Set(547, kSetUG04, -6.70f, -1.74f, -362.88f);
+		World_Waypoint_Set(548, kSetUG04, 164.0f, 11.87f, -1013.0f);
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 2);
 		AI_Movement_Track_Append(kActorFreeSlotB, 547, 0);
 		AI_Movement_Track_Append(kActorFreeSlotB, 548, 0);
@@ -534,14 +528,14 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 	case 5:
 		// kSetUG05
 		AI_Movement_Track_Append(kActorFreeSlotB, 457, 15);
-		AI_Movement_Track_Append(kActorFreeSlotB, 458,  0);
+		AI_Movement_Track_Append(kActorFreeSlotB, 458, 0);
 		AI_Movement_Track_Append(kActorFreeSlotB, 459, 15);
 		break;
 
 	case 6:
 		// kSetUG06
 		AI_Movement_Track_Append(kActorFreeSlotB, 460, 15);
-		AI_Movement_Track_Append(kActorFreeSlotB, 461,  5);
+		AI_Movement_Track_Append(kActorFreeSlotB, 461, 5);
 		AI_Movement_Track_Append(kActorFreeSlotB, 460, 15);
 		break;
 
@@ -555,8 +549,8 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 			// make them collide with Clovis' path
 			AI_Movement_Track_Append(kActorFreeSlotB, 39, 10);
 		} else {
-			World_Waypoint_Set(466, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(547, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(466, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(547, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(548, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotB, 466, 5);
 			AI_Movement_Track_Append(kActorFreeSlotB, 547, 1);
@@ -567,21 +561,21 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 		// Don't put rats in UG07 after the UG18 Guzza scene
 		// since Clovis may be there too and that does not work well
 		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
-			World_Waypoint_Set(466, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(547, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(466, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(547, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(548, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotB, 466, 5);
 			AI_Movement_Track_Append(kActorFreeSlotB, 547, 1);
 			// TODO: A bug? the waypoint 548 is created but is unused
 			break;
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
-		// fall through
+#endif // BLADERUNNER_ORIGINAL_BUGS \
+       // fall through
 	case 8:
 		// kSetUG07
 #if BLADERUNNER_ORIGINAL_BUGS
-		World_Waypoint_Set(466, kSetUG07,  -88.78f, -12.21f, -184.08f);
-		World_Waypoint_Set(547, kSetUG07,  250.0f,  -12.21f, -342.0f);
+		World_Waypoint_Set(466, kSetUG07, -88.78f, -12.21f, -184.08f);
+		World_Waypoint_Set(547, kSetUG07, 250.0f, -12.21f, -342.0f);
 		World_Waypoint_Set(548, kSetUG07, -164.78f, -12.21f, -832.08f);
 		AI_Movement_Track_Append(kActorFreeSlotB, 547, 5);
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
@@ -591,21 +585,21 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 		// Don't put rats in UG07 after the UG18 Guzza scene
 		// since Clovis may be there too and that does not work well
 		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
-			World_Waypoint_Set(466, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(547, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(466, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(547, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(548, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotB, 547, 5);
 			AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
 			// TODO: A bug? the waypoint 548 is created but is unused
 			break;
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
-		// fall through
+#endif // BLADERUNNER_ORIGINAL_BUGS \
+       // fall through
 	case 9:
 		// kSetUG07
 #if BLADERUNNER_ORIGINAL_BUGS
-		World_Waypoint_Set(466, kSetUG07,  -88.78f, -12.21f, -184.08f);
-		World_Waypoint_Set(547, kSetUG07,  250.0f,  -12.21f, -342.0f);
+		World_Waypoint_Set(466, kSetUG07, -88.78f, -12.21f, -184.08f);
+		World_Waypoint_Set(547, kSetUG07, 250.0f, -12.21f, -342.0f);
 		World_Waypoint_Set(548, kSetUG07, -164.78f, -12.21f, -832.08f);
 		AI_Movement_Track_Append(kActorFreeSlotB, 547, 5);
 		AI_Movement_Track_Append(kActorFreeSlotB, 548, 1);
@@ -615,21 +609,21 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 		// Don't put rats in UG07 after the UG18 Guzza scene
 		// since Clovis may be there too and that does not work well
 		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
-			World_Waypoint_Set(466, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(547, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(466, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(547, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(548, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotB, 547, 5);
 			AI_Movement_Track_Append(kActorFreeSlotB, 548, 1);
 			// TODO: A bug? the waypoint 466 is created but is unused
 			break;
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
-		// fall through
+#endif // BLADERUNNER_ORIGINAL_BUGS \
+       // fall through
 	case 10:
 		// kSetUG07
 #if BLADERUNNER_ORIGINAL_BUGS
-		World_Waypoint_Set(466, kSetUG07,  -88.78f, -12.21f, -184.08f);
-		World_Waypoint_Set(547, kSetUG07,  250.0f,  -12.21f, -342.0f);
+		World_Waypoint_Set(466, kSetUG07, -88.78f, -12.21f, -184.08f);
+		World_Waypoint_Set(547, kSetUG07, 250.0f, -12.21f, -342.0f);
 		World_Waypoint_Set(548, kSetUG07, -164.78f, -12.21f, -832.08f);
 		AI_Movement_Track_Append(kActorFreeSlotB, 548, 5);
 		AI_Movement_Track_Append(kActorFreeSlotB, 547, 1);
@@ -639,19 +633,19 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 		// Don't put rats in UG07 after the UG18 Guzza scene
 		// since Clovis may be there too and that does not work well
 		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
-			World_Waypoint_Set(466, kSetUG07,  -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(547, kSetUG07,  250.0f,  -12.21f, -342.0f);
+			World_Waypoint_Set(466, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(547, kSetUG07, 250.0f, -12.21f, -342.0f);
 			World_Waypoint_Set(548, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotB, 548, 5);
 			AI_Movement_Track_Append(kActorFreeSlotB, 547, 1);
 			// TODO: A bug? the waypoint 466 is created but is unused
 			break;
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
-		// fall through
+#endif // BLADERUNNER_ORIGINAL_BUGS \
+       // fall through
 	case 11:
 		// kSetUG09
-		World_Waypoint_Set(466, kSetUG09,   91.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(466, kSetUG09, 91.0f, 156.94f, -498.0f);
 		World_Waypoint_Set(547, kSetUG09, -149.0f, 156.94f, -498.0f);
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 5);
 		AI_Movement_Track_Append(kActorFreeSlotB, 547, 1);
@@ -659,7 +653,7 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 
 	case 12:
 		// kSetUG09
-		World_Waypoint_Set(466, kSetUG09,   91.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(466, kSetUG09, 91.0f, 156.94f, -498.0f);
 		World_Waypoint_Set(547, kSetUG09, -149.0f, 156.94f, -498.0f);
 		AI_Movement_Track_Append(kActorFreeSlotB, 547, 5);
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
@@ -677,8 +671,8 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
 #else
 		// replacing with something more normal
-		World_Waypoint_Set(466, kSetUG09, -149.0f,  156.94f, -498.0f);
-		World_Waypoint_Set(547, kSetUG09,  -32.60f, 156.94f, -498.0f);
+		World_Waypoint_Set(466, kSetUG09, -149.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(547, kSetUG09, -32.60f, 156.94f, -498.0f);
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
 		AI_Movement_Track_Append(kActorFreeSlotB, 547, 2);
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
@@ -687,8 +681,8 @@ void AIScriptFreeSlotB::goToRandomUGxx() {
 
 	case 14:
 		// kSetUG12
-		World_Waypoint_Set(466, kSetUG12, -360.67f, 21.39f,   517.55f);
-		World_Waypoint_Set(547, kSetUG12, -250.67f, 21.39f,   477.55f);
+		World_Waypoint_Set(466, kSetUG12, -360.67f, 21.39f, 517.55f);
+		World_Waypoint_Set(547, kSetUG12, -250.67f, 21.39f, 477.55f);
 		World_Waypoint_Set(548, kSetUG12, -248.67f, 21.39f, -1454.45f);
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
 		AI_Movement_Track_Append(kActorFreeSlotB, 547, 8);

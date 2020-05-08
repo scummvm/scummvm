@@ -58,7 +58,6 @@ public:
 			return nullptr;
 	}
 
-
 	uint32 getSize(uint32 index) const override;
 	uint32 getSize(const Std::string &name) const override {
 		uint32 index;

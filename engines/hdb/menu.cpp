@@ -24,15 +24,15 @@
 #include "common/random.h"
 #include "graphics/thumbnail.h"
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
-#include "hdb/sound.h"
-#include "hdb/menu.h"
 #include "hdb/map.h"
+#include "hdb/menu.h"
 #include "hdb/mpc.h"
+#include "hdb/sound.h"
 
 namespace HDB {
 
@@ -186,8 +186,8 @@ Menu::Menu() {
 
 	_nextScreen = 0;
 
-	_nebulaY = 0;		// Used as a flag
-	_fStars[0].y = 0;	// Used as a flag
+	_nebulaY = 0;     // Used as a flag
+	_fStars[0].y = 0; // Used as a flag
 
 	_keyAssignUp = Common::KEYCODE_UP;
 	_keyAssignDown = Common::KEYCODE_DOWN;
@@ -306,8 +306,7 @@ bool Menu::init() {
 			_hdbLogoScreen = g_hdb->_gfx->loadPic(DEMOTITLESCREEN);
 			if (g_hdb->isHandango())
 				_handangoGfx = g_hdb->_gfx->loadPic(PIC_HANDANGO);
-		}
-		else
+		} else
 			_hdbLogoScreen = g_hdb->_gfx->loadPic(TITLESCREEN);
 	} else {
 		_gCheckEmpty = g_hdb->_gfx->loadPic(G_CHECK_EMPTY);
@@ -425,15 +424,13 @@ void Menu::writeConfig() {
 }
 
 static const char nebulaNames[kNebulaCount][32] = {
-	BACKSCROLL_PLANET1,
-	BACKSCROLL_PLANET2,
-	BACKSCROLL_PLANET3,
-	BACKSCROLL_PLANET4,
-	BACKSCROLL_PLANET5,
-	BACKSCROLL_GALAXY1,
-	BACKSCROLL_GALAXY2
-};
-
+    BACKSCROLL_PLANET1,
+    BACKSCROLL_PLANET2,
+    BACKSCROLL_PLANET3,
+    BACKSCROLL_PLANET4,
+    BACKSCROLL_PLANET5,
+    BACKSCROLL_GALAXY1,
+    BACKSCROLL_GALAXY2};
 
 void Menu::startMenu() {
 	// stuff that gets loaded-in at Title Screen
@@ -471,18 +468,18 @@ void Menu::startMenu() {
 			_screenshots1gfx = g_hdb->_gfx->loadPic(PIC_DEMOSCREEN);
 			_screenshots1agfx = g_hdb->_gfx->loadPic(PIC_DEMOSCREEN2);
 			_screenshots2gfx = g_hdb->_gfx->loadPic(PIC_DEMO_BUY);
-			_demoPlaqueGfx =  g_hdb->_gfx->loadPic(PIC_DEMO);
+			_demoPlaqueGfx = g_hdb->_gfx->loadPic(PIC_DEMO);
 		} else {
 			_screenshots1agfx = g_hdb->_gfx->loadPic("pic_demoscreenshots");
 			_screenshots1gfx = g_hdb->_gfx->loadPic("pic_demoscreenshots2");
 			_screenshots2gfx = nullptr;
-			_demoPlaqueGfx =  nullptr;
+			_demoPlaqueGfx = nullptr;
 		}
 	}
 
-	_vortexian[0] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"01");
-	_vortexian[1] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"02");
-	_vortexian[2] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN"03");
+	_vortexian[0] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN "01");
+	_vortexian[1] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN "02");
+	_vortexian[2] = g_hdb->_gfx->loadTile(GROUP_ENT_VORTEXIAN_STANDDOWN "03");
 
 	_modeLoadGfx = g_hdb->_gfx->loadPic(MENU_LOAD);
 	_modeSaveGfx = g_hdb->_gfx->loadPic(MENU_SAVE);
@@ -526,7 +523,7 @@ void Menu::startMenu() {
 
 	// did we skip the intro?
 	if (!_nebulaY) {
-		g_hdb->_gfx->setup3DStars();	// setup the star info
+		g_hdb->_gfx->setup3DStars(); // setup the star info
 
 		_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
 		_nebulaX = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1) + 10;
@@ -564,7 +561,7 @@ void Menu::drawMenu() {
 		_clickDelay--;
 
 	//	sound.UpdateMusic();		// fading in/out
-	g_hdb->_gfx->turnOffFade();			// heh
+	g_hdb->_gfx->turnOffFade(); // heh
 
 	//-------------------------------------------------------------------
 	// Draw the MAIN MENU
@@ -612,30 +609,33 @@ void Menu::drawMenu() {
 
 		// Draw the Secret Stars! (tm)
 		if (g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7 ||
-			g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14 ||
-			g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
+		    g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14 ||
+		    g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
 			static int anim = 0, angler = 0, angleb = 90, angleg = 180;
 			static uint32 anim_time;
 
 			if (g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7)
 				_starRedGfx[anim]->drawMasked(
-					kStarRedX + (int)(5 * g_hdb->_gfx->getCos(angler)),
-					kStarRedY + (int)(5 * g_hdb->_gfx->getSin(angler))
-				);
+				    kStarRedX + (int)(5 * g_hdb->_gfx->getCos(angler)),
+				    kStarRedY + (int)(5 * g_hdb->_gfx->getSin(angler)));
 			if (g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14)
 				_starGreenGfx[anim]->drawMasked(
-					kStarGreenX + (int)(5 * g_hdb->_gfx->getCos(angleg)),
-					kStarGreenY + (int)(5 * g_hdb->_gfx->getSin(angleg))
-				);
+				    kStarGreenX + (int)(5 * g_hdb->_gfx->getCos(angleg)),
+				    kStarGreenY + (int)(5 * g_hdb->_gfx->getSin(angleg)));
 			if (g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21)
 				_starBlueGfx[anim]->drawMasked(
-					kStarBlueX + (int)(5 * g_hdb->_gfx->getCos(angleb)),
-					kStarBlueY + (int)(5 * g_hdb->_gfx->getSin(angleb))
-				);
+				    kStarBlueX + (int)(5 * g_hdb->_gfx->getCos(angleb)),
+				    kStarBlueY + (int)(5 * g_hdb->_gfx->getSin(angleb)));
 
-			angler += 10; if (angler > 359) angler = 0;
-			angleg += 10; if (angleg > 359) angleg = 0;
-			angleb += 10; if (angleb > 359) angleb = 0;
+			angler += 10;
+			if (angler > 359)
+				angler = 0;
+			angleg += 10;
+			if (angleg > 359)
+				angleg = 0;
+			angleb += 10;
+			if (angleb > 359)
+				angleb = 0;
 
 			if (anim_time < g_hdb->getTimeSlice()) {
 				anim_time = g_hdb->getTimeSlice() + 500;
@@ -1068,7 +1068,7 @@ bool Menu::startTitle() {
 	for (int i = 0; i < kNebulaCount; i++)
 		_nebulaGfx[i] = g_hdb->_gfx->loadPic(nebulaNames[i]);
 
-	_titleCycle = 1;	// 1 = Waiting for OOH OOH
+	_titleCycle = 1; // 1 = Waiting for OOH OOH
 
 	_titleDelay = g_system->getMillis() + 1000 * TITLE_DELAY1;
 
@@ -1133,7 +1133,7 @@ void Menu::drawTitle() {
 			_nebulaX = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1) + 10;
 			_nebulaY = -11 * 8;
 			_nebulaYVel = g_hdb->_rnd->getRandomNumber(3) + 1;
-			if (_nebulaWhich > 4)		// galaxy?
+			if (_nebulaWhich > 4) // galaxy?
 				_nebulaYVel = 1;
 		}
 
@@ -1197,7 +1197,7 @@ void Menu::drawTitle() {
 		g_hdb->_gfx->setFade(false, false, kScreenFade / time); // FADEOUT
 		_titleCycle++;
 		g_hdb->_sound->stopMusic();
-	break;
+		break;
 
 	// wait for fadeout, then start music
 	case 4:
@@ -1211,33 +1211,33 @@ void Menu::drawTitle() {
 			_titleCycle++;
 		else
 			_titleCycle = 20;
-	break;
+		break;
 
 	//-------------------------------------------------------------------
 	// HANDANGO LOGO
 	//-------------------------------------------------------------------
-	case 20:        // fadein handango screen
+	case 20: // fadein handango screen
 		if (g_hdb->_gfx->isFadeActive())
 			break;
 		_titleDelay = g_system->getMillis() + 750;
 		_titleCycle++;
 		break;
 
-	case 21:        // wait
-		g_hdb->_gfx->setFade(false, false, kScreenFade / time);                // FADEOUT
+	case 21:                                                    // wait
+		g_hdb->_gfx->setFade(false, false, kScreenFade / time); // FADEOUT
 		_titleCycle++;
 		break;
 
-	case 22:        // fadeout handango screen
+	case 22: // fadeout handango screen
 		if (g_hdb->_gfx->isFadeActive())
 			break;
 		_titleCycle++;
 		break;
 
-	case 23:        // fadein HDB title screen
+	case 23: // fadein HDB title screen
 		if (g_hdb->_gfx->isFadeActive())
 			break;
-		g_hdb->_gfx->setFade(true, false, kScreenFade / time);         // FADEIN
+		g_hdb->_gfx->setFade(true, false, kScreenFade / time); // FADEIN
 		_titleCycle = 5;
 		break;
 
@@ -1254,7 +1254,7 @@ void Menu::drawTitle() {
 
 	// set fadeout to stars
 	case 6:
-		g_hdb->_gfx->setFade(false, false, kScreenFade / time);		// FADEOUT
+		g_hdb->_gfx->setFade(false, false, kScreenFade / time); // FADEOUT
 		_titleCycle++;
 		break;
 
@@ -1266,16 +1266,16 @@ void Menu::drawTitle() {
 		g_hdb->_gfx->fillScreen(0);
 		{
 			_titleCycle++;
-			_rocketY = g_hdb->_screenHeight;	// ycoord
-			_rocketYVel = -1;		// yspeed
-			_rocketEx = 0;			// exhaust toggle
-			g_hdb->_gfx->setup3DStars();	// setup the star info
+			_rocketY = g_hdb->_screenHeight; // ycoord
+			_rocketYVel = -1;                // yspeed
+			_rocketEx = 0;                   // exhaust toggle
+			g_hdb->_gfx->setup3DStars();     // setup the star info
 
 			_nebulaWhich = g_hdb->_rnd->getRandomNumber(kNebulaCount - 1);
 			_nebulaX = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1) + 10;
 			_nebulaY = -11 * 8;
 			_nebulaYVel = g_hdb->_rnd->getRandomNumber(9) + 2;
-			if (_nebulaWhich > 4)		// galaxy?
+			if (_nebulaWhich > 4) // galaxy?
 				_nebulaYVel = 1;
 		}
 		break;
@@ -1337,17 +1337,17 @@ void Menu::processInput(int x, int y) {
 	//	MAIN MENU INPUT
 	//-------------------------------------------------------------------
 	if (_menuActive) {
-		int	resume = getMenuKey();
+		int resume = getMenuKey();
 		// quit game?
 		if (x >= _menuX && x < _menuX + _menuItemWidth &&
-			y >= _menuY + _mQuitY && y < _menuY + _mQuitY + _menuItemHeight) {
+		    y >= _menuY + _mQuitY && y < _menuY + _mQuitY + _menuItemHeight) {
 			g_hdb->_sound->playSound(SND_BYE);
 			_quitTimer = g_hdb->getTimeSlice() + 1000;
 			_quitActive = 1;
 			_menuActive = false;
 			return;
 		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
-			y >= _menuY && y < _menuY + _menuItemHeight) {
+		           y >= _menuY && y < _menuY + _menuItemHeight) {
 			// new game?
 			_optionsScrolling = true;
 			_optionsXV = 5;
@@ -1355,14 +1355,14 @@ void Menu::processInput(int x, int y) {
 			g_hdb->_sound->freeSound(SND_HDB);
 			_nextScreen = 2;
 		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
-			y >= _menuY + _mLoadY && y < _menuY + _mLoadY + _menuItemHeight) {
+		           y >= _menuY + _mLoadY && y < _menuY + _mLoadY + _menuItemHeight) {
 			// game files?
-				_optionsScrolling = true;
-				_optionsXV = 5;
-				g_hdb->_sound->playSound(SND_MENU_ACCEPT);
-				_nextScreen = 1;
+			_optionsScrolling = true;
+			_optionsXV = 5;
+			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+			_nextScreen = 1;
 		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
-			y >= _menuY + _mOptionsY && y < _menuY + _mOptionsY + _menuItemHeight) {
+		           y >= _menuY + _mOptionsY && y < _menuY + _mOptionsY + _menuItemHeight) {
 			// options?
 			SoundType temp;
 			temp = g_hdb->_sound->whatSongIsPlaying();
@@ -1373,8 +1373,9 @@ void Menu::processInput(int x, int y) {
 			_nextScreen = 0;
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 		} else if (((x >= _menuX && x < _menuX + _menuItemWidth &&
-			y >= _menuY + _mResumeY && y < _menuY + _mResumeY + _menuItemHeight) || resume) &&
-			(true == g_hdb->_map->isLoaded() || _saveGames[5].seconds)) {
+		             y >= _menuY + _mResumeY && y < _menuY + _mResumeY + _menuItemHeight) ||
+		            resume) &&
+		           (true == g_hdb->_map->isLoaded() || _saveGames[5].seconds)) {
 			// resume game? ( must be playing already or have an autosave )
 			g_hdb->_sound->playSound(SND_POP);
 			freeMenu();
@@ -1387,44 +1388,44 @@ void Menu::processInput(int x, int y) {
 				}
 			}
 		} else if (g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7 ||
-			g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14 ||
-			g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
+		           g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14 ||
+		           g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
 			// Secret Stars! (tm)
 			if (x >= kStarRedX && x <= kStarRedX + _starRedGfx[0]->_width &&
-				y >= kStarRedY && y <= kStarRedY + _starRedGfx[0]->_height &&
-				g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7) {
+			    y >= kStarRedY && y <= kStarRedY + _starRedGfx[0]->_height &&
+			    g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7) {
 				_optionsActive = false;
 				g_hdb->setGameState(GAME_PLAY);
-				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
-					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
+				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5)) // don't save if we're already on 30!
+					g_hdb->saveGameState(kAutoSaveSlot, "FIXME");        // Add here date/level name // TODO
 				_starWarp = 0;
 				g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
 				g_hdb->startMap("MAP30");
 			} else if (x >= kStarGreenX && x <= kStarGreenX + _starGreenGfx[0]->_width &&
-				y >= kStarGreenY && y <= kStarGreenY + _starGreenGfx[0]->_height &&
-				g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14) {
+			           y >= kStarGreenY && y <= kStarGreenY + _starGreenGfx[0]->_height &&
+			           g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14) {
 				_optionsActive = false;
 				g_hdb->setGameState(GAME_PLAY);
-				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
-					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
+				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5)) // don't save if we're already on 30!
+					g_hdb->saveGameState(kAutoSaveSlot, "FIXME");        // Add here date/level name // TODO
 				_starWarp = 1;
 				g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
 				g_hdb->startMap("MAP30");
 
 			} else if (x >= kStarBlueX && x <= kStarBlueX + _starBlueGfx[0]->_width &&
-				y >= kStarBlueY && y <= kStarBlueY + _starBlueGfx[0]->_height &&
-				g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
+			           y >= kStarBlueY && y <= kStarBlueY + _starBlueGfx[0]->_height &&
+			           g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
 				_optionsActive = false;
 				g_hdb->setGameState(GAME_PLAY);
-				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
-					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
+				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5)) // don't save if we're already on 30!
+					g_hdb->saveGameState(kAutoSaveSlot, "FIXME");        // Add here date/level name // TODO
 				_starWarp = 2;
 				g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
 				g_hdb->startMap("MAP30");
 			}
 		}
 		// secret warp menu? (click on nebula!)
-		int		open;
+		int open;
 		if (!g_hdb->getCheatingOn())
 			open = (x >= _nebulaX && x < _nebulaX + 16 && y >= _nebulaY && y < _nebulaY + 16);
 		else
@@ -1442,7 +1443,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		//	NEWGAME INPUT
 		//-------------------------------------------------------------------
-		int	xit = getMenuKey();
+		int xit = getMenuKey();
 
 		if (y >= g_hdb->_menu->_menuExitY || y < _menuExitYTop || xit) {
 			_optionsScrolling = true;
@@ -1468,7 +1469,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		//	OPTIONS INPUT
 		//-------------------------------------------------------------------
-		int	xit = getMenuKey();
+		int xit = getMenuKey();
 
 		//
 		// Controls screen
@@ -1478,10 +1479,10 @@ void Menu::processInput(int x, int y) {
 			return;
 		}
 
-		int	offset;
+		int offset;
 		// Slider 1
 		if (x >= 0 && x <= _optionsX + 200 &&
-			y >= _optionsY + 20 && y <= _optionsY + 36) {
+		    y >= _optionsY + 20 && y <= _optionsY + 36) {
 			int oldVol = g_hdb->_sound->getMusicVolume();
 			if (x < _optionsX) {
 				if (oldVol) {
@@ -1496,7 +1497,7 @@ void Menu::processInput(int x, int y) {
 					g_hdb->_sound->startMusic(_resumeSong);
 			}
 		} else if (x >= 0 && x <= _optionsX + 200 &&
-			y >= _optionsY + kOptionLineSPC * 2 + 20 && y <= _optionsY + kOptionLineSPC * 2 + 36) {
+		           y >= _optionsY + kOptionLineSPC * 2 + 20 && y <= _optionsY + kOptionLineSPC * 2 + 36) {
 			// Slider 2
 			if (x >= _optionsX)
 				offset = ((x - _optionsX) * 256) / 200;
@@ -1505,7 +1506,7 @@ void Menu::processInput(int x, int y) {
 			g_hdb->_sound->setSFXVolume(offset);
 			g_hdb->_sound->playSound(SND_MENU_SLIDER);
 		} else if (x >= _optionsX && x <= _optionsX + 200 &&
-			y >= _optionsY + kOptionLineSPC * 4 + 24 && y <= _optionsY + kOptionLineSPC * 4 + 40) {
+		           y >= _optionsY + kOptionLineSPC * 4 + 24 && y <= _optionsY + kOptionLineSPC * 4 + 40) {
 			// Voices ON/OFF
 			if (!g_hdb->isVoiceless()) {
 				bool value = g_hdb->_sound->getVoiceStatus();
@@ -1518,7 +1519,7 @@ void Menu::processInput(int x, int y) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 		} else if (x >= (g_hdb->_screenWidth / 2 - _controlButtonGfx->_width / 2) && x < (g_hdb->_screenWidth / 2 + _controlButtonGfx->_width / 2) &&
-			y >= _mControlsY && y < _mControlsY + _controlButtonGfx->_height) {
+		           y >= _mControlsY && y < _mControlsY + _controlButtonGfx->_height) {
 			// CONTROLS BUTTON!
 
 			// Ignore Controls Button
@@ -1530,7 +1531,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		//	GAMEFILES INPUT
 		//-------------------------------------------------------------------
-		int	xit = getMenuKey();
+		int xit = getMenuKey();
 
 		if (y >= g_hdb->_menu->_menuExitY + 15 || y < _menuExitYTop || xit) {
 			_optionsScrolling = true;
@@ -1586,7 +1587,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		//	WARP INPUT
 		//-------------------------------------------------------------------
-		int	xit = getMenuKey();
+		int xit = getMenuKey();
 
 		if ((y >= g_hdb->_menu->_menuExitY && x < _menuExitXLeft) || xit) {
 			_menuActive = true;
@@ -1598,11 +1599,10 @@ void Menu::processInput(int x, int y) {
 
 			if (x > _warpX + 160)
 				map = 20;
+			else if (x > _warpX + 80)
+				map = 10;
 			else
-				if (x > _warpX + 80)
-					map = 10;
-				else
-					map = 0;
+				map = 0;
 
 			map += (y - _warpY) / 16;
 
@@ -1630,7 +1630,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		//	QUIT INPUT
 		//-------------------------------------------------------------------
-		int	xit = getMenuKey();
+		int xit = getMenuKey();
 
 		if (!g_hdb->isDemo()) {
 			if ((x >= _quitNoX1 && x <= _quitNoX2 && y > _quitNoY1 && y < _quitNoY2 && _quitTimer < g_hdb->getTimeSlice()) || xit) {
@@ -1658,7 +1658,7 @@ void Menu::processInput(int x, int y) {
 
 					_menuActive = true;
 					_quitActive = 0;
-				} else if (_quitActive == 3 && _quitTimer < g_hdb->getTimeSlice()){
+				} else if (_quitActive == 3 && _quitTimer < g_hdb->getTimeSlice()) {
 					writeConfig();
 					g_hdb->quitGame();
 				}
@@ -1683,7 +1683,7 @@ void Menu::drawNebula() {
 		_nebulaX = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1) + 10;
 		_nebulaY = -11 * 8;
 		_nebulaYVel = g_hdb->_rnd->getRandomNumber(3) + 1;
-		if (_nebulaWhich > 4)		// galaxy?
+		if (_nebulaWhich > 4) // galaxy?
 			_nebulaYVel = 1;
 	}
 
@@ -1775,7 +1775,7 @@ void Menu::drawSlider(int x, int y, int offset) {
 }
 
 void Menu::drawToggle(int x, int y, bool flag) {
-	int	x1 = x;
+	int x1 = x;
 
 	_gCheckLeft->drawMasked(x, y);
 	x += _gCheckLeft->_width;
@@ -1801,4 +1801,4 @@ void Menu::drawWarpScreen() {
 		_warpPlaque->drawMasked(centerPic(_warpPlaque), 64);
 }
 
-} // End of Namespace
+} // namespace HDB

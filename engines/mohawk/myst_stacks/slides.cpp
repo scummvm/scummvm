@@ -20,21 +20,20 @@
  *
  */
 
+#include "mohawk/myst_stacks/slides.h"
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/slides.h"
 
 #include "common/system.h"
 
 namespace Mohawk {
 namespace MystStacks {
 
-Slides::Slides(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm, kDemoSlidesStack) {
+Slides::Slides(MohawkEngine_Myst *vm) : MystScriptParser(vm, kDemoSlidesStack) {
 	setupOpcodes();
 
 	_vm->_cursor->hideCursor();

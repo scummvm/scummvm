@@ -23,7 +23,6 @@
 #ifndef LURE_DECODE_H
 #define LURE_DECODE_H
 
-
 #include "lure/luredefs.h"
 #include "lure/memory.h"
 
@@ -46,7 +45,7 @@ private:
 	bool shlCarry();
 
 public:
-	MemoryBlock *decode(MemoryBlock *src, uint32 maxOutputSize  = SCREEN_SIZE + 1);
+	MemoryBlock *decode(MemoryBlock *src, uint32 maxOutputSize = SCREEN_SIZE + 1);
 	MemoryBlock *egaDecode(MemoryBlock *src, uint32 maxOutputSize);
 	MemoryBlock *vgaDecode(MemoryBlock *src, uint32 maxOutputSize);
 };
@@ -56,7 +55,7 @@ public:
 	static void rcl(uint16 &value, bool &carry);
 	static uint32 decode_data(MemoryBlock *src, MemoryBlock *dest, uint32 srcPos);
 	static void decode_data_2(MemoryBlock *src, byte *&pSrc, uint16 &currData,
-						uint16 &bitCtr, uint16 &dx, bool &carry);
+	                          uint16 &bitCtr, uint16 &dx, bool &carry);
 };
 
 } // End of namespace Lure

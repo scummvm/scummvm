@@ -36,8 +36,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobjectregistry.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
@@ -54,7 +54,7 @@ public:
 		return static_cast<T *>(RenderObjectRegistry::instance().resolveHandle(_handle));
 	}
 
-	bool operator==(const RenderObjectPtr<T> & other) {
+	bool operator==(const RenderObjectPtr<T> &other) {
 		return _handle == other._handle;
 	}
 

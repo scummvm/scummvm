@@ -19,19 +19,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/font.h"
+#include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Graphics {
 
 #define DEBUG 0
 
 #if DEBUG
-#define D(...)  debug(__VA_ARGS__)
+#define D(...) debug(__VA_ARGS__)
 #else
-#define D(...)  ;
+#define D(...) ;
 #endif
 
 const Font *MacFontRun::getFont() {
@@ -50,9 +50,7 @@ const Common::String MacFontRun::toString() {
 }
 
 bool MacFontRun::equals(MacFontRun &to) {
-	return (fontId == to.fontId && textSlant == to.textSlant
-		&& fontSize == to.fontSize && palinfo1 == to.palinfo1
-		&& palinfo2 == to.palinfo2 && palinfo3 == to.palinfo3);
+	return (fontId == to.fontId && textSlant == to.textSlant && fontSize == to.fontSize && palinfo1 == to.palinfo1 && palinfo2 == to.palinfo2 && palinfo3 == to.palinfo3);
 }
 
 uint MacTextLine::getChunkNum(int *col) {
@@ -68,7 +66,7 @@ uint MacTextLine::getChunkNum(int *col) {
 	}
 
 	if (i == chunks.size()) {
-		i--;	// touch the last chunk
+		i--; // touch the last chunk
 		pos = chunks[i].text.size();
 	}
 
@@ -156,14 +154,13 @@ void MacText::setMaxWidth(int maxWidth) {
 }
 
 void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
-		uint16 palinfo1, uint16 palinfo2, uint16 palinfo3) {
+                                   uint16 palinfo1, uint16 palinfo2, uint16 palinfo3) {
 	_defaultFormatting.setValues(_defaultFormatting.wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 	MacFont macFont = MacFont(fontId, fontSize, textSlant);
 
 	_defaultFormatting.font = _wm->_fontMan->getFont(macFont);
 }
-
 
 static const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
 	*res = 0;
@@ -275,7 +272,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			if (*l == '\r') {
 				l++;
 
-				if (*l == '\n')	// Skip whole '\r\n'
+				if (*l == '\n') // Skip whole '\r\n'
 					l++;
 
 				break;
@@ -299,13 +296,13 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				s++;
 			}
 
-			if (*s)	// If it was \001, skip it
+			if (*s) // If it was \001, skip it
 				s++;
 
 			if (*s == '\001') { // \001\001 -> \001
 				tmp += *s++;
 
-				if (*s)	// Check we reached end of line
+				if (*s) // Check we reached end of line
 					continue;
 			}
 
@@ -324,21 +321,26 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				break;
 			}
 
-			if (*s == '\015') {	// binary format
+			if (*s == '\015') { // binary format
 				s++;
 
-				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
+				uint16 fontId = *s++;
+				fontId = (fontId << 8) | *s++;
 				byte textSlant = *s++;
-				uint16 fontSize = *s++; fontSize = (fontSize << 8) | *s++;
-				uint16 palinfo1 = *s++; palinfo1 = (palinfo1 << 8) | *s++;
-				uint16 palinfo2 = *s++; palinfo2 = (palinfo2 << 8) | *s++;
-				uint16 palinfo3 = *s++; palinfo3 = (palinfo3 << 8) | *s++;
+				uint16 fontSize = *s++;
+				fontSize = (fontSize << 8) | *s++;
+				uint16 palinfo1 = *s++;
+				palinfo1 = (palinfo1 << 8) | *s++;
+				uint16 palinfo2 = *s++;
+				palinfo2 = (palinfo2 << 8) | *s++;
+				uint16 palinfo3 = *s++;
+				palinfo3 = (palinfo3 << 8) | *s++;
 
 				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
-						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+				  fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				chunk.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
-			} else if (*s == '\016') {	// human-readable format
+			} else if (*s == '\016') { // human-readable format
 				s++;
 
 				uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
@@ -351,7 +353,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				s = readHex(&palinfo3, s, 4);
 
 				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
-						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+				  fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				chunk.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 			} else {
@@ -449,8 +451,8 @@ void MacText::render(int from, int to) {
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
 			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d",
-				i, j, xOffset, _textLines[i].y, _textLines[i].height, _textLines[i].chunks[j].text.encode().c_str(),
-				_textLines[i].chunks[j].fontId, _surface->w, _surface->h);
+			      i, j, xOffset, _textLines[i].y, _textLines[i].height, _textLines[i].chunks[j].text.encode().c_str(),
+			      _textLines[i].chunks[j].fontId, _surface->w, _surface->h);
 
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
@@ -587,9 +589,8 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
 	}
 
-	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y),
-										MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)),
-										Common::Point(xoff, yoff));
+	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)),
+	            Common::Point(xoff, yoff));
 }
 
 void MacText::drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint) {
@@ -756,13 +757,13 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 // If adjacent chunks have same format, then skip the format definition
 // This happens when a long paragraph is split into several lines
-#define ADDFORMATTING() \
-	if (formatted) { \
+#define ADDFORMATTING()                                      \
+	if (formatted) {                                         \
 		formatting = _textLines[i].chunks[chunk].toString(); \
-		if (formatting != prevformatting) { \
-			res += formatting; \
-			prevformatting = formatting; \
-		} \
+		if (formatting != prevformatting) {                  \
+			res += formatting;                               \
+			prevformatting = formatting;                     \
+		}                                                    \
 	}
 
 Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
@@ -804,7 +805,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				if (endCol <= 0)
 					break;
 			}
-		// We are at the top line and it is not completely requested
+			// We are at the top line and it is not completely requested
 		} else if (i == startRow && startCol != 0) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
 				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
@@ -824,7 +825,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				res += '\n';
 			else
 				res += ' ';
-		// We are at the end row, and it could be not completely requested
+			// We are at the end row, and it could be not completely requested
 		} else if (i == endRow) {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
 				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
@@ -842,7 +843,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				if (endCol <= 0)
 					break;
 			}
-		// We are in the middle of requested range, pass whole line
+			// We are in the middle of requested range, pass whole line
 		} else {
 			for (uint chunk = 0; chunk < _textLines[i].chunks.size(); chunk++) {
 				if (_textLines[i].chunks[chunk].text.empty()) // skip empty chunks
@@ -886,7 +887,7 @@ void MacText::insertChar(byte c, int *row, int *col) {
 	int oldw = line->chunks[ch].getFont()->getStringWidth(line->chunks[ch].text);
 
 	line->chunks[ch].text = newchunk;
-	line->width = -1;	// Force recalc
+	line->width = -1; // Force recalc
 
 	(*col)++;
 

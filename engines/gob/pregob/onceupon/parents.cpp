@@ -20,11 +20,11 @@
  *
  */
 
-#include "gob/gob.h"
-#include "gob/global.h"
 #include "gob/dataio.h"
-#include "gob/palanim.h"
 #include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/palanim.h"
 #include "gob/video.h"
 
 #include "gob/sound/sound.h"
@@ -39,28 +39,25 @@ namespace Gob {
 namespace OnceUpon {
 
 const char *Parents::kSound[kSoundCount] = {
-	"rire.snd", // kSoundCackle
-	"tonn.snd"  // kSoundThunder
+    "rire.snd", // kSoundCackle
+    "tonn.snd"  // kSoundThunder
 };
 
 // So that every GCT line is displayed for 12 seconds
 const uint16 Parents::kLoop[kLoopCount][3] = {
-	{ 72,  77, 33},
-	{105, 109, 38},
-	{141, 145, 38},
-	{446, 454, 23},
-	{456, 464, 23},
-	{466, 474, 23},
-	{476, 484, 23}
-};
-
+    {72, 77, 33},
+    {105, 109, 38},
+    {141, 145, 38},
+    {446, 454, 23},
+    {456, 464, 23},
+    {466, 474, 23},
+    {476, 484, 23}};
 
 Parents::Parents(GobEngine *vm, const Common::String &seq, const Common::String &gct,
                  const Common::String &childName, uint8 house, const Font &font,
-                 const byte *normalPalette, const byte *brightPalette, uint paletteSize) :
-	SEQFile(vm, seq),
-	_gct(0), _house(house), _font(&font),
-	_paletteSize(paletteSize), _normalPalette(normalPalette), _brightPalette(brightPalette) {
+                 const byte *normalPalette, const byte *brightPalette, uint paletteSize) : SEQFile(vm, seq),
+                                                                                           _gct(0), _house(house), _font(&font),
+                                                                                           _paletteSize(paletteSize), _normalPalette(normalPalette), _brightPalette(brightPalette) {
 
 	// Load sounds
 	for (int i = 0; i < kSoundCount; i++)

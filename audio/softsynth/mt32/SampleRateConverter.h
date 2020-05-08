@@ -17,9 +17,9 @@
 #ifndef MT32EMU_SAMPLE_RATE_CONVERTER_H
 #define MT32EMU_SAMPLE_RATE_CONVERTER_H
 
-#include "globals.h"
-#include "Types.h"
 #include "Enumerations.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -67,7 +67,7 @@ public:
 private:
 	const double synthInternalToTargetSampleRateRatio;
 	const bool useSynthDelegate;
-	void * const srcDelegate;
+	void *const srcDelegate;
 }; // class SampleRateConverter
 
 } // namespace MT32Emu

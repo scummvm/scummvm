@@ -20,25 +20,23 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/fonts/jp_font.h"
+#include "ultima/ultima8/graphics/fonts/jp_rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/fonts/jp_rendered_text.h"
 #include "ultima/ultima8/misc/encoding.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(JPFont, Font)
 
-
 JPFont::JPFont(ShapeFont *jpfont, unsigned int fontnum_)
-	: _fontNum(fontnum_), _shapeFont(jpfont) {
+    : _fontNum(fontnum_), _shapeFont(jpfont) {
 	assert(_shapeFont->frameCount() > 256);
 }
-
 
 JPFont::~JPFont() {
 }
@@ -58,7 +56,6 @@ int JPFont::getBaseline() {
 int JPFont::getBaselineSkip() {
 	return _shapeFont->getBaselineSkip();
 }
-
 
 void JPFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
 	int hlead = _shapeFont->getHlead();

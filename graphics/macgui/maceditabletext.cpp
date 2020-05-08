@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/timer.h"
 #include "common/system.h"
+#include "common/timer.h"
 
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/maceditabletext.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/macwidget.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Graphics {
 
@@ -40,8 +40,7 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-		MacWidget(parent, x, y, w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
+MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) : MacWidget(parent, x, y, w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
 
 	_maxWidth = maxWidth;
 
@@ -52,8 +51,7 @@ MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, 
 	MacText::render();
 }
 
-MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-		MacWidget(parent, x, y, w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
+MacEditableText::MacEditableText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) : MacWidget(parent, x, y, w, h, true), MacText(s, wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
 
 	_maxWidth = maxWidth;
 
@@ -270,7 +268,7 @@ void MacEditableText::clearSelection() {
 
 bool MacEditableText::isCutAllowed() {
 	if (_selectedText.startRow >= _editableRow &&
-			_selectedText.endRow  >= _editableRow)
+	    _selectedText.endRow >= _editableRow)
 		return true;
 
 	return false;
@@ -425,7 +423,7 @@ bool MacEditableText::processEvent(Common::Event &event) {
 			_inTextSelection = false;
 
 			if (_selectedText.endY == -1 ||
-					(_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
+			    (_selectedText.endX == _selectedText.startX && _selectedText.endY == _selectedText.startY)) {
 				_selectedText.startY = _selectedText.endY = -1;
 				_contentIsDirty = true;
 
@@ -497,8 +495,8 @@ void MacEditableText::updateTextSelection(int x, int y) {
 	MacText::getRowCol(x, y, &_selectedText.endX, &_selectedText.endY, &_selectedText.endRow, &_selectedText.endCol);
 
 	debug(3, "s: %d,%d (%d, %d) e: %d,%d (%d, %d)", _selectedText.startX, _selectedText.startY,
-			_selectedText.startRow, _selectedText.startCol, _selectedText.endX,
-			_selectedText.endY, _selectedText.endRow, _selectedText.endCol);
+	      _selectedText.startRow, _selectedText.startCol, _selectedText.endX,
+	      _selectedText.endY, _selectedText.endRow, _selectedText.endCol);
 
 	_contentIsDirty = true;
 }

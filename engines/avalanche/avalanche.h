@@ -28,25 +28,25 @@
 #ifndef AVALANCHE_AVALANCHE_H
 #define AVALANCHE_AVALANCHE_H
 
-#include "avalanche/console.h"
-#include "avalanche/graphics.h"
-#include "avalanche/parser.h"
-#include "avalanche/avalot.h"
-#include "avalanche/dialogs.h"
-#include "avalanche/background.h"
-#include "avalanche/sequence.h"
-#include "avalanche/timer.h"
 #include "avalanche/animation.h"
-#include "avalanche/dropdown.h"
-#include "avalanche/closing.h"
-#include "avalanche/sound.h"
-#include "avalanche/nim.h"
+#include "avalanche/avalot.h"
+#include "avalanche/background.h"
 #include "avalanche/clock.h"
+#include "avalanche/closing.h"
+#include "avalanche/console.h"
+#include "avalanche/dialogs.h"
+#include "avalanche/dropdown.h"
 #include "avalanche/ghostroom.h"
+#include "avalanche/graphics.h"
 #include "avalanche/help.h"
-#include "avalanche/shootemup.h"
-#include "avalanche/mainmenu.h"
 #include "avalanche/highscore.h"
+#include "avalanche/mainmenu.h"
+#include "avalanche/nim.h"
+#include "avalanche/parser.h"
+#include "avalanche/sequence.h"
+#include "avalanche/shootemup.h"
+#include "avalanche/sound.h"
+#include "avalanche/timer.h"
 
 #include "common/error.h"
 #include "common/serializer.h"
@@ -142,62 +142,62 @@ public:
 	byte _interrogation;
 
 	// Former DNA structure
-	byte _carryNum; // How many objects you're carrying...
-	bool _objects[kObjectNum]; // ...and which ones they are.
-	int16 _score; // your score, of course
-	int32 _money; // your current amount of dosh
-	Room _room; // your current room
-	bool _wonNim; // Have you *won* Nim? (That's harder.)
-	byte _wineState; // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
-	bool _cwytalotGone; // Has Cwytalot rushed off to Jerusalem yet?
-	byte _passwordNum; // Number of the passw for this game.
-	bool _aylesIsAwake; // pretty obvious!
-	byte _drawbridgeOpen; // Between 0 (shut) and 4 (open).
-	byte _avariciusTalk; // How much Avaricius has said to you.
-	bool _rottenOnion; // And has it rotted?
-	bool _onionInVinegar; // Is the onion in the vinegar?
-	byte _givenToSpludwick; // 0 = nothing given, 1 = onion...
-	byte _brummieStairs; // Progression through the stairs trick.
-	byte _cardiffQuestionNum; // Things you get asked in Cardiff.
-	bool _avvyIsAwake; // Well? Is Avvy awake? (Screen 1 only.)
-	bool _avvyInBed; // True if Avvy's in bed, but awake.
-	bool _userMovesAvvy; // If this is false, the user has no control over Avvy's movements.
-	byte _npcFacing; // If there's an NPC in the current room which turns it's head according to Avvy's movement (keep looking at him), this variable tells which way it's facing at the moment.
-	bool _givenBadgeToIby; // Have you given the badge to Iby yet?
-	bool _friarWillTieYouUp; // If you're going to get tied up.
-	bool _tiedUp; // You ARE tied up!
-	byte _boxContent; // 0 = money (sixpence), 254 = empty, any other number implies the contents of the box.
-	bool _talkedToCrapulus; // Pretty self-explanatory.
-	byte _jacquesState; // 0=asleep, 1=awake, 2=gets up, 3=gone.
-	bool _bellsAreRinging; // Is Jacques ringing the bells?
-	bool _standingOnDais; // In room 71, inside Cardiff Castle.
-	bool _takenPen; // Have you taken the pen (in Cardiff?)
-	bool _arrowInTheDoor;  // Did the arrow hit the wall?
+	byte _carryNum;                                                                  // How many objects you're carrying...
+	bool _objects[kObjectNum];                                                       // ...and which ones they are.
+	int16 _score;                                                                    // your score, of course
+	int32 _money;                                                                    // your current amount of dosh
+	Room _room;                                                                      // your current room
+	bool _wonNim;                                                                    // Have you *won* Nim? (That's harder.)
+	byte _wineState;                                                                 // 0=good (Notts), 1=passable(Argent) ... 3=vinegar.
+	bool _cwytalotGone;                                                              // Has Cwytalot rushed off to Jerusalem yet?
+	byte _passwordNum;                                                               // Number of the passw for this game.
+	bool _aylesIsAwake;                                                              // pretty obvious!
+	byte _drawbridgeOpen;                                                            // Between 0 (shut) and 4 (open).
+	byte _avariciusTalk;                                                             // How much Avaricius has said to you.
+	bool _rottenOnion;                                                               // And has it rotted?
+	bool _onionInVinegar;                                                            // Is the onion in the vinegar?
+	byte _givenToSpludwick;                                                          // 0 = nothing given, 1 = onion...
+	byte _brummieStairs;                                                             // Progression through the stairs trick.
+	byte _cardiffQuestionNum;                                                        // Things you get asked in Cardiff.
+	bool _avvyIsAwake;                                                               // Well? Is Avvy awake? (Screen 1 only.)
+	bool _avvyInBed;                                                                 // True if Avvy's in bed, but awake.
+	bool _userMovesAvvy;                                                             // If this is false, the user has no control over Avvy's movements.
+	byte _npcFacing;                                                                 // If there's an NPC in the current room which turns it's head according to Avvy's movement (keep looking at him), this variable tells which way it's facing at the moment.
+	bool _givenBadgeToIby;                                                           // Have you given the badge to Iby yet?
+	bool _friarWillTieYouUp;                                                         // If you're going to get tied up.
+	bool _tiedUp;                                                                    // You ARE tied up!
+	byte _boxContent;                                                                // 0 = money (sixpence), 254 = empty, any other number implies the contents of the box.
+	bool _talkedToCrapulus;                                                          // Pretty self-explanatory.
+	byte _jacquesState;                                                              // 0=asleep, 1=awake, 2=gets up, 3=gone.
+	bool _bellsAreRinging;                                                           // Is Jacques ringing the bells?
+	bool _standingOnDais;                                                            // In room 71, inside Cardiff Castle.
+	bool _takenPen;                                                                  // Have you taken the pen (in Cardiff?)
+	bool _arrowInTheDoor;                                                            // Did the arrow hit the wall?
 	Common::String _favoriteDrink, _favoriteSong, _worstPlaceOnEarth, _spareEvening; // Personalisation str's
-	uint32 _startTime; // When did you start playing this session?
-	uint32 _totalTime; // Your total time playing this game, in seconds. Updated only at saving and loading.
-	byte _jumpStatus; // Fixes how high you're jumping.
-	bool _mushroomGrowing; // Is the mushroom growing in 42?
-	bool _crapulusWillTell; // Will Crapulus tell you about Spludwick being away?
+	uint32 _startTime;                                                               // When did you start playing this session?
+	uint32 _totalTime;                                                               // Your total time playing this game, in seconds. Updated only at saving and loading.
+	byte _jumpStatus;                                                                // Fixes how high you're jumping.
+	bool _mushroomGrowing;                                                           // Is the mushroom growing in 42?
+	bool _crapulusWillTell;                                                          // Will Crapulus tell you about Spludwick being away?
 	bool _enterCatacombsFromLustiesRoom;
-	bool _teetotal; // Are we touching any more drinks?
+	bool _teetotal;   // Are we touching any more drinks?
 	byte _malagauche; // Position of Malagauche. See Celer for more info.
-	char _drinking; // What's he getting you?
+	char _drinking;   // What's he getting you?
 	bool _enteredLustiesRoomAsMonk;
-	byte _catacombX, _catacombY;   // XY coords in the catacombs.
-	bool _avvysInTheCupboard; // On screen 22.
-	bool _geidaFollows; // Is Geida following you?
-	bool _givenPotionToGeida; // Does Geida have the potion?
-	bool _lustieIsAsleep; // Is BDL asleep?
-	bool _beenTiedUp; // In r__Robins.
-	bool _sittingInPub; // Are you sitting down in the pub?
-	byte _spurgeTalkCount; // Count for talking to Spurge.
+	byte _catacombX, _catacombY; // XY coords in the catacombs.
+	bool _avvysInTheCupboard;    // On screen 22.
+	bool _geidaFollows;          // Is Geida following you?
+	bool _givenPotionToGeida;    // Does Geida have the potion?
+	bool _lustieIsAsleep;        // Is BDL asleep?
+	bool _beenTiedUp;            // In r__Robins.
+	bool _sittingInPub;          // Are you sitting down in the pub?
+	byte _spurgeTalkCount;       // Count for talking to Spurge.
 	bool _metAvaroid;
 	bool _takenMushroom, _givenPenToAyles, _askedDogfoodAboutNim;
 	// End of former DNA Structure
 
 	bool _showDebugLines;
-	byte _lineNum; // Number of lines.
+	byte _lineNum;       // Number of lines.
 	LineType _lines[50]; // For Also.
 	bool _dropsOk;
 	bool _cheat; // CHECKME: Currently unused
@@ -233,7 +233,7 @@ public:
 	void loadBackground(byte num);
 	void loadRoom(byte num);
 	void thinkAbout(byte object, bool type); // Hey!!! Get it and put it!!!
-	void incScore(byte num); // Add on no. of points
+	void incScore(byte num);                 // Add on no. of points
 	void fxToggle();
 	void refreshObjectList();
 	void errorLed();
@@ -256,13 +256,14 @@ public:
 
 	Common::String getName(People whose);
 	Common::String getItem(byte which); // Called get_better in the original.
-	Common::String f5Does(); // This procedure determines what f5 does.
+	Common::String f5Does();            // This procedure determines what f5 does.
 
 	void openDoor(Room whither, byte ped, byte magicnum); // Handles slidey-open doors.
 	void flipRoom(Room room, byte ped);
 
 	void setRoom(People persId, Room roomId);
 	Room getRoom(People persId);
+
 private:
 	static const int16 kMaxSprites = 2; // Current max no. of sprites.
 	static Room _whereIs[29];
@@ -271,9 +272,9 @@ private:
 	bool _fxHidden;
 	byte _fxPal[16][16][3];
 
-	bool _spludwickAtHome; // Is Spludwick at home?
+	bool _spludwickAtHome;       // Is Spludwick at home?
 	bool _passedCwytalotInHerts; // Have you passed Cwytalot in Herts?
-	bool _holdTheDawn; // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
+	bool _holdTheDawn;           // If this is true, calling Dawn will do nothing. It's used, for example, at the start, to stop Load from dawning.
 	byte _lastRoom;
 	byte _lastRoomNotMap;
 	byte _roomCount[100]; // Add one to each every time you enter a room

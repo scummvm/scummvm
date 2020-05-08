@@ -25,8 +25,8 @@
 #ifndef GLK_GLULXE
 #define GLK_GLULXE
 
-#include "common/scummsys.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "glk/glk_api.h"
 #include "glk/glulxe/glulxe_types.h"
 
@@ -85,7 +85,7 @@ private:
 	 * The library_autorestore_hook is called right after the VM's initial setup. This is an appropriate time
 	 * to autorestore an initial game state, if the library has that capability. (Currently, only iosglk does.)
 	 */
-	void(*library_autorestore_hook)(void);
+	void (*library_autorestore_hook)(void);
 
 	/**@}*/
 
@@ -112,7 +112,7 @@ private:
 	 * @{
 	 */
 
-	uint heap_start;    ///< zero for inactive heap
+	uint heap_start; ///< zero for inactive heap
 	int alloc_count;
 
 	/* The heap_head/heap_tail is a doubly-linked list of blocks, both
@@ -662,7 +662,6 @@ public:
 	 * @{
 	 */
 
-
 	/**
 	 * An array of data structures is stored in memory, beginning at start, each structure being structsize bytes.
 	 * Within each struct, there is a key value keysize bytes long, starting at position keyoffset (from
@@ -719,7 +718,7 @@ public:
 		return _random.getRandomNumber(0xfffffff);
 	}
 
-	void glulx_sort(void *addr, int count, int size, int(*comparefunc)(const void *p1, const void *p2));
+	void glulx_sort(void *addr, int count, int size, int (*comparefunc)(const void *p1, const void *p2));
 
 	/**@}*/
 
@@ -742,7 +741,7 @@ public:
 	 */
 	void glkopInit();
 
-	void set_library_select_hook(void(*func)(uint));
+	void set_library_select_hook(void (*func)(uint));
 
 	/**
 	 * Set up the class hash tables and other startup-time stuff.
@@ -809,22 +808,22 @@ public:
 	int init_profile();
 	void profile_set_call_counts(int flag);
 
-	#if VM_PROFILING
+#if VM_PROFILING
 	uint profile_opcount;
-	#define profile_tick() (profile_opcount++)
+#define profile_tick() (profile_opcount++)
 	int profile_profiling_active();
 	void profile_in(uint addr, uint stackuse, int accel);
 	void profile_out(uint stackuse);
 	void profile_fail(const char *reason);
 	void profile_quit();
-	#else /* VM_PROFILING */
+#else  /* VM_PROFILING */
 	void profile_tick() {}
 	void profile_profiling_active() {}
 	void profile_in(uint addr, uint stackuse, int accel) {}
-	void profile_out(uint stackuse)  {}
+	void profile_out(uint stackuse) {}
 	void profile_fail(const char *reason) {}
 	void profile_quit() {}
-	#endif /* VM_PROFILING */
+#endif /* VM_PROFILING */
 
 #if VM_DEBUGGER
 	unsigned long debugger_opcount;
@@ -844,7 +843,7 @@ public:
 	void debugger_block_and_debug(char *msg);
 	void debugger_handle_crash(char *msg);
 	void debugger_handle_quit();
-#else /* VM_DEBUGGER */
+#else  /* VM_DEBUGGER */
 	void debugger_tick() {}
 	void debugger_check_story_file() {}
 	void debugger_setup_start_state() {}
@@ -871,7 +870,7 @@ public:
 	 * Iterate the entire acceleration table, calling the callback for each (non-nullptr) entry.
 	 * This is used only for autosave.
 	 */
-	void accel_iterate_funcs(void(*func)(uint index, uint addr));
+	void accel_iterate_funcs(void (*func)(uint index, uint addr));
 
 	/**@}*/
 
@@ -985,9 +984,9 @@ public:
 
 extern Glulxe *g_vm;
 
-#define fatal_error(s)  (fatal_error_handler((s), nullptr, false, 0))
-#define fatal_error_2(s1, s2)  (fatal_error_handler((s1), (s2), false, 0))
-#define fatal_error_i(s, v)  (fatal_error_handler((s), nullptr, true, (v)))
+#define fatal_error(s) (fatal_error_handler((s), nullptr, false, 0))
+#define fatal_error_2(s1, s2) (fatal_error_handler((s1), (s2), false, 0))
+#define fatal_error_i(s, v) (fatal_error_handler((s), nullptr, true, (v)))
 #define nonfatal_warning(s) (nonfatal_warning_handler((s), nullptr, false, 0))
 #define nonfatal_warning_2(s1, s2) (nonfatal_warning_handler((s1), (s2), false, 0))
 #define nonfatal_warning_i(s, v) (nonfatal_warning_handler((s), nullptr, true, (v)))

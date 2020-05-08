@@ -20,13 +20,13 @@
  *
  */
 
-#include "mohawk/mohawk.h"
 #include "mohawk/dialogs.h"
+#include "mohawk/mohawk.h"
 
+#include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
-#include "gui/ThemeEval.h"
 #include "gui/widget.h"
 #include "gui/widgets/popup.h"
 
@@ -86,21 +86,20 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 
 enum {
 	kDropCmd = 'DROP',
-	kMapCmd  = 'SMAP',
+	kMapCmd = 'SMAP',
 	kMenuCmd = 'MENU'
 };
 
 #ifdef ENABLE_MYST
 
-MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "MystOptionsDialog", false, domain),
-		_zipModeCheckbox(nullptr),
-		_transitionsCheckbox(nullptr),
-		_mystFlyByCheckbox(nullptr),
-		_languagePopUp(nullptr),
-		_dropPageButton(nullptr),
-		_showMapButton(nullptr),
-		_returnToMenuButton(nullptr) {
+MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) : OptionsContainerWidget(boss, name, "MystOptionsDialog", false, domain),
+                                                                                                                  _zipModeCheckbox(nullptr),
+                                                                                                                  _transitionsCheckbox(nullptr),
+                                                                                                                  _mystFlyByCheckbox(nullptr),
+                                                                                                                  _languagePopUp(nullptr),
+                                                                                                                  _dropPageButton(nullptr),
+                                                                                                                  _showMapButton(nullptr),
+                                                                                                                  _returnToMenuButton(nullptr) {
 	Common::String guiOptions = ConfMan.get("guioptions", _domain);
 	bool isDemo = checkGameGUIOption(GAMEOPTION_DEMO, guiOptions);
 	bool isME = checkGameGUIOption(GAMEOPTION_ME, guiOptions);
@@ -154,26 +153,26 @@ MystOptionsWidget::~MystOptionsWidget() {
 
 void MystOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
-	            .addLayout(GUI::ThemeLayout::kLayoutVertical)
-	                .addPadding(16, 16, 16, 16)
-	                .addWidget("ZipMode", "Checkbox")
-	                .addWidget("Transistions", "Checkbox")
-	                .addWidget("PlayMystFlyBy", "Checkbox")
-	                .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-	                    .addPadding(0, 0, 0, 0)
-	                    .addWidget("LanguageDesc", "OptionsLabel")
-	                    .addWidget("Language", "PopUp")
-	                .closeLayout()
-	                .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-	                    .addPadding(0, 0, 16, 0)
-	                    .addSpace()
-	                    .addWidget("DropPage", "Button")
-	                    .addWidget("ShowMap",  "Button")
-	                    .addWidget("MainMenu", "Button")
-	                    .addSpace()
-	                .closeLayout()
-	            .closeLayout()
-	        .closeDialog();
+	    .addLayout(GUI::ThemeLayout::kLayoutVertical)
+	    .addPadding(16, 16, 16, 16)
+	    .addWidget("ZipMode", "Checkbox")
+	    .addWidget("Transistions", "Checkbox")
+	    .addWidget("PlayMystFlyBy", "Checkbox")
+	    .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	    .addPadding(0, 0, 0, 0)
+	    .addWidget("LanguageDesc", "OptionsLabel")
+	    .addWidget("Language", "PopUp")
+	    .closeLayout()
+	    .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	    .addPadding(0, 0, 16, 0)
+	    .addSpace()
+	    .addWidget("DropPage", "Button")
+	    .addWidget("ShowMap", "Button")
+	    .addWidget("MainMenu", "Button")
+	    .addSpace()
+	    .closeLayout()
+	    .closeLayout()
+	    .closeDialog();
 }
 
 bool MystOptionsWidget::isInGame() const {
@@ -273,8 +272,7 @@ void MystOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	}
 }
 
-MystMenuDialog::MystMenuDialog(Engine *engine) :
-		MainMenuDialog(engine) {
+MystMenuDialog::MystMenuDialog(Engine *engine) : MainMenuDialog(engine) {
 }
 
 MystMenuDialog::~MystMenuDialog() {
@@ -310,9 +308,8 @@ void MystMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 
 #ifdef ENABLE_RIVEN
 
-RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "RivenOptionsDialog", false, domain),
-		_languagePopUp(nullptr) {
+RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) : OptionsContainerWidget(boss, name, "RivenOptionsDialog", false, domain),
+                                                                                                                    _languagePopUp(nullptr) {
 	Common::String guiOptions = ConfMan.get("guioptions", domain);
 	bool is25th = checkGameGUIOption(GAMEOPTION_25TH, guiOptions);
 
@@ -355,21 +352,21 @@ RivenOptionsWidget::~RivenOptionsWidget() {
 
 void RivenOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
-	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
-	            .addPadding(16, 16, 16, 16)
-	            .addWidget("ZipMode", "Checkbox")
-	            .addWidget("WaterEffect", "Checkbox")
-	            .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-	                .addPadding(0, 0, 0, 0)
-	                .addWidget("TransistionsDesc", "OptionsLabel")
-	                .addWidget("Transistions", "PopUp")
-	            .closeLayout()
-	            .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-	                .addPadding(0, 0, 0, 0)
-	                .addWidget("LanguageDesc", "OptionsLabel")
-	                .addWidget("Language", "PopUp")
-	            .closeLayout()
-	        .closeLayout()
+	    .addLayout(GUI::ThemeLayout::kLayoutVertical)
+	    .addPadding(16, 16, 16, 16)
+	    .addWidget("ZipMode", "Checkbox")
+	    .addWidget("WaterEffect", "Checkbox")
+	    .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	    .addPadding(0, 0, 0, 0)
+	    .addWidget("TransistionsDesc", "OptionsLabel")
+	    .addWidget("Transistions", "PopUp")
+	    .closeLayout()
+	    .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+	    .addPadding(0, 0, 0, 0)
+	    .addWidget("LanguageDesc", "OptionsLabel")
+	    .addWidget("Language", "PopUp")
+	    .closeLayout()
+	    .closeLayout()
 	    .closeDialog();
 }
 

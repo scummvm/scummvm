@@ -20,12 +20,12 @@
  *
  */
 
+#include "voyeur/sound.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "voyeur/sound.h"
 #include "voyeur/staticres.h"
 
 namespace Voyeur {
@@ -66,7 +66,7 @@ void SoundManager::startVOCPlay(const Common::String &filename) {
 		error("Could not find voc file - %s", filename.c_str());
 
 	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(f.readStream(f.size()),
-		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	                                                               Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream);
 	audioStream->seek(Audio::Timestamp(_vocOffset * 1000, 11025));

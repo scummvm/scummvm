@@ -21,22 +21,21 @@
  */
 
 #include "ultima/shared/engine/ultima.h"
-#include "ultima/shared/engine/data_archive.h"
-#include "ultima/shared/engine/events.h"
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/translation.h"
+#include "ultima/shared/engine/data_archive.h"
+#include "ultima/shared/engine/events.h"
 
 namespace Ultima {
 namespace Shared {
 
-UltimaEngine * g_ultima;
+UltimaEngine *g_ultima;
 
-UltimaEngine::UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima"),
-		_dataArchive(nullptr), _events(nullptr) {
+UltimaEngine::UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima"),
+                                                                                           _dataArchive(nullptr), _events(nullptr) {
 	g_ultima = this;
 }
 
@@ -73,10 +72,9 @@ void UltimaEngine::GUIError(const Common::String &msg) {
 }
 
 bool UltimaEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 uint32 UltimaEngine::getFeatures() const {

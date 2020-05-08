@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/widgets/king.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/u1dialogs/king.h"
 
 namespace Ultima {
@@ -45,7 +45,7 @@ void King::talk() {
 	if (areGuardsHostile()) {
 		addInfoMsg(_game->_res->HE_REJECTS_OFFER);
 		_game->endOfTurn();
-	
+
 	} else {
 		U1Dialogs::King *dialog = new U1Dialogs::King(_game, _map->getMapIndex());
 		dialog->show();

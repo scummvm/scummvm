@@ -21,21 +21,21 @@
  */
 
 #include "ultima/ultima4/gfx/image.h"
-#include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/core/utils.h"
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/misc.h"
-#include "common/system.h"
 #include "common/list.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/misc.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/gfx/screen.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 Image::Image() : _surface(nullptr), _disposeAfterUse(DisposeAfterUse::NO),
-		_paletted(false) {
+                 _paletted(false) {
 }
 
 Image *Image::create(int w, int h, bool paletted, Image::Type type) {
@@ -47,9 +47,7 @@ Image *Image::create(int w, int h, bool paletted, Image::Type type) {
 
 void Image::create(int w, int h, bool paletted) {
 	_paletted = paletted;
-	_surface = new Graphics::ManagedSurface(w, h, paletted ?
-		Graphics::PixelFormat::createFormatCLUT8() :
-		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	_surface = new Graphics::ManagedSurface(w, h, paletted ? Graphics::PixelFormat::createFormatCLUT8() : Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 	_disposeAfterUse = DisposeAfterUse::YES;
 }
 
@@ -70,8 +68,8 @@ Image *Image::duplicate(Image *image) {
 	bool alphaOn = image->isAlphaOn();
 	Image *im = create(image->width(), image->height(), false, HARDWARE);
 
-//    if (image->isIndexed())
-//        im->setPaletteFromImage(image);
+	//    if (image->isIndexed())
+	//        im->setPaletteFromImage(image);
 
 	/* Turn alpha off before blitting to non-screen surfaces */
 	if (alphaOn)
@@ -150,47 +148,70 @@ RGBA Image::setColor(uint8 r, uint8 g, uint8 b, uint8 a) {
 }
 
 bool Image::setFontColor(ColorFG fg, ColorBG bg) {
-	if (!setFontColorFG(fg)) return false;
-	if (!setFontColorBG(bg)) return false;
+	if (!setFontColorFG(fg))
+		return false;
+	if (!setFontColorBG(bg))
+		return false;
 	return true;
 }
 
 bool Image::setFontColorFG(ColorFG fg) {
 	switch (fg) {
 	case FG_GREY:
-		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX,   setColor(153, 153, 153))) return false;
-		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(102, 102, 102))) return false;
-		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX,    setColor(51, 51, 51))) return false;
+		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX, setColor(153, 153, 153)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(102, 102, 102)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX, setColor(51, 51, 51)))
+			return false;
 		break;
 	case FG_BLUE:
-		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX,   setColor(102, 102, 255))) return false;
-		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(51, 51, 204))) return false;
-		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX,    setColor(51, 51, 51))) return false;
+		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX, setColor(102, 102, 255)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(51, 51, 204)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX, setColor(51, 51, 51)))
+			return false;
 		break;
 	case FG_PURPLE:
-		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX,   setColor(255, 102, 255))) return false;
-		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(204, 51, 204))) return false;
-		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX,    setColor(51, 51, 51))) return false;
+		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX, setColor(255, 102, 255)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(204, 51, 204)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX, setColor(51, 51, 51)))
+			return false;
 		break;
 	case FG_GREEN:
-		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX,   setColor(102, 255, 102))) return false;
-		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(0, 153, 0))) return false;
-		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX,    setColor(51, 51, 51))) return false;
+		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX, setColor(102, 255, 102)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(0, 153, 0)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX, setColor(51, 51, 51)))
+			return false;
 		break;
 	case FG_RED:
-		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX,   setColor(255, 102, 102))) return false;
-		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(204, 51, 51))) return false;
-		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX,    setColor(51, 51, 51))) return false;
+		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX, setColor(255, 102, 102)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(204, 51, 51)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX, setColor(51, 51, 51)))
+			return false;
 		break;
 	case FG_YELLOW:
-		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX,   setColor(255, 255, 51))) return false;
-		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(204, 153, 51))) return false;
-		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX,    setColor(51, 51, 51))) return false;
+		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX, setColor(255, 255, 51)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(204, 153, 51)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX, setColor(51, 51, 51)))
+			return false;
 		break;
 	default:
-		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX,   setColor(255, 255, 255))) return false;
-		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(204, 204, 204))) return false;
-		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX,    setColor(68, 68, 68))) return false;
+		if (!setPaletteIndex(TEXT_FG_PRIMARY_INDEX, setColor(255, 255, 255)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SECONDARY_INDEX, setColor(204, 204, 204)))
+			return false;
+		if (!setPaletteIndex(TEXT_FG_SHADOW_INDEX, setColor(68, 68, 68)))
+			return false;
 	}
 	return true;
 }
@@ -233,7 +254,7 @@ void Image::initializeToBackgroundColor(RGBA backgroundColor) {
 
 	_backgroundColor = backgroundColor;
 	fillRect(0, 0, _surface->w, _surface->h, backgroundColor.r,
-		backgroundColor.g, backgroundColor.b, backgroundColor.a);
+	         backgroundColor.g, backgroundColor.b, backgroundColor.a);
 }
 
 bool Image::isAlphaOn() const {
@@ -272,11 +293,10 @@ uint Image::getColor(byte r, byte g, byte b, byte a) {
 
 void Image::makeBackgroundColorTransparent(int haloSize, int shadowOpacity) {
 	uint32 bgColor = _surface->format.ARGBToColor(
-	                     static_cast<byte>(_backgroundColor.a),
-	                     static_cast<byte>(_backgroundColor.r),
-	                     static_cast<byte>(_backgroundColor.g),
-	                     static_cast<byte>(_backgroundColor.b)
-	                 );
+	    static_cast<byte>(_backgroundColor.a),
+	    static_cast<byte>(_backgroundColor.r),
+	    static_cast<byte>(_backgroundColor.g),
+	    static_cast<byte>(_backgroundColor.b));
 
 	performTransparencyHack(bgColor, 1, 0, haloSize, shadowOpacity);
 }
@@ -284,7 +304,7 @@ void Image::makeBackgroundColorTransparent(int haloSize, int shadowOpacity) {
 void Image::performTransparencyHack(uint colorValue, uint numFrames,
                                     uint currentFrameIndex, uint haloWidth,
                                     uint haloOpacityIncrementByPixelDistance) {
-	Common::List<Std::pair<uint, uint> > opaqueXYs;
+	Common::List<Std::pair<uint, uint>> opaqueXYs;
 	uint x, y;
 	byte t_r, t_g, t_b;
 
@@ -301,8 +321,8 @@ void Image::performTransparencyHack(uint colorValue, uint numFrames,
 			uint r, g, b, a;
 			getPixel(x, y, r, g, b, a);
 			if (r == t_r &&
-			        g == t_g &&
-			        b == t_b) {
+			    g == t_g &&
+			    b == t_b) {
 				putPixel(x, y, r, g, b, IM_TRANSPARENT);
 			} else {
 				putPixel(x, y, r, g, b, a);
@@ -312,9 +332,9 @@ void Image::performTransparencyHack(uint colorValue, uint numFrames,
 		}
 	}
 	int ox, oy;
-	for (Common::List<Std::pair<uint, uint> >::iterator xy = opaqueXYs.begin();
-	        xy != opaqueXYs.end();
-	        ++xy) {
+	for (Common::List<Std::pair<uint, uint>>::iterator xy = opaqueXYs.begin();
+	     xy != opaqueXYs.end();
+	     ++xy) {
 		ox = xy->first;
 		oy = xy->second;
 		int span = int(haloWidth);
@@ -335,8 +355,6 @@ void Image::performTransparencyHack(uint colorValue, uint numFrames,
 			}
 		}
 	}
-
-
 }
 
 void Image::setTransparentIndex(uint index) {

@@ -33,13 +33,13 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 
+#include "audio/fmopl.h"
 #include "common/debug.h"
 #include "common/str.h"
-#include "audio/fmopl.h"
 
-#include <sys/ioctl.h>
 #include <alsa/asoundlib.h>
 #include <sound/asound_fm.h>
+#include <sys/ioctl.h>
 
 namespace OPL {
 namespace ALSA {
@@ -80,11 +80,11 @@ public:
 };
 
 const int OPL::voiceToOper0[OPL::kVoices] =
-	{ 0, 1, 2, 6, 7, 8, 12, 13, 14, 18, 19, 20, 24, 25, 26, 30, 31, 32 };
+    {0, 1, 2, 6, 7, 8, 12, 13, 14, 18, 19, 20, 24, 25, 26, 30, 31, 32};
 
 const int OPL::regOffsetToOper[0x20] =
-	{ 0,  1,  2,  3,  4,  5, -1, -1, 6, 7, 8, 9, 10, 11, -1, -1,
-	 12, 13, 14, 15, 16, 17, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+    {0, 1, 2, 3, 4, 5, -1, -1, 6, 7, 8, 9, 10, 11, -1, -1,
+     12, 13, 14, 15, 16, 17, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 OPL::OPL(Config::OplType type) : _type(type), _opl(nullptr), _iface(0) {
 }
@@ -197,7 +197,7 @@ void OPL::write(int port, int val) {
 	int chip = (port & 2) >> 1;
 
 	if (port & 1) {
-		switch(_type) {
+		switch (_type) {
 		case Config::kOpl2:
 			writeOplReg(0, index[0], val);
 			break;
@@ -215,7 +215,7 @@ void OPL::write(int port, int val) {
 			break;
 		}
 	} else {
-		switch(_type) {
+		switch (_type) {
 		case Config::kOpl2:
 			index[0] = val;
 			break;

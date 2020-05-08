@@ -22,8 +22,8 @@
 
 #ifdef __N64__
 
-#include <romfs.h>
 #include "backends/fs/n64/romfsstream.h"
+#include <romfs.h>
 
 RomfsStream::RomfsStream(void *handle) : _handle(handle) {
 	assert(handle);

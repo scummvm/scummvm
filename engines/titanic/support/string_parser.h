@@ -30,6 +30,7 @@ namespace Titanic {
 class CStringParser : public CString {
 private:
 	uint _index;
+
 private:
 	/**
 	 * Gets the character at the current index
@@ -45,6 +46,7 @@ private:
 	 * Skips over any spaces
 	 */
 	void skipSpaces();
+
 public:
 	CStringParser() : CString(), _index(0) {}
 	CStringParser(const CString &str) : CString(str), _index(0) {}
@@ -68,7 +70,6 @@ public:
 	 * Reads an integer from the string
 	 */
 	uint readInt();
-
 };
 
 } // End of namespace Titanic

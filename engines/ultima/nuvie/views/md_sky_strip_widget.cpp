@@ -20,27 +20,25 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/views/md_sky_strip_widget.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/files/u6_shape.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/views/md_sky_strip_widget.h"
+#include "ultima/nuvie/files/u6_shape.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-MDSkyStripWidget::MDSkyStripWidget(Configuration *cfg, GameClock *c, Player *p): GUI_Widget(NULL, 0, 0, 0, 0) {
+MDSkyStripWidget::MDSkyStripWidget(Configuration *cfg, GameClock *c, Player *p) : GUI_Widget(NULL, 0, 0, 0, 0) {
 	config = cfg;
 	clock = c;
 	player = p;
 }
 
 MDSkyStripWidget::~MDSkyStripWidget() {
-
 }
-
 
 void MDSkyStripWidget::init(sint16 x, sint16 y) {
 	Std::string filename;
@@ -67,7 +65,6 @@ void MDSkyStripWidget::Display(bool full_redraw) {
 
 		screen->update(area.left, area.top, area.width(), area.height());
 	}
-
 }
 
 void MDSkyStripWidget::display_surface() {

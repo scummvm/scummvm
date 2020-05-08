@@ -23,9 +23,9 @@
 #ifndef TITANIC_FLIGHT_MANAGER_BASE_H
 #define TITANIC_FLIGHT_MANAGER_BASE_H
 
+#include "common/array.h"
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/orientation_changer.h"
-#include "common/array.h"
 
 namespace Titanic {
 
@@ -33,7 +33,9 @@ namespace Titanic {
 
 class CErrorCode;
 class FMatrix;
-enum MoverState { NOT_ACTIVE = 0, MOVING = 1, DONE_MOVING = 2 };
+enum MoverState { NOT_ACTIVE = 0,
+	              MOVING = 1,
+	              DONE_MOVING = 2 };
 
 /**
  * Base class for flight manager handling automated movement
@@ -55,6 +57,7 @@ protected:
 	double _currentSpin;
 	double _spinStep;
 	COrientationChanger _orientationChanger;
+
 public:
 	CFlightManagerBase();
 	virtual ~CFlightManagerBase() {}

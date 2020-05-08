@@ -21,11 +21,10 @@
  */
 
 #include "glk/quest/quest.h"
-#include "glk/quest/geas_glk.h"
-#include "glk/quest/geas_glk.h"
-#include "glk/quest/streams.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "glk/quest/geas_glk.h"
+#include "glk/quest/streams.h"
 
 namespace Glk {
 namespace Quest {
@@ -33,7 +32,7 @@ namespace Quest {
 Quest *g_vm;
 
 Quest::Quest(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_saveSlot(-1), _runner(nullptr) {
+                                                                  _saveSlot(-1), _runner(nullptr) {
 	g_vm = this;
 }
 
@@ -109,7 +108,7 @@ void Quest::playGame() {
 			case evtype_Redraw:
 				draw_banner();
 				break;
-			
+
 			default:
 				break;
 			}
@@ -129,13 +128,13 @@ bool Quest::initialize() {
 
 	glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
 	bannerwin = glk_window_open(mainglkwin,
-		winmethod_Above | winmethod_Fixed,
-		1, wintype_TextGrid, 0);
+	                            winmethod_Above | winmethod_Fixed,
+	                            1, wintype_TextGrid, 0);
 
 	if (use_inputwindow)
 		inputwin = glk_window_open(mainglkwin,
-			winmethod_Below | winmethod_Fixed,
-			1, wintype_TextBuffer, 0);
+		                           winmethod_Below | winmethod_Fixed,
+		                           1, wintype_TextBuffer, 0);
 	else
 		inputwin = NULL;
 
@@ -146,8 +145,8 @@ bool Quest::initialize() {
 
 	if (!glk_gestalt(gestalt_Timer, 0)) {
 		const char *err = "\nNote -- The underlying Glk library does not support"
-			" timers.  If this game tries to use timers, then some"
-			" functionality may not work correctly.\n\n";
+		                  " timers.  If this game tries to use timers, then some"
+		                  " functionality may not work correctly.\n\n";
 		glk_put_string(err);
 	}
 

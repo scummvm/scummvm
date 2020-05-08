@@ -32,10 +32,9 @@
 #ifndef SWORD25_SWIMAGE_H
 #define SWORD25_SWIMAGE_H
 
-#include "sword25/kernel/common.h"
-#include "sword25/gfx/image/image.h"
 #include "sword25/gfx/graphicengine.h"
-
+#include "sword25/gfx/image/image.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 
@@ -55,36 +54,37 @@ public:
 	}
 
 	bool blit(int posX = 0, int posY = 0,
-	                  int flipping = Graphics::FLIP_NONE,
-	                  Common::Rect *pPartRect = NULL,
-	                  uint color = BS_ARGB(255, 255, 255, 255),
-	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0) override;
+	          int flipping = Graphics::FLIP_NONE,
+	          Common::Rect *pPartRect = NULL,
+	          uint color = BS_ARGB(255, 255, 255, 255),
+	          int width = -1, int height = -1,
+	          RectangleList *updateRects = 0) override;
 	bool fill(const Common::Rect *fillRectPtr, uint color) override;
 	bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) override;
 	uint getPixel(int x, int y) override;
 
-	bool isBlitSource() const override               {
+	bool isBlitSource() const override {
 		return false;
 	}
-	bool isBlitTarget() const override               {
+	bool isBlitTarget() const override {
 		return false;
 	}
-	bool isScalingAllowed() const override           {
+	bool isScalingAllowed() const override {
 		return false;
 	}
-	bool isFillingAllowed() const override           {
+	bool isFillingAllowed() const override {
 		return false;
 	}
-	bool isAlphaAllowed() const override             {
+	bool isAlphaAllowed() const override {
 		return false;
 	}
-	bool isColorModulationAllowed() const override   {
+	bool isColorModulationAllowed() const override {
 		return false;
 	}
-	bool isSetContentAllowed() const override        {
+	bool isSetContentAllowed() const override {
 		return false;
 	}
+
 private:
 	Graphics::Surface _image;
 };

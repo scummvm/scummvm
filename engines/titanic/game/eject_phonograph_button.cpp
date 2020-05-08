@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEjectPhonographButton, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(CylinderHolderReadyMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(CylinderHolderReadyMsg)
 END_MESSAGE_MAP()
 
 void CEjectPhonographButton::save(SimpleFile *file, int indent) {

@@ -42,14 +42,12 @@ Parameter *newParameter(int id) {
 	return parameter;
 }
 
-
 /*======================================================================*/
 Parameter *newParameterArray(void) {
 	Parameter *newArray = (Parameter *)allocate((MAXINSTANCE + 1) * sizeof(Parameter));
 	setEndOfArray(newArray);
 	return newArray;
 }
-
 
 /*======================================================================*/
 void freeParameterArray(ParameterArray arrayPointer) {
@@ -61,7 +59,6 @@ void freeParameterArray(ParameterArray arrayPointer) {
 	deallocate(arrayPointer);
 }
 
-
 /*======================================================================*/
 Parameter *ensureParameterArrayAllocated(ParameterArray currentArray) {
 	if (currentArray == NULL)
@@ -72,12 +69,10 @@ Parameter *ensureParameterArrayAllocated(ParameterArray currentArray) {
 	}
 }
 
-
 /*======================================================================*/
 bool parameterArrayIsEmpty(ParameterArray array) {
 	return array == NULL || lengthOfParameterArray(array) == 0;
 }
-
 
 /*======================================================================*/
 void clearParameter(Parameter *parameter) {
@@ -88,14 +83,12 @@ void clearParameter(Parameter *parameter) {
 		clearParameterArray(parameter->candidates);
 }
 
-
 /*======================================================================*/
 void setGlobalParameters(ParameterArray newParameters) {
 	if (globalParameters == NULL)
 		globalParameters = newParameterArray();
 	copyParameterArray(globalParameters, newParameters);
 }
-
 
 /*======================================================================*/
 Parameter *getGlobalParameters(void) {
@@ -104,20 +97,18 @@ Parameter *getGlobalParameters(void) {
 	return globalParameters;
 }
 
-
 /*======================================================================*/
 Parameter *getGlobalParameter(int parameterIndex) {
 	return &globalParameters[parameterIndex];
 }
 
-
 /*======================================================================*/
 Parameter *findEndOfParameterArray(Parameter *parameters) {
 	Parameter *parameter;
-	for (parameter = parameters; !isEndOfArray(parameter); parameter++);
+	for (parameter = parameters; !isEndOfArray(parameter); parameter++)
+		;
 	return parameter;
 }
-
 
 /*======================================================================*/
 /* A parameter position with code == 0 means this is a multiple position.
@@ -133,7 +124,6 @@ int findMultiplePosition(Parameter parameters[]) {
 	return -1;
 }
 
-
 /*======================================================================*/
 void compressParameterArray(Parameter theArray[]) {
 	int i, j;
@@ -144,18 +134,17 @@ void compressParameterArray(Parameter theArray[]) {
 	setEndOfArray(&theArray[i]);
 }
 
-
 /*======================================================================*/
 int lengthOfParameterArray(Parameter theArray[]) {
 	int i = 0;
 
-	if (theArray == NULL) return 0;
+	if (theArray == NULL)
+		return 0;
 
 	while (!isEndOfArray(&theArray[i]))
 		i++;
 	return i;
 }
-
 
 /*======================================================================*/
 bool equalParameterArrays(Parameter parameters1[], Parameter parameters2[]) {
@@ -166,21 +155,22 @@ bool equalParameterArrays(Parameter parameters1[], Parameter parameters2[]) {
 	if (parameters1 == NULL) // Because then parameter2 is also NULL
 		return TRUE;
 	for (i = 0; !isEndOfArray(&parameters1[i]); i++) {
-		if (isEndOfArray(&parameters2[i])) return FALSE;
-		if (parameters1[i].instance != parameters2[i].instance) return FALSE;
+		if (isEndOfArray(&parameters2[i]))
+			return FALSE;
+		if (parameters1[i].instance != parameters2[i].instance)
+			return FALSE;
 	}
 	return isEndOfArray(&parameters2[i]);
 }
-
 
 /*======================================================================*/
 bool inParameterArray(Parameter theArray[], Aword theCode) {
 	int i;
 
-	for (i = 0; !isEndOfArray(&theArray[i]) && theArray[i].instance != theCode; i++);
+	for (i = 0; !isEndOfArray(&theArray[i]) && theArray[i].instance != theCode; i++)
+		;
 	return (theArray[i].instance == theCode);
 }
-
 
 /*======================================================================*/
 void copyParameter(Parameter *to, Parameter *from) {
@@ -197,10 +187,10 @@ void copyParameter(Parameter *to, Parameter *from) {
 		freeParameterArray(toCandidates);
 }
 
-
 /*======================================================================*/
 void addParameterToParameterArray(ParameterArray theArray, Parameter *theParameter) {
-	if (theArray == NULL) syserr("Adding to null parameter array");
+	if (theArray == NULL)
+		syserr("Adding to null parameter array");
 
 	uint i;
 
@@ -213,12 +203,12 @@ void addParameterToParameterArray(ParameterArray theArray, Parameter *theParamet
 		syserr("Couldn't find end of ParameterArray");
 }
 
-
 /*======================================================================*/
 void copyParameterArray(ParameterArray to, ParameterArray from) {
 	int i;
 
-	if (to == NULL && from == NULL) return;
+	if (to == NULL && from == NULL)
+		return;
 
 	if (to == NULL)
 		syserr("Copying to null parameter array");
@@ -229,19 +219,18 @@ void copyParameterArray(ParameterArray to, ParameterArray from) {
 	}
 }
 
-
 /*======================================================================*/
 void subtractParameterArrays(Parameter theArray[], Parameter remove[]) {
 	int i;
 
-	if (remove == NULL) return;
+	if (remove == NULL)
+		return;
 
 	for (i = 0; !isEndOfArray(&theArray[i]); i++)
 		if (inParameterArray(remove, theArray[i].instance))
-			theArray[i].instance = 0;       /* Mark empty */
+			theArray[i].instance = 0; /* Mark empty */
 	compressParameterArray(theArray);
 }
-
 
 /*======================================================================*/
 void clearParameterArray(Parameter theArray[]) {
@@ -252,18 +241,15 @@ void clearParameterArray(Parameter theArray[]) {
 	setEndOfArray(theArray);
 }
 
-
 /*======================================================================*/
 void intersectParameterArrays(Parameter one[], Parameter other[]) {
 	int i, last = 0;
-
 
 	for (i = 0; !isEndOfArray(&one[i]); i++)
 		if (inParameterArray(other, one[i].instance))
 			one[last++] = one[i];
 	setEndOfArray(&one[last]);
 }
-
 
 /*======================================================================*/
 void copyReferencesToParameterArray(Aint references[], Parameter parameterArray[]) {
@@ -276,7 +262,6 @@ void copyReferencesToParameterArray(Aint references[], Parameter parameterArray[
 	setEndOfArray(&parameterArray[i]);
 }
 
-
 /*======================================================================*/
 void addParameterForInstance(Parameter *parameters, int instance) {
 	Parameter *parameter = findEndOfParameterArray(parameters);
@@ -286,7 +271,6 @@ void addParameterForInstance(Parameter *parameters, int instance) {
 
 	setEndOfArray(parameter + 1);
 }
-
 
 /*======================================================================*/
 void addParameterForInteger(ParameterArray parameters, int value) {

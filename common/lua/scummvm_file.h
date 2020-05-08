@@ -23,14 +23,15 @@
 #ifndef LUA_SCUMMVM_FILE_H
 #define LUA_SCUMMVM_FILE_H
 
-#include "common/str.h"
 #include "common/file.h"
+#include "common/str.h"
 
 namespace Lua {
 
 class LuaFileProxy {
 public:
 	static LuaFileProxy *create(const Common::String &filename, const Common::String &mode);
+
 public:
 	virtual ~LuaFileProxy() {}
 	virtual bool eof() const = 0;
@@ -44,6 +45,7 @@ public:
  */
 class LuaFileConfig : public LuaFileProxy {
 	friend class LuaFileProxy;
+
 private:
 	Common::String _readData;
 	uint _readPos;
@@ -57,6 +59,7 @@ private:
 	void updateSetting(const Common::String &setting, const Common::String &value);
 
 	LuaFileConfig(const Common::String &filename, const Common::String &mode);
+
 public:
 	virtual ~LuaFileConfig();
 
@@ -69,8 +72,10 @@ class LuaFileRead : public LuaFileProxy {
 private:
 	Common::File _file;
 	int32 _size;
+
 public:
 	LuaFileRead(const Common::String &filename, const Common::String &mode);
+
 public:
 	virtual ~LuaFileRead() {}
 

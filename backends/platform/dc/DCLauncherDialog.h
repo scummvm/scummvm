@@ -21,7 +21,7 @@
  */
 
 class DCLauncherDialog {
- public:
-  DCLauncherDialog() {}
-  int runModal();
+public:
+	DCLauncherDialog() {}
+	int runModal();
 };

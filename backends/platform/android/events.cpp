@@ -39,9 +39,9 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "backends/platform/android/events.h"
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/graphics.h"
-#include "backends/platform/android/events.h"
 #include "backends/platform/android/jni-android.h"
 
 // floating point. use sparingly
@@ -53,7 +53,7 @@ static inline T scalef(T in, float numerator, float denominator) {
 static const int kQueuedInputEventDelay = 50;
 
 void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
-								int arg4, int arg5, int arg6) {
+                                int arg4, int arg5, int arg6) {
 	Common::Event e;
 
 	switch (type) {
@@ -547,14 +547,10 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JKEYCODE_BUTTON_B:
 			switch (arg1) {
 			case JACTION_DOWN:
-				e.type = (arg2 == JKEYCODE_BUTTON_A?
-					  Common::EVENT_LBUTTONDOWN :
-					  Common::EVENT_RBUTTONDOWN);
+				e.type = (arg2 == JKEYCODE_BUTTON_A ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN);
 				break;
 			case JACTION_UP:
-				e.type = (arg2 == JKEYCODE_BUTTON_A?
-					  Common::EVENT_LBUTTONUP :
-					  Common::EVENT_RBUTTONUP);
+				e.type = (arg2 == JKEYCODE_BUTTON_A ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP);
 				break;
 			}
 

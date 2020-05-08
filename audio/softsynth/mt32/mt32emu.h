@@ -71,13 +71,13 @@
 
 #else /* #if !defined(__cplusplus) || MT32EMU_API_TYPE == 1 */
 
-#include "Types.h"
 #include "File.h"
 #include "FileStream.h"
-#include "ROMInfo.h"
-#include "Synth.h"
 #include "MidiStreamParser.h"
+#include "ROMInfo.h"
 #include "SampleRateConverter.h"
+#include "Synth.h"
+#include "Types.h"
 
 #endif /* #if !defined(__cplusplus) || MT32EMU_API_TYPE == 1 */
 

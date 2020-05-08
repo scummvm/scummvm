@@ -119,8 +119,7 @@ bool pop_heap(Element &e) {
 	if (H.empty()) {
 		return false;
 	} else {
-		if (!(access_xarray(H, 0, e, PEEK_ACCESS) && access_xarray(H, H.size() - 1, temp, PEEK_ACCESS)
-				&&  access_xarray(H, 0, temp, POKE_ACCESS)))
+		if (!(access_xarray(H, 0, e, PEEK_ACCESS) && access_xarray(H, H.size() - 1, temp, PEEK_ACCESS) && access_xarray(H, 0, temp, POKE_ACCESS)))
 			g_vm->writeln(CANT_PEEK);
 
 		shrink_xarray(H);

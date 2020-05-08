@@ -39,8 +39,8 @@ bool CStarFieldBase::loadYale(int v1) {
 }
 
 bool CStarFieldBase::selectStar(CSurfaceArea *surfaceArea,
-		CCamera *camera, const Common::Point &pt, void *handler) {
-		int index = findStar(surfaceArea, camera, pt);
+                                CCamera *camera, const Common::Point &pt, void *handler) {
+	int index = findStar(surfaceArea, camera, pt);
 	if (index == -1) {
 		return false;
 	} else if (!handler) {

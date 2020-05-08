@@ -34,11 +34,13 @@ class XMLNode;
 
 class XMLTree {
 	friend class XMLNode;
+
 private:
 	XMLNode *_tree;
 	Common::String _filename;
 	bool _isFile;
 	bool _readOnly;
+
 public:
 	XMLTree();
 	XMLTree(const Common::String &fname);
@@ -70,7 +72,7 @@ public:
 
 	// get value
 	void value(const Common::String &key, Common::String &ret,
-		const char *defaultvalue = "") const;
+	           const char *defaultvalue = "") const;
 	void value(const Common::String &key, int &ret, int defaultvalue = 0) const;
 	void value(const Common::String &key, bool &ret, bool defaultvalue = false) const;
 

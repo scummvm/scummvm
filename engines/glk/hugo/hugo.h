@@ -55,13 +55,13 @@ private:
 	int address_scale;
 
 	// heexpr
-	int eval[MAX_EVAL_ELEMENTS];		///< expression components
-	int evalcount;						///< # of expr. components
-	int var[MAXLOCALS + MAXGLOBALS];	///< variables
-	int incdec;							///< value is being incremented/dec.
-	char getaddress;					///< true when finding &routine
-	char inexpr;						///< true when in expression
-	char inobj;							///< true when in object compound
+	int eval[MAX_EVAL_ELEMENTS];     ///< expression components
+	int evalcount;                   ///< # of expr. components
+	int var[MAXLOCALS + MAXGLOBALS]; ///< variables
+	int incdec;                      ///< value is being incremented/dec.
+	char getaddress;                 ///< true when finding &routine
+	char inexpr;                     ///< true when in expression
+	char inobj;                      ///< true when in object compound
 	int last_precedence;
 
 	// hemedia
@@ -78,7 +78,9 @@ private:
 	HUGO_FILE script;
 	HUGO_FILE playback;
 	HUGO_FILE record;
-	HUGO_FILE io; char ioblock; char ioerror;
+	HUGO_FILE io;
+	char ioblock;
+	char ioerror;
 
 	char id[3];
 	char serial[9];
@@ -120,8 +122,8 @@ private:
 	unsigned int textto;
 	int SCREENWIDTH, SCREENHEIGHT;
 	int physical_windowwidth, physical_windowheight,
-		physical_windowtop, physical_windowleft,
-		physical_windowbottom, physical_windowright;
+	    physical_windowtop, physical_windowleft,
+	    physical_windowbottom, physical_windowright;
 	int inwindow;
 	int charwidth, lineheight, FIXEDCHARWIDTH, FIXEDLINEHEIGHT;
 	int current_text_x, current_text_y;
@@ -140,49 +142,49 @@ private:
 	int secondwin_bottom;
 
 	// heobject
-	int display_object;				///< i.e., non-existent (yet)
-	char display_needs_repaint;		///< for display object
+	int display_object;         ///< i.e., non-existent (yet)
+	char display_needs_repaint; ///< for display object
 	int display_pointer_x, display_pointer_y;
 
 	// heparse
 	char buffer[MAXBUFFER + MAXWORDS];
-	char errbuf[MAXBUFFER + 1];				///< last invalid input
-	char line[1025];						///< line buffer
+	char errbuf[MAXBUFFER + 1]; ///< last invalid input
+	char line[1025];            ///< line buffer
 
-	int words;								///< parsed word count
-	char *word[MAXWORDS + 1];				///< breakdown into words
-	unsigned int wd[MAXWORDS + 1];			///<     "      "   dict. entries
-	unsigned int parsed_number;				///< needed for numbers in input
+	int words;                     ///< parsed word count
+	char *word[MAXWORDS + 1];      ///< breakdown into words
+	unsigned int wd[MAXWORDS + 1]; ///<     "      "   dict. entries
+	unsigned int parsed_number;    ///< needed for numbers in input
 
-	signed char remaining;					///< multiple commands in input
-	char parseerr[MAXBUFFER + 1];			///< for passing to RunPrint, etc.
-	char parsestr[MAXBUFFER + 1];			///< for passing quoted string
-	char xverb;								///< flag; 0 = regular verb
-	char starts_with_verb;					///< input line; 0 = no verb word
-	unsigned int grammaraddr;				///< address in grammar
-	char *obj_parselist;					///< objects with noun/adjective
-	int domain, odomain;					///< of object(s)
-	int objlist[MAXOBJLIST];				///< for objects of verb
-	char objcount;							///< of objlist
-	char parse_allflag;						///< for "all" in MatchObject
-	pobject_structure pobjlist[MAXPOBJECTS];	///< for possible objects
-	int pobjcount;							///< of pobjlist
-	int pobj;								///< last remaining suspect
-	int obj_match_state;					///< see MatchCommand() for details
-	char objword_cache[MAXWORDS];			///< for MatchWord() xobject, etc.
-	char object_is_number;					///< number used in player command
-	unsigned int objgrammar;				///< for 2nd pass
-	int objstart;							///<  "   "   "
-	int objfinish;							///<  "   "   "
-	bool addflag;							///< true if adding to objlist[]
-	int speaking;							///< if command is addressed to obj.
+	signed char remaining;                   ///< multiple commands in input
+	char parseerr[MAXBUFFER + 1];            ///< for passing to RunPrint, etc.
+	char parsestr[MAXBUFFER + 1];            ///< for passing quoted string
+	char xverb;                              ///< flag; 0 = regular verb
+	char starts_with_verb;                   ///< input line; 0 = no verb word
+	unsigned int grammaraddr;                ///< address in grammar
+	char *obj_parselist;                     ///< objects with noun/adjective
+	int domain, odomain;                     ///< of object(s)
+	int objlist[MAXOBJLIST];                 ///< for objects of verb
+	char objcount;                           ///< of objlist
+	char parse_allflag;                      ///< for "all" in MatchObject
+	pobject_structure pobjlist[MAXPOBJECTS]; ///< for possible objects
+	int pobjcount;                           ///< of pobjlist
+	int pobj;                                ///< last remaining suspect
+	int obj_match_state;                     ///< see MatchCommand() for details
+	char objword_cache[MAXWORDS];            ///< for MatchWord() xobject, etc.
+	char object_is_number;                   ///< number used in player command
+	unsigned int objgrammar;                 ///< for 2nd pass
+	int objstart;                            ///<  "   "   "
+	int objfinish;                           ///<  "   "   "
+	bool addflag;                            ///< true if adding to objlist[]
+	int speaking;                            ///< if command is addressed to obj.
 
-	char oops[MAXBUFFER + 1];				///< illegal word
-	int oopscount;							///< # of corrections in a row
+	char oops[MAXBUFFER + 1]; ///< illegal word
+	int oopscount;            ///< # of corrections in a row
 
 	char parse_called_twice;
 	char reparse_everything;
-	char punc_string[64];					///< punctuation string
+	char punc_string[64]; ///< punctuation string
 	byte full_buffer;
 
 	/**
@@ -191,7 +193,7 @@ private:
 	 * i.e., when 'held' doesn't refer to held by the player, etc.
 	 */
 	char recursive_call;
-	int parse_location;						///< usually var[location]
+	int parse_location; ///< usually var[location]
 
 	// heres
 	HUGO_FILE resource_file;
@@ -201,13 +203,13 @@ private:
 	char resource_type;
 
 	// herun
-	int passlocal[MAXLOCALS];		///< locals passed to routine
-	int arguments_passed;			///< when calling routine
-	int ret;						///< return value and returning flag
+	int passlocal[MAXLOCALS]; ///< locals passed to routine
+	int arguments_passed;     ///< when calling routine
+	int ret;                  ///< return value and returning flag
 	char retflag;
 	bool during_player_input;
 	char override_full;
-	bool game_reset;				///< for restore, undo, etc.
+	bool game_reset; ///< for restore, undo, etc.
 
 	CODE_BLOCK code_block[MAXSTACKDEPTH];
 	int stack_depth;
@@ -216,17 +218,17 @@ private:
 
 	// Used by RunWindow for setting current window dimensions:
 	int last_window_top, last_window_bottom, last_window_left, last_window_right;
-	int lowest_windowbottom,				///< in text lines
-		physical_lowest_windowbottom;		///< in pixels or text lines
+	int lowest_windowbottom,          ///< in text lines
+	    physical_lowest_windowbottom; ///< in pixels or text lines
 	bool just_left_window;
 
 	// heset
 	char game_title[MAX_GAME_TITLE];
-	char arrexpr;							///< true when assigning array
-	char multiprop;							///< true in multiple prop. assign.
+	char arrexpr;   ///< true when assigning array
+	char multiprop; ///< true in multiple prop. assign.
 	int set_value;
 
-#if defined (DEBUGGER)
+#if defined(DEBUGGER)
 	char debug_line[MAX_DEBUG_LINE];
 	bool debug_eval;
 	bool debug_eval_error;
@@ -272,7 +274,7 @@ private:
 	 * @{
 	 */
 
-	 /**
+	/**
 	  * The new-and-improved expression evaluator.  Evaluates the current expression
 	  * (or sub-expression therein) beginning at eval[p].
 	  */
@@ -333,7 +335,7 @@ private:
 	 * @{
 	 */
 
-	 /**
+	/**
 	  * Does whatever has to be done to initially set up the display
 	  */
 	void hugo_init_screen();
@@ -1137,7 +1139,7 @@ private:
 
 	void hugo_blockfree(void *block) { free(block); }
 
-#if defined (DEBUGGER)
+#if defined(DEBUGGER)
 	int CheckinRange(uint v1, uint v2, const char *v3) { return 1; }
 
 	/**

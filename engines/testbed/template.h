@@ -57,7 +57,6 @@ public:
 	const char *getDescription() const {
 		return "Some Arbit description";
 	}
-
 };
 
 } // End of namespace Testbed

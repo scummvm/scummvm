@@ -20,9 +20,9 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "glk/adrift/scare.h"
 #include "glk/adrift/sxprotos.h"
-#include "common/textconsole.h"
 
 namespace Glk {
 namespace Adrift {
@@ -39,7 +39,6 @@ struct sx_scr_stream_t {
 	sc_bool is_writable;
 };
 static sx_scr_stream_t scr_serialization_stream = {NULL, 0, FALSE, FALSE};
-
 
 /*
  * file_open_file_callback()
@@ -58,11 +57,11 @@ void *file_open_file_callback(sc_bool is_save) {
 	/* Detect any problems due to scripting limitations. */
 	if (stream->is_open) {
 		error("File open error: %s",
-		                "stream is in use (script limitation)");
+		      "stream is in use (script limitation)");
 		return NULL;
 	} else if (is_save && stream->data) {
 		error("File open error: %s",
-		                "stream has not been read (script limitation)");
+		      "stream has not been read (script limitation)");
 		return NULL;
 	}
 
@@ -153,7 +152,6 @@ void file_close_file_callback(void *opaque) {
 	stream->is_writable = FALSE;
 	stream->is_open = FALSE;
 }
-
 
 /*
  * file_cleanup()

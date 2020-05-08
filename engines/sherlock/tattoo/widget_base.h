@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_TATTOO_WIDGET_BASE_H
 #define SHERLOCK_TATTOO_WIDGET_BASE_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
 #include "sherlock/surface.h"
 
@@ -38,6 +38,7 @@ namespace Tattoo {
 class WidgetBase {
 private:
 	uint32 _dialogTimer;
+
 protected:
 	SherlockEngine *_vm;
 	Common::Rect _bounds;
@@ -100,6 +101,7 @@ protected:
 	 * Handle drawing the background on the area the widget is going to cover
 	 */
 	virtual void drawBackground();
+
 public:
 	WidgetBase(SherlockEngine *vm);
 	virtual ~WidgetBase() {}

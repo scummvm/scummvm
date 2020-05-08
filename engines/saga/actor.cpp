@@ -29,10 +29,10 @@
 #include "saga/isomap.h"
 #include "saga/objectmap.h"
 #include "saga/resource.h"
+#include "saga/scene.h"
 #include "saga/script.h"
 #include "saga/sndres.h"
 #include "saga/sound.h"
-#include "saga/scene.h"
 
 #include "common/config-manager.h"
 
@@ -145,7 +145,6 @@ void ActorData::loadState(uint32 version, Common::InSaveFile *in) {
 
 	_frameNumber = in->readSint32LE();
 
-
 	_tileDirections.resize(in->readSint32LE());
 	for (i = 0; i < _tileDirections.size(); i++) {
 		_tileDirections[i] = in->readByte();
@@ -174,7 +173,7 @@ void ActorData::addWalkStepPoint(const Point &point) {
 	_walkStepsPoints[_walkStepsCount++] = point;
 }
 
-static int commonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
+static int commonObjectCompare(const CommonObjectDataPointer &obj1, const CommonObjectDataPointer &obj2) {
 	int p1 = obj1->_location.y - obj1->_location.z;
 	int p2 = obj2->_location.y - obj2->_location.z;
 	if (p1 == p2)
@@ -185,7 +184,7 @@ static int commonObjectCompare(const CommonObjectDataPointer& obj1, const Common
 }
 
 #ifdef ENABLE_IHNM
-static int commonObjectCompareIHNM(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
+static int commonObjectCompareIHNM(const CommonObjectDataPointer &obj1, const CommonObjectDataPointer &obj2) {
 	int p1 = obj1->_location.y;
 	int p2 = obj2->_location.y;
 	if (p1 == p2)
@@ -196,7 +195,7 @@ static int commonObjectCompareIHNM(const CommonObjectDataPointer& obj1, const Co
 }
 #endif
 
-static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
+static int tileCommonObjectCompare(const CommonObjectDataPointer &obj1, const CommonObjectDataPointer &obj2) {
 	int p1 = -obj1->_location.u() - obj1->_location.v() - obj1->_location.z;
 	int p2 = -obj2->_location.u() - obj2->_location.v() - obj2->_location.z;
 	//TODO:  for kObjNotFlat obj Height*3 of sprite should be added to p1 and p2
@@ -393,7 +392,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		actor->_id = objectIndexToId(kGameObjectActor, actor->_index); //actorIndexToId(i);
 		debug(4, "init actor id=0x%X index=%d", actor->_id, actor->_index);
 		actorS.readUint32LE(); //next displayed
-		actorS.readByte(); //type
+		actorS.readByte();     //type
 		actor->_flags = actorS.readByte();
 		actor->_nameIndex = actorS.readUint16LE();
 		actor->_sceneNumber = actorS.readUint32LE();
@@ -430,11 +429,11 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 			}
 		}
 		//actorS.seek(128, SEEK_CUR);
-		walkStepCount = actorS.readByte();//walkStepCount
+		walkStepCount = actorS.readByte(); //walkStepCount
 		if (walkStepCount) {
 			error("Actor::loadActorList walkStepCount != 0");
 		}
-		walkStepIndex = actorS.readByte();//walkStepIndex
+		walkStepIndex = actorS.readByte(); //walkStepIndex
 		if (walkStepIndex) {
 			error("Actor::loadActorList walkStepIndex != 0");
 		}
@@ -452,15 +451,15 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 				error("Actor::loadActorList acv[%d] != 0", j);
 			}
 		}
-//		actorS.seek(6, SEEK_CUR); //action vars
+		//		actorS.seek(6, SEEK_CUR); //action vars
 	}
 
 	_actors[protagonistIdx]._flags |= kProtagonist | kExtended;
 
 	for (ActorDataArray::iterator actor = _actors.begin(); actor != _actors.end(); ++actor) {
 		//if (actor->_flags & kProtagonist) {
-			loadActorResources(actor);
-			//break;
+		loadActorResources(actor);
+		//break;
 		//}
 	}
 
@@ -488,7 +487,6 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 
 		_protagonist->_frames = &_protagStates[_protagState]._frames;
 	}
-
 }
 
 void Actor::loadObjList(int objectCount, int objectsResourceID) {
@@ -508,7 +506,7 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 		object->_id = objectIndexToId(kGameObjectObject, object->_index);
 		debug(9, "init object id=%d index=%d", object->_id, object->_index);
 		objectS.readUint32LE(); //next displayed
-		objectS.readByte(); //type
+		objectS.readByte();     //type
 		object->_flags = objectS.readByte();
 		object->_nameIndex = objectS.readUint16LE();
 		object->_sceneNumber = objectS.readUint32LE();
@@ -570,12 +568,12 @@ void Actor::stepZoneAction(ActorData *actor, const HitZone *hitZone, bool exit, 
 		event.code = kScriptEvent;
 		event.op = kEventExecNonBlocking;
 		event.time = 0;
-		event.param = _vm->_scene->getScriptModuleNumber(); // module number
-		event.param2 = hitZone->getScriptNumber();			// script entry point number
-		event.param3 = _vm->_script->getVerbType(kVerbEnter);		// Action
-		event.param4 = ID_NOTHING;		// Object
-		event.param5 = ID_NOTHING;		// With Object
-		event.param6 = ID_PROTAG;		// Actor
+		event.param = _vm->_scene->getScriptModuleNumber();   // module number
+		event.param2 = hitZone->getScriptNumber();            // script entry point number
+		event.param3 = _vm->_script->getVerbType(kVerbEnter); // Action
+		event.param4 = ID_NOTHING;                            // Object
+		event.param5 = ID_NOTHING;                            // With Object
+		event.param6 = ID_PROTAG;                             // Actor
 
 		_vm->_events->queue(event);
 	}
@@ -621,7 +619,6 @@ void Actor::setProtagState(int state) {
 		_protagonist->_frames = &_protagStates[state]._frames;
 	}
 #endif
-
 }
 
 int Actor::getFrameType(ActorFrameTypes frameType) {
@@ -646,7 +643,7 @@ int Actor::getFrameType(ActorFrameTypes frameType) {
 			return kFrameITELook;
 		default:
 			error("Actor::getFrameType() unknown frame type %d", frameType);
-			return kFrameITEStand;		// for compilers that don't support NORETURN
+			return kFrameITEStand; // for compilers that don't support NORETURN
 		}
 #ifdef ENABLE_IHNM
 	} else if (_vm->getGameId() == GID_IHNM) {
@@ -666,12 +663,12 @@ int Actor::getFrameType(ActorFrameTypes frameType) {
 		case kFrameLook:
 		default:
 			error("Actor::getFrameType() unknown frame type %d", frameType);
-			return kFrameIHNMStand;		// for compilers that don't support NORETURN
+			return kFrameIHNMStand; // for compilers that don't support NORETURN
 		}
 #endif
 	}
 	error("Actor::getFrameType() unknown frame type %d", frameType);
-	return kFrameITEStand;		// for compilers that don't support NORETURN
+	return kFrameITEStand; // for compilers that don't support NORETURN
 }
 
 ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
@@ -692,7 +689,6 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 			warning("Actor::getActorFrameRange Wrong frameType 0x%X (%d) actorId 0x%X", frameType, frames->size(), actorId);
 			return &def;
 		}
-
 
 		fourDirection = actorDirectionsLUT[actor->_facingDirection];
 		return &(*frames)[frameType].directions[fourDirection];
@@ -907,9 +903,9 @@ bool Actor::calcScreenPosition(CommonObjectData *commonObjectData) {
 	}
 
 	result = commonObjectData->_screenPosition.x > -64 &&
-			commonObjectData->_screenPosition.x < _vm->getDisplayInfo().width + 64 &&
-			commonObjectData->_screenPosition.y > -64 &&
-			commonObjectData->_screenPosition.y < _vm->_scene->getHeight() + 64;
+	         commonObjectData->_screenPosition.x < _vm->getDisplayInfo().width + 64 &&
+	         commonObjectData->_screenPosition.y > -64 &&
+	         commonObjectData->_screenPosition.y < _vm->_scene->getHeight() + 64;
 
 	return result;
 }
@@ -957,18 +953,18 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 		if (_vm->_sprite->hitTest(*spriteList, frameNumber, drawObject->_screenPosition, drawObject->_screenScale, testPoint)) {
 			result = drawObject->_id;
 			if (_vm->getGameId() == GID_ITE)
-				return result;		// in ITE, return the first result found (read above)
+				return result; // in ITE, return the first result found (read above)
 		}
 	}
-	return result;					// in IHNM, return the last result found (read above)
+	return result; // in IHNM, return the last result found (read above)
 }
 
-void Actor::drawOrderListAdd(const CommonObjectDataPointer& element, CompareFunction compareFunction) {
+void Actor::drawOrderListAdd(const CommonObjectDataPointer &element, CompareFunction compareFunction) {
 	int res;
 
-	for (CommonObjectOrderList::iterator i = _drawOrderList.begin(); i !=_drawOrderList.end(); ++i) {
+	for (CommonObjectOrderList::iterator i = _drawOrderList.begin(); i != _drawOrderList.end(); ++i) {
 		res = compareFunction(element, *i);
-		if	(res < 0) {
+		if (res < 0) {
 			_drawOrderList.insert(i, element);
 			return;
 		}
@@ -1003,7 +999,7 @@ void Actor::createDrawOrderList() {
 
 	for (ObjectDataArray::iterator obj = _objs.begin(); obj != _objs.end(); ++obj) {
 		if (obj->_sceneNumber != _vm->_scene->currentSceneNumber())
-			 continue;
+			continue;
 
 		// WORKAROUND for a bug found in the original interpreter of IHNM
 		// If an object's x or y value is negative, don't draw it
@@ -1020,8 +1016,8 @@ void Actor::createDrawOrderList() {
 
 bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber, SpriteList *&spriteList) {
 	if (_vm->_scene->currentSceneResourceId() == ITE_SCENE_OVERMAP) {
-		if (!(commonObjectData->_flags & kProtagonist)){
-//			warning("not protagonist");
+		if (!(commonObjectData->_flags & kProtagonist)) {
+			//			warning("not protagonist");
 			return false;
 		}
 		frameNumber = 8;
@@ -1047,8 +1043,8 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 
 	if ((frameNumber < 0) || (spriteList->size() <= uint(frameNumber))) {
 		debug(1, "Actor::getSpriteParams frameNumber invalid for %s id 0x%X (%d)",
-				validObjId(commonObjectData->_id) ? "object" : "actor",
-				commonObjectData->_id, frameNumber);
+		      validObjId(commonObjectData->_id) ? "object" : "actor",
+		      commonObjectData->_id, frameNumber);
 		return false;
 	}
 	return true;
@@ -1062,7 +1058,7 @@ void Actor::drawActors() {
 
 	// WORKAROUND
 	// Bug #2928923: 'ITE: Graphic Glitches during racoon death "Cut Scene"'
-	if (_vm->_anim->hasCutaway()  || _vm->_scene->currentSceneNumber() == 287 || _vm->_scene->currentSceneNumber() == 286) {
+	if (_vm->_anim->hasCutaway() || _vm->_scene->currentSceneNumber() == 287 || _vm->_scene->currentSceneNumber() == 286) {
 		drawSpeech();
 		return;
 	}
@@ -1100,9 +1096,7 @@ void Actor::drawActors() {
 }
 
 void Actor::drawSpeech() {
-	if (!isSpeaking() || !_activeSpeech.playing || _vm->_script->_skipSpeeches
-		|| (!_vm->_subtitlesEnabled && _vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY))
-		|| (!_vm->_subtitlesEnabled && (_vm->getGameId() == GID_IHNM)))
+	if (!isSpeaking() || !_activeSpeech.playing || _vm->_script->_skipSpeeches || (!_vm->_subtitlesEnabled && _vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY)) || (!_vm->_subtitlesEnabled && (_vm->getGameId() == GID_IHNM)))
 		return;
 
 	Point textPoint;
@@ -1133,11 +1127,11 @@ void Actor::drawSpeech() {
 				textPoint.y = 10; // CLIP(actor->_screenPosition.y - 160, 10, _vm->_scene->getHeight(true) - 10 - height);
 
 			_vm->_font->textDraw(kKnownFontScript, &outputString.front(), textPoint,
-				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
+			                     _activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
 		}
 	} else {
 		_vm->_font->textDrawRect(kKnownFontScript, &outputString.front(), _activeSpeech.drawRect, _activeSpeech.speechColor[0],
-			_activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
+		                         _activeSpeech.outlineColor[0], _activeSpeech.getFontFlags(0));
 	}
 }
 
@@ -1180,7 +1174,6 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayInfo().width - 10;
 		_activeSpeech.speechBox.right = _vm->getDisplayInfo().width - 10;
 	}
-
 }
 
 void Actor::nonActorSpeech(const Common::Rect &box, const char **strings, int stringsCount, int sampleResourceId, int speechFlags) {

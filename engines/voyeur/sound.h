@@ -23,9 +23,9 @@
 #ifndef VOYEUR_SOUND_H
 #define VOYEUR_SOUND_H
 
+#include "audio/mixer.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "audio/mixer.h"
 
 namespace Voyeur {
 
@@ -34,6 +34,7 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	int _vocOffset;
+
 public:
 	SoundManager(Audio::Mixer *mixer);
 

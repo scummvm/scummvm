@@ -27,10 +27,9 @@
 namespace Cloud {
 namespace Id {
 
-IdCreateDirectoryRequest::IdCreateDirectoryRequest(IdStorage *storage, Common::String parentPath, Common::String directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb),
-	_requestedParentPath(parentPath), _requestedDirectoryName(directoryName), _storage(storage), _boolCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+IdCreateDirectoryRequest::IdCreateDirectoryRequest(IdStorage *storage, Common::String parentPath, Common::String directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb),
+                                                                                                                                                                                           _requestedParentPath(parentPath), _requestedDirectoryName(directoryName), _storage(storage), _boolCallback(cb),
+                                                                                                                                                                                           _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 

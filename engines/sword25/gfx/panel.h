@@ -32,8 +32,8 @@
 #ifndef SWORD25_PANEL_H
 #define SWORD25_PANEL_H
 
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
+#include "sword25/kernel/common.h"
 
 namespace Sword25 {
 

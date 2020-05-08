@@ -34,6 +34,7 @@ namespace Widgets {
  */
 class MerchantTavern : public Merchant {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	DECLARE_WIDGET(MerchantTavern)
 	CLASSDEF;
@@ -41,14 +42,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	MerchantTavern(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Merchant(game, map, 50, hitPoints) {}
+	MerchantTavern(Ultima1Game *game, Maps::MapBase *map, int hitPoints) : Merchant(game, map, 50, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	MerchantTavern(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
-		Merchant(game, map, tileNum, hitPoints) {}
+	MerchantTavern(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) : Merchant(game, map, tileNum, hitPoints) {}
 
 	/**
 	 * Constructor

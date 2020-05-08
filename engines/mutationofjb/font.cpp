@@ -21,16 +21,15 @@
  */
 
 #include "mutationofjb/font.h"
+#include "common/debug.h"
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/util.h"
-#include "common/debug.h"
 
 namespace MutationOfJB {
 
-Font::Font(const Common::String &fileName, int horizSpacing, int lineHeight) :
-	_horizSpacing(horizSpacing),
-	_lineHeight(lineHeight),
-	_maxCharWidth(0) {
+Font::Font(const Common::String &fileName, int horizSpacing, int lineHeight) : _horizSpacing(horizSpacing),
+                                                                               _lineHeight(lineHeight),
+                                                                               _maxCharWidth(0) {
 
 	load(fileName);
 }
@@ -115,8 +114,8 @@ int Font::getKerningOffset(uint32 left, uint32 right) const {
 class FontBlitOperation {
 public:
 	FontBlitOperation(const Font &font, const byte baseColor)
-		: _font(font),
-		  _baseColor(baseColor) {}
+	    : _font(font),
+	      _baseColor(baseColor) {}
 
 	byte operator()(const byte srcColor, const byte destColor) {
 		if (srcColor == 0) {
@@ -161,4 +160,4 @@ uint8 SpeechFont::transformColor(uint8 baseColor, uint8 glyphColor) const {
 	return Font::transformColor(baseColor, glyphColor);
 }
 
-}
+} // namespace MutationOfJB

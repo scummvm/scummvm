@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "ultima/nuvie/gui/gui_scroll_bar.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_button.h"
-#include "ultima/nuvie/gui/gui_scroll_bar.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -52,9 +52,8 @@ namespace Nuvie {
 #define TRACK_BASE_G 139
 #define TRACK_BASE_B 113
 
-
 GUI_ScrollBar::GUI_ScrollBar(int x, int y, int h, GUI_CallBack *callback)
-	: GUI_Widget(NULL, x, y, SCROLLBAR_WIDTH, h) {
+    : GUI_Widget(NULL, x, y, SCROLLBAR_WIDTH, h) {
 	callback_object = callback;
 	drag = false;
 
@@ -63,9 +62,7 @@ GUI_ScrollBar::GUI_ScrollBar(int x, int y, int h, GUI_CallBack *callback)
 	track_length = area.height() - 2 * button_height;
 	slider_length = track_length / 2;
 	slider_y = 5;
-
 }
-
 
 void GUI_ScrollBar::loadButtons() {
 	Std::string datadir = GUI::get_gui()->get_data_dir();
@@ -113,11 +110,10 @@ void GUI_ScrollBar::set_slider_position(float percentage) {
 	move_slider((int)((float)track_length * percentage));
 }
 
-
 /* Show the widget  */
 void GUI_ScrollBar::Display(bool full_redraw) {
 	Common::Rect framerect;
-// Common::Rect src, dst;
+	// Common::Rect src, dst;
 
 	if (slider_y > 0) {
 		framerect.left = area.left;
@@ -144,7 +140,6 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 		framerect.setWidth(1);
 		framerect.setHeight(slider_y);
 		SDL_FillRect(surface, &framerect, track_border_c);
-
 	}
 
 	DisplaySlider();
@@ -174,7 +169,6 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 		framerect.setWidth(1);
 		framerect.setHeight(track_length - slider_y - slider_length);
 		SDL_FillRect(surface, &framerect, track_border_c);
-
 	}
 
 	DisplayChildren();
@@ -216,7 +210,6 @@ inline void GUI_ScrollBar::DisplaySlider() {
 	rect.setWidth(SCROLLBAR_WIDTH - 1);
 	rect.setHeight(1);
 	SDL_FillRect(surface, &rect, slider_shadow_c);
-
 }
 GUI_status GUI_ScrollBar::MouseWheel(sint32 x, sint32 y) {
 	if (y > 0) {
@@ -260,7 +253,7 @@ GUI_status GUI_ScrollBar::MouseMotion(int x, int y, uint8 state) {
 	if (move_slider(new_slider_y)) {
 		send_slider_moved_msg();
 	}
-// Redraw();
+	// Redraw();
 
 	return (GUI_YUM);
 }
@@ -313,4 +306,3 @@ GUI_status GUI_ScrollBar::callback(uint16 msg, GUI_CallBack *caller, void *data)
 
 } // End of namespace Nuvie
 } // End of namespace Ultima
-

@@ -21,8 +21,8 @@
  */
 
 #include "glk/adrift/scare.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 
 #undef longjmp
 #undef setjmp
@@ -37,7 +37,6 @@ static const sc_char NUL = '\0';
 
 /* Trace flag, set before running. */
 static sc_bool restr_trace = FALSE;
-
 
 /*
  * restr_integer_variable()
@@ -67,7 +66,6 @@ static sc_int restr_integer_variable(sc_gameref_t game, sc_int n) {
 	return var - 1;
 }
 
-
 /*
  * restr_object_in_place()
  *
@@ -79,48 +77,47 @@ static sc_bool restr_object_in_place(sc_gameref_t game, sc_int object, sc_int va
 
 	if (restr_trace) {
 		sc_trace("Restr: checking"
-		         " object in place, %ld, %ld, %ld\n", object, var2, var3);
+		         " object in place, %ld, %ld, %ld\n",
+		         object, var2, var3);
 	}
 
 	/* Var2 controls what we do. */
 	switch (var2) {
 	case 0:
-	case 6:                    /* In room */
+	case 6: /* In room */
 		if (var3 == 0)
 			return gs_object_position(game, object) == OBJ_HIDDEN;
 		else
 			return gs_object_position(game, object) == var3;
 
 	case 1:
-	case 7:                    /* Held by */
-		if (var3 == 0)            /* Player */
+	case 7:            /* Held by */
+		if (var3 == 0) /* Player */
 			return gs_object_position(game, object) == OBJ_HELD_PLAYER;
-		else if (var3 == 1)       /* Ref character */
+		else if (var3 == 1) /* Ref character */
 			npc = var_get_ref_character(vars);
 		else
 			npc = var3 - 2;
 
-		return gs_object_position(game, object) == OBJ_HELD_NPC
-		       && gs_object_parent(game, object) == npc;
+		return gs_object_position(game, object) == OBJ_HELD_NPC && gs_object_parent(game, object) == npc;
 
 	case 2:
-	case 8:                    /* Worn by */
-		if (var3 == 0)            /* Player */
+	case 8:            /* Worn by */
+		if (var3 == 0) /* Player */
 			return gs_object_position(game, object) == OBJ_WORN_PLAYER;
-		else if (var3 == 1)       /* Ref character */
+		else if (var3 == 1) /* Ref character */
 			npc = var_get_ref_character(vars);
 		else
 			npc = var3 - 2;
 
-		return gs_object_position(game, object) == OBJ_WORN_NPC
-		       && gs_object_parent(game, object) == npc;
+		return gs_object_position(game, object) == OBJ_WORN_NPC && gs_object_parent(game, object) == npc;
 
 	case 3:
-	case 9:                    /* Visible to */
-		if (var3 == 0)            /* Player */
+	case 9:            /* Visible to */
+		if (var3 == 0) /* Player */
 			return obj_indirectly_in_room(game,
 			                              object, gs_playerroom(game));
-		else if (var3 == 1)       /* Ref character */
+		else if (var3 == 1) /* Ref character */
 			npc = var_get_ref_character(vars);
 		else
 			npc = var3 - 2;
@@ -129,22 +126,20 @@ static sc_bool restr_object_in_place(sc_gameref_t game, sc_int object, sc_int va
 		                              gs_npc_location(game, npc) - 1);
 
 	case 4:
-	case 10:                   /* Inside */
-		if (var3 == 0)            /* Nothing? */
+	case 10:           /* Inside */
+		if (var3 == 0) /* Nothing? */
 			return gs_object_position(game, object) != OBJ_IN_OBJECT;
 
-		return gs_object_position(game, object) == OBJ_IN_OBJECT
-		       && gs_object_parent(game, object) == obj_container_object(game,
-		               var3 - 1);
+		return gs_object_position(game, object) == OBJ_IN_OBJECT && gs_object_parent(game, object) == obj_container_object(game,
+		                                                                                                                   var3 - 1);
 
 	case 5:
-	case 11:                   /* On top of */
-		if (var3 == 0)            /* Nothing? */
+	case 11:           /* On top of */
+		if (var3 == 0) /* Nothing? */
 			return gs_object_position(game, object) != OBJ_ON_OBJECT;
 
-		return gs_object_position(game, object) == OBJ_ON_OBJECT
-		       && gs_object_parent(game, object) == obj_surface_object(game,
-		               var3 - 1);
+		return gs_object_position(game, object) == OBJ_ON_OBJECT && gs_object_parent(game, object) == obj_surface_object(game,
+		                                                                                                                 var3 - 1);
 
 	default:
 		sc_fatal("restr_object_in_place: bad var2, %ld\n", var2);
@@ -152,21 +147,21 @@ static sc_bool restr_object_in_place(sc_gameref_t game, sc_int object, sc_int va
 	}
 }
 
-
 /*
  * restr_pass_task_object_location()
  *
  * Evaluate restrictions relating to object location.
  */
 static sc_bool restr_pass_task_object_location(sc_gameref_t game,
-		sc_int var1, sc_int var2, sc_int var3) {
+                                               sc_int var1, sc_int var2, sc_int var3) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_bool should_be;
 	sc_int object;
 
 	if (restr_trace) {
 		sc_trace("Restr: running object"
-		         " location restriction, %ld, %ld, %ld\n", var1, var2, var3);
+		         " location restriction, %ld, %ld, %ld\n",
+		         var1, var2, var3);
 	}
 
 	/* Initialize variables to avoid gcc warnings. */
@@ -183,10 +178,10 @@ static sc_bool restr_pass_task_object_location(sc_gameref_t game,
 
 	/* Now find the addressed object. */
 	if (var1 == 0) {
-		object = -1;              /* No object */
+		object = -1; /* No object */
 		should_be = !should_be;
 	} else if (var1 == 1)
-		object = -1;                /* Any object */
+		object = -1; /* Any object */
 	else if (var1 == 2)
 		object = var_get_ref_object(vars);
 	else if (var1 >= 3)
@@ -205,7 +200,8 @@ static sc_bool restr_pass_task_object_location(sc_gameref_t game,
 	if (var1 == 2 && object != -1 && obj_is_static(game, object)) {
 		if (restr_trace) {
 			sc_trace("Restr:"
-			         " restriction object %ld is static, rejecting\n", object);
+			         " restriction object %ld is static, rejecting\n",
+			         object);
 		}
 
 		return FALSE;
@@ -224,7 +220,6 @@ static sc_bool restr_pass_task_object_location(sc_gameref_t game,
 	return should_be == restr_object_in_place(game, object, var2, var3);
 }
 
-
 /*
  * restr_pass_task_object_state()
  *
@@ -239,7 +234,8 @@ sc_bool restr_pass_task_object_state(sc_gameref_t game, sc_int var1, sc_int var2
 
 	if (restr_trace) {
 		sc_trace("Restr:"
-		         " running object state restriction, %ld, %ld\n", var1, var2);
+		         " running object state restriction, %ld, %ld\n",
+		         var1, var2);
 	}
 
 	/* Find the object being addressed. */
@@ -271,7 +267,6 @@ sc_bool restr_pass_task_object_state(sc_gameref_t game, sc_int var1, sc_int var2
 	} else
 		return gs_object_state(game, object) == var2 + 1;
 }
-
 
 /*
  * restr_pass_task_task_state()
@@ -310,7 +305,6 @@ static sc_bool restr_pass_task_task_state(sc_gameref_t game, sc_int var1, sc_int
 	return gs_task_done(game, var1 - 1) == should_be;
 }
 
-
 /*
  * restr_pass_task_char()
  *
@@ -323,13 +317,14 @@ static sc_bool restr_pass_task_char(sc_gameref_t game, sc_int var1, sc_int var2,
 
 	if (restr_trace) {
 		sc_trace("Restr:"
-		         " running char restriction, %ld, %ld, %ld\n", var1, var2, var3);
+		         " running char restriction, %ld, %ld, %ld\n",
+		         var1, var2, var3);
 	}
 
 	/* Handle var2 types 1 and 2. */
-	if (var2 == 1)                /* Not in same room as */
+	if (var2 == 1) /* Not in same room as */
 		return !restr_pass_task_char(game, var1, 0, var3);
-	else if (var2 == 2)           /* Alone */
+	else if (var2 == 2) /* Alone */
 		return !restr_pass_task_char(game, var1, 3, var3);
 
 	/* Decode NPC number, -1 if none. */
@@ -346,35 +341,32 @@ static sc_bool restr_pass_task_char(sc_gameref_t game, sc_int var1, sc_int var2,
 
 		/* Player -- decode based on var2. */
 		switch (var2) {
-		case 0:                /* In same room as */
+		case 0: /* In same room as */
 			if (var3 == 1)
 				npc2 = var_get_ref_character(vars);
 			else if (var3 > 1)
 				npc2 = var3 - 2;
-			if (var3 == 0)       /* Player */
+			if (var3 == 0) /* Player */
 				return TRUE;
 			else
 				return npc_in_room(game, npc2, gs_playerroom(game));
 
-		case 3:                /* Not alone */
+		case 3: /* Not alone */
 			return npc_count_in_room(game, gs_playerroom(game)) > 1;
 
-		case 4:                /* Standing on */
-			return gs_playerposition(game) == 0
-			       && gs_playerparent(game) == obj_standable_object(game,
-			               var3 - 1);
+		case 4: /* Standing on */
+			return gs_playerposition(game) == 0 && gs_playerparent(game) == obj_standable_object(game,
+			                                                                                     var3 - 1);
 
-		case 5:                /* Sitting on */
-			return gs_playerposition(game) == 1
-			       && gs_playerparent(game) == obj_standable_object(game,
-			               var3 - 1);
+		case 5: /* Sitting on */
+			return gs_playerposition(game) == 1 && gs_playerparent(game) == obj_standable_object(game,
+			                                                                                     var3 - 1);
 
-		case 6:                /* Lying on */
-			return gs_playerposition(game) == 2
-			       && gs_playerparent(game) == obj_lieable_object(game,
-			               var3 - 1);
+		case 6: /* Lying on */
+			return gs_playerposition(game) == 2 && gs_playerparent(game) == obj_lieable_object(game,
+			                                                                                   var3 - 1);
 
-		case 7:                /* Player gender */
+		case 7: /* Player gender */
 			vt_key[0].string = "Globals";
 			vt_key[1].string = "PlayerGender";
 			gender = prop_get_integer(bundle, "I<-ss", vt_key);
@@ -390,7 +382,7 @@ static sc_bool restr_pass_task_char(sc_gameref_t game, sc_int var1, sc_int var2,
 
 		/* NPC -- decode based on var2. */
 		switch (var2) {
-		case 0:                /* In same room as */
+		case 0: /* In same room as */
 			if (var3 == 0)
 				return npc_in_room(game, npc1, gs_playerroom(game));
 			if (var3 == 1)
@@ -399,22 +391,19 @@ static sc_bool restr_pass_task_char(sc_gameref_t game, sc_int var1, sc_int var2,
 				npc2 = var3 - 2;
 			return npc_in_room(game, npc1, gs_npc_location(game, npc2) - 1);
 
-		case 3:                /* Not alone */
+		case 3: /* Not alone */
 			return npc_count_in_room(game, gs_npc_location(game, npc1) - 1) > 1;
 
-		case 4:                /* Standing on */
-			return gs_npc_position(game, npc1) == 0
-			       && gs_playerparent(game) == obj_standable_object(game, var3);
+		case 4: /* Standing on */
+			return gs_npc_position(game, npc1) == 0 && gs_playerparent(game) == obj_standable_object(game, var3);
 
-		case 5:                /* Sitting on */
-			return gs_npc_position(game, npc1) == 1
-			       && gs_playerparent(game) == obj_standable_object(game, var3);
+		case 5: /* Sitting on */
+			return gs_npc_position(game, npc1) == 1 && gs_playerparent(game) == obj_standable_object(game, var3);
 
-		case 6:                /* Lying on */
-			return gs_npc_position(game, npc1) == 2
-			       && gs_playerparent(game) == obj_lieable_object(game, var3);
+		case 6: /* Lying on */
+			return gs_npc_position(game, npc1) == 2 && gs_playerparent(game) == obj_lieable_object(game, var3);
 
-		case 7:                /* NPC gender */
+		case 7: /* NPC gender */
 			vt_key[0].string = "NPCs";
 			vt_key[1].integer = npc1;
 			vt_key[2].string = "Gender";
@@ -427,7 +416,6 @@ static sc_bool restr_pass_task_char(sc_gameref_t game, sc_int var1, sc_int var2,
 		}
 	}
 }
-
 
 /*
  * restr_pass_task_int_var()
@@ -442,7 +430,8 @@ static sc_bool restr_pass_task_int_var(sc_gameref_t game, sc_int var2, sc_int va
 
 	if (restr_trace) {
 		sc_trace("Restr: running"
-		         " integer var restriction, %ld, %ld, %ld\n", var2, var3, value);
+		         " integer var restriction, %ld, %ld, %ld\n",
+		         var2, var3, value);
 	}
 
 	/* Compare against var3 if that's what var2 says. */
@@ -482,7 +471,8 @@ static sc_bool restr_pass_task_int_var(sc_gameref_t game, sc_int var2, sc_int va
 
 			if (type != TAFVAR_NUMERIC) {
 				sc_fatal("restr_pass_task_int_var:"
-				         " non-integer in comparison, %s\n", name);
+				         " non-integer in comparison, %s\n",
+				         name);
 			}
 
 			/* Get the value in variable numbered in var3 - 1. */
@@ -505,12 +495,12 @@ static sc_bool restr_pass_task_int_var(sc_gameref_t game, sc_int var2, sc_int va
 
 		default:
 			sc_fatal("restr_pass_task_int_var:"
-			         " unknown int comparison, %ld\n", var2);
+			         " unknown int comparison, %ld\n",
+			         var2);
 			return FALSE;
 		}
 	}
 }
-
 
 /*
  * restr_pass_task_string_var()
@@ -520,23 +510,24 @@ static sc_bool restr_pass_task_int_var(sc_gameref_t game, sc_int var2, sc_int va
 static sc_bool restr_pass_task_string_var(sc_int var2, const sc_char *var4, const sc_char *value) {
 	if (restr_trace) {
 		sc_trace("Restr: running string"
-		         " var restriction, %ld, \"%s\", \"%s\"\n", var2, var4, value);
+		         " var restriction, %ld, \"%s\", \"%s\"\n",
+		         var2, var4, value);
 	}
 
 	/* Make comparison against var4 based on var2 value. */
 	switch (var2) {
 	case 0:
-		return strcmp(value, var4) == 0;   /* == */
+		return strcmp(value, var4) == 0; /* == */
 	case 1:
-		return strcmp(value, var4) != 0;   /* != */
+		return strcmp(value, var4) != 0; /* != */
 
 	default:
 		sc_fatal("restr_pass_task_string_var:"
-		         " unknown string comparison, %ld\n", var2);
+		         " unknown string comparison, %ld\n",
+		         var2);
 		return FALSE;
 	}
 }
-
 
 /*
  * restr_pass_task_var()
@@ -544,7 +535,7 @@ static sc_bool restr_pass_task_string_var(sc_int var2, const sc_char *var4, cons
  * Evaluate restrictions relating to variables.
  */
 static sc_bool restr_pass_task_var(sc_gameref_t game, sc_int var1, sc_int var2, sc_int var3,
-		const sc_char *var4) {
+                                   const sc_char *var4) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[3];
@@ -553,7 +544,8 @@ static sc_bool restr_pass_task_var(sc_gameref_t game, sc_int var1, sc_int var2, 
 
 	if (restr_trace) {
 		sc_trace("Restr: running var restriction,"
-		         " %ld, %ld, %ld, \"%s\"\n", var1, var2, var3, var4);
+		         " %ld, %ld, %ld, \"%s\"\n",
+		         var1, var2, var3, var4);
 	}
 
 	/*
@@ -592,7 +584,6 @@ static sc_bool restr_pass_task_var(sc_gameref_t game, sc_int var1, sc_int var2, 
 	}
 }
 
-
 /*
  * restr_pass_task_restriction()
  *
@@ -607,7 +598,8 @@ static sc_bool restr_pass_task_restriction(sc_gameref_t game, sc_int task, sc_in
 
 	if (restr_trace) {
 		sc_trace("Restr:"
-		         " evaluating task %ld restriction %ld\n", task, restriction);
+		         " evaluating task %ld restriction %ld\n",
+		         task, restriction);
 	}
 
 	/* Get the task restriction type. */
@@ -620,7 +612,7 @@ static sc_bool restr_pass_task_restriction(sc_gameref_t game, sc_int task, sc_in
 
 	/* Demultiplex depending on type. */
 	switch (type) {
-	case 0:                    /* Object location. */
+	case 0: /* Object location. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -630,7 +622,7 @@ static sc_bool restr_pass_task_restriction(sc_gameref_t game, sc_int task, sc_in
 		result = restr_pass_task_object_location(game, var1, var2, var3);
 		break;
 
-	case 1:                    /* Object state. */
+	case 1: /* Object state. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -638,7 +630,7 @@ static sc_bool restr_pass_task_restriction(sc_gameref_t game, sc_int task, sc_in
 		result = restr_pass_task_object_state(game, var1, var2);
 		break;
 
-	case 2:                    /* Task state. */
+	case 2: /* Task state. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -646,7 +638,7 @@ static sc_bool restr_pass_task_restriction(sc_gameref_t game, sc_int task, sc_in
 		result = restr_pass_task_task_state(game, var1, var2);
 		break;
 
-	case 3:                    /* Player and NPCs. */
+	case 3: /* Player and NPCs. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -656,7 +648,7 @@ static sc_bool restr_pass_task_restriction(sc_gameref_t game, sc_int task, sc_in
 		result = restr_pass_task_char(game, var1, var2, var3);
 		break;
 
-	case 4:                    /* Variable. */
+	case 4: /* Variable. */
 		vt_key[4].string = "Var1";
 		var1 = prop_get_integer(bundle, "I<-sisis", vt_key);
 		vt_key[4].string = "Var2";
@@ -670,17 +662,18 @@ static sc_bool restr_pass_task_restriction(sc_gameref_t game, sc_int task, sc_in
 
 	default:
 		sc_fatal("restr_pass_task_restriction:"
-		         " unknown restriction type %ld\n", type);
+		         " unknown restriction type %ld\n",
+		         type);
 	}
 
 	if (restr_trace) {
 		sc_trace("Restr: task %ld restriction"
-		         " %ld is %s\n", task, restriction, result ? "PASS" : "FAIL");
+		         " %ld is %s\n",
+		         task, restriction, result ? "PASS" : "FAIL");
 	}
 
 	return result;
 }
-
 
 /* Enumeration of restrictions combination string tokens. */
 enum {
@@ -713,7 +706,6 @@ static void restr_tokenize_end(void) {
 	restr_index = 0;
 }
 
-
 /*
  * restr_next_token()
  *
@@ -737,7 +729,6 @@ static sc_char restr_next_token(void) {
 		return restr_expression[restr_index - 1];
 	}
 }
-
 
 /* Evaluation values stack. */
 static sc_bool restr_eval_values[MAX_NESTING_DEPTH];
@@ -775,7 +766,6 @@ static void restr_eval_start(sc_gameref_t game, sc_int task) {
 	restr_lowest_fail = -1;
 }
 
-
 /*
  * restr_eval_push()
  *
@@ -787,7 +777,6 @@ static void restr_eval_push(sc_bool value) {
 
 	restr_eval_values[restr_eval_stack++] = value;
 }
-
 
 /*
  * expr_restr_action()
@@ -853,7 +842,6 @@ static void restr_eval_action(sc_char token) {
 	}
 }
 
-
 /*
  * restr_eval_result()
  *
@@ -866,7 +854,6 @@ static sc_int restr_eval_result(sc_int *lowest_fail) {
 	*lowest_fail = restr_lowest_fail;
 	return restr_eval_values[0];
 }
-
 
 /* Single lookahead token for parser. */
 static sc_char restr_lookahead = '\0';
@@ -884,7 +871,6 @@ static void restr_match(CONTEXT, sc_char c) {
 		LONG_JUMP;
 	}
 }
-
 
 /* Forward declaration for recursion. */
 static void restr_bexpr(CONTEXT);
@@ -933,7 +919,6 @@ static void restr_bexpr(CONTEXT) {
 	}
 }
 
-
 /*
  * restr_get_fail_message()
  *
@@ -956,7 +941,6 @@ static const sc_char *restr_get_fail_message(sc_gameref_t game, sc_int task, sc_
 	return !sc_strempty(message) ? message : NULL;
 }
 
-
 /*
  * restr_debug_trace()
  *
@@ -965,7 +949,6 @@ static const sc_char *restr_get_fail_message(sc_gameref_t game, sc_int task, sc_
 void restr_debug_trace(sc_bool flag) {
 	restr_trace = flag;
 }
-
 
 /*
  * restr_eval_task_restrictions()
@@ -978,7 +961,7 @@ void restr_debug_trace(sc_bool flag) {
  * value is TRUE if restrictions parsed successfully, FALSE otherwise.
  */
 sc_bool restr_eval_task_restrictions(sc_gameref_t game, sc_int task, sc_bool *pass,
-		const sc_char **fail_message) {
+                                     const sc_char **fail_message) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_int restr_count, lowest_fail;

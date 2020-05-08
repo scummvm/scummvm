@@ -20,74 +20,65 @@
  *
  */
 
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/duckman_screenshakereffects.h"
+#include "illusions/duckman/illusions_duckman.h"
 
 #include "engines/util.h"
 
 namespace Illusions {
 
 static const ScreenShakerPoint kShakerPoints0[] = {
-	{0, -2}, {0, -4}, {0, -3}, {0, -1}, {0, 1}
-};
+    {0, -2}, {0, -4}, {0, -3}, {0, -1}, {0, 1}};
 
 static const ScreenShakeEffect kShakerEffect0 = {
-	ARRAYSIZE(kShakerPoints0), 5, kShakerPoints0
-};
+    ARRAYSIZE(kShakerPoints0), 5, kShakerPoints0};
 
 static const ScreenShakerPoint kShakerPoints1[] = {
-	{-4, -5}, {4,  5}, {-3, -4}, {3, 4}, {-2, -3}, {2, 3}, {-1, -2},
-	{ 1,  2}, {0, -1}
-};
+    {-4, -5}, {4, 5}, {-3, -4}, {3, 4}, {-2, -3}, {2, 3}, {-1, -2}, {1, 2}, {0, -1}};
 
 static const ScreenShakeEffect kShakerEffect1 = {
-	ARRAYSIZE(kShakerPoints1), 2, kShakerPoints1
-};
+    ARRAYSIZE(kShakerPoints1), 2, kShakerPoints1};
 
 static const ScreenShakerPoint kShakerPoints2[] = {
-	{0, -3}, {0,  3}, {0, -2}, {0, 2}, {0, -2}, {0, 2}, {0, -1},
-	{0,  1}, {0, -1},
+    {0, -3},
+    {0, 3},
+    {0, -2},
+    {0, 2},
+    {0, -2},
+    {0, 2},
+    {0, -1},
+    {0, 1},
+    {0, -1},
 };
 
 static const ScreenShakeEffect kShakerEffect2 = {
-	ARRAYSIZE(kShakerPoints2), 2, kShakerPoints2
-};
+    ARRAYSIZE(kShakerPoints2), 2, kShakerPoints2};
 
 static const ScreenShakerPoint kShakerPoints3[] = {
-	{0, 1}, {0, -1}, {0, -2}, {0, 0}, {(int16)32768, 0}
-};
+    {0, 1}, {0, -1}, {0, -2}, {0, 0}, {(int16)32768, 0}};
 
 static const ScreenShakeEffect kShakerEffect3 = {
-	ARRAYSIZE(kShakerPoints3), 2, kShakerPoints3
-};
+    ARRAYSIZE(kShakerPoints3), 2, kShakerPoints3};
 
 static const ScreenShakerPoint kShakerPoints4[] = {
-	{0, 4}, {0, -1}, {0, 3}, {0, -2}, {0, 1}, {0, -1}, {0, 1}, {0, -1}
-};
+    {0, 4}, {0, -1}, {0, 3}, {0, -2}, {0, 1}, {0, -1}, {0, 1}, {0, -1}};
 
 static const ScreenShakeEffect kShakerEffect4 = {
-	ARRAYSIZE(kShakerPoints4), 5, kShakerPoints4
-};
+    ARRAYSIZE(kShakerPoints4), 5, kShakerPoints4};
 
 static const ScreenShakerPoint kShakerPoints5[] = {
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0},
-	{0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}
-};
+    {0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}, {0, -1}, {0, 0}, {0, 1}, {0, 0}};
 
 static const ScreenShakeEffect kShakerEffect5 = {
-	ARRAYSIZE(kShakerPoints5), 2, kShakerPoints5
-};
+    ARRAYSIZE(kShakerPoints5), 2, kShakerPoints5};
 
 static const ScreenShakeEffect *kShakerEffects[] = {
-	&kShakerEffect0,
-	&kShakerEffect1,
-	&kShakerEffect2,
-	&kShakerEffect3,
-	&kShakerEffect4,
-	&kShakerEffect5
-};
+    &kShakerEffect0,
+    &kShakerEffect1,
+    &kShakerEffect2,
+    &kShakerEffect3,
+    &kShakerEffect4,
+    &kShakerEffect5};
 
 const ScreenShakeEffect *getScreenShakeEffect(byte index) {
 	return kShakerEffects[index];

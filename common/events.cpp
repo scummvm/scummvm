@@ -27,19 +27,7 @@
 namespace Common {
 
 bool isMouseEvent(const Event &event) {
-	return event.type == EVENT_LBUTTONDOWN
-	        || event.type == EVENT_LBUTTONUP
-	        || event.type == EVENT_RBUTTONDOWN
-	        || event.type == EVENT_RBUTTONUP
-	        || event.type == EVENT_MBUTTONDOWN
-	        || event.type == EVENT_MBUTTONUP
-	        || event.type == EVENT_X1BUTTONDOWN
-	        || event.type == EVENT_X1BUTTONUP
-	        || event.type == EVENT_X2BUTTONDOWN
-	        || event.type == EVENT_X2BUTTONUP
-	        || event.type == EVENT_WHEELDOWN
-	        || event.type == EVENT_WHEELUP
-	        || event.type == EVENT_MOUSEMOVE;
+	return event.type == EVENT_LBUTTONDOWN || event.type == EVENT_LBUTTONUP || event.type == EVENT_RBUTTONDOWN || event.type == EVENT_RBUTTONUP || event.type == EVENT_MBUTTONDOWN || event.type == EVENT_MBUTTONUP || event.type == EVENT_X1BUTTONDOWN || event.type == EVENT_X1BUTTONUP || event.type == EVENT_X2BUTTONDOWN || event.type == EVENT_X2BUTTONUP || event.type == EVENT_WHEELDOWN || event.type == EVENT_WHEELUP || event.type == EVENT_MOUSEMOVE;
 }
 
 EventSource::~EventSource() {}
@@ -84,7 +72,6 @@ void EventDispatcher::dispatch() {
 				assert(event.type != EVENT_CUSTOM_ENGINE_ACTION_START);
 				assert(event.type != EVENT_CUSTOM_ENGINE_ACTION_END);
 
-
 				List<Event> mappedEvents = _mapper->mapEvent(event);
 
 				for (List<Event>::iterator j = mappedEvents.begin(); j != mappedEvents.end(); ++j) {
@@ -102,15 +89,14 @@ void EventDispatcher::clearEvents() {
 	Event event;
 
 	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
-		while (i->source->pollEvent(event)) {}
+		while (i->source->pollEvent(event)) {
+		}
 	}
 }
-
 
 void EventDispatcher::registerMapper(EventMapper *mapper) {
 	_mapper = mapper;
 }
-
 
 void EventDispatcher::registerSource(EventSource *source, bool autoFree) {
 	SourceEntry newEntry;
@@ -179,9 +165,8 @@ void EventDispatcher::dispatchPoll() {
 
 class KeyboardRepeatEventSourceWrapper : public Common::EventSource {
 public:
-	KeyboardRepeatEventSourceWrapper(Common::EventSource *delegate) :
-			_delegate(delegate),
-			_keyRepeatTime(0) {
+	KeyboardRepeatEventSourceWrapper(Common::EventSource *delegate) : _delegate(delegate),
+	                                                                  _keyRepeatTime(0) {
 		assert(delegate);
 	}
 

@@ -25,22 +25,22 @@
  * Copyright (c) 1994-1995 Janusz B. Wisniewski and L.K. Avalon
  */
 
+#include "cge/vga13h.h"
+#include "cge/bitmap.h"
+#include "cge/cge.h"
+#include "cge/cge_main.h"
+#include "cge/general.h"
+#include "cge/text.h"
 #include "common/array.h"
 #include "common/config-manager.h"
 #include "common/rect.h"
 #include "graphics/palette.h"
-#include "cge/general.h"
-#include "cge/vga13h.h"
-#include "cge/bitmap.h"
-#include "cge/text.h"
-#include "cge/cge_main.h"
-#include "cge/cge.h"
 
 namespace CGE {
 
 Seq *getConstantSeq(bool seqFlag) {
-	const Seq seq1[] = { { 0, 0, 0, 0, 0 } };
-	const Seq seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
+	const Seq seq1[] = {{0, 0, 0, 0, 0}};
+	const Seq seq2[] = {{0, 1, 0, 0, 0}, {1, 0, 0, 0, 0}};
 
 	Seq *seq;
 	if (seqFlag) {
@@ -56,9 +56,9 @@ Seq *getConstantSeq(bool seqFlag) {
 }
 
 Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
-	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
-	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
-	  _ext(NULL), _ref(-1), _scene(0), _vm(vm) {
+    : _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
+      _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
+      _ext(NULL), _ref(-1), _scene(0), _vm(vm) {
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
 	_ref = 0;
@@ -187,7 +187,7 @@ Sprite *Sprite::expand() {
 	if (!*_file)
 		return this;
 
-	static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
+	static const char *Comd[] = {"Name", "Phase", "Seq", "Near", "Take", NULL};
 	char fname[kPathMax];
 
 	Common::Array<BitmapPtr> shplist;
@@ -468,7 +468,7 @@ BitmapPtr Sprite::ghost() {
 	bmp->_h = e->_b1->_h;
 	bmp->_b = new HideDesc[bmp->_h];
 	assert(bmp->_b != NULL);
-	bmp->_v = (uint8 *) memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
+	bmp->_v = (uint8 *)memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
 	bmp->_map = (e->_y1 << 16) + e->_x1;
 	return bmp;
 }
@@ -477,7 +477,7 @@ void Sprite::sync(Common::Serializer &s) {
 	uint16 unused = 0;
 
 	s.syncAsUint16LE(unused);
-	s.syncAsUint16LE(unused);	// _ext
+	s.syncAsUint16LE(unused); // _ext
 	s.syncAsUint16LE(_ref);
 	s.syncAsByte(_scene);
 
@@ -535,8 +535,8 @@ void Sprite::sync(Common::Serializer &s) {
 	s.syncBytes((byte *)&_file[0], 9);
 	_file[8] = '\0';
 
-	s.syncAsUint16LE(unused);	// _prev
-	s.syncAsUint16LE(unused);	// _next
+	s.syncAsUint16LE(unused); // _prev
+	s.syncAsUint16LE(unused); // _next
 }
 
 Queue::Queue(bool show) : _head(NULL), _tail(NULL), _show(show) {
@@ -645,7 +645,6 @@ Vga::Vga(CGEEngine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _
 	if (ConfMan.getBool("enable_color_blind"))
 		_mono = 1;
 
-
 	_oldColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	_newColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	getColors(_oldColors);
@@ -658,7 +657,7 @@ Vga::~Vga() {
 	_mono = 0;
 
 	Common::String buffer = "";
-/*
+	/*
 	clear(0);
 	setMode(_oldMode);
 	setColors();
@@ -707,7 +706,7 @@ uint8 Vga::closest(Dac *pal, const uint8 colR, const uint8 colG, const uint8 col
 		uint16 l = pal[i]._r + pal[i]._g + pal[i]._b;
 		if (!l)
 			l++;
-		int  r = f(pal[i]._r, l), g = f(pal[i]._g, l), b = f(pal[i]._b, l);
+		int r = f(pal[i]._r, l), g = f(pal[i]._g, l), b = f(pal[i]._b, l);
 		uint16 D = ((r > R) ? (r - R) : (R - r)) +
 		           ((g > G) ? (g - G) : (G - g)) +
 		           ((b > B) ? (b - B) : (B - b)) +
@@ -717,7 +716,7 @@ uint8 Vga::closest(Dac *pal, const uint8 colR, const uint8 colG, const uint8 col
 			found = i;
 			dif = D;
 			if (D == 0)
-				break;    // exact!
+				break; // exact!
 		}
 	}
 	return found;
@@ -730,8 +729,8 @@ uint8 *Vga::glass(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB
 		uint16 i;
 		for (i = 0; i < 256; i++) {
 			x[i] = closest(pal, ((uint16)(pal[i]._r) * colR) / 255,
-			                    ((uint16)(pal[i]._g) * colG) / 255,
-			                    ((uint16)(pal[i]._b) * colB) / 255);
+			               ((uint16)(pal[i]._g) * colG) / 255,
+			               ((uint16)(pal[i]._b) * colB) / 255);
 		}
 	}
 	return x;
@@ -902,7 +901,6 @@ void Bitmap::xShow(int16 x, int16 y) {
 	}
 }
 
-
 void Bitmap::show(int16 x, int16 y) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::show(%d, %d)", x, y);
 
@@ -956,7 +954,6 @@ void Bitmap::show(int16 x, int16 y) {
 	}
 }
 
-
 void Bitmap::hide(int16 x, int16 y) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::hide(%d, %d)", x, y);
 
@@ -988,7 +985,7 @@ SceneLight::SceneLight(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	setShapeList(PR);
 }
 
-Speaker::Speaker(CGEEngine *vm): Sprite(vm, NULL), _vm(vm) {
+Speaker::Speaker(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *SP = new BitmapPtr[3];
 	SP[0] = new Bitmap(_vm, "SPK_L");
@@ -998,7 +995,7 @@ Speaker::Speaker(CGEEngine *vm): Sprite(vm, NULL), _vm(vm) {
 	setShapeList(SP);
 }
 
-PocLight::PocLight(CGEEngine *vm): Sprite(vm, NULL), _vm(vm) {
+PocLight::PocLight(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *LI = new BitmapPtr[5];
 	LI[0] = new Bitmap(_vm, "LITE0");

@@ -21,6 +21,8 @@
  */
 
 #include "ultima/ultima4/ultima4.h"
+#include "common/debug.h"
+#include "common/system.h"
 #include "ultima/ultima4/controllers/intro_controller.h"
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
@@ -39,31 +41,28 @@
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/weapon.h"
-#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
+#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
-#include "common/debug.h"
-#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 Ultima4Engine *g_ultima;
 
-Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _armors(nullptr),
-		_codex(nullptr), _config(nullptr), _context(nullptr), _death(nullptr),
-		_dialogueLoaders(nullptr), _game(nullptr), _items(nullptr), _music(nullptr),
-		_imageLoaders(nullptr), _mapLoaders(nullptr), _moongates(nullptr),
-		_responseParts(nullptr), _saveGame(nullptr), _screen(nullptr), _shrines(nullptr),
-		_soundManager(nullptr), _spells(nullptr), _tileMaps(nullptr), _tileRules(nullptr),
-		_tileSets(nullptr), _weapons(nullptr) {
+Ultima4Engine::Ultima4Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : Shared::UltimaEngine(syst, gameDesc), _saveSlotToLoad(-1), _armors(nullptr),
+                                                                                             _codex(nullptr), _config(nullptr), _context(nullptr), _death(nullptr),
+                                                                                             _dialogueLoaders(nullptr), _game(nullptr), _items(nullptr), _music(nullptr),
+                                                                                             _imageLoaders(nullptr), _mapLoaders(nullptr), _moongates(nullptr),
+                                                                                             _responseParts(nullptr), _saveGame(nullptr), _screen(nullptr), _shrines(nullptr),
+                                                                                             _soundManager(nullptr), _spells(nullptr), _tileMaps(nullptr), _tileRules(nullptr),
+                                                                                             _tileSets(nullptr), _weapons(nullptr) {
 	g_ultima = this;
 	g_armors = nullptr;
 	g_codex = nullptr;
@@ -203,11 +202,7 @@ void Ultima4Engine::setToJourneyOnwards() {
 }
 
 bool Ultima4Engine::canSaveGameStateCurrently(bool isAutosave) {
-	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game
-		&& (
-			!g_context->_location->_prev ||
-			(g_context->_location->_context & (CTX_DUNGEON | CTX_COMBAT)) == CTX_DUNGEON
-		);
+	return g_game != nullptr && g_context != nullptr && eventHandler->getController() == g_game && (!g_context->_location->_prev || (g_context->_location->_context & (CTX_DUNGEON | CTX_COMBAT)) == CTX_DUNGEON);
 }
 
 Common::Error Ultima4Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
@@ -219,7 +214,6 @@ Common::Error Ultima4Engine::saveGameState(int slot, const Common::String &desc,
 
 	return result;
 }
-
 
 Common::Error Ultima4Engine::loadGameStream(Common::SeekableReadStream *stream) {
 	g_ultima->_saveGame->load(stream);

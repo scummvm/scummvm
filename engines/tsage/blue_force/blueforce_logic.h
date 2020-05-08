@@ -24,10 +24,10 @@
 #define TSAGE_BLUEFORCE_LOGIC_H
 
 #include "common/scummsys.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 
 namespace TsAGE {
 
@@ -37,7 +37,7 @@ using namespace TsAGE;
 
 #define BF_INVENTORY (*((::TsAGE::BlueForce::BlueForceInvObjectList *)g_globals->_inventory))
 
-class BlueForceGame: public Game {
+class BlueForceGame : public Game {
 public:
 	void start() override;
 	Scene *createScene(int sceneNumber) override;
@@ -49,11 +49,12 @@ public:
 };
 
 #define OBJ_ARRAY_SIZE 10
-class AObjectArray: public EventHandler {
+class AObjectArray : public EventHandler {
 public:
 	EventHandler *_objList[OBJ_ARRAY_SIZE];
 	bool _inUse;
 	int getNewIndex();
+
 public:
 	AObjectArray();
 	void clear();
@@ -70,11 +71,12 @@ public:
 	void remove() override { EventHandler::remove(); }
 };
 
-class Timer: public EventHandler {
+class Timer : public EventHandler {
 public:
 	Action *_tickAction;
 	EventHandler *_endHandler;
 	uint32 _endFrame;
+
 public:
 	Timer();
 	void set(uint32 delay, EventHandler *endHandler);
@@ -86,9 +88,10 @@ public:
 	void dispatch() override;
 };
 
-class TimerExt: public Timer {
+class TimerExt : public Timer {
 public:
 	Action *_newAction;
+
 public:
 	TimerExt();
 	void set(uint32 delay, EventHandler *endHandler, Action *action);
@@ -99,8 +102,7 @@ public:
 	void signal() override;
 };
 
-
-class SceneHotspotExt: public SceneHotspot {
+class SceneHotspotExt : public SceneHotspot {
 public:
 	int _state;
 
@@ -112,12 +114,12 @@ public:
 	}
 };
 
-class SceneItemType2: public SceneHotspot {
+class SceneItemType2 : public SceneHotspot {
 public:
 	virtual void startMove(SceneObject *sceneObj, va_list va);
 };
 
-class NamedObject: public SceneObject {
+class NamedObject : public SceneObject {
 public:
 	Common::String getClassName() override { return "NamedObject"; }
 	void synchronize(Serializer &s) override;
@@ -125,7 +127,7 @@ public:
 	bool startAction(CursorType action, Event &event) override;
 };
 
-class NamedObjectExt: public NamedObject {
+class NamedObjectExt : public NamedObject {
 public:
 	int _flag;
 
@@ -137,7 +139,7 @@ public:
 	}
 };
 
-class NamedObject2: public NamedObject {
+class NamedObject2 : public NamedObject {
 public:
 	int _talkCount;
 
@@ -153,7 +155,7 @@ public:
 	}
 };
 
-class CountdownObject: public NamedObject {
+class CountdownObject : public NamedObject {
 public:
 	int _countDown;
 	CountdownObject();
@@ -164,7 +166,7 @@ public:
 	void dispatch() override;
 };
 
-class FollowerObject: public NamedObject {
+class FollowerObject : public NamedObject {
 public:
 	SceneObject *_object;
 	FollowerObject();
@@ -178,7 +180,7 @@ public:
 	void setup(SceneObject *object, int visage, int frameNum, int yDiff);
 };
 
-class FocusObject: public NamedObject {
+class FocusObject : public NamedObject {
 public:
 	GfxSurface _img;
 
@@ -189,13 +191,20 @@ public:
 	void process(Event &event) override;
 };
 
-enum ExitFrame { EXITFRAME_N = 1, EXITFRAME_NE = 2, EXITFRAME_E = 3, EXITFRAME_SE = 4,
-		EXITFRAME_S = 5, EXITFRAME_SW = 6, EXITFRAME_W = 7, EXITFRAME_NW = 8 };
+enum ExitFrame { EXITFRAME_N = 1,
+	             EXITFRAME_NE = 2,
+	             EXITFRAME_E = 3,
+	             EXITFRAME_SE = 4,
+	             EXITFRAME_S = 5,
+	             EXITFRAME_SW = 6,
+	             EXITFRAME_W = 7,
+	             EXITFRAME_NW = 8 };
 
-class SceneExt: public Scene {
+class SceneExt : public Scene {
 private:
 	static void startStrip();
 	static void endStrip();
+
 public:
 	AObjectArray _timerList, _objArray2;
 	bool _savedPlayerEnabled;
@@ -204,6 +213,7 @@ public:
 
 	EventHandler *_focusObject;
 	Visage _cursorVisage;
+
 public:
 	SceneExt();
 
@@ -223,10 +233,11 @@ public:
 	void clearScreen();
 };
 
-class PalettedScene: public SceneExt {
+class PalettedScene : public SceneExt {
 public:
 	ScenePalette _palette;
 	bool _hasFader;
+
 public:
 	PalettedScene();
 
@@ -238,7 +249,7 @@ public:
 	void transition(const byte *arrBufferRGB, int arg8, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag);
 };
 
-class SceneHandlerExt: public SceneHandler {
+class SceneHandlerExt : public SceneHandler {
 public:
 	void postInit(SceneObjectList *OwnerList = NULL) override;
 	void process(Event &event) override;
@@ -250,6 +261,7 @@ public:
 class BlueForceInvObjectList : public InvObjectList {
 private:
 	static bool SelectItem(int objectNumber);
+
 public:
 	InvObject _none;
 	InvObject _colt45;
@@ -349,12 +361,13 @@ public:
 	}
 };
 
-class SceneMessage: public Action {
+class SceneMessage : public Action {
 private:
 	Common::String _message;
 
 	void draw();
 	void clear();
+
 public:
 	void setup(const Common::String &msg) { _message = msg; }
 
@@ -364,11 +377,12 @@ public:
 	void process(Event &event) override;
 };
 
-class IntroSceneText: public SceneText {
+class IntroSceneText : public SceneText {
 public:
 	Action *_action;
 	uint32 _frameNumber;
 	int _diff;
+
 public:
 	IntroSceneText();
 	void setup(const Common::String &msg, Action *action);

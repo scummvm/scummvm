@@ -25,10 +25,10 @@
 #include "backends/saves/default/default-saves.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/encoding.h"
 #include "common/file.h"
 #include "common/translation.h"
 #include "common/unzip.h"
-#include "common/encoding.h"
 
 namespace Networking {
 
@@ -55,7 +55,7 @@ Common::Archive *HandlerUtils::getZipArchive() {
 	Common::ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, ARCHIVE_NAME);
 	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		Common::ArchiveMember       const &m = **it;
+		Common::ArchiveMember const &m = **it;
 		Common::SeekableReadStream *const stream = m.createReadStream();
 		Common::Archive *zipArchive = Common::makeZipArchive(stream);
 		if (zipArchive)
@@ -120,7 +120,8 @@ Common::String HandlerUtils::normalizePath(const Common::String &path) {
 			normalized += c;
 		}
 	}
-	if (slash) normalized += '/';
+	if (slash)
+		normalized += '/';
 	return normalized;
 }
 
@@ -130,9 +131,9 @@ bool HandlerUtils::hasForbiddenCombinations(const Common::String &path) {
 
 bool HandlerUtils::isBlacklisted(const Common::String &path) {
 	const char *blacklist[] = {
-		"/etc",
-		"/bin",
-		"c:/windows" // just saying: I know guys who install windows on another drives
+	    "/etc",
+	    "/bin",
+	    "c:/windows" // just saying: I know guys who install windows on another drives
 	};
 
 	// normalize path
@@ -204,16 +205,14 @@ void HandlerUtils::setMessageHandler(Client &client, Common::String message, Com
 
 void HandlerUtils::setFilesManagerErrorMessageHandler(Client &client, Common::String message, Common::String redirectTo) {
 	setMessageHandler(
-		client,
-		Common::String::format(
-			"%s<br/><a href=\"files%s?path=%s\">%s</a>",
-			message.c_str(),
-			client.queryParameter("ajax") == "true" ? "AJAX" : "",
-			"%2F", //that's encoded "/"
-			toUtf8(_("Back to the files manager")).c_str()
-		),
-		redirectTo
-	);
+	    client,
+	    Common::String::format(
+	        "%s<br/><a href=\"files%s?path=%s\">%s</a>",
+	        message.c_str(),
+	        client.queryParameter("ajax") == "true" ? "AJAX" : "",
+	        "%2F", //that's encoded "/"
+	        toUtf8(_("Back to the files manager")).c_str()),
+	    redirectTo);
 }
 
 } // End of namespace Networking

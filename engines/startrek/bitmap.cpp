@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 
 #include "startrek/bitmap.h"
 #include "startrek/startrek.h"
@@ -62,7 +62,6 @@ Bitmap::~Bitmap() {
 	if (pixels != nullptr)
 		delete[] pixels;
 }
-
 
 TextBitmap::TextBitmap(int w, int h) {
 	width = w;

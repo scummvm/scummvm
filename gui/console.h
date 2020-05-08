@@ -23,8 +23,8 @@
 #ifndef CONSOLE_DIALOG_H
 #define CONSOLE_DIALOG_H
 
-#include "gui/dialog.h"
 #include "common/str.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 
@@ -65,20 +65,20 @@ class ScrollBarWidget;
 class ConsoleDialog : public Dialog {
 public:
 	typedef bool (*InputCallbackProc)(ConsoleDialog *console, const char *input, void *refCon);
-	typedef bool (*CompletionCallbackProc)(ConsoleDialog* console, const char *input, Common::String &completion, void *refCon);
+	typedef bool (*CompletionCallbackProc)(ConsoleDialog *console, const char *input, Common::String &completion, void *refCon);
 
 protected:
 	enum {
-		kBufferSize   = 32768,
+		kBufferSize = 32768,
 		kCharsPerLine = 128,
 
-		kHistorySize  = 20
+		kHistorySize = 20
 	};
 
 	const Graphics::Font *_font;
 
 	char _buffer[kBufferSize];
-	int  _linesInBuffer;
+	int _linesInBuffer;
 
 	int _pageWidth;
 	int _linesPerPage;
@@ -90,7 +90,7 @@ protected:
 	int _promptStartPos;
 	int _promptEndPos;
 
-	bool   _caretVisible;
+	bool _caretVisible;
 	uint32 _caretTime;
 
 	enum SlideMode {
@@ -100,7 +100,7 @@ protected:
 	};
 
 	SlideMode _slideMode;
-	uint32    _slideTime;
+	uint32 _slideTime;
 
 	ScrollBarWidget *_scrollBar;
 

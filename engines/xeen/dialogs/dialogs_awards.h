@@ -23,14 +23,15 @@
 #ifndef XEEN_DIALOGS_AWARDS_H
 #define XEEN_DIALOGS_AWARDS_H
 
-#include "xeen/dialogs/dialogs.h"
 #include "xeen/character.h"
+#include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
 
 class Awards : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
+
 private:
 	Awards(XeenEngine *vm) : ButtonContainer(vm) {}
 
@@ -43,6 +44,7 @@ private:
 	 * Add buttons for the dialog
 	 */
 	void addButtons();
+
 public:
 	static void show(XeenEngine *vm, const Character *ch);
 };

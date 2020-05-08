@@ -23,8 +23,8 @@
 #ifndef GOB_MINIGAMES_GEISHA_PENETRATION_H
 #define GOB_MINIGAMES_GEISHA_PENETRATION_H
 
-#include "common/system.h"
 #include "common/list.h"
+#include "common/system.h"
 
 #include "gob/sound/sounddesc.h"
 
@@ -54,10 +54,10 @@ public:
 	void cheatWin();
 
 private:
-	static const int kModeCount  = 2;
+	static const int kModeCount = 2;
 	static const int kFloorCount = 3;
 
-	static const int kMapWidth  = 17;
+	static const int kMapWidth = 17;
 	static const int kMapHeight = 13;
 
 	static const int kPaletteSize = 16;
@@ -65,7 +65,7 @@ private:
 	static const byte kPalettes[kFloorCount][3 * kPaletteSize];
 	static const byte kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight];
 
-	static const int kEnemyCount     =  9;
+	static const int kEnemyCount = 9;
 	static const int kMaxBulletCount = 10;
 
 	struct MapObject {
@@ -171,12 +171,12 @@ private:
 
 	ManagedSub *_sub;
 
-	Common::List<MapObject>    _walls;
-	Common::List<MapObject>    _exits;
-	Common::List<MapObject>    _shields;
+	Common::List<MapObject> _walls;
+	Common::List<MapObject> _exits;
+	Common::List<MapObject> _shields;
 	Common::List<ManagedMouth> _mouths;
 
-	ManagedEnemy  _enemies[kEnemyCount];
+	ManagedEnemy _enemies[kEnemyCount];
 	ManagedBullet _bullets[kMaxBulletCount];
 
 	Common::List<MapObject *> _blockingObjects;
@@ -191,7 +191,6 @@ private:
 	SoundDesc _soundExplode;
 
 	bool _isPlaying;
-
 
 	void init();
 	void deinit();

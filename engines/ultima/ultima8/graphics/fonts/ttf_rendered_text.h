@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_FONTS_SHAPERENDEREDTEXT_H
 #define ULTIMA8_GRAPHICS_FONTS_SHAPERENDEREDTEXT_H
 
-#include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
+#include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -40,9 +40,9 @@ public:
 	~TTFRenderedText() override;
 
 	void draw(RenderSurface *surface, int x, int y,
-	                  bool destmasked = false) override;
+	          bool destmasked = false) override;
 	void drawBlended(RenderSurface *surface, int x, int y, uint32 col,
-	                         bool destmasked = false) override;
+	                 bool destmasked = false) override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 

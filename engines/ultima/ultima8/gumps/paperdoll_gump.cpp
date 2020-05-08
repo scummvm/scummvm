@@ -20,22 +20,22 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/paperdoll_gump.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/gumps/widgets/button_widget.h"
+#include "ultima/ultima8/graphics/main_shape_archive.h"
+#include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/gumps/mini_stats_gump.h"
+#include "ultima/ultima8/gumps/widgets/button_widget.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -43,33 +43,30 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(PaperdollGump, ContainerGump)
 
-
-
 // lots of CONSTANTS...
 struct equipcoords_struct {
 	int x, y;
 } equipcoords[] = {
-	{ 0, 0 },
-	{ 24, 60 }, // shield
-	{ 36, 50 }, // arm
-	{ 40, 26 }, // head
-	{ 40, 63 }, // body
-	{ 40, 92 }, // legs
-	{ 16, 18 }  // weapon
+    {0, 0},
+    {24, 60}, // shield
+    {36, 50}, // arm
+    {40, 26}, // head
+    {40, 63}, // body
+    {40, 92}, // legs
+    {16, 18}  // weapon
 };
 
 struct statcords_struct {
 
 	int xd, x, y;
 } statcoords[] = {
-	{ 90, 130, 24 },
-	{ 90, 130, 33 },
-	{ 90, 130, 42 },
-	{ 90, 130, 51 },
-	{ 90, 130, 60 },
-	{ 90, 130, 69 },
-	{ 90, 130, 78 }
-};
+    {90, 130, 24},
+    {90, 130, 33},
+    {90, 130, 42},
+    {90, 130, 51},
+    {90, 130, 60},
+    {90, 130, 69},
+    {90, 130, 78}};
 
 static const int statdescwidth = 29;
 static const int statwidth = 15;
@@ -80,17 +77,16 @@ static const int statbuttonshape = 38;
 static const int statbuttonx = 81;
 static const int statbuttony = 84;
 
-
 PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
-		_backpackRect(49, 25, 10, 25) {
+                                 _backpackRect(49, 25, 10, 25) {
 	Common::fill(_cachedText, _cachedText + 14, (RenderedText *)nullptr);
 	Common::fill(_cachedVal, _cachedVal + 7, 0);
 }
 
 PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
-		uint32 Flags, int32 layer)
-		: ContainerGump(shape_, frameNum, owner, Flags, layer),
-		_statButtonId(0), _backpackRect(49, 25, 10, 25) {
+                             uint32 Flags, int32 layer)
+    : ContainerGump(shape_, frameNum, owner, Flags, layer),
+      _statButtonId(0), _backpackRect(49, 25, 10, 25) {
 	_statButtonId = 0;
 
 	Common::fill(_cachedText, _cachedText + 14, (RenderedText *)nullptr);
@@ -121,14 +117,15 @@ void PaperdollGump::Close(bool no_del) {
 
 	// Make every item leave the fast area
 	Container *c = getContainer(_owner);
-	if (!c) return; // Container gone!?
+	if (!c)
+		return; // Container gone!?
 
 	Std::list<Item *> &contents = c->_contents;
 	Std::list<Item *>::iterator iter = contents.begin();
 	while (iter != contents.end()) {
 		Item *item = *iter;
 		++iter;
-		item->leaveFastArea();  // Can destroy the item
+		item->leaveFastArea(); // Can destroy the item
 	}
 
 	Item *o = getItem(_owner);
@@ -151,16 +148,16 @@ void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
 
 	if (!_cachedText[2 * n])
 		_cachedText[2 * n] = descfont->renderText(text, remaining,
-		                     statdescwidth, statheight,
-		                     Font::TEXT_RIGHT);
+		                                          statdescwidth, statheight,
+		                                          Font::TEXT_RIGHT);
 	_cachedText[2 * n]->draw(surf, statcoords[n].xd, statcoords[n].y);
 
 	if (!_cachedText[2 * n + 1] || _cachedVal[n] != val) {
 		delete _cachedText[2 * n + 1];
 		sprintf(buf, "%d", val);
 		_cachedText[2 * n + 1] = font->renderText(buf, remaining,
-		                         statwidth, statheight,
-		                         Font::TEXT_RIGHT);
+		                                          statwidth, statheight,
+		                                          Font::TEXT_RIGHT);
 		_cachedVal[n] = val;
 	}
 	_cachedText[2 * n + 1]->draw(surf, statcoords[n].x, statcoords[n].y);
@@ -195,7 +192,8 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	for (int i = 6; i >= 1; --i) { // constants
 		Item *item = getItem(a->getEquip(i));
-		if (!item) continue;
+		if (!item)
+			continue;
 		int32 itemx, itemy;
 		uint32 frame = item->getFrame() + 1;
 
@@ -212,8 +210,7 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 		int32 itemx, itemy;
 		itemx = _draggingX + _itemArea.x;
 		itemy = _draggingY + _itemArea.y;
-		Shape *s = GameData::get_instance()->getMainShapes()->
-		           getShape(_draggingShape);
+		Shape *s = GameData::get_instance()->getMainShapes()->getShape(_draggingShape);
 		assert(s);
 		surf->PaintInvisible(s, _draggingFrame, itemx, itemy, false, (_draggingFlags & Item::FLG_FLIPPED) != 0);
 	}
@@ -223,7 +220,8 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 // (mx,my) are relative to parent
 uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
-	if (objId_ && objId_ != 65535) return objId_;
+	if (objId_ && objId_ != 65535)
+		return objId_;
 
 	ParentToGump(mx, my);
 
@@ -234,7 +232,8 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 
 	for (int i = 1; i <= 6; ++i) {
 		Item *item = getItem(a->getEquip(i));
-		if (!item) continue;
+		if (!item)
+			continue;
 		int32 itemx, itemy;
 
 		itemx = equipcoords[i].x;
@@ -304,11 +303,10 @@ bool PaperdollGump::StartDraggingItem(Item *item, int mx, int my) {
 	assert(frame);
 
 	Mouse::get_instance()->setDraggingOffset(frame->_width / 2 - frame->_xoff,
-	        frame->_height / 2 - frame->_yoff);
+	                                         frame->_height / 2 - frame->_yoff);
 
 	return ret;
 }
-
 
 bool PaperdollGump::DraggingItem(Item *item, int mx, int my) {
 	if (!_itemArea.InRect(mx, my)) {
@@ -382,7 +380,7 @@ void PaperdollGump::DropItem(Item *item, int mx, int my) {
 
 void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 	if (child->getObjId() == _statButtonId &&
-	        message == ButtonWidget::BUTTON_CLICK) {
+	    message == ButtonWidget::BUTTON_CLICK) {
 		// check if there already is an open MiniStatsGump
 		Gump *desktop = Ultima8Engine::get_instance()->getDesktopGump();
 		Gump *statsgump = desktop->FindGump(MiniStatsGump::ClassType);
@@ -408,7 +406,6 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-
 void PaperdollGump::saveData(Common::WriteStream *ws) {
 	ContainerGump::saveData(ws);
 
@@ -416,7 +413,8 @@ void PaperdollGump::saveData(Common::WriteStream *ws) {
 }
 
 bool PaperdollGump::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!ContainerGump::loadData(rs, version)) return false;
+	if (!ContainerGump::loadData(rs, version))
+		return false;
 
 	_statButtonId = rs->readUint16LE();
 

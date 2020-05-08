@@ -22,13 +22,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/rect.h"
 
-#include "sword2/sword2.h"
+#include "sword2/console.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
-#include "sword2/console.h"
 #include "sword2/logic.h"
 #include "sword2/maketext.h"
 #include "sword2/memory.h"
@@ -36,6 +34,7 @@
 #include "sword2/resman.h"
 #include "sword2/router.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -67,7 +66,7 @@ void Debugger::makeDebugTextBlock(char *text, int16 x, int16 y) {
 void Debugger::buildDebugText() {
 	char buf[128];
 
-	int32 showVarNo;		// for variable watching
+	int32 showVarNo; // for variable watching
 	int32 showVarPos;
 	int32 varNo;
 
@@ -112,7 +111,7 @@ void Debugger::buildDebugText() {
 
 	// testingSnR indicator
 
-	if (_testingSnR) {		// see fnAddHuman()
+	if (_testingSnR) { // see fnAddHuman()
 		sprintf(buf, "TESTING LOGIC STABILITY!");
 		makeDebugTextBlock(buf, 0, 105);
 	}
@@ -166,7 +165,7 @@ void Debugger::buildDebugText() {
 	// general debug info
 
 	if (_displayDebugText) {
-/*
+		/*
 		// CD in use
 		sprintf(buf, "CD-%d", currentCD);
 		makeDebugTextBlock(buf, 0, 0);
@@ -176,14 +175,14 @@ void Debugger::buildDebugText() {
 
 		if (_vm->_logic->readVar(CLICKED_ID))
 			sprintf(buf, "last click at %d,%d (id %d: %s)",
-				_vm->_logic->readVar(MOUSE_X),
-				_vm->_logic->readVar(MOUSE_Y),
-				_vm->_logic->readVar(CLICKED_ID),
-				_vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID)));
+			        _vm->_logic->readVar(MOUSE_X),
+			        _vm->_logic->readVar(MOUSE_Y),
+			        _vm->_logic->readVar(CLICKED_ID),
+			        _vm->_resman->fetchName(_vm->_logic->readVar(CLICKED_ID)));
 		else
 			sprintf(buf, "last click at %d,%d (---)",
-				_vm->_logic->readVar(MOUSE_X),
-				_vm->_logic->readVar(MOUSE_Y));
+			        _vm->_logic->readVar(MOUSE_X),
+			        _vm->_logic->readVar(MOUSE_Y));
 
 		makeDebugTextBlock(buf, 0, 15);
 
@@ -195,14 +194,14 @@ void Debugger::buildDebugText() {
 
 		if (mouseTouching)
 			sprintf(buf, "mouse %d,%d (id %d: %s)",
-				mouseX + screenInfo->scroll_offset_x,
-				mouseY + screenInfo->scroll_offset_y,
-				mouseTouching,
-				_vm->_resman->fetchName(mouseTouching));
+			        mouseX + screenInfo->scroll_offset_x,
+			        mouseY + screenInfo->scroll_offset_y,
+			        mouseTouching,
+			        _vm->_resman->fetchName(mouseTouching));
 		else
 			sprintf(buf, "mouse %d,%d (not touching)",
-				mouseX + screenInfo->scroll_offset_x,
-				mouseY + screenInfo->scroll_offset_y);
+			        mouseX + screenInfo->scroll_offset_x,
+			        mouseY + screenInfo->scroll_offset_y);
 
 		makeDebugTextBlock(buf, 0, 30);
 
@@ -211,17 +210,17 @@ void Debugger::buildDebugText() {
 
 		if (_graphAnimRes)
 			sprintf(buf, "player %d,%d %s (%d) #%d/%d",
-				screenInfo->player_feet_x,
-				screenInfo->player_feet_y,
-				_vm->_resman->fetchName(_graphAnimRes),
-				_graphAnimRes,
-				_graphAnimPc,
-				_graphNoFrames);
+			        screenInfo->player_feet_x,
+			        screenInfo->player_feet_y,
+			        _vm->_resman->fetchName(_graphAnimRes),
+			        _graphAnimRes,
+			        _graphAnimPc,
+			        _graphNoFrames);
 		else
 			sprintf(buf, "player %d,%d --- %d",
-				screenInfo->player_feet_x,
-				screenInfo->player_feet_y,
-				_graphAnimPc);
+			        screenInfo->player_feet_x,
+			        screenInfo->player_feet_y,
+			        _graphAnimPc);
 
 		makeDebugTextBlock(buf, 0, 45);
 
@@ -279,17 +278,17 @@ void Debugger::buildDebugText() {
 
 		if (_speechScriptWaiting) {
 			sprintf(buf, "script waiting for %s (%d)",
-				_vm->_resman->fetchName(_speechScriptWaiting),
-				_speechScriptWaiting);
+			        _vm->_resman->fetchName(_speechScriptWaiting),
+			        _speechScriptWaiting);
 			makeDebugTextBlock(buf, 0, 90);
 		}
 
 		// variable watch display
 
-		showVarPos = 115;	// y-coord for first showVar
+		showVarPos = 115; // y-coord for first showVar
 
 		for (showVarNo = 0; showVarNo < MAX_SHOWVARS; showVarNo++) {
-			varNo = _showVar[showVarNo];	// get variable number
+			varNo = _showVar[showVarNo]; // get variable number
 
 			// if non-zero ie. cannot watch 'id' but not needed
 			// anyway because it changes throughout the logic loop
@@ -297,7 +296,7 @@ void Debugger::buildDebugText() {
 			if (varNo) {
 				sprintf(buf, "var(%d) = %d", varNo, _vm->_logic->readVar(varNo));
 				makeDebugTextBlock(buf, 530, showVarPos);
-				showVarPos += 15;	// next line down
+				showVarPos += 15; // next line down
 			}
 		}
 
@@ -364,10 +363,10 @@ void Debugger::plotCrossHair(int16 x, int16 y, uint8 pen) {
 }
 
 void Debugger::drawRect(int16 x1, int16 y1, int16 x2, int16 y2, uint8 pen) {
-	_vm->_screen->drawLine(x1, y1, x2, y1, pen);	// top edge
-	_vm->_screen->drawLine(x1, y2, x2, y2, pen);	// bottom edge
-	_vm->_screen->drawLine(x1, y1, x1, y2, pen);	// left edge
-	_vm->_screen->drawLine(x2, y1, x2, y2, pen);	// right edge
+	_vm->_screen->drawLine(x1, y1, x2, y1, pen); // top edge
+	_vm->_screen->drawLine(x1, y2, x2, y2, pen); // bottom edge
+	_vm->_screen->drawLine(x1, y1, x1, y2, pen); // left edge
+	_vm->_screen->drawLine(x2, y1, x2, y2, pen); // right edge
 }
 
 } // End of namespace Sword2

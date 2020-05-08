@@ -306,13 +306,13 @@ bool PathFinding::findPath(int16 x, int16 y, int16 destx, int16 desty) {
 	}
 
 	// no direct line, we use the standard A* algorithm
-	memset(_sq , 0, _width * _height * sizeof(uint16));
+	memset(_sq, 0, _width * _height * sizeof(uint16));
 	_heap->clear();
 	int16 curX = x;
 	int16 curY = y;
 	uint16 curWeight = 0;
 
-	_sq[curX + curY *_width] = 1;
+	_sq[curX + curY * _width] = 1;
 	_heap->push(curX, curY, abs(destx - x) + abs(desty - y));
 
 	while (_heap->getCount()) {

@@ -21,9 +21,9 @@
  */
 
 #include "ultima/shared/engine/resources.h"
+#include "common/endian.h"
 #include "ultima/shared/early/font_resources.h"
 #include "ultima/ultima1/core/resources.h"
-#include "common/endian.h"
 
 namespace Ultima {
 namespace Shared {

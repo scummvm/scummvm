@@ -20,23 +20,23 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/movement.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/movement.h"
 #include "ultima/ultima4/map/tilemap.h"
-#include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -47,14 +47,13 @@ bool MapCoords::operator==(const MapCoords &a) const {
 bool MapCoords::operator!=(const MapCoords &a) const {
 	return !operator==(a);
 }
-bool MapCoords::operator<(const MapCoords &a)  const {
+bool MapCoords::operator<(const MapCoords &a) const {
 	if (x > a.x)
 		return false;
 	if (y > a.y)
 		return false;
 	return z < a.z;
 }
-
 
 MapCoords &MapCoords::wrap(const Map *map) {
 	if (map && map->_borderBehavior == Map::BORDER_WRAP) {
@@ -74,15 +73,15 @@ MapCoords &MapCoords::putInBounds(const Map *map) {
 	if (map) {
 		if (x < 0)
 			x = 0;
-		if (x >= (int) map->_width)
+		if (x >= (int)map->_width)
 			x = map->_width - 1;
 		if (y < 0)
 			y = 0;
-		if (y >= (int) map->_height)
+		if (y >= (int)map->_height)
 			y = map->_height - 1;
 		if (z < 0)
 			z = 0;
-		if (z >= (int) map->_levels)
+		if (z >= (int)map->_levels)
 			z = map->_levels - 1;
 	}
 	return *this;
@@ -151,12 +150,16 @@ int MapCoords::getRelativeDirection(const MapCoords &c, const Map *map) const {
 	}
 
 	// Add x directions that lead towards to_x to the mask
-	if (dx < 0)         dirmask |= MASK_DIR(DIR_EAST);
-	else if (dx > 0)    dirmask |= MASK_DIR(DIR_WEST);
+	if (dx < 0)
+		dirmask |= MASK_DIR(DIR_EAST);
+	else if (dx > 0)
+		dirmask |= MASK_DIR(DIR_WEST);
 
 	// Add y directions that lead towards to_y to the mask
-	if (dy < 0)         dirmask |= MASK_DIR(DIR_SOUTH);
-	else if (dy > 0)    dirmask |= MASK_DIR(DIR_NORTH);
+	if (dy < 0)
+		dirmask |= MASK_DIR(DIR_SOUTH);
+	else if (dy > 0)
+		dirmask |= MASK_DIR(DIR_NORTH);
 
 	// Return the result
 	return dirmask;
@@ -176,7 +179,8 @@ Direction MapCoords::pathTo(const MapCoords &c, int valid_directions, bool towar
 		return dirRandomDir(directionsToObject);
 
 	// There are no valid directions that lead to our target, just move wherever we can!
-	else return dirRandomDir(valid_directions);
+	else
+		return dirRandomDir(valid_directions);
 }
 
 Direction MapCoords::pathAway(const MapCoords &c, int valid_directions) const {
@@ -198,14 +202,16 @@ int MapCoords::movementDistance(const MapCoords &c, const Map *map) const {
 		if (me.x != c.x) {
 			if (dirmask & MASK_DIR_WEST)
 				me.move(DIR_WEST, map);
-			else me.move(DIR_EAST, map);
+			else
+				me.move(DIR_EAST, map);
 
 			dist++;
 		}
 		if (me.y != c.y) {
 			if (dirmask & MASK_DIR_NORTH)
 				me.move(DIR_NORTH, map);
-			else me.move(DIR_SOUTH, map);
+			else
+				me.move(DIR_SOUTH, map);
 
 			dist++;
 		}
@@ -228,9 +234,9 @@ int MapCoords::distance(const MapCoords &c, const Map *map) const {
 /*-------------------------------------------------------------------*/
 
 Map::Map() : _id(0), _type(WORLD), _width(0), _height(0), _levels(1),
-		_chunkWidth(0), _chunkHeight(0), _offset(0), _flags(0),
-		_borderBehavior(BORDER_WRAP), _music(Music::NONE),
-		_tileSet(nullptr), _tileMap(nullptr) {
+             _chunkWidth(0), _chunkHeight(0), _offset(0), _flags(0),
+             _borderBehavior(BORDER_WRAP), _music(Music::NONE),
+             _tileSet(nullptr), _tileMap(nullptr) {
 	_annotations = new AnnotationMgr();
 }
 
@@ -271,7 +277,7 @@ const Portal *Map::portalAt(const Coords &coords, int actionFlags) {
 
 	for (i = _portals.begin(); i != _portals.end(); i++) {
 		if (((*i)->_coords == coords) &&
-		        ((*i)->_triggerAction & actionFlags))
+		    ((*i)->_triggerAction & actionFlags))
 			return *i;
 	}
 	return nullptr;
@@ -339,7 +345,7 @@ bool Map::isEnclosed(const Coords &party) {
 	// Find two connecting pathways where the avatar can reach both without wrapping
 	for (x = 0; x < _width; x++) {
 		int index = x;
-		if (path_data[index] == 2 && path_data[index + ((_height - 1)*_width)] == 2)
+		if (path_data[index] == 2 && path_data[index + ((_height - 1) * _width)] == 2)
 			return false;
 	}
 
@@ -389,7 +395,8 @@ Creature *Map::addCreature(const Creature *creature, Coords coords) {
 		m->setMovementBehavior(MOVEMENT_WANDER);
 	else if (m->isStationary())
 		m->setMovementBehavior(MOVEMENT_FIXED);
-	else m->setMovementBehavior(MOVEMENT_ATTACK_AVATAR);
+	else
+		m->setMovementBehavior(MOVEMENT_ATTACK_AVATAR);
 
 	// Hide camouflaged creatures from view during combat
 	if (m->camouflages() && (_type == COMBAT))
@@ -425,7 +432,7 @@ void Map::removeObject(const Object *rem, bool deleteObject) {
 		if (*i == rem) {
 			// Party members persist through different maps, so don't delete them!
 			if (!isPartyMember(*i) && deleteObject)
-				delete(*i);
+				delete (*i);
 			_objects.erase(i);
 			return;
 		}
@@ -435,7 +442,7 @@ void Map::removeObject(const Object *rem, bool deleteObject) {
 ObjectDeque::iterator Map::removeObject(ObjectDeque::iterator rem, bool deleteObject) {
 	// Party members persist through different maps, so don't delete them!
 	if (!isPartyMember(*rem) && deleteObject)
-		delete(*rem);
+		delete (*rem);
 	return _objects.erase(rem);
 }
 
@@ -449,7 +456,7 @@ Creature *Map::moveObjects(MapCoords avatar) {
 			/* check if the object is an attacking creature and not
 			   just a normal, docile person in town or an inanimate object */
 			if ((m->getType() == Object::PERSON && m->getMovementBehavior() == MOVEMENT_ATTACK_AVATAR) ||
-			        (m->getType() == Object::CREATURE && m->willAttack())) {
+			    (m->getType() == Object::CREATURE && m->willAttack())) {
 				MapCoords o_coords = m->getCoords();
 
 				// Don't move objects that aren't on the same level as us
@@ -464,7 +471,6 @@ Creature *Map::moveObjects(MapCoords avatar) {
 
 			// Before moving, Enact any special effects of the creature (such as storms eating objects, whirlpools teleporting, etc.)
 			m->specialEffect();
-
 
 			// Perform any special actions (such as pirate ships firing cannons, sea serpents' fireblast attect, etc.)
 			if (!m->specialAction()) {
@@ -572,15 +578,8 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
 
 			if ((ontoAvatar && m->canMoveOntoPlayer()) || (ontoCreature && m->canMoveOntoCreatures()))
 				tile = *tileAt(coords, WITHOUT_OBJECTS); //Ignore all objects, and just consider terrain
-			if ((ontoAvatar && !m->canMoveOntoPlayer())
-			        || (
-			            ontoCreature &&
-			            (
-			                (!m->canMoveOntoCreatures() && !to_m->canMoveOntoCreatures())
-			                || (m->isForceOfNature() && to_m->isForceOfNature())
-			            )
-			        )
-			   )
+			if ((ontoAvatar && !m->canMoveOntoPlayer()) || (ontoCreature &&
+			                                                ((!m->canMoveOntoCreatures() && !to_m->canMoveOntoCreatures()) || (m->isForceOfNature() && to_m->isForceOfNature()))))
 				continue;
 		}
 
@@ -595,13 +594,13 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
 			// avatar or horseback: check walkable
 			else if (transport == _tileSet->getByName("avatar")->getId() || transport.getTileType()->isHorse()) {
 				if (tile.getTileType()->canWalkOn(d) &&
-				        (!transport.getTileType()->isHorse() || tile.getTileType()->isCreatureWalkable()) &&
-				        prev_tile.getTileType()->canWalkOff(d))
+				    (!transport.getTileType()->isHorse() || tile.getTileType()->isCreatureWalkable()) &&
+				    prev_tile.getTileType()->canWalkOff(d))
 					retval = DIR_ADD_TO_MASK(d, retval);
 			}
-//            else if (ontoCreature && to_m->canMoveOntoPlayer()) {
-//              retval = DIR_ADD_TO_MASK(d, retval);
-//            }
+			//            else if (ontoCreature && to_m->canMoveOntoPlayer()) {
+			//              retval = DIR_ADD_TO_MASK(d, retval);
+			//            }
 		}
 
 		// Creature movement
@@ -631,14 +630,14 @@ int Map::getValidMoves(MapCoords from, MapTile transport) {
 			else if (m->isIncorporeal()) {
 				// can move anywhere but onto water, unless of course the creature can swim
 				if (!(tile.getTileType()->isSwimable() ||
-				        tile.getTileType()->isSailable()))
+				      tile.getTileType()->isSailable()))
 					retval = DIR_ADD_TO_MASK(d, retval);
 			}
 			// Walking creatures
 			else if (m->walks()) {
 				if (tile.getTileType()->canWalkOn(d) &&
-				        prev_tile.getTileType()->canWalkOff(d) &&
-				        tile.getTileType()->isCreatureWalkable())
+				    prev_tile.getTileType()->canWalkOff(d) &&
+				    tile.getTileType()->isCreatureWalkable())
 					retval = DIR_ADD_TO_MASK(d, retval);
 			}
 			// Creatures that can move onto player
@@ -710,8 +709,10 @@ bool Map::fillMonsterTable() {
 			// Whirlpools and storms are separated from other moving objects
 			if (c->getId() == WHIRLPOOL_ID || c->getId() == STORM_ID)
 				monsters.push_back(obj);
-			else other_creatures.push_back(obj);
-		} else inanimate_objects.push_back(obj);
+			else
+				other_creatures.push_back(obj);
+		} else
+			inanimate_objects.push_back(obj);
 	}
 
 	/**

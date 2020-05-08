@@ -23,12 +23,12 @@
 #ifndef SHERLOCK_SCALPEL_TSAGE_LOGO_H
 #define SHERLOCK_SCALPEL_TSAGE_LOGO_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
 #include "common/list.h"
-#include "common/str.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
+#include "common/str.h"
 #include "common/util.h"
 #include "graphics/surface.h"
 #include "sherlock/scalpel/tsage/resources.h"
@@ -44,6 +44,7 @@ namespace TsAGE {
 class ObjectSurface : public Surface {
 public:
 	Common::Point _centroid;
+
 public:
 	ObjectSurface() : Surface() {}
 	~ObjectSurface() override {}
@@ -57,10 +58,12 @@ private:
 	 * Translates a raw image resource into a graphics surface
 	 */
 	void surfaceFromRes(ObjectSurface &s);
+
 public:
 	static TLib *_tLib;
 	int _resNum;
 	int _rlbNum;
+
 public:
 	Visage();
 	~Visage();
@@ -133,6 +136,7 @@ private:
 	 * Ends any current movement
 	 */
 	void endMove();
+
 public:
 	static ScalpelEngine *_vm;
 	Common::Point _position;
@@ -141,6 +145,7 @@ public:
 	int _frame;
 	int _numFrames;
 	int _frameChange;
+
 public:
 	Object();
 
@@ -186,9 +191,9 @@ public:
 };
 
 struct AnimationFrame {
-	int	frame;
-	int	x;
-	int	y;
+	int frame;
+	int x;
+	int y;
 };
 
 class Logo {
@@ -239,6 +244,7 @@ private:
 	 * Fade from the current palette to a new one
 	 */
 	void fade(const byte palette[PALETTE_SIZE], int step = 6);
+
 public:
 	static bool show(ScalpelEngine *vm);
 };

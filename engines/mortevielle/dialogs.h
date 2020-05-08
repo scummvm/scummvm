@@ -50,6 +50,7 @@ private:
 	void setPosition(int ji, int coldep, int esp);
 	void drawAlertBox(int firstLine, int lineNum, int width);
 	void setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp);
+
 public:
 	DialogManager(MortevielleEngine *vm);
 

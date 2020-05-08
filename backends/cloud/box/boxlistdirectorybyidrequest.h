@@ -33,7 +33,7 @@ namespace Box {
 
 class BoxStorage;
 
-class BoxListDirectoryByIdRequest: public Networking::Request {
+class BoxListDirectoryByIdRequest : public Networking::Request {
 	Common::String _requestedId;
 	BoxStorage *_storage;
 
@@ -48,6 +48,7 @@ class BoxListDirectoryByIdRequest: public Networking::Request {
 	void responseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);
 	void finishListing(Common::Array<StorageFile> &files);
+
 public:
 	BoxListDirectoryByIdRequest(BoxStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
 	virtual ~BoxListDirectoryByIdRequest();

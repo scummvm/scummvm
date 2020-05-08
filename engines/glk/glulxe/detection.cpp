@@ -21,12 +21,12 @@
  */
 
 #include "glk/glulxe/detection.h"
-#include "glk/glulxe/detection_tables.h"
-#include "glk/blorb.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/blorb.h"
+#include "glk/glulxe/detection_tables.h"
 
 namespace Glk {
 namespace Glulxe {
@@ -47,7 +47,7 @@ GameDescriptor GlulxeMetaEngine::findGame(const char *gameId) {
 }
 
 bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".ulx", nullptr };
+	const char *const EXTENSIONS[] = {".ulx", nullptr};
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {

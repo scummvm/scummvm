@@ -23,18 +23,19 @@
 #ifndef XEEN_XSURFACE_H
 #define XEEN_XSURFACE_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/rect.h"
 #include "graphics/managed_surface.h"
 
 namespace Xeen {
 
-class BaseSurface: public Graphics::ManagedSurface {
+class BaseSurface : public Graphics::ManagedSurface {
 public:
 	void addDirtyRect(const Common::Rect &r) override {
 		Graphics::ManagedSurface::addDirtyRect(r);
 	}
+
 public:
 	BaseSurface() : Graphics::ManagedSurface() {}
 	BaseSurface(int width, int height) : Graphics::ManagedSurface(width, height) {}

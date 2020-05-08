@@ -26,26 +26,26 @@
  */
 
 #include "cge2/snail.h"
+#include "cge2/events.h"
 #include "cge2/fileio.h"
 #include "cge2/hero.h"
-#include "cge2/text.h"
 #include "cge2/sound.h"
-#include "cge2/events.h"
+#include "cge2/text.h"
 
 namespace CGE2 {
 
 const char *CommandHandler::_commandText[] = {
-	"NOP", "USE", "PAUSE", "INF", "CAVE", "SETX", "SETY", "SETZ", "ADD",
-	"FLASH", "CYCLE", "CLEAR", "MOUSE", "MAP", "MIDI", ".DUMMY.", "WAIT",
-	"HIDE", "ROOM", "SAY", "SOUND", "KILL", "RSEQ", "SEQ", "SEND", "SWAP",
-	"KEEP", "GIVE", "GETPOS", "GOTO", "PORT", "NEXT", "NNEXT", "MTNEXT",
-	"FTNEXT", "RNNEXT", "RMTNEXT", "RFTNEXT", "RMNEAR", "RMMTAKE", "RMFTAKE",
-	"SETREF", "WALKTO", "REACH", "COVER", "UNCOVER", "EXEC", "GHOST",
-	nullptr };
+    "NOP", "USE", "PAUSE", "INF", "CAVE", "SETX", "SETY", "SETZ", "ADD",
+    "FLASH", "CYCLE", "CLEAR", "MOUSE", "MAP", "MIDI", ".DUMMY.", "WAIT",
+    "HIDE", "ROOM", "SAY", "SOUND", "KILL", "RSEQ", "SEQ", "SEND", "SWAP",
+    "KEEP", "GIVE", "GETPOS", "GOTO", "PORT", "NEXT", "NNEXT", "MTNEXT",
+    "FTNEXT", "RNNEXT", "RMTNEXT", "RFTNEXT", "RMNEAR", "RMMTAKE", "RMFTAKE",
+    "SETREF", "WALKTO", "REACH", "COVER", "UNCOVER", "EXEC", "GHOST",
+    nullptr};
 
 CommandHandler::CommandHandler(CGE2Engine *vm, bool turbo)
-	: _turbo(turbo), _textDelay(false), _timerExpiry(0), _talkEnable(true),
-      _head(0), _tail(0), _commandList((Command *)malloc(sizeof(Command)* 256)),
+    : _turbo(turbo), _textDelay(false), _timerExpiry(0), _talkEnable(true),
+      _head(0), _tail(0), _commandList((Command *)malloc(sizeof(Command) * 256)),
       _vm(vm) {
 }
 
@@ -318,7 +318,7 @@ void CGE2Engine::snMidi(int val) {
 void CGE2Engine::snSeq(Sprite *spr, int val) {
 	if (spr) {
 		if (isHero(spr) && (val == 0))
-			((Hero*)spr)->park();
+			((Hero *)spr)->park();
 		else
 			spr->step(val);
 	}
@@ -356,7 +356,7 @@ void CGE2Engine::snSend(Sprite *spr, int val) {
 			if (isHero(spr)) {
 				V2D p = *_heroTab[spr->_ref & 1]->_posTab[val];
 				spr->gotoxyz(V3D(p.x, 0, p.y));
-				((Hero*)spr)->setCurrent();
+				((Hero *)spr)->setCurrent();
 			}
 			_taken = false;
 			_bitmapPalette = nullptr;
@@ -525,7 +525,7 @@ void CGE2Engine::snRMTNext(Sprite *spr, int val) {
 		spr->_actionCtrl[kMTake]._ptr += val;
 }
 
-void CGE2Engine::snRFTNext(Sprite * spr, int val) {
+void CGE2Engine::snRFTNext(Sprite *spr, int val) {
 	if (spr)
 		spr->_actionCtrl[kFTake]._ptr += val;
 }
@@ -607,7 +607,7 @@ void CGE2Engine::snSound(Sprite *spr, int wav, Audio::Mixer::SoundType soundType
 		_soundStat._ref[1] = wav;
 		_soundStat._ref[0] = !_fx->exist(_soundStat._ref[1]);
 		_sound->play(soundType, _fx->load(_soundStat._ref[1], _soundStat._ref[0]),
-			(spr) ? (spr->_pos2D.x / (kScrWidth / 16)) : 8);
+		             (spr) ? (spr->_pos2D.x / (kScrWidth / 16)) : 8);
 	}
 }
 
@@ -783,8 +783,7 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 			CommandHandler::Command *p = c;
 			for (; p < q && p->_commandType != kCmdNext; p++) { // scan commands
 				// drop from pocket?
-				if ((p->_commandType == kCmdSend && p->_val != _now)
-					|| p->_commandType == kCmdGive) {
+				if ((p->_commandType == kCmdSend && p->_val != _now) || p->_commandType == kCmdGive) {
 					int ref = p->_ref;
 					if (ref < 0)
 						ref = spr->_ref;
@@ -848,8 +847,7 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 					}
 					if (v >= 0) {
 						s->_actionCtrl[snq]._ptr = v;
-						if (spr->_ref == 1537 && s->_actionCtrl[snq]._ptr == 26)
-						{
+						if (spr->_ref == 1537 && s->_actionCtrl[snq]._ptr == 26) {
 							debug(1, "Carpet Clothes Horse Rehanging Workaround Triggered!");
 							s->_actionCtrl[snq]._ptr = 8;
 						}
@@ -865,7 +863,6 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 			++c;
 		}
 	}
-
 }
 
 } // End of namespace CGE2.

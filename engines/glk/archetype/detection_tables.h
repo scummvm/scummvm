@@ -20,30 +20,28 @@
  *
  */
 
-#include "engines/game.h"
 #include "common/gui_options.h"
 #include "common/language.h"
+#include "engines/game.h"
 
 namespace Glk {
 namespace Archetype {
 
 const PlainGameDescriptor ARCHETYPE_GAME_LIST[] = {
-	{ "archetype", "Archetype IF Game" },
+    {"archetype", "Archetype IF Game"},
 
-	{ "guesstheanimal", "Guess the Animal" },
-	{ "gorreven", "The Gorreven Papers" },
-	{ "starshipsolitaire", "The Starship Solitaire adventure" },
+    {"guesstheanimal", "Guess the Animal"},
+    {"gorreven", "The Gorreven Papers"},
+    {"starshipsolitaire", "The Starship Solitaire adventure"},
 
-	{ nullptr, nullptr }
-};
+    {nullptr, nullptr}};
 
 const GlkDetectionEntry ARCHETYPE_GAMES[] = {
-	DT_ENTRY0("guesstheanimal", "f1c4d7ba35db9f217eacd84181b4bb33", 1266),
-	DT_ENTRY0("gorreven", "073a996b158474a2c419bc1d9dc8d44b", 66793),
-	DT_ENTRY0("starshipsolitaire", "6c86208d0d84fb11f81bf5b1f6fedb84", 55762),
+    DT_ENTRY0("guesstheanimal", "f1c4d7ba35db9f217eacd84181b4bb33", 1266),
+    DT_ENTRY0("gorreven", "073a996b158474a2c419bc1d9dc8d44b", 66793),
+    DT_ENTRY0("starshipsolitaire", "6c86208d0d84fb11f81bf5b1f6fedb84", 55762),
 
-	DT_END_MARKER
-};
+    DT_END_MARKER};
 
 } // End of namespace Archetype
 } // End of namespace Glk

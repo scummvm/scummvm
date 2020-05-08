@@ -20,25 +20,25 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "graphics/scaler.h"
-#include "mads/mads.h"
-#include "mads/game.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
-#include "mads/menu_views.h"
 #include "mads/nebular/game_nebular.h"
+#include "common/config-manager.h"
+#include "common/scummsys.h"
+#include "graphics/scaler.h"
+#include "mads/game.h"
+#include "mads/mads.h"
+#include "mads/menu_views.h"
+#include "mads/msurface.h"
 #include "mads/nebular/dialogs_nebular.h"
 #include "mads/nebular/globals_nebular.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/screen.h"
 
 namespace MADS {
 
 namespace Nebular {
 
 GameNebular::GameNebular(MADSEngine *vm)
-	: Game(vm) {
+    : Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
 	_difficulty = DIFFICULTY_HARD;
@@ -219,7 +219,6 @@ void GameNebular::initializeGlobals() {
 		} while (bad);
 	}
 
-
 	/* Section #5 variables */
 	_globals[kHoverCarLocation] = 501;
 	_globals[kHoverCarDestination] = -1;
@@ -227,7 +226,6 @@ void GameNebular::initializeGlobals() {
 	_globals[kBoatRaised] = true;
 	_globals[kLaserHoleIsThere] = false;
 	_globals[kLineStatus] = LINE_NOT_DROPPED;
-
 
 	/* Section #6 variables */
 	_globals[kHasTalkedToHermit] = false;
@@ -237,11 +235,9 @@ void GameNebular::initializeGlobals() {
 	_globals._timebombClock = 0;
 	_globals._timebombTimer = 0;
 
-
 	/* Section #7 variables */
 	_globals[kBottleStatus] = BOTTLE_EMPTY;
 	_globals[kBoatStatus] = BOAT_UNFLOODED;
-
 
 	/* Section #8 variables */
 	_globals[kWindowFixed] = false;
@@ -262,7 +258,6 @@ void GameNebular::initializeGlobals() {
 	_globals[kShieldModInstalled] = false;
 	_globals[kTargetModInstalled] = false;
 	_globals[kUpBecauseOfRemote] = false;
-
 
 	/* Set up the game's teleporters */
 	_globals[kTeleporterRoom] = 201;
@@ -358,8 +353,7 @@ void GameNebular::setSectionHandler() {
 
 void GameNebular::checkShowDialog() {
 	// Loop for showing dialogs, if any need to be shown
-	if (_vm->_dialogs->_pendingDialog && (_player._stepEnabled || _winStatus)
-			&& !_globals[kCopyProtectFailed]) {
+	if (_vm->_dialogs->_pendingDialog && (_player._stepEnabled || _winStatus) && !_globals[kCopyProtectFailed]) {
 		_player.releasePlayerSprites();
 
 		// Make a thumbnail in case it's needed for making a savegame
@@ -376,7 +370,7 @@ void GameNebular::showRecipe() {
 	int count;
 
 	for (count = 0; count < 4; count++) {
-		switch(_globals[kIngredientQuantity + count]) {
+		switch (_globals[kIngredientQuantity + count]) {
 		case 0:
 			dialogs._indexList[count] = NOUN_DROP;
 			break;
@@ -395,7 +389,7 @@ void GameNebular::showRecipe() {
 	}
 
 	for (count = 0; count < 4; count++) {
-		switch(_globals[kIngredientList + count]) {
+		switch (_globals[kIngredientList + count]) {
 		case 0:
 			dialogs._indexList[count + 4] = NOUN_ALCOHOL;
 			break;
@@ -496,29 +490,27 @@ void GameNebular::doObjectAction() {
 		dialogs.show(476);
 	} else if (action.isAction(VERB_DRINK, NOUN_LECITHIN)) {
 		dialogs.show(477);
-	} else if (action.isAction(VERB_PUT, NOUN_POISON_DARTS, NOUN_PLANT_STALK) && _objects.isInInventory(OBJ_POISON_DARTS)
-			&& _objects.isInInventory(OBJ_PLANT_STALK)) {
+	} else if (action.isAction(VERB_PUT, NOUN_POISON_DARTS, NOUN_PLANT_STALK) && _objects.isInInventory(OBJ_POISON_DARTS) && _objects.isInInventory(OBJ_PLANT_STALK)) {
 		_objects.addToInventory(OBJ_BLOWGUN);
 		_objects.setRoom(OBJ_PLANT_STALK, NOWHERE);
 		_globals[kBlowgunStatus] = 0;
 		dialogs.showItem(OBJ_BLOWGUN, 809);
-	} else if (action.isAction(VERB_PUT, NOUN_POISON_DARTS, NOUN_BLOWGUN) && _objects.isInInventory(OBJ_POISON_DARTS)
-			&& _objects.isInInventory(OBJ_BLOWGUN)) {
+	} else if (action.isAction(VERB_PUT, NOUN_POISON_DARTS, NOUN_BLOWGUN) && _objects.isInInventory(OBJ_POISON_DARTS) && _objects.isInInventory(OBJ_BLOWGUN)) {
 		dialogs.show(433);
 	} else if (action.isAction(VERB_DEFACE) && action.isAction(VERB_FOLD) && action.isAction(VERB_MUTILATE)) {
 		dialogs.show(434);
 	} else if (action.isAction(VERB_SPINDLE)) {
 		dialogs.show(479);
 	} else if ((action.isAction(VERB_READ) || action.isAction(VERB_LOOK_AT) || action.isAction(VERB_LOOK)) &&
-			action.isObject(NOUN_NOTE) && _objects.isInInventory(OBJ_NOTE)) {
+	           action.isObject(NOUN_NOTE) && _objects.isInInventory(OBJ_NOTE)) {
 		_objects.setRoom(OBJ_NOTE, NOWHERE);
 		_objects.addToInventory(OBJ_COMBINATION);
 		dialogs.showItem(OBJ_COMBINATION, 851);
 	} else if ((action.isAction(VERB_LOOK) || action.isAction(VERB_READ)) &&
-			((id = _objects.getIdFromDesc(action._activeAction._objectNameId)) > 0 ||
-			(action._activeAction._indirectObjectId > 0 &&
-			(id = _objects.getIdFromDesc(action._activeAction._indirectObjectId)))) &&
-			_objects.isInInventory(id)) {
+	           ((id = _objects.getIdFromDesc(action._activeAction._objectNameId)) > 0 ||
+	            (action._activeAction._indirectObjectId > 0 &&
+	             (id = _objects.getIdFromDesc(action._activeAction._indirectObjectId)))) &&
+	           _objects.isInInventory(id)) {
 		if (id == OBJ_REPAIR_LIST) {
 			dialogs._indexList[0] = _globals[kTeleporterCode + 7];
 			dialogs._indexList[1] = _globals[kTeleporterCode + 8];
@@ -559,7 +551,7 @@ void GameNebular::doObjectAction() {
 			dialogs.showItem(OBJ_STUFFED_FISH, 803);
 		}
 	} else if (action.isAction(VERB_PUT, NOUN_AUDIO_TAPE, NOUN_TAPE_PLAYER) && _objects.isInInventory(OBJ_AUDIO_TAPE) &&
-			_objects.isInInventory(OBJ_TAPE_PLAYER)) {
+	           _objects.isInInventory(OBJ_TAPE_PLAYER)) {
 		_objects.setRoom(OBJ_AUDIO_TAPE, OBJ_TAPE_PLAYER);
 	} else if (action.isAction(VERB_ACTIVATE, NOUN_TAPE_PLAYER) && _objects.isInInventory(OBJ_TAPE_PLAYER)) {
 		if (_objects[OBJ_AUDIO_TAPE]._roomNumber == OBJ_TAPE_PLAYER) {
@@ -578,7 +570,7 @@ void GameNebular::doObjectAction() {
 	} else if (action.isAction(VERB_ACTIVATE, NOUN_REMOTE)) {
 		dialogs.show(_globals[kTopButtonPushed] ? 502 : 501);
 	} else if ((action.isAction(VERB_ATTACH, NOUN_DETONATORS, NOUN_CHARGE_CASES) || action.isAction(VERB_PUT, NOUN_DETONATORS, NOUN_CHARGE_CASES)) &&
-			_objects.isInInventory(OBJ_DETONATORS) && _objects.isInInventory(OBJ_CHARGE_CASES)) {
+	           _objects.isInInventory(OBJ_DETONATORS) && _objects.isInInventory(OBJ_CHARGE_CASES)) {
 		if (_objects[OBJ_CHARGE_CASES].getQuality(3)) {
 			_objects.setRoom(OBJ_CHARGE_CASES, NOWHERE);
 			_objects.setRoom(OBJ_DETONATORS, NOWHERE);
@@ -589,9 +581,7 @@ void GameNebular::doObjectAction() {
 		}
 	} else if (action.isAction(VERB_ATTACH, NOUN_DETONATORS)) {
 		dialogs.show(470);
-	} else if ((action.isAction(VERB_ATTACH, NOUN_TIMER_MODULE, NOUN_BOMBS) || action.isAction(VERB_PUT, NOUN_TIMER_MODULE, NOUN_BOMBS) || action.isAction(VERB_ATTACH, NOUN_TIMER_MODULE, NOUN_BOMB)
-			|| action.isAction(VERB_PUT, NOUN_TIMER_MODULE, NOUN_BOMB)) && _objects.isInInventory(OBJ_TIMER_MODULE) && (
-			_objects.isInInventory(OBJ_BOMBS) || _objects.isInInventory(OBJ_BOMB))) {
+	} else if ((action.isAction(VERB_ATTACH, NOUN_TIMER_MODULE, NOUN_BOMBS) || action.isAction(VERB_PUT, NOUN_TIMER_MODULE, NOUN_BOMBS) || action.isAction(VERB_ATTACH, NOUN_TIMER_MODULE, NOUN_BOMB) || action.isAction(VERB_PUT, NOUN_TIMER_MODULE, NOUN_BOMB)) && _objects.isInInventory(OBJ_TIMER_MODULE) && (_objects.isInInventory(OBJ_BOMBS) || _objects.isInInventory(OBJ_BOMB))) {
 		if (_objects.isInInventory(OBJ_BOMBS)) {
 			_objects.setRoom(OBJ_BOMBS, NOWHERE);
 			_objects.addToInventory(OBJ_BOMB);
@@ -642,7 +632,7 @@ void GameNebular::doObjectAction() {
 		case 1:
 			_objects.addToInventory(OBJ_DURAFAIL_CELLS);
 			dialogs.showItem(OBJ_DURAFAIL_CELLS,
-				_difficulty != DIFFICULTY_HARD || _globals[kDurafailRecharged] ? 415 : 414);
+			                 _difficulty != DIFFICULTY_HARD || _globals[kDurafailRecharged] ? 415 : 414);
 			_globals[kDurafailRecharged] = true;
 			break;
 		case 2:
@@ -719,8 +709,7 @@ void GameNebular::unhandledAction() {
 	int randVal = _vm->getRandomNumber(1, 1000);
 	MADSAction &action = _scene._action;
 
-	if (action.isAction(VERB_THROW, NOUN_BOMB) || action.isAction(VERB_THROW, NOUN_BOMBS)
-	|| action.isAction(VERB_THROW, NOUN_TIMEBOMB) || action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB))
+	if (action.isAction(VERB_THROW, NOUN_BOMB) || action.isAction(VERB_THROW, NOUN_BOMBS) || action.isAction(VERB_THROW, NOUN_TIMEBOMB) || action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB))
 		_vm->_dialogs->show(42);
 	else if (action.isAction(VERB_DISASSEMBLE))
 		_vm->_dialogs->show(435);
@@ -735,8 +724,7 @@ void GameNebular::unhandledAction() {
 			_vm->_dialogs->show(38);
 		else if (action.isObject(NOUN_PIRANHA))
 			_vm->_dialogs->show(41);
-		else if (action.isObject(NOUN_CHICKEN) || action.isObject(NOUN_VULTURE) || action.isObject(NOUN_SPIDER)
-				|| action.isObject(NOUN_YELLOW_BIRD) || action.isObject(NOUN_SWOOPING_CREATURE) || action.isObject(NOUN_CAPTIVE_CREATURE)) {
+		else if (action.isObject(NOUN_CHICKEN) || action.isObject(NOUN_VULTURE) || action.isObject(NOUN_SPIDER) || action.isObject(NOUN_YELLOW_BIRD) || action.isObject(NOUN_SWOOPING_CREATURE) || action.isObject(NOUN_CAPTIVE_CREATURE)) {
 			_vm->_dialogs->show(40);
 		} else
 			_vm->_dialogs->show(39);
@@ -811,9 +799,7 @@ void GameNebular::unhandledAction() {
 			_vm->_dialogs->show(28);
 		else
 			_vm->_dialogs->show(29);
-	} else if (!action.isAction(VERB_WALKTO) && !action.isAction(VERB_WALK_ACROSS) && !action.isAction(VERB_WALK_TOWARDS) && !action.isAction(VERB_WALK_DOWN)
-			&& !action.isAction(VERB_SWIM_TO) && !action.isAction(VERB_SWIM_ACROSS) && !action.isAction(VERB_SWIM_INTO) && !action.isAction(VERB_SWIM_THROUGH)
-			&& !action.isAction(VERB_SWIM_UNDER)) {
+	} else if (!action.isAction(VERB_WALKTO) && !action.isAction(VERB_WALK_ACROSS) && !action.isAction(VERB_WALK_TOWARDS) && !action.isAction(VERB_WALK_DOWN) && !action.isAction(VERB_SWIM_TO) && !action.isAction(VERB_SWIM_ACROSS) && !action.isAction(VERB_SWIM_INTO) && !action.isAction(VERB_SWIM_THROUGH) && !action.isAction(VERB_SWIM_UNDER)) {
 		if (randVal <= 100)
 			_vm->_dialogs->show(36);
 		else if (randVal <= 200)
@@ -829,7 +815,7 @@ void GameNebular::unhandledAction() {
 
 void GameNebular::step() {
 	if (_player._visible && _player._stepEnabled && !_player._moving &&
-		(_player._facing == _player._turnToFacing)) {
+	    (_player._facing == _player._turnToFacing)) {
 		if (_scene._frameStartTime >= (uint32)_globals[kWalkerTiming]) {
 			if (_player._stopWalkers.empty()) {
 				int randomVal = _vm->getRandomNumber(29999);

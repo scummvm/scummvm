@@ -79,7 +79,7 @@ void TimeAndDate::setTime(const TimeSeconds &ts) {
 	int dayInYear = total / (24 * 60 * 60);
 	total %= 24 * 60 * 60;
 
-	int MONTH_DAYS[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	int MONTH_DAYS[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	this->month = 1;
 	while (dayInYear >= MONTH_DAYS[this->month - 1]) {
 		dayInYear -= MONTH_DAYS[this->month - 1];
@@ -104,7 +104,7 @@ TimeSeconds TimeAndDate::getTime() const {
 		else
 			days += 365;
 
-	int mdays[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	int mdays[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	for (int i = 1; i < month; ++i) {
 		days += mdays[i - 1];
 		if (i == 2)

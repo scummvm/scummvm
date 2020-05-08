@@ -20,19 +20,19 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
-#include "ultima/nuvie/gui/gui_scroll_bar.h"
 #include "ultima/nuvie/gui/gui_scroller.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/gui_scroll_bar.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 GUI_Scroller::GUI_Scroller(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, uint16 r_height)
-	: GUI_Widget(NULL, x, y, w, h) {
+    : GUI_Widget(NULL, x, y, w, h) {
 
 	R = r;
 	G = g;
@@ -101,7 +101,7 @@ void GUI_Scroller::update_viewport(bool update_slider) {
 }
 
 /* Show the widget  */
-void GUI_Scroller:: Display(bool full_redraw) {
+void GUI_Scroller::Display(bool full_redraw) {
 	Common::Rect framerect;
 
 	framerect = area;
@@ -111,29 +111,28 @@ void GUI_Scroller:: Display(bool full_redraw) {
 
 	DisplayChildren();
 
-// screen->update(area.left,area.top,area.width(),area.height());
+	// screen->update(area.left,area.top,area.width(),area.height());
 
 	return;
 }
 
 GUI_status GUI_Scroller::MouseDown(int x, int y, Shared::MouseButton button) {
-//grab_focus();
+	//grab_focus();
 
 	return GUI_YUM;
 }
 
 GUI_status GUI_Scroller::MouseUp(int x, int y, Shared::MouseButton button) {
 
-// release_focus();
+	// release_focus();
 
 	return GUI_YUM;
 }
 
 GUI_status GUI_Scroller::MouseMotion(int x, int y, uint8 state) {
 
-
-//GUI::get_gui()->moveWidget(this,dx,dy);
-// Redraw();
+	//GUI::get_gui()->moveWidget(this,dx,dy);
+	// Redraw();
 
 	return (GUI_YUM);
 }
@@ -152,7 +151,6 @@ void GUI_Scroller::move_up() {
 		disp_offset--;
 		update_viewport(true);
 	}
-
 }
 
 void GUI_Scroller::move_down() {
@@ -191,25 +189,24 @@ void GUI_Scroller::page_down(bool all) {
 }
 
 void GUI_Scroller::move_percentage(float offset_percentage) {
-// DEBUG(0,LEVEL_DEBUGGING,"offset_percentage = %f\n", offset_percentage);
+	// DEBUG(0,LEVEL_DEBUGGING,"offset_percentage = %f\n", offset_percentage);
 
 	disp_offset = (int)((float)num_rows * offset_percentage);
 	update_viewport(false);
-
 }
 
 GUI_status GUI_Scroller::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 
 	switch (msg) {
-	case SCROLLBAR_CB_SLIDER_MOVED :
+	case SCROLLBAR_CB_SLIDER_MOVED:
 		move_percentage(*(float *)data);
 		break;
 
-	case SCROLLBAR_CB_UP_BUTTON :
+	case SCROLLBAR_CB_UP_BUTTON:
 		move_up();
 		break;
 
-	case SCROLLBAR_CB_DOWN_BUTTON :
+	case SCROLLBAR_CB_DOWN_BUTTON:
 		move_down();
 		break;
 	case SCROLLBAR_CB_PAGE_DOWN:
@@ -219,7 +216,7 @@ GUI_status GUI_Scroller::callback(uint16 msg, GUI_CallBack *caller, void *data) 
 		page_up();
 		break;
 
-	default :
+	default:
 		DEBUG(0, LEVEL_ERROR, "Unhandled callback!\n");
 		break;
 	}

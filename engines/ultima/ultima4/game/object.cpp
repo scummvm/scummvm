@@ -21,10 +21,10 @@
  */
 
 #include "ultima/ultima4/game/object.h"
-#include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/game/game.h"
 #include "common/algorithm.h"
+#include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/map.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -49,7 +49,8 @@ void Object::remove() {
 	for (uint i = 0; i < size; i++) {
 		if (i == size - 1)
 			_maps[i]->removeObject(this);
-		else _maps[i]->removeObject(this, false);
+		else
+			_maps[i]->removeObject(this, false);
 	}
 }
 

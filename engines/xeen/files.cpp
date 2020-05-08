@@ -20,14 +20,14 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "xeen/files.h"
 #include "common/archive.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
-#include "xeen/xeen.h"
-#include "xeen/files.h"
 #include "xeen/saves.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
@@ -152,15 +152,14 @@ int BaseCCArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 /*------------------------------------------------------------------------*/
 
-CCArchive::CCArchive(const Common::String &filename, bool encoded):
-		BaseCCArchive(), _filename(filename), _encoded(encoded) {
+CCArchive::CCArchive(const Common::String &filename, bool encoded) : BaseCCArchive(), _filename(filename), _encoded(encoded) {
 	File f(filename, SearchMan);
 	loadIndex(f);
 }
 
 CCArchive::CCArchive(const Common::String &filename, const Common::String &prefix,
-		bool encoded): BaseCCArchive(), _filename(filename),
-		_prefix(prefix), _encoded(encoded) {
+                     bool encoded) : BaseCCArchive(), _filename(filename),
+                                     _prefix(prefix), _encoded(encoded) {
 	_prefix.toLowercase();
 	File f(filename, SearchMan);
 	loadIndex(f);
@@ -237,10 +236,8 @@ bool FileManager::setup() {
 		File::_xeenCc = nullptr;
 		File::_darkCc = new CCArchive("swrd.cc", "xeen", true);
 	} else {
-		File::_xeenCc = (g_vm->getGameID() == GType_DarkSide) ? nullptr :
-			new CCArchive("xeen.cc", "xeen", true);
-		File::_darkCc = (g_vm->getGameID() == GType_Clouds) ? nullptr :
-			new CCArchive("dark.cc", "dark", true);
+		File::_xeenCc = (g_vm->getGameID() == GType_DarkSide) ? nullptr : new CCArchive("xeen.cc", "xeen", true);
+		File::_darkCc = (g_vm->getGameID() == GType_Clouds) ? nullptr : new CCArchive("dark.cc", "dark", true);
 	}
 
 	if (Common::File::exists("intro.cc")) {
@@ -248,8 +245,7 @@ bool FileManager::setup() {
 		SearchMan.add("intro", File::_introCc);
 	}
 
-	File::_currentArchive = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
-		File::_darkCc : File::_xeenCc;
+	File::_currentArchive = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ? File::_darkCc : File::_xeenCc;
 	assert(File::_currentArchive);
 
 	// Ensure the custom CC archive is present
@@ -508,7 +504,7 @@ void SaveArchive::reset(CCArchive *src) {
 	_newData.clear();
 
 	g_vm->_files->setGameCc(g_vm->getGameID() == GType_DarkSide ? 1 : 0);
-	const int RESOURCES[6] = { 0x2A0C, 0x2A1C, 0x2A2C, 0x2A3C, 0x284C, 0x2A5C };
+	const int RESOURCES[6] = {0x2A0C, 0x2A1C, 0x2A2C, 0x2A3C, 0x284C, 0x2A5C};
 	for (int i = 0; i < 6; ++i) {
 		Common::String filename = Common::String::format("%.4x", RESOURCES[i]);
 		if (src->hasFile(filename)) {
@@ -544,8 +540,7 @@ void SaveArchive::save(Common::WriteStream &s) {
 	// First caclculate new offsets and total filesize
 	_dataSize = _index.size() * 8 + 2;
 	for (uint idx = 0; idx < _index.size(); ++idx) {
-		_index[idx]._writeOffset = (idx == 0) ? _dataSize :
-			_index[idx - 1]._writeOffset + _index[idx - 1]._size;
+		_index[idx]._writeOffset = (idx == 0) ? _dataSize : _index[idx - 1]._writeOffset + _index[idx - 1]._size;
 		_dataSize += _index[idx]._size;
 	}
 
@@ -591,17 +586,14 @@ void SaveArchive::replaceEntry(uint16 id, const byte *data, size_t size) {
 
 /*------------------------------------------------------------------------*/
 
-OutFile::OutFile(const Common::String &filename) :
-		_filename(filename), _backingStream(DisposeAfterUse::YES) {
+OutFile::OutFile(const Common::String &filename) : _filename(filename), _backingStream(DisposeAfterUse::YES) {
 	_archive = File::_currentSave;
 }
 
-OutFile::OutFile(const Common::String &filename, SaveArchive *archive) :
-	_filename(filename), _archive(archive), _backingStream(DisposeAfterUse::YES) {
+OutFile::OutFile(const Common::String &filename, SaveArchive *archive) : _filename(filename), _archive(archive), _backingStream(DisposeAfterUse::YES) {
 }
 
-OutFile::OutFile(const Common::String &filename, int ccMode) :
-		_filename(filename), _backingStream(DisposeAfterUse::YES) {
+OutFile::OutFile(const Common::String &filename, int ccMode) : _filename(filename), _backingStream(DisposeAfterUse::YES) {
 	g_vm->_files->setGameCc(ccMode);
 	_archive = File::_currentSave;
 }

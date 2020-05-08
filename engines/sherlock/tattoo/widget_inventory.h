@@ -33,18 +33,20 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-#define NUM_INVENTORY_SHOWN 8		// Number of Inventory Items Shown
+#define NUM_INVENTORY_SHOWN 8 // Number of Inventory Items Shown
 
 class WidgetInventory;
 
-class WidgetInventoryTooltip: public WidgetTooltipBase {
+class WidgetInventoryTooltip : public WidgetTooltipBase {
 private:
 	WidgetInventory *_owner;
+
 protected:
 	/**
 	* Overriden from base class, since tooltips have a completely transparent background
 	*/
 	void drawBackground() override {}
+
 public:
 	WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner);
 	~WidgetInventoryTooltip() override {}
@@ -66,8 +68,10 @@ private:
 	Common::StringArray _inventCommands;
 
 	void highlightControls();
+
 public:
 	int _invVerbSelect, _oldInvVerbSelect;
+
 public:
 	WidgetInventoryVerbs(SherlockEngine *vm, WidgetInventory *owner);
 	~WidgetInventoryVerbs() override {}
@@ -80,9 +84,10 @@ public:
 	void handleEvents() override;
 };
 
-class WidgetInventory: public WidgetBase {
+class WidgetInventory : public WidgetBase {
 	friend class WidgetInventoryTooltip;
 	friend class WidgetInventoryVerbs;
+
 private:
 	int _invVerbMode;
 	int _selector, _oldSelector;
@@ -107,10 +112,12 @@ private:
 	 * Highlights the controls
 	 */
 	void highlightControls();
+
 public:
 	int _invMode;
 	Common::String _action;
 	Common::String _verb;
+
 public:
 	WidgetInventory(SherlockEngine *vm);
 	~WidgetInventory() override {}

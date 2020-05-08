@@ -23,8 +23,8 @@
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/dialogs.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -61,7 +61,7 @@ void RingworldDemoGame::pauseGame() {
 	dlg->draw();
 
 	GfxButton *selectedButton = dlg->execute(&dlg->_btn2);
-	bool exitFlag  =  selectedButton != &dlg->_btn2;
+	bool exitFlag = selectedButton != &dlg->_btn2;
 
 	delete dlg;
 	g_globals->_events.hideCursor();
@@ -121,7 +121,6 @@ void RingworldDemoScene::signal() {
 }
 
 void RingworldDemoScene::process(Event &event) {
-
 }
 
 } // End of namespace Ringworld

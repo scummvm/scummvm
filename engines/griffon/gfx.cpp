@@ -167,5 +167,4 @@ void GriffonEngine::drawProgress(int w, int wm) {
 	g_system->getEventManager()->pollEvent(_event);
 }
 
-
 } // end of namespace Griffon

@@ -75,6 +75,6 @@ private:
 	Game &_game;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

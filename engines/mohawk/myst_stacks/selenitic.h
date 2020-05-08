@@ -75,11 +75,11 @@ private:
 	DECLARE_OPCODE(o_mazeRunnerLeft_init);
 
 	enum SoundReceiverSpeed {
-		kSoundReceiverSpeedStill  = 0,
-		kSoundReceiverSpeedSlow   = 1,
-		kSoundReceiverSpeedNormal = 5,   // The original has this at 10
-		kSoundReceiverSpeedFast   = 10,  // The original has this at 50 too fast!
-		kSoundReceiverSpeedFaster = 13   // The original has this at 100, way too fast!
+		kSoundReceiverSpeedStill = 0,
+		kSoundReceiverSpeedSlow = 1,
+		kSoundReceiverSpeedNormal = 5, // The original has this at 10
+		kSoundReceiverSpeedFast = 10,  // The original has this at 50 too fast!
+		kSoundReceiverSpeedFaster = 13 // The original has this at 100, way too fast!
 	};
 
 	void soundReceiver_run();
@@ -87,41 +87,41 @@ private:
 	MystGameState::Selenitic &_state;
 
 	bool _soundReceiverRunning;
-	bool _soundReceiverSigmaPressed; // 6
-	MystAreaImageSwitch *_soundReceiverSources[5]; // 92 -> 108
+	bool _soundReceiverSigmaPressed;                  // 6
+	MystAreaImageSwitch *_soundReceiverSources[5];    // 92 -> 108
 	MystAreaImageSwitch *_soundReceiverCurrentSource; // 112
-	uint16 *_soundReceiverPosition; // 116
-	uint16 _soundReceiverDirection; // 120
-	SoundReceiverSpeed _soundReceiverSpeed; // 122
-	uint32 _soundReceiverStartTime; //124
+	uint16 *_soundReceiverPosition;                   // 116
+	uint16 _soundReceiverDirection;                   // 120
+	SoundReceiverSpeed _soundReceiverSpeed;           // 122
+	uint32 _soundReceiverStartTime;                   //124
 	uint _soundReceiverNearBlinkCounter;
-	MystAreaImageSwitch *_soundReceiverViewer; // 128
+	MystAreaImageSwitch *_soundReceiverViewer;      // 128
 	MystAreaImageSwitch *_soundReceiverRightButton; // 132
-	MystAreaImageSwitch *_soundReceiverLeftButton; // 136
-	MystAreaImageSwitch *_soundReceiverAngle1; // 140
-	MystAreaImageSwitch *_soundReceiverAngle2; // 144
-	MystAreaImageSwitch *_soundReceiverAngle3; // 148
-	MystAreaImageSwitch *_soundReceiverAngle4; // 152
+	MystAreaImageSwitch *_soundReceiverLeftButton;  // 136
+	MystAreaImageSwitch *_soundReceiverAngle1;      // 140
+	MystAreaImageSwitch *_soundReceiverAngle2;      // 144
+	MystAreaImageSwitch *_soundReceiverAngle3;      // 148
+	MystAreaImageSwitch *_soundReceiverAngle4;      // 152
 	MystAreaImageSwitch *_soundReceiverSigmaButton; // 156
 
 	static const uint16 _mazeRunnerMap[300][4];
 	static const uint8 _mazeRunnerVideos[300][4];
 
-	uint16 _mazeRunnerPosition; // 56
-	uint16 _mazeRunnerDirection; // 58
-	MystAreaImageSwitch *_mazeRunnerWindow; // 68
-	MystAreaImageSwitch *_mazeRunnerCompass; // 72
-	MystAreaImageSwitch *_mazeRunnerLight; // 76
+	uint16 _mazeRunnerPosition;                  // 56
+	uint16 _mazeRunnerDirection;                 // 58
+	MystAreaImageSwitch *_mazeRunnerWindow;      // 68
+	MystAreaImageSwitch *_mazeRunnerCompass;     // 72
+	MystAreaImageSwitch *_mazeRunnerLight;       // 76
 	MystAreaImageSwitch *_mazeRunnerRightButton; // 80
-	MystAreaImageSwitch *_mazeRunnerLeftButton; // 84
-	bool _mazeRunnerDoorOpened; // 160
+	MystAreaImageSwitch *_mazeRunnerLeftButton;  // 84
+	bool _mazeRunnerDoorOpened;                  // 160
 
 	uint16 _soundLockSoundId;
-	MystAreaSlider *_soundLockSlider1; // 164
-	MystAreaSlider *_soundLockSlider2; // 168
-	MystAreaSlider *_soundLockSlider3; // 172
-	MystAreaSlider *_soundLockSlider4; // 176
-	MystAreaSlider *_soundLockSlider5; // 180
+	MystAreaSlider *_soundLockSlider1;     // 164
+	MystAreaSlider *_soundLockSlider2;     // 168
+	MystAreaSlider *_soundLockSlider3;     // 172
+	MystAreaSlider *_soundLockSlider4;     // 176
+	MystAreaSlider *_soundLockSlider5;     // 180
 	MystAreaImageSwitch *_soundLockButton; // 184
 
 	void soundReceiverLeftRight(uint direction);
@@ -146,7 +146,7 @@ private:
 };
 
 } // End of namespace MystStacks
-}
+} // namespace Mohawk
 
 #undef DECLARE_OPCODE
 

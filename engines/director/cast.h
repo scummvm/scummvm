@@ -29,12 +29,12 @@
 namespace Graphics {
 struct Surface;
 class MacWidget;
-}
+} // namespace Graphics
 
 namespace Common {
 class SeekableReadStream;
 class ReadStreamEndian;
-}
+} // namespace Common
 
 namespace Image {
 class ImageDecoder;
@@ -127,7 +127,7 @@ public:
 	Common::String _ftext;
 	Common::String _ptext;
 	void importStxt(const Stxt *stxt);
-	void importRTE(byte* text);
+	void importRTE(byte *text);
 	CachedMacText *_cachedMacText;
 
 	Common::String getText();
@@ -166,7 +166,10 @@ struct CastInfo {
 struct Label {
 	Common::String name;
 	uint16 number;
-	Label(Common::String name1, uint16 number1) { name = name1; number = number1; }
+	Label(Common::String name1, uint16 number1) {
+		name = name1;
+		number = number1;
+	}
 };
 
 } // End of namespace Director

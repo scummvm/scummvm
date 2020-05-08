@@ -31,34 +31,34 @@
 // FIXME: Avoid using printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "engines/engine.h"
-#include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
 #include "base/version.h"
+#include "engines/engine.h"
+#include "engines/metaengine.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h" /* for debug manager */
+#include "common/debug.h"
 #include "common/events.h"
-#include "gui/EventRecorder.h"
 #include "common/fs.h"
+#include "gui/EventRecorder.h"
 #ifdef ENABLE_EVENTRECORDER
 #include "common/recorderfile.h"
 #endif
+#include "common/osd_message_queue.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
-#include "common/text-to-speech.h"
-#include "common/osd_message_queue.h"
 
-#include "gui/gui-manager.h"
 #include "gui/error.h"
+#include "gui/gui-manager.h"
 
 #include "audio/mididrv.h"
-#include "audio/musicplugin.h"  /* for music manager */
+#include "audio/musicplugin.h" /* for music manager */
 
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
@@ -165,7 +165,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	// needed because otherwise the g_system->getSupportedFormats might return
 	// bad values.
 	g_system->beginGFXTransaction();
-		g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+	g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 	if (g_system->endGFXTransaction() != OSystem::kTransactionSuccess) {
 		warning("Switching graphics mode to '%s' failed", ConfMan.get("gfx_mode").c_str());
 		return Common::kUnknownError;
@@ -196,11 +196,10 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		// Print a warning; note that scummvm_main will also
 		// display an error dialog, so we don't have to do this here.
 		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
-			plugin->getName(),
-			err.getDesc().c_str(),
-			target.c_str(),
-			dir.getPath().c_str()
-			);
+		        plugin->getName(),
+		        err.getDesc().c_str(),
+		        target.c_str(),
+		        dir.getPath().c_str());
 
 		// If a temporary target failed to launch, remove it from the configuration manager
 		// so it not visible in the launcher.
@@ -223,7 +222,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	}
 	if (caption.empty())
 		caption = target;
-	if (!caption.empty())	{
+	if (!caption.empty()) {
 		system.setWindowCaption(caption.c_str());
 	}
 
@@ -265,9 +264,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 
 #ifdef USE_TRANSLATION
 	Common::String previousLanguage = TransMan.getCurrentLanguage();
-	if (ConfMan.hasKey("gui_use_game_language")
-	    && ConfMan.getBool("gui_use_game_language")
-	    && ConfMan.hasKey("language")) {
+	if (ConfMan.hasKey("gui_use_game_language") && ConfMan.getBool("gui_use_game_language") && ConfMan.hasKey("language")) {
 		TransMan.setLanguage(ConfMan.get("language"));
 #ifdef USE_TTS
 		Common::TextToSpeechManager *ttsMan;
@@ -309,10 +306,10 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 #ifdef USE_TRANSLATION
 	TransMan.setLanguage(previousLanguage);
 #ifdef USE_TTS
-		Common::TextToSpeechManager *ttsMan;
-		if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr) {
-			ttsMan->setLanguage(ConfMan.get("language"));
-		}
+	Common::TextToSpeechManager *ttsMan;
+	if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr) {
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
 #endif // USE_TTS
 #endif // USE_TRANSLATION
 
@@ -323,21 +320,21 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 static void setupGraphics(OSystem &system) {
 
 	system.beginGFXTransaction();
-		// Set the user specified graphics mode (if any).
-		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+	// Set the user specified graphics mode (if any).
+	system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
-		system.initSize(320, 200);
+	system.initSize(320, 200);
 
-		if (ConfMan.hasKey("aspect_ratio"))
-			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
-		if (ConfMan.hasKey("fullscreen"))
-			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-		if (ConfMan.hasKey("filtering"))
-			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
-		if (ConfMan.hasKey("stretch_mode"))
-			system.setStretchMode(ConfMan.get("stretch_mode").c_str());
-		if (ConfMan.hasKey("shader"))
-			system.setShader(ConfMan.get("shader").c_str());
+	if (ConfMan.hasKey("aspect_ratio"))
+		system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+	if (ConfMan.hasKey("fullscreen"))
+		system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+	if (ConfMan.hasKey("filtering"))
+		system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+	if (ConfMan.hasKey("stretch_mode"))
+		system.setStretchMode(ConfMan.get("stretch_mode").c_str());
+	if (ConfMan.hasKey("shader"))
+		system.setShader(ConfMan.get("shader").c_str());
 	system.endGFXTransaction();
 
 	// When starting up launcher for the first time, the user might have specified
@@ -377,7 +374,7 @@ static void setupKeymapper(OSystem &system) {
 	}
 }
 
-extern "C" int scummvm_main(int argc, const char * const argv[]) {
+extern "C" int scummvm_main(int argc, const char *const argv[]) {
 	Common::String specialDebug;
 	Common::String command;
 
@@ -422,9 +419,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("debug-channels-only"))
 		gDebugChannelsOnly = true;
 
-
 	PluginManager::instance().init();
- 	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
+	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
 
 	// If we received an invalid music parameter via command line we check this here.
 	// We can't check this before loading the music plugins.
@@ -451,7 +447,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		// Store this command line setting in ConfMan, since all transient settings are destroyed
 		ConfMan.registerDefault("dump_midi", true);
 	}
-
 
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.

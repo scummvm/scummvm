@@ -20,16 +20,16 @@
  *
  */
 
+#include "graphics/palette.h"
 #include "common/scummsys.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
 #include "mads/mads.h"
 #include "mads/msurface.h"
 #include "mads/staticres.h"
 
 namespace MADS {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+#define VGA_COLOR_TRANS(x) ((x)*255 / 63)
 
 void RGB6::load(Common::SeekableReadStream *f) {
 	r = VGA_COLOR_TRANS(f->readByte());
@@ -54,12 +54,12 @@ void PaletteUsage::load(Common::Array<UsageEntry> *data) {
 void PaletteUsage::getKeyEntries(Common::Array<RGB6> &palette) {
 	_data->clear();
 
-	 for (uint i = 0; i < palette.size(); ++i) {
-		 byte *uPtr = &palette[i]._flags;
-		 if ((*uPtr & 0x10) && _data->size() < 3) {
-			 _data->push_back(UsageEntry(i));
-		 }
-	 }
+	for (uint i = 0; i < palette.size(); ++i) {
+		byte *uPtr = &palette[i]._flags;
+		if ((*uPtr & 0x10) && _data->size() < 3) {
+			_data->push_back(UsageEntry(i));
+		}
+	}
 }
 
 static bool sortHelper(const PaletteUsage::UsageEntry &ue1, const PaletteUsage::UsageEntry &ue2) {
@@ -179,8 +179,10 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 
 		if (!changed && !noUsageFlag) {
 			int bestHash = (palette[palIndex]._flags & 0x20) ||
-				(((flags & 0x2000) || (palette[palIndex]._flags & 0x40)) &&
-				((flags & 0x1000) || (palCount == 0))) ? 0x7fff : 1;
+			                       (((flags & 0x2000) || (palette[palIndex]._flags & 0x40)) &&
+			                        ((flags & 0x1000) || (palCount == 0)))
+			                   ? 0x7fff
+			                   : 1;
 			int var36 = (palette[palIndex]._flags & 0x80) ? 0 : 2;
 
 			for (int idx = palLow; idx < palIdx; ++idx) {
@@ -190,8 +192,8 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 					if (bestHash > 1) {
 						hash = rgbFactor(&_vm->_palette->_mainPalette[idx * 3], palette[palIndex]);
 					} else if (_vm->_palette->_mainPalette[idx * 3] != palette[palIndex].r ||
-							_vm->_palette->_mainPalette[idx * 3 + 1] != palette[palIndex].g ||
-							_vm->_palette->_mainPalette[idx * 3 + 2] != palette[palIndex].b) {
+					           _vm->_palette->_mainPalette[idx * 3 + 1] != palette[palIndex].g ||
+					           _vm->_palette->_mainPalette[idx * 3 + 2] != palette[palIndex].b) {
 						hash = 1;
 					} else {
 						hash = 0;
@@ -269,7 +271,8 @@ void PaletteUsage::updateUsage(Common::Array<int> &usageList, int sceneUsageInde
 		uint32 mask = mask2 & _vm->_palette->_palFlags[idx];
 		if (mask) {
 			_vm->_palette->_palFlags[idx] = (_vm->_palette->_palFlags[idx] &
-				mask1) | mask3;
+			                                 mask1) |
+			                                mask3;
 		}
 	}
 
@@ -399,7 +402,7 @@ void RGBList::copy(RGBList &src) {
 /*------------------------------------------------------------------------*/
 
 Fader::Fader(MADSEngine *vm)
-	: _vm(vm) {
+    : _vm(vm) {
 	_colorFlags[0] = _colorFlags[1] = _colorFlags[2] = true;
 	_colorFlags[3] = false;
 	_colorValues[0] = _colorValues[1] = 0;
@@ -419,7 +422,6 @@ Fader::Fader(MADSEngine *vm)
 	}
 }
 
-
 void Fader::setPalette(const byte *colors, uint start, uint num) {
 	g_system->getPaletteManager()->setPalette(colors, start, num);
 }
@@ -437,8 +439,8 @@ void Fader::setFullPalette(byte palette[PALETTE_SIZE]) {
 }
 
 void Fader::fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
-		int baseColor, int numColors, int baseGrey, int numGreys,
-		int tickDelay, int steps) {
+                    int baseColor, int numColors, int baseGrey, int numGreys,
+                    int tickDelay, int steps) {
 	GreyEntry map[PALETTE_COUNT];
 	int intensity;
 	byte palIndex[PALETTE_COUNT][3];
@@ -475,7 +477,7 @@ void Fader::fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
 					map[index]._accum[colorCtr] -= steps;
 
 					byte rgb63 = _rgb64Map[palette[palCtr * 3 + colorCtr]] +
-						signs[palCtr][colorCtr];
+					             signs[palCtr][colorCtr];
 					palette[palCtr * 3 + colorCtr] = VGA_COLOR_TRANS(rgb63);
 				}
 			}
@@ -494,8 +496,8 @@ void Fader::fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
 }
 
 void Fader::fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
-	int baseColor, int numColors, int baseGrey, int numGreys,
-	int tickDelay, int steps) {
+                   int baseColor, int numColors, int baseGrey, int numGreys,
+                   int tickDelay, int steps) {
 	GreyEntry map[PALETTE_COUNT];
 	byte tempPal[PALETTE_SIZE];
 	int8 signs[PALETTE_COUNT][3];
@@ -535,7 +537,7 @@ void Fader::fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
 					map[index]._accum[colorCtr] -= steps;
 
 					byte rgb63 = _rgb64Map[palette[palCtr * 3 + colorCtr]] +
-						signs[palCtr][colorCtr];
+					             signs[palCtr][colorCtr];
 					palette[palCtr * 3 + colorCtr] = VGA_COLOR_TRANS(rgb63);
 				}
 			}
@@ -548,7 +550,7 @@ void Fader::fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
 }
 
 void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColors,
-		int baseGrey, int numGreys, GreyEntry *map) {
+                          int baseGrey, int numGreys, GreyEntry *map) {
 	byte greyList[PALETTE_COUNT];
 	byte greyMapping[PALETTE_COUNT];
 	byte greyTable[64];
@@ -623,7 +625,7 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 }
 
 void Fader::getGreyValues(const byte palette[PALETTE_SIZE],
-		byte greyList[PALETTE_COUNT], int baseColor, int numColors) {
+                          byte greyList[PALETTE_COUNT], int baseColor, int numColors) {
 	const byte *palP = &palette[baseColor * 3];
 
 	for (int i = 0; i < numColors; ++i, palP += 3) {
@@ -633,7 +635,7 @@ void Fader::getGreyValues(const byte palette[PALETTE_SIZE],
 }
 
 void Fader::greyPopularity(const byte greyList[PALETTE_COUNT],
-		byte greyTable[64], int numColors) {
+                           byte greyTable[64], int numColors) {
 	Common::fill(&greyTable[0], &greyTable[64], 0);
 	for (int i = 0; i < numColors; ++i) {
 		int idx = greyList[i];
@@ -747,7 +749,7 @@ void Palette::setGradient(byte *palette, int start, int count, int rgbValue1, in
 	int rgbCurrent = rgbValue2;
 	int rgbDiff = -(rgbValue2 - rgbValue1);
 
-	if (count >  0) {
+	if (count > 0) {
 		byte *pDest = palette + start * 3;
 		int endVal = count - 1;
 		int numLeft = count;
@@ -809,8 +811,7 @@ void Palette::initPalette() {
 	if (_vm->_game->_player._spritesLoaded && _vm->_game->_player._numSprites) {
 
 		for (int idx = 0; idx < _vm->_game->_player._numSprites; ++idx) {
-			SpriteAsset *asset = _vm->_game->_scene._sprites[
-				_vm->_game->_player._spritesStart + idx];
+			SpriteAsset *asset = _vm->_game->_scene._sprites[_vm->_game->_player._spritesStart + idx];
 
 			uint32 mask = 1;
 			if (asset->_usageIndex)
@@ -894,7 +895,7 @@ void Palette::refreshSceneColors() {
 }
 
 int Palette::closestColor(const byte *matchColor, const byte *refPalette,
-		int paletteInc, int count) {
+                          int paletteInc, int count) {
 	int bestColor = 0;
 	int bestDistance = 0x7fff;
 
@@ -917,6 +918,5 @@ int Palette::closestColor(const byte *matchColor, const byte *refPalette,
 
 	return bestColor;
 }
-
 
 } // End of namespace MADS

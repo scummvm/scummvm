@@ -21,12 +21,12 @@
  */
 
 #include "glk/alan3/glkio.h"
+#include "common/config-manager.h"
 #include "glk/alan3/acode.h"
 #include "glk/alan3/current.h"
 #include "glk/alan3/instance.h"
 #include "glk/alan3/options.h"
 #include "glk/alan3/output.h"
-#include "common/config-manager.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -34,8 +34,8 @@ namespace Alan3 {
 GlkIO *g_io;
 
 GlkIO::GlkIO(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		glkMainWin(nullptr), glkStatusWin(nullptr), onStatusLine(false), _saveSlot(-1),
-		_soundChannel(nullptr) {
+                                                                  glkMainWin(nullptr), glkStatusWin(nullptr), onStatusLine(false), _saveSlot(-1),
+                                                                  _soundChannel(nullptr) {
 	g_io = this;
 }
 
@@ -46,8 +46,7 @@ bool GlkIO::initialize() {
 		return false;
 
 	glk_stylehint_set(wintype_TextGrid, style_User1, stylehint_ReverseColor, 1);
-	glkStatusWin = glk_window_open(glkMainWin, winmethod_Above |
-		winmethod_Fixed, 1, wintype_TextGrid, 0);
+	glkStatusWin = glk_window_open(glkMainWin, winmethod_Above | winmethod_Fixed, 1, wintype_TextGrid, 0);
 	glk_set_window(glkMainWin);
 
 	// Check for a save being loaded directly from the launcher
@@ -80,7 +79,7 @@ void GlkIO::showImage(int image, int align) {
 		return;
 
 	if ((glk_gestalt(gestalt_Graphics, 0) == 1) &&
-		(glk_gestalt(gestalt_DrawImage, wintype_TextBuffer) == 1)) {
+	    (glk_gestalt(gestalt_DrawImage, wintype_TextBuffer) == 1)) {
 		glk_window_flow_break(glkMainWin);
 		printf("\n");
 		ecode = glk_image_draw(glkMainWin, image, imagealign_MarginLeft, 0);
@@ -143,11 +142,11 @@ void GlkIO::statusLine(CONTEXT) {
 	glk_window_move_cursor(glkStatusWin, 1, 0);
 	CALL1(sayInstance, where(HERO, /*TRUE*/ TRANSITIVE))
 
-		// TODO Add status message1  & 2 as author customizable messages
-		if (header->maximumScore > 0)
-			sprintf(line, "Score %d(%d)/%d moves", current.score, (int)header->maximumScore, current.tick);
-		else
-			sprintf(line, "%d moves", current.tick);
+	// TODO Add status message1  & 2 as author customizable messages
+	if (header->maximumScore > 0)
+		sprintf(line, "Score %d(%d)/%d moves", current.score, (int)header->maximumScore, current.tick);
+	else
+		sprintf(line, "%d moves", current.tick);
 	glk_window_move_cursor(glkStatusWin, glkWidth - strlen(line) - 1, 0);
 	glk_put_string(line);
 	needSpace = FALSE;
@@ -157,7 +156,6 @@ void GlkIO::statusLine(CONTEXT) {
 
 	glk_set_window(glkMainWin);
 }
-
 
 /*======================================================================
 

@@ -22,13 +22,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/logic.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -104,7 +102,7 @@ void Screen::setScrolling() {
 	int16 dx = _thisScreen.scroll_offset_x - offset_x;
 	int16 dy = _thisScreen.scroll_offset_y - offset_y;
 
-	uint16 scroll_distance_x;	// how much we want to scroll
+	uint16 scroll_distance_x; // how much we want to scroll
 	uint16 scroll_distance_y;
 
 	if (dx < 0) {

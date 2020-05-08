@@ -20,7 +20,6 @@
  *
  */
 
-
 namespace DS {
 
 void scanKeys(void);

@@ -124,12 +124,8 @@ void FighterPlayerMilos::update() {
 }
 
 bool FighterPlayerMilos::canInteract(FightAction action) {
-	if (action != kFightAction128
-	 || _sequenceIndex != 1
-	 || !_frame
-	 || checkFrame(4)
-	 || _opponent->getSequenceIndex() != 1) {
-		 return Fighter::canInteract();
+	if (action != kFightAction128 || _sequenceIndex != 1 || !_frame || checkFrame(4) || _opponent->getSequenceIndex() != 1) {
+		return Fighter::canInteract();
 	}
 
 	_engine->getCursor()->setStyle(kCursorHand);

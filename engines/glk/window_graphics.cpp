@@ -28,7 +28,7 @@
 namespace Glk {
 
 GraphicsWindow::GraphicsWindow(Windows *windows, uint rock) : Window(windows, rock),
-	_w(0), _h(0), _dirty(false), _surface(nullptr) {
+                                                              _w(0), _h(0), _dirty(false), _surface(nullptr) {
 	_type = wintype_Graphics;
 	_bgnd = _bgColor;
 }
@@ -97,7 +97,7 @@ void GraphicsWindow::redraw() {
 }
 
 bool GraphicsWindow::drawPicture(uint image, int xpos, int ypos, bool scale,
-                                   uint imagewidth, uint imageheight) {
+                                 uint imagewidth, uint imageheight) {
 	Picture *pic = g_vm->_pictures->load(image);
 	uint hyperlink = _attr.hyper;
 
@@ -131,14 +131,22 @@ void GraphicsWindow::eraseRect(bool whole, const Rect &box) {
 		y1 = _h;
 	}
 
-	if (x0 < 0) x0 = 0;
-	if (y0 < 0) y0 = 0;
-	if (x1 < 0) x1 = 0;
-	if (y1 < 0) y1 = 0;
-	if ((uint)x0 >= _w) x0 = _w;
-	if ((uint)y0 >= _h) y0 = _h;
-	if ((uint)x1 >= _w) x1 = _w;
-	if ((uint)y1 >= _h) y1 = _h;
+	if (x0 < 0)
+		x0 = 0;
+	if (y0 < 0)
+		y0 = 0;
+	if (x1 < 0)
+		x1 = 0;
+	if (y1 < 0)
+		y1 = 0;
+	if ((uint)x0 >= _w)
+		x0 = _w;
+	if ((uint)y0 >= _h)
+		y0 = _h;
+	if ((uint)x1 >= _w)
+		x1 = _w;
+	if ((uint)y1 >= _h)
+		y1 = _h;
 
 	hx0 = _bbox.left + x0;
 	hx1 = _bbox.left + x1;
@@ -156,14 +164,22 @@ void GraphicsWindow::fillRect(uint color, const Rect &box) {
 	int x0 = box.left, y0 = box.top, x1 = box.right, y1 = box.bottom;
 	int hx0, hx1, hy0, hy1;
 
-	if (x0 < 0) x0 = 0;
-	if (y0 < 0) y0 = 0;
-	if (x1 < 0) x1 = 0;
-	if (y1 < 0) y1 = 0;
-	if ((uint)x0 > _w) x0 = _w;
-	if ((uint)y0 > _h) y0 = _h;
-	if ((uint)x1 > _w) x1 = _w;
-	if ((uint)y1 > _h) y1 = _h;
+	if (x0 < 0)
+		x0 = 0;
+	if (y0 < 0)
+		y0 = 0;
+	if (x1 < 0)
+		x1 = 0;
+	if (y1 < 0)
+		y1 = 0;
+	if ((uint)x0 > _w)
+		x0 = _w;
+	if ((uint)y0 > _h)
+		y0 = _h;
+	if ((uint)x1 > _w)
+		x1 = _w;
+	if ((uint)y1 > _h)
+		y1 = _h;
 
 	hx0 = _bbox.left + x0;
 	hx1 = _bbox.left + x1;
@@ -188,7 +204,7 @@ void GraphicsWindow::drawPicture(Picture *src, int x0, int y0, int width, int he
 }
 
 void GraphicsWindow::drawPicture(const Graphics::Surface &image, uint transColor, int x0, int y0,
-		int width, int height, uint linkval) {
+                                 int width, int height, uint linkval) {
 	int dx1, dy1, x1, y1, sx0, sy0, sx1, sy1;
 	int hx0, hx1, hy0, hy1;
 	int w, h;
@@ -203,8 +219,10 @@ void GraphicsWindow::drawPicture(const Graphics::Surface &image, uint transColor
 	x1 = x0 + image.w;
 	y1 = y0 + image.h;
 
-	if (x1 <= 0 || x0 >= dx1) return;
-	if (y1 <= 0 || y0 >= dy1) return;
+	if (x1 <= 0 || x0 >= dx1)
+		return;
+	if (y1 <= 0 || y0 >= dy1)
+		return;
 	if (x0 < 0) {
 		sx0 -= x0;
 		x0 = 0;

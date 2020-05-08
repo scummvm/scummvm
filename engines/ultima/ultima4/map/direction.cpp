@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/events/event_handler.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -53,10 +53,14 @@ Direction dirReverse(Direction dir) {
 }
 
 Direction dirFromMask(int dir_mask) {
-	if (dir_mask & MASK_DIR_NORTH) return DIR_NORTH;
-	else if (dir_mask & MASK_DIR_EAST) return DIR_EAST;
-	else if (dir_mask & MASK_DIR_SOUTH) return DIR_SOUTH;
-	else if (dir_mask & MASK_DIR_WEST) return DIR_WEST;
+	if (dir_mask & MASK_DIR_NORTH)
+		return DIR_NORTH;
+	else if (dir_mask & MASK_DIR_EAST)
+		return DIR_EAST;
+	else if (dir_mask & MASK_DIR_SOUTH)
+		return DIR_SOUTH;
+	else if (dir_mask & MASK_DIR_WEST)
+		return DIR_WEST;
 	return DIR_NONE;
 }
 

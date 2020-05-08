@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "startrek/startrek.h"
 
 namespace StarTrek {
@@ -100,8 +99,7 @@ void StarTrekEngine::drawStarfield() {
 		Point3 p = star->pos - _starfieldPosition;
 		Point3 point2 = matrixMult(p, _starPositionMatrix);
 
-		if (point2.z > _flt_50898 && point2.z < 0x3fff
-		        && abs(point2.x) < point2.z && abs(point2.y) < point2.z) {
+		if (point2.z > _flt_50898 && point2.z < 0x3fff && abs(point2.x) < point2.z && abs(point2.y) < point2.z) {
 
 			int16 x = _starfieldXVar1 + scaleSpacePosition(point2.x, point2.z);
 			int16 y = _starfieldYVar1 - scaleSpacePosition(point2.y, point2.z);
@@ -359,11 +357,11 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 			else
 				dbl3f4 = (thing[index2 * 2] - thing[index1 * 2]) / (thing[index2 * 2 + 1] - thing[index1 * 2 + 1]);
 
-			int32 boundDiff = (int32)(0x10000 * dbl3f4); // var3ec
+			int32 boundDiff = (int32)(0x10000 * dbl3f4);                                                       // var3ec
 			int32 boundBase = (int32)(((top - thing[index1 * 2 + 1]) * dbl3f4 + thing[index1 * 2]) * 0x10000); // var3e8
 
 			for (int y = top; y <= bottom; y++) {
-				int16 rightBound = boundBase >> 16; // var3f6
+				int16 rightBound = boundBase >> 16;           // var3f6
 				int16 leftBound = (boundBase + 0xffff) >> 16; // var3f8
 
 				if (leftBound < _starfieldRect.left)

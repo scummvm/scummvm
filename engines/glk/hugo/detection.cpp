@@ -21,11 +21,11 @@
  */
 
 #include "glk/hugo/detection.h"
-#include "glk/hugo/detection_tables.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/hugo/detection_tables.h"
 
 namespace Glk {
 namespace Hugo {
@@ -46,7 +46,7 @@ GameDescriptor HugoMetaEngine::findGame(const char *gameId) {
 }
 
 bool HugoMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".hex", nullptr };
+	const char *const EXTENSIONS[] = {".hex", nullptr};
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {

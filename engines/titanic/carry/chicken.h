@@ -41,13 +41,16 @@ class CChicken : public CCarry {
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
 	bool PETObjectStateMsg(CPETObjectStateMsg *msg);
 	bool PETLostObjectMsg(CPETLostObjectMsg *msg);
+
 public:
 	static int _temperature;
+
 public:
 	bool _greasy;
 	CString _condiment;
 	bool _inactive;
 	int _timerId;
+
 public:
 	CLASSDEF;
 	CChicken();

@@ -35,18 +35,15 @@ Common::Language PinkEngine::getLanguage() const {
 } // End of Namespace Pink
 
 static const PlainGameDescriptor pinkGames[] = {
-	{"peril", "The Pink Panther: Passport to Peril"},
-	{"pokus", "The Pink Panther: Hokus Pokus Pink"},
-	{0, 0}
-};
+    {"peril", "The Pink Panther: Passport to Peril"},
+    {"pokus", "The Pink Panther: Hokus Pokus Pink"},
+    {0, 0}};
 
 #include "pink/detection_tables.h"
 
 static const char *directoryGlobs[] = {
-	"install",
-	nullptr
-};
-
+    "install",
+    nullptr};
 
 class PinkMetaEngine : public AdvancedMetaEngine {
 public:
@@ -77,15 +74,14 @@ public:
 };
 
 bool PinkMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate) ||
+	       (f == kSavesSupportPlayTime) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSimpleSavesNames);
 }
 
 SaveStateList PinkMetaEngine::listSaves(const char *target) const {

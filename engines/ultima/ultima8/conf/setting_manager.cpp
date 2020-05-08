@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/conf/config_file_manager.h"
 #include "common/config-manager.h"
+#include "ultima/ultima8/conf/config_file_manager.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -95,7 +95,6 @@ bool SettingManager::get(istring key, bool &ret, Domain dom) {
 	return true;
 }
 
-
 void SettingManager::set(istring key, Std::string value, Domain dom) {
 	_confFileMan->set(getConfigKey(key, dom), value);
 
@@ -126,9 +125,6 @@ void SettingManager::unset(istring key, Domain dom) {
 	callCallbacks(key);
 }
 
-
-
-
 void SettingManager::setDefault(istring key, Std::string value) {
 	set(key, value, DOM_DEFAULTS);
 }
@@ -144,8 +140,6 @@ void SettingManager::setDefault(istring key, int value) {
 void SettingManager::setDefault(istring key, bool value) {
 	set(key, value, DOM_DEFAULTS);
 }
-
-
 
 void SettingManager::setCurrentDomain(Domain dom) {
 	_currentDomain = dom;
@@ -251,7 +245,8 @@ void SettingManager::callCallbacks(istring key) {
 	Callbacks::iterator i;
 	i = _callbacks.find(key);
 
-	if (i == _callbacks.end()) return;
+	if (i == _callbacks.end())
+		return;
 
 	Std::vector<ConfigCallback> &cb = (*i)._value;
 	Std::vector<ConfigCallback>::iterator iter;

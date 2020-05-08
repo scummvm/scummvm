@@ -21,9 +21,9 @@
  */
 
 #include "sherlock/animation.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/3do/scalpel_3do_screen.h"
+#include "sherlock/scalpel/scalpel_screen.h"
+#include "sherlock/sherlock.h"
 
 #include "common/algorithm.h"
 
@@ -35,7 +35,7 @@ Animation::Animation(SherlockEngine *vm) : _vm(vm) {
 }
 
 bool Animation::play(const Common::String &filename, bool intro, int minDelay, int fade,
-		bool setPalette, int speed) {
+                     bool setPalette, int speed) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -126,7 +126,7 @@ bool Animation::play(const Common::String &filename, bool intro, int minDelay, i
 		if (events.kbHit()) {
 			Common::KeyState keyState = events.getKey();
 			if (keyState.keycode == Common::KEYCODE_ESCAPE ||
-				keyState.keycode == Common::KEYCODE_SPACE) {
+			    keyState.keycode == Common::KEYCODE_SPACE) {
 				skipped = true;
 				break;
 			}
@@ -144,17 +144,17 @@ bool Animation::play(const Common::String &filename, bool intro, int minDelay, i
 }
 
 bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay, bool fadeFromGrey,
-		int speed) {
+                        int speed) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	Sound  &sound  = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	int soundNumber = 0;
 
-	bool   fadeActive = false;
-	uint16 fadeLimitColor      = 0;
-	uint16 fadeLimitColorRed   = 0;
+	bool fadeActive = false;
+	uint16 fadeLimitColor = 0;
+	uint16 fadeLimitColorRed = 0;
 	uint16 fadeLimitColorGreen = 0;
-	uint16 fadeLimitColorBlue  = 0;
+	uint16 fadeLimitColorBlue = 0;
 
 	// Check for any any sound frames for the given animation
 	const int *soundFrames = checkForSoundFrames(filename, intro);
@@ -250,7 +250,7 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 		if (events.kbHit()) {
 			Common::KeyState keyState = events.getKey();
 			if (keyState.keycode == Common::KEYCODE_ESCAPE ||
-				keyState.keycode == Common::KEYCODE_SPACE) {
+			    keyState.keycode == Common::KEYCODE_SPACE) {
 				skipped = true;
 				break;
 			}

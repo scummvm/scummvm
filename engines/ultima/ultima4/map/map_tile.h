@@ -64,7 +64,7 @@ public:
 		return _id != i;
 	}
 	bool operator<(const MapTile &m) const {
-		return _id < m._id;    // for Std::less
+		return _id < m._id; // for Std::less
 	}
 
 	/**

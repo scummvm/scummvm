@@ -21,8 +21,8 @@
  */
 
 #include "scumm/file.h"
-#include "scumm/scumm_v2.h"
 #include "scumm/resource.h"
+#include "scumm/scumm_v2.h"
 
 namespace Scumm {
 
@@ -175,40 +175,40 @@ void ScummEngine_v2::readIndexFile() {
 	magic = _fileHandle->readUint16LE();
 
 	switch (magic) {
-		case 0x0100:
-			debug("Enhanced V2 game detected");
-			assert(_game.version == 2);
-			readEnhancedIndexFile();
-			break;
-		case 0x0A31:
-			debug("Classic V1 game detected");
-			assert(_game.version == 1);
-			readClassicIndexFile();
-			break;
-		case 0x4643:
-			if (!(_game.platform == Common::kPlatformNES))
-				error("Use maniac target");
-			debug("NES V1 game detected");
-			assert(_game.version == 1);
-			readClassicIndexFile();
-			break;
-		case 0x132:
-			debug("C64 V1 game detected");
-			if (_game.id == GID_MANIAC) {
-				assert(_game.version == 0);
-			} else {
-				assert(_game.version == 1);
-			}
-			readClassicIndexFile();
-			break;
-		case 0x032:
-			debug("Apple II V1 game detected");
+	case 0x0100:
+		debug("Enhanced V2 game detected");
+		assert(_game.version == 2);
+		readEnhancedIndexFile();
+		break;
+	case 0x0A31:
+		debug("Classic V1 game detected");
+		assert(_game.version == 1);
+		readClassicIndexFile();
+		break;
+	case 0x4643:
+		if (!(_game.platform == Common::kPlatformNES))
+			error("Use maniac target");
+		debug("NES V1 game detected");
+		assert(_game.version == 1);
+		readClassicIndexFile();
+		break;
+	case 0x132:
+		debug("C64 V1 game detected");
+		if (_game.id == GID_MANIAC) {
 			assert(_game.version == 0);
-			readClassicIndexFile();
-			break;
-		default:
-			error("Unknown magic id (0x%X) - this version is unsupported", magic);
-			break;
+		} else {
+			assert(_game.version == 1);
+		}
+		readClassicIndexFile();
+		break;
+	case 0x032:
+		debug("Apple II V1 game detected");
+		assert(_game.version == 0);
+		readClassicIndexFile();
+		break;
+	default:
+		error("Unknown magic id (0x%X) - this version is unsupported", magic);
+		break;
 	}
 
 	closeRoom();

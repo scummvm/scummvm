@@ -23,12 +23,12 @@
 #ifndef TSAGE_RINGWORLD2_OUTPOST_H
 #define TSAGE_RINGWORLD2_OUTPOST_H
 
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
-#include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/scenes.h"
+#include "tsage/sound.h"
 
 namespace TsAGE {
 
@@ -37,7 +37,7 @@ namespace Ringworld2 {
 using namespace TsAGE;
 
 class Scene1337 : public SceneExt {
-	class OptionsDialog: public GfxDialog {
+	class OptionsDialog : public GfxDialog {
 	private:
 		GfxButton _autoplay;
 		GfxButton _restartGame;
@@ -47,11 +47,12 @@ class Scene1337 : public SceneExt {
 		OptionsDialog();
 		~OptionsDialog() override {}
 		virtual GfxButton *execute(GfxButton *defaultButton);
+
 	public:
 		static void show();
 	};
 
-	class Card: public SceneHotspot {
+	class Card : public SceneHotspot {
 	public:
 		SceneObject _card;
 
@@ -63,7 +64,7 @@ class Scene1337 : public SceneExt {
 		bool isIn(Common::Point pt);
 	};
 
-	class GameBoardSide: public SceneHotspot {
+	class GameBoardSide : public SceneHotspot {
 	public:
 		Card _handCard[4];
 		Card _outpostStation[8];
@@ -80,63 +81,64 @@ class Scene1337 : public SceneExt {
 		void synchronize(Serializer &s) override;
 	};
 
-	class Action1337: public Action {
+	class Action1337 : public Action {
 	public:
 		void waitFrames(int32 frameCount);
 	};
 
-	class Action1: public Action1337 {
+	class Action1 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action1337 {
+	class Action2 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action3: public Action1337 {
+	class Action3 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action4: public Action1337 {
+	class Action4 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action5: public Action1337 {
+	class Action5 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action6: public Action1337 {
+	class Action6 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action7: public Action1337 {
+	class Action7 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action8: public Action1337 {
+	class Action8 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action9: public Action1337 {
+	class Action9 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action10: public Action1337 {
+	class Action10 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action11: public Action1337 {
+	class Action11 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action12: public Action1337 {
+	class Action12 : public Action1337 {
 	public:
 		void signal() override;
 	};
-	class Action13: public Action1337 {
+	class Action13 : public Action1337 {
 	public:
 		void signal() override;
 	};
+
 public:
 	Action1 _action1;
 	Action2 _action2;
@@ -204,17 +206,17 @@ public:
 	void handlePlayerTurn();
 	bool isStationCard(int cardId);
 	bool isStopConstructionCard(int cardId);
-	int  getStationId(int playerId, int handCardId);
-	int  findPlatformCardInHand(int playerId);
-	int  findMeteorCardInHand(int playerId);
-	int  findThieftCardInHand(int playerId);
-	int  isDelayCard(int cardId);
-	int  getStationCardId(int cardId);
+	int getStationId(int playerId, int handCardId);
+	int findPlatformCardInHand(int playerId);
+	int findMeteorCardInHand(int playerId);
+	int findThieftCardInHand(int playerId);
+	int isDelayCard(int cardId);
+	int getStationCardId(int cardId);
 	void handlePlayer01Discard(int playerId);
 	void playThieftCard(int playerId, Card *card, int victimId);
-	int  getPreventionCardId(int cardId);
+	int getPreventionCardId(int cardId);
 	bool isAttackPossible(int victimId, int cardId);
-	int  getPlayerWithOutpost(int playerId);
+	int getPlayerWithOutpost(int playerId);
 	bool checkAntiDelayCard(int delayCardId, int cardId);
 	void playStationCard(Card *station, Card *platform);
 	void playDelayCard(Card *card, Card *dest);
@@ -222,7 +224,7 @@ public:
 	void playAntiDelayCard(Card *card, Card *dest);
 	Card *getStationCard(int arg1);
 	void playCentralOutpostCard(Card *card, int playerId);
-	int  getRandomCardFromHand(int playerId);
+	int getRandomCardFromHand(int playerId);
 	void discardCard(Card *card);
 	void subC4CD2();
 	void subC4CEC();

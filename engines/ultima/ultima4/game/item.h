@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_GAME_ITEM_H
 #define ULTIMA4_GAME_ITEM_H
 
-#include "ultima/ultima4/core/types.h"
 #include "common/str.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -34,9 +34,9 @@ class Map;
 struct Portal;
 
 enum SearchCondition {
-	SC_NONE         = 0x00,
-	SC_NEWMOONS     = 0x01,
-	SC_FULLAVATAR   = 0x02,
+	SC_NONE = 0x00,
+	SC_NEWMOONS = 0x01,
+	SC_FULLAVATAR = 0x02,
 	SC_REAGENTDELAY = 0x04
 };
 
@@ -44,7 +44,7 @@ class Items;
 typedef bool (Items::*IsInInventoryProc)(int item);
 typedef void (Items::*InventoryActionProc)(int item);
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 struct ItemLocation {
 	const char *_name;
 	const char *_shortName;
@@ -55,18 +55,18 @@ struct ItemLocation {
 	int _data;
 	byte _conditions;
 } PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 typedef void (*DestroyAllCreaturesCallback)();
 #define N_ITEMS 34
 
 class Items {
 private:
-
 	static const ItemLocation ITEMS[N_ITEMS];
 	DestroyAllCreaturesCallback destroyAllCreaturesCallback;
 	int needStoneNames;
 	byte stoneMask;
+
 private:
 	bool isRuneInInventory(int virt);
 	void putRuneInInventory(int virt);
@@ -118,6 +118,7 @@ private:
 	 * Returns true if the specified conditions are met to be able to get the item
 	 */
 	bool itemConditionsMet(byte conditions);
+
 public:
 	Items();
 	~Items();

@@ -21,9 +21,9 @@
  */
 
 #include "sherlock/tattoo/widget_lab.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -179,7 +179,7 @@ void WidgetLab::displayLabNames() {
 			ui._tooltipWidget.setText("");
 		} else {
 			Common::String str = Common::String::format("%s %s %s %s", FIXED(Use), _labObject->_description.c_str(),
-				FIXED(With), ui._bgShape->_description.c_str());
+			                                            FIXED(With), ui._bgShape->_description.c_str());
 
 			// Make sure that the Object has a name
 			if (!ui._bgShape->_description.empty() && !ui._bgShape->_description.hasPrefix(" ")) {

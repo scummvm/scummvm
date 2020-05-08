@@ -31,9 +31,11 @@ class CCallBot : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool TurnOn(CTurnOn *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 protected:
 	CString _npcName;
 	bool _enabled;
+
 public:
 	CLASSDEF;
 	CCallBot();

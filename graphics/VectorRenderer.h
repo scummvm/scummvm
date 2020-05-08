@@ -38,23 +38,21 @@ namespace Graphics {
 class VectorRenderer;
 struct DrawStep;
 
-
 typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);
-
 
 struct DrawStep {
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
-	Graphics::Surface* blitSrc;
-	Graphics::TransparentSurface* blitAlphaSrc;
+	Graphics::Surface *blitSrc;
+	Graphics::TransparentSurface *blitAlphaSrc;
 
 	struct Color {
 		uint8 r, g, b;
 		bool set;
 
-		Color () : r(0), g(0), b(0), set(false) {}
+		Color() : r(0), g(0), b(0), set(false) {}
 	};
-	Color fgColor; /**< Foreground color */
-	Color bgColor; /**< background color */
+	Color fgColor;    /**< Foreground color */
+	Color bgColor;    /**< background color */
 	Color gradColor1; /**< gradient start*/
 	Color gradColor2; /**< gradient end */
 	Color bevelColor;
@@ -80,7 +78,7 @@ struct DrawStep {
 
 	uint8 shadow, stroke, factor, radius, bevel; /**< Misc options... */
 
-	uint8 fillMode; /**< active fill mode */
+	uint8 fillMode;       /**< active fill mode */
 	uint8 shadowFillMode; /**< fill mode of the shadow used */
 
 	uint32 extraData; /**< Generic parameter for extra options (orientation/bevel) */
@@ -130,8 +128,7 @@ VectorRenderer *createRenderer(int mode);
 class VectorRenderer {
 public:
 	VectorRenderer() : _activeSurface(NULL), _fillMode(kFillDisabled), _shadowOffset(0), _shadowFillMode(kShadowExponential),
-		_disableShadows(false), _strokeWidth(1), _gradientFactor(1), _bevel(0), _dynamicData(0) {
-
+	                   _disableShadows(false), _strokeWidth(1), _gradientFactor(1), _bevel(0), _dynamicData(0) {
 	}
 
 	virtual ~VectorRenderer() {}
@@ -517,10 +514,10 @@ public:
 	virtual void blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p) = 0;
 
 	virtual void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
-			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
-			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
-			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
-			int alpha = 255) = 0;
+	                             GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
+	                             Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
+	                             Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
+	                             int alpha = 255) = 0;
 
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
@@ -549,11 +546,11 @@ protected:
 	FillMode _fillMode; /**< Defines in which way (if any) are filled the drawn shapes */
 	ShadowFillMode _shadowFillMode;
 
-	int _shadowOffset; /**< offset for drawn shadows */
-	int _bevel; /**< amount of fake bevel */
+	int _shadowOffset;    /**< offset for drawn shadows */
+	int _bevel;           /**< amount of fake bevel */
 	bool _disableShadows; /**< Disables temporarily shadow drawing for overlayed images. */
-	int _strokeWidth; /**< Width of the stroke of all drawn shapes */
-	uint32 _dynamicData; /**< Dynamic data from the GUI Theme that modifies the drawing of the current shape */
+	int _strokeWidth;     /**< Width of the stroke of all drawn shapes */
+	uint32 _dynamicData;  /**< Dynamic data from the GUI Theme that modifies the drawing of the current shape */
 
 	int _gradientFactor; /**< Multiplication factor of the active gradient */
 };

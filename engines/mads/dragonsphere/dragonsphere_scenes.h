@@ -24,9 +24,9 @@
 #define MADS_DRAGONSPHERE_SCENES_H
 
 #include "common/scummsys.h"
+#include "mads/dragonsphere/game_dragonsphere.h"
 #include "mads/game.h"
 #include "mads/scene.h"
-#include "mads/dragonsphere/game_dragonsphere.h"
 //#include "mads/dragonsphere/globals_dragonsphere.h"
 
 namespace MADS {
@@ -635,6 +635,7 @@ protected:
 	 * Plays appropriate sound for entering varous rooms
 	 */
 	void lowRoomsEntrySound();
+
 public:
 	/**
 	 * Constructor
@@ -646,6 +647,7 @@ public:
 
 class SceneInfoDragonsphere : public SceneInfo {
 	friend class SceneInfo;
+
 protected:
 	void loadCodes(BaseSurface &depthSurface, int variant) override;
 

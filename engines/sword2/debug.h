@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef	SWORD2_DEBUG_H
+#ifndef SWORD2_DEBUG_H
 #define SWORD2_DEBUG_H
 
 // FIXME: I don't know how large this constant used to be

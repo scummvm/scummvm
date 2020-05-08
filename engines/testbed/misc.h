@@ -25,7 +25,6 @@
 
 #include "testbed/testsuite.h"
 
-
 namespace Testbed {
 
 // Shared variables used in mutex handling test

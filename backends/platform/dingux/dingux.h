@@ -33,6 +33,5 @@ public:
 	bool hasFeature(Feature f);
 };
 
-
 #endif /* DINGUX */
 #endif /* SDL_DINGUX_COMMON_H */

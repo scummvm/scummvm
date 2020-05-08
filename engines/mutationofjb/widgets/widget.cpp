@@ -76,4 +76,4 @@ void Widget::update(Graphics::ManagedSurface &surface) {
 	}
 }
 
-}
+} // namespace MutationOfJB

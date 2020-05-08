@@ -1,5 +1,5 @@
-#include <cxxtest/TestSuite.h>
 #include "engines/ultima/shared/core/str.h"
+#include <cxxtest/TestSuite.h>
 
 /**
  * Test suite for the functions in engines/ultima/shared/core/str.h
@@ -7,8 +7,8 @@
 
 class UltimaStrSuite : public CxxTest::TestSuite {
 
-	public:
-	UltimaStrSuite () {
+public:
+	UltimaStrSuite() {
 	}
 
 	void test_index_of() {

@@ -20,9 +20,9 @@
  *
  */
 
-#include "mohawk/resource.h"
-#include "mohawk/livingbooks.h"
 #include "mohawk/livingbooks_graphics.h"
+#include "mohawk/livingbooks.h"
+#include "mohawk/resource.h"
 
 #include "common/substream.h"
 #include "common/system.h"

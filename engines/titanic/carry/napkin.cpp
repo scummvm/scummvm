@@ -26,7 +26,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNapkin, CCarry)
-	ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(UseWithOtherMsg)
 END_MESSAGE_MAP()
 
 CNapkin::CNapkin() : CCarry() {

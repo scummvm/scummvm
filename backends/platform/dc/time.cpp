@@ -22,35 +22,32 @@
 
 #define RONIN_TIMER_ACCESS
 
-#include <common/scummsys.h>
 #include "dc.h"
+#include <common/scummsys.h>
 
+uint32 OSystem_Dreamcast::getMillis(bool skipRecord) {
+	static uint32 msecs = 0;
+	static unsigned int t0 = 0;
 
-uint32 OSystem_Dreamcast::getMillis(bool skipRecord)
-{
-  static uint32 msecs=0;
-  static unsigned int t0=0;
+	unsigned int t = Timer();
+	unsigned int dm, dt = t - t0;
 
-  unsigned int t = Timer();
-  unsigned int dm, dt = t - t0;
+	t0 = t;
+	dm = (dt << 6) / 3125U;
+	dt -= (dm * 3125U) >> 6;
+	t0 -= dt;
 
-  t0 = t;
-  dm = (dt << 6)/3125U;
-  dt -= (dm * 3125U)>>6;
-  t0 -= dt;
-
-  return msecs += dm;
+	return msecs += dm;
 }
 
-void OSystem_Dreamcast::delayMillis(uint msecs)
-{
-  getMillis();
-  unsigned int t, start = Timer();
-  int time = (((unsigned int)msecs)*3125U)>>6;
-  while (((int)((t = Timer())-start))<time) {
-    if (_timerManager != NULL)
-      ((DefaultTimerManager *)_timerManager)->handler();
-    checkSound();
-  }
-  getMillis();
+void OSystem_Dreamcast::delayMillis(uint msecs) {
+	getMillis();
+	unsigned int t, start = Timer();
+	int time = (((unsigned int)msecs) * 3125U) >> 6;
+	while (((int)((t = Timer()) - start)) < time) {
+		if (_timerManager != NULL)
+			((DefaultTimerManager *)_timerManager)->handler();
+		checkSound();
+	}
+	getMillis();
 }

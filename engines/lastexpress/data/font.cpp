@@ -85,7 +85,6 @@ bool Font::load(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-
 uint16 Font::getCharGlyph(uint16 c) const {
 	//warning("%c", c);
 	if (c >= 0x200)
@@ -133,7 +132,7 @@ byte *Font::getCharImg(uint16 c) {
 	return getGlyphImg(getCharGlyph(c));
 }
 
-uint8 Font::getCharWidth(uint16 c) const{
+uint8 Font::getCharWidth(uint16 c) const {
 	if (c == 0x20) {
 		// Space is a special case
 		// TODO: this is an arbitrary value
@@ -174,7 +173,7 @@ void Font::drawChar(Graphics::Surface *surface, int16 x, int16 y, uint16 c) {
 				index = *p >> 4;
 			uint16 color = _palette[index];
 			if (color != 0x1f) {
-				surface->fillRect(Common::Rect(x+i, y+j, x+i+1, y+j+1), color);
+				surface->fillRect(Common::Rect(x + i, y + j, x + i + 1, y + j + 1), color);
 			}
 			if (i % 2)
 				p++;

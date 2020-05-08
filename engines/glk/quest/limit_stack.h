@@ -26,14 +26,14 @@
 namespace Glk {
 namespace Quest {
 
-template <class T> class LimitStack {
+template<class T>
+class LimitStack {
 	uint stack_size, cur_ptr, end_ptr;
 	Common::Array<T> data;
 	//bool last_push;
 
-
 	uint dofwd(uint i) const {
-		i ++;
+		i++;
 		return i == stack_size ? 0 : i;
 	}
 	uint dobwd(uint i) const {
@@ -54,7 +54,7 @@ template <class T> class LimitStack {
 	*/
 
 public:
-	LimitStack(uint maxSize) : stack_size(maxSize), cur_ptr(0), end_ptr(maxSize - 1), data(Common::Array<T> (maxSize)) { }
+	LimitStack(uint maxSize) : stack_size(maxSize), cur_ptr(0), end_ptr(maxSize - 1), data(Common::Array<T>(maxSize)) {}
 
 	void push(T &item) {
 		if (cur_ptr == end_ptr)
@@ -92,7 +92,8 @@ public:
 	}
 };
 
-template<class T> Common::WriteStream &operator<< (Common::WriteStream &o, LimitStack<T> st) {
+template<class T>
+Common::WriteStream &operator<<(Common::WriteStream &o, LimitStack<T> st) {
 	st.dump(o);
 	return o;
 }

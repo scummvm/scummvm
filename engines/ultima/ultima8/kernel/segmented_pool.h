@@ -41,7 +41,7 @@ struct SegmentedPoolNode;
  * If the requested memory is larger than a segment, allocation will fail
  * and return nullptr.
  */
-class SegmentedPool: public Pool {
+class SegmentedPool : public Pool {
 public:
 	SegmentedPool(size_t nodeCapacity, uint32 nodes);
 	~SegmentedPool() override;
@@ -69,6 +69,7 @@ public:
 	}
 
 	SegmentedPoolNode *getPoolNode(void *ptr);
+
 private:
 	uint8 *_startOfPool;
 	uint8 *_endOfPool;

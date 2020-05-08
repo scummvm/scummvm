@@ -302,7 +302,7 @@ void decodeVectorsTmpl(CinepakFrame &frame, const byte *clipTable, const byte *c
 	int32 startPos = stream.pos();
 
 	for (uint16 y = frame.strips[strip].rect.top; y < frame.strips[strip].rect.bottom; y += 4) {
-		iy[0] = (PixelInt *)frame.surface->getBasePtr(frame.strips[strip].rect.left, + y);
+		iy[0] = (PixelInt *)frame.surface->getBasePtr(frame.strips[strip].rect.left, +y);
 		iy[1] = iy[0] + frame.width;
 		iy[2] = iy[1] + frame.width;
 		iy[3] = iy[2] + frame.width;
@@ -312,8 +312,8 @@ void decodeVectorsTmpl(CinepakFrame &frame, const byte *clipTable, const byte *c
 				if ((stream.pos() - startPos + 4) > (int32)chunkSize)
 					return;
 
-				flag  = stream.readUint32BE();
-				mask  = 0x80000000;
+				flag = stream.readUint32BE();
+				mask = 0x80000000;
 			}
 
 			if (!(chunkID & 0x01) || (flag & mask)) {
@@ -321,8 +321,8 @@ void decodeVectorsTmpl(CinepakFrame &frame, const byte *clipTable, const byte *c
 					if ((stream.pos() - startPos + 4) > (int32)chunkSize)
 						return;
 
-					flag  = stream.readUint32BE();
-					mask  = 0x80000000;
+					flag = stream.readUint32BE();
+					mask = 0x80000000;
 				}
 
 				if ((chunkID & 0x02) || (~flag & mask)) {
@@ -446,10 +446,13 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 
 		_curFrame.strips[i].id = stream.readUint16BE();
 		_curFrame.strips[i].length = stream.readUint16BE() - 12; // Subtract the 12 byte header
-		_curFrame.strips[i].rect.top = _y; stream.readUint16BE(); // Ignore, substitute with our own.
-		_curFrame.strips[i].rect.left = 0; stream.readUint16BE(); // Ignore, substitute with our own
+		_curFrame.strips[i].rect.top = _y;
+		stream.readUint16BE(); // Ignore, substitute with our own.
+		_curFrame.strips[i].rect.left = 0;
+		stream.readUint16BE(); // Ignore, substitute with our own
 		_curFrame.strips[i].rect.bottom = _y + stream.readUint16BE();
-		_curFrame.strips[i].rect.right = _curFrame.width; stream.readUint16BE(); // Ignore, substitute with our own
+		_curFrame.strips[i].rect.right = _curFrame.width;
+		stream.readUint16BE(); // Ignore, substitute with our own
 
 		// Sanity check. Because Cinepak is based on 4x4 blocks, the width and height of each strip needs to be divisible by 4.
 		assert(!(_curFrame.strips[i].rect.width() % 4) && !(_curFrame.strips[i].rect.height() % 4));
@@ -528,8 +531,8 @@ void CinepakDecoder::loadCodebook(Common::SeekableReadStream &stream, uint16 str
 			if ((stream.pos() - startPos + 4) > (int32)chunkSize)
 				break;
 
-			flag  = stream.readUint32BE();
-			mask  = 0x80000000;
+			flag = stream.readUint32BE();
+			mask = 0x80000000;
 		}
 
 		if (!(chunkID & 0x01) || (flag & mask)) {

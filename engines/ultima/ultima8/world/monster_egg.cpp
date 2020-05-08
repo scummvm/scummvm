@@ -22,15 +22,15 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/monster_egg.h"
+#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/actors/monster_info.h"
-#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/monster_egg.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -39,7 +39,6 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MonsterEgg, Item)
 
 MonsterEgg::MonsterEgg() {
 }
-
 
 MonsterEgg::~MonsterEgg() {
 }
@@ -55,8 +54,8 @@ uint16 MonsterEgg::hatch() {
 		return 0;
 
 	Actor *newactor = ItemFactory::createActor(shapeNum, 0, 0,
-	                  FLG_FAST_ONLY | FLG_DISPOSABLE | FLG_IN_NPC_LIST,
-	                  0, 0, 0, true);
+	                                           FLG_FAST_ONLY | FLG_DISPOSABLE | FLG_IN_NPC_LIST,
+	                                           0, 0, 0, true);
 	if (!newactor) {
 		perr << "MonsterEgg::hatch failed to create actor (" << shapeNum
 		     << ")." << Std::endl;
@@ -91,7 +90,8 @@ void MonsterEgg::saveData(Common::WriteStream *ws) {
 }
 
 bool MonsterEgg::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Item::loadData(rs, version)) return false;
+	if (!Item::loadData(rs, version))
+		return false;
 
 	return true;
 }
@@ -99,7 +99,8 @@ bool MonsterEgg::loadData(Common::ReadStream *rs, uint32 version) {
 uint32 MonsterEgg::I_monsterEggHatch(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	MonsterEgg *megg = p_dynamic_cast<MonsterEgg *>(item);
-	if (!megg) return 0;
+	if (!megg)
+		return 0;
 
 	return megg->hatch();
 }
@@ -107,7 +108,8 @@ uint32 MonsterEgg::I_monsterEggHatch(const uint8 *args, unsigned int /*argsize*/
 uint32 MonsterEgg::I_getMonId(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	MonsterEgg *megg = p_dynamic_cast<MonsterEgg *>(item);
-	if (!megg) return 0;
+	if (!megg)
+		return 0;
 
 	return megg->getMapNum() >> 3;
 }

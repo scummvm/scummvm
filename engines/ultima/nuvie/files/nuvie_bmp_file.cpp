@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_bmp_file.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -214,7 +214,7 @@ bool NuvieBmpFile::save(Std::string filename) {
 void NuvieBmpFile::write8BitData(NuvieIOFileWrite *file) {
 	uint32 i;
 	for (i = infoHeader.height; i > 0; i--) {
-		file->writeBuf(&data[(i - 1)*infoHeader.width], infoHeader.width);
+		file->writeBuf(&data[(i - 1) * infoHeader.width], infoHeader.width);
 		if ((sint32)bmp_line_width > infoHeader.width) {
 			//write out padding bytes.
 			for (uint8 j = 0; j < bmp_line_width - infoHeader.width; j++) {
@@ -282,9 +282,8 @@ Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32() {
 	}
 
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(
-		infoHeader.width, infoHeader.height, 
-		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
-	);
+	    infoHeader.width, infoHeader.height,
+	    Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	unsigned char *src_buf = data;
 	Graphics::Surface s = surface->getSubArea(Common::Rect(0, 0, surface->w, surface->h));

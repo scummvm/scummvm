@@ -26,25 +26,25 @@ namespace BladeRunner {
 
 void SceneScriptKP04::InitializeScene() {
 	if (Game_Flag_Query(kFlagKP05toKP04)) {
-		Setup_Scene_Information(-544.0f, 94.89f,  288.0f, 700);
+		Setup_Scene_Information(-544.0f, 94.89f, 288.0f, 700);
 	} else {
 		Setup_Scene_Information(-905.0f, 94.89f, 1357.0f, 970);
 	}
-	Scene_Exit_Add_2D_Exit(0,   0, 455, 639, 479, 2);
+	Scene_Exit_Add_2D_Exit(0, 0, 455, 639, 479, 2);
 	Scene_Exit_Add_2D_Exit(1, 475, 247, 514, 416, 1);
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxKPAMB1,   34, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxKPAMB1, 34, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 27, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 90, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSCARY1,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY2,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY3,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY1, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY2, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY3, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptKP04::SceneLoaded() {

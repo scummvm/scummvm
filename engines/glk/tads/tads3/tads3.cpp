@@ -33,6 +33,6 @@ void TADS3::runGame() {
 	// TODO
 }
 
-} // End of namespace TADS2
+} // namespace TADS3
 } // End of namespace TADS
 } // End of namespace Glk

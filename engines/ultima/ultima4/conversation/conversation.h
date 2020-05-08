@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_CONVERSATION_CONVERSATION_H
 #define ULTIMA4_CONVERSATION_CONVERSATION_H
 
-#include "ultima/ultima4/core/utils.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -104,7 +104,7 @@ private:
  */
 class DynamicResponse : public Response {
 public:
-	DynamicResponse(Response * (*generator)(const DynamicResponse *), const Common::String &param = "");
+	DynamicResponse(Response *(*generator)(const DynamicResponse *), const Common::String &param = "");
 	virtual ~DynamicResponse();
 
 	const Std::vector<ResponsePart> &getParts() const override;
@@ -210,28 +210,28 @@ public:
 	 * Getters
 	 */
 	void setName(const Common::String &n) {
-		_name           = n;
+		_name = n;
 	}
 	void setPronoun(const Common::String &pn) {
-		_pronoun        = pn;
+		_pronoun = pn;
 	}
 	void setPrompt(const Common::String &prompt) {
-		this->_prompt   = prompt;
+		this->_prompt = prompt;
 	}
 	void setIntro(Response *i) {
-		_intro          = i;
+		_intro = i;
 	}
 	void setLongIntro(Response *i) {
-		_longIntro      = i;
+		_longIntro = i;
 	}
 	void setDefaultAnswer(Response *a) {
-		_defaultAnswer  = a;
+		_defaultAnswer = a;
 	}
 	void setTurnAwayProb(int prob) {
-		_turnAwayProb   = prob;
+		_turnAwayProb = prob;
 	}
 	void setQuestion(Question *q) {
-		_question       = q;
+		_question = q;
 	}
 	void addKeyword(const Common::String &kw, Response *response);
 
@@ -267,25 +267,25 @@ class Conversation {
 public:
 	/** Different states the conversation may be in */
 	enum State {
-		INTRO,                  /**< The initial state of the conversation, before anything is said */
-		TALK,                   /**< The "default" state of the conversation */
-		ASK,                    /**< The talker is asking the player a question */
-		ASKYESNO,               /**< The talker is asking the player a yes/no question */
-		VENDORQUESTION,         /**< A vendor is asking the player a question */
-		BUY_ITEM,               /**< Asked which item to buy */
-		SELL_ITEM,              /**< Asked which item to sell */
-		BUY_QUANTITY,           /**< Asked how many items to buy */
-		SELL_QUANTITY,          /**< Asked how many items to sell */
-		BUY_PRICE,              /**< Asked how much money to give someone */
-		CONFIRMATION,           /**< Asked by a vendor to confirm something */
-		CONTINUEQUESTION,       /**< Asked whether or not to continue */
-		TOPIC,                  /**< Asked a topic to speak about */
-		PLAYER,                 /**< Input for which player is required */
-		FULLHEAL,               /**< Heal the entire party before continuing conversation */
-		ADVANCELEVELS,          /**< Check and advance the party's levels before continuing */
-		GIVEBEGGAR,             /**< Asked how much to give a beggar */
-		ATTACK,                 /**< The conversation ends with the talker attacking you */
-		DONE                    /**< The conversation is over */
+		INTRO,            /**< The initial state of the conversation, before anything is said */
+		TALK,             /**< The "default" state of the conversation */
+		ASK,              /**< The talker is asking the player a question */
+		ASKYESNO,         /**< The talker is asking the player a yes/no question */
+		VENDORQUESTION,   /**< A vendor is asking the player a question */
+		BUY_ITEM,         /**< Asked which item to buy */
+		SELL_ITEM,        /**< Asked which item to sell */
+		BUY_QUANTITY,     /**< Asked how many items to buy */
+		SELL_QUANTITY,    /**< Asked how many items to sell */
+		BUY_PRICE,        /**< Asked how much money to give someone */
+		CONFIRMATION,     /**< Asked by a vendor to confirm something */
+		CONTINUEQUESTION, /**< Asked whether or not to continue */
+		TOPIC,            /**< Asked a topic to speak about */
+		PLAYER,           /**< Input for which player is required */
+		FULLHEAL,         /**< Heal the entire party before continuing conversation */
+		ADVANCELEVELS,    /**< Check and advance the party's levels before continuing */
+		GIVEBEGGAR,       /**< Asked how much to give a beggar */
+		ATTACK,           /**< The conversation ends with the talker attacking you */
+		DONE              /**< The conversation is over */
 	};
 
 	/** Different types of conversation input required */
@@ -303,17 +303,17 @@ public:
 	InputType getInputRequired(int *bufferLen);
 
 	/* Static variables */
-	static const uint BUFFERLEN;    /**< The default maxixum length of input */
+	static const uint BUFFERLEN; /**< The default maxixum length of input */
 
 public:
-	State _state;                /**< The state of the conversation */
+	State _state;                        /**< The state of the conversation */
 	Common::String _playerInput;         /**< A Common::String holding the text the player inputs */
-	Common::List<Common::String> _reply;         /**< What the talker says */
-	class Script *_script;       /**< A script that this person follows during the conversation (may be nullptr) */
-	Dialogue::Question *_question; /**< The current question the player is being asked */
-	int _quant;                  /**< For vendor transactions */
-	int _player;                 /**< For vendor transactions */
-	int _price;                  /**< For vendor transactions */
+	Common::List<Common::String> _reply; /**< What the talker says */
+	class Script *_script;               /**< A script that this person follows during the conversation (may be nullptr) */
+	Dialogue::Question *_question;       /**< The current question the player is being asked */
+	int _quant;                          /**< For vendor transactions */
+	int _player;                         /**< For vendor transactions */
+	int _price;                          /**< For vendor transactions */
 };
 
 } // End of namespace Ultima4

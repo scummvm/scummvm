@@ -24,8 +24,8 @@
 #define ULTIMA_SHARED_CORE_MOUSE_CURSOR_H
 
 #include "common/scummsys.h"
-#include "ultima/shared/core/rect.h"
 #include "common/stream.h"
+#include "ultima/shared/core/rect.h"
 
 namespace Ultima {
 namespace Shared {
@@ -66,14 +66,17 @@ class MouseCursor {
 
 		void load(Common::SeekableReadStream &s);
 	};
+
 private:
 	Common::Array<MouseCursorData> _cursors;
 	int _cursorId;
+
 private:
 	/**
 	 * Loads the mouse cursors
 	 */
 	void loadCursors();
+
 public:
 	MouseCursor();
 

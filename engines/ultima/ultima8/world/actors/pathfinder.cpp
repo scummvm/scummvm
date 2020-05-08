@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/animation_tracker.h"
+#include "common/system.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/ultima8.h"
-#include "common/system.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/animation_tracker.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -101,11 +101,13 @@ bool PathfindingState::checkHit(const Actor *_actor, const Actor *target) const 
 	}
 
 	while (tracker.step()) {
-		if (tracker.hitSomething()) break;
+		if (tracker.hitSomething())
+			break;
 	}
 
 	ObjId hit = tracker.hitSomething();
-	if (hit == target->getObjId()) return true;
+	if (hit == target->getObjId())
+		return true;
 
 	return false;
 }
@@ -115,8 +117,8 @@ bool PathNodeCmp::operator()(const PathNode *n1, const PathNode *n2) const {
 }
 
 Pathfinder::Pathfinder() : _actor(nullptr), _targetItem(nullptr),
-		_hitMode(false), _expandTime(0), _targetX(0), _targetY(0),
-		_targetZ(0), _actorXd(0), _actorYd(0), _actorZd(0) {
+                           _hitMode(false), _expandTime(0), _targetX(0), _targetY(0),
+                           _targetZ(0), _actorXd(0), _actorYd(0), _actorZd(0) {
 	expandednodes = 0;
 }
 
@@ -240,7 +242,6 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) {
 	return node->heuristicTotalCost;
 }
 
-
 #ifdef DEBUG
 
 // FIXME: these functions assume that we're using a 2x scaler...
@@ -345,7 +346,6 @@ static void drawpath(PathNode *to, uint32 rgb, bool done) {
 		else
 			drawdot(n1->state._x, n1->state._y, n1->state._z, 1, 0xFFFFFFFF);
 
-
 		drawdot(n2->state._x, n2->state._y, n2->state._z, 2, 0xFFFFFFFF);
 
 		n1 = n2;
@@ -380,8 +380,10 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 
 	if (oldnode->depth > 0) {
 		turn = state._direction - oldnode->state._direction;
-		if (turn < 0) turn = -turn;
-		if (turn > 4) turn = 8 - turn;
+		if (turn < 0)
+			turn = -turn;
+		if (turn > 4)
+			turn = 8 - turn;
 	}
 
 	newnode->cost = oldnode->cost + dist + 32 * turn; //!! constant
@@ -445,17 +447,20 @@ void Pathfinder::expandNode(PathNode *node) {
 		bestsqdist += (_targetY - node->state._y + _actorYd / 2) *
 		              (_targetY - node->state._y + _actorYd / 2);
 
-		if (!tracker.init(_actor, walkanim, dir, &state)) continue;
+		if (!tracker.init(_actor, walkanim, dir, &state))
+			continue;
 
 		// determine how far the _actor will travel if the animation runs to completion
 		int32 max_endx, max_endy;
 		tracker.evaluateMaxAnimTravel(max_endx, max_endy, dir);
-		if (alreadyVisited(max_endx, max_endy, state._z)) continue;
+		if (alreadyVisited(max_endx, max_endy, state._z))
+			continue;
 		int sqrddist;
 		const int x_travel = ABS(max_endx - state._x);
-		int xy_maxtravel = x_travel;    // don't have the max(a,b) macro...
+		int xy_maxtravel = x_travel; // don't have the max(a,b) macro...
 		const int y_travel = ABS(max_endy - state._y);
-		if (y_travel > xy_maxtravel) xy_maxtravel = y_travel;
+		if (y_travel > xy_maxtravel)
+			xy_maxtravel = y_travel;
 
 		sqrddist = x_travel * x_travel + y_travel * y_travel;
 		if (sqrddist > 400) {
@@ -527,7 +532,6 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 	}
 #endif
 
-
 	path.clear();
 
 	PathNode *startnode = new PathNode();
@@ -571,7 +575,8 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 #endif
 
 			unsigned int i = length;
-			if (length > 0) length++; // add space for final 'stand' action
+			if (length > 0)
+				length++; // add space for final 'stand' action
 			path.resize(length);
 
 			// now backtrack through the _nodes to assemble the final animation
@@ -610,7 +615,8 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 
 		if (expandedNodes >= NODELIMIT_MIN && ((expandedNodes) % 5) == 0) {
 			uint32 elapsed_ms = g_system->getMillis() - starttime;
-			if (elapsed_ms > 350) break;
+			if (elapsed_ms > 350)
+				break;
 		}
 	}
 

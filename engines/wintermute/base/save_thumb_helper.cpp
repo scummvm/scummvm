@@ -27,9 +27,9 @@
  */
 
 #include "engines/wintermute/base/save_thumb_helper.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/base_game.h"
 #include "graphics/scaler.h"
 
 namespace Wintermute {
@@ -71,7 +71,6 @@ BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 			thumbnail = new BaseImage();
 			thumbnail->copyFrom(screenshot, width, height);
 		}
-
 
 		delete screenshot;
 		screenshot = nullptr;

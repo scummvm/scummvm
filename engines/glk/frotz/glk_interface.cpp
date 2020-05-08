@@ -21,22 +21,21 @@
  */
 
 #include "glk/frotz/glk_interface.h"
-#include "glk/frotz/pics.h"
-#include "glk/frotz/sound_folder.h"
-#include "glk/conf.h"
-#include "glk/screen.h"
 #include "common/config-manager.h"
 #include "common/unzip.h"
+#include "glk/conf.h"
+#include "glk/frotz/pics.h"
+#include "glk/frotz/sound_folder.h"
+#include "glk/screen.h"
 
 namespace Glk {
 namespace Frotz {
 
-GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
-		GlkAPI(syst, gameDesc), _pics(nullptr), curr_status_ht(0), mach_status_ht(0), gos_status(nullptr),
-		gos_linepending(0), gos_linebuf(nullptr), gos_linewin(nullptr), gos_channel(nullptr), mwin(0),
-		mouse_x(0), mouse_y(0), fixforced(0), menu_selected(0), enable_wrapping(false), enable_scripting(false),
-		enable_scrolling(false), enable_buffering(false), next_sample(0), next_volume(0), _soundLocked(false),
-		_soundPlaying(false), _reverseVideo(false) {
+GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _pics(nullptr), curr_status_ht(0), mach_status_ht(0), gos_status(nullptr),
+                                                                                gos_linepending(0), gos_linebuf(nullptr), gos_linewin(nullptr), gos_channel(nullptr), mwin(0),
+                                                                                mouse_x(0), mouse_y(0), fixforced(0), menu_selected(0), enable_wrapping(false), enable_scripting(false),
+                                                                                enable_scrolling(false), enable_buffering(false), next_sample(0), next_volume(0), _soundLocked(false),
+                                                                                _soundPlaying(false), _reverseVideo(false) {
 	Common::fill(&statusline[0], &statusline[256], '\0');
 	Common::fill(&zcolors[0], &zcolors[zcolor_NUMCOLORS], 0);
 }
@@ -51,21 +50,21 @@ void GlkInterface::initialize() {
 
 	/* Setup colors array */
 	const int COLOR_MAP[zcolor_NUMCOLORS - 2] = {
-		0x0000,					///<  2 = black
-		0x001D,					///<  3 = red
-		0x0340,					///<  4 = green
-		0x03BD,					///<  5 = yellow
-		0x59A0,					///<  6 = blue
-		0x7C1F,					///<  7 = magenta
-		0x77A0,					///<  8 = cyan
-		0x7FFF,					///<  9 = white
-		0x5AD6,					///< 10 = light grey
-		0x4631,					///< 11 = medium grey
-		0x2D6B,					///< 12 = dark grey
+	    0x0000, ///<  2 = black
+	    0x001D, ///<  3 = red
+	    0x0340, ///<  4 = green
+	    0x03BD, ///<  5 = yellow
+	    0x59A0, ///<  6 = blue
+	    0x7C1F, ///<  7 = magenta
+	    0x77A0, ///<  8 = cyan
+	    0x7FFF, ///<  9 = white
+	    0x5AD6, ///< 10 = light grey
+	    0x4631, ///< 11 = medium grey
+	    0x2D6B, ///< 12 = dark grey
 	};
 
-	zcolors[0] = zcolor_Current;		// Current
-	zcolors[1] = zcolor_Default;		// Default
+	zcolors[0] = zcolor_Current; // Current
+	zcolors[1] = zcolor_Default; // Default
 	for (int i = 2; i < zcolor_NUMCOLORS; ++i)
 		zcolors[i] = zRGB(COLOR_MAP[i - 2]);
 
@@ -73,7 +72,7 @@ void GlkInterface::initialize() {
 	 * Init glk stuff
 	 */
 
-	 // monor
+	// monor
 	glk_stylehint_set(wintype_AllTypes, style_Preformatted, stylehint_Proportional, 0);
 	glk_stylehint_set(wintype_AllTypes, style_Preformatted, stylehint_Weight, 0);
 	glk_stylehint_set(wintype_AllTypes, style_Preformatted, stylehint_Oblique, 0);
@@ -150,12 +149,11 @@ void GlkInterface::initialize() {
 	h_default_background = BLACK_COLOUR;
 
 	// Set up the foreground & background
-	_color_enabled = ((h_version >= 5) && (h_flags & COLOUR_FLAG))
-		|| (_defaultForeground != zcolor_Transparent) || (_defaultBackground != zcolor_Transparent);
+	_color_enabled = ((h_version >= 5) && (h_flags & COLOUR_FLAG)) || (_defaultForeground != zcolor_Transparent) || (_defaultBackground != zcolor_Transparent);
 
 	if (_color_enabled) {
 		h_config |= CONFIG_COLOUR;
-		h_flags |= COLOUR_FLAG;		// FIXME: beyond zork handling?
+		h_flags |= COLOUR_FLAG; // FIXME: beyond zork handling?
 
 		if (h_version == 6) {
 			h_default_foreground = BLACK_COLOUR;
@@ -180,7 +178,7 @@ void GlkInterface::initialize() {
 		_wp[i][TRUE_FG_COLOR] = zcolors[h_default_foreground];
 		_wp[i][TRUE_BG_COLOR] = zcolors[h_default_background];
 	}
-	
+
 	/*
 	 * Icky magic bit setting
 	 */
@@ -196,7 +194,7 @@ void GlkInterface::initialize() {
 
 	if (h_version >= V4)
 		h_config |= CONFIG_BOLDFACE | CONFIG_EMPHASIS |
-		CONFIG_FIXED | CONFIG_TIMEDINPUT | CONFIG_COLOUR;
+		            CONFIG_FIXED | CONFIG_TIMEDINPUT | CONFIG_COLOUR;
 
 	if (h_version >= V5)
 		h_flags &= ~(GRAPHICS_FLAG | MOUSE_FLAG | MENU_FLAG);
@@ -224,7 +222,7 @@ void GlkInterface::initialize() {
 	// For Beyond Zork the Page Up/Down keys are remapped to scroll the description area,
 	// since the arrow keys the original used are in use now for cycling prior commands
 	if (_storyId == BEYOND_ZORK) {
-		uint32 KEYCODES[2] = { keycode_PageUp, keycode_PageDown };
+		uint32 KEYCODES[2] = {keycode_PageUp, keycode_PageDown};
 		glk_set_terminators_line_event(_wp._lower, KEYCODES, 2);
 	}
 }
@@ -264,7 +262,8 @@ int GlkInterface::os_string_width(const zchar *s) {
 
 int GlkInterface::os_string_length(zchar *s) {
 	int length = 0;
-	while (*s++) length++;
+	while (*s++)
+		length++;
 	return length;
 }
 
@@ -286,15 +285,33 @@ void GlkInterface::os_start_sample(int number, int volume, int repeats, zword eo
 	}
 
 	switch (volume) {
-	case   1: vol = 0x02000; break;
-	case   2: vol = 0x04000; break;
-	case   3: vol = 0x06000; break;
-	case   4: vol = 0x08000; break;
-	case   5: vol = 0x0a000; break;
-	case   6: vol = 0x0c000; break;
-	case   7: vol = 0x0e000; break;
-	case   8: vol = 0x10000; break;
-	default:  vol = 0x20000; break;
+	case 1:
+		vol = 0x02000;
+		break;
+	case 2:
+		vol = 0x04000;
+		break;
+	case 3:
+		vol = 0x06000;
+		break;
+	case 4:
+		vol = 0x08000;
+		break;
+	case 5:
+		vol = 0x0a000;
+		break;
+	case 6:
+		vol = 0x0c000;
+		break;
+	case 7:
+		vol = 0x0e000;
+		break;
+	case 8:
+		vol = 0x10000;
+		break;
+	default:
+		vol = 0x20000;
+		break;
 	}
 
 	glk_schannel_play_ext(gos_channel, number, repeats, eos);
@@ -329,11 +346,10 @@ bool GlkInterface::os_picture_data(int picture, uint *height, uint *width) {
 
 void GlkInterface::start_sample(int number, int volume, int repeats, zword eos) {
 	static zbyte LURKING_REPEATS[] = {
-		0x00, 0x00, 0x00, 0x01, 0xff,
-		0x00, 0x01, 0x01, 0x01, 0x01,
-		0xff, 0x01, 0x01, 0xff, 0x00,
-		0xff, 0xff, 0xff, 0xff, 0xff
-	};
+	    0x00, 0x00, 0x00, 0x01, 0xff,
+	    0x00, 0x01, 0x01, 0x01, 0x01,
+	    0xff, 0x01, 0x01, 0xff, 0x00,
+	    0xff, 0xff, 0xff, 0xff, 0xff};
 
 	if (_storyId == LURKING_HORROR)
 		repeats = LURKING_REPEATS[number];
@@ -381,7 +397,7 @@ void GlkInterface::reset_status_ht() {
 		glk_window_get_size(_wp._upper, nullptr, &height);
 		if ((uint)mach_status_ht != height) {
 			glk_window_set_arrangement(glk_window_get_parent(_wp._upper),
-				winmethod_Above | winmethod_Fixed, mach_status_ht, nullptr);
+			                           winmethod_Above | winmethod_Fixed, mach_status_ht, nullptr);
 		}
 	}
 }
@@ -392,7 +408,7 @@ void GlkInterface::erase_window(zword w) {
 
 	else if (_wp._upper) {
 		//os_set_reverse_video(glk_window_get_stream(_wp._upper), true);
-		
+
 		memset(statusline, ' ', sizeof statusline);
 		_wp._upper.clear();
 		reset_status_ht();
@@ -414,7 +430,7 @@ void GlkInterface::split_window(zword lines) {
 		glk_window_get_size(_wp._upper, nullptr, &height);
 		if (lines != height)
 			glk_window_set_arrangement(glk_window_get_parent(_wp._upper),
-				winmethod_Above | winmethod_Fixed, lines, nullptr);
+			                           winmethod_Above | winmethod_Fixed, lines, nullptr);
 		curr_status_ht = lines;
 	}
 	mach_status_ht = lines;
@@ -551,15 +567,23 @@ int GlkInterface::os_peek_color() {
 #ifdef COLOR_SUPPORT
 	short fg, bg;
 	pair_content(PAIR_NUMBER(inch() & A_COLOR), &fg, &bg);
-	switch(bg) {
-		  case COLOR_BLACK: return BLACK_COLOUR;
-		  case COLOR_RED: return RED_COLOUR;
-		  case COLOR_GREEN: return GREEN_COLOUR;
-		  case COLOR_YELLOW: return YELLOW_COLOUR;
-		  case COLOR_BLUE: return BLUE_COLOUR;
-		  case COLOR_MAGENTA: return MAGENTA_COLOUR;
-		  case COLOR_CYAN: return CYAN_COLOUR;
-		  case COLOR_WHITE: return WHITE_COLOUR;
+	switch (bg) {
+	case COLOR_BLACK:
+		return BLACK_COLOUR;
+	case COLOR_RED:
+		return RED_COLOUR;
+	case COLOR_GREEN:
+		return GREEN_COLOUR;
+	case COLOR_YELLOW:
+		return YELLOW_COLOUR;
+	case COLOR_BLUE:
+		return BLUE_COLOUR;
+	case COLOR_MAGENTA:
+		return MAGENTA_COLOUR;
+	case COLOR_CYAN:
+		return CYAN_COLOUR;
+	case COLOR_WHITE:
+		return WHITE_COLOUR;
 	}
 	return 0;
 #endif /* COLOR_SUPPORT */
@@ -606,16 +630,26 @@ zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
 	}
 
 	switch (key) {
-	case keycode_Escape: return ZC_ESCAPE;
-	case keycode_PageUp: return ZC_ARROW_MIN;
-	case keycode_PageDown: return ZC_ARROW_MAX;
-	case keycode_Left: return ZC_ARROW_LEFT;
-	case keycode_Right: return ZC_ARROW_RIGHT;
-	case keycode_Up: return ZC_ARROW_UP;
-	case keycode_Down: return ZC_ARROW_DOWN;
-	case keycode_Return: return ZC_RETURN;
-	case keycode_Delete: return ZC_BACKSPACE;
-	case keycode_Tab: return ZC_INDENT;
+	case keycode_Escape:
+		return ZC_ESCAPE;
+	case keycode_PageUp:
+		return ZC_ARROW_MIN;
+	case keycode_PageDown:
+		return ZC_ARROW_MAX;
+	case keycode_Left:
+		return ZC_ARROW_LEFT;
+	case keycode_Right:
+		return ZC_ARROW_RIGHT;
+	case keycode_Up:
+		return ZC_ARROW_UP;
+	case keycode_Down:
+		return ZC_ARROW_DOWN;
+	case keycode_Return:
+		return ZC_RETURN;
+	case keycode_Delete:
+		return ZC_BACKSPACE;
+	case keycode_Tab:
+		return ZC_INDENT;
 	default:
 		return key;
 	}

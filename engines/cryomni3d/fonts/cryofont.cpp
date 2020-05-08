@@ -43,9 +43,9 @@ void CryoFont::load(const Common::String &fontFile) {
 	}
 
 	// 3 unknown uint16
-	(void) crf.readUint16BE();
-	(void) crf.readUint16BE();
-	(void) crf.readUint16BE();
+	(void)crf.readUint16BE();
+	(void)crf.readUint16BE();
+	(void)crf.readUint16BE();
 
 	_height = crf.readSint16BE();
 	//debug("Max char height %d", _maxHeight);
@@ -64,8 +64,8 @@ void CryoFont::loadAll8bitGlyphs(Common::SeekableReadStream &font_fl) {
 		uint16 w = font_fl.readUint16BE();
 		uint sz = glyph.setup(w, h);
 		//debug("Char %d sz %dx%d %d", i, w, h, sz);
-		glyph.offX    = font_fl.readSint16BE();
-		glyph.offY    = font_fl.readSint16BE();
+		glyph.offX = font_fl.readSint16BE();
+		glyph.offY = font_fl.readSint16BE();
 		glyph.advance = font_fl.readUint16BE();
 		//debug("Char %d offX %d offY %d PW %d", i, glyph.offX, glyph.offY, glyph.advance);
 

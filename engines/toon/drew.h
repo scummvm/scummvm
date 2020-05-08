@@ -40,6 +40,7 @@ public:
 	void update(int32 timeIncrement) override;
 	void playWalkAnim(int32 start, int32 end) override;
 	int32 getRandomIdleAnim() override;
+
 protected:
 	int32 _currentScale;
 };

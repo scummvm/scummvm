@@ -21,20 +21,20 @@
  */
 
 #include "ultima/ultima4/core/debugger_actions.h"
-#include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/controllers/read_choice_controller.h"
 #include "ultima/ultima4/controllers/read_int_controller.h"
 #include "ultima/ultima4/controllers/reagents_menu_controller.h"
 #include "ultima/ultima4/conversation/conversation.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/textcolor.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/city.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -112,26 +112,25 @@ bool DebuggerActions::getChestTrapHandler(int player) {
 	int randNum = xu4_random(4);
 
 	/* Do we use u4dos's way of trap-determination, or the original intended way? */
-	int passTest = (settings._enhancements && settings._enhancementsOptions._c64ChestTraps) ?
-		(xu4_random(2) == 0) : /* xu4-enhanced */
-		((randNum & 1) == 0); /* u4dos original way (only allows even numbers through, so only acid and poison show) */
+	int passTest = (settings._enhancements && settings._enhancementsOptions._c64ChestTraps) ? (xu4_random(2) == 0) : /* xu4-enhanced */
+	                   ((randNum & 1) == 0);                                                                         /* u4dos original way (only allows even numbers through, so only acid and poison show) */
 
-/* Chest is trapped! 50/50 chance */
+	/* Chest is trapped! 50/50 chance */
 	if (passTest) {
 		/* Figure out which trap the chest has */
 		switch (randNum & xu4_random(4)) {
 		case 0:
 			trapType = EFFECT_FIRE;
-			break;   /* acid trap (56% chance - 9/16) */
+			break; /* acid trap (56% chance - 9/16) */
 		case 1:
 			trapType = EFFECT_SLEEP;
-			break;  /* sleep trap (19% chance - 3/16) */
+			break; /* sleep trap (19% chance - 3/16) */
 		case 2:
 			trapType = EFFECT_POISON;
 			break; /* poison trap (19% chance - 3/16) */
 		case 3:
 			trapType = EFFECT_LAVA;
-			break;   /* bomb trap (6% chance - 1/16) */
+			break; /* bomb trap (6% chance - 1/16) */
 		default:
 			trapType = EFFECT_FIRE;
 			break;
@@ -153,11 +152,13 @@ bool DebuggerActions::getChestTrapHandler(int player) {
 		// evaded by testing the PC's dex
 		//
 		if ((player >= 0) &&
-			(g_ultima->_saveGame->_players[player]._dex + 25 < xu4_random(100))) {
+		    (g_ultima->_saveGame->_players[player]._dex + 25 < xu4_random(100))) {
 			if (trapType == EFFECT_LAVA) /* bomb trap */
 				g_context->_party->applyEffect(trapType);
-			else g_context->_party->member(player)->applyEffect(trapType);
-		} else g_screen->screenMessage("Evaded!\n");
+			else
+				g_context->_party->member(player)->applyEffect(trapType);
+		} else
+			g_screen->screenMessage("Evaded!\n");
 
 		return true;
 	}
@@ -283,7 +284,7 @@ bool DebuggerActions::openAt(const Coords &coords) {
 	const Tile *tile = g_context->_location->_map->tileTypeAt(coords, WITH_OBJECTS);
 
 	if (!tile->isDoor() &&
-		!tile->isLockedDoor())
+	    !tile->isLockedDoor())
 		return false;
 
 	if (tile->isLockedDoor()) {
@@ -312,7 +313,7 @@ void DebuggerActions::gameCastSpell(uint spell, int caster, int param) {
 }
 
 bool DebuggerActions::talkAt(const Coords &coords) {
-	extern int personIsVendor(const Person * person);
+	extern int personIsVendor(const Person *person);
 	City *city;
 
 	/* can't have any conversations outside of town */
@@ -332,12 +333,12 @@ bool DebuggerActions::talkAt(const Coords &coords) {
 	/* No response from alerted guards... does any monster both
 	   attack and talk besides Nate the Snake? */
 	if (talker->getMovementBehavior() == MOVEMENT_ATTACK_AVATAR &&
-		talker->getId() != PYTHON_ID)
+	    talker->getId() != PYTHON_ID)
 		return false;
 
 	// If we're talking to Lord British and the avatar is dead, LB resurrects them!
 	if (talker->getNpcType() == NPC_LORD_BRITISH &&
-		g_context->_party->member(0)->getStatus() == STAT_DEAD) {
+	    g_context->_party->member(0)->getStatus() == STAT_DEAD) {
 		g_screen->screenMessage("%s, Thou shalt live again!\n", g_context->_party->member(0)->getName().c_str());
 
 		g_context->_party->member(0)->setStatus(STAT_GOOD);
@@ -393,8 +394,8 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 			int i;
 
 			for (i = 0; i < g_context->_party->size(); i++) {
-				g_context->_party->member(i)->heal(HT_CURE);        // cure the party
-				g_context->_party->member(i)->heal(HT_FULLHEAL);    // heal the party
+				g_context->_party->member(i)->heal(HT_CURE);     // cure the party
+				g_context->_party->member(i)->heal(HT_FULLHEAL); // heal the party
 			}
 			gameSpellEffect('r', -1, SOUND_MAGIC); // same spell effect as 'r'esurrect
 
@@ -423,8 +424,7 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 
 		int maxlen;
 		switch (conv.getInputRequired(&maxlen)) {
-		case Conversation::INPUT_STRING:
-		{
+		case Conversation::INPUT_STRING: {
 			conv._playerInput = gameGetInput(maxlen);
 #ifdef IOS_ULTIMA4
 			g_screen->screenMessage("%s", conv.playerInput.c_str()); // Since we put this in a different window, we need to show it again.
@@ -434,15 +434,13 @@ void DebuggerActions::talkRunConversation(Conversation &conv, Person *talker, bo
 			showPrompt = true;
 			break;
 		}
-		case Conversation::INPUT_CHARACTER:
-		{
+		case Conversation::INPUT_CHARACTER: {
 			char message[2];
 #ifdef IOS_ULTIMA4
 			U4IOS::IOSConversationChoiceHelper yesNoHelper;
 			yesNoHelper.updateChoices("yn ");
 #endif
 			int choice = ReadChoiceController::get("");
-
 
 			message[0] = choice;
 			message[1] = '\0';
@@ -469,7 +467,7 @@ void DebuggerActions::gameLordBritishCheckLevels() {
 	for (int i = 0; i < g_context->_party->size(); i++) {
 		PartyMember *player = g_context->_party->member(i);
 		if (player->getRealLevel() <
-			player->getMaxLevel())
+		    player->getMaxLevel())
 
 			// add an extra space to separate messages
 			if (!advanced) {

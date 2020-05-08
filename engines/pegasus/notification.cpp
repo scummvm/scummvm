@@ -23,8 +23,8 @@
  *
  */
 
-#include "pegasus/constants.h"
 #include "pegasus/notification.h"
+#include "pegasus/constants.h"
 
 namespace Pegasus {
 
@@ -90,11 +90,11 @@ void Notification::checkReceivers() {
 // Receiver entries are equal if their receivers are equal.
 
 int operator==(const ReceiverEntry &entry1, const ReceiverEntry &entry2) {
-	return	entry1.receiver == entry2.receiver;
+	return entry1.receiver == entry2.receiver;
 }
 
 int operator!=(const ReceiverEntry &entry1, const ReceiverEntry &entry2) {
-	return	entry1.receiver != entry2.receiver;
+	return entry1.receiver != entry2.receiver;
 }
 
 NotificationReceiver::NotificationReceiver() {

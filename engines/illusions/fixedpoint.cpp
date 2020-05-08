@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/fixedpoint.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 

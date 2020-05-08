@@ -108,7 +108,7 @@ void CConstBoundaries::draw(CSurfaceArea *surface, CCamera *camera) {
 				sc0 = camera->getRelativePos(2, ec0);
 				sc1 = camera->getRelativePos(2, ec1);
 				surface->drawLine(FPoint(sc0._x + centerX, sc0._y + centerY),
-					FPoint(sc1._x + centerX, sc1._y + centerY));
+				                  FPoint(sc1._x + centerX, sc1._y + centerY));
 			}
 		}
 

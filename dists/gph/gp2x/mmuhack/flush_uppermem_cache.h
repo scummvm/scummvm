@@ -1,6 +1,5 @@
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 void flush_uppermem_cache(void *start_address, void *end_address, int flags);

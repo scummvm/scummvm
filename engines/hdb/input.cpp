@@ -20,13 +20,13 @@
  *
  */
 
-#include "hdb/hdb.h"
+#include "hdb/input.h"
 #include "hdb/ai.h"
 #include "hdb/gfx.h"
-#include "hdb/input.h"
+#include "hdb/hdb.h"
 #include "hdb/map.h"
-#include "hdb/sound.h"
 #include "hdb/menu.h"
+#include "hdb/sound.h"
 #include "hdb/window.h"
 
 namespace HDB {
@@ -86,7 +86,7 @@ void Input::setButtons(uint16 b) {
 
 	// Debug Mode Cycling
 	if ((_buttons & kButtonExit) && g_hdb->getCheatingOn()) {
-		int	debugFlag = g_hdb->getDebug();
+		int debugFlag = g_hdb->getDebug();
 		debugFlag++;
 		if (debugFlag > 2)
 			debugFlag = 0;
@@ -96,9 +96,9 @@ void Input::setButtons(uint16 b) {
 			g_hdb->_ai->clearWaypoints();
 
 		if (!debugFlag && g_hdb->getGameState() == GAME_PLAY) {
-			int	x, y;
+			int x, y;
 			g_hdb->_ai->getPlayerXY(&x, &y);
-			g_hdb->_map->centerMapXY(x + 16, y + 16);	// point to center of player
+			g_hdb->_map->centerMapXY(x + 16, y + 16); // point to center of player
 		}
 	}
 
@@ -119,8 +119,8 @@ void Input::setButtons(uint16 b) {
 			// Deliveries screen?
 			if (g_hdb->_window->deliveriesActive() && !g_hdb->_window->animatingDelivery()) {
 				if (_buttons & kButtonLeft) {
-					int	amount = g_hdb->_ai->getDeliveriesAmount();
-					int	current = g_hdb->_window->getSelectedDelivery();
+					int amount = g_hdb->_ai->getDeliveriesAmount();
+					int current = g_hdb->_window->getSelectedDelivery();
 
 					if (!current)
 						current = amount - 1;
@@ -177,10 +177,9 @@ void Input::setButtons(uint16 b) {
 					return;
 				}
 
-
 				if (_buttons & kButtonLeft) {
-					int	amount = g_hdb->_ai->getInvMax();
-					int	current = g_hdb->_window->getInvSelect();
+					int amount = g_hdb->_ai->getInvMax();
+					int current = g_hdb->_window->getInvSelect();
 
 					if (!amount)
 						return;
@@ -218,8 +217,8 @@ void Input::setButtons(uint16 b) {
 					g_hdb->_sound->playSound(SND_MENU_SLIDER);
 					g_hdb->_window->setInvSelect(current);
 				} else if (_buttons & kButtonUp) {
-					int	amount = g_hdb->_ai->getInvMax();
-					int	current = g_hdb->_window->getInvSelect();
+					int amount = g_hdb->_ai->getInvMax();
+					int current = g_hdb->_window->getInvSelect();
 
 					if (amount < 6)
 						return;
@@ -291,8 +290,7 @@ void Input::stylusDown(int x, int y) {
 	case GAME_MENU:
 		g_hdb->_menu->processInput(x, y);
 		break;
-	case GAME_PLAY:
-		{
+	case GAME_PLAY: {
 		// Is Player Dead? Click on TRY AGAIN
 		if (g_hdb->_ai->playerDead()) {
 			if (y >= g_hdb->_window->_tryRestartY && y <= g_hdb->_window->_tryRestartY + 24) {
@@ -410,7 +408,7 @@ void Input::stylusDown(int x, int y) {
 
 		g_hdb->setTargetXY(worldX, worldY);
 		break;
-		}
+	}
 	case GAME_LOADING:
 		break;
 	default:
@@ -586,4 +584,4 @@ void Input::updateKeys(Common::Event event, bool keyDown) {
 	setButtons(buttons);
 }
 
-} // End of Namespace
+} // namespace HDB

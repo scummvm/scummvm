@@ -31,7 +31,7 @@
 // Custom nullptr replacement. This is not type safe as the real C++11 nullptr
 // though.
 //
-#if !defined(nullptr)  // XCode 5.0.1 has __cplusplus=199711 but defines this
+#if !defined(nullptr) // XCode 5.0.1 has __cplusplus=199711 but defines this
 // MSVC 2010 and newer fully support nullptr: http://msdn.microsoft.com/en-us/library/hh567368.aspx
 #if !defined(_MSC_VER) || _MSC_VER < 1600
 #define nullptr 0

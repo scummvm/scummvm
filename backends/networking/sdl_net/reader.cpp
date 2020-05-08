@@ -120,13 +120,15 @@ bool Reader::readAndHandleFirstHeaders() {
 
 bool Reader::readBlockHeadersIntoStream(Common::WriteStream *stream) {
 	Common::String boundary = "\r\n\r\n";
-	if (_window == nullptr) makeWindow(boundary.size());
+	if (_window == nullptr)
+		makeWindow(boundary.size());
 
 	while (readOneByteInStream(stream, boundary)) {
 		if (!bytesLeft())
 			return false;
 	}
-	if (stream) stream->flush();
+	if (stream)
+		stream->flush();
 
 	freeWindow();
 	_state = RS_READING_CONTENT;
@@ -146,7 +148,7 @@ void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::S
 		}
 	}
 }
-}
+} // namespace
 
 void Reader::handleFirstHeaders(Common::MemoryReadWriteStream *headersStream) {
 	if (!_boundary.empty()) {
@@ -213,7 +215,8 @@ void Reader::parseFirstLine(const Common::String &headersToParse) {
 		}
 	}
 
-	if (bad) _isBadRequest = true;
+	if (bad)
+		_isBadRequest = true;
 }
 
 void Reader::parsePathQueryAndAnchor(Common::String pathToParse) {
@@ -328,7 +331,7 @@ bool windowEqualsString(const byte *window, uint32 windowSize, const Common::Str
 
 	return true;
 }
-}
+} // namespace
 
 bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::String &boundary) {
 	byte b = readOne();

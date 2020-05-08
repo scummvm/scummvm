@@ -37,6 +37,7 @@ public:
 	void read(Common::ReadStream *in);
 	void write(Common::WriteStream *out);
 	void deleteReadStream();
+
 protected:
 	uint32 _writeBufferSize;
 	byte *_writeBuffer;

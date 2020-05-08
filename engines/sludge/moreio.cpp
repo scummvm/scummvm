@@ -56,50 +56,50 @@ Common::String encodeFilename(const Common::String &nameIn) {
 	if (allowAnyFilename) {
 		for (uint i = 0; i < nameIn.size(); ++i) {
 			switch (nameIn[i]) {
-				case '<':
-					newName += '_';
-					newName += 'L';
-					break;
-				case '>':
-					newName += '_';
-					newName += 'G';
-					break;
-				case '|':
-					newName += '_';
-					newName += 'P';
-					break;
-				case '_':
-					newName += '_';
-					newName += 'U';
-					break;
-				case '\"':
-					newName += '_';
-					newName += 'S';
-					break;
-				case '\\':
-					newName += '_';
-					newName += 'B';
-					break;
-				case '/':
-					newName += '_';
-					newName += 'F';
-					break;
-				case ':':
-					newName += '_';
-					newName += 'C';
-					break;
-				case '*':
-					newName += '_';
-					newName += 'A';
-					break;
-				case '?':
-					newName += '_';
-					newName += 'Q';
-					break;
+			case '<':
+				newName += '_';
+				newName += 'L';
+				break;
+			case '>':
+				newName += '_';
+				newName += 'G';
+				break;
+			case '|':
+				newName += '_';
+				newName += 'P';
+				break;
+			case '_':
+				newName += '_';
+				newName += 'U';
+				break;
+			case '\"':
+				newName += '_';
+				newName += 'S';
+				break;
+			case '\\':
+				newName += '_';
+				newName += 'B';
+				break;
+			case '/':
+				newName += '_';
+				newName += 'F';
+				break;
+			case ':':
+				newName += '_';
+				newName += 'C';
+				break;
+			case '*':
+				newName += '_';
+				newName += 'A';
+				break;
+			case '?':
+				newName += '_';
+				newName += 'Q';
+				break;
 
-				default:
-					newName += nameIn[i];
-					break;
+			default:
+				newName += nameIn[i];
+				break;
 			}
 		}
 	} else {
@@ -114,46 +114,46 @@ Common::String encodeFilename(const Common::String &nameIn) {
 }
 
 Common::String decodeFilename(const Common::String &nameIn) {
-	Common::String newName ="";
+	Common::String newName = "";
 	if (allowAnyFilename) {
 		for (uint i = 0; i < nameIn.size(); ++i) {
 			if (nameIn[i] == '_') {
 				++i;
 				switch (nameIn[i]) {
-					case 'L':
-						newName += '<';
-						break;
-					case 'G':
-						newName += '>';
-						break;
-					case 'P':
-						newName += '|';
-						break;
-					case 'U':
-						newName += '_';
-						break;
-					case 'S':
-						newName += '\"';
-						break;
-					case 'B':
-						newName += '\\';
-						break;
-					case 'F':
-						newName += '/';
-						break;
-					case 'C':
-						newName += ':';
-						break;
-					case 'A':
-						newName += '*';
-						break;
-					case 'Q':
-						newName += '?';
-						break;
-					default:
-						newName += '_';
-						--i;
-						break;
+				case 'L':
+					newName += '<';
+					break;
+				case 'G':
+					newName += '>';
+					break;
+				case 'P':
+					newName += '|';
+					break;
+				case 'U':
+					newName += '_';
+					break;
+				case 'S':
+					newName += '\"';
+					break;
+				case 'B':
+					newName += '\\';
+					break;
+				case 'F':
+					newName += '/';
+					break;
+				case 'C':
+					newName += ':';
+					break;
+				case 'A':
+					newName += '*';
+					break;
+				case 'Q':
+					newName += '?';
+					break;
+				default:
+					newName += '_';
+					--i;
+					break;
 				}
 			} else {
 				newName += nameIn[i];

@@ -74,8 +74,7 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 			checkEvents(_vm);
 		}
 
-		if ((mode & 0x80) || _buttonValue == Common::KEYCODE_ESCAPE
-				|| _buttonValue == Common::KEYCODE_n)
+		if ((mode & 0x80) || _buttonValue == Common::KEYCODE_ESCAPE || _buttonValue == Common::KEYCODE_n)
 			break;
 
 		if (_buttonValue == Common::KEYCODE_y) {

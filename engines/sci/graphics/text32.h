@@ -32,9 +32,9 @@ namespace Sci {
 
 enum TextAlign {
 	kTextAlignDefault = -1,
-	kTextAlignLeft    = 0,
-	kTextAlignCenter  = 1,
-	kTextAlignRight   = 2
+	kTextAlignLeft = 0,
+	kTextAlignCenter = 1,
+	kTextAlignRight = 2
 };
 
 enum ScrollDirection {
@@ -141,7 +141,7 @@ private:
 	* Gets the pixel dimensions of a substring of the currently loaded text,
 	* without scaling.
 	*/
-	void getTextDimensions(const uint index, uint length, int16 &width, int16& height) const;
+	void getTextDimensions(const uint index, uint length, int16 &width, int16 &height) const;
 
 	inline Common::Rect scaleRect(const Common::Rect &rect) {
 		Common::Rect scaledRect(rect);

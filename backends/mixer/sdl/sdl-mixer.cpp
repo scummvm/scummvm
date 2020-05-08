@@ -25,9 +25,9 @@
 #if defined(SDL_BACKEND)
 
 #include "backends/mixer/sdl/sdl-mixer.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/system.h"
-#include "common/config-manager.h"
 #include "common/textconsole.h"
 
 #if defined(GP2X)
@@ -39,10 +39,8 @@
 #endif
 
 SdlMixerManager::SdlMixerManager()
-	:
-	_mixer(0),
-	_audioSuspended(false) {
-
+    : _mixer(0),
+      _audioSuspended(false) {
 }
 
 SdlMixerManager::~SdlMixerManager() {

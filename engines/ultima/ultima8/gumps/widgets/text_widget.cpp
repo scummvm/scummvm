@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
-#include "ultima/ultima8/graphics/fonts/shape_font.h"
-#include "ultima/ultima8/graphics/fonts/rendered_text.h"
-#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/fonts/rendered_text.h"
+#include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/graphics/fonts/tt_font.h"
-#include "ultima/ultima8/gumps/bark_gump.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
+#include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -37,15 +37,14 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget, Gump)
 
 TextWidget::TextWidget() : Gump(), _gameFont(false), _fontNum(0), _blendColour(0),
-		_tx(0), _ty(0), _currentStart(0), _currentEnd(0), _targetWidth(0), _targetHeight(0),
-		_cachedText(nullptr), _textAlign(Font::TEXT_LEFT) {
+                           _tx(0), _ty(0), _currentStart(0), _currentEnd(0), _targetWidth(0), _targetHeight(0),
+                           _cachedText(nullptr), _textAlign(Font::TEXT_LEFT) {
 }
 
 TextWidget::TextWidget(int x, int y, const Std::string &txt, bool gamefont_, int font,
-                       int w, int h, Font::TextAlign align) :
-	Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
-	_blendColour(0), _currentStart(0), _currentEnd(0), _tx(0), _ty(0),
-	_targetWidth(w), _targetHeight(h), _cachedText(nullptr), _textAlign(align) {
+                       int w, int h, Font::TextAlign align) : Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
+                                                              _blendColour(0), _currentStart(0), _currentEnd(0), _tx(0), _ty(0),
+                                                              _targetWidth(w), _targetHeight(h), _cachedText(nullptr), _textAlign(align) {
 }
 
 TextWidget::~TextWidget(void) {
@@ -110,14 +109,14 @@ Font *TextWidget::getFont() const {
 bool TextWidget::setupNextText() {
 	_currentStart = _currentEnd;
 
-	if (_currentStart >= _text.size()) return false;
+	if (_currentStart >= _text.size())
+		return false;
 
 	Font *font = getFont();
 
 	unsigned int remaining;
 	font->getTextSize(_text.substr(_currentStart), _tx, _ty, remaining,
 	                  _targetWidth, _targetHeight, _textAlign, true);
-
 
 	_dims.w = _tx;
 	_dims.h = _ty;
@@ -156,7 +155,7 @@ void TextWidget::renderText() {
 
 		unsigned int remaining;
 		_cachedText = font->renderText(_text.substr(_currentStart,
-		                               _currentEnd - _currentStart),
+		                                            _currentEnd - _currentStart),
 		                               remaining, _targetWidth, _targetHeight,
 		                               _textAlign, true);
 	}
@@ -183,7 +182,8 @@ void TextWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy) {
 	Font *font = getFont();
 
-	if (!_gameFont || !font->isHighRes()) return;
+	if (!_gameFont || !font->isHighRes())
+		return;
 
 	int32 x = 0, y = 0;
 	GumpToScreenSpace(x, y, ROUND_BOTTOMRIGHT);
@@ -211,7 +211,6 @@ Gump *TextWidget::OnMouseMotion(int32 mx, int32 my) {
 	return nullptr;
 }
 
-
 void TextWidget::saveData(Common::WriteStream *ws) {
 	Gump::saveData(ws);
 
@@ -228,7 +227,8 @@ void TextWidget::saveData(Common::WriteStream *ws) {
 }
 
 bool TextWidget::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Gump::loadData(rs, version)) return false;
+	if (!Gump::loadData(rs, version))
+		return false;
 
 	_gameFont = (rs->readByte() != 0);
 	_fontNum = static_cast<int>(rs->readUint32LE());

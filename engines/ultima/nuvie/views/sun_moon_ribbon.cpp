@@ -20,14 +20,14 @@
  *
  */
 
+#include "ultima/nuvie/views/sun_moon_ribbon.h"
+#include "ultima/nuvie/core/game_clock.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/nuvie_bmp_file.h"
 #include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/core/weather.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/views/sun_moon_ribbon.h"
+#include "ultima/nuvie/files/nuvie_bmp_file.h"
 #include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -38,7 +38,7 @@ namespace Nuvie {
 #define SUNMOON_RIBBON_DIR_WIDTH 14
 #define SUNMOON_RIBBON_TOTAL_WIDTH (SUNMOON_RIBBON_WIDTH + SUNMOON_RIBBON_DIR_WIDTH)
 
-SunMoonRibbon::SunMoonRibbon(Player *p, Weather *w, TileManager *tm): SunMoonStripWidget(p, tm) {
+SunMoonRibbon::SunMoonRibbon(Player *p, Weather *w, TileManager *tm) : SunMoonStripWidget(p, tm) {
 	bg_data = NULL;
 	weather = w;
 	retracted = true;
@@ -46,15 +46,12 @@ SunMoonRibbon::SunMoonRibbon(Player *p, Weather *w, TileManager *tm): SunMoonStr
 }
 
 SunMoonRibbon::~SunMoonRibbon() {
-
 }
 
-
 void SunMoonRibbon::init(Screen *) {
-	GUI_Widget::Init(NULL, Game::get_game()->get_game_x_offset()
-		+ Game::get_game()->get_game_width() - SUNMOON_RIBBON_TOTAL_WIDTH,
-		Game::get_game()->get_game_y_offset(),
-		SUNMOON_RIBBON_TOTAL_WIDTH,SUNMOON_RIBBON_HEIGHT);
+	GUI_Widget::Init(NULL, Game::get_game()->get_game_x_offset() + Game::get_game()->get_game_width() - SUNMOON_RIBBON_TOTAL_WIDTH,
+	                 Game::get_game()->get_game_y_offset(),
+	                 SUNMOON_RIBBON_TOTAL_WIDTH, SUNMOON_RIBBON_HEIGHT);
 
 	loadBgImage(0);
 }
@@ -100,8 +97,6 @@ void SunMoonRibbon::Display(bool full_redraw) {
 		display_surface_strip();
 	else
 		display_dungeon_strip();
-
-
 }
 
 void SunMoonRibbon::update_hour(uint16 time) {
@@ -116,9 +111,9 @@ void SunMoonRibbon::update_hour(uint16 time) {
 		if (current_time >= 50 && current_time < 60) {
 			bg_num = dawn_tbl[current_time - 50]; //dawn
 		} else if (current_time >= 60 && current_time < 190) {
-			bg_num = 0; //day time
+			bg_num = 0;                                         //day time
 		} else if (current_time >= 190 && current_time < 200) { //dusk
-			bg_num = dusk_tbl[current_time - 190]; //dusk
+			bg_num = dusk_tbl[current_time - 190];              //dusk
 		}
 		loadBgImage(bg_num);
 	}
@@ -127,27 +122,26 @@ void SunMoonRibbon::update_hour(uint16 time) {
 void SunMoonRibbon::display_sun_moon(Tile *tile, uint8 pos) {
 	struct {
 		sint16 x, y;
-	} skypos[15] = { // sky positions relative to area
-		{ SUNMOON_RIBBON_WIDTH - 0 * 3, 7 },
-		{ SUNMOON_RIBBON_WIDTH - 1 * 3, 6 },
-		{ SUNMOON_RIBBON_WIDTH - 2 * 3, 5 },
-		{ SUNMOON_RIBBON_WIDTH - 3 * 3, 4 },
-		{ SUNMOON_RIBBON_WIDTH - 4 * 3, 3 },
-		{ SUNMOON_RIBBON_WIDTH - 5 * 3, 2 },
-		{ SUNMOON_RIBBON_WIDTH - 6 * 3, 1 },
-		{ SUNMOON_RIBBON_WIDTH - 7 * 3, 0 },
-		{ SUNMOON_RIBBON_WIDTH - 8 * 3, 1 },
-		{ SUNMOON_RIBBON_WIDTH - 9 * 3, 2 },
-		{ SUNMOON_RIBBON_WIDTH - 10 * 3, 3 },
-		{ SUNMOON_RIBBON_WIDTH - 11 * 3, 4 },
-		{ SUNMOON_RIBBON_WIDTH - 12 * 3, 5 },
-		{ SUNMOON_RIBBON_WIDTH - 13 * 3, 6 },
-		{ SUNMOON_RIBBON_WIDTH - 14 * 3, 7 }
-	};
+	} skypos[15] = {// sky positions relative to area
+	                {SUNMOON_RIBBON_WIDTH - 0 * 3, 7},
+	                {SUNMOON_RIBBON_WIDTH - 1 * 3, 6},
+	                {SUNMOON_RIBBON_WIDTH - 2 * 3, 5},
+	                {SUNMOON_RIBBON_WIDTH - 3 * 3, 4},
+	                {SUNMOON_RIBBON_WIDTH - 4 * 3, 3},
+	                {SUNMOON_RIBBON_WIDTH - 5 * 3, 2},
+	                {SUNMOON_RIBBON_WIDTH - 6 * 3, 1},
+	                {SUNMOON_RIBBON_WIDTH - 7 * 3, 0},
+	                {SUNMOON_RIBBON_WIDTH - 8 * 3, 1},
+	                {SUNMOON_RIBBON_WIDTH - 9 * 3, 2},
+	                {SUNMOON_RIBBON_WIDTH - 10 * 3, 3},
+	                {SUNMOON_RIBBON_WIDTH - 11 * 3, 4},
+	                {SUNMOON_RIBBON_WIDTH - 12 * 3, 5},
+	                {SUNMOON_RIBBON_WIDTH - 13 * 3, 6},
+	                {SUNMOON_RIBBON_WIDTH - 14 * 3, 7}};
 
 	uint16 x = area.left + skypos[pos].x - 10, y = area.top + skypos[pos].y;
 
-	screen->blit(x, y, tile->data, 8 , 16, area.height() - skypos[pos].y > 16 ? 16 : area.height() - skypos[pos].y, 16, true);
+	screen->blit(x, y, tile->data, 8, 16, area.height() - skypos[pos].y > 16 ? 16 : area.height() - skypos[pos].y, 16, true);
 }
 
 void SunMoonRibbon::display_surface_strip() {
@@ -165,7 +159,7 @@ void SunMoonRibbon::display_surface_strip() {
 	GameClock *clock = Game::get_game()->get_clock();
 	bool eclipse = weather->is_eclipse();
 
-	display_sun(clock->get_hour(), 0/*minutes*/, eclipse);
+	display_sun(clock->get_hour(), 0 /*minutes*/, eclipse);
 
 	if (!eclipse)
 		display_moons(clock->get_day(), clock->get_hour());
@@ -173,10 +167,10 @@ void SunMoonRibbon::display_surface_strip() {
 	src.left = SUNMOON_RIBBON_WIDTH + weather->get_wind_dir() * SUNMOON_RIBBON_DIR_WIDTH;
 	uint8 dir;
 	if (weather->is_displaying_from_wind_dir()) { // points dir wind is coming from
-		const uint8 from_wind_pos[] = { 1, 3, 5, 7, 2, 4, 6, 8, 0 };
+		const uint8 from_wind_pos[] = {1, 3, 5, 7, 2, 4, 6, 8, 0};
 		dir = from_wind_pos[weather->get_wind_dir()];
 	} else { // points dir wind is blowing to
-		const uint8 to_wind_pos[] = { 5, 7, 1, 3, 6, 8, 2, 4, 0 };
+		const uint8 to_wind_pos[] = {5, 7, 1, 3, 6, 8, 2, 4, 0};
 		dir = to_wind_pos[weather->get_wind_dir()];
 	}
 	src.left = SUNMOON_RIBBON_WIDTH + dir * SUNMOON_RIBBON_DIR_WIDTH;
@@ -190,8 +184,6 @@ void SunMoonRibbon::display_surface_strip() {
 	dest.setHeight(SUNMOON_RIBBON_HEIGHT);
 
 	SDL_BlitSurface(bg_data, &src, surface, &dest);
-
-
 
 	screen->update(area.left, area.top, area.width(), area.height());
 }

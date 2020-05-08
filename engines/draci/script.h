@@ -43,8 +43,8 @@ class DraciEngine;
 class Script;
 
 typedef void (Script::*GPLHandler)(const Common::Array<int> &);
-typedef int  (Script::*GPLOperatorHandler)(int, int) const;
-typedef int  (Script::*GPLFunctionHandler)(int) const;
+typedef int (Script::*GPLOperatorHandler)(int, int) const;
+typedef int (Script::*GPLFunctionHandler)(int) const;
 
 /**
  * Represents a single command in the GPL scripting language bytecode.

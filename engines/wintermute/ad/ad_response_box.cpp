@@ -26,26 +26,26 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/ad/ad_response_box.h"
+#include "common/str.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_response.h"
-#include "engines/wintermute/ad/ad_response_box.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_surface_storage.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
-#include "common/str.h"
 
 namespace Wintermute {
 
@@ -70,7 +70,6 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 	_verticalAlign = VAL_BOTTOM;
 	_align = TAL_LEFT;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdResponseBox::~AdResponseBox() {
@@ -109,7 +108,6 @@ void AdResponseBox::clearResponses() {
 	_responses.clear();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdResponseBox::clearButtons() {
 	for (uint32 i = 0; i < _respButtons.size(); i++) {
@@ -117,7 +115,6 @@ void AdResponseBox::clearButtons() {
 	}
 	_respButtons.clear();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::invalidateButtons() {
@@ -131,7 +128,6 @@ bool AdResponseBox::invalidateButtons() {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::createButtons() {
@@ -177,7 +173,6 @@ bool AdResponseBox::createButtons() {
 				if (_gameRef->_touchInterface) {
 					btn->setFontHover(btn->getFont());
 				}
-
 
 				if (_responses[i]->getFont()) {
 					btn->setFont(_responses[i]->getFont());
@@ -227,7 +222,6 @@ bool AdResponseBox::createButtons() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
@@ -244,12 +238,10 @@ bool AdResponseBox::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(RESPONSE_BOX)
@@ -281,7 +273,6 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(VERTICAL_ALIGN)
 	TOKEN_TABLE(EDITOR_PROPERTY)
 	TOKEN_TABLE_END
-
 
 	char *params;
 	int cmd;
@@ -467,7 +458,6 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::display() {
 	Rect32 rect = _responseArea;
@@ -485,7 +475,7 @@ bool AdResponseBox::display() {
 	// shift down if needed
 	if (!_horizontal) {
 		int totalHeight = 0;
-		for (i = 0; i < (int32) _respButtons.size(); i++) {
+		for (i = 0; i < (int32)_respButtons.size(); i++) {
 			totalHeight += (_respButtons[i]->getHeight() + _spacing);
 		}
 		totalHeight -= _spacing;
@@ -512,7 +502,7 @@ bool AdResponseBox::display() {
 
 	// prepare response buttons
 	bool scrollNeeded = false;
-	for (i = _scrollOffset; i < (int32) _respButtons.size(); i++) {
+	for (i = _scrollOffset; i < (int32)_respButtons.size(); i++) {
 
 #ifdef ENABLE_FOXTAIL
 		// FoxTail's "HORIZONTAL=TRUE" display boxes are actual 2x3 display boxes
@@ -529,8 +519,7 @@ bool AdResponseBox::display() {
 		}
 #endif
 
-		if ((_horizontal && xxx + _respButtons[i]->getWidth() > rect.right)
-		        || (!_horizontal && yyy + _respButtons[i]->getHeight() > rect.bottom)) {
+		if ((_horizontal && xxx + _respButtons[i]->getWidth() > rect.right) || (!_horizontal && yyy + _respButtons[i]->getHeight() > rect.bottom)) {
 
 			scrollNeeded = true;
 			_respButtons[i]->setVisible(false);
@@ -568,15 +557,13 @@ bool AdResponseBox::display() {
 		_window->display();
 	}
 
-
 	// display response buttons
-	for (i = _scrollOffset; i < (int32) _respButtons.size(); i++) {
+	for (i = _scrollOffset; i < (int32)_respButtons.size(); i++) {
 		_respButtons[i]->display();
 	}
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
@@ -610,7 +597,6 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
@@ -634,7 +620,6 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::weedResponses() {
@@ -664,7 +649,6 @@ bool AdResponseBox::weedResponses() {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void AdResponseBox::setLastResponseText(const char *text, const char *textOrig) {
@@ -717,7 +701,6 @@ bool AdResponseBox::handleResponse(const AdResponse *response) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {

@@ -22,66 +22,66 @@
 
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
 
 #ifdef GLK
-extern uint                     status_width, status_height;
-extern winid_t                  statuswin;
+extern uint status_width, status_height;
+extern winid_t statuswin;
 #endif
 
 #ifdef __NDS__
-extern int                      screen_width;
-extern int                      screen_depth;
+extern int screen_width;
+extern int screen_depth;
 #endif
 
-extern struct object_type       *object[];
-extern struct integer_type      *integer_table;
-extern struct integer_type      *integer[];
-extern struct cinteger_type     *cinteger_table;
-extern struct attribute_type    *attribute_table;
-extern struct string_type       *string_table;
-extern struct string_type       *cstring_table;
-extern struct function_type     *function_table;
-extern struct function_type     *executing_function;
-extern struct command_type      *completion_list;
-extern struct word_type         *grammar_table;
-extern struct synonym_type      *synonym_table;
-extern struct filter_type       *filter_table;
+extern struct object_type *object[];
+extern struct integer_type *integer_table;
+extern struct integer_type *integer[];
+extern struct cinteger_type *cinteger_table;
+extern struct attribute_type *attribute_table;
+extern struct string_type *string_table;
+extern struct string_type *cstring_table;
+extern struct function_type *function_table;
+extern struct function_type *executing_function;
+extern struct command_type *completion_list;
+extern struct word_type *grammar_table;
+extern struct synonym_type *synonym_table;
+extern struct filter_type *filter_table;
 
-extern char                     function_name[];
-extern char                     temp_buffer[];
-extern char                     error_buffer[];
-extern char                     integer_buffer[16];
+extern char function_name[];
+extern char temp_buffer[];
+extern char error_buffer[];
+extern char integer_buffer[16];
 
 #ifndef GLK
 #ifndef __NDS__
-extern char                     game_url[];
-extern char                     user_id[];
+extern char game_url[];
+extern char user_id[];
 #endif
 #endif
 
-extern int                      noun[];
-extern int                      quoted[];
-extern int                      percented[];
-extern const char               *word[];
+extern int noun[];
+extern int quoted[];
+extern int percented[];
+extern const char *word[];
 
-extern int                      resolved_attribute;
+extern int resolved_attribute;
 
-extern int                      objects;
-extern int                      integers;
-extern int                      player;
-extern int                      oec;
-extern int                      *object_element_address;
-extern int                      *object_backup_address;
+extern int objects;
+extern int integers;
+extern int player;
+extern int oec;
+extern int *object_element_address;
+extern int *object_backup_address;
 
-extern int                      value_resolved;
+extern int value_resolved;
 
-char                            macro_function[84];
-int                             value_has_been_resolved;
+char macro_function[84];
+int value_has_been_resolved;
 
 int *container_resolve(const char *container_name) {
 	container_name = arg_text_of(container_name);
@@ -106,7 +106,7 @@ int *container_resolve(const char *container_name) {
 	else if (!strcmp(container_name, "here"))
 		return (&object[player]->PARENT);
 	else
-		return ((int *) NULL);
+		return ((int *)NULL);
 }
 
 const char *var_text_of_word(int wordnumber) {
@@ -165,9 +165,9 @@ const char *text_of(const char *string) {
 	struct cinteger_type *resolved_cinteger;
 	struct string_type *resolved_string;
 	struct string_type *resolved_cstring;
-	char            *return_string;
+	char *return_string;
 
-	int             index;
+	int index;
 
 	/* CHECK IF THE SUPPLIED STRING IS THE NAME OF A STRING CONSTANT,
 	 * IF NOT, RETURN THE STRING LITERAL */
@@ -224,7 +224,7 @@ const char *text_of(const char *string) {
 const char *arg_text_of(const char *string) {
 	struct string_type *resolved_string;
 	struct string_type *resolved_cstring;
-	char               *macro_text;
+	char *macro_text;
 
 	/* CHECK IF THE SUPPLIED STRING IS THE NAME OF A STRING CONSTANT,
 	 * IF NOT, RETURN THE STRING LITERAL */
@@ -243,8 +243,8 @@ const char *arg_text_of(const char *string) {
 }
 
 int validate(const char *string) {
-	int             index,
-	                count;
+	int index,
+	    count;
 
 	if (string == NULL) {
 		return (FALSE);
@@ -256,7 +256,7 @@ int validate(const char *string) {
 	/* LOOP OVER THE WHOLE STRING MAKING SURE THAT EACH CHARACTER IS EITHER
 	 * A DIGIT OR A MINUS SIGN */
 	for (index = 0; index < count; index++) {
-		if (!Common::isDigit((int) * (string + index)) && string[index] != '-') {
+		if (!Common::isDigit((int)*(string + index)) && string[index] != '-') {
 			//printf ("'%c' is not a digit\n", *(string + index));
 			return (FALSE);
 		}
@@ -266,7 +266,7 @@ int validate(const char *string) {
 }
 
 long value_of(const char *value, int run_time) {
-	long            compare;
+	long compare;
 
 	value_resolved = TRUE;
 
@@ -348,11 +348,11 @@ long value_of(const char *value, int run_time) {
 }
 
 struct integer_type *integer_resolve(const char *name) {
-	int             index,
-	                iterator,
-	                counter;
-	int             delimiter = 0;
-	char            expression[84];
+	int index,
+	    iterator,
+	    counter;
+	int delimiter = 0;
+	char expression[84];
 
 	strncpy(expression, name, 80);
 
@@ -433,11 +433,11 @@ struct integer_type *integer_resolve_indexed(const char *name, int index) {
 }
 
 struct cinteger_type *cinteger_resolve(const char *name) {
-	int             index,
-	                iterator,
-	                counter;
-	int             delimiter = 0;
-	char            expression[84];
+	int index,
+	    iterator,
+	    counter;
+	int delimiter = 0;
+	char expression[84];
 
 	strncpy(expression, name, 80);
 
@@ -518,11 +518,11 @@ struct cinteger_type *cinteger_resolve_indexed(const char *name, int index) {
 }
 
 struct string_type *string_resolve(const char *name) {
-	int             index,
-	                iterator,
-	                counter;
-	int             delimiter = 0;
-	char            expression[84];
+	int index,
+	    iterator,
+	    counter;
+	int delimiter = 0;
+	char expression[84];
 
 	strncpy(expression, name, 80);
 
@@ -594,11 +594,11 @@ struct string_type *string_resolve_indexed(const char *name, int index) {
 }
 
 struct string_type *cstring_resolve(const char *name) {
-	int             index,
-	                iterator,
-	                counter;
-	int             delimiter = 0;
-	char            expression[84];
+	int index,
+	    iterator,
+	    counter;
+	int delimiter = 0;
+	char expression[84];
 
 	strncpy(expression, name, 80);
 
@@ -670,9 +670,9 @@ struct string_type *cstring_resolve_indexed(const char *name, int index) {
 }
 
 struct function_type *function_resolve(const char *name) {
-	const char      *full_name;
-	char            core_name[84];
-	int             index;
+	const char *full_name;
+	char core_name[84];
+	int index;
 
 	struct function_type *pointer = function_table;
 
@@ -710,10 +710,10 @@ struct function_type *function_resolve(const char *name) {
 const char *expand_function(const char *name) {
 	/* THIS FUNCTION TAKES A SCOPE FUNCTION CALL SUCH AS noun1.function
 	 * AND REOLVE THE ACTUAL FUNCTION NAME SUCH AS function_key */
-	int             index,
-	                counter;
-	int             delimiter = 0;
-	char            expression[84];
+	int index,
+	    counter;
+	int delimiter = 0;
+	char expression[84];
 
 	strncpy(expression, name, 80);
 
@@ -738,12 +738,12 @@ const char *expand_function(const char *name) {
 	index = value_of(expression, TRUE);
 
 	if (index < 1 || index > objects) {
-		return ((const char *) name);
+		return ((const char *)name);
 	}
 
 	if (cinteger_resolve(&expression[delimiter]) != NULL ||
-	        integer_resolve(&expression[delimiter]) != NULL ||
-	        object_element_resolve(&expression[delimiter])) {
+	    integer_resolve(&expression[delimiter]) != NULL ||
+	    object_element_resolve(&expression[delimiter])) {
 		/* THE DELIMETER RESOLVES TO A CONSTANT, VARIABLE OR OBJECT
 		 * ELEMENT, SO TAKE NOTE OF THAT */
 		sprintf(function_name, "%ld", value_of(&expression[delimiter], TRUE));
@@ -753,14 +753,14 @@ const char *expand_function(const char *name) {
 	strcat(function_name, "_");
 	strcat(function_name, object[index]->label);
 
-	return ((const char *) function_name);
+	return ((const char *)function_name);
 }
 
 char *macro_resolve(const char *testString) {
-	int             index,
-	                counter;
-	int             delimiter = 0;
-	char            expression[84];
+	int index,
+	    counter;
+	int delimiter = 0;
+	char expression[84];
 
 	strncpy(expression, testString, 80);
 
@@ -988,7 +988,7 @@ char *macro_resolve(const char *testString) {
 }
 
 int count_resolve(const char *testString) {
-	struct function_type    *resolved_function = NULL;
+	struct function_type *resolved_function = NULL;
 
 	if (*(testString + 1) == 0) {
 		// @ ON ITS OWN, SO RETURN THE CALL COUNT OF THE CURRENTLY EXECUTING
@@ -1002,8 +1002,8 @@ int count_resolve(const char *testString) {
 }
 
 int array_length_resolve(const char *testString) {
-	int             counter = 0;
-	const char      *array_name = &testString[1];
+	int counter = 0;
+	const char *array_name = &testString[1];
 
 	struct integer_type *integer_pointer = integer_table;
 	struct cinteger_type *cinteger_pointer = cinteger_table;
@@ -1071,11 +1071,11 @@ int array_length_resolve(const char *testString) {
 }
 
 int object_element_resolve(const char *testString) {
-	int             index,
-	                iterator,
-	                counter;
-	int             delimiter = 0;
-	char            expression[84];
+	int index,
+	    iterator,
+	    counter;
+	int delimiter = 0;
+	char expression[84];
 
 	struct integer_type *resolved_integer;
 	struct cinteger_type *resolved_cinteger;
@@ -1161,7 +1161,7 @@ int object_element_resolve(const char *testString) {
 }
 
 int object_resolve(const char *object_string) {
-	int             index;
+	int index;
 
 	if (!strcmp(object_string, "noun1"))
 		return (noun[0]);
@@ -1195,7 +1195,7 @@ int object_resolve(const char *object_string) {
 }
 
 long attribute_resolve(const char *attribute) {
-	long            bit_mask;
+	long bit_mask;
 
 	if (!strcmp(attribute, "VISITED"))
 		return (VISITED);

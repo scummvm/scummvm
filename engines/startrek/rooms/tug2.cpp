@@ -32,7 +32,7 @@ namespace StarTrek {
 #define OBJECT_13 13
 
 #define HOTSPOT_BUTTON 0x20
-#define HOTSPOT_DOOR   0x21
+#define HOTSPOT_DOOR 0x21
 #define HOTSPOT_OPEN_BRIG 0x22
 
 #define GUARDSTAT_UP 0
@@ -96,7 +96,6 @@ void Room::tug2Tick1() {
 		loadActorAnim2(OBJECT_GUARD_2, "p6draw", 0xfb, 0xc5, 0);
 	if (_awayMission->tug.guard2Status == 2)
 		loadActorAnim2(OBJECT_GUARD_2, "p5hat", 0xfb, 0xc5, 0); // FIXME
-
 
 	if (_awayMission->tug.field4e == 0)
 		loadActorAnim2(OBJECT_13, "wallht", 0, 0, 0);
@@ -235,7 +234,7 @@ void Room::tug2UseKirkOnWires() {
 }
 
 void Room::tug2KirkReachedWires() {
-	showText(TX_SPEAKER_KIRK,  3, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 	showText(TX_SPEAKER_SPOCK, 23, true);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
@@ -702,28 +701,26 @@ void Room::tug2Timer0Expired() {
 
 void Room::tug2GuardShootsCrewman() {
 	const char *g1ShotsOnStun[] = {
-		"t2beem15",
-		"t2beem14",
-		"t2beem17",
-		"t2beem16"
-	};
+	    "t2beem15",
+	    "t2beem14",
+	    "t2beem17",
+	    "t2beem16"};
 	const char *g1ShotsOnKill[] = {
-		"t2beem19",
-		"t2beem20",
-		"t2beem21",
-		"t2beem18",
+	    "t2beem19",
+	    "t2beem20",
+	    "t2beem21",
+	    "t2beem18",
 	};
-	const char *g2ShotsOnStun[] = { // BUG: these look wrong. But correct animations don't seem to exist.
-		"t2beem07",
-		"t2beem08",
-		"t2beem09",
-		"t2beem06"
-	};
+	const char *g2ShotsOnStun[] = {// BUG: these look wrong. But correct animations don't seem to exist.
+	                               "t2beem07",
+	                               "t2beem08",
+	                               "t2beem09",
+	                               "t2beem06"};
 	const char *g2ShotsOnKill[] = {
-		"t2beem11",
-		"t2beem12",
-		"t2beem13",
-		"t2beem10",
+	    "t2beem11",
+	    "t2beem12",
+	    "t2beem13",
+	    "t2beem10",
 	};
 
 	const char *crewPrefixes = "ksmr";
@@ -874,4 +871,4 @@ void Room::tug2UsePhaserAnywhere() {
 	// Stub function to suppress "you can't do that" messages.
 }
 
-}
+} // namespace StarTrek

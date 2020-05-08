@@ -51,8 +51,20 @@
 #endif
 
 // Macros to free an array/object
-#define FREE_ARRAY(x) { JSONArray::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete *iter; } }
-#define FREE_OBJECT(x) { JSONObject::iterator iter; for (iter = x.begin(); iter != x.end(); iter++) { delete (*iter)._value; } }
+#define FREE_ARRAY(x)                                     \
+	{                                                     \
+		JSONArray::iterator iter;                         \
+		for (iter = x.begin(); iter != x.end(); iter++) { \
+			delete *iter;                                 \
+		}                                                 \
+	}
+#define FREE_OBJECT(x)                                    \
+	{                                                     \
+		JSONObject::iterator iter;                        \
+		for (iter = x.begin(); iter != x.end(); iter++) { \
+			delete (*iter)._value;                        \
+		}                                                 \
+	}
 
 namespace Common {
 
@@ -151,21 +163,29 @@ bool JSON::extractString(const char **data, String &str) {
 
 			// Deal with the escaped char
 			switch (**data) {
-			case '"': next_char = '"';
+			case '"':
+				next_char = '"';
 				break;
-			case '\\': next_char = '\\';
+			case '\\':
+				next_char = '\\';
 				break;
-			case '/': next_char = '/';
+			case '/':
+				next_char = '/';
 				break;
-			case 'b': next_char = '\b';
+			case 'b':
+				next_char = '\b';
 				break;
-			case 'f': next_char = '\f';
+			case 'f':
+				next_char = '\f';
 				break;
-			case 'n': next_char = '\n';
+			case 'n':
+				next_char = '\n';
 				break;
-			case 'r': next_char = '\r';
+			case 'r':
+				next_char = '\r';
 				break;
-			case 't': next_char = '\t';
+			case 't':
+				next_char = '\t';
 				break;
 			case 'u': {
 				next_char = 0;
@@ -356,7 +376,8 @@ JSONValue *JSONValue::parse(const char **data) {
 	else if (**data == '-' || (**data >= '0' && **data <= '9')) {
 		// Negative?
 		bool neg = **data == '-';
-		if (neg) (*data)++;
+		if (neg)
+			(*data)++;
 
 		long long int integer = 0;
 		double number = 0.0;
@@ -411,7 +432,8 @@ JSONValue *JSONValue::parse(const char **data) {
 		}
 
 		// Was it neg?
-		if (neg) number *= -1;
+		if (neg)
+			number *= -1;
 
 		if (onlyInteger)
 			return new JSONValue(neg ? -integer : integer);
@@ -1006,7 +1028,6 @@ String JSONValue::stringify(bool const prettyprint) const {
 	return stringifyImpl(indentDepth);
 }
 
-
 /**
 * Creates a JSON encoded string for the value with all necessary characters escaped
 *
@@ -1118,7 +1139,7 @@ String JSONValue::stringifyString(const String &str) {
 			str_out += "\\r";
 		} else if (uchr == '\t') {
 			str_out += "\\t";
-		} else if (uchr >= ' ' && uchr <= 126 ) {
+		} else if (uchr >= ' ' && uchr <= 126) {
 			str_out += (char)uchr;
 		} else {
 			if (uchr <= 0xFFFF)
@@ -1160,7 +1181,9 @@ uint32 JSONValue::decodeUtf8Char(String::const_iterator &iter, const String::con
 		// would be invalid (since the json standard indicate the string has to be in utf-8) but rather
 		// that return 0FFFFFFFF and truncate, try to recover from it by rewinding and returning the
 		// raw byte.
-		while (--nbRead > 0) { --iter; }
+		while (--nbRead > 0) {
+			--iter;
+		}
 		uint8 byte = uint8(*iter);
 		warning("Invalid UTF-8 character 0x%x in JSON string.", byte);
 		return byte;
@@ -1191,26 +1214,24 @@ uint32 JSONValue::decodeUtf8Char(String::const_iterator &iter, const String::con
 */
 uint8 JSONValue::decodeUtf8Byte(uint8 state, uint32 &codepoint, uint8 byte) {
 	static const uint8 utf8d[] = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 00..1F
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 20..3F
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 40..5F
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 60..7F
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, // 80..9F
-		7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, // A0..BF
-		8, 8, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // C0..DF
-		0xA, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 0x3, 0x3, // E0..EF
-		0xB, 0x6, 0x6, 0x6, 0x5, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, // F0..FF
-		0x0, 0x1, 0x2, 0x3, 0x5, 0x8, 0x7, 0x1, 0x1, 0x1, 0x4, 0x6, 0x1, 0x1, 0x1, 0x1, // s0..s0
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, // s1..s2
-		1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, // s3..s4
-		1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, // s5..s6
-		1, 3, 1, 1, 1, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 // s7..s8
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 00..1F
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 20..3F
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 40..5F
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 60..7F
+	    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, // 80..9F
+	    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, // A0..BF
+	    8, 8, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // C0..DF
+	    0xA, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x4, 0x3, 0x3,                 // E0..EF
+	    0xB, 0x6, 0x6, 0x6, 0x5, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8, 0x8,                 // F0..FF
+	    0x0, 0x1, 0x2, 0x3, 0x5, 0x8, 0x7, 0x1, 0x1, 0x1, 0x4, 0x6, 0x1, 0x1, 0x1, 0x1,                 // s0..s0
+	    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, // s1..s2
+	    1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, // s3..s4
+	    1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, // s5..s6
+	    1, 3, 1, 1, 1, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1  // s7..s8
 	};
 
 	const uint8 type = utf8d[byte];
-	codepoint = state != 0 ?
-		(codepoint << 6) | (byte & 0x3f) :
-		(0xFF >> type) & byte;
+	codepoint = state != 0 ? (codepoint << 6) | (byte & 0x3f) : (0xFF >> type) & byte;
 	return utf8d[256 + state * 16 + type];
 }
 
@@ -1227,7 +1248,8 @@ String JSONValue::indent(size_t depth) {
 	const size_t indent_step = 2;
 	depth ? --depth : 0;
 	String indentStr;
-	for (size_t i = 0; i < depth * indent_step; ++i) indentStr += ' ';
+	for (size_t i = 0; i < depth * indent_step; ++i)
+		indentStr += ' ';
 	return indentStr;
 }
 

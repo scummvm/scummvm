@@ -61,6 +61,6 @@ private:
 	Array<Handler *> _timerHandlers;
 };
 
-}
+} // namespace Pink
 
 #endif

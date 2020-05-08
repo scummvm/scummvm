@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/widgets/edit_widget.h"
-#include "ultima/ultima8/graphics/fonts/shape_font.h"
-#include "ultima/ultima8/graphics/fonts/rendered_text.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/fonts/font_manager.h"
-#include "ultima/ultima8/graphics/fonts/tt_font.h"
-#include "ultima/ultima8/misc/encoding.h"
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
+#include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/fonts/rendered_text.h"
+#include "ultima/ultima8/graphics/fonts/shape_font.h"
+#include "ultima/ultima8/graphics/fonts/tt_font.h"
+#include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/misc/encoding.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -38,9 +38,9 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget, Gump)
 
 EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont_, int font,
                        int w, int h, unsigned int maxlength_, bool multiline_)
-	: Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
-	  _maxLength(maxlength_), _multiLine(multiline_),
-	  _cursorChanged(0), _cursorVisible(true), _cachedText(nullptr) {
+    : Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
+      _maxLength(maxlength_), _multiLine(multiline_),
+      _cursorChanged(0), _cursorVisible(true), _cachedText(nullptr) {
 	_cursor = _text.size();
 }
 
@@ -165,7 +165,8 @@ void EditWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy) {
 	Font *font = getFont();
 
-	if (!_gameFont || !font->isHighRes()) return;
+	if (!_gameFont || !font->isHighRes())
+		return;
 
 	int32 x_ = 0, y_ = 0;
 	GumpToScreenSpace(x_, y_, ROUND_BOTTOMRIGHT);
@@ -231,7 +232,6 @@ bool EditWidget::OnKeyUp(int key) {
 	return true;
 }
 
-
 bool EditWidget::OnTextInput(int unicode) {
 	if (_maxLength > 0 && _text.size() >= _maxLength)
 		return true;
@@ -239,7 +239,8 @@ bool EditWidget::OnTextInput(int unicode) {
 	char c = 0;
 	if (unicode >= 0 && unicode < 256)
 		c = reverse_encoding[unicode];
-	if (!c) return true;
+	if (!c)
+		return true;
 
 	Std::string newtext = _text;
 	newtext.insert(_cursor, 1, c);

@@ -23,11 +23,9 @@
 #ifndef NUVIE_GUI_GUI_CONSOLE_H
 #define NUVIE_GUI_GUI_CONSOLE_H
 
-
-
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
-#include "ultima/nuvie/gui/gui_types.h"
 #include "ultima/nuvie/gui/gui_font.h"
+#include "ultima/nuvie/gui/gui_types.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/screen/screen.h"
 
 namespace Ultima {
@@ -59,7 +57,6 @@ public:
 	virtual void AddLine(Std::string line);
 
 protected:
-
 };
 
 } // End of namespace Nuvie

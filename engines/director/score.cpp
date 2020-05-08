@@ -20,40 +20,39 @@
  *
  */
 
-#include "common/system.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/system.h"
 
 #include "audio/decoders/raw.h"
 #include "engines/util.h"
-#include "graphics/primitives.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/primitives.h"
 #include "image/bmp.h"
 
-#include "director/director.h"
 #include "director/cast.h"
-#include "director/images.h"
-#include "director/score.h"
+#include "director/director.h"
 #include "director/frame.h"
+#include "director/images.h"
+#include "director/lingo/lingo.h"
+#include "director/score.h"
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
 #include "director/util.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 
 const char *scriptTypes[] = {
-	"MovieScript",
-	"SpriteScript",
-	"FrameScript",
-	"CastScript",
-	"GlobalScript",
-	"ScoreScript"
-};
+    "MovieScript",
+    "SpriteScript",
+    "FrameScript",
+    "CastScript",
+    "GlobalScript",
+    "ScoreScript"};
 
 const char *scriptType2str(ScriptType scr) {
 	if (scr < 0)
@@ -64,7 +63,6 @@ const char *scriptType2str(ScriptType scr) {
 
 	return scriptTypes[scr];
 }
-
 
 Score::Score(DirectorEngine *vm) {
 	_vm = vm;
@@ -217,12 +215,12 @@ void Score::loadArchive() {
 
 	// Try to load script context
 	if (_vm->getVersion() >= 4) {
-		Common::Array<uint16> lctx =  _movieArchive->getResourceIDList(MKTAG('L','c','t','x'));
+		Common::Array<uint16> lctx = _movieArchive->getResourceIDList(MKTAG('L', 'c', 't', 'x'));
 		if (lctx.size() > 0) {
 			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
 
 			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
-				loadLingoContext(*(r = _movieArchive->getResource(MKTAG('L','c','t','x'), *iterator)));
+				loadLingoContext(*(r = _movieArchive->getResource(MKTAG('L', 'c', 't', 'x'), *iterator)));
 				delete r;
 			}
 		}
@@ -230,7 +228,7 @@ void Score::loadArchive() {
 
 	// Try to load script name lists
 	if (_vm->getVersion() >= 4) {
-		Common::Array<uint16> lnam =  _movieArchive->getResourceIDList(MKTAG('L','n','a','m'));
+		Common::Array<uint16> lnam = _movieArchive->getResourceIDList(MKTAG('L', 'n', 'a', 'm'));
 		if (lnam.size() > 0) {
 
 			int maxLnam = -1;
@@ -238,7 +236,7 @@ void Score::loadArchive() {
 				maxLnam = MAX(maxLnam, (int)*iterator);
 			}
 			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
-			loadLingoNames(*(r = _movieArchive->getResource(MKTAG('L','n','a','m'), maxLnam)));
+			loadLingoNames(*(r = _movieArchive->getResource(MKTAG('L', 'n', 'a', 'm'), maxLnam)));
 			delete r;
 		}
 	}
@@ -278,29 +276,27 @@ void Score::loadArchive() {
 		debug("STUB: Unhandled 'SCVW' resource");
 	}
 
-
 	setSpriteCasts();
 	loadSpriteImages(false);
 	loadSpriteSounds(false);
 
 	// Now process STXTs
-	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
+	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S', 'T', 'X', 'T'));
 	debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
 
 	_loadedStxts = new Common::HashMap<int, const Stxt *>();
 
 	for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 		_loadedStxts->setVal(*iterator,
-				 new Stxt(*(r = _movieArchive->getResource(MKTAG('S','T','X','T'), *iterator))));
+		                     new Stxt(*(r = _movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), *iterator))));
 
 		delete r;
 
 		// Try to load movie script, it starts with a comment
 		if (_vm->getVersion() <= 3) {
-			loadScriptText(*(r = _movieArchive->getResource(MKTAG('S','T','X','T'), *iterator)));
+			loadScriptText(*(r = _movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), *iterator)));
 			delete r;
 		}
-
 	}
 	copyCastStxts();
 }
@@ -409,7 +405,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		bitmapCast->_img = img;
 
 		debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d clut: %x",
-			imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
+		       imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
 	}
 }
 
@@ -451,7 +447,6 @@ void Score::loadSpriteSounds(bool isSharedCast) {
 		}
 	}
 }
-
 
 Score::~Score() {
 	if (_trailSurface && _trailSurface->w)
@@ -544,10 +539,10 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		if (version > 13) {
 			_numChannelsDisplayed = stream.readUint16();
 		} else {
-			if (version <= 7)	// Director5
+			if (version <= 7) // Director5
 				_numChannelsDisplayed = 48;
 			else
-				_numChannelsDisplayed = 120;	// D6
+				_numChannelsDisplayed = 120; // D6
 
 			stream.readUint16(); // Skip
 		}
@@ -555,7 +550,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		size -= 2;
 
 		warning("STUB: Score::loadFrames. frame1Offset: %x numFrames: %x version: %x spriteRecordSize: %x numChannels: %x numChannelsDisplayed: %x",
-			frame1Offset, numFrames, version, spriteRecordSize, numChannels, _numChannelsDisplayed);
+		        frame1Offset, numFrames, version, spriteRecordSize, numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else if (_vm->getVersion() > 4) {
 		//what data is up the top of D5 VWSC?
@@ -670,7 +665,7 @@ void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 commentStyle = stream.readUint16();
 	_stageColor = _vm->transformColor(stream.readUint16());
 	uint16 bitdepth = stream.readUint16();
-	byte color = stream.readByte();	// boolean, color = 1, B/W = 0
+	byte color = stream.readByte(); // boolean, color = 1, B/W = 0
 	uint16 stageColorR = stream.readUint16();
 	uint16 stageColorG = stream.readUint16();
 	uint16 stageColorB = stream.readUint16();
@@ -693,9 +688,10 @@ void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	}
 
 	debugC(1, kDebugLoading, "Score::loadConfig(): len: %d, ver: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
-			", style: %d", len, ver1, _currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
+	                         ", style: %d",
+	       len, ver1, _currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
 	debugC(1, kDebugLoading, "Score::loadConfig(): stagecolor: %d, depth: %d, color: %d, rgb: 0x%04x 0x%04x 0x%04x",
-			_stageColor, bitdepth, color, stageColorR, stageColorG, stageColorB);
+	       _stageColor, bitdepth, color, stageColorR, stageColorG, stageColorB);
 	if (debugChannelSet(1, kDebugLoading))
 		_movieRect.debugPrint(1, "Score::loadConfig(): Movie rect: ");
 }
@@ -798,7 +794,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 	if (_vm->getVersion() <= 3) {
 		size1 = stream.readUint16();
-		sizeToRead = size1 +16; // 16 is for bounding rects
+		sizeToRead = size1 + 16; // 16 is for bounding rects
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
@@ -830,7 +826,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	}
 
 	debugC(3, kDebugLoading, "Score::loadCastData(): CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
-		id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
+	       id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
 	byte *data = (byte *)calloc(sizeToRead, 1);
 	stream.read(data, sizeToRead);
@@ -1306,7 +1302,7 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	castStrings.clear();
 
 	debugC(5, kDebugLoading, "Score::loadCastInfo(): CastInfo: name: '%s' directory: '%s', fileName: '%s', type: '%s'",
-				ci->name.c_str(), ci->directory.c_str(), ci->fileName.c_str(), ci->type.c_str());
+	       ci->name.c_str(), ci->directory.c_str(), ci->fileName.c_str(), ci->type.c_str());
 
 	if (!ci->name.empty())
 		_castsNames[ci->name] = id;
@@ -1642,7 +1638,7 @@ void Score::update() {
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
 
-	if (_frames[_currentFrame]->_transType != 0 && !_vm->_newMovieStarted)	// Store screen, so we could draw a nice transition
+	if (_frames[_currentFrame]->_transType != 0 && !_vm->_newMovieStarted) // Store screen, so we could draw a nice transition
 		_backSurface2->copyFrom(*_surface);
 
 	_vm->_newMovieStarted = false;
@@ -1757,15 +1753,15 @@ void Score::renderZoomBox(bool redraw) {
 	Graphics::MacPlotData pd(_surface, nullptr, &_vm->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
 
 	for (int i = start; i <= end; i++) {
-		Common::Rect r(box->start.left   + (box->end.left   - box->start.left)   * i / 8,
-					   box->start.top    + (box->end.top    - box->start.top)    * i / 8,
-					   box->start.right  + (box->end.right  - box->start.right)  * i / 8,
-					   box->start.bottom + (box->end.bottom - box->start.bottom) * i / 8);
+		Common::Rect r(box->start.left + (box->end.left - box->start.left) * i / 8,
+		               box->start.top + (box->end.top - box->start.top) * i / 8,
+		               box->start.right + (box->end.right - box->start.right) * i / 8,
+		               box->start.bottom + (box->end.bottom - box->start.bottom) * i / 8);
 
-		Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xffff, Graphics::macDrawPixel, &pd);
-		Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
-		Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
-		Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+		Graphics::drawLine(r.left, r.top, r.right, r.top, 0xffff, Graphics::macDrawPixel, &pd);
+		Graphics::drawLine(r.right, r.top, r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+		Graphics::drawLine(r.left, r.bottom, r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+		Graphics::drawLine(r.left, r.top, r.left, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
 	}
 
 	box->step++;

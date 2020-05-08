@@ -119,8 +119,8 @@ struct MacFONTdata {
 	uint16 _firstChar;
 	uint16 _lastChar;
 	uint16 _maxWidth;
-	int16  _kernMax;
-	int16  _nDescent;
+	int16 _kernMax;
+	int16 _nDescent;
 	uint16 _fRectWidth;
 	uint16 _fRectHeight;
 	uint32 _owTLoc;

@@ -23,10 +23,10 @@
 #ifndef ULTIMA_SHARED_CORE_BASE_OBJECT_H
 #define ULTIMA_SHARED_CORE_BASE_OBJECT_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 #include "ultima/shared/core/file.h"
 
 namespace Ultima {
@@ -35,7 +35,7 @@ namespace Shared {
 class BaseObject;
 
 class ClassDef;
-typedef ClassDef(*ClassDefFn)();
+typedef ClassDef (*ClassDefFn)();
 
 /**
  * Encapsulation of a class definition. Used as part of the message dispatch system
@@ -44,11 +44,12 @@ typedef ClassDef(*ClassDefFn)();
 class ClassDef {
 private:
 	ClassDefFn _parentFn;
+
 public:
 	const char *_className;
+
 public:
-	ClassDef(const char *className, const ClassDefFn parentFn) :
-		_className(className), _parentFn(parentFn) {
+	ClassDef(const char *className, const ClassDefFn parentFn) : _className(className), _parentFn(parentFn) {
 	}
 
 	bool hasParent() const {
@@ -62,7 +63,7 @@ public:
 	}
 };
 
-#define CLASSDEF \
+#define CLASSDEF                              \
 	static ::Ultima::Shared::ClassDef type(); \
 	virtual ::Ultima::Shared::ClassDef getType() const override { return type(); }
 
@@ -71,9 +72,9 @@ public:
  */
 class BaseObject {
 public:
-		static ::Ultima::Shared::ClassDef type();
-		virtual ::Ultima::Shared::ClassDef getType() const { return type(); }
-		virtual ~BaseObject() {
+	static ::Ultima::Shared::ClassDef type();
+	virtual ::Ultima::Shared::ClassDef getType() const { return type(); }
+	virtual ~BaseObject() {
 	}
 
 	/**

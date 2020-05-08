@@ -67,9 +67,8 @@ public:
 		SubtractValue
 	};
 
-	ChangeCommand(uint8 sceneId, uint8 entityId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val) :
-		_sceneId(sceneId), _entityId(entityId), _register(reg), _operation(op), _value(val)
-	{}
+	ChangeCommand(uint8 sceneId, uint8 entityId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val) : _sceneId(sceneId), _entityId(entityId), _register(reg), _operation(op), _value(val) {}
+
 protected:
 	const char *getRegisterAsString() const;
 	Common::String getValueAsString() const;
@@ -111,8 +110,7 @@ public:
 class ChangeDoorCommand : public ChangeCommand {
 public:
 	ChangeDoorCommand(uint8 sceneId, uint8 doorId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
-		: ChangeCommand(sceneId, doorId, reg, op, val)
-	{}
+	    : ChangeCommand(sceneId, doorId, reg, op, val) {}
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
 };
@@ -120,8 +118,7 @@ public:
 class ChangeObjectCommand : public ChangeCommand {
 public:
 	ChangeObjectCommand(uint8 sceneId, uint8 objectId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
-		: ChangeCommand(sceneId, objectId, reg, op, val)
-	{}
+	    : ChangeCommand(sceneId, objectId, reg, op, val) {}
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
 };
@@ -129,8 +126,7 @@ public:
 class ChangeStaticCommand : public ChangeCommand {
 public:
 	ChangeStaticCommand(uint8 sceneId, uint8 staticId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
-		: ChangeCommand(sceneId, staticId, reg, op, val)
-	{}
+	    : ChangeCommand(sceneId, staticId, reg, op, val) {}
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
 };
@@ -138,10 +134,9 @@ public:
 class ChangeSceneCommand : public ChangeCommand {
 public:
 	ChangeSceneCommand(uint8 sceneId, uint8 staticId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
-		: ChangeCommand(sceneId, staticId, reg, op, val)
-	{}
+	    : ChangeCommand(sceneId, staticId, reg, op, val) {}
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
 };
 
-}
+} // namespace MutationOfJB

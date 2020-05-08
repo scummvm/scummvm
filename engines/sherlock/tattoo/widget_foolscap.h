@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_TATTOO_FOOLSCAP_H
 #define SHERLOCK_TATTOO_FOOLSCAP_H
 
-#include "sherlock/tattoo/widget_base.h"
 #include "sherlock/image_file.h"
+#include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
 
@@ -32,7 +32,7 @@ namespace Tattoo {
 
 class TattooEngine;
 
-class WidgetFoolscap: public WidgetBase {
+class WidgetFoolscap : public WidgetBase {
 private:
 	ImageFile *_images;
 	Common::Point _lines[3];
@@ -55,6 +55,7 @@ private:
 	 * Restore the background for the current line/horiz position
 	 */
 	void restoreChar();
+
 public:
 	WidgetFoolscap(TattooEngine *vm);
 	~WidgetFoolscap() override;

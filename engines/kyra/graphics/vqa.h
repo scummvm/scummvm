@@ -23,9 +23,9 @@
 #ifndef KYRA_VQA_H
 #define KYRA_VQA_H
 
-#include "video/video_decoder.h"
 #include "common/file.h"
 #include "common/rational.h"
+#include "video/video_decoder.h"
 
 class OSystem;
 
@@ -148,6 +148,7 @@ public:
 	bool open(const char *filename);
 	void close();
 	void play();
+
 private:
 	OSystem *_system;
 	KyraEngine_v1 *_vm;

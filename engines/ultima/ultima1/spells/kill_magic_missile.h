@@ -23,8 +23,8 @@
 #ifndef ULTIMA_ULTIMA1_U1DIALOGS_KILL_MAGIC_MISSILE_H
 #define ULTIMA_ULTIMA1_U1DIALOGS_KILL_MAGIC_MISSILE_H
 
-#include "ultima/ultima1/spells/spell.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/ultima1/spells/spell.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -38,6 +38,7 @@ using Shared::CCharacterInputMsg;
 class KillMagicMIssile : public Spell {
 	DECLARE_MESSAGE_MAP;
 	bool CharacterInputMsg(CCharacterInputMsg &msg);
+
 public:
 	CLASSDEF;
 
@@ -84,7 +85,7 @@ public:
 	void dungeonCast(Maps::MapDungeon *map) override;
 };
 
-} // End of  namespace U1Dialogs
+} // namespace Spells
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

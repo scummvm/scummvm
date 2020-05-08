@@ -24,9 +24,9 @@
 #define BACKENDS_GRAPHICS_WINDOWED_H
 
 #include "backends/graphics/graphics.h"
+#include "common/config-manager.h"
 #include "common/frac.h"
 #include "common/rect.h"
-#include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "graphics/scaler/aspect.h"
 
@@ -40,20 +40,19 @@ enum {
 
 class WindowedGraphicsManager : virtual public GraphicsManager {
 public:
-	WindowedGraphicsManager() :
-		_windowWidth(0),
-		_windowHeight(0),
-		_overlayVisible(false),
-		_gameScreenShakeXOffset(0),
-		_gameScreenShakeYOffset(0),
-		_forceRedraw(false),
-		_cursorVisible(false),
-		_cursorX(0),
-		_cursorY(0),
-		_xdpi(90),
-		_ydpi(90),
-		_cursorNeedsRedraw(false),
-		_cursorLastInActiveArea(true) {}
+	WindowedGraphicsManager() : _windowWidth(0),
+	                            _windowHeight(0),
+	                            _overlayVisible(false),
+	                            _gameScreenShakeXOffset(0),
+	                            _gameScreenShakeYOffset(0),
+	                            _forceRedraw(false),
+	                            _cursorVisible(false),
+	                            _cursorX(0),
+	                            _cursorY(0),
+	                            _xdpi(90),
+	                            _ydpi(90),
+	                            _cursorNeedsRedraw(false),
+	                            _cursorLastInActiveArea(true) {}
 
 	virtual void showOverlay() override {
 		if (_overlayVisible)
@@ -408,7 +407,7 @@ private:
 					width = fracToInt(height * displayAspect);
 			}
 		}
-		
+
 		drawRect.left = ((_windowWidth - width) / 2) + _gameScreenShakeXOffset * width / getWidth();
 		drawRect.top = ((_windowHeight - height) / 2) + _gameScreenShakeYOffset * height / getHeight();
 		drawRect.setWidth(width);

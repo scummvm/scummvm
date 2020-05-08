@@ -39,6 +39,7 @@ class Timer {
 	uint32 _timer;
 	uint32 _timerDelta;
 	uint32 _timerLast;
+
 public:
 	Timer();
 	void setTime(uint32 time);
@@ -50,7 +51,6 @@ public:
 	uint32 getTimeLast() const;
 	void persist(BasePersistenceManager *persistMgr);
 };
-
 
 } // End of namespace Wintermute
 

@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/endian.h"
 
 #include "cine/cine.h"
@@ -47,13 +46,18 @@ void loadRel(char *pRelName) {
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	numEntry = READ_BE_UINT16(ptr); ptr += 2;
+	numEntry = READ_BE_UINT16(ptr);
+	ptr += 2;
 
 	for (i = 0; i < numEntry; i++) {
-		size = READ_BE_UINT16(ptr); ptr += 2;
-		p1 = READ_BE_UINT16(ptr); ptr += 2;
-		p2 = READ_BE_UINT16(ptr); ptr += 2;
-		p3 = READ_BE_UINT16(ptr); ptr += 2;
+		size = READ_BE_UINT16(ptr);
+		ptr += 2;
+		p1 = READ_BE_UINT16(ptr);
+		ptr += 2;
+		p2 = READ_BE_UINT16(ptr);
+		ptr += 2;
+		p3 = READ_BE_UINT16(ptr);
+		ptr += 2;
 		RawObjectScriptPtr tmp(new RawObjectScript(size, p1, p2, p3));
 		assert(tmp);
 		g_cine->_relTable.push_back(tmp);

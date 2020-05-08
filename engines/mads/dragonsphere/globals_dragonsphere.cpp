@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
 #include "mads/dragonsphere/globals_dragonsphere.h"
+#include "common/config-manager.h"
+#include "common/scummsys.h"
 
 namespace MADS {
 
 namespace Dragonsphere {
 
 DragonsphereGlobals::DragonsphereGlobals()
-	: Globals() {
+    : Globals() {
 	// Initialize lists
 	resize(140);
 	_spriteIndexes.resize(30);
@@ -44,7 +44,6 @@ void DragonsphereGlobals::synchronize(Common::Serializer &s) {
 	_sequenceIndexes.synchronize(s);
 	_animationIndexes.synchronize(s);
 }
-
 
 } // End of namespace Dragonsphere
 

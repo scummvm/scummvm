@@ -23,15 +23,15 @@
 #ifndef ULTIMA4_EVENTS_EVENT_HANDLER_H
 #define ULTIMA4_EVENTS_EVENT_HANDLER_H
 
-#include "ultima/ultima4/events/timed_event_mgr.h"
-#include "ultima/ultima4/controllers/key_handler_controller.h"
-#include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/gfx/screen.h"
-#include "ultima/shared/std/containers.h"
 #include "common/events.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/controllers/key_handler_controller.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/events/timed_event_mgr.h"
+#include "ultima/ultima4/gfx/screen.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -48,7 +48,7 @@ typedef void *UIEvent;
 #endif
 #endif
 
-typedef void(*updateScreenCallback)();
+typedef void (*updateScreenCallback)();
 
 /**
  * Encapsulates the logic for deciding how frequently to walk
@@ -58,6 +58,7 @@ class WalkTrigger {
 private:
 	int _ticksCtr, _ticksPerWalk;
 	KeybindingAction _action;
+
 public:
 	/**
 	 * Constructor
@@ -81,21 +82,23 @@ public:
 	KeybindingAction getAction();
 };
 
-
 /**
  * A class for handling game events.
  */
 class EventHandler {
 	typedef Common::List<const MouseArea *> MouseAreaList;
+
 private:
 	static EventHandler *_instance;
 	WalkTrigger _walk;
 	bool _isRightButtonDown;
+
 private:
 	void handleMouseMotionEvent(const Common::Event &event);
 	void handleMouseButtonDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen);
 	void handleMouseButtonUpEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen);
 	void handleKeyDownEvent(const Common::Event &event, Controller *controller, updateScreenCallback updateScreen);
+
 protected:
 	static bool _controllerDone;
 	static bool _ended;
@@ -103,6 +106,7 @@ protected:
 	Std::vector<Controller *> _controllers;
 	MouseAreaList _mouseAreaSets;
 	updateScreenCallback _updateScreen;
+
 public:
 	/**
 	 * Constructor

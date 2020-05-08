@@ -36,7 +36,7 @@ struct PalanimEntry {
 };
 
 class PalAnim {
- public:
+public:
 	PalAnim(SagaEngine *vm);
 
 	void loadPalAnim(const ByteArray &resourceData);
@@ -44,7 +44,7 @@ class PalAnim {
 	void cycleStep(int vectortime);
 	void clear();
 
- private:
+private:
 	SagaEngine *_vm;
 
 	Common::Array<PalanimEntry> _entries;

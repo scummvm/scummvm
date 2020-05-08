@@ -25,8 +25,8 @@
 
 /*   Parse data for ALAN interpreter module. */
 
-#include "glk/alan3/types.h"
 #include "glk/alan3/params.h"
+#include "glk/alan3/types.h"
 #include "glk/jumps.h"
 
 namespace Glk {

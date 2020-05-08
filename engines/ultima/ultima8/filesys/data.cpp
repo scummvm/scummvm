@@ -38,7 +38,8 @@ void FileSystem::initBuiltinData(bool allowoverride) {
 	int i = 0;
 	while (true) {
 		PentagramData::DataFile &file = PentagramData::files[i++];
-		if (!file.name) break;
+		if (!file.name)
+			break;
 
 		Std::string vp = "@data/";
 		vp += file.name;
@@ -52,7 +53,6 @@ void FileSystem::initBuiltinData(bool allowoverride) {
 		}
 
 		memoryfiles[vp] = new MemoryFile(file.data, file.size);
-
 	}
 #endif
 }

@@ -21,11 +21,11 @@
  */
 
 #include "sherlock/tattoo/widget_verbs.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
+#include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo_people.h"
-#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -62,7 +62,6 @@ void WidgetVerbs::load(bool objectsOn) {
 			if (!scumm_strnicmp(person._npcName.c_str(), "WATS", 4))
 				isWatson = true;
 
-
 			if (scumm_strnicmp(person._examine.c_str(), "_EXIT", 5))
 				_verbCommands.push_back(FIXED(Look));
 
@@ -71,7 +70,7 @@ void WidgetVerbs::load(bool objectsOn) {
 			// Add any extra active verbs from the NPC's verb list
 			for (int idx = 0; idx < 2; ++idx) {
 				if (!person._use[idx]._verb.empty() && !person._use[idx]._verb.hasPrefix(" ") &&
-						(person._use[idx]._target.empty() || person._use[idx]._target.hasPrefix(" "))) {
+				    (person._use[idx]._target.empty() || person._use[idx]._target.hasPrefix(" "))) {
 					_verbCommands.push_back(person._use[idx]._verb);
 				}
 			}
@@ -91,7 +90,7 @@ void WidgetVerbs::load(bool objectsOn) {
 			for (int idx = 0; idx < 6; ++idx) {
 				UseType &use = ui._bgShape->_use[idx];
 				if (!use._verb.empty() && !use._verb.hasPrefix(" ") && !use._verb.hasPrefix("*") &&
-					(use._target.empty() || use._target.hasPrefix("*") || use._target.hasPrefix(" "))) {
+				    (use._target.empty() || use._target.hasPrefix("*") || use._target.hasPrefix(" "))) {
 					_verbCommands.push_back(use._verb);
 				}
 			}
@@ -134,8 +133,7 @@ void WidgetVerbs::render() {
 
 	// Draw the verb commands and the lines separating them
 	for (uint idx = 0; idx < _verbCommands.size(); ++idx) {
-		_surface.writeString(_verbCommands[idx], Common::Point((_bounds.width() - _surface.stringWidth(_verbCommands[idx])) / 2,
-			(_surface.fontHeight() + 7) * idx + 5), INFO_TOP);
+		_surface.writeString(_verbCommands[idx], Common::Point((_bounds.width() - _surface.stringWidth(_verbCommands[idx])) / 2, (_surface.fontHeight() + 7) * idx + 5), INFO_TOP);
 
 		if (idx < (_verbCommands.size() - 1)) {
 			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1), _bounds.width() - 4, INFO_TOP);
@@ -144,7 +142,7 @@ void WidgetVerbs::render() {
 
 			_surface.SHtransBlitFrom(images[4], Common::Point(0, (_surface.fontHeight() + 7) * (idx + 1) - 1));
 			_surface.SHtransBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width,
-				(_surface.fontHeight() + 7) * (idx + 1) - 1));
+			                                                  (_surface.fontHeight() + 7) * (idx + 1) - 1));
 		}
 	}
 }
@@ -300,8 +298,7 @@ void WidgetVerbs::highlightVerbControls() {
 		// Redraw the verb list
 		for (int idx = 0; idx < (int)_verbCommands.size(); ++idx) {
 			byte color = (idx == _selector) ? (byte)COMMAND_HIGHLIGHTED : (byte)INFO_TOP;
-			_surface.writeString(_verbCommands[idx], Common::Point((_bounds.width() - screen.stringWidth(_verbCommands[idx])) / 2,
-				(screen.fontHeight() + 7) * idx + 5), color);
+			_surface.writeString(_verbCommands[idx], Common::Point((_bounds.width() - screen.stringWidth(_verbCommands[idx])) / 2, (screen.fontHeight() + 7) * idx + 5), color);
 		}
 
 		_oldSelector = _selector;

@@ -29,8 +29,8 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
@@ -63,7 +63,7 @@ bool EmulateHTTPConnectExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *
 		const char *productKey = stack->pop()->getString();
 		int productKeyMaxLen = stack->pop()->getInt();
 
-		warning("Register(\"%s\",%d,\"%s\",%d) is not implemented", productId , productIdMaxLen, productKey, productKeyMaxLen);
+		warning("Register(\"%s\",%d,\"%s\",%d) is not implemented", productId, productIdMaxLen, productKey, productKeyMaxLen);
 
 		stack->pushInt(-7); // "no internet connection" error
 		return STATUS_OK;
@@ -148,7 +148,7 @@ bool EmulateHTTPConnectExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *
 		stack->correctParams(4);
 		const char *dirUrl = stack->pop()->getString();
 		int dirUrlMaxLen = stack->pop()->getInt();
-		/*ScValue *buf =*/ stack->pop();
+		/*ScValue *buf =*/stack->pop();
 		int bufMaxLen = stack->pop()->getInt();
 
 		//TODO: Count items and give scores, persist those values

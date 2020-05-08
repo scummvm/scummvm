@@ -23,10 +23,10 @@
 #ifndef TITANIC_LINK_ITEM_H
 #define TITANIC_LINK_ITEM_H
 
-#include "titanic/support/mouse_cursor.h"
 #include "titanic/core/named_item.h"
-#include "titanic/support/movie_clip.h"
 #include "titanic/messages/messages.h"
+#include "titanic/support/mouse_cursor.h"
+#include "titanic/support/movie_clip.h"
 
 namespace Titanic {
 
@@ -36,22 +36,27 @@ class CRoomItem;
 
 class CLinkItem : public CNamedItem {
 	DECLARE_MESSAGE_MAP;
+
 private:
 	/**
 	 * Returns a new name for the link item, based on the
 	 * current values for it's destination
 	 */
 	CString formName();
+
 protected:
 	int _roomNumber;
 	int _nodeNumber;
 	int _viewNumber;
 	int _linkMode;
+
 public:
 	Rect _bounds;
 	CursorId _cursorId;
+
 public:
 	static Movement getMovementFromCursor(CursorId cursorId);
+
 public:
 	CLASSDEF;
 	CLinkItem();
@@ -75,7 +80,7 @@ public:
 	 * Set the destination for the link item
 	 */
 	virtual void setDestination(int roomNumber, int nodeNumber,
-		int viewNumber, int linkMode);
+	                            int viewNumber, int linkMode);
 
 	/**
 	 * Get the destination view for the link item

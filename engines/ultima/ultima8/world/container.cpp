@@ -24,13 +24,13 @@
 
 #include "ultima/ultima8/world/container.h"
 
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/world/item_factory.h"
 
 #include "ultima/ultima8/graphics/shape_info.h"
 
@@ -43,22 +43,18 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Container, Item)
 Container::Container() {
 }
 
-
 Container::~Container() {
 	// TODO: handle container's _contents.
 	// Either destroy the _contents, or move them up to this container's parent?
-
-
 
 	// if we don't have an _objId, we _must_ delete children
 	if (_objId == 0xFFFF) {
 		Std::list<Item *>::iterator iter;
 		for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
-			delete(*iter);
+			delete (*iter);
 		}
 	}
 }
-
 
 ObjId Container::assignObjId() {
 	ObjId id = Item::assignObjId();
@@ -84,12 +80,14 @@ void Container::clearObjId() {
 	}
 }
 
-
 bool Container::CanAddItem(Item *item, bool checkwghtvol) {
-	if (!item) return false;
-	if (item->getParent() == this->getObjId()) return true; // already in here
+	if (!item)
+		return false;
+	if (item->getParent() == this->getObjId())
+		return true; // already in here
 
-	if (item->getObjId() < 256) return false; // actors don't fit in containers
+	if (item->getObjId() < 256)
+		return false; // actors don't fit in containers
 
 	Container *c = p_dynamic_cast<Container *>(item);
 	if (c) {
@@ -144,13 +142,14 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 }
 
 bool Container::addItem(Item *item, bool checkwghtvol) {
-	if (!CanAddItem(item, checkwghtvol)) return false;
-	if (item->getParent() == _objId) return true; // already in here
+	if (!CanAddItem(item, checkwghtvol))
+		return false;
+	if (item->getParent() == _objId)
+		return true; // already in here
 
 	_contents.push_back(item);
 	return true;
 }
-
 
 bool Container::removeItem(Item *item) {
 	Std::list<Item *>::iterator iter;
@@ -200,12 +199,12 @@ void Container::removeContents() {
 	}
 }
 
-
 void Container::destroyContents() {
 	while (_contents.begin() != _contents.end()) {
 		Item *item = *(_contents.begin());
 		Container *cont = p_dynamic_cast<Container *>(item);
-		if (cont) cont->destroyContents();
+		if (cont)
+			cont->destroyContents();
 		item->destroy(true); // we destroy the item immediately
 	}
 }
@@ -217,7 +216,8 @@ void Container::setFlagRecursively(uint32 mask) {
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		(*iter)->setFlag(mask);
 		Container *cont = p_dynamic_cast<Container *>(*iter);
-		if (cont) cont->setFlagRecursively(mask);
+		if (cont)
+			cont->setFlagRecursively(mask);
 	}
 }
 
@@ -313,7 +313,8 @@ void Container::saveData(Common::WriteStream *ws) {
 }
 
 bool Container::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Item::loadData(rs, version)) return false;
+	if (!Item::loadData(rs, version))
+		return false;
 
 	uint32 contentcount = rs->readUint32LE();
 
@@ -321,7 +322,8 @@ bool Container::loadData(Common::ReadStream *rs, uint32 version) {
 	for (unsigned int i = 0; i < contentcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
 		Item *item = p_dynamic_cast<Item *>(obj);
-		if (!item) return false;
+		if (!item)
+			return false;
 
 		addItem(item);
 		item->setParent(_objId);
@@ -330,10 +332,10 @@ bool Container::loadData(Common::ReadStream *rs, uint32 version) {
 	return true;
 }
 
-
 uint32 Container::I_removeContents(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_CONTAINER_FROM_PTR(container);
-	if (!container) return 0;
+	if (!container)
+		return 0;
 
 	container->removeContents();
 	return 0;
@@ -341,7 +343,8 @@ uint32 Container::I_removeContents(const uint8 *args, unsigned int /*argsize*/) 
 
 uint32 Container::I_destroyContents(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_CONTAINER_FROM_PTR(container);
-	if (!container) return 0;
+	if (!container)
+		return 0;
 
 	container->destroyContents();
 	return 0;

@@ -27,7 +27,7 @@
 
 #if defined(DINGUX)
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
 	g_system = new OSystem_SDL_Dingux();
 	assert(g_system);

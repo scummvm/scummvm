@@ -23,11 +23,11 @@
 #ifndef TEENAGENT_INVENTORY_H
 #define TEENAGENT_INVENTORY_H
 
-#include "teenagent/surface.h"
-#include "teenagent/animation.h"
-#include "common/events.h"
 #include "common/array.h"
+#include "common/events.h"
+#include "teenagent/animation.h"
 #include "teenagent/objects.h"
+#include "teenagent/surface.h"
 
 namespace TeenAgent {
 
@@ -42,17 +42,17 @@ enum {
 	kInvItemNoItem = 0, // No item i.e. empty inventory slot
 	kInvItemFeather = 1,
 	kInvItemShotgun = 2,
-	kInvItemToolboxFull = 3, // Contains Car Jack and Spanner
+	kInvItemToolboxFull = 3,      // Contains Car Jack and Spanner
 	kInvItemToolboxHalfEmpty = 4, // Contains Spanner
 	kInvItemSpanner = 5,
 	kInvItemComb = 6,
 	kInvItemFan = 7,
 	kInvItemBrokenPaddle = 8,
-	kInvItemPaddle = 9, // Repaired - BrokenPaddle combined with Branch (with Glue)
-	kInvItemFirstFlower = 10, // Smells nice
+	kInvItemPaddle = 9,        // Repaired - BrokenPaddle combined with Branch (with Glue)
+	kInvItemFirstFlower = 10,  // Smells nice
 	kInvItemSecondFlower = 11, // Really beautiful
 	kInvItemFeatherDusterClean = 12,
-	kInvItemChainsaw = 13, // Unfueled
+	kInvItemChainsaw = 13,        // Unfueled
 	kInvItemDrunkenChainsaw = 14, // Fueled with Whisky (Chainsaw combined with Whiskey)
 	kInvItemBranch = 15,
 	kInvItemWhisky = 16,
@@ -69,9 +69,9 @@ enum {
 	kInvItemPlasticApple = 27,
 	kInvItemCone = 28,
 	kInvItemSuperGlue = 29,
-	kInvItemConeAndNeedle = 30, // Cone combined with Needle
+	kInvItemConeAndNeedle = 30,  // Cone combined with Needle
 	kInvItemConeAndFeather = 31, // Cone combined with Feather
-	kInvItemDart = 32, // Needle combined with ConeAndFeather or Feather combined with ConeAndNeedle
+	kInvItemDart = 32,           // Needle combined with ConeAndFeather or Feather combined with ConeAndNeedle
 	kInvItemFeatherDusterDirty = 33,
 	kInvItemPaintedPotato = 34, // Potato combined with Dirty Feather Duster (Soot)
 	kInvItemCarJack = 35,
@@ -124,7 +124,7 @@ enum {
 	kInvItemKaleidoscope = 82,
 	kInvItemSoldierNews = 83,
 	kInvItemGrenade = 84,
-	kInvItemMug = 85, // Empty
+	kInvItemMug = 85,      // Empty
 	kInvItemMugOfMud = 86, // Full of mud
 	kInvItemCrumbs = 87,
 	kInvItemRopeAct1 = 88,
@@ -162,7 +162,7 @@ private:
 	TeenAgentEngine *_vm;
 	Surface _background;
 	byte *_items;
-	uint _offset[kNumInventoryItems+1];
+	uint _offset[kNumInventoryItems + 1];
 
 	Common::Array<InventoryObject> _objects;
 	byte *_inventory;

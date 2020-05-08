@@ -23,10 +23,10 @@
 #ifndef GLK_FROTZ_SOUND_FOLDER_H
 #define GLK_FROTZ_SOUND_FOLDER_H
 
-#include "glk/frotz/frotz_types.h"
 #include "common/archive.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
+#include "glk/frotz/frotz_types.h"
 
 namespace Glk {
 namespace Frotz {
@@ -40,11 +40,13 @@ class SoundSubfolder : public Common::Archive {
 private:
 	Common::FSNode _folder;
 	Common::StringMap _filenames;
+
 private:
 	/**
 	 * Constructor
 	 */
 	SoundSubfolder(const Common::FSNode &folder);
+
 public:
 	/**
 	 * Checks for a sound subfolder, and if so, instantiates the class for it
@@ -88,11 +90,13 @@ class SoundZip : public Common::Archive {
 private:
 	Common::Archive *_zip;
 	Common::StringMap _filenames;
+
 private:
 	/**
 	 * Constructor
 	 */
 	SoundZip(Common::Archive *zip);
+
 public:
 	/**
 	 * Checks for a sound subfolder, and if so, instantiates the class for it

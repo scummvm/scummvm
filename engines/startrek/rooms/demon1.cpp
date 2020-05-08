@@ -325,14 +325,13 @@ void Room::demon1Timer5Expired() {
 		return;
 
 	showText(TX_SPEAKER_UHURA, 77, true);
-	showText(TX_SPEAKER_KIRK,  3, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 	showText(TX_SPEAKER_UHURA, 78, true);
-	showText(TX_SPEAKER_KIRK,  2, true);
+	showText(TX_SPEAKER_KIRK, 2, true);
 	showText(TX_SPEAKER_SPOCK, 20, true);
-	showText(TX_SPEAKER_KIRK,  4, true);
+	showText(TX_SPEAKER_KIRK, 4, true);
 	showText(TX_SPEAKER_SPOCK, 21, true);
 }
-
 
 void Room::demon1UseMTricorderOnKlingon() {
 	loadActorAnim2(OBJECT_MCCOY, "mscann", -1, -1, 0);
@@ -545,11 +544,10 @@ void Room::demon1TalkToRedshirt() {
 // FIXME: this doesn't happen in actual game? (does the event get blocked from higher up?)
 void Room::demon1TalkToUnconsciousCrewman() {
 	const char *text[] = {
-		nullptr,
-		"Zzzzz....",
-		""
-	};
+	    nullptr,
+	    "Zzzzz....",
+	    ""};
 	showRoomSpecificText(text);
 }
 
-}
+} // namespace StarTrek

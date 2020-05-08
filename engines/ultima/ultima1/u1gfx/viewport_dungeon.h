@@ -35,11 +35,13 @@ private:
 	 * Draws a dungeon widget
 	 */
 	static void drawWidget(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color);
+
 protected:
 	/**
 	 * Returns the surface for rendering the dungeon
 	 */
 	Shared::DungeonSurface getSurface() override;
+
 public:
 	ViewportDungeon(TreeItem *parent) : Shared::ViewportDungeon(parent) {}
 	~ViewportDungeon() override {}

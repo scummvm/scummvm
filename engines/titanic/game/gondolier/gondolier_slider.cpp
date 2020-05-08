@@ -27,23 +27,23 @@ namespace Titanic {
 /**
  * Y offsets within slider for each successive thumbnail position
  */
-static const int Y_OFFSETS[11] = { 0, 0, 1, 4, 9, 15, 21, 27, 32, 35, 36 };
+static const int Y_OFFSETS[11] = {0, 0, 1, 4, 9, 15, 21, 27, 32, 35, 36};
 
 BEGIN_MESSAGE_MAP(CGondolierSlider, CGondolierBase)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseDragMoveMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MouseDragEndMsg)
-	ON_MESSAGE(IsHookedOnMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(SignalObject)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseDragMoveMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MouseDragEndMsg)
+ON_MESSAGE(IsHookedOnMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(SignalObject)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 CGondolierSlider::CGondolierSlider() : CGondolierBase(),
-	_sliderIndex(0), _stringUnused("NULL"), _sliderNum(0), _dragging(false) {
+                                       _sliderIndex(0), _stringUnused("NULL"), _sliderNum(0), _dragging(false) {
 }
 
 void CGondolierSlider::save(SimpleFile *file, int indent) {
@@ -89,8 +89,7 @@ bool CGondolierSlider::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 	if (!(_sliderNum ? _leftSliderHooked : _rightSliderHooked)) {
 		int minVal = 0x7FFFFFFF;
 		int foundIndex = -1;
-		int yp = (_defaultThumbRect.top + _defaultThumbRect.bottom) / 2
-			+ _bounds.top - msg->_mousePos.y;
+		int yp = (_defaultThumbRect.top + _defaultThumbRect.bottom) / 2 + _bounds.top - msg->_mousePos.y;
 
 		for (int idx = 0; idx < 11; ++idx) {
 			int yDiff = ABS(yp + Y_OFFSETS[idx]);

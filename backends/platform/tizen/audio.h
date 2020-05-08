@@ -24,14 +24,14 @@
 #define TIZEN_AUDIO_H
 
 #include <FBase.h>
-#include <FMedia.h>
-#include <FIo.h>
 #include <FBaseByteBuffer.h>
+#include <FIo.h>
+#include <FMedia.h>
 
-#include "config.h"
+#include "audio/mixer_intern.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "audio/mixer_intern.h"
+#include "config.h"
 
 using namespace Tizen::Base;
 using namespace Tizen::Base::Collection;
@@ -41,10 +41,9 @@ using namespace Tizen::Io;
 
 #define NUM_AUDIO_BUFFERS 2
 
-class AudioThread:
-	public Tizen::Media::IAudioOutEventListener,
-	public Tizen::Base::Runtime::ITimerEventListener,
-	public Tizen::Base::Runtime::EventDrivenThread {
+class AudioThread : public Tizen::Media::IAudioOutEventListener,
+                    public Tizen::Base::Runtime::ITimerEventListener,
+                    public Tizen::Base::Runtime::EventDrivenThread {
 
 public:
 	AudioThread(void);

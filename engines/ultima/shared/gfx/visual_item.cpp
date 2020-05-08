@@ -21,16 +21,16 @@
  */
 
 #include "ultima/shared/gfx/visual_item.h"
-#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
 BEGIN_MESSAGE_MAP(VisualItem, NamedItem)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(HideMsg)
+ON_MESSAGE(ShowMsg)
+ON_MESSAGE(HideMsg)
 END_MESSAGE_MAP()
 
 void VisualItem::init(TreeItem *parent) {
@@ -87,5 +87,5 @@ void VisualItem::setView() {
 }
 
 } // End of namespace Gfx
-} // End of namespace Shaerd
+} // namespace Shared
 } // End of namespace Ultima

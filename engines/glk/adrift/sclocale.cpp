@@ -42,7 +42,6 @@ namespace Adrift {
  */
 enum { TABLE_SIZE = 256 };
 
-
 /*
  * loc_setrange_bool()
  * loc_setranges_bool()
@@ -67,7 +66,6 @@ static void loc_setranges_bool(const sc_int ranges[], sc_bool table[]) {
 		loc_setrange_bool(ranges[index_], ranges[index_ + 1], table);
 	}
 }
-
 
 /*
  * loc_setrange_char()
@@ -97,14 +95,14 @@ static void loc_setranges_char(const sc_int ranges[], sc_char table[]) {
 	}
 }
 
-
 /*
  * A locale consists of a name, ranges for each table, and signatures for
  * autodetection based on the game's compilation date.  This is the static
  * data portion of a locale.
  */
 enum { RANGES_LENGTH = 32 };
-enum { SIGNATURE_COUNT = 24, SIGNATURE_LENGTH = 3 };
+enum { SIGNATURE_COUNT = 24,
+	   SIGNATURE_LENGTH = 3 };
 struct sc_locale_t {
 	const sc_char *const name;
 	const sc_int isspace_ranges[RANGES_LENGTH];
@@ -114,7 +112,6 @@ struct sc_locale_t {
 	const sc_int tolower_ranges[RANGES_LENGTH];
 	const sc_byte signature[SIGNATURE_COUNT][SIGNATURE_LENGTH];
 };
-
 
 /*
  * The locale table set is built from a locale using its ranges.  There is one
@@ -136,7 +133,6 @@ struct sc_locale_table_t {
  * detects a locale change.
  */
 static sc_locale_table_t loc_locale_tables = {NULL, {0}, {0}, {0}, {0}, {0}};
-
 
 /*
  * loc_synchronize_tables()
@@ -164,7 +160,6 @@ static void loc_check_tables_synchronized(const sc_locale_t *locale) {
 		loc_synchronize_tables(locale);
 }
 
-
 /*
  * Locale for Latin1.  The signatures in this locale are null since it is the
  * default locale; no matching required.  Also, none may be practical, as this
@@ -172,61 +167,38 @@ static void loc_check_tables_synchronized(const sc_locale_t *locale) {
  * practice, it seems that only English and French Adrift Latin1 games exist).
  */
 static const sc_locale_t LATIN1_LOCALE = {
-	"Latin1",
-	{9, 13,  32, 32,  160, 160,  -1},
-	{48, 57,  -1},
-	{
-		65, 90,  97, 122,  192, 214,  216, 246,  248, 255,  138, 138,  140, 140,
-		142, 142,  154, 154,  156, 156,  158, 158,  159, 159,  -1
-	},
-	{
-		0, TABLE_SIZE - 1, 0,  97, 122, -32,  224, 246, -32,  248, 254, -32,  154, 154, -16,
-		156, 156, -16,  158, 158, -16,  255, 255, -96,  -1
-	},
-	{
-		0, TABLE_SIZE - 1, 0,  65, 90, 32,  192, 214, 32,  216, 222, 32,  138, 138, 16,
-		140, 140, 16,  142, 142, 16,  159, 159, 96,  -1
-	},
-	{{0}}
-};
-
+    "Latin1",
+    {9, 13, 32, 32, 160, 160, -1},
+    {48, 57, -1},
+    {65, 90, 97, 122, 192, 214, 216, 246, 248, 255, 138, 138, 140, 140,
+     142, 142, 154, 154, 156, 156, 158, 158, 159, 159, -1},
+    {0, TABLE_SIZE - 1, 0, 97, 122, -32, 224, 246, -32, 248, 254, -32, 154, 154, -16,
+     156, 156, -16, 158, 158, -16, 255, 255, -96, -1},
+    {0, TABLE_SIZE - 1, 0, 65, 90, 32, 192, 214, 32, 216, 222, 32, 138, 138, 16,
+     140, 140, 16, 142, 142, 16, 159, 159, 96, -1},
+    {{0}}};
 
 /*
  * Locale for Cyrillic.  The signatures in this locale are month names in
  * both mixed case and lowercase Russian Cyrillic.
  */
 static const sc_locale_t CYRILLIC_LOCALE = {
-	"Cyrillic",
-	{9, 13,  32, 32,  160, 160,  -1},
-	{48, 57,  -1},
-	{
-		65, 90,  97, 122,  168, 168,  184, 184,  175, 175,  191, 191,  178, 179,
-		192, 255,  -1
-	},
-	{
-		0, TABLE_SIZE - 1, 0,  97, 122, -32,  184, 184, -16,  191, 191, -16,  179, 179, -1,
-		224, 255, -32,  -1
-	},
-	{
-		0, TABLE_SIZE - 1, 0,  65, 90, 32,  168, 168, 16,  175, 175, 16,  178, 178, 1,
-		192, 223, 32,  -1
-	},
-	{	{223, 237, 226}, {212, 229, 226}, {204, 224, 240}, {192, 239, 240},
-		{204, 224, 233}, {200, 254, 237}, {200, 254, 235}, {192, 226, 227},
-		{209, 229, 237}, {206, 234, 242}, {205, 238, 255}, {196, 229, 234},
-		{255, 237, 226}, {244, 229, 226}, {236, 224, 240}, {224, 239, 240},
-		{236, 224, 233}, {232, 254, 237}, {232, 254, 235}, {224, 226, 227},
-		{241, 229, 237}, {238, 234, 242}, {237, 238, 255}, {228, 229, 234}
-	}
-};
-
+    "Cyrillic",
+    {9, 13, 32, 32, 160, 160, -1},
+    {48, 57, -1},
+    {65, 90, 97, 122, 168, 168, 184, 184, 175, 175, 191, 191, 178, 179,
+     192, 255, -1},
+    {0, TABLE_SIZE - 1, 0, 97, 122, -32, 184, 184, -16, 191, 191, -16, 179, 179, -1,
+     224, 255, -32, -1},
+    {0, TABLE_SIZE - 1, 0, 65, 90, 32, 168, 168, 16, 175, 175, 16, 178, 178, 1,
+     192, 223, 32, -1},
+    {{223, 237, 226}, {212, 229, 226}, {204, 224, 240}, {192, 239, 240}, {204, 224, 233}, {200, 254, 237}, {200, 254, 235}, {192, 226, 227}, {209, 229, 237}, {206, 234, 242}, {205, 238, 255}, {196, 229, 234}, {255, 237, 226}, {244, 229, 226}, {236, 224, 240}, {224, 239, 240}, {236, 224, 233}, {232, 254, 237}, {232, 254, 235}, {224, 226, 227}, {241, 229, 237}, {238, 234, 242}, {237, 238, 255}, {228, 229, 234}}};
 
 /* List of pointers to supported and available locales, NULL terminated. */
 static const sc_locale_t *const AVAILABLE_LOCALES[] = {
-	&LATIN1_LOCALE,
-	&CYRILLIC_LOCALE,
-	NULL
-};
+    &LATIN1_LOCALE,
+    &CYRILLIC_LOCALE,
+    NULL};
 
 /*
  * The locale for the game, set below explicitly or on game startup, and
@@ -235,7 +207,6 @@ static const sc_locale_t *const AVAILABLE_LOCALES[] = {
  */
 static const sc_locale_t *loc_locale = &LATIN1_LOCALE;
 static sc_bool loc_is_autodetect_enabled = TRUE;
-
 
 /*
  * loc_locate_signature_in_date()
@@ -258,7 +229,6 @@ static const sc_char *loc_locate_signature_in_date(const sc_char *date) {
 	else
 		return NULL;
 }
-
 
 /*
  * loc_compare_locale_signatures()
@@ -285,7 +255,6 @@ static sc_bool loc_compare_locale_signatures(const char *signature, const sc_loc
 	return is_matched;
 }
 
-
 /*
  * loc_find_matching_locale()
  *
@@ -295,7 +264,7 @@ static sc_bool loc_compare_locale_signatures(const char *signature, const sc_loc
  * first locale that matches, or NULL if none match.
  */
 static const sc_locale_t *loc_find_matching_locale(const sc_char *date,
-		const sc_locale_t *const *locales) {
+                                                   const sc_locale_t *const *locales) {
 	const sc_char *signature;
 	const sc_locale_t *matched = NULL;
 
@@ -316,7 +285,6 @@ static const sc_locale_t *loc_find_matching_locale(const sc_char *date,
 	/* Return the matching locale, NULL if none matched. */
 	return matched;
 }
-
 
 /*
  * loc_detect_game_locale()
@@ -346,7 +314,6 @@ void loc_detect_game_locale(sc_prop_setref_t bundle) {
 	}
 }
 
-
 /*
  * loc_ascii_tolower()
  * loc_ascii_strncasecmp()
@@ -374,7 +341,6 @@ static sc_int loc_ascii_strncasecmp(const sc_char *s1, const sc_char *s2, sc_int
 
 	return 0;
 }
-
 
 /*
  * loc_set_locale()
@@ -415,7 +381,6 @@ const sc_char *loc_get_locale(void) {
 	return loc_locale->name;
 }
 
-
 /*
  * loc_debug_dump_new_line()
  * loc_debug_dump_bool_table()
@@ -444,7 +409,7 @@ static void loc_debug_dump_char_table(const sc_char *label, sc_int count, const 
 
 	sc_trace("loc_locale_tables.%s = {\n  ", label);
 	for (index_ = 0; index_ < TABLE_SIZE; index_++) {
-		sc_trace("%02lx%s", (sc_int)(sc_byte) table[index_],
+		sc_trace("%02lx%s", (sc_int)(sc_byte)table[index_],
 		         loc_debug_dump_new_line(index_, count) ? "\n  " : " ");
 	}
 	sc_trace("\n}\n");
@@ -455,7 +420,8 @@ void loc_debug_dump(void) {
 
 	loc_check_tables_synchronized(loc_locale);
 	sc_trace("loc_locale_tables"
-	         ".locale->name = %s\n", loc_locale_tables.locale->name);
+	         ".locale->name = %s\n",
+	         loc_locale_tables.locale->name);
 
 	loc_debug_dump_bool_table("isspace", 64, loc_locale_tables.isspace);
 	loc_debug_dump_bool_table("isdigit", 64, loc_locale_tables.isdigit);
@@ -463,7 +429,6 @@ void loc_debug_dump(void) {
 	loc_debug_dump_char_table("toupper", 16, loc_locale_tables.toupper);
 	loc_debug_dump_char_table("tolower", 16, loc_locale_tables.tolower);
 }
-
 
 /*
  * loc_bool_template()
@@ -474,14 +439,13 @@ void loc_debug_dump(void) {
  */
 static sc_bool loc_bool_template(sc_char character, const sc_bool table[]) {
 	loc_check_tables_synchronized(loc_locale);
-	return table[(sc_byte) character];
+	return table[(sc_byte)character];
 }
 
 static sc_char loc_char_template(sc_char character, const sc_char table[]) {
 	loc_check_tables_synchronized(loc_locale);
-	return table[(sc_byte) character];
+	return table[(sc_byte)character];
 }
-
 
 /*
  * sc_isspace()

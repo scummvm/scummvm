@@ -22,8 +22,8 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/misc/util.h"
 
 namespace Ultima {
@@ -41,25 +41,22 @@ struct GameLangDesc {
 
 // Keep order the same as the GameType enum!
 static const GameTypeDesc gametypes[] = {
-	{ "", "" },
-	{ "ultima8", "Ultima VIII: Pagan" },
-	{ "remorse", "Crusader: No Remorse" },
-	{ "regret", "Crusader: No Regret" },
-	{ "pentmenu", "Pentagram Menu" },
-	{ 0, 0 }
-};
+    {"", ""},
+    {"ultima8", "Ultima VIII: Pagan"},
+    {"remorse", "Crusader: No Remorse"},
+    {"regret", "Crusader: No Regret"},
+    {"pentmenu", "Pentagram Menu"},
+    {0, 0}};
 
 // Keep order the same as the GameLanguage enum!
 static const GameLangDesc gamelangs[] = {
-	{ 0, 0, "unknown" },
-	{ 'e', 'e', "English" },
-	{ 'f', 'f', "French" },
-	{ 'g', 'g', "German" },
-	{ 'e', 'e', "Spanish" },
-	{ 'e', 'j', "Japanese" },
-	{ '\0', '\0', 0 }
-};
-
+    {0, 0, "unknown"},
+    {'e', 'e', "English"},
+    {'f', 'f', "French"},
+    {'g', 'g', "German"},
+    {'e', 'e', "Spanish"},
+    {'e', 'j', "Japanese"},
+    {'\0', '\0', 0}};
 
 GameInfo::GameInfo() : _type(GAME_UNKNOWN), version(0), _language(GAMELANG_UNKNOWN) {
 	for (int i = 0; i < 16; ++i)
@@ -122,12 +119,14 @@ Std::string GameInfo::getPrintDetails() const {
 	Std::string ret;
 
 	Std::string title = getGameTitle();
-	if (title == "") title = "Unknown";
+	if (title == "")
+		title = "Unknown";
 
 	ret = title + ", ";
 
 	Std::string lang = getLanguage();
-	if (lang == "") lang = "Unknown";
+	if (lang == "")
+		lang = "Unknown";
 	ret += lang;
 
 	if (_type != GAME_PENTAGRAM_MENU) {
@@ -143,7 +142,6 @@ Std::string GameInfo::getPrintDetails() const {
 	return ret;
 }
 
-
 Std::string GameInfo::getPrintableMD5() const {
 	Std::string ret;
 
@@ -158,11 +156,15 @@ Std::string GameInfo::getPrintableMD5() const {
 }
 
 bool GameInfo::match(GameInfo &other, bool ignoreMD5) const {
-	if (_type != other._type) return false;
-	if (_language != other._language) return false;
-	if (version != other.version) return false;
+	if (_type != other._type)
+		return false;
+	if (_language != other._language)
+		return false;
+	if (version != other.version)
+		return false;
 
-	if (ignoreMD5) return true;
+	if (ignoreMD5)
+		return true;
 
 	return (Std::memcmp(_md5, other._md5, 16) == 0);
 }
@@ -191,7 +193,8 @@ bool GameInfo::load(IDataSource *ids, uint32 version_) {
 
 	ids->readline(s);
 	SplitString(s, ',', parts);
-	if (parts.size() != 4) return false;
+	if (parts.size() != 4)
+		return false;
 
 	int i = 0;
 	while (gametypes[i].shortname) {
@@ -201,7 +204,8 @@ bool GameInfo::load(IDataSource *ids, uint32 version_) {
 		}
 		i++;
 	}
-	if (!gametypes[i].shortname) return false;
+	if (!gametypes[i].shortname)
+		return false;
 
 	i = 0;
 	while (gamelangs[i].name) {
@@ -211,7 +215,8 @@ bool GameInfo::load(IDataSource *ids, uint32 version_) {
 		}
 		i++;
 	}
-	if (!gamelangs[i].name) return false;
+	if (!gamelangs[i].name)
+		return false;
 
 	this->version = Std::strtol(parts[2].c_str(), 0, 0);
 

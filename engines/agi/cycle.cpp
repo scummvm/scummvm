@@ -23,14 +23,14 @@
 #include "common/config-manager.h"
 
 #include "agi/agi.h"
-#include "agi/sprite.h"
+#include "agi/appleIIgs_timedelay_overwrite.h"
 #include "agi/graphics.h"
 #include "agi/inv.h"
-#include "agi/text.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+#include "agi/sprite.h"
 #include "agi/systemui.h"
-#include "agi/appleIIgs_timedelay_overwrite.h"
+#include "agi/text.h"
 
 namespace Agi {
 

@@ -26,8 +26,8 @@
 
 #include "pink/cel_decoder.h"
 #include "pink/director.h"
-#include "pink/objects/actions/action_sound.h"
 #include "pink/objects/actions/action_cel.h"
+#include "pink/objects/actions/action_sound.h"
 #include "pink/objects/actions/action_text.h"
 #include "pink/objects/actors/actor.h"
 
@@ -89,10 +89,8 @@ static void redrawCallback(void *ref) {
 }
 
 Director::Director()
-	: _surface(640, 480), _textRendered(false) {
-	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
-		| Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts
-		| Graphics::kWMModeUnicode);
+    : _surface(640, 480), _textRendered(false) {
+	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts | Graphics::kWMModeUnicode);
 
 	_wm->setScreen(&_surface);
 	_wm->setMenuHotzone(Common::Rect(0, 0, 640, 23));
@@ -152,7 +150,7 @@ void Director::removeTextAction(ActionText *action) {
 void Director::addSprite(ActionCEL *sprite) {
 	_sprites.push_back(sprite);
 	int i;
-	for (i = _sprites.size() - 1; i > 0 ; --i) {
+	for (i = _sprites.size() - 1; i > 0; --i) {
 		if (sprite->getZ() < _sprites[i - 1]->getZ())
 			_sprites[i] = _sprites[i - 1];
 		else
@@ -185,7 +183,7 @@ void Director::clear() {
 }
 
 void Director::pause(bool pause_) {
-	for (uint i = 0; i < _sprites.size() ; ++i) {
+	for (uint i = 0; i < _sprites.size(); ++i) {
 		_sprites[i]->pause(pause_);
 	}
 }

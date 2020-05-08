@@ -20,7 +20,9 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/game/game.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "ultima/ultima4/controllers/camp_controller.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/controllers/intro_controller.h"
@@ -36,40 +38,38 @@
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/death.h"
 #include "ultima/ultima4/game/item.h"
-#include "ultima/ultima4/views/menu.h"
-#include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/game/spell.h"
-#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/game/script.h"
+#include "ultima/ultima4/game/spell.h"
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/movement.h"
 #include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/map/dungeonview.h"
+#include "ultima/ultima4/meta_engine.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
-#include "ultima/ultima4/meta_engine.h"
-#include "common/savefile.h"
-#include "common/system.h"
+#include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/views/menu.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -195,7 +195,7 @@ int gameGetPlayer(bool canBeDisabled, bool canBeActivePlayer) {
 		}
 	}
 
-	g_context->_col--;// display the selected character name, in place of the number
+	g_context->_col--; // display the selected character name, in place of the number
 	if ((player >= 0) && (player < 8)) {
 		g_screen->screenMessage("%s\n", g_ultima->_saveGame->_players[player]._name); //Write player's name after prompt
 	}
@@ -238,7 +238,6 @@ bool fireAt(const Coords &coords, bool originAvatar) {
 
 	Object *obj = nullptr;
 
-
 	MapTile tile(g_context->_location->_map->_tileSet->getByName("miss_flash")->getId());
 	GameController::flashTile(coords, tile, 1);
 
@@ -269,7 +268,8 @@ bool fireAt(const Coords &coords, bool originAvatar) {
 
 			if (g_context->_transportContext == TRANSPORT_SHIP)
 				gameDamageShip(-1, 10);
-			else gameDamageParty(10, 25); /* party gets hurt between 10-25 damage */
+			else
+				gameDamageParty(10, 25); /* party gets hurt between 10-25 damage */
 		}
 		/* inanimate objects get destroyed instantly, while creatures get a chance */
 		else if (obj->getType() == Object::UNKNOWN) {
@@ -356,11 +356,10 @@ void gameCheckHullIntegrity() {
 		killAll = true;
 	}
 
-
 	if (!g_debugger->_collisionOverride && g_context->_transportContext == TRANSPORT_FOOT &&
-	        g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITHOUT_OBJECTS)->isSailable() &&
-	        !g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_GROUND_OBJECTS)->isShip() &&
-	        !g_context->_location->_map->getValidMoves(g_context->_location->_coords, g_context->_party->getTransport())) {
+	    g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITHOUT_OBJECTS)->isSailable() &&
+	    !g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_GROUND_OBJECTS)->isShip() &&
+	    !g_context->_location->_map->getValidMoves(g_context->_location->_coords, g_context->_party->getTransport())) {
 		g_screen->screenMessage("\nTrapped at sea without thy ship, thou dost drown!\n\n");
 		killAll = true;
 	}
@@ -425,7 +424,7 @@ void gameCreatureAttack(Creature *m) {
 	if (!ground->isChest()) {
 		ground = g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITHOUT_OBJECTS);
 		if ((under = g_context->_location->_map->objectAt(g_context->_location->_coords)) &&
-		        under->getTile().getTileType()->isShip())
+		    under->getTile().getTileType()->isShip())
 			ground = under->getTile().getTileType();
 	}
 
@@ -435,12 +434,10 @@ void gameCreatureAttack(Creature *m) {
 }
 
 bool creatureRangeAttack(const Coords &coords, Creature *m) {
-//    int attackdelay = MAX_BATTLE_SPEED - settings.battleSpeed;
+	//    int attackdelay = MAX_BATTLE_SPEED - settings.battleSpeed;
 
 	// Figure out what the ranged attack should look like
-	MapTile tile(g_context->_location->_map->_tileSet->getByName((m && !m->getWorldrangedtile().empty()) ?
-	             m->getWorldrangedtile() :
-	             "hit_flash")->getId());
+	MapTile tile(g_context->_location->_map->_tileSet->getByName((m && !m->getWorldrangedtile().empty()) ? m->getWorldrangedtile() : "hit_flash")->getId());
 
 	GameController::flashTile(coords, tile, 1);
 
@@ -457,14 +454,15 @@ bool creatureRangeAttack(const Coords &coords, Creature *m) {
 		/* FIXME: check actual damage from u4dos -- values here are guessed */
 		if (g_context->_transportContext == TRANSPORT_SHIP)
 			gameDamageShip(-1, 10);
-		else gameDamageParty(10, 25);
+		else
+			gameDamageParty(10, 25);
 
 		return true;
 	}
 	// Destroy objects that were hit
 	else if (obj) {
 		if ((obj->getType() == Object::CREATURE && m->isAttackable()) ||
-		        obj->getType() == Object::UNKNOWN) {
+		    obj->getType() == Object::UNKNOWN) {
 
 			GameController::flashTile(coords, tile, 3);
 			g_context->_location->_map->removeObject(obj);
@@ -497,9 +495,9 @@ Std::vector<Coords> gameGetDirectionalActionPath(int dirmask, int validDirection
 
 	MapCoords t_c(origin);
 	if ((dirx <= 0 || DIR_IN_MASK(dirx, validDirections)) &&
-	        (diry <= 0 || DIR_IN_MASK(diry, validDirections))) {
+	    (diry <= 0 || DIR_IN_MASK(diry, validDirections))) {
 		for (int distance = 0; distance <= maxDistance;
-		        distance++, t_c.move(dirx, g_context->_location->_map), t_c.move(diry, g_context->_location->_map)) {
+		     distance++, t_c.move(dirx, g_context->_location->_map), t_c.move(diry, g_context->_location->_map)) {
 
 			if (distance >= minDistance) {
 				/* make sure our action isn't taking us off the map */
@@ -510,14 +508,14 @@ Std::vector<Coords> gameGetDirectionalActionPath(int dirmask, int validDirection
 
 				/* should we see if the action is blocked before trying it? */
 				if (!includeBlocked && blockedPredicate &&
-				        !(*(blockedPredicate))(tile))
+				    !(*(blockedPredicate))(tile))
 					break;
 
 				path.push_back(t_c);
 
 				/* see if the action was blocked only if it did not succeed */
 				if (includeBlocked && blockedPredicate &&
-				        !(*(blockedPredicate))(tile))
+				    !(*(blockedPredicate))(tile))
 					break;
 			}
 		}
@@ -533,9 +531,7 @@ void gameDamageParty(int minDamage, int maxDamage) {
 
 	for (i = 0; i < g_context->_party->size(); i++) {
 		if (xu4_random(2) == 0) {
-			damage = ((minDamage >= 0) && (minDamage < maxDamage)) ?
-			         xu4_random((maxDamage + 1) - minDamage) + minDamage :
-			         maxDamage;
+			damage = ((minDamage >= 0) && (minDamage < maxDamage)) ? xu4_random((maxDamage + 1) - minDamage) + minDamage : maxDamage;
 			g_context->_party->member(i)->applyDamage(damage);
 			g_context->_stats->highlightPlayer(i);
 			lastdmged = i;
@@ -546,16 +542,15 @@ void gameDamageParty(int minDamage, int maxDamage) {
 	g_screen->screenShake(1);
 
 	// Un-highlight the last player
-	if (lastdmged != -1) g_context->_stats->highlightPlayer(lastdmged);
+	if (lastdmged != -1)
+		g_context->_stats->highlightPlayer(lastdmged);
 }
 
 void gameDamageShip(int minDamage, int maxDamage) {
 	int damage;
 
 	if (g_context->_transportContext == TRANSPORT_SHIP) {
-		damage = ((minDamage >= 0) && (minDamage < maxDamage)) ?
-		         xu4_random((maxDamage + 1) - minDamage) + minDamage :
-		         maxDamage;
+		damage = ((minDamage >= 0) && (minDamage < maxDamage)) ? xu4_random((maxDamage + 1) - minDamage) + minDamage : maxDamage;
 
 		g_screen->screenShake(1);
 
@@ -629,12 +624,14 @@ bool gameSpawnCreature(const Creature *m) {
 
 				const Tile *tile = g_context->_location->_map->tileTypeAt(new_coords, WITHOUT_OBJECTS);
 				if ((m->sails() && tile->isSailable()) ||
-				        (m->swims() && tile->isSwimable()) ||
-				        (m->walks() && tile->isCreatureWalkable()) ||
-				        (m->flies() && tile->isFlyable()))
+				    (m->swims() && tile->isSwimable()) ||
+				    (m->walks() && tile->isCreatureWalkable()) ||
+				    (m->flies() && tile->isFlyable()))
 					ok = true;
-				else tries++;
-			} else ok = true;
+				else
+					tries++;
+			} else
+				ok = true;
 		}
 
 		if (ok)
@@ -687,8 +684,10 @@ void gameDestroyAllCreatures(void) {
 				// The skull does not destroy Lord British
 				if (m->getId() != LORDBRITISH_ID)
 					current = map->removeObject(current);
-				else current++;
-			} else current++;
+				else
+					current++;
+			} else
+				current++;
 		}
 	}
 
@@ -700,8 +699,7 @@ void gameDestroyAllCreatures(void) {
 // from the book of wisdom.  Maybe we could use BOLD to distinguish
 // the two grey and the two red reagents.
 const int colors[] = {
-	FG_YELLOW, FG_GREY, FG_BLUE, FG_WHITE, FG_RED, FG_GREY, FG_GREEN, FG_RED
-};
+    FG_YELLOW, FG_GREY, FG_BLUE, FG_WHITE, FG_RED, FG_GREY, FG_GREEN, FG_RED};
 
 void showMixturesSuper(int page = 0) {
 	g_screen->screenTextColor(FG_WHITE);
@@ -738,10 +736,10 @@ void mixReagentsSuper() {
 		int price[6];
 	};
 	ReagentShop shops[] = {
-		{ "BuccDen", {6, 7, 9, 9, 9, 1} },
-		{ "Moonglo", {2, 5, 6, 3, 6, 9} },
-		{ "Paws", {3, 4, 2, 8, 6, 7} },
-		{ "SkaraBr", {2, 4, 9, 6, 4, 8} },
+	    {"BuccDen", {6, 7, 9, 9, 9, 1}},
+	    {"Moonglo", {2, 5, 6, 3, 6, 9}},
+	    {"Paws", {3, 4, 2, 8, 6, 7}},
+	    {"SkaraBr", {2, 4, 9, 6, 4, 8}},
 	};
 	const int shopcount = sizeof(shops) / sizeof(shops[0]);
 

@@ -30,11 +30,11 @@
 #include "tinsel/handle.h"
 #include "tinsel/multiobj.h"
 #include "tinsel/object.h"
-#include "tinsel/pcode.h"		// CONTROL_STARTOFF
+#include "tinsel/pcode.h" // CONTROL_STARTOFF
 #include "tinsel/pid.h"
 #include "tinsel/sched.h"
-#include "tinsel/timers.h"		// For ONE_SECOND constant
-#include "tinsel/tinlib.h"		// For Control()
+#include "tinsel/timers.h" // For ONE_SECOND constant
+#include "tinsel/tinlib.h" // For Control()
 #include "tinsel/tinsel.h"
 
 #include "common/textconsole.h"
@@ -79,7 +79,7 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 			int i;
 			for (i = 0; i < _vm->_bg->_bgReels; i++) {
 				// Get the MULTI_INIT structure
-				pmi = (PMULTI_INIT) LockMem(FROM_32(pFilm->reels[i].mobj));
+				pmi = (PMULTI_INIT)LockMem(FROM_32(pFilm->reels[i].mobj));
 
 				// Initialize and insert the object, and initialize its script.
 				_vm->_bg->_pBG[i] = MultiInitObject(pmi);
@@ -88,7 +88,7 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 				InitStepAnimScript(&_vm->_bg->_thisAnim[i], _vm->_bg->_pBG[i], FROM_32(pFilm->reels[i].script), _vm->_bg->getBgSpeed());
 
 				if (i > 0)
-					_vm->_bg->_pBG[i-1]->pSlave = _vm->_bg->_pBG[i];
+					_vm->_bg->_pBG[i - 1]->pSlave = _vm->_bg->_pBG[i];
 			}
 		}
 
@@ -133,8 +133,8 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 void BGotherProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		OBJECT *pObj;
-		ANIM anim;
+	OBJECT *pObj;
+	ANIM anim;
 	CORO_END_CONTEXT(_ctx);
 
 	const FREEL *pReel = (const FREEL *)param;
@@ -169,7 +169,7 @@ void Background::StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 	const FILM *pfilm;
 	IMAGE *pim;
 
-	_hBackground = hFilm;		// Save handle in case of Save_Scene()
+	_hBackground = hFilm; // Save handle in case of Save_Scene()
 
 	pim = GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
 

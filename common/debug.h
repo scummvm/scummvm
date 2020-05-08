@@ -38,7 +38,6 @@ inline void debugCN(uint32 debugChannels, const char *s, ...) {}
 
 #else
 
-
 /**
  * Print a debug message to the text console (stdout).
  * Automatically appends a newline.

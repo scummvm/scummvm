@@ -23,7 +23,6 @@
 #ifndef SKY_SKY_H
 #define SKY_SKY_H
 
-
 #include "common/error.h"
 #include "common/keyboard.h"
 #include "engines/engine.h"

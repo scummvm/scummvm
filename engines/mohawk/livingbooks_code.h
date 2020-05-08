@@ -189,7 +189,7 @@ enum {
 	kTokenConstItemType = 0x3c, // ??
 	kTokenConstEventId = 0x42,
 	kTokenConstScriptOpcode = 0x43, // ??
-	kTokenConstScriptParam = 0x44, // ??
+	kTokenConstScriptParam = 0x44,  // ??
 	kTokenEval = 0x4b,
 	kTokenGeneralCommand = 0x4d,
 	kTokenItemCommand = 0x4e,

@@ -20,23 +20,22 @@
  *
  */
 
+#include "mohawk/myst_stacks/intro.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/intro.h"
 
 namespace Mohawk {
 namespace MystStacks {
 
-Intro::Intro(MohawkEngine_Myst *vm, MystStack stackId) :
-		MystScriptParser(vm, stackId),
-		_introMoviesRunning(false),
-		_introStep(0),
-		_linkBookRunning(false),
-		_linkBookMovie(nullptr) {
+Intro::Intro(MohawkEngine_Myst *vm, MystStack stackId) : MystScriptParser(vm, stackId),
+                                                         _introMoviesRunning(false),
+                                                         _introStep(0),
+                                                         _linkBookRunning(false),
+                                                         _linkBookMovie(nullptr) {
 	setupOpcodes();
 }
 
@@ -69,7 +68,7 @@ void Intro::runPersistentScripts() {
 }
 
 uint16 Intro::getVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 0:
 		if (_globals.currentAge == kSirrusEnding || _globals.currentAge == kAchenarEnding)
 			return 2;
@@ -84,7 +83,7 @@ void Intro::o_useLinkBook(uint16 var, const ArgumentsArray &args) {
 	// Hard coded SoundId valid only for Intro Stack.
 	// Other stacks use Opcode 40, which takes SoundId values as arguments.
 	const uint16 soundIdLinkSrc = 5;
-	const uint16 soundIdLinkDst[] = { 2282, 3029, 6396, 7122, 3137, 0, 9038, 5134, 0, 4739, 4741 };
+	const uint16 soundIdLinkDst[] = {2282, 3029, 6396, 7122, 3137, 0, 9038, 5134, 0, 4739, 4741};
 
 	// Change to dest stack
 	_vm->changeToStack(_stackMap[_globals.currentAge], _startCard[_globals.currentAge], soundIdLinkSrc, soundIdLinkDst[_globals.currentAge]);

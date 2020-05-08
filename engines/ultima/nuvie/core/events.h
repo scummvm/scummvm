@@ -23,12 +23,12 @@
 #ifndef NUVIE_CORE_EVENT_H
 #define NUVIE_CORE_EVENT_H
 
+#include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/keybinding/keys_enum.h"
+#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
-#include "ultima/nuvie/misc/call_back.h"
-#include "ultima/nuvie/keybinding/keys_enum.h"
-#include "ultima/nuvie/core/obj_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -53,7 +53,7 @@ class KeyBinder;
 class FpsCounter;
 class ScriptThread;
 
-#define NUVIE_INTERVAL    50
+#define NUVIE_INTERVAL 50
 #define PUSH_FROM_PLAYER false
 #define PUSH_FROM_OBJECT true
 
@@ -69,7 +69,7 @@ enum EventMode {
 	REST_MODE, /* modes before this need targets if using the command bar selected action */
 	CAST_MODE,
 	COMBAT_MODE, /* only used to cancel previous actions */
-	SPELL_MODE, //direct spell casting without spell select etc.
+	SPELL_MODE,  //direct spell casting without spell select etc.
 	EQUIP_MODE,
 	WAIT_MODE, /* waiting for something, optionally display prompt when finished */
 	INPUT_MODE,
@@ -82,9 +82,9 @@ extern uint32 nuvieGameCounter;
 
 // type of input that event may collect and send somewhere
 #define EVENTINPUT_MAPCOORD 0
-#define EVENTINPUT_KEY      1
-#define EVENTINPUT_STRING   2
-#define EVENTINPUT_OBJECT   3
+#define EVENTINPUT_KEY 1
+#define EVENTINPUT_STRING 2
+#define EVENTINPUT_OBJECT 3
 #define EVENTINPUT_MAPCOORD_DIR 4
 #define EVENTINPUT_SPELL_NUM 5
 
@@ -92,7 +92,7 @@ extern uint32 nuvieGameCounter;
  * Joystick actions mapped to dummy unused keycode values
  */
 const Common::KeyCode FIRST_JOY = (Common::KeyCode)400;
-const Common::KeyCode JOY_UP = FIRST_JOY;               // PS d-pad when analog is disabled. left stick when enabled
+const Common::KeyCode JOY_UP = FIRST_JOY; // PS d-pad when analog is disabled. left stick when enabled
 const Common::KeyCode JOY_DOWN = (Common::KeyCode)(FIRST_JOY + 1);
 const Common::KeyCode JOY_LEFT = (Common::KeyCode)(FIRST_JOY + 2);
 const Common::KeyCode JOY_RIGHT = (Common::KeyCode)(FIRST_JOY + 3);
@@ -132,16 +132,16 @@ const Common::KeyCode JOY_HAT_RIGHTUP = (Common::KeyCode)(FIRST_JOY + 36);
 const Common::KeyCode JOY_HAT_RIGHTDOWN = (Common::KeyCode)(FIRST_JOY + 37);
 const Common::KeyCode JOY_HAT_LEFTUP = (Common::KeyCode)(FIRST_JOY + 38);
 const Common::KeyCode JOY_HAT_LEFTDOWN = (Common::KeyCode)(FIRST_JOY + 39);
-const Common::KeyCode JOY0 = (Common::KeyCode)(FIRST_JOY + 40); // PS triangle
-const Common::KeyCode JOY1 = (Common::KeyCode)(FIRST_JOY + 41); // PS circle
-const Common::KeyCode JOY2 = (Common::KeyCode)(FIRST_JOY + 42); // PS x
-const Common::KeyCode JOY3 = (Common::KeyCode)(FIRST_JOY + 43); // PS square
-const Common::KeyCode JOY4 = (Common::KeyCode)(FIRST_JOY + 44); // PS L2
-const Common::KeyCode JOY5 = (Common::KeyCode)(FIRST_JOY + 45); // PS R2
-const Common::KeyCode JOY6 = (Common::KeyCode)(FIRST_JOY + 46); // PS L1
-const Common::KeyCode JOY7 = (Common::KeyCode)(FIRST_JOY + 47); // PS R1
-const Common::KeyCode JOY8 = (Common::KeyCode)(FIRST_JOY + 48); // PS select
-const Common::KeyCode JOY9 = (Common::KeyCode)(FIRST_JOY + 49); // PS start
+const Common::KeyCode JOY0 = (Common::KeyCode)(FIRST_JOY + 40);  // PS triangle
+const Common::KeyCode JOY1 = (Common::KeyCode)(FIRST_JOY + 41);  // PS circle
+const Common::KeyCode JOY2 = (Common::KeyCode)(FIRST_JOY + 42);  // PS x
+const Common::KeyCode JOY3 = (Common::KeyCode)(FIRST_JOY + 43);  // PS square
+const Common::KeyCode JOY4 = (Common::KeyCode)(FIRST_JOY + 44);  // PS L2
+const Common::KeyCode JOY5 = (Common::KeyCode)(FIRST_JOY + 45);  // PS R2
+const Common::KeyCode JOY6 = (Common::KeyCode)(FIRST_JOY + 46);  // PS L1
+const Common::KeyCode JOY7 = (Common::KeyCode)(FIRST_JOY + 47);  // PS R1
+const Common::KeyCode JOY8 = (Common::KeyCode)(FIRST_JOY + 48);  // PS select
+const Common::KeyCode JOY9 = (Common::KeyCode)(FIRST_JOY + 49);  // PS start
 const Common::KeyCode JOY10 = (Common::KeyCode)(FIRST_JOY + 50); // PS L3 (analog must be enabled)
 const Common::KeyCode JOY11 = (Common::KeyCode)(FIRST_JOY + 51); // PS R3 (analog must be enabled)
 const Common::KeyCode JOY12 = (Common::KeyCode)(FIRST_JOY + 52);
@@ -153,16 +153,15 @@ const Common::KeyCode JOY17 = (Common::KeyCode)(FIRST_JOY + 57);
 const Common::KeyCode JOY18 = (Common::KeyCode)(FIRST_JOY + 58);
 const Common::KeyCode JOY19 = (Common::KeyCode)(FIRST_JOY + 59);
 
-
 struct EventInput_s {
-	uint8 type; // 0=loc,1=key,2=str,3=obj,4=actor
-//    union
-//    {
-	Common::KeyCode key; // last key entered, if capturing input
+	uint8 type;                    // 0=loc,1=key,2=str,3=obj,4=actor
+	                               //    union
+	                               //    {
+	Common::KeyCode key;           // last key entered, if capturing input
 	ActionKeyType action_key_type; // last ActionKeyType entered if capturing input
-	MapCoord *loc; // target location, or direction if relative ???
-	Std::string *str; // ???
-//    };
+	MapCoord *loc;                 // target location, or direction if relative ???
+	Std::string *str;              // ???
+	                               //    };
 	void set_loc(MapCoord c);
 	EventInput_s() : loc(0), str(0), obj(0), actor(0), get_direction(false), get_text(false), target_init(0), select_from_inventory(false), select_range(0) {
 		spell_num = 0;
@@ -170,13 +169,13 @@ struct EventInput_s {
 	}
 	~EventInput_s();
 
-	Obj *obj; // top object at loc (or object from inventory)
-	Actor *actor; // actor at loc
-	bool get_direction; // if true, entering directions selects a target
-	bool get_text; // if true, the MsgScroll is polled for text input
-	MapCoord *target_init; // where MapWindow cursor is centered when targeting
+	Obj *obj;                   // top object at loc (or object from inventory)
+	Actor *actor;               // actor at loc
+	bool get_direction;         // if true, entering directions selects a target
+	bool get_text;              // if true, the MsgScroll is polled for text input
+	MapCoord *target_init;      // where MapWindow cursor is centered when targeting
 	bool select_from_inventory; // if true, objects from inventory will be selected (and not from the map)
-	uint8 select_range; // limits movement of MapWindow cursor from center
+	uint8 select_range;         // limits movement of MapWindow cursor from center
 	sint16 spell_num;
 };
 typedef struct EventInput_s EventInput;
@@ -201,20 +200,20 @@ private:
 
 	Common::Event event;
 	EventMode mode, last_mode;
-	EventInput input; // collected/received input (of any type)
-// Std::vector<EventMode> mode_stack; // current mode is at the end of the list
-	int ts; //timestamp for TimeLeft() method.
-	char alt_code_str[4]; // string representation of alt-code input
-	uint8 alt_code_len; // how many characters have been input for alt-code
-	uint16 active_alt_code; // alt-code that needs more input
+	EventInput input;         // collected/received input (of any type)
+	                          // Std::vector<EventMode> mode_stack; // current mode is at the end of the list
+	int ts;                   //timestamp for TimeLeft() method.
+	char alt_code_str[4];     // string representation of alt-code input
+	uint8 alt_code_len;       // how many characters have been input for alt-code
+	uint16 active_alt_code;   // alt-code that needs more input
 	uint8 alt_code_input_num; // alt-code can get multiple inputs
 
 	TimeQueue *time_queue, *game_time_queue;
 	Obj *drop_obj;
 	uint16 drop_qty;
 	sint32 drop_x, drop_y; // only to allow pre-targeting from MapWindow, feel free to ignore this
-	uint8 rest_time; // How many hours?
-	uint8 rest_guard; // Who will guard?
+	uint8 rest_time;       // How many hours?
+	uint8 rest_guard;      // Who will guard?
 	Obj *push_obj;
 	Actor *push_actor;
 
@@ -233,6 +232,7 @@ private:
 	ScriptThread *scriptThread;
 
 	static Events *g_events;
+
 protected:
 	inline uint32 TimeLeft();
 
@@ -280,28 +280,28 @@ public:
 	void request_input(CallBack *caller, void *user_data = NULL);
 	void target_spell();
 	void close_spellbook();
-// Prompt for input.
-// obsolete:
-// void useselect_mode(Obj *src, const char *prompt = NULL); // deprecated
-// void freeselect_mode(Obj *src, const char *prompt = NULL); // deprecated
+	// Prompt for input.
+	// obsolete:
+	// void useselect_mode(Obj *src, const char *prompt = NULL); // deprecated
+	// void freeselect_mode(Obj *src, const char *prompt = NULL); // deprecated
 	void get_scroll_input(const char *allowed = NULL, bool can_escape = true, bool using_target_cursor = false, bool set_numbers_only_to_true = true);
 	void get_inventory_obj(Actor *actor, bool getting_target = true);
 	void get_spell_num(Actor *caster, Obj *spell_container);
-// void get_amount();
+	// void get_amount();
 	void get_direction(const char *prompt);
 	void get_direction(const MapCoord &from, const char *prompt);
 	void get_target(const char *prompt);
 	void get_target(const MapCoord &init, const char *prompt);
-// void get_obj_from_inventory(Actor *actor, const char *prompt);
+	// void get_obj_from_inventory(Actor *actor, const char *prompt);
 	void display_portrait(Actor *actor, const char *name = NULL);
-// Start a new action, setting a new mode and prompting for input.
+	// Start a new action, setting a new mode and prompting for input.
 	bool newAction(EventMode new_mode);
-// void doAction(sint16 rel_x = 0, sint16 rel_y = 0);
-// void doAction(Obj *obj);
+	// void doAction(sint16 rel_x = 0, sint16 rel_y = 0);
+	// void doAction(Obj *obj);
 	void doAction();
 	void cancelAction();
 	void endAction(bool prompt = false);
-// Send input back to Events, performing an action for the current mode.
+	// Send input back to Events, performing an action for the current mode.
 	bool select_obj(Obj *obj, Actor *actor = NULL);
 	bool select_view_obj(Obj *obj, Actor *actor);
 	bool select_actor(Actor *actor);
@@ -309,11 +309,11 @@ public:
 	bool select_target(uint16 x, uint16 y, uint8 z = 0);
 	bool select_party_member(uint8 num);
 	bool select_spell_num(sint16 spell_num);
-// bool select_obj(Obj *obj = NULL, Actor *actor = NULL);
-// bool select_obj(sint16 rel_x, sint16 rel_y);
-// There is no "select_text", as Events polls MsgScroll for new input.
-// Similiarly, a "select_key" is unnecessary. The following method
-// starts sending all keyboard input to 'caller'. (with the CB_DATA_READY message)
+	// bool select_obj(Obj *obj = NULL, Actor *actor = NULL);
+	// bool select_obj(sint16 rel_x, sint16 rel_y);
+	// There is no "select_text", as Events polls MsgScroll for new input.
+	// Similiarly, a "select_key" is unnecessary. The following method
+	// starts sending all keyboard input to 'caller'. (with the CB_DATA_READY message)
 	void key_redirect(CallBack *caller, void *user_data);
 	void cancel_key_redirect();
 
@@ -332,7 +332,7 @@ public:
 	bool perform_get(Obj *obj, Obj *container_obj = NULL, Actor *actor = NULL);
 
 	bool look_start();
-	bool lookAtCursor(bool delayed = false, uint16 x = 0, uint16 y  = 0,  uint8 z = 0, Obj *obj = NULL, Actor *actor = NULL);
+	bool lookAtCursor(bool delayed = false, uint16 x = 0, uint16 y = 0, uint8 z = 0, Obj *obj = NULL, Actor *actor = NULL);
 	bool look(Obj *obj);
 	bool look(Actor *actor);
 	bool search(Obj *obj);
@@ -397,7 +397,7 @@ public:
 	void cast_spell_directly(uint8 spell_num);
 	bool can_target_icon(); // Target the actor or container tile in inventory and party view
 
-// these are both for mouse-using convenience
+	// these are both for mouse-using convenience
 	void walk_to_mouse_cursor(uint32 mx, uint32 my);
 	void multiuse(uint16 wx, uint16 wy);
 
@@ -419,9 +419,9 @@ public:
 	EventInput *get_input() {
 		return &input;
 	}
-// These cursor methods are use to make sure Events knows where the cursor is
-// when objects are selected with ENTER. (since MapWindow and InventoryView
-// may each independantly show/hide their own cursors)
+	// These cursor methods are use to make sure Events knows where the cursor is
+	// when objects are selected with ENTER. (since MapWindow and InventoryView
+	// may each independantly show/hide their own cursors)
 	void moveCursorToMapWindow(bool ToggleCursor = false);
 	void moveCursorToInventory();
 
@@ -437,7 +437,7 @@ public:
 	/* FIXME: Some of the above (action) functions can be removed from public, so
 	   that we don't need to check for WAIT mode in all of them. */
 
-	   /**
+	/**
 		* Gets a reference to the events manager
 		*/
 	static Events *get() { return g_events; }

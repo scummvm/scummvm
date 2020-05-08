@@ -26,8 +26,8 @@
 #define KYRA_SCRIPT_EOB_H
 
 #include "common/func.h"
-#include "common/substream.h"
 #include "common/savefile.h"
+#include "common/substream.h"
 
 namespace Kyra {
 

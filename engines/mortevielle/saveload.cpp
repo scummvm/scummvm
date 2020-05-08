@@ -25,17 +25,17 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "mortevielle/mortevielle.h"
-#include "mortevielle/dialogs.h"
-#include "mortevielle/mouse.h"
 #include "mortevielle/saveload.h"
+#include "mortevielle/dialogs.h"
+#include "mortevielle/mortevielle.h"
+#include "mortevielle/mouse.h"
 
 #include "common/file.h"
 #include "common/system.h"
 
 namespace Mortevielle {
 
-static const char SAVEGAME_ID[4] = { 'M', 'O', 'R', 'T' };
+static const char SAVEGAME_ID[4] = {'M', 'O', 'R', 'T'};
 
 SavegameManager::SavegameManager(MortevielleEngine *vm) {
 	_vm = vm;
@@ -267,8 +267,7 @@ SaveStateList SavegameManager::listSaves(const Common::String &target) {
 				}
 			} else if (file->size() == 497) {
 				// Form an appropriate savegame name
-				saveDescription = (slotNumber == 0) ? "Initial game state" :
-					Common::String::format("Savegame #%d", slotNumber);
+				saveDescription = (slotNumber == 0) ? "Initial game state" : Common::String::format("Savegame #%d", slotNumber);
 				validFlag = true;
 			}
 

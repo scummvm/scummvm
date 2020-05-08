@@ -20,31 +20,31 @@
  *
  */
 
-#include "sci/sci.h"
+#include "sci/graphics/paint16.h"
 #include "sci/engine/features.h"
-#include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/engine/workarounds.h"
+#include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
-#include "sci/graphics/ports.h"
-#include "sci/graphics/paint16.h"
-#include "sci/graphics/animate.h"
 #include "sci/graphics/font.h"
-#include "sci/graphics/picture.h"
-#include "sci/graphics/view.h"
-#include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/picture.h"
 #include "sci/graphics/portrait.h"
+#include "sci/graphics/ports.h"
+#include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
+#include "sci/graphics/view.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster16 *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
-	: _resMan(resMan), _segMan(segMan), _cache(cache), _ports(ports),
-	  _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette),
-	  _transitions(transitions), _audio(audio), _EGAdrawingVisualize(false) {
+    : _resMan(resMan), _segMan(segMan), _cache(cache), _ports(ports),
+      _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette),
+      _transitions(transitions), _audio(audio), _EGAdrawingVisualize(false) {
 
 	// _animate and _text16 will be initialized later on
 	_animate = NULL;
@@ -165,10 +165,13 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 
 		clipRectTranslated = clipRect;
 		if (!upscaledHiresHack) {
-			curPortPos.x = _ports->_curPort->left; curPortPos.y = _ports->_curPort->top;
+			curPortPos.x = _ports->_curPort->left;
+			curPortPos.y = _ports->_curPort->top;
 			view->adjustToUpscaledCoordinates(curPortPos.y, curPortPos.x);
-			clipRectTranslated.top += curPortPos.y; clipRectTranslated.bottom += curPortPos.y;
-			clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
+			clipRectTranslated.top += curPortPos.y;
+			clipRectTranslated.bottom += curPortPos.y;
+			clipRectTranslated.left += curPortPos.x;
+			clipRectTranslated.right += curPortPos.x;
 		}
 
 		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, true);
@@ -251,7 +254,7 @@ void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte color,
 
 	if (drawFlags < 2)
 		return;
-	drawFlags &= GFX_SCREEN_MASK_PRIORITY|GFX_SCREEN_MASK_CONTROL;
+	drawFlags &= GFX_SCREEN_MASK_PRIORITY | GFX_SCREEN_MASK_CONTROL;
 
 	// we need to isolate the bits, sierra sci saved priority and control inside one byte, we don't
 	priority &= 0x0f;
@@ -300,7 +303,7 @@ void GfxPaint16::bitsShow(const Common::Rect &rect) {
 	_ports->offsetRect(workerRect);
 
 	// We adjust the left/right coordinates to even coordinates
-	workerRect.left &= 0xFFFE; // round down
+	workerRect.left &= 0xFFFE;                          // round down
 	workerRect.right = (workerRect.right + 1) & 0xFFFE; // round up
 
 	_screen->copyRectToScreen(workerRect);
@@ -367,7 +370,7 @@ void GfxPaint16::bitsRestore(reg_t memoryHandle) {
 }
 
 void GfxPaint16::bitsFree(reg_t memoryHandle) {
-	if (!memoryHandle.isNull())	// happens in KQ5CD
+	if (!memoryHandle.isNull()) // happens in KQ5CD
 		_segMan->freeHunkEntry(memoryHandle);
 }
 
@@ -462,17 +465,17 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 	_ports->setPort(oldPort);
 }
 
-#define SCI_DISPLAY_MOVEPEN				100
-#define SCI_DISPLAY_SETALIGNMENT		101
-#define SCI_DISPLAY_SETPENCOLOR			102
-#define SCI_DISPLAY_SETBACKGROUNDCOLOR	103
-#define SCI_DISPLAY_SETGREYEDOUTPUT		104
-#define SCI_DISPLAY_SETFONT				105
-#define SCI_DISPLAY_WIDTH				106
-#define SCI_DISPLAY_SAVEUNDER			107
-#define SCI_DISPLAY_RESTOREUNDER		108
-#define SCI_DISPLAY_DONTSHOWBITS		121
-#define SCI_DISPLAY_SETSTROKE			122
+#define SCI_DISPLAY_MOVEPEN 100
+#define SCI_DISPLAY_SETALIGNMENT 101
+#define SCI_DISPLAY_SETPENCOLOR 102
+#define SCI_DISPLAY_SETBACKGROUNDCOLOR 103
+#define SCI_DISPLAY_SETGREYEDOUTPUT 104
+#define SCI_DISPLAY_SETFONT 105
+#define SCI_DISPLAY_WIDTH 106
+#define SCI_DISPLAY_SAVEUNDER 107
+#define SCI_DISPLAY_RESTOREUNDER 108
+#define SCI_DISPLAY_DONTSHOWBITS 121
+#define SCI_DISPLAY_SETSTROKE 122
 
 reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv) {
 	reg_t displayArg;
@@ -496,36 +499,44 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 		displayArg = argv[0];
 		if (displayArg.getSegment())
 			displayArg.setOffset(0xFFFF);
-		argc--; argv++;
+		argc--;
+		argv++;
 		switch (displayArg.getOffset()) {
 		case SCI_DISPLAY_MOVEPEN:
 			_ports->moveTo(argv[0].toUint16(), argv[1].toUint16());
-			argc -= 2; argv += 2;
+			argc -= 2;
+			argv += 2;
 			break;
 		case SCI_DISPLAY_SETALIGNMENT:
 			alignment = argv[0].toSint16();
-			argc--; argv++;
+			argc--;
+			argv++;
 			break;
 		case SCI_DISPLAY_SETPENCOLOR:
 			colorPen = argv[0].toUint16();
 			_ports->penColor(colorPen);
-			argc--; argv++;
+			argc--;
+			argv++;
 			break;
 		case SCI_DISPLAY_SETBACKGROUNDCOLOR:
 			colorBack = argv[0].toUint16();
-			argc--; argv++;
+			argc--;
+			argv++;
 			break;
 		case SCI_DISPLAY_SETGREYEDOUTPUT:
 			_ports->textGreyedOutput(!argv[0].isNull());
-			argc--; argv++;
+			argc--;
+			argv++;
 			break;
 		case SCI_DISPLAY_SETFONT:
 			_text16->SetFont(argv[0].toUint16());
-			argc--; argv++;
+			argc--;
+			argv++;
 			break;
 		case SCI_DISPLAY_WIDTH:
 			width = argv[0].toUint16();
-			argc--; argv++;
+			argc--;
+			argv++;
 			break;
 		case SCI_DISPLAY_SAVEUNDER:
 			doSaveUnder = true;
@@ -543,7 +554,8 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 			break;
 		case SCI_DISPLAY_SETSTROKE: // From Kawa's SCI11+
 			stroke = argv[0].toUint16();
-			argc--; argv++;
+			argc--;
+			argv++;
 			break;
 
 		default:
@@ -579,17 +591,33 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 		fillRect(rect, GFX_SCREEN_MASK_VISUAL, colorBack, 0, 0);
 
 	// Kawa's SCI11+
-	if (stroke)	{
+	if (stroke) {
 		_ports->penColor(0);
-		rect.translate(1, 0); if (stroke & 1) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // right
-		rect.translate(0, 1); if (stroke & 2) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom right
-		rect.translate(-1, 0); if (stroke & 4) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom
-		rect.translate(-1, 0); if (stroke & 8) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom left
-		rect.translate(0, -1); if (stroke & 16) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // left
-		rect.translate(0, -1); if (stroke & 32) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // top left
-		rect.translate(1, 0); if (stroke & 64) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // top
-		rect.translate(1, 0); if (stroke & 128) _text16->Box(text, languageSplitter, false, rect, alignment, -1); // top right
-		rect.translate(-1, 1); // and back to center
+		rect.translate(1, 0);
+		if (stroke & 1)
+			_text16->Box(text, languageSplitter, false, rect, alignment, -1); // right
+		rect.translate(0, 1);
+		if (stroke & 2)
+			_text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom right
+		rect.translate(-1, 0);
+		if (stroke & 4)
+			_text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom
+		rect.translate(-1, 0);
+		if (stroke & 8)
+			_text16->Box(text, languageSplitter, false, rect, alignment, -1); // bottom left
+		rect.translate(0, -1);
+		if (stroke & 16)
+			_text16->Box(text, languageSplitter, false, rect, alignment, -1); // left
+		rect.translate(0, -1);
+		if (stroke & 32)
+			_text16->Box(text, languageSplitter, false, rect, alignment, -1); // top left
+		rect.translate(1, 0);
+		if (stroke & 64)
+			_text16->Box(text, languageSplitter, false, rect, alignment, -1); // top
+		rect.translate(1, 0);
+		if (stroke & 128)
+			_text16->Box(text, languageSplitter, false, rect, alignment, -1); // top right
+		rect.translate(-1, 1);                                                // and back to center
 		_ports->penColor(colorPen);
 	}
 
@@ -632,7 +660,8 @@ void GfxPaint16::kernelPortraitShow(const Common::String &resourceName, Common::
 	// TODO: cache portraits
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)
-	position.x += _ports->getPort()->left; position.y += _ports->getPort()->top;
+	position.x += _ports->getPort()->left;
+	position.y += _ports->getPort()->top;
 	_screen->adjustToUpscaledCoordinates(position.y, position.x);
 	myPortrait->doit(position, resourceId, noun, verb, cond, seq);
 	delete myPortrait;

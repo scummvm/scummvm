@@ -95,6 +95,6 @@ public:
 	void setStyle(uint8 newStyle) override;
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_CURSOR_H

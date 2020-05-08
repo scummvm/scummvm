@@ -25,11 +25,11 @@
 
 #include "common/lua/lua.h"
 
-#include "ultima/shared/std/string.h"
-#include "ultima/shared/std/containers.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/usecode/usecode.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -42,20 +42,20 @@ class Actor;
 class NuvieIO;
 class SoundManager;
 
-#define NUVIE_SCRIPT_NOT_STARTED     255
-#define NUVIE_SCRIPT_ERROR             0
-#define NUVIE_SCRIPT_FINISHED          1
-#define NUVIE_SCRIPT_GET_TARGET        2
-#define NUVIE_SCRIPT_GET_DIRECTION     3
-#define NUVIE_SCRIPT_GET_INV_OBJ       4
+#define NUVIE_SCRIPT_NOT_STARTED 255
+#define NUVIE_SCRIPT_ERROR 0
+#define NUVIE_SCRIPT_FINISHED 1
+#define NUVIE_SCRIPT_GET_TARGET 2
+#define NUVIE_SCRIPT_GET_DIRECTION 3
+#define NUVIE_SCRIPT_GET_INV_OBJ 4
 #define NUVIE_SCRIPT_ADVANCE_GAME_TIME 5
 #define NUVIE_SCRIPT_ADVANCE_REAL_TIME 6
-#define NUVIE_SCRIPT_TALK_TO_ACTOR     7
-#define NUVIE_SCRIPT_GET_SPELL         8
-#define NUVIE_SCRIPT_GET_OBJ           9
-#define NUVIE_SCRIPT_GET_PLAYER_OBJ   10 //can get an object immediately surrounding the player or from their inventory.
+#define NUVIE_SCRIPT_TALK_TO_ACTOR 7
+#define NUVIE_SCRIPT_GET_SPELL 8
+#define NUVIE_SCRIPT_GET_OBJ 9
+#define NUVIE_SCRIPT_GET_PLAYER_OBJ 10 //can get an object immediately surrounding the player or from their inventory.
 
-#define NUVIE_SCRIPT_CB_ADV_GAME_TIME  1
+#define NUVIE_SCRIPT_CB_ADV_GAME_TIME 1
 
 class ScriptThread {
 	lua_State *L;
@@ -64,14 +64,13 @@ class ScriptThread {
 	uint8 state;
 
 public:
-
 	ScriptThread(lua_State *l, int nargs) {
 		L = l;
 		start_nargs = nargs;
 		data = 0;
 		state = NUVIE_SCRIPT_NOT_STARTED;
 	}
-	~ScriptThread() {  }
+	~ScriptThread() {}
 	uint32 get_data() {
 		return data;
 	}
@@ -108,14 +107,13 @@ class Script {
 	lua_State *L;
 
 public:
-
 	Script(Configuration *cfg, GUI *gui, SoundManager *sm, nuvie_game_t type);
 	~Script();
 
 	bool init();
 
 	/* Return instance of self */
-	static Script *get_script()           {
+	static Script *get_script() {
 		return (script);
 	}
 	Configuration *get_config() {

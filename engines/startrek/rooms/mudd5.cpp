@@ -62,11 +62,10 @@ void Room::mudd5Tick1() {
 
 void Room::mudd5Timer1Expired() { // Mudd enters room through hatch
 	const TextRef choices[] = {
-		TX_SPEAKER_KIRK,
-		6, true,
-		10, true,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    6, true,
+	    10, true,
+	    TX_BLANK};
 
 	showText(TX_SPEAKER_MUDD, 34, true);
 	showMultipleTexts(choices);
@@ -84,7 +83,7 @@ void Room::mudd5Timer2Expired() { // Life-support generator starts acting up
 }
 
 void Room::mudd5UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  3, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
@@ -120,13 +119,12 @@ void Room::mudd5UseStunPhaserOnHatch() {
 
 void Room::mudd5UseKillPhaserOnHatch() {
 	showText(TX_SPEAKER_BUCHERT, 39, true);
-	showText(TX_SPEAKER_SPOCK,   27, true);
+	showText(TX_SPEAKER_SPOCK, 27, true);
 }
 
 void Room::mudd5UseAnythingOnLifeSupportGenerator() {
 	showText(TX_SPEAKER_MCCOY, 14, true); // BUGFIX: speaker is McCoy, not none
 }
-
 
 void Room::mudd5UseDooverOnLifeSupportGenerator() {
 	if (_awayMission->mudd.lifeSupportMalfunctioning) {
@@ -150,7 +148,7 @@ void Room::mudd5KirkTimer4Expired() {
 }
 
 void Room::mudd5KirkRepairedLifeSupportGenerator() {
-	showText(TX_SPEAKER_KIRK,  7, true);
+	showText(TX_SPEAKER_KIRK, 7, true);
 	showText(TX_SPEAKER_SPOCK, 28, true);
 
 	_awayMission->mudd.lifeSupportMalfunctioning = false;
@@ -167,7 +165,7 @@ void Room::mudd5KirkRepairedLifeSupportGenerator() {
 
 void Room::mudd5KirkTimer3Expired() { // Mudd popped back in after repairing generator
 	showText(TX_SPEAKER_MUDD, 35, true);
-	showText(TX_SPEAKER_KIRK,  5, true);
+	showText(TX_SPEAKER_KIRK, 5, true);
 	showText(TX_SPEAKER_MUDD, 36, true);
 
 	loadActorAnim2(OBJECT_MUDD, "s4ephc");
@@ -177,7 +175,7 @@ void Room::mudd5KirkTimer3Expired() { // Mudd popped back in after repairing gen
 void Room::mudd5LookAtHatch() {
 	showDescription(11, true);
 	showText(TX_SPEAKER_SPOCK, 31, true);
-	showText(TX_SPEAKER_KIRK,   9, true);
+	showText(TX_SPEAKER_KIRK, 9, true);
 }
 
 void Room::mudd5LookAtLifeSupportGenerator() {
@@ -231,7 +229,7 @@ void Room::mudd5LookAtEngine() {
 }
 
 void Room::mudd5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,   2, true);
+	showText(TX_SPEAKER_KIRK, 2, true);
 	showText(TX_SPEAKER_SPOCK, 32, true);
 }
 
@@ -242,16 +240,16 @@ void Room::mudd5TalkToSpock() {
 
 void Room::mudd5TalkToMccoy() {
 	showText(TX_SPEAKER_MCCOY, 17, true);
-	showText(TX_SPEAKER_KIRK,   4, true);
+	showText(TX_SPEAKER_KIRK, 4, true);
 }
 
 void Room::mudd5TalkToRedshirt() {
 	showText(TX_SPEAKER_BUCHERT, 40, true);
-	showText(TX_SPEAKER_MCCOY,   18, true);
+	showText(TX_SPEAKER_MCCOY, 18, true);
 }
 
 void Room::mudd5UseMedkit() {
 	showText(TX_SPEAKER_MCCOY, 12, true);
 }
 
-}
+} // namespace StarTrek

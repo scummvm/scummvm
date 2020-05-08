@@ -24,8 +24,7 @@
 
 namespace Sludge {
 
-SludgeConsole::SludgeConsole(SludgeEngine *vm) :
-		GUI::Debugger() {
+SludgeConsole::SludgeConsole(SludgeEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 }
 

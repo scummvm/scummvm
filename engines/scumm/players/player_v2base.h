@@ -23,18 +23,17 @@
 #ifndef SCUMM_PLAYERS_PLAYER_V2BASE_H
 #define SCUMM_PLAYERS_PLAYER_V2BASE_H
 
-#include "common/scummsys.h"
-#include "common/mutex.h"
-#include "scumm/music.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/mutex.h"
+#include "common/scummsys.h"
+#include "scumm/music.h"
 
 namespace Scumm {
 
 class ScummEngine;
 
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct channel_data {
 	uint16 time_left;          // 00
@@ -61,7 +60,7 @@ struct channel_data {
 	uint16 music_script_nr;    // 48
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 /**
  * Common base class for Player_V2 and Player_V2CMS.
@@ -72,15 +71,15 @@ public:
 	~Player_V2Base() override;
 
 	// MusicEngine API
-// 	virtual void setMusicVolume(int vol);
-// 	virtual void startSound(int sound);
-// 	virtual void stopSound(int sound);
-// 	virtual void stopAllSounds();
- 	int  getMusicTimer() override;
-// 	virtual int  getSoundStatus(int sound) const;
+	// 	virtual void setMusicVolume(int vol);
+	// 	virtual void startSound(int sound);
+	// 	virtual void stopSound(int sound);
+	// 	virtual void stopAllSounds();
+	int getMusicTimer() override;
+	// 	virtual int  getSoundStatus(int sound) const;
 
 	// AudioStream API
-/*
+	/*
 	int readBuffer(int16 *buffer, const int numSamples) {
 		do_mix(buffer, numSamples / 2);
 		return numSamples;
@@ -107,9 +106,9 @@ protected:
 	uint32 _next_tick;
 	uint32 _tick_len;
 
-	int   _current_nr;
+	int _current_nr;
 	byte *_current_data;
-	int   _next_nr;
+	int _next_nr;
 	byte *_next_data;
 	byte *_retaddr;
 
@@ -117,7 +116,7 @@ protected:
 
 	union ChannelInfo {
 		channel_data d;
-		uint16 array[sizeof(channel_data)/2];
+		uint16 array[sizeof(channel_data) / 2];
 	};
 
 	ChannelInfo _channels[5];
@@ -138,7 +137,6 @@ protected:
 	void execute_cmd(ChannelInfo *channel);
 	void next_freqs(ChannelInfo *channel);
 };
-
 
 } // End of namespace Scumm
 

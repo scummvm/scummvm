@@ -63,7 +63,7 @@ void FighterPlayerSalko::handleAction(FightAction action) {
 			_opponent->handleAction(kFightAction103);
 
 			if (action == kFightAction2)
-				_countdown= 0;
+				_countdown = 0;
 
 			update();
 		} else {

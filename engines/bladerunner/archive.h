@@ -53,7 +53,7 @@ private:
 	uint32 _size;
 
 	struct ArchiveEntry {
-		int32  hash;
+		int32 hash;
 		uint32 offset;
 		uint32 length;
 	};
@@ -62,7 +62,6 @@ private:
 
 	uint32 indexForHash(int32 hash) const;
 };
-
 
 } // End of namespace BladeRunner
 

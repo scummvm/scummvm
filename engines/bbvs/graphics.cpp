@@ -56,7 +56,7 @@ void Screen::setPalette(Palette &palette) {
 }
 
 void Screen::copyToScreen() {
-	_system->copyRectToScreen((const byte*)_surface->getBasePtr(0, 0), _surface->pitch, 0, 0, 320, 240);
+	_system->copyRectToScreen((const byte *)_surface->getBasePtr(0, 0), _surface->pitch, 0, 0, 320, 240);
 	_system->updateScreen();
 }
 
@@ -110,7 +110,7 @@ void Screen::drawSprite(Sprite &sprite, int x, int y) {
 	if (sprite.type == 1) {
 		for (int yc = 0; yc < height; ++yc) {
 			byte *source = sprite.getRow(skipY + yc);
-			byte *dest = (byte*)_surface->getBasePtr(destX, destY + yc);
+			byte *dest = (byte *)_surface->getBasePtr(destX, destY + yc);
 			int currWidth = -skipX;
 			while (currWidth < width) {
 				int8 op = *source++;
@@ -130,7 +130,7 @@ void Screen::drawSprite(Sprite &sprite, int x, int y) {
 	} else {
 		for (int yc = 0; yc < height; ++yc) {
 			byte *source = sprite.getRow(skipY + yc) + skipX;
-			byte *dest = (byte*)_surface->getBasePtr(destX, destY + yc);
+			byte *dest = (byte *)_surface->getBasePtr(destX, destY + yc);
 			memcpy(dest, source, width);
 		}
 	}

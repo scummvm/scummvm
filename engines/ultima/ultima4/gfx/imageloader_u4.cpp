@@ -20,13 +20,13 @@
  *
  */
 
+#include "ultima/ultima4/gfx/imageloader_u4.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/core/lzw/u4decode.h"
+#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/filesys/rle.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
-#include "ultima/ultima4/gfx/imageloader_u4.h"
-#include "ultima/ultima4/filesys/rle.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -88,11 +88,11 @@ Image *U4RleImageLoader::load(Common::File *file, int width, int height, int bpp
 	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
 	long compressedLen = file->size();
-	byte *compressed = (byte *) malloc(compressedLen);
+	byte *compressed = (byte *)malloc(compressedLen);
 	file->read(compressed, compressedLen);
 
 	byte *raw = nullptr;
-	long rawLen = rleDecompressMemory(compressed, compressedLen, (void **) &raw);
+	long rawLen = rleDecompressMemory(compressed, compressedLen, (void **)&raw);
 	free(compressed);
 
 	if (rawLen != (width * height * bpp / 8)) {
@@ -135,11 +135,11 @@ Image *U4LzwImageLoader::load(Common::File *file, int width, int height, int bpp
 	ASSERT(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
 	long compressedLen = file->size();
-	byte *compressed = (byte *) malloc(compressedLen);
+	byte *compressed = (byte *)malloc(compressedLen);
 	file->read(compressed, compressedLen);
 
 	byte *raw = nullptr;
-	long rawLen = LZW::decompress_u4_memory(compressed, compressedLen, (void **) &raw);
+	long rawLen = LZW::decompress_u4_memory(compressed, compressedLen, (void **)&raw);
 	free(compressed);
 
 	if (rawLen != (width * height * bpp / 8)) {
@@ -184,7 +184,6 @@ RGBA *U4PaletteLoader::loadBWPalette() {
 		_bwPalette[1].r = 255;
 		_bwPalette[1].g = 255;
 		_bwPalette[1].b = 255;
-
 	}
 	return _bwPalette;
 }
@@ -232,7 +231,6 @@ RGBA *U4PaletteLoader::loadVgaPalette() {
 			_vgaPalette[i].b = u4fgetc(pal) * 255 / 63;
 		}
 		u4fclose(pal);
-
 	}
 
 	return _vgaPalette;

@@ -25,10 +25,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBelbotGetLight, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(MovieFrameMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 void CBelbotGetLight::save(SimpleFile *file, int indent) {

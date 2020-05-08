@@ -23,11 +23,10 @@
 #ifndef SHERLOCK_TATTOO_UI_H
 #define SHERLOCK_TATTOO_UI_H
 
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 #include "sherlock/saveload.h"
 #include "sherlock/screen.h"
-#include "sherlock/user_interface.h"
 #include "sherlock/tattoo/widget_credits.h"
 #include "sherlock/tattoo/widget_files.h"
 #include "sherlock/tattoo/widget_inventory.h"
@@ -36,6 +35,7 @@
 #include "sherlock/tattoo/widget_text.h"
 #include "sherlock/tattoo/widget_tooltip.h"
 #include "sherlock/tattoo/widget_verbs.h"
+#include "sherlock/user_interface.h"
 
 namespace Sherlock {
 
@@ -48,15 +48,21 @@ namespace Tattoo {
 
 class WidgetBase;
 
-enum ScrollHighlight { SH_NONE = 0, SH_SCROLL_UP = 1, SH_PAGE_UP = 2, SH_THUMBNAIL = 3, SH_PAGE_DOWN = 4, SH_SCROLL_DOWN = 5 };
+enum ScrollHighlight { SH_NONE = 0,
+	                   SH_SCROLL_UP = 1,
+	                   SH_PAGE_UP = 2,
+	                   SH_THUMBNAIL = 3,
+	                   SH_PAGE_DOWN = 4,
+	                   SH_SCROLL_DOWN = 5 };
 
-class WidgetList : public Common::List <WidgetBase *> {
+class WidgetList : public Common::List<WidgetBase *> {
 public:
 	bool contains(const WidgetBase *item) const;
 };
 
 class TattooUserInterface : public UserInterface {
 	friend class WidgetBase;
+
 private:
 	int _scriptZone;
 	int _cAnimFramePause;
@@ -67,6 +73,7 @@ private:
 	WidgetList _widgets;
 	byte _lookupTable[PALETTE_COUNT];
 	byte _lookupTable1[PALETTE_COUNT];
+
 private:
 	/**
 	 * Handle any input when we're in standard mode (with no windows open)
@@ -92,6 +99,7 @@ private:
 	 * Free any active menu
 	 */
 	void freeMenu();
+
 public:
 	Common::Point _targetScroll;
 	int _scrollSize, _scrollSpeed;
@@ -114,6 +122,7 @@ public:
 	WidgetSceneTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
 	WidgetList _postRenderWidgets;
+
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	~TattooUserInterface() override;
@@ -228,6 +237,7 @@ public:
 	 * main _widgets list
 	 */
 	void addFixedWidget(WidgetBase *widget);
+
 public:
 	/**
 	 * Resets the user interface

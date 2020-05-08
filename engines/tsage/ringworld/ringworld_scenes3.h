@@ -24,8 +24,8 @@
 #define TSAGE_RINGWORLD_SCENES3_H
 
 #include "common/scummsys.h"
-#include "tsage/core.h"
 #include "tsage/converse.h"
+#include "tsage/core.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
 
@@ -235,6 +235,7 @@ class Scene2100 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	ASound _soundHandler;
@@ -301,13 +302,22 @@ class Scene2120 : public Scene {
 		int _lineNum;
 		int _visage;
 
-		Entry() { _size = 0; _lineNum = 0; _visage = 0; }
-		Entry(int size, int lineNum, int visage) { _size = size; _lineNum = lineNum; _visage = visage; }
+		Entry() {
+			_size = 0;
+			_lineNum = 0;
+			_visage = 0;
+		}
+		Entry(int size, int lineNum, int visage) {
+			_size = size;
+			_lineNum = lineNum;
+			_visage = visage;
+		}
 	};
 
 	class Action1 : public Action {
 	private:
 		Common::Array<Entry> _entries;
+
 	public:
 		Action1();
 
@@ -363,6 +373,7 @@ class Scene2150 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	ASound _soundHandler;
 	SequenceManager _sequenceManager;
@@ -423,6 +434,7 @@ class Scene2200 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SpeakerMText _speakerMText;
@@ -556,6 +568,7 @@ class Scene2230 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	ASound _soundHandler;
 	Action1 _action1;
@@ -716,6 +729,7 @@ class Scene2300 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	ASound _soundHandler1, _soundHandler2;
 	SpeakerSL _speakerSL;
@@ -749,8 +763,11 @@ private:
 
 		void set(int pageNumber, int v1, int v2, int v3, int v4, int v5) {
 			_pageNumber = pageNumber;
-			_connectionList[0] = v1; _connectionList[1] = v2; _connectionList[2] = v3;
-			_connectionList[3] = v4; _connectionList[4] = v5;
+			_connectionList[0] = v1;
+			_connectionList[1] = v2;
+			_connectionList[2] = v3;
+			_connectionList[3] = v4;
+			_connectionList[4] = v5;
 		}
 	};
 
@@ -838,6 +855,7 @@ class Scene2320 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	ASound _soundHandler;
 	SequenceManager _sequenceManager1, _sequenceManager2;
@@ -888,6 +906,7 @@ class Scene2400 : public Scene {
 		void signal() override;
 		void dispatch() override;
 	};
+
 public:
 	Action1 _action1;
 	SceneObject _object;

@@ -126,7 +126,7 @@ void Fighter::process() {
 	}
 
 	if (_sequence->count() <= _frameIndex) {
-		switch(_action) {
+		switch (_action) {
 		default:
 			break;
 
@@ -224,7 +224,7 @@ void Fighter::handleAction(FightAction action) {
 	_action = action;
 }
 
-bool Fighter::canInteract(FightAction /*action = kFightActionNone*/ ) {
+bool Fighter::canInteract(FightAction /*action = kFightActionNone*/) {
 	return (_action == kFightAction101 && !_sequenceIndex);
 }
 

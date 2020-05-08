@@ -23,8 +23,6 @@
 #ifndef NUVIE_GUI_GUI_SCROLLER_H
 #define NUVIE_GUI_GUI_SCROLLER_H
 
-
-
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/screen/screen.h"
 

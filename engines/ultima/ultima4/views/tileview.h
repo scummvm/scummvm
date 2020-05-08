@@ -61,7 +61,7 @@ protected:
 	int _columns, _rows;
 	int _tileWidth, _tileHeight;
 	Tileset *_tileSet;
-	Image *_animated;            /**< a scratchpad image for drawing animations */
+	Image *_animated; /**< a scratchpad image for drawing animations */
 };
 
 } // End of namespace Ultima4

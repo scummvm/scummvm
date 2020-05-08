@@ -63,7 +63,6 @@ protected:
 		BOOL_MARKER,
 		BLOCK_MARKER
 	};
-
 };
 
 #define CTASSERT(ex) typedef char ctassert_type[(ex) ? 1 : -1]

@@ -32,13 +32,22 @@
 namespace Ultima {
 namespace Shared {
 
-#define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map) 
-#define DECLARE_WIDGET(NAME) virtual const char *getClassName() const override { return #NAME; }
+#define REGISTER_WIDGET(NAME) \
+	if (name == #NAME)        \
+	return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map)
+#define DECLARE_WIDGET(NAME) \
+	virtual const char *getClassName() const override { return #NAME; }
 
 enum Direction {
 	DIR_NONE = 0,
-	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4,
-	DIR_WEST = 1, DIR_EAST = 2, DIR_NORTH = 3, DIR_SOUTH = 4
+	DIR_LEFT = 1,
+	DIR_RIGHT = 2,
+	DIR_UP = 3,
+	DIR_DOWN = 4,
+	DIR_WEST = 1,
+	DIR_EAST = 2,
+	DIR_NORTH = 3,
+	DIR_SOUTH = 4
 };
 
 typedef byte MapCell;
@@ -54,22 +63,23 @@ typedef Common::SharedPtr<MapWidget> MapWidgetPtr;
  */
 class MapTile {
 public:
-	int _tileId;							// Tile Id
-	int _tileNum;							// Tile number to display. Normally equals Tile Id, but can differ in rare cases
-	int _widgetNum;							// Widget number, if any
-	MapWidget *_widget;						// Widget pointer
-	int _itemNum;							// Item number, if any
-	// Dungeon tile flags 
+	int _tileId;        // Tile Id
+	int _tileNum;       // Tile number to display. Normally equals Tile Id, but can differ in rare cases
+	int _widgetNum;     // Widget number, if any
+	MapWidget *_widget; // Widget pointer
+	int _itemNum;       // Item number, if any
+	// Dungeon tile flags
 	bool _isDoor, _isSecretDoor;
 	bool _isLadderUp, _isLadderDown;
 	bool _isWall, _isHallway, _isBeams;
+
 public:
 	/**
 	 * Constructor
 	 */
 	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(nullptr), _itemNum(-1),
-		_isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false),
-		_isHallway(false), _isBeams(false) {}
+	            _isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false),
+	            _isHallway(false), _isBeams(false) {}
 
 	/**
  	 * Destructor
@@ -111,9 +121,9 @@ class Map {
 	 * as a convenience to be alongside the current party position
 	 */
 	struct ViewportPosition {
-		Point _topLeft;					// Top, left tile position for viewport
-		Point _size;					// Size of the viewport. Just in case we ever allow it to change
-		MapId _mapId;					// Maze the viewport is for. Used to detect when the map changes
+		Point _topLeft; // Top, left tile position for viewport
+		Point _size;    // Size of the viewport. Just in case we ever allow it to change
+		MapId _mapId;   // Maze the viewport is for. Used to detect when the map changes
 
 		/**
 		 * Constructor
@@ -145,40 +155,43 @@ class Map {
 	struct MapCellsRow {
 	public:
 		Common::Array<MapCell> _data;
+
 	public:
 		byte &operator[](int idx) { return _data[idx]; }
 		byte operator[](int idx) const { return _data[idx]; }
 	};
+
 public:
 	/**
 	 * Base class for specific map types
 	 */
 	class MapBase {
 	private:
-		Map *_map;							// Map manager reference
+		Map *_map; // Map manager reference
 	protected:
-		MapId _mapId;						// The map Id
-		uint _mapIndex;						// Index of map within the group of same maps
-		uint _mapStyle;						// Map style category for towns & castles
-		ViewportPosition _viewportPos;		// Viewport position
+		MapId _mapId;                  // The map Id
+		uint _mapIndex;                // Index of map within the group of same maps
+		uint _mapStyle;                // Map style category for towns & castles
+		ViewportPosition _viewportPos; // Viewport position
 	protected:
 		/**
 		 * Set the size of the map
 		 */
 		void setDimensions(const Point &size);
+
 	public:
-		Point _size;						// X, Y size of the map
-		Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
-		Common::String _name;				// Name of map, if applicable
-		MapWidget *_playerWidget;		// Current means of transport, even if on foot
-		Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
-		Common::Array<MapCellsRow> _data;	// Data for the map
+		Point _size;                          // X, Y size of the map
+		Point _tilesPerOrigTile;              // For enhanced modes, number of tiles per original game tile
+		Common::String _name;                 // Name of map, if applicable
+		MapWidget *_playerWidget;             // Current means of transport, even if on foot
+		Common::Array<MapWidgetPtr> _widgets; // Party, monsteres, transports, etc.
+		Common::Array<MapCellsRow> _data;     // Data for the map
 	public:
 		/**
 		 * Constructor
 		 */
 		MapBase(Game *game, Map *map) : _map(map), _playerWidget(nullptr), _mapId(0), _mapIndex(0),
-			_mapStyle(0) {}
+		                                _mapStyle(0) {}
 
 		/**
 		 * Destructor
@@ -302,8 +315,10 @@ public:
 		 */
 		virtual void update();
 	};
+
 protected:
 	MapBase *_mapArea;
+
 public:
 	/**
 	 * Constructor
@@ -487,20 +502,19 @@ public:
  */
 class MapWidget {
 protected:
-	Game *_game;						// Game reference
-	Map::MapBase *_map;					// Map reference
+	Game *_game;        // Game reference
+	Map::MapBase *_map; // Map reference
 public:
-	Point _position;					// Position within the map
-	Direction _direction;				// Direction
-	Common::String _name;				// Name of widget
+	Point _position;      // Position within the map
+	Direction _direction; // Direction
+	Common::String _name; // Name of widget
 public:
 	/**
 	 * Constructor
 	 */
 	MapWidget(Game *game, Map::MapBase *map) : _game(game), _map(map) {}
 	MapWidget(Game *game, Map::MapBase *map, const Point &pt, Direction dir = DIR_NONE) : _game(game), _map(map), _position(pt), _direction(dir) {}
-	MapWidget(Game *game, Map::MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) :
-		_game(game), _map(map), _name(name), _position(pt), _direction(dir) {}
+	MapWidget(Game *game, Map::MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) : _game(game), _map(map), _name(name), _position(pt), _direction(dir) {}
 
 	/**
 	 * Destructor
@@ -541,7 +555,9 @@ public:
 	 */
 	virtual void update(bool isPreUpdate) {}
 
-	enum CanMove { UNSET = 0, YES = 1, NO = 2 };
+	enum CanMove { UNSET = 0,
+		           YES = 1,
+		           NO = 2 };
 
 	/**
 	 * Returns true if the given widget can move to a given position on the map

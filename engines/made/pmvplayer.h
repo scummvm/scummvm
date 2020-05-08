@@ -47,6 +47,7 @@ public:
 	~PmvPlayer();
 	// Returns true if the movie was played till the end
 	bool play(const char *filename);
+
 protected:
 	MadeEngine *_vm;
 	Audio::Mixer *_mixer;
@@ -62,6 +63,6 @@ protected:
 	void decompressPalette(byte *palData, byte *outPal, uint32 palDataSize);
 };
 
-}
+} // namespace Made
 
 #endif

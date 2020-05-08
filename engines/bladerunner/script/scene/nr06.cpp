@@ -27,34 +27,34 @@ namespace BladeRunner {
 void SceneScriptNR06::InitializeScene() {
 	playNextMusic();
 	if (Game_Flag_Query(kFlagNR07toNR06)) {
-		Setup_Scene_Information( 48.0f, -71.88f,  -26.0f, 782);
+		Setup_Scene_Information(48.0f, -71.88f, -26.0f, 782);
 	} else {
-		Setup_Scene_Information(-36.0f,   0.37f, -373.0f, 592);
+		Setup_Scene_Information(-36.0f, 0.37f, -373.0f, 592);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 533, 234, 592, 414, 1);
 	Scene_Exit_Add_2D_Exit(1, 238, 137, 337, 322, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxDRAMB5, 25, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX1,  3, 60, 8, 12,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX3,  3, 60, 8,  8,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX4,  3, 60, 8,  8,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX5,  3, 60, 8,  8,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX6,  3, 60, 8,  8,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxBARSFX7,  3, 60, 8,  8,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK1,   3, 60, 8,  8,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK2,   3, 60, 8,  8,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK3,   3, 60, 8,  8,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxCLINK4,   3, 60, 8,  8,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5, 70, 8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5, 70, 8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5, 70, 8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 8,  8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX1, 3, 60, 8, 12, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX3, 3, 60, 8, 8, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX4, 3, 60, 8, 8, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX5, 3, 60, 8, 8, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX6, 3, 60, 8, 8, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBARSFX7, 3, 60, 8, 8, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK1, 3, 60, 8, 8, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK2, 3, 60, 8, 8, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK3, 3, 60, 8, 8, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCLINK4, 3, 60, 8, 8, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptNR06::SceneLoaded() {

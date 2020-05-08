@@ -133,8 +133,7 @@ void DreamWebSound::playSound(uint8 channel, uint8 id, uint8 loops) {
 
 	int bank = 0;
 	bool speech = false;
-	Audio::Mixer::SoundType type = channel == 0?
-		Audio::Mixer::kMusicSoundType: Audio::Mixer::kSFXSoundType;
+	Audio::Mixer::SoundType type = channel == 0 ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (id >= 12) {
 		id -= 12;

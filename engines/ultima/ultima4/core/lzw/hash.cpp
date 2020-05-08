@@ -57,12 +57,12 @@ int probe2(byte root, int codeword) {
 	}
 
 	/* the rcl part */
-	for (i = 0; i < 2; i++) { /* 2 rcl's */
+	for (i = 0; i < 2; i++) {     /* 2 rcl's */
 		for (j = 0; j < 2; j++) { /* rotate through 2 registers */
 			oldCarry = carry;
 			carry = (registers[j] >> 15) & 1;
 			registers[j] = (registers[j] << 1) | oldCarry;
-			registers[j] = registers[j] & 0xffff;   /* make sure register stays 16 bit */
+			registers[j] = registers[j] & 0xffff; /* make sure register stays 16 bit */
 		}
 	}
 
@@ -73,7 +73,7 @@ int probe2(byte root, int codeword) {
 }
 
 int probe3(int hashCode) {
-	const long probeOffset = 0x1fd;   /* I think 0x1fd is prime */
+	const long probeOffset = 0x1fd; /* I think 0x1fd is prime */
 
 	long newHashCode = (hashCode + probeOffset) & 0xfff;
 	return ((int)newHashCode);

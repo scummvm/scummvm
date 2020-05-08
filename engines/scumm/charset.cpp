@@ -20,13 +20,12 @@
  *
  */
 
-
 #include "scumm/charset.h"
-#include "scumm/scumm.h"
-#include "scumm/nut_renderer.h"
-#include "scumm/util.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/wiz_he.h"
+#include "scumm/nut_renderer.h"
+#include "scumm/scumm.h"
+#include "scumm/util.h"
 
 namespace Scumm {
 
@@ -41,7 +40,6 @@ be taken into account for that.
 The advantage will be cleaner coder (easier to debug, in particular), and a
 better separation of the various modules.
 */
-
 
 void ScummEngine::loadCJKFont() {
 	Common::File fp;
@@ -83,7 +81,7 @@ void ScummEngine::loadCJKFont() {
 		// set byte 0 to 0xFF (0x00 when loaded) to indicate that the font was not loaded
 		_2byteFontPtr[0] = 0xFF;
 	} else if ((_game.version >= 7 && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) ||
-			   (_game.version >= 3 && _language == Common::ZH_CNA)) {
+	           (_game.version >= 3 && _language == Common::ZH_CNA)) {
 		int numChar = 0;
 		const char *fontFile = NULL;
 
@@ -103,8 +101,8 @@ void ScummEngine::loadCJKFont() {
 			break;
 		case Common::ZH_CNA:
 			if (_game.id == GID_FT || _game.id == GID_LOOM || _game.id == GID_INDY3 ||
-				_game.id == GID_INDY4 || _game.id == GID_MONKEY || _game.id == GID_MONKEY2 ||
-				_game.id == GID_TENTACLE) {
+			    _game.id == GID_INDY4 || _game.id == GID_MONKEY || _game.id == GID_MONKEY2 ||
+			    _game.id == GID_TENTACLE) {
 				fontFile = "chinese_gb16x12.fnt";
 				numChar = 8178;
 			}
@@ -148,7 +146,7 @@ void ScummEngine::loadCJKFont() {
 			fp.close();
 		} else {
 			if (fontFile)
-				error("SCUMM::Font: Could not open %s",fontFile);
+				error("SCUMM::Font: Could not open %s", fontFile);
 			else
 				error("SCUMM::Font: Could not load any font");
 		}
@@ -179,55 +177,52 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 		}
 
 		break;
-	case Common::ZH_TWN:
-		{
-			int base = 0;
-			byte low = idx % 256;
-			int high = 0;
+	case Common::ZH_TWN: {
+		int base = 0;
+		byte low = idx % 256;
+		int high = 0;
 
-			if (low >= 0x20 && low <= 0x7e) {
-				base = (3 * low + 81012) * 5;
+		if (low >= 0x20 && low <= 0x7e) {
+			base = (3 * low + 81012) * 5;
+		} else {
+			if (low >= 0xa1 && low <= 0xa3) {
+				base = 392820;
+				low += 0x5f;
+			} else if (low >= 0xa4 && low <= 0xc6) {
+				base = 0;
+				low += 0x5c;
+			} else if (low >= 0xc9 && low <= 0xf9) {
+				base = 162030;
+				low += 0x37;
 			} else {
-				if (low >= 0xa1 && low <= 0xa3) {
-					base = 392820;
-					low += 0x5f;
-				} else if (low >= 0xa4 && low <= 0xc6) {
-					base = 0;
-					low += 0x5c;
-				} else if (low >= 0xc9 && low <= 0xf9) {
-					base = 162030;
-					low += 0x37;
-				} else {
-					base = 392820;
-					low = 0xff;
-				}
-
-				if (low != 0xff) {
-					high = idx / 256;
-					if (high >= 0x40 && high <= 0x7e) {
-						high -= 0x40;
-					} else {
-						high -= 0x62;
-					}
-
-					base += (low * 0x9d + high) * 30;
-				}
+				base = 392820;
+				low = 0xff;
 			}
 
-			return _2byteFontPtr + base;
+			if (low != 0xff) {
+				high = idx / 256;
+				if (high >= 0x40 && high <= 0x7e) {
+					high -= 0x40;
+				} else {
+					high -= 0x62;
+				}
+
+				base += (low * 0x9d + high) * 30;
+			}
 		}
+
+		return _2byteFontPtr + base;
+	}
 	case Common::ZH_CNA:
-		idx = ((idx % 256) - 0xa1)* 94  + ((idx / 256) - 0xa1);
+		idx = ((idx % 256) - 0xa1) * 94 + ((idx / 256) - 0xa1);
 		break;
 	default:
 		idx = 0;
 	}
-	return	_2byteFontPtr + ((_2byteWidth + 7) / 8) * _2byteHeight * idx;
+	return _2byteFontPtr + ((_2byteWidth + 7) / 8) * _2byteHeight * idx;
 }
 
-
 #pragma mark -
-
 
 CharsetRenderer::CharsetRenderer(ScummEngine *vm) {
 	_top = 0;
@@ -252,7 +247,7 @@ CharsetRenderer::~CharsetRenderer() {
 }
 
 CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
-	: CharsetRenderer(vm), _bytesPerPixel(0), _fontHeight(0), _numChars(0) {
+    : CharsetRenderer(vm), _bytesPerPixel(0), _fontHeight(0), _numChars(0) {
 	_enableShadow = false;
 	_shadowColor = 0;
 }
@@ -311,7 +306,7 @@ int CharsetRendererCommon::getFontHeight() {
 int CharsetRendererClassic::getCharWidth(uint16 chr) {
 	int spacing = 0;
 
- 	if (_vm->_useCJKMode && chr >= 0x80)
+	if (_vm->_useCJKMode && chr >= 0x80)
 		return _vm->_2byteWidth / 2;
 
 	int offs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
@@ -334,14 +329,14 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 		if (_vm->_game.heversion >= 72) {
 			if (chr == code) {
 				chr = text[pos++];
-				if (chr == 84 || chr == 116) {  // Strings of speech offset/size
+				if (chr == 84 || chr == 116) { // Strings of speech offset/size
 					while (chr != code)
 						chr = text[pos++];
 					continue;
 				}
 				if (chr == 119) // 'Wait'
 					break;
-				if (chr == 104|| chr == 110) // 'Newline'
+				if (chr == 104 || chr == 110) // 'Newline'
 					break;
 			}
 		} else {
@@ -349,13 +344,13 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 				continue;
 			if (chr == 255 || (_vm->_game.version <= 6 && chr == 254)) {
 				chr = text[pos++];
-				if (chr == 3)	// 'WAIT'
+				if (chr == 3) // 'WAIT'
 					break;
 				if (chr == 8) { // 'Verb on next line'
 					if (arg == 1)
 						break;
 					while (text[pos++] == ' ')
-					;
+						;
 					continue;
 				}
 				if (chr == 10 || chr == 21 || chr == 12 || chr == 13) {
@@ -418,7 +413,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		if (_vm->_game.heversion >= 72) {
 			if (chr == code) {
 				chr = str[pos++];
-				if (chr == 84 || chr == 116) {  // Strings of speech offset/size
+				if (chr == 84 || chr == 116) { // Strings of speech offset/size
 					while (chr != code)
 						chr = str[pos++];
 					continue;
@@ -658,9 +653,9 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 
 	if ((ignoreCharsetMask || !vs->hasTwoBuffers)
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		&& (_vm->_game.platform != Common::kPlatformFMTowns)
+	    && (_vm->_game.platform != Common::kPlatformFMTowns)
 #endif
-		)
+	)
 		drawBits1(*vs, _left + vs->xstart, drawTop, charPtr, drawTop, origWidth, origHeight);
 	else
 		drawBits1(_vm->_textSurface, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, charPtr, drawTop, origWidth, origHeight);
@@ -696,14 +691,14 @@ void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 void CharsetRenderer::translateColor() {
 	// Based on disassembly
 	if (_vm->_renderMode == Common::kRenderCGA) {
-		static const byte CGAtextColorMap[16] = {0,  3, 3, 3, 5, 5, 5,  15,
-										   15, 3, 3, 3, 5, 5, 15, 15};
+		static const byte CGAtextColorMap[16] = {0, 3, 3, 3, 5, 5, 5, 15,
+		                                         15, 3, 3, 3, 5, 5, 15, 15};
 		_color = CGAtextColorMap[_color & 0x0f];
 	}
 
 	if (_vm->_renderMode == Common::kRenderHercA || _vm->_renderMode == Common::kRenderHercG) {
-		static const byte HercTextColorMap[16] = {0, 15,  2, 15, 15,  5, 15,  15,
-										   8, 15, 15, 15, 15, 15, 15, 15};
+		static const byte HercTextColorMap[16] = {0, 15, 2, 15, 15, 5, 15, 15,
+		                                          8, 15, 15, 15, 15, 15, 15, 15};
 		_color = HercTextColorMap[_color & 0x0f];
 	}
 }
@@ -940,7 +935,7 @@ bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 
 	_offsY = (signed char)_charPtr[3];
 
-	_charPtr += 4;	// Skip over char header
+	_charPtr += 4; // Skip over char header
 	return true;
 }
 
@@ -1205,7 +1200,7 @@ void CharsetRendererPCE::setDrawCharIntern(uint16 chr) {
 
 #ifdef ENABLE_SCUMM_7_8
 CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
-	 : CharsetRenderer(vm) {
+    : CharsetRenderer(vm) {
 	_current = 0;
 
 	for (int i = 0; i < 5; i++) {
@@ -1403,7 +1398,7 @@ CharsetRendererTownsClassic::CharsetRendererTownsClassic(ScummEngine *vm) : Char
 int CharsetRendererTownsClassic::getCharWidth(uint16 chr) {
 	int spacing = 0;
 
- 	if (_vm->_useCJKMode) {
+	if (_vm->_useCJKMode) {
 		if ((chr & 0xff00) == 0xfd00) {
 			chr &= 0xff;
 		} else if (chr >= 256) {
@@ -1433,14 +1428,14 @@ int CharsetRendererTownsClassic::getCharWidth(uint16 chr) {
 }
 
 int CharsetRendererTownsClassic::getFontHeight() {
-	static const uint8 sjisFontHeightM1[] = { 0, 8, 9, 8, 9, 8, 9, 0, 0, 0 };
-	static const uint8 sjisFontHeightM2[] = { 0, 8, 9, 9, 9, 8, 9, 9, 9, 8 };
-	static const uint8 sjisFontHeightI4[] = { 0, 8, 9, 9, 9, 8, 8, 8, 8, 8 };
+	static const uint8 sjisFontHeightM1[] = {0, 8, 9, 8, 9, 8, 9, 0, 0, 0};
+	static const uint8 sjisFontHeightM2[] = {0, 8, 9, 9, 9, 8, 9, 9, 9, 8};
+	static const uint8 sjisFontHeightI4[] = {0, 8, 9, 9, 9, 8, 8, 8, 8, 8};
 	const uint8 *htbl = (_vm->_game.id == GID_MONKEY) ? sjisFontHeightM1 : ((_vm->_game.id == GID_INDY4) ? sjisFontHeightI4 : sjisFontHeightM2);
 	return _vm->_useCJKMode ? htbl[_curId] : _fontHeight;
 }
 
-void CharsetRendererTownsClassic::drawBitsN(const Graphics::Surface&, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) {
+void CharsetRendererTownsClassic::drawBitsN(const Graphics::Surface &, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) {
 	if (_sjisCurChar) {
 		assert(_vm->_cjkFont);
 		_vm->_cjkFont->drawChar(_vm->_textSurface, _sjisCurChar, _left * _vm->_textSurfaceMultiplier, (_top - _vm->_screenTop) * _vm->_textSurfaceMultiplier, _vm->_townsCharsetColorMap[1], _shadowColor);
@@ -1546,9 +1541,9 @@ void CharsetRendererTownsClassic::setupShadowMode() {
 	assert(_vm->_cjkFont);
 
 	if (((_vm->_game.id == GID_MONKEY) && (_curId == 2 || _curId == 4 || _curId == 6)) ||
-		((_vm->_game.id == GID_MONKEY2) && (_curId != 1 && _curId != 5 && _curId != 9)) ||
-		((_vm->_game.id == GID_INDY4) && (_curId == 2 || _curId == 3 || _curId == 4))) {
-			_vm->_cjkFont->setDrawingMode(Graphics::FontSJIS::kOutlineMode);
+	    ((_vm->_game.id == GID_MONKEY2) && (_curId != 1 && _curId != 5 && _curId != 9)) ||
+	    ((_vm->_game.id == GID_INDY4) && (_curId == 2 || _curId == 3 || _curId == 4))) {
+		_vm->_cjkFont->setDrawingMode(Graphics::FontSJIS::kOutlineMode);
 	} else {
 		_vm->_cjkFont->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
 	}
@@ -1599,7 +1594,7 @@ void CharsetRendererNES::drawBits1(Graphics::Surface &dest, int x, int y, const 
 		byte c1 = src[i + 8];
 		for (int j = 0; j < 8; j++)
 			dst[j] = _vm->_NESPalette[0][((c0 >> (7 - j)) & 1) | (((c1 >> (7 - j)) & 1) << 1) |
-			(_color ? 12 : 8)];
+			                             (_color ? 12 : 8)];
 		dst += dest.pitch;
 	}
 }

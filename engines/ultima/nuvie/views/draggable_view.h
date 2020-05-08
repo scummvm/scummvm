@@ -23,8 +23,8 @@
 #ifndef NUVIE_VIEWS_INVENTORY_FONT_H
 #define NUVIE_VIEWS_INVENTORY_FONT_H
 
-#include "ultima/nuvie/views/view.h"
 #include "graphics/managed_surface.h"
+#include "ultima/nuvie/views/view.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -32,7 +32,7 @@ namespace Nuvie {
 class Configuration;
 class GUI_Button;
 
-class DraggableView: public View {
+class DraggableView : public View {
 protected:
 	Graphics::ManagedSurface *bg_image;
 	uint32 bg_color_key;

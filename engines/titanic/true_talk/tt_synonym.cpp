@@ -33,8 +33,7 @@ TTsynonym::TTsynonym(const TTsynonym *src) : TTstringNode() {
 	_file = src->_file;
 }
 
-TTsynonym::TTsynonym(int mode, const char *str, FileHandle file) :
-		TTstringNode() {
+TTsynonym::TTsynonym(int mode, const char *str, FileHandle file) : TTstringNode() {
 	_string = str;
 	initialize(mode);
 	_file = file;

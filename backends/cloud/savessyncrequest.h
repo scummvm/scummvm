@@ -23,15 +23,15 @@
 #ifndef BACKENDS_CLOUD_SAVESSYNCREQUEST_H
 #define BACKENDS_CLOUD_SAVESSYNCREQUEST_H
 
-#include "backends/networking/curl/request.h"
 #include "backends/cloud/storage.h"
-#include "common/hashmap.h"
+#include "backends/networking/curl/request.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "gui/object.h"
 
 namespace Cloud {
 
-class SavesSyncRequest: public Networking::Request, public GUI::CommandSender {
+class SavesSyncRequest : public Networking::Request, public GUI::CommandSender {
 	Storage *_storage;
 	Storage::BoolCallback _boolCallback;
 	Common::HashMap<Common::String, uint32> _localFilesTimestamps;

@@ -29,6 +29,7 @@ class TTnode {
 public:
 	TTnode *_priorP;
 	TTnode *_nextP;
+
 public:
 	TTnode();
 	virtual ~TTnode();

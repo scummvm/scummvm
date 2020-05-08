@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/memstream.h"
 #include "dragons/dragonimg.h"
+#include "common/memstream.h"
 #include "dragons/bigfile.h"
 
 namespace Dragons {
@@ -34,7 +34,6 @@ DragonImg::DragonImg(BigfileArchive *bigfileArchive) {
 
 	_imgData = bigfileArchive->load("dragon.img", fileSize);
 	Common::SeekableReadStream *imgReadStream = new Common::MemoryReadStream(_imgData, fileSize, DisposeAfterUse::NO);
-
 
 	_imgObjects = new Img[_count];
 

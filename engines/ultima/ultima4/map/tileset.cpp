@@ -22,8 +22,8 @@
 
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/map/tilemap.h"
 
@@ -124,7 +124,8 @@ void TileSets::unloadAllImages() {
 Tileset *TileSets::get(const Common::String &name) {
 	if (find(name) != end())
 		return (*this)[name];
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 Tile *TileSets::findTileByName(const Common::String &name) {
@@ -149,7 +150,6 @@ Tile *TileSets::findTileById(TileId id) {
 	return nullptr;
 }
 
-
 /*-------------------------------------------------------------------*/
 
 bool TileRule::initFromConf(const ConfigElement &conf) {
@@ -159,33 +159,31 @@ bool TileRule::initFromConf(const ConfigElement &conf) {
 		const char *name;
 		uint mask;
 	} booleanAttributes[] = {
-		{ "dispel", MASK_DISPEL },
-		{ "talkover", MASK_TALKOVER },
-		{ "door", MASK_DOOR },
-		{ "lockeddoor", MASK_LOCKEDDOOR },
-		{ "chest", MASK_CHEST },
-		{ "ship", MASK_SHIP },
-		{ "horse", MASK_HORSE },
-		{ "balloon", MASK_BALLOON },
-		{ "canattackover", MASK_ATTACKOVER },
-		{ "canlandballoon", MASK_CANLANDBALLOON },
-		{ "replacement", MASK_REPLACEMENT },
-		{ "foreground", MASK_FOREGROUND },
-		{ "onWaterOnlyReplacement", MASK_WATER_REPLACEMENT},
-		{ "livingthing", MASK_LIVING_THING }
-	};
+	    {"dispel", MASK_DISPEL},
+	    {"talkover", MASK_TALKOVER},
+	    {"door", MASK_DOOR},
+	    {"lockeddoor", MASK_LOCKEDDOOR},
+	    {"chest", MASK_CHEST},
+	    {"ship", MASK_SHIP},
+	    {"horse", MASK_HORSE},
+	    {"balloon", MASK_BALLOON},
+	    {"canattackover", MASK_ATTACKOVER},
+	    {"canlandballoon", MASK_CANLANDBALLOON},
+	    {"replacement", MASK_REPLACEMENT},
+	    {"foreground", MASK_FOREGROUND},
+	    {"onWaterOnlyReplacement", MASK_WATER_REPLACEMENT},
+	    {"livingthing", MASK_LIVING_THING}};
 
 	static const struct {
 		const char *_name;
 		uint _mask;
 	} movementBooleanAttr[] = {
-		{ "swimable", MASK_SWIMABLE },
-		{ "sailable", MASK_SAILABLE },
-		{ "unflyable", MASK_UNFLYABLE },
-		{ "creatureunwalkable", MASK_CREATURE_UNWALKABLE }
-	};
-	static const char *speedEnumStrings[] = { "fast", "slow", "vslow", "vvslow", nullptr };
-	static const char *effectsEnumStrings[] = { "none", "fire", "sleep", "poison", "poisonField", "electricity", "lava", nullptr };
+	    {"swimable", MASK_SWIMABLE},
+	    {"sailable", MASK_SAILABLE},
+	    {"unflyable", MASK_UNFLYABLE},
+	    {"creatureunwalkable", MASK_CREATURE_UNWALKABLE}};
+	static const char *speedEnumStrings[] = {"fast", "slow", "vslow", "vvslow", nullptr};
+	static const char *effectsEnumStrings[] = {"none", "fire", "sleep", "poison", "poisonField", "electricity", "lava", nullptr};
 
 	_mask = 0;
 	_movementMask = 0;
@@ -249,7 +247,8 @@ void Tileset::load(const ConfigElement &tilesetConf) {
 		_imageName = tilesetConf.getString("imageName");
 	if (tilesetConf.exists("extends"))
 		_extends = g_tileSets->get(tilesetConf.getString("extends"));
-	else _extends = nullptr;
+	else
+		_extends = nullptr;
 
 	int index = 0;
 	Std::vector<ConfigElement> children = tilesetConf.getChildren();
@@ -303,13 +302,15 @@ Tile *Tileset::getByName(const Common::String &name) {
 		return _nameMap[name];
 	else if (_extends)
 		return _extends->getByName(name);
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 Common::String Tileset::getImageName() const {
 	if (_imageName.empty() && _extends)
 		return _extends->getImageName();
-	else return _imageName;
+	else
+		return _imageName;
 }
 
 uint Tileset::numTiles() const {

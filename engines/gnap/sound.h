@@ -23,10 +23,10 @@
 #ifndef GNAP_SOUND_H
 #define GNAP_SOUND_H
 
-#include "gnap/gnap.h"
-#include "gnap/resource.h"
 #include "audio/mixer.h"
 #include "common/array.h"
+#include "gnap/gnap.h"
+#include "gnap/resource.h"
 
 namespace Gnap {
 
@@ -45,6 +45,7 @@ public:
 	bool isSoundPlaying(int resourceId);
 	void stopAll();
 	void update();
+
 protected:
 	GnapEngine *_vm;
 	Common::Array<SoundItem> _items;

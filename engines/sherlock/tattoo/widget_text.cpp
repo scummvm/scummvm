@@ -21,10 +21,10 @@
  */
 
 #include "sherlock/tattoo/widget_text.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -46,8 +46,7 @@ void WidgetText::load(const Common::String &str, int speaker) {
 		splitLines(str, lines, width - _surface.widestChar() * 2, 100);
 		height = (screen.fontHeight() + 1) * lines.size() + 9;
 
-		if ((width - _surface.widestChar() * 2 > height * 3 / 2) || (width - _surface.widestChar() * 2
-				> SHERLOCK_SCREEN_WIDTH * 3 / 4))
+		if ((width - _surface.widestChar() * 2 > height * 3 / 2) || (width - _surface.widestChar() * 2 > SHERLOCK_SCREEN_WIDTH * 3 / 4))
 			break;
 
 		width += (width / 4);
@@ -89,12 +88,10 @@ void WidgetText::centerWindowOnSpeaker(int speaker) {
 		int scaleVal = scene.getScaleVal(people[HOLMES]._position);
 		if (scaleVal == SCALE_THRESHOLD) {
 			pt.x += people[HOLMES].frameWidth() / 2;
-			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES].frameHeight()
-				- _bounds.height() - _surface.fontHeight();
+			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES].frameHeight() - _bounds.height() - _surface.fontHeight();
 		} else {
 			pt.x += people[HOLMES]._imageFrame->sDrawXSize(scaleVal) / 2;
-			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES]._imageFrame->sDrawYSize(scaleVal)
-				- _bounds.height() - _surface.fontHeight();
+			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES]._imageFrame->sDrawYSize(scaleVal) - _bounds.height() - _surface.fontHeight();
 		}
 	} else {
 		pt.y = -1;
@@ -114,13 +111,10 @@ void WidgetText::centerWindowOnSpeaker(int speaker) {
 					int scaleVal = scene.getScaleVal(people[idx]._position);
 					if (scaleVal == SCALE_THRESHOLD) {
 						pt.x += people[idx].frameWidth() / 2;
-						pt.y = people[idx]._position.y / FIXED_INT_MULTIPLIER - people[idx].frameHeight()
-							- _bounds.height() - _surface.fontHeight();
-					}
-					else {
+						pt.y = people[idx]._position.y / FIXED_INT_MULTIPLIER - people[idx].frameHeight() - _bounds.height() - _surface.fontHeight();
+					} else {
 						pt.x += people[idx]._imageFrame->sDrawXSize(scaleVal) / 2;
-						pt.y = people[idx]._position.y / FIXED_INT_MULTIPLIER - people[idx]._imageFrame->sDrawYSize(scaleVal)
-							- _bounds.height() - _surface.fontHeight();
+						pt.y = people[idx]._position.y / FIXED_INT_MULTIPLIER - people[idx]._imageFrame->sDrawYSize(scaleVal) - _bounds.height() - _surface.fontHeight();
 					}
 
 					if (pt.y < 0)
@@ -162,7 +156,7 @@ void WidgetText::centerWindowOnSpeaker(int speaker) {
 void WidgetText::render(const Common::String &str) {
 	Common::StringArray lines;
 	_remainingText = splitLines(str, lines, _bounds.width() - _surface.widestChar() * 2,
-		_bounds.height() / (_surface.fontHeight() + 1));
+	                            _bounds.height() / (_surface.fontHeight() + 1));
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());
@@ -211,7 +205,7 @@ void WidgetMessage::handleEvents() {
 
 	// Check if a mouse or keypress has occurred, or the display counter has expired
 	if (events._pressed || events._released || events._rightPressed || events._rightReleased ||
-			ui._keyState.keycode || !_menuCounter) {
+	    ui._keyState.keycode || !_menuCounter) {
 		// Close the window
 		banishWindow();
 

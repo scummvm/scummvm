@@ -30,8 +30,10 @@ namespace Titanic {
 class CMultiMove : public CMovePlayerTo {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 private:
 	CString _viewNames[5];
+
 public:
 	CLASSDEF;
 	CMultiMove();

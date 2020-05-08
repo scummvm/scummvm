@@ -1,9 +1,9 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/util.h"
-#include "common/func.h"
 #include "common/algorithm.h"
+#include "common/func.h"
 #include "common/list.h"
+#include "common/util.h"
 
 class AlgorithmTestSuite : public CxxTest::TestSuite {
 	template<typename T, class StrictWeakOrdering>
@@ -61,10 +61,11 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 			return value < r.value;
 		}
 	};
+
 public:
 	void test_check_sort() {
-		const int arraySorted[] = { 1, 2, 3, 3, 4, 5 };
-		const int arrayUnsorted[] = { 5, 3, 1, 2, 4, 3 };
+		const int arraySorted[] = {1, 2, 3, 3, 4, 5};
+		const int arrayUnsorted[] = {5, 3, 1, 2, 4, 3};
 
 		TS_ASSERT_EQUALS(checkSort(arraySorted, ARRAYEND(arraySorted), Common::Less<int>()), true);
 		TS_ASSERT_EQUALS(checkSort(arraySorted, ARRAYEND(arraySorted), Common::Greater<int>()), false);
@@ -80,7 +81,7 @@ public:
 			TS_ASSERT_EQUALS(checkSort(&dummy, &dummy, Common::Less<int>()), true);
 		}
 		{
-			int array[] = { 12 };
+			int array[] = {12};
 			Common::sort(array, ARRAYEND(array));
 			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
 
@@ -89,11 +90,11 @@ public:
 			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
 		}
 		{
-			int array[] = { 63, 11, 31, 72, 1, 48, 32, 69, 38, 31 };
+			int array[] = {63, 11, 31, 72, 1, 48, 32, 69, 38, 31};
 			Common::sort(array, ARRAYEND(array));
 			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
 
-			int sortedArray[] = { 1, 11, 31, 31, 32, 38, 48, 63, 69, 72 };
+			int sortedArray[] = {1, 11, 31, 31, 32, 38, 48, 63, 69, 72};
 			for (size_t i = 0; i < 10; ++i)
 				TS_ASSERT_EQUALS(array[i], sortedArray[i]);
 
@@ -102,7 +103,7 @@ public:
 			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
 		}
 		{
-			int array[] = { 90, 80, 70, 60, 50, 40, 30, 20, 10 };
+			int array[] = {90, 80, 70, 60, 50, 40, 30, 20, 10};
 			Common::sort(array, ARRAYEND(array));
 			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
 
@@ -115,7 +116,7 @@ public:
 		const int n = 1000;
 
 		Common::List<Item> list;
-		for(int i = 0; i < n; ++i)
+		for (int i = 0; i < n; ++i)
 			list.push_back(Item(i * 0xDEADBEEF % 1337));
 
 		Common::sort(list.begin(), list.end(), Common::Less<Item>());

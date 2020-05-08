@@ -44,7 +44,7 @@ struct runcxdef;
  * Text i/o context
  */
 struct tiocxdef {
-    errcxdef *tiocxerr;                           /* error handling context */
+	errcxdef *tiocxerr; /* error handling context */
 };
 
 /**
@@ -53,21 +53,20 @@ struct tiocxdef {
  */
 void out_init();
 
-
 /* redirect all tioxxx routines to TADS v1.x outxxx equivalents */
 #define tioflushn(ctx, nl) outflushn(nl)
-#define tioflush(ctx)      outflush()
-#define tioblank(ctx)      outblank()
-#define tioreset(ctx)      outreset()
+#define tioflush(ctx) outflush()
+#define tioblank(ctx) outblank()
+#define tioreset(ctx) outreset()
 #define tiogets(ctx, prompt, str, siz) getstring(prompt, str, siz)
-#define tioputs(ctx, str)  outformat(str)
+#define tioputs(ctx, str) outformat(str)
 #define tioputslen(ctx, str, len) outformatlen(str, len)
-#define tiocaps(ctx)       outcaps()
-#define tionocaps(ctx)     outnocaps()
-#define tioshow(ctx)       outshow()
-#define tiohide(ctx)       outhide()
+#define tiocaps(ctx) outcaps()
+#define tionocaps(ctx) outnocaps()
+#define tioshow(ctx) outshow()
+#define tiohide(ctx) outhide()
 #define tioscore(ctx, s1, s2) os_score(s1, s2)
-#define tiostrsc(ctx, s)   os_strsc(s)
+#define tiostrsc(ctx, s) os_strsc(s)
 
 /* set up format strings in output subsystem */
 void tiosetfmt(tiocxdef *ctx, runcxdef *rctx, uchar *fmtbase,
@@ -134,7 +133,6 @@ int tiologcls(tiocxdef *ctx);
  *   here.  
  */
 void out_logfile_print(const char *txt, int nl);
-
 
 /*
  *   Check output status.  Indicate whether output is currently hidden,
@@ -223,7 +221,6 @@ int tio_askfile(const char *prompt, char *reply, int replen, int prompt_type, os
 int tio_input_dialog(int icon_id, const char *prompt, int standard_button_set,
                      const char **buttons, int button_count,
                      int default_index, int cancel_index);
-
 
 } // End of namespace TADS2
 } // End of namespace TADS

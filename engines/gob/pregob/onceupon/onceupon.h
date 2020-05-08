@@ -23,8 +23,8 @@
 #ifndef GOB_PREGOB_ONCEUPON_ONCEUPON_H
 #define GOB_PREGOB_ONCEUPON_ONCEUPON_H
 
-#include "common/system.h"
 #include "common/str.h"
+#include "common/system.h"
 
 #include "gob/pregob/pregob.h"
 
@@ -44,10 +44,8 @@ public:
 	/** Number of languages we support. */
 	static const uint kLanguageCount = 5;
 
-
 	OnceUpon(GobEngine *vm);
 	~OnceUpon() override;
-
 
 protected:
 	/** A description of a menu button. */
@@ -74,7 +72,7 @@ protected:
 	struct StorkParam {
 		const char *backdrop; ///< Backdrop image file.
 
-		uint  houseCount;         ///< Number of houses.
+		uint houseCount;          ///< Number of houses.
 		const MenuButton *houses; ///< House button definitions.
 
 		const Stork::BundleDrop *drops; ///< The bundle drop parameters.
@@ -103,48 +101,46 @@ protected:
 	 *  @param animalNames   File prefixes for the name of each animal.
 	 */
 	void doStartMenu(const MenuButton *animalsButton, uint animalCount,
-	                 const MenuButton *animalButtons, const char * const *animalNames);
+	                 const MenuButton *animalButtons, const char *const *animalNames);
 
 	/** Play the game proper. */
 	void playGame();
 
-
 	/** Return the parameters for the stork section. */
 	virtual const StorkParam &getStorkParameters() const = 0;
-
 
 private:
 	/** All actions a user can request in a menu. */
 	enum MenuAction {
 		kMenuActionNone = 0, ///< No action.
-		kMenuActionAnimals , ///< Do the animal names.
-		kMenuActionPlay    , ///< Play the game.
-		kMenuActionRestart , ///< Restart the section.
+		kMenuActionAnimals,  ///< Do the animal names.
+		kMenuActionPlay,     ///< Play the game.
+		kMenuActionRestart,  ///< Restart the section.
 		kMenuActionMainMenu, ///< Go to the main menu.
 		kMenuActionQuit      ///< Quit the game.
 	};
 
 	/** Difficulty levels. */
 	enum Difficulty {
-		kDifficultyBeginner     = 0,
+		kDifficultyBeginner = 0,
 		kDifficultyIntermediate = 1,
-		kDifficultyAdvanced     = 2,
+		kDifficultyAdvanced = 2,
 		kDifficultyCount
 	};
 
 	/** The different sounds common in the game. */
 	enum Sound {
 		kSoundClick = 0,
-		kSoundStork    ,
-		kSoundJump     ,
+		kSoundStork,
+		kSoundJump,
 		kSoundCount
 	};
 
 	/** Action the character generation wants us to take. */
 	enum CharGenAction {
-		kCharGenDone    = 0, ///< Created a character, move on.
-		kCharGenAbort      , ///< Aborted the character generation.
-		kCharGenRestart      ///< Restart the character generation.
+		kCharGenDone = 0, ///< Created a character, move on.
+		kCharGenAbort,    ///< Aborted the character generation.
+		kCharGenRestart   ///< Restart the character generation.
 	};
 
 	/** A complete screen backup. */
@@ -159,14 +155,13 @@ private:
 		~ScreenBackup();
 	};
 
-
 	/** The number of game sections. */
 	static const int kSectionCount = 15;
 
 	static const MenuButton kMainMenuDifficultyButton[]; ///< Difficulty buttons.
 	static const MenuButton kSectionButtons[];           ///< Section buttons.
 
-	static const MenuButton kIngameButtons[];            ///< Ingame menu buttons.
+	static const MenuButton kIngameButtons[]; ///< Ingame menu buttons.
 
 	static const MenuButton kAnimalNamesBack;   ///< "Back" button in the animal names screens.
 	static const MenuButton kLanguageButtons[]; ///< Language buttons in the animal names screen.
@@ -183,18 +178,15 @@ private:
 	/** All general game sounds we know about. */
 	static const char *kSound[kSoundCount];
 
-
 	static const AnimProperties kClownAnimations[];
 	static const AnimProperties kTitleAnimation;
 	static const AnimProperties kSectionStorkAnimations[];
 	static const AnimProperties kSectionEndAnimations[];
 
-
 	/** Function pointer type for a section handler. */
 	typedef bool (OnceUpon::*SectionFunc)();
 	/** Section handler function. */
 	static const SectionFunc kSectionFuncs[kSectionCount];
-
 
 	/** Did we open the game archives? */
 	bool _openedArchives;
@@ -211,7 +203,7 @@ private:
 	bool _quit; ///< Did the user request a normal game quit?
 
 	Difficulty _difficulty; ///< The current difficulty.
-	int        _section;    ///< The current game section.
+	int _section;           ///< The current game section.
 
 	Common::String _name; ///< The name of the child.
 
@@ -221,7 +213,6 @@ private:
 	uint8 _colorHair;
 	uint8 _colorJacket;
 	uint8 _colorTrousers;
-
 
 	// -- General helpers --
 
@@ -238,8 +229,7 @@ private:
 	void restoreScreen(ScreenBackup &backup);
 
 	Common::String fixString(const Common::String &str) const; ///< Fix a string if necessary.
-	void fixTXTStrings(TXTFile &txt) const override;                    ///< Fix all strings in a TXT.
-
+	void fixTXTStrings(TXTFile &txt) const override;           ///< Fix all strings in a TXT.
 
 	// -- Copy protection helpers --
 
@@ -251,7 +241,6 @@ private:
 	/** Display the "You are wrong" screen. */
 	void cpWrong();
 
-
 	// -- Show different game screens --
 
 	void showWait(uint palette = 0xFFFF); ///< Show the wait / loading screen.
@@ -261,8 +250,7 @@ private:
 	void showByeBye();                    ///< Show the "bye bye" screen.
 
 	/** Handle the "listen to animal names" part. */
-	void handleAnimalNames(uint count, const MenuButton *buttons, const char * const *names);
-
+	void handleAnimalNames(uint count, const MenuButton *buttons, const char *const *names);
 
 	// -- Menu helpers --
 
@@ -285,20 +273,18 @@ private:
 	/** Handle the whole ingame menu if ESC or right mouse button was pressed. */
 	MenuAction doIngameMenu(int16 &key, MouseButtons &mouseButtons);
 
-
 	// -- Menu button helpers --
 
 	/** Find the button under these coordinates. */
 	int checkButton(const MenuButton *buttons, uint count, int16 x, int16 y, int failValue = -1) const;
 
 	/** Draw a menu button. */
-	void drawButton (Surface &dest, const Surface &src, const MenuButton &button, int transp = -1) const;
+	void drawButton(Surface &dest, const Surface &src, const MenuButton &button, int transp = -1) const;
 	/** Draw multiple menu buttons. */
 	void drawButtons(Surface &dest, const Surface &src, const MenuButton *buttons, uint count, int transp = -1) const;
 
 	/** Draw a border around a button. */
 	void drawButtonBorder(const MenuButton &button, uint8 color);
-
 
 	// -- Animal names helpers --
 
@@ -308,7 +294,6 @@ private:
 	void anSetupNames(const MenuButton &animal);
 	/** Play / Display the name of an animal in one language. */
 	void anPlayAnimalName(const Common::String &animal, uint language);
-
 
 	// -- Game sections --
 

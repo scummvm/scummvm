@@ -84,26 +84,26 @@ void syncGame(Common::Serializer &s) {
 	// Strings
 	if (header->stringInitTable != 0)
 		for (StringInitEntry *initEntry = (StringInitEntry *)pointerTo(header->stringInitTable);
-				!isEndOfArray(initEntry); initEntry++) {
+		     !isEndOfArray(initEntry); initEntry++) {
 
-		if (s.isSaving()) {
-			char *attr = (char *)getInstanceStringAttribute(initEntry->instanceCode, initEntry->attributeCode);
-			Aint length = strlen(attr) + 1;
-			s.syncAsUint32LE(length);
-			s.syncBytes((byte *)attr, length);
-		} else {
-			Aint length = 0;
-			s.syncAsUint32LE(length);
-			char *string = (char *)allocate(length + 1);
-			s.syncBytes((byte *)string, length);
-			setInstanceAttribute(initEntry->instanceCode, initEntry->attributeCode, toAptr(string));
+			if (s.isSaving()) {
+				char *attr = (char *)getInstanceStringAttribute(initEntry->instanceCode, initEntry->attributeCode);
+				Aint length = strlen(attr) + 1;
+				s.syncAsUint32LE(length);
+				s.syncBytes((byte *)attr, length);
+			} else {
+				Aint length = 0;
+				s.syncAsUint32LE(length);
+				char *string = (char *)allocate(length + 1);
+				s.syncBytes((byte *)string, length);
+				setInstanceAttribute(initEntry->instanceCode, initEntry->attributeCode, toAptr(string));
+			}
 		}
-	}
 
 	// Sets
 	if (header->setInitTable != 0) {
 		for (SetInitEntry *initEntry = (SetInitEntry *)pointerTo(header->setInitTable);
-				!isEndOfArray(initEntry); initEntry++) {
+		     !isEndOfArray(initEntry); initEntry++) {
 
 			if (s.isSaving()) {
 				Set *attr = (Set *)getInstanceSetAttribute(initEntry->instanceCode, initEntry->attributeCode);
@@ -138,15 +138,18 @@ void saveGame(Common::WriteStream *saveFile) {
 bool restoreGame(Common::SeekableReadStream *saveFile) {
 	Context ctx;
 	verifySaveFile(ctx, saveFile);
-	if (ctx._break) return false;
+	if (ctx._break)
+		return false;
 
 	// Verify version of compiler/interpreter of saved game with us
 	verifyCompilerVersion(ctx, saveFile);
-	if (ctx._break) return false;
+	if (ctx._break)
+		return false;
 
 	// Verify unique id of game
 	verifyGameId(ctx, saveFile);
-	if (ctx._break) return false;
+	if (ctx._break)
+		return false;
 
 	// Restore game data
 	Common::Serializer s(saveFile, nullptr);

@@ -21,11 +21,11 @@
  */
 
 #include "glk/agt/detection.h"
-#include "glk/agt/detection_tables.h"
-#include "glk/blorb.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/agt/detection_tables.h"
+#include "glk/blorb.h"
 
 namespace Glk {
 namespace AGT {

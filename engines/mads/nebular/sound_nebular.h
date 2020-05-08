@@ -23,10 +23,10 @@
 #ifndef MADS_SOUND_NEBULAR_H
 #define MADS_SOUND_NEBULAR_H
 
-#include "common/scummsys.h"
 #include "common/file.h"
 #include "common/mutex.h"
 #include "common/queue.h"
+#include "common/scummsys.h"
 
 namespace Audio {
 class Mixer;
@@ -82,8 +82,10 @@ public:
 
 	// TODO: Only used by asound.003. Figure out usage
 	byte _field20;
+
 public:
 	static bool _channelsEnabled;
+
 public:
 	AdlibChannel();
 
@@ -132,7 +134,8 @@ struct RegisterValue {
 	uint8 _value;
 
 	RegisterValue(int regNum, int value) {
-		_regNum = regNum; _value = value;
+		_regNum = regNum;
+		_value = value;
 	}
 };
 
@@ -204,6 +207,7 @@ private:
 	 * Timer function for OPL
 	 */
 	void onTimer();
+
 protected:
 	int _commandParam;
 
@@ -283,6 +287,7 @@ protected:
 	int command8();
 
 	int nullCommand() { return 0; }
+
 public:
 	Audio::Mixer *_mixer;
 	OPL::OPL *_opl;
@@ -317,6 +322,7 @@ public:
 	int _activeChannelReg;
 	int _v11;
 	bool _amDep, _vibDep, _splitPoint;
+
 public:
 	/**
 	 * Constructor
@@ -418,6 +424,7 @@ private:
 
 	void command111213();
 	int command2627293032();
+
 public:
 	ASound1(Audio::Mixer *mixer, OPL::OPL *opl);
 
@@ -427,6 +434,7 @@ public:
 class ASound2 : public ASound {
 private:
 	byte _command12Param;
+
 private:
 	typedef int (ASound2::*CommandPtr)();
 	static const CommandPtr _commandList[44];
@@ -470,6 +478,7 @@ private:
 
 	void command9Randomize();
 	void command9Apply(byte *data, int val, int incr);
+
 public:
 	ASound2(Audio::Mixer *mixer, OPL::OPL *opl);
 
@@ -530,6 +539,7 @@ private:
 
 	void command9Randomize();
 	void command9Apply(byte *data, int val, int incr);
+
 public:
 	ASound3(Audio::Mixer *mixer, OPL::OPL *opl);
 
@@ -568,6 +578,7 @@ private:
 	int command60();
 
 	void method1();
+
 public:
 	ASound4(Audio::Mixer *mixer, OPL::OPL *opl);
 
@@ -614,6 +625,7 @@ private:
 	int command41();
 	int command42();
 	int command43();
+
 public:
 	ASound5(Audio::Mixer *mixer, OPL::OPL *opl);
 
@@ -643,6 +655,7 @@ private:
 	int command24();
 	int command25();
 	int command29();
+
 public:
 	ASound6(Audio::Mixer *mixer, OPL::OPL *opl);
 
@@ -675,6 +688,7 @@ private:
 	int command35();
 	int command36();
 	int command37();
+
 public:
 	ASound7(Audio::Mixer *mixer, OPL::OPL *opl);
 
@@ -718,6 +732,7 @@ private:
 
 	void method1(byte *pData);
 	void adjustRange(byte *pData, byte v, int incr);
+
 public:
 	ASound8(Audio::Mixer *mixer, OPL::OPL *opl);
 
@@ -777,6 +792,7 @@ private:
 	int command57();
 	int command59();
 	int command60();
+
 public:
 	ASound9(Audio::Mixer *mixer, OPL::OPL *opl);
 

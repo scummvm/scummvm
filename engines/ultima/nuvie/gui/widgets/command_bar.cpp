@@ -20,27 +20,27 @@
  *
  */
 
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/core/tile_manager.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/fonts/font_manager.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/screen/game_palette.h"
 #include "ultima/nuvie/gui/widgets/command_bar.h"
-#include "ultima/nuvie/core/weather.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/save/obj_list.h"
+#include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/core/weather.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/u6_shape.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/fonts/font_manager.h"
 #include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/nuvie.h"
+#include "ultima/nuvie/save/obj_list.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/nuvie/screen/screen.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -48,42 +48,39 @@ namespace Nuvie {
 using Std::string;
 
 static Tile placeholder_tile = {
-	0,
-	false,
-	false,
-	false,
-	false,
-	false,
-	true,
-	false,
-	false,
-	0,
-	//uint8 qty;
-	//uint8 flags;
+    0,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    0,
+    //uint8 qty;
+    //uint8 flags;
 
-	0,
-	0,
-	0,
+    0,
+    0,
+    0,
 
-	{
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15
-	}
-};
+    {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+     15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}};
 
 CommandBar::CommandBar() : GUI_Widget(NULL) {
 	selected_action = -1;
@@ -94,7 +91,7 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(NULL) {
 	background = NULL;
 	Weather *weather;
 	uint16 x_off = game->get_game_x_offset();
-	uint16 y_off =  game->get_game_y_offset();
+	uint16 y_off = game->get_game_y_offset();
 	bool right_pos_cb = false;
 	Configuration *cfg = nullptr;
 
@@ -184,28 +181,28 @@ bool CommandBar::init_buttons() {
 		icon[11] = tile_man->get_tile(409); // quick save
 		icon[12] = tile_man->get_tile(409); // quick load
 	} else if (game->get_game_type() == NUVIE_GAME_MD) {
-		icon[0] = &placeholder_tile; // attack
-		icon[1] = &placeholder_tile; // talk
-		icon[2] = &placeholder_tile; // look
-		icon[3] = &placeholder_tile; // get
-		icon[4] = &placeholder_tile; // drop
-		icon[5] = &placeholder_tile; // move
-		icon[6] = &placeholder_tile; // use
-		icon[7] = &placeholder_tile; // combat mode
-		icon[8] = &placeholder_tile; // load/save
-		icon[9] = &placeholder_tile; // quick save
+		icon[0] = &placeholder_tile;  // attack
+		icon[1] = &placeholder_tile;  // talk
+		icon[2] = &placeholder_tile;  // look
+		icon[3] = &placeholder_tile;  // get
+		icon[4] = &placeholder_tile;  // drop
+		icon[5] = &placeholder_tile;  // move
+		icon[6] = &placeholder_tile;  // use
+		icon[7] = &placeholder_tile;  // combat mode
+		icon[8] = &placeholder_tile;  // load/save
+		icon[9] = &placeholder_tile;  // quick save
 		icon[10] = &placeholder_tile; // quick load
-	} else { // SE
-		icon[0] = &placeholder_tile; // move
-		icon[1] = &placeholder_tile; // get
-		icon[2] = &placeholder_tile; // drop
-		icon[3] = &placeholder_tile; // use
-		icon[4] = &placeholder_tile; // talk
-		icon[5] = &placeholder_tile; // look
-		icon[6] = &placeholder_tile; // attack
-		icon[7] = &placeholder_tile; // rest
-		icon[8] = &placeholder_tile; // combat mode
-		icon[9] = &placeholder_tile; // load/save
+	} else {                          // SE
+		icon[0] = &placeholder_tile;  // move
+		icon[1] = &placeholder_tile;  // get
+		icon[2] = &placeholder_tile;  // drop
+		icon[3] = &placeholder_tile;  // use
+		icon[4] = &placeholder_tile;  // talk
+		icon[5] = &placeholder_tile;  // look
+		icon[6] = &placeholder_tile;  // attack
+		icon[7] = &placeholder_tile;  // rest
+		icon[8] = &placeholder_tile;  // combat mode
+		icon[9] = &placeholder_tile;  // load/save
 		icon[10] = &placeholder_tile; // quick save
 		icon[11] = &placeholder_tile; // quick load
 	}
@@ -238,9 +235,9 @@ bool CommandBar::save(NuvieIO *objlist) {
 }
 
 void CommandBar::fill_square(uint8 pal_index) {
-	screen->fill(pal_index, area.left + selected_action * 18, area.top, 19, 1); // top row
-	screen->fill(pal_index, area.left + selected_action * 18, area.top + 18, 19, 1); // bottom row
-	screen->fill(pal_index, area.left + selected_action * 18, area.top + 1, 1, 17); // left side
+	screen->fill(pal_index, area.left + selected_action * 18, area.top, 19, 1);          // top row
+	screen->fill(pal_index, area.left + selected_action * 18, area.top + 18, 19, 1);     // bottom row
+	screen->fill(pal_index, area.left + selected_action * 18, area.top + 1, 1, 17);      // left side
 	screen->fill(pal_index, area.left + selected_action * 18 + 18, area.top + 1, 1, 17); // right side
 }
 
@@ -258,7 +255,7 @@ GUI_status CommandBar::MouseDown(int x, int y, Shared::MouseButton button) {
 	y -= area.top;
 
 	if (game->get_game_type() != NUVIE_GAME_U6 ||
-	        (y >= 8 && y <= 24)) {
+	    (y >= 8 && y <= 24)) {
 		uint8 activate = x / 16; // icon selected
 		if (game->get_game_type() == NUVIE_GAME_SE)
 			activate = x / 18;
@@ -278,7 +275,8 @@ GUI_status CommandBar::MouseDown(int x, int y, Shared::MouseButton button) {
 }
 
 GUI_status CommandBar::hit(uint8 num) {
-	if (!event) event = game->get_event();
+	if (!event)
+		event = game->get_event();
 
 	if (event->get_mode() != MOVE_MODE && event->get_mode() != EQUIP_MODE)
 		return GUI_PASS;
@@ -288,21 +286,19 @@ GUI_status CommandBar::hit(uint8 num) {
 	return (GUI_YUM);
 }
 
-static const EventMode U6_mode_tbl[] = { ATTACK_MODE, CAST_MODE, TALK_MODE, LOOK_MODE, GET_MODE,
-                                         DROP_MODE, PUSH_MODE, USE_MODE, REST_MODE, COMBAT_MODE
-                                       };
-static const EventMode MD_mode_tbl[] = { ATTACK_MODE, TALK_MODE, LOOK_MODE, GET_MODE,
-                                         DROP_MODE, PUSH_MODE, USE_MODE, COMBAT_MODE
-                                       };
-static const EventMode SE_mode_tbl[] = { PUSH_MODE, GET_MODE, DROP_MODE, USE_MODE, TALK_MODE,
-                                         LOOK_MODE, ATTACK_MODE, REST_MODE, COMBAT_MODE
-                                       };
+static const EventMode U6_mode_tbl[] = {ATTACK_MODE, CAST_MODE, TALK_MODE, LOOK_MODE, GET_MODE,
+                                        DROP_MODE, PUSH_MODE, USE_MODE, REST_MODE, COMBAT_MODE};
+static const EventMode MD_mode_tbl[] = {ATTACK_MODE, TALK_MODE, LOOK_MODE, GET_MODE,
+                                        DROP_MODE, PUSH_MODE, USE_MODE, COMBAT_MODE};
+static const EventMode SE_mode_tbl[] = {PUSH_MODE, GET_MODE, DROP_MODE, USE_MODE, TALK_MODE,
+                                        LOOK_MODE, ATTACK_MODE, REST_MODE, COMBAT_MODE};
 
 /*
  * return true if target is needed (only used for original CommandBar commands)
  */
 bool CommandBar::try_selected_action(sint8 command_num) {
-	if (!event) event = game->get_event();
+	if (!event)
+		event = game->get_event();
 
 	if (command_num == -1)
 		command_num = selected_action;
@@ -327,7 +323,7 @@ bool CommandBar::try_selected_action(sint8 command_num) {
 		quick_load_num = 11;
 	}
 
-// CommandBarNewUI only commands
+	// CommandBarNewUI only commands
 	if (command_num == save_num) {
 		g_engine->openMainMenuDialog();
 		return false;
@@ -338,7 +334,7 @@ bool CommandBar::try_selected_action(sint8 command_num) {
 	else if (command_num >= save_num)
 		return false;
 
-// original CommandBar commands (also used in CommandBarNewUI)
+	// original CommandBar commands (also used in CommandBarNewUI)
 	if (game->get_game_type() == NUVIE_GAME_U6)
 		mode = U6_mode_tbl[command_num];
 	else if (game->get_game_type() == NUVIE_GAME_MD)
@@ -406,7 +402,7 @@ void CommandBar::Display(bool full_redraw) {
 		} else if (game->get_game_type() == NUVIE_GAME_SE) {
 			if (!game->is_orig_style()) {
 				unsigned char *se_ptr = background->get_data();
-				se_ptr += ((320 * 178) + 8); // ((bg_w * image_y_off)  + image_x_off)
+				se_ptr += ((320 * 178) + 8);                                   // ((bg_w * image_y_off)  + image_x_off)
 				scr->blit(area.left, area.top, se_ptr, 8, 163, 19, 320, true); // drawing command bar icons from background
 			}
 			if (selected_action >= 0 && selected_action <= 8)
@@ -414,11 +410,11 @@ void CommandBar::Display(bool full_redraw) {
 		} else { // MD
 			if (!game->is_orig_style()) {
 				unsigned char *md_bg_ptr = background->get_data();
-				md_bg_ptr += ((320 * 163) + 15); // ((bg_w * image_y_off)  + image_x_off)
-				scr->fill(0, area.left, area.top, area.width(), area.height()); // lever slots, text, top, and bottom have transparency so we need to fill in black first
+				md_bg_ptr += ((320 * 163) + 15);                                                      // ((bg_w * image_y_off)  + image_x_off)
+				scr->fill(0, area.left, area.top, area.width(), area.height());                       // lever slots, text, top, and bottom have transparency so we need to fill in black first
 				scr->blit(area.left, area.top, md_bg_ptr, 8, area.width(), area.height(), 320, true); // drawing command bar icons from background
-				scr->fill(0, area.left, area.top, 1, area.height()); // make left black so it looks better
-				scr->fill(0, area.left + area.width() - 1, area.top, 1, area.height()); // make right black so it looks better
+				scr->fill(0, area.left, area.top, 1, area.height());                                  // make left black so it looks better
+				scr->fill(0, area.left + area.width() - 1, area.top, 1, area.height());               // make right black so it looks better
 			}
 			// FIXME code to display the switched levers goes here (the selected action and the current action will be have the lever down)
 		}
@@ -448,8 +444,7 @@ uint16 CommandBar::callback(uint16 msg, CallBack *caller, void *data) {
 bool CommandBar::drag_accept_drop(int x, int y, int message, void *data) {
 	GUI::get_gui()->force_full_redraw();
 	DEBUG(0, LEVEL_DEBUGGING, "CommandBar::drag_accept_drop()\n");
-	if (game->get_game_type() == NUVIE_GAME_U6 && !Game::get_game()->is_orig_style()
-	        && message == GUI_DRAG_OBJ) {
+	if (game->get_game_type() == NUVIE_GAME_U6 && !Game::get_game()->is_orig_style() && message == GUI_DRAG_OBJ) {
 		if (y < area.top + 8) // over text
 			return Game::get_game()->get_map_window()->drag_accept_drop(x, y, message, data);
 	}

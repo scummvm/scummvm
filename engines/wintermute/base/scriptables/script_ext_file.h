@@ -29,9 +29,8 @@
 #ifndef WINTERMUTES_SXFILE_H
 #define WINTERMUTES_SXFILE_H
 
-
-#include "engines/wintermute/base/base_scriptable.h"
 #include "common/stream.h"
+#include "engines/wintermute/base/base_scriptable.h"
 
 namespace Wintermute {
 
@@ -46,6 +45,7 @@ public:
 	const char *scToString() override;
 	SXFile(BaseGame *inGame, ScStack *Stack);
 	~SXFile() override;
+
 private:
 	Common::SeekableReadStream *_readFile;
 	Common::WriteStream *_writeFile;

@@ -23,10 +23,10 @@
 #ifndef TOON_PICTURE_H
 #define TOON_PICTURE_H
 
-#include "common/stream.h"
 #include "common/array.h"
 #include "common/func.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 #include "toon/toon.h"
 
@@ -42,7 +42,7 @@ public:
 	bool loadPicture(const Common::String &file);
 	void setupPalette();
 	void draw(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy);
-	void drawWithRectList(Graphics::Surface& surface, int16 x, int16 y, int16 dx, int16 dy, Common::Array<Common::Rect>& rectArray);
+	void drawWithRectList(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy, Common::Array<Common::Rect> &rectArray);
 	void drawMask(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy);
 	void drawLineOnMask(int16 x, int16 y, int16 x2, int16 y2, bool walkable);
 	void floodFillNotWalkableOnMask(int16 x, int16 y);

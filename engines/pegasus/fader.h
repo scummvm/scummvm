@@ -34,7 +34,8 @@ namespace Pegasus {
 class Fader;
 
 class FaderMoveSpec {
-friend class Fader;
+	friend class Fader;
+
 public:
 	FaderMoveSpec() {
 		_faderScale = kDefaultTimeScale;
@@ -108,7 +109,8 @@ public:
 class Sound;
 
 class SoundFader : public Fader {
-friend class Sound;
+	friend class Sound;
+
 public:
 	SoundFader();
 	~SoundFader() override {}

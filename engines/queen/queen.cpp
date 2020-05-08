@@ -32,7 +32,6 @@
 
 #include "engines/util.h"
 
-#include "queen/queen.h"
 #include "queen/bankman.h"
 #include "queen/command.h"
 #include "queen/cutaway.h"
@@ -42,6 +41,7 @@
 #include "queen/grid.h"
 #include "queen/input.h"
 #include "queen/logic.h"
+#include "queen/queen.h"
 #include "queen/resource.h"
 #include "queen/sound.h"
 #include "queen/talk.h"
@@ -50,10 +50,10 @@
 namespace Queen {
 
 QueenEngine::QueenEngine(OSystem *syst)
-	: Engine(syst), _bam(nullptr), _bankMan(nullptr), _command(nullptr), _debugger(nullptr),
-	_display(nullptr), _graphics(nullptr), _grid(nullptr), _input(nullptr), _logic(nullptr),
-	_sound(nullptr), _resource(nullptr), _walk(nullptr), _gameStarted(false),
-	randomizer("queen") {
+    : Engine(syst), _bam(nullptr), _bankMan(nullptr), _command(nullptr), _debugger(nullptr),
+      _display(nullptr), _graphics(nullptr), _grid(nullptr), _input(nullptr), _logic(nullptr),
+      _sound(nullptr), _resource(nullptr), _walk(nullptr), _gameStarted(false),
+      randomizer("queen") {
 }
 
 QueenEngine::~QueenEngine() {
@@ -241,7 +241,7 @@ Common::Error QueenEngine::loadGameState(int slot) {
 			_sound->loadState(header.version, p);
 			if (header.dataSize != (uint32)(p - saveData)) {
 				warning("Corrupted savegame file");
-				err = Common::kReadingFailed;	// FIXME
+				err = Common::kReadingFailed; // FIXME
 			} else {
 				_logic->setupRestoredGame();
 			}
@@ -259,7 +259,7 @@ Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *
 	char name[20];
 	makeGameStateName(slot, name);
 	Common::InSaveFile *file = _saveFileMan->openForLoading(name);
-	if (file && file->readUint32BE() == MKTAG('S','C','V','M')) {
+	if (file && file->readUint32BE() == MKTAG('S', 'C', 'V', 'M')) {
 		gsh->version = file->readUint32BE();
 		gsh->flags = file->readUint32BE();
 		gsh->dataSize = file->readUint32BE();
@@ -311,11 +311,10 @@ void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 }
 
 bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsSubtitleOptions);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime) ||
+	       (f == kSupportsSubtitleOptions);
 }
 
 Common::Error QueenEngine::run() {

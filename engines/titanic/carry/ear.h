@@ -31,6 +31,7 @@ class CEar : public CHeadPiece {
 	DECLARE_MESSAGE_MAP;
 	bool ActMsg(CActMsg *msg);
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+
 public:
 	CLASSDEF;
 	CEar();

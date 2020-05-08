@@ -76,13 +76,12 @@ void CGameView::drawView() {
 	srcRect.translate(-VIEW_OFFSET_X, -VIEW_OFFSET_Y);
 
 	CScreenManager::_currentScreenManagerPtr->blitFrom(SURFACE_BACKBUFFER,
-		_surface, &destPos, &srcRect);
+	                                                   _surface, &destPos, &srcRect);
 }
 
 /*------------------------------------------------------------------------*/
 
-CSTGameView::CSTGameView(CMainGameWindow *gameWindow) :
-		CGameView(), _gameWindow(gameWindow) {
+CSTGameView::CSTGameView(CMainGameWindow *gameWindow) : CGameView(), _gameWindow(gameWindow) {
 }
 
 void CSTGameView::setView(CViewItem *view) {

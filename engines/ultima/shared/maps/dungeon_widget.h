@@ -23,11 +23,11 @@
 #ifndef ULTIMA_SHARED_MAPS_DUNGEON_WIDGET_H
 #define ULTIMA_SHARED_MAPS_DUNGEON_WIDGET_H
 
-#include "ultima/shared/maps/map_widget.h"
-#include "ultima/shared/maps/map.h"
-#include "ultima/shared/gfx/dungeon_surface.h"
 #include "common/serializer.h"
 #include "common/str.h"
+#include "ultima/shared/gfx/dungeon_surface.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Shared {
@@ -47,8 +47,7 @@ public:
 	 */
 	DungeonWidget(Game *game, Maps::MapBase *map) : MapWidget(game, map) {}
 	DungeonWidget(Game *game, Maps::MapBase *map, const Point &pt, Direction dir = DIR_NONE) : MapWidget(game, map, pt, dir) {}
-	DungeonWidget(Game *game, Maps::MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) :
-		MapWidget(game, map, name, pt, dir) {}
+	DungeonWidget(Game *game, Maps::MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) : MapWidget(game, map, name, pt, dir) {}
 
 	/**
 	 * Destructor

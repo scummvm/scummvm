@@ -25,99 +25,93 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/time.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
 
 namespace BladeRunner {
 
 const Color256 UIScrollBox::k3DFrameColors[] = {
-	{ 32, 32, 24 },
-	{ 40, 40, 40 },
-	{ 40, 40, 48 },
-	{ 72, 64, 64 },
-	{ 160, 136, 128 },
-	{ 160, 136, 128 },
-	{ 0, 0, 0 },
-	{ 0, 0, 0 }
-};
+    {32, 32, 24},
+    {40, 40, 40},
+    {40, 40, 48},
+    {72, 64, 64},
+    {160, 136, 128},
+    {160, 136, 128},
+    {0, 0, 0},
+    {0, 0, 0}};
 const Color256 UIScrollBox::kTextBackgroundColors[] = {
-	{ 40, 56, 80 },
-	{ 48, 64, 96 },
-	{ 56, 72, 112 },
-	{ 72, 88, 128 },
-	{ 152, 192, 248 },
-	{ 0, 0, 0 }
-};
+    {40, 56, 80},
+    {48, 64, 96},
+    {56, 72, 112},
+    {72, 88, 128},
+    {152, 192, 248},
+    {0, 0, 0}};
 const Color256 UIScrollBox::kTextColors1[] = {
-	{ 72, 104, 152 },
-	{ 96, 120, 184 },
-	{ 112, 144, 216 },
-	{ 136, 168, 248 },
-	{ 152, 192, 248 }
-};
+    {72, 104, 152},
+    {96, 120, 184},
+    {112, 144, 216},
+    {136, 168, 248},
+    {152, 192, 248}};
 const Color256 UIScrollBox::kTextColors2[] = {
-	{ 200, 216, 248 },
-	{ 216, 224, 248 },
-	{ 224, 232, 248 },
-	{ 232, 240, 248 },
-	{ 248, 248, 248 }
-};
+    {200, 216, 248},
+    {216, 224, 248},
+    {224, 232, 248},
+    {232, 240, 248},
+    {248, 248, 248}};
 const Color256 UIScrollBox::kTextColors3[] = {
-	{ 240, 232, 192 },
-	{ 240, 232, 208 },
-	{ 240, 240, 216 },
-	{ 248, 240, 232 },
-	{ 248, 248, 248 }
-};
+    {240, 232, 192},
+    {240, 232, 208},
+    {240, 240, 216},
+    {248, 240, 232},
+    {248, 248, 248}};
 const Color256 UIScrollBox::kTextColors4[] = {
-	{ 152, 112, 56 },
-	{ 184, 144, 88 },
-	{ 216, 184, 112 },
-	{ 232, 208, 136 },
-	{ 248, 224, 144 }
-};
+    {152, 112, 56},
+    {184, 144, 88},
+    {216, 184, 112},
+    {232, 208, 136},
+    {248, 224, 144}};
 
 UIScrollBox::UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelectedCallback, void *callbackData, int maxLineCount, int style, bool center, Common::Rect rect, Common::Rect scrollBarRect) : UIComponent(vm) {
-	_selectedLineState     = 0;
-	_scrollUpButtonState   = 0;
+	_selectedLineState = 0;
+	_scrollUpButtonState = 0;
 	_scrollDownButtonState = 0;
-	_scrollAreaUpState     = 0;
-	_scrollAreaDownState   = 0;
-	_scrollBarState        = 0;
+	_scrollAreaUpState = 0;
+	_scrollAreaDownState = 0;
+	_scrollBarState = 0;
 
-	_scrollUpButtonHover   = false;
+	_scrollUpButtonHover = false;
 	_scrollDownButtonHover = false;
-	_scrollAreaUpHover     = false;
-	_scrollAreaDownHover   = false;
-	_scrollBarHover        = false;
+	_scrollAreaUpHover = false;
+	_scrollAreaDownHover = false;
+	_scrollBarHover = false;
 
-	_hoveredLine          = -1;
-	_selectedLineIndex    = -1;
+	_hoveredLine = -1;
+	_selectedLineIndex = -1;
 
 	_lineSelectedCallback = lineSelectedCallback;
-	_callbackData         = callbackData;
+	_callbackData = callbackData;
 
-	_isVisible  = false;
-	_style      = style;
-	_center     = center;
-	_timeLastScroll    = _vm->_time->currentSystem();
-	_timeLastCheckbox  = _vm->_time->currentSystem();
+	_isVisible = false;
+	_style = style;
+	_center = center;
+	_timeLastScroll = _vm->_time->currentSystem();
+	_timeLastCheckbox = _vm->_time->currentSystem();
 	_timeLastHighlight = _vm->_time->currentSystem();
 
 	_highlightFrame = 0;
 
-	_rect          = rect;
+	_rect = rect;
 	_scrollBarRect = scrollBarRect;
 	_scrollBarRect.right += 15; // right side was not used, but it's useful for determining if the control is selected
 
-	_lineCount    = 0;
+	_lineCount = 0;
 	_maxLineCount = maxLineCount;
 
 	_firstLineVisible = 0;
-	_maxLinesVisible  = _rect.height() / kLineHeight;
+	_maxLinesVisible = _rect.height() / kLineHeight;
 
 	_mouseButton = false;
 
@@ -141,24 +135,24 @@ UIScrollBox::~UIScrollBox() {
 }
 
 void UIScrollBox::show() {
-	_selectedLineState     = 0;
-	_scrollUpButtonState   = 0;
+	_selectedLineState = 0;
+	_scrollUpButtonState = 0;
 	_scrollDownButtonState = 0;
-	_scrollAreaUpState     = 0;
-	_scrollAreaDownState   = 0;
-	_scrollBarState        = 0;
+	_scrollAreaUpState = 0;
+	_scrollAreaDownState = 0;
+	_scrollBarState = 0;
 
-	_hoveredLine       = -1;
+	_hoveredLine = -1;
 	_selectedLineIndex = -1;
 
-	_scrollUpButtonHover   = false;
+	_scrollUpButtonHover = false;
 	_scrollDownButtonHover = false;
-	_scrollAreaUpHover     = false;
-	_scrollAreaDownHover   = false;
-	_scrollBarHover        = false;
+	_scrollAreaUpHover = false;
+	_scrollAreaDownHover = false;
+	_scrollBarHover = false;
 
-	_timeLastScroll    = _vm->_time->currentSystem();
-	_timeLastCheckbox  = _vm->_time->currentSystem();
+	_timeLastScroll = _vm->_time->currentSystem();
+	_timeLastCheckbox = _vm->_time->currentSystem();
 	_timeLastHighlight = _vm->_time->currentSystem();
 
 	_highlightFrame = 0;
@@ -174,7 +168,6 @@ void UIScrollBox::hide() {
 void UIScrollBox::clearLines() {
 	_lineCount = 0;
 	_firstLineVisible = 0;
-
 }
 
 void UIScrollBox::addLine(const Common::String &text, int lineData, int flags) {
@@ -213,7 +206,7 @@ void UIScrollBox::handleMouseMove(int mouseX, int mouseY) {
 		if (newHoveredLine != _hoveredLine && newHoveredLine >= 0 && newHoveredLine < _lineCount) {
 			if (_lines[newHoveredLine]->lineData >= 0 && _selectedLineState == 0) {
 				int soundId = kSfxTEXT1;
-				if (_lines[newHoveredLine]->flags & 0x01 ) {
+				if (_lines[newHoveredLine]->flags & 0x01) {
 					soundId = kSfxTEXT3;
 				}
 				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(soundId), 100, 0, 0, 50, 0);
@@ -225,16 +218,10 @@ void UIScrollBox::handleMouseMove(int mouseX, int mouseY) {
 	}
 
 	_scrollUpButtonHover =
-		(mouseX >= _scrollBarRect.left)
-		&& (mouseX < _scrollBarRect.left + 15)
-		&& (mouseY >= _scrollBarRect.top)
-		&& (mouseY < _scrollBarRect.top + 8);
+	    (mouseX >= _scrollBarRect.left) && (mouseX < _scrollBarRect.left + 15) && (mouseY >= _scrollBarRect.top) && (mouseY < _scrollBarRect.top + 8);
 
 	_scrollDownButtonHover =
-		(mouseX >= _scrollBarRect.left)
-		&& (mouseX < _scrollBarRect.left + 15)
-		&& (mouseY > _scrollBarRect.bottom - 8)
-		&& (mouseY <= _scrollBarRect.bottom);
+	    (mouseX >= _scrollBarRect.left) && (mouseX < _scrollBarRect.left + 15) && (mouseY > _scrollBarRect.bottom - 8) && (mouseY <= _scrollBarRect.bottom);
 
 	int scrollAreaHeight = _scrollBarRect.bottom - _scrollBarRect.top - 15;
 
@@ -267,28 +254,19 @@ void UIScrollBox::handleMouseMove(int mouseX, int mouseY) {
 		if (_lineCount <= _maxLinesVisible) {
 			scrollBarY = 0;
 		} else {
-			scrollBarY = scrollAreaEmptySize * _firstLineVisible/ (_lineCount - _maxLinesVisible);
+			scrollBarY = scrollAreaEmptySize * _firstLineVisible / (_lineCount - _maxLinesVisible);
 		}
 	}
 	scrollBarY = scrollBarY + _scrollBarRect.top + 8;
 
 	_scrollBarHover =
-		(mouseX >= _scrollBarRect.left)
-		&& (mouseX < _scrollBarRect.left + 15)
-		&& (mouseY >= scrollBarY)
-		&& (mouseY < scrollBarY + scrollBarHeight);
+	    (mouseX >= _scrollBarRect.left) && (mouseX < _scrollBarRect.left + 15) && (mouseY >= scrollBarY) && (mouseY < scrollBarY + scrollBarHeight);
 
 	_scrollAreaUpHover =
-		(mouseX >= _scrollBarRect.left)
-		&& (mouseX < _scrollBarRect.left + 15)
-		&& (mouseY >= _scrollBarRect.top + 8)
-		&& (mouseY < scrollBarY);
+	    (mouseX >= _scrollBarRect.left) && (mouseX < _scrollBarRect.left + 15) && (mouseY >= _scrollBarRect.top + 8) && (mouseY < scrollBarY);
 
 	_scrollAreaDownHover =
-		(mouseX >= _scrollBarRect.left)
-		&& (mouseX < _scrollBarRect.left + 15)
-		&& (mouseY >= scrollBarY + scrollBarHeight)
-		&& (mouseY < _scrollBarRect.bottom - 8);
+	    (mouseX >= _scrollBarRect.left) && (mouseX < _scrollBarRect.left + 15) && (mouseY >= scrollBarY + scrollBarHeight) && (mouseY < _scrollBarRect.bottom - 8);
 }
 
 void UIScrollBox::handleMouseDown(bool alternateButton) {
@@ -346,7 +324,7 @@ void UIScrollBox::handleMouseDown(bool alternateButton) {
 
 void UIScrollBox::handleMouseUp(bool alternateButton) {
 	if (_isVisible) {
-		if ( alternateButton == _mouseButton) {
+		if (alternateButton == _mouseButton) {
 			_selectedLineState = 0;
 			_selectedLineIndex = -1;
 		}
@@ -416,7 +394,7 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 	if (timeDiffCheckBox > 67u) {
 		_timeLastCheckbox = timeNow;
 		for (int i = 0; i < _lineCount; ++i) {
-			if (_lines[i]->flags & 0x01) { // has checkbox
+			if (_lines[i]->flags & 0x01) {     // has checkbox
 				if (_lines[i]->flags & 0x02) { // checkbox checked
 					if (_lines[i]->checkboxFrame < 5u) {
 						_lines[i]->checkboxFrame += timeDiffCheckBox / 67u;
@@ -426,7 +404,7 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 					}
 				} else { // checkbox not checked
 					if (_lines[i]->checkboxFrame > 0u) {
-						_lines[i]->checkboxFrame =  (_lines[i]->checkboxFrame < (timeDiffCheckBox / 67u)) ? 0u : _lines[i]->checkboxFrame - (timeDiffCheckBox / 67u);
+						_lines[i]->checkboxFrame = (_lines[i]->checkboxFrame < (timeDiffCheckBox / 67u)) ? 0u : _lines[i]->checkboxFrame - (timeDiffCheckBox / 67u);
 					}
 					if (_lines[i]->checkboxFrame == 0u) { // original was < 0, int
 						_lines[i]->checkboxFrame = 0u;
@@ -435,7 +413,6 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 			}
 		}
 	}
-
 
 	// update highlight
 	// unsigned difference is intentional
@@ -487,8 +464,7 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 				} else {
 					color = surface.format.RGBToColor(kTextColors3[colorIndex].r, kTextColors3[colorIndex].g, kTextColors3[colorIndex].b);
 				}
-			}
-			else {
+			} else {
 				if (_style) {
 					color = surface.format.RGBToColor(kTextColors1[colorIndex].r, kTextColors1[colorIndex].g, kTextColors1[colorIndex].b);
 				} else {
@@ -675,8 +651,8 @@ void UIScrollBox::resetFlags(int lineData, int flags) {
 }
 
 int UIScrollBox::sortFunction(const void *item1, const void *item2) {
-	Line *line1 = *(Line * const *)item1;
-	Line *line2 = *(Line * const *)item2;
+	Line *line1 = *(Line *const *)item1;
+	Line *line2 = *(Line *const *)item2;
 	return line1->text.compareToIgnoreCase(line2->text);
 }
 
@@ -696,12 +672,12 @@ void UIScrollBox::draw3DFrame(Graphics::Surface &surface, Common::Rect rect, boo
 
 	surface.fillRect(Common::Rect(rect.left + 1, rect.top + 1, rect.right - 1, rect.bottom - 1), fillColor);
 
-	surface.hLine(rect.left + 1,  rect.top,        rect.right - 2,  color1);
-	surface.hLine(rect.left + 1,  rect.bottom - 1, rect.right - 2,  color2);
-	surface.vLine(rect.left,      rect.top,        rect.bottom - 2, color1);
-	surface.vLine(rect.right - 1, rect.top + 1,    rect.bottom - 1, color2);
-	surface.hLine(rect.right - 1, rect.top,        rect.right - 1,  color3);
-	surface.hLine(rect.left,      rect.bottom - 1, rect.left,       color3);
+	surface.hLine(rect.left + 1, rect.top, rect.right - 2, color1);
+	surface.hLine(rect.left + 1, rect.bottom - 1, rect.right - 2, color2);
+	surface.vLine(rect.left, rect.top, rect.bottom - 2, color1);
+	surface.vLine(rect.right - 1, rect.top + 1, rect.bottom - 1, color2);
+	surface.hLine(rect.right - 1, rect.top, rect.right - 1, color3);
+	surface.hLine(rect.left, rect.bottom - 1, rect.left, color3);
 }
 
 void UIScrollBox::scrollUp() {

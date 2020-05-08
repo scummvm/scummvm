@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-class CStarFieldBase: public CBaseStars {
+class CStarFieldBase : public CBaseStars {
 public:
 	~CStarFieldBase() override {}
 
@@ -37,7 +37,7 @@ public:
 	 * Selects a star
 	 */
 	bool selectStar(CSurfaceArea *surfaceArea, CCamera *camera,
-		const Common::Point &pt, void *handler = nullptr) override;
+	                const Common::Point &pt, void *handler = nullptr) override;
 
 	bool loadStar() override;
 

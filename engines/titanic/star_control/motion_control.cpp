@@ -22,8 +22,8 @@
 
 #include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/error_code.h"
 #include "titanic/star_control/camera.h"
+#include "titanic/star_control/error_code.h"
 #include "titanic/support/simple_file.h"
 
 namespace Titanic {
@@ -147,7 +147,7 @@ void CMotionControl::save(SimpleFile *file, int indent) {
 
 void CMotionControl::incLockCount() {
 	if (_lockCounter < 3)
-	++_lockCounter;
+		++_lockCounter;
 }
 
 void CMotionControl::decLockCount() {

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/ bin / sh
 
 echo Quick script to make building all the time less painful.
 

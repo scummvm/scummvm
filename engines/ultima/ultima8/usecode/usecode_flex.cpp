@@ -22,9 +22,9 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/usecode/usecode_flex.h"
-#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/usecode/usecode_flex.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -49,7 +49,8 @@ const char *UsecodeFlex::get_class_name(uint32 classid) {
 }
 
 uint32 UsecodeFlex::get_class_base_offset(uint32 classid) {
-	if (get_size(classid + 2) == 0) return 0;
+	if (get_size(classid + 2) == 0)
+		return 0;
 
 	if (GAME_IS_U8) {
 		return 0x0C;
@@ -68,7 +69,8 @@ uint32 UsecodeFlex::get_class_base_offset(uint32 classid) {
 }
 
 uint32 UsecodeFlex::get_class_event_count(uint32 classid) {
-	if (get_size(classid + 2) == 0) return 0;
+	if (get_size(classid + 2) == 0)
+		return 0;
 
 	if (GAME_IS_U8) {
 		return 32;

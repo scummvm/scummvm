@@ -32,6 +32,7 @@ class CPickUpBarGlass : public CPickUp {
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	CLASSDEF;
 

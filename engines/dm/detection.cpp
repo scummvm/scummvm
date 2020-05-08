@@ -25,7 +25,6 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/fs.h"
@@ -37,63 +36,56 @@
 
 namespace DM {
 static const PlainGameDescriptor DMGames[] = {
-	{"dm", "Dungeon Master"},
-	{0, 0}
-};
+    {"dm", "Dungeon Master"},
+    {0, 0}};
 
 static const DMADGameDescription gameDescriptions[] = {
-	{
-		{"dm", "Amiga v2.0 English",
-			{
-				{"graphics.dat", 0, "c2205f6225bde728417de29394f97d55", 411960},
-				{"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006},
-				AD_LISTEND
-			},
-			Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)
-		},
-	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAmiga,
-		{ kDMSaveTargetDM21, kDMSaveTargetEndOfList },
-		{ kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
-		{ kDMSavePlatformAcceptAny}
-	},
-	{
-		{"dm", "Atari v??? English",
-			{
-				{"graphics.dat", 0, "6ffff2a17e2df0effa9a12fb4b1bf6b6", 271911},
-				{"Dungeon.dat", 0, "be9468b460515741babec9a70501e2e9", 33286},
-				AD_LISTEND
-			},
-	    	Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI),
-	    },
-	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAtariSt,
-	    { kDMSaveTargetDM21, kDMSaveTargetEndOfList},
-	    { kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
-	    { kDMSavePlatformAcceptAny }
-	},
-	{
-		// Added by Strangerke
-		{"dm", "Amiga Demo v2.0 English",
-			{
-				{"graphics.dat", 0, "3932c8359bb36c24291b09e915114d38", 192421},
-				{"DemoDun.dat", 0, "78848e1a2d3d5a11e5954deb8c7b772b", 1209},
-				AD_LISTEND
-			},
-			Common::EN_ANY, Common::kPlatformAmiga, ADGF_DEMO, GUIO1(GUIO_NOMIDI),
-		},
-		kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAtariSt,
-		{ kDMSaveTargetDM21, kDMSaveTargetEndOfList},
-		{ kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
-		{ kDMSavePlatformAcceptAny }
-	},
-	{
-		AD_TABLE_END_MARKER, kDMSaveTargetNone, kDMSaveFormatNone, kDMSavePlatformNone,
-		{kDMSaveTargetNone}, {kDMSaveFormatNone}, {kDMSavePlatformNone}
-	}
-};
+    {{"dm", "Amiga v2.0 English", {{"graphics.dat", 0, "c2205f6225bde728417de29394f97d55", 411960}, {"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006}, AD_LISTEND}, Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NOMIDI)},
+     kDMSaveTargetDM21,
+     kDMSaveFormatAmigaPC98FmTowns,
+     kDMSavePlatformAmiga,
+     {kDMSaveTargetDM21, kDMSaveTargetEndOfList},
+     {kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
+     {kDMSavePlatformAcceptAny}},
+    {{
+         "dm",
+         "Atari v??? English",
+         {{"graphics.dat", 0, "6ffff2a17e2df0effa9a12fb4b1bf6b6", 271911},
+          {"Dungeon.dat", 0, "be9468b460515741babec9a70501e2e9", 33286},
+          AD_LISTEND},
+         Common::EN_ANY,
+         Common::kPlatformAtariST,
+         ADGF_NO_FLAGS,
+         GUIO1(GUIO_NOMIDI),
+     },
+     kDMSaveTargetDM21,
+     kDMSaveFormatAmigaPC98FmTowns,
+     kDMSavePlatformAtariSt,
+     {kDMSaveTargetDM21, kDMSaveTargetEndOfList},
+     {kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
+     {kDMSavePlatformAcceptAny}},
+    {// Added by Strangerke
+     {
+         "dm",
+         "Amiga Demo v2.0 English",
+         {{"graphics.dat", 0, "3932c8359bb36c24291b09e915114d38", 192421},
+          {"DemoDun.dat", 0, "78848e1a2d3d5a11e5954deb8c7b772b", 1209},
+          AD_LISTEND},
+         Common::EN_ANY,
+         Common::kPlatformAmiga,
+         ADGF_DEMO,
+         GUIO1(GUIO_NOMIDI),
+     },
+     kDMSaveTargetDM21,
+     kDMSaveFormatAmigaPC98FmTowns,
+     kDMSavePlatformAtariSt,
+     {kDMSaveTargetDM21, kDMSaveTargetEndOfList},
+     {kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
+     {kDMSavePlatformAcceptAny}},
+    {AD_TABLE_END_MARKER, kDMSaveTargetNone, kDMSaveFormatNone, kDMSavePlatformNone, {kDMSaveTargetNone}, {kDMSaveFormatNone}, {kDMSavePlatformNone}}};
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+    AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 class DMMetaEngine : public AdvancedMetaEngine {
 public:
@@ -114,17 +106,16 @@ public:
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc)
-			*engine = new DM::DMEngine(syst, (const DMADGameDescription*)desc);
+			*engine = new DM::DMEngine(syst, (const DMADGameDescription *)desc);
 		return desc != nullptr;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {
-		return
-			(f == kSupportsListSaves) ||
-			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSavesSupportThumbnail) ||
-			(f == kSavesSupportMetaInfo) ||
-			(f == kSavesSupportCreationDate);
+		return (f == kSupportsListSaves) ||
+		       (f == kSupportsLoadingDuringStartup) ||
+		       (f == kSavesSupportThumbnail) ||
+		       (f == kSavesSupportMetaInfo) ||
+		       (f == kSavesSupportCreationDate);
 	}
 
 	int getMaximumSaveSlot() const override { return 99; }
@@ -182,7 +173,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override {}
 };
 
-}
+} // namespace DM
 #if PLUGIN_ENABLED_DYNAMIC(DM)
 REGISTER_PLUGIN_DYNAMIC(DM, PLUGIN_TYPE_ENGINE, DM::DMMetaEngine);
 #else

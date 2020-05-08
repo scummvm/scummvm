@@ -50,9 +50,7 @@ bool AIScriptKlein::Update() {
 		}
 	}
 
-	if (Actor_Query_Goal_Number(kActorKlein) < kGoalKleinIsAnnoyedByMcCoyInit
-	    && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 40
-	) {
+	if (Actor_Query_Goal_Number(kActorKlein) < kGoalKleinIsAnnoyedByMcCoyInit && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 40) {
 		Actor_Set_Goal_Number(kActorKlein, kGoalKleinIsAnnoyedByMcCoyInit);
 	}
 
@@ -65,34 +63,22 @@ bool AIScriptKlein::Update() {
 		// Original behavior:
 		// The following if-clauses and flags circumvent the manual's explicit instruction
 		// that McCoy should upload his clues on the Mainframe, so that Dino Klein can acquire them.
-		if (Actor_Clue_Query(kActorMcCoy, kClueOfficersStatement)
-		    && !Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
-		) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueOfficersStatement) && !Game_Flag_Query(kFlagMcCoyHasOfficersStatement)) {
 			Game_Flag_Set(kFlagMcCoyHasOfficersStatement);
 		}
-		if (Actor_Clue_Query(kActorMcCoy, kCluePaintTransfer)
-		    && !Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
-		) {
+		if (Actor_Clue_Query(kActorMcCoy, kCluePaintTransfer) && !Game_Flag_Query(kFlagMcCoyHasPaintTransfer)) {
 			Game_Flag_Set(kFlagMcCoyHasPaintTransfer);
 		}
-		if (Actor_Clue_Query(kActorMcCoy, kClueShellCasings)
-		    && !Game_Flag_Query(kFlagMcCoyHasShellCasings)
-		) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueShellCasings) && !Game_Flag_Query(kFlagMcCoyHasShellCasings)) {
 			Game_Flag_Set(kFlagMcCoyHasShellCasings);
 		}
-		if (Actor_Clue_Query(kActorMcCoy, kClueChromeDebris)
-		    && !Game_Flag_Query(kFlagMcCoyHasChromeDebris)
-		) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueChromeDebris) && !Game_Flag_Query(kFlagMcCoyHasChromeDebris)) {
 			Game_Flag_Set(kFlagMcCoyHasChromeDebris);
 		}
 	}
 
 	// The following deals with the case that Klein gets annoyed by McCoy
-	if (Player_Query_Current_Scene() == kScenePS07
-	    && ((_vm->_cutContent && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 40)
-	        || (!_vm->_cutContent && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 35) )
-	    && !Game_Flag_Query(kFlagPS07KleinInsulted)
-	) {
+	if (Player_Query_Current_Scene() == kScenePS07 && ((_vm->_cutContent && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 40) || (!_vm->_cutContent && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 35)) && !Game_Flag_Query(kFlagPS07KleinInsulted)) {
 		// kActorTimerAIScriptCustomTask2 causes the "Klein is annoyed dialogue" to occur after a few seconds
 		AI_Countdown_Timer_Reset(kActorKlein, kActorTimerAIScriptCustomTask2);
 		if (_vm->_cutContent) {
@@ -108,9 +94,7 @@ bool AIScriptKlein::Update() {
 
 	// The following deals with how Klein recovers from being annoyed at McCoy
 	if (Actor_Query_Goal_Number(kActorKlein) == kGoalKleinIsAnnoyedByMcCoyFinal) {
-		if (Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) > 20
-		    && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 40
-		) {
+		if (Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) > 20 && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 40) {
 			// when insulted, slowly increase friendliness again, until it's at 40 or greater
 			Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, 2);
 #if !BLADERUNNER_ORIGINAL_BUGS
@@ -128,8 +112,7 @@ bool AIScriptKlein::Update() {
 #else
 		// don't go to Default if Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) <= 20
 		// and also reset kFlagPS07KleinInsulted if the friendliness is now above 40
-		if (Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) >= 40)
-		{
+		if (Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) >= 40) {
 			if (Game_Flag_Query(kFlagPS07KleinInsulted)) {
 				Game_Flag_Reset(kFlagPS07KleinInsulted);
 				// don't reset the kFlagPS07KleinInsultedTalk
@@ -149,10 +132,7 @@ void AIScriptKlein::TimerExpired(int timer) {
 		// This timer expiration was buggy; it would play the short dialogue version
 		// even when the timer expires even if McCoy has left the room and is somewhere else
 		// The fix is to return when the player is somewhere else
-		if (Player_Query_Current_Set() != kSetPS07
-		    || !Actor_Query_Is_In_Current_Set(kActorKlein)
-		    || !Game_Flag_Query(kFlagPS07KleinInsulted)
-		) {
+		if (Player_Query_Current_Set() != kSetPS07 || !Actor_Query_Is_In_Current_Set(kActorKlein) || !Game_Flag_Query(kFlagPS07KleinInsulted)) {
 			if (Actor_Query_Goal_Number(kActorKlein) == kGoalKleinIsAnnoyedByMcCoyPreInit) {
 				Actor_Set_Goal_Number(kActorKlein, kGoalKleinDefault);
 			}
@@ -162,10 +142,10 @@ void AIScriptKlein::TimerExpired(int timer) {
 #endif
 		if (!Game_Flag_Query(kFlagPS07KleinInsultedTalk)
 #if BLADERUNNER_ORIGINAL_BUGS
-			// this is redundant now because we return in the added code above if Klein is not insulted
-			// (and the flag now gets reset when Klein calms down)
+		    // this is redundant now because we return in the added code above if Klein is not insulted
+		    // (and the flag now gets reset when Klein calms down)
 		    && Game_Flag_Query(kFlagPS07KleinInsulted)
-			// this is redundant now because we return in the added code above if Klein is not in the current set
+		    // this is redundant now because we return in the added code above if Klein is not in the current set
 		    && Actor_Query_Is_In_Current_Set(kActorKlein)
 #endif
 		) {
@@ -242,7 +222,7 @@ void AIScriptKlein::CompletedMovementTrack() {
 			}
 			Actor_Set_Goal_Number(kActorKlein, kGoalKleinDefault);
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
+#endif          // BLADERUNNER_ORIGINAL_BUGS
 		return; // true;
 	}
 	// return false;
@@ -292,7 +272,7 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
 	case kGoalKleinMovingInLab01:
 		AI_Movement_Track_Flush(kActorKlein);
-		AI_Movement_Track_Append(kActorKlein, 73, Random_Query(3, 20));  // kSetPS07
+		AI_Movement_Track_Append(kActorKlein, 73, Random_Query(3, 20)); // kSetPS07
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
 	case kGoalKleinMovingInLab02:
@@ -302,7 +282,7 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 	case kGoalKleinGotoLabSpeaker:
 		AI_Movement_Track_Flush(kActorKlein);
-		AI_Movement_Track_Append(kActorKlein, 31, 3);  // kSetPS07
+		AI_Movement_Track_Append(kActorKlein, 31, 3); // kSetPS07
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
 	case kGoalKleinIsAnnoyedByMcCoyPreInit:
@@ -310,7 +290,7 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 	case kGoalKleinIsAnnoyedByMcCoyInit:
 		AI_Movement_Track_Flush(kActorKlein);
-		AI_Movement_Track_Append(kActorKlein, 32, 5);  // kSetPS07 (hidden spot)
+		AI_Movement_Track_Append(kActorKlein, 32, 5); // kSetPS07 (hidden spot)
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
 	case kGoalKleinIsAnnoyedByMcCoy01:
@@ -325,7 +305,7 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 	case kGoalKleinIsAnnoyedByMcCoy02:
 		AI_Movement_Track_Flush(kActorKlein);
-		AI_Movement_Track_Append(kActorKlein, 32, 5);  // kSetPS07 (hidden spot)
+		AI_Movement_Track_Append(kActorKlein, 32, 5); // kSetPS07 (hidden spot)
 		AI_Movement_Track_Repeat(kActorKlein);
 		break;
 	case kGoalKleinIsAnnoyedByMcCoyFinal:
@@ -342,7 +322,7 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalKleinAwayAtEndOfActOne:
 		AI_Movement_Track_Flush(kActorKlein);
 		Actor_Put_In_Set(kActorKlein, kSetFreeSlotC);
-		Actor_Set_At_Waypoint(kActorKlein, 35, 0);    //  kSetFreeSlotC
+		Actor_Set_At_Waypoint(kActorKlein, 35, 0); //  kSetFreeSlotC
 		break;
 	}
 	return false;
@@ -351,17 +331,13 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (Actor_Query_Goal_Number(kActorKlein) == kGoalKleinMovingInLab01
-		    || Actor_Query_Goal_Number(kActorKlein) == kGoalKleinMovingInLab02
-		) {
+		if (Actor_Query_Goal_Number(kActorKlein) == kGoalKleinMovingInLab01 || Actor_Query_Goal_Number(kActorKlein) == kGoalKleinMovingInLab02) {
 			*animation = kModelAnimationKleinWorkingOnInstruments;
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinWorkingOnInstruments)) {
 				_animationFrame = 0;
 			}
-		} else if (!Game_Flag_Query(kFlagKleinAnimation1)
-		           && Actor_Query_Goal_Number(kActorKlein) == kGoalKleinGotoLabSpeaker
-		) {
+		} else if (!Game_Flag_Query(kFlagKleinAnimation1) && Actor_Query_Goal_Number(kActorKlein) == kGoalKleinGotoLabSpeaker) {
 			*animation = kModelAnimationKleinStandingIdle;
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinStandingIdle)) {
@@ -371,9 +347,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 				}
 			}
 		} else {
-			if (Game_Flag_Query(kFlagKleinAnimation3)
-			    && Actor_Query_Goal_Number(kActorKlein) == kGoalKleinGotoLabSpeaker
-			) {
+			if (Game_Flag_Query(kFlagKleinAnimation3) && Actor_Query_Goal_Number(kActorKlein) == kGoalKleinGotoLabSpeaker) {
 				--_animationFrame;
 				if (_animationFrame < 0) {
 					_animationFrame = 0;
@@ -458,7 +432,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 	case 7:
 		*animation = kModelAnimationKleinTalkRaisingBothHands;
 		++_animationFrame;
-		if (_animationFrame>= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkRaisingBothHands)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationKleinTalkRaisingBothHands)) {
 			_animationState = 2;
 			_animationFrame = 0;
 			*animation = kModelAnimationKleinTalkSmallLeftHandMove;
@@ -466,7 +440,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 8:
 		_animationFrame = 0;
-		*animation      = _animationNext;
+		*animation = _animationNext;
 		_animationState = _animationStateNext;
 		break;
 	default:
@@ -558,17 +532,17 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptKlein::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptKlein::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptKlein::ReachedMovementTrackWaypoint(int waypointId) {

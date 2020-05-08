@@ -38,7 +38,6 @@ struct Breakpoint {
 	int file;
 };
 
-
 /* Data: */
 extern int breakpointCount;
 extern Breakpoint breakpoint[];

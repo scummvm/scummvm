@@ -29,11 +29,11 @@
 //#include "common/util.h"
 #include "decoder/wave/stream.h"
 
-#include "audiostream.h"
 #include "audio/mixer.h"
-#include "decoder/wave/wave.h"
+#include "audiostream.h"
 #include "decoder/wave/adpcm.h"
 #include "decoder/wave/raw.h"
+#include "decoder/wave/wave.h"
 
 namespace Audio {
 
@@ -76,15 +76,14 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	// 17 -> IMA ADPCM compressed WAVE
 	// See <http://www.saettler.com/RIFFNEW/RIFFNEW.htm> for a more complete
 	// list of common WAVE compression formats...
-	uint16 type = stream.readUint16LE();    // == 1 for PCM data
-	uint16 numChannels = stream.readUint16LE(); // 1 for mono, 2 for stereo
-	uint32 samplesPerSec = stream.readUint32LE();   // in Hz
-	uint32 avgBytesPerSec = stream.readUint32LE();  // == SampleRate * NumChannels * BitsPerSample/8
+	uint16 type = stream.readUint16LE();           // == 1 for PCM data
+	uint16 numChannels = stream.readUint16LE();    // 1 for mono, 2 for stereo
+	uint32 samplesPerSec = stream.readUint32LE();  // in Hz
+	uint32 avgBytesPerSec = stream.readUint32LE(); // == SampleRate * NumChannels * BitsPerSample/8
 
-	uint16 blockAlign = stream.readUint16LE();  // == NumChannels * BitsPerSample/8
-	uint16 bitsPerSample = stream.readUint16LE();   // 8, 16 ...
+	uint16 blockAlign = stream.readUint16LE();    // == NumChannels * BitsPerSample/8
+	uint16 bitsPerSample = stream.readUint16LE(); // 8, 16 ...
 	// 8 bit data is unsigned, 16 bit data signed
-
 
 	if (wavType != 0)
 		*wavType = type;
@@ -109,20 +108,20 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	}
 
 	if (blockAlign != numChannels * bitsPerSample / 8 && type != 2) {
-		DEBUG(0, LEVEL_DEBUGGING , 0, "getWavInfo: blockAlign is invalid");
+		DEBUG(0, LEVEL_DEBUGGING, 0, "getWavInfo: blockAlign is invalid");
 	}
 
 	if (avgBytesPerSec != samplesPerSec * blockAlign && type != 2) {
-		DEBUG(0, LEVEL_DEBUGGING , 0, "getWavInfo: avgBytesPerSec is invalid");
+		DEBUG(0, LEVEL_DEBUGGING, 0, "getWavInfo: avgBytesPerSec is invalid");
 	}
 
 	// Prepare the return values.
 	rate = samplesPerSec;
 
 	flags = 0;
-	if (bitsPerSample == 8)     // 8 bit data is unsigned
+	if (bitsPerSample == 8) // 8 bit data is unsigned
 		flags |= Audio::FLAG_UNSIGNED;
-	else if (bitsPerSample == 16)   // 16 bit data is signed little endian
+	else if (bitsPerSample == 16) // 16 bit data is signed little endian
 		flags |= (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 	else if (bitsPerSample == 4 && (type == 2 || type == 17))
 		flags |= Audio::FLAG_16BITS;

@@ -23,8 +23,8 @@
 #ifndef ULTIMA_STR_H
 #define ULTIMA_STR_H
 
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Shared {

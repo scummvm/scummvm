@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/file.h"
-#include "common/util.h"
-#include "common/savefile.h"
-#include "common/events.h"
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/memstream.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/memstream.h"
+#include "common/util.h"
 
 #include "graphics/palette.h"
 #include "graphics/thumbnail.h"
@@ -40,11 +40,11 @@
 #include "sword1/music.h"
 #include "sword1/objectman.h"
 #include "sword1/resman.h"
+#include "sword1/screen.h"
 #include "sword1/sound.h"
 #include "sword1/sword1.h"
 #include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
-#include "sword1/screen.h"
 
 namespace Sword1 {
 
@@ -82,7 +82,7 @@ enum ButtonIds {
 	BUTTON_VOLUME_PANEL,
 	BUTTON_TEXT,
 	BUTTON_CONFIRM,
-//-
+	//-
 	BUTTON_SCROLL_UP_FAST,
 	BUTTON_SCROLL_UP_SLOW,
 	BUTTON_SCROLL_DOWN_SLOW,
@@ -97,7 +97,7 @@ enum ButtonIds {
 	BUTTON_SAVE_SELECT8,
 	BUTTON_SAVE_RESTORE_OKAY,
 	BUTTON_SAVE_CANCEL,
-//-
+	//-
 	CONFIRM_OKAY,
 	CONFIRM_CANCEL
 };
@@ -662,19 +662,19 @@ void Control::handleVolumeClicks() {
 			int16 mouseOffs = (int16)sqrt((double)(mouseDiffX * mouseDiffX + mouseDiffY * mouseDiffY));
 			// check if the player really hit the button (but not the center).
 			if ((mouseOffs <= 42) && (mouseOffs >= 8)) {
-				if (mouseDiffX > 8) { // right part
+				if (mouseDiffX > 8) {    // right part
 					if (mouseDiffY < -8) // upper right
 						clickDest = 2;
 					else if (ABS(mouseDiffY) <= 8) // right
 						clickDest = 3;
-					else                 // lower right
+					else // lower right
 						clickDest = 4;
 				} else if (mouseDiffX < -8) { // left part
-					if (mouseDiffY < -8) // upper left
+					if (mouseDiffY < -8)      // upper left
 						clickDest = 8;
 					else if (ABS(mouseDiffY) <= 8) // left
 						clickDest = 7;
-					else                 // lower left
+					else // lower left
 						clickDest = 6;
 				} else { // middle
 					if (mouseDiffY < -8)
@@ -780,9 +780,9 @@ bool Control::getConfirm(const uint8 *title) {
 bool Control::keyAccepted(uint16 ascii) {
 	static const char allowedSpecials[] = ",.:-()?! \"\'";
 	if (((ascii >= 'A') && (ascii <= 'Z')) ||
-	        ((ascii >= 'a') && (ascii <= 'z')) ||
-	        ((ascii >= '0') && (ascii <= '9')) ||
-	        strchr(allowedSpecials, ascii))
+	    ((ascii >= 'a') && (ascii <= 'z')) ||
+	    ((ascii >= '0') && (ascii <= '9')) ||
+	    strchr(allowedSpecials, ascii))
 		return true;
 	else
 		return false;
@@ -791,7 +791,7 @@ bool Control::keyAccepted(uint16 ascii) {
 void Control::handleSaveKey(Common::KeyState kbd) {
 	if (_selectedSavegame < 255) {
 		uint8 len = _saveNames[_selectedSavegame].size();
-		if ((kbd.keycode == Common::KEYCODE_BACKSPACE) && len)  // backspace
+		if ((kbd.keycode == Common::KEYCODE_BACKSPACE) && len) // backspace
 			_saveNames[_selectedSavegame].deleteLastChar();
 		else if (kbd.ascii && keyAccepted(kbd.ascii) && (len < 31)) {
 			_saveNames[_selectedSavegame].insertChar(kbd.ascii, len);
@@ -818,7 +818,7 @@ void Control::readSavegameDescriptions() {
 	char saveName[40];
 	Common::String pattern = "sword1.???";
 	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end()); // Sort (hopefully ensuring we are sorted numerically..)
 
 	_saveNames.clear();
 
@@ -886,7 +886,8 @@ void Control::checkForOldSaveGames() {
 	GUI::MessageDialog dialog0(
 	    _("ScummVM found that you have old saved games for Broken Sword 1 that should be converted.\n"
 	      "The old saved game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
-	      "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
+	      "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"),
+	    _("OK"), _("Cancel"));
 
 	int choice = dialog0.runModal();
 	if (choice == GUI::kMessageCancel) {
@@ -913,7 +914,7 @@ void Control::checkForOldSaveGames() {
 			}
 		} while ((ch != 10) && (ch != 255) && (!inf->eos()));
 
-		if (pos > 1)    // if the slot has a description
+		if (pos > 1) // if the slot has a description
 			convertSaveGame(slot, (char *)saveName);
 		slot++;
 	} while ((ch != 255) && (!inf->eos()));
@@ -937,7 +938,7 @@ void Control::showSavegameNames() {
 				savegameNameStr += "_";
 			}
 		}
-		renderText((const uint8*)savegameNameStr.c_str(), _saveButtons[cnt].x + 6, ycoord, textMode);
+		renderText((const uint8 *)savegameNameStr.c_str(), _saveButtons[cnt].x + 6, ycoord, textMode);
 	}
 }
 
@@ -1192,7 +1193,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		return false;
 	}
 
-	inf->skip(40);      // skip description
+	inf->skip(40); // skip description
 	uint8 saveVersion = inf->readByte();
 
 	if (saveVersion > SAVEGAME_VERSION) {
@@ -1205,8 +1206,8 @@ bool Control::restoreGameFromFile(uint8 slot) {
 
 	Graphics::skipThumbnail(*inf);
 
-	inf->readUint32BE();    // save date
-	inf->readUint16BE();    // save time
+	inf->readUint32BE(); // save date
+	inf->readUint16BE(); // save time
 
 	if (saveVersion < 2) { // Before version 2 we didn't had play time feature
 		g_engine->setTotalPlayTime(0);
@@ -1215,9 +1216,9 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	}
 
 	_restoreBuf = (uint8 *)malloc(
-	                  TOTAL_SECTIONS * 2 +
-	                  NUM_SCRIPT_VARS * 4 +
-	                  (sizeof(Object) - 12000));
+	    TOTAL_SECTIONS * 2 +
+	    NUM_SCRIPT_VARS * 4 +
+	    (sizeof(Object) - 12000));
 
 	uint16 *liveBuf = (uint16 *)_restoreBuf;
 	uint32 *scriptBuf = (uint32 *)(_restoreBuf + 2 * TOTAL_SECTIONS);
@@ -1259,8 +1260,8 @@ bool Control::convertSaveGame(uint8 slot, char *desc) {
 		delete testSave;
 
 		Common::String msg = Common::String::format(_("Target new saved game already exists!\n"
-		                     "Would you like to keep the old saved game (%s) or the new one (%s)?\n"),
-		                     oldFileName, newFileName);
+		                                              "Would you like to keep the old saved game (%s) or the new one (%s)?\n"),
+		                                            oldFileName, newFileName);
 		GUI::MessageDialog dialog0(msg, _("Keep the old one"), _("Keep the new one"));
 
 		int choice = dialog0.runModal();
@@ -1403,45 +1404,42 @@ void Control::delay(uint32 msecs) {
 }
 
 const ButtonInfo Control::_deathButtons[3] = {
-	{250, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL, 0 },
-	{250, 260 + 40, SR_BUTTON, BUTTON_RESTART, kButtonOk },
-	{250, 296 + 40, SR_BUTTON, BUTTON_QUIT, kButtonCancel }
-};
+    {250, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL, 0},
+    {250, 260 + 40, SR_BUTTON, BUTTON_RESTART, kButtonOk},
+    {250, 296 + 40, SR_BUTTON, BUTTON_QUIT, kButtonCancel}};
 
 const ButtonInfo Control::_panelButtons[7] = {
-	{145, 188 + 40, SR_BUTTON, BUTTON_SAVE_PANEL, 0 },
-	{145, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL, 0 },
-	{145, 260 + 40, SR_BUTTON, BUTTON_RESTART, 0 },
-	{145, 296 + 40, SR_BUTTON, BUTTON_QUIT, kButtonCancel },
-	{475, 188 + 40, SR_BUTTON, BUTTON_VOLUME_PANEL, 0 },
-	{475, 224 + 40, SR_TEXT_BUTTON, BUTTON_TEXT, 0 },
-	{475, 332 + 40, SR_BUTTON, BUTTON_DONE, kButtonOk }
-};
+    {145, 188 + 40, SR_BUTTON, BUTTON_SAVE_PANEL, 0},
+    {145, 224 + 40, SR_BUTTON, BUTTON_RESTORE_PANEL, 0},
+    {145, 260 + 40, SR_BUTTON, BUTTON_RESTART, 0},
+    {145, 296 + 40, SR_BUTTON, BUTTON_QUIT, kButtonCancel},
+    {475, 188 + 40, SR_BUTTON, BUTTON_VOLUME_PANEL, 0},
+    {475, 224 + 40, SR_TEXT_BUTTON, BUTTON_TEXT, 0},
+    {475, 332 + 40, SR_BUTTON, BUTTON_DONE, kButtonOk}};
 
 const ButtonInfo Control::_saveButtons[16] = {
-	{114,  32 + 40, SR_SLAB1, BUTTON_SAVE_SELECT1, 0 },
-	{114,  68 + 40, SR_SLAB2, BUTTON_SAVE_SELECT2, 0 },
-	{114, 104 + 40, SR_SLAB3, BUTTON_SAVE_SELECT3, 0 },
-	{114, 140 + 40, SR_SLAB4, BUTTON_SAVE_SELECT4, 0 },
-	{114, 176 + 40, SR_SLAB1, BUTTON_SAVE_SELECT5, 0 },
-	{114, 212 + 40, SR_SLAB2, BUTTON_SAVE_SELECT6, 0 },
-	{114, 248 + 40, SR_SLAB3, BUTTON_SAVE_SELECT7, 0 },
-	{114, 284 + 40, SR_SLAB4, BUTTON_SAVE_SELECT8, 0 },
+    {114, 32 + 40, SR_SLAB1, BUTTON_SAVE_SELECT1, 0},
+    {114, 68 + 40, SR_SLAB2, BUTTON_SAVE_SELECT2, 0},
+    {114, 104 + 40, SR_SLAB3, BUTTON_SAVE_SELECT3, 0},
+    {114, 140 + 40, SR_SLAB4, BUTTON_SAVE_SELECT4, 0},
+    {114, 176 + 40, SR_SLAB1, BUTTON_SAVE_SELECT5, 0},
+    {114, 212 + 40, SR_SLAB2, BUTTON_SAVE_SELECT6, 0},
+    {114, 248 + 40, SR_SLAB3, BUTTON_SAVE_SELECT7, 0},
+    {114, 284 + 40, SR_SLAB4, BUTTON_SAVE_SELECT8, 0},
 
-	{516,  25 + 40, SR_BUTUF, BUTTON_SCROLL_UP_FAST, 0 },
-	{516,  45 + 40, SR_BUTUS, BUTTON_SCROLL_UP_SLOW, 0 },
-	{516, 289 + 40, SR_BUTDS, BUTTON_SCROLL_DOWN_SLOW, 0 },
-	{516, 310 + 40, SR_BUTDF, BUTTON_SCROLL_DOWN_FAST, 0 },
+    {516, 25 + 40, SR_BUTUF, BUTTON_SCROLL_UP_FAST, 0},
+    {516, 45 + 40, SR_BUTUS, BUTTON_SCROLL_UP_SLOW, 0},
+    {516, 289 + 40, SR_BUTDS, BUTTON_SCROLL_DOWN_SLOW, 0},
+    {516, 310 + 40, SR_BUTDF, BUTTON_SCROLL_DOWN_FAST, 0},
 
-	{125, 338 + 40, SR_BUTTON, BUTTON_SAVE_RESTORE_OKAY, kButtonOk},
-	{462, 338 + 40, SR_BUTTON, BUTTON_SAVE_CANCEL, kButtonCancel }
-};
+    {125, 338 + 40, SR_BUTTON, BUTTON_SAVE_RESTORE_OKAY, kButtonOk},
+    {462, 338 + 40, SR_BUTTON, BUTTON_SAVE_CANCEL, kButtonCancel}};
 
 const ButtonInfo Control::_volumeButtons[4] = {
-	{ 478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL, kButtonOk },
-	{ 138, 135, SR_VKNOB, 0, 0 },
-	{ 273, 135, SR_VKNOB, 0, 0 },
-	{ 404, 135, SR_VKNOB, 0, 0 },
+    {478, 338 + 40, SR_BUTTON, BUTTON_MAIN_PANEL, kButtonOk},
+    {138, 135, SR_VKNOB, 0, 0},
+    {273, 135, SR_VKNOB, 0, 0},
+    {404, 135, SR_VKNOB, 0, 0},
 };
 
 bool Control::loadCustomStrings(const char *filename) {
@@ -1456,8 +1454,8 @@ bool Control::loadCustomStrings(const char *filename) {
 			if (f.eos())
 				return false;
 
-			memset((void*)_customStrings[lineNo], 0, 43);
-			strncpy((char*)_customStrings[lineNo], line.c_str(), 42);
+			memset((void *)_customStrings[lineNo], 0, 43);
+			strncpy((char *)_customStrings[lineNo], line.c_str(), 42);
 		}
 		return true;
 	}
@@ -1465,153 +1463,154 @@ bool Control::loadCustomStrings(const char *filename) {
 }
 
 const uint8 Control::_languageStrings[8 * 20][43] = {
-	// BS1_ENGLISH:
-	"PAUSED",
-	"PLEASE INSERT CD-",
-	"THEN PRESS A KEY",
-	"INCORRECT CD",
-	"Save",
-	"Restore",
-	"Restart",
-	"Start",
-	"Quit",
-	"Speed",
-	"Volume",
-	"Text",
-	"Done",
-	"OK",
-	"Cancel",
-	"Music",
-	"Speech",
-	"Fx",
-	"The End",
-	"DRIVE FULL!",
-// BS1_FRENCH:
-	"PAUSE",
-	"INS\xC9REZ LE CD-",
-	"ET APPUYES SUR UNE TOUCHE",
-	"CD INCORRECT",
-	"Sauvegarder",
-	"Recharger",
-	"Recommencer",
-	"Commencer",
-	"Quitter",
-	"Vitesse",
-	"Volume",
-	"Texte",
-	"Termin\xE9",
-	"OK",
-	"Annuler",
-	"Musique",
-	"Voix",
-	"Fx",
-	"Fin",
-	"DISQUE PLEIN!",
-//BS1_GERMAN:
-	"PAUSE",
-	"BITTE LEGEN SIE CD-",
-	"EIN UND DR\xDC""CKEN SIE EINE BELIEBIGE TASTE",
-	"FALSCHE CD",
-	"Speichern",
-	"Laden",
-	"Neues Spiel",
-	"Start",
-	"Beenden",
-	"Geschwindigkeit",
-	"Lautst\xE4rke",
-	"Text",
-	"Fertig",
-	"OK",
-	"Abbrechen",
-	"Musik",
-	"Sprache",
-	"Fx",
-	"Ende",
-	"DRIVE FULL!",
-//BS1_ITALIAN:
-	"PAUSA",
-	"INSERITE IL CD-",
-	"E PREMETE UN TASTO",
-	"CD ERRATO",
-	"Salva",
-	"Ripristina",
-	"Ricomincia",
-	"Inizio",
-	"Esci",
-	"Velocit\xE0",
-	"Volume",
-	"Testo",
-	"Fatto",
-	"OK",
-	"Annulla",
-	"Musica",
-	"Parlato",
-	"Fx",
-	"Fine",
-	"DISCO PIENO!",
-//BS1_SPANISH:
-	"PAUSA",
-	"POR FAVOR INTRODUCE EL CD-",
-	"Y PULSA UNA TECLA",
-	"CD INCORRECTO",
-	"Guardar",
-	"Recuperar",
-	"Reiniciar",
-	"Empezar",
-	"Abandonar",
-	"Velocidad",
-	"Volumen",
-	"Texto",
-	"Hecho",
-	"OK",
-	"Cancelar",
-	"M\xFAsica",
-	"Di\xE1logo",
-	"Fx",
-	"Fin",
-	"DISCO LLENO",
-// BS1_CZECH:
-	"\xAC\x41S SE ZASTAVIL",
-	"VLO\xA6TE DO MECHANIKY CD DISK",
-	"PAK STISKN\xB7TE LIBOVOLNOU KL\xB5VESU",
-	"TO NEBUDE TO SPR\xB5VN\x90 CD",
-	"Ulo\xA7it pozici",
-	"Nahr\xA0t pozici",
-	"Za\x9F\xA1t znovu",
-	"Start",
-	"Ukon\x9Fit hru",
-	"Rychlost",
-	"Hlasitost",
-	"Titulky",
-	"Souhlas\xA1m",
-	"Ano",
-	"Ne",
-	"Hudba",
-	"Mluven, slovo",
-	"Zvuky",
-	"Konec",
-	"Disk pln\xEC",
-//BS1_PORTUGESE:
-	"PAUSA",
-	"FAVOR INSERIR CD",
-	"E DIGITAR UMA TECLA",
-	"CD INCORRETO",
-	"Salvar",
-	"Restaurar",
-	"Reiniciar",
-	"Iniciar",
-	"Sair",
-	"Velocidade",
-	"Volume",
-	"Texto",
-	"Feito",
-	"OK",
-	"Cancelar",
-	"M\xFAsica",
-	"Voz",
-	"Efeitos",
-	"Fim",
-	"UNIDADE CHEIA!",
+    // BS1_ENGLISH:
+    "PAUSED",
+    "PLEASE INSERT CD-",
+    "THEN PRESS A KEY",
+    "INCORRECT CD",
+    "Save",
+    "Restore",
+    "Restart",
+    "Start",
+    "Quit",
+    "Speed",
+    "Volume",
+    "Text",
+    "Done",
+    "OK",
+    "Cancel",
+    "Music",
+    "Speech",
+    "Fx",
+    "The End",
+    "DRIVE FULL!",
+    // BS1_FRENCH:
+    "PAUSE",
+    "INS\xC9REZ LE CD-",
+    "ET APPUYES SUR UNE TOUCHE",
+    "CD INCORRECT",
+    "Sauvegarder",
+    "Recharger",
+    "Recommencer",
+    "Commencer",
+    "Quitter",
+    "Vitesse",
+    "Volume",
+    "Texte",
+    "Termin\xE9",
+    "OK",
+    "Annuler",
+    "Musique",
+    "Voix",
+    "Fx",
+    "Fin",
+    "DISQUE PLEIN!",
+    //BS1_GERMAN:
+    "PAUSE",
+    "BITTE LEGEN SIE CD-",
+    "EIN UND DR\xDC"
+    "CKEN SIE EINE BELIEBIGE TASTE",
+    "FALSCHE CD",
+    "Speichern",
+    "Laden",
+    "Neues Spiel",
+    "Start",
+    "Beenden",
+    "Geschwindigkeit",
+    "Lautst\xE4rke",
+    "Text",
+    "Fertig",
+    "OK",
+    "Abbrechen",
+    "Musik",
+    "Sprache",
+    "Fx",
+    "Ende",
+    "DRIVE FULL!",
+    //BS1_ITALIAN:
+    "PAUSA",
+    "INSERITE IL CD-",
+    "E PREMETE UN TASTO",
+    "CD ERRATO",
+    "Salva",
+    "Ripristina",
+    "Ricomincia",
+    "Inizio",
+    "Esci",
+    "Velocit\xE0",
+    "Volume",
+    "Testo",
+    "Fatto",
+    "OK",
+    "Annulla",
+    "Musica",
+    "Parlato",
+    "Fx",
+    "Fine",
+    "DISCO PIENO!",
+    //BS1_SPANISH:
+    "PAUSA",
+    "POR FAVOR INTRODUCE EL CD-",
+    "Y PULSA UNA TECLA",
+    "CD INCORRECTO",
+    "Guardar",
+    "Recuperar",
+    "Reiniciar",
+    "Empezar",
+    "Abandonar",
+    "Velocidad",
+    "Volumen",
+    "Texto",
+    "Hecho",
+    "OK",
+    "Cancelar",
+    "M\xFAsica",
+    "Di\xE1logo",
+    "Fx",
+    "Fin",
+    "DISCO LLENO",
+    // BS1_CZECH:
+    "\xAC\x41S SE ZASTAVIL",
+    "VLO\xA6TE DO MECHANIKY CD DISK",
+    "PAK STISKN\xB7TE LIBOVOLNOU KL\xB5VESU",
+    "TO NEBUDE TO SPR\xB5VN\x90 CD",
+    "Ulo\xA7it pozici",
+    "Nahr\xA0t pozici",
+    "Za\x9F\xA1t znovu",
+    "Start",
+    "Ukon\x9Fit hru",
+    "Rychlost",
+    "Hlasitost",
+    "Titulky",
+    "Souhlas\xA1m",
+    "Ano",
+    "Ne",
+    "Hudba",
+    "Mluven, slovo",
+    "Zvuky",
+    "Konec",
+    "Disk pln\xEC",
+    //BS1_PORTUGESE:
+    "PAUSA",
+    "FAVOR INSERIR CD",
+    "E DIGITAR UMA TECLA",
+    "CD INCORRETO",
+    "Salvar",
+    "Restaurar",
+    "Reiniciar",
+    "Iniciar",
+    "Sair",
+    "Velocidade",
+    "Volume",
+    "Texto",
+    "Feito",
+    "OK",
+    "Cancelar",
+    "M\xFAsica",
+    "Voz",
+    "Efeitos",
+    "Fim",
+    "UNIDADE CHEIA!",
 };
 
 } // End of namespace Sword1

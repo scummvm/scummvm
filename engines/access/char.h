@@ -23,9 +23,9 @@
 #ifndef ACCESS_CHAR_H
 #define ACCESS_CHAR_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
 #include "access/data.h"
+#include "common/array.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -40,6 +40,7 @@ public:
 	FileIdent _animFile;
 	FileIdent _scriptFile;
 	Common::Array<ExtraCell> _extraCells;
+
 public:
 	CharEntry(const byte *data, AccessEngine *vm);
 
@@ -49,6 +50,7 @@ public:
 class CharManager : public Manager {
 private:
 	void charMenu();
+
 public:
 	Common::Array<CharEntry> _charTable;
 	int _charFlag;

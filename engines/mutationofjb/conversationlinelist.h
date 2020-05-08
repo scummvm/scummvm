@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_CONVERSATIONLINELIST_H
 #define MUTATIONOFJB_CONVERSATIONLINELIST_H
 
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 
@@ -60,6 +60,6 @@ private:
 	Common::Array<Line> _lines;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

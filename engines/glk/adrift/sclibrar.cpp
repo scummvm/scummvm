@@ -21,8 +21,8 @@
  */
 
 #include "glk/adrift/adrift.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 #include "glk/adrift/serialization.h"
 
 namespace Glk {
@@ -51,7 +51,6 @@ enum { LIB_ALLOCATION_AVOIDANCE_SIZE = 128 };
 /* Trace flag, set before running. */
 static sc_bool lib_trace = FALSE;
 
-
 /*
  * lib_warn_battle_system()
  *
@@ -79,7 +78,6 @@ void lib_warn_battle_system(void) {
 	if_print_tag(SC_TAG_WAITKEY, "");
 }
 
-
 /*
  * lib_random_roomgroup_member()
  *
@@ -97,7 +95,8 @@ sc_int lib_random_roomgroup_member(sc_gameref_t game, sc_int roomgroup) {
 	count = prop_get_child_count(bundle, "I<-sis", vt_key);
 	if (count == 0) {
 		sc_fatal("lib_random_roomgroup_member:"
-		         " no rooms in group %ld\n", roomgroup);
+		         " no rooms in group %ld\n",
+		         roomgroup);
 	}
 
 	/* Pick a room at random and return it. */
@@ -111,7 +110,6 @@ sc_int lib_random_roomgroup_member(sc_gameref_t game, sc_int roomgroup) {
 
 	return room;
 }
-
 
 /*
  * lib_use_room_alt()
@@ -135,12 +133,12 @@ static sc_bool lib_use_room_alt(sc_gameref_t game, sc_int room, sc_int alt) {
 	/* Select based on type. */
 	retval = FALSE;
 	switch (type) {
-	case 0: {                  /* Task. */
+	case 0: { /* Task. */
 		sc_int var2, var3;
 
 		vt_key[4].string = "Var2";
 		var2 = prop_get_integer(bundle, "I<-sisis", vt_key);
-		if (var2 == 0)          /* No task. */
+		if (var2 == 0) /* No task. */
 			retval = TRUE;
 		else {
 			vt_key[4].string = "Var3";
@@ -151,12 +149,12 @@ static sc_bool lib_use_room_alt(sc_gameref_t game, sc_int room, sc_int alt) {
 		break;
 	}
 
-	case 1: {                  /* Stateful object. */
+	case 1: { /* Stateful object. */
 		sc_int var2, var3, object;
 
 		vt_key[4].string = "Var2";
 		var2 = prop_get_integer(bundle, "I<-sisis", vt_key);
-		if (var2 == 0)          /* No object. */
+		if (var2 == 0) /* No object. */
 			retval = TRUE;
 		else {
 			vt_key[4].string = "Var3";
@@ -168,7 +166,7 @@ static sc_bool lib_use_room_alt(sc_gameref_t game, sc_int room, sc_int alt) {
 		break;
 	}
 
-	case 2: {                  /* Player condition. */
+	case 2: { /* Player condition. */
 		sc_int var2, var3, object;
 
 		vt_key[4].string = "Var2";
@@ -190,7 +188,8 @@ static sc_bool lib_use_room_alt(sc_gameref_t game, sc_int room, sc_int alt) {
 				break;
 			default:
 				sc_fatal("lib_use_room_alt:"
-				         " invalid player condition, %ld\n", var2);
+				         " invalid player condition, %ld\n",
+				         var2);
 			}
 			break;
 		}
@@ -201,31 +200,30 @@ static sc_bool lib_use_room_alt(sc_gameref_t game, sc_int room, sc_int alt) {
 			object = obj_dynamic_object(game, var3 - 1);
 
 		switch (var2) {
-		case 0:              /* Isn't holding (or wearing). */
-			retval = gs_object_position(game, object) != OBJ_HELD_PLAYER
-			         && gs_object_position(game, object) != OBJ_WORN_PLAYER;
+		case 0: /* Isn't holding (or wearing). */
+			retval = gs_object_position(game, object) != OBJ_HELD_PLAYER && gs_object_position(game, object) != OBJ_WORN_PLAYER;
 			break;
-		case 1:              /* Is holding (or wearing). */
-			retval = gs_object_position(game, object) == OBJ_HELD_PLAYER
-			         || gs_object_position(game, object) == OBJ_WORN_PLAYER;
+		case 1: /* Is holding (or wearing). */
+			retval = gs_object_position(game, object) == OBJ_HELD_PLAYER || gs_object_position(game, object) == OBJ_WORN_PLAYER;
 			break;
-		case 2:              /* Isn't wearing. */
+		case 2: /* Isn't wearing. */
 			retval = gs_object_position(game, object) != OBJ_WORN_PLAYER;
 			break;
-		case 3:              /* Is wearing. */
+		case 3: /* Is wearing. */
 			retval = gs_object_position(game, object) == OBJ_WORN_PLAYER;
 			break;
-		case 4:              /* Isn't in the same room as. */
+		case 4: /* Isn't in the same room as. */
 			retval = !obj_indirectly_in_room(game,
 			                                 object, gs_playerroom(game));
 			break;
-		case 5:              /* Is in the same room as. */
+		case 5: /* Is in the same room as. */
 			retval = obj_indirectly_in_room(game,
 			                                object, gs_playerroom(game));
 			break;
 		default:
 			sc_fatal("lib_use_room_alt:"
-			         " invalid player condition, %ld\n", var2);
+			         " invalid player condition, %ld\n",
+			         var2);
 		}
 		break;
 	}
@@ -236,7 +234,6 @@ static sc_bool lib_use_room_alt(sc_gameref_t game, sc_int room, sc_int alt) {
 
 	return retval;
 }
-
 
 /*
  * lib_find_starting_alt()
@@ -294,7 +291,6 @@ static sc_int lib_find_starting_alt(sc_gameref_t game, sc_int room) {
 	/* Return the index of the base alt, or -1 if none found. */
 	return retval;
 }
-
 
 /*
  * lib_get_room_name()
@@ -367,7 +363,6 @@ void lib_print_room_name(sc_gameref_t game, sc_int room) {
 		pf_buffer_string(filter, name);
 	pf_buffer_character(filter, '\n');
 }
-
 
 /*
  * lib_print_object_np
@@ -468,7 +463,6 @@ static void lib_print_object(sc_gameref_t game, sc_int object) {
 	pf_buffer_string(filter, name);
 }
 
-
 /*
  * lib_print_npc_np
  * lib_print_npc
@@ -513,7 +507,6 @@ static void lib_print_npc(sc_gameref_t game, sc_int npc) {
 }
 #endif
 
-
 /*
  * lib_select_response()
  * lib_select_plurality()
@@ -522,7 +515,7 @@ static void lib_print_npc(sc_gameref_t game, sc_int npc) {
  * response string for a game, based on perspective or object plurality.
  */
 static const sc_char *lib_select_response(sc_gameref_t game,
-		const sc_char *second_person, const sc_char *first_person, const sc_char *third_person) {
+                                          const sc_char *second_person, const sc_char *first_person, const sc_char *third_person) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
 	sc_int perspective;
@@ -544,7 +537,8 @@ static const sc_char *lib_select_response(sc_gameref_t game,
 		break;
 	default:
 		sc_error("lib_select_response:"
-		         " unknown perspective, %ld\n", perspective);
+		         " unknown perspective, %ld\n",
+		         perspective);
 		response = second_person;
 		break;
 	}
@@ -553,10 +547,9 @@ static const sc_char *lib_select_response(sc_gameref_t game,
 }
 
 static const sc_char *lib_select_plurality(sc_gameref_t game, sc_int object,
-		const sc_char *singular, const sc_char *plural) {
+                                           const sc_char *singular, const sc_char *plural) {
 	return obj_appears_plural(game, object) ? plural : singular;
 }
-
 
 /*
  * lib_get_npc_inroom_text()
@@ -597,7 +590,6 @@ static const sc_char *lib_get_npc_inroom_text(sc_gameref_t game, sc_int npc) {
 	return inroomtext;
 }
 
-
 /*
  * lib_print_room_contents()
  *
@@ -612,8 +604,7 @@ static void lib_print_room_contents(sc_gameref_t game, sc_int room) {
 	/* List all objects that show their initial description. */
 	count = 0;
 	for (object = 0; object < gs_object_count(game); object++) {
-		if (obj_directly_in_room(game, object, room)
-		        && obj_shows_initial_description(game, object)) {
+		if (obj_directly_in_room(game, object, room) && obj_shows_initial_description(game, object)) {
 			const sc_char *inroomdesc;
 
 			/* Find and print in room description. */
@@ -653,8 +644,7 @@ static void lib_print_room_contents(sc_gameref_t game, sc_int room) {
 			vt_key[2].string = "InRoomDesc";
 			inroomdesc = prop_get_string(bundle, "S<-sis", vt_key);
 
-			if (!obj_shows_initial_description(game, object)
-			        || sc_strempty(inroomdesc)) {
+			if (!obj_shows_initial_description(game, object) || sc_strempty(inroomdesc)) {
 				sc_bool listflag;
 
 				vt_key[2].string = "ListFlag";
@@ -753,7 +743,6 @@ static void lib_print_room_contents(sc_gameref_t game, sc_int room) {
 		pf_buffer_string(filter, ".\n");
 	}
 }
-
 
 /*
  * lib_print_room_description()
@@ -869,8 +858,7 @@ void lib_print_room_description(sc_gameref_t game, sc_int room) {
 
 	/* Print out any relevant event look text. */
 	for (event = 0; event < gs_event_count(game); event++) {
-		if (gs_event_state(game, event) == ES_RUNNING
-		        && evt_can_see_event(game, event)) {
+		if (gs_event_state(game, event) == ES_RUNNING && evt_can_see_event(game, event)) {
 			const sc_char *looktext;
 
 			vt_key[0].string = "Events";
@@ -894,7 +882,6 @@ void lib_print_room_description(sc_gameref_t game, sc_int room) {
 	if (showobjects)
 		lib_print_room_contents(game, room);
 }
-
 
 /*
  * lib_can_go()
@@ -926,7 +913,7 @@ static sc_bool lib_can_go(sc_gameref_t game, sc_int room, sc_int direction) {
 		vt_key[4].string = "Var3";
 		type = prop_get_integer(bundle, "I<-sisis", vt_key);
 		switch (type) {
-		case 0: {              /* Task type restriction */
+		case 0: { /* Task type restriction */
 			sc_int check;
 
 			/* Get the expected completion state. */
@@ -944,7 +931,7 @@ static sc_bool lib_can_go(sc_gameref_t game, sc_int room, sc_int direction) {
 			break;
 		}
 
-		case 1: {              /* Object state restriction */
+		case 1: { /* Object state restriction */
 			sc_int object, check, openable;
 
 			/* Get the target object. */
@@ -1004,18 +991,14 @@ static sc_bool lib_can_go(sc_gameref_t game, sc_int room, sc_int direction) {
 	return !is_restricted;
 }
 
-
 /* List of direction names, for printing and counting exits. */
 static const sc_char *const DIRNAMES_4[] = {
-	"north", "east", "south", "west", "up", "down", "in", "out",
-	NULL
-};
+    "north", "east", "south", "west", "up", "down", "in", "out",
+    NULL};
 static const sc_char *const DIRNAMES_8[] = {
-	"north", "east", "south", "west", "up", "down", "in", "out",
-	"northeast", "southeast", "southwest", "northwest",
-	NULL
-};
-
+    "north", "east", "south", "west", "up", "down", "in", "out",
+    "northeast", "southeast", "southwest", "northwest",
+    NULL};
 
 /*
  * lib_cmd_print_room_exits()
@@ -1046,8 +1029,7 @@ sc_bool lib_cmd_print_room_exits(sc_gameref_t game) {
 		vt_key[1].integer = gs_playerroom(game);
 		vt_key[2].string = "Exits";
 		vt_key[3].integer = index_;
-		if (prop_get(bundle, "I<-sisi", &vt_rvalue, vt_key)
-		        && lib_can_go(game, gs_playerroom(game), index_)) {
+		if (prop_get(bundle, "I<-sisi", &vt_rvalue, vt_key) && lib_can_go(game, gs_playerroom(game), index_)) {
 			if (count > 0) {
 				if (count == 1) {
 					/* Vary text slightly for DispFirstRoom. */
@@ -1093,7 +1075,6 @@ sc_bool lib_cmd_print_room_exits(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_describe_player_room()
  *
@@ -1109,8 +1090,7 @@ static void lib_describe_player_room(sc_gameref_t game, sc_bool force_verbose) {
 	lib_print_room_name(game, gs_playerroom(game));
 
 	/* Print other room details if applicable. */
-	if (force_verbose
-	        || game->verbose || !gs_room_seen(game, gs_playerroom(game))) {
+	if (force_verbose || game->verbose || !gs_room_seen(game, gs_playerroom(game))) {
 		sc_bool showexits;
 
 		/* Print room description, and objects and NPCs. */
@@ -1127,7 +1107,6 @@ static void lib_describe_player_room(sc_gameref_t game, sc_bool force_verbose) {
 	}
 }
 
-
 /*
  * lib_cmd_look()
  *
@@ -1141,7 +1120,6 @@ sc_bool lib_cmd_look(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_quit()
  *
@@ -1154,7 +1132,6 @@ sc_bool lib_cmd_quit(sc_gameref_t game) {
 	game->is_admin = TRUE;
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_restart()
@@ -1171,7 +1148,6 @@ sc_bool lib_cmd_restart(sc_gameref_t game) {
 	game->is_admin = TRUE;
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_undo()
@@ -1216,7 +1192,6 @@ sc_bool lib_cmd_undo(sc_gameref_t game) {
 	game->is_admin = TRUE;
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_history_common()
@@ -1317,7 +1292,6 @@ sc_bool lib_cmd_history_number(sc_gameref_t game) {
 sc_bool lib_cmd_history(sc_gameref_t game) {
 	return lib_cmd_history_common(game, 0);
 }
-
 
 /*
  * lib_cmd_again()
@@ -1472,7 +1446,6 @@ sc_bool lib_cmd_redo_last(sc_gameref_t game) {
 	return lib_cmd_redo_text_last_common(game, "!");
 }
 
-
 /*
  * lib_cmd_hints()
  *
@@ -1514,7 +1487,6 @@ sc_bool lib_cmd_hints(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_print_string_bold()
  * lib_print_string_italics()
@@ -1532,7 +1504,6 @@ static void lib_print_string_italics(const sc_char *string) {
 	if_print_string(string);
 	if_print_tag(SC_TAG_ENDITALICS, "");
 }
-
 
 /*
  * lib_cmd_help()
@@ -1630,7 +1601,6 @@ sc_bool lib_cmd_license(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_information()
  *
@@ -1678,7 +1648,6 @@ sc_bool lib_cmd_information(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_clear()
  *
@@ -1692,7 +1661,6 @@ sc_bool lib_cmd_clear(sc_gameref_t game) {
 	game->is_admin = TRUE;
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_statusline()
@@ -1739,7 +1707,6 @@ sc_bool lib_cmd_statusline(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_version()
  *
@@ -1772,7 +1739,6 @@ sc_bool lib_cmd_version(sc_gameref_t game) {
 	game->is_admin = TRUE;
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_wait()
@@ -1838,7 +1804,6 @@ sc_bool lib_cmd_wait_number(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_verbose()
  * lib_cmd_brief()
@@ -1873,7 +1838,6 @@ sc_bool lib_cmd_brief(sc_gameref_t game) {
 	game->is_admin = TRUE;
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_notify_on_off()
@@ -1934,7 +1898,6 @@ sc_bool lib_cmd_notify(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_time()
  * lib_cmd_date()
@@ -1975,18 +1938,25 @@ sc_bool lib_cmd_date(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * Direction enumeration.  Used by movement commands, to multiplex them all
  * into a single function.  The values are explicit to ensure they match
  * enumerations in the game data.
  */
 enum {
-	DIR_NORTH = 0, DIR_EAST = 1, DIR_SOUTH = 2, DIR_WEST = 3,
-	DIR_UP = 4, DIR_DOWN = 5, DIR_IN = 6, DIR_OUT = 7,
-	DIR_NORTHEAST = 8, DIR_SOUTHEAST = 9, DIR_SOUTHWEST = 10, DIR_NORTHWEST = 11
+	DIR_NORTH = 0,
+	DIR_EAST = 1,
+	DIR_SOUTH = 2,
+	DIR_WEST = 3,
+	DIR_UP = 4,
+	DIR_DOWN = 5,
+	DIR_IN = 6,
+	DIR_OUT = 7,
+	DIR_NORTHEAST = 8,
+	DIR_SOUTHEAST = 9,
+	DIR_SOUTHWEST = 10,
+	DIR_NORTHWEST = 11
 };
-
 
 /*
  * lib_go()
@@ -2014,8 +1984,7 @@ static sc_bool lib_go(sc_gameref_t game, sc_int direction) {
 		vt_key[1].integer = gs_playerroom(game);
 		vt_key[2].string = "Exits";
 		vt_key[3].integer = index_;
-		if (prop_get(bundle, "I<-sisi", &vt_rvalue, vt_key)
-		        && lib_can_go(game, gs_playerroom(game), index_)) {
+		if (prop_get(bundle, "I<-sisi", &vt_rvalue, vt_key) && lib_can_go(game, gs_playerroom(game), index_)) {
 			is_exitable[index_] = TRUE;
 			is_trapped = FALSE;
 		} else
@@ -2112,7 +2081,6 @@ static sc_bool lib_go(sc_gameref_t game, sc_int direction) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_go_*()
  *
@@ -2166,7 +2134,6 @@ sc_bool lib_cmd_go_southwest(sc_gameref_t game) {
 	return lib_go(game, DIR_SOUTHWEST);
 }
 
-
 /*
  * lib_compare_rooms()
  *
@@ -2202,7 +2169,6 @@ static sc_bool lib_compare_rooms(sc_gameref_t game, sc_int room, const sc_char *
 
 	return status;
 }
-
 
 /*
  * lib_cmd_go_room()
@@ -2265,8 +2231,7 @@ sc_bool lib_cmd_go_room(sc_gameref_t game) {
 		vt_key[1].integer = gs_playerroom(game);
 		vt_key[2].string = "Exits";
 		vt_key[3].integer = index_;
-		if (prop_get(bundle, "I<-sisi", &vt_rvalue, vt_key)
-		        && lib_can_go(game, gs_playerroom(game), index_)) {
+		if (prop_get(bundle, "I<-sisi", &vt_rvalue, vt_key) && lib_can_go(game, gs_playerroom(game), index_)) {
 			is_trapped = FALSE;
 
 			/*
@@ -2280,8 +2245,7 @@ sc_bool lib_cmd_go_room(sc_gameref_t game) {
 				sc_int location;
 
 				location = vt_rvalue.integer - 1;
-				if (location != destination
-				        && lib_compare_rooms(game, location, compare_name)) {
+				if (location != destination && lib_compare_rooms(game, location, compare_name)) {
 					if (direction != -1)
 						is_ambiguous = TRUE;
 					direction = index_;
@@ -2319,7 +2283,6 @@ sc_bool lib_cmd_go_room(sc_gameref_t game) {
 
 	return lib_go(game, direction);
 }
-
 
 /*
  * lib_cmd_examine_self()
@@ -2383,8 +2346,7 @@ sc_bool lib_cmd_examine_self(sc_gameref_t game) {
 		break;
 	}
 
-	if (position
-	        && !(gs_playerposition(game) == 0 && gs_playerparent(game) == -1)) {
+	if (position && !(gs_playerposition(game) == 0 && gs_playerparent(game) == -1)) {
 		pf_buffer_string(filter, "  ");
 		pf_buffer_string(filter, position);
 		if (gs_playerparent(game) != -1) {
@@ -2432,7 +2394,6 @@ sc_bool lib_cmd_examine_self(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_disambiguate_npc()
  *
@@ -2455,9 +2416,7 @@ static sc_int lib_disambiguate_npc(sc_gameref_t game, const sc_char *verb, sc_bo
 	count = 0;
 	npc = -1;
 	for (index_ = 0; index_ < gs_npc_count(game); index_++) {
-		if (game->npc_references[index_]
-		        && gs_npc_seen(game, index_)
-		        && npc_in_room(game, index_, gs_playerroom(game))) {
+		if (game->npc_references[index_] && gs_npc_seen(game, index_) && npc_in_room(game, index_, gs_playerroom(game))) {
 			count++;
 			npc = index_;
 		} else
@@ -2511,7 +2470,6 @@ static sc_int lib_disambiguate_npc(sc_gameref_t game, const sc_char *verb, sc_bo
 	return -1;
 }
 
-
 /*
  * lib_disambiguate_object_common()
  * lib_disambiguate_object()
@@ -2530,8 +2488,8 @@ static sc_int lib_disambiguate_npc(sc_gameref_t game, const sc_char *verb, sc_bo
  * function used to filter objects for multiple references.
  */
 static sc_int lib_disambiguate_object_common(sc_gameref_t game, const sc_char *verb,
-		sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int),
-		sc_int resolver_arg, sc_bool *is_ambiguous) {
+                                             sc_bool (*resolver)(sc_gameref_t, sc_int, sc_int),
+                                             sc_int resolver_arg, sc_bool *is_ambiguous) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int count, index_, object, listed;
@@ -2544,9 +2502,7 @@ static sc_int lib_disambiguate_object_common(sc_gameref_t game, const sc_char *v
 	count = 0;
 	object = -1;
 	for (index_ = 0; index_ < gs_object_count(game); index_++) {
-		if (game->object_references[index_]
-		        && gs_object_seen(game, index_)
-		        && obj_indirectly_in_room(game, index_, gs_playerroom(game))) {
+		if (game->object_references[index_] && gs_object_seen(game, index_) && obj_indirectly_in_room(game, index_, gs_playerroom(game))) {
 			count++;
 			object = index_;
 		} else
@@ -2568,8 +2524,7 @@ static sc_int lib_disambiguate_object_common(sc_gameref_t game, const sc_char *v
 		retry_count = 0;
 		object = -1;
 		for (index_ = 0; index_ < gs_object_count(game); index_++) {
-			if (game->object_references[index_]
-			        && resolver(game, index_, resolver_arg)) {
+			if (game->object_references[index_] && resolver(game, index_, resolver_arg)) {
 				retry_count++;
 				object = index_;
 			}
@@ -2591,8 +2546,7 @@ static sc_int lib_disambiguate_object_common(sc_gameref_t game, const sc_char *v
 				 */
 				count = 0;
 				for (index_ = 0; index_ < gs_object_count(game); index_++) {
-					if (game->object_references[index_]
-					        && resolver(game, index_, resolver_arg))
+					if (game->object_references[index_] && resolver(game, index_, resolver_arg))
 						count++;
 					else
 						game->object_references[index_] = FALSE;
@@ -2653,11 +2607,10 @@ static sc_int lib_disambiguate_object(sc_gameref_t game, const sc_char *verb, sc
 }
 
 static sc_int lib_disambiguate_object_extended(sc_gameref_t game, const sc_char *verb,
-		sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int), sc_int resolver_arg, sc_bool *is_ambiguous) {
+                                               sc_bool (*resolver)(sc_gameref_t, sc_int, sc_int), sc_int resolver_arg, sc_bool *is_ambiguous) {
 	return lib_disambiguate_object_common(game, verb,
 	                                      resolver, resolver_arg, is_ambiguous);
 }
-
 
 /*
  * lib_list_npc_inventory()
@@ -2674,8 +2627,7 @@ static sc_bool lib_list_npc_inventory(sc_gameref_t game, sc_int npc, sc_bool is_
 	trail = -1;
 	wearing = FALSE;
 	for (object = 0; object < gs_object_count(game); object++) {
-		if (gs_object_position(game, object) == OBJ_WORN_NPC
-		        && gs_object_parent(game, object) == npc) {
+		if (gs_object_position(game, object) == OBJ_WORN_NPC && gs_object_parent(game, object) == npc) {
 			if (count > 0) {
 				if (count == 1) {
 					if (is_described)
@@ -2709,8 +2661,7 @@ static sc_bool lib_list_npc_inventory(sc_gameref_t game, sc_int npc, sc_bool is_
 	count = 0;
 	trail = -1;
 	for (object = 0; object < gs_object_count(game); object++) {
-		if (gs_object_position(game, object) == OBJ_HELD_NPC
-		        && gs_object_parent(game, object) == npc) {
+		if (gs_object_position(game, object) == OBJ_HELD_NPC && gs_object_parent(game, object) == npc) {
 			if (count > 0) {
 				if (count == 1) {
 					if (!wearing) {
@@ -2752,7 +2703,6 @@ static sc_bool lib_list_npc_inventory(sc_gameref_t game, sc_int npc, sc_bool is_
 	/* Return TRUE if anything worn or carried. */
 	return wearing || count > 0;
 }
-
 
 /*
  * lib_cmd_examine_npc()
@@ -2810,7 +2760,6 @@ sc_bool lib_cmd_examine_npc(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_list_in_object_normal()
  *
@@ -2825,8 +2774,7 @@ static sc_bool lib_list_in_object_normal(sc_gameref_t game, sc_int container, sc
 	trail = -1;
 	for (object = 0; object < gs_object_count(game); object++) {
 		/* Contained? */
-		if (gs_object_position(game, object) == OBJ_IN_OBJECT
-		        && gs_object_parent(game, object) == container) {
+		if (gs_object_position(game, object) == OBJ_IN_OBJECT && gs_object_parent(game, object) == container) {
 			if (count > 0) {
 				if (count == 1) {
 					if (is_described)
@@ -2868,13 +2816,12 @@ static sc_bool lib_list_in_object_normal(sc_gameref_t game, sc_int container, sc
 	return count > 0;
 }
 
-
 /*
  * lib_list_in_object_alternate()
  *
  * List the objects in a given container object, alternate format listing.
  */
-static sc_bool lib_list_in_object_alternate(sc_gameref_t game,sc_int container, sc_bool is_described) {
+static sc_bool lib_list_in_object_alternate(sc_gameref_t game, sc_int container, sc_bool is_described) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object, count, trail;
 
@@ -2883,8 +2830,7 @@ static sc_bool lib_list_in_object_alternate(sc_gameref_t game,sc_int container, 
 	trail = -1;
 	for (object = 0; object < gs_object_count(game); object++) {
 		/* Contained? */
-		if (gs_object_position(game, object) == OBJ_IN_OBJECT
-		        && gs_object_parent(game, object) == container) {
+		if (gs_object_position(game, object) == OBJ_IN_OBJECT && gs_object_parent(game, object) == container) {
 			if (count > 0) {
 				if (count == 1) {
 					if (is_described)
@@ -2926,7 +2872,6 @@ static sc_bool lib_list_in_object_alternate(sc_gameref_t game,sc_int container, 
 	return count > 0;
 }
 
-
 /*
  * lib_list_in_object()
  *
@@ -2957,8 +2902,7 @@ static sc_bool lib_list_in_object(sc_gameref_t game, sc_int container, sc_bool i
 
 		count = 0;
 		for (object = 0; object < gs_object_count(game); object++) {
-			if (gs_object_position(game, object) == OBJ_IN_OBJECT
-			        && gs_object_parent(game, object) == container)
+			if (gs_object_position(game, object) == OBJ_IN_OBJECT && gs_object_parent(game, object) == container)
 				count++;
 			if (count > 1)
 				break;
@@ -2970,10 +2914,9 @@ static sc_bool lib_list_in_object(sc_gameref_t game, sc_int container, sc_bool i
 
 	/* List contained objects using the selected handler. */
 	return use_alternate_format
-	       ? lib_list_in_object_alternate(game, container, is_described)
-	       : lib_list_in_object_normal(game, container, is_described);
+	           ? lib_list_in_object_alternate(game, container, is_described)
+	           : lib_list_in_object_normal(game, container, is_described);
 }
-
 
 /*
  * lib_list_on_object()
@@ -2989,8 +2932,7 @@ static sc_bool lib_list_on_object(sc_gameref_t game, sc_int supporter, sc_bool i
 	trail = -1;
 	for (object = 0; object < gs_object_count(game); object++) {
 		/* Standing on? */
-		if (gs_object_position(game, object) == OBJ_ON_OBJECT
-		        && gs_object_parent(game, object) == supporter) {
+		if (gs_object_position(game, object) == OBJ_ON_OBJECT && gs_object_parent(game, object) == supporter) {
 			if (count > 0) {
 				if (count == 1) {
 					if (is_described)
@@ -3031,7 +2973,6 @@ static sc_bool lib_list_on_object(sc_gameref_t game, sc_int supporter, sc_bool i
 	/* Return TRUE if anything listed. */
 	return count > 0;
 }
-
 
 /*
  * lib_list_object_state()
@@ -3075,7 +3016,6 @@ static sc_bool lib_list_object_state(sc_gameref_t game, sc_int object, sc_bool i
 	/* Return TRUE if a state was printed. */
 	return is_statussed;
 }
-
 
 /*
  * lib_cmd_examine_object()
@@ -3203,7 +3143,6 @@ sc_bool lib_cmd_examine_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_save_game_references()
  * lib_restore_game_references()
@@ -3239,7 +3178,6 @@ static void lib_restore_object_references(sc_gameref_t game, const sc_bool refer
 	memcpy(game->object_references, references, bytes);
 }
 
-
 /*
  * lib_try_game_command_common()
  * lib_try_game_command_short()
@@ -3251,8 +3189,8 @@ static void lib_restore_object_references(sc_gameref_t game, const sc_bool refer
  * makes "take/pick up/put down" work with a game's overridden get/drop.
  */
 static sc_bool lib_try_game_command_common(sc_gameref_t game, const sc_char *verb, sc_int object,
-		const sc_char *preposition, sc_int associate, sc_bool is_associate_object,
-		sc_bool is_associate_npc) {
+                                           const sc_char *preposition, sc_int associate, sc_bool is_associate_object,
+                                           sc_bool is_associate_npc) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[3];
 	sc_char buffer[LIB_ALLOCATION_AVOIDANCE_SIZE];
@@ -3298,11 +3236,10 @@ static sc_bool lib_try_game_command_common(sc_gameref_t game, const sc_char *ver
 		}
 
 		assert(preposition);
-		required = strlen(verb) + strlen(prefix) + strlen(name)
-		           + strlen(preposition) + strlen(associate_prefix)
-		           + strlen(associate_name) + 6;
-		command = required > (sc_int) sizeof(buffer)
-		          ? (sc_char *)sc_malloc(required) : buffer;
+		required = strlen(verb) + strlen(prefix) + strlen(name) + strlen(preposition) + strlen(associate_prefix) + strlen(associate_name) + 6;
+		command = required > (sc_int)sizeof(buffer)
+		              ? (sc_char *)sc_malloc(required)
+		              : buffer;
 
 		/*
 		 * Try the command with and without prefixes on both the target object
@@ -3330,8 +3267,9 @@ static sc_bool lib_try_game_command_common(sc_gameref_t game, const sc_char *ver
 		sc_int required;
 
 		required = strlen(verb) + strlen(prefix) + strlen(name) + 3;
-		command = required > (sc_int) sizeof(buffer)
-		          ? (sc_char *)sc_malloc(required) : buffer;
+		command = required > (sc_int)sizeof(buffer)
+		              ? (sc_char *)sc_malloc(required)
+		              : buffer;
 
 		/* Try the command with and without prefixes on the addressed object. */
 		sprintf(command, "%s %s %s", verb, prefix, name);
@@ -3358,17 +3296,16 @@ static sc_bool lib_try_game_command_short(sc_gameref_t game, const sc_char *verb
 }
 
 static sc_bool lib_try_game_command_with_object(sc_gameref_t game, const sc_char *verb,
-		sc_int object, const sc_char *preposition, sc_int other_object) {
+                                                sc_int object, const sc_char *preposition, sc_int other_object) {
 	return lib_try_game_command_common(game, verb, object,
 	                                   preposition, other_object, TRUE, FALSE);
 }
 
 static sc_bool lib_try_game_command_with_npc(sc_gameref_t game, const sc_char *verb,
-		sc_int object, const sc_char *preposition, sc_int npc) {
+                                             sc_int object, const sc_char *preposition, sc_int npc) {
 	return lib_try_game_command_common(game, verb, object,
 	                                   preposition, npc, FALSE, TRUE);
 }
-
 
 /*
  * lib_parse_next_object()
@@ -3379,8 +3316,8 @@ static sc_bool lib_try_game_command_with_npc(sc_gameref_t game, const sc_char *v
  * but there appear to be more following it.
  */
 static sc_bool lib_parse_next_object(sc_gameref_t game, const sc_char *verb,
-		sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int), sc_int resolver_arg,
-		sc_int *object, sc_bool *are_more_objects, sc_bool *is_ambiguous) {
+                                     sc_bool (*resolver)(sc_gameref_t, sc_int, sc_int), sc_int resolver_arg,
+                                     sc_int *object, sc_bool *are_more_objects, sc_bool *is_ambiguous) {
 	const sc_var_setref_t vars = gs_get_vars(game);
 	const sc_char *list;
 	sc_bool is_matched;
@@ -3399,15 +3336,14 @@ static sc_bool lib_parse_next_object(sc_gameref_t game, const sc_char *verb,
 	/* If we extracted an object from referenced text, disambiguate. */
 	if (is_matched)
 		*object = lib_disambiguate_object_extended(game, verb,
-		          resolver, resolver_arg,
-		          is_ambiguous);
+		                                           resolver, resolver_arg,
+		                                           is_ambiguous);
 	else
 		*is_ambiguous = FALSE;
 
 	/* Return TRUE if we matched anything. */
 	return is_matched;
 }
-
 
 /*
  * lib_parse_multiple_objects()
@@ -3417,8 +3353,8 @@ static sc_bool lib_parse_next_object(sc_gameref_t game, const sc_char *verb,
  * the multiple objects in the game's multiple_references.
  */
 static sc_bool lib_parse_multiple_objects(sc_gameref_t game, const sc_char *verb,
-		sc_bool(*resolver)(sc_gameref_t, sc_int, sc_int),
-		sc_int resolver_arg, sc_int *count) {
+                                          sc_bool (*resolver)(sc_gameref_t, sc_int, sc_int),
+                                          sc_int resolver_arg, sc_int *count) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int count_, object;
 	sc_bool are_more_objects, is_ambiguous;
@@ -3477,9 +3413,8 @@ static sc_bool lib_parse_multiple_objects(sc_gameref_t game, const sc_char *verb
 		last_object = object;
 		if (!lib_parse_next_object(game, verb,
 		                           resolver, resolver_arg,
-		                           &object, &are_more_objects, &is_ambiguous)
-		        || object == -1
-		        || game->multiple_references[object]) {
+		                           &object, &are_more_objects, &is_ambiguous) ||
+		    object == -1 || game->multiple_references[object]) {
 			if (!is_ambiguous) {
 				pf_buffer_string(filter,
 				                 "I only understood you as far as wanting to ");
@@ -3504,7 +3439,6 @@ static sc_bool lib_parse_multiple_objects(sc_gameref_t game, const sc_char *verb
 	return TRUE;
 }
 
-
 /*
  * lib_apply_multiple_filter()
  * lib_apply_except_filter()
@@ -3514,8 +3448,8 @@ static sc_bool lib_parse_multiple_objects(sc_gameref_t game, const sc_char *verb
  * The first is inclusive, the second exclusive.
  */
 static sc_int lib_apply_multiple_filter(sc_gameref_t game,
-		sc_bool(*filter)(sc_gameref_t, sc_int, sc_int),
-		sc_int filter_arg, sc_int *references) {
+                                        sc_bool (*filter)(sc_gameref_t, sc_int, sc_int),
+                                        sc_int filter_arg, sc_int *references) {
 	sc_int count, object, references_;
 
 	/* Clear all object references initially. */
@@ -3546,8 +3480,8 @@ static sc_int lib_apply_multiple_filter(sc_gameref_t game,
 }
 
 static sc_int lib_apply_except_filter(sc_gameref_t game,
-		sc_bool(*filter)(sc_gameref_t, sc_int, sc_int),
-		sc_int filter_arg, sc_int *references) {
+                                      sc_bool (*filter)(sc_gameref_t, sc_int, sc_int),
+                                      sc_int filter_arg, sc_int *references) {
 	sc_int count, object, references_;
 
 	/* Clear all object references initially. */
@@ -3578,7 +3512,6 @@ static sc_int lib_apply_except_filter(sc_gameref_t game,
 	return count;
 }
 
-
 /*
  * lib_cmd_count()
  *
@@ -3592,16 +3525,14 @@ sc_bool lib_cmd_count(sc_gameref_t game) {
 	/* Sum sizes for objects currently held or worn by player. */
 	size = 0;
 	for (index_ = 0; index_ < gs_object_count(game); index_++) {
-		if (gs_object_position(game, index_) == OBJ_HELD_PLAYER
-		        || gs_object_position(game, index_) == OBJ_WORN_PLAYER)
+		if (gs_object_position(game, index_) == OBJ_HELD_PLAYER || gs_object_position(game, index_) == OBJ_WORN_PLAYER)
 			size += obj_get_size(game, index_);
 	}
 
 	/* Sum weights for objects currently held or worn by player. */
 	weight = 0;
 	for (index_ = 0; index_ < gs_object_count(game); index_++) {
-		if (gs_object_position(game, index_) == OBJ_HELD_PLAYER
-		        || gs_object_position(game, index_) == OBJ_WORN_PLAYER)
+		if (gs_object_position(game, index_) == OBJ_HELD_PLAYER || gs_object_position(game, index_) == OBJ_WORN_PLAYER)
 			weight += obj_get_weight(game, index_);
 	}
 
@@ -3626,7 +3557,6 @@ sc_bool lib_cmd_count(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_object_too_heavy()
  *
@@ -3642,8 +3572,7 @@ static sc_bool lib_object_too_heavy(sc_gameref_t game, sc_int object, sc_bool *i
 	/* Sum weights for objects currently held or worn by player. */
 	weight = 0;
 	for (index_ = 0; index_ < gs_object_count(game); index_++) {
-		if (gs_object_position(game, index_) == OBJ_HELD_PLAYER
-		        || gs_object_position(game, index_) == OBJ_WORN_PLAYER)
+		if (gs_object_position(game, index_) == OBJ_HELD_PLAYER || gs_object_position(game, index_) == OBJ_WORN_PLAYER)
 			weight += obj_get_weight(game, index_);
 	}
 
@@ -3654,7 +3583,6 @@ static sc_bool lib_object_too_heavy(sc_gameref_t game, sc_int object, sc_bool *i
 	/* Return TRUE if the new object exceeds limit. */
 	return weight + object_weight > player_limit;
 }
-
 
 /*
  * lib_object_too_large()
@@ -3671,8 +3599,7 @@ static sc_bool lib_object_too_large(sc_gameref_t game, sc_int object, sc_bool *i
 	/* Sum sizes for objects currently held or worn by player. */
 	size = 0;
 	for (index_ = 0; index_ < gs_object_count(game); index_++) {
-		if (gs_object_position(game, index_) == OBJ_HELD_PLAYER
-		        || gs_object_position(game, index_) == OBJ_WORN_PLAYER)
+		if (gs_object_position(game, index_) == OBJ_HELD_PLAYER || gs_object_position(game, index_) == OBJ_WORN_PLAYER)
 			size += obj_get_size(game, index_);
 	}
 
@@ -3683,7 +3610,6 @@ static sc_bool lib_object_too_large(sc_gameref_t game, sc_int object, sc_bool *i
 	/* Return TRUE if the new object exceeds limit. */
 	return size + object_size > player_limit;
 }
-
 
 /*
  * lib_cmd_take_npc()
@@ -3707,7 +3633,6 @@ sc_bool lib_cmd_take_npc(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_take_backend_common()
  *
@@ -3719,7 +3644,7 @@ sc_bool lib_cmd_take_npc(sc_gameref_t game) {
  * deemed not actionable are flagged in multiple_references.
  */
 static void lib_take_backend_common(sc_gameref_t game, sc_int associate,
-		sc_bool is_associate_object, sc_bool is_associate_npc) {
+                                    sc_bool is_associate_object, sc_bool is_associate_npc) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object_count, object, count, trail, total, npc;
 	sc_int too_heavy, too_large;
@@ -3748,10 +3673,8 @@ static void lib_take_backend_common(sc_gameref_t game, sc_int associate,
 		 * If the object is inside or on something already held by the player,
 		 * capacity checks are meaningless.
 		 */
-		if (!((gs_object_position(game, object) == OBJ_IN_OBJECT
-		        || gs_object_position(game, object) == OBJ_ON_OBJECT)
-		        && obj_indirectly_held_by_player(game,
-		                gs_object_parent(game, object)))) {
+		if (!((gs_object_position(game, object) == OBJ_IN_OBJECT || gs_object_position(game, object) == OBJ_ON_OBJECT) && obj_indirectly_held_by_player(game,
+		                                                                                                                                                gs_object_parent(game, object)))) {
 			sc_bool is_portable;
 
 			/*
@@ -3779,7 +3702,7 @@ static void lib_take_backend_common(sc_gameref_t game, sc_int associate,
 		/* Now try for a game command, using the associate if supplied. */
 		if (is_associate_object)
 			status = lib_try_game_command_with_object(game, "get",
-			         object, "from", associate);
+			                                          object, "from", associate);
 		else if (is_associate_npc)
 			status = lib_try_game_command_with_npc(game, "get",
 			                                       object, "from", associate);
@@ -3827,12 +3750,10 @@ static void lib_take_backend_common(sc_gameref_t game, sc_int associate,
 				 * current parent.
 				 */
 				if (parent == -1) {
-					if (gs_object_position(game, object) == OBJ_IN_OBJECT
-					        || gs_object_position(game, object) == OBJ_ON_OBJECT)
+					if (gs_object_position(game, object) == OBJ_IN_OBJECT || gs_object_position(game, object) == OBJ_ON_OBJECT)
 						continue;
 				} else {
-					if (!(gs_object_position(game, object) == OBJ_IN_OBJECT
-					        || gs_object_position(game, object) == OBJ_ON_OBJECT))
+					if (!(gs_object_position(game, object) == OBJ_IN_OBJECT || gs_object_position(game, object) == OBJ_ON_OBJECT))
 						continue;
 					if (gs_object_parent(game, object) != parent)
 						continue;
@@ -3843,8 +3764,7 @@ static void lib_take_backend_common(sc_gameref_t game, sc_int associate,
 				 * acquired more and more of the player's capacity gets used up.
 				 * This means a check directly before each acquisition.
 				 */
-				if (parent == -1
-				        || !obj_indirectly_held_by_player(game, parent)) {
+				if (parent == -1 || !obj_indirectly_held_by_player(game, parent)) {
 					if (lib_object_too_heavy(game, object, &is_portable)) {
 						if (too_heavy == -1) {
 							too_heavy = object;
@@ -3965,8 +3885,7 @@ static void lib_take_backend_common(sc_gameref_t game, sc_int associate,
 			if (!game->multiple_references[object])
 				continue;
 
-			if (gs_object_position(game, object) == OBJ_HELD_PLAYER
-			        || gs_object_position(game, object) == OBJ_WORN_PLAYER)
+			if (gs_object_position(game, object) == OBJ_HELD_PLAYER || gs_object_position(game, object) == OBJ_WORN_PLAYER)
 				continue;
 
 			if (count > 0) {
@@ -4172,8 +4091,7 @@ static void lib_take_backend_common(sc_gameref_t game, sc_int associate,
 			if (!game->multiple_references[object])
 				continue;
 
-			if (gs_object_position(game, object) != OBJ_HELD_NPC
-			        && gs_object_position(game, object) != OBJ_WORN_NPC)
+			if (gs_object_position(game, object) != OBJ_HELD_NPC && gs_object_position(game, object) != OBJ_WORN_NPC)
 				continue;
 			if (gs_object_parent(game, object) != npc)
 				continue;
@@ -4259,7 +4177,6 @@ static void lib_take_backend_common(sc_gameref_t game, sc_int associate,
 	}
 }
 
-
 /*
  * lib_take_backend()
  * lib_take_from_object_backend()
@@ -4280,7 +4197,6 @@ static void lib_take_from_npc_backend(sc_gameref_t game, sc_int associate) {
 	lib_take_backend_common(game, associate, FALSE, TRUE);
 }
 
-
 /*
  * lib_take_filter()
  * lib_take_not_associated_filter()
@@ -4295,23 +4211,15 @@ static sc_bool lib_take_filter(sc_gameref_t game, sc_int object, sc_int unused) 
 	 * To be take-able, an object must be visible in the room, not static,
 	 * and not already held or worn by the player or an NPC.
 	 */
-	return obj_indirectly_in_room(game, object, gs_playerroom(game))
-	       && !obj_is_static(game, object)
-	       && !(gs_object_position(game, object) == OBJ_HELD_PLAYER
-	            || gs_object_position(game, object) == OBJ_WORN_PLAYER)
-	       && !(gs_object_position(game, object) == OBJ_HELD_NPC
-	            || gs_object_position(game, object) == OBJ_WORN_NPC);
+	return obj_indirectly_in_room(game, object, gs_playerroom(game)) && !obj_is_static(game, object) && !(gs_object_position(game, object) == OBJ_HELD_PLAYER || gs_object_position(game, object) == OBJ_WORN_PLAYER) && !(gs_object_position(game, object) == OBJ_HELD_NPC || gs_object_position(game, object) == OBJ_WORN_NPC);
 }
 
 static sc_bool lib_take_not_associated_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
 	/* In addition to other checks, the object may not be in or on an object. */
-	return lib_take_filter(game, object, -1)
-	       && !(gs_object_position(game, object) == OBJ_ON_OBJECT
-	            || gs_object_position(game, object) == OBJ_IN_OBJECT);
+	return lib_take_filter(game, object, -1) && !(gs_object_position(game, object) == OBJ_ON_OBJECT || gs_object_position(game, object) == OBJ_IN_OBJECT);
 }
-
 
 /*
  * lib_cmd_take_all()
@@ -4336,7 +4244,6 @@ sc_bool lib_cmd_take_all(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_take_except_multiple()
@@ -4373,7 +4280,6 @@ sc_bool lib_cmd_take_except_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_take_multiple()
  *
@@ -4404,7 +4310,6 @@ sc_bool lib_cmd_take_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_take_from_filter()
  *
@@ -4416,12 +4321,8 @@ static sc_bool lib_take_from_filter(sc_gameref_t game, sc_int object, sc_int ass
 	 * To be take-able, an object must be either inside or on the specified
 	 * object.
 	 */
-	return (gs_object_position(game, object) == OBJ_IN_OBJECT
-	        || gs_object_position(game, object) == OBJ_ON_OBJECT)
-	       && !obj_is_static(game, object)
-	       && gs_object_parent(game, object) == associate;
+	return (gs_object_position(game, object) == OBJ_IN_OBJECT || gs_object_position(game, object) == OBJ_ON_OBJECT) && !obj_is_static(game, object) && gs_object_parent(game, object) == associate;
 }
-
 
 /*
  * lib_take_from_empty()
@@ -4482,7 +4383,6 @@ static void lib_take_from_empty(sc_gameref_t game, sc_int associate, sc_bool is_
 	}
 }
 
-
 /*
  * lib_take_from_is_valid()
  *
@@ -4492,8 +4392,7 @@ static sc_bool lib_take_from_is_valid(sc_gameref_t game, sc_int associate) {
 	const sc_filterref_t filter = gs_get_filter(game);
 
 	/* Disallow emptying non-container/non-surface objects. */
-	if (!(obj_is_container(game, associate)
-	        || obj_is_surface(game, associate))) {
+	if (!(obj_is_container(game, associate) || obj_is_surface(game, associate))) {
 		pf_buffer_string(filter,
 		                 lib_select_response(game,
 		                                     "You can't take anything from ",
@@ -4505,8 +4404,7 @@ static sc_bool lib_take_from_is_valid(sc_gameref_t game, sc_int associate) {
 	}
 
 	/* If object is a container, and is closed, reject now. */
-	if (obj_is_container(game, associate)
-	        && gs_object_openness(game, associate) > OBJ_OPEN) {
+	if (obj_is_container(game, associate) && gs_object_openness(game, associate) > OBJ_OPEN) {
 		pf_new_sentence(filter);
 		lib_print_object_np(game, associate);
 		pf_buffer_string(filter,
@@ -4519,7 +4417,6 @@ static sc_bool lib_take_from_is_valid(sc_gameref_t game, sc_int associate) {
 	/* Associate is a valid target for "take from". */
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_take_all_from()
@@ -4554,7 +4451,6 @@ sc_bool lib_cmd_take_all_from(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_take_from_except_multiple()
@@ -4606,7 +4502,6 @@ sc_bool lib_cmd_take_from_except_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_take_from_multiple()
  *
@@ -4649,7 +4544,6 @@ sc_bool lib_cmd_take_from_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_take_from_npc_filter()
  *
@@ -4661,12 +4555,8 @@ static sc_bool lib_take_from_npc_filter(sc_gameref_t game, sc_int object, sc_int
 	 * To be take-able, an object must be either held or worn by the specified
 	 * NPC.
 	 */
-	return (gs_object_position(game, object) == OBJ_HELD_NPC
-	        || gs_object_position(game, object) == OBJ_WORN_NPC)
-	       && !obj_is_static(game, object)
-	       && gs_object_parent(game, object) == associate;
+	return (gs_object_position(game, object) == OBJ_HELD_NPC || gs_object_position(game, object) == OBJ_WORN_NPC) && !obj_is_static(game, object) && gs_object_parent(game, object) == associate;
 }
-
 
 /*
  * lib_cmd_take_all_from_npc()
@@ -4700,7 +4590,6 @@ sc_bool lib_cmd_take_all_from_npc(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_take_from_npc_except_multiple()
@@ -4742,7 +4631,6 @@ sc_bool lib_cmd_take_from_npc_except_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_take_from_npc_multiple()
  *
@@ -4782,7 +4670,6 @@ sc_bool lib_cmd_take_from_npc_multiple(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_drop_backend()
@@ -4899,7 +4786,6 @@ static void lib_drop_backend(sc_gameref_t game) {
 	}
 }
 
-
 /*
  * lib_drop_filter()
  *
@@ -4909,10 +4795,8 @@ static void lib_drop_backend(sc_gameref_t game) {
 static sc_bool lib_drop_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
-	return !obj_is_static(game, object)
-	       && gs_object_position(game, object) == OBJ_HELD_PLAYER;
+	return !obj_is_static(game, object) && gs_object_position(game, object) == OBJ_HELD_PLAYER;
 }
-
 
 /*
  * lib_cmd_drop_all()
@@ -4942,7 +4826,6 @@ sc_bool lib_cmd_drop_all(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_drop_except_multiple()
@@ -4983,7 +4866,6 @@ sc_bool lib_cmd_drop_except_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_drop_multiple()
  *
@@ -5018,7 +4900,6 @@ sc_bool lib_cmd_drop_multiple(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_give_object_npc()
@@ -5090,7 +4971,6 @@ sc_bool lib_cmd_give_object(sc_gameref_t game) {
 	pf_buffer_string(filter, " to who?\n");
 	return TRUE;
 }
-
 
 /*
  * lib_wear_backend()
@@ -5294,7 +5174,6 @@ static void lib_wear_backend(sc_gameref_t game) {
 	}
 }
 
-
 /*
  * lib_wear_filter()
  *
@@ -5310,8 +5189,7 @@ static sc_bool lib_wear_filter(sc_gameref_t game, sc_int object, sc_int unused) 
 	 * (static moved to player inventory by event), and if it's marked wearable
 	 * in properties.
 	 */
-	if (gs_object_position(game, object) == OBJ_HELD_PLAYER
-	        && !obj_is_static(game, object)) {
+	if (gs_object_position(game, object) == OBJ_HELD_PLAYER && !obj_is_static(game, object)) {
 		sc_vartype_t vt_key[3];
 
 		/* Return wearability from the object properties. */
@@ -5323,7 +5201,6 @@ static sc_bool lib_wear_filter(sc_gameref_t game, sc_int object, sc_int unused) 
 
 	return FALSE;
 }
-
 
 /*
  * lib_cmd_wear_all()
@@ -5354,7 +5231,6 @@ sc_bool lib_cmd_wear_all(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_wear_except_multiple()
@@ -5395,7 +5271,6 @@ sc_bool lib_cmd_wear_except_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_wear_multiple()
  *
@@ -5432,7 +5307,6 @@ sc_bool lib_cmd_wear_multiple(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_remove_backend()
@@ -5548,7 +5422,6 @@ static void lib_remove_backend(sc_gameref_t game) {
 	}
 }
 
-
 /*
  * lib_remove_filter()
  *
@@ -5558,10 +5431,8 @@ static void lib_remove_backend(sc_gameref_t game) {
 static sc_bool lib_remove_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
-	return !obj_is_static(game, object)
-	       && gs_object_position(game, object) == OBJ_WORN_PLAYER;
+	return !obj_is_static(game, object) && gs_object_position(game, object) == OBJ_WORN_PLAYER;
 }
-
 
 /*
  * lib_cmd_remove_all()
@@ -5592,7 +5463,6 @@ sc_bool lib_cmd_remove_all(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_remove_except_multiple()
@@ -5633,7 +5503,6 @@ sc_bool lib_cmd_remove_except_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_remove_multiple()
  *
@@ -5669,7 +5538,6 @@ sc_bool lib_cmd_remove_multiple(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_inventory()
@@ -5767,8 +5635,7 @@ sc_bool lib_cmd_inventory(sc_gameref_t game) {
 		/* Print contents of every container and surface carried. */
 		for (object = 0; object < gs_object_count(game); object++) {
 			if (gs_object_position(game, object) == OBJ_HELD_PLAYER) {
-				if (obj_is_container(game, object)
-				        && gs_object_openness(game, object) <= OBJ_OPEN)
+				if (obj_is_container(game, object) && gs_object_openness(game, object) <= OBJ_OPEN)
 					lib_list_in_object(game, object, TRUE);
 
 				if (obj_is_surface(game, object))
@@ -5796,7 +5663,6 @@ sc_bool lib_cmd_inventory(sc_gameref_t game) {
 	/* Successful command. */
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_open_object()
@@ -5867,7 +5733,6 @@ sc_bool lib_cmd_open_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_close_object()
  *
@@ -5926,7 +5791,6 @@ sc_bool lib_cmd_close_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_attempt_key_acquisition()
  *
@@ -5940,18 +5804,14 @@ static void lib_attempt_key_acquisition(sc_gameref_t game, sc_int object) {
 		return;
 
 	/* If the object is not seen or available, reject the attempt. */
-	if (!(gs_object_seen(game, object)
-	        && obj_indirectly_in_room(game, object, gs_playerroom(game))))
+	if (!(gs_object_seen(game, object) && obj_indirectly_in_room(game, object, gs_playerroom(game))))
 		return;
 
 	/*
 	 * Check if we already have it, or are wearing it, or if a NPC has or is
 	 * wearing it.
 	 */
-	if (gs_object_position(game, object) == OBJ_HELD_PLAYER
-	        || gs_object_position(game, object) == OBJ_WORN_PLAYER
-	        || gs_object_position(game, object) == OBJ_HELD_NPC
-	        || gs_object_position(game, object) == OBJ_WORN_NPC)
+	if (gs_object_position(game, object) == OBJ_HELD_PLAYER || gs_object_position(game, object) == OBJ_WORN_PLAYER || gs_object_position(game, object) == OBJ_HELD_NPC || gs_object_position(game, object) == OBJ_WORN_NPC)
 		return;
 
 	/*
@@ -5959,8 +5819,7 @@ static void lib_attempt_key_acquisition(sc_gameref_t game, sc_int object) {
 	 * capacity checks are meaningless.
 	 */
 	if (!obj_indirectly_held_by_player(game, object)) {
-		if (lib_object_too_heavy(game, object, NULL)
-		        || lib_object_too_large(game, object, NULL))
+		if (lib_object_too_heavy(game, object, NULL) || lib_object_too_large(game, object, NULL))
 			return;
 	}
 
@@ -5969,8 +5828,7 @@ static void lib_attempt_key_acquisition(sc_gameref_t game, sc_int object) {
 		return;
 
 	/* Note what we're doing. */
-	if (gs_object_position(game, object) == OBJ_IN_OBJECT
-	        || gs_object_position(game, object) == OBJ_ON_OBJECT) {
+	if (gs_object_position(game, object) == OBJ_IN_OBJECT || gs_object_position(game, object) == OBJ_ON_OBJECT) {
 		pf_buffer_string(filter, "(Taking ");
 		lib_print_object_np(game, object);
 
@@ -5986,7 +5844,6 @@ static void lib_attempt_key_acquisition(sc_gameref_t game, sc_int object) {
 	/* Take possession of the object. */
 	gs_object_player_get(game, object);
 }
-
 
 /*
  * lib_cmd_unlock_object_with()
@@ -6093,7 +5950,6 @@ sc_bool lib_cmd_unlock_object_with(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_unlock_object()
  *
@@ -6176,7 +6032,6 @@ sc_bool lib_cmd_unlock_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_lock_object_with()
  *
@@ -6256,9 +6111,9 @@ sc_bool lib_cmd_lock_object_with(sc_gameref_t game) {
 
 		gs_set_object_openness(game, object, OBJ_LOCKED);
 		pf_buffer_string(filter, lib_select_response(game,
-		                 "You lock ",
-		                 "I lock ",
-		                 "%player% locks "));
+		                                             "You lock ",
+		                                             "I lock ",
+		                                             "%player% locks "));
 		lib_print_object_np(game, object);
 		pf_buffer_string(filter, " with ");
 		lib_print_object_np(game, key);
@@ -6289,7 +6144,6 @@ sc_bool lib_cmd_lock_object_with(sc_gameref_t game) {
 	pf_buffer_string(filter, ".\n");
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_lock_object()
@@ -6382,7 +6236,6 @@ sc_bool lib_cmd_lock_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_compare_subject()
  *
@@ -6393,10 +6246,10 @@ static sc_bool lib_compare_subject(const sc_char *subject, sc_int posn, const sc
 
 	/* Skip any leading subject spaces. */
 	for (word_posn = posn;
-	        subject[word_posn] != NUL && sc_isspace(subject[word_posn]);)
+	     subject[word_posn] != NUL && sc_isspace(subject[word_posn]);)
 		word_posn++;
 	for (string_posn = 0;
-	        string[string_posn] != NUL && sc_isspace(string[string_posn]);)
+	     string[string_posn] != NUL && sc_isspace(string[string_posn]);)
 		string_posn++;
 
 	/* Match characters from words with the string at position. */
@@ -6413,8 +6266,7 @@ static sc_bool lib_compare_subject(const sc_char *subject, sc_int posn, const sc
 		 * If at space, advance over whitespace in subjects list.  Stop when we
 		 * hit the end of the element or list.
 		 */
-		while (sc_isspace(subject[word_posn])
-		        && subject[word_posn] != COMMA && subject[word_posn] != NUL)
+		while (sc_isspace(subject[word_posn]) && subject[word_posn] != COMMA && subject[word_posn] != NUL)
 			subject++;
 
 		/* Advance over whitespace in the current string too. */
@@ -6437,7 +6289,6 @@ static sc_bool lib_compare_subject(const sc_char *subject, sc_int posn, const sc
 	/* Matched in the loop; return TRUE. */
 	return TRUE;
 }
-
 
 /*
  * lib_npc_reply_to()
@@ -6474,7 +6325,6 @@ static sc_bool lib_npc_reply_to(sc_gameref_t game, sc_int npc, sc_int topic) {
 	/* No response to this combination. */
 	return FALSE;
 }
-
 
 /*
  * lib_cmd_ask_npc_about()
@@ -6563,7 +6413,6 @@ sc_bool lib_cmd_ask_npc_about(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_check_put_in_recursion()
  *
@@ -6571,7 +6420,7 @@ sc_bool lib_cmd_ask_npc_about(sc_gameref_t game) {
  * TRUE if no recursion detected.
  */
 static sc_bool lib_check_put_in_recursion(sc_gameref_t game, sc_int object,
-		sc_int container, sc_bool report) {
+                                          sc_int container, sc_bool report) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int check;
 
@@ -6589,8 +6438,7 @@ static sc_bool lib_check_put_in_recursion(sc_gameref_t game, sc_int object,
 
 	/* Avoid the subtle possibility of infinite recursion. */
 	check = container;
-	while (gs_object_position(game, check) == OBJ_ON_OBJECT
-	        || gs_object_position(game, check) == OBJ_IN_OBJECT) {
+	while (gs_object_position(game, check) == OBJ_ON_OBJECT || gs_object_position(game, check) == OBJ_IN_OBJECT) {
 		check = gs_object_parent(game, check);
 		if (check == object) {
 			if (report) {
@@ -6608,7 +6456,6 @@ static sc_bool lib_check_put_in_recursion(sc_gameref_t game, sc_int object,
 	/* No infinite recursion detected. */
 	return TRUE;
 }
-
 
 /*
  * lib_put_in_backend()
@@ -6669,8 +6516,7 @@ static void lib_put_in_backend(sc_gameref_t game, sc_int container) {
 
 			contains = 0;
 			for (other = 0; other < gs_object_count(game); other++) {
-				if (gs_object_position(game, other) == OBJ_IN_OBJECT
-				        && gs_object_parent(game, other) == container)
+				if (gs_object_position(game, other) == OBJ_IN_OBJECT && gs_object_parent(game, other) == container)
 					contains++;
 			}
 			if (contains >= capacity)
@@ -6849,7 +6695,6 @@ static void lib_put_in_backend(sc_gameref_t game, sc_int container) {
 	}
 }
 
-
 /*
  * lib_put_in_filter()
  * lib_put_in_not_container_filter()
@@ -6860,14 +6705,12 @@ static void lib_put_in_backend(sc_gameref_t game, sc_int container) {
 static sc_bool lib_put_in_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
-	return !obj_is_static(game, object)
-	       && gs_object_position(game, object) == OBJ_HELD_PLAYER;
+	return !obj_is_static(game, object) && gs_object_position(game, object) == OBJ_HELD_PLAYER;
 }
 
 static sc_bool lib_put_in_not_container_filter(sc_gameref_t game, sc_int object, sc_int container) {
 	return lib_put_in_filter(game, object, -1) && object != container;
 }
-
 
 /*
  * lib_put_in_is_valid()
@@ -6905,7 +6748,6 @@ static sc_bool lib_put_in_is_valid(sc_gameref_t game, sc_int container) {
 	/* Container is a valid target for "put in". */
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_put_all_in()
@@ -6948,7 +6790,6 @@ sc_bool lib_cmd_put_all_in(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_put_in_except_multiple()
@@ -7008,7 +6849,6 @@ sc_bool lib_cmd_put_in_except_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_put_in_multiple()
  *
@@ -7055,7 +6895,6 @@ sc_bool lib_cmd_put_in_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_check_put_on_recursion()
  *
@@ -7063,7 +6902,7 @@ sc_bool lib_cmd_put_in_multiple(sc_gameref_t game) {
  * TRUE if no recursion detected.
  */
 static sc_bool lib_check_put_on_recursion(sc_gameref_t game, sc_int object,
-		sc_int supporter, sc_bool report) {
+                                          sc_int supporter, sc_bool report) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int check;
 
@@ -7081,8 +6920,7 @@ static sc_bool lib_check_put_on_recursion(sc_gameref_t game, sc_int object,
 
 	/* Avoid the subtle possibility of infinite recursion. */
 	check = supporter;
-	while (gs_object_position(game, check) == OBJ_ON_OBJECT
-	        || gs_object_position(game, check) == OBJ_IN_OBJECT) {
+	while (gs_object_position(game, check) == OBJ_ON_OBJECT || gs_object_position(game, check) == OBJ_IN_OBJECT) {
 		check = gs_object_parent(game, check);
 		if (check == object) {
 			if (report) {
@@ -7100,7 +6938,6 @@ static sc_bool lib_check_put_on_recursion(sc_gameref_t game, sc_int object,
 	/* No infinite recursion detected. */
 	return TRUE;
 }
-
 
 /*
  * lib_put_on_backend()
@@ -7228,7 +7065,6 @@ static void lib_put_on_backend(sc_gameref_t game, sc_int supporter) {
 	}
 }
 
-
 /*
  * lib_put_on_filter()
  * lib_put_on_not_supporter_filter()
@@ -7239,8 +7075,7 @@ static void lib_put_on_backend(sc_gameref_t game, sc_int supporter) {
 static sc_bool lib_put_on_filter(sc_gameref_t game, sc_int object, sc_int unused) {
 	assert(unused == -1);
 
-	return !obj_is_static(game, object)
-	       && gs_object_position(game, object) == OBJ_HELD_PLAYER;
+	return !obj_is_static(game, object) && gs_object_position(game, object) == OBJ_HELD_PLAYER;
 }
 
 static sc_bool
@@ -7248,7 +7083,6 @@ lib_put_on_not_supporter_filter(sc_gameref_t game,
                                 sc_int object, sc_int supporter) {
 	return lib_put_on_filter(game, object, -1) && object != supporter;
 }
-
 
 /*
  * lib_put_on_is_valid()
@@ -7273,7 +7107,6 @@ static sc_bool lib_put_on_is_valid(sc_gameref_t game, sc_int supporter) {
 	/* Surface is a valid target for "put on". */
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_put_all_on()
@@ -7316,7 +7149,6 @@ sc_bool lib_cmd_put_all_on(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_put_on_except_multiple()
@@ -7376,7 +7208,6 @@ sc_bool lib_cmd_put_on_except_multiple(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_put_on_multiple()
  *
@@ -7422,7 +7253,6 @@ sc_bool lib_cmd_put_on_multiple(sc_gameref_t game) {
 	pf_buffer_character(filter, '\n');
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_read_object()
@@ -7503,7 +7333,6 @@ sc_bool lib_cmd_read_other(sc_gameref_t game) {
 	                                     "%player% sees no such thing.\n"));
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_attack_npc()
@@ -7602,7 +7431,6 @@ sc_bool lib_cmd_attack_npc_with(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_kiss_npc()
  * lib_cmd_kiss_object()
@@ -7672,7 +7500,6 @@ sc_bool lib_cmd_kiss_other(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_buy_object()
  * lib_cmd_buy_other()
@@ -7705,7 +7532,6 @@ sc_bool lib_cmd_buy_other(sc_gameref_t game) {
 	pf_buffer_string(filter, "I don't think that is for sale.\n");
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_break_object()
@@ -7746,7 +7572,6 @@ sc_bool lib_cmd_break_other(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_smell_object()
  * lib_cmd_smell_other()
@@ -7778,7 +7603,6 @@ sc_bool lib_cmd_smell_other(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_sell_object()
  * lib_cmd_sell_other()
@@ -7808,7 +7632,6 @@ sc_bool lib_cmd_sell_other(sc_gameref_t game) {
 	pf_buffer_string(filter, "No-one is interested in buying that.\n");
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_eat_object()
@@ -7879,15 +7702,18 @@ sc_bool lib_cmd_eat_object(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /* Enumerated sit/stand/lie types. */
 enum {
 	OBJ_STANDABLE_MASK = 1 << 0,
 	OBJ_LIEABLE_MASK = 1 << 1
 };
 enum {
-	MOVE_SIT, MOVE_SIT_FLOOR,
-	MOVE_STAND, MOVE_STAND_FLOOR, MOVE_LIE, MOVE_LIE_FLOOR
+	MOVE_SIT,
+	MOVE_SIT_FLOOR,
+	MOVE_STAND,
+	MOVE_STAND_FLOOR,
+	MOVE_LIE,
+	MOVE_LIE_FLOOR
 };
 
 /*
@@ -7985,9 +7811,9 @@ static sc_bool lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
 	switch (movement) {
 	case MOVE_STAND:
 		already_doing_that = lib_select_response(game,
-		                     "You are already standing on ",
-		                     "I am already standing on ",
-		                     "%player% is already standing on ");
+		                                         "You are already standing on ",
+		                                         "I am already standing on ",
+		                                         "%player% is already standing on ");
 		success_message = lib_select_response(game,
 		                                      "You stand on ",
 		                                      "I stand on ",
@@ -7997,9 +7823,9 @@ static sc_bool lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
 
 	case MOVE_STAND_FLOOR:
 		already_doing_that = lib_select_response(game,
-		                     "You are already standing!\n",
-		                     "I am already standing!\n",
-		                     "%player% is already standing!\n");
+		                                         "You are already standing!\n",
+		                                         "I am already standing!\n",
+		                                         "%player% is already standing!\n");
 		success_message = lib_select_response(game,
 		                                      "You stand up",
 		                                      "I stand up",
@@ -8009,9 +7835,9 @@ static sc_bool lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
 
 	case MOVE_SIT:
 		already_doing_that = lib_select_response(game,
-		                     "You are already sitting on ",
-		                     "I am already sitting on ",
-		                     "%player% is already sitting on ");
+		                                         "You are already sitting on ",
+		                                         "I am already sitting on ",
+		                                         "%player% is already sitting on ");
 		if (gs_playerposition(game) == 2)
 			success_message = lib_select_response(game,
 			                                      "You sit up on ",
@@ -8027,9 +7853,9 @@ static sc_bool lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
 
 	case MOVE_SIT_FLOOR:
 		already_doing_that = lib_select_response(game,
-		                     "You are already sitting down.\n",
-		                     "I am already sitting down.\n",
-		                     "%player% is already sitting down.\n");
+		                                         "You are already sitting down.\n",
+		                                         "I am already sitting down.\n",
+		                                         "%player% is already sitting down.\n");
 		if (gs_playerposition(game) == 2)
 			success_message = lib_select_response(game,
 			                                      "You sit up on the ground.\n",
@@ -8045,9 +7871,9 @@ static sc_bool lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
 
 	case MOVE_LIE:
 		already_doing_that = lib_select_response(game,
-		                     "You are already lying on ",
-		                     "I am already lying on ",
-		                     "%player% is already lying on ");
+		                                         "You are already lying on ",
+		                                         "I am already lying on ",
+		                                         "%player% is already lying on ");
 		success_message = lib_select_response(game,
 		                                      "You lie down on ",
 		                                      "I lie down on ",
@@ -8057,9 +7883,9 @@ static sc_bool lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
 
 	case MOVE_LIE_FLOOR:
 		already_doing_that = lib_select_response(game,
-		                     "You are already lying down.\n",
-		                     "I am already lying down.\n",
-		                     "%player% is already lying down.\n");
+		                                         "You are already lying down.\n",
+		                                         "I am already lying down.\n",
+		                                         "%player% is already lying down.\n");
 		success_message = lib_select_response(game,
 		                                      "You lie down on the ground.\n",
 		                                      "I lie down on the ground.\n",
@@ -8100,7 +7926,6 @@ static sc_bool lib_stand_sit_lie(sc_gameref_t game, sc_int movement) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_stand_*
  * lib_cmd_sit_*
@@ -8131,7 +7956,6 @@ sc_bool lib_cmd_lie_on_object(sc_gameref_t game) {
 sc_bool lib_cmd_lie_on_floor(sc_gameref_t game) {
 	return lib_stand_sit_lie(game, MOVE_LIE_FLOOR);
 }
-
 
 /*
  * lib_cmd_get_off_object()
@@ -8202,7 +8026,6 @@ sc_bool lib_cmd_get_off(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_save()
  * lib_cmd_restore()
@@ -8235,7 +8058,6 @@ sc_bool lib_cmd_restore(sc_gameref_t game) {
 	game->is_admin = TRUE;
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_locate_object()
@@ -8330,7 +8152,8 @@ sc_bool lib_cmd_locate_object(sc_gameref_t game) {
 			lib_print_npc_np(game, parent);
 			pf_buffer_string(filter,
 			                 (position == OBJ_HELD_NPC)
-			                 ? " is holding " : " is wearing ");
+			                     ? " is holding "
+			                     : " is wearing ");
 			lib_print_object_np(game, object);
 			pf_buffer_string(filter, ".\n");
 		} else
@@ -8509,7 +8332,6 @@ sc_bool lib_cmd_locate_npc(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_turns()
  * lib_cmd_score()
@@ -8567,7 +8389,6 @@ sc_bool lib_cmd_score(sc_gameref_t game) {
 	game->is_admin = TRUE;
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_*()
@@ -8931,7 +8752,6 @@ sc_bool lib_cmd_yes_or_no(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_ask_npc()
  * lib_cmd_ask_object()
@@ -8986,7 +8806,6 @@ sc_bool lib_cmd_ask_other(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_cmd_kill_other()
  *
@@ -8999,7 +8818,6 @@ sc_bool lib_cmd_kill_other(sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /*
  * lib_nothing_happens_common()
  * lib_nothing_happens_object()
@@ -9009,7 +8827,7 @@ sc_bool lib_cmd_kill_other(sc_gameref_t game) {
  * uninteresting responses.
  */
 static sc_bool lib_nothing_happens_common(sc_gameref_t game, const sc_char *verb_general,
-		const sc_char *verb_third_person, sc_bool is_object) {
+                                          const sc_char *verb_third_person, sc_bool is_object) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2];
@@ -9064,17 +8882,16 @@ static sc_bool lib_nothing_happens_common(sc_gameref_t game, const sc_char *verb
 }
 
 static sc_bool lib_nothing_happens_object(sc_gameref_t game,
-		const sc_char *verb_general, const sc_char *verb_third_person) {
+                                          const sc_char *verb_general, const sc_char *verb_third_person) {
 	return lib_nothing_happens_common(game,
 	                                  verb_general, verb_third_person, TRUE);
 }
 
 static sc_bool lib_nothing_happens_other(sc_gameref_t game,
-		const sc_char *verb_general, const sc_char *verb_third_person) {
+                                         const sc_char *verb_general, const sc_char *verb_third_person) {
 	return lib_nothing_happens_common(game,
 	                                  verb_general, verb_third_person, FALSE);
 }
-
 
 /*
  * lib_cmd_*()
@@ -9129,7 +8946,6 @@ sc_bool lib_cmd_shake_other(sc_gameref_t game) {
 	return lib_nothing_happens_other(game, "shake", "shakes");
 }
 
-
 /*
  * lib_cant_do_common()
  * lib_cant_do_object()
@@ -9178,7 +8994,6 @@ static sc_bool lib_cant_do_object(sc_gameref_t game, const sc_char *verb) {
 static sc_bool lib_cant_do_other(sc_gameref_t game, const sc_char *verb) {
 	return lib_cant_do_common(game, verb, FALSE);
 }
-
 
 /*
  * lib_cmd_*()
@@ -9329,7 +9144,6 @@ sc_bool lib_cmd_wash_other(sc_gameref_t game) {
 	return lib_cant_do_other(game, "wash");
 }
 
-
 /*
  * lib_dont_think_common()
  * lib_dont_think_object()
@@ -9339,7 +9153,7 @@ sc_bool lib_cmd_wash_other(sc_gameref_t game) {
  * uninteresting responses.
  */
 static sc_bool lib_dont_think_common(sc_gameref_t game,
-                      const sc_char *verb, sc_bool is_object) {
+                                     const sc_char *verb, sc_bool is_object) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;
@@ -9378,7 +9192,6 @@ static sc_bool lib_dont_think_other(sc_gameref_t game, const sc_char *verb) {
 	return lib_dont_think_common(game, verb, FALSE);
 }
 
-
 /*
  * lib_cmd_*()
  *
@@ -9408,7 +9221,6 @@ sc_bool lib_cmd_repair_other(sc_gameref_t game) {
 	return lib_dont_think_other(game, "repair");
 }
 
-
 /*
  * lib_what()
  *
@@ -9421,7 +9233,6 @@ static sc_bool lib_what(sc_gameref_t game, const sc_char *verb) {
 	pf_buffer_string(filter, " what?\n");
 	return TRUE;
 }
-
 
 /*
  * lib_cmd_*()
@@ -9576,7 +9387,6 @@ sc_bool lib_cmd_unlock_what(sc_gameref_t game) {
 	return lib_what(game, "Unlock");
 }
 
-
 /*
  * lib_cmd_verb_object()
  * lib_cmd_verb_character()
@@ -9592,9 +9402,7 @@ sc_bool lib_cmd_verb_object(sc_gameref_t game) {
 	count = 0;
 	object = -1;
 	for (index_ = 0; index_ < gs_object_count(game); index_++) {
-		if (game->object_references[index_]
-		        && gs_object_seen(game, index_)
-		        && obj_indirectly_in_room(game, index_, gs_playerroom(game))) {
+		if (game->object_references[index_] && gs_object_seen(game, index_) && obj_indirectly_in_room(game, index_, gs_playerroom(game))) {
 			count++;
 			object = index_;
 		}
@@ -9621,9 +9429,7 @@ sc_bool lib_cmd_verb_npc(sc_gameref_t game) {
 	count = 0;
 	npc = -1;
 	for (index_ = 0; index_ < gs_npc_count(game); index_++) {
-		if (game->npc_references[index_]
-		        && gs_npc_seen(game, index_)
-		        && npc_in_room(game, index_, gs_playerroom(game))) {
+		if (game->npc_references[index_] && gs_npc_seen(game, index_) && npc_in_room(game, index_, gs_playerroom(game))) {
 			count++;
 			npc = index_;
 		}
@@ -9640,7 +9446,6 @@ sc_bool lib_cmd_verb_npc(sc_gameref_t game) {
 	pf_buffer_string(filter, ".\n");
 	return TRUE;
 }
-
 
 /*
  * lib_debug_trace()

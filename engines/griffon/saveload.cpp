@@ -41,19 +41,19 @@
 
 namespace Griffon {
 
-#define PRINT(A,B)                      \
-	do {                                \
-		char line[256];                 \
-		sprintf(line, A "\n", B);       \
+#define PRINT(A, B)                      \
+	do {                                 \
+		char line[256];                  \
+		sprintf(line, A "\n", B);        \
 		file->write(line, strlen(line)); \
-	} while(0)
+	} while (0)
 
 #define INPUT(A, B)                 \
 	do {                            \
 		Common::String line;        \
-		line = file->readLine();     \
+		line = file->readLine();    \
 		sscanf(line.c_str(), A, B); \
-	} while(0)
+	} while (0)
 
 Common::String GriffonEngine::getSaveStateName(int slot) const {
 	return (_targetName + Common::String::format(".s%02d", slot));

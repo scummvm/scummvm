@@ -26,7 +26,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMoveObjectButton, CSTButton)
-	ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseButtonUpMsg)
 END_MESSAGE_MAP()
 
 CMoveObjectButton::CMoveObjectButton() : CSTButton(), _field11C(1) {

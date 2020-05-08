@@ -23,8 +23,8 @@
 #ifndef ULTIMA_ULTIMA1_U1DIALOGS_BUY_SELL_DIALOG_H
 #define ULTIMA_ULTIMA1_U1DIALOGS_BUY_SELL_DIALOG_H
 
-#include "ultima/ultima1/u1dialogs/dialog.h"
 #include "ultima/shared/gfx/character_input.h"
+#include "ultima/ultima1/u1dialogs/dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,11 +32,16 @@ namespace U1Dialogs {
 
 #define DIALOG_CLOSE_DELAY 50
 
-enum BuySell { SELECT, BUY, SELL, SOLD, CANT_AFFORD, DONE };
+enum BuySell { SELECT,
+	           BUY,
+	           SELL,
+	           SOLD,
+	           CANT_AFFORD,
+	           DONE };
 
-using Shared::CShowMsg;
-using Shared::CFrameMsg;
 using Shared::CCharacterInputMsg;
+using Shared::CFrameMsg;
+using Shared::CShowMsg;
 
 /**
   * Secondary base class for dialogs that have display for buying and selling
@@ -46,12 +51,15 @@ class BuySellDialog : public Dialog {
 	bool ShowMsg(CShowMsg &msg);
 	bool FrameMsg(CFrameMsg &msg);
 	virtual bool CharacterInputMsg(CCharacterInputMsg &msg);
+
 private:
 	Shared::Gfx::CharacterInput _charInput;
+
 protected:
 	BuySell _mode;
 	Common::String _title;
 	uint _closeCounter;
+
 protected:
 	/**
 	 * Constructor
@@ -82,6 +90,7 @@ protected:
 	 * Sets the dialog to close after a brief pause
 	 */
 	void closeShortly() { _closeCounter = 3 * DIALOG_CLOSE_DELAY; }
+
 public:
 	CLASSDEF;
 

@@ -42,8 +42,8 @@
 #ifndef SWORD25_KERNEL_H
 #define SWORD25_KERNEL_H
 
-#include "common/scummsys.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -72,7 +72,6 @@ class MoviePlayer;
 */
 class Kernel {
 public:
-
 	/**
 	 * Returns the elapsed time since startup in milliseconds
 	 */

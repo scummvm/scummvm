@@ -23,8 +23,8 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "util.h"
 #include "create_cryomni3d_dat.h"
+#include "util.h"
 
 #include "versailles.h"
 
@@ -44,11 +44,13 @@ size_t writeVersaillesSubtitle(FILE *fp, Subtitle const &subtitle) {
 
 	size_t count = 0;
 	for (; count < ARRAYSIZE(subtitle.entries) &&
-	        (subtitle.entries[count].text != nullptr ||
-	         subtitle.entries[count].frameStart != 0); count++) { }
+	       (subtitle.entries[count].text != nullptr ||
+	        subtitle.entries[count].frameStart != 0);
+	     count++) {
+	}
 
 	size += writeArray<SubtitleEntry, writeVersaillesSubtitleEntry, uint16, writeUint16LE>(fp,
-	        subtitle.entries, count);
+	                                                                                       subtitle.entries, count);
 
 	return size;
 }
@@ -58,68 +60,68 @@ size_t writeVersaillesSubtitles16(FILE *fp, Subtitle const *subtitles, uint16 el
 }
 
 // In Versailles platform doesn't seem to change anything
-#define DEFINE_FUNCS(lang) \
-    size_t writeVersailles_ALL_ ## lang ## _Header(FILE *f, uint32 offset, uint32 size) { \
-        return writeGameHeader(f, VERSAILLES_GAMEID, VERSAILLES_VERSION, LANG_ ## lang, PLATFORM_ALL, \
-                               offset, size); \
-    } \
-    \
-    size_t writeVersailles_ALL_ ## lang ## _Data(FILE *f) { \
-        size_t size = 0; \
-        \
-        assert(VERSAILLES_LOCALIZED_FILENAMES_COUNT == ARRAYSIZE(versailles ## lang ## localizedFilenames)); \
-        size += writeString16Array16(f, versailles ## lang ## localizedFilenames, \
-                                     VERSAILLES_LOCALIZED_FILENAMES_COUNT); \
-        \
-        size += writeString16(f, versailles ## lang ## EpilMsg); \
-        size += writeString16(f, versailles ## lang ## EpilPwd); \
-        \
-        size += writeString16(f, versailles ## lang ## BombPwd); \
-        \
-        assert(VERSAILLES_MESSAGES_COUNT == ARRAYSIZE(versailles ## lang ## messages)); \
-        size += writeString16Array16(f, versailles ## lang ## messages, ARRAYSIZE(versailles ## lang ## messages)); \
-        \
-        assert(VERSAILLES_PAINTINGS_COUNT == ARRAYSIZE(versailles ## lang ## paintings)); \
-        size += writeString16Array16(f, versailles ## lang ## paintings, ARRAYSIZE(versailles ## lang ## paintings)); \
-        \
-        size += writePadding(f); \
-        return size; \
-    }
+#define DEFINE_FUNCS(lang)                                                                                    \
+	size_t writeVersailles_ALL_##lang##_Header(FILE *f, uint32 offset, uint32 size) {                         \
+		return writeGameHeader(f, VERSAILLES_GAMEID, VERSAILLES_VERSION, LANG_##lang, PLATFORM_ALL,           \
+		                       offset, size);                                                                 \
+	}                                                                                                         \
+                                                                                                              \
+	size_t writeVersailles_ALL_##lang##_Data(FILE *f) {                                                       \
+		size_t size = 0;                                                                                      \
+                                                                                                              \
+		assert(VERSAILLES_LOCALIZED_FILENAMES_COUNT == ARRAYSIZE(versailles##lang##localizedFilenames));      \
+		size += writeString16Array16(f, versailles##lang##localizedFilenames,                                 \
+		                             VERSAILLES_LOCALIZED_FILENAMES_COUNT);                                   \
+                                                                                                              \
+		size += writeString16(f, versailles##lang##EpilMsg);                                                  \
+		size += writeString16(f, versailles##lang##EpilPwd);                                                  \
+                                                                                                              \
+		size += writeString16(f, versailles##lang##BombPwd);                                                  \
+                                                                                                              \
+		assert(VERSAILLES_MESSAGES_COUNT == ARRAYSIZE(versailles##lang##messages));                           \
+		size += writeString16Array16(f, versailles##lang##messages, ARRAYSIZE(versailles##lang##messages));   \
+                                                                                                              \
+		assert(VERSAILLES_PAINTINGS_COUNT == ARRAYSIZE(versailles##lang##paintings));                         \
+		size += writeString16Array16(f, versailles##lang##paintings, ARRAYSIZE(versailles##lang##paintings)); \
+                                                                                                              \
+		size += writePadding(f);                                                                              \
+		return size;                                                                                          \
+	}
 
-#define DEFINE_FUNCS_CJK(lang) \
-    size_t writeVersailles_ALL_ ## lang ## _Header(FILE *f, uint32 offset, uint32 size) { \
-        return writeGameHeader(f, VERSAILLES_GAMEID, VERSAILLES_VERSION, LANG_ ## lang, PLATFORM_ALL, \
-                               offset, size); \
-    } \
-    \
-    size_t writeVersailles_ALL_ ## lang ## _Data(FILE *f) { \
-        size_t size = 0; \
-        \
-        assert(VERSAILLES_LOCALIZED_FILENAMES_COUNT == ARRAYSIZE(versailles ## lang ## localizedFilenames)); \
-        size += writeString16Array16(f, versailles ## lang ## localizedFilenames, \
-                                     VERSAILLES_LOCALIZED_FILENAMES_COUNT); \
-        \
-        size += writeString16(f, versailles ## lang ## EpilMsg); \
-        size += writeString16(f, versailles ## lang ## EpilPwd); \
-        \
-        if ((LANG_ ## lang == LANG_JA)) { \
-            assert(VERSAILLES_JA_BOMB_ALPHABET_SIZE + 1 == sizeof(versaillesJABombAlphabet)); \
-            size += writeString16(f, versaillesJABombAlphabet); \
-        } \
-        size += writeString16(f, versailles ## lang ## BombPwd); \
-        \
-        assert(VERSAILLES_MESSAGES_COUNT_CJK == ARRAYSIZE(versailles ## lang ## messages)); \
-        size += writeString16Array16(f, versailles ## lang ## messages, ARRAYSIZE(versailles ## lang ## messages)); \
-        \
-        assert(VERSAILLES_PAINTINGS_COUNT == ARRAYSIZE(versailles ## lang ## paintings)); \
-        size += writeString16Array16(f, versailles ## lang ## paintings, ARRAYSIZE(versailles ## lang ## paintings)); \
-        \
-        /* No need to assert as we don't expect a fixed count in engine */ \
-        size += writeVersaillesSubtitles16(f, versailles ## lang ## subtitles, ARRAYSIZE(versailles ## lang ## subtitles)); \
-        \
-        size += writePadding(f); \
-        return size; \
-    }
+#define DEFINE_FUNCS_CJK(lang)                                                                                      \
+	size_t writeVersailles_ALL_##lang##_Header(FILE *f, uint32 offset, uint32 size) {                               \
+		return writeGameHeader(f, VERSAILLES_GAMEID, VERSAILLES_VERSION, LANG_##lang, PLATFORM_ALL,                 \
+		                       offset, size);                                                                       \
+	}                                                                                                               \
+                                                                                                                    \
+	size_t writeVersailles_ALL_##lang##_Data(FILE *f) {                                                             \
+		size_t size = 0;                                                                                            \
+                                                                                                                    \
+		assert(VERSAILLES_LOCALIZED_FILENAMES_COUNT == ARRAYSIZE(versailles##lang##localizedFilenames));            \
+		size += writeString16Array16(f, versailles##lang##localizedFilenames,                                       \
+		                             VERSAILLES_LOCALIZED_FILENAMES_COUNT);                                         \
+                                                                                                                    \
+		size += writeString16(f, versailles##lang##EpilMsg);                                                        \
+		size += writeString16(f, versailles##lang##EpilPwd);                                                        \
+                                                                                                                    \
+		if ((LANG_##lang == LANG_JA)) {                                                                             \
+			assert(VERSAILLES_JA_BOMB_ALPHABET_SIZE + 1 == sizeof(versaillesJABombAlphabet));                       \
+			size += writeString16(f, versaillesJABombAlphabet);                                                     \
+		}                                                                                                           \
+		size += writeString16(f, versailles##lang##BombPwd);                                                        \
+                                                                                                                    \
+		assert(VERSAILLES_MESSAGES_COUNT_CJK == ARRAYSIZE(versailles##lang##messages));                             \
+		size += writeString16Array16(f, versailles##lang##messages, ARRAYSIZE(versailles##lang##messages));         \
+                                                                                                                    \
+		assert(VERSAILLES_PAINTINGS_COUNT == ARRAYSIZE(versailles##lang##paintings));                               \
+		size += writeString16Array16(f, versailles##lang##paintings, ARRAYSIZE(versailles##lang##paintings));       \
+                                                                                                                    \
+		/* No need to assert as we don't expect a fixed count in engine */                                          \
+		size += writeVersaillesSubtitles16(f, versailles##lang##subtitles, ARRAYSIZE(versailles##lang##subtitles)); \
+                                                                                                                    \
+		size += writePadding(f);                                                                                    \
+		return size;                                                                                                \
+	}
 
 DEFINE_FUNCS(FR)
 DEFINE_FUNCS(BR)

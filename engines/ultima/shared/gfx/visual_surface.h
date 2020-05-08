@@ -32,7 +32,7 @@ namespace Ultima {
 namespace Shared {
 
 class GameBase;
-	
+
 namespace Gfx {
 
 class Font;
@@ -43,6 +43,7 @@ private:
 	Point _textPos;
 	byte _textColor;
 	byte _bgColor;
+
 public:
 	/**
 	 * Constructor

@@ -53,10 +53,12 @@ private:
 	bool _dat_80093c72;
 	uint16 _dat_80093c74;
 	bool _dat_80093ca8;
+
 public:
 	Minigame2(DragonsEngine *vm);
 
 	void run(int16 param_1, uint16 param_2, int16 param_3);
+
 private:
 	void fun_80093aec_dialog(uint32 textId, int16 x, int16 y);
 	bool fun_80093520();

@@ -80,7 +80,6 @@ struct ChunkHeader {
 	uint32 size;    ///< Size of the chunk after this header in bytes
 };
 
-
 } // End of namespace Cine
 
 #endif

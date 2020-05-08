@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/util.h"
 #include "ultima/shared/core/file.h"
+#include "common/util.h"
 #include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
@@ -37,7 +37,6 @@ Common::String readStringFromStream(Common::SeekableReadStream *s) {
 }
 
 /*------------------------------------------------------------------------*/
-
 
 #define ERROR error("Could not open file - %s", name.c_str())
 

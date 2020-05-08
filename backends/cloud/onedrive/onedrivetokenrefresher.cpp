@@ -22,18 +22,17 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include "common/json.h"
+#include <curl/curl.h>
 
 namespace Cloud {
 namespace OneDrive {
 
-OneDriveTokenRefresher::OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url):
-	CurlJsonRequest(callback, ecb, url), _parentStorage(parent) {}
+OneDriveTokenRefresher::OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url) : CurlJsonRequest(callback, ecb, url), _parentStorage(parent) {}
 
 OneDriveTokenRefresher::~OneDriveTokenRefresher() {}
 

@@ -27,30 +27,30 @@
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
-#include "sci/sci.h"
-#include "sci/event.h"
-#include "sci/resource.h"
 #include "sci/engine/features.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
+#include "sci/event.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
-#include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
+#include "sci/resource.h"
+#include "sci/sci.h"
 #ifdef ENABLE_SCI32
-#include "sci/graphics/cursor32.h"
 #include "sci/graphics/celobj32.h"
 #include "sci/graphics/controls32.h"
-#include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
+#include "sci/graphics/cursor32.h"
+#include "sci/graphics/font.h" // TODO: remove once kBitmap is moved in a separate class
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
@@ -62,7 +62,7 @@
 namespace Sci {
 #ifdef ENABLE_SCI32
 
-extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
+extern int showScummVMDialog(const Common::String &message, const char *altButton = nullptr, bool alignCenter = true);
 
 reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
@@ -107,8 +107,8 @@ reg_t kSetNowSeen32(EngineState *s, int argc, reg_t *argv) {
 	// the moment (Phar Lap Windows-only release)
 	// (See also getNowSeenRect)
 	if (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
-		g_sci->getGameId() == GID_SQ6 ||
-		g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+	    g_sci->getGameId() == GID_SQ6 ||
+	    g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
 
 		return s->r_acc;
 	}
@@ -141,9 +141,9 @@ reg_t kSetCursor32(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 4: {
 		const Common::Rect restrictRect(argv[0].toSint16(),
-										argv[1].toSint16(),
-										argv[2].toSint16() + 1,
-										argv[3].toSint16() + 1);
+		                                argv[1].toSint16(),
+		                                argv[2].toSint16() + 1,
+		                                argv[3].toSint16() + 1);
 		g_sci->_gfxCursor32->setRestrictedArea(restrictRect);
 		break;
 	}
@@ -295,11 +295,10 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	int16 dimmed = readSelectorValue(segMan, object, SELECTOR(dimmed));
 
 	Common::Rect rect(
-		readSelectorValue(segMan, object, SELECTOR(textLeft)),
-		readSelectorValue(segMan, object, SELECTOR(textTop)),
-		readSelectorValue(segMan, object, SELECTOR(textRight)) + 1,
-		readSelectorValue(segMan, object, SELECTOR(textBottom)) + 1
-	);
+	    readSelectorValue(segMan, object, SELECTOR(textLeft)),
+	    readSelectorValue(segMan, object, SELECTOR(textTop)),
+	    readSelectorValue(segMan, object, SELECTOR(textRight)) + 1,
+	    readSelectorValue(segMan, object, SELECTOR(textBottom)) + 1);
 
 	if (subop == 0) {
 		TextAlign alignment = (TextAlign)readSelectorValue(segMan, object, SELECTOR(mode));
@@ -335,10 +334,10 @@ reg_t kTextSize32(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect textRect = g_sci->_gfxText32->getTextSize(text, maxWidth, doScaling);
 
 	reg_t value[4] = {
-		make_reg(0, textRect.left),
-		make_reg(0, textRect.top),
-		make_reg(0, textRect.right - 1),
-		make_reg(0, textRect.bottom - 1) };
+	    make_reg(0, textRect.left),
+	    make_reg(0, textRect.top),
+	    make_reg(0, textRect.right - 1),
+	    make_reg(0, textRect.bottom - 1)};
 
 	rect->setElements(0, 4, value);
 	return s->r_acc;
@@ -690,19 +689,17 @@ reg_t kBitmapDrawView(EngineState *s, int argc, reg_t *argv) {
 	const int16 alignY = argc > 8 ? argv[8].toSint16() : -1;
 
 	Common::Point position(
-		x == -1 ? bitmap.getOrigin().x : x,
-		y == -1 ? bitmap.getOrigin().y : y
-	);
+	    x == -1 ? bitmap.getOrigin().x : x,
+	    y == -1 ? bitmap.getOrigin().y : y);
 
 	position.x -= alignX == -1 ? view._origin.x : alignX;
 	position.y -= alignY == -1 ? view._origin.y : alignY;
 
 	Common::Rect drawRect(
-		position.x,
-		position.y,
-		position.x + view._width,
-		position.y + view._height
-	);
+	    position.x,
+	    position.y,
+	    position.x + view._width,
+	    position.y + view._height);
 	drawRect.clip(Common::Rect(bitmap.getWidth(), bitmap.getHeight()));
 	view.draw(bitmap.getBuffer(), drawRect, position, view._mirrorX);
 	return s->r_acc;
@@ -714,11 +711,10 @@ reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv) {
 	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
 	Common::String text = s->_segMan->getString(argv[1]);
 	Common::Rect textRect(
-		argv[2].toSint16(),
-		argv[3].toSint16(),
-		argv[4].toSint16() + 1,
-		argv[5].toSint16() + 1
-	);
+	    argv[2].toSint16(),
+	    argv[3].toSint16(),
+	    argv[4].toSint16() + 1,
+	    argv[5].toSint16() + 1);
 	int16 foreColor = argv[6].toSint16();
 	int16 backColor = argv[7].toSint16();
 	int16 skipColor = argv[8].toSint16();
@@ -742,11 +738,10 @@ reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv) {
 
 	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
 	Common::Rect fillRect(
-		argv[1].toSint16(),
-		argv[2].toSint16(),
-		argv[3].toSint16() + 1,
-		argv[4].toSint16() + 1
-	);
+	    argv[1].toSint16(),
+	    argv[2].toSint16(),
+	    argv[3].toSint16() + 1,
+	    argv[4].toSint16() + 1);
 
 	bitmap.getBuffer().fillRect(fillRect, argv[5].toSint16());
 	return s->r_acc;

@@ -29,10 +29,10 @@
  *
  */
 
-#include "sword25/kernel/outputpersistenceblock.h"
-#include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/gfx/animationtemplateregistry.h"
 #include "sword25/gfx/animationtemplate.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
 namespace Common {
 DECLARE_SINGLETON(Sword25::AnimationTemplateRegistry);

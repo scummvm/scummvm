@@ -33,90 +33,90 @@ enum {
 	kJmpClassNum = -1
 };
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_PN, x)
+#define OPCODE(x) _OPCODE(AGOSEngine_PN, x)
 
 void AGOSEngine_PN::setupOpcodes() {
 	static const OpcodeEntryPN opcodes[] = {
-		/* 00 */
-		OPCODE(opn_opcode00),
-		OPCODE(opn_add),
-		OPCODE(opn_sub),
-		OPCODE(opn_mul),
-		/* 04 */
-		OPCODE(opn_div),
-		OPCODE(opn_opcode05),
-		OPCODE(opn_opcode06),
-		OPCODE(opn_opcode07),
-		/* 08 */
-		OPCODE(opn_opcode08),
-		OPCODE(opn_opcode09),
-		OPCODE(opn_opcode10),
-		OPCODE(opn_opcode11),
-		/* 12 */
-		OPCODE(opn_opcode12),
-		OPCODE(opn_opcode13),
-		OPCODE(opn_opcode14),
-		OPCODE(opn_opcode15),
-		/* 16 */
-		OPCODE(opn_opcode16),
-		OPCODE(opn_lt),
-		OPCODE(opn_gt),
-		OPCODE(opn_eq),
-		/* 20 */
-		OPCODE(opn_neq),
-		OPCODE(opn_opcode21),
-		OPCODE(opn_opcode22),
-		OPCODE(opn_opcode23),
-		/* 24 */
-		OPCODE(opn_opcode24),
-		OPCODE(opn_opcode25),
-		OPCODE(opn_opcode26),
-		OPCODE(opn_opcode27),
-		/* 28 */
-		OPCODE(opn_opcode28),
-		OPCODE(opn_opcode29),
-		OPCODE(opn_opcode30),
-		OPCODE(opn_opcode31),
-		/* 32 */
-		OPCODE(opn_opcode32),
-		OPCODE(opn_opcode33),
-		OPCODE(opn_opcode34),
-		OPCODE(opn_opcode35),
-		/* 36 */
-		OPCODE(opn_opcode36),
-		OPCODE(opn_opcode37),
-		OPCODE(opn_opcode38),
-		OPCODE(opn_opcode39),
-		/* 40 */
-		OPCODE(opn_opcode40),
-		OPCODE(opn_opcode41),
-		OPCODE(opn_opcode42),
-		OPCODE(opn_opcode43),
-		/* 44 */
-		OPCODE(opn_opcode44),
-		OPCODE(opn_opcode45),
-		OPCODE(opn_opcode46),
-		OPCODE(opn_opcode47),
-		/* 48 */
-		OPCODE(opn_opcode48),
-		OPCODE(opn_opcode49),
-		OPCODE(opn_opcode50),
-		OPCODE(opn_opcode51),
-		/* 52 */
-		OPCODE(opn_opcode52),
-		OPCODE(opn_opcode53),
-		OPCODE(opn_opcode54),
-		OPCODE(opn_opcode55),
-		/* 56 */
-		OPCODE(opn_opcode56),
-		OPCODE(opn_opcode57),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 60 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(opn_opcode62),
-		OPCODE(opn_opcode63),
+	    /* 00 */
+	    OPCODE(opn_opcode00),
+	    OPCODE(opn_add),
+	    OPCODE(opn_sub),
+	    OPCODE(opn_mul),
+	    /* 04 */
+	    OPCODE(opn_div),
+	    OPCODE(opn_opcode05),
+	    OPCODE(opn_opcode06),
+	    OPCODE(opn_opcode07),
+	    /* 08 */
+	    OPCODE(opn_opcode08),
+	    OPCODE(opn_opcode09),
+	    OPCODE(opn_opcode10),
+	    OPCODE(opn_opcode11),
+	    /* 12 */
+	    OPCODE(opn_opcode12),
+	    OPCODE(opn_opcode13),
+	    OPCODE(opn_opcode14),
+	    OPCODE(opn_opcode15),
+	    /* 16 */
+	    OPCODE(opn_opcode16),
+	    OPCODE(opn_lt),
+	    OPCODE(opn_gt),
+	    OPCODE(opn_eq),
+	    /* 20 */
+	    OPCODE(opn_neq),
+	    OPCODE(opn_opcode21),
+	    OPCODE(opn_opcode22),
+	    OPCODE(opn_opcode23),
+	    /* 24 */
+	    OPCODE(opn_opcode24),
+	    OPCODE(opn_opcode25),
+	    OPCODE(opn_opcode26),
+	    OPCODE(opn_opcode27),
+	    /* 28 */
+	    OPCODE(opn_opcode28),
+	    OPCODE(opn_opcode29),
+	    OPCODE(opn_opcode30),
+	    OPCODE(opn_opcode31),
+	    /* 32 */
+	    OPCODE(opn_opcode32),
+	    OPCODE(opn_opcode33),
+	    OPCODE(opn_opcode34),
+	    OPCODE(opn_opcode35),
+	    /* 36 */
+	    OPCODE(opn_opcode36),
+	    OPCODE(opn_opcode37),
+	    OPCODE(opn_opcode38),
+	    OPCODE(opn_opcode39),
+	    /* 40 */
+	    OPCODE(opn_opcode40),
+	    OPCODE(opn_opcode41),
+	    OPCODE(opn_opcode42),
+	    OPCODE(opn_opcode43),
+	    /* 44 */
+	    OPCODE(opn_opcode44),
+	    OPCODE(opn_opcode45),
+	    OPCODE(opn_opcode46),
+	    OPCODE(opn_opcode47),
+	    /* 48 */
+	    OPCODE(opn_opcode48),
+	    OPCODE(opn_opcode49),
+	    OPCODE(opn_opcode50),
+	    OPCODE(opn_opcode51),
+	    /* 52 */
+	    OPCODE(opn_opcode52),
+	    OPCODE(opn_opcode53),
+	    OPCODE(opn_opcode54),
+	    OPCODE(opn_opcode55),
+	    /* 56 */
+	    OPCODE(opn_opcode56),
+	    OPCODE(opn_opcode57),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 60 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(opn_opcode62),
+	    OPCODE(opn_opcode63),
 	};
 
 	_opcodesPN = opcodes;
@@ -237,7 +237,7 @@ void AGOSEngine_PN::opn_opcode11() {
 void AGOSEngine_PN::opn_opcode12() {
 	char bf[8];
 	int a = 0;
-	sprintf(bf,"%d", varval());
+	sprintf(bf, "%d", varval());
 	while (bf[a])
 		pcf(bf[a++]);
 	setScriptReturn(true);
@@ -246,7 +246,7 @@ void AGOSEngine_PN::opn_opcode12() {
 void AGOSEngine_PN::opn_opcode13() {
 	char bf[8];
 	int a = 0;
-	sprintf(bf,"%d", varval());
+	sprintf(bf, "%d", varval());
 	while (bf[a])
 		pcf(bf[a++]);
 	pcf((uint8)'\n');
@@ -379,20 +379,20 @@ void AGOSEngine_PN::opn_opcode31() {
 	}
 
 	switch (a) {
-		case 0:
-			getFilename();
-			slot = matchSaveGame(_saveFile, countSaveGames());
-			bf = genSaveName(slot);
-			break;
-		case 1:
-			bf = "pn.sav";
-			break;
-		case 2:
-			// NOTE: Is this case ever used?
-			error("opn_opcode31: case 2");
-			break;
-		default:
-			break;
+	case 0:
+		getFilename();
+		slot = matchSaveGame(_saveFile, countSaveGames());
+		bf = genSaveName(slot);
+		break;
+	case 1:
+		bf = "pn.sav";
+		break;
+	case 2:
+		// NOTE: Is this case ever used?
+		error("opn_opcode31: case 2");
+		break;
+	default:
+		break;
 	}
 
 	if (slot == -1) {
@@ -418,23 +418,23 @@ void AGOSEngine_PN::opn_opcode32() {
 
 	uint16 curSlot = countSaveGames();
 	switch (a) {
-		case 0:
-			getFilename();
-			slot = matchSaveGame(_saveFile, curSlot);
-			if (slot != -1)
-				bf = genSaveName(slot);
-			else
-				bf = genSaveName(curSlot);
-			break;
-		case 1:
-			bf = "pn.sav";
-			break;
-		case 2:
-			// NOTE: Is this case ever used?
-			error("opn_opcode32: case 2");
-			break;
-		default:
-			break;
+	case 0:
+		getFilename();
+		slot = matchSaveGame(_saveFile, curSlot);
+		if (slot != -1)
+			bf = genSaveName(slot);
+		else
+			bf = genSaveName(curSlot);
+		break;
+	case 1:
+		bf = "pn.sav";
+		break;
+	case 2:
+		// NOTE: Is this case ever used?
+		error("opn_opcode32: case 2");
+		break;
+	default:
+		break;
 	}
 
 	a = saveFile(bf);
@@ -449,8 +449,8 @@ void AGOSEngine_PN::opn_opcode34() {
 	uint16 msgNum1, msgNum2;
 	varval();
 	getResponse((int)_variableArray[166], (int)_variableArray[167], msgNum1, msgNum2);
-	_variableArray[168]= msgNum1;
-	_variableArray[169]= msgNum2;
+	_variableArray[168] = msgNum1;
+	_variableArray[169] = msgNum2;
 	setScriptReturn(true);
 }
 
@@ -487,7 +487,7 @@ void AGOSEngine_PN::opn_opcode36() {
 
 	int ct = 1;
 	while ((*_inpp != '.') && (*_inpp != ',') && (!Common::isSpace(*_inpp)) && (*_inpp != '\0') &&
-		(*_inpp!='"')) {
+	       (*_inpp != '"')) {
 		if (ct < _dataBase[57])
 			_wordcp[ct++] = *_inpp;
 		_inpp++;
@@ -501,7 +501,7 @@ void AGOSEngine_PN::opn_opcode37() {
 	_inputReady = true;
 	interact(_inputline, 49);
 
-	if ((_inpp = strchr(_inputline,'\n')) != NULL)
+	if ((_inpp = strchr(_inputline, '\n')) != NULL)
 		*_inpp = '\0';
 	_inpp = _inputline;
 	setScriptReturn(true);
@@ -690,17 +690,17 @@ void AGOSEngine_PN::opn_opcode62() {
 void AGOSEngine_PN::opn_opcode63() {
 	int a = readfromline();
 	switch (a) {
-		case 65:
-			setScriptReturn(inventoryOn(varval()));
-			break;
-		case 64:
-			setScriptReturn((_videoLockOut & 0x10) != 0);
-			break;
-		case 63:
-			setScriptReturn(inventoryOff());
-			break;
-		default:
-			error("opn_opcode63: unknown code %d", a);
+	case 65:
+		setScriptReturn(inventoryOn(varval()));
+		break;
+	case 64:
+		setScriptReturn((_videoLockOut & 0x10) != 0);
+		break;
+	case 63:
+		setScriptReturn(inventoryOff());
+		break;
+	default:
+		error("opn_opcode63: unknown code %d", a);
 	}
 }
 
@@ -742,7 +742,6 @@ int AGOSEngine_PN::inventoryOff() {
 // Personal Nightmare Script Code
 // -----------------------------------------------------------------------
 
-
 int AGOSEngine_PN::bitextract(uint32 ptr, int offs) {
 	const byte mask = 0x80 >> (offs % 8);
 	return ((mask & _dataBase[ptr + offs / 8]) != 0);
@@ -771,33 +770,33 @@ int AGOSEngine_PN::varval() {
 	}
 
 	switch (a) {
-		case 249:
-			b = readfromline();
-			return (int)(b + 256 * readfromline());
-		case 250:
-			return readfromline();
-		case 251:
-			return (int)_variableArray[varval()];
-		case 252:
-			b = varval();
-			return (int)_dataBase[_quickptr[0] + b * _quickshort[0] + varval()];
-		case 254:
-			b = varval();
-			return (int)_dataBase[_quickptr[3] + b * _quickshort[2] + varval()];
-		case 247:
-			b = varval();
-			return (int)getptr(_quickptr[11] + (b * _quickshort[4]) + (2 * varval()));
-		case 248:
-			b = varval();
-			return (int)getptr(_quickptr[12] + (b * _quickshort[5]) + (2 * varval()));
-		case 253:
-			b = varval();
-			return bitextract((int32)_quickptr[1] + b * _quickshort[1], varval());
-		case 255:
-			b = varval();
-			return bitextract((int32)_quickptr[4] + b * _quickshort[3], varval());
-		default:
-			error("VARVAL : Illegal code %d encountered", a);
+	case 249:
+		b = readfromline();
+		return (int)(b + 256 * readfromline());
+	case 250:
+		return readfromline();
+	case 251:
+		return (int)_variableArray[varval()];
+	case 252:
+		b = varval();
+		return (int)_dataBase[_quickptr[0] + b * _quickshort[0] + varval()];
+	case 254:
+		b = varval();
+		return (int)_dataBase[_quickptr[3] + b * _quickshort[2] + varval()];
+	case 247:
+		b = varval();
+		return (int)getptr(_quickptr[11] + (b * _quickshort[4]) + (2 * varval()));
+	case 248:
+		b = varval();
+		return (int)getptr(_quickptr[12] + (b * _quickshort[5]) + (2 * varval()));
+	case 253:
+		b = varval();
+		return bitextract((int32)_quickptr[1] + b * _quickshort[1], varval());
+	case 255:
+		b = varval();
+		return bitextract((int32)_quickptr[4] + b * _quickshort[3], varval());
+	default:
+		error("VARVAL : Illegal code %d encountered", a);
 	}
 }
 
@@ -811,43 +810,43 @@ void AGOSEngine_PN::writeval(uint8 *ptr, int val) {
 		error("writeval: Write to constant (%d)", a);
 
 	switch (a) {
-		case 249:
-			error("writeval: Write to constant (%d)", a);
-			break;
-		case 250:
-			error("writeval: Write to constant (%d)", a);
-			break;
-		case 251:
-			_variableArray[varval()] = val;
-			break;
-		case 252:
-			b = varval();
-			_dataBase[_quickptr[0] + b * _quickshort[0] + varval()] = val;
-			break;
-		case 254:
-			b = varval();
-			_dataBase[_quickptr[3] + b * _quickshort[2] + varval()] = val;
-			break;
-		case 247:
-			b = varval();
-			x = _quickptr[11] + b * _quickshort[4] + varval() * 2;
-			WRITE_LE_UINT16(_dataBase + x, val);
-			break;
-		case 248:
-			b = varval();
-			x = _quickptr[12] + b * _quickshort[5] + varval() * 2;
-			WRITE_LE_UINT16(_dataBase + x, val);
-			break;
-		case 253:
-			b = varval();
-			setbitf((uint32)_quickptr[1] + b * _quickshort[1], varval(), val);
-			break;
-		case 255:
-			b = varval();
-			setbitf((uint32)_quickptr[4] + b * _quickshort[3], varval(), val);
-			break;
-		default:
-			error("WRITEVAL : undefined evaluation %d", a);
+	case 249:
+		error("writeval: Write to constant (%d)", a);
+		break;
+	case 250:
+		error("writeval: Write to constant (%d)", a);
+		break;
+	case 251:
+		_variableArray[varval()] = val;
+		break;
+	case 252:
+		b = varval();
+		_dataBase[_quickptr[0] + b * _quickshort[0] + varval()] = val;
+		break;
+	case 254:
+		b = varval();
+		_dataBase[_quickptr[3] + b * _quickshort[2] + varval()] = val;
+		break;
+	case 247:
+		b = varval();
+		x = _quickptr[11] + b * _quickshort[4] + varval() * 2;
+		WRITE_LE_UINT16(_dataBase + x, val);
+		break;
+	case 248:
+		b = varval();
+		x = _quickptr[12] + b * _quickshort[5] + varval() * 2;
+		WRITE_LE_UINT16(_dataBase + x, val);
+		break;
+	case 253:
+		b = varval();
+		setbitf((uint32)_quickptr[1] + b * _quickshort[1], varval(), val);
+		break;
+	case 255:
+		b = varval();
+		setbitf((uint32)_quickptr[4] + b * _quickshort[3], varval(), val);
+		break;
+	default:
+		error("WRITEVAL : undefined evaluation %d", a);
 	}
 	_linct = lsav;
 	_workptr = savpt;
@@ -892,7 +891,7 @@ int AGOSEngine_PN::doline(int needsave) {
 	assert(!_stackbase == !needsave);
 
 	int x;
-	int myTag = ++_tagOfActiveDoline;	// Obtain a unique tag for this doline invocation
+	int myTag = ++_tagOfActiveDoline; // Obtain a unique tag for this doline invocation
 	_dolineReturnVal = 0;
 
 	if (_stackbase && needsave)
@@ -929,7 +928,7 @@ int AGOSEngine_PN::doline(int needsave) {
 
 		} while (x && !shouldQuit());
 
-skipln:
+	skipln:
 		_linebase += 127 & *_linebase;
 		_linembr++;
 	} while (!shouldQuit());
@@ -949,9 +948,9 @@ int AGOSEngine_PN::findentry() {
 
 	while (curObj < _quickshort[6]) {
 		if (((c1 == 255) || (c1 == getptr(ofs))) &&
-			(c2 == getptr(ofs + 2))) {
-				_variableArray[23] = curObj;
-				return 1;
+		    (c2 == getptr(ofs + 2))) {
+			_variableArray[23] = curObj;
+			return 1;
 		}
 		curObj++;
 		ofs += stepmt;
@@ -969,13 +968,13 @@ int AGOSEngine_PN::findset() {
 	c3 = varval();
 	c4 = varval();
 	while (curObj < _quickshort[6]) {
-		if (((c1 ==255) || (c1 == getptr(ofs))) &&
-			((c2 == 255) || (c2 == getptr(ofs + 2))) &&
-			((c3 == 255) || (c3 == getptr(ofs + 4))) &&
-			((c4 == 255) || (c4 == getptr(ofs + 6)))) {
-				_variableArray[23] = curObj;
-				_fnst = curObj + 1;
-				return 1;
+		if (((c1 == 255) || (c1 == getptr(ofs))) &&
+		    ((c2 == 255) || (c2 == getptr(ofs + 2))) &&
+		    ((c3 == 255) || (c3 == getptr(ofs + 4))) &&
+		    ((c4 == 255) || (c4 == getptr(ofs + 6)))) {
+			_variableArray[23] = curObj;
+			_fnst = curObj + 1;
+			return 1;
 		}
 		curObj++;
 		ofs += stepmt;
@@ -1010,7 +1009,6 @@ int AGOSEngine_PN::gvwrd(uint8 *wptr, int mask) {
 	}
 	return -1;
 }
-
 
 int AGOSEngine_PN::setposition(int process, int line) {
 	uint8 *ourptr;

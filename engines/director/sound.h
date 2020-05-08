@@ -24,11 +24,11 @@
 #define DIRECTOR_SOUND_H
 
 namespace Audio {
-	class AudioStream;
-	class SoundHandle;
-	class PCSpeaker;
-	class SeekableAudioStream;
-}
+class AudioStream;
+class SoundHandle;
+class PCSpeaker;
+class SeekableAudioStream;
+} // namespace Audio
 
 namespace Director {
 
@@ -55,7 +55,6 @@ public:
 	void stopSound(uint8 soundChannel);
 	void stopSound();
 };
-
 
 class SNDDecoder {
 public:

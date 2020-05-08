@@ -37,6 +37,7 @@ private:
 	void execute();
 
 	void protectionText();
+
 public:
 	static void show(XeenEngine *vm);
 };

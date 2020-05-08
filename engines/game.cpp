@@ -24,7 +24,6 @@
 #include "common/gui_options.h"
 #include "common/translation.h"
 
-
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
 	const PlainGameDescriptor *g = list;
 	while (g->gameId) {
@@ -49,38 +48,34 @@ PlainGameDescriptor PlainGameDescriptor::of(const char *gameId, const char *desc
 	return pgd;
 }
 
-QualifiedGameDescriptor::QualifiedGameDescriptor(const char *engine, const PlainGameDescriptor &pgd) :
-		engineId(engine),
-		gameId(pgd.gameId),
-		description(pgd.description) {
+QualifiedGameDescriptor::QualifiedGameDescriptor(const char *engine, const PlainGameDescriptor &pgd) : engineId(engine),
+                                                                                                       gameId(pgd.gameId),
+                                                                                                       description(pgd.description) {
 }
 
-DetectedGame::DetectedGame() :
-		hasUnknownFiles(false),
-		canBeAdded(true),
-		language(Common::UNK_LANG),
-		platform(Common::kPlatformUnknown),
-		gameSupportLevel(kStableGame) {
+DetectedGame::DetectedGame() : hasUnknownFiles(false),
+                               canBeAdded(true),
+                               language(Common::UNK_LANG),
+                               platform(Common::kPlatformUnknown),
+                               gameSupportLevel(kStableGame) {
 }
 
-DetectedGame::DetectedGame(const Common::String &engine, const PlainGameDescriptor &pgd) :
-		engineId(engine),
-		hasUnknownFiles(false),
-		canBeAdded(true),
-		language(Common::UNK_LANG),
-		platform(Common::kPlatformUnknown),
-		gameSupportLevel(kStableGame) {
+DetectedGame::DetectedGame(const Common::String &engine, const PlainGameDescriptor &pgd) : engineId(engine),
+                                                                                           hasUnknownFiles(false),
+                                                                                           canBeAdded(true),
+                                                                                           language(Common::UNK_LANG),
+                                                                                           platform(Common::kPlatformUnknown),
+                                                                                           gameSupportLevel(kStableGame) {
 
 	gameId = pgd.gameId;
 	preferredTarget = pgd.gameId;
 	description = pgd.description;
 }
 
-DetectedGame::DetectedGame(const Common::String &engine, const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex) :
-		engineId(engine),
-		hasUnknownFiles(false),
-		canBeAdded(true),
-		gameSupportLevel(kStableGame) {
+DetectedGame::DetectedGame(const Common::String &engine, const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex) : engineId(engine),
+                                                                                                                                                                                hasUnknownFiles(false),
+                                                                                                                                                                                canBeAdded(true),
+                                                                                                                                                                                gameSupportLevel(kStableGame) {
 
 	gameId = id;
 	preferredTarget = id;
@@ -134,8 +129,7 @@ Common::String DetectedGame::updateDesc() const {
 	return descr;
 }
 
-DetectionResults::DetectionResults(const DetectedGames &detectedGames) :
-		_detectedGames(detectedGames) {
+DetectionResults::DetectionResults(const DetectedGames &detectedGames) : _detectedGames(detectedGames) {
 }
 
 bool DetectionResults::foundUnknownGames() const {
@@ -175,10 +169,9 @@ Common::String generateUnknownGameReport(const DetectedGames &detectedGames, boo
 	const char *reportEngineHeader = _s("Matched game IDs for the %s engine:");
 
 	Common::String report = Common::String::format(
-			translate ? _(reportStart) : reportStart,
-			fullPath ? detectedGames[0].path.c_str() : detectedGames[0].shortPath.c_str(),
-			"https://bugs.scummvm.org/"
-	);
+	    translate ? _(reportStart) : reportStart,
+	    fullPath ? detectedGames[0].path.c_str() : detectedGames[0].shortPath.c_str(),
+	    "https://bugs.scummvm.org/");
 	report += "\n";
 
 	FilePropertiesMap matchedFiles;
@@ -187,7 +180,8 @@ Common::String generateUnknownGameReport(const DetectedGames &detectedGames, boo
 	for (uint i = 0; i < detectedGames.size(); i++) {
 		const DetectedGame &game = detectedGames[i];
 
-		if (!game.hasUnknownFiles) continue;
+		if (!game.hasUnknownFiles)
+			continue;
 
 		if (currentEngineId.empty() || currentEngineId != game.engineId) {
 			currentEngineId = game.engineId;
@@ -195,9 +189,8 @@ Common::String generateUnknownGameReport(const DetectedGames &detectedGames, boo
 			// If the engine is not the same as for the previous entry, print an engine line header
 			report += "\n";
 			report += Common::String::format(
-					translate ? _(reportEngineHeader) : reportEngineHeader,
-					game.engineId.c_str()
-			);
+			    translate ? _(reportEngineHeader) : reportEngineHeader,
+			    game.engineId.c_str());
 			report += " ";
 
 		} else {

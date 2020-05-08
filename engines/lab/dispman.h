@@ -204,7 +204,7 @@ public:
 	 * @param text The text itself
 	 */
 	int flowText(TextFont *font, int16 spacing, byte penColor, byte backPen, bool fillBack,
-				bool centerh, bool centerv, bool output, Common::Rect textRect, const char *text, Image *targetImage = nullptr);
+	             bool centerh, bool centerv, bool output, Common::Rect textRect, const char *text, Image *targetImage = nullptr);
 
 	void screenUpdate();
 

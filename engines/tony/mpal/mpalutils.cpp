@@ -21,8 +21,8 @@
  */
 
 #include "tony/mpal/mpalutils.h"
-#include "tony/tony.h"
 #include "common/memstream.h"
+#include "tony/tony.h"
 
 namespace Tony {
 

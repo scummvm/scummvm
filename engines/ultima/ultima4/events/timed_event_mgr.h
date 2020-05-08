@@ -114,14 +114,14 @@ public:
 	/**
 	 * Re-initializes the timer manager to a new timer granularity
 	 */
-	void reset(uint interval);     /**< Re-initializes the event manager to a new base interval */
+	void reset(uint interval); /**< Re-initializes the event manager to a new base interval */
 #if defined(IOS_ULTIMA4)
 	bool hasActiveTimer() const;
 #endif
 
 private:
-	void lock();                /**< Locks the event list */
-	void unlock();              /**< Unlocks the event list */
+	void lock();   /**< Locks the event list */
+	void unlock(); /**< Unlocks the event list */
 
 	/* Properties */
 protected:

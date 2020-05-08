@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/base/base_active_rect.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -46,7 +46,6 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
 	_offsetX = _offsetY = 0;
 	clipRect();
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX, float zoomY, bool precise) : BaseClass(inGame) {
@@ -76,14 +75,12 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *
 	_offsetY = offsetY;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::~BaseActiveRect() {
 	_owner = nullptr;
 	_frame = nullptr;
 	_region = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseActiveRect::clipRect() {
@@ -102,8 +99,8 @@ void BaseActiveRect::clipRect() {
 	if (rc.left > _rect.left) {
 		_offsetX = rc.left - _rect.left;
 	}
-	if (rc.top  > _rect.top) {
-		_offsetY = rc.top  - _rect.top;
+	if (rc.top > _rect.top) {
+		_offsetY = rc.top - _rect.top;
 	}
 
 	BasePlatform::intersectRect(&_rect, &_rect, &rc);

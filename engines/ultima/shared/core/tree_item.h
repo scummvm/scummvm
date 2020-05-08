@@ -48,15 +48,17 @@ class CMessage;
  * This implements the base for objects can form a class hierarchy, with parents, children, and siblings
  * that messages can be passed around.
  */
-class TreeItem: public MessageTarget {
+class TreeItem : public MessageTarget {
 	friend class CMessage;
 	DECLARE_MESSAGE_MAP;
+
 private:
 	TreeItem *_parent;
 	TreeItem *_nextSibling;
 	TreeItem *_priorSibling;
 	TreeItem *_firstChild;
 	DisposeAfterUse::Flag _disposeAfterUse;
+
 public:
 	CLASSDEF;
 	TreeItem();

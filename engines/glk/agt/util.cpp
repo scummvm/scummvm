@@ -20,9 +20,9 @@
  *
  */
 
+#include "common/textconsole.h"
 #include "glk/agt/agility.h"
 #include "glk/quetzal.h"
-#include "common/textconsole.h"
 
 namespace Glk {
 namespace AGT {
@@ -46,7 +46,8 @@ namespace AGT {
 #endif
 
 long rangefix(long n) {
-	if (n > 0) return n;
+	if (n > 0)
+		return n;
 	return 0;
 }
 
@@ -63,10 +64,12 @@ short fixsign16(uchar n1, uchar n2) {
 	if (n2 > 0x80) {
 		n2 &= 0x7F;
 		sflag = 1;
-	} else sflag = 0;
+	} else
+		sflag = 0;
 
 	n = n1 + (n2 << 8);
-	if (sflag) n = n - 0x7fff - 1;
+	if (sflag)
+		n = n - 0x7fff - 1;
 	return n;
 }
 
@@ -77,15 +80,15 @@ long fixsign32(uchar n1, uchar n2, uchar n3, uchar n4) {
 	if (n4 > 0x80) {
 		n4 &= 0x7F;
 		sflag = 1;
-	} else sflag = 0;
+	} else
+		sflag = 0;
 
 	n = n1 + (((long)n2) << 8) + (((long)n3) << 16) + (((long)n4) << 24);
-	if (sflag) n = n - 0x7fffffffL - 1L;
+	if (sflag)
+		n = n - 0x7fffffffL - 1L;
 	return n;
 }
 #endif
-
-
 
 /*----------------------------------------------------------------------*/
 /* rprintf(), uses writestr for output           */
@@ -107,9 +110,9 @@ void rprintf(const char *fmt, ...) {
 	if (i >= 0 && s[i] == '\n') {
 		s[i] = 0;
 		writeln(s);
-	} else writestr(s);
+	} else
+		writestr(s);
 }
-
 
 /*----------------------------------------------------------------------*/
 /* Memory allocation wrappers: All memory allocation should run through */
@@ -143,7 +146,6 @@ long get_rm_freesize(void)
 	return 0;
 }
 
-
 void *rmalloc(long size) {
 	void *p;
 
@@ -151,12 +153,14 @@ void *rmalloc(long size) {
 		error("Memory allocation error: Over-sized structure requested.");
 	}
 	assert(size >= 0);
-	if (size == 0) return NULL;
+	if (size == 0)
+		return NULL;
 	p = malloc((size_t)size);
 	if (p == NULL && rm_trap && size > 0) {
 		error("Memory allocation error: Out of memory.");
 	}
-	if (rm_acct) ralloc_cnt++;
+	if (rm_acct)
+		ralloc_cnt++;
 	return p;
 }
 
@@ -171,7 +175,8 @@ void *rrealloc(void *old, long size) {
 		r_free(old);
 		return NULL;
 	}
-	if (rm_acct && old == NULL) ralloc_cnt++;
+	if (rm_acct && old == NULL)
+		ralloc_cnt++;
 	p = realloc(old, (size_t)size);
 	if (p == NULL && rm_trap && size > 0) {
 		error("Memory reallocation error: Out of memory.");
@@ -180,13 +185,15 @@ void *rrealloc(void *old, long size) {
 }
 
 char *rstrdup(const char *s) {
-	if (s == NULL) return NULL;
+	if (s == NULL)
+		return NULL;
 
 	char *t = scumm_strdup(s);
 	if (t == NULL && rm_trap) {
 		error("Memory duplication error: Out of memory.");
 	}
-	if (rm_acct) ralloc_cnt++;
+	if (rm_acct)
+		ralloc_cnt++;
 
 	return t;
 }
@@ -194,18 +201,20 @@ char *rstrdup(const char *s) {
 void r_free(void *p) {
 	int tmp;
 
-	if (p == NULL) return;
+	if (p == NULL)
+		return;
 
-	tmp = get_rm_size();            /* Take worst case in all cases */
-	if (tmp > rm_size) rm_size = tmp;
+	tmp = get_rm_size(); /* Take worst case in all cases */
+	if (tmp > rm_size)
+		rm_size = tmp;
 	tmp = get_rm_freesize();
-	if (tmp < rm_freesize) rm_freesize = tmp;
+	if (tmp < rm_freesize)
+		rm_freesize = tmp;
 
-	if (rm_acct) rfree_cnt++;
+	if (rm_acct)
+		rfree_cnt++;
 	free(p);
 }
-
-
 
 /*----------------------------------------------------------------------*/
 /* String utilities: These are utilities to manipulate strings.         */
@@ -232,14 +241,13 @@ rbool match_str(const char **pstr, const char *match) {
 
 	s = *pstr;
 	for (i = 0; match[i] != 0 && s[i] != 0; i++)
-		if (toupper(s[i]) != match[i]) return 0;
-	if (match[i] != 0) return 0;
+		if (toupper(s[i]) != match[i])
+			return 0;
+	if (match[i] != 0)
+		return 0;
 	*pstr += i;
 	return 1;
 }
-
-
-
 
 /* Utility to concacate two strings with a space inserted */
 
@@ -248,8 +256,10 @@ char *concdup(const char *s1, const char *s2) {
 	char *s;
 
 	len1 = len2 = 0;
-	if (s1 != NULL) len1 = strlen(s1);
-	if (s2 != NULL) len2 = strlen(s2);
+	if (s1 != NULL)
+		len1 = strlen(s1);
+	if (s2 != NULL)
+		len2 = strlen(s2);
 
 	s = (char *)rmalloc(sizeof(char) * (len1 + len2 + 2));
 	if (s1 != NULL)
@@ -260,7 +270,6 @@ char *concdup(const char *s1, const char *s2) {
 	s[len1 + len2 + 1] = 0;
 	return s;
 }
-
 
 /* Misc. C utility functions that may be supported locally.
   If they are, use the local functions since they'll probably be faster
@@ -273,11 +282,16 @@ int strcasecmp(const char *s1, const char *s2)
 {
 	int i;
 
-	for (i = 0; tolower(s1[i]) == tolower(s2[i]) && s1[i] != 0; i++);
-	if (tolower(s1[i]) == tolower(s2[i])) return 0;
-	if (s1[i] == 0) return -1;
-	if (s2[i] == 0) return 1;
-	if (tolower(s1[i]) < tolower(s2[i])) return -1;
+	for (i = 0; tolower(s1[i]) == tolower(s2[i]) && s1[i] != 0; i++)
+		;
+	if (tolower(s1[i]) == tolower(s2[i]))
+		return 0;
+	if (s1[i] == 0)
+		return -1;
+	if (s2[i] == 0)
+		return 1;
+	if (tolower(s1[i]) < tolower(s2[i]))
+		return -1;
 	return 1;
 }
 #endif /* NEED_STR_CMP */
@@ -289,11 +303,16 @@ int strncasecmp(const char *s1, const char *s2, size_t n)
 {
 	size_t i;
 
-	for (i = 0; i < n && tolower(s1[i]) == tolower(s2[i]) && s1[i] != 0; i++);
-	if (i == n || tolower(s1[i]) == tolower(s2[i])) return 0;
-	if (s1[i] == 0) return -1;
-	if (s2[i] == 0) return 1;
-	if (tolower(s1[i]) < tolower(s2[i])) return -1;
+	for (i = 0; i < n && tolower(s1[i]) == tolower(s2[i]) && s1[i] != 0; i++)
+		;
+	if (i == n || tolower(s1[i]) == tolower(s2[i]))
+		return 0;
+	if (s1[i] == 0)
+		return -1;
+	if (s2[i] == 0)
+		return 1;
+	if (tolower(s1[i]) < tolower(s2[i]))
+		return -1;
 	return 1;
 }
 #endif /* NEED_STRN_CMP */
@@ -310,7 +329,6 @@ void build_trans_ascii(void) {
 	trans_ascii[0xFF] = 0xFF; /* Preserve format character */
 }
 
-
 /*----------------------------------------------------------------------*/
 /* File utilities: Utilities to manipulate files.                       */
 /*----------------------------------------------------------------------*/
@@ -319,8 +337,10 @@ void print_error(const char *fname, filetype ext, const char *err, rbool ferr) {
 	char *estring; /* Hold error string */
 	estring = (char *)rmalloc(strlen(err) + strlen(fname) + 2);
 	sprintf(estring, err, fname);
-	if (ferr) fatal(estring);
-	else writeln(estring);
+	if (ferr)
+		fatal(estring);
+	else
+		writeln(estring);
 	rfree(estring);
 }
 
@@ -382,7 +402,7 @@ genfile openfile(fc_type fc, filetype ext, const char *err, rbool ferr)
 /* If ferr is true, then on failure the routine will abort with a fatal
    error. */
 {
-	genfile tfile;  /* Actually, this may not be a text file anymore */
+	genfile tfile; /* Actually, this may not be a text file anymore */
 	const char *errstr;
 
 	tfile = readopen(fc, ext, &errstr);
@@ -392,7 +412,6 @@ genfile openfile(fc_type fc, filetype ext, const char *err, rbool ferr)
 	return tfile;
 }
 
-
 genfile openbin(fc_type fc, filetype ext, const char *err, rbool ferr)
 /* Opens the file fname+ext, printing out err if something goes wrong.
   (unless err==NULL, in which case nothing will be printed) */
@@ -401,7 +420,7 @@ genfile openbin(fc_type fc, filetype ext, const char *err, rbool ferr)
 /* If ferr is true, then on failure the routine will abort with a fatal
    error. */
 {
-	genfile f;  /* Actually, this may not be a text file anymore */
+	genfile f; /* Actually, this may not be a text file anymore */
 	const char *errstr;
 	char *fname;
 
@@ -415,16 +434,14 @@ genfile openbin(fc_type fc, filetype ext, const char *err, rbool ferr)
 	return f;
 }
 
-
-
 /* This routine reads in a line from a 'text' file; it's designed to work
    regardless of the EOL conventions of the platform, at least up to a point.
    It should work with files that have \n, \r, or \r\n termined lines.  */
 
-#define READLN_GRAIN 64 /* Granularity of readln() rrealloc requests
-                this needs to be at least the size of a tab
-                character */
-#define DOS_EOF 26    /* Ctrl-Z is the DOS end-of-file marker */
+#define READLN_GRAIN 64 /* Granularity of readln() rrealloc requests \
+	            this needs to be at least the size of a tab          \
+	            character */
+#define DOS_EOF 26      /* Ctrl-Z is the DOS end-of-file marker */
 
 char *readln(genfile f, char *buff, int n)
 /* Reads first n characters of line, eliminates any newline,
@@ -443,13 +460,15 @@ pass it back as its return value.  n is ignored in this case */
 		buff = (char *)rrealloc(buff, READLN_GRAIN * sizeof(char));
 		buffsize = READLN_GRAIN;
 		n = buffsize - 1;
-	} else buffsize = -1; /* So we know that we are using a fixed-size buffer */
+	} else
+		buffsize = -1; /* So we know that we are using a fixed-size buffer */
 
 	i = 0;
 	for (;;) {
 		c = textgetc(f);
 
-		if (c == '\n' || c == '\r' || c == EOF || c == DOS_EOF) break;
+		if (c == '\n' || c == '\r' || c == EOF || c == DOS_EOF)
+			break;
 
 		csize = (c == '\t') ? 5 : 1; /* Tabs are translated into five spaces */
 
@@ -459,10 +478,14 @@ pass it back as its return value.  n is ignored in this case */
 			buff = (char *)rrealloc(buff, buffsize * sizeof(char));
 		}
 
-		if (c == 0) c = FORMAT_CODE;
+		if (c == 0)
+			c = FORMAT_CODE;
 		else if (c != '\t') {
-			if (i < n) buff[i++] = c;
-		} else for (j = 0; j < 5 && i < n; j++) buff[i++] = ' ';
+			if (i < n)
+				buff[i++] = c;
+		} else
+			for (j = 0; j < 5 && i < n; j++)
+				buff[i++] = ' ';
 
 		/* We can't exit the loop if i>n since we still need to discard
 		   the rest of the line */
@@ -473,13 +496,15 @@ pass it back as its return value.  n is ignored in this case */
 	if (c == '\r') { /* Check for \r\n DOS-style newline  */
 		char newc;
 		newc = textgetc(f);
-		if (newc != '\n') textungetc(f, newc);
+		if (newc != '\n')
+			textungetc(f, newc);
 		/* Replace the character we just read. */
 	} else if (c == DOS_EOF) /* Ctrl-Z is the DOS EOF marker */
-		textungetc(f, c); /* So it will be the first character we see next time */
+		textungetc(f, c);    /* So it will be the first character we see next time */
 
 	if (i == 0 && (c == EOF || c == DOS_EOF)) { /* We've hit the end of the file */
-		if (buffsize >= 0) rfree(buff);
+		if (buffsize >= 0)
+			rfree(buff);
 		return NULL;
 	}
 
@@ -490,7 +515,6 @@ pass it back as its return value.  n is ignored in this case */
 
 	return buff;
 }
-
 
 /*-------------------------------------------------------------------------*/
 /* Buffered file Input: Routines to do buffered file I/O for files organized */
@@ -504,18 +528,17 @@ pass it back as its return value.  n is ignored in this case */
 genfile bfile;
 
 static uchar *buffer = NULL;
-static long buffsize; /* How big the buffer is */
-static long record_size;  /* Size of a record in the file */
-static long buff_frame;  /* The file index corrosponding to buffer[0] */
-static long buff_fcnt;  /* Number of records that can be held in the buffer */
-static long real_buff_fcnt;  /* Number of records actually held in buffer */
-static long buff_rsize;  /* Minimum amount that must be read. */
+static long buffsize;       /* How big the buffer is */
+static long record_size;    /* Size of a record in the file */
+static long buff_frame;     /* The file index corrosponding to buffer[0] */
+static long buff_fcnt;      /* Number of records that can be held in the buffer */
+static long real_buff_fcnt; /* Number of records actually held in buffer */
+static long buff_rsize;     /* Minimum amount that must be read. */
 
-static long block_size;  /* Size of the current block
+static long block_size;   /* Size of the current block
                 (for non-AGX files, this is just the filesize) */
 static long block_offset; /* Offset of current block in file (this should
                be zero for non-AGX files) */
-
 
 static void buff_setrecsize(long recsize) {
 	const char *errstr;
@@ -533,8 +556,6 @@ static void buff_setrecsize(long recsize) {
 	if (!binread(bfile, buffer, record_size, real_buff_fcnt, &errstr))
 		fatal(errstr);
 }
-
-
 
 long buffopen(fc_type fc, filetype ext, long minbuff, const char *rectype, long recnum)
 /* Returns record size; print out error and halt on failure  */
@@ -566,22 +587,27 @@ buffreopen will be called before any major file activity
 
 	block_size = filesize;
 	block_offset = 0;
-	if (agx_file) block_size = minbuff; /* Just for the beginning */
+	if (agx_file)
+		block_size = minbuff; /* Just for the beginning */
 
 	if (block_size % recnum != 0) {
 		sprintf(ebuff, "Fractional record count in %s file.", rectype);
 		agtwarn(ebuff, 0);
 	}
 	buff_rsize = recsize = block_size / recnum;
-	if (buff_rsize > minbuff) buff_rsize = minbuff;
+	if (buff_rsize > minbuff)
+		buff_rsize = minbuff;
 
 	/* No point in having a buffer bigger than the block size */
 	buffsize = BUFF_SIZE;
-	if (block_size < buffsize) buffsize = block_size;
+	if (block_size < buffsize)
+		buffsize = block_size;
 
 	/* ... but it needs to be big enough: */
-	if (buffsize < minbuff) buffsize = minbuff;
-	if (buffsize < recsize) buffsize = recsize;
+	if (buffsize < minbuff)
+		buffsize = minbuff;
+	if (buffsize < recsize)
+		buffsize = recsize;
 
 	buffer = (uchar *)rmalloc(buffsize); /* Might want to make this adaptive eventually */
 
@@ -593,10 +619,11 @@ buffreopen will be called before any major file activity
 		rfree(s);
 		rprintf("  Record size=  Formal:%ld    File:%ld", minbuff, recsize);
 	}
-	if (agx_file) return (long) filesize;
-	else return (long) recsize;
+	if (agx_file)
+		return (long)filesize;
+	else
+		return (long)recsize;
 }
-
 
 /* Compute the game signature: a checksum of relevant parts of the file */
 
@@ -615,7 +642,7 @@ uchar *buffread(long index) {
 		bptr = buffer + (index - buff_frame) * record_size;
 	else {
 		binseek(bfile, block_offset + index * record_size);
-		real_buff_fcnt = block_size / record_size - index;  /* How many records
+		real_buff_fcnt = block_size / record_size - index; /* How many records
                              could we read in? */
 		if (real_buff_fcnt > buff_fcnt)
 			real_buff_fcnt = buff_fcnt; /* Don't overflow buffer */
@@ -624,16 +651,15 @@ uchar *buffread(long index) {
 		buff_frame = index;
 		bptr = buffer;
 	}
-	if (!agx_file) compute_sig(bptr);
+	if (!agx_file)
+		compute_sig(bptr);
 	return bptr;
 }
-
 
 void buffclose(void) {
 	readclose(bfile);
 	rfree(buffer);
 }
-
 
 /* This changes the record size and offset settings of the buffered
    file so we can read files that consist of multiple sections with
@@ -652,27 +678,30 @@ static void buffreopen(long f_ofs, long file_recsize, long recnum,
 		agtwarn(ebuff, 0);
 	}
 	buff_rsize = recsize = block_size / recnum;
-	if (buff_rsize > file_recsize) buff_rsize = file_recsize;
+	if (buff_rsize > file_recsize)
+		buff_rsize = file_recsize;
 	/* recsize is the size of each record in the file.
 	   buff_rsize is the internal size of each record (the part
 	   we actually look at, which may be smaller than recsize) */
 
 	/* No point in having a buffer bigger than the block size */
 	buffsize = BUFF_SIZE;
-	if (block_size < buffsize) buffsize = block_size;
+	if (block_size < buffsize)
+		buffsize = block_size;
 
 	/* The buffer needs to be at least as big as one block, so
 	   we have space to both read it in and so we can look at the
 	   block without having to worry about how big it really is */
-	if (buffsize < file_recsize) buffsize = file_recsize;
-	if (buffsize < recsize) buffsize = recsize;
+	if (buffsize < file_recsize)
+		buffsize = file_recsize;
+	if (buffsize < recsize)
+		buffsize = recsize;
 
 	rfree(buffer);
 	buffer = (uchar *)rmalloc(buffsize); /* Resize the buffer */
 
 	buff_setrecsize(recsize); /* Set up remaining stats */
 }
-
 
 /*-------------------------------------------------------------------------*/
 /* Buffered file output: Routines to buffer output  for files organized    */
@@ -684,15 +713,15 @@ static void buffreopen(long f_ofs, long file_recsize, long recnum,
 /*  concurrently                                                           */
 /*-------------------------------------------------------------------------*/
 
-/* #define DEBUG_SEEK*/  /* Debug seek beyond EOF problem */
+/* #define DEBUG_SEEK*/ /* Debug seek beyond EOF problem */
 
-static long bw_first, bw_last;  /* First and last record in buffer written to.
+static long bw_first, bw_last; /* First and last record in buffer written to.
                  This is relative to the beginning of the
                  buffer bw_last points just beyond the last
                  one written to */
 #ifdef DEBUG_SEEK
-static long bw_fileleng;  /* Current file length */
-#endif /* DEBUG_SEEK */
+static long bw_fileleng; /* Current file length */
+#endif                   /* DEBUG_SEEK */
 file_id_type bw_fileid;
 
 /* Unlike is reading counterpart, this doesn't actually allocate
@@ -704,7 +733,8 @@ void bw_open(fc_type fc, filetype ext) {
 	assert(buffer == NULL);
 
 	bfile = writeopen(fc, ext, &bw_fileid, &errstr);
-	if (errstr != NULL) fatal(errstr);
+	if (errstr != NULL)
+		fatal(errstr);
 	bw_last = 0;
 	buffsize = 0;
 	buffer = NULL;
@@ -720,9 +750,9 @@ static void bw_seek(long offset) {
 	binseek(bfile, offset);
 }
 
-
 static void bw_flush(void) {
-	if (bw_first == bw_last) return; /* Nothing to do */
+	if (bw_first == bw_last)
+		return; /* Nothing to do */
 	bw_first += buff_frame;
 	bw_last += buff_frame;
 	bw_seek(block_offset + bw_first * record_size);
@@ -733,8 +763,6 @@ static void bw_flush(void) {
 #endif
 	bw_first = bw_last = 0;
 }
-
-
 
 static void bw_setblock(long fofs, long recnum, long rsize)
 /* Set parameters for current block */
@@ -750,8 +778,10 @@ static void bw_setblock(long fofs, long recnum, long rsize)
 	buff_frame = 0;
 	bw_first = bw_last = 0;
 	buffsize = BUFF_SIZE;
-	if (buffsize > block_size) buffsize = block_size;
-	if (buffsize < rsize) buffsize = rsize;
+	if (buffsize > block_size)
+		buffsize = block_size;
+	if (buffsize < rsize)
+		buffsize = rsize;
 	buff_fcnt = buffsize / rsize;
 	buffsize = buff_fcnt * rsize;
 	buffer = (uchar *)rmalloc(buffsize);
@@ -769,10 +799,10 @@ static uchar *bw_getbuff(long index) {
 		buff_frame = buff_frame + index;
 		index = 0;
 	}
-	if (index == bw_last) bw_last++;
+	if (index == bw_last)
+		bw_last++;
 	return buffer + record_size * index;
 }
-
 
 /* This flushes all buffers to disk and closes all files */
 void bw_close(void) {
@@ -785,11 +815,9 @@ void bw_abort(void) {
 	binremove(bfile, bw_fileid);
 }
 
-
 /*-------------------------------------------------------------------------*/
 /* Block reading and writing code and support for internal buffers         */
 /*-------------------------------------------------------------------------*/
-
 
 /* If the internal buffer is not NULL, it is used instead of a file */
 /* (This is used by RESTART, etc. to save state to memory rather than
@@ -821,10 +849,10 @@ static void buff_blockread(void *buff, long size, long offset) {
 		memcpy((char *)buff, int_buff + offset, size);
 	else {
 		binseek(bfile, offset);
-		if (!binread(bfile, buff, size, 1, &errstr)) fatal(errstr);
+		if (!binread(bfile, buff, size, 1, &errstr))
+			fatal(errstr);
 	}
 }
-
 
 /* This writes buff to disk. */
 static void bw_blockwrite(void *buff, long size, long offset) {
@@ -835,11 +863,11 @@ static void bw_blockwrite(void *buff, long size, long offset) {
 		bw_seek(offset);
 		binwrite(bfile, buff, size, 1, 1);
 #ifdef DEBUG_SEEK
-		if (offset + size > bw_fileleng) bw_fileleng = offset + size;
+		if (offset + size > bw_fileleng)
+			bw_fileleng = offset + size;
 #endif
 	}
 }
-
 
 /*-------------------------------------------------------------------------*/
 /* Platform-independent record-based file I/O: Routines to read and write  */
@@ -849,15 +877,13 @@ static void bw_blockwrite(void *buff, long size, long offset) {
 
 /* Length of file datatypes */
 const size_t ft_leng[FT_COUNT] = {0, 2, 2, /* END, int16, and uint16 */
-                                  4, 4,  /* int32 and uint32 */
+                                  4, 4,    /* int32 and uint32 */
                                   1, 2, 0, /* byte, version, rbool */
-                                  8, 4,  /* descptr, ss_ptr */
-                                  2, 26,  /* slist, path[13] */
-                                  4, 4, /* cmdptr, dictptr */
-                                  81,  /* tline */
-                                  1, 1
-                                 };  /* char, cfg */
-
+                                  8, 4,    /* descptr, ss_ptr */
+                                  2, 26,   /* slist, path[13] */
+                                  4, 4,    /* cmdptr, dictptr */
+                                  81,      /* tline */
+                                  1, 1};   /* char, cfg */
 
 long compute_recsize(file_info *recinfo) {
 	long cnt, bcnt;
@@ -865,7 +891,8 @@ long compute_recsize(file_info *recinfo) {
 	cnt = 0;
 	for (; recinfo->ftype != FT_END; recinfo++)
 		if (recinfo->ftype == FT_BOOL) {
-			for (bcnt = 0; recinfo->ftype == FT_BOOL; recinfo++, bcnt++);
+			for (bcnt = 0; recinfo->ftype == FT_BOOL; recinfo++, bcnt++)
+				;
 			recinfo--;
 			cnt += (bcnt + 7) / 8; /* +7 is to round up */
 		} else
@@ -874,15 +901,18 @@ long compute_recsize(file_info *recinfo) {
 }
 
 static const int agx_version[] = {0, 0000, 1800, 2000, 3200, 3500, 8200, 8300,
-                                  5000, 5050, 5070, 10000, 10050, 15000, 15500, 16000, 20000
-                                 };
+                                  5000, 5050, 5070, 10000, 10050, 15000, 15500, 16000, 20000};
 
 static int agx_decode_version(int vercode) {
 	if (vercode & 1) /* Large/Soggy */
-		if (vercode == 3201) ver = 4;
-		else ver = 2;
-	else if (vercode < 10000) ver = 1;
-	else ver = 3;
+		if (vercode == 3201)
+			ver = 4;
+		else
+			ver = 2;
+	else if (vercode < 10000)
+		ver = 1;
+	else
+		ver = 3;
 	switch (vercode & (~1)) {
 	case 0000:
 		return AGT10;
@@ -930,8 +960,8 @@ static int agx_decode_version(int vercode) {
    the neccessary conversions. It is the foundation of all the generic
    file reading code */
 
-#define p(t)  ((t*)(rec_desc->ptr))
-#define fixu16(n1,n2)  ( ((long)(n1))|( ((long)(n2))<<8 ))
+#define p(t) ((t *)(rec_desc->ptr))
+#define fixu16(n1, n2) (((long)(n1)) | (((long)(n2)) << 8))
 
 /* This is as large as the largest data structure we could run into */
 static const uchar zero_block[81] = {0, 0, 0, 0, 0, 0, 0, 0,
@@ -944,8 +974,7 @@ static const uchar zero_block[81] = {0, 0, 0, 0, 0, 0, 0, 0,
                                      0, 0, 0, 0, 0, 0, 0, 0,
                                      0, 0, 0, 0, 0, 0, 0, 0,
                                      0, 0, 0, 0, 0, 0, 0, 0,
-                                     0
-                                    };
+                                     0};
 
 static void read_filerec(file_info *rec_desc, const uchar *filedata) {
 	uchar mask;
@@ -980,19 +1009,19 @@ static void read_filerec(file_info *rec_desc, const uchar *filedata) {
 		case FT_CMDPTR: /* cmd ptr */
 		case FT_INT32:
 			*p(int32) = fixsign32(filedata[0], filedata[1],
-			                     filedata[2], filedata[3]);
+			                      filedata[2], filedata[3]);
 			break;
 		case FT_UINT32:
 			if (filedata[3] & 0x80)
 				agtwarn("File value out of range", 0);
 			*p(uint32) = fixsign32(filedata[0], filedata[1],
-			                     filedata[2], filedata[3] & 0x7F);
+			                       filedata[2], filedata[3] & 0x7F);
 			break;
 		case FT_BYTE:
 			*p(uchar) = filedata[0];
 			break;
 		case FT_CHAR:
-			*p(uchar) = trans_ascii[filedata[0]^'r'];
+			*p(uchar) = trans_ascii[filedata[0] ^ 'r'];
 			break;
 		case FT_VERSION:
 			*p(int) = agx_decode_version(fixu16(filedata[0], filedata[1]));
@@ -1010,13 +1039,14 @@ static void read_filerec(file_info *rec_desc, const uchar *filedata) {
 				mask <<= 1;
 			break;
 		case FT_DESCPTR:
-			if (skip_descr) break;
+			if (skip_descr)
+				break;
 			p(descr_ptr)->start = fixsign32(filedata[0], filedata[1],
 			                                filedata[2], filedata[3]);
 			p(descr_ptr)->size = fixsign32(filedata[4], filedata[5],
 			                               filedata[6], filedata[7]);
 			break;
-		case FT_STR:  /* ss_string ptr */
+		case FT_STR: /* ss_string ptr */
 			*p(char *) = static_str + fixsign32(filedata[0], filedata[1],
 			                                    filedata[2], filedata[3]);
 			break;
@@ -1034,7 +1064,7 @@ static void read_filerec(file_info *rec_desc, const uchar *filedata) {
 			int i;
 			s = (uchar *)*p(tline);
 			for (i = 0; i < 80; i++)
-				s[i] = trans_ascii[filedata[i]^'r'];
+				s[i] = trans_ascii[filedata[i] ^ 'r'];
 			s[80] = 0;
 			break;
 		}
@@ -1049,8 +1079,7 @@ static void read_filerec(file_info *rec_desc, const uchar *filedata) {
 	}
 }
 
-
-#define v(t) (*(t*)(rec_desc->ptr))
+#define v(t) (*(t *)(rec_desc->ptr))
 /* Here is the corresponding routien for _writing_ to files */
 /* This copies the contents of a record into a buffer */
 
@@ -1092,18 +1121,20 @@ static void write_filerec(file_info *rec_desc, uchar *filedata) {
 			filedata[0] = v(uchar);
 			break;
 		case FT_CHAR:
-			filedata[0] = v(uchar)^'r';
+			filedata[0] = v(uchar) ^ 'r';
 			break;
 		case FT_VERSION: {
 			int tver;
 			tver = agx_version[v(int)];
-			if (ver == 2 || ver == 4) tver += 1;
+			if (ver == 2 || ver == 4)
+				tver += 1;
 			filedata[0] = tver & 0xFF;
 			filedata[1] = (tver >> 8) & 0xFF;
 			break;
 		}
 		case FT_BOOL:
-			if (mask == 1) filedata[0] = 0;
+			if (mask == 1)
+				filedata[0] = 0;
 			filedata[0] |= v(rbool) ? mask : 0;
 			if (mask == 0x80) {
 				filedata++;
@@ -1121,8 +1152,7 @@ static void write_filerec(file_info *rec_desc, uchar *filedata) {
 				n1 >>= 8;
 				n2 >>= 8;
 			}
-		}
-		break;
+		} break;
 		case FT_STR: { /* ss_string ptr */
 			long delta;
 			delta = v(char *) - static_str;
@@ -1149,7 +1179,7 @@ static void write_filerec(file_info *rec_desc, uchar *filedata) {
 			int i;
 			s = (uchar *)v(tline);
 			for (i = 0; i < 80; i++)
-				filedata[i] = s[i]^'r';
+				filedata[i] = s[i] ^ 'r';
 			filedata[80] = 0;
 			break;
 		}
@@ -1172,9 +1202,6 @@ static void write_filerec(file_info *rec_desc, uchar *filedata) {
 #undef v
 #undef p
 
-
-
-
 /* This reads in a structure array */
 /* base=the beginning of the array. If NULL, this is malloc'd and returned
    eltsize = the size of each structure
@@ -1190,7 +1217,8 @@ void *read_recarray(void *base, long eltsize, long numelts,
 	file_info *curr;
 	uchar *file_data;
 
-	if (numelts == 0) return NULL;
+	if (numelts == 0)
+		return NULL;
 
 	if (int_buff)
 		set_ibuff(file_offset, compute_recsize(field_info));
@@ -1223,7 +1251,6 @@ void *read_recarray(void *base, long eltsize, long numelts,
 	return base;
 }
 
-
 /* A NULL value means to write junk; we're just producing
    a placeholder for systems that can't seek beyond the end-of-file */
 
@@ -1233,7 +1260,8 @@ long write_recarray(void *base, long eltsize, long numelts,
 	file_info *curr;
 	uchar *file_data;
 
-	if (numelts == 0) return 0;
+	if (numelts == 0)
+		return 0;
 
 	if (int_buff)
 		set_ibuff(file_offset, compute_recsize(field_info));
@@ -1264,7 +1292,6 @@ long write_recarray(void *base, long eltsize, long numelts,
 	return compute_recsize(field_info) * numelts;
 }
 
-
 void read_globalrec(file_info *global_info, const char *rectype,
                     long file_offset, long file_blocksize) {
 	uchar *file_data;
@@ -1280,7 +1307,6 @@ void read_globalrec(file_info *global_info, const char *rectype,
 	read_filerec(global_info, file_data);
 }
 
-
 long write_globalrec(file_info *global_info, long file_offset) {
 	uchar *file_data;
 
@@ -1295,12 +1321,9 @@ long write_globalrec(file_info *global_info, long file_offset) {
 	return compute_recsize(global_info);
 }
 
-
-
 static file_info fi_temp[] = {
-	{0, DT_DEFAULT, NULL, 0},
-	endrec
-};
+    {0, DT_DEFAULT, NULL, 0},
+    endrec};
 
 /* This routine reads in an array of simple data */
 
@@ -1311,12 +1334,13 @@ void *read_recblock(void *base, int ftype, long numrec,
 	switch (ftype) {
 	case FT_CHAR:
 	case FT_BYTE:
-		if (base == NULL) base = rmalloc(numrec * sizeof(char));
+		if (base == NULL)
+			base = rmalloc(numrec * sizeof(char));
 		buff_blockread(base, numrec, offset);
 		if (ftype == FT_CHAR) {
 			long i;
 			for (i = 0; i < numrec; i++)
-				((uchar *)base)[i] = trans_ascii[((uchar *)base)[i]^'r' ];
+				((uchar *)base)[i] = trans_ascii[((uchar *)base)[i] ^ 'r'];
 		}
 		return base;
 	case FT_SLIST:
@@ -1343,16 +1367,16 @@ void *read_recblock(void *base, int ftype, long numrec,
 	return read_recarray(base, dsize, numrec, fi_temp, "", offset, bl_size);
 }
 
-
 long write_recblock(void *base, int ftype, long numrec, long offset) {
 	int dsize;
 
-	if (numrec == 0) return 0;
+	if (numrec == 0)
+		return 0;
 	switch (ftype) {
 	case FT_CHAR: {
 		int i;
 		for (i = 0; i < numrec; i++)
-			((uchar *)base)[i] = ((uchar *)base)[i]^'r';
+			((uchar *)base)[i] = ((uchar *)base)[i] ^ 'r';
 	}
 	/* Fall through.... */
 	case FT_BYTE:
@@ -1450,13 +1474,12 @@ void startwatch(void) {
 static char watchbuff[81];
 char *timestring(void) {
 	sprintf(watchbuff, "User:%ld.%02ld   Sys:%ld.%02ld   Total:%ld.%02ld"
-	        "   Real:%ld.%02ld",
+	                   "   Real:%ld.%02ld",
 	        delta.tms_utime / 100, delta.tms_utime % 100,
 	        delta.tms_stime / 100, delta.tms_stime % 100,
 	        (delta.tms_utime + delta.tms_stime) / 100,
 	        (delta.tms_utime + delta.tms_stime) % 100,
-	        delta_realtime / 100, delta_realtime % 100
-	       );
+	        delta_realtime / 100, delta_realtime % 100);
 	return watchbuff;
 }
 

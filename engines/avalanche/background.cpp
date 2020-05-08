@@ -27,8 +27,8 @@
 
 /* Original name: CELER		The unit for updating the screen pics. */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/background.h"
+#include "avalanche/avalanche.h"
 
 namespace Avalanche {
 
@@ -156,9 +156,9 @@ void Background::update() {
 				direction = 4; // du Lustie blinks.
 			// Bearing of Avvy from du Lustie.
 			else if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
-					direction = 1; // Middle.
+				direction = 1; // Middle.
 			else if ((angle >= 45) && (angle <= 180))
-					direction = 2; // Left.
+				direction = 2; // Left.
 			else if ((angle >= 181) && (angle <= 314))
 				direction = 3; // Right.
 
@@ -172,7 +172,7 @@ void Background::update() {
 		if ((!_vm->_aylesIsAwake) && (_vm->_roomCycles % 14 == 0)) {
 			switch ((_vm->_roomCycles / 14) % 2) {
 			case 0:
-				draw(-1, -1, 0);  // Frame 2: EGA.
+				draw(-1, -1, 0); // Frame 2: EGA.
 				break;
 			case 1:
 				draw(-1, -1, 2); // Frame 1: Natural.
@@ -216,17 +216,17 @@ void Background::update() {
 		}
 
 		switch (_vm->_roomCycles % 50) {
-		case 45 :
+		case 45:
 			draw(-1, -1, 8); // Spurge blinks.
 			break;
-		case 49 :
+		case 49:
 			draw(-1, -1, 9);
 			break;
 		default:
 			break;
 		}
 		break;
-	  }
+	}
 	case kRoomDucks: {
 		if ((_vm->_roomCycles % 3) == 0) // The fire flickers.
 			draw(-1, -1, (_vm->_roomCycles / 3) % 3);
@@ -249,7 +249,7 @@ void Background::update() {
 			_vm->_npcFacing = direction;
 		}
 		break;
-	   }
+	}
 	default:
 		break;
 	}
@@ -339,7 +339,7 @@ void Background::draw(int16 destX, int16 destY, byte sprId) {
 	} else {
 		Common::File f;
 		if (!f.open(_filename)) // Filename was set in loadBackgroundSprites().
-			return; // We skip because some rooms don't have sprites in the background.
+			return;             // We skip because some rooms don't have sprites in the background.
 
 		f.seek(_offsets[sprId]);
 

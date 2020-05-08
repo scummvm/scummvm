@@ -28,11 +28,11 @@
 // Seek function by Gael Chardon gael.dev@4now.net
 //
 
+#include "common/quicktime.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
-#include "common/quicktime.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "common/zlib.h"
@@ -66,7 +66,7 @@ bool QuickTimeParser::parseFile(const String &filename) {
 	_foundMOOV = false;
 	_disposeFileHandle = DisposeAfterUse::YES;
 
-	Atom atom = { 0, 0, 0 };
+	Atom atom = {0, 0, 0};
 
 	if (_resFork->hasResFork()) {
 		// Search for a 'moov' resource
@@ -99,7 +99,7 @@ bool QuickTimeParser::parseStream(SeekableReadStream *stream, DisposeAfterUse::F
 	_foundMOOV = false;
 	_disposeFileHandle = disposeFileHandle;
 
-	Atom atom = { 0, 0, 0xffffffff };
+	Atom atom = {0, 0, 0xffffffff};
 
 	if (readDefault(atom) < 0 || !_foundMOOV) {
 		close();
@@ -137,37 +137,36 @@ void QuickTimeParser::init() {
 
 void QuickTimeParser::initParseTable() {
 	static const ParseTable p[] = {
-		{ &QuickTimeParser::readDefault, MKTAG('d', 'i', 'n', 'f') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('d', 'r', 'e', 'f') },
-		{ &QuickTimeParser::readDefault, MKTAG('e', 'd', 't', 's') },
-		{ &QuickTimeParser::readELST,    MKTAG('e', 'l', 's', 't') },
-		{ &QuickTimeParser::readHDLR,    MKTAG('h', 'd', 'l', 'r') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('m', 'd', 'a', 't') },
-		{ &QuickTimeParser::readMDHD,    MKTAG('m', 'd', 'h', 'd') },
-		{ &QuickTimeParser::readDefault, MKTAG('m', 'd', 'i', 'a') },
-		{ &QuickTimeParser::readDefault, MKTAG('m', 'i', 'n', 'f') },
-		{ &QuickTimeParser::readMOOV,    MKTAG('m', 'o', 'o', 'v') },
-		{ &QuickTimeParser::readMVHD,    MKTAG('m', 'v', 'h', 'd') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('s', 'm', 'h', 'd') },
-		{ &QuickTimeParser::readDefault, MKTAG('s', 't', 'b', 'l') },
-		{ &QuickTimeParser::readSTCO,    MKTAG('s', 't', 'c', 'o') },
-		{ &QuickTimeParser::readSTSC,    MKTAG('s', 't', 's', 'c') },
-		{ &QuickTimeParser::readSTSD,    MKTAG('s', 't', 's', 'd') },
-		{ &QuickTimeParser::readSTSS,    MKTAG('s', 't', 's', 's') },
-		{ &QuickTimeParser::readSTSZ,    MKTAG('s', 't', 's', 'z') },
-		{ &QuickTimeParser::readSTTS,    MKTAG('s', 't', 't', 's') },
-		{ &QuickTimeParser::readTKHD,    MKTAG('t', 'k', 'h', 'd') },
-		{ &QuickTimeParser::readTRAK,    MKTAG('t', 'r', 'a', 'k') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('u', 'd', 't', 'a') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('v', 'm', 'h', 'd') },
-		{ &QuickTimeParser::readCMOV,    MKTAG('c', 'm', 'o', 'v') },
-		{ &QuickTimeParser::readWAVE,    MKTAG('w', 'a', 'v', 'e') },
-		{ &QuickTimeParser::readESDS,    MKTAG('e', 's', 'd', 's') },
-		{ &QuickTimeParser::readSMI,     MKTAG('S', 'M', 'I', ' ') },
-		{ &QuickTimeParser::readDefault, MKTAG('g', 'm', 'h', 'd') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('g', 'm', 'i', 'n') },
-		{ nullptr, 0 }
-	};
+	    {&QuickTimeParser::readDefault, MKTAG('d', 'i', 'n', 'f')},
+	    {&QuickTimeParser::readLeaf, MKTAG('d', 'r', 'e', 'f')},
+	    {&QuickTimeParser::readDefault, MKTAG('e', 'd', 't', 's')},
+	    {&QuickTimeParser::readELST, MKTAG('e', 'l', 's', 't')},
+	    {&QuickTimeParser::readHDLR, MKTAG('h', 'd', 'l', 'r')},
+	    {&QuickTimeParser::readLeaf, MKTAG('m', 'd', 'a', 't')},
+	    {&QuickTimeParser::readMDHD, MKTAG('m', 'd', 'h', 'd')},
+	    {&QuickTimeParser::readDefault, MKTAG('m', 'd', 'i', 'a')},
+	    {&QuickTimeParser::readDefault, MKTAG('m', 'i', 'n', 'f')},
+	    {&QuickTimeParser::readMOOV, MKTAG('m', 'o', 'o', 'v')},
+	    {&QuickTimeParser::readMVHD, MKTAG('m', 'v', 'h', 'd')},
+	    {&QuickTimeParser::readLeaf, MKTAG('s', 'm', 'h', 'd')},
+	    {&QuickTimeParser::readDefault, MKTAG('s', 't', 'b', 'l')},
+	    {&QuickTimeParser::readSTCO, MKTAG('s', 't', 'c', 'o')},
+	    {&QuickTimeParser::readSTSC, MKTAG('s', 't', 's', 'c')},
+	    {&QuickTimeParser::readSTSD, MKTAG('s', 't', 's', 'd')},
+	    {&QuickTimeParser::readSTSS, MKTAG('s', 't', 's', 's')},
+	    {&QuickTimeParser::readSTSZ, MKTAG('s', 't', 's', 'z')},
+	    {&QuickTimeParser::readSTTS, MKTAG('s', 't', 't', 's')},
+	    {&QuickTimeParser::readTKHD, MKTAG('t', 'k', 'h', 'd')},
+	    {&QuickTimeParser::readTRAK, MKTAG('t', 'r', 'a', 'k')},
+	    {&QuickTimeParser::readLeaf, MKTAG('u', 'd', 't', 'a')},
+	    {&QuickTimeParser::readLeaf, MKTAG('v', 'm', 'h', 'd')},
+	    {&QuickTimeParser::readCMOV, MKTAG('c', 'm', 'o', 'v')},
+	    {&QuickTimeParser::readWAVE, MKTAG('w', 'a', 'v', 'e')},
+	    {&QuickTimeParser::readESDS, MKTAG('e', 's', 'd', 's')},
+	    {&QuickTimeParser::readSMI, MKTAG('S', 'M', 'I', ' ')},
+	    {&QuickTimeParser::readDefault, MKTAG('g', 'm', 'h', 'd')},
+	    {&QuickTimeParser::readLeaf, MKTAG('g', 'm', 'i', 'n')},
+	    {nullptr, 0}};
 
 	_parseTable = p;
 }
@@ -179,7 +178,7 @@ int QuickTimeParser::readDefault(Atom atom) {
 
 	a.offset = atom.offset;
 
-	while(((total_size + 8) < atom.size) && !_fd->eos() && _fd->pos() < _fd->size() && !err) {
+	while (((total_size + 8) < atom.size) && !_fd->eos() && _fd->pos() < _fd->size() && !err) {
 		a.size = atom.size;
 		a.type = 0;
 
@@ -289,7 +288,7 @@ int QuickTimeParser::readCMOV(Atom atom) {
 	// Uncompress the data
 	unsigned long dstLen = uncompressedSize;
 	if (!uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
-		warning ("Could not uncompress cmov chunk");
+		warning("Could not uncompress cmov chunk");
 		free(compressedData);
 		free(uncompressedData);
 		return -1;
@@ -300,7 +299,7 @@ int QuickTimeParser::readCMOV(Atom atom) {
 	_fd = new MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
 
 	// Read the contents of the uncompressed data
-	Atom a = { MKTAG('m', 'o', 'o', 'v'), 0, uncompressedSize };
+	Atom a = {MKTAG('m', 'o', 'o', 'v'), 0, uncompressedSize};
 	int err = readDefault(a);
 
 	// Assign the file handle back to the original handle
@@ -310,19 +309,23 @@ int QuickTimeParser::readCMOV(Atom atom) {
 
 	return err;
 #else
-	warning ("zlib not found, cannot read QuickTime cmov atom");
+	warning("zlib not found, cannot read QuickTime cmov atom");
 	return -1;
 #endif
 }
 
 int QuickTimeParser::readMVHD(Atom atom) {
 	byte version = _fd->readByte(); // version
-	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
+	_fd->readByte();
+	_fd->readByte();
+	_fd->readByte(); // flags
 
 	if (version == 1) {
 		warning("QuickTime version 1");
-		_fd->readUint32BE(); _fd->readUint32BE();
-		_fd->readUint32BE(); _fd->readUint32BE();
+		_fd->readUint32BE();
+		_fd->readUint32BE();
+		_fd->readUint32BE();
+		_fd->readUint32BE();
 	} else {
 		_fd->readUint32BE(); // creation time
 		_fd->readUint32BE(); // modification time
@@ -378,7 +381,8 @@ int QuickTimeParser::readTKHD(Atom atom) {
 	Track *track = _tracks.back();
 	byte version = _fd->readByte();
 
-	_fd->readByte(); _fd->readByte();
+	_fd->readByte();
+	_fd->readByte();
 	_fd->readByte(); // flags
 	//
 	//MOV_TRACK_ENABLED 0x0001
@@ -388,18 +392,20 @@ int QuickTimeParser::readTKHD(Atom atom) {
 	//
 
 	if (version == 1) {
-		_fd->readUint32BE(); _fd->readUint32BE();
-		_fd->readUint32BE(); _fd->readUint32BE();
+		_fd->readUint32BE();
+		_fd->readUint32BE();
+		_fd->readUint32BE();
+		_fd->readUint32BE();
 	} else {
 		_fd->readUint32BE(); // creation time
 		_fd->readUint32BE(); // modification time
 	}
 
-	/* track->id = */_fd->readUint32BE(); // track id (NOT 0 !)
-	_fd->readUint32BE(); // reserved
+	/* track->id = */ _fd->readUint32BE();                                                               // track id (NOT 0 !)
+	_fd->readUint32BE();                                                                                 // reserved
 	track->duration = (version == 1) ? (_fd->readUint32BE(), _fd->readUint32BE()) : _fd->readUint32BE(); // highlevel (considering edits) duration in movie timebase
-	_fd->readUint32BE(); // reserved
-	_fd->readUint32BE(); // reserved
+	_fd->readUint32BE();                                                                                 // reserved
+	_fd->readUint32BE();                                                                                 // reserved
 
 	_fd->readUint16BE(); // layer
 	_fd->readUint16BE(); // alternate group
@@ -431,7 +437,9 @@ int QuickTimeParser::readELST(Atom atom) {
 	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
-	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
+	_fd->readByte();
+	_fd->readByte();
+	_fd->readByte(); // flags
 
 	uint32 editCount = _fd->readUint32BE();
 	track->editList.resize(editCount);
@@ -457,7 +465,9 @@ int QuickTimeParser::readHDLR(Atom atom) {
 	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
-	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
+	_fd->readByte();
+	_fd->readByte();
+	_fd->readByte(); // flags
 
 	// component type
 	uint32 ctype = _fd->readUint32BE();
@@ -501,12 +511,15 @@ int QuickTimeParser::readMDHD(Atom atom) {
 	if (version > 1)
 		return 1; // unsupported
 
-	_fd->readByte(); _fd->readByte();
+	_fd->readByte();
+	_fd->readByte();
 	_fd->readByte(); // flags
 
 	if (version == 1) {
-		_fd->readUint32BE(); _fd->readUint32BE();
-		_fd->readUint32BE(); _fd->readUint32BE();
+		_fd->readUint32BE();
+		_fd->readUint32BE();
+		_fd->readUint32BE();
+		_fd->readUint32BE();
 	} else {
 		_fd->readUint32BE(); // creation time
 		_fd->readUint32BE(); // modification time
@@ -525,15 +538,17 @@ int QuickTimeParser::readSTSD(Atom atom) {
 	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
-	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
+	_fd->readByte();
+	_fd->readByte();
+	_fd->readByte(); // flags
 
 	uint32 entryCount = _fd->readUint32BE();
 	track->sampleDescs.reserve(entryCount);
 
 	for (uint32 i = 0; i < entryCount; i++) { // Parsing Sample description table
-		Atom a = { 0, 0, 0 };
+		Atom a = {0, 0, 0};
 		uint32 start_pos = _fd->pos();
-		int size = _fd->readUint32BE(); // size
+		int size = _fd->readUint32BE();      // size
 		uint32 format = _fd->readUint32BE(); // data format
 
 		_fd->readUint32BE(); // reserved
@@ -564,7 +579,9 @@ int QuickTimeParser::readSTSC(Atom atom) {
 	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
-	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
+	_fd->readByte();
+	_fd->readByte();
+	_fd->readByte(); // flags
 
 	track->sampleToChunkCount = _fd->readUint32BE();
 
@@ -589,7 +606,9 @@ int QuickTimeParser::readSTSS(Atom atom) {
 	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
-	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
+	_fd->readByte();
+	_fd->readByte();
+	_fd->readByte(); // flags
 
 	track->keyframeCount = _fd->readUint32BE();
 
@@ -603,7 +622,6 @@ int QuickTimeParser::readSTSS(Atom atom) {
 	for (uint32 i = 0; i < track->keyframeCount; i++) {
 		track->keyframes[i] = _fd->readUint32BE() - 1; // Adjust here, the frames are based on 1
 		debug(6, "keyframes[%d] = %d", i, track->keyframes[i]);
-
 	}
 	return 0;
 }
@@ -612,7 +630,9 @@ int QuickTimeParser::readSTSZ(Atom atom) {
 	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
-	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
+	_fd->readByte();
+	_fd->readByte();
+	_fd->readByte(); // flags
 
 	track->sampleSize = _fd->readUint32BE();
 	track->sampleCount = _fd->readUint32BE();
@@ -627,7 +647,7 @@ int QuickTimeParser::readSTSZ(Atom atom) {
 	if (!track->sampleSizes)
 		return -1;
 
-	for(uint32 i = 0; i < track->sampleCount; i++) {
+	for (uint32 i = 0; i < track->sampleCount; i++) {
 		track->sampleSizes[i] = _fd->readUint32BE();
 		debug(6, "sampleSizes[%d] = %d", i, track->sampleSizes[i]);
 	}
@@ -640,7 +660,9 @@ int QuickTimeParser::readSTTS(Atom atom) {
 	uint32 totalSampleCount = 0;
 
 	_fd->readByte(); // version
-	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
+	_fd->readByte();
+	_fd->readByte();
+	_fd->readByte(); // flags
 
 	track->timeToSampleCount = _fd->readUint32BE();
 	track->timeToSample = new TimeToSampleEntry[track->timeToSampleCount];
@@ -664,7 +686,9 @@ int QuickTimeParser::readSTCO(Atom atom) {
 	Track *track = _tracks.back();
 
 	_fd->readByte(); // version
-	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
+	_fd->readByte();
+	_fd->readByte();
+	_fd->readByte(); // flags
 
 	track->chunkCount = _fd->readUint32BE();
 	track->chunkOffsets = new uint32[track->chunkCount];
@@ -708,9 +732,9 @@ int QuickTimeParser::readWAVE(Atom atom) {
 }
 
 enum {
-	kMP4IODescTag          = 2,
-	kMP4ESDescTag          = 3,
-	kMP4DecConfigDescTag   = 4,
+	kMP4IODescTag = 2,
+	kMP4ESDescTag = 3,
+	kMP4DecConfigDescTag = 4,
 	kMP4DecSpecificDescTag = 5
 };
 
@@ -762,10 +786,11 @@ int QuickTimeParser::readESDS(Atom atom) {
 		return 0;
 
 	sampleDesc->_objectTypeMP4 = _fd->readByte();
-	_fd->readByte();                      // stream type
-	_fd->readUint16BE(); _fd->readByte(); // buffer size
-	_fd->readUint32BE();                  // max bitrate
-	_fd->readUint32BE();                  // avg bitrate
+	_fd->readByte(); // stream type
+	_fd->readUint16BE();
+	_fd->readByte();     // buffer size
+	_fd->readUint32BE(); // max bitrate
+	_fd->readUint32BE(); // avg bitrate
 
 	// Check if we've got the Specific MPEG-4 header
 	readMP4Desc(_fd, tag, length);
@@ -852,4 +877,4 @@ QuickTimeParser::Track::~Track() {
 		delete sampleDescs[i];
 }
 
-} // End of namespace Video
+} // namespace Common

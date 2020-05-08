@@ -25,10 +25,10 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+#include <cassert>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <cassert>
 
 typedef unsigned char byte;
 typedef unsigned int uint32;
@@ -38,6 +38,7 @@ extern void error(const char *s);
 class File {
 private:
 	FILE *_file;
+
 public:
 	File(const char *filename) {
 		_file = fopen(filename, "rb");
@@ -86,6 +87,7 @@ public:
 class WriteFile {
 private:
 	FILE *_file;
+
 public:
 	WriteFile(const char *filename) {
 		_file = fopen(filename, "wb");
@@ -140,11 +142,10 @@ struct Surface {
 		_pixels = new byte[w * h];
 		memset(_pixels, 0xff, w * h);
 
-		// Set a default palette		
+		// Set a default palette
 		for (int idx = 0; idx < 256; ++idx) {
 			memset(_palette + idx * 3, idx, 3);
 		}
-
 	}
 
 	~Surface() {

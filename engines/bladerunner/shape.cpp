@@ -129,5 +129,4 @@ void Shapes::unload() {
 	_shapes.clear();
 }
 
-
 } // End of namespace BladeRunner

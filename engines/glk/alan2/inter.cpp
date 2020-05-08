@@ -20,14 +20,14 @@
  *
  */
 
-#include "glk/alan2/types.h"
-#include "glk/alan2/exe.h"
 #include "glk/alan2/inter.h"
+#include "glk/alan2/exe.h"
 #include "glk/alan2/glkio.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/parse.h"
 #include "glk/alan2/stack.h"
 #include "glk/alan2/sysdep.h"
+#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -35,7 +35,6 @@ namespace Alan2 {
 /* PRIVATE DATA */
 
 static int pc;
-
 
 static void if_(Aword v) {
 	int lev = 1;
@@ -48,14 +47,16 @@ static void if_(Aword v) {
 			if (I_CLASS(i) == (Aword)C_STMOP)
 				switch (I_OP(i)) {
 				case I_ELSE:
-					if (lev == 1) return;
+					if (lev == 1)
+						return;
 					break;
 				case I_IF:
 					lev++;
 					break;
 				case I_ENDIF:
 					lev--;
-					if (lev == 0) return;
+					if (lev == 0)
+						return;
 					break;
 				default:
 					break;
@@ -75,7 +76,8 @@ static void else_() {
 			switch (I_OP(i)) {
 			case I_ENDIF:
 				lev--;
-				if (lev == 0) return;
+				if (lev == 0)
+					return;
 				break;
 			case I_IF:
 				lev++;
@@ -115,12 +117,14 @@ static void depexec(Aword v) {
 					lev++;
 					break;
 				case I_DEPEND:
-					if (lev == 1) return;
+					if (lev == 1)
+						return;
 					lev--;
 					break;
 				case I_DEPCASE:
 				case I_DEPELSE:
-					if (lev == 1) return;
+					if (lev == 1)
+						return;
 					break;
 				default:
 					break;
@@ -145,7 +149,8 @@ static void depcase() {
 				break;
 			case I_DEPEND:
 				lev--;
-				if (lev == 0) return;
+				if (lev == 0)
+					return;
 				break;
 			default:
 				break;
@@ -162,12 +167,14 @@ void interpret(CONTEXT, Aaddr adr) {
 	Aaddr oldpc;
 	Aword i;
 
-	if (stpflg) printf("\n++++++++++++++++++++++++++++++++++++++++++++++++++");
+	if (stpflg)
+		printf("\n++++++++++++++++++++++++++++++++++++++++++++++++++");
 
 	oldpc = pc;
 	pc = adr;
 	while (TRUE) {
-		if (stpflg) printf("\n%4x: ", pc);
+		if (stpflg)
+			printf("\n%4x: ", pc);
 		if (pc > (int)memTop)
 			syserr("Interpreting outside program.");
 
@@ -175,29 +182,35 @@ void interpret(CONTEXT, Aaddr adr) {
 
 		switch (I_CLASS(i)) {
 		case C_CONST:
-			if (stpflg) printf("PUSH  \t%5u", I_OP(i));
+			if (stpflg)
+				printf("PUSH  \t%5u", I_OP(i));
 			push(I_OP(i));
 			break;
 		case C_CURVAR:
 			switch (I_OP(i)) {
 			case V_PARAM:
-				if (stpflg) printf("PARAM \t%5lu\t\t(%u)", top(), params[top() - 1].code);
+				if (stpflg)
+					printf("PARAM \t%5lu\t\t(%u)", top(), params[top() - 1].code);
 				push(params[pop() - 1].code);
 				break;
 			case V_CURLOC:
-				if (stpflg) printf("CURLOC \t\t\t(%d)", cur.loc);
+				if (stpflg)
+					printf("CURLOC \t\t\t(%d)", cur.loc);
 				push(cur.loc);
 				break;
 			case V_CURACT:
-				if (stpflg) printf("CURACT \t\t\t(%d)", cur.act);
+				if (stpflg)
+					printf("CURACT \t\t\t(%d)", cur.act);
 				push(cur.act);
 				break;
 			case V_CURVRB:
-				if (stpflg) printf("CURVRB \t\t\t(%d)", cur.vrb);
+				if (stpflg)
+					printf("CURVRB \t\t\t(%d)", cur.vrb);
 				push(cur.vrb);
 				break;
 			case V_SCORE:
-				if (stpflg) printf("CURSCORE \t\t\t(%d)", cur.score);
+				if (stpflg)
+					printf("CURSCORE \t\t\t(%d)", cur.score);
 				push(cur.score);
 				break;
 			default:
@@ -214,7 +227,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				len = pop();
 				if (stpflg) {
 					printf("PRINT \t%5ld, %5ld\t\"", fpos, len);
-					col = 34;     /* To format it better! */
+					col = 34; /* To format it better! */
 				}
 				print(fpos, len);
 				if (stpflg)
@@ -227,7 +240,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				len = pop();
 				if (stpflg) {
 					printf("SYSTEM \t%5ld, %5ld\t\"", fpos, len);
-					col = 34;     /* To format it better! */
+					col = 34; /* To format it better! */
 				}
 				sys(fpos, len);
 				break;
@@ -331,8 +344,10 @@ void interpret(CONTEXT, Aaddr adr) {
 				val = pop();
 				if (stpflg) {
 					printf("MAKE \t%5ld, %5ld, ", id, atr);
-					if (val) printf("TRUE");
-					else printf("FALSE");
+					if (val)
+						printf("TRUE");
+					else
+						printf("FALSE");
 				}
 				make(id, atr, val);
 				break;
@@ -429,8 +444,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("HERE \t%5ld", id);
 				push(isHere(id));
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -441,8 +458,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("NEAR \t%5ld", id);
 				push(isNear(id));
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -463,8 +482,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("IN \t%5ld, %5ld ", obj, cnt);
 				push(in(obj, cnt));
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -473,7 +494,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				id = pop();
 				if (stpflg) {
 					printf("DESCRIBE \t%5ld\t", id);
-					col = 34;     /* To format it better! */
+					col = 34; /* To format it better! */
 				}
 				describe(id);
 				break;
@@ -513,8 +534,10 @@ void interpret(CONTEXT, Aaddr adr) {
 				v = pop();
 				if (stpflg) {
 					printf("IF \t");
-					if (v) printf(" TRUE");
-					else printf("FALSE");
+					if (v)
+						printf(" TRUE");
+					else
+						printf("FALSE");
 				}
 				if_(v);
 				break;
@@ -538,15 +561,21 @@ void interpret(CONTEXT, Aaddr adr) {
 				lh = pop();
 				if (stpflg) {
 					printf("AND \t");
-					if (lh) printf("TRUE, ");
-					else printf("FALSE, ");
-					if (rh) printf("TRUE");
-					else printf("FALSE");
+					if (lh)
+						printf("TRUE, ");
+					else
+						printf("FALSE, ");
+					if (rh)
+						printf("TRUE");
+					else
+						printf("FALSE");
 				}
 				push(lh && rh);
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -558,15 +587,21 @@ void interpret(CONTEXT, Aaddr adr) {
 				lh = pop();
 				if (stpflg) {
 					printf("OR \t");
-					if (lh) printf("TRUE, ");
-					else printf("FALSE, ");
-					if (rh) printf("TRUE");
-					else printf("FALSE");
+					if (lh)
+						printf("TRUE, ");
+					else
+						printf("FALSE, ");
+					if (rh)
+						printf("TRUE");
+					else
+						printf("FALSE");
 				}
 				push(lh || rh);
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -580,8 +615,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("NE \t%5ld, %5ld", lh, rh);
 				push(lh != rh);
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -595,8 +632,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("EQ \t%5ld, %5ld", lh, rh);
 				push(lh == rh);
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -610,8 +649,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("STREQ \t%5ld, %5ld", lh, rh);
 				push(streq((char *)lh, (char *)rh));
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -625,8 +666,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("STREXACT \t%5ld, %5ld", lh, rh);
 				push(strcmp((char *)lh, (char *)rh) == 0);
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				free((void *)lh);
 				free((void *)rh);
@@ -642,8 +685,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("LE \t%5d, %5d", lh, rh);
 				push(lh <= rh);
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -657,8 +702,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("GE \t%5d, %5d", lh, rh);
 				push(lh >= rh);
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -672,8 +719,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("LT \t%5d, %5d", lh, rh);
 				push((signed int)lh < (signed int)rh);
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -687,8 +736,10 @@ void interpret(CONTEXT, Aaddr adr) {
 					printf("GT \t%5d, %5d", lh, rh);
 				push(lh > rh);
 				if (stpflg) {
-					if (top()) printf("\t(TRUE)");
-					else printf("\t(FALSE)");
+					if (top())
+						printf("\t(TRUE)");
+					else
+						printf("\t(FALSE)");
 				}
 				break;
 			}
@@ -749,13 +800,17 @@ void interpret(CONTEXT, Aaddr adr) {
 				val = pop();
 				if (stpflg) {
 					printf("NOT \t");
-					if (val) printf("TRUE");
-					else printf("FALSE");
+					if (val)
+						printf("TRUE");
+					else
+						printf("FALSE");
 				}
 				push(!val);
 				if (stpflg) {
-					if (top()) printf("\t\t(TRUE)");
-					else printf("\t\t(FALSE)");
+					if (top())
+						printf("\t\t(TRUE)");
+					else
+						printf("\t\t(FALSE)");
 				}
 				break;
 			}
@@ -792,7 +847,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				break;
 			}
 			case I_RND: {
-				Aptr  from, to;
+				Aptr from, to;
 				from = pop();
 				to = pop();
 				if (stpflg)
@@ -843,8 +898,10 @@ void interpret(CONTEXT, Aaddr adr) {
 				v = pop();
 				if (stpflg) {
 					printf("DEPEXEC \t");
-					if (v) printf(" TRUE");
-					else printf("FALSE");
+					if (v)
+						printf(" TRUE");
+					else
+						printf("FALSE");
 				}
 				depexec(v);
 				break;

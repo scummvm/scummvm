@@ -30,21 +30,21 @@ namespace Titanic {
 int CBarbot::_timesCalled;
 
 BEGIN_MESSAGE_MAP(CBarbot, CTrueTalkNPC)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(TrueTalkSelfQueueAnimSetMsg)
-	ON_MESSAGE(TrueTalkQueueUpAnimSetMsg)
-	ON_MESSAGE(TrueTalkGetStateValueMsg)
-	ON_MESSAGE(TrueTalkTriggerActionMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(LoadSuccessMsg)
-	ON_MESSAGE(MovieFrameMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(TrueTalkSelfQueueAnimSetMsg)
+ON_MESSAGE(TrueTalkQueueUpAnimSetMsg)
+ON_MESSAGE(TrueTalkGetStateValueMsg)
+ON_MESSAGE(TrueTalkTriggerActionMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
 CBarbot::FrameRanges::FrameRanges() : Common::Array<FrameRange>() {
@@ -425,8 +425,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 		return true;
 	}
 
-	if (msg->_endFrame == _frames[56]._endFrame
-			|| msg->_endFrame == _frames[54]._endFrame) {
+	if (msg->_endFrame == _frames[56]._endFrame || msg->_endFrame == _frames[54]._endFrame) {
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 1;
 		statusMsg.execute("PickUpGlass");
@@ -468,9 +467,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 		return true;
 	}
 
-	if (msg->_endFrame == _frames[43]._endFrame
-			|| msg->_endFrame == _frames[42]._endFrame
-			|| msg->_endFrame == _frames[41]._endFrame) {
+	if (msg->_endFrame == _frames[43]._endFrame || msg->_endFrame == _frames[42]._endFrame || msg->_endFrame == _frames[41]._endFrame) {
 		if (_field124)
 			playMovie(_frames[53]._startFrame, _frames[53]._startFrame, 0);
 		return true;
@@ -589,9 +586,7 @@ bool CBarbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 }
 
 bool CBarbot::FrameMsg(CFrameMsg *msg) {
-	if (!_fieldC4 || _frameNum != -1 || _field148 != -1
-			|| (msg->_ticks - _field14C) <= 5000
-			|| (msg->_ticks - _field150) <= 1000)
+	if (!_fieldC4 || _frameNum != -1 || _field148 != -1 || (msg->_ticks - _field14C) <= 5000 || (msg->_ticks - _field150) <= 1000)
 		return true;
 
 	if (!_drunkFlag) {
@@ -643,8 +638,7 @@ bool CBarbot::FrameMsg(CFrameMsg *msg) {
 		}
 	} else {
 		static const int CASES[23] = {
-			0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 7, 7
-		};
+		    0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 7, 7};
 		switch (CASES[g_vm->getRandomNumber(22)]) {
 		case 0:
 			playRange(_frames[13], MOVIE_NOTIFY_OBJECT);
@@ -703,8 +697,7 @@ bool CBarbot::MovieFrameMsg(CMovieFrameMsg *msg) {
 	if (msg->_frameNumber == _frames[29]._startFrame) {
 		playSound(TRANSLATE("c#2.wav", "c#62.wav"), _volume);
 
-	} else if (msg->_frameNumber == _frames[55]._startFrame
-			|| msg->_frameNumber == _frames[32]._startFrame) {
+	} else if (msg->_frameNumber == _frames[55]._startFrame || msg->_frameNumber == _frames[32]._startFrame) {
 		// Finished giving the Barbot a glass
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 0;

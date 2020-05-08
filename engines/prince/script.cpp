@@ -21,17 +21,17 @@
  */
 
 #include "prince/script.h"
-#include "prince/prince.h"
+#include "prince/animation.h"
 #include "prince/flags.h"
-#include "prince/variatxt.h"
 #include "prince/font.h"
 #include "prince/hero.h"
+#include "prince/prince.h"
 #include "prince/resource.h"
-#include "prince/animation.h"
+#include "prince/variatxt.h"
 
-#include "common/debug.h"
-#include "common/debug-channels.h"
 #include "common/archive.h"
+#include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/memstream.h"
 
 namespace Prince {
@@ -268,7 +268,7 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, 
 
 	BackgroundAnim newBackgroundAnim; // BackgroundAnim seq data and its array of Anim
 
-	int animOffset = READ_LE_UINT32(&_data[offset]); // pos of BackgroundAnim data in script
+	int animOffset = READ_LE_UINT32(&_data[offset]);    // pos of BackgroundAnim data in script
 	int anims = READ_LE_UINT32(&_data[animOffset + 8]); // amount of Anim in BackgroundAnim
 
 	if (anims == 0) {
@@ -336,7 +336,7 @@ void Script::installSingleBackAnim(Common::Array<BackgroundAnim> &backAnimList, 
 		newBackgroundAnim._seq._data2 = stream.readUint32LE();
 
 		int start = newBackgroundAnim.backAnims[0]._basaData._start; // BASA_Start of first frame
-		int end = newBackgroundAnim.backAnims[0]._basaData._end; // BASA_End of first frame
+		int end = newBackgroundAnim.backAnims[0]._basaData._end;     // BASA_End of first frame
 
 		if (start != -1) {
 			newBackgroundAnim.backAnims[0]._frame = start;
@@ -432,10 +432,9 @@ int32 InterpreterFlags::getFlagValue(Flags::Id flagId) {
 	return _flags[(uint32)flagId - kFlagMask];
 }
 
-Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) :
-	_vm(vm), _script(script), _flags(flags),
-	_stacktop(0), _opcodeNF(false), _opcodeEnd(false),
-	_waitFlag(0), _result(true) {
+Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) : _vm(vm), _script(script), _flags(flags),
+                                                                                      _stacktop(0), _opcodeNF(false), _opcodeEnd(false),
+                                                                                      _waitFlag(0), _result(true) {
 
 	// Initialize the script
 	_mode = "fg";
@@ -495,9 +494,9 @@ uint32 Interpreter::step(uint32 opcodePC) {
 
 		if (_lastOpcode >= kNumOpcodes)
 			error(
-				"Trying to execute unknown opcode @0x%04X: %02d",
-				_currentInstruction,
-				_lastOpcode);
+			    "Trying to execute unknown opcode @0x%04X: %02d",
+			    _currentInstruction,
+			    _lastOpcode);
 
 		// Execute the current opcode
 		OpcodeFunc op = _opcodes[_lastOpcode];
@@ -819,7 +818,7 @@ void Interpreter::O_UPDATEON() {
 }
 
 // Not used in script
-void Interpreter::O_UPDATE () {
+void Interpreter::O_UPDATE() {
 	error("O_UPDATE");
 }
 
@@ -1166,7 +1165,7 @@ void Interpreter::O_REMWALKAREA() {
 	error("O_REMWALKAREA");
 }
 
- // Not used in script
+// Not used in script
 void Interpreter::O_RESTOREWALKAREA() {
 	error("O_RESTOREWALKAREA");
 }
@@ -1264,7 +1263,7 @@ void Interpreter::O_SETHEROANIM() {
 	}
 	if (hero != nullptr) {
 		hero->freeHeroAnim();
-		if (hero ->_specAnim == nullptr) {
+		if (hero->_specAnim == nullptr) {
 			hero->_specAnim = new Animation();
 			if (offset < 100) {
 				const Common::String animName = Common::String::format("AN%02d", offset);
@@ -1951,150 +1950,150 @@ void Interpreter::O_BREAK_POINT() {
 }
 
 Interpreter::OpcodeFunc Interpreter::_opcodes[kNumOpcodes] = {
-	&Interpreter::O_WAITFOREVER,
-	&Interpreter::O_BLACKPALETTE,
-	&Interpreter::O_SETUPPALETTE,
-	&Interpreter::O_INITROOM,
-	&Interpreter::O_SETSAMPLE,
-	&Interpreter::O_FREESAMPLE,
-	&Interpreter::O_PLAYSAMPLE,
-	&Interpreter::O_PUTOBJECT,
-	&Interpreter::O_REMOBJECT,
-	&Interpreter::O_SHOWANIM,
-	&Interpreter::O_CHECKANIMEND,
-	&Interpreter::O_FREEANIM,
-	&Interpreter::O_CHECKANIMFRAME,
-	&Interpreter::O_PUTBACKANIM,
-	&Interpreter::O_REMBACKANIM,
-	&Interpreter::O_CHECKBACKANIMFRAME,
-	&Interpreter::O_FREEALLSAMPLES,
-	&Interpreter::O_SETMUSIC,
-	&Interpreter::O_STOPMUSIC,
-	&Interpreter::O__WAIT,
-	&Interpreter::O_UPDATEOFF,
-	&Interpreter::O_UPDATEON,
-	&Interpreter::O_UPDATE ,
-	&Interpreter::O_CLS,
-	&Interpreter::O__CALL,
-	&Interpreter::O_RETURN,
-	&Interpreter::O_GO,
-	&Interpreter::O_BACKANIMUPDATEOFF,
-	&Interpreter::O_BACKANIMUPDATEON,
-	&Interpreter::O_CHANGECURSOR,
-	&Interpreter::O_CHANGEANIMTYPE,
-	&Interpreter::O__SETFLAG,
-	&Interpreter::O_COMPARE,
-	&Interpreter::O_JUMPZ,
-	&Interpreter::O_JUMPNZ,
-	&Interpreter::O_EXIT,
-	&Interpreter::O_ADDFLAG,
-	&Interpreter::O_TALKANIM,
-	&Interpreter::O_SUBFLAG,
-	&Interpreter::O_SETSTRING,
-	&Interpreter::O_ANDFLAG,
-	&Interpreter::O_GETMOBDATA,
-	&Interpreter::O_ORFLAG,
-	&Interpreter::O_SETMOBDATA,
-	&Interpreter::O_XORFLAG,
-	&Interpreter::O_GETMOBTEXT,
-	&Interpreter::O_MOVEHERO,
-	&Interpreter::O_WALKHERO,
-	&Interpreter::O_SETHERO,
-	&Interpreter::O_HEROOFF,
-	&Interpreter::O_HEROON,
-	&Interpreter::O_CLSTEXT,
-	&Interpreter::O_CALLTABLE,
-	&Interpreter::O_CHANGEMOB,
-	&Interpreter::O_ADDINV,
-	&Interpreter::O_REMINV,
-	&Interpreter::O_REPINV,
-	&Interpreter::O_OBSOLETE_GETACTION,
-	&Interpreter::O_ADDWALKAREA,
-	&Interpreter::O_REMWALKAREA,
-	&Interpreter::O_RESTOREWALKAREA,
-	&Interpreter::O_WAITFRAME,
-	&Interpreter::O_SETFRAME,
-	&Interpreter::O_RUNACTION,
-	&Interpreter::O_COMPAREHI,
-	&Interpreter::O_COMPARELO,
-	&Interpreter::O_PRELOADSET,
-	&Interpreter::O_FREEPRELOAD,
-	&Interpreter::O_CHECKINV,
-	&Interpreter::O_TALKHERO,
-	&Interpreter::O_WAITTEXT,
-	&Interpreter::O_SETHEROANIM,
-	&Interpreter::O_WAITHEROANIM,
-	&Interpreter::O_GETHERODATA,
-	&Interpreter::O_GETMOUSEBUTTON,
-	&Interpreter::O_CHANGEFRAMES,
-	&Interpreter::O_CHANGEBACKFRAMES,
-	&Interpreter::O_GETBACKANIMDATA,
-	&Interpreter::O_GETANIMDATA,
-	&Interpreter::O_SETBGCODE,
-	&Interpreter::O_SETBACKFRAME,
-	&Interpreter::O_GETRND,
-	&Interpreter::O_TALKBACKANIM,
-	&Interpreter::O_LOADPATH,
-	&Interpreter::O_GETCHAR,
-	&Interpreter::O_SETDFLAG,
-	&Interpreter::O_CALLDFLAG,
-	&Interpreter::O_PRINTAT,
-	&Interpreter::O_ZOOMIN,
-	&Interpreter::O_ZOOMOUT,
-	&Interpreter::O_SETSTRINGOFFSET,
-	&Interpreter::O_GETOBJDATA,
-	&Interpreter::O_SETOBJDATA,
-	&Interpreter::O_SWAPOBJECTS,
-	&Interpreter::O_CHANGEHEROSET,
-	&Interpreter::O_ADDSTRING,
-	&Interpreter::O_SUBSTRING,
-	&Interpreter::O_INITDIALOG,
-	&Interpreter::O_ENABLEDIALOGOPT,
-	&Interpreter::O_DISABLEDIALOGOPT,
-	&Interpreter::O_SHOWDIALOGBOX,
-	&Interpreter::O_STOPSAMPLE,
-	&Interpreter::O_BACKANIMRANGE,
-	&Interpreter::O_CLEARPATH,
-	&Interpreter::O_SETPATH,
-	&Interpreter::O_GETHEROX,
-	&Interpreter::O_GETHEROY,
-	&Interpreter::O_GETHEROD,
-	&Interpreter::O_PUSHSTRING,
-	&Interpreter::O_POPSTRING,
-	&Interpreter::O_SETFGCODE,
-	&Interpreter::O_STOPHERO,
-	&Interpreter::O_ANIMUPDATEOFF,
-	&Interpreter::O_ANIMUPDATEON,
-	&Interpreter::O_FREECURSOR,
-	&Interpreter::O_ADDINVQUIET,
-	&Interpreter::O_RUNHERO,
-	&Interpreter::O_SETBACKANIMDATA,
-	&Interpreter::O_VIEWFLC,
-	&Interpreter::O_CHECKFLCFRAME,
-	&Interpreter::O_CHECKFLCEND,
-	&Interpreter::O_FREEFLC,
-	&Interpreter::O_TALKHEROSTOP,
-	&Interpreter::O_HEROCOLOR,
-	&Interpreter::O_GRABMAPA,
-	&Interpreter::O_ENABLENAK,
-	&Interpreter::O_DISABLENAK,
-	&Interpreter::O_GETMOBNAME,
-	&Interpreter::O_SWAPINVENTORY,
-	&Interpreter::O_CLEARINVENTORY,
-	&Interpreter::O_SKIPTEXT,
-	&Interpreter::O_SETVOICEH,
-	&Interpreter::O_SETVOICEA,
-	&Interpreter::O_SETVOICEB,
-	&Interpreter::O_SETVOICEC,
-	&Interpreter::O_VIEWFLCLOOP,
-	&Interpreter::O_FLCSPEED,
-	&Interpreter::O_OPENINVENTORY,
-	&Interpreter::O_KRZYWA,
-	&Interpreter::O_GETKRZYWA,
-	&Interpreter::O_GETMOB,
-	&Interpreter::O_INPUTLINE,
-	&Interpreter::O_SETVOICED,
-	&Interpreter::O_BREAK_POINT,
+    &Interpreter::O_WAITFOREVER,
+    &Interpreter::O_BLACKPALETTE,
+    &Interpreter::O_SETUPPALETTE,
+    &Interpreter::O_INITROOM,
+    &Interpreter::O_SETSAMPLE,
+    &Interpreter::O_FREESAMPLE,
+    &Interpreter::O_PLAYSAMPLE,
+    &Interpreter::O_PUTOBJECT,
+    &Interpreter::O_REMOBJECT,
+    &Interpreter::O_SHOWANIM,
+    &Interpreter::O_CHECKANIMEND,
+    &Interpreter::O_FREEANIM,
+    &Interpreter::O_CHECKANIMFRAME,
+    &Interpreter::O_PUTBACKANIM,
+    &Interpreter::O_REMBACKANIM,
+    &Interpreter::O_CHECKBACKANIMFRAME,
+    &Interpreter::O_FREEALLSAMPLES,
+    &Interpreter::O_SETMUSIC,
+    &Interpreter::O_STOPMUSIC,
+    &Interpreter::O__WAIT,
+    &Interpreter::O_UPDATEOFF,
+    &Interpreter::O_UPDATEON,
+    &Interpreter::O_UPDATE,
+    &Interpreter::O_CLS,
+    &Interpreter::O__CALL,
+    &Interpreter::O_RETURN,
+    &Interpreter::O_GO,
+    &Interpreter::O_BACKANIMUPDATEOFF,
+    &Interpreter::O_BACKANIMUPDATEON,
+    &Interpreter::O_CHANGECURSOR,
+    &Interpreter::O_CHANGEANIMTYPE,
+    &Interpreter::O__SETFLAG,
+    &Interpreter::O_COMPARE,
+    &Interpreter::O_JUMPZ,
+    &Interpreter::O_JUMPNZ,
+    &Interpreter::O_EXIT,
+    &Interpreter::O_ADDFLAG,
+    &Interpreter::O_TALKANIM,
+    &Interpreter::O_SUBFLAG,
+    &Interpreter::O_SETSTRING,
+    &Interpreter::O_ANDFLAG,
+    &Interpreter::O_GETMOBDATA,
+    &Interpreter::O_ORFLAG,
+    &Interpreter::O_SETMOBDATA,
+    &Interpreter::O_XORFLAG,
+    &Interpreter::O_GETMOBTEXT,
+    &Interpreter::O_MOVEHERO,
+    &Interpreter::O_WALKHERO,
+    &Interpreter::O_SETHERO,
+    &Interpreter::O_HEROOFF,
+    &Interpreter::O_HEROON,
+    &Interpreter::O_CLSTEXT,
+    &Interpreter::O_CALLTABLE,
+    &Interpreter::O_CHANGEMOB,
+    &Interpreter::O_ADDINV,
+    &Interpreter::O_REMINV,
+    &Interpreter::O_REPINV,
+    &Interpreter::O_OBSOLETE_GETACTION,
+    &Interpreter::O_ADDWALKAREA,
+    &Interpreter::O_REMWALKAREA,
+    &Interpreter::O_RESTOREWALKAREA,
+    &Interpreter::O_WAITFRAME,
+    &Interpreter::O_SETFRAME,
+    &Interpreter::O_RUNACTION,
+    &Interpreter::O_COMPAREHI,
+    &Interpreter::O_COMPARELO,
+    &Interpreter::O_PRELOADSET,
+    &Interpreter::O_FREEPRELOAD,
+    &Interpreter::O_CHECKINV,
+    &Interpreter::O_TALKHERO,
+    &Interpreter::O_WAITTEXT,
+    &Interpreter::O_SETHEROANIM,
+    &Interpreter::O_WAITHEROANIM,
+    &Interpreter::O_GETHERODATA,
+    &Interpreter::O_GETMOUSEBUTTON,
+    &Interpreter::O_CHANGEFRAMES,
+    &Interpreter::O_CHANGEBACKFRAMES,
+    &Interpreter::O_GETBACKANIMDATA,
+    &Interpreter::O_GETANIMDATA,
+    &Interpreter::O_SETBGCODE,
+    &Interpreter::O_SETBACKFRAME,
+    &Interpreter::O_GETRND,
+    &Interpreter::O_TALKBACKANIM,
+    &Interpreter::O_LOADPATH,
+    &Interpreter::O_GETCHAR,
+    &Interpreter::O_SETDFLAG,
+    &Interpreter::O_CALLDFLAG,
+    &Interpreter::O_PRINTAT,
+    &Interpreter::O_ZOOMIN,
+    &Interpreter::O_ZOOMOUT,
+    &Interpreter::O_SETSTRINGOFFSET,
+    &Interpreter::O_GETOBJDATA,
+    &Interpreter::O_SETOBJDATA,
+    &Interpreter::O_SWAPOBJECTS,
+    &Interpreter::O_CHANGEHEROSET,
+    &Interpreter::O_ADDSTRING,
+    &Interpreter::O_SUBSTRING,
+    &Interpreter::O_INITDIALOG,
+    &Interpreter::O_ENABLEDIALOGOPT,
+    &Interpreter::O_DISABLEDIALOGOPT,
+    &Interpreter::O_SHOWDIALOGBOX,
+    &Interpreter::O_STOPSAMPLE,
+    &Interpreter::O_BACKANIMRANGE,
+    &Interpreter::O_CLEARPATH,
+    &Interpreter::O_SETPATH,
+    &Interpreter::O_GETHEROX,
+    &Interpreter::O_GETHEROY,
+    &Interpreter::O_GETHEROD,
+    &Interpreter::O_PUSHSTRING,
+    &Interpreter::O_POPSTRING,
+    &Interpreter::O_SETFGCODE,
+    &Interpreter::O_STOPHERO,
+    &Interpreter::O_ANIMUPDATEOFF,
+    &Interpreter::O_ANIMUPDATEON,
+    &Interpreter::O_FREECURSOR,
+    &Interpreter::O_ADDINVQUIET,
+    &Interpreter::O_RUNHERO,
+    &Interpreter::O_SETBACKANIMDATA,
+    &Interpreter::O_VIEWFLC,
+    &Interpreter::O_CHECKFLCFRAME,
+    &Interpreter::O_CHECKFLCEND,
+    &Interpreter::O_FREEFLC,
+    &Interpreter::O_TALKHEROSTOP,
+    &Interpreter::O_HEROCOLOR,
+    &Interpreter::O_GRABMAPA,
+    &Interpreter::O_ENABLENAK,
+    &Interpreter::O_DISABLENAK,
+    &Interpreter::O_GETMOBNAME,
+    &Interpreter::O_SWAPINVENTORY,
+    &Interpreter::O_CLEARINVENTORY,
+    &Interpreter::O_SKIPTEXT,
+    &Interpreter::O_SETVOICEH,
+    &Interpreter::O_SETVOICEA,
+    &Interpreter::O_SETVOICEB,
+    &Interpreter::O_SETVOICEC,
+    &Interpreter::O_VIEWFLCLOOP,
+    &Interpreter::O_FLCSPEED,
+    &Interpreter::O_OPENINVENTORY,
+    &Interpreter::O_KRZYWA,
+    &Interpreter::O_GETKRZYWA,
+    &Interpreter::O_GETMOB,
+    &Interpreter::O_INPUTLINE,
+    &Interpreter::O_SETVOICED,
+    &Interpreter::O_BREAK_POINT,
 };
 
 } // End of namespace Prince

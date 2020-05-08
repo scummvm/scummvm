@@ -28,19 +28,19 @@ namespace TADS {
 namespace TADS2 {
 
 errcxdef *lerini() {
-	errcxdef *errcx;                                         /* error context */
-  
+	errcxdef *errcx; /* error context */
+
 	// allocate an error context
 	if (!(errcx = (errcxdef *)ltk_suballoc(sizeof(errcxdef)))) {
 		// failure
-		return((errcxdef *)0);
+		return ((errcxdef *)0);
 	}
 
 	// initialize the error context
-	errcx->errcxfp  = (osfildef *)0;                  /* no error file handle */
-	errcx->errcxofs = 0;                      /* no offset in argument buffer */
-	errcx->errcxlog = ltk_errlog;                    /* error logging routine */
-	errcx->errcxlgc = errcx;                         /* error logging context */
+	errcx->errcxfp = (osfildef *)0; /* no error file handle */
+	errcx->errcxofs = 0;            /* no offset in argument buffer */
+	errcx->errcxlog = ltk_errlog;   /* error logging routine */
+	errcx->errcxlgc = errcx;        /* error logging context */
 
 	// return the new context
 	return errcx;

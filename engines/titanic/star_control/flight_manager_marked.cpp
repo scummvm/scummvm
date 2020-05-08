@@ -26,7 +26,7 @@
 namespace Titanic {
 
 void CMarkedAutoMover::setFlight(const FVector &oldPos, const FVector &newPos,
-	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
+                                 const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	CFlightManagerBase::setPath(oldPos, newPos);
 
 	double distance = _distance;
@@ -93,10 +93,9 @@ void CMarkedAutoMover::getVectorOnPath(FVector &pos) const {
 		pos = _destPos;
 	} else {
 		pos = FVector(
-			(_destPos._x - _srcPos._x) * distance + _srcPos._x,
-			(_destPos._y - _srcPos._y) * distance + _srcPos._y,
-			(_destPos._z - _srcPos._z) * distance + _srcPos._z
-		);
+		    (_destPos._x - _srcPos._x) * distance + _srcPos._x,
+		    (_destPos._y - _srcPos._y) * distance + _srcPos._y,
+		    (_destPos._z - _srcPos._z) * distance + _srcPos._z);
 	}
 }
 

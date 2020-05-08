@@ -34,38 +34,36 @@ class Actor;
 #define NO_OBJ_STATUS 0
 
 // obj status bit flags
-#define OBJ_STATUS_OK_TO_TAKE    0x1
+#define OBJ_STATUS_OK_TO_TAKE 0x1
 //#define OBJ_STATUS_SEEN_EGG      0x2  // something to do with eggs <- not sure about this one.
-#define OBJ_STATUS_INVISIBLE     0x2  // I think this is correct
-#define OBJ_STATUS_CHARMED       0x4 // objlist.txt says 'charmed'
-
+#define OBJ_STATUS_INVISIBLE 0x2 // I think this is correct
+#define OBJ_STATUS_CHARMED 0x4   // objlist.txt says 'charmed'
 
 // position: A 2 bit field, so can't use plain | to check / |= to set these.
 // FIXME: check to make sure we don't do this anywhere anymore
-#define OBJ_STATUS_ON_MAP        0x0
-#define OBJ_STATUS_IN_CONTAINER  0x8
+#define OBJ_STATUS_ON_MAP 0x0
+#define OBJ_STATUS_IN_CONTAINER 0x8
 #define OBJ_STATUS_IN_INVENTORY 0x10
-#define OBJ_STATUS_READIED      0x18
-#define OBJ_STATUS_MASK_GET     0x18
-#define OBJ_STATUS_MASK_SET     0xE7
+#define OBJ_STATUS_READIED 0x18
+#define OBJ_STATUS_MASK_GET 0x18
+#define OBJ_STATUS_MASK_SET 0xE7
 
-#define OBJ_STATUS_TEMPORARY    0x20
-#define OBJ_STATUS_EGG_ACTIVE   0x40  // something to do with eggs
-#define OBJ_STATUS_BROKEN       0x40
-#define OBJ_STATUS_MUTANT       0x40
-#define OBJ_STATUS_CURSED       0x40
-#define OBJ_STATUS_LIT          0x80
-
+#define OBJ_STATUS_TEMPORARY 0x20
+#define OBJ_STATUS_EGG_ACTIVE 0x40 // something to do with eggs
+#define OBJ_STATUS_BROKEN 0x40
+#define OBJ_STATUS_MUTANT 0x40
+#define OBJ_STATUS_CURSED 0x40
+#define OBJ_STATUS_LIT 0x80
 
 //first 3 bits of nuvie_status code object location
 //in the nuvie engine.
 
 //Nuvie engine obj locations
-#define OBJ_LOC_NONE    0
-#define OBJ_LOC_INV     1
-#define OBJ_LOC_MAP     2
+#define OBJ_LOC_NONE 0
+#define OBJ_LOC_INV 1
+#define OBJ_LOC_MAP 2
 #define OBJ_LOC_READIED 3
-#define OBJ_LOC_CONT    4
+#define OBJ_LOC_CONT 4
 
 #define NUVIE_OBJ_STATUS_LOC_MASK_GET 0x7
 #define NUVIE_OBJ_STATUS_LOC_MASK_SET 0xf8
@@ -97,47 +95,47 @@ public:
 
 	uint16 qty;
 	uint8 quality;
-	void *parent;  //either an Obj pointer or an Actor pointer depending on engine_loc.
+	void *parent; //either an Obj pointer or an Actor pointer depending on engine_loc.
 	U6LList *container;
 
 public:
 	Obj();
 	Obj(Obj *sobj);
 
-	bool is_script_obj()    {
+	bool is_script_obj() {
 		return (nuvie_status & NUVIE_OBJ_STATUS_SCRIPTING);
 	}
-	bool is_actor_obj()     {
+	bool is_actor_obj() {
 		return (nuvie_status & NUVIE_OBJ_STATUS_ACTOR_OBJ);
 	}
 
 	bool is_ok_to_take();
-	bool is_invisible()     {
+	bool is_invisible() {
 		return (status & OBJ_STATUS_INVISIBLE);
 	}
-	bool is_charmed()     {
+	bool is_charmed() {
 		return (status & OBJ_STATUS_CHARMED);
 	}
-	bool is_temporary()    {
+	bool is_temporary() {
 		return (status & OBJ_STATUS_TEMPORARY);
 	}
-	bool is_egg_active()   {
+	bool is_egg_active() {
 		return (status & OBJ_STATUS_EGG_ACTIVE);
 	}
-	bool is_broken()       {
+	bool is_broken() {
 		return (status & OBJ_STATUS_BROKEN);
 	}
-	bool is_mutant()       {
+	bool is_mutant() {
 		return (status & OBJ_STATUS_MUTANT);
 	}
-	bool is_cursed()       {
+	bool is_cursed() {
 		return (status & OBJ_STATUS_CURSED);
 	}
-	bool is_lit()          {
+	bool is_lit() {
 		return (status & OBJ_STATUS_LIT);
 	}
 
-	bool is_on_map()       {
+	bool is_on_map() {
 		return ((nuvie_status & NUVIE_OBJ_STATUS_LOC_MASK_GET) == OBJ_LOC_MAP);
 	}
 	bool is_in_container() {
@@ -145,7 +143,7 @@ public:
 	}
 	bool is_in_inventory(bool check_parent = true);
 
-	bool is_readied()      {
+	bool is_readied() {
 		return ((nuvie_status & NUVIE_OBJ_STATUS_LOC_MASK_GET) == OBJ_LOC_READIED);
 	}
 
@@ -183,9 +181,7 @@ public:
 	uint32 get_total_qty(uint16 match_obj_n);
 
 protected:
-
 	void add_and_stack(Obj *obj);
-
 };
 
 } // End of namespace Nuvie

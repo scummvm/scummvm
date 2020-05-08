@@ -35,7 +35,11 @@ class Ultima1Game;
 namespace Maps {
 
 enum MapType {
-	MAP_OVERWORLD = 0, MAP_CITY = 1, MAP_CASTLE = 2, MAP_DUNGEON = 3, MAP_UNKNOWN = 4
+	MAP_OVERWORLD = 0,
+	MAP_CITY = 1,
+	MAP_CASTLE = 2,
+	MAP_DUNGEON = 3,
+	MAP_UNKNOWN = 4
 };
 
 enum MapIdent {
@@ -72,15 +76,16 @@ struct SurroundingTotals {
  */
 class Ultima1Map : public Shared::Maps::Map {
 private:
-//	Ultima1Game *_game;
+	//	Ultima1Game *_game;
 	MapCity *_mapCity;
 	MapCastle *_mapCastle;
 	MapDungeon *_mapDungeon;
 	MapOverworld *_mapOverworld;
+
 public:
-	MapType _mapType;					// Type of map
-	Point _worldPos;					// Point in the world map, updated when entering locations
-	uint _moveCounter;					// Movement counter
+	MapType _mapType;  // Type of map
+	Point _worldPos;   // Point in the world map, updated when entering locations
+	uint _moveCounter; // Movement counter
 public:
 	/**
 	 * Constructor
@@ -107,10 +112,11 @@ public:
 	 */
 	void synchronize(Common::Serializer &s) override;
 
-	/**
+/**
 	 * Action pass-throughs
 	 */
-	#define PASS_METHOD(NAME) void NAME() { static_cast<MapBase *>(_mapArea)->NAME(); }
+#define PASS_METHOD(NAME) \
+	void NAME() { static_cast<MapBase *>(_mapArea)->NAME(); }
 	PASS_METHOD(board)
 	PASS_METHOD(cast)
 	PASS_METHOD(drop)

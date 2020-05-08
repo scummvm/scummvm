@@ -32,6 +32,7 @@ class CToilet : public CSGTStateRoom {
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 public:
 	CLASSDEF;
 

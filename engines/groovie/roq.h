@@ -89,6 +89,6 @@ private:
 	bool _firstFrame;
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_ROQ_H

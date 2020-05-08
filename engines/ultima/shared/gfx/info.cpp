@@ -21,9 +21,9 @@
  */
 
 #include "ultima/shared/gfx/info.h"
+#include "ultima/shared/core/str.h"
 #include "ultima/shared/early/game.h"
 #include "ultima/shared/gfx/text_cursor.h"
-#include "ultima/shared/core/str.h"
 
 namespace Ultima {
 namespace Shared {
@@ -32,15 +32,15 @@ namespace Shared {
 #define SUGGESTED_CR '\r'
 
 BEGIN_MESSAGE_MAP(Info, Shared::Gfx::VisualItem)
-	ON_MESSAGE(InfoMsg)
-	ON_MESSAGE(InfoGetCommandKeypress)
-	ON_MESSAGE(InfoGetKeypress)
-	ON_MESSAGE(InfoGetInput)
-	ON_MESSAGE(KeypressMsg)
+ON_MESSAGE(InfoMsg)
+ON_MESSAGE(InfoGetCommandKeypress)
+ON_MESSAGE(InfoGetKeypress)
+ON_MESSAGE(InfoGetInput)
+ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
 Info::Info(TreeItem *parent, const Rect &bounds) : Gfx::VisualItem("Info", bounds, parent),
-		_commandRespondTo(nullptr) {
+                                                   _commandRespondTo(nullptr) {
 	_characterInput = new Gfx::CharacterInput(getGame());
 	_textInput = new Gfx::TextInput(getGame());
 }

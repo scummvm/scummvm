@@ -27,13 +27,12 @@
 
 namespace Saga {
 
-
-#define PUZZLE_SOUNDS         3622
-#define PUZZLE_TOOL_SOUNDS    (PUZZLE_SOUNDS + 0)
-#define PUZZLE_HINT_SOUNDS    (PUZZLE_SOUNDS + 45)
+#define PUZZLE_SOUNDS 3622
+#define PUZZLE_TOOL_SOUNDS (PUZZLE_SOUNDS + 0)
+#define PUZZLE_HINT_SOUNDS (PUZZLE_SOUNDS + 45)
 #define PUZZLE_SOLICIT_SOUNDS (PUZZLE_SOUNDS + 57)
-#define PUZZLE_WHINE_SOUNDS   (PUZZLE_SOUNDS + 72)
-#define PUZZLE_SAKKA_SOUNDS   (PUZZLE_SOUNDS + 87)
+#define PUZZLE_WHINE_SOUNDS (PUZZLE_SOUNDS + 72)
+#define PUZZLE_SAKKA_SOUNDS (PUZZLE_SOUNDS + 87)
 
 class Puzzle {
 private:
@@ -82,8 +81,8 @@ public:
 
 private:
 	void initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, int16 trgX,
-					   int16 trgY, uint8 flag, uint8 count, Point point0, Point point1,
-					   Point point2, Point point3, Point point4, Point point5);
+	                   int16 trgY, uint8 flag, uint8 count, Point point0, Point point1,
+	                   Point point2, Point point3, Point point4, Point point5);
 
 	static void hintTimerCallback(void *refCon);
 

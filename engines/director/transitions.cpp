@@ -22,9 +22,9 @@
 
 #include "common/system.h"
 
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/managed_surface.h"
 #include "graphics/primitives.h"
-#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/frame.h"
@@ -67,7 +67,8 @@ enum {
 	kNumBlinds = 12
 };
 
-#define TRANS(t,a,d) {t,#t,a,d}
+#define TRANS(t, a, d) \
+	{ t, #t, a, d }
 
 struct {
 	TransitionType type;
@@ -75,60 +76,59 @@ struct {
 	TransitionAlgo algo;
 	TransitionDirection dir;
 } static const transProps[] = {
-	TRANS(kTransNone, 					kTransAlgoWipe,		kTransDirNone),
-	TRANS(kTransWipeRight, 				kTransAlgoWipe,		kTransDirHorizontal),
-	TRANS(kTransWipeLeft,				kTransAlgoWipe,		kTransDirHorizontal),
-	TRANS(kTransWipeDown,				kTransAlgoWipe,		kTransDirVertical),
-	TRANS(kTransWipeUp,					kTransAlgoWipe,		kTransDirVertical),
-	TRANS(kTransCenterOutHorizontal, 	kTransAlgoCenterOut,kTransDirHorizontal),	// 5
-	TRANS(kTransEdgesInHorizontal, 		kTransAlgoEdgesIn,	kTransDirHorizontal),
-	TRANS(kTransCenterOutVertical,		kTransAlgoCenterOut,kTransDirVertical),
-	TRANS(kTransEdgesInVertical,		kTransAlgoEdgesIn,	kTransDirVertical),
-	TRANS(kTransCenterOutSquare,		kTransAlgoCenterOut,kTransDirBoth),
-	TRANS(kTransEdgesInSquare,			kTransAlgoEdgesIn,	kTransDirBoth),			// 10
-	TRANS(kTransPushLeft,				kTransAlgoPush,		kTransDirHorizontal),
-	TRANS(kTransPushRight,				kTransAlgoPush,		kTransDirHorizontal),
-	TRANS(kTransPushDown,				kTransAlgoPush,		kTransDirVertical),
-	TRANS(kTransPushUp,					kTransAlgoPush,		kTransDirVertical),
-	TRANS(kTransRevealUp,				kTransAlgoReveal,	kTransDirVertical),		// 15
-	TRANS(kTransRevealUpRight,			kTransAlgoReveal,	kTransDirBoth),
-	TRANS(kTransRevealRight,			kTransAlgoReveal,	kTransDirHorizontal),
-	TRANS(kTransRevealDownRight,		kTransAlgoReveal,	kTransDirBoth),
-	TRANS(kTransRevealDown,				kTransAlgoReveal,	kTransDirVertical),
-	TRANS(kTransRevealDownLeft,			kTransAlgoReveal,	kTransDirBoth),			// 20
-	TRANS(kTransRevealLeft,				kTransAlgoReveal,	kTransDirHorizontal),
-	TRANS(kTransRevealUpLeft,			kTransAlgoReveal,	kTransDirBoth),
-	TRANS(kTransDissolvePixelsFast,		kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransDissolveBoxyRects,		kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransDissolveBoxySquares,	kTransAlgoDissolve,	kTransDirNone),			// 25
-	TRANS(kTransDissolvePatterns,		kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransRandomRows,				kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransRandomColumns,			kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransCoverDown,				kTransAlgoCover,	kTransDirVertical),
-	TRANS(kTransCoverDownLeft,			kTransAlgoCover,	kTransDirBoth),			// 30
-	TRANS(kTransCoverDownRight,			kTransAlgoCover,	kTransDirBoth),
-	TRANS(kTransCoverLeft,				kTransAlgoCover,	kTransDirHorizontal),
-	TRANS(kTransCoverRight,				kTransAlgoCover,	kTransDirHorizontal),
-	TRANS(kTransCoverUp,				kTransAlgoCover,	kTransDirVertical),
-	TRANS(kTransCoverUpLeft,			kTransAlgoCover,	kTransDirBoth),			// 35
-	TRANS(kTransCoverUpRight,			kTransAlgoCover,	kTransDirBoth),
-	TRANS(kTransVenetianBlind,			kTransAlgoBlinds,	kTransDirBlindsH),
-	TRANS(kTransCheckerboard,			kTransAlgoChecker,	kTransDirCheckers),
-	TRANS(kTransStripsBottomBuildLeft, 	kTransAlgoStrips,	kTransDirStepsV),
-	TRANS(kTransStripsBottomBuildRight,	kTransAlgoStrips,	kTransDirStepsV),		// 40
-	TRANS(kTransStripsLeftBuildDown, 	kTransAlgoStrips,	kTransDirStepsH),
-	TRANS(kTransStripsLeftBuildUp,		kTransAlgoStrips,	kTransDirStepsH),
-	TRANS(kTransStripsRightBuildDown,	kTransAlgoStrips,	kTransDirStepsH),
-	TRANS(kTransStripsRightBuildUp,		kTransAlgoStrips,	kTransDirStepsH),
-	TRANS(kTransStripsTopBuildLeft,		kTransAlgoStrips,	kTransDirStepsV),		// 45
-	TRANS(kTransStripsTopBuildRight,	kTransAlgoStrips,	kTransDirStepsV),
-	TRANS(kTransZoomOpen,				kTransAlgoZoom,		kTransDirBoth),
-	TRANS(kTransZoomClose,				kTransAlgoZoom,		kTransDirBoth),
-	TRANS(kTransVerticalBinds,			kTransAlgoBlinds,	kTransDirBlindsV),
-	TRANS(kTransDissolveBitsFast,		kTransAlgoDissolve,	kTransDirNone),			// 50
-	TRANS(kTransDissolvePixels,			kTransAlgoDissolve,	kTransDirNone),
-	TRANS(kTransDissolveBits,			kTransAlgoDissolve,	kTransDirNone)
-};
+    TRANS(kTransNone, kTransAlgoWipe, kTransDirNone),
+    TRANS(kTransWipeRight, kTransAlgoWipe, kTransDirHorizontal),
+    TRANS(kTransWipeLeft, kTransAlgoWipe, kTransDirHorizontal),
+    TRANS(kTransWipeDown, kTransAlgoWipe, kTransDirVertical),
+    TRANS(kTransWipeUp, kTransAlgoWipe, kTransDirVertical),
+    TRANS(kTransCenterOutHorizontal, kTransAlgoCenterOut, kTransDirHorizontal), // 5
+    TRANS(kTransEdgesInHorizontal, kTransAlgoEdgesIn, kTransDirHorizontal),
+    TRANS(kTransCenterOutVertical, kTransAlgoCenterOut, kTransDirVertical),
+    TRANS(kTransEdgesInVertical, kTransAlgoEdgesIn, kTransDirVertical),
+    TRANS(kTransCenterOutSquare, kTransAlgoCenterOut, kTransDirBoth),
+    TRANS(kTransEdgesInSquare, kTransAlgoEdgesIn, kTransDirBoth), // 10
+    TRANS(kTransPushLeft, kTransAlgoPush, kTransDirHorizontal),
+    TRANS(kTransPushRight, kTransAlgoPush, kTransDirHorizontal),
+    TRANS(kTransPushDown, kTransAlgoPush, kTransDirVertical),
+    TRANS(kTransPushUp, kTransAlgoPush, kTransDirVertical),
+    TRANS(kTransRevealUp, kTransAlgoReveal, kTransDirVertical), // 15
+    TRANS(kTransRevealUpRight, kTransAlgoReveal, kTransDirBoth),
+    TRANS(kTransRevealRight, kTransAlgoReveal, kTransDirHorizontal),
+    TRANS(kTransRevealDownRight, kTransAlgoReveal, kTransDirBoth),
+    TRANS(kTransRevealDown, kTransAlgoReveal, kTransDirVertical),
+    TRANS(kTransRevealDownLeft, kTransAlgoReveal, kTransDirBoth), // 20
+    TRANS(kTransRevealLeft, kTransAlgoReveal, kTransDirHorizontal),
+    TRANS(kTransRevealUpLeft, kTransAlgoReveal, kTransDirBoth),
+    TRANS(kTransDissolvePixelsFast, kTransAlgoDissolve, kTransDirNone),
+    TRANS(kTransDissolveBoxyRects, kTransAlgoDissolve, kTransDirNone),
+    TRANS(kTransDissolveBoxySquares, kTransAlgoDissolve, kTransDirNone), // 25
+    TRANS(kTransDissolvePatterns, kTransAlgoDissolve, kTransDirNone),
+    TRANS(kTransRandomRows, kTransAlgoDissolve, kTransDirNone),
+    TRANS(kTransRandomColumns, kTransAlgoDissolve, kTransDirNone),
+    TRANS(kTransCoverDown, kTransAlgoCover, kTransDirVertical),
+    TRANS(kTransCoverDownLeft, kTransAlgoCover, kTransDirBoth), // 30
+    TRANS(kTransCoverDownRight, kTransAlgoCover, kTransDirBoth),
+    TRANS(kTransCoverLeft, kTransAlgoCover, kTransDirHorizontal),
+    TRANS(kTransCoverRight, kTransAlgoCover, kTransDirHorizontal),
+    TRANS(kTransCoverUp, kTransAlgoCover, kTransDirVertical),
+    TRANS(kTransCoverUpLeft, kTransAlgoCover, kTransDirBoth), // 35
+    TRANS(kTransCoverUpRight, kTransAlgoCover, kTransDirBoth),
+    TRANS(kTransVenetianBlind, kTransAlgoBlinds, kTransDirBlindsH),
+    TRANS(kTransCheckerboard, kTransAlgoChecker, kTransDirCheckers),
+    TRANS(kTransStripsBottomBuildLeft, kTransAlgoStrips, kTransDirStepsV),
+    TRANS(kTransStripsBottomBuildRight, kTransAlgoStrips, kTransDirStepsV), // 40
+    TRANS(kTransStripsLeftBuildDown, kTransAlgoStrips, kTransDirStepsH),
+    TRANS(kTransStripsLeftBuildUp, kTransAlgoStrips, kTransDirStepsH),
+    TRANS(kTransStripsRightBuildDown, kTransAlgoStrips, kTransDirStepsH),
+    TRANS(kTransStripsRightBuildUp, kTransAlgoStrips, kTransDirStepsH),
+    TRANS(kTransStripsTopBuildLeft, kTransAlgoStrips, kTransDirStepsV), // 45
+    TRANS(kTransStripsTopBuildRight, kTransAlgoStrips, kTransDirStepsV),
+    TRANS(kTransZoomOpen, kTransAlgoZoom, kTransDirBoth),
+    TRANS(kTransZoomClose, kTransAlgoZoom, kTransDirBoth),
+    TRANS(kTransVerticalBinds, kTransAlgoBlinds, kTransDirBlindsV),
+    TRANS(kTransDissolveBitsFast, kTransAlgoDissolve, kTransDirNone), // 50
+    TRANS(kTransDissolvePixels, kTransAlgoDissolve, kTransDirNone),
+    TRANS(kTransDissolveBits, kTransAlgoDissolve, kTransDirNone)};
 
 struct TransParams {
 	TransitionType type;
@@ -229,60 +229,60 @@ void Frame::playTransition(Score *score) {
 		rfrom = clipRect;
 
 		if (transProps[t.type].algo == kTransAlgoReveal ||
-				transProps[t.type].algo == kTransAlgoEdgesIn) {
+		    transProps[t.type].algo == kTransAlgoEdgesIn) {
 			score->_backSurface->copyFrom(*score->_surface);
 		}
 
 		switch (t.type) {
-		case kTransWipeRight:								// 1
+		case kTransWipeRight: // 1
 			rto.setWidth(t.xStepSize * i);
 			rfrom = rto;
 			break;
 
-		case kTransWipeLeft:								// 2
+		case kTransWipeLeft: // 2
 			rto.setWidth(t.xStepSize * i);
 			rto.moveTo(w - t.xStepSize * i, 0);
 			rfrom = rto;
 			break;
 
-		case kTransWipeDown:								// 3
+		case kTransWipeDown: // 3
 			rto.setHeight(t.yStepSize * i);
 			rfrom = rto;
 			break;
 
-		case kTransWipeUp:									// 4
+		case kTransWipeUp: // 4
 			rto.setHeight(t.yStepSize * i);
 			rto.moveTo(0, h - t.yStepSize * i);
 			rfrom = rto;
 			break;
 
-		case kTransCenterOutHorizontal:						// 5
+		case kTransCenterOutHorizontal: // 5
 			t.xpos += t.xStepSize;
 			rto.setWidth(t.xpos * 2);
 			rto.moveTo(w / 2 - t.xpos, 0);
 			rfrom = rto;
 			break;
 
-		case kTransEdgesInHorizontal:						// 6
+		case kTransEdgesInHorizontal: // 6
 			rto.setWidth(w - t.xStepSize * i * 2);
 			rto.moveTo(t.xStepSize * i, 0);
 			rfrom = rto;
 			break;
 
-		case kTransCenterOutVertical:						// 7
+		case kTransCenterOutVertical: // 7
 			t.ypos += t.yStepSize;
 			rto.setHeight(t.ypos * 2);
 			rto.moveTo(0, h / 2 - t.ypos);
 			rfrom = rto;
 			break;
 
-		case kTransEdgesInVertical:							// 8
+		case kTransEdgesInVertical: // 8
 			rto.setHeight(h - t.yStepSize * i * 2);
 			rto.moveTo(0, t.yStepSize * i);
 			rfrom = rto;
 			break;
 
-		case kTransCenterOutSquare: 						// 9
+		case kTransCenterOutSquare: // 9
 			t.ypos += t.yStepSize;
 			rto.setHeight(t.ypos * 2);
 			t.xpos += t.xStepSize;
@@ -291,14 +291,14 @@ void Frame::playTransition(Score *score) {
 			rfrom = rto;
 			break;
 
-		case kTransEdgesInSquare:							// 10
+		case kTransEdgesInSquare: // 10
 			rto.setHeight(h - t.yStepSize * i * 2);
 			rto.setWidth(w - t.xStepSize * i * 2);
 			rto.moveTo(t.xStepSize * i, t.yStepSize * i);
 			rfrom = rto;
 			break;
 
-		case kTransPushLeft:								// 11
+		case kTransPushLeft: // 11
 			rto.moveTo(w - t.xStepSize * i, 0);
 			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
 
@@ -307,7 +307,7 @@ void Frame::playTransition(Score *score) {
 			rto.moveTo(0, 0);
 			break;
 
-		case kTransPushRight:								// 12
+		case kTransPushRight: // 12
 			rfrom.moveTo(w - t.xStepSize * i, 0);
 			rfrom.setWidth(t.xStepSize * i);
 			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
@@ -318,7 +318,7 @@ void Frame::playTransition(Score *score) {
 			rfrom.setWidth(w - t.xStepSize * i);
 			break;
 
-		case kTransPushDown:								// 13
+		case kTransPushDown: // 13
 			rfrom.moveTo(0, h - t.yStepSize * i);
 			rfrom.setHeight(t.yStepSize * i);
 			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
@@ -329,7 +329,7 @@ void Frame::playTransition(Score *score) {
 			rfrom.setHeight(h - t.yStepSize * i);
 			break;
 
-		case kTransPushUp:									// 14
+		case kTransPushUp: // 14
 			rto.moveTo(0, h - t.yStepSize * i);
 			score->_backSurface->blitFrom(*score->_surface, rfrom, Common::Point(rto.left, rto.top));
 
@@ -338,105 +338,105 @@ void Frame::playTransition(Score *score) {
 			rto.moveTo(0, 0);
 			break;
 
-		case kTransRevealUp:								// 15
+		case kTransRevealUp: // 15
 			rto.moveTo(0, -t.yStepSize * i);
 			break;
 
-		case kTransRevealUpRight:							// 16
+		case kTransRevealUpRight: // 16
 			rto.moveTo(t.xStepSize * i, -t.yStepSize * i);
 			break;
 
-		case kTransRevealRight:								// 17
+		case kTransRevealRight: // 17
 			rto.moveTo(t.xStepSize * i, 0);
 			break;
 
-		case kTransRevealDownRight:							// 18
+		case kTransRevealDownRight: // 18
 			rto.moveTo(t.xStepSize * i, t.yStepSize * i);
 			break;
 
-		case kTransRevealDown:								// 19
+		case kTransRevealDown: // 19
 			rto.moveTo(0, t.yStepSize * i);
 			break;
 
-		case kTransRevealDownLeft:							// 20
+		case kTransRevealDownLeft: // 20
 			rto.moveTo(-t.xStepSize * i, t.yStepSize * i);
 			break;
 
-		case kTransRevealLeft:								// 21
+		case kTransRevealLeft: // 21
 			rto.moveTo(-t.xStepSize * i, 0);
 			break;
 
-		case kTransRevealUpLeft:							// 22
+		case kTransRevealUpLeft: // 22
 			rto.moveTo(-t.xStepSize * i, -t.yStepSize * i);
 			break;
 
-		case kTransDissolvePixelsFast:						// 23
-		case kTransDissolveBoxyRects:						// 24
-		case kTransDissolveBoxySquares:						// 25
-		case kTransDissolvePatterns:						// 26
-		case kTransRandomRows:								// 27
-		case kTransRandomColumns:							// 28
+		case kTransDissolvePixelsFast:  // 23
+		case kTransDissolveBoxyRects:   // 24
+		case kTransDissolveBoxySquares: // 25
+		case kTransDissolvePatterns:    // 26
+		case kTransRandomRows:          // 27
+		case kTransRandomColumns:       // 28
 			// Dissolve
 			break;
 
-		case kTransCoverDown:								// 29
+		case kTransCoverDown: // 29
 			rto.setHeight(h);
 			rto.moveTo(0, -h + t.yStepSize * i);
 			break;
 
-		case kTransCoverDownLeft:							// 30
+		case kTransCoverDownLeft: // 30
 			rto.moveTo(w - t.xStepSize * i, -h + t.yStepSize * i);
 			break;
 
-		case kTransCoverDownRight:							// 31
+		case kTransCoverDownRight: // 31
 			rto.moveTo(-w + t.xStepSize * i, -h + t.yStepSize * i);
 			break;
 
-		case kTransCoverLeft:								// 32
+		case kTransCoverLeft: // 32
 			rto.moveTo(w - t.xStepSize * i, 0);
 			break;
 
-		case kTransCoverRight:								// 33
+		case kTransCoverRight: // 33
 			rto.moveTo(-w + t.xStepSize * i, 0);
 			break;
 
-		case kTransCoverUp:									// 34
+		case kTransCoverUp: // 34
 			rto.moveTo(0, h - t.yStepSize * i);
 			break;
 
-		case kTransCoverUpLeft:								// 35
+		case kTransCoverUpLeft: // 35
 			rto.moveTo(w - t.xStepSize * i, h - t.yStepSize * i);
 			break;
 
-		case kTransCoverUpRight:							// 36
+		case kTransCoverUpRight: // 36
 			rto.moveTo(-w + t.xStepSize * i, h - t.yStepSize * i);
 			break;
 
-		case kTransVenetianBlind:							// 37
-		case kTransCheckerboard:							// 38
-		case kTransStripsBottomBuildLeft:					// 39
-		case kTransStripsBottomBuildRight:					// 40
-		case kTransStripsLeftBuildDown:						// 41
-		case kTransStripsLeftBuildUp:						// 42
-		case kTransStripsRightBuildDown:					// 43
-		case kTransStripsRightBuildUp:						// 44
-		case kTransStripsTopBuildLeft:						// 45
-		case kTransStripsTopBuildRight:						// 46
+		case kTransVenetianBlind:          // 37
+		case kTransCheckerboard:           // 38
+		case kTransStripsBottomBuildLeft:  // 39
+		case kTransStripsBottomBuildRight: // 40
+		case kTransStripsLeftBuildDown:    // 41
+		case kTransStripsLeftBuildUp:      // 42
+		case kTransStripsRightBuildDown:   // 43
+		case kTransStripsRightBuildUp:     // 44
+		case kTransStripsTopBuildLeft:     // 45
+		case kTransStripsTopBuildRight:    // 46
 			// Multipass
 			break;
 
-		case kTransZoomOpen:								// 47
-		case kTransZoomClose:								// 48
+		case kTransZoomOpen:  // 47
+		case kTransZoomClose: // 48
 			// Zoom
 			break;
 
-		case kTransVerticalBinds:							// 49
+		case kTransVerticalBinds: // 49
 			// Multipass
 			break;
 
-		case kTransDissolveBitsFast:						// 50
-		case kTransDissolvePixels:							// 51
-		case kTransDissolveBits:							// 52
+		case kTransDissolveBitsFast: // 50
+		case kTransDissolvePixels:   // 51
+		case kTransDissolveBits:     // 52
 			// Dissolve
 			break;
 
@@ -479,16 +479,15 @@ static int getLog2(int n) {
 }
 
 static uint32 randomSeed[33] = {
-	0x00000000UL,
-	0x00000000UL, 0x00000003UL, 0x00000006UL, 0x0000000cUL,
-	0x00000014UL, 0x00000030UL, 0x00000060UL, 0x000000b8UL,
-	0x00000110UL, 0x00000240UL, 0x00000500UL, 0x00000ca0UL,
-	0x00001b00UL, 0x00003500UL, 0x00006000UL, 0x0000b400UL,
-	0x00012000UL, 0x00020400UL, 0x00072000UL, 0x00090000UL,
-	0x00140000UL, 0x00300000UL, 0x00420000UL, 0x00d80000UL,
-	0x01200000UL, 0x03880000UL, 0x07200000UL, 0x09000000UL,
-	0x14000000UL, 0x32800000UL, 0x48000000UL, 0xa3000000UL
-};
+    0x00000000UL,
+    0x00000000UL, 0x00000003UL, 0x00000006UL, 0x0000000cUL,
+    0x00000014UL, 0x00000030UL, 0x00000060UL, 0x000000b8UL,
+    0x00000110UL, 0x00000240UL, 0x00000500UL, 0x00000ca0UL,
+    0x00001b00UL, 0x00003500UL, 0x00006000UL, 0x0000b400UL,
+    0x00012000UL, 0x00020400UL, 0x00072000UL, 0x00090000UL,
+    0x00140000UL, 0x00300000UL, 0x00420000UL, 0x00d80000UL,
+    0x01200000UL, 0x03880000UL, 0x07200000UL, 0x09000000UL,
+    0x14000000UL, 0x32800000UL, 0x48000000UL, 0xa3000000UL};
 
 static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) {
 	uint w = clipRect.width();
@@ -592,8 +591,8 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 	t.stepDuration = t.duration / t.steps;
 
 	if (t.type == kTransDissolvePixelsFast ||
-			t.type == kTransDissolveBitsFast)
-		t.stepDuration = 0;						// No delay
+	    t.type == kTransDissolveBitsFast)
+		t.stepDuration = 0; // No delay
 
 	Common::Rect r(MAX(1, t.xStepSize), t.yStepSize);
 
@@ -650,71 +649,70 @@ static void dissolveTrans(TransParams &t, Score *score, Common::Rect &clipRect) 
 }
 
 static byte dissolvePatterns[][8] = {
-	{ 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-	{ 0x80, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00 },
-	{ 0x88, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00 },
-	{ 0x88, 0x00, 0x00, 0x00, 0x88, 0x00, 0x00, 0x00 },
-	{ 0x88, 0x00, 0x20, 0x00, 0x88, 0x00, 0x00, 0x00 },
-	{ 0x88, 0x00, 0x20, 0x00, 0x88, 0x00, 0x02, 0x00 },
-	{ 0x88, 0x00, 0x22, 0x00, 0x88, 0x00, 0x02, 0x00 },
-	{ 0x88, 0x00, 0x22, 0x00, 0x88, 0x00, 0x22, 0x00 },
-	{ 0xa8, 0x00, 0x22, 0x00, 0x88, 0x00, 0x22, 0x00 },
-	{ 0xa8, 0x00, 0x22, 0x00, 0x8a, 0x00, 0x22, 0x00 },
-	{ 0xaa, 0x00, 0x22, 0x00, 0x8a, 0x00, 0x22, 0x00 },
-	{ 0xaa, 0x00, 0x22, 0x00, 0xaa, 0x00, 0x22, 0x00 },
-	{ 0xaa, 0x00, 0xa2, 0x00, 0xaa, 0x00, 0x22, 0x00 },
-	{ 0xaa, 0x00, 0xa2, 0x00, 0xaa, 0x00, 0x2a, 0x00 },
-	{ 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00, 0x2a, 0x00 },
-	{ 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00 },
-	{ 0xaa, 0x40, 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00 },
-	{ 0xaa, 0x40, 0xaa, 0x00, 0xaa, 0x04, 0xaa, 0x00 },
-	{ 0xaa, 0x44, 0xaa, 0x00, 0xaa, 0x04, 0xaa, 0x00 },
-	{ 0xaa, 0x44, 0xaa, 0x00, 0xaa, 0x44, 0xaa, 0x00 },
-	{ 0xaa, 0x44, 0xaa, 0x10, 0xaa, 0x44, 0xaa, 0x00 },
-	{ 0xaa, 0x44, 0xaa, 0x10, 0xaa, 0x44, 0xaa, 0x01 },
-	{ 0xaa, 0x44, 0xaa, 0x11, 0xaa, 0x44, 0xaa, 0x01 },
-	{ 0xaa, 0x44, 0xaa, 0x11, 0xaa, 0x44, 0xaa, 0x11 },
-	{ 0xaa, 0x54, 0xaa, 0x11, 0xaa, 0x44, 0xaa, 0x11 },
-	{ 0xaa, 0x54, 0xaa, 0x11, 0xaa, 0x45, 0xaa, 0x11 },
-	{ 0xaa, 0x55, 0xaa, 0x11, 0xaa, 0x45, 0xaa, 0x11 },
-	{ 0xaa, 0x55, 0xaa, 0x11, 0xaa, 0x55, 0xaa, 0x11 },
-	{ 0xaa, 0x55, 0xaa, 0x51, 0xaa, 0x55, 0xaa, 0x11 },
-	{ 0xaa, 0x55, 0xaa, 0x51, 0xaa, 0x55, 0xaa, 0x15 },
-	{ 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x15 },
-	{ 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 },
-	{ 0xea, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 },
-	{ 0xea, 0x55, 0xaa, 0x55, 0xae, 0x55, 0xaa, 0x55 },
-	{ 0xee, 0x55, 0xaa, 0x55, 0xae, 0x55, 0xaa, 0x55 },
-	{ 0xee, 0x55, 0xaa, 0x55, 0xee, 0x55, 0xaa, 0x55 },
-	{ 0xee, 0x55, 0xba, 0x55, 0xee, 0x55, 0xaa, 0x55 },
-	{ 0xee, 0x55, 0xba, 0x55, 0xee, 0x55, 0xab, 0x55 },
-	{ 0xee, 0x55, 0xbb, 0x55, 0xee, 0x55, 0xab, 0x55 },
-	{ 0xee, 0x55, 0xbb, 0x55, 0xee, 0x55, 0xbb, 0x55 },
-	{ 0xfe, 0x55, 0xbb, 0x55, 0xee, 0x55, 0xbb, 0x55 },
-	{ 0xfe, 0x55, 0xbb, 0x55, 0xef, 0x55, 0xbb, 0x55 },
-	{ 0xff, 0x55, 0xbb, 0x55, 0xef, 0x55, 0xbb, 0x55 },
-	{ 0xff, 0x55, 0xbb, 0x55, 0xff, 0x55, 0xbb, 0x55 },
-	{ 0xff, 0x55, 0xfb, 0x55, 0xff, 0x55, 0xbb, 0x55 },
-	{ 0xff, 0x55, 0xfb, 0x55, 0xff, 0x55, 0xbf, 0x55 },
-	{ 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xbf, 0x55 },
-	{ 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55 },
-	{ 0xff, 0xd5, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55 },
-	{ 0xff, 0xd5, 0xff, 0x55, 0xff, 0x5d, 0xff, 0x55 },
-	{ 0xff, 0xdd, 0xff, 0x55, 0xff, 0x5d, 0xff, 0x55 },
-	{ 0xff, 0xdd, 0xff, 0x55, 0xff, 0xdd, 0xff, 0x55 },
-	{ 0xff, 0xdd, 0xff, 0x75, 0xff, 0xdd, 0xff, 0x55 },
-	{ 0xff, 0xdd, 0xff, 0x75, 0xff, 0xdd, 0xff, 0x57 },
-	{ 0xff, 0xdd, 0xff, 0x77, 0xff, 0xdd, 0xff, 0x57 },
-	{ 0xff, 0xdd, 0xff, 0x77, 0xff, 0xdd, 0xff, 0x77 },
-	{ 0xff, 0xfd, 0xff, 0x77, 0xff, 0xdd, 0xff, 0x77 },
-	{ 0xff, 0xfd, 0xff, 0x77, 0xff, 0xdf, 0xff, 0x77 },
-	{ 0xff, 0xff, 0xff, 0x77, 0xff, 0xdf, 0xff, 0x77 },
-	{ 0xff, 0xff, 0xff, 0x77, 0xff, 0xff, 0xff, 0x77 },
-	{ 0xff, 0xff, 0xff, 0xf7, 0xff, 0xff, 0xff, 0x77 },
-	{ 0xff, 0xff, 0xff, 0xf7, 0xff, 0xff, 0xff, 0x7f },
-	{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f },
-	{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
-};
+    {0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x80, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00},
+    {0x88, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00},
+    {0x88, 0x00, 0x00, 0x00, 0x88, 0x00, 0x00, 0x00},
+    {0x88, 0x00, 0x20, 0x00, 0x88, 0x00, 0x00, 0x00},
+    {0x88, 0x00, 0x20, 0x00, 0x88, 0x00, 0x02, 0x00},
+    {0x88, 0x00, 0x22, 0x00, 0x88, 0x00, 0x02, 0x00},
+    {0x88, 0x00, 0x22, 0x00, 0x88, 0x00, 0x22, 0x00},
+    {0xa8, 0x00, 0x22, 0x00, 0x88, 0x00, 0x22, 0x00},
+    {0xa8, 0x00, 0x22, 0x00, 0x8a, 0x00, 0x22, 0x00},
+    {0xaa, 0x00, 0x22, 0x00, 0x8a, 0x00, 0x22, 0x00},
+    {0xaa, 0x00, 0x22, 0x00, 0xaa, 0x00, 0x22, 0x00},
+    {0xaa, 0x00, 0xa2, 0x00, 0xaa, 0x00, 0x22, 0x00},
+    {0xaa, 0x00, 0xa2, 0x00, 0xaa, 0x00, 0x2a, 0x00},
+    {0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00, 0x2a, 0x00},
+    {0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00},
+    {0xaa, 0x40, 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00},
+    {0xaa, 0x40, 0xaa, 0x00, 0xaa, 0x04, 0xaa, 0x00},
+    {0xaa, 0x44, 0xaa, 0x00, 0xaa, 0x04, 0xaa, 0x00},
+    {0xaa, 0x44, 0xaa, 0x00, 0xaa, 0x44, 0xaa, 0x00},
+    {0xaa, 0x44, 0xaa, 0x10, 0xaa, 0x44, 0xaa, 0x00},
+    {0xaa, 0x44, 0xaa, 0x10, 0xaa, 0x44, 0xaa, 0x01},
+    {0xaa, 0x44, 0xaa, 0x11, 0xaa, 0x44, 0xaa, 0x01},
+    {0xaa, 0x44, 0xaa, 0x11, 0xaa, 0x44, 0xaa, 0x11},
+    {0xaa, 0x54, 0xaa, 0x11, 0xaa, 0x44, 0xaa, 0x11},
+    {0xaa, 0x54, 0xaa, 0x11, 0xaa, 0x45, 0xaa, 0x11},
+    {0xaa, 0x55, 0xaa, 0x11, 0xaa, 0x45, 0xaa, 0x11},
+    {0xaa, 0x55, 0xaa, 0x11, 0xaa, 0x55, 0xaa, 0x11},
+    {0xaa, 0x55, 0xaa, 0x51, 0xaa, 0x55, 0xaa, 0x11},
+    {0xaa, 0x55, 0xaa, 0x51, 0xaa, 0x55, 0xaa, 0x15},
+    {0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x15},
+    {0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55},
+    {0xea, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55},
+    {0xea, 0x55, 0xaa, 0x55, 0xae, 0x55, 0xaa, 0x55},
+    {0xee, 0x55, 0xaa, 0x55, 0xae, 0x55, 0xaa, 0x55},
+    {0xee, 0x55, 0xaa, 0x55, 0xee, 0x55, 0xaa, 0x55},
+    {0xee, 0x55, 0xba, 0x55, 0xee, 0x55, 0xaa, 0x55},
+    {0xee, 0x55, 0xba, 0x55, 0xee, 0x55, 0xab, 0x55},
+    {0xee, 0x55, 0xbb, 0x55, 0xee, 0x55, 0xab, 0x55},
+    {0xee, 0x55, 0xbb, 0x55, 0xee, 0x55, 0xbb, 0x55},
+    {0xfe, 0x55, 0xbb, 0x55, 0xee, 0x55, 0xbb, 0x55},
+    {0xfe, 0x55, 0xbb, 0x55, 0xef, 0x55, 0xbb, 0x55},
+    {0xff, 0x55, 0xbb, 0x55, 0xef, 0x55, 0xbb, 0x55},
+    {0xff, 0x55, 0xbb, 0x55, 0xff, 0x55, 0xbb, 0x55},
+    {0xff, 0x55, 0xfb, 0x55, 0xff, 0x55, 0xbb, 0x55},
+    {0xff, 0x55, 0xfb, 0x55, 0xff, 0x55, 0xbf, 0x55},
+    {0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xbf, 0x55},
+    {0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55},
+    {0xff, 0xd5, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55},
+    {0xff, 0xd5, 0xff, 0x55, 0xff, 0x5d, 0xff, 0x55},
+    {0xff, 0xdd, 0xff, 0x55, 0xff, 0x5d, 0xff, 0x55},
+    {0xff, 0xdd, 0xff, 0x55, 0xff, 0xdd, 0xff, 0x55},
+    {0xff, 0xdd, 0xff, 0x75, 0xff, 0xdd, 0xff, 0x55},
+    {0xff, 0xdd, 0xff, 0x75, 0xff, 0xdd, 0xff, 0x57},
+    {0xff, 0xdd, 0xff, 0x77, 0xff, 0xdd, 0xff, 0x57},
+    {0xff, 0xdd, 0xff, 0x77, 0xff, 0xdd, 0xff, 0x77},
+    {0xff, 0xfd, 0xff, 0x77, 0xff, 0xdd, 0xff, 0x77},
+    {0xff, 0xfd, 0xff, 0x77, 0xff, 0xdf, 0xff, 0x77},
+    {0xff, 0xff, 0xff, 0x77, 0xff, 0xdf, 0xff, 0x77},
+    {0xff, 0xff, 0xff, 0x77, 0xff, 0xff, 0xff, 0x77},
+    {0xff, 0xff, 0xff, 0xf7, 0xff, 0xff, 0xff, 0x77},
+    {0xff, 0xff, 0xff, 0xf7, 0xff, 0xff, 0xff, 0x7f},
+    {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f},
+    {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}};
 
 static void dissolvePatternsTrans(TransParams &t, Score *score, Common::Rect &clipRect) {
 	uint w = clipRect.width();
@@ -768,7 +766,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 		rto = clipRect;
 
 		switch (t.type) {
-		case kTransVenetianBlind:							// 37
+		case kTransVenetianBlind: // 37
 			rto.setHeight(t.yStepSize * i);
 			for (int r = 0; r < kNumBlinds; r++) {
 				rto.moveTo(0, r * t.stripSize);
@@ -776,7 +774,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransCheckerboard:							// 38
+		case kTransCheckerboard: // 38
 			rto.setWidth(t.stripSize);
 			rto.setHeight((i % ((t.steps + 1) / 2)) * t.chunkSize);
 
@@ -792,7 +790,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransStripsBottomBuildLeft:					// 39
+		case kTransStripsBottomBuildLeft: // 39
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.yStepSize * i - (kNumStrips - r - 1) * t.stripSize;
 				if (len > 0) {
@@ -804,7 +802,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransStripsBottomBuildRight:					// 40
+		case kTransStripsBottomBuildRight: // 40
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.yStepSize * i - r * t.stripSize;
 				if (len > 0) {
@@ -816,7 +814,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransStripsLeftBuildDown:						// 41
+		case kTransStripsLeftBuildDown: // 41
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.xStepSize * i - r * t.stripSize;
 				if (len > 0) {
@@ -828,7 +826,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransStripsLeftBuildUp:						// 42
+		case kTransStripsLeftBuildUp: // 42
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.xStepSize * i - (kNumStrips - r - 1) * t.stripSize;
 				if (len > 0) {
@@ -840,7 +838,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransStripsRightBuildDown:					// 43
+		case kTransStripsRightBuildDown: // 43
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.xStepSize * i - r * t.stripSize;
 				if (len > 0) {
@@ -852,7 +850,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransStripsRightBuildUp:						// 44
+		case kTransStripsRightBuildUp: // 44
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.xStepSize * i - (kNumStrips - r - 1) * t.stripSize;
 				if (len > 0) {
@@ -864,7 +862,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransStripsTopBuildLeft:						// 45
+		case kTransStripsTopBuildLeft: // 45
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.yStepSize * i - (kNumStrips - r - 1) * t.stripSize;
 				if (len > 0) {
@@ -876,7 +874,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransStripsTopBuildRight:						// 46
+		case kTransStripsTopBuildRight: // 46
 			for (int r = 0; r < kNumStrips; r++) {
 				int len = t.yStepSize * i - r * t.stripSize;
 				if (len > 0) {
@@ -888,7 +886,7 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 			}
 			break;
 
-		case kTransVerticalBinds:							// 49
+		case kTransVerticalBinds: // 49
 			rto.setWidth(t.xStepSize * i);
 			for (int r = 0; r < kNumBlinds; r++) {
 				rto.moveTo(r * t.stripSize, 0);
@@ -921,7 +919,6 @@ static void transMultiPass(TransParams &t, Score *score, Common::Rect &clipRect)
 		g_system->delayMillis(t.stepDuration);
 		if (processQuitEvent(true))
 			break;
-
 	}
 }
 
@@ -951,10 +948,10 @@ static void transZoom(TransParams &t, Score *score, Common::Rect &clipRect) {
 				r.moveTo(t.xStepSize * (i - s), t.yStepSize * (i - s));
 			}
 
-			Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xffff, Graphics::macDrawPixel, &pd);
-			Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
-			Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
-			Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+			Graphics::drawLine(r.left, r.top, r.right, r.top, 0xffff, Graphics::macDrawPixel, &pd);
+			Graphics::drawLine(r.right, r.top, r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+			Graphics::drawLine(r.left, r.bottom, r.right, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
+			Graphics::drawLine(r.left, r.top, r.left, r.bottom, 0xffff, Graphics::macDrawPixel, &pd);
 		}
 
 		r.setHeight(t.yStepSize * i * 2);
@@ -977,7 +974,7 @@ static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect
 	TransitionAlgo a = transProps[t.type].algo;
 
 	if (a == kTransAlgoCenterOut || a == kTransAlgoEdgesIn || a == kTransAlgoZoom) {
-		w = (w + 1) >> 1;	// round up
+		w = (w + 1) >> 1; // round up
 		h = (h + 1) >> 1;
 	}
 
@@ -1024,8 +1021,8 @@ static void initTransParams(TransParams &t, Score *score, Common::Rect &clipRect
 			t.stripSize = (h + kNumStrips - 1) / kNumStrips;
 
 		t.steps = ((t.stripSize + t.chunkSize - 1) / t.chunkSize) * 2 + 2;
-		t.xStepSize = (w + t.stripSize - 1) / t.stripSize;		// number of checkers
-		t.yStepSize = (h + t.stripSize - 1) / t.stripSize;		// number of checkers
+		t.xStepSize = (w + t.stripSize - 1) / t.stripSize; // number of checkers
+		t.yStepSize = (h + t.stripSize - 1) / t.stripSize; // number of checkers
 		break;
 
 	case kTransDirBlindsV:

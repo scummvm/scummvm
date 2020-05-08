@@ -29,12 +29,12 @@
 #ifndef WINTERMUTE_VIDTHEORAPLAYER_H
 #define WINTERMUTE_VIDTHEORAPLAYER_H
 
+#include "common/stream.h"
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/video/video_subtitler.h"
-#include "video/video_decoder.h"
-#include "common/stream.h"
 #include "graphics/surface.h"
+#include "video/video_decoder.h"
 
 namespace Wintermute {
 class BaseSurface;
@@ -49,6 +49,7 @@ private:
 	};
 	Video::VideoDecoder *_theoraDecoder;
 	Graphics::Surface _surface;
+
 public:
 	DECLARE_PERSISTENT(VideoTheoraPlayer, BaseClass)
 
@@ -104,6 +105,7 @@ public:
 	int32 _posY;
 
 	bool _dontDropFrames;
+
 private:
 	int32 _state;
 	uint32 _startTime;

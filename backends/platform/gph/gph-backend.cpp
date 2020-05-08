@@ -49,12 +49,11 @@
 #define DUMP_STDOUT
 
 OSystem_GPH::OSystem_GPH()
-	:
-	OSystem_POSIX() {
+    : OSystem_POSIX() {
 }
 
 Common::String OSystem_GPH::getCurrentDirectory() {
-	char cwd[MAXPATHLEN+1];
+	char cwd[MAXPATHLEN + 1];
 	return Common::String(getcwd(cwd, MAXPATHLEN));
 }
 

@@ -23,9 +23,9 @@
  *
  */
 
-#include "pegasus/pegasus.h"
-#include "pegasus/notification.h"
 #include "pegasus/timers.h"
+#include "pegasus/notification.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 

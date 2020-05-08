@@ -27,8 +27,8 @@
 
 /* Original name: TIMEOUT	The scheduling unit. */
 
-#include "avalanche/avalanche.h"
 #include "avalanche/timer.h"
+#include "avalanche/avalanche.h"
 
 namespace Avalanche {
 
@@ -75,16 +75,16 @@ void Timer::updateTimer() {
 
 		if (_times[i]._timeLeft == 0) {
 			switch (_times[i]._action) {
-			case kProcOpenDrawbridge :
+			case kProcOpenDrawbridge:
 				openDrawbridge();
 				break;
-			case kProcAvariciusTalks :
+			case kProcAvariciusTalks:
 				avariciusTalks();
 				break;
-			case kProcUrinate :
+			case kProcUrinate:
 				urinate();
 				break;
-			case kProcToilet :
+			case kProcToilet:
 				toilet();
 				break;
 			case kProcBang:
@@ -212,7 +212,6 @@ void Timer::loseTimer(byte which) {
 		if (_times[i]._reason == which)
 			_times[i]._timeLeft = 0; // Cancel this one!
 	}
-
 }
 
 void Timer::openDrawbridge() {
@@ -262,7 +261,7 @@ void Timer::stairs() {
 	_vm->_background->draw(-1, -1, 1);
 	_vm->_brummieStairs = 2;
 	_vm->_magics[10]._operation = kMagicSpecial;
-	_vm->_magics[10]._data = 2; // Reached the bottom of the stairs.
+	_vm->_magics[10]._data = 2;                 // Reached the bottom of the stairs.
 	_vm->_magics[3]._operation = kMagicNothing; // Stop them hitting the sides (or the game will hang.)
 }
 
@@ -357,7 +356,6 @@ void Timer::afterTheShootemup() {
 	} else
 		_vm->incScore(gain);
 
-
 	_vm->_dialogs->displayScrollChain('Q', 70);
 }
 
@@ -369,14 +367,14 @@ void Timer::jacquesWakesUp() {
 		_vm->_background->draw(-1, -1, 0); // Eyes open.
 		_vm->_dialogs->displayScrollChain('Q', 45);
 		break;
-	case 2: // Going through the door.
-		_vm->_background->draw(-1, -1, 1); // Not on the floor.
-		_vm->_background->draw(-1, -1, 2); // But going through the door.
+	case 2:                                         // Going through the door.
+		_vm->_background->draw(-1, -1, 1);          // Not on the floor.
+		_vm->_background->draw(-1, -1, 2);          // But going through the door.
 		_vm->_magics[5]._operation = kMagicNothing; // You can't wake him up now.
 		break;
-	case 3: // Gone through the door.
-		_vm->_background->draw(-1, -1, 1); // Not on the floor, either.
-		_vm->_background->draw(-1, -1, 3); // He's gone... so the door's open.
+	case 3:                                         // Gone through the door.
+		_vm->_background->draw(-1, -1, 1);          // Not on the floor, either.
+		_vm->_background->draw(-1, -1, 3);          // He's gone... so the door's open.
 		_vm->setRoom(kPeopleJacques, kRoomNowhere); // Gone!
 		break;
 	default:
@@ -405,9 +403,9 @@ void Timer::jacquesWakesUp() {
 
 void Timer::naughtyDuke() { // This is when the Duke comes in and takes your money.
 	AnimationType *spr = _vm->_animation->_sprites[1];
-	spr->init(9, false); // Here comes the Duke.
+	spr->init(9, false);              // Here comes the Duke.
 	_vm->_animation->appearPed(1, 0); // He starts at the door...
-	spr->walkTo(2); // He walks over to you.
+	spr->walkTo(2);                   // He walks over to you.
 
 	// Let's get the door opening.
 	_vm->_background->draw(-1, -1, 0);
@@ -419,8 +417,8 @@ void Timer::naughtyDuke() { // This is when the Duke comes in and takes your mon
 void Timer::naughtyDuke2() {
 	AnimationType *spr = _vm->_animation->_sprites[1];
 	_vm->_dialogs->displayScrollChain('Q', 48); // "Ha ha, it worked again!"
-	spr->walkTo(0); // Walk to the door.
-	spr->_vanishIfStill = true; // Then go away!
+	spr->walkTo(0);                             // Walk to the door.
+	spr->_vanishIfStill = true;                 // Then go away!
 
 	addTimer(32, kProcNaughtyDuke3, kReasonNaughtyDuke);
 }
@@ -461,10 +459,8 @@ void Timer::jump() {
 	} else // Still jumping.
 		addTimer(1, kProcJump, kReasonJumping);
 
-	if ((_vm->_jumpStatus == 10) // You're at the highest point of your jump.
-			&& (_vm->_room == kRoomInsideCardiffCastle)
-			&& (_vm->_arrowInTheDoor == true)
-			&& (_vm->_animation->inField(2))) { // Beside the wall
+	if ((_vm->_jumpStatus == 10)                                                                                          // You're at the highest point of your jump.
+	    && (_vm->_room == kRoomInsideCardiffCastle) && (_vm->_arrowInTheDoor == true) && (_vm->_animation->inField(2))) { // Beside the wall
 		// Grab the arrow!
 		if (_vm->_carryNum >= kCarryLimit)
 			_vm->_dialogs->displayText("You fail to grab it, because your hands are full.");
@@ -489,10 +485,10 @@ void Timer::buyDrinks() {
 	_vm->_malagauche = 0;
 
 	_vm->_dialogs->displayScrollChain('D', _vm->_drinking); // Display message about it.
-	_vm->_animation->wobble(); // Do the special effects.
-	_vm->_dialogs->displayScrollChain('D', 1); // That'll be thruppence.
-	if (_vm->decreaseMoney(3)) // Pay 3d.
-		_vm->_dialogs->displayScrollChain('D', 3); // Tell 'em you paid up.
+	_vm->_animation->wobble();                              // Do the special effects.
+	_vm->_dialogs->displayScrollChain('D', 1);              // That'll be thruppence.
+	if (_vm->decreaseMoney(3))                              // Pay 3d.
+		_vm->_dialogs->displayScrollChain('D', 3);          // Tell 'em you paid up.
 	_vm->_parser->drink();
 }
 
@@ -501,7 +497,7 @@ void Timer::buyWine() {
 	_vm->_malagauche = 0;
 
 	_vm->_dialogs->displayScrollChain('D', 50); // You buy the wine.
-	_vm->_dialogs->displayScrollChain('D', 1); // It'll be thruppence.
+	_vm->_dialogs->displayScrollChain('D', 1);  // It'll be thruppence.
 	if (_vm->decreaseMoney(3)) {
 		_vm->_dialogs->displayScrollChain('D', 4); // You paid up.
 		_vm->_objects[kObjectWine - 1] = true;
@@ -524,15 +520,15 @@ void Timer::fallDownOubliette() {
 	_vm->_magics[8]._operation = kMagicNothing;
 
 	AnimationType *avvy = _vm->_animation->_sprites[0];
-	avvy->_moveY++; // Increments dx/dy!
-	avvy->_y += avvy->_moveY;   // Dowwwn we go...
+	avvy->_moveY++;           // Increments dx/dy!
+	avvy->_y += avvy->_moveY; // Dowwwn we go...
 	addTimer(3, kProcFallDownOubliette, kReasonFallingDownOubliette);
 }
 
 void Timer::meetAvaroid() {
 	if (_vm->_metAvaroid) {
 		Common::String tmpStr = Common::String::format("You can't expect to be %cthat%c lucky twice in a row!",
-			kControlItalic, kControlRoman);
+		                                               kControlItalic, kControlRoman);
 		_vm->_dialogs->displayText(tmpStr);
 		_vm->gameOver();
 	} else {
@@ -553,7 +549,7 @@ void Timer::meetAvaroid() {
 void Timer::riseUpOubliette() {
 	AnimationType *avvy = _vm->_animation->_sprites[0];
 	avvy->_visible = true;
-	avvy->_moveY++; // Decrements dx/dy!
+	avvy->_moveY++;           // Decrements dx/dy!
 	avvy->_y -= avvy->_moveY; // Uuuupppp we go...
 	if (avvy->_moveY > 0)
 		addTimer(3, kProcRiseUpOubliette, kReasonRisingUpOubliette);
@@ -605,7 +601,7 @@ void Timer::avalotReturns() {
  */
 void Timer::avvySitDown() {
 	AnimationType *avvy = _vm->_animation->_sprites[0];
-	if (avvy->_homing)    // Still walking.
+	if (avvy->_homing) // Still walking.
 		addTimer(1, kProcAvvySitDown, kReasonSittingDown);
 	else {
 		_vm->_background->draw(-1, -1, 2);
@@ -617,7 +613,7 @@ void Timer::avvySitDown() {
 
 void Timer::ghostRoomPhew() {
 	Common::String tmpStr = Common::String::format("%cPHEW!%c You're glad to get out of %cthere!",
-		kControlItalic, kControlRoman, kControlItalic);
+	                                               kControlItalic, kControlRoman, kControlItalic);
 	_vm->_dialogs->displayText(tmpStr);
 }
 
@@ -675,10 +671,10 @@ void Timer::avalotFalls() {
 		addTimer(3, kProcAvalotFalls, kReasonFallingOver);
 	} else {
 		Common::String toDisplay = Common::String::format("%c%c%c%c%c%c%c%c%c%c%c%c%cZ%c",
-			kControlNewLine, kControlNewLine, kControlNewLine, kControlNewLine,
-			kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlInsertSpaces,
-			kControlInsertSpaces, kControlInsertSpaces, kControlInsertSpaces,
-			kControlInsertSpaces, kControlRegister, kControlIcon);
+		                                                  kControlNewLine, kControlNewLine, kControlNewLine, kControlNewLine,
+		                                                  kControlNewLine, kControlNewLine, kControlInsertSpaces, kControlInsertSpaces,
+		                                                  kControlInsertSpaces, kControlInsertSpaces, kControlInsertSpaces,
+		                                                  kControlInsertSpaces, kControlRegister, kControlIcon);
 		_vm->_dialogs->displayText(toDisplay);
 	}
 }

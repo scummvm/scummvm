@@ -20,22 +20,21 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/duckman/illusions_duckman.h"
+#include "illusions/illusions.h"
 
+#include "base/plugins.h"
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "base/plugins.h"
+#include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
 static const PlainGameDescriptor illusionsGames[] = {
-	{ "bbdou", "Beavis and Butt-head Do U" },
-	{ "duckman", "Duckman" },
-	{ 0, 0 }
-};
+    {"bbdou", "Beavis and Butt-head Do U"},
+    {"duckman", "Duckman"},
+    {0, 0}};
 
 namespace Illusions {
 
@@ -49,67 +48,49 @@ int IllusionsEngine::getGameId() const {
 }
 
 static const IllusionsGameDescription gameDescriptions[] = {
-	{
-		{
-			"bbdou",
-			0,
-			AD_ENTRY1s("000D0001.scr", "d0c846d5dccc5607a482c7dcbdf06973", 601980),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-			GUIO0()
-		},
-		kGameIdBBDOU
-	},
+    {{"bbdou",
+      0,
+      AD_ENTRY1s("000D0001.scr", "d0c846d5dccc5607a482c7dcbdf06973", 601980),
+      Common::EN_ANY,
+      Common::kPlatformWindows,
+      ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+      GUIO0()},
+     kGameIdBBDOU},
 
-	{
-		{
-			"duckman",
-			0,
-			AD_ENTRY1s("duckman.gam", "172c0514f3793041718159cf9cf9935f", 29560832),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUIO0()
-		},
-		kGameIdDuckman
-	},
+    {{"duckman",
+      0,
+      AD_ENTRY1s("duckman.gam", "172c0514f3793041718159cf9cf9935f", 29560832),
+      Common::EN_ANY,
+      Common::kPlatformWindows,
+      ADGF_DROPPLATFORM,
+      GUIO0()},
+     kGameIdDuckman},
 
-	{
-		{
-			"duckman",
-			"Demo",
-			AD_ENTRY1s("duckman.gam", "71d01e3f3d9d4e51cd69f71028745610", 7127040),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM | ADGF_DEMO,
-			GUIO0()
-		},
-		kGameIdDuckman
-	},
+    {{"duckman",
+      "Demo",
+      AD_ENTRY1s("duckman.gam", "71d01e3f3d9d4e51cd69f71028745610", 7127040),
+      Common::EN_ANY,
+      Common::kPlatformWindows,
+      ADGF_DROPPLATFORM | ADGF_DEMO,
+      GUIO0()},
+     kGameIdDuckman},
 
-	{
-		{
-			"duckman",
-			0,
-			AD_ENTRY1s("duckman.gam", "64d16922ffb46b746fc2c12a14d75bcc", 29779968),
-			Common::DE_DEU,
-			Common::kPlatformWindows,
-			ADGF_DROPPLATFORM,
-			GUIO0()
-		},
-		kGameIdDuckman
-	},
+    {{"duckman",
+      0,
+      AD_ENTRY1s("duckman.gam", "64d16922ffb46b746fc2c12a14d75bcc", 29779968),
+      Common::DE_DEU,
+      Common::kPlatformWindows,
+      ADGF_DROPPLATFORM,
+      GUIO0()},
+     kGameIdDuckman},
 
-	{AD_TABLE_END_MARKER, 0}
-};
+    {AD_TABLE_END_MARKER, 0}};
 
 } // End of namespace Illusions
 
-static const char * const directoryGlobs[] = {
-	"resource",
-	0
-};
+static const char *const directoryGlobs[] = {
+    "resource",
+    0};
 
 class IllusionsMetaEngine : public AdvancedMetaEngine {
 public:
@@ -139,13 +120,12 @@ public:
 };
 
 bool IllusionsMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate);
 }
 
 void IllusionsMetaEngine::removeSaveState(const char *target, int slot) const {
@@ -224,7 +204,7 @@ bool IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ILLUSIONS)
-	REGISTER_PLUGIN_DYNAMIC(ILLUSIONS, PLUGIN_TYPE_ENGINE, IllusionsMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(ILLUSIONS, PLUGIN_TYPE_ENGINE, IllusionsMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ILLUSIONS, PLUGIN_TYPE_ENGINE, IllusionsMetaEngine);
+REGISTER_PLUGIN_STATIC(ILLUSIONS, PLUGIN_TYPE_ENGINE, IllusionsMetaEngine);
 #endif

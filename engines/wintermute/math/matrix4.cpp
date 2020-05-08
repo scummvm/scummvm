@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/math/matrix4.h"
-#include "engines/wintermute/math/vector2.h"
 #include "common/scummsys.h"
+#include "engines/wintermute/math/vector2.h"
 
 namespace Wintermute {
 
@@ -45,7 +45,6 @@ Matrix4::Matrix4() {
 Matrix4::~Matrix4() {
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void Matrix4::identity() {
 	for (int i = 0; i < 4; i++) {
@@ -57,7 +56,6 @@ void Matrix4::identity() {
 	m[1][1] = 1.0f;
 	m[2][2] = 1.0f;
 	m[3][3] = 1.0f;
-
 }
 
 //////////////////////////////////////////////////////////////////////////

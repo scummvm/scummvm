@@ -32,9 +32,10 @@ namespace OpenGL {
  */
 class Framebuffer {
 	friend class Pipeline;
+
 public:
 	Framebuffer();
-	virtual ~Framebuffer() {};
+	virtual ~Framebuffer(){};
 
 public:
 	enum BlendMode {
@@ -84,13 +85,14 @@ public:
 	 * Obtain projection matrix of the framebuffer.
 	 */
 	const GLfloat *getProjectionMatrix() const { return _projectionMatrix; }
+
 protected:
 	bool isActive() const { return _isActive; }
 
 	GLint _viewport[4];
 	void applyViewport();
 
-	GLfloat _projectionMatrix[4*4];
+	GLfloat _projectionMatrix[4 * 4];
 	void applyProjectionMatrix();
 
 	/**

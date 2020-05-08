@@ -32,9 +32,9 @@
 
 #include "engines/dialogs.h"
 
+#include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
-#include "graphics/managed_surface.h"
 #include "graphics/thumbnail.h"
 
 const char *MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
@@ -133,19 +133,18 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 }
 
 bool MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSavesUseExtendedFormat);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate) ||
+	       (f == kSavesSupportPlayTime) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSavesUseExtendedFormat);
 }
 
 void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
-		Common::String desc, bool isAutosave) {
+                                    Common::String desc, bool isAutosave) {
 	ExtendedSavegameHeader header;
 
 	uint headerPos = saveFile->pos();
@@ -171,7 +170,7 @@ void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playti
 
 	saveScreenThumbnail(saveFile);
 
-	saveFile->writeUint32LE(headerPos);	// Store where the header starts
+	saveFile->writeUint32LE(headerPos); // Store where the header starts
 
 	saveFile->finalize();
 }
@@ -262,7 +261,6 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 
 	return true;
 }
-
 
 ///////////////////////////////////////
 // MetaEngine default implementations
@@ -370,7 +368,7 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 		return SaveStateDescriptor();
 
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
-		getSavegameFile(slot, target)));
+	    getSavegameFile(slot, target)));
 
 	if (f) {
 		ExtendedSavegameHeader header;

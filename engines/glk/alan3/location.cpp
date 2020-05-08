@@ -21,19 +21,19 @@
  */
 
 #include "glk/alan3/location.h"
-#include "glk/alan3/instance.h"
-#include "glk/alan3/options.h"
-#include "glk/alan3/word.h"
-#include "glk/alan3/inter.h"
-#include "glk/alan3/glkio.h"
-#include "glk/alan3/lists.h"
 #include "glk/alan3/checkentry.h"
-#include "glk/alan3/debug.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/dictionary.h"
-#include "glk/alan3/output.h"
-#include "glk/alan3/msg.h"
 #include "glk/alan3/current.h"
+#include "glk/alan3/debug.h"
+#include "glk/alan3/dictionary.h"
+#include "glk/alan3/glkio.h"
+#include "glk/alan3/instance.h"
+#include "glk/alan3/inter.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/msg.h"
+#include "glk/alan3/options.h"
+#include "glk/alan3/output.h"
+#include "glk/alan3/word.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -46,15 +46,13 @@ static void traceExit(CONTEXT, int location, int dir, const char *what) {
 	printf("[%d], %s:>\n", location, what);
 }
 
-
-
 /*======================================================================*/
 void go(CONTEXT, int location, int dir) {
 	ExitEntry *theExit;
 	bool ok;
 	Aword oldloc;
 
-	theExit = (ExitEntry *) pointerTo(instances[location].exits);
+	theExit = (ExitEntry *)pointerTo(instances[location].exits);
 	if (instances[location].exits != 0) {
 		while (!isEndOfArray(theExit)) {
 			if (theExit->code == (uint)dir) {
@@ -91,7 +89,6 @@ void go(CONTEXT, int location, int dir) {
 	CALL1(error, M_NO_WAY)
 }
 
-
 /*======================================================================*/
 bool exitto(int to, int from) {
 	ExitEntry *theExit;
@@ -99,13 +96,12 @@ bool exitto(int to, int from) {
 	if (instances[from].exits == 0)
 		return FALSE; /* No exits */
 
-	for (theExit = (ExitEntry *) pointerTo(instances[from].exits); !isEndOfArray(theExit); theExit++)
+	for (theExit = (ExitEntry *)pointerTo(instances[from].exits); !isEndOfArray(theExit); theExit++)
 		if (theExit->target == (uint)to)
 			return TRUE;
 
 	return FALSE;
 }
-
 
 /*======================================================================*/
 void look(CONTEXT) {

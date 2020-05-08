@@ -21,19 +21,19 @@
  */
 
 #include "ultima/ultima1/game.h"
+#include "ultima/shared/early/font_resources.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/popup.h"
 #include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map.h"
-#include "ultima/ultima1/u1gfx/view_game.h"
-#include "ultima/ultima1/u1gfx/view_char_gen.h"
-#include "ultima/ultima1/u1gfx/view_title.h"
-#include "ultima/ultima1/u1gfx/text_cursor.h"
-#include "ultima/ultima1/u6gfx/game_view.h"
 #include "ultima/ultima1/spells/prayer.h"
-#include "ultima/shared/early/font_resources.h"
-#include "ultima/shared/gfx/popup.h"
-#include "ultima/shared/engine/messages.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima1/u1gfx/text_cursor.h"
+#include "ultima/ultima1/u1gfx/view_char_gen.h"
+#include "ultima/ultima1/u1gfx/view_game.h"
+#include "ultima/ultima1/u1gfx/view_title.h"
+#include "ultima/ultima1/u6gfx/game_view.h"
 
 namespace Ultima {
 namespace Ultima1 {

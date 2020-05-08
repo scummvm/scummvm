@@ -23,20 +23,20 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/random.h"
 #include "common/keyboard.h"
+#include "common/random.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "graphics/wincursor.h"
 
 #include "engines/util.h"
 
 #include "composer/composer.h"
+#include "composer/console.h"
 #include "composer/graphics.h"
 #include "composer/resource.h"
-#include "composer/console.h"
 
 namespace Composer {
 
@@ -390,8 +390,7 @@ void ComposerEngine::loadLibrary(uint id) {
 				filename = getStringFromConfig("splash.rsc", "100");
 			else
 				filename = getStringFromConfig(_bookGroup + ".rsc", Common::String::format("%d", id));
-		}
-		else {
+		} else {
 			if (!id || _bookGroup.empty())
 				filename = getStringFromConfig("Common", "StartPage");
 			else
@@ -640,12 +639,12 @@ bool Button::contains(const Common::Point &pos) const {
 		if (!_rect.contains(pos))
 			return false;
 		{
-		int16 a = _rect.width() / 2;
-		int16 b = _rect.height() / 2;
-		if (!a || !b)
-			return false;
-		Common::Point adjustedPos = pos - Common::Point(_rect.left + a, _rect.top + b);
-		return ((adjustedPos.x*adjustedPos.x)/(a*a) + (adjustedPos.y*adjustedPos.y)/(b*b) < 1);
+			int16 a = _rect.width() / 2;
+			int16 b = _rect.height() / 2;
+			if (!a || !b)
+				return false;
+			Common::Point adjustedPos = pos - Common::Point(_rect.left + a, _rect.top + b);
+			return ((adjustedPos.x * adjustedPos.x) / (a * a) + (adjustedPos.y * adjustedPos.y) / (b * b) < 1);
 		}
 	case kButtonSprites:
 		return false;

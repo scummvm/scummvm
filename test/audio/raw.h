@@ -1,12 +1,11 @@
 #include <cxxtest/TestSuite.h>
 
-#include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 #include "helper.h"
 
-class RawStreamTestSuite : public CxxTest::TestSuite
-{
+class RawStreamTestSuite : public CxxTest::TestSuite {
 private:
 	template<typename T>
 	void readBufferTestTemplate(const int sampleRate, const int time, const bool le, const bool isStereo) {
@@ -94,6 +93,7 @@ private:
 		delete[] buffer;
 		delete s;
 	}
+
 public:
 	void test_partial_read() {
 		partialReadTest();
@@ -140,6 +140,7 @@ private:
 		delete[] buffer;
 		delete s;
 	}
+
 public:
 	void test_rewind() {
 		rewindTest();

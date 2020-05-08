@@ -39,7 +39,7 @@ private:
 	bool seek(int32 offs, int whence);
 
 public:
-	InFRAMSave() : fd(NULL) { }
+	InFRAMSave() : fd(NULL) {}
 
 	~InFRAMSave() {
 		if (fd != NULL)
@@ -144,6 +144,5 @@ public:
 
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);
 };
-
 
 #endif

@@ -20,18 +20,18 @@
  *
  */
 
+#include "dragons/bag.h"
 #include "common/memstream.h"
+#include "dragons/background.h"
 #include "dragons/bigfile.h"
 #include "dragons/screen.h"
-#include "dragons/bag.h"
-#include "dragons/background.h"
 
 namespace Dragons {
 
 #define TILEMAP_WIDTH 10
 #define TILEMAP_HEIGHT 25
 
-Bag::Bag(BigfileArchive *bigFileArchive, Screen *screen): _screen(screen) {
+Bag::Bag(BigfileArchive *bigFileArchive, Screen *screen) : _screen(screen) {
 	_surface = nullptr;
 	_position.x = 0;
 	_position.y = 0;

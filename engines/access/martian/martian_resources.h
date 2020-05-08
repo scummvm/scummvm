@@ -23,9 +23,9 @@
 #ifndef ACCESS_MARTIAN_RESOURCES_H
 #define ACCESS_MARTIAN_RESOURCES_H
 
-#include "common/scummsys.h"
-#include "access/resources.h"
 #include "access/font.h"
+#include "access/resources.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -61,9 +61,11 @@ protected:
 	 * Load data from the access.dat file
 	 */
 	void load(Common::SeekableReadStream &s) override;
+
 public:
 	MartianFont *_font6x6;
 	MartianFont *_font3x5;
+
 public:
 	MartianResources(AccessEngine *vm) : Resources(vm), _font6x6(nullptr), _font3x5(nullptr) {}
 	~MartianResources() override;

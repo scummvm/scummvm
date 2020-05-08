@@ -74,12 +74,12 @@ enum ObjectField {
  * Built-in variables
  */
 enum Variable {
-	V_ACTOR = 1,        ///< Actor noun phrase number
-	V_ACTION = 2,       ///< Action from phrase
-	V_DOBJECT = 3,      ///< First direct object noun phrase number
-	V_NDOBJECTS = 4,    ///< Number of direct object noun phrases
-	V_IOBJECT = 5,      ///< Indirect object noun phrase number
-	V_OCOUNT = 6        ///< Total object count
+	V_ACTOR = 1,     ///< Actor noun phrase number
+	V_ACTION = 2,    ///< Action from phrase
+	V_DOBJECT = 3,   ///< First direct object noun phrase number
+	V_NDOBJECTS = 4, ///< Number of direct object noun phrases
+	V_IOBJECT = 5,   ///< Indirect object noun phrase number
+	V_OCOUNT = 6     ///< Total object count
 };
 
 /**
@@ -98,36 +98,36 @@ public:
  */
 class Header : public Decrypter {
 public:
-	bool _valid;                ///< Signals whether header is valid
-	size_t _size;               ///< Resident size in bytes
-	uint _headerVersion;        ///< Header structure version
-	Common::String _name;       ///< Adventure name
-	uint _version;              ///< Adventure version
-	uint _wordTableOffset;      ///< Word table offset
-	uint _wordTypeTableOffset;  ///< Word type table offset
-	uint _objectTableOffset;    ///< Object table offset
-	uint _actionTableOffset;    ///< Action table offset
-	uint _variableTableOffset;  ///< Variable table offset
-	uint _dataSpaceOffset;      ///< Data space offset
-	uint _codeSpaceOffset;      ///< Code space offset
-	uint _dataBlockOffset;      ///< First data block offset
-	uint _messageBlockOffset;   ///< First message block offset
-	uint _initCodeOffset;       ///< Initialization code offset
-	uint _updateCodeOffset;     ///< Update code offset
-	uint _beforeOffset;         ///< Code offset before verb handler
-	uint _afterOffset;          ///< Code offset after verb handler
-	uint _errorHandlerOffset;   ///< Error handler code offset
-	uint _saveAreaOffset;       ///< Save area offset
-	uint _saveSize;             ///< Save area size
+	bool _valid;               ///< Signals whether header is valid
+	size_t _size;              ///< Resident size in bytes
+	uint _headerVersion;       ///< Header structure version
+	Common::String _name;      ///< Adventure name
+	uint _version;             ///< Adventure version
+	uint _wordTableOffset;     ///< Word table offset
+	uint _wordTypeTableOffset; ///< Word type table offset
+	uint _objectTableOffset;   ///< Object table offset
+	uint _actionTableOffset;   ///< Action table offset
+	uint _variableTableOffset; ///< Variable table offset
+	uint _dataSpaceOffset;     ///< Data space offset
+	uint _codeSpaceOffset;     ///< Code space offset
+	uint _dataBlockOffset;     ///< First data block offset
+	uint _messageBlockOffset;  ///< First message block offset
+	uint _initCodeOffset;      ///< Initialization code offset
+	uint _updateCodeOffset;    ///< Update code offset
+	uint _beforeOffset;        ///< Code offset before verb handler
+	uint _afterOffset;         ///< Code offset after verb handler
+	uint _errorHandlerOffset;  ///< Error handler code offset
+	uint _saveAreaOffset;      ///< Save area offset
+	uint _saveSize;            ///< Save area size
 public:
 	/**
 	 * Constructor
 	 */
 	Header() : _valid(false), _size(0), _headerVersion(0), _version(0), _wordTableOffset(0),
-		_wordTypeTableOffset(0), _objectTableOffset(0), _actionTableOffset(0), _variableTableOffset(0),
-		_dataSpaceOffset(0), _codeSpaceOffset(0), _dataBlockOffset(0), _messageBlockOffset(0),
-		_initCodeOffset(0), _updateCodeOffset(0), _beforeOffset(0), _afterOffset(0),
-		_errorHandlerOffset(0), _saveAreaOffset(0), _saveSize(0) {
+	           _wordTypeTableOffset(0), _objectTableOffset(0), _actionTableOffset(0), _variableTableOffset(0),
+	           _dataSpaceOffset(0), _codeSpaceOffset(0), _dataBlockOffset(0), _messageBlockOffset(0),
+	           _initCodeOffset(0), _updateCodeOffset(0), _beforeOffset(0), _afterOffset(0),
+	           _errorHandlerOffset(0), _saveAreaOffset(0), _saveSize(0) {
 	}
 
 	/**
@@ -158,11 +158,13 @@ class Game : public Header {
 			Common::fill(&_data[0], &_data[MESSAGE_BLOCK_SIZE], '\0');
 		}
 	};
+
 private:
 	bool _restartFlag;
 	Common::SeekableReadStream *_stream;
 	Common::Array<CacheEntry *> _msgCache;
 	int _msgBlockNum, _msgBlockOffset;
+
 private:
 	/**
 	 * Find an object property field
@@ -195,6 +197,7 @@ private:
 	 * Read the next character for a string
 	 */
 	char readMsgChar();
+
 protected:
 	/**
 	 * Returns true if an object has a given noun
@@ -205,6 +208,7 @@ protected:
 	 * Returns true if an object has a given adjective
 	 */
 	bool hasAdjective(int obj, int adjective) const;
+
 public:
 	Common::Array<byte> _data;
 	int _residentOffset;
@@ -221,6 +225,7 @@ public:
 	byte *_saveArea;
 	byte *_dataSpace;
 	byte *_codeSpace;
+
 public:
 	/**
 	 * Constructor

@@ -31,8 +31,8 @@
 #ifndef GLK_TADS_TADS2_MEMORY_CACHE_HEAP
 #define GLK_TADS_TADS2_MEMORY_CACHE_HEAP
 
-#include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/error_handling.h"
+#include "glk/tads/tads2/lib.h"
 
 namespace Glk {
 namespace TADS {
@@ -47,7 +47,7 @@ uchar *mchalo(errcxdef *ctx, size_t siz, const char *comment);
 
 /* allocate a structure */
 #define MCHNEW(errctx, typ, comment) \
- ((typ *)mchalo(errctx, sizeof(typ), comment))
+	((typ *)mchalo(errctx, sizeof(typ), comment))
 
 /* free a block of memory */
 /* void mchfre(uchar *ptr); */

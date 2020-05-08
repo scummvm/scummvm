@@ -26,32 +26,29 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 
+#include "audio/fmopl.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/str.h"
 #include "common/textconsole.h"
-#include "audio/fmopl.h"
 
-#include <unistd.h>
 #include <ieee1284.h>
+#include <unistd.h>
 
 static const uint8 OPL2LPTRegisterSelect[] = {
-	(C1284_NSELECTIN | C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED,
-	(C1284_NSELECTIN | C1284_NSTROBE) ^ C1284_INVERTED,
-	(C1284_NSELECTIN | C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED
-};
+    (C1284_NSELECTIN | C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED,
+    (C1284_NSELECTIN | C1284_NSTROBE) ^ C1284_INVERTED,
+    (C1284_NSELECTIN | C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED};
 
 static const uint8 OPL3LPTRegisterSelect[] = {
-	(C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED,
-	C1284_NSTROBE ^ C1284_INVERTED,
-	(C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED
-};
+    (C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED,
+    C1284_NSTROBE ^ C1284_INVERTED,
+    (C1284_NSTROBE | C1284_NINIT) ^ C1284_INVERTED};
 
 static const uint8 OPL2LPTRegisterWrite[] = {
-	(C1284_NSELECTIN | C1284_NINIT) ^ C1284_INVERTED,
-	C1284_NSELECTIN ^ C1284_INVERTED,
-	(C1284_NSELECTIN | C1284_NINIT) ^ C1284_INVERTED
-};
+    (C1284_NSELECTIN | C1284_NINIT) ^ C1284_INVERTED,
+    C1284_NSELECTIN ^ C1284_INVERTED,
+    (C1284_NSELECTIN | C1284_NINIT) ^ C1284_INVERTED};
 
 namespace OPL {
 namespace OPL2LPT {
@@ -119,7 +116,7 @@ bool OPL::init() {
 }
 
 void OPL::reset() {
-	for(int i = 0; i < 256; i ++) {
+	for (int i = 0; i < 256; i++) {
 		writeReg(i, 0);
 	}
 	if (_type == Config::kOpl3) {
@@ -171,7 +168,7 @@ void OPL::writeReg(int r, int v) {
 		ieee1284_write_control(_pport, OPL3LPTRegisterSelect[1]);
 		ieee1284_write_control(_pport, OPL3LPTRegisterSelect[2]);
 	}
-	usleep(4);		// 3.3 us
+	usleep(4); // 3.3 us
 
 	ieee1284_write_data(_pport, v);
 	ieee1284_write_control(_pport, OPL2LPTRegisterWrite[0]);

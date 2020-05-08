@@ -23,8 +23,8 @@
 #ifndef TITANIC_CONSTELLATIONS_H
 #define TITANIC_CONSTELLATIONS_H
 
-#include "titanic/star_control/fvector.h"
 #include "common/array.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
@@ -36,8 +36,10 @@ class CConstellations {
 		FVector _start, _end;
 	};
 	typedef Common::Array<ConstellationLine> Constellation;
+
 private:
 	Common::Array<Constellation> _data;
+
 public:
 	/**
 	 * Initializes the data

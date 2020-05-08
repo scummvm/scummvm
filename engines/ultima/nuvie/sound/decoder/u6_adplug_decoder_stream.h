@@ -20,12 +20,12 @@
 #ifndef NUVIE_SOUND_ADPLUG_ADPLUG_DECODER_STREAM_H
 #define NUVIE_SOUND_ADPLUG_ADPLUG_DECODER_STREAM_H
 
-#include "ultima/shared/std/string.h"
+#include "audio/audiostream.h"
 #include "ultima/nuvie/sound/adplug/emu_opl.h"
+#include "ultima/nuvie/sound/adplug/mid.h"
 #include "ultima/nuvie/sound/adplug/opl.h"
 #include "ultima/nuvie/sound/adplug/u6m.h"
-#include "ultima/nuvie/sound/adplug/mid.h"
-#include "audio/audiostream.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -60,7 +60,7 @@ public:
 
 	bool rewind() override {
 		if (player) {
-			player->rewind();    //FIXME this would need to be locked if called outside mixer thread.
+			player->rewind(); //FIXME this would need to be locked if called outside mixer thread.
 			return true;
 		}
 		return false;
@@ -76,10 +76,11 @@ public:
 	bool endOfData() const override {
 		return false;
 	}
+
 private:
 	void update_opl(short *data, int num_samples);
-protected:
 
+protected:
 	uint16 samples_left;
 	CEmuopl *opl;
 	CPlayer *player;

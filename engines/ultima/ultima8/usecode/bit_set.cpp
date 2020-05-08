@@ -20,15 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/bit_set.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 BitSet::BitSet() : _size(0), _bytes(0), _data(nullptr) {
 }
-
 
 BitSet::BitSet(unsigned int size) : _data(nullptr) {
 	setSize(size);
@@ -39,11 +38,13 @@ BitSet::~BitSet() {
 }
 
 void BitSet::setSize(unsigned int size) {
-	if (_data) delete[] _data;
+	if (_data)
+		delete[] _data;
 
 	_size = size;
 	_bytes = _size / 8;
-	if (_size % 8 != 0) _bytes++;
+	if (_size % 8 != 0)
+		_bytes++;
 
 	_data = new uint8[_bytes];
 	for (unsigned int i = 0; i < _bytes; ++i)
@@ -53,7 +54,8 @@ void BitSet::setSize(unsigned int size) {
 uint32 BitSet::getBits(unsigned int pos, unsigned int n) const {
 	assert(n <= 32);
 	assert(pos + n <= _size);
-	if (n == 0) return 0;
+	if (n == 0)
+		return 0;
 
 	unsigned int firstbyte = pos / 8;
 	unsigned int lastbyte = (pos + n - 1) / 8;
@@ -84,7 +86,8 @@ uint32 BitSet::getBits(unsigned int pos, unsigned int n) const {
 void BitSet::setBits(unsigned int pos, unsigned int n, uint32 bits) {
 	assert(n <= 32);
 	assert(pos + n <= _size);
-	if (n == 0) return;
+	if (n == 0)
+		return;
 
 	unsigned int firstbyte = pos / 8;
 	unsigned int lastbyte = (pos + n - 1) / 8;

@@ -35,6 +35,7 @@ class Usecode;
 class UCProcess : public Process {
 	friend class UCMachine;
 	friend class Kernel;
+
 public:
 	UCProcess();
 	UCProcess(uint16 classid_, uint16 offset_, uint32 this_ptr = 0,
@@ -58,6 +59,7 @@ public:
 	void dumpInfo() const override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 
@@ -80,7 +82,7 @@ protected:
 	UCStack _stack;
 
 	// "Free Me" list
-	Std::list<Std::pair<uint16, int> > _freeOnTerminate;
+	Std::list<Std::pair<uint16, int>> _freeOnTerminate;
 };
 
 } // End of namespace Ultima8

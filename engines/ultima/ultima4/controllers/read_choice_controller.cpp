@@ -25,9 +25,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-
-ReadChoiceController::ReadChoiceController(const Common::String &choices) :
-		WaitableController<int>(-1) {
+ReadChoiceController::ReadChoiceController(const Common::String &choices) : WaitableController<int>(-1) {
 	_choices = choices;
 }
 

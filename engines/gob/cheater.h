@@ -24,15 +24,15 @@
 #define GOB_CHEATER_H
 
 namespace GUI {
-	class Debugger;
+class Debugger;
 }
 
 namespace Gob {
 
 namespace Geisha {
-	class Diving;
-	class Penetration;
-}
+class Diving;
+class Penetration;
+} // namespace Geisha
 
 class GobEngine;
 
@@ -55,7 +55,7 @@ public:
 	bool cheat(GUI::Debugger &console) override;
 
 private:
-	Geisha::Diving      *_diving;
+	Geisha::Diving *_diving;
 	Geisha::Penetration *_penetration;
 };
 

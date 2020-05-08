@@ -23,16 +23,16 @@
 #ifndef ULTIMA_ULTIMA1_U1DIALOGS_DIALOG_H
 #define ULTIMA_ULTIMA1_U1DIALOGS_DIALOG_H
 
-#include "ultima/shared/gfx/popup.h"
-#include "ultima/shared/gfx/character_input.h"
 #include "ultima/shared/core/str.h"
+#include "ultima/shared/gfx/character_input.h"
+#include "ultima/shared/gfx/popup.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
 class Ultima1Game;
 namespace Maps {
-	class Ultima1Map;
+class Ultima1Map;
 }
 
 namespace U1Dialogs {
@@ -44,6 +44,7 @@ class Dialog : public Shared::Gfx::Popup {
 protected:
 	Ultima1Game *_game;
 	Common::String _prompt;
+
 protected:
 	/**
 	 * Jumps up through the parents to find the root game
@@ -82,6 +83,7 @@ protected:
 	 * Write a text line to the dialog
 	 */
 	void centerText(const Shared::StringArray &lines, int yp);
+
 public:
 	/**
 	 * Constructor

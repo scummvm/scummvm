@@ -25,10 +25,10 @@
 #include "fullpipe/constants.h"
 
 #include "fullpipe/gameloader.h"
+#include "fullpipe/input.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
-#include "fullpipe/input.h"
 
 #include "fullpipe/interaction.h"
 
@@ -66,7 +66,7 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 
 	if (ex->_messageNum == 29) {
 		GameObject *obj = sceneHandlerDbgMenu_getObjectAtXY(mx, my);
-		if (obj && canInteractAny(0, obj, -3) ) {
+		if (obj && canInteractAny(0, obj, -3)) {
 			getGameLoaderInteractionController()->enableFlag24();
 			handleObjectInteraction(0, obj, 0);
 		}
@@ -90,7 +90,7 @@ int sceneHandlerDbgMenu(ExCommand *ex) {
 		}
 	} else {
 		obj = sceneHandlerDbgMenu_getObjectAtXY(mx, my);
-		if (obj && canInteractAny(0, obj, -3) ) {
+		if (obj && canInteractAny(0, obj, -3)) {
 			g_vars->selector->_flags |= 4;
 			g_vars->selector->setOXY(obj->_ox, obj->_oy);
 			g_fp->_cursorId = PIC_CSR_DEFAULT;

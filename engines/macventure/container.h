@@ -40,7 +40,7 @@ namespace MacVenture {
 
 struct ItemGroup {
 	uint32 bitOffset; //It's really uint24
-	uint32 offset; //It's really uint24
+	uint32 offset;    //It's really uint24
 	uint32 lengths[64];
 };
 
@@ -64,7 +64,6 @@ public:
 	Common::SeekableReadStream *getItem(uint32 id);
 
 protected:
-
 	bool _simplified;
 
 	uint _lenObjs; // In the case of simple container, lenght of an object
@@ -73,15 +72,13 @@ protected:
 	ContainerHeader _header;
 
 	Common::Array<uint16> _huff; // huffman masks
-	Common::Array<uint8> _lens; // huffman lengths
+	Common::Array<uint8> _lens;  // huffman lengths
 	Common::Array<ItemGroup> _groups;
 
 	Common::String _filename;
 	Common::File _file;
 	Common::SeekableReadStream *_res;
-
 };
-
 
 } // End of namespace MacVenture
 

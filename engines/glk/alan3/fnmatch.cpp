@@ -62,11 +62,11 @@
 namespace Glk {
 namespace Alan3 {
 
-#define EOS     '\0'
+#define EOS '\0'
 
-#define RANGE_MATCH     1
-#define RANGE_NOMATCH   0
-#define RANGE_ERROR     (-1)
+#define RANGE_MATCH 1
+#define RANGE_NOMATCH 0
+#define RANGE_ERROR (-1)
 
 static int rangematch(const char *, char, int, char **);
 
@@ -87,8 +87,8 @@ int fnmatch(const char *pattern, const char *string, int flags) {
 			if (*string == '/' && (flags & FNM_PATHNAME))
 				return (FNM_NOMATCH);
 			if (*string == '.' && (flags & FNM_PERIOD) &&
-			        (string == stringstart ||
-			         ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
+			    (string == stringstart ||
+			     ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
 				return (FNM_NOMATCH);
 			++string;
 			break;
@@ -99,16 +99,17 @@ int fnmatch(const char *pattern, const char *string, int flags) {
 				c = *++pattern;
 
 			if (*string == '.' && (flags & FNM_PERIOD) &&
-			        (string == stringstart ||
-			         ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
+			    (string == stringstart ||
+			     ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
 				return (FNM_NOMATCH);
 
 			/* Optimize for pattern with * at end or before /. */
 			if (c == EOS)
 				if (flags & FNM_PATHNAME)
 					return ((flags & FNM_LEADING_DIR) ||
-					        strchr(string, '/') == NULL ?
-					        0 : FNM_NOMATCH);
+					                strchr(string, '/') == NULL
+					            ? 0
+					            : FNM_NOMATCH);
 				else
 					return (0);
 			else if (c == '/' && flags & FNM_PATHNAME) {
@@ -132,8 +133,8 @@ int fnmatch(const char *pattern, const char *string, int flags) {
 			if (*string == '/' && (flags & FNM_PATHNAME))
 				return (FNM_NOMATCH);
 			if (*string == '.' && (flags & FNM_PERIOD) &&
-			        (string == stringstart ||
-			         ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
+			    (string == stringstart ||
+			     ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
 				return (FNM_NOMATCH);
 
 			switch (rangematch(pattern, *string, flags, &newp)) {
@@ -158,7 +159,7 @@ int fnmatch(const char *pattern, const char *string, int flags) {
 			}
 		/* FALLTHROUGH */
 		default:
-norm:
+		norm:
 			if (c == *string)
 				;
 			else if ((flags & FNM_CASEFOLD) &&
@@ -210,8 +211,7 @@ rangematch(const char *pattern, char test, int flags, char **newp) {
 		if (flags & FNM_CASEFOLD)
 			c = tolower((unsigned char)c);
 
-		if (*pattern == '-'
-		        && (c2 = *(pattern + 1)) != EOS && c2 != ']') {
+		if (*pattern == '-' && (c2 = *(pattern + 1)) != EOS && c2 != ']') {
 			pattern += 2;
 			if (c2 == '\\' && !(flags & FNM_NOESCAPE))
 				c2 = *pattern++;

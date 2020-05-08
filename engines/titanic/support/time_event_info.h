@@ -44,8 +44,10 @@ private:
 	void unlock() {
 		_lockCounter = MAX(_lockCounter - 1, 0);
 	}
+
 public:
 	static uint _nextId;
+
 public:
 	int _lockCounter;
 	uint _id;
@@ -61,11 +63,12 @@ public:
 	bool _done;
 	bool _persisent;
 	CString _targetName;
+
 public:
 	CLASSDEF;
 	CTimeEventInfo();
 	CTimeEventInfo(uint ticks, bool repeated, uint firstDuration, uint repeatDuration,
-		CTreeItem *target, int endVal, const CString &action);
+	               CTreeItem *target, int endVal, const CString &action);
 
 	/**
 	 * Save the data for the class to file

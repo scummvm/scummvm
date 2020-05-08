@@ -27,8 +27,8 @@
 #include "common/substream.h"
 #include "common/textconsole.h"
 
-#include "groovie/resource.h"
 #include "groovie/groovie.h"
+#include "groovie/resource.h"
 
 namespace Groovie {
 
@@ -71,7 +71,6 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 	// Returning the resource substream
 	return new Common::SeekableSubReadStream(gjdFile, resInfo.offset, resInfo.offset + resInfo.size, DisposeAfterUse::YES);
 }
-
 
 // ResMan_t7g
 
@@ -186,7 +185,6 @@ bool ResMan_t7g::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	return true;
 }
 
-
 // ResMan_v2
 
 ResMan_v2::ResMan_v2() {
@@ -295,4 +293,4 @@ bool ResMan_v2::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	return true;
 }
 
-} // End of Groovie namespace
+} // namespace Groovie

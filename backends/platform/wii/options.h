@@ -25,12 +25,12 @@
 
 #include "common/str.h"
 #include "gui/dialog.h"
-#include "gui/widgets/tab.h"
 #include "gui/widgets/edittext.h"
+#include "gui/widgets/tab.h"
 
 using namespace GUI;
 
-class WiiOptionsDialog: public GUI::Dialog {
+class WiiOptionsDialog : public GUI::Dialog {
 	typedef Common::String String;
 
 public:

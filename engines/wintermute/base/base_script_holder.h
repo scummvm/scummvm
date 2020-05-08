@@ -29,9 +29,9 @@
 #ifndef WINTERMUTE_BASE_SCRIPTHOLDER_H
 #define WINTERMUTE_BASE_SCRIPTHOLDER_H
 
+#include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/persistent.h"
-#include "engines/wintermute/base/base_scriptable.h"
 
 namespace Wintermute {
 
@@ -67,6 +67,7 @@ public:
 	// IWmeObject
 private:
 	char *_filename;
+
 public:
 	virtual bool sendEvent(const char *eventName);
 };

@@ -31,7 +31,6 @@
 
 #include "common/scummsys.h"
 
-
 namespace Wintermute {
 
 #define NUM_MUSIC_CHANNELS 5
@@ -56,6 +55,7 @@ public:
 
 	bool persistChannels(BasePersistenceManager *persistMgr);
 	bool persistCrossfadeSettings(BasePersistenceManager *persistMgr);
+
 private:
 	BaseGame *_gameRef;
 	BaseSound *_music[NUM_MUSIC_CHANNELS];

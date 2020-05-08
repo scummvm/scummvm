@@ -56,6 +56,7 @@ class QuetzalReader : public QuetzalBase {
 		uint32 _id;
 		size_t _offset, _size;
 	};
+
 public:
 	/**
 	 * Iterator for the chunks list
@@ -65,12 +66,12 @@ public:
 		Common::SeekableReadStream *_stream;
 		Common::Array<Chunk> &_chunks;
 		int _index;
+
 	public:
 		/**
 		 * Constructor
 		 */
-		Iterator(Common::SeekableReadStream *stream, Common::Array<Chunk> &chunks, int index) :
-			_stream(stream), _chunks(chunks), _index(index) {}
+		Iterator(Common::SeekableReadStream *stream, Common::Array<Chunk> &chunks, int index) : _stream(stream), _chunks(chunks), _index(index) {}
 
 		/**
 		 * Deference
@@ -84,7 +85,7 @@ public:
 			++_index;
 			return *this;
 		}
-		
+
 		/**
 		 * Decrementer
 		 */
@@ -111,9 +112,11 @@ public:
 			return _stream->readStream(_chunks[_index]._size);
 		}
 	};
+
 private:
 	Common::SeekableReadStream *_stream;
 	Common::Array<Chunk> _chunks;
+
 public:
 	/**
 	 * Constructor
@@ -177,6 +180,7 @@ class QuetzalWriter : public QuetzalBase {
 		 */
 		Chunk(uint32 id) : _id(id), _stream(DisposeAfterUse::YES) {}
 	};
+
 private:
 	Common::Array<Chunk> _chunks;
 
@@ -184,6 +188,7 @@ private:
 	 * Add chunks common to all Glk savegames
 	 */
 	void addCommonChunks(const Common::String &saveName);
+
 public:
 	/**
 	 * Clear

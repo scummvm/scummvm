@@ -26,11 +26,11 @@
 #define IMAGE_CODECS_MPEG_H
 
 #include "common/inttypes.h"
-#include "image/codecs/codec.h"
 #include "graphics/pixelformat.h"
+#include "image/codecs/codec.h"
 
 extern "C" {
-	#include <mpeg2dec/mpeg2.h>
+#include <mpeg2dec/mpeg2.h>
 }
 
 namespace Common {

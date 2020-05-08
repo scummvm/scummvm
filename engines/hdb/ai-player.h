@@ -278,6 +278,6 @@ void aiAnimateStanddown(AIEntity *e, int speed);
 void aiGenericAction(AIEntity *e);
 void aiGetItemAction(AIEntity *e);
 
-} // End of Namespace
+} // namespace HDB
 
 #endif // !HDB_AI_PLAYER_H

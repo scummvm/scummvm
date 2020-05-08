@@ -20,10 +20,10 @@
  *
  */
 
+#include "common/winexe.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/str.h"
-#include "common/winexe.h"
 #include "common/winexe_ne.h"
 #include "common/winexe_pe.h"
 
@@ -108,7 +108,7 @@ bool WinResources::loadFromCompressedEXE(const String &fileName) {
 		return false;
 
 	// First part of the signature
-	if (file.readUint32BE() != MKTAG('S','Z','D','D'))
+	if (file.readUint32BE() != MKTAG('S', 'Z', 'D', 'D'))
 		return false;
 
 	// Second part of the signature
@@ -152,7 +152,6 @@ bool WinResources::loadFromCompressedEXE(const String &fileName) {
 					matchPos &= 0xFFF;
 				}
 			}
-
 		}
 	}
 
@@ -161,7 +160,6 @@ bool WinResources::loadFromCompressedEXE(const String &fileName) {
 
 	return loadFromEXE(stream);
 }
-
 
 WinResources *WinResources::createFromEXE(const String &fileName) {
 	WinResources *exe;

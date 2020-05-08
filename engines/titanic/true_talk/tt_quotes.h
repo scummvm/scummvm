@@ -42,20 +42,24 @@ class TTquotes {
 
 		TTquotesLetter() : _field4(0), _field8(0) {}
 	};
+
 private:
 	TTquotesLetter _alphabet[26];
 	uint _tags[256];
 	char *_dataP;
 	size_t _dataSize;
 	int _field544;
+
 private:
 	/**
 	 * Test whether a substring contains one of the quotes,
 	 * and if so, returns the 4-character tag Id associated with it
 	 */
 	int find(const char *startP, const char *endP) const;
+
 public:
 	bool _loaded;
+
 public:
 	TTquotes();
 	~TTquotes();

@@ -20,9 +20,9 @@
 
 #include "internals.h"
 
-#include "PartialManager.h"
 #include "Part.h"
 #include "Partial.h"
+#include "PartialManager.h"
 #include "Poly.h"
 #include "Synth.h"
 
@@ -46,7 +46,8 @@ PartialManager::PartialManager(Synth *useSynth, Part **useParts) {
 PartialManager::~PartialManager(void) {
 	for (unsigned int i = 0; i < synth->getPartialCount(); i++) {
 		delete partialTable[i];
-		if (freePolys[i] != NULL) delete freePolys[i];
+		if (freePolys[i] != NULL)
+			delete freePolys[i];
 	}
 	delete[] partialTable;
 	delete[] inactivePartials;

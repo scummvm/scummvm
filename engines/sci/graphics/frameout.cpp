@@ -33,14 +33,13 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
-#include "sci/sci.h"
 #include "sci/console.h"
-#include "sci/event.h"
 #include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/engine/vm.h"
+#include "sci/event.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/cursor32.h"
@@ -54,24 +53,23 @@
 #include "sci/graphics/screen.h"
 #include "sci/graphics/screen_item32.h"
 #include "sci/graphics/text32.h"
-#include "sci/graphics/frameout.h"
 #include "sci/graphics/transitions32.h"
 #include "sci/graphics/video32.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
-GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
-	_isHiRes(detectHiRes()),
-	_palette(palette),
-	_cursor(cursor),
-	_segMan(segMan),
-	_transitions(transitions),
-	_throttleState(0),
-	_remapOccurred(false),
-	_overdrawThreshold(0),
-	_throttleKernelFrameOut(true),
-	_palMorphIsOn(false),
-	_lastScreenUpdateTick(0) {
+GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) : _isHiRes(detectHiRes()),
+                                                                                                                          _palette(palette),
+                                                                                                                          _cursor(cursor),
+                                                                                                                          _segMan(segMan),
+                                                                                                                          _transitions(transitions),
+                                                                                                                          _throttleState(0),
+                                                                                                                          _remapOccurred(false),
+                                                                                                                          _overdrawThreshold(0),
+                                                                                                                          _throttleKernelFrameOut(true),
+                                                                                                                          _palMorphIsOn(false),
+                                                                                                                          _lastScreenUpdateTick(0) {
 
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
 		_currentBuffer.create(630, 450, Graphics::PixelFormat::createFormatCLUT8());
@@ -147,8 +145,8 @@ bool GfxFrameout::detectHiRes() const {
 	// GK1 DOS floppy is low resolution only, but GK1 Mac floppy is high
 	// resolution only
 	if (g_sci->getGameId() == GID_GK1 &&
-		!g_sci->isCD() &&
-		g_sci->getPlatform() != Common::kPlatformMacintosh) {
+	    !g_sci->isCD() &&
+	    g_sci->getPlatform() != Common::kPlatformMacintosh) {
 
 		return false;
 	}
@@ -171,10 +169,10 @@ void GfxFrameout::addScreenItem(ScreenItem &screenItem) const {
 
 void GfxFrameout::updateScreenItem(ScreenItem &screenItem) const {
 	// TODO: In SCI3+ this will need to go through Plane
-//	Plane *plane = _planes.findByObject(screenItem._plane);
-//	if (plane == nullptr) {
-//		error("GfxFrameout::updateScreenItem: Could not find plane %04x:%04x for screen item %04x:%04x", PRINT_REG(screenItem._plane), PRINT_REG(screenItem._object));
-//	}
+	//	Plane *plane = _planes.findByObject(screenItem._plane);
+	//	if (plane == nullptr) {
+	//		error("GfxFrameout::updateScreenItem: Could not find plane %04x:%04x for screen item %04x:%04x", PRINT_REG(screenItem._plane), PRINT_REG(screenItem._object));
+	//	}
 
 	screenItem.update();
 }
@@ -350,16 +348,16 @@ void GfxFrameout::deletePlanesForMacRestore() {
 	//  their Game:restore script before calling kRestore.
 	//  In Mac this work was moved into the interpreter
 	//  for some games, while others added it back to
-    //  Game:restore or used their own scripts that took
+	//  Game:restore or used their own scripts that took
 	//  care of this in both PC and Mac versions.
 	if (!(g_sci->getGameId() == GID_GK1 ||
-		  g_sci->getGameId() == GID_PQ4 ||
-		  g_sci->getGameId() == GID_LSL6 ||
-		  g_sci->getGameId() == GID_KQ7)) {
+	      g_sci->getGameId() == GID_PQ4 ||
+	      g_sci->getGameId() == GID_LSL6 ||
+	      g_sci->getGameId() == GID_KQ7)) {
 		return;
 	}
 
-	for (PlaneList::size_type i = 0; i < _planes.size(); ) {
+	for (PlaneList::size_type i = 0; i < _planes.size();) {
 		Plane *plane = _planes[i];
 
 		// don't delete the default plane
@@ -372,8 +370,8 @@ void GfxFrameout::deletePlanesForMacRestore() {
 		for (ScreenItemList::size_type j = 0; j < plane->_screenItemList.size(); ++j) {
 			ScreenItem *screenItem = plane->_screenItemList[j];
 			if (screenItem != nullptr &&
-				!screenItem->_object.isNumber() &&
-				_segMan->getObject(screenItem->_object)->isInserted()) {
+			    !screenItem->_object.isNumber() &&
+			    _segMan->getObject(screenItem->_object)->isInserted()) {
 
 				// delete the screen item
 				if (screenItem->_created) {
@@ -668,7 +666,7 @@ void GfxFrameout::resetHardware() {
  * number of returned parts (in `outRects`) otherwise. (In particular, this
  * returns 0 if `middleRect` is contained in `showRect`.)
  */
-int splitRectsForRender(Common::Rect &middleRect, const Common::Rect &showRect, Common::Rect(&outRects)[2]) {
+int splitRectsForRender(Common::Rect &middleRect, const Common::Rect &showRect, Common::Rect (&outRects)[2]) {
 	if (!middleRect.intersects(showRect)) {
 		return -1;
 	}
@@ -682,8 +680,7 @@ int splitRectsForRender(Common::Rect &middleRect, const Common::Rect &showRect, 
 		upperTop = middleRect.top;
 		upperRight = middleRect.right;
 		upperMaxTop = showRect.top;
-	}
-	else {
+	} else {
 		upperLeft = showRect.left;
 		upperTop = showRect.top;
 		upperRight = showRect.right;
@@ -809,10 +806,9 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 					const Plane &innerPlane = *_planes[innerPlaneIndex];
 
 					if (
-						!innerPlane._deleted &&
-						innerPlane._type != kPlaneTypeTransparent &&
-						innerPlane._screenRect.intersects(rect)
-					) {
+					    !innerPlane._deleted &&
+					    innerPlane._type != kPlaneTypeTransparent &&
+					    innerPlane._screenRect.intersects(rect)) {
 						if (!innerPlane._redrawAllCount) {
 							eraseLists[innerPlaneIndex].add(innerPlane._screenRect.findIntersectingRect(rect));
 						}
@@ -1187,9 +1183,8 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 		}
 
 		if (
-			(styleRangeValue == 1 && styleRangeValue == style) ||
-			(styleRangeValue == 0 && style == 1)
-		) {
+		    (styleRangeValue == 1 && styleRangeValue == style) ||
+		    (styleRangeValue == 0 && style == 1)) {
 			pixels[pixelIndex] = clut[currentValue];
 		}
 	}
@@ -1333,9 +1328,9 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 		// either confirm this is a suitable fix (because SSCI just read bad
 		// memory) or fix the actual broken thing and remove this workaround.
 		if (scaledPosition.x < 0 ||
-			scaledPosition.y < 0 ||
-			scaledPosition.x >= celObj._width ||
-			scaledPosition.y >= celObj._height) {
+		    scaledPosition.y < 0 ||
+		    scaledPosition.x >= celObj._width ||
+		    scaledPosition.y >= celObj._height) {
 
 			return false;
 		}
@@ -1361,8 +1356,8 @@ bool GfxFrameout::getNowSeenRect(const reg_t screenItemObject, Common::Rect &res
 		// disassembled at the moment (Phar Lap Windows-only release)
 		// (See also kSetNowSeen32)
 		if (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
-			g_sci->getGameId() == GID_SQ6 ||
-			g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+		    g_sci->getGameId() == GID_SQ6 ||
+		    g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
 
 			error("getNowSeenRect: Unable to find screen item %04x:%04x", PRINT_REG(screenItemObject));
 		}

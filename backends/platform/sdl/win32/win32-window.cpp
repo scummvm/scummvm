@@ -32,7 +32,7 @@
 
 void SdlWindow_Win32::setupIcon() {
 	HMODULE handle = GetModuleHandle(NULL);
-	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
+	HICON ico = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
 	if (ico) {
 		HWND hwnd = getHwnd();
 		if (hwnd) {

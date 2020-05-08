@@ -21,10 +21,10 @@
  */
 
 #include "glk/quest/geas_file.h"
-#include "glk/quest/reserved_words.h"
-#include "glk/quest/read_file.h"
-#include "glk/quest/geas_util.h"
 #include "glk/quest/geas_impl.h"
+#include "glk/quest/geas_util.h"
+#include "glk/quest/read_file.h"
+#include "glk/quest/reserved_words.h"
 #include "glk/quest/streams.h"
 #include "glk/quest/string.h"
 
@@ -34,10 +34,10 @@ namespace Quest {
 void report_error(const String &s);
 
 // FIXME: This requires global constructor
-reserved_words obj_tag_property("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *) NULL);
+reserved_words obj_tag_property("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *)NULL);
 
 // FIXME: This requires global constructor
-reserved_words room_tag_property("look", "alias", "prefix", "indescription", "description", "north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) NULL);
+reserved_words room_tag_property("look", "alias", "prefix", "indescription", "description", "north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *)NULL);
 
 void GeasFile::debug_print(String s) const {
 	if (gi == NULL)
@@ -48,7 +48,7 @@ void GeasFile::debug_print(String s) const {
 
 const GeasBlock *GeasFile::find_by_name(String type, String name) const {
 	//name = lcase (name);
-	for (uint i = 0; i < size(type); i ++) {
+	for (uint i = 0; i < size(type); i++) {
 		//cerr << "find_by_name (" << type << ", " << name << "), vs. '"
 		//     << block(type, i).name << "'\n";
 		//if (block(type, i).lname == name)
@@ -85,7 +85,6 @@ uint GeasFile::size(String type) const {
 	return (*iter)._value.size();
 }
 
-
 bool GeasFile::obj_has_property(String objname, String propname) const {
 	String tmp;
 	return get_obj_property(objname, propname, tmp);
@@ -119,7 +118,7 @@ void GeasFile::get_obj_keys(String obj, Set<String> &rv) const {
 		return;
 	}
 
-	for (uint i = 0; i < gb->data.size(); i ++) {
+	for (uint i = 0; i < gb->data.size(); i++) {
 		line = gb->data[i];
 		cerr << "  handling line <" << line << ">\n";
 		tok = first_token(line, c1, c2);
@@ -128,7 +127,7 @@ void GeasFile::get_obj_keys(String obj, Set<String> &rv) const {
 			tok = next_token(line, c1, c2);
 			if (is_param(tok)) {
 				vstring params = split_param(param_contents(tok));
-				for (uint j = 0; j < params.size(); j ++) {
+				for (uint j = 0; j < params.size(); j++) {
 					cerr << "   handling parameter <" << params[j] << ">\n";
 					int k = params[j].find('=');
 					// SENSITIVE?
@@ -173,7 +172,7 @@ void GeasFile::get_type_keys(String typen, Set<String> &rv) const {
 	}
 	String line, tok;
 	uint c1, c2;
-	for (uint i = 0; i < gb->data.size(); i ++) {
+	for (uint i = 0; i < gb->data.size(); i++) {
 		line = gb->data[i];
 		//cerr << "    g_t_k: Handling line '" << line << "'\n";
 		tok = first_token(line, c1, c2);
@@ -239,7 +238,7 @@ bool GeasFile::get_obj_property(String objname, String propname, String &string_
 	uint c1, c2;
 	assert(geasBlock != NULL);
 	//assert (geasBlock->data != NULL);
-	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+	for (uint i = 0; i < geasBlock->data.size(); i++) {
 		String line = geasBlock->data[i];
 		//cerr << "  g_o_p: Handling line <" << line << ">\n";
 		String tok = first_token(line, c1, c2);
@@ -260,7 +259,7 @@ bool GeasFile::get_obj_property(String objname, String propname, String &string_
 				continue;
 			}
 			Common::Array<String> props = split_param(param_contents(tok));
-			for (uint j = 0; j < props.size(); j ++) {
+			for (uint j = 0; j < props.size(); j++) {
 				//cerr << "    g_o_p: Comparing against <" << props[j] << ">\n";
 				int index;
 				if (props[j] == propname) {
@@ -292,7 +291,7 @@ void GeasFile::get_type_property(String typenamex, String propname, bool &bool_r
 		debug_print("Object of nonexistent type " + typenamex);
 		return;
 	}
-	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+	for (uint i = 0; i < geasBlock->data.size(); i++) {
 		String line = geasBlock->data[i];
 		//cerr << "    Comparing vs. line <" << line << ">\n";
 		uint c1, c2;
@@ -350,8 +349,6 @@ void GeasFile::get_type_property(String typenamex, String propname, bool &bool_r
 	}
 }
 
-
-
 bool GeasFile::obj_of_type(String objname, String typenamex) const {
 	if (!has(obj_types, objname)) {
 		debug_print("Checking nonexistent obj <" + objname + "> for type <" +
@@ -364,7 +361,7 @@ bool GeasFile::obj_of_type(String objname, String typenamex) const {
 
 	uint c1, c2;
 	assert(geasBlock != NULL);
-	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+	for (uint i = 0; i < geasBlock->data.size(); i++) {
 		String line = geasBlock->data[i];
 		String tok = first_token(line, c1, c2);
 		// SENSITIVE?
@@ -381,7 +378,6 @@ bool GeasFile::obj_of_type(String objname, String typenamex) const {
 	return false;
 }
 
-
 bool GeasFile::type_of_type(String subtype, String supertype) const {
 	if (ci_equal(subtype, supertype))
 		return true;
@@ -391,7 +387,7 @@ bool GeasFile::type_of_type(String subtype, String supertype) const {
 		debug_print("t_o_t: Nonexistent type " + subtype);
 		return false;
 	}
-	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+	for (uint i = 0; i < geasBlock->data.size(); i++) {
 		String line = geasBlock->data[i];
 		//cerr << "    Comparing vs. line <" << line << ">\n";
 		uint c1, c2;
@@ -405,8 +401,6 @@ bool GeasFile::type_of_type(String subtype, String supertype) const {
 	}
 	return false;
 }
-
-
 
 bool GeasFile::get_obj_action(String objname, String propname, String &string_rv) const {
 	cerr << "g_o_a: Getting action <" << propname << "> of object <" << objname << ">\n";
@@ -432,7 +426,7 @@ bool GeasFile::get_obj_action(String objname, String propname, String &string_rv
 	const GeasBlock *geasBlock = find_by_name(objtype, objname);
 	String not_prop = "not " + propname;
 	uint c1, c2;
-	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+	for (uint i = 0; i < geasBlock->data.size(); i++) {
 		String line = geasBlock->data[i];
 		//cerr << "  g_o_a: Handling line <" << line << ">\n";
 		String tok = first_token(line, c1, c2);
@@ -476,7 +470,7 @@ bool GeasFile::get_obj_action(String objname, String propname, String &string_rv
 		}
 	}
 
-	cerr << "g_o_a: Ultimately returning value " << (bool_rv ? "true" : "false")  << ", with String <" << string_rv << ">\n\n";
+	cerr << "g_o_a: Ultimately returning value " << (bool_rv ? "true" : "false") << ", with String <" << string_rv << ">\n\n";
 
 	return bool_rv;
 }
@@ -488,7 +482,7 @@ void GeasFile::get_type_action(String typenamex, String actname, bool &bool_rv, 
 		debug_print("Object of nonexistent type " + typenamex);
 		return;
 	}
-	for (uint i = 0; i < geasBlock->data.size(); i ++) {
+	for (uint i = 0; i < geasBlock->data.size(); i++) {
 		String line = geasBlock->data[i];
 		//cerr << "    g_t_a: Comparing vs. line <" << line << ">\n";
 		uint c1, c2;
@@ -568,13 +562,13 @@ String GeasFile::static_svar_lookup(String varname) const {
 
 String GeasFile::static_ivar_lookup(String varname) const {
 	//varname = lcase (varname);
-	for (uint i = 0; i < size("variable"); i ++)
+	for (uint i = 0; i < size("variable"); i++)
 		//if (blocks[i].lname == varname)
 		if (ci_equal(blocks[i].name, varname)) {
 			String rv;
 			String tok;
 			uint c1, c2;
-			for (uint j = 0; j < blocks[i].data.size(); j ++) {
+			for (uint j = 0; j < blocks[i].data.size(); j++) {
 				String line = blocks[i].data[j];
 				tok = first_token(line, c1, c2);
 				// SENSITIVE?
@@ -604,15 +598,15 @@ String GeasFile::static_ivar_lookup(String varname) const {
 String GeasFile::static_eval(String input) const {
 	//cerr << "static_eval (" << input << ")" << endl;
 	String rv = "";
-	for (uint i = 0; i < input.length(); i ++) {
+	for (uint i = 0; i < input.length(); i++) {
 		if (input[i] == '#') {
 			uint j;
-			for (j = i + 1; j < input.length() && input[j] != '#'; j ++)
+			for (j = i + 1; j < input.length() && input[j] != '#'; j++)
 				;
 			if (j == input.length())
 				error("Error processing '%s', odd hashes", input.c_str());
 			uint k;
-			for (k = i + 1; k < j && input[k] != ':'; k ++)
+			for (k = i + 1; k < j && input[k] != ':'; k++)
 				;
 			if (k == ':') {
 				String objname;
@@ -640,7 +634,7 @@ String GeasFile::static_eval(String input) const {
 			i = j;
 		} else if (input[i] == '%') {
 			uint j;
-			for (j = i; j < input.length() && input[j] != '%'; j ++)
+			for (j = i; j < input.length() && input[j] != '%'; j++)
 				;
 			if (j == input.length())
 				error("Error processing '%s', unmatched %%", input.c_str());

@@ -37,9 +37,11 @@ class CChevPanel : public CGameObject {
 	bool ClearChevPanelBits(CClearChevPanelBits *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool SetChevPanelButtonsMsg(CSetChevPanelButtonsMsg *msg);
+
 public:
 	Point _startPos;
 	int _chevCode;
+
 public:
 	CLASSDEF;
 	CChevPanel() : _chevCode(0) {}

@@ -22,10 +22,10 @@
 
 //Mix_HookMusicFinished
 
+#include "ultima/nuvie/sound/song_adplug.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/adplug/emu_opl.h"
 #include "ultima/nuvie/sound/adplug/u6m.h"
-#include "ultima/nuvie/sound/song_adplug.h"
 #include "ultima/nuvie/sound/sound_manager.h"
 
 namespace Ultima {
@@ -39,7 +39,7 @@ SongAdPlug::SongAdPlug(Audio::Mixer *m, CEmuopl *o) {
 }
 
 SongAdPlug::~SongAdPlug() {
-//delete player;
+	//delete player;
 }
 
 bool SongAdPlug::Init(const char *filename, uint16 song_num) {

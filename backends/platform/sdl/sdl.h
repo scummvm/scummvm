@@ -25,10 +25,10 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
-#include "backends/modular-backend.h"
-#include "backends/mixer/sdl/sdl-mixer.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
+#include "backends/mixer/sdl/sdl-mixer.h"
+#include "backends/modular-backend.h"
 #include "backends/platform/sdl/sdl-window.h"
 
 #include "common/array.h"

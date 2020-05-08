@@ -32,10 +32,12 @@ class CAutoAnimate : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool InitializeAnimMsg(CInitializeAnimMsg *msg);
+
 private:
 	bool _enabled;
 	bool _redo;
 	bool _repeat;
+
 public:
 	CLASSDEF;
 	CAutoAnimate() : CBackground(), _enabled(true), _redo(true), _repeat(false) {}

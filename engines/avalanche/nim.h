@@ -40,7 +40,7 @@ public:
 private:
 	AvalancheEngine *_vm;
 
-	static const char * const kNames[2];
+	static const char *const kNames[2];
 
 	byte _old[3];
 	byte _stones[3];
@@ -64,9 +64,9 @@ private:
 	void startMove();
 	void showChanges();
 	void blip();
-	void findNextUp(); // Inner function for checkInput().
+	void findNextUp();   // Inner function for checkInput().
 	void findNextDown(); // Same as above.
-	bool checkInput(); // It returns TRUE if the player confirmed his selection of stones either by pressing RETURN or by clicking on a stone.
+	bool checkInput();   // It returns TRUE if the player confirmed his selection of stones either by pressing RETURN or by clicking on a stone.
 	void takeSome();
 	void endOfGame();
 	bool find(byte x); // This gives TRUE if there's a pile with x stones in.

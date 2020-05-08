@@ -99,6 +99,6 @@ public:
 	virtual Common::String debugString() const = 0;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

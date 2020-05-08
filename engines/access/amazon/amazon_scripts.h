@@ -23,8 +23,8 @@
 #ifndef ACCESS_AMAZON_SCRIPTS_H
 #define ACCESS_AMAZON_SCRIPTS_H
 
-#include "common/scummsys.h"
 #include "access/scripts.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -35,6 +35,7 @@ class AmazonEngine;
 class AmazonScripts : public Scripts {
 private:
 	AmazonEngine *_game;
+
 protected:
 	void executeSpecial(int commandIndex, int param1, int param2) override;
 	void executeCommand(int commandIndex) override;
@@ -56,6 +57,7 @@ protected:
 	void cmdCenterPanel();
 	void cmdMainPanel();
 	void CMDRETFLASH();
+
 public:
 	AmazonScripts(AccessEngine *vm);
 };

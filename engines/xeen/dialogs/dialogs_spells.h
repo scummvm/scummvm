@@ -30,7 +30,9 @@
 namespace Xeen {
 
 enum SpellDialogMode {
-	SPELLS_DIALOG_BUY = 0, SPELLS_DIALOG_SELECT = 1, SPELLS_DIALOG_INFO = 0x80
+	SPELLS_DIALOG_BUY = 0,
+	SPELLS_DIALOG_SELECT = 1,
+	SPELLS_DIALOG_INFO = 0x80
 };
 
 struct SpellEntry {
@@ -39,8 +41,7 @@ struct SpellEntry {
 	int _spellId;
 	int _color;
 
-	SpellEntry(const Common::String &name, int spellIndex, int spellId) :
-		_name(name), _spellIndex(spellIndex), _spellId(spellId), _color(9) {}
+	SpellEntry(const Common::String &name, int spellIndex, int spellId) : _name(name), _spellIndex(spellIndex), _spellId(spellId), _color(9) {}
 };
 
 /**
@@ -72,18 +73,20 @@ private:
 	 * Sets the spell text
 	 */
 	const char *setSpellText(Character *c, int isCasting);
+
 public:
 	/**
 	 * Show the spells list dialog
 	 */
 	static Character *show(XeenEngine *vm, ButtonContainer *priorDialog,
-		Character *c, SpellDialogMode mode);
+	                       Character *c, SpellDialogMode mode);
 };
 
 class CastSpell : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 	int _oldMode;
+
 private:
 	CastSpell(XeenEngine *vm);
 	~CastSpell() override;
@@ -91,6 +94,7 @@ private:
 	int execute(Character *&c);
 
 	void loadButtons();
+
 public:
 	static int show(XeenEngine *vm);
 };
@@ -100,6 +104,7 @@ private:
 	SpellOnWho(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute(int spellId);
+
 public:
 	static Character *show(XeenEngine *vm, int spellId);
 };
@@ -113,6 +118,7 @@ private:
 	int execute(int spellId);
 
 	void loadButtons();
+
 public:
 	static int show(XeenEngine *vm, int spellId);
 };
@@ -122,6 +128,7 @@ private:
 	NotWhileEngaged(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute(int spellId);
+
 public:
 	static void show(XeenEngine *vm, int spellId);
 };
@@ -135,6 +142,7 @@ private:
 	bool execute();
 
 	void loadButtons();
+
 public:
 	static bool show(XeenEngine *vm);
 };
@@ -146,6 +154,7 @@ private:
 	Teleport(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute();
+
 public:
 	static int show(XeenEngine *vm);
 };
@@ -155,6 +164,7 @@ private:
 	TownPortal(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute();
+
 public:
 	static int show(XeenEngine *vm);
 };
@@ -164,6 +174,7 @@ private:
 	IdentifyMonster(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
+
 public:
 	static void show(XeenEngine *vm);
 };
@@ -173,6 +184,7 @@ private:
 	DetectMonsters(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
+
 public:
 	static void show(XeenEngine *vm);
 };

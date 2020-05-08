@@ -20,25 +20,25 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/message_box_gump.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
-#include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/gumps/gump_notify_process.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/misc/util.h"
-#include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
-#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/widgets/button_widget.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
+#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/util.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -46,16 +46,14 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(MessageBoxGump, ModalGump)
 
 MessageBoxGump::MessageBoxGump()
-	: ModalGump(), _titleColour(0) {
-
+    : ModalGump(), _titleColour(0) {
 }
 
 MessageBoxGump::MessageBoxGump(const Std::string &title, const Std::string &message_, uint32 titleColour,
-                               Std::vector<Std::string> *buttons) :
-		ModalGump(0, 0, 100, 100), _title(title), _message(message_), _titleColour(titleColour) {
+                               Std::vector<Std::string> *buttons) : ModalGump(0, 0, 100, 100), _title(title), _message(message_), _titleColour(titleColour) {
 	if (buttons)
 		buttons->swap(_buttons);
-	
+
 	if (_buttons.empty())
 		_buttons.push_back(Std::string("Ok"));
 }
@@ -90,8 +88,10 @@ void MessageBoxGump::InitGump(Gump *newparent, bool take_focus) {
 	font->getTextSize(_message, width, height, rem);
 
 	_dims.w = MBG_PADDING + width + MBG_PADDING;
-	if (_dims.w < MBG_PADDING + title_w + MBG_PADDING) _dims.w = MBG_PADDING + title_w + MBG_PADDING;
-	if (_dims.w < buttons_w) _dims.w = buttons_w;
+	if (_dims.w < MBG_PADDING + title_w + MBG_PADDING)
+		_dims.w = MBG_PADDING + title_w + MBG_PADDING;
+	if (_dims.w < buttons_w)
+		_dims.w = buttons_w;
 
 	_dims.h = 23 + MBG_PADDING + height + MBG_PADDING + 28;
 
@@ -131,7 +131,8 @@ void MessageBoxGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*sc
 	surf->FillBlended(0x80000000, 0, 0, _dims.w, _dims.h);
 
 	uint32 line_colour = 0xFFFFFFFF;
-	if (!IsFocus()) line_colour = 0xFF7F7F7F;
+	if (!IsFocus())
+		line_colour = 0xFF7F7F7F;
 
 	// outer border
 	surf->Fill32(line_colour, 0, 0, _dims.w, 1);
@@ -146,8 +147,10 @@ void MessageBoxGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*sc
 	surf->Fill32(line_colour, 0, 23, _dims.w, 1);
 
 	// Highlight behind _message..
-	if (IsFocus()) surf->Fill32(_titleColour, 1, 1, _dims.w - 2, 22);
-	else surf->Fill32(0xFF000000, 1, 1, _dims.w - 2, 22);
+	if (IsFocus())
+		surf->Fill32(_titleColour, 1, 1, _dims.w - 2, 22);
+	else
+		surf->Fill32(0xFF000000, 1, 1, _dims.w - 2, 22);
 }
 
 void MessageBoxGump::ChildNotify(Gump *child, uint32 msg) {

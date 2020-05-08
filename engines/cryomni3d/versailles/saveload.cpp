@@ -54,7 +54,7 @@ bool CryOmni3DEngine_Versailles::canVisit() const {
 }
 
 void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &saveNames,
-        int &nextSaveNum) {
+                                              int &nextSaveNum) {
 	nextSaveNum = 1;
 	bool supportsAutoName = (_messages.size() >= 148);
 
@@ -62,9 +62,9 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 	// Terminate saveName here forever (we don't overrun kSaveDescriptionLen)
 	saveName[kSaveDescriptionLen] = '\0';
 	Common::String pattern = Common::String::format("%s%s.????", _targetName.c_str(),
-	                         visit ? "_visit" : "");
+	                                                visit ? "_visit" : "");
 	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end()); // Sort (hopefully ensuring we are sorted numerically..)
 
 	saveNames.clear();
 	saveNames.reserve(100);
@@ -90,7 +90,7 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 	}
 
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end();
-	        ++file) {
+	     ++file) {
 		// Obtain the last 4 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 4);
 
@@ -145,7 +145,7 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 }
 
 void CryOmni3DEngine_Versailles::saveGame(bool visit, uint saveNum,
-        const Common::String &saveName) {
+                                          const Common::String &saveName) {
 	if (visit && saveNum == 1) {
 		error("Can't erase bootstrap visit");
 	}
@@ -214,7 +214,7 @@ void CryOmni3DEngine_Versailles::saveGame(bool visit, uint saveNum,
 	// Game variables
 	assert(_gameVariables.size() < 100);
 	for (Common::Array<uint>::const_iterator it = _gameVariables.begin();
-	        it != _gameVariables.end(); it++) {
+	     it != _gameVariables.end(); it++) {
 		out->writeUint32BE(*it);
 	}
 	for (uint i = _gameVariables.size(); i < 100; i++) {
@@ -253,9 +253,9 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 	in->read(saveNameC, sizeof(saveNameC));
 
 	// dummy values
-	(void) in->readUint32LE();
-	(void) in->readUint32BE();
-	(void) in->readUint32BE();
+	(void)in->readUint32LE();
+	(void)in->readUint32BE();
+	(void)in->readUint32BE();
 
 	// Dialog variables
 	assert(_dialogsMan.size() < 200);
@@ -264,7 +264,7 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 	}
 	for (uint i = _dialogsMan.size(); i < 200; i++) {
 		// Read the remaining bytes but don't use them
-		(void) in->readByte();
+		(void)in->readByte();
 	}
 
 	// Inventory
@@ -302,12 +302,12 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 	// Game variables
 	assert(_gameVariables.size() < 100);
 	for (Common::Array<uint>::iterator it = _gameVariables.begin(); it != _gameVariables.end();
-	        it++) {
+	     it++) {
 		*it = in->readUint32BE();
 	}
 	for (uint i = _gameVariables.size(); i < 100; i++) {
 		// Read the remaining variables but don't use them
-		(void) in->readUint32BE();
+		(void)in->readUint32BE();
 	}
 
 	delete in;
@@ -327,7 +327,7 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 	// _placeStates has just been resized in initNewLevel
 	uint i = 0;
 	for (Common::Array<PlaceState>::iterator placeIt = _placeStates.begin();
-	        placeIt != _placeStates.end() && i < ARRAYSIZE(placesStates); placeIt++, i++) {
+	     placeIt != _placeStates.end() && i < ARRAYSIZE(placesStates); placeIt++, i++) {
 		placeIt->state = placesStates[i];
 	}
 

@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/ultima4/gfx/image.h"
-#include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/controllers/intro_controller.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
@@ -35,7 +35,6 @@ namespace Ultima4 {
 bool ImageInfo::hasBlackBackground() {
 	return this->_filetype == "image/x-u4raw";
 }
-
 
 class ImageSet {
 public:
@@ -140,7 +139,7 @@ ImageSet *ImageMgr::loadImageSetFromConf(const ConfigElement &conf) {
 
 ImageInfo *ImageMgr::loadImageInfoFromConf(const ConfigElement &conf) {
 	ImageInfo *info;
-	static const char *fixupEnumStrings[] = { "none", "intro", "abyss", "abacus", "dungns", "blackTransparencyHack", "fmtownsscreen", nullptr };
+	static const char *fixupEnumStrings[] = {"none", "intro", "abyss", "abacus", "dungns", "blackTransparencyHack", "fmtownsscreen", nullptr};
 
 	info = new ImageInfo();
 	info->_name = conf.getString("name");
@@ -260,37 +259,37 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 		/* ---------------------------------------------
 		 * update the position of "Quest of the Avatar"
 		 * --------------------------------------------- */
-		im->drawSubRectOn(im, 69 * prescale, 80 * prescale,     // quEst
+		im->drawSubRectOn(im, 69 * prescale, 80 * prescale, // quEst
 		                  70 * prescale,
 		                  80 * prescale,
 		                  11 * prescale,
 		                  13 * prescale);
-		im->drawSubRectOn(im, 82 * prescale, 80 * prescale,     // queST
+		im->drawSubRectOn(im, 82 * prescale, 80 * prescale, // queST
 		                  84 * prescale,
 		                  80 * prescale,
 		                  27 * prescale,
 		                  13 * prescale);
-		im->drawSubRectOn(im, 131 * prescale, 80 * prescale,    // oF
+		im->drawSubRectOn(im, 131 * prescale, 80 * prescale, // oF
 		                  132 * prescale,
 		                  80 * prescale,
 		                  11 * prescale,
 		                  13 * prescale);
-		im->drawSubRectOn(im, 150 * prescale, 80 * prescale,    // THE
+		im->drawSubRectOn(im, 150 * prescale, 80 * prescale, // THE
 		                  149 * prescale,
 		                  80 * prescale,
 		                  40 * prescale,
 		                  13 * prescale);
-		im->drawSubRectOn(im, 166 * prescale, 80 * prescale,    // tHe
+		im->drawSubRectOn(im, 166 * prescale, 80 * prescale, // tHe
 		                  165 * prescale,
 		                  80 * prescale,
 		                  11 * prescale,
 		                  13 * prescale);
-		im->drawSubRectOn(im, 200 * prescale, 80 * prescale,    // AVATAR
+		im->drawSubRectOn(im, 200 * prescale, 80 * prescale, // AVATAR
 		                  201 * prescale,
 		                  80 * prescale,
 		                  81 * prescale,
 		                  13 * prescale);
-		im->drawSubRectOn(im, 227 * prescale, 80 * prescale,    // avAtar
+		im->drawSubRectOn(im, 227 * prescale, 80 * prescale, // avAtar
 		                  228 * prescale,
 		                  80 * prescale,
 		                  11 * prescale,
@@ -320,7 +319,7 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 	 * ------------------------- */
 	if (settings._videoType == "VGA") {
 		ImageInfo *borderInfo = imageMgr->get(BKGD_BORDERS, true);
-//        ImageInfo *charsetInfo = imageMgr->get(BKGD_CHARSET);
+		//        ImageInfo *charsetInfo = imageMgr->get(BKGD_CHARSET);
 		if (!borderInfo)
 			error("ERROR 1001: Unable to load the \"%s\" data file", BKGD_BORDERS);
 
@@ -356,10 +355,9 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 	/* -----------------------------
 	 * draw "Lord British" signature
 	 * ----------------------------- */
-	color = im->setColor(0, 255, 255);  // cyan for EGA
+	color = im->setColor(0, 255, 255); // cyan for EGA
 	int blue[16] = {255, 250, 226, 226, 210, 194, 161, 161,
-	                129,  97,  97,  64,  64,  32,  32,   0
-	               };
+	                129, 97, 97, 64, 64, 32, 32, 0};
 	i = 0;
 	while (sigData[i] != 0) {
 		/* (x/y) are unscaled coordinates, i.e. in 320x200 */
@@ -382,11 +380,11 @@ void ImageMgr::fixupIntro(Image *im, int prescale) {
 	 * -------------------------------------------------------------- */
 	/* we're still working with an unscaled surface */
 	if (settings._videoType != "EGA") {
-		color = im->setColor(0, 0, 161);    // dark blue
+		color = im->setColor(0, 0, 161); // dark blue
 	} else {
-		color = im->setColor(128, 0, 0);    // dark red for EGA
+		color = im->setColor(128, 0, 0); // dark red for EGA
 	}
-	for (i = 84; i < 236; i++)  // 152 px wide
+	for (i = 84; i < 236; i++) // 152 px wide
 		im->fillRect(i * prescale, 31 * prescale,
 		             prescale, prescale,
 		             color.r, color.g, color.b);
@@ -428,15 +426,15 @@ void ImageMgr::fixupAbacus(Image *im, int prescale) {
 	 * when scaling
 	 */
 
-	im->fillRect(7 * prescale, 186 * prescale, prescale, 14 * prescale, 0, 255, 80); /* green */
+	im->fillRect(7 * prescale, 186 * prescale, prescale, 14 * prescale, 0, 255, 80);  /* green */
 	im->fillRect(16 * prescale, 186 * prescale, prescale, 14 * prescale, 0, 255, 80); /* green */
-	im->fillRect(8 * prescale, 186 * prescale, prescale * 8, prescale, 0, 255, 80); /* green */
-	im->fillRect(8 * prescale, 199 * prescale, prescale * 8, prescale, 0, 255, 80); /* green */
+	im->fillRect(8 * prescale, 186 * prescale, prescale * 8, prescale, 0, 255, 80);   /* green */
+	im->fillRect(8 * prescale, 199 * prescale, prescale * 8, prescale, 0, 255, 80);   /* green */
 
 	im->fillRect(23 * prescale, 186 * prescale, prescale, 14 * prescale, 0, 255, 80); /* green */
 	im->fillRect(32 * prescale, 186 * prescale, prescale, 14 * prescale, 0, 255, 80); /* green */
-	im->fillRect(24 * prescale, 186 * prescale, prescale * 8, prescale, 0, 255, 80); /* green */
-	im->fillRect(24 * prescale, 199 * prescale, prescale * 8, prescale, 0, 255, 80); /* green */
+	im->fillRect(24 * prescale, 186 * prescale, prescale * 8, prescale, 0, 255, 80);  /* green */
+	im->fillRect(24 * prescale, 199 * prescale, prescale * 8, prescale, 0, 255, 80);  /* green */
 }
 
 void ImageMgr::fixupDungNS(Image *im, int prescale) {
@@ -512,7 +510,6 @@ bool ImageMgr::imageExists(ImageInfo *info) {
 	}
 	return false;
 }
-
 
 Common::File *ImageMgr::getImageFile(ImageInfo *info) {
 	Common::String filename = info->_filename;
@@ -642,7 +639,7 @@ SubImage *ImageMgr::getSubImage(const Common::String &name) {
 
 	while (set != nullptr) {
 		for (Std::map<Common::String, ImageInfo *>::iterator i = set->_info.begin(); i != set->_info.end(); i++) {
-			ImageInfo *info = (ImageInfo *) i->_value;
+			ImageInfo *info = (ImageInfo *)i->_value;
 			Std::map<Common::String, SubImage *>::iterator j = info->_subImages.find(name);
 			if (j != info->_subImages.end())
 				return j->_value;

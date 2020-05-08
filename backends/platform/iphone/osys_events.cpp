@@ -23,8 +23,8 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "gui/message.h"
 #include "common/translation.h"
+#include "gui/message.h"
 
 #include "backends/platform/iphone/osys_main.h"
 
@@ -316,7 +316,6 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 			dialog.runModal();
 			return false;
-
 		}
 
 		if (absY < kMaxDeviation && -vecX >= kNeededLength) {
@@ -328,7 +327,7 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 	return false;
 }
 
-void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
+void OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
 	//printf("Orientation: %i\n", orientation);
 
 	ScreenOrientation newOrientation;
@@ -346,7 +345,6 @@ void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
 		return;
 	}
 
-
 	if (_screenOrientation != newOrientation) {
 		_screenOrientation = newOrientation;
 		updateOutputSurface();
@@ -358,7 +356,7 @@ void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
 	}
 }
 
-void  OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
+void OSystem_IPHONE::handleEvent_keyPressed(Common::Event &event, int keyPressed) {
 	int ascii = keyPressed;
 	//printf("key: %i\n", keyPressed);
 

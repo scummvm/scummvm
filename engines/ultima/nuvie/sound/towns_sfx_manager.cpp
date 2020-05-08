@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/sound/towns_sfx_manager.h"
 #include "audio/mixer.h"
-#include "ultima/nuvie/files/u6_lzw.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
-#include "ultima/nuvie/sound/towns_sfx_manager.h"
+#include "ultima/nuvie/files/u6_lzw.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -45,20 +45,19 @@ typedef struct { // sfx lookup
 //18 cast magic sound
 //19 resurrection tune
 static const TownsSfxLookup sfx_lookup_tbl[] = {
-	{NUVIE_SFX_BLOCKED, 0},
-	{NUVIE_SFX_HIT, 4},
-	{NUVIE_SFX_BROKEN_GLASS, 12},
-	{NUVIE_SFX_BELL, 13},
-	{NUVIE_SFX_FOUNTAIN, 46},
-	{NUVIE_SFX_PROTECTION_FIELD, 47},
-	//FIXME {NUVIE_SFX_CLOCK, 1},
-	{NUVIE_SFX_FIRE, 6},
-	{NUVIE_SFX_RUBBER_DUCK, 3},
-	{NUVIE_SFX_WATER_WHEEL, 48},
-	{NUVIE_SFX_MISSLE, 9},
-	{NUVIE_SFX_EXPLOSION, 16},
-	{NUVIE_SFX_ATTACK_SWING, 2}
-};
+    {NUVIE_SFX_BLOCKED, 0},
+    {NUVIE_SFX_HIT, 4},
+    {NUVIE_SFX_BROKEN_GLASS, 12},
+    {NUVIE_SFX_BELL, 13},
+    {NUVIE_SFX_FOUNTAIN, 46},
+    {NUVIE_SFX_PROTECTION_FIELD, 47},
+    //FIXME {NUVIE_SFX_CLOCK, 1},
+    {NUVIE_SFX_FIRE, 6},
+    {NUVIE_SFX_RUBBER_DUCK, 3},
+    {NUVIE_SFX_WATER_WHEEL, 48},
+    {NUVIE_SFX_MISSLE, 9},
+    {NUVIE_SFX_EXPLOSION, 16},
+    {NUVIE_SFX_ATTACK_SWING, 2}};
 
 TownsSfxManager::TownsSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
 	config->pathFromValue("config/ultima6/townsdir", "sounds2.dat", sounds2dat_filepath);
@@ -108,7 +107,6 @@ void TownsSfxManager::loadSound1Dat() {
 bool TownsSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
 	return playSfxLooping(sfx_id, NULL, volume);
 }
-
 
 bool TownsSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
 	uint16 i = 0;

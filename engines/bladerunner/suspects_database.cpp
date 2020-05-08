@@ -167,11 +167,7 @@ bool SuspectDatabaseEntry::hasIdentityClue(int clueId) const {
 }
 
 bool SuspectDatabaseEntry::hasClue(int clueId) const {
-	return hasMOClue(clueId)
-		|| hasWhereaboutsClue(clueId)
-		|| hasReplicantClue(clueId)
-		|| hasNonReplicantClue(clueId)
-		|| hasOtherClue(clueId);
+	return hasMOClue(clueId) || hasWhereaboutsClue(clueId) || hasReplicantClue(clueId) || hasNonReplicantClue(clueId) || hasOtherClue(clueId);
 }
 
 int SuspectDatabaseEntry::getPhotoCount() const {
@@ -212,7 +208,7 @@ void SuspectDatabaseEntry::reset() {
 		_otherClues[i] = -1;
 	}
 	for (int i = 0; i < kPhotoClueCount; ++i) {
-		_photoClues[i].clueId  = -1;
+		_photoClues[i].clueId = -1;
 		_photoClues[i].shapeId = -1;
 		_photoClues[i].notUsed = -1;
 	}

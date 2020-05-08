@@ -219,7 +219,7 @@ void Glulxe::execute_loop() {
 				value = inst[0].value;
 				/* fall through to PerformJump label. */
 
-PerformJump: /* goto label for successful jumping... ironic, no? */
+			PerformJump: /* goto label for successful jumping... ironic, no? */
 				if (value == 0 || value == 1) {
 					/* Return from function. This is exactly what happens in
 					   return_op, but it's only a few lines of code, so I won't
@@ -514,7 +514,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 				   cases. */
 				if (vals1 > 0) {
 					vals1 = vals1 % vals0;
-					vals1 = (vals0) - vals1;
+					vals1 = (vals0)-vals1;
 				} else {
 					vals1 = (-vals1) % vals0;
 				}
@@ -699,7 +699,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 				if (value == 0) {
 					/* We've succeeded, and the stack now contains the callstub
 					   saved during saveundo. Ignore this opcode's operand. */
-					value = (uint) - 1;
+					value = (uint)-1;
 					pop_callstub(value);
 				} else {
 					/* We've failed, so we must store the failure in this opcode's
@@ -719,7 +719,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 				if (value == 0) {
 					/* We've succeeded, and the stack now contains the callstub
 					   saved during saveundo. Ignore this opcode's operand. */
-					value = (uint) - 1;
+					value = (uint)-1;
 					pop_callstub(value);
 				} else {
 					/* We've failed, so we must store the failure in this opcode's
@@ -755,8 +755,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 				for (lx = 0; lx < count; lx++, addr++) {
 					MemW1(addr, 0);
 				}
-			}
-			break;
+			} break;
 			case op_mcopy: {
 				uint lx;
 				uint count = inst[0].value;
@@ -775,8 +774,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 						MemW1(addrdest, value);
 					}
 				}
-			}
-			break;
+			} break;
 			case op_malloc:
 				value = heap_alloc(inst[0].value);
 				store_operand(inst[1].desttype, inst[1].value, value);
@@ -970,8 +968,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 				if ((inst[2].value & 0x7F800000) == 0x7F800000 && (inst[2].value & 0x007FFFFF) != 0) {
 					/* The delta is NaN, which can never match. */
 					val0 = 0;
-				} else if ((inst[0].value == 0x7F800000 || inst[0].value == 0xFF800000)
-				           && (inst[1].value == 0x7F800000 || inst[1].value == 0xFF800000)) {
+				} else if ((inst[0].value == 0x7F800000 || inst[0].value == 0xFF800000) && (inst[1].value == 0x7F800000 || inst[1].value == 0xFF800000)) {
 					/* Both are infinite. Opposite infinities are never equal,
 					   even if the difference is infinite, so this is easy. */
 					val0 = (inst[0].value == inst[1].value);
@@ -989,8 +986,7 @@ PerformJump: /* goto label for successful jumping... ironic, no? */
 				if ((inst[2].value & 0x7F800000) == 0x7F800000 && (inst[2].value & 0x007FFFFF) != 0) {
 					/* The delta is NaN, which can never match. */
 					val0 = 0;
-				} else if ((inst[0].value == 0x7F800000 || inst[0].value == 0xFF800000)
-				           && (inst[1].value == 0x7F800000 || inst[1].value == 0xFF800000)) {
+				} else if ((inst[0].value == 0x7F800000 || inst[0].value == 0xFF800000) && (inst[1].value == 0x7F800000 || inst[1].value == 0xFF800000)) {
 					/* Both are infinite. Opposite infinities are never equal,
 					   even if the difference is infinite, so this is easy. */
 					val0 = (inst[0].value == inst[1].value);

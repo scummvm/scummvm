@@ -33,18 +33,18 @@
 
 namespace Wintermute {
 
-#define BYTETORGBA(r,g,b,a) ((uint32)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+#define BYTETORGBA(r, g, b, a) ((uint32)((((a)&0xff) << 24) | (((r)&0xff) << 16) | (((g)&0xff) << 8) | ((b)&0xff)))
 
-#define RGBCOLGetB(rgb)  ((byte )(rgb))
-#define RGBCOLGetG(rgb)  ((byte )(((uint16)(rgb)) >> 8))
-#define RGBCOLGetR(rgb)  ((byte )((rgb)>>16))
-#define RGBCOLGetA(rgb)  ((byte )((rgb)>>24))
+#define RGBCOLGetB(rgb) ((byte)(rgb))
+#define RGBCOLGetG(rgb) ((byte)(((uint16)(rgb)) >> 8))
+#define RGBCOLGetR(rgb) ((byte)((rgb) >> 16))
+#define RGBCOLGetA(rgb) ((byte)((rgb) >> 24))
 
 #define DID_SUCCEED(hr) ((bool)(hr))
 #define DID_FAIL(hr) (!((bool)(hr)))
 
-#define STATUS_OK       (true)
-#define STATUS_FAILED   (false)
+#define STATUS_OK (true)
+#define STATUS_FAILED (false)
 
 #define MAX_PATH_LENGTH 512
 

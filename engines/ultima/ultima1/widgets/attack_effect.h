@@ -39,18 +39,20 @@ protected:
 	uint _remainingDistance;
 	uint _agility;
 	uint _damage;
+
 protected:
 	/**
 	 * Constructor
 	 */
 	AttackEffect(Shared::Game *game, Shared::Maps::MapBase *map, uint tileId) : Shared::Maps::MapWidget(game, map),
-		_tileId(tileId), _remainingDistance(0), _agility(0), _damage(0) {}
+	                                                                            _tileId(tileId), _remainingDistance(0), _agility(0), _damage(0) {}
+
 public:
 	/**
 	 * Constructor
 	 */
 	AttackEffect(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::MapWidget(game, map),
-		_tileId(0), _remainingDistance(0), _agility(0), _damage(0) {}
+	                                                               _tileId(0), _remainingDistance(0), _agility(0), _damage(0) {}
 
 	/**
 	 * Handles loading and saving the widget's data
@@ -75,8 +77,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	PhysicalAttackEffect(Shared::Game *game, Shared::Maps::MapBase *map) :
-		AttackEffect(game, map, 50) {}
+	PhysicalAttackEffect(Shared::Game *game, Shared::Maps::MapBase *map) : AttackEffect(game, map, 50) {}
 };
 
 /**
@@ -87,10 +88,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	SpellAttackEffect(Shared::Game *game, Shared::Maps::MapBase *map) :
-		AttackEffect(game, map, 51) {}
+	SpellAttackEffect(Shared::Game *game, Shared::Maps::MapBase *map) : AttackEffect(game, map, 51) {}
 };
-
 
 } // End of namespace Widgets
 } // End of namespace Ultima1

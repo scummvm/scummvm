@@ -28,31 +28,32 @@
 #ifndef CGE_EVENTS_H
 #define CGE_EVENTS_H
 
-#include "common/events.h"
 #include "cge/game.h"
 #include "cge/talk.h"
 #include "cge/vga13h.h"
+#include "common/events.h"
 
 namespace CGE {
 
 /*----------------- KEYBOARD interface -----------------*/
 
-#define kEventMax   256
+#define kEventMax 256
 
 enum EventMask {
-	kMouseRoll      = 1 << 0,
-	kMouseLeftDown  = 1 << 1,
-	kMouseLeftUp    = 1 << 2,
+	kMouseRoll = 1 << 0,
+	kMouseLeftDown = 1 << 1,
+	kMouseLeftUp = 1 << 2,
 	kMouseRightDown = 1 << 3,
-	kMouseRightUp   = 1 << 4,
-	kEventAttn      = 1 << 5,
-	kEventKeyb      = 1 << 7
+	kMouseRightUp = 1 << 4,
+	kEventAttn = 1 << 5,
+	kEventKeyb = 1 << 7
 };
 
 class Keyboard {
 private:
 	bool getKey(Common::Event &event);
 	CGEEngine *_vm;
+
 public:
 	Sprite *_client;
 	bool _keyAlt;
@@ -88,6 +89,7 @@ public:
 	void on();
 	void off();
 	void newMouse(Common::Event &event);
+
 private:
 	CGEEngine *_vm;
 };
@@ -103,6 +105,7 @@ private:
 	uint16 _eventQueueTail;
 
 	void handleEvents();
+
 public:
 	EventManager(CGEEngine *vm);
 	void poll();

@@ -33,9 +33,9 @@ struct FrameID {
 	uint32 _shapeNum;
 	uint32 _frameNum;
 
-	FrameID() : _flexId(0), _shapeNum(0), _frameNum(0) { }
+	FrameID() : _flexId(0), _shapeNum(0), _frameNum(0) {}
 	FrameID(uint16 flex, uint32 shape, uint32 frame)
-		: _flexId(flex), _shapeNum(shape), _frameNum(frame) {
+	    : _flexId(flex), _shapeNum(shape), _frameNum(frame) {
 	}
 
 	void save(Common::WriteStream *ws);

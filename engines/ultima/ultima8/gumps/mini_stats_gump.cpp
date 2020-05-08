@@ -20,17 +20,17 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/mini_stats_gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/gumps/paperdoll_gump.h"
+#include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -44,16 +44,14 @@ static const int manax = 13;
 static const int bary = 19;
 static const int barheight = 14;
 
-static const uint32 hpcolour[] = { 0x980404, 0xBC0C0C, 0xD43030 };
-static const uint32 manacolour[] = { 0x4050FC, 0x1C28FC, 0x0C0CCC };
-
+static const uint32 hpcolour[] = {0x980404, 0xBC0C0C, 0xD43030};
+static const uint32 manacolour[] = {0x4050FC, 0x1C28FC, 0x0C0CCC};
 
 MiniStatsGump::MiniStatsGump() : Gump() {
-
 }
 
 MiniStatsGump::MiniStatsGump(int x, int y, uint32 flags, int32 layer)
-	: Gump(x, y, 5, 5, 0, flags, layer) {
+    : Gump(x, y, 5, 5, 0, flags, layer) {
 }
 
 MiniStatsGump::~MiniStatsGump() {
@@ -80,7 +78,6 @@ void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	int manaheight, hpheight;
 
-
 	if (maxmana == 0)
 		manaheight = 0;
 	else
@@ -99,9 +96,11 @@ void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 uint16 MiniStatsGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
-	if (objId_ && objId_ != 65535) return objId_;
+	if (objId_ && objId_ != 65535)
+		return objId_;
 
-	if (PointOnGump(mx, my)) return getObjId();
+	if (PointOnGump(mx, my))
+		return getObjId();
 
 	return 0;
 }
@@ -128,7 +127,8 @@ void MiniStatsGump::saveData(Common::WriteStream *ws) {
 }
 
 bool MiniStatsGump::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Gump::loadData(rs, version)) return false;
+	if (!Gump::loadData(rs, version))
+		return false;
 
 	return true;
 }

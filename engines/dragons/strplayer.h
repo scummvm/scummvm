@@ -33,11 +33,13 @@ private:
 	DragonsEngine *_vm;
 	Screen *_screen;
 	Video::VideoDecoder *_decoder;
+
 public:
 	StrPlayer(DragonsEngine *vm, Screen *screen);
 	~StrPlayer();
 
 	void playVideo(const Common::String &filename);
+
 private:
 };
 

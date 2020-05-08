@@ -58,7 +58,6 @@ public:
 	bool OnKeyDown(int key, int mod) override;
 
 protected:
-
 	void extractLine(Std::string &text_, char &modifier, Std::string &line);
 
 	Std::string _text;

@@ -209,7 +209,7 @@ public:
 };
 
 class MovGraphLink : public CObject {
- public:
+public:
 	MovGraphNode *_graphSrc;
 	MovGraphNode *_graphDst;
 	DWordArray _dwordArray1;
@@ -222,7 +222,7 @@ class MovGraphLink : public CObject {
 	MovGraphReact *_movGraphReact;
 	Common::String _name;
 
-  public:
+public:
 	MovGraphLink();
 	~MovGraphLink() override;
 
@@ -269,9 +269,10 @@ struct MovGraphItem {
 };
 
 class MovGraph : public MotionController {
-friend class MctlCompound;
-friend class MctlGraph;
-friend class MotionController;
+	friend class MctlCompound;
+	friend class MctlGraph;
+	friend class MotionController;
+
 private:
 	typedef ObList<MovGraphNode> NodeList;
 	typedef ObList<MovGraphLink> LinkList;
@@ -364,7 +365,7 @@ struct MctlMQ {
 struct MctlAni { // 744
 	int _objectId;
 	StaticANIObject *_obj;
-	MctlAniSub _subItems[4];  // 184
+	MctlAniSub _subItems[4]; // 184
 };
 
 class MctlGraph : public MovGraph {

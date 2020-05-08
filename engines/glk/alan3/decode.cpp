@@ -22,23 +22,21 @@
 
 #include "glk/alan3/decode.h"
 #include "glk/alan3/acode.h"
-#include "glk/alan3/syserr.h"
 #include "glk/alan3/exe.h"
 #include "glk/alan3/memory.h"
+#include "glk/alan3/syserr.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA */
-Aword *freq;            /* Cumulative character frequencies */
-
+Aword *freq; /* Cumulative character frequencies */
 
 /* PRIVATE DATA */
 /* Bit output */
-static int decodeBuffer;    /* Bits to be input */
-static int bitsToGo;        /* Bits still in buffer */
-static int garbageBits;     /* Bits past EOD */
-
+static int decodeBuffer; /* Bits to be input */
+static int bitsToGo;     /* Bits still in buffer */
+static int garbageBits;  /* Bits past EOD */
 
 static int inputBit(void) {
 	int bit;
@@ -52,20 +50,18 @@ static int inputBit(void) {
 			if (garbageBits > VALUEBITS - 2)
 				syserr("Error in encoded data file.");
 		} else
-			bitsToGo = 8;     /* Another Char, 8 new bits */
+			bitsToGo = 8; /* Another Char, 8 new bits */
 	}
-	bit = decodeBuffer & 1;   /* Get next bit */
+	bit = decodeBuffer & 1;           /* Get next bit */
 	decodeBuffer = decodeBuffer >> 1; /* and remove it */
 	bitsToGo--;
 	return bit;
 }
 
-
 /* Current state of decoding */
 
-static CodeValue value;         /* Currently seen code value */
-static CodeValue low, high;     /* Current code region */
-
+static CodeValue value;     /* Currently seen code value */
+static CodeValue low, high; /* Current code region */
 
 void startDecoding(void) {
 	int i;
@@ -80,7 +76,6 @@ void startDecoding(void) {
 	high = TOPVALUE;
 }
 
-
 int decodeChar(void) {
 	long range;
 	int f;
@@ -90,7 +85,8 @@ int decodeChar(void) {
 	f = (((long)(value - low) + 1) * freq[0] - 1) / range;
 
 	/* Find the symbol */
-	for (symbol = 1; (int)freq[symbol] > f; ++symbol) {}
+	for (symbol = 1; (int)freq[symbol] > f; ++symbol) {
+	}
 
 	high = low + range * freq[symbol - 1] / freq[0] - 1;
 	low = low + range * freq[symbol] / freq[0];
@@ -117,8 +113,6 @@ int decodeChar(void) {
 	return symbol - 1;
 }
 
-
-
 /* Structure for saved decode info */
 struct DecodeInfo {
 	long fpos;
@@ -128,7 +122,6 @@ struct DecodeInfo {
 	CodeValue high;
 	CodeValue low;
 };
-
 
 /*======================================================================
 
@@ -151,7 +144,6 @@ void *pushDecode(void) {
 	return (info);
 }
 
-
 /*======================================================================
 
   popDecode()
@@ -161,7 +153,7 @@ void *pushDecode(void) {
 
  */
 void popDecode(void *i) {
-	DecodeInfo *info = (DecodeInfo *) i;
+	DecodeInfo *info = (DecodeInfo *)i;
 
 	textFile->seek(info->fpos);
 	decodeBuffer = info->buffer;

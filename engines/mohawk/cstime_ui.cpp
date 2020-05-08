@@ -20,15 +20,15 @@
  *
  */
 
-#include "mohawk/cstime_game.h"
 #include "mohawk/cstime_ui.h"
-#include "mohawk/cstime_view.h"
-#include "mohawk/resource.h"
 #include "common/algorithm.h" // find
 #include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/fontman.h"
+#include "mohawk/cstime_game.h"
+#include "mohawk/cstime_view.h"
+#include "mohawk/resource.h"
 
 namespace Mohawk {
 
@@ -934,7 +934,7 @@ void CSTimeHelp::cleanupAfterFlapping() {
 void CSTimeHelp::mouseDown(Common::Point &pos) {
 	for (uint i = 0; i < _qars.size(); i++) {
 		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-		thisRect.top += 1 + i*15;
+		thisRect.top += 1 + i * 15;
 		thisRect.bottom = thisRect.top + 15;
 		if (!thisRect.contains(pos))
 			continue;
@@ -950,7 +950,7 @@ void CSTimeHelp::mouseMove(Common::Point &pos) {
 
 	for (uint i = 0; i < _qars.size(); i++) {
 		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-		thisRect.top += 1 + i*15;
+		thisRect.top += 1 + i * 15;
 		thisRect.bottom = thisRect.top + 15;
 		if (!thisRect.contains(pos))
 			continue;
@@ -983,7 +983,7 @@ void CSTimeHelp::mouseUp(Common::Point &pos) {
 	}
 
 	Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-	thisRect.top += 1 + _currEntry*15;
+	thisRect.top += 1 + _currEntry * 15;
 	thisRect.bottom = thisRect.top + 15;
 	if (!thisRect.contains(pos))
 		return;
@@ -1014,7 +1014,6 @@ void CSTimeHelp::unhighlightLine(uint line) {
 	bool askedAlready = Common::find(_askedAlready.begin(), _askedAlready.end(), text) != _askedAlready.end();
 	_vm->getInterface()->displayDialogLine(5900 + text, line, askedAlready ? 13 : 32);
 }
-
 
 void CSTimeHelp::selectStrings() {
 	_qars.clear();
@@ -1120,8 +1119,8 @@ void CSTimeInventoryDisplay::hide() {
 
 void CSTimeInventoryDisplay::idle() {
 	if (_vm->getInterface()->getCarmenNote()->getState() ||
-		_vm->getCase()->getCurrConversation()->getState() != 0xffff ||
-		_vm->getInterface()->getHelp()->getState() != 0xffff) {
+	    _vm->getCase()->getCurrConversation()->getState() != 0xffff ||
+	    _vm->getInterface()->getHelp()->getState() != 0xffff) {
 		if (_state == 4) {
 			// FIXME: check timeout!
 			hide();

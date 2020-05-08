@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/spells/open_unlock.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/widgets/dungeon_item.h"
 

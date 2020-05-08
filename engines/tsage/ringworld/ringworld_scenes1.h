@@ -24,13 +24,13 @@
 #define TSAGE_RINGWORLD_SCENES1_H
 
 #include "common/scummsys.h"
+#include "tsage/converse.h"
+#include "tsage/core.h"
+#include "tsage/events.h"
+#include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
-#include "tsage/converse.h"
-#include "tsage/events.h"
-#include "tsage/core.h"
 #include "tsage/scenes.h"
-#include "tsage/globals.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -49,6 +49,7 @@ class Scene10 : public Scene {
 	public:
 		void signal() override;
 	};
+
 public:
 	Speaker _speakerSText;
 	Speaker _speakerQText;
@@ -72,6 +73,7 @@ class Scene15 : public Scene {
 		void signal() override;
 		void dispatch() override;
 	};
+
 public:
 	Action1 _action1;
 	SceneObject _ship;
@@ -98,6 +100,7 @@ class Scene20 : public Scene {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SpeakerQText _speakerQText;
@@ -111,6 +114,7 @@ public:
 	SceneObject _laserShot1;
 	SceneObject _laserShot2;
 	ASound _sound;
+
 public:
 	Scene20();
 	~Scene20() override {}
@@ -172,6 +176,7 @@ public:
 	SpeakerQL _speakerQL;
 	SpeakerSText _speakerSText;
 	SpeakerQText _speakerQText;
+
 public:
 	Scene30();
 	~Scene30() override {}
@@ -239,6 +244,7 @@ class Scene40 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SpeakerSL _speakerSL;
@@ -437,6 +443,7 @@ class Scene90 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SpeakerSText _speakerSText;
@@ -559,7 +566,6 @@ public:
 	void process(Event &event) override;
 	void dispatch() override;
 	void showMessage(const Common::String &msg, int color, Action *action);
-
 };
 
 } // End of namespace Ringworld

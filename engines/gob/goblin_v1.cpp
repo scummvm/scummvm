@@ -24,19 +24,31 @@
 
 #include "gob/gob.h"
 #include "gob/goblin.h"
-#include "gob/util.h"
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/scenery.h"
 #include "gob/sound/sound.h"
+#include "gob/util.h"
 
 namespace Gob {
 
 Goblin_v1::Goblin_v1(GobEngine *vm) : Goblin(vm) {
-	_rotStates[0][0] = 0; _rotStates[0][1] = 22; _rotStates[0][2] = 23; _rotStates[0][3] = 24;
-	_rotStates[1][0] = 13; _rotStates[1][1] = 2; _rotStates[1][2] = 12; _rotStates[1][3] = 14;
-	_rotStates[2][0] = 16; _rotStates[2][1] = 15; _rotStates[2][2] = 4; _rotStates[2][3] = 17;
-	_rotStates[3][0] = 27; _rotStates[3][1] = 25; _rotStates[3][2] = 26; _rotStates[3][3] = 6;
+	_rotStates[0][0] = 0;
+	_rotStates[0][1] = 22;
+	_rotStates[0][2] = 23;
+	_rotStates[0][3] = 24;
+	_rotStates[1][0] = 13;
+	_rotStates[1][1] = 2;
+	_rotStates[1][2] = 12;
+	_rotStates[1][3] = 14;
+	_rotStates[2][0] = 16;
+	_rotStates[2][1] = 15;
+	_rotStates[2][2] = 4;
+	_rotStates[2][3] = 17;
+	_rotStates[3][0] = 27;
+	_rotStates[3][1] = 25;
+	_rotStates[3][2] = 26;
+	_rotStates[3][3] = 6;
 }
 
 void Goblin_v1::freeObjects() {
@@ -91,7 +103,7 @@ void Goblin_v1::freeObjects() {
 }
 
 void Goblin_v1::placeObject(Gob_Object *objDesc, char animated,
-		int16 index, int16 x, int16 y, int16 state) {
+                            int16 index, int16 x, int16 y, int16 state) {
 	int16 layer;
 
 	if (objDesc->stateMach[objDesc->state][0] != 0) {
@@ -118,7 +130,7 @@ void Goblin_v1::placeObject(Gob_Object *objDesc, char animated,
 
 		layer = objDesc->stateMach[objDesc->state][0]->layer;
 		_vm->_scenery->updateAnim(layer, 0, objDesc->animation, 0,
-		    objDesc->xPos, objDesc->yPos, 0);
+		                          objDesc->xPos, objDesc->yPos, 0);
 
 		objDesc->order = _vm->_scenery->_toRedrawBottom / 24 + 3;
 
@@ -142,13 +154,13 @@ void Goblin_v1::initiateMove(Mult::Mult_Object *obj) {
 	_vm->_map->optimizePoints(0, 0, 0);
 
 	_pathExistence = _vm->_map->checkDirectPath(0,
-			_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
-	    _pressedMapX, _pressedMapY);
+	                                            _vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
+	                                            _pressedMapX, _pressedMapY);
 
 	if (_pathExistence == 3) {
 		if (_vm->_map->checkLongPath(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY,
-			_pressedMapX, _pressedMapY,
-			_vm->_map->_nearestWayPoint, _vm->_map->_nearestDest) == 0) {
+		                             _pressedMapX, _pressedMapY,
+		                             _vm->_map->_nearestWayPoint, _vm->_map->_nearestDest) == 0) {
 			_pathExistence = 0;
 		} else {
 			const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
@@ -160,7 +172,7 @@ void Goblin_v1::initiateMove(Mult::Mult_Object *obj) {
 }
 
 void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
-		Gob_Object *gobDesc, int16 nextAct) {
+                             Gob_Object *gobDesc, int16 nextAct) {
 
 	if (_pathExistence == 1) {
 		_vm->_map->_curGoblinX = _gobPositions[_currentGoblin].x;
@@ -172,8 +184,8 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 			_pathExistence = 0;
 		}
 
-		nextAct = (int16) _vm->_map->getDirection(_vm->_map->_curGoblinX,
-				_vm->_map->_curGoblinY, _vm->_map->_destX, _vm->_map->_destY);
+		nextAct = (int16)_vm->_map->getDirection(_vm->_map->_curGoblinX,
+		                                         _vm->_map->_curGoblinY, _vm->_map->_destX, _vm->_map->_destY);
 
 		if (nextAct == kDirNone)
 			_pathExistence = 0;
@@ -182,18 +194,18 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		_vm->_map->_curGoblinY = _gobPositions[_currentGoblin].y;
 
 		if ((_vm->_map->_curGoblinX == _gobDestX) &&
-				(_vm->_map->_curGoblinY == _gobDestY)) {
+		    (_vm->_map->_curGoblinY == _gobDestY)) {
 			_pathExistence = 1;
 			_vm->_map->_destX = _pressedMapX;
 			_vm->_map->_destY = _pressedMapY;
 		} else {
 
 			if (_vm->_map->checkDirectPath(0, _vm->_map->_curGoblinX,
-						_vm->_map->_curGoblinY, _gobDestX, _gobDestY) == 1) {
+			                               _vm->_map->_curGoblinY, _gobDestX, _gobDestY) == 1) {
 				_vm->_map->_destX = _gobDestX;
 				_vm->_map->_destY = _gobDestY;
 			} else if ((_vm->_map->_curGoblinX == _vm->_map->_destX) &&
-					(_vm->_map->_curGoblinY == _vm->_map->_destY)) {
+			           (_vm->_map->_curGoblinY == _vm->_map->_destY)) {
 
 				if (_vm->_map->_nearestWayPoint > _vm->_map->_nearestDest) {
 					_vm->_map->optimizePoints(0, 0, 0);
@@ -217,8 +229,8 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 						_vm->_map->_nearestWayPoint++;
 				} else {
 					if ((_vm->_map->checkDirectPath(0, _vm->_map->_curGoblinX,
-						_vm->_map->_curGoblinY, _gobDestX, _gobDestY) == 3) &&
-							(_vm->_map->getPass(_pressedMapX, _pressedMapY) != 0)) {
+					                                _vm->_map->_curGoblinY, _gobDestX, _gobDestY) == 3) &&
+					    (_vm->_map->getPass(_pressedMapX, _pressedMapY) != 0)) {
 
 						const WayPoint &wayPoint = _vm->_map->getWayPoint(_vm->_map->_nearestWayPoint);
 
@@ -232,8 +244,8 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 					}
 				}
 			}
-			nextAct = (int16) _vm->_map->getDirection(_vm->_map->_curGoblinX,
-					_vm->_map->_curGoblinY, _vm->_map->_destX, _vm->_map->_destY);
+			nextAct = (int16)_vm->_map->getDirection(_vm->_map->_curGoblinX,
+			                                         _vm->_map->_curGoblinY, _vm->_map->_destX, _vm->_map->_destY);
 		}
 	}
 
@@ -358,14 +370,14 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 	case 0x4DC8:
 
 		if ((_currentGoblin == 0) && (_gobAction == 3) &&
-				(_itemIndInPocket == -1)) {
+		    (_itemIndInPocket == -1)) {
 			_destItemId = -1;
 			_readyToAct = 0;
 			break;
 		}
 
 		if ((_currentGoblin == 0) && (_gobAction == 4) &&
-				(_itemIndInPocket == -1) && (_destActionItem == 0)) {
+		    (_itemIndInPocket == -1) && (_destActionItem == 0)) {
 			gobDesc->multState = 104;
 			_destItemId = -1;
 			_readyToAct = 0;
@@ -404,8 +416,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 
 	default:
 		if ((_vm->_map->getPass(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY) == 3) ||
-		    ((_vm->_map->getPass(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY) == 6)
-			&& (_currentGoblin == 1))) {
+		    ((_vm->_map->getPass(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY) == 6) && (_currentGoblin == 1))) {
 			gobDesc->nextState = 20;
 			break;
 		}
@@ -430,7 +441,7 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 }
 
 void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
-		int16 nextAct, int16 framesCount) {
+                            int16 nextAct, int16 framesCount) {
 	int16 i;
 	int16 newX;
 	int16 newY;
@@ -503,9 +514,9 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	}
 
 	if ((_currentGoblin == 0) &&
-			(gobDesc->stateMach == gobDesc->realStateMach) &&
-			((gobDesc->state == 10) || (gobDesc->state == 11)) &&
-			(gobDesc->curFrame == 9)) {
+	    (gobDesc->stateMach == gobDesc->realStateMach) &&
+	    ((gobDesc->state == 10) || (gobDesc->state == 11)) &&
+	    (gobDesc->curFrame == 9)) {
 		_vm->_sound->blasterStop(0);
 
 		if (_itemIndInPocket != -1)
@@ -526,10 +537,14 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		gobDesc->multState = -1;
 
 		newX = _vm->_scenery->getAnimLayer(gobDesc->animation,
-				_gobStateLayer)->animDeltaX + gobDesc->xPos;
+		                                   _gobStateLayer)
+		           ->animDeltaX +
+		       gobDesc->xPos;
 
 		newY = _vm->_scenery->getAnimLayer(gobDesc->animation,
-				_gobStateLayer)->animDeltaY + gobDesc->yPos;
+		                                   _gobStateLayer)
+		           ->animDeltaY +
+		       gobDesc->yPos;
 
 		_gobStateLayer = nextLayer(gobDesc);
 
@@ -539,8 +554,8 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		if ((gobDesc->curFrame == 3) &&
 		    (gobDesc->stateMach == gobDesc->realStateMach) &&
 		    ((gobDesc->state < 10) ||
-			((_currentGoblin == 1) && ((gobDesc->state == 28) ||
-				(gobDesc->state == 29))))) {
+		     ((_currentGoblin == 1) && ((gobDesc->state == 28) ||
+		                                (gobDesc->state == 29))))) {
 			flag = 0;
 			if (_forceNextState[0] != -1) {
 				gobDesc->nextState = _forceNextState[0];
@@ -613,18 +628,18 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 
 			if (flag != 0) {
 				_vm->_scenery->updateAnim(_gobStateLayer, 0,
-						gobDesc->animation, 0, gobDesc->xPos, gobDesc->yPos, 0);
+				                          gobDesc->animation, 0, gobDesc->xPos, gobDesc->yPos, 0);
 
 				gobDesc->yPos =
 				    (_vm->_map->_curGoblinY + 1) * 6 -
 				    (_vm->_scenery->_toRedrawBottom - _vm->_scenery->_animTop);
 				gobDesc->xPos =
 				    _vm->_map->_curGoblinX * 12 - (_vm->_scenery->_toRedrawLeft -
-				    _vm->_scenery->_animLeft);
+				                                   _vm->_scenery->_animLeft);
 			}
 
 			if (((gobDesc->state == 10) || (gobDesc->state == 11)) &&
-					(_currentGoblin != 0))
+			    (_currentGoblin != 0))
 				_goesAtTarget = 1;
 		}
 
@@ -700,17 +715,17 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		}
 
 		_vm->_scenery->updateAnim(_gobStateLayer, 0, gobDesc->animation, 0,
-		    gobDesc->xPos, gobDesc->yPos, 0);
+		                          gobDesc->xPos, gobDesc->yPos, 0);
 
 		gobDesc->yPos =
 		    (_vm->_map->_curGoblinY + 1) * 6 - (_vm->_scenery->_toRedrawBottom -
-		    _vm->_scenery->_animTop);
+		                                        _vm->_scenery->_animTop);
 		gobDesc->xPos =
 		    _vm->_map->_curGoblinX * 12 -
-				(_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
+		    (_vm->_scenery->_toRedrawLeft - _vm->_scenery->_animLeft);
 
 		if (((gobDesc->state == 10) || (gobDesc->state == 11)) &&
-				(_currentGoblin != 0))
+		    (_currentGoblin != 0))
 			_goesAtTarget = 1;
 	}
 	return;

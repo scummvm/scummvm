@@ -26,10 +26,9 @@
 namespace Cloud {
 namespace Id {
 
-IdResolveIdRequest::IdResolveIdRequest(IdStorage *storage, Common::String path, Storage::UploadCallback cb, Networking::ErrorCallback ecb, bool recursive):
-	Networking::Request(nullptr, ecb),
-	_requestedPath(path), _storage(storage), _uploadCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+IdResolveIdRequest::IdResolveIdRequest(IdStorage *storage, Common::String path, Storage::UploadCallback cb, Networking::ErrorCallback ecb, bool recursive) : Networking::Request(nullptr, ecb),
+                                                                                                                                                             _requestedPath(path), _storage(storage), _uploadCallback(cb),
+                                                                                                                                                             _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 

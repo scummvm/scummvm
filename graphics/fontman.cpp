@@ -67,18 +67,17 @@ const struct {
 	const char *name;
 	FontManager::FontUsage id;
 } builtinFontNames[] = {
-	{ "builtinConsole", FontManager::kConsoleFont },
-	{ "fixed5x8.bdf", FontManager::kConsoleFont },
-	{ "fixed5x8-iso-8859-1.bdf", FontManager::kConsoleFont },
-	{ "fixed5x8-ascii.bdf", FontManager::kConsoleFont },
-	{ "clR6x12.bdf", FontManager::kGUIFont },
-	{ "clR6x12-iso-8859-1.bdf", FontManager::kGUIFont },
-	{ "clR6x12-ascii.bdf", FontManager::kGUIFont },
-	{ "helvB12.bdf", FontManager::kBigGUIFont },
-	{ "helvB12-iso-8859-1.bdf", FontManager::kBigGUIFont },
-	{ "helvB12-ascii.bdf", FontManager::kBigGUIFont },
-	{ 0, FontManager::kConsoleFont }
-};
+    {"builtinConsole", FontManager::kConsoleFont},
+    {"fixed5x8.bdf", FontManager::kConsoleFont},
+    {"fixed5x8-iso-8859-1.bdf", FontManager::kConsoleFont},
+    {"fixed5x8-ascii.bdf", FontManager::kConsoleFont},
+    {"clR6x12.bdf", FontManager::kGUIFont},
+    {"clR6x12-iso-8859-1.bdf", FontManager::kGUIFont},
+    {"clR6x12-ascii.bdf", FontManager::kGUIFont},
+    {"helvB12.bdf", FontManager::kBigGUIFont},
+    {"helvB12-iso-8859-1.bdf", FontManager::kBigGUIFont},
+    {"helvB12-ascii.bdf", FontManager::kBigGUIFont},
+    {0, FontManager::kConsoleFont}};
 
 bool FontManager::setLocalizedFont(const Common::String &name) {
 	Common::String lowercaseName = name;

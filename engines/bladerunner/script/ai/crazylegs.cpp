@@ -104,7 +104,7 @@ void AIScriptCrazylegs::ShotAtAndMissed() {
 
 bool AIScriptCrazylegs::ShotAtAndHit() {
 	Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsShotAndHit);
-	Actor_Says(kActorMcCoy, 1875, 4);  // I wouldn't drag that bucket of bolts if you paid me.
+	Actor_Says(kActorMcCoy, 1875, 4); // I wouldn't drag that bucket of bolts if you paid me.
 	return false;
 }
 
@@ -450,17 +450,17 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptCrazylegs::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptCrazylegs::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptCrazylegs::ReachedMovementTrackWaypoint(int waypointId) {

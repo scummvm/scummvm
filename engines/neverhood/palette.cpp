@@ -196,11 +196,11 @@ void Palette::update() {
 }
 
 void Palette::fadeColor(byte *rgb, byte toR, byte toG, byte toB) {
-	#define FADE(color, toColor) color += _fadeStep < toColor - color ? _fadeStep : (-_fadeStep <= toColor - color ? toColor - color : -_fadeStep)
+#define FADE(color, toColor) color += _fadeStep < toColor - color ? _fadeStep : (-_fadeStep <= toColor - color ? toColor - color : -_fadeStep)
 	FADE(rgb[0], toR);
 	FADE(rgb[1], toG);
 	FADE(rgb[2], toB);
-	#undef FADE
+#undef FADE
 }
 
 int Palette::calculateFadeStep(int counter) {

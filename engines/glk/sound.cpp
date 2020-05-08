@@ -21,14 +21,14 @@
  */
 
 #include "glk/sound.h"
-#include "glk/glk.h"
-#include "glk/events.h"
-#include "common/file.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "common/file.h"
+#include "glk/events.h"
+#include "glk/glk.h"
 
 namespace Glk {
 
@@ -74,7 +74,7 @@ void Sounds::poll() {
 /*--------------------------------------------------------------------------*/
 
 SoundChannel::SoundChannel(Sounds *owner, uint volume) : _owner(owner),
-		_soundNum(0), _rock(0), _notify(0) {
+                                                         _soundNum(0), _rock(0), _notify(0) {
 	_defaultVolume = MIN(volume, (uint)GLK_MAXVOLUME);
 
 	if (g_vm->gli_register_obj)
@@ -148,7 +148,7 @@ uint SoundChannel::play(uint soundNum, uint repeats, uint notify) {
 
 	// Start playing the audio
 	g_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, stream, -1,
-		_defaultVolume * 255 / GLK_MAXVOLUME);
+	                         _defaultVolume * 255 / GLK_MAXVOLUME);
 	return 0;
 }
 
@@ -170,7 +170,7 @@ void SoundChannel::setVolume(uint volume, uint duration, uint notify) {
 
 	if (notify) {
 		warning("TODO: Gradual volume change");
-		g_vm->_events->store(evtype_VolumeNotify, nullptr, 0, notify);	
+		g_vm->_events->store(evtype_VolumeNotify, nullptr, 0, notify);
 	}
 }
 

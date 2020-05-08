@@ -43,7 +43,7 @@ void MidiDriver_Accolade_readDriver(Common::String filename, MusicType requested
 		uint32 streamSize = driverStream->size();
 		uint32 streamLeft = streamSize;
 		uint16 skipChunks = 0; // 1 for MT32, 0 for AdLib
-		uint16 chunkSize  = 0;
+		uint16 chunkSize = 0;
 
 		switch (requestedDriverType) {
 		case MT_ADLIB:
@@ -97,7 +97,7 @@ void MidiDriver_Accolade_readDriver(Common::String filename, MusicType requested
 		// MUSIC.DRV / used by Elvira 2 / Waxworks / Simon 1 demo
 		uint32 streamSize = driverStream->size();
 		uint32 streamLeft = streamSize;
-		uint16 getChunk   = 0; // 4 for MT32, 2 for AdLib
+		uint16 getChunk = 0; // 4 for MT32, 2 for AdLib
 
 		switch (requestedDriverType) {
 		case MT_ADLIB:
@@ -134,7 +134,7 @@ void MidiDriver_Accolade_readDriver(Common::String filename, MusicType requested
 		uint16 musicDrvSignature = driverStream->readUint16LE();
 		uint16 musicDrvType = driverStream->readUint16LE();
 		uint16 chunkOffset = driverStream->readUint16LE();
-		uint16 chunkSize   = driverStream->readUint16LE();
+		uint16 chunkSize = driverStream->readUint16LE();
 
 		// Security checks
 		if (musicDrvSignature != 0xFEDC)

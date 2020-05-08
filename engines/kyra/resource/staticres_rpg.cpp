@@ -22,7 +22,6 @@
 
 #include "kyra/resource/resource.h"
 
-
 namespace Kyra {
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
@@ -72,7 +71,7 @@ void StaticResource::freeRawDataBe32(void *&ptr, int &size) {
 	size = 0;
 }
 
-const uint8 KyraRpgEngine::_dropItemDirIndex[] = { 0, 1, 2, 3, 1, 3, 0, 2, 3, 2, 1, 0, 2, 0, 3, 1 };
+const uint8 KyraRpgEngine::_dropItemDirIndex[] = {0, 1, 2, 3, 1, 3, 0, 2, 3, 2, 1, 0, 2, 0, 3, 1};
 
 void KyraRpgEngine::initStaticResource() {
 	int temp;

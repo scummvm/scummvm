@@ -54,9 +54,9 @@ void CryoExtFont::load(const Common::String &fontFile, Common::CodePage codepage
 	}
 
 	// 3 unknown uint16
-	(void) _crf->readUint16BE();
-	(void) _crf->readUint16BE();
-	(void) _crf->readUint16BE();
+	(void)_crf->readUint16BE();
+	(void)_crf->readUint16BE();
+	(void)_crf->readUint16BE();
 
 	_height = _crf->readSint16BE();
 	//debug("Max char height %d", _maxHeight);
@@ -106,8 +106,8 @@ void CryoExtFont::assureCached(uint32 chr) const {
 	uint16 w = _crf->readUint16BE();
 	uint sz = glyph.setup(w, h);
 	//debug("Char %u/%u sz %ux%u %u", chr, glyphId, w, h, sz);
-	glyph.offX    = _crf->readSint16BE();
-	glyph.offY    = _crf->readSint16BE();
+	glyph.offX = _crf->readSint16BE();
+	glyph.offY = _crf->readSint16BE();
 	glyph.advance = _crf->readUint16BE();
 	//debug("Char %u/%u offX %d offY %d PW %d", chr, glyphId, glyph.offX, glyph.offY, glyph.advance);
 

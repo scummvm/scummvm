@@ -41,8 +41,8 @@ class Combat {
 
 	bool _active;
 	bool _enabled;
-	int  _hitSoundId[kSoundCount];
-	int  _missSoundId[kSoundCount];
+	int _hitSoundId[kSoundCount];
+	int _missSoundId[kSoundCount];
 	// int  _random1;
 	// int  _random2;
 
@@ -50,22 +50,22 @@ public:
 	int _ammoDamage[3];
 
 	struct CoverWaypoint {
-		int      type;
-		int      setId;
-		int      sceneId;
-		Vector3  position;
+		int type;
+		int setId;
+		int sceneId;
+		Vector3 position;
 	};
 
 	struct FleeWaypoint {
-		int     type;
-		int     setId;
-		int     sceneId;
+		int type;
+		int setId;
+		int sceneId;
 		Vector3 position;
-		int     field7;
+		int field7;
 	};
 
 	Common::Array<CoverWaypoint> _coverWaypoints;
-	Common::Array<FleeWaypoint>  _fleeWaypoints;
+	Common::Array<FleeWaypoint> _fleeWaypoints;
 
 public:
 	Combat(BladeRunnerEngine *vm);
@@ -88,7 +88,7 @@ public:
 
 	void shoot(int actorId, Vector3 &to, int screenX);
 
-	int findFleeWaypoint(int setId, int enemyId, const Vector3& position) const;
+	int findFleeWaypoint(int setId, int enemyId, const Vector3 &position) const;
 	int findCoverWaypoint(int waypointType, int actorId, int enemyId) const;
 
 	void save(SaveFileWriteStream &f);

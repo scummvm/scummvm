@@ -34,11 +34,19 @@ class Ultima1Game;
 class Character;
 
 namespace Spells {
-	
+
 enum SpellId {
-	SPELL_PRAYER = 0, SPELL_OPEN = 1, SPELL_UNLOCK = 2, SPELL_MAGIC_MISSILE = 3, SPELL_STEAL = 4,
-	SPELL_LADDER_DOWN = 5, SPELL_LADDER_UP = 6, SPELL_BLINK = 7, SPELL_CREATE = 8,
-	SPELL_DESTROY = 9, SPELL_KILL = 10
+	SPELL_PRAYER = 0,
+	SPELL_OPEN = 1,
+	SPELL_UNLOCK = 2,
+	SPELL_MAGIC_MISSILE = 3,
+	SPELL_STEAL = 4,
+	SPELL_LADDER_DOWN = 5,
+	SPELL_LADDER_UP = 6,
+	SPELL_BLINK = 7,
+	SPELL_CREATE = 8,
+	SPELL_DESTROY = 9,
+	SPELL_KILL = 10
 };
 
 /**
@@ -49,6 +57,7 @@ protected:
 	Ultima1Game *_game;
 	Character *_character;
 	SpellId _spellId;
+
 protected:
 	/**
 	 * Adds a text string to the info area
@@ -56,11 +65,13 @@ protected:
 	 * @param newLine		Whether to apply a newline at the end
 	 */
 	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
+
 protected:
 	/**
 	 * Constructor
 	 */
 	Spell(Ultima1Game *game, Character *c, SpellId spellId);
+
 public:
 	/**
 	 * Change the quantity by a given amount
@@ -85,7 +96,7 @@ public:
 	uint getBuyCost() const;
 };
 
-} // End of  namespace U1Dialogs
+} // namespace Spells
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

@@ -99,7 +99,7 @@ protected:
 private:
 	// An image cache that stores images until clearCache() is called
 	Common::HashMap<uint16, MohawkSurface *> _cache;
-	Common::HashMap<uint16, Common::Array<MohawkSurface *> > _subImageCache;
+	Common::HashMap<uint16, Common::Array<MohawkSurface *>> _subImageCache;
 };
 
 } // End of namespace Mohawk

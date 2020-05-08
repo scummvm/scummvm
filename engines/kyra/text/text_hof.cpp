@@ -28,7 +28,7 @@
 namespace Kyra {
 
 TextDisplayer_HoF::TextDisplayer_HoF(KyraEngine_HoF *vm, Screen_v2 *screen)
-	: TextDisplayer(vm, screen), _vm(vm) {
+    : TextDisplayer(vm, screen), _vm(vm) {
 }
 
 void TextDisplayer_HoF::backupTalkTextMessageBkgd(int srcPage, int dstPage) {
@@ -57,7 +57,7 @@ void TextDisplayer_HoF::printCustomCharacterText(const char *text, int x, int y,
 	calcWidestLineBounds(x1, x2, w, x);
 
 	_talkCoords.x = x1;
-	_talkCoords.w = w+2;
+	_talkCoords.w = w + 2;
 	_talkCoords.y = y;
 	_talkMessageY = y;
 	_talkMessageH = h;
@@ -98,7 +98,7 @@ char *TextDisplayer_HoF::preprocessString(const char *str) {
 	int maxTextWidth = (_vm->language() == 0) ? 176 : 240;
 
 	if (textWidth > maxTextWidth) {
-		if (textWidth > (maxTextWidth*2)) {
+		if (textWidth > (maxTextWidth * 2)) {
 			int count = getCharLength(p, textWidth / 3);
 			int offs = dropCRIntoString(p, count);
 			p += count + offs;
@@ -151,7 +151,7 @@ int KyraEngine_HoF::chatGetType(const char *str) {
 }
 
 int KyraEngine_HoF::chatCalcDuration(const char *str) {
-	static const uint8 durationMultiplicator[] = { 16, 14, 12, 10, 8, 8, 7, 6, 5, 4 };
+	static const uint8 durationMultiplicator[] = {16, 14, 12, 10, 8, 8, 7, 6, 5, 4};
 
 	int duration = strlen(str);
 	duration *= _flags.isTalkie ? 8 : durationMultiplicator[(_configTextspeed / 10)];
@@ -176,30 +176,28 @@ void KyraEngine_HoF::objectChat(const char *str, int object, int vocHigh, int vo
 		_mainCharacter.facing = 5;
 
 	static const uint8 talkScriptTable[] = {
-		6, 7, 8,
-		3, 4, 5,
-		3, 4, 5,
-		0, 1, 2,
-		0, 1, 2,
-		0, 1, 2,
-		3, 4, 5,
-		3, 4, 5
-	};
+	    6, 7, 8,
+	    3, 4, 5,
+	    3, 4, 5,
+	    0, 1, 2,
+	    0, 1, 2,
+	    0, 1, 2,
+	    3, 4, 5,
+	    3, 4, 5};
 
 	assert(_mainCharacter.facing * 3 + chatType < ARRAYSIZE(talkScriptTable));
 	int script = talkScriptTable[_mainCharacter.facing * 3 + chatType];
 
 	static const char *const chatScriptFilenames[] = {
-		"_Z1FSTMT.EMC",
-		"_Z1FQUES.EMC",
-		"_Z1FEXCL.EMC",
-		"_Z1SSTMT.EMC",
-		"_Z1SQUES.EMC",
-		"_Z1SEXCL.EMC",
-		"_Z1BSTMT.EMC",
-		"_Z1BQUES.EMC",
-		"_Z1BEXCL.EMC"
-	};
+	    "_Z1FSTMT.EMC",
+	    "_Z1FQUES.EMC",
+	    "_Z1FEXCL.EMC",
+	    "_Z1SSTMT.EMC",
+	    "_Z1SQUES.EMC",
+	    "_Z1SEXCL.EMC",
+	    "_Z1BSTMT.EMC",
+	    "_Z1BQUES.EMC",
+	    "_Z1BEXCL.EMC"};
 
 	objectChatProcess(chatScriptFilenames[script]);
 	_chatIsNote = false;
@@ -233,7 +231,7 @@ void KyraEngine_HoF::objectChatInit(const char *str, int object, int vocHigh, in
 	yPos -= lineNum * 10;
 	yPos = MAX(yPos, 0);
 	_text->_talkMessageY = yPos;
-	_text->_talkMessageH = lineNum*10;
+	_text->_talkMessageH = lineNum * 10;
 
 	int width = _text->getWidestLineWidth(lineNum);
 	_text->calcWidestLineBounds(xPos, yPos, width, xPos);
@@ -269,7 +267,7 @@ void KyraEngine_HoF::objectChatPrintText(const char *str, int object) {
 	_text->calcWidestLineBounds(cX1, cX2, maxWidth, x);
 
 	for (int i = 0; i < lineNum; ++i) {
-		str = &_text->_talkSubstrings[i*_text->maxSubstringLen()];
+		str = &_text->_talkSubstrings[i * _text->maxSubstringLen()];
 
 		int y = _text->_talkMessageY + i * 10;
 		x = _text->getCenterStringX(str, cX1, cX2);
@@ -514,7 +512,7 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 			} else if (_flags.isTalkie) {
 				int len = READ_LE_UINT16(_dlgBuffer + offs);
 				offs += 2;
-				static const int irnv[] = { 91, 105, 110, 114, 118 };
+				static const int irnv[] = {91, 105, 110, 114, 118};
 				vocHi = irnv[vocH - 1] + csEntry;
 				vocLo = READ_LE_UINT16(_dlgBuffer + offs);
 				offs += 2;
@@ -622,7 +620,7 @@ void KyraEngine_HoF::npcChatSequence(const char *str, int objectId, int vocHigh,
 
 	uint32 ct = chatCalcDuration(str);
 	uint32 time = _system->getMillis();
-	_chatEndTime =  time + (3 + ct) * _tickLength;
+	_chatEndTime = time + (3 + ct) * _tickLength;
 	uint32 chatAnimEndTime = time + (3 + (ct >> 1)) * _tickLength;
 
 	if (_chatVocHigh >= 0) {

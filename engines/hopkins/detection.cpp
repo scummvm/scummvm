@@ -23,12 +23,12 @@
 #include "hopkins/hopkins.h"
 
 #include "base/plugins.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
-#include "common/memstream.h"
-#include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
@@ -63,41 +63,30 @@ const Common::String &HopkinsEngine::getTargetName() const {
 } // End of namespace Hopkins
 
 static const PlainGameDescriptor hopkinsGames[] = {
-	{"hopkins", "Hopkins FBI"},
-	{0, 0}
-};
+    {"hopkins", "Hopkins FBI"},
+    {0, 0}};
 
 #include "hopkins/detection_tables.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_GORE_DEFAULT_OFF,
-		{
-			_s("Gore Mode"),
-			_s("Enable Gore Mode when available"),
-			"enable_gore",
-			false
-		}
-	},
+    {GAMEOPTION_GORE_DEFAULT_OFF,
+     {_s("Gore Mode"),
+      _s("Enable Gore Mode when available"),
+      "enable_gore",
+      false}},
 
-	{
-		GAMEOPTION_GORE_DEFAULT_ON,
-		{
-			_s("Gore Mode"),
-			_s("Enable Gore Mode when available"),
-			"enable_gore",
-			true
-		}
-	},
+    {GAMEOPTION_GORE_DEFAULT_ON,
+     {_s("Gore Mode"),
+      _s("Enable Gore Mode when available"),
+      "enable_gore",
+      true}},
 
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+    AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 const static char *directoryGlobs[] = {
-	"voice",
-	"link",
-	0
-};
+    "voice",
+    "link",
+    0};
 
 class HopkinsMetaEngine : public AdvancedMetaEngine {
 public:
@@ -127,20 +116,18 @@ public:
 };
 
 bool HopkinsMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSimpleSavesNames);
 }
 
 bool Hopkins::HopkinsEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 bool HopkinsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -219,9 +206,8 @@ SaveStateDescriptor HopkinsMetaEngine::querySaveMetaInfos(const char *target, in
 	return SaveStateDescriptor();
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(HOPKINS)
-	REGISTER_PLUGIN_DYNAMIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
+REGISTER_PLUGIN_STATIC(HOPKINS, PLUGIN_TYPE_ENGINE, HopkinsMetaEngine);
 #endif

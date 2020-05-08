@@ -22,8 +22,8 @@
 #ifndef DRAGONS_CREDITS_H
 #define DRAGONS_CREDITS_H
 
-#include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Dragons {
 
@@ -53,6 +53,7 @@ public:
 	bool isRunning();
 	void draw();
 	void update();
+
 private:
 	void cleanup();
 	void convertToWideChar(uint16 *destBuf, const byte *text, uint16 maxLength);

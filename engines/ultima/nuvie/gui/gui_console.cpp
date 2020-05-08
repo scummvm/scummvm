@@ -20,18 +20,18 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "ultima/nuvie/gui/gui_console.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
-#include "ultima/nuvie/gui/gui_console.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 GUI_Console::GUI_Console(uint16 x, uint16 y, uint16 w, uint16 h)
-	: GUI_Widget(NULL, x, y, w, h) {
+    : GUI_Widget(NULL, x, y, w, h) {
 	bg_color = new GUI_Color(0, 0, 0);
 	font = new GUI_Font(1);
 	font->setColoring(0xff, 0xff, 0xff, 0, 0, 0);
@@ -51,7 +51,7 @@ void GUI_Console::SetDisplay(Screen *s) {
 }
 
 /* Show the widget  */
-void GUI_Console:: Display(bool full_redraw) {
+void GUI_Console::Display(bool full_redraw) {
 	Common::Rect framerect;
 
 	framerect = area;
@@ -81,31 +81,28 @@ void GUI_Console::AddLine(Std::string line) {
 	} else
 		data.push_back(line);
 
-
 	for (i = data.size(); i > num_rows; i--)
 		data.pop_front();
 }
 
 GUI_status GUI_Console::MouseDown(int x, int y, Shared::MouseButton button) {
 
-
-//grab_focus();
+	//grab_focus();
 
 	return GUI_YUM;
 }
 
 GUI_status GUI_Console::MouseUp(int x, int y, Shared::MouseButton button) {
 
-// release_focus();
+	// release_focus();
 
 	return GUI_YUM;
 }
 
 GUI_status GUI_Console::MouseMotion(int x, int y, uint8 state) {
 
-
-//GUI::get_gui()->moveWidget(this,dx,dy);
-// Redraw();
+	//GUI::get_gui()->moveWidget(this,dx,dy);
+	// Redraw();
 
 	return (GUI_YUM);
 }

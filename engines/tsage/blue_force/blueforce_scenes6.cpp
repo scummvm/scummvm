@@ -22,8 +22,8 @@
 
 #include "tsage/blue_force/blueforce_scenes6.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -49,7 +49,7 @@ void Scene600::Action1::signal() {
 	case 2:
 		scene->_sound1.play(59);
 		setAction(&scene->_sequenceManager, this, 600, &scene->_object2, &scene->_ryan,
-			&BF_GLOBALS._player, &scene->_skidMarks, NULL);
+		          &BF_GLOBALS._player, &scene->_skidMarks, NULL);
 		break;
 	case 3:
 		BF_GLOBALS._sound1.play(61);
@@ -322,7 +322,7 @@ void Scene666::postInit(SceneObjectList *OwnerList) {
 			_object2.postInit();
 			_object3.postInit();
 			setAction(&_sequenceManager, this, 6660, &BF_GLOBALS._player, &_object1, &_object2,
-				&_object3, NULL);
+			          &_object3, NULL);
 			break;
 		case 13:
 		case 14:
@@ -393,7 +393,7 @@ bool Scene690::Object1::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._walkRegions.enableRegion(6);
 		scene->_sceneMode = 6901;
 		scene->setAction(&scene->_sequenceManager, scene, 6901, &BF_GLOBALS._player,
-			&scene->_object2, &scene->_object1, &scene->_object4, &scene->_object5, NULL);
+		                 &scene->_object2, &scene->_object1, &scene->_object4, &scene->_object5, NULL);
 		return true;
 	} else {
 		return NamedObject::startAction(action, event);
@@ -414,7 +414,7 @@ bool Scene690::Object2::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 6902;
 			scene->setAction(&scene->_sequenceManager, scene, 6902, &BF_GLOBALS._player,
-				&scene->_object2, &scene->_object6, NULL);
+			                 &scene->_object2, &scene->_object6, NULL);
 			return true;
 		}
 		break;
@@ -511,7 +511,6 @@ void Scene690::signal() {
 		break;
 	}
 }
-
 
 } // End of namespace BlueForce
 

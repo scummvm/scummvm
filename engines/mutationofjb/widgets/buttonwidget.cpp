@@ -26,12 +26,11 @@
 
 namespace MutationOfJB {
 
-ButtonWidget::ButtonWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &normalSurface, const Graphics::Surface &pressedSurface) :
-	Widget(gui, area),
-	_normalSurface(normalSurface),
-	_pressedSurface(pressedSurface),
-	_callback(nullptr),
-	_pressed(false) {}
+ButtonWidget::ButtonWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &normalSurface, const Graphics::Surface &pressedSurface) : Widget(gui, area),
+                                                                                                                                                        _normalSurface(normalSurface),
+                                                                                                                                                        _pressedSurface(pressedSurface),
+                                                                                                                                                        _callback(nullptr),
+                                                                                                                                                        _pressed(false) {}
 
 void ButtonWidget::setCallback(ButtonWidgetCallback *callback) {
 	_callback = callback;
@@ -67,4 +66,4 @@ void ButtonWidget::draw(Graphics::ManagedSurface &surface) {
 	surface.blitFrom(_pressed ? _pressedSurface : _normalSurface, Common::Point(_area.left, _area.top));
 }
 
-}
+} // namespace MutationOfJB

@@ -31,6 +31,7 @@ class CCellPointButton : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 public:
 	int _unused1;
 	int _unused2;
@@ -45,6 +46,7 @@ public:
 	int _unused10;
 	CString _npcName;
 	int _dialNum;
+
 public:
 	CLASSDEF;
 	CCellPointButton();

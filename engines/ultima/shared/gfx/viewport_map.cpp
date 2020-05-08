@@ -21,8 +21,8 @@
  */
 
 #include "ultima/shared/gfx/viewport_map.h"
-#include "ultima/shared/maps/map.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/maps/map.h"
 
 namespace Ultima {
 namespace Shared {

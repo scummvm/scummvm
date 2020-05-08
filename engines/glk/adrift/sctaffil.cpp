@@ -20,12 +20,12 @@
  *
  */
 
+#include "common/algorithm.h"
+#include "common/memstream.h"
+#include "common/zlib.h"
+#include "glk/adrift/detection.h"
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
-#include "glk/adrift/detection.h"
-#include "common/algorithm.h"
-#include "common/zlib.h"
-#include "common/memstream.h"
 
 namespace Glk {
 namespace Adrift {
@@ -80,7 +80,6 @@ struct sc_taf_s {
 };
 typedef sc_taf_s sc_taf_t;
 
-
 /* Microsoft Visual Basic PRNG magic numbers, initial and current state. */
 static const sc_int PRNG_CST1 = 0x43fd43fd,
                     PRNG_CST2 = 0x00c39ec3,
@@ -101,14 +100,13 @@ static sc_int taf_random_state = 0x00a09e86;
 static sc_byte taf_random(void) {
 	/* Generate and return the next pseudo-random number. */
 	taf_random_state = (taf_random_state * PRNG_CST1 + PRNG_CST2) & PRNG_CST3;
-	return (BYTE_MAX * (sc_uint) taf_random_state) / (sc_uint)(PRNG_CST3 + 1);
+	return (BYTE_MAX * (sc_uint)taf_random_state) / (sc_uint)(PRNG_CST3 + 1);
 }
 
 static void taf_random_reset(void) {
 	/* Reset PRNG to initial conditions. */
 	taf_random_state = PRNG_INITIAL_STATE;
 }
-
 
 /*
  * taf_is_valid()
@@ -118,7 +116,6 @@ static void taf_random_reset(void) {
 static sc_bool taf_is_valid(sc_tafref_t taf) {
 	return taf && taf->magic == TAF_MAGIC;
 }
-
 
 /*
  * taf_create_empty()
@@ -145,7 +142,6 @@ static sc_tafref_t taf_create_empty(void) {
 	return taf;
 }
 
-
 /*
  * taf_destroy()
  *
@@ -167,7 +163,6 @@ void taf_destroy(sc_tafref_t taf) {
 	memset(taf, 0xaa, sizeof(*taf));
 	sc_free(taf);
 }
-
 
 /*
  * taf_finalize_last_slab()
@@ -203,7 +198,6 @@ static void taf_finalize_last_slab(sc_tafref_t taf) {
 	}
 }
 
-
 /*
  * taf_find_buffer_extent()
  *
@@ -229,7 +223,6 @@ static sc_int taf_find_buffer_extent(const sc_byte *buffer, sc_int length, sc_bo
 	return bytes;
 }
 
-
 /*
  * taf_append_buffer()
  *
@@ -251,7 +244,7 @@ static sc_int taf_append_buffer(sc_tafref_t taf, const sc_byte *buffer, sc_int l
 		if (taf->slab_count == taf->slabs_allocated) {
 			taf->slabs_allocated += GROW_INCREMENT;
 			taf->slabs = (sc_slabdescref_t)sc_realloc(taf->slabs,
-			             taf->slabs_allocated * sizeof(*taf->slabs));
+			                                          taf->slabs_allocated * sizeof(*taf->slabs));
 		}
 
 		/* Advance to the next unused slab in the slab descriptors array. */
@@ -284,9 +277,7 @@ static sc_int taf_append_buffer(sc_tafref_t taf, const sc_byte *buffer, sc_int l
 		 * that are split over two buffers; force correct termination of this
 		 * slab.
 		 */
-		if (slab->size > 1
-		        && slab->data[slab->size - 2] == CARRIAGE_RETURN
-		        && slab->data[slab->size - 1] == NEWLINE)
+		if (slab->size > 1 && slab->data[slab->size - 2] == CARRIAGE_RETURN && slab->data[slab->size - 1] == NEWLINE)
 			is_unterminated = FALSE;
 	}
 
@@ -302,7 +293,6 @@ static sc_int taf_append_buffer(sc_tafref_t taf, const sc_byte *buffer, sc_int l
 	return bytes;
 }
 
-
 /*
  * taf_unobfuscate()
  *
@@ -312,7 +302,7 @@ static sc_int taf_append_buffer(sc_tafref_t taf, const sc_byte *buffer, sc_int l
  * Assumes that the file has been read past the header.
  */
 static sc_bool taf_unobfuscate(sc_tafref_t taf, sc_read_callbackref_t callback,
-		void *opaque, sc_bool is_gamefile) {
+                               void *opaque, sc_bool is_gamefile) {
 	sc_byte *buffer;
 	sc_int bytes, used_bytes, total_bytes, index_;
 
@@ -371,7 +361,8 @@ static sc_bool taf_unobfuscate(sc_tafref_t taf, sc_read_callbackref_t callback,
 	/* Check that we found the end of the input file as expected. */
 	if (used_bytes > 0) {
 		sc_error("taf_unobfuscate:"
-		         " warning: %ld unhandled bytes in the buffer\n", used_bytes);
+		         " warning: %ld unhandled bytes in the buffer\n",
+		         used_bytes);
 	}
 
 	if (taf->is_unterminated)
@@ -390,7 +381,7 @@ static sc_bool taf_unobfuscate(sc_tafref_t taf, sc_read_callbackref_t callback,
  * Decompress a version 4.0 TAF
  */
 static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
-		void *opaque, sc_bool is_gamefile) {
+                              void *opaque, sc_bool is_gamefile) {
 #if defined(USE_ZLIB)
 	Common::SeekableReadStream *src = (Common::SeekableReadStream *)opaque;
 	assert(src);
@@ -423,7 +414,7 @@ static sc_bool taf_decompress(sc_tafref_t taf, sc_read_callbackref_t callback,
  * Read an uncompressed version 4.0 TAF save chunk used by ScummVM
  */
 static sc_bool taf_read_raw(sc_tafref_t taf, sc_read_callbackref_t callback,
-	void *opaque, sc_bool is_gamefile) {
+                            void *opaque, sc_bool is_gamefile) {
 	byte *buffer = new byte[BUFFER_SIZE];
 	size_t bytesRead, bytesLeft = 0;
 	size_t totalBytes, bytesWritten;
@@ -435,7 +426,7 @@ static sc_bool taf_read_raw(sc_tafref_t taf, sc_read_callbackref_t callback,
 
 		totalBytes = bytesLeft + bytesRead;
 		bytesWritten = taf_append_buffer(taf, buffer, totalBytes);
-		
+
 		bytesLeft = totalBytes - bytesWritten;
 		if (bytesLeft)
 			Common::copy(buffer + bytesWritten, buffer + totalBytes, buffer);
@@ -453,7 +444,7 @@ static sc_bool taf_read_raw(sc_tafref_t taf, sc_read_callbackref_t callback,
  * in the buffer, or 0 if no more (end of file).
  */
 static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
-		void *opaque, sc_bool is_gamefile) {
+                                            void *opaque, sc_bool is_gamefile) {
 	sc_tafref_t taf;
 	sc_bool status = FALSE;
 	assert(callback);
@@ -483,7 +474,7 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 		int version = AdriftMetaEngine::detectGameVersion(taf->header);
 
 		if (version == TAF_VERSION_500 || version == TAF_VERSION_390 ||
-				version == TAF_VERSION_380) {
+		    version == TAF_VERSION_380) {
 			taf->version = TAF_VERSION_500;
 
 		} else if (version == TAF_VERSION_400) {
@@ -544,7 +535,6 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 	return taf;
 }
 
-
 /*
  * taf_create()
  * taf_create_tas()
@@ -560,7 +550,6 @@ sc_tafref_t taf_create_tas(sc_read_callbackref_t callback, void *opaque) {
 	return taf_create_from_callback(callback, opaque, FALSE);
 }
 
-
 /*
  * taf_first_line()
  *
@@ -573,7 +562,6 @@ void taf_first_line(sc_tafref_t taf) {
 	taf->current_slab = 0;
 	taf->current_offset = 0;
 }
-
 
 /*
  * taf_next_line()
@@ -589,7 +577,7 @@ const sc_char *taf_next_line(sc_tafref_t taf) {
 		sc_char *line;
 
 		/* Get the effective address of the current line. */
-		line = (sc_char *) taf->slabs[taf->current_slab].data;
+		line = (sc_char *)taf->slabs[taf->current_slab].data;
 		line += taf->current_offset;
 
 		/*
@@ -609,7 +597,6 @@ const sc_char *taf_next_line(sc_tafref_t taf) {
 	return NULL;
 }
 
-
 /*
  * taf_more_lines()
  *
@@ -621,7 +608,6 @@ sc_bool taf_more_lines(sc_tafref_t taf) {
 	/* Return TRUE if not at TAF data end. */
 	return taf->current_slab < taf->slab_count;
 }
-
 
 /*
  * taf_get_game_data_length()
@@ -641,7 +627,6 @@ sc_int taf_get_game_data_length(sc_tafref_t taf) {
 	return taf->total_in_bytes;
 }
 
-
 /*
  * taf_get_version()
  *
@@ -653,7 +638,6 @@ sc_int taf_get_version(sc_tafref_t taf) {
 	assert(taf->version != TAF_VERSION_NONE);
 	return taf->version;
 }
-
 
 /*
  * taf_debug_is_taf_string()
@@ -672,8 +656,7 @@ sc_bool taf_debug_is_taf_string(sc_tafref_t taf, const void *addr) {
 	 * the TAF slabs.  Return TRUE if in range.
 	 */
 	for (index_ = 0; index_ < taf->slab_count; index_++) {
-		if (addr_ >= taf->slabs[index_].data
-		        && addr_ < taf->slabs[index_].data + taf->slabs[index_].size)
+		if (addr_ >= taf->slabs[index_].data && addr_ < taf->slabs[index_].data + taf->slabs[index_].size)
 			return TRUE;
 	}
 
@@ -687,14 +670,12 @@ void taf_debug_dump(sc_tafref_t taf) {
 	/* Dump complete structure. */
 	sc_trace("TAFfile: debug dump follows...\n");
 	sc_trace("taf->header =");
-	for (index_ = 0; index_ < (sc_int) sizeof(taf->header); index_++)
+	for (index_ = 0; index_ < (sc_int)sizeof(taf->header); index_++)
 		sc_trace(" %02x", taf->header[index_]);
 	sc_trace("\n");
 
 	sc_trace("taf->version = %s\n",
-	         taf->version == TAF_VERSION_400 ? "4.00" :
-	         taf->version == TAF_VERSION_390 ? "3.90" :
-	         taf->version == TAF_VERSION_380 ? "3.80" : "[Unknown]");
+	         taf->version == TAF_VERSION_400 ? "4.00" : taf->version == TAF_VERSION_390 ? "3.90" : taf->version == TAF_VERSION_380 ? "3.80" : "[Unknown]");
 
 	sc_trace("taf->slabs = \n");
 	for (index_ = 0; index_ < taf->slab_count; index_++) {

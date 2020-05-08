@@ -21,19 +21,19 @@
  */
 
 #include "ultima/ultima1/u1dialogs/king.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map.h"
 #include "ultima/shared/gfx/visual_surface.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(King, Dialog)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(CharacterInputMsg)
-	ON_MESSAGE(TextInputMsg)
+ON_MESSAGE(ShowMsg)
+ON_MESSAGE(CharacterInputMsg)
+ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
 King::King(Ultima1Game *game, uint kingIndex) : Dialog(game), _kingIndex(kingIndex), _mode(SELECT) {
@@ -114,8 +114,8 @@ void King::setMode(KingMode mode) {
 
 	switch (_mode) {
 	case PENCE:
-		addInfoMsg(_game->_res->KING_TEXT[2]);			// Pence
-		addInfoMsg(_game->_res->KING_TEXT[4], false);	// How much?
+		addInfoMsg(_game->_res->KING_TEXT[2]);        // Pence
+		addInfoMsg(_game->_res->KING_TEXT[4], false); // How much?
 		getInput();
 		break;
 
@@ -216,5 +216,5 @@ void King::giveHitPoints(uint amount) {
 }
 
 } // End of namespace U1Dialogs
-} // End of namespace Gfx
+} // namespace Ultima1
 } // End of namespace Ultima

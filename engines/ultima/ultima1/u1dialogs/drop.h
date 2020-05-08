@@ -23,15 +23,15 @@
 #ifndef ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
 #define ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
 
-#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
 #include "ultima/shared/gfx/text_input.h"
+#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CShowMsg;
 using Shared::CCharacterInputMsg;
+using Shared::CShowMsg;
 using Shared::CTextInputMsg;
 
 /**
@@ -43,9 +43,14 @@ class Drop : public FullScreenDialog {
 	bool CharacterInputMsg(CCharacterInputMsg &msg);
 	bool TextInputMsg(CTextInputMsg &msg);
 
-	enum Mode { SELECT, DROP_PENCE, DROP_WEAPON, DROP_armour };
+	enum Mode { SELECT,
+		        DROP_PENCE,
+		        DROP_WEAPON,
+		        DROP_armour };
+
 private:
 	Mode _mode;
+
 private:
 	/**
 	 * Sets the mode
@@ -71,6 +76,7 @@ private:
 	 * Draw the drop armor display
 	 */
 	void drawDropArmor();
+
 public:
 	CLASSDEF;
 

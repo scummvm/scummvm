@@ -24,39 +24,39 @@
 #include "common/endian.h"
 #include "common/stream.h"
 
-#include "toon/toon.h"
 #include "toon/script.h"
+#include "toon/toon.h"
 
 namespace Toon {
 EMCInterpreter::EMCInterpreter(ToonEngine *vm) : _vm(vm), _scriptData(0), _filename(0) {
 
-#define OPCODE(x) { &EMCInterpreter::x, #x }
+#define OPCODE(x) \
+	{ &EMCInterpreter::x, #x }
 	static const OpcodeEntry opcodes[] = {
-		// 0x00
-		OPCODE(op_jmp),
-		OPCODE(op_setRetValue),
-		OPCODE(op_pushRetOrPos),
-		OPCODE(op_push),
-		// 0x04
-		OPCODE(op_push),
-		OPCODE(op_pushReg),
-		OPCODE(op_pushBPNeg),
-		OPCODE(op_pushBPAdd),
-		// 0x08
-		OPCODE(op_popRetOrPos),
-		OPCODE(op_popReg),
-		OPCODE(op_popBPNeg),
-		OPCODE(op_popBPAdd),
-		// 0x0C
-		OPCODE(op_addSP),
-		OPCODE(op_subSP),
-		OPCODE(op_sysCall),
-		OPCODE(op_ifNotJmp),
-		// 0x10
-		OPCODE(op_negate),
-		OPCODE(op_eval),
-		OPCODE(op_setRetAndJmp)
-	};
+	    // 0x00
+	    OPCODE(op_jmp),
+	    OPCODE(op_setRetValue),
+	    OPCODE(op_pushRetOrPos),
+	    OPCODE(op_push),
+	    // 0x04
+	    OPCODE(op_push),
+	    OPCODE(op_pushReg),
+	    OPCODE(op_pushBPNeg),
+	    OPCODE(op_pushBPAdd),
+	    // 0x08
+	    OPCODE(op_popRetOrPos),
+	    OPCODE(op_popReg),
+	    OPCODE(op_popBPNeg),
+	    OPCODE(op_popBPAdd),
+	    // 0x0C
+	    OPCODE(op_addSP),
+	    OPCODE(op_subSP),
+	    OPCODE(op_sysCall),
+	    OPCODE(op_ifNotJmp),
+	    // 0x10
+	    OPCODE(op_negate),
+	    OPCODE(op_eval),
+	    OPCODE(op_setRetAndJmp)};
 	_opcodes = opcodes;
 #undef OPCODE
 
@@ -68,7 +68,7 @@ EMCInterpreter::~EMCInterpreter() {
 
 bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 	switch (chunk._type) {
-	case MKTAG('T','E','X','T'):
+	case MKTAG('T', 'E', 'X', 'T'):
 		delete[] _scriptData->text;
 		_scriptData->text = new byte[chunk._size];
 		assert(_scriptData->text);
@@ -76,7 +76,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 			error("Couldn't read TEXT chunk from file '%s'", _filename);
 		break;
 
-	case MKTAG('O','R','D','R'):
+	case MKTAG('O', 'R', 'D', 'R'):
 		delete[] _scriptData->ordr;
 		_scriptData->ordr = new uint16[chunk._size >> 1];
 		assert(_scriptData->ordr);
@@ -87,7 +87,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 			_scriptData->ordr[i] = READ_BE_UINT16(&_scriptData->ordr[i]);
 		break;
 
-	case MKTAG('D','A','T','A'):
+	case MKTAG('D', 'A', 'T', 'A'):
 		delete[] _scriptData->data;
 		_scriptData->data = new uint16[chunk._size >> 1];
 		assert(_scriptData->data);
@@ -118,7 +118,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 	_filename = filename;
 
 	IFFParser iff(*stream);
-	Common::Functor1Mem< Common::IFFChunk &, bool, EMCInterpreter > c(this, &EMCInterpreter::callback);
+	Common::Functor1Mem<Common::IFFChunk &, bool, EMCInterpreter> c(this, &EMCInterpreter::callback);
 	iff.parse(c);
 
 	if (!_scriptData->ordr)
@@ -153,7 +153,7 @@ void EMCInterpreter::unload(EMCData *data) {
 	data->ordr = NULL;
 
 	delete[] data->data;
-	 data->data = NULL;
+	data->data = NULL;
 }
 
 void EMCInterpreter::init(EMCState *scriptStat, const EMCData *data) {

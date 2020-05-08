@@ -33,8 +33,8 @@ class NamedArchiveFile : public ArchiveFile {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	NamedArchiveFile() : _indexCount(0) { }
-	~NamedArchiveFile() override { }
+	NamedArchiveFile() : _indexCount(0) {}
+	~NamedArchiveFile() override {}
 
 	bool exists(uint32 index) override {
 		Std::string name;
@@ -75,7 +75,8 @@ protected:
 	bool indexToName(uint32 index, Std::string &name) const {
 		Std::map<uint32, Std::string>::const_iterator iter;
 		iter = _indexedNames.find(index);
-		if (iter == _indexedNames.end()) return false;
+		if (iter == _indexedNames.end())
+			return false;
 		name = iter->_value;
 		return true;
 	}
@@ -85,7 +86,8 @@ protected:
 		bool hasIndex = extractIndexFromName(name, index);
 		if (hasIndex) {
 			_indexedNames[index] = name;
-			if (index >= _indexCount) _indexCount = index + 1;
+			if (index >= _indexCount)
+				_indexCount = index + 1;
 		}
 	}
 

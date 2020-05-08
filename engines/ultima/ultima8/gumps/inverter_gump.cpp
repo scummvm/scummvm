@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/inverter_gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
@@ -33,7 +33,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(InverterGump, DesktopGump)
 
 InverterGump::InverterGump(int32 x, int32 y, int32 width, int32 height)
-	: DesktopGump(x, y, width, height) {
+    : DesktopGump(x, y, width, height) {
 	_buffer = nullptr;
 }
 
@@ -64,7 +64,8 @@ void InverterGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	//  to use to compensate for the flipping... -wjp :-) )
 
 	// Don't paint if hidden
-	if (IsHidden()) return;
+	if (IsHidden())
+		return;
 
 	// Paint This
 	PaintThis(surf, lerp_factor, scaled);
@@ -72,7 +73,6 @@ void InverterGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	// Paint children
 	PaintChildren(surf, lerp_factor, scaled);
 }
-
 
 void InverterGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	unsigned int state = Ultima8Engine::get_instance()->getInversion();
@@ -92,7 +92,6 @@ void InverterGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sc
 
 	int width = _dims.w, height = _dims.h;
 
-
 	// need a backbuffer
 	if (!_buffer) {
 		_buffer = RenderSurface::CreateSecondaryRenderSurface(width, height);
@@ -107,7 +106,7 @@ void InverterGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sc
 
 	for (int i = 0; i < height; ++i) {
 		int src = getLine(getIndex(i, height / 2) + t, height / 2);
-//		pout << src << " -> " << i << Std::endl;
+		//		pout << src << " -> " << i << Std::endl;
 		surf->Blit(tex, 0, src, width, 1, 0, i);
 	}
 }
@@ -117,7 +116,8 @@ void InverterGump::ParentToGump(int32 &px, int32 &py, PointRoundDir) {
 	px -= _x;
 	px += _dims.x;
 	py -= _y;
-	if (Ultima8Engine::get_instance()->isInverted()) py = _dims.h - py - 1;
+	if (Ultima8Engine::get_instance()->isInverted())
+		py = _dims.h - py - 1;
 	py += _dims.y;
 }
 
@@ -126,7 +126,8 @@ void InverterGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir) {
 	gx -= _dims.x;
 	gx += _x;
 	gy -= _dims.y;
-	if (Ultima8Engine::get_instance()->isInverted()) gy = _dims.h - gy - 1;
+	if (Ultima8Engine::get_instance()->isInverted())
+		gy = _dims.h - gy - 1;
 	gy += _y;
 }
 

@@ -18,8 +18,8 @@
 #ifndef MT32EMU_MIDI_EVENT_QUEUE_H
 #define MT32EMU_MIDI_EVENT_QUEUE_H
 
-#include "globals.h"
 #include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -50,7 +50,7 @@ struct MidiEvent {
  */
 class MidiEventQueue {
 private:
-	MidiEvent * const ringBuffer;
+	MidiEvent *const ringBuffer;
 	const Bit32u ringBufferMask;
 	volatile Bit32u startPosition;
 	volatile Bit32u endPosition;

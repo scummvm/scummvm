@@ -95,8 +95,8 @@ int Processor::read_number() {
 	read_string(5, buffer);
 
 	for (i = 0; buffer[i] != 0; i++)
-	if (buffer[i] >= '0' && buffer[i] <= '9')
-		value = 10 * value + buffer[i] - '0';
+		if (buffer[i] >= '0' && buffer[i] <= '9')
+			value = 10 * value + buffer[i] - '0';
 
 	return value;
 }
@@ -146,11 +146,11 @@ void Processor::z_read() {
 
 	// Read input from current input stream
 	key = stream_read_input(
-		max, buffer,		// buffer and size
-		zargs[2],			// timeout value
-		zargs[3],			// timeout routine
-		false,				// enable hot keys
-		h_version == V6		// no script in V6
+	    max, buffer,    // buffer and size
+	    zargs[2],       // timeout value
+	    zargs[3],       // timeout routine
+	    false,          // enable hot keys
+	    h_version == V6 // no script in V6
 	);
 
 	if (key == ZC_BAD)
@@ -163,7 +163,7 @@ void Processor::z_read() {
 	// Copy local buffer back to dynamic memory
 	for (i = 0; buffer[i] != 0; i++) {
 		if (key == ZC_RETURN) {
-			buffer[i] = unicode_tolower (buffer[i]);
+			buffer[i] = unicode_tolower(buffer[i]);
 		}
 
 		storeb((zword)(zargs[0] + ((h_version <= V4) ? 1 : 2) + i), translate_to_zscii(buffer[i]));
@@ -177,7 +177,7 @@ void Processor::z_read() {
 
 	// Tokenise line if a token buffer is present
 	if (key == ZC_RETURN && zargs[1] != 0)
-		tokenise_line (zargs[0], zargs[1], 0, false);
+		tokenise_line(zargs[0], zargs[1], 0, false);
 
 	// Store key
 	if (h_version >= V5)
@@ -193,9 +193,9 @@ void Processor::z_read_char() {
 
 	// Read input from the current input stream
 	key = stream_read_key(
-		zargs[1],	// timeout value
-		zargs[2],	// timeout routine
-		false  		// enable hot keys
+	    zargs[1], // timeout value
+	    zargs[2], // timeout routine
+	    false     // enable hot keys
 	);
 
 	if (key == ZC_BAD)
@@ -215,8 +215,8 @@ void Processor::z_read_mouse() {
 
 	storew((zword)(zargs[0] + 0), hx_mouse_y);
 	storew((zword)(zargs[0] + 2), hx_mouse_x);
-	storew((zword)(zargs[0] + 4), btn);				// mouse button bits
-	storew((zword)(zargs[0] + 6), menu_selected);	// menu selection
+	storew((zword)(zargs[0] + 4), btn);           // mouse button bits
+	storew((zword)(zargs[0] + 6), menu_selected); // menu selection
 }
 
 } // End of namespace Frotz

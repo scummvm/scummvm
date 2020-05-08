@@ -23,8 +23,8 @@
 #ifndef BACKENDS_MIXER_SDL_H
 #define BACKENDS_MIXER_SDL_H
 
-#include "backends/platform/sdl/sdl-sys.h"
 #include "audio/mixer_intern.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
 /**
  * SDL mixer manager. It wraps the actual implementation

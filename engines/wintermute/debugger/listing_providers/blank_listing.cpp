@@ -34,5 +34,4 @@ Common::String BlankListing::getLine(uint n) {
 }
 BlankListing::~BlankListing() {}
 
-}
-
+} // namespace Wintermute

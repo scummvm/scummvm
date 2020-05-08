@@ -27,10 +27,10 @@
 
 #include <jni.h>
 
+#include "common/archive.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/util.h"
-#include "common/archive.h"
 
 #include <android/asset_manager.h>
 

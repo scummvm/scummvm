@@ -23,10 +23,10 @@
 #ifndef ULTIMA4_MAP_TILE_H
 #define ULTIMA4_MAP_TILE_H
 
-#include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/map/tileset.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/map/tileset.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -37,26 +37,25 @@ class Tileset;
 class TileAnim;
 
 /* attr masks */
-#define MASK_SHIP                   0x0001
-#define MASK_HORSE                  0x0002
-#define MASK_BALLOON                0x0004
-#define MASK_DISPEL                 0x0008
-#define MASK_TALKOVER               0x0010
-#define MASK_DOOR                   0x0020
-#define MASK_LOCKEDDOOR             0x0040
-#define MASK_CHEST                  0x0080
-#define MASK_ATTACKOVER             0x0100
-#define MASK_CANLANDBALLOON         0x0200
-#define MASK_REPLACEMENT            0x0400
-#define MASK_WATER_REPLACEMENT      0x0800
-#define MASK_FOREGROUND             0x1000
-#define MASK_LIVING_THING           0x2000
-
+#define MASK_SHIP 0x0001
+#define MASK_HORSE 0x0002
+#define MASK_BALLOON 0x0004
+#define MASK_DISPEL 0x0008
+#define MASK_TALKOVER 0x0010
+#define MASK_DOOR 0x0020
+#define MASK_LOCKEDDOOR 0x0040
+#define MASK_CHEST 0x0080
+#define MASK_ATTACKOVER 0x0100
+#define MASK_CANLANDBALLOON 0x0200
+#define MASK_REPLACEMENT 0x0400
+#define MASK_WATER_REPLACEMENT 0x0800
+#define MASK_FOREGROUND 0x1000
+#define MASK_LIVING_THING 0x2000
 
 /* movement masks */
-#define MASK_SWIMABLE           0x0001
-#define MASK_SAILABLE           0x0002
-#define MASK_UNFLYABLE          0x0004
+#define MASK_SWIMABLE 0x0001
+#define MASK_SAILABLE 0x0002
+#define MASK_UNFLYABLE 0x0004
 #define MASK_CREATURE_UNWALKABLE 0x0008
 
 /**
@@ -119,23 +118,23 @@ public:
 	 * All tiles that you can walk, swim, or sail on, can be attacked over. All others must declare
 	 * themselves
 	 */
-	int  canAttackOver() const {
+	int canAttackOver() const {
 		return isWalkable() || isSwimable() || isSailable() || (rule->_mask & MASK_ATTACKOVER);
 	}
-	int  canLandBalloon() const {
+	int canLandBalloon() const {
 		return rule->_mask & MASK_CANLANDBALLOON;
 	}
-	int  isLivingObject() const {
+	int isLivingObject() const {
 		return rule->_mask & MASK_LIVING_THING;
 	}
-	int  isReplacement() const {
+	int isReplacement() const {
 		return rule->_mask & MASK_REPLACEMENT;
 	}
-	int  isWaterReplacement() const {
+	int isWaterReplacement() const {
 		return rule->_mask & MASK_WATER_REPLACEMENT;
 	}
 
-	int  isWalkable() const {
+	int isWalkable() const {
 		return rule->_walkOnDirs > 0;
 	}
 	bool isCreatureWalkable() const {
@@ -143,43 +142,43 @@ public:
 	}
 	bool isDungeonWalkable() const;
 	bool isDungeonFloor() const;
-	int  isSwimable() const {
+	int isSwimable() const {
 		return rule->_movementMask & MASK_SWIMABLE;
 	}
-	int  isSailable() const {
+	int isSailable() const {
 		return rule->_movementMask & MASK_SAILABLE;
 	}
 	bool isWater() const {
 		return (isSwimable() || isSailable());
 	}
-	int  isFlyable() const {
+	int isFlyable() const {
 		return !(rule->_movementMask & MASK_UNFLYABLE);
 	}
-	int  isDoor() const {
+	int isDoor() const {
 		return rule->_mask & MASK_DOOR;
 	}
-	int  isLockedDoor() const {
+	int isLockedDoor() const {
 		return rule->_mask & MASK_LOCKEDDOOR;
 	}
-	int  isChest() const {
+	int isChest() const {
 		return rule->_mask & MASK_CHEST;
 	}
-	int  isShip() const {
+	int isShip() const {
 		return rule->_mask & MASK_SHIP;
 	}
 	bool isPirateShip() const {
 		return _name == "pirate_ship";
 	}
-	int  isHorse() const {
+	int isHorse() const {
 		return rule->_mask & MASK_HORSE;
 	}
-	int  isBalloon() const {
+	int isBalloon() const {
 		return rule->_mask & MASK_BALLOON;
 	}
-	int  canDispel() const {
+	int canDispel() const {
 		return rule->_mask & MASK_DISPEL;
 	}
-	int  canTalkOver() const {
+	int canTalkOver() const {
 		return rule->_mask & MASK_TALKOVER;
 	}
 	TileSpeed getSpeed() const {
@@ -217,28 +216,27 @@ private:
 	void loadImage();
 
 private:
-	TileId _id;          /**< an id that is unique across all tilesets */
-	Common::String _name;        /**< The name of this tile */
-	Tileset *_tileSet;   /**< The tileset this tile belongs to */
+	TileId _id;           /**< an id that is unique across all tilesets */
+	Common::String _name; /**< The name of this tile */
+	Tileset *_tileSet;    /**< The tileset this tile belongs to */
 	int _w, _h;           /**< width and height of the tile */
-	int _frames;         /**< The number of frames this tile has */
-	int _scale;          /**< The scale of the tile */
-	TileAnim *_anim;     /**< The tile animation for this tile */
-	bool _opaque;        /**< Is this tile opaque? */
+	int _frames;          /**< The number of frames this tile has */
+	int _scale;           /**< The scale of the tile */
+	TileAnim *_anim;      /**< The tile animation for this tile */
+	bool _opaque;         /**< Is this tile opaque? */
 
-	bool _foreground;    /**< As a maptile, is a foreground that will search neighbour maptiles for a land-based background replacement. ex: chests */
-	bool _waterForeground;/**< As a maptile, is a foreground that will search neighbour maptiles for a water-based background replacement. ex: chests */
+	bool _foreground;      /**< As a maptile, is a foreground that will search neighbour maptiles for a land-based background replacement. ex: chests */
+	bool _waterForeground; /**< As a maptile, is a foreground that will search neighbour maptiles for a water-based background replacement. ex: chests */
 
-	TileRule *rule;     /**< The rules that govern the behavior of this tile */
-	Common::String _imageName;   /**< The name of the image that belongs to this tile */
-	Common::String _looksLike;  /**< The name of the tile that this tile looks exactly like (if any) */
+	TileRule *rule;            /**< The rules that govern the behavior of this tile */
+	Common::String _imageName; /**< The name of the image that belongs to this tile */
+	Common::String _looksLike; /**< The name of the tile that this tile looks exactly like (if any) */
 
-	Image *_image;       /**< The original image for this tile (with all of its frames) */
+	Image *_image; /**< The original image for this tile (with all of its frames) */
 	bool _tiledInDungeon;
 	Std::vector<Direction> _directions;
 
 	Common::String _animationRule;
-
 
 	static TileId _nextId;
 };

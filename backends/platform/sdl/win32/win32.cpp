@@ -26,33 +26,33 @@
 #ifdef WIN32
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <shellapi.h>
+#include <windows.h>
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 // required for SHGFP_TYPE_CURRENT in shlobj.h
 #define _WIN32_IE 0x500
 #endif
 #include <shlobj.h>
 
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/error.h"
+#include "common/scummsys.h"
 #include "common/textconsole.h"
 
 #include "backends/audiocd/win32/win32-audiocd.h"
-#include "backends/platform/sdl/win32/win32.h"
-#include "backends/platform/sdl/win32/win32-window.h"
-#include "backends/platform/sdl/win32/win32_wrapper.h"
-#include "backends/platform/sdl/win32/codepage.h"
-#include "backends/saves/windows/windows-saves.h"
+#include "backends/dialogs/win32/win32-dialogs.h"
 #include "backends/fs/windows/windows-fs-factory.h"
+#include "backends/platform/sdl/win32/codepage.h"
+#include "backends/platform/sdl/win32/win32-window.h"
+#include "backends/platform/sdl/win32/win32.h"
+#include "backends/platform/sdl/win32/win32_wrapper.h"
+#include "backends/saves/windows/windows-saves.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
 #include "backends/updates/win32/win32-updates.h"
-#include "backends/dialogs/win32/win32-dialogs.h"
 
+#include "common/encoding.h"
 #include "common/memstream.h"
 #include "common/ustr.h"
-#include "common/encoding.h"
 
 #if defined(USE_TTS)
 #include "backends/text-to-speech/windows/windows-text-to-speech.h"
@@ -69,12 +69,12 @@ void OSystem_Win32::init() {
 
 #if defined(USE_TASKBAR)
 	// Initialize taskbar manager
-	_taskbarManager = new Win32TaskbarManager((SdlWindow_Win32*)_window);
+	_taskbarManager = new Win32TaskbarManager((SdlWindow_Win32 *)_window);
 #endif
 
 #if defined(USE_SYSDIALOGS)
 	// Initialize dialog manager
-	_dialogManager = new Win32DialogManager((SdlWindow_Win32*)_window);
+	_dialogManager = new Win32DialogManager((SdlWindow_Win32 *)_window);
 #endif
 
 	// Invoke parent implementation of this method
@@ -89,7 +89,7 @@ WORD GetCurrentSubsystem() {
 	// Conveniently, since it's for our own process, it's always the correct bitness.
 	// IMAGE_NT_HEADERS has to be found using a byte offset from the EXEHeader,
 	// which requires the ugly cast.
-	PIMAGE_NT_HEADERS PEHeader = (PIMAGE_NT_HEADERS)(((char*)EXEHeader) + EXEHeader->e_lfanew);
+	PIMAGE_NT_HEADERS PEHeader = (PIMAGE_NT_HEADERS)(((char *)EXEHeader) + EXEHeader->e_lfanew);
 	assert(PEHeader->Signature == IMAGE_NT_SIGNATURE);
 	return PEHeader->OptionalHeader.Subsystem;
 }
@@ -102,9 +102,9 @@ void OSystem_Win32::initBackend() {
 	// Enable or disable the window console window
 	if (ConfMan.getBool("console")) {
 		if (AllocConsole()) {
-			freopen("CONIN$","r",stdin);
-			freopen("CONOUT$","w",stdout);
-			freopen("CONOUT$","w",stderr);
+			freopen("CONIN$", "r", stdin);
+			freopen("CONOUT$", "w", stdout);
+			freopen("CONOUT$", "w", stderr);
 		}
 		SetConsoleTitle("ScummVM Status Window");
 	} else {
@@ -117,7 +117,7 @@ void OSystem_Win32::initBackend() {
 
 #if defined(USE_SPARKLE)
 	// Initialize updates manager
-	_updateManager = new Win32UpdateManager((SdlWindow_Win32*)_window);
+	_updateManager = new Win32UpdateManager((SdlWindow_Win32 *)_window);
 #endif
 
 	// Initialize text to speech
@@ -128,7 +128,6 @@ void OSystem_Win32::initBackend() {
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
 }
-
 
 bool OSystem_Win32::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile || f == kFeatureOpenUrl)
@@ -159,7 +158,7 @@ bool OSystem_Win32::displayLogFile() {
 	memset(&startupInfo, 0, sizeof(startupInfo));
 	startupInfo.cb = sizeof(startupInfo);
 
-	char cmdLine[MAX_PATH * 2];  // CreateProcess may change the contents of cmdLine
+	char cmdLine[MAX_PATH * 2]; // CreateProcess may change the contents of cmdLine
 	sprintf(cmdLine, "rundll32 shell32.dll,OpenAs_RunDLL %s", _logFilePath.c_str());
 	BOOL result = CreateProcess(NULL,
 	                            cmdLine,
@@ -181,10 +180,10 @@ bool OSystem_Win32::displayLogFile() {
 }
 
 bool OSystem_Win32::openUrl(const Common::String &url) {
-	HINSTANCE result = ShellExecute(getHwnd(), NULL, /*(wchar_t*)nativeFilePath.utf16()*/url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	HINSTANCE result = ShellExecute(getHwnd(), NULL, /*(wchar_t*)nativeFilePath.utf16()*/ url.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	// ShellExecute returns a value greater than 32 if successful
 	if ((intptr_t)result <= 32) {
-		warning("ShellExecute failed: error = %p", (void*)result);
+		warning("ShellExecute failed: error = %p", (void *)result);
 		return false;
 	}
 	return true;
@@ -193,7 +192,7 @@ bool OSystem_Win32::openUrl(const Common::String &url) {
 void OSystem_Win32::logMessage(LogMessageType::Type type, const char *message) {
 	OSystem_SDL::logMessage(type, message);
 
-#if defined( USE_WINDBG )
+#if defined(USE_WINDBG)
 	OutputDebugString(message);
 #endif
 }
@@ -207,7 +206,7 @@ Common::String OSystem_Win32::getSystemLanguage() const {
 	char ctryName[9];
 
 	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
-		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
+	    GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
 		Common::String localeName = langName;
 		localeName += "_";
 		localeName += ctryName;
@@ -312,6 +311,7 @@ namespace {
 
 class Win32ResourceArchive : public Common::Archive {
 	friend BOOL CALLBACK EnumResNameProc(HMODULE hModule, LPCTSTR lpszType, LPTSTR lpszName, LONG_PTR lParam);
+
 public:
 	Win32ResourceArchive();
 
@@ -319,6 +319,7 @@ public:
 	virtual int listMembers(Common::ArchiveMemberList &list) const;
 	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+
 private:
 	typedef Common::List<Common::String> FilenameList;
 
@@ -396,7 +397,7 @@ AudioCDManager *OSystem_Win32::createAudioCDManager() {
 	return createWin32AudioCDManager();
 }
 
-char *OSystem_Win32::convertEncoding(const char* to, const char *from, const char *string, size_t length) {
+char *OSystem_Win32::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
 	char *newString = nullptr;
 	char *result = OSystem_SDL::convertEncoding(to, from, string, length);
 	if (result != nullptr)
@@ -414,12 +415,10 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 		if (Common::String(from).hasPrefixIgnoreCase("utf-16")) {
 			newString = Common::Encoding::switchEndian(string, length, 16);
 			from = "utf-16";
-		}
-		else if (Common::String(from).hasPrefixIgnoreCase("utf-32")) {
+		} else if (Common::String(from).hasPrefixIgnoreCase("utf-32")) {
 			newString = Common::Encoding::switchEndian(string, length, 32);
 			from = "utf-32";
-		}
-		else
+		} else
 			return nullptr;
 		if (newString != nullptr)
 			string = newString;
@@ -428,11 +427,11 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	}
 	bool swapToEndian = false;
 #ifdef SCUMM_BIG_ENDIAN
-		if (Common::String(to).hasSuffixIgnoreCase("le"))
-			swapToEndian = true;
+	if (Common::String(to).hasSuffixIgnoreCase("le"))
+		swapToEndian = true;
 #else
-		if (Common::String(to).hasSuffixIgnoreCase("be"))
-			swapToEndian = true;
+	if (Common::String(to).hasSuffixIgnoreCase("be"))
+		swapToEndian = true;
 #endif
 	// UTF-32 is really important for us, because it is used for the
 	// transliteration in Common::Encoding and Win32 cannot convert it
@@ -446,11 +445,11 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 		Common::U32String UTF32Str = Common::convertUtf8ToUtf32(UTF8Str);
 		free(UTF8Str);
 		if (swapToEndian) {
-			result = Common::Encoding::switchEndian((const char *) UTF32Str.c_str(),
-						(UTF32Str.size() + 1) * 4,
-						32);
+			result = Common::Encoding::switchEndian((const char *)UTF32Str.c_str(),
+			                                        (UTF32Str.size() + 1) * 4,
+			                                        32);
 		} else {
-			result = (char *) malloc((UTF32Str.size() + 1) * 4);
+			result = (char *)malloc((UTF32Str.size() + 1) * 4);
 			memcpy(result, UTF32Str.c_str(), (UTF32Str.size() + 1) * 4);
 		}
 		if (newString != nullptr)
@@ -462,7 +461,7 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 	WCHAR *tmpStr;
 	if (Common::String(from).hasPrefixIgnoreCase("utf-16")) {
 		// Allocate space for string and 2 ending zeros
-		tmpStr = (WCHAR *) calloc(sizeof(char), length + 2);
+		tmpStr = (WCHAR *)calloc(sizeof(char), length + 2);
 		if (!tmpStr) {
 			if (newString != nullptr)
 				free(newString);
@@ -480,7 +479,7 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 			return nullptr;
 		}
 		size_t size = wcslen(tmpStr2) + 1; // +1 for the terminating null wchar
-		tmpStr = (WCHAR *) malloc(sizeof(WCHAR) * size);
+		tmpStr = (WCHAR *)malloc(sizeof(WCHAR) * size);
 		memcpy(tmpStr, tmpStr2, sizeof(WCHAR) * size);
 		delete[] tmpStr2;
 	}
@@ -494,7 +493,7 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 			free(tmpStr);
 			return result;
 		}
-		return (char *) tmpStr;
+		return (char *)tmpStr;
 	} else {
 		result = Win32::unicodeToAnsi(tmpStr, Win32::getCodePageId(to));
 		free(tmpStr);
@@ -503,7 +502,7 @@ char *OSystem_Win32::convertEncoding(const char* to, const char *from, const cha
 		// Win32::unicodeToAnsi uses new to allocate the memory. We need to copy it into an array
 		// allocated with malloc as it is going to be freed using free.
 		size_t size = strlen(result) + 1;
-		char *resultCopy = (char *) malloc(sizeof(char) * size);
+		char *resultCopy = (char *)malloc(sizeof(char) * size);
 		memcpy(resultCopy, result, sizeof(char) * size);
 		delete[] result;
 		return resultCopy;

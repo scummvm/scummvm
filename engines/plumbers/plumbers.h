@@ -65,21 +65,21 @@ private:
 	static const int kMaxScene = 100;
 
 	struct {
-		int  _duration;
+		int _duration;
 		Common::String _filename;
 	} _bitmaps[kMaxBitmaps];
 
 	struct {
-		int	 _bitmapNum;
-		int	 _startBitmap;
-		int	 _decisionChoices;
+		int _bitmapNum;
+		int _startBitmap;
+		int _decisionChoices;
 		Common::String _sceneName;
 		Common::String _waveFilename;
 		Common::String _decisionBitmap;
 		struct {
 			long _points;
-			int  _sceneIdx;
-			int  _skipScene;
+			int _sceneIdx;
+			int _skipScene;
 			Common::Rect _region;
 		} _choices[kMaxChoice];
 	} _scenes[kMaxScene];
@@ -91,11 +91,11 @@ private:
 	bool _setDurationFl;
 	bool _leftButtonDownFl;
 	bool _endGameFl;
-	bool _timerInstalled; 
-	int	 _curSceneIdx, _prvSceneIdx;
-	int	 _curBitmapIdx;
-	int	 _curChoice;
-	int	 _totScene;
+	bool _timerInstalled;
+	int _curSceneIdx, _prvSceneIdx;
+	int _curBitmapIdx;
+	int _curChoice;
+	int _totScene;
 	long _totScore;
 
 	enum Action {

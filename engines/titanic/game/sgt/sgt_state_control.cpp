@@ -25,11 +25,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSGTStateControl, CBackground)
-	ON_MESSAGE(PETUpMsg)
-	ON_MESSAGE(PETDownMsg)
-	ON_MESSAGE(PETActivateMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(PETUpMsg)
+ON_MESSAGE(PETDownMsg)
+ON_MESSAGE(PETActivateMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 void CSGTStateControl::save(SimpleFile *file, int indent) {
@@ -57,9 +57,8 @@ bool CSGTStateControl::PETDownMsg(CPETDownMsg *msg) {
 bool CSGTStateControl::PETActivateMsg(CPETActivateMsg *msg) {
 	if (msg->_name == "SGTSelector") {
 		static const char *const TARGETS[] = {
-			"Vase", "Bedfoot", "Toilet", "Drawer", "SGTTV", "Armchair", "BedHead",
-			"WashStand", "Desk", "DeskChair", "Basin", "ChestOfDrawers"
-		};
+		    "Vase", "Bedfoot", "Toilet", "Drawer", "SGTTV", "Armchair", "BedHead",
+		    "WashStand", "Desk", "DeskChair", "Basin", "ChestOfDrawers"};
 		_state = msg->_numValue;
 		CActMsg actMsg;
 		actMsg.execute(TARGETS[_state]);

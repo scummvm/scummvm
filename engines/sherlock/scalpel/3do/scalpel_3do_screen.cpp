@@ -20,15 +20,15 @@
  *
  */
 
-#include "sherlock/scalpel/scalpel_screen.h"
-#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/3do/scalpel_3do_screen.h"
+#include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_screen.h"
 
 namespace Sherlock {
 
 namespace Scalpel {
 
-Scalpel3DOScreen::Scalpel3DOScreen(SherlockEngine *vm): ScalpelScreen(vm) {
+Scalpel3DOScreen::Scalpel3DOScreen(SherlockEngine *vm) : ScalpelScreen(vm) {
 }
 
 void Scalpel3DOScreen::SHblitFrom(const Graphics::Surface &src) {
@@ -70,7 +70,7 @@ void Scalpel3DOScreen::SHblitFrom(const Graphics::Surface &src, const Common::Po
 }
 
 void Scalpel3DOScreen::transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped, int overrideColor) {
+                                             bool flipped, int overrideColor) {
 	error("TODO: Refactor");
 #if 0
 	if (!_vm->_isScreenDoubled) {
@@ -124,38 +124,37 @@ void Scalpel3DOScreen::SHfillRect(const Common::Rect &r, uint color) {
 }
 
 void Scalpel3DOScreen::SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped, int overrideColor, int scaleVal) {
+                                       bool flipped, int overrideColor, int scaleVal) {
 	ScalpelScreen::SHtransBlitFrom(src, pt, flipped, overrideColor,
-		_vm->_isScreenDoubled ? scaleVal / 2 : scaleVal);
+	                               _vm->_isScreenDoubled ? scaleVal / 2 : scaleVal);
 }
 
 void Scalpel3DOScreen::SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped, int overrideColor, int scaleVal) {
+                                       bool flipped, int overrideColor, int scaleVal) {
 	ScalpelScreen::SHtransBlitFrom(src, pt, flipped, overrideColor,
-		_vm->_isScreenDoubled ? scaleVal / 2 : scaleVal);
+	                               _vm->_isScreenDoubled ? scaleVal / 2 : scaleVal);
 }
-
 
 void Scalpel3DOScreen::fadeIntoScreen3DO(int speed) {
 	Events &events = *_vm->_events;
 	uint16 *currentScreenBasePtr = (uint16 *)getPixels();
 	uint16 *targetScreenBasePtr = (uint16 *)_backBuffer.getPixels();
-	uint16  currentScreenPixel = 0;
-	uint16  targetScreenPixel = 0;
+	uint16 currentScreenPixel = 0;
+	uint16 targetScreenPixel = 0;
 
-	uint16  currentScreenPixelRed = 0;
-	uint16  currentScreenPixelGreen = 0;
-	uint16  currentScreenPixelBlue = 0;
+	uint16 currentScreenPixelRed = 0;
+	uint16 currentScreenPixelGreen = 0;
+	uint16 currentScreenPixelBlue = 0;
 
-	uint16  targetScreenPixelRed = 0;
-	uint16  targetScreenPixelGreen = 0;
-	uint16  targetScreenPixelBlue = 0;
+	uint16 targetScreenPixelRed = 0;
+	uint16 targetScreenPixelGreen = 0;
+	uint16 targetScreenPixelBlue = 0;
 
-	uint16  screenWidth = SHERLOCK_SCREEN_WIDTH;
-	uint16  screenHeight = SHERLOCK_SCREEN_HEIGHT;
-	uint16  screenX = 0;
-	uint16  screenY = 0;
-	uint16  pixelsChanged = 0;
+	uint16 screenWidth = SHERLOCK_SCREEN_WIDTH;
+	uint16 screenHeight = SHERLOCK_SCREEN_HEIGHT;
+	uint16 screenX = 0;
+	uint16 screenY = 0;
+	uint16 pixelsChanged = 0;
 
 	clearDirtyRects();
 
@@ -234,20 +233,20 @@ void Scalpel3DOScreen::fadeIntoScreen3DO(int speed) {
 void Scalpel3DOScreen::blitFrom3DOcolorLimit(uint16 limitColor) {
 	uint16 *currentScreenPtr = (uint16 *)getPixels();
 	uint16 *targetScreenPtr = (uint16 *)_backBuffer.getPixels();
-	uint16  currentScreenPixel = 0;
+	uint16 currentScreenPixel = 0;
 
-	uint16  screenWidth = SHERLOCK_SCREEN_WIDTH;
-	uint16  screenHeight = SHERLOCK_SCREEN_HEIGHT;
-	uint16  screenX = 0;
-	uint16  screenY = 0;
+	uint16 screenWidth = SHERLOCK_SCREEN_WIDTH;
+	uint16 screenHeight = SHERLOCK_SCREEN_HEIGHT;
+	uint16 screenX = 0;
+	uint16 screenY = 0;
 
-	uint16  currentScreenPixelRed = 0;
-	uint16  currentScreenPixelGreen = 0;
-	uint16  currentScreenPixelBlue = 0;
+	uint16 currentScreenPixelRed = 0;
+	uint16 currentScreenPixelGreen = 0;
+	uint16 currentScreenPixelBlue = 0;
 
-	uint16  limitPixelRed = limitColor & 0xF800;
-	uint16  limitPixelGreen = limitColor & 0x07E0;
-	uint16  limitPixelBlue = limitColor & 0x001F;
+	uint16 limitPixelRed = limitColor & 0xF800;
+	uint16 limitPixelGreen = limitColor & 0x07E0;
+	uint16 limitPixelBlue = limitColor & 0x001F;
 
 	for (screenY = 0; screenY < screenHeight; screenY++) {
 		for (screenX = 0; screenX < screenWidth; screenX++) {

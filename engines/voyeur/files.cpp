@@ -22,8 +22,8 @@
 
 #include "voyeur/files.h"
 #include "voyeur/screen.h"
-#include "voyeur/voyeur.h"
 #include "voyeur/staticres.h"
+#include "voyeur/voyeur.h"
 
 namespace Voyeur {
 
@@ -50,7 +50,9 @@ BoltFilesState::BoltFilesState(VoyeurEngine *vm) : _vm(vm) {
 	_boltPageFrame = NULL;
 }
 
-#define NEXT_BYTE if (--_bytesLeft < 0) nextBlock()
+#define NEXT_BYTE         \
+	if (--_bytesLeft < 0) \
+	nextBlock()
 
 byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 	if (!buf) {
@@ -83,8 +85,7 @@ byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 				break;
 			case 0x80:
 				_runType = 1;
-				_runLength = (nextByte & 0x20) ? ((32 - (nextByte & 0x1f)) << 2) + 2 :
-					(32 - (nextByte & 0x1f)) << 2;
+				_runLength = (nextByte & 0x20) ? ((32 - (nextByte & 0x1f)) << 2) + 2 : (32 - (nextByte & 0x1f)) << 2;
 				NEXT_BYTE;
 				_runOffset = *_bufPos++ << 1;
 				break;
@@ -219,7 +220,7 @@ byte *FilesManager::fload(const Common::String &filename, int *size) {
 
 /*------------------------------------------------------------------------*/
 
-BoltFile::BoltFile(const Common::String &filename, BoltFilesState &state): _state(state) {
+BoltFile::BoltFile(const Common::String &filename, BoltFilesState &state) : _state(state) {
 	if (!_file.open(filename))
 		error("Could not open %s", filename.c_str());
 
@@ -398,8 +399,7 @@ byte *BoltFile::getBoltMember(uint32 id) {
 		_state._bufStart = _state._decompressBuf;
 		_state._bufSize = DECOMPRESS_SIZE;
 
-		if ((_state._curFd != &_file) || (_state._curMemberPtr->_fileOffset < _state._bufferBegin)
-				|| (_state._curMemberPtr->_fileOffset >= _state._bufferEnd)) {
+		if ((_state._curFd != &_file) || (_state._curMemberPtr->_fileOffset < _state._bufferBegin) || (_state._curMemberPtr->_fileOffset >= _state._bufferEnd)) {
 			_state._bytesLeft = 0;
 			_state._bufPos = _state._bufStart;
 			_state._bufferBegin = -1;
@@ -422,12 +422,12 @@ byte *BoltFile::getBoltMember(uint32 id) {
 
 void BoltFile::initDefault() {
 	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size,
-		_state._curMemberPtr->_mode);
+	                                                _state._curMemberPtr->_mode);
 }
 
 /*------------------------------------------------------------------------*/
 
-BVoyBoltFile::BVoyBoltFile(BoltFilesState &state): BoltFile("bvoy.blt", state) {
+BVoyBoltFile::BVoyBoltFile(BoltFilesState &state) : BoltFile("bvoy.blt", state) {
 }
 
 void BVoyBoltFile::initResource(int resType) {
@@ -483,7 +483,7 @@ void BVoyBoltFile::initViewPortList() {
 
 	ViewPortListResource *res;
 	_state._curMemberPtr->_viewPortListResource = res = new ViewPortListResource(
-		_state, _state._curMemberPtr->_data);
+	    _state, _state._curMemberPtr->_data);
 
 	_state._vm->_screen->_viewPortListPtr = res;
 	_state._vm->_screen->_vPort = res->_entries[0];
@@ -492,7 +492,7 @@ void BVoyBoltFile::initViewPortList() {
 void BVoyBoltFile::initFontInfo() {
 	initDefault();
 	_state._curMemberPtr->_fontInfoResource = new FontInfoResource(
-		_state, _state._curMemberPtr->_data);
+	    _state, _state._curMemberPtr->_data);
 }
 
 void BVoyBoltFile::initFont() {
@@ -506,7 +506,7 @@ void BVoyBoltFile::initSoundMap() {
 
 void BVoyBoltFile::sInitRect() {
 	_state._curMemberPtr->_data = _state.decompress(NULL, _state._curMemberPtr->_size,
-		_state._curMemberPtr->_mode);
+	                                                _state._curMemberPtr->_mode);
 
 	// Check whether the resource Id is in the list of extended rects
 	bool isExtendedRects = false;
@@ -516,32 +516,32 @@ void BVoyBoltFile::sInitRect() {
 	int rectSize = isExtendedRects ? 12 : 8;
 	if ((_state._curMemberPtr->_size % rectSize) == 0 || (_state._curMemberPtr->_size % rectSize) == 2)
 		_state._curMemberPtr->_rectResource = new RectResource(_state._curMemberPtr->_data,
-			_state._curMemberPtr->_size, isExtendedRects);
+		                                                       _state._curMemberPtr->_size, isExtendedRects);
 }
 
 void BVoyBoltFile::sInitPic() {
 	// Read in the header data
 	_state._curMemberPtr->_data = _state.decompress(NULL, 24, _state._curMemberPtr->_mode);
 	_state._curMemberPtr->_picResource = new PictureResource(_state,
-		_state._curMemberPtr->_data);
+	                                                         _state._curMemberPtr->_data);
 }
 
 void BVoyBoltFile::vInitCMap() {
 	initDefault();
 	_state._curMemberPtr->_cMapResource = new CMapResource(
-		_state, _state._curMemberPtr->_data);
+	    _state, _state._curMemberPtr->_data);
 }
 
 void BVoyBoltFile::vInitCycl() {
 	initDefault();
 	_state._curMemberPtr->_vInitCycleResource = new VInitCycleResource(
-		_state, _state._curMemberPtr->_data);
+	    _state, _state._curMemberPtr->_data);
 	_state._curMemberPtr->_vInitCycleResource->vStopCycle();
 }
 
 /*------------------------------------------------------------------------*/
 
-StampBoltFile::StampBoltFile(BoltFilesState &state): BoltFile("stampblt.blt", state) {
+StampBoltFile::StampBoltFile(BoltFilesState &state) : BoltFile("stampblt.blt", state) {
 }
 
 void StampBoltFile::initResource(int resType) {
@@ -568,25 +568,24 @@ void StampBoltFile::initThread() {
 	initDefault();
 
 	_state._curMemberPtr->_threadResource = new ThreadResource(_state,
-		_state._curMemberPtr->_data);
+	                                                           _state._curMemberPtr->_data);
 }
 
 void StampBoltFile::initPtr() {
 	initDefault();
 
 	_state._curMemberPtr->_ptrResource = new PtrResource(_state,
-		_state._curMemberPtr->_data);
+	                                                     _state._curMemberPtr->_data);
 }
 
-	void initControlData();
-
+void initControlData();
 
 void StampBoltFile::initControl() {
 	initDefault();
 
 	ControlResource *res;
 	_state._curMemberPtr->_controlResource = res = new ControlResource(_state,
-		_state._curMemberPtr->_data);
+	                                                                   _state._curMemberPtr->_data);
 
 	_state._vm->_controlGroupPtr = _state._curGroupPtr;
 	_state._vm->_controlPtr = res;
@@ -597,12 +596,12 @@ void StampBoltFile::initState() {
 
 	assert(_state._curMemberPtr->_size == 16);
 	_state._curMemberPtr->_stateResource = new StateResource(_state,
-		_state._curMemberPtr->_data);
+	                                                         _state._curMemberPtr->_data);
 }
 
 /*------------------------------------------------------------------------*/
 
-BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
+BoltGroup::BoltGroup(Common::SeekableReadStream *f) : _file(f) {
 	byte buffer[BOLT_GROUP_SIZE];
 
 	_loaded = false;
@@ -636,7 +635,7 @@ void BoltGroup::unload() {
 
 /*------------------------------------------------------------------------*/
 
-BoltEntry::BoltEntry(Common::SeekableReadStream *f, uint16 id): _file(f), _id(id) {
+BoltEntry::BoltEntry(Common::SeekableReadStream *f, uint16 id) : _file(f), _id(id) {
 	_data = nullptr;
 	_rectResource = nullptr;
 	_picResource = nullptr;
@@ -686,15 +685,12 @@ void BoltEntry::load() {
  * Returns true if the given bolt entry has an attached resource
  */
 bool BoltEntry::hasResource() const {
-	return _rectResource ||  _picResource || _viewPortResource || _viewPortListResource
-		|| _fontResource || _fontInfoResource || _cMapResource || _vInitCycleResource
-		|| _ptrResource || _controlResource || _stateResource || _threadResource;
+	return _rectResource || _picResource || _viewPortResource || _viewPortListResource || _fontResource || _fontInfoResource || _cMapResource || _vInitCycleResource || _ptrResource || _controlResource || _stateResource || _threadResource;
 }
 
 /*------------------------------------------------------------------------*/
 
-RectEntry::RectEntry(int x1, int y1, int x2, int y2, int arrIndex, int count):
-		Common::Rect(x1, y1, x2, y2), _arrIndex(arrIndex), _count(count) {
+RectEntry::RectEntry(int x1, int y1, int x2, int y2, int arrIndex, int count) : Common::Rect(x1, y1, x2, y2), _arrIndex(arrIndex), _count(count) {
 }
 
 /*------------------------------------------------------------------------*/
@@ -810,8 +806,8 @@ int DisplayResource::drawText(const Common::String &msg) {
 	FontInfoResource &fontInfo = *screen._fontPtr;
 	PictureResource &fontChar = *_vm->_screen->_fontChar;
 	FontResource &fontData = *fontInfo._curFont;
-	int xShadows[9] = { 0, 1, 1, 1, 0, -1, -1, -1, 0 };
-	int yShadows[9] = { 0, 1, 0, -1, -1, -1, 0, 1, 1 };
+	int xShadows[9] = {0, 1, 1, 1, 0, -1, -1, -1, 0};
+	int yShadows[9] = {0, 1, 0, -1, -1, -1, 0, 1, 1};
 
 	Common::Rect *clipPtr = screen._clipPtr;
 	if (!(fontInfo._picFlags & DISPFLAG_1))
@@ -830,11 +826,10 @@ int DisplayResource::drawText(const Common::String &msg) {
 	fontChar._select = fontInfo._picSelect;
 	fontChar._bounds.setHeight(fontHeight);
 
-	ViewPortResource *viewPort = !(_flags & DISPFLAG_VIEWPORT) ? NULL :
-		(ViewPortResource *)this;
+	ViewPortResource *viewPort = !(_flags & DISPFLAG_VIEWPORT) ? NULL : (ViewPortResource *)this;
 
 	if ((fontInfo._fontFlags & DISPFLAG_1) || fontInfo._justify ||
-			(screen._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT))) {
+	    (screen._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT))) {
 		msgWidth = viewPort->textWidth(msg);
 		yp = pos.y;
 		xp = pos.x;
@@ -1019,8 +1014,7 @@ int DisplayResource::textWidth(const Common::String &msg) {
 
 /*------------------------------------------------------------------------*/
 
-PictureResource::PictureResource(BoltFilesState &state, const byte *src):
-		DisplayResource(state._vm) {
+PictureResource::PictureResource(BoltFilesState &state, const byte *src) : DisplayResource(state._vm) {
 	_flags = READ_LE_UINT16(src);
 	_select = src[2];
 	_pick = src[3];
@@ -1030,7 +1024,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src):
 	int xs = READ_LE_UINT16(&src[6]);
 	int ys = READ_LE_UINT16(&src[8]);
 	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(&src[10]),
-		ys + READ_LE_UINT16(&src[12]));
+	                       ys + READ_LE_UINT16(&src[12]));
 	_maskData = READ_LE_UINT32(&src[14]);
 	_planeSize = READ_LE_UINT16(&src[22]);
 
@@ -1157,7 +1151,7 @@ PictureResource::PictureResource() {
 }
 
 PictureResource::PictureResource(int flags, int select, int pick, int onOff,
-		const Common::Rect &bounds, int maskData, byte *imgData, int planeSize) {
+                                 const Common::Rect &bounds, int maskData, byte *imgData, int planeSize) {
 	_flags = flags;
 	_select = select;
 	_pick = pick;
@@ -1201,8 +1195,7 @@ void PictureResource::flipVertical(const byte *data) {
 
 /*------------------------------------------------------------------------*/
 
-ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
-		_state(state), DisplayResource(state._vm) {
+ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src) : _state(state), DisplayResource(state._vm) {
 	_flags = READ_LE_UINT16(src);
 	_parent = NULL;
 	_pageCount = READ_LE_UINT16(src + 6);
@@ -1212,7 +1205,7 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	int xs = READ_LE_UINT16(src + 12);
 	int ys = READ_LE_UINT16(src + 14);
 	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 16),
-		ys + READ_LE_UINT16(src + 18));
+	                       ys + READ_LE_UINT16(src + 18));
 
 	_currentPic = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x20));
 	_activePage = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x24));
@@ -1238,7 +1231,7 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 					xs = FROM_LE_16(rectList[0]);
 					ys = FROM_LE_16(rectList[1]);
 					_rectListPtr[i]->push_back(Common::Rect(xs, ys, xs + FROM_LE_16(rectList[2]),
-						ys + FROM_LE_16(rectList[3])));
+					                                        ys + FROM_LE_16(rectList[3])));
 				}
 			}
 		}
@@ -1247,7 +1240,7 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	xs = READ_LE_UINT16(src + 0x46);
 	ys = READ_LE_UINT16(src + 0x48);
 	_clipRect = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 0x4A),
-		ys + READ_LE_UINT16(src + 0x4C));
+	                         ys + READ_LE_UINT16(src + 0x4C));
 
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x7A), &dummy);
 	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x7E), (ScreenMethodPtr *)&_fn1);
@@ -1265,7 +1258,7 @@ ViewPortResource::~ViewPortResource() {
 }
 
 void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clippingRect,
-		ViewPortSetupPtr setupFn, ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn) {
+                                     ViewPortSetupPtr setupFn, ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn) {
 	PictureResource *pic = _currentPic;
 	Common::Rect r = _bounds;
 	r.translate(pic->_bounds.left, pic->_bounds.top);
@@ -1333,14 +1326,14 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clippi
 
 void ViewPortResource::setupViewPort() {
 	setupViewPort(_state._vm->_screen->_backgroundPage, NULL,
-		&Screen::setupMCGASaveRect, &Screen::addRectOptSaveRect,
-		&Screen::restoreMCGASaveRect);
+	              &Screen::setupMCGASaveRect, &Screen::addRectOptSaveRect,
+	              &Screen::restoreMCGASaveRect);
 }
 
 void ViewPortResource::setupViewPort(PictureResource *pic, Common::Rect *clippingRect) {
 	setupViewPort(pic, clippingRect,
-		&Screen::setupMCGASaveRect, &Screen::addRectOptSaveRect,
-		&Screen::restoreMCGASaveRect);
+	              &Screen::setupMCGASaveRect, &Screen::addRectOptSaveRect,
+	              &Screen::restoreMCGASaveRect);
 }
 
 void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
@@ -1362,21 +1355,21 @@ void ViewPortResource::fillPic(byte onOff) {
 void ViewPortResource::drawIfaceTime() {
 	// Hour display
 	_state._vm->_screen->drawANumber(_state._vm->_screen->_vPort,
-		(_state._vm->_gameHour / 10) == 0 ? 10 : _state._vm->_gameHour / 10,
-		Common::Point(161, 25));
+	                                 (_state._vm->_gameHour / 10) == 0 ? 10 : _state._vm->_gameHour / 10,
+	                                 Common::Point(161, 25));
 	_state._vm->_screen->drawANumber(_state._vm->_screen->_vPort,
-		_state._vm->_gameHour % 10, Common::Point(172, 25));
+	                                 _state._vm->_gameHour % 10, Common::Point(172, 25));
 
 	// Minute display
 	_state._vm->_screen->drawANumber(_state._vm->_screen->_vPort,
-		_state._vm->_gameMinute / 10, Common::Point(190, 25));
+	                                 _state._vm->_gameMinute / 10, Common::Point(190, 25));
 	_state._vm->_screen->drawANumber(_state._vm->_screen->_vPort,
-		_state._vm->_gameMinute % 10, Common::Point(201, 25));
+	                                 _state._vm->_gameMinute % 10, Common::Point(201, 25));
 
 	// AM/PM indicator
 	PictureResource *pic = _state._vm->_bVoy->boltEntry(_state._vm->_voy->_isAM ? 272 : 273)._picResource;
 	_state._vm->_screen->sDrawPic(pic, _state._vm->_screen->_vPort,
-		Common::Point(215, 27));
+	                              Common::Point(215, 27));
 }
 
 void ViewPortResource::drawPicPerm(PictureResource *pic, const Common::Point &pt) {
@@ -1430,7 +1423,6 @@ ViewPortPalEntry::ViewPortPalEntry(const byte *src) {
 	_bChange = READ_LE_UINT16(v++);
 	_palIndex = READ_LE_UINT16(v++);
 }
-
 
 /*------------------------------------------------------------------------*/
 
@@ -1495,9 +1487,9 @@ FontInfoResource::FontInfoResource() {
 }
 
 FontInfoResource::FontInfoResource(byte picFlags, byte picSelect, byte picPick, byte picOnOff,
-		byte fontFlags, FontJustify justify, int fontSaveBack, const Common::Point &pos,
-		int justifyWidth, int justifyHeight, const Common::Point &shadow, int foreColor,
-		int backColor, int shadowColor) {
+                                   byte fontFlags, FontJustify justify, int fontSaveBack, const Common::Point &pos,
+                                   int justifyWidth, int justifyHeight, const Common::Point &shadow, int foreColor,
+                                   int backColor, int shadowColor) {
 	_curFont = NULL;
 	_picFlags = picFlags;
 	_picSelect = picSelect;
@@ -1517,7 +1509,7 @@ FontInfoResource::FontInfoResource(byte picFlags, byte picSelect, byte picPick, 
 
 /*------------------------------------------------------------------------*/
 
-CMapResource::CMapResource(BoltFilesState &state, const byte *src): _vm(state._vm) {
+CMapResource::CMapResource(BoltFilesState &state, const byte *src) : _vm(state._vm) {
 	_steps = src[0];
 	_fadeStatus = src[1];
 	_start = READ_LE_UINT16(src + 2);
@@ -1544,8 +1536,7 @@ void CMapResource::startFade() {
 
 /*------------------------------------------------------------------------*/
 
-VInitCycleResource::VInitCycleResource(BoltFilesState &state, const byte *src):
-		_state(state) {
+VInitCycleResource::VInitCycleResource(BoltFilesState &state, const byte *src) : _state(state) {
 	// Set up arrays
 	for (int i = 0; i < 4; ++i) {
 		_type[i] = READ_LE_UINT16(src + i * 2);
@@ -1612,9 +1603,8 @@ ControlResource::ControlResource(BoltFilesState &state, const byte *src) {
 
 /*------------------------------------------------------------------------*/
 
-StateResource::StateResource(BoltFilesState &state, const byte *src):
-		_victimIndex(_vals[1]), _victimEvidenceIndex(_vals[2]),
-		_victimMurderIndex(_vals[3]) {
+StateResource::StateResource(BoltFilesState &state, const byte *src) : _victimIndex(_vals[1]), _victimEvidenceIndex(_vals[2]),
+                                                                       _victimMurderIndex(_vals[3]) {
 	for (int i = 0; i < 4; ++i)
 		_vals[i] = READ_LE_UINT32(src + i * 4);
 }

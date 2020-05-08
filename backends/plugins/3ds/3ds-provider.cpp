@@ -40,9 +40,8 @@ static uint32 alignUp(uint32 ptr, uint32 align) {
 
 class CTRDLObject : public ARMDLObject {
 public:
-	CTRDLObject():
-			ARMDLObject(),
-			_segmentHeapAddress(0) {
+	CTRDLObject() : ARMDLObject(),
+	                _segmentHeapAddress(0) {
 	}
 
 protected:
@@ -58,9 +57,12 @@ protected:
 		debug(2, "elfloader: Protecting memory at %p, len %d with %d", ptr, len, prot);
 
 		uint32 ctrFlags = 0;
-		if (prot & PF_R) ctrFlags |= MEMPERM_READ;
-		if (prot & PF_W) ctrFlags |= MEMPERM_WRITE;
-		if (prot & PF_X) ctrFlags |= MEMPERM_EXECUTE;
+		if (prot & PF_R)
+			ctrFlags |= MEMPERM_READ;
+		if (prot & PF_W)
+			ctrFlags |= MEMPERM_WRITE;
+		if (prot & PF_X)
+			ctrFlags |= MEMPERM_EXECUTE;
 
 		// The kernel expects the range to be aligned to page boundaries
 		len = alignUp(len, kPageSize);
@@ -117,7 +119,6 @@ protected:
 
 		_segmentHeapAddress = 0;
 	}
-
 };
 
 Plugin *CTRPluginProvider::createPlugin(const Common::FSNode &node) const {

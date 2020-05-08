@@ -21,15 +21,15 @@
  */
 
 #include "glk/level9/detection.h"
-#include "glk/level9/detection_tables.h"
-#include "glk/level9/level9_main.h"
-#include "glk/level9/os_glk.h"
-#include "glk/blorb.h"
-#include "glk/detection.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/blorb.h"
+#include "glk/detection.h"
+#include "glk/level9/detection_tables.h"
+#include "glk/level9/level9_main.h"
+#include "glk/level9/os_glk.h"
 
 namespace Glk {
 namespace Level9 {
@@ -103,14 +103,18 @@ long Scanner::scan(byte *startFile, uint32 size) {
 				for (j = 0; j < 12; j++) {
 					d0 = L9WORD(startFile + i + 0x12 + j * 2);
 					if (j != 11 && d0 >= 0x8000 && d0 < 0x9000) {
-						if (d0 >= 0x8000 + LISTAREASIZE) break;
-					} else if (i + d0 > size) break;
+						if (d0 >= 0x8000 + LISTAREASIZE)
+							break;
+					} else if (i + d0 > size)
+						break;
 				}
 				/* list9 ptr must be in listarea, acode ptr in data */
-				if (j < 12 /*|| (d0>=0x8000 && d0<0x9000)*/) continue;
+				if (j < 12 /*|| (d0>=0x8000 && d0<0x9000)*/)
+					continue;
 
 				l9 = L9WORD(startFile + i + 0x12 + 10 * 2);
-				if (l9 < 0x8000 || l9 >= 0x8000 + LISTAREASIZE) continue;
+				if (l9 < 0x8000 || l9 >= 0x8000 + LISTAREASIZE)
+					continue;
 
 				Size = 0;
 				Min = Max = i + d0;
@@ -159,14 +163,18 @@ long Scanner::ScanV2(byte *startFile, uint32 size) {
 			for (j = 0; j < 14; j++) {
 				d0 = L9WORD(startFile + i + j * 2);
 				if (j != 13 && d0 >= 0x8000 && d0 < 0x9000) {
-					if (d0 >= 0x8000 + LISTAREASIZE) break;
-				} else if (i + d0 > size) break;
+					if (d0 >= 0x8000 + LISTAREASIZE)
+						break;
+				} else if (i + d0 > size)
+					break;
 			}
 			/* list9 ptr must be in listarea, acode ptr in data */
-			if (j < 14 /*|| (d0>=0x8000 && d0<0x9000)*/) continue;
+			if (j < 14 /*|| (d0>=0x8000 && d0<0x9000)*/)
+				continue;
 
 			l9 = L9WORD(startFile + i + 6 + 9 * 2);
-			if (l9 < 0x8000 || l9 >= 0x8000 + LISTAREASIZE) continue;
+			if (l9 < 0x8000 || l9 >= 0x8000 + LISTAREASIZE)
+				continue;
 
 			Size = 0;
 			Min = Max = i + d0;
@@ -193,7 +201,7 @@ long Scanner::ScanV1(byte *startFile, uint32 size) {
 	long MaxPos = -1;
 	uint32 MaxCount = 0;
 	uint32 Min, Max; //, MaxMax, MaxMin;
-	bool JumpKill; // , MaxJK;
+	bool JumpKill;   // , MaxJK;
 
 	int dictOff1 = 0, dictOff2 = 0;
 	byte dictVal1 = 0xff, dictVal2 = 0xff;
@@ -279,16 +287,20 @@ bool Scanner::ValidateSequence(byte *Base, byte *Image, uint32 iPos, uint32 acod
 	if (iPos >= size)
 		return false;
 	Pos = iPos;
-	if (Pos < *Min) *Min = Pos;
+	if (Pos < *Min)
+		*Min = Pos;
 
-	if (Image[Pos]) return true; /* hit valid code */
+	if (Image[Pos])
+		return true; /* hit valid code */
 
 	do {
 		Code = Base[Pos];
 		Valid = true;
-		if (Image[Pos]) break; /* converged to found code */
+		if (Image[Pos])
+			break; /* converged to found code */
 		Image[Pos++] = 2;
-		if (Pos > *Max) *Max = Pos;
+		if (Pos > *Max)
+			*Max = Pos;
 
 		ScanCodeMask = 0x9f;
 		if (Code & 0x80) {
@@ -296,123 +308,125 @@ bool Scanner::ValidateSequence(byte *Base, byte *Image, uint32 iPos, uint32 acod
 			if ((Code & 0x1f) > 0xa)
 				Valid = false;
 			Pos += 2;
-		}
-		else switch (Code & 0x1f) {
-		case 0: { /* goto */
-			uint32 Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
-			Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, true/*Rts*/, JumpKill, DriverV4);
-			Finished = true;
-			break;
-		}
-		case 1: { /* intgosub */
-			uint32 Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
-			Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, true, JumpKill, DriverV4);
-			break;
-		}
-		case 2: /* intreturn */
-			Valid = Rts;
-			Finished = true;
-			break;
-		case 3: /* printnumber */
-			Pos++;
-			break;
-		case 4: /* messagev */
-			Pos++;
-			break;
-		case 5: /* messagec */
-			scangetcon(Code, &Pos, &ScanCodeMask);
-			break;
-		case 6: /* function */
-			switch (Base[Pos++]) {
-			case 2:/* random */
+		} else
+			switch (Code & 0x1f) {
+			case 0: { /* goto */
+				uint32 Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
+				Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, true /*Rts*/, JumpKill, DriverV4);
+				Finished = true;
+				break;
+			}
+			case 1: { /* intgosub */
+				uint32 Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
+				Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, true, JumpKill, DriverV4);
+				break;
+			}
+			case 2: /* intreturn */
+				Valid = Rts;
+				Finished = true;
+				break;
+			case 3: /* printnumber */
 				Pos++;
 				break;
-			case 1:/* calldriver */
-				if (DriverV4) {
-					if (CheckCallDriverV4(Base, Pos - 2))
-						*DriverV4 = true;
+			case 4: /* messagev */
+				Pos++;
+				break;
+			case 5: /* messagec */
+				scangetcon(Code, &Pos, &ScanCodeMask);
+				break;
+			case 6: /* function */
+				switch (Base[Pos++]) {
+				case 2: /* random */
+					Pos++;
+					break;
+				case 1: /* calldriver */
+					if (DriverV4) {
+						if (CheckCallDriverV4(Base, Pos - 2))
+							*DriverV4 = true;
+					}
+					break;
+				case 3: /* save */
+				case 4: /* restore */
+				case 5: /* clearworkspace */
+				case 6: /* clear stack */
+					break;
+				case 250: /* printstr */
+					while (Base[Pos++])
+						;
+					break;
+
+				default:
+					Valid = false;
+					break;
 				}
 				break;
-			case 3:/* save */
-			case 4:/* restore */
-			case 5:/* clearworkspace */
-			case 6:/* clear stack */
+			case 7: /* input */
+				Pos += 4;
 				break;
-			case 250: /* printstr */
-				while (Base[Pos++]);
+			case 8: /* varcon */
+				scangetcon(Code, &Pos, &ScanCodeMask);
+				Pos++;
 				break;
-
-			default:
+			case 9: /* varvar */
+				Pos += 2;
+				break;
+			case 10: /* _add */
+				Pos += 2;
+				break;
+			case 11: /* _sub */
+				Pos += 2;
+				break;
+			case 14: /* jump */
+				*JumpKill = true;
+				Finished = true;
+				break;
+			case 15: /* exit */
+				Pos += 4;
+				break;
+			case 16:   /* ifeqvt */
+			case 17:   /* ifnevt */
+			case 18:   /* ifltvt */
+			case 19: { /* ifgtvt */
+				uint32 Val;
+				Pos += 2;
+				Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
+				Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, Rts, JumpKill, DriverV4);
+				break;
+			}
+			case 20: /* screen */
+				if (Base[Pos++])
+					Pos++;
+				break;
+			case 21: /* cleartg */
+				Pos++;
+				break;
+			case 22: /* picture */
+				Pos++;
+				break;
+			case 23: /* getnextobject */
+				Pos += 6;
+				break;
+			case 24:   /* ifeqct */
+			case 25:   /* ifnect */
+			case 26:   /* ifltct */
+			case 27: { /* ifgtct */
+				uint32 Val;
+				Pos++;
+				scangetcon(Code, &Pos, &ScanCodeMask);
+				Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
+				Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, Rts, JumpKill, DriverV4);
+				break;
+			}
+			case 28: /* printinput */
+				break;
+			case 12: /* ilins */
+			case 13: /* ilins */
+			case 29: /* ilins */
+			case 30: /* ilins */
+			case 31: /* ilins */
 				Valid = false;
 				break;
 			}
-			break;
-		case 7: /* input */
-			Pos += 4;
-			break;
-		case 8: /* varcon */
-			scangetcon(Code, &Pos, &ScanCodeMask);
-			Pos++;
-			break;
-		case 9: /* varvar */
-			Pos += 2;
-			break;
-		case 10: /* _add */
-			Pos += 2;
-			break;
-		case 11: /* _sub */
-			Pos += 2;
-			break;
-		case 14: /* jump */
-			*JumpKill = true;
-			Finished = true;
-			break;
-		case 15: /* exit */
-			Pos += 4;
-			break;
-		case 16: /* ifeqvt */
-		case 17: /* ifnevt */
-		case 18: /* ifltvt */
-		case 19: { /* ifgtvt */
-			uint32 Val;
-			Pos += 2;
-			Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
-			Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, Rts, JumpKill, DriverV4);
-			break;
-		}
-		case 20: /* screen */
-			if (Base[Pos++]) Pos++;
-			break;
-		case 21: /* cleartg */
-			Pos++;
-			break;
-		case 22: /* picture */
-			Pos++;
-			break;
-		case 23: /* getnextobject */
-			Pos += 6;
-			break;
-		case 24: /* ifeqct */
-		case 25: /* ifnect */
-		case 26: /* ifltct */
-		case 27: { /* ifgtct */
-			uint32 Val;
-			Pos++;
-			scangetcon(Code, &Pos, &ScanCodeMask);
-			Val = scangetaddr(Code, Base, &Pos, acode, &ScanCodeMask);
-			Valid = ValidateSequence(Base, Image, Val, acode, Size, size, Min, Max, Rts, JumpKill, DriverV4);
-			break;
-		}
-		case 28: /* printinput */
-			break;
-		case 12: /* ilins */
-		case 13: /* ilins */
-		case 29: /* ilins */
-		case 30: /* ilins */
-		case 31: /* ilins */
-			Valid = false;
-			break;
-		}
 		if (Valid && (Code & ~ScanCodeMask))
 			Strange++;
 	} while (Valid && !Finished && Pos < size); /* && Strange==0); */
@@ -440,7 +454,8 @@ uint32 Scanner::scangetaddr(int Code, byte *Base, uint32 *Pos, uint32 acode, int
 
 void Scanner::scangetcon(int Code, uint32 *Pos, int *Mask) {
 	(*Pos)++;
-	if (!(Code & 64))(*Pos)++;
+	if (!(Code & 64))
+		(*Pos)++;
 	(*Mask) |= 0x40;
 }
 
@@ -525,8 +540,7 @@ void Scanner::fullScan(byte *startFile, uint32 size) {
 
 /*----------------------------------------------------------------------*/
 
-GameDetection::GameDetection(byte *&startData, uint32 &fileSize) :
-		_startData(startData), _fileSize(fileSize), _crcInitialized(false), _gameName(nullptr) {
+GameDetection::GameDetection(byte *&startData, uint32 &fileSize) : _startData(startData), _fileSize(fileSize), _crcInitialized(false), _gameName(nullptr) {
 	Common::fill(&_crcTable[0], &_crcTable[256], 0);
 }
 
@@ -547,14 +561,11 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 	 * If the length exceeds the available data, fail.
 	 */
 	assert(_startData);
-	is_version2 = _startData[4] == 0x20 && _startData[5] == 0x00
-		&& _startData[10] == 0x00 && _startData[11] == 0x80
-		&& _startData[20] == _startData[22]
-		&& _startData[21] == _startData[23];
+	is_version2 = _startData[4] == 0x20 && _startData[5] == 0x00 && _startData[10] == 0x00 && _startData[11] == 0x80 && _startData[20] == _startData[22] && _startData[21] == _startData[23];
 
 	length = is_version2
-		? _startData[28] | _startData[29] << BITS_PER_BYTE
-		: _startData[0] | _startData[1] << BITS_PER_BYTE;
+	             ? _startData[28] | _startData[29] << BITS_PER_BYTE
+	             : _startData[0] | _startData[1] << BITS_PER_BYTE;
 	if (length >= _fileSize)
 		return nullptr;
 
@@ -565,8 +576,7 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 		checksum = 0;
 		for (index = 0; index < length + 1; index++)
 			checksum += _startData[index];
-	}
-	else
+	} else
 		checksum = _startData[length];
 
 	/*
@@ -582,9 +592,9 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 	 */
 	patch = gln_gameid_lookup_patch(length, checksum, crc);
 	game = gln_gameid_lookup_game(length,
-		patch ? patch->orig_checksum : checksum,
-		patch ? patch->orig_crc : crc,
-		false);
+	                              patch ? patch->orig_checksum : checksum,
+	                              patch ? patch->orig_crc : crc,
+	                              false);
 
 	/* If no game identified, retry without the CRC.  This is guesswork. */
 	if (!game)
@@ -635,8 +645,7 @@ gln_game_tableref_t GameDetection::gln_gameid_lookup_game(uint16 length, byte ch
 	gln_game_tableref_t game;
 
 	for (game = GLN_GAME_TABLE; game->length; game++) {
-		if (game->length == length && game->checksum == checksum
-			&& (ignore_crc || game->crc == crc))
+		if (game->length == length && game->checksum == checksum && (ignore_crc || game->crc == crc))
 			break;
 	}
 
@@ -647,8 +656,7 @@ gln_patch_tableref_t GameDetection::gln_gameid_lookup_patch(uint16 length, byte 
 	gln_patch_tableref_t patch;
 
 	for (patch = GLN_PATCH_TABLE; patch->length; patch++) {
-		if (patch->length == length && patch->patch_checksum == checksum
-			&& patch->patch_crc == crc)
+		if (patch->length == length && patch->patch_checksum == checksum && patch->patch_crc == crc)
 			break;
 	}
 
@@ -764,7 +772,7 @@ bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 
 		// Found the game, add a detection entry
 		DetectedGame gd = DetectedGame("glk", game->gameId, game->name, Common::UNK_LANG,
-			Common::kPlatformUnknown, game->extra);
+		                               Common::kPlatformUnknown, game->extra);
 		gd.addExtraEntry("filename", filename);
 		gameList.push_back(gd);
 	}

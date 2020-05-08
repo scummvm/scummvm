@@ -29,7 +29,8 @@
 
 namespace Common {
 
-template<class T> class Array;
+template<class T>
+class Array;
 class SeekableReadStream;
 
 /**
@@ -73,7 +74,7 @@ private:
 		uint16 usage;
 	};
 
-	SeekableReadStream *_exe;        ///< Current file.
+	SeekableReadStream *_exe; ///< Current file.
 
 	/** All resources. */
 	List<Resource> _resources;

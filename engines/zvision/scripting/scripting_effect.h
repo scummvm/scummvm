@@ -27,7 +27,7 @@ namespace Common {
 class SeekableReadStream;
 struct Point;
 class WriteStream;
-}
+} // namespace Common
 
 namespace ZVision {
 
@@ -45,9 +45,8 @@ class ZVision;
   */
 class ScriptingEffect {
 public:
-
 	enum ScriptingEffectType {
-		SCRIPTING_EFFECT_ANIM  = 1,
+		SCRIPTING_EFFECT_ANIM = 1,
 		SCRIPTING_EFFECT_AUDIO = 2,
 		SCRIPTING_EFFECT_DISTORT = 4,
 		SCRIPTING_EFFECT_PANTRACK = 8,
@@ -115,9 +114,8 @@ protected:
 	uint32 _key;
 	ScriptingEffectType _type;
 
-// Static member functions
+	// Static member functions
 public:
-
 };
 } // End of namespace ZVision
 

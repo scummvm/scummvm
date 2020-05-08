@@ -35,8 +35,8 @@ class ConvFont : public Font {
 	unsigned char *f_data;
 	uint8 *f_w_data;
 	uint16 data_offset;
-public:
 
+public:
 	ConvFont();
 	~ConvFont() override;
 
@@ -48,8 +48,8 @@ public:
 	}
 	uint16 drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 	                uint8 color) override;
-protected:
 
+protected:
 };
 
 } // End of namespace Nuvie

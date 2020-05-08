@@ -31,6 +31,7 @@ namespace Titanic {
 class CPETPellerator : public CPETTransport {
 	DECLARE_MESSAGE_MAP;
 	bool PETActivateMsg(CPETActivateMsg *msg);
+
 public:
 	CLASSDEF;
 

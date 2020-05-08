@@ -20,9 +20,9 @@
  *
  */
 
+#include "common/str.h"
 #include "glk/adrift/scare.h"
 #include "glk/adrift/sxprotos.h"
-#include "common/str.h"
 
 namespace Glk {
 namespace Adrift {
@@ -41,10 +41,10 @@ static sc_bool stub_trace = FALSE;
  * Input/output handler functions.  If assigned, calls to os_* functions are
  * routed here to allow the script runner to catch interpeter i/o.
  */
-static sc_bool(*stub_read_line)(sc_char *, sc_int) = NULL;
+static sc_bool (*stub_read_line)(sc_char *, sc_int) = NULL;
 static void (*stub_print_string)(const sc_char *) = NULL;
 static void *(*stub_open_file)(sc_bool) = NULL;
-static sc_int(*stub_read_file)(void *, sc_byte *, sc_int) = NULL;
+static sc_int (*stub_read_file)(void *, sc_byte *, sc_int) = NULL;
 static void (*stub_write_file)(void *, const sc_byte *, sc_int) = NULL;
 static void (*stub_close_file)(void *) = NULL;
 
@@ -52,20 +52,18 @@ static void (*stub_close_file)(void *) = NULL;
 static sc_int stub_show_resources = 0;
 static sc_int stub_show_tags = 0;
 
-
 /*
  * stub_attach_handlers()
  * stub_detach_handlers()
  *
  * Attach input/output handler functions, and reset to NULLs.
  */
-void
-stub_attach_handlers(sc_bool(*read_line)(sc_char *, sc_int),
-                     void (*print_string)(const sc_char *),
-                     void *(*open_file)(sc_bool),
-                     sc_int(*read_file)(void *, sc_byte *, sc_int),
-                     void (*write_file)(void *, const sc_byte *, sc_int),
-                     void (*close_file)(void *)) {
+void stub_attach_handlers(sc_bool (*read_line)(sc_char *, sc_int),
+                          void (*print_string)(const sc_char *),
+                          void *(*open_file)(sc_bool),
+                          sc_int (*read_file)(void *, sc_byte *, sc_int),
+                          void (*write_file)(void *, const sc_byte *, sc_int),
+                          void (*close_file)(void *)) {
 	stub_read_line = read_line;
 	stub_print_string = print_string;
 	stub_open_file = open_file;
@@ -77,8 +75,7 @@ stub_attach_handlers(sc_bool(*read_line)(sc_char *, sc_int),
 	stub_show_tags = 0;
 }
 
-void
-stub_detach_handlers(void) {
+void stub_detach_handlers(void) {
 	stub_read_line = NULL;
 	stub_print_string = NULL;
 	stub_open_file = NULL;
@@ -89,7 +86,6 @@ stub_detach_handlers(void) {
 	stub_show_resources = 0;
 	stub_show_tags = 0;
 }
-
 
 /*
  * stub_adjust_test_control()
@@ -125,7 +121,6 @@ stub_catch_test_control(sc_int tag, const sc_char *argument) {
 	return FALSE;
 }
 
-
 /*
  * stub_notnull()
  *
@@ -137,14 +132,12 @@ stub_notnull(const sc_char *string) {
 	return string ? string : "(nil)";
 }
 
-
 /*
  * os_*()
  *
  * Stub functions called by the interpreter core.
  */
-void
-os_print_tag(sc_int tag, const sc_char *argument) {
+void os_print_tag(sc_int tag, const sc_char *argument) {
 	if (stub_trace)
 		sx_trace("os_print_tag (%ld, \"%s\")\n", tag, stub_notnull(argument));
 
@@ -163,8 +156,7 @@ os_print_tag(sc_int tag, const sc_char *argument) {
 	}
 }
 
-void
-os_print_string(const sc_char *string) {
+void os_print_string(const sc_char *string) {
 	if (stub_trace)
 		sx_trace("os_print_string (\"%s\")\n", stub_notnull(string));
 
@@ -172,8 +164,7 @@ os_print_string(const sc_char *string) {
 		stub_print_string(string);
 }
 
-void
-os_print_string_debug(const sc_char *string) {
+void os_print_string_debug(const sc_char *string) {
 	if (stub_trace)
 		sx_trace("os_print_string_debug (\"%s\")\n", stub_notnull(string));
 
@@ -181,9 +172,8 @@ os_print_string_debug(const sc_char *string) {
 		stub_print_string(string);
 }
 
-void
-os_play_sound(const sc_char *filepath,
-              sc_int offset, sc_int length, sc_bool is_looping) {
+void os_play_sound(const sc_char *filepath,
+                   sc_int offset, sc_int length, sc_bool is_looping) {
 	if (stub_trace)
 		sx_trace("os_play_sound (\"%s\", %ld, %ld, %s)\n",
 		         stub_notnull(filepath), offset, length,
@@ -206,8 +196,7 @@ os_play_sound(const sc_char *filepath,
 	}
 }
 
-void
-os_stop_sound(void) {
+void os_stop_sound(void) {
 	if (stub_trace)
 		sx_trace("os_stop_sound ()\n");
 
@@ -215,8 +204,7 @@ os_stop_sound(void) {
 		stub_print_string("<<Sound: stop>>");
 }
 
-void
-os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
+void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 	if (stub_trace)
 		sx_trace("os_show_graphic (\"%s\", %ld, %ld)\n",
 		         stub_notnull(filepath), offset, length);
@@ -309,8 +297,7 @@ os_read_file(void *opaque, sc_byte *buffer, sc_int length) {
 	return bytes;
 }
 
-void
-os_write_file(void *opaque, const sc_byte *buffer, sc_int length) {
+void os_write_file(void *opaque, const sc_byte *buffer, sc_int length) {
 	if (stub_write_file)
 		stub_write_file(opaque, buffer, length);
 
@@ -318,8 +305,7 @@ os_write_file(void *opaque, const sc_byte *buffer, sc_int length) {
 		sx_trace("os_write_file (%p, %p, %ld)\n", opaque, buffer, length);
 }
 
-void
-os_close_file(void *opaque) {
+void os_close_file(void *opaque) {
 	if (stub_close_file)
 		stub_close_file(opaque);
 
@@ -327,8 +313,7 @@ os_close_file(void *opaque) {
 		sx_trace("os_close_file (%p)\n", opaque);
 }
 
-void
-os_display_hints(sc_game game) {
+void os_display_hints(sc_game game) {
 	if (stub_trace)
 		sx_trace("os_display_hints (%p)\n", game);
 
@@ -336,7 +321,7 @@ os_display_hints(sc_game game) {
 		sc_game_hint hint;
 
 		for (hint = sc_get_first_game_hint(game);
-		        hint; hint = sc_get_next_game_hint(game, hint)) {
+		     hint; hint = sc_get_next_game_hint(game, hint)) {
 			const sc_char *hint_text;
 
 			stub_print_string(sc_get_game_hint_question(game, hint));
@@ -359,14 +344,12 @@ os_display_hints(sc_game game) {
 	}
 }
 
-
 /*
  * stub_debug_trace()
  *
  * Set stubs tracing on/off.
  */
-void
-stub_debug_trace(sc_bool flag) {
+void stub_debug_trace(sc_bool flag) {
 	stub_trace = flag;
 }
 

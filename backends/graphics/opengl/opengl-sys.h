@@ -49,13 +49,13 @@
 //  1 - Force OpenGL ES context
 //  2 - Force OpenGL ES 2.0 context
 #ifdef USE_GLES_MODE
-	#define USE_FORCED_GL    (USE_GLES_MODE == 0)
-	#define USE_FORCED_GLES  (USE_GLES_MODE == 1)
-	#define USE_FORCED_GLES2 (USE_GLES_MODE == 2)
+#define USE_FORCED_GL (USE_GLES_MODE == 0)
+#define USE_FORCED_GLES (USE_GLES_MODE == 1)
+#define USE_FORCED_GLES2 (USE_GLES_MODE == 2)
 #else
-	#define USE_FORCED_GL    0
-	#define USE_FORCED_GLES  0
-	#define USE_FORCED_GLES2 0
+#define USE_FORCED_GL 0
+#define USE_FORCED_GLES 0
+#define USE_FORCED_GLES2 0
 #endif
 
 // On Tizen we include the toolchain's OpenGL file. This is something we
@@ -66,26 +66,26 @@
 // TODO: See if there is an alternative which allows us to avoid including
 // Tizen's OpenGL header here.
 #if defined(TIZEN)
-	#include <FGraphicsOpengl.h>
-	using namespace Tizen::Graphics::Opengl;
-	#define USE_BUILTIN_OPENGL
+#include <FGraphicsOpengl.h>
+using namespace Tizen::Graphics::Opengl;
+#define USE_BUILTIN_OPENGL
 #elif defined(__ANDROID__)
-	#include <GLES/gl.h>
-	#define USE_BUILTIN_OPENGL
+#include <GLES/gl.h>
+#define USE_BUILTIN_OPENGL
 #else
-	#include "backends/graphics/opengl/opengl-defs.h"
+#include "backends/graphics/opengl/opengl-defs.h"
 #endif
 
 #ifdef SDL_BACKEND
-	// Win32 needs OpenGL functions declared with APIENTRY.
-	// However, SDL does not define APIENTRY in it's SDL.h file on non-Windows
-	// targets, thus if it is not available, we just dummy define it.
-	#ifndef APIENTRY
-		#define APIENTRY
-	#endif
-	#define GL_CALL_CONV APIENTRY
+// Win32 needs OpenGL functions declared with APIENTRY.
+// However, SDL does not define APIENTRY in it's SDL.h file on non-Windows
+// targets, thus if it is not available, we just dummy define it.
+#ifndef APIENTRY
+#define APIENTRY
+#endif
+#define GL_CALL_CONV APIENTRY
 #else
-	#define GL_CALL_CONV
+#define GL_CALL_CONV
 #endif
 
 namespace OpenGL {
@@ -129,7 +129,7 @@ struct Context {
 	/** Whether FBO support is available or not. */
 	bool framebufferObjectSupported;
 
-#define GL_FUNC_DEF(ret, name, param) ret (GL_CALL_CONV *name)param
+#define GL_FUNC_DEF(ret, name, param) ret(GL_CALL_CONV *name) param
 #include "backends/graphics/opengl/opengl-func.h"
 #undef GL_FUNC_DEF
 
@@ -166,13 +166,13 @@ extern Context g_context;
 
 } // End of namespace OpenGL
 
-#define GL_CALL(x)                 GL_WRAP_DEBUG(g_context.x, x)
+#define GL_CALL(x) GL_WRAP_DEBUG(g_context.x, x)
 #define GL_CALL_SAFE(func, params) \
-	do { \
-		if (g_context.func) { \
-			GL_CALL(func params); \
-		} \
+	do {                           \
+		if (g_context.func) {      \
+			GL_CALL(func params);  \
+		}                          \
 	} while (0)
-#define GL_ASSIGN(var, x)          GL_WRAP_DEBUG(var = g_context.x, x)
+#define GL_ASSIGN(var, x) GL_WRAP_DEBUG(var = g_context.x, x)
 
 #endif

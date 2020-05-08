@@ -28,11 +28,11 @@
 
 #include "pegasus/hotspot.h"
 #include "pegasus/input.h"
+#include "pegasus/items/inventorypicture.h"
 #include "pegasus/notification.h"
 #include "pegasus/sound.h"
 #include "pegasus/surface.h"
 #include "pegasus/transition.h"
-#include "pegasus/items/inventorypicture.h"
 
 namespace Pegasus {
 

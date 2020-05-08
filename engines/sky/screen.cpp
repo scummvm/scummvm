@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/system.h"
@@ -28,34 +27,33 @@
 
 #include "graphics/palette.h"
 
+#include "sky/compact.h"
 #include "sky/disk.h"
 #include "sky/logic.h"
 #include "sky/screen.h"
-#include "sky/compact.h"
 #include "sky/sky.h"
 #include "sky/skydefs.h"
 #include "sky/struc.h"
 
 namespace Sky {
 
-uint8 Screen::_top16Colors[16*3] = {
-	0, 0, 0,
-	38, 38, 38,
-	63, 63, 63,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	54, 54, 54,
-	45, 47, 49,
-	32, 31, 41,
-	29, 23, 37,
-	23, 18, 30,
-	49, 11, 11,
-	39, 5, 5,
-	29, 1, 1,
-	63, 63, 63
-};
+uint8 Screen::_top16Colors[16 * 3] = {
+    0, 0, 0,
+    38, 38, 38,
+    63, 63, 63,
+    0, 0, 0,
+    0, 0, 0,
+    0, 0, 0,
+    0, 0, 0,
+    54, 54, 54,
+    45, 47, 49,
+    32, 31, 41,
+    29, 23, 37,
+    23, 18, 30,
+    49, 11, 11,
+    39, 5, 5,
+    29, 1, 1,
+    63, 63, 63};
 
 Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_system = pSystem;
@@ -75,7 +73,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	memset(tmpPal, 0, GAME_COLORS * 3);
 
 	//set the remaining colors
-	for (i = 0; i < (VGA_COLORS-GAME_COLORS); i++) {
+	for (i = 0; i < (VGA_COLORS - GAME_COLORS); i++) {
 		tmpPal[3 * GAME_COLORS + i * 3 + 0] = (_top16Colors[i * 3 + 0] << 2) + (_top16Colors[i * 3 + 0] >> 4);
 		tmpPal[3 * GAME_COLORS + i * 3 + 1] = (_top16Colors[i * 3 + 1] << 2) + (_top16Colors[i * 3 + 1] >> 4);
 		tmpPal[3 * GAME_COLORS + i * 3 + 2] = (_top16Colors[i * 3 + 2] << 2) + (_top16Colors[i * 3 + 2] >> 4);
@@ -102,7 +100,7 @@ void Screen::clearScreen(bool fullscreen) {
 	_system->updateScreen();
 }
 
-void Screen::setFocusRectangle(const Common::Rect& rect) {
+void Screen::setFocusRectangle(const Common::Rect &rect) {
 	_system->setFocusRectangle(rect);
 }
 
@@ -143,10 +141,10 @@ void Screen::setPalette(uint16 fileNum) {
 		setPalette(tmpPal);
 		free(tmpPal);
 	} else
-		warning("Screen::setPalette: can't load file nr. %d",fileNum);
+		warning("Screen::setPalette: can't load file nr. %d", fileNum);
 }
 
-  void Screen::showScreen(uint16 fileNum, bool fullscreen) {
+void Screen::showScreen(uint16 fileNum, bool fullscreen) {
 	// This is only used for static images in the floppy and cd intro
 	free(_currentScreen);
 	_currentScreen = _skyDisk->loadFile(fileNum);
@@ -158,7 +156,7 @@ void Screen::setPalette(uint16 fileNum) {
 	if (_currentScreen)
 		showScreen(_currentScreen, fullscreen);
 	else
-		warning("Screen::showScreen: can't load file nr. %d",fileNum);
+		warning("Screen::showScreen: can't load file nr. %d", fileNum);
 }
 
 void Screen::showScreen(uint8 *pScreen, bool fullscreen) {
@@ -167,7 +165,7 @@ void Screen::showScreen(uint8 *pScreen, bool fullscreen) {
 }
 
 //convert 3 byte 0..63 rgb to 3 byte 0..255 rgb
-void Screen::convertPalette(uint8 *inPal, uint8* outPal) {
+void Screen::convertPalette(uint8 *inPal, uint8 *outPal) {
 	int i;
 
 	for (i = 0; i < VGA_COLORS; i++) {
@@ -294,7 +292,7 @@ void Screen::paletteFadeUp(uint16 fileNr) {
 		paletteFadeUp(pal);
 		free(pal);
 	} else
-		warning("Screen::paletteFadeUp: Can't load palette #%d",fileNr);
+		warning("Screen::paletteFadeUp: Can't load palette #%d", fileNr);
 }
 
 void Screen::paletteFadeUp(uint8 *pal) {
@@ -340,7 +338,7 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 #else
 		paletteFadeUp(palette);
 #endif
-	} else if (scroll == 123) {	// scroll left (going right)
+	} else if (scroll == 123) { // scroll left (going right)
 		assert(_currentScreen && _scrollScreen);
 		uint8 *scrNewPtr, *scrOldPtr;
 		for (uint8 scrollCnt = 0; scrollCnt < (GAME_SCREEN_WIDTH / SCROLL_JUMP) - 1; scrollCnt++) {
@@ -356,7 +354,7 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 			waitForTick();
 		}
 		showScreen(_currentScreen);
-	} else if (scroll == 321) {	// scroll right (going left)
+	} else if (scroll == 321) { // scroll right (going left)
 		assert(_currentScreen && _scrollScreen);
 		uint8 *scrNewPtr, *scrOldPtr;
 		for (uint8 scrollCnt = 0; scrollCnt < (GAME_SCREEN_WIDTH / SCROLL_JUMP) - 1; scrollCnt++) {
@@ -471,8 +469,8 @@ void Screen::processSequence() {
 			nrToDo = _seqInfo.seqDataPos[0];
 			_seqInfo.seqDataPos++;
 
-			uint8 gridSta = (uint8)((screenPos / (GAME_SCREEN_WIDTH * 16))*20 + ((screenPos % GAME_SCREEN_WIDTH) >> 4));
-			uint8 gridEnd = (uint8)(((screenPos+nrToDo) / (GAME_SCREEN_WIDTH * 16))*20 + (((screenPos+nrToDo) % GAME_SCREEN_WIDTH) >> 4));
+			uint8 gridSta = (uint8)((screenPos / (GAME_SCREEN_WIDTH * 16)) * 20 + ((screenPos % GAME_SCREEN_WIDTH) >> 4));
+			uint8 gridEnd = (uint8)(((screenPos + nrToDo) / (GAME_SCREEN_WIDTH * 16)) * 20 + (((screenPos + nrToDo) % GAME_SCREEN_WIDTH) >> 4));
 			gridSta = MIN(gridSta, (uint8)(12 * 20 - 1));
 			gridEnd = MIN(gridEnd, (uint8)(12 * 20 - 1));
 			if (gridEnd >= gridSta)
@@ -492,7 +490,9 @@ void Screen::processSequence() {
 			}
 		} while (nrToDo == 0xFF);
 	} while (screenPos < (GAME_SCREEN_WIDTH * GAME_SCREEN_HEIGHT));
-	uint8 *gridPtr = _seqGrid; uint8 *scrPtr = _currentScreen; uint8 *rectPtr = NULL;
+	uint8 *gridPtr = _seqGrid;
+	uint8 *scrPtr = _currentScreen;
+	uint8 *rectPtr = NULL;
 	uint8 rectWid = 0, rectX = 0, rectY = 0;
 	for (uint8 cnty = 0; cnty < 12; cnty++) {
 		for (uint8 cntx = 0; cntx < 20; cntx++) {
@@ -557,19 +557,19 @@ void Screen::sortSprites() {
 				} else {
 					// process_this_id:
 					Compact *spriteComp = _skyCompact->fetchCpt(drawListData[0]);
-					if ((spriteComp->status & 4) && // is it sortable playfield?(!?!)
-						(spriteComp->screen == Logic::_scriptVariables[SCREEN])) { // on current screen
-							DataFileHeader *spriteData =
-								(DataFileHeader *)SkyEngine::fetchItem(spriteComp->frame >> 6);
-							if (!spriteData) {
-								debug(9,"Missing file %d", spriteComp->frame >> 6);
-								spriteComp->status = 0;
-							} else {
-								sortList[spriteCnt].yCood = spriteComp->ycood + spriteData->s_offset_y + spriteData->s_height;
-								sortList[spriteCnt].compact = spriteComp;
-								sortList[spriteCnt].sprite = spriteData;
-								spriteCnt++;
-							}
+					if ((spriteComp->status & 4) &&                                // is it sortable playfield?(!?!)
+					    (spriteComp->screen == Logic::_scriptVariables[SCREEN])) { // on current screen
+						DataFileHeader *spriteData =
+						    (DataFileHeader *)SkyEngine::fetchItem(spriteComp->frame >> 6);
+						if (!spriteData) {
+							debug(9, "Missing file %d", spriteComp->frame >> 6);
+							spriteComp->status = 0;
+						} else {
+							sortList[spriteCnt].yCood = spriteComp->ycood + spriteData->s_offset_y + spriteData->s_height;
+							sortList[spriteCnt].compact = spriteComp;
+							sortList[spriteCnt].sprite = spriteData;
+							spriteCnt++;
+						}
 					}
 					drawListData++;
 				}
@@ -607,7 +607,7 @@ void Screen::sortSprites() {
 void Screen::doSprites(uint8 layer) {
 	uint16 drawListNum = DRAW_LIST_NO;
 	uint32 idNum;
-	uint16* drawList;
+	uint16 *drawList;
 	while (Logic::_scriptVariables[drawListNum]) { // std sp loop
 		idNum = Logic::_scriptVariables[drawListNum];
 		drawListNum++;
@@ -621,7 +621,7 @@ void Screen::doSprites(uint8 layer) {
 				Compact *spriteData = _skyCompact->fetchCpt(drawList[0]);
 				drawList++;
 				if ((spriteData->status & (1 << layer)) &&
-						(spriteData->screen == Logic::_scriptVariables[SCREEN])) {
+				    (spriteData->screen == Logic::_scriptVariables[SCREEN])) {
 					uint8 *toBeDrawn = (uint8 *)SkyEngine::fetchItem(spriteData->frame >> 6);
 					if (!toBeDrawn) {
 						debug(9, "Spritedata %d not loaded", spriteData->frame >> 6);
@@ -706,7 +706,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		return;
 	}
 	if ((_sprX + _sprWidth > 320) || (_sprY + _sprHeight > 192)) {
-		warning("Screen::drawSprite fatal error: got x = %d, y = %d, w = %d, h = %d",_sprX, _sprY, _sprWidth, _sprHeight);
+		warning("Screen::drawSprite fatal error: got x = %d, y = %d, w = %d, h = %d", _sprX, _sprY, _sprWidth, _sprHeight);
 		_sprWidth = 0;
 		return;
 	}
@@ -719,8 +719,8 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 		screenPtr += GAME_SCREEN_WIDTH;
 	}
 	// Convert the sprite coordinate/size values to blocks for vertical mask and/or vector to game
-	_sprWidth += _sprX + GRID_W-1;
-	_sprHeight += _sprY + GRID_H-1;
+	_sprWidth += _sprX + GRID_W - 1;
+	_sprHeight += _sprY + GRID_H - 1;
 
 	_sprX >>= GRID_W_SHIFT;
 	_sprWidth >>= GRID_W_SHIFT;
@@ -734,7 +734,7 @@ void Screen::drawSprite(uint8 *spriteInfo, Compact *sprCompact) {
 void Screen::vectorToGame(uint8 gridVal) {
 	if (_sprWidth == 0)
 		return;
-	uint8 *trgGrid = _gameGrid + _sprY * GRID_X +_sprX;
+	uint8 *trgGrid = _gameGrid + _sprY * GRID_X + _sprX;
 	for (uint32 cnty = 0; cnty < _sprHeight; cnty++) {
 		for (uint32 cntx = 0; cntx < _sprWidth; cntx++)
 			trgGrid[cntx] |= gridVal;
@@ -805,8 +805,8 @@ void Screen::paintBox(uint16 x, uint16 y) {
 void Screen::showGrid(uint8 *gridBuf) {
 	uint32 gridData = 0;
 	uint8 bitsLeft = 0;
-	for (uint16 cnty = 0; cnty < GAME_SCREEN_HEIGHT >> 3; cnty++) {
-		for (uint16 cntx = 0; cntx < GAME_SCREEN_WIDTH >> 3; cntx++) {
+	for (uint16 cnty = 0; cnty<GAME_SCREEN_HEIGHT> > 3; cnty++) {
+		for (uint16 cntx = 0; cntx<GAME_SCREEN_WIDTH> > 3; cntx++) {
 			if (!bitsLeft) {
 				bitsLeft = 32;
 				gridData = *(uint32 *)gridBuf;
@@ -819,7 +819,6 @@ void Screen::showGrid(uint8 *gridBuf) {
 		}
 	}
 	_system->copyRectToScreen(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-
 }
 
 } // End of namespace Sky

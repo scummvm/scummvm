@@ -35,9 +35,11 @@ class CTitaniaSpeech : public CGameObject {
 	bool MovieFrameMsg(CMovieFrameMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+
 private:
 	int _actionNum;
 	int _backgroundFrame;
+
 public:
 	CLASSDEF;
 	CTitaniaSpeech() : CGameObject(), _actionNum(1), _backgroundFrame(0) {}

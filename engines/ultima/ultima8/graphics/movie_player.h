@@ -30,8 +30,8 @@ class RenderSurface;
 
 class MoviePlayer {
 public:
-	MoviePlayer() {};
-	virtual ~MoviePlayer() {};
+	MoviePlayer(){};
+	virtual ~MoviePlayer(){};
 
 	virtual void run() = 0;
 	virtual void paint(RenderSurface *surf, int lerp) = 0;
@@ -39,7 +39,6 @@ public:
 	virtual void start() = 0;
 	virtual void stop() = 0;
 	virtual bool isPlaying() const = 0;
-
 };
 
 } // End of namespace Ultima8

@@ -20,26 +20,23 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/true_talk/liftbot_script.h"
-#include "titanic/true_talk/true_talk_manager.h"
+#include "common/textconsole.h"
 #include "titanic/titanic.h"
 #include "titanic/translation.h"
+#include "titanic/true_talk/true_talk_manager.h"
 
 namespace Titanic {
 
 int LiftbotScript::_stateIndex;
 
 static const int STATE_ARRAY_EN[7] = {
-	30910, 30912, 30913, 30914, 30915, 30916, 30917
-};
+    30910, 30912, 30913, 30914, 30915, 30916, 30917};
 static const int STATE_ARRAY_DE[7] = {
-	30919, 30921, 30922, 30923, 30924, 30925, 30926
-};
+    30919, 30921, 30922, 30923, 30924, 30925, 30926};
 
 LiftbotScript::LiftbotScript(int val1, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
+                             const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) : TTnpcScript(val1, charClass, v2, charName, v3, val2, v4, v5, v6, v7) {
 	_stateIndex = 0;
 
 	loadRanges("Ranges/Liftbot");
@@ -72,7 +69,7 @@ int LiftbotScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 			_stateIndex = 0;
 		} else {
 			addResponse(TRANSLATE(STATE_ARRAY_EN[_stateIndex++],
-				STATE_ARRAY_DE[_stateIndex++]));
+			                      STATE_ARRAY_DE[_stateIndex++]));
 		}
 
 		applyResponse();
@@ -139,7 +136,7 @@ int LiftbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 		case 9:
 			if (sentMode == 10 || g_vm->_trueTalkManager->_quotesTree.search(
-				sentence->_normalizedLine.c_str(), TREE_2, &treeResult[0], 0, 0) != -1)
+			                          sentence->_normalizedLine.c_str(), TREE_2, &treeResult[0], 0, 0) != -1)
 				return addDialogueAndState(getDialogueId(210970), 9);
 			break;
 
@@ -155,9 +152,7 @@ int LiftbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	if (sentence->localWord("injury") || sentence->localWord("illness")) {
 		addResponse(getDialogueId(210059));
 		applyResponse();
-	} else if (processEntries(_defaultEntries, 0, roomScript, sentence) != 2
-			&& !defaultProcess(roomScript, sentence)
-			&& !sentence1(sentence)) {
+	} else if (processEntries(_defaultEntries, 0, roomScript, sentence) != 2 && !defaultProcess(roomScript, sentence) && !sentence1(sentence)) {
 		if (getDialRegion(1) != 0 && getRandomNumber(100) <= 20) {
 			addResponse(getDialogueId(210906));
 			addResponse(getDialogueId(210901));
@@ -215,7 +210,7 @@ ScriptChangedResult LiftbotScript::scriptChanged(const TTroomScript *roomScript,
 }
 
 int LiftbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder) {
+                               uint tag1, uint tag2, uint remainder) {
 	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
@@ -340,13 +335,7 @@ int LiftbotScript::updateState(uint oldId, uint newId, int index) {
 }
 
 int LiftbotScript::preResponse(uint id) {
-	if (id == (uint)TRANSLATE(30565, 30574)
-			|| id == (uint)TRANSLATE(30566, 30575)
-			|| id == (uint)TRANSLATE(30567, 30576)
-			|| id == (uint)TRANSLATE(30568, 30577)
-			|| id == (uint)TRANSLATE(30569, 30578)
-			|| id == (uint)TRANSLATE(30570, 30579)
-			|| id == (uint)TRANSLATE(30571, 30580))
+	if (id == (uint)TRANSLATE(30565, 30574) || id == (uint)TRANSLATE(30566, 30575) || id == (uint)TRANSLATE(30567, 30576) || id == (uint)TRANSLATE(30568, 30577) || id == (uint)TRANSLATE(30569, 30578) || id == (uint)TRANSLATE(30570, 30579) || id == (uint)TRANSLATE(30571, 30580))
 		return 210901;
 
 	if (getDialRegion(0) == 0 && getRandomNumber(100) > 60)
@@ -370,23 +359,22 @@ uint LiftbotScript::getDialsBitset() const {
 int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	// Responses for each floor when asked "what floor are we on"
 	static const int FLOOR_RESPONSE_IDS[] = {
-		0, 210724, 210735, 210746, 210757, 210758, 210759, 210760,
-		210761, 210762, 210725, 210726, 210727, 210728, 210729,
-		210730, 210731, 210732, 210733, 210734, 210736, 210737,
-		210738, 210739, 210740, 210741, 210742, 210743, 210744,
-		210745, 210747, 210748, 210749, 210750, 210751, 210752,
-		210753, 210754, 210755, 210756
-	};
+	    0, 210724, 210735, 210746, 210757, 210758, 210759, 210760,
+	    210761, 210762, 210725, 210726, 210727, 210728, 210729,
+	    210730, 210731, 210732, 210733, 210734, 210736, 210737,
+	    210738, 210739, 210740, 210741, 210742, 210743, 210744,
+	    210745, 210747, 210748, 210749, 210750, 210751, 210752,
+	    210753, 210754, 210755, 210756};
 	// Responses for each lift when asked "which lift am I in"
 	static const int LIFT_RESPONSE_IDS[] = {
-		0, 210849, 210850, 210851, 210852, 210838, 210839, 210840, 210841, 0
-	};
+	    0, 210849, 210850, 210851, 210852, 210838, 210839, 210840, 210841, 0};
 
 	getState();
 	int stateVal;
 
 	int state = (g_language == Common::DE_DEU && val1 > 3000 && val1 < 3020)
-		? val1 - 3000 : val1;
+	                ? val1 - 3000
+	                : val1;
 	switch (state) {
 	case 1:
 		if (getValue(1) != 1)
@@ -407,9 +395,7 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		if (sentence->localWord("big") || sentence->localWord("small")) {
 			addResponse(getDialogueId(210215));
 			applyResponse();
-		} else if (sentence->localWord("my") || sentence->contains("my")
-				|| sentence->contains("bedroom") || sentence->contains("state")
-				|| sentence->contains("mein") || sentence->contains("schlafzimmer")) {
+		} else if (sentence->localWord("my") || sentence->contains("my") || sentence->contains("bedroom") || sentence->contains("state") || sentence->contains("mein") || sentence->contains("schlafzimmer")) {
 			addResponse1(CTrueTalkManager::getStateValue(4), true, 0);
 		} else {
 			selectResponse(210763);
@@ -450,7 +436,7 @@ int LiftbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 		stateVal = getState6();
 		if (g_language == Common::EN_ANY) {
 			if (sentence->contains("elevator") ||
-				(!sentence->contains("lift") && getRandomNumber(100) > 60))
+			    (!sentence->contains("lift") && getRandomNumber(100) > 60))
 				stateVal += 4;
 		}
 		selectResponse(LIFT_RESPONSE_IDS[stateVal]);
@@ -513,12 +499,11 @@ int LiftbotScript::addDialogueAndState(int id, int state) {
 
 int LiftbotScript::addResponse1(int index, bool flag, int id) {
 	static const int DIALOGUE_IDS[37] = {
-		210735, 210746, 210757, 210758, 210759, 210760, 210761, 210762,
-		210725, 210726, 210727, 210728, 210729, 210730, 210731, 210732,
-		210733, 210734, 210736, 210737, 210738, 210739, 210740, 210741,
-		210742, 210743, 210744, 210745, 210747, 210748, 210749, 210750,
-		210751, 210752, 210753, 210754, 210755
-	};
+	    210735, 210746, 210757, 210758, 210759, 210760, 210761, 210762,
+	    210725, 210726, 210727, 210728, 210729, 210730, 210731, 210732,
+	    210733, 210734, 210736, 210737, 210738, 210739, 210740, 210741,
+	    210742, 210743, 210744, 210745, 210747, 210748, 210749, 210750,
+	    210751, 210752, 210753, 210754, 210755};
 
 	int stateVal = getState6();
 	int maxIndex = (stateVal == 2 || stateVal == 4) ? 27 : 39;
@@ -530,7 +515,7 @@ int LiftbotScript::addResponse1(int index, bool flag, int id) {
 	} else if (index == getCurrentFloor()) {
 		if (index == 1) {
 			addResponse(TRANSLATE(30558 - (getRandomBit() ? 290 : 0),
-				30567 - (getRandomBit() ? 297 : 0)));
+			                      30567 - (getRandomBit() ? 297 : 0)));
 			addResponse(getDialogueId(210589));
 		} else {
 			if (index == 39)
@@ -560,7 +545,7 @@ int LiftbotScript::addResponse1(int index, bool flag, int id) {
 	if (flag) {
 		if (index == 1) {
 			selectResponse(TRANSLATE(30558 - (getRandomBit() ? 290 : 0),
-				30567 - (getRandomBit() ? 297 : 0)));
+			                         30567 - (getRandomBit() ? 297 : 0)));
 		} else if (index == 39) {
 			addResponse(TRANSLATE(30346, 30348));
 		} else {
@@ -651,9 +636,7 @@ int LiftbotScript::sentence1(const TTsentence *sentence) {
 			newId = 210898;
 			diff = -98;
 		}
-	} else if (sentence->localWord("topwell") || sentence->localWord("servicelift")
-			|| sentence->localWord("bridge") || sentence->localWord("dome")
-			|| sentence->localWord("pellerator") || sentence->localWord("top")) {
+	} else if (sentence->localWord("topwell") || sentence->localWord("servicelift") || sentence->localWord("bridge") || sentence->localWord("dome") || sentence->localWord("pellerator") || sentence->localWord("top")) {
 		diff = 1;
 	} else {
 		diff = -100;
@@ -676,13 +659,7 @@ int LiftbotScript::sentence1(const TTsentence *sentence) {
 		return 1;
 	}
 
-	if (sentence->_category == 4 || sentence->localWord("find")
-			|| sentence->contains("get to")
-			|| sentence->contains("komme ich")
-			|| sentence->contains("ich will zum")
-			|| sentence->contains("ich will zur")
-			|| sentence->contains("ich will ins")
-			|| sentence->contains("ich will in")) {
+	if (sentence->_category == 4 || sentence->localWord("find") || sentence->contains("get to") || sentence->contains("komme ich") || sentence->contains("ich will zum") || sentence->contains("ich will zur") || sentence->contains("ich will ins") || sentence->contains("ich will in")) {
 		if (getCurrentFloor() != diff) {
 			selectResponse(diff == 1 ? 210769 : 210764);
 		} else if (!newId) {

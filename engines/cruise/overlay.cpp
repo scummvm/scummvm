@@ -149,7 +149,7 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	overlayTable[scriptIdx].ovlData =
-	    (ovlDataStruct *) mallocAndZero(sizeof(ovlDataStruct));
+	    (ovlDataStruct *)mallocAndZero(sizeof(ovlDataStruct));
 
 	if (!overlayTable[scriptIdx].ovlData)
 		return (-2);
@@ -187,16 +187,15 @@ int loadOverlay(const char *scriptName) {
 
 	if (volumePtrToFileDescriptor[fileIdx].size + 2 != unpackedSize) {
 		char *pakedBuffer =
-		    (char *)mallocAndZero(volumePtrToFileDescriptor[fileIdx].
-		                          size + 2);
+		    (char *)mallocAndZero(volumePtrToFileDescriptor[fileIdx].size + 2);
 
-		loadPackedFileToMem(fileIdx, (uint8 *) pakedBuffer);
+		loadPackedFileToMem(fileIdx, (uint8 *)pakedBuffer);
 
 		delphineUnpack((uint8 *)unpackedBuffer, (const uint8 *)pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
 		MemFree(pakedBuffer);
 	} else {
-		loadPackedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
+		loadPackedFileToMem(fileIdx, (uint8 *)unpackedBuffer);
 	}
 
 	debug(1, "OVL loading done...");
@@ -241,9 +240,9 @@ int loadOverlay(const char *scriptName) {
 	ovlData->specialString1Length = s.readUint16BE();
 	ovlData->scriptNumber = s.readUint16BE();
 
-	if (ovlData->numSymbGlob)	{ // export data
+	if (ovlData->numSymbGlob) { // export data
 		ovlData->arraySymbGlob =
-		    (exportEntryStruct *) mallocAndZero(ovlData->numSymbGlob * sizeof(exportEntryStruct));
+		    (exportEntryStruct *)mallocAndZero(ovlData->numSymbGlob * sizeof(exportEntryStruct));
 
 		if (!ovlData->arraySymbGlob)
 			return (-2);
@@ -257,8 +256,8 @@ int loadOverlay(const char *scriptName) {
 		}
 	}
 
-	if (ovlData->exportNamesSize) {	// export names
-		ovlData->arrayNameSymbGlob = (char *) mallocAndZero(ovlData->exportNamesSize);
+	if (ovlData->exportNamesSize) { // export names
+		ovlData->arrayNameSymbGlob = (char *)mallocAndZero(ovlData->exportNamesSize);
 
 		if (!ovlData->arrayNameSymbGlob) {
 			return (-2);
@@ -267,10 +266,10 @@ int loadOverlay(const char *scriptName) {
 		s.read(ovlData->arrayNameSymbGlob, ovlData->exportNamesSize);
 	}
 
-	if (ovlData->numRelocGlob) {	// import data
+	if (ovlData->numRelocGlob) { // import data
 		ovlData->arrayRelocGlob =
-		    (importDataStruct *) mallocAndZero(ovlData->numRelocGlob *
-		                                       sizeof(importDataStruct));
+		    (importDataStruct *)mallocAndZero(ovlData->numRelocGlob *
+		                                      sizeof(importDataStruct));
 
 		if (!ovlData->arrayRelocGlob)
 			return (-2);
@@ -284,8 +283,8 @@ int loadOverlay(const char *scriptName) {
 		}
 	}
 
-	if (ovlData->nameExportSize) {	// import name
-		ovlData->arrayNameRelocGlob = (char *) mallocAndZero(ovlData->nameExportSize);
+	if (ovlData->nameExportSize) { // import name
+		ovlData->arrayNameRelocGlob = (char *)mallocAndZero(ovlData->nameExportSize);
 
 		if (!ovlData->arrayNameRelocGlob) {
 			return (-2);
@@ -294,10 +293,10 @@ int loadOverlay(const char *scriptName) {
 		s.read(ovlData->arrayNameRelocGlob, ovlData->nameExportSize);
 	}
 
-	if (ovlData->numMsgRelHeader) {	// link data
+	if (ovlData->numMsgRelHeader) { // link data
 		assert(sizeof(linkDataStruct) == 0x22);
 
-		ovlData->arrayMsgRelHeader = (linkDataStruct *) mallocAndZero(ovlData->numMsgRelHeader * sizeof(linkDataStruct));
+		ovlData->arrayMsgRelHeader = (linkDataStruct *)mallocAndZero(ovlData->numMsgRelHeader * sizeof(linkDataStruct));
 
 		if (!ovlData->arrayMsgRelHeader)
 			return (-2);
@@ -328,10 +327,10 @@ int loadOverlay(const char *scriptName) {
 		}
 	}
 
-	if (ovlData->numProc) {	// script
+	if (ovlData->numProc) { // script
 		ovlData3Struct *tempPtr;
 
-		ovlData->arrayProc = (ovlData3Struct *) mallocAndZero(ovlData->numProc * sizeof(ovlData3Struct));
+		ovlData->arrayProc = (ovlData3Struct *)mallocAndZero(ovlData->numProc * sizeof(ovlData3Struct));
 
 		if (!ovlData->arrayProc)
 			return (-2);
@@ -356,7 +355,7 @@ int loadOverlay(const char *scriptName) {
 		tempPtr = ovlData->arrayProc;
 
 		for (int i = 0; i < ovlData->numProc; i++) {
-			tempPtr->dataPtr = (uint8 *) mallocAndZero(tempPtr->sizeOfData);
+			tempPtr->dataPtr = (uint8 *)mallocAndZero(tempPtr->sizeOfData);
 
 			if (!tempPtr->dataPtr) {
 				return (-2);
@@ -381,7 +380,7 @@ int loadOverlay(const char *scriptName) {
 	if (ovlData->numRel) {
 		ovlData3Struct *tempPtr;
 
-		ovlData->ptr1 = (ovlData3Struct *) mallocAndZero(ovlData->numRel * sizeof(ovlData3Struct));
+		ovlData->ptr1 = (ovlData3Struct *)mallocAndZero(ovlData->numRel * sizeof(ovlData3Struct));
 
 		if (!ovlData->ptr1)
 			return (-2);
@@ -403,10 +402,10 @@ int loadOverlay(const char *scriptName) {
 			ovlData->ptr1[i].var1A = s.readUint16BE();
 		}
 
-		tempPtr = (ovlData3Struct *) ovlData->ptr1;
+		tempPtr = (ovlData3Struct *)ovlData->ptr1;
 
 		for (int i = 0; i < ovlData->numRel; i++) {
-			tempPtr->dataPtr = (uint8 *) mallocAndZero(tempPtr->sizeOfData);
+			tempPtr->dataPtr = (uint8 *)mallocAndZero(tempPtr->sizeOfData);
 
 			if (!tempPtr->dataPtr)
 				return (-2);
@@ -428,7 +427,7 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->size12) {
-		ovlData->ptr8 = (uint8 *) mallocAndZero(ovlData->size12);
+		ovlData->ptr8 = (uint8 *)mallocAndZero(ovlData->size12);
 
 		if (!ovlData->ptr8) {
 			/*      releaseScript(scriptIdx,scriptName);
@@ -444,14 +443,14 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->numObj) {
-		ovlData->arrayObject = (objDataStruct *) mallocAndZero(ovlData->numObj * sizeof(objDataStruct));
+		ovlData->arrayObject = (objDataStruct *)mallocAndZero(ovlData->numObj * sizeof(objDataStruct));
 
 		if (!ovlData->arrayObject)
 			return (-2);
 
 		for (int i = 0; i < ovlData->numObj; i++) {
 			ovlData->arrayObject[i]._type = s.readUint16BE();
-			ovlData->arrayObject[i]._class = (eClass) s.readUint16BE();
+			ovlData->arrayObject[i]._class = (eClass)s.readUint16BE();
 			ovlData->arrayObject[i]._nameOffset = s.readUint16BE();
 			ovlData->arrayObject[i]._numStates = s.readUint16BE();
 			ovlData->arrayObject[i]._varTableIdx = s.readUint16BE();
@@ -469,8 +468,8 @@ int loadOverlay(const char *scriptName) {
 
 	if (ovlData->size9) {
 		ovlData->arrayObjVar =
-		    (objectParams *) mallocAndZero(ovlData->size9 *
-		                                   sizeof(objectParams));
+		    (objectParams *)mallocAndZero(ovlData->size9 *
+		                                  sizeof(objectParams));
 
 		if (!ovlData->arrayObjVar) {
 			return (-2);
@@ -478,7 +477,7 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->size8) {
-		ovlData->arrayStates = (objectParams *) mallocAndZero(ovlData->size8 * sizeof(objectParams));
+		ovlData->arrayStates = (objectParams *)mallocAndZero(ovlData->size8 * sizeof(objectParams));
 
 		if (!ovlData->arrayStates)
 			return (-2);
@@ -494,21 +493,21 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->numStrings) {
-		ovlData->stringTable = (stringEntryStruct *) mallocAndZero(ovlData->numStrings * sizeof(stringEntryStruct));
+		ovlData->stringTable = (stringEntryStruct *)mallocAndZero(ovlData->numStrings * sizeof(stringEntryStruct));
 
 		for (int i = 0; i < ovlData->numStrings; i++)
 			ovlData->stringTable[i].idx = s.readUint16BE();
 	}
 
 	if (ovlData->sizeOfData4) {
-		ovlData->data4Ptr = (uint8 *) mallocAndZero(ovlData->sizeOfData4);
+		ovlData->data4Ptr = (uint8 *)mallocAndZero(ovlData->sizeOfData4);
 
 		if (!ovlData->data4Ptr)
 			return (-2);
 	}
 
 	if (ovlData->specialString1Length /*|| ovlData->specialString2Length */
-	        || ovlData->stringTable) {
+	    || ovlData->stringTable) {
 		//int unpackedSize;
 		//int fileIdx;
 		//uint8 fileName[50];
@@ -534,19 +533,18 @@ int loadOverlay(const char *scriptName) {
 		memset(unpackedBuffer, 0, unpackedSize);
 
 		if (volumePtrToFileDescriptor[fileIdx].size + 2 !=
-		        unpackedSize) {
+		    unpackedSize) {
 			char *pakedBuffer =
 			    (char *)
-			    mallocAndZero(volumePtrToFileDescriptor[fileIdx].
-			                  size + 2);
+			        mallocAndZero(volumePtrToFileDescriptor[fileIdx].size + 2);
 
-			loadPackedFileToMem(fileIdx, (uint8 *) pakedBuffer);
+			loadPackedFileToMem(fileIdx, (uint8 *)pakedBuffer);
 
-			delphineUnpack((uint8 *) unpackedBuffer, (const uint8 *)pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
+			delphineUnpack((uint8 *)unpackedBuffer, (const uint8 *)pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
 			MemFree(pakedBuffer);
 		} else {
-			loadPackedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
+			loadPackedFileToMem(fileIdx, (uint8 *)unpackedBuffer);
 		}
 
 		Common::MemoryReadStream s2(unpackedBuffer, unpackedSize, DisposeAfterUse::YES);
@@ -554,7 +552,7 @@ int loadOverlay(const char *scriptName) {
 
 		ovlData->specialString1Length = s2.readUint16BE();
 		if (ovlData->specialString1Length) {
-			ovlData->nameVerbGlob = (char *) mallocAndZero(ovlData->specialString1Length);
+			ovlData->nameVerbGlob = (char *)mallocAndZero(ovlData->specialString1Length);
 
 			if (!ovlData->nameVerbGlob) {
 				/*      releaseScript(scriptIdx,scriptName);
@@ -572,7 +570,7 @@ int loadOverlay(const char *scriptName) {
 
 		ovlData->specialString2Length = s2.readUint16BE();
 		if (ovlData->specialString2Length) {
-			ovlData->arrayNameObj = (char *) mallocAndZero(ovlData->specialString2Length);
+			ovlData->arrayNameObj = (char *)mallocAndZero(ovlData->specialString2Length);
 
 			if (!ovlData->arrayNameObj) {
 				/*      releaseScript(scriptIdx,scriptName);
@@ -593,8 +591,7 @@ int loadOverlay(const char *scriptName) {
 
 			if (ovlData->stringTable[i].length) {
 				ovlData->stringTable[i].string =
-				    (char *)mallocAndZero(ovlData->
-				                          stringTable[i].length);
+				    (char *)mallocAndZero(ovlData->stringTable[i].length);
 
 				if (!ovlData->stringTable[i].string) {
 					/*      releaseScript(scriptIdx,scriptName);
@@ -637,8 +634,7 @@ int loadOverlay(const char *scriptName) {
 				        i);
 				if (var_34->stringNameOffset != 0xFFFF) {
 					fprintf(fHandle, "name: %s\n",
-					        getObjectName(var_34->
-					                      stringNameOffset,
+					        getObjectName(var_34->stringNameOffset,
 					                      ovlData->arrayNameObj));
 				}
 			}

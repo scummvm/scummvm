@@ -21,29 +21,29 @@
  */
 
 #include "ultima/nuvie/keybinding/keys.h"
-#include "ultima/nuvie/keybinding/key_actions.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/files/utils.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/files/nuvie_io.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/gui/widgets/console.h"
-#include "ultima/nuvie/core/effect.h"
-#include "ultima/shared/conf/xml_tree.h"
 #include "common/hash-str.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/files/nuvie_io.h"
+#include "ultima/nuvie/files/utils.h"
+#include "ultima/nuvie/gui/widgets/console.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/keybinding/key_actions.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/shared/conf/xml_tree.h"
 
 #define ENCODE_KEY(key, mod) ((uint32)(key) | ((uint32)(mod) << 24))
 
 namespace Ultima {
 namespace Nuvie {
 
-static  class Chardata { // ctype-like character lists
+static class Chardata { // ctype-like character lists
 public:
-	string  whitespace;
+	string whitespace;
 	Chardata() {
 		for (size_t i = 0; i < 256; i++)
 			if (Common::isSpace(i))
@@ -51,7 +51,7 @@ public:
 	}
 } chardata;
 
-typedef void(*ActionFunc)(int const *);
+typedef void (*ActionFunc)(int const *);
 
 struct Action {
 	const char *s;
@@ -67,76 +67,76 @@ struct Action {
 };
 
 const Action NuvieActions[] = {
-	{ "WALK_WEST", ActionWalkWest, "Walk west", Action::normal_keys, true, WEST_KEY  },
-	{ "WALK_EAST", ActionWalkEast, "Walk east", Action::normal_keys, true, EAST_KEY },
-	{ "WALK_NORTH", ActionWalkNorth, "Walk north", Action::normal_keys, true, NORTH_KEY },
-	{ "WALK_SOUTH", ActionWalkSouth, "Walk south", Action::normal_keys, true, SOUTH_KEY },
-	{ "WALK_NORTH_EAST", ActionWalkNorthEast, "Walk north-east", Action::normal_keys, true, NORTH_EAST_KEY },
-	{ "WALK_SOUTH_EAST", ActionWalkSouthEast, "Walk south-east", Action::normal_keys, true, SOUTH_EAST_KEY },
-	{ "WALK_NORTH_WEST", ActionWalkNorthWest, "Walk north-west", Action::normal_keys, true, NORTH_WEST_KEY },
-	{ "WALK_SOUTH_WEST", ActionWalkSouthWest, "Walk south-west", Action::normal_keys, true, SOUTH_WEST_KEY },
-	{ "CAST", ActionCast, "Cast", Action::normal_keys, true, OTHER_KEY }, // allow_in_vehicle is true, so the right message or cancel is done for WOU games
-	{ "LOOK", ActionLook, "Look", Action::normal_keys, true, OTHER_KEY },
-	{ "TALK", ActionTalk, "Talk", Action::normal_keys, true, OTHER_KEY },
-	{ "USE", ActionUse, "Use", Action::normal_keys, true, OTHER_KEY },
-	{ "GET", ActionGet, "Get", Action::normal_keys, false, OTHER_KEY },
-	{ "MOVE", ActionMove, "Move", Action::normal_keys, false, OTHER_KEY },
-	{ "DROP", ActionDrop, "Drop", Action::normal_keys, false, OTHER_KEY },
-	{ "TOGGLE_COMBAT", ActionToggleCombat, "Toggle combat", Action::normal_keys, false, OTHER_KEY },
-	{ "ATTACK", ActionAttack, "Attack", Action::normal_keys, true, OTHER_KEY },
-	{ "REST", ActionRest, "Rest", Action::normal_keys, true, OTHER_KEY },
-	{ "MULTI_USE", ActionMultiUse, "Multi-use", Action::normal_keys, true, OTHER_KEY },
-	{ "SELECT_COMMAND_BAR", ActionSelectCommandBar, "Select Command Bar", Action::normal_keys, true, OTHER_KEY },
-	{ "NEW_COMMAND_BAR", ActionSelectNewCommandBar, "Select New Command Bar", Action::normal_keys, true, NEW_COMMAND_BAR_KEY },
-	{ "DOLL_GUMP", ActionDollGump, "Doll gump", Action::normal_keys, true, OTHER_KEY },
-	{ "SHOW_STATS", ActionShowStats, "Shows the party member's stats", Action::normal_keys, true, OTHER_KEY },
-	{ "INVENTORY", ActionInventory, "inventory", Action::normal_keys, true, OTHER_KEY },
-	{ "PREVIOUS_PARTY_MEMBER", ActionPreviousPartyMember, "Previous party member", Action::normal_keys, true, PREVIOUS_PARTY_MEMBER_KEY },
-	{ "NEXT_PARTY_MEMBER", ActionNextPartyMember, "Next party member", Action::normal_keys, true, NEXT_PARTY_MEMBER_KEY },
-	{ "HOME_KEY", ActionHome, "Home key", Action::normal_keys, true, HOME_KEY },
-	{ "END_KEY", ActionEnd, "End key", Action::normal_keys, true, END_KEY },
-	{ "TOGGLE_VIEW", ActionToggleView, "Toggle between inventory and actor view", Action::normal_keys, true, OTHER_KEY },
-	{ "PARTY_VIEW", ActionPartyView, "Party view", Action::normal_keys, true, OTHER_KEY },
-	{ "SOLO_MODE", ActionSoloMode, "Solo mode", Action::normal_keys, true, OTHER_KEY },
-	{ "PARTY_MODE", ActionPartyMode, "Party mode", Action::normal_keys, true, OTHER_KEY },
-	{ "SAVE_MENU", ActionSaveDialog, "Save menu", Action::normal_keys, true, OTHER_KEY },
-	{ "LOAD_LATEST_SAVE", ActionLoadLatestSave, "Load latest save", Action::normal_keys, true, OTHER_KEY },
-	{ "QUICK_SAVE", ActionQuickSave, "Quick save", Action::normal_keys, true, OTHER_KEY },
-	{ "QUICK_LOAD", ActionQuickLoad, "Quick load", Action::normal_keys, true, OTHER_KEY },
-	{ "QUIT", ActionQuitDialog, "Quit", Action::normal_keys, true, QUIT_KEY },
-	{ "QUIT_NO_DIALOG", ActionQuitNODialog, "Quit without confirmation", Action::normal_keys, true, QUIT_KEY },
-	{ "GAME_MENU_DIALOG", ActionGameMenuDialog, "Show game menu; Cancel action if in middle of action", Action::normal_keys, true, CANCEL_ACTION_KEY },
-	{ "TOGGLE_FULLSCREEN", ActionToggleFullscreen, "Toggle Fullscreen", Action::normal_keys, true, TOGGLE_FULLSCREEN_KEY },
-	{ "TOGGLE_CURSOR", ActionToggleCursor, "Toggle Cursor", Action::normal_keys, true, TOGGLE_CURSOR_KEY },
-	{ "TOGGLE_COMBAT_STRATEGY", ActionToggleCombatStrategy, "Toggle combat strategy", Action::normal_keys, true, OTHER_KEY },
-	{ "TOGGLE_FPS_DISPLAY", ActionToggleFps, "Toggle frames per second display", Action::normal_keys, true, TOGGLE_FPS_KEY },
-	{ "TOGGLE_AUDIO", ActionToggleAudio, "Toggle audio", Action::normal_keys, true, TOGGLE_AUDIO_KEY },
-	{ "TOGGLE_MUSIC", ActionToggleMusic, "Toggle music", Action::normal_keys, true, TOGGLE_MUSIC_KEY },
-	{ "TOGGLE_SFX", ActionToggleSFX, "Toggle sfx", Action::normal_keys, true, TOGGLE_SFX_KEY },
-	{ "TOGGLE_ORIGINAL_STYLE_COMMAND_BAR", ActionToggleOriginalStyleCommandBar, "Show/hide original style command bar", Action::normal_keys, true, OTHER_KEY },
-	{ "DO_ACTION", ActionDoAction, "Do action", Action::normal_keys, true, DO_ACTION_KEY },
-	{ "CANCEL_ACTION", ActionCancelAction, "Cancel action", Action::normal_keys, true, CANCEL_ACTION_KEY },
-	{ "MSG_SCROLL_UP", ActionMsgScrollUP, "Msg scroll up", Action::normal_keys, true, MSGSCROLL_UP_KEY },
-	{ "MSG_SCROLL_DOWN", ActionMsgScrollDown, "Msg scroll down", Action::normal_keys, true, MSGSCROLL_DOWN_KEY },
-	{ "SHOW_KEYS", ActionShowKeys, "Show keys", Action::normal_keys, true, OTHER_KEY },
-	{ "DECREASE_DEBUG", ActionDecreaseDebug, "Decrease debug", Action::normal_keys, true, DECREASE_DEBUG_KEY },
-	{ "INCREASE_DEBUG", ActionIncreaseDebug, "Increase debug", Action::normal_keys, true, INCREASE_DEBUG_KEY },
-	{ "CLOSE_GUMPS", ActionCloseGumps, "Close gumps", Action::normal_keys, true, OTHER_KEY },
-	{ "USE_ITEM", ActionUseItem, "Use item", Action::normal_keys, true, OTHER_KEY },
-	{ "SHOW_EGGS", ActionShowEggs, "Show eggs", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_HACKMOVE", ActionToggleHackmove, "Toggle hack move", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_EGG_SPAWN", ActionToggleEggSpawn, "Toggle egg spawn", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_UNLIMITED_CASTING", ActionToggleUnlimitedCasting, "Toggle unlimited casting", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_NO_DARKNESS", ActionToggleNoDarkness, "Toggle no darkness", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_PICKPOCKET_MODE", ActionTogglePickpocket, "Toggle pickpocket mode", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_GOD_MODE",  ActionToggleGodMode, "Toggle god mode", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_ETHEREAL",  ActionToggleEthereal, "Toggle ethereal mode", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_X_RAY",  ActionToggleX_Ray, "Toggle X-ray mode", Action::cheat_keys, true, OTHER_KEY },
-	{ "HEAL_PARTY", ActionHealParty, "Heal party", Action::cheat_keys, true, OTHER_KEY },
-	{ "TELEPORT_TO_CURSOR", ActionTeleportToCursor, "Teleport to cursor", Action::cheat_keys, true, OTHER_KEY },
-	{ "TOGGLE_CHEATS", ActionToggleCheats, "Toggle cheats", Action::normal_keys, true, OTHER_KEY },
-	{ "DO_NOTHING", ActionDoNothing, "", Action::dont_show, true, OTHER_KEY },
-	{ "", 0, "", Action::dont_show, false, OTHER_KEY } //terminator
+    {"WALK_WEST", ActionWalkWest, "Walk west", Action::normal_keys, true, WEST_KEY},
+    {"WALK_EAST", ActionWalkEast, "Walk east", Action::normal_keys, true, EAST_KEY},
+    {"WALK_NORTH", ActionWalkNorth, "Walk north", Action::normal_keys, true, NORTH_KEY},
+    {"WALK_SOUTH", ActionWalkSouth, "Walk south", Action::normal_keys, true, SOUTH_KEY},
+    {"WALK_NORTH_EAST", ActionWalkNorthEast, "Walk north-east", Action::normal_keys, true, NORTH_EAST_KEY},
+    {"WALK_SOUTH_EAST", ActionWalkSouthEast, "Walk south-east", Action::normal_keys, true, SOUTH_EAST_KEY},
+    {"WALK_NORTH_WEST", ActionWalkNorthWest, "Walk north-west", Action::normal_keys, true, NORTH_WEST_KEY},
+    {"WALK_SOUTH_WEST", ActionWalkSouthWest, "Walk south-west", Action::normal_keys, true, SOUTH_WEST_KEY},
+    {"CAST", ActionCast, "Cast", Action::normal_keys, true, OTHER_KEY}, // allow_in_vehicle is true, so the right message or cancel is done for WOU games
+    {"LOOK", ActionLook, "Look", Action::normal_keys, true, OTHER_KEY},
+    {"TALK", ActionTalk, "Talk", Action::normal_keys, true, OTHER_KEY},
+    {"USE", ActionUse, "Use", Action::normal_keys, true, OTHER_KEY},
+    {"GET", ActionGet, "Get", Action::normal_keys, false, OTHER_KEY},
+    {"MOVE", ActionMove, "Move", Action::normal_keys, false, OTHER_KEY},
+    {"DROP", ActionDrop, "Drop", Action::normal_keys, false, OTHER_KEY},
+    {"TOGGLE_COMBAT", ActionToggleCombat, "Toggle combat", Action::normal_keys, false, OTHER_KEY},
+    {"ATTACK", ActionAttack, "Attack", Action::normal_keys, true, OTHER_KEY},
+    {"REST", ActionRest, "Rest", Action::normal_keys, true, OTHER_KEY},
+    {"MULTI_USE", ActionMultiUse, "Multi-use", Action::normal_keys, true, OTHER_KEY},
+    {"SELECT_COMMAND_BAR", ActionSelectCommandBar, "Select Command Bar", Action::normal_keys, true, OTHER_KEY},
+    {"NEW_COMMAND_BAR", ActionSelectNewCommandBar, "Select New Command Bar", Action::normal_keys, true, NEW_COMMAND_BAR_KEY},
+    {"DOLL_GUMP", ActionDollGump, "Doll gump", Action::normal_keys, true, OTHER_KEY},
+    {"SHOW_STATS", ActionShowStats, "Shows the party member's stats", Action::normal_keys, true, OTHER_KEY},
+    {"INVENTORY", ActionInventory, "inventory", Action::normal_keys, true, OTHER_KEY},
+    {"PREVIOUS_PARTY_MEMBER", ActionPreviousPartyMember, "Previous party member", Action::normal_keys, true, PREVIOUS_PARTY_MEMBER_KEY},
+    {"NEXT_PARTY_MEMBER", ActionNextPartyMember, "Next party member", Action::normal_keys, true, NEXT_PARTY_MEMBER_KEY},
+    {"HOME_KEY", ActionHome, "Home key", Action::normal_keys, true, HOME_KEY},
+    {"END_KEY", ActionEnd, "End key", Action::normal_keys, true, END_KEY},
+    {"TOGGLE_VIEW", ActionToggleView, "Toggle between inventory and actor view", Action::normal_keys, true, OTHER_KEY},
+    {"PARTY_VIEW", ActionPartyView, "Party view", Action::normal_keys, true, OTHER_KEY},
+    {"SOLO_MODE", ActionSoloMode, "Solo mode", Action::normal_keys, true, OTHER_KEY},
+    {"PARTY_MODE", ActionPartyMode, "Party mode", Action::normal_keys, true, OTHER_KEY},
+    {"SAVE_MENU", ActionSaveDialog, "Save menu", Action::normal_keys, true, OTHER_KEY},
+    {"LOAD_LATEST_SAVE", ActionLoadLatestSave, "Load latest save", Action::normal_keys, true, OTHER_KEY},
+    {"QUICK_SAVE", ActionQuickSave, "Quick save", Action::normal_keys, true, OTHER_KEY},
+    {"QUICK_LOAD", ActionQuickLoad, "Quick load", Action::normal_keys, true, OTHER_KEY},
+    {"QUIT", ActionQuitDialog, "Quit", Action::normal_keys, true, QUIT_KEY},
+    {"QUIT_NO_DIALOG", ActionQuitNODialog, "Quit without confirmation", Action::normal_keys, true, QUIT_KEY},
+    {"GAME_MENU_DIALOG", ActionGameMenuDialog, "Show game menu; Cancel action if in middle of action", Action::normal_keys, true, CANCEL_ACTION_KEY},
+    {"TOGGLE_FULLSCREEN", ActionToggleFullscreen, "Toggle Fullscreen", Action::normal_keys, true, TOGGLE_FULLSCREEN_KEY},
+    {"TOGGLE_CURSOR", ActionToggleCursor, "Toggle Cursor", Action::normal_keys, true, TOGGLE_CURSOR_KEY},
+    {"TOGGLE_COMBAT_STRATEGY", ActionToggleCombatStrategy, "Toggle combat strategy", Action::normal_keys, true, OTHER_KEY},
+    {"TOGGLE_FPS_DISPLAY", ActionToggleFps, "Toggle frames per second display", Action::normal_keys, true, TOGGLE_FPS_KEY},
+    {"TOGGLE_AUDIO", ActionToggleAudio, "Toggle audio", Action::normal_keys, true, TOGGLE_AUDIO_KEY},
+    {"TOGGLE_MUSIC", ActionToggleMusic, "Toggle music", Action::normal_keys, true, TOGGLE_MUSIC_KEY},
+    {"TOGGLE_SFX", ActionToggleSFX, "Toggle sfx", Action::normal_keys, true, TOGGLE_SFX_KEY},
+    {"TOGGLE_ORIGINAL_STYLE_COMMAND_BAR", ActionToggleOriginalStyleCommandBar, "Show/hide original style command bar", Action::normal_keys, true, OTHER_KEY},
+    {"DO_ACTION", ActionDoAction, "Do action", Action::normal_keys, true, DO_ACTION_KEY},
+    {"CANCEL_ACTION", ActionCancelAction, "Cancel action", Action::normal_keys, true, CANCEL_ACTION_KEY},
+    {"MSG_SCROLL_UP", ActionMsgScrollUP, "Msg scroll up", Action::normal_keys, true, MSGSCROLL_UP_KEY},
+    {"MSG_SCROLL_DOWN", ActionMsgScrollDown, "Msg scroll down", Action::normal_keys, true, MSGSCROLL_DOWN_KEY},
+    {"SHOW_KEYS", ActionShowKeys, "Show keys", Action::normal_keys, true, OTHER_KEY},
+    {"DECREASE_DEBUG", ActionDecreaseDebug, "Decrease debug", Action::normal_keys, true, DECREASE_DEBUG_KEY},
+    {"INCREASE_DEBUG", ActionIncreaseDebug, "Increase debug", Action::normal_keys, true, INCREASE_DEBUG_KEY},
+    {"CLOSE_GUMPS", ActionCloseGumps, "Close gumps", Action::normal_keys, true, OTHER_KEY},
+    {"USE_ITEM", ActionUseItem, "Use item", Action::normal_keys, true, OTHER_KEY},
+    {"SHOW_EGGS", ActionShowEggs, "Show eggs", Action::cheat_keys, true, OTHER_KEY},
+    {"TOGGLE_HACKMOVE", ActionToggleHackmove, "Toggle hack move", Action::cheat_keys, true, OTHER_KEY},
+    {"TOGGLE_EGG_SPAWN", ActionToggleEggSpawn, "Toggle egg spawn", Action::cheat_keys, true, OTHER_KEY},
+    {"TOGGLE_UNLIMITED_CASTING", ActionToggleUnlimitedCasting, "Toggle unlimited casting", Action::cheat_keys, true, OTHER_KEY},
+    {"TOGGLE_NO_DARKNESS", ActionToggleNoDarkness, "Toggle no darkness", Action::cheat_keys, true, OTHER_KEY},
+    {"TOGGLE_PICKPOCKET_MODE", ActionTogglePickpocket, "Toggle pickpocket mode", Action::cheat_keys, true, OTHER_KEY},
+    {"TOGGLE_GOD_MODE", ActionToggleGodMode, "Toggle god mode", Action::cheat_keys, true, OTHER_KEY},
+    {"TOGGLE_ETHEREAL", ActionToggleEthereal, "Toggle ethereal mode", Action::cheat_keys, true, OTHER_KEY},
+    {"TOGGLE_X_RAY", ActionToggleX_Ray, "Toggle X-ray mode", Action::cheat_keys, true, OTHER_KEY},
+    {"HEAL_PARTY", ActionHealParty, "Heal party", Action::cheat_keys, true, OTHER_KEY},
+    {"TELEPORT_TO_CURSOR", ActionTeleportToCursor, "Teleport to cursor", Action::cheat_keys, true, OTHER_KEY},
+    {"TOGGLE_CHEATS", ActionToggleCheats, "Toggle cheats", Action::normal_keys, true, OTHER_KEY},
+    {"DO_NOTHING", ActionDoNothing, "", Action::dont_show, true, OTHER_KEY},
+    {"", 0, "", Action::dont_show, false, OTHER_KEY} //terminator
 };
 
 struct KeycodeString {
@@ -144,124 +144,124 @@ struct KeycodeString {
 	Common::KeyCode k;
 };
 const KeycodeString StringTable[] = {
-	{"LCTRL",     Common::KEYCODE_LCTRL},
-	{"RCTRL",     Common::KEYCODE_RCTRL},
-	{"LALT",      Common::KEYCODE_LALT},
-	{"RALT",      Common::KEYCODE_RALT},
-	{"LSHIFT",    Common::KEYCODE_LSHIFT},
-	{"RSHIFT",    Common::KEYCODE_RSHIFT},
-	{"BACKSPACE", Common::KEYCODE_BACKSPACE},
-	{"TAB",       Common::KEYCODE_TAB},
-	{"ENTER",     Common::KEYCODE_RETURN},
-	{"PAUSE",     Common::KEYCODE_PAUSE},
-	{"ESC",       Common::KEYCODE_ESCAPE},
-	{"SPACE",     Common::KEYCODE_SPACE},
-	{"DEL",       Common::KEYCODE_DELETE},
-	{"KP0",       Common::KEYCODE_KP0},
-	{"KP1",       Common::KEYCODE_KP1},
-	{"KP2",       Common::KEYCODE_KP2},
-	{"KP3",       Common::KEYCODE_KP3},
-	{"KP4",       Common::KEYCODE_KP4},
-	{"KP5",       Common::KEYCODE_KP5},
-	{"KP6",       Common::KEYCODE_KP6},
-	{"KP7",       Common::KEYCODE_KP7},
-	{"KP8",       Common::KEYCODE_KP8},
-	{"KP9",       Common::KEYCODE_KP9},
-	{"KP.",       Common::KEYCODE_KP_PERIOD},
-	{"KP/",       Common::KEYCODE_KP_DIVIDE},
-	{"KP*",       Common::KEYCODE_KP_MULTIPLY},
-	{"KP-",       Common::KEYCODE_KP_MINUS},
-	{"KP+",       Common::KEYCODE_KP_PLUS},
-	{"KP_ENTER",  Common::KEYCODE_KP_ENTER},
-	{"UP",        Common::KEYCODE_UP},
-	{"DOWN",      Common::KEYCODE_DOWN},
-	{"RIGHT",     Common::KEYCODE_RIGHT},
-	{"LEFT",      Common::KEYCODE_LEFT},
-	{"INSERT",    Common::KEYCODE_INSERT},
-	{"HOME",      Common::KEYCODE_HOME},
-	{"END",       Common::KEYCODE_END},
-	{"PAGEUP",    Common::KEYCODE_PAGEUP},
-	{"PAGEDOWN",  Common::KEYCODE_PAGEDOWN},
-	{"F1",        Common::KEYCODE_F1},
-	{"F2",        Common::KEYCODE_F2},
-	{"F3",        Common::KEYCODE_F3},
-	{"F4",        Common::KEYCODE_F4},
-	{"F5",        Common::KEYCODE_F5},
-	{"F6",        Common::KEYCODE_F6},
-	{"F7",        Common::KEYCODE_F7},
-	{"F8",        Common::KEYCODE_F8},
-	{"F9",        Common::KEYCODE_F9},
-	{"F10",       Common::KEYCODE_F10},
-	{"F11",       Common::KEYCODE_F11},
-	{"F12",       Common::KEYCODE_F12},
-	{"F13",       Common::KEYCODE_F13},
-	{"F14",       Common::KEYCODE_F14},
-	{"F15",       Common::KEYCODE_F15},
-	// hackishly map joystick to unused keycode values
-	{"JOY_UP",            JOY_UP},
-	{"JOY_DOWN",          JOY_DOWN},
-	{"JOY_LEFT",          JOY_LEFT},
-	{"JOY_RIGHT",         JOY_RIGHT},
-	{"JOY_RIGHTUP",       JOY_RIGHTUP},
-	{"JOY_RIGHTDOWN",     JOY_RIGHTDOWN},
-	{"JOY_LEFTUP",        JOY_LEFTUP},
-	{"JOY_LEFTDOWN",      JOY_LEFTDOWN},
-	{"JOY_UP2",           JOY_UP2},
-	{"JOY_DOWN2",         JOY_DOWN2},
-	{"JOY_LEFT2",         JOY_LEFT2},
-	{"JOY_RIGHT2",        JOY_RIGHT2},
-	{"JOY_RIGHTUP2",      JOY_RIGHTUP2},
-	{"JOY_RIGHTDOWN2",    JOY_RIGHTDOWN2},
-	{"JOY_LEFTUP2",       JOY_LEFTUP2},
-	{"JOY_LEFTDOWN2",     JOY_LEFTDOWN2},
-	{"JOY_UP3",           JOY_UP3},
-	{"JOY_DOWN3",         JOY_DOWN3},
-	{"JOY_LEFT3",         JOY_LEFT3},
-	{"JOY_RIGHT3",        JOY_RIGHT3},
-	{"JOY_RIGHTUP3",      JOY_RIGHTUP3},
-	{"JOY_RIGHTDOWN3",    JOY_RIGHTDOWN3},
-	{"JOY_LEFTUP3",       JOY_LEFTUP3},
-	{"JOY_LEFTDOWN3",     JOY_LEFTDOWN3},
-	{"JOY_UP4",           JOY_UP4},
-	{"JOY_DOWN4",         JOY_DOWN4},
-	{"JOY_LEFT4",         JOY_LEFT4},
-	{"JOY_RIGHT4",        JOY_RIGHT4},
-	{"JOY_RIGHTUP4",      JOY_RIGHTUP4},
-	{"JOY_RIGHTDOWN4",    JOY_RIGHTDOWN4},
-	{"JOY_LEFTUP4",       JOY_LEFTUP4},
-	{"JOY_LEFTDOWN4",     JOY_LEFTDOWN4},
-	{"JOY_HAT_UP",        JOY_HAT_UP},
-	{"JOY_HAT_DOWN",      JOY_HAT_DOWN},
-	{"JOY_HAT_LEFT",      JOY_HAT_LEFT},
-	{"JOY_HAT_RIGHT",     JOY_HAT_RIGHT},
-	{"JOY_HAT_RIGHTUP",   JOY_HAT_RIGHTUP},
-	{"JOY_HAT_RIGHTDOWN", JOY_HAT_RIGHTDOWN},
-	{"JOY_HAT_LEFTUP",    JOY_HAT_LEFTUP},
-	{"JOY_HAT_LEFTDOWN",  JOY_HAT_LEFTDOWN},
-	{"JOY0",              JOY0},
-	{"JOY1",              JOY1},
-	{"JOY2",              JOY2},
-	{"JOY3",              JOY3},
-	{"JOY4",              JOY4},
-	{"JOY5",              JOY5},
-	{"JOY6",              JOY6},
-	{"JOY7",              JOY7},
-	{"JOY8",              JOY8},
-	{"JOY9",              JOY9},
-	{"JOY10",             JOY10},
-	{"JOY11",             JOY11},
-	{"JOY12",             JOY12},
-	{"JOY13",             JOY13},
-	{"JOY14",             JOY14},
-	{"JOY15",             JOY15},
-	{"JOY16",             JOY16},
-	{"JOY17",             JOY17},
-	{"JOY18",             JOY18},
-	{"JOY19",             JOY19},
-	{"", Common::KEYCODE_INVALID} // terminator
+    {"LCTRL", Common::KEYCODE_LCTRL},
+    {"RCTRL", Common::KEYCODE_RCTRL},
+    {"LALT", Common::KEYCODE_LALT},
+    {"RALT", Common::KEYCODE_RALT},
+    {"LSHIFT", Common::KEYCODE_LSHIFT},
+    {"RSHIFT", Common::KEYCODE_RSHIFT},
+    {"BACKSPACE", Common::KEYCODE_BACKSPACE},
+    {"TAB", Common::KEYCODE_TAB},
+    {"ENTER", Common::KEYCODE_RETURN},
+    {"PAUSE", Common::KEYCODE_PAUSE},
+    {"ESC", Common::KEYCODE_ESCAPE},
+    {"SPACE", Common::KEYCODE_SPACE},
+    {"DEL", Common::KEYCODE_DELETE},
+    {"KP0", Common::KEYCODE_KP0},
+    {"KP1", Common::KEYCODE_KP1},
+    {"KP2", Common::KEYCODE_KP2},
+    {"KP3", Common::KEYCODE_KP3},
+    {"KP4", Common::KEYCODE_KP4},
+    {"KP5", Common::KEYCODE_KP5},
+    {"KP6", Common::KEYCODE_KP6},
+    {"KP7", Common::KEYCODE_KP7},
+    {"KP8", Common::KEYCODE_KP8},
+    {"KP9", Common::KEYCODE_KP9},
+    {"KP.", Common::KEYCODE_KP_PERIOD},
+    {"KP/", Common::KEYCODE_KP_DIVIDE},
+    {"KP*", Common::KEYCODE_KP_MULTIPLY},
+    {"KP-", Common::KEYCODE_KP_MINUS},
+    {"KP+", Common::KEYCODE_KP_PLUS},
+    {"KP_ENTER", Common::KEYCODE_KP_ENTER},
+    {"UP", Common::KEYCODE_UP},
+    {"DOWN", Common::KEYCODE_DOWN},
+    {"RIGHT", Common::KEYCODE_RIGHT},
+    {"LEFT", Common::KEYCODE_LEFT},
+    {"INSERT", Common::KEYCODE_INSERT},
+    {"HOME", Common::KEYCODE_HOME},
+    {"END", Common::KEYCODE_END},
+    {"PAGEUP", Common::KEYCODE_PAGEUP},
+    {"PAGEDOWN", Common::KEYCODE_PAGEDOWN},
+    {"F1", Common::KEYCODE_F1},
+    {"F2", Common::KEYCODE_F2},
+    {"F3", Common::KEYCODE_F3},
+    {"F4", Common::KEYCODE_F4},
+    {"F5", Common::KEYCODE_F5},
+    {"F6", Common::KEYCODE_F6},
+    {"F7", Common::KEYCODE_F7},
+    {"F8", Common::KEYCODE_F8},
+    {"F9", Common::KEYCODE_F9},
+    {"F10", Common::KEYCODE_F10},
+    {"F11", Common::KEYCODE_F11},
+    {"F12", Common::KEYCODE_F12},
+    {"F13", Common::KEYCODE_F13},
+    {"F14", Common::KEYCODE_F14},
+    {"F15", Common::KEYCODE_F15},
+    // hackishly map joystick to unused keycode values
+    {"JOY_UP", JOY_UP},
+    {"JOY_DOWN", JOY_DOWN},
+    {"JOY_LEFT", JOY_LEFT},
+    {"JOY_RIGHT", JOY_RIGHT},
+    {"JOY_RIGHTUP", JOY_RIGHTUP},
+    {"JOY_RIGHTDOWN", JOY_RIGHTDOWN},
+    {"JOY_LEFTUP", JOY_LEFTUP},
+    {"JOY_LEFTDOWN", JOY_LEFTDOWN},
+    {"JOY_UP2", JOY_UP2},
+    {"JOY_DOWN2", JOY_DOWN2},
+    {"JOY_LEFT2", JOY_LEFT2},
+    {"JOY_RIGHT2", JOY_RIGHT2},
+    {"JOY_RIGHTUP2", JOY_RIGHTUP2},
+    {"JOY_RIGHTDOWN2", JOY_RIGHTDOWN2},
+    {"JOY_LEFTUP2", JOY_LEFTUP2},
+    {"JOY_LEFTDOWN2", JOY_LEFTDOWN2},
+    {"JOY_UP3", JOY_UP3},
+    {"JOY_DOWN3", JOY_DOWN3},
+    {"JOY_LEFT3", JOY_LEFT3},
+    {"JOY_RIGHT3", JOY_RIGHT3},
+    {"JOY_RIGHTUP3", JOY_RIGHTUP3},
+    {"JOY_RIGHTDOWN3", JOY_RIGHTDOWN3},
+    {"JOY_LEFTUP3", JOY_LEFTUP3},
+    {"JOY_LEFTDOWN3", JOY_LEFTDOWN3},
+    {"JOY_UP4", JOY_UP4},
+    {"JOY_DOWN4", JOY_DOWN4},
+    {"JOY_LEFT4", JOY_LEFT4},
+    {"JOY_RIGHT4", JOY_RIGHT4},
+    {"JOY_RIGHTUP4", JOY_RIGHTUP4},
+    {"JOY_RIGHTDOWN4", JOY_RIGHTDOWN4},
+    {"JOY_LEFTUP4", JOY_LEFTUP4},
+    {"JOY_LEFTDOWN4", JOY_LEFTDOWN4},
+    {"JOY_HAT_UP", JOY_HAT_UP},
+    {"JOY_HAT_DOWN", JOY_HAT_DOWN},
+    {"JOY_HAT_LEFT", JOY_HAT_LEFT},
+    {"JOY_HAT_RIGHT", JOY_HAT_RIGHT},
+    {"JOY_HAT_RIGHTUP", JOY_HAT_RIGHTUP},
+    {"JOY_HAT_RIGHTDOWN", JOY_HAT_RIGHTDOWN},
+    {"JOY_HAT_LEFTUP", JOY_HAT_LEFTUP},
+    {"JOY_HAT_LEFTDOWN", JOY_HAT_LEFTDOWN},
+    {"JOY0", JOY0},
+    {"JOY1", JOY1},
+    {"JOY2", JOY2},
+    {"JOY3", JOY3},
+    {"JOY4", JOY4},
+    {"JOY5", JOY5},
+    {"JOY6", JOY6},
+    {"JOY7", JOY7},
+    {"JOY8", JOY8},
+    {"JOY9", JOY9},
+    {"JOY10", JOY10},
+    {"JOY11", JOY11},
+    {"JOY12", JOY12},
+    {"JOY13", JOY13},
+    {"JOY14", JOY14},
+    {"JOY15", JOY15},
+    {"JOY16", JOY16},
+    {"JOY17", JOY17},
+    {"JOY18", JOY18},
+    {"JOY19", JOY19},
+    {"", Common::KEYCODE_INVALID} // terminator
 };
 
-const Action doNothingAction = { "DO_NOTHING", ActionDoNothing, "", Action::dont_show, true, OTHER_KEY };
+const Action doNothingAction = {"DO_NOTHING", ActionDoNothing, "", Action::dont_show, true, OTHER_KEY};
 
 KeyBinder::KeyBinder(Configuration *config) {
 	FillParseMaps();
@@ -279,7 +279,7 @@ KeyBinder::KeyBinder(Configuration *config) {
 	LoadFromFile(keyfilename.c_str());
 
 	LoadGameSpecificKeys(); // won't load if file isn't found
-	LoadFromPatch(); // won't load if file isn't found
+	LoadFromPatch();        // won't load if file isn't found
 
 	int config_int;
 	uint16 max_delay = 10000; // 10 seconds but means no repeat
@@ -336,7 +336,7 @@ void KeyBinder::AddKeyBinding(Common::KeyCode key, byte mod, const Action *actio
 	ActionType a;
 	a.action = action;
 
-	int i;  // For MSVC
+	int i; // For MSVC
 	for (i = 0; i < c_maxparams && i < nparams; i++)
 		a.params[i] = params[i];
 	for (i = nparams; i < c_maxparams; i++)
@@ -386,8 +386,7 @@ bool KeyBinder::HandleEvent(const Common::Event *ev) {
 	if (sdlkey_index != _bindings.end())
 		return DoAction((*sdlkey_index)._value);
 
-	if (ev->kbd.keycode != Common::KEYCODE_LALT && ev->kbd.keycode != Common::KEYCODE_RALT
-	        && ev->kbd.keycode != Common::KEYCODE_LCTRL && ev->kbd.keycode != Common::KEYCODE_RCTRL) {
+	if (ev->kbd.keycode != Common::KEYCODE_LALT && ev->kbd.keycode != Common::KEYCODE_RALT && ev->kbd.keycode != Common::KEYCODE_LCTRL && ev->kbd.keycode != Common::KEYCODE_RCTRL) {
 		handle_wrong_key_pressed();
 	}
 
@@ -422,7 +421,7 @@ bool KeyBinder::handle_always_available_keys(ActionType a) {
 
 void KeyBinder::ShowKeys() const { // FIXME This doesn't look very good, the font is missing
 	// some characters, and it is longer than msgscroll can hold
-//	if(Game::get_game()->is_orig_style())
+	//	if(Game::get_game()->is_orig_style())
 	{
 		Std::vector<string>::const_iterator iter;
 		string keysStr;
@@ -457,7 +456,6 @@ static void skipspace(string &s) {
 	if (i && i != string::npos)
 		s.erase(0, i);
 }
-
 
 void KeyBinder::ParseLine(char *line) {
 	size_t i;
@@ -636,7 +634,7 @@ void KeyBinder::LoadGameSpecificKeys() {
 
 	if (game_type == NUVIE_GAME_U6)
 		default_key_path += "/u6keys.txt";
-	else if (game_type ==  NUVIE_GAME_MD)
+	else if (game_type == NUVIE_GAME_MD)
 		default_key_path += "/mdkeys.txt";
 	else // SE
 		default_key_path += "/sekeys.txt";
@@ -732,7 +730,7 @@ joy_axes_pairs KeyBinder::get_axes_pair(int axis) {
 }
 
 Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating) {
-	joy_axes_pairs axes_pair =  get_axes_pair(axis);
+	joy_axes_pairs axes_pair = get_axes_pair(axis);
 	if (axes_pair == UNHANDLED_AXES_PAIR)
 		return Common::KEYCODE_INVALID;
 

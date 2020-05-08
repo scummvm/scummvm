@@ -34,11 +34,11 @@ void SceneScriptHF02::InitializeScene() {
 		Setup_Scene_Information(-18.0f, 47.76f, -288.0f, 275);
 	}
 
-	Scene_Exit_Add_2D_Exit(0,   0,  0,  30, 479, 3);
+	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
 	Scene_Exit_Add_2D_Exit(1, 207, 66, 272, 207, 3);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxARCBED1, 28, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCIRCUS1, 33,    0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCIRCUS1, 33, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfx67_0470R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfx67_0500R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
@@ -112,7 +112,6 @@ bool SceneScriptHF02::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptHF02::SceneFrameAdvanced(int frame) {
-
 }
 
 void SceneScriptHF02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {

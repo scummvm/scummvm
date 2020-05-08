@@ -23,14 +23,13 @@
 #ifndef COMMON_SAVEFILE_H
 #define COMMON_SAVEFILE_H
 
+#include "common/error.h"
 #include "common/noncopyable.h"
 #include "common/scummsys.h"
-#include "common/stream.h"
 #include "common/str-array.h"
-#include "common/error.h"
+#include "common/stream.h"
 
 namespace Common {
-
 
 /**
  * A class which allows game engines to load game state data.
@@ -44,7 +43,7 @@ typedef SeekableReadStream InSaveFile;
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class OutSaveFile: public WriteStream {
+class OutSaveFile : public WriteStream {
 protected:
 	WriteStream *_wrapped;
 
@@ -90,7 +89,10 @@ protected:
 	 * @param error Code identifying the last error.
 	 * @param errorDesc String describing the last error.
 	 */
-	virtual void setError(Error error, const String &errorDesc) { _error = error; _errorDesc = errorDesc; }
+	virtual void setError(Error error, const String &errorDesc) {
+		_error = error;
+		_errorDesc = errorDesc;
+	}
 
 public:
 	virtual ~SaveFileManager() {}
@@ -98,7 +100,10 @@ public:
 	/**
 	 * Clears the last set error code and string.
 	 */
-	virtual void clearError() { _error = kNoError; _errorDesc.clear(); }
+	virtual void clearError() {
+		_error = kNoError;
+		_errorDesc.clear();
+	}
 
 	/**
 	 * Returns the last occurred error code. If none occurred, returns kNoError.

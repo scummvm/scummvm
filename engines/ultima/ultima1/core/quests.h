@@ -37,10 +37,14 @@ class Ultima1Game;
  * Quest entry
  */
 class QuestFlag {
-	enum FlagState { UNSTARTED = 0, IN_PROGRESS = -1, COMPLETED = 1 };
+	enum FlagState { UNSTARTED = 0,
+		             IN_PROGRESS = -1,
+		             COMPLETED = 1 };
+
 private:
 	Ultima1Game *_game;
 	FlagState _state;
+
 public:
 	/**
 	 * Constructor

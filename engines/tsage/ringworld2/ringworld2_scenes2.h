@@ -25,13 +25,13 @@
 
 #include "common/scummsys.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
-#include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
 #include "tsage/ringworld2/ringworld2_speakers.h"
+#include "tsage/scenes.h"
+#include "tsage/sound.h"
 
 namespace TsAGE {
 
@@ -65,6 +65,7 @@ class Scene2000 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	bool _exitingFlag;
 	int _mazePlayerMode;
@@ -105,6 +106,7 @@ class Scene2350 : public SceneExt {
 	class ExitWest : public SceneExit {
 		void changeScene() override;
 	};
+
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerPharisha _pharishaSpeaker;
@@ -129,6 +131,7 @@ class Scene2400 : public SceneExt {
 	class EastExit : public SceneExit {
 		void changeScene() override;
 	};
+
 public:
 	WestExit _westExit;
 	EastExit _eastExit;
@@ -169,6 +172,7 @@ class Scene2425 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	RopeDest1 _ropeDest1;
 	RopeDest2 _ropeDest2;
@@ -203,6 +207,7 @@ class Scene2430 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background;
 	NamedHotspot _bottles2;
@@ -241,6 +246,7 @@ class Scene2435 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	SpeakerQuinn2435 _quinnSpeaker;
 	SpeakerSeeker2435 _seekerSpeaker;
@@ -272,6 +278,7 @@ class Scene2440 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background;
 	NamedHotspot _garments;
@@ -312,6 +319,7 @@ class Scene2450 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	SpeakerQuinn2450 _quinnSpeaker;
 	SpeakerSeeker2450 _seekerSpeaker;
@@ -348,6 +356,7 @@ class Scene2455 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background;
 	Lamp _lamp;
@@ -366,6 +375,7 @@ class Scene2500 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	SpeakerQuinn _quinnSpeaker;
 	SpeakerSeeker _seekerSpeaker;
@@ -397,6 +407,7 @@ class Scene2525 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background;
 	NamedHotspot _machine;
@@ -428,6 +439,7 @@ class Scene2530 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background;
 	NamedHotspot _crank2;
@@ -458,6 +470,7 @@ class Scene2535 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 public:
 	NamedHotspot _background;
 	NamedHotspot _roof;
@@ -490,31 +503,32 @@ public:
 };
 
 class Scene2700 : public SceneExt {
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		void signal() override;
 	};
 
-	class SouthExit: public SceneArea {
+	class SouthExit : public SceneArea {
 	public:
 		void process(Event &event) override;
 	};
-	class EastExit: public SceneArea {
+	class EastExit : public SceneArea {
 	public:
 		void process(Event &event) override;
 	};
+
 public:
 	SpeakerQuinn2700 _quinnSpeaker;
 	SpeakerNej2700 _nejSpeaker;
@@ -548,43 +562,44 @@ public:
 };
 
 class Scene2750 : public SceneExt {
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action5: public Action {
+	class Action5 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action6: public Action {
+	class Action6 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action7: public Action {
+	class Action7 : public Action {
 	public:
 		void signal() override;
 	};
 
-	class WestExit: public SceneArea {
+	class WestExit : public SceneArea {
 	public:
 		void process(Event &event) override;
 	};
-	class EastExit: public SceneArea {
+	class EastExit : public SceneArea {
 	public:
 		void process(Event &event) override;
 	};
+
 public:
 	SpeakerQuinn2750 _quinnSpeaker;
 	SpeakerNej2750 _nejSpeaker;
@@ -634,17 +649,19 @@ class Scene2800 : public SceneExt {
 		bool startAction(CursorType action, Event &event) override;
 	};
 
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 		SceneObject _object2;
 		SceneObject _object3;
 		SceneObject _object4;
+
 	public:
 		void signal() override;
 	};
+
 public:
 	SpeakerQuinn2800 _quinnSpeaker;
 	SpeakerNej2800 _nejSpeaker;
@@ -694,7 +711,7 @@ class Scene2900 : public SceneExt {
 	};
 
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
@@ -706,6 +723,7 @@ class Scene2900 : public SceneExt {
 		void moveLine(int xpSrc, int ypSrc, int xpDest, int ypDest, int width);
 		int adjustRect(Common::Rect &r1, const Common::Rect &r2);
 		void drawBlock(const byte *data, int xp, int yp, const Rect &r1, const Rect &r2);
+
 	public:
 		int _mapWidth, _mapHeight;
 		int _resNum;
@@ -718,6 +736,7 @@ class Scene2900 : public SceneExt {
 		void synchronize(Serializer &s);
 		void redraw(Rect *updateRect = NULL);
 	};
+
 public:
 	SceneObject _leftEdge;
 	SceneObject _rightEdge;

@@ -24,7 +24,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h //On IRIX, sys/stat.h includes sys/time.h
 #define FORBIDDEN_SYMBOL_EXCEPTION_system
 #define FORBIDDEN_SYMBOL_EXCEPTION_random
 #define FORBIDDEN_SYMBOL_EXCEPTION_srandom
@@ -33,12 +33,12 @@
 
 #ifdef POSIX
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/saves/posix/posix-saves.h"
+#include "backends/dialogs/gtk/gtk-dialogs.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
+#include "backends/platform/sdl/posix/posix.h"
+#include "backends/saves/posix/posix-saves.h"
 #include "backends/taskbar/unity/unity-taskbar.h"
-#include "backends/dialogs/gtk/gtk-dialogs.h"
 
 #ifdef USE_LINUXCD
 #include "backends/audiocd/linux/linux-audiocd.h"
@@ -46,8 +46,8 @@
 
 #include "common/textconsole.h"
 
-#include <stdlib.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -402,11 +402,10 @@ bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::St
 #ifdef HAS_POSIX_SPAWN
 	pid_t pid;
 	const char *argv[] = {
-		client.c_str(),
-		url.c_str(),
-		NULL,
-		NULL
-	};
+	    client.c_str(),
+	    url.c_str(),
+	    NULL,
+	    NULL};
 	if (client == "kfmclient") {
 		argv[2] = argv[1];
 		argv[1] = "openURL";

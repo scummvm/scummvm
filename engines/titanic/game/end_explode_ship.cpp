@@ -26,10 +26,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEndExplodeShip, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MovieFrameMsg)
 END_MESSAGE_MAP()
 
 void CEndExplodeShip::save(SimpleFile *file, int indent) {

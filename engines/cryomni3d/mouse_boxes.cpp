@@ -92,4 +92,4 @@ void MouseBoxes::display(int box_id, const FontManager &font_manager) {
 	}
 }
 
-}
+} // namespace CryOmni3D

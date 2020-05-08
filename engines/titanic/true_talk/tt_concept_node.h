@@ -40,6 +40,7 @@ public:
 	int _field1C;
 	TTconceptNode *_nextP;
 	int _status;
+
 public:
 	TTconceptNode();
 	TTconceptNode(const TTconceptNode &src);

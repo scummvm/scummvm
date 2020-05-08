@@ -23,17 +23,17 @@
 #ifndef ULTIMA4_GFX_IMAGE_H
 #define ULTIMA4_GFX_IMAGE_H
 
+#include "graphics/managed_surface.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/gfx/textcolor.h"
-#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 typedef Graphics::ManagedSurface *BackendSurface;
 
-#define DARK_GRAY_HALO RGBA(14,15,16,255)
+#define DARK_GRAY_HALO RGBA(14, 15, 16, 255)
 
 struct RGBA {
 	RGBA(int red, int green, int blue, int alpha) : r(red), g(green), b(blue), a(alpha) {}
@@ -53,7 +53,7 @@ struct SubImage : public Common::Rect {
 	Common::String _srcImageName;
 };
 
-#define IM_OPAQUE (uint) 255
+#define IM_OPAQUE (uint)255
 #define IM_TRANSPARENT 0
 
 /**
@@ -70,7 +70,7 @@ private:
 	DisposeAfterUse::Flag _disposeAfterUse;
 	bool _paletted;
 	RGBA _backgroundColor;
-	Image();                    /* use create method to construct images */
+	Image(); /* use create method to construct images */
 
 	// disallow assignments, copy contruction
 	Image(const Image &);
@@ -79,6 +79,7 @@ private:
 	Graphics::ManagedSurface *getSurface(Image *d) const;
 
 	uint getColor(byte r, byte g, byte b, byte a);
+
 public:
 	enum Type {
 		HARDWARE,
@@ -143,7 +144,7 @@ public:
 	/**
 	 * Returns the color of the specified palette index
 	 */
-	RGBA getPaletteColor(int index);       // returns the color of the specified palette index
+	RGBA getPaletteColor(int index); // returns the color of the specified palette index
 
 	/**
 	 * Sets the specified palette index to the specified RGB color
@@ -156,18 +157,15 @@ public:
 	int getPaletteIndex(RGBA color);
 	RGBA setColor(uint8 r, uint8 g, uint8 b, uint8 a = IM_OPAQUE);
 
-
 	/* alpha handling */
 	bool isAlphaOn() const;
 	void alphaOn();
 	void alphaOff();
 
-
 	/* Will clear the image to the background color, and set the internal backgroundColor variable */
 	void initializeToBackgroundColor(RGBA backgroundColor = DARK_GRAY_HALO);
 	/* Will make the pixels that match the background color disappear, with a blur halo */
-	void makeBackgroundColorTransparent(int haloSize = 0,  int shadowOpacity = 255);
-
+	void makeBackgroundColorTransparent(int haloSize = 0, int shadowOpacity = 255);
 
 	//void finalizeAlphaSurface(RGBA * key = nullptr);
 

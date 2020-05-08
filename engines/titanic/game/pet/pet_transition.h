@@ -30,6 +30,7 @@ namespace Titanic {
 class CPETTransition : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
+
 public:
 	CLASSDEF;
 

@@ -21,17 +21,17 @@
  */
 
 #include "ultima/ultima1/u1dialogs/grocery.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/shared/core/str.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Grocery, BuySellDialog)
-	ON_MESSAGE(TextInputMsg)
+ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
 Grocery::Grocery(Ultima1Game *game, int groceryNum) : BuySellDialog(game, game->_res->GROCERY_NAMES[groceryNum - 1]) {

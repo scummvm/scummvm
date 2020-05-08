@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_llist.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/nuvie/script/script.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -68,8 +68,6 @@ bool UseCode::init(ObjManager *om, Map *m, Player *p, MsgScroll *ms) {
 
 	return true;
 }
-
-
 
 /* Clear items.
  */
@@ -124,7 +122,7 @@ bool UseCode::use_obj(Obj *obj, Actor *actor) {
 		}
 	}
 
-	return true;//script->call_use_obj(obj, actor);
+	return true; //script->call_use_obj(obj, actor);
 }
 
 // use obj at location with src_obj as object_ref
@@ -154,7 +152,6 @@ void UseCode::toggle_frame(Obj *obj) {
 		obj->frame_n = 1;
 }
 
-
 /* Print container contents and dump them on top of the container.
  */
 //FIXME! some of this logic should go elsewhere.
@@ -164,7 +161,7 @@ bool UseCode::search_container(Obj *obj, bool show_string) {
 
 	/* Test whether this object has items inside it. */
 	if ((obj->container != NULL) &&
-	        ((obj_link = obj->container->end()) != NULL)) {
+	    ((obj_link = obj->container->end()) != NULL)) {
 		/* Add objects to obj_list. */
 		for (; obj_link != NULL;) {
 			temp_obj = (Obj *)obj_link->data;
@@ -191,7 +188,6 @@ bool UseCode::search_container(Obj *obj, bool show_string) {
 	return false;
 }
 
-
 /* Remove last object in container and return a pointer to it.
  */
 Obj *UseCode::get_obj_from_container(Obj *obj) {
@@ -203,7 +199,6 @@ Obj *UseCode::get_obj_from_container(Obj *obj) {
 	}
 	return (NULL);
 }
-
 
 /* Print name of event being sent and the object receiving it.
  */
@@ -249,7 +244,6 @@ void UseCode::dbg_print_event(UseCodeEvent event, Obj *obj) {
 		      event, obj->obj_n, obj->frame_n, obj->x, obj->y, obj->z);
 }
 
-
 /* Subtract `count' from object quantity. Destroy the object completely if all
  * stacked objects were removed, or the object is not stackable, or `count' is
  * 0. This means it will be removed from the world or an actor's inventory, and
@@ -287,8 +281,7 @@ bool UseCode::out_of_use_range(Obj *obj, bool check_enemies) {
 	MapCoord obj_loc = MapCoord(obj->x, obj->y, obj->z);
 
 	if (!check_enemies) {
-		if (player_loc.distance(obj_loc) > 1
-		        && game->get_map_window()->get_interface() == INTERFACE_NORMAL) {
+		if (player_loc.distance(obj_loc) > 1 && game->get_map_window()->get_interface() == INTERFACE_NORMAL) {
 			scroll->display_string("\nOut of range.\n");
 			return true;
 		} else if (!game->get_map_window()->can_get_obj(player->get_actor(), obj)) {
@@ -311,13 +304,13 @@ bool UseCode::out_of_use_range(Obj *obj, bool check_enemies) {
 
 const char *useCodeTypeToString(UseCodeType type) {
 	switch (type) {
-	case USE :
+	case USE:
 		return "use";
-	case MOVE :
+	case MOVE:
 		return "move";
-	case GET :
+	case GET:
 		return "get";
-	default :
+	default:
 		return "other";
 	}
 }

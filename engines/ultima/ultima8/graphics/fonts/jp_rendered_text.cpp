@@ -20,23 +20,22 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/fonts/jp_rendered_text.h"
 #include "ultima/ultima8/graphics/fonts/shape_font.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/misc/encoding.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/misc/encoding.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(JPRenderedText, RenderedText)
 
-
 JPRenderedText::JPRenderedText(Std::list<PositionedText> &lines, int width, int height,
-		int vLead, ShapeFont *font, unsigned int fontNum)
-		: _lines(lines), _font(font), _fontNum(fontNum) {
+                               int vLead, ShapeFont *font, unsigned int fontNum)
+    : _lines(lines), _font(font), _fontNum(fontNum) {
 	_width = width;
 	_height = height;
 	_vLead = vLead;
@@ -49,8 +48,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 	// TODO support masking here??
 
 	PaletteManager *palman = PaletteManager::get_instance();
-	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>
-	                                   (PaletteManager::Pal_JPFontStart + _fontNum);
+	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>(PaletteManager::Pal_JPFontStart + _fontNum);
 	Palette *pal = palman->getPalette(fontpal);
 	const Palette *savepal = _font->getPalette();
 	_font->setPalette(pal);
@@ -94,8 +92,7 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 	// TODO Support masking here??
 
 	PaletteManager *palman = PaletteManager::get_instance();
-	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>
-	                                   (PaletteManager::Pal_JPFontStart + _fontNum);
+	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>(PaletteManager::Pal_JPFontStart + _fontNum);
 	Palette *pal = palman->getPalette(fontpal);
 	const Palette *savepal = _font->getPalette();
 	_font->setPalette(pal);
@@ -120,7 +117,6 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 			                        false, false, col);
 			line_x += (_font->getFrame(u8char))->_width - _font->getHlead();
 		}
-
 	}
 
 	_font->setPalette(savepal);

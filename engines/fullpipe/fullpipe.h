@@ -24,12 +24,12 @@
 #define FULLPIPE_FULLPIPE_H
 
 #include "audio/mixer.h"
-#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/ptr.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/surface.h"
 
@@ -48,17 +48,17 @@ enum FullpipeGameFeatures {
 };
 
 enum {
-	kDebugPathfinding	= 1 << 0,
-	kDebugDrawing		= 1 << 1,
-	kDebugLoading		= 1 << 2,
-	kDebugAnimation		= 1 << 3,
-	kDebugMemory		= 1 << 4,
-	kDebugEvents		= 1 << 5,
-	kDebugBehavior		= 1 << 6,
-	kDebugInventory		= 1 << 7,
-	kDebugSceneLogic	= 1 << 8,
-	kDebugInteractions	= 1 << 9,
-	kDebugXML			= 1 << 10
+	kDebugPathfinding = 1 << 0,
+	kDebugDrawing = 1 << 1,
+	kDebugLoading = 1 << 2,
+	kDebugAnimation = 1 << 3,
+	kDebugMemory = 1 << 4,
+	kDebugEvents = 1 << 5,
+	kDebugBehavior = 1 << 6,
+	kDebugInventory = 1 << 7,
+	kDebugSceneLogic = 1 << 8,
+	kDebugInteractions = 1 << 9,
+	kDebugXML = 1 << 10
 };
 
 #define MAXGAMEOBJH 10000
@@ -98,10 +98,8 @@ int global_messageHandler3(ExCommand *cmd);
 int global_messageHandler4(ExCommand *cmd);
 void global_messageHandler_handleSound(ExCommand *cmd);
 
-
 class FullpipeEngine : public ::Engine {
 protected:
-
 	Common::Error run() override;
 
 public:
@@ -352,7 +350,6 @@ public:
 	GameObjHMap _gameObjH;
 
 public:
-
 	bool _isSaveAllowed;
 
 	Common::Error loadGameState(int slot) override;
@@ -362,7 +359,6 @@ public:
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
 	bool hasFeature(EngineFeature f) const override;
-
 };
 
 extern FullpipeEngine *g_fp;

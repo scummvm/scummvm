@@ -21,17 +21,17 @@
  */
 
 #include "sherlock/tattoo/tattoo_darts.h"
-#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
 enum {
-	DART_COLOR_FORE	= 5,
-	PLAYER_COLOR	= 11,
-	DART_BAR_FORE	= 208
+	DART_COLOR_FORE = 5,
+	PLAYER_COLOR = 11,
+	DART_BAR_FORE = 208
 };
 
 static const int STATUS_INFO_X = 430;
@@ -51,7 +51,7 @@ static const int DARTBOARD_TOTALX = DARTBOARD_WIDTH * 120 / 100;
 static const int DARTBOARD_TOTALY = DARTBOARD_HEIGHT * 120 / 100;
 static const int DARTBOARD_TOTALTOP = DARTBOARD_TOP - DARTBOARD_WIDTH / 10;
 static const int DARTBOARD_TOTALLEFT = DARTBOARD_LEFT - DARTBOARD_HEIGHT / 10;
-static const int CRICKET_VALUE[7] = { 20, 19, 18, 17, 16, 15, 25 };
+static const int CRICKET_VALUE[7] = {20, 19, 18, 17, 16, 15, 25};
 
 Darts::Darts(SherlockEngine *vm) : _vm(vm) {
 	_gameType = GAME_301;
@@ -105,12 +105,11 @@ void Darts::playDarts(GameType gameType) {
 
 		for (int idx = 0; idx < 3 && !_vm->shouldQuit(); ++idx) {
 			if (_compPlay == 1)
-				lastDart = throwDart(idx + 1, playerNum * 2);  /* Throw one dart */
+				lastDart = throwDart(idx + 1, playerNum * 2); /* Throw one dart */
+			else if (_compPlay == 2)
+				lastDart = throwDart(idx + 1, playerNum + 1); /* Throw one dart */
 			else
-				if (_compPlay == 2)
-					lastDart = throwDart(idx + 1, playerNum + 1);  /* Throw one dart */
-				else
-					lastDart = throwDart(idx + 1, 0);    /* Throw one dart */
+				lastDart = throwDart(idx + 1, 0); /* Throw one dart */
 
 			if (_gameType == GAME_301) {
 				score -= lastDart;
@@ -134,7 +133,6 @@ void Darts::playDarts(GameType gameType) {
 				done = true;
 				playerNum = 0;
 			}
-
 
 			if (_gameType == GAME_301) {
 				if (playerNum == 0)
@@ -164,7 +162,7 @@ void Darts::playDarts(GameType gameType) {
 			// Show scores
 			showStatus(playerNum);
 			screen._backBuffer2.SHblitFrom(screen._backBuffer1, Common::Point(_dartInfo.left, _dartInfo.top - 1),
-				Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
+			                               Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
 			screen.print(Common::Point(_dartInfo.left, _dartInfo.top), 0, FIXED(DartsCurrentDart), idx + 1);
 
 			if (_gameType == GAME_301) {
@@ -218,29 +216,29 @@ void Darts::playDarts(GameType gameType) {
 
 			if (score != 0 && playerNum == 0 && !gameOver)
 				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 3), 0,
-					"%s", FIXED(DartsPressKey));
+				             "%s", FIXED(DartsPressKey));
 
 			if (gameOver) {
 				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 3),
-					0, "%s", FIXED(DartsGameOver));
+				             0, "%s", FIXED(DartsGameOver));
 				if (playerNum == 0) {
 					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 4), 0,
-						FIXED(DartsWins), FIXED(DartsPlayerHolmes));
+					             FIXED(DartsWins), FIXED(DartsPlayerHolmes));
 					_vm->setFlagsDirect(531);
 				} else {
 					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 4), 0,
-						FIXED(DartsWins), _opponent.c_str());
+					             FIXED(DartsWins), _opponent.c_str());
 					_vm->setFlagsDirect(530);
 				}
 
 				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 5), 0,
-					"%s", FIXED(DartsPressKey));
+				             "%s", FIXED(DartsPressKey));
 
 				done = true;
 				idx = 10;
 			} else if (_gameType == GAME_301 && score < 0) {
 				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 2), 0,
-					"%s!", FIXED(DartsBusted));
+				             "%s!", FIXED(DartsBusted));
 
 				// End turn
 				idx = 10;
@@ -270,7 +268,7 @@ void Darts::playDarts(GameType gameType) {
 
 			// Clears the status part of the board
 			screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(_dartInfo.left, _dartInfo.top - 1),
-				Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
+			                               Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
 			screen.SHblitFrom(screen._backBuffer1);
 		}
 
@@ -389,27 +387,31 @@ void Darts::showNames(int playerNum) {
 	color = playerNum == 0 ? PLAYER_COLOR : DART_COLOR_FORE;
 	screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y), 0, "%s", FIXED(DartsPlayerHolmes));
 	screen._backBuffer1.fillRect(Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + _spacing + 1,
-		STATUS_INFO_X + 50, STATUS_INFO_Y + _spacing + 3), color);
+	                                          STATUS_INFO_X + 50, STATUS_INFO_Y + _spacing + 3),
+	                             color);
 	screen.fillRect(Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + _spacing + 1,
-		STATUS_INFO_X + 50, STATUS_INFO_Y + _spacing + 3), color);
+	                             STATUS_INFO_X + 50, STATUS_INFO_Y + _spacing + 3),
+	                color);
 
 	color = playerNum == 1 ? PLAYER_COLOR : DART_COLOR_FORE;
 	screen.print(Common::Point(STATUS2_INFO_X, STATUS_INFO_Y), 0, "%s", _opponent.c_str());
 	screen._backBuffer1.fillRect(Common::Rect(STATUS2_INFO_X, STATUS_INFO_Y + _spacing + 1,
-		STATUS2_INFO_X + 50, STATUS_INFO_Y + _spacing + 3), color);
+	                                          STATUS2_INFO_X + 50, STATUS_INFO_Y + _spacing + 3),
+	                             color);
 	screen.fillRect(Common::Rect(STATUS2_INFO_X, STATUS_INFO_Y + _spacing + 1,
-		STATUS2_INFO_X + 50, STATUS_INFO_Y + _spacing + 3), color);
+	                             STATUS2_INFO_X + 50, STATUS_INFO_Y + _spacing + 3),
+	                color);
 
 	screen._backBuffer2.SHblitFrom(screen._backBuffer1);
 }
 
 void Darts::showStatus(int playerNum) {
 	Screen &screen = *_vm->_screen;
-	const char *const CRICKET_SCORE_NAME[7] = { "20", "19", "18", "17", "16", "15", FIXED(DartsBull) };
+	const char *const CRICKET_SCORE_NAME[7] = {"20", "19", "18", "17", "16", "15", FIXED(DartsBull)};
 
 	screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 10),
-		Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, STATUS_INFO_X + STATUS_INFO_WIDTH,
-		STATUS_INFO_Y + STATUS_INFO_HEIGHT - 10));
+	                               Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, STATUS_INFO_X + STATUS_INFO_WIDTH,
+	                                            STATUS_INFO_Y + STATUS_INFO_HEIGHT - 10));
 	screen.print(Common::Point(STATUS_INFO_X + 30, STATUS_INFO_Y + _spacing + 4), 0, "%d", _score1);
 
 	screen.print(Common::Point(STATUS2_INFO_X + 30, STATUS_INFO_Y + _spacing + 4), 0, "%d", _score2);
@@ -432,10 +434,10 @@ void Darts::showStatus(int playerNum) {
 			for (int y = 0; y < 2; ++y) {
 				switch (CRICKET_SCORE_NAME[y][x]) {
 				case 1:
-					screen.print(Common::Point(STATUS_INFO_X + 38 + y*STATUS2_X_ADD, STATUS_INFO_Y + 40 + x * _spacing), 0, "/");
+					screen.print(Common::Point(STATUS_INFO_X + 38 + y * STATUS2_X_ADD, STATUS_INFO_Y + 40 + x * _spacing), 0, "/");
 					break;
 				case 2:
-					screen.print(Common::Point(STATUS_INFO_X + 38 + y*STATUS2_X_ADD, STATUS_INFO_Y + 40 + x * _spacing), 0, "X");
+					screen.print(Common::Point(STATUS_INFO_X + 38 + y * STATUS2_X_ADD, STATUS_INFO_Y + 40 + x * _spacing), 0, "X");
 					break;
 				case 3:
 					screen.print(Common::Point(STATUS_INFO_X + 38 + y * STATUS2_X_ADD - 1, STATUS_INFO_Y + 40 + x * _spacing), 0, "X");
@@ -449,8 +451,8 @@ void Darts::showStatus(int playerNum) {
 	}
 
 	screen.SHblitFrom(screen._backBuffer1, Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 10),
-		Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, STATUS_INFO_X + STATUS_INFO_WIDTH,
-			STATUS_INFO_Y + STATUS_INFO_HEIGHT - 10));
+	                  Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, STATUS_INFO_X + STATUS_INFO_WIDTH,
+	                               STATUS_INFO_Y + STATUS_INFO_HEIGHT - 10));
 }
 
 void Darts::erasePowerBars() {
@@ -497,7 +499,7 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, int or
 				break;
 		}
 
-		screen._backBuffer1.hLine(pt.x, pt.y + DART_BAR_SIZE- 1 - idx, pt.x + 8, color);
+		screen._backBuffer1.hLine(pt.x, pt.y + DART_BAR_SIZE - 1 - idx, pt.x + 8, color);
 		screen._backBuffer1.SHtransBlitFrom((*_dartGraphics)[0], Common::Point(pt.x - 1, pt.y - 1));
 		screen.slamArea(pt.x, pt.y + DART_BAR_SIZE - 1 - idx, 8, 2);
 
@@ -513,7 +515,7 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, int or
 int Darts::drawHand(int goToPower, int computer) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	const int HAND_OFFSET[2] = { 72, 44 };
+	const int HAND_OFFSET[2] = {72, 44};
 	ImageFile *hands;
 	int hand;
 
@@ -677,7 +679,7 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 				screen.slamArea(oldDrawPos.x, oldDrawPos.y, oldxSize, oldySize);
 
 			screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(drawPos.x, drawPos.y),
-				Common::Rect(drawPos.x, drawPos.y, drawPos.x + xSize, drawPos.y + ySize));
+			                               Common::Rect(drawPos.x, drawPos.y, drawPos.x + xSize, drawPos.y + ySize));
 
 			oldDrawPos.x = drawPos.x;
 			oldDrawPos.y = drawPos.y;
@@ -698,7 +700,7 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 		screen.slamArea(oldDrawPos.x, oldDrawPos.y, oldxSize, oldySize);
 
 	screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(drawPos.x, drawPos.y),
-		Common::Rect(drawPos.x, drawPos.y, drawPos.x + xSize, drawPos.y + ySize));
+	                               Common::Rect(drawPos.x, drawPos.y, drawPos.x + xSize, drawPos.y + ySize));
 
 	cx = dartPos.x;
 	cy = dartPos.y + 2;
@@ -711,9 +713,8 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 
 		if (idx < 14)
 			cy -= delta--;
-		else
-			if (idx == 14)
-				delta = 1;
+		else if (idx == 14)
+			delta = 1;
 		if (idx > 14)
 			cy += delta++;
 
@@ -746,7 +747,7 @@ void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
 
 		if (idx != 23)
 			screen._backBuffer1.SHblitFrom(screen._backBuffer2, drawPos,
-				Common::Rect(drawPos.x, drawPos.y, drawPos.x + xSize, drawPos.y + ySize)); // erase dart
+			                               Common::Rect(drawPos.x, drawPos.y, drawPos.x + xSize, drawPos.y + ySize)); // erase dart
 
 		events.wait(1);
 
@@ -833,7 +834,7 @@ void Darts::getComputerNumber(int playerNum, Common::Point &targetPos) {
 	if (_gameType == GAME_301) {
 		// Try to hit number
 		aim = score;
-		if(score > 60)
+		if (score > 60)
 			shootBull = true;
 	} else {
 		bool cricketaimset = false;
@@ -857,7 +858,7 @@ void Darts::getComputerNumber(int playerNum, Common::Point &targetPos) {
 			// just in case we don't get set in loop below, which should never happen
 			aim = 14;
 			for (int idx = 0; idx < 7; ++idx) {
-				if (_cricketScore[playerNum^1][idx] < 3) {
+				if (_cricketScore[playerNum ^ 1][idx] < 3) {
 					// Opponent has this open
 					aim = CRICKET_VALUE[idx];
 
@@ -874,8 +875,8 @@ void Darts::getComputerNumber(int playerNum, Common::Point &targetPos) {
 
 		if (_level <= 1) {
 			if (_vm->getRandomNumber(1) == 1) {
-				targetPos.x += (_vm->getRandomNumber(20)-10);
-				targetPos.y += (_vm->getRandomNumber(20)-10);
+				targetPos.x += (_vm->getRandomNumber(20) - 10);
+				targetPos.y += (_vm->getRandomNumber(20) - 10);
 			}
 		}
 	} else {
@@ -908,8 +909,8 @@ void Darts::getComputerNumber(int playerNum, Common::Point &targetPos) {
 		targetPos.x += _vm->getRandomNumber(30) - 15;
 		targetPos.y += _vm->getRandomNumber(30) - 15;
 	} else if (v <= 8) {
-		targetPos.x += _vm->getRandomNumber(20) -10;
-		targetPos.y += _vm->getRandomNumber(20) -10;
+		targetPos.x += _vm->getRandomNumber(20) - 10;
+		targetPos.y += _vm->getRandomNumber(20) - 10;
 	} else if (v <= 10) {
 		targetPos.x += _vm->getRandomNumber(11) - 5;
 		targetPos.y += _vm->getRandomNumber(11) - 5;
@@ -957,9 +958,9 @@ int Darts::throwDart(int dartNum, int computer) {
 
 	drawDartsLeft(dartNum + 1, computer);
 	screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(_dartInfo.left, _dartInfo.top - 1),
-		Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
+	                               Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
 	screen.SHblitFrom(screen._backBuffer1, Common::Point(_dartInfo.left, _dartInfo.top - 1),
-		Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
+	                  Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
 
 	if (computer) {
 		getComputerNumber(computer - 1, targetPos);
@@ -981,11 +982,11 @@ int Darts::throwDart(int dartNum, int computer) {
 
 	// Copy power bars to the secondary back buffer
 	screen._backBuffer2.SHblitFrom(screen._backBuffer1, Common::Point(DART_BAR_VX - 1, DART_HEIGHT_Y - 1),
-		Common::Rect(DART_BAR_VX - 1, DART_HEIGHT_Y - 1, DART_BAR_VX - 1 + 10,
-		DART_HEIGHT_Y - 1 + DART_BAR_SIZE + 2));
+	                               Common::Rect(DART_BAR_VX - 1, DART_HEIGHT_Y - 1, DART_BAR_VX - 1 + 10,
+	                                            DART_HEIGHT_Y - 1 + DART_BAR_SIZE + 2));
 
-	Common::Point dartPos(DARTBOARD_TOTALLEFT + horiz*DARTBOARD_TOTALX / 100,
-		DARTBOARD_TOTALTOP + height * DARTBOARD_TOTALY / 100);
+	Common::Point dartPos(DARTBOARD_TOTALLEFT + horiz * DARTBOARD_TOTALX / 100,
+	                      DARTBOARD_TOTALTOP + height * DARTBOARD_TOTALY / 100);
 
 	dartPos.x += 2 - _vm->getRandomNumber(4);
 	dartPos.y += 2 - _vm->getRandomNumber(4);
@@ -1019,13 +1020,13 @@ void Darts::updateCricketScore(int player, int dartVal, int multiplier) {
 
 void Darts::drawDartsLeft(int dartNum, int computer) {
 	Screen &screen = *_vm->_screen;
-	const int DART_X1[3] = { 391, 451, 507 };
-	const int DART_Y1[3] = { 373, 373, 373 };
-	const int DART_X2[3] = { 393, 441, 502 };
-	const int DART_Y2[3] = { 373, 373, 373 };
+	const int DART_X1[3] = {391, 451, 507};
+	const int DART_Y1[3] = {373, 373, 373};
+	const int DART_X2[3] = {393, 441, 502};
+	const int DART_Y2[3] = {373, 373, 373};
 
 	screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(DART_X1[0], DART_Y1[0]),
-		Common::Rect(DART_X1[0], DART_Y1[0], SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+	                               Common::Rect(DART_X1[0], DART_Y1[0], SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 	for (int idx = 2; idx >= dartNum - 1; --idx) {
 		if (computer)

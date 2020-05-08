@@ -1,11 +1,11 @@
-#include <cxxtest/TestSuite.h>
 #include "engines/ultima/ultima8/usecode/bit_set.h"
+#include <cxxtest/TestSuite.h>
 /**
  * Test suite for the functions in engines/ultima/ultima8/usecode/bit_set.h
  */
 
 class U8BitSetTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	Ultima::Ultima8::BitSet bs;
 
 	U8BitSetTestSuite() {

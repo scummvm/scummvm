@@ -35,7 +35,7 @@ class RenderSurface;
 class RenderedText;
 struct Palette;
 
-class SKFPlayer : public MoviePlayer  {
+class SKFPlayer : public MoviePlayer {
 public:
 	SKFPlayer(Common::SeekableReadStream *rs, int width, int height, bool introMusicHack = false);
 	~SKFPlayer();
@@ -50,7 +50,6 @@ public:
 	}
 
 private:
-
 	void parseEventList(Common::ReadStream *rs);
 
 	int _width, _height;

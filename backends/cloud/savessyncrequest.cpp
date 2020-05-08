@@ -34,9 +34,8 @@
 
 namespace Cloud {
 
-SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb):
-	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _boolCallback(callback),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+SavesSyncRequest::SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb) : Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _boolCallback(callback),
+                                                                                                                      _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -68,11 +67,11 @@ void SavesSyncRequest::start() {
 	if (dir.lastChar() == '/')
 		dir.deleteLastChar();
 	_workingRequest = _storage->listDirectory(
-		dir,
-		new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback),
-		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryListedErrorCallback)
-	);
-	if (!_workingRequest) finishError(Networking::ErrorResponse(this, "SavesSyncRequest::start: Storage couldn't create Request to list directory"));
+	    dir,
+	    new Common::Callback<SavesSyncRequest, Storage::ListDirectoryResponse>(this, &SavesSyncRequest::directoryListedCallback),
+	    new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryListedErrorCallback));
+	if (!_workingRequest)
+		finishError(Networking::ErrorResponse(this, "SavesSyncRequest::start: Storage couldn't create Request to list directory"));
 }
 
 void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse response) {
@@ -80,7 +79,8 @@ void SavesSyncRequest::directoryListedCallback(Storage::ListDirectoryResponse re
 	if (_ignoreCallback)
 		return;
 
-	if (response.request) _date = response.request->date();
+	if (response.request)
+		_date = response.request->date();
 
 	Common::HashMap<Common::String, bool> localFileNotAvailableInCloud;
 	for (Common::HashMap<Common::String, uint32>::iterator i = _localFilesTimestamps.begin(); i != _localFilesTimestamps.end(); ++i) {
@@ -171,7 +171,8 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 	if (_ignoreCallback)
 		return;
 
-	if (error.failed) debug(9, "%s", error.response.c_str());
+	if (error.failed)
+		debug(9, "%s", error.response.c_str());
 
 	bool irrecoverable = error.interrupted || error.failed;
 	if (error.failed) {
@@ -234,10 +235,9 @@ void SavesSyncRequest::directoryListedErrorCallback(Networking::ErrorResponse er
 		dir.deleteLastChar();
 	debug(9, "\nSavesSyncRequest: creating %s", dir.c_str());
 	_workingRequest = _storage->createDirectory(
-		dir,
-		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::directoryCreatedCallback),
-		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryCreatedErrorCallback)
-	);
+	    dir,
+	    new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::directoryCreatedCallback),
+	    new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::directoryCreatedErrorCallback));
 	if (!_workingRequest)
 		finishError(Networking::ErrorResponse(this, "SavesSyncRequest::directoryListedErrorCallback: Storage couldn't create Request to create remote directory"));
 }
@@ -282,11 +282,10 @@ void SavesSyncRequest::downloadNextFile() {
 
 	debug(9, "\nSavesSyncRequest: downloading %s (%d %%)", _currentDownloadingFile.name().c_str(), (int)(getProgress() * 100));
 	_workingRequest = _storage->downloadById(
-		_currentDownloadingFile.id(),
-		DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
-		new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
-		new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileDownloadedErrorCallback)
-	);
+	    _currentDownloadingFile.id(),
+	    DefaultSaveFileManager::concatWithSavesPath(_currentDownloadingFile.name()),
+	    new Common::Callback<SavesSyncRequest, Storage::BoolResponse>(this, &SavesSyncRequest::fileDownloadedCallback),
+	    new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileDownloadedErrorCallback));
 	if (!_workingRequest)
 		finishError(Networking::ErrorResponse(this, "SavesSyncRequest::downloadNextFile: Storage couldn't create Request to download a file"));
 }
@@ -334,20 +333,19 @@ void SavesSyncRequest::uploadNextFile() {
 	debug(9, "\nSavesSyncRequest: uploading %s (%d %%)", _currentUploadingFile.c_str(), (int)(getProgress() * 100));
 	if (_storage->uploadStreamSupported()) {
 		_workingRequest = _storage->upload(
-			_storage->savesDirectoryPath() + _currentUploadingFile,
-			g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
-			new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
-			new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
-		);
+		    _storage->savesDirectoryPath() + _currentUploadingFile,
+		    g_system->getSavefileManager()->openRawFile(_currentUploadingFile),
+		    new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
+		    new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback));
 	} else {
 		_workingRequest = _storage->upload(
-			_storage->savesDirectoryPath() + _currentUploadingFile,
-			DefaultSaveFileManager::concatWithSavesPath(_currentUploadingFile),
-			new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
-			new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback)
-		);
+		    _storage->savesDirectoryPath() + _currentUploadingFile,
+		    DefaultSaveFileManager::concatWithSavesPath(_currentUploadingFile),
+		    new Common::Callback<SavesSyncRequest, Storage::UploadResponse>(this, &SavesSyncRequest::fileUploadedCallback),
+		    new Common::Callback<SavesSyncRequest, Networking::ErrorResponse>(this, &SavesSyncRequest::fileUploadedErrorCallback));
 	}
-	if (!_workingRequest) finishError(Networking::ErrorResponse(this, "SavesSyncRequest::uploadNextFile: Storage couldn't create Request to upload a file"));
+	if (!_workingRequest)
+		finishError(Networking::ErrorResponse(this, "SavesSyncRequest::uploadNextFile: Storage couldn't create Request to upload a file"));
 }
 
 void SavesSyncRequest::fileUploadedCallback(Storage::UploadResponse response) {
@@ -381,7 +379,7 @@ double SavesSyncRequest::getDownloadingProgress() const {
 	if (_totalFilesToHandle == 0) {
 		if (_state == Networking::FINISHED)
 			return 1; //nothing to upload and download => Request ends soon
-		return 0; //directory not listed yet
+		return 0;     //directory not listed yet
 	}
 
 	if (_totalFilesToHandle == _filesToUpload.size())
@@ -396,7 +394,7 @@ double SavesSyncRequest::getProgress() const {
 	if (_totalFilesToHandle == 0) {
 		if (_state == Networking::FINISHED)
 			return 1; //nothing to upload and download => Request ends soon
-		return 0; //directory not listed yet
+		return 0;     //directory not listed yet
 	}
 
 	return (double)(_totalFilesToHandle - _filesToDownload.size() - _filesToUpload.size()) / (double)(_totalFilesToHandle);

@@ -20,19 +20,19 @@
  *
  */
 
-#include "common/stream.h"
-#include "glk/alan3/glkio.h"
-#include "glk/alan3/options.h"
 #include "glk/alan3/output.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/word.h"
-#include "glk/alan3/lists.h"
-#include "glk/alan3/syserr.h"
-#include "glk/alan3/dictionary.h"
+#include "common/stream.h"
 #include "glk/alan3/current.h"
-#include "glk/alan3/msg.h"
-#include "glk/alan3/sysdep.h"
+#include "glk/alan3/dictionary.h"
+#include "glk/alan3/glkio.h"
 #include "glk/alan3/instance.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/msg.h"
+#include "glk/alan3/options.h"
+#include "glk/alan3/sysdep.h"
+#include "glk/alan3/syserr.h"
+#include "glk/alan3/word.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -50,7 +50,6 @@ int pageLength, pageWidth;
 /* Logfile */
 strid_t logFile;
 
-
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 /*
@@ -65,7 +64,6 @@ void getPageSize(void) {
 	pageWidth = 0;
 }
 
-
 /*----------------------------------------------------------------------*/
 static int updateColumn(int currentColumn, const char *string) {
 	const char *newlinePosition = strrchr(string, '\n');
@@ -75,12 +73,10 @@ static int updateColumn(int currentColumn, const char *string) {
 		return currentColumn + strlen(string);
 }
 
-
 /*======================================================================*/
 void setSubHeaderStyle(void) {
 	g_io->glk_set_style(style_Subheader);
 }
-
 
 /*======================================================================*/
 void setNormalStyle(void) {
@@ -94,7 +90,6 @@ void newline(void) {
 	needSpace = FALSE;
 }
 
-
 /*======================================================================*/
 void para(void) {
 	g_io->flowBreak();
@@ -105,26 +100,24 @@ void para(void) {
 	capitalize = TRUE;
 }
 
-
 /*======================================================================*/
 void clear(void) {
 	g_io->clear();
 }
-
 
 /*----------------------------------------------------------------------*/
 static void capitalizeFirst(Common::String &str) {
 	uint i = 0;
 
 	// Skip over space...
-	while (i < str.size() && isSpace(str[i])) i++;
+	while (i < str.size() && isSpace(str[i]))
+		i++;
 
 	if (i < str.size()) {
 		str.setChar(toUpper(str[i]), i);
 		capitalize = false;
 	}
 }
-
 
 /*======================================================================*/
 void printAndLog(const char *string) {
@@ -136,11 +129,12 @@ void printAndLog(const char *string) {
 	if (!g_io->onStatusLine && transcriptOption) {
 		// TODO Is this assuming only 70-char wide windows for GLK?
 		if ((int)strlen(string) > 70 - column) {
-			stringCopy = scumm_strdup(string);  /* Make sure we can write NULLs */
+			stringCopy = scumm_strdup(string); /* Make sure we can write NULLs */
 			stringPart = stringCopy;
 			while ((int)strlen(stringPart) > 70 - column) {
 				int p;
-				for (p = 70 - column; p > 0 && !Common::isSpace((int)stringPart[p]); p--);
+				for (p = 70 - column; p > 0 && !Common::isSpace((int)stringPart[p]); p--)
+					;
 				stringPart[p] = '\0';
 				g_io->glk_put_string_stream(logFile, stringPart);
 				g_io->glk_put_char_stream(logFile, '\n');
@@ -157,7 +151,6 @@ void printAndLog(const char *string) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void justify(const char *str) {
 	Common::String tempStr(str);
@@ -166,9 +159,8 @@ static void justify(const char *str) {
 		capitalizeFirst(tempStr);
 
 	printAndLog(tempStr.c_str());
-	col = col + tempStr.size();  // Update column
+	col = col + tempStr.size(); // Update column
 }
-
 
 /*----------------------------------------------------------------------*/
 static void space(void) {
@@ -183,7 +175,6 @@ static void space(void) {
 	needSpace = FALSE;
 }
 
-
 /*----------------------------------------------------------------------*/
 static void sayPlayerWordsForParameter(int p) {
 	int i;
@@ -194,7 +185,6 @@ static void sayPlayerWordsForParameter(int p) {
 			justify(" ");
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static void sayParameter(CONTEXT, int p, int form) {
@@ -220,7 +210,6 @@ static void sayParameter(CONTEXT, int p, int form) {
 #endif
 }
 
-
 /*----------------------------------------------------------------------
 
   Print an expanded symbolic reference.
@@ -245,8 +234,10 @@ static void sayParameter(CONTEXT, int p, int form) {
 static char *printSymbol(CONTEXT, char str[]) {
 	int advance = 2;
 
-	if (*str == '\0') printAndLog("$");
-	else switch (toLower(str[1])) {
+	if (*str == '\0')
+		printAndLog("$");
+	else
+		switch (toLower(str[1])) {
 		case 'n':
 			newline();
 			needSpace = FALSE;
@@ -260,7 +251,7 @@ static char *printSymbol(CONTEXT, char str[]) {
 		case 'o':
 			space();
 			R0CALL2(sayParameter, 0, 0)
-			needSpace = TRUE;       /* We did print something non-white */
+			needSpace = TRUE; /* We did print something non-white */
 			break;
 		case '+':
 		case '0':
@@ -302,22 +293,22 @@ static char *printSymbol(CONTEXT, char str[]) {
 		case '9':
 			space();
 			R0CALL2(sayParameter, str[1] - '1', SAY_SIMPLE)
-			needSpace = TRUE;       /* We did print something non-white */
+			needSpace = TRUE; /* We did print something non-white */
 			break;
 		case 'l':
 			space();
 			R0CALL1(say, current.location)
-			needSpace = TRUE;       /* We did print something non-white */
+			needSpace = TRUE; /* We did print something non-white */
 			break;
 		case 'a':
 			space();
 			R0CALL1(say, current.actor)
-			needSpace = TRUE;       /* We did print something non-white */
+			needSpace = TRUE; /* We did print something non-white */
 			break;
 		case 'v':
 			space();
 			justify((const char *)pointerTo(dictionary[verbWord].string));
-			needSpace = TRUE;       /* We did print something non-white */
+			needSpace = TRUE; /* We did print something non-white */
 			break;
 		case 'p':
 			para();
@@ -327,7 +318,8 @@ static char *printSymbol(CONTEXT, char str[]) {
 			int i;
 			int spaces = 4 - (col - 1) % 4;
 
-			for (i = 0; i < spaces; i++) printAndLog(" ");
+			for (i = 0; i < spaces; i++)
+				printAndLog(" ");
 			col = col + spaces;
 			needSpace = FALSE;
 			break;
@@ -349,24 +341,18 @@ static char *printSymbol(CONTEXT, char str[]) {
 	return &str[advance];
 }
 
-
 /*----------------------------------------------------------------------*/
 static bool inhibitSpace(char *str) {
 	return str[0] != '\0' && str[0] == '$' && str[1] == '$';
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool isSpaceEquivalent(char str[]) {
 	if (str[0] == ' ')
 		return TRUE;
 	else
-		return strncmp(str, "$p", 2) == 0
-		       || strncmp(str, "$n", 2) == 0
-		       || strncmp(str, "$i", 2) == 0
-		       || strncmp(str, "$t", 2) == 0;
+		return strncmp(str, "$p", 2) == 0 || strncmp(str, "$n", 2) == 0 || strncmp(str, "$i", 2) == 0 || strncmp(str, "$t", 2) == 0;
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool punctuationNext(char *str) {
@@ -376,12 +362,10 @@ static bool punctuationNext(char *str) {
 	return (punctuation != NULL && (end || space));
 }
 
-
 /*----------------------------------------------------------------------*/
 static char lastCharOf(char *str) {
 	return str[strlen(str) - 1];
 }
-
 
 /*======================================================================*/
 void output(const char *original) {
@@ -396,30 +380,30 @@ void output(const char *original) {
 	if (inhibitSpace(str) || punctuationNext(str))
 		needSpace = FALSE;
 	else
-		space();            /* Output space if needed (& not inhibited) */
+		space(); /* Output space if needed (& not inhibited) */
 
 	/* Output string up to symbol and handle the symbol */
-	while ((symptr = strchr(str, '$')) != (char *) NULL) {
-		ch = *symptr;       /* Terminate before symbol */
+	while ((symptr = strchr(str, '$')) != (char *)NULL) {
+		ch = *symptr; /* Terminate before symbol */
 		*symptr = '\0';
 		if (strlen(str) > 0) {
-			skipSpace = FALSE;    /* Only let skipSpace through if it is
+			skipSpace = FALSE; /* Only let skipSpace through if it is
                                      last in the string */
 			if (lastCharOf(str) == ' ') {
 				str[strlen(str) - 1] = '\0'; /* Truncate space character */
-				justify(str);       /* Output part before '$' */
+				justify(str);                /* Output part before '$' */
 				needSpace = TRUE;
 			} else {
-				justify(str);       /* Output part before '$' */
+				justify(str); /* Output part before '$' */
 				needSpace = FALSE;
 			}
 		}
-		*symptr = ch;       /* restore '$' */
-		str = printSymbol(ctx, symptr);  /* Print the symbolic reference and advance */
+		*symptr = ch;                   /* restore '$' */
+		str = printSymbol(ctx, symptr); /* Print the symbolic reference and advance */
 	}
 
 	if (str[0] != 0) {
-		justify(str);           /* Output trailing part */
+		justify(str); /* Output trailing part */
 		skipSpace = FALSE;
 		if (lastCharOf(str) != ' ')
 			needSpace = TRUE;
@@ -431,7 +415,6 @@ void output(const char *original) {
 	anyOutput = TRUE;
 	free(copy);
 }
-
 
 /*======================================================================*/
 bool confirm(CONTEXT, MsgKind msgno) {

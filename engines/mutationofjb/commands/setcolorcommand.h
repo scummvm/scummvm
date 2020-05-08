@@ -34,7 +34,6 @@ public:
 	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
-
 class SetColorCommand : public SeqCommand {
 public:
 	SetColorCommand(uint8 color) : _color(color) {}
@@ -46,6 +45,6 @@ private:
 	uint8 _color;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

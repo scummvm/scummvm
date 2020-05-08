@@ -31,8 +31,7 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-PSpit::PSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackPspit, "psliders.25", "psliderbg.25") {
+PSpit::PSpit(MohawkEngine_Riven *vm) : DomeSpit(vm, kStackPspit, "psliders.25", "psliderbg.25") {
 
 	REGISTER_COMMAND(PSpit, xpisland990_elevcombo);
 	REGISTER_COMMAND(PSpit, xpscpbtn);
@@ -50,14 +49,14 @@ void PSpit::catherineIdleTimer() {
 
 	// Choose a random movie based on where Catherine is
 	if (cathCheck == 0) {
-		static const int movieList[] = { 5, 6, 7, 8 };
+		static const int movieList[] = {5, 6, 7, 8};
 		cathCheck = 1;
 		movie = movieList[_vm->_rnd->getRandomNumber(3)];
 	} else if (cathState == 1) {
-		static const int movieList[] = { 11, 14 };
+		static const int movieList[] = {11, 14};
 		movie = movieList[_vm->_rnd->getRandomBit()];
 	} else {
-		static const int movieList[] = { 9, 10, 12, 13 };
+		static const int movieList[] = {9, 10, 12, 13};
 		movie = movieList[_vm->_rnd->getRandomNumber(3)];
 	}
 

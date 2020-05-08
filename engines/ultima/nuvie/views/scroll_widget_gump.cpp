@@ -20,33 +20,32 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/fonts/font_manager.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/portraits/portrait.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/fonts/conv_font.h"
 #include "ultima/nuvie/views/scroll_widget_gump.h"
 #include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/core/timed_event.h"
+#include "ultima/nuvie/fonts/conv_font.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 // ScrollWidgetGump Class
 
-ScrollWidgetGump::ScrollWidgetGump(Configuration *cfg, Screen *s) :
-		arrow_up_rect(SCROLLWIDGETGUMP_W - 8 - 1, 4 + 1,
-			SCROLLWIDGETGUMP_W - 8 - 1 + 7, 4 + 1 + 5),
-		arrow_down_rect(SCROLLWIDGETGUMP_W - 8 - 1, SCROLLWIDGETGUMP_H - 8 + 3,
-			SCROLLWIDGETGUMP_W - 8 - 1 + 7, SCROLLWIDGETGUMP_H - 8 + 3 + 5) {
+ScrollWidgetGump::ScrollWidgetGump(Configuration *cfg, Screen *s) : arrow_up_rect(SCROLLWIDGETGUMP_W - 8 - 1, 4 + 1,
+                                                                                  SCROLLWIDGETGUMP_W - 8 - 1 + 7, 4 + 1 + 5),
+                                                                    arrow_down_rect(SCROLLWIDGETGUMP_W - 8 - 1, SCROLLWIDGETGUMP_H - 8 + 3,
+                                                                                    SCROLLWIDGETGUMP_W - 8 - 1 + 7, SCROLLWIDGETGUMP_H - 8 + 3 + 5) {
 	drop_target = false; //we don't participate in drag and drop.
 
 	font_normal = Game::get_game()->get_font_manager()->get_conv_font();
@@ -69,11 +68,11 @@ ScrollWidgetGump::ScrollWidgetGump(Configuration *cfg, Screen *s) :
 	add_new_line(); //MsgScroll requires a line to start.
 
 	position = 0;
-// ignore_page_breaks = true;
+	// ignore_page_breaks = true;
 }
 
 ScrollWidgetGump::~ScrollWidgetGump() {
-// ignore_page_breaks = false;
+	// ignore_page_breaks = false;
 }
 
 void ScrollWidgetGump::set_font(uint8 font_type) {
@@ -136,15 +135,13 @@ void ScrollWidgetGump::Display(bool full_redraw) {
 		if (i + position < ((int)msg_buf.size() - 1) || (iter1 != msg_line->text.end() && ((*iter)->total_length != 0))) {
 			//screen->fill(26, area.left, y + (i==0?-4:4), scroll_width * 7 + 8, (i==0?18:10));
 
-
-			for (uint16 total_length = 0; iter1 != msg_line->text.end() ; iter1++) {
+			for (uint16 total_length = 0; iter1 != msg_line->text.end(); iter1++) {
 				token = *iter1;
 
 				total_length += token->font->drawString(screen, token->s.c_str(), area.left + 4 + 4 + total_length, y + 4, font_color, font_highlight); //FIX for hardcoded font height
 			}
 			y += 10;
 		}
-
 	}
 
 	screen->update(area.left, area.top, area.width(), area.height());
@@ -175,7 +172,7 @@ GUI_status ScrollWidgetGump::KeyDown(const Common::KeyState &key) {
 	case END_KEY:
 		event = SCROLL_TO_END;
 		break;
-	default :
+	default:
 		break;
 	}
 
@@ -200,19 +197,19 @@ GUI_status ScrollWidgetGump::MouseDown(int x, int y, Shared::MouseButton button)
 	ScrollEventType event = SCROLL_ESCAPE;
 
 	switch (button) {
-	case Shared::BUTTON_LEFT : {
+	case Shared::BUTTON_LEFT: {
 		x -= area.left;
 		y -= area.top;
 		if (HitRect(x, y, arrow_up_rect))
 			event = SCROLL_UP;
 		else if (HitRect(x, y, arrow_down_rect))
 			event = SCROLL_DOWN;
-// FIXME - uncomment when we get a checkmark
-//	                       else if(show_down_arrow || show_up_arrow) // don't close if scrollable
-//	                           return GUI_YUM;
+		// FIXME - uncomment when we get a checkmark
+		//	                       else if(show_down_arrow || show_up_arrow) // don't close if scrollable
+		//	                           return GUI_YUM;
 		break;
 	}
-	default :
+	default:
 		break;
 	}
 
@@ -221,7 +218,7 @@ GUI_status ScrollWidgetGump::MouseDown(int x, int y, Shared::MouseButton button)
 
 GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 	switch (event) {
-	case SCROLL_UP :
+	case SCROLL_UP:
 		if (position > 0) {
 			//timer = new TimedCallback(this, NULL, 2000);
 			position--;
@@ -230,7 +227,7 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 		}
 		return GUI_YUM;
 
-	case SCROLL_DOWN :
+	case SCROLL_DOWN:
 		//timer = new TimedCallback(this, NULL, 2000);
 		if (page_break && position + scroll_height >= (int)msg_buf.size()) {
 			if (position + scroll_height == (int)msg_buf.size()) // break was just off the page so advance text
@@ -264,13 +261,13 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 			update_arrows();
 		}
 		return GUI_YUM;
-	case SCROLL_TO_BEGINNING :
+	case SCROLL_TO_BEGINNING:
 		if (position > 0) {
 			position = 0;
 			update_arrows();
 		}
 		return GUI_YUM;
-	case SCROLL_TO_END :
+	case SCROLL_TO_END:
 		if (position + scroll_height < (int)msg_buf.size() || page_break) {
 			while (position + scroll_height < (int)msg_buf.size() || page_break) {
 				if (page_break)
@@ -281,7 +278,7 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 			update_arrows();
 		}
 		return GUI_YUM;
-	default :
+	default:
 		//release_focus();
 		//new TimedCallback(this, NULL, 50);
 		break;

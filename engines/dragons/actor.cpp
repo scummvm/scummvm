@@ -19,11 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/debug.h"
-#include "dragons/dragons.h"
-#include "dragons/dragonini.h"
-#include "dragons/actorresource.h"
 #include "dragons/actor.h"
+#include "common/debug.h"
+#include "dragons/actorresource.h"
+#include "dragons/dragonini.h"
+#include "dragons/dragons.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
 
@@ -37,7 +37,6 @@ ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorRes
 	}
 	resetDisplayOrder();
 }
-
 
 Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 priorityLayer) {
 	Actor *actor = loadActor(resourceId, sequenceId, x, y);
@@ -109,7 +108,7 @@ void ActorManager::updateActorDisplayOrder() {
 			int16 curY = curActor->_y_pos > 0 ? curActor->_y_pos : 0;
 			int16 nextY = nextActor->_y_pos > 0 ? nextActor->_y_pos : 0;
 			if (nextActor->_priorityLayer * 0x1000000 + nextY * 0x100 + nextActor->_actorID <
-					curActor->_priorityLayer * 0x1000000 + curY * 0x100 + curActor->_actorID) {
+			    curActor->_priorityLayer * 0x1000000 + curY * 0x100 + curActor->_actorID) {
 				_displayOrder[i] = nextActor->_actorID;
 				_displayOrder[i + 1] = curActor->_actorID;
 				shouldContinue = true;
@@ -208,7 +207,6 @@ void Actor::loadFrame(uint16 frameOffset) {
 	debug(5, "ActorId: %d load frame header: (%d,%d)", _actorID, _frame->width, _frame->height);
 
 	_flags |= ACTOR_FLAG_8; //TODO check if this is the right spot. engine sets it at 0x800185b0
-
 }
 
 void Actor::freeFrame() {
@@ -236,19 +234,16 @@ uint32 calcDistance(int32 x1, int32 y1, int32 x2, int32 y2) {
 
 bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 	static const int kCosTbl[40] = {
-		// cos table
-		256, 251, 236, 212, 181, 142, 97, 49,
-		0, -49, -97, -142, -181, -212, -236, -251,
-		-255, -251, -236, -212, -181, -142, -97, -49,
-		0, 49, 97, 142, 181, 212, 236, 251,
-		11, 0, 0, 0, 0, 0, 0, 0
-	};
+	    // cos table
+	    256, 251, 236, 212, 181, 142, 97, 49,
+	    0, -49, -97, -142, -181, -212, -236, -251,
+	    -255, -251, -236, -212, -181, -142, -97, -49,
+	    0, 49, 97, 142, 181, 212, 236, 251,
+	    11, 0, 0, 0, 0, 0, 0, 0};
 	static const int kAdjustXTbl[8] = {
-		1, -1, 0, 0, 1, -1, 1, -1
-	};
+	    1, -1, 0, 0, 1, -1, 1, -1};
 	static const int kAdjustYTbl[8] = {
-		0, 0, 1, -1, 1, 1, -1, -1
-	};
+	    0, 0, 1, -1, 1, 1, -1, -1};
 
 	debug("startWalk(%d, %d, %d)", _actorID, destX, destY);
 	bool wasAlreadyWalking = isFlagSet(ACTOR_FLAG_10);
@@ -448,7 +443,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 					newDirection = (dx <= 0) ? 5 : 1;
 				}
 			} else {
-				newDirection = (dy <= 0)  ? 2 : 6;
+				newDirection = (dy <= 0) ? 2 : 6;
 			}
 			_direction = newDirection;
 			if (wasAlreadyWalking) {
@@ -547,14 +542,7 @@ uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 ta
 	uint16 height = getEngine()->_scene->getStageHeight();
 
 	if (walkFlags & 0x8000) {
-		if (actor_x < 0
-			|| width - 1 < actor_x
-			|| actor_y < 0
-			|| height - 1 < actor_y
-			|| target_x < 0
-			|| width - 1 < target_x
-			|| target_y < 0
-			|| height - 1 < target_y) {
+		if (actor_x < 0 || width - 1 < actor_x || actor_y < 0 || height - 1 < actor_y || target_x < 0 || width - 1 < target_x || target_y < 0 || height - 1 < target_y) {
 			return 0;
 		}
 	}
@@ -600,10 +588,10 @@ uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 ta
 	int32 x = actor_x << 0x10;
 	int32 y = actor_y << 0x10;
 	for (;;) {
-		if ((x+0x8000) >> 0x10 == target_x && (y+0x8000) >> 0x10 == target_y) {
+		if ((x + 0x8000) >> 0x10 == target_x && (y + 0x8000) >> 0x10 == target_y) {
 			return 1;
 		}
-		int16 priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(x>>0x10, y>>0x10));
+		int16 priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(x >> 0x10, y >> 0x10));
 		if (priority < 0) {
 			priority = 1;
 		}
@@ -706,13 +694,11 @@ void Actor::walkPath() {
 		_xShl16 += (((_scale * _walkSlopeX) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
 		_yShl16 += (((_scale * _walkSlopeY) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
 
-		if ((_walkSlopeX >= 0 && _walkDestX < (_xShl16 >> 0x10))
-				|| (_walkSlopeX < 0 && (_xShl16 >> 0x10) < _walkDestX)) {
+		if ((_walkSlopeX >= 0 && _walkDestX < (_xShl16 >> 0x10)) || (_walkSlopeX < 0 && (_xShl16 >> 0x10) < _walkDestX)) {
 			_xShl16 = _walkDestX << 0x10;
 		}
 
-		if ((_walkSlopeY >= 0 && _walkDestY < (_yShl16 >> 0x10))
-				|| (_walkSlopeY < 0 && (_yShl16 >> 0x10) < _walkDestY)) {
+		if ((_walkSlopeY >= 0 && _walkDestY < (_yShl16 >> 0x10)) || (_walkSlopeY < 0 && (_yShl16 >> 0x10) < _walkDestY)) {
 			_yShl16 = _walkDestY << 0x10;
 		}
 
@@ -756,7 +742,7 @@ void Actor::walkPath() {
 
 // 0x80034930
 int16 Actor::pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y,
-										 int16 unkType, bool *pointsInUseTbl) {
+                                         int16 unkType, bool *pointsInUseTbl) {
 	int16 pointId = -1;
 	uint32 minDist = 0xffffffff;
 

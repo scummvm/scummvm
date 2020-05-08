@@ -20,36 +20,36 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/map.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/item_sorter.h"
-#include "ultima/ultima8/world/camera_process.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/graphics/shape_info.h"
+#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/world/actors/avatar_mover_process.h"
-#include "ultima/ultima8/world/missile_tracker.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/camera_process.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/item_sorter.h"
+#include "ultima/ultima8/world/map.h"
+#include "ultima/ultima8/world/missile_tracker.h"
+#include "ultima/ultima8/world/world.h"
 
-#include "ultima/ultima8/world/gravity_process.h" // hack...
 #include "ultima/ultima8/kernel/object_manager.h" // hack...
-#include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/world/actors/pathfinder_process.h"
+#include "ultima/ultima8/world/gravity_process.h" // hack...
 #include "ultima/ultima8/world/loop_script.h"
 
 // map dumping
-#include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/filesys/file_system.h"
 #include "image/png.h"
+#include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -58,16 +58,14 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(GameMapGump, Gump)
 
 bool GameMapGump::_highlightItems = false;
 
-GameMapGump::GameMapGump() :
-	Gump(), _displayDragging(false), _displayList(0), _draggingShape(0),
-		_draggingFrame(0), _draggingFlags(0) {
+GameMapGump::GameMapGump() : Gump(), _displayDragging(false), _displayList(0), _draggingShape(0),
+                             _draggingFrame(0), _draggingFlags(0) {
 	_displayList = new ItemSorter();
 }
 
-GameMapGump::GameMapGump(int x, int y, int width, int height) :
-		Gump(x, y, width, height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP, LAYER_GAMEMAP),
-		_displayList(0), _displayDragging(false), _draggingShape(0), _draggingFrame(0),
-		_draggingFlags(0) {
+GameMapGump::GameMapGump(int x, int y, int width, int height) : Gump(x, y, width, height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP, LAYER_GAMEMAP),
+                                                                _displayList(0), _displayDragging(false), _draggingShape(0), _draggingFrame(0),
+                                                                _draggingFlags(0) {
 	// Offset the gump. We want 0,0 to be the centre
 	_dims.x -= _dims.w / 2;
 	_dims.y -= _dims.h / 2;
@@ -92,11 +90,12 @@ void GameMapGump::GetCameraLocation(int32 &lx, int32 &ly, int32 &lz,
 
 void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	World *world = World::get_instance();
-	if (!world) return; // Is it possible the world doesn't exist?
+	if (!world)
+		return; // Is it possible the world doesn't exist?
 
 	CurrentMap *map = world->getCurrentMap();
-	if (!map) return;   // Is it possible the map doesn't exist?
-
+	if (!map)
+		return; // Is it possible the map doesn't exist?
 
 	// Get the camera location
 	int32 lx, ly, lz;
@@ -133,17 +132,20 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	for (int cy = 0; cy < MAP_NUM_CHUNKS; cy++) {
 		for (int cx = 0; cx < MAP_NUM_CHUNKS; cx++) {
 			// Not fast, ignore
-			if (!map->isChunkFast(cx, cy)) continue;
+			if (!map->isChunkFast(cx, cy))
+				continue;
 
 			const Std::list<Item *> *items = map->getItemList(cx, cy);
 
-			if (!items) continue;
+			if (!items)
+				continue;
 
 			Std::list<Item *>::const_iterator it = items->begin();
 			Std::list<Item *>::const_iterator end = items->end();
 			for (; it != end; ++it) {
 				Item *item = *it;
-				if (!item) continue;
+				if (!item)
+					continue;
 
 				item->setupLerp(gametick);
 				item->doLerp(lerp_factor);
@@ -181,14 +183,14 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		                      _draggingFlags, Item::EXT_TRANSPARENT);
 	}
 
-
 	_displayList->PaintDisplayList(_highlightItems);
 }
 
 // Trace a click, and return ObjId
 uint16 GameMapGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
-	if (objId_ && objId_ != 65535) return objId_;
+	if (objId_ && objId_ != 65535)
+		return objId_;
 
 	ParentToGump(mx, my);
 	return _displayList->Trace(mx, my, 0, _highlightItems);
@@ -250,9 +252,11 @@ bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
                                     int32 lerp_factor) {
 	Item *item = getItem(itemid);
 
-	if (!item) return false;
+	if (!item)
+		return false;
 
-	while (item->getParentAsContainer()) item = item->getParentAsContainer();
+	while (item->getParentAsContainer())
+		item = item->getParentAsContainer();
 
 	int32 ix, iy, iz;
 
@@ -264,8 +268,10 @@ bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	// Get the camera's location
 	int32 cx, cy, cz;
 	CameraProcess *cam = CameraProcess::GetCameraProcess();
-	if (!cam) CameraProcess::GetCameraLocation(cx, cy, cz);
-	else cam->GetLerped(cx, cy, cz, lerp_factor);
+	if (!cam)
+		CameraProcess::GetCameraLocation(cx, cy, cz);
+	else
+		cam->GetLerped(cx, cy, cz, lerp_factor);
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
 	gx = (ix - iy) / 4;
@@ -291,7 +297,7 @@ Gump *GameMapGump::OnMouseDown(int button, int32 mx, int32 my) {
 	}
 
 	if (button == Shared::BUTTON_LEFT || button == Shared::BUTTON_RIGHT ||
-	        button == Shared::BUTTON_MIDDLE) {
+	    button == Shared::BUTTON_MIDDLE) {
 		// we take all clicks
 		return this;
 	}
@@ -310,9 +316,11 @@ void GameMapGump::OnMouseClick(int button, int32 mx, int32 my) {
 	MainActor *avatar = getMainActor();
 	switch (button) {
 	case Shared::BUTTON_LEFT: {
-		if (avatar->isInCombat()) break;
+		if (avatar->isInCombat())
+			break;
 
-		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT))
+			break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << Std::endl;
@@ -342,7 +350,7 @@ void GameMapGump::OnMouseClick(int button, int32 mx, int32 my) {
 #if 1
 			Actor *devon = getActor(1);
 			PathfinderProcess *pfp = new PathfinderProcess(devon, xv, yv, zv);
-//			PathfinderProcess* pfp = new PathfinderProcess(devon, objID, false);
+			//			PathfinderProcess* pfp = new PathfinderProcess(devon, objID, false);
 			Kernel::get_instance()->addProcess(pfp);
 #elif 0
 			if (p_dynamic_cast<Actor *>(item)) {
@@ -359,7 +367,8 @@ void GameMapGump::OnMouseClick(int button, int32 mx, int32 my) {
 			                                      item, true, false, true);
 			for (uint32 i = 0; i < uclist.getSize(); i++) {
 				Item *item2 = getItem(uclist.getuint16(i));
-				if (!item2) continue;
+				if (!item2)
+					continue;
 				item2->setExtFlag(Item::EXT_HIGHLIGHT);
 			}
 #elif 0
@@ -378,9 +387,11 @@ void GameMapGump::OnMouseDouble(int button, int32 mx, int32 my) {
 	MainActor *avatar = getMainActor();
 	switch (button) {
 	case Shared::BUTTON_LEFT: {
-		if (avatar->isInCombat()) break;
+		if (avatar->isInCombat())
+			break;
 
-		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT))
+			break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << Std::endl;
@@ -395,7 +406,7 @@ void GameMapGump::OnMouseDouble(int button, int32 mx, int32 my) {
 			item->dumpInfo();
 
 			if (p_dynamic_cast<Actor *>(item) ||
-			        avatar->canReach(item, 128)) { // CONSTANT!
+			    avatar->canReach(item, 128)) { // CONSTANT!
 				// call the 'use' event
 				item->use();
 			} else {
@@ -410,17 +421,21 @@ void GameMapGump::OnMouseDouble(int button, int32 mx, int32 my) {
 }
 
 void GameMapGump::IncSortOrder(int count) {
-	if (count > 0) _displayList->IncSortLimit();
-	else _displayList->DecSortLimit();
+	if (count > 0)
+		_displayList->IncSortLimit();
+	else
+		_displayList->DecSortLimit();
 }
 
 bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {
-//	ParentToGump(mx, my);
+	//	ParentToGump(mx, my);
 
-	if (!item->canDrag()) return false;
+	if (!item->canDrag())
+		return false;
 
 	MainActor *avatar = getMainActor();
-	if (!avatar->canReach(item, 128)) return false;  // CONSTANT!
+	if (!avatar->canReach(item, 128))
+		return false; // CONSTANT!
 
 	// get item offset
 	int32 itemx = 0;
@@ -448,10 +463,10 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 		return false;
 
 	MainActor *avatar = getMainActor();
-	if (trace == 1) { // dropping on self
+	if (trace == 1) {                   // dropping on self
 		ObjId bp = avatar->getEquip(7); // !! constant
 		Container *backpack = getContainer(bp);
-		return  backpack->CanAddItem(item, true);
+		return backpack->CanAddItem(item, true);
 	}
 
 	bool throwing = false;
@@ -462,7 +477,8 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 		if (throwrange && avatar->canReach(item, throwrange, _draggingPos[0],
 		                                   _draggingPos[1], _draggingPos[2])) {
 			int speed = 64 - item->getTotalWeight() + avatar->getStr();
-			if (speed < 1) speed = 1;
+			if (speed < 1)
+				speed = 1;
 			int32 ax, ay, az;
 			avatar->getLocation(ax, ay, az);
 			MissileTracker t(item, ax, ay, az,
@@ -490,11 +506,11 @@ void GameMapGump::DraggingItemLeftGump(Item *item) {
 	_displayDragging = false;
 }
 
-
 void GameMapGump::StopDraggingItem(Item *item, bool moved) {
 	_displayDragging = false;
 
-	if (!moved) return; // nothing to do
+	if (!moved)
+		return; // nothing to do
 
 	// make items on top of item fall and call release on supporting items
 	item->grab();
@@ -508,7 +524,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 	Actor *avatar = getMainActor();
 
 	ObjId trace = TraceCoordinates(mx, my, _draggingPos, dox, doy, item);
-	if (trace == 1) { // dropping on self
+	if (trace == 1) {                   // dropping on self
 		ObjId bp = avatar->getEquip(7); // !! constant
 		Container *backpack = getContainer(bp);
 		if (backpack && item->moveToContainer(backpack)) {
@@ -524,7 +540,8 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		pout << "Throwing item to (" << _draggingPos[0] << ","
 		     << _draggingPos[1] << "," << _draggingPos[2] << ")" << Std::endl;
 		int speed = 64 - item->getTotalWeight() + avatar->getStr();
-		if (speed < 1) speed = 1;
+		if (speed < 1)
+			speed = 1;
 		int32 ax, ay, az;
 		avatar->getLocation(ax, ay, az);
 		// CHECKME: correct position to throw from?
@@ -534,7 +551,8 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		tx = _draggingPos[0];
 		ty = _draggingPos[1];
 		int inaccuracy = 4 * (30 - avatar->getDex());
-		if (inaccuracy < 20) inaccuracy = 20; // just in case dex > 25
+		if (inaccuracy < 20)
+			inaccuracy = 20; // just in case dex > 25
 		tx += (getRandom() % inaccuracy) - (getRandom() % inaccuracy);
 		ty += (getRandom() % inaccuracy) - (getRandom() % inaccuracy);
 		MissileTracker t(item, tx, ty, _draggingPos[2],

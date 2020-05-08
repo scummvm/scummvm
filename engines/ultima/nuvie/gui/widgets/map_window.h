@@ -25,11 +25,10 @@
 
 #include "ultima/shared/std/containers.h"
 
-
+#include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
-#include "ultima/nuvie/core/map.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -49,7 +48,7 @@ class Game;
 #define MAPWINDOW_THUMBNAIL_SCALE 3
 
 #define MAP_OVERLAY_DEFAULT 0 /* just below border */
-#define MAP_OVERLAY_ONTOP   1 /* cover border */
+#define MAP_OVERLAY_ONTOP 1   /* cover border */
 
 #define MAPWINDOW_ROOFTILES_IMG_W 5
 #define MAPWINDOW_ROOFTILES_IMG_H 204
@@ -66,12 +65,23 @@ typedef struct {
 	CallBack *caller;
 } WizardEye;
 
-enum RoofDisplayType {ROOF_DISPLAY_OFF, ROOF_DISPLAY_NORMAL, ROOF_DISPLAY_FORCE_ON };
-enum InterfaceType { INTERFACE_NORMAL, INTERFACE_FULLSCREEN, INTERFACE_IGNORE_BLOCK };
-enum X_RayType { X_RAY_CHEAT_OFF = -1,  X_RAY_OFF = 0, X_RAY_ON = 1, X_RAY_CHEAT_ON = 2};
-enum CanDropOrMoveMsg { MSG_NOT_POSSIBLE, MSG_SUCCESS, MSG_BLOCKED, MSG_OUT_OF_RANGE, MSG_NO_TILE};
+enum RoofDisplayType { ROOF_DISPLAY_OFF,
+	                   ROOF_DISPLAY_NORMAL,
+	                   ROOF_DISPLAY_FORCE_ON };
+enum InterfaceType { INTERFACE_NORMAL,
+	                 INTERFACE_FULLSCREEN,
+	                 INTERFACE_IGNORE_BLOCK };
+enum X_RayType { X_RAY_CHEAT_OFF = -1,
+	             X_RAY_OFF = 0,
+	             X_RAY_ON = 1,
+	             X_RAY_CHEAT_ON = 2 };
+enum CanDropOrMoveMsg { MSG_NOT_POSSIBLE,
+	                    MSG_SUCCESS,
+	                    MSG_BLOCKED,
+	                    MSG_OUT_OF_RANGE,
+	                    MSG_NO_TILE };
 
-class MapWindow: public GUI_Widget {
+class MapWindow : public GUI_Widget {
 	friend class AnimManager;
 	friend class ConverseGumpWOU;
 	Game *game;
@@ -90,7 +100,7 @@ class MapWindow: public GUI_Widget {
 	uint16 *tmp_map_buf; // tempory buffer for flood fill, hide rooms.
 	uint16 tmp_map_width, tmp_map_height;
 	Graphics::ManagedSurface *overlay; // used for visual effects
-	uint8 overlay_level; // where the overlay surface is placed
+	uint8 overlay_level;               // where the overlay surface is placed
 	int min_brightness;
 
 	TileManager *tile_manager;
@@ -100,7 +110,7 @@ class MapWindow: public GUI_Widget {
 
 	sint16 cur_x, cur_y;
 	uint16 cursor_x, cursor_y, map_center_xoff;
-	sint16 mousecenter_x, mousecenter_y; // location mousecursor rotates around, relative to cur_x&cur_y
+	sint16 mousecenter_x, mousecenter_y;               // location mousecursor rotates around, relative to cur_x&cur_y
 	uint16 last_boundary_fill_x, last_boundary_fill_y; // start of boundary-fill in previous blacking update
 	Tile *cursor_tile;
 	Tile *use_tile;
@@ -117,7 +127,7 @@ class MapWindow: public GUI_Widget {
 	uint16 map_width;
 
 	uint8 cur_x_add, cur_y_add; // pixel offset from cur_x,cur_y (set by shiftMapRelative)
-	sint32 vel_x, vel_y; // velocity of automatic map movement (pixels per second)
+	sint32 vel_x, vel_y;        // velocity of automatic map movement (pixels per second)
 
 	Common::Rect clip_rect;
 
@@ -142,13 +152,12 @@ class MapWindow: public GUI_Widget {
 
 	bool draw_brit_lens_anim;
 	bool draw_garg_lens_anim;
-// Std::vector<TileInfo> m_ViewableObjTiles; // shouldn't need this for in_town checks
+	// Std::vector<TileInfo> m_ViewableObjTiles; // shouldn't need this for in_town checks
 	Std::vector<TileInfo> m_ViewableMapTiles;
 
 	bool lighting_update_required;
 
 public:
-
 	MapWindow(Configuration *cfg, Map *m);
 	~MapWindow() override;
 
@@ -262,7 +271,7 @@ public:
 	AnimManager *get_anim_manager() {
 		return anim_manager;
 	}
-	Common::Rect *get_clip_rect()       {
+	Common::Rect *get_clip_rect() {
 		return &clip_rect;
 	}
 	Graphics::ManagedSurface *get_overlay();
@@ -278,7 +287,7 @@ public:
 	bool in_window(uint16 x, uint16 y, uint8 z);
 	bool in_dungeon_level();
 	bool in_town();
-// can put object at world location x,y?
+	// can put object at world location x,y?
 	CanDropOrMoveMsg can_drop_or_move_obj(uint16 x, uint16 y, Actor *actor, Obj *obj);
 	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Std::string msg_text = "");
 	bool can_get_obj(Actor *actor, Obj *obj);
@@ -363,8 +372,10 @@ protected:
 	void wizard_eye_stop();
 	void wizard_eye_update();
 	bool is_wizard_eye_mode() {
-		if (wizard_eye_info.moves_left != 0) return true;
-		else return false;
+		if (wizard_eye_info.moves_left != 0)
+			return true;
+		else
+			return false;
 	}
 
 	void loadRoofTiles();

@@ -31,7 +31,7 @@ namespace Scalpel {
 
 extern const int ENV_POINTS[6][3];
 
-class ScalpelSaveManager: public SaveManager {
+class ScalpelSaveManager : public SaveManager {
 public:
 	SaveMode _envMode;
 

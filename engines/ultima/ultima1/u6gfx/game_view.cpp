@@ -22,24 +22,24 @@
 
 #include "ultima/ultima1/u6gfx/game_view.h"
 #include "ultima/shared/actions/pass.h"
-#include "ultima/shared/maps/map.h"
+#include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/bitmap.h"
 #include "ultima/shared/gfx/info.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/ultima1/actions/move.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/ultima1/u1gfx/status.h"
 #include "ultima/ultima1/u1gfx/viewport_dungeon.h"
 #include "ultima/ultima1/u1gfx/viewport_map.h"
-#include "ultima/ultima1/actions/move.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/shared/engine/messages.h"
-#include "ultima/shared/gfx/bitmap.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U6Gfx {
 
 BEGIN_MESSAGE_MAP(GameView, Shared::Gfx::VisualContainer)
-	ON_MESSAGE(KeypressMsg)
+ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
@@ -162,18 +162,17 @@ void GameView::Scroll::draw(Graphics::ManagedSurface &dest, const Common::Rect &
 	// the four corners, allowing overlapping in the source if needed to increase the width
 	// Top left
 	dest.transBlitFrom(*this, Common::Rect(0, 0, r.width() / 2 + 1, r.height() / 2 + 1),
-		Common::Point(r.left, r.top), bgColor);
+	                   Common::Point(r.left, r.top), bgColor);
 	// Top right
 	dest.transBlitFrom(*this, Common::Rect(this->w - r.width() / 2, 0, this->w, r.height() / 2 + 1),
-		Common::Point(r.left + r.width() / 2, r.top), bgColor);
+	                   Common::Point(r.left + r.width() / 2, r.top), bgColor);
 	// Bottom left
 	dest.transBlitFrom(*this, Common::Rect(0, this->h - r.height() / 2, r.width() / 2 + 1, this->h),
-		Common::Point(r.left, r.top + r.height() / 2), bgColor);
+	                   Common::Point(r.left, r.top + r.height() / 2), bgColor);
 	// Bottom right
-	dest.transBlitFrom(*this, Common::Rect(this->w - r.width() / 2, this->h - r.height() / 2,
-		this->w, this->h), Common::Point(r.left + r.width() / 2, r.top + r.height() / 2), bgColor);
+	dest.transBlitFrom(*this, Common::Rect(this->w - r.width() / 2, this->h - r.height() / 2, this->w, this->h), Common::Point(r.left + r.width() / 2, r.top + r.height() / 2), bgColor);
 }
 
-} // End of namespace U1Gfx
-} // End of namespace Shared
+} // namespace U6Gfx
+} // namespace Ultima1
 } // End of namespace Ultima

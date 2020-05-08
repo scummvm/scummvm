@@ -30,8 +30,8 @@
 #ifndef IMAGE_CODECS_INDEO_INDEO_DSP_H
 #define IMAGE_CODECS_INDEO_INDEO_DSP_H
 
-#include "image/codecs/indeo/mem.h"
 #include "image/codecs/indeo/indeo.h"
+#include "image/codecs/indeo/mem.h"
 
 namespace Image {
 namespace Indeo {
@@ -49,11 +49,11 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviInverseHaar8x8(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                                const uint8 *flags);
 	static void ffIviInverseHaar8x1(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                                const uint8 *flags);
 	static void ffIviInverseHaar1x8(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                                const uint8 *flags);
 
 	/**
 	 *  one-dimensional inverse 8-point Haar transform on rows for Indeo 4
@@ -66,7 +66,7 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviRowHaar8(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                          const uint8 *flags);
 
 	/**
 	 *  one-dimensional inverse 8-point Haar transform on columns for Indeo 4
@@ -79,7 +79,7 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviColHaar8(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                          const uint8 *flags);
 
 	/**
 	 *  two-dimensional inverse Haar 4x4 transform for Indeo 4
@@ -92,7 +92,7 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviInverseHaar4x4(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                                const uint8 *flags);
 
 	/**
 	 *  one-dimensional inverse 4-point Haar transform on rows for Indeo 4
@@ -105,7 +105,7 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviRowHaar4(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                          const uint8 *flags);
 
 	/**
 	 *  one-dimensional inverse 4-point Haar transform on columns for Indeo 4
@@ -118,7 +118,7 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviColHaar4(const int32 *in, int16 *out, uint32 pitch,
-						  const uint8 *flags);
+	                          const uint8 *flags);
 
 	/**
 	 *  DC-only two-dimensional inverse Haar transform for Indeo 4.
@@ -131,7 +131,7 @@ public:
 	 *  @param[in]  blkSize		Transform block size
 	 */
 	static void ffIviDcHaar2d(const int32 *in, int16 *out, uint32 pitch,
-		int blkSize);
+	                          int blkSize);
 
 	/**
 	 *  two-dimensional inverse slant 8x8 transform
@@ -144,7 +144,7 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviInverseSlant8x8(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                                 const uint8 *flags);
 
 	/**
 	 *  two-dimensional inverse slant 4x4 transform
@@ -157,7 +157,7 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviInverseSlant4x4(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                                 const uint8 *flags);
 
 	/**
 	 *  DC-only two-dimensional inverse slant transform.
@@ -181,7 +181,7 @@ public:
 	 *  @param[in]    flags		Pointer to the array of column flags (unused here)
 	 */
 	static void ffIviRowSlant8(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                           const uint8 *flags);
 
 	/**
 	 *  inverse 1D column slant transform
@@ -194,7 +194,7 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviColSlant8(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                           const uint8 *flags);
 
 	/**
 	 *  inverse 1D row slant transform
@@ -205,7 +205,7 @@ public:
 	 *  @param[in]    flags		Pointer to the array of column flags (unused here)
 	 */
 	static void ffIviRowSlant4(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                           const uint8 *flags);
 
 	/**
 	 *  inverse 1D column slant transform
@@ -218,7 +218,7 @@ public:
 	 *						(this array must be filled by caller)
 	 */
 	static void ffIviColSlant4(const int32 *in, int16 *out, uint32 pitch,
-		const uint8 *flags);
+	                           const uint8 *flags);
 
 	/**
 	 *  DC-only inverse row slant transform

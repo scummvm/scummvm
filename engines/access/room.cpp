@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/memstream.h"
-#include "access/access.h"
-#include "access/resources.h"
 #include "access/room.h"
+#include "access/access.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
+#include "access/resources.h"
+#include "common/memstream.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -100,7 +100,7 @@ void Room::takePicture() {
 	Common::Array<Common::Rect> pictureCoords;
 	for (int i = 0; Martian::PICTURERANGE[i][0] != -1; i += 2) {
 		pictureCoords.push_back(Common::Rect(Martian::PICTURERANGE[i][0], Martian::PICTURERANGE[i + 1][0],
-			                                 Martian::PICTURERANGE[i][1], Martian::PICTURERANGE[i + 1][1]));
+		                                     Martian::PICTURERANGE[i][1], Martian::PICTURERANGE[i + 1][1]));
 	}
 
 	int result = _vm->_events->checkMouseBox1(pictureCoords);
@@ -113,7 +113,7 @@ void Room::takePicture() {
 			return;
 		}
 
-		if ((_vm->_scrollCol < 35) || (_vm->_scrollRow >= 20)){
+		if ((_vm->_scrollCol < 35) || (_vm->_scrollRow >= 20)) {
 			Common::String msg = "THAT ISN'T INTERESTING ENOUGH TO WASTE FILM ON.";
 			_vm->_scripts->doCmdPrint_v1(msg);
 			return;
@@ -246,7 +246,7 @@ void Room::doRoom() {
 					_vm->plotList();
 
 					if (((_vm->getGameID() == GType_MartianMemorandum) && (_vm->_events->_mousePos.y < 184)) ||
-						((_vm->getGameID() == GType_Amazon) && (_vm->_events->_mousePos.y < 177)))
+					    ((_vm->getGameID() == GType_Amazon) && (_vm->_events->_mousePos.y < 177)))
 						_vm->_events->setCursor(_vm->_events->_normalMouse);
 					else
 						_vm->_events->setCursor(CURSOR_ARROW);
@@ -303,7 +303,7 @@ void Room::loadRoomData(const byte *roomData) {
 
 	if (roomInfo._playFieldFile._fileNum != -1) {
 		loadPlayField(roomInfo._playFieldFile._fileNum,
-			roomInfo._playFieldFile._subfile);
+		              roomInfo._playFieldFile._subfile);
 		setupRoom();
 
 		_vm->_scaleMaxY = _playFieldHeight << 4;
@@ -336,7 +336,7 @@ void Room::loadRoomData(const byte *roomData) {
 		_vm->_screen->_startColor = roomInfo._startColor;
 		_vm->_screen->_numColors = roomInfo._numColors;
 		_vm->_screen->loadPalette(roomInfo._paletteFile._fileNum,
-			roomInfo._paletteFile._subfile);
+		                          roomInfo._paletteFile._subfile);
 	}
 
 	// Load extra cells
@@ -381,9 +381,10 @@ void Room::setupRoom() {
 		_vm->_scrollRow = 0;
 	} else {
 		_vm->_scrollY = _vm->_player->_rawPlayer.y -
-			(_vm->_player->_rawPlayer.y / 16) * 16;
+		                (_vm->_player->_rawPlayer.y / 16) * 16;
 		int yc = MAX((_vm->_player->_rawPlayer.y >> 4) -
-			(screen._vWindowHeight / 2), 0);
+		                 (screen._vWindowHeight / 2),
+		             0);
 		_vm->_scrollRow = yc;
 
 		yc = yc + screen._vWindowHeight - _playFieldHeight;
@@ -427,8 +428,7 @@ void Room::buildColumn(int playX, int screenX) {
 	if (playX < 0 || playX >= _playFieldWidth)
 		return;
 
-	const byte *pSrc = _playField + _vm->_scrollRow *
-		_playFieldWidth + playX;
+	const byte *pSrc = _playField + _vm->_scrollRow * _playFieldWidth + playX;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
 	int h = MIN(_vm->_screen->_vWindowHeight + 1, _playFieldHeight);
@@ -452,7 +452,7 @@ void Room::buildRow(int playY, int screenY) {
 		return;
 	assert(screenY <= (_vm->_screen->h - TILE_HEIGHT));
 
-	const byte *pSrc = _playField + playY *_playFieldWidth + _vm->_scrollCol;
+	const byte *pSrc = _playField + playY * _playFieldWidth + _vm->_scrollCol;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
 	int w = MIN(_vm->_screen->_vWindowWidth + 1, _playFieldWidth);
@@ -553,8 +553,7 @@ void Room::doCommands() {
 		_vm->_screen->_screenChangeFlag = false;
 		_vm->_events->_cursorExitFlag = true;
 		executeCommand(7);
-	}
-	else if (_vm->_events->_wheelUp || _vm->_events->_wheelDown) {
+	} else if (_vm->_events->_wheelUp || _vm->_events->_wheelDown) {
 		// Handle scrolling mouse wheel
 		cycleCommand(_vm->_events->_wheelUp ? 1 : -1);
 
@@ -567,7 +566,7 @@ void Room::doCommands() {
 			// Mouse in user interface area
 			for (commandId = 0; commandId < 10; ++commandId) {
 				if (_vm->_events->_mousePos.x >= _rMouse[commandId][0] &&
-					_vm->_events->_mousePos.x < _rMouse[commandId][1])
+				    _vm->_events->_mousePos.x < _rMouse[commandId][1])
 					break;
 			}
 			if (commandId < 10)
@@ -591,7 +590,7 @@ void Room::cycleCommand(int incr) {
 		command = 6;
 	else if (command == -1)
 		command = 7;
-	else  if (command == 1)
+	else if (command == 1)
 		command = (incr == 1) ? 2 : 0;
 	else if (command == 4)
 		command = (incr == 1) ? 5 : 3;
@@ -605,7 +604,7 @@ void Room::handleCommand(int commandId) {
 		_vm->_canSaveLoad = true;
 		_vm->openMainMenuDialog();
 		_vm->_canSaveLoad = false;
-	}  else if (commandId == _selectCommand) {
+	} else if (commandId == _selectCommand) {
 		_vm->_events->debounceLeft();
 		commandOff();
 	} else {
@@ -662,7 +661,7 @@ void Room::executeCommand(int commandId) {
 
 			_vm->_boxSelect = true;
 			return;
-			}
+		}
 		default:
 			// No set cursor in MM. Forcing to CROSSHAIRS
 			events.setCursor(CURSOR_CROSSHAIRS);
@@ -715,7 +714,7 @@ void Room::executeCommand(int commandId) {
 	screen.plotImage(spr, 0, Common::Point(0, 177));
 	screen.plotImage(spr, 1, Common::Point(143, 177));
 	screen.plotImage(spr, _selectCommand + 2,
-		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
+	                 Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
 
 	delete spr;
 
@@ -851,10 +850,12 @@ bool Room::codeWalls() {
 				swapOrg();
 
 			if ((player._rawYTemp >= screen._orgY1) &&
-					(player._rawYTemp <= screen._orgY2)) {
+			    (player._rawYTemp <= screen._orgY2)) {
 				jf._wallCode |= (calcLR(player._rawYTemp) - player._rawXTemp) < 0 ? 2 : 1;
 				jf._wallCode1 |= (calcLR(player._rawYTemp) -
-					(player._rawXTemp + player._playerOffset.x)) < 0 ? 2 : 1;
+				                  (player._rawXTemp + player._playerOffset.x)) < 0
+				                     ? 2
+				                     : 1;
 			}
 		}
 
@@ -863,7 +864,7 @@ bool Room::codeWalls() {
 				swapOrg();
 
 			if ((player._rawXTemp >= screen._orgX1) &&
-					(player._rawXTemp <= screen._orgX2)) {
+			    (player._rawXTemp <= screen._orgX2)) {
 				int y = screen._orgY2;
 				if (y != screen._orgY1)
 					y = calcUD(player._rawXTemp);
@@ -885,7 +886,7 @@ bool Room::codeWalls() {
 	for (uint i = 0; i < _jetFrame.size(); ++i) {
 		JetFrame &jf = _jetFrame[i];
 		if (checkCode(jf._wallCode, jf._wallCodeOld) ||
-			checkCode(jf._wallCode1, jf._wallCode1Old))
+		    checkCode(jf._wallCode1, jf._wallCode1Old))
 			return true;
 	}
 

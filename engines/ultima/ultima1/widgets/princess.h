@@ -38,14 +38,14 @@ protected:
 	 * Handles moving creatures
 	 */
 	void movement() override;
+
 public:
 	DECLARE_WIDGET(Princess)
 
 	/**
 	 * Constructor
 	 */
-	Princess(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Wench(game, map, 22, hitPoints) {}
+	Princess(Ultima1Game *game, Maps::MapBase *map, int hitPoints) : Wench(game, map, 22, hitPoints) {}
 
 	/**
 	 * Constructor

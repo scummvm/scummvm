@@ -32,7 +32,7 @@ class Configuration;
 class Font;
 
 #define NUVIE_FONT_NORMAL 0
-#define NUVIE_FONT_GARG   1
+#define NUVIE_FONT_GARG 1
 
 class FontManager {
 	Configuration *config;
@@ -43,13 +43,12 @@ class FontManager {
 	Font *conv_garg_font;
 	unsigned char *conv_font_data;
 	uint8 *conv_font_widths;
-public:
 
+public:
 	FontManager(Configuration *cfg);
 	~FontManager();
 
 	bool init(nuvie_game_t game_type);
-
 
 	Font *get_font(uint16 font_number);
 	Font *get_conv_font() {
@@ -60,7 +59,6 @@ public:
 	}
 
 protected:
-
 	bool initU6();
 	bool initWOU(Std::string filename);
 	bool initWOUSystemFont();

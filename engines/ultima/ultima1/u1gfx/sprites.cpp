@@ -21,15 +21,15 @@
  */
 
 #include "ultima/ultima1/u1gfx/sprites.h"
-#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(Sprites, Shared::TreeItem)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
 #define ANIMATE_FRAME_DELAY 200

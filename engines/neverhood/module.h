@@ -25,11 +25,11 @@
 #ifndef NEVERHOOD_MODULE_H
 #define NEVERHOOD_MODULE_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/background.h"
 #include "neverhood/entity.h"
 #include "neverhood/graphics.h"
 #include "neverhood/mouse.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/palette.h"
 #include "neverhood/screen.h"
 
@@ -51,6 +51,7 @@ public:
 	SceneType getSceneType() { return _sceneType; }
 
 	Entity *_childObject;
+
 protected:
 	Module *_parentModule;
 	bool _done;

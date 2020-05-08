@@ -26,16 +26,15 @@
 namespace Neverhood {
 
 static const uint32 kModule2600SoundList[] = {
-	0xB288D450,
-	0x90804450,
-	0x99801500,
-	0xB288D455,
-	0x93825040,
-	0
-};
+    0xB288D450,
+    0x90804450,
+    0x99801500,
+    0xB288D455,
+    0x93825040,
+    0};
 
 Module2600::Module2600(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+    : Module(vm, parentModule) {
 
 	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
@@ -47,7 +46,6 @@ Module2600::Module2600(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->addSoundList(0x40271018, kModule2600SoundList);
 	_vm->_soundMan->setSoundListParams(kModule2600SoundList, true, 50, 600, 5, 150);
 	_vm->_soundMan->playTwoSounds(0x40271018, 0x41861371, 0x43A2507F, 0);
-
 }
 
 Module2600::~Module2600() {
@@ -193,8 +191,7 @@ void Module2600::updateScene() {
 					createScene(9999, -1);
 				else
 					createScene(1006, -1);
-			}
-			else if (_moduleResult == 1)
+			} else if (_moduleResult == 1)
 				createScene(1, 2);
 			break;
 		case 7:
@@ -225,7 +222,7 @@ void Module2600::updateScene() {
 }
 
 Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isBusy(false) {
+    : Scene(vm, parentModule), _isBusy(false) {
 
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&Scene2609::handleMessage);

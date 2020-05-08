@@ -21,16 +21,15 @@
  */
 
 #include "ultima/shared/gfx/visual_surface.h"
-#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/gfx/font.h"
 
 namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-VisualSurface::VisualSurface(const Graphics::ManagedSurface &src, const Rect &bounds, GameBase *game) :
-		Graphics::ManagedSurface(src), _bounds(bounds), _textColor(255), _bgColor(0) {
+VisualSurface::VisualSurface(const Graphics::ManagedSurface &src, const Rect &bounds, GameBase *game) : Graphics::ManagedSurface(src), _bounds(bounds), _textColor(255), _bgColor(0) {
 	Shared::Game *sharedGame = dynamic_cast<Shared::Game *>(game);
 	if (sharedGame) {
 		_textColor = sharedGame->_textColor;

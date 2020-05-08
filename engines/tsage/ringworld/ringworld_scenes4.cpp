@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "tsage/ringworld/ringworld_scenes4.h"
+#include "common/config-manager.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -158,10 +158,10 @@ void Scene3700::Viewer::draw() {
 		GfxSurface img = v.getFrame(_frameList[idx]);
 		Rect destRect = img.getBounds();
 		destRect.resize(img, (_position.x - g_globals->_sceneOffset.x),
-			(_position.y  - g_globals->_sceneOffset.y - _yDiff), _percentList[idx]);
+		                (_position.y - g_globals->_sceneOffset.y - _yDiff), _percentList[idx]);
 
 		destRect.translate(-g_globals->_sceneManager._scene->_sceneBounds.left,
-			-g_globals->_sceneManager._scene->_sceneBounds.top);
+		                   -g_globals->_sceneManager._scene->_sceneBounds.top);
 
 		g_globals->gfxManager().copyFrom(img, destRect, priorityRegion);
 	}

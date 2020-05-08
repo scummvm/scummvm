@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/raw_audio_sample.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 RawAudioSample::RawAudioSample(const uint8 *buffer_, uint32 size, uint32 rate,
                                bool signedData, bool stereo)
-	: AudioSample(buffer_, size, 8, stereo), _signedData(signedData) {
+    : AudioSample(buffer_, size, 8, stereo), _signedData(signedData) {
 	_sampleRate = rate;
 	_frameSize = 512;
 	_decompressorSize = sizeof(RawDecompData);
@@ -51,7 +51,8 @@ void RawAudioSample::rewind(void *DecompData) const {
 uint32 RawAudioSample::decompressFrame(void *DecompData, void *samples) const {
 	RawDecompData *decomp = reinterpret_cast<RawDecompData *>(DecompData);
 
-	if (decomp->_pos == _bufferSize) return 0;
+	if (decomp->_pos == _bufferSize)
+		return 0;
 
 	uint32 count = _frameSize;
 	if (decomp->_pos + count > _bufferSize)

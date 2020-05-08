@@ -51,12 +51,12 @@ struct backgroundIncrustStruct {
 
 extern backgroundIncrustStruct backgroundIncrustHead;
 
-void resetBackgroundIncrustList(backgroundIncrustStruct * pHead);
-backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx, int16 param2, backgroundIncrustStruct * pHead, int16 scriptNumber, int16 scriptOverlay, int16 backgroundIdx, int16 param4);
-void regenerateBackgroundIncrust(backgroundIncrustStruct * pHead);
-void freeBackgroundIncrustList(backgroundIncrustStruct * pHead);
-void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHead);
-void unmergeBackgroundIncrust(backgroundIncrustStruct * pHead, int ovl, int idx);
+void resetBackgroundIncrustList(backgroundIncrustStruct *pHead);
+backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx, int16 param2, backgroundIncrustStruct *pHead, int16 scriptNumber, int16 scriptOverlay, int16 backgroundIdx, int16 param4);
+void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead);
+void freeBackgroundIncrustList(backgroundIncrustStruct *pHead);
+void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct *pHead);
+void unmergeBackgroundIncrust(backgroundIncrustStruct *pHead, int ovl, int idx);
 
 } // End of namespace Cruise
 

@@ -38,7 +38,6 @@ static const unsigned int DEFAULT_WINDOWED_SINC_MAX_DOWNSAMPLE_FACTOR = 256;
 // so oversampling factor of 128 should be sufficient to achieve the DEFAULT_DB_SNR with linear interpolation.
 static const unsigned int DEFAULT_WINDOWED_SINC_MAX_UPSAMPLE_FACTOR = DEFAULT_WINDOWED_SINC_MAX_DOWNSAMPLE_FACTOR / 2;
 
-
 enum Quality {
 	// Use when the speed is more important than the audio quality.
 	FASTEST,

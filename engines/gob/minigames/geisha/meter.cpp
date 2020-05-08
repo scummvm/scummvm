@@ -31,11 +31,9 @@ namespace Gob {
 namespace Geisha {
 
 Meter::Meter(int16 x, int16 y, int16 width, int16 height, uint8 frontColor,
-             uint8 backColor, int32 maxValue, Direction direction) :
-	_x(x), _y(y), _width(width), _height(height), _frontColor(frontColor),
-	_backColor(backColor), _value(0), _maxValue(maxValue), _direction(direction),
-	_needUpdate(true), _surface(0) {
-
+             uint8 backColor, int32 maxValue, Direction direction) : _x(x), _y(y), _width(width), _height(height), _frontColor(frontColor),
+                                                                     _backColor(backColor), _value(0), _maxValue(maxValue), _direction(direction),
+                                                                     _needUpdate(true), _surface(0) {
 }
 
 Meter::~Meter() {
@@ -103,9 +101,9 @@ void Meter::draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bo
 
 	update();
 
-	left   = CLIP<int16>(_x              , 0, dest.getWidth () - 1);
-	top    = CLIP<int16>(_y              , 0, dest.getHeight() - 1);
-	right  = CLIP<int16>(_x + _width  - 1, 0, dest.getWidth () - 1);
+	left = CLIP<int16>(_x, 0, dest.getWidth() - 1);
+	top = CLIP<int16>(_y, 0, dest.getHeight() - 1);
+	right = CLIP<int16>(_x + _width - 1, 0, dest.getWidth() - 1);
 	bottom = CLIP<int16>(_y + _height - 1, 0, dest.getHeight() - 1);
 
 	dest.blit(*_surface, left - _x, top - _y, _width, _height, left, top);
@@ -119,14 +117,14 @@ void Meter::update() {
 
 	_surface->fill(_backColor);
 
-	int32 n = (int32)floor((((float) _width) / _maxValue * _value) + 0.5);
+	int32 n = (int32)floor((((float)_width) / _maxValue * _value) + 0.5);
 	if (n <= 0)
 		return;
 
 	if (_direction == kFillToLeft)
 		_surface->fillRect(_width - n, 0, _width - 1, _height - 1, _frontColor);
 	else
-		_surface->fillRect(0         , 0, n - 1, _height - 1, _frontColor);
+		_surface->fillRect(0, 0, n - 1, _height - 1, _frontColor);
 }
 
 } // End of namespace Geisha

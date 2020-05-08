@@ -21,7 +21,7 @@
  * Handles timers.
  */
 
-#ifndef TINSEL_TIMERS_H	// prevent multiple includes
+#ifndef TINSEL_TIMERS_H // prevent multiple includes
 #define TINSEL_TIMERS_H
 
 #include "common/scummsys.h"

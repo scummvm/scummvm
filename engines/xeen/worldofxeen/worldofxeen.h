@@ -23,8 +23,8 @@
 #ifndef XEEN_WORLDOFXEEN_WORLDOFXEEN_H
 #define XEEN_WORLDOFXEEN_WORLDOFXEEN_H
 
-#include "xeen/xeen.h"
 #include "xeen/worldofxeen/worldofxeen_cutscenes.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
@@ -34,7 +34,7 @@ namespace WorldOfXeen {
  * Clouds of Xeen, Dark Side of Xeen, and Worlds of Xeen specific
  * game code
  */
-class WorldOfXeenEngine: public XeenEngine, public WorldOfXeenCutscenes {
+class WorldOfXeenEngine : public XeenEngine, public WorldOfXeenCutscenes {
 protected:
 	/**
 	 * Show the starting sequence/intro
@@ -50,6 +50,7 @@ protected:
 	 * Death cutscene
 	 */
 	void death() override;
+
 public:
 	WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	~WorldOfXeenEngine() override {}

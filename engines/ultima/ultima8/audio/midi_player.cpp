@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima8/audio/midi_player.h"
-#include "ultima/ultima8/ultima8.h"
 #include "audio/midiparser.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -95,9 +95,8 @@ void MidiPlayer::xmidiCallback(byte eventData, void *data) {
 	if (data == nullptr)
 		return;
 
-	*static_cast<byte*>(data) = eventData;
+	*static_cast<byte *>(data) = eventData;
 }
-
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

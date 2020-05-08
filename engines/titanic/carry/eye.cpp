@@ -31,11 +31,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEye, CHeadPiece)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(PETGainedObjectMsg)
-	ON_MESSAGE(PassOnDragStartMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(PassOnDragStartMsg)
 END_MESSAGE_MAP()
 
 CEye::CEye() : CHeadPiece(), _eyeFlag(false) {
@@ -52,7 +52,6 @@ void CEye::load(SimpleFile *file) {
 	_eyeFlag = file->readNumber();
 	CHeadPiece::load(file);
 }
-
 
 bool CEye::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	CHeadSlot *slot = dynamic_cast<CHeadSlot *>(msg->_other);
@@ -112,7 +111,7 @@ bool CEye::ActMsg(CActMsg *msg) {
 
 		CActMsg actMsg("Eye Removed");
 		actMsg.execute("1stClassState", CLight::_type,
-			MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
+		               MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
 	} else {
 		_eyeFlag = false;
 

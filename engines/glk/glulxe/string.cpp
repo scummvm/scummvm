@@ -150,7 +150,6 @@ void Glulxe::stream_num(int val, int inmiddle, int charnum) {
 
 	default:
 		break;
-
 	}
 
 	if (inmiddle) {
@@ -362,8 +361,7 @@ void Glulxe::stream_string(uint addr, int inmiddle, int bitnum) {
 						} else {
 							fatal_error("Unknown object while decoding string indirect reference.");
 						}
-					}
-					break;
+					} break;
 					default:
 						fatal_error("Unknown entity in string decoding (cached).");
 						break;
@@ -526,8 +524,7 @@ void Glulxe::stream_string(uint addr, int inmiddle, int bitnum) {
 						} else {
 							fatal_error("Unknown object while decoding string indirect reference.");
 						}
-					}
-					break;
+					} break;
 					default:
 						fatal_error("Unknown entity in string decoding.");
 						break;
@@ -661,7 +658,7 @@ void Glulxe::buildcache(cacheblock_t *cablist, uint nodeaddr, int depth, int mas
 	}
 
 	if (type == 0) {
-		uint leftaddr  = Mem4(nodeaddr + 1);
+		uint leftaddr = Mem4(nodeaddr + 1);
 		uint rightaddr = Mem4(nodeaddr + 5);
 		buildcache(cablist, leftaddr, depth + 1, mask);
 		buildcache(cablist, rightaddr, depth + 1, (mask | (1 << depth)));
@@ -749,7 +746,8 @@ char *Glulxe::make_temp_string(uint addr) {
 		fatal_error("String argument to a Glk call must be unencoded.");
 	addr++;
 
-	for (addr2 = addr; Mem1(addr2); addr2++) { };
+	for (addr2 = addr; Mem1(addr2); addr2++) {
+	};
 	len = (addr2 - addr);
 	if (len < STATIC_TEMP_BUFSIZE) {
 		res = temp_buf;
@@ -776,7 +774,8 @@ uint32 *Glulxe::make_temp_ustring(uint addr) {
 		fatal_error("Ustring argument to a Glk call must be unencoded.");
 	addr += 4;
 
-	for (addr2 = addr; Mem4(addr2); addr2 += 4) { };
+	for (addr2 = addr; Mem4(addr2); addr2 += 4) {
+	};
 	len = (addr2 - addr) / 4;
 	if ((len + 1) * 4 < STATIC_TEMP_BUFSIZE) {
 		res = (uint32 *)temp_buf;

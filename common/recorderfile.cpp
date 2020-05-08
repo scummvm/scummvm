@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/system.h"
-#include "gui/EventRecorder.h"
-#include "common/md5.h"
 #include "common/recorderfile.h"
-#include "common/savefile.h"
 #include "common/bufferedstream.h"
-#include "graphics/thumbnail.h"
-#include "graphics/surface.h"
+#include "common/md5.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "graphics/scaler.h"
+#include "graphics/surface.h"
+#include "graphics/thumbnail.h"
+#include "gui/EventRecorder.h"
 
 #define RECORD_VERSION 1
 
@@ -101,7 +101,7 @@ void PlaybackFile::close() {
 		delete _screenshotsFile;
 		_screenshotsFile = NULL;
 	}
-	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
+	for (HashMap<String, SaveFileBuffer>::iterator i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
 		free(i->_value.buffer);
 	}
 	_header.saveFiles.clear();
@@ -137,12 +137,11 @@ bool PlaybackFile::checkPlaybackFileVersion() {
 	return true;
 }
 
-
 String PlaybackFile::readString(int len) {
 	String result;
 	char buf[50];
 	int readSize = 49;
-	while (len > 0)	{
+	while (len > 0) {
 		if (len <= 49) {
 			readSize = len;
 		}
@@ -257,7 +256,7 @@ bool PlaybackFile::processChunk(ChunkHeader &nextChunk) {
 		}
 		break;
 	default:
-			return false;
+		return false;
 	}
 	return true;
 }
@@ -295,7 +294,6 @@ bool PlaybackFile::processSettingsRecord() {
 	return true;
 }
 
-
 bool PlaybackFile::readSaveRecord() {
 	ChunkHeader fileNameChunk;
 	if (!readChunkHeader(fileNameChunk) || (fileNameChunk.id != kSaveRecordNameTag)) {
@@ -316,8 +314,6 @@ bool PlaybackFile::readSaveRecord() {
 	debugC(1, kDebugLevelEventRec, "playback:action=\"Load save file\" filename=%s len=%d", fileName.c_str(), buf.size);
 	return true;
 }
-
-
 
 RecorderEvent PlaybackFile::getNextEvent() {
 	assert(_mode == kRead);
@@ -355,7 +351,7 @@ bool PlaybackFile::isEventsBufferEmpty() {
 	return (uint32)_tmpPlaybackFile.pos() == _eventsSize;
 }
 
-void PlaybackFile::readEvent(RecorderEvent& event) {
+void PlaybackFile::readEvent(RecorderEvent &event) {
 	event.recordedtype = (RecorderEventType)_tmpPlaybackFile.readByte();
 	switch (event.recordedtype) {
 	case kRecorderEventTypeTimer:
@@ -524,7 +520,7 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 		// fallthrough intended
 	case kRecorderEventTypeNormal:
 		_tmpRecordFile.writeUint32LE((uint32)event.type);
-		switch(event.type) {
+		switch (event.type) {
 		case EVENT_KEYDOWN:
 		case EVENT_KEYUP:
 			_tmpRecordFile.writeUint32LE(event.time);
@@ -601,8 +597,7 @@ bool PlaybackFile::skipToNextScreenshot() {
 		}
 		if (id == kScreenShotTag) {
 			return true;
-		}
-		else {
+		} else {
 			uint32 size = _readStream->readUint32LE();
 			_readStream->skip(size);
 		}
@@ -665,8 +660,7 @@ void PlaybackFile::skipHeader() {
 		if ((id == kScreenShotTag) || (id == kEventTag) || (id == kMD5Tag)) {
 			_readStream->seek(-4, SEEK_CUR);
 			return;
-		}
-		else {
+		} else {
 			uint32 size = _readStream->readUint32LE();
 			_readStream->skip(size);
 		}
@@ -684,7 +678,7 @@ void PlaybackFile::addSaveFile(const String &fileName, InSaveFile *saveStream) {
 
 void PlaybackFile::writeSaveFilesSection() {
 	uint size = 0;
-	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
+	for (HashMap<String, SaveFileBuffer>::iterator i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
 		size += i->_value.size + i->_key.size() + 24;
 	}
 	if (size == 0) {
@@ -692,7 +686,7 @@ void PlaybackFile::writeSaveFilesSection() {
 	}
 	_writeStream->writeSint32LE(kSaveTag);
 	_writeStream->writeSint32LE(size);
-	for (HashMap<String, SaveFileBuffer>::iterator  i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
+	for (HashMap<String, SaveFileBuffer>::iterator i = _header.saveFiles.begin(); i != _header.saveFiles.end(); ++i) {
 		_writeStream->writeSint32LE(kSaveRecordTag);
 		_writeStream->writeSint32LE(i->_key.size() + i->_value.size + 16);
 		_writeStream->writeSint32LE(kSaveRecordNameTag);
@@ -703,7 +697,6 @@ void PlaybackFile::writeSaveFilesSection() {
 		_writeStream->write(i->_value.buffer, i->_value.size);
 	}
 }
-
 
 void PlaybackFile::checkRecordedMD5() {
 	uint8 currentMD5[16];
@@ -725,5 +718,4 @@ void PlaybackFile::checkRecordedMD5() {
 	screen.free();
 }
 
-
-}
+} // namespace Common

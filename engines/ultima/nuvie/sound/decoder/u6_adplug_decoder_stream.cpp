@@ -17,12 +17,12 @@
  *
  */
 
+#include "ultima/nuvie/sound/decoder/u6_adplug_decoder_stream.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/sound/decoder/u6_adplug_decoder_stream.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -54,7 +54,7 @@ int U6AdPlugDecoderStream::readBuffer(sint16 *buffer, const int numSamples) {
 
 	int len = numSamples / 2;
 
-//DEBUG(0, LEVEL_INFORMATIONAL, "Get here. numSamples = %d player refreshrate = %f refresh_count = %d\n", numSamples, player->getrefresh(), (int)(opl->getRate() / player->getrefresh()));
+	//DEBUG(0, LEVEL_INFORMATIONAL, "Get here. numSamples = %d player refreshrate = %f refresh_count = %d\n", numSamples, player->getrefresh(), (int)(opl->getRate() / player->getrefresh()));
 
 	if (samples_left > 0) {
 		if (samples_left > len) {

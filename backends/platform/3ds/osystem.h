@@ -25,15 +25,15 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-#include "backends/mutex/mutex.h"
-#include "backends/base-backend.h"
-#include "graphics/palette.h"
-#include "base/main.h"
 #include "audio/mixer_intern.h"
+#include "backends/base-backend.h"
 #include "backends/graphics/graphics.h"
+#include "backends/mutex/mutex.h"
 #include "backends/platform/3ds/sprite.h"
-#include "common/rect.h"
+#include "base/main.h"
 #include "common/queue.h"
+#include "common/rect.h"
+#include "graphics/palette.h"
 
 #define TICKS_PER_MSEC 268123
 
@@ -63,7 +63,6 @@ enum TransactionState {
 	kTransactionRollback = 2
 };
 
-
 struct TransactionDetails {
 	bool formatChanged, modeChanged;
 
@@ -89,7 +88,6 @@ struct GfxState {
 		gfxModeID = CLUT8;
 	}
 };
-
 
 class OSystem_3DS : public EventsBaseBackend, public PaletteManager, public Common::EventObserver {
 public:
@@ -142,8 +140,8 @@ public:
 
 	void beginGFXTransaction();
 	OSystem::TransactionError endGFXTransaction();
-	int16 getHeight(){ return _gameHeight; }
-	int16 getWidth(){ return _gameWidth; }
+	int16 getHeight() { return _gameHeight; }
+	int16 getWidth() { return _gameWidth; }
 	float getScaleRatio() const;
 	void setPalette(const byte *colors, uint start, uint num);
 	void grabPalette(byte *colors, uint start, uint num) const;
@@ -245,8 +243,8 @@ private:
 	int _modelviewLocation;
 	C3D_Mtx _projectionTop;
 	C3D_Mtx _projectionBottom;
-	C3D_RenderTarget* _renderTargetTop;
-	C3D_RenderTarget* _renderTargetBottom;
+	C3D_RenderTarget *_renderTargetTop;
+	C3D_RenderTarget *_renderTargetBottom;
 
 	// Focus
 	Common::Rect _focusRect;

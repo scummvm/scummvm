@@ -23,8 +23,8 @@
 #ifndef DS_FILESYSTEM_FACTORY_H
 #define DS_FILESYSTEM_FACTORY_H
 
-#include "common/singleton.h"
 #include "backends/fs/fs-factory.h"
+#include "common/singleton.h"
 
 /**
  * Creates DSFilesystemNode objects.

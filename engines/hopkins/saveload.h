@@ -26,8 +26,8 @@
 #include "hopkins/globals.h"
 #include "hopkins/graphics.h"
 
-#include "common/scummsys.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/str.h"
 
@@ -53,6 +53,7 @@ private:
 	void createThumbnail(Graphics::Surface *s);
 	void syncSavegameData(Common::Serializer &s, int version);
 	void syncCharacterLocation(Common::Serializer &s, CharacterLocation &item);
+
 public:
 	SaveLoadManager(HopkinsEngine *vm);
 

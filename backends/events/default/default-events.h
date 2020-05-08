@@ -32,8 +32,7 @@ class Keymapper;
 class VirtualKeyboard;
 #endif
 class VirtualMouse;
-}
-
+} // namespace Common
 
 class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 #ifdef ENABLE_VKEYBD

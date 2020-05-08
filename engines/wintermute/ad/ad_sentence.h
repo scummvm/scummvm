@@ -29,12 +29,11 @@
 #ifndef WINTERMUTE_ADSENTENCE_H
 #define WINTERMUTE_ADSENTENCE_H
 
-
-#include "engines/wintermute/base/base.h"
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/math/rect32.h"
-#include "engines/wintermute/dctypes.h"    // Added by ClassView
 #include "common/rect.h"
+#include "engines/wintermute/base/base.h"
+#include "engines/wintermute/dctypes.h" // Added by ClassView
+#include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 class AdTalkDef;
@@ -77,7 +76,6 @@ public:
 private:
 	char *_tempStance;
 	char *getStance(int stance);
-
 };
 
 } // End of namespace Wintermute

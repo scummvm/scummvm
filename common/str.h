@@ -52,15 +52,15 @@ public:
 
 	static void releaseMemoryPoolMutex();
 
-	typedef char          value_type;
+	typedef char value_type;
 	/**
 	 * Unsigned version of the underlying type. This can be used to cast
 	 * individual string characters to bigger integer types without sign
 	 * extension happening.
 	 */
 	typedef unsigned char unsigned_type;
-	typedef char *        iterator;
-	typedef const char *  const_iterator;
+	typedef char *iterator;
+	typedef const char *const_iterator;
 
 protected:
 	/**
@@ -87,8 +87,7 @@ protected:
 	 * Pointer to the actual string storage. Either points to _storage,
 	 * or to a block allocated on the heap via malloc.
 	 */
-	char  *_str;
-
+	char *_str;
 
 	union {
 		/**
@@ -101,7 +100,7 @@ protected:
 		 */
 		struct {
 			mutable int *_refCount;
-			uint32       _capacity;
+			uint32 _capacity;
 		} _extern;
 	};
 
@@ -154,8 +153,8 @@ public:
 
 	bool equals(const char *x) const;
 	bool equalsIgnoreCase(const char *x) const;
-	int compareTo(const char *x) const;             // strcmp clone
-	int compareToIgnoreCase(const char *x) const;   // stricmp clone
+	int compareTo(const char *x) const;           // strcmp clone
+	int compareToIgnoreCase(const char *x) const; // stricmp clone
 	int compareDictionary(const String &x) const;
 	int compareDictionary(const char *x) const;
 
@@ -204,13 +203,12 @@ public:
 	bool matchString(const char *pat, bool ignoreCase = false, bool pathMode = false) const;
 	bool matchString(const String &pat, bool ignoreCase = false, bool pathMode = false) const;
 
-
 	inline const char *c_str() const { return _str; }
-	inline uint size() const         { return _size; }
+	inline uint size() const { return _size; }
 
 	inline bool empty() const { return (_size == 0); }
-	char firstChar() const    { return (_size > 0) ? _str[0] : 0; }
-	char lastChar() const     { return (_size > 0) ? _str[_size - 1] : 0; }
+	char firstChar() const { return (_size > 0) ? _str[0] : 0; }
+	char lastChar() const { return (_size > 0) ? _str[_size - 1] : 0; }
 
 	char operator[](int idx) const {
 		assert(_str && idx >= 0 && idx < (int)_size);
@@ -288,11 +286,11 @@ public:
 	// Replace _str[posOri, posOri + countOri) with
 	// str._str[posDest, posDest + countDest)
 	void replace(uint32 posOri, uint32 countOri, const String &str,
-					uint32 posDest, uint32 countDest);
+	             uint32 posDest, uint32 countDest);
 	// Replace _str[posOri, posOri + countOri) with
 	// str[posDest, posDest + countDest)
 	void replace(uint32 posOri, uint32 countOri, const char *str,
-					uint32 posDest, uint32 countDest);
+	             uint32 posDest, uint32 countDest);
 	/**@}*/
 
 	/**
@@ -365,7 +363,6 @@ public:
 	String substr(size_t pos = 0, size_t len = npos) const;
 
 public:
-
 	iterator begin() {
 		// Since the user could potentially
 		// change the string via the returned
@@ -420,7 +417,6 @@ extern char *ltrim(char *t);
 extern char *rtrim(char *t);
 extern char *trim(char *t);
 
-
 /**
  * Returns the last component of a given path.
  *
@@ -448,7 +444,6 @@ String lastPathComponent(const String &path, const char sep);
  * @return      the normalized path
  */
 String normalizePath(const String &path, const char sep);
-
 
 /**
  * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
@@ -547,7 +542,7 @@ size_t strnlen(const char *src, size_t maxSize);
  * Note: It is *NOT* safe to do anything with the return value other than directly
  * copying or printing it.
  */
-#define tag2str(x)	Common::tag2string(x).c_str()
+#define tag2str(x) Common::tag2string(x).c_str()
 
 /**
  * Converts string with all non-printable characters properly escaped

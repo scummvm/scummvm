@@ -23,7 +23,6 @@
 #ifndef SKY_AUTOROUTE_H
 #define SKY_AUTOROUTE_H
 
-
 #include "common/scummsys.h"
 
 namespace Sky {
@@ -37,6 +36,7 @@ public:
 	AutoRoute(Grid *pGrid, SkyCompact *compact);
 	~AutoRoute();
 	uint16 autoRoute(Compact *cpt);
+
 private:
 	uint16 checkBlock(uint16 *blockPos);
 	void clipCoordX(uint16 x, uint8 &blkX, int16 &initX);

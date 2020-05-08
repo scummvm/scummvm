@@ -26,7 +26,8 @@
 
 #include "common/system.h"
 
-#define SEQOP(n, x) { n, &SeqPlayer::x, #x }
+#define SEQOP(n, x) \
+	{ n, &SeqPlayer::x, #x }
 
 namespace Kyra {
 
@@ -135,7 +136,8 @@ void SeqPlayer::s1_wsaPlayFrame() {
 	uint8 wsaObj = *_seqData++;
 	assert(wsaObj < ARRAYSIZE(_seqMovies));
 	int16 frame = (int8)*_seqData++;
-	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData); _seqData += 2;
+	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	_seqMovies[wsaObj].pos.y = *_seqData++;
 	assert(_seqMovies[wsaObj].movie);
 	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, 0, 0, 0);
@@ -167,13 +169,15 @@ void SeqPlayer::s1_wsaPlayPrevFrame() {
 
 void SeqPlayer::s1_drawShape() {
 	uint8 shapeNum = *_seqData++;
-	int x = READ_LE_UINT16(_seqData); _seqData += 2;
+	int x = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	int y = *_seqData++;
 	_screen->drawShape(2, _handShapes[shapeNum], x, y, 0, 0, 0);
 }
 
 void SeqPlayer::s1_waitTicks() {
-	uint16 ticks = READ_LE_UINT16(_seqData); _seqData += 2;
+	uint16 ticks = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	_vm->delay(ticks * _vm->tickLength());
 }
 
@@ -208,7 +212,8 @@ void SeqPlayer::s1_loopInit() {
 
 void SeqPlayer::s1_loopInc() {
 	uint8 seqLoop = *_seqData++;
-	uint16 seqLoopCount = READ_LE_UINT16(_seqData); _seqData += 2;
+	uint16 seqLoopCount = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	if (_seqLoopTable[seqLoop].count == 0xFFFF) {
 		_seqLoopTable[seqLoop].count = seqLoopCount - 1;
 		_seqData = _seqLoopTable[seqLoop].ptr;
@@ -253,7 +258,7 @@ void SeqPlayer::s1_fadeToBlack() {
 }
 
 void SeqPlayer::s1_printText() {
-	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
+	static const uint8 colorMap[] = {0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0};
 	uint8 txt = *_seqData++;
 
 	if (!_vm->textEnabled())
@@ -279,7 +284,8 @@ void SeqPlayer::s1_printText() {
 
 void SeqPlayer::s1_printTalkText() {
 	uint8 txt = *_seqData++;
-	int x = READ_LE_UINT16(_seqData); _seqData += 2;
+	int x = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	int y = *_seqData++;
 	uint8 fillColor = *_seqData++;
 
@@ -337,7 +343,7 @@ void SeqPlayer::s1_copyRegion() {
 }
 
 void SeqPlayer::s1_copyRegionSpecial() {
-	static const uint8 colorMap[] = { 0, 0, 0, 0, 0, 12, 12, 0, 0, 0, 0, 0 };
+	static const uint8 colorMap[] = {0, 0, 0, 0, 0, 12, 12, 0, 0, 0, 0, 0};
 	const char *copyStr = 0;
 	if (!_vm->gameFlags().isTalkie)
 		copyStr = "Copyright (c) 1992 Westwood Studios";
@@ -382,7 +388,7 @@ void SeqPlayer::s1_copyRegionSpecial() {
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
 		_screen->printText(copyStr, x, y, 0xF, 0xC);
-		} break;
+	} break;
 	case 5:
 		_screen->_curPage = 2;
 		break;
@@ -392,9 +398,11 @@ void SeqPlayer::s1_copyRegionSpecial() {
 }
 
 void SeqPlayer::s1_fillRect() {
-	int x1 = READ_LE_UINT16(_seqData); _seqData += 2;
+	int x1 = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	int y1 = *_seqData++;
-	int x2 = READ_LE_UINT16(_seqData); _seqData += 2;
+	int x2 = READ_LE_UINT16(_seqData);
+	_seqData += 2;
 	int y2 = *_seqData++;
 	uint8 color = *_seqData++;
 	uint8 page = *_seqData++;
@@ -478,95 +486,93 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	assert(seqData);
 
 	static const SeqEntry floppySeqProcs[] = {
-		// 0x00
-		SEQOP(3, s1_wsaOpen),
-		SEQOP(2, s1_wsaClose),
-		SEQOP(6, s1_wsaPlayFrame),
-		SEQOP(2, s1_wsaPlayNextFrame),
-		// 0x04
-		SEQOP(2, s1_wsaPlayPrevFrame),
-		SEQOP(5, s1_drawShape),
-		SEQOP(3, s1_waitTicks),
-		SEQOP(3, s1_copyWaitTicks),
-		// 0x08
-		SEQOP(1, s1_shuffleScreen),
-		SEQOP(1, s1_copyView),
-		SEQOP(2, s1_loopInit),
-		SEQOP(4, s1_loopInc),
-		// 0x0C
-		SEQOP(2, s1_loadPalette),
-		SEQOP(2, s1_loadBitmap),
-		SEQOP(1, s1_fadeToBlack),
-		SEQOP(2, s1_printText),
-		// 0x10
-		SEQOP(6, s1_printTalkText),
-		SEQOP(1, s1_restoreTalkText),
-		SEQOP(1, s1_clearCurrentScreen),
-		SEQOP(1, s1_break),
-		// 0x14
-		SEQOP(1, s1_fadeFromBlack),
-		SEQOP(3, s1_copyRegion),
-		SEQOP(2, s1_copyRegionSpecial),
-		SEQOP(9, s1_fillRect),
-		// 0x18
-		SEQOP(2, s1_playEffect),
-		SEQOP(2, s1_playTrack),
-		SEQOP(1, s1_allocTempBuffer),
-		SEQOP(1, s1_textDisplayEnable),
-		// 0x1C
-		SEQOP(1, s1_textDisplayDisable),
-		SEQOP(1, s1_endOfScript)
-	};
+	    // 0x00
+	    SEQOP(3, s1_wsaOpen),
+	    SEQOP(2, s1_wsaClose),
+	    SEQOP(6, s1_wsaPlayFrame),
+	    SEQOP(2, s1_wsaPlayNextFrame),
+	    // 0x04
+	    SEQOP(2, s1_wsaPlayPrevFrame),
+	    SEQOP(5, s1_drawShape),
+	    SEQOP(3, s1_waitTicks),
+	    SEQOP(3, s1_copyWaitTicks),
+	    // 0x08
+	    SEQOP(1, s1_shuffleScreen),
+	    SEQOP(1, s1_copyView),
+	    SEQOP(2, s1_loopInit),
+	    SEQOP(4, s1_loopInc),
+	    // 0x0C
+	    SEQOP(2, s1_loadPalette),
+	    SEQOP(2, s1_loadBitmap),
+	    SEQOP(1, s1_fadeToBlack),
+	    SEQOP(2, s1_printText),
+	    // 0x10
+	    SEQOP(6, s1_printTalkText),
+	    SEQOP(1, s1_restoreTalkText),
+	    SEQOP(1, s1_clearCurrentScreen),
+	    SEQOP(1, s1_break),
+	    // 0x14
+	    SEQOP(1, s1_fadeFromBlack),
+	    SEQOP(3, s1_copyRegion),
+	    SEQOP(2, s1_copyRegionSpecial),
+	    SEQOP(9, s1_fillRect),
+	    // 0x18
+	    SEQOP(2, s1_playEffect),
+	    SEQOP(2, s1_playTrack),
+	    SEQOP(1, s1_allocTempBuffer),
+	    SEQOP(1, s1_textDisplayEnable),
+	    // 0x1C
+	    SEQOP(1, s1_textDisplayDisable),
+	    SEQOP(1, s1_endOfScript)};
 
 	static const SeqEntry cdromSeqProcs[] = {
-		// 0x00
-		SEQOP(3, s1_wsaOpen),
-		SEQOP(2, s1_wsaClose),
-		SEQOP(6, s1_wsaPlayFrame),
-		SEQOP(2, s1_wsaPlayNextFrame),
-		// 0x04
-		SEQOP(2, s1_wsaPlayPrevFrame),
-		SEQOP(5, s1_drawShape),
-		SEQOP(3, s1_waitTicks),
-		SEQOP(3, s1_waitTicks),
-		// 0x08
-		SEQOP(3, s1_copyWaitTicks),
-		SEQOP(1, s1_shuffleScreen),
-		SEQOP(1, s1_copyView),
-		SEQOP(2, s1_loopInit),
-		// 0x0C
-		SEQOP(4, s1_loopInc),
-		SEQOP(4, s1_loopInc),
-		SEQOP(2, s1_skip),
-		SEQOP(2, s1_loadPalette),
-		// 0x10
-		SEQOP(2, s1_loadBitmap),
-		SEQOP(1, s1_fadeToBlack),
-		SEQOP(2, s1_printText),
-		SEQOP(6, s1_printTalkText),
-		// 0x14
-		SEQOP(1, s1_restoreTalkText),
-		SEQOP(1, s1_clearCurrentScreen),
-		SEQOP(1, s1_break),
-		SEQOP(1, s1_fadeFromBlack),
-		// 0x18
-		SEQOP(3, s1_copyRegion),
-		SEQOP(2, s1_copyRegionSpecial),
-		SEQOP(9, s1_fillRect),
-		SEQOP(2, s1_playEffect),
-		// 0x1C
-		SEQOP(2, s1_playTrack),
-		SEQOP(1, s1_allocTempBuffer),
-		SEQOP(1, s1_textDisplayEnable),
-		SEQOP(1, s1_textDisplayDisable),
-		// 0x20
-		SEQOP(1, s1_endOfScript),
-		SEQOP(1, s1_loadIntroVRM),
-		SEQOP(2, s1_playVocFile),
-		SEQOP(1, s1_miscUnk3),
-		// 0x24
-		SEQOP(2, s1_prefetchVocFile)
-	};
+	    // 0x00
+	    SEQOP(3, s1_wsaOpen),
+	    SEQOP(2, s1_wsaClose),
+	    SEQOP(6, s1_wsaPlayFrame),
+	    SEQOP(2, s1_wsaPlayNextFrame),
+	    // 0x04
+	    SEQOP(2, s1_wsaPlayPrevFrame),
+	    SEQOP(5, s1_drawShape),
+	    SEQOP(3, s1_waitTicks),
+	    SEQOP(3, s1_waitTicks),
+	    // 0x08
+	    SEQOP(3, s1_copyWaitTicks),
+	    SEQOP(1, s1_shuffleScreen),
+	    SEQOP(1, s1_copyView),
+	    SEQOP(2, s1_loopInit),
+	    // 0x0C
+	    SEQOP(4, s1_loopInc),
+	    SEQOP(4, s1_loopInc),
+	    SEQOP(2, s1_skip),
+	    SEQOP(2, s1_loadPalette),
+	    // 0x10
+	    SEQOP(2, s1_loadBitmap),
+	    SEQOP(1, s1_fadeToBlack),
+	    SEQOP(2, s1_printText),
+	    SEQOP(6, s1_printTalkText),
+	    // 0x14
+	    SEQOP(1, s1_restoreTalkText),
+	    SEQOP(1, s1_clearCurrentScreen),
+	    SEQOP(1, s1_break),
+	    SEQOP(1, s1_fadeFromBlack),
+	    // 0x18
+	    SEQOP(3, s1_copyRegion),
+	    SEQOP(2, s1_copyRegionSpecial),
+	    SEQOP(9, s1_fillRect),
+	    SEQOP(2, s1_playEffect),
+	    // 0x1C
+	    SEQOP(2, s1_playTrack),
+	    SEQOP(1, s1_allocTempBuffer),
+	    SEQOP(1, s1_textDisplayEnable),
+	    SEQOP(1, s1_textDisplayDisable),
+	    // 0x20
+	    SEQOP(1, s1_endOfScript),
+	    SEQOP(1, s1_loadIntroVRM),
+	    SEQOP(2, s1_playVocFile),
+	    SEQOP(1, s1_miscUnk3),
+	    // 0x24
+	    SEQOP(2, s1_prefetchVocFile)};
 
 	const SeqEntry *commands;
 	int numCommands;
@@ -653,6 +659,5 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	}
 	return seqSkippedFlag;
 }
-
 
 } // End of namespace Kyra

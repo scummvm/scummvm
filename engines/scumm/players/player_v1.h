@@ -38,7 +38,7 @@ public:
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int  getMusicTimer() override;
+	int getMusicTimer() override;
 
 protected:
 	void nextTick() override;
@@ -68,29 +68,29 @@ private:
 		uint level;
 		uint sustain_1;
 		uint sustain_2;
-		int  sustctr;
+		int sustctr;
 	};
 
 	channel_data_v1 _channels[4];
 
 	byte *_next_chunk;
 	byte *_repeat_chunk;
-	uint  _chunk_type;
-	uint  _mplex_step;
-	uint  _mplex;
-	uint  _repeat_ctr;
-	uint  _freq_current;
-	int   _forced_level;
+	uint _chunk_type;
+	uint _mplex_step;
+	uint _mplex;
+	uint _repeat_ctr;
+	uint _freq_current;
+	int _forced_level;
 	uint16 _random_lsr;
-	uint  *_value_ptr;
-	uint  _time_left;
-	uint  _start;
-	uint  _end;
-	int   _delta;
-	uint  *_value_ptr_2;
-	uint  _time_left_2;
-	uint  _start_2;
-	int   _delta_2;
+	uint *_value_ptr;
+	uint _time_left;
+	uint _start;
+	uint _end;
+	int _delta;
+	uint *_value_ptr_2;
+	uint _time_left_2;
+	uint _start_2;
+	int _delta_2;
 };
 
 } // End of namespace Scumm

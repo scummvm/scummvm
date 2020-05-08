@@ -21,9 +21,9 @@
  */
 
 #include "titanic/sound/music_song.h"
+#include "common/util.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
-#include "common/util.h"
 
 namespace Titanic {
 
@@ -77,8 +77,8 @@ CMusicSong::~CMusicSong() {
 #define FETCH_CHAR _currentChar = _str[_strIndex++]
 
 CSongParser::CSongParser(const char *str) : _str(str), _strIndex(0),
-		_field8(0), _priorChar('A'), _field10(32), _field14(0), _flag(false),
-		_field1C(0), _currentChar(' '), _numValue(1) {
+                                            _field8(0), _priorChar('A'), _field10(32), _field14(0), _flag(false),
+                                            _field1C(0), _currentChar(' '), _numValue(1) {
 }
 
 void CSongParser::reset() {
@@ -93,7 +93,7 @@ void CSongParser::reset() {
 }
 
 bool CSongParser::parse(CValuePair &r) {
-	const int INDEXES[8] = { 0, 2, 3, 5, 7, 8, 10, 0 };
+	const int INDEXES[8] = {0, 2, 3, 5, 7, 8, 10, 0};
 
 	while (_currentChar) {
 		skipSpaces();

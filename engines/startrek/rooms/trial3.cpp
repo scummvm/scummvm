@@ -33,66 +33,65 @@
 namespace StarTrek {
 
 extern const RoomAction trial3ActionList[] = {
-	{ {ACTION_TICK, 1,  0, 0}, &Room::trial3Tick1 },
-	{ {ACTION_TICK, 30, 0, 0}, &Room::trial3Tick30 },
-	{ {ACTION_DONE_ANIM,  1, 0, 0}, &Room::trial3Klingon1BeamedIn },
-	{ {ACTION_DONE_ANIM,  2, 0, 0}, &Room::trial3Klingon2BeamedIn },
-	{ {ACTION_DONE_ANIM,  3, 0, 0}, &Room::trial3Klingon3BeamedIn },
-	{ {ACTION_DONE_ANIM,  4, 0, 0}, &Room::trial3Klingon1DoneShooting },
-	{ {ACTION_DONE_ANIM,  5, 0, 0}, &Room::trial3Klingon2DoneShooting },
-	{ {ACTION_DONE_ANIM,  6, 0, 0}, &Room::trial3Klingon3DoneShooting },
-	{ {ACTION_DONE_ANIM, 15, 0, 0}, &Room::trial3RedshirtDoneDying },
-	{ {ACTION_DONE_ANIM, 16, 0, 0}, &Room::trial3KirkDoneDying },
-	{ {ACTION_DONE_ANIM, 11, 0, 0}, &Room::trial3Klingon1Shot },
-	{ {ACTION_DONE_ANIM, 12, 0, 0}, &Room::trial3Klingon2Shot },
-	{ {ACTION_DONE_ANIM, 13, 0, 0}, &Room::trial3Klingon3Shot },
-	{ {ACTION_DONE_ANIM, 19, 0, 0}, &Room::trial3CrewmanBeamedOut },
-	{ {ACTION_TICK, 90,      0, 0}, &Room::trial3Tick90 },
-	{ {ACTION_TOUCHED_HOTSPOT, 3,    0, 0}, &Room::trial3TouchedHotspot3 },
-	{ {ACTION_DONE_ANIM, 14,         0, 0}, &Room::trial3KirkExploded },
-	{ {ACTION_LOOK, OBJECT_KIRK,     0, 0}, &Room::trial3LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,    0, 0}, &Room::trial3LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,    0, 0}, &Room::trial3LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::trial3LookAtRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_EXIT,    0, 0}, &Room::trial3LookAtExit },
-	{ {ACTION_LOOK, HOTSPOT_WALL,    0, 0}, &Room::trial3LookAtWall },
-	{ {ACTION_TALK, OBJECT_KIRK,     0, 0}, &Room::trial3TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK,    0, 0}, &Room::trial3TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,    0, 0}, &Room::trial3TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::trial3TalkToRedshirt },
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_WALL, 0}, &Room::trial3UsePhaserOnWall },
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_WALL, 0}, &Room::trial3UsePhaserOnWall },
+    {{ACTION_TICK, 1, 0, 0}, &Room::trial3Tick1},
+    {{ACTION_TICK, 30, 0, 0}, &Room::trial3Tick30},
+    {{ACTION_DONE_ANIM, 1, 0, 0}, &Room::trial3Klingon1BeamedIn},
+    {{ACTION_DONE_ANIM, 2, 0, 0}, &Room::trial3Klingon2BeamedIn},
+    {{ACTION_DONE_ANIM, 3, 0, 0}, &Room::trial3Klingon3BeamedIn},
+    {{ACTION_DONE_ANIM, 4, 0, 0}, &Room::trial3Klingon1DoneShooting},
+    {{ACTION_DONE_ANIM, 5, 0, 0}, &Room::trial3Klingon2DoneShooting},
+    {{ACTION_DONE_ANIM, 6, 0, 0}, &Room::trial3Klingon3DoneShooting},
+    {{ACTION_DONE_ANIM, 15, 0, 0}, &Room::trial3RedshirtDoneDying},
+    {{ACTION_DONE_ANIM, 16, 0, 0}, &Room::trial3KirkDoneDying},
+    {{ACTION_DONE_ANIM, 11, 0, 0}, &Room::trial3Klingon1Shot},
+    {{ACTION_DONE_ANIM, 12, 0, 0}, &Room::trial3Klingon2Shot},
+    {{ACTION_DONE_ANIM, 13, 0, 0}, &Room::trial3Klingon3Shot},
+    {{ACTION_DONE_ANIM, 19, 0, 0}, &Room::trial3CrewmanBeamedOut},
+    {{ACTION_TICK, 90, 0, 0}, &Room::trial3Tick90},
+    {{ACTION_TOUCHED_HOTSPOT, 3, 0, 0}, &Room::trial3TouchedHotspot3},
+    {{ACTION_DONE_ANIM, 14, 0, 0}, &Room::trial3KirkExploded},
+    {{ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::trial3LookAtKirk},
+    {{ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::trial3LookAtSpock},
+    {{ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::trial3LookAtMccoy},
+    {{ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::trial3LookAtRedshirt},
+    {{ACTION_LOOK, HOTSPOT_EXIT, 0, 0}, &Room::trial3LookAtExit},
+    {{ACTION_LOOK, HOTSPOT_WALL, 0, 0}, &Room::trial3LookAtWall},
+    {{ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::trial3TalkToKirk},
+    {{ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::trial3TalkToSpock},
+    {{ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::trial3TalkToMccoy},
+    {{ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::trial3TalkToRedshirt},
+    {{ACTION_USE, OBJECT_IPHASERS, HOTSPOT_WALL, 0}, &Room::trial3UsePhaserOnWall},
+    {{ACTION_USE, OBJECT_IPHASERK, HOTSPOT_WALL, 0}, &Room::trial3UsePhaserOnWall},
 
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_KLINGON_1, 0}, &Room::trial3UseStunPhaserOnKlingon1 },
-	{ {ACTION_DONE_ANIM, 17, 0, 0},                       &Room::trial3ReadyToShootKlingon1OnStun },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_KLINGON_1, 0}, &Room::trial3UseKillPhaserOnKlingon1 },
-	{ {ACTION_DONE_ANIM, 18, 0, 0},                       &Room::trial3ReadyToShootKlingon1OnKill },
-	// OMITTED: Similar code for unused klingons 2 and 3
+    {{ACTION_USE, OBJECT_IPHASERS, OBJECT_KLINGON_1, 0}, &Room::trial3UseStunPhaserOnKlingon1},
+    {{ACTION_DONE_ANIM, 17, 0, 0}, &Room::trial3ReadyToShootKlingon1OnStun},
+    {{ACTION_USE, OBJECT_IPHASERK, OBJECT_KLINGON_1, 0}, &Room::trial3UseKillPhaserOnKlingon1},
+    {{ACTION_DONE_ANIM, 18, 0, 0}, &Room::trial3ReadyToShootKlingon1OnKill},
+    // OMITTED: Similar code for unused klingons 2 and 3
 
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::trial3UsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::trial3UsePhaserAnywhere },
+    {{ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::trial3UsePhaserAnywhere},
+    {{ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::trial3UsePhaserAnywhere},
 
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0},      &Room::trial3UseMTricorderOnKirk },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0},     &Room::trial3UseMTricorderOnSpock },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0},     &Room::trial3UseMTricorderOnMccoy },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0},  &Room::trial3UseMTricorderOnRedshirt },
-	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_EXIT, 0},     &Room::trial3UseMTricorderOnExit },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WALL, 0},     &Room::trial3UseSTricorderOnWall },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_EXIT, 0},     &Room::trial3UseSTricorderOnExit },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KLINGON_1, 0}, &Room::trial3UseMTricorderOnKlingon },
-	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0},                &Room::trial3UseCommunicator },
-	{ {ACTION_USE, OBJECT_MCCOY, HOTSPOT_WALL, 0},        &Room::trial3UseMccoyOnWall },
-	{ {ACTION_USE, OBJECT_MCCOY, HOTSPOT_EXIT, 0},        &Room::trial3UseMccoyOnExit },
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_WALL, 0},        &Room::trial3UseSpockOnWall },
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_EXIT, 0},        &Room::trial3UseSpockOnExit },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_EXIT, 0},     &Room::trial3UseRedshirtOnExit },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_WALL, 0},     &Room::trial3UseRedshirtOnWall },
-	{ {ACTION_WALK, HOTSPOT_EXIT, 0, 0},                  &Room::trial3WalkToExit },
-	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},              &Room::trial3UseMedkitAnywhere },
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::trial3UseMTricorderOnKirk},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0}, &Room::trial3UseMTricorderOnSpock},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::trial3UseMTricorderOnMccoy},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::trial3UseMTricorderOnRedshirt},
+    {{ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_EXIT, 0}, &Room::trial3UseMTricorderOnExit},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WALL, 0}, &Room::trial3UseSTricorderOnWall},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_EXIT, 0}, &Room::trial3UseSTricorderOnExit},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_KLINGON_1, 0}, &Room::trial3UseMTricorderOnKlingon},
+    {{ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::trial3UseCommunicator},
+    {{ACTION_USE, OBJECT_MCCOY, HOTSPOT_WALL, 0}, &Room::trial3UseMccoyOnWall},
+    {{ACTION_USE, OBJECT_MCCOY, HOTSPOT_EXIT, 0}, &Room::trial3UseMccoyOnExit},
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_WALL, 0}, &Room::trial3UseSpockOnWall},
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_EXIT, 0}, &Room::trial3UseSpockOnExit},
+    {{ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_EXIT, 0}, &Room::trial3UseRedshirtOnExit},
+    {{ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_WALL, 0}, &Room::trial3UseRedshirtOnWall},
+    {{ACTION_WALK, HOTSPOT_EXIT, 0, 0}, &Room::trial3WalkToExit},
+    {{ACTION_USE, OBJECT_IMEDKIT, 0xff, 0}, &Room::trial3UseMedkitAnywhere},
 };
 
 extern const int trial3NumActions = ARRAYSIZE(trial3ActionList);
-
 
 void Room::trial3Tick1() {
 	playVoc("TRI3LOOP");
@@ -110,11 +109,11 @@ void Room::trial3Tick30() {
 		_awayMission->trial.enteredTrial3FirstTime = true;
 
 		showText(TX_SPEAKER_BENNIE, 30, true);
-		showText(TX_SPEAKER_KIRK,    5, true);
-		showText(TX_SPEAKER_MCCOY,  19, true);
-		showText(TX_SPEAKER_SPOCK,  25, true);
-		showText(TX_SPEAKER_MCCOY,  20, true);
-		showText(TX_SPEAKER_KIRK,    4, true);
+		showText(TX_SPEAKER_KIRK, 5, true);
+		showText(TX_SPEAKER_MCCOY, 19, true);
+		showText(TX_SPEAKER_SPOCK, 25, true);
+		showText(TX_SPEAKER_MCCOY, 20, true);
+		showText(TX_SPEAKER_KIRK, 4, true);
 	}
 }
 
@@ -210,22 +209,21 @@ void Room::trial3CheckShowUhuraText() {
 		loadActorStandAnim(OBJECT_KIRK);
 
 		showText(TX_SPEAKER_UHURA, 84, true);
-		showText(TX_SPEAKER_KIRK,   7, true);
+		showText(TX_SPEAKER_KIRK, 7, true);
 		showText(TX_SPEAKER_UHURA, 99, true);
 
 		_awayMission->trial.forceFieldDown = true;
 
 		const TextRef choices[] = {
-			TX_SPEAKER_KIRK,
-			6, 2, 3,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    6, 2, 3,
+		    TX_BLANK};
 		int choice = showMultipleTexts(choices, true);
 
-		if (choice == 0) { // Don't beam out
-		} else if (choice == 1) { // Beam to enterprise
+		if (choice == 0) {                                                                // Don't beam out
+		} else if (choice == 1) {                                                         // Beam to enterprise
 			endMission(_awayMission->trial.missionScore, _awayMission->trial.field2b, 1); // FIXME: inconsistent
-		} else if (choice == 2) { // Beam to Vlict
+		} else if (choice == 2) {                                                         // Beam to Vlict
 			trial3BeamToVlict();
 		}
 	}
@@ -391,18 +389,17 @@ void Room::trial3UseCommunicator() {
 		showText(TX_SPEAKER_UHURA, 89, true);
 
 		const TextRef choices[] = {
-			TX_SPEAKER_KIRK,
-			103, 104, 107,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    103, 104, 107,
+		    TX_BLANK};
 		int choice = showMultipleTexts(choices, true);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
 			_awayMission->trial.missionEndMethod = 1;
 			endMission(_awayMission->trial.missionScore, _awayMission->trial.field2b, 1); // FIXME: inconsistent
-		} else if (choice == 1) { // "Beam us to Vlict's position"
+		} else if (choice == 1) {                                                         // "Beam us to Vlict's position"
 			trial3BeamToVlict();
-		} // Else don't transport anywhere
+		}    // Else don't transport anywhere
 	} else { // Force field still up
 		showText(TX_SPEAKER_UHURA, 67, true);
 	}
@@ -417,7 +414,7 @@ void Room::trial3BeamToVlict() {
 	_awayMission->disableInput = true;
 	playSoundEffectIndex(SND_TRANSDEM);
 
-	loadActorAnimC(OBJECT_KIRK,  "kteled", -1, -1, &Room::trial3CrewmanBeamedOut);
+	loadActorAnimC(OBJECT_KIRK, "kteled", -1, -1, &Room::trial3CrewmanBeamedOut);
 	loadActorAnimC(OBJECT_SPOCK, "steled", -1, -1, &Room::trial3CrewmanBeamedOut);
 	loadActorAnimC(OBJECT_MCCOY, "mteled", -1, -1, &Room::trial3CrewmanBeamedOut);
 	if (!_awayMission->redshirtDead)
@@ -456,4 +453,4 @@ void Room::trial3UseMedkitAnywhere() {
 	showText(TX_SPEAKER_MCCOY, 17, true);
 }
 
-}
+} // namespace StarTrek

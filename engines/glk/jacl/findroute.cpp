@@ -22,14 +22,14 @@
 
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
 
-extern struct object_type       *object[];
-extern int                      objects;
+extern struct object_type *object[];
+extern int objects;
 
 /**************************************/
 /* Queue functions                    */
@@ -81,7 +81,7 @@ void qDebug(Queue *q) {
 }
 
 void qAppend(Queue *q, int val, int val2) {
-	QueueNode *node = (QueueNode *) malloc(sizeof(QueueNode));
+	QueueNode *node = (QueueNode *)malloc(sizeof(QueueNode));
 	node->val = val;
 	node->val2 = val2;
 	node->next = NULL;
@@ -214,7 +214,7 @@ void setAdd(Set *set, int val) {
 		}
 	}
 
-	node = (SetNode *) malloc(sizeof(SetNode));
+	node = (SetNode *)malloc(sizeof(SetNode));
 	node->val = val;
 	node->next = set->node[n];
 	set->node[n] = node;
@@ -268,7 +268,7 @@ void setTest() {
 
 /**************************************/
 
-#define DIR_NONE   -1
+#define DIR_NONE -1
 
 int find_route(int fromRoom, int toRoom, int known) {
 	Set visited;
@@ -292,12 +292,14 @@ int find_route(int fromRoom, int toRoom, int known) {
 			break;
 		}
 
-		for (dir = 0; dir < 12 ; dir++) {
+		for (dir = 0; dir < 12; dir++) {
 			int dest = object[n]->integer[dir];
 
-			if (dest < 1 || dest > objects) continue;
+			if (dest < 1 || dest > objects)
+				continue;
 
-			if (object[dest] == NULL) continue;
+			if (object[dest] == NULL)
+				continue;
 
 			if (dest != NOWHERE && !setContains(&visited, dest)) {
 				if (!known || (object[dest]->attributes & KNOWN)) {

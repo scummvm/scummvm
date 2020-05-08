@@ -26,9 +26,9 @@
 #include "common/error.h"
 #include "common/stream.h"
 
-#include "pegasus/pegasus.h"
 #include "pegasus/items/item.h"
 #include "pegasus/items/itemlist.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 

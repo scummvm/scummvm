@@ -23,10 +23,10 @@
 #ifndef GRAPHICS_MACGUI_MACTEXT_H
 #define GRAPHICS_MACGUI_MACTEXT_H
 
-#include "graphics/fontman.h"
-#include "graphics/managed_surface.h"
 #include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/managed_surface.h"
 
 namespace Graphics {
 
@@ -48,25 +48,25 @@ struct MacFontRun {
 	MacFontRun() {
 		wm = nullptr;
 		fontId = textSlant = fontSize = 0;
-		palinfo1 = palinfo2  = palinfo3 = 0;
+		palinfo1 = palinfo2 = palinfo3 = 0;
 		font = nullptr;
 	}
 
 	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
-			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
+	           uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		setValues(wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
 	}
 
 	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
-			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
-		wm        = wm_;
-		fontId    = fontId_;
+	               uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
+		wm = wm_;
+		fontId = fontId_;
 		textSlant = textSlant_;
-		fontSize  = fontSize_;
-		palinfo1  = palinfo1_;
-		palinfo2  = palinfo2_;
-		palinfo3  = palinfo3_;
-		font      = nullptr;
+		fontSize = fontSize_;
+		palinfo1 = palinfo1_;
+		palinfo2 = palinfo2_;
+		palinfo3 = palinfo3_;
+		font = nullptr;
 	}
 
 	const Font *getFont();
@@ -109,17 +109,17 @@ class MacText {
 
 public:
 	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
-			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
+	        int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
 	MacText(const Common::String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
-			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
-			// 0 pixels between the lines by default
+	        int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
+	// 0 pixels between the lines by default
 	~MacText();
 
 	int getInterLinear() { return _interLinear; }
 	void setInterLinear(int interLinear);
 	void setMaxWidth(int maxWidth);
 	void setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
-			uint16 palinfo1, uint16 palinfo2, uint16 palinfo3);
+	                          uint16 palinfo1, uint16 palinfo2, uint16 palinfo3);
 
 	const MacFontRun &getDefaultFormatting() { return _defaultFormatting; }
 

@@ -21,33 +21,33 @@
  */
 
 #include "glk/alan3/instance.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/syserr.h"
+#include "glk/alan3/actor.h"
 #include "glk/alan3/attribute.h"
-#include "glk/alan3/current.h"
-#include "glk/alan3/container.h"
-#include "glk/alan3/debug.h"
 #include "glk/alan3/checkentry.h"
+#include "glk/alan3/class.h"
+#include "glk/alan3/compatibility.h"
+#include "glk/alan3/container.h"
+#include "glk/alan3/current.h"
+#include "glk/alan3/debug.h"
+#include "glk/alan3/dictionary.h"
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/inter.h"
+#include "glk/alan3/literal.h"
+#include "glk/alan3/location.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/msg.h"
 #include "glk/alan3/options.h"
 #include "glk/alan3/output.h"
-#include "glk/alan3/class.h"
-#include "glk/alan3/msg.h"
-#include "glk/alan3/actor.h"
-#include "glk/alan3/literal.h"
-#include "glk/alan3/dictionary.h"
-#include "glk/alan3/location.h"
-#include "glk/alan3/compatibility.h"
+#include "glk/alan3/syserr.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA */
 
-InstanceEntry *instances;   /* Instance table pointer */
+InstanceEntry *instances; /* Instance table pointer */
 
-AdminEntry *admin;      /* Administrative data about instances */
+AdminEntry *admin;          /* Administrative data about instances */
 AttributeEntry *attributes; /* Dynamic attribute values */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -83,7 +83,6 @@ bool isA(int instance, int ancestor) {
 	return (parent != 0);
 }
 
-
 bool isAObject(int instance) {
 	return isA(instance, OBJECT);
 }
@@ -100,7 +99,6 @@ bool isALocation(int instance) {
 	return isA(instance, LOCATION);
 }
 
-
 bool isLiteral(int instance) {
 	return instance > (int)header->instanceMax;
 }
@@ -113,12 +111,10 @@ bool isAString(int instance) {
 	return isLiteral(instance) && literals[literalFromInstance(instance)].type == STRING_LITERAL;
 }
 
-
 /*======================================================================*/
 bool isOpaque(int container) {
 	return getInstanceAttribute(container, OPAQUEATTRIBUTE);
 }
-
 
 /*======================================================================*/
 void setInstanceAttribute(int instance, int attribute, Aptr value) {
@@ -136,20 +132,17 @@ void setInstanceAttribute(int instance, int attribute, Aptr value) {
 	}
 }
 
-
 /*======================================================================*/
 void setInstanceStringAttribute(int instance, int attribute, char *string) {
 	deallocate(fromAptr(getInstanceAttribute(instance, attribute)));
 	setInstanceAttribute(instance, attribute, toAptr(string));
 }
 
-
 /*======================================================================*/
 void setInstanceSetAttribute(int instance, int attribute, Aptr set) {
 	freeSet((Set *)fromAptr(getInstanceAttribute(instance, attribute)));
 	setInstanceAttribute(instance, attribute, set);
 }
-
 
 /*----------------------------------------------------------------------*/
 static Aptr literalAttribute(int literal, int attribute) {
@@ -166,7 +159,6 @@ static Aptr literalAttribute(int literal, int attribute) {
 	}
 	return (EOD);
 }
-
 
 /*======================================================================*/
 Aptr getInstanceAttribute(int instance, int attribute) {
@@ -188,18 +180,15 @@ Aptr getInstanceAttribute(int instance, int attribute) {
 	return (EOD);
 }
 
-
 /*======================================================================*/
 char *getInstanceStringAttribute(int instance, int attribute) {
 	return scumm_strdup((char *)fromAptr(getInstanceAttribute(instance, attribute)));
 }
 
-
 /*======================================================================*/
 Set *getInstanceSetAttribute(int instance, int attribute) {
 	return copySet((Set *)fromAptr(getInstanceAttribute(instance, attribute)));
 }
-
 
 /*----------------------------------------------------------------------*/
 static void verifyInstance(int instance, const char *action) {
@@ -214,14 +203,12 @@ static void verifyInstance(int instance, const char *action) {
 	}
 }
 
-
 /*======================================================================*/
 bool isHere(int id, ATrans transitivity) {
 	verifyInstance(id, "HERE");
 
 	return isAt(id, current.location, transitivity);
 }
-
 
 /*======================================================================*/
 bool isNearby(int instance, ATrans transitivity) {
@@ -232,7 +219,6 @@ bool isNearby(int instance, ATrans transitivity) {
 	else
 		return exitto(current.location, where(instance, transitivity));
 }
-
 
 /*======================================================================*/
 bool isNear(int instance, int other, ATrans trans) {
@@ -250,7 +236,6 @@ bool isNear(int instance, int other, ATrans trans) {
 		l2 = where(other, trans);
 	return exitto(l2, l1);
 }
-
 
 /*======================================================================*/
 /* Look in a container to see if the instance is in it. */
@@ -275,12 +260,11 @@ bool isIn(int instance, int container, ATrans trans) {
 	}
 }
 
-
-
 /*======================================================================*/
 /* Look see if an instance is AT another. */
 bool isAt(int instance, int other, ATrans trans) {
-	if (instance == 0 || other == 0) return FALSE;
+	if (instance == 0 || other == 0)
+		return FALSE;
 
 	if (isALocation(instance)) {
 		/* Nested locations */
@@ -318,8 +302,8 @@ bool isAt(int instance, int other, ATrans trans) {
 			return admin[instance].location == other;
 		case INDIRECT:
 			if (admin[instance].location == other)
-				return FALSE;   /* Directly, so not Indirectly */
-			// fall through
+				return FALSE; /* Directly, so not Indirectly */
+			                  // fall through
 		case TRANSITIVE: {
 			int location = locationOf(instance);
 			int curr = other;
@@ -376,7 +360,6 @@ bool isAt(int instance, int other, ATrans trans) {
 	}
 }
 
-
 /*======================================================================*/
 /* Return the *location* of an instance, transitively, i.e. the first
    location instance found when traversing the containment/position
@@ -392,7 +375,7 @@ int locationOf(int instance) {
 
 	position = admin[instance].location;
 	while (position != 0 && !isALocation(position)) {
-		container = position;   /* Remember innermost container */
+		container = position; /* Remember innermost container */
 		position = admin[position].location;
 	}
 	if (position > NOWHERE) /* It was a location so return that */
@@ -403,7 +386,7 @@ int locationOf(int instance) {
 			instance = container;
 		/* If the instance or the container it was in is a THING then its nowhere. */
 		if (isA(instance, THING))
-			return NOWHERE;     /* #nowhere */
+			return NOWHERE; /* #nowhere */
 		else if (isALocation(instance))
 			return NO_LOCATION; /* No location */
 		else
@@ -411,14 +394,12 @@ int locationOf(int instance) {
 	}
 }
 
-
 /*======================================================================*/
 /* Return the current position of an instance, directly or not */
 /* TODO: this will be a possible duplicate of where() */
 int positionOf(int instance) {
 	return admin[instance].location;
 }
-
 
 /*======================================================================*/
 /* Return the current position of an instance, directly or not */
@@ -433,10 +414,10 @@ int where(int instance, ATrans trans) {
 		return locationOf(instance);
 }
 
-
 /*----------------------------------------------------------------------*/
 static bool executeInheritedMentioned(CONTEXT, int cls) {
-	if (cls == 0) return FALSE;
+	if (cls == 0)
+		return FALSE;
 
 	if (classes[cls].mentioned) {
 		R0CALL1(interpret, classes[cls].mentioned)
@@ -447,7 +428,6 @@ static bool executeInheritedMentioned(CONTEXT, int cls) {
 		return flag;
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool mention(CONTEXT, int instance) {
@@ -461,7 +441,6 @@ static bool mention(CONTEXT, int instance) {
 	}
 }
 
-
 /*======================================================================*/
 void sayInstance(CONTEXT, int instance) {
 #ifdef SAY_INSTANCE_WITH_PLAYER_WORDS_IF_PARAMETER
@@ -473,8 +452,8 @@ void sayInstance(CONTEXT, int instance) {
 			if (params[p].code == instance) {
 				/* Found it so.. */
 				if (params[p].firstWord == EOD) /* Any words he used? */
-					break;      /* No... */
-				else {              /* Yes, so use them... */
+					break;                      /* No... */
+				else {                          /* Yes, so use them... */
 					char *capitalized;
 					/* Assuming the noun is the last word we can simply output the adjectives... */
 					for (i = params[p].firstWord; i <= params[p].lastWord - 1; i++)
@@ -498,7 +477,6 @@ void sayInstance(CONTEXT, int instance) {
 		CALL1(interpret, instances[instance].name)
 }
 
-
 /*======================================================================*/
 void sayInteger(int value) {
 	char buf[25];
@@ -509,14 +487,12 @@ void sayInteger(int value) {
 	}
 }
 
-
 /*======================================================================*/
 void sayString(char *string) {
 	if (isHere(HERO, /*FALSE*/ TRANSITIVE))
 		output(string);
 	deallocate(string);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void sayLiteral(int literal) {
@@ -530,7 +506,6 @@ static void sayLiteral(int literal) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static char *wordWithCode(int classBit, int code) {
 	int w;
@@ -543,7 +518,6 @@ static char *wordWithCode(int classBit, int code) {
 	syserr(str);
 	return NULL;
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool sayInheritedDefiniteForm(CONTEXT, int cls) {
@@ -562,7 +536,6 @@ static bool sayInheritedDefiniteForm(CONTEXT, int cls) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void sayDefinite(CONTEXT, int instance) {
 	if (instances[instance].definite.address) {
@@ -577,7 +550,6 @@ static void sayDefinite(CONTEXT, int instance) {
 			CALL1(sayInstance, instance)
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool sayInheritedIndefiniteForm(CONTEXT, int cls) {
@@ -596,7 +568,6 @@ static bool sayInheritedIndefiniteForm(CONTEXT, int cls) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void sayIndefinite(CONTEXT, int instance) {
 	if (instances[instance].indefinite.address) {
@@ -611,7 +582,6 @@ static void sayIndefinite(CONTEXT, int instance) {
 			CALL1(sayInstance, instance)
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool sayInheritedNegativeForm(CONTEXT, int cls) {
@@ -630,7 +600,6 @@ static bool sayInheritedNegativeForm(CONTEXT, int cls) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void sayNegative(CONTEXT, int instance) {
 	if (instances[instance].negative.address) {
@@ -645,7 +614,6 @@ static void sayNegative(CONTEXT, int instance) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void sayInheritedPronoun(CONTEXT, int instance) {
 	if (instance == 0)
@@ -658,7 +626,6 @@ static void sayInheritedPronoun(CONTEXT, int instance) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void sayPronoun(CONTEXT, int instance) {
 	if (instances[instance].pronoun != 0)
@@ -666,7 +633,6 @@ static void sayPronoun(CONTEXT, int instance) {
 	else
 		CALL1(sayInheritedPronoun, instances[instance].parent)
 }
-
 
 /*----------------------------------------------------------------------*/
 static void sayArticleOrForm(CONTEXT, int id, SayForm form) {
@@ -695,7 +661,6 @@ static void sayArticleOrForm(CONTEXT, int id, SayForm form) {
 	}
 }
 
-
 /*======================================================================*/
 void say(CONTEXT, int instance) {
 	Aword previousInstance = current.instance;
@@ -712,7 +677,6 @@ void say(CONTEXT, int instance) {
 	current.instance = previousInstance;
 }
 
-
 /*======================================================================*/
 void sayForm(CONTEXT, int instance, SayForm form) {
 	Aword previousInstance = current.instance;
@@ -723,12 +687,10 @@ void sayForm(CONTEXT, int instance, SayForm form) {
 	current.instance = previousInstance;
 }
 
-
 /*======================================================================*/
 bool isDescribable(int instance) {
 	return isAObject(instance) || isAActor(instance);
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool inheritsDescriptionFrom(int cls) {
@@ -740,7 +702,6 @@ static bool inheritsDescriptionFrom(int cls) {
 		return FALSE;
 }
 
-
 /*======================================================================*/
 bool hasDescription(int instance) {
 	if (instances[instance].description != 0)
@@ -750,7 +711,6 @@ bool hasDescription(int instance) {
 	else
 		return FALSE;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void describeClass(CONTEXT, int instance) {
@@ -763,7 +723,6 @@ static void describeClass(CONTEXT, int instance) {
 			CALL1(describeClass, classes[instance].parent)
 	}
 }
-
 
 /*======================================================================*/
 void describeAnything(CONTEXT, int instance) {
@@ -778,7 +737,6 @@ void describeAnything(CONTEXT, int instance) {
 	admin[instance].alreadyDescribed = TRUE;
 }
 
-
 /*----------------------------------------------------------------------*/
 static void describeObject(CONTEXT, int object) {
 	if (hasDescription(object)) {
@@ -792,16 +750,18 @@ static void describeObject(CONTEXT, int object) {
 	admin[object].alreadyDescribed = TRUE;
 }
 
-
 /*----------------------------------------------------------------------*/
 static bool inheritedDescriptionCheck(CONTEXT, int cls) {
-	if (cls == 0) return TRUE;
+	if (cls == 0)
+		return TRUE;
 
 	bool flag;
 	R0FUNC1(inheritedDescriptionCheck, flag, classes[cls].parent)
-	if (!flag) return FALSE;
+	if (!flag)
+		return FALSE;
 
-	if (classes[cls].descriptionChecks == 0) return TRUE;
+	if (classes[cls].descriptionChecks == 0)
+		return TRUE;
 	R0FUNC2(checksFailed, flag, classes[cls].descriptionChecks, TRUE)
 	return !flag;
 }
@@ -817,13 +777,11 @@ static bool descriptionCheck(CONTEXT, int instance) {
 			r = TRUE;
 		else
 			r = !checksFailed(context, instances[instance].checks, TRUE);
-	}
-	else
+	} else
 		r = FALSE;
 	current.instance = previousInstance;
 	return r;
 }
-
 
 /*======================================================================*/
 void describeInstances(CONTEXT) {
@@ -834,15 +792,12 @@ void describeInstances(CONTEXT) {
 	/* First describe every object here with its own description */
 	for (i = 1; i <= header->instanceMax; i++)
 		if (admin[i].location == current.location && isAObject(i) &&
-		        !admin[i].alreadyDescribed && hasDescription(i))
+		    !admin[i].alreadyDescribed && hasDescription(i))
 			CALL1(describe, i)
 
 	/* Then list all things without a description */
 	for (i = 1; i <= header->instanceMax; i++)
-		if (admin[i].location == current.location
-		        && !admin[i].alreadyDescribed
-		        && isAObject(i)
-		        && descriptionCheck(context, i)) {
+		if (admin[i].location == current.location && !admin[i].alreadyDescribed && isAObject(i) && descriptionCheck(context, i)) {
 			if (found == 0)
 				printMessageWithInstanceParameter(M_SEE_START, i);
 			else if (found > 1)
@@ -856,7 +811,7 @@ void describeInstances(CONTEXT) {
 				printMessage(M_SEE_END);
 				CALL1(describeContainer, i)
 				found = 0;
-				continue;       /* Actually start another list. */
+				continue; /* Actually start another list. */
 			}
 			found++;
 			lastInstanceFound = i;
@@ -871,15 +826,13 @@ void describeInstances(CONTEXT) {
 
 	/* Finally all actors with a separate description */
 	for (i = 1; i <= header->instanceMax; i++)
-		if (admin[i].location == current.location && i != HERO && isAActor(i)
-		        && !admin[i].alreadyDescribed)
+		if (admin[i].location == current.location && i != HERO && isAActor(i) && !admin[i].alreadyDescribed)
 			CALL1(describe, i)
 
 	/* Clear the describe flag for all instances */
 	for (i = 1; i <= header->instanceMax; i++)
 		admin[i].alreadyDescribed = FALSE;
 }
-
 
 /*======================================================================*/
 bool describe(CONTEXT, int instance) {
@@ -904,7 +857,6 @@ bool describe(CONTEXT, int instance) {
 	return descriptionOk;
 }
 
-
 /*----------------------------------------------------------------------*/
 static void locateIntoContainer(CONTEXT, Aword theInstance, Aword theContainer) {
 	if (!isA(theInstance, containers[instances[theContainer].container]._class))
@@ -914,7 +866,6 @@ static void locateIntoContainer(CONTEXT, Aword theInstance, Aword theContainer) 
 	else
 		abortPlayerCommand(context);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void locateLocation(Aword loc, Aword whr) {
@@ -930,7 +881,6 @@ static void locateLocation(Aword loc, Aword whr) {
 	admin[loc].location = whr;
 }
 
-
 /*----------------------------------------------------------------------*/
 static void locateObject(CONTEXT, Aword obj, Aword whr) {
 	if (isAContainer(whr)) { /* Into a container */
@@ -942,14 +892,12 @@ static void locateObject(CONTEXT, Aword obj, Aword whr) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void traceEnteredClass(Aint theClass, bool empty) {
 	printf("\n<ENTERED in class ");
 	printf("%s", idOfClass(theClass));
 	printf("[%d]%s>\n", theClass, empty ? " is empty" : ":");
 }
-
 
 /*----------------------------------------------------------------------*/
 static void traceEnteredInstance(CONTEXT, Aint instance, bool empty) {
@@ -958,10 +906,10 @@ static void traceEnteredInstance(CONTEXT, Aint instance, bool empty) {
 	printf("[%d]%s>\n", instance, empty ? " is empty" : "");
 }
 
-
 /*----------------------------------------------------------------------*/
 static void executeInheritedEntered(CONTEXT, Aint theClass) {
-	if (theClass == 0) return;
+	if (theClass == 0)
+		return;
 	CALL1(executeInheritedEntered, classes[theClass].parent)
 
 	if (traceSectionOption)
@@ -970,7 +918,6 @@ static void executeInheritedEntered(CONTEXT, Aint theClass) {
 		CALL1(interpret, classes[theClass].entered)
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static void executeEntered(CONTEXT, Aint instance) {
@@ -988,12 +935,10 @@ static void executeEntered(CONTEXT, Aint instance) {
 	current.instance = currentInstance;
 }
 
-
 /*----------------------------------------------------------------------*/
 static int getVisits(int location) {
 	return getInstanceAttribute(location, VISITSATTRIBUTE);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void incrementVisits(int location) {
@@ -1002,7 +947,6 @@ static void incrementVisits(int location) {
 		/* Nested location, so increment that too */
 		incrementVisits(admin[location].location);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void revisited(CONTEXT) {
@@ -1014,16 +958,13 @@ static void revisited(CONTEXT) {
 	CALL0(describeInstances)
 }
 
-
 /*----------------------------------------------------------------------*/
 static bool shouldBeDescribed(void) {
 	if (!isPreBeta5(header->version))
-		return getVisits(admin[HERO].location) % (current.visits + 1) == 0
-		       || admin[admin[HERO].location].visitsCount == 0;
+		return getVisits(admin[HERO].location) % (current.visits + 1) == 0 || admin[admin[HERO].location].visitsCount == 0;
 	else
 		return admin[admin[HERO].location].visitsCount % (current.visits + 1) == 0;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void locateActor(CONTEXT, Aint movingActor, Aint whr) {
@@ -1075,7 +1016,6 @@ static void locateActor(CONTEXT, Aint movingActor, Aint whr) {
 	current.instance = previousInstance;
 }
 
-
 /*----------------------------------------------------------------------*/
 static void traceExtract(CONTEXT, int instance, int containerId, const char *what) {
 	if (traceSectionOption) {
@@ -1084,7 +1024,6 @@ static void traceExtract(CONTEXT, int instance, int containerId, const char *wha
 		printf("[%d, container %d], %s:>\n", instance, containerId, what);
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static void containmentLoopError(CONTEXT, int instance, int whr) {
@@ -1103,7 +1042,6 @@ static void containmentLoopError(CONTEXT, int instance, int whr) {
 	CALL1(error, NO_MSG)
 }
 
-
 /*----------------------------------------------------------------------*/
 static void runExtractStatements(CONTEXT, int instance, int containerId) {
 	ContainerEntry *theContainer = &containers[containerId];
@@ -1114,7 +1052,6 @@ static void runExtractStatements(CONTEXT, int instance, int containerId) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static bool runExtractChecks(CONTEXT, int instance, int containerId) {
 	ContainerEntry *theContainer = &containers[containerId];
@@ -1123,12 +1060,11 @@ static bool runExtractChecks(CONTEXT, int instance, int containerId) {
 		R0CALL3(traceExtract, instance, containerId, "Checking")
 		if (checksFailed(context, theContainer->extractChecks, EXECUTE_CHECK_BODY_ON_FAIL)) {
 			fail = TRUE;
-			return FALSE;       /* Failed! */
+			return FALSE; /* Failed! */
 		}
 	}
-	return TRUE;                /* Passed! */
+	return TRUE; /* Passed! */
 }
-
 
 /*======================================================================*/
 void locate(CONTEXT, int instance, int whr) {
@@ -1143,7 +1079,7 @@ void locate(CONTEXT, int instance, int whr) {
 		CALL2(containmentLoopError, instance, whr)
 
 	/* First check if the instance is in a container, if so run extract checks */
-	if (isAContainer(admin[instance].location)) {    /* In something? */
+	if (isAContainer(admin[instance].location)) { /* In something? */
 		int loc = admin[instance].location;
 
 		/* Run all nested extraction checks */

@@ -21,10 +21,10 @@
  */
 
 #include "ultima/ultima1/u1gfx/text_cursor.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/gfx/screen.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/gfx/screen.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -35,14 +35,13 @@ namespace U1Gfx {
 #define CURSOR_H 8
 
 static const byte TEXT_CURSOR_FRAMES[4][8] = {
-	{ 0x66, 0x3C, 0x18, 0x66, 0x66, 0x18, 0x3C, 0x66 },
-	{ 0x3C, 0x18, 0x66, 0x24, 0x24, 0x66, 0x18, 0x3C },
-	{ 0x18, 0x66, 0x24, 0x3C, 0x3C, 0x24, 0x66, 0x18 },
-	{ 0x66, 0x24, 0x18, 0x18, 0x18, 0x18, 0x3C, 0x66 }
-};
+    {0x66, 0x3C, 0x18, 0x66, 0x66, 0x18, 0x3C, 0x66},
+    {0x3C, 0x18, 0x66, 0x24, 0x24, 0x66, 0x18, 0x3C},
+    {0x18, 0x66, 0x24, 0x3C, 0x3C, 0x24, 0x66, 0x18},
+    {0x66, 0x24, 0x18, 0x18, 0x18, 0x18, 0x3C, 0x66}};
 
 U1TextCursor::U1TextCursor(const byte &fgColor, const byte &bgColor) : _fgColor(fgColor),
-		_bgColor(bgColor), _frameNum(0), _lastFrameFrame(0) {
+                                                                       _bgColor(bgColor), _frameNum(0), _lastFrameFrame(0) {
 	_bounds = Common::Rect(0, 0, 8, 8);
 }
 
@@ -64,7 +63,7 @@ void U1TextCursor::draw() {
 
 	// Get the surface area to draw the cursor on
 	Graphics::ManagedSurface s(8, 8);
-		
+
 	// Loop to draw the cursor
 	for (int y = 0; y < CURSOR_H; ++y) {
 		byte *lineP = (byte *)s.getBasePtr(0, y);

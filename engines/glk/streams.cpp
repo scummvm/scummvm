@@ -21,20 +21,19 @@
  */
 
 #include "glk/streams.h"
+#include "common/file.h"
+#include "common/savefile.h"
+#include "common/translation.h"
 #include "glk/conf.h"
 #include "glk/events.h"
 #include "glk/glk.h"
 #include "glk/windows.h"
 #include "gui/saveload.h"
-#include "common/file.h"
-#include "common/savefile.h"
-#include "common/translation.h"
 
 namespace Glk {
 
-Stream::Stream(Streams *streams, bool readable, bool writable, uint rock, bool unicode) :
-		_streams(streams), _readable(readable), _writable(writable), _rock(0), _unicode(unicode),
-		_readCount(0), _writeCount(0), _prev(nullptr), _next(nullptr) {
+Stream::Stream(Streams *streams, bool readable, bool writable, uint rock, bool unicode) : _streams(streams), _readable(readable), _writable(writable), _rock(0), _unicode(unicode),
+                                                                                          _readCount(0), _writeCount(0), _prev(nullptr), _next(nullptr) {
 	if (g_vm->gli_register_obj)
 		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Stream);
 }
@@ -306,9 +305,8 @@ void WindowStream::setReverseVideo(bool reverse) {
 
 /*--------------------------------------------------------------------------*/
 
-MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint rock, bool unicode) :
-	Stream(streams, mode != filemode_Write, mode != filemode_Read, rock, unicode),
-	_buf(buf), _bufLen(buflen), _bufPtr(buf) {
+MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint rock, bool unicode) : Stream(streams, mode != filemode_Write, mode != filemode_Read, rock, unicode),
+                                                                                                                 _buf(buf), _bufLen(buflen), _bufPtr(buf) {
 	assert(_buf && _bufLen);
 	assert(mode == filemode_Read || mode == filemode_Write || mode == filemode_ReadWrite);
 
@@ -319,7 +317,7 @@ MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode 
 	_bufEof = mode == filemode_Write ? _buf : _bufEnd;
 
 	if (g_vm->gli_register_arr)
-		_arrayRock = (*g_vm->gli_register_arr)(buf, buflen, unicode ?  "&+#!Iu" : "&+#!Cn");
+		_arrayRock = (*g_vm->gli_register_arr)(buf, buflen, unicode ? "&+#!Iu" : "&+#!Cn");
 }
 
 MemoryStream::~MemoryStream() {
@@ -839,7 +837,6 @@ void IOStream::putBufferUni(const uint32 *buf, size_t len) {
 		return;
 	_writeCount += len;
 
-
 	ensureOp(filemode_Write);
 	for (size_t lx = 0; lx < len; lx++) {
 		uint32 ch = buf[lx];
@@ -1307,10 +1304,9 @@ uint IOStream::getLineUni(uint32 *ubuf, uint len) {
 
 /*--------------------------------------------------------------------------*/
 
-FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, bool unicode) :
-		IOStream(streams, fmode == filemode_Read, fmode != filemode_Read, rock, unicode),
-		_inSave(nullptr), _outSave(nullptr) {
-	
+FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, bool unicode) : IOStream(streams, fmode == filemode_Read, fmode != filemode_Read, rock, unicode),
+                                                                                               _inSave(nullptr), _outSave(nullptr) {
+
 	_textFile = fref->_textMode;
 	Common::String fname = fref->_slotNumber == -1 ? fref->_filename : fref->getSaveName();
 
@@ -1414,7 +1410,6 @@ Stream *Streams::getFirst(uint *rock) {
 		*rock = _streamList ? _streamList->_rock : 0;
 	return _streamList;
 }
-
 
 frefid_t Streams::createByPrompt(uint usage, FileMode fmode, uint rock) {
 	switch (usage & fileusage_TypeMask) {
@@ -1521,9 +1516,8 @@ FileReference::FileReference() : _rock(0), _slotNumber(-1), _fileType(fileusage_
 		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Fileref);
 }
 
-FileReference::FileReference(int slot, const Common::String &desc, uint usage, uint rock) :
-		_rock(rock), _slotNumber(slot), _description(desc),
-		_fileType((FileUsage)(usage & fileusage_TypeMask)), _textMode(usage & fileusage_TextMode) {
+FileReference::FileReference(int slot, const Common::String &desc, uint usage, uint rock) : _rock(rock), _slotNumber(slot), _description(desc),
+                                                                                            _fileType((FileUsage)(usage & fileusage_TypeMask)), _textMode(usage & fileusage_TextMode) {
 	if (g_vm->gli_register_obj)
 		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Fileref);
 }

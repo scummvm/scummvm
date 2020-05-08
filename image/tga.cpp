@@ -26,11 +26,11 @@
 
 #include "image/tga.h"
 
-#include "common/util.h"
 #include "common/algorithm.h"
+#include "common/error.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "common/error.h"
+#include "common/util.h"
 
 namespace Image {
 
@@ -276,7 +276,7 @@ bool TGADecoder::readData(Common::SeekableReadStream &tga, byte imageType, byte 
 	} else if (imageType == TYPE_BW) {
 		_surface.create(_surface.w, _surface.h, _format);
 
-		byte *data  = (byte *)_surface.getPixels();
+		byte *data = (byte *)_surface.getPixels();
 		uint32 count = _surface.w * _surface.h;
 
 		while (count-- > 0) {

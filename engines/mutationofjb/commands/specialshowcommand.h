@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_SPECIALSHOWCOMMAND_H
 #define MUTATIONOFJB_SPECIALSHOWCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -48,6 +48,6 @@ private:
 	Mode _mode;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

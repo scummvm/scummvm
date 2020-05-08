@@ -29,13 +29,13 @@
 #ifndef WINTERMUTE_BASE_NAMED_OBJECT_H
 #define WINTERMUTE_BASE_NAMED_OBJECT_H
 
-
 #include "engines/wintermute/base/base.h"
 
 namespace Wintermute {
 
 class BaseNamedObject : public BaseClass {
 	char *_name;
+
 public:
 	BaseNamedObject(BaseGame *inGame);
 	BaseNamedObject();

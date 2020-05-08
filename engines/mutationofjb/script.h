@@ -23,16 +23,16 @@
 #ifndef MUTATIONOFJB_SCRIPT_H
 #define MUTATIONOFJB_SCRIPT_H
 
-#include "mutationofjb/commands/command.h"
 #include "common/array.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/stack.h"
+#include "mutationofjb/commands/command.h"
 
 namespace Common {
 class SeekableReadStream;
 class String;
-}
+} // namespace Common
 
 namespace MutationOfJB {
 
@@ -150,6 +150,6 @@ private:
 	Extras _extras;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

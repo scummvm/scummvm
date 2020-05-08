@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "common/error.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-#include "mohawk/mohawk.h"
 #include "mohawk/cursors.h"
 #include "mohawk/dialogs.h"
+#include "mohawk/mohawk.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 

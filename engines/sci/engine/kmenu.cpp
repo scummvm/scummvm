@@ -20,13 +20,13 @@
  *
  */
 
-#include "sci/sci.h"
-#include "sci/resource.h"
-#include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/state.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/menu.h"
 #include "sci/graphics/screen.h"
+#include "sci/resource.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -37,7 +37,6 @@ reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxMenu->kernelAddEntry(title, content, argv[1]);
 	return s->r_acc;
 }
-
 
 reg_t kSetMenu(EngineState *s, int argc, reg_t *argv) {
 	uint16 menuId = argv[0].toUint16() >> 8;
@@ -63,7 +62,6 @@ reg_t kGetMenu(EngineState *s, int argc, reg_t *argv) {
 
 	return g_sci->_gfxMenu->kernelGetAttribute(menuId, itemId, attributeId);
 }
-
 
 reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	reg_t textReference = argv[0];

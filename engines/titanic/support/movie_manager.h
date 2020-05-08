@@ -45,6 +45,7 @@ public:
 class CMovieManager : public CMovieManagerBase {
 private:
 	CSoundManager *_soundManager;
+
 public:
 	CMovieManager() : CMovieManagerBase(), _soundManager(nullptr) {}
 	~CMovieManager() override {}

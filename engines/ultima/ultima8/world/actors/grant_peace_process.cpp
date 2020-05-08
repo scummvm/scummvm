@@ -20,23 +20,23 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/grant_peace_process.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/gumps/target_gump.h"
-#include "ultima/ultima8/world/weapon_info.h"
-#include "ultima/ultima8/graphics/palette_fader_process.h"
-#include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/misc/direction.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/gumps/gump_notify_process.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/graphics/palette_fader_process.h"
+#include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/target_gump.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/weapon_info.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -105,10 +105,13 @@ void GrantPeaceProcess::run() {
 
 		for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
 			Actor *t = getActor(itemlist.getuint16(i));
-			if (!t) continue;
-			if (t == caster) continue;
+			if (!t)
+				continue;
+			if (t == caster)
+				continue;
 
-			if (t->isDead()) continue;
+			if (t->isDead())
+				continue;
 
 			// undead?
 			if (t->getDefenseType() & WeaponInfo::DMG_UNDEAD) {
@@ -143,15 +146,14 @@ void GrantPeaceProcess::run() {
 				        4);
 #endif
 			}
-
 		}
 
 	} else {
 		// not undead
 
 		if (!target->hasActorFlags(Actor::ACT_DEAD |
-								   Actor::ACT_IMMORTAL |
-								   Actor::ACT_INVINCIBLE)) {
+		                           Actor::ACT_IMMORTAL |
+		                           Actor::ACT_INVINCIBLE)) {
 			if (getRandom() % 10 == 0) {
 				target->receiveHit(_itemNum, 8, target->getHP(),
 				                   (WeaponInfo::DMG_MAGIC |
@@ -160,9 +162,7 @@ void GrantPeaceProcess::run() {
 				hit = true;
 			}
 		}
-
 	}
-
 
 	if (hit) {
 		// lightning
@@ -183,16 +183,16 @@ void GrantPeaceProcess::run() {
 		}
 
 		AudioProcess *audioproc = AudioProcess::get_instance();
-		if (audioproc) audioproc->playSFX(sfx, 0x60, 1, 0); //constants!!
+		if (audioproc)
+			audioproc->playSFX(sfx, 0x60, 1, 0); //constants!!
 	}
-
 
 	// done
 	terminate();
 }
 
 uint32 GrantPeaceProcess::I_castGrantPeace(const uint8 *args,
-        unsigned int /*argsize*/) {
+                                           unsigned int /*argsize*/) {
 	MainActor *avatar = getMainActor();
 
 	GrantPeaceProcess *gpp = new GrantPeaceProcess(avatar);
@@ -224,7 +224,8 @@ void GrantPeaceProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool GrantPeaceProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_haveTarget = (rs->readByte() != 0);
 

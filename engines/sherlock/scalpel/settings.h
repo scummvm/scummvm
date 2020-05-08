@@ -70,6 +70,7 @@ private:
 	 * Draws the buttons for the settings dialog
 	 */
 	int drawButtons(const Common::Point &pt, int key);
+
 public:
 	/**
 	 * Handles input when the settings window is being shown

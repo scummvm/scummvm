@@ -35,11 +35,11 @@ struct MemHandle {
 	MemHandle *next, *prev;
 };
 // mem conditions:
-#define MEM_FREED       0
-#define MEM_CAN_FREE    1
-#define MEM_DONT_FREE   2
+#define MEM_FREED 0
+#define MEM_CAN_FREE 1
+#define MEM_DONT_FREE 2
 
-#define MAX_ALLOC (6*1024*1024) // max amount of mem we want to alloc().
+#define MAX_ALLOC (6 * 1024 * 1024) // max amount of mem we want to alloc().
 
 class MemMan {
 public:
@@ -50,11 +50,12 @@ public:
 	void freeNow(MemHandle *bsMem);
 	void initHandle(MemHandle *bsMem);
 	void flush();
+
 private:
 	void addToFreeList(MemHandle *bsMem);
 	void removeFromFreeList(MemHandle *bsMem);
 	void checkMemoryUsage();
-	uint32 _alloced;  //currently allocated memory
+	uint32 _alloced; //currently allocated memory
 	MemHandle *_memListFree;
 	MemHandle *_memListFreeEnd;
 };

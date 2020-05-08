@@ -21,17 +21,17 @@
  */
 
 #include "ultima/shared/engine/input_handler.h"
-#include "ultima/shared/engine/ultima.h"
-#include "ultima/shared/engine/events.h"
 #include "ultima/shared/early/game_base.h"
+#include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/gfx/visual_item.h"
 
 namespace Ultima {
 namespace Shared {
 
 InputHandler::InputHandler(GameBase *game) : _game(game), _inputTranslator(nullptr), _dragging(false),
-		_buttonDown(false), _lockCount(0), _abortMessage(false) {
+                                             _buttonDown(false), _lockCount(0), _abortMessage(false) {
 }
 
 InputHandler::~InputHandler() {

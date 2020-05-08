@@ -31,4 +31,4 @@ CommandParser::~CommandParser() {}
 
 Command::~Command() {}
 
-}
+} // namespace MutationOfJB

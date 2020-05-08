@@ -23,8 +23,8 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 
-#include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/intern.h"
 #include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
@@ -142,7 +142,7 @@ void AGOSEngine::setup_cond_c_helper() {
 			}
 
 			delay(100);
-		} while ((_lastHitArea3 == (HitArea *) -1 || _lastHitArea3 == 0) && !shouldQuit());
+		} while ((_lastHitArea3 == (HitArea *)-1 || _lastHitArea3 == 0) && !shouldQuit());
 
 		if (_lastHitArea == NULL) {
 		} else if (_lastHitArea->id == 0x7FFB) {
@@ -193,13 +193,13 @@ void AGOSEngine::waitForInput() {
 
 		while (!shouldQuit()) {
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-					_keyPressed.keycode == Common::KEYCODE_F10)
+			    _keyPressed.keycode == Common::KEYCODE_F10)
 				displayBoxStars();
 			if (processSpecialKeys()) {
 				if (getGameId() != GID_DIMP)
 					goto out_of_here;
 			}
-			if (_lastHitArea3 == (HitArea *) -1) {
+			if (_lastHitArea3 == (HitArea *)-1) {
 				_lastHitArea = NULL;
 				_lastHitArea3 = NULL;
 				_dragAccept = true;
@@ -260,7 +260,7 @@ void AGOSEngine::waitForInput() {
 		} else if (ha->id == 0x7FFC) {
 			inventoryDown(ha->window);
 		} else if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-			(ha->id >= 101 && ha->id < 113)) {
+		           (ha->id >= 101 && ha->id < 113)) {
 			_verbHitArea = ha->verb;
 			setVerb(ha);
 			_defaultVerb = 0;
@@ -296,8 +296,7 @@ void AGOSEngine::waitForInput() {
 				}
 			}
 			if (ha->itemPtr && (!ha->verb || _verbHitArea ||
-					(_hitAreaSubjectItem != ha->itemPtr && (ha->flags & kBFBoxItem)))
-				) {
+			                    (_hitAreaSubjectItem != ha->itemPtr && (ha->flags & kBFBoxItem)))) {
 				_hitAreaSubjectItem = ha->itemPtr;
 				id = setVerbText(ha);
 				_nameLocked = false;
@@ -359,12 +358,12 @@ out_of_here:
 
 void AGOSEngine::hitarea_stuff_helper() {
 	if (getGameType() == GType_SIMON2 || getGameType() == GType_FF ||
-		getGameType() == GType_PP) {
+	    getGameType() == GType_PP) {
 		if (_variableArray[254] || _variableArray[249]) {
 			hitarea_stuff_helper_2();
 		}
 	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW ||
-		getGameType() == GType_SIMON1) {
+	           getGameType() == GType_SIMON1) {
 		uint subr_id = (uint16)_variableArray[254];
 		if (subr_id) {
 			Subroutine *sub = getSubroutineByID(subr_id);
@@ -443,7 +442,7 @@ void AGOSEngine_Feeble::handleMouseWheelDown() {
 		HitArea *ha = findBox(0x7FFC);
 		if (ha != NULL && (ha->flags & kBFBoxInUse)) {
 			if (!isSpriteLoaded(21, 9) && !isSpriteLoaded(23, 9))
-					inventoryDown(ha->window);
+				inventoryDown(ha->window);
 		}
 	}
 }
@@ -452,15 +451,15 @@ void AGOSEngine_Feeble::handleMouseWheelDown() {
 void AGOSEngine_Simon1::handleMouseWheelUp() {
 	HitArea *ha = findBox(206);
 	if (ha != NULL && (ha->flags & kBFBoxInUse) && !(ha->flags & kBFBoxDead)) {
-			if (_saveLoadRowCurPos != 1) {
-				if (_saveLoadRowCurPos < 7)
-					_saveLoadRowCurPos = 1;
-				else
-					_saveLoadRowCurPos -= 1;
+		if (_saveLoadRowCurPos != 1) {
+			if (_saveLoadRowCurPos < 7)
+				_saveLoadRowCurPos = 1;
+			else
+				_saveLoadRowCurPos -= 1;
 
-				_saveLoadEdit = false;
-				listSaveGames();
-			}
+			_saveLoadEdit = false;
+			listSaveGames();
+		}
 	} else {
 		AGOSEngine::handleMouseWheelUp();
 	}
@@ -469,14 +468,14 @@ void AGOSEngine_Simon1::handleMouseWheelUp() {
 void AGOSEngine_Simon1::handleMouseWheelDown() {
 	HitArea *ha = findBox(207);
 	if (ha != NULL && (ha->flags & kBFBoxInUse) && !(ha->flags & kBFBoxDead)) {
-			if (_saveDialogFlag) {
-				_saveLoadRowCurPos += 1;
-				if (_saveLoadRowCurPos >= _numSaveGameRows)
-					_saveLoadRowCurPos = _numSaveGameRows;
+		if (_saveDialogFlag) {
+			_saveLoadRowCurPos += 1;
+			if (_saveLoadRowCurPos >= _numSaveGameRows)
+				_saveLoadRowCurPos = _numSaveGameRows;
 
-				_saveLoadEdit = false;
-				listSaveGames();
-			}
+			_saveLoadEdit = false;
+			listSaveGames();
+		}
 	} else {
 		AGOSEngine::handleMouseWheelDown();
 	}
@@ -485,28 +484,28 @@ void AGOSEngine_Simon1::handleMouseWheelDown() {
 void AGOSEngine_Elvira2::handleMouseWheelUp() {
 	HitArea *ha = findBox(224);
 	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
-			_saveGameNameLen = 0;
+		_saveGameNameLen = 0;
 
-			if (_saveLoadRowCurPos < 3)
-				_saveLoadRowCurPos = 1;
-			else
-				_saveLoadRowCurPos -= 3;
+		if (_saveLoadRowCurPos < 3)
+			_saveLoadRowCurPos = 1;
+		else
+			_saveLoadRowCurPos -= 3;
 
-			listSaveGames();
+		listSaveGames();
 	} else {
 		AGOSEngine::handleMouseWheelUp();
 	}
 }
 
 void AGOSEngine_Elvira2::handleMouseWheelDown() {
-	HitArea *ha =  findBox(224);
+	HitArea *ha = findBox(224);
 	if (ha != NULL && (ha->flags & kBFBoxInUse)) {
-			_saveGameNameLen = 0;
-			_saveLoadRowCurPos += 3;
-			if (_saveLoadRowCurPos >= _numSaveGameRows)
-				_saveLoadRowCurPos = 1;
+		_saveGameNameLen = 0;
+		_saveLoadRowCurPos += 3;
+		if (_saveLoadRowCurPos >= _numSaveGameRows)
+			_saveLoadRowCurPos = 1;
 
-			listSaveGames();
+		listSaveGames();
 	} else {
 		AGOSEngine::handleMouseWheelDown();
 	}
@@ -541,7 +540,7 @@ void AGOSEngine::permitInput() {
 				waitWindow(_textWindow);
 				clsCheck(_textWindow);
 			}
-			_fcsData1[n]=0;
+			_fcsData1[n] = 0;
 			n++;
 		}
 
@@ -554,7 +553,6 @@ void AGOSEngine::permitInput() {
 		justifyStart();
 	}
 	_mortalFlag = false;
-
 }
 
 bool AGOSEngine::processSpecialKeys() {
@@ -678,7 +676,7 @@ bool AGOSEngine::processSpecialKeys() {
 	switch (_keyPressed.ascii) {
 	case 't':
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) ||
-			((getFeatures() & GF_TALKIE) && _language != Common::EN_ANY && _language != Common::DE_DEU)) {
+		    ((getFeatures() & GF_TALKIE) && _language != Common::EN_ANY && _language != Common::DE_DEU)) {
 			if (_speech)
 				_subtitles = !_subtitles;
 		}

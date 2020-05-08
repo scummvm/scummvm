@@ -20,8 +20,8 @@
  *
  */
 
-#include "teenagent/teenagent.h"
 #include "teenagent/animation.h"
+#include "teenagent/teenagent.h"
 
 #include "common/endian.h"
 #include "common/textconsole.h"
@@ -180,8 +180,7 @@ void Animation::load(Common::SeekableReadStream &s, Type type) {
 		for (uint16 i = 0; i < framesCount; ++i) {
 			frames[i].load(s, Surface::kTypeOns);
 		}
-	}
-	break;
+	} break;
 
 	case kTypeVaria:
 		framesCount = s.readByte();

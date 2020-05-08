@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/widgets/urban_player.h"
-#include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {

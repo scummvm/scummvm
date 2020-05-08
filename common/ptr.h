@@ -23,9 +23,9 @@
 #ifndef COMMON_PTR_H
 #define COMMON_PTR_H
 
-#include "common/scummsys.h"
 #include "common/noncopyable.h"
 #include "common/safe-bool.h"
+#include "common/scummsys.h"
 #include "common/types.h"
 
 namespace Common {
@@ -43,6 +43,7 @@ public:
 		STATIC_ASSERT(sizeof(T) > 0, SharedPtr_cannot_delete_incomplete_type);
 		delete _ptr;
 	}
+
 private:
 	T *_ptr;
 };
@@ -52,6 +53,7 @@ class SharedPtrDeletionDeleterImpl : public SharedPtrDeletionInternal {
 public:
 	SharedPtrDeletionDeleterImpl(T *ptr, D d) : _ptr(ptr), _deleter(d) {}
 	~SharedPtrDeletionDeleterImpl() { _deleter(_ptr); }
+
 private:
 	T *_ptr;
 	D _deleter;
@@ -99,9 +101,10 @@ private:
  * a plain pointer is only possible via SharedPtr::get.
  */
 template<class T>
-class SharedPtr : public SafeBool<SharedPtr<T> > {
+class SharedPtr : public SafeBool<SharedPtr<T>> {
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
-	template<class T2> friend class SharedPtr;
+	template<class T2>
+	friend class SharedPtr;
 #endif
 public:
 	typedef int RefValue;
@@ -117,9 +120,15 @@ public:
 	template<class T2, class D>
 	SharedPtr(T2 *p, D d) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionDeleterImpl<T2, D>(p, d)), _pointer(p) {}
 
-	SharedPtr(const SharedPtr &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
+	SharedPtr(const SharedPtr &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) {
+		if (_refCount)
+			++(*_refCount);
+	}
 	template<class T2>
-	SharedPtr(const SharedPtr<T2> &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
+	SharedPtr(const SharedPtr<T2> &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) {
+		if (_refCount)
+			++(*_refCount);
+	}
 
 	~SharedPtr() { decRef(); }
 
@@ -148,8 +157,14 @@ public:
 		return *this;
 	}
 
-	ReferenceType operator*() const { assert(_pointer); return *_pointer; }
-	PointerType operator->() const { assert(_pointer); return _pointer; }
+	ReferenceType operator*() const {
+		assert(_pointer);
+		return *_pointer;
+	}
+	PointerType operator->() const {
+		assert(_pointer);
+		return _pointer;
+	}
 
 	/**
 	 * Returns the plain pointer value. Be sure you know what you
@@ -218,7 +233,7 @@ private:
 	PointerType _pointer;
 };
 
-template <typename T>
+template<typename T>
 struct DefaultDeleter {
 	inline void operator()(T *object) {
 		STATIC_ASSERT(sizeof(T) > 0, cannot_delete_incomplete_type);
@@ -226,8 +241,8 @@ struct DefaultDeleter {
 	}
 };
 
-template<typename T, class D = DefaultDeleter<T> >
-class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T, D> > {
+template<typename T, class D = DefaultDeleter<T>>
+class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T, D>> {
 public:
 	typedef T ValueType;
 	typedef T *PointerType;
@@ -245,14 +260,16 @@ public:
 	bool operator_bool() const { return _pointer != nullptr; }
 
 	~ScopedPtr() {
-		D()(_pointer);
+		D()
+		(_pointer);
 	}
 
 	/**
 	 * Resets the pointer with the new value. Old object will be destroyed
 	 */
 	void reset(PointerType o = nullptr) {
-		D()(_pointer);
+		D()
+		(_pointer);
 		_pointer = o;
 	}
 
@@ -279,17 +296,19 @@ private:
 	PointerType _pointer;
 };
 
-template<typename T, class D = DefaultDeleter<T> >
-class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T, D> > {
+template<typename T, class D = DefaultDeleter<T>>
+class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T, D>> {
 public:
-	typedef T  ValueType;
+	typedef T ValueType;
 	typedef T *PointerType;
 	typedef T &ReferenceType;
 
 	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose) {}
 
 	~DisposablePtr() {
-		if (_dispose) D()(_pointer);
+		if (_dispose)
+			D()
+		(_pointer);
 	}
 
 	ReferenceType operator*() const { return *_pointer; }
@@ -305,7 +324,9 @@ public:
 	 * Resets the pointer with the new value. Old object will be destroyed
 	 */
 	void reset(PointerType o, DisposeAfterUse::Flag dispose) {
-		if (_dispose) D()(_pointer);
+		if (_dispose)
+			D()
+		(_pointer);
 		_pointer = o;
 		_dispose = dispose;
 	}
@@ -325,7 +346,7 @@ public:
 	PointerType get() const { return _pointer; }
 
 private:
-	PointerType           _pointer;
+	PointerType _pointer;
 	DisposeAfterUse::Flag _dispose;
 };
 

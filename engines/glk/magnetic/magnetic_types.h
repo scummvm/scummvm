@@ -46,7 +46,7 @@ struct picture {
 	byte *mask;
 
 	picture() : data(nullptr), data_size(0), width(0), height(0), wbytes(0), plane_step(0),
-		mask(nullptr) {}
+	            mask(nullptr) {}
 };
 
 /**
@@ -121,9 +121,9 @@ struct ms_hint {
 };
 
 struct gms_gamma_t {
-	const char *const level;       ///< Gamma correction level
-	const unsigned char table[8];  ///< Color lookup table
-	const bool is_corrected;       ///< Flag if non-linear
+	const char *const level;      ///< Gamma correction level
+	const unsigned char table[8]; ///< Color lookup table
+	const bool is_corrected;      ///< Flag if non-linear
 };
 typedef const gms_gamma_t *gms_gammaref_t;
 
@@ -138,16 +138,16 @@ typedef gms_rgb_t *gms_rgbref_t;
 
 #ifndef GARGLK
 struct gms_layering_t {
-	long complexity;  /* Count of vertices for this color. */
-	long usage;       /* Color usage count. */
-	int color;        /* Color index into palette. */
+	long complexity; /* Count of vertices for this color. */
+	long usage;      /* Color usage count. */
+	int color;       /* Color index into palette. */
 };
 #endif
 
 /* Table of single-character command abbreviations. */
 struct gms_abbreviation_t {
-	const char abbreviation;       /* Abbreviation character. */
-	const char *const expansion;   /* Expansion string. */
+	const char abbreviation;     /* Abbreviation character. */
+	const char *const expansion; /* Expansion string. */
 };
 typedef gms_abbreviation_t *gms_abbreviationref_t;
 

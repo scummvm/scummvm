@@ -23,15 +23,14 @@
 #ifndef TESTBED_CONFIG_H
 #define TESTBED_CONFIG_H
 
-
 #include "common/array.h"
 #include "common/ini-file.h"
 #include "common/str-array.h"
 #include "common/tokenizer.h"
 
-#include "gui/widgets/list.h"
-#include "gui/dialog.h"
 #include "gui/ThemeEngine.h"
+#include "gui/dialog.h"
+#include "gui/widgets/list.h"
 
 #include "testbed/testsuite.h"
 
@@ -42,8 +41,6 @@ enum {
 	kTestbedSelectAll = 'sAll',
 	kTestbedDeselectAll = 'dAll'
 };
-
-
 
 class TestbedConfigManager {
 public:
@@ -62,8 +59,8 @@ public:
 
 private:
 	Common::Array<Testsuite *> &_testsuiteList;
-	Common::String	_configFileName;
-	Common::INIFile	_configFileInterface;
+	Common::String _configFileName;
+	Common::INIFile _configFileInterface;
 	void parseConfigFile();
 };
 
@@ -94,7 +91,7 @@ public:
 	}
 
 private:
-	Common::Array<Testsuite *>	_testSuiteArray;
+	Common::Array<Testsuite *> _testSuiteArray;
 };
 
 class TestbedOptionsDialog : public GUI::Dialog {
@@ -105,7 +102,7 @@ public:
 
 private:
 	GUI::ListWidget::ColorList _colors;
-	GUI::ButtonWidget	*_selectButton;
+	GUI::ButtonWidget *_selectButton;
 	Common::Array<Testsuite *> _testSuiteArray;
 	Common::StringArray _testSuiteDescArray;
 	TestbedListWidget *_testListDisplay;
@@ -121,11 +118,11 @@ public:
 	void addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd);
 	void addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding = 8);
 	void addList(uint x, uint y, uint w, uint h, const Common::Array<Common::String> &strArray, GUI::ListWidget::ColorList *colors = 0, uint yPadding = 8);
+
 protected:
 	Common::Array<GUI::ButtonWidget *> _buttonArray;
 	uint _xOffset;
 	uint _yOffset;
-
 };
 
 } // End of namespace Testbed

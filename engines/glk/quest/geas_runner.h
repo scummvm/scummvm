@@ -23,10 +23,10 @@
 #ifndef GLK_QUEST_GEAS_RUNNER
 #define GLK_QUEST_GEAS_RUNNER
 
-#include "glk/quest/string.h"
-#include "glk/quest/geas_state.h"
 #include "common/array.h"
 #include "common/stream.h"
+#include "glk/quest/geas_state.h"
+#include "glk/quest/string.h"
 
 namespace Glk {
 namespace Quest {
@@ -34,7 +34,9 @@ namespace Quest {
 typedef Common::Array<String> vstring;
 typedef Common::Array<vstring> v2string;
 
-enum geas_justification { JUSTIFY_LEFT, JUSTIFY_RIGHT, JUSTIFY_CENTER };
+enum geas_justification { JUSTIFY_LEFT,
+	                      JUSTIFY_RIGHT,
+	                      JUSTIFY_CENTER };
 
 struct GeasFontStyle {
 	bool is_underlined, is_italic, is_bold;
@@ -43,23 +45,29 @@ struct GeasFontStyle {
 	geas_justification justify;
 
 	GeasFontStyle() : is_underlined(false), is_italic(false), is_bold(false),
-		color(""), font(""), size(10), justify(JUSTIFY_LEFT) {}
+	                  color(""), font(""), size(10), justify(JUSTIFY_LEFT) {}
 };
 
 class GeasFontStyleCompare {
 public:
 	int operator()(const GeasFontStyle &a, const GeasFontStyle &b) {
-		if (a.size           !=  b.size)           return a.size < b.size;
-		if (a.is_underlined  !=  b.is_underlined)  return a.is_underlined;
-		if (a.is_bold        !=  b.is_bold)        return a.is_bold;
-		if (a.is_italic      !=  b.is_italic)      return a.is_italic;
-		if (a.color          !=  b.color)          return a.color < b.color;
-		if (a.justify        !=  b.justify)        return a.justify < b.justify;
+		if (a.size != b.size)
+			return a.size < b.size;
+		if (a.is_underlined != b.is_underlined)
+			return a.is_underlined;
+		if (a.is_bold != b.is_bold)
+			return a.is_bold;
+		if (a.is_italic != b.is_italic)
+			return a.is_italic;
+		if (a.color != b.color)
+			return a.color < b.color;
+		if (a.justify != b.justify)
+			return a.justify < b.justify;
 		return 0;
 	}
 };
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const GeasFontStyle &gfs);
+Common::WriteStream &operator<<(Common::WriteStream &o, const GeasFontStyle &gfs);
 
 enum GeasResult {
 	r_success,
@@ -94,7 +102,6 @@ public:
 	virtual GeasResult print_newline() = 0;
 
 protected:
-
 	void update_style() {
 		set_style(cur_style);
 	}
@@ -186,9 +193,8 @@ public:
 	 * the interpreter may want to update the inventory or room object
 	 * listings.
 	 */
-	virtual void update_sidebars() { }
+	virtual void update_sidebars() {}
 };
-
 
 /* Callback for passing information from the UI to the execution core
  */
@@ -206,12 +212,12 @@ public:
 
 	virtual v2string get_inventory() = 0;
 	virtual v2string get_room_contents() = 0;
-	virtual vstring  get_status_vars() = 0;
+	virtual vstring get_status_vars() = 0;
 	virtual Common::Array<bool> get_valid_exits() = 0;
 
 	virtual void tick_timers() = 0;
 
-	virtual ~GeasRunner() {  }
+	virtual ~GeasRunner() {}
 	virtual void set_game(const String &fname) = 0;
 	static GeasRunner *get_runner(GeasInterface *gi);
 };

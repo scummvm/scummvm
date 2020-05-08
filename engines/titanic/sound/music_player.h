@@ -38,15 +38,17 @@ class CMusicPlayer : public CGameObject {
 	bool CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+
 protected:
 	bool _isActive;
 	CString _stopTarget;
 	bool _musicActive;
 	int _volume;
+
 public:
 	CLASSDEF;
 	CMusicPlayer() : CGameObject(),
-		_isActive(false), _musicActive(false), _volume(100) {}
+	                 _isActive(false), _musicActive(false), _volume(100) {}
 
 	/**
 	 * Save the data for the class to file

@@ -25,11 +25,11 @@
 
 #include "common/lua/lua.h"
 
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/files/u6_shape.h"
 #include "ultima/nuvie/fonts/wou_font.h"
-#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -61,7 +61,7 @@ public:
 		return scale;
 	}
 
-	virtual void updateEffect() { };
+	virtual void updateEffect(){};
 };
 
 #define STAR_FIELD_NUM_STARS 70
@@ -75,6 +75,7 @@ private:
 		uint8 color;
 		U6LineWalker *line;
 	} stars[STAR_FIELD_NUM_STARS];
+
 public:
 	CSStarFieldImage(U6Shape *shape);
 	~CSStarFieldImage() override {}
@@ -140,7 +141,7 @@ public:
 	Std::vector<CSMidGameData> load_midgame_file(const char *filename);
 
 	CSImage *load_image(const char *filename, int idx, int sub_idx = 0);
-	Std::vector<Std::vector<CSImage *> > load_all_images(const char *filename);
+	Std::vector<Std::vector<CSImage *>> load_all_images(const char *filename);
 	void add_sprite(CSSprite *s) {
 		sprite_list.push_back(s);
 	}

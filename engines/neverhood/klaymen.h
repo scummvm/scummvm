@@ -23,10 +23,10 @@
 #ifndef NEVERHOOD_KLAYMEN_H
 #define NEVERHOOD_KLAYMEN_H
 
-#include "neverhood/neverhood.h"
-#include "neverhood/sprite.h"
 #include "neverhood/graphics.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/resource.h"
+#include "neverhood/sprite.h"
 
 namespace Neverhood {
 
@@ -37,14 +37,14 @@ class Scene;
 
 const uint32 kKlaymenSpeedUpHash = 0x004A2148;
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct KlaymenIdleTableItem {
 	int weight;
 	uint idleAnimation;
 };
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 enum {
 	kIdlePickEar,

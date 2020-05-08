@@ -22,46 +22,45 @@
 
 #include "ultima/detection.h"
 #include "base/plugins.h"
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
-#include "common/memstream.h"
+#include "common/system.h"
 #include "common/translation.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/meta_engine.h"
 #include "ultima/nuvie/meta_engine.h"
 #include "ultima/nuvie/nuvie.h"
-#include "ultima/ultima8/ultima8.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima4/meta_engine.h"
+#include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima8/meta_engine.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 
 static const PlainGameDescriptor ULTIMA_GAMES[] = {
-	{ "ultima1", "Ultima I - The First Age of Darkness" },
-	{ "ultima4", "Ultima IV - Quest of the Avatar" },
-	{ "ultima4_enh", "Ultima IV - Quest of the Avatar - Enhanced" },
-	{ "ultima6", "Ultima VI - The False Prophet" },
-	{ "ultima6_enh", "Ultima VI - The False Prophet - Enhanced" },
-	{ "ultima8", "Ultima VIII - Pagan" },
-	{ "remorse", "Crusader: No Remorse" },
-	{ "regret", "Crusader: No Regret" },
+    {"ultima1", "Ultima I - The First Age of Darkness"},
+    {"ultima4", "Ultima IV - Quest of the Avatar"},
+    {"ultima4_enh", "Ultima IV - Quest of the Avatar - Enhanced"},
+    {"ultima6", "Ultima VI - The False Prophet"},
+    {"ultima6_enh", "Ultima VI - The False Prophet - Enhanced"},
+    {"ultima8", "Ultima VIII - Pagan"},
+    {"remorse", "Crusader: No Remorse"},
+    {"regret", "Crusader: No Regret"},
 
-	{ "martiandreams", "Worlds of Ultima: Martian Dreams" },
-	{ "martiandreams_enh", "Worlds of Ultima: Martian Dreams - Enhanced" },
-	{ "thesavageempire", "Worlds of Ultima: The Savage Empire" },
-	{ "thesavageempire_enh", "Worlds of Ultima: The Savage Empire - Enhanced" },
-	{ 0, 0 }
-};
+    {"martiandreams", "Worlds of Ultima: Martian Dreams"},
+    {"martiandreams_enh", "Worlds of Ultima: Martian Dreams - Enhanced"},
+    {"thesavageempire", "Worlds of Ultima: The Savage Empire"},
+    {"thesavageempire_enh", "Worlds of Ultima: The Savage Empire - Enhanced"},
+    {0, 0}};
 
 } // End of namespace Ultima
 
 #include "ultima/detection_tables.h"
 
 UltimaMetaEngine::UltimaMetaEngine() : AdvancedMetaEngine(Ultima::GAME_DESCRIPTIONS,
-	        sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES) {
-	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
+                                                          sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES) {
+	static const char *const DIRECTORY_GLOBS[2] = {"usecode", 0};
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;
 }

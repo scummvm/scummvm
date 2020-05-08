@@ -31,7 +31,7 @@
 namespace Cloud {
 namespace Dropbox {
 
-class DropboxUploadRequest: public Networking::Request {
+class DropboxUploadRequest : public Networking::Request {
 	Common::String _token;
 	Common::String _savePath;
 	Common::SeekableReadStream *_contentsStream;

@@ -26,10 +26,10 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-#include "common/scummsys.h"
-#include "graphics/surface.h"
-#include "engines/util.h"
 #include "tony/window.h"
+#include "common/scummsys.h"
+#include "engines/util.h"
+#include "graphics/surface.h"
 #include "tony/game.h"
 #include "tony/tony.h"
 
@@ -95,7 +95,7 @@ void RMWindow::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w,
 		}
 		g_system->copyRectToScreen(buf, pitch, x, y, w, h);
 	}
- }
+}
 
 /**
  * Close the window

@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui_load_image.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/the_font.h"
 
 namespace Ultima {
@@ -34,7 +34,7 @@ namespace Nuvie {
 
 Graphics::ManagedSurface *GUI_LoadImage(int w, int h, uint8 *pal, uint8 *data) {
 	Graphics::ManagedSurface *image = new Graphics::ManagedSurface(w, h,
-		Graphics::PixelFormat::createFormatCLUT8());
+	                                                               Graphics::PixelFormat::createFormatCLUT8());
 
 	if (image) {
 		for (int row = 0; row < h; ++row) {

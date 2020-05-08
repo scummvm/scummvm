@@ -40,9 +40,7 @@ void AIScriptSebastian::Initialize() {
 }
 
 bool AIScriptSebastian::Update() {
-	if (Actor_Query_Goal_Number(kActorSebastian) < 200
-	 && Global_Variable_Query(kVariableChapter) == 3
-	) {
+	if (Actor_Query_Goal_Number(kActorSebastian) < 200 && Global_Variable_Query(kVariableChapter) == 3) {
 		Actor_Set_Goal_Number(kActorSebastian, 200);
 	}
 
@@ -92,9 +90,7 @@ void AIScriptSebastian::OtherAgentExitedThisSet(int otherActorId) {
 }
 
 void AIScriptSebastian::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (otherActorId == kActorMcCoy
-	 && combatMode
-	) {
+	if (otherActorId == kActorMcCoy && combatMode) {
 		Global_Variable_Increment(kVariableGunPulledInFrontOfSebastian, 1);
 		Actor_Modify_Friendliness_To_Other(kActorSebastian, kActorMcCoy, -5);
 		AI_Movement_Track_Pause(kActorSebastian);
@@ -351,17 +347,17 @@ bool AIScriptSebastian::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptSebastian::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptSebastian::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptSebastian::ReachedMovementTrackWaypoint(int waypointId) {
@@ -376,23 +372,21 @@ void AIScriptSebastian::dialogue() {
 	Dialogue_Menu_Clear_List();
 
 	if (Actor_Query_Friendliness_To_Other(kActorSebastian, kActorMcCoy) >= 45) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(930, 5, 5, 5); // MORAJI AND CHEW
+		DM_Add_To_List_Never_Repeat_Once_Selected(930, 5, 5, 5);  // MORAJI AND CHEW
 		DM_Add_To_List_Never_Repeat_Once_Selected(940, -1, 5, 6); // EISENDULLER
-		DM_Add_To_List_Never_Repeat_Once_Selected(950, 5, 5, 5); // TYRELL
+		DM_Add_To_List_Never_Repeat_Once_Selected(950, 5, 5, 5);  // TYRELL
 	}
 
 	if (Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(960, 3, -1, 5); // TWINS
 	}
 
-	if (Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage)
-	 && Actor_Clue_Query(kActorMcCoy, kClueEnvelope)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage) && Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(970, -1, 4, -1); // RUNCITER
 	}
 
 	DM_Add_To_List_Never_Repeat_Once_Selected(980, -1, -1, 7); // ROBBERS
-	DM_Add_To_List_Never_Repeat_Once_Selected(990, 7, 3, -1); // NEXUS-6
+	DM_Add_To_List_Never_Repeat_Once_Selected(990, 7, 3, -1);  // NEXUS-6
 
 	if (Dialogue_Menu_Query_List_Size()) {
 		// This condition clause for non-empty dialogue menu options before adding the DONE option

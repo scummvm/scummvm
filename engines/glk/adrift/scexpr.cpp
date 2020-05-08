@@ -44,7 +44,6 @@ static const sc_char PERCENT = '%';
 static const sc_char SINGLE_QUOTE = '\'';
 static const sc_char DOUBLE_QUOTE = '"';
 
-
 /*
  * Tokens.  Single character tokens are represented by their ascii value
  * (0-255), others by values above 255.  -1 represents a null token.  Because
@@ -54,17 +53,47 @@ static const sc_char DOUBLE_QUOTE = '"';
  */
 enum {
 	TOK_NONE = -1,
-	TOK_ADD = '+', TOK_SUBTRACT = '-', TOK_MULTIPLY = '*', TOK_DIVIDE = '/',
-	TOK_AND = '&', TOK_OR = '|',
-	TOK_LPAREN = '(', TOK_RPAREN = ')', TOK_COMMA = ',', TOK_POWER = '^',
-	TOK_EQUAL = '=', TOK_GREATER = '>', TOK_LESS = '<',
+	TOK_ADD = '+',
+	TOK_SUBTRACT = '-',
+	TOK_MULTIPLY = '*',
+	TOK_DIVIDE = '/',
+	TOK_AND = '&',
+	TOK_OR = '|',
+	TOK_LPAREN = '(',
+	TOK_RPAREN = ')',
+	TOK_COMMA = ',',
+	TOK_POWER = '^',
+	TOK_EQUAL = '=',
+	TOK_GREATER = '>',
+	TOK_LESS = '<',
 
 	TOK_IDENT = 256,
-	TOK_INTEGER, TOK_STRING, TOK_VARIABLE, TOK_UMINUS, TOK_UPLUS,
-	TOK_MOD, TOK_NOT_EQUAL, TOK_GREATER_EQ, TOK_LESS_EQ, TOK_IF,
-	TOK_MIN, TOK_MAX, TOK_EITHER, TOK_RANDOM, TOK_INSTR, TOK_LEN, TOK_VAL,
-	TOK_ABS, TOK_UPPER, TOK_LOWER, TOK_PROPER, TOK_RIGHT, TOK_LEFT, TOK_MID,
-	TOK_STR, TOK_CONCATENATE,
+	TOK_INTEGER,
+	TOK_STRING,
+	TOK_VARIABLE,
+	TOK_UMINUS,
+	TOK_UPLUS,
+	TOK_MOD,
+	TOK_NOT_EQUAL,
+	TOK_GREATER_EQ,
+	TOK_LESS_EQ,
+	TOK_IF,
+	TOK_MIN,
+	TOK_MAX,
+	TOK_EITHER,
+	TOK_RANDOM,
+	TOK_INSTR,
+	TOK_LEN,
+	TOK_VAL,
+	TOK_ABS,
+	TOK_UPPER,
+	TOK_LOWER,
+	TOK_PROPER,
+	TOK_RIGHT,
+	TOK_LEFT,
+	TOK_MID,
+	TOK_STR,
+	TOK_CONCATENATE,
 	TOK_EOS
 };
 
@@ -79,24 +108,31 @@ struct sc_expr_multichar_t {
 };
 
 static const sc_expr_multichar_t FUNCTION_TOKENS[] = {
-	{"either", 6, TOK_EITHER},
-	{"proper", 6, TOK_PROPER}, {"pcase", 5, TOK_PROPER}, {"instr", 5, TOK_INSTR},
-	{"upper", 5, TOK_UPPER}, {"ucase", 5, TOK_UPPER},
-	{"lower", 5, TOK_LOWER}, {"lcase", 5, TOK_LOWER},
-	{"right", 5, TOK_RIGHT}, {"left", 4, TOK_LEFT},
-	{"rand", 4, TOK_RANDOM}, {"max", 3, TOK_MAX}, {"min", 3, TOK_MIN},
-	{"mod", 3, TOK_MOD}, {"abs", 3, TOK_ABS}, {"len", 3, TOK_LEN},
-	{"val", 3, TOK_VAL}, {"and", 3, TOK_AND}, {"mid", 3, TOK_MID},
-	{"str", 3, TOK_STR}, {"or", 2, TOK_OR}, {"if", 2, TOK_IF},
-	{NULL, 0, TOK_NONE}
-};
+    {"either", 6, TOK_EITHER},
+    {"proper", 6, TOK_PROPER},
+    {"pcase", 5, TOK_PROPER},
+    {"instr", 5, TOK_INSTR},
+    {"upper", 5, TOK_UPPER},
+    {"ucase", 5, TOK_UPPER},
+    {"lower", 5, TOK_LOWER},
+    {"lcase", 5, TOK_LOWER},
+    {"right", 5, TOK_RIGHT},
+    {"left", 4, TOK_LEFT},
+    {"rand", 4, TOK_RANDOM},
+    {"max", 3, TOK_MAX},
+    {"min", 3, TOK_MIN},
+    {"mod", 3, TOK_MOD},
+    {"abs", 3, TOK_ABS},
+    {"len", 3, TOK_LEN},
+    {"val", 3, TOK_VAL},
+    {"and", 3, TOK_AND},
+    {"mid", 3, TOK_MID},
+    {"str", 3, TOK_STR},
+    {"or", 2, TOK_OR},
+    {"if", 2, TOK_IF},
+    {NULL, 0, TOK_NONE}};
 static const sc_expr_multichar_t OPERATOR_TOKENS[] = {
-	{"&&", 2, TOK_AND}, {"||", 2, TOK_OR},
-	{"==", 2, TOK_EQUAL}, {"!=", 2, TOK_NOT_EQUAL},
-	{"<>", 2, TOK_NOT_EQUAL}, {">=", 2, TOK_GREATER_EQ}, {"<=", 2, TOK_LESS_EQ},
-	{NULL, 0, TOK_NONE}
-};
-
+    {"&&", 2, TOK_AND}, {"||", 2, TOK_OR}, {"==", 2, TOK_EQUAL}, {"!=", 2, TOK_NOT_EQUAL}, {"<>", 2, TOK_NOT_EQUAL}, {">=", 2, TOK_GREATER_EQ}, {"<=", 2, TOK_LESS_EQ}, {NULL, 0, TOK_NONE}};
 
 /*
  * expr_multichar_search()
@@ -116,7 +152,6 @@ static sc_int expr_multichar_search(const sc_char *name, const sc_expr_multichar
 	/* Return the token matched, or TOK_NONE. */
 	return entry->name ? entry->token : (sc_int)TOK_NONE;
 }
-
 
 /* Tokenizer variables. */
 static const sc_char *expr_expression = NULL;
@@ -140,7 +175,7 @@ static void expr_tokenize_start(const sc_char *expression) {
 
 		/* Compare table lengths with string lengths. */
 		for (entry = FUNCTION_TOKENS; entry->name; entry++) {
-			if (entry->length != (sc_int) strlen(entry->name)) {
+			if (entry->length != (sc_int)strlen(entry->name)) {
 				sc_fatal("expr_tokenize_start:"
 				         " token string length is wrong for \"%s\"\n",
 				         entry->name);
@@ -148,7 +183,7 @@ static void expr_tokenize_start(const sc_char *expression) {
 		}
 
 		for (entry = OPERATOR_TOKENS; entry->name; entry++) {
-			if (entry->length != (sc_int) strlen(entry->name)) {
+			if (entry->length != (sc_int)strlen(entry->name)) {
 				sc_fatal("expr_tokenize_start:"
 				         " operator string length is wrong for \"%s\"\n",
 				         entry->name);
@@ -178,7 +213,6 @@ static void expr_tokenize_end(void) {
 	expr_index = 0;
 	expr_current_token = TOK_NONE;
 }
-
 
 /*
  * expr_next_token_unadjusted()
@@ -380,7 +414,6 @@ static sc_int expr_next_token(void) {
 	return token;
 }
 
-
 /*
  * expr_current_token_value()
  *
@@ -398,13 +431,13 @@ static void expr_current_token_value(sc_vartype_t *value) {
 
 	default:
 		sc_fatal("expr_current_token_value:"
-		         " taking undefined token value, %ld\n", expr_current_token);
+		         " taking undefined token value, %ld\n",
+		         expr_current_token);
 	}
 
 	/* Return value. */
 	*value = expr_token_value;
 }
-
 
 /*
  * Evaluation values stack, uses a variable type so it can contain both
@@ -432,7 +465,6 @@ static void expr_eval_start(sc_var_setref_t vars) {
 	expr_varset = vars;
 }
 
-
 /*
  * expr_eval_garbage_collect()
  *
@@ -454,7 +486,6 @@ static void expr_eval_garbage_collect(void) {
 	/* Reset the stack index, for clarity and neatness. */
 	expr_eval_stack_index = 0;
 }
-
 
 /*
  * expr_eval_push_integer()
@@ -495,7 +526,6 @@ static void expr_eval_push_alloced_string(sc_char *value) {
 	expr_eval_stack[expr_eval_stack_index++].value.mutable_string = value;
 }
 
-
 /*
  * expr_eval_pop_integer()
  * expr_eval_pop_string()
@@ -520,7 +550,6 @@ static sc_char *expr_eval_pop_string(void) {
 	return expr_eval_stack[--expr_eval_stack_index].value.mutable_string;
 }
 
-
 /*
  * expr_eval_result()
  *
@@ -534,7 +563,6 @@ static void expr_eval_result(sc_vartype_t *vt_rvalue) {
 	expr_eval_stack_index = 0;
 	*vt_rvalue = expr_eval_stack[0].value;
 }
-
 
 /*
  * expr_eval_abs()
@@ -573,7 +601,8 @@ static void expr_eval_action(CONTEXT, sc_int token) {
 		expr_current_token_value(&token_value);
 		if (!var_get(expr_varset, token_value.string, &type, &vt_rvalue)) {
 			sc_error("expr_eval_action:"
-			         " undefined variable, %s\n", token_value.string);
+			         " undefined variable, %s\n",
+			         token_value.string);
 			LONG_JUMP;
 		}
 		switch (type) {
@@ -821,8 +850,8 @@ static void expr_eval_action(CONTEXT, sc_int token) {
 			 * the same here.
 			 */
 			result = ((val1 < 0) == (val2 < 0))
-			         ? ((x / y) + (((x % y) * 2 >= y) ? 1 : 0))
-			         : -((x / y) + (((x % y) * 2 >  y) ? 1 : 0));
+			             ? ((x / y) + (((x % y) * 2 >= y) ? 1 : 0))
+			             : -((x / y) + (((x % y) * 2 > y) ? 1 : 0));
 			break;
 
 		case TOK_MOD:
@@ -898,7 +927,7 @@ static void expr_eval_action(CONTEXT, sc_int token) {
 		 */
 		length = expr_eval_pop_integer();
 		text = expr_eval_pop_string();
-		if (length < 0 || length >= (sc_int) strlen(text)) {
+		if (length < 0 || length >= (sc_int)strlen(text)) {
 			expr_eval_push_alloced_string(text);
 			break;
 		}
@@ -973,7 +1002,6 @@ static void expr_eval_action(CONTEXT, sc_int token) {
 		break;
 	}
 
-
 	/* Handle tokens representing unary string operations. */
 	case TOK_UPPER:
 	case TOK_LOWER:
@@ -1036,7 +1064,6 @@ static void expr_eval_action(CONTEXT, sc_int token) {
 	}
 }
 
-
 /* Predictive parser lookahead token. */
 static sc_int expr_parse_lookahead = TOK_NONE;
 
@@ -1056,11 +1083,11 @@ static void expr_parse_match(CONTEXT, sc_int token) {
 	else {
 		/* Syntax error. */
 		sc_error("expr_parse_match: syntax error,"
-		         " expected %ld, got %ld\n", expr_parse_lookahead, token);
+		         " expected %ld, got %ld\n",
+		         expr_parse_lookahead, token);
 		LONG_JUMP;
 	}
 }
-
 
 /*
  * Numeric operator precedence table.  Operators are in order of precedence,
@@ -1096,19 +1123,12 @@ static const sc_precedence_entry_t PRECEDENCE_TABLE[] = {
  * subtraction, and boolean 'and' and 'or' have equal precedence.
  */
 static const sc_precedence_entry_t PRECEDENCE_TABLE[] = {
-	{2, {TOK_OR, TOK_AND}},
-	{
-		6, {
-			TOK_EQUAL, TOK_NOT_EQUAL,
-			TOK_GREATER, TOK_LESS, TOK_GREATER_EQ, TOK_LESS_EQ
-		}
-	},
-	{4, {TOK_ADD, TOK_SUBTRACT, TOK_POWER, TOK_MOD}},
-	{2, {TOK_MULTIPLY, TOK_DIVIDE}},
-	{0, {TOK_NONE}}
-};
+    {2, {TOK_OR, TOK_AND}},
+    {6, {TOK_EQUAL, TOK_NOT_EQUAL, TOK_GREATER, TOK_LESS, TOK_GREATER_EQ, TOK_LESS_EQ}},
+    {4, {TOK_ADD, TOK_SUBTRACT, TOK_POWER, TOK_MOD}},
+    {2, {TOK_MULTIPLY, TOK_DIVIDE}},
+    {0, {TOK_NONE}}};
 #endif
-
 
 /*
  * expr_parse_contains_token()
@@ -1131,7 +1151,6 @@ static int expr_parse_contains_token(const sc_precedence_entry_t *entry, sc_int 
 
 	return is_matched;
 }
-
 
 /*
  * expr_parse_numeric_element()
@@ -1167,7 +1186,6 @@ static void expr_parse_numeric_element(CONTEXT, sc_int precedence) {
 	}
 }
 
-
 /*
  * expr_parse_numeric_expr
  *
@@ -1177,7 +1195,6 @@ static void expr_parse_numeric_expr(CONTEXT) {
 	/* Call the parser of the lowest precedence operators. */
 	CALL1(expr_parse_numeric_element, 0);
 }
-
 
 /*
  * expr_parse_numeric_factor()
@@ -1217,7 +1234,8 @@ static void expr_parse_numeric_factor(CONTEXT) {
 		expr_current_token_value(&token_value);
 		if (!var_get(expr_varset, token_value.string, &type, &vt_rvalue)) {
 			sc_error("expr_parse_numeric_factor:"
-			         " undefined variable, %s\n", token_value.string);
+			         " undefined variable, %s\n",
+			         token_value.string);
 			LONG_JUMP;
 		}
 		if (type != VAR_INTEGER) {
@@ -1269,29 +1287,29 @@ static void expr_parse_numeric_factor(CONTEXT) {
 	case TOK_MIN:
 	case TOK_EITHER:
 		/* Parse as "<func> (val1[,val2[,val3...]]])". */
-	{
-		sc_int token, argument_count;
+		{
+			sc_int token, argument_count;
 
-		/* Match up the function name and opening parenthesis. */
-		token = expr_parse_lookahead;
-		CALL1(expr_parse_match, token);
-		CALL1(expr_parse_match, TOK_LPAREN);
+			/* Match up the function name and opening parenthesis. */
+			token = expr_parse_lookahead;
+			CALL1(expr_parse_match, token);
+			CALL1(expr_parse_match, TOK_LPAREN);
 
-		/* Count variable number of arguments as they are stacked. */
-		CALL0(expr_parse_numeric_expr);
-		argument_count = 1;
-		while (expr_parse_lookahead == TOK_COMMA) {
-			CALL1(expr_parse_match, TOK_COMMA);
+			/* Count variable number of arguments as they are stacked. */
 			CALL0(expr_parse_numeric_expr);
-			argument_count++;
-		}
-		CALL1(expr_parse_match, TOK_RPAREN);
+			argument_count = 1;
+			while (expr_parse_lookahead == TOK_COMMA) {
+				CALL1(expr_parse_match, TOK_COMMA);
+				CALL0(expr_parse_numeric_expr);
+				argument_count++;
+			}
+			CALL1(expr_parse_match, TOK_RPAREN);
 
-		/* Push additional value -- the count of arguments. */
-		expr_eval_push_integer(argument_count);
-		CALL1(expr_eval_action, token);
-		break;
-	}
+			/* Push additional value -- the count of arguments. */
+			expr_eval_push_integer(argument_count);
+			CALL1(expr_eval_action, token);
+			break;
+		}
 
 	case TOK_INSTR:
 		/* Parse as "instr (val1, val2)". */
@@ -1330,11 +1348,11 @@ static void expr_parse_numeric_factor(CONTEXT) {
 	default:
 		/* Syntax error. */
 		sc_error("expr_parse_numeric_factor:"
-		         " syntax error, unexpected token, %ld\n", expr_parse_lookahead);
+		         " syntax error, unexpected token, %ld\n",
+		         expr_parse_lookahead);
 		LONG_JUMP;
 	}
 }
-
 
 /*
  * expr_parse_string_expr()
@@ -1354,7 +1372,6 @@ static void expr_parse_string_expr(CONTEXT) {
 		CALL1(expr_eval_action, TOK_CONCATENATE);
 	}
 }
-
 
 /*
  * expr_parse_string_factor()
@@ -1383,7 +1400,8 @@ static void expr_parse_string_factor(CONTEXT) {
 		expr_current_token_value(&token_value);
 		if (!var_get(expr_varset, token_value.string, &type, &vt_rvalue)) {
 			sc_error("expr_parse_string_factor:"
-			         " undefined variable, %s\n", token_value.string);
+			         " undefined variable, %s\n",
+			         token_value.string);
 			LONG_JUMP;
 		}
 		if (type != VAR_STRING) {
@@ -1402,34 +1420,34 @@ static void expr_parse_string_factor(CONTEXT) {
 	case TOK_LOWER:
 	case TOK_PROPER:
 		/* Parse as "<func> (text)". */
-	{
-		sc_int token;
+		{
+			sc_int token;
 
-		token = expr_parse_lookahead;
-		CALL1(expr_parse_match, token);
-		CALL1(expr_parse_match, TOK_LPAREN);
-		CALL0(expr_parse_string_expr);
-		CALL1(expr_parse_match, TOK_RPAREN);
-		CALL1(expr_eval_action, token);
-		break;
-	}
+			token = expr_parse_lookahead;
+			CALL1(expr_parse_match, token);
+			CALL1(expr_parse_match, TOK_LPAREN);
+			CALL0(expr_parse_string_expr);
+			CALL1(expr_parse_match, TOK_RPAREN);
+			CALL1(expr_eval_action, token);
+			break;
+		}
 
 	case TOK_LEFT:
 	case TOK_RIGHT:
 		/* Parse as "<func> (text,length)". */
-	{
-		sc_int token;
+		{
+			sc_int token;
 
-		token = expr_parse_lookahead;
-		CALL1(expr_parse_match, token);
-		CALL1(expr_parse_match, TOK_LPAREN);
-		CALL0(expr_parse_string_expr);
-		CALL1(expr_parse_match, TOK_COMMA);
-		CALL0(expr_parse_numeric_expr);
-		CALL1(expr_parse_match, TOK_RPAREN);
-		CALL1(expr_eval_action, token);
-		break;
-	}
+			token = expr_parse_lookahead;
+			CALL1(expr_parse_match, token);
+			CALL1(expr_parse_match, TOK_LPAREN);
+			CALL0(expr_parse_string_expr);
+			CALL1(expr_parse_match, TOK_COMMA);
+			CALL0(expr_parse_numeric_expr);
+			CALL1(expr_parse_match, TOK_RPAREN);
+			CALL1(expr_eval_action, token);
+			break;
+		}
 
 	case TOK_MID:
 		/* Parse as "mid (text,start,length)". */
@@ -1461,11 +1479,11 @@ static void expr_parse_string_factor(CONTEXT) {
 	default:
 		/* Syntax error. */
 		sc_error("expr_parse_string_factor:"
-		         " syntax error, unexpected token, %ld\n", expr_parse_lookahead);
+		         " syntax error, unexpected token, %ld\n",
+		         expr_parse_lookahead);
 		LONG_JUMP;
 	}
 }
-
 
 /*
  * expr_evaluate_expression()
@@ -1474,7 +1492,7 @@ static void expr_parse_string_factor(CONTEXT) {
  * value of the expression.
  */
 static sc_bool expr_evaluate_expression(const sc_char *expression, sc_var_setref_t vars,
-		sc_int assign_type, sc_vartype_t *vt_rvalue) {
+                                        sc_int assign_type, sc_vartype_t *vt_rvalue) {
 	assert(assign_type == VAR_INTEGER || assign_type == VAR_STRING);
 	Context context;
 
@@ -1503,7 +1521,6 @@ static sc_bool expr_evaluate_expression(const sc_char *expression, sc_var_setref
 	expr_eval_result(vt_rvalue);
 	return TRUE;
 }
-
 
 /*
  * expr_eval_numeric_expression()

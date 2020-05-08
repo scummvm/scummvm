@@ -21,16 +21,16 @@
  */
 
 #include "glk/scott/scott.h"
-#include "glk/quetzal.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "glk/quetzal.h"
 
 namespace Glk {
 namespace Scott {
 
 Scott::Scott(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_currentCounter(0), _savedRoom(0), _options(0), _width(0), _topHeight(0), _splitScreen(true),
-		_bottomWindow(0), _topWindow(0), _bitFlags(0), _saveSlot(-1) {
+                                                                  _currentCounter(0), _savedRoom(0), _options(0), _width(0), _topHeight(0), _splitScreen(true),
+                                                                  _bottomWindow(0), _topWindow(0), _bitFlags(0), _saveSlot(-1) {
 	Common::fill(&_nounText[0], &_nounText[16], '\0');
 	Common::fill(&_counters[0], &_counters[16], 0);
 	Common::fill(&_roomSaved[0], &_roomSaved[16], 0);
@@ -113,7 +113,7 @@ void Scott::runGame() {
 			if (_gameHeader._lightTime < 1) {
 				_bitFlags |= (1 << LIGHTOUTBIT);
 				if (_items[LIGHT_SOURCE]._location == CARRIED ||
-						_items[LIGHT_SOURCE]._location == MY_LOC) {
+				    _items[LIGHT_SOURCE]._location == MY_LOC) {
 					if (_options & SCOTTLIGHT)
 						output(_("Light has run out! "));
 					else
@@ -123,7 +123,7 @@ void Scott::runGame() {
 					_items[LIGHT_SOURCE]._location = DESTROYED;
 			} else if (_gameHeader._lightTime < 25) {
 				if (_items[LIGHT_SOURCE]._location == CARRIED ||
-						_items[LIGHT_SOURCE]._location == MY_LOC) {
+				    _items[LIGHT_SOURCE]._location == MY_LOC) {
 
 					if (_options & SCOTTLIGHT) {
 						output(_("Light runs out in "));
@@ -207,7 +207,7 @@ int Scott::countCarried(void) {
 const char *Scott::mapSynonym(const char *word) {
 	int n = 1;
 	const char *tp;
-	static char lastword[16];   // Last non synonym
+	static char lastword[16]; // Last non synonym
 	while (n <= _gameHeader._numWords) {
 		tp = _nouns[n].c_str();
 		if (*tp == '*')
@@ -230,7 +230,7 @@ int Scott::matchUpItem(const char *text, int loc) {
 
 	while (ct <= _gameHeader._numItems) {
 		if (!_items[ct]._autoGet.empty() && _items[ct]._location == loc &&
-				scumm_strnicmp(_items[ct]._autoGet.c_str(), word, _gameHeader._wordLength) == 0)
+		    scumm_strnicmp(_items[ct]._autoGet.c_str(), word, _gameHeader._wordLength) == 0)
 			return ct;
 		ct++;
 	}
@@ -316,8 +316,8 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	for (int idx = 0; idx < na + 1; ++idx) {
 		Action &a = _actions[idx];
 		readInts(f, 8,
-			&a._vocab, &a._condition[0], &a._condition[1], &a._condition[2],
-			&a._condition[3], &a._condition[4], &a._action[0], &a._action[1]);
+		         &a._vocab, &a._condition[0], &a._condition[1], &a._condition[2],
+		         &a._condition[3], &a._condition[4], &a._action[0], &a._action[1]);
 	}
 
 	if (loud)
@@ -332,8 +332,8 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	for (int idx = 0; idx < nr + 1; ++idx) {
 		Room &r = _rooms[idx];
 		readInts(f, 6, &r._exits[0], &r._exits[1], &r._exits[2],
-				 &r._exits[3], &r._exits[4], &r._exits[5]);
-		r._text =  readString(f);
+		         &r._exits[3], &r._exits[4], &r._exits[5]);
+		r._text = readString(f);
 	}
 
 	if (loud)
@@ -391,8 +391,7 @@ void Scott::outputNumber(int a) {
 
 void Scott::look(void) {
 	const char *const ExitNames[6] = {
-		_("North"), _("South"), _("East"), _("West"), _("Up"), _("Down")
-	};
+	    _("North"), _("South"), _("East"), _("West"), _("Up"), _("Down")};
 	Room *r;
 	int ct, f;
 	int pos;
@@ -400,8 +399,7 @@ void Scott::look(void) {
 	if (_splitScreen)
 		glk_window_clear(_topWindow);
 
-	if ((_bitFlags & (1 << DARKBIT)) && _items[LIGHT_SOURCE]._location != CARRIED
-			&& _items[LIGHT_SOURCE]._location != MY_LOC) {
+	if ((_bitFlags & (1 << DARKBIT)) && _items[LIGHT_SOURCE]._location != CARRIED && _items[LIGHT_SOURCE]._location != MY_LOC) {
 		if (_options & YOUARE)
 			display(_topWindow, _("You can't see. It is too dark!\n"));
 		else
@@ -519,8 +517,8 @@ Common::Error Scott::writeGameData(Common::WriteStream *ws) {
 	}
 
 	msg = Common::String::format("%u %d %d %d %d %d\n",
-								 _bitFlags, (_bitFlags & (1 << DARKBIT)) ? 1 : 0,
-								 MY_LOC, _currentCounter, _savedRoom, _gameHeader._lightTime);
+	                             _bitFlags, (_bitFlags & (1 << DARKBIT)) ? 1 : 0,
+	                             MY_LOC, _currentCounter, _savedRoom, _gameHeader._lightTime);
 	ws->write(msg.c_str(), msg.size());
 	ws->writeByte(0);
 
@@ -547,8 +545,8 @@ Common::Error Scott::readSaveData(Common::SeekableReadStream *rs) {
 
 	line = QuetzalReader::readString(rs);
 	sscanf(line.c_str(), "%u %hd %d %d %d %d\n",
-		   &_bitFlags, &darkFlag, &MY_LOC, &_currentCounter, &_savedRoom,
-		   &_gameHeader._lightTime);
+	       &_bitFlags, &darkFlag, &MY_LOC, &_currentCounter, &_savedRoom,
+	       &_gameHeader._lightTime);
 
 	// Backward compatibility
 	if (darkFlag)
@@ -656,7 +654,7 @@ int Scott::performLine(int ct) {
 			break;
 		case 3:
 			if (_items[dv]._location != CARRIED &&
-					_items[dv]._location != MY_LOC)
+			    _items[dv]._location != MY_LOC)
 				return 0;
 			break;
 		case 4:
@@ -748,7 +746,7 @@ int Scott::performLine(int ct) {
 			output("\n");
 		} else {
 			switch (act[cc]) {
-			case 0:// NOP
+			case 0: // NOP
 				break;
 			case 52:
 				if (countCarried() == _gameHeader._maxCarry) {
@@ -790,7 +788,7 @@ int Scott::performLine(int ct) {
 				else
 					output(_("I am dead.\n"));
 				_bitFlags &= ~(1 << DARKBIT);
-				MY_LOC = _gameHeader._numRooms;// It seems to be what the code says!
+				MY_LOC = _gameHeader._numRooms; // It seems to be what the code says!
 				break;
 			case 62: {
 				// Bug fix for some systems - before it could get parameters wrong */
@@ -799,7 +797,7 @@ int Scott::performLine(int ct) {
 				break;
 			}
 			case 63:
-doneit:
+			doneit:
 				output(_("The game is now over.\n"));
 				glk_exit();
 				return 0;
@@ -810,7 +808,7 @@ doneit:
 				int n = 0;
 				while (i <= _gameHeader._numItems) {
 					if (_items[i]._location == _gameHeader._treasureRoom &&
-							_items[i]._text.hasPrefix("*"))
+					    _items[i]._text.hasPrefix("*"))
 						n++;
 					i++;
 				}
@@ -959,7 +957,7 @@ doneit:
 				break;
 			default:
 				error("Unknown action %d [Param begins %d %d]\n",
-					  act[cc], param[pptr], param[pptr + 1]);
+				      act[cc], param[pptr], param[pptr + 1]);
 				break;
 			}
 		}
@@ -984,7 +982,7 @@ int Scott::performActions(int vb, int no) {
 	if (vb == 1 && no >= 1 && no <= 6) {
 		int nl;
 		if (_items[LIGHT_SOURCE]._location == MY_LOC ||
-				_items[LIGHT_SOURCE]._location == CARRIED)
+		    _items[LIGHT_SOURCE]._location == CARRIED)
 			d = 0;
 		if (d)
 			output(_("Dangerous to move in the dark! "));
@@ -1023,7 +1021,7 @@ int Scott::performActions(int vb, int no) {
 		vv /= 150;
 		if ((vv == vb) || (doagain && _actions[ct]._vocab == 0)) {
 			if ((vv == 0 && randomPercent(nv)) || doagain ||
-					(vv != 0 && (nv == no || nv == 0))) {
+			    (vv != 0 && (nv == no || nv == 0))) {
 				int f2;
 				if (fl == -1)
 					fl = -2;
@@ -1052,7 +1050,7 @@ int Scott::performActions(int vb, int no) {
 	if (fl != 0 && disableSysFunc == 0) {
 		int item;
 		if (_items[LIGHT_SOURCE]._location == MY_LOC ||
-				_items[LIGHT_SOURCE]._location == CARRIED)
+		    _items[LIGHT_SOURCE]._location == CARRIED)
 			d = 0;
 		if (vb == 10 || vb == 18) {
 			// Yes they really _are_ hardcoded values
@@ -1068,8 +1066,8 @@ int Scott::performActions(int vb, int no) {
 					while (i <= _gameHeader._numItems) {
 						if (_items[i]._location == MY_LOC && _items[i]._autoGet != nullptr && _items[i]._autoGet[0] != '*') {
 							no = whichWord(_items[i]._autoGet.c_str(), _nouns);
-							disableSysFunc = true;    // Don't recurse into auto get !
-							performActions(vb, no);   // Recursively check each items table code
+							disableSysFunc = true;  // Don't recurse into auto get !
+							performActions(vb, no); // Recursively check each items table code
 							disableSysFunc = false;
 							if (shouldQuit())
 								return 0;
@@ -1120,8 +1118,7 @@ int Scott::performActions(int vb, int no) {
 					int i = 0;
 					int f = 0;
 					while (i <= _gameHeader._numItems) {
-						if (_items[i]._location == CARRIED && !_items[i]._autoGet.empty()
-								&& !_items[i]._autoGet.hasPrefix("*")) {
+						if (_items[i]._location == CARRIED && !_items[i]._autoGet.empty() && !_items[i]._autoGet.hasPrefix("*")) {
 							no = whichWord(_items[i]._autoGet.c_str(), _nouns);
 							disableSysFunc = true;
 							performActions(vb, no);
@@ -1184,7 +1181,7 @@ void Scott::readInts(Common::SeekableReadStream *f, size_t count, ...) {
 			c = f->readByte();
 		}
 
-		*val *= factor;		// Handle negatives
+		*val *= factor; // Handle negatives
 	}
 
 	va_end(va);

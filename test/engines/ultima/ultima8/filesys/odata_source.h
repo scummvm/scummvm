@@ -1,11 +1,11 @@
-#include <cxxtest/TestSuite.h>
 #include "engines/ultima/ultima8/filesys/odata_source.h"
+#include <cxxtest/TestSuite.h>
 /**
  * Test suite for the functions in engines/ultima/ultima8/filesys/odata_source.h
  */
 
 class U8ODataSourceTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	U8ODataSourceTestSuite() {
 	}
 
@@ -39,7 +39,7 @@ class U8ODataSourceTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(source.size(), 41);
 		TS_ASSERT_EQUALS(source.pos(), 2);
 
-		const uint8* buf = source.getData();
+		const uint8 *buf = source.getData();
 		TS_ASSERT_EQUALS(buf[0], 0xEF);
 		TS_ASSERT_EQUALS(buf[1], 0xDE);
 		TS_ASSERT_EQUALS(buf[2], 0xC0);
@@ -70,5 +70,4 @@ class U8ODataSourceTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(buf[8], 0x8F);
 		TS_ASSERT_EQUALS(buf[9], 0x90);
 	}
-
 };

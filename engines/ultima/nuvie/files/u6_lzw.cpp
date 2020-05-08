@@ -29,11 +29,11 @@
 // This program decompresses Ultima_6-style LZW-compressed files
 // =============================================================
 
-#include "ultima/shared/std/string.h"
+#include "ultima/nuvie/files/u6_lzw.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/files/u6_lzw.h"
 #include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -48,7 +48,6 @@ U6Lzw::~U6Lzw() {
 	delete dict;
 	delete stack;
 }
-
 
 /* Copy and return the contents of `src' buffer, in LZW form. It is not really
  * compressed, it just makes it suitable to be read by an LZW decoder.
@@ -84,7 +83,6 @@ unsigned char *U6Lzw::compress_buffer(unsigned char *src, uint32 src_len,
 #endif
 	return (dest_buf);
 }
-
 
 // this function only checks a few *necessary* conditions
 // returns "FALSE" if the file doesn't satisfy these conditions
@@ -188,12 +186,12 @@ bool U6Lzw::decompress_buffer(unsigned char *source, uint32 source_length, unsig
 	long bytes_written = 0;
 
 	int cW;
-	int pW = 0;  // get rid of uninitialized warning.
+	int pW = 0; // get rid of uninitialized warning.
 	unsigned char C;
 
 	source += 4; //skip the filesize dword.
 
-	while (! end_marker_reached) {
+	while (!end_marker_reached) {
 		cW = get_next_codeword(&bits_read, source, codeword_size);
 		switch (cW) {
 		// re-init the dictionary
@@ -281,11 +279,11 @@ unsigned char *U6Lzw::decompress_file(Std::string filename, uint32 &destination_
 	if (this->is_valid_lzw_file(&input_file)) {
 		// determine the buffer sizes
 		source_buffer_size = input_file.get_size();
-//       destination_buffer_size = this->get_uncompressed_file_size(input_file);
+		//       destination_buffer_size = this->get_uncompressed_file_size(input_file);
 
 		// create the buffers
 		source_buffer = (unsigned char *)malloc(sizeof(unsigned char) * source_buffer_size);
-//       destination_buffer = (unsigned char *)malloc(sizeof(unsigned char *) * destination_buffer_size);
+		//       destination_buffer = (unsigned char *)malloc(sizeof(unsigned char *) * destination_buffer_size);
 
 		// read the input file into the source buffer
 		input_file.seekStart();
@@ -373,7 +371,6 @@ void U6Lzw::get_string(int codeword) {
 	// push the root at the leaf
 	stack->push((unsigned char)current_codeword);
 }
-
 
 U6LzwStack::U6LzwStack() {
 	memset(stack, 0, STACK_SIZE);

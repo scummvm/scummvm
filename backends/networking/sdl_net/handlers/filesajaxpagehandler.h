@@ -27,7 +27,7 @@
 
 namespace Networking {
 
-class FilesAjaxPageHandler: public FilesBaseHandler {
+class FilesAjaxPageHandler : public FilesBaseHandler {
 public:
 	FilesAjaxPageHandler();
 	virtual ~FilesAjaxPageHandler();

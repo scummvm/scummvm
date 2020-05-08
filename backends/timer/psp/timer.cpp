@@ -39,10 +39,10 @@
 #if defined(__PSP__)
 #include <pspthreadman.h>
 
-#include "common/scummsys.h"
-#include "common/timer.h"
 #include "backends/platform/psp/thread.h"
 #include "backends/timer/psp/timer.h"
+#include "common/scummsys.h"
+#include "common/timer.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
@@ -54,12 +54,12 @@ PspTimerManager::PspTimerManager(uint32 interval) : _interval(interval * 1000), 
 
 	_threadId = sceKernelCreateThread("timerThread", thread, PRIORITY_TIMER_THREAD, STACK_TIMER_THREAD, THREAD_ATTR_USER, 0);
 
-	if (_threadId < 0) {	// error
+	if (_threadId < 0) { // error
 		PSP_ERROR("failed to create timer thread. Error code %d\n", _threadId);
 		return;
 	}
 
-	PspTimerManager *_this = this;	// trick to get into context when the thread starts
+	PspTimerManager *_this = this; // trick to get into context when the thread starts
 	_init = true;
 
 	if (sceKernelStartThread(_threadId, sizeof(uint32 *), &_this) < 0) {
@@ -72,7 +72,7 @@ PspTimerManager::PspTimerManager(uint32 interval) : _interval(interval * 1000), 
 
 int PspTimerManager::thread(SceSize, void *__this) {
 	DEBUG_ENTER_FUNC();
-	PspTimerManager *_this = *(PspTimerManager **)__this;		// get our this for the context
+	PspTimerManager *_this = *(PspTimerManager **)__this; // get our this for the context
 
 	_this->timerThread();
 	return 0;

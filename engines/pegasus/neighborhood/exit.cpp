@@ -50,8 +50,8 @@ void ExitTable::loadFromStream(Common::SeekableReadStream *stream) {
 		_entries[i].originalEnd = _entries[i].exitEnd;
 
 		debug(0, "Exit[%d]: %d %d %d %d %d %d %d %d %d", i, _entries[i].room, _entries[i].direction,
-				_entries[i].altCode, _entries[i].movieStart, _entries[i].movieEnd, _entries[i].exitEnd,
-				_entries[i].exitLoop, _entries[i].exitRoom, _entries[i].exitDirection);
+		      _entries[i].altCode, _entries[i].movieStart, _entries[i].movieEnd, _entries[i].exitEnd,
+		      _entries[i].exitLoop, _entries[i].exitRoom, _entries[i].exitDirection);
 	}
 }
 

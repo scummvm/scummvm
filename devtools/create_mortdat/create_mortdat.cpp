@@ -33,12 +33,11 @@
 #undef main
 #endif // main
 
-#include "common/endian.h"
 #include "create_mortdat.h"
+#include "common/endian.h"
 #include "enginetext.h"
 #include "gametext.h"
 #include "menudata.h"
-
 
 bool File::open(const char *filename, AccessMode mode) {
 	f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb");
@@ -122,7 +121,7 @@ void writeFontBlock() {
 
 	// Move to just prior the font data and verify that we're reading the known mort.com
 	for (int i = 0; i <= 3; ++i) {
-		if ( i == 3) {
+		if (i == 3) {
 			printf("Invalid mort.com input file");
 			exit(0);
 		}
@@ -131,8 +130,8 @@ void writeFontBlock() {
 		mortCom.read(checkBuffer, 7);
 
 		if ((checkBuffer[0] == 0x59) && (checkBuffer[1] == 0x5B) && (checkBuffer[2] == 0x58) &&
-			(checkBuffer[3] == 0xC3) && (checkBuffer[4] == 0xE8) && (checkBuffer[5] == 0xD6) &&
-			(checkBuffer[6] == 0x02)) {
+		    (checkBuffer[3] == 0xC3) && (checkBuffer[4] == 0xE8) && (checkBuffer[5] == 0xD6) &&
+		    (checkBuffer[6] == 0x02)) {
 			break;
 		}
 	}
@@ -141,17 +140,17 @@ void writeFontBlock() {
 	mortCom.read(fontBuffer, 121 * 6);
 
 	// Write out a section header to the output file and the font data
-	const char fontHeader[4] = { 'F', 'O', 'N', 'T' };
-	outputFile.write(fontHeader, 4);	// Section Id
-	outputFile.writeWord(121 * 6);		// Section size
+	const char fontHeader[4] = {'F', 'O', 'N', 'T'};
+	outputFile.write(fontHeader, 4); // Section Id
+	outputFile.writeWord(121 * 6);   // Section size
 
 	outputFile.write(fontBuffer, 121 * 6);
 }
 
 void writeStaticStrings(const char **strings, DataType dataType, int languageId) {
 	// Write out a section header
-	const char sStaticStrings[4] = { 'S', 'S', 'T', 'R' };
-	const char sGameStrings[4] = { 'G', 'S', 'T', 'R' };
+	const char sStaticStrings[4] = {'S', 'S', 'T', 'R'};
+	const char sGameStrings[4] = {'G', 'S', 'T', 'R'};
 
 	if (dataType == kStaticStrings)
 		outputFile.write(sStaticStrings, 4);
@@ -202,8 +201,8 @@ void writeGameStrings() {
  */
 void writeMenuData(const char *menuData, int languageId) {
 	// Write out a section header to the output file and the menu data
-	const char menuHeader[4] = { 'M', 'E', 'N', 'U' };
-	outputFile.write(menuHeader, 4);				// Section Id
+	const char menuHeader[4] = {'M', 'E', 'N', 'U'};
+	outputFile.write(menuHeader, 4);     // Section Id
 	int size = strlen(menuData) / 8 + 1; // Language code + Menu data size
 	outputFile.writeWord(size);
 
@@ -212,7 +211,7 @@ void writeMenuData(const char *menuData, int languageId) {
 	// ' ' -> 0, anything else -> 1
 	byte value = 0;
 	int valueCpt = 0;
-	const char* str = menuData;
+	const char *str = menuData;
 	while (*str != 0) {
 		if (*(str++) != ' ')
 			value |= (1 << (7 - valueCpt));
@@ -233,9 +232,9 @@ void writeMenuBlock() {
 
 void writeVerbNums(const int *verbs, int languageId) {
 	// Write out a section header to the output file
-	const char menuHeader[4] = { 'V', 'E', 'R', 'B' };
-	outputFile.write(menuHeader, 4);				// Section Id
-	int size = 52 + 1; // Language code + 26 words
+	const char menuHeader[4] = {'V', 'E', 'R', 'B'};
+	outputFile.write(menuHeader, 4); // Section Id
+	int size = 52 + 1;               // Language code + 26 words
 	outputFile.writeWord(size);
 
 	outputFile.writeByte(languageId);

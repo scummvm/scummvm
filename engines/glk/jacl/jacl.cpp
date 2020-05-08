@@ -21,9 +21,9 @@
  */
 
 #include "glk/jacl/jacl.h"
+#include "common/config-manager.h"
 #include "glk/jacl/prototypes.h"
 #include "glk/jacl/types.h"
-#include "common/config-manager.h"
 
 namespace Glk {
 namespace JACL {
@@ -33,7 +33,7 @@ extern strid_t game_stream;
 extern void glk_main();
 
 JACL::JACL(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-	_saveSlot(-1) {
+                                                                _saveSlot(-1) {
 	g_vm = this;
 }
 

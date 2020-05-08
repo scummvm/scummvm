@@ -23,12 +23,12 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/kyra_rpg.h"
-#include "kyra/resource/resource.h"
-#include "kyra/sound/sound_intern.h"
-#include "kyra/sound/sound_pc_v1.h"
-#include "kyra/script/script_eob.h"
 #include "kyra/engine/timer.h"
 #include "kyra/gui/debugger.h"
+#include "kyra/resource/resource.h"
+#include "kyra/script/script_eob.h"
+#include "kyra/sound/sound_intern.h"
+#include "kyra/sound/sound_pc_v1.h"
 
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -43,8 +43,8 @@ namespace Kyra {
 const char *const EoBCoreEngine::kKeymapName = "eob";
 
 EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
-	_numSmallItemShapes(flags.gameID == GI_EOB1 ? 23 : 26),	_numThrownItemShapes(flags.gameID == GI_EOB1 ? 12 : 9),
-	_numItemIconShapes(flags.gameID == GI_EOB1 ? 89 : 112),	_teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
+                                                                        _numSmallItemShapes(flags.gameID == GI_EOB1 ? 23 : 26), _numThrownItemShapes(flags.gameID == GI_EOB1 ? 12 : 9),
+                                                                        _numItemIconShapes(flags.gameID == GI_EOB1 ? 89 : 112), _teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
 
 	_screen = 0;
 	_gui = 0;
@@ -72,7 +72,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	memset(_thrownItemShapesScl, 0, sizeof(_thrownItemShapesScl));
 
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTable2 = 0;
-	
+
 	_monsterDustStrings = 0;
 	_enemyMageSpellList = 0;
 	_enemyMageSfx = 0;
@@ -239,15 +239,42 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 
 #define DWM0 _dscWallMapping.push_back(0)
 #define DWM(x) _dscWallMapping.push_back(&_sceneDrawVar##x)
-	DWM0;       DWM0;       DWM(Down);  DWM(Right);
-	DWM(Down);  DWM(Right); DWM(Down);  DWM0;
-	DWM(Down);  DWM(Left);  DWM(Down);  DWM(Left);
-	DWM0;       DWM0;       DWM(Down);  DWM(Right);
-	DWM(Down);  DWM(Right); DWM(Down);  DWM0;
-	DWM(Down);  DWM(Left);  DWM(Down);  DWM(Left);
-	DWM(Down);  DWM(Right); DWM(Down);  DWM0;
-	DWM(Down);  DWM(Left);  DWM0;       DWM(Right);
-	DWM(Down);  DWM0;       DWM0;       DWM(Left);
+	DWM0;
+	DWM0;
+	DWM(Down);
+	DWM(Right);
+	DWM(Down);
+	DWM(Right);
+	DWM(Down);
+	DWM0;
+	DWM(Down);
+	DWM(Left);
+	DWM(Down);
+	DWM(Left);
+	DWM0;
+	DWM0;
+	DWM(Down);
+	DWM(Right);
+	DWM(Down);
+	DWM(Right);
+	DWM(Down);
+	DWM0;
+	DWM(Down);
+	DWM(Left);
+	DWM(Down);
+	DWM(Left);
+	DWM(Down);
+	DWM(Right);
+	DWM(Down);
+	DWM0;
+	DWM(Down);
+	DWM(Left);
+	DWM0;
+	DWM(Right);
+	DWM(Down);
+	DWM0;
+	DWM0;
+	DWM(Left);
 #undef DWM
 #undef DWM0
 }
@@ -509,7 +536,7 @@ Common::Error EoBCoreEngine::init() {
 
 	// Setup volume settings (and read in all ConfigManager settings)
 	_configNullSound = (MidiDriver::getMusicType(dev) == MT_NULL);
-	syncSoundSettings();	
+	syncSoundSettings();
 
 	if (!_screen->init())
 		error("screen()->init() failed");
@@ -529,7 +556,7 @@ Common::Error EoBCoreEngine::init() {
 	_inf = new EoBInfProcessor(this, _screen);
 	assert(_inf);
 	setDebugger(new Debugger_EoB(this));
-	
+
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (_res->exists("EOBF6.FONT"))
 			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
@@ -580,7 +607,7 @@ Common::Error EoBCoreEngine::init() {
 
 	_wllVcnOffset = (_flags.platform == Common::kPlatformFMTowns) ? 0 : 16;
 	int bpp = (_flags.platform == Common::kPlatformFMTowns) ? 2 : 1;
-	
+
 	_greenFadingTable = new uint8[256 * bpp];
 	_blueFadingTable = new uint8[256 * bpp];
 	_lightBlueFadingTable = new uint8[256 * bpp];
@@ -596,7 +623,7 @@ Common::Error EoBCoreEngine::init() {
 	_items = new EoBItem[600];
 	memset(_items, 0, sizeof(EoBItem) * 600);
 
-	_itemNames = new char*[130];
+	_itemNames = new char *[130];
 	for (int i = 0; i < 130; i++) {
 		_itemNames[i] = new char[35];
 		memset(_itemNames[i], 0, 35);
@@ -616,11 +643,11 @@ Common::Error EoBCoreEngine::init() {
 	memset(_doorType, 0, sizeof(_doorType));
 	memset(_noDoorSwitch, 0, sizeof(_noDoorSwitch));
 
-	_monsterShapes = new uint8*[36];
+	_monsterShapes = new uint8 *[36];
 	memset(_monsterShapes, 0, 36 * sizeof(uint8 *));
 	_monsterDecorations = new SpriteDecoration[36];
 	memset(_monsterDecorations, 0, 36 * sizeof(SpriteDecoration));
-	_monsterPalettes = new uint8*[24];
+	_monsterPalettes = new uint8 *[24];
 	for (int i = 0; i < 24; i++)
 		_monsterPalettes[i] = new uint8[16];
 
@@ -670,7 +697,7 @@ Common::Error EoBCoreEngine::go() {
 			// load game
 			startupLoad();
 			repeatLoop = _gui->runLoadMenu(72, 14, true);
-				
+
 		} else if (action == -2) {
 			// new game
 			repeatLoop = startCharacterGeneration();
@@ -708,7 +735,7 @@ void EoBCoreEngine::registerDefaultSettings() {
 void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
 	_configMouseBtSwap = ConfMan.getBool("mousebtswap");
-	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;	
+	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 	_configMusic = (_flags.platform == Common::kPlatformPC98) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
 	if (_sound) {
@@ -816,7 +843,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 	int mul = (_flags.gameID == GI_EOB1) ? 64 : 24;
 	int size = 0;
 
-	_largeItemShapes = new const uint8*[_numLargeItemShapes];
+	_largeItemShapes = new const uint8 *[_numLargeItemShapes];
 	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
 		for (int i = 0; i < _numLargeItemShapes; i++)
 			_largeItemShapes[i] = _staticres->loadRawData(kEoB2LargeItemsShapeData00 + i, size);
@@ -827,14 +854,14 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 		if (_flags.gameID == GI_EOB1) {
 			for (int c = 0; c < 3; ++c) {
-				_largeItemShapesScl[c] = new const uint8*[_numLargeItemShapes];
+				_largeItemShapesScl[c] = new const uint8 *[_numLargeItemShapes];
 				for (int i = 0; i < _numLargeItemShapes; i++)
 					_largeItemShapesScl[c][i] = _screen->encodeShape((i / div) << 3, (i % div) * mul + 24 + (c << 4), 6 - 2 * c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsL);
 			}
 		}
 	}
 
-	_smallItemShapes = new const uint8*[_numSmallItemShapes];
+	_smallItemShapes = new const uint8 *[_numSmallItemShapes];
 	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
 		for (int i = 0; i < _numSmallItemShapes; i++)
 			_smallItemShapes[i] = _staticres->loadRawData(kEoB2SmallItemsShapeData00 + i, size);
@@ -845,17 +872,17 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 		if (_flags.gameID == GI_EOB1) {
 			for (int c = 0; c < 3; ++c) {
-				_smallItemShapesScl[c] = new const uint8*[_numSmallItemShapes];
+				_smallItemShapesScl[c] = new const uint8 *[_numSmallItemShapes];
 				for (int i = 0; i < _numSmallItemShapes; i++)
 					_smallItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsS);
 			}
 		}
 	}
 
-	_thrownItemShapes = new const uint8*[_numThrownItemShapes];
+	_thrownItemShapes = new const uint8 *[_numThrownItemShapes];
 	if (_flags.gameID == GI_EOB2)
-		_spellShapes = new const uint8*[4];
-	_firebeamShapes = new const uint8*[3];
+		_spellShapes = new const uint8 *[4];
+	_firebeamShapes = new const uint8 *[3];
 
 	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
 		for (int i = 0; i < _numThrownItemShapes; i++)
@@ -873,7 +900,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 		if (_flags.gameID == GI_EOB1) {
 			for (int c = 0; c < 3; ++c) {
-				_thrownItemShapesScl[c] = new const uint8*[_numThrownItemShapes];
+				_thrownItemShapesScl[c] = new const uint8 *[_numThrownItemShapes];
 				for (int i = 0; i < _numThrownItemShapes; i++)
 					_thrownItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingThrown);
 			}
@@ -889,7 +916,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		_greenSplatShape = _screen->encodeShape(16, _flags.gameID == GI_EOB1 ? 168 : 96, 5, 16, false, _cgaMappingThrown);
 	}
 
-	_itemIconShapes = new const uint8*[_numItemIconShapes];
+	_itemIconShapes = new const uint8 *[_numItemIconShapes];
 	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
 		for (int i = 0; i < _numItemIconShapes; i++)
 			_itemIconShapes[i] = _staticres->loadRawData(kEoB2ItemIconShapeData00 + i, size);
@@ -897,10 +924,10 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		_screen->loadShapeSetBitmap("ITEMICN", 5, 3);
 		for (int i = 0; i < _numItemIconShapes; i++)
 			_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
-		
+
 		if (_flags.platform == Common::kPlatformAmiga) {
 			const uint8 offsY = (_flags.gameID == GI_EOB1) ? 80 : 96;
-			_amigaBlueItemIconShapes = new const uint8*[_numItemIconShapes];
+			_amigaBlueItemIconShapes = new const uint8 *[_numItemIconShapes];
 			for (int i = 0; i < _numItemIconShapes; i++) {
 				int bx = (i % 0x14) << 1;
 				int by = (i / 0x14) << 4;
@@ -909,11 +936,11 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		}
 	}
 
-	_teleporterShapes = new const uint8*[6];
-	_sparkShapes = new const uint8*[3];
-	_compassShapes = new const uint8*[12];
+	_teleporterShapes = new const uint8 *[6];
+	_sparkShapes = new const uint8 *[3];
+	_compassShapes = new const uint8 *[12];
 	if (_flags.gameID == GI_EOB2)
-		_wallOfForceShapes = new const uint8*[6];
+		_wallOfForceShapes = new const uint8 *[6];
 
 	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
 		_lightningColumnShape = _staticres->loadRawData(kEoB2LightningColumnShapeData, size);
@@ -942,7 +969,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 		for (int i = 0; i < 6; i++)
 			_teleporterShapes[i] = _screen->encodeShape(_teleporterShapeDefs[(i << 2)], _teleporterShapeDefs[(i << 2) + 1], _teleporterShapeDefs[(i << 2) + 2], _teleporterShapeDefs[(i << 2) + 3], false, _cgaMappingDefault);
-		
+
 		_sparkShapes[0] = _screen->encodeShape(29, 0, 2, 16, false, _cgaMappingDeco);
 		_sparkShapes[1] = _screen->encodeShape(31, 0, 2, 16, false, _cgaMappingDeco);
 		_sparkShapes[2] = _screen->encodeShape(33, 0, 2, 16, false, _cgaMappingDeco);
@@ -952,9 +979,9 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		_weaponSlotGrid = _screen->encodeShape(8, 88, 4, 16, false, _cgaMappingDeco);
 		_blackBoxWideGrid = _screen->encodeShape(8, 104, 4, 8, false, _cgaMappingDeco);
 
-		static const uint8 dHeight[] = { 17, 10, 10 };
-		static const uint8 dY[] = { 120, 137, 147 };
-		
+		static const uint8 dHeight[] = {17, 10, 10};
+		static const uint8 dY[] = {120, 137, 147};
+
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 4; x++)
 				_compassShapes[(y << 2) + x] = _screen->encodeShape(x * 3, dY[y], 3, dHeight[y], false, _cgaMappingDeco);
@@ -1125,7 +1152,7 @@ void EoBCoreEngine::setHandItem(Item itemIndex) {
 }
 
 int EoBCoreEngine::getDexterityArmorClassModifier(int dexterity) {
-	static const int8 mod[] = { 5, 5, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, -1, -2, -3, -4, -4, -5, -5, -5, -6, -6 };
+	static const int8 mod[] = {5, 5, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, -1, -2, -3, -4, -4, -5, -5, -5, -6, -6};
 	return mod[dexterity];
 }
 
@@ -1248,7 +1275,7 @@ void EoBCoreEngine::recalcArmorClass(int index) {
 	int acm = getDexterityArmorClassModifier(c->dexterityCur);
 	c->armorClass = 10 + acm;
 
-	static uint8 slot[] = { 17, 0, 1, 18 };
+	static uint8 slot[] = {17, 0, 1, 18};
 	for (int i = 0; i < 4; i++) {
 		int itm = c->inventory[slot[i]];
 		if (!itm)
@@ -1446,7 +1473,7 @@ void EoBCoreEngine::npcSequence(int npcIndex) {
 			_screen->loadSpecialAmigaCPS("TEXT.CPS", 5, false);
 		else
 			_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
-	}		
+	}
 	delete s;
 
 	gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
@@ -1521,7 +1548,8 @@ int EoBCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 		_txt->printDialogueText(_npcMaxStrings[0]);
 		_screen->set16bitShadingLevel(0);
 		int r = runDialogue(-1, 7, _characters[0].name, _characters[1].name, _characters[2].name, _characters[3].name,
-		                    _characters[4].name, _characters[5].name, _abortStrings[0]) - 1;
+		                    _characters[4].name, _characters[5].name, _abortStrings[0]) -
+		        1;
 
 		if (r == 6)
 			return 0;
@@ -1599,7 +1627,7 @@ void EoBCoreEngine::increasePartyExperience(int16 points) {
 void EoBCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
 	int cl = _characters[charIndex].cClass;
 	points /= _numLevelsPerClass[cl];
-	
+
 	for (int i = 0; i < 3; i++) {
 		if (getCharacterClassType(cl, i) == -1)
 			continue;
@@ -1658,8 +1686,8 @@ void EoBCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &a
 			_dialogueNumButtons = numStr = i;
 	}
 
-	static const uint16 prsX[] = { 59, 166, 4, 112, 220, 4, 112, 220, 4, 112, 220, 4, 112, 220 };
-	static const uint8 prsY[] = { 0, 0, 0, 0, 0, 12, 12, 12, 24, 24, 24, 36, 36, 36 };
+	static const uint16 prsX[] = {59, 166, 4, 112, 220, 4, 112, 220, 4, 112, 220, 4, 112, 220};
+	static const uint8 prsY[] = {0, 0, 0, 0, 0, 12, 12, 12, 24, 24, 24, 36, 36, 36};
 
 	const ScreenDim *dm = screen()->_curDim;
 	int yOffs = (_txt->lineCount() + 1) * _screen->getFontHeight() + dm->sy + 4;
@@ -1724,10 +1752,10 @@ void EoBCoreEngine::restoreAfterDialogueSequence() {
 }
 
 void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, int y1, int flags) {
-	static const uint8 frameX[] = { 1, 0 };
-	static const uint8 frameY[] = { 8, 0 };
-	static const uint8 frameW[] = { 20, 40 };
-	static const uint8 frameH[] = { 96, 121 };
+	static const uint8 frameX[] = {1, 0};
+	static const uint8 frameY[] = {8, 0};
+	static const uint8 frameW[] = {20, 40};
+	static const uint8 frameH[] = {96, 121};
 
 	int page = ((flags & 2) || destRect) ? 0 : 6;
 	int amigaPalIndex = (x1 ? 1 : 0) + (y1 ? 2 : 0) + 1;
@@ -1863,8 +1891,8 @@ int EoBCoreEngine::restParty_getCharacterWithLowestHp() {
 }
 
 bool EoBCoreEngine::restParty_checkHealSpells(int charIndex) {
-	static const uint8 eob1healSpells[] = { 2, 15, 20 };
-	static const uint8 eob2healSpells[] = { 3, 16, 20 };
+	static const uint8 eob1healSpells[] = {2, 15, 20};
+	static const uint8 eob2healSpells[] = {3, 16, 20};
 	const uint8 *spells = _flags.gameID == GI_EOB1 ? eob1healSpells : eob2healSpells;
 	const int8 *list = _characters[charIndex].clericSpells;
 
@@ -1941,8 +1969,8 @@ void EoBCoreEngine::displayParchment(int id) {
 
 	} else {
 		// display bitmap
-		static const uint8 x[] = { 0, 20, 0 };
-		static const uint8 y[] = { 0, 0, 96 };
+		static const uint8 x[] = {0, 20, 0};
+		static const uint8 y[] = {0, 0, 96};
 		id = -id - 1;
 
 		if (_flags.platform == Common::kPlatformAmiga)
@@ -2388,7 +2416,7 @@ bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int 
 	int p = item ? (_flags.gameID == GI_EOB1 ? _items[item].type : (_itemTypes[_items[item].type].extraProperties & 0x7F)) : 0;
 
 	if (_monsters[monsterIndex].flags & 0x20)
-		return true;// EOB 2 only ?
+		return true; // EOB 2 only ?
 
 	int t = _monsters[monsterIndex].type;
 	int d = (p < 1 || p > 3) ? 0 : _items[item].value;
@@ -2459,7 +2487,7 @@ bool EoBCoreEngine::flyingObjectPartyHit(EoBFlyingObject *fo) {
 	if (ps > 2)
 		s += rollDice(1, 2, -1);
 
-	static const int8 charId[] = { 0, -1, 1, -1, 2, 4, 3, 5 };
+	static const int8 charId[] = {0, -1, 1, -1, 2, 4, 3, 5};
 
 	for (int i = 0; i < 2; i++) {
 		int c = charId[s];
@@ -2534,7 +2562,6 @@ void EoBCoreEngine::monsterCloseAttack(EoBMonsterInPlay *m) {
 
 			if (_monsterProps[m->type].capsFlags & 0x8000)
 				statusAttack(c, 8, _monsterSpecAttStrings[4], 2, 0, 0, 1);
-
 		}
 
 		if (!(_monsterProps[m->type].capsFlags & 0x4000))
@@ -2590,8 +2617,7 @@ int EoBCoreEngine::calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, i
 			s = 1;
 	}
 
-	if ((flags & 0x100) && (!(_itemTypes[_items[pips].type].allowedClasses & 4 /* bug in original code ??*/))
-	    && ((_flags.gameID == GI_EOB2 && (p->immunityFlags & 0x100)) || (_flags.gameID == GI_EOB1 && (p->capsFlags & 4))))
+	if ((flags & 0x100) && (!(_itemTypes[_items[pips].type].allowedClasses & 4 /* bug in original code ??*/)) && ((_flags.gameID == GI_EOB2 && (p->immunityFlags & 0x100)) || (_flags.gameID == GI_EOB1 && (p->capsFlags & 4))))
 		s >>= 1;
 
 	if (p->immunityFlags & 0x2000) {
@@ -2616,7 +2642,7 @@ int EoBCoreEngine::calcMonsterDamage(EoBMonsterInPlay *m, int times, int pips, i
 	if (_flags.gameID == GI_EOB1)
 		return s;
 
-	static const uint16 damageImmunityFlags[] = { 0x01, 0x10, 0x02, 0x20, 0x80, 0x400, 0x20, 0x800, 0x40, 0x80, 0x400, 0x40 };
+	static const uint16 damageImmunityFlags[] = {0x01, 0x10, 0x02, 0x20, 0x80, 0x400, 0x20, 0x800, 0x40, 0x80, 0x400, 0x40};
 	for (int i = 0; i < 12; i += 2) {
 		if ((flags & damageImmunityFlags[i]) && (p->immunityFlags & damageImmunityFlags[i + 1]))
 			s = 0;
@@ -2630,8 +2656,7 @@ int EoBCoreEngine::calcDamageModifers(int charIndex, EoBMonsterInPlay *m, int it
 	if (item) {
 		EoBItemType *p = &_itemTypes[itemType];
 		int t = m ? m->type : 0;
-		s += ((m && (_monsterProps[t].capsFlags & 1)) ? rollDice(p->dmgNumDiceL, p->dmgNumPipsL, p->dmgIncS /* bug in original code ? */) :
-		      rollDice(p->dmgNumDiceS, p->dmgNumPipsS, p->dmgIncS));
+		s += ((m && (_monsterProps[t].capsFlags & 1)) ? rollDice(p->dmgNumDiceL, p->dmgNumPipsL, p->dmgIncS /* bug in original code ? */) : rollDice(p->dmgNumDiceS, p->dmgNumPipsS, p->dmgIncS));
 		s += _items[item].value;
 	} else {
 		s += rollDice(1, 2);
@@ -2641,7 +2666,7 @@ int EoBCoreEngine::calcDamageModifers(int charIndex, EoBMonsterInPlay *m, int it
 }
 
 bool EoBCoreEngine::trySavingThrow(void *target, int hpModifier, int level, int type, int race) {
-	static const int8 constMod[] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5 };
+	static const int8 constMod[] = {0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5};
 
 	if (type == 5)
 		return false;
@@ -2689,9 +2714,9 @@ bool EoBCoreEngine::tryMonsterAttackEvasion(EoBMonsterInPlay *m) {
 }
 
 int EoBCoreEngine::getStrHitChanceModifier(int charIndex) {
-	static const int8 strExtLimit[] = { 1, 51, 76, 91, 100 };
-	static const int8 strExtMod[] = { 1, 2, 2, 2, 3 };
-	static const int8 strMod[] = { -4, -3, -3, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 4, 4, 5, 6, 7 };
+	static const int8 strExtLimit[] = {1, 51, 76, 91, 100};
+	static const int8 strExtMod[] = {1, 2, 2, 2, 3};
+	static const int8 strMod[] = {-4, -3, -3, -2, -2, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 4, 4, 5, 6, 7};
 
 	int r = strMod[_characters[charIndex].strengthCur - 1];
 	if (_characters[charIndex].strengthExtCur) {
@@ -2705,9 +2730,9 @@ int EoBCoreEngine::getStrHitChanceModifier(int charIndex) {
 }
 
 int EoBCoreEngine::getStrDamageModifier(int charIndex) {
-	static const int8 strExtLimit[] = { 1, 51, 76, 91, 100 };
-	static const int8 strExtMod[] = { 3, 3, 4, 5, 6 };
-	static const int8 strMod[] = { -3, -2, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 7, 8, 9, 10, 11, 12, 14 };
+	static const int8 strExtLimit[] = {1, 51, 76, 91, 100};
+	static const int8 strExtMod[] = {3, 3, 4, 5, 6};
+	static const int8 strMod[] = {-3, -2, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 7, 8, 9, 10, 11, 12, 14};
 
 	int r = strMod[_characters[charIndex].strengthCur - 1];
 	if (_characters[charIndex].strengthExtCur) {
@@ -2721,7 +2746,7 @@ int EoBCoreEngine::getStrDamageModifier(int charIndex) {
 }
 
 int EoBCoreEngine::getDexHitChanceModifier(int charIndex) {
-	static const int8 dexMod[] = { -5, -4, -3, -2, -1, 0, 0, 0, 0, 0, 0, 1, 2, 2, 3, 3, 4, 4, 4 };
+	static const int8 dexMod[] = {-5, -4, -3, -2, -1, 0, 0, 0, 0, 0, 0, 1, 2, 2, 3, 3, 4, 4, 4};
 	return dexMod[_characters[charIndex].dexterityCur - 1];
 }
 

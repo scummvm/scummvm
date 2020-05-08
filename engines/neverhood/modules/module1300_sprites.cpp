@@ -25,7 +25,7 @@
 namespace Neverhood {
 
 AsScene1302Bridge::AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	_x = 320;
 	_y = 240;
@@ -81,7 +81,7 @@ void AsScene1302Bridge::cbLowerBridgeEvent() {
 }
 
 SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
-	: StaticSprite(vm, 0x11122122, 200) {
+    : StaticSprite(vm, 0x11122122, 200) {
 
 	_firstY = _y;
 	if (getGlobalVar(V_FLYTRAP_RING_FENCE))
@@ -136,7 +136,7 @@ void SsScene1302Fence::suMoveUp() {
 }
 
 AsScene1303Balloon::AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	createSurface(200, 128, 315);
 	_x = 289;
@@ -188,7 +188,7 @@ void AsScene1303Balloon::stPopBalloon() {
 }
 
 AsScene1304Needle::AsScene1304Needle(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, int16 x, int16 y)
-	: AnimatedSprite(vm, 0x548E9411, surfacePriority, x, y), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 0x548E9411, surfacePriority, x, y), _parentScene(parentScene) {
 
 	// NOTE: Skipped check if Klaymen already has the needle since that's done in the scene itself
 	SetMessageHandler(&AsScene1304Needle::handleMessage);
@@ -213,8 +213,8 @@ uint32 AsScene1304Needle::handleMessage(int messageNum, const MessageParam &para
 }
 
 AsScene1306Elevator::AsScene1306Elevator(NeverhoodEngine *vm, Scene *parentScene, AnimatedSprite *asElevatorDoor)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _asElevatorDoor(asElevatorDoor), _isUp(false), _isDown(true),
-	_countdown(0) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene), _asElevatorDoor(asElevatorDoor), _isUp(false), _isDown(true),
+      _countdown(0) {
 
 	_x = 320;
 	_y = 240;
@@ -300,50 +300,40 @@ void AsScene1306Elevator::cbGoingDownEvent() {
 }
 
 static const uint32 kAsScene1307KeyResourceList1[] = {
-	0x0438069C, 0x45B0023C, 0x05700217
-};
+    0x0438069C, 0x45B0023C, 0x05700217};
 
 static const uint32 kAsScene1307KeyResourceList2[] = {
-	0x04441334, 0x061433F0, 0x06019390
-};
+    0x04441334, 0x061433F0, 0x06019390};
 
 static const uint32 kAsScene1307KeyResourceList3[] = {
-	0x11A80030, 0x178812B1, 0x1488121C
-};
+    0x11A80030, 0x178812B1, 0x1488121C};
 
 static const uint32 *kAsScene1307KeyResourceLists[] = {
-	kAsScene1307KeyResourceList1,
-	kAsScene1307KeyResourceList2,
-	kAsScene1307KeyResourceList3
-};
+    kAsScene1307KeyResourceList1,
+    kAsScene1307KeyResourceList2,
+    kAsScene1307KeyResourceList3};
 
 static const int kAsScene1307KeySurfacePriorities[] = {
-	700, 500, 300, 100
-};
+    700, 500, 300, 100};
 
 const uint kAsScene1307KeyPointsCount = 12;
 
 static const NPoint kAsScene1307KeyPoints[] = {
-	{-2,  0}, {-5,  0}, { 5,  0},
-	{12,  0}, {17,  0}, {25,  0},
-	{16, -2}, {10, -6}, { 0, -7},
-	{-7, -3}, {-3,  4}, { 2,  2}
-};
+    {-2, 0}, {-5, 0}, {5, 0}, {12, 0}, {17, 0}, {25, 0}, {16, -2}, {10, -6}, {0, -7}, {-7, -3}, {-3, 4}, {2, 2}};
 
 const uint kAsScene1307KeyFrameIndicesCount = 20;
 
 static const int16 kAsScene1307KeyFrameIndices[] = {
-	 1,  4,  8, 11, 15, 16, 17, 17, 17, 16,
-	15, 14, 12, 10,  9,  7,  5,  3,  2,  1
-};
+    1, 4, 8, 11, 15, 16, 17, 17, 17, 16,
+    15, 14, 12, 10, 9, 7, 5, 3, 2, 1};
 
 const int kAsScene1307KeyDivValue = 200;
 const int16 kAsScene1307KeyXDelta = 70;
 const int16 kAsScene1307KeyYDelta = -12;
 
 AsScene1307Key::AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint keyIndex, NRect *clipRects)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _keyIndex(keyIndex), _clipRects(clipRects),
-	_isClickable(true) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene), _keyIndex(keyIndex), _clipRects(clipRects),
+      _isClickable(true) {
 
 	NPoint pt;
 	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_keyIndex];
@@ -484,7 +474,7 @@ void AsScene1307Key::stInsert() {
 }
 
 AsScene1308JaggyDoor::AsScene1308JaggyDoor(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0xBA0AE050, 1100, 320, 240), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 0xBA0AE050, 1100, 320, 240), _parentScene(parentScene) {
 
 	setVisible(false);
 	stopAnimation();
@@ -536,7 +526,7 @@ void AsScene1308JaggyDoor::stCloseDoorDone() {
 }
 
 AsScene1308KeyboardDoor::AsScene1308KeyboardDoor(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0xA08A0851, 1100, 320, 240), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 0xA08A0851, 1100, 320, 240), _parentScene(parentScene) {
 
 	playSound(0, 0x51456049);
 	SetMessageHandler(&AsScene1308KeyboardDoor::handleMessage);
@@ -569,7 +559,7 @@ void AsScene1308KeyboardDoor::stFallingKeysDone() {
 }
 
 AsScene1308LightWallSymbols::AsScene1308LightWallSymbols(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 0x80180A10, 100, 320, 240), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 0x80180A10, 100, 320, 240), _parentScene(parentScene) {
 
 	setVisible(false);
 	stopAnimation();
@@ -614,7 +604,7 @@ void AsScene1308LightWallSymbols::stFadeOutDone() {
 }
 
 SsScene1308Number::SsScene1308Number(NeverhoodEngine *vm, uint32 fileHash, int index)
-	: StaticSprite(vm, fileHash, 100) {
+    : StaticSprite(vm, fileHash, 100) {
 
 	setVisible(false);
 	_x = _spriteResource.getPosition().x + index * 20;
@@ -622,7 +612,7 @@ SsScene1308Number::SsScene1308Number(NeverhoodEngine *vm, uint32 fileHash, int i
 }
 
 AsScene1308Mouse::AsScene1308Mouse(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100) {
+    : AnimatedSprite(vm, 1100) {
 
 	_x = 286;
 	_y = 429;
@@ -650,7 +640,7 @@ uint32 AsScene1308Mouse::handleMessage(int messageNum, const MessageParam &param
 }
 
 KmScene1303::KmScene1303(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -673,7 +663,7 @@ uint32 KmScene1303::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1304::KmScene1304(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -726,7 +716,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1305::KmScene1305(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -770,7 +760,7 @@ void KmScene1305::stCrashDownFinished() {
 }
 
 KmScene1306::KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -893,7 +883,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1308::KmScene1308(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

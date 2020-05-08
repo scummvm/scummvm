@@ -71,7 +71,6 @@ protected:
 
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
-
 	/* Version 8 script opcodes */
 	void o8_mod();
 	void o8_wait();

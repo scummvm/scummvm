@@ -21,16 +21,16 @@
  */
 
 #include "common/cosinetables.h"
-#include "common/sinetables.h"
-#include "common/random.h"
 #include "common/memstream.h"
+#include "common/random.h"
+#include "common/sinetables.h"
 #include "graphics/cursor.h"
 #include "graphics/cursorman.h"
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/input.h"
 #include "hdb/mpc.h"
 #include "hdb/sound.h"
@@ -128,59 +128,56 @@ Gfx::~Gfx() {
 }
 
 static const byte cursorPalette[16 * 3] = {
-	0x00, 0x01, 0x00,
-	0x09, 0x4E, 0xA2,
-	0x42, 0x3D, 0xBE,
-	0xFF, 0x00, 0xFD,
-	0x00, 0x57, 0xB8,
-	0x0C, 0x66, 0xCB,
-	0x0D, 0x65, 0xED,
-	0x01, 0x6A, 0xDE,
-	0x34, 0x59, 0xF1,
-	0x26, 0x5E, 0xEE,
-	0x00, 0x77, 0xFA,
-	0x23, 0x87, 0xFE,
-	0x47, 0x94, 0xFA,
-	0x69, 0xAF, 0xFC,
-	0x9F, 0xCD, 0xFE,
-	0xDE, 0xEE, 0xFD
-};
+    0x00, 0x01, 0x00,
+    0x09, 0x4E, 0xA2,
+    0x42, 0x3D, 0xBE,
+    0xFF, 0x00, 0xFD,
+    0x00, 0x57, 0xB8,
+    0x0C, 0x66, 0xCB,
+    0x0D, 0x65, 0xED,
+    0x01, 0x6A, 0xDE,
+    0x34, 0x59, 0xF1,
+    0x26, 0x5E, 0xEE,
+    0x00, 0x77, 0xFA,
+    0x23, 0x87, 0xFE,
+    0x47, 0x94, 0xFA,
+    0x69, 0xAF, 0xFC,
+    0x9F, 0xCD, 0xFE,
+    0xDE, 0xEE, 0xFD};
 
 static const byte cursorData[] = {
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0,  0,  0,  0,  0,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0, 11, 11, 11, 10, 10, 10, 10,  6,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  0, 13, 13, 12, 12, 11, 10, 10, 10, 10, 10, 10,  8,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  0, 14, 13, 13, 13, 12, 11,  7,  7, 10, 10, 10, 10, 10,  6,  0,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  0, 14, 14, 14, 13, 12,  0,  0,  0,  0,  0,  0,  7, 10, 10, 10, 10,  0,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  0, 14, 15, 14, 13,  0,  0,  3,  3,  3,  3,  3,  3,  0,  0,  7, 10, 10,  6,  0,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  0, 13, 14, 14, 13,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  7,  7,  7,  8,  0,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  0, 13, 14, 13,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  7,  7,  7,  0,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  0, 12, 13, 13,  5,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  7,  7,  7,  8,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  0, 12, 13, 13,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  7,  5,  6,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  0, 12, 12, 12,  0,  3,  3,  3,  3,  3,  3,  0,  0,  3,  3,  3,  3,  3,  3,  0,  5,  5,  5,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  0, 11, 11,  5,  0,  3,  3,  3,  3,  3,  0, 15, 15,  0,  3,  3,  3,  3,  3,  0,  5,  4,  4,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  0, 10, 11,  5,  0,  3,  3,  3,  3,  0, 15, 15, 13, 13,  0,  3,  3,  3,  3,  0,  7,  4,  4,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  0, 10, 11,  5,  0,  3,  3,  3,  3,  0, 15, 13, 13,  7,  0,  3,  3,  3,  3,  0,  7,  4,  4,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  0, 10, 10,  7,  0,  3,  3,  3,  3,  3,  0, 13,  7,  0,  3,  3,  3,  3,  3,  0,  5,  4,  4,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  0, 10, 10,  7,  0,  3,  3,  3,  3,  3,  3,  0,  0,  3,  3,  3,  3,  3,  3,  0,  4,  4,  4,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  0, 10, 10, 10,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  4,  4,  4,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  0,  9, 10, 10,  7,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  5,  1,  1,  2,  0,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  0, 10, 10, 10,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  1,  1,  1,  0,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  0,  8, 10, 10,  7,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  1,  1,  1,  2,  0,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  0,  6, 10,  7,  7,  0,  0,  3,  3,  3,  3,  3,  3,  0,  0,  1,  1,  1,  4,  0,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  0, 10,  7,  7,  7,  7,  0,  0,  0,  0,  0,  0,  5,  1,  1,  1,  1,  0,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  0,  6,  7,  7,  7,  5,  5,  4,  4,  4,  4,  1,  1,  1,  4,  0,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  9,  7,  5,  5,  4,  4,  4,  4,  4,  1,  1,  2,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0,  9,  7,  4,  4,  4,  4,  4,  2,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0,  0,  0,  0,  0,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
- 3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3
-};
-
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 11, 11, 11, 10, 10, 10, 10, 6, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 13, 13, 12, 12, 11, 10, 10, 10, 10, 10, 10, 8, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 0, 14, 13, 13, 13, 12, 11, 7, 7, 10, 10, 10, 10, 10, 6, 0, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 0, 14, 14, 14, 13, 12, 0, 0, 0, 0, 0, 0, 7, 10, 10, 10, 10, 0, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 0, 14, 15, 14, 13, 0, 0, 3, 3, 3, 3, 3, 3, 0, 0, 7, 10, 10, 6, 0, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 0, 13, 14, 14, 13, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 7, 7, 7, 8, 0, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 0, 13, 14, 13, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 7, 7, 7, 0, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 12, 13, 13, 5, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 7, 7, 7, 8, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 12, 13, 13, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 7, 5, 6, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 12, 12, 12, 0, 3, 3, 3, 3, 3, 3, 0, 0, 3, 3, 3, 3, 3, 3, 0, 5, 5, 5, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 11, 11, 5, 0, 3, 3, 3, 3, 3, 0, 15, 15, 0, 3, 3, 3, 3, 3, 0, 5, 4, 4, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 10, 11, 5, 0, 3, 3, 3, 3, 0, 15, 15, 13, 13, 0, 3, 3, 3, 3, 0, 7, 4, 4, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 10, 11, 5, 0, 3, 3, 3, 3, 0, 15, 13, 13, 7, 0, 3, 3, 3, 3, 0, 7, 4, 4, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 10, 10, 7, 0, 3, 3, 3, 3, 3, 0, 13, 7, 0, 3, 3, 3, 3, 3, 0, 5, 4, 4, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 10, 10, 7, 0, 3, 3, 3, 3, 3, 3, 0, 0, 3, 3, 3, 3, 3, 3, 0, 4, 4, 4, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 10, 10, 10, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 4, 4, 4, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 0, 9, 10, 10, 7, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 5, 1, 1, 2, 0, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 0, 10, 10, 10, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 1, 0, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 0, 8, 10, 10, 7, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 1, 2, 0, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 0, 6, 10, 7, 7, 0, 0, 3, 3, 3, 3, 3, 3, 0, 0, 1, 1, 1, 4, 0, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 0, 10, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 5, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 0, 6, 7, 7, 7, 5, 5, 4, 4, 4, 4, 1, 1, 1, 4, 0, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 9, 7, 5, 5, 4, 4, 4, 4, 4, 1, 1, 2, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 9, 7, 4, 4, 4, 4, 4, 2, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
 
 void Gfx::init() {
 	// Set the default cursor pos & char clipping
@@ -424,7 +421,7 @@ void Gfx::updateFade() {
 		return;
 
 	debug(7, "updateFade: active: %d stayFaded: %d isBlack: %d speed: %d isFadeIn: %d curStep: %d",
-		_fadeInfo.active, _fadeInfo.stayFaded, _fadeInfo.isBlack, _fadeInfo.speed, _fadeInfo.isFadeIn, _fadeInfo.curStep);
+	      _fadeInfo.active, _fadeInfo.stayFaded, _fadeInfo.isBlack, _fadeInfo.speed, _fadeInfo.isFadeIn, _fadeInfo.curStep);
 
 	if (g_hdb->isPPC()) {
 		if (!_fadeInfo.isBlack) {
@@ -571,7 +568,7 @@ void Gfx::updateFade() {
 
 		} while (_fadeInfo.active);
 
-		waitAFrame = 0;			// reset counter
+		waitAFrame = 0; // reset counter
 	}
 }
 
@@ -731,8 +728,8 @@ Tile *Gfx::getTileGfx(const char *name, int32 size) {
 	// Try to find graphic
 	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); ++it) {
 		if (Common::matchString((*it)->name, name)) {
-			if ((*it)->loaded == -1) {	// Marked for Deletetion?
-				(*it)->loaded = 1;		// Reactivate it
+			if ((*it)->loaded == -1) { // Marked for Deletetion?
+				(*it)->loaded = 1;     // Reactivate it
 				return (*it)->tileGfx;
 			}
 		}
@@ -765,8 +762,8 @@ Picture *Gfx::getPicGfx(const char *name, int32 size) {
 	// Try to find graphic
 	for (Common::Array<GfxCache *>::iterator it = _gfxCache->begin(); it != _gfxCache->end(); ++it) {
 		if (Common::matchString((*it)->name, name)) {
-			if ((*it)->loaded == -1) {	// Marked for Deletetion?
-				(*it)->loaded = 1;		// Reactivate it
+			if ((*it)->loaded == -1) { // Marked for Deletetion?
+				(*it)->loaded = 1;     // Reactivate it
 				return (*it)->picGfx;
 			}
 		}
@@ -835,11 +832,11 @@ void Gfx::setup3DStarsLeft() {
 	for (int i = 0; i < kNum3DStars; i++) {
 		_stars3DSlow[i].x = g_hdb->_rnd->getRandomNumber(g_hdb->_screenWidth - 1);
 		_stars3DSlow[i].y = g_hdb->_rnd->getRandomNumber(g_hdb->_screenHeight - 1);
-		_stars3DSlow[i].speed = ((double) (1 + g_hdb->_rnd->getRandomNumber(4))) / 6.0;
+		_stars3DSlow[i].speed = ((double)(1 + g_hdb->_rnd->getRandomNumber(4))) / 6.0;
 		if (g_hdb->isPPC())
 			_stars3DSlow[i].color = g_hdb->_format.RGBToColor((int)(_stars3DSlow[i].speed * 250), (int)(_stars3DSlow[i].speed * 250), (int)(_stars3DSlow[i].speed * 250));
 		else
-			_stars3DSlow[i].color = (int) (_stars3DSlow[i].speed * 4.00);
+			_stars3DSlow[i].color = (int)(_stars3DSlow[i].speed * 4.00);
 	}
 }
 
@@ -1052,7 +1049,7 @@ void Gfx::drawText(const char *string) {
 
 	// Word Wrapping
 	int width = _eLeft;
-	char cr[256];	// Carriage Return Array
+	char cr[256]; // Carriage Return Array
 
 	for (int i = 0; i < (int)strlen(string); i++) {
 		unsigned char c = string[i];
@@ -1225,15 +1222,15 @@ void Gfx::turnOnBonusStars(int which) {
 		_starsInfo.starAngle[i] = (36 * (i + 1)) - 10;
 	if (!_starsInfo.gfx[0]) {
 		switch (which) {
-		case 0:		// Red Star
+		case 0: // Red Star
 			_starsInfo.gfx[0] = loadPic(SECRETSTAR_RED1);
 			_starsInfo.gfx[1] = loadPic(SECRETSTAR_RED2);
 			break;
-		case 1:		// Green Star
+		case 1: // Green Star
 			_starsInfo.gfx[0] = loadPic(SECRETSTAR_GREEN1);
 			_starsInfo.gfx[1] = loadPic(SECRETSTAR_GREEN2);
 			break;
-		case 2:		// Blue Star
+		case 2: // Blue Star
 			_starsInfo.gfx[0] = loadPic(SECRETSTAR_BLUE1);
 			_starsInfo.gfx[1] = loadPic(SECRETSTAR_BLUE2);
 			break;
@@ -1246,7 +1243,7 @@ void Gfx::turnOnBonusStars(int which) {
 	_starsInfo.angleSpeed = 25;
 	_starsInfo.timer = g_hdb->getTimeSlice() + 500;
 	_starsInfo.anim = 0;
-	_starsInfo.totalTime = g_hdb->getTimeSlice() + 5000;		// 5 seconds long
+	_starsInfo.totalTime = g_hdb->getTimeSlice() + 5000; // 5 seconds long
 	g_hdb->_sound->playSound(SND_MONKEYSTONE_SECRET_STAR);
 }
 
@@ -1265,14 +1262,12 @@ void Gfx::drawBonusStars() {
 	for (int i = 0; i < 10; i++) {
 		if (g_hdb->isPPC()) {
 			_starsInfo.gfx[_starsInfo.anim]->drawMasked(
-				(g_hdb->_screenWidth / 2) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
-				(g_hdb->_screenHeight / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h)
-				);
+			    (g_hdb->_screenWidth / 2) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
+			    (g_hdb->_screenHeight / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h));
 		} else {
 			_starsInfo.gfx[_starsInfo.anim]->drawMasked(
-				(int)(g_hdb->_screenDrawWidth / 2 + ((float)_starsInfo.radius / 2)) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
-				(g_hdb->_screenDrawHeight / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h)
-			);
+			    (int)(g_hdb->_screenDrawWidth / 2 + ((float)_starsInfo.radius / 2)) + (int)((double)_starsInfo.radius * _cosines->at(_starsInfo.starAngle[i]) - w),
+			    (g_hdb->_screenDrawHeight / 2) + (int)((double)_starsInfo.radius * _sines->at(_starsInfo.starAngle[i]) - h));
 		}
 
 		int angle = (int)(_starsInfo.starAngle[i] + _starsInfo.angleSpeed);
@@ -1460,4 +1455,4 @@ int Tile::drawMasked(int x, int y, int alpha) {
 	return 0;
 }
 
-}
+} // namespace HDB

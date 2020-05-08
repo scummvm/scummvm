@@ -60,22 +60,22 @@ public:
 
 	bool open(const Common::String &name);
 
-	uint32 getActorCount() const           { return _actorCount; }
-	uint32 getPlayerId() const             { return _playerId; }
-	uint32 getFlagCount() const            { return _flagCount; }
-	uint32 getClueCount() const            { return _clueCount; }
-	uint32 getGlobalVarCount() const       { return _globalVarCount; }
-	uint32 getSceneNamesCount() const      { return _sceneNamesCount; }
-	uint32 getInitialSceneId() const       { return _initialSceneId; }
-	uint32 getInitialSetId() const         { return _initialSetId; }
-	uint32 getWaypointCount() const        { return _waypointCount; }
-	uint32 getSfxTrackCount() const        { return _sfxTrackCount; }
-	uint32 getMusicTrackCount() const      { return _musicTrackCount; }
-	uint32 getOuttakeCount() const         { return _outtakeCount; }
-	uint32 getCrimeCount() const           { return _crimeCount; }
-	uint32 getSuspectCount() const         { return _suspectCount; }
-	uint32 getCoverWaypointCount() const   { return _coverWaypointCount; }
-	uint32 getFleeWaypointCount() const    { return _fleeWaypointCount; }
+	uint32 getActorCount() const { return _actorCount; }
+	uint32 getPlayerId() const { return _playerId; }
+	uint32 getFlagCount() const { return _flagCount; }
+	uint32 getClueCount() const { return _clueCount; }
+	uint32 getGlobalVarCount() const { return _globalVarCount; }
+	uint32 getSceneNamesCount() const { return _sceneNamesCount; }
+	uint32 getInitialSceneId() const { return _initialSceneId; }
+	uint32 getInitialSetId() const { return _initialSetId; }
+	uint32 getWaypointCount() const { return _waypointCount; }
+	uint32 getSfxTrackCount() const { return _sfxTrackCount; }
+	uint32 getMusicTrackCount() const { return _musicTrackCount; }
+	uint32 getOuttakeCount() const { return _outtakeCount; }
+	uint32 getCrimeCount() const { return _crimeCount; }
+	uint32 getSuspectCount() const { return _suspectCount; }
+	uint32 getCoverWaypointCount() const { return _coverWaypointCount; }
+	uint32 getFleeWaypointCount() const { return _fleeWaypointCount; }
 
 	const Common::String &getSceneName(int i) const;
 	const Common::String &getSfxTrack(int i) const;

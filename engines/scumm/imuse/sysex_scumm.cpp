@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -125,7 +124,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		}
 		break;
 
-	case 17: // AdLib instrument definition(Global)
+	case 17:    // AdLib instrument definition(Global)
 		p += 2; // Skip hardware type and... whatever came right before it
 		a = *p++;
 		player->decode_sysex_bytes(p, buf, len - 3);

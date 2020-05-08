@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/pathfinder/combat_path_finder.h"
+#include "ultima/nuvie/actors/actor.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 CombatPathFinder::CombatPathFinder(Actor *a)
-	: ActorPathFinder(a, a->get_location()) {
+    : ActorPathFinder(a, a->get_location()) {
 	target_mode = PATHFINDER_NONE;
 	max_dist = 0;
 	target = NULL;
@@ -35,14 +35,13 @@ CombatPathFinder::CombatPathFinder(Actor *a)
 
 /* Without a mode set, CombatPathFinder is identical to ActorPathFinder. */
 CombatPathFinder::CombatPathFinder(Actor *a, Actor *t)
-	: ActorPathFinder(a, t->get_location()) {
+    : ActorPathFinder(a, t->get_location()) {
 	target_mode = PATHFINDER_CHASE;
 	target = t;
 	max_dist = 0;
 }
 
 CombatPathFinder::~CombatPathFinder() {
-
 }
 
 bool CombatPathFinder::reached_goal() {

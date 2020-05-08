@@ -23,13 +23,15 @@
 #ifndef ARCHETYPE_INTERPRETER
 #define ARCHETYPE_INTERPRETER
 
-#include "glk/archetype/expression.h"
 #include "common/stream.h"
+#include "glk/archetype/expression.h"
 
 namespace Glk {
 namespace Archetype {
 
-enum DesiredType { LVALUE, RVALUE, NAME };
+enum DesiredType { LVALUE,
+	               RVALUE,
+	               NAME };
 
 typedef ExprNode ResultType;
 

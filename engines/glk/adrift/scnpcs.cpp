@@ -21,15 +21,14 @@
  */
 
 #include "glk/adrift/scare.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 
 namespace Glk {
 namespace Adrift {
 
 /* Trace flag, set before running. */
 static sc_bool npc_trace = FALSE;
-
 
 /*
  * npc_in_room()
@@ -44,7 +43,6 @@ sc_bool npc_in_room(sc_gameref_t game, sc_int npc, sc_int room) {
 
 	return gs_npc_location(game, npc) - 1 == room;
 }
-
 
 /*
  * npc_count_in_room()
@@ -64,7 +62,6 @@ sc_int npc_count_in_room(sc_gameref_t game, sc_int room) {
 	}
 	return count;
 }
-
 
 /*
  * npc_start_npc_walk()
@@ -89,7 +86,6 @@ void npc_start_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
 	gs_set_npc_walkstep(game, npc, walk, movetime);
 }
 
-
 /*
  * npc_turn_update()
  * npc_setup_initial()
@@ -101,8 +97,7 @@ void npc_turn_update(sc_gameref_t game) {
 
 	/* Set current values for NPC seen states. */
 	for (index_ = 0; index_ < gs_npc_count(game); index_++) {
-		if (!gs_npc_seen(game, index_)
-		        && npc_in_room(game, index_, gs_playerroom(game)))
+		if (!gs_npc_seen(game, index_) && npc_in_room(game, index_, gs_playerroom(game)))
 			gs_set_npc_seen(game, index_, TRUE);
 	}
 }
@@ -138,7 +133,6 @@ void npc_setup_initial(sc_gameref_t game) {
 	npc_turn_update(game);
 }
 
-
 /*
  * npc_room_in_roomgroup()
  *
@@ -158,19 +152,16 @@ static sc_bool npc_room_in_roomgroup(sc_gameref_t game, sc_int room, sc_int grou
 	return member != 0;
 }
 
-
 /* List of direction names, for printing entry/exit messages. */
 static const sc_char *const DIRNAMES_4[] = {
-	"the north", "the east", "the south", "the west", "above", "below",
-	"inside", "outside",
-	NULL
-};
+    "the north", "the east", "the south", "the west", "above", "below",
+    "inside", "outside",
+    NULL};
 static const sc_char *const DIRNAMES_8[] = {
-	"the north", "the east", "the south", "the west", "above", "below",
-	"inside", "outside",
-	"the north-east", "the south-east", "the south-west", "the north-west",
-	NULL
-};
+    "the north", "the east", "the south", "the west", "above", "below",
+    "inside", "outside",
+    "the north-east", "the south-east", "the south-west", "the north-west",
+    NULL};
 
 /*
  * npc_random_adjacent_roomgroup_member()
@@ -217,7 +208,6 @@ static sc_int npc_random_adjacent_roomgroup_member(sc_gameref_t game, sc_int roo
 	/* Return a random adjacent room, or -1 if nothing is adjacent. */
 	return (count > 0) ? roomlist[sc_randomint(0, count - 1)] : -1;
 }
-
 
 /*
  * npc_announce()
@@ -296,7 +286,6 @@ static void npc_announce(sc_gameref_t game, sc_int npc, sc_int room, sc_bool is_
 	res_handle_resource(game, "sisi", vt_key);
 }
 
-
 /*
  * npc_tick_npc_walk()
  *
@@ -327,7 +316,7 @@ static void npc_tick_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
 
 	/* Find a step to match the movetime. */
 	for (walkstep = 0; walkstep < movetimes - 1; walkstep++) {
-		sc_int  movetime;
+		sc_int movetime;
 
 		vt_key[5].integer = walkstep + 1;
 		movetime = prop_get_integer(bundle, "I<-sisisi", vt_key);
@@ -342,12 +331,12 @@ static void npc_tick_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
 	vt_key[5].integer = walkstep;
 	destnum = prop_get_integer(bundle, "I<-sisisi", vt_key);
 
-	if (destnum == 0)          /* Hidden. */
+	if (destnum == 0) /* Hidden. */
 		dest = -1;
-	else if (destnum == 1)     /* Follow player. */
+	else if (destnum == 1) /* Follow player. */
 		dest = gs_playerroom(game);
 	else if (destnum < gs_room_count(game) + 2)
-		dest = destnum - 2;      /* To room. */
+		dest = destnum - 2; /* To room. */
 	else if (destnum < gs_room_count(game) + 2 + roomgroups) {
 		sc_int initial;
 
@@ -389,8 +378,7 @@ static void npc_tick_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
 		/* Run meetchar task if appropriate. */
 		vt_key[4].string = "MeetChar";
 		meetchar = prop_get_integer(bundle, "I<-sisis", vt_key) - 1;
-		if ((meetchar == -1 && gs_player_in_room(game, dest))
-		        || (meetchar >= 0 && dest == gs_npc_location(game, meetchar) - 1)) {
+		if ((meetchar == -1 && gs_player_in_room(game, dest)) || (meetchar >= 0 && dest == gs_npc_location(game, meetchar) - 1)) {
 			if (task_can_run_task(game, chartask))
 				task_run_task(game, chartask, TRUE);
 		}
@@ -410,7 +398,6 @@ static void npc_tick_npc_walk(sc_gameref_t game, sc_int npc, sc_int walk) {
 		}
 	}
 }
-
 
 /*
  * npc_tick_npc()
@@ -504,7 +491,6 @@ static void npc_tick_npc(sc_gameref_t game, sc_int npc) {
 	}
 }
 
-
 /*
  * npc_tick_npcs()
  *
@@ -554,7 +540,7 @@ void npc_tick_npcs(sc_gameref_t game) {
 					vt_key[4].string = "MeetChar";
 					meetchar = prop_get_integer(bundle, "I<-sisis", vt_key) - 1;
 					if (meetchar == -1 &&
-					        gs_player_in_room(game, gs_npc_location(game, npc) - 1)) {
+					    gs_player_in_room(game, gs_npc_location(game, npc) - 1)) {
 						if (task_can_run_task(game, chartask))
 							task_run_task(game, chartask, TRUE);
 					}
@@ -567,7 +553,6 @@ void npc_tick_npcs(sc_gameref_t game) {
 	for (npc = 0; npc < gs_npc_count(game); npc++)
 		npc_tick_npc(game, npc);
 }
-
 
 /*
  * npc_debug_trace()

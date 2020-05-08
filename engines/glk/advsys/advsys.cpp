@@ -21,8 +21,8 @@
  */
 
 #include "glk/advsys/advsys.h"
-#include "common/translation.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 namespace Glk {
 namespace AdvSys {
@@ -47,7 +47,7 @@ void AdvSys::runGame() {
 			if (err != Common::kNoError)
 				print(_("Sorry, the savegame couldn't be restored"));
 			else
-				_pendingLine = "look";		// Do a look action after loading the savegame
+				_pendingLine = "look"; // Do a look action after loading the savegame
 		}
 
 		// Gameplay loop
@@ -58,7 +58,8 @@ void AdvSys::runGame() {
 			// Get and parse a single line
 			if (getInput()) {
 				if (singleAction()) {
-					while (!shouldQuit() && nextCommand() && singleAction()) {}
+					while (!shouldQuit() && nextCommand() && singleAction()) {
+					}
 				}
 			}
 		}

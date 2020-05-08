@@ -23,10 +23,10 @@
 #ifndef SHARED_CONF_XML_NODE_H
 #define SHARED_CONF_XML_NODE_H
 
-#include "ultima/shared/std/containers.h"
-#include "common/str.h"
 #include "common/array.h"
 #include "common/hash-str.h"
+#include "common/str.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Shared {
@@ -43,6 +43,7 @@ private:
 	Common::StringMap _attributes;
 	bool _noClose;
 	Common::String _emptyString;
+
 private:
 	static void parseDocTypeElement(const Common::String &s, size_t &nn);
 
@@ -60,10 +61,11 @@ private:
 
 	static Common::String closeTag(const Common::String &s);
 	static Common::String encodeEntity(const Common::String &s);
+
 public:
 	XMLNode(XMLTree *tree, XMLNode *parent = nullptr) : _tree(tree), _parent(parent), _noClose(false) {}
 	XMLNode(const XMLNode &n) : _tree(n._tree), _parent(n._parent), _id(n._id),
-		_text(n._text), _nodeList(n._nodeList), _noClose(false) {}
+	                            _text(n._text), _nodeList(n._nodeList), _noClose(false) {}
 	~XMLNode();
 
 	XMLNode &operator=(const XMLNode &n) {
@@ -132,7 +134,7 @@ public:
 	 * Returns true if search is 'finished'
 	 */
 	bool searchPairs(KeyTypeList &ktl, const Common::String &basekey,
-		const Common::String currkey, const unsigned int pos);
+	                 const Common::String currkey, const unsigned int pos);
 	void selectPairs(KeyTypeList &ktl, const Common::String currkey);
 
 	Common::String dump(int depth = 0);
@@ -142,7 +144,7 @@ public:
 	static XMLNode *xmlParse(XMLTree *tree, const Common::String &s, size_t &pos);
 
 	void listKeys(const Common::String &, Common::Array<Common::String> &,
-		bool longformat = true) const;
+	              bool longformat = true) const;
 
 	/**
 	 * Deletes the entire tree this node belongs to, including itself

@@ -33,14 +33,13 @@ namespace Ultima8 {
 
 class ShapeArchive;
 
-
 class ShapeViewerGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ShapeViewerGump();
 	ShapeViewerGump(int x, int y, int width, int height,
-	                Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
+	                Std::vector<Std::pair<Std::string, ShapeArchive *>> &flexes,
 	                uint32 flags = 0, int32 layer = LAYER_MODAL);
 	~ShapeViewerGump() override;
 
@@ -55,10 +54,11 @@ public:
 	static void U8ShapeViewer();
 
 	bool loadData(Common::ReadStream *rs);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 
-	Std::vector<Std::pair<Std::string, ShapeArchive *> > _flexes;
+	Std::vector<Std::pair<Std::string, ShapeArchive *>> _flexes;
 	unsigned int _curFlex;
 	ShapeArchive *_flex;
 	uint32 _curShape;

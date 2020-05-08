@@ -29,11 +29,13 @@ namespace Titanic {
 
 class CArbBackground : public CBackground {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;
 	int _fieldEC;
+
 public:
 	CLASSDEF;
 	CArbBackground();

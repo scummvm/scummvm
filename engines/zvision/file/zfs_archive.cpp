@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/memstream.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/memstream.h"
+#include "common/scummsys.h"
 
 #include "zvision/file/zfs_archive.h"
 

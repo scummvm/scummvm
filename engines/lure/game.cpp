@@ -73,7 +73,7 @@ void Game::tick() {
 		Hotspot const &hotspot = **i;
 
 		if (!_preloadFlag || ((hotspot.layer() != 0xff) &&
-			(hotspot.hotspotId() < FIRST_NONCHARACTER_ID)))
+		                      (hotspot.hotspotId() < FIRST_NONCHARACTER_ID)))
 			// Add hotspot to list to execute
 			idList[idSize++] = hotspot.hotspotId();
 	}
@@ -154,7 +154,8 @@ void Game::execute() {
 		if ((_state & GS_RESTART) != 0) {
 			res.reset();
 			Fights.reset();
-			if (!initialRestart) room.reset();
+			if (!initialRestart)
+				room.reset();
 
 			setState(0);
 			Script::execute(STARTUP_SCRIPT);
@@ -208,15 +209,18 @@ void Game::execute() {
 					case Common::KEYCODE_KP_PLUS:
 						if (_debugFlag) {
 							while (++roomNum <= 51)
-								if (res.getRoom(roomNum) != NULL) break;
-							if (roomNum == 52) roomNum = 1;
+								if (res.getRoom(roomNum) != NULL)
+									break;
+							if (roomNum == 52)
+								roomNum = 1;
 							room.setRoomNumber(roomNum);
 						}
 						break;
 
 					case Common::KEYCODE_KP_MINUS:
 						if (_debugFlag) {
-							if (roomNum == 1) roomNum = 55;
+							if (roomNum == 1)
+								roomNum = 55;
 							while (res.getRoom(--roomNum) == NULL)
 								;
 							room.setRoomNumber(roomNum);
@@ -226,7 +230,7 @@ void Game::execute() {
 					case Common::KEYCODE_KP_MULTIPLY:
 						if (_debugFlag)
 							res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
-								room.roomNumber());
+							    room.roomNumber());
 						break;
 
 					case Common::KEYCODE_KP_DIVIDE:
@@ -247,7 +251,7 @@ void Game::execute() {
 				}
 
 				if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
-					(events.type() == Common::EVENT_RBUTTONDOWN))
+				    (events.type() == Common::EVENT_RBUTTONDOWN))
 					handleClick();
 			}
 
@@ -456,14 +460,14 @@ void Game::handleClick() {
 			fields.setField(OLD_ROOM_NUMBER, 0);
 		}
 	} else if ((room.cursorState() == CS_TALKING) ||
-			   (res.getTalkState() != TALK_NONE)) {
+	           (res.getTalkState() != TALK_NONE)) {
 		// Currently talking, so let its tick proc handle it
 	} else if (mouse.y() < MENUBAR_Y_SIZE) {
 		uint8 response = Menu::getReference().execute();
 		if (response != MENUITEM_NONE)
 			handleMenuResponse(response);
 	} else if ((room.cursorState() == CS_SEQUENCE) ||
-			   (room.cursorState() == CS_BUMPED)) {
+	           (room.cursorState() == CS_BUMPED)) {
 		// No action necessary
 	} else {
 		if (mouse.lButton())
@@ -577,8 +581,7 @@ void Game::handleRightClickMenu() {
 						else
 							Common::strlcat(statusLine, stringList.getString(S_ON), MAX_DESC_SIZE);
 						statusLine += strlen(statusLine);
-					}
-					else if ((action == DRINK) || (action == EXAMINE))
+					} else if ((action == DRINK) || (action == EXAMINE))
 						hotspot = res.getHotspot(itemId);
 				}
 			}
@@ -603,8 +606,7 @@ void Game::handleRightClickMenu() {
 					HotspotData *itemHotspot = res.getHotspot(itemId);
 					if (itemHotspot != NULL)
 						strings.getString(itemHotspot->nameId, statusLine);
-				}
-				else
+				} else
 					strings.getString(hotspot->nameId, statusLine);
 			}
 
@@ -641,10 +643,10 @@ void Game::handleLeftClick() {
 	} else if (room.destRoomNumber() != 0) {
 		// Walk to another room
 		RoomExitCoordinateData &exitData =
-			res.coordinateList().getEntry(room.roomNumber()).getData(room.destRoomNumber());
+		    res.coordinateList().getEntry(room.roomNumber()).getData(room.destRoomNumber());
 
 		player->walkTo((exitData.x & 0xfff8) | 5, (exitData.y & 0xfff8),
-			room.hotspotId() == 0 ? 0xffff : room.hotspotId());
+		               room.hotspotId() == 0 ? 0xffff : room.hotspotId());
 	} else {
 		// Walking within room
 		player->walkTo(mouse.x(), mouse.y(), 0);
@@ -710,7 +712,7 @@ bool Game::GetTellActions() {
 				sprintf(statusLine + strlen(statusLine), "%s ", stringList.getString(action));
 
 				// Handle any processing for the action
-				commands[_numTellCommands * 3] = (uint16) action;
+				commands[_numTellCommands * 3] = (uint16)action;
 				commands[_numTellCommands * 3 + 1] = 0;
 				commands[_numTellCommands * 3 + 2] = 0;
 				++paramIndex;
@@ -718,7 +720,7 @@ bool Game::GetTellActions() {
 
 			case 1:
 				// First parameter
-				action = (Action) commands[_numTellCommands * 3];
+				action = (Action)commands[_numTellCommands * 3];
 				if (action != RETURN) {
 					// Prompt for selection
 					if ((action != USE) && (action != DRINK) && (action != GIVE))
@@ -754,7 +756,7 @@ bool Game::GetTellActions() {
 
 			case 2:
 				// Second parameter
-				action = (Action) commands[_numTellCommands * 3];
+				action = (Action)commands[_numTellCommands * 3];
 				if (action == ASK)
 					Common::strlcat(statusLine, stringList.getString(S_FOR), MAX_DESC_SIZE);
 				else if (action == GIVE)
@@ -812,7 +814,7 @@ bool Game::GetTellActions() {
 
 					default:
 						// Move to end of just completed command
-						action = (Action) commands[_numTellCommands * 3];
+						action = (Action)commands[_numTellCommands * 3];
 						if (action == RETURN)
 							paramIndex = 0;
 						else if ((action == ASK) || (action == GIVE) || (action == USE))
@@ -962,8 +964,8 @@ void Game::handleBootParam(int value) {
 		h = res.getActiveHotspot(PLAYER_ID);
 		h->setRoomNumber(4);
 		h->setPosition(150, 110);
-		res.getHotspot(0x2710)->roomNumber = PLAYER_ID;  // Bottle
-		res.getHotspot(0x2713)->roomNumber = PLAYER_ID;  // Knife
+		res.getHotspot(0x2710)->roomNumber = PLAYER_ID; // Bottle
+		res.getHotspot(0x2713)->roomNumber = PLAYER_ID; // Knife
 
 		room.setRoomNumber(4);
 		break;
@@ -973,9 +975,9 @@ void Game::handleBootParam(int value) {
 		h = res.getActiveHotspot(PLAYER_ID);
 		h->setRoomNumber(2);
 		h->setPosition(100, 110);
-		res.getHotspot(0x2710)->roomNumber = PLAYER_ID;  // Bottle
+		res.getHotspot(0x2710)->roomNumber = PLAYER_ID; // Bottle
 		fields.setField(BOTTLE_FILLED, 1);
-		res.getHotspot(0x2713)->roomNumber = PLAYER_ID;  // Knife
+		res.getHotspot(0x2713)->roomNumber = PLAYER_ID; // Knife
 
 		room.setRoomNumber(2);
 		break;
@@ -995,10 +997,14 @@ bool Game::getYN() {
 
 	Common::Language l = LureEngine::getReference().getLanguage();
 	Common::KeyCode y = Common::KEYCODE_y;
-	if (l == Common::FR_FRA) y = Common::KEYCODE_o;
-	else if ((l == Common::DE_DEU) || (l == Common::NL_NLD)) y = Common::KEYCODE_j;
-	else if ((l == Common::ES_ESP) || (l == Common::IT_ITA)) y = Common::KEYCODE_s;
-	else if (l == Common::RU_RUS) y = Common::KEYCODE_l;
+	if (l == Common::FR_FRA)
+		y = Common::KEYCODE_o;
+	else if ((l == Common::DE_DEU) || (l == Common::NL_NLD))
+		y = Common::KEYCODE_j;
+	else if ((l == Common::ES_ESP) || (l == Common::IT_ITA))
+		y = Common::KEYCODE_s;
+	else if (l == Common::RU_RUS)
+		y = Common::KEYCODE_l;
 
 	bool vKbdFlag = g_system->hasFeature(OSystem::kFeatureVirtualKeyboard);
 	if (!vKbdFlag)
@@ -1023,7 +1029,7 @@ bool Game::getYN() {
 						result = key == y;
 					}
 				} else if ((key == y) || (key == Common::KEYCODE_n) ||
-					(key == Common::KEYCODE_ESCAPE)) {
+				           (key == Common::KEYCODE_ESCAPE)) {
 					breakFlag = true;
 					result = key == y;
 				}
@@ -1083,6 +1089,5 @@ void Game::loadFromStream(Common::ReadStream *stream) {
 	// Reset game state flags
 	setState(0);
 }
-
 
 } // End of namespace Lure

@@ -20,9 +20,9 @@
  *
  */
 
+#include "xeen/debugger.h"
 #include "common/file.h"
 #include "xeen/xeen.h"
-#include "xeen/debugger.h"
 
 namespace Xeen {
 
@@ -45,7 +45,7 @@ static int strToInt(const char *s) {
 /*------------------------------------------------------------------------*/
 
 Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm),
-		_spellId(-1), _invincible(false), _intangible(false), _superStrength(false) {
+                                     _spellId(-1), _invincible(false), _intangible(false), _superStrength(false) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
 	registerCmd("spells", WRAP_METHOD(Debugger, cmdSpells));

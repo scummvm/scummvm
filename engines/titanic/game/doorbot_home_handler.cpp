@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CDoorbotHomeHandler, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 CDoorbotHomeHandler::CDoorbotHomeHandler() {

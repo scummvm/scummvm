@@ -38,7 +38,6 @@
 
 ------------------------------------------------------------------------ */
 
-
 #include "engines/wintermute/utils/convert_utf.h"
 #ifdef CVTUTF_DEBUG
 #include "common/textconsole.h"
@@ -46,15 +45,15 @@
 
 namespace Wintermute {
 
-static const int halfShift  = 10; /* used for shifting by 10 bits */
+static const int halfShift = 10; /* used for shifting by 10 bits */
 
 static const UTF32 halfBase = 0x0010000UL;
 static const UTF32 halfMask = 0x3FFUL;
 
-#define UNI_SUR_HIGH_START  (UTF32)0xD800
-#define UNI_SUR_HIGH_END    (UTF32)0xDBFF
-#define UNI_SUR_LOW_START   (UTF32)0xDC00
-#define UNI_SUR_LOW_END     (UTF32)0xDFFF
+#define UNI_SUR_HIGH_START (UTF32)0xD800
+#define UNI_SUR_HIGH_END (UTF32)0xDBFF
+#define UNI_SUR_LOW_START (UTF32)0xDC00
+#define UNI_SUR_LOW_END (UTF32)0xDFFF
 
 /* --------------------------------------------------------------------- */
 
@@ -126,15 +125,14 @@ ConversionResult ConvertUTF16toUTF32(
 				ch2 = *source;
 				/* If it's a low surrogate, convert to UTF32. */
 				if (ch2 >= UNI_SUR_LOW_START && ch2 <= UNI_SUR_LOW_END) {
-					ch = ((ch - UNI_SUR_HIGH_START) << halfShift)
-					     + (ch2 - UNI_SUR_LOW_START) + halfBase;
+					ch = ((ch - UNI_SUR_HIGH_START) << halfShift) + (ch2 - UNI_SUR_LOW_START) + halfBase;
 					++source;
 				} else if (flags == strictConversion) { /* it's an unpaired high surrogate */
-					--source; /* return to the illegal value itself */
+					--source;                           /* return to the illegal value itself */
 					result = sourceIllegal;
 					break;
 				}
-			} else { /* We don't have the 16 bits following the high surrogate. */
+			} else {      /* We don't have the 16 bits following the high surrogate. */
 				--source; /* return to the high surrogate */
 				result = sourceExhausted;
 				break;
@@ -174,24 +172,22 @@ ConversionResult ConvertUTF16toUTF32(
  * allowed in earlier algorithms.
  */
 static const char trailingBytesForUTF8[256] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5
-};
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5};
 
 /*
  * Magic values subtracted from a buffer value during UTF8 conversion.
  * This table contains as many values as there might be trailing bytes
  * in a UTF-8 sequence.
  */
-static const UTF32 offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080UL,
-                                        0x03C82080UL, 0xFA082080UL, 0x82082080UL
-                                        };
+static const UTF32 offsetsFromUTF8[6] = {0x00000000UL, 0x00003080UL, 0x000E2080UL,
+                                         0x03C82080UL, 0xFA082080UL, 0x82082080UL};
 
 /*
  * Once the bits are split out into bytes of UTF-8, this is a mask OR-ed
@@ -200,7 +196,7 @@ static const UTF32 offsetsFromUTF8[6] = { 0x00000000UL, 0x00003080UL, 0x000E2080
  * (I.e., one byte sequence, two byte... etc.). Remember that sequencs
  * for *legal* UTF-8 will be 4 or fewer bytes total.
  */
-static const UTF8 firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+static const UTF8 firstByteMark[7] = {0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC};
 
 /* --------------------------------------------------------------------- */
 
@@ -234,15 +230,14 @@ ConversionResult ConvertUTF16toUTF8(
 				UTF32 ch2 = *source;
 				/* If it's a low surrogate, convert to UTF32. */
 				if (ch2 >= UNI_SUR_LOW_START && ch2 <= UNI_SUR_LOW_END) {
-					ch = ((ch - UNI_SUR_HIGH_START) << halfShift)
-					     + (ch2 - UNI_SUR_LOW_START) + halfBase;
+					ch = ((ch - UNI_SUR_HIGH_START) << halfShift) + (ch2 - UNI_SUR_LOW_START) + halfBase;
 					++source;
 				} else if (flags == strictConversion) { /* it's an unpaired high surrogate */
-					--source; /* return to the illegal value itself */
+					--source;                           /* return to the illegal value itself */
 					result = sourceIllegal;
 					break;
 				}
-			} else { /* We don't have the 16 bits following the high surrogate. */
+			} else {      /* We don't have the 16 bits following the high surrogate. */
 				--source; /* return to the high surrogate */
 				result = sourceExhausted;
 				break;
@@ -323,37 +318,47 @@ static bool isLegalUTF8(const UTF8 *source, int length) {
 		return false;
 		/* Everything else falls through when "true"... */
 	case 4:
-		if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+		if ((a = (*--srcptr)) < 0x80 || a > 0xBF)
+			return false;
 		// fall through
 	case 3:
-		if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+		if ((a = (*--srcptr)) < 0x80 || a > 0xBF)
+			return false;
 		// fall through
 	case 2:
-		if ((a = (*--srcptr)) > 0xBF) return false;
+		if ((a = (*--srcptr)) > 0xBF)
+			return false;
 
 		switch (*source) {
 			/* no fall-through in this inner switch */
 		case 0xE0:
-			if (a < 0xA0) return false;
+			if (a < 0xA0)
+				return false;
 			break;
 		case 0xED:
-			if (a > 0x9F) return false;
+			if (a > 0x9F)
+				return false;
 			break;
 		case 0xF0:
-			if (a < 0x90) return false;
+			if (a < 0x90)
+				return false;
 			break;
 		case 0xF4:
-			if (a > 0x8F) return false;
+			if (a > 0x8F)
+				return false;
 			break;
 		default:
-			if (a < 0x80) return false;
+			if (a < 0x80)
+				return false;
 		}
 		// fall through
 
 	case 1:
-		if (*source >= 0x80 && *source < 0xC2) return false;
+		if (*source >= 0x80 && *source < 0xC2)
+			return false;
 	}
-	if (*source > 0xF4) return false;
+	if (*source > 0xF4)
+		return false;
 	return true;
 }
 
@@ -387,7 +392,7 @@ ConversionResult ConvertUTF8toUTF16(
 			break;
 		}
 		/* Do this check whether lenient or strict */
-		if (! isLegalUTF8(source, extraBytesToRead + 1)) {
+		if (!isLegalUTF8(source, extraBytesToRead + 1)) {
 			result = sourceIllegal;
 			break;
 		}
@@ -398,11 +403,11 @@ ConversionResult ConvertUTF8toUTF16(
 		case 5:
 			ch += *source++;
 			ch <<= 6; /* remember, illegal UTF-8 */
-			// fall through
+			          // fall through
 		case 4:
 			ch += *source++;
 			ch <<= 6; /* remember, illegal UTF-8 */
-			// fall through
+			          // fall through
 		case 3:
 			ch += *source++;
 			ch <<= 6;
@@ -445,7 +450,7 @@ ConversionResult ConvertUTF8toUTF16(
 			if (flags == strictConversion) {
 				result = sourceIllegal;
 				source -= (extraBytesToRead + 1); /* return to the start */
-				break; /* Bail out; shouldn't continue */
+				break;                            /* Bail out; shouldn't continue */
 			} else {
 				*target++ = UNI_REPLACEMENT_CHAR;
 			}
@@ -555,7 +560,7 @@ ConversionResult ConvertUTF8toUTF32(
 			break;
 		}
 		/* Do this check whether lenient or strict */
-		if (! isLegalUTF8(source, extraBytesToRead + 1)) {
+		if (!isLegalUTF8(source, extraBytesToRead + 1)) {
 			result = sourceIllegal;
 			break;
 		}

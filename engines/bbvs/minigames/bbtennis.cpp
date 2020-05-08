@@ -20,56 +20,47 @@
  *
  */
 
-#include "bbvs/sound.h"
 #include "bbvs/minigames/bbtennis.h"
+#include "bbvs/sound.h"
 
 namespace Bbvs {
 
 static const int kLeftPlayerOffX[] = {
-	-44, -44, -44, -44, -39, -39, -34,
-	-26, -26, -14,  -6,  -6,  -6,  -6
-};
+    -44, -44, -44, -44, -39, -39, -34,
+    -26, -26, -14, -6, -6, -6, -6};
 
 static const int kLeftPlayerOffY[] = {
-	-31, -31, -31, -31, -23, -23, -21,
-	-18, -18, -14, -11, -11, -11, -11
-};
+    -31, -31, -31, -31, -23, -23, -21,
+    -18, -18, -14, -11, -11, -11, -11};
 
-static const char * const kSoundFilenames[] = {
-	"tenis9.aif", "tenis10.aif", "tenis11.aif", "tenis12.aif", "tenis13.aif",
-	"tenis14.aif", "tenis15.aif", "tenis16.aif", "tenis17.aif", "tenis18.aif",
-	"tenis19.aif", "tenis20.aif", "tenis21.aif", "1ahh.aif", "1dammit.aif",
-	"1getawy.aif", "1getthem.aif", "1owww.aif", "1pardon.aif", "1rcktbll.aif",
-	"1yourout.aif", "2hey.aif", "2inhere.aif", "2stoptht.aif", "2theyare.aif",
-	"3oh.aif", "3ow.aif", "3upunks.aif", "tenismus.aif", "canon1.aif",
-	"canon2.aif"
-};
+static const char *const kSoundFilenames[] = {
+    "tenis9.aif", "tenis10.aif", "tenis11.aif", "tenis12.aif", "tenis13.aif",
+    "tenis14.aif", "tenis15.aif", "tenis16.aif", "tenis17.aif", "tenis18.aif",
+    "tenis19.aif", "tenis20.aif", "tenis21.aif", "1ahh.aif", "1dammit.aif",
+    "1getawy.aif", "1getthem.aif", "1owww.aif", "1pardon.aif", "1rcktbll.aif",
+    "1yourout.aif", "2hey.aif", "2inhere.aif", "2stoptht.aif", "2theyare.aif",
+    "3oh.aif", "3ow.aif", "3upunks.aif", "tenismus.aif", "canon1.aif",
+    "canon2.aif"};
 
 static const uint kSoundFilenamesCount = ARRAYSIZE(kSoundFilenames);
 
 static const int kLeftNetPlayAnims[] = {
-	13, 15, 17
-};
+    13, 15, 17};
 
 static const int kRightNetPlayAnims[] = {
-	14, 16, 18
-};
+    14, 16, 18};
 
 static const uint kYuppieHitSounds[] = {
-	14, 15, 18, 22, 26, 27
-};
+    14, 15, 18, 22, 26, 27};
 
 static const uint kYuppieEnteringCourtSounds[] = {
-	19, 20
-};
+    19, 20};
 
 static const uint kYuppieChargeSounds[] = {
-	16, 17, 23, 24, 28,  0
-};
+    16, 17, 23, 24, 28, 0};
 
 static const uint kAllSounds[] = {
-	3,  4,  7,  9, 19, 20, 16, 17, 23, 24, 28
-};
+    3, 4, 7, 9, 19, 20, 16, 17, 23, 24, 28};
 
 void MinigameBbTennis::buildDrawList(DrawList &drawList) {
 	switch (_gameState) {
@@ -99,7 +90,6 @@ void MinigameBbTennis::buildDrawList0(DrawList &drawList) {
 
 	if (_titleScreenSpriteIndex > 0)
 		drawList.add(_titleScreenSpriteIndex, 0, 0, 0);
-
 }
 
 void MinigameBbTennis::buildDrawList1(DrawList &drawList) {
@@ -160,7 +150,6 @@ void MinigameBbTennis::buildDrawList1(DrawList &drawList) {
 			}
 
 			drawList.add(index, x, y, priority);
-
 		}
 	}
 
@@ -168,7 +157,6 @@ void MinigameBbTennis::buildDrawList1(DrawList &drawList) {
 		drawList.add(getAnimation(19)->frameIndices[0], 24, 208, 990);
 		drawList.add(getAnimation(20)->frameIndices[_rapidFireBallsCount / 10 % 10], 19, 198, 2000);
 		drawList.add(getAnimation(20)->frameIndices[_rapidFireBallsCount % 10], 29, 198, 2000);
-
 	}
 
 	if (_backgroundSpriteIndex > 0)
@@ -183,7 +171,6 @@ void MinigameBbTennis::buildDrawList1(DrawList &drawList) {
 
 	for (int i = 0; i < _numHearts; ++i)
 		drawList.add(getAnimation(7)->frameIndices[0], 20 + i * 20, 236, 990);
-
 }
 
 void MinigameBbTennis::buildDrawList2(DrawList &drawList) {
@@ -205,7 +192,6 @@ void MinigameBbTennis::buildDrawList2(DrawList &drawList) {
 	drawList.add(getAnimation(23)->frameIndices[0], 95, 95, 2000);
 
 	drawNumber(drawList, _hiScore, 210, 109);
-
 }
 
 void MinigameBbTennis::drawSprites() {
@@ -409,7 +395,7 @@ bool MinigameBbTennis::updateStatus1(int mouseX, int mouseY, uint mouseButtons) 
 	}
 
 	if (((mouseButtons & kLeftButtonClicked) || (_rapidFireBallsCount > 0 && (mouseButtons & kLeftButtonDown))) &&
-		_newBallTimer == 0 && _numBalls < _maxBalls) {
+	    _newBallTimer == 0 && _numBalls < _maxBalls) {
 		// Insert a ball
 		Obj *obj = getFreeObject();
 		obj->anim = getAnimation(6);
@@ -567,7 +553,6 @@ void MinigameBbTennis::updateObjs() {
 		if (_vm->getRandom(10) == 1 && !isAnySoundPlaying(kAllSounds, 11))
 			playSound(kYuppieChargeSounds[_vm->getRandom(2)]);
 	}
-
 }
 
 void MinigameBbTennis::updateTennisBall(int objIndex) {
@@ -609,7 +594,6 @@ void MinigameBbTennis::updateTennisBall(int objIndex) {
 	obj->x = (int)obj->fltX;
 	obj->fltY = obj->fltY - obj->fltStepY;
 	obj->y = (int)obj->fltY;
-
 }
 
 void MinigameBbTennis::updateSquirrel(int objIndex) {
@@ -617,94 +601,94 @@ void MinigameBbTennis::updateSquirrel(int objIndex) {
 
 	switch (obj->status) {
 
-		case 0:
-			--obj->ticks;
-			if (--obj->ticks == 0) {
-				if (++obj->frameIndex == 4) {
-					obj->anim = getAnimation(0);
-					obj->frameIndex = 0;
-					obj->ticks = getAnimation(0)->frameTicks[0];
-					obj->y += 2;
-					++obj->status;
-				} else {
-					obj->ticks = getAnimation(1)->frameTicks[obj->frameIndex];
-					++_squirrelDelay;
-				}
-			} else {
-				++_squirrelDelay;
-			}
-			break;
-
-		case 1:
-			if (--obj->ticks == 0) {
-				++obj->frameIndex;
-				if (obj->frameIndex == 4)
-					obj->frameIndex = 0;
-				obj->ticks = getAnimation(0)->frameTicks[obj->frameIndex];
-			}
-			++obj->x;
-			if (obj->x < 230) {
-				if (--obj->blinkCtr <= 0) {
-					obj->anim = getAnimation(4);
-					obj->frameIndex = 0;
-					obj->ticks = getAnimation(4)->frameTicks[obj->frameIndex];
-					obj->status = 3;
-				}
-				++_squirrelDelay;
-			} else {
-				obj->anim = getAnimation(2);
+	case 0:
+		--obj->ticks;
+		if (--obj->ticks == 0) {
+			if (++obj->frameIndex == 4) {
+				obj->anim = getAnimation(0);
 				obj->frameIndex = 0;
-				obj->ticks = getAnimation(2)->frameTicks[0];
-				obj->y -= 2;
+				obj->ticks = getAnimation(0)->frameTicks[0];
+				obj->y += 2;
 				++obj->status;
-			}
-			break;
-
-		case 2:
-			if (--obj->ticks == 0) {
-				if (++obj->frameIndex == 4) {
-					obj->kind = 0;
-				} else {
-					obj->ticks = getAnimation(2)->frameTicks[0];
-					++_squirrelDelay;
-				}
 			} else {
+				obj->ticks = getAnimation(1)->frameTicks[obj->frameIndex];
 				++_squirrelDelay;
 			}
-			break;
+		} else {
+			++_squirrelDelay;
+		}
+		break;
 
-		case 3:
-			if (--obj->ticks) {
-				if (++obj->frameIndex == 2) {
-					obj->anim = getAnimation(0);
-					obj->frameIndex = 0;
-					obj->ticks = getAnimation(0)->frameTicks[0];
-					obj->status = 1;
-					obj->blinkCtr = _vm->getRandom(128) + 10;
-				} else {
-					obj->ticks = getAnimation(4)->frameTicks[obj->frameIndex];
-					++_squirrelDelay;
-				}
+	case 1:
+		if (--obj->ticks == 0) {
+			++obj->frameIndex;
+			if (obj->frameIndex == 4)
+				obj->frameIndex = 0;
+			obj->ticks = getAnimation(0)->frameTicks[obj->frameIndex];
+		}
+		++obj->x;
+		if (obj->x < 230) {
+			if (--obj->blinkCtr <= 0) {
+				obj->anim = getAnimation(4);
+				obj->frameIndex = 0;
+				obj->ticks = getAnimation(4)->frameTicks[obj->frameIndex];
+				obj->status = 3;
+			}
+			++_squirrelDelay;
+		} else {
+			obj->anim = getAnimation(2);
+			obj->frameIndex = 0;
+			obj->ticks = getAnimation(2)->frameTicks[0];
+			obj->y -= 2;
+			++obj->status;
+		}
+		break;
+
+	case 2:
+		if (--obj->ticks == 0) {
+			if (++obj->frameIndex == 4) {
+				obj->kind = 0;
 			} else {
+				obj->ticks = getAnimation(2)->frameTicks[0];
 				++_squirrelDelay;
 			}
-			break;
+		} else {
+			++_squirrelDelay;
+		}
+		break;
 
-		case 4:
-			if (--obj->ticks == 0) {
-				if (++obj->frameIndex == 5) {
-					obj->kind = 0;
-				} else {
-					obj->ticks = getAnimation(3)->frameTicks[obj->frameIndex];
-					++_squirrelDelay;
-				}
+	case 3:
+		if (--obj->ticks) {
+			if (++obj->frameIndex == 2) {
+				obj->anim = getAnimation(0);
+				obj->frameIndex = 0;
+				obj->ticks = getAnimation(0)->frameTicks[0];
+				obj->status = 1;
+				obj->blinkCtr = _vm->getRandom(128) + 10;
 			} else {
+				obj->ticks = getAnimation(4)->frameTicks[obj->frameIndex];
 				++_squirrelDelay;
 			}
-			break;
+		} else {
+			++_squirrelDelay;
+		}
+		break;
 
-		default:
-			break;
+	case 4:
+		if (--obj->ticks == 0) {
+			if (++obj->frameIndex == 5) {
+				obj->kind = 0;
+			} else {
+				obj->ticks = getAnimation(3)->frameTicks[obj->frameIndex];
+				++_squirrelDelay;
+			}
+		} else {
+			++_squirrelDelay;
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	if (obj->status != 4) {
@@ -729,7 +713,6 @@ void MinigameBbTennis::updateSquirrel(int objIndex) {
 			tennisBallObj = findTennisBall(tennisBallObjIndex++);
 		}
 	}
-
 }
 
 void MinigameBbTennis::updateTennisPlayer(int objIndex) {
@@ -896,7 +879,6 @@ void MinigameBbTennis::updateTennisPlayer(int objIndex) {
 			tennisBallObj = findTennisBall(tennisBallObjIndex++);
 		}
 	}
-
 }
 
 void MinigameBbTennis::updateThrower(int objIndex) {
@@ -977,7 +959,6 @@ void MinigameBbTennis::updateThrower(int objIndex) {
 			tennisBallObj = findTennisBall(tennisBallObjIndex++);
 		}
 	}
-
 }
 
 void MinigameBbTennis::updateNetPlayer(int objIndex) {
@@ -1062,7 +1043,7 @@ void MinigameBbTennis::updateNetPlayer(int objIndex) {
 		Obj *tennisBallObj = findTennisBall(tennisBallObjIndex++);
 		while (tennisBallObj) {
 			if (obj->status == 0 && tennisBallObj->frameIndex >= 3 && tennisBallObj->frameIndex <= 6 &&
-				isHit(obj, tennisBallObj)) {
+			    isHit(obj, tennisBallObj)) {
 				hitSomething();
 				tennisBallObj->kind = 0;
 				--_numBalls;
@@ -1078,8 +1059,8 @@ void MinigameBbTennis::updateNetPlayer(int objIndex) {
 				obj->blinkCtr = 20;
 				playSound(kYuppieHitSounds[_vm->getRandom(6)]);
 				break;
-			} else if (obj->status > 1 && obj->status < 4 && tennisBallObj->frameIndex >= 3	&& tennisBallObj->frameIndex <= 4 &&
-				isHit(obj, tennisBallObj)) {
+			} else if (obj->status > 1 && obj->status < 4 && tennisBallObj->frameIndex >= 3 && tennisBallObj->frameIndex <= 4 &&
+			           isHit(obj, tennisBallObj)) {
 				hitSomething();
 				tennisBallObj->kind = 0;
 				--_numBalls;
@@ -1092,7 +1073,6 @@ void MinigameBbTennis::updateNetPlayer(int objIndex) {
 			tennisBallObj = findTennisBall(tennisBallObjIndex++);
 		}
 	}
-
 }
 
 void MinigameBbTennis::updateEnemyTennisBall(int objIndex) {
@@ -1123,7 +1103,6 @@ void MinigameBbTennis::updateEnemyTennisBall(int objIndex) {
 	obj->x = (int)obj->fltX;
 	obj->fltY = obj->fltY - obj->fltStepY;
 	obj->y = (int)obj->fltY;
-
 }
 
 void MinigameBbTennis::makeEnemyBall(int x, int y, int frameIndex) {
@@ -1194,7 +1173,6 @@ void MinigameBbTennis::makeEnemyBall(int x, int y, int frameIndex) {
 	default:
 		break;
 	}
-
 }
 
 void MinigameBbTennis::hitSomething() {
@@ -1235,7 +1213,7 @@ bool MinigameBbTennis::run(bool fromMainGame) {
 	_gameTicks = 0;
 	playSound(29, true);
 
-	while (!_vm->shouldQuit() &&!_gameDone) {
+	while (!_vm->shouldQuit() && !_gameDone) {
 		_vm->updateEvents();
 		update();
 	}
@@ -1283,7 +1261,6 @@ void MinigameBbTennis::update() {
 	drawSprites();
 
 	_vm->_system->delayMillis(10);
-
 }
 
 void MinigameBbTennis::loadSounds() {

@@ -33,8 +33,8 @@
 #include "dbopl.h"
 
 #include "audio/mixer.h"
-#include "common/system.h"
 #include "common/scummsys.h"
+#include "common/system.h"
 #include "common/util.h"
 
 #include <math.h>
@@ -91,38 +91,37 @@ bool Chip::write(uint32 reg, uint8 val) {
 	case 0x03:
 		timer[1].counter = val;
 		return true;
-	case 0x04:
-		{
-			double time = g_system->getMillis() / 1000.0;
+	case 0x04: {
+		double time = g_system->getMillis() / 1000.0;
 
-			if (val & 0x80) {
-				timer[0].reset(time);
-				timer[1].reset(time);
-			} else {
-				timer[0].update(time);
-				timer[1].update(time);
+		if (val & 0x80) {
+			timer[0].reset(time);
+			timer[1].reset(time);
+		} else {
+			timer[0].update(time);
+			timer[1].update(time);
 
-				if (val & 0x1)
-					timer[0].start(time, 80);
-				else
-					timer[0].stop();
+			if (val & 0x1)
+				timer[0].start(time, 80);
+			else
+				timer[0].stop();
 
-				timer[0].masked = (val & 0x40) > 0;
+			timer[0].masked = (val & 0x40) > 0;
 
-				if (timer[0].masked)
-					timer[0].overflow = false;
+			if (timer[0].masked)
+				timer[0].overflow = false;
 
-				if (val & 0x2)
-					timer[1].start(time, 320);
-				else
-					timer[1].stop();
+			if (val & 0x2)
+				timer[1].start(time, 320);
+			else
+				timer[1].stop();
 
-				timer[1].masked = (val & 0x20) > 0;
+			timer[1].masked = (val & 0x20) > 0;
 
-				if (timer[1].masked)
-					timer[1].overflow = false;
-			}
+			if (timer[1].masked)
+				timer[1].overflow = false;
 		}
+	}
 		return true;
 	default:
 		break;
@@ -189,7 +188,7 @@ void OPL::reset() {
 }
 
 void OPL::write(int port, int val) {
-	if (port&1) {
+	if (port & 1) {
 		switch (_type) {
 		case Config::kOpl2:
 		case Config::kOpl3:

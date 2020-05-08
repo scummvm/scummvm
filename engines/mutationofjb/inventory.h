@@ -24,8 +24,8 @@
 #define MUTATIONOFJB_INVENTORY_H
 
 #include "common/array.h"
-#include "common/serializer.h"
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/str.h"
 
 namespace MutationOfJB {
@@ -71,6 +71,6 @@ private:
 	InventoryObserver *_observer;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

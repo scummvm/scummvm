@@ -20,8 +20,8 @@
 
 #include <cstddef>
 
-#include "globals.h"
 #include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 

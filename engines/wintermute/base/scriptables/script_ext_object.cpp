@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/base/scriptables/script_ext_object.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
@@ -50,12 +50,9 @@ SXObject::SXObject(BaseGame *inGame, ScStack *stack) : BaseObject(inGame) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 SXObject::~SXObject() {
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXObject::persist(BasePersistenceManager *persistMgr) {

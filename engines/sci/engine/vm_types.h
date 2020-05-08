@@ -186,7 +186,7 @@ static inline reg_t make_reg32(SegmentId segment, uint32 offset) {
 	return r;
 }
 
-#define PRINT_REG(r) (kSegmentMask) & (unsigned) (r).getSegment(), (unsigned) (r).getOffset()
+#define PRINT_REG(r) (kSegmentMask) & (unsigned)(r).getSegment(), (unsigned)(r).getOffset()
 
 // Stack pointer type
 typedef reg_t *StackPtr;
@@ -231,7 +231,6 @@ enum opcode_format {
 	Script_Offset,
 	Script_End
 };
-
 
 } // End of namespace Sci
 

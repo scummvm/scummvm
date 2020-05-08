@@ -60,4 +60,4 @@ void SequentialTask::runTasks() {
 	}
 }
 
-}
+} // namespace MutationOfJB

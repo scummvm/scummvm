@@ -65,6 +65,6 @@ private:
 	Timer _timer;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

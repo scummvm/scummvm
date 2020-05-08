@@ -21,19 +21,19 @@
  */
 
 #include "ultima/ultima1/u1gfx/status.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(Status, Shared::Gfx::VisualItem)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
 Status::Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", TextRect(31, 21, 39, 24), parent),
-		_hitPoints(0), _food(0), _experience(0), _coins(0) {
+                                           _hitPoints(0), _food(0), _experience(0), _coins(0) {
 }
 
 bool Status::FrameMsg(CFrameMsg &msg) {
@@ -62,7 +62,7 @@ void Status::draw() {
 	s.clear();
 
 	// Iterate through displaying the values
-	const uint *vals[4] = { &_hitPoints, &_food, &_experience, &_coins };
+	const uint *vals[4] = {&_hitPoints, &_food, &_experience, &_coins};
 	int count = game->isVGA() ? 3 : 4;
 
 	for (int idx = 0; idx < count; ++idx) {

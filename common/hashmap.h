@@ -42,7 +42,6 @@
  */
 #define USE_HASHMAP_MEMORY_POOL
 
-
 #include "common/func.h"
 
 #ifdef DEBUG_HASH_COLLISIONS
@@ -53,17 +52,15 @@
 #include "common/memorypool.h"
 #endif
 
-
-
 namespace Common {
 
 // The sgi IRIX MIPSpro Compiler has difficulties with nested templates.
 // This and the other __sgi conditionals below work around these problems.
 // The Intel C++ Compiler suffers from the same problems.
 #if (defined(__sgi) && !defined(__GNUC__)) || defined(__INTEL_COMPILER)
-template<class T> class IteratorImpl;
+template<class T>
+class IteratorImpl;
 #endif
-
 
 /**
  * HashMap<Key,Val> maps objects of type Key to objects of type Val.
@@ -78,13 +75,12 @@ template<class T> class IteratorImpl;
  * triggered instead. Hence if you are not sure whether a key is contained in
  * the map, use contains() first to check for its presence.
  */
-template<class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
+template<class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key>>
 class HashMap {
 public:
 	typedef uint size_type;
 
 private:
-
 	typedef HashMap<Key, Val, HashFunc, EqualFunc> HM_t;
 
 	struct Node {
@@ -116,16 +112,16 @@ private:
 	/** Default value, returned by the const getVal. */
 	Val _defaultVal;
 
-	Node **_storage;	///< hashtable of size arrsize.
-	size_type _mask;		///< Capacity of the HashMap minus one; must be a power of two of minus one
+	Node **_storage; ///< hashtable of size arrsize.
+	size_type _mask; ///< Capacity of the HashMap minus one; must be a power of two of minus one
 	size_type _size;
 	size_type _deleted; ///< Number of deleted elements (_dummyNodes)
 
 	HashFunc _hash;
 	EqualFunc _equal;
 
-	/** Dummy node, used as marker for erased objects. */
-	#define HASHMAP_DUMMY_NODE	((Node *)1)
+/** Dummy node, used as marker for erased objects. */
+#define HASHMAP_DUMMY_NODE ((Node *)1)
 
 #ifdef DEBUG_HASH_COLLISIONS
 	mutable int _collisions, _lookups, _dummyHits;
@@ -154,7 +150,8 @@ private:
 	void expandStorage(size_type newCapacity);
 
 #if !defined(__sgi) || defined(__GNUC__)
-	template<class T> friend class IteratorImpl;
+	template<class T>
+	friend class IteratorImpl;
 #endif
 
 	/**
@@ -164,9 +161,11 @@ private:
 	class IteratorImpl {
 		friend class HashMap;
 #if (defined(__sgi) && !defined(__GNUC__)) || defined(__INTEL_COMPILER)
-		template<class T> friend class Common::IteratorImpl;
+		template<class T>
+		friend class Common::IteratorImpl;
 #else
-		template<class T> friend class IteratorImpl;
+		template<class T>
+		friend class IteratorImpl;
 #endif
 	protected:
 		typedef const HashMap hashmap_t;
@@ -210,7 +209,7 @@ private:
 
 		IteratorImpl operator++(int) {
 			IteratorImpl old = *this;
-			operator ++();
+			operator++();
 			return old;
 		}
 	};
@@ -252,7 +251,7 @@ public:
 
 	size_type size() const { return _size; }
 
-	iterator	begin() {
+	iterator begin() {
 		// Find and return the first non-empty entry
 		for (size_type ctr = 0; ctr <= _mask; ++ctr) {
 			if (_storage[ctr] && _storage[ctr] != HASHMAP_DUMMY_NODE)
@@ -260,11 +259,11 @@ public:
 		}
 		return end();
 	}
-	iterator	end() {
+	iterator end() {
 		return iterator((size_type)-1, this);
 	}
 
-	const_iterator	begin() const {
+	const_iterator begin() const {
 		// Find and return the first non-empty entry
 		for (size_type ctr = 0; ctr <= _mask; ++ctr) {
 			if (_storage[ctr] && _storage[ctr] != HASHMAP_DUMMY_NODE)
@@ -272,18 +271,18 @@ public:
 		}
 		return end();
 	}
-	const_iterator	end() const {
+	const_iterator end() const {
 		return const_iterator((size_type)-1, this);
 	}
 
-	iterator	find(const Key &key) {
+	iterator find(const Key &key) {
 		size_type ctr = lookup(key);
 		if (_storage[ctr])
 			return iterator(ctr, this);
 		return end();
 	}
 
-	const_iterator	find(const Key &key) const {
+	const_iterator find(const Key &key) const {
 		size_type ctr = lookup(key);
 		if (_storage[ctr])
 			return const_iterator(ctr, this);
@@ -309,9 +308,9 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
 // We have to skip _defaultVal() on PS2 to avoid gcc 3.2.2 ICE
 //
 #ifdef __PLAYSTATION2__
-	{
+{
 #else
-	: _defaultVal() {
+    : _defaultVal() {
 #endif
 	_mask = HASHMAP_MIN_CAPACITY - 1;
 	_storage = new Node *[HASHMAP_MIN_CAPACITY];
@@ -334,8 +333,7 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
  * to heap buffers for the internal storage.
  */
 template<class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t &map) :
-	_defaultVal() {
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t &map) : _defaultVal() {
 #ifdef DEBUG_HASH_COLLISIONS
 	_collisions = 0;
 	_lookups = 0;
@@ -350,7 +348,7 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t &map) :
 template<class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
 	for (size_type ctr = 0; ctr <= _mask; ++ctr)
-	  freeNode(_storage[ctr]);
+		freeNode(_storage[ctr]);
 
 	delete[] _storage;
 #ifdef DEBUG_HASH_COLLISIONS
@@ -390,7 +388,6 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t &map) {
 	assert(_size == map._size);
 	assert(_deleted == map._deleted);
 }
-
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
@@ -466,7 +463,7 @@ template<class Key, class Val, class HashFunc, class EqualFunc>
 typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 	const size_type hash = _hash(key);
 	size_type ctr = hash & _mask;
-	for (size_type perturb = hash; ; perturb >>= HASHMAP_PERTURB_SHIFT) {
+	for (size_type perturb = hash;; perturb >>= HASHMAP_PERTURB_SHIFT) {
 		if (_storage[ctr] == nullptr)
 			break;
 		if (_storage[ctr] == HASHMAP_DUMMY_NODE) {
@@ -486,8 +483,8 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 #ifdef DEBUG_HASH_COLLISIONS
 	_lookups++;
 	debug("collisions %d, dummies hit %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d",
-		_collisions, _dummyHits, _lookups, ((double) _collisions / (double)_lookups),
-		(const void *)this, _mask + 1, _size);
+	      _collisions, _dummyHits, _lookups, ((double)_collisions / (double)_lookups),
+	      (const void *)this, _mask + 1, _size);
 #endif
 
 	return ctr;
@@ -500,7 +497,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 	const size_type NONE_FOUND = _mask + 1;
 	size_type first_free = NONE_FOUND;
 	bool found = false;
-	for (size_type perturb = hash; ; perturb >>= HASHMAP_PERTURB_SHIFT) {
+	for (size_type perturb = hash;; perturb >>= HASHMAP_PERTURB_SHIFT) {
 		if (_storage[ctr] == nullptr)
 			break;
 		if (_storage[ctr] == HASHMAP_DUMMY_NODE) {
@@ -524,8 +521,8 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 #ifdef DEBUG_HASH_COLLISIONS
 	_lookups++;
 	debug("collisions %d, dummies hit %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d",
-		_collisions, _dummyHits, _lookups, ((double) _collisions / (double)_lookups),
-		(const void *)this, _mask + 1, _size);
+	      _collisions, _dummyHits, _lookups, ((double)_collisions / (double)_lookups),
+	      (const void *)this, _mask + 1, _size);
 #endif
 
 	if (!found && first_free != NONE_FOUND)
@@ -542,7 +539,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 		// Deleted nodes are also counted
 		size_type capacity = _mask + 1;
 		if ((_size + _deleted) * HASHMAP_LOADFACTOR_DENOMINATOR >
-		        capacity * HASHMAP_LOADFACTOR_NUMERATOR) {
+		    capacity * HASHMAP_LOADFACTOR_NUMERATOR) {
 			capacity = capacity < 500 ? (capacity * 4) : (capacity * 2);
 			expandStorage(capacity);
 			ctr = lookup(key);
@@ -552,7 +549,6 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 
 	return ctr;
 }
-
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
@@ -604,7 +600,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(iterator entry) {
 	assert(entry._hashmap == this);
 	const size_type ctr = entry._idx;
 	assert(ctr <= _mask);
-	Node * const node = _storage[ctr];
+	Node *const node = _storage[ctr];
 	assert(node != NULL);
 	assert(node != HASHMAP_DUMMY_NODE);
 

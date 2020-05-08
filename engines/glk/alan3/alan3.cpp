@@ -21,18 +21,18 @@
  */
 
 #include "glk/alan3/alan3.h"
+#include "common/error.h"
+#include "common/scummsys.h"
+#include "common/serializer.h"
+#include "common/system.h"
+#include "common/translation.h"
 #include "glk/alan3/exe.h"
-#include "glk/alan3/main.h"
 #include "glk/alan3/glkio.h"
+#include "glk/alan3/main.h"
 #include "glk/alan3/options.h"
 #include "glk/alan3/output.h"
 #include "glk/alan3/save.h"
 #include "glk/alan3/syserr.h"
-#include "common/system.h"
-#include "common/translation.h"
-#include "common/error.h"
-#include "common/scummsys.h"
-#include "common/serializer.h"
 #include "glk/glk.h"
 #include "glk/streams.h"
 
@@ -95,9 +95,9 @@ bool Alan3::initialize() {
 	// In Alan 3, the text data comes from the adventure file itself
 	Common::File *txt = new Common::File();
 	if (!txt->open(getFilename())) {
-	    GUIErrorMessage("Could not open adventure file for text data");
-	    delete txt;
-	    return false;
+		GUIErrorMessage("Could not open adventure file for text data");
+		delete txt;
+		return false;
 	}
 	textFile = txt;
 
@@ -110,7 +110,7 @@ bool Alan3::initialize() {
 void Alan3::deinitialize() {
 	free(memory);
 	delete textFile;
-//  delete logfil;
+	//  delete logfil;
 }
 
 Common::Error Alan3::readSaveData(Common::SeekableReadStream *rs) {

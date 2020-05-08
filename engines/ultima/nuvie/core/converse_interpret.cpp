@@ -20,19 +20,19 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/usecode/u6_usecode.h"
+#include "ultima/nuvie/core/converse_interpret.h"
 #include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/core/converse_speech.h"
+#include "ultima/nuvie/core/effect.h"
 #include "ultima/nuvie/core/game_clock.h"
 #include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/script/script.h"
-#include "ultima/nuvie/core/converse_interpret.h"
-#include "ultima/nuvie/core/converse_speech.h"
+#include "ultima/nuvie/usecode/u6_usecode.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -53,11 +53,9 @@ ConverseInterpret::ConverseInterpret(Converse *owner) {
 	db_offset = 0;
 }
 
-
 ConverseInterpret::~ConverseInterpret() {
 	leave_all(); // deletes b_frame when empty
 }
-
 
 /* Returns a value from the current location in the ConvScript, respecting any
  * present data-size definition.
@@ -80,7 +78,6 @@ struct ConverseInterpret::in_val_s ConverseInterpret::read_value() {
 	return (ival);
 }
 
-
 /* Read a control statement from the script.
  */
 void ConverseInterpret::collect_input() {
@@ -92,14 +89,14 @@ void ConverseInterpret::collect_input() {
 		add_val(cs->read4());
 		return;
 	} else if (cval == U6OP_SIDENT) { // 0xff, get NPC identity
-		add_val(cs->read()); // OPC
-		add_val(cs->read()); // number
-		add_text(); // name
+		add_val(cs->read());          // OPC
+		add_val(cs->read());          // number
+		add_text();                   // name
 		return;
-	} else if (cval == U6OP_KEYWORDS // 0xef, get keyword list
-	           || cval == U6OP_ASKC   // ...0xf8, or characters allowed as input
+	} else if (cval == U6OP_KEYWORDS    // 0xef, get keyword list
+	           || cval == U6OP_ASKC     // ...0xf8, or characters allowed as input
 	           || cval == U6OP_SLOOK) { // ...0xf1, or description
-		add_val(cs->read()); // OPC
+		add_val(cs->read());            // OPC
 		add_text();
 		return;
 	}
@@ -120,7 +117,6 @@ void ConverseInterpret::collect_input() {
 		}
 	} while (!cs->overflow() && !is_ctrl(cs->peek()));
 }
-
 
 /* Interpret control codes and text from the ConvScript.
  */
@@ -152,7 +148,6 @@ void ConverseInterpret::step() {
 	}
 }
 
-
 /* Collect text from script and add to end of collected text statement, or add
  * one character to text.
  */
@@ -163,7 +158,6 @@ void ConverseInterpret::add_text(unsigned char c) {
 	} while (!cs->overflow() && is_print(cs->peek()));
 }
 
-
 /* Add some code or data to end of collected control statement.
  */
 void ConverseInterpret::add_val(converse_value c, uint8 d) {
@@ -172,7 +166,6 @@ void ConverseInterpret::add_val(converse_value c, uint8 d) {
 	ivs.d = d;
 	in.push_back(ivs);
 }
-
 
 /* Delete the top-level frame. If no frames are left, run==true for all code.
  */
@@ -192,12 +185,11 @@ void ConverseInterpret::leave() {
 	}
 }
 
-
 /* Create new top-level frame for a code block starting at control code `c'.
  */
 void ConverseInterpret::enter(converse_value c) {
 	struct convi_frame_s *ef = new convi_frame_s;
-	ef->start = in_start; // start location
+	ef->start = in_start;                            // start location
 	ef->run = top_frame() ? top_frame()->run : true; // run if parent is
 	ef->break_c = 0x00;
 	ef->start_c = c;
@@ -209,7 +201,6 @@ void ConverseInterpret::enter(converse_value c) {
 #endif
 }
 
-
 /* Leave the top-frame for end-code matching `c', and enter a new frame for
  * other codes. Toggle run mode if `c' is break-code.
  */
@@ -219,20 +210,19 @@ void ConverseInterpret::do_frame(converse_value c) {
 		enter(U6OP_IF);
 		break;
 	case U6OP_ENDIF: // 0xa2
-		leave(); // (0xa1)
+		leave();     // (0xa1)
 		break;
 	case U6OP_KEYWORDS: // 0xef
 		if (!top_frame() || top_frame()->start_c != U6OP_KEYWORDS)
 			enter(U6OP_KEYWORDS); // 0xef...0xef...0xee, can't be recursive
 		break;
 	case U6OP_ENDANSWER: // 0xee
-		leave(); // (0xef)
+		leave();         // (0xef)
 		break;
 	}
 	if (c != 0x00 && c == get_break())
 		set_run(!get_run());
 }
-
 
 /* Run (or skip) the stored control and text statements, and clear them.
  */
@@ -252,7 +242,6 @@ void ConverseInterpret::exec() {
 	converse->set_output(""); // clear output
 }
 
-
 /* Print script text, resolving special symbols as they are encountered.
  */
 void ConverseInterpret::do_text() {
@@ -264,8 +253,8 @@ void ConverseInterpret::do_text() {
  */
 string ConverseInterpret::get_formatted_text(const char *c_str) {
 	unsigned int i = 0;
-	char symbol[3] = { '\0', '\0', '\0' },
-	                 intval[16];
+	char symbol[3] = {'\0', '\0', '\0'},
+	     intval[16];
 	string output;
 	const uint32 len = strlen(c_str);
 	uint32 last_value = 0;
@@ -273,8 +262,8 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 	while (i < len) {
 		switch (c_str[i]) {
 
-		case '$' :
-		case '#' : // copy symbol
+		case '$':
+		case '#': // copy symbol
 			strncpy(symbol, &c_str[i], 2);
 			// evaluate
 			if (!strcmp(symbol, "$G")) // gender title
@@ -305,11 +294,11 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 			i += 2;
 			break;
 
-		case '{' :
+		case '{':
 			i++;
 			break; //FIXME what does this FM-Towns command do?
 
-		case '~' :
+		case '~':
 			if (i + 3 <= len) {
 				i++;
 				if (c_str[i] == 'P')
@@ -320,23 +309,25 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 			}
 			break;
 
-		case '/' : // singular
-		case '\\' : { // plural
+		case '/':    // singular
+		case '\\': { // plural
 			bool show = false;
 			if ((last_value == 1 && c_str[i] == '/') ||
-			        (last_value != 1 && c_str[i] == '\\')) show = true;
+			    (last_value != 1 && c_str[i] == '\\'))
+				show = true;
 			++i;
 			unsigned int count = 0;
 			while (i + count < len &&
-			        c_str[i + count] >= 'a' && c_str[i + count] <= 'z')
+			       c_str[i + count] >= 'a' && c_str[i + count] <= 'z')
 				// NOTE: the above check might not work for non-english
 				count++;
-			if (show) output.append(count, c_str[i]);
+			if (show)
+				output.append(count, c_str[i]);
 			i += count;
 			break;
 		}
 
-		default :
+		default:
 			//skip fm-towns keyword commands when in original ui mode.
 			// They take the following form. '+actor_numberKeyword+' eg. '+3leave+'
 			if (c_str[i] == '+' && !Game::get_game()->is_new_style()) {
@@ -359,7 +350,6 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 	return output;
 }
 
-
 /* Execute a control statement/instruction (control code + optional arguments
  * which must have been evaluated already.)
  */
@@ -380,7 +370,6 @@ void ConverseInterpret::do_ctrl() {
 	op(st);
 }
 
-
 /* Returns last item value from input list (and removes it from the same.)
  */
 converse_value ConverseInterpret::pop_val() {
@@ -391,7 +380,6 @@ converse_value ConverseInterpret::pop_val() {
 	}
 	return (ret);
 }
-
 
 /* Returns last item data-size/type from value list (and removes it from the
  * same.)
@@ -405,7 +393,6 @@ uint8 ConverseInterpret::pop_val_size() {
 	return (ret);
 }
 
-
 /* Returns any item value from the input list (and leaves the list alone.)
  */
 converse_value ConverseInterpret::get_val(uint32 vi) {
@@ -413,7 +400,6 @@ converse_value ConverseInterpret::get_val(uint32 vi) {
 		return (in[vi].v);
 	return (0);
 }
-
 
 /* Returns any item data-size/type from the input list (and leaves the list
  * alone.)
@@ -437,7 +423,6 @@ void ConverseInterpret::set_rstr(uint32 sn, const char *s) {
 	rstrings[sn] = s ? s : "";
 }
 
-
 /* Add a return string.
  * Returns the index into the list, which is used by an instruction.
  */
@@ -445,7 +430,6 @@ converse_value ConverseInterpret::add_rstr(const char *s) {
 	rstrings.push_back(s ? s : "");
 	return (rstrings.size() - 1);
 }
-
 
 /* Returns and removes top item from a value stack.
  */
@@ -529,13 +513,13 @@ bool WOUConverseInterpret::op_create_new(stack<converse_typed_value> &i) {
  */
 bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 	bool success = true;
-	converse_value v[4] = { 0, 0, 0, 0 }; // args
+	converse_value v[4] = {0, 0, 0, 0}; // args
 	converse_value inVal;
 	ConvScript *cs = converse->script;
 	Actor *cnpc = NULL;
 	Obj *cnpc_obj = NULL;
 	Player *player = converse->player;
-//    converse_db_s *cdb;
+	//    converse_db_s *cdb;
 
 	inVal = pop_arg(i);
 
@@ -554,7 +538,7 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		// FIXME: probably need to do more real actor/object set-up here
 		cnpc = converse->actors->get_actor(npc_num(pop_arg(i)));
 		cnpc_obj = cnpc->make_obj();
-		cnpc_obj->frame_n = 0; // FIX for actors orginal direction.
+		cnpc_obj->frame_n = 0;                     // FIX for actors orginal direction.
 		cnpc_obj->obj_n = OBJ_U6_HORSE_WITH_RIDER; // mount up.
 		cnpc->init_from_obj(cnpc_obj);
 		delete_obj(cnpc_obj);
@@ -564,10 +548,10 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		set_run(pop_arg(i) ? true : false);
 		break;
 	case U6OP_ENDIF: // 0xa2
-		break; // (frame only)
-	case U6OP_ELSE: // 0xa3
-		break; // (frame only_
-	case U6OP_SETF: // 0xa4 (npc, flagnum)
+		break;       // (frame only)
+	case U6OP_ELSE:  // 0xa3
+		break;       // (frame only_
+	case U6OP_SETF:  // 0xa4 (npc, flagnum)
 		cnpc = converse->actors->get_actor(npc_num(pop_arg(i)));
 		if (cnpc)
 			cnpc->set_flag(pop_arg(i));
@@ -586,13 +570,13 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 			converse_typed_value top = i.top();
 			if ((top.val == 0xb2 || top.val == 0xb4)) {
 				if (top.val == 0xb2) { // eg DB1[#2] = ...
-					pop_arg(i); //0xb2
-					pop_arg(i); //0xb4 DATA op.
+					pop_arg(i);        //0xb2
+					pop_arg(i);        //0xb4 DATA op.
 					db_lvar = true;
 					db_loc = v[0];
 					db_offset = converse->get_var(v[1]);
 				} else if (top.val == 0xb4) { // eg DB1[0] = ...
-					pop_arg(i); //0xb4 DATA op.
+					pop_arg(i);               //0xb4 DATA op.
 					db_lvar = true;
 					db_loc = v[0];
 					db_offset = v[1];
@@ -604,9 +588,9 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		}
 		let(v[0], v[1]);
 		break;
-	case U6OP_ASSIGN: // 0xa8
-	case U6OP_SETNAME: // 0xd8
-		v[0] = pop_arg(i); // value
+	case U6OP_ASSIGN:               // 0xa8
+	case U6OP_SETNAME:              // 0xd8
+		v[0] = pop_arg(i);          // value
 		if (inVal == U6OP_ASSIGN) { // 0xa8
 			if (db_lvar) {
 				set_db_integer(db_loc, db_offset, v[0]);
@@ -638,14 +622,14 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		cs->seek(v[0]);
 		leave_all(); // always run
 		break;
-	case U6OP_DPRINT: { // 0xb5
+	case U6OP_DPRINT: {    // 0xb5
 		v[0] = pop_arg(i); // db location
 		v[1] = pop_arg(i); // index
 		char *dstring = get_db_string(v[0], v[1]);
 		if (dstring) {
 			converse->set_output(dstring); // data may have special symbols
-//                converse->print(dstring); // data can have no special symbols -- wrong
-//                converse->print("\n");
+			                               //                converse->print(dstring); // data can have no special symbols -- wrong
+			                               //                converse->print("\n");
 			free(dstring);
 		}
 		break;
@@ -656,8 +640,8 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 	case U6OP_NEW: // 0xb9 (npc, obj, qual, quant)
 		op_create_new(i);
 		break;
-	case U6OP_DELETE: // 0xba
-//bool Actor::inventory_del_object(uint16 obj_n, uint8 qty, uint8 quality);
+	case U6OP_DELETE:      // 0xba
+		                   //bool Actor::inventory_del_object(uint16 obj_n, uint8 qty, uint8 quality);
 		v[0] = pop_arg(i); // npc
 		v[1] = pop_arg(i); // obj
 		v[2] = pop_arg(i); // qual
@@ -666,7 +650,7 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		if (cnpc)
 			cnpc->inventory_del_object(v[1], v[3], v[2]);
 		break;
-	case U6OP_GIVE: // 0xc9
+	case U6OP_GIVE:        // 0xc9
 		v[0] = pop_arg(i); // obj
 		v[1] = pop_arg(i); // qual
 		v[2] = pop_arg(i); // from
@@ -699,7 +683,7 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 			body = OBJ_MD_DEAD_BODY;
 
 		if (v[0] == 0) // Party
-			cnpc = converse->player->get_party()->who_has_obj(body , 0, false);
+			cnpc = converse->player->get_party()->who_has_obj(body, 0, false);
 		else
 			cnpc = converse->actors->get_actor(v[0]);
 
@@ -727,7 +711,7 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		if (cnpc)
 			cnpc->set_poisoned(false);
 		break;
-	case U6OP_WORKTYPE: // 0xcd
+	case U6OP_WORKTYPE:    // 0xcd
 		v[0] = pop_arg(i); // npc
 		v[1] = pop_arg(i); // worktype
 		cnpc = converse->actors->get_actor(npc_num(v[0]));
@@ -744,24 +728,25 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		converse->print("*");
 		wait();
 		break;
-	case U6OP_ENDANSWER: // 0xee
-		break; // (frame only)
-	case U6OP_KEYWORDS: // 0xef (text:keywords)
+	case U6OP_ENDANSWER:                  // 0xee
+		break;                            // (frame only)
+	case U6OP_KEYWORDS:                   // 0xef (text:keywords)
 		if (answer_mode != ANSWER_DONE) { // havn't already answered
 			answer_mode = ANSWER_NO;
 			if (check_keywords(get_text(), converse->get_input()))
 				answer_mode = ANSWER_YES;
 		}
-		break; // (frame only)
+		break;        // (frame only)
 	case U6OP_SIDENT: // 0xff, arg 1 is id number, name follows
 		v[0] = pop_arg(i);
 		if (v[0] != converse->npc_num)
 			DEBUG(0, LEVEL_WARNING,
 			      "Converse: npc number inVal script (%d) does not"
-			      " match actor number (%d)\n", v[0], converse->npc_num);
+			      " match actor number (%d)\n",
+			      v[0], converse->npc_num);
 		converse->_name = get_text(); // collected
 		break;
-	case U6OP_SLOOK: // 0xf1, description follows
+	case U6OP_SLOOK:                                              // 0xf1, description follows
 		converse->_desc = get_formatted_text(get_text().c_str()); // collected
 		converse->print("\nYou see ");
 		converse->print(converse->_desc.c_str());
@@ -771,32 +756,32 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 		break;
 	case U6OP_SPREFIX: // 0xf3, Unknown
 		break;
-	case U6OP_ANSWER: // 0xf6
-		set_break(U6OP_KEYWORDS); // run or skip to next 0xef
+	case U6OP_ANSWER:                    // 0xf6
+		set_break(U6OP_KEYWORDS);        // run or skip to next 0xef
 		if (answer_mode == ANSWER_YES) { // depending on input comparison
 			set_run(true);
 			answer_mode = ANSWER_DONE; // don't do further comparisons
 		} else
 			set_run(false);
 		break;
-	case U6OP_ASK: // 0xf7
+	case U6OP_ASK:               // 0xf7
 		answer_mode = ANSWER_NO; // reset answer switch
 		converse->collect_input();
 		break;
-	case U6OP_ASKC: // 0xf8 (blocking, single character input)
-		answer_mode = ANSWER_NO; // reset answer switch
+	case U6OP_ASKC:                                      // 0xf8 (blocking, single character input)
+		answer_mode = ANSWER_NO;                         // reset answer switch
 		converse->poll_input(get_text().c_str(), false); // collected=allowed input
 		break;
-	case U6OP_INPUTSTR: // 0xf9 (string or integer)
+	case U6OP_INPUTSTR:          // 0xf9 (string or integer)
 		answer_mode = ANSWER_NO; // reset answer switch
-		// fall through
-	case U6OP_INPUT: // 0xfb (integer)
-		v[0] = pop_arg(i); // var
-		v[1] = pop_arg(i); // type (should be 0xb2)
+		                         // fall through
+	case U6OP_INPUT:             // 0xfb (integer)
+		v[0] = pop_arg(i);       // var
+		v[1] = pop_arg(i);       // type (should be 0xb2)
 		let(v[0], v[1]);
 		converse->poll_input();
 		break;
-	case U6OP_INPUTNUM: // 0xfc
+	case U6OP_INPUTNUM:    // 0xfc
 		v[0] = pop_arg(i); // var
 		v[1] = pop_arg(i); // type
 		let(v[0], v[1]);
@@ -810,7 +795,6 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 	return (success);
 }
 
-
 /* The other set of codes, these operate on the input values, so call them
  * valops. Output goes back to the stack.
  */
@@ -821,7 +805,7 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 	converse_typed_value out;
 	Actor *cnpc = NULL;
 	Obj *cnpc_obj = NULL;
-//    converse_db_s *cdb;
+	//    converse_db_s *cdb;
 	Player *player = converse->player;
 
 	out.type = U6OP_VAR;
@@ -901,12 +885,11 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 	case U6OP_CANCARRY: // 0x9a
 		cnpc = converse->actors->get_actor(pop_arg(i));
 		if (cnpc)
-			out.val = (converse_value)((cnpc->inventory_get_max_weight()
-			                            - cnpc->get_inventory_weight()) * 10);
+			out.val = (converse_value)((cnpc->inventory_get_max_weight() - cnpc->get_inventory_weight()) * 10);
 		break;
-	case U6OP_WEIGHT: { // 0x9b
-		v[1] = pop_arg(i); // quantity
-		v[0] = pop_arg(i); // object
+	case U6OP_WEIGHT: {                                                                // 0x9b
+		v[1] = pop_arg(i);                                                             // quantity
+		v[0] = pop_arg(i);                                                             // object
 		float weight = (float)converse->objects->get_obj_weight_unscaled(v[0]) * v[1]; //FIXME should this be scaled down by 10???
 		if (converse->objects->has_reduced_weight(v[0]))
 			weight /= 10;
@@ -920,7 +903,7 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 			out.val = 1;
 		delete_obj(cnpc_obj);
 		break;
-	case U6OP_HASOBJ: // 0x9f
+	case U6OP_HASOBJ:      // 0x9f
 		v[2] = pop_arg(i); // quality
 		v[1] = pop_arg(i); // object
 		v[0] = pop_arg(i); // npc
@@ -928,7 +911,7 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 		if (cnpc && cnpc->inventory_has_object(v[1], v[2], (v[2] != 0 ? true : false))) //don't search quality if quality is 0
 			out.val = 1;
 		break;
-	case U6OP_RAND: // 0xa0
+	case U6OP_RAND:        // 0xa0
 		v[1] = pop_arg(i); // max.
 		v[0] = pop_arg(i); // min.
 		if (v[0] >= v[1])
@@ -951,7 +934,7 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 	case U6OP_VAR: // 0xb2
 		out.val = converse->get_var(pop_arg(i));
 		break;
-	case U6OP_SVAR: // 0xb3 (using new rstring)
+	case U6OP_SVAR:                                         // 0xb3 (using new rstring)
 		out.val = add_rstr(converse->get_svar(pop_arg(i))); // rstr num
 		out.type = U6OP_SVAR;
 		break;
@@ -969,7 +952,7 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 		delete cdb;
 		break;
 #else /* new read assumes DATA may be assigned, and depend on variable type */
-	case U6OP_DATA: // 0xb4
+	case U6OP_DATA:        // 0xb4
 		v[1] = pop_arg(i); // index
 		v[0] = pop_arg(i); // db location
 
@@ -986,14 +969,14 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 			out.val = get_db_integer(v[0], v[1]);
 		break;
 #endif
-	case U6OP_INDEXOF: // 0xb7
+	case U6OP_INDEXOF:     // 0xb7
 		v[1] = pop_arg(i); // string variable
 		v[0] = pop_arg(i); // db location
 		out.val = find_db_string(v[0], converse->get_svar(v[1]));
 		break;
-	case U6OP_OBJCOUNT: // 0xbb
-		v[1] = pop_arg(i); // object
-		v[0] = pop_arg(i); // npc
+	case U6OP_OBJCOUNT:                                    // 0xbb
+		v[1] = pop_arg(i);                                 // object
+		v[0] = pop_arg(i);                                 // npc
 		cnpc = converse->actors->get_actor(npc_num(v[0])); //FIXME should this be party?
 		if (cnpc)
 			out.val = cnpc->inventory_count_object(v[1]);
@@ -1002,13 +985,11 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 		if (player->get_party()->contains_actor(npc_num(pop_arg(i))))
 			out.val = 1;
 		break;
-	case U6OP_OBJINPARTY: { // 0xc7 ?? check if party has object
-		v[1] = pop_arg(i); // qual
-		v[0] = pop_arg(i); // obj
+	case U6OP_OBJINPARTY: {     // 0xc7 ?? check if party has object
+		v[1] = pop_arg(i);      // qual
+		v[0] = pop_arg(i);      // obj
 		bool has_mouse = false; // resurrect others first
-		if (!player->get_party()->has_obj(v[0], v[1], false) && (v[0] != OBJ_U6_DEAD_BODY
-		        || Game::get_game()->get_game_type() != NUVIE_GAME_U6
-		        || !(has_mouse = player->get_party()->has_obj(OBJ_U6_MOUSE, v[1], false))))
+		if (!player->get_party()->has_obj(v[0], v[1], false) && (v[0] != OBJ_U6_DEAD_BODY || Game::get_game()->get_game_type() != NUVIE_GAME_U6 || !(has_mouse = player->get_party()->has_obj(OBJ_U6_MOUSE, v[1], false))))
 			out.val = 0x8001; // something OR'ed or u6val version of "no npc"?
 		else {
 			cnpc = player->get_party()->who_has_obj(has_mouse ? OBJ_U6_MOUSE : v[0], v[1], false);
@@ -1024,9 +1005,9 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 				out.val = 3; // 3: ALREADY IN PARTY
 			else if (player->get_party()->get_party_size() >=
 			         player->get_party()->get_party_max())
-				out.val = 2; // 2: PARTY TOO LARGE
+				out.val = 2;                                    // 2: PARTY TOO LARGE
 			else if (player->get_actor()->get_actor_num() == 0) // vehicle
-				out.val = 1; // 1: NOT ON LAND
+				out.val = 1;                                    // 1: NOT ON LAND
 			else
 				player->get_party()->add_actor(cnpc);
 			// 0: SUCCESS
@@ -1036,9 +1017,9 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 		cnpc = converse->actors->get_actor(npc_num(pop_arg(i)));
 		if (cnpc) {
 			if (!player->get_party()->contains_actor(cnpc))
-				out.val = 2; // 2: NOT IN PARTY
+				out.val = 2;                                    // 2: NOT IN PARTY
 			else if (player->get_actor()->get_actor_num() == 0) // vehicle
-				out.val = 1; // 1: NOT ON LAND
+				out.val = 1;                                    // 1: NOT ON LAND
 			else
 				player->get_party()->remove_actor(cnpc);
 			// 0: SUCCESS
@@ -1066,7 +1047,7 @@ bool ConverseInterpret::evop(stack<converse_typed_value> &i) {
 		cnpc = player->get_party()->get_actor(v[0]);
 		out.val = cnpc ? cnpc->get_actor_num() : 0;
 		break;
-	case U6OP_EXP: // 0xe0
+	case U6OP_EXP:         // 0xe0
 		v[1] = pop_arg(i); // add value
 		v[0] = pop_arg(i); // npc
 		cnpc = converse->actors->get_actor(npc_num(v[0]));
@@ -1178,13 +1159,11 @@ void ConverseInterpret::eval(uint32 vi) {
 #endif
 }
 
-
 /* Return `n' as-is or convert to number of NPC from Converse.
  */
 uint8 ConverseInterpret::npc_num(uint32 n) {
 	return ((n != 0xeb) ? n : converse->npc_num);
 }
-
 
 /* Returns true if the keywords list contains the input string, or contains an
  * asterisk (matching any input).
@@ -1202,7 +1181,8 @@ bool ConverseInterpret::check_keywords(string keystr, string instr) {
 			// copy from keyword start to end of string/keyword
 			uint32 l;
 			tok_s = scumm_strdup(&strt_s[(c == 0) ? c : c + 1]);
-			for (l = 0; l < strlen(tok_s) && tok_s[l] != ','; l++);
+			for (l = 0; l < strlen(tok_s) && tok_s[l] != ','; l++)
+				;
 			tok_s[l] = '\0';
 			cmp_s = scumm_strdup(instr.c_str());
 			// trim input to keyword size
@@ -1221,7 +1201,6 @@ bool ConverseInterpret::check_keywords(string keystr, string instr) {
 	return (false);
 }
 
-
 /* Assign input from Converse to the declared variable.
  */
 void ConverseInterpret::assign_input() {
@@ -1232,7 +1211,6 @@ void ConverseInterpret::assign_input() {
 	if (decl_t == 0xb3)
 		converse->set_svar(decl_v, converse->get_input().c_str());
 }
-
 
 /* Collect data from section at `loc', index `i'.
  * Returns pointer to data, which can be 8bit integer or a character string.
@@ -1247,7 +1225,7 @@ ConverseInterpret::get_db(uint32 loc, uint32 i) {
 	if (!db)
 		return (NULL);
 
-//    item = (struct converse_db_s *)malloc(sizeof(struct converse_db_s));
+	//    item = (struct converse_db_s *)malloc(sizeof(struct converse_db_s));
 	item = new struct converse_db_s;
 	item->type = 0;
 	item->s = NULL;
@@ -1275,7 +1253,6 @@ ConverseInterpret::get_db(uint32 loc, uint32 i) {
 	return (item);
 }
 
-
 /* Collect data from section at `loc', index `i', as a string.
  * Returns pointer to NEW data, or NULL if only integer data is found.
  */
@@ -1283,7 +1260,7 @@ char *ConverseInterpret::get_db_string(uint32 loc, uint32 i) {
 	convscript_buffer db = converse->script->get_buffer(loc);
 	char *item = NULL;
 	uint32 d = 0, dbuf_len = 0, /* string pointer & length */
-	       p = 0; /* pointer into db */
+	    p = 0;                  /* pointer into db */
 	if (!db)
 		return (NULL);
 	/* skip to index */
@@ -1291,7 +1268,8 @@ char *ConverseInterpret::get_db_string(uint32 loc, uint32 i) {
 	while (e++ < i) {
 		if (db[p] == U6OP_ENDDATA)
 			return (NULL);
-		while (is_print(db[p++]));
+		while (is_print(db[p++]))
+			;
 	}
 
 	d = 0;
@@ -1305,7 +1283,6 @@ char *ConverseInterpret::get_db_string(uint32 loc, uint32 i) {
 	} while (is_print(db[++p]));
 	return (item);
 }
-
 
 /* Collect data from section at `loc', index `i', as an integer.
  * Returns the two-byte integer value.
@@ -1355,10 +1332,10 @@ void ConverseInterpret::set_db_integer(uint32 loc, uint32 i, converse_value val)
  */
 converse_value ConverseInterpret::find_db_string(uint32 loc, const char *dstring) {
 	convscript_buffer db = converse->script->get_buffer(loc);
-	char *item = NULL; /* item being checked */
+	char *item = NULL;          /* item being checked */
 	uint32 d = 0, dbuf_len = 0, /* string pointer & length */
-	       p = 0, /* pointer into db */
-	       i = 0; /* item index */
+	    p = 0,                  /* pointer into db */
+	    i = 0;                  /* item index */
 #ifdef CONVERSE_DEBUG
 	DEBUG(1, LEVEL_DEBUGGING, "\nConverse: find_db_string(0x%04x, \"%s\")\n", loc, dstring);
 #endif
@@ -1385,7 +1362,8 @@ converse_value ConverseInterpret::find_db_string(uint32 loc, const char *dstring
 				if (check_keywords(item_str, find_str))
 					return (i);
 			}
-		} else ++p;
+		} else
+			++p;
 		++i;
 	}
 #ifdef CONVERSE_DEBUG
@@ -1551,7 +1529,7 @@ const char *ConverseInterpret::op_str(converse_value op) {
 		return "U6OP_INPUT";
 	case U6OP_INPUTNUM:
 		return "U6OP_INPUTNUM";
-	default :
+	default:
 		break;
 	}
 

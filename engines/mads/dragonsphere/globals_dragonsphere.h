@@ -23,8 +23,8 @@
 #ifndef MADS_GLOBALS_DRAGONSPHERE_H
 #define MADS_GLOBALS_DRAGONSPHERE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "mads/game.h"
 #include "mads/resources.h"
 
@@ -35,8 +35,8 @@ namespace Dragonsphere {
 enum GlobalId {
 	// Global variables
 
-	kWalkerTiming           = 0,
-	kWalkerTiming2			= 1,
+	kWalkerTiming = 0,
+	kWalkerTiming2 = 1,
 	kPlayerPersona = 10,
 	kPlayerScore = 11,
 	kDragonHighScene = 12,
@@ -158,13 +158,14 @@ enum GlobalId {
 	kTorchIsIn609 = 139,
 
 	kGridPosition = 140
-	};
+};
 
 class DragonsphereGlobals : public Globals {
 public:
 	SynchronizedList _spriteIndexes;
 	SynchronizedList _sequenceIndexes;
 	SynchronizedList _animationIndexes;
+
 public:
 	/**
 	 * Constructor

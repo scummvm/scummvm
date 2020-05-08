@@ -25,9 +25,9 @@
 
 #include "common/events.h"
 
-#include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/mactextwindow.h"
+#include "graphics/macgui/macwindow.h"
 
 #include "pink/objects/actions/action.h"
 
@@ -47,7 +47,6 @@ public:
 	void draw(Graphics::ManagedSurface *surface); // only for non-scrollable text
 
 private:
-
 	void findColorsInPalette();
 
 private:

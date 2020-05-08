@@ -19,24 +19,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "audio/mixer.h"
+#include "dragons/sound.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/xa.h"
+#include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "dragons/dragons.h"
-#include "dragons/sound.h"
 #include "dragons/bigfile.h"
 #include "dragons/dragonrms.h"
+#include "dragons/dragons.h"
 #include "dragons/vabsound.h"
 
 #define RAW_CD_SECTOR_SIZE 2352
 
-#define CDXA_TYPE_MASK     0x0E
-#define CDXA_TYPE_DATA     0x08
-#define CDXA_TYPE_AUDIO    0x04
+#define CDXA_TYPE_MASK 0x0E
+#define CDXA_TYPE_DATA 0x08
+#define CDXA_TYPE_AUDIO 0x04
 
 namespace Dragons {
 
@@ -63,10 +63,10 @@ void CdIntToPos_0(uint32 param_1) { //, byte *param_2)
 	sector = (char)iVar2 + (char)(iVar2 / 10) * 6;
 	minute = (char)iVar1 + (char)(iVar1 / 10) * 6;
 
-
-	uint32 out =          (((uint)(minute >> 4) * 10 + ((uint)minute & 0xf)) * 0x3c +
-						   (uint)(second >> 4) * 10 + ((uint)second & 0xf)) * 0x4b +
-						  (uint)(sector >> 4) * 10 + ((uint)sector & 0xf) + -0x96;
+	uint32 out = (((uint)(minute >> 4) * 10 + ((uint)minute & 0xf)) * 0x3c +
+	              (uint)(second >> 4) * 10 + ((uint)second & 0xf)) *
+	                 0x4b +
+	             (uint)(sector >> 4) * 10 + ((uint)sector & 0xf) + -0x96;
 
 	debug("Seek Audio %2X:%2X:%2X  in: %d out %d", minute, second, sector, param_1, out);
 
@@ -75,7 +75,7 @@ void CdIntToPos_0(uint32 param_1) { //, byte *param_2)
 
 void SoundManager::playSpeech(uint32 textIndex) {
 	if (isSpeechPlaying()) {
-//		_vm->_mixer->stopHandle(_speechHandle);
+		//		_vm->_mixer->stopHandle(_speechHandle);
 		return;
 	}
 
@@ -161,16 +161,15 @@ SoundManager::PSXAudioTrack::~PSXAudioTrack() {
 }
 
 // Ha! It's palindromic!
-#define AUDIO_DATA_CHUNK_SIZE   2304
+#define AUDIO_DATA_CHUNK_SIZE 2304
 #define AUDIO_DATA_SAMPLE_COUNT 4032
 
 static const int s_xaTable[5][2] = {
-	{   0,   0 },
-	{  60,   0 },
-	{ 115, -52 },
-	{  98, -55 },
-	{ 122, -60 }
-};
+    {0, 0},
+    {60, 0},
+    {115, -52},
+    {98, -55},
+    {122, -60}};
 
 void SoundManager::PSXAudioTrack::queueAudioFromSector(Common::SeekableReadStream *sector) {
 	sector->skip(24);
@@ -258,9 +257,9 @@ void SoundManager::PSXAudioTrack::queueAudioFromSector(Common::SeekableReadStrea
 }
 
 SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, DragonRMS *dragonRMS)
-		: _vm(vm),
-		  _bigFileArchive(bigFileArchive),
-		  _dragonRMS(dragonRMS) {
+    : _vm(vm),
+      _bigFileArchive(bigFileArchive),
+      _dragonRMS(dragonRMS) {
 	_dat_8006bb60_sound_related = 0;
 
 	bool allSoundIsMuted = false;
@@ -365,7 +364,7 @@ void SoundManager::loadMusAndGlob() {
 	_vabGlob = loadVab("glob.vh", "glob.vb");
 }
 
-VabSound * SoundManager::loadVab(const char *headerFilename, const char *bodyFilename) {
+VabSound *SoundManager::loadVab(const char *headerFilename, const char *bodyFilename) {
 	uint32 headSize, bodySize;
 
 	byte *headData = _bigFileArchive->load(headerFilename, headSize);
@@ -400,7 +399,7 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 	byte volume = 0;
 
 	volume = _soundArr[volumeId];
-	_soundArr[volumeId] = _soundArr[volumeId] | 0x40u;      // Set bit 0x40
+	_soundArr[volumeId] = _soundArr[volumeId] | 0x40u; // Set bit 0x40
 
 	VabSound *vabSound = ((soundId & 0x8000u) != 0) ? _vabGlob : _vabMusx;
 
@@ -428,9 +427,9 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 }
 
 void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
-	_soundArr[volumeId] = _soundArr[volumeId] & 0xbfu;      // Clear bit 0x40
+	_soundArr[volumeId] = _soundArr[volumeId] & 0xbfu; // Clear bit 0x40
 
-//	uint16 vabId = getVabFromSoundId(soundId);
+	//	uint16 vabId = getVabFromSoundId(soundId);
 
 	stopVoicePlaying(soundId & ~0x4000u);
 }

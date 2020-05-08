@@ -79,27 +79,27 @@ enum ObjectProperties {
  * Fatal errors
  */
 enum ERROR_TYPE {
-	MEMORY_E = 1,   ///< out of memory
-	OPEN_E,         ///< error opening file
-	READ_E,         ///< error reading from file
-	WRITE_E,        ///< error writing to file
-	EXPECT_VAL_E,   ///< expecting value
-	UNKNOWN_OP_E,   ///< unknown operation
-	ILLEGAL_OP_E,   ///< illegal operation
-	OVERFLOW_E,     ///< overflow
-	DIVIDE_E		///< divide by zero
+	MEMORY_E = 1, ///< out of memory
+	OPEN_E,       ///< error opening file
+	READ_E,       ///< error reading from file
+	WRITE_E,      ///< error writing to file
+	EXPECT_VAL_E, ///< expecting value
+	UNKNOWN_OP_E, ///< unknown operation
+	ILLEGAL_OP_E, ///< illegal operation
+	OVERFLOW_E,   ///< overflow
+	DIVIDE_E      ///< divide by zero
 };
 
 enum RESOURCE_TYPE {
-	JPEG_R,			///< JPEG image
-	WAVE_R,			///< RIFF WAVE audio sample
-	MOD_R,			///< MOD music module
-	S3M_R,			///< S3M music module
-	XM_R,			///< XM music module
-	MIDI_R,			///< MIDI music
-	MP3_R,			///< MP3 audio layer
-	AVI_R,			///< Video for Windows
-	MPEG_R,			///< MPEG video
+	JPEG_R, ///< JPEG image
+	WAVE_R, ///< RIFF WAVE audio sample
+	MOD_R,  ///< MOD music module
+	S3M_R,  ///< S3M music module
+	XM_R,   ///< XM music module
+	MIDI_R, ///< MIDI music
+	MP3_R,  ///< MP3 audio layer
+	AVI_R,  ///< Video for Windows
+	MPEG_R, ///< MPEG video
 	UNKNOWN_R
 };
 
@@ -107,8 +107,8 @@ enum RESOURCE_TYPE {
  * A structure used for disambiguation in MatchObject()
  */
 struct pobject_structure {
-	int obj;		///< the actual object number
-	char type;		///< referred to by noun or adjective
+	int obj;   ///< the actual object number
+	char type; ///< referred to by noun or adjective
 
 	pobject_structure() : obj(0), type(0) {}
 };
@@ -124,22 +124,23 @@ struct SAVED_WINDOW_DATA {
  * Structure used for navigating {...} blocks:
  */
 struct CODE_BLOCK {
-	int type;			///< see #defines, below
-	long brk;			///< break address, or 0 to indicate NOP
-	long returnaddr;	///< used only for do-while loops
-#if defined (DEBUGGER)
-	int dbnest;			///< for recovering from 'break'
+	int type;        ///< see #defines, below
+	long brk;        ///< break address, or 0 to indicate NOP
+	long returnaddr; ///< used only for do-while loops
+#if defined(DEBUGGER)
+	int dbnest; ///< for recovering from 'break'
 #endif
 
 	CODE_BLOCK() : type(0), brk(0), returnaddr(0)
-#if defined (DEBUGGER)
-	, dbnest(0)
+#if defined(DEBUGGER)
+	               ,
+	               dbnest(0)
 #endif
 	{
 	}
 };
 
-#if defined (DEBUGGER)
+#if defined(DEBUGGER)
 enum DEBUGGER_ERROR {
 	D_MEMORY_ERROR
 };

@@ -57,4 +57,3 @@ AudioCDManager *createWin32AudioCDManager();
 #endif
 
 #endif
-

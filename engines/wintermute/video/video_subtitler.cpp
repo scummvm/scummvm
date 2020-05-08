@@ -28,14 +28,14 @@
 
 #include "engines/wintermute/video/video_subtitler.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/utils/path_util.h"
-#include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/utils/path_util.h"
 
 namespace Wintermute {
 
-VideoSubtitler::VideoSubtitler(BaseGame *inGame): BaseClass(inGame) {
+VideoSubtitler::VideoSubtitler(BaseGame *inGame) : BaseClass(inGame) {
 	_lastSample = -1;
 	_currentSubtitle = 0;
 	_showSubtitle = false;
@@ -101,8 +101,8 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 		bool inToken = false;
 
 		while (pos + lineLength < fileSize &&
-				buffer[pos + lineLength] != '\n' &&
-				buffer[pos + lineLength] != '\0') {
+		       buffer[pos + lineLength] != '\n' &&
+		       buffer[pos + lineLength] != '\0') {
 			// Measure the line until we hit EOL, EOS or just hit the boundary
 			lineLength++;
 		}
@@ -165,7 +165,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 			}
 		}
 
-		if (start != -1 && cardText.size() > 0 && (start != 1 || end != 1)){
+		if (start != -1 && cardText.size() > 0 && (start != 1 || end != 1)) {
 			// Add a subtitlecard based on the line we have just parsed
 			_subtitles.push_back(SubtitleCard(_gameRef, cardText, start, end));
 		}
@@ -191,8 +191,8 @@ void VideoSubtitler::display() {
 		}
 
 		int textHeight = font->getTextHeight(
-		                     (const byte *)_subtitles[_currentSubtitle].getText().c_str(),
-		                     _gameRef->_renderer->getWidth());
+		    (const byte *)_subtitles[_currentSubtitle].getText().c_str(),
+		    _gameRef->_renderer->getWidth());
 
 		font->drawText(
 		    (const byte *)_subtitles[_currentSubtitle].getText().c_str(),
@@ -228,7 +228,7 @@ void VideoSubtitler::update(uint32 frame) {
 		}
 
 		while (_currentSubtitle < _subtitles.size() &&
-		        overdue && hasNext && nextStarted) {
+		       overdue && hasNext && nextStarted) {
 			/*
 			 *  We advance until we get past all overdue subtitles.
 			 *  We should exit the cycle when we either reach the first

@@ -22,9 +22,9 @@
 
 #ifdef ENABLE_EOB
 
+#include "kyra/script/script_eob.h"
 #include "kyra/engine/eobcommon.h"
 #include "kyra/graphics/screen_eob.h"
-#include "kyra/script/script_eob.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
 
@@ -89,10 +89,15 @@ void EoBCoreEngine::updateScriptTimers() {
 }
 
 EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen) : _vm(engine), _screen(screen),
-	_commandMin(engine->game() == GI_EOB1 ? -27 : -31) {
+                                                                              _commandMin(engine->game() == GI_EOB1 ? -27 : -31) {
 
 #define Opcode(x) _opcodes.push_back(new InfOpcode(new InfProc(this, &EoBInfProcessor::x), #x))
-#define OpcodeAlt(x) if (_vm->game() == GI_EOB1) { Opcode(x##_v1); } else { Opcode(x##_v2); }
+#define OpcodeAlt(x)              \
+	if (_vm->game() == GI_EOB1) { \
+		Opcode(x##_v1);           \
+	} else {                      \
+		Opcode(x##_v2);           \
+	}
 	Opcode(oeob_setWallType);
 	Opcode(oeob_toggleWallState);
 	Opcode(oeob_openDoor);
@@ -137,7 +142,7 @@ EoBInfProcessor::EoBInfProcessor(EoBCoreEngine *engine, Screen_EoB *screen) : _v
 	_lastScriptFunc = 0;
 	_lastScriptFlags = 0;
 
-	_subroutineStack = new int8*[10];
+	_subroutineStack = new int8 *[10];
 	memset(_subroutineStack, 0, 10 * sizeof(int8 *));
 	_subroutineStackPos = 0;
 
@@ -550,7 +555,7 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 }
 
 int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
-	
+
 	int8 *pos = data;
 	uint16 str = READ_LE_UINT16(pos);
 	pos += 2;
@@ -563,7 +568,7 @@ int EoBInfProcessor::oeob_printMessage_v2(int8 *data) {
 		assert(col < 16);
 		col = _amigaColorMap[col];
 	}
-	
+
 	if (_activeCharacter == -1) {
 		c = _vm->rollDice(1, 6, -1);
 		while (!_vm->testCharacter(c, 3))
@@ -1375,7 +1380,7 @@ int EoBInfProcessor::oeob_createItem_v1(int8 *data) {
 }
 
 int EoBInfProcessor::oeob_createItem_v2(int8 *data) {
-	static const uint8 _itemPos[] = { 0, 1, 2, 3, 1, 3, 0, 2, 3, 2, 1, 0, 2, 0, 3, 1 };
+	static const uint8 _itemPos[] = {0, 1, 2, 3, 1, 3, 0, 2, 3, 2, 1, 0, 2, 0, 3, 1};
 	int8 *pos = data;
 
 	uint16 itm = _vm->duplicateItem(READ_LE_UINT16(pos));
@@ -1417,7 +1422,7 @@ int EoBInfProcessor::oeob_createItem_v2(int8 *data) {
 }
 
 int EoBInfProcessor::oeob_launchObject(int8 *data) {
-	static const uint8 startPos[] = { 2, 3, 0, 2, 1, 0, 3, 1 };
+	static const uint8 startPos[] = {2, 3, 0, 2, 1, 0, 3, 1};
 
 	int8 *pos = data;
 	bool m = (*pos++ == -33);
@@ -1426,7 +1431,7 @@ int EoBInfProcessor::oeob_launchObject(int8 *data) {
 	uint16 block = READ_LE_UINT16(pos);
 	pos += 2;
 	int dir = *pos++;
-	int dirOffs =  *pos++;
+	int dirOffs = *pos++;
 
 	if (m) {
 		uint8 openBookType = _vm->_openBookType;
@@ -1644,8 +1649,7 @@ int EoBInfProcessor::oeob_specialEvent(int8 *data) {
 }
 
 const uint8 EoBInfProcessor::_amigaColorMap[16] = {
-	0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
-};
+    0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f};
 
 } // End of namespace Kyra
 

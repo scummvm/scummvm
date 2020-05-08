@@ -39,6 +39,7 @@ private:
 	 * Open a given widget
 	 */
 	void openItem(Maps::MapDungeon *map, Widgets::DungeonItem *item);
+
 public:
 	/**
 	 * Constructor
@@ -73,7 +74,7 @@ public:
 	Unlock(Ultima1Game *game, Character *c) : OpenUnlock(game, c, SPELL_UNLOCK) {}
 };
 
-} // End of  namespace U1Dialogs
+} // namespace Spells
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

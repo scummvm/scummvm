@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "sky/compact.h"
 #include "sky/control.h"
 #include "sky/debug.h"
 #include "sky/disk.h"
@@ -42,7 +43,6 @@
 #include "sky/skydefs.h"
 #include "sky/sound.h"
 #include "sky/text.h"
-#include "sky/compact.h"
 
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
@@ -70,12 +70,12 @@ namespace Sky {
 
 void *SkyEngine::_itemList[300];
 
-SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false };
+SystemVars SkyEngine::_systemVars = {0, 0, 0, 0, 4316, 0, 0, false, false};
 
 const char *SkyEngine::shortcutsKeymapId = "sky-shortcuts";
 
 SkyEngine::SkyEngine(OSystem *syst)
-	: Engine(syst), _fastMode(0), _debugger(0) {
+    : Engine(syst), _fastMode(0), _debugger(0) {
 }
 
 SkyEngine::~SkyEngine() {
@@ -108,7 +108,7 @@ void SkyEngine::syncSoundSettings() {
 	if (ConfMan.getBool("music_mute"))
 		SkyEngine::_systemVars.systemFlags |= SF_MUS_OFF;
 
-	_skyMusic->setVolume(mute ? 0: ConfMan.getInt("music_volume") >> 1);
+	_skyMusic->setVolume(mute ? 0 : ConfMan.getInt("music_volume") >> 1);
 }
 
 void SkyEngine::initVirgin() {
@@ -332,10 +332,10 @@ Common::Error SkyEngine::init() {
 		if (_skyDisk->fileExists(60600))
 			SkyEngine::_systemVars.language = SKY_ENGLISH; // default to GB english if it exists..
 		else if (_skyDisk->fileExists(60600 + SKY_USA * 8))
-			SkyEngine::_systemVars.language = SKY_USA;		// try US english...
+			SkyEngine::_systemVars.language = SKY_USA; // try US english...
 		else
 			for (uint8 cnt = SKY_ENGLISH; cnt <= SKY_SPANISH; cnt++)
-				if (_skyDisk->fileExists(60600 + cnt * 8)) {	// pick the first language we can find
+				if (_skyDisk->fileExists(60600 + cnt * 8)) { // pick the first language we can find
 					SkyEngine::_systemVars.language = cnt;
 					break;
 				}

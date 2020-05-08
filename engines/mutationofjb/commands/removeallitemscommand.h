@@ -40,9 +40,10 @@ public:
 
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
+
 private:
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

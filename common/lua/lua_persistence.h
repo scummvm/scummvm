@@ -48,12 +48,10 @@
 
 #include "lua.h"
 
-
 namespace Common {
 class WriteStream;
 class ReadStream;
-}
-
+} // namespace Common
 
 namespace Lua {
 

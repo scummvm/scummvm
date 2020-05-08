@@ -21,33 +21,31 @@
  */
 
 #include "xeen/worldofxeen/worldofxeen.h"
-#include "xeen/worldofxeen/darkside_cutscenes.h"
-#include "xeen/worldofxeen/clouds_cutscenes.h"
-#include "xeen/worldofxeen/worldofxeen_menu.h"
-#include "xeen/sound.h"
 #include "common/config-manager.h"
+#include "xeen/sound.h"
+#include "xeen/worldofxeen/clouds_cutscenes.h"
+#include "xeen/worldofxeen/darkside_cutscenes.h"
+#include "xeen/worldofxeen/worldofxeen_menu.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
 
 WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
-		: XeenEngine(syst, gameDesc), WorldOfXeenCutscenes(this) {
+    : XeenEngine(syst, gameDesc), WorldOfXeenCutscenes(this) {
 }
 
 void WorldOfXeenEngine::death() {
 	Window &w = (*_windows)[0];
 	_sound->stopAllAudio();
 	SpriteResource fireSprites[4] = {
-		SpriteResource("fire1.vga"),
-		SpriteResource("fire2.vga"),
-		SpriteResource("fire3.vga"),
-		SpriteResource("fire4.vga")
-	};
+	    SpriteResource("fire1.vga"),
+	    SpriteResource("fire2.vga"),
+	    SpriteResource("fire3.vga"),
+	    SpriteResource("fire4.vga")};
 	SpriteResource deathSprites("death.vga"), death1Sprites("death1.vga");
 	const int Y_LIST[] = {
-		196, 187, 179, 169, 159, 147, 138, 127, 113, 101, 86,
-		73, 60, 48, 36, 23, 10, 0, 0
-	};
+	    196, 187, 179, 169, 159, 147, 138, 127, 113, 101, 86,
+	    73, 60, 48, 36, 23, 10, 0, 0};
 
 	Graphics::ManagedSurface savedBg;
 	savedBg.copyFrom(*_screen);

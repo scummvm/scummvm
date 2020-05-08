@@ -46,7 +46,6 @@ AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 	_responseType = RESPONSE_ALWAYS;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdResponse::~AdResponse() {
 	delete[] _text;
@@ -64,13 +63,11 @@ AdResponse::~AdResponse() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdResponse::setText(const char *text) {
 	BaseUtils::setString(&_text, text);
 	BaseUtils::setString(&_textOrig, text);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIcon(const char *filename) {
@@ -111,7 +108,6 @@ bool AdResponse::setIconHover(const char *filename) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconPressed(const char *filename) {
 	delete _iconPressed;
@@ -124,7 +120,6 @@ bool AdResponse::setIconPressed(const char *filename) {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::persist(BasePersistenceManager *persistMgr) {

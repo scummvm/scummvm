@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLittleLiftButton, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CLittleLiftButton::save(SimpleFile *file, int indent) {

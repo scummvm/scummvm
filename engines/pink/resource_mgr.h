@@ -26,9 +26,9 @@
 #include "common/scummsys.h"
 
 namespace Common {
-	class SafeSeekableSubReadStream;
-	class String;
-}
+class SafeSeekableSubReadStream;
+class String;
+} // namespace Common
 
 namespace Pink {
 

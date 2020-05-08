@@ -23,15 +23,15 @@
 #ifndef TOLTECS_MICROTILES_H
 #define TOLTECS_MICROTILES_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "common/rect.h"
 
 namespace Toltecs {
 
 typedef uint32 BoundingBox;
 
-const BoundingBox FullBoundingBox  = 0x00001F1F;
+const BoundingBox FullBoundingBox = 0x00001F1F;
 const BoundingBox EmptyBoundingBox = 0x00000000;
 const int TileSize = 32;
 
@@ -42,6 +42,7 @@ public:
 	void addRect(Common::Rect r);
 	void clear();
 	Common::Rect *getRectangles(int *num_rects, int min_x, int min_y, int max_x, int max_y);
+
 protected:
 	BoundingBox *_tiles;
 	int16 _tilesW, _tilesH;

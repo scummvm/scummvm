@@ -31,9 +31,11 @@ class CReservedTable : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool PlayerTriesRestaurantTableMsg(CPlayerTriesRestaurantTableMsg *msg);
+
 public:
 	bool _flag;
 	int _tableId;
+
 public:
 	CLASSDEF;
 	CReservedTable() : CGameObject(), _flag(false), _tableId(0) {}

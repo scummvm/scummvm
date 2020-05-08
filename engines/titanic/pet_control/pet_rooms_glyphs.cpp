@@ -33,15 +33,15 @@
 namespace Titanic {
 
 CPetRoomsGlyph::CPetRoomsGlyph() : CPetGlyph(),
-		_roomFlags(0), _mailFlag(0), _mode(RGM_UNASSIGNED),
-		_chevLeftOnDim(nullptr), _chevLeftOffDim(nullptr), _chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
-		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr), _chevRightOnLit(nullptr), _chevRightOffLit(nullptr) {
+                                   _roomFlags(0), _mailFlag(0), _mode(RGM_UNASSIGNED),
+                                   _chevLeftOnDim(nullptr), _chevLeftOffDim(nullptr), _chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
+                                   _chevRightOnDim(nullptr), _chevRightOffDim(nullptr), _chevRightOnLit(nullptr), _chevRightOffLit(nullptr) {
 }
 
 CPetRoomsGlyph::CPetRoomsGlyph(uint flags) : CPetGlyph(),
-		_roomFlags(flags), _mailFlag(0), _mode(RGM_UNASSIGNED),
-		_chevLeftOnDim(nullptr), _chevLeftOffDim(nullptr), _chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
-		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr), _chevRightOnLit(nullptr), _chevRightOffLit(nullptr) {
+                                             _roomFlags(flags), _mailFlag(0), _mode(RGM_UNASSIGNED),
+                                             _chevLeftOnDim(nullptr), _chevLeftOffDim(nullptr), _chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
+                                             _chevRightOnDim(nullptr), _chevRightOffDim(nullptr), _chevRightOnLit(nullptr), _chevRightOffLit(nullptr) {
 }
 
 bool CPetRoomsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
@@ -95,7 +95,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 	drawObjects(roomBits >> 3, destPt, screenManager);
 	destPt.y += 10;
 	drawObjects(((roomBits & 7) << 1) + (roomFlags.getBit0() ? 1 : 0),
-		destPt, screenManager);
+	            destPt, screenManager);
 
 	// Restore original image pointers
 	_chevLeftOnDim = leftOnDim;
@@ -196,11 +196,10 @@ void CPetRoomsGlyph::changeClass(PassengerClass newClassNum) {
 
 int CPetRoomsGlyph::getSelection(const Point &topLeft, const Point &pt) {
 	Rect rects[4] = {
-		Rect(topLeft.x, topLeft.y, topLeft.x + 13, topLeft.y + 10),
-		Rect(topLeft.x + 13, topLeft.y, topLeft.x + 26, topLeft.y + 10),
-		Rect(topLeft.x + 26, topLeft.y, topLeft.x + 39, topLeft.y + 10),
-		Rect(topLeft.x + 39, topLeft.y, topLeft.x + 52, topLeft.y + 10)
-	};
+	    Rect(topLeft.x, topLeft.y, topLeft.x + 13, topLeft.y + 10),
+	    Rect(topLeft.x + 13, topLeft.y, topLeft.x + 26, topLeft.y + 10),
+	    Rect(topLeft.x + 26, topLeft.y, topLeft.x + 39, topLeft.y + 10),
+	    Rect(topLeft.x + 39, topLeft.y, topLeft.x + 52, topLeft.y + 10)};
 
 	for (int idx = 0, btnIndex = 19; idx < 5; ++idx, btnIndex -= 4) {
 		// Iterate through each of the four rects, seeing if there's a match.
@@ -228,7 +227,6 @@ void CPetRoomsGlyph::drawObjects(uint flags, const Point &pt, CScreenManager *sc
 		((flags & 1) ? _chevRightOnDim : _chevRightOffDim)->draw(screenManager, destPos);
 	}
 }
-
 
 /*------------------------------------------------------------------------*/
 

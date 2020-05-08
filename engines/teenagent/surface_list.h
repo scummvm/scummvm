@@ -43,6 +43,6 @@ protected:
 	uint surfacesCount;
 };
 
-}
+} // namespace TeenAgent
 
 #endif

@@ -23,12 +23,12 @@
 #ifndef SCUMM_PLAYERS_PLAYER_MAC_H
 #define SCUMM_PLAYERS_PLAYER_MAC_H
 
-#include "common/scummsys.h"
-#include "common/util.h"
-#include "common/mutex.h"
-#include "scumm/music.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/mutex.h"
+#include "common/scummsys.h"
+#include "common/util.h"
+#include "scumm/music.h"
 
 #define RES_SND MKTAG('s', 'n', 'd', ' ')
 
@@ -53,8 +53,8 @@ public:
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int  getMusicTimer() override;
-	int  getSoundStatus(int sound) const override;
+	int getMusicTimer() override;
+	int getSoundStatus(int sound) const override;
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;
@@ -119,7 +119,7 @@ protected:
 		bool _notesLeft;
 
 		bool loadInstrument(Common::SeekableReadStream *stream);
- 	};
+	};
 	friend void syncWithSerializer(Common::Serializer &, Channel &);
 
 	ScummEngine *const _vm;

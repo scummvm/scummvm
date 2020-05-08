@@ -55,4 +55,4 @@ Common::String SwitchPartCommand::debugString() const {
 	return "SWITCHPART";
 }
 
-}
+} // namespace MutationOfJB

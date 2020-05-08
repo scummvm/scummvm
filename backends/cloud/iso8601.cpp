@@ -40,7 +40,7 @@ int find(const char *cstr, uint32 startPosition, char needle) {
 	return res - cstr;
 }
 
-}
+} // namespace
 
 namespace Cloud {
 namespace ISO8601 {
@@ -83,7 +83,7 @@ uint32 convertToTimestamp(const Common::String &iso8601Date) {
 		else
 			days += 365;
 
-	int mdays[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	int mdays[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	for (int i = 1; i < M; ++i) {
 		days += mdays[i - 1];
 		if (i == 2)

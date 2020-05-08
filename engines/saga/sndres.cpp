@@ -192,10 +192,10 @@ enum GameSoundType {
 };
 
 // Use a macro to read in the sound data based on if we actually want to buffer it or not
-#define READ_STREAM(streamSize) \
-	(onlyHeader \
-	? new Common::SeekableSubReadStream(&readS, readS.pos(), readS.pos() + (streamSize)) \
-	: readS.readStream(streamSize))
+#define READ_STREAM(streamSize)                                                               \
+	(onlyHeader                                                                               \
+	     ? new Common::SeekableSubReadStream(&readS, readS.pos(), readS.pos() + (streamSize)) \
+	     : readS.readStream(streamSize))
 
 bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buffer, bool onlyHeader) {
 	size_t soundResourceLength;
@@ -231,7 +231,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	} else
 #endif
 	{
-		ResourceData* resourceData = context->getResourceData(resourceId);
+		ResourceData *resourceData = context->getResourceData(resourceId);
 		file = context->getFile(resourceData);
 
 		file->seek(resourceData->offset);
@@ -275,7 +275,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 				resourceType = kSoundFLAC;
 			}
 		}
-
 	}
 
 	// Default sound type is 16-bit signed PCM, used in ITE
@@ -285,7 +284,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		if (context->fileType() & GAME_MACBINARY) {
 			// ITE Mac has sound in the Mac snd format
 			resourceType = kSoundMacSND;
-		} else if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
+		} else if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) { // older ITE demos
 			rawFlags |= Audio::FLAG_UNSIGNED;
 			rawFlags &= ~Audio::FLAG_16BITS;
 		} else if (!uncompressedSound && !scumm_stricmp(context->fileName(), "voicesd.rsc")) {
@@ -314,7 +313,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.stream = audStream;
 		buffer.streamLength = audStream->getLength();
 		result = true;
-		} break;
+	} break;
 	case kSoundVOX:
 		buffer.stream = Audio::makeADPCMStream(READ_STREAM(soundResourceLength), DisposeAfterUse::YES, soundResourceLength, Audio::kADPCMOki, 22050, 1);
 		buffer.streamLength = Audio::Timestamp(0, soundResourceLength * 2, buffer.stream->getRate());
@@ -325,7 +324,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.stream = audStream;
 		buffer.streamLength = audStream->getLength();
 		result = true;
-		} break;
+	} break;
 	case kSoundAIFF: {
 		Audio::RewindableAudioStream *audStream = Audio::makeAIFFStream(READ_STREAM(soundResourceLength), DisposeAfterUse::YES);
 		Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(audStream);
@@ -340,13 +339,13 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.stream = seekStream;
 		buffer.streamLength = seekStream->getLength();
 		result = true;
-		} break;
+	} break;
 	case kSoundVOC: {
 		Audio::SeekableAudioStream *audStream = Audio::makeVOCStream(READ_STREAM(soundResourceLength), Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 		buffer.stream = audStream;
 		buffer.streamLength = audStream->getLength();
 		result = true;
-		} break;
+	} break;
 	case kSoundWAV:
 	case kSoundShorten:
 		if (resourceType == kSoundWAV) {
@@ -393,7 +392,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			delete memStream;
 		}
 
-		} break;
+	} break;
 	default:
 		error("SndRes::load Unknown sound type");
 	}

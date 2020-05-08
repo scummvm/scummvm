@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui_button.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui_load_image.h"
 
 namespace Ultima {
@@ -30,10 +30,9 @@ namespace Nuvie {
 /* the check marks bitmap */
 Graphics::ManagedSurface *checkmarks = NULL;
 
-
-GUI_Button:: GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *image,
-                        Graphics::ManagedSurface *image2, GUI_CallBack *callback, bool free_surfaces)
-	: GUI_Widget(data, x, y, image->w, image->h) {
+GUI_Button::GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *image,
+                       Graphics::ManagedSurface *image2, GUI_CallBack *callback, bool free_surfaces)
+    : GUI_Widget(data, x, y, image->w, image->h) {
 	callback_object = callback;
 
 	button = image;
@@ -51,9 +50,9 @@ GUI_Button:: GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *imag
 	is_highlighted = false;
 }
 
-GUI_Button:: GUI_Button(void *data, int x, int y, int w, int h,
-                        GUI_CallBack *callback)
-	: GUI_Widget(data, x, y, w, h) {
+GUI_Button::GUI_Button(void *data, int x, int y, int w, int h,
+                       GUI_CallBack *callback)
+    : GUI_Widget(data, x, y, w, h) {
 	callback_object = callback;
 
 	button = NULL;
@@ -74,7 +73,7 @@ GUI_Button:: GUI_Button(void *data, int x, int y, int w, int h,
 GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
                        GUI_Font *font, int alignment, int is_checkbutton,
                        GUI_CallBack *callback, int flat)
-	: GUI_Widget(data, x, y, w, h) {
+    : GUI_Widget(data, x, y, w, h) {
 	callback_object = callback;
 
 	if (font != NULL) {
@@ -147,7 +146,7 @@ void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, 
 }
 
 /* Show the widget  */
-void GUI_Button:: Display(bool full_redraw) {
+void GUI_Button::Display(bool full_redraw) {
 	Common::Rect src, dest = area;
 
 	if (button) {
@@ -169,13 +168,14 @@ void GUI_Button:: Display(bool full_redraw) {
 	}
 	if (!enabled) {
 		uint8 *pointer;
-		int pixel = SDL_MapRGB(surface->format, 0, 0, 0);;
+		int pixel = SDL_MapRGB(surface->format, 0, 0, 0);
+		;
 		uint8 bytepp = surface->format.bytesPerPixel;
 
 		if (!SDL_LockSurface(surface)) {
 			for (int y = 0; y < area.height(); y += 2) {
 				pointer = (uint8 *)surface->getPixels() + surface->pitch * (area.top + y) + (area.left * bytepp);
-				for (int x = 0; x<area.width() >> 1; x++) {
+				for (int x = 0; x<area.width()> > 1; x++) {
 					switch (bytepp) {
 					case 1:
 						*((uint8 *)(pointer)) = (uint8)pixel;
@@ -185,7 +185,7 @@ void GUI_Button:: Display(bool full_redraw) {
 						*((uint16 *)(pointer)) = (uint16)pixel;
 						pointer += 4;
 						break;
-					case 3:  /* Format/endian independent */
+					case 3: /* Format/endian independent */
 						uint8 r, g, b;
 
 						r = (pixel >> surface->format.rShift) & 0xFF;
@@ -211,9 +211,9 @@ void GUI_Button:: Display(bool full_redraw) {
 }
 
 /* Mouse hits activate us */
-GUI_status GUI_Button:: MouseDown(int x, int y, Shared::MouseButton btn) {
-//	if(btn == SDL_BUTTON_WHEELUP || btn == SDL_BUTTON_WHEELDOWN)
-//	  return GUI_PASS;
+GUI_status GUI_Button::MouseDown(int x, int y, Shared::MouseButton btn) {
+	//	if(btn == SDL_BUTTON_WHEELUP || btn == SDL_BUTTON_WHEELDOWN)
+	//	  return GUI_PASS;
 	if (enabled && (btn == Shared::BUTTON_LEFT || btn == Shared::BUTTON_RIGHT)) {
 		pressed[0] = 1;
 		Redraw();
@@ -222,8 +222,8 @@ GUI_status GUI_Button:: MouseDown(int x, int y, Shared::MouseButton btn) {
 }
 
 GUI_status GUI_Button::MouseUp(int x, int y, Shared::MouseButton btn) {
-//	if (btn==SDL_BUTTON_WHEELUP || btn==SDL_BUTTON_WHEELDOWN)
-//		return GUI_PASS;
+	//	if (btn==SDL_BUTTON_WHEELUP || btn==SDL_BUTTON_WHEELDOWN)
+	//		return GUI_PASS;
 	if ((btn == Shared::BUTTON_LEFT || btn == Shared::BUTTON_RIGHT) && (pressed[0])) {
 		pressed[0] = 0;
 		return Activate_button(x, y, btn);
@@ -269,7 +269,7 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	char *duptext = 0;
 
 	Graphics::ManagedSurface *img = new Graphics::ManagedSurface(area.width(), area.height(),
-		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	                                                             Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
 	if (img == NULL)
 		return NULL;
@@ -278,7 +278,6 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	uint32 color2 = SDL_MapRGB(img->format, BS_R, BS_G, BS_B);
 	uint32 color3 = SDL_MapRGB(img->format, BF_R, BF_G, BF_B);
 	uint32 color4 = SDL_MapRGB(img->format, BI2_R, BI2_G, BI2_B);
-
 
 	buttonFont->setColoring(0, 0, 0);
 	buttonFont->setTransparency(true);

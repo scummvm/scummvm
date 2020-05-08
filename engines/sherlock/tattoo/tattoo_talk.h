@@ -23,12 +23,12 @@
 #ifndef SHERLOCK_TATTOO_TALK_H
 #define SHERLOCK_TATTOO_TALK_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
-#include "common/stream.h"
 #include "common/stack.h"
+#include "common/stream.h"
 #include "sherlock/talk.h"
 #include "sherlock/tattoo/widget_password.h"
 #include "sherlock/tattoo/widget_talk.h"
@@ -43,6 +43,7 @@ class WidgetTalk;
 
 class TattooTalk : public Talk {
 	friend class WidgetTalk;
+
 private:
 	WidgetTalk _talkWidget;
 	WidgetPassword _passwordWidget;
@@ -85,6 +86,7 @@ private:
 	OpcodeReturn cmdWalkNPCToCAnimation(const byte *&str);
 	OpcodeReturn cmdWalkNPCToCoords(const byte *&str);
 	OpcodeReturn cmdWalkHomesAndNPCToCoords(const byte *&str);
+
 protected:
 	/**
 	 * Display the talk interface window
@@ -100,6 +102,7 @@ protected:
 	 * Show the talk display
 	 */
 	void showTalk() override;
+
 public:
 	TattooTalk(SherlockEngine *vm);
 	~TattooTalk() override {}

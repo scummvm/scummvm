@@ -33,8 +33,7 @@ class LineReader;
 
 class Credits {
 public:
-
-	Credits(QueenEngine *vm, const char* filename);
+	Credits(QueenEngine *vm, const char *filename);
 
 	//! update/display credits for current room
 	void update();
@@ -46,7 +45,6 @@ public:
 	bool running() const { return _running; }
 
 private:
-
 	struct Line {
 		short x, y, color, fontSize;
 		const char *text;

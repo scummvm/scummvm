@@ -39,7 +39,8 @@ bool AndroidSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &
 }
 
 bool AndroidSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
-	if (false) {}
+	if (false) {
+	}
 
 	if (ev.key.keysym.sym == SDLK_F13) {
 		event.type = Common::EVENT_MAINMENU;

@@ -21,13 +21,13 @@
  */
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
-#include "backends/graphics/opengl/texture.h"
 #include "backends/events/sdl/sdl-events.h"
+#include "backends/graphics/opengl/texture.h"
 #include "backends/platform/sdl/sdl.h"
 #include "graphics/scaler/aspect.h"
 
-#include "common/textconsole.h"
 #include "common/config-manager.h"
+#include "common/textconsole.h"
 #ifdef USE_OSD
 #include "common/translation.h"
 #endif
@@ -155,7 +155,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	// should probably use this information and disable any fullscreen support
 	// in this case.
 	if (availableModes != NULL && availableModes != (void *)-1) {
-		for (;*availableModes; ++availableModes) {
+		for (; *availableModes; ++availableModes) {
 			const SDL_Rect *mode = *availableModes;
 
 			_fullscreenVideoModes.push_back(VideoMode(mode->w, mode->h));
@@ -183,11 +183,11 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 
 	// Get information about display sizes from the previous runs.
 	if (ConfMan.hasKey("last_fullscreen_mode_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_fullscreen_mode_height", Common::ConfigManager::kApplicationDomain)) {
-		_desiredFullscreenWidth  = ConfMan.getInt("last_fullscreen_mode_width", Common::ConfigManager::kApplicationDomain);
+		_desiredFullscreenWidth = ConfMan.getInt("last_fullscreen_mode_width", Common::ConfigManager::kApplicationDomain);
 		_desiredFullscreenHeight = ConfMan.getInt("last_fullscreen_mode_height", Common::ConfigManager::kApplicationDomain);
 	} else {
 		// Use the desktop resolutions when no previous default has been setup.
-		_desiredFullscreenWidth  = desktopWidth;
+		_desiredFullscreenWidth = desktopWidth;
 		_desiredFullscreenHeight = desktopHeight;
 	}
 }
@@ -334,11 +334,11 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	_gotResize = false;
 
 	// Save the requested dimensions.
-	_lastRequestedWidth  = requestedWidth;
+	_lastRequestedWidth = requestedWidth;
 	_lastRequestedHeight = requestedHeight;
 
 	// Apply the currently saved scale setting.
-	requestedWidth  *= _graphicsScale;
+	requestedWidth *= _graphicsScale;
 	requestedHeight *= _graphicsScale;
 
 	// Set up the mode.
@@ -394,10 +394,10 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 				VideoModeArray::const_iterator i = _fullscreenVideoModes.end();
 				--i;
 
-				_desiredFullscreenWidth  = i->width;
+				_desiredFullscreenWidth = i->width;
 				_desiredFullscreenHeight = i->height;
 			} else {
-				_desiredFullscreenWidth  = width;
+				_desiredFullscreenWidth = width;
 				_desiredFullscreenHeight = height;
 			}
 		}
@@ -414,9 +414,9 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	// Thus, we chose this one.
 	const Graphics::PixelFormat rgba8888 =
 #ifdef SCUMM_LITTLE_ENDIAN
-	                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	    Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 #else
-	                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	    Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -441,7 +441,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 			_window->createOrUpdateWindow(width, height, flags);
 		}
 
-		width  = _desiredFullscreenWidth;
+		width = _desiredFullscreenWidth;
 		height = _desiredFullscreenHeight;
 
 		flags |= SDL_WINDOW_FULLSCREEN;
@@ -482,7 +482,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 	uint32 flags = SDL_OPENGL;
 	if (_wantsFullScreen) {
-		width  = _desiredFullscreenWidth;
+		width = _desiredFullscreenWidth;
 		height = _desiredFullscreenHeight;
 		flags |= SDL_FULLSCREEN;
 	} else {
@@ -530,7 +530,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return SdlGraphicsManager::notifyEvent(event);
 	}
 
-	switch ((CustomEventAction) event.customType) {
+	switch ((CustomEventAction)event.customType) {
 	case kActionIncreaseScaleFactor:
 	case kActionDecreaseScaleFactor: {
 		const int direction = event.customType == kActionIncreaseScaleFactor ? +1 : -1;
@@ -565,7 +565,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				--i;
 			}
 
-			_desiredFullscreenWidth  = i->width;
+			_desiredFullscreenWidth = i->width;
 			_desiredFullscreenHeight = i->height;
 
 			// Try to setup the mode.
@@ -611,7 +611,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 		// Toggles the aspect ratio correction state.
 		beginGFXTransaction();
-			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
+		setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
 		endGFXTransaction();
 
 		// Make sure we do not ignore the next resize. This
@@ -634,7 +634,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 		// Ctrl+Alt+f toggles filtering on/off
 		beginGFXTransaction();
-			setFeatureState(OSystem::kFeatureFilteringMode, !getFeatureState(OSystem::kFeatureFilteringMode));
+		setFeatureState(OSystem::kFeatureFilteringMode, !getFeatureState(OSystem::kFeatureFilteringMode));
 		endGFXTransaction();
 
 		// Make sure we do not ignore the next resize. This
@@ -674,9 +674,8 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 #ifdef USE_OSD
 		Common::String message = Common::String::format("%s: %s",
-			_("Stretch mode"),
-			_(stretchModes[index].description)
-			);
+		                                                _("Stretch mode"),
+		                                                _(stretchModes[index].description));
 		displayMessageOnOSD(message.c_str());
 #endif
 

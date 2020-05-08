@@ -23,22 +23,22 @@
 #include "ultima/ultima1/u1gfx/view_game.h"
 #include "ultima/shared/actions/huh.h"
 #include "ultima/shared/actions/pass.h"
+#include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/maps/map.h"
+#include "ultima/ultima1/actions/attack.h"
+#include "ultima/ultima1/actions/map_action.h"
+#include "ultima/ultima1/actions/move.h"
+#include "ultima/ultima1/actions/quit.h"
+#include "ultima/ultima1/actions/ready.h"
+#include "ultima/ultima1/actions/stats.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/ultima1/u1gfx/info.h"
 #include "ultima/ultima1/u1gfx/status.h"
 #include "ultima/ultima1/u1gfx/viewport_dungeon.h"
 #include "ultima/ultima1/u1gfx/viewport_map.h"
-#include "ultima/ultima1/actions/map_action.h"
-#include "ultima/ultima1/actions/move.h"
-#include "ultima/ultima1/actions/attack.h"
-#include "ultima/ultima1/actions/quit.h"
-#include "ultima/ultima1/actions/ready.h"
-#include "ultima/ultima1/actions/stats.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/shared/gfx/text_cursor.h"
-#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -57,15 +57,15 @@ MAP_ACTION(Transact, 19, talk)
 MAP_ACTION_END_TURN(Unlock, 20, unlock)
 MAP_ACTION_END_TURN(ViewChange, 21, view)
 MAP_ACTION_END_TURN(ExitTransport, 23, disembark)
-}
+} // namespace Actions
 
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(ViewGame, Shared::Gfx::VisualContainer)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(EndOfTurnMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(CharacterInputMsg)
+ON_MESSAGE(ShowMsg)
+ON_MESSAGE(EndOfTurnMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
 ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect(0, 0, 320, 200), parent), _frameCtr(0) {
@@ -75,7 +75,7 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
-	
+
 	_actions.resize(22);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Shared::Actions::Huh(this, game->_res->HUH);
@@ -202,7 +202,10 @@ void dispatchKey(ViewGame *game) {
 	T dMsg;
 	dMsg.execute(game);
 }
-#define CHECK(KEYCODE, MSG_CLASS) else if (msg._keyState.keycode == KEYCODE) { dispatchKey<MSG_CLASS>(this); }
+#define CHECK(KEYCODE, MSG_CLASS)                \
+	else if (msg._keyState.keycode == KEYCODE) { \
+		dispatchKey<MSG_CLASS>(this);            \
+	}
 
 bool ViewGame::checkMovement(const Common::KeyState &keyState) {
 	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(keyState.keycode);
@@ -257,7 +260,8 @@ bool ViewGame::checkMovement(const Common::KeyState &keyState) {
 }
 
 bool ViewGame::CharacterInputMsg(CCharacterInputMsg &msg) {
-	if (checkMovement(msg._keyState)) {}
+	if (checkMovement(msg._keyState)) {
+	}
 	CHECK(Common::KEYCODE_a, Shared::CAttackMsg)
 	CHECK(Common::KEYCODE_b, Shared::CBoardMsg)
 	CHECK(Common::KEYCODE_c, Shared::CCastMsg)
@@ -287,5 +291,5 @@ bool ViewGame::CharacterInputMsg(CCharacterInputMsg &msg) {
 }
 
 } // End of namespace U1Gfx
-} // End of namespace Shared
+} // namespace Ultima1
 } // End of namespace Ultima

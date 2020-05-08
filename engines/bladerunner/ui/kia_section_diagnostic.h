@@ -32,11 +32,11 @@ class TextResource;
 
 class KIASectionDiagnostic : public KIASectionBase {
 	static const Color256 kTextColors[];
-	static const int      kLineHeight = 18;
+	static const int kLineHeight = 18;
 
 	TextResource *_text;
-	int           _offset;
-	uint32        _timeLast;
+	int _offset;
+	uint32 _timeLast;
 
 public:
 	KIASectionDiagnostic(BladeRunnerEngine *vm);

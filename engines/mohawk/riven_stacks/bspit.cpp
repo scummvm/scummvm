@@ -31,8 +31,7 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-BSpit::BSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackBspit, "bSliders.190", "bSliderBG.190") {
+BSpit::BSpit(MohawkEngine_Riven *vm) : DomeSpit(vm, kStackBspit, "bSliders.190", "bSliderBG.190") {
 
 	REGISTER_COMMAND(BSpit, xblabopenbook);
 	REGISTER_COMMAND(BSpit, xblabbookprevpage);
@@ -79,14 +78,14 @@ void BSpit::labBookDrawDomeCombination() const {
 	byte numCount = 0;
 
 	for (int bitPos = 24; bitPos >= 0; bitPos--) {
-			if (domeCombo & (1 << bitPos)) {
-				uint16 offset = (24 - bitPos) * kNumberWidth;
-				Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
-				Common::Rect dstRect = Common::Rect(numCount * kNumberWidth + kDstX, kDstY, (numCount + 1) * kNumberWidth + kDstX, kDstY + kNumberHeight);
-				_vm->_gfx->drawImageRect(numCount + 364, srcRect, dstRect);
-				numCount++;
-			}
+		if (domeCombo & (1 << bitPos)) {
+			uint16 offset = (24 - bitPos) * kNumberWidth;
+			Common::Rect srcRect = Common::Rect(offset, 0, offset + kNumberWidth, kNumberHeight);
+			Common::Rect dstRect = Common::Rect(numCount * kNumberWidth + kDstX, kDstY, (numCount + 1) * kNumberWidth + kDstX, kDstY + kNumberHeight);
+			_vm->_gfx->drawImageRect(numCount + 364, srcRect, dstRect);
+			numCount++;
 		}
+	}
 
 	assert(numCount == 5); // Sanity check
 }
@@ -328,7 +327,7 @@ void BSpit::xbait(const ArgumentArray &args) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCard()->drawPicture(4);
 
-		bait->enable(false); // Disable bait hotspot
+		bait->enable(false);     // Disable bait hotspot
 		baitPlate->enable(true); // Enable baitplate hotspot
 	}
 }
@@ -338,16 +337,16 @@ void BSpit::xbfreeytram(const ArgumentArray &args) {
 	uint16 mlstId;
 
 	switch (_vm->_vars["bytram"]) {
-		case 1:
-			mlstId = 11;
-			break;
-		case 2:
-			mlstId = 12;
-			break;
-		default:
-			// The original did rand(13, 14)
-			mlstId = _vm->_rnd->getRandomNumberRng(13, 15);
-			break;
+	case 1:
+		mlstId = 11;
+		break;
+	case 2:
+		mlstId = 12;
+		break;
+	default:
+		// The original did rand(13, 14)
+		mlstId = _vm->_rnd->getRandomNumberRng(13, 15);
+		break;
 	}
 
 	// Play the video
@@ -383,11 +382,11 @@ void BSpit::xbaitplate(const ArgumentArray &args) {
 	if (baitPlate->containsPoint(getMousePosition())) {
 		_vm->_vars["bbait"] = 1;
 		_vm->getCard()->drawPicture(4);
-		bait->enable(false); // Disable bait hotspot
+		bait->enable(false);     // Disable bait hotspot
 		baitPlate->enable(true); // Enable baitplate hotspot
 	} else {
 		_vm->_vars["bbait"] = 0;
-		bait->enable(true); // Enable bait hotspot
+		bait->enable(true);       // Enable bait hotspot
 		baitPlate->enable(false); // Disable baitplate hotspot
 	}
 }

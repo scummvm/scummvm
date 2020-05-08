@@ -21,13 +21,13 @@
  */
 
 #include "asyncfio.h"
-#include <tamtypes.h>
-#include <kernel.h>
-#include <fileio.h>
-#include <assert.h>
-#include <string.h>
-#include <fileXio_rpc.h>
 #include "backends/platform/ps2/ps2debug.h"
+#include <assert.h>
+#include <fileXio_rpc.h>
+#include <fileio.h>
+#include <kernel.h>
+#include <string.h>
+#include <tamtypes.h>
 
 #define DEFAULT_MODE (FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IROTH | FIO_S_IWOTH)
 

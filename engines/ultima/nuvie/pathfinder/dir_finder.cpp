@@ -20,10 +20,10 @@
  *
  */
 
+#include "ultima/nuvie/pathfinder/dir_finder.h"
+#include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/map.h"
-#include "ultima/nuvie/pathfinder/dir_finder.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -37,10 +37,7 @@ namespace Nuvie {
 void DirFinder::get_adjacent_dir(sint8 &xdir, sint8 &ydir, sint8 rotate) {
 	struct {
 		sint8 x, y;
-	} neighbors[8] = { { -1, -1}, { +0, -1}, { +1, -1},
-		{ +1, +0},/*ACTOR*/ { +1, +1},
-		{ +0, +1}, { -1, +1}, { -1, +0}
-	};
+	} neighbors[8] = {{-1, -1}, {+0, -1}, {+1, -1}, {+1, +0}, /*ACTOR*/ {+1, +1}, {+0, +1}, {-1, +1}, {-1, +0}};
 
 	for (uint32 start = 0; start < 8; start++)
 		if (neighbors[start].x == xdir && neighbors[start].y == ydir) {
@@ -85,7 +82,7 @@ sint8 DirFinder::get_turn_towards_dir(sint16 oxdir, sint16 oydir, sint8 txdir, s
 	tydir = clamp(tydir, -1, 1);
 	struct {
 		sint8 x, y;
-	} dirs[8] = {{ -1, -1}, { +0, -1}, { +1, -1}, { +1, +0}, { +1, +1}, { +0, +1}, { -1, +1}, { -1, +0}};
+	} dirs[8] = {{-1, -1}, {+0, -1}, {+1, -1}, {+1, +0}, {+1, +1}, {+0, +1}, {-1, +1}, {-1, +0}};
 	uint8 t = 0, o = 0;
 	for (uint8 d = 0; d < 8; d++) {
 		if (dirs[d].x == oxdir && dirs[d].y == oydir)

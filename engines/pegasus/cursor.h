@@ -32,7 +32,7 @@
 #include "pegasus/timers.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace Pegasus {

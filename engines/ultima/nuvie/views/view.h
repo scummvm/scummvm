@@ -40,7 +40,7 @@ class Party;
 class GUI_Button;
 class Actor;
 
-class View: public GUI_Widget {
+class View : public GUI_Widget {
 protected:
 	Configuration *config;
 
@@ -56,7 +56,6 @@ protected:
 	bool new_ui_mode;
 
 public:
-
 	View(Configuration *cfg);
 	~View() override;
 
@@ -75,7 +74,6 @@ public:
 	virtual void close_view() {}
 
 protected:
-
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 	GUI_Button *loadButton(Std::string dir, Std::string name, uint16 x, uint16 y);
 };

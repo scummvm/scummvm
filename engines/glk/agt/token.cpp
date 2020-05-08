@@ -21,8 +21,8 @@
  */
 
 #include "glk/agt/agility.h"
-#include "glk/agt/interp.h"
 #include "glk/agt/exec.h"
+#include "glk/agt/interp.h"
 
 namespace Glk {
 namespace AGT {
@@ -39,8 +39,10 @@ namespace AGT {
 static void it_newdesc(integer item, descr_ptr *newdesc) {
 	descr_ptr *desc;
 
-	if (tnoun(item)) desc = noun_ptr + (item - first_noun);
-	else if (tcreat(item)) desc = creat_ptr + (item - first_creat);
+	if (tnoun(item))
+		desc = noun_ptr + (item - first_noun);
+	else if (tcreat(item))
+		desc = creat_ptr + (item - first_creat);
 	else if (item >= first_room && item <= maxroom)
 		desc = room_ptr + (item - first_room);
 	else {
@@ -57,7 +59,6 @@ static void changepict(int old_pict, int new_pict)
 	pictable[old_pict - 1] = new_pict - 1;
 }
 
-
 static const int antidir[12] = {1, 0, 3, 2, 7, 6, 5, 4, 9, 8, 11, 10};
 
 static void change_passage(int start, int dir, int newend)
@@ -67,13 +68,14 @@ static void change_passage(int start, int dir, int newend)
 {
 	int oldend, i;
 
-	dir--;  /* Convert direction to 0..11 scale */
+	dir--; /* Convert direction to 0..11 scale */
 	oldend = room[start].path[dir];
 	room[start].path[dir] = newend;
 	if (newend == 0) {
 		if (room[oldend - first_room].path[antidir[dir]] == start + first_room)
 			room[oldend - first_room].path[antidir[dir]] = 0;
-		else for (i = 0; i < 12; i++)
+		else
+			for (i = 0; i < 12; i++)
 				if (room[oldend - first_room].path[i] == start + first_room) {
 					room[oldend - first_room].path[i] = 0;
 					break;
@@ -81,7 +83,6 @@ static void change_passage(int start, int dir, int newend)
 	} else
 		room[newend - first_room].path[antidir[dir]] = start + first_room;
 }
-
 
 static long ask_for_number(int n1, int n2) {
 	char s[50];
@@ -94,7 +95,8 @@ static long ask_for_number(int n1, int n2) {
 	for (;;) {
 		writestr(s);
 		n = read_number();
-		if (n1 == n2 || (n >= n1 && n <= n2)) return n;
+		if (n1 == n2 || (n >= n1 && n <= n2))
+			return n;
 		writeln("");
 	}
 }
@@ -104,15 +106,21 @@ static long ask_for_number(int n1, int n2) {
 static rbool mult_rangecheck(long n1, long n2) {
 	int cnt;
 
-	if (n1 == 0 || n2 == 0) return 1;
-	if (n1 < 0) n1 = -n1;
-	if (n2 < 0) n2 = -n2;
+	if (n1 == 0 || n2 == 0)
+		return 1;
+	if (n1 < 0)
+		n1 = -n1;
+	if (n2 < 0)
+		n2 = -n2;
 
-	for (cnt = 0; n1 != 0; n1 >>= 1, cnt++);
-	for (; n2 != 0; n2 >>= 1, cnt++);
+	for (cnt = 0; n1 != 0; n1 >>= 1, cnt++)
+		;
+	for (; n2 != 0; n2 >>= 1, cnt++)
+		;
 	cnt--;
 
-	if (cnt <= 31) return 1; /* We're okay */
+	if (cnt <= 31)
+		return 1; /* We're okay */
 
 	if (!PURE_ERROR)
 		writeln("GAME ERROR: Multiplication out of range.");
@@ -122,19 +130,23 @@ static rbool mult_rangecheck(long n1, long n2) {
 static rbool is_numeric(parse_rec *objrec) {
 	char *s;
 
-	if (objrec->num != 0 || objrec->info == D_NUM) return 1;
-	if (objrec->adj != 0) return 0;
-	if (objrec->noun <= 0) return 0;
+	if (objrec->num != 0 || objrec->info == D_NUM)
+		return 1;
+	if (objrec->adj != 0)
+		return 0;
+	if (objrec->noun <= 0)
+		return 0;
 	(void)strtol(dict[objrec->noun], &s, 10);
 	return (*s == 0); /* *s==0 means no error-- it parsed as a number. */
 }
 
 static void setcase(char *s, rbool up) {
 	for (; *s != 0; s++)
-		if (up) *s = toupper(*s);
-		else *s = tolower(*s);
+		if (up)
+			*s = toupper(*s);
+		else
+			*s = tolower(*s);
 }
-
 
 void move_in_dir(int obj, int dir) {
 	int r;
@@ -145,20 +157,20 @@ void move_in_dir(int obj, int dir) {
 		return;
 	}
 	r = room[r - first_room].path[dir - 1];
-	if (!troom(r)) return; /* Can't go that way; Fail silently */
+	if (!troom(r))
+		return; /* Can't go that way; Fail silently */
 	if (obj == 1)
 		goto_room(r);
 	else
 		it_move(obj, r);
 }
 
-
 /* ------------------------------------------------------------------- */
 /*  Stack routines:   Manipulating the expression stack                */
 /* ------------------------------------------------------------------- */
 
 static long *stack = NULL;
-static int sp = 0; /* Stack pointer */
+static int sp = 0;        /* Stack pointer */
 static int stacksize = 0; /* Actual space allocated to the stack */
 
 void init_stack(void) {
@@ -199,7 +211,6 @@ long pop_expr_stack(void) {
 	return pop_stack();
 }
 
-
 /* opnum: 0=+, 1=-, 2=*, 3=/ 4=% */
 static void op_stack(int opnum) {
 	long n1, n2;
@@ -213,15 +224,20 @@ static void op_stack(int opnum) {
 		n1 = n1 - n2;
 		break;
 	case 2:
-		if (mult_rangecheck(n1, n2)) n1 = n1 * n2;
+		if (mult_rangecheck(n1, n2))
+			n1 = n1 * n2;
 		break;
 	case 3:
-		if (n2 != 0) n1 = n1 / n2;
-		else writeln("GAME ERROR: Division by zero.");
+		if (n2 != 0)
+			n1 = n1 / n2;
+		else
+			writeln("GAME ERROR: Division by zero.");
 		break;
 	case 4:
-		if (n2 != 0) n1 = n1 % n2;
-		else writeln("GAME ERROR: Division by zero.");
+		if (n2 != 0)
+			n1 = n1 % n2;
+		else
+			writeln("GAME ERROR: Division by zero.");
 		break;
 	default:
 		writeln("INTERNAL ERROR: Invalid stack operation.");
@@ -237,8 +253,6 @@ void print_tos(void) {
 		debugout("TOS(xxx)");
 }
 
-
-
 /* ------------------------------------------------------------------- */
 /* METACOMMAND ROUTINES  */
 /*  Functions for scanning and decoding of metacommands */
@@ -246,15 +260,15 @@ void print_tos(void) {
 
 /* #define cret(b) return ((b) ? -1 : 0)*/
 #define cret(b) return (b)
-#define cretn(i,f) cret(tnoun(i) && noun[i-first_noun].f)
-#define cretc(i,f) cret(tcreat(i) && creature[i-first_creat].f)
-#define icretc(f) cret(do_disambig==1 || \
-                       (tcreat(iobj) && creature[iobj-first_creat].f))
+#define cretn(i, f) cret(tnoun(i) && noun[i - first_noun].f)
+#define cretc(i, f) cret(tcreat(i) && creature[i - first_creat].f)
+#define icretc(f) cret(do_disambig == 1 || \
+	                   (tcreat(iobj) && creature[iobj - first_creat].f))
 
 static int obj_cond(int op_, int obj, int arg) {
 	switch (op_) {
 	case 0:
-		cret(in_scope(obj));  /* Present--
+		cret(in_scope(obj)); /* Present--
                       Do we want to use visible here?? */
 	case 1:
 		cret(is_within(obj, 1000, 1)); /* IsWearing */
@@ -295,7 +309,6 @@ static int obj_cond(int op_, int obj, int arg) {
 	}
 }
 
-
 static int exec_cond(int op_, int arg1, int arg2) {
 	int i;
 
@@ -321,7 +334,7 @@ static int exec_cond(int op_, int arg1, int arg2) {
 		     loc + first_room <= arg2); /* BetweenRooms  ?? */
 	case 8:
 		cret(room[arg1 - first_room].seen);
-	case 9:  /* Entered Object? i.e. is iobj valid */
+	case 9: /* Entered Object? i.e. is iobj valid */
 		cret(do_disambig == 1 || iobj > 0);
 	case 10:
 		cret(curr_time > arg1); /* TimeGT */
@@ -339,11 +352,9 @@ static int exec_cond(int op_, int arg1, int arg2) {
 		cret(player_worn != 0); /* WearSome */
 	case 18:
 		cret(player_worn == 0); /* WearNo */
-	case 17:          /* CarryTreas */
-		contloop(i, 1)
-		if (tnoun(i) && noun[i - first_noun].points >= arg1) return 1;
-		contloop(i, 1000)
-		if (tnoun(i) && noun[i - first_noun].points >= arg1) return 1;
+	case 17:                    /* CarryTreas */
+		contloop(i, 1) if (tnoun(i) && noun[i - first_noun].points >= arg1) return 1;
+		contloop(i, 1000) if (tnoun(i) && noun[i - first_noun].points >= arg1) return 1;
 		return 0;
 	case 19:
 		cret(totwt == arg1);
@@ -513,26 +524,25 @@ static int exec_cond(int op_, int arg1, int arg2) {
 	case 117:
 		cret(curr_time % 100 < arg1);
 	case 118:
-		cret(curr_time < 1200);  /* IsAM */
+		cret(curr_time < 1200); /* IsAM */
 
 	case 119:
-		cret(do_disambig);     /* OnDisambig */
+		cret(do_disambig); /* OnDisambig */
 	case 120:
-		cretc(arg1, hostile);   /* IsHostile */
-	case 121:         /* HostilePresent */
-		creatloop(i)
-		if (creature[i].location == loc + first_room &&
-		        creature[i].hostile) return 1;
+		cretc(arg1, hostile); /* IsHostile */
+	case 121:                 /* HostilePresent */
+		creatloop(i) if (creature[i].location == loc + first_room &&
+		                 creature[i].hostile) return 1;
 		return 0;
 	/* Otherwise, we're in trouble. */
 	case 122:
 		cret(actor_in_scope); /* NameWasPresent */
-	case 123: /* OncePerTurn */
+	case 123:                 /* OncePerTurn */
 		if (beforecmd)
 			cret(start_of_turn);
 		else
 			cret(end_of_turn);
-	case 124:  /* IsClass */
+	case 124: /* IsClass */
 		cret(arg2 == 0 || matchclass(arg1, arg2));
 	case 125:
 		cret(getattr(arg1, arg2)); /* IsSet */
@@ -586,11 +596,10 @@ static int exec_cond(int op_, int arg1, int arg2) {
 #undef cretn
 #undef cretc
 
-
 static void obj_act(int op_, int obj) {
 	switch (op_) {
 	case 0:
-	case 1:  /* open and close */
+	case 1: /* open and close */
 		if (tnoun(obj))
 			noun[obj - first_noun].open = (op_ == 0);
 		break;
@@ -603,7 +612,6 @@ static void obj_act(int op_, int obj) {
 		break;
 	}
 }
-
 
 static void exec_action(int op_, int arg1, int arg2) {
 	int i, j;
@@ -649,30 +657,32 @@ static void exec_action(int op_, int arg1, int arg2) {
 		break;
 	case 1012:
 		if (it_loc(arg1) == 1000) {
-			if (PURE_WEAR) drop_obj(arg1);
-			else it_move(arg1, 1);
+			if (PURE_WEAR)
+				drop_obj(arg1);
+			else
+				it_move(arg1, 1);
 		}
 		break;
 	case 1013:
 		fontcmd(0, arg1 - 1);
-		break;  /* Load font */
+		break; /* Load font */
 	case 1014:
 		pictcmd(1, pictable[arg1 - 1]);
-		break;  /* Show picture */
+		break; /* Show picture */
 	case 1015:
 		changepict(arg1, arg2);
 		break; /* ChangePicture */
 	case 1016:
 		if (PICT_SUPPORT &&
-		        yesno("Would you like to see the picture?"))
+		    yesno("Would you like to see the picture?"))
 			pictcmd(1, pictable[arg1 - 1]);
 		break;
 	case 1017:
 		pictcmd(2, arg1);
-		break;  /* Show room pix */
+		break; /* Show room pix */
 	case 1018:
 		if (PICT_SUPPORT &&
-		        yesno("Would you like to see the picture?"))
+		    yesno("Would you like to see the picture?"))
 			pictcmd(2, arg1 - 1);
 		break;
 	case 1019:
@@ -686,16 +696,16 @@ static void exec_action(int op_, int arg1, int arg2) {
 		break;
 	case 1022:
 		musiccmd(3, -1);
-		break;  /* Stop Repeat */
+		break; /* Stop Repeat */
 	case 1023:
 		musiccmd(4, -1);
-		break;  /* Stop song */
+		break; /* Stop song */
 	case 1024:
 		musiccmd(5, -1);
-		break;  /* Suspend song */
+		break; /* Suspend song */
 	case 1025:
 		musiccmd(6, -1);
-		break;   /* Resume song */
+		break; /* Resume song */
 	case 1026:
 		if (tnoun(dobj))
 			noun[dobj - first_noun].movable = !noun[dobj - first_noun].movable;
@@ -704,9 +714,12 @@ static void exec_action(int op_, int arg1, int arg2) {
 		it_newdesc(arg1, &msg_ptr[arg2 - 1]);
 		break;
 	case 1028:
-		if (tnoun(arg1)) noun[arg1 - first_noun].points = arg2;
-		else if (tcreat(arg1)) creature[arg1 - first_creat].points = arg2;
-		else if (troom(arg1)) room[arg1 - first_room].points = arg2;
+		if (tnoun(arg1))
+			noun[arg1 - first_noun].points = arg2;
+		else if (tcreat(arg1))
+			creature[arg1 - first_creat].points = arg2;
+		else if (troom(arg1))
+			room[arg1 - first_room].points = arg2;
 		break;
 	case 1029:
 		it_destroy(iobj);
@@ -714,7 +727,8 @@ static void exec_action(int op_, int arg1, int arg2) {
 	case 1030:
 		tmpstr = agt_readline(3);
 		i = strlen(tmpstr) - 1;
-		if (i > 0 && tmpstr[i] == '\n') tmpstr[i] = 0;
+		if (i > 0 && tmpstr[i] == '\n')
+			tmpstr[i] = 0;
 		strncpy(userstr[arg1 - 1], tmpstr, 80);
 		rfree(tmpstr);
 		break;
@@ -748,8 +762,10 @@ static void exec_action(int op_, int arg1, int arg2) {
 		break;
 	case 1042:
 		if (it_loc(dobj) == 1000) {
-			if (PURE_WEAR) it_move(dobj, 1);
-			else drop_obj(dobj);
+			if (PURE_WEAR)
+				it_move(dobj, 1);
+			else
+				drop_obj(dobj);
 		}
 		break;
 	case 1043: /* drop all */
@@ -781,13 +797,11 @@ static void exec_action(int op_, int arg1, int arg2) {
 		safecontloop(i, j, 1000) it_move(i, arg1);
 		break;
 	case 1052:
-		nounloop(i)
-		if (player_has(i + first_noun) && noun[i].points > arg2)
-			it_move(i + first_noun, arg1);
+		nounloop(i) if (player_has(i + first_noun) && noun[i].points > arg2)
+		    it_move(i + first_noun, arg1);
 		break;
 	case 1053:
-		safecontloop(i, j, arg1)
-		if (tnoun(i)) it_move(i, arg2);
+		safecontloop(i, j, arg1) if (tnoun(i)) it_move(i, arg2);
 		break;
 	case 1054:
 		it_destroy(arg1);
@@ -811,9 +825,8 @@ static void exec_action(int op_, int arg1, int arg2) {
 		if (tcreat(arg1))
 			creature[arg1 - first_creat].groupmemb = (op_ == 1059);
 		break;
-	case 1061:   /* Move group */
-		safecontloop(i, j, loc + first_room)
-		if (it_group(i)) it_move(i, arg1);
+	case 1061: /* Move group */
+		safecontloop(i, j, loc + first_room) if (it_group(i)) it_move(i, arg1);
 		break;
 	/* 1062 is RedirectTo */
 	case 1063:
@@ -863,7 +876,7 @@ static void exec_action(int op_, int arg1, int arg2) {
 		break;
 	case 1082:
 		look_room();
-		break;   /* LOOK */
+		break; /* LOOK */
 	case 1083:
 		msgout(arg1, 1);
 		break;
@@ -975,27 +988,30 @@ static void exec_action(int op_, int arg1, int arg2) {
 		statusmode = arg1;
 		break;
 	case 1118:
-		if (!mult_rangecheck(agt_var[arg1], arg2)) break;
+		if (!mult_rangecheck(agt_var[arg1], arg2))
+			break;
 		agt_var[arg1] *= arg2;
 		break;
 	case 1119:
 		if (arg2 == 0) {
 			if (!PURE_ERROR)
 				writeln("GAME ERROR: Division by zero.");
-		} else agt_var[arg1] /= arg2;
+		} else
+			agt_var[arg1] /= arg2;
 		break;
 	case 1120:
 		if (arg2 == 0) {
 			if (!PURE_ERROR)
 				writeln("GAME ERROR: Attempt to divide by zero.");
-		} else agt_var[arg1] %= arg2;
+		} else
+			agt_var[arg1] %= arg2;
 		break;
 	case 1121:
 		agt_waitkey();
 		break;
 	case 1122:
 		last_he = arg1;
-		break;   /* SetHE */
+		break; /* SetHE */
 	case 1123:
 		last_she = arg1;
 		break;
@@ -1015,7 +1031,7 @@ static void exec_action(int op_, int arg1, int arg2) {
 	case 1128:
 		msgout(arg1, 1);
 		break; /* FailMessage */
-	case 1129:  /* StdMessage */
+	case 1129: /* StdMessage */
 		sysmsg(arg1, "GAME ERROR: Standard message not defined.");
 		break;
 	case 1130:
@@ -1025,11 +1041,14 @@ static void exec_action(int op_, int arg1, int arg2) {
 		sysmsg(arg1, "GAME ERROR: Standard message not defined.");
 		break;
 	case 1132: /* AND */
-		break;  /* These don't do anything under normal circumstances */
-	case 1133:  /* SetClass */
-		if (troom(arg1)) room[arg1 - first_room].oclass = arg2;
-		else if (tnoun(arg1)) noun[arg1 - first_noun].oclass = arg2;
-		else if (tcreat(arg1)) noun[arg1 - first_creat].oclass = arg2;
+		break; /* These don't do anything under normal circumstances */
+	case 1133: /* SetClass */
+		if (troom(arg1))
+			room[arg1 - first_room].oclass = arg2;
+		else if (tnoun(arg1))
+			noun[arg1 - first_noun].oclass = arg2;
+		else if (tcreat(arg1))
+			noun[arg1 - first_creat].oclass = arg2;
 		break;
 	case 1134:
 		agt_var[arg1] = it_class(arg2);
@@ -1132,28 +1151,30 @@ int exec_instr(op_rec *oprec)
 	case 1151: /* EndDisambig <num> */
 		if (do_disambig) {
 			disambig_score = oprec->arg1;
-			return 102;  /* "End turn" if disambiguating */
+			return 102; /* "End turn" if disambiguating */
 		}
-		return 0;  /* ... otherwise do nothing */
+		return 0; /* ... otherwise do nothing */
 	case 1062:
 	case 1152:
 		return 103; /* Redirect */
 	case WIN_ACT:
 		winflag = 1;
-		return 0;  /* win game */
-	case (WIN_ACT+1):
+		return 0; /* win game */
+	case (WIN_ACT + 1):
 		endflag = 1;
 		return 102; /* end game */
-	case (WIN_ACT+2):
+	case (WIN_ACT + 2):
 		return 100; /* end this command */
-	case (WIN_ACT+3):
+	case (WIN_ACT + 3):
 		return 101; /* end all commands */
-	case (WIN_ACT+4):
+	case (WIN_ACT + 4):
 		return 102; /* end turn */
 	default:
 		exec_action(oprec->op, oprec->arg1, oprec->arg2);
-		if (oprec->failmsg) return 102;
-		else return 0;
+		if (oprec->failmsg)
+			return 102;
+		else
+			return 0;
 	}
 }
 

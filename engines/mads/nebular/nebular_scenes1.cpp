@@ -20,11 +20,11 @@
  *
  */
 
+#include "mads/nebular/nebular_scenes1.h"
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
-#include "mads/nebular/nebular_scenes1.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -194,7 +194,7 @@ void Scene101::enter() {
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(100, 152);
 
-	if ((_scene->_priorSceneId == 112) || ((_scene->_priorSceneId == RETURNING_FROM_DIALOG) && _sittingFl )) {
+	if ((_scene->_priorSceneId == 112) || ((_scene->_priorSceneId == RETURNING_FROM_DIALOG) && _sittingFl)) {
 		_game._player._visible = false;
 		_sittingFl = true;
 		_game._player._playerPos = Common::Point(161, 123);
@@ -447,7 +447,7 @@ void Scene101::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_LOOK, NOUN_SHIELD_ACCESS_PANEL) || (_action.isAction(VERB_LOOK, NOUN_SHIELD_MODULATOR) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) ) {
+	if (_action.isAction(VERB_LOOK, NOUN_SHIELD_ACCESS_PANEL) || (_action.isAction(VERB_LOOK, NOUN_SHIELD_MODULATOR) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR))) {
 		if (_panelOpened) {
 			if (_game._objects.isInRoom(OBJ_SHIELD_MODULATOR))
 				_vm->_dialogs->show(10128);
@@ -794,8 +794,7 @@ void Scene102::step() {
 		}
 	}
 
-	if (!_activeMsgFl && (_game._player._playerPos == Common::Point(177, 114)) && (_game._player._facing == FACING_NORTH)
-	&& (_vm->getRandomNumber(1, 5000) == 1)) {
+	if (!_activeMsgFl && (_game._player._playerPos == Common::Point(177, 114)) && (_game._player._facing == FACING_NORTH) && (_vm->getRandomNumber(1, 5000) == 1)) {
 		_scene->_kernelMessages.reset();
 		_activeMsgFl = false;
 		addRandomMessage();
@@ -1040,7 +1039,7 @@ void Scene102::actions() {
 		}
 	}
 
-	if ((_action.isObject(NOUN_LADDER) || _action.isObject(NOUN_HATCHWAY)) && (_action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH)) ) {
+	if ((_action.isObject(NOUN_LADDER) || _action.isObject(NOUN_HATCHWAY)) && (_action.isAction(VERB_CLIMB_UP) || _action.isAction(VERB_CLIMB_THROUGH))) {
 		switch (_game._trigger) {
 		case 0:
 			_scene->loadAnimation(formAnimName('A', -1), 1);
@@ -1377,15 +1376,13 @@ void Scene103::step() {
 		Common::Point pt = _vm->_game->_player._playerPos;
 		int dist = _vm->hypotenuse(pt.x - 58, pt.y - 93);
 		_vm->_sound->command(27, (dist * -128 / 378) + 127);
-		}
-		break;
+	} break;
 
 	case 73: {
 		Common::Point pt = _vm->_game->_player._playerPos;
 		int dist = _vm->hypotenuse(pt.x - 266, pt.y - 81);
 		_vm->_sound->command(27, (dist * -127 / 378) + 127);
-		}
-		break;
+	} break;
 
 	default:
 		break;
@@ -1897,8 +1894,7 @@ void Scene105::step() {
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], oldIdx);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 8);
 			_scene->_sequences.addTimer(90, 3);
-			}
-			break;
+		} break;
 
 		case 3:
 			_vm->_dialogs->show(10507);
@@ -2128,11 +2124,11 @@ void Scene106::step() {
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 44, 73);
 			}
 		} else if (_game._trigger == 73)
-				_game._player._visible = false;
+			_game._player._visible = false;
 		else if (_game._trigger == 72)
-				_scene->_sequences.addTimer(24, 74);
+			_scene->_sequences.addTimer(24, 74);
 		else if (_game._trigger == 74)
-				_scene->_nextSceneId = 102;
+			_scene->_nextSceneId = 102;
 	}
 
 	if (_game._trigger == 75) {
@@ -2591,9 +2587,7 @@ void Scene109::preActions() {
 	if (_action.isAction(VERB_SWIM_UNDER, NOUN_OVERHANG_TO_WEST))
 		_game._player._walkOffScreenSceneId = 108;
 
-	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT))
-			&& (_action.isTarget(NOUN_SMALL_HOLE) || _action.isTarget(NOUN_TUNNEL))
-			&& (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER))) {
+	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT)) && (_action.isTarget(NOUN_SMALL_HOLE) || _action.isTarget(NOUN_TUNNEL)) && (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER))) {
 		int idx = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if ((idx >= 0) && _game._objects.isInInventory(idx)) {
 			_game._player._prepareWalkPos = Common::Point(106, 38);
@@ -2603,8 +2597,7 @@ void Scene109::preActions() {
 		}
 	}
 
-	if ((_action.isAction(VERB_SWIM_INTO, NOUN_TUNNEL) || _action.isAction(VERB_SWIM_TO, NOUN_SMALL_HOLE))
-	&& (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(NOUN_TUNNEL)))
+	if ((_action.isAction(VERB_SWIM_INTO, NOUN_TUNNEL) || _action.isAction(VERB_SWIM_TO, NOUN_SMALL_HOLE)) && (!_globals[kHoovicAlive] || _globals[kHoovicSated]) && (_action.isObject(NOUN_TUNNEL)))
 		_game._player._walkOffScreenSceneId = 110;
 
 	_hungryFl = false;
@@ -2757,8 +2750,7 @@ void Scene109::actions() {
 						int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_scene->_sequences.addTimer(65, 6);
-						}
-						break;
+					} break;
 
 					case 6: {
 						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -2767,8 +2759,7 @@ void Scene109::actions() {
 						int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 7);
-						}
-						break;
+					} break;
 
 					case 7: {
 						_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -2776,8 +2767,7 @@ void Scene109::actions() {
 						int idx = _scene->_dynamicHotspots.add(53, 348, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(-3, 0), FACING_NORTHEAST);
 						_vm->_dialogs->show(10915);
-						}
-						break;
+					} break;
 
 					case 8:
 						_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 7, 1, 0, 0);
@@ -2880,7 +2870,7 @@ void Scene110::enter() {
 		_game._player._facing = FACING_SOUTH;
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
-		_scene->loadAnimation(Resources::formatName(110, 'T', 1,EXT_AA, ""), 70);
+		_scene->loadAnimation(Resources::formatName(110, 'T', 1, EXT_AA, ""), 70);
 	}
 
 	sceneEntrySound();

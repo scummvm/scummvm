@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 
 #include "ultima/nuvie/gui/gui.h"
@@ -35,8 +34,7 @@ namespace Ultima {
 namespace Nuvie {
 
 GUI_YesNoDialog::GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const char *msg,
-		CallBack *yesCallback, CallBack *noCallback) :
-	GUI_Dialog(x, y, w, h, 244, 216, 131, GUI_DIALOG_MOVABLE) {
+                                 CallBack *yesCallback, CallBack *noCallback) : GUI_Dialog(x, y, w, h, 244, 216, 131, GUI_DIALOG_MOVABLE) {
 	GUI_Widget *widget;
 	b_index_num = -1;
 
@@ -51,10 +49,9 @@ GUI_YesNoDialog::GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const cha
 	AddWidget(no_button);
 	button_index[1] = no_button;
 
-	widget = (GUI_Widget *) new GUI_Text(10, 25, 0, 0, 0, msg, gui->get_font());
+	widget = (GUI_Widget *)new GUI_Text(10, 25, 0, 0, 0, msg, gui->get_font());
 	AddWidget(widget);
 }
-
 
 GUI_YesNoDialog::~GUI_YesNoDialog() {
 }

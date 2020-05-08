@@ -32,7 +32,7 @@ namespace Adl {
 
 class GraphicsMan {
 public:
-	virtual ~GraphicsMan() { }
+	virtual ~GraphicsMan() {}
 
 	// Applesoft BASIC HLINE
 	virtual void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const = 0;
@@ -47,7 +47,7 @@ protected:
 };
 
 // Used in hires1
-template <class T>
+template<class T>
 class GraphicsMan_v1 : public GraphicsMan {
 public:
 	GraphicsMan_v1<T>(T &display) : _display(display) { this->setBounds(Common::Rect(280, 160)); }
@@ -67,10 +67,10 @@ private:
 };
 
 // Used in hires0 and hires2-hires4
-template <class T>
+template<class T>
 class GraphicsMan_v2 : public GraphicsMan_v1<T> {
 public:
-	GraphicsMan_v2<T>(T &display) : GraphicsMan_v1<T>(display), _color(0) { }
+	GraphicsMan_v2<T>(T &display) : GraphicsMan_v1<T>(display), _color(0) {}
 	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) override;
 
 protected:
@@ -94,24 +94,24 @@ private:
 };
 
 // Used in hires5, hires6 and gelfling (possibly others as well)
-template <class T>
+template<class T>
 class GraphicsMan_v3 : public GraphicsMan_v2<T> {
 public:
-	GraphicsMan_v3<T>(T &display) : GraphicsMan_v2<T>(display) { }
+	GraphicsMan_v3<T>(T &display) : GraphicsMan_v2<T>(display) {}
 
 private:
 	void fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) override;
 	void fillAt(Common::Point p, const byte pattern) override;
 };
 
-template <class T>
+template<class T>
 void GraphicsMan_v1<T>::clearScreen() const {
 	_display.setMode(Display::kModeMixed);
 	_display.clear(getClearColor());
 }
 
 // Draws a four-connected line
-template <class T>
+template<class T>
 void GraphicsMan_v1<T>::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const {
 	int16 deltaX = p2.x - p1.x;
 	int8 xStep = 1;
@@ -149,13 +149,13 @@ void GraphicsMan_v1<T>::drawLine(const Common::Point &p1, const Common::Point &p
 	}
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v1<T>::putPixel(const Common::Point &p, byte color) const {
 	if (this->_bounds.contains(p))
 		_display.putPixel(p, color);
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v1<T>::drawShapePixel(Common::Point &p, byte color, byte bits, byte quadrant) const {
 	if (bits & 4)
 		putPixel(p, color);
@@ -168,13 +168,12 @@ void GraphicsMan_v1<T>::drawShapePixel(Common::Point &p, byte color, byte bits, 
 		p.y += (bits & 2 ? 1 : -1);
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v1<T>::drawShape(Common::ReadStream &corners, Common::Point &pos, byte rotation, byte scaling, byte color) const {
 	const byte stepping[] = {
-		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
-		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
-		0xff
-	};
+	    0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
+	    0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
+	    0xff};
 
 	byte quadrant = rotation >> 4;
 	rotation &= 0xf;
@@ -206,7 +205,7 @@ void GraphicsMan_v1<T>::drawShape(Common::ReadStream &corners, Common::Point &po
 	}
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v1<T>::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
 	byte x, y;
 	bool bNewLine = false;
@@ -244,7 +243,7 @@ void GraphicsMan_v1<T>::drawPic(Common::SeekableReadStream &pic, const Common::P
 	}
 }
 
-template <class T>
+template<class T>
 bool GraphicsMan_v2<T>::readByte(Common::SeekableReadStream &pic, byte &b) {
 	b = pic.readByte();
 
@@ -259,7 +258,7 @@ bool GraphicsMan_v2<T>::readByte(Common::SeekableReadStream &pic, byte &b) {
 	return true;
 }
 
-template <class T>
+template<class T>
 bool GraphicsMan_v2<T>::readPoint(Common::SeekableReadStream &pic, Common::Point &p) {
 	byte b;
 
@@ -277,32 +276,31 @@ bool GraphicsMan_v2<T>::readPoint(Common::SeekableReadStream &pic, Common::Point
 	return true;
 }
 
-template <class T>
+template<class T>
 byte GraphicsMan_v2<T>::getPatternColor(const Common::Point &p, byte pattern) {
 	const byte fillPatterns[][4] = {
-		{ 0x00, 0x00, 0x00, 0x00 },
-		{ 0x80, 0x80, 0x80, 0x80 },
-		{ 0xff, 0xff, 0xff, 0xff },
-		{ 0x7f, 0x7f, 0x7f, 0x7f },
-		{ 0x2a, 0x55, 0x2a, 0x55 },
-		{ 0xaa, 0xd5, 0xaa, 0xd5 },
-		{ 0x55, 0x2a, 0x55, 0x2a },
-		{ 0xd5, 0xaa, 0xd5, 0xaa },
-		{ 0x33, 0x66, 0x4c, 0x19 },
-		{ 0xb3, 0xe6, 0xcc, 0x99 },
-		{ 0x22, 0x44, 0x08, 0x11 },
-		{ 0xa2, 0xc4, 0x88, 0x91 },
-		{ 0x11, 0x22, 0x44, 0x08 },
-		{ 0x91, 0xa2, 0xc4, 0x88 },
-		{ 0x6e, 0x5d, 0x3b, 0x77 },
-		{ 0xee, 0xdd, 0xbb, 0xf7 },
-		{ 0x5d, 0x3b, 0x77, 0x6e },
-		{ 0xdd, 0xbb, 0xf7, 0xee },
-		{ 0x66, 0x4c, 0x19, 0x33 },
-		{ 0xe6, 0xcc, 0x99, 0xb3 },
-		{ 0x33, 0x66, 0x4c, 0x19 },
-		{ 0xb3, 0xe6, 0xcc, 0x99 }
-	};
+	    {0x00, 0x00, 0x00, 0x00},
+	    {0x80, 0x80, 0x80, 0x80},
+	    {0xff, 0xff, 0xff, 0xff},
+	    {0x7f, 0x7f, 0x7f, 0x7f},
+	    {0x2a, 0x55, 0x2a, 0x55},
+	    {0xaa, 0xd5, 0xaa, 0xd5},
+	    {0x55, 0x2a, 0x55, 0x2a},
+	    {0xd5, 0xaa, 0xd5, 0xaa},
+	    {0x33, 0x66, 0x4c, 0x19},
+	    {0xb3, 0xe6, 0xcc, 0x99},
+	    {0x22, 0x44, 0x08, 0x11},
+	    {0xa2, 0xc4, 0x88, 0x91},
+	    {0x11, 0x22, 0x44, 0x08},
+	    {0x91, 0xa2, 0xc4, 0x88},
+	    {0x6e, 0x5d, 0x3b, 0x77},
+	    {0xee, 0xdd, 0xbb, 0xf7},
+	    {0x5d, 0x3b, 0x77, 0x6e},
+	    {0xdd, 0xbb, 0xf7, 0xee},
+	    {0x66, 0x4c, 0x19, 0x33},
+	    {0xe6, 0xcc, 0x99, 0xb3},
+	    {0x33, 0x66, 0x4c, 0x19},
+	    {0xb3, 0xe6, 0xcc, 0x99}};
 
 	if (pattern >= ARRAYSIZE(fillPatterns))
 		error("Invalid fill pattern %i encountered in picture", pattern);
@@ -313,7 +311,7 @@ byte GraphicsMan_v2<T>::getPatternColor(const Common::Point &p, byte pattern) {
 	return fillPatterns[pattern][offset % sizeof(fillPatterns[0])];
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v2<T>::drawCorners(Common::SeekableReadStream &pic, bool yFirst) {
 	Common::Point p;
 
@@ -338,7 +336,7 @@ void GraphicsMan_v2<T>::drawCorners(Common::SeekableReadStream &pic, bool yFirst
 		this->drawLine(p, Common::Point(n, p.y), _color);
 		p.x = n;
 
-doYStep:
+	doYStep:
 		if (!readByte(pic, b))
 			return;
 
@@ -354,7 +352,7 @@ doYStep:
 	}
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v2<T>::drawRelativeLines(Common::SeekableReadStream &pic) {
 	Common::Point p1;
 
@@ -389,7 +387,7 @@ void GraphicsMan_v2<T>::drawRelativeLines(Common::SeekableReadStream &pic) {
 	}
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v2<T>::drawAbsoluteLines(Common::SeekableReadStream &pic) {
 	Common::Point p1;
 
@@ -409,12 +407,12 @@ void GraphicsMan_v2<T>::drawAbsoluteLines(Common::SeekableReadStream &pic) {
 	}
 }
 
-template <class T>
+template<class T>
 bool GraphicsMan_v2<T>::canFillAt(const Common::Point &p, const bool stopBit) {
 	return this->_display.getPixelBit(p) != stopBit && this->_display.getPixelBit(Common::Point(p.x + 1, p.y)) != stopBit;
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v2<T>::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
 	byte color = getPatternColor(p, pattern);
 
@@ -429,7 +427,7 @@ void GraphicsMan_v2<T>::fillRowLeft(Common::Point p, const byte pattern, const b
 	}
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v2<T>::fillRow(Common::Point p, const byte pattern, const bool stopBit) {
 	// Set pixel at p and palette
 	byte color = getPatternColor(p, pattern);
@@ -452,19 +450,20 @@ void GraphicsMan_v2<T>::fillRow(Common::Point p, const byte pattern, const bool 
 	}
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v2<T>::fillAt(Common::Point p, const byte pattern) {
 	const bool stopBit = !this->_display.getPixelBit(p);
 
 	// Move up into the open space above p
-	while (--p.y >= this->_bounds.top && canFillAt(p, stopBit)) {}
+	while (--p.y >= this->_bounds.top && canFillAt(p, stopBit)) {
+	}
 
 	// Then fill by moving down
 	while (++p.y < this->_bounds.bottom && canFillAt(p, stopBit))
 		fillRow(p, pattern, stopBit);
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v2<T>::fill(Common::SeekableReadStream &pic) {
 	byte pattern;
 
@@ -482,7 +481,7 @@ void GraphicsMan_v2<T>::fill(Common::SeekableReadStream &pic) {
 	}
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v2<T>::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
 	// NOTE: The original engine only resets the color for overlays. As a result, room
 	// pictures that draw without setting a color or clearing the screen, will use the
@@ -552,7 +551,7 @@ void GraphicsMan_v2<T>::drawPic(Common::SeekableReadStream &pic, const Common::P
 	}
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v3<T>::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
 	byte color = this->getPatternColor(p, pattern);
 
@@ -568,11 +567,11 @@ void GraphicsMan_v3<T>::fillRowLeft(Common::Point p, const byte pattern, const b
 	}
 }
 
-template <class T>
+template<class T>
 void GraphicsMan_v3<T>::fillAt(Common::Point p, const byte pattern) {
 	// If the row at p cannot be filled, we do nothing
 	if (!this->canFillAt(p))
-			return;
+		return;
 
 	this->fillRow(p, pattern);
 

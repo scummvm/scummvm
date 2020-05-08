@@ -35,12 +35,14 @@ protected:
 	SherlockEngine *_vm;
 
 	Map(SherlockEngine *vm);
+
 public:
 	Point32 _overPos;
 	Point32 _bigPos;
 	int _charPoint, _oldCharPoint;
 	bool _active;
 	bool _frameChangeFlag;
+
 public:
 	static Map *init(SherlockEngine *vm);
 	virtual ~Map() {}

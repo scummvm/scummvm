@@ -22,13 +22,13 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+#include "ultima/ultima8/convert/convert_shape.h"
+#include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
+#include "ultima/ultima8/convert/u8/convert_shape_u8.h"
+#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/graphics/raw_shape_frame.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/graphics/raw_shape_frame.h"
-#include "ultima/ultima8/convert/convert_shape.h"
-#include "ultima/ultima8/convert/u8/convert_shape_u8.h"
-#include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 
 #include "common/memstream.h"
 
@@ -41,7 +41,7 @@ DEFINE_CUSTOM_MEMORY_ALLOCATION(Shape)
 
 Shape::Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
              const uint16 id, const uint32 shape)
-		: _flexId(id), _shapeNum(shape), _palette(nullptr) {
+    : _flexId(id), _shapeNum(shape), _palette(nullptr) {
 	// NB: U8 style!
 	loadFrames(data, size, format);
 
@@ -49,7 +49,7 @@ Shape::Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
 }
 
 Shape::Shape(IDataSource *src, const ConvertShapeFormat *format)
-	: _flexId(0), _shapeNum(0), _palette(nullptr) {
+    : _flexId(0), _shapeNum(0), _palette(nullptr) {
 	// NB: U8 style!
 	uint32 size = src->size();
 	uint8 *data = new uint8[size];
@@ -170,30 +170,38 @@ Common::Array<RawShapeFrame *> Shape::loadGenericFormat(const uint8 *data, uint3
 	uint8 special[256];
 	if (format->_bytes_special) {
 		memset(special, 0, 256);
-		for (uint32 i = 0; i < format->_bytes_special; i++) special[ds.readByte() & 0xFF] = i + 2;
+		for (uint32 i = 0; i < format->_bytes_special; i++)
+			special[ds.readByte() & 0xFF] = i + 2;
 	}
 
 	// Skip unknown
 	ds.skip(format->_bytes_header_unk);
 
 	// Read framecount, default 1 if no
-	if (format->_bytes_num_frames) framecount = ds.readX(format->_bytes_num_frames);
-	else framecount = 1;
-	if (framecount == 0) framecount = ConvertShape::CalcNumFrames(&ds, format, size, 0);
+	if (format->_bytes_num_frames)
+		framecount = ds.readX(format->_bytes_num_frames);
+	else
+		framecount = 1;
+	if (framecount == 0)
+		framecount = ConvertShape::CalcNumFrames(&ds, format, size, 0);
 
 	frames.reserve(framecount);
 
 	for (uint i = 0; i < framecount; ++i) {
 		// Read the offset
-		if (format->_bytes_frame_offset) frameoffset = ds.readX(format->_bytes_frame_offset) + format->_bytes_special;
-		else frameoffset = format->_len_header + (format->_len_frameheader * i);
+		if (format->_bytes_frame_offset)
+			frameoffset = ds.readX(format->_bytes_frame_offset) + format->_bytes_special;
+		else
+			frameoffset = format->_len_header + (format->_len_frameheader * i);
 
 		// Skip the unknown
 		ds.skip(format->_bytes_frameheader_unk);
 
 		// Read frame_length
-		if (format->_bytes_frame_length) framesize = ds.readX(format->_bytes_frame_length) + format->_bytes_frame_length_kludge;
-		else framesize = size - frameoffset;
+		if (format->_bytes_frame_length)
+			framesize = ds.readX(format->_bytes_frame_length) + format->_bytes_frame_length_kludge;
+		else
+			framesize = size - frameoffset;
 
 		if (framesize > size) {
 			warning("shape frame %d goes off the end of the buffer, stopping early", i);
@@ -276,7 +284,6 @@ const ShapeFrame *Shape::getFrame(unsigned int frame) const {
 	else
 		return nullptr;
 }
-
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

@@ -23,6 +23,7 @@
 #ifndef TITANIC_TRUE_TALK_MANAGER_H
 #define TITANIC_TRUE_TALK_MANAGER_H
 
+#include "titanic/game_state.h"
 #include "titanic/messages/messages.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/dialogue_file.h"
@@ -31,7 +32,6 @@
 #include "titanic/true_talk/tt_quotes_tree.h"
 #include "titanic/true_talk/tt_scripts.h"
 #include "titanic/true_talk/tt_talker.h"
-#include "titanic/game_state.h"
 
 namespace Titanic {
 
@@ -52,6 +52,7 @@ private:
 	int _dialogueId;
 	int _speechDuration;
 	TTtalkerList _talkers;
+
 private:
 	/**
 	 * Loads the statics for the class
@@ -120,6 +121,7 @@ private:
 	 * Return the game state
 	 */
 	CGameState *getGameState() const;
+
 public:
 	static int _v1;
 	static int _v2;
@@ -135,9 +137,11 @@ public:
 	static CTrueTalkNPC *_currentNPC;
 
 	static void setFlags(int index, int val);
+
 public:
 	TTquotes _quotes;
 	TTquotesTree _quotesTree;
+
 public:
 	/**
 	 * Get a specified state value from the currently set NPC
@@ -148,6 +152,7 @@ public:
 	 * Trigger an NPC action
 	 */
 	static bool triggerAction(int action, int param);
+
 public:
 	CTrueTalkManager(CGameManager *owner);
 	~CTrueTalkManager();

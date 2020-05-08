@@ -22,8 +22,8 @@
 
 #include "video/avi_decoder.h"
 
-#include "gnap/gnap.h"
 #include "gnap/gamesys.h"
+#include "gnap/gnap.h"
 #include "gnap/resource.h"
 #include "gnap/scenes/intro.h"
 
@@ -38,24 +38,24 @@ int SceneIntro::init() {
 
 void SceneIntro::run() {
 	const int animIdArr[] = {
-		0x356, 0x357, 0x358, 0x35A, 0x35F,
-		0x360, 0x361, 0x362, 0x363, 0x364,
-		0x365, 0x368, 0x369, 0x36B, 0x378,
-		0x36C, 0x36D, 0x36E, 0x36F, 0x370,
-		0x371, 0x372, 0x373, 0x374, 0x375,
-		0x376, 0x377, 0x378, 0x379, 0x37A,
-		0x37B, 0};
+	    0x356, 0x357, 0x358, 0x35A, 0x35F,
+	    0x360, 0x361, 0x362, 0x363, 0x364,
+	    0x365, 0x368, 0x369, 0x36B, 0x378,
+	    0x36C, 0x36D, 0x36E, 0x36F, 0x370,
+	    0x371, 0x372, 0x373, 0x374, 0x375,
+	    0x376, 0x377, 0x378, 0x379, 0x37A,
+	    0x37B, 0};
 
 	const int backgroundIdArr[] = {
-		0x354, 0x355, 0, 1, 3,
-		4, 5, 6, 7, 8,
-		7, 9, 0xA, 0xB, 0xC,
-		0xD, 0xE, 0xF, 0x10, 0x11,
-		0x12, 0x13, 0x17, 0x14, 0x19,
-		0x1A, 0x14, 0x15, 0x16, 0x14,
-		0x19, 0};
+	    0x354, 0x355, 0, 1, 3,
+	    4, 5, 6, 7, 8,
+	    7, 9, 0xA, 0xB, 0xC,
+	    0xD, 0xE, 0xF, 0x10, 0x11,
+	    0x12, 0x13, 0x17, 0x14, 0x19,
+	    0x1A, 0x14, 0x15, 0x16, 0x14,
+	    0x19, 0};
 
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 	int index = 0;
 	bool skip = false;
 
@@ -115,7 +115,7 @@ void SceneIntro::run() {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
-				event.type == Common::EVENT_LBUTTONUP)
+			    event.type == Common::EVENT_LBUTTONUP)
 				skipVideo = true;
 		}
 
@@ -131,11 +131,11 @@ void SceneIntro::run() {
 	while (!_vm->_sceneDone) {
 		_vm->gameUpdateTick();
 
-		if (gameSys.getAnimationStatus(0) == 2 || skip ) {
+		if (gameSys.getAnimationStatus(0) == 2 || skip) {
 			skip = false;
 			gameSys.requestClear2(false);
 			gameSys.requestClear1();
-			if ( index == 11 || index == 1 )
+			if (index == 11 || index == 1)
 				_vm->screenEffect(0, 0, 0, 0);
 
 			gameSys.setAnimation(0, 0, 0);

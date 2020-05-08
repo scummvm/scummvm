@@ -66,7 +66,6 @@ protected:
 	void resetRoomObjects() override;
 };
 
-
 } // End of namespace Scumm
 
 #endif

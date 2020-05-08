@@ -20,6 +20,9 @@
  *
  */
 
+#include "lure/surface.h"
+#include "common/config-manager.h"
+#include "common/endian.h"
 #include "lure/decode.h"
 #include "lure/events.h"
 #include "lure/game.h"
@@ -28,9 +31,6 @@
 #include "lure/screen.h"
 #include "lure/sound.h"
 #include "lure/strings.h"
-#include "lure/surface.h"
-#include "common/endian.h"
-#include "common/config-manager.h"
 
 #ifdef USE_TTS
 #include "common/text-to-speech.h"
@@ -70,7 +70,7 @@ void Surface::initialize() {
 		byte *pChar = int_font->data() + (ctr * 8);
 		fontSize[ctr] = 0;
 
-		for (int yp = 0; yp < FONT_HEIGHT; ++yp)  {
+		for (int yp = 0; yp < FONT_HEIGHT; ++yp) {
 			byte v = *pChar++;
 
 			for (int xp = 0; xp < FONT_WIDTH; ++xp) {
@@ -81,7 +81,8 @@ void Surface::initialize() {
 		}
 
 		// If character is empty, like for a space, give a default size
-		if (fontSize[ctr] == 0) fontSize[ctr] = 2;
+		if (fontSize[ctr] == 0)
+			fontSize[ctr] = 2;
 	}
 }
 
@@ -92,14 +93,14 @@ void Surface::deinitialize() {
 
 /*--------------------------------------------------------------------------*/
 
-Surface::Surface(MemoryBlock *src, uint16 wdth, uint16 hght): _data(src),
-		_width(wdth), _height(hght) {
-	if ((uint32) (wdth * hght) != src->size())
+Surface::Surface(MemoryBlock *src, uint16 wdth, uint16 hght) : _data(src),
+                                                               _width(wdth), _height(hght) {
+	if ((uint32)(wdth * hght) != src->size())
 		error("Surface dimensions do not match size of passed data");
 }
 
-Surface::Surface(uint16 wdth, uint16 hght): _data(Memory::allocate(wdth*hght)),
-	_width(wdth), _height(hght) {
+Surface::Surface(uint16 wdth, uint16 hght) : _data(Memory::allocate(wdth * hght)),
+                                             _width(wdth), _height(hght) {
 }
 
 Surface::~Surface() {
@@ -150,13 +151,16 @@ void Surface::egaCreateDialog(bool blackFlag) {
 void copyLine(byte *pSrc, byte *pDest, uint16 leftSide, uint16 center, uint16 rightSide) {
 	// Left area
 	memcpy(pDest, pSrc, leftSide);
-	pSrc += leftSide; pDest += leftSide;
+	pSrc += leftSide;
+	pDest += leftSide;
 	// Center area
 	memset(pDest, *pSrc, center);
-	++pSrc; pDest += center;
+	++pSrc;
+	pDest += center;
 	// Right side
 	memcpy(pDest, pSrc, rightSide);
-	pSrc += rightSide; pDest += rightSide;
+	pSrc += rightSide;
+	pDest += rightSide;
 }
 
 #define VGA_DIALOG_EDGE_WIDTH 9
@@ -192,7 +196,7 @@ void Surface::vgaCreateDialog(bool blackFlag) {
 	// Final processing - if black flag set, clear dialog inside area
 	if (blackFlag) {
 		Common::Rect r = Common::Rect(VGA_DIALOG_EDGE_WIDTH, VGA_DIALOG_EDGE_WIDTH,
-			_width - VGA_DIALOG_EDGE_WIDTH, _height-VGA_DIALOG_EDGE_WIDTH);
+		                              _width - VGA_DIALOG_EDGE_WIDTH, _height - VGA_DIALOG_EDGE_WIDTH);
 		fillRect(r, 0);
 	}
 }
@@ -218,7 +222,7 @@ void Surface::loadScreen(MemoryBlock *rawData) {
 
 	empty();
 	_data->copyFrom(tmpScreen, 0, MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH,
-		(FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE) * FULL_SCREEN_WIDTH);
+	                (FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE) * FULL_SCREEN_WIDTH);
 	delete tmpScreen;
 }
 
@@ -242,9 +246,10 @@ int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int co
 		for (int x1 = 0; x1 < 8; ++x1, ++pDest) {
 			if (v & 0x80) {
 				*pDest = color;
-				if (x1+1 > charWidth) charWidth = x1 + 1;
-			}
-			else if (!transparent) *pDest = 0;
+				if (x1 + 1 > charWidth)
+					charWidth = x1 + 1;
+			} else if (!transparent)
+				*pDest = 0;
 			v = (v << 1) & 0xff;
 		}
 	}
@@ -253,12 +258,12 @@ int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int co
 }
 
 void Surface::writeString(uint16 x, uint16 y, Common::String line, bool transparent,
-						  int color, bool varLength) {
+                          int color, bool varLength) {
 	writeSubstring(x, y, line, line.size(), transparent, color, varLength);
 }
 
 void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len,
-		  bool transparent, int color, bool varLength) {
+                             bool transparent, int color, bool varLength) {
 
 	const char *sPtr = line.c_str();
 	if (color == DEFAULT_TEXT_COLOR)
@@ -271,7 +276,7 @@ void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len,
 			break;
 
 		// Write next character
-		writeChar(x, y, (uint8) *sPtr, transparent, color);
+		writeChar(x, y, (uint8)*sPtr, transparent, color);
 
 		// Move to after the character in preparation for the next character
 		x += charSize;
@@ -284,10 +289,11 @@ void Surface::transparentCopyTo(Surface *dest) {
 
 	byte *pSrc = _data->data();
 	byte *pDest = dest->data().data();
-	uint16 numBytes = MIN(_height,dest->height()) * FULL_SCREEN_WIDTH;
+	uint16 numBytes = MIN(_height, dest->height()) * FULL_SCREEN_WIDTH;
 
 	while (numBytes-- > 0) {
-		if (*pSrc) *pDest = *pSrc;
+		if (*pSrc)
+			*pDest = *pSrc;
 
 		++pSrc;
 		++pDest;
@@ -302,27 +308,31 @@ void Surface::copyTo(Surface *dest, uint16 x, uint16 y) {
 	if ((x == 0) && (dest->width() == _width)) {
 		// Use fast data transfer
 		uint32 dataSize = dest->data().size() - (y * _width);
-		if (dataSize > _data->size()) dataSize = _data->size();
+		if (dataSize > _data->size())
+			dataSize = _data->size();
 		dest->data().copyFrom(_data, 0, y * _width, dataSize);
 	} else {
 		// Use slower transfer
 		Common::Rect rect;
-		rect.left = 0; rect.top = 0;
-		rect.right = _width-1; rect.bottom = _height-1;
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = _width - 1;
+		rect.bottom = _height - 1;
 		copyTo(dest, rect, x, y);
 	}
 }
 
 void Surface::copyTo(Surface *dest, const Common::Rect &srcBounds,
-					 uint16 destX, uint16 destY, int transparentColor) {
+                     uint16 destX, uint16 destY, int transparentColor) {
 	int numBytes = srcBounds.right - srcBounds.left + 1;
 	if (destX + numBytes > dest->width())
 		numBytes = dest->width() - destX;
-	if (numBytes <= 0) return;
+	if (numBytes <= 0)
+		return;
 
-	for (uint16 y=0; y<=(srcBounds.bottom-srcBounds.top); ++y) {
+	for (uint16 y = 0; y <= (srcBounds.bottom - srcBounds.top); ++y) {
 		const uint32 srcPos = (srcBounds.top + y) * _width + srcBounds.left;
-		const uint32 destPos = (destY+y) * dest->width() + destX;
+		const uint32 destPos = (destY + y) * dest->width() + destX;
 
 		if (transparentColor == -1) {
 			// No trnnsparent color, so copy all the bytes of the line
@@ -333,7 +343,7 @@ void Surface::copyTo(Surface *dest, const Common::Rect &srcBounds,
 
 			int bytesCtr = numBytes;
 			while (bytesCtr-- > 0) {
-				if (*pSrc != (uint8) transparentColor)
+				if (*pSrc != (uint8)transparentColor)
 					*pDest = *pSrc;
 				++pSrc;
 				++pDest;
@@ -344,7 +354,8 @@ void Surface::copyTo(Surface *dest, const Common::Rect &srcBounds,
 
 void Surface::copyFrom(MemoryBlock *src, uint32 destOffset) {
 	uint32 size = _data->size() - destOffset;
-	if (src->size() > size) size = src->size();
+	if (src->size() > size)
+		size = src->size();
 	_data->copyFrom(src, 0, destOffset, size);
 }
 
@@ -375,14 +386,15 @@ void Surface::centerOnScreen() {
 	OSystem &system = *g_system;
 
 	system.copyRectToScreen(_data->data(), _width,
-		(FULL_SCREEN_WIDTH - _width) / 2, (FULL_SCREEN_HEIGHT - _height) / 2,
-		_width, _height);
+	                        (FULL_SCREEN_WIDTH - _width) / 2, (FULL_SCREEN_HEIGHT - _height) / 2,
+	                        _width, _height);
 	system.updateScreen();
 }
 
 uint16 Surface::textWidth(const char *s, int numChars) {
 	uint16 result = 0;
-	if (numChars == 0) numChars = strlen(s);
+	if (numChars == 0)
+		numChars = strlen(s);
 
 	while (numChars-- > 0) {
 		uint8 charIndex = (uint8)*s++ - 32;
@@ -406,7 +418,8 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 
 	while (*s != '\0') {
 		char *wordStart = s;
-		while (*wordStart == ' ') ++wordStart;
+		while (*wordStart == ' ')
+			++wordStart;
 		char *wordEnd = strchr(wordStart, ' ');
 		char *wordEnd2 = strchr(wordStart, '\n');
 		if ((!wordEnd) || ((wordEnd2) && (wordEnd2 < wordEnd))) {
@@ -417,10 +430,11 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 		}
 
 		debugC(ERROR_DETAILED, kLureDebugStrings, "word scanning: start=%xh, after=%xh, newLine=%d",
-			(uint32)(wordStart - text), (uint32)((wordEnd == NULL) ? -1 : wordEnd - text), newLine ? 1 : 0);
+		       (uint32)(wordStart - text), (uint32)((wordEnd == NULL) ? -1 : wordEnd - text), newLine ? 1 : 0);
 
 		if (wordEnd) {
-			if (*wordEnd != '\0') --wordEnd;
+			if (*wordEnd != '\0')
+				--wordEnd;
 		} else {
 			wordEnd = strchr(wordStart, '\0') - 1;
 		}
@@ -450,15 +464,15 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 			lineWidth += wordSize;
 		}
 
-		s = wordEnd+1;
+		s = wordEnd + 1;
 	}
 
 	// Set up a list for the start of each line
-	lines = (char **) Memory::alloc(sizeof(char *) * numLines);
+	lines = (char **)Memory::alloc(sizeof(char *) * numLines);
 	lines[0] = text;
 	debugC(ERROR_DETAILED, kLureDebugStrings, "wordWrap lines[0]='%s'", lines[0]);
 	for (int ctr = 1; ctr < numLines; ++ctr) {
-		lines[ctr] = strchr(lines[ctr-1], 0) + 1;
+		lines[ctr] = strchr(lines[ctr - 1], 0) + 1;
 		debugC(ERROR_DETAILED, kLureDebugStrings, "wordWrap lines[%d]='%s'", ctr, lines[ctr]);
 	}
 
@@ -466,33 +480,32 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 }
 
 Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength,
-							int color, bool squashedLines) {
+                            int color, bool squashedLines) {
 	Common::Point size;
 	Surface::getDialogBounds(size, 0, numLines, squashedLines);
 
 	Surface *s = new Surface(width, size.y);
 	s->createDialog();
-	#ifdef USE_TTS
+#ifdef USE_TTS
 	Common::String text;
-	#endif
+#endif
 
 	uint16 yP = Surface::textY();
 	for (uint8 ctr = 0; ctr < numLines; ++ctr) {
-		#ifdef USE_TTS
+#ifdef USE_TTS
 		text += lines[ctr];
-		#endif
+#endif
 		s->writeString(Surface::textX(), yP, lines[ctr], true, color, varLength);
 		yP += squashedLines ? FONT_HEIGHT - 1 : FONT_HEIGHT;
 	}
 
-
-	#ifdef USE_TTS
+#ifdef USE_TTS
 	if (ConfMan.getBool("tts_narrator")) {
 		Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
 		_ttsMan->stop();
 		_ttsMan->say(text.c_str());
 	}
-	#endif 
+#endif
 
 	return s;
 }
@@ -537,7 +550,6 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 	else
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
-
 	// Insert a cursor character at the end of the string
 	newLine.insertChar('_', newLine.size());
 
@@ -551,7 +563,8 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 		refreshFlag = false;
 		while (!refreshFlag && !abortFlag) {
 			abortFlag = engine.shouldQuit();
-			if (abortFlag) break;
+			if (abortFlag)
+				break;
 
 			while (events.pollEvent()) {
 				if (events.type() == Common::EVENT_KEYDOWN) {
@@ -561,33 +574,33 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 					if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
 						// Return character
 						screen.screen().fillRect(
-							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
+						    Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 						screen.update();
 						newLine.deleteLastChar();
 						line = newLine;
 						if (!vKbdFlag)
 							mouse.cursorOn();
 						return true;
-					}
-					else if (keycode == Common::KEYCODE_ESCAPE) {
+					} else if (keycode == Common::KEYCODE_ESCAPE) {
 						// Escape character
 						screen.screen().fillRect(
-							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
+						    Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 						screen.update();
 						abortFlag = true;
 					} else if (keycode == Common::KEYCODE_BACKSPACE) {
 						// Delete the last character
-						if (newLine.size() == 1) continue;
+						if (newLine.size() == 1)
+							continue;
 
 						screen.screen().fillRect(
-							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
+						    Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 						newLine.deleteChar(newLine.size() - 2);
 						refreshFlag = true;
 
 					} else if ((ch >= ' ') && (stringSize + 8 < maxSize)) {
 						if (((ch >= '0') && (ch <= '9')) || !isNumeric) {
 							screen.screen().fillRect(
-								Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
+							    Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColor);
 							newLine.insertChar(ch, newLine.size() - 1);
 							refreshFlag = true;
 						}
@@ -607,7 +620,6 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 
 	return false;
 }
-
 
 /*--------------------------------------------------------------------------*/
 
@@ -636,7 +648,7 @@ void Dialog::show(const char *text) {
 
 void Dialog::show(uint16 stringId, const char *hotspotName, const char *characterName) {
 	debugC(ERROR_BASIC, kLureDebugStrings, "Hotspot::showMessage stringId=%xh hotspot=%s, character=%s",
-		stringId, hotspotName, characterName);
+	       stringId, hotspotName, characterName);
 	char buffer[MAX_DESC_SIZE];
 	StringData &sl = StringData::getReference();
 
@@ -651,15 +663,15 @@ void Dialog::show(uint16 stringId) {
 /*--------------------------------------------------------------------------*/
 
 const uint16 spanish_pre_e1_type_tl[] = {0x8000, 4, 0x4000, 5, 0x2000, 6, 0xc000, 7, 0, 0};
-const uint16 spanish_others_tl[]      = {0x8000, 0, 0x4000, 1, 0x2000, 2, 0xc000, 3, 0, 0};
+const uint16 spanish_others_tl[] = {0x8000, 0, 0x4000, 1, 0x2000, 2, 0xc000, 3, 0, 0};
 
-const uint16 german_pre_k_type[]    = {106, 0};
+const uint16 german_pre_k_type[] = {106, 0};
 const uint16 german_pre_k_type_tl[] = {0x8000, 0, 0xc000, 0, 0x4000, 1, 0xa000, 1, 0x2000, 2, 0, 0};
-const uint16 german_pre_d[]         = {128, 0};
-const uint16 german_pre_d_tl[]		= {0x8000, 6, 0x4000, 4, 0xa000, 4, 0x2000, 5, 0xc000, 6, 0, 0};
-const uint16 german_pre_d_type[]    = {158, 236, 161, 266, 280, 287, 286, 294, 264, 0};
+const uint16 german_pre_d[] = {128, 0};
+const uint16 german_pre_d_tl[] = {0x8000, 6, 0x4000, 4, 0xa000, 4, 0x2000, 5, 0xc000, 6, 0, 0};
+const uint16 german_pre_d_type[] = {158, 236, 161, 266, 280, 287, 286, 294, 264, 0};
 const uint16 german_pre_d_type_tl[] = {0x8000, 3, 0x4000, 4, 0xa000, 4, 0x2000, 5, 0xc000, 6, 0, 0};
-const uint16 german_pre_e_type[]    = {160, 0};
+const uint16 german_pre_e_type[] = {160, 0};
 const uint16 german_pre_e_type_tl[] = {0x8000, 7, 0xc000, 7, 0x4000, 8, 0xa000, 8, 0x2000, 9, 0, 0};
 
 struct GermanLanguageArticle {
@@ -668,12 +680,10 @@ struct GermanLanguageArticle {
 };
 
 const GermanLanguageArticle germanArticles[] = {
-	{&german_pre_k_type[0], &german_pre_k_type_tl[0]},
-	{&german_pre_d[0], &german_pre_d_tl[0]},
-	{&german_pre_d_type[0], &german_pre_d_type_tl[0]},
-	{&german_pre_e_type[0], &german_pre_e_type_tl[0]}
-};
-
+    {&german_pre_k_type[0], &german_pre_k_type_tl[0]},
+    {&german_pre_d[0], &german_pre_d_tl[0]},
+    {&german_pre_d_type[0], &german_pre_d_type_tl[0]},
+    {&german_pre_e_type[0], &german_pre_e_type_tl[0]}};
 
 int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 	Common::Language language = LureEngine::getReference().getLanguage();
@@ -687,7 +697,8 @@ int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 			bool msgFound = false;
 			for (const uint16 *msgPtr = germanArticles[sectionIndex].messageList; *msgPtr != 0; ++msgPtr) {
 				msgFound = *msgPtr == msgId;
-				if (msgFound) break;
+				if (msgFound)
+					break;
 			}
 
 			if (msgFound) {
@@ -701,7 +712,6 @@ int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 				return 0;
 			}
 		}
-
 
 		return 0;
 
@@ -778,7 +788,7 @@ void TalkDialog::vgaTalkDialog(Surface *s) {
 
 TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId) {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog(chars=%xh/%xh, item=%d, str=%d",
-		characterId, destCharacterId, activeItemId, descId);
+	       characterId, destCharacterId, activeItemId, descId);
 	StringData &strings = StringData::getReference();
 	Resources &res = Resources::getReference();
 	char srcCharName[MAX_DESC_SIZE];
@@ -787,17 +797,14 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	int characterArticle = 0, hotspotArticle = 0;
 	bool isEGA = LureEngine::getReference().isEGA();
 
-
 	_characterId = characterId;
 	_destCharacterId = destCharacterId;
 	_activeItemId = activeItemId;
 	_descId = descId;
 
 	HotspotData *talkingChar = res.getHotspot(characterId);
-	HotspotData *destCharacter = (destCharacterId == 0) ? NULL :
-		res.getHotspot(destCharacterId);
-	HotspotData *itemHotspot = (activeItemId == 0) ? NULL :
-		res.getHotspot(activeItemId);
+	HotspotData *destCharacter = (destCharacterId == 0) ? NULL : res.getHotspot(destCharacterId);
+	HotspotData *itemHotspot = (activeItemId == 0) ? NULL : res.getHotspot(activeItemId);
 	assert(talkingChar);
 
 	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
@@ -817,13 +824,14 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 
 	// Apply word wrapping to figure out the needed size of the dialog
 	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - (TALK_DIALOG_EDGE_SIZE + 3) * 2,
-		_lines, _numLines);
-	_endLine = 0; _endIndex = 0;
+	                  _lines, _numLines);
+	_endLine = 0;
+	_endIndex = 0;
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Creating talk dialog for %d lines", _numLines);
 
 	_surface = new Surface(TALK_DIALOG_WIDTH,
-		(_numLines + 1) * FONT_HEIGHT + TALK_DIALOG_EDGE_SIZE * 4);
+	                       (_numLines + 1) * FONT_HEIGHT + TALK_DIALOG_EDGE_SIZE * 4);
 
 	if (isEGA)
 		_surface->createDialog();
@@ -834,9 +842,9 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 
 	// Write out the character name
 	uint16 charWidth = Surface::textWidth(srcCharName);
-	byte white = LureEngine::getReference().isEGA() ?  EGA_DIALOG_WHITE_COLOR : VGA_DIALOG_WHITE_COLOR;
+	byte white = LureEngine::getReference().isEGA() ? EGA_DIALOG_WHITE_COLOR : VGA_DIALOG_WHITE_COLOR;
 	_surface->writeString((TALK_DIALOG_WIDTH - charWidth) / 2, TALK_DIALOG_EDGE_SIZE + 2,
-		srcCharName, true, white);
+	                      srcCharName, true, white);
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog end");
 }
 
@@ -867,8 +875,8 @@ void TalkDialog::copyTo(Surface *dest, uint16 x, uint16 y) {
 
 			// Write out the completed portion of the current line
 			_surface->writeSubstring(TALK_DIALOG_EDGE_SIZE + 2,
-				TALK_DIALOG_EDGE_SIZE + 4 + (_endLine + 1) * FONT_HEIGHT,
-				_lines[_endLine], _endIndex, true);
+			                         TALK_DIALOG_EDGE_SIZE + 4 + (_endLine + 1) * FONT_HEIGHT,
+			                         _lines[_endLine], _endIndex, true);
 
 			// If at end of line, move to next line for next time
 			if (ch == '\0') {
@@ -889,7 +897,6 @@ void TalkDialog::saveToStream(Common::WriteStream *stream) {
 	stream->writeSint16LE(_endLine);
 	stream->writeSint16LE(_endIndex);
 	stream->writeSint16LE(_wordCountdown);
-
 }
 
 TalkDialog *TalkDialog::loadFromStream(Common::ReadStream *stream) {
@@ -915,18 +922,19 @@ TalkDialog *TalkDialog::loadFromStream(Common::ReadStream *stream) {
 #define SR_SEPARATOR_HEIGHT 5
 #define SR_SAVEGAME_NAMES_Y (SR_SEPARATOR_Y + SR_SEPARATOR_HEIGHT + 1)
 
-
 void SaveRestoreDialog::toggleHightlight(int xs, int xe, int ys, int ye) {
 	Screen &screen = Screen::getReference();
 	byte *addr = screen.screen().data().data() + FULL_SCREEN_WIDTH * ys + xs;
 	const byte colorList[4] = {EGA_DIALOG_TEXT_COLOR, EGA_DIALOG_WHITE_COLOR,
-		VGA_DIALOG_TEXT_COLOR, VGA_DIALOG_WHITE_COLOR};
+	                           VGA_DIALOG_TEXT_COLOR, VGA_DIALOG_WHITE_COLOR};
 	const byte *colors = LureEngine::getReference().isEGA() ? &colorList[0] : &colorList[2];
 
 	for (int y = 0; y < ye - ys + 1; ++y, addr += FULL_SCREEN_WIDTH) {
 		for (int x = 0; x < xe - xs + 1; ++x) {
-			if (addr[x] == colors[0]) addr[x] = colors[1];
-			else if (addr[x] == colors[1]) addr[x] = colors[0];
+			if (addr[x] == colors[0])
+				addr[x] = colors[1];
+			else if (addr[x] == colors[1])
+				addr[x] = colors[0];
 		}
 	}
 
@@ -947,7 +955,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	Common::String **saveNames = (Common::String **)Memory::alloc(sizeof(Common::String *) * MAX_SAVEGAME_SLOTS);
 	int numSaves = 0;
 	while ((numSaves < MAX_SAVEGAME_SLOTS) &&
-		((saveNames[numSaves] = engine.detectSave(numSaves + 1)) != NULL))
+	       ((saveNames[numSaves] = engine.detectSave(numSaves + 1)) != NULL))
 		++numSaves;
 
 	// For the save dialog, if all the slots have not been used up, create a
@@ -962,19 +970,19 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	}
 
 	Surface *s = new Surface(INFO_DIALOG_WIDTH, SR_SAVEGAME_NAMES_Y +
-		numSaves * FONT_HEIGHT + FONT_HEIGHT + 2);
+	                                                numSaves * FONT_HEIGHT + FONT_HEIGHT + 2);
 
 	// Create the outer dialog and dividing line
 	s->createDialog();
 	byte *pDest = s->data().data() + (s->width() * SR_SEPARATOR_Y) + SR_SEPARATOR_X;
-	uint8 rowColors[5] = {*(pDest-2), *(pDest-1), *(pDest-1), *(pDest-2), *(pDest+1)};
+	uint8 rowColors[5] = {*(pDest - 2), *(pDest - 1), *(pDest - 1), *(pDest - 2), *(pDest + 1)};
 	for (int y = 0; y < SR_SEPARATOR_HEIGHT; ++y, pDest += s->width())
 		memset(pDest, rowColors[y], s->width() - 12);
 
 	// Create title line
 	Common::String title(res.stringList().getString(
-		saveDialog ? S_SAVE_GAME : S_RESTORE_GAME));
-	s->writeString((s->width() - s->textWidth(title.c_str())) / 2, FONT_HEIGHT+2, title, true);
+	    saveDialog ? S_SAVE_GAME : S_RESTORE_GAME));
+	s->writeString((s->width() - s->textWidth(title.c_str())) / 2, FONT_HEIGHT + 2, title, true);
 
 	// Write out any existing save names
 	for (index = 0; index < numSaves; ++index)
@@ -990,27 +998,27 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	bool doneFlag = false;
 	while (!abortFlag && !doneFlag) {
 		// Provide highlighting of lines to select a save slot
-		while (!abortFlag && !(mouse.lButton() && (selectedLine != -1))
-				&& !mouse.rButton() && !mouse.mButton()) {
+		while (!abortFlag && !(mouse.lButton() && (selectedLine != -1)) && !mouse.rButton() && !mouse.mButton()) {
 			abortFlag = engine.shouldQuit();
-			if (abortFlag) break;
+			if (abortFlag)
+				break;
 
 			while (events.pollEvent()) {
 				if ((events.type() == Common::EVENT_KEYDOWN) &&
-					(events.event().kbd.keycode == Common::KEYCODE_ESCAPE)) {
+				    (events.event().kbd.keycode == Common::KEYCODE_ESCAPE)) {
 					abortFlag = true;
 					break;
 				}
 				if (events.type() == Common::EVENT_MOUSEMOVE ||
-					events.type() == Common::EVENT_WHEELUP || events.type() == Common::EVENT_WHEELDOWN) {
+				    events.type() == Common::EVENT_WHEELUP || events.type() == Common::EVENT_WHEELDOWN) {
 					// Mouse movement
 					int lineNum = 0;
 
 					if (events.type() == Common::EVENT_MOUSEMOVE) {
 						if ((mouse.x() < (SAVE_DIALOG_X + Surface::textX())) ||
-							(mouse.x() >= (SAVE_DIALOG_X + s->width() - Surface::textX())) ||
-							(mouse.y() < SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y) ||
-							(mouse.y() >= SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + numSaves * FONT_HEIGHT))
+						    (mouse.x() >= (SAVE_DIALOG_X + s->width() - Surface::textX())) ||
+						    (mouse.y() < SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y) ||
+						    (mouse.y() >= SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + numSaves * FONT_HEIGHT))
 							// Outside displayed lines
 							lineNum = -1;
 						else
@@ -1029,17 +1037,17 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 						if (selectedLine != -1)
 							// Deselect previously selected line
 							toggleHightlight(SAVE_DIALOG_X + Surface::textX(),
-								SAVE_DIALOG_X + s->width() - Surface::textX(),
-								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
-								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
+							                 SAVE_DIALOG_X + s->width() - Surface::textX(),
+							                 SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
+							                 SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
 
 						// Highlight new line
 						selectedLine = lineNum;
 						if (selectedLine != -1)
 							toggleHightlight(SAVE_DIALOG_X + Surface::textX(),
-								SAVE_DIALOG_X + s->width() - Surface::textX(),
-								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
-								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
+							                 SAVE_DIALOG_X + s->width() - Surface::textX(),
+							                 SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
+							                 SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
 					}
 				}
 			}
@@ -1051,28 +1059,29 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		// Deselect selected row
 		if (selectedLine != -1)
 			toggleHightlight(SAVE_DIALOG_X + Surface::textX(),
-				SAVE_DIALOG_X + s->width() - Surface::textX(),
-				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
-				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
+			                 SAVE_DIALOG_X + s->width() - Surface::textX(),
+			                 SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
+			                 SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
 
 		if (mouse.lButton() || mouse.rButton() || mouse.mButton()) {
 			abortFlag = mouse.rButton();
 			mouse.waitForRelease();
 		}
-		if (abortFlag) break;
+		if (abortFlag)
+			break;
 
 		// If in save mode, allow the entry of a new savename
 		if (saveDialog) {
 			if (!screen.screen().getString(*saveNames[selectedLine],
-				INFO_DIALOG_WIDTH - (Surface::textX() * 2),
-				false, true, SAVE_DIALOG_X + Surface::textX(),
-				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT)) {
+			                               INFO_DIALOG_WIDTH - (Surface::textX() * 2),
+			                               false, true, SAVE_DIALOG_X + Surface::textX(),
+			                               SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT)) {
 				// Aborted out of name selection, so restore old name and
 				// go back to slot selection
 				screen.screen().writeString(
-					SAVE_DIALOG_X + Surface::textX(),
-					SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
-					saveNames[selectedLine]->c_str(), true);
+				    SAVE_DIALOG_X + Surface::textX(),
+				    SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
+				    saveNames[selectedLine]->c_str(), true);
 				selectedLine = -1;
 				continue;
 			}
@@ -1100,7 +1109,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	mouse.popCursor();
 
 	// Free savegame caption list
-	for (index = 0; index < numSaves; ++index) delete saveNames[index];
+	for (index = 0; index < numSaves; ++index)
+		delete saveNames[index];
 	Memory::dealloc(saveNames);
 
 	if (errorFlag != 0) {
@@ -1130,11 +1140,9 @@ struct RestartRecord {
 };
 
 static const RestartRecord buttonBounds[] = {
-	{ Common::EN_ANY, 48, 14, { 118, 152 }, { 168, 152 } },
-	{ Common::DE_DEU, 48, 14, { 106, 152 }, { 168, 152 } },
-	{ Common::UNK_LANG, 48, 14, { 112, 152 }, { 168, 152 } }
-};
-
+    {Common::EN_ANY, 48, 14, {118, 152}, {168, 152}},
+    {Common::DE_DEU, 48, 14, {106, 152}, {168, 152}},
+    {Common::UNK_LANG, 48, 14, {112, 152}, {168, 152}}};
 
 bool RestartRestoreDialog::show() {
 	Resources &res = Resources::getReference();
@@ -1158,7 +1166,7 @@ bool RestartRestoreDialog::show() {
 		// Get the correct button bounds record to use
 		const RestartRecord *btnRecord = &buttonBounds[0];
 		while ((btnRecord->Language != engine.getLanguage()) &&
-			   (btnRecord->Language != Common::UNK_LANG))
+		       (btnRecord->Language != Common::UNK_LANG))
 			++btnRecord;
 
 		// Fade out the screen
@@ -1211,13 +1219,13 @@ bool RestartRestoreDialog::show() {
 			// Check if the pointer is over either button
 			int currentButton = -1;
 			if ((mouse.y() >= btnRecord->BtnRestart.y) &&
-				(mouse.y() < btnRecord->BtnRestart.y + btnRecord->height)) {
+			    (mouse.y() < btnRecord->BtnRestart.y + btnRecord->height)) {
 				// Check whether the Restart or Restore button is highlighted
 				if ((mouse.x() >= btnRecord->BtnRestart.x) &&
-					(mouse.x() < btnRecord->BtnRestart.x + btnRecord->width))
+				    (mouse.x() < btnRecord->BtnRestart.x + btnRecord->width))
 					currentButton = 0;
 				else if ((mouse.x() >= btnRecord->BtnRestore.x) &&
-					(mouse.x() < btnRecord->BtnRestore.x + btnRecord->width))
+				         (mouse.x() < btnRecord->BtnRestore.x + btnRecord->width))
 					currentButton = 1;
 			}
 
@@ -1235,7 +1243,6 @@ bool RestartRestoreDialog::show() {
 				btnHotspot->setPosition(btnRecord->BtnRestore.x, btnRecord->BtnRestore.y);
 				btnHotspot->copyTo(&screen.screen());
 			}
-
 
 			screen.update();
 			g_system->delayMillis(10);
@@ -1272,26 +1279,25 @@ struct ItemDesc {
 #define NUMBER_HEADER 0x1842
 
 static const ItemDesc copyProtectElements[] = {
-	{Common::UNK_LANG, 104, 96, 32, 48, PROT_SPR_HEADER, 0},
-	{Common::UNK_LANG, 179, 96, 32, 48, PROT_SPR_HEADER, 0},
+    {Common::UNK_LANG, 104, 96, 32, 48, PROT_SPR_HEADER, 0},
+    {Common::UNK_LANG, 179, 96, 32, 48, PROT_SPR_HEADER, 0},
 
-	{Common::EN_ANY, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{Common::FR_FRA, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{Common::DE_DEU, 39, 30, 240, 53, WORDING_HEADER, 32},
-	{Common::NL_NLD, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{Common::ES_ESP, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{Common::IT_ITA, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{Common::RU_RUS, 57, 40, 208, 40, WORDING_HEADER, 32},
+    {Common::EN_ANY, 57, 40, 208, 40, WORDING_HEADER, 32},
+    {Common::FR_FRA, 57, 40, 208, 40, WORDING_HEADER, 32},
+    {Common::DE_DEU, 39, 30, 240, 53, WORDING_HEADER, 32},
+    {Common::NL_NLD, 57, 40, 208, 40, WORDING_HEADER, 32},
+    {Common::ES_ESP, 57, 40, 208, 40, WORDING_HEADER, 32},
+    {Common::IT_ITA, 57, 40, 208, 40, WORDING_HEADER, 32},
+    {Common::RU_RUS, 57, 40, 208, 40, WORDING_HEADER, 32},
 
-	{Common::UNK_LANG, 138, 168, 16, 8, NUMBER_HEADER, 32},
-	{Common::UNK_LANG, 145, 168, 16, 8, NUMBER_HEADER, 32},
-	{Common::UNK_LANG, 164, 168, 16, 8, NUMBER_HEADER, 32},
-	{Common::UNK_LANG, 171, 168, 16, 8, NUMBER_HEADER, 32},
-	{Common::UNK_LANG, 0, 0, 0, 0, 0, 0}
-};
+    {Common::UNK_LANG, 138, 168, 16, 8, NUMBER_HEADER, 32},
+    {Common::UNK_LANG, 145, 168, 16, 8, NUMBER_HEADER, 32},
+    {Common::UNK_LANG, 164, 168, 16, 8, NUMBER_HEADER, 32},
+    {Common::UNK_LANG, 171, 168, 16, 8, NUMBER_HEADER, 32},
+    {Common::UNK_LANG, 0, 0, 0, 0, 0, 0}};
 
 int pageNumbers[20] = {
-	4, 10, 16, 22, 5, 11, 17, 23, 6, 12, 18, 7, 13, 19, 8, 14, 20, 9, 15, 21};
+    4, 10, 16, 22, 5, 11, 17, 23, 6, 12, 18, 7, 13, 19, 8, 14, 20, 9, 15, 21};
 
 CopyProtectionDialog::CopyProtectionDialog() {
 	// Get objects for the screen
@@ -1376,12 +1382,12 @@ bool CopyProtectionDialog::show() {
 						HotspotsList::iterator tmpHotspot = _hotspots.begin();
 						for (int i = 0; i < _charIndex + 3; i++)
 							++tmpHotspot;
-						(*tmpHotspot)->setFrameNumber(10);   // Blank space
+						(*tmpHotspot)->setFrameNumber(10); // Blank space
 						(*tmpHotspot)->copyTo(&screen.screen());
 
 						screen.update();
 					} else if ((events.event().kbd.ascii >= '0') &&
-							   (events.event().kbd.ascii <= '9')) {
+					           (events.event().kbd.ascii <= '9')) {
 						HotspotsList::iterator tmpHotspot = _hotspots.begin();
 						for (int i = 0; i < _charIndex + 3; i++)
 							++tmpHotspot;

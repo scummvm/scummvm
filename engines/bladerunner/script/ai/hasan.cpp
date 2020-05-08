@@ -53,19 +53,14 @@ void AIScriptHasan::Initialize() {
 
 bool AIScriptHasan::Update() {
 	if (_vm->_cutContent) {
-		if (Global_Variable_Query(kVariableChapter) == 1
-		    && Actor_Query_Goal_Number(kActorHasan) != kGoalHasanIsAway)
-		{
+		if (Global_Variable_Query(kVariableChapter) == 1 && Actor_Query_Goal_Number(kActorHasan) != kGoalHasanIsAway) {
 			// use this goal to put Hasan in a FreeSlot set for Act 1
 			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsAway);
 			return true;
-		} else if (Global_Variable_Query(kVariableChapter) == 2
-		           && Actor_Query_Goal_Number(kActorHasan) != kGoalHasanDefault
-		) {
+		} else if (Global_Variable_Query(kVariableChapter) == 2 && Actor_Query_Goal_Number(kActorHasan) != kGoalHasanDefault) {
 			Actor_Set_Goal_Number(kActorHasan, kGoalHasanDefault);
 			return true;
-		} else if (Global_Variable_Query(kVariableChapter) > 2
-		           && Actor_Query_Goal_Number(kActorHasan) < kGoalHasanIsWalkingAroundIsAtAR02) {
+		} else if (Global_Variable_Query(kVariableChapter) > 2 && Actor_Query_Goal_Number(kActorHasan) < kGoalHasanIsWalkingAroundIsAtAR02) {
 			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtAR02);
 			return true;
 		}
@@ -92,18 +87,12 @@ void AIScriptHasan::CompletedMovementTrack() {
 			int maxHasanLeaveProb = 4;
 			// if Bullet Bob is dead or McCoy reprimanded Bob about Hasan,
 			// then Hasan is less likely to leave at Animoid Row, *after Act 2*
-			if (Game_Flag_Query(kFlagMcCoyTalkedToBulletBobAboutHasan)
-			    || Actor_Query_Goal_Number(kGoalBulletBobDead)
-			    || Actor_Query_Goal_Number(kGoalBulletBobGone)
-			) {
+			if (Game_Flag_Query(kFlagMcCoyTalkedToBulletBobAboutHasan) || Actor_Query_Goal_Number(kGoalBulletBobDead) || Actor_Query_Goal_Number(kGoalBulletBobGone)) {
 				maxHasanLeaveProb = 10;
 			}
 
 			if (Actor_Query_Goal_Number(kActorHasan) == kGoalHasanIsWalkingAroundIsAtAR02) {
-				if (Random_Query(1, maxHasanLeaveProb) == 1
-				    && Player_Query_Current_Scene() != kSceneAR01
-					&& Player_Query_Current_Scene() != kSceneAR02
-				) {
+				if (Random_Query(1, maxHasanLeaveProb) == 1 && Player_Query_Current_Scene() != kSceneAR01 && Player_Query_Current_Scene() != kSceneAR02) {
 					// Hasan leaves Animoid Row
 					Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAway);
 					return; // true;
@@ -115,10 +104,7 @@ void AIScriptHasan::CompletedMovementTrack() {
 			}
 
 			if (Actor_Query_Goal_Number(kActorHasan) == kGoalHasanIsWalkingAroundIsAway) {
-				if (Random_Query(1, 2) == 1
-				    && Player_Query_Current_Scene() != kSceneAR01
-					&& Player_Query_Current_Scene() != kSceneAR02
-				) {
+				if (Random_Query(1, 2) == 1 && Player_Query_Current_Scene() != kSceneAR01 && Player_Query_Current_Scene() != kSceneAR02) {
 					// Hasan returns tp Animoid Row
 					Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtAR02);
 					return; // true;
@@ -389,17 +375,17 @@ bool AIScriptHasan::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptHasan::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptHasan::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptHasan::ReachedMovementTrackWaypoint(int waypointId) {

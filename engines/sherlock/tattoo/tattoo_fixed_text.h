@@ -215,9 +215,10 @@ struct FixedTextLanguageEntry {
 	const char *const *fixedTextArray;
 };
 
-class TattooFixedText: public FixedText {
+class TattooFixedText : public FixedText {
 private:
 	const FixedTextLanguageEntry *_curLanguageEntry;
+
 public:
 	TattooFixedText(SherlockEngine *vm);
 	~TattooFixedText() override {}

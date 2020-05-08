@@ -28,12 +28,14 @@
 
 #define BODGE
 
+#include "tinsel/tinlib.h"
 #include "common/coroutines.h"
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
 #include "tinsel/bmv.h"
 #include "tinsel/config.h"
 #include "tinsel/cursor.h"
+#include "tinsel/dialogs.h"
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
 #include "tinsel/events.h"
@@ -42,7 +44,6 @@
 #include "tinsel/font.h"
 #include "tinsel/graphics.h"
 #include "tinsel/handle.h"
-#include "tinsel/dialogs.h"
 #include "tinsel/mareels.h"
 #include "tinsel/move.h"
 #include "tinsel/multiobj.h"
@@ -62,8 +63,7 @@
 #include "tinsel/strres.h"
 #include "tinsel/sysvar.h"
 #include "tinsel/text.h"
-#include "tinsel/timers.h"		// For ONE_SECOND constant
-#include "tinsel/tinlib.h"
+#include "tinsel/timers.h" // For ONE_SECOND constant
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
 
@@ -74,8 +74,8 @@ namespace Tinsel {
 //----------------- EXTERNAL GLOBAL DATA --------------------
 
 // In DOS_DW.C
-extern bool g_bRestart;		// restart flag - set to restart the game
-extern bool g_bHasRestarted;	// Set after a restart
+extern bool g_bRestart;      // restart flag - set to restart the game
+extern bool g_bHasRestarted; // Set after a restart
 
 // In PCODE.CPP
 extern bool g_bNoPause;
@@ -124,168 +124,364 @@ bool g_bEnableMenu;
 static bool g_bInstantScroll = false;
 static bool g_bEscapedCdPlay = false;
 
-
 //----------------- LOCAL DEFINES --------------------
 
-#define JAP_TEXT_TIME	(2*ONE_SECOND)
+#define JAP_TEXT_TIME (2 * ONE_SECOND)
 
 /*----------------------------------------------------------------------*\
 |*                      Library Procedure and Function codes            *|
 \*----------------------------------------------------------------------*/
 
 enum MASTER_LIB_CODES {
-	ACTORATTR, ACTORBRIGHTNESS, ACTORDIRECTION, ACTORPALETTE, ACTORPRIORITY, ACTORREF,
-	ACTORRGB, ACTORSCALE, ACTORSON, ACTORXPOS, ACTORYPOS, ADDHIGHLIGHT,
-	ADDINV, ADDINV1, ADDINV2, ADDOPENINV, ADDTOPIC, AUXSCALE, BACKGROUND, BLOCKING,
-	CALLACTOR, CALLGLOBALPROCESS, CALLOBJECT, CALLPROCESS, CALLSCENE, CALLTAG,
-	CAMERA, CDCHANGESCENE, CDDOCHANGE, CDENDACTOR, CDLOAD, CDPLAY, CLEARHOOKSCENE,
-	CLOSEINVENTORY, CONTROL, CONVERSATION, CONVTOPIC, CURSOR, CURSORXPOS, CURSORYPOS,
-	CUTSCENE, DECCONVW, DECCSTRINGS, DECCURSOR, DECFLAGS, DECINV1, DECINV2, DECINVW,
-	DECLARELANGUAGE, DECLEAD, DECSCALE, DECTAGFONT, DECTALKFONT, DELICON,
-	DELINV, DELTOPIC, DIMMUSIC, DROP, DROPEVERYTHING, DROPOUT, EFFECTACTOR, ENABLEMENU,
-	ENDACTOR, ESCAPE, ESCAPEOFF, ESCAPEON, EVENT, FACETAG, FADEIN, FADEMIDI,
-	FADEOUT, FRAMEGRAB, FREEZECURSOR, GETINVLIMIT, GHOST, GLOBALVAR, GRABMOVIE, HAILSCENE,
-	HASRESTARTED, HAVE, HELDOBJECT, HIDEACTOR, HIDEBLOCK, HIDEEFFECT, HIDEPATH,
-	HIDEREFER, HIDETAG, HOLD, HOOKSCENE, IDLETIME, ININVENTORY, INSTANTSCROLL, INVDEPICT,
-	INVENTORY, INVPLAY, INWHICHINV, KILLACTOR, KILLBLOCK, KILLEXIT, KILLGLOBALPROCESS,
-	KILLPROCESS, KILLTAG, LOCALVAR, MOVECURSOR, MOVETAG, MOVETAGTO, NEWSCENE,
-	NOBLOCKING, NOPAUSE, NOSCROLL, OBJECTHELD, OFFSET, OTHEROBJECT, PAUSE, PLAY, PLAYMIDI,
-	PLAYMOVIE, PLAYMUSIC, PLAYRTF, PLAYSAMPLE, POINTACTOR, POINTTAG, POSTACTOR, POSTGLOBALPROCESS,
-	POSTOBJECT, POSTPROCESS, POSTTAG, PREPARESCENE, PRINT, PRINTCURSOR, PRINTOBJ, PRINTTAG,
-	QUITGAME, RANDOM, RESETIDLETIME, RESTARTGAME, RESTORESCENE, RESTORE_CUT,
-	RESUMELASTGAME, RUNMODE, SAMPLEPLAYING, SAVESCENE, SAY, SAYAT, SCALINGREELS,
-	SCANICON, SCREENXPOS, SCREENYPOS, SCROLL, SCROLLPARAMETERS, SENDACTOR, SENDGLOBALPROCESS,
-	SENDOBJECT, SENDPROCESS, SENDTAG, SETACTOR, SETBLOCK, SETBRIGHTNESS, SETEXIT, SETINVLIMIT,
-	SETINVSIZE, SETLANGUAGE, SETPALETTE, SETSYSTEMREEL, SETSYSTEMSTRING, SETSYSTEMVAR,
-	SETTAG, SETTIMER, SHELL, SHOWACTOR, SHOWBLOCK, SHOWEFFECT, SHOWMENU, SHOWPATH,
-	SHOWPOS, SHOWREFER, SHOWSTRING, SHOWTAG, SPLAY, STAND, STANDTAG, STARTGLOBALPROCESS,
-	STARTPROCESS, STARTTIMER, STOPMIDI, STOPSAMPLE, STOPWALK, SUBTITLES, SWALK, SWALKZ,
-	SYSTEMVAR, TAGACTOR, TAGTAGXPOS, TAGTAGYPOS, TAGWALKXPOS, TAGWALKYPOS, TALK, TALKAT,
-	TALKATS, TALKATTR, TALKPALETTEINDEX, TALKRGB, TALKVIA, TEMPTAGFONT, TEMPTALKFONT,
-	THISOBJECT, THISTAG, TIMER, TOPIC, TOPPLAY, TOPWINDOW, TRANSLUCENTINDEX,
-	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
-	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
-	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ,
+	ACTORATTR,
+	ACTORBRIGHTNESS,
+	ACTORDIRECTION,
+	ACTORPALETTE,
+	ACTORPRIORITY,
+	ACTORREF,
+	ACTORRGB,
+	ACTORSCALE,
+	ACTORSON,
+	ACTORXPOS,
+	ACTORYPOS,
+	ADDHIGHLIGHT,
+	ADDINV,
+	ADDINV1,
+	ADDINV2,
+	ADDOPENINV,
+	ADDTOPIC,
+	AUXSCALE,
+	BACKGROUND,
+	BLOCKING,
+	CALLACTOR,
+	CALLGLOBALPROCESS,
+	CALLOBJECT,
+	CALLPROCESS,
+	CALLSCENE,
+	CALLTAG,
+	CAMERA,
+	CDCHANGESCENE,
+	CDDOCHANGE,
+	CDENDACTOR,
+	CDLOAD,
+	CDPLAY,
+	CLEARHOOKSCENE,
+	CLOSEINVENTORY,
+	CONTROL,
+	CONVERSATION,
+	CONVTOPIC,
+	CURSOR,
+	CURSORXPOS,
+	CURSORYPOS,
+	CUTSCENE,
+	DECCONVW,
+	DECCSTRINGS,
+	DECCURSOR,
+	DECFLAGS,
+	DECINV1,
+	DECINV2,
+	DECINVW,
+	DECLARELANGUAGE,
+	DECLEAD,
+	DECSCALE,
+	DECTAGFONT,
+	DECTALKFONT,
+	DELICON,
+	DELINV,
+	DELTOPIC,
+	DIMMUSIC,
+	DROP,
+	DROPEVERYTHING,
+	DROPOUT,
+	EFFECTACTOR,
+	ENABLEMENU,
+	ENDACTOR,
+	ESCAPE,
+	ESCAPEOFF,
+	ESCAPEON,
+	EVENT,
+	FACETAG,
+	FADEIN,
+	FADEMIDI,
+	FADEOUT,
+	FRAMEGRAB,
+	FREEZECURSOR,
+	GETINVLIMIT,
+	GHOST,
+	GLOBALVAR,
+	GRABMOVIE,
+	HAILSCENE,
+	HASRESTARTED,
+	HAVE,
+	HELDOBJECT,
+	HIDEACTOR,
+	HIDEBLOCK,
+	HIDEEFFECT,
+	HIDEPATH,
+	HIDEREFER,
+	HIDETAG,
+	HOLD,
+	HOOKSCENE,
+	IDLETIME,
+	ININVENTORY,
+	INSTANTSCROLL,
+	INVDEPICT,
+	INVENTORY,
+	INVPLAY,
+	INWHICHINV,
+	KILLACTOR,
+	KILLBLOCK,
+	KILLEXIT,
+	KILLGLOBALPROCESS,
+	KILLPROCESS,
+	KILLTAG,
+	LOCALVAR,
+	MOVECURSOR,
+	MOVETAG,
+	MOVETAGTO,
+	NEWSCENE,
+	NOBLOCKING,
+	NOPAUSE,
+	NOSCROLL,
+	OBJECTHELD,
+	OFFSET,
+	OTHEROBJECT,
+	PAUSE,
+	PLAY,
+	PLAYMIDI,
+	PLAYMOVIE,
+	PLAYMUSIC,
+	PLAYRTF,
+	PLAYSAMPLE,
+	POINTACTOR,
+	POINTTAG,
+	POSTACTOR,
+	POSTGLOBALPROCESS,
+	POSTOBJECT,
+	POSTPROCESS,
+	POSTTAG,
+	PREPARESCENE,
+	PRINT,
+	PRINTCURSOR,
+	PRINTOBJ,
+	PRINTTAG,
+	QUITGAME,
+	RANDOM,
+	RESETIDLETIME,
+	RESTARTGAME,
+	RESTORESCENE,
+	RESTORE_CUT,
+	RESUMELASTGAME,
+	RUNMODE,
+	SAMPLEPLAYING,
+	SAVESCENE,
+	SAY,
+	SAYAT,
+	SCALINGREELS,
+	SCANICON,
+	SCREENXPOS,
+	SCREENYPOS,
+	SCROLL,
+	SCROLLPARAMETERS,
+	SENDACTOR,
+	SENDGLOBALPROCESS,
+	SENDOBJECT,
+	SENDPROCESS,
+	SENDTAG,
+	SETACTOR,
+	SETBLOCK,
+	SETBRIGHTNESS,
+	SETEXIT,
+	SETINVLIMIT,
+	SETINVSIZE,
+	SETLANGUAGE,
+	SETPALETTE,
+	SETSYSTEMREEL,
+	SETSYSTEMSTRING,
+	SETSYSTEMVAR,
+	SETTAG,
+	SETTIMER,
+	SHELL,
+	SHOWACTOR,
+	SHOWBLOCK,
+	SHOWEFFECT,
+	SHOWMENU,
+	SHOWPATH,
+	SHOWPOS,
+	SHOWREFER,
+	SHOWSTRING,
+	SHOWTAG,
+	SPLAY,
+	STAND,
+	STANDTAG,
+	STARTGLOBALPROCESS,
+	STARTPROCESS,
+	STARTTIMER,
+	STOPMIDI,
+	STOPSAMPLE,
+	STOPWALK,
+	SUBTITLES,
+	SWALK,
+	SWALKZ,
+	SYSTEMVAR,
+	TAGACTOR,
+	TAGTAGXPOS,
+	TAGTAGYPOS,
+	TAGWALKXPOS,
+	TAGWALKYPOS,
+	TALK,
+	TALKAT,
+	TALKATS,
+	TALKATTR,
+	TALKPALETTEINDEX,
+	TALKRGB,
+	TALKVIA,
+	TEMPTAGFONT,
+	TEMPTALKFONT,
+	THISOBJECT,
+	THISTAG,
+	TIMER,
+	TOPIC,
+	TOPPLAY,
+	TOPWINDOW,
+	TRANSLUCENTINDEX,
+	TRYPLAYSAMPLE,
+	UNDIMMUSIC,
+	UNHOOKSCENE,
+	UNTAGACTOR,
+	VIBRATE,
+	WAITFRAME,
+	WAITKEY,
+	WAITSCROLL,
+	WAITTIME,
+	WALK,
+	WALKED,
+	WALKEDPOLY,
+	WALKEDTAG,
+	WALKINGACTOR,
+	WALKPOLY,
+	WALKTAG,
+	WALKXPOS,
+	WALKYPOS,
+	WHICHCD,
+	WHICHINVENTORY,
+	ZZZZZZ,
 	HIGHEST_LIBCODE
 };
 
 static const MASTER_LIB_CODES DW1DEMO_CODES[] = {
-	ACTORREF, ACTORXPOS, ACTORYPOS, ADDTOPIC, ADDINV1, ADDINV2, AUXSCALE, BACKGROUND,
-	CAMERA, CONTROL, CONVERSATION, CONVTOPIC, HIGHEST_LIBCODE, CURSORXPOS, CURSORYPOS,
-	DECCONVW, DECCURSOR, DECTAGFONT, DECINVW, DECINV1, DECINV2, DECLEAD, DELICON,
-	DELINV, EVENT, HIGHEST_LIBCODE, HELDOBJECT, HIDEACTOR, ININVENTORY, HIGHEST_LIBCODE,
-	INVENTORY, HIGHEST_LIBCODE, KILLACTOR, KILLBLOCK, KILLTAG, SCREENXPOS,
-	HIGHEST_LIBCODE, MOVECURSOR, NEWSCENE, NOSCROLL, OBJECTHELD, OFFSET, HIGHEST_LIBCODE,
-	PLAY, PLAYSAMPLE, PREPARESCENE, PRINT, PRINTOBJ, PRINTTAG, RESTORESCENE, SAVESCENE,
-	SCANICON, SCROLL, SETACTOR, SETBLOCK, HIGHEST_LIBCODE, SETTAG, SETTIMER, SHOWPOS,
-	SPLAY, STAND, STANDTAG, STOPWALK, HIGHEST_LIBCODE, SWALK, TAGACTOR, TALK,
-	SCREENYPOS, UNTAGACTOR, VIBRATE, WAITKEY, WAITTIME, WALK, WALKINGACTOR, WALKPOLY,
-	WALKTAG, RANDOM, TIMER
-};
+    ACTORREF, ACTORXPOS, ACTORYPOS, ADDTOPIC, ADDINV1, ADDINV2, AUXSCALE, BACKGROUND,
+    CAMERA, CONTROL, CONVERSATION, CONVTOPIC, HIGHEST_LIBCODE, CURSORXPOS, CURSORYPOS,
+    DECCONVW, DECCURSOR, DECTAGFONT, DECINVW, DECINV1, DECINV2, DECLEAD, DELICON,
+    DELINV, EVENT, HIGHEST_LIBCODE, HELDOBJECT, HIDEACTOR, ININVENTORY, HIGHEST_LIBCODE,
+    INVENTORY, HIGHEST_LIBCODE, KILLACTOR, KILLBLOCK, KILLTAG, SCREENXPOS,
+    HIGHEST_LIBCODE, MOVECURSOR, NEWSCENE, NOSCROLL, OBJECTHELD, OFFSET, HIGHEST_LIBCODE,
+    PLAY, PLAYSAMPLE, PREPARESCENE, PRINT, PRINTOBJ, PRINTTAG, RESTORESCENE, SAVESCENE,
+    SCANICON, SCROLL, SETACTOR, SETBLOCK, HIGHEST_LIBCODE, SETTAG, SETTIMER, SHOWPOS,
+    SPLAY, STAND, STANDTAG, STOPWALK, HIGHEST_LIBCODE, SWALK, TAGACTOR, TALK,
+    SCREENYPOS, UNTAGACTOR, VIBRATE, WAITKEY, WAITTIME, WALK, WALKINGACTOR, WALKPOLY,
+    WALKTAG, RANDOM, TIMER};
 
 static const MASTER_LIB_CODES DW1_CODES[] = {
-	ACTORATTR, ACTORDIRECTION, ACTORREF, ACTORSCALE, ACTORXPOS,
-	ACTORYPOS, ADDTOPIC, ADDINV1, ADDINV2, ADDOPENINV, AUXSCALE,
-	BACKGROUND, CAMERA, CLOSEINVENTORY, CONTROL, CONVERSATION,
-	CONVTOPIC, CURSORXPOS, CURSORYPOS, DECCONVW, DECCURSOR,
-	DECINV1, DECINV2, DECINVW, DECLEAD, DECTAGFONT,
-	DECTALKFONT, DELICON, DELINV, EFFECTACTOR, ESCAPE, EVENT,
-	GETINVLIMIT, HELDOBJECT, HIDEACTOR, ININVENTORY, INVDEPICT,
-	INVENTORY, KILLACTOR, KILLBLOCK, KILLEXIT, KILLTAG, SCREENXPOS,
-	MOVECURSOR, NEWSCENE, NOSCROLL, OBJECTHELD, OFFSET, PAUSE,
-	PLAY, PLAYMIDI, PLAYSAMPLE, PREPARESCENE, PRINT, PRINTOBJ,
-	PRINTTAG, RANDOM, RESTORESCENE, SAVESCENE, SCALINGREELS,
-	SCANICON, SCROLL, SETACTOR, SETBLOCK, SETEXIT, SETINVLIMIT,
-	SETPALETTE, SETTAG, SETTIMER, SHOWPOS, SHOWSTRING, SPLAY,
-	STAND, STANDTAG, STOPWALK, SWALK, TAGACTOR, TALK, TALKATTR, TIMER,
-	SCREENYPOS, TOPPLAY, TOPWINDOW, UNTAGACTOR, VIBRATE, WAITKEY,
-	WAITTIME, WALK, WALKED, WALKINGACTOR, WALKPOLY, WALKTAG,
-	WHICHINVENTORY, ACTORSON, CUTSCENE, HOOKSCENE, IDLETIME,
-	RESETIDLETIME, TALKAT, UNHOOKSCENE, WAITFRAME,	DECCSTRINGS,
-	STOPMIDI, STOPSAMPLE, TALKATS, DECFLAGS, FADEMIDI,
-	CLEARHOOKSCENE, SETINVSIZE, INWHICHINV, NOBLOCKING,
-	SAMPLEPLAYING, TRYPLAYSAMPLE, ENABLEMENU, RESTARTGAME, QUITGAME,
-	FRAMEGRAB, PLAYRTF, CDPLAY, CDLOAD, HASRESTARTED, RESTORE_CUT,
-	RUNMODE, SUBTITLES, SETLANGUAGE,
-	HIGHEST_LIBCODE
-};
+    ACTORATTR, ACTORDIRECTION, ACTORREF, ACTORSCALE, ACTORXPOS,
+    ACTORYPOS, ADDTOPIC, ADDINV1, ADDINV2, ADDOPENINV, AUXSCALE,
+    BACKGROUND, CAMERA, CLOSEINVENTORY, CONTROL, CONVERSATION,
+    CONVTOPIC, CURSORXPOS, CURSORYPOS, DECCONVW, DECCURSOR,
+    DECINV1, DECINV2, DECINVW, DECLEAD, DECTAGFONT,
+    DECTALKFONT, DELICON, DELINV, EFFECTACTOR, ESCAPE, EVENT,
+    GETINVLIMIT, HELDOBJECT, HIDEACTOR, ININVENTORY, INVDEPICT,
+    INVENTORY, KILLACTOR, KILLBLOCK, KILLEXIT, KILLTAG, SCREENXPOS,
+    MOVECURSOR, NEWSCENE, NOSCROLL, OBJECTHELD, OFFSET, PAUSE,
+    PLAY, PLAYMIDI, PLAYSAMPLE, PREPARESCENE, PRINT, PRINTOBJ,
+    PRINTTAG, RANDOM, RESTORESCENE, SAVESCENE, SCALINGREELS,
+    SCANICON, SCROLL, SETACTOR, SETBLOCK, SETEXIT, SETINVLIMIT,
+    SETPALETTE, SETTAG, SETTIMER, SHOWPOS, SHOWSTRING, SPLAY,
+    STAND, STANDTAG, STOPWALK, SWALK, TAGACTOR, TALK, TALKATTR, TIMER,
+    SCREENYPOS, TOPPLAY, TOPWINDOW, UNTAGACTOR, VIBRATE, WAITKEY,
+    WAITTIME, WALK, WALKED, WALKINGACTOR, WALKPOLY, WALKTAG,
+    WHICHINVENTORY, ACTORSON, CUTSCENE, HOOKSCENE, IDLETIME,
+    RESETIDLETIME, TALKAT, UNHOOKSCENE, WAITFRAME, DECCSTRINGS,
+    STOPMIDI, STOPSAMPLE, TALKATS, DECFLAGS, FADEMIDI,
+    CLEARHOOKSCENE, SETINVSIZE, INWHICHINV, NOBLOCKING,
+    SAMPLEPLAYING, TRYPLAYSAMPLE, ENABLEMENU, RESTARTGAME, QUITGAME,
+    FRAMEGRAB, PLAYRTF, CDPLAY, CDLOAD, HASRESTARTED, RESTORE_CUT,
+    RUNMODE, SUBTITLES, SETLANGUAGE,
+    HIGHEST_LIBCODE};
 
 static const MASTER_LIB_CODES DW2DEMO_CODES[] = {
-	ACTORBRIGHTNESS, ACTORDIRECTION, ACTORPALETTE, ACTORPRIORITY,
-	ACTORREF, ACTORRGB, ACTORSCALE, ACTORXPOS, ACTORYPOS,
-	ADDHIGHLIGHT, ADDINV, ADDINV1, ADDINV2, ADDOPENINV, ADDTOPIC,
-	BACKGROUND, CALLACTOR, CALLGLOBALPROCESS, CALLOBJECT,
-	CALLPROCESS, CALLSCENE, CALLTAG, CAMERA, CDCHANGESCENE,
-	CDDOCHANGE, CDLOAD, CDPLAY, CLEARHOOKSCENE, CLOSEINVENTORY,
-	CONTROL, CONVERSATION, CURSOR, CURSORXPOS, CURSORYPOS,
-	DECCONVW, DECCURSOR, DECFLAGS, DECINV1, DECINV2, DECINVW,
-	DECLEAD, DECSCALE, DECTAGFONT, DECTALKFONT, DELTOPIC,
-	DIMMUSIC, DROP, DROPOUT, EFFECTACTOR, ENABLEMENU, ENDACTOR,
-	ESCAPEOFF, ESCAPEON, EVENT, FACETAG, FADEIN, FADEOUT, FRAMEGRAB,
-	FREEZECURSOR, GETINVLIMIT, GHOST, GLOBALVAR, HASRESTARTED,
-	HAVE, HELDOBJECT, HIDEACTOR, HIDEBLOCK, HIDEEFFECT, HIDEPATH,
-	HIDEREFER, HIDETAG, HOLD, HOOKSCENE, IDLETIME, INSTANTSCROLL,
-	INVENTORY, INVPLAY, INWHICHINV, KILLACTOR, KILLGLOBALPROCESS,
-	KILLPROCESS, LOCALVAR, MOVECURSOR, MOVETAG, MOVETAGTO, NEWSCENE,
-	NOBLOCKING, NOPAUSE, NOSCROLL, OFFSET, OTHEROBJECT, PAUSE, PLAY,
-	PLAYMUSIC, PLAYRTF, PLAYSAMPLE, POINTACTOR, POINTTAG, POSTACTOR,
-	POSTGLOBALPROCESS, POSTOBJECT, POSTPROCESS, POSTTAG, PRINT,
-	PRINTCURSOR, PRINTOBJ, PRINTTAG, QUITGAME, RANDOM, RESETIDLETIME,
-	RESTARTGAME, RESTORESCENE, RUNMODE, SAVESCENE, SAY, SAYAT,
-	SCALINGREELS, SCREENXPOS, SCREENYPOS, SCROLL, SCROLLPARAMETERS,
-	SENDACTOR, SENDGLOBALPROCESS, SENDOBJECT, SENDPROCESS, SENDTAG,
-	SETBRIGHTNESS, SETINVLIMIT, SETINVSIZE, SETLANGUAGE, SETPALETTE,
-	SETSYSTEMSTRING, SETSYSTEMVAR, SHELL, SHOWACTOR, SHOWBLOCK,
-	SHOWEFFECT, SHOWPATH, SHOWREFER, SHOWTAG, STAND, STANDTAG,
-	STARTGLOBALPROCESS, STARTPROCESS, STARTTIMER, STOPWALK, SUBTITLES,
-	SWALK, SYSTEMVAR, TAGTAGXPOS, TAGTAGYPOS, TAGWALKXPOS, TAGWALKYPOS,
-	TALK, TALKAT, TALKPALETTEINDEX, TALKRGB, TALKVIA, THISOBJECT,
-	THISTAG, TIMER, TOPIC, TOPPLAY, TOPWINDOW, TRANSLUCENTINDEX,
-	UNDIMMUSIC, UNHOOKSCENE, WAITFRAME, WAITKEY, WAITSCROLL, WAITTIME,
-	WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
-	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY,
-	HIGHEST_LIBCODE
-};
+    ACTORBRIGHTNESS, ACTORDIRECTION, ACTORPALETTE, ACTORPRIORITY,
+    ACTORREF, ACTORRGB, ACTORSCALE, ACTORXPOS, ACTORYPOS,
+    ADDHIGHLIGHT, ADDINV, ADDINV1, ADDINV2, ADDOPENINV, ADDTOPIC,
+    BACKGROUND, CALLACTOR, CALLGLOBALPROCESS, CALLOBJECT,
+    CALLPROCESS, CALLSCENE, CALLTAG, CAMERA, CDCHANGESCENE,
+    CDDOCHANGE, CDLOAD, CDPLAY, CLEARHOOKSCENE, CLOSEINVENTORY,
+    CONTROL, CONVERSATION, CURSOR, CURSORXPOS, CURSORYPOS,
+    DECCONVW, DECCURSOR, DECFLAGS, DECINV1, DECINV2, DECINVW,
+    DECLEAD, DECSCALE, DECTAGFONT, DECTALKFONT, DELTOPIC,
+    DIMMUSIC, DROP, DROPOUT, EFFECTACTOR, ENABLEMENU, ENDACTOR,
+    ESCAPEOFF, ESCAPEON, EVENT, FACETAG, FADEIN, FADEOUT, FRAMEGRAB,
+    FREEZECURSOR, GETINVLIMIT, GHOST, GLOBALVAR, HASRESTARTED,
+    HAVE, HELDOBJECT, HIDEACTOR, HIDEBLOCK, HIDEEFFECT, HIDEPATH,
+    HIDEREFER, HIDETAG, HOLD, HOOKSCENE, IDLETIME, INSTANTSCROLL,
+    INVENTORY, INVPLAY, INWHICHINV, KILLACTOR, KILLGLOBALPROCESS,
+    KILLPROCESS, LOCALVAR, MOVECURSOR, MOVETAG, MOVETAGTO, NEWSCENE,
+    NOBLOCKING, NOPAUSE, NOSCROLL, OFFSET, OTHEROBJECT, PAUSE, PLAY,
+    PLAYMUSIC, PLAYRTF, PLAYSAMPLE, POINTACTOR, POINTTAG, POSTACTOR,
+    POSTGLOBALPROCESS, POSTOBJECT, POSTPROCESS, POSTTAG, PRINT,
+    PRINTCURSOR, PRINTOBJ, PRINTTAG, QUITGAME, RANDOM, RESETIDLETIME,
+    RESTARTGAME, RESTORESCENE, RUNMODE, SAVESCENE, SAY, SAYAT,
+    SCALINGREELS, SCREENXPOS, SCREENYPOS, SCROLL, SCROLLPARAMETERS,
+    SENDACTOR, SENDGLOBALPROCESS, SENDOBJECT, SENDPROCESS, SENDTAG,
+    SETBRIGHTNESS, SETINVLIMIT, SETINVSIZE, SETLANGUAGE, SETPALETTE,
+    SETSYSTEMSTRING, SETSYSTEMVAR, SHELL, SHOWACTOR, SHOWBLOCK,
+    SHOWEFFECT, SHOWPATH, SHOWREFER, SHOWTAG, STAND, STANDTAG,
+    STARTGLOBALPROCESS, STARTPROCESS, STARTTIMER, STOPWALK, SUBTITLES,
+    SWALK, SYSTEMVAR, TAGTAGXPOS, TAGTAGYPOS, TAGWALKXPOS, TAGWALKYPOS,
+    TALK, TALKAT, TALKPALETTEINDEX, TALKRGB, TALKVIA, THISOBJECT,
+    THISTAG, TIMER, TOPIC, TOPPLAY, TOPWINDOW, TRANSLUCENTINDEX,
+    UNDIMMUSIC, UNHOOKSCENE, WAITFRAME, WAITKEY, WAITSCROLL, WAITTIME,
+    WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
+    WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY,
+    HIGHEST_LIBCODE};
 
 static const MASTER_LIB_CODES DW2_CODES[] = {
-	ACTORBRIGHTNESS, ACTORDIRECTION, ACTORPALETTE, ACTORPRIORITY,
-	ACTORREF, ACTORRGB, ACTORSCALE, ACTORXPOS, ACTORYPOS,
-	ADDHIGHLIGHT, ADDINV, ADDINV1, ADDINV2, ADDOPENINV, ADDTOPIC,
-	BACKGROUND, CALLACTOR, CALLGLOBALPROCESS, CALLOBJECT,
-	CALLPROCESS, CALLSCENE, CALLTAG, CAMERA, CDCHANGESCENE,
-	CDDOCHANGE, CDLOAD, CDPLAY, CLEARHOOKSCENE, CLOSEINVENTORY,
-	CONTROL, CONVERSATION, CURSOR, CURSORXPOS, CURSORYPOS,
-	DECCONVW, DECCURSOR, DECFLAGS, DECINV1, DECINV2, DECINVW,
-	DECLEAD, DECSCALE, DECTAGFONT, DECTALKFONT, DELTOPIC,
-	DIMMUSIC, DROP, DROPOUT, EFFECTACTOR, ENABLEMENU, ENDACTOR,
-	ESCAPEOFF, ESCAPEON, EVENT, FACETAG, FADEIN, FADEOUT, FRAMEGRAB,
-	FREEZECURSOR, GETINVLIMIT, GHOST, GLOBALVAR, GRABMOVIE,
-	HASRESTARTED, HAVE, HELDOBJECT, HIDEACTOR, HIDEBLOCK, HIDEEFFECT,
-	HIDEPATH, HIDEREFER, HIDETAG, HOLD, HOOKSCENE, IDLETIME,
-	INSTANTSCROLL, INVENTORY, INVPLAY, INWHICHINV, KILLACTOR,
-	KILLGLOBALPROCESS, KILLPROCESS, LOCALVAR, MOVECURSOR, MOVETAG,
-	MOVETAGTO, NEWSCENE, NOBLOCKING, NOPAUSE, NOSCROLL, OFFSET,
-	OTHEROBJECT, PAUSE, PLAY, PLAYMUSIC, PLAYRTF, PLAYSAMPLE,
-	POINTACTOR, POINTTAG, POSTACTOR, POSTGLOBALPROCESS, POSTOBJECT,
-	POSTPROCESS, POSTTAG, PRINT, PRINTCURSOR, PRINTOBJ, PRINTTAG,
-	QUITGAME, RANDOM, RESETIDLETIME, RESTARTGAME, RESTORESCENE,
-	RUNMODE, SAVESCENE, SAY, SAYAT, SCALINGREELS, SCREENXPOS,
-	SCREENYPOS, SCROLL, SCROLLPARAMETERS, SENDACTOR, SENDGLOBALPROCESS,
-	SENDOBJECT, SENDPROCESS, SENDTAG, SETBRIGHTNESS, SETINVLIMIT,
-	SETINVSIZE, SETLANGUAGE, SETPALETTE, SETSYSTEMSTRING, SETSYSTEMVAR,
-	SHELL, SHOWACTOR, SHOWBLOCK, SHOWEFFECT, SHOWPATH, SHOWREFER,
-	SHOWTAG, STAND, STANDTAG, STARTGLOBALPROCESS, STARTPROCESS,
-	STARTTIMER, STOPWALK, SUBTITLES, SWALK, SYSTEMVAR, TAGTAGXPOS,
-	TAGTAGYPOS, TAGWALKXPOS, TAGWALKYPOS, TALK, TALKAT, TALKPALETTEINDEX,
-	TALKRGB, TALKVIA, THISOBJECT, THISTAG, TIMER, TOPIC, TOPPLAY,
-	TOPWINDOW, TRANSLUCENTINDEX, UNDIMMUSIC, UNHOOKSCENE, WAITFRAME,
-	WAITKEY, WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG,
-	WALKINGACTOR, WALKPOLY, WALKTAG, WALKXPOS, WALKYPOS, WHICHCD,
-	WHICHINVENTORY, ZZZZZZ, SWALKZ, DROPEVERYTHING, BLOCKING, STOPSAMPLE,
-	CDENDACTOR, DECLARELANGUAGE, RESUMELASTGAME, SHOWMENU, TEMPTALKFONT,
-	TEMPTAGFONT, PLAYMOVIE, HAILSCENE, SETSYSTEMREEL,
-	HIGHEST_LIBCODE
-};
+    ACTORBRIGHTNESS, ACTORDIRECTION, ACTORPALETTE, ACTORPRIORITY,
+    ACTORREF, ACTORRGB, ACTORSCALE, ACTORXPOS, ACTORYPOS,
+    ADDHIGHLIGHT, ADDINV, ADDINV1, ADDINV2, ADDOPENINV, ADDTOPIC,
+    BACKGROUND, CALLACTOR, CALLGLOBALPROCESS, CALLOBJECT,
+    CALLPROCESS, CALLSCENE, CALLTAG, CAMERA, CDCHANGESCENE,
+    CDDOCHANGE, CDLOAD, CDPLAY, CLEARHOOKSCENE, CLOSEINVENTORY,
+    CONTROL, CONVERSATION, CURSOR, CURSORXPOS, CURSORYPOS,
+    DECCONVW, DECCURSOR, DECFLAGS, DECINV1, DECINV2, DECINVW,
+    DECLEAD, DECSCALE, DECTAGFONT, DECTALKFONT, DELTOPIC,
+    DIMMUSIC, DROP, DROPOUT, EFFECTACTOR, ENABLEMENU, ENDACTOR,
+    ESCAPEOFF, ESCAPEON, EVENT, FACETAG, FADEIN, FADEOUT, FRAMEGRAB,
+    FREEZECURSOR, GETINVLIMIT, GHOST, GLOBALVAR, GRABMOVIE,
+    HASRESTARTED, HAVE, HELDOBJECT, HIDEACTOR, HIDEBLOCK, HIDEEFFECT,
+    HIDEPATH, HIDEREFER, HIDETAG, HOLD, HOOKSCENE, IDLETIME,
+    INSTANTSCROLL, INVENTORY, INVPLAY, INWHICHINV, KILLACTOR,
+    KILLGLOBALPROCESS, KILLPROCESS, LOCALVAR, MOVECURSOR, MOVETAG,
+    MOVETAGTO, NEWSCENE, NOBLOCKING, NOPAUSE, NOSCROLL, OFFSET,
+    OTHEROBJECT, PAUSE, PLAY, PLAYMUSIC, PLAYRTF, PLAYSAMPLE,
+    POINTACTOR, POINTTAG, POSTACTOR, POSTGLOBALPROCESS, POSTOBJECT,
+    POSTPROCESS, POSTTAG, PRINT, PRINTCURSOR, PRINTOBJ, PRINTTAG,
+    QUITGAME, RANDOM, RESETIDLETIME, RESTARTGAME, RESTORESCENE,
+    RUNMODE, SAVESCENE, SAY, SAYAT, SCALINGREELS, SCREENXPOS,
+    SCREENYPOS, SCROLL, SCROLLPARAMETERS, SENDACTOR, SENDGLOBALPROCESS,
+    SENDOBJECT, SENDPROCESS, SENDTAG, SETBRIGHTNESS, SETINVLIMIT,
+    SETINVSIZE, SETLANGUAGE, SETPALETTE, SETSYSTEMSTRING, SETSYSTEMVAR,
+    SHELL, SHOWACTOR, SHOWBLOCK, SHOWEFFECT, SHOWPATH, SHOWREFER,
+    SHOWTAG, STAND, STANDTAG, STARTGLOBALPROCESS, STARTPROCESS,
+    STARTTIMER, STOPWALK, SUBTITLES, SWALK, SYSTEMVAR, TAGTAGXPOS,
+    TAGTAGYPOS, TAGWALKXPOS, TAGWALKYPOS, TALK, TALKAT, TALKPALETTEINDEX,
+    TALKRGB, TALKVIA, THISOBJECT, THISTAG, TIMER, TOPIC, TOPPLAY,
+    TOPWINDOW, TRANSLUCENTINDEX, UNDIMMUSIC, UNHOOKSCENE, WAITFRAME,
+    WAITKEY, WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG,
+    WALKINGACTOR, WALKPOLY, WALKTAG, WALKXPOS, WALKYPOS, WHICHCD,
+    WHICHINVENTORY, ZZZZZZ, SWALKZ, DROPEVERYTHING, BLOCKING, STOPSAMPLE,
+    CDENDACTOR, DECLARELANGUAGE, RESUMELASTGAME, SHOWMENU, TEMPTALKFONT,
+    TEMPTAGFONT, PLAYMOVIE, HAILSCENE, SETSYSTEMREEL,
+    HIGHEST_LIBCODE};
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
@@ -297,11 +493,11 @@ static const MASTER_LIB_CODES DW2_CODES[] = {
 // precedes control(on).
 static int g_controlX = 0, g_controlY = 0;
 
-static int g_offtype = 0;			// used by Control()
-static uint32 g_lastValue = 0;	// used by RandomFn()
-static int g_scrollNumber = 0;	// used by scroll()
+static int g_offtype = 0;      // used by Control()
+static uint32 g_lastValue = 0; // used by RandomFn()
+static int g_scrollNumber = 0; // used by scroll()
 
-static bool g_bNotPointedRunning = false;	// Used in Printobj and PrintObjPointed
+static bool g_bNotPointedRunning = false; // Used in Printobj and PrintObjPointed
 
 //----------------- FORWARD REFERENCES --------------------
 
@@ -315,7 +511,7 @@ void StopSample(int sample = -1);
 static void StopWalk(int actor);
 static void WaitScroll(CORO_PARAM, int myescEvent);
 void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, int hold, bool igPath,
-		  int zOverride, bool escOn, int myescTime);
+          int zOverride, bool escOn, int myescTime);
 
 //----------------- SUPPORT FUNCTIONS --------------------
 
@@ -324,7 +520,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, int hold, bool ig
  * given screen position.
  */
 static void DecodeExtreme(EXTREME extreme, int *px, int *py) {
-	int	Loffset, Toffset;
+	int Loffset, Toffset;
 
 	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
@@ -377,10 +573,10 @@ static void KillSelf(CORO_PARAM) {
 }
 
 struct SCROLL_MONITOR {
-	int	x;
-	int	y;
-	int	thisScroll;
-	int	myEscape;
+	int x;
+	int y;
+	int thisScroll;
+	int myEscape;
 };
 typedef SCROLL_MONITOR *PSCROLL_MONITOR;
 
@@ -388,7 +584,7 @@ typedef SCROLL_MONITOR *PSCROLL_MONITOR;
  * Monitor a scrolling, allowing Escape to interrupt it
  */
 static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
-	int		Loffset, Toffset;
+	int Loffset, Toffset;
 	const SCROLL_MONITOR *psm = (const SCROLL_MONITOR *)param;
 
 	// COROUTINE
@@ -445,12 +641,12 @@ static int TextTime(char *pTstring) {
  * KeepOnScreen
  */
 void KeepOnScreen(POBJECT pText, int *pTextX, int *pTextY) {
-	int	shift;
+	int shift;
 
 	// Not off the left
 	shift = MultiLeftmost(pText);
 	if (shift < 0) {
-		MultiMoveRelXY(pText, - shift, 0);
+		MultiMoveRelXY(pText, -shift, 0);
 		*pTextX -= shift;
 	}
 
@@ -464,7 +660,7 @@ void KeepOnScreen(POBJECT pText, int *pTextX, int *pTextY) {
 	// Not off the top
 	shift = MultiHighest(pText);
 	if (shift < 0) {
-		MultiMoveRelXY(pText, 0, - shift);
+		MultiMoveRelXY(pText, 0, -shift);
 		*pTextY -= shift;
 	}
 
@@ -500,7 +696,7 @@ void TinGetVersion(WHICH_VER which, char *buffer, int length) {
 
 	char *cptr = (char *)FindChunk(MASTER_SCNHANDLE, CHUNK_TIME_STAMPS);
 
-	switch (which)	{
+	switch (which) {
 	case VER_GLITTER:
 		memcpy(buffer, cptr, length);
 		break;
@@ -625,11 +821,11 @@ static void AuxScale(int actor, int scale, SCNHANDLE *rp) {
 
 	int j;
 	for (j = 0; j < 4; ++j)
-		pMover->walkReels[scale-1][j] = *rp++;
+		pMover->walkReels[scale - 1][j] = *rp++;
 	for (j = 0; j < 4; ++j)
-		pMover->standReels[scale-1][j] = *rp++;
+		pMover->standReels[scale - 1][j] = *rp++;
 	for (j = 0; j < 4; ++j)
-		pMover->talkReels[scale-1][j] = *rp++;
+		pMover->talkReels[scale - 1][j] = *rp++;
 }
 
 /**
@@ -683,8 +879,8 @@ void CdDoChange(CORO_PARAM) {
 /**
  * CdEndActor("actor")
  */
-void CdEndActor(int	actor, int	myEscape) {
-	PMOVER	pMover;			// for if it's a moving actor
+void CdEndActor(int actor, int myEscape) {
+	PMOVER pMover; // for if it's a moving actor
 
 	// Only do it if escaped!
 	if (myEscape && myEscape != GetEscEvents()) {
@@ -758,9 +954,9 @@ void Control(int param) {
 
 	switch (param) {
 	case CONTROL_STARTOFF:
-		GetControlToken();	// Take control
-		DisableTags();			// Switch off tags
-		DwHideCursor();			// Blank out cursor
+		GetControlToken(); // Take control
+		DisableTags();     // Switch off tags
+		DwHideCursor();    // Blank out cursor
 		g_offtype = param;
 		break;
 
@@ -768,10 +964,10 @@ void Control(int param) {
 	case CONTROL_OFFV:
 	case CONTROL_OFFV2:
 		if (TestToken(TOKEN_CONTROL)) {
-			GetControlToken();	// Take control
+			GetControlToken(); // Take control
 
-			DisableTags();			// Switch off tags
-			GetCursorXYNoWait(&g_controlX, &g_controlY, true);	// Store cursor position
+			DisableTags();                                     // Switch off tags
+			GetCursorXYNoWait(&g_controlX, &g_controlY, true); // Store cursor position
 
 			// There may be a button timing out
 			GetToken(TOKEN_LEFT_BUT);
@@ -779,12 +975,12 @@ void Control(int param) {
 		}
 
 		if (g_offtype == CONTROL_STARTOFF)
-			GetCursorXYNoWait(&g_controlX, &g_controlY, true);	// Store cursor position
+			GetCursorXYNoWait(&g_controlX, &g_controlY, true); // Store cursor position
 
 		g_offtype = param;
 
 		if (param == CONTROL_OFF)
-			DwHideCursor();		// Blank out cursor
+			DwHideCursor(); // Blank out cursor
 		else if (param == CONTROL_OFFV) {
 			UnHideCursor();
 			FreezeCursor();
@@ -795,14 +991,14 @@ void Control(int param) {
 
 	case CONTROL_ON:
 		if (g_offtype != CONTROL_OFFV2 && g_offtype != CONTROL_STARTOFF)
-			SetCursorXY(g_controlX, g_controlY);// ... where it was
+			SetCursorXY(g_controlX, g_controlY); // ... where it was
 
-		FreeControlToken();	// Release control
+		FreeControlToken(); // Release control
 
 		if (!InventoryActive())
-			EnableTags();		// Tags back on
+			EnableTags(); // Tags back on
 
-		RestoreMainCursor();		// Re-instate cursor...
+		RestoreMainCursor(); // Re-instate cursor...
 		break;
 
 	default:
@@ -858,8 +1054,8 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 			ConvPoly(hp);
 		}
 
-		PopUpInventory(INV_CONV);	// Conversation window
-		ConvAction(INV_OPENICON);	// CONVERSATION event
+		PopUpInventory(INV_CONV); // Conversation window
+		ConvAction(INV_OPENICON); // CONVERSATION event
 	}
 
 	CORO_END_CODE;
@@ -899,9 +1095,9 @@ static int CursorPos(int xory) {
  * Declare conversation window.
  */
 static void DecConvW(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeight,
-			int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
+                     int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
 	idec_convw(text, MaxContents, MinWidth, MinHeight,
-			StartWidth, StartHeight, MaxWidth, MaxHeight);
+	           StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
 /**
@@ -929,22 +1125,22 @@ static void DecFlags(SCNHANDLE hFilm) {
  * Declare inventory 1's parameters.
  */
 static void DecInv1(SCNHANDLE text, int MaxContents,
-		int MinWidth, int MinHeight,
-		int StartWidth, int StartHeight,
-		int MaxWidth, int MaxHeight) {
+                    int MinWidth, int MinHeight,
+                    int StartWidth, int StartHeight,
+                    int MaxWidth, int MaxHeight) {
 	idec_inv1(text, MaxContents, MinWidth, MinHeight,
-			StartWidth, StartHeight, MaxWidth, MaxHeight);
+	          StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
 /**
  * Declare inventory 2's parameters.
  */
 static void DecInv2(SCNHANDLE text, int MaxContents,
-		int MinWidth, int MinHeight,
-		int StartWidth, int StartHeight,
-		int MaxWidth, int MaxHeight) {
+                    int MinWidth, int MinHeight,
+                    int StartWidth, int StartHeight,
+                    int MaxWidth, int MaxHeight) {
 	idec_inv2(text, MaxContents, MinWidth, MinHeight,
-			StartWidth, StartHeight, MaxWidth, MaxHeight);
+	          StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
 /**
@@ -968,7 +1164,7 @@ static void DeclareLanguage(int languageId, SCNHANDLE hDescription, SCNHANDLE hF
  * @param text		Tag text (v1 only)
  */
 static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
-	PMOVER	pMover;		// Moving actor structure
+	PMOVER pMover; // Moving actor structure
 
 	if (TinselV2) {
 		// Tinsel 2 only specifies the lead actor Id
@@ -977,11 +1173,11 @@ static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
 
 	} else {
 
-		Tag_Actor(id, text, TAG_DEF);	// The lead actor is automatically tagged
-		SetLeadId(id);			// Establish this as the lead
-		RegisterMover(id);			// Establish as a moving actor
+		Tag_Actor(id, text, TAG_DEF); // The lead actor is automatically tagged
+		SetLeadId(id);                // Establish this as the lead
+		RegisterMover(id);            // Establish as a moving actor
 
-		pMover = GetMover(id);		// Get moving actor structure
+		pMover = GetMover(id); // Get moving actor structure
 		assert(pMover);
 
 		// Store all those reels
@@ -994,7 +1190,6 @@ static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
 			for (j = 0; j < 4; ++j)
 				pMover->talkReels[i][j] = *rp++;
 		}
-
 
 		for (i = NUM_MAINSCALES; i < TOTAL_SCALES; i++) {
 			for (j = 0; j < 4; ++j) {
@@ -1011,9 +1206,9 @@ static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
  * Define an actor's walk and stand reels for a scale.
  */
 static void DecScale(int actor, int scale,
-		SCNHANDLE wkl, SCNHANDLE wkr, SCNHANDLE wkf, SCNHANDLE wka,
-		SCNHANDLE stl, SCNHANDLE str, SCNHANDLE stf, SCNHANDLE sta,
-		SCNHANDLE tal, SCNHANDLE tar, SCNHANDLE taf, SCNHANDLE taa) {
+                     SCNHANDLE wkl, SCNHANDLE wkr, SCNHANDLE wkf, SCNHANDLE wka,
+                     SCNHANDLE stl, SCNHANDLE str, SCNHANDLE stf, SCNHANDLE sta,
+                     SCNHANDLE tal, SCNHANDLE tar, SCNHANDLE taf, SCNHANDLE taa) {
 	PMOVER pMover = GetMover(actor);
 	assert(pMover);
 
@@ -1033,10 +1228,10 @@ static void DelIcon(int icon) {
  * Delete the object from inventory 1 or 2.
  */
 static void DelInv(int object) {
-	if (!RemFromInventory(INV_1, object))		// Remove from inventory 1...
-		RemFromInventory(INV_2, object);		// ...or 2 (whichever)
+	if (!RemFromInventory(INV_1, object)) // Remove from inventory 1...
+		RemFromInventory(INV_2, object);  // ...or 2 (whichever)
 
-	DropItem(object);			// Stop holding it
+	DropItem(object); // Stop holding it
 }
 
 /**
@@ -1053,10 +1248,10 @@ static void Drop(int object) {
 	if (object == -1)
 		object = HeldObject();
 
-	if (!RemFromInventory(INV_1, object))	// Remove from inventory 1...
-		RemFromInventory(INV_2, object);	// ...or 2 (whichever)
+	if (!RemFromInventory(INV_1, object)) // Remove from inventory 1...
+		RemFromInventory(INV_2, object);  // ...or 2 (whichever)
 
-	DropItem(object);			// Stop holding it
+	DropItem(object); // Stop holding it
 }
 
 /**
@@ -1088,9 +1283,9 @@ static void EndActor(int actor) {
  * If the actor is at the tag, do a StandTag().
  */
 static void FaceTag(int actor, HPOLYGON hp) {
-	PMOVER	pMover;		// Moving actor structure
-	int	nowx, nowy;
-	int	nodex, nodey;
+	PMOVER pMover; // Moving actor structure
+	int nowx, nowy;
+	int nodex, nodey;
 
 	assert(hp != NOPOLY);
 
@@ -1121,9 +1316,9 @@ static void FaceTag(int actor, HPOLYGON hp) {
 		// Look towards polygon
 		GetPolyMidBottom(hp, &nodex, &nodey);
 		SetMoverDirection(pMover, GetDirection(nowx, nowy,
-						nodex, nodey,
-						GetMoverDirection(pMover),
-						NOPOLY, YB_X1_5));
+		                                       nodex, nodey,
+		                                       GetMoverDirection(pMover),
+		                                       NOPOLY, YB_X1_5));
 		SetMoverStanding(pMover);
 	}
 }
@@ -1163,7 +1358,7 @@ static int GetInvLimit(int invno) {
  */
 static void Ghost(int actor, int tColor, int tPalOffset) {
 	SetSysVar(ISV_GHOST_ACTOR, actor);
-	SetSysVar(ISV_GHOST_COLOR,  tColor);
+	SetSysVar(ISV_GHOST_COLOR, tColor);
 	SetSysVar(ISV_GHOST_BASE, tPalOffset);
 }
 
@@ -1385,8 +1580,8 @@ static int LToffset(int lort) {
 static void MoveCursor(int x, int y) {
 	SetCursorXY(x, y);
 
-	g_controlX = x;		// Save these values so that
-	g_controlY = y;		// control(on) doesn't undo this
+	g_controlX = x; // Save these values so that
+	g_controlY = y; // control(on) doesn't undo this
 }
 
 /**
@@ -1496,7 +1691,7 @@ int OtherObject(INV_OBJECT *pinvo) {
  * Play a film.
  */
 static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int actorid, bool splay, int sfact,
-		  bool escOn, int myEscape, bool bTop) {
+                 bool escOn, int myEscape, bool bTop) {
 	assert(hFilm != 0); // play(): Trying to play NULL film
 
 	// COROUTINE
@@ -1504,7 +1699,6 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int acto
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
-
 
 	// Don't do CDPlay() for now if already escaped
 	if (g_bEscapedCdPlay) {
@@ -1540,7 +1734,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int acto
  * Play a film
  */
 static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int myEscape,
-		bool bTop, TINSEL_EVENT event, HPOLYGON hPoly, int taggedActor) {
+                 bool bTop, TINSEL_EVENT event, HPOLYGON hPoly, int taggedActor) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1555,7 +1749,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 	}
 
 	if (event == TALKING) {
-		int	actor;
+		int actor;
 		if (hPoly == NOPOLY) {
 			// Must be a tagged actor
 
@@ -1566,8 +1760,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 			actor = GetTagPolyId(hPoly);
 			assert(actor & ACTORTAG_KEY);
 			actor &= ~ACTORTAG_KEY;
-		}
-		else {
+		} else {
 			return;
 		}
 
@@ -1585,7 +1778,6 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
 
 	CORO_END_CODE;
 }
-
 
 /**
  * Play a midi file.
@@ -1621,7 +1813,7 @@ static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 
 static void PlayMovie(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
 	CORO_BEGIN_CONTEXT;
-		int i;
+	int i;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -1659,7 +1851,7 @@ static void PlayMusic(int tune) {
  */
 static void PlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, int myEscape) {
 	CORO_BEGIN_CONTEXT;
-		Audio::SoundHandle handle;
+	Audio::SoundHandle handle;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -1669,7 +1861,7 @@ static void PlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, int m
 
 	// Don't do it if it's not wanted
 	if (escOn && myEscape != GetEscEvents()) {
-		_vm->_sound->stopAllSamples();		// Stop any currently playing sample
+		_vm->_sound->stopAllSamples(); // Stop any currently playing sample
 		return;
 	}
 
@@ -1699,10 +1891,10 @@ static void PlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, int m
  * Tinsel 2 version
  */
 static void PlaySample(CORO_PARAM, int sample, int x, int y, int flags, int myEscape) {
-	int	priority;
+	int priority;
 	CORO_BEGIN_CONTEXT;
-		Audio::SoundHandle handle;
-		int myEscape;
+	Audio::SoundHandle handle;
+	int myEscape;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -1726,7 +1918,7 @@ static void PlaySample(CORO_PARAM, int sample, int x, int y, int flags, int myEs
 			x = -1;
 
 		_vm->_sound->playSample(sample, 0, false, x, y, priority, Audio::Mixer::kSFXSoundType,
-			&_ctx->handle);
+		                        &_ctx->handle);
 
 		if (flags & PS_COMPLETE) {
 			while (_vm->_mixer->isSoundHandleActive(_ctx->handle)) {
@@ -1751,7 +1943,7 @@ static void PlaySample(CORO_PARAM, int sample, int x, int y, int flags, int myEs
  * Move the cursor to the tagged actor's tag point.
  */
 void PointActor(int actor) {
-	int	x, y;
+	int x, y;
 
 	// Only do this if the function is enabled
 	if (!SysVar(SV_ENABLEPOINTTAG))
@@ -1768,7 +1960,7 @@ void PointActor(int actor) {
  * Move the cursor to the tag's tag point.
  */
 static void PointTag(int tagno, HPOLYGON hp) {
-	int	x, y;
+	int x, y;
 	SCNHANDLE junk;
 
 	// Only do this if the function is enabled
@@ -1788,7 +1980,7 @@ static void PointTag(int tagno, HPOLYGON hp) {
  * PostActor("actor", event)
  */
 static void PostActor(CORO_PARAM, int actor, TINSEL_EVENT event, HPOLYGON hp,
-			   int taggedActor, int myEscape) {
+                      int taggedActor, int myEscape) {
 	if (actor == -1) {
 		actor = taggedActor;
 		assert(hp == NOPOLY && taggedActor);
@@ -1856,15 +2048,15 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		escOn = myEscape != 0;
 
 	CORO_BEGIN_CONTEXT;
-		OBJECT *pText;			// text object pointer
-		int	myleftEvent;
-		bool bSample;			// Set if a sample is playing
-		Audio::SoundHandle handle;
-		int timeout;
-		int time;
+	OBJECT *pText; // text object pointer
+	int myleftEvent;
+	bool bSample; // Set if a sample is playing
+	Audio::SoundHandle handle;
+	int timeout;
+	int time;
 	CORO_END_CONTEXT(_ctx);
 
-	bool	bJapDoPrintText;	// Bodge to get-around Japanese bodge
+	bool bJapDoPrintText; // Bodge to get-around Japanese bodge
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -1906,8 +2098,8 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		int Loffset, Toffset;
 		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
-			_vm->_font->TextBufferAddr(), 0, x - Loffset, y - Toffset, _vm->_font->GetTagFontHandle(),
-			TXT_CENTER, 0);
+		                            _vm->_font->TextBufferAddr(), 0, x - Loffset, y - Toffset, _vm->_font->GetTagFontHandle(),
+		                            TXT_CENTER, 0);
 		assert(_ctx->pText);
 
 		// Adjust x, y, or z if necessary
@@ -1916,11 +2108,11 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 	} else if (bJapDoPrintText || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
-		int Loffset, Toffset;	// Screen position
+		int Loffset, Toffset; // Screen position
 		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
-					0, x - Loffset, y - Toffset,
-					TinselV2 ? _vm->_font->GetTagFontHandle() : _vm->_font->GetTalkFontHandle(), TXT_CENTER);
+		                            0, x - Loffset, y - Toffset,
+		                            TinselV2 ? _vm->_font->GetTagFontHandle() : _vm->_font->GetTalkFontHandle(), TXT_CENTER);
 		assert(_ctx->pText); // string produced NULL text
 		if (IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
@@ -1928,15 +2120,15 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		/*
 		 * New feature: Don't go off the side of the background
 		 */
-		int	shift;
+		int shift;
 		shift = MultiRightmost(_ctx->pText) + 2;
-		if (shift >= _vm->_bg->BgWidth())			// Not off right
+		if (shift >= _vm->_bg->BgWidth()) // Not off right
 			MultiMoveRelXY(_ctx->pText, _vm->_bg->BgWidth() - shift, 0);
 		shift = MultiLeftmost(_ctx->pText) - 1;
-		if (shift <= 0)					// Not off left
+		if (shift <= 0) // Not off left
 			MultiMoveRelXY(_ctx->pText, -shift, 0);
 		shift = MultiLowest(_ctx->pText);
-		if (shift > _vm->_bg->BgHeight())			// Not off bottom
+		if (shift > _vm->_bg->BgHeight()) // Not off bottom
 			MultiMoveRelXY(_ctx->pText, 0, _vm->_bg->BgHeight() - shift);
 	}
 
@@ -1950,8 +2142,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 			CORO_SLEEP(1);
 
 			// Cancelled?
-			if ( (myEscape && myEscape != GetEscEvents())
-					|| (!bSustain && LeftEventChange(_ctx->myleftEvent)))
+			if ((myEscape && myEscape != GetEscEvents()) || (!bSustain && LeftEventChange(_ctx->myleftEvent)))
 				break;
 
 		} while (_ctx->time-- >= 0);
@@ -1965,15 +2156,13 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 			// Abort if left click - hardwired feature for talky-print!
 			// Will be ignored if myleftevent happens to be 0!
 			// Abort if sample times out
-			if ((escOn && myEscape != GetEscEvents())
-			|| (_ctx->myleftEvent && _ctx->myleftEvent != GetLeftEvents())
-			|| (_ctx->bSample && --_ctx->timeout <= 0))
+			if ((escOn && myEscape != GetEscEvents()) || (_ctx->myleftEvent && _ctx->myleftEvent != GetLeftEvents()) || (_ctx->bSample && --_ctx->timeout <= 0))
 				break;
 
 			if (_ctx->bSample) {
 				// Wait for sample to end whether or not
 				if (!_vm->_mixer->isSoundHandleActive(_ctx->handle)) {
-					if (_ctx->pText == NULL || _vm->_config->_textSpeed == DEFTEXTSPEED)				{
+					if (_ctx->pText == NULL || _vm->_config->_textSpeed == DEFTEXTSPEED) {
 						// No text or speed modification - just depends on sample
 						break;
 					} else {
@@ -1998,7 +2187,6 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	CORO_END_CODE;
 }
 
-
 static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *pinvo, OBJECT *&pText, const int textx, const int texty, const int item);
 static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *pText);
 
@@ -2007,17 +2195,17 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
  */
 static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo, const int event, int myEscape) {
 	CORO_BEGIN_CONTEXT;
-		OBJECT *pText;		// text object pointer
-		int	textx, texty;
-		int	item;
-		bool bSample;
-		int sub;
-		Audio::SoundHandle handle;
-		int ticks;
-		int timeout;
-		bool bTookControl;
-		int myEscape;
-		int myLeftEvent;
+	OBJECT *pText; // text object pointer
+	int textx, texty;
+	int item;
+	bool bSample;
+	int sub;
+	Audio::SoundHandle handle;
+	int ticks;
+	int timeout;
+	bool bTookControl;
+	int myEscape;
+	int myLeftEvent;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2025,11 +2213,11 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	assert(pinvo != 0); // PrintObj() may only be called from an object code block
 	_ctx->myEscape = myEscape;
 
-	if (hText == (SCNHANDLE)-1) {	// 'OFF'
+	if (hText == (SCNHANDLE)-1) { // 'OFF'
 		g_bNotPointedRunning = true;
 		return;
 	}
-	if (hText == (SCNHANDLE)-2) {	// 'ON'
+	if (hText == (SCNHANDLE)-2) { // 'ON'
 		g_bNotPointedRunning = false;
 		return;
 	}
@@ -2041,8 +2229,8 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	/*
 	* Find out which icon the cursor is over, and where to put the text.
 	*/
-	GetCursorXY(&_ctx->textx, &_ctx->texty, false);	// Cursor position..
-	_ctx->item = InvItem(&_ctx->textx, &_ctx->texty, true);	// ..to text position
+	GetCursorXY(&_ctx->textx, &_ctx->texty, false);         // Cursor position..
+	_ctx->item = InvItem(&_ctx->textx, &_ctx->texty, true); // ..to text position
 	if (_ctx->item == INV_NOICON)
 		return;
 
@@ -2050,10 +2238,10 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	* POINT/other event PrintObj() arbitration...
 	*/
 	if (event != POINTED) {
-		g_bNotPointedRunning = true;	// Get POINTED text to die
-		CORO_SLEEP(1);		// Give it chance to
+		g_bNotPointedRunning = true; // Get POINTED text to die
+		CORO_SLEEP(1);               // Give it chance to
 	} else if (!TinselV2)
-		g_bNotPointedRunning = false;	// There may have been an OFF without an ON
+		g_bNotPointedRunning = false; // There may have been an OFF without an ON
 
 	// Make multi-ones escape
 	if (TinselV2 && (SubStringCount(hText) > 1) && !_ctx->myEscape)
@@ -2069,13 +2257,13 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 		else {
 			// Kick off the voice sample
 			_vm->_sound->playSample(hText, _ctx->sub, false, -1, -1, PRIORITY_TALK,
-				Audio::Mixer::kSpeechSoundType, &_ctx->handle);
+			                        Audio::Mixer::kSpeechSoundType, &_ctx->handle);
 			_ctx->bSample = true;
 		}
 
 		// Display the text and set it's Z position
 		if (event == POINTED || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
-			int	xshift;
+			int xshift;
 
 			// Get the text string
 			if (TinselV2)
@@ -2084,7 +2272,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 			_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
-						0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
+			                            0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // PrintObj() string produced NULL text
 
 			MultiSetZPosition(_ctx->pText, Z_INV_ITEXT);
@@ -2095,7 +2283,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				// Don't go off the side of the screen
 				xshift = MultiLeftmost(_ctx->pText);
 				if (xshift < 0) {
-					MultiMoveRelXY(_ctx->pText, - xshift, 0);
+					MultiMoveRelXY(_ctx->pText, -xshift, 0);
 					_ctx->textx -= xshift;
 				}
 				xshift = MultiRightmost(_ctx->pText);
@@ -2136,8 +2324,8 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 						// Re-display in the same place
 						LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 						_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
-							_vm->_font->TextBufferAddr(), 0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(),
-							TXT_CENTER, 0);
+						                            _vm->_font->TextBufferAddr(), 0, _ctx->textx, _ctx->texty, _vm->_font->GetTagFontHandle(),
+						                            TXT_CENTER, 0);
 						assert(_ctx->pText);
 
 						KeepOnScreen(_ctx->pText, &_ctx->textx, &_ctx->texty);
@@ -2168,9 +2356,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Abort if left click - hardwired feature for talky-print!
 					// Abort if sample times out
 					// Abort if conversation hidden
-					if (LeftEventChange(_ctx->myLeftEvent)
-							|| --_ctx->timeout <= 0
-							|| ConvIsHidden())
+					if (LeftEventChange(_ctx->myLeftEvent) || --_ctx->timeout <= 0 || ConvIsHidden())
 						break;
 
 					if (_ctx->bSample) {
@@ -2186,7 +2372,8 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 						}
 
 						// Decrement the subtitles timeout counter
-						if (_ctx->ticks > 0) --_ctx->ticks;
+						if (_ctx->ticks > 0)
+							--_ctx->ticks;
 
 					} else {
 						// No sample - just depends on time
@@ -2196,7 +2383,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				}
 
 				if (_ctx->bTookControl)
-					ControlOn();		// Free control if we took it
+					ControlOn(); // Free control if we took it
 			}
 
 		} else {
@@ -2230,112 +2417,113 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
-		// Have to give way to non-POINTED-generated text
-		// and go away if the item gets picked up
-		int	x, y;
-		do {
-			// Give up if this item gets picked up
-			if (WhichItemHeld() == pinvo->id)
+	// Have to give way to non-POINTED-generated text
+	// and go away if the item gets picked up
+	int x, y;
+	do {
+		// Give up if this item gets picked up
+		if (WhichItemHeld() == pinvo->id)
+			break;
+
+		// Give way to non-POINTED-generated text
+		if (g_bNotPointedRunning) {
+			// Delete the text, and wait for the all-clear
+			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), pText);
+			pText = nullptr;
+			while (g_bNotPointedRunning)
+				CORO_SLEEP(1);
+
+			GetCursorXY(&x, &y, false);
+			if (InvItem(&x, &y, false) != item)
 				break;
 
-			// Give way to non-POINTED-generated text
-			if (g_bNotPointedRunning) {
-				// Delete the text, and wait for the all-clear
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), pText);
-				pText = nullptr;
-				while (g_bNotPointedRunning)
-					CORO_SLEEP(1);
+			// Re-display in the same place
+			LoadStringRes(text, _vm->_font->TextBufferAddr(), TBUFSZ);
+			pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
+			                      0, textx, texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
+			assert(pText); // PrintObj() string produced NULL text
+			MultiSetZPosition(pText, Z_INV_ITEXT);
+		}
 
-				GetCursorXY(&x, &y, false);
-				if (InvItem(&x, &y, false) != item)
-					break;
+		CORO_SLEEP(1);
 
-				// Re-display in the same place
-				LoadStringRes(text, _vm->_font->TextBufferAddr(), TBUFSZ);
-				pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
-							0, textx, texty, _vm->_font->GetTagFontHandle(), TXT_CENTER);
-				assert(pText); // PrintObj() string produced NULL text
-				MultiSetZPosition(pText, Z_INV_ITEXT);
-			}
-
-			CORO_SLEEP(1);
-
-			// Carry on until the cursor leaves this icon
-			GetCursorXY(&x, &y, false);
-		} while (InvItemId(x, y) == pinvo->id);
+		// Carry on until the cursor leaves this icon
+		GetCursorXY(&x, &y, false);
+	} while (InvItemId(x, y) == pinvo->id);
 
 	CORO_END_CODE;
 }
 
 static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *pText) {
 	CORO_BEGIN_CONTEXT;
-		bool bSample;		// Set if a sample is playing
-		Audio::SoundHandle handle;
+	bool bSample; // Set if a sample is playing
+	Audio::SoundHandle handle;
 
-		int myleftEvent;
-		bool took_control;
-		int	ticks;
-		int	timeout;
+	int myleftEvent;
+	bool took_control;
+	int ticks;
+	int timeout;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
-		// Kick off the voice sample
-		if (_vm->_config->_voiceVolume != 0 && _vm->_sound->sampleExists(text)) {
-			_vm->_sound->playSample(text, Audio::Mixer::kSpeechSoundType, &_ctx->handle);
-			_ctx->bSample = _vm->_mixer->isSoundHandleActive(_ctx->handle);
-		} else
-			_ctx->bSample = false;
+	// Kick off the voice sample
+	if (_vm->_config->_voiceVolume != 0 && _vm->_sound->sampleExists(text)) {
+		_vm->_sound->playSample(text, Audio::Mixer::kSpeechSoundType, &_ctx->handle);
+		_ctx->bSample = _vm->_mixer->isSoundHandleActive(_ctx->handle);
+	} else
+		_ctx->bSample = false;
 
-		_ctx->myleftEvent = GetLeftEvents();
-		_ctx->took_control = GetControl(CONTROL_OFF);
+	_ctx->myleftEvent = GetLeftEvents();
+	_ctx->took_control = GetControl(CONTROL_OFF);
 
-		// Display for a time, but abort if conversation gets hidden
-		if (_vm->_config->isJapanMode())
-			_ctx->ticks = JAP_TEXT_TIME;
-		else if (pText)
-			_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
-		else
-			_ctx->ticks = 0;
+	// Display for a time, but abort if conversation gets hidden
+	if (_vm->_config->isJapanMode())
+		_ctx->ticks = JAP_TEXT_TIME;
+	else if (pText)
+		_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
+	else
+		_ctx->ticks = 0;
 
-		_ctx->timeout = SAMPLETIMEOUT;
-		do {
-			CORO_SLEEP(1);
-			--_ctx->timeout;
+	_ctx->timeout = SAMPLETIMEOUT;
+	do {
+		CORO_SLEEP(1);
+		--_ctx->timeout;
 
-			// Abort if left click - hardwired feature for talky-print!
-			// Abort if sample times out
-			// Abort if conversation hidden
-			if (_ctx->myleftEvent != GetLeftEvents() || _ctx->timeout <= 0 || ConvIsHidden())
-				break;
+		// Abort if left click - hardwired feature for talky-print!
+		// Abort if sample times out
+		// Abort if conversation hidden
+		if (_ctx->myleftEvent != GetLeftEvents() || _ctx->timeout <= 0 || ConvIsHidden())
+			break;
 
-			if (_ctx->bSample) {
-				// Wait for sample to end whether or not
-				if (!_vm->_mixer->isSoundHandleActive(_ctx->handle)) {
-					if (pText == NULL || _vm->_config->_textSpeed == DEFTEXTSPEED) {
-						// No text or speed modification - just depends on sample
-						break;
-					} else {
-						// Must wait for time
-						_ctx->bSample = false;
-					}
-				}
-
-				// Decrement the subtitles timeout counter
-				if (_ctx->ticks > 0) --_ctx->ticks;
-
-			} else {
-				// No sample - just depends on time
-				if (_ctx->ticks-- <= 0)
+		if (_ctx->bSample) {
+			// Wait for sample to end whether or not
+			if (!_vm->_mixer->isSoundHandleActive(_ctx->handle)) {
+				if (pText == NULL || _vm->_config->_textSpeed == DEFTEXTSPEED) {
+					// No text or speed modification - just depends on sample
 					break;
+				} else {
+					// Must wait for time
+					_ctx->bSample = false;
+				}
 			}
-		} while (1);
 
-		g_bNotPointedRunning = false;	// Let POINTED text back in
+			// Decrement the subtitles timeout counter
+			if (_ctx->ticks > 0)
+				--_ctx->ticks;
 
-		if (_ctx->took_control)
-			Control(CONTROL_ON);	// Free control if we took it
+		} else {
+			// No sample - just depends on time
+			if (_ctx->ticks-- <= 0)
+				break;
+		}
+	} while (1);
 
-		_vm->_mixer->stopHandle(_ctx->handle);
+	g_bNotPointedRunning = false; // Let POINTED text back in
+
+	if (_ctx->took_control)
+		Control(CONTROL_ON); // Free control if we took it
+
+	_vm->_mixer->stopHandle(_ctx->handle);
 
 	CORO_END_CODE;
 }
@@ -2379,7 +2567,8 @@ static int RandomFn(int n1, int n2, int norpt) {
 	uint32 value;
 
 	// In DW1 demo, upper/lower limit can be reversed
-	if (n2 < n1) SWAP(n1, n2);
+	if (n2 < n1)
+		SWAP(n1, n2);
 
 	do {
 		value = n1 + _vm->getRandomNumber(n2 - n1);
@@ -2446,7 +2635,7 @@ void ResumeLastGame() {
  * Returns the current run mode
  */
 static int RunMode() {
-	return 0;	//clRunMode;
+	return 0; //clRunMode;
 }
 
 /**
@@ -2489,7 +2678,7 @@ void SaveScene(CORO_PARAM) {
  * ScalingReels
  */
 static void ScalingReels(int actor, int scale, int direction,
-		SCNHANDLE left, SCNHANDLE right, SCNHANDLE forward, SCNHANDLE away) {
+                         SCNHANDLE left, SCNHANDLE right, SCNHANDLE forward, SCNHANDLE away) {
 
 	SetScalingReels(actor, scale, direction, left, right, forward, away);
 }
@@ -2506,8 +2695,8 @@ static int ScanIcon() {
  */
 static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int yIter, bool bComp, bool escOn, int myEscape) {
 	CORO_BEGIN_CONTEXT;
-		int	thisScroll;
-		int x, y;
+	int thisScroll;
+	int x, y;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2527,7 +2716,7 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
 		ScrollTo(_ctx->x, _ctx->y, xIter, yIter);
 
 		if (bComp) {
-			int	Loffset, Toffset;
+			int Loffset, Toffset;
 			do {
 				CORO_SLEEP(1);
 
@@ -2562,9 +2751,9 @@ static void Scroll(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter, int y
  * ScrollParameters
  */
 static void ScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
-		int yTriggerBottom, int yDistance, int ySpeed) {
+                             int yTriggerBottom, int yDistance, int ySpeed) {
 	SetScrollParameters(xTrigger, xDistance, xSpeed,
-			yTriggerTop, yTriggerBottom, yDistance, ySpeed);
+	                    yTriggerTop, yTriggerBottom, yDistance, ySpeed);
 }
 
 /**
@@ -2658,7 +2847,7 @@ static void SetInvLimit(int invno, int n) {
  * Guess what.
  */
 static void SetInvSize(int invno, int MinWidth, int MinHeight,
-		int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
+                       int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
 	InvSetSize(invno, MinWidth, MinHeight, StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
@@ -2666,9 +2855,7 @@ static void SetInvSize(int invno, int MinWidth, int MinHeight,
  * Guess what.
  */
 static void SetLanguage(LANGUAGE lang) {
-	assert(lang == TXT_ENGLISH || lang == TXT_FRENCH
-	     || lang == TXT_GERMAN  || lang == TXT_ITALIAN
-	     || lang == TXT_SPANISH); // ensure language is valid
+	assert(lang == TXT_ENGLISH || lang == TXT_FRENCH || lang == TXT_GERMAN || lang == TXT_ITALIAN || lang == TXT_SPANISH); // ensure language is valid
 
 	ChangeLanguage(lang);
 }
@@ -2806,7 +2993,7 @@ static void SPlay(CORO_PARAM, int sf, SCNHANDLE film, int x, int y, bool complet
  */
 void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm) {
 	CORO_BEGIN_CONTEXT;
-		PMOVER pMover;		// Moving actor structure
+	PMOVER pMover; // Moving actor structure
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2840,23 +3027,28 @@ void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm) {
 				// Check hFilm against certain constants. Note that a switch statement isn't
 				// used here because it would interfere with our co-routine implementation
 				if (hFilm == TF_UP) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselV2)
+						CORO_GIVE_WAY;
 					SetMoverDirection(_ctx->pMover, AWAY);
 					SetMoverStanding(_ctx->pMover);
 				} else if (hFilm == TF_DOWN) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselV2)
+						CORO_GIVE_WAY;
 					SetMoverDirection(_ctx->pMover, FORWARD);
 					SetMoverStanding(_ctx->pMover);
 				} else if (hFilm == TF_LEFT) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselV2)
+						CORO_GIVE_WAY;
 					SetMoverDirection(_ctx->pMover, LEFTREEL);
 					SetMoverStanding(_ctx->pMover);
 				} else if (hFilm == TF_RIGHT) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselV2)
+						CORO_GIVE_WAY;
 					SetMoverDirection(_ctx->pMover, RIGHTREEL);
 					SetMoverStanding(_ctx->pMover);
 				} else if (hFilm != TF_NONE) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselV2)
+						CORO_GIVE_WAY;
 					AlterMover(_ctx->pMover, hFilm, AR_NORMAL);
 				}
 			}
@@ -2916,7 +3108,7 @@ void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm) {
  */
 static void StandTag(int actor, HPOLYGON hp) {
 	SCNHANDLE hFilm;
-	int	pnodex, pnodey;
+	int pnodex, pnodey;
 
 	assert(hp != NOPOLY); // StandTag() may only be called from a polygon code block
 
@@ -2928,9 +3120,7 @@ static void StandTag(int actor, HPOLYGON hp) {
 
 	// other actors can use direction
 	if (TinselV2) {
-		if (actor != LEAD_ACTOR && actor != GetLeadId()
-				&& hFilm != TF_UP && hFilm != TF_DOWN
-				&& hFilm != TF_LEFT && hFilm != TF_RIGHT)
+		if (actor != LEAD_ACTOR && actor != GetLeadId() && hFilm != TF_UP && hFilm != TF_DOWN && hFilm != TF_LEFT && hFilm != TF_RIGHT)
 			hFilm = 0;
 
 		Stand(Common::nullContext, actor, pnodex, pnodey, hFilm);
@@ -2940,7 +3130,6 @@ static void StandTag(int actor, HPOLYGON hp) {
 	else
 		Stand(Common::nullContext, actor, pnodex, pnodey, 0);
 }
-
 
 /**
  * StartGlobalProcess
@@ -2964,7 +3153,7 @@ static void StartTimerFn(int timerno, int start, bool up, int fs) {
 }
 
 void StopMidiFn() {
-	_vm->_music->StopMidi();		// Stop any currently playing midi
+	_vm->_music->StopMidi(); // Stop any currently playing midi
 }
 
 /**
@@ -2972,7 +3161,7 @@ void StopMidiFn() {
  */
 void StopSample(int sample) {
 	if (sample == -1)
-		_vm->_sound->stopAllSamples();		// Stop any currently playing sample
+		_vm->_sound->stopAllSamples(); // Stop any currently playing sample
 	else
 		_vm->_sound->stopSpecSample(sample, 0);
 }
@@ -2990,10 +3179,10 @@ static void StopWalk(int actor) {
 		if (MoverHidden(pMover))
 			return;
 
-		StopMover(pMover);		// Cause the actor to stop
+		StopMover(pMover); // Cause the actor to stop
 	} else {
-		GetToken(pMover->actorToken);	// Kill the walk process
-		pMover->bStop = true;			// Cause the actor to stop
+		GetToken(pMover->actorToken); // Kill the walk process
+		pMover->bStop = true;         // Cause the actor to stop
 		FreeToken(pMover->actorToken);
 	}
 }
@@ -3002,10 +3191,10 @@ static void StopWalk(int actor) {
  * Subtitles on/off
  */
 static void Subtitles(int onoff) {
-	assert (onoff == ST_ON || onoff == ST_OFF);
+	assert(onoff == ST_ON || onoff == ST_OFF);
 
 	if (_vm->_config->isJapanMode())
-		return;	// Subtitles are always off in JAPAN version (?)
+		return; // Subtitles are always off in JAPAN version (?)
 
 	_vm->_config->_useSubtitles = (onoff == ST_ON);
 }
@@ -3016,7 +3205,7 @@ static void Subtitles(int onoff) {
  */
 static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHANDLE film, int32 zOverride, bool escOn, int myEscape) {
 	CORO_BEGIN_CONTEXT;
-		bool	bTookControl;			// Set if this function takes control
+	bool bTookControl; // Set if this function takes control
 	CORO_END_CONTEXT(_ctx);
 
 	HPOLYGON hPath;
@@ -3061,7 +3250,7 @@ static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHAND
 			assert(hPath != NOPOLY); //one co-ordinate must be in a legal path
 
 			// Walking into a path
-			CORO_INVOKE_ARGS(Stand, (CORO_SUBCTX, actor, x2, y2, 0));	// Get path's characteristics
+			CORO_INVOKE_ARGS(Stand, (CORO_SUBCTX, actor, x2, y2, 0)); // Get path's characteristics
 			CORO_INVOKE_ARGS(Stand, (CORO_SUBCTX, actor, x1, y1, 0));
 		}
 
@@ -3100,7 +3289,7 @@ static void TagActor(int actor, SCNHANDLE text, int tp) {
  * TagPos([tag #])
  */
 static int TagPos(MASTER_LIB_CODES operand, int tagno, HPOLYGON hp) {
-	int	x, y;
+	int x, y;
 
 	// Tag could be zero, meaning calling tag
 	if (tagno == 0)
@@ -3141,27 +3330,27 @@ static void FinishTalkingReel(CORO_PARAM, PMOVER pMover, int actor) {
 }
 
 static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x, int y,
-					  SCNHANDLE hFilm, int actorId, bool bSustain, bool escOn, int myEscape) {
+                      SCNHANDLE hFilm, int actorId, bool bSustain, bool escOn, int myEscape) {
 	CORO_BEGIN_CONTEXT;
-		int		Loffset, Toffset;	// Top left of display
-		int		actor;			// The speaking actor
-		PMOVER	pActor;			// For moving actors
-		int		myLeftEvent;
-		int		escEvents;
-		int		ticks;
-		bool	bTookControl;	// Set if this function takes control
-		bool	bTookTags;		// Set if this function disables tags
-		OBJECT	*pText;			// text object pointer
-		bool	bSample;		// Set if a sample is playing
-		bool	bSamples;
-		bool	bTalkReel;		// Set while talk reel is playing
-		Audio::SoundHandle handle;
-		int	timeout;
+	int Loffset, Toffset; // Top left of display
+	int actor;            // The speaking actor
+	PMOVER pActor;        // For moving actors
+	int myLeftEvent;
+	int escEvents;
+	int ticks;
+	bool bTookControl; // Set if this function takes control
+	bool bTookTags;    // Set if this function disables tags
+	OBJECT *pText;     // text object pointer
+	bool bSample;      // Set if a sample is playing
+	bool bSamples;
+	bool bTalkReel; // Set while talk reel is playing
+	Audio::SoundHandle handle;
+	int timeout;
 
-		SPEECH_TYPE whatSort;
-		TFTYPE	direction;
-		int sub;
-		int x, y;
+	SPEECH_TYPE whatSort;
+	TFTYPE direction;
+	int sub;
+	int x, y;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -3200,7 +3389,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		case TF_DOWN:
 		case TF_LEFT:
 		case TF_RIGHT:
-			_ctx->actor = GetLeadId();	// If no film, actor is lead actor
+			_ctx->actor = GetLeadId(); // If no film, actor is lead actor
 			_ctx->direction = (TFTYPE)hFilm;
 			break;
 
@@ -3264,7 +3453,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			CORO_INVOKE_ARGS(PlayFilm, (CORO_SUBCTX, hFilm, -1, -1, 0, false, 0, escOn, myEscape, false));
 		}
 		_ctx->bTalkReel = true;
-		CORO_SLEEP(1);		// Allow the play to come in
+		CORO_SLEEP(1); // Allow the play to come in
 
 	} else if (_ctx->whatSort == IS_TALKAT) {
 		_ctx->bTalkReel = false;
@@ -3275,7 +3464,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			CORO_INVOKE_ARGS(ActorEvent, (CORO_SUBCTX, _ctx->actor, TALKING, false, 0));
 		} else if (IsTagPolygon(_ctx->actor | ACTORTAG_KEY)) {
 			CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, GetTagHandle(_ctx->actor | ACTORTAG_KEY),
-				TALKING, 0, false, 0));
+			                                TALKING, 0, false, 0));
 		}
 
 		if (TinselV2)
@@ -3305,7 +3494,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			/*
 			 * Work out where to display the text
 			 */
-			int	xshift, yshift;
+			int xshift, yshift;
 
 			_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &_ctx->Loffset, &_ctx->Toffset);
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
@@ -3322,8 +3511,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			}
 
 			_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
-					_vm->_font->TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
-					_vm->_font->GetTalkFontHandle(), TXT_CENTER);
+			                            _vm->_font->TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
+			                            _vm->_font->GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
 
 			if (IsTopWindow())
@@ -3337,20 +3526,20 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				if (TinselV2)
 					MultiMoveRelXY(_ctx->pText, 0, _ctx->y - _ctx->Toffset - MultiLowest(_ctx->pText) - 2);
 				else {
-					yshift = _ctx->y - MultiLowest(_ctx->pText) - 2;		// Just above head
-					MultiMoveRelXY(_ctx->pText, 0, yshift);		//
+					yshift = _ctx->y - MultiLowest(_ctx->pText) - 2; // Just above head
+					MultiMoveRelXY(_ctx->pText, 0, yshift);          //
 					yshift = MultiHighest(_ctx->pText);
 					if (yshift < 4)
-						MultiMoveRelXY(_ctx->pText, 0, 4 - yshift);	// Not off top
+						MultiMoveRelXY(_ctx->pText, 0, 4 - yshift); // Not off top
 
 					/*
 					 * Don't go off the side of the screen
 					 */
 					xshift = MultiRightmost(_ctx->pText) + 2;
-					if (xshift >= SCREEN_WIDTH)			// Not off right
+					if (xshift >= SCREEN_WIDTH) // Not off right
 						MultiMoveRelXY(_ctx->pText, SCREEN_WIDTH - xshift, 0);
 					xshift = MultiLeftmost(_ctx->pText) - 1;
-					if (xshift <= 0)					// Not off left
+					if (xshift <= 0) // Not off left
 						MultiMoveRelXY(_ctx->pText, -xshift, 0);
 				}
 			}
@@ -3382,7 +3571,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 		do {
 			// Keep text in place if scrolling
 			if (_ctx->pText != NULL) {
-				int	nLoff, nToff;
+				int nLoff, nToff;
 
 				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
 				if (nLoff != _ctx->Loffset || nToff != _ctx->Toffset) {
@@ -3397,8 +3586,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			// Handle timeout decrementing and Escape presses
 			if (TinselV2) {
 				if ((_ctx->escEvents && _ctx->escEvents != GetEscEvents()) ||
-					(!bSustain && LeftEventChange(_ctx->myLeftEvent)) ||
-					(--_ctx->timeout <= 0)) {
+				    (!bSustain && LeftEventChange(_ctx->myLeftEvent)) ||
+				    (--_ctx->timeout <= 0)) {
 					// Left event only kills current sub-string
 					_ctx->myLeftEvent = GetLeftEvents();
 					break;
@@ -3409,9 +3598,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				// Abort if escapable and ESCAPE is pressed
 				// Abort if left click - hardwired feature for talk!
 				// Abort if sample times out
-				if ((escOn && myEscape != GetEscEvents())
-						|| (_ctx->myLeftEvent != GetLeftEvents())
-						|| (_ctx->timeout <= 0))
+				if ((escOn && myEscape != GetEscEvents()) || (_ctx->myLeftEvent != GetLeftEvents()) || (_ctx->timeout <= 0))
 					break;
 			}
 
@@ -3432,7 +3619,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				}
 
 				// Decrement the subtitles timeout counter
-				if (_ctx->ticks > 0) --_ctx->ticks;
+				if (_ctx->ticks > 0)
+					--_ctx->ticks;
 
 			} else {
 				// No sample - just depends on time
@@ -3466,7 +3654,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				CORO_INVOKE_ARGS(ActorEvent, (CORO_SUBCTX, _ctx->actor, ENDTALK, false, 0));
 			else if (IsTagPolygon(_ctx->actor | ACTORTAG_KEY))
 				CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX,
-					GetTagHandle(_ctx->actor | ACTORTAG_KEY), ENDTALK, 0, false, 0));
+				                                GetTagHandle(_ctx->actor | ACTORTAG_KEY), ENDTALK, 0, false, 0));
 
 			CORO_SLEEP(1);
 		}
@@ -3479,7 +3667,10 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	 * And, finally, release the talk token.
 	 */
 	if (_ctx->bTookControl) {
-		if (TinselV2) ControlOn(); else Control(CONTROL_ON);
+		if (TinselV2)
+			ControlOn();
+		else
+			Control(CONTROL_ON);
 	}
 	if (_ctx->bTookTags)
 		EnableTags();
@@ -3532,9 +3723,12 @@ static void TalkAttr(int r1, int g1, int b1, bool escOn, int myEscape) {
 	if (escOn && myEscape != GetEscEvents())
 		return;
 
-	if (r1 > MAX_INTENSITY)	r1 = MAX_INTENSITY;	// } Ensure
-	if (g1 > MAX_INTENSITY)	g1 = MAX_INTENSITY;	// } within limits
-	if (b1 > MAX_INTENSITY)	b1 = MAX_INTENSITY;	// }
+	if (r1 > MAX_INTENSITY)
+		r1 = MAX_INTENSITY; // } Ensure
+	if (g1 > MAX_INTENSITY)
+		g1 = MAX_INTENSITY; // } within limits
+	if (b1 > MAX_INTENSITY)
+		b1 = MAX_INTENSITY; // }
 
 	SetTextPal(TINSEL_RGB(r1, g1, b1));
 }
@@ -3693,8 +3887,8 @@ static void WaitFrame(CORO_PARAM, int actor, int frameNumber, bool escOn, int my
  */
 static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 	CORO_BEGIN_CONTEXT;
-		int	startEvent;
-		int startX, startY;
+	int startEvent;
+	int startX, startY;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -3717,7 +3911,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 			// Not necessary to monitor escape as it's an event anyway
 			if (TinselV1) {
 				int curX, curY;
-				GetCursorXY(&curX, &curY, false);	// Store cursor position
+				GetCursorXY(&curX, &curY, false); // Store cursor position
 				if (curX != _ctx->startX || curY != _ctx->startY)
 					break;
 			}
@@ -3733,7 +3927,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 			CORO_SLEEP(1);
 		} while (MenuActive());
 
-		CORO_SLEEP(ONE_SECOND / 2);		// Let it die down
+		CORO_SLEEP(ONE_SECOND / 2); // Let it die down
 	}
 	CORO_END_CODE;
 }
@@ -3743,7 +3937,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
  */
 void WaitScroll(CORO_PARAM, int myescEvent) {
 	CORO_BEGIN_CONTEXT;
-		int time;
+	int time;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -3764,7 +3958,7 @@ void WaitScroll(CORO_PARAM, int myescEvent) {
  */
 static void WaitTime(CORO_PARAM, int time, bool frame, bool escOn, int myEscape) {
 	CORO_BEGIN_CONTEXT;
-		int time;
+	int time;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -3792,9 +3986,9 @@ static void WaitTime(CORO_PARAM, int time, bool frame, bool escOn, int myEscape)
  * Set a moving actor off on a walk.
  */
 void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool igPath,
-		  int zOverride, bool escOn, int myescEvent) {
+          int zOverride, bool escOn, int myescEvent) {
 	CORO_BEGIN_CONTEXT;
-		int thisWalk;
+	int thisWalk;
 	CORO_END_CONTEXT(_ctx);
 
 	bool bQuick = hold != 0;
@@ -3883,7 +4077,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool escOn, int myEscape, bool &retVal) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		int	thisWalk;
+	int thisWalk;
 	CORO_END_CONTEXT(_ctx);
 
 	PMOVER pMover = GetMover(actor);
@@ -3936,7 +4130,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 		CORO_SLEEP(1);
 	}
 
-	int	endx, endy;
+	int endx, endy;
 	GetMoverPosition(pMover, &endx, &endy);
 	retVal = (_ctx->thisWalk == GetWalkNumber(pMover) && endx == x && endy == y);
 
@@ -3947,14 +4141,14 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
  * Declare a moving actor.
  */
 static void WalkingActor(uint32 id, SCNHANDLE *rp = NULL) {
-	PMOVER	pActor;		// Moving actor structure
+	PMOVER pActor; // Moving actor structure
 
 	if (TinselVersion == TINSEL_V2) {
 		RegisterMover(id);
 		return;
 	}
 
-	RegisterMover(id);		// Establish as a moving actor
+	RegisterMover(id); // Establish as a moving actor
 	pActor = GetMover(id);
 	assert(pActor);
 
@@ -3966,7 +4160,6 @@ static void WalkingActor(uint32 id, SCNHANDLE *rp = NULL) {
 		for (j = 0; j < 4; ++j)
 			pActor->standReels[i][j] = *rp++;
 	}
-
 
 	for (i = NUM_MAINSCALES; i < TOTAL_SCALES; i++) {
 		for (j = 0; j < 4; ++j) {
@@ -3981,11 +4174,11 @@ static void WalkingActor(uint32 id, SCNHANDLE *rp = NULL) {
  * actor enters the polygon.
  */
 static void WalkPoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool escOn, int myEscape) {
-	int	pnodex, pnodey;
+	int pnodex, pnodey;
 
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		int thisWalk;
+	int thisWalk;
 	CORO_END_CONTEXT(_ctx);
 
 	assert(hp != NOPOLY); // WalkPoly() may only be called from a polygon code block
@@ -4044,7 +4237,7 @@ static void WalkPoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool es
 static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool escOn, int myEscape) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		int thisWalk;
+	int thisWalk;
 	CORO_END_CONTEXT(_ctx);
 
 	PMOVER pMover = GetMover(actor);
@@ -4052,7 +4245,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 
 	CORO_BEGIN_CODE(_ctx);
 
-	int	pnodex, pnodey;
+	int pnodex, pnodey;
 
 	assert(hp != NOPOLY); // walkpoly() may only be called from a polygon code block
 
@@ -4156,7 +4349,6 @@ int WhichInventory() {
 	return WhichInventoryOpen();
 }
 
-
 /**
  * Subtract one less that the number of parameters from pp
  * pp then points to the first parameter.
@@ -4172,16 +4364,20 @@ int WhichInventory() {
  */
 int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pic, RESUME_STATE *pResumeState) {
 	int libCode;
-	if (TinselV0) libCode = DW1DEMO_CODES[operand];
-	else if (!TinselV2) libCode = DW1_CODES[operand];
-	else if (TinselV2Demo) libCode = DW2DEMO_CODES[operand];
-	else libCode = DW2_CODES[operand];
+	if (TinselV0)
+		libCode = DW1DEMO_CODES[operand];
+	else if (!TinselV2)
+		libCode = DW1_CODES[operand];
+	else if (TinselV2Demo)
+		libCode = DW2DEMO_CODES[operand];
+	else
+		libCode = DW2_CODES[operand];
 
 	debug(7, "CallLibraryRoutine op %d (escOn %d, myEscape %d)", operand, pic->escOn, pic->myEscape);
 	switch (libCode) {
 	case ACTORATTR:
 		// DW1 only
-		pp -= 3;			// 4 parameters
+		pp -= 3; // 4 parameters
 		ActorAttr(pp[0], pp[1], pp[2], pp[3]);
 		return -4;
 
@@ -4198,13 +4394,13 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case ACTORPALETTE:
 		// DW2 only
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		ActorPalette(pp[0], pp[1], pp[2]);
 		return -3;
 
 	case ACTORPRIORITY:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		ActorPriority(pp[0], pp[1]);
 		return -2;
 
@@ -4216,7 +4412,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case ACTORRGB:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		ActorRGB(pp[0], pp[1]);
 		return -2;
 
@@ -4243,7 +4439,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case ADDHIGHLIGHT:
 		// DW2 only
 		// Command doesn't actually do anything
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		return -2;
 
 	case ADDINV:
@@ -4273,8 +4469,8 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case AUXSCALE:
 		// DW1 only
-		pp -= 13;			// 14 parameters
-		AuxScale(pp[0], pp[1], (SCNHANDLE *)(pp+2));
+		pp -= 13; // 14 parameters
+		AuxScale(pp[0], pp[1], (SCNHANDLE *)(pp + 2));
 		return -14;
 
 	case BACKGROUND:
@@ -4291,7 +4487,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case CALLGLOBALPROCESS:
 	case CALLOBJECT:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		if (*pResumeState == RES_1 && pic->resumeCode == RES_WAITING) {
 			bool result;
 			*pResumeState = RES_NOT;
@@ -4319,10 +4515,9 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 			KillSelf(coroParam);
 		return -2;
 
-
 	case CALLPROCESS:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		if (*pResumeState == RES_1 && pic->resumeCode == RES_WAITING) {
 			bool result;
 			*pResumeState = RES_NOT;
@@ -4348,7 +4543,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case CALLTAG:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		if (*pResumeState == RES_1 && pic->resumeCode == RES_WAITING) {
 			bool result;
 			*pResumeState = RES_NOT;
@@ -4394,7 +4589,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case CDLOAD:
 		// Common to both DW1 & DW2
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		CDload(pp[0], pp[1], pic->myEscape);
 		return -2;
 
@@ -4448,14 +4643,14 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DECCONVW:
 		// Common to both DW1 & DW2
-		pp -= 7;			// 8 parameters
+		pp -= 7; // 8 parameters
 		DecConvW(pp[0], pp[1], pp[2], pp[3],
-			 pp[4], pp[5], pp[6], pp[7]);
+		         pp[4], pp[5], pp[6], pp[7]);
 		return -8;
 
 	case DECCSTRINGS:
 		// DW1 only
-		pp -= 19;			// 20 parameters
+		pp -= 19; // 20 parameters
 		DecCStrings((SCNHANDLE *)pp);
 		return -20;
 
@@ -4474,16 +4669,16 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DECINV1:
 		// Common to both DW1 & DW2
-		pp -= 7;			// 8 parameters
+		pp -= 7; // 8 parameters
 		DecInv1(pp[0], pp[1], pp[2], pp[3],
-			 pp[4], pp[5], pp[6], pp[7]);
+		        pp[4], pp[5], pp[6], pp[7]);
 		return -8;
 
 	case DECINV2:
 		// Common to both DW1 & DW2
-		pp -= 7;			// 8 parameters
+		pp -= 7; // 8 parameters
 		DecInv2(pp[0], pp[1], pp[2], pp[3],
-			 pp[4], pp[5], pp[6], pp[7]);
+		        pp[4], pp[5], pp[6], pp[7]);
 		return -8;
 
 	case DECINVW:
@@ -4493,7 +4688,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DECLARELANGUAGE:
 		// DW2 only
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		DeclareLanguage(pp[0], pp[1], pp[2]);
 		return -3;
 
@@ -4503,17 +4698,17 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 			DecLead(pp[0]);
 			return -1;
 		} else {
-			pp -= 61;			// 62 parameters
+			pp -= 61; // 62 parameters
 			DecLead(pp[0], (SCNHANDLE *)&pp[1], pp[61]);
 			return -62;
 		}
 
 	case DECSCALE:
 		// DW2 only
-		pp -= 13;			// 14 parameters
+		pp -= 13; // 14 parameters
 		DecScale(pp[0], pp[1], pp[2], pp[3], pp[4],
-			 pp[5], pp[6], pp[7], pp[8], pp[9],
-			 pp[10], pp[11], pp[12], pp[13]);
+		         pp[5], pp[6], pp[7], pp[8], pp[9],
+		         pp[10], pp[11], pp[12], pp[13]);
 		return -14;
 
 	case DECTAGFONT:
@@ -4627,7 +4822,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case GHOST:
 		// DW2 only
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		Ghost(pp[0], pp[1], pp[2]);
 		return -3;
 
@@ -4652,7 +4847,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case HAVE:
 		// DW2 only
 		pp[0] = Have(pp[0]);
-		return 0;			// using return value
+		return 0; // using return value
 
 	case HELDOBJECT:
 		// Common to both DW1 & DW2
@@ -4717,7 +4912,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case HOOKSCENE:
 		// Common to both DW1 & DW2
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		HookScene(pp[0], pp[1], pp[2]);
 		return -3;
 
@@ -4729,7 +4924,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case ININVENTORY:
 		// DW1 only
 		pp[0] = InInventory(pp[0]);
-		return 0;			// using return value
+		return 0; // using return value
 
 	case INSTANTSCROLL:
 		// DW2 only
@@ -4738,7 +4933,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case INVDEPICT:
 		// DW1 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		InvDepict(pp[0], pp[1]);
 		return -2;
 
@@ -4749,14 +4944,14 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case INVPLAY:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		InvPlay(pp[0], pp[1]);
 		return -2;
 
 	case INWHICHINV:
 		// Common to both DW1 & DW2
 		pp[0] = InWhichInv(pp[0]);
-		return 0;			// using return value
+		return 0; // using return value
 
 	case KILLACTOR:
 		// DW1 only
@@ -4797,25 +4992,25 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case MOVECURSOR:
 		// Common to both DW1 & DW2
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		MoveCursor(pp[0], pp[1]);
 		return -2;
 
 	case MOVETAG:
 		// DW2 only
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		MoveTag(pp[0], pp[1], pp[2], pic->hPoly);
 		return -3;
 
 	case MOVETAGTO:
 		// DW2 only
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		MoveTagTo(pp[0], pp[1], pp[2], pic->hPoly);
 		return -3;
 
 	case NEWSCENE:
 		// Common to both DW1 & DW2
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		if (*pResumeState == RES_2)
 			*pResumeState = RES_NOT;
 		else
@@ -4834,7 +5029,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case NOSCROLL:
 		// Common to both DW1 & DW2
-		pp -= 3;			// 4 parameters
+		pp -= 3; // 4 parameters
 		NoScroll(pp[0], pp[1], pp[2], pp[3]);
 		return -4;
 
@@ -4846,11 +5041,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case OFFSET:
 		// Common to both DW1 & DW2
 		if (TinselV2) {
-			pp -= 2;			// 2 parameters
+			pp -= 2; // 2 parameters
 			Offset((EXTREME)pp[0], pp[1], pp[2]);
 			return -3;
 		} else {
-			pp -= 1;			// 2 parameters
+			pp -= 1; // 2 parameters
 			Offset(EX_USEXY, pp[0], pp[1]);
 			return -2;
 		}
@@ -4868,17 +5063,17 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case PLAY:
 		// Common to both DW1 & DW2
 		if (TinselV2) {
-			pp -= 3;			// 4 parameters
+			pp -= 3; // 4 parameters
 			if (*pResumeState == RES_1 && IsCdPlayHandle(pp[0]))
 				*pResumeState = RES_NOT;
 			else {
 				Play(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, false,
-						pic->event, pic->hPoly, pic->idActor);
+				     pic->event, pic->hPoly, pic->idActor);
 			}
 			return -4;
 
 		} else {
-			pp -= 5;			// 6 parameters
+			pp -= 5; // 6 parameters
 
 			if (pic->event == WALKIN || pic->event == WALKOUT)
 				Play(coroParam, pp[0], pp[1], pp[2], pp[5], 0, false, 0, pic->escOn, pic->myEscape, false);
@@ -4889,7 +5084,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case PLAYMIDI:
 		// Common to both DW1 & DW2
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		PlayMidi(coroParam, pp[0], pp[1], pp[2]);
 		return -3;
 
@@ -4910,11 +5105,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case PLAYSAMPLE:
 		// Common to both DW1 & DW2
 		if (TinselV2) {
-			pp -= 3;			// 4 parameters
+			pp -= 3; // 4 parameters
 			PlaySample(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape);
 			return -4;
 		} else {
-			pp -= 1;			// 2 parameters
+			pp -= 1; // 2 parameters
 			PlaySample(coroParam, pp[0], pp[1], pic->escOn, pic->myEscape);
 			return -2;
 		}
@@ -4931,34 +5126,33 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case POSTACTOR:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		PostActor(coroParam, pp[0], (TINSEL_EVENT)pp[1], pic->hPoly, pic->idActor, pic->myEscape);
 		return -2;
 
 	case POSTGLOBALPROCESS:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		PostGlobalProcess(coroParam, pp[0], (TINSEL_EVENT)pp[1], pic->myEscape);
 		return -2;
 
 	case POSTOBJECT:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		PostObject(coroParam, pp[0], (TINSEL_EVENT)pp[1], pic->myEscape);
 		return -2;
 
 	case POSTPROCESS:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		PostProcess(coroParam, pp[0], (TINSEL_EVENT)pp[1], pic->myEscape);
 		return -2;
 
 	case POSTTAG:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		PostTag(coroParam, pp[0], (TINSEL_EVENT)pp[1], pic->hPoly, pic->myEscape);
 		return -2;
-
 
 	case PREPARESCENE:
 		// DW1 only
@@ -4968,11 +5162,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case PRINT:
 		// Common to both DW1 & DW2
 		if (TinselV2) {
-			pp -= 4;			// 5 parameters
+			pp -= 4; // 5 parameters
 			Print(coroParam, pp[0], pp[1], pp[2], pp[3], pp[4] != 0, pic->escOn, pic->myEscape);
 			return -5;
 		} else {
-			pp -= 5;			// 6 parameters
+			pp -= 5; // 6 parameters
 			/* pp[2] was intended to be attribute */
 			Print(coroParam, pp[0], pp[1], pp[3], pp[4], pp[5] == 2, pic->escOn, pic->myEscape);
 			return -6;
@@ -5000,9 +5194,9 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case RANDOM:
 		// Common to both DW1 & DW2
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		pp[0] = RandomFn(pp[0], pp[1], pp[2]);
-		return -2;		// One holds return value
+		return -2; // One holds return value
 
 	case RESETIDLETIME:
 		// Common to both DW1 & DW2
@@ -5054,19 +5248,19 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case SAY:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		TalkOrSay(coroParam, IS_SAY, pp[1], 0, 0, 0, pp[0], false, pic->escOn, pic->myEscape);
 		return -2;
 
 	case SAYAT:
 		// DW2 only
-		pp -= 4;			// 5 parameters
+		pp -= 4; // 5 parameters
 		TalkOrSay(coroParam, IS_SAYAT, pp[3], pp[1], pp[2], 0, pp[0], pp[4], pic->escOn, pic->myEscape);
 		return -5;
 
 	case SCALINGREELS:
 		// Common to both DW1 & DW2
-		pp -= 6;			// 7 parameters
+		pp -= 6; // 7 parameters
 		ScalingReels(pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6]);
 		return -7;
 
@@ -5088,24 +5282,24 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case SCROLL:
 		// Common to both DW1 & DW2
 		if (TinselV2) {
-			pp -= 5;			// 6 parameters
+			pp -= 5; // 6 parameters
 			Scroll(coroParam, (EXTREME)pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pic->escOn, pic->myEscape);
 			return -6;
 		} else {
-			pp -= 3;			// 4 parameters
+			pp -= 3; // 4 parameters
 			Scroll(coroParam, EX_USEXY, pp[0], pp[1], pp[2], pp[2], pp[3], pic->escOn, pic->myEscape);
 			return -4;
 		}
 
 	case SCROLLPARAMETERS:
 		// DW2 only
-		pp -= 6;			// 7 parameters
+		pp -= 6; // 7 parameters
 		ScrollParameters(pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6]);
 		return -7;
 
 	case SENDTAG:
 		// DW2 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		if (*pResumeState == RES_1 && pic->resumeCode == RES_WAITING) {
 			bool result;
 			*pResumeState = RES_NOT;
@@ -5125,7 +5319,6 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		}
 		return -1;
 
-
 	case SETACTOR:
 		// DW1 only
 		SetActor(pp[0]);
@@ -5143,13 +5336,13 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case SETINVLIMIT:
 		// Common to both DW1 & DW2
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		SetInvLimit(pp[0], pp[1]);
 		return -2;
 
 	case SETINVSIZE:
 		// Common to both DW1 & DW2
-		pp -= 6;			// 7 parameters
+		pp -= 6; // 7 parameters
 		SetInvSize(pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6]);
 		return -7;
 
@@ -5172,13 +5365,13 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case SETSYSTEMSTRING:
 		// DW2 only
-		pp -= 1;				// 2 parameters
+		pp -= 1; // 2 parameters
 		SetSystemString(pp[0], pp[1]);
 		return -2;
 
 	case SETSYSTEMVAR:
 		// DW1 only
-		pp -= 1;				// 2 parameters
+		pp -= 1; // 2 parameters
 		SetSystemVar(pp[0], pp[1]);
 		return -2;
 
@@ -5189,7 +5382,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case SETTIMER:
 		// DW1 only
-		pp -= 3;			// 4 parameters
+		pp -= 3; // 4 parameters
 		SetTimer(pp[0], pp[1], pp[2], pp[3]);
 		return -4;
 
@@ -5266,7 +5459,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case SPLAY:
 		// DW1 only
-		pp -= 6;			// 7 parameters
+		pp -= 6; // 7 parameters
 
 		if (pic->event == WALKIN || pic->event == WALKOUT)
 			SPlay(coroParam, pp[0], pp[1], pp[2], pp[3], pp[6], 0, pic->escOn, pic->myEscape);
@@ -5276,7 +5469,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case STAND:
 		// Common to both DW1 & DW2
-		pp -= 3;			// 4 parameters
+		pp -= 3; // 4 parameters
 		Stand(coroParam, pp[0], pp[1], pp[2], pp[3]);
 		return -4;
 
@@ -5297,7 +5490,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case STARTTIMER:
 		// DW2 only
-		pp -= 3;			// 4 parameters
+		pp -= 3; // 4 parameters
 		StartTimerFn(pp[0], pp[1], pp[2], pp[3]);
 		return -4;
 
@@ -5328,13 +5521,13 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case SWALK:
 		// Common to both DW1 & DW2
-		pp -= 5;			// 6 parameters
+		pp -= 5; // 6 parameters
 		Swalk(coroParam, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], -1, pic->escOn, pic->myEscape);
 		return -6;
 
 	case SWALKZ:
 		// DW2 only
-		pp -= 6;			// 7 parameters
+		pp -= 6; // 7 parameters
 		Swalk(coroParam, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pic->escOn, pic->myEscape);
 		return -7;
 
@@ -5344,7 +5537,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return 0;
 
 	case TAGACTOR:
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		TagActor(pp[0], pp[1], pp[2]);
 		return -3;
 
@@ -5358,7 +5551,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case TALK:
 		// Common to both DW1 & DW2
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 
 		if (TinselV2)
 			TalkOrSay(coroParam, IS_TALK, pp[1], 0, 0, pp[0], 0, false, pic->escOn, pic->myEscape);
@@ -5371,24 +5564,24 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case TALKAT:
 		// Common to both DW1 & DW2
 		if (TinselV2) {
-			pp -= 4;			// 5 parameters
+			pp -= 4; // 5 parameters
 			TalkOrSay(coroParam, IS_TALKAT, pp[3], pp[1], pp[2], 0, pp[0], pp[4], pic->escOn, pic->myEscape);
 			return -5;
 		} else {
-			pp -= 3;			// 4 parameters
+			pp -= 3; // 4 parameters
 			TalkAt(coroParam, pp[0], pp[1], pp[2], pp[3], pic->escOn, pic->myEscape);
 			return -4;
 		}
 
 	case TALKATS:
 		// DW1 only
-		pp -= 4;			// 5 parameters
+		pp -= 4; // 5 parameters
 		TalkAtS(coroParam, pp[0], pp[1], pp[2], pp[3], pp[4], pic->escOn, pic->myEscape);
 		return -5;
 
 	case TALKATTR:
 		// DW1 only
-		pp -= 2;			// 3 parameters
+		pp -= 2; // 3 parameters
 		TalkAttr(pp[0], pp[1], pp[2], pic->escOn, pic->myEscape);
 		return -3;
 
@@ -5440,11 +5633,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case TOPPLAY:
 		// Common to both DW1 & DW2
 		if (TinselV2) {
-			pp -= 3;			// 4 parameters
+			pp -= 3; // 4 parameters
 			TopPlay(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, pic->event);
 			return -4;
 		} else {
-			pp -= 5;			// 6 parameters
+			pp -= 5; // 6 parameters
 			TopPlay(coroParam, pp[0], pp[1], pp[2], pp[5], pic->idActor, false, 0, pic->escOn, pic->myEscape);
 			return -6;
 		}
@@ -5461,7 +5654,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case TRYPLAYSAMPLE:
 		// DW1 only
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		TryPlaySample(coroParam, pp[0], pp[1], pic->escOn, pic->myEscape);
 		return -2;
 
@@ -5487,7 +5680,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case WAITFRAME:
 		// Common to both DW1 & DW2
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		WaitFrame(coroParam, pp[0], pp[1], pic->escOn, pic->myEscape);
 		return -2;
 
@@ -5503,7 +5696,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case WAITTIME:
 		// Common to both DW1 & DW2
-		pp -= 1;			// 2 parameters
+		pp -= 1; // 2 parameters
 		WaitTime(coroParam, pp[0], pp[1], pic->escOn, pic->myEscape);
 		if (!coroParam && (pic->hCode == 0x3007540) && (pic->resumeState == RES_2))
 			// FIXME: This is a hack to return control to the user after using the prunes in
@@ -5514,20 +5707,20 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case WALK:
 		// Common to both DW1 & DW2
-		pp -= 4;			// 5 parameters
+		pp -= 4; // 5 parameters
 		Walk(coroParam, pp[0], pp[1], pp[2], pp[3], pp[4], false, -1, pic->escOn, pic->myEscape);
 		return -5;
 
 	case WALKED: {
 		// Common to both DW1 & DW2
-		pp -= 3;			// 4 parameters
+		pp -= 3; // 4 parameters
 		bool tmp = false;
 		Walked(coroParam, pp[0], pp[1], pp[2], pp[3], pic->escOn, pic->myEscape, tmp);
 		if (!coroParam) {
 			// Only write the result to the stack if walked actually completed running.
 			pp[0] = tmp;
 		}
-		}
+	}
 		return -3;
 
 	case WALKINGACTOR:
@@ -5537,7 +5730,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 			WalkingActor(pp[0]);
 			return -1;
 		} else {
-			pp -= 40;			// 41 parameters
+			pp -= 40; // 41 parameters
 			WalkingActor(pp[0], (SCNHANDLE *)&pp[1]);
 			return -41;
 		}
@@ -5545,11 +5738,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case WALKPOLY:
 		// Common to both DW1 & DW2
 		if (TinselV2) {
-			pp -= 1;			// 2 parameters
+			pp -= 1; // 2 parameters
 			WalkPoly(coroParam, pp[0], pp[1], pic->hPoly, pic->escOn, pic->myEscape);
 			return -2;
 		} else {
-			pp -= 2;			// 3 parameters
+			pp -= 2; // 3 parameters
 			WalkPoly(coroParam, pp[0], pp[1], pic->hPoly, pic->escOn, pic->myEscape);
 			return -3;
 		}
@@ -5557,11 +5750,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case WALKTAG:
 		// Common to both DW1 & DW2
 		if (TinselV2) {
-			pp -= 1;			// 2 parameters
+			pp -= 1; // 2 parameters
 			WalkTag(coroParam, pp[0], pp[1], pic->hPoly, pic->escOn, pic->myEscape);
 			return -2;
 		} else {
-			pp -= 2;			// 3 parameters
+			pp -= 2; // 3 parameters
 			WalkTag(coroParam, pp[0], pp[1], pic->hPoly, pic->escOn, pic->myEscape);
 			return -3;
 		}

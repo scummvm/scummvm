@@ -23,10 +23,10 @@
  *
  */
 
-#include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/norad/alpha/ecrmonitor.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
-#include "pegasus/neighborhood/norad/alpha/ecrmonitor.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -34,8 +34,8 @@ static const NotificationFlags kECRSection1FinishedFlag = 1;
 static const NotificationFlags kECRPanFinishedFlag = kECRSection1FinishedFlag << 1;
 static const NotificationFlags kECRSection2FinishedFlag = kECRPanFinishedFlag << 1;
 static const NotificationFlags kECRNotificationFlags = kECRSection1FinishedFlag |
-													kECRPanFinishedFlag |
-													kECRSection2FinishedFlag;
+                                                       kECRPanFinishedFlag |
+                                                       kECRSection2FinishedFlag;
 
 static const TimeValue kSection1Start = 0;
 static const TimeValue kSection1Stop = 25;
@@ -51,8 +51,7 @@ enum {
 
 // Interesting times are in seconds.
 static const TimeValue s_ECRInterestingTimes[] = {
-	0, 1, 2, 10, 25, 26, 56, 64, 72, 80, 88, 94, 102, 108, 116, 999
-};
+    0, 1, 2, 10, 25, 26, 56, 64, 72, 80, 88, 94, 102, 108, 116, 999};
 
 // Index into s_ECRInterestingTimes of interesting time before security pan.
 static const int kBeforePanTime = 3;
@@ -61,8 +60,8 @@ static const int kBeforePanTime = 3;
 static const int kAfterPanTime = 5;
 
 NoradAlphaECRMonitor::NoradAlphaECRMonitor(Neighborhood *nextHandler) : GameInteraction(kNoradECRMonitorInteractionID, nextHandler),
-		_ecrSlideShowNotification(kNoradECRNotificationID, (PegasusEngine *)g_engine), _ecrMovie(kECRSlideShowMovieID),
-		_ecrPan(kECRPanID) {
+                                                                        _ecrSlideShowNotification(kNoradECRNotificationID, (PegasusEngine *)g_engine), _ecrMovie(kECRSlideShowMovieID),
+                                                                        _ecrPan(kECRPanID) {
 }
 
 void NoradAlphaECRMonitor::receiveNotification(Notification *, const NotificationFlags flags) {

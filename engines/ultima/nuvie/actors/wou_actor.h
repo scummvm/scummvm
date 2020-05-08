@@ -28,17 +28,14 @@
 namespace Ultima {
 namespace Nuvie {
 
-class WOUActor: public Actor {
+class WOUActor : public Actor {
 protected:
-
 public:
-
-	WOUActor(Map *m, ObjManager *om, GameClock *c) : Actor(m, om, c) { }
-	~WOUActor() override { }
+	WOUActor(Map *m, ObjManager *om, GameClock *c) : Actor(m, om, c) {}
+	~WOUActor() override {}
 
 	bool can_carry_object(uint16 obj_n, uint32 qty = 0) override;
 	bool can_carry_object(Obj *obj) override;
-
 };
 
 } // End of namespace Nuvie

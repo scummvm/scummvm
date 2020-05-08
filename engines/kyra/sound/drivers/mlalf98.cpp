@@ -22,8 +22,8 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/kyra_v1.h"
 #include "kyra/sound/drivers/mlalf98.h"
+#include "kyra/kyra_v1.h"
 
 #include "audio/softsynth/fmtowns_pc98/pc98_audio.h"
 
@@ -39,7 +39,7 @@ public:
 	void globalUnblock();
 
 	void toggleMute(bool mute);
-	virtual void restore() {};
+	virtual void restore(){};
 	virtual bool checkFinished() { return false; }
 
 	void update();
@@ -72,11 +72,12 @@ protected:
 		kVbrEnable = 1 << 7
 	};
 
-	template <class SoundChannelImpl> class SoundOpcode : public Common::Functor1Mem<uint8*&, void, SoundChannelImpl> {
+	template<class SoundChannelImpl>
+	class SoundOpcode : public Common::Functor1Mem<uint8 *&, void, SoundChannelImpl> {
 	public:
-		typedef Common::Functor1Mem<uint8*&, void, SoundChannelImpl> SCFunc;
+		typedef Common::Functor1Mem<uint8 *&, void, SoundChannelImpl> SCFunc;
 		SoundOpcode(SoundChannelImpl *sc, const typename SCFunc::FuncType &func, const char *dsc, int chanId, int chanType, int cDataBytes) : SCFunc(sc, func), _dataLen(cDataBytes) {
-			static const char tpstr[4][4] = { "FM ", "SSG", "RHY", "EXT" };
+			static const char tpstr[4][4] = {"FM ", "SSG", "RHY", "EXT"};
 			Common::String args;
 			while (cDataBytes--)
 				args += "0x%02x ";
@@ -91,6 +92,7 @@ protected:
 			if (SCFunc::isValid())
 				SCFunc::operator()(arg);
 		}
+
 	private:
 		int _dataLen;
 		uint8 _dt[7];
@@ -169,7 +171,7 @@ private:
 	void op3_vbrSetTremolo(uint8 *&data);
 
 	typedef SoundOpcode<SoundChannel> Opcode;
-	Common::Array<Opcode*> _subOpcodes[2];
+	Common::Array<Opcode *> _subOpcodes[2];
 
 private:
 	virtual void parse() = 0;
@@ -209,7 +211,7 @@ private:
 	void op_enableLFO(uint8 *&data);
 
 	typedef SoundOpcode<SoundChannelNonSSG> Opcode;
-	Common::Array<Opcode*> _opcodes;
+	Common::Array<Opcode *> _opcodes;
 };
 
 class MusicChannelFM : public SoundChannelNonSSG {
@@ -290,7 +292,7 @@ private:
 	bool _externalPrograms;
 
 	typedef SoundOpcode<MusicChannelSSG> Opcode;
-	Common::Array<Opcode*> _opcodes;
+	Common::Array<Opcode *> _opcodes;
 
 	uint8 _envStartLvl;
 	uint8 _envAR;
@@ -376,7 +378,7 @@ private:
 	void writeDevice(uint8 reg, uint8 val) override;
 
 	void op_writeDevice(uint8 *&data) override;
-	
+
 	uint8 _specialModeModifier[4];
 	bool _specialMode;
 	bool _isFinished;
@@ -418,8 +420,8 @@ private:
 	MLALF98::ADPCMData *_extBuffer;
 	int _extBufferSize;
 
-	Common::Array<SoundChannel*> _musicChannels;
-	Common::Array<SoundChannel*> _sfxChannels;
+	Common::Array<SoundChannel *> _musicChannels;
+	Common::Array<SoundChannel *> _sfxChannels;
 
 	const bool _type86;
 	PC98AudioCore *_pc98a;
@@ -434,13 +436,13 @@ private:
 bool SoundChannel::_globalBlock = false;
 
 SoundChannel::SoundChannel(PC98AudioCore *pc98a, int part, int regOffset, int type) : _pc98a(pc98a), _regOffset(regOffset), _part(part),
-_ticksLeft(0), _program(0), _volume(0), _algorithm(0), _envRR(0), _vbrDelay(0), _vbrRem(0), _vbrRate(0), _vbrTicker(0), _vbrStepSize(0), _vbrModifier(0),
-_vbrDepth(0), _vbrState(0), _duration(0), _frequency(0), _flags2(0), _note(0), _flags(0),
-_transpose(0), _envCurLvl(0), _fadeVolModifier(0), _fadeProgress(0), _fadeTicker(16), _trmCarrier(1),
-_dataPtr(0), _dataEnd(0), _loopStartPtr(0), _instrBuffer(0), _backupData(0), _mute(false), _type(type) {
+                                                                                      _ticksLeft(0), _program(0), _volume(0), _algorithm(0), _envRR(0), _vbrDelay(0), _vbrRem(0), _vbrRate(0), _vbrTicker(0), _vbrStepSize(0), _vbrModifier(0),
+                                                                                      _vbrDepth(0), _vbrState(0), _duration(0), _frequency(0), _flags2(0), _note(0), _flags(0),
+                                                                                      _transpose(0), _envCurLvl(0), _fadeVolModifier(0), _fadeProgress(0), _fadeTicker(16), _trmCarrier(1),
+                                                                                      _dataPtr(0), _dataEnd(0), _loopStartPtr(0), _instrBuffer(0), _backupData(0), _mute(false), _type(type) {
 	_subOpcodes[0].reserve(8);
 	_subOpcodes[1].reserve(8);
-#define OPCODE(x, y, z)	_subOpcodes[x].push_back(new Opcode(this, &SoundChannel::y, #y, type == 1 ? (_regOffset >> 1) : (type == 0 ? (_regOffset + _part * 3) : 0), type, z))
+#define OPCODE(x, y, z) _subOpcodes[x].push_back(new Opcode(this, &SoundChannel::y, #y, type == 1 ? (_regOffset >> 1) : (type == 0 ? (_regOffset + _part * 3) : 0), type, z))
 	OPCODE(0, op2_setExtPara, 1);
 	OPCODE(0, op2_setEnvGenFlags, 1);
 	OPCODE(0, op2_setEnvGenTimer, 2);
@@ -462,7 +464,7 @@ _dataPtr(0), _dataEnd(0), _loopStartPtr(0), _instrBuffer(0), _backupData(0), _mu
 
 SoundChannel::~SoundChannel() {
 	for (int c = 0; c < 2; ++c) {
-		for (Common::Array<Opcode*>::iterator i = _subOpcodes[c].begin(); i != _subOpcodes[c].end(); ++i)
+		for (Common::Array<Opcode *>::iterator i = _subOpcodes[c].begin(); i != _subOpcodes[c].end(); ++i)
 			delete (*i);
 	}
 }
@@ -560,7 +562,7 @@ void SoundChannel::vbrReset() {
 }
 
 void SoundChannel::clear() {
-	_ticksLeft = _program = _volume	= _algorithm = _duration = _envRR = _vbrDelay = _vbrRem = _vbrRate = _vbrTicker = _vbrDepth = _vbrState = _flags2 = _note = _flags = 0;
+	_ticksLeft = _program = _volume = _algorithm = _duration = _envRR = _vbrDelay = _vbrRem = _vbrRate = _vbrTicker = _vbrDepth = _vbrState = _flags2 = _note = _flags = 0;
 	_frequency = _transpose = _vbrStepSize = _vbrModifier = 0;
 	_dataPtr = _loopStartPtr = 0;
 }
@@ -621,7 +623,7 @@ void SoundChannel::op_jumpToSubroutine(uint8 *&data) {
 	else
 		warning("SoundChannel::op_jumpToSubroutine(): invalid offset");
 	data = _buffer + offset;
-#else	
+#else
 	// This is a very ugly opcode which reads and sets an absolute 16 bit offset
 	// inside the music driver segment. Thus, the ip can jump anywhere, not only
 	// from one track or channel to another or from the music buffer to the sfx
@@ -694,7 +696,7 @@ void SoundChannel::op2_returnFromSubroutine(uint8 *&data) {
 }
 
 void SoundChannel::op2_7(uint8 *&data) {
-	/*_unkbyte27 = */data++;
+	/*_unkbyte27 = */ data++;
 }
 
 void SoundChannel::op3_vbrInit(uint8 *&data) {
@@ -781,7 +783,7 @@ void SoundChannel::updateSounds() {
 
 SoundChannelNonSSG::SoundChannelNonSSG(PC98AudioCore *pc98a, int part, int regOffset, int type) : SoundChannel(pc98a, part, regOffset, type), _statusB4(0xC0) {
 	_opcodes.reserve(16);
-#define OPCODE(y, z)	_opcodes.push_back(new Opcode(this, &SoundChannelNonSSG::y, #y, _regOffset + _part * 3, type, z))
+#define OPCODE(y, z) _opcodes.push_back(new Opcode(this, &SoundChannelNonSSG::y, #y, _regOffset + _part * 3, type, z))
 	OPCODE(op_programChange, 1);
 	OPCODE(op_setVolume, type == 2 ? 7 : 1);
 	OPCODE(op_setTranspose, 3);
@@ -802,7 +804,7 @@ SoundChannelNonSSG::SoundChannelNonSSG(PC98AudioCore *pc98a, int part, int regOf
 }
 
 SoundChannelNonSSG::~SoundChannelNonSSG() {
-	for (Common::Array<Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
+	for (Common::Array<Opcode *>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
 		delete (*i);
 }
 
@@ -820,7 +822,7 @@ void SoundChannelNonSSG::parse() {
 	_flags2 |= kNoSustain;
 
 	uint8 cmd = 0;
-	for (bool loop = true; loop && pos && pos < _dataEnd; ) {
+	for (bool loop = true; loop && pos && pos < _dataEnd;) {
 		if (*pos == 0) {
 			_flags2 |= kEoT;
 			if (!_loopStartPtr) {
@@ -889,7 +891,7 @@ void SoundChannelNonSSG::op_enableLFO(uint8 *&data) {
 
 uint8 *MusicChannelFM::_registers = 0;
 bool MusicChannelFM::_specialMode = false;
-uint8 MusicChannelFM::_specialModeModifier[4] = { 0, 0, 0, 0 };
+uint8 MusicChannelFM::_specialModeModifier[4] = {0, 0, 0, 0};
 uint16 MusicChannelFM::_frequency2 = 0;
 
 MusicChannelFM::MusicChannelFM(PC98AudioCore *pc98a, int part, int regOffset) : SoundChannelNonSSG(pc98a, part, regOffset, 0) {
@@ -929,12 +931,11 @@ void MusicChannelFM::parse() {
 }
 void MusicChannelFM::noteOn(uint8 note) {
 	static uint16 freqTableFM[12] = {
-		0x026a, 0x028f, 0x02b6, 0x02df, 0x030b, 0x0339, 0x036a, 0x039e, 0x03d5, 0x0410, 0x044e, 0x048f
-	};
+	    0x026a, 0x028f, 0x02b6, 0x02df, 0x030b, 0x0339, 0x036a, 0x039e, 0x03d5, 0x0410, 0x044e, 0x048f};
 
 	if (_note == note && !(_flags2 & kNoSustain))
 		return;
-	
+
 	_note = note;
 
 	if ((note & 0x0F) >= 12)
@@ -1022,13 +1023,11 @@ void MusicChannelFM::toggleSpecialMode(bool on) {
 
 void MusicChannelFM::sendVolume(uint8 volume) {
 	static const uint8 volTable[20] = {
-		0x36, 0x33, 0x30, 0x2d, 0x2a, 0x28, 0x25, 0x22, 0x20, 0x1d,
-		0x1a, 0x18, 0x15, 0x12, 0x10, 0x0d, 0x0a, 0x08, 0x05, 0x02
-	};
+	    0x36, 0x33, 0x30, 0x2d, 0x2a, 0x28, 0x25, 0x22, 0x20, 0x1d,
+	    0x1a, 0x18, 0x15, 0x12, 0x10, 0x0d, 0x0a, 0x08, 0x05, 0x02};
 
 	static const uint8 carrier[8] = {
-		0x08, 0x08, 0x08, 0x08, 0x0c, 0x0e, 0x0e, 0x0f
-	};
+	    0x08, 0x08, 0x08, 0x08, 0x0c, 0x0e, 0x0e, 0x0f};
 
 	assert(volume < 20);
 	assert(_algorithm < 8);
@@ -1042,7 +1041,7 @@ void MusicChannelFM::sendVolume(uint8 volume) {
 }
 
 void MusicChannelFM::sendTrmVolume(uint8 volume) {
-	static uint8 cflg[4] = { 1, 4, 2, 8 };
+	static uint8 cflg[4] = {1, 4, 2, 8};
 	uint8 reg = 0x40 + _regOffset;
 	for (int i = 0; i < 4; ++i) {
 		if (_trmCarrier & cflg[i]) {
@@ -1107,9 +1106,9 @@ uint8 MusicChannelSSG::_enState = 0x38;
 uint8 MusicChannelSSG::_ngState = 0;
 
 MusicChannelSSG::MusicChannelSSG(PC98AudioCore *pc98a, int part, int regOffset) : SoundChannel(pc98a, part, regOffset, 1), _regOffsetAttn(8 + (regOffset >> 1)),
-	_externalPrograms(0), _envDataTemp(0), _envStartLvl(0), _envAR(0), _envDR(0), _envSL(0), _envSR(0) {
+                                                                                  _externalPrograms(0), _envDataTemp(0), _envStartLvl(0), _envAR(0), _envDR(0), _envSL(0), _envSR(0) {
 	_opcodes.reserve(16);
-#define OPCODE(y, z)	_opcodes.push_back(new Opcode(this, &MusicChannelSSG::y, #y, _regOffset >> 1, 1, z))
+#define OPCODE(y, z) _opcodes.push_back(new Opcode(this, &MusicChannelSSG::y, #y, _regOffset >> 1, 1, z))
 	OPCODE(op_programChange, 1);
 	OPCODE(op_setVolume, 1);
 	OPCODE(op_setTranspose, 3);
@@ -1132,7 +1131,7 @@ MusicChannelSSG::MusicChannelSSG(PC98AudioCore *pc98a, int part, int regOffset) 
 }
 
 MusicChannelSSG::~MusicChannelSSG() {
-	for (Common::Array<Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
+	for (Common::Array<Opcode *>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
 		delete (*i);
 	delete[] _envDataTemp;
 }
@@ -1154,7 +1153,7 @@ void MusicChannelSSG::parse() {
 					_flags2 &= ~kNoSustain;
 				else
 					noteOff();
-			} 
+			}
 		}
 
 		if (_volume & kUpdate) {
@@ -1163,8 +1162,8 @@ void MusicChannelSSG::parse() {
 		}
 		return;
 	}
-	
-	uint8 *pos = _dataPtr;	
+
+	uint8 *pos = _dataPtr;
 	if (pos && pos < _dataEnd) {
 		if (*pos == 0xFD) {
 			_flags2 &= ~kNoSustain;
@@ -1175,7 +1174,7 @@ void MusicChannelSSG::parse() {
 	}
 
 	uint8 cmd = 0;
-	for (bool loop = true && pos && pos < _dataEnd; loop; ) {
+	for (bool loop = true && pos && pos < _dataEnd; loop;) {
 		if (*pos == 0) {
 			_flags2 |= kEoT;
 			if (!_loopStartPtr) {
@@ -1215,7 +1214,7 @@ void MusicChannelSSG::noteOff() {
 			writeDevice(_regOffsetAttn, _globalBlock ? 0 : val);
 		}
 		return;
-	} 
+	}
 
 	if (_volume & kUpdate) {
 		_volume &= ~(kAttack | kDecay | kSustain);
@@ -1228,9 +1227,8 @@ void MusicChannelSSG::noteOff() {
 
 void MusicChannelSSG::noteOn(uint8 note) {
 	static uint16 freqTableSSG[12] = {
-		0x0EE8, 0x0E12, 0x0D48, 0x0C89, 0x0BD5, 0x0B2B, 0x0A8A, 0x09F3, 0x0964, 0x08DD, 0x085E, 0x07E6
-	};
-	
+	    0x0EE8, 0x0E12, 0x0D48, 0x0C89, 0x0BD5, 0x0B2B, 0x0A8A, 0x09F3, 0x0964, 0x08DD, 0x085E, 0x07E6};
+
 	if (_note == note && !(_flags2 & kNoSustain))
 		return;
 
@@ -1248,7 +1246,7 @@ void MusicChannelSSG::noteOn(uint8 note) {
 	if (_flags2 & kNoSustain) {
 		if (_flags & kEnvelope) {
 			writeDevice(_regOffsetAttn, 0x10);
-			writeDevice(0x0D, _flags & kInternalMask);	
+			writeDevice(0x0D, _flags & kInternalMask);
 		} else {
 			_volume = (kUpdate | kAttack) | (_volume & 0x0F);
 			_envCurLvl = _envStartLvl;
@@ -1376,19 +1374,18 @@ uint8 *MusicChannelSSG::getProgramData(uint8 program) const {
 }
 
 const uint8 MusicChannelSSG::_envDataPreset[96] = {
-	0xff, 0xff, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff,
-	0xff, 0xc8, 0x00, 0x0a, 0xff, 0xff, 0xff, 0xc8,
-	0x01, 0x0a, 0xff, 0xff, 0xff, 0xbe, 0x00, 0x0a,
-	0xff, 0xff, 0xff, 0xbe, 0x01, 0x0a, 0xff, 0xff,
-	0xff, 0xaa, 0x00, 0x0a, 0x28, 0x46, 0x0e, 0xbe,
-	0x00, 0x0f, 0x78, 0x1e, 0xff, 0xff, 0x00, 0x0a,
-	0xff, 0xff, 0xff, 0xe1, 0x08, 0x0f, 0xff, 0xff,
-	0xff, 0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc8,
-	0x08, 0xff, 0xff, 0xff, 0xff, 0xdc, 0x14, 0x08,
-	0xff, 0xff, 0xff, 0xff, 0x00, 0x0a, 0xff, 0xff,
-	0xff, 0xff, 0x00, 0x0a, 0x78, 0x50, 0xff, 0xff,
-	0x00, 0xff, 0xff, 0xff, 0xff, 0xdc, 0x00, 0xff
-};
+    0xff, 0xff, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff,
+    0xff, 0xc8, 0x00, 0x0a, 0xff, 0xff, 0xff, 0xc8,
+    0x01, 0x0a, 0xff, 0xff, 0xff, 0xbe, 0x00, 0x0a,
+    0xff, 0xff, 0xff, 0xbe, 0x01, 0x0a, 0xff, 0xff,
+    0xff, 0xaa, 0x00, 0x0a, 0x28, 0x46, 0x0e, 0xbe,
+    0x00, 0x0f, 0x78, 0x1e, 0xff, 0xff, 0x00, 0x0a,
+    0xff, 0xff, 0xff, 0xe1, 0x08, 0x0f, 0xff, 0xff,
+    0xff, 0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc8,
+    0x08, 0xff, 0xff, 0xff, 0xff, 0xdc, 0x14, 0x08,
+    0xff, 0xff, 0xff, 0xff, 0x00, 0x0a, 0xff, 0xff,
+    0xff, 0xff, 0x00, 0x0a, 0x78, 0x50, 0xff, 0xff,
+    0x00, 0xff, 0xff, 0xff, 0xff, 0xdc, 0x00, 0xff};
 
 MusicChannelRHY::MusicChannelRHY(PC98AudioCore *pc98a, int part, int regOffset) : SoundChannelNonSSG(pc98a, part, regOffset, 2), _activeInstruments(0) {
 	_instrLevel[0] = _instrLevel[1] = _instrLevel[2] = _instrLevel[3] = _instrLevel[4] = _instrLevel[5] = 0xC0;
@@ -1441,7 +1438,7 @@ void MusicChannelRHY::op_modifyVolume(uint8 *&data) {
 }
 
 MusicChannelEXT::MusicChannelEXT(PC98AudioCore *pc98a, int part, int regOffset, MLALF98::ADPCMData *const &data) : SoundChannelNonSSG(pc98a, part, regOffset, 3),
-	_pc98a(pc98a), _extBuffer(data), _useVolPreset(0), _volume2(0), _instrument(0), _panPos(3), _smpStart(0), _smpEnd(0) {
+                                                                                                                   _pc98a(pc98a), _extBuffer(data), _useVolPreset(0), _volume2(0), _instrument(0), _panPos(3), _smpStart(0), _smpEnd(0) {
 }
 
 MusicChannelEXT::~MusicChannelEXT() {
@@ -1456,9 +1453,8 @@ void MusicChannelEXT::keyOff() {
 
 void MusicChannelEXT::noteOn(uint8 note) {
 	static uint16 freqTableEXT[12] = {
-		0x4A82, 0x4EE4, 0x5389, 0x5875, 0x5DAC, 0x6332, 0x690C, 0x6F3F, 0x75D1, 0x7C76, 0x8426, 0x8BF5
-	};
-	
+	    0x4A82, 0x4EE4, 0x5389, 0x5875, 0x5DAC, 0x6332, 0x690C, 0x6F3F, 0x75D1, 0x7C76, 0x8426, 0x8BF5};
+
 	if (!(_flags2 & kNoSustain) && _note == note)
 		return;
 
@@ -1472,7 +1468,7 @@ void MusicChannelEXT::noteOn(uint8 note) {
 	if (!(_flags2 & kNoSustain))
 		vbrResetDelay();
 	vbrReset();
-	
+
 	if (_globalBlock)
 		return;
 
@@ -1534,7 +1530,7 @@ void MusicChannelEXT::op_setVolume(uint8 *&data) {
 		_volume2 = *data;
 	else
 		_volume = *data;
-	data++;	
+	data++;
 }
 
 void MusicChannelEXT::op_setPanPos(uint8 *&data) {
@@ -1556,12 +1552,11 @@ void MusicChannelEXT::op2_setExtPara(uint8 *&data) {
 }
 
 SoundEffectChannel::SoundEffectChannel(PC98AudioCore *pc98a, int part, int regOffset, SoundChannel *replaceChannel) : MusicChannelFM(pc98a, part, regOffset),
-	_replaceChannel(replaceChannel), _specialMode(false), _isFinished(false) {
+                                                                                                                      _replaceChannel(replaceChannel), _specialMode(false), _isFinished(false) {
 	_specialModeModifier[0] = _specialModeModifier[1] = _specialModeModifier[2] = _specialModeModifier[3] = 0;
 }
 
 SoundEffectChannel::~SoundEffectChannel() {
-
 }
 
 void SoundEffectChannel::setData(uint8 *dataStart, uint8 *loopStart, const uint8 *dataEnd, uint8 *instrBuffer) {
@@ -1625,13 +1620,13 @@ void SoundEffectChannel::op_writeDevice(uint8 *&data) {
 		toggleSpecialMode(_specialMode);
 }
 
-#define iterateChannels(arr)	for (Common::Array<SoundChannel*>::iterator i = arr.begin(); i != arr.end(); ++i)
+#define iterateChannels(arr) for (Common::Array<SoundChannel *>::iterator i = arr.begin(); i != arr.end(); ++i)
 
 MLALF98Internal *MLALF98Internal::_refInstance = 0;
 int MLALF98Internal::_refCount = 0;
 
 MLALF98Internal::MLALF98Internal(Audio::Mixer *mixer, EmuType emuType) : PC98AudioPluginDriver(), _type86(emuType == kType86),
-	_musicBuffer(0), _sfxBuffer(0), _extBuffer(0), _musicBufferSize(0), _sfxBufferSize(0), _extBufferSize(0), _pc98a(0), _sfxPlaying(0), _ready(false) {
+                                                                         _musicBuffer(0), _sfxBuffer(0), _extBuffer(0), _musicBufferSize(0), _sfxBufferSize(0), _extBufferSize(0), _pc98a(0), _sfxPlaying(0), _ready(false) {
 	_pc98a = new PC98AudioCore(mixer, this, emuType);
 	assert(_pc98a);
 
@@ -1641,7 +1636,7 @@ MLALF98Internal::MLALF98Internal(Audio::Mixer *mixer, EmuType emuType) : PC98Aud
 		_musicChannels.push_back(new MusicChannelFM(_pc98a, 0, i));
 	for (int i = 3; i < 6; ++i)
 		_musicChannels.push_back(new MusicChannelSSG(_pc98a, 0, (i - 3) << 1));
-	
+
 	if (_type86) {
 		_musicChannels.push_back(new MusicChannelRHY(_pc98a, 0, 0));
 		for (int i = 7; i < 10; ++i)
@@ -1659,14 +1654,12 @@ MLALF98Internal::MLALF98Internal(Audio::Mixer *mixer, EmuType emuType) : PC98Aud
 
 MLALF98Internal::~MLALF98Internal() {
 	_ready = false;
-	
+
 	delete _pc98a;
 
-	iterateChannels(_musicChannels)
-		delete (*i);
+	iterateChannels(_musicChannels) delete (*i);
 
-	iterateChannels(_sfxChannels)
-		delete (*i);
+	iterateChannels(_sfxChannels) delete (*i);
 
 	delete[] _musicBuffer;
 	delete[] _sfxBuffer;
@@ -1704,8 +1697,7 @@ void MLALF98Internal::loadMusicData(Common::SeekableReadStream *data) {
 	if (data->size() == 0)
 		error("MLALF98Internal::loadMusicData(): Invalid data size.");
 
-	iterateChannels(_musicChannels)
-		(*i)->setData(0, 0, 0, 0);
+	iterateChannels(_musicChannels)(*i)->setData(0, 0, 0, 0);
 
 	delete[] _musicBuffer;
 	_musicBufferSize = data->size();
@@ -1721,8 +1713,7 @@ void MLALF98Internal::loadSoundEffectData(Common::SeekableReadStream *data) {
 	if (data->size() == 0)
 		error("MLALF98Internal::loadSoundEffectData(): Invalid data size.");
 
-	iterateChannels(_sfxChannels)
-		(*i)->setData(0, 0, 0, 0);
+	iterateChannels(_sfxChannels)(*i)->setData(0, 0, 0, 0);
 
 	delete[] _sfxBuffer;
 	_sfxBufferSize = data->size();
@@ -1741,7 +1732,7 @@ void MLALF98Internal::loadExtData(MLALF98::ADPCMDataArray &data) {
 	MLALF98::ADPCMData *dst = _extBuffer;
 	for (MLALF98::ADPCMDataArray::iterator i = data.begin(); i != data.end(); ++i)
 		*dst++ = *i;
- }
+}
 
 void MLALF98Internal::startMusic(int track) {
 	PC98AudioCore::MutexLock lock = _pc98a->stackLockMutex();
@@ -1757,14 +1748,11 @@ void MLALF98Internal::startMusic(int track) {
 	_pc98a->writeReg(0, 0x10, 0x00);
 	_pc98a->writeReg(0, 0x24, 0x18);
 	_pc98a->writeReg(0, 0x25, 0x02);
-	
-	iterateChannels(_sfxChannels)
-		(*i)->setData(0, 0, 0, 0);
 
-	iterateChannels(_musicChannels)
-		(*i)->keyOff();
-	iterateChannels(_sfxChannels)
-		(*i)->keyOff();
+	iterateChannels(_sfxChannels)(*i)->setData(0, 0, 0, 0);
+
+	iterateChannels(_musicChannels)(*i)->keyOff();
+	iterateChannels(_sfxChannels)(*i)->keyOff();
 
 	assert(track * 45 + 5 < _musicBufferSize);
 	const uint8 *header = _musicBuffer + (track * 45) + 5;
@@ -1779,13 +1767,13 @@ void MLALF98Internal::startMusic(int track) {
 		header += 2;
 		(*i)->setData(_musicBuffer + 5 + offset1, offset2 ? _musicBuffer + 5 + offset2 : 0, _musicBuffer + _musicBufferSize, _musicBuffer + 1);
 	}
-	
+
 	debugC(3, kDebugLevelSound, "\nStarting music. Track: %03d", track);
 
 	_pc98a->writeReg(0, 0x29, 0x83);
 	for (int i = 0; i < 6; ++i)
 		_pc98a->writeReg(0, i, 0);
-	_pc98a->writeReg(0, 0x07, 0x38);	
+	_pc98a->writeReg(0, 0x07, 0x38);
 	_pc98a->writeReg(0, 0x26, tempo);
 
 	for (int i = 0; i < 2; ++i) {
@@ -1799,8 +1787,7 @@ void MLALF98Internal::startMusic(int track) {
 
 void MLALF98Internal::fadeOutMusic() {
 	PC98AudioCore::MutexLock lock = _pc98a->stackLockMutex();
-	iterateChannels(_musicChannels)
-		(*i)->startFadeOut();
+	iterateChannels(_musicChannels)(*i)->startFadeOut();
 }
 
 void MLALF98Internal::startSoundEffect(int track) {
@@ -1834,10 +1821,8 @@ void MLALF98Internal::startSoundEffect(int track) {
 
 void MLALF98Internal::allChannelsOff() {
 	PC98AudioCore::MutexLock lock = _pc98a->stackLockMutex();
-	iterateChannels(_musicChannels)
-		(*i)->keyOff();
-	iterateChannels(_sfxChannels)
-		(*i)->keyOff();
+	iterateChannels(_musicChannels)(*i)->keyOff();
+	iterateChannels(_sfxChannels)(*i)->keyOff();
 }
 
 void MLALF98Internal::resetExtUnit() {
@@ -1885,10 +1870,8 @@ void MLALF98Internal::timerCallbackA() {
 void MLALF98Internal::timerCallbackB() {
 	if (!_ready)
 		return;
-	iterateChannels(_musicChannels)
-		(*i)->update();
-	iterateChannels(_musicChannels)
-		(*i)->updateFadeOut();
+	iterateChannels(_musicChannels)(*i)->update();
+	iterateChannels(_musicChannels)(*i)->updateFadeOut();
 	//_updateCounterMusic++;
 }
 

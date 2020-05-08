@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/screen/screen.h"
 #include "ultima/nuvie/fonts/u6_font.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/screen/screen.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -59,13 +59,13 @@ uint16 U6Font::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 
 	memset(buf, 0xff, 64);
 
-//pixels = (unsigned char *)screen->get_pixels();
+	//pixels = (unsigned char *)screen->get_pixels();
 	pixels = buf;
-	pitch = 8;//screen->get_pitch();
+	pitch = 8; //screen->get_pitch();
 
 	font = &font_data[char_num * 8];
 
-//pixels += y * pitch + x;
+	//pixels += y * pitch + x;
 
 	for (i = 0; i < 8; i++) {
 		for (j = 8; j > 0; j--) {

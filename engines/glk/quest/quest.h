@@ -20,14 +20,14 @@
  *
  */
 
- /* Based on Geas interpreter version 3.53 */
+/* Based on Geas interpreter version 3.53 */
 
 #ifndef GLK_QUEST_QUEST
 #define GLK_QUEST_QUEST
 
 #include "glk/glk_api.h"
-#include "glk/quest/string.h"
 #include "glk/quest/geas_runner.h"
+#include "glk/quest/string.h"
 
 namespace Glk {
 namespace Quest {
@@ -39,8 +39,10 @@ class Quest : public GlkAPI {
 private:
 	int _saveSlot;
 	GeasRunner *_runner;
+
 public:
 	String banner;
+
 private:
 	/**
 	 * Engine initialization
@@ -56,6 +58,7 @@ private:
 	 * Inner gameplay method
 	 */
 	void playGame();
+
 public:
 	/**
 	 * Constructor

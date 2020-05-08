@@ -26,20 +26,20 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/ui/ui_text.h"
-#include "engines/wintermute/ui/ui_tiled_image.h"
+#include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/ui/ui_tiled_image.h"
 
 namespace Wintermute {
 
@@ -53,19 +53,15 @@ UIText::UIText(BaseGame *inGame) : UIObject(inGame) {
 	_canFocus = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 UIText::~UIText() {
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIText::display(int offsetX, int offsetY) {
 	if (!_visible) {
 		return STATUS_OK;
 	}
-
 
 	BaseFont *font = _font;
 	if (!font) {
@@ -99,8 +95,6 @@ bool UIText::display(int offsetX, int offsetY) {
 	return STATUS_OK;
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
 bool UIText::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
@@ -121,7 +115,6 @@ bool UIText::loadFile(const char *filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(STATIC)
@@ -432,7 +425,6 @@ bool UIText::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *UIText::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -464,7 +456,6 @@ ScValue *UIText::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool UIText::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -494,13 +485,10 @@ bool UIText::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *UIText::scToString() {
 	return "[static]";
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIText::persist(BasePersistenceManager *persistMgr) {
@@ -511,7 +499,6 @@ bool UIText::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool UIText::sizeToFit() {

@@ -32,6 +32,7 @@ class CLongStick : public CCarry {
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 public:
 	CLASSDEF;
 	CLongStick();

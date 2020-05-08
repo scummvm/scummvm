@@ -23,27 +23,27 @@
 #ifndef ULTIMA4_MAP_LOCATION_H
 #define ULTIMA4_MAP_LOCATION_H
 
-#include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/map/movement.h"
 #include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/map/map.h"
+#include "ultima/ultima4/map/movement.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 typedef enum {
-	CTX_WORLDMAP    = 0x0001,
-	CTX_COMBAT      = 0x0002,
-	CTX_CITY        = 0x0004,
-	CTX_DUNGEON     = 0x0008,
-	CTX_ALTAR_ROOM  = 0x0010,
-	CTX_SHRINE      = 0x0020
+	CTX_WORLDMAP = 0x0001,
+	CTX_COMBAT = 0x0002,
+	CTX_CITY = 0x0004,
+	CTX_DUNGEON = 0x0008,
+	CTX_ALTAR_ROOM = 0x0010,
+	CTX_SHRINE = 0x0020
 } LocationContext;
 
-#define CTX_ANY             (LocationContext)(0xffff)
-#define CTX_NORMAL          (LocationContext)(CTX_WORLDMAP | CTX_CITY)
-#define CTX_NON_COMBAT      (LocationContext)(CTX_ANY & ~CTX_COMBAT)
-#define CTX_CAN_SAVE_GAME   (LocationContext)(CTX_WORLDMAP | CTX_DUNGEON)
+#define CTX_ANY (LocationContext)(0xffff)
+#define CTX_NORMAL (LocationContext)(CTX_WORLDMAP | CTX_CITY)
+#define CTX_NON_COMBAT (LocationContext)(CTX_ANY & ~CTX_COMBAT)
+#define CTX_CAN_SAVE_GAME (LocationContext)(CTX_WORLDMAP | CTX_DUNGEON)
 
 class TurnCompleter;
 

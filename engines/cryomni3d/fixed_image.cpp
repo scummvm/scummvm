@@ -32,14 +32,13 @@ namespace CryOmni3D {
 ZonFixedImage::ZonFixedImage(CryOmni3DEngine &engine,
                              Inventory &inventory,
                              const Sprites &sprites,
-                             const FixedImageConfiguration *configuration) :
-	_engine(engine), _inventory(inventory), _sprites(sprites),
-	_configuration(configuration),
-	_callback(nullptr), _imageDecoder(nullptr), _imageSurface(nullptr),
-	_zonesMode(kZonesMode_None), _currentZone(uint(-1)), _exit(false), _zoneLow(false),
-	_zoneHigh(false), _zoneHighLeft(false), _zoneHighRight(false), _zoneLeft(false), _zoneRight(false),
-	_zoneQuestion(false), _zoneListen(false), _zoneSee(false), _zoneUse(false), _zoneSpeak(false),
-	_usedObject(nullptr), _highLeftId(0), _highRightId(0), _refreshCursor(false) {
+                             const FixedImageConfiguration *configuration) : _engine(engine), _inventory(inventory), _sprites(sprites),
+                                                                             _configuration(configuration),
+                                                                             _callback(nullptr), _imageDecoder(nullptr), _imageSurface(nullptr),
+                                                                             _zonesMode(kZonesMode_None), _currentZone(uint(-1)), _exit(false), _zoneLow(false),
+                                                                             _zoneHigh(false), _zoneHighLeft(false), _zoneHighRight(false), _zoneLeft(false), _zoneRight(false),
+                                                                             _zoneQuestion(false), _zoneListen(false), _zoneSee(false), _zoneUse(false), _zoneSpeak(false),
+                                                                             _usedObject(nullptr), _highLeftId(0), _highRightId(0), _refreshCursor(false) {
 }
 
 ZonFixedImage::~ZonFixedImage() {
@@ -220,8 +219,8 @@ void ZonFixedImage::manage() {
 	}
 
 	if (_key == Common::KEYCODE_SPACE ||
-	        _engine.getCurrentMouseButton() == 2 ||
-	        mousePos.y > _configuration->toolbarTriggerY) {
+	    _engine.getCurrentMouseButton() == 2 ||
+	    mousePos.y > _configuration->toolbarTriggerY) {
 		bool mustRedraw = _engine.displayToolbar(_imageSurface);
 		// We just came back from toolbar: check if an object is selected and go into object mode
 		if (_inventory.selectedObject()) {
@@ -275,7 +274,6 @@ void ZonFixedImage::manage() {
 		} else {
 			_engine.setCursor(selectedObj->idSl());
 		}
-
 	}
 
 	g_system->updateScreen();
@@ -317,8 +315,8 @@ void ZonFixedImage::handleMouseZones(const Common::Array<Zone>::const_iterator &
 
 void ZonFixedImage::updateSurface(const Graphics::Surface *newSurface) {
 	if (newSurface->w != _imageSurface->w ||
-	        newSurface->h != _imageSurface->h ||
-	        newSurface->format != _imageSurface->format) {
+	    newSurface->h != _imageSurface->h ||
+	    newSurface->format != _imageSurface->format) {
 		error("New surface has invalid attributes");
 	}
 

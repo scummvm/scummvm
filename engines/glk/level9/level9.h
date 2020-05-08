@@ -48,8 +48,10 @@ private:
 	 * Deinitialization
 	 */
 	void deinitialize();
+
 public:
 	GameDetection _detection;
+
 public:
 	/**
 	 * Constructor
@@ -78,12 +80,11 @@ public:
 	 * in the Quetzal save file that will be created
 	 */
 	Common::Error writeGameData(Common::WriteStream *ws) override;
-
 };
 
 extern Level9 *g_vm;
 
-} // End of namespace Alan2
+} // namespace Level9
 } // End of namespace Glk
 
 #endif

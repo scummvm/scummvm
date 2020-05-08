@@ -45,7 +45,7 @@ void waitForMusicToPlay(MidiParser *parser);
 // add more here
 TestExitStatus playMidiMusic();
 
-} // End of namespace MIDItests
+} // namespace MidiTests
 
 class MidiTestSuite : public Testsuite {
 public:
@@ -71,7 +71,6 @@ public:
 
 private:
 	bool _isMidiDataFound;
-
 };
 
 } // End of namespace Testbed

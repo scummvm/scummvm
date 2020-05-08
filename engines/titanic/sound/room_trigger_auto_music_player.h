@@ -23,8 +23,8 @@
 #ifndef TITANIC_ROOM_TRIGGER_AUTO_MUSIC_PLAYER_H
 #define TITANIC_ROOM_TRIGGER_AUTO_MUSIC_PLAYER_H
 
-#include "titanic/sound/trigger_auto_music_player.h"
 #include "titanic/messages/messages.h"
+#include "titanic/sound/trigger_auto_music_player.h"
 
 namespace Titanic {
 
@@ -32,6 +32,7 @@ class CRoomTriggerAutoMusicPlayer : public CTriggerAutoMusicPlayer {
 	DECLARE_MESSAGE_MAP;
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+
 public:
 	CLASSDEF;
 

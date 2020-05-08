@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "access/access.h"
-#include "access/room.h"
-#include "access/martian/martian_game.h"
 #include "access/martian/martian_player.h"
+#include "access/access.h"
+#include "access/martian/martian_game.h"
 #include "access/martian/martian_resources.h"
+#include "access/room.h"
+#include "common/scummsys.h"
 
 namespace Access {
 

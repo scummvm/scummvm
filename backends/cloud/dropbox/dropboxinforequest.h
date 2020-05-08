@@ -24,13 +24,13 @@
 #define BACKENDS_CLOUD_DROPBOX_DROPBOXINFOREQUEST_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/request.h"
 
 namespace Cloud {
 namespace Dropbox {
 
-class DropboxInfoRequest: public Networking::Request {
+class DropboxInfoRequest : public Networking::Request {
 	Common::String _token;
 	Common::String _uid, _name, _email;
 	Storage::StorageInfoCallback _infoCallback;
@@ -42,6 +42,7 @@ class DropboxInfoRequest: public Networking::Request {
 	void quotaResponseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);
 	void finishInfo(StorageInfo info);
+
 public:
 	DropboxInfoRequest(Common::String token, Storage::StorageInfoCallback cb, Networking::ErrorCallback ecb);
 	virtual ~DropboxInfoRequest();

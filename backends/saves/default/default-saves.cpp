@@ -37,14 +37,14 @@
 
 #include "backends/saves/default/default-saves.h"
 
-#include "common/savefile.h"
-#include "common/util.h"
-#include "common/fs.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/fs.h"
+#include "common/savefile.h"
+#include "common/util.h"
 #include "common/zlib.h"
 
-#include <errno.h>	// for removeSavefile()
+#include <errno.h> // for removeSavefile()
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 const char *DefaultSaveFileManager::TIMESTAMPS_FILENAME = "timestamps";
@@ -57,15 +57,14 @@ DefaultSaveFileManager::DefaultSaveFileManager(const Common::String &defaultSave
 	ConfMan.registerDefault("savepath", defaultSavepath);
 }
 
-
 void DefaultSaveFileManager::checkPath(const Common::FSNode &dir) {
 	clearError();
 	if (!dir.exists()) {
 		if (!dir.createDirectory()) {
-			setError(Common::kPathDoesNotExist, "Failed to create directory '"+dir.getPath()+"'");
+			setError(Common::kPathDoesNotExist, "Failed to create directory '" + dir.getPath() + "'");
 		}
 	} else if (!dir.isDirectory()) {
-		setError(Common::kPathNotDirectory, "The savepath '"+dir.getPath()+"' is not a directory");
+		setError(Common::kPathNotDirectory, "The savepath '" + dir.getPath() + "' is not a directory");
 	}
 }
 
@@ -210,10 +209,10 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 		// There is a nicely portable workaround, too: Make this method overloadable.
 		if (remove(fileNode.getPath().c_str()) != 0) {
 			if (errno == EACCES)
-				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+fileNode.getName());
+				setError(Common::kWritePermissionDenied, "Search or write permission denied: " + fileNode.getName());
 
 			if (errno == ENOENT)
-				setError(Common::kPathDoesNotExist, "removeSavefile: '"+fileNode.getName()+"' does not exist or path is invalid");
+				setError(Common::kPathDoesNotExist, "removeSavefile: '" + fileNode.getName() + "' does not exist or path is invalid");
 
 			return false;
 		} else {
@@ -246,8 +245,10 @@ void DefaultSaveFileManager::assureCached(const Common::String &savePathName) {
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
-	if (!files.empty()) updateSavefilesList(files); //makes this cache invalid
-	else _lockedFiles = files;
+	if (!files.empty())
+		updateSavefilesList(files); //makes this cache invalid
+	else
+		_lockedFiles = files;
 #endif
 
 	if (_cachedDirectory == savePathName) {
@@ -311,7 +312,8 @@ Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps()
 		Common::String buffer;
 		while (!file->eos()) {
 			byte b = file->readByte();
-			if (b == ' ') break;
+			if (b == ' ')
+				break;
 			buffer += (char)b;
 		}
 
@@ -329,14 +331,18 @@ Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps()
 				buffer += (char)b;
 			}
 
-			if (buffer == "" && file->eos()) break;
-			if (!lineEnded) filename += " " + buffer;
-			else break;
+			if (buffer == "" && file->eos())
+				break;
+			if (!lineEnded)
+				filename += " " + buffer;
+			else
+				break;
 		}
 
 		//parse timestamp
 		uint32 timestamp = buffer.asUint64();
-		if (buffer == "" || timestamp == 0) break;
+		if (buffer == "" || timestamp == 0)
+			break;
 		if (timestamps.contains(filename))
 			timestamps[filename] = timestamp;
 	}
@@ -355,7 +361,8 @@ void DefaultSaveFileManager::saveTimestamps(Common::HashMap<Common::String, uint
 
 	for (Common::HashMap<Common::String, uint32>::iterator i = timestamps.begin(); i != timestamps.end(); ++i) {
 		uint32 v = i->_value;
-		if (v < 1) v = 1; // 0 timestamp is treated as EOF up there, so we should never save zeros
+		if (v < 1)
+			v = 1; // 0 timestamp is treated as EOF up there, so we should never save zeros
 
 		Common::String data = i->_key + Common::String::format(" %u\n", v);
 		if (f.write(data.c_str(), data.size()) != data.size()) {
@@ -380,10 +387,13 @@ Common::String DefaultSaveFileManager::concatWithSavesPath(Common::String name) 
 	//simple heuristic to determine which path separator to use
 	int backslashes = 0;
 	for (uint32 i = 0; i < path.size(); ++i)
-		if (path[i] == '/') --backslashes;
-		else if (path[i] == '\\') ++backslashes;
+		if (path[i] == '/')
+			--backslashes;
+		else if (path[i] == '\\')
+			++backslashes;
 
-	if (backslashes > 0) return path + '\\' + name;
+	if (backslashes > 0)
+		return path + '\\' + name;
 	return path + '/' + name;
 }
 

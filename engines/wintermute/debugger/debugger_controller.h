@@ -25,11 +25,11 @@
 
 #include "common/str.h"
 #include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/debugger/listing_providers/source_listing_provider.h"
-#include "script_monitor.h"
+#include "engines/wintermute/wintermute.h"
 #include "error.h"
 #include "listing.h"
+#include "script_monitor.h"
 namespace Wintermute {
 
 class ScScript;
@@ -64,6 +64,7 @@ class DebuggerController : public ScriptMonitor {
 	uint32 _lastLine;
 	void clear();
 	bool bytecodeExists(const Common::String &filename);
+
 public:
 	DebuggerController(WintermuteEngine *vm);
 	~DebuggerController() override;
@@ -101,10 +102,10 @@ public:
 	/**
 	 * @brief set value for a variable accessible from within the current scope.
 	 */
-	Error setValue(const Common::String &name, const Common::String &value, ScValue*&var);
+	Error setValue(const Common::String &name, const Common::String &value, ScValue *&var);
 	Error setSourcePath(const Common::String &sourcePath);
 	Common::String getSourcePath() const;
-	Listing *getListing(Error* &err);
+	Listing *getListing(Error *&err);
 	void showFps(bool show);
 	/**
 	 * Inherited from ScriptMonitor
@@ -113,6 +114,6 @@ public:
 	void onWatch(const Watch *watch, DebuggableScript *script) override;
 	void notifyStep(DebuggableScript *script) override;
 };
-}
+} // namespace Wintermute
 
 #endif // WINTERMUTE_DEBUGGER_H

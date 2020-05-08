@@ -48,11 +48,10 @@ namespace Common {
 DECLARE_SINGLETON(WiiFilesystemFactory);
 }
 
-WiiFilesystemFactory::WiiFilesystemFactory() :
-	_dvdMounted(false),
-	_smbMounted(false),
-	_dvdError(false),
-	_smbError(false) {
+WiiFilesystemFactory::WiiFilesystemFactory() : _dvdMounted(false),
+                                               _smbMounted(false),
+                                               _dvdError(false),
+                                               _smbError(false) {
 }
 
 AbstractFSNode *WiiFilesystemFactory::makeRootFileNode() const {
@@ -97,9 +96,9 @@ void WiiFilesystemFactory::asyncInitNetwork() {
 }
 
 void WiiFilesystemFactory::setSMBLoginData(const String &server,
-											const String &share,
-											const String &username,
-											const String &password) {
+                                           const String &share,
+                                           const String &username,
+                                           const String &password) {
 	_smbServer = server;
 	_smbShare = share;
 	_smbUsername = username;
@@ -131,9 +130,9 @@ bool WiiFilesystemFactory::failedToMount(FileSystemType type) {
 
 #ifdef USE_WII_DI
 #ifndef GAMECUBE
-  const DISC_INTERFACE* dvd = &__io_wiidvd;
+const DISC_INTERFACE *dvd = &__io_wiidvd;
 #else
-  const DISC_INTERFACE* dvd = &__io_gcdvd;
+const DISC_INTERFACE *dvd = &__io_gcdvd;
 #endif
 #endif
 
@@ -169,7 +168,7 @@ void WiiFilesystemFactory::mount(FileSystemType type) {
 		}
 
 		if (smbInit(_smbUsername.c_str(), _smbPassword.c_str(),
-					_smbShare.c_str(), _smbServer.c_str())) {
+		            _smbShare.c_str(), _smbServer.c_str())) {
 			_smbMounted = true;
 			_smbError = false;
 			printf("smb mounted\n");

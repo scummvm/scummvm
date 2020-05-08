@@ -92,6 +92,6 @@ private:
 	int _moveCount;
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_CELL_H

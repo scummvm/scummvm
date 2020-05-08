@@ -20,30 +20,29 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/views/view_manager.h"
+#include "ultima/nuvie/core/converse.h"
 #include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/converse_interpret.h"
 #include "ultima/nuvie/core/converse_speech.h"
-#include "ultima/nuvie/gui/widgets/converse_gump.h"
-#include "ultima/nuvie/core/converse.h"
+#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/files/u6_lzw.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/widgets/background.h"
+#include "ultima/nuvie/gui/widgets/converse_gump.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 //#define CONVERSE_DEBUG
-
 
 Converse::Converse() {
 	config = NULL;
@@ -75,12 +74,10 @@ Converse::Converse() {
 	gametype = NUVIE_GAME_NONE;
 }
 
-
 /* Initialize global classes from the game.
  */
-void
-Converse::init(Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a,
-               GameClock *c, Player *p, ViewManager *v, ObjManager *o) {
+void Converse::init(Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a,
+                    GameClock *c, Player *p, ViewManager *v, ObjManager *o) {
 	Std::string townsdir;
 
 	config = cfg;
@@ -103,7 +100,6 @@ Converse::init(Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a
 	speech->init(config);
 }
 
-
 Converse::~Converse() {
 	if (running()) {
 		reset();
@@ -114,14 +110,13 @@ Converse::~Converse() {
 	delete speech;
 }
 
-
 /* Free up allocated memory, reset values for new conversation. (call only when
  * ending a conversation or quitting)
  */
 void Converse::reset() {
 	delete conv_i;
 	conv_i = NULL;
-	set_input(""); // delete
+	set_input("");  // delete
 	set_output(""); // clear output
 	if (script) {
 		delete script;
@@ -138,7 +133,6 @@ void Converse::reset() {
 
 	delete_variables();
 }
-
 
 /* Load `convfilename' as src.
  */
@@ -206,7 +200,7 @@ uint32 Converse::load_conv(uint8 a) {
 		if (src_num != 1)
 			load_conv("talk.lzc");
 	}
-// we want to return the real item number in the converse file.
+	// we want to return the real item number in the converse file.
 	if (gametype == NUVIE_GAME_U6 && a > 98) {
 		a -= 99;
 	} else if (gametype == NUVIE_GAME_SE) {
@@ -214,7 +208,6 @@ uint32 Converse::load_conv(uint8 a) {
 	}
 	return a;
 }
-
 
 /* Returns name of loaded source file, identified by `src_num'.
  */
@@ -231,7 +224,6 @@ const char *Converse::src_name() {
 	return ("");
 }
 
-
 /* Get an NPC conversation from the source file.
  * Returns new ConvScript object.
  */
@@ -245,7 +237,6 @@ ConvScript *Converse::load_script(uint32 n) {
 		      loaded->compressed ? "encoded" : "unencoded", src_name(), (unsigned int)n);
 	return (loaded);
 }
-
 
 /* Initialize Converse variable list, and set globals from game.
  */
@@ -271,17 +262,15 @@ void Converse::init_variables() {
 	set_var(U6TALK_VAR_WORKTYPE, npc->get_worktype());
 }
 
-
 /* Free memory used by Converse variable list.
  */
 void Converse::delete_variables() {
 	for (uint32 v = 0; v <= U6TALK_VAR__LAST_; v++)
 		if (variables[v].sv)
 			free(variables[v].sv);
-	delete [] variables;
+	delete[] variables;
 	variables = NULL;
 }
-
 
 /* Create new script interpreter for the current game.
  * Returns pointer to object which is derived from ConverseInterpret.
@@ -301,7 +290,6 @@ ConverseInterpret *Converse::new_interpreter() {
 	}
 	return (ci);
 }
-
 
 /* Returns false if a conversation cannot be started with the NPC. This
  * represents an internal error, and doesn't have anything to do with the NPC
@@ -364,7 +352,6 @@ bool Converse::start(uint8 n) {
 	return (false);
 }
 
-
 /* Stop execution of the current script.
  */
 void Converse::stop() {
@@ -385,7 +372,6 @@ void Converse::stop() {
 		}
 	} else {
 
-
 		system_scroll->set_autobreak(false);
 		system_scroll->display_string("\n");
 		system_scroll->display_prompt();
@@ -396,7 +382,7 @@ void Converse::stop() {
 	}
 	if (!Game::get_game()->is_new_style()) {
 		if (last_view->set_party_member(last_view->get_party_member_num()) == false) // set party member left party
-			last_view->prev_party_member(); // seems only needed with new converse gump but will leave here just in case
+			last_view->prev_party_member();                                          // seems only needed with new converse gump but will leave here just in case
 		views->set_current_view(last_view);
 	}
 
@@ -412,7 +398,6 @@ void Converse::stop() {
 	DEBUG(0, LEVEL_INFORMATIONAL, "End conversation\n");
 }
 
-
 /* Returns true if there is input available (placed at `in_str'.)
  */
 bool Converse::input() {
@@ -426,7 +411,6 @@ bool Converse::input() {
 	}
 	return (false);
 }
-
 
 /* Output string `s' or the current set output to the scroll view.
  */
@@ -452,14 +436,12 @@ const char *Converse::get_svar(uint8 varnum) {
 	return ("");
 }
 
-
 /* Set string value of variable `varnum'.
  */
 void Converse::set_svar(uint8 varnum, const char *set) {
 	if (varnum <= U6TALK_VAR__LAST_)
 		variables[varnum].sv = scumm_strdup(set);
 }
-
 
 /* Show portrait for npc `n'. The name will be shown for actors in the player
  * party, or those the player/avatar has met. The look-string will be shown for
@@ -478,20 +460,17 @@ void Converse::show_portrait(uint8 n) {
 			nameret = npc_name(130);
 		else
 			nameret = actors->look_actor(real_actor, false);
-	} else if ((actor->is_met() || player->get_party()->contains_actor(actor))
-	           && !statue) // they need to display statue of names
+	} else if ((actor->is_met() || player->get_party()->contains_actor(actor)) && !statue) // they need to display statue of names
 		nameret = npc_name(n);
 	else
 		nameret = actors->look_actor(actor, false);
 	if (game->using_new_converse_gump()) {
-		if ((game->is_original_plus() && game->get_converse_gump()->W() > game->get_game_width() - game->get_background()->get_border_width())
-		        || game->is_orig_style())
+		if ((game->is_original_plus() && game->get_converse_gump()->W() > game->get_game_width() - game->get_background()->get_border_width()) || game->is_orig_style())
 			views->close_current_view();
 		((ConverseGump *)scroll)->set_actor_portrait(actor);
 	} else
 		views->set_portrait_mode(actor, nameret);
 }
-
 
 /* Copy the NPC num's name from their conversation script. This is very U6
  * specific.
@@ -501,14 +480,14 @@ const char *Converse::npc_name(uint8 num) {
 	convscript_buffer s_pt;
 	aname[15] = '\0';
 
-// FIX (crashing)
-//    if(actors->get_actor(num))
-//        actors->get_actor(num)->set_name(name);
+	// FIX (crashing)
+	//    if(actors->get_actor(num))
+	//        actors->get_actor(num)->set_name(name);
 
 	if ((num == npc_num) && !_name.empty()) // use NPC name
 		strncpy(aname, _name.c_str(), 15);
-	else {                            // or load another script
-//        uint32 temp_num = num;
+	else {                                    // or load another script
+		                                      //        uint32 temp_num = num;
 		num = load_conv(get_script_num(num)); // get idx number; won't actually reload file
 		temp_script = new ConvScript(src, num);
 		s_pt = temp_script->get_buffer();
@@ -526,7 +505,6 @@ const char *Converse::npc_name(uint8 num) {
 	return (aname);
 }
 
-
 /* Start checking i/o object for some input, (optionally block all but allowed
  * input) and tell interpreter to wait.
  */
@@ -541,14 +519,12 @@ void Converse::poll_input(const char *allowed, bool nonblock) {
 	conv_i->wait();
 }
 
-
 /* Stop polling i/o, tell interpreter to stop waiting.
  */
 void Converse::unwait() {
 	need_input = false;
 	conv_i->unwait();
 }
-
 
 /* Check talk input and determine if it needs to be handled before being passed
  * to the interpreter.
@@ -564,7 +540,7 @@ bool Converse::override_input() {
 		script->seek(script->pos() - 1); // back to ASK command
 	} else if (overide_cheat && in_str == "join") {
 		if (Game::get_game()->get_game_type() == NUVIE_GAME_U6 // altars and statues
-		        && (npc->get_actor_num() >= 189 && npc->get_actor_num() <= 200))
+		    && (npc->get_actor_num() >= 189 && npc->get_actor_num() <= 200))
 			return true;
 		else if (!npc->is_alive()) {
 			print("\"How can I join you when I'm dead?\"\n*");
@@ -623,7 +599,6 @@ void Converse::continue_script() {
 	}
 }
 
-
 /*** ConvScript ***/
 
 /* Init. and read data from U6Lib.
@@ -642,7 +617,6 @@ ConvScript::ConvScript(U6Lib_n *s, uint32 idx) {
 	rewind();
 }
 
-
 /* Init. and use data from another ConvScript.
  */
 ConvScript::ConvScript(ConvScript *orig) {
@@ -659,7 +633,6 @@ ConvScript::ConvScript(ConvScript *orig) {
 	rewind();
 }
 
-
 ConvScript::~ConvScript() {
 	if (ref == 0)
 		free(buf);
@@ -667,13 +640,12 @@ ConvScript::~ConvScript() {
 		cpy->ref -= 1;
 }
 
-
 /* Read (decode if necessary) the script data (with the pre-set item index) from
  * the loaded converse library.
  */
 void ConvScript::read_script() {
 	unsigned char *undec_script = 0; // item as it appears in library
-	unsigned char *dec_script = 0; // decoded
+	unsigned char *dec_script = 0;   // decoded
 	uint32 undec_len = 0, dec_len = 0;
 	U6Lzw decoder;
 	uint8 gametype = src->get_game_type();
@@ -683,8 +655,7 @@ void ConvScript::read_script() {
 		undec_script = src->get_item(src_index);
 		if (gametype == NUVIE_GAME_U6) {
 			// decode
-			if (!(undec_script[0] == 0 && undec_script[1] == 0
-			        && undec_script[2] == 0 && undec_script[3] == 0)) {
+			if (!(undec_script[0] == 0 && undec_script[1] == 0 && undec_script[2] == 0 && undec_script[3] == 0)) {
 				compressed = true;
 				dec_script =
 				    decoder.decompress_buffer(undec_script, undec_len, dec_len);
@@ -709,7 +680,6 @@ void ConvScript::read_script() {
 	}
 }
 
-
 /* Returns 8bit value from current script location in LSB-first form.
  */
 converse_value ConvScript::read(uint32 advance) {
@@ -721,7 +691,6 @@ converse_value ConvScript::read(uint32 advance) {
 	return (val);
 }
 
-
 /* Returns 16bit value from current script location in LSB-first form.
  */
 converse_value ConvScript::read2() {
@@ -730,7 +699,6 @@ converse_value ConvScript::read2() {
 	val += *(buf_pt++) << 8;
 	return (val);
 }
-
 
 /* Returns 32bit value from current script location in LSB-first form.
  */
@@ -748,7 +716,6 @@ void ConvScript::write2(converse_value val) {
 	*(buf_pt++) = (val >> 8) & 0xff;
 	return;
 }
-
 
 uint8 get_converse_gump_type_from_config(Configuration *config) {
 	Std::string configvalue;

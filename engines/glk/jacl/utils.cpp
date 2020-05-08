@@ -22,30 +22,30 @@
 
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
 
-extern char                     function_name[];
+extern char function_name[];
 
-extern struct object_type       *object[];
-extern struct variable_type     *variable[];
+extern struct object_type *object[];
+extern struct variable_type *variable[];
 
-extern int                      objects;
-extern int                      player;
+extern int objects;
+extern int player;
 
-extern char                     game_file[];
-extern char                     game_path[];
-extern char                     prefix[];
-extern char                     blorb[];
-extern char                     bookmark[];
-extern char                     walkthru[];
-extern char                     include_directory[];
-extern char                     temp_directory[];
-extern char                     data_directory[];
-extern char                     temp_buffer[];
+extern char game_file[];
+extern char game_path[];
+extern char prefix[];
+extern char blorb[];
+extern char bookmark[];
+extern char walkthru[];
+extern char include_directory[];
+extern char temp_directory[];
+extern char data_directory[];
+extern char temp_buffer[];
 
 void eachturn() {
 	/* INCREMENT THE TOTAL NUMBER OF MOVES MADE AND CALL THE 'EACHTURN'
@@ -108,8 +108,8 @@ int random_number() {
 }
 
 void create_paths(char *full_path) {
-	int       index;
-	char      *last_slash;
+	int index;
+	char *last_slash;
 
 	/* SAVE A COPY OF THE SUPPLIED GAMEFILE NAME */
 	strcpy(game_file, full_path);
@@ -133,7 +133,7 @@ void create_paths(char *full_path) {
 	}
 
 	/* STORE THE GAME PATH AND THE GAME FILENAME PARTS SEPARATELY */
-	if (last_slash == (const char *) NULL) {
+	if (last_slash == (const char *)NULL) {
 		/* GAME MUST BE IN CURRENT DIRECTORY SO THERE WILL BE NO GAME PATH */
 		strcpy(prefix, full_path);
 		game_path[0] = 0;
@@ -199,11 +199,13 @@ char *stripwhite(char *string) {
 	int i;
 
 	/* STRIP WHITESPACE FROM THE START AND END OF STRING. */
-	while (jacl_whitespace(*string)) string++;
+	while (jacl_whitespace(*string))
+		string++;
 
 	i = strlen(string) - 1;
 
-	while (i >= 0 && ((jacl_whitespace(*(string + i))) || *(string + i) == '\n' || *(string + i) == '\r')) i--;
+	while (i >= 0 && ((jacl_whitespace(*(string + i))) || *(string + i) == '\n' || *(string + i) == '\r'))
+		i--;
 
 #ifdef WIN32
 	i++;

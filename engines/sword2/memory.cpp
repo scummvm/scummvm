@@ -47,8 +47,8 @@
 
 #include "common/textconsole.h"
 
-#include "sword2/sword2.h"
 #include "sword2/memory.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 

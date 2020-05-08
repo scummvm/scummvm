@@ -20,8 +20,8 @@
  *
  */
 
-#include "neverhood/console.h"
 #include "neverhood/gamevars.h"
+#include "neverhood/console.h"
 
 namespace Neverhood {
 

@@ -23,8 +23,8 @@
 #ifndef MADS_MSURFACE_H
 #define MADS_MSURFACE_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "graphics/screen.h"
 #include "mads/palette.h"
 
@@ -58,8 +58,10 @@ private:
 	 * Helper method for calculating new dimensions when scaling a sprite
 	 */
 	int scaleValue(int value, int scale, int err);
+
 protected:
 	static MADSEngine *_vm;
+
 public:
 	/**
 	 * Sets the engine reference used all surfaces
@@ -70,12 +72,13 @@ public:
 	* Base method for descendents to load their contents
 	*/
 	virtual void load(const Common::String &resName) {}
+
 public:
 	/**
 	 * Basic constructor
 	 */
 	BaseSurface() : Graphics::Screen(0, 0) {
-		free();		// Free the 0x0 surface allocated by Graphics::Screen
+		free(); // Free the 0x0 surface allocated by Graphics::Screen
 	}
 
 	/**
@@ -153,7 +156,7 @@ public:
 	 * map as it's done
 	 */
 	void copyRectTranslate(BaseSurface &srcSurface, const byte *paletteMap,
-		const Common::Point &destPos, const Common::Rect &srcRect);
+	                       const Common::Point &destPos, const Common::Rect &srcRect);
 
 	/**
 	 * Copys a sub-section of another surface into the current one.
@@ -166,7 +169,7 @@ public:
 	 * @param transparentColor	Transparency palette index
 	 */
 	void copyFrom(BaseSurface &src, const Common::Point &destPos, int depth, DepthSurface *depthSurface,
-		int scale, bool flipped, int transparentColor = -1);
+	              int scale, bool flipped, int transparentColor = -1);
 };
 
 class MSurface : public BaseSurface {
@@ -176,6 +179,7 @@ protected:
 	 * surfaces we don't need dirty rects to be tracked
 	 */
 	void addDirtyRect(const Common::Rect &r) override {}
+
 public:
 	MSurface() : BaseSurface() {}
 	MSurface(int width, int height) : BaseSurface(width, height) {}

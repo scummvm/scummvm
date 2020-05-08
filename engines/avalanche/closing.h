@@ -54,7 +54,6 @@ private:
 	void getScreen(ScreenType which);
 	void showScreen();
 	void putIn(Common::String str, uint16 where);
-
 };
 
 } // End of namespace Avalanche.

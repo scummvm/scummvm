@@ -29,7 +29,7 @@
 
 namespace Draci {
 
-const Displacement kNoDisplacement = { 0, 0, 1.0, 1.0 };
+const Displacement kNoDisplacement = {0, 0, 1.0, 1.0};
 
 /**
  *  @brief Transforms an image from column-wise to row-wise
@@ -57,14 +57,14 @@ static void transformToRows(byte *img, uint16 width, uint16 height) {
 Sprite::Sprite(uint16 width, uint16 height, byte *raw_data, int x, int y, bool columnwise)
     : _ownsData(true), _data(raw_data), _mirror(false) {
 
-	 _width = width;
-	 _height = height;
+	_width = width;
+	_height = height;
 
 	_scaledWidth = _width;
 	_scaledHeight = _height;
 
-	 _x = x;
-	 _y = y;
+	_x = x;
+	_y = y;
 
 	_delay = 0;
 
@@ -87,8 +87,8 @@ Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool column
 	_scaledWidth = _width;
 	_scaledHeight = _height;
 
-	 _x = x;
-	 _y = y;
+	_x = x;
+	_y = y;
 
 	_delay = 0;
 
@@ -129,7 +129,6 @@ int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
 		return _data[sy * _width + sx];
 }
 
-
 void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const {
 	const Common::Rect destRect(getRect(displacement));
 	Common::Rect clippedDestRect(0, 0, surface->w, surface->h);
@@ -151,12 +150,12 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 	int *columnIndices = new int[columns];
 	if (!_mirror) {
 		for (int j = 0; j < columns; ++j) {
-		        columnIndices[j] = (j + croppedBy.x) * _width / destRect.width();
+			columnIndices[j] = (j + croppedBy.x) * _width / destRect.width();
 		}
 	} else {
 		// Draw the sprite mirrored if the _mirror flag is set
 		for (int j = 0; j < columns; ++j) {
-		        columnIndices[j] = _width - 1 - (j + croppedBy.x) * _width / destRect.width();
+			columnIndices[j] = _width - 1 - (j + croppedBy.x) * _width / destRect.width();
 		}
 	}
 
@@ -207,7 +206,7 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 	// Get pointers to source and destination buffers
 	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
 	const byte *src = _data + croppedBy.y * _width +
-		(!_mirror ? croppedBy.x : _width - 1 - croppedBy.x);
+	                  (!_mirror ? croppedBy.x : _width - 1 - croppedBy.x);
 
 	const int transparent = surface->getTransparentColor();
 
@@ -242,15 +241,14 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 	}
 }
 
-
 Common::Rect Sprite::getRect(const Displacement &displacement) const {
 	return Common::Rect(_x + displacement.relX, _y + displacement.relY,
-	    _x + displacement.relX + scummvm_lround(_scaledWidth * displacement.extraScaleX),
-	    _y + displacement.relY + scummvm_lround(_scaledHeight * displacement.extraScaleY));
+	                    _x + displacement.relX + scummvm_lround(_scaledWidth * displacement.extraScaleX),
+	                    _y + displacement.relY + scummvm_lround(_scaledHeight * displacement.extraScaleY));
 }
 
 Text::Text(const Common::String &str, const Font *font, byte fontColor,
-                int x, int y, uint spacing) {
+           int x, int y, uint spacing) {
 	_x = x;
 	_y = y;
 	_delay = 0;
@@ -280,7 +278,7 @@ void Text::setText(const Common::String &str) {
 	_width = _font->getStringWidth(str, _spacing);
 	_height = _font->getStringHeight(str);
 
-	 _text = str;
+	_text = str;
 
 	_length = 0;
 	for (uint i = 0; i < _text.size(); ++i) {
@@ -318,7 +316,7 @@ void Text::repeatedlySplitLongLines(uint maxWidth) {
 }
 
 void Text::splitLinesLongerThan(uint maxWidth) {
-	char *start = const_cast<char *> (_text.c_str());	// hacky
+	char *start = const_cast<char *>(_text.c_str()); // hacky
 	while (1) {
 		char *end = strchr(start, '|');
 		if (end) {
@@ -327,7 +325,7 @@ void Text::splitLinesLongerThan(uint maxWidth) {
 		uint lineWidth = _font->getStringWidth(start, _spacing);
 		if (lineWidth > maxWidth) {
 			int middle = end ? (end - start) / 2 : strlen(start) / 2;
-			for (int i = 0; ; ++i) {
+			for (int i = 0;; ++i) {
 				if (start[middle + i] == ' ') {
 					start[middle + i] = '|';
 					break;

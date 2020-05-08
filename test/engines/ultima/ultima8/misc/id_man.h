@@ -1,5 +1,5 @@
-#include <cxxtest/TestSuite.h>
 #include "engines/ultima/ultima8/misc/id_man.h"
+#include <cxxtest/TestSuite.h>
 
 /**
  * Test suite for the functions in engines/ultima/ultima8/misc/id_man.h
@@ -7,7 +7,7 @@
 
 class U8IdManTestSuite : public CxxTest::TestSuite {
 
-	public:
+public:
 	U8IdManTestSuite() {
 	}
 

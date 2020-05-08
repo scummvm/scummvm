@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/views/container_widget_gump.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/keybinding/keys.h"
 #include "ultima/nuvie/views/view_manager.h"
 
@@ -31,43 +31,39 @@ namespace Ultima {
 namespace Nuvie {
 
 static const Tile gump_empty_tile = {
-	0,
-	false,
-	false,
-	false,
-	false,
-	false,
-	true,
-	false,
-	false,
-	0,
-	//uint8 qty;
-	//uint8 flags;
+    0,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    0,
+    //uint8 qty;
+    //uint8 flags;
 
-	0,
-	0,
-	0,
+    0,
+    0,
+    0,
 
-	{
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 143, 142, 141, 141, 142, 143, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 143, 141, 141, 142, 142, 141, 141, 143, 255, 255, 255, 255,
-		255, 255, 255, 143, 141, 142, 143, 143, 143, 143, 142, 141, 143, 255, 255, 255,
-		255, 255, 143, 141, 142, 143, 0, 0, 0, 0, 143, 142, 141, 143, 255, 255,
-		255, 255, 142, 141, 143, 0, 0, 0, 0, 0, 0, 143, 141, 142, 255, 255,
-		255, 255, 141, 142, 143, 0, 0, 0, 0, 0, 0, 143, 142, 141, 255, 255,
-		255, 255, 141, 142, 143, 0, 0, 0, 0, 0, 0, 143, 142, 141, 255, 255,
-		255, 255, 142, 141, 143, 0, 0, 0, 0, 0, 0, 143, 141, 142, 255, 255,
-		255, 255, 143, 141, 142, 143, 0, 0, 0, 0, 143, 142, 141, 143, 255, 255,
-		255, 255, 255, 143, 141, 142, 143, 143, 143, 143, 142, 141, 143, 255, 255, 255,
-		255, 255, 255, 255, 143, 141, 141, 142, 142, 141, 141, 143, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 143, 142, 141, 141, 142, 143, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
-	}
-};
-
+    {255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 143, 142, 141, 141, 142, 143, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 143, 141, 141, 142, 142, 141, 141, 143, 255, 255, 255, 255,
+     255, 255, 255, 143, 141, 142, 143, 143, 143, 143, 142, 141, 143, 255, 255, 255,
+     255, 255, 143, 141, 142, 143, 0, 0, 0, 0, 143, 142, 141, 143, 255, 255,
+     255, 255, 142, 141, 143, 0, 0, 0, 0, 0, 0, 143, 141, 142, 255, 255,
+     255, 255, 141, 142, 143, 0, 0, 0, 0, 0, 0, 143, 142, 141, 255, 255,
+     255, 255, 141, 142, 143, 0, 0, 0, 0, 0, 0, 143, 142, 141, 255, 255,
+     255, 255, 142, 141, 143, 0, 0, 0, 0, 0, 0, 143, 141, 142, 255, 255,
+     255, 255, 143, 141, 142, 143, 0, 0, 0, 0, 143, 142, 141, 143, 255, 255,
+     255, 255, 255, 143, 141, 142, 143, 143, 143, 143, 142, 141, 143, 255, 255, 255,
+     255, 255, 255, 255, 143, 141, 141, 142, 142, 141, 141, 143, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 143, 142, 141, 141, 142, 143, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255}};
 
 ContainerWidgetGump::ContainerWidgetGump(Configuration *cfg, GUI_CallBack *callback) : ContainerWidget(cfg, callback) {
 	cursor_tile = NULL;
@@ -81,7 +77,6 @@ ContainerWidgetGump::ContainerWidgetGump(Configuration *cfg, GUI_CallBack *callb
 }
 
 ContainerWidgetGump::~ContainerWidgetGump() {
-
 }
 
 bool ContainerWidgetGump::init(Actor *a, uint16 x, uint16 y, uint8 Cols, uint8 Rows, TileManager *tm, ObjManager *om, Font *f, uint8 check_xoff, uint8 check_yoff) {
@@ -90,16 +85,16 @@ bool ContainerWidgetGump::init(Actor *a, uint16 x, uint16 y, uint8 Cols, uint8 R
 
 	rows = Rows;
 	cols = Cols;
-	check_x = - x + check_xoff;
-	check_y = - y + check_yoff;
-//objlist_offset_x = 0;
-//objlist_offset_y = 0;
+	check_x = -x + check_xoff;
+	check_y = -y + check_yoff;
+	//objlist_offset_x = 0;
+	//objlist_offset_y = 0;
 
-//72 =  4 * 16 + 8
+	//72 =  4 * 16 + 8
 	GUI_Widget::Init(NULL, x, y, cols * 16, rows * 16);
 
 	set_actor(a);
-	set_accept_mouseclick(true, 0);//USE_BUTTON); // accept [double]clicks from button1 (even if double-click disabled we need clicks)
+	set_accept_mouseclick(true, 0); //USE_BUTTON); // accept [double]clicks from button1 (even if double-click disabled we need clicks)
 
 	cursor_tile = tile_manager->get_gump_cursor_tile();
 
@@ -110,7 +105,7 @@ void ContainerWidgetGump::Display(bool full_redraw) {
 	display_inventory_list();
 	if (show_cursor) {
 		screen->blit(area.left + (cursor_x < 0 ? check_x : cursor_x * 16), area.top + (cursor_x < 0 ? check_y : cursor_y * 16),
-			(const unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
+		             (const unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
 	}
 	screen->update(area.left, area.top, area.width(), area.height());
 }

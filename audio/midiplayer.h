@@ -23,9 +23,9 @@
 #ifndef AUDIO_MIDIPLAYER_H
 #define AUDIO_MIDIPLAYER_H
 
-#include "common/scummsys.h"
-#include "common/mutex.h"
 #include "audio/mididrv.h"
+#include "common/mutex.h"
+#include "common/scummsys.h"
 
 class MidiParser;
 
@@ -177,11 +177,10 @@ protected:
 	/**
 	 * The master volume, in the range 0-255.
 	 */
-	int _masterVolume;	// FIXME: byte or int ?
+	int _masterVolume; // FIXME: byte or int ?
 
 	bool _nativeMT32;
 };
-
 
 } // End of namespace Audio
 

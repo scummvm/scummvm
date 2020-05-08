@@ -41,6 +41,7 @@ public:
 	INTRINSIC(I_feedAvatar);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 

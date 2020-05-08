@@ -26,10 +26,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEmptyNutBowl, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(ReplaceBowlAndNutsMsg)
-	ON_MESSAGE(NutPuzzleMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(ReplaceBowlAndNutsMsg)
+ON_MESSAGE(NutPuzzleMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 void CEmptyNutBowl::save(SimpleFile *file, int indent) {

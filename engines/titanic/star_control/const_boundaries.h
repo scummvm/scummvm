@@ -23,8 +23,8 @@
 #ifndef TITANIC_CONST_BOUNDARIES_H
 #define TITANIC_CONST_BOUNDARIES_H
 
-#include "titanic/star_control/fvector.h"
 #include "common/array.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
@@ -33,11 +33,13 @@ class CSurfaceArea;
 
 class CConstBoundaries {
 	struct CBoundaryVector : public FVector {
-		bool _isDrawn;		// Line is drawn to previous point
+		bool _isDrawn; // Line is drawn to previous point
 		CBoundaryVector() : FVector(), _isDrawn(false) {}
 	};
+
 private:
 	Common::Array<CBoundaryVector> _data;
+
 public:
 	CConstBoundaries();
 

@@ -20,22 +20,24 @@
  *
  */
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/gui_options.h"
 #include "common/keyboard.h"
-#include "common/translation.h"
 #include "common/system.h"
-#include "backends/keymapper/action.h"
-#include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/standard-actions.h"
+#include "common/translation.h"
 #include "engines/dialogs.h"
 #include "graphics/scaler.h"
-#include "gui/saveload.h"
 #include "gui/message.h"
+#include "gui/saveload.h"
 
+#include "mohawk/console.h"
 #include "mohawk/cursors.h"
+#include "mohawk/dialogs.h"
 #include "mohawk/installer_archive.h"
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
@@ -54,13 +56,10 @@
 #include "mohawk/riven_stacks/rspit.h"
 #include "mohawk/riven_stacks/tspit.h"
 #include "mohawk/riven_video.h"
-#include "mohawk/dialogs.h"
-#include "mohawk/console.h"
 
 namespace Mohawk {
 
-MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) :
-		MohawkEngine(syst, gamedesc) {
+MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
 	_activatedPLST = false;
 	_activatedSLST = false;
@@ -194,7 +193,6 @@ Common::Error MohawkEngine_Riven::run() {
 		changeToStack(kStackAspit);
 		changeToCard(1);
 	}
-
 
 	while (!hasGameEnded())
 		doFrame();
@@ -434,35 +432,32 @@ const char **MohawkEngine_Riven::listExpectedDatafiles() const {
 	// The only "Data3" file is j_Data3.mhk from that patch. Patch files have higher
 	// priorities over the regular files and are therefore loaded and checked first.
 	static const char *datafilesDVD[] = {
-			"a_Data.mhk",                  "a_Sounds.mhk",
-			"b_Data.mhk",                  "b_Sounds.mhk",
-			"g_Data.mhk",                  "g_Sounds.mhk",
-			"j_Data2.mhk", "j_Data1.mhk",  "j_Sounds.mhk",
-			"o_Data.mhk",                  "o_Sounds.mhk",
-			"p_Data.mhk",                  "p_Sounds.mhk",
-			"r_Data.mhk",                  "r_Sounds.mhk",
-			"t_Data2.mhk", "t_Data1.mhk",  "t_Sounds.mhk",
-			nullptr
-	};
+	    "a_Data.mhk", "a_Sounds.mhk",
+	    "b_Data.mhk", "b_Sounds.mhk",
+	    "g_Data.mhk", "g_Sounds.mhk",
+	    "j_Data2.mhk", "j_Data1.mhk", "j_Sounds.mhk",
+	    "o_Data.mhk", "o_Sounds.mhk",
+	    "p_Data.mhk", "p_Sounds.mhk",
+	    "r_Data.mhk", "r_Sounds.mhk",
+	    "t_Data2.mhk", "t_Data1.mhk", "t_Sounds.mhk",
+	    nullptr};
 
 	static const char *datafilesCD[] = {
-			"a_Data.mhk",                                "a_Sounds.mhk",
-			"b_Data1.mhk", "b_Data.mhk",                 "b_Sounds.mhk",
-			"g_Data.mhk",                                "g_Sounds.mhk",
-			"j_Data3.mhk", "j_Data2.mhk", "j_Data1.mhk", "j_Sounds.mhk",
-			"o_Data.mhk",                                "o_Sounds.mhk",
-			"p_Data.mhk",                                "p_Sounds.mhk",
-			"r_Data.mhk",                                "r_Sounds.mhk",
-			"t_Data.mhk",                                "t_Sounds.mhk",
-			nullptr
-	};
+	    "a_Data.mhk", "a_Sounds.mhk",
+	    "b_Data1.mhk", "b_Data.mhk", "b_Sounds.mhk",
+	    "g_Data.mhk", "g_Sounds.mhk",
+	    "j_Data3.mhk", "j_Data2.mhk", "j_Data1.mhk", "j_Sounds.mhk",
+	    "o_Data.mhk", "o_Sounds.mhk",
+	    "p_Data.mhk", "p_Sounds.mhk",
+	    "r_Data.mhk", "r_Sounds.mhk",
+	    "t_Data.mhk", "t_Sounds.mhk",
+	    nullptr};
 
 	static const char *datafilesDemo[] = {
-			"a_Data.mhk", "a_Sounds.mhk",
-			"j_Data.mhk", "j_Sounds.mhk",
-			"t_Data.mhk", "t_Sounds.mhk",
-			nullptr
-	};
+	    "a_Data.mhk", "a_Sounds.mhk",
+	    "j_Data.mhk", "j_Sounds.mhk",
+	    "t_Data.mhk", "t_Sounds.mhk",
+	    nullptr};
 
 	const char **datafiles;
 	if (isGameVariant(GF_DEMO)) {
@@ -481,8 +476,7 @@ bool MohawkEngine_Riven::checkDatafiles() {
 	const char **datafiles = listExpectedDatafiles();
 	for (int i = 0; datafiles[i] != nullptr; i++) {
 		if (!SearchMan.hasFile(datafiles[i])) {
-			if (strcmp(datafiles[i], "j_Data3.mhk") == 0
-					|| strcmp(datafiles[i], "b_Data1.mhk") == 0) {
+			if (strcmp(datafiles[i], "j_Data3.mhk") == 0 || strcmp(datafiles[i], "b_Data1.mhk") == 0) {
 				// j_Data3.mhk and b_Data1.mhk come from the 1.02 patch. They are not required to play.
 				continue;
 			}
@@ -507,16 +501,15 @@ bool MohawkEngine_Riven::checkDatafiles() {
 
 const RivenLanguage *MohawkEngine_Riven::listLanguages() {
 	static const RivenLanguage languages[] = {
-	    { Common::EN_ANY,   "english"  },
-	    { Common::FR_FRA,   "french"   },
-	    { Common::DE_DEU,   "german"   },
-	    { Common::IT_ITA,   "italian"  },
-	    { Common::JA_JPN,   "japanese" },
-	    { Common::PL_POL,   "polish"   },
-	    { Common::RU_RUS,   "russian"  },
-	    { Common::ES_ESP,   "spanish"  },
-	    { Common::UNK_LANG, nullptr    }
-	};
+	    {Common::EN_ANY, "english"},
+	    {Common::FR_FRA, "french"},
+	    {Common::DE_DEU, "german"},
+	    {Common::IT_ITA, "italian"},
+	    {Common::JA_JPN, "japanese"},
+	    {Common::PL_POL, "polish"},
+	    {Common::RU_RUS, "russian"},
+	    {Common::ES_ESP, "spanish"},
+	    {Common::UNK_LANG, nullptr}};
 	return languages;
 }
 
@@ -569,24 +562,24 @@ void MohawkEngine_Riven::loadLanguageDatafile(char prefix, uint16 stackId) {
 
 RivenStack *MohawkEngine_Riven::constructStackById(uint16 id) {
 	switch (id) {
-		case kStackAspit:
-			return new RivenStacks::ASpit(this);
-		case kStackBspit:
-			return new RivenStacks::BSpit(this);
-		case kStackGspit:
-			return new RivenStacks::GSpit(this);
-		case kStackJspit:
-			return new RivenStacks::JSpit(this);
-		case kStackOspit:
-			return new RivenStacks::OSpit(this);
-		case kStackPspit:
-			return new RivenStacks::PSpit(this);
-		case kStackRspit:
-			return new RivenStacks::RSpit(this);
-		case kStackTspit:
-			return new RivenStacks::TSpit(this);
-		default:
-			error("Unknown stack id '%d'", id);
+	case kStackAspit:
+		return new RivenStacks::ASpit(this);
+	case kStackBspit:
+		return new RivenStacks::BSpit(this);
+	case kStackGspit:
+		return new RivenStacks::GSpit(this);
+	case kStackJspit:
+		return new RivenStacks::JSpit(this);
+	case kStackOspit:
+		return new RivenStacks::OSpit(this);
+	case kStackPspit:
+		return new RivenStacks::PSpit(this);
+	case kStackRspit:
+		return new RivenStacks::RSpit(this);
+	case kStackTspit:
+		return new RivenStacks::TSpit(this);
+	default:
+		error("Unknown stack id '%d'", id);
 	}
 }
 
@@ -600,23 +593,23 @@ struct RivenSpecialChange {
 };
 
 static const RivenSpecialChange rivenSpecialChange[] = {
-	{ kStackAspit,  0x1f04, kStackOspit,  0x44ad }, // Trap Book
-	{ kStackBspit, 0x1c0e7, kStackOspit,  0x2e76 }, // Dome Linking Book
-	{ kStackGspit, 0x111b1, kStackOspit,  0x2e76 }, // Dome Linking Book
-	{ kStackJspit, 0x28a18, kStackRspit,   0xf94 }, // Tay Linking Book
-	{ kStackJspit, 0x26228, kStackOspit,  0x2e76 }, // Dome Linking Book
-	{ kStackOspit,  0x5f0d, kStackPspit,  0x3bf0 }, // Return from 233rd Age
-	{ kStackOspit,  0x470a, kStackJspit, 0x1508e }, // Return from 233rd Age
-	{ kStackOspit,  0x5c52, kStackGspit, 0x10bea }, // Return from 233rd Age
-	{ kStackOspit,  0x5d68, kStackBspit, 0x1adfd }, // Return from 233rd Age
-	{ kStackOspit,  0x5e49, kStackTspit,   0xe87 }, // Return from 233rd Age
-	{ kStackPspit,  0x4108, kStackOspit,  0x2e76 }, // Dome Linking Book
-	{ kStackRspit,  0x32d8, kStackJspit, 0x1c474 }, // Return from Tay
-	{ kStackTspit, 0x21b69, kStackOspit,  0x2e76 }  // Dome Linking Book
+    {kStackAspit, 0x1f04, kStackOspit, 0x44ad},  // Trap Book
+    {kStackBspit, 0x1c0e7, kStackOspit, 0x2e76}, // Dome Linking Book
+    {kStackGspit, 0x111b1, kStackOspit, 0x2e76}, // Dome Linking Book
+    {kStackJspit, 0x28a18, kStackRspit, 0xf94},  // Tay Linking Book
+    {kStackJspit, 0x26228, kStackOspit, 0x2e76}, // Dome Linking Book
+    {kStackOspit, 0x5f0d, kStackPspit, 0x3bf0},  // Return from 233rd Age
+    {kStackOspit, 0x470a, kStackJspit, 0x1508e}, // Return from 233rd Age
+    {kStackOspit, 0x5c52, kStackGspit, 0x10bea}, // Return from 233rd Age
+    {kStackOspit, 0x5d68, kStackBspit, 0x1adfd}, // Return from 233rd Age
+    {kStackOspit, 0x5e49, kStackTspit, 0xe87},   // Return from 233rd Age
+    {kStackPspit, 0x4108, kStackOspit, 0x2e76},  // Dome Linking Book
+    {kStackRspit, 0x32d8, kStackJspit, 0x1c474}, // Return from Tay
+    {kStackTspit, 0x21b69, kStackOspit, 0x2e76}  // Dome Linking Book
 };
 
 void MohawkEngine_Riven::changeToCard(uint16 dest) {
-	debug (1, "Changing to card %d", dest);
+	debug(1, "Changing to card %d", dest);
 
 	// Clear the graphics cache (images typically aren't used
 	// on different cards).
@@ -625,7 +618,7 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 	if (!isGameVariant(GF_DEMO)) {
 		for (byte i = 0; i < ARRAYSIZE(rivenSpecialChange); i++)
 			if (_stack->getId() == rivenSpecialChange[i].startStack && dest == _stack->getCardStackId(
-					rivenSpecialChange[i].startCardRMAP)) {
+			                                                                       rivenSpecialChange[i].startCardRMAP)) {
 				changeToStack(rivenSpecialChange[i].targetStack);
 				dest = _stack->getCardStackId(rivenSpecialChange[i].targetCardRMAP);
 			}
@@ -661,7 +654,6 @@ Common::Array<uint16> MohawkEngine_Riven::getResourceIDList(uint32 type) const {
 
 	return ids;
 }
-
 
 void MohawkEngine_Riven::delay(uint32 ms) {
 	uint32 startTime = _system->getMillis();
@@ -795,8 +787,8 @@ void MohawkEngine_Riven::applyGameSettings() {
 	RivenTransitionMode transitionsMode = RivenGraphics::sanitizeTransitionMode(transitions);
 
 	_vars["transitionmode"] = transitionsMode;
-	_vars["azip"]           = ConfMan.getBool("zip_mode");
-	_vars["waterenabled"]   = ConfMan.getBool("water_effects");
+	_vars["azip"] = ConfMan.getBool("zip_mode");
+	_vars["waterenabled"] = ConfMan.getBool("water_effects");
 
 	_gfx->setTransitionMode(transitionsMode);
 
@@ -931,7 +923,7 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	return Keymap::arrayOf(engineKeyMap);
 }
 
-bool ZipMode::operator== (const ZipMode &z) const {
+bool ZipMode::operator==(const ZipMode &z) const {
 	return z.name == name && z.id == id;
 }
 

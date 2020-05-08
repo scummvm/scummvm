@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_SETOBJECTFRAMECOMMAND_H
 #define MUTATIONOFJB_SETOBJECTFRAMECOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -41,11 +41,12 @@ public:
 
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
+
 private:
 	uint8 _objectId;
 	uint8 _frame;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

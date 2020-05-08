@@ -171,10 +171,10 @@ private:
 
 	Graphics::Surface _background;
 	Graphics::Surface _backup;
-	Graphics::Surface _digits[10]; // digitsize and rwlitesize are defined in loadDigits() !!!
+	Graphics::Surface _digits[10];    // digitsize and rwlitesize are defined in loadDigits() !!!
 	Graphics::Surface _directions[9]; // Maybe it will be needed to move them to the class itself instead.
-	Graphics::Surface _magics; // Lucerna::draw_also_lines() draws the "magical" lines here. Further information: https://github.com/urukgit/avalot/wiki/Also
-	Graphics::Surface _screen; // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
+	Graphics::Surface _magics;        // Lucerna::draw_also_lines() draws the "magical" lines here. Further information: https://github.com/urukgit/avalot/wiki/Also
+	Graphics::Surface _screen;        // Only used in refreshScreen() to make it more optimized. (No recreation of it at every call of the function.)
 	Graphics::Surface _scrolls;
 	Graphics::Surface _surface;
 	Graphics::Surface _menu;
@@ -194,7 +194,7 @@ private:
 	void skipDifference(int size, const Graphics::Surface &picture, Common::File &file);
 
 	// Further information about these two: http://www.shikadi.net/moddingwiki/Raw_EGA_data
-	Graphics::Surface loadPictureGraphic(Common::File &file); // Reads Graphic-planar EGA data.
+	Graphics::Surface loadPictureGraphic(Common::File &file);                           // Reads Graphic-planar EGA data.
 	Graphics::Surface loadPictureSign(Common::File &file, uint16 width, uint16 height); // Reads a tricky type of picture used for the "game over"/"about" scrolls and in the mini-game Nim.
 
 	void drawText(Graphics::Surface &surface, const Common::String text, FontType font, byte fontHeight, int16 x, int16 y, Color color);

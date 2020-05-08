@@ -22,20 +22,20 @@
 
 #include "ultima/shared/early/game.h"
 #include "ultima/shared/early/font_resources.h"
-#include "ultima/shared/maps/map.h"
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/gfx/font.h"
 #include "ultima/shared/gfx/screen.h"
+#include "ultima/shared/maps/map.h"
 
 namespace Ultima {
 namespace Shared {
 
 BEGIN_MESSAGE_MAP(Game, GameBase)
-	ON_MESSAGE(EndOfTurnMsg)
+ON_MESSAGE(EndOfTurnMsg)
 END_MESSAGE_MAP()
 
 Game::Game() : GameBase(), _randomSeed(0), _gameView(nullptr), _map(nullptr), _party(nullptr),
-		_edgeColor(0), _borderColor(0), _highlightColor(0), _textColor(0), _color1(0), _bgColor(0), _whiteColor(0) {
+               _edgeColor(0), _borderColor(0), _highlightColor(0), _textColor(0), _color1(0), _bgColor(0), _whiteColor(0) {
 	_fontResources = new FontResources();
 	_fontResources->load();
 	setFont(new Gfx::Font((const byte *)&_fontResources->_font8x8[0][0]));
@@ -46,7 +46,7 @@ Game::~Game() {
 }
 
 void Game::setCGAPalette() {
-	static const byte PALETTE[4][3] = { { 0, 0, 0 },{ 0xAA, 0xAA, 0 },{ 0xAA, 0, 0xAA },{ 0xAA, 0xAA, 0xAA } };
+	static const byte PALETTE[4][3] = {{0, 0, 0}, {0xAA, 0xAA, 0}, {0xAA, 0, 0xAA}, {0xAA, 0xAA, 0xAA}};
 	g_vm->_screen->setPalette(&PALETTE[0][0], 0, 4);
 
 	_edgeColor = 3;
@@ -59,11 +59,7 @@ void Game::setCGAPalette() {
 
 void Game::setEGAPalette() {
 	static const byte PALETTE[16][3] = {
-		{ 0, 0, 0 },{ 0x00, 0x00, 0x80 },{ 0x00, 0x80, 0x00 },{ 0x00, 0x80, 0x80 },
-		{ 0x80, 0x00, 0x00 },{ 0x80, 0x00, 0x80 },{ 0x80, 0x80, 0x00 },{ 0xC0, 0xC0, 0xC0 },
-		{ 0x80, 0x80, 0x80 },{ 0x00, 0x00, 0xFF },{ 0x00, 0xFF, 0x00 },{ 0x00, 0xFF, 0xFF },
-		{ 0xFF, 0x40, 0x40 },{ 0xFF, 0x00, 0xFF },{ 0xFF, 0xFF, 0x00 },{ 0xFF, 0xFF, 0xFF }
-	};
+	    {0, 0, 0}, {0x00, 0x00, 0x80}, {0x00, 0x80, 0x00}, {0x00, 0x80, 0x80}, {0x80, 0x00, 0x00}, {0x80, 0x00, 0x80}, {0x80, 0x80, 0x00}, {0xC0, 0xC0, 0xC0}, {0x80, 0x80, 0x80}, {0x00, 0x00, 0xFF}, {0x00, 0xFF, 0x00}, {0x00, 0xFF, 0xFF}, {0xFF, 0x40, 0x40}, {0xFF, 0x00, 0xFF}, {0xFF, 0xFF, 0x00}, {0xFF, 0xFF, 0xFF}};
 	g_vm->_screen->setPalette(&PALETTE[0][0], 0, 16);
 
 	_edgeColor = 15;

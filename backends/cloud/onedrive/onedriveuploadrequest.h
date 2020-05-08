@@ -32,7 +32,7 @@ namespace Cloud {
 namespace OneDrive {
 class OneDriveStorage;
 
-class OneDriveUploadRequest: public Networking::Request {
+class OneDriveUploadRequest : public Networking::Request {
 	OneDriveStorage *_storage;
 	Common::String _savePath;
 	Common::SeekableReadStream *_contentsStream;

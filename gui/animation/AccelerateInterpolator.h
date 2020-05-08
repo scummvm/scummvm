@@ -29,7 +29,7 @@
 
 namespace GUI {
 
-class AccelerateInterpolator: public Interpolator {
+class AccelerateInterpolator : public Interpolator {
 public:
 	AccelerateInterpolator() {}
 	virtual ~AccelerateInterpolator() {}
@@ -37,7 +37,6 @@ public:
 	virtual float interpolate(float linearValue) {
 		return pow(linearValue, 2);
 	}
-
 };
 
 } // End of namespace GUI

@@ -29,20 +29,20 @@ struct Character;
 
 class SaveLoad {
 protected:
-	Common::SaveFileManager	*_saveFileMan;
+	Common::SaveFileManager *_saveFileMan;
 	Common::String _saveFilePrefix;
 
 	Common::String genSaveFileName(uint slot);
 	Common::InSaveFile *getInSaveFile(uint slot);
 	Common::OutSaveFile *getOutSaveFile(uint slot);
 	int selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button);
-	int buildSaveFileList(Common::StringArray& l);
+	int buildSaveFileList(Common::StringArray &l);
 	virtual void doLoadGame(uint16 slot) = 0;
-	virtual void doSaveGame(uint16 slot, const char* name) = 0;
+	virtual void doSaveGame(uint16 slot, const char *name) = 0;
 
 public:
-	SaveLoad(Common::SaveFileManager* saveFileMan, const char *prefix) : _saveFileMan(saveFileMan), _saveFilePrefix(prefix) { }
-	virtual ~SaveLoad() { }
+	SaveLoad(Common::SaveFileManager *saveFileMan, const char *prefix) : _saveFileMan(saveFileMan), _saveFilePrefix(prefix) {}
+	virtual ~SaveLoad() {}
 
 	virtual bool loadGame();
 	virtual bool saveGame();
@@ -50,7 +50,7 @@ public:
 	virtual void getGamePartProgress(bool *complete, int size) = 0;
 	virtual void setPartComplete(const char *part) = 0;
 
-	virtual void renameOldSavefiles() { }
+	virtual void renameOldSavefiles() {}
 };
 
 class SaveLoad_ns : public SaveLoad {
@@ -59,10 +59,10 @@ class SaveLoad_ns : public SaveLoad {
 protected:
 	void renameOldSavefiles() override;
 	void doLoadGame(uint16 slot) override;
-	void doSaveGame(uint16 slot, const char* name) override;
+	void doSaveGame(uint16 slot, const char *name) override;
 
 public:
-	SaveLoad_ns(Parallaction_ns *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "nippon"), _vm(vm) { }
+	SaveLoad_ns(Parallaction_ns *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "nippon"), _vm(vm) {}
 
 	bool saveGame() override;
 
@@ -71,12 +71,12 @@ public:
 };
 
 class SaveLoad_br : public SaveLoad {
-//	Parallaction_br *_vm;
+	//	Parallaction_br *_vm;
 	void doLoadGame(uint16 slot) override;
-	void doSaveGame(uint16 slot, const char* name) override;
+	void doSaveGame(uint16 slot, const char *name) override;
 
 public:
-	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra") { }
+	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra") {}
 
 	void getGamePartProgress(bool *complete, int size) override;
 	void setPartComplete(const char *part) override;

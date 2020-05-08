@@ -29,7 +29,7 @@
 
 namespace GUI {
 
-class AlphaAnimation: public Animation {
+class AlphaAnimation : public Animation {
 public:
 	AlphaAnimation() {}
 	virtual ~AlphaAnimation() {}
@@ -39,7 +39,7 @@ public:
 	void setStartAlpha(float startAlpha) { _startAlpha = startAlpha; }
 
 protected:
-	virtual void updateInternal(Drawable* drawable, float interpolation) {
+	virtual void updateInternal(Drawable *drawable, float interpolation) {
 		// Calculate alpha value based on properties and interpolation
 		drawable->setAlpha(_startAlpha * (1 - interpolation) + _endAlpha * interpolation);
 	}

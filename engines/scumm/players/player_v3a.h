@@ -45,8 +45,8 @@ public:
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int  getMusicTimer() override;
-	int  getSoundStatus(int sound) const override;
+	int getMusicTimer() override;
+	int getSoundStatus(int sound) const override;
 
 private:
 	enum {
@@ -90,8 +90,8 @@ private:
 
 	instData **_wavetable;
 
-	int getMusChan (int id = 0) const;
-	int getSfxChan (int id = 0) const;
+	int getMusChan(int id = 0) const;
+	int getSfxChan(int id = 0) const;
 	static void update_proc(void *param);
 	void playMusic();
 };

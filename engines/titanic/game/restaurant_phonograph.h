@@ -36,11 +36,13 @@ class CRestaurantPhonograph : public CPhonograph {
 	bool EjectCylinderMsg(CEjectCylinderMsg *msg);
 	bool QueryPhonographState(CQueryPhonographState *msg);
 	bool LockPhonographMsg(CLockPhonographMsg *msg);
+
 private:
 	bool _isLocked;
 	CString _ejectSoundName;
 	CString _stopSoundName;
 	int _field114;
+
 public:
 	CLASSDEF;
 	CRestaurantPhonograph();

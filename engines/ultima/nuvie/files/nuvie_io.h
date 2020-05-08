@@ -34,6 +34,7 @@ class NuvieIO {
 protected:
 	uint32 size;
 	uint32 pos;
+
 public:
 	NuvieIO();
 	virtual ~NuvieIO();
@@ -59,7 +60,6 @@ public:
 		return false;
 	};
 
-
 	virtual bool write1(uint8 src) {
 		return false;
 	};
@@ -80,7 +80,6 @@ public:
 		return size;
 	};
 
-
 	inline void seekStart() {
 		seek(0);
 	};
@@ -100,13 +99,11 @@ public:
 	};
 };
 
-#define NUVIE_BUF_COPY   true
+#define NUVIE_BUF_COPY true
 #define NUVIE_BUF_NOCOPY false
 
-
-class NuvieIOBuffer: public NuvieIO {
+class NuvieIOBuffer : public NuvieIO {
 protected:
-
 	unsigned char *data;
 	bool copied_data;
 

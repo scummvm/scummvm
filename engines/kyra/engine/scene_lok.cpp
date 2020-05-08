@@ -21,11 +21,11 @@
  */
 
 #include "kyra/engine/kyra_lok.h"
+#include "kyra/engine/sprites.h"
+#include "kyra/engine/timer.h"
+#include "kyra/graphics/animator_lok.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
-#include "kyra/engine/sprites.h"
-#include "kyra/graphics/animator_lok.h"
-#include "kyra/engine/timer.h"
 
 #include "common/system.h"
 
@@ -341,14 +341,13 @@ void KyraEngine_LoK::setCharacterPositionHelper(int character, int *facingTable)
 	}
 
 	static const uint16 maxAnimationFrame[] = {
-		0x000F, 0x0031, 0x0055, 0x0000, 0x0000, 0x0000,
-		0x0008, 0x002A, 0x004E, 0x0000, 0x0000, 0x0000,
-		0x0022, 0x0046, 0x006A, 0x0000, 0x0000, 0x0000,
-		0x001D, 0x0041, 0x0065, 0x0000, 0x0000, 0x0000,
-		0x001F, 0x0043, 0x0067, 0x0000, 0x0000, 0x0000,
-		0x0028, 0x004C, 0x0070, 0x0000, 0x0000, 0x0000,
-		0x0023, 0x0047, 0x006B, 0x0000, 0x0000, 0x0000
-	};
+	    0x000F, 0x0031, 0x0055, 0x0000, 0x0000, 0x0000,
+	    0x0008, 0x002A, 0x004E, 0x0000, 0x0000, 0x0000,
+	    0x0022, 0x0046, 0x006A, 0x0000, 0x0000, 0x0000,
+	    0x001D, 0x0041, 0x0065, 0x0000, 0x0000, 0x0000,
+	    0x001F, 0x0043, 0x0067, 0x0000, 0x0000, 0x0000,
+	    0x0028, 0x004C, 0x0070, 0x0000, 0x0000, 0x0000,
+	    0x0023, 0x0047, 0x006B, 0x0000, 0x0000, 0x0000};
 
 	if (facing == 0) {
 		if (maxAnimationFrame[36 + character] > ch->currentAnimFrame)
@@ -432,7 +431,9 @@ void KyraEngine_LoK::initSceneData(int facing, int unk1, int brandonAlive) {
 			xpos = ypos = -1;
 			break;
 
-		case 1: case 2: case 8:
+		case 1:
+		case 2:
+		case 8:
 			xpos = _sceneExits.southXPos;
 			ypos = _sceneExits.southYPos;
 			break;
@@ -442,7 +443,9 @@ void KyraEngine_LoK::initSceneData(int facing, int unk1, int brandonAlive) {
 			ypos = _sceneExits.westYPos;
 			break;
 
-		case 4: case 5: case 6:
+		case 4:
+		case 5:
+		case 6:
 			xpos = _sceneExits.northXPos;
 			ypos = _sceneExits.northYPos;
 			break;
@@ -902,9 +905,14 @@ int KyraEngine_LoK::processSceneChange(int *table, int unk1, int frameReset) {
 	while (running) {
 		bool forceContinue = false;
 		switch (*table) {
-		case 0: case 1: case 2:
-		case 3: case 4: case 5:
-		case 6: case 7:
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
 			_currentCharacter->facing = getOppositeFacingDirection(*table);
 			break;
 
@@ -1086,11 +1094,10 @@ int KyraEngine_LoK::changeScene(int facing) {
 
 void KyraEngine_LoK::setCharactersInDefaultScene() {
 	static const uint32 defaultSceneTable[][4] = {
-		{ 0xFFFF, 0x0004, 0x0003, 0xFFFF },
-		{ 0xFFFF, 0x0022, 0xFFFF, 0x0000 },
-		{ 0xFFFF, 0x001D, 0x0021, 0xFFFF },
-		{ 0xFFFF, 0x0000, 0x0000, 0xFFFF }
-	};
+	    {0xFFFF, 0x0004, 0x0003, 0xFFFF},
+	    {0xFFFF, 0x0022, 0xFFFF, 0x0000},
+	    {0xFFFF, 0x001D, 0x0021, 0xFFFF},
+	    {0xFFFF, 0x0000, 0x0000, 0xFFFF}};
 
 	for (int i = 1; i < 5; ++i) {
 		Character *cur = &_characterList[i];
@@ -1101,7 +1108,7 @@ void KyraEngine_LoK::setCharactersInDefaultScene() {
 
 		if (cur->sceneId == _currentCharacter->sceneId)
 			//++cur->field_20;
-			cur->sceneId = curTable[1/*cur->field_20*/];
+			cur->sceneId = curTable[1 /*cur->field_20*/];
 
 		//cur->field_23 = curTable[cur->field_20+1];
 	}
@@ -1109,14 +1116,12 @@ void KyraEngine_LoK::setCharactersInDefaultScene() {
 
 void KyraEngine_LoK::setCharactersPositions(int character) {
 	static const uint16 initXPosTable[] = {
-		0x3200, 0x0024, 0x2230, 0x2F00, 0x0020, 0x002B,
-		0x00CA, 0x00F0, 0x0082, 0x00A2, 0x0042
-	};
+	    0x3200, 0x0024, 0x2230, 0x2F00, 0x0020, 0x002B,
+	    0x00CA, 0x00F0, 0x0082, 0x00A2, 0x0042};
 	static const uint8 initYPosTable[] = {
-		0x00, 0xA2, 0x00, 0x42, 0x00,
-		0x67, 0x67, 0x60, 0x5A, 0x71,
-		0x76
-	};
+	    0x00, 0xA2, 0x00, 0x42, 0x00,
+	    0x67, 0x67, 0x60, 0x5A, 0x71,
+	    0x76};
 
 	assert(character < ARRAYSIZE(initXPosTable));
 	Character *edit = &_characterList[character];

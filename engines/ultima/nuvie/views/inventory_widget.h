@@ -23,8 +23,8 @@
 #ifndef NUVIE_VIEWS_INVENTORY_WIDGET_H
 #define NUVIE_VIEWS_INVENTORY_WIDGET_H
 
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/views/inventory_message.h"
 
 namespace Ultima {
@@ -38,6 +38,7 @@ class Font;
 class InventoryWidget : public GUI_Widget {
 private:
 	Common::Rect arrow_rects[2];
+
 protected:
 	Configuration *config;
 
@@ -104,7 +105,6 @@ public:
 	}
 
 protected:
-
 	GUI_CallBack *callback_object; // object-selected callback
 
 	inline uint16 get_list_position(int x, int y);

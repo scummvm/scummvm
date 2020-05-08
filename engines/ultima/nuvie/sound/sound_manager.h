@@ -31,13 +31,13 @@
 //-make samples fade in & out according to distance
 //-try and use original .m files
 
-#include "ultima/nuvie/sound/sound.h"
-#include "ultima/nuvie/sound/song.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "audio/mixer.h"
 #include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/sound/sfx.h"
-#include "audio/mixer.h"
+#include "ultima/nuvie/sound/song.h"
+#include "ultima/nuvie/sound/sound.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -51,7 +51,7 @@ class CEmuopl;
 struct SoundManagerSfx {
 	SfxIdType sfx_id;
 	Audio::SoundHandle handle;
-} ;
+};
 
 class SoundManager {
 public:
@@ -61,7 +61,7 @@ public:
 	bool nuvieStartup(Configuration *config);
 	bool initAudio();
 	void update_map_sfx(); //updates the active sounds
-	void update(); // at the moment this just changes songs if required
+	void update();         // at the moment this just changes songs if required
 
 	void musicPlayFrom(string group);
 
@@ -121,9 +121,8 @@ private:
 	//bool LoadTileSamples(string sound_dir);
 	bool LoadSfxManager(string sfx_style);
 
-	Sound *SongExists(string name); //have we loaded this sound before?
+	Sound *SongExists(string name);   //have we loaded this sound before?
 	Sound *SampleExists(string name); //have we loaded this sound before?
-
 
 	Sound *RequestTileSound(int id);
 	Sound *RequestObjectSound(int id);

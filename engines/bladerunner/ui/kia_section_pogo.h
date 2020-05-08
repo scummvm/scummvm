@@ -29,19 +29,19 @@
 namespace BladeRunner {
 
 class KIASectionPogo : public KIASectionBase {
-	static const int      kStringCount = 158;
-	static const int      kLineCount = 22;
-	static const char    *kStrings[];
+	static const int kStringCount = 158;
+	static const int kLineCount = 22;
+	static const char *kStrings[];
 	static const Color256 kTextColors[];
 
 	const char *_strings[kStringCount];
-	int         _stringIndex;
+	int _stringIndex;
 
 	const char *_lineTexts[kLineCount];
-	int         _lineTimeouts[kLineCount];
-	int         _lineOffsets[kLineCount];
+	int _lineTimeouts[kLineCount];
+	int _lineOffsets[kLineCount];
 
-	uint32      _timeLast;
+	uint32 _timeLast;
 
 public:
 	KIASectionPogo(BladeRunnerEngine *vm);

@@ -23,8 +23,6 @@
 #ifndef NUVIE_GUI_GUI_DIALOG_H
 #define NUVIE_GUI_GUI_DIALOG_H
 
-
-
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/screen/screen.h"
 
@@ -47,6 +45,7 @@ class GUI_Dialog : public GUI_Widget {
 	unsigned char *backingstore;
 
 	Common::Rect backingstore_rect;
+
 public:
 	/* Passed the area, color and shape */
 	GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bool is_moveable);
@@ -62,6 +61,7 @@ public:
 	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
 	GUI_status MouseMotion(int x, int y, uint8 state) override;
 	void MoveRelative(int dx, int dy) override;
+
 protected:
 	bool can_drag;
 	void loadBorderImages();

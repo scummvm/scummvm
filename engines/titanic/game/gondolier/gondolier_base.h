@@ -30,6 +30,7 @@ namespace Titanic {
 class CGondolierBase : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
+
 protected:
 	static bool _chestOpen;
 	static bool _puzzleSolved;
@@ -41,6 +42,7 @@ protected:
 	static bool _rightSliderHooked;
 	static bool _priorLeftSliderHooked;
 	static bool _priorRightSliderHooked;
+
 public:
 	CLASSDEF;
 

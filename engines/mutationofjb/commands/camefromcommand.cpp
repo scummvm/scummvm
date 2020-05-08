@@ -21,9 +21,9 @@
  */
 
 #include "mutationofjb/commands/camefromcommand.h"
+#include "common/str.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
-#include "common/str.h"
 
 /** @file
  * "CAMEFROM " <sceneId>
@@ -56,4 +56,4 @@ Common::String CameFromCommand::debugString() const {
 	return Common::String::format("CAMEFROM %d", _sceneId);
 }
 
-}
+} // namespace MutationOfJB

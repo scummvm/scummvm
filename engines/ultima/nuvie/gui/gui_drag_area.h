@@ -35,7 +35,6 @@ protected:
 	bool dragging;
 
 public:
-
 	GUI_DragArea() {
 		dragging = false;
 		drop_target = true;
@@ -60,7 +59,6 @@ public:
 	virtual void drag_draw(int x, int y, int message, void *data) {
 		return;
 	}
-
 };
 
 } // End of namespace Nuvie

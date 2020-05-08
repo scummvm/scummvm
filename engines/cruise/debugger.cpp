@@ -28,10 +28,10 @@
 
 namespace Cruise {
 
-Debugger::Debugger(): GUI::Debugger() {
-	registerCmd("continue",			WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("hotspots",				WRAP_METHOD(Debugger, cmd_hotspots));
-	registerCmd("items",				WRAP_METHOD(Debugger, cmd_items));
+Debugger::Debugger() : GUI::Debugger() {
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("hotspots", WRAP_METHOD(Debugger, cmd_hotspots));
+	registerCmd("items", WRAP_METHOD(Debugger, cmd_items));
 }
 
 /**
@@ -45,8 +45,8 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 
 	while (currentObject) {
 		if (currentObject->overlay > 0 && overlayTable[currentObject->overlay].alreadyLoaded &&
-			(currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK ||
-			currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUAL)) {
+		    (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK ||
+		     currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUAL)) {
 			const char *pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
 
 			switch (currentObject->type) {

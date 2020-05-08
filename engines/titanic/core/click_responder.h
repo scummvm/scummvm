@@ -30,8 +30,10 @@ namespace Titanic {
 class CClickResponder : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 protected:
 	CString _message, _soundName;
+
 public:
 	CLASSDEF;
 

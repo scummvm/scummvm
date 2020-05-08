@@ -35,8 +35,10 @@ namespace Widgets {
  */
 class UrbanWidget : public Shared::Maps::MapWidget {
 	DECLARE_MESSAGE_MAP;
+
 private:
 	uint _tileNum;
+
 protected:
 	CLASSDEF;
 
@@ -46,12 +48,12 @@ protected:
 	 * @returns			True if the move was able to be done
 	 */
 	bool moveBy(const Point &delta);
+
 public:
 	/**
 	 * Constructor
 	 */
-	UrbanWidget(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum) :
-		Shared::Maps::MapWidget(game, map), _tileNum(tileNum) {}
+	UrbanWidget(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum) : Shared::Maps::MapWidget(game, map), _tileNum(tileNum) {}
 
 	/**
 	 * Destructor

@@ -54,6 +54,7 @@ public:
 	}
 
 	bool loadData(Common::ReadStream *rs);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 	int _leftOff, _rightOff, _topOff, _gumpShape;

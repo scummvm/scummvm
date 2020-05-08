@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/widgets/merchant_armour.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/u1dialogs/armoury.h"
 
 namespace Ultima {

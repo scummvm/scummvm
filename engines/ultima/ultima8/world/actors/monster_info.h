@@ -39,9 +39,9 @@ struct MonsterInfo {
 	uint16 _damageType;
 	uint16 _defenseType;
 	bool _resurrection; // auto-resurrection after being killed
-	bool _ranged; // ranged attack
-	bool _shifter; // shapeshifter
-	uint32 _explode; // shape to hurl around after being killed (or 0)
+	bool _ranged;       // ranged attack
+	bool _shifter;      // shapeshifter
+	uint32 _explode;    // shape to hurl around after being killed (or 0)
 
 	Std::vector<TreasureInfo> _treasure;
 };

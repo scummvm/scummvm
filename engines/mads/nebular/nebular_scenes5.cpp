@@ -20,11 +20,11 @@
  *
  */
 
+#include "mads/nebular/nebular_scenes5.h"
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
-#include "mads/nebular/nebular_scenes5.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -175,7 +175,7 @@ void Scene501::enter() {
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 	int idx = _scene->_dynamicHotspots.add(NOUN_DOOR, VERB_WALK_THROUGH, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
-	_doorHotspotid = _scene->_dynamicHotspots.setPosition(idx,Common::Point(282, 110), FACING_NORTH);
+	_doorHotspotid = _scene->_dynamicHotspots.setPosition(idx, Common::Point(282, 110), FACING_NORTH);
 	_scene->_dynamicHotspots.setCursor(_doorHotspotid, CURSOR_GO_UP);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
@@ -312,8 +312,7 @@ void Scene501::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
 			_scene->_sequences.addTimer(15, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_game._player._visible = false;
@@ -333,8 +332,7 @@ void Scene501::actions() {
 			_scene->_sequences.setMsgLayout(_mainSequenceId);
 			_scene->_sequences.updateTimeout(_mainSequenceId, syncIdx);
 			_scene->_sequences.addTimer(30, 4);
-			}
-			break;
+		} break;
 
 		case 4:
 			_scene->_nextSceneId = 504;
@@ -420,8 +418,7 @@ void Scene501::actions() {
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_vm->_sound->command(12);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 8);
-			}
-			break;
+		} break;
 
 		case 8: {
 			int syncIdx = _globals._sequenceIndexes[3];
@@ -429,8 +426,7 @@ void Scene501::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_nextSceneId = 503;
-			}
-			break;
+		} break;
 
 		default:
 			break;
@@ -447,8 +443,7 @@ void Scene501::actions() {
 		_vm->_dialogs->show(50115);
 	else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK_TO_EAST))
 		_vm->_dialogs->show(50118);
-	else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK_TO_WEST) || _action.isAction(VERB_LOOK, NOUN_STREET_TO_WEST)
-		|| _action.isAction(VERB_WALK_DOWN, NOUN_SIDEWALK_TO_WEST) || _action.isAction(VERB_WALK_DOWN, NOUN_STREET_TO_WEST))
+	else if (_action.isAction(VERB_LOOK, NOUN_SIDEWALK_TO_WEST) || _action.isAction(VERB_LOOK, NOUN_STREET_TO_WEST) || _action.isAction(VERB_WALK_DOWN, NOUN_SIDEWALK_TO_WEST) || _action.isAction(VERB_WALK_DOWN, NOUN_STREET_TO_WEST))
 		_vm->_dialogs->show(50119);
 	else if (_action.isAction(VERB_LOOK, NOUN_BUILDING))
 		_vm->_dialogs->show(50120);
@@ -514,13 +509,7 @@ void Scene502::actions() {
 		_vm->_dialogs->show(50211);
 	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
 		_vm->_dialogs->show(50212);
-	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
+	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY) || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY) || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY) || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY) || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY) || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY) || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
 		_vm->_dialogs->show(50213);
 	else if (_action.isAction(VERB_LOOK, NOUN_DEVICE) || _action._lookFlag)
 		_vm->_dialogs->show(50214);
@@ -575,7 +564,7 @@ void Scene503::actions() {
 	if (_action.isAction(VERB_WALK, NOUN_OUTSIDE))
 		_scene->_nextSceneId = 501;
 	else if (_action.isAction(VERB_TAKE, NOUN_DETONATORS)) {
-		if ( _game._trigger || !_game._objects.isInInventory(OBJ_DETONATORS)) {
+		if (_game._trigger || !_game._objects.isInInventory(OBJ_DETONATORS)) {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
@@ -699,7 +688,7 @@ void Scene504::enter() {
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
 	_carFrame = -1;
 
-	if ((_scene->_priorSceneId == 505) && (_globals[kHoverCarDestination] != _globals[kHoverCarLocation])){
+	if ((_scene->_priorSceneId == 505) && (_globals[kHoverCarDestination] != _globals[kHoverCarLocation])) {
 		_carAnimationMode = 1;
 		_scene->loadAnimation(formAnimName('A', -1));
 		_vm->_sound->command(14);
@@ -739,7 +728,6 @@ void Scene504::step() {
 		}
 	}
 
-
 	if (_game._trigger >= 70) {
 		switch (_game._trigger) {
 		case 70:
@@ -748,10 +736,10 @@ void Scene504::step() {
 				_scene->freeAnimation();
 				_carAnimationMode = 2;
 				if (((_globals[kHoverCarLocation] >= 500 && _globals[kHoverCarLocation] <= 599) &&
-					(_globals[kHoverCarDestination] >= 500 && _globals[kHoverCarDestination] <= 599)) ||
-					((_globals[kHoverCarLocation] >= 600 && _globals[kHoverCarLocation] <= 699) &&
-					(_globals[kHoverCarDestination] >= 600 && _globals[kHoverCarDestination] <= 699))) {
-						_scene->loadAnimation(formAnimName('A', -1), 71);
+				     (_globals[kHoverCarDestination] >= 500 && _globals[kHoverCarDestination] <= 599)) ||
+				    ((_globals[kHoverCarLocation] >= 600 && _globals[kHoverCarLocation] <= 699) &&
+				     (_globals[kHoverCarDestination] >= 600 && _globals[kHoverCarDestination] <= 699))) {
+					_scene->loadAnimation(formAnimName('A', -1), 71);
 				} else if (_globals[kHoverCarLocation] > _globals[kHoverCarDestination])
 					_scene->loadAnimation(formAnimName('C', -1), 71);
 				else
@@ -805,8 +793,7 @@ void Scene504::actions() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 6);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
-			}
-			break;
+		} break;
 
 		case 2:
 			_scene->_sequences.addTimer(10, 3);
@@ -1017,7 +1004,7 @@ void Scene505::step() {
 				}
 			}
 			break;
-			}
+		}
 
 		case 18:
 		case 19:
@@ -1110,7 +1097,7 @@ void Scene505::step() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 1);
 		}
 		break;
-		}
+	}
 
 	case 61:
 		_globals._sequenceIndexes[10] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[10], false, 8, 0, 0, 0);
@@ -1306,7 +1293,6 @@ void Scene506::handleDoorSequences() {
 		_scene->_sequences.addSubEntry(_doorSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 		break;
 
-
 	case 81:
 		_doorSequenceIdx = _scene->_sequences.startCycle(_doorSpriteIdx, false, -2);
 		_scene->_sequences.setDepth(_doorSequenceIdx, _doorDepth);
@@ -1342,8 +1328,7 @@ void Scene506::handleDoorSequences() {
 		}
 		_game._player._stepEnabled = true;
 
-			 }
-			 break;
+	} break;
 
 	case 84:
 		_actionFl = false;
@@ -1390,8 +1375,7 @@ void Scene506::actions() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_game._player._visible = false;
@@ -1406,8 +1390,7 @@ void Scene506::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_nextSceneId = 504;
-			}
-			break;
+		} break;
 
 		default:
 			break;
@@ -1753,8 +1736,7 @@ void Scene508::actions() {
 				_scene->_kernelMessages.reset();
 				_scene->changeVariant(1);
 				_scene->_sequences.addTimer(30, 7);
-				}
-				break;
+			} break;
 
 			case 7:
 				_globals[kLaserOn] = true;
@@ -1891,7 +1873,7 @@ void Scene511::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 4);
 
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[6],5);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 5);
 
 		_scene->_hotspots.activate(NOUN_ROPE, true);
 		_scene->_hotspots.activate(NOUN_BOAT, true);
@@ -2004,9 +1986,9 @@ void Scene511::preActions() {
 		if (_game._trigger == 0) {
 			_game._player._readyToWalk = false;
 			_game._player._stepEnabled = false;
-			_scene->freeAnimation ();
+			_scene->freeAnimation();
 			_lineAnimationMode = 2;
-			_scene->loadAnimation(formAnimName('R',2), 1);
+			_scene->loadAnimation(formAnimName('R', 2), 1);
 		} else if (_game._trigger == 1) {
 			_game._player._visible = true;
 			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
@@ -2037,8 +2019,7 @@ void Scene511::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_game._player._visible = false;
@@ -2053,13 +2034,12 @@ void Scene511::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_nextSceneId = 504;
-			}
-			break;
+		} break;
 
 		default:
 			break;
 		}
-	} else 	if (_action.isAction(VERB_TAKE, NOUN_FISHING_LINE)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_FISHING_LINE)) {
 		if (!_globals[kBoatRaised]) {
 			if (_globals[kLineStatus] == 2) {
 				if (_globals[kLineStatus] != 3) {
@@ -2090,7 +2070,7 @@ void Scene511::actions() {
 			_vm->_dialogs->show(51130);
 		}
 	} else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) ||
-			_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) {
+	           _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51131);
 		else if (_globals[kLineStatus] == 1)
@@ -2148,9 +2128,7 @@ void Scene511::actions() {
 		_vm->_dialogs->show(51118);
 	else if (_action.isAction(VERB_UNLOCK, NOUN_PADLOCK_KEY, NOUN_DOME_ENTRANCE) || _action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_DOME_ENTRANCE))
 		_vm->_dialogs->show(51119);
-	else if ( (_action.isAction(VERB_PUT) || _action.isAction(VERB_THROW))
-		 && (_action.isObject(NOUN_TIMEBOMB) || _action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS))
-		 && _action.isObject(NOUN_DOME_ENTRANCE))
+	else if ((_action.isAction(VERB_PUT) || _action.isAction(VERB_THROW)) && (_action.isObject(NOUN_TIMEBOMB) || _action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS)) && _action.isObject(NOUN_DOME_ENTRANCE))
 		_vm->_dialogs->show(51120);
 	else if (_action.isAction(VERB_LOOK, NOUN_RESTAURANT)) {
 		if (_globals[kBoatRaised])
@@ -2435,7 +2413,7 @@ void Scene512::actions() {
 	else if (_action.isAction(VERB_LOOK, NOUN_PADLOCK_KEY) && _game._objects.isInRoom(OBJ_PADLOCK_KEY))
 		_vm->_dialogs->show(51215);
 	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_ROD) && (!_scene->_animation[0] ||
-			_scene->_animation[0]->getCurrentFrame() == 4))
+	                                                           _scene->_animation[0]->getCurrentFrame() == 4))
 		_vm->_dialogs->show(51216);
 	else if (_action.isAction(VERB_LOOK, NOUN_SHIPS_WHEEL))
 		_vm->_dialogs->show(51218);
@@ -2609,8 +2587,7 @@ void Scene513::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], syncIdx);
 			_scene->_sequences.addTimer(6, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_game._player._visible = false;
@@ -2625,8 +2602,7 @@ void Scene513::actions() {
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_nextSceneId = 504;
-			}
-			break;
+		} break;
 
 		default:
 			break;

@@ -21,11 +21,11 @@
  */
 
 #include "ultima/ultima1/actions/action.h"
+#include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/visual_item.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/shared/gfx/visual_item.h"
-#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {

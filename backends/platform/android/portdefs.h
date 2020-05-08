@@ -23,13 +23,13 @@
 #ifndef _PORTDEFS_H_
 #define _PORTDEFS_H_
 
+#include <assert.h>
+#include <ctype.h>
+#include <new>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <assert.h>
-#include <new>
 
 #define _USE_MATH_DEFINES
 #include <math.h>

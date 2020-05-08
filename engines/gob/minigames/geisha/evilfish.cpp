@@ -28,12 +28,10 @@ namespace Geisha {
 
 EvilFish::EvilFish(const ANIFile &ani, uint16 screenWidth,
                    uint16 animSwimLeft, uint16 animSwimRight,
-                   uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie) :
-	ANIObject(ani), _screenWidth(screenWidth),
-	_animSwimLeft(animSwimLeft), _animSwimRight(animSwimRight),
-	_animTurnLeft(animTurnLeft), _animTurnRight(animTurnRight), _animDie(animDie),
-	_shouldLeave(false), _state(kStateNone) {
-
+                   uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie) : ANIObject(ani), _screenWidth(screenWidth),
+                                                                                _animSwimLeft(animSwimLeft), _animSwimRight(animSwimRight),
+                                                                                _animTurnLeft(animTurnLeft), _animTurnRight(animTurnRight), _animDie(animDie),
+                                                                                _shouldLeave(false), _state(kStateNone) {
 }
 
 EvilFish::~EvilFish() {
@@ -106,7 +104,7 @@ void EvilFish::advance() {
 			setVisible(false);
 
 			_shouldLeave = false;
-			_state       = kStateNone;
+			_state = kStateNone;
 		}
 		break;
 
@@ -121,7 +119,7 @@ void EvilFish::advance() {
 			setVisible(false);
 
 			_shouldLeave = false;
-			_state       = kStateNone;
+			_state = kStateNone;
 		}
 		break;
 
@@ -152,11 +150,11 @@ void EvilFish::advance() {
 void EvilFish::mutate(uint16 animSwimLeft, uint16 animSwimRight,
                       uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie) {
 
-	_animSwimLeft  = animSwimLeft;
+	_animSwimLeft = animSwimLeft;
 	_animSwimRight = animSwimRight;
-	_animTurnLeft  = animTurnLeft;
+	_animTurnLeft = animTurnLeft;
 	_animTurnRight = animTurnRight;
-	_animDie       = animDie;
+	_animDie = animDie;
 
 	switch (_state) {
 	case kStateSwimLeft:

@@ -1,11 +1,11 @@
-#include <cxxtest/TestSuite.h>
 #include "engines/ultima/ultima8/usecode/uc_list.h"
+#include <cxxtest/TestSuite.h>
 /**
  * Test suite for the functions in engines/ultima/ultima8/usecode/uc_list.h
  */
 
 class U8UCListTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	U8UCListTestSuite() {
 	}
 
@@ -16,21 +16,20 @@ class U8UCListTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(l.getElementSize(), 2);
 
 		uint16 test = 0xBEEF;
-		l.append((uint8*)&test);
+		l.append((uint8 *)&test);
 		TS_ASSERT_EQUALS(l.getSize(), 1);
 
 		uint16 test2 = 0xF00D;
-		l.append((uint8*)&test2);
+		l.append((uint8 *)&test2);
 		TS_ASSERT_EQUALS(l.getSize(), 2);
-		TS_ASSERT(l.inList((uint8*)&test));
+		TS_ASSERT(l.inList((uint8 *)&test));
 
-		l.remove((uint8*)&test);
-		TS_ASSERT(!l.inList((uint8*)&test));
-		TS_ASSERT(l.inList((uint8*)&test2));
+		l.remove((uint8 *)&test);
+		TS_ASSERT(!l.inList((uint8 *)&test));
+		TS_ASSERT(l.inList((uint8 *)&test2));
 		TS_ASSERT_EQUALS(l.getSize(), 1);
 
 		l.free();
 		TS_ASSERT_EQUALS(l.getSize(), 0);
 	}
-
 };

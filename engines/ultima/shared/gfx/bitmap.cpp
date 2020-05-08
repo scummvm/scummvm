@@ -21,9 +21,9 @@
  */
 
 #include "ultima/shared/gfx/bitmap.h"
-#include "ultima/shared/core/file.h"
 #include "common/memstream.h"
 #include "graphics/managed_surface.h"
+#include "ultima/shared/core/file.h"
 
 namespace Ultima {
 namespace Shared {
@@ -52,7 +52,7 @@ void Bitmap::load(const Common::String &filename) {
 
 void Bitmap::flipHorizontally() {
 	Graphics::Surface s = getSubArea(Common::Rect(0, 0, this->w, this->h));
-	
+
 	for (int y = 0; y < h; ++y) {
 		byte *lineStart = (byte *)s.getBasePtr(0, y);
 		byte *lineEnd = (byte *)s.getBasePtr(this->w - 1, y);

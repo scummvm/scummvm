@@ -24,10 +24,10 @@
  */
 //#include <string.h>
 //#include <assert.h>
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/sound/mixer/types.h"
 #include "decoder/wave/stream.h"
 #include "decoder/wave/memstream.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/sound/mixer/types.h"
 //#include "common/substream.h"
 //#include "common/bufferedstream.h"
 //#include "common/str.h"
@@ -45,7 +45,6 @@ SeekableReadStream *ReadStream::readStream(uint32 dataSize) {
 	assert(dataSize > 0);
 	return new MemoryReadStream((uint8 *)buf, dataSize, DisposeAfterUse::YES);
 }
-
 
 uint32 MemoryReadStream::read(void *dataPtr, uint32 dataSize) {
 	// Read at most as many bytes as are still available...
@@ -85,7 +84,7 @@ bool MemoryReadStream::seek(sint32 offs, int whence) {
 
 	// Reset end-of-stream flag on a successful seek
 	_eos = false;
-	return true;    // FIXME: STREAM REWRITE
+	return true; // FIXME: STREAM REWRITE
 }
 /*
 bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
@@ -200,7 +199,6 @@ Std::string SeekableReadStream::readLine() {
 	return line;
 }
 
-
 /*
 uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
     if (dataSize > _end - _pos) {
@@ -288,12 +286,12 @@ public:
 };
 
 BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
-	: _parentStream(parentStream),
-	  _disposeParentStream(disposeParentStream),
-	  _pos(0),
-	  _eos(false),
-	  _bufSize(0),
-	  _realBufSize(bufSize) {
+    : _parentStream(parentStream),
+      _disposeParentStream(disposeParentStream),
+      _pos(0),
+      _eos(false),
+      _bufSize(0),
+      _realBufSize(bufSize) {
 
 	assert(parentStream);
 	_buf = new uint8[bufSize];
@@ -355,8 +353,7 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 	return alreadyRead + dataSize;
 }
 
-}   // End of nameless namespace
-
+} // namespace
 
 ReadStream *wrapBufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
 	if (parentStream)
@@ -375,6 +372,7 @@ namespace {
 class BufferedSeekableReadStream : public BufferedReadStream, public SeekableReadStream {
 protected:
 	SeekableReadStream *_parentStream;
+
 public:
 	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 
@@ -389,8 +387,8 @@ public:
 };
 
 BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
-	: BufferedReadStream(parentStream, bufSize, disposeParentStream),
-	  _parentStream(parentStream) {
+    : BufferedReadStream(parentStream, bufSize, disposeParentStream),
+      _parentStream(parentStream) {
 }
 
 bool BufferedSeekableReadStream::seek(sint32 offset, int whence) {
@@ -398,7 +396,7 @@ bool BufferedSeekableReadStream::seek(sint32 offset, int whence) {
 	// in the buffer only.
 	// Note: We could try to handle SEEK_END and SEEK_SET, too, but
 	// since they are rarely used, it seems not worth the effort.
-	_eos = false;   // seeking always cancels EOS
+	_eos = false; // seeking always cancels EOS
 
 	if (whence == SEEK_CUR && (int)_pos + offset >= 0 && _pos + offset <= _bufSize) {
 		_pos += offset;
@@ -417,7 +415,7 @@ bool BufferedSeekableReadStream::seek(sint32 offset, int whence) {
 	return true;
 }
 
-}   // End of nameless namespace
+} // namespace
 
 SeekableReadStream *wrapBufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
 	if (parentStream)
@@ -459,9 +457,9 @@ protected:
 
 public:
 	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize)
-		: _parentStream(parentStream),
-		  _pos(0),
-		  _bufSize(bufSize) {
+	    : _parentStream(parentStream),
+	      _pos(0),
+	      _bufSize(bufSize) {
 
 		assert(parentStream);
 		_buf = new uint8[bufSize];
@@ -482,12 +480,12 @@ public:
 		if (_bufSize - _pos >= dataSize) {
 			memcpy(_buf + _pos, dataPtr, dataSize);
 			_pos += dataSize;
-		} else if (_bufSize >= dataSize) {  // check if we can flush the buffer and load the data
+		} else if (_bufSize >= dataSize) { // check if we can flush the buffer and load the data
 			const bool flushResult = flushBuffer();
 			assert(flushResult);
 			memcpy(_buf, dataPtr, dataSize);
 			_pos += dataSize;
-		} else  {   // too big for our buffer
+		} else { // too big for our buffer
 			const bool flushResult = flushBuffer();
 			assert(flushResult);
 			return _parentStream->write(dataPtr, dataSize);
@@ -498,10 +496,9 @@ public:
 	virtual bool flush() {
 		return flushBuffer();
 	}
-
 };
 
-}   // End of nameless namespace
+} // namespace
 
 WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) {
 	if (parentStream)
@@ -509,4 +506,4 @@ WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) 
 	return 0;
 }
 
-}   // End of namespace Common
+} // End of namespace Common

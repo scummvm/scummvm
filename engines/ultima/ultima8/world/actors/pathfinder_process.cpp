@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
@@ -37,13 +37,12 @@ static const unsigned int PATH_FAILED = 0;
 DEFINE_RUNTIME_CLASSTYPE_CODE(PathfinderProcess, Process)
 
 PathfinderProcess::PathfinderProcess() : Process(),
-		_currentStep(0), _targetItem(0), _hitMode(false),
-		_targetX(0), _targetY(0), _targetZ(0) {
+                                         _currentStep(0), _targetItem(0), _hitMode(false),
+                                         _targetX(0), _targetY(0), _targetZ(0) {
 }
 
-PathfinderProcess::PathfinderProcess(Actor *actor, ObjId item_, bool hit) :
-		_currentStep(0), _targetItem(item_), _hitMode(hit),
-		_targetX(0), _targetY(0), _targetZ(0) {
+PathfinderProcess::PathfinderProcess(Actor *actor, ObjId item_, bool hit) : _currentStep(0), _targetItem(item_), _hitMode(hit),
+                                                                            _targetX(0), _targetY(0), _targetZ(0) {
 	assert(actor);
 	_itemNum = actor->getObjId();
 	_type = 0x0204; // CONSTANT !
@@ -79,9 +78,8 @@ PathfinderProcess::PathfinderProcess(Actor *actor, ObjId item_, bool hit) :
 	actor->setActorFlag(Actor::ACT_PATHFINDING);
 }
 
-PathfinderProcess::PathfinderProcess(Actor *actor_, int32 x, int32 y, int32 z) :
-		_targetX(x), _targetY(y), _targetZ(z), _targetItem(0), _currentStep(0),
-		_hitMode(false) {
+PathfinderProcess::PathfinderProcess(Actor *actor_, int32 x, int32 y, int32 z) : _targetX(x), _targetY(y), _targetZ(z), _targetItem(0), _currentStep(0),
+                                                                                 _hitMode(false) {
 	assert(actor_);
 	_itemNum = actor_->getObjId();
 
@@ -121,8 +119,8 @@ void PathfinderProcess::run() {
 	Actor *actor = getActor(_itemNum);
 	assert(actor);
 	// if not in the fastarea, do nothing
-	if (!actor->hasFlags(Item::FLG_FASTAREA)) return;
-
+	if (!actor->hasFlags(Item::FLG_FASTAREA))
+		return;
 
 	bool ok = true;
 
@@ -138,7 +136,7 @@ void PathfinderProcess::run() {
 
 		item->getLocation(curx, cury, curz);
 		if (ABS(curx - _targetX) >= 32 || ABS(cury - _targetY) >= 32 ||
-		        ABS(curz - _targetZ) >= 8) {
+		    ABS(curz - _targetZ) >= 8) {
 			// target moved
 			ok = false;
 		}
@@ -253,7 +251,8 @@ void PathfinderProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool PathfinderProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_targetItem = rs->readUint16LE();
 	_targetX = rs->readUint16LE();

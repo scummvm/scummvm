@@ -36,9 +36,9 @@ class AudioSpeech {
 
 	BladeRunnerEngine *_vm;
 
-	int   _speechVolume;
-	bool  _isActive;
-	int   _channel;
+	int _speechVolume;
+	bool _isActive;
+	int _channel;
 	byte *_data;
 
 public:

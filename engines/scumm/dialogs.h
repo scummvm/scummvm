@@ -23,16 +23,15 @@
 #ifndef SCUMM_DIALOGS_H
 #define SCUMM_DIALOGS_H
 
-#include "common/str.h"
 #include "common/keyboard.h"
-#include "gui/dialog.h"
+#include "common/str.h"
 #include "engines/dialogs.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 class CommandSender;
 class StaticTextWidget;
-}
-
+} // namespace GUI
 
 namespace Scumm {
 
@@ -55,7 +54,7 @@ public:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 protected:
-	GUI::Dialog		*_helpDialog;
+	GUI::Dialog *_helpDialog;
 };
 #endif
 
@@ -67,17 +66,17 @@ protected:
  */
 class InfoDialog : public ScummDialog {
 protected:
-	ScummEngine		*_vm;
+	ScummEngine *_vm;
 	String _message;
 	GUI::StaticTextWidget *_text;
 
 public:
 	// arbitrary message
-	InfoDialog(ScummEngine *scumm, const String& message);
+	InfoDialog(ScummEngine *scumm, const String &message);
 	// from resources
 	InfoDialog(ScummEngine *scumm, int res);
 
-	void setInfoText(const String& message);
+	void setInfoText(const String &message);
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override {
 		setResult(0);
@@ -91,7 +90,6 @@ public:
 	void reflowLayout() override;
 
 protected:
-
 	// Query a string from the resources
 	const String queryResString(int stringno);
 };
@@ -125,7 +123,7 @@ protected:
  */
 class ValueDisplayDialog : public GUI::Dialog {
 public:
-	ValueDisplayDialog(const Common::String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
+	ValueDisplayDialog(const Common::String &label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
 
 	void open() override;
 	void drawDialog(GUI::DrawLayer layerToDraw) override;
@@ -163,6 +161,7 @@ public:
 		close();
 	}
 	void handleKeyDown(Common::KeyState state) override;
+
 protected:
 	int _value;
 	uint32 _timer;
@@ -173,13 +172,13 @@ protected:
 //The Indy IQ dialog
 class Indy3IQPointsDialog : public InfoDialog {
 public:
-	Indy3IQPointsDialog(ScummEngine *scumm, char* text);
+	Indy3IQPointsDialog(ScummEngine *scumm, char *text);
 	void handleKeyDown(Common::KeyState state) override;
 };
 
 class DebugInputDialog : public InfoDialog {
 public:
-	DebugInputDialog(ScummEngine *scumm, char* text);
+	DebugInputDialog(ScummEngine *scumm, char *text);
 	void handleKeyDown(Common::KeyState state) override;
 	bool done;
 	Common::String buffer;
@@ -194,6 +193,7 @@ public:
 	LoomTownsDifficultyDialog();
 
 	int getSelectedDifficulty() const { return _difficulty; }
+
 protected:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 

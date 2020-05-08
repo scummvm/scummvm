@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/random.h"
 #include "audio/mixer.h"
+#include "common/random.h"
 
 #include "agi/agi.h"
 
@@ -32,37 +32,36 @@ namespace Agi {
 #define USE_INTERPOLATION
 
 static const int16 waveformRamp[WAVEFORM_SIZE] = {
-	0, 8, 16, 24, 32, 40, 48, 56,
-	64, 72, 80, 88, 96, 104, 112, 120,
-	128, 136, 144, 152, 160, 168, 176, 184,
-	192, 200, 208, 216, 224, 232, 240, 255,
-	0, -248, -240, -232, -224, -216, -208, -200,
-	-192, -184, -176, -168, -160, -152, -144, -136,
-	-128, -120, -112, -104, -96, -88, -80, -72,
-	-64, -56, -48, -40, -32, -24, -16, -8   // Ramp up
+    0, 8, 16, 24, 32, 40, 48, 56,
+    64, 72, 80, 88, 96, 104, 112, 120,
+    128, 136, 144, 152, 160, 168, 176, 184,
+    192, 200, 208, 216, 224, 232, 240, 255,
+    0, -248, -240, -232, -224, -216, -208, -200,
+    -192, -184, -176, -168, -160, -152, -144, -136,
+    -128, -120, -112, -104, -96, -88, -80, -72,
+    -64, -56, -48, -40, -32, -24, -16, -8 // Ramp up
 };
 
 static const int16 waveformSquare[WAVEFORM_SIZE] = {
-	255, 230, 220, 220, 220, 220, 220, 220,
-	220, 220, 220, 220, 220, 220, 220, 220,
-	220, 220, 220, 220, 220, 220, 220, 220,
-	220, 220, 220, 220, 220, 220, 220, 110,
-	-255, -230, -220, -220, -220, -220, -220, -220,
-	-220, -220, -220, -220, -220, -220, -220, -220,
-	-220, -220, -220, -220, -220, -220, -220, -220,
-	-220, -220, -220, -110, 0, 0, 0, 0  // Square
+    255, 230, 220, 220, 220, 220, 220, 220,
+    220, 220, 220, 220, 220, 220, 220, 220,
+    220, 220, 220, 220, 220, 220, 220, 220,
+    220, 220, 220, 220, 220, 220, 220, 110,
+    -255, -230, -220, -220, -220, -220, -220, -220,
+    -220, -220, -220, -220, -220, -220, -220, -220,
+    -220, -220, -220, -220, -220, -220, -220, -220,
+    -220, -220, -220, -110, 0, 0, 0, 0 // Square
 };
 
 static const int16 waveformMac[WAVEFORM_SIZE] = {
-	45, 110, 135, 161, 167, 173, 175, 176,
-	156, 137, 123, 110, 91, 72, 35, -2,
-	-60, -118, -142, -165, -170, -176, -177, -179,
-	-177, -176, -164, -152, -117, -82, -17, 47,
-	92, 137, 151, 166, 170, 173, 171, 169,
-	151, 133, 116, 100, 72, 43, -7, -57,
-	-99, -141, -156, -170, -174, -177, -178, -179,
-	-175, -172, -165, -159, -137, -114, -67, -19
-};
+    45, 110, 135, 161, 167, 173, 175, 176,
+    156, 137, 123, 110, 91, 72, 35, -2,
+    -60, -118, -142, -165, -170, -176, -177, -179,
+    -177, -176, -164, -152, -117, -82, -17, 47,
+    92, 137, 151, 166, 170, 173, 171, 169,
+    151, 133, 116, 100, 72, 43, -7, -57,
+    -99, -141, -156, -170, -174, -177, -178, -179,
+    -175, -172, -165, -159, -137, -114, -67, -19};
 
 SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _chn() {
 	_sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
@@ -71,7 +70,7 @@ SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm,
 	_env = false;
 	_playingSound = -1;
 	_playing = false;
-	_useChorus = true;  // FIXME: Currently always true?
+	_useChorus = true; // FIXME: Currently always true?
 
 	switch (_vm->_soundemu) {
 	default:
@@ -118,7 +117,7 @@ void SoundGenSarien::play(int resnum) {
 
 	_playingSound = resnum;
 
-	PCjrSound *pcjrSound = (PCjrSound *) _vm->_game.sounds[resnum];
+	PCjrSound *pcjrSound = (PCjrSound *)_vm->_game.sounds[resnum];
 
 	// Initialize channel info
 	for (int i = 0; i < NUM_CHANNELS; i++) {
@@ -154,7 +153,7 @@ void SoundGenSarien::stopNote(int i) {
 	if (_useChorus) {
 		// Stop chorus ;)
 		if (_chn[i].type == AGI_SOUND_4CHN &&
-		        _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
+		    _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 			stopNote(i + 4);
 		}
 	}
@@ -175,7 +174,7 @@ void SoundGenSarien::playNote(int i, int freq, int vol) {
 	if (_useChorus) {
 		// Add chorus ;)
 		if (_chn[i].type == AGI_SOUND_4CHN &&
-		        _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
+		    _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 
 			int newfreq = freq * 1007 / 1000;
 
@@ -251,8 +250,7 @@ uint32 SoundGenSarien::mixSound() {
 		if (!_chn[c].vol)
 			continue;
 
-		m = _chn[c].flags & AGI_SOUND_ENVELOPE ?
-		    _chn[c].vol * _chn[c].env >> 16 : _chn[c].vol;
+		m = _chn[c].flags & AGI_SOUND_ENVELOPE ? _chn[c].vol * _chn[c].env >> 16 : _chn[c].vol;
 
 		if (_chn[c].type != AGI_SOUND_4CHN || c != 3) {
 			src = _chn[c].ins;
@@ -265,7 +263,7 @@ uint32 SoundGenSarien::mixSound() {
 #endif
 				_sndBuffer[i] += (b * m) >> 4;
 
-				p += (uint32) 118600 * 4 / _chn[c].freq;
+				p += (uint32)118600 * 4 / _chn[c].freq;
 
 				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
 				// needs fixing, or remove it!
@@ -279,7 +277,6 @@ uint32 SoundGenSarien::mixSound() {
 						break;
 					}
 				}
-
 			}
 			_chn[c].phase = p;
 		} else {

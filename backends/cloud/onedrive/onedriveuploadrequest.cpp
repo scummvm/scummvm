@@ -21,8 +21,8 @@
  */
 
 #include "backends/cloud/onedrive/onedriveuploadrequest.h"
-#include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/iso8601.h"
+#include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/storage.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
@@ -36,9 +36,8 @@ namespace OneDrive {
 #define ONEDRIVE_API_SPECIAL_APPROOT_UPLOAD "https://graph.microsoft.com/v1.0/drive/special/approot:/%s:/upload.createSession"
 #define ONEDRIVE_API_SPECIAL_APPROOT_CONTENT "https://graph.microsoft.com/v1.0/drive/special/approot:/%s:/content"
 
-OneDriveUploadRequest::OneDriveUploadRequest(OneDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+OneDriveUploadRequest::OneDriveUploadRequest(OneDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
+                                                                                                                                                                                                     _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -143,9 +142,9 @@ void OneDriveUploadRequest::partUploadedCallback(Networking::JsonResponse respon
 		}
 
 		if (Networking::CurlJsonRequest::jsonContainsString(object, "id", "OneDriveUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsString(object, "name", "OneDriveUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsIntegerNumber(object, "size", "OneDriveUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsString(object, "lastModifiedDateTime", "OneDriveUploadRequest")) {
+		    Networking::CurlJsonRequest::jsonContainsString(object, "name", "OneDriveUploadRequest") &&
+		    Networking::CurlJsonRequest::jsonContainsIntegerNumber(object, "size", "OneDriveUploadRequest") &&
+		    Networking::CurlJsonRequest::jsonContainsString(object, "lastModifiedDateTime", "OneDriveUploadRequest")) {
 			//finished
 			Common::String path = _savePath;
 			uint32 size = object.getVal("size")->asIntegerNumber();

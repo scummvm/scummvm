@@ -1,12 +1,12 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/memstream.h"
 #include "common/bufferedstream.h"
+#include "common/memstream.h"
 
 class BufferedReadStreamTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_traverse() {
-		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		byte contents[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 		Common::MemoryReadStream ms(contents, 10);
 
 		// Use a buffer size of 4 -- note that 10 % 4 != 0,
@@ -32,7 +32,7 @@ class BufferedReadStreamTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_traverse2() {
-		byte contents[9] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+		byte contents[9] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 		Common::MemoryReadStream ms(contents, 9);
 
 		Common::ReadStream &brs = *Common::wrapBufferedReadStream(&ms, 4, DisposeAfterUse::NO);

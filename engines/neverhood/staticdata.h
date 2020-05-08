@@ -25,8 +25,8 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
-#include "neverhood/neverhood.h"
 #include "neverhood/graphics.h"
+#include "neverhood/neverhood.h"
 
 namespace Neverhood {
 
@@ -102,13 +102,14 @@ public:
 	NavigationList *getNavigationList(uint32 id);
 	HallOfRecordsInfo *getHallOfRecordsInfoItem(uint32 id);
 	TrackInfo *getTrackInfo(uint32 id);
+
 protected:
-	Common::HashMap<uint32, HitRectList*> _hitRectLists;
-	Common::HashMap<uint32, RectList*> _rectLists;
-	Common::HashMap<uint32, MessageList*> _messageLists;
-	Common::HashMap<uint32, NavigationList*> _navigationLists;
-	Common::HashMap<uint32, HallOfRecordsInfo*> _hallOfRecordsInfoItems;
-	Common::HashMap<uint32, TrackInfo*> _trackInfoItems;
+	Common::HashMap<uint32, HitRectList *> _hitRectLists;
+	Common::HashMap<uint32, RectList *> _rectLists;
+	Common::HashMap<uint32, MessageList *> _messageLists;
+	Common::HashMap<uint32, NavigationList *> _navigationLists;
+	Common::HashMap<uint32, HallOfRecordsInfo *> _hallOfRecordsInfoItems;
+	Common::HashMap<uint32, TrackInfo *> _trackInfoItems;
 };
 
 } // End of namespace Neverhood

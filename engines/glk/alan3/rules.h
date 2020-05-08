@@ -25,15 +25,15 @@
 
 /* Header file for rules handler in Alan interpreter */
 
-#include "glk/jumps.h"
 #include "glk/alan3/acode.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* DATA */
-extern RuleEntry *rules;      /* Rule table pointer */
-extern bool anyRuleRun;       /* Did any rule run? */
+extern RuleEntry *rules; /* Rule table pointer */
+extern bool anyRuleRun;  /* Did any rule run? */
 
 /* FUNCTIONS */
 extern void initRules(Aaddr rulesTableAddress);

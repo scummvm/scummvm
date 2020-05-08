@@ -24,22 +24,20 @@
 #define GLK_ALAN3_MSG
 
 #include "glk/alan3/acode.h"
-#include "glk/jumps.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/params.h"
+#include "glk/alan3/types.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* TYPES */
-typedef struct MessageEntry {   /* MESSAGE TABLE */
-	Aaddr stms;           /* Address to statements*/
+typedef struct MessageEntry { /* MESSAGE TABLE */
+	Aaddr stms;               /* Address to statements*/
 } MessageEntry;
 
-
 /* DATA */
-extern MessageEntry *msgs;  /* Message table pointer */
-
+extern MessageEntry *msgs; /* Message table pointer */
 
 /* FUNCTIONS */
 extern void setErrorHandler(void (*handler)(MsgKind));

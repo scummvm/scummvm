@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_PLAYANIMATIONCOMMAND_H
 #define MUTATIONOFJB_PLAYANIMATIONCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -42,11 +42,12 @@ public:
 
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
+
 private:
 	int _fromFrame;
 	int _toFrame;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

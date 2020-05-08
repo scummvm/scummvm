@@ -35,6 +35,7 @@ namespace Shared {
 class File : public Common::File {
 private:
 	int32 _filesize;
+
 public:
 	File() : Common::File(), _filesize(-1) {}
 	File(const Common::String &name);

@@ -55,7 +55,7 @@ public:
 	void handle(Actor *actor) override;
 
 protected:
-	void execute(Sequence *sequence) override {};
+	void execute(Sequence *sequence) override{};
 };
 
 } // End of namespace Pink

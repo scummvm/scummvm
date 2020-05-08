@@ -29,8 +29,8 @@
 
 namespace Common {
 
-template<typename T> class List;
-
+template<typename T>
+class List;
 
 namespace ListInternal {
 struct NodeBase {
@@ -38,22 +38,23 @@ struct NodeBase {
 	NodeBase *_next;
 };
 
-template <typename T>
+template<typename T>
 struct Node : public NodeBase {
 	T _data;
 
 	Node(const T &x) : _data(x) {}
 };
 
-template<typename T> struct ConstIterator;
+template<typename T>
+struct ConstIterator;
 
 template<typename T>
 struct Iterator {
 	typedef Iterator<T> Self;
-	typedef Node<T>    *NodePtr;
-	typedef T          &ValueRef;
-	typedef T          *ValuePtr;
-	typedef T           ValueType;
+	typedef Node<T> *NodePtr;
+	typedef T &ValueRef;
+	typedef T *ValuePtr;
+	typedef T ValueType;
 
 	NodeBase *_node;
 
@@ -103,10 +104,10 @@ struct Iterator {
 
 template<typename T>
 struct ConstIterator {
-	typedef ConstIterator<T>    Self;
-	typedef const Node<T>  *NodePtr;
-	typedef const T        &ValueRef;
-	typedef const T        *ValuePtr;
+	typedef ConstIterator<T> Self;
+	typedef const Node<T> *NodePtr;
+	typedef const T &ValueRef;
+	typedef const T *ValuePtr;
 
 	const NodeBase *_node;
 
@@ -155,7 +156,6 @@ struct ConstIterator {
 	}
 };
 
-
 template<typename T>
 bool operator==(const Iterator<T> &a, const ConstIterator<T> &b) {
 	return a._node == b._node;
@@ -165,8 +165,7 @@ template<typename T>
 bool operator!=(const Iterator<T> &a, const ConstIterator<T> &b) {
 	return a._node != b._node;
 }
-}
-
+} // namespace ListInternal
 
 } // End of namespace Common
 

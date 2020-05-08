@@ -53,12 +53,12 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 	int x = 0;
 	int y = _surface->h - 1;
 
-	byte *data = (byte *) _surface->getPixels();
-	uint16 width  = _surface->w;
+	byte *data = (byte *)_surface->getPixels();
+	uint16 width = _surface->w;
 	uint16 height = _surface->h;
 
-	byte *output     = data + ((height - 1) * width);
-	byte *output_end = data + ((height)     * width);
+	byte *output = data + ((height - 1) * width);
+	byte *output_end = data + ((height)*width);
 
 	while (!stream.eos()) {
 		byte count = stream.readByte();
@@ -129,7 +129,6 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 			for (int i = 0; i < count; i++, x++)
 				*output++ = value;
 		}
-
 	}
 
 	warning("MS RLE Codec: No end-of-picture code");

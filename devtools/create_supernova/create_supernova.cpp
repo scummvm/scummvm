@@ -1,6 +1,6 @@
 #include "create_supernova.h"
-#include "gametext.h"
 #include "file.h"
+#include "gametext.h"
 #include "po_parser.h"
 #include <iostream>
 
@@ -17,11 +17,10 @@
 //   - strings in a po file named 'strings-##.po' that uses CP850 encoding
 
 const char *lang[] = {
-	"en",
-	NULL
-};
+    "en",
+    NULL};
 
-void writeDatafile(File& outputFile, int fileNumber, const char* language, int part) {
+void writeDatafile(File &outputFile, int fileNumber, const char *language, int part) {
 	File dataFile;
 	char fileName[20];
 	if (part == 1)
@@ -38,12 +37,12 @@ void writeDatafile(File& outputFile, int fileNumber, const char* language, int p
 	char number[4];
 	sprintf(number, "%03d", fileNumber);
 	outputFile.writeByte('M');
-	for (int i = 0 ; i < 3 ; ++i) {
-			outputFile.writeByte(number[i]);
+	for (int i = 0; i < 3; ++i) {
+		outputFile.writeByte(number[i]);
 	}
 	// And write the language code on 4 bytes as well (padded with 0 if needed).
 	int languageLength = strlen(language);
-	for (int i = 0 ; i < 4 ; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		if (i < languageLength)
 			outputFile.writeByte(language[i]);
 		else
@@ -51,7 +50,7 @@ void writeDatafile(File& outputFile, int fileNumber, const char* language, int p
 	}
 
 	// Write block size
-	
+
 	dataFile.seek(0, SEEK_END);
 	int length = dataFile.pos();
 	dataFile.seek(0, SEEK_SET);
@@ -60,7 +59,7 @@ void writeDatafile(File& outputFile, int fileNumber, const char* language, int p
 	// Write all the bytes. We should have w * h / 8 bytes
 	// However we need to invert the bits has the engine expects 1 for the background and 0 for the text (black)
 	// but pbm uses 0 for white and 1 for black.
-	for (int i = 0 ; i < length; ++i) {
+	for (int i = 0; i < length; ++i) {
 		byte b = dataFile.readByte();
 		outputFile.writeByte(b);
 	}
@@ -68,7 +67,7 @@ void writeDatafile(File& outputFile, int fileNumber, const char* language, int p
 	dataFile.close();
 }
 
-void writeDocFile(File& outputFile, const char *fileExtension, const char* language, int part) {
+void writeDocFile(File &outputFile, const char *fileExtension, const char *language, int part) {
 	File docFile;
 	char fileName[20];
 	if (part == 1)
@@ -82,17 +81,17 @@ void writeDocFile(File& outputFile, const char *fileExtension, const char* langu
 
 	// Write block header in output file (4 bytes).
 	// We convert the file extension to upper case.
-	for (int i = 0 ; i < 3 ; ++i) {
+	for (int i = 0; i < 3; ++i) {
 		if (fileExtension[i] >= 97 && fileExtension[i] <= 122)
 			outputFile.writeByte(fileExtension[i] - 32);
 		else
 			outputFile.writeByte(fileExtension[i]);
 	}
-	outputFile.writeByte((char) part + '0');
+	outputFile.writeByte((char)part + '0');
 
 	// And write the language code on 4 bytes as well (padded with 0 if needed).
 	int languageLength = strlen(language);
-	for (int i = 0 ; i < 4 ; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		if (i < languageLength)
 			outputFile.writeByte(language[i]);
 		else
@@ -100,14 +99,14 @@ void writeDocFile(File& outputFile, const char *fileExtension, const char* langu
 	}
 
 	// Write block size
-	
+
 	docFile.seek(0, SEEK_END);
 	int length = docFile.pos();
 	docFile.seek(0, SEEK_SET);
 	outputFile.writeLong(length);
 
 	// Write all the bytes.
-	for (int i = 0 ; i < length; ++i) {
+	for (int i = 0; i < length; ++i) {
 		byte b = docFile.readByte();
 		outputFile.writeByte(b);
 	}
@@ -115,7 +114,7 @@ void writeDocFile(File& outputFile, const char *fileExtension, const char* langu
 	docFile.close();
 }
 
-void writeImage(File& outputFile, const char *name, const char* language) {
+void writeImage(File &outputFile, const char *name, const char *language) {
 	File imgFile;
 	char fileName[16];
 	sprintf(fileName, "%s-%s.pbm", name, language);
@@ -143,7 +142,9 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	// sufficient to delimit the raster.
 
 	int w = 0, h = 0;
-	enum PbmState { PbmMagic, PbmWidth, PbmHeight};
+	enum PbmState { PbmMagic,
+		            PbmWidth,
+		            PbmHeight };
 	PbmState state = PbmMagic;
 	int i = 0;
 	do {
@@ -201,7 +202,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 
 	// Write block header in output file (4 bytes).
 	// We convert the image name to upper case.
-	for (i = 0 ; i < 4 ; ++i) {
+	for (i = 0; i < 4; ++i) {
 		if (name[i] >= 97 && name[i] <= 122)
 			outputFile.writeByte(name[i] - 32);
 		else
@@ -209,7 +210,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	}
 	// And write the language code on 4 bytes as well (padded with 0 if needed).
 	int languageLength = strlen(language);
-	for (i = 0 ; i < 4 ; ++i) {
+	for (i = 0; i < 4; ++i) {
 		if (i < languageLength)
 			outputFile.writeByte(language[i]);
 		else
@@ -222,7 +223,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	// Write all the bytes. We should have 38400 bytes (640 * 480 / 8)
 	// However we need to invert the bits has the engine expects 1 for the background and 0 for the text (black)
 	// but pbm uses 0 for white and 1 for black.
-	for (i = 0 ; i < 38400 ; ++i) {
+	for (i = 0; i < 38400; ++i) {
 		byte b = imgFile.readByte();
 		outputFile.writeByte(~b);
 	}
@@ -230,7 +231,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	imgFile.close();
 }
 
-void writeGermanStrings(File& outputFile, int part) {
+void writeGermanStrings(File &outputFile, int part) {
 	// Write header and language
 	outputFile.write("TEXT", 4);
 	outputFile.write("de\0\0", 4);
@@ -258,10 +259,10 @@ void writeGermanStrings(File& outputFile, int part) {
 	outputFile.seek(0, SEEK_END);
 }
 
-void writeStrings(File& outputFile, const char* language, int part) {
+void writeStrings(File &outputFile, const char *language, int part) {
 	char fileName[16];
 	sprintf(fileName, "strings%d-%s.po", part, language);
-	PoMessageList* poList = parsePoFile(fileName);
+	PoMessageList *poList = parsePoFile(fileName);
 	if (!poList) {
 		printf("Cannot find strings file for language '%s'.\n", language);
 		return;
@@ -272,7 +273,7 @@ void writeStrings(File& outputFile, const char* language, int part) {
 
 	// And write the language code on 4 bytes as well (padded with 0 if needed).
 	int languageLength = strlen(language);
-	for (int i = 0 ; i < 4 ; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		if (i < languageLength)
 			outputFile.writeByte(language[i]);
 		else
@@ -292,7 +293,7 @@ void writeStrings(File& outputFile, const char* language, int part) {
 	if (part == 2)
 		s = &gameText2[0];
 	while (*s) {
-		const char* translation = poList->findTranslation(*s);
+		const char *translation = poList->findTranslation(*s);
 		if (translation) {
 			outputFile.writeString(translation);
 			blockSize += strlen(translation) + 1;
@@ -325,7 +326,7 @@ void writeMS1(File &outputFile) {
 
 	// Other languages
 	const char **l = &lang[0];
-	while(*l) {
+	while (*l) {
 		writeImage(outputFile, "img1", *l);
 		writeImage(outputFile, "img2", *l);
 		writeStrings(outputFile, *l, 1);
@@ -353,7 +354,7 @@ void writeMS2(File &outputFile) {
 
 	// Other languages
 	const char **l = &lang[0];
-	while(*l) {
+	while (*l) {
 		writeImage(outputFile, "img3", *l);
 		writeDatafile(outputFile, 15, *l, 2);
 		writeDatafile(outputFile, 27, *l, 2);

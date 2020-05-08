@@ -37,7 +37,7 @@ struct NgiHeader {
 	int32 extVal;
 	int32 flags;
 	int32 size;
-	char  filename[NGI_FILENAME_MAX];
+	char filename[NGI_FILENAME_MAX];
 };
 
 typedef Common::HashMap<Common::String, Common::ScopedPtr<NgiHeader>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> NgiHeadersMap;

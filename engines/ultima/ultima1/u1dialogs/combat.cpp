@@ -21,22 +21,22 @@
  */
 
 #include "ultima/ultima1/u1dialogs/combat.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map.h"
-#include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/text_cursor.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Combat, Dialog)
-	ON_MESSAGE(KeypressMsg)
+ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
 Combat::Combat(Ultima1Game *game, Shared::Maps::Direction direction, int weaponType,
-	const Common::String weaponName) : FullScreenDialog(game), _direction(direction) {
+               const Common::String weaponName) : FullScreenDialog(game), _direction(direction) {
 }
 
 bool Combat::KeypressMsg(CKeypressMsg &msg) {
@@ -68,14 +68,12 @@ bool Combat::KeypressMsg(CKeypressMsg &msg) {
 	return true;
 }
 
-
 void Combat::draw() {
 	if (_direction == Shared::Maps::DIR_NONE)
 		drawSelection();
 }
 
 void Combat::drawSelection() {
-
 }
 
 void Combat::nothing() {

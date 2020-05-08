@@ -34,6 +34,7 @@ class CCreditLine : public ListItem {
 public:
 	CString _line;
 	uint _lineWidth;
+
 public:
 	CCreditLine() : _lineWidth(0) {}
 	CCreditLine(const CString &line, uint lineWidth) : _line(line), _lineWidth(lineWidth) {}
@@ -62,6 +63,7 @@ private:
 	 * Handles a group where the .... sequence was encountered
 	 */
 	void handleDots(CCreditLineGroup *group);
+
 public:
 	CScreenManager *_screenManagerP;
 	Rect _rect;
@@ -76,6 +78,7 @@ public:
 	int _textR, _textG, _textB;
 	int _deltaR, _deltaG, _deltaB;
 	int _counter;
+
 public:
 	CCreditText();
 
@@ -88,7 +91,7 @@ public:
 	 * Sets the game object this override is associated with
 	 */
 	void load(CGameObject *obj, CScreenManager *screenManager,
-		const Rect &rect);
+	          const Rect &rect);
 
 	/**
 	 * Draw the item

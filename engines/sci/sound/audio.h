@@ -24,8 +24,8 @@
 #ifndef SCI_AUDIO_H
 #define SCI_AUDIO_H
 
-#include "sci/engine/vm_types.h"
 #include "audio/mixer.h"
+#include "sci/engine/vm_types.h"
 
 namespace Audio {
 class RewindableAudioStream;
@@ -34,16 +34,16 @@ class RewindableAudioStream;
 namespace Sci {
 
 enum AudioCommands {
-	kSciAudioWPlay = 1, /* Loads an audio stream */
-	kSciAudioPlay = 2, /* Plays an audio stream */
-	kSciAudioStop = 3, /* Stops an audio stream */
-	kSciAudioPause = 4, /* Pauses an audio stream */
-	kSciAudioResume = 5, /* Resumes an audio stream */
+	kSciAudioWPlay = 1,    /* Loads an audio stream */
+	kSciAudioPlay = 2,     /* Plays an audio stream */
+	kSciAudioStop = 3,     /* Stops an audio stream */
+	kSciAudioPause = 4,    /* Pauses an audio stream */
+	kSciAudioResume = 5,   /* Resumes an audio stream */
 	kSciAudioPosition = 6, /* Return current position in audio stream */
-	kSciAudioRate = 7, /* Return audio rate */
-	kSciAudioVolume = 8, /* Return audio volume */
+	kSciAudioRate = 7,     /* Return audio rate */
+	kSciAudioVolume = 8,   /* Return audio volume */
 	kSciAudioLanguage = 9, /* Return audio language */
-	kSciAudioCD = 10 /* Plays SCI1.1 CD audio */
+	kSciAudioCD = 10       /* Plays SCI1.1 CD audio */
 };
 
 #define AUDIO_VOLUME_MAX 127

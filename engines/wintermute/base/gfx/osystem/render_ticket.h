@@ -29,9 +29,9 @@
 #ifndef WINTERMUTE_RENDER_TICKET_H
 #define WINTERMUTE_RENDER_TICKET_H
 
-#include "graphics/transparent_surface.h"
-#include "graphics/surface.h"
 #include "common/rect.h"
+#include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 namespace Wintermute {
 
@@ -70,6 +70,7 @@ public:
 	BaseSurfaceOSystem *_owner;
 	bool operator==(const RenderTicket &a) const;
 	const Common::Rect *getSrcRect() const { return &_srcRect; }
+
 private:
 	Graphics::Surface *_surface;
 	Common::Rect _srcRect;

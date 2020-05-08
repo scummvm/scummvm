@@ -26,17 +26,17 @@
 
 #include <dlfcn.h>
 
-#include "common/debug.h"
-#include "common/endian.h"
-#include "common/textconsole.h"
-#include "common/error.h"
-#include "common/file.h"
-#include "common/config-manager.h"
-#include "common/system.h"
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "audio/mpu401.h"
 #include "audio/musicplugin.h"
-#include "audio/mixer.h"
+#include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/endian.h"
+#include "common/error.h"
+#include "common/file.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 //#define EAS_DUMPSTREAM
 
@@ -73,7 +73,7 @@ public:
 	virtual void send(uint32 b) override;
 	virtual void sysEx(const byte *msg, uint16 length);
 	virtual void setTimerCallback(void *timerParam,
-								Common::TimerManager::TimerProc timerProc);
+	                              Common::TimerManager::TimerProc timerProc);
 	virtual uint32 getBaseTempo();
 
 	// AudioStream
@@ -102,8 +102,8 @@ private:
 		long long length;
 	};
 
-	typedef void * EASDataHandle;
-	typedef void * EASHandle;
+	typedef void *EASDataHandle;
+	typedef void *EASHandle;
 
 	typedef EASLibConfig *(*ConfigFunc)();
 	typedef int32 (*InitFunc)(EASDataHandle *);
@@ -159,28 +159,27 @@ private:
 	Common::DumpFile _dump;
 };
 
-MidiDriver_EAS::MidiDriver_EAS() :
-	MidiDriver_MPU401(),
-	_dlHandle(0),
-	_configFunc(0),
-	_initFunc(0),
-	_shutdownFunc(0),
-	_loadDLSFunc(0),
-	_setParameterFunc(0),
-	_setVolumeFunc(0),
-	_openStreamFunc(0),
-	_writeStreamFunc(0),
-	_closeStreamFunc(0),
-	_renderFunc(0),
-	_config(0),
-	_EASHandle(0),
-	_midiStream(0),
-	_timerProc(0),
-	_timerParam(0),
-	_baseTempo(0),
-	_rounds(0),
-	_soundHandle(),
-	_dump() {
+MidiDriver_EAS::MidiDriver_EAS() : MidiDriver_MPU401(),
+                                   _dlHandle(0),
+                                   _configFunc(0),
+                                   _initFunc(0),
+                                   _shutdownFunc(0),
+                                   _loadDLSFunc(0),
+                                   _setParameterFunc(0),
+                                   _setVolumeFunc(0),
+                                   _openStreamFunc(0),
+                                   _writeStreamFunc(0),
+                                   _closeStreamFunc(0),
+                                   _renderFunc(0),
+                                   _config(0),
+                                   _EASHandle(0),
+                                   _midiStream(0),
+                                   _timerProc(0),
+                                   _timerParam(0),
+                                   _baseTempo(0),
+                                   _rounds(0),
+                                   _soundHandle(),
+                                   _dump() {
 }
 
 MidiDriver_EAS::~MidiDriver_EAS() {
@@ -239,8 +238,8 @@ int MidiDriver_EAS::open() {
 	sym(_renderFunc, "EAS_Render");
 
 	if (!_initFunc || !_shutdownFunc || !_loadDLSFunc || !_setParameterFunc ||
-			!_openStreamFunc || !_writeStreamFunc || !_closeStreamFunc ||
-			!_renderFunc) {
+	    !_openStreamFunc || !_writeStreamFunc || !_closeStreamFunc ||
+	    !_renderFunc) {
 		close();
 		return -1;
 	}
@@ -253,7 +252,7 @@ int MidiDriver_EAS::open() {
 	}
 
 	res = _setParameterFunc(_EASHandle, EAS_REVERB, EAS_REVERB_PRESET,
-							EAS_REVERB_CHAMBER);
+	                        EAS_REVERB_CHAMBER);
 	if (res)
 		warning("error setting reverb preset: %d", res);
 
@@ -281,8 +280,9 @@ int MidiDriver_EAS::open() {
 	_rounds = INTERMEDIATE_BUFFER_SIZE / (_config->bufSize * _config->channels);
 
 	debug("EAS initialized (voices:%d channels:%d rate:%d buffer:%d) "
-			"tempo:%u rounds:%u", _config->voices, _config->channels,
-			_config->rate, _config->bufSize, _baseTempo, _rounds);
+	      "tempo:%u rounds:%u",
+	      _config->voices, _config->channels,
+	      _config->rate, _config->bufSize, _baseTempo, _rounds);
 
 	// TODO doesn't seem to work with midi streams?
 	if (ConfMan.hasKey("soundfont")) {
@@ -307,9 +307,9 @@ int MidiDriver_EAS::open() {
 #endif
 
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType,
-										&_soundHandle, this, -1,
-										Audio::Mixer::kMaxChannelVolume, 0,
-										DisposeAfterUse::NO, true);
+	                                 &_soundHandle, this, -1,
+	                                 Audio::Mixer::kMaxChannelVolume, 0,
+	                                 DisposeAfterUse::NO, true);
 
 	return 0;
 }
@@ -385,7 +385,7 @@ void MidiDriver_EAS::sysEx(const byte *msg, uint16 length) {
 }
 
 void MidiDriver_EAS::setTimerCallback(void *timerParam,
-								Common::TimerManager::TimerProc timerProc) {
+                                      Common::TimerManager::TimerProc timerProc) {
 	_timerParam = timerParam;
 	_timerProc = timerProc;
 }
@@ -444,7 +444,7 @@ public:
 	const char *getId() const;
 	MusicDevices getDevices() const;
 	Common::Error createInstance(MidiDriver **mididriver,
-									MidiDriver::DeviceHandle = 0) const;
+	                             MidiDriver::DeviceHandle = 0) const;
 };
 
 EASMusicPlugin::EASMusicPlugin() {
@@ -475,9 +475,9 @@ Common::Error EASMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(EAS)
-	//REGISTER_PLUGIN_DYNAMIC(EAS, PLUGIN_TYPE_MUSIC, EASMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(EAS, PLUGIN_TYPE_MUSIC, EASMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(EAS, PLUGIN_TYPE_MUSIC, EASMusicPlugin);
+REGISTER_PLUGIN_STATIC(EAS, PLUGIN_TYPE_MUSIC, EASMusicPlugin);
 //#endif
 
 #endif

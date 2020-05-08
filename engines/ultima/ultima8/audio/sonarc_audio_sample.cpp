@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/sonarc_audio_sample.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -30,16 +30,16 @@ namespace Ultima8 {
 bool SonarcAudioSample::_generatedOneTable = false;
 int SonarcAudioSample::_oneTable[256];
 
-SonarcAudioSample::SonarcAudioSample(uint8 const *buffer, uint32 size) :
-	AudioSample(buffer, size, 8, false), _srcOffset(0x20) {
-	if (!_generatedOneTable) GenerateOneTable();
+SonarcAudioSample::SonarcAudioSample(uint8 const *buffer, uint32 size) : AudioSample(buffer, size, 8, false), _srcOffset(0x20) {
+	if (!_generatedOneTable)
+		GenerateOneTable();
 
 	_length = *_buffer;
 	_length |= *(_buffer + 1) << 8;
 	_length |= *(_buffer + 2) << 16;
 	_length |= *(_buffer + 3) << 24;
 
-	_sampleRate  = *(_buffer + 4);
+	_sampleRate = *(_buffer + 4);
 	_sampleRate |= *(_buffer + 5) << 8;
 
 	// Get frame bytes... we need to compensate for 'large' files
@@ -53,7 +53,6 @@ SonarcAudioSample::SonarcAudioSample(uint8 const *buffer, uint32 size) :
 	// Get Num Frame Samples
 	_frameSize = *(_buffer + _srcOffset + 2);
 	_frameSize |= (*(_buffer + _srcOffset + 3)) << 8;
-
 
 	_decompressorSize = sizeof(SonarcDecompData);
 }
@@ -128,7 +127,7 @@ void SonarcAudioSample::decode_EC(int mode, int samplecount,
 				int8 sample = usample << (7 - mode - ones);
 				sample &= 0x7F;
 				if (!(sample & 0x40))
-					sample |= 0x80; // reconstruct sign bit
+					sample |= 0x80;           // reconstruct sign bit
 				sample >>= (7 - mode - ones); // sign extend
 				*dest++ = (uint8)(sample + 0x80);
 				data >>= (mode + ones);
@@ -181,7 +180,8 @@ int SonarcAudioSample::audio_decode(const uint8 *source, uint8 *dest) {
 		checksum ^= val;
 	}
 
-	if (checksum != 0xACED) return -1;
+	if (checksum != 0xACED)
+		return -1;
 
 	int order = source[7];
 	int mode = source[6] - 8;
@@ -194,8 +194,8 @@ int SonarcAudioSample::audio_decode(const uint8 *source, uint8 *dest) {
 
 	// Try to fix a number of clipped samples
 	for (int i = 1; i < samplecount; ++i)
-		if (dest[i] == 0 && dest[i - 1] > 192) dest[i] = 0xFF;
-
+		if (dest[i] == 0 && dest[i - 1] > 192)
+			dest[i] = 0xFF;
 
 	return 0;
 }
@@ -213,15 +213,17 @@ void SonarcAudioSample::initDecompressor(void *DecompData) const {
 uint32 SonarcAudioSample::decompressFrame(void *DecompData, void *samples) const {
 	SonarcDecompData *decomp = reinterpret_cast<SonarcDecompData *>(DecompData);
 
-	if (decomp->_pos == _bufferSize) return 0;
-	if (decomp->_samplePos == _length) return 0;
+	if (decomp->_pos == _bufferSize)
+		return 0;
+	if (decomp->_samplePos == _length)
+		return 0;
 
 	// Get Frame size
-	uint32 frame_bytes  = *(_buffer + decomp->_pos);
+	uint32 frame_bytes = *(_buffer + decomp->_pos);
 	frame_bytes |= (*(_buffer + decomp->_pos + 1)) << 8;
 
 	// Get Num Frame Samples
-	uint32 frame_samples  = *(_buffer + decomp->_pos + 2);
+	uint32 frame_samples = *(_buffer + decomp->_pos + 2);
 	frame_samples |= (*(_buffer + decomp->_pos + 3)) << 8;
 
 	audio_decode(_buffer + decomp->_pos, reinterpret_cast<uint8 *>(samples));

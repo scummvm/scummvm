@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/utils.h"
 #include "ultima/nuvie/gui/gui_font.h"
-#include "ultima/nuvie/gui/gui_load_image.h"
 #include "common/textconsole.h"
+#include "ultima/nuvie/files/utils.h"
+#include "ultima/nuvie/gui/gui_load_image.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -42,7 +42,6 @@ GUI_Font::GUI_Font(uint8 fontType) {
 		_wData = GUI_FontGumpWData();
 	} else
 		temp = GUI_DefaultFont();
-
 
 	_fontStore = SDL_ConvertSurface(temp, temp->format, SDL_SWSURFACE);
 	_charH = _fontStore->h / 16;
@@ -98,7 +97,7 @@ GUI_Font::~GUI_Font() {
 /* determine drawing style */
 void GUI_Font::setTransparency(bool on) {
 	_transparent = on;
-	
+
 	if (_transparent)
 		_fontStore->setTransparentColor(0);
 	else
@@ -107,13 +106,13 @@ void GUI_Font::setTransparency(bool on) {
 
 /* determine foreground and background color values RGB*/
 void GUI_Font::setColoring(uint8 fr, uint8 fg, uint8 fb, uint8 br, uint8 bg, uint8 bb) {
-	const SDL_Color colors[2] = { MAKE_COLOR(br, bg, bb), MAKE_COLOR(fr, fg, fb) };	
+	const SDL_Color colors[2] = {MAKE_COLOR(br, bg, bb), MAKE_COLOR(fr, fg, fb)};
 	SDL_SetColors(_fontStore, colors, 0, 2);
 }
 
 void GUI_Font::setColoring(uint8 fr, uint8 fg, uint8 fb, uint8 fr1, uint8 fg1, uint8 fb1, uint8 br, uint8 bg, uint8 bb) {
 	const SDL_Color colors[3] = {
-		MAKE_COLOR(br, bg, bb), MAKE_COLOR(fr, fg, fb), MAKE_COLOR(fr1, fg1, fb1) };
+	    MAKE_COLOR(br, bg, bb), MAKE_COLOR(fr, fg, fb), MAKE_COLOR(fr1, fg1, fb1)};
 	SDL_SetColors(_fontStore, colors, 0, 3);
 }
 
@@ -150,7 +149,7 @@ void GUI_Font::textOut(Graphics::ManagedSurface *context, int x, int y, const ch
 	}
 }
 
-void GUI_Font:: textExtent(const char *text, int *w, int *h, int line_wrap) {
+void GUI_Font::textExtent(const char *text, int *w, int *h, int line_wrap) {
 	int len = strlen(text);
 	if (_wData) { //variable width font.
 		//FIXME we're not handling line_wrap properly for variable width fonts!

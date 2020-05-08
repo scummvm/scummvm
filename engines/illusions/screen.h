@@ -23,10 +23,10 @@
 #ifndef ILLUSIONS_SCREEN_H
 #define ILLUSIONS_SCREEN_H
 
-#include "illusions/graphics.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
+#include "illusions/graphics.h"
 
 namespace Illusions {
 
@@ -47,10 +47,11 @@ public:
 	SpriteDecompressQueue(Screen *screen);
 	~SpriteDecompressQueue();
 	void insert(byte *drawFlags, uint32 flags, uint32 field8, WidthHeight &dimensions,
-		byte *compressedPixels, Graphics::Surface *surface);
+	            byte *compressedPixels, Graphics::Surface *surface);
 	void decompressAll();
+
 protected:
-	typedef Common::List<SpriteDecompressQueueItem*> SpriteDecompressQueueList;
+	typedef Common::List<SpriteDecompressQueueItem *> SpriteDecompressQueueList;
 	typedef SpriteDecompressQueueList::iterator SpriteDecompressQueueListIterator;
 	Screen *_screen;
 	SpriteDecompressQueueList _queue;
@@ -76,15 +77,16 @@ public:
 	bool draw(SpriteDrawQueueItem *item);
 	void drawAll();
 	void insertSprite(byte *drawFlags, Graphics::Surface *surface, WidthHeight &dimensions,
-		Common::Point &drawPosition, Common::Point &controlPosition, uint32 priority, int16 scale, uint16 flags);
+	                  Common::Point &drawPosition, Common::Point &controlPosition, uint32 priority, int16 scale, uint16 flags);
 	void insertSurface(Graphics::Surface *surface, WidthHeight &dimensions,
-		Common::Point &drawPosition, uint32 priority);
+	                   Common::Point &drawPosition, uint32 priority);
 	void insertTextSurface(Graphics::Surface *surface, WidthHeight &dimensions,
-		Common::Point &drawPosition, uint32 priority);
+	                       Common::Point &drawPosition, uint32 priority);
+
 protected:
-	typedef Common::List<SpriteDrawQueueItem*> SpriteDrawQueueList;
+	typedef Common::List<SpriteDrawQueueItem *> SpriteDrawQueueList;
 	typedef SpriteDrawQueueList::iterator SpriteDrawQueueListIterator;
-	struct FindInsertionPosition : public Common::UnaryFunction<const SpriteDrawQueueItem*, bool> {
+	struct FindInsertionPosition : public Common::UnaryFunction<const SpriteDrawQueueItem *, bool> {
 		uint32 _priority;
 		FindInsertionPosition(uint32 priority) : _priority(priority) {}
 		bool operator()(const SpriteDrawQueueItem *item) const {
@@ -113,16 +115,16 @@ struct Fader {
 
 class ScreenPaletteBase {
 public:
-	virtual ~ScreenPaletteBase() {};
-	virtual void setPalette(byte *colors, uint start, uint count) {};
-	virtual void setPaletteEntry(int16 index, byte r, byte g, byte b) {};
-	virtual void getPalette(byte *colors) {};
-	virtual void shiftPalette(int16 fromIndex, int16 toIndex) {};
-	virtual void updatePalette() {};
-	virtual void updateFaderPalette() {};
-	virtual void setFader(int newValue, int firstIndex, int lastIndex) {};
+	virtual ~ScreenPaletteBase(){};
+	virtual void setPalette(byte *colors, uint start, uint count){};
+	virtual void setPaletteEntry(int16 index, byte r, byte g, byte b){};
+	virtual void getPalette(byte *colors){};
+	virtual void shiftPalette(int16 fromIndex, int16 toIndex){};
+	virtual void updatePalette(){};
+	virtual void updateFaderPalette(){};
+	virtual void setFader(int newValue, int firstIndex, int lastIndex){};
 	virtual bool isFaderActive() const { return false; }
-	virtual const byte* getColorTransTbl() const { return 0; }
+	virtual const byte *getColorTransTbl() const { return 0; }
 };
 
 class ScreenPalette : public ScreenPaletteBase {
@@ -136,7 +138,8 @@ public:
 	void updateFaderPalette() override;
 	void setFader(int newValue, int firstIndex, int lastIndex) override;
 	bool isFaderActive() const override { return _isFaderActive; }
-	const byte* getColorTransTbl() const override { return _colorTransTbl; }
+	const byte *getColorTransTbl() const override { return _colorTransTbl; }
+
 protected:
 	IllusionsEngine *_vm;
 	bool _needRefreshPalette;
@@ -175,7 +178,8 @@ public:
 	virtual void fillSurface(Graphics::Surface *surface, byte color) = 0;
 	virtual void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color) = 0;
 	virtual bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
-		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) = 0;
+	                                const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) = 0;
+
 public:
 	IllusionsEngine *_vm;
 	bool _displayOn;
@@ -197,7 +201,8 @@ public:
 	void fillSurface(Graphics::Surface *surface, byte color) override;
 	void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color) override;
 	bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
-		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) override;
+	                        const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) override;
+
 public:
 	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
 	void drawSurfaceUnscaled(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect);
@@ -213,7 +218,8 @@ public:
 	void fillSurface(Graphics::Surface *surface, byte color) override;
 	void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color) override;
 	bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
-		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) override;
+	                        const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) override;
+
 public:
 	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
 	void drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey);

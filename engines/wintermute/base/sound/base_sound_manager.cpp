@@ -27,15 +27,15 @@
  */
 
 #include "engines/wintermute/base/sound/base_sound_manager.h"
+#include "audio/mixer.h"
+#include "common/config-manager.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/utils/path_util.h"
-#include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
+#include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/wintermute.h"
-#include "common/config-manager.h"
-#include "audio/mixer.h"
 
 namespace Wintermute {
 
@@ -52,13 +52,11 @@ BaseSoundMgr::BaseSoundMgr(BaseGame *inGame) : BaseClass(inGame) {
 	_volumeMasterPercent = 100;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseSoundMgr::~BaseSoundMgr() {
 	saveSettings();
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::cleanup() {
@@ -124,7 +122,6 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 	sound->setStreaming(streamed);
 	sound->setType(type);
 
-
 	bool res = sound->loadFromFile(useFilename);
 	if (DID_FAIL(res)) {
 		BaseEngine::LOG(res, "Error loading sound '%s'", useFilename.c_str());
@@ -171,7 +168,6 @@ bool BaseSoundMgr::removeSound(BaseSoundBuffer *sound) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::setVolume(Audio::Mixer::SoundType type, int volume) {
 	if (!_soundAvailable) {
@@ -204,7 +200,6 @@ bool BaseSoundMgr::setVolumePercent(Audio::Mixer::SoundType type, byte percent) 
 	return setVolume(type, percent * 255 / 100);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 	int volume = 0;
@@ -222,7 +217,6 @@ byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 
 	return (byte)(volume * 100 / 255);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::setMasterVolume(byte value) {
@@ -245,7 +239,6 @@ bool BaseSoundMgr::setMasterVolumePercent(byte percent) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 byte BaseSoundMgr::getMasterVolumePercent() {
 	return _volumeMasterPercent;
@@ -255,7 +248,6 @@ byte BaseSoundMgr::getMasterVolumePercent() {
 byte BaseSoundMgr::getMasterVolume() {
 	return (byte)_volumeMaster;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::pauseAll(bool includingMusic) {
@@ -270,7 +262,6 @@ bool BaseSoundMgr::pauseAll(bool includingMusic) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::resumeAll() {
 
@@ -283,7 +274,6 @@ bool BaseSoundMgr::resumeAll() {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 float BaseSoundMgr::posToPan(int x, int y) {

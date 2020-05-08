@@ -43,10 +43,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include "common/installshield_cab.h"
 #include "common/archive.h"
 #include "common/debug.h"
 #include "common/hash-str.h"
-#include "common/installshield_cab.h"
 #include "common/memstream.h"
 #include "common/zlib.h"
 
@@ -209,4 +209,4 @@ Archive *makeInstallShieldArchive(SeekableReadStream *stream, DisposeAfterUse::F
 	return new InstallShieldCabinet(stream, disposeAfterUse);
 }
 
-} // End of namespace AGOS
+} // namespace Common

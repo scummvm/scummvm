@@ -20,7 +20,7 @@
  *
  */
 
- // Console module header file
+// Console module header file
 
 #ifndef SAGA_CONSOLE_H
 #define SAGA_CONSOLE_H

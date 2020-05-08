@@ -23,9 +23,9 @@
 #ifndef NUVIE_CORE_WEATHER_H
 #define NUVIE_CORE_WEATHER_H
 
+#include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/call_back.h"
-#include "ultima/nuvie/core/map.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -42,21 +42,20 @@ using Std::string;
 //our callbacks
 
 #define WEATHER_CB_CHANGE_WIND_DIR 1
-#define WEATHER_CB_END_ECLIPSE     2
+#define WEATHER_CB_END_ECLIPSE 2
 #define WEATHER_WIND_CALM 8
 
-class Weather: public CallBack {
+class Weather : public CallBack {
 	Configuration *config;
 	GameClock *clock;
 	nuvie_game_t gametype; // what game is being played?
 
 	uint8 wind_dir;
-	Std::list<CallBack *>wind_change_notification_list;
+	Std::list<CallBack *> wind_change_notification_list;
 
 	GameTimedCallback *wind_timer;
 
 public:
-
 	Weather(Configuration *cfg, GameClock *c, nuvie_game_t type);
 	~Weather() override;
 
@@ -82,7 +81,6 @@ public:
 	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 
 protected:
-
 	uint8 load_wind(NuvieIO *objlist);
 	bool save_wind(NuvieIO *objlist);
 	void change_wind_dir();

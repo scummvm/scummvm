@@ -21,10 +21,10 @@
  */
 
 #include "made/script.h"
-#include "made/scriptfuncs.h"
-#include "made/made.h"
 #include "made/database.h"
+#include "made/made.h"
 #include "made/screen.h"
+#include "made/scriptfuncs.h"
 
 #include "common/util.h"
 
@@ -32,90 +32,90 @@ namespace Made {
 
 /* ScriptInterpreter */
 
-
 ScriptInterpreter::ScriptInterpreter(MadeEngine *vm) : _vm(vm) {
 #ifdef DUMP_SCRIPTS
-#define COMMAND(x, sig) { &ScriptInterpreter::x, #x, sig }
+#define COMMAND(x, sig) \
+	{ &ScriptInterpreter::x, #x, sig }
 #else
-#define COMMAND(x, sig) { &ScriptInterpreter::x, #x}
+#define COMMAND(x, sig) \
+	{ &ScriptInterpreter::x, #x }
 #endif
 	static CommandEntry commandProcs[] = {
-		/* 01 */
-		COMMAND(cmd_branchTrue, "W"),
-		COMMAND(cmd_branchFalse, "W"),
-		COMMAND(cmd_branch, "W"),
-		COMMAND(cmd_true, ""),
-		/* 05 */
-		COMMAND(cmd_false, ""),
-		COMMAND(cmd_push, ""),
-		COMMAND(cmd_not, ""),
-		COMMAND(cmd_add, ""),
-		/* 09 */
-		COMMAND(cmd_sub, ""),
-		COMMAND(cmd_mul, ""),
-		COMMAND(cmd_div, ""),
-		COMMAND(cmd_mod, ""),
-		/* 13 */
-		COMMAND(cmd_band, ""),
-		COMMAND(cmd_bor, ""),
-		COMMAND(cmd_bnot, ""),
-		COMMAND(cmd_lt, ""),
-		/* 17 */
-		COMMAND(cmd_eq, ""),
-		COMMAND(cmd_gt, ""),
-		COMMAND(cmd_loadConstant, "w"),
-		COMMAND(cmd_loadVariable, "w"),
-		/* 21 */
-		COMMAND(cmd_getObjectProperty, ""),
-		COMMAND(cmd_setObjectProperty, ""),
-		COMMAND(cmd_set, "w"),
-		COMMAND(cmd_print, ""),
-		/* 25 */
-		COMMAND(cmd_terpri, ""),
-		COMMAND(cmd_printNumber, ""),
-		COMMAND(cmd_vref, ""),
-		COMMAND(cmd_vset, ""),
-		/* 29 */
-		COMMAND(cmd_vsize, ""),
-		COMMAND(cmd_exit, ""),
-		COMMAND(cmd_return, ""),
-		COMMAND(cmd_call, "b"),
-		/* 33 */
-		COMMAND(cmd_svar, ""),
-		COMMAND(cmd_sset, ""),
-		COMMAND(cmd_split, ""),
-		COMMAND(cmd_snlit, ""),
-		/* 37 */
-		COMMAND(cmd_yorn, ""),
-		COMMAND(cmd_save, ""),
-		COMMAND(cmd_restore, ""),
-		COMMAND(cmd_arg, "b"),
-		/* 41 */
-		COMMAND(cmd_aset, "b"),
-		COMMAND(cmd_tmp, "b"),
-		COMMAND(cmd_tset, "b"),
-		COMMAND(cmd_tspace, "b"),
-		/* 45 */
-		COMMAND(cmd_class, ""),
-		COMMAND(cmd_objectp, ""),
-		COMMAND(cmd_vectorp, ""),
-		COMMAND(cmd_restart, ""),
-		/* 49 */
-		COMMAND(cmd_rand, ""),
-		COMMAND(cmd_randomize, ""),
-		COMMAND(cmd_send, "b"),
-		COMMAND(cmd_extend, "Eb"),
-		/* 53 */
-		COMMAND(cmd_catch, ""),
-		COMMAND(cmd_cdone, ""),
-		COMMAND(cmd_throw, ""),
-		COMMAND(cmd_functionp, ""),
-		/* 57 */
-		COMMAND(cmd_le, ""),
-		COMMAND(cmd_ge, ""),
-		COMMAND(cmd_varx, ""),
-		COMMAND(cmd_setx, "")
-	};
+	    /* 01 */
+	    COMMAND(cmd_branchTrue, "W"),
+	    COMMAND(cmd_branchFalse, "W"),
+	    COMMAND(cmd_branch, "W"),
+	    COMMAND(cmd_true, ""),
+	    /* 05 */
+	    COMMAND(cmd_false, ""),
+	    COMMAND(cmd_push, ""),
+	    COMMAND(cmd_not, ""),
+	    COMMAND(cmd_add, ""),
+	    /* 09 */
+	    COMMAND(cmd_sub, ""),
+	    COMMAND(cmd_mul, ""),
+	    COMMAND(cmd_div, ""),
+	    COMMAND(cmd_mod, ""),
+	    /* 13 */
+	    COMMAND(cmd_band, ""),
+	    COMMAND(cmd_bor, ""),
+	    COMMAND(cmd_bnot, ""),
+	    COMMAND(cmd_lt, ""),
+	    /* 17 */
+	    COMMAND(cmd_eq, ""),
+	    COMMAND(cmd_gt, ""),
+	    COMMAND(cmd_loadConstant, "w"),
+	    COMMAND(cmd_loadVariable, "w"),
+	    /* 21 */
+	    COMMAND(cmd_getObjectProperty, ""),
+	    COMMAND(cmd_setObjectProperty, ""),
+	    COMMAND(cmd_set, "w"),
+	    COMMAND(cmd_print, ""),
+	    /* 25 */
+	    COMMAND(cmd_terpri, ""),
+	    COMMAND(cmd_printNumber, ""),
+	    COMMAND(cmd_vref, ""),
+	    COMMAND(cmd_vset, ""),
+	    /* 29 */
+	    COMMAND(cmd_vsize, ""),
+	    COMMAND(cmd_exit, ""),
+	    COMMAND(cmd_return, ""),
+	    COMMAND(cmd_call, "b"),
+	    /* 33 */
+	    COMMAND(cmd_svar, ""),
+	    COMMAND(cmd_sset, ""),
+	    COMMAND(cmd_split, ""),
+	    COMMAND(cmd_snlit, ""),
+	    /* 37 */
+	    COMMAND(cmd_yorn, ""),
+	    COMMAND(cmd_save, ""),
+	    COMMAND(cmd_restore, ""),
+	    COMMAND(cmd_arg, "b"),
+	    /* 41 */
+	    COMMAND(cmd_aset, "b"),
+	    COMMAND(cmd_tmp, "b"),
+	    COMMAND(cmd_tset, "b"),
+	    COMMAND(cmd_tspace, "b"),
+	    /* 45 */
+	    COMMAND(cmd_class, ""),
+	    COMMAND(cmd_objectp, ""),
+	    COMMAND(cmd_vectorp, ""),
+	    COMMAND(cmd_restart, ""),
+	    /* 49 */
+	    COMMAND(cmd_rand, ""),
+	    COMMAND(cmd_randomize, ""),
+	    COMMAND(cmd_send, "b"),
+	    COMMAND(cmd_extend, "Eb"),
+	    /* 53 */
+	    COMMAND(cmd_catch, ""),
+	    COMMAND(cmd_cdone, ""),
+	    COMMAND(cmd_throw, ""),
+	    COMMAND(cmd_functionp, ""),
+	    /* 57 */
+	    COMMAND(cmd_le, ""),
+	    COMMAND(cmd_ge, ""),
+	    COMMAND(cmd_varx, ""),
+	    COMMAND(cmd_setx, "")};
 	_commands = commandProcs;
 	_commandsMax = ARRAYSIZE(commandProcs) + 1;
 
@@ -149,7 +149,7 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 		byte opcode = readByte();
 
 		if (opcode >= 1 && opcode <= _commandsMax) {
-			debug(4, "[%04X:%04X] %s", _runningScriptObjectIndex, (uint) (_codeIp - _codeBase), _commands[opcode - 1].desc);
+			debug(4, "[%04X:%04X] %s", _runningScriptObjectIndex, (uint)(_codeIp - _codeBase), _commands[opcode - 1].desc);
 			(this->*_commands[opcode - 1].proc)();
 		} else {
 			warning("ScriptInterpreter::runScript(%d) Unknown opcode %02X", _runningScriptObjectIndex, opcode);
@@ -161,7 +161,6 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 			_vm->_screen->updateScreenAndWait(5);
 			opcodeSleepCounter = 0;
 		}
-
 	}
 }
 
@@ -557,7 +556,6 @@ void ScriptInterpreter::cmd_send() {
 		_stack.push(0);
 		cmd_return();
 	}
-
 }
 
 void ScriptInterpreter::cmd_extend() {
@@ -577,7 +575,6 @@ void ScriptInterpreter::cmd_extend() {
 	_stack.free(argc);
 
 	_stack.setTop(result);
-
 }
 
 void ScriptInterpreter::cmd_catch() {

@@ -32,8 +32,10 @@ class CEndCreditText : public CGameObject {
 	bool ActMsg(CActMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CEndCreditText() : CGameObject(), _flag(false) {}

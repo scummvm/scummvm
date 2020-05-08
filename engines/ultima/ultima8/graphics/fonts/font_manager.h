@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_FONTS_FONTMANAGER_H
 #define ULTIMA8_GRAPHICS_FONTS_FONTMANAGER_H
 
-#include "ultima/shared/std/containers.h"
 #include "graphics/font.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,7 +35,6 @@ class Font;
 typedef struct _TTF_Font TTF_Font;
 
 class TTFont;
-
 
 class FontManager {
 private:
@@ -78,6 +77,7 @@ private:
 	Std::vector<Font *> _ttFonts;
 
 	static FontManager *_fontManager;
+
 public:
 	FontManager(bool ttf_antialiasing);
 	~FontManager();
@@ -90,7 +90,7 @@ public:
 	//! \param fontnum the number of the font
 	//! \param allowOverride if true, allow an override font to be used
 	Font *getGameFont(unsigned int fontnum,
-	                             bool allowOverride = false);
+	                  bool allowOverride = false);
 
 	//! get a TTF font (for non-game fonts)
 	Font *getTTFont(unsigned int ttfnum);
@@ -121,6 +121,6 @@ public:
 };
 
 } // End of namespace Ultima8
-} // End of namespace Ultima // End of namespace Ultima8
+} // namespace Ultima
 
 #endif

@@ -25,7 +25,7 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
- /* SCROLLS		The scroll driver. */
+/* SCROLLS		The scroll driver. */
 
 #ifndef AVALANCHE_DIALOGS_H
 #define AVALANCHE_DIALOGS_H
@@ -61,6 +61,7 @@ public:
 	void sayHello();
 	void sayOK();
 	void saySilly();
+
 private:
 	AvalancheEngine *_vm;
 	int16 _talkX, _talkY;
@@ -84,7 +85,7 @@ private:
 	byte _currentFont;
 	byte _param; // For using arguments code
 	byte _useIcon;
-	byte _scrollBells; // no. of times to ring the bell
+	byte _scrollBells;  // no. of times to ring the bell
 	int16 _underScroll; // Y-coord of just under the scroll text.
 	int16 _shadowBoxX, _shadowBoxY;
 

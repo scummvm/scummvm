@@ -20,17 +20,17 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_dialog.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 GUI_Dialog::GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bool is_moveable)
-	: GUI_Widget(NULL, x, y, w, h) {
+    : GUI_Widget(NULL, x, y, w, h) {
 
 	R = r;
 	G = g;
@@ -77,8 +77,7 @@ void GUI_Dialog::SetDisplay(Screen *s) {
 }
 
 /* Show the widget  */
-void
-GUI_Dialog:: Display(bool full_redraw) {
+void GUI_Dialog::Display(bool full_redraw) {
 	int i;
 	Common::Rect framerect;
 	Common::Rect src, dst;
@@ -87,7 +86,7 @@ GUI_Dialog:: Display(bool full_redraw) {
 		if (backingstore) {
 			screen->restore_area(backingstore, &backingstore_rect, NULL, NULL, false);
 			screen->update(backingstore_rect.left, backingstore_rect.top,
-				backingstore_rect.width(), backingstore_rect.height());
+			               backingstore_rect.width(), backingstore_rect.height());
 		}
 
 		backingstore_rect.moveTo(area.left, area.top);
@@ -101,7 +100,7 @@ GUI_Dialog:: Display(bool full_redraw) {
 	framerect.grow(-8);
 	SDL_FillRect(surface, &framerect, bg_color);
 
-// Draw border corners
+	// Draw border corners
 
 	dst = area;
 	dst.setWidth(8);
@@ -126,7 +125,7 @@ GUI_Dialog:: Display(bool full_redraw) {
 	dst.setHeight(8);
 	SDL_BlitSurface(border[6], NULL, surface, &dst);
 
-// Draw top and bottom border lines
+	// Draw top and bottom border lines
 
 	for (i = area.left + 8; i < area.left + area.width() - 24; i += 16) {
 		dst.left = i;
@@ -161,8 +160,7 @@ GUI_Dialog:: Display(bool full_redraw) {
 		SDL_BlitSurface(border[5], &src, surface, &dst);
 	}
 
-// Draw left and right sides
-
+	// Draw left and right sides
 
 	for (i = area.top + 8; i < area.top + area.height() - 24; i += 16) {
 		dst.left = area.left;
@@ -235,7 +233,7 @@ GUI_status GUI_Dialog::MouseMotion(int x, int y, uint8 state) {
 	button_y = y;
 
 	GUI::get_gui()->moveWidget(this, dx, dy);
-// Redraw();
+	// Redraw();
 
 	return (GUI_YUM);
 }

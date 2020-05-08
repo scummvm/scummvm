@@ -23,16 +23,16 @@
 #ifndef ULTIMA_ULTIMA1_ACTIONS_ATTACK_H
 #define ULTIMA_ULTIMA1_ACTIONS_ATTACK_H
 
-#include "ultima/ultima1/actions/action.h"
-#include "ultima/shared/maps/map_widget.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/maps/map_widget.h"
+#include "ultima/ultima1/actions/action.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
-using Shared::CCharacterInputMsg;
 using Shared::CAttackMsg;
+using Shared::CCharacterInputMsg;
 using Shared::CFireMsg;
 
 /**
@@ -41,11 +41,13 @@ using Shared::CFireMsg;
 class AttackFire : public Action {
 	DECLARE_MESSAGE_MAP;
 	bool CharacterInputMsg(CCharacterInputMsg &msg);
+
 protected:
 	/**
 	 * Do the attack in a given direction
 	 */
 	virtual void doAttack(Shared::Maps::Direction dir) = 0;
+
 public:
 	CLASSDEF;
 
@@ -53,7 +55,6 @@ public:
 	 * Constructor
 	 */
 	AttackFire(TreeItem *parent) : Action(parent) {}
-
 };
 
 /**
@@ -62,11 +63,13 @@ public:
 class Attack : public AttackFire {
 	DECLARE_MESSAGE_MAP;
 	bool AttackMsg(CAttackMsg &msg);
+
 protected:
 	/**
 	 * Do the attack in a given direction
 	 */
 	void doAttack(Shared::Maps::Direction dir) override;
+
 public:
 	CLASSDEF;
 
@@ -82,11 +85,13 @@ public:
 class Fire : public AttackFire {
 	DECLARE_MESSAGE_MAP;
 	bool FireMsg(CFireMsg &msg);
+
 protected:
 	/**
 	 * Do the attack in a given direction
 	 */
 	void doAttack(Shared::Maps::Direction dir) override;
+
 public:
 	CLASSDEF;
 

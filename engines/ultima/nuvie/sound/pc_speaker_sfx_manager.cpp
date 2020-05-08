@@ -20,29 +20,26 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/pc_speaker_sfx_manager.h"
+#include "audio/mixer.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/decoder/adlib_sfx_stream.h"
 #include "ultima/nuvie/sound/decoder/fm_towns_decoder_stream.h"
 #include "ultima/nuvie/sound/decoder/pc_speaker_stream.h"
-#include "audio/mixer.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 PCSpeakerSfxManager::PCSpeakerSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
-
 }
 
 PCSpeakerSfxManager::~PCSpeakerSfxManager() {
-
 }
 
 bool PCSpeakerSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
 	return playSfxLooping(sfx_id, NULL, volume);
 }
-
 
 bool PCSpeakerSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
 	Audio::AudioStream *stream = NULL;
@@ -115,7 +112,6 @@ void PCSpeakerSfxManager::playSoundSample(Audio::AudioStream *stream, Audio::Sou
 	} else {
 		mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, volume);
 	}
-
 }
 
 } // End of namespace Nuvie

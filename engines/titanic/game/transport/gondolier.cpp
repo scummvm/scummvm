@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGondolier, CTransport)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
 int CGondolier::_v1;

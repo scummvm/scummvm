@@ -56,23 +56,21 @@ namespace Griffon {
 
 // element tile locations
 const int8 elementmap[15][20] = {
-	{  2, 2, 2, 2, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1 },
-	{  2, -1, -1, -1, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1 },
-	{  2, -1, 2, 2, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1 },
-	{  2, -1, 2, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{  2, 2, 2, 2, 2, -1, -1, -1, 2, -1, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, 2, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, -1, 0, 0, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, -1, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, -1, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
-};
-
+    {2, 2, 2, 2, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1},
+    {2, -1, -1, -1, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1},
+    {2, -1, 2, 2, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1},
+    {2, -1, 2, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {2, 2, 2, 2, 2, -1, -1, -1, 2, -1, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, 2, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1, 0, 0, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
 
 void GriffonEngine::updateAnims() {
 	for (int i = 0; i <= _lastObj; i++) {
@@ -574,7 +572,6 @@ void GriffonEngine::updateNPCs() {
 								_npcInfo[i].headTargetY[0] = _player.py - 4;
 							}
 						}
-
 					}
 
 					dospell = false;
@@ -610,10 +607,8 @@ void GriffonEngine::updateNPCs() {
 					xdif = _npcInfo[i].bodysection[7].x - _npcInfo[i].headTargetX[0];
 					ydif = _npcInfo[i].bodysection[7].y - _npcInfo[i].headTargetY[0];
 
-
-					_npcInfo[i].bodysection[7].x = _npcInfo[i].bodysection[7].x  - xdif * 0.4 * _fpsr;
-					_npcInfo[i].bodysection[7].y = _npcInfo[i].bodysection[7].y  - ydif * 0.4 * _fpsr;
-
+					_npcInfo[i].bodysection[7].x = _npcInfo[i].bodysection[7].x - xdif * 0.4 * _fpsr;
+					_npcInfo[i].bodysection[7].y = _npcInfo[i].bodysection[7].y - ydif * 0.4 * _fpsr;
 
 					_npcInfo[i].bodysection[0].x = _npcInfo[i].x + 12;
 					_npcInfo[i].bodysection[0].y = _npcInfo[i].y + 12;
@@ -644,7 +639,6 @@ void GriffonEngine::updateNPCs() {
 						_npcInfo[i].castPause = _ticks + 12000;
 					}
 				}
-
 
 				// firehydra specific
 				if (_npcInfo[i].spriteset == kMonsterFireHydra) {
@@ -683,7 +677,6 @@ void GriffonEngine::updateNPCs() {
 										_npcInfo[i].swayAngle = 0;
 									}
 								}
-
 							}
 
 							if (_npcInfo[i].attacking2[ff] == 0) {
@@ -695,8 +688,8 @@ void GriffonEngine::updateNPCs() {
 							xdif = _npcInfo[i].bodysection[10 * ff + 9].x - _npcInfo[i].headTargetX[ff];
 							ydif = _npcInfo[i].bodysection[10 * ff + 9].y - _npcInfo[i].headTargetY[ff];
 
-							_npcInfo[i].bodysection[10 * ff + 9].x = _npcInfo[i].bodysection[10 * ff + 9].x  - xdif * 0.4 * _fpsr;
-							_npcInfo[i].bodysection[10 * ff + 9].y = _npcInfo[i].bodysection[10 * ff + 9].y  - ydif * 0.4 * _fpsr;
+							_npcInfo[i].bodysection[10 * ff + 9].x = _npcInfo[i].bodysection[10 * ff + 9].x - xdif * 0.4 * _fpsr;
+							_npcInfo[i].bodysection[10 * ff + 9].y = _npcInfo[i].bodysection[10 * ff + 9].y - ydif * 0.4 * _fpsr;
 
 							_npcInfo[i].bodysection[10 * ff].x = _npcInfo[i].x + 12 + 8 * cos(3.141592 * 2 * (_itemyloc / 16 + ff * 120 / 360));
 							_npcInfo[i].bodysection[10 * ff].y = _npcInfo[i].y + 12 + 8 * sin(3.141592 * 2 * (_itemyloc / 16 + ff * 120 / 360));
@@ -778,7 +771,6 @@ void GriffonEngine::updateNPCs() {
 						// castSpell 6, _npcinfo[i].x, _npcinfo[i].y, _player.px, _player.py, i
 						// _npcinfo[i].castpause = _ticks + 12000
 					}
-
 				}
 
 				// spriteset6 specific
@@ -860,7 +852,6 @@ void GriffonEngine::updateNPCs() {
 								_npcInfo[i].headTargetY[0] = _player.py - 4;
 							}
 						}
-
 					}
 
 					if (!_npcInfo[i].attacking && _npcInfo[i].castPause < _ticks) {
@@ -890,9 +881,8 @@ void GriffonEngine::updateNPCs() {
 					xdif = _npcInfo[i].bodysection[7].x - _npcInfo[i].headTargetX[0];
 					ydif = _npcInfo[i].bodysection[7].y - _npcInfo[i].headTargetY[0];
 
-
-					_npcInfo[i].bodysection[7].x = _npcInfo[i].bodysection[7].x  - xdif * 0.4 * _fpsr;
-					_npcInfo[i].bodysection[7].y = _npcInfo[i].bodysection[7].y  - ydif * 0.4 * _fpsr;
+					_npcInfo[i].bodysection[7].x = _npcInfo[i].bodysection[7].x - xdif * 0.4 * _fpsr;
+					_npcInfo[i].bodysection[7].y = _npcInfo[i].bodysection[7].y - ydif * 0.4 * _fpsr;
 
 					_npcInfo[i].bodysection[0].x = _npcInfo[i].x + 12;
 					_npcInfo[i].bodysection[0].y = _npcInfo[i].y + 12;
@@ -907,7 +897,6 @@ void GriffonEngine::updateNPCs() {
 						_npcInfo[i].bodysection[f].x = _npcInfo[i].bodysection[f].x - (_npcInfo[i].bodysection[f].x - tx) / 3;
 						_npcInfo[i].bodysection[f].y = _npcInfo[i].bodysection[f].y - (_npcInfo[i].bodysection[f].y - ty) / 3;
 					}
-
 				}
 
 				// dragon2 specific
@@ -934,7 +923,6 @@ void GriffonEngine::updateNPCs() {
 					}
 				}
 
-
 				// endboss specific
 				if (_npcInfo[i].spriteset == kMonsterFinalBoss && _npcInfo[i].attackattempt < _ticks) {
 					if (_npcInfo[i].attacknext < _ticks && _npcInfo[i].pause < _ticks && !_npcInfo[i].attacking) {
@@ -959,7 +947,6 @@ void GriffonEngine::updateNPCs() {
 				}
 			}
 
-
 			float npx = _npcInfo[i].x;
 			float npy = _npcInfo[i].y;
 
@@ -973,7 +960,6 @@ void GriffonEngine::updateNPCs() {
 
 			if (_npcInfo[i].pause < _ticks)
 				_clipBg->fillRect(rcSrc, i);
-
 
 			pass = 0;
 			if (_npcInfo[i].attacking)
@@ -1022,8 +1008,8 @@ void GriffonEngine::updateNPCs() {
 					float xdif = _npcInfo[i].bodysection[7].x - _npcInfo[i].headTargetX[0];
 					float ydif = _npcInfo[i].bodysection[7].y - _npcInfo[i].headTargetY[0];
 
-					_npcInfo[i].bodysection[7].x = _npcInfo[i].bodysection[7].x  - xdif * 0.4 * _fpsr;
-					_npcInfo[i].bodysection[7].y = _npcInfo[i].bodysection[7].y  - ydif * 0.4 * _fpsr;
+					_npcInfo[i].bodysection[7].x = _npcInfo[i].bodysection[7].x - xdif * 0.4 * _fpsr;
+					_npcInfo[i].bodysection[7].y = _npcInfo[i].bodysection[7].y - ydif * 0.4 * _fpsr;
 
 					_npcInfo[i].bodysection[0].x = _npcInfo[i].x + 12;
 					_npcInfo[i].bodysection[0].y = _npcInfo[i].y + 12;
@@ -1066,7 +1052,6 @@ void GriffonEngine::updateNPCs() {
 					}
 				}
 
-
 				// firehydra
 				if (_npcInfo[i].spriteset == kMonsterFireHydra) {
 					for (int ff = 0; ff <= 2; ff++) {
@@ -1074,8 +1059,8 @@ void GriffonEngine::updateNPCs() {
 							float xdif = _npcInfo[i].bodysection[10 * ff + 9].x - _npcInfo[i].headTargetX[ff];
 							float ydif = _npcInfo[i].bodysection[10 * ff + 9].y - _npcInfo[i].headTargetY[ff];
 
-							_npcInfo[i].bodysection[10 * ff + 9].x = _npcInfo[i].bodysection[10 * ff + 9].x  - xdif * .2 * _fpsr;
-							_npcInfo[i].bodysection[10 * ff + 9].y = _npcInfo[i].bodysection[10 * ff + 9].y  - ydif * .2 * _fpsr;
+							_npcInfo[i].bodysection[10 * ff + 9].x = _npcInfo[i].bodysection[10 * ff + 9].x - xdif * .2 * _fpsr;
+							_npcInfo[i].bodysection[10 * ff + 9].y = _npcInfo[i].bodysection[10 * ff + 9].y - ydif * .2 * _fpsr;
 
 							_npcInfo[i].bodysection[10 * ff].x = _npcInfo[i].x + 12 + 8 * cos(3.141592 * 2 * (_itemyloc / 16 + ff * 120 / 360));
 							_npcInfo[i].bodysection[10 * ff].y = _npcInfo[i].y + 12 + 8 * sin(3.141592 * 2 * (_itemyloc / 16 + ff * 120 / 360));
@@ -1118,7 +1103,6 @@ void GriffonEngine::updateNPCs() {
 							}
 						}
 					}
-
 				}
 
 				// twowing specific
@@ -1444,7 +1428,6 @@ void GriffonEngine::updateSpells() {
 					}
 				}
 
-
 				// check for(int post damage
 				if (_postInfoNbr > 0) {
 					for (int e = 0; e <= _postInfoNbr - 1; e++) {
@@ -1523,7 +1506,6 @@ void GriffonEngine::updateSpells() {
 										}
 									}
 								}
-
 
 								// check for(int post damage
 								if (_postInfoNbr > 0) {
@@ -2093,7 +2075,6 @@ void GriffonEngine::updateSpellsUnder() {
 				if (_spellInfo[i].frame < 0)
 					_spellInfo[i].frame = 0;
 
-
 				for (f = 1; f <= _lastNpc; f++) {
 					int xdif = _spellInfo[i].enemyx - _npcInfo[f].x;
 					int ydif = _spellInfo[i].enemyy - _npcInfo[f].y;
@@ -2130,7 +2111,6 @@ void GriffonEngine::updateSpellsUnder() {
 
 							if (dq == 0)
 								xpass = 1;
-
 
 							sx = (_npcInfo[f].x / 2 + 6);
 							sy = (newy / 2 + 10);
@@ -2275,10 +2255,7 @@ void GriffonEngine::updateSpellsUnder() {
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.2 * _fpsr;
 				if (_spellInfo[i].frame < 0)
 					_spellInfo[i].frame = 0;
-
-
 			}
-
 
 			// sprite 6 spitfire
 			if (spellnum == 7) {
@@ -2327,12 +2304,9 @@ void GriffonEngine::updateSpellsUnder() {
 										setChannelVolume(snd, config.effectsVol);
 									}
 								}
-
 							}
 						}
-
 					}
-
 				}
 
 				_spellInfo[i].frame = _spellInfo[i].frame - 0.5 * _fpsr;
@@ -2347,6 +2321,5 @@ void GriffonEngine::updateSpellsUnder() {
 		}
 	}
 }
-
 
 } // end of namespace Griffon

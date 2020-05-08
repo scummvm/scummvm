@@ -20,13 +20,13 @@
  *
  */
 
-#include "tsage/tsage.h"
+#include "tsage/ringworld/ringworld_dialogs.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
-#include "tsage/staticres.h"
 #include "tsage/globals.h"
-#include "tsage/ringworld/ringworld_dialogs.h"
 #include "tsage/ringworld/ringworld_logic.h"
+#include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -72,8 +72,8 @@ void RightClickButton::highlight() {
  * This dialog implements the right-click dialog
  */
 RightClickDialog::RightClickDialog() : GfxDialog(),
-		_walkButton(1, 48, 12), _lookButton(2, 31, 29), _useButton(3, 65, 29),
-		_talkButton(4, 14, 47), _inventoryButton(5, 48, 47), _optionsButton(6, 83, 47) {
+                                       _walkButton(1, 48, 12), _lookButton(2, 31, 29), _useButton(3, 65, 29),
+                                       _talkButton(4, 14, 47), _inventoryButton(5, 48, 47), _optionsButton(6, 83, 47) {
 	Rect rectArea, dialogRect;
 
 	// Set the palette and change the cursor
@@ -103,7 +103,7 @@ RightClickDialog::~RightClickDialog() {
 }
 
 RightClickButton *RightClickDialog::findButton(const Common::Point &pt) {
-	RightClickButton *btnList[] = {  &_walkButton, &_lookButton, &_useButton, &_talkButton, &_inventoryButton, &_optionsButton };
+	RightClickButton *btnList[] = {&_walkButton, &_lookButton, &_useButton, &_talkButton, &_inventoryButton, &_optionsButton};
 
 	for (int i = 0; i < 6; ++i) {
 		btnList[i]->_owner = this;

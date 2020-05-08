@@ -25,8 +25,8 @@
 #ifndef PLATFORM_SDL_MAEMO_H
 #define PLATFORM_SDL_MAEMO_H
 
-#include "backends/platform/sdl/posix/posix.h"
 #include "backends/platform/maemo/maemo-common.h"
+#include "backends/platform/sdl/posix/posix.h"
 
 namespace Maemo {
 class MaemoSdlEventObserver;

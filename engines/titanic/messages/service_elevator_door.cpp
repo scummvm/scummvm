@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CServiceElevatorDoor, CDoorAutoSoundEvent)
-	ON_MESSAGE(PreEnterNodeMsg)
+ON_MESSAGE(PreEnterNodeMsg)
 END_MESSAGE_MAP()
 
 CServiceElevatorDoor::CServiceElevatorDoor() : CDoorAutoSoundEvent() {

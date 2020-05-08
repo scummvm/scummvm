@@ -37,15 +37,15 @@ public:
 
 	FontShapeArchive(uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(id_, pal_, format_) { }
+	    : ShapeArchive(id_, pal_, format_) {}
 	FontShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(af, id_, pal_, format_) { }
+	    : ShapeArchive(af, id_, pal_, format_) {}
 	FontShapeArchive(Common::SeekableReadStream *rs, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(rs, id_, pal_, format_) { }
- 
-	~FontShapeArchive() override { }
+	    : ShapeArchive(rs, id_, pal_, format_) {}
+
+	~FontShapeArchive() override {}
 
 	//! load HVLeads from u8.ini
 	void setHVLeads();

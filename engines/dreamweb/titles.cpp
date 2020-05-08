@@ -20,8 +20,8 @@
  *
  */
 
-#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/sound.h"
 #include "engines/util.h"
 
 namespace DreamWeb {
@@ -43,7 +43,7 @@ void DreamWebEngine::monkSpeaking() {
 	GraphicsFile graphics;
 	loadGraphicsFile(graphics, "G15");
 	clearWork();
-	showFrame(graphics, 160, 72, 0, 128);	// show monk
+	showFrame(graphics, 160, 72, 0, 128); // show monk
 	workToScreen();
 	_sound->volumeSet(7);
 	_sound->volumeChange(hasSpeech() ? 5 : 0, -1);
@@ -74,7 +74,7 @@ void DreamWebEngine::monkSpeaking() {
 				printResult = printDirect(&string, 36, &y, 239, 239 & 1);
 				workToScreen();
 				clearWork();
-				showFrame(graphics, 160, 72, 0, 128);	// show monk
+				showFrame(graphics, 160, 72, 0, 128); // show monk
 				hangOnP(240);
 				if (_quitRequested)
 					return;
@@ -134,7 +134,7 @@ void DreamWebEngine::hangOne(uint16 delay) {
 		waitForVSync();
 		if (_lastHardKey == Common::KEYCODE_ESCAPE)
 			return; // "hangonearly"
-	} while	(--delay);
+	} while (--delay);
 }
 
 void DreamWebEngine::intro() {
@@ -225,7 +225,6 @@ void DreamWebEngine::runIntroSeq() {
 			break;
 
 	} while (_getBack != 1);
-
 
 	if (_lastHardKey == Common::KEYCODE_ESCAPE) {
 		getRidOfTempText();

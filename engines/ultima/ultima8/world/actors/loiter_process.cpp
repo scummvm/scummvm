@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
+#include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -108,7 +108,8 @@ void LoiterProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool LoiterProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	if (version >= 3)
 		_count = rs->readUint32LE();

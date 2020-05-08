@@ -24,8 +24,8 @@
 #define ULTIMA_SHARED_CORE_PARTY_H
 
 #include "common/array.h"
-#include "common/str.h"
 #include "common/serializer.h"
+#include "common/str.h"
 #include "ultima/shared/core/character.h"
 
 namespace Ultima {
@@ -37,6 +37,7 @@ namespace Shared {
 class Party {
 protected:
 	Common::Array<Character *> _characters;
+
 public:
 	~Party();
 

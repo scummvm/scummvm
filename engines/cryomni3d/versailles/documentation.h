@@ -23,8 +23,8 @@
 #ifndef CRYOMNI3D_VERSAILLES_DOCUMENTATION_H
 #define CRYOMNI3D_VERSAILLES_DOCUMENTATION_H
 
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
 #include "common/str-array.h"
 #include "graphics/managed_surface.h"
@@ -40,9 +40,9 @@ namespace Versailles {
 class Versailles_Documentation {
 public:
 	Versailles_Documentation() : _engine(nullptr), _fontManager(nullptr), _sprites(nullptr),
-		_messages(nullptr), _linksData(nullptr), _linksSize(0),
-		_currentInTimeline(false), _currentMapLayout(false), _currentHasMap(false) { }
-	~Versailles_Documentation() { delete [] _linksData; }
+	                             _messages(nullptr), _linksData(nullptr), _linksSize(0),
+	                             _currentInTimeline(false), _currentMapLayout(false), _currentHasMap(false) {}
+	~Versailles_Documentation() { delete[] _linksData; }
 
 	void init(const Sprites *sprites, FontManager *fontManager, const Common::StringArray *messages,
 	          CryOmni3DEngine *engine, const Common::String &allDocsFileName,

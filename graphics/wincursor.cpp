@@ -62,18 +62,18 @@ private:
 	uint16 _height;   ///< The cursor's height.
 	uint16 _hotspotX; ///< The cursor's hotspot's x coordinate.
 	uint16 _hotspotY; ///< The cursor's hotspot's y coordinate.
-	byte   _keyColor; ///< The cursor's transparent key
+	byte _keyColor;   ///< The cursor's transparent key
 
 	/** Clear the cursor. */
 	void clear();
 };
 
 WinCursor::WinCursor() {
-	_width    = 0;
-	_height   = 0;
+	_width = 0;
+	_height = 0;
 	_hotspotX = 0;
 	_hotspotY = 0;
-	_surface  = 0;
+	_surface = 0;
 	_keyColor = 0;
 	memset(_palette, 0, 256 * 3);
 }
@@ -147,10 +147,10 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 
 	// Reading the palette
 	stream.seek(40 + 4);
-	for (uint32 i = 0 ; i < numColors; i++) {
+	for (uint32 i = 0; i < numColors; i++) {
 		_palette[i * 3 + 2] = stream.readByte();
 		_palette[i * 3 + 1] = stream.readByte();
-		_palette[i * 3    ] = stream.readByte();
+		_palette[i * 3] = stream.readByte();
 		stream.readByte();
 	}
 
@@ -229,7 +229,8 @@ bool WinCursor::readFromStream(Common::SeekableReadStream &stream) {
 }
 
 void WinCursor::clear() {
-	delete[] _surface; _surface = 0;
+	delete[] _surface;
+	_surface = 0;
 }
 
 WinCursorGroup::WinCursorGroup() {
@@ -305,35 +306,34 @@ public:
 
 	const byte *getSurface() const {
 		static const byte defaultCursor[] = {
-			1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-			1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
-			1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
-			1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
-			1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
-			1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
-			1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
-			1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
-			1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
-			1, 2, 2, 2, 1, 2, 2, 1, 0, 0, 0, 0,
-			1, 2, 2, 1, 1, 2, 2, 1, 0, 0, 0, 0,
-			1, 2, 1, 0, 1, 1, 2, 2, 1, 0, 0, 0,
-			1, 1, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0,
-			1, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
-			0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
-			0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0
-		};
+		    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		    1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		    1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+		    1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+		    1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+		    1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
+		    1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+		    1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
+		    1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+		    1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+		    1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+		    1, 2, 2, 2, 1, 2, 2, 1, 0, 0, 0, 0,
+		    1, 2, 2, 1, 1, 2, 2, 1, 0, 0, 0, 0,
+		    1, 2, 1, 0, 1, 1, 2, 2, 1, 0, 0, 0,
+		    1, 1, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+		    1, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+		    0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+		    0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+		    0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+		    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0};
 
 		return defaultCursor;
 	}
 
 	const byte *getPalette() const {
 		static const byte bwPalette[] = {
-			0x00, 0x00, 0x00,	// Black
-			0xFF, 0xFF, 0xFF	// White
+		    0x00, 0x00, 0x00, // Black
+		    0xFF, 0xFF, 0xFF  // White
 		};
 
 		return bwPalette;

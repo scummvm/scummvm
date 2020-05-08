@@ -32,8 +32,8 @@
 
 namespace CGE2 {
 
-#define kMapGrid   4
-#define kMapMask   (~(kMapGrid - 1))
+#define kMapGrid 4
+#define kMapMask (~(kMapGrid - 1))
 
 class Map {
 	CGE2Engine *_vm;
@@ -41,6 +41,7 @@ class Map {
 
 	int convertCoord(int coord);
 	int nextNum(char *currPos);
+
 public:
 	Map(CGE2Engine *vm);
 	~Map();

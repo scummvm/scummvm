@@ -49,7 +49,7 @@ class Client;
 
 class ClientHandler {
 public:
-	virtual ~ClientHandler() {};
+	virtual ~ClientHandler(){};
 	virtual void handle(Client *client) = 0;
 };
 

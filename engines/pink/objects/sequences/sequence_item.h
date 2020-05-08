@@ -37,7 +37,7 @@ public:
 
 	virtual bool execute(uint segment, Sequence *sequence, bool loadingSave);
 	virtual bool isLeader();
-	virtual void skip(Sequence *sequence) {};
+	virtual void skip(Sequence *sequence){};
 
 	const Common::String &getActor() const { return _actor; }
 
@@ -55,7 +55,7 @@ public:
 class SequenceItemLeaderAudio : public SequenceItemLeader {
 public:
 	SequenceItemLeaderAudio()
-		: _sample(0) {}
+	    : _sample(0) {}
 
 	void deserialize(Archive &archive) override;
 	void toConsole() const override;

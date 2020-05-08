@@ -204,7 +204,7 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 }
 
 void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
-	uint8 colorMap[] = { 0, 15, 12, 12 };
+	uint8 colorMap[] = {0, 15, 12, 12};
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
 	_screen->_charWidth = -2;
@@ -224,12 +224,12 @@ void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX
 
 	uint8 color = 0;
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		const uint8 colorTable[] = { 0x1F, 0x1B, 0xC9, 0x80, 0x1E, 0x81, 0x11, 0xD8, 0x55, 0x3A, 0x3A };
+		const uint8 colorTable[] = {0x1F, 0x1B, 0xC9, 0x80, 0x1E, 0x81, 0x11, 0xD8, 0x55, 0x3A, 0x3A};
 		color = colorTable[charNum];
 
 		setTextColor(color);
 	} else {
-		const uint8 colorTable[] = { 0x0F, 0x09, 0xC9, 0x80, 0x05, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3A };
+		const uint8 colorTable[] = {0x0F, 0x09, 0xC9, 0x80, 0x05, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3A};
 		color = colorTable[charNum];
 	}
 

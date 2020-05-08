@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima4/map/city.h"
-#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/conversation/conversation.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/person.h"
@@ -69,10 +69,7 @@ void City::addPeople() {
 
 	for (current = _persons.begin(); current != _persons.end(); current++) {
 		Person *p = *current;
-		if ((p->getTile() != 0)
-		        && !(g_context->_party->canPersonJoin(p->getName(), nullptr)
-		             && g_context->_party->isPersonJoined(p->getName()))
-		   )
+		if ((p->getTile() != 0) && !(g_context->_party->canPersonJoin(p->getName(), nullptr) && g_context->_party->isPersonJoined(p->getName())))
 			addPerson(p);
 	}
 }
@@ -82,7 +79,8 @@ void City::removeAllPeople() {
 	for (obj = _objects.begin(); obj != _objects.end();) {
 		if (isPerson(*obj))
 			obj = removeObject(obj);
-		else obj++;
+		else
+			obj++;
 	}
 }
 
@@ -95,7 +93,6 @@ Person *City::personAt(const Coords &coords) {
 	else
 		return nullptr;
 }
-
 
 bool isCity(Map *punknown) {
 	City *pCity;

@@ -27,7 +27,7 @@
 
 namespace Networking {
 
-class DownloadFileHandler: public FilesBaseHandler {
+class DownloadFileHandler : public FilesBaseHandler {
 public:
 	DownloadFileHandler();
 	virtual ~DownloadFileHandler();

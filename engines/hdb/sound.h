@@ -23,35 +23,35 @@
 #ifndef HDB_SOUND_H
 #define HDB_SOUND_H
 
-#define	SFNAME_TITLE		"jungle.mp3"
-#define	SFNAME_MENU			"on_a_mission.mp3"
-#define	SFNAME_ROBO			"low_techno.mp3"
-#define	SFNAME_MEXI			"ambient_mexi_howl.mp3"
-#define	SFNAME_BASSO		"amb_walkin_basso.mp3"
-#define	SFNAME_WIND			"dangerous_wind.mp3"
-#define	SFNAME_INDUSTRO		"industro_hunch.mp3"
-#define	SFNAME_JACKIN		"jaround.mp3"
-#define	SFNAME_SNEAKERS		"lost_my_sneakers.mp3"
-#define	SFNAME_QUIET		"mysterious_quiet.mp3"
-#define	SFNAME_JEEBIES		"jeebies5B.mp3"
-#define	SFNAME_VIBRACIOUS	"vibracious_(dope_delivery_mix).mp3"
-#define	SFNAME_ROMANTIC		"romantic.mp3"
-#define	SFNAME_ARETHERE		"AreWeThereYet_(extended).mp3"
+#define SFNAME_TITLE "jungle.mp3"
+#define SFNAME_MENU "on_a_mission.mp3"
+#define SFNAME_ROBO "low_techno.mp3"
+#define SFNAME_MEXI "ambient_mexi_howl.mp3"
+#define SFNAME_BASSO "amb_walkin_basso.mp3"
+#define SFNAME_WIND "dangerous_wind.mp3"
+#define SFNAME_INDUSTRO "industro_hunch.mp3"
+#define SFNAME_JACKIN "jaround.mp3"
+#define SFNAME_SNEAKERS "lost_my_sneakers.mp3"
+#define SFNAME_QUIET "mysterious_quiet.mp3"
+#define SFNAME_JEEBIES "jeebies5B.mp3"
+#define SFNAME_VIBRACIOUS "vibracious_(dope_delivery_mix).mp3"
+#define SFNAME_ROMANTIC "romantic.mp3"
+#define SFNAME_ARETHERE "AreWeThereYet_(extended).mp3"
 
-#define	SFNAME_CORRIDOR		"corridor(extended).mp3"
-#define SFNAME_MOKE			"moke_a_doke_doke.mp3"
-#define	SFNAME_TILES		"tilesache(extended).mp3"
-#define SFNAME_DARKVIB		"vibracious_(Dark_Delivery_Mix).mp3"
-#define SFNAME_EXPER		"experimentatus_(extended).mp3"
+#define SFNAME_CORRIDOR "corridor(extended).mp3"
+#define SFNAME_MOKE "moke_a_doke_doke.mp3"
+#define SFNAME_TILES "tilesache(extended).mp3"
+#define SFNAME_DARKVIB "vibracious_(Dark_Delivery_Mix).mp3"
+#define SFNAME_EXPER "experimentatus_(extended).mp3"
 
-#define	FIRST_VOICE		V00_AIRLOCK_01
-#define	NUM_VOICES		( LAST_SOUND - FIRST_VOICE )
+#define FIRST_VOICE V00_AIRLOCK_01
+#define NUM_VOICES (LAST_SOUND - FIRST_VOICE)
 
 #include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/wave.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/decoders/wave.h"
+#include "audio/mixer.h"
 
 namespace HDB {
 
@@ -1421,8 +1421,8 @@ enum SoundType {
 
 struct SoundLookUp {
 	SoundType idx;
-	const char *name;			// name from MSD .h file
-	const char *luaName;		// name for Lua code to use
+	const char *name;    // name from MSD .h file
+	const char *luaName; // name for Lua code to use
 };
 
 struct Voice {
@@ -1446,11 +1446,11 @@ enum SndType {
 };
 
 struct SoundCache {
-	SndMem loaded;			// -1 = freeable; in memory, 0 = not cached, 1 = cached
-	int size;				// size of sound
-	const char *name;		// filename / MSD name
-	const char *luaName;	// name used by Lua for i.d.
-	SndType ext;			// 0 = Uninitialized, -1 = WAV, 1 = MP3
+	SndMem loaded;       // -1 = freeable; in memory, 0 = not cached, 1 = cached
+	int size;            // size of sound
+	const char *name;    // filename / MSD name
+	const char *luaName; // name used by Lua for i.d.
+	SndType ext;         // 0 = Uninitialized, -1 = WAV, 1 = MP3
 	byte *data;
 
 	SoundCache() : loaded(SNDMEM_NOTCACHED), size(0), name(nullptr), luaName(nullptr), ext(SNDTYPE_NONE), data(nullptr) {}
@@ -1459,8 +1459,8 @@ struct SoundCache {
 class Song {
 public:
 	Song() : _playing(false), _song(SONG_NONE),
-		fadingOut(false), fadeOutVol(0), fadeOutRamp(0),
-		fadingIn(false), fadeInVol(0), fadeInRamp(0) {}
+	         fadingOut(false), fadeOutVol(0), fadeOutRamp(0),
+	         fadingIn(false), fadeInVol(0), fadeInRamp(0) {}
 
 	void playSong(SoundType song, bool fadeIn, int ramp);
 	void fadeOut(int ramp);
@@ -1475,7 +1475,7 @@ public:
 
 private:
 	static Common::String getFileName(SoundType song);
-	Audio::AudioStream* createStream(Common::String fileName);
+	Audio::AudioStream *createStream(Common::String fileName);
 
 	Audio::SoundHandle handle;
 
@@ -1484,16 +1484,15 @@ private:
 
 	bool fadingOut;
 	int fadeOutVol;
-	int	fadeOutRamp;
+	int fadeOutRamp;
 
 	bool fadingIn;
-	int	fadeInVol;
-	int	fadeInRamp;
+	int fadeInVol;
+	int fadeInRamp;
 };
 
 class Sound {
 public:
-
 	Sound();
 
 	void test(); // FIXME. Remove
@@ -1578,9 +1577,8 @@ public:
 	int _numSounds;
 	int _sfxVolume;
 	Audio::SoundHandle _handles[kMaxSNDChannels];
-
 };
 
-} // End of Namespace
+} // namespace HDB
 
 #endif // !HDB_SOUND_H

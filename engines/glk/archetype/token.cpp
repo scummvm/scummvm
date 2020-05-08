@@ -23,13 +23,22 @@
 #include "glk/archetype/token.h"
 #include "glk/archetype/archetype.h"
 #include "glk/archetype/id_table.h"
-#include "glk/archetype/misc.h"
 #include "glk/archetype/keywords.h"
+#include "glk/archetype/misc.h"
 
 namespace Glk {
 namespace Archetype {
 
-enum StateType { START, STOP, DECIDE, WHITE, COMMENT, QUOTE, LITERAL, IDENTIFIER, NUMBER, OPERATOR };
+enum StateType { START,
+	             STOP,
+	             DECIDE,
+	             WHITE,
+	             COMMENT,
+	             QUOTE,
+	             LITERAL,
+	             IDENTIFIER,
+	             NUMBER,
+	             OPERATOR };
 
 bool isWhitespace(char c) {
 	return c == ' ' || c == '\t' || c == NEWLINE_CH;
@@ -56,8 +65,7 @@ bool isIdChar(char c) {
 }
 
 bool isLongOper(char c) {
-	return c == '<' || c == '>' || c == ':' || c == '+' || c == '-' || c == '*'
-		|| c == '/' || c == '&' || c == '~';
+	return c == '<' || c == '>' || c == ':' || c == '+' || c == '-' || c == '*' || c == '/' || c == '&' || c == '~';
 }
 
 bool isOperChar(char c) {
@@ -75,7 +83,7 @@ bool isOperChar(char c) {
  * @returns				true if match_str was an element in the_array; false otherwise
  */
 static bool binary_search(const LookupType &the_array, int elements,
-		const ShortStringType &match_str, int &a_index) {
+                          const ShortStringType &match_str, int &a_index) {
 	int left = 0, right = elements - 1, mid;
 
 	do {
@@ -154,7 +162,7 @@ bool get_token(progfile &f) {
 	}
 
 	more_chars = true;
-	state      = START;
+	state = START;
 
 	while (state != STOP) {
 		switch (state) {
@@ -239,9 +247,9 @@ bool get_token(progfile &f) {
 					state = STOP;
 			} else {
 				// quoted literal
-				f.unreadChar(next_ch);           // leave \n for the next guy
-				f.ttype    = QUOTE_LIT;
-				f.tnum     = add_non_unique_str(g_vm->Literals, s);
+				f.unreadChar(next_ch); // leave \n for the next guy
+				f.ttype = QUOTE_LIT;
+				f.tnum = add_non_unique_str(g_vm->Literals, s);
 				state = STOP;
 			}
 			break;
@@ -249,7 +257,7 @@ bool get_token(progfile &f) {
 		case LITERAL:
 			bracket = next_ch;
 			s = "";
-			more_chars = f.readChar(next_ch);     // start the loop
+			more_chars = f.readChar(next_ch); // start the loop
 			while (more_chars && next_ch != NEWLINE_CH && next_ch != bracket) {
 				if (next_ch == '\\') {
 					more_chars = f.readChar(next_ch);
@@ -263,7 +271,7 @@ bool get_token(progfile &f) {
 					case 'e':
 						next_ch = (char)27;
 						break;
-					case'n':
+					case 'n':
 						s = s + '\r';
 						next_ch = '\n';
 						break;

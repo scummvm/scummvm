@@ -23,9 +23,9 @@
 #ifndef GOB_SURFACE_H
 #define GOB_SURFACE_H
 
-#include "common/scummsys.h"
 #include "common/ptr.h"
 #include "common/rational.h"
+#include "common/scummsys.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -35,7 +35,7 @@ namespace Gob {
 
 enum ImageType {
 	kImageTypeNone = -1,
-	kImageTypeTGA  =  0,
+	kImageTypeTGA = 0,
 	kImageTypeIFF,
 	kImageTypeBRC,
 	kImageTypeBMP,
@@ -97,9 +97,9 @@ public:
 	Surface(uint16 width, uint16 height, uint8 bpp, const byte *vidMem);
 	~Surface();
 
-	uint16 getWidth () const;
+	uint16 getWidth() const;
 	uint16 getHeight() const;
-	uint8  getBPP   () const;
+	uint8 getBPP() const;
 
 	byte *getData(uint16 x = 0, uint16 y = 0);
 	const byte *getData(uint16 x = 0, uint16 y = 0) const;
@@ -126,7 +126,7 @@ public:
 	void clear();
 
 	void shadeRect(uint16 left, uint16 top, uint16 right, uint16 bottom,
-			uint32 color, uint8 strength);
+	               uint32 color, uint8 strength);
 
 	void recolor(uint8 from, uint8 to);
 
@@ -145,18 +145,18 @@ public:
 private:
 	uint16 _width;
 	uint16 _height;
-	uint8  _bpp;
+	uint8 _bpp;
 
-	bool  _ownVidMem;
+	bool _ownVidMem;
 	byte *_vidMem;
 
 	static bool clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom, int16 &x, int16 &y,
 	                         uint16 dWidth, uint16 dHeight, uint16 sWidth, uint16 sHeight);
 
-	bool loadTGA (Common::SeekableReadStream &stream);
-	bool loadIFF (Common::SeekableReadStream &stream);
-	bool loadBRC (Common::SeekableReadStream &stream);
-	bool loadBMP (Common::SeekableReadStream &stream);
+	bool loadTGA(Common::SeekableReadStream &stream);
+	bool loadIFF(Common::SeekableReadStream &stream);
+	bool loadBRC(Common::SeekableReadStream &stream);
+	bool loadBMP(Common::SeekableReadStream &stream);
 	bool loadJPEG(Common::SeekableReadStream &stream);
 };
 

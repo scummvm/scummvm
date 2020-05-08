@@ -21,17 +21,17 @@
  */
 
 #include "made/pmvplayer.h"
+#include "made/graphics.h"
 #include "made/made.h"
 #include "made/screen.h"
-#include "made/graphics.h"
 
-#include "common/file.h"
 #include "common/debug.h"
-#include "common/system.h"
 #include "common/events.h"
+#include "common/file.h"
+#include "common/system.h"
 
-#include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 #include "graphics/surface.h"
 
@@ -58,24 +58,24 @@ bool PmvPlayer::play(const char *filename) {
 
 	uint32 chunkType, chunkSize, prevChunkSize = 0;
 
-	readChunk(chunkType, chunkSize);	// "MOVE"
-	if (chunkType != MKTAG('M','O','V','E')) {
+	readChunk(chunkType, chunkSize); // "MOVE"
+	if (chunkType != MKTAG('M', 'O', 'V', 'E')) {
 		warning("Unexpected PMV video header, expected 'MOVE'");
 		delete _fd;
 		return false;
 	}
 
-	readChunk(chunkType, chunkSize);	// "MHED"
-	if (chunkType != MKTAG('M','H','E','D')) {
+	readChunk(chunkType, chunkSize); // "MHED"
+	if (chunkType != MKTAG('M', 'H', 'E', 'D')) {
 		warning("Unexpected PMV video header, expected 'MHED'");
 		delete _fd;
 		return false;
 	}
 
 	uint frameDelay = _fd->readUint16LE();
-	_fd->skip(4);	// always 0?
+	_fd->skip(4); // always 0?
 	uint frameCount = _fd->readUint16LE();
-	_fd->skip(4);	// always 0?
+	_fd->skip(4); // always 0?
 
 	uint soundFreq = _fd->readUint16LE();
 	// Note: There seem to be weird sound frequencies in PMV videos.
@@ -125,7 +125,7 @@ bool PmvPlayer::play(const char *filename) {
 		int32 frameTime = _vm->_system->getMillis();
 
 		readChunk(chunkType, chunkSize);
-		if (chunkType != MKTAG('M','F','R','M')) {
+		if (chunkType != MKTAG('M', 'F', 'R', 'M')) {
 			warning("Unknown chunk type");
 		}
 
@@ -179,7 +179,7 @@ bool PmvPlayer::play(const char *filename) {
 		lineSize = READ_LE_UINT16(imageData + 24);
 
 		debug(2, "width = %d; height = %d; cmdOffs = %04X; pixelOffs = %04X; maskOffs = %04X; lineSize = %d\n",
-			width, height, cmdOffs, pixelOffs, maskOffs, lineSize);
+		      width, height, cmdOffs, pixelOffs, maskOffs, lineSize);
 
 		if (!_surface) {
 			_surface = new Graphics::Surface();
@@ -200,7 +200,7 @@ bool PmvPlayer::play(const char *filename) {
 
 		if (skipFrames == 0) {
 			int32 waitTime = (frameNumber * frameDelay) -
-				(g_system->getMillis() - soundStartTime) - (_vm->_system->getMillis() - frameTime);
+			                 (g_system->getMillis() - soundStartTime) - (_vm->_system->getMillis() - frameTime);
 
 			if (waitTime < 0) {
 				skipFrames = -waitTime / frameDelay;
@@ -212,7 +212,6 @@ bool PmvPlayer::play(const char *filename) {
 			skipFrames--;
 
 		frameNumber++;
-
 	}
 
 	delete soundDecoderData;
@@ -224,13 +223,12 @@ bool PmvPlayer::play(const char *filename) {
 	//delete _audioStream;
 	delete _fd;
 
-	if(_surface)
+	if (_surface)
 		_surface->free();
 
 	delete _surface;
 
 	return !_aborted;
-
 }
 
 void PmvPlayer::readChunk(uint32 &chunkType, uint32 &chunkSize) {
@@ -238,10 +236,9 @@ void PmvPlayer::readChunk(uint32 &chunkType, uint32 &chunkSize) {
 	chunkSize = _fd->readUint32LE();
 
 	debug(2, "ofs = %08X; chunkType = %c%c%c%c; chunkSize = %d\n",
-		_fd->pos(),
-		(chunkType >> 24) & 0xFF, (chunkType >> 16) & 0xFF, (chunkType >> 8) & 0xFF, chunkType & 0xFF,
-		chunkSize);
-
+	      _fd->pos(),
+	      (chunkType >> 24) & 0xFF, (chunkType >> 16) & 0xFF, (chunkType >> 8) & 0xFF, chunkType & 0xFF,
+	      chunkSize);
 }
 
 void PmvPlayer::handleEvents() {
@@ -260,7 +257,7 @@ void PmvPlayer::handleEvents() {
 
 void PmvPlayer::updateScreen() {
 	_vm->_system->copyRectToScreen(_surface->getPixels(), _surface->pitch,
-									(320 - _surface->w) / 2, (200 - _surface->h) / 2, _surface->w, _surface->h);
+	                               (320 - _surface->w) / 2, (200 - _surface->h) / 2, _surface->w, _surface->h);
 	_vm->_system->updateScreen();
 }
 
@@ -276,4 +273,4 @@ void PmvPlayer::decompressPalette(byte *palData, byte *outPal, uint32 palDataSiz
 	}
 }
 
-}
+} // namespace Made

@@ -23,16 +23,29 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_OVERWORLD_MONSTER_H
 #define ULTIMA_ULTIMA1_WIDGETS_OVERWORLD_MONSTER_H
 
-#include "ultima/ultima1/widgets/overworld_widget.h"
 #include "ultima/shared/maps/creature.h"
+#include "ultima/ultima1/widgets/overworld_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 enum OverworldMonsterId {
-	NESS_CREATURE = 0, GIANT_SQUID, DRAGON_TURTLE, PIRATE_SHIP, HOOD, BEAR, HIDDEN_ARCHER, DARK_KNIGHT,
-	EVIL_TRENT, THIEF, ORC, KNIGHT, NECROMANCER, EVIL_RANGER, WANDERING_WARLOCK
+	NESS_CREATURE = 0,
+	GIANT_SQUID,
+	DRAGON_TURTLE,
+	PIRATE_SHIP,
+	HOOD,
+	BEAR,
+	HIDDEN_ARCHER,
+	DARK_KNIGHT,
+	EVIL_TRENT,
+	THIEF,
+	ORC,
+	KNIGHT,
+	NECROMANCER,
+	EVIL_RANGER,
+	WANDERING_WARLOCK
 };
 
 /**
@@ -42,6 +55,7 @@ class OverworldMonster : public OverworldWidget, public Shared::Maps::Creature {
 private:
 	OverworldMonsterId _monsterId;
 	uint _attackStrength;
+
 protected:
 	/**
 	 * Handles attacking the party
@@ -52,6 +66,7 @@ protected:
 	 * Handles moving creatures
 	 */
 	void movement() override;
+
 public:
 	DECLARE_WIDGET(OverworldMonster)
 
@@ -59,13 +74,13 @@ public:
 	 * Constructor
 	 */
 	OverworldMonster(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum, int hitPoints,
-		const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE);
+	                 const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE);
 
 	/**
 	 * Constructor
 	 */
 	OverworldMonster(Shared::Game *game, Shared::Maps::MapBase *map) : OverworldWidget(game, map),
-		Shared::Maps::Creature(game, map), _monsterId(NESS_CREATURE), _attackStrength(0) {}
+	                                                                   Shared::Maps::Creature(game, map), _monsterId(NESS_CREATURE), _attackStrength(0) {}
 
 	/**
 	 * Destructor
@@ -98,8 +113,7 @@ public:
 	 * Constructor
 	 */
 	EnemyVessel(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum, int hitPoints,
-		const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) :
-		OverworldMonster(game, map, tileNum, hitPoints, pt, dir) {}
+	            const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) : OverworldMonster(game, map, tileNum, hitPoints, pt, dir) {}
 
 	/**
 	 * Constructor

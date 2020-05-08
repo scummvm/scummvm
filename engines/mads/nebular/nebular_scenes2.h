@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -45,6 +45,7 @@ protected:
 	void setPlayerSpritesPrefix();
 
 	void sceneEntrySound();
+
 public:
 	Scene2xx(MADSEngine *vm) : NebularScene(vm) {}
 };
@@ -315,7 +316,7 @@ public:
 	void setup() override;
 	void enter() override;
 	void step() override;
-	void actions() override {};
+	void actions() override{};
 };
 
 } // End of namespace Nebular

@@ -25,9 +25,9 @@
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 
-#include "kyra/kyra_v1.h"
 #include "kyra/graphics/screen_eob.h"
 #include "kyra/gui/gui_eob.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/text/text_lol.h"
 
 namespace Kyra {
@@ -126,7 +126,8 @@ struct KyraRpgGUISettings {
 };
 
 class KyraRpgEngine : public KyraEngine_v1 {
-friend class TextDisplayer_rpg;
+	friend class TextDisplayer_rpg;
+
 public:
 	KyraRpgEngine(OSystem *system, const GameFlags &flags);
 	~KyraRpgEngine() override;
@@ -339,7 +340,7 @@ protected:
 	bool clickedShape(int shapeIndex);
 
 	virtual const KyraRpgGUISettings *guiSettings() const = 0;
-	virtual void useMainMenuGUISettings(bool toggle) {};
+	virtual void useMainMenuGUISettings(bool toggle){};
 
 	int _clickedShapeXOffs;
 	int _clickedShapeYOffs;

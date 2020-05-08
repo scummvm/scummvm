@@ -30,11 +30,12 @@
 namespace Kyra {
 
 class EoBEngine : public EoBCoreEngine {
-friend class GUI_EoB;
-friend class EoBSeqPlayerCommon;
-friend class EoBIntroPlayer;
-friend class EoBPC98FinalePlayer;
-friend class EoBAmigaFinalePlayer;
+	friend class GUI_EoB;
+	friend class EoBSeqPlayerCommon;
+	friend class EoBIntroPlayer;
+	friend class EoBPC98FinalePlayer;
+	friend class EoBAmigaFinalePlayer;
+
 public:
 	EoBEngine(OSystem *system, const GameFlags &flags);
 	~EoBEngine() override;

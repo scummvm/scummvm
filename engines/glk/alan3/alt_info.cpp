@@ -21,27 +21,26 @@
  */
 
 #include "glk/alan3/alt_info.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/checkentry.h"
-#include "glk/alan3/debug.h"
-#include "glk/alan3/inter.h"
-#include "glk/alan3/glkio.h"
-#include "glk/alan3/lists.h"
-#include "glk/alan3/instance.h"
-#include "glk/alan3/options.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/current.h"
 #include "glk/alan3/class.h"
-#include "glk/alan3/params.h"
+#include "glk/alan3/current.h"
+#include "glk/alan3/debug.h"
+#include "glk/alan3/glkio.h"
+#include "glk/alan3/instance.h"
+#include "glk/alan3/inter.h"
+#include "glk/alan3/lists.h"
 #include "glk/alan3/literal.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/options.h"
+#include "glk/alan3/params.h"
 #include "glk/alan3/syntax.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* Types */
 typedef AltInfo *AltInfoFinder(int verb, Parameter parameters[]);
-
 
 /*======================================================================*/
 void primeAltInfo(AltInfo *altInfo, int level, int parameter, int instance, int cls) {
@@ -53,7 +52,6 @@ void primeAltInfo(AltInfo *altInfo, int level, int parameter, int instance, int 
 	altInfo->end = FALSE;
 }
 
-
 /*----------------------------------------------------------------------*/
 static void traceInstanceAndItsClass(CONTEXT, Aid instance, Aid cls) {
 	CALL1(traceSay, instance)
@@ -61,7 +59,6 @@ static void traceInstanceAndItsClass(CONTEXT, Aid instance, Aid cls) {
 	if (cls != NO_CLASS)
 		printf(", inherited from %s[%d]", idOfClass(cls), cls);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void traceAltInfo(CONTEXT, AltInfo *alt) {
@@ -87,7 +84,6 @@ static void traceAltInfo(CONTEXT, AltInfo *alt) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void traceVerbCheck(CONTEXT, AltInfo *alt, bool execute) {
 	if (traceSectionOption && execute) {
@@ -96,7 +92,6 @@ static void traceVerbCheck(CONTEXT, AltInfo *alt, bool execute) {
 		printf(", CHECK:>\n");
 	}
 }
-
 
 /*======================================================================*/
 bool checkFailed(CONTEXT, AltInfo *altInfo, bool execute) {
@@ -110,7 +105,6 @@ bool checkFailed(CONTEXT, AltInfo *altInfo, bool execute) {
 	}
 	return FALSE;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void traceVerbExecution(CONTEXT, AltInfo *alt) {
@@ -137,7 +131,6 @@ static void traceVerbExecution(CONTEXT, AltInfo *alt) {
 	}
 }
 
-
 /*======================================================================*/
 bool executedOk(CONTEXT, AltInfo *altInfo) {
 	fail = FALSE;
@@ -150,12 +143,10 @@ bool executedOk(CONTEXT, AltInfo *altInfo) {
 	return !fail;
 }
 
-
 /*======================================================================*/
 bool canBeExecuted(AltInfo *altInfo) {
 	return altInfo->alt != NULL && altInfo->alt->action != 0;
 }
-
 
 /*======================================================================*/
 AltInfo *duplicateAltInfoArray(AltInfo original[]) {
@@ -170,7 +161,6 @@ AltInfo *duplicateAltInfoArray(AltInfo original[]) {
 	return duplicate;
 }
 
-
 /*======================================================================*/
 int lastAltInfoIndex(AltInfo altInfo[]) {
 	int altIndex;
@@ -181,12 +171,10 @@ int lastAltInfoIndex(AltInfo altInfo[]) {
 	return altIndex;
 }
 
-
 /*----------------------------------------------------------------------*/
 static AltInfo *nextFreeAltInfo(AltInfoArray altInfos) {
 	return &altInfos[lastAltInfoIndex(altInfos) + 1];
 }
-
 
 /*----------------------------------------------------------------------*/
 static void addAlternative(AltInfoArray altInfos, int verb, int level, Aint parameterNumber, Aint theClass, Aid theInstance, AltEntryFinder finder) {
@@ -199,12 +187,10 @@ static void addAlternative(AltInfoArray altInfos, int verb, int level, Aint para
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void addGlobalAlternatives(AltInfoArray altInfos, int verb, AltEntryFinder finder) {
 	addAlternative(altInfos, verb, GLOBAL_LEVEL, NO_PARAMETER, NO_CLASS, NO_INSTANCE, finder);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void addAlternativesFromParents(AltInfoArray altInfos, int verb, int level, Aint parameterNumber, Aint theClass, Aid theInstance, AltEntryFinder finder) {
@@ -217,7 +203,6 @@ static void addAlternativesFromParents(AltInfoArray altInfos, int verb, int leve
 
 	addAlternative(altInfos, verb, level, parameterNumber, theClass, theInstance, finder);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void addAlternativesFromLocation(AltInfoArray altInfos, int verb, Aid location, AltEntryFinder finder) {
@@ -234,7 +219,6 @@ static void addAlternativesFromLocation(AltInfoArray altInfos, int verb, Aid loc
 	addAlternative(altInfos, verb, LOCATION_LEVEL, NO_PARAMETER, NO_CLASS, location, finder);
 }
 
-
 /*----------------------------------------------------------------------*/
 static void addAlternativesFromParameter(AltInfoArray altInfos, int verb, Parameter parameters[], int parameterNumber, AltEntryFinder finder) {
 	Aid parent;
@@ -249,7 +233,6 @@ static void addAlternativesFromParameter(AltInfoArray altInfos, int verb, Parame
 	if (!isLiteral(theInstance))
 		addAlternative(altInfos, verb, PARAMETER_LEVEL, parameterNumber, NO_CLASS, theInstance, finder);
 }
-
 
 /*======================================================================*/
 bool anyCheckFailed(CONTEXT, AltInfoArray altInfo, bool execute) {
@@ -266,7 +249,6 @@ bool anyCheckFailed(CONTEXT, AltInfoArray altInfo, bool execute) {
 	return FALSE;
 }
 
-
 /*======================================================================*/
 bool anythingToExecute(AltInfo altInfo[]) {
 	int altIndex;
@@ -278,7 +260,6 @@ bool anythingToExecute(AltInfo altInfo[]) {
 				return TRUE;
 	return FALSE;
 }
-
 
 /*----------------------------------------------------------------------*/
 static VerbEntry *findVerbEntry(int verbCode, VerbEntry *entries) {
@@ -296,25 +277,25 @@ static VerbEntry *findVerbEntry(int verbCode, VerbEntry *entries) {
 	return NULL;
 }
 
-
 /*----------------------------------------------------------------------*/
 static AltEntry *findAlternative(Aaddr verbTableAddress, int verbCode, int parameterNumber) {
 	AltEntry *alt;
 	VerbEntry *verbEntry;
 
-	if (verbTableAddress == 0) return NULL;
+	if (verbTableAddress == 0)
+		return NULL;
 
-	verbEntry = findVerbEntry(verbCode, (VerbEntry *) pointerTo(verbTableAddress));
+	verbEntry = findVerbEntry(verbCode, (VerbEntry *)pointerTo(verbTableAddress));
 	if (verbEntry != NULL)
-		for (alt = (AltEntry *) pointerTo(verbEntry->alts); !isEndOfArray(alt); alt++) {
+		for (alt = (AltEntry *)pointerTo(verbEntry->alts); !isEndOfArray(alt); alt++) {
 			if (alt->param == parameterNumber || alt->param == 0) {
-				if (verbEntry->code < 0) current.meta = TRUE;
+				if (verbEntry->code < 0)
+					current.meta = TRUE;
 				return alt;
 			}
 		}
 	return NULL;
 }
-
 
 /*----------------------------------------------------------------------*/
 static AltEntry *alternativeFinder(int verb, int parameterNumber, int theInstance, int theClass) {
@@ -325,7 +306,6 @@ static AltEntry *alternativeFinder(int verb, int parameterNumber, int theInstanc
 	else
 		return findAlternative(header->verbTableAddress, verb, parameterNumber);
 }
-
 
 /*======================================================================*/
 AltInfo *findAllAlternatives(int verb, Parameter parameters[]) {
@@ -342,7 +322,6 @@ AltInfo *findAllAlternatives(int verb, Parameter parameters[]) {
 	}
 	return duplicateAltInfoArray(altInfos);
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool possibleWithFinder(CONTEXT, int verb, Parameter parameters[], AltInfoFinder *finder) {
@@ -365,8 +344,6 @@ static bool possibleWithFinder(CONTEXT, int verb, Parameter parameters[], AltInf
 
 	return (anything);
 }
-
-
 
 /*======================================================================*/
 bool possible(CONTEXT, int verb, Parameter inParameters[], ParameterPosition parameterPositions[]) {

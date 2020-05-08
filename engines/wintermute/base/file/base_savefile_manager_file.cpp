@@ -27,11 +27,10 @@
  */
 
 #include "engines/wintermute/base/file/base_savefile_manager_file.h"
-#include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/base_engine.h"
-#include "common/system.h"
 #include "common/savefile.h"
-
+#include "common/system.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
 
 namespace Wintermute {
 

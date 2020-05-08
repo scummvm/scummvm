@@ -36,138 +36,137 @@
 namespace StarTrek {
 
 extern const RoomAction trial1ActionList[] = {
-	{ {ACTION_TICK, 1,  0, 0}, &Room::trial1Tick1 },
-	{ {ACTION_TICK, 50, 0, 0}, &Room::trial1Tick50 },
-	{ {ACTION_DONE_ANIM, 9, 0, 0}, &Room::trial1DoorOpened },
+    {{ACTION_TICK, 1, 0, 0}, &Room::trial1Tick1},
+    {{ACTION_TICK, 50, 0, 0}, &Room::trial1Tick50},
+    {{ACTION_DONE_ANIM, 9, 0, 0}, &Room::trial1DoorOpened},
 
-	{ {ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::trial1TouchedHotspot0 },
-	{ {ACTION_DONE_ANIM, 1, 0, 0},       &Room::trial1KirkDied },
+    {{ACTION_TOUCHED_HOTSPOT, 0, 0, 0}, &Room::trial1TouchedHotspot0},
+    {{ACTION_DONE_ANIM, 1, 0, 0}, &Room::trial1KirkDied},
 
-	{ {ACTION_TOUCHED_HOTSPOT, 1, 0, 0}, &Room::trial1TouchedHotspot1 },
+    {{ACTION_TOUCHED_HOTSPOT, 1, 0, 0}, &Room::trial1TouchedHotspot1},
 
-	{ {ACTION_GET, HOTSPOT_RODS, 0, 0}, &Room::trial1GetRod },
-	{ {ACTION_DONE_WALK, 4, 0, 0},      &Room::trial1ReachedRod },
-	{ {ACTION_DONE_ANIM, 5, 0, 0},      &Room::trial1PickedUpRod },
+    {{ACTION_GET, HOTSPOT_RODS, 0, 0}, &Room::trial1GetRod},
+    {{ACTION_DONE_WALK, 4, 0, 0}, &Room::trial1ReachedRod},
+    {{ACTION_DONE_ANIM, 5, 0, 0}, &Room::trial1PickedUpRod},
 
-	{ {ACTION_LOOK, OBJECT_KIRK, 0, 0},      &Room::trial1LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0},     &Room::trial1LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0},     &Room::trial1LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0},  &Room::trial1LookAtRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_WALL, 0, 0},     &Room::trial1LookAtWall },
-	{ {ACTION_LOOK, HOTSPOT_FLOOR, 0, 0},     &Room::trial1LookAtFloor },
-	{ {ACTION_LOOK, HOTSPOT_RODS, 0, 0},     &Room::trial1LookAtRods },
-	{ {ACTION_LOOK, HOTSPOT_DOOR, 0, 0},     &Room::trial1LookAtDoor },
-	{ {ACTION_LOOK, HOTSPOT_LOCK, 0, 0},     &Room::trial1LookAtLock },
-	{ {ACTION_LOOK, OBJECT_ENTITY, 0, 0},     &Room::trial1LookAtEntity },
-	{ {ACTION_LOOK, OBJECT_MOLTEN_ROCK, 0, 0}, &Room::trial1LookAtMoltenRock },
-	{ {ACTION_TALK, OBJECT_KIRK, 0, 0},      &Room::trial1TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK, 0, 0},     &Room::trial1TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY, 0, 0},     &Room::trial1TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT, 0, 0},  &Room::trial1TalkToRedshirt },
-	{ {ACTION_TALK, OBJECT_ENTITY, 0, 0},  &Room::trial1TalkToEntity },
+    {{ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::trial1LookAtKirk},
+    {{ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::trial1LookAtSpock},
+    {{ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::trial1LookAtMccoy},
+    {{ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::trial1LookAtRedshirt},
+    {{ACTION_LOOK, HOTSPOT_WALL, 0, 0}, &Room::trial1LookAtWall},
+    {{ACTION_LOOK, HOTSPOT_FLOOR, 0, 0}, &Room::trial1LookAtFloor},
+    {{ACTION_LOOK, HOTSPOT_RODS, 0, 0}, &Room::trial1LookAtRods},
+    {{ACTION_LOOK, HOTSPOT_DOOR, 0, 0}, &Room::trial1LookAtDoor},
+    {{ACTION_LOOK, HOTSPOT_LOCK, 0, 0}, &Room::trial1LookAtLock},
+    {{ACTION_LOOK, OBJECT_ENTITY, 0, 0}, &Room::trial1LookAtEntity},
+    {{ACTION_LOOK, OBJECT_MOLTEN_ROCK, 0, 0}, &Room::trial1LookAtMoltenRock},
+    {{ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::trial1TalkToKirk},
+    {{ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::trial1TalkToSpock},
+    {{ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::trial1TalkToMccoy},
+    {{ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::trial1TalkToRedshirt},
+    {{ACTION_TALK, OBJECT_ENTITY, 0, 0}, &Room::trial1TalkToEntity},
 
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_KIRK,     0}, &Room::trial1UsePhaserOnCrewman },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_KIRK,     0}, &Room::trial1UsePhaserOnCrewman },
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_SPOCK,    0}, &Room::trial1UsePhaserOnCrewman },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_SPOCK,    0}, &Room::trial1UsePhaserOnCrewman },
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_MCCOY,    0}, &Room::trial1UsePhaserOnCrewman },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_MCCOY,    0}, &Room::trial1UsePhaserOnCrewman },
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_REDSHIRT, 0}, &Room::trial1UsePhaserOnCrewman },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_REDSHIRT, 0}, &Room::trial1UsePhaserOnCrewman },
+    {{ACTION_USE, OBJECT_IPHASERS, OBJECT_KIRK, 0}, &Room::trial1UsePhaserOnCrewman},
+    {{ACTION_USE, OBJECT_IPHASERK, OBJECT_KIRK, 0}, &Room::trial1UsePhaserOnCrewman},
+    {{ACTION_USE, OBJECT_IPHASERS, OBJECT_SPOCK, 0}, &Room::trial1UsePhaserOnCrewman},
+    {{ACTION_USE, OBJECT_IPHASERK, OBJECT_SPOCK, 0}, &Room::trial1UsePhaserOnCrewman},
+    {{ACTION_USE, OBJECT_IPHASERS, OBJECT_MCCOY, 0}, &Room::trial1UsePhaserOnCrewman},
+    {{ACTION_USE, OBJECT_IPHASERK, OBJECT_MCCOY, 0}, &Room::trial1UsePhaserOnCrewman},
+    {{ACTION_USE, OBJECT_IPHASERS, OBJECT_REDSHIRT, 0}, &Room::trial1UsePhaserOnCrewman},
+    {{ACTION_USE, OBJECT_IPHASERK, OBJECT_REDSHIRT, 0}, &Room::trial1UsePhaserOnCrewman},
 
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_ENTITY, 0}, &Room::trial1UsePhaserOnEntity },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_ENTITY, 0}, &Room::trial1UsePhaserOnEntity },
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_WALL, 0}, &Room::trial1UsePhaserOnWall },
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_WALL, 0}, &Room::trial1UsePhaserOnWall },
+    {{ACTION_USE, OBJECT_IPHASERS, OBJECT_ENTITY, 0}, &Room::trial1UsePhaserOnEntity},
+    {{ACTION_USE, OBJECT_IPHASERK, OBJECT_ENTITY, 0}, &Room::trial1UsePhaserOnEntity},
+    {{ACTION_USE, OBJECT_IPHASERS, HOTSPOT_WALL, 0}, &Room::trial1UsePhaserOnWall},
+    {{ACTION_USE, OBJECT_IPHASERK, HOTSPOT_WALL, 0}, &Room::trial1UsePhaserOnWall},
 
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_FLOOR, 0}, &Room::trial1UseStunPhaserOnFloor },
-	{ {ACTION_DONE_WALK, 12, 0, 0}, &Room::trial1ReachedFloorToUseStunPhaser },
-	{ {ACTION_DONE_ANIM, 13, 0, 0}, &Room::trial1DoneShootingFloorWithStunPhaser },
+    {{ACTION_USE, OBJECT_IPHASERS, HOTSPOT_FLOOR, 0}, &Room::trial1UseStunPhaserOnFloor},
+    {{ACTION_DONE_WALK, 12, 0, 0}, &Room::trial1ReachedFloorToUseStunPhaser},
+    {{ACTION_DONE_ANIM, 13, 0, 0}, &Room::trial1DoneShootingFloorWithStunPhaser},
 
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_FLOOR, 0}, &Room::trial1UseKillPhaserOnFloor },
-	{ {ACTION_DONE_WALK, 14, 0, 0}, &Room::trial1ReachedFloorToUseKillPhaser },
-	{ {ACTION_DONE_ANIM, 15, 0, 0}, &Room::trial1DoneShootingFloorWithKillPhaser },
+    {{ACTION_USE, OBJECT_IPHASERK, HOTSPOT_FLOOR, 0}, &Room::trial1UseKillPhaserOnFloor},
+    {{ACTION_DONE_WALK, 14, 0, 0}, &Room::trial1ReachedFloorToUseKillPhaser},
+    {{ACTION_DONE_ANIM, 15, 0, 0}, &Room::trial1DoneShootingFloorWithKillPhaser},
 
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_RODS, 0}, &Room::trial1UsePhaserOnRod },
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_RODS, 0}, &Room::trial1UsePhaserOnRod },
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_DOOR, 0}, &Room::trial1UsePhaserOnDoor },
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_DOOR, 0}, &Room::trial1UsePhaserOnDoor },
-	{ {ACTION_USE, OBJECT_IPHASERS, HOTSPOT_LOCK, 0}, &Room::trial1UsePhaserOnLock },
-	{ {ACTION_USE, OBJECT_IPHASERK, HOTSPOT_LOCK, 0}, &Room::trial1UsePhaserOnLock },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::trial1UseMTricorderOnKirk },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0}, &Room::trial1UseMTricorderOnSpock },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::trial1UseMTricorderOnMccoy },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::trial1UseMTricorderOnRedshirt },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_ENTITY, 0}, &Room::trial1UseMTricorderOnEntity },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WALL, 0}, &Room::trial1UseSTricorderOnWall },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_ENTITY, 0}, &Room::trial1UseSTricorderOnEntity },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_RODS, 0}, &Room::trial1UseSTricorderOnRods },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_FLOOR, 0}, &Room::trial1UseSTricorderOnFloor },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DOOR, 0}, &Room::trial1UseSTricorderOnDoor },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_LOCK, 0}, &Room::trial1UseSTricorderOnLock },
-	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::trial1UseCommunicator },
-	{ {ACTION_USE, OBJECT_MCCOY, OBJECT_ENTITY, 0}, &Room::trial1UseMccoyOnEntity },
-	{ {ACTION_USE, OBJECT_MCCOY, HOTSPOT_LOCK, 0}, &Room::trial1UseMccoyOnLock },
-	{ {ACTION_USE, OBJECT_MCCOY, HOTSPOT_FLOOR, 0}, &Room::trial1UseMccoyOnFloor },
-	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_ENTITY, 0}, &Room::trial1UseSpockOnEntity },
+    {{ACTION_USE, OBJECT_IPHASERS, HOTSPOT_RODS, 0}, &Room::trial1UsePhaserOnRod},
+    {{ACTION_USE, OBJECT_IPHASERK, HOTSPOT_RODS, 0}, &Room::trial1UsePhaserOnRod},
+    {{ACTION_USE, OBJECT_IPHASERS, HOTSPOT_DOOR, 0}, &Room::trial1UsePhaserOnDoor},
+    {{ACTION_USE, OBJECT_IPHASERK, HOTSPOT_DOOR, 0}, &Room::trial1UsePhaserOnDoor},
+    {{ACTION_USE, OBJECT_IPHASERS, HOTSPOT_LOCK, 0}, &Room::trial1UsePhaserOnLock},
+    {{ACTION_USE, OBJECT_IPHASERK, HOTSPOT_LOCK, 0}, &Room::trial1UsePhaserOnLock},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_KIRK, 0}, &Room::trial1UseMTricorderOnKirk},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK, 0}, &Room::trial1UseMTricorderOnSpock},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY, 0}, &Room::trial1UseMTricorderOnMccoy},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::trial1UseMTricorderOnRedshirt},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_ENTITY, 0}, &Room::trial1UseMTricorderOnEntity},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WALL, 0}, &Room::trial1UseSTricorderOnWall},
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_ENTITY, 0}, &Room::trial1UseSTricorderOnEntity},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_RODS, 0}, &Room::trial1UseSTricorderOnRods},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_FLOOR, 0}, &Room::trial1UseSTricorderOnFloor},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DOOR, 0}, &Room::trial1UseSTricorderOnDoor},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_LOCK, 0}, &Room::trial1UseSTricorderOnLock},
+    {{ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::trial1UseCommunicator},
+    {{ACTION_USE, OBJECT_MCCOY, OBJECT_ENTITY, 0}, &Room::trial1UseMccoyOnEntity},
+    {{ACTION_USE, OBJECT_MCCOY, HOTSPOT_LOCK, 0}, &Room::trial1UseMccoyOnLock},
+    {{ACTION_USE, OBJECT_MCCOY, HOTSPOT_FLOOR, 0}, &Room::trial1UseMccoyOnFloor},
+    {{ACTION_USE, OBJECT_SPOCK, OBJECT_ENTITY, 0}, &Room::trial1UseSpockOnEntity},
 
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_LOCK, 0}, &Room::trial1UseSpockOnLock },
-	{ {ACTION_DONE_WALK, 18, 0, 0},                &Room::trial1SpockReachedKeypad },
-	{ {ACTION_DONE_ANIM, 19, 0, 0},                &Room::trial1SpockUsedKeypad },
-	{ {ACTION_DONE_WALK, 20, 0, 0},                &Room::trial1SpockReachedKeypadWithExtraProgram },
-	{ {ACTION_DONE_ANIM, 21, 0, 0},                &Room::trial1SpockUsedKeypadWithExtraProgram },
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_LOCK, 0}, &Room::trial1UseSpockOnLock},
+    {{ACTION_DONE_WALK, 18, 0, 0}, &Room::trial1SpockReachedKeypad},
+    {{ACTION_DONE_ANIM, 19, 0, 0}, &Room::trial1SpockUsedKeypad},
+    {{ACTION_DONE_WALK, 20, 0, 0}, &Room::trial1SpockReachedKeypadWithExtraProgram},
+    {{ACTION_DONE_ANIM, 21, 0, 0}, &Room::trial1SpockUsedKeypadWithExtraProgram},
 
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_FLOOR, 0},    &Room::trial1UseSpockOnFloor },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_ENTITY, 0}, &Room::trial1UseRedshirtOnEntity },
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_FLOOR, 0}, &Room::trial1UseSpockOnFloor},
+    {{ACTION_USE, OBJECT_REDSHIRT, OBJECT_ENTITY, 0}, &Room::trial1UseRedshirtOnEntity},
 
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_LOCK, 0}, &Room::trial1UseRedshirtOnLock },
-	{ {ACTION_DONE_WALK, 24, 0, 0},                   &Room::trial1RedshirtReachedKeypad },
-	{ {ACTION_DONE_ANIM, 25, 0, 0},                   &Room::trial1RedshirtUsedKeypad },
-	{ {ACTION_DONE_WALK, 26, 0, 0},                   &Room::trial1RedshirtReachedKeypadWithExtraProgram },
-	{ {ACTION_DONE_ANIM, 27, 0, 0},                   &Room::trial1RedshirtUsedKeypadWithExtraProgram },
+    {{ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_LOCK, 0}, &Room::trial1UseRedshirtOnLock},
+    {{ACTION_DONE_WALK, 24, 0, 0}, &Room::trial1RedshirtReachedKeypad},
+    {{ACTION_DONE_ANIM, 25, 0, 0}, &Room::trial1RedshirtUsedKeypad},
+    {{ACTION_DONE_WALK, 26, 0, 0}, &Room::trial1RedshirtReachedKeypadWithExtraProgram},
+    {{ACTION_DONE_ANIM, 27, 0, 0}, &Room::trial1RedshirtUsedKeypadWithExtraProgram},
 
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_FLOOR, 0}, &Room::trial1UseRedshirtOnFloor },
-	{ {ACTION_USE, OBJECT_IWROD, OBJECT_MCCOY, 0},     &Room::trial1UseRodOnMccoy },
-	{ {ACTION_USE, OBJECT_IWROD, OBJECT_SPOCK, 0},     &Room::trial1UseRodOnSpock },
-	{ {ACTION_USE, OBJECT_IWROD, OBJECT_REDSHIRT, 0},  &Room::trial1UseRodOnRedshirt },
-	{ {ACTION_USE, OBJECT_IWROD, HOTSPOT_FLOOR, 0},    &Room::trial1UseRodOnFloorOrWall },
-	{ {ACTION_USE, OBJECT_IWROD, HOTSPOT_WALL, 0},     &Room::trial1UseRodOnFloorOrWall },
+    {{ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_FLOOR, 0}, &Room::trial1UseRedshirtOnFloor},
+    {{ACTION_USE, OBJECT_IWROD, OBJECT_MCCOY, 0}, &Room::trial1UseRodOnMccoy},
+    {{ACTION_USE, OBJECT_IWROD, OBJECT_SPOCK, 0}, &Room::trial1UseRodOnSpock},
+    {{ACTION_USE, OBJECT_IWROD, OBJECT_REDSHIRT, 0}, &Room::trial1UseRodOnRedshirt},
+    {{ACTION_USE, OBJECT_IWROD, HOTSPOT_FLOOR, 0}, &Room::trial1UseRodOnFloorOrWall},
+    {{ACTION_USE, OBJECT_IWROD, HOTSPOT_WALL, 0}, &Room::trial1UseRodOnFloorOrWall},
 
-	{ {ACTION_USE, OBJECT_IWROD, OBJECT_ENTITY, 0},    &Room::trial1UseWoodRodOnEntity },
-	{ {ACTION_DONE_WALK, 10, 0, 0},                    &Room::trial1ReachedPositionToThrowWoodRod },
-	{ {ACTION_DONE_ANIM,  6, 0, 0},                    &Room::trial1DoneThrowingWoodRod },
+    {{ACTION_USE, OBJECT_IWROD, OBJECT_ENTITY, 0}, &Room::trial1UseWoodRodOnEntity},
+    {{ACTION_DONE_WALK, 10, 0, 0}, &Room::trial1ReachedPositionToThrowWoodRod},
+    {{ACTION_DONE_ANIM, 6, 0, 0}, &Room::trial1DoneThrowingWoodRod},
 
-	{ {ACTION_USE, OBJECT_IWROD, HOTSPOT_LOCK, 0},    &Room::trial1UseWoodRodOnLock },
+    {{ACTION_USE, OBJECT_IWROD, HOTSPOT_LOCK, 0}, &Room::trial1UseWoodRodOnLock},
 
-	{ {ACTION_USE, OBJECT_IWROD, OBJECT_MOLTEN_ROCK, 0}, &Room::trial1UseWoodRodOnMoltenRock },
-	{ {ACTION_DONE_WALK, 16, 0, 0},                      &Room::trial1ReachedMoltenRock },
-	{ {ACTION_DONE_ANIM, 17, 0, 0},                      &Room::trial1DoneCoatingWoodRod },
+    {{ACTION_USE, OBJECT_IWROD, OBJECT_MOLTEN_ROCK, 0}, &Room::trial1UseWoodRodOnMoltenRock},
+    {{ACTION_DONE_WALK, 16, 0, 0}, &Room::trial1ReachedMoltenRock},
+    {{ACTION_DONE_ANIM, 17, 0, 0}, &Room::trial1DoneCoatingWoodRod},
 
-	{ {ACTION_USE, OBJECT_IIROD, OBJECT_MCCOY, 0},     &Room::trial1UseRodOnMccoy },
-	{ {ACTION_USE, OBJECT_IIROD, OBJECT_SPOCK, 0},     &Room::trial1UseRodOnSpock },
-	{ {ACTION_USE, OBJECT_IIROD, OBJECT_REDSHIRT, 0},  &Room::trial1UseRodOnRedshirt },
-	{ {ACTION_USE, OBJECT_IIROD, HOTSPOT_FLOOR, 0},    &Room::trial1UseRodOnFloorOrWall },
-	{ {ACTION_USE, OBJECT_IIROD, HOTSPOT_WALL, 0},     &Room::trial1UseRodOnFloorOrWall },
+    {{ACTION_USE, OBJECT_IIROD, OBJECT_MCCOY, 0}, &Room::trial1UseRodOnMccoy},
+    {{ACTION_USE, OBJECT_IIROD, OBJECT_SPOCK, 0}, &Room::trial1UseRodOnSpock},
+    {{ACTION_USE, OBJECT_IIROD, OBJECT_REDSHIRT, 0}, &Room::trial1UseRodOnRedshirt},
+    {{ACTION_USE, OBJECT_IIROD, HOTSPOT_FLOOR, 0}, &Room::trial1UseRodOnFloorOrWall},
+    {{ACTION_USE, OBJECT_IIROD, HOTSPOT_WALL, 0}, &Room::trial1UseRodOnFloorOrWall},
 
-	{ {ACTION_USE, OBJECT_IIROD, OBJECT_ENTITY, 0},    &Room::trial1UseIronRodOnEntity },
-	{ {ACTION_DONE_WALK, 11, 0, 0},                    &Room::trial1ReachedPositionToThrowIronRod },
-	{ {ACTION_DONE_ANIM,  7, 0, 0},                    &Room::trial1DoneThrowingIronRod },
+    {{ACTION_USE, OBJECT_IIROD, OBJECT_ENTITY, 0}, &Room::trial1UseIronRodOnEntity},
+    {{ACTION_DONE_WALK, 11, 0, 0}, &Room::trial1ReachedPositionToThrowIronRod},
+    {{ACTION_DONE_ANIM, 7, 0, 0}, &Room::trial1DoneThrowingIronRod},
 
-	{ {ACTION_USE, OBJECT_IIROD, HOTSPOT_LOCK, 0},   &Room::trial1UseIronRodOnLock },
-	{ {ACTION_GET, OBJECT_THROWN_IRON_ROD, 0, 0},    &Room::trial1GetThrownIronRod },
-	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0},             &Room::trial1WalkToDoor },
-	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},         &Room::trial1UseMedkit },
+    {{ACTION_USE, OBJECT_IIROD, HOTSPOT_LOCK, 0}, &Room::trial1UseIronRodOnLock},
+    {{ACTION_GET, OBJECT_THROWN_IRON_ROD, 0, 0}, &Room::trial1GetThrownIronRod},
+    {{ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::trial1WalkToDoor},
+    {{ACTION_USE, OBJECT_IMEDKIT, 0xff, 0}, &Room::trial1UseMedkit},
 
-	// ENHANCEMENT: Implement actions for the door object, not just the hotspot
-	{ {ACTION_LOOK, OBJECT_DOOR, 0, 0},              &Room::trial1LookAtDoor },
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_DOOR, 0}, &Room::trial1UsePhaserOnDoor },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_DOOR, 0}, &Room::trial1UsePhaserOnDoor },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_DOOR, 0}, &Room::trial1UseSTricorderOnDoor },
-	{ {ACTION_WALK, OBJECT_DOOR, 0, 0},              &Room::trial1WalkToDoor },
+    // ENHANCEMENT: Implement actions for the door object, not just the hotspot
+    {{ACTION_LOOK, OBJECT_DOOR, 0, 0}, &Room::trial1LookAtDoor},
+    {{ACTION_USE, OBJECT_IPHASERS, OBJECT_DOOR, 0}, &Room::trial1UsePhaserOnDoor},
+    {{ACTION_USE, OBJECT_IPHASERK, OBJECT_DOOR, 0}, &Room::trial1UsePhaserOnDoor},
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_DOOR, 0}, &Room::trial1UseSTricorderOnDoor},
+    {{ACTION_WALK, OBJECT_DOOR, 0, 0}, &Room::trial1WalkToDoor},
 };
 
 extern const int trial1NumActions = ARRAYSIZE(trial1ActionList);
-
 
 void Room::trial1Tick1() {
 	if (!_awayMission->trial.doorOpen) {
@@ -185,11 +184,11 @@ void Room::trial1Tick50() {
 		_awayMission->disableInput = false;
 	if (!_awayMission->trial.entityDefeated) {
 		showText(TX_SPEAKER_BENNIE, 56, true);
-		showText(TX_SPEAKER_SPOCK,  47, true);
-		showText(TX_SPEAKER_MCCOY,  32, true);
-		showText(TX_SPEAKER_KIRK,   7, true);
+		showText(TX_SPEAKER_SPOCK, 47, true);
+		showText(TX_SPEAKER_MCCOY, 32, true);
+		showText(TX_SPEAKER_KIRK, 7, true);
 		showText(TX_SPEAKER_BENNIE, 57, true);
-		showText(TX_SPEAKER_KIRK,   10, true);
+		showText(TX_SPEAKER_KIRK, 10, true);
 		showText(TX_SPEAKER_BENNIE, 55, true);
 	}
 }
@@ -217,7 +216,6 @@ void Room::trial1TouchedHotspot1() { // Entered the door
 		loadRoomIndex(2, 2);
 	}
 }
-
 
 void Room::trial1GetRod() {
 	_awayMission->disableInput = true;
@@ -314,7 +312,6 @@ void Room::trial1UsePhaserOnWall() {
 	showDescription(8, true);
 }
 
-
 void Room::trial1UseStunPhaserOnFloor() {
 	_awayMission->disableInput = true;
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
@@ -331,7 +328,6 @@ void Room::trial1DoneShootingFloorWithStunPhaser() {
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_E;
 	loadActorStandAnim(OBJECT_KIRK);
 }
-
 
 void Room::trial1UseKillPhaserOnFloor() {
 	_awayMission->disableInput = true;
@@ -430,10 +426,9 @@ void Room::trial1UseCommunicator() {
 		showText(TX_SPEAKER_UHURA, 90, true);
 
 		const TextRef choices[] = {
-			TX_SPEAKER_KIRK,
-			5, 4, 9,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    5, 4, 9,
+		    TX_BLANK};
 		int choice = showMultipleTexts(choices, true);
 
 		if (choice == 0) { // "Beam us back to the enterprise"
@@ -443,7 +438,7 @@ void Room::trial1UseCommunicator() {
 			showText(TX_SPEAKER_UHURA, 80, true);
 			_awayMission->disableInput = true;
 			loadRoomIndex(4, 4);
-		} // Else don't transport anywhere
+		}    // Else don't transport anywhere
 	} else { // Force field still up
 		if (_awayMission->trial.uhuraAnalyzedCode)
 			showText(TX_SPEAKER_UHURA, 68, true);
@@ -453,14 +448,13 @@ void Room::trial1UseCommunicator() {
 			showText(TX_SPEAKER_UHURA, 98, true);
 
 			if (_awayMission->trial.scannedLock) {
-				showText(TX_SPEAKER_KIRK,  11, true);
+				showText(TX_SPEAKER_KIRK, 11, true);
 				showText(TX_SPEAKER_UHURA, 101, true);
 
 				const TextRef choices[] = {
-					TX_SPEAKER_KIRK,
-					6, 2,
-					TX_BLANK
-				};
+				    TX_SPEAKER_KIRK,
+				    6, 2,
+				    TX_BLANK};
 				int choice = showMultipleTexts(choices, true);
 
 				if (choice == 0) { // Don't analyze the anomolous program
@@ -472,10 +466,9 @@ void Room::trial1UseCommunicator() {
 					showText(TX_SPEAKER_UHURA, 102, true);
 
 					const TextRef choices2[] = {
-						TX_SPEAKER_KIRK,
-						3, 8,
-						TX_BLANK
-					};
+					    TX_SPEAKER_KIRK,
+					    3, 8,
+					    TX_BLANK};
 					choice = showMultipleTexts(choices2, true);
 
 					if (choice == 0) { // Activate the program
@@ -516,7 +509,6 @@ void Room::trial1UseSpockOnEntity() {
 	showText(TX_SPEAKER_SPOCK, 39, true);
 }
 
-
 void Room::trial1UseSpockOnLock() {
 	if (_awayMission->trial.doorOpen)
 		showText(TX_SPEAKER_SPOCK, 38, true);
@@ -556,7 +548,6 @@ void Room::trial1SpockUsedKeypadWithExtraProgram() {
 	loadRoomIndex(5, 5);
 }
 
-
 void Room::trial1UseSpockOnFloor() {
 	showText(TX_SPEAKER_SPOCK, 35, true);
 }
@@ -564,7 +555,6 @@ void Room::trial1UseSpockOnFloor() {
 void Room::trial1UseRedshirtOnEntity() {
 	showText(TX_SPEAKER_BENNIE, 50, true);
 }
-
 
 void Room::trial1UseRedshirtOnLock() {
 	if (_awayMission->trial.doorOpen)
@@ -605,7 +595,6 @@ void Room::trial1RedshirtUsedKeypadWithExtraProgram() {
 	loadRoomIndex(5, 5);
 }
 
-
 void Room::trial1UseRedshirtOnFloor() {
 	showText(TX_SPEAKER_BENNIE, 49, true);
 }
@@ -628,7 +617,6 @@ void Room::trial1UseRodOnFloorOrWall() {
 	showDescription(TX_TRI1C002);
 }
 
-
 void Room::trial1UseWoodRodOnEntity() {
 	_awayMission->disableInput = true;
 	walkCrewmanC(OBJECT_KIRK, 0xe9, 0xad, &Room::trial1ReachedPositionToThrowWoodRod);
@@ -643,11 +631,9 @@ void Room::trial1DoneThrowingWoodRod() {
 	_awayMission->disableInput = false;
 }
 
-
 void Room::trial1UseWoodRodOnLock() {
 	showDescription(5, true);
 }
-
 
 void Room::trial1UseWoodRodOnMoltenRock() {
 	_awayMission->disableInput = true;
@@ -669,7 +655,6 @@ void Room::trial1DoneCoatingWoodRod() {
 		_awayMission->trial.missionScore += 1;
 	}
 }
-
 
 void Room::trial1UseIronRodOnEntity() {
 	_awayMission->disableInput = true;
@@ -697,7 +682,6 @@ void Room::trial1DoneThrowingIronRod() {
 	_awayMission->trial.missionScore += 1;
 }
 
-
 void Room::trial1UseIronRodOnLock() {
 	showDescription(4, true);
 }
@@ -715,4 +699,4 @@ void Room::trial1UseMedkit() {
 	showText(TX_SPEAKER_MCCOY, 26, true);
 }
 
-}
+} // namespace StarTrek

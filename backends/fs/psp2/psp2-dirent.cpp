@@ -49,12 +49,11 @@ DEALINGS IN THE SOFTWARE.
 #include <malloc.h>
 #include <string.h>
 
-#include <psp2/types.h>
 #include <psp2/io/dirent.h>
 #include <psp2/kernel/threadmgr.h>
+#include <psp2/types.h>
 
 #define SCE_ERRNO_MASK 0xFF
-
 
 struct DIR_ {
 	SceUID uid;
@@ -88,7 +87,7 @@ static inline void atomic_exchange(int *obj, int desired) {
 }
 
 #ifdef F_closedir
-int	closedir(DIR *dirp) {
+int closedir(DIR *dirp) {
 	if (!dirp) {
 		errno = EBADF;
 		return -1;
@@ -169,7 +168,7 @@ struct dirent *readdir(DIR *dirp) {
 }
 #endif
 #ifdef F_readdir_r
-int	readdir_r(DIR *dirp, struct dirent *x, struct dirent **y) {
+int readdir_r(DIR *dirp, struct dirent *x, struct dirent **y) {
 	errno = ENOSYS;
 	return -1;
 }

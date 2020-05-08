@@ -51,7 +51,7 @@ public:
 	void drawDrawList(DrawList &drawList, SpriteModule *spriteModule);
 	void drawSprite(Sprite &sprite, int x, int y);
 	void clear();
-//protected:
+	//protected:
 	OSystem *_system;
 	Graphics::Surface *_surface;
 };

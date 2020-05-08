@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/stream.h"
-#include "common/substream.h"
-#include "common/memstream.h"
-#include "common/md5.h"
 #include "common/algorithm.h"
 #include "common/bitstream.h"
+#include "common/md5.h"
+#include "common/memstream.h"
+#include "common/stream.h"
+#include "common/substream.h"
 
 #include "adl/disk.h"
 
@@ -162,9 +162,9 @@ static uint8 read44(byte *buffer, uint size, uint &pos) {
 
 static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool dos33, byte *const diskImage, uint tracks, Common::Array<bool> &goodSectors) {
 	// starting at 0xaa, 64 is invalid (see below)
-	const byte c_5and3_lookup[] = { 64, 0, 64, 1, 2, 3, 64, 64, 64, 64, 64, 4, 5, 6, 64, 64, 7, 8, 64, 9, 10, 11, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 12, 13, 64, 64, 14, 15, 64, 16, 17, 18, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 19, 20, 64, 21, 22, 23, 64, 64, 64, 64, 64, 24, 25, 26, 64, 64, 27, 28, 64, 29, 30, 31 };
+	const byte c_5and3_lookup[] = {64, 0, 64, 1, 2, 3, 64, 64, 64, 64, 64, 4, 5, 6, 64, 64, 7, 8, 64, 9, 10, 11, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 12, 13, 64, 64, 14, 15, 64, 16, 17, 18, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 19, 20, 64, 21, 22, 23, 64, 64, 64, 64, 64, 24, 25, 26, 64, 64, 27, 28, 64, 29, 30, 31};
 	// starting at 0x96, 64 is invalid (see below)
-	const byte c_6and2_lookup[] = { 0, 1, 64, 64, 2, 3, 64, 4, 5, 6, 64, 64, 64, 64, 64, 64, 7, 8, 64, 64, 64, 9, 10, 11, 12, 13, 64, 64, 14, 15, 16, 17, 18, 19, 64, 20, 21, 22, 23, 24, 25, 26, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 27, 64, 28, 29, 30, 64, 64, 64, 31, 64, 64, 32, 33, 64, 34, 35, 36, 37, 38, 39, 40, 64, 64, 64, 64, 64, 41, 42, 43, 64, 44, 45, 46, 47, 48, 49, 50, 64, 64, 51, 52, 53, 54, 55, 56, 64, 57, 58, 59, 60, 61, 62, 63 };
+	const byte c_6and2_lookup[] = {0, 1, 64, 64, 2, 3, 64, 4, 5, 6, 64, 64, 64, 64, 64, 64, 7, 8, 64, 64, 64, 9, 10, 11, 12, 13, 64, 64, 14, 15, 16, 17, 18, 19, 64, 20, 21, 22, 23, 24, 25, 26, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 27, 64, 28, 29, 30, 64, 64, 64, 31, 64, 64, 32, 33, 64, 34, 35, 36, 37, 38, 39, 40, 64, 64, 64, 64, 64, 41, 42, 43, 64, 44, 45, 46, 47, 48, 49, 50, 64, 64, 51, 52, 53, 54, 55, 56, 64, 57, 58, 59, 60, 61, 62, 63};
 
 	const uint sectorsPerTrack = (dos33 ? 16 : 13);
 	const uint bytesPerSector = 256;
@@ -238,7 +238,7 @@ static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool 
 
 		if (dos33) {
 			// We hardcode the DOS 3.3 mapping here. TODO: Do we also need raw/prodos?
-			int raw2dos[16] = { 0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15 };
+			int raw2dos[16] = {0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15};
 			sector = raw2dos[sector];
 			output = diskImage + (track * sectorsPerTrack + sector) * bytesPerSector;
 
@@ -252,12 +252,12 @@ static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool 
 				if (n < 86) { // use first pair of bits
 					output[n] |= ((inbuffer[n] & 1) << 1);
 					output[n] |= ((inbuffer[n] & 2) >> 1);
-				} else if (n < 86*2) { // second pair
-					output[n] |= ((inbuffer[n-86] & 4) >> 1);
-					output[n] |= ((inbuffer[n-86] & 8) >> 3);
+				} else if (n < 86 * 2) { // second pair
+					output[n] |= ((inbuffer[n - 86] & 4) >> 1);
+					output[n] |= ((inbuffer[n - 86] & 8) >> 3);
 				} else { // third pair
-					output[n] |= ((inbuffer[n-86*2] & 0x10) >> 3);
-					output[n] |= ((inbuffer[n-86*2] & 0x20) >> 5);
+					output[n] |= ((inbuffer[n - 86 * 2] & 0x10) >> 3);
+					output[n] |= ((inbuffer[n - 86 * 2] & 0x20) >> 5);
 				}
 			}
 		} else {
@@ -271,16 +271,16 @@ static bool decodeTrack(Common::SeekableReadStream &stream, uint trackLen, bool 
 			// so we have 51 of these batches (255 bytes), plus 2 bytes of 'leftover' nibbles for byte 256
 			for (uint n = 0; n < 51; ++n) {
 				// e.g. figure 3.18 of Beneath Apple DOS
-				byte lowbits1 = inbuffer[51*3 - n];
-				byte lowbits2 = inbuffer[51*2 - n];
-				byte lowbits3 = inbuffer[51*1 - n];
+				byte lowbits1 = inbuffer[51 * 3 - n];
+				byte lowbits2 = inbuffer[51 * 2 - n];
+				byte lowbits3 = inbuffer[51 * 1 - n];
 				byte lowbits4 = (lowbits1 & 2) << 1 | (lowbits2 & 2) | (lowbits3 & 2) >> 1;
 				byte lowbits5 = (lowbits1 & 1) << 2 | (lowbits2 & 1) << 1 | (lowbits3 & 1);
-				output[250 - 5*n] = (inbuffer[n + 51*3 + 1] << 3) | ((lowbits1 >> 2) & 0x7);
-				output[251 - 5*n] = (inbuffer[n + 51*4 + 1] << 3) | ((lowbits2 >> 2) & 0x7);
-				output[252 - 5*n] = (inbuffer[n + 51*5 + 1] << 3) | ((lowbits3 >> 2) & 0x7);
-				output[253 - 5*n] = (inbuffer[n + 51*6 + 1] << 3) | lowbits4;
-				output[254 - 5*n] = (inbuffer[n + 51*7 + 1] << 3) | lowbits5;
+				output[250 - 5 * n] = (inbuffer[n + 51 * 3 + 1] << 3) | ((lowbits1 >> 2) & 0x7);
+				output[251 - 5 * n] = (inbuffer[n + 51 * 4 + 1] << 3) | ((lowbits2 >> 2) & 0x7);
+				output[252 - 5 * n] = (inbuffer[n + 51 * 5 + 1] << 3) | ((lowbits3 >> 2) & 0x7);
+				output[253 - 5 * n] = (inbuffer[n + 51 * 6 + 1] << 3) | lowbits4;
+				output[254 - 5 * n] = (inbuffer[n + 51 * 7 + 1] << 3) | lowbits5;
 			}
 			output[255] = (inbuffer[409] << 3) | (inbuffer[0] & 0x7);
 		}
@@ -394,7 +394,7 @@ static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bo
 		return nullptr;
 	}
 
-	Common::BitStreamMemory8MSB bitStream(new Common::BitStreamMemoryStream(inBuf, byteSize, DisposeAfterUse::YES), DisposeAfterUse::YES); 
+	Common::BitStreamMemory8MSB bitStream(new Common::BitStreamMemoryStream(inBuf, byteSize, DisposeAfterUse::YES), DisposeAfterUse::YES);
 
 	byte nibble = 0;
 	bool stop = false;
@@ -648,8 +648,7 @@ Files_AppleDOS::~Files_AppleDOS() {
 	delete _disk;
 }
 
-Files_AppleDOS::Files_AppleDOS() :
-		_disk(nullptr) {
+Files_AppleDOS::Files_AppleDOS() : _disk(nullptr) {
 }
 
 void Files_AppleDOS::readSectorList(TrackSector start, Common::Array<TrackSector> &list) {
@@ -691,7 +690,7 @@ void Files_AppleDOS::readVTOC(uint trackVTOC) {
 	byte sector = stream->readByte();
 
 	while (track != 0) {
-		char name[kFilenameLen + 1] = { };
+		char name[kFilenameLen + 1] = {};
 
 		stream.reset(_disk->createReadStream(track, sector));
 		stream->readByte();
@@ -800,7 +799,7 @@ Common::SeekableReadStream *Files_AppleDOS::createReadStream(const Common::Strin
 
 	Common::SeekableReadStream *stream;
 
-	switch(entry.type) {
+	switch (entry.type) {
 	case kFileTypeText:
 		stream = createReadStreamText(entry);
 		break;

@@ -70,8 +70,7 @@ void Scene1950::KeypadWindow::KeypadButton::init(int indx) {
 }
 
 void Scene1950::KeypadWindow::KeypadButton::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE)
-			&& (_bounds.contains(event.mousePos)) && !_pressed) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_USE) && (_bounds.contains(event.mousePos)) && !_pressed) {
 		R2_GLOBALS._sound2.play(227);
 		if (!_toggled) {
 			setFrame(2);
@@ -143,7 +142,7 @@ void Scene1950::KeypadWindow::setup2(int visage, int stripFrameNum, int frameNum
 
 void Scene1950::KeypadWindow::setup3(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
 	// Copy of Scene1200::LaserPanel::proc13()
-	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *) NULL);
+	_areaActor.setDetails(resNum, lookLineNum, talkLineNum, useLineNum, 2, (SceneItem *)NULL);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -237,8 +236,7 @@ void Scene1950::Vampire::signal() {
 
 		NpcMover *mover = new NpcMover();
 		addMover(mover, &scene->_vampireDestPos, scene);
-		}
-		break;
+	} break;
 	case 20: {
 		// Non fatal shot
 		_vampireMode = 19;
@@ -269,8 +267,7 @@ void Scene1950::Vampire::signal() {
 		addMover(mover, &pt, this);
 
 		R2_GLOBALS._player.enableControl();
-		}
-		break;
+	} break;
 	case 21: {
 		// Fatal shot
 		R2_GLOBALS._player.setVisage(22);
@@ -285,7 +282,7 @@ void Scene1950::Vampire::signal() {
 			setStrip(4);
 		else
 			setStrip(3);
-		setDetails(1950, 15, -1, 17, 2, (SceneItem *) NULL);
+		setDetails(1950, 15, -1, 17, 2, (SceneItem *)NULL);
 		addMover(NULL);
 		_numFrames = 8;
 		R2_GLOBALS._sound2.play(226);
@@ -325,8 +322,7 @@ void Scene1950::Vampire::signal() {
 			scene->_westExit._enabled = true;
 
 		scene->_vampireActive = false;
-		}
-		break;
+	} break;
 	case 22:
 		SceneItem::display(1950, 18, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, LIST_END);
 		R2_GLOBALS._player.enableControl(CURSOR_WALK);
@@ -345,7 +341,7 @@ bool Scene1950::Vampire::startAction(CursorType action, Event &event) {
 	Scene1950 *scene = (Scene1950 *)R2_GLOBALS._sceneManager._scene;
 
 	if (!R2_GLOBALS._vampireData[scene->_vampireIndex - 1]._isAlive ||
-			(action != R2_PHOTON_STUNNER))
+	    (action != R2_PHOTON_STUNNER))
 		return SceneActor::startAction(action, event);
 
 	R2_GLOBALS._player.disableControl();
@@ -1309,13 +1305,13 @@ void Scene1950::enterArea() {
 			_vampire.setStrip(4);
 			_vampire.setFrame(10);
 			_vampire.fixPriority(10);
-			_vampire.setDetails(1950, 15, -1, 17, 2, (SceneItem *) NULL);
+			_vampire.setDetails(1950, 15, -1, 17, 2, (SceneItem *)NULL);
 		} else {
 			// Start the vampire
 			_vampire.setVisage(1960);
 			_vampire.setPosition(Common::Point(160, 130));
 			_vampire.animate(ANIM_MODE_2, NULL);
-			_vampire.setDetails(1950, 12, -1, 14, 2, (SceneItem *) NULL);
+			_vampire.setDetails(1950, 12, -1, 14, 2, (SceneItem *)NULL);
 			_vampireActive = true;
 		}
 	}
@@ -1326,7 +1322,7 @@ void Scene1950::enterArea() {
 		_door.setStrip(3);
 		_door.setPosition(Common::Point(278, 155));
 		_door.fixPriority(100);
-		_door.setDetails(1950, 19, 20, 23, 2, (SceneItem *) NULL);
+		_door.setDetails(1950, 19, 20, 23, 2, (SceneItem *)NULL);
 	}
 
 	if (R2_GLOBALS._flubMazeArea == 102) {
@@ -1344,7 +1340,7 @@ void Scene1950::enterArea() {
 		else
 			_cube.setFrame(1);
 		_cube.setPosition(Common::Point(193, 158));
-		_cube.setDetails(1950, 3, 4, 5, 2, (SceneItem *) NULL);
+		_cube.setDetails(1950, 3, 4, 5, 2, (SceneItem *)NULL);
 
 		_pulsingLights.postInit();
 		_pulsingLights.setVisage(1970);
@@ -1366,7 +1362,7 @@ void Scene1950::enterArea() {
 
 		if (R2_GLOBALS.getFlag(37)) {
 			_gem.setPosition(Common::Point(192, 118));
-			_gem.setDetails(1950, 9, 4, -1, 2, (SceneItem *) NULL);
+			_gem.setDetails(1950, 9, 4, -1, 2, (SceneItem *)NULL);
 		} else {
 			_containmentField.postInit();
 			_containmentField.setVisage(1970);
@@ -1375,10 +1371,10 @@ void Scene1950::enterArea() {
 			_containmentField.animate(ANIM_MODE_8, 0, NULL);
 			_containmentField.setPosition(Common::Point(192, 121));
 			_containmentField.fixPriority(159);
-			_containmentField.setDetails(1950, 6, 7, 8, 2, (SceneItem *) NULL);
+			_containmentField.setDetails(1950, 6, 7, 8, 2, (SceneItem *)NULL);
 
 			_gem.setPosition(Common::Point(192, 109));
-			_gem.setDetails(1950, 9, 7, 8, 2, (SceneItem *) NULL);
+			_gem.setDetails(1950, 9, 7, 8, 2, (SceneItem *)NULL);
 		}
 
 		_scrolls.postInit();
@@ -1386,7 +1382,7 @@ void Scene1950::enterArea() {
 		_scrolls.setStrip(1);
 		_scrolls.setPosition(Common::Point(76, 94));
 		_scrolls.fixPriority(25);
-		_scrolls.setDetails(1950, 30, -1, -1, 2, (SceneItem *) NULL);
+		_scrolls.setDetails(1950, 30, -1, -1, 2, (SceneItem *)NULL);
 		if (R2_INVENTORY.getObjectScene(R2_ANCIENT_SCROLLS) == 2)
 			_scrolls.setFrame(2);
 		else
@@ -1422,8 +1418,7 @@ void Scene1950::enterArea() {
 		Common::Point pt(160, 160);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 2:
 		_sceneMode = R2_GLOBALS._flubMazeEntryDirection;
 		if (R2_GLOBALS.getFlag(36))
@@ -1476,8 +1471,7 @@ void Scene1950::enterArea() {
 		Common::Point pt(160, 160);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 6:
 		// Entering from the right
 		if (!_vampireActive) {
@@ -1536,7 +1530,7 @@ void Scene1950::doButtonPress(int indx) {
 
 	prevIndex = indx + 1;
 	if ((indx / 4) == (prevIndex / 4)) {
-		if (prevIndex >  15)
+		if (prevIndex > 15)
 			prevIndex = 12;
 	} else {
 		prevIndex -= 4;
@@ -1631,8 +1625,7 @@ void Scene1950::postInit(SceneObjectList *OwnerList) {
 	_doorExit.setDest(Common::Point(268, 149));
 
 	R2_GLOBALS._player.postInit();
-	if ( (R2_INVENTORY.getObjectScene(R2_TANNER_MASK) == 0) && (R2_INVENTORY.getObjectScene(R2_PURE_GRAIN_ALCOHOL) == 0)
-		&& (R2_INVENTORY.getObjectScene(R2_SOAKED_FACEMASK) == 0) && (!R2_GLOBALS.getFlag(36)) )
+	if ((R2_INVENTORY.getObjectScene(R2_TANNER_MASK) == 0) && (R2_INVENTORY.getObjectScene(R2_PURE_GRAIN_ALCOHOL) == 0) && (R2_INVENTORY.getObjectScene(R2_SOAKED_FACEMASK) == 0) && (!R2_GLOBALS.getFlag(36)))
 		R2_GLOBALS._player.setVisage(22);
 	else
 		R2_GLOBALS._player.setVisage(20);
@@ -1664,7 +1657,7 @@ void Scene1950::signal() {
 		break;
 	case 1975:
 		SceneItem::display(1950, 21, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, 1,
-			SET_Y, 20, SET_EXT_BGCOLOR, 7, LIST_END);
+		                   SET_Y, 20, SET_EXT_BGCOLOR, 7, LIST_END);
 		// fall through
 	case 13:
 		// Moving east within the Flub maze
@@ -1705,8 +1698,7 @@ void Scene1950::signal() {
 		Common::Point pt2(289, 160);
 		NpcMover *mover2 = new NpcMover();
 		_vampire.addMover(mover2, &pt2, NULL);
-		}
-		break;
+	} break;
 	case 18: {
 		_sceneMode = 16;
 		R2_GLOBALS._flubMazeEntryDirection = 6;
@@ -1721,8 +1713,7 @@ void Scene1950::signal() {
 		Common::Point pt2(30, 160);
 		NpcMover *mover2 = new NpcMover();
 		_vampire.addMover(mover2, &pt2, NULL);
-		}
-		break;
+	} break;
 	case 24:
 		_KeypadWindow.remove();
 		_sceneMode = 1966;
@@ -1766,7 +1757,7 @@ void Scene1950::signal() {
 			_sceneMode = 1965;
 			setAction(&_sequenceManager, this, 1965, &R2_GLOBALS._player, NULL);
 		}
-		_gem.setDetails(1950, 9, -1, -1, 2, (SceneItem *) NULL);
+		_gem.setDetails(1950, 9, -1, -1, 2, (SceneItem *)NULL);
 		break;
 	case 1967: {
 		_sceneMode = 0;
@@ -1782,8 +1773,7 @@ void Scene1950::signal() {
 		Common::Point pt(128, 165);
 		NpcMover *mover = new NpcMover();
 		R2_GLOBALS._player.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 1968:
 		R2_GLOBALS._player.enableControl();
 		R2_INVENTORY.setObjectScene(R2_ANCIENT_SCROLLS, 2);
@@ -1801,11 +1791,7 @@ void Scene1950::signal() {
 }
 
 void Scene1950::process(Event &event) {
-	if ( (event.eventType == EVENT_BUTTON_DOWN)
-			&& (R2_GLOBALS._player._uiEnabled)
-			&& (R2_GLOBALS._events.getCursor() == R2_SOAKED_FACEMASK)
-			&& (R2_GLOBALS._player._bounds.contains(event.mousePos))
-			&& (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0)) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._player._uiEnabled) && (R2_GLOBALS._events.getCursor() == R2_SOAKED_FACEMASK) && (R2_GLOBALS._player._bounds.contains(event.mousePos)) && (R2_INVENTORY.getObjectScene(R2_SCRITH_KEY) == 0)) {
 		event.handled = true;
 		R2_GLOBALS._player.disableControl();
 		_shaftExit._enabled = false;

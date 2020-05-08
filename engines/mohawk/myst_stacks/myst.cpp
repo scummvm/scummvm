@@ -20,15 +20,15 @@
  *
  */
 
-#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
+#include "mohawk/cursors.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
-#include "mohawk/myst_state.h"
 #include "mohawk/myst_sound.h"
-#include "mohawk/video.h"
 #include "mohawk/myst_stacks/myst.h"
+#include "mohawk/myst_state.h"
+#include "mohawk/video.h"
 
 #include "common/events.h"
 #include "common/math.h"
@@ -38,10 +38,9 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Myst::Myst(MohawkEngine_Myst *vm, MystStack stackId) :
-		MystScriptParser(vm, stackId),
-		_state(_vm->_gameState->_myst),
-		_towerRotationCenter(Common::Point(383, 124)) {
+Myst::Myst(MohawkEngine_Myst *vm, MystStack stackId) : MystScriptParser(vm, stackId),
+                                                       _state(_vm->_gameState->_myst),
+                                                       _towerRotationCenter(Common::Point(383, 124)) {
 	setupOpcodes();
 
 	// Card ID preinitialized by the engine for use by opcode 18
@@ -404,7 +403,7 @@ void Myst::runPersistentScripts() {
 }
 
 uint16 Myst::getVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 0: // Myst Library Bookcase Closed
 		return _state.libraryBookcaseDoor;
 	case 1:
@@ -437,10 +436,7 @@ uint16 Myst::getVar(uint16 var) {
 	case 12: // Clock tower gears bridge
 		return _state.clockTowerBridgeOpen;
 	case 13: // Tower in right position
-		return _state.towerRotationAngle == 271
-				|| _state.towerRotationAngle == 83
-				|| _state.towerRotationAngle == 129
-				|| _state.towerRotationAngle == 152;
+		return _state.towerRotationAngle == 271 || _state.towerRotationAngle == 83 || _state.towerRotationAngle == 129 || _state.towerRotationAngle == 152;
 	case 14: // Tower Solution (Key) Plaque
 		switch (_state.towerRotationAngle) {
 		case 271:
@@ -474,7 +470,7 @@ uint16 Myst::getVar(uint16 var) {
 			return 0;
 		}
 	case 16: // Tower Window (Book) View From Ladder Top
-		if (_state.towerRotationAngle != 271 && _state.towerRotationAngle != 83	&& _state.towerRotationAngle != 129) {
+		if (_state.towerRotationAngle != 271 && _state.towerRotationAngle != 83 && _state.towerRotationAngle != 129) {
 			if (_state.towerRotationAngle == 152)
 				return 2;
 			else
@@ -482,12 +478,7 @@ uint16 Myst::getVar(uint16 var) {
 		} else
 			return 1;
 	case 23: // Fireplace Pattern Correct
-		return _fireplaceLines[0] == 195
-				&& _fireplaceLines[1] == 107
-				&& _fireplaceLines[2] == 163
-				&& _fireplaceLines[3] == 147
-				&& _fireplaceLines[4] == 204
-				&& _fireplaceLines[5] == 250;
+		return _fireplaceLines[0] == 195 && _fireplaceLines[1] == 107 && _fireplaceLines[2] == 163 && _fireplaceLines[3] == 147 && _fireplaceLines[4] == 204 && _fireplaceLines[5] == 250;
 	case 24: // Fireplace Blue Page Present
 		if (_globals.ending != kBooksDestroyed)
 			return !(_globals.bluePagesInBook & 32) && (_globals.heldPage != kBlueFirePlacePage);
@@ -656,7 +647,7 @@ uint16 Myst::getVar(uint16 var) {
 				return 2;
 		}
 	case 81: // Stellar Observatory Hour #2 - Right
-		uint32 observatoryRightMinutes,observatoryRightHour;
+		uint32 observatoryRightMinutes, observatoryRightHour;
 		if (!observatoryIsDDMMYYYY2400()) {
 			// 12 Hour Format
 			observatoryRightMinutes = _state.observatoryTimeSetting % (12 * 60);
@@ -746,7 +737,7 @@ uint16 Myst::getVar(uint16 var) {
 }
 
 void Myst::toggleVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 2: // Marker Switch Near Cabin
 		_state.cabinMarkerSwitch = (_state.cabinMarkerSwitch + 1) % 2;
 		break;
@@ -795,14 +786,13 @@ void Myst::toggleVar(uint16 var) {
 	case 31: // Courtyard Image Box - Spider
 	case 32: // Courtyard Image Box - Anchor
 	case 33: // Courtyard Image Box - Ostrich
-		{
-			uint16 mask = 0x01 << (var - 26);
-			if (_state.courtyardImageBoxes & mask)
-				_state.courtyardImageBoxes &= ~mask;
-			else
-				_state.courtyardImageBoxes |= mask;
-		}
-		break;
+	{
+		uint16 mask = 0x01 << (var - 26);
+		if (_state.courtyardImageBoxes & mask)
+			_state.courtyardImageBoxes &= ~mask;
+		else
+			_state.courtyardImageBoxes |= mask;
+	} break;
 	case 41: // Vault white page
 		if (_globals.ending != kBooksDestroyed) {
 			if (_dockVaultState == 1) {
@@ -866,9 +856,9 @@ bool Myst::setVarValue(uint16 var, uint16 value) {
 	case 90:
 	case 91:
 	case 92:
-	case 300: // Set slider value
+	case 300:  // Set slider value
 		break; // Do nothing
-	case 302: // Green Book Opened Before Flag
+	case 302:  // Green Book Opened Before Flag
 		_state.greenBookOpenedBefore = value;
 		break;
 	case 303: // Library Bookcase status changed
@@ -1035,21 +1025,13 @@ void Myst::o_towerRotationEnd(uint16 var, const ArgumentsArray &args) {
 	_towerRotationMapClicked = false;
 
 	// Set angle value to expected value
-	if (_state.towerRotationAngle >= 265
-			&& _state.towerRotationAngle <= 277
-			&& _state.rocketshipMarkerSwitch) {
+	if (_state.towerRotationAngle >= 265 && _state.towerRotationAngle <= 277 && _state.rocketshipMarkerSwitch) {
 		_state.towerRotationAngle = 271;
-	} else if (_state.towerRotationAngle >= 77
-			&& _state.towerRotationAngle <= 89
-			&& _state.gearsMarkerSwitch) {
+	} else if (_state.towerRotationAngle >= 77 && _state.towerRotationAngle <= 89 && _state.gearsMarkerSwitch) {
 		_state.towerRotationAngle = 83;
-	} else if (_state.towerRotationAngle >= 123
-			&& _state.towerRotationAngle <= 135
-			&& _state.dockMarkerSwitch) {
+	} else if (_state.towerRotationAngle >= 123 && _state.towerRotationAngle <= 135 && _state.dockMarkerSwitch) {
 		_state.towerRotationAngle = 129;
-	} else if (_state.towerRotationAngle >= 146
-			&& _state.towerRotationAngle <= 158
-			&& _state.cabinMarkerSwitch) {
+	} else if (_state.towerRotationAngle >= 146 && _state.towerRotationAngle <= 158 && _state.cabinMarkerSwitch) {
 		_state.towerRotationAngle = 152;
 	}
 
@@ -1090,13 +1072,13 @@ void Myst::o_dockVaultOpen(uint16 var, const ArgumentsArray &args) {
 	uint16 directionalUpdateDataSize = args[2];
 
 	if ((_state.cabinMarkerSwitch == 1) &&
-		(_state.clockTowerMarkerSwitch == 1) &&
-		(_state.dockMarkerSwitch == 0) &&
-		(_state.gearsMarkerSwitch == 1) &&
-		(_state.generatorMarkerSwitch == 1) &&
-		(_state.observatoryMarkerSwitch == 1) &&
-		(_state.poolMarkerSwitch == 1) &&
-		(_state.rocketshipMarkerSwitch == 1)) {
+	    (_state.clockTowerMarkerSwitch == 1) &&
+	    (_state.dockMarkerSwitch == 0) &&
+	    (_state.gearsMarkerSwitch == 1) &&
+	    (_state.generatorMarkerSwitch == 1) &&
+	    (_state.observatoryMarkerSwitch == 1) &&
+	    (_state.poolMarkerSwitch == 1) &&
+	    (_state.rocketshipMarkerSwitch == 1)) {
 		if (_globals.heldPage != kWhitePage && _globals.ending != kBooksDestroyed)
 			_dockVaultState = 2;
 		else
@@ -1115,13 +1097,13 @@ void Myst::o_dockVaultClose(uint16 var, const ArgumentsArray &args) {
 	uint16 directionalUpdateDataSize = args[2];
 
 	if ((_state.cabinMarkerSwitch == 1) &&
-		(_state.clockTowerMarkerSwitch == 1) &&
-		(_state.dockMarkerSwitch == 1) &&
-		(_state.gearsMarkerSwitch == 1) &&
-		(_state.generatorMarkerSwitch == 1) &&
-		(_state.observatoryMarkerSwitch == 1) &&
-		(_state.poolMarkerSwitch == 1) &&
-		(_state.rocketshipMarkerSwitch == 1)) {
+	    (_state.clockTowerMarkerSwitch == 1) &&
+	    (_state.dockMarkerSwitch == 1) &&
+	    (_state.gearsMarkerSwitch == 1) &&
+	    (_state.generatorMarkerSwitch == 1) &&
+	    (_state.observatoryMarkerSwitch == 1) &&
+	    (_state.poolMarkerSwitch == 1) &&
+	    (_state.rocketshipMarkerSwitch == 1)) {
 		if (_dockVaultState == 1 || _dockVaultState == 2)
 			_dockVaultState = 0;
 
@@ -1227,8 +1209,7 @@ void Myst::o_clockWheelsExecute(uint16 var, const ArgumentsArray &args) {
 	uint16 soundId = args[0];
 
 	// Correct time is 2:40
-	bool correctTime = _state.clockTowerHourPosition == 2
-						&& _state.clockTowerMinutePosition == 40;
+	bool correctTime = _state.clockTowerHourPosition == 2 && _state.clockTowerMinutePosition == 40;
 
 	if (!_state.clockTowerBridgeOpen && correctTime) {
 		_vm->_sound->playEffect(soundId);
@@ -1275,7 +1256,6 @@ void Myst::o_imagerPlayButton(uint16 var, const ArgumentsArray &args) {
 	_vm->doFrame();
 
 	_vm->_cursor->hideCursor();
-
 
 	// Play selected video
 	if (!_state.imagerActive && video != 3)
@@ -1712,9 +1692,9 @@ void Myst::observatoryIncrementDay(int16 increment) {
 		// Update slider
 		// WORKAROUND: Have the day setting increment at 315/100 rather than x3 so that the slider
 		// will reach the bottom spot on day 31st. Only relevant when using the down button and
-		// not dragging the slider. Fixes Trac#10572. The original engine incremented it with x3 
+		// not dragging the slider. Fixes Trac#10572. The original engine incremented it with x3
 		// and has this bug, but it is less noticeable.
-		_observatoryDaySlider->setPosition(91 + (_state.observatoryDaySetting * 315) / 100 );
+		_observatoryDaySlider->setPosition(91 + (_state.observatoryDaySetting * 315) / 100);
 		_observatoryDaySlider->restoreBackground();
 		_observatoryDaySlider->drawConditionalDataToScreen(2);
 		_state.observatoryDaySlider = _observatoryDaySlider->_pos.y;
@@ -1858,10 +1838,7 @@ void Myst::observatoryTimeChange_run() {
 
 void Myst::o_observatoryGoButton(uint16 var, const ArgumentsArray &args) {
 	// Setting not at target
-	if (_state.observatoryDayTarget != _state.observatoryDaySetting
-			|| _state.observatoryMonthTarget != _state.observatoryMonthSetting
-			|| _state.observatoryYearTarget != _state.observatoryYearSetting
-			|| _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
+	if (_state.observatoryDayTarget != _state.observatoryDaySetting || _state.observatoryMonthTarget != _state.observatoryMonthSetting || _state.observatoryYearTarget != _state.observatoryYearSetting || _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
 		uint16 soundId = args[0];
 		_vm->_sound->playEffect(soundId);
 
@@ -2190,8 +2167,7 @@ void Myst::tree_run() {
 			goingDown = false;
 
 		// Tree is within bounds
-		if ((_state.treePosition < 12 && !goingDown)
-				|| (_state.treePosition > _treeMinPosition && goingDown)) {
+		if ((_state.treePosition < 12 && !goingDown) || (_state.treePosition > _treeMinPosition && goingDown)) {
 			uint16 delay = treeNextMoveDelay(pressure);
 			uint32 time = _vm->getTotalPlayTime();
 			if (delay < time - _state.treeLastMoveTime) {
@@ -2233,8 +2209,7 @@ void Myst::tree_run() {
 void Myst::treeSetAlcoveAccessible() {
 	if (_treeAlcove) {
 		// Make alcove accessible if the tree is in the correct position
-		_treeAlcove->setEnabled(_state.treePosition >= _treeMinAccessiblePosition
-					&& _state.treePosition <= _treeMaxAccessiblePosition);
+		_treeAlcove->setEnabled(_state.treePosition >= _treeMinAccessiblePosition && _state.treePosition <= _treeMaxAccessiblePosition);
 	}
 }
 
@@ -2954,11 +2929,11 @@ void Myst::clockLeverMove(bool leftLever) {
 }
 
 void Myst::clockGearForwardOneStep(uint16 gear) {
-	static const uint16 startTime[] = { 0, 324, 618 };
-	static const uint16 endTime[] = { 324, 618, 950 };
-	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3" };
-	static const uint16 x[] = { 224, 224, 224 };
-	static const uint16 y[] = { 49, 82, 109 };
+	static const uint16 startTime[] = {0, 324, 618};
+	static const uint16 endTime[] = {324, 618, 950};
+	static const char *videos[] = {"cl1wg1", "cl1wg2", "cl1wg3"};
+	static const uint16 x[] = {224, 224, 224};
+	static const uint16 y[] = {49, 82, 109};
 
 	// Increment value by one
 	_clockGearsPositions[gear] = _clockGearsPositions[gear] % 3 + 1;
@@ -2968,8 +2943,8 @@ void Myst::clockGearForwardOneStep(uint16 gear) {
 	_clockGearsVideos[gear] = _vm->playMovie(videos[gear], kMystStack);
 	_clockGearsVideos[gear]->moveTo(x[gear], y[gear]);
 	_clockGearsVideos[gear]->setBounds(
-			Audio::Timestamp(0, startTime[gearPosition], 600),
-			Audio::Timestamp(0, endTime[gearPosition], 600));
+	    Audio::Timestamp(0, startTime[gearPosition], 600),
+	    Audio::Timestamp(0, endTime[gearPosition], 600));
 }
 
 void Myst::clockWeightDownOneStep() {
@@ -2982,8 +2957,8 @@ void Myst::clockWeightDownOneStep() {
 		_clockWeightVideo = _vm->playMovie("cl1wlfch", kMystStack);
 		_clockWeightVideo->moveTo(124, 0);
 		_clockWeightVideo->setBounds(
-				Audio::Timestamp(0, _clockWeightPosition, 600),
-				Audio::Timestamp(0, _clockWeightPosition + 246, 600));
+		    Audio::Timestamp(0, _clockWeightPosition, 600),
+		    Audio::Timestamp(0, _clockWeightPosition + 246, 600));
 	}
 
 	// Increment value by one step
@@ -3000,7 +2975,7 @@ void Myst::clockGears_run() {
 }
 
 void Myst::o_clockLeverEndMove(uint16 var, const ArgumentsArray &args) {
-	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3", "cl1wlfch" };
+	static const char *videos[] = {"cl1wg1", "cl1wg2", "cl1wg3", "cl1wlfch"};
 
 	_vm->_cursor->hideCursor();
 	_clockLeverPulled = false;
@@ -3026,18 +3001,15 @@ void Myst::o_clockLeverEndMove(uint16 var, const ArgumentsArray &args) {
 }
 
 void Myst::clockGearsCheckSolution() {
-	if (_clockGearsPositions[0] == 2
-			&& _clockGearsPositions[1] == 2
-			&& _clockGearsPositions[2] == 1
-			&& !_state.gearsOpen) {
+	if (_clockGearsPositions[0] == 2 && _clockGearsPositions[1] == 2 && _clockGearsPositions[2] == 1 && !_state.gearsOpen) {
 
 		// Make weight go down
 		_vm->_sound->playEffect(9113);
 		_clockWeightVideo = _vm->playMovie("cl1wlfch", kMystStack);
 		_clockWeightVideo->moveTo(124, 0);
 		_clockWeightVideo->setBounds(
-				Audio::Timestamp(0, _clockWeightPosition, 600),
-				Audio::Timestamp(0, 2214, 600));
+		    Audio::Timestamp(0, _clockWeightPosition, 600),
+		    Audio::Timestamp(0, 2214, 600));
 
 		_vm->waitUntilMovieEnds(_clockWeightVideo);
 		_clockWeightPosition = 2214;
@@ -3070,7 +3042,7 @@ void Myst::o_clockResetLeverMove(uint16 var, const ArgumentsArray &args) {
 }
 
 void Myst::clockReset() {
-	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3", "cl1wlfch" };
+	static const char *videos[] = {"cl1wg1", "cl1wg2", "cl1wg3", "cl1wlfch"};
 
 	_vm->_cursor->hideCursor();
 
@@ -3128,10 +3100,10 @@ void Myst::clockResetWeight() {
 }
 
 void Myst::clockResetGear(uint16 gear) {
-	static const uint16 time[] = { 324, 618, 950 };
-	static const char *videos[] = { "cl1wg1", "cl1wg2", "cl1wg3" };
-	static const uint16 x[] = { 224, 224, 224 };
-	static const uint16 y[] = { 49, 82, 109 };
+	static const uint16 time[] = {324, 618, 950};
+	static const char *videos[] = {"cl1wg1", "cl1wg2", "cl1wg3"};
+	static const uint16 x[] = {224, 224, 224};
+	static const uint16 y[] = {49, 82, 109};
 
 	// Set video bounds, gears going to 3
 	uint16 gearPosition = _clockGearsPositions[gear] - 1;
@@ -3139,8 +3111,8 @@ void Myst::clockResetGear(uint16 gear) {
 		_clockGearsVideos[gear] = _vm->playMovie(videos[gear], kMystStack);
 		_clockGearsVideos[gear]->moveTo(x[gear], y[gear]);
 		_clockGearsVideos[gear]->setBounds(
-				Audio::Timestamp(0, time[gearPosition], 600),
-				Audio::Timestamp(0, time[2], 600));
+		    Audio::Timestamp(0, time[gearPosition], 600),
+		    Audio::Timestamp(0, time[2], 600));
 	}
 
 	// Reset gear position
@@ -3184,8 +3156,7 @@ void Myst::towerRotationMap_run() {
 		if (_towerRotationMapClicked) {
 			towerRotationMapRotate();
 			_startTime = time + 100;
-		} else if (_towerRotationBlinkLabel
-				&& _vm->_sound->isEffectPlaying()) {
+		} else if (_towerRotationBlinkLabel && _vm->_sound->isEffectPlaying()) {
 			// Blink tower rotation label while sound is playing
 			_towerRotationBlinkLabelCount = (_towerRotationBlinkLabelCount + 1) % 14;
 
@@ -3239,23 +3210,19 @@ uint16 Myst::towerRotationMapComputeAngle() {
 	uint16 angle = _state.towerRotationAngle;
 	_towerRotationOverSpot = false;
 
-	if (angle >= 265 && angle <= 277
-			&& _state.rocketshipMarkerSwitch) {
+	if (angle >= 265 && angle <= 277 && _state.rocketshipMarkerSwitch) {
 		angle = 271;
 		_towerRotationOverSpot = true;
 		_towerRotationSpeed = 1;
-	} else if (angle >= 77 && angle <= 89
-			&& _state.gearsMarkerSwitch) {
+	} else if (angle >= 77 && angle <= 89 && _state.gearsMarkerSwitch) {
 		angle = 83;
 		_towerRotationOverSpot = true;
 		_towerRotationSpeed = 1;
-	} else if (angle >= 123 && angle <= 135
-			&& _state.dockMarkerSwitch) {
+	} else if (angle >= 123 && angle <= 135 && _state.dockMarkerSwitch) {
 		angle = 129;
 		_towerRotationOverSpot = true;
 		_towerRotationSpeed = 1;
-	} else if (angle >= 146 && angle <= 158
-			&& _state.cabinMarkerSwitch) {
+	} else if (angle >= 146 && angle <= 158 && _state.cabinMarkerSwitch) {
 		angle = 152;
 		_towerRotationOverSpot = true;
 		_towerRotationSpeed = 1;
@@ -3268,7 +3235,7 @@ Common::Point Myst::towerRotationMapComputeCoords(uint16 angle) {
 	Common::Point end;
 
 	// Polar to rect coords
-	float radians = Common::deg2rad<uint16,float>(angle);
+	float radians = Common::deg2rad<uint16, float>(angle);
 	end.x = (int16)(_towerRotationCenter.x + cos(radians) * 310.0f);
 	end.y = (int16)(_towerRotationCenter.y + sin(radians) * 310.0f);
 
@@ -3455,7 +3422,7 @@ void Myst::o_gulls1_init(uint16 var, const ArgumentsArray &args) {
 }
 
 void Myst::gullsFly1_run() {
-	static const char* gulls[] = { "birds1", "birds2", "birds3" };
+	static const char *gulls[] = {"birds1", "birds2", "birds3"};
 	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _gullsNextTime) {
@@ -3505,8 +3472,7 @@ void Myst::o_observatory_init(uint16 var, const ArgumentsArray &args) {
 
 bool Myst::observatoryIsDDMMYYYY2400() {
 	// TODO: Auto-detect based on the month rect position
-	return !_vm->isGameVariant(GF_ME) && (_vm->getLanguage() == Common::FR_FRA
-			|| _vm->getLanguage() == Common::DE_DEU);
+	return !_vm->isGameVariant(GF_ME) && (_vm->getLanguage() == Common::FR_FRA || _vm->getLanguage() == Common::DE_DEU);
 }
 
 void Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
@@ -3522,9 +3488,7 @@ void Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
 
 void Myst::observatorySetTargetToSetting() {
 	uint32 visuX = _state.observatoryTimeSetting * 7 / 25;
-	uint32 visuY = 250 * _state.observatoryYearSetting
-			+ 65 * (_state.observatoryMonthSetting + 1)
-			+ 20 * _state.observatoryDaySetting;
+	uint32 visuY = 250 * _state.observatoryYearSetting + 65 * (_state.observatoryMonthSetting + 1) + 20 * _state.observatoryDaySetting;
 
 	observatoryUpdateVisualizer(visuX % 407, visuY % 407);
 
@@ -3577,10 +3541,7 @@ void Myst::observatory_run() {
 	}
 
 	// Setting not at target
-	if (_state.observatoryDayTarget != _state.observatoryDaySetting
-			|| _state.observatoryMonthTarget != _state.observatoryMonthSetting
-			|| _state.observatoryYearTarget != _state.observatoryYearSetting
-			|| _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
+	if (_state.observatoryDayTarget != _state.observatoryDaySetting || _state.observatoryMonthTarget != _state.observatoryMonthSetting || _state.observatoryYearTarget != _state.observatoryYearSetting || _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
 
 		// Blink the go button
 		uint32 time = _vm->getTotalPlayTime();
@@ -3600,7 +3561,7 @@ void Myst::o_gulls2_init(uint16 var, const ArgumentsArray &args) {
 }
 
 void Myst::gullsFly2_run() {
-	static const char* gulls[] = { "birds1", "birds2", "birds3" };
+	static const char *gulls[] = {"birds1", "birds2", "birds3"};
 	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _gullsNextTime) {
@@ -3765,7 +3726,7 @@ void Myst::o_gulls3_init(uint16 var, const ArgumentsArray &args) {
 }
 
 void Myst::gullsFly3_run() {
-	static const char* gulls[] = { "birds1", "birds2", "birds3" };
+	static const char *gulls[] = {"birds1", "birds2", "birds3"};
 	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _gullsNextTime) {

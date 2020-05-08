@@ -33,7 +33,7 @@ char *StringFunctions::Left(char a[], int l) {
 
 	if (l > (int)strlen(a))
 		l = strlen(a);
-	for (i = 0; i<l; i++)
+	for (i = 0; i < l; i++)
 		temp[i] = a[i];
 	temp[i] = '\0';
 	return temp;
@@ -45,8 +45,8 @@ char *StringFunctions::Ltrim(char a[]) {
 
 	temp = GetTempString();
 	strcpy(temp, a);
-	while (temp[0]==' ' || temp[0]=='\t')
-		memmove(temp, temp+1, len + 1);
+	while (temp[0] == ' ' || temp[0] == '\t')
+		memmove(temp, temp + 1, len + 1);
 	return temp;
 }
 
@@ -56,10 +56,10 @@ char *StringFunctions::Mid(char a[], int pos, int n) {
 
 	temp = GetTempString();
 	pos--;
-	if (pos+n > (int)strlen(a))
-		n = strlen(a)-pos;
-	for (i = 0; i<n; i++)
-		temp[i] = a[pos+i];
+	if (pos + n > (int)strlen(a))
+		n = strlen(a) - pos;
+	for (i = 0; i < n; i++)
+		temp[i] = a[pos + i];
 	temp[i] = '\0';
 	return temp;
 }
@@ -71,8 +71,8 @@ char *StringFunctions::Right(char a[], int l) {
 	temp = GetTempString();
 	if (l > (int)strlen(a))
 		l = strlen(a);
-	for (i = 0; i<l; i++)
-		temp[i] = a[strlen(a)-l+i];
+	for (i = 0; i < l; i++)
+		temp[i] = a[strlen(a) - l + i];
 	temp[i] = '\0';
 	return temp;
 }
@@ -83,14 +83,15 @@ char *StringFunctions::Rtrim(char a[]) {
 
 	temp = GetTempString();
 	strcpy(temp, a);
-	while (((len = strlen(temp))) && (temp[len-1]==' ' || temp[len-1]=='\t'))
-		strcpy(temp, Left(temp, len-1));
+	while (((len = strlen(temp))) && (temp[len - 1] == ' ' || temp[len - 1] == '\t'))
+		strcpy(temp, Left(temp, len - 1));
 	return temp;
 }
 
-char *StringFunctions::hugo_strcpy(char *s, const char *t)  {
+char *StringFunctions::hugo_strcpy(char *s, const char *t) {
 	char *r = s;
-	while ((*s++ = *t++) != 0) ;
+	while ((*s++ = *t++) != 0)
+		;
 	return r;
 }
 

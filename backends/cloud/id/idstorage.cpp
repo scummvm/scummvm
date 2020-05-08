@@ -35,8 +35,7 @@ namespace Id {
 
 IdStorage::IdStorage() {}
 
-IdStorage::IdStorage(Common::String token, Common::String refreshToken, bool enabled):
-	BaseStorage(token, refreshToken, enabled) {}
+IdStorage::IdStorage(Common::String token, Common::String refreshToken, bool enabled) : BaseStorage(token, refreshToken, enabled) {}
 
 IdStorage::~IdStorage() {}
 

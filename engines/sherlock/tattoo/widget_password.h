@@ -32,7 +32,7 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetPassword: public WidgetBase {
+class WidgetPassword : public WidgetBase {
 private:
 	Common::Point _cursorPos;
 	Common::String _password;
@@ -46,6 +46,7 @@ private:
 	 * Close the window and check if the entered password is correct
 	 */
 	void close();
+
 public:
 	WidgetPassword(SherlockEngine *vm);
 	~WidgetPassword() override {}

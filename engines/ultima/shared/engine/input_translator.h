@@ -37,8 +37,10 @@ private:
 	 * Converts the special buttons bitset into a buttons bitset
 	 */
 	int getButtons(int special) const;
+
 public:
 	InputHandler *_inputHandler;
+
 public:
 	InputTranslator(InputHandler *inputHandler);
 

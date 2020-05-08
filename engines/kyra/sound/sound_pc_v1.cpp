@@ -20,12 +20,11 @@
  *
  */
 
-#include "kyra/sound/sound_intern.h"
 #include "kyra/sound/drivers/pc_base.h"
+#include "kyra/sound/sound_intern.h"
 
-#include "common/system.h"
 #include "common/config-manager.h"
-
+#include "common/system.h"
 
 namespace Kyra {
 
@@ -35,13 +34,12 @@ namespace Kyra {
 // spend enough time there to notice.
 
 const int SoundPC_v1::_kyra1SoundTriggers[] = {
-	0, 4, 5, 3
-};
+    0, 4, 5, 3};
 
 const int SoundPC_v1::_kyra1NumSoundTriggers = ARRAYSIZE(SoundPC_v1::_kyra1SoundTriggers);
 
 SoundPC_v1::SoundPC_v1(KyraEngine_v1 *vm, Audio::Mixer *mixer, kType type)
-	: Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0), _type(type) {
+    : Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0), _type(type) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
 
 	_soundTriggers = 0;
@@ -162,7 +160,7 @@ void SoundPC_v1::play(uint8 track, uint8 volume) {
 	uint16 soundId = 0;
 
 	if (_version == 4)
-		soundId = READ_LE_UINT16(&_trackEntries[track<<1]);
+		soundId = READ_LE_UINT16(&_trackEntries[track << 1]);
 	else
 		soundId = _trackEntries[track];
 
@@ -187,7 +185,7 @@ void SoundPC_v1::resetTrigger() {
 void SoundPC_v1::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
-		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : 0;
+		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC *)info) : 0;
 	}
 }
 
@@ -223,7 +221,8 @@ void SoundPC_v1::internalLoadFile(Common::String file) {
 	if (_soundDataPtr)
 		haltTrack();
 
-	uint8 *fileData = 0; uint32 fileSize = 0;
+	uint8 *fileData = 0;
+	uint32 fileSize = 0;
 
 	fileData = _vm->resource()->fileData(file.c_str(), &fileSize);
 	if (!fileData) {

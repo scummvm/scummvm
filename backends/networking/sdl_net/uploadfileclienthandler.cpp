@@ -31,9 +31,8 @@
 
 namespace Networking {
 
-UploadFileClientHandler::UploadFileClientHandler(Common::String parentDirectoryPath):
-	_state(UFH_READING_CONTENT), _headersStream(nullptr), _contentStream(nullptr),
-	_parentDirectoryPath(parentDirectoryPath), _uploadedFiles(0) {}
+UploadFileClientHandler::UploadFileClientHandler(Common::String parentDirectoryPath) : _state(UFH_READING_CONTENT), _headersStream(nullptr), _contentStream(nullptr),
+                                                                                       _parentDirectoryPath(parentDirectoryPath), _uploadedFiles(0) {}
 
 UploadFileClientHandler::~UploadFileClientHandler() {
 	delete _headersStream;
@@ -101,7 +100,7 @@ void readFromThatUntilDoubleQuote(const char *cstr, Common::String needle, Commo
 		}
 	}
 }
-}
+} // namespace
 
 void UploadFileClientHandler::handleBlockHeaders(Client *client) {
 	_state = UFH_READING_BLOCK_CONTENT;
@@ -196,16 +195,14 @@ void UploadFileClientHandler::setErrorMessageHandler(Client &client, Common::Str
 void UploadFileClientHandler::setSuccessHandler(Client &client) {
 	// success - redirect back to directory listing
 	HandlerUtils::setMessageHandler(
-		client,
-		Common::String::format(
-			"%s<br/><a href=\"files?path=%s\">%s</a>",
-			HandlerUtils::toUtf8(_("Uploaded successfully!")).c_str(),
-			client.queryParameter("path").c_str(),
-			HandlerUtils::toUtf8(_("Back to parent directory")).c_str()
-			),
-		(client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
-		LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path"))
-	);
+	    client,
+	    Common::String::format(
+	        "%s<br/><a href=\"files?path=%s\">%s</a>",
+	        HandlerUtils::toUtf8(_("Uploaded successfully!")).c_str(),
+	        client.queryParameter("path").c_str(),
+	        HandlerUtils::toUtf8(_("Back to parent directory")).c_str()),
+	    (client.queryParameter("ajax") == "true" ? "/filesAJAX?path=" : "/files?path=") +
+	        LocalWebserver::urlEncodeQueryParameterValue(client.queryParameter("path")));
 	_state = UFH_STOP;
 }
 

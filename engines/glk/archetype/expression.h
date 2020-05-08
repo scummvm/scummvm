@@ -30,8 +30,8 @@
 namespace Glk {
 namespace Archetype {
 
-const int OP_LPAREN = NUM_OPERS + 1;		// book-keeping operator
-const int OP_SEND_TO_TYPE = NUM_OPERS + 2;	// for use with interpreter
+const int OP_LPAREN = NUM_OPERS + 1;       // book-keeping operator
+const int OP_SEND_TO_TYPE = NUM_OPERS + 2; // for use with interpreter
 
 struct ExprNode;
 

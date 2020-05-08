@@ -23,8 +23,8 @@
 #ifndef SCUMM_IMUSE_DIGI_BUNDLE_MGR_H
 #define SCUMM_IMUSE_DIGI_BUNDLE_MGR_H
 
-#include "common/scummsys.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 
 namespace Scumm {
 
@@ -44,7 +44,6 @@ public:
 	};
 
 private:
-
 	struct FileDirCache {
 		char fileName[20];
 		AudioTable *bundleTable;
@@ -67,7 +66,6 @@ public:
 class BundleMgr {
 
 private:
-
 	struct CompTable {
 		int32 offset;
 		int32 size;
@@ -93,7 +91,6 @@ private:
 	bool loadCompTable(int32 index);
 
 public:
-
 	BundleMgr(BundleDirCache *_cache);
 	~BundleMgr();
 

@@ -34,21 +34,29 @@ namespace CGE2 {
 
 class CGE2Engine;
 
-#define kBtSize       2048
-#define kBtKeySize    13
-#define kBtLevel      2
+#define kBtSize 2048
+#define kBtKeySize 13
+#define kBtLevel 2
 #define kBtInnerCount ((kBtSize - 4 /*sizeof(Header) */) / (kBtKeySize + 2 /*sizeof(Inner) */))
-#define kBtLeafCount  ((kBtSize - 4 /*sizeof(Header) */) / (kBtKeySize + 4 + 4 /*sizeof(BtKeypack) */))
-#define kBtValNone    0xFFFF
-#define kBtValRoot    0
-#define kCatName      "VOL.CAT"
-#define kDatName      "VOL.DAT"
-#define kCryptSeed    0xA5
+#define kBtLeafCount ((kBtSize - 4 /*sizeof(Header) */) / (kBtKeySize + 4 + 4 /*sizeof(BtKeypack) */))
+#define kBtValNone 0xFFFF
+#define kBtValRoot 0
+#define kCatName "VOL.CAT"
+#define kDatName "VOL.DAT"
+#define kCryptSeed 0xA5
 
 enum ID {
-	kIdNear, kIdMTake, kIdFTake, kIdPhase, kIdSeq,
-	kIdName, kIdType, kIdFront, kIdEast,
-	kIdPortable, kIdTransparent,
+	kIdNear,
+	kIdMTake,
+	kIdFTake,
+	kIdPhase,
+	kIdSeq,
+	kIdName,
+	kIdType,
+	kIdFront,
+	kIdEast,
+	kIdPortable,
+	kIdTransparent,
 	kIdNone = -1
 };
 
@@ -59,7 +67,7 @@ struct BtKeypack {
 };
 
 struct Inner {
-	uint8  _key[kBtKeySize];
+	uint8 _key[kBtKeySize];
 	uint16 _down;
 };
 
@@ -95,6 +103,7 @@ private:
 	Common::File *_catFile;
 	Common::File *_datFile;
 	void xCrypt(byte *buf, uint16 length);
+
 public:
 	ResourceManager();
 	~ResourceManager();
@@ -111,6 +120,7 @@ private:
 	Common::SeekableReadStream *_readStream;
 	int _lineCount;
 	bool _error;
+
 public:
 	EncryptedStream(CGE2Engine *vm, const char *name);
 	~EncryptedStream();

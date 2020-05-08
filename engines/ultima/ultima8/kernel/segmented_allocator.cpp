@@ -20,19 +20,19 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/segmented_allocator.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(SegmentedAllocator, Allocator)
 
-SegmentedAllocator::SegmentedAllocator(size_t nodeCapacity, uint32 nodes): Allocator(), _nodes(nodes) {
+SegmentedAllocator::SegmentedAllocator(size_t nodeCapacity, uint32 nodes) : Allocator(), _nodes(nodes) {
 	_pools.push_back(new SegmentedPool(nodeCapacity, nodes));
 	_nodeCapacity = _pools[0]->getNodeCapacity();
-//	pout << "Initial Pool Created: Nodes - " << _nodes << ", Node Capacity - "
-//		<< _nodeCapacity << Std::endl;
+	//	pout << "Initial Pool Created: Nodes - " << _nodes << ", Node Capacity - "
+	//		<< _nodeCapacity << Std::endl;
 }
 
 SegmentedAllocator::~SegmentedAllocator() {
@@ -59,8 +59,8 @@ void *SegmentedAllocator::allocate(size_t size) {
 	// else we need a new pool
 	p = new SegmentedPool(_nodeCapacity, _nodes);
 	if (p) {
-//		pout << "New Pool Created: Nodes - " << _nodes << ", Node Capacity - "
-//			<< _nodeCapacity << Std::endl;
+		//		pout << "New Pool Created: Nodes - " << _nodes << ", Node Capacity - "
+		//			<< _nodeCapacity << Std::endl;
 
 		_pools.push_back(p);
 		return p->allocate(size);
@@ -97,7 +97,7 @@ void SegmentedAllocator::printInfo() const {
 	Std::vector<SegmentedPool *>::const_iterator it;
 	int i = 0;
 
-	pout << "Pools: " <<  _pools.size() << Std::endl;
+	pout << "Pools: " << _pools.size() << Std::endl;
 	for (it = _pools.begin(); it != _pools.end(); ++it) {
 		pout << "  Pool " << i++ << ":" << Std::endl;
 		(*it)->printInfo();

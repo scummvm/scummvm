@@ -42,52 +42,32 @@ void AIScriptLucy::Initialize() {
 bool AIScriptLucy::Update() {
 	float x, y, z;
 
-	if (Global_Variable_Query(kVariableChapter) == 3
-	 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyMoveAround
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyMoveAround) {
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyMoveAround);
 	}
 
-	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Start
-	 && Player_Query_Current_Scene() == kSceneHF04
-	) {
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Start && Player_Query_Current_Scene() == kSceneHF04) {
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Run1);
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyStartChapter4
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyStartChapter4) {
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyStartChapter4);
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGone
-	 && Actor_Query_Which_Set_In(kActorLucy) != kSetFreeSlotI
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGone && Actor_Query_Which_Set_In(kActorLucy) != kSetFreeSlotI) {
 		if (Actor_Query_Which_Set_In(kActorLucy) != Player_Query_Current_Set()) {
 			Actor_Put_In_Set(kActorLucy, kSetFreeSlotI);
 			Actor_Set_At_Waypoint(kActorLucy, 41, 0);
 		}
 	}
 
-	if (Game_Flag_Query(kFlagMcCoyCapturedByHolloway)
-	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyWillReturnToHF03
-	) {
+	if (Game_Flag_Query(kFlagMcCoyCapturedByHolloway) && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyWillReturnToHF03) {
 		Actor_Put_In_Set(kActorLucy, kSetHF03);
 		Actor_Set_At_Waypoint(kActorLucy, 371, 156);
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyReturnToHF03);
 	}
 
-	if ( Actor_Query_Goal_Number(kActorLucy) > 229
-	 &&  Actor_Query_Goal_Number(kActorLucy) < 239
-	 &&  Actor_Query_Goal_Number(kActorLucy) != kGoalLucyHF04TalkToMcCoy
-	 &&  Player_Query_Current_Scene() == kSceneHF04
-	 &&  Actor_Query_Which_Set_In(kActorLucy) == kSetHF04
-	 && !Game_Flag_Query(kFlagMcCoyAttackedLucy)
-	 &&  Actor_Query_Inch_Distance_From_Actor(kActorLucy, kActorMcCoy) < 84
-	 && !Player_Query_Combat_Mode()
-	 &&  Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 40
-	) {
+	if (Actor_Query_Goal_Number(kActorLucy) > 229 && Actor_Query_Goal_Number(kActorLucy) < 239 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyHF04TalkToMcCoy && Player_Query_Current_Scene() == kSceneHF04 && Actor_Query_Which_Set_In(kActorLucy) == kSetHF04 && !Game_Flag_Query(kFlagMcCoyAttackedLucy) && Actor_Query_Inch_Distance_From_Actor(kActorLucy, kActorMcCoy) < 84 && !Player_Query_Combat_Mode() && Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 40) {
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04TalkToMcCoy); // how can this be triggered?
 	}
 
@@ -126,9 +106,7 @@ void AIScriptLucy::TimerExpired(int timer) {
 void AIScriptLucy::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorLucy)) {
 	case kGoalLucyGoToHF03:
-		if (Game_Flag_Query(kFlagMcCoyCapturedByHolloway)
-		 && Global_Variable_Query(kVariableHollowayArrest) == 3
-		) {
+		if (Game_Flag_Query(kFlagMcCoyCapturedByHolloway) && Global_Variable_Query(kVariableHollowayArrest) == 3) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyReturnToHF03);
 			return; //true;
 		}
@@ -150,9 +128,7 @@ void AIScriptLucy::CompletedMovementTrack() {
 		break;
 
 	case kGoalLucyHF03RunToHF042:
-		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy)
-		 && Global_Variable_Query(kVariableHollowayArrest) != 3
-		) {
+		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy) && Global_Variable_Query(kVariableHollowayArrest) != 3) {
 			Game_Flag_Set(kFlagLucyRanAway);
 		} else {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Start);
@@ -271,19 +247,11 @@ void AIScriptLucy::Retired(int byActorId) {
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	if ((byActorId == kActorSteele
-	  || byActorId == kActorMcCoy
-	 )
-	 && Actor_Query_In_Set(kActorSteele, kSetHF06)
-	 && Actor_Query_In_Set(kActorMcCoy, kSetHF06)
-	) {
+	if ((byActorId == kActorSteele || byActorId == kActorMcCoy) && Actor_Query_In_Set(kActorSteele, kSetHF06) && Actor_Query_In_Set(kActorMcCoy, kSetHF06)) {
 		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorMcCoy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
 
-	if (Query_Difficulty_Level() != kGameDifficultyEasy
-	 && byActorId == kActorMcCoy
-	 && Game_Flag_Query(kFlagLucyIsReplicant)
-	) {
+	if (Query_Difficulty_Level() != kGameDifficultyEasy && byActorId == kActorMcCoy && Game_Flag_Query(kFlagLucyIsReplicant)) {
 		Global_Variable_Increment(kVariableChinyen, 200);
 	}
 
@@ -303,10 +271,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
 	case kGoalLucyMoveAround:
 		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
-			if (Game_Flag_Query(kFlagDektoraRanAway)
-			 && Game_Flag_Query(kFlagGordoRanAway)
-			 && Player_Query_Current_Scene() != kSceneHF03
-			) {
+			if (Game_Flag_Query(kFlagDektoraRanAway) && Game_Flag_Query(kFlagGordoRanAway) && Player_Query_Current_Scene() != kSceneHF03) {
 				Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToHF03);
 			} else {
 				if (Random_Query(0, 1) == 1) {
@@ -431,9 +396,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 				Actor_Says(kActorLucy, 990, 15);
 			}
 			Actor_Says(kActorMcCoy, 6790, 13);
-			if (Game_Flag_Query(kFlagDektoraIsReplicant)
-			 && Game_Flag_Query(kFlagLucyIsReplicant)
-			) {
+			if (Game_Flag_Query(kFlagDektoraIsReplicant) && Game_Flag_Query(kFlagLucyIsReplicant)) {
 				Actor_Says(kActorLucy, 1000, 12);
 			}
 			Actor_Says(kActorLucy, 1010, 15);
@@ -707,8 +670,8 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptLucy::ChangeAnimationMode(int mode) {
 	switch (mode) {
-		case 0:
-	if (_animationState >= 8 && _animationState <= 16) {
+	case 0:
+		if (_animationState >= 8 && _animationState <= 16) {
 			_flag = 1;
 		} else {
 			_animationState = 0;
@@ -827,17 +790,17 @@ bool AIScriptLucy::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptLucy::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptLucy::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptLucy::ReachedMovementTrackWaypoint(int waypointId) {
@@ -845,9 +808,7 @@ bool AIScriptLucy::ReachedMovementTrackWaypoint(int waypointId) {
 }
 
 void AIScriptLucy::FledCombat() {
-	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorLucy) == 450
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorLucy) == 450) {
 		Actor_Put_In_Set(kActorLucy, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorLucy, 39, 0);
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyGone);
@@ -927,10 +888,7 @@ void AIScriptLucy::voightKampffTest() {
 void AIScriptLucy::checkCombat() {
 	Game_Flag_Set(kFlagMcCoyAttackedLucy);
 
-	if (Actor_Query_In_Set(kActorLucy, kSetHF01)
-	 && Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorLucy) != 450
-	) {
+	if (Actor_Query_In_Set(kActorLucy, kSetHF01) && Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorLucy) != 450) {
 		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) {
 			Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 		}

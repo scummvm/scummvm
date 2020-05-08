@@ -23,42 +23,42 @@
 #ifndef NUVIE_ACTORS_ACTOR_H
 #define NUVIE_ACTORS_ACTOR_H
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/misc/actor_list.h"
 #include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/misc/actor_list.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-using Std::map;
 using Std::list;
+using Std::map;
 using Std::string;
 using Std::vector;
 
 #define ACTOR_NO_READIABLE_LOCATION -1
-#define ACTOR_HEAD   0
-#define ACTOR_NECK   1
-#define ACTOR_BODY   2
-#define ACTOR_ARM    3
-#define ACTOR_ARM_2  4
-#define ACTOR_HAND   5
+#define ACTOR_HEAD 0
+#define ACTOR_NECK 1
+#define ACTOR_BODY 2
+#define ACTOR_ARM 3
+#define ACTOR_ARM_2 4
+#define ACTOR_HAND 5
 #define ACTOR_HAND_2 6
-#define ACTOR_FOOT   7
+#define ACTOR_FOOT 7
 #define ACTOR_NOT_READIABLE 8
 
 // actor alignment
 #define ACTOR_ALIGNMENT_DEFAULT 0
 #define ACTOR_ALIGNMENT_NEUTRAL 1
-#define ACTOR_ALIGNMENT_EVIL    2
-#define ACTOR_ALIGNMENT_GOOD    3
+#define ACTOR_ALIGNMENT_EVIL 2
+#define ACTOR_ALIGNMENT_GOOD 3
 #define ACTOR_ALIGNMENT_CHAOTIC 4
 
 // move-flags
-#define ACTOR_FORCE_MOVE    1
+#define ACTOR_FORCE_MOVE 1
 #define ACTOR_IGNORE_OTHERS 2
-#define ACTOR_OPEN_DOORS    4
+#define ACTOR_OPEN_DOORS 4
 #define ACTOR_IGNORE_DANGER 8
 #define ACTOR_IGNORE_MOVES 0x10
 #define ACTOR_IGNORE_PARTY_MEMBERS 0x20 // only used in Actor::check_move. In U6, player diagonal movement
@@ -66,20 +66,20 @@ using Std::vector;
 
 // push-flags (exclusive)
 #define ACTOR_PUSH_ANYWHERE 0
-#define ACTOR_PUSH_HERE     1
-#define ACTOR_PUSH_FORWARD  2
+#define ACTOR_PUSH_HERE 1
+#define ACTOR_PUSH_FORWARD 2
 
 #define ACTOR_SHOW_BLOOD true
 #define ACTOR_FORCE_HIT true
 
 #define ACTOR_STATUS_PROTECTED 0x1
 #define ACTOR_STATUS_PARALYZED 0x2
-#define ACTOR_STATUS_ASLEEP    0x4
-#define ACTOR_STATUS_POISONED  0x8
-#define ACTOR_STATUS_DEAD      0x10
+#define ACTOR_STATUS_ASLEEP 0x4
+#define ACTOR_STATUS_POISONED 0x8
+#define ACTOR_STATUS_DEAD 0x10
 #define ACTOR_STATUS_ATTACK_EVIL 0x20
 #define ACTOR_STATUS_ATTACK_GOOD 0x40
-#define ACTOR_STATUS_IN_PARTY  0x80
+#define ACTOR_STATUS_IN_PARTY 0x80
 #define ACTOR_STATUS_ALIGNMENT_MASK 0x60
 
 #define ACTOR_MOVEMENT_HIT_FLAG 0x8
@@ -103,13 +103,13 @@ using Std::vector;
 #define ACTOR_CHANGE_BASE_OBJ_N true
 
 #define ACTOR_VEHICLE_ID_N 0
-#define ACTOR_AVATAR_ID_N  1
+#define ACTOR_AVATAR_ID_N 1
 
 #define INV_EXCLUDE_READIED_OBJECTS false
 #define INV_INCLUDE_READIED_OBJECTS true
 
 #define ACTOR_MD_OBJ_FLAG_HYPOXIA 6
-#define ACTOR_MD_OBJ_FLAG_FRENZY  7
+#define ACTOR_MD_OBJ_FLAG_FRENZY 7
 
 #define ACTOR_MD_STATUS_FLAG_COLD 0
 
@@ -130,7 +130,10 @@ typedef struct {
 	uint8 worktype;
 } Schedule;
 
-typedef enum { ATTACK_TYPE_NONE, ATTACK_TYPE_HAND, ATTACK_TYPE_THROWN, ATTACK_TYPE_MISSLE } AttackType;
+typedef enum { ATTACK_TYPE_NONE,
+	           ATTACK_TYPE_HAND,
+	           ATTACK_TYPE_THROWN,
+	           ATTACK_TYPE_MISSLE } AttackType;
 
 typedef struct {
 	uint16 obj_n;
@@ -228,7 +231,6 @@ public:
 	};
 
 protected:
-
 	uint8 id_n;
 
 	Map *map;
@@ -264,7 +266,7 @@ protected:
 	bool met_player;
 
 	bool visible_flag;
-// bool active; // "cached in"
+	// bool active; // "cached in"
 
 	sint8 moves; // number of moves actor has this turn
 	uint8 light; // level of light around actor (normally 0)
@@ -294,14 +296,13 @@ protected:
 
 	U6LList *obj_inventory;
 
-//current schedule pos;
+	//current schedule pos;
 	uint16 sched_pos;
 
 	list<Obj *> surrounding_objects; //used for multi-tile actors.
 	Std::map<uint16, uint16> *custom_tile_tbl;
 
 public:
-
 	Actor(Map *m, ObjManager *om, GameClock *c);
 	virtual ~Actor();
 
@@ -333,7 +334,7 @@ public:
 		return temp_actor;
 	}
 
-//for lack of a better name:
+	//for lack of a better name:
 	bool is_met() {
 		return (talk_flags & 0x01);
 	}
@@ -399,7 +400,7 @@ public:
 	uint16 get_y() {
 		return (y);
 	}
-	uint8  get_z() {
+	uint8 get_z() {
 		return (z);
 	}
 
@@ -541,7 +542,7 @@ public:
 		return combat_mode;
 	}
 	void set_combat_mode(uint8 new_mode);
-	virtual void revert_worktype() { }
+	virtual void revert_worktype() {}
 
 	uint8 get_direction() {
 		return (direction);
@@ -591,8 +592,8 @@ public:
 		return;
 	}
 
-// combat methods
-//void attack(MapCoord pos); // attack at a given map location
+	// combat methods
+	//void attack(MapCoord pos); // attack at a given map location
 	Obj *get_weapon_obj(sint8 readied_obj_location);
 	void attack(sint8 readied_obj_location, MapCoord target, Actor *foe = NULL);
 	const CombatType *get_weapon(sint8 readied_obj_location);
@@ -683,13 +684,13 @@ public:
 		return false;
 	}
 	uint16 get_custom_tile_num(uint16 obj_num);
-protected:
 
+protected:
 	void loadSchedule(unsigned char *schedule_data, uint16 num);
 	virtual bool updateSchedule(uint8 hour, bool teleport = false);
 	uint16 getSchedulePos(uint8 hour);
-// uint16 getSchedulePos(uint8 hour, uint8 day_of_week);
-// inline uint16 Actor::getSchedulePos(uint8 hour);
+	// uint16 getSchedulePos(uint8 hour, uint8 day_of_week);
+	// inline uint16 Actor::getSchedulePos(uint8 hour);
 
 	void inventory_parse_readied_objects(); //this is used to initialise the readied_objects array on load.
 
@@ -715,7 +716,6 @@ protected:
 	}
 
 private:
-
 };
 
 const char *get_actor_alignment_str(uint8 alignment);

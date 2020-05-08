@@ -20,20 +20,20 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/readable_gump.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/gump_shape_archive.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/gumps/gump_notify_process.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
+#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/util.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -43,12 +43,10 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ReadableGump, ModalGump)
 const int jpsub_font = 6;
 
 ReadableGump::ReadableGump()
-	: ModalGump(), _shapeNum(0), _fontNum(0) {
-
+    : ModalGump(), _shapeNum(0), _fontNum(0) {
 }
 
-ReadableGump::ReadableGump(ObjId owner, uint16 shape, int font, const Std::string &msg) :
-	ModalGump(0, 0, 100, 100, owner), _shapeNum(shape), _fontNum(font), _text(msg) {
+ReadableGump::ReadableGump(ObjId owner, uint16 shape, int font, const Std::string &msg) : ModalGump(0, 0, 100, 100, owner), _shapeNum(shape), _fontNum(font), _text(msg) {
 }
 
 ReadableGump::~ReadableGump(void) {
@@ -64,7 +62,7 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 	UpdateDimsFromShape();
 
 	if (CoreApp::get_instance()->getGameInfo()->_language ==
-	        GameInfo::GAMELANG_JAPANESE) {
+	    GameInfo::GAMELANG_JAPANESE) {
 		// Japanese subtitles
 		Std::string::size_type pos;
 		pos = _text.find('%');
@@ -92,7 +90,6 @@ bool ReadableGump::OnKeyDown(int key, int mod) {
 	Close();
 	return true;
 }
-
 
 uint32 ReadableGump::I_readGrave(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);

@@ -21,17 +21,17 @@
  */
 
 #include "ultima/ultima1/actions/attack.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/widgets/transport.h"
-#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
 BEGIN_MESSAGE_MAP(AttackFire, Action)
-	ON_MESSAGE(CharacterInputMsg)
+ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
 bool AttackFire::CharacterInputMsg(CCharacterInputMsg &msg) {
@@ -53,8 +53,8 @@ bool AttackFire::CharacterInputMsg(CCharacterInputMsg &msg) {
 /*-------------------------------------------------------------------*/
 
 BEGIN_MESSAGE_MAP(Attack, AttackFire)
-	ON_MESSAGE(AttackMsg)
-	ON_MESSAGE(CharacterInputMsg)
+ON_MESSAGE(AttackMsg)
+ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
 bool Attack::AttackMsg(CAttackMsg &msg) {
@@ -64,7 +64,7 @@ bool Attack::AttackMsg(CAttackMsg &msg) {
 	const Shared::Weapon &weapon = *c._weapons[c._equippedWeapon];
 
 	addInfoMsg(Common::String::format("%s %s", game->_res->ACTION_NAMES[0], weapon._shortName.c_str()), false);
-	
+
 	if (weapon._distance == 0) {
 		addInfoMsg("?");
 		game->playFX(1);
@@ -95,7 +95,7 @@ void Attack::doAttack(Shared::Maps::Direction dir) {
 /*-------------------------------------------------------------------*/
 
 BEGIN_MESSAGE_MAP(Fire, AttackFire)
-	ON_MESSAGE(FireMsg)
+ON_MESSAGE(FireMsg)
 END_MESSAGE_MAP()
 
 bool Fire::FireMsg(CFireMsg &msg) {
@@ -133,4 +133,3 @@ void Fire::doAttack(Shared::Maps::Direction dir) {
 } // End of namespace Actions
 } // End of namespace Ultima1
 } // End of namespace Ultima
-

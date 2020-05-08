@@ -26,12 +26,16 @@
 namespace Xeen {
 namespace WorldOfXeen {
 
-#define WAIT(TIME) if (_subtitles.wait(TIME)) return false
-#define ROTATE_BG screen.horizMerge(_mergeX); \
+#define WAIT(TIME)             \
+	if (_subtitles.wait(TIME)) \
+	return false
+#define ROTATE_BG               \
+	screen.horizMerge(_mergeX); \
 	_mergeX = (_mergeX + 1) % SCREEN_WIDTH
-#define LOAD_VORTEX loadScreen(Common::String::format("vort%02u.frm", cloudsCtr)); \
-	if (++cloudsCtr > 20) \
-		cloudsCtr = 1
+#define LOAD_VORTEX                                                \
+	loadScreen(Common::String::format("vort%02u.frm", cloudsCtr)); \
+	if (++cloudsCtr > 20)                                          \
+	cloudsCtr = 1
 
 bool CloudsCutscenes::showCloudsIntro() {
 	EventsManager &events = *g_vm->_events;
@@ -66,8 +70,7 @@ bool CloudsCutscenes::showCloudsTitle() {
 	screen.fadeIn(128);
 
 	SpriteResource logo[2] = {
-		SpriteResource("logo.vga"), SpriteResource("logo1.vga")
-	};
+	    SpriteResource("logo.vga"), SpriteResource("logo1.vga")};
 	sound.playFX(1);
 
 	for (int idx = 0; idx < 80; ++idx) {
@@ -117,9 +120,9 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 	Windows &windows = *_vm->_windows;
 
 	SpriteResource stars("stars.vga"), intro1("intro1.vga"),
-		lake("lake.vga"), xeen("xeen.vga"), wizTower("wiztower.vga"),
-		wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
-		xeen1("xeen1.vga");
+	    lake("lake.vga"), xeen("xeen.vga"), wizTower("wiztower.vga"),
+	    wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
+	    xeen1("xeen1.vga");
 
 	// Show the production splash screen
 	sound.playSong("mm4theme.m");
@@ -201,9 +204,9 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 	}
 
 	// Zoom in on a closeup of the wizardry tower
-	const int XLIST1[16] = { 0, 5, 10, 15, 20, 25, 30, 35, 40, 44, 48, 52, 56, 60, 64, 68 };
-	const int XLIST2[16] = { 160, 155, 150, 145, 140, 135, 130, 125, 120, 114, 108, 102, 96, 90, 84, 78 };
-	const int YLIST[23] = { 0, 6, 12, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, 50, 51 };
+	const int XLIST1[16] = {0, 5, 10, 15, 20, 25, 30, 35, 40, 44, 48, 52, 56, 60, 64, 68};
+	const int XLIST2[16] = {160, 155, 150, 145, 140, 135, 130, 125, 120, 114, 108, 102, 96, 90, 84, 78};
+	const int YLIST[23] = {0, 6, 12, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, 50, 51};
 
 	for (int idx = 15; idx >= 0; --idx) {
 		events.updateGameCounter();
@@ -237,7 +240,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 
 	// All the lines whilst the scroll is open
 	SpriteResource groupo("groupo.vga"), group("group.vga"),
-		crodo("crodo.vga"), box("box.vga");
+	    crodo("crodo.vga"), box("box.vga");
 
 	groupo.draw(0, 0);
 	groupo.draw(0, 1, Common::Point(160, 0));
@@ -280,7 +283,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 		}
 
 		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() ||
-				(_subtitles.active() && (lineCtr == 0 || lineCtr == 4 || lineCtr == 10 || lineCtr == 13)); ) {
+		                                   (_subtitles.active() && (lineCtr == 0 || lineCtr == 4 || lineCtr == 10 || lineCtr == 13));) {
 			groupo.draw(0, 0);
 			groupo.draw(0, 1, Common::Point(160, 0));
 
@@ -478,7 +481,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	screen.fadeIn(0x81);
 
 	// Castle gets destroyed / sucked into the vortex
-	const byte COUNTS1[6] = { 9, 3, 2, 2, 3, 15 };
+	const byte COUNTS1[6] = {9, 3, 2, 2, 3, 15};
 	bool flag = false;
 	for (int idx1 = 1; idx1 < 7; ++idx1) {
 		for (int idx2 = 0; idx2 < COUNTS1[idx1 - 1]; ++idx2) {
@@ -644,7 +647,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	Sound &sound = *_vm->_sound;
 
 	SpriteResource king("king.end"), people("people.end"), crodo("crodo.end"),
-		kingCord("kingcord.end");
+	    kingCord("kingcord.end");
 
 	// Later at Castle Burlock
 	screen.loadPalette("endgame.pal");
@@ -661,7 +664,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 
 	int xp2 = SCREEN_WIDTH;
 	bool fadeFlag = true;
-	for (int ctr = SCREEN_WIDTH, xp1 = 117, xp3 = 0; ctr > 0; --ctr, xp1 -=   2, ++xp3) {
+	for (int ctr = SCREEN_WIDTH, xp1 = 117, xp3 = 0; ctr > 0; --ctr, xp1 -= 2, ++xp3) {
 		screen.horizMerge(xp3);
 		people.draw(0, 0, Common::Point(xp1, 68), SPRFLAG_800);
 		if (xp3 > 250) {
@@ -689,9 +692,9 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	savedBg.blitFrom(screen);
 
 	// Close up of King Roland
-	const int XLIST1[13] = { 0, -5, -10, -15, -20, -25, -30, -33, -27, -22, -17 };
-	const int XLIST2[13] = { 160, 145, 130, 115, 100, 85, 70, 57, 53, 48, 42, 39, 34 };
-	const int YLIST[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4 };
+	const int XLIST1[13] = {0, -5, -10, -15, -20, -25, -30, -33, -27, -22, -17};
+	const int XLIST2[13] = {160, 145, 130, 115, 100, 85, 70, 57, 53, 48, 42, 39, 34};
+	const int YLIST[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4};
 
 	for (int idx = 12; idx >= 0; --idx) {
 		screen.blitFrom(savedBg);
@@ -701,7 +704,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	}
 
 	// Congratulations adventurers
-	const char *const VOC_NAMES[3] = { "king1.voc", "king2.voc", "king3.voc" };
+	const char *const VOC_NAMES[3] = {"king1.voc", "king2.voc", "king3.voc"};
 	_subtitles.setLine(12);
 	for (int idx = 0; idx < 3; ++idx) {
 		sound.playVoice(VOC_NAMES[idx]);
@@ -728,14 +731,13 @@ bool CloudsCutscenes::showCloudsEnding2() {
 }
 
 const byte MONSTER_INDEXES[73] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 76,
-	23, 16, 17, 80, 19, 20, 83, 22, 24, 25, 26, 27, 28, 29, 30,
-	31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 84,
-	47, 48, 49, 50, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 62,
-	63, 64, 65, 66, 67, 68, 70, 71, 72, 73, 75, 88, 89
-};
-const int8 XARRAY[8] = { -2, -1, 0, 1, 2, 1, 0, -1 };
-const int8 YARRAY[8] = { -2, 0, 2, 0, -1, 0, 2, 0 };
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 76,
+    23, 16, 17, 80, 19, 20, 83, 22, 24, 25, 26, 27, 28, 29, 30,
+    31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 84,
+    47, 48, 49, 50, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 62,
+    63, 64, 65, 66, 67, 68, 70, 71, 72, 73, 75, 88, 89};
+const int8 XARRAY[8] = {-2, -1, 0, 1, 2, 1, 0, -1};
+const int8 YARRAY[8] = {-2, 0, 2, 0, -1, 0, 2, 0};
 
 bool CloudsCutscenes::showCloudsEnding3() {
 	Map &map = *_vm->_map;
@@ -767,8 +769,8 @@ bool CloudsCutscenes::showCloudsEnding3() {
 	screen.freePages();
 	savedBg.blitFrom(screen);
 
-	const int XLIST3[9] = { 0, -5, -10, -15, -24, -30, -39, -50, -59 };
-	const int YLIST3[9] = { 0, 12, 25, 37, 46, 52, 59, 64, 68 };
+	const int XLIST3[9] = {0, -5, -10, -15, -24, -30, -39, -50, -59};
+	const int YLIST3[9] = {0, 12, 25, 37, 46, 52, 59, 64, 68};
 	for (int idx = 8; idx >= 0; --idx) {
 		screen.blitFrom(savedBg);
 		bigSky.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
@@ -779,7 +781,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 	// Roland and Crodo moving in to look at mirror
 	const int DELTA = 2;
 	for (int idx = 0, xc1 = -115, yp = SCREEN_HEIGHT, xc2 = 335;
-	idx < 115; idx += DELTA, xc1 += DELTA, yp -= DELTA, xc2 -= DELTA) {
+	     idx < 115; idx += DELTA, xc1 += DELTA, yp -= DELTA, xc2 -= DELTA) {
 		ROTATE_BG;
 
 		_mirrBack.draw(0, 0);
@@ -903,7 +905,7 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 
 	// Random animation of score numbers
 	int frames[10];
-	const int FRAMEX[10] = { 64, 83, 102, 121, 140, 159, 178, 197, 216, 235 };
+	const int FRAMEX[10] = {64, 83, 102, 121, 140, 159, 178, 197, 216, 235};
 	for (int idx1 = 0; idx1 < 30; ++idx1) {
 		for (int idx2 = 0; idx2 < 10; ++idx2)
 			frames[idx2] = getSpeakingFrame(20, 29);
@@ -964,8 +966,7 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 
 			for (int idx2 = 0; idx2 < 10; ++idx2)
 				endText.draw(0, frames[idx2], Common::Point(FRAMEX[idx2], 110));
-			windows[28].writeString(idx == 1 ? Res.CLOUDS_CONGRATULATIONS1 :
-				Res.CLOUDS_CONGRATULATIONS2);
+			windows[28].writeString(idx == 1 ? Res.CLOUDS_CONGRATULATIONS1 : Res.CLOUDS_CONGRATULATIONS2);
 
 			events.updateGameCounter();
 			events.wait(1, false);
@@ -1011,11 +1012,11 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 	byte *destP = (byte *)screen.getPixels();
 	byte *destEndP = (byte *)destP + SCREEN_WIDTH * SCREEN_HEIGHT;
 
-	// Setup reference arrays
-	#define ARRAY_SIZE 314
-	#define ARRAY_LAST1 ((ARRAY_SIZE - 1) * 2)
-	#define ARRAY_LAST2 ((ARRAY_SIZE - 1) * 2 + 1)
-	#define BUFFER_SIZE 0x1000
+// Setup reference arrays
+#define ARRAY_SIZE 314
+#define ARRAY_LAST1 ((ARRAY_SIZE - 1) * 2)
+#define ARRAY_LAST2 ((ARRAY_SIZE - 1) * 2 + 1)
+#define BUFFER_SIZE 0x1000
 	uint array2[ARRAY_SIZE * 2], array3[ARRAY_SIZE * 2];
 	uint array4[ARRAY_SIZE * 3];
 	byte buffer[BUFFER_SIZE];
@@ -1040,12 +1041,12 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 	uint16 bytePair;
 	fSrc.read((byte *)&bytePair, 2);
 	Common::fill((uint16 *)buffer, (uint16 *)(buffer + BUFFER_SIZE),
-		bytePair);
+	             bytePair);
 
 	int count = fSrc.readUint16BE();
 	assert(count == (SCREEN_WIDTH * SCREEN_HEIGHT));
 
-	for (int byteIdx = 0; byteIdx < count; ) {
+	for (int byteIdx = 0; byteIdx < count;) {
 		assert(fSrc.pos() < fSrc.size());
 
 		int vMin = array2[(ARRAY_SIZE - 1) * 2];
@@ -1196,109 +1197,85 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 }
 
 const char *const CloudsCutscenes::_INTRO_VOCS[14] = {
-	"crodo1.voc", "crodo2.voc", "iamking.voc", "crodo3.voc",
-	"ya1.voc", "crodo4a.voc", "crodo4b.voc", "crodo4c.voc",
-	"xeenlaff.voc", "tiger2&.voc", "crodo5.voc", "crodo6.voc",
-	"xeenlaff.voc", "tiger2&.voc"
-};
+    "crodo1.voc", "crodo2.voc", "iamking.voc", "crodo3.voc",
+    "ya1.voc", "crodo4a.voc", "crodo4b.voc", "crodo4c.voc",
+    "xeenlaff.voc", "tiger2&.voc", "crodo5.voc", "crodo6.voc",
+    "xeenlaff.voc", "tiger2&.voc"};
 
 const int CloudsCutscenes::_INTRO_FRAMES_LOOKUP[14] = {
-	0, 1, 0, 2, 0, 3, 4, 5, 0, 0, 6, 7, 0, 0
-};
+    0, 1, 0, 2, 0, 3, 4, 5, 0, 0, 6, 7, 0, 0};
 
 const int CloudsCutscenes::_INTRO_FRAMES_VALS[8][32] = {
-	{
-		4, 2, 3, 0, 2, 3, 2, 0, 1, 1, 3, 4, 3, 2, 4, 2,
-		3, 4, 3, 4, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	}, {
-		3, 2, 3, 2, 4, 3, 0, 3, 2, 2, 3, 1, 2, 3, 3, 3,
-		2, 3, 2, 3, 2, 0, 3, 2, 0, 0, 0, 0, 0, 0, 2, 4
-	}, {
-		3, 1, 2, 3, 0, 3, 4, 3, 2, 3, 0, 3, 2, 3, 2, 1,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 3
-	}, {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 3
-	}, {
-		4, 2, 2, 3, 2, 3, 3, 4, 2, 4, 2, 0, 3, 2, 3, 2,
-		3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 2, 3
-	}, {
-		2, 0, 2, 3, 2, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 3, 2, 3, 1
-	}, {
-		3, 2, 0, 2, 4, 2, 3, 2, 3, 2, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 3, 4, 0, 2
-	}, {
-		3, 2, 4, 1, 2, 4, 3, 2, 3, 0, 2, 2, 0, 3, 2, 3,
-		2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	}
-};
+    {4, 2, 3, 0, 2, 3, 2, 0, 1, 1, 3, 4, 3, 2, 4, 2,
+     3, 4, 3, 4, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {3, 2, 3, 2, 4, 3, 0, 3, 2, 2, 3, 1, 2, 3, 3, 3,
+     2, 3, 2, 3, 2, 0, 3, 2, 0, 0, 0, 0, 0, 0, 2, 4},
+    {3, 1, 2, 3, 0, 3, 4, 3, 2, 3, 0, 3, 2, 3, 2, 1,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 3},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 3},
+    {4, 2, 2, 3, 2, 3, 3, 4, 2, 4, 2, 0, 3, 2, 3, 2,
+     3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 2, 3},
+    {2, 0, 2, 3, 2, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 3, 2, 3, 1},
+    {3, 2, 0, 2, 4, 2, 3, 2, 3, 2, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 3, 4, 0, 2},
+    {3, 2, 4, 1, 2, 4, 3, 2, 3, 0, 2, 2, 0, 3, 2, 3,
+     2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
 const uint CloudsCutscenes::_INTRO_FRAMES_WAIT[8][32] = {
-	{
-		 2,  5,  6,  9, 10, 11, 12, 13, 14, 23, 25, 29, 31, 35, 38, 41,
-		42, 45, 50, 52, 55, 56, 57,  0,  0,  0,  0,  0,  0,  0,  0,  0
-	}, {
-		 1,  4,  6,  8,  9, 11, 13, 15, 17, 18, 19, 22, 28, 29, 30, 31,
-		 0, 39,  0, 44,  0, 50, 51,  0, 54,  0,  0,  0,  0,  0,  0,  4
-	}, {
-		 6,  9, 11, 13, 15, 19, 21, 23, 25, 27, 28, 31, 35, 39, 40,  0,
-		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  5,  7
-	}, {
-		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  3,  4
-	}, {
-		 5,  9, 10, 11, 13, 15, 18, 23, 26, 31, 33, 36, 37, 41, 43, 45,
-		48,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9,  0, 12
-	}, {
-		14, 17, 20, 23, 27, 29,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  4,  8, 11, 13
-	}, {
-		15, 16, 17, 19, 21, 24, 24, 27, 34, 35,  0,  0,  0,  0,  0,  0,
-		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  5,  7, 10, 11, 13
-	}, {
-		17, 19, 22, 23, 26, 30, 32, 34, 40, 43, 47, 52, 53, 55, 57, 60,
-		62,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
-	}
-};
+    {2, 5, 6, 9, 10, 11, 12, 13, 14, 23, 25, 29, 31, 35, 38, 41,
+     42, 45, 50, 52, 55, 56, 57, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 4, 6, 8, 9, 11, 13, 15, 17, 18, 19, 22, 28, 29, 30, 31,
+     0, 39, 0, 44, 0, 50, 51, 0, 54, 0, 0, 0, 0, 0, 0, 4},
+    {6, 9, 11, 13, 15, 19, 21, 23, 25, 27, 28, 31, 35, 39, 40, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 7},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 4},
+    {5, 9, 10, 11, 13, 15, 18, 23, 26, 31, 33, 36, 37, 41, 43, 45,
+     48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 12},
+    {14, 17, 20, 23, 27, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 8, 11, 13},
+    {15, 16, 17, 19, 21, 24, 24, 27, 34, 35, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 7, 10, 11, 13},
+    {17, 19, 22, 23, 26, 30, 32, 34, 40, 43, 47, 52, 53, 55, 57, 60,
+     62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
 const byte CloudsCutscenes::_DECODE_TABLE1[256] = {
-	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-	5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-	5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-	5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-	5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-	6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-	6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-	6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
-};
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+    8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8};
 
 const byte CloudsCutscenes::_DECODE_TABLE2[256] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5,
-	6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7,
-	8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9,
-	10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11,
-	12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15,
-	16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19,
-	20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23,
-	24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31,
-	32, 32, 33, 33, 34, 34, 35, 35, 36, 36, 37, 37, 38, 38, 39, 39,
-	40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47,
-	48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63
-};
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+    4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5,
+    6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7,
+    8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9,
+    10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11,
+    12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15,
+    16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19,
+    20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23,
+    24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31,
+    32, 32, 33, 33, 34, 34, 35, 35, 36, 36, 37, 37, 38, 38, 39, 39,
+    40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47,
+    48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
 
 } // End of namespace WorldOfXeen
 } // End of namespace Xeen

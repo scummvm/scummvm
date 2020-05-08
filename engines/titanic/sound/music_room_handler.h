@@ -33,7 +33,10 @@ namespace Titanic {
 class CProjectItem;
 class CSoundManager;
 
-enum MusicInstrument { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
+enum MusicInstrument { BELLS = 0,
+	                   SNAKE = 1,
+	                   PIANO = 2,
+	                   BASS = 3 };
 
 struct MusicRoomInstrument {
 	int _pitchControl;
@@ -42,7 +45,7 @@ struct MusicRoomInstrument {
 	bool _inversionControl;
 	bool _muteControl;
 	MusicRoomInstrument() : _pitchControl(0), _speedControl(0), _directionControl(false),
-		_inversionControl(false), _muteControl(false) {}
+	                        _inversionControl(false), _muteControl(false) {}
 };
 
 class CMusicRoomHandler {
@@ -66,6 +69,7 @@ private:
 	uint _soundStartTicks;
 	uint _startTicks;
 	int _volume;
+
 private:
 	/**
 	 * Starts music room instruments animation
@@ -101,6 +105,7 @@ private:
 	 * which wave file the music instruments will use.
 	 */
 	int getPitch(MusicInstrument instrument, int arrIndex);
+
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();

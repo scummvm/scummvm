@@ -55,7 +55,7 @@ public:
 	~EffectManager();
 
 	void delete_effect(Effect *eff); // anyone may delete an effect
-	void update_effects(); // check and delete
+	void update_effects();           // check and delete
 
 	bool has_effects();
 	void watch_effect(CallBack *callback_target, Effect *watch);

@@ -32,6 +32,6 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

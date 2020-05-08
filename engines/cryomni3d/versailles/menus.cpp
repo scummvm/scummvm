@@ -29,8 +29,8 @@
 #include "image/bmp.h"
 #include "image/image_decoder.h"
 
-#include "cryomni3d/mouse_boxes.h"
 #include "cryomni3d/font_manager.h"
+#include "cryomni3d/mouse_boxes.h"
 
 #include "cryomni3d/versailles/engine.h"
 
@@ -48,9 +48,9 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 
 	int titleX, titleY, subtitleX, subtitleY;
 	if (getLanguage() == Common::FR_FRA ||
-	        getLanguage() == Common::ES_ESP ||
-	        getLanguage() == Common::KO_KOR ||
-	        getLanguage() == Common::PT_BRA) {
+	    getLanguage() == Common::ES_ESP ||
+	    getLanguage() == Common::KO_KOR ||
+	    getLanguage() == Common::PT_BRA) {
 		titleX = 144;
 		titleY = 160;
 		subtitleX = 305;
@@ -87,10 +87,10 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 	_fontManager.displayStr(subtitleX, subtitleY - offY, _messages[24]);
 
 	if (getLanguage() == Common::FR_FRA ||
-	        getLanguage() == Common::ES_ESP ||
-	        getLanguage() == Common::KO_KOR ||
-	        getLanguage() == Common::PT_BRA ||
-	        getLanguage() == Common::ZH_TWN) {
+	    getLanguage() == Common::ES_ESP ||
+	    getLanguage() == Common::KO_KOR ||
+	    getLanguage() == Common::PT_BRA ||
+	    getLanguage() == Common::ZH_TWN) {
 		surface->vLine(100, 146, 172, color);
 		surface->hLine(100, 172, 168, color); // minus 1 because hLine draws inclusive
 	}
@@ -529,7 +529,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 }
 
 uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surface,
-        const Common::Rect &position, uint msg_id) {
+                                                 const Common::Rect &position, uint msg_id) {
 	uint confirmWidth = _fontManager.getStrWidth(_messages[53]);
 	uint cancelWidth = _fontManager.getStrWidth(_messages[54]);
 	uint oldFont = _fontManager.getCurrentFont();
@@ -604,7 +604,7 @@ uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surfa
 }
 
 uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFrame,
-        bool saveMode, Common::String &saveName) {
+                                                   bool saveMode, Common::String &saveName) {
 	bool autoName = (_messages.size() >= 148);
 
 	Graphics::ManagedSurface surface(bgFrame->w, bgFrame->h, bgFrame->format);
@@ -650,8 +650,7 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 
 	setCursor(181);
 
-	uint fileListOffset = CLIP(ConfMan.getInt(_isVisiting ? "visits_list_off" :
-	                           "saves_list_off"), 0, 100 - 6);
+	uint fileListOffset = CLIP(ConfMan.getInt(_isVisiting ? "visits_list_off" : "saves_list_off"), 0, 100 - 6);
 
 	uint boxHovered = uint(-1);
 	uint boxSelected = uint(-1);
@@ -777,7 +776,7 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 							// Apply autoname to text
 							if (_currentLevel < 8) {
 								savesList[boxSelected + fileListOffset] = Common::String::format(_messages[146].c_str(),
-								        _currentLevel);
+								                                                                 _currentLevel);
 							} else {
 								savesList[boxSelected + fileListOffset] = _messages[147];
 							}
@@ -883,16 +882,14 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 }
 
 const MsgBoxParameters CryOmni3DEngine_Versailles::kWarpMsgBoxParameters = {
-	9, 241, 22, 2, 1, 36, 18, 20, 10, 5
-};
+    9, 241, 22, 2, 1, 36, 18, 20, 10, 5};
 
 const MsgBoxParameters CryOmni3DEngine_Versailles::kFixedimageMsgBoxParameters = {
-	3, 241, 22, 2, 1, 40, 20, 20, 10, 3
-};
+    3, 241, 22, 2, 1, 40, 20, 20, 10, 3};
 
 void CryOmni3DEngine_Versailles::displayMessageBox(const MsgBoxParameters &params,
-        const Graphics::Surface *surface, const Common::String &msg, const Common::Point &position,
-        const Common::Functor0<void> &callback) {
+                                                   const Graphics::Surface *surface, const Common::String &msg, const Common::Point &position,
+                                                   const Common::Functor0<void> &callback) {
 	Graphics::ManagedSurface dstSurface;
 	dstSurface.create(surface->w, surface->h, surface->format);
 	dstSurface.blitFrom(*surface);
@@ -995,7 +992,7 @@ void CryOmni3DEngine_Versailles::displayMessageBoxWarp(const Common::String &mes
 	}
 	displayMessageBox(kWarpMsgBoxParameters, _omni3dMan.getSurface(), message, mousePos,
 	                  Common::Functor0Mem<void, CryOmni3DEngine_Versailles>(this,
-	                          &CryOmni3DEngine_Versailles::warpMsgBoxCB));
+	                                                                        &CryOmni3DEngine_Versailles::warpMsgBoxCB));
 }
 
 void CryOmni3DEngine_Versailles::displayCredits() {

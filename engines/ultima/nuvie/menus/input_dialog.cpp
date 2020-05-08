@@ -20,25 +20,24 @@
  *
  */
 
-
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/gui_types.h"
-#include "ultima/nuvie/gui/gui_button.h"
-#include "ultima/nuvie/gui/gui_text.h"
-#include "ultima/nuvie/gui/gui_text_toggle_button.h"
-#include "ultima/nuvie/gui/gui_callback.h"
-#include "ultima/nuvie/gui/gui_area.h"
-#include "ultima/nuvie/gui/gui_dialog.h"
 #include "ultima/nuvie/menus/input_dialog.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/gui_area.h"
+#include "ultima/nuvie/gui/gui_button.h"
+#include "ultima/nuvie/gui/gui_callback.h"
+#include "ultima/nuvie/gui/gui_dialog.h"
+#include "ultima/nuvie/gui/gui_text.h"
+#include "ultima/nuvie/gui/gui_text_toggle_button.h"
+#include "ultima/nuvie/gui/gui_types.h"
+#include "ultima/nuvie/gui/widgets/command_bar_new_ui.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/views/party_view.h"
 #include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/gui/widgets/command_bar_new_ui.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/keybinding/keys.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -47,9 +46,9 @@ namespace Nuvie {
 #define ID_HEIGHT 166
 
 InputDialog::InputDialog(GUI_CallBack *callback)
-	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - ID_WIDTH) / 2,
-	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - ID_HEIGHT) / 2,
-	             ID_WIDTH, ID_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
+    : GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - ID_WIDTH) / 2,
+                 Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - ID_HEIGHT) / 2,
+                 ID_WIDTH, ID_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
 	callback_object = callback;
 	init();
 	grab_focus();
@@ -58,7 +57,7 @@ InputDialog::InputDialog(GUI_CallBack *callback)
 bool InputDialog::init() {
 	uint8 textY = 11;
 	uint8 buttonY = 9;
-	int colX[] = { 9, 239 };
+	int colX[] = {9, 239};
 	int height = 12;
 	uint8 row_h = 13;
 	int yesno_width = 32;
@@ -70,30 +69,30 @@ bool InputDialog::init() {
 	Game *game = Game::get_game();
 	MapWindow *map_window = game->get_map_window();
 
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY, 0, 0, 0, "Interface:", font);
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY, 0, 0, 0, "Interface:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Dragging enabled:", font);
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Dragging enabled:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Direction selects target:", font);
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Direction selects target:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Look on left_click:", font);
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Look on left_click:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Walk with left button:", font);
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Walk with left button:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Enable doubleclick:", font);
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Enable doubleclick:", font);
 	AddWidget(widget);
 	if (game->get_game_type() == NUVIE_GAME_U6) {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Allow free balloon movement:", font);
+		widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Allow free balloon movement:", font);
 		AddWidget(widget);
 	}
 	if (!game->is_new_style()) {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Doubleclick opens containers:", font);
+		widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Doubleclick opens containers:", font);
 		AddWidget(widget);
 	}
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use new command bar:", font);
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use new command bar:", font);
 	AddWidget(widget);
 	if (!game->is_new_style()) {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Party view targeting:", font);
+		widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Party view targeting:", font);
 		AddWidget(widget);
 	}
 
@@ -108,8 +107,8 @@ bool InputDialog::init() {
 	else // normal
 		interface = 0;
 
-	const char *const yesno_text[] = { "no", "yes" };
-	const char *const interface_text[] = { "Normal", "U7 like", "ignores obstacles" };
+	const char *const yesno_text[] = {"no", "yes"};
+	const char *const interface_text[] = {"Normal", "U7 like", "ignores obstacles"};
 
 	interface_button = new GUI_TextToggleButton(this, 129, buttonY, 142, height, interface_text, 3, interface, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(interface_button);
@@ -153,7 +152,7 @@ bool InputDialog::init() {
 	if (!Game::get_game()->is_new_style()) {
 		bool party_view_targeting;
 		config->value("config/input/party_view_targeting", party_view_targeting, false);
-		party_targeting_button = new GUI_TextToggleButton(this, colX[1], buttonY += row_h, yesno_width, height, yesno_text, 2, party_view_targeting,  font, BUTTON_TEXTALIGN_CENTER, this, 0);
+		party_targeting_button = new GUI_TextToggleButton(this, colX[1], buttonY += row_h, yesno_width, height, yesno_text, 2, party_view_targeting, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(party_targeting_button);
 		button_index[last_index += 1] = party_targeting_button;
 	} else
@@ -206,7 +205,8 @@ GUI_status InputDialog::KeyDown(const Common::KeyState &key) {
 		button_index[b_index_num]->set_highlighted(true);
 		break;
 	case DO_ACTION_KEY:
-		if (b_index_num != -1) return button_index[b_index_num]->Activate_button();
+		if (b_index_num != -1)
+			return button_index[b_index_num]->Activate_button();
 		break;
 	case CANCEL_ACTION_KEY:
 		return close_dialog();

@@ -38,7 +38,7 @@
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
-int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
+int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/, LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
 #endif

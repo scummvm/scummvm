@@ -37,7 +37,7 @@ bool getActive();
 bool isPlaying();
 void update();
 
-}
+} // namespace CD
 } // End of namespace DS
 
 #endif

@@ -20,17 +20,17 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/camera_process.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -47,8 +47,8 @@ int32 CameraProcess::_eqX = 0;
 int32 CameraProcess::_eqY = 0;
 
 CameraProcess::CameraProcess() : Process(), _sx(0), _sy(0), _sz(0),
-	_ex(0), _ey(0), _ez(0), _time(0), _elapsed(0),
-	_itemNum(0), _lastFrameNum(0) {
+                                 _ex(0), _ey(0), _ez(0), _time(0), _elapsed(0),
+                                 _itemNum(0), _lastFrameNum(0) {
 }
 
 CameraProcess::~CameraProcess() {
@@ -57,14 +57,17 @@ CameraProcess::~CameraProcess() {
 }
 
 uint16 CameraProcess::SetCameraProcess(CameraProcess *cam) {
-	if (!cam) cam = new CameraProcess(0);
-	if (_camera) _camera->terminate();
+	if (!cam)
+		cam = new CameraProcess(0);
+	if (_camera)
+		_camera->terminate();
 	_camera = cam;
 	return Kernel::get_instance()->addProcess(_camera);
 }
 
 void CameraProcess::ResetCameraProcess() {
-	if (_camera) _camera->terminate();
+	if (_camera)
+		_camera->terminate();
 	_camera = nullptr;
 }
 
@@ -96,8 +99,7 @@ void CameraProcess::GetCameraLocation(int32 &x, int32 &y, int32 &z) {
 //
 
 // Track item, do nothing
-CameraProcess::CameraProcess(uint16 _itemnum) :
-	_time(0), _elapsed(0), _itemNum(_itemnum), _lastFrameNum(0) {
+CameraProcess::CameraProcess(uint16 _itemnum) : _time(0), _elapsed(0), _itemNum(_itemnum), _lastFrameNum(0) {
 	GetCameraLocation(_sx, _sy, _sz);
 
 	if (_itemNum) {
@@ -122,14 +124,12 @@ CameraProcess::CameraProcess(uint16 _itemnum) :
 }
 
 // Stay over point
-CameraProcess::CameraProcess(int32 x_, int32 y_, int32 z_) :
-	_ex(x_), _ey(y_), _ez(z_), _time(0), _elapsed(0), _itemNum(0), _lastFrameNum(0) {
+CameraProcess::CameraProcess(int32 x_, int32 y_, int32 z_) : _ex(x_), _ey(y_), _ez(z_), _time(0), _elapsed(0), _itemNum(0), _lastFrameNum(0) {
 	GetCameraLocation(_sx, _sy, _sz);
 }
 
 // Scroll
-CameraProcess::CameraProcess(int32 x_, int32 y_, int32 z_, int32 time_) :
-	_ex(x_), _ey(y_), _ez(z_), _time(time_), _elapsed(0), _itemNum(0), _lastFrameNum(0) {
+CameraProcess::CameraProcess(int32 x_, int32 y_, int32 z_, int32 time_) : _ex(x_), _ey(y_), _ez(z_), _time(time_), _elapsed(0), _itemNum(0), _lastFrameNum(0) {
 	GetCameraLocation(_sx, _sy, _sz);
 	//pout << "Scrolling from (" << sx << "," << sy << "," << sz << ") to (" <<
 	//  ex << "," << ey << "," << ez << ") in " << _time << " frames" << Std::endl;
@@ -138,7 +138,8 @@ CameraProcess::CameraProcess(int32 x_, int32 y_, int32 z_, int32 time_) :
 void CameraProcess::terminate() {
 	if (_itemNum) {
 		Item *item = getItem(_itemNum);
-		if (item) item->clearExtFlag(Item::EXT_CAMERA);
+		if (item)
+			item->clearExtFlag(Item::EXT_CAMERA);
 	}
 
 	Process::terminate();
@@ -154,7 +155,7 @@ void CameraProcess::run() {
 	}
 
 	if (_time && _elapsed > _time) {
-		_result = 0; // do we need this
+		_result = 0;                        // do we need this
 		CameraProcess::SetCameraProcess(0); // This will terminate us
 		return;
 	}
@@ -186,7 +187,8 @@ void CameraProcess::GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool n
 
 			if (_lastFrameNum != _elapsed) {
 				// No lerping if we missed a frame
-				if ((_elapsed - _lastFrameNum) > 1) factor = 256;
+				if ((_elapsed - _lastFrameNum) > 1)
+					factor = 256;
 				_lastFrameNum = _elapsed;
 				inBetween = false;
 			}
@@ -231,8 +233,10 @@ void CameraProcess::GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool n
 		int32 sfactor = _elapsed;
 		int32 efactor = _elapsed + 1;
 
-		if (sfactor > _time) sfactor = _time;
-		if (efactor > _time) efactor = _time;
+		if (sfactor > _time)
+			sfactor = _time;
+		if (efactor > _time)
+			efactor = _time;
 
 		int32 lsx = ((_sx * (_time - sfactor) + _ex * sfactor) / _time);
 		int32 lsy = ((_sy * (_time - sfactor) + _ey * sfactor) / _time);
@@ -243,7 +247,8 @@ void CameraProcess::GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool n
 		int32 lez = ((_sz * (_time - efactor) + _ez * efactor) / _time);
 
 		// Update the fast area
-		if (!noupdate) World::get_instance()->getCurrentMap()->updateFastArea(lsx, lsy, lsz, lex, ley, lez);
+		if (!noupdate)
+			World::get_instance()->getCurrentMap()->updateFastArea(lsx, lsy, lsz, lex, ley, lez);
 
 		// This way while possibly slower is more accurate
 		x = ((lsx * (256 - factor) + lex * factor) >> 8);
@@ -291,7 +296,8 @@ void CameraProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool CameraProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_sx = static_cast<int32>(rs->readUint32LE());
 	_sy = static_cast<int32>(rs->readUint32LE());
@@ -304,8 +310,8 @@ bool CameraProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_itemNum = rs->readUint16LE();
 	_lastFrameNum = rs->readUint32LE();
 	_earthquake = static_cast<int32>(rs->readUint32LE()); //static
-	_eqX = static_cast<int32>(rs->readUint32LE()); //static
-	_eqY = static_cast<int32>(rs->readUint32LE()); //static
+	_eqX = static_cast<int32>(rs->readUint32LE());        //static
+	_eqY = static_cast<int32>(rs->readUint32LE());        //static
 
 	_camera = this; //static
 

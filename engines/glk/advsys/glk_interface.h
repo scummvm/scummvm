@@ -35,9 +35,11 @@ namespace AdvSys {
 class GlkInterface : public GlkAPI {
 private:
 	winid_t _window;
+
 protected:
 	int _saveSlot;
 	Common::String _pendingLine;
+
 protected:
 	/**
 	 * GLK initialization
@@ -60,12 +62,13 @@ protected:
 	 * Get an input line
 	 */
 	Common::String readLine();
+
 public:
 	/**
 	 * Constructor
 	 */
 	GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_window(nullptr), _saveSlot(-1) {}
+	                                                                  _window(nullptr), _saveSlot(-1) {}
 };
 
 } // End of namespace AdvSys

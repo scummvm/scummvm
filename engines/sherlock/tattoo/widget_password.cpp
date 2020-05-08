@@ -108,13 +108,9 @@ void WidgetPassword::handleEvents() {
 
 		// Redraw the text
 		--_index;
-		_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _bounds.width() - 9, _cursorPos.y +
-			_surface.fontHeight() - 1), TRANSPARENCY);
+		_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _bounds.width() - 9, _cursorPos.y + _surface.fontHeight() - 1), TRANSPARENCY);
 		_surface.writeString(_password.c_str() + _index, _cursorPos, COMMAND_HIGHLIGHTED);
-	} else if ((keycode == Common::KEYCODE_LEFT && _index > 0)
-			|| (keycode == Common::KEYCODE_RIGHT && _index < (int)_password.size() && _cursorPos.x < (_bounds.width() - _surface.widestChar() - 3))
-			|| (keycode == Common::KEYCODE_HOME && _index > 0)
-			|| (keycode == Common::KEYCODE_END)) {
+	} else if ((keycode == Common::KEYCODE_LEFT && _index > 0) || (keycode == Common::KEYCODE_RIGHT && _index < (int)_password.size() && _cursorPos.x < (_bounds.width() - _surface.widestChar() - 3)) || (keycode == Common::KEYCODE_HOME && _index > 0) || (keycode == Common::KEYCODE_END)) {
 		// Restore character the cursor was previously over
 		_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _cursorPos.x + width, _cursorPos.y + _surface.fontHeight()), TRANSPARENCY);
 		if (currentChar != ' ')
@@ -153,8 +149,7 @@ void WidgetPassword::handleEvents() {
 			_password.deleteChar(_index);
 
 		// Redraw the text
-		_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _bounds.width() - 9, _cursorPos.y +
-			_surface.fontHeight() - 1), TRANSPARENCY);
+		_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _bounds.width() - 9, _cursorPos.y + _surface.fontHeight() - 1), TRANSPARENCY);
 		_surface.writeString(_password.c_str() + _index, _cursorPos, COMMAND_HIGHLIGHTED);
 	} else if (keycode == Common::KEYCODE_RETURN || keycode == Common::KEYCODE_ESCAPE) {
 		close();
@@ -167,8 +162,7 @@ void WidgetPassword::handleEvents() {
 				_password.setChar(ui._keyState.ascii, _index);
 
 			// Redraw the text
-			_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _bounds.width() - 9, _cursorPos.y +
-				_surface.fontHeight() - 1), TRANSPARENCY);
+			_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _bounds.width() - 9, _cursorPos.y + _surface.fontHeight() - 1), TRANSPARENCY);
 			_surface.writeString(_password.c_str() + _index, _cursorPos, COMMAND_HIGHLIGHTED);
 
 			_cursorPos.x += _surface.charWidth(ui._keyState.ascii);
@@ -197,8 +191,7 @@ void WidgetPassword::close() {
 	Common::String correct2 = Common::String::format("%s?", FIXED(CorrectPassword));
 	Common::String correct3 = Common::String::format("%s ?", FIXED(CorrectPassword));
 
-	if (!_password.compareToIgnoreCase(correct1) || !_password.compareToIgnoreCase(correct2)
-			|| !_password.compareToIgnoreCase(correct3))
+	if (!_password.compareToIgnoreCase(correct1) || !_password.compareToIgnoreCase(correct2) || !_password.compareToIgnoreCase(correct3))
 		// They got it correct
 		_vm->setFlags(149);
 

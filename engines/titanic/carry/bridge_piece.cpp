@@ -27,8 +27,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBridgePiece, CCarry)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(PassOnDragStartMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(PassOnDragStartMsg)
 END_MESSAGE_MAP()
 
 CBridgePiece::CBridgePiece() : CCarry(), _field140(0) {
@@ -66,8 +66,7 @@ bool CBridgePiece::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		shipSetting->_itemName = getName();
 		petMoveToHiddenRoom();
 
-		CAddHeadPieceMsg headpieceMsg(shipSetting->getName() == _string6 ?
-			"Enable" : "Disable");
+		CAddHeadPieceMsg headpieceMsg(shipSetting->getName() == _string6 ? "Enable" : "Disable");
 		CSetFrameMsg frameMsg;
 
 		CString name = getName();

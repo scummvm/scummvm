@@ -56,9 +56,7 @@ bool AIScriptLeon::Update() {
 			return true;
 		}
 
-		if ( Actor_Query_Inch_Distance_From_Actor(kActorLeon, kActorMcCoy) <= 36
-		 && !Player_Query_Combat_Mode()
-		) {
+		if (Actor_Query_Inch_Distance_From_Actor(kActorLeon, kActorMcCoy) <= 36 && !Player_Query_Combat_Mode()) {
 			Actor_Set_Goal_Number(kActorLeon, kGoalLeonPunchMcCoy);
 			return true;
 		}
@@ -73,9 +71,7 @@ bool AIScriptLeon::Update() {
 }
 
 void AIScriptLeon::TimerExpired(int timer) {
-	if (timer == kActorTimerAIScriptCustomTask0
-	 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave
-	) {
+	if (timer == kActorTimerAIScriptCustomTask0 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave) {
 		AI_Countdown_Timer_Reset(kActorLeon, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorLeon, kGoalLeonGone);
 	}
@@ -108,9 +104,7 @@ void AIScriptLeon::ClickedByPlayer() {
 void AIScriptLeon::EnteredSet(int setId) {}
 
 void AIScriptLeon::OtherAgentEnteredThisSet(int otherActorId) {
-	if (otherActorId == kActorMcCoy
-	 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave
-	) {
+	if (otherActorId == kActorMcCoy && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave) {
 		AI_Countdown_Timer_Reset(kActorLeon, kActorTimerAIScriptCustomTask0);
 		AI_Movement_Track_Flush(kActorLeon);
 		AI_Movement_Track_Append(kActorLeon, 353, 0);
@@ -121,9 +115,7 @@ void AIScriptLeon::OtherAgentEnteredThisSet(int otherActorId) {
 }
 
 void AIScriptLeon::OtherAgentExitedThisSet(int otherActorId) {
-	if (otherActorId == kActorMcCoy
-	 && Actor_Query_Which_Set_In(kActorLeon) != kSetCT11
-	) {
+	if (otherActorId == kActorMcCoy && Actor_Query_Which_Set_In(kActorLeon) != kSetCT11) {
 		AI_Movement_Track_Flush(kActorLeon);
 		ADQ_Flush();
 		Actor_Set_Goal_Number(kActorLeon, kGoalLeonGone);
@@ -134,10 +126,7 @@ void AIScriptLeon::OtherAgentExitedThisSet(int otherActorId) {
 }
 
 void AIScriptLeon::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (otherActorId == kActorMcCoy
-	 && combatMode == 1
-	 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonHoldingDeskClerk
-	) {
+	if (otherActorId == kActorMcCoy && combatMode == 1 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonHoldingDeskClerk) {
 		Game_Flag_Set(kFlagCT09LeonInterrupted);
 		Player_Loses_Control();
 		Actor_Face_Actor(kActorMcCoy, kActorLeon, true);
@@ -287,9 +276,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _flag) {
 			*animation = 847;
 			_animationState = 0;
 		} else {
@@ -332,9 +319,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 6:
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _flag) {
 			Actor_Change_Animation_Mode(kActorLeon, 72);
 			*animation = 848;
 		} else {
@@ -481,17 +466,17 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptLeon::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptLeon::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptLeon::ReachedMovementTrackWaypoint(int waypointId) {

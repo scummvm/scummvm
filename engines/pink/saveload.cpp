@@ -24,8 +24,8 @@
 
 #include "graphics/thumbnail.h"
 
-#include "pink/pink.h"
 #include "pink/objects/module.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -115,4 +115,4 @@ WARN_UNUSED_RESULT bool readSaveHeader(Common::InSaveFile &in, SaveStateDescript
 	return true;
 }
 
-}
+} // namespace Pink

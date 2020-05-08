@@ -32,9 +32,10 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetQuit: public WidgetBase {
+class WidgetQuit : public WidgetBase {
 private:
 	int _select, _oldSelect;
+
 public:
 	WidgetQuit(SherlockEngine *vm);
 	~WidgetQuit() override {}

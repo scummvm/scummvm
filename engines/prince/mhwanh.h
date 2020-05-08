@@ -23,8 +23,8 @@
 #ifndef PRINCE_MHWANH_H
 #define PRINCE_MHWANH_H
 
-#include "image/image_decoder.h"
 #include "image/bmp.h"
+#include "image/image_decoder.h"
 
 #include "graphics/surface.h"
 

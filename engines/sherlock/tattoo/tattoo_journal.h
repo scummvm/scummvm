@@ -23,16 +23,23 @@
 #ifndef SHERLOCK_TATTOO_JOURNAL_H
 #define SHERLOCK_TATTOO_JOURNAL_H
 
-#include "sherlock/journal.h"
 #include "sherlock/image_file.h"
+#include "sherlock/journal.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
 enum JournalHighlight {
-	JH_NONE = -1, JH_CLOSE = 0, JH_SEARCH = 1, JH_SAVE = 2,
-	JH_SCROLL_LEFT = 3, JH_PAGE_LEFT = 4, JH_PAGE_RIGHT = 5, JH_SCROLL_RIGHT = 6, JH_THUMBNAIL = 7
+	JH_NONE = -1,
+	JH_CLOSE = 0,
+	JH_SEARCH = 1,
+	JH_SAVE = 2,
+	JH_SCROLL_LEFT = 3,
+	JH_PAGE_LEFT = 4,
+	JH_PAGE_RIGHT = 5,
+	JH_SCROLL_RIGHT = 6,
+	JH_THUMBNAIL = 7
 };
 
 class TattooJournal : public Journal {
@@ -96,6 +103,7 @@ private:
 	 * Show a message that the journal has been saved to file
 	 */
 	void showSavedDialog();
+
 public:
 	TattooJournal(SherlockEngine *vm);
 	~TattooJournal() override {}
@@ -104,6 +112,7 @@ public:
 	 * Show the journal
 	 */
 	void show();
+
 public:
 	/**
 	 * Draw the journal background, frame, and interface buttons

@@ -26,15 +26,13 @@
 #include "common/system.h"
 
 #ifdef SAMPLES_PER_SEC_8000 // the GreanSymbianMMP format cannot handle values for defines :(
-  #define SAMPLES_PER_SEC 8000
+#define SAMPLES_PER_SEC 8000
 #else
-  #define SAMPLES_PER_SEC 16000
+#define SAMPLES_PER_SEC 16000
 #endif
 
 SymbianSdlMixerManager::SymbianSdlMixerManager()
-	:
-	_stereoMixBuffer(0) {
-
+    : _stereoMixBuffer(0) {
 }
 
 SymbianSdlMixerManager::~SymbianSdlMixerManager() {
@@ -44,7 +42,7 @@ SymbianSdlMixerManager::~SymbianSdlMixerManager() {
 void SymbianSdlMixerManager::startAudio() {
 	// Need to create mixbuffer for stereo mix to downmix
 	if (_obtained.channels != 2) {
-		_stereoMixBuffer = new byte [_obtained.size * 2]; // * 2 for stereo values
+		_stereoMixBuffer = new byte[_obtained.size * 2]; // * 2 for stereo values
 	}
 
 	SdlMixerManager::startAudio();
@@ -60,7 +58,7 @@ void SymbianSdlMixerManager::callbackHandler(byte *samples, int len) {
 		int16 *bitmixDst = (int16 *)samples;
 		int16 *bitmixSrc = (int16 *)_stereoMixBuffer;
 
-		for (int loop = len / 2; loop >= 0; loop --) {
+		for (int loop = len / 2; loop >= 0; loop--) {
 			*bitmixDst = (*bitmixSrc + *(bitmixSrc + 1)) >> 1;
 			bitmixDst++;
 			bitmixSrc += 2;

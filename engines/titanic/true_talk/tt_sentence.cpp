@@ -21,10 +21,10 @@
  */
 
 #include "titanic/true_talk/tt_sentence.h"
-#include "titanic/true_talk/tt_concept.h"
-#include "titanic/true_talk/script_handler.h"
 #include "titanic/titanic.h"
 #include "titanic/translation.h"
+#include "titanic/true_talk/script_handler.h"
+#include "titanic/true_talk/tt_concept.h"
 
 namespace Titanic {
 
@@ -46,15 +46,14 @@ TTsentenceConcept *TTsentenceConcept::addSibling() {
 /*------------------------------------------------------------------------*/
 
 TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
-		TTroomScript *roomScript, TTnpcScript *npcScript) :
-		_owner(owner), _category(1), _inputCtr(inputCtr), _field34(0),
-		_field38(0), _initialLine(line), _nodesP(nullptr), _roomScript(roomScript),
-		_npcScript(npcScript), _field58(5), _field5C(5) {
-	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
+                       TTroomScript *roomScript, TTnpcScript *npcScript) : _owner(owner), _category(1), _inputCtr(inputCtr), _field34(0),
+                                                                           _field38(0), _initialLine(line), _nodesP(nullptr), _roomScript(roomScript),
+                                                                           _npcScript(npcScript), _field58(5), _field5C(5) {
+	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11 : SS_VALID;
 }
 
 TTsentence::TTsentence(const TTsentence *src) : _sentenceConcept(src->_sentenceConcept),
-		_initialLine(src->_initialLine), _normalizedLine(src->_normalizedLine) {
+                                                _initialLine(src->_initialLine), _normalizedLine(src->_normalizedLine) {
 	copyFrom(*src);
 }
 
@@ -89,7 +88,7 @@ void TTsentence::copyFrom(const TTsentence &src) {
 	if (src._nodesP) {
 		// Source has processed nodes, so duplicate them
 		for (TTsentenceNode *node = src._nodesP; node;
-				node = dynamic_cast<TTsentenceNode *>(node->_nextP)) {
+		     node = dynamic_cast<TTsentenceNode *>(node->_nextP)) {
 			TTsentenceNode *newNode = new TTsentenceNode(node->_wordP);
 			if (_nodesP)
 				_nodesP->addToTail(newNode);
@@ -114,7 +113,7 @@ int TTsentence::storeVocabHit(TTword *word) {
 }
 
 bool TTsentence::fn1(const CString &str, int wordId1, const CString &str1, const CString &str2,
-		const CString &str3, int wordId2, int val1, int val2, const TTconceptNode *node) const {
+                     const CString &str3, int wordId2, int val1, int val2, const TTconceptNode *node) const {
 	if (!node)
 		node = &_sentenceConcept;
 
@@ -141,8 +140,8 @@ bool TTsentence::fn1(const CString &str, int wordId1, const CString &str1, const
 }
 
 bool TTsentence::fn3(const CString &str1, const CString &str2, const CString &str3,
-		const CString &str4, const CString &str5, const CString &str6,
-		int val1, int val2, const TTconceptNode *node) const {
+                     const CString &str4, const CString &str5, const CString &str6,
+                     int val1, int val2, const TTconceptNode *node) const {
 	if (!node)
 		node = &_sentenceConcept;
 
@@ -203,26 +202,26 @@ bool TTsentence::fn2(int slotIndex, const TTstring &str, const TTconceptNode *no
 
 	if (slotIndex == 1 && g_vm->_exeResources._owner->_concept4P) {
 		if (str == g_vm->_exeResources._owner->_concept4P->getText() &&
-				conceptText == "do")
+		    conceptText == "do")
 			goto exit;
 	}
 
 	if (g_vm->_exeResources._owner->_concept2P && (slotIndex == 0 ||
-			slotIndex == 3 || slotIndex == 4)) {
+	                                               slotIndex == 3 || slotIndex == 4)) {
 		if (str == g_vm->_exeResources._owner->_concept2P->getText() &&
-				(conceptText == "it" || conceptText == "he" || conceptText == "she" ||
-				conceptText == "him" || conceptText == "her" || conceptText == "them" ||
-				conceptText == "they"))
+		    (conceptText == "it" || conceptText == "he" || conceptText == "she" ||
+		     conceptText == "him" || conceptText == "her" || conceptText == "them" ||
+		     conceptText == "they"))
 			goto exit;
 	}
 
 	if (g_vm->_exeResources._owner->_concept1P && (slotIndex == 0 ||
-		slotIndex == 2 || slotIndex == 3 || slotIndex == 4 || slotIndex == 5)) {
+	                                               slotIndex == 2 || slotIndex == 3 || slotIndex == 4 || slotIndex == 5)) {
 		if (str == g_vm->_exeResources._owner->_concept1P->getText() &&
-			(conceptText == "it" || conceptText == "that" || conceptText == "he" ||
-				conceptText == "she" || conceptText == "him" || conceptText == "her" ||
-				conceptText == "them" || conceptText == "they" || conceptText == "those" ||
-				conceptText == "1" || conceptText == "thing"))
+		    (conceptText == "it" || conceptText == "that" || conceptText == "he" ||
+		     conceptText == "she" || conceptText == "him" || conceptText == "her" ||
+		     conceptText == "them" || conceptText == "they" || conceptText == "those" ||
+		     conceptText == "1" || conceptText == "thing"))
 			goto exit;
 	}
 
@@ -233,9 +232,9 @@ bool TTsentence::fn2(int slotIndex, const TTstring &str, const TTconceptNode *no
 			conceptText = concept->getText();
 
 			if (conceptText == "it" || conceptText == "that" || conceptText == "he" ||
-				conceptText == "she" || conceptText == "him" || conceptText == "her" ||
-				conceptText == "them" || conceptText == "they" || conceptText == "those" ||
-				conceptText == "1" || conceptText == "thing")
+			    conceptText == "she" || conceptText == "him" || conceptText == "her" ||
+			    conceptText == "them" || conceptText == "they" || conceptText == "those" ||
+			    conceptText == "1" || conceptText == "thing")
 				abortFlag = true;
 		}
 	}
@@ -313,27 +312,25 @@ bool TTsentence::localWord(const char *str) const {
 	CScriptHandler &scriptHandler = *g_vm->_exeResources._owner;
 	bool foundMatch = false;
 	static const char *const ARTICLES_EN[11] = {
-		"it", "that", "he", "she", "him", "her", "them", "they", "those", "1", "thing"
-	};
+	    "it", "that", "he", "she", "him", "her", "them", "they", "those", "1", "thing"};
 	static const char *const ARTICLES_DE[9] = {
-		"es", "das", "er", "ihn", "ihm", "ihnen", "diese", "man", "ding"
-	};
+	    "es", "das", "er", "ihn", "ihm", "ihnen", "diese", "man", "ding"};
 
 	if (scriptHandler._concept1P) {
 		TTstring s = scriptHandler._concept1P->getText();
 		if (s == str)
 			foundMatch = true;
 	} else if (scriptHandler._concept2P) {
-			TTstring s = scriptHandler._concept2P->getText();
-			if (s == str)
-				foundMatch = true;
+		TTstring s = scriptHandler._concept2P->getText();
+		if (s == str)
+			foundMatch = true;
 	}
 
 	VocabMode mode = g_vm->_exeResources.getVocabMode();
 	bool result = false;
 
 	for (TTsentenceNode *nodeP = _nodesP; nodeP && !result;
-			nodeP = dynamic_cast<TTsentenceNode *>(nodeP->_nextP)) {
+	     nodeP = dynamic_cast<TTsentenceNode *>(nodeP->_nextP)) {
 		TTsynonym syn;
 		if (!nodeP->_wordP)
 			continue;

@@ -35,7 +35,7 @@ class Framelimiter {
 private:
 	BladeRunnerEngine *_vm;
 
-	bool   _enabled;
+	bool _enabled;
 	uint32 _speedLimitMs;
 
 	uint32 _timeFrameStart;
@@ -47,7 +47,6 @@ public:
 
 private:
 	void reset();
-
 };
 
 } // End of namespace BladeRunner

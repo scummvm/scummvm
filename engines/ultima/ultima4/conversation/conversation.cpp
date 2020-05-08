@@ -30,19 +30,18 @@ namespace Ultima4 {
 const uint Conversation::BUFFERLEN = 16;
 ResponseParts *g_responseParts;
 
-ResponseParts::ResponseParts() :
-		NONE("<NONE>", "", true),
-		ASK("<ASK>", "", true),
-		END("<END>", "", true),
-		ATTACK("<ATTACK>", "", true),
-		BRAGGED("<BRAGGED>", "", true),
-		HUMBLE("<HUMBLE>", "", true),
-		ADVANCELEVELS("<ADVANCELEVELS>", "", true),
-		HEALCONFIRM("<HEALCONFIRM>", "", true),
-		STARTMUSIC_LB("<STARTMUSIC_LB>", "", true),
-		STARTMUSIC_HW("<STARTMUSIC_HW>", "", true),
-		STOPMUSIC("<STOPMUSIC>", "", true),
-		HAWKWIND("<HAWKWIND>", "", true) {
+ResponseParts::ResponseParts() : NONE("<NONE>", "", true),
+                                 ASK("<ASK>", "", true),
+                                 END("<END>", "", true),
+                                 ATTACK("<ATTACK>", "", true),
+                                 BRAGGED("<BRAGGED>", "", true),
+                                 HUMBLE("<HUMBLE>", "", true),
+                                 ADVANCELEVELS("<ADVANCELEVELS>", "", true),
+                                 HEALCONFIRM("<HEALCONFIRM>", "", true),
+                                 STARTMUSIC_LB("<STARTMUSIC_LB>", "", true),
+                                 STARTMUSIC_HW("<STARTMUSIC_HW>", "", true),
+                                 STOPMUSIC("<STOPMUSIC>", "", true),
+                                 HAWKWIND("<HAWKWIND>", "", true) {
 	g_responseParts = this;
 }
 
@@ -101,8 +100,7 @@ bool ResponsePart::isCommand() const {
 	return _command;
 }
 
-DynamicResponse::DynamicResponse(Response * (*generator)(const DynamicResponse *), const Common::String &param) :
-	Response(""), _param(param) {
+DynamicResponse::DynamicResponse(Response *(*generator)(const DynamicResponse *), const Common::String &param) : Response(""), _param(param) {
 	_generator = generator;
 	_currentResponse = nullptr;
 }
@@ -121,8 +119,7 @@ const Std::vector<ResponsePart> &DynamicResponse::getParts() const {
 /*
  * Dialogue::Question class
  */
-Dialogue::Question::Question(const Common::String &txt, Response *yes, Response *no) :
-	_text(txt), _yesResp(yes->addref()), _noResp(no->addref()) {}
+Dialogue::Question::Question(const Common::String &txt, Response *yes, Response *no) : _text(txt), _yesResp(yes->addref()), _noResp(no->addref()) {}
 
 Common::String Dialogue::Question::getText() {
 	return _text;
@@ -134,18 +131,15 @@ Response *Dialogue::Question::getResponse(bool yes) {
 	return _noResp;
 }
 
-
 /*
  * Dialogue::Keyword class
  */
-Dialogue::Keyword::Keyword(const Common::String &kw, Response *resp) :
-	_keyword(kw), _response(resp->addref()) {
+Dialogue::Keyword::Keyword(const Common::String &kw, Response *resp) : _keyword(kw), _response(resp->addref()) {
 	trim(_keyword);
 	lowercase(_keyword);
 }
 
-Dialogue::Keyword::Keyword(const Common::String &kw, const Common::String &resp) :
-	_keyword(kw), _response((new Response(resp))->addref()) {
+Dialogue::Keyword::Keyword(const Common::String &kw, const Common::String &resp) : _keyword(kw), _response((new Response(resp))->addref()) {
 	trim(_keyword);
 	lowercase(_keyword);
 }
@@ -172,10 +166,7 @@ bool Dialogue::Keyword::operator==(const Common::String &kw) const {
  */
 
 Dialogue::Dialogue()
-	: _intro(nullptr)
-	, _longIntro(nullptr)
-	, _defaultAnswer(nullptr)
-	, _question(nullptr) {
+    : _intro(nullptr), _longIntro(nullptr), _defaultAnswer(nullptr), _question(nullptr) {
 }
 
 Dialogue::~Dialogue() {
@@ -241,7 +232,7 @@ Common::String Dialogue::dump(const Common::String &arg) {
  */
 
 Conversation::Conversation() : _state(INTRO), _script(new Script()),
-		_question(nullptr), _quant(0), _player(0), _price(0) {
+                               _question(nullptr), _quant(0), _player(0), _price(0) {
 #ifdef IOS_ULTIMA4
 	U4IOS::incrementConversationCount();
 #endif

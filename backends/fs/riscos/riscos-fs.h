@@ -46,6 +46,7 @@ protected:
 	 * Plain constructor, for internal use only (hence protected).
 	 */
 	RISCOSFilesystemNode() : _isDirectory(false), _isValid(false) {}
+
 public:
 	/**
 	 * Creates a RISCOSFilesystemNode for a given path.
@@ -69,6 +70,7 @@ public:
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
 	virtual bool createDirectory();
+
 private:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using OS_File 20.
@@ -88,6 +90,6 @@ namespace Riscos {
  */
 bool assureDirectoryExists(const Common::String &dir, const char *prefix = nullptr);
 
-} // End of namespace RISCOS
+} // namespace Riscos
 
 #endif

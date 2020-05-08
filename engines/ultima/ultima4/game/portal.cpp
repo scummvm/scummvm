@@ -21,15 +21,15 @@
  */
 
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/game/game.h"
-#include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/city.h"
+#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/map/tile.h"
 
@@ -37,13 +37,15 @@ namespace Ultima {
 namespace Ultima4 {
 
 void createDngLadder(Location *location, PortalTriggerAction action, Portal *p) {
-	if (!p) return;
+	if (!p)
+		return;
 	else {
 		p->_destid = location->_map->_id;
 		if (action == ACTION_KLIMB && location->_coords.z == 0) {
 			p->_exitPortal = true;
 			p->_destid = 1;
-		} else p->_exitPortal = false;
+		} else
+			p->_exitPortal = false;
 		p->_message = "";
 		p->_portalConditionsMet = nullptr;
 		p->_portalTransportRequisites = TRANSPORT_FOOT_OR_HORSE;
@@ -73,9 +75,11 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 				createDngLadder(location, action, &dngLadder);
 			else if ((action & ACTION_DESCEND) && dungeon->ladderDownAt(coords))
 				createDngLadder(location, action, &dngLadder);
-			else return 0;
+			else
+				return 0;
 			portal = &dngLadder;
-		} else return 0;
+		} else
+			return 0;
 	}
 
 	/* conditions not met for portal to work */
@@ -98,7 +102,8 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 		case ACTION_KLIMB:
 			if (portal->_exitPortal)
 				sprintf(msg, "Klimb up!\nLeaving...\n");
-			else sprintf(msg, "Klimb up!\nTo level %d\n", portal->_start.z + 1);
+			else
+				sprintf(msg, "Klimb up!\nTo level %d\n", portal->_start.z + 1);
 			break;
 		case ACTION_ENTER:
 			switch (destination->_type) {
@@ -106,8 +111,7 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 				City *city = dynamic_cast<City *>(destination);
 				assert(city);
 				g_screen->screenMessage("Enter %s!\n\n%s\n\n", city->_type.c_str(), city->getName().c_str());
-			}
-			break;
+			} break;
 			case Map::SHRINE:
 				g_screen->screenMessage("Enter the %s!\n\n", destination->getName().c_str());
 				break;

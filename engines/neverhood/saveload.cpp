@@ -24,9 +24,9 @@
 
 #include "graphics/thumbnail.h"
 
-#include "neverhood/neverhood.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/gamevars.h"
+#include "neverhood/neverhood.h"
 
 namespace Neverhood {
 

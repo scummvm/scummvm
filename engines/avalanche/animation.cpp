@@ -27,25 +27,24 @@
 
 /* TRIP5	Trippancy V - the sprite animation subsystem */
 
-#include "common/system.h"
-#include "avalanche/avalanche.h"
 #include "avalanche/animation.h"
+#include "avalanche/avalanche.h"
+#include "common/system.h"
 
 namespace Avalanche {
 
 // Art gallery at 2,1; notice about this at 2,2.
 const int32 Animation::kCatacombMap[8][8] = {
-	// Geida's room
-	// 1	   2	   3	   4	   5	   6	   7	   8
-	{0x204,	 0x200,  0xd0f0, 0xf0ff, 0xff,   0xd20f, 0xd200, 0x200},
-	{0x50f1, 0x20ff, 0x2ff,  0xff,   0xe0ff, 0x20ff, 0x200f, 0x7210},
-	{0xe3f0, 0xe10f, 0x72f0, 0xff,   0xe0ff, 0xff,   0xff,   0x800f},
-	{0x2201, 0x2030, 0x800f, 0x220,  0x20f,  0x30,   0xff,   0x23f}, // >> Oubliette
-	{0x5024, 0xf3,   0xff,   0x200f, 0x22f0, 0x20f,  0x200,  0x7260},
-	{0xf0,   0x2ff,  0xe2ff, 0xff,   0x200f, 0x50f0, 0x72ff, 0x201f},
-	{0xf6,   0x220f, 0x22f0, 0x30f,  0xf0,   0x20f,  0x8200, 0x2f0}, // <<< In here
-	{0x34,   0x200f, 0x51f0, 0x201f, 0xf1,   0x50ff, 0x902f, 0x2062}
-};
+    // Geida's room
+    // 1	   2	   3	   4	   5	   6	   7	   8
+    {0x204, 0x200, 0xd0f0, 0xf0ff, 0xff, 0xd20f, 0xd200, 0x200},
+    {0x50f1, 0x20ff, 0x2ff, 0xff, 0xe0ff, 0x20ff, 0x200f, 0x7210},
+    {0xe3f0, 0xe10f, 0x72f0, 0xff, 0xe0ff, 0xff, 0xff, 0x800f},
+    {0x2201, 0x2030, 0x800f, 0x220, 0x20f, 0x30, 0xff, 0x23f}, // >> Oubliette
+    {0x5024, 0xf3, 0xff, 0x200f, 0x22f0, 0x20f, 0x200, 0x7260},
+    {0xf0, 0x2ff, 0xe2ff, 0xff, 0x200f, 0x50f0, 0x72ff, 0x201f},
+    {0xf6, 0x220f, 0x22f0, 0x30f, 0xf0, 0x20f, 0x8200, 0x2f0}, // <<< In here
+    {0x34, 0x200f, 0x51f0, 0x201f, 0xf1, 0x50ff, 0x902f, 0x2062}};
 
 AnimationType::AnimationType(Animation *anim) {
 	_anim = anim;
@@ -116,7 +115,7 @@ void AnimationType::init(byte spritenum, bool doCheck) {
 	_yLength = inf.readByte();
 	_seq = inf.readByte();
 	uint16 size = inf.readUint16LE();
-	assert (size > 6);
+	assert(size > 6);
 	_fgBubbleCol = (Color)inf.readByte();
 	_bgBubbleCol = (Color)inf.readByte();
 	_characterId = inf.readByte();
@@ -250,10 +249,9 @@ void AnimationType::walk() {
 			case kMagicUnfinished: {
 				bounce();
 				Common::String tmpStr = Common::String::format("%c%cSorry.%cThis place is not available yet!",
-					kControlBell, kControlCenter, kControlRoman);
+				                                               kControlBell, kControlCenter, kControlRoman);
 				_anim->_vm->_dialogs->displayText(tmpStr);
-				}
-				break;
+			} break;
 			case kMagicSpecial:
 				_anim->callSpecial(magic->_data);
 				break;
@@ -420,7 +418,7 @@ Animation::~Animation() {
 
 		if (curSpr->_quick)
 			curSpr->remove();
-		delete(curSpr);
+		delete (curSpr);
 	}
 }
 
@@ -482,11 +480,11 @@ void Animation::catacombMove(byte ped) {
 		_vm->flipRoom(kRoomLustiesRoom, 4);
 		_vm->_dialogs->displayText("Phew! Nice to be out of there!");
 		return;
-	case 1033:{ // Oubliette
+	case 1033: { // Oubliette
 		_vm->flipRoom(kRoomOubliette, 1);
 		Common::String tmpStr = Common::String::format("Oh, NO!%c1%c", kControlRegister, kControlSpeechBubble);
 		_vm->_dialogs->displayText(tmpStr);
-		}
+	}
 		return;
 	case 4:
 		_vm->flipRoom(kRoomGeidas, 1);
@@ -506,66 +504,66 @@ void Animation::catacombMove(byte ped) {
 		_vm->loadRoom(29);
 	int32 here = kCatacombMap[_vm->_catacombY - 1][_vm->_catacombX - 1];
 
-	switch (here & 0xf) { // West.
-	case 0: // no connection (wall)
-		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+	switch (here & 0xf) {                            // West.
+	case 0:                                          // no connection (wall)
+		_vm->_magics[1]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[4]._operation = kMagicNothing; // Door.
 		_vm->_background->draw(-1, -1, 27);
 		break;
-	case 0x1: // no connection (wall + shield),
-		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+	case 0x1:                                        // no connection (wall + shield),
+		_vm->_magics[1]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[4]._operation = kMagicNothing; // Door.
-		_vm->_background->draw(-1, -1, 27); // Wall, plus...
-		_vm->_background->draw(-1, -1, 28); // ...shield.
+		_vm->_background->draw(-1, -1, 27);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 28);          // ...shield.
 		break;
-	case 0x2: // wall with door
-		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+	case 0x2:                                        // wall with door
+		_vm->_magics[1]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[4]._operation = kMagicSpecial; // Door.
-		_vm->_background->draw(-1, -1, 27); // Wall, plus...
-		_vm->_background->draw(-1, -1, 29); // ...door.
+		_vm->_background->draw(-1, -1, 27);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 29);          // ...door.
 		break;
-	case 0x3: // wall with door and shield
-		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+	case 0x3:                                        // wall with door and shield
+		_vm->_magics[1]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[4]._operation = kMagicSpecial; // Door.
-		_vm->_background->draw(-1, -1, 27); // Wall, plus...
-		_vm->_background->draw(-1, -1, 29); // ...door, and...
-		_vm->_background->draw(-1, -1, 28); // ...shield.
+		_vm->_background->draw(-1, -1, 27);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 29);          // ...door, and...
+		_vm->_background->draw(-1, -1, 28);          // ...shield.
 		break;
-	case 0x4: // no connection (wall + window),
-		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+	case 0x4:                                        // no connection (wall + window),
+		_vm->_magics[1]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[4]._operation = kMagicNothing; // Door.
-		_vm->_background->draw(-1, -1, 27); // Wall, plus...
-		_vm->_background->draw(-1, -1, 4);  // ...window.
+		_vm->_background->draw(-1, -1, 27);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 4);           // ...window.
 		break;
-	case 0x5: // wall with door and window
-		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+	case 0x5:                                        // wall with door and window
+		_vm->_magics[1]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[4]._operation = kMagicSpecial; // Door.
-		_vm->_background->draw(-1, -1, 27); // Wall, plus...
-		_vm->_background->draw(-1, -1, 29); // ...door, and...
-		_vm->_background->draw(-1, -1, 4); // ...window.
+		_vm->_background->draw(-1, -1, 27);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 29);          // ...door, and...
+		_vm->_background->draw(-1, -1, 4);           // ...window.
 		break;
-	case 0x6: // no connection (wall + torches),
-		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+	case 0x6:                                        // no connection (wall + torches),
+		_vm->_magics[1]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[4]._operation = kMagicNothing; // No door.
-		_vm->_background->draw(-1, -1, 27); // Wall, plus...
-		_vm->_background->draw(-1, -1, 6); // ...torches.
+		_vm->_background->draw(-1, -1, 27);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 6);           // ...torches.
 		break;
-	case 0x7: // wall with door and torches
-		_vm->_magics[1]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[2]._operation = kMagicNothing; // Straight wall.
+	case 0x7:                                        // wall with door and torches
+		_vm->_magics[1]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[2]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[4]._operation = kMagicSpecial; // Door.
-		_vm->_background->draw(-1, -1, 27); // Wall, plus...
-		_vm->_background->draw(-1, -1, 29); // ...door, and...
-		_vm->_background->draw(-1, -1, 6); // ...torches.
+		_vm->_background->draw(-1, -1, 27);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 29);          // ...door, and...
+		_vm->_background->draw(-1, -1, 6);           // ...torches.
 		break;
-	case 0xf: // straight-through corridor.
+	case 0xf:                                       // straight-through corridor.
 		_vm->_magics[1]._operation = kMagicNothing; // Sloping wall.
 		_vm->_magics[2]._operation = kMagicSpecial; // Straight wall.
 		break;
@@ -575,53 +573,53 @@ void Animation::catacombMove(byte ped) {
 
 	/*  ---- */
 
-	switch ((here & 0xf0) >> 4) { // East
-	case 0: // no connection (wall)
-		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+	switch ((here & 0xf0) >> 4) {                    // East
+	case 0:                                          // no connection (wall)
+		_vm->_magics[4]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[6]._operation = kMagicNothing; // Door.
 		_vm->_background->draw(-1, -1, 18);
 		break;
-	case 0x1: // no connection (wall + window),
-		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+	case 0x1:                                        // no connection (wall + window),
+		_vm->_magics[4]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[6]._operation = kMagicNothing; // Door.
-		_vm->_background->draw(-1, -1, 18); // Wall, plus...
-		_vm->_background->draw(-1, -1, 19); // ...window.
+		_vm->_background->draw(-1, -1, 18);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 19);          // ...window.
 		break;
-	case 0x2: // wall with door
-		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+	case 0x2:                                        // wall with door
+		_vm->_magics[4]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[6]._operation = kMagicSpecial; // Door.
-		_vm->_background->draw(-1, -1, 18); // Wall, plus...
-		_vm->_background->draw(-1, -1, 20); // ...door.
+		_vm->_background->draw(-1, -1, 18);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 20);          // ...door.
 		break;
-	case 0x3: // wall with door and window
-		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+	case 0x3:                                        // wall with door and window
+		_vm->_magics[4]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[6]._operation = kMagicSpecial; // Door.
-		_vm->_background->draw(-1, -1, 18); // Wall, plus...
-		_vm->_background->draw(-1, -1, 19); // ...door, and...
-		_vm->_background->draw(-1, -1, 20); // ...window.
+		_vm->_background->draw(-1, -1, 18);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 19);          // ...door, and...
+		_vm->_background->draw(-1, -1, 20);          // ...window.
 		break;
-	case 0x6: // no connection (wall + torches),
-		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+	case 0x6:                                        // no connection (wall + torches),
+		_vm->_magics[4]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[6]._operation = kMagicNothing; // No door.
-		_vm->_background->draw(-1, -1, 18); // Wall, plus...
-		_vm->_background->draw(-1, -1, 17); // ...torches.
+		_vm->_background->draw(-1, -1, 18);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 17);          // ...torches.
 		break;
-	case 0x7: // wall with door and torches
-		_vm->_magics[4]._operation = kMagicBounce; // Sloping wall.
-		_vm->_magics[5]._operation = kMagicNothing; // Straight wall.
+	case 0x7:                                        // wall with door and torches
+		_vm->_magics[4]._operation = kMagicBounce;   // Sloping wall.
+		_vm->_magics[5]._operation = kMagicNothing;  // Straight wall.
 		_vm->_portals[6]._operation = kMagicSpecial; // Door.
-		_vm->_background->draw(-1, -1, 18); // Wall, plus...
-		_vm->_background->draw(-1, -1, 20); // ...door, and...
-		_vm->_background->draw(-1, -1, 17); // ...torches.
+		_vm->_background->draw(-1, -1, 18);          // Wall, plus...
+		_vm->_background->draw(-1, -1, 20);          // ...door, and...
+		_vm->_background->draw(-1, -1, 17);          // ...torches.
 		break;
-	case 0xf: // straight-through corridor.
-		_vm->_magics[4]._operation = kMagicNothing; // Sloping wall.
-		_vm->_magics[5]._operation = kMagicSpecial; // Straight wall.
+	case 0xf:                                        // straight-through corridor.
+		_vm->_magics[4]._operation = kMagicNothing;  // Sloping wall.
+		_vm->_magics[5]._operation = kMagicSpecial;  // Straight wall.
 		_vm->_portals[6]._operation = kMagicNothing; // Door.
 		break;
 	default:
@@ -629,7 +627,7 @@ void Animation::catacombMove(byte ped) {
 	}
 
 	switch ((here & 0xf00) >> 8) { // South
-	case 0: // No connection.
+	case 0:                        // No connection.
 		_vm->_magics[6]._operation = kMagicBounce;
 		_vm->_magics[11]._operation = kMagicBounce;
 		_vm->_magics[12]._operation = kMagicBounce;
@@ -662,11 +660,11 @@ void Animation::catacombMove(byte ped) {
 	}
 
 	switch ((here & 0xf000) >> 12) { // North
-	case 0: // No connection
+	case 0:                          // No connection
 		_vm->_magics[0]._operation = kMagicBounce;
 		_vm->_portals[3]._operation = kMagicNothing; // Door.
 		break;
-	// LEFT handles:
+		// LEFT handles:
 #if 0
 	case 0x1:
 		_vm->_celer->show_one(-1, -1, 4);
@@ -676,7 +674,7 @@ void Animation::catacombMove(byte ped) {
 #endif
 	case 0x2:
 		_vm->_background->draw(-1, -1, 3);
-		_vm->_magics[0]._operation = kMagicBounce; // Middle exit north.
+		_vm->_magics[0]._operation = kMagicBounce;   // Middle exit north.
 		_vm->_portals[3]._operation = kMagicSpecial; // Door.
 		break;
 #if 0
@@ -694,7 +692,7 @@ void Animation::catacombMove(byte ped) {
 #endif
 	case 0x5:
 		_vm->_background->draw(-1, -1, 2);
-		_vm->_magics[0]._operation = kMagicBounce; // Middle exit north.
+		_vm->_magics[0]._operation = kMagicBounce;   // Middle exit north.
 		_vm->_portals[3]._operation = kMagicSpecial; // Door.
 		break;
 #if 0
@@ -715,7 +713,7 @@ void Animation::catacombMove(byte ped) {
 		if (((here & 0xf000) >> 12) == 0x9)
 			_vm->_background->draw(-1, -1, 31);
 
-		_vm->_magics[0]._operation = kMagicSpecial; // Middle arch north.
+		_vm->_magics[0]._operation = kMagicSpecial;  // Middle arch north.
 		_vm->_portals[3]._operation = kMagicNothing; // Door.
 		break;
 	// DECORATIONS:
@@ -742,13 +740,13 @@ void Animation::catacombMove(byte ped) {
 	switch (xy) {
 	case 514:
 		_vm->_background->draw(-1, -1, 16);
-		break;     // [2,2] : "Art Gallery" sign over door.
+		break; // [2,2] : "Art Gallery" sign over door.
 	case 264:
 		_vm->_background->draw(-1, -1, 8);
-		break;      // [8,1] : "The Wrong Way!" sign.
+		break; // [8,1] : "The Wrong Way!" sign.
 	case 1797:
 		_vm->_background->draw(-1, -1, 1);
-		break;      // [5,7] : "Ite Mingite" sign.
+		break; // [5,7] : "Ite Mingite" sign.
 	case 258:
 		for (int i = 0; i <= 2; i++) { // [2,1] : Art gallery - pictures
 			_vm->_background->draw(130 + i * 120, 70, 14);
@@ -761,10 +759,10 @@ void Animation::catacombMove(byte ped) {
 		break; // [7,5] : 4 candles.
 	case 776:
 		_vm->_background->draw(-1, -1, 9);
-		break;     // [8,3] : 1 candle.
+		break; // [8,3] : 1 candle.
 	case 2049:
 		_vm->_background->draw(-1, -1, 10);
-		break;     // [1,8] : another candle.
+		break; // [1,8] : another candle.
 	case 257:
 		_vm->_background->draw(-1, -1, 11);
 		_vm->_background->draw(-1, -1, 12);
@@ -776,7 +774,7 @@ void Animation::catacombMove(byte ped) {
 	if (_vm->_geidaFollows && (ped > 0)) {
 		AnimationType *spr1 = _sprites[1];
 
-		if (!spr1->_quick)  // If we don't already have her...
+		if (!spr1->_quick)       // If we don't already have her...
 			spr1->init(5, true); // ...Load Geida.
 		appearPed(1, geidaPed(ped));
 		spr1->_callEachStepFl = true;
@@ -811,15 +809,15 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_dialogs->displayScrollChain('Q', 26);
 		_vm->_userMovesAvvy = true;
 		break;
-	case 3: // _vm->special 3: Room 71: triggers dart.
+	case 3:                    // _vm->special 3: Room 71: triggers dart.
 		_sprites[0]->bounce(); // Must include that.
 
 		if (!_arrowTriggered) {
 			_arrowTriggered = true;
 
 			AnimationType *spr1 = _sprites[1];
-			appearPed(1, 3); // The dart starts at ped 4, and...
-			spr1->walkTo(4); // flies to ped 5 (- 1 for pascal to C conversion).
+			appearPed(1, 3);           // The dart starts at ped 4, and...
+			spr1->walkTo(4);           // flies to ped 5 (- 1 for pascal to C conversion).
 			spr1->_facingDir = kDirUp; // Only face.
 			// Should call some kind of Eachstep procedure which will deallocate
 			// the sprite when it hits the wall, and replace it with the chunk
@@ -830,7 +828,7 @@ void Animation::callSpecial(uint16 which) {
 			spr1->_eachStepProc = kProcArrow;
 		}
 		break;
-	case 4: // This is the ghost room link.
+	case 4:                           // This is the ghost room link.
 		_sprites[0]->turn(kDirRight); // You'll see this after we get back.
 		_vm->_timer->addTimer(1, Timer::kProcGhostRoomPhew, Timer::kReasonGhostRoomPhew);
 		_vm->_ghostroom->run();
@@ -849,7 +847,7 @@ void Animation::callSpecial(uint16 which) {
 			_vm->_friarWillTieYouUp = false;
 			spr1->walkTo(2);
 			spr1->_vanishIfStill = true;
-			spr1->_doCheck = true; // One of them must have Check_Me switched on.
+			spr1->_doCheck = true;                      // One of them must have Check_Me switched on.
 			_vm->setRoom(kPeopleFriarTuck, kRoomDummy); // Not here, then.
 			_vm->_timer->addTimer(364, Timer::kProcHangAround, Timer::kReasonHangingAround);
 		}
@@ -862,8 +860,7 @@ void Animation::callSpecial(uint16 which) {
 		avvy->_moveY = 0;
 		avvy->_facingDir = kDirRight;
 		_vm->_timer->addTimer(1, Timer::kProcFallDownOubliette, Timer::kReasonFallingDownOubliette);
-		}
-		break;
+	} break;
 	case 7: // _vm->special 7: stop falling down oubliette.
 		_sprites[0]->_visible = false;
 		_vm->_magics[9]._operation = kMagicNothing;
@@ -874,7 +871,7 @@ void Animation::callSpecial(uint16 which) {
 		_vm->_dialogs->displayText("Oh dear, you seem to be down the bottom of an oubliette.");
 		_vm->_timer->addTimer(200, Timer::kProcMeetAvaroid, Timer::kReasonMeetingAvaroid);
 		break;
-	case 8:        // _vm->special 8: leave du Lustie's room.
+	case 8: // _vm->special 8: leave du Lustie's room.
 		if (_vm->_geidaFollows && !_vm->_lustieIsAsleep) {
 			AnimationType *spr1 = _sprites[1];
 			_vm->_dialogs->displayScrollChain('Q', 63);
@@ -887,15 +884,14 @@ void Animation::callSpecial(uint16 which) {
 	case 9: {
 		// _vm->special 9: lose Geida to Robin Hood...
 		if (!_vm->_geidaFollows)
-			return;   // DOESN'T COUNT: no Geida.
+			return; // DOESN'T COUNT: no Geida.
 		AnimationType *spr1 = _sprites[1];
 		spr1->_callEachStepFl = false; // She no longer follows Avvy around.
-		spr1->walkTo(3); // She walks to somewhere...
-		_sprites[0]->remove();     // Lose Avvy.
+		spr1->walkTo(3);               // She walks to somewhere...
+		_sprites[0]->remove();         // Lose Avvy.
 		_vm->_userMovesAvvy = false;
 		_vm->_timer->addTimer(40, Timer::kProcRobinHoodAndGeida, Timer::kReasonRobinHoodAndGeida);
-		}
-		break;
+	} break;
 	case 10: // _vm->special 10: transfer north in catacombs.
 		if ((_vm->_catacombX == 4) && (_vm->_catacombY == 1)) {
 			// Into Geida's room.
@@ -972,10 +968,10 @@ void Animation::setMoveSpeed(byte t, Direction dir) {
 		spr->setSpeed(0, spr->_speedY);
 		break;
 	case kDirLeft:
-		spr->setSpeed(-spr->_speedX,  0);
+		spr->setSpeed(-spr->_speedX, 0);
 		break;
 	case kDirRight:
-		spr->setSpeed(spr->_speedX,  0);
+		spr->setSpeed(spr->_speedX, 0);
 		break;
 	case kDirUpLeft:
 		spr->setSpeed(-spr->_speedX, -spr->_speedY);
@@ -1021,7 +1017,7 @@ void Animation::followAvalotY(byte tripnum) {
 		else
 			return;
 
-		if (tripSpr->_moveX == 0)  {
+		if (tripSpr->_moveX == 0) {
 			tripSpr->_stepNum++;
 			if (tripSpr->_stepNum == tripSpr->_seq)
 				tripSpr->_stepNum = 0;
@@ -1062,28 +1058,28 @@ void Animation::arrowProcs(byte tripnum) {
 		// This is so if: a) the bottom of the arrow is below Avvy's head,
 		// b) the left of the arrow is left of the right of Avvy's head, and
 		// c) the right of the arrow is right of the left of Avvy's head.
-		if ((tripSpr->_y + tripSpr->_yLength >= avvy->_y) // A
-			&& (tripSpr->_x <= avvy->_x + avvy->_xLength) // B
-			&& (tripSpr->_x + tripSpr->_xLength >= avvy->_x)) { // C
+		if ((tripSpr->_y + tripSpr->_yLength >= avvy->_y)       // A
+		    && (tripSpr->_x <= avvy->_x + avvy->_xLength)       // B
+		    && (tripSpr->_x + tripSpr->_xLength >= avvy->_x)) { // C
 			// OK, it's hit him... what now?
 
-			_sprites[1]->_callEachStepFl = false; // prevent recursion.
+			_sprites[1]->_callEachStepFl = false;       // prevent recursion.
 			_vm->_dialogs->displayScrollChain('Q', 47); // Complaint!
-			tripSpr->remove(); // Deallocate the arrow.
+			tripSpr->remove();                          // Deallocate the arrow.
 
 			_vm->gameOver();
 
 			_vm->_userMovesAvvy = false; // Stop the user from moving him.
 			_vm->_timer->addTimer(55, Timer::kProcNaughtyDuke, Timer::kReasonNaughtyDuke);
 		}
-	} else { // Arrow has hit the wall!
-		tripSpr->remove(); // Deallocate the arrow.
+	} else {                               // Arrow has hit the wall!
+		tripSpr->remove();                 // Deallocate the arrow.
 		_vm->_background->draw(-1, -1, 2); // Show pic of arrow stuck into the door.
-		_vm->_arrowInTheDoor = true; // So that we can pick it up.
+		_vm->_arrowInTheDoor = true;       // So that we can pick it up.
 	}
 }
 
-void Animation::grabAvvy(byte tripnum) {     // For Friar Tuck, in Nottingham.
+void Animation::grabAvvy(byte tripnum) { // For Friar Tuck, in Nottingham.
 	AnimationType *tripSpr = _sprites[tripnum];
 	AnimationType *avvy = _sprites[0];
 
@@ -1238,23 +1234,23 @@ void Animation::animLink() {
 		AnimationType *curSpr = _sprites[i];
 		if (curSpr->_quick && curSpr->_callEachStepFl) {
 			switch (curSpr->_eachStepProc) {
-			case kProcFollowAvvyY :
+			case kProcFollowAvvyY:
 				followAvalotY(i);
 				break;
-			case kProcBackAndForth :
+			case kProcBackAndForth:
 				backAndForth(i);
 				break;
-			case kProcFaceAvvy :
+			case kProcFaceAvvy:
 				faceAvvy(i);
 				break;
-			case kProcArrow :
+			case kProcArrow:
 				arrowProcs(i);
 				break;
 				//    PROCSpludwick_procs : spludwick_procs(fv);
-			case kProcGrabAvvy :
+			case kProcGrabAvvy:
 				grabAvvy(i);
 				break;
-			case kProcFollowAvvy :
+			case kProcFollowAvvy:
 				follow(i);
 				break;
 			default:
@@ -1299,8 +1295,9 @@ void Animation::hideInCupboard() {
 		// Not hiding in the cupboard
 		_sprites[0]->_visible = false;
 		_vm->_userMovesAvvy = false;
-		Common::String tmpStr = Common::String::format("You walk into the room...%cIt seems to be an empty, " \
-			"but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.", kControlParagraph);
+		Common::String tmpStr = Common::String::format("You walk into the room...%cIt seems to be an empty, "
+		                                               "but dusty, cupboard. Hmmmm... you leave the door slightly open to avoid suffocation.",
+		                                               kControlParagraph);
 		_vm->_dialogs->displayText(tmpStr);
 		_vm->_avvysInTheCupboard = true;
 		_vm->_background->draw(-1, -1, 7);

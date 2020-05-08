@@ -35,10 +35,11 @@ class UCList;
 class TeleportEgg;
 class EggHatcherProcess;
 
-#define MAP_NUM_CHUNKS  64
+#define MAP_NUM_CHUNKS 64
 
 class CurrentMap {
 	friend class World;
+
 public:
 	CurrentMap();
 	~CurrentMap();
@@ -84,12 +85,12 @@ public:
 	//! \param y y coordinate of search center if item is 0.
 	void areaSearch(UCList *itemlist, const uint8 *loopscript,
 	                uint32 scriptsize, const Item *item, uint16 range,
-					bool recurse, int32 x = 0, int32 y = 0) const;
+	                bool recurse, int32 x = 0, int32 y = 0) const;
 
 	// Surface search: Search above and below an item.
 	void surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 	                   uint32 scriptsize, const Item *item, bool above,
-					   bool below, bool recurse = false) const;
+	                   bool below, bool recurse = false) const;
 
 	// Surface search: Search above and below an item.
 	void surfaceSearch(UCList *itemlist, const uint8 *loopscript,
@@ -122,7 +123,7 @@ public:
 	// into account!
 	bool isValidPosition(int32 x, int32 y, int32 z, uint32 shape,
 	                     ObjId item, const Item **support = 0,
-                         ObjId *roof = 0) const;
+	                     ObjId *roof = 0) const;
 
 	//! Scan for a valid position for item in directions orthogonal to movedir
 	bool scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
@@ -132,10 +133,10 @@ public:
 	struct SweepItem {
 		SweepItem(ObjId it, int32 ht, int32 et, bool touch,
 		          bool touchfloor, bool block, uint8 dir)
-			: _item(it), _hitTime(ht), _endTime(et), _touching(touch),
-			  _touchingFloor(touchfloor), _blocking(block), _dirs(dir) { }
+		    : _item(it), _hitTime(ht), _endTime(et), _touching(touch),
+		      _touchingFloor(touchfloor), _blocking(block), _dirs(dir) {}
 
-		ObjId   _item;       // Item that was hit
+		ObjId _item; // Item that was hit
 
 		//
 		// The time values here are 'normalized' fixed point values
@@ -146,15 +147,15 @@ public:
 		// hit_time to find where the moving item was when the hit occurs
 		//
 
-		int32   _hitTime;   // if -1, already hitting when sweep started.
-		int32   _endTime;   // if 0x4000, still hitting when sweep finished
+		int32 _hitTime; // if -1, already hitting when sweep started.
+		int32 _endTime; // if 0x4000, still hitting when sweep finished
 
-		bool    _touching;   // We are only touching (don't actually overlap)
-		bool    _touchingFloor; // touching and directly below the moving item
+		bool _touching;      // We are only touching (don't actually overlap)
+		bool _touchingFloor; // touching and directly below the moving item
 
-		bool    _blocking;   // This item blocks the moving item
+		bool _blocking; // This item blocks the moving item
 
-		uint8   _dirs; // Directions in which the item is being hit.
+		uint8 _dirs; // Directions in which the item is being hit.
 		// Bitmask. Bit 0 is x, 1 is y, 2 is z.
 
 		// Use this func to get the interpolated location of the hit

@@ -36,20 +36,19 @@ inline uint hashit_lower(const String &str) { return hashit_lower(str.c_str()); 
 // FIXME: The following functors obviously are not consistently named
 
 struct CaseSensitiveString_EqualTo {
-	bool operator()(const String& x, const String& y) const { return x.equals(y); }
+	bool operator()(const String &x, const String &y) const { return x.equals(y); }
 };
 
 struct CaseSensitiveString_Hash {
-	uint operator()(const String& x) const { return hashit(x.c_str()); }
+	uint operator()(const String &x) const { return hashit(x.c_str()); }
 };
 
-
 struct IgnoreCase_EqualTo {
-	bool operator()(const String& x, const String& y) const { return x.equalsIgnoreCase(y); }
+	bool operator()(const String &x, const String &y) const { return x.equalsIgnoreCase(y); }
 };
 
 struct IgnoreCase_Hash {
-	uint operator()(const String& x) const { return hashit_lower(x.c_str()); }
+	uint operator()(const String &x) const { return hashit_lower(x.c_str()); }
 };
 
 // Specalization of the Hash functor for String objects.
@@ -60,7 +59,7 @@ struct IgnoreCase_Hash {
 // hash anyway.
 template<>
 struct Hash<String> {
-	uint operator()(const String& s) const {
+	uint operator()(const String &s) const {
 		return hashit(s.c_str());
 	}
 };

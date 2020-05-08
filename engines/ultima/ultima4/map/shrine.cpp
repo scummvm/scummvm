@@ -20,9 +20,6 @@
  *
  */
 
-#include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/controllers/read_choice_controller.h"
 #include "ultima/ultima4/controllers/read_string_controller.h"
@@ -32,13 +29,16 @@
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/creature.h"
+#include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/ultima4.h"
@@ -160,7 +160,7 @@ void Shrine::enter() {
 	}
 
 	if (((g_ultima->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) >= 0x10000) ||
-	        (((g_ultima->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff) != g_ultima->_saveGame->_lastMeditation)) {
+	    (((g_ultima->_saveGame->_moves / SHRINE_MEDITATION_INTERVAL) & 0xffff) != g_ultima->_saveGame->_lastMeditation)) {
 		g_screen->screenMessage("Begin Meditation\n");
 		meditationCycle();
 	} else {
@@ -227,7 +227,7 @@ void Shrine::meditationCycle() {
 void Shrine::askMantra() {
 	g_screen->screenEnableCursor();
 	g_screen->screenMessage("\nMantra: ");
-	g_screen->update();       // FIXME: needed?
+	g_screen->update(); // FIXME: needed?
 	Common::String mantra;
 #ifdef IOS_ULTIMA4
 	{
@@ -255,16 +255,15 @@ void Shrine::askMantra() {
 		bool elevated = g_shrines->_completedCycles == 3 && g_context->_party->attemptElevation(getVirtue());
 		if (elevated)
 			g_screen->screenMessage("\nThou hast achieved partial Avatarhood in the Virtue of %s\n\n",
-			              getVirtueName(getVirtue()));
+			                        getVirtueName(getVirtue()));
 		else
 			g_screen->screenMessage("\nThy thoughts are pure. "
-			              "Thou art granted a vision!\n");
+			                        "Thou art granted a vision!\n");
 
 #ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationChoiceHelper choiceDialog;
 		choiceDialog.updateChoices(" ");
-		U4IOS::testFlightPassCheckPoint(Common::String("Gained avatarhood in: ")
-		                                + getVirtueName(getVirtue()));
+		U4IOS::testFlightPassCheckPoint(Common::String("Gained avatarhood in: ") + getVirtueName(getVirtue()));
 #endif
 		ReadChoiceController::get("");
 		showVision(elevated);
@@ -276,17 +275,15 @@ void Shrine::askMantra() {
 
 void Shrine::showVision(bool elevated) {
 	static const char *visionImageNames[] = {
-		BKGD_SHRINE_HON, BKGD_SHRINE_COM, BKGD_SHRINE_VAL, BKGD_SHRINE_JUS,
-		BKGD_SHRINE_SAC, BKGD_SHRINE_HNR, BKGD_SHRINE_SPI, BKGD_SHRINE_HUM
-	};
+	    BKGD_SHRINE_HON, BKGD_SHRINE_COM, BKGD_SHRINE_VAL, BKGD_SHRINE_JUS,
+	    BKGD_SHRINE_SAC, BKGD_SHRINE_HNR, BKGD_SHRINE_SPI, BKGD_SHRINE_HUM};
 
 	if (elevated) {
 		g_screen->screenMessage("Thou art granted a vision!\n");
 		gameSetViewMode(VIEW_RUNE);
 		g_screen->screenDrawImageInMapArea(visionImageNames[getVirtue()]);
 	} else {
-		g_screen->screenMessage("\n%s", g_shrines->_advice[
-			getVirtue() * 3 + g_shrines->_completedCycles - 1].c_str());
+		g_screen->screenMessage("\n%s", g_shrines->_advice[getVirtue() * 3 + g_shrines->_completedCycles - 1].c_str());
 	}
 }
 

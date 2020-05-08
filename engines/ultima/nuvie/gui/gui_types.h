@@ -47,16 +47,14 @@ private:
 
 class GUI_Color {
 public:
-
 	uint8 r;
 	uint8 g;
 	uint8 b;
-//uint8 a;
+	//uint8 a;
 
 	uint32 sdl_color;
 
 public:
-
 	GUI_Color(uint8 red, uint8 green, uint8 blue) {
 		r = red;
 		g = green;
@@ -70,7 +68,6 @@ public:
 	void map_color(Graphics::ManagedSurface *surface) {
 		sdl_color = SDL_MapRGB(surface->format, r, g, b);
 	};
-
 };
 
 } // End of namespace Nuvie

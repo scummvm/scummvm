@@ -20,33 +20,33 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/views/view_manager.h"
 #include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/files/nuvie_bmp_file.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/usecode/usecode.h"
 #include "ultima/nuvie/views/actor_view.h"
-#include "ultima/nuvie/views/portrait_view.h"
-#include "ultima/nuvie/views/inventory_view.h"
-#include "ultima/nuvie/views/doll_view_gump.h"
 #include "ultima/nuvie/views/container_view_gump.h"
-#include "ultima/nuvie/views/portrait_view_gump.h"
-#include "ultima/nuvie/views/sign_view_gump.h"
-#include "ultima/nuvie/views/scroll_view_gump.h"
+#include "ultima/nuvie/views/doll_view_gump.h"
+#include "ultima/nuvie/views/inventory_view.h"
+#include "ultima/nuvie/views/map_editor_view.h"
+#include "ultima/nuvie/views/md_sky_strip_widget.h"
 #include "ultima/nuvie/views/party_view.h"
+#include "ultima/nuvie/views/portrait_view.h"
+#include "ultima/nuvie/views/portrait_view_gump.h"
+#include "ultima/nuvie/views/scroll_view_gump.h"
+#include "ultima/nuvie/views/sign_view_gump.h"
 #include "ultima/nuvie/views/spell_view.h"
 #include "ultima/nuvie/views/spell_view_gump.h"
 #include "ultima/nuvie/views/sun_moon_ribbon.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/views/map_editor_view.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/portraits/portrait.h"
-#include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/files/nuvie_bmp_file.h"
-#include "ultima/nuvie/views/md_sky_strip_widget.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -72,13 +72,17 @@ ViewManager::ViewManager(Configuration *cfg) {
 }
 
 ViewManager::~ViewManager() {
-// only delete the views that are not currently active
-	if (current_view != actor_view)     delete actor_view;
-	if (current_view != inventory_view) delete inventory_view;
-	if (current_view != party_view)     delete party_view;
-	if (current_view != portrait_view)  delete portrait_view;
-	if (current_view != spell_view)  delete spell_view;
-
+	// only delete the views that are not currently active
+	if (current_view != actor_view)
+		delete actor_view;
+	if (current_view != inventory_view)
+		delete inventory_view;
+	if (current_view != party_view)
+		delete party_view;
+	if (current_view != portrait_view)
+		delete portrait_view;
+	if (current_view != spell_view)
+		delete spell_view;
 }
 
 bool ViewManager::init(GUI *g, Font *f, Party *p, Player *player, TileManager *tm, ObjManager *om, Portrait *por) {
@@ -142,7 +146,7 @@ bool ViewManager::init(GUI *g, Font *f, Party *p, Player *player, TileManager *t
 	if (spell_view) {
 		spell_view->init(gui->get_screen(), this, spell_x_offset, 6 + y_off, font, party, tile_manager, obj_manager);
 	}
-//set_current_view((View *)party_view);
+	//set_current_view((View *)party_view);
 
 	return true;
 }
@@ -160,7 +164,7 @@ void ViewManager::reload() {
 bool ViewManager::set_current_view(View *view) {
 	uint8 cur_party_member;
 
-//actor_view->set_party_member(cur_party_member);
+	//actor_view->set_party_member(cur_party_member);
 	if (view == NULL) // || game_type != NUVIE_GAME_U6) //HACK! remove this when views support MD and SE
 		return false;
 
@@ -168,7 +172,7 @@ bool ViewManager::set_current_view(View *view) {
 		return false;
 
 	if (current_view != NULL) {
-		gui->removeWidget((GUI_Widget *)current_view);//remove current widget from gui
+		gui->removeWidget((GUI_Widget *)current_view); //remove current widget from gui
 
 		cur_party_member = current_view->get_party_member_num();
 		view->set_party_member(cur_party_member);
@@ -201,7 +205,7 @@ void ViewManager::close_current_view() {
 	if (current_view == NULL)
 		return;
 
-	gui->removeWidget((GUI_Widget *)current_view);//remove current widget from gui
+	gui->removeWidget((GUI_Widget *)current_view); //remove current widget from gui
 	current_view = NULL;
 }
 
@@ -230,8 +234,7 @@ void ViewManager::set_portrait_mode(Actor *actor, const char *name) {
 void ViewManager::set_inventory_mode() {
 	set_current_view((View *)inventory_view);
 	Events *event = Game::get_game()->get_event();
-	if (event->get_mode() == EQUIP_MODE || event->get_mode() == INPUT_MODE
-	        || event->get_mode() == ATTACK_MODE)
+	if (event->get_mode() == EQUIP_MODE || event->get_mode() == INPUT_MODE || event->get_mode() == ATTACK_MODE)
 		inventory_view->set_show_cursor(true);
 }
 
@@ -250,8 +253,7 @@ void ViewManager::set_party_mode() {
 void ViewManager::set_actor_mode() {
 	set_current_view((View *)actor_view);
 	Events *event = Game::get_game()->get_event();
-	if (event->get_mode() == EQUIP_MODE || event->get_mode() == INPUT_MODE
-	        || event->get_mode() == ATTACK_MODE) {
+	if (event->get_mode() == EQUIP_MODE || event->get_mode() == INPUT_MODE || event->get_mode() == ATTACK_MODE) {
 		actor_view->set_show_cursor(true);
 		actor_view->moveCursorToButton(2);
 	}
@@ -390,7 +392,7 @@ void ViewManager::open_mapeditor_view() {
 		uint16 y_off = Game::get_game()->get_game_y_offset();
 		x_off += Game::get_game()->get_game_width() - 90;
 		MapEditorView *view = new MapEditorView(config);
-		view->init(Game::get_game()->get_screen(), this, x_off , y_off, font, party, tile_manager, obj_manager);
+		view->init(Game::get_game()->get_screen(), this, x_off, y_off, font, party, tile_manager, obj_manager);
 		add_view((View *)view);
 		view->grab_focus();
 	}

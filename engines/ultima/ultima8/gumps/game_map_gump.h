@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GUMPS_GAMEMAPGUMP_H
 #define ULTIMA8_GUMPS_GAMEMAPGUMP_H
 
-#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -44,34 +44,34 @@ public:
 	GameMapGump(int x, int y, int w, int h);
 	~GameMapGump() override;
 
-	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
-	void                GetCameraLocation(int32 &x, int32 &y, int32 &z,
-	                                      int lerp_factor = 256);
+	void GetCameraLocation(int32 &x, int32 &y, int32 &z,
+	                       int lerp_factor = 256);
 
 	// Trace a click, and return ObjId (_parent coord space)
-	uint16      TraceObjId(int32 mx, int32 my) override;
+	uint16 TraceObjId(int32 mx, int32 my) override;
 
 	// Trace a click, return ObjId, and the coordinates of the mouse click (gump coord space)
-	virtual uint16      TraceCoordinates(int mx, int my, int32 coords[3],
-	                                     int offsetx = 0, int offsety = 0,
-	                                     Item *item = 0);
+	virtual uint16 TraceCoordinates(int mx, int my, int32 coords[3],
+	                                int offsetx = 0, int offsety = 0,
+	                                Item *item = 0);
 
 	// Get the location of an item in the gump (coords relative to this).
 	// Returns false on failure
-	bool        GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
-	                                      int32 lerp_factor = 256) override;
+	bool GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
+	                       int32 lerp_factor = 256) override;
 
-	bool        StartDraggingItem(Item *item, int mx, int my) override;
-	bool        DraggingItem(Item *item, int mx, int my) override;
-	void        DraggingItemLeftGump(Item *item) override;
-	void        StopDraggingItem(Item *item, bool moved) override;
-	void        DropItem(Item *item, int mx, int my) override;
+	bool StartDraggingItem(Item *item, int mx, int my) override;
+	bool DraggingItem(Item *item, int mx, int my) override;
+	void DraggingItemLeftGump(Item *item) override;
+	void StopDraggingItem(Item *item, bool moved) override;
+	void DropItem(Item *item, int mx, int my) override;
 
-	Gump       *OnMouseDown(int button, int32 mx, int32 my) override;
-	void        OnMouseUp(int button, int32 mx, int32 my) override;
-	void        OnMouseClick(int button, int32 mx, int32 my) override;
-	void        OnMouseDouble(int button, int32 mx, int32 my) override;
+	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	void OnMouseUp(int button, int32 mx, int32 my) override;
+	void OnMouseClick(int button, int32 mx, int32 my) override;
+	void OnMouseDouble(int button, int32 mx, int32 my) override;
 
 	void IncSortOrder(int count);
 
@@ -84,7 +84,7 @@ public:
 		return _highlightItems;
 	}
 
-	void        RenderSurfaceChanged() override;
+	void RenderSurfaceChanged() override;
 
 protected:
 	void saveData(Common::WriteStream *ws) override;

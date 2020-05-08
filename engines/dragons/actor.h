@@ -42,13 +42,13 @@ enum ActorFlags {
 	ACTOR_FLAG_40 = 0x40,
 	ACTOR_FLAG_80 = 0x80,
 	ACTOR_FLAG_100 = 0x100,
-	ACTOR_FLAG_200 = 0x200,  // Use screen coordinates not map coordinates.
-	ACTOR_FLAG_400 = 0x400,  // Actor is hidden
+	ACTOR_FLAG_200 = 0x200, // Use screen coordinates not map coordinates.
+	ACTOR_FLAG_400 = 0x400, // Actor is hidden
 	ACTOR_FLAG_800 = 0x800,
 	ACTOR_FLAG_1000 = 0x1000,
 	ACTOR_FLAG_2000 = 0x2000,
 	ACTOR_FLAG_4000 = 0x4000,
-	ACTOR_FLAG_8000 = 0x8000  //Seems turn off semi trans mode when selected.
+	ACTOR_FLAG_8000 = 0x8000 //Seems turn off semi trans mode when selected.
 };
 
 enum ActorFrameFlags {
@@ -66,6 +66,7 @@ private:
 	ActorResourceLoader *_actorResourceLoader;
 	Actors _actors;
 	uint16 _displayOrder[DRAGONS_ENGINE_NUM_ACTORS];
+
 public:
 	ActorManager(ActorResourceLoader *actorResourceLoader);
 
@@ -78,6 +79,7 @@ public:
 	void clearActorFlags(uint16 startingActorId);
 	ActorResource *getActorResource(uint32 resourceId);
 	void updateActorDisplayOrder();
+
 private:
 	Actor *findFreeActor(int16 resourceID);
 	void resetDisplayOrder();
@@ -86,7 +88,7 @@ private:
 class Actor {
 public:
 	uint16 _actorID;
-	ActorResource* _actorResource;
+	ActorResource *_actorResource;
 	uint16 _actorFileDictionaryIndex;
 	int16 _resourceID;
 	byte *_seqCodeIp;
@@ -114,8 +116,8 @@ public:
 	uint16 _field_7a;
 	int32 _walkSpeed;
 	uint16 _frame_flags;
-public:
 
+public:
 	Actor(uint16 id);
 	void init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID);
 	void updateSequence(uint16 newSequenceID);
@@ -143,11 +145,12 @@ public:
 
 	byte *getPalette();
 	int16 getFrameYOffset();
+
 private:
 	void stopWalk();
 	uint16 canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 walkFlags);
 	int16 pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType,
-									  bool *pointsInUseTbl);
+	                                  bool *pointsInUseTbl);
 	int startMoveToPoint(int destX, int destY);
 };
 

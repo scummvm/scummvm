@@ -29,7 +29,6 @@ namespace Scumm {
 
 class Codec47Decoder {
 private:
-
 	int32 _deltaSize;
 	byte *_deltaBufs[2];
 	byte *_deltaBuf;

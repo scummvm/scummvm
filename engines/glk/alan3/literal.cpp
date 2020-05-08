@@ -21,8 +21,8 @@
  */
 
 #include "glk/alan3/literal.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/memory.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -32,9 +32,7 @@ int litCount = 0;
 static LiteralEntry literalTable[100];
 LiteralEntry *literals = literalTable;
 
-
 /* PRIVATE TYPES & DATA */
-
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -69,8 +67,6 @@ void freeLiterals() {
 		}
 	litCount = 0;
 }
-
-
 
 /*======================================================================*/
 int literalFromInstance(int instance) {

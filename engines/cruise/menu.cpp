@@ -24,9 +24,9 @@
 #include "cruise/cruise_main.h"
 #include "cruise/staticres.h"
 
+#include "common/system.h"
 #include "engines/metaengine.h"
 #include "gui/saveload.h"
-#include "common/system.h"
 
 namespace Cruise {
 
@@ -37,7 +37,7 @@ menuStruct *menuTable[8];
 menuStruct *createMenu(int X, int Y, const char *menuName) {
 	menuStruct *entry;
 
-	entry = (menuStruct *) MemAlloc(sizeof(menuStruct));
+	entry = (menuStruct *)MemAlloc(sizeof(menuStruct));
 	assert(entry);
 
 	entry->x = X - 160 / 2;
@@ -127,7 +127,7 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu) {
 	if (pMenu) {
 		if (pMenu->gfx) {
-			int height = pMenu->gfx->height;	// rustine
+			int height = pMenu->gfx->height; // rustine
 			int var_2 = 0;
 			menuElementStruct *pCurrentEntry = pMenu->ptrNextElement;
 
@@ -184,7 +184,7 @@ int processMenu(menuStruct *pMenu) {
 		manageEvents();
 		g_system->delayMillis(10);
 
-//    readKeyboard();
+		//    readKeyboard();
 	} while (!si);
 
 	currentActiveMenu = -1;
@@ -193,7 +193,7 @@ int processMenu(menuStruct *pMenu) {
 	flipScreen();
 
 	if (mouseButton & 1) {
-		menuElementSubStruct* pSelectedEntry = getSelectedEntryInMenu(pMenu);
+		menuElementSubStruct *pSelectedEntry = getSelectedEntryInMenu(pMenu);
 
 		if (pSelectedEntry) {
 			return pSelectedEntry->header;

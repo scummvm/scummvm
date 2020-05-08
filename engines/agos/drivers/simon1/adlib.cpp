@@ -22,14 +22,14 @@
 
 #include "agos/drivers/simon1/adlib.h"
 
+#include "common/file.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "common/file.h"
 
 namespace AGOS {
 
 enum {
-	kChannelUnused       = 0xFF,
+	kChannelUnused = 0xFF,
 	kChannelOrphanedFlag = 0x80,
 
 	kOPLVoicesCount = 9
@@ -97,8 +97,8 @@ void MidiDriver_Simon1_AdLib::close() {
 void MidiDriver_Simon1_AdLib::send(uint32 b) {
 	int channel = b & 0x0F;
 	int command = b & 0xF0;
-	int param1  = (b >>  8) & 0xFF;
-	int param2  = (b >> 16) & 0xFF;
+	int param1 = (b >> 8) & 0xFF;
+	int param2 = (b >> 16) & 0xFF;
 
 	// The percussion channel is handled specially. The AdLib output uses
 	// channels 11 to 15 for percussions. For this, the original converted
@@ -232,7 +232,7 @@ int MidiDriver_Simon1_AdLib::allocateVoice(uint channel) {
 	// However, the priority value is always 0, which causes the first channel
 	// to be picked all the time.
 	const int voice = 0;
-	_opl->writeReg(0xA0 + voice, (_voices[voice].frequency     ) & 0xFF);
+	_opl->writeReg(0xA0 + voice, (_voices[voice].frequency) & 0xFF);
 	_opl->writeReg(0xB0 + voice, (_voices[voice].frequency >> 8) & 0xFF);
 	return voice;
 }
@@ -245,7 +245,7 @@ void MidiDriver_Simon1_AdLib::noteOff(uint channel, uint note) {
 		for (int i = 0; i < _melodyVoices; ++i) {
 			if (_voices[i].note == note && _voices[i].channel == channel) {
 				_voices[i].channel |= kChannelOrphanedFlag;
-				_opl->writeReg(0xA0 + i, (_voices[i].frequency     ) & 0xFF);
+				_opl->writeReg(0xA0 + i, (_voices[i].frequency) & 0xFF);
 				_opl->writeReg(0xB0 + i, (_voices[i].frequency >> 8) & 0xFF);
 				return;
 			}
@@ -278,7 +278,7 @@ void MidiDriver_Simon1_AdLib::noteOn(uint channel, uint note, uint velocity) {
 	const uint frequency = _frequencyTable[frequencyAndOctave & 0x0F];
 
 	uint highByte = ((frequency & 0xFF00) >> 8) | ((frequencyAndOctave & 0x70) >> 2);
-	uint lowByte  = frequency & 0x00FF;
+	uint lowByte = frequency & 0x00FF;
 	voice.frequency = (highByte << 8) | lowByte;
 
 	_opl->writeReg(0xA0 + voiceNum, lowByte);
@@ -307,7 +307,7 @@ void MidiDriver_Simon1_AdLib::noteOnRhythm(uint channel, uint note, uint velocit
 	const uint frequency = _frequencyTable[frequencyAndOctave & 0x0F];
 
 	uint highByte = ((frequency & 0xFF00) >> 8) | ((frequencyAndOctave & 0x70) >> 2);
-	uint lowByte  = frequency & 0x00FF;
+	uint lowByte = frequency & 0x00FF;
 	voice.frequency = (highByte << 8) | lowByte;
 
 	const uint oplOperator = _rhythmVoiceMap[voiceNum - 6];
@@ -371,10 +371,10 @@ void MidiDriver_Simon1_AdLib::setupInstrument(uint voice, uint instrument) {
 	}
 
 	const int scalingLevel = scaling & 0xC0;
-	const int totalLevel   = scaling & 0x3F;
+	const int totalLevel = scaling & 0x3F;
 
 	_voices[voice].instrScalingLevel = scalingLevel;
-	_voices[voice].instrTotalLevel   = (-(totalLevel - 0x3F)) & 0xFF;
+	_voices[voice].instrTotalLevel = (-(totalLevel - 0x3F)) & 0xFF;
 
 	if (!_rhythmEnabled || voice <= 6) {
 		int oplRegister = _operatorMap[voice];
@@ -406,91 +406,83 @@ void MidiDriver_Simon1_AdLib::setupInstrument(uint voice, uint instrument) {
 }
 
 const int MidiDriver_Simon1_AdLib::_operatorMap[9] = {
-	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11,
-	0x12
-};
+    0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11,
+    0x12};
 
 const int MidiDriver_Simon1_AdLib::_operatorDefaults[8] = {
-	0x01, 0x11, 0x4F, 0x00, 0xF1, 0xF2, 0x53, 0x74
-};
+    0x01, 0x11, 0x4F, 0x00, 0xF1, 0xF2, 0x53, 0x74};
 
 const int MidiDriver_Simon1_AdLib::_rhythmOperatorMap[5] = {
-	0x10, 0x14, 0x12, 0x15, 0x11
-};
+    0x10, 0x14, 0x12, 0x15, 0x11};
 
 const uint MidiDriver_Simon1_AdLib::_rhythmInstrumentMask[5] = {
-	0x10, 0x08, 0x04, 0x02, 0x01
-};
+    0x10, 0x08, 0x04, 0x02, 0x01};
 
 const int MidiDriver_Simon1_AdLib::_rhythmVoiceMap[5] = {
-	6, 7, 8, 8, 7
-};
+    6, 7, 8, 8, 7};
 
 const int MidiDriver_Simon1_AdLib::_frequencyIndexAndOctaveTable[128] = {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-	0x08, 0x09, 0x0A, 0x0B, 0x00, 0x01, 0x02, 0x03,
-	0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
-	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
-	0x18, 0x19, 0x1A, 0x1B, 0x20, 0x21, 0x22, 0x23,
-	0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B,
-	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
-	0x38, 0x39, 0x3A, 0x3B, 0x40, 0x41, 0x42, 0x43,
-	0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
-	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57,
-	0x58, 0x59, 0x5A, 0x5B, 0x60, 0x61, 0x62, 0x63,
-	0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B,
-	0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,
-	0x78, 0x79, 0x7A, 0x7B, 0x70, 0x71, 0x72, 0x73,
-	0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B,
-	0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B
-};
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0A, 0x0B, 0x00, 0x01, 0x02, 0x03,
+    0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+    0x18, 0x19, 0x1A, 0x1B, 0x20, 0x21, 0x22, 0x23,
+    0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B,
+    0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+    0x38, 0x39, 0x3A, 0x3B, 0x40, 0x41, 0x42, 0x43,
+    0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
+    0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57,
+    0x58, 0x59, 0x5A, 0x5B, 0x60, 0x61, 0x62, 0x63,
+    0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B,
+    0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,
+    0x78, 0x79, 0x7A, 0x7B, 0x70, 0x71, 0x72, 0x73,
+    0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B,
+    0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B};
 
 const int MidiDriver_Simon1_AdLib::_frequencyTable[16] = {
-	0x0157, 0x016B, 0x0181, 0x0198, 0x01B0, 0x01CA, 0x01E5, 0x0202,
-	0x0220, 0x0241, 0x0263, 0x0287, 0x2100, 0xD121, 0xA307, 0x46A4
-};
+    0x0157, 0x016B, 0x0181, 0x0198, 0x01B0, 0x01CA, 0x01E5, 0x0202,
+    0x0220, 0x0241, 0x0263, 0x0287, 0x2100, 0xD121, 0xA307, 0x46A4};
 
 const MidiDriver_Simon1_AdLib::RhythmMap MidiDriver_Simon1_AdLib::_rhythmMap[39] = {
-	{ 11, 123,  40 },
-	{ 12, 127,  50 },
-	{ 12, 124,   1 },
-	{ 12, 124,  90 },
-	{ 13, 125,  50 },
-	{ 13, 125,  25 },
-	{ 15, 127,  80 },
-	{ 13, 125,  25 },
-	{ 15, 127,  40 },
-	{ 13, 125,  35 },
-	{ 15, 127,  90 },
-	{ 13, 125,  35 },
-	{ 13, 125,  45 },
-	{ 14, 126,  90 },
-	{ 13, 125,  45 },
-	{ 15, 127,  90 },
-	{  0,   0,   0 },
-	{ 15, 127,  60 },
-	{  0,   0,   0 },
-	{ 13, 125,  60 },
-	{  0,   0,   0 },
-	{  0,   0,   0 },
-	{  0,   0,   0 },
-	{ 13, 125,  45 },
-	{ 13, 125,  40 },
-	{ 13, 125,  35 },
-	{ 13, 125,  30 },
-	{ 13, 125,  25 },
-	{ 13, 125,  80 },
-	{ 13, 125,  40 },
-	{ 13, 125,  80 },
-	{ 13, 125,  40 },
-	{ 14, 126,  40 },
-	{ 15, 127,  60 },
-	{  0,   0,   0 },
-	{  0,   0,   0 },
-	{ 14, 126,  80 },
-	{  0,   0,   0 },
-	{ 13, 125, 100 }
-};
+    {11, 123, 40},
+    {12, 127, 50},
+    {12, 124, 1},
+    {12, 124, 90},
+    {13, 125, 50},
+    {13, 125, 25},
+    {15, 127, 80},
+    {13, 125, 25},
+    {15, 127, 40},
+    {13, 125, 35},
+    {15, 127, 90},
+    {13, 125, 35},
+    {13, 125, 45},
+    {14, 126, 90},
+    {13, 125, 45},
+    {15, 127, 90},
+    {0, 0, 0},
+    {15, 127, 60},
+    {0, 0, 0},
+    {13, 125, 60},
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0},
+    {13, 125, 45},
+    {13, 125, 40},
+    {13, 125, 35},
+    {13, 125, 30},
+    {13, 125, 25},
+    {13, 125, 80},
+    {13, 125, 40},
+    {13, 125, 80},
+    {13, 125, 40},
+    {14, 126, 40},
+    {15, 127, 60},
+    {0, 0, 0},
+    {0, 0, 0},
+    {14, 126, 80},
+    {0, 0, 0},
+    {13, 125, 100}};
 
 MidiDriver *createMidiDriverSimon1AdLib(const char *instrumentFilename) {
 	// Load instrument data.

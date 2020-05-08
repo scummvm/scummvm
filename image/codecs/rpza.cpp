@@ -20,13 +20,13 @@
  *
  */
 
- // Based off ffmpeg's RPZA decoder
+// Based off ffmpeg's RPZA decoder
 
 #include "image/codecs/rpza.h"
 
 #include "common/debug.h"
-#include "common/system.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 namespace Image {
@@ -53,15 +53,15 @@ RPZADecoder::~RPZADecoder() {
 	delete[] _colorMap;
 }
 
-#define ADVANCE_BLOCK() \
-	blockPtr += 4; \
-	if (blockPtr >= endPtr) { \
-		blockPtr += pitch * 3; \
+#define ADVANCE_BLOCK()            \
+	blockPtr += 4;                 \
+	if (blockPtr >= endPtr) {      \
+		blockPtr += pitch * 3;     \
 		endPtr = blockPtr + pitch; \
-	} \
-	totalBlocks--; \
-	if (totalBlocks < 0) \
-		error("rpza block counter just went negative (this should not happen)") \
+	}                              \
+	totalBlocks--;                 \
+	if (totalBlocks < 0)           \
+	error("rpza block counter just went negative (this should not happen)")
 
 struct BlockDecoderRaw {
 	static inline void drawFillBlock(uint16 *blockPtr, uint16 pitch, uint16 color, const byte *colorMap) {
@@ -235,7 +235,7 @@ static inline void decodeFrameTmpl(Common::SeekableReadStream &stream, PixelInt 
 
 	// Process chunk data
 	while ((uint32)stream.pos() < chunkSize) {
-		byte opcode = stream.readByte(); // Get opcode
+		byte opcode = stream.readByte();      // Get opcode
 		byte numBlocks = (opcode & 0x1f) + 1; // Extract block counter from opcode
 
 		// If opcode MSbit is 0, we need more data to decide what to do

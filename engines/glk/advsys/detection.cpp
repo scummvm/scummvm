@@ -21,12 +21,12 @@
  */
 
 #include "glk/advsys/detection.h"
-#include "glk/advsys/detection_tables.h"
-#include "glk/advsys/game.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/advsys/detection_tables.h"
+#include "glk/advsys/game.h"
 
 namespace Glk {
 namespace AdvSys {
@@ -46,7 +46,7 @@ GameDescriptor AdvSysMetaEngine::findGame(const char *gameId) {
 }
 
 bool AdvSysMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".dat", nullptr };
+	const char *const EXTENSIONS[] = {".dat", nullptr};
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {

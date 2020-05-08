@@ -21,21 +21,21 @@
  */
 
 #include "ultima/ultima1/maps/map.h"
+#include "ultima/shared/core/file.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/maps/map_dungeon.h"
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/shared/core/file.h"
-#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Maps {
 
 Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Maps::Map(),
-		_mapType(MAP_UNKNOWN), _moveCounter(0) {
+                                            _mapType(MAP_UNKNOWN), _moveCounter(0) {
 	Ultima1Map::clear();
 	_mapCity = new MapCity(game, this);
 	_mapCastle = new MapCastle(game, this);

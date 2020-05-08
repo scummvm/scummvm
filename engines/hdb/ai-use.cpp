@@ -20,8 +20,8 @@
  *
  */
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
+#include "hdb/hdb.h"
 #include "hdb/map.h"
 #include "hdb/sound.h"
 #include "hdb/window.h"
@@ -31,31 +31,31 @@ namespace HDB {
 bool AI::isClosedDoor(int x, int y) {
 	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
 
-	if ((tileIndex == _targetDoorN + 3) ||		// locked SILVER door?
-		(tileIndex == _targetDoorNv + 3) ||
-		(tileIndex == _targetDoorP + 3) ||		// locked BLUE door?
-		(tileIndex == _targetDoorPv + 3) ||
-		(tileIndex == _targetDoorS + 3) ||		// locked RED door?
-		(tileIndex == _targetDoorSv + 3) ||
-		(tileIndex == _targetDoor2N + 3) ||		// locked SILVER door?
-		(tileIndex == _targetDoor2Nv + 3) ||
-		(tileIndex == _targetDoor2P + 3) ||		// locked BLUE door?
-		(tileIndex == _targetDoor2Pv + 3) ||
-		(tileIndex == _targetDoor2S + 3) ||		// locked RED door?
-		(tileIndex == _targetDoor2Sv + 3) ||
-		(tileIndex == _target2DoorN + 3) ||		// locked SILVER door?
-		(tileIndex == _target2DoorNv + 3) ||
-		(tileIndex == _target2DoorP + 3) ||		// locked BLUE door?
-		(tileIndex == _target2DoorPv + 3) ||
-		(tileIndex == _target2DoorS + 3) ||		// locked RED door?
-		(tileIndex == _target2DoorSv + 3) ||
-		(tileIndex == _target3DoorN + 3) ||		// locked SILVER door?
-		(tileIndex == _target3DoorNv + 3) ||
-		(tileIndex == _target3DoorP + 3) ||		// locked BLUE door?
-		(tileIndex == _target3DoorPv + 3) ||
-		(tileIndex == _target3DoorS + 3) ||		// locked RED door?
-		(tileIndex == _target3DoorSv + 3) ||
-		(tileIndex == _blockpole + 3))			// blockpole UP?
+	if ((tileIndex == _targetDoorN + 3) || // locked SILVER door?
+	    (tileIndex == _targetDoorNv + 3) ||
+	    (tileIndex == _targetDoorP + 3) || // locked BLUE door?
+	    (tileIndex == _targetDoorPv + 3) ||
+	    (tileIndex == _targetDoorS + 3) || // locked RED door?
+	    (tileIndex == _targetDoorSv + 3) ||
+	    (tileIndex == _targetDoor2N + 3) || // locked SILVER door?
+	    (tileIndex == _targetDoor2Nv + 3) ||
+	    (tileIndex == _targetDoor2P + 3) || // locked BLUE door?
+	    (tileIndex == _targetDoor2Pv + 3) ||
+	    (tileIndex == _targetDoor2S + 3) || // locked RED door?
+	    (tileIndex == _targetDoor2Sv + 3) ||
+	    (tileIndex == _target2DoorN + 3) || // locked SILVER door?
+	    (tileIndex == _target2DoorNv + 3) ||
+	    (tileIndex == _target2DoorP + 3) || // locked BLUE door?
+	    (tileIndex == _target2DoorPv + 3) ||
+	    (tileIndex == _target2DoorS + 3) || // locked RED door?
+	    (tileIndex == _target2DoorSv + 3) ||
+	    (tileIndex == _target3DoorN + 3) || // locked SILVER door?
+	    (tileIndex == _target3DoorNv + 3) ||
+	    (tileIndex == _target3DoorP + 3) || // locked BLUE door?
+	    (tileIndex == _target3DoorPv + 3) ||
+	    (tileIndex == _target3DoorS + 3) || // locked RED door?
+	    (tileIndex == _target3DoorSv + 3) ||
+	    (tileIndex == _blockpole + 3)) // blockpole UP?
 		return true;
 	return false;
 }
@@ -63,31 +63,31 @@ bool AI::isClosedDoor(int x, int y) {
 bool AI::isOpenDoor(int x, int y) {
 	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
 
-	if ((tileIndex == _targetDoorN) ||		// open SILVER door?
-		(tileIndex == _targetDoorNv) ||
-		(tileIndex == _targetDoorP) ||		// open BLUE door?
-		(tileIndex == _targetDoorPv) ||
-		(tileIndex == _targetDoorS) ||		// open RED door?
-		(tileIndex == _targetDoorSv) ||
-		(tileIndex == _targetDoor2N) ||		// open SILVER door?
-		(tileIndex == _targetDoor2Nv) ||
-		(tileIndex == _targetDoor2P) ||		// open BLUE door?
-		(tileIndex == _targetDoor2Pv) ||
-		(tileIndex == _targetDoor2S) ||		// open RED door?
-		(tileIndex == _targetDoor2Sv) ||
-		(tileIndex == _target2DoorN) ||		// open SILVER door?
-		(tileIndex == _target2DoorNv) ||
-		(tileIndex == _target2DoorP) ||		// open BLUE door?
-		(tileIndex == _target2DoorPv) ||
-		(tileIndex == _target2DoorS) ||		// open RED door?
-		(tileIndex == _target2DoorSv) ||
-		(tileIndex == _target3DoorN) ||		// open SILVER door?
-		(tileIndex == _target3DoorNv) ||
-		(tileIndex == _target3DoorP) ||		// open BLUE door?
-		(tileIndex == _target3DoorPv) ||
-		(tileIndex == _target3DoorS) ||		// open RED door?
-		(tileIndex == _target3DoorSv) ||
-		(tileIndex == _blockpole))			// blockpole DOWN?
+	if ((tileIndex == _targetDoorN) || // open SILVER door?
+	    (tileIndex == _targetDoorNv) ||
+	    (tileIndex == _targetDoorP) || // open BLUE door?
+	    (tileIndex == _targetDoorPv) ||
+	    (tileIndex == _targetDoorS) || // open RED door?
+	    (tileIndex == _targetDoorSv) ||
+	    (tileIndex == _targetDoor2N) || // open SILVER door?
+	    (tileIndex == _targetDoor2Nv) ||
+	    (tileIndex == _targetDoor2P) || // open BLUE door?
+	    (tileIndex == _targetDoor2Pv) ||
+	    (tileIndex == _targetDoor2S) || // open RED door?
+	    (tileIndex == _targetDoor2Sv) ||
+	    (tileIndex == _target2DoorN) || // open SILVER door?
+	    (tileIndex == _target2DoorNv) ||
+	    (tileIndex == _target2DoorP) || // open BLUE door?
+	    (tileIndex == _target2DoorPv) ||
+	    (tileIndex == _target2DoorS) || // open RED door?
+	    (tileIndex == _target2DoorSv) ||
+	    (tileIndex == _target3DoorN) || // open SILVER door?
+	    (tileIndex == _target3DoorNv) ||
+	    (tileIndex == _target3DoorP) || // open BLUE door?
+	    (tileIndex == _target3DoorPv) ||
+	    (tileIndex == _target3DoorS) || // open RED door?
+	    (tileIndex == _target3DoorSv) ||
+	    (tileIndex == _blockpole)) // blockpole DOWN?
 		return true;
 	return false;
 }
@@ -102,7 +102,7 @@ bool AI::useTarget(int x, int y, int targetX, int targetY, int newTile, int *wor
 		if (g_hdb->_map->onScreen(x, y))
 			g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
 		*worked = 1;
-		return false;						// return FALSE because we need to be able to do it some more
+		return false; // return FALSE because we need to be able to do it some more
 	}
 
 	// close an open door?
@@ -114,19 +114,19 @@ bool AI::useTarget(int x, int y, int targetX, int targetY, int newTile, int *wor
 		if (g_hdb->_map->onScreen(x, y))
 			g_hdb->_sound->playSound(SND_DOOR_OPEN_CLOSE);
 		*worked = 1;
-		return false;						// return FALSE because we need to be able to do it some more
+		return false; // return FALSE because we need to be able to do it some more
 	}
 
 	// open up a bridge?
 	int tileIndex = g_hdb->_map->getMapFGTileIndex(targetX, targetY);
 	if (tileIndex == _targetBridgeU ||
-		tileIndex == _targetBridgeD ||
-		tileIndex == _targetBridgeL ||
-		tileIndex == _targetBridgeR) {
+	    tileIndex == _targetBridgeD ||
+	    tileIndex == _targetBridgeL ||
+	    tileIndex == _targetBridgeR) {
 		addBridgeExtend(targetX, targetY, tileIndex);
 		g_hdb->_map->setMapBGTileIndex(x, y, newTile);
 		*worked = 1;
-		return true;						// return TRUE because we can't open it again
+		return true; // return TRUE because we can't open it again
 	}
 
 	*worked = 0;
@@ -159,9 +159,9 @@ bool AI::useLockedSwitch(AIEntity *e, int x, int y, int targetX, int targetY, in
 	if (abs(x - _player->tileX) > 1 || abs(y - _player->tileY) > 1)
 		return false;
 
-	int	amount = queryInventoryType(item);
+	int amount = queryInventoryType(item);
 	if (amount) {
-		int	worked;
+		int worked;
 		bool rtn = useTarget(x, y, targetX, targetY, onTile, &worked);
 		if (worked) {
 			removeInvItemType(item, 1);
@@ -185,7 +185,7 @@ bool AI::useLockedSwitchOn(AIEntity *e, int x, int y, int targetX, int targetY, 
 	if (getInvAmount() == 10)
 		return false;
 
-	int	worked;
+	int worked;
 	bool rtn = useTarget(x, y, targetX, targetY, offTile, &worked);
 	if (worked) {
 		addItemToInventory(item, 1, nullptr, nullptr, nullptr);
@@ -201,10 +201,10 @@ bool AI::useCellHolder(AIEntity *e, int x, int y, int targetX, int targetY) {
 	if (abs(x - _player->tileX) > 1 || abs(y - _player->tileY) > 1)
 		return false;
 
-	int	amount = queryInventoryType(ITEM_CELL);
+	int amount = queryInventoryType(ITEM_CELL);
 
 	if (amount) {
-		int	worked;
+		int worked;
 		bool rtn = useTarget(x, y, targetX, targetY, _useHolderFull, &worked);
 		if (worked) {
 			removeInvItemType(ITEM_CELL, 1);
@@ -235,7 +235,7 @@ bool AI::useTouchplateOn(AIEntity *e, int x, int y, int targetX, int targetY, in
 }
 
 void callbackDoorOpenClose(int x, int y) {
-	int	tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
 
 	// is the door gonna close on something?  if so, wait again
 	if (!g_hdb->_ai->findEntity(x, y)) {
@@ -290,7 +290,7 @@ bool AI::useAutoDoorOpenClose(AIEntity *e, int x, int y) {
 
 // Any Type Door
 bool AI::useDoorOpenCloseBot(AIEntity *e, int x, int y) {
-	int	tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
+	int tileIndex = g_hdb->_map->getMapBGTileIndex(x, y);
 
 	if (e == _player || e->type == AI_SLUG_ATTACK || e->type == AI_GEM_ATTACK) {
 		if (isClosedDoor(x, y))
@@ -305,4 +305,4 @@ bool AI::useDoorOpenCloseBot(AIEntity *e, int x, int y) {
 	return true;
 }
 
-} // End of Namespace
+} // namespace HDB

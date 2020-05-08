@@ -24,8 +24,8 @@
 #define ULTIMA8_WORLD_CAMERAPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -42,9 +42,9 @@ namespace Ultima8 {
 class CameraProcess : public Process {
 public:
 	CameraProcess();
-	CameraProcess(uint16 itemnum);                          // Follow item/Do nothing
-	CameraProcess(int32 x, int32 y, int32 z);               // Goto location
-	CameraProcess(int32 x, int32 y, int32 z, int32 time);   // Scroll to location
+	CameraProcess(uint16 itemnum);                        // Follow item/Do nothing
+	CameraProcess(int32 x, int32 y, int32 z);             // Goto location
+	CameraProcess(int32 x, int32 y, int32 z, int32 time); // Scroll to location
 
 	~CameraProcess() override;
 
@@ -67,23 +67,25 @@ public:
 	INTRINSIC(I_startQuake);
 	INTRINSIC(I_stopQuake);
 
-	static void             GetCameraLocation(int32 &x, int32 &y, int32 &z);
-	static CameraProcess   *GetCameraProcess() {
+	static void GetCameraLocation(int32 &x, int32 &y, int32 &z);
+	static CameraProcess *GetCameraProcess() {
 		return _camera;
 	}
-	static uint16           SetCameraProcess(CameraProcess *);  // Set the current camera process. Adds process. Return PID
-	static void             ResetCameraProcess();
+	static uint16 SetCameraProcess(CameraProcess *); // Set the current camera process. Adds process. Return PID
+	static void ResetCameraProcess();
 
-	static void             SetEarthquake(int32 e) {
+	static void SetEarthquake(int32 e) {
 		_earthquake = e;
-		if (!e)  _eqX = _eqY = 0;
+		if (!e)
+			_eqX = _eqY = 0;
 	}
 
-	void                    ItemMoved();
+	void ItemMoved();
 
-	void terminate() override;   // Terminate NOW!
+	void terminate() override; // Terminate NOW!
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 private:
 	void saveData(Common::WriteStream *ws) override;
 

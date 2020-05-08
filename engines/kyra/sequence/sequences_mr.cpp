@@ -58,16 +58,15 @@ void KyraEngine_MR::showBadConscience() {
 	talkObject.y = 30;
 
 	static const char *const animFilenames[] = {
-		"GUNFL00.WSA", "GUNFL01.WSA", "GUNFL02.WSA", "GUNFL03.WSA", "GUNFL04.WSA", "GUNFL05.WSA", "GUNFL06.WSA", "GUNFL07.WSA",
-		"GUNFR00.WSA", "GUNFR01.WSA", "GUNFR02.WSA", "GUNFR03.WSA", "GUNFR04.WSA", "GUNFR05.WSA", "GUNFR06.WSA", "GUNFR07.WSA"
-	};
+	    "GUNFL00.WSA", "GUNFL01.WSA", "GUNFL02.WSA", "GUNFL03.WSA", "GUNFL04.WSA", "GUNFL05.WSA", "GUNFL06.WSA", "GUNFL07.WSA",
+	    "GUNFR00.WSA", "GUNFR01.WSA", "GUNFR02.WSA", "GUNFR03.WSA", "GUNFR04.WSA", "GUNFR05.WSA", "GUNFR06.WSA", "GUNFR07.WSA"};
 
 	setupSceneAnimObject(0x0E, 9, 0, 187, -1, -1, -1, -1, 0, 0, 0, -1, animFilenames[anim]);
 	for (uint i = 0; i <= _badConscienceFrameTable[_badConscienceAnim]; ++i) {
 		if (i == 8)
 			snd_playSoundEffect(0x1B, 0xC8);
 		updateSceneAnim(0x0E, i);
-		delay(3*_tickLength, true);
+		delay(3 * _tickLength, true);
 	}
 
 	if (_mainCharacter.animFrame < 50 || _mainCharacter.animFrame > 87)
@@ -93,11 +92,11 @@ void KyraEngine_MR::hideBadConscience() {
 		return;
 
 	_badConscienceShown = false;
-	for (int frame = _badConscienceFrameTable[_badConscienceAnim+8]; frame >= 0; --frame) {
+	for (int frame = _badConscienceFrameTable[_badConscienceAnim + 8]; frame >= 0; --frame) {
 		if (frame == 15)
 			snd_playSoundEffect(0x31, 0xC8);
 		updateSceneAnim(0x0E, frame);
-		delay(1*_tickLength, true);
+		delay(1 * _tickLength, true);
 	}
 
 	updateSceneAnim(0x0E, -1);
@@ -130,16 +129,15 @@ void KyraEngine_MR::showGoodConscience() {
 	talkObject.y = 30;
 
 	static const char *const animFilenames[] = {
-		"STUFL00.WSA", "STUFL02.WSA", "STUFL04.WSA", "STUFL03.WSA", "STUFL01.WSA",
-		"STUFR00.WSA", "STUFR02.WSA", "STUFR04.WSA", "STUFR03.WSA", "STUFR01.WSA"
-	};
+	    "STUFL00.WSA", "STUFL02.WSA", "STUFL04.WSA", "STUFL03.WSA", "STUFL01.WSA",
+	    "STUFR00.WSA", "STUFR02.WSA", "STUFR04.WSA", "STUFR03.WSA", "STUFR01.WSA"};
 
 	setupSceneAnimObject(0x0F, 9, 0, 187, -1, -1, -1, -1, 0, 0, 0, -1, animFilenames[anim]);
 	for (uint i = 0; i <= _goodConscienceFrameTable[_goodConscienceAnim]; ++i) {
 		if (i == 10)
 			snd_playSoundEffect(0x7F, 0xC8);
 		updateSceneAnim(0x0F, i);
-		delay(2*_tickLength, true);
+		delay(2 * _tickLength, true);
 	}
 
 	if (_mainCharacter.animFrame < 50 || _mainCharacter.animFrame > 87)
@@ -164,11 +162,11 @@ void KyraEngine_MR::hideGoodConscience() {
 		return;
 
 	_goodConscienceShown = false;
-	for (int frame = _goodConscienceFrameTable[_goodConscienceAnim+5]; frame >= 0; --frame) {
+	for (int frame = _goodConscienceFrameTable[_goodConscienceAnim + 5]; frame >= 0; --frame) {
 		if (frame == 17)
 			snd_playSoundEffect(0x31, 0xC8);
 		updateSceneAnim(0x0F, frame);
-		delay(1*_tickLength, true);
+		delay(1 * _tickLength, true);
 	}
 
 	updateSceneAnim(0x0F, -1);
@@ -195,7 +193,7 @@ void KyraEngine_MR::eelScript() {
 
 	setGameFlag(0x171);
 
-	switch (_characterShapeFile-1) {
+	switch (_characterShapeFile - 1) {
 	case 0:
 		runAnimationScript("EELS01.EMC", 0, 0, 1, 1);
 		break;
@@ -224,13 +222,13 @@ void KyraEngine_MR::eelScript() {
 int KyraEngine_MR::initAnimationShapes(uint8 *filedata) {
 	const int lastEntry = MIN(_animShapeLastEntry, 41);
 	for (int i = 0; i < lastEntry; ++i)
-		_gameShapes[9+i] = _screen->getPtrToShape(filedata, i);
+		_gameShapes[9 + i] = _screen->getPtrToShape(filedata, i);
 	return lastEntry;
 }
 
 void KyraEngine_MR::uninitAnimationShapes(int count, uint8 *filedata) {
 	for (int i = 0; i < count; ++i)
-		_gameShapes[9+i] = 0;
+		_gameShapes[9 + i] = 0;
 	delete[] filedata;
 	setNextIdleAnimTimer();
 }

@@ -27,7 +27,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrotLobbyLinkUpdater, CParrotLobbyObject)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 /*------------------------------------------------------------------------*/

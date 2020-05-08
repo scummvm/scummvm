@@ -30,7 +30,6 @@
  */
 #include "ultima/shared/std/string.h"
 
-
 namespace Ultima {
 namespace Nuvie {
 

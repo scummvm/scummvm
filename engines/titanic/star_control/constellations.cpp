@@ -49,7 +49,7 @@ bool CConstellations::initialize() {
 		rootEntry.resize(count);
 		for (int idx = 0; idx < count; ++idx) {
 			ConstellationLine &cl = rootEntry[idx];
-			FVector *vectors[2] = { &cl._start, &cl._end};
+			FVector *vectors[2] = {&cl._start, &cl._end};
 
 			for (int fctr = 0; fctr < 2; ++fctr) {
 				ra = (double)stream->readSint32LE() * 360.0f / 24000.0f;
@@ -109,7 +109,7 @@ void CConstellations::draw(CSurfaceArea *surface, CCamera *camera) {
 				sc0 = camera->getRelativePos(2, ec0);
 				sc1 = camera->getRelativePos(2, ec1);
 				surface->drawLine(Point(sc0._x + centerX, sc0._y + centerY),
-					Point(sc1._x + centerX, sc1._y + centerY));
+				                  Point(sc1._x + centerX, sc1._y + centerY));
 			}
 		}
 	}

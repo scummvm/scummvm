@@ -34,9 +34,11 @@ class CPellerator : public CTransport {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+
 public:
 	static int _soundHandle;
 	static int _destination;
+
 public:
 	CLASSDEF;
 	CPellerator();

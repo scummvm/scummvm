@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/widgets/merchant_grocer.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/u1dialogs/grocery.h"
 
 namespace Ultima {

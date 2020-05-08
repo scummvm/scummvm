@@ -20,15 +20,15 @@
  *
  */
 
+#include "ultima/nuvie/gui/gui_area.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/gui_area.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, int aShape)
-	: GUI_Widget(NULL, x, y, w, h) {
+GUI_Area::GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, int aShape)
+    : GUI_Widget(NULL, x, y, w, h) {
 	R = r;
 	G = g;
 	B = b;
@@ -38,9 +38,9 @@ GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, int a
 	frameThickness = 0;
 }
 
-GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b,
-                    uint8 fr, uint8 fg, uint8 fb, int fthick, int aShape)
-	: GUI_Widget(NULL, x, y, w, h) {
+GUI_Area::GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b,
+                   uint8 fr, uint8 fg, uint8 fb, int fthick, int aShape)
+    : GUI_Widget(NULL, x, y, w, h) {
 	R = r;
 	G = g;
 	B = b;
@@ -55,8 +55,7 @@ GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b,
 }
 
 /* Map the color to the display */
-void
-GUI_Area:: SetDisplay(Screen *s) {
+void GUI_Area::SetDisplay(Screen *s) {
 	GUI_Widget::SetDisplay(s);
 	color = SDL_MapRGB(surface->format, R, G, B);
 	if (useFrame)
@@ -76,7 +75,7 @@ void GUI_Area::Display(bool full_redraw) {
 		x0 = area.left + r1;
 		y0 = area.top + r2;
 		for (x = area.left; x < area.left + area.width(); x++) {
-			dy = (int)((double) r2 * sin(acos((double)(x - x0) / (double) r1)));
+			dy = (int)((double)r2 * sin(acos((double)(x - x0) / (double)r1)));
 			framerect.left = x;
 			framerect.top = y0 - dy;
 			framerect.setWidth(1);

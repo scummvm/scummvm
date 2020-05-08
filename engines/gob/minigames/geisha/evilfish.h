@@ -33,7 +33,7 @@ namespace Geisha {
 class EvilFish : public ANIObject {
 public:
 	enum Direction {
-		kDirectionLeft  = 0,
+		kDirectionLeft = 0,
 		kDirectionRight = 1
 	};
 

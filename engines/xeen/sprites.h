@@ -23,9 +23,9 @@
 #ifndef XEEN_SPRITES_H
 #define XEEN_SPRITES_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "graphics/surface.h"
 #include "xeen/files.h"
 #include "xeen/xsurface.h"
@@ -36,14 +36,24 @@ class XeenEngine;
 class Window;
 
 enum {
-	SCALE_MASK = 0x7FFF, SCALE_ENLARGE = 0x8000
+	SCALE_MASK = 0x7FFF,
+	SCALE_ENLARGE = 0x8000
 };
 
 enum SpriteFlags {
-	SPRFLAG_MODE_MASK = 0xF00, SPRFLAG_DRAWER1 = 0x100, SPRFLAG_DRAWER2 = 0x200,
-	SPRFLAG_DRAWER3 = 0x300, SPRFLAG_DRAWER4 = 0x400, SPRFLAG_DRAWER5 = 0x500, SPRFLAG_DRAWER6 = 0x600,
-	SPRFLAG_DRAWER7 = 0x700, SPRFLAG_800 = 0x800, SPRFLAG_SCENE_CLIPPED = 0x2000,
-	SPRFLAG_BOTTOM_CLIPPED = 0x4000, SPRFLAG_HORIZ_FLIPPED = 0x8000, SPRFLAG_RESIZE = 0x10000
+	SPRFLAG_MODE_MASK = 0xF00,
+	SPRFLAG_DRAWER1 = 0x100,
+	SPRFLAG_DRAWER2 = 0x200,
+	SPRFLAG_DRAWER3 = 0x300,
+	SPRFLAG_DRAWER4 = 0x400,
+	SPRFLAG_DRAWER5 = 0x500,
+	SPRFLAG_DRAWER6 = 0x600,
+	SPRFLAG_DRAWER7 = 0x700,
+	SPRFLAG_800 = 0x800,
+	SPRFLAG_SCENE_CLIPPED = 0x2000,
+	SPRFLAG_BOTTOM_CLIPPED = 0x4000,
+	SPRFLAG_HORIZ_FLIPPED = 0x8000,
+	SPRFLAG_RESIZE = 0x10000
 };
 
 class SpriteResource {
@@ -67,13 +77,14 @@ private:
 	 * Draw the sprite onto the given surface
 	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, uint flags = 0, int scale = 0);
+	          const Common::Rect &bounds, uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw the sprite onto a given window
 	 */
 	void draw(int windowNum, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, uint flags = 0, int scale = 0);
+	          const Common::Rect &bounds, uint flags = 0, int scale = 0);
+
 public:
 	SpriteResource();
 	SpriteResource(const Common::String &filename);
@@ -111,7 +122,7 @@ public:
 	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
-		uint flags = 0, int scale = 0);
+	          uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw a sprite onto a specific window
@@ -123,7 +134,7 @@ public:
 	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(Window &dest, int frame, const Common::Point &destPos,
-		uint flags = 0, int scale = 0);
+	          uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw a sprite onto a given window
@@ -135,7 +146,7 @@ public:
 	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(int windowIndex, int frame, const Common::Point &destPos,
-		uint flags = 0, int scale = 0);
+	          uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw the sprite onto the given surface
@@ -180,15 +191,18 @@ class SpriteDrawer {
 private:
 	byte *_data;
 	size_t _filesize;
+
 protected:
 	byte *_destTop, *_destBottom;
 	byte *_destLeft, *_destRight;
 	int _pitch;
+
 private:
 	/**
 	 * Scale a co-ordinate value based on the passed scaling mask
 	 */
 	static uint getScaledVal(int xy, uint16 &scaleMask);
+
 protected:
 	/**
 	 * Roll carry right opcode emulation
@@ -199,6 +213,7 @@ protected:
 	 * Output a pixel
 	 */
 	virtual void drawPixel(byte *dest, byte pixel);
+
 public:
 	/**
 	 * Constructor
@@ -214,17 +229,19 @@ public:
 	 * Draw a sprite frame based on a passed offset into the data stream
 	 */
 	void draw(XSurface &dest, uint16 offset, const Common::Point &pt,
-		const Common::Rect &clipRect, uint flags, int scale);
+	          const Common::Rect &clipRect, uint flags, int scale);
 };
 
 class SpriteDrawer1 : public SpriteDrawer {
 private:
 	byte _offset, _mask;
+
 protected:
 	/**
 	 * Output a pixel
 	 */
 	void drawPixel(byte *dest, byte pixel) override;
+
 public:
 	/**
 	 * Constructor
@@ -240,11 +257,13 @@ class SpriteDrawer2 : public SpriteDrawer {
 private:
 	uint16 _mask1, _mask2;
 	uint16 _random1, _random2;
+
 private:
 	/**
 	 * Output a pixel
 	 */
 	void drawPixel(byte *dest, byte pixel) override;
+
 public:
 	/**
 	 * Constructor
@@ -260,11 +279,13 @@ private:
 	uint16 _offset, _mask;
 	byte _palette[256 * 3];
 	bool _hasPalette;
+
 private:
 	/**
 	 * Output a pixel
 	 */
 	void drawPixel(byte *dest, byte pixel) override;
+
 public:
 	/**
 	 * Constructor
@@ -275,11 +296,13 @@ public:
 class SpriteDrawer4 : public SpriteDrawer {
 private:
 	byte _threshold;
+
 protected:
 	/**
 	 * Output a pixel
 	 */
 	void drawPixel(byte *dest, byte pixel) override;
+
 public:
 	/**
 	 * Constructor
@@ -293,11 +316,13 @@ public:
 class SpriteDrawer5 : public SpriteDrawer {
 private:
 	uint16 _threshold, _random1, _random2;
+
 protected:
 	/**
 	 * Output a pixel
 	 */
 	void drawPixel(byte *dest, byte pixel) override;
+
 public:
 	/**
 	 * Constructor
@@ -308,11 +333,13 @@ public:
 class SpriteDrawer6 : public SpriteDrawer {
 private:
 	byte _mask;
+
 protected:
 	/**
 	 * Output a pixel
 	 */
 	void drawPixel(byte *dest, byte pixel) override;
+
 public:
 	/**
 	 * Constructor

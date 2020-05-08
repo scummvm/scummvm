@@ -21,11 +21,11 @@
  */
 
 #include "glk/agt/agt.h"
-#include "glk/quetzal.h"
 #include "common/config-manager.h"
 #include "glk/agt/agility.h"
-#include "glk/agt/interp.h"
 #include "glk/agt/exec.h"
+#include "glk/agt/interp.h"
+#include "glk/quetzal.h"
 
 namespace Glk {
 namespace AGT {
@@ -37,12 +37,12 @@ extern int glk_startup_code();
 extern void gagt_finalizer();
 
 AGT::AGT(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		gagt_main_window(nullptr), gagt_status_window(nullptr), gagt_gamefile(nullptr),
-		gagt_game_message(nullptr), gagt_delay_mode(DELAY_SHORT), gagt_font_mode(FONT_AUTOMATIC),
-		gagt_transcript_stream(nullptr), gagt_inputlog_stream(nullptr),
-		gagt_readlog_stream(nullptr), gagt_replacement_enabled(true),
-		gagt_extended_status_enabled(true), gagt_abbreviations_enabled(true),
-		gagt_commands_enabled(true), gagt_clean_exit_test(false) {
+                                                              gagt_main_window(nullptr), gagt_status_window(nullptr), gagt_gamefile(nullptr),
+                                                              gagt_game_message(nullptr), gagt_delay_mode(DELAY_SHORT), gagt_font_mode(FONT_AUTOMATIC),
+                                                              gagt_transcript_stream(nullptr), gagt_inputlog_stream(nullptr),
+                                                              gagt_readlog_stream(nullptr), gagt_replacement_enabled(true),
+                                                              gagt_extended_status_enabled(true), gagt_abbreviations_enabled(true),
+                                                              gagt_commands_enabled(true), gagt_clean_exit_test(false) {
 	g_vm = this;
 }
 

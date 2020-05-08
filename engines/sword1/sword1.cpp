@@ -22,16 +22,16 @@
 
 #include "sword1/sword1.h"
 
-#include "sword1/resman.h"
-#include "sword1/objectman.h"
-#include "sword1/mouse.h"
-#include "sword1/logic.h"
-#include "sword1/sound.h"
-#include "sword1/screen.h"
-#include "sword1/swordres.h"
-#include "sword1/menu.h"
-#include "sword1/music.h"
 #include "sword1/control.h"
+#include "sword1/logic.h"
+#include "sword1/menu.h"
+#include "sword1/mouse.h"
+#include "sword1/music.h"
+#include "sword1/objectman.h"
+#include "sword1/resman.h"
+#include "sword1/screen.h"
+#include "sword1/sound.h"
+#include "sword1/swordres.h"
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"
@@ -45,11 +45,11 @@ namespace Sword1 {
 SystemVars SwordEngine::_systemVars;
 
 SwordEngine::SwordEngine(OSystem *syst)
-	: Engine(syst) {
+    : Engine(syst) {
 
 	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo") ||
-	        !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo") ||
-	        !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
+	    !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo") ||
+	    !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
 		_features = GF_DEMO;
 	else
 		_features = 0;
@@ -96,7 +96,7 @@ Common::Error SwordEngine::init() {
 	initGraphics(640, 480);
 
 	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
-	        0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
+	    0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
 		_systemVars.platform = Common::kPlatformMacintosh;
 	else if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psx") ||
 	         0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo"))
@@ -253,113 +253,117 @@ void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
 }
 
 static const char *const errorMsgs[] = {
-	"The file \"%s\" is missing and the game doesn't work without it.\n"
-	"Please copy it from CD %d and try starting the game again.\n"
-	"The Readme file also contains further information.",
+    "The file \"%s\" is missing and the game doesn't work without it.\n"
+    "Please copy it from CD %d and try starting the game again.\n"
+    "The Readme file also contains further information.",
 
-	"%d important files are missing, the game can't start without them.\n"
-	"Please copy these files from their corresponding CDs:\n",
+    "%d important files are missing, the game can't start without them.\n"
+    "Please copy these files from their corresponding CDs:\n",
 
-	"The file \"%s\" is missing.\n"
-	"Even though the game may initially seem to\n"
-	"work fine, it will crash when it needs the\n"
-	"data from this file and you will be thrown back to your last savegame.\n"
-	"Please copy the file from CD %d and start the game again.",
+    "The file \"%s\" is missing.\n"
+    "Even though the game may initially seem to\n"
+    "work fine, it will crash when it needs the\n"
+    "data from this file and you will be thrown back to your last savegame.\n"
+    "Please copy the file from CD %d and start the game again.",
 
-	"%d files are missing.\n"
-	"Even though the game may initially seem to\n"
-	"work fine, it will crash when it needs the\n"
-	"data from these files and you will be thrown back to your last savegame.\n"
-	"Please copy these files from their corresponding CDs:\n"
-};
+    "%d files are missing.\n"
+    "Even though the game may initially seem to\n"
+    "work fine, it will crash when it needs the\n"
+    "data from these files and you will be thrown back to your last savegame.\n"
+    "Please copy these files from their corresponding CDs:\n"};
 
 const CdFile SwordEngine::_pcCdFileList[] = {
-	{ "paris2.clu", FLAG_CD1 },
-	{ "ireland.clu", FLAG_CD2 },
-	{ "paris3.clu", FLAG_CD1 },
-	{ "paris4.clu", FLAG_CD1 },
-	{ "scotland.clu", FLAG_CD2 },
-	{ "spain.clu", FLAG_CD2 },
-	{ "syria.clu", FLAG_CD2 },
-	{ "train.clu", FLAG_CD2 },
-	{ "compacts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "general.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "maps.clu", FLAG_CD1 | FLAG_DEMO },
-	{ "paris1.clu", FLAG_CD1 | FLAG_DEMO },
-	{ "scripts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "text.clu", FLAG_CD1 | FLAG_DEMO },
-	{ "cows.mad", FLAG_DEMO },
-	{ "speech1.clu", FLAG_SPEECH1 },
-	{ "speech2.clu", FLAG_SPEECH2 }
+    {"paris2.clu", FLAG_CD1},
+    {"ireland.clu", FLAG_CD2},
+    {"paris3.clu", FLAG_CD1},
+    {"paris4.clu", FLAG_CD1},
+    {"scotland.clu", FLAG_CD2},
+    {"spain.clu", FLAG_CD2},
+    {"syria.clu", FLAG_CD2},
+    {"train.clu", FLAG_CD2},
+    {"compacts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"general.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"maps.clu", FLAG_CD1 | FLAG_DEMO},
+    {"paris1.clu", FLAG_CD1 | FLAG_DEMO},
+    {"scripts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"text.clu", FLAG_CD1 | FLAG_DEMO},
+    {"cows.mad", FLAG_DEMO},
+    {"speech1.clu", FLAG_SPEECH1},
+    {"speech2.clu", FLAG_SPEECH2}
 #ifdef USE_FLAC
-	, { "speech1.clf", FLAG_SPEECH1 },
-	{ "speech2.clf", FLAG_SPEECH2 }
+    ,
+    {"speech1.clf", FLAG_SPEECH1},
+    {"speech2.clf", FLAG_SPEECH2}
 #endif
 #ifdef USE_VORBIS
-	, { "speech1.clv", FLAG_SPEECH1 },
-	{ "speech2.clv", FLAG_SPEECH2 }
+    ,
+    {"speech1.clv", FLAG_SPEECH1},
+    {"speech2.clv", FLAG_SPEECH2}
 #endif
 #ifdef USE_MAD
-	, { "speech1.cl3", FLAG_SPEECH1 },
-	{ "speech2.cl3", FLAG_SPEECH2 }
+    ,
+    {"speech1.cl3", FLAG_SPEECH1},
+    {"speech2.cl3", FLAG_SPEECH2}
 #endif
 };
 
 const CdFile SwordEngine::_macCdFileList[] = {
-	{ "paris2.clm", FLAG_CD1 },
-	{ "ireland.clm", FLAG_CD2 },
-	{ "paris3.clm", FLAG_CD1 },
-	{ "paris4.clm", FLAG_CD1 },
-	{ "scotland.clm", FLAG_CD2 },
-	{ "spain.clm", FLAG_CD2 },
-	{ "syria.clm", FLAG_CD2 },
-	{ "train.clm", FLAG_CD2 },
-	{ "compacts.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "general.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "maps.clm", FLAG_CD1 | FLAG_DEMO },
-	{ "paris1.clm", FLAG_CD1 | FLAG_DEMO },
-	{ "scripts.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "text.clm", FLAG_CD1 | FLAG_DEMO },
-	{ "speech1.clu", FLAG_SPEECH1 },
-	{ "speech2.clu", FLAG_SPEECH2 }
+    {"paris2.clm", FLAG_CD1},
+    {"ireland.clm", FLAG_CD2},
+    {"paris3.clm", FLAG_CD1},
+    {"paris4.clm", FLAG_CD1},
+    {"scotland.clm", FLAG_CD2},
+    {"spain.clm", FLAG_CD2},
+    {"syria.clm", FLAG_CD2},
+    {"train.clm", FLAG_CD2},
+    {"compacts.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"general.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"maps.clm", FLAG_CD1 | FLAG_DEMO},
+    {"paris1.clm", FLAG_CD1 | FLAG_DEMO},
+    {"scripts.clm", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"text.clm", FLAG_CD1 | FLAG_DEMO},
+    {"speech1.clu", FLAG_SPEECH1},
+    {"speech2.clu", FLAG_SPEECH2}
 #ifdef USE_FLAC
-	,{ "speech1.clf", FLAG_SPEECH1 },
-	{ "speech2.clf", FLAG_SPEECH2 }
+    ,
+    {"speech1.clf", FLAG_SPEECH1},
+    {"speech2.clf", FLAG_SPEECH2}
 #endif
 #ifdef USE_VORBIS
-	,{ "speech1.clv", FLAG_SPEECH1 },
-	{ "speech2.clv", FLAG_SPEECH2 }
+    ,
+    {"speech1.clv", FLAG_SPEECH1},
+    {"speech2.clv", FLAG_SPEECH2}
 #endif
 #ifdef USE_MAD
-	,{ "speech1.cl3", FLAG_SPEECH1 },
-	{ "speech2.cl3", FLAG_SPEECH2 }
+    ,
+    {"speech1.cl3", FLAG_SPEECH1},
+    {"speech2.cl3", FLAG_SPEECH2}
 #endif
 };
 
 const CdFile SwordEngine::_psxCdFileList[] = { // PSX edition has only one cd
-	{ "paris2.clu", FLAG_CD1 },
-	{ "ireland.clu", FLAG_CD1 },
-	{ "paris3.clu", FLAG_CD1 },
-	{ "paris4.clu", FLAG_CD1 },
-	{ "scotland.clu", FLAG_CD1 },
-	{ "spain.clu", FLAG_CD1 },
-	{ "syria.clu", FLAG_CD1 },
-	{ "train.clu", FLAG_CD1 },
-	{ "train.plx", FLAG_CD1 },
-	{ "compacts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "general.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "maps.clu", FLAG_CD1 | FLAG_DEMO },
-	{ "paris1.clu", FLAG_CD1 | FLAG_DEMO},
-	{ "scripts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
-	{ "text.clu", FLAG_CD1 | FLAG_DEMO },
-	{ "speech.dat", FLAG_SPEECH1 | FLAG_DEMO },
-	{ "speech.tab", FLAG_SPEECH1 | FLAG_DEMO },
-	{ "speech.inf", FLAG_SPEECH1 | FLAG_DEMO },
-	{ "speech.lis", FLAG_SPEECH1 | FLAG_DEMO }
-};
+    {"paris2.clu", FLAG_CD1},
+    {"ireland.clu", FLAG_CD1},
+    {"paris3.clu", FLAG_CD1},
+    {"paris4.clu", FLAG_CD1},
+    {"scotland.clu", FLAG_CD1},
+    {"spain.clu", FLAG_CD1},
+    {"syria.clu", FLAG_CD1},
+    {"train.clu", FLAG_CD1},
+    {"train.plx", FLAG_CD1},
+    {"compacts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"general.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"maps.clu", FLAG_CD1 | FLAG_DEMO},
+    {"paris1.clu", FLAG_CD1 | FLAG_DEMO},
+    {"scripts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED},
+    {"text.clu", FLAG_CD1 | FLAG_DEMO},
+    {"speech.dat", FLAG_SPEECH1 | FLAG_DEMO},
+    {"speech.tab", FLAG_SPEECH1 | FLAG_DEMO},
+    {"speech.inf", FLAG_SPEECH1 | FLAG_DEMO},
+    {"speech.lis", FLAG_SPEECH1 | FLAG_DEMO}};
 
 void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 	char msg[1024];
@@ -440,8 +444,8 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or what...
 	bool fileExists[30];
 	bool isFullVersion = false; // default to demo version
-	bool missingTypes[8] = { false, false, false, false, false, false, false, false };
-	bool foundTypes[8] = { false, false, false, false, false, false, false, false };
+	bool missingTypes[8] = {false, false, false, false, false, false, false, false};
+	bool foundTypes[8] = {false, false, false, false, false, false, false, false};
 	bool cd2FilesFound = false;
 	_systemVars.runningFromCd = false;
 	_systemVars.playSpeech = true;
@@ -493,9 +497,9 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 	if (((_features & GF_DEMO) == 0) != isFullVersion) // shouldn't happen...
 		warning("Your Broken Sword 1 version looks like a %s version but you are starting it as a %s version", isFullVersion ? "full" : "demo", (_features & GF_DEMO) ? "demo" : "full");
 
-	if (foundTypes[TYPE_SPEECH1]) // we found some kind of speech1 file (.clu, .cl3, .clv)
+	if (foundTypes[TYPE_SPEECH1])           // we found some kind of speech1 file (.clu, .cl3, .clv)
 		missingTypes[TYPE_SPEECH1] = false; // so we don't care if there's a different kind missing
-	if (foundTypes[TYPE_SPEECH2]) // same for speech2
+	if (foundTypes[TYPE_SPEECH2])           // same for speech2
 		missingTypes[TYPE_SPEECH2] = false;
 
 	if (isFullVersion)                   // if this is the full version...
@@ -560,7 +564,8 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 			else
 				warning("Unable to find the speech file from CD %d.\n"
 				        "You won't hear any voice output in that part of the game.\n"
-				        "Please read the ScummVM Readme file for more information", missingTypes[TYPE_SPEECH1] ? 1 : 2);
+				        "Please read the ScummVM Readme file for more information",
+				        missingTypes[TYPE_SPEECH1] ? 1 : 2);
 		} else if (missingTypes[TYPE_DEMO]) {
 			// for the demo version, we simply expect to have all files immediately
 			showFileErrorMsg(TYPE_IMMED, fileExists);
@@ -621,16 +626,16 @@ Common::Error SwordEngine::go() {
 void SwordEngine::checkCd() {
 	uint8 needCd = _cdList[Logic::_scriptVars[NEW_SCREEN]];
 	if (_systemVars.runningFromCd) { // are we running from cd?
-		if (needCd == 0) { // needCd == 0 means we can use either CD1 or CD2.
+		if (needCd == 0) {           // needCd == 0 means we can use either CD1 or CD2.
 			if (_systemVars.currentCD == 0) {
 				_systemVars.currentCD = 1; // if there is no CD currently inserted, ask for CD1.
 				_control->askForCd();
-			} // else: there is already a cd inserted and we don't care if it's cd1 or cd2.
+			}                                         // else: there is already a cd inserted and we don't care if it's cd1 or cd2.
 		} else if (needCd != _systemVars.currentCD) { // we need a different CD than the one in drive.
-			_music->startMusic(0, 0); //
-			_sound->closeCowSystem(); // close music and sound files before changing CDs
-			_systemVars.currentCD = needCd; // askForCd will ask the player to insert _systemVars.currentCd,
-			_control->askForCd();           // so it has to be updated before calling it.
+			_music->startMusic(0, 0);                 //
+			_sound->closeCowSystem();                 // close music and sound files before changing CDs
+			_systemVars.currentCD = needCd;           // askForCd will ask the player to insert _systemVars.currentCd,
+			_control->askForCd();                     // so it has to be updated before calling it.
 		}
 	} else {        // we're running from HDD, we don't have to care about music files and Sound will take care of
 		if (needCd) // switching sound.clu files on Sound::newScreen by itself, so there's nothing to be done.
@@ -684,8 +689,7 @@ uint8 SwordEngine::mainLoop() {
 				retCode = CONTROL_RESTART_GAME;
 
 			// The control panel is triggered by F5 or ESC.
-			else if (((_keyPressed.keycode == Common::KEYCODE_F5 || _keyPressed.keycode == Common::KEYCODE_ESCAPE)
-			          && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.controlPanelMode)) {
+			else if (((_keyPressed.keycode == Common::KEYCODE_F5 || _keyPressed.keycode == Common::KEYCODE_ESCAPE) && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.controlPanelMode)) {
 				retCode = _control->runPanel();
 				if (retCode == CONTROL_NOTHING_DONE)
 					_screen->fullRefresh();
@@ -706,7 +710,7 @@ uint8 SwordEngine::mainLoop() {
 		}
 
 		_sound->quitScreen();
-		_screen->quitScreen(); // close graphic resources
+		_screen->quitScreen();                                // close graphic resources
 		_objectMan->closeSection(Logic::_scriptVars[SCREEN]); // close the section that PLAYER has just left, if it's empty now
 	}
 	return retCode;

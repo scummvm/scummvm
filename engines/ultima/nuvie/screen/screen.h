@@ -23,11 +23,11 @@
 #ifndef NUVIE_SCREEN_SCREEN_H
 #define NUVIE_SCREEN_SCREEN_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/screen/surface.h"
-#include "ultima/nuvie/screen/scale.h"
 #include "graphics/screen.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/screen/scale.h"
+#include "ultima/nuvie/screen/surface.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -43,10 +43,10 @@ private:
 	Configuration *config;
 	Graphics::Screen *_rawSurface;
 	RenderSurface *_renderSurface;
-	ScalerRegistry     scaler_reg;     // Scaler Registry
-	const ScalerStruct *scaler;        // Scaler
-	int scaler_index;  // Index of Current Scaler
-	int scale_factor;  // Scale factor
+	ScalerRegistry scaler_reg;  // Scaler Registry
+	const ScalerStruct *scaler; // Scaler
+	int scaler_index;           // Index of Current Scaler
+	int scale_factor;           // Scale factor
 
 	bool fullscreen;
 	bool doubleBuffer;
@@ -125,7 +125,7 @@ public:
 		return lighting_style;
 	}
 	int get_old_lighting_style() {
-		return old_lighting_style;    // return the lighting_style before cheats applied
+		return old_lighting_style; // return the lighting_style before cheats applied
 	}
 	void set_lighting_style(int lighting);
 

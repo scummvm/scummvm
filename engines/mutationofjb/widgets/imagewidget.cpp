@@ -25,13 +25,11 @@
 
 namespace MutationOfJB {
 
-ImageWidget::ImageWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &image) :
-	Widget(gui, area),
-	_image(image) {}
-
+ImageWidget::ImageWidget(GuiScreen &gui, const Common::Rect &area, const Graphics::Surface &image) : Widget(gui, area),
+                                                                                                     _image(image) {}
 
 void ImageWidget::draw(Graphics::ManagedSurface &surface) {
 	surface.blitFrom(_image, Common::Point(_area.left, _area.top));
 }
 
-}
+} // namespace MutationOfJB

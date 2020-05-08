@@ -20,21 +20,21 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/widgets/converse_gump.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/nuvie/fonts/font_manager.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/portraits/portrait.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/gui/widgets/converse_gump.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -44,7 +44,7 @@ namespace Nuvie {
 // ConverseGump Class
 
 ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
-// uint16 x, y;
+	// uint16 x, y;
 
 	init(cfg, f);
 	Game *game = Game::get_game();
@@ -53,8 +53,8 @@ ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
 	scroll_width = 30;
 	scroll_height = 8;
 
-// x = 8;
-// y = 8;
+	// x = 8;
+	// y = 8;
 	int gump_h;
 	uint8 min_h, default_c;
 	Std::string height_str;
@@ -69,7 +69,7 @@ ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
 	} else if (game_type == NUVIE_GAME_MD) {
 		default_c = 136;
 		min_h = 181;
-	} else {// U6
+	} else { // U6
 		default_c = 218;
 		min_h = 152;
 	}
@@ -123,7 +123,7 @@ ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
 		frame_w = portrait_width + 8;
 		frame_h = portrait_height + 9;
 	}
-//DEBUG(0, LEVEL_DEBUGGING, "\nMin w = %d\n", frame_w + 12 + 210);
+	//DEBUG(0, LEVEL_DEBUGGING, "\nMin w = %d\n", frame_w + 12 + 210);
 }
 
 ConverseGump::~ConverseGump() {
@@ -212,7 +212,7 @@ unsigned char *ConverseGump::create_framed_portrait(Actor *a) { //FIXME U6 speci
 	memset(framed_data, 255, frame_w * frame_h);
 
 	memset(framed_data, 0, frame_w);
-	memset(framed_data + (frame_h - 1)*frame_w, 0, frame_w);
+	memset(framed_data + (frame_h - 1) * frame_w, 0, frame_w);
 	memset(framed_data + 1 * frame_w + 2, 53, 57);
 	memset(framed_data + 2 * frame_w + 2, 57, 59);
 
@@ -229,32 +229,32 @@ unsigned char *ConverseGump::create_framed_portrait(Actor *a) { //FIXME U6 speci
 	framed_data[3 * frame_w + 3] = 143;
 
 	for (i = 0; i < portrait_height; i++) {
-		framed_data[(i + 4)*frame_w] = 0;
-		framed_data[(i + 4)*frame_w + 1] = 139;
-		framed_data[(i + 4)*frame_w + 2] = 57;
-		framed_data[(i + 4)*frame_w + 3] = 142;
+		framed_data[(i + 4) * frame_w] = 0;
+		framed_data[(i + 4) * frame_w + 1] = 139;
+		framed_data[(i + 4) * frame_w + 2] = 57;
+		framed_data[(i + 4) * frame_w + 3] = 142;
 
-		memcpy(&framed_data[(i + 4)*frame_w + 4], &portrait_data[i * p->get_portrait_width()], portrait_width);
+		memcpy(&framed_data[(i + 4) * frame_w + 4], &portrait_data[i * p->get_portrait_width()], portrait_width);
 
-		framed_data[(i + 4)*frame_w + 4 + portrait_width] = 0;
-		framed_data[(i + 4)*frame_w + 4 + portrait_width + 1] = 57;
-		framed_data[(i + 4)*frame_w + 4 + portrait_width + 2] = 53;
-		framed_data[(i + 4)*frame_w + 4 + portrait_width + 3] = 0;
+		framed_data[(i + 4) * frame_w + 4 + portrait_width] = 0;
+		framed_data[(i + 4) * frame_w + 4 + portrait_width + 1] = 57;
+		framed_data[(i + 4) * frame_w + 4 + portrait_width + 2] = 53;
+		framed_data[(i + 4) * frame_w + 4 + portrait_width + 3] = 0;
 	}
 
-	memset(framed_data + (frame_h - 5)*frame_w + 3, 142, 57);
-	memset(framed_data + (frame_h - 4)*frame_w + 2, 57, 60);
-	memset(framed_data + (frame_h - 3)*frame_w + 1, 139, 61);
-	memset(framed_data + (frame_h - 2)*frame_w + 1, 142, 62);
+	memset(framed_data + (frame_h - 5) * frame_w + 3, 142, 57);
+	memset(framed_data + (frame_h - 4) * frame_w + 2, 57, 60);
+	memset(framed_data + (frame_h - 3) * frame_w + 1, 139, 61);
+	memset(framed_data + (frame_h - 2) * frame_w + 1, 142, 62);
 
 	//bottom left
-	framed_data[(frame_h - 5)*frame_w] = 0;
-	framed_data[(frame_h - 5)*frame_w + 1] = 139;
-	framed_data[(frame_h - 5)*frame_w + 2] = 57;
-	framed_data[(frame_h - 4)*frame_w] = 0;
-	framed_data[(frame_h - 4)*frame_w + 1] = 139;
-	framed_data[(frame_h - 3)*frame_w] = 0;
-	framed_data[(frame_h - 2)*frame_w] = 0;
+	framed_data[(frame_h - 5) * frame_w] = 0;
+	framed_data[(frame_h - 5) * frame_w + 1] = 139;
+	framed_data[(frame_h - 5) * frame_w + 2] = 57;
+	framed_data[(frame_h - 4) * frame_w] = 0;
+	framed_data[(frame_h - 4) * frame_w + 1] = 139;
+	framed_data[(frame_h - 3) * frame_w] = 0;
+	framed_data[(frame_h - 2) * frame_w] = 0;
 
 	//top right
 	framed_data[1 * frame_w + 59] = 50;
@@ -271,15 +271,15 @@ unsigned char *ConverseGump::create_framed_portrait(Actor *a) { //FIXME U6 speci
 	framed_data[4 * frame_w + 59 + 3] = 50;
 
 	//bottom right
-	framed_data[(frame_h - 5)*frame_w + 60] = 143;
-	framed_data[(frame_h - 5)*frame_w + 61] = 57;
-	framed_data[(frame_h - 5)*frame_w + 62] = 53;
-	framed_data[(frame_h - 5)*frame_w + 63] = 0;
-	framed_data[(frame_h - 4)*frame_w + 62] = 53;
-	framed_data[(frame_h - 4)*frame_w + 63] = 0;
-	framed_data[(frame_h - 3)*frame_w + 62] = 173;
-	framed_data[(frame_h - 3)*frame_w + 63] = 0;
-	framed_data[(frame_h - 2)*frame_w + 63] = 0;
+	framed_data[(frame_h - 5) * frame_w + 60] = 143;
+	framed_data[(frame_h - 5) * frame_w + 61] = 57;
+	framed_data[(frame_h - 5) * frame_w + 62] = 53;
+	framed_data[(frame_h - 5) * frame_w + 63] = 0;
+	framed_data[(frame_h - 4) * frame_w + 62] = 53;
+	framed_data[(frame_h - 4) * frame_w + 63] = 0;
+	framed_data[(frame_h - 3) * frame_w + 62] = 173;
+	framed_data[(frame_h - 3) * frame_w + 63] = 0;
+	framed_data[(frame_h - 2) * frame_w + 63] = 0;
 
 	free(portrait_data);
 
@@ -327,11 +327,11 @@ void ConverseGump::add_token(MsgText *token)
 }
 */
 
-void ConverseGump::display_string(Std::string s, Font *f,  bool include_on_map_window) {
+void ConverseGump::display_string(Std::string s, Font *f, bool include_on_map_window) {
 	if (s.empty())
 		return;
 
-	MsgScroll::display_string(strip_whitespace_after_break(s), f, include_on_map_window);//, MSGSCROLL_NO_MAP_DISPLAY);
+	MsgScroll::display_string(strip_whitespace_after_break(s), f, include_on_map_window); //, MSGSCROLL_NO_MAP_DISPLAY);
 }
 
 Std::string ConverseGump::strip_whitespace_after_break(Std::string s) {
@@ -456,7 +456,7 @@ Std::string ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
 		MsgText t = *iter;
 		uint16 token_len = font->getStringWidth(t.s.c_str());
 
-//		if(token_len + total_length >= (26 * 8))
+		//		if(token_len + total_length >= (26 * 8))
 		if (portrait_width / 2 + portrait_width + token_len + total_length + 8 >= min_w - 4) {
 			total_length = 0;
 			tmp_y += 10;
@@ -535,7 +535,7 @@ void ConverseGump::Display(bool full_redraw) {
 		for (iter = keyword_list->begin(); iter != keyword_list->end(); i++, iter++) {
 			MsgText t = *iter;
 			uint16 token_len = font->getStringWidth(t.s.c_str());
-//			 if(token_len + total_length >= (26 * 8))
+			//			 if(token_len + total_length >= (26 * 8))
 			if (portrait_width / 2 + portrait_width + token_len + total_length + 8 >= min_w - 4) {
 				total_length = 0;
 				y += 10;
@@ -563,7 +563,7 @@ void ConverseGump::Display(bool full_redraw) {
 		MsgLine *msg_line = *iter;
 		Std::list<MsgText *>::iterator iter1;
 
-		for (iter1 = msg_line->text.begin(); iter1 != msg_line->text.end() ; iter1++) {
+		for (iter1 = msg_line->text.begin(); iter1 != msg_line->text.end(); iter1++) {
 			token = *iter1;
 
 			total_length += token->font->drawString(screen, token->s.c_str(), area.left + 4 + frame_w + 4 + total_length, y + 4, 0, 0); //FIX for hardcoded font height
@@ -571,7 +571,6 @@ void ConverseGump::Display(bool full_redraw) {
 			//token->s.length();
 			//token->font->drawChar(screen, ' ', area.left + portrait_width + 8 + total_length * 8, y, 0);
 			//total_length += 1;
-
 		}
 		y += 10;
 		total_length = 0;
@@ -580,7 +579,6 @@ void ConverseGump::Display(bool full_redraw) {
 	//font->drawString(screen, conv_str.c_str(), area.left, area.top);
 	screen->update(area.left, area.top, area.width(), area.height());
 }
-
 
 GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 	Common::KeyState key = keyState;
@@ -621,7 +619,8 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 			key.keycode = Common::KEYCODE_RETURN;
 			break;
 		default:
-			if (keybinder->handle_always_available_keys(a)) return GUI_YUM;
+			if (keybinder->handle_always_available_keys(a))
+				return GUI_YUM;
 			break;
 		}
 	}
@@ -664,8 +663,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 		return (GUI_YUM);
 	case Common::KEYCODE_KP_ENTER:
 	case Common::KEYCODE_RETURN:
-		if (permit_inputescape || !cursor_at_input_section()
-		        || input_char != 0) { // input_char should only be permit_input
+		if (permit_inputescape || !cursor_at_input_section() || input_char != 0) { // input_char should only be permit_input
 			if (!cursor_at_input_section())
 				input_add_string(get_token_at_cursor());
 			else {
@@ -680,7 +678,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 		}
 
 		return (GUI_YUM);
-	case Common::KEYCODE_BACKSPACE :
+	case Common::KEYCODE_BACKSPACE:
 		if (input_mode)
 			input_buf_remove_char();
 		break;
@@ -743,16 +741,13 @@ GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
 void ConverseGump::input_add_string(Std::string token_str) {
 	input_buf.clear();
 	for (uint16 i = 0; i < token_str.length(); i++) {
-		if (Common::isAlnum(token_str[i]) && (!permit_input || strchr(permit_input, token_str[i])
-		                              || strchr(permit_input, tolower(token_str[i]))))
+		if (Common::isAlnum(token_str[i]) && (!permit_input || strchr(permit_input, token_str[i]) || strchr(permit_input, tolower(token_str[i]))))
 			input_buf_add_char(token_str[i]);
 	}
 }
 
 bool ConverseGump::is_permanent_keyword(Std::string keyword) {
-	return (string_i_compare(keyword, " *buy") || string_i_compare(keyword, " *sell")
-	        || string_i_compare(keyword, " *bye") || string_i_compare(keyword, " *spells")
-	        || string_i_compare(keyword, " *reagents"));
+	return (string_i_compare(keyword, " *buy") || string_i_compare(keyword, " *sell") || string_i_compare(keyword, " *bye") || string_i_compare(keyword, " *spells") || string_i_compare(keyword, " *reagents"));
 }
 
 void ConverseGump::drawCursor(uint16 x, uint16 y) {

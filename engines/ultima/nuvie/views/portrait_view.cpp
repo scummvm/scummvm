@@ -25,20 +25,20 @@
 #include "ultima/nuvie/core/nuvie_defs.h"
 
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_shape.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
-#include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/portraits/portrait.h"
 #include "ultima/nuvie/views/doll_widget.h"
 #include "ultima/nuvie/views/portrait_view.h"
 #include "ultima/nuvie/views/sun_moon_strip_widget.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -55,7 +55,7 @@ PortraitView::PortraitView(Configuration *cfg) : View(cfg) {
 	cur_actor_num = 0;
 	gametype = get_game_type(cfg);
 
-//FIXME: Portraits in SE/MD are different size than in U6! 79x85 76x83
+	//FIXME: Portraits in SE/MD are different size than in U6! 79x85 76x83
 	switch (gametype) {
 	case NUVIE_GAME_U6:
 		portrait_width = 56;
@@ -106,7 +106,6 @@ bool PortraitView::init(uint16 x, uint16 y, Font *f, Party *p, Player *player, T
 	return true;
 }
 
-
 void PortraitView::load_background(const char *f, uint8 lib_offset) {
 	U6Lib_n file;
 	bg_data = new U6Shape();
@@ -122,7 +121,7 @@ void PortraitView::Display(bool full_redraw) {
 
 	if (Game::get_game()->is_new_style() || Game::get_game()->is_original_plus_full_map())
 		screen->fill(bg_color, area.left, area.top, area.width(), area.height());
-	if (portrait_data != NULL/* && (full_redraw || update_display)*/) {
+	if (portrait_data != NULL /* && (full_redraw || update_display)*/) {
 		update_display = false;
 		if (gametype == NUVIE_GAME_U6) {
 			if (display_doll)
@@ -186,7 +185,7 @@ bool PortraitView::set_portrait(Actor *actor, const char *name) {
 	if (name == NULL)
 		name = actor->get_name();
 	if (name == NULL)
-		name_string->assign("");  // just in case
+		name_string->assign(""); // just in case
 	else
 		name_string->assign(name);
 
@@ -207,17 +206,11 @@ void PortraitView::display_name(uint16 y_offset) {
 	return;
 }
 
-
 /* On any input return to previous status view if waiting.
  * Returns true if event was used.
  */
 GUI_status PortraitView::HandleEvent(const Common::Event *event) {
-	if (waiting && (
-			event->type == Common::EVENT_LBUTTONDOWN
-			|| event->type == Common::EVENT_RBUTTONDOWN
-			|| event->type == Common::EVENT_MBUTTONDOWN
-			|| event->type == Common::EVENT_KEYDOWN)
-	) {
+	if (waiting && (event->type == Common::EVENT_LBUTTONDOWN || event->type == Common::EVENT_RBUTTONDOWN || event->type == Common::EVENT_MBUTTONDOWN || event->type == Common::EVENT_KEYDOWN)) {
 		if (Game::get_game()->is_new_style())
 			this->Hide();
 		else // FIXME revert to previous status view
@@ -229,7 +222,6 @@ GUI_status PortraitView::HandleEvent(const Common::Event *event) {
 	}
 	return (GUI_PASS);
 }
-
 
 /* Start/stop waiting for input to continue, and (for now) steal cursor from
  * MsgScroll.

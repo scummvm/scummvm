@@ -20,12 +20,12 @@
  *
  */
 
+#include "scumm/he/moonbase/ai_defenseunit.h"
 #include "common/rect.h"
 #include "common/util.h"
 #include "scumm/he/intern_he.h"
-#include "scumm/he/moonbase/moonbase.h"
-#include "scumm/he/moonbase/ai_defenseunit.h"
 #include "scumm/he/moonbase/ai_main.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 
@@ -59,7 +59,8 @@ Common::Point *AntiAirUnit::createTargetPos(int index, int distance, int weaponT
 	int radius;
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -239,7 +240,7 @@ int ShieldUnit::selectWeapon(int index) {
 
 	switch (index) {
 	case 0:
-		if (getState() == DUS_OFF)  {
+		if (getState() == DUS_OFF) {
 			if (_ai->getPlayerEnergy() < 3) {
 				return ITEM_BOMB;
 			} else {
@@ -309,11 +310,11 @@ int MineUnit::selectWeapon(int index) {
 	}
 }
 
-
 Common::Point *HubUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -378,11 +379,11 @@ int HubUnit::selectWeapon(int index) {
 	return ITEM_BOMB;
 }
 
-
 Common::Point *TowerUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -416,11 +417,11 @@ int TowerUnit::selectWeapon(int index) {
 	}
 }
 
-
 Common::Point *BridgeUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -461,7 +462,8 @@ int BridgeUnit::selectWeapon(int index) {
 Common::Point *EnergyUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -517,7 +519,8 @@ int EnergyUnit::selectWeapon(int index) {
 Common::Point *OffenseUnit::createTargetPos(int index, int distance, int weaponType, int sourceX, int sourceY) {
 	Common::Point *targetPos = new Common::Point;
 
-	if (!distance) distance = 1;
+	if (!distance)
+		distance = 1;
 
 	switch (weaponType) {
 	case ITEM_BOMB:
@@ -689,7 +692,6 @@ AntiAirUnit::AntiAirUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) 
 	setState(inUnit->getState());
 	setRadius(inUnit->getRadius());
 	setArmor(inUnit->getArmor());
-
 }
 
 ShieldUnit::ShieldUnit(DefenseUnit *inUnit, AI *ai) : DefenseUnit(inUnit, ai) {

@@ -42,11 +42,13 @@ private:
 	 * Handles loading the character graphics and runic fonts
 	 */
 	void loadExtraFonts(Common::Archive *archive);
+
 protected:
 	/**
 	 * Load the fonts
 	 */
 	void loadFonts(Common::Archive *archive) override;
+
 public:
 	/**
 	 * Constructor

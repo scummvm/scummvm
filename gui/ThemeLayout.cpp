@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/util.h"
 #include "common/system.h"
+#include "common/util.h"
 
-#include "gui/gui-manager.h"
-#include "gui/widget.h"
 #include "gui/ThemeEval.h"
 #include "gui/ThemeLayout.h"
+#include "gui/gui-manager.h"
+#include "gui/widget.h"
 
 #include "graphics/font.h"
 
@@ -74,8 +74,10 @@ void ThemeLayout::resetLayout() {
 bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
 	if (name.empty()) {
 		assert(getLayoutType() == kLayoutMain);
-		x = _x; y = _y;
-		w = _w; h = _h;
+		x = _x;
+		y = _y;
+		w = _w;
+		h = _h;
 		return true;
 	}
 
@@ -148,7 +150,7 @@ void ThemeLayout::debugDraw(Graphics::Surface *screen, const Graphics::Font *fon
 	uint32 color = 0xFFFFFFFF;
 	font->drawString(screen, getName(), _x, _y, _w, color, Graphics::kTextAlignRight, 0, true);
 	screen->hLine(_x, _y, _x + _w, color);
-	screen->hLine(_x, _y + _h, _x + _w , color);
+	screen->hLine(_x, _y + _h, _x + _w, color);
 	screen->vLine(_x, _y, _y + _h, color);
 	screen->vLine(_x + _w, _y, _y + _h, color);
 
@@ -157,11 +159,12 @@ void ThemeLayout::debugDraw(Graphics::Surface *screen, const Graphics::Font *fon
 }
 #endif
 
-
 bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
 	if (name == _name) {
-		x = _x; y = _y;
-		w = _w; h = _h;
+		x = _x;
+		y = _y;
+		w = _w;
+		h = _h;
 		return true;
 	}
 
@@ -182,7 +185,7 @@ void ThemeLayoutWidget::reflowLayout(Widget *widgetChain) {
 		return;
 	}
 
-	int minWidth  = -1;
+	int minWidth = -1;
 	int minHeight = -1;
 	guiWidget->getMinSize(minWidth, minHeight);
 
@@ -229,23 +232,27 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		_w = _defaultW > 0 ? MIN(_defaultW, g_system->getOverlayWidth()) : -1;
 		_h = _defaultH > 0 ? MIN(_defaultH, g_system->getOverlayHeight()) : -1;
 	} else {
-		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, (uint16 &) _w, (uint16 &) _h)) {
+		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, (uint16 &)_w, (uint16 &)_h)) {
 			warning("Unable to retrieve overlayed dialog position %s", _overlays.c_str());
 		}
 
 		if (_w == -1 || _h == -1) {
 			warning("The overlayed dialog %s has not been sized, using a default size for %s", _overlays.c_str(), _name.c_str());
-			_x = g_system->getOverlayWidth()      / 10;
-			_y = g_system->getOverlayHeight()     / 10;
-			_w = g_system->getOverlayWidth()  * 8 / 10;
+			_x = g_system->getOverlayWidth() / 10;
+			_y = g_system->getOverlayHeight() / 10;
+			_w = g_system->getOverlayWidth() * 8 / 10;
 			_h = g_system->getOverlayHeight() * 8 / 10;
 		}
 	}
 
-	if (_x >= 0) _x += _inset;
-	if (_y >= 0) _y += _inset;
-	if (_w >= 0) _w -= 2 * _inset;
-	if (_h >= 0) _h -= 2 * _inset;
+	if (_x >= 0)
+		_x += _inset;
+	if (_y >= 0)
+		_y += _inset;
+	if (_w >= 0)
+		_w -= 2 * _inset;
+	if (_h >= 0)
+		_h -= 2 * _inset;
 
 	if (_children.size()) {
 		_children[0]->setWidth(_w);
@@ -276,7 +283,8 @@ void ThemeLayoutStacked::reflowLayoutVertical(Widget *widgetChain) {
 	_h = _padding.top + _padding.bottom;
 
 	for (uint i = 0; i < _children.size(); ++i) {
-		if (!_children[i]->isBound(widgetChain)) continue;
+		if (!_children[i]->isBound(widgetChain))
+			continue;
 
 		_children[i]->reflowLayout(widgetChain);
 
@@ -343,7 +351,8 @@ void ThemeLayoutStacked::reflowLayoutVertical(Widget *widgetChain) {
 	// then distributing this equally over all items which need auto-resizing.
 	if (rescount) {
 		int newh = (getParentHeight() - _h - _padding.bottom) / rescount;
-		if (newh < 0) newh = 0; // In case there is no room left, avoid giving a negative height to widgets
+		if (newh < 0)
+			newh = 0; // In case there is no room left, avoid giving a negative height to widgets
 
 		for (int i = 0; i < rescount; ++i) {
 			// Set the height of the item.
@@ -367,7 +376,8 @@ void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
 	_w = _padding.left + _padding.right;
 
 	for (uint i = 0; i < _children.size(); ++i) {
-		if (!_children[i]->isBound(widgetChain)) continue;
+		if (!_children[i]->isBound(widgetChain))
+			continue;
 
 		_children[i]->reflowLayout(widgetChain);
 
@@ -434,7 +444,8 @@ void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
 	// then distributing this equally over all items which need auto-resizing.
 	if (rescount) {
 		int neww = (getParentWidth() - _w - _padding.right) / rescount;
-		if (neww < 0) neww = 0; // In case there is no room left, avoid giving a negative width to widgets
+		if (neww < 0)
+			neww = 0; // In case there is no room left, avoid giving a negative width to widgets
 
 		for (int i = 0; i < rescount; ++i) {
 			// Set the width of the item.

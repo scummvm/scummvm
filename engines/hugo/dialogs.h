@@ -107,12 +107,12 @@ public:
 
 	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) override;
 
-	const Common::String &getEditString() const	{ return _text->getEditString(); }
+	const Common::String &getEditString() const { return _text->getEditString(); }
 
 protected:
 	GUI::EditTextWidget *_text;
 };
 
-}
+} // namespace Hugo
 
 #endif // HUGO_DIALOGS_H

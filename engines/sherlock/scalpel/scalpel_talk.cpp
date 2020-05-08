@@ -21,6 +21,8 @@
  */
 
 #include "sherlock/scalpel/scalpel_talk.h"
+#include "sherlock/scalpel/3do/movie_decoder.h"
+#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/scalpel/scalpel_map.h"
@@ -28,135 +30,132 @@
 #include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
-#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/screen.h"
-#include "sherlock/scalpel/3do/movie_decoder.h"
 
 namespace Sherlock {
 
 namespace Scalpel {
 
 const byte SCALPEL_OPCODES[] = {
-	128,	// OP_SWITCH_SPEAKER
-	129,	// OP_RUN_CANIMATION
-	130,	// OP_ASSIGN_PORTRAIT_LOCATION
-	131,	// OP_PAUSE
-	132,	// OP_REMOVE_PORTRAIT
-	133,	// OP_CLEAR_WINDOW
-	134,	// OP_ADJUST_OBJ_SEQUENCE
-	135,	// OP_WALK_TO_COORDS
-	136,	// OP_PAUSE_WITHOUT_CONTROL
-	137,	// OP_BANISH_WINDOW
-	138,	// OP_SUMMON_WINDOW
-	139,	// OP_SET_FLAG
-	140,	// OP_SFX_COMMAND
-	141,	// OP_TOGGLE_OBJECT
-	142,	// OP_STEALTH_MODE_ACTIVE
-	143,	// OP_IF_STATEMENT
-	144,	// OP_ELSE_STATEMENT
-	145,	// OP_END_IF_STATEMENT
-	146,	// OP_STEALTH_MODE_DEACTIVATE
-	147,	// OP_TURN_HOLMES_OFF
-	148,	// OP_TURN_HOLMES_ON
-	149,	// OP_GOTO_SCENE
-	150,	// OP_PLAY_PROLOGUE
-	151,	// OP_ADD_ITEM_TO_INVENTORY
-	152,	// OP_SET_OBJECT
-	153,	// OP_CALL_TALK_FILE
-	143,	// OP_MOVE_MOUSE
-	155,	// OP_DISPLAY_INFO_LINE
-	156,	// OP_CLEAR_INFO_LINE
-	157,	// OP_WALK_TO_CANIMATION
-	158,	// OP_REMOVE_ITEM_FROM_INVENTORY
-	159,	// OP_ENABLE_END_KEY
-	160,	// OP_DISABLE_END_KEY
-	161,	// OP_END_TEXT_WINDOW
-	0,		// OP_MOUSE_ON_OFF
-	0,		// OP_SET_WALK_CONTROL
-	0,		// OP_SET_TALK_SEQUENCE
-	0,		// OP_PLAY_SONG
-	0,		// OP_WALK_HOLMES_AND_NPC_TO_CANIM
-	0,		// OP_SET_NPC_PATH_DEST
-	0,		// OP_NEXT_SONG
-	0,		// OP_SET_NPC_PATH_PAUSE
-	0,		// OP_PASSWORD
-	0,		// OP_SET_SCENE_ENTRY_FLAG
-	0,		// OP_WALK_NPC_TO_CANIM
-	0,		// OP_WALK_HOLMES_AND_NPC_TO_COORDS
-	0,		// OP_WALK_HOLMES_AND_NPC_TO_COORDS
-	0,		// OP_SET_NPC_TALK_FILE
-	0,		// OP_TURN_NPC_OFF
-	0,		// OP_TURN_NPC_ON
-	0,		// OP_NPC_DESC_ON_OFF
-	0,		// OP_NPC_PATH_PAUSE_TAKING_NOTES
-	0,		// OP_NPC_PATH_PAUSE_LOOKING_HOLMES
-	0,		// OP_ENABLE_TALK_INTERRUPTS
-	0,		// OP_DISABLE_TALK_INTERRUPTS
-	0,		// OP_SET_NPC_INFO_LINE
-	0,		// OP_SET_NPC_POSITION
-	0,		// OP_NPC_PATH_LABEL
-	0,		// OP_PATH_GOTO_LABEL
-	0,		// OP_PATH_IF_FLAG_GOTO_LABEL
-	0,		// OP_NPC_WALK_GRAPHICS
-	0,		// OP_NPC_VERB
-	0,		// OP_NPC_VERB_CANIM
-	0,		// OP_NPC_VERB_SCRIPT
-	0,		// OP_RESTORE_PEOPLE_SEQUENCE
-	0,		// OP_NPC_VERB_TARGET
-	0,		// OP_TURN_SOUNDS_OFF
-	0		// OP_NULL
+    128, // OP_SWITCH_SPEAKER
+    129, // OP_RUN_CANIMATION
+    130, // OP_ASSIGN_PORTRAIT_LOCATION
+    131, // OP_PAUSE
+    132, // OP_REMOVE_PORTRAIT
+    133, // OP_CLEAR_WINDOW
+    134, // OP_ADJUST_OBJ_SEQUENCE
+    135, // OP_WALK_TO_COORDS
+    136, // OP_PAUSE_WITHOUT_CONTROL
+    137, // OP_BANISH_WINDOW
+    138, // OP_SUMMON_WINDOW
+    139, // OP_SET_FLAG
+    140, // OP_SFX_COMMAND
+    141, // OP_TOGGLE_OBJECT
+    142, // OP_STEALTH_MODE_ACTIVE
+    143, // OP_IF_STATEMENT
+    144, // OP_ELSE_STATEMENT
+    145, // OP_END_IF_STATEMENT
+    146, // OP_STEALTH_MODE_DEACTIVATE
+    147, // OP_TURN_HOLMES_OFF
+    148, // OP_TURN_HOLMES_ON
+    149, // OP_GOTO_SCENE
+    150, // OP_PLAY_PROLOGUE
+    151, // OP_ADD_ITEM_TO_INVENTORY
+    152, // OP_SET_OBJECT
+    153, // OP_CALL_TALK_FILE
+    143, // OP_MOVE_MOUSE
+    155, // OP_DISPLAY_INFO_LINE
+    156, // OP_CLEAR_INFO_LINE
+    157, // OP_WALK_TO_CANIMATION
+    158, // OP_REMOVE_ITEM_FROM_INVENTORY
+    159, // OP_ENABLE_END_KEY
+    160, // OP_DISABLE_END_KEY
+    161, // OP_END_TEXT_WINDOW
+    0,   // OP_MOUSE_ON_OFF
+    0,   // OP_SET_WALK_CONTROL
+    0,   // OP_SET_TALK_SEQUENCE
+    0,   // OP_PLAY_SONG
+    0,   // OP_WALK_HOLMES_AND_NPC_TO_CANIM
+    0,   // OP_SET_NPC_PATH_DEST
+    0,   // OP_NEXT_SONG
+    0,   // OP_SET_NPC_PATH_PAUSE
+    0,   // OP_PASSWORD
+    0,   // OP_SET_SCENE_ENTRY_FLAG
+    0,   // OP_WALK_NPC_TO_CANIM
+    0,   // OP_WALK_HOLMES_AND_NPC_TO_COORDS
+    0,   // OP_WALK_HOLMES_AND_NPC_TO_COORDS
+    0,   // OP_SET_NPC_TALK_FILE
+    0,   // OP_TURN_NPC_OFF
+    0,   // OP_TURN_NPC_ON
+    0,   // OP_NPC_DESC_ON_OFF
+    0,   // OP_NPC_PATH_PAUSE_TAKING_NOTES
+    0,   // OP_NPC_PATH_PAUSE_LOOKING_HOLMES
+    0,   // OP_ENABLE_TALK_INTERRUPTS
+    0,   // OP_DISABLE_TALK_INTERRUPTS
+    0,   // OP_SET_NPC_INFO_LINE
+    0,   // OP_SET_NPC_POSITION
+    0,   // OP_NPC_PATH_LABEL
+    0,   // OP_PATH_GOTO_LABEL
+    0,   // OP_PATH_IF_FLAG_GOTO_LABEL
+    0,   // OP_NPC_WALK_GRAPHICS
+    0,   // OP_NPC_VERB
+    0,   // OP_NPC_VERB_CANIM
+    0,   // OP_NPC_VERB_SCRIPT
+    0,   // OP_RESTORE_PEOPLE_SEQUENCE
+    0,   // OP_NPC_VERB_TARGET
+    0,   // OP_TURN_SOUNDS_OFF
+    0    // OP_NULL
 };
 
 /*----------------------------------------------------------------*/
 
 ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 	static OpcodeMethod OPCODE_METHODS[] = {
-		(OpcodeMethod)&ScalpelTalk::cmdSwitchSpeaker,
-		(OpcodeMethod)&ScalpelTalk::cmdRunCAnimation,
-		(OpcodeMethod)&ScalpelTalk::cmdAssignPortraitLocation,
+	    (OpcodeMethod)&ScalpelTalk::cmdSwitchSpeaker,
+	    (OpcodeMethod)&ScalpelTalk::cmdRunCAnimation,
+	    (OpcodeMethod)&ScalpelTalk::cmdAssignPortraitLocation,
 
-		(OpcodeMethod)&ScalpelTalk::cmdPause,
-		(OpcodeMethod)&ScalpelTalk::cmdRemovePortrait,
-		(OpcodeMethod)&ScalpelTalk::cmdClearWindow,
-		(OpcodeMethod)&ScalpelTalk::cmdAdjustObjectSequence,
-		(OpcodeMethod)&ScalpelTalk::cmdWalkToCoords,
-		(OpcodeMethod)&ScalpelTalk::cmdPauseWithoutControl,
-		(OpcodeMethod)&ScalpelTalk::cmdBanishWindow,
-		(OpcodeMethod)&ScalpelTalk::cmdSummonWindow,
-		(OpcodeMethod)&ScalpelTalk::cmdSetFlag,
-		(OpcodeMethod)&ScalpelTalk::cmdSfxCommand,
+	    (OpcodeMethod)&ScalpelTalk::cmdPause,
+	    (OpcodeMethod)&ScalpelTalk::cmdRemovePortrait,
+	    (OpcodeMethod)&ScalpelTalk::cmdClearWindow,
+	    (OpcodeMethod)&ScalpelTalk::cmdAdjustObjectSequence,
+	    (OpcodeMethod)&ScalpelTalk::cmdWalkToCoords,
+	    (OpcodeMethod)&ScalpelTalk::cmdPauseWithoutControl,
+	    (OpcodeMethod)&ScalpelTalk::cmdBanishWindow,
+	    (OpcodeMethod)&ScalpelTalk::cmdSummonWindow,
+	    (OpcodeMethod)&ScalpelTalk::cmdSetFlag,
+	    (OpcodeMethod)&ScalpelTalk::cmdSfxCommand,
 
-		(OpcodeMethod)&ScalpelTalk::cmdToggleObject,
-		(OpcodeMethod)&ScalpelTalk::cmdStealthModeActivate,
-		(OpcodeMethod)&ScalpelTalk::cmdIf,
-		(OpcodeMethod)&ScalpelTalk::cmdElse,
-		nullptr,
-		(OpcodeMethod)&ScalpelTalk::cmdStealthModeDeactivate,
-		(OpcodeMethod)&ScalpelTalk::cmdHolmesOff,
-		(OpcodeMethod)&ScalpelTalk::cmdHolmesOn,
-		(OpcodeMethod)&ScalpelTalk::cmdGotoScene,
-		(OpcodeMethod)&ScalpelTalk::cmdPlayPrologue,
+	    (OpcodeMethod)&ScalpelTalk::cmdToggleObject,
+	    (OpcodeMethod)&ScalpelTalk::cmdStealthModeActivate,
+	    (OpcodeMethod)&ScalpelTalk::cmdIf,
+	    (OpcodeMethod)&ScalpelTalk::cmdElse,
+	    nullptr,
+	    (OpcodeMethod)&ScalpelTalk::cmdStealthModeDeactivate,
+	    (OpcodeMethod)&ScalpelTalk::cmdHolmesOff,
+	    (OpcodeMethod)&ScalpelTalk::cmdHolmesOn,
+	    (OpcodeMethod)&ScalpelTalk::cmdGotoScene,
+	    (OpcodeMethod)&ScalpelTalk::cmdPlayPrologue,
 
-		(OpcodeMethod)&ScalpelTalk::cmdAddItemToInventory,
-		(OpcodeMethod)&ScalpelTalk::cmdSetObject,
-		(OpcodeMethod)&ScalpelTalk::cmdCallTalkFile,
-		(OpcodeMethod)&ScalpelTalk::cmdMoveMouse,
-		(OpcodeMethod)&ScalpelTalk::cmdDisplayInfoLine,
-		(OpcodeMethod)&ScalpelTalk::cmdClearInfoLine,
-		(OpcodeMethod)&ScalpelTalk::cmdWalkToCAnimation,
-		(OpcodeMethod)&ScalpelTalk::cmdRemoveItemFromInventory,
-		(OpcodeMethod)&ScalpelTalk::cmdEnableEndKey,
-		(OpcodeMethod)&ScalpelTalk::cmdDisableEndKey,
+	    (OpcodeMethod)&ScalpelTalk::cmdAddItemToInventory,
+	    (OpcodeMethod)&ScalpelTalk::cmdSetObject,
+	    (OpcodeMethod)&ScalpelTalk::cmdCallTalkFile,
+	    (OpcodeMethod)&ScalpelTalk::cmdMoveMouse,
+	    (OpcodeMethod)&ScalpelTalk::cmdDisplayInfoLine,
+	    (OpcodeMethod)&ScalpelTalk::cmdClearInfoLine,
+	    (OpcodeMethod)&ScalpelTalk::cmdWalkToCAnimation,
+	    (OpcodeMethod)&ScalpelTalk::cmdRemoveItemFromInventory,
+	    (OpcodeMethod)&ScalpelTalk::cmdEnableEndKey,
+	    (OpcodeMethod)&ScalpelTalk::cmdDisableEndKey,
 
-		(OpcodeMethod)&ScalpelTalk::cmdEndTextWindow,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
-	};
+	    (OpcodeMethod)&ScalpelTalk::cmdEndTextWindow,
+	    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 	_opcodeTable = OPCODE_METHODS;
 	_opcodes = SCALPEL_OPCODES;
@@ -171,11 +170,11 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 	}
 
 	_fixedTextWindowExit = FIXED(Window_Exit);
-	_fixedTextWindowUp   = FIXED(Window_Up);
+	_fixedTextWindowUp = FIXED(Window_Up);
 	_fixedTextWindowDown = FIXED(Window_Down);
 
 	_hotkeyWindowExit = toupper(_fixedTextWindowExit[0]);
-	_hotkeyWindowUp   = toupper(_fixedTextWindowUp[0]);
+	_hotkeyWindowUp = toupper(_fixedTextWindowUp[0]);
 	_hotkeyWindowDown = toupper(_fixedTextWindowDown[0]);
 }
 
@@ -217,10 +216,10 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 		// Otherwise, simply draw it on the back buffer
 		if (ui._windowOpen) {
 			screen.print(Common::Point(16, _yp), TALK_FOREGROUND, "%s",
-				people._characters[_speaker & 127]._name);
+			             people._characters[_speaker & 127]._name);
 		} else {
 			screen.gPrint(Common::Point(16, _yp - 1), TALK_FOREGROUND, "%s",
-				people._characters[_speaker & 127]._name);
+			              people._characters[_speaker & 127]._name);
 			_openTalkWindow = true;
 		}
 
@@ -284,16 +283,16 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 
 	// Certain different conditions require a wait
 	if ((_line == 4 && str < _scriptEnd && str[0] != _opcodes[OP_SFX_COMMAND] && str[0] != _opcodes[OP_PAUSE] && _speaker != -1) ||
-		(_line == 5 && str < _scriptEnd && str[0] != _opcodes[OP_PAUSE] && _speaker == -1) ||
-		_endStr) {
+	    (_line == 5 && str < _scriptEnd && str[0] != _opcodes[OP_PAUSE] && _speaker == -1) ||
+	    _endStr) {
 		_wait = 1;
 	}
 
 	byte v = (str >= _scriptEnd ? 0 : str[0]);
 	if (v == _opcodes[OP_SWITCH_SPEAKER] || v == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
-		v == _opcodes[OP_BANISH_WINDOW] || v == _opcodes[OP_IF_STATEMENT] ||
-		v == _opcodes[OP_ELSE_STATEMENT] || v == _opcodes[OP_END_IF_STATEMENT] ||
-		v == _opcodes[OP_GOTO_SCENE] || v == _opcodes[OP_CALL_TALK_FILE]) {
+	    v == _opcodes[OP_BANISH_WINDOW] || v == _opcodes[OP_IF_STATEMENT] ||
+	    v == _opcodes[OP_ELSE_STATEMENT] || v == _opcodes[OP_END_IF_STATEMENT] ||
+	    v == _opcodes[OP_GOTO_SCENE] || v == _opcodes[OP_CALL_TALK_FILE]) {
 		_wait = 1;
 	}
 }
@@ -485,7 +484,8 @@ OpcodeReturn ScalpelTalk::cmdWalkToCoords(const byte *&str) {
 	++str;
 
 	people[HOLMES].walkToCoords(Point32(((str[0] - 1) * 256 + str[1] - 1) * FIXED_INT_MULTIPLIER,
-		str[2] * FIXED_INT_MULTIPLIER), str[3] - 1);
+	                                    str[2] * FIXED_INT_MULTIPLIER),
+	                            str[3] - 1);
 	if (_talkToAbort)
 		return RET_EXIT;
 
@@ -514,7 +514,7 @@ OpcodeReturn ScalpelTalk::cmdSfxCommand(const byte *&str) {
 }
 
 OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
-	Events       &events = *_vm->_events;
+	Events &events = *_vm->_events;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 
 	drawInterface();
@@ -664,7 +664,7 @@ Common::Point ScalpelTalk::get3doPortraitPosition() const {
 	Common::Point pt;
 	if (_speaker == HOLMES) {
 		pt = Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER,
-			people[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
+		                   people[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 	} else {
 		int objNum = people.findSpeaker(_speaker);
 		if (objNum == -1)
@@ -689,28 +689,31 @@ void ScalpelTalk::drawInterface() {
 	bb.fillRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y1 + 10), BORDER_COLOR);
 	bb.fillRect(Common::Rect(0, CONTROLS_Y + 10, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
 	bb.fillRect(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y + 10,
-		SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	                         SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
+	            BORDER_COLOR);
 	bb.fillRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 1, SHERLOCK_SCREEN_WIDTH - 2,
-		SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	                         SHERLOCK_SCREEN_HEIGHT),
+	            BORDER_COLOR);
 	bb.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2,
-		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+	                         SHERLOCK_SCREEN_HEIGHT - 2),
+	            INV_BACKGROUND);
 
 	if (_talkTo != -1) {
 		Common::String fixedText_Exit = FIXED(Window_Exit);
-		Common::String fixedText_Up   = FIXED(Window_Up);
+		Common::String fixedText_Up = FIXED(Window_Up);
 		Common::String fixedText_Down = FIXED(Window_Down);
 
 		screen.makeButton(Common::Rect(99, CONTROLS_Y, 139, CONTROLS_Y + 10),
-			119, fixedText_Exit);
+		                  119, fixedText_Exit);
 		screen.makeButton(Common::Rect(140, CONTROLS_Y, 180, CONTROLS_Y + 10),
-			159, fixedText_Up);
+		                  159, fixedText_Up);
 		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
-			200, fixedText_Down);
+		                  200, fixedText_Down);
 	} else {
 		Common::String fixedText_PressKeyToContinue = FIXED(PressKey_ToContinue);
 
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
-			160, fixedText_PressKeyToContinue);
+		                  160, fixedText_PressKeyToContinue);
 	}
 }
 
@@ -747,7 +750,8 @@ bool ScalpelTalk::displayTalk(bool slamIt) {
 		} else {
 			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowUp);
 			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11,
-				15, CONTROLS_Y + 22), INV_BACKGROUND);
+			                                          15, CONTROLS_Y + 22),
+			                             INV_BACKGROUND);
 		}
 	}
 
@@ -759,7 +763,7 @@ bool ScalpelTalk::displayTalk(bool slamIt) {
 		if (statement._talkMap != -1) {
 			bool flag = _talkHistory[_converseNum][idx];
 			lineY = talkLine(idx, statement._talkMap, flag ? (byte)TALK_NULL : (byte)INV_FOREGROUND,
-				yp, slamIt);
+			                 yp, slamIt);
 
 			if (lineY != -1) {
 				statement._talkPos.top = yp;
@@ -836,7 +840,6 @@ int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool
 			// Can display remainder of the statement on the current line
 			sLine = Common::String(lineStartP);
 		}
-
 
 		if (lineY <= (SHERLOCK_SCREEN_HEIGHT - 10)) {
 			// Need to directly display on-screen?
@@ -915,7 +918,7 @@ void ScalpelTalk::showTalk() {
 
 		if (!ui._slideWindows) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y,
-				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+			                             SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		} else {
 			ui.summonWindow();
 		}

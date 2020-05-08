@@ -21,24 +21,24 @@
  */
 
 #include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/spells/spell.h"
-#include "ultima/ultima1/widgets/urban_player.h"
-#include "ultima/ultima1/widgets/person.h"
+#include "ultima/ultima1/u1dialogs/drop.h"
 #include "ultima/ultima1/widgets/bard.h"
 #include "ultima/ultima1/widgets/guard.h"
 #include "ultima/ultima1/widgets/king.h"
-#include "ultima/ultima1/widgets/princess.h"
-#include "ultima/ultima1/widgets/wench.h"
 #include "ultima/ultima1/widgets/merchant_armour.h"
 #include "ultima/ultima1/widgets/merchant_grocer.h"
 #include "ultima/ultima1/widgets/merchant_magic.h"
 #include "ultima/ultima1/widgets/merchant_tavern.h"
 #include "ultima/ultima1/widgets/merchant_transport.h"
 #include "ultima/ultima1/widgets/merchant_weapons.h"
-#include "ultima/ultima1/u1dialogs/drop.h"
+#include "ultima/ultima1/widgets/person.h"
+#include "ultima/ultima1/widgets/princess.h"
+#include "ultima/ultima1/widgets/urban_player.h"
+#include "ultima/ultima1/widgets/wench.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -115,7 +115,7 @@ void MapCityCastle::loadWidgets() {
 		default:
 			error("Unknown NPC type %d", lp[0]);
 		}
-		
+
 		person->_position = Point(lp[1], lp[2]);
 		addWidget(person);
 	}
@@ -204,12 +204,11 @@ Widgets::Person *MapCityCastle::getTalkPerson() {
 
 	case 62:
 		return dynamic_cast<Widgets::Person *>(_widgets.findByClass(
-			dynamic_cast<MapCity *>(this) ? Widgets::MerchantTransport::type() : Widgets::King::type() ));
+		    dynamic_cast<MapCity *>(this) ? Widgets::MerchantTransport::type() : Widgets::King::type()));
 
 	default:
 		return nullptr;
 	}
-
 }
 
 void MapCityCastle::cast() {
@@ -298,7 +297,7 @@ void MapCity::load(Shared::Maps::MapId mapId) {
 
 	// Load up the widgets for the given map
 	loadWidgets();
-	setPosition(Common::Point(width() / 2, height() - 1));		// Start at bottom center edge of map
+	setPosition(Common::Point(width() / 2, height() - 1)); // Start at bottom center edge of map
 }
 
 void MapCity::dropCoins(uint coins) {
@@ -313,9 +312,9 @@ void MapCity::dropCoins(uint coins) {
 		switch (tile._tileId) {
 		case CTILE_POND_EDGE1: {
 			// Increase one of the attributes randomly
-			uint *attrList[6] = { &c._strength, &c._agility, &c._stamina, &c._charisma, &c._wisdom, &c._intelligence };
+			uint *attrList[6] = {&c._strength, &c._agility, &c._stamina, &c._charisma, &c._wisdom, &c._intelligence};
 			uint &attr = *attrList[_game->getRandomNumber(0, 5)];
-			
+
 			attr = MIN(attr + coins / 10, 99U);
 			break;
 		}
@@ -386,7 +385,7 @@ void MapCastle::load(Shared::Maps::MapId mapId) {
 
 	// Load up the widgets for the given map
 	loadWidgets();
-	setPosition(Common::Point(0, height() / 2));		// Start at center left edge of map
+	setPosition(Common::Point(0, height() / 2)); // Start at center left edge of map
 }
 
 void MapCastle::synchronize(Common::Serializer &s) {
@@ -404,14 +403,14 @@ void MapCastle::dropCoins(uint coins) {
 	if (tile._tileId == CTILE_POND_EDGE1) {
 		uint hp = coins * 3 / 2;
 		c._hitPoints = MIN(c._hitPoints + hp, 9999U);
-		
+
 		if (_game->getRandomNumber(1, 255) > 16) {
 			addInfoMsg(_game->_res->SHAZAM);
 		} else {
 			uint spellNum = _game->getRandomNumber(1, 7);
 			if (spellNum == Spells::SPELL_MAGIC_MISSILE)
 				spellNum = Spells::SPELL_STEAL;
-		
+
 			c._spells[spellNum]->incrQuantity();
 			addInfoMsg(_game->_res->ALAKAZOT);
 		}

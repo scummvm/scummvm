@@ -28,15 +28,21 @@
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
-	class Person;
-	class Merchant;
-}
+class Person;
+class Merchant;
+} // namespace Widgets
 
 namespace Maps {
 
 enum CityTile {
-	CTILE_GROUND = 1, CTILE_POND_EDGE1 = 51, CTILE_POND_EDGE2 = 52, CTILE_POND_EDGE3 = 53,
-	CTILE_GATE = 11, CTILE_LOCK1 = 60, CTILE_LOCK2 = 61, CTILE_63 = 63
+	CTILE_GROUND = 1,
+	CTILE_POND_EDGE1 = 51,
+	CTILE_POND_EDGE2 = 52,
+	CTILE_POND_EDGE3 = 53,
+	CTILE_GATE = 11,
+	CTILE_LOCK1 = 60,
+	CTILE_LOCK2 = 61,
+	CTILE_63 = 63
 };
 
 /**
@@ -63,15 +69,16 @@ protected:
 	 * Get a person to talk to based on the tile the player is on
 	 */
 	Widgets::Person *getTalkPerson();
+
 public:
-	bool _guardsHostile;			// Flag for whether guards are hostile
-	uint _tipCounter;				// Tip counter for taverns
+	bool _guardsHostile; // Flag for whether guards are hostile
+	uint _tipCounter;    // Tip counter for taverns
 public:
 	/**
 	 * Constructor
 	 */
 	MapCityCastle(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map),
-		_guardsHostile(false), _tipCounter(0) {}
+	                                                    _guardsHostile(false), _tipCounter(0) {}
 
 	/**
 	 * Load the map
@@ -176,15 +183,15 @@ public:
  */
 class MapCastle : public MapCityCastle {
 public:
-	uint _castleKey;					// Key for castle map lock
-	int _getCounter;					// Counter for allowed gets without stealing check
-	bool _freeingPrincess;				// Set when freeing the princess is in progress
+	uint _castleKey;       // Key for castle map lock
+	int _getCounter;       // Counter for allowed gets without stealing check
+	bool _freeingPrincess; // Set when freeing the princess is in progress
 public:
 	/**
 	 * Constructor
 	 */
 	MapCastle(Ultima1Game *game, Ultima1Map *map) : MapCityCastle(game, map), _castleKey(0),
-		_getCounter(0), _freeingPrincess(false) {}
+	                                                _getCounter(0), _freeingPrincess(false) {}
 
 	/**
 	 * Load the map
@@ -215,7 +222,6 @@ public:
 	 * Do an unlock action
 	 */
 	void unlock() override;
-
 
 	/**
 	 * Returns true if Lord British's castle is the currently active map

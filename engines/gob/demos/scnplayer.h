@@ -23,9 +23,9 @@
 #ifndef GOB_SCNPLAYER_H
 #define GOB_SCNPLAYER_H
 
-#include "common/str.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/str.h"
 
 #include "gob/demos/demoplayer.h"
 

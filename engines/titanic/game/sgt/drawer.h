@@ -32,8 +32,10 @@ class CDrawer : public CSGTStateRoom {
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 private:
 	int _fieldF4;
+
 public:
 	CLASSDEF;
 	CDrawer();

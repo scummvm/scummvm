@@ -31,11 +31,11 @@
 
 #include "graphics/macgui/macwindowmanager.h"
 
-#include "director/director.h"
 #include "director/archive.h"
+#include "director/director.h"
+#include "director/lingo/lingo.h"
 #include "director/score.h"
 #include "director/sound.h"
-#include "director/lingo/lingo.h"
 #include "director/util.h"
 
 namespace Director {
@@ -43,7 +43,7 @@ namespace Director {
 DirectorEngine *g_director;
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
-		_rnd("director") {
+                                                                                         _rnd("director") {
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
 	DebugMan.addDebugChannel(kDebugLingoCompile, "lingocompile", "Lingo Compilation");
 	DebugMan.addDebugChannel(kDebugLingoParse, "lingoparse", "Lingo code parsing");
@@ -89,9 +89,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband
+	SearchMan.addSubDirectoryMatching(gameDataDir, "main"); // Meet Mediaband
 
-	_colorDepth = 8;	// 256-color
+	_colorDepth = 8; // 256-color
 	_key = 0;
 	_keyCode = 0;
 	_machineType = 9; // Macintosh IIci
@@ -130,8 +130,7 @@ Common::Error DirectorEngine::run() {
 	_macBinary = nullptr;
 	_soundManager = nullptr;
 
-	_wm = new Graphics::MacWindowManager(Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
-							| Graphics::kWMModeManualDrawWidgets);
+	_wm = new Graphics::MacWindowManager(Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop | Graphics::kWMModeManualDrawWidgets);
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();
@@ -177,7 +176,7 @@ Common::Error DirectorEngine::run() {
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
 
-	if (getGameID() == GID_TESTALL)  {
+	if (getGameID() == GID_TESTALL) {
 		_nextMovie = getNextMovieFromQueue();
 		loadInitialMovie(_nextMovie.movie);
 	} else {
@@ -310,7 +309,6 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 		sharedMMMname = "SHARDCST.MMM";
 	else
 		sharedMMMname = "Shared Cast";
-
 
 	Common::HashMap<Common::String, Score *> *nameMap = new Common::HashMap<Common::String, Score *>();
 	if (!directory.getChildren(movies, Common::FSNode::kListFilesOnly))

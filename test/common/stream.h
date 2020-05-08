@@ -3,9 +3,9 @@
 #include "common/memstream.h"
 
 class ReadLineStreamTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_readline() {
-		byte contents[] = { 'a', 'b', '\n', '\n', 'c', '\n' };
+		byte contents[] = {'a', 'b', '\n', '\n', 'c', '\n'};
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 
 		char buffer[100];
@@ -27,7 +27,7 @@ class ReadLineStreamTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_readline2() {
-		byte contents[] = { 'a', 'b', '\n', '\n', 'c' };
+		byte contents[] = {'a', 'b', '\n', '\n', 'c'};
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 
 		char buffer[100];

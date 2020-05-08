@@ -108,16 +108,16 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 	s = tmp.c_str();
 	while (*s) {
 		if (*s == ' ' || *s == '\t') { // If we see a whitespace
-			const char *ps = s; // Remember where we saw it
+			const char *ps = s;        // Remember where we saw it
 
-			while (*ps == ' ' || *ps == '\t')	// Scan until end of whitespaces
+			while (*ps == ' ' || *ps == '\t') // Scan until end of whitespaces
 				ps++;
 
-			if (*ps) {	// Not end of the string
-				if (*ps == '\n') {	// If it is newline, then we continue from it
+			if (*ps) {             // Not end of the string
+				if (*ps == '\n') { // If it is newline, then we continue from it
 					s = ps;
-				} else {	// It is not a newline
-					while (s != ps) {	// Add all whitespaces
+				} else {              // It is not a newline
+					while (s != ps) { // Add all whitespaces
 						res += *s;
 						s++;
 					}
@@ -171,7 +171,7 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 		res += res1;
 
 		if (line.size() < 4) { // If line is too small, then skip it
-			if (*s)	// copy newline symbol
+			if (*s)            // copy newline symbol
 				res += *s++;
 
 			debugC(2, kDebugLingoParse, "too small");
@@ -203,7 +203,7 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 			} else { // other token
 				// Now check if we have tNLELSE
 				if (!*s) {
-					iflevel++;	// end, we have to add 'end if'
+					iflevel++; // end, we have to add 'end if'
 					break;
 				}
 				const char *s1 = s + 1;
@@ -363,7 +363,7 @@ Common::String preprocessReturn(Common::String in) {
 		debugC(2, kDebugLingoParse, "RETURN: prevtok: %s nexttok: %s", prev.c_str(), next.c_str());
 
 		if (prev.hasSuffix("&") || prev.hasSuffix("&&") || prev.hasSuffix("=") ||
-				next.hasPrefix("&") || next.hasPrefix("&&")) {
+		    next.hasPrefix("&") || next.hasPrefix("&&")) {
 			res += "scummvm_"; // Turn it into scummvm_return
 		}
 
@@ -426,10 +426,10 @@ Common::String preprocessSound(Common::String in) {
 		bool modified = false;
 
 		if (next.equalsIgnoreCase("close") ||
-				next.equalsIgnoreCase("fadeIn") ||
-				next.equalsIgnoreCase("fadeOut") ||
-				next.equalsIgnoreCase("playFile") ||
-				next.equalsIgnoreCase("stop")) {
+		    next.equalsIgnoreCase("fadeIn") ||
+		    next.equalsIgnoreCase("fadeOut") ||
+		    next.equalsIgnoreCase("playFile") ||
+		    next.equalsIgnoreCase("stop")) {
 			res += '#'; // Turn it into SYMBOL
 			modified = true;
 		}

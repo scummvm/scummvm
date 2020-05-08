@@ -21,11 +21,11 @@
  */
 
 #include "backends/graphics/sdl/sdl-graphics.h"
-#include "backends/platform/sdl/sdl-sys.h"
-#include "backends/platform/sdl/sdl.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
+#include "backends/platform/sdl/sdl-sys.h"
+#include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
@@ -36,9 +36,10 @@
 #endif
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window)
-	: _eventSource(source), _window(window), _hwScreen(nullptr)
+    : _eventSource(source), _window(window), _hwScreen(nullptr)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	, _allowWindowSizeReset(false), _hintedWidth(0), _hintedHeight(0), _lastFlags(0)
+      ,
+      _allowWindowSizeReset(false), _hintedWidth(0), _hintedHeight(0), _lastFlags(0)
 #endif
 {
 	SDL_GetMouseState(&_cursorX, &_cursorY);
@@ -55,13 +56,13 @@ void SdlGraphicsManager::deactivateManager() {
 SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 	State state;
 
-	state.screenWidth   = getWidth();
-	state.screenHeight  = getHeight();
-	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
-	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
+	state.screenWidth = getWidth();
+	state.screenHeight = getHeight();
+	state.aspectRatio = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
+	state.fullscreen = getFeatureState(OSystem::kFeatureFullscreenMode);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
 #ifdef USE_RGB_COLOR
-	state.pixelFormat   = getScreenFormat();
+	state.pixelFormat = getScreenFormat();
 #endif
 	return state;
 }
@@ -69,13 +70,13 @@ SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 bool SdlGraphicsManager::setState(const State &state) {
 	beginGFXTransaction();
 #ifdef USE_RGB_COLOR
-		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
+	initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
 #else
-		initSize(state.screenWidth, state.screenHeight, nullptr);
+	initSize(state.screenWidth, state.screenHeight, nullptr);
 #endif
-		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
-		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
-		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+	setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
+	setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
+	setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
 
 	if (endGFXTransaction() != OSystem::kTransactionSuccess) {
 		return false;
@@ -193,10 +194,10 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 		mouse.y = CLIP<int>(mouse.y, _activeArea.drawRect.top, _activeArea.drawRect.bottom - 1);
 
 		if (_window->mouseIsGrabbed() ||
-			// Keep the mouse inside the game area during dragging to prevent an
-			// event mismatch where the mouseup event gets lost because it is
-			// performed outside of the game area
-			(_cursorLastInActiveArea && SDL_GetMouseState(nullptr, nullptr) != 0)) {
+		    // Keep the mouse inside the game area during dragging to prevent an
+		    // event mismatch where the mouseup event gets lost because it is
+		    // performed outside of the game area
+		    (_cursorLastInActiveArea && SDL_GetMouseState(nullptr, nullptr) != 0)) {
 			setSystemMousePosition(mouse.x, mouse.y);
 		} else {
 			// Allow the in-game mouse to get a final movement event to the edge
@@ -277,7 +278,7 @@ void SdlGraphicsManager::saveScreenshot() {
 	Common::String filename;
 
 	Common::String screenshotsPath;
-	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
+	OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL *>(g_system);
 	if (sdl_g_system)
 		screenshotsPath = sdl_g_system->getScreenshotsPath();
 
@@ -318,7 +319,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return false;
 	}
 
-	switch ((CustomEventAction) event.customType) {
+	switch ((CustomEventAction)event.customType) {
 	case kActionToggleMouseCapture:
 		getWindow()->toggleMouseGrab();
 		return true;
@@ -414,17 +415,16 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 		const char *description;
 	};
 	static const ActionEntry filters[] = {
-			{ "FLT1", _s("Switch to nearest neighbour scaling") },
-			{ "FLT2", _s("Switch to AdvMame 2x/3x scaling")     },
+	    {"FLT1", _s("Switch to nearest neighbour scaling")},
+	    {"FLT2", _s("Switch to AdvMame 2x/3x scaling")},
 #ifdef USE_HQ_SCALERS
-			{ "FLT3", _s("Switch to HQ 2x/3x scaling")          },
+	    {"FLT3", _s("Switch to HQ 2x/3x scaling")},
 #endif
-			{ "FLT4", _s("Switch to 2xSai scaling")             },
-			{ "FLT5", _s("Switch to Super2xSai scaling")        },
-			{ "FLT6", _s("Switch to SuperEagle scaling")        },
-			{ "FLT7", _s("Switch to TV 2x scaling")             },
-			{ "FLT8", _s("Switch to DotMatrix scaling")         }
-	};
+	    {"FLT4", _s("Switch to 2xSai scaling")},
+	    {"FLT5", _s("Switch to Super2xSai scaling")},
+	    {"FLT6", _s("Switch to SuperEagle scaling")},
+	    {"FLT7", _s("Switch to TV 2x scaling")},
+	    {"FLT8", _s("Switch to DotMatrix scaling")}};
 
 	for (uint i = 0; i < ARRAYSIZE(filters); i++) {
 		act = new Action(filters[i].id, filters[i].description);

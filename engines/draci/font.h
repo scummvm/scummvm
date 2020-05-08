@@ -27,8 +27,8 @@
 
 namespace Draci {
 
-extern const char * const kFontSmall;
-extern const char * const kFontBig;
+extern const char *const kFontSmall;
+extern const char *const kFontBig;
 
 class Surface;
 

@@ -26,8 +26,7 @@
 
 namespace Graphics {
 
-MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable) :
-		_focusable(focusable), _parent(parent) {
+MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, bool focusable) : _focusable(focusable), _parent(parent) {
 	_contentIsDirty = true;
 
 	_dims.left = x;
@@ -75,22 +74,21 @@ MacWidget *MacWidget::findEventHandler(Common::Event &event, int dx, int dy) {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_MOUSEMOVE:
-		{
-			Common::Point pos;
+	case Common::EVENT_MOUSEMOVE: {
+		Common::Point pos;
 
-			pos = g_system->getEventManager()->getMousePos();
+		pos = g_system->getEventManager()->getMousePos();
 
-			if (_dims.contains(pos.x - dx, pos.y - dy)) {
-				for (uint i = 0; i < _children.size(); i++) {
-					MacWidget *res = _children[i]->findEventHandler(event, dx + _dims.left, dy + _dims.top);
-					if (res)
-						return res;
-				}
-				return this;
+		if (_dims.contains(pos.x - dx, pos.y - dy)) {
+			for (uint i = 0; i < _children.size(); i++) {
+				MacWidget *res = _children[i]->findEventHandler(event, dx + _dims.left, dy + _dims.top);
+				if (res)
+					return res;
 			}
-			break;
+			return this;
 		}
+		break;
+	}
 
 	case Common::EVENT_KEYDOWN:
 		break;

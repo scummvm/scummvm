@@ -31,7 +31,7 @@ namespace Ultima1 {
 class Ultima1Game;
 class GameResources;
 namespace Maps {
-	class Ultima1Map;
+class Ultima1Map;
 }
 
 namespace Actions {

@@ -47,4 +47,4 @@ private:
 	State _state;
 };
 
-}
+} // namespace MutationOfJB

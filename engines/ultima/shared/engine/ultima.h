@@ -23,12 +23,12 @@
 #ifndef ULTIMA_SHARED_ENGINE_ULTIMA_H
 #define ULTIMA_SHARED_ENGINE_ULTIMA_H
 
-#include "ultima/detection.h"
-#include "ultima/shared/engine/debugger.h"
-#include "ultima/shared/engine/events.h"
 #include "common/archive.h"
 #include "common/random.h"
 #include "engines/engine.h"
+#include "ultima/detection.h"
+#include "ultima/shared/engine/debugger.h"
+#include "ultima/shared/engine/events.h"
 
 namespace Ultima {
 namespace Shared {
@@ -41,9 +41,11 @@ enum UltimaDebugChannels {
 class UltimaEngine : public Engine, public EventsCallback {
 private:
 	Common::RandomSource _randomSource;
+
 protected:
 	const UltimaGameDescription *_gameDescription;
 	Common::Archive *_dataArchive;
+
 protected:
 	/**
 	 * Initializes needed data for the engine
@@ -64,6 +66,7 @@ protected:
 
 public:
 	EventsManager *_events;
+
 public:
 	UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~UltimaEngine() override;

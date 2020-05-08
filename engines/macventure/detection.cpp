@@ -22,23 +22,23 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 
 #include "macventure/macventure.h"
 
 namespace MacVenture {
 
-#define ADGF_DEFAULT (ADGF_DROPLANGUAGE|ADGF_DROPPLATFORM|ADGF_MACRESFORK|ADGF_UNSTABLE)
+#define ADGF_DEFAULT (ADGF_DROPLANGUAGE | ADGF_DROPPLATFORM | ADGF_MACRESFORK | ADGF_UNSTABLE)
 
-#define BASEGAME(n, v, f, md5, s) {n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT, GUIO1(GUIO_NOMIDI)}
+#define BASEGAME(n, v, f, md5, s) \
+	{ n, v, AD_ENTRY1s(f, md5, s), Common::EN_ANY, Common::kPlatformMacintosh, ADGF_DEFAULT, GUIO1(GUIO_NOMIDI) }
 
 static const ADGameDescription gameDescriptions[] = {
-	BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate.bin", "ebbfbcbf93938bd2900cb0c0213b19ad", 68974), // Zojoi Rerelease
-	BASEGAME("deja_vu", "Zojoi Rerelease", "Deja Vu.bin", "5e9f5a8e3c8eb29ed02b34ae5937354f", 69034), // Zojoi Rerelease
-	BASEGAME("deja_vu2", "Zojoi Rerelease", "Lost in Las Vegas.bin", "8f8e1d8d41f577ee0fbc03847969af0d", 66520), // Zojoi Rerelease
-	AD_TABLE_END_MARKER
-};
+    BASEGAME("shadowgate", "Zojoi Rerelease", "Shadowgate.bin", "ebbfbcbf93938bd2900cb0c0213b19ad", 68974),      // Zojoi Rerelease
+    BASEGAME("deja_vu", "Zojoi Rerelease", "Deja Vu.bin", "5e9f5a8e3c8eb29ed02b34ae5937354f", 69034),            // Zojoi Rerelease
+    BASEGAME("deja_vu2", "Zojoi Rerelease", "Lost in Las Vegas.bin", "8f8e1d8d41f577ee0fbc03847969af0d", 66520), // Zojoi Rerelease
+    AD_TABLE_END_MARKER};
 
 const char *MacVentureEngine::getGameFileName() const {
 	return _gameDescription->filesDescriptions[0].fileName;
@@ -46,11 +46,10 @@ const char *MacVentureEngine::getGameFileName() const {
 } // End of namespace MacVenture
 
 static const PlainGameDescriptor macventureGames[] = {
-	{ "shadowgate", "Shadowgate" },
-	{ "deja_vu", "Deja Vu"},
-	{ "deja_vu2", "Deja Vu II"},
-	{ 0, 0 }
-};
+    {"shadowgate", "Shadowgate"},
+    {"deja_vu", "Deja Vu"},
+    {"deja_vu2", "Deja Vu II"},
+    {0, 0}};
 
 namespace MacVenture {
 
@@ -85,21 +84,19 @@ protected:
 };
 
 bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate) ||
+	       (f == kSavesSupportPlayTime);
 }
 
 bool MacVentureEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
@@ -152,7 +149,6 @@ void MacVentureMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Common::String::format("%s.%03d", target, slot));
 }
 
-
 SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SaveStateDescriptor desc;
@@ -179,7 +175,7 @@ SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target,
 } // End of namespace MacVenture
 
 #if PLUGIN_ENABLED_DYNAMIC(MACVENTURE)
- REGISTER_PLUGIN_DYNAMIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
 #else
- REGISTER_PLUGIN_STATIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
+REGISTER_PLUGIN_STATIC(MACVENTURE, PLUGIN_TYPE_ENGINE, MacVenture::MacVentureMetaEngine);
 #endif

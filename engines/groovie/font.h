@@ -58,6 +58,6 @@ private:
 	const Glyph *getGlyph(uint32 chr) const;
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_FONT_H

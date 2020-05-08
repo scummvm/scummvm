@@ -20,13 +20,13 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/keyboard.h"
 #include "common/fs.h"
-#include "common/config-manager.h"
+#include "common/keyboard.h"
 #include "common/serializer.h"
 
 #include "backends/audiocd/audiocd.h"
@@ -38,6 +38,7 @@
 #include "tinsel/bmv.h"
 #include "tinsel/config.h"
 #include "tinsel/cursor.h"
+#include "tinsel/dialogs.h"
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
 #include "tinsel/events.h"
@@ -45,8 +46,7 @@
 #include "tinsel/film.h"
 #include "tinsel/font.h"
 #include "tinsel/handle.h"
-#include "tinsel/heapmem.h"			// MemoryInit
-#include "tinsel/dialogs.h"
+#include "tinsel/heapmem.h" // MemoryInit
 #include "tinsel/mareels.h"
 #include "tinsel/music.h"
 #include "tinsel/object.h"
@@ -89,20 +89,20 @@ static bool g_bCuttingScene = false;
 static bool g_bChangingForRestore = false;
 
 #ifdef DEBUG
-bool g_bFast;		// set to make it go ludicrously fast
+bool g_bFast; // set to make it go ludicrously fast
 #endif
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
 struct Scene {
-	SCNHANDLE scene;	// Memory handle for scene
-	int	entry;		// Entrance number
-	int	trans;		// Transition - not yet used
+	SCNHANDLE scene; // Memory handle for scene
+	int entry;       // Entrance number
+	int trans;       // Transition - not yet used
 };
 
-static Scene g_NextScene = { 0, 0, 0 };
-static Scene g_HookScene = { 0, 0, 0 };
-static Scene g_DelayedScene = { 0, 0, 0 };
+static Scene g_NextScene = {0, 0, 0};
+static Scene g_HookScene = {0, 0, 0};
+static Scene g_DelayedScene = {0, 0, 0};
 
 static Common::PROCESS *g_pMouseProcess = 0;
 static Common::PROCESS *g_pKeyboardProcess = 0;
@@ -184,7 +184,7 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			continue;
 
 		/*** l = LOOK ***/
-		case Common::KEYCODE_l:		// LOOK
+		case Common::KEYCODE_l: // LOOK
 			ProcessKeyEvent(PLR_LOOK);
 			continue;
 
@@ -255,7 +255,7 @@ void KeyboardProcess(CORO_PARAM, const void *) {
  */
 static void SingleLeftProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
-		uint32 endTicks;
+	uint32 endTicks;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -283,10 +283,10 @@ static void SingleLeftProcess(CORO_PARAM, const void *param) {
 static void MouseProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		bool lastLWasDouble;
-		bool lastRWasDouble;
-		uint32 lastLeftClick, lastRightClick;
-		Common::Point clickPos;
+	bool lastLWasDouble;
+	bool lastRWasDouble;
+	uint32 lastLeftClick, lastRightClick;
+	Common::Point clickPos;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -447,7 +447,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 static void MasterScriptProcess(CORO_PARAM, const void *) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		INT_CONTEXT *pic;
+	INT_CONTEXT *pic;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -514,7 +514,7 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
 	// the swamp dragon previously to "load it up").
 	if (TinselV1PSX && g_NextScene.scene == 0x1800000 && g_NextScene.entry == 2) {
 		if ((IsInInventory(261, INV_1) || IsInInventory(261, INV_2)) &&
-			(!IsInInventory(232, INV_1) && !IsInInventory(232, INV_2)))
+		    (!IsInInventory(232, INV_1) && !IsInInventory(232, INV_2)))
 			g_NextScene.entry = 1;
 	}
 }
@@ -589,20 +589,19 @@ void syncSCdata(Common::Serializer &s) {
 	s.syncAsSint32LE(g_DelayedScene.trans);
 }
 
-
 //-----------------------------------------------------------------------
 
 static void RestoredProcess(CORO_PARAM, const void *param) {
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
-		INT_CONTEXT *pic;
-		bool bConverse;
+	INT_CONTEXT *pic;
+	bool bConverse;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
 	// get the stuff copied to process when it was created
-	_ctx->pic = *((INT_CONTEXT * const *)param);
+	_ctx->pic = *((INT_CONTEXT *const *)param);
 
 	_ctx->pic = RestoreInterpretContext(_ctx->pic);
 	_ctx->bConverse = TinselV2 && (_ctx->pic->event == CONVERSE);
@@ -626,7 +625,7 @@ void RestoreMasterProcess(INT_CONTEXT *pic) {
 
 // FIXME: CountOut is used by ChangeScene
 // FIXME: Avoid non-const global vars
-static int CountOut = 1;	// == 1 for immediate start of first scene
+static int CountOut = 1; // == 1 for immediate start of first scene
 
 /**
  * If a scene restore is going on, just return (we don't update the
@@ -640,7 +639,7 @@ bool ChangeScene(bool bReset) {
 
 	// Prevent attempt to fade-out when restarting game
 	if (bReset) {
-		CountOut = 1;	// immediate start of first scene again
+		CountOut = 1; // immediate start of first scene again
 		g_DelayedScene.scene = g_HookScene.scene = 0;
 		return false;
 	}
@@ -726,9 +725,9 @@ void LoadBasicChunks() {
 	// Convert to native endianness
 	INV_OBJECT *io = (INV_OBJECT *)cptr;
 	for (int i = 0; i < numObjects; i++, io++) {
-		io->id        = FROM_32(io->id);
+		io->id = FROM_32(io->id);
 		io->hIconFilm = FROM_32(io->hIconFilm);
-		io->hScript   = FROM_32(io->hScript);
+		io->hScript = FROM_32(io->hScript);
 		io->attribute = FROM_32(io->attribute);
 	}
 
@@ -771,51 +770,48 @@ struct GameSettings {
 };
 
 static const GameSettings tinselSettings[] = {
-	{"tinsel", "Tinsel game", 0, 0, 0},
+    {"tinsel", "Tinsel game", 0, 0, 0},
 
-	{NULL, NULL, 0, 0, NULL}
-};
+    {NULL, NULL, 0, 0, NULL}};
 
 // For the languages, refer to the LANGUAGE enum in dw.h
 
 const char *const TinselEngine::_sampleIndices[][3] = {
-	{ "english.idx", "english1.idx", "english2.idx" },	// English
-	{ "french.idx", "french1.idx", "french2.idx" },		// French
-	{ "german.idx", "german1.idx", "german2.idx" },		// German
-	{ "english.idx", "english1.idx", "english2.idx" },	// Italian
-	{ "english.idx", "english1.idx", "english2.idx" },	// Spanish
-	{ "english.idx", "english1.idx", "english2.idx" },	// Hebrew (FIXME: not sure if this is correct)
-	{ "english.idx", "english1.idx", "english2.idx" },	// Hungarian (FIXME: not sure if this is correct)
-	{ "english.idx", "english1.idx", "english2.idx" },	// Japanese (FIXME: not sure if this is correct)
-	{ "us.idx", "us1.idx", "us2.idx" }					// US English
+    {"english.idx", "english1.idx", "english2.idx"}, // English
+    {"french.idx", "french1.idx", "french2.idx"},    // French
+    {"german.idx", "german1.idx", "german2.idx"},    // German
+    {"english.idx", "english1.idx", "english2.idx"}, // Italian
+    {"english.idx", "english1.idx", "english2.idx"}, // Spanish
+    {"english.idx", "english1.idx", "english2.idx"}, // Hebrew (FIXME: not sure if this is correct)
+    {"english.idx", "english1.idx", "english2.idx"}, // Hungarian (FIXME: not sure if this is correct)
+    {"english.idx", "english1.idx", "english2.idx"}, // Japanese (FIXME: not sure if this is correct)
+    {"us.idx", "us1.idx", "us2.idx"}                 // US English
 };
 const char *const TinselEngine::_sampleFiles[][3] = {
-	{ "english.smp", "english1.smp", "english2.smp" },	// English
-	{ "french.smp", "french1.smp", "french2.smp" },		// French
-	{ "german.smp", "german1.smp", "german2.smp" },		// German
-	{ "english.smp", "english1.smp", "english2.smp" },	// Italian
-	{ "english.smp", "english1.smp", "english2.smp" },	// Spanish
-	{ "english.smp", "english1.smp", "english2.smp" },	// Hebrew (FIXME: not sure if this is correct)
-	{ "english.smp", "english1.smp", "english2.smp" },	// Hungarian (FIXME: not sure if this is correct)
-	{ "english.smp", "english1.smp", "english2.smp" },	// Japanese (FIXME: not sure if this is correct)
-	{ "us.smp", "us1.smp", "us2.smp" },					// US English
+    {"english.smp", "english1.smp", "english2.smp"}, // English
+    {"french.smp", "french1.smp", "french2.smp"},    // French
+    {"german.smp", "german1.smp", "german2.smp"},    // German
+    {"english.smp", "english1.smp", "english2.smp"}, // Italian
+    {"english.smp", "english1.smp", "english2.smp"}, // Spanish
+    {"english.smp", "english1.smp", "english2.smp"}, // Hebrew (FIXME: not sure if this is correct)
+    {"english.smp", "english1.smp", "english2.smp"}, // Hungarian (FIXME: not sure if this is correct)
+    {"english.smp", "english1.smp", "english2.smp"}, // Japanese (FIXME: not sure if this is correct)
+    {"us.smp", "us1.smp", "us2.smp"},                // US English
 };
 const char *const TinselEngine::_textFiles[][3] = {
-	{ "english.txt", "english1.txt", "english2.txt" },	// English
-	{ "french.txt", "french1.txt", "french2.txt" },		// French
-	{ "german.txt", "german1.txt", "german2.txt" },		// German
-	{ "italian.txt", "italian1.txt", "italian2.txt" },	// Italian
-	{ "spanish.txt", "spanish1.txt", "spanish2.txt" },	// Spanish
-	{ "english.txt", "english1.txt", "english2.txt" },	// Hebrew (FIXME: not sure if this is correct)
-	{ "english.txt", "english1.txt", "english2.txt" },	// Hungarian (FIXME: not sure if this is correct)
-	{ "english.txt", "english1.txt", "english2.txt" },	// Japanese (FIXME: not sure if this is correct)
-	{ "us.txt", "us1.txt", "us2.txt" }					// US English
+    {"english.txt", "english1.txt", "english2.txt"}, // English
+    {"french.txt", "french1.txt", "french2.txt"},    // French
+    {"german.txt", "german1.txt", "german2.txt"},    // German
+    {"italian.txt", "italian1.txt", "italian2.txt"}, // Italian
+    {"spanish.txt", "spanish1.txt", "spanish2.txt"}, // Spanish
+    {"english.txt", "english1.txt", "english2.txt"}, // Hebrew (FIXME: not sure if this is correct)
+    {"english.txt", "english1.txt", "english2.txt"}, // Hungarian (FIXME: not sure if this is correct)
+    {"english.txt", "english1.txt", "english2.txt"}, // Japanese (FIXME: not sure if this is correct)
+    {"us.txt", "us1.txt", "us2.txt"}                 // US English
 };
 
-
-TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
-		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
+TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
+                                                                                   _sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
 	// Register debug flags
 	DebugMan.addDebugChannel(kTinselDebugAnimations, "animations", "Animations debugging");
 	DebugMan.addDebugChannel(kTinselDebugActions, "actions", "Actions debugging");
@@ -980,7 +976,7 @@ Common::Error TinselEngine::run() {
 		if (g_bRestart) {
 			RestartGame();
 			g_bRestart = false;
-			g_bHasRestarted = true;	// Set restarted flag
+			g_bHasRestarted = true; // Set restarted flag
 		}
 
 		// Save/Restore scene file transfers
@@ -991,7 +987,7 @@ Common::Error TinselEngine::run() {
 
 #ifdef DEBUG
 		if (g_bFast)
-			continue;		// run flat-out
+			continue; // run flat-out
 #endif
 		// Loop processing events while there are any pending
 		while (pollEvent())
@@ -1017,7 +1013,6 @@ Common::Error TinselEngine::run() {
 	return Common::kNoError;
 }
 
-
 void TinselEngine::NextGameCycle() {
 	// Dim Music
 	_pcmMusic->dimIteration();
@@ -1041,7 +1036,6 @@ void TinselEngine::NextGameCycle() {
 	FettleTimers();
 }
 
-
 bool TinselEngine::pollEvent() {
 	Common::Event event;
 
@@ -1060,15 +1054,13 @@ bool TinselEngine::pollEvent() {
 		_mouseButtons.push_back(event.type);
 		break;
 
-	case Common::EVENT_MOUSEMOVE:
-		{
-			// This fragment takes care of Tinsel 2 when it's been compiled with
-			// blank areas at the top and bottom of the screen
-			int ySkip = TinselV2 ? (g_system->getHeight() - _vm->screen().h) / 2 : 0;
-			if ((event.mouse.y >= ySkip) && (event.mouse.y < (g_system->getHeight() - ySkip)))
-				_mousePos = Common::Point(event.mouse.x, event.mouse.y - ySkip);
-		}
-		break;
+	case Common::EVENT_MOUSEMOVE: {
+		// This fragment takes care of Tinsel 2 when it's been compiled with
+		// blank areas at the top and bottom of the screen
+		int ySkip = TinselV2 ? (g_system->getHeight() - _vm->screen().h) / 2 : 0;
+		if ((event.mouse.y >= ySkip) && (event.mouse.y < (g_system->getHeight() - ySkip)))
+			_mousePos = Common::Point(event.mouse.x, event.mouse.y - ySkip);
+	} break;
 
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
@@ -1098,9 +1090,9 @@ void TinselEngine::CreateConstProcesses() {
  * Restart the game
  */
 void TinselEngine::RestartGame() {
-	HoldItem(INV_NOICON);	// Holding nothing
+	HoldItem(INV_NOICON); // Holding nothing
 
-	_bg->DropBackground();	// No background
+	_bg->DropBackground(); // No background
 
 	// Ditches existing infrastructure background
 	_bg->InitBackground();
@@ -1221,7 +1213,7 @@ const char *TinselEngine::getSampleIndex(LANGUAGE lang) {
 	if (TinselV2) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
-		assert(((unsigned int) lang) < NUM_LANGUAGES);
+		assert(((unsigned int)lang) < NUM_LANGUAGES);
 
 		if (lang == TXT_ENGLISH)
 			if (_vm->getLanguage() == Common::EN_USA)
@@ -1241,7 +1233,7 @@ const char *TinselEngine::getSampleFile(LANGUAGE lang) {
 	if (TinselV2) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
-		assert(((unsigned int) lang) < NUM_LANGUAGES);
+		assert(((unsigned int)lang) < NUM_LANGUAGES);
 
 		if (lang == TXT_ENGLISH)
 			if (_vm->getLanguage() == Common::EN_USA)
@@ -1256,7 +1248,7 @@ const char *TinselEngine::getSampleFile(LANGUAGE lang) {
 }
 
 const char *TinselEngine::getTextFile(LANGUAGE lang) {
-	assert(((unsigned int) lang) < NUM_LANGUAGES);
+	assert(((unsigned int)lang) < NUM_LANGUAGES);
 
 	int cd;
 

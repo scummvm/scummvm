@@ -32,8 +32,8 @@ namespace Scumm {
  */
 class ScummEngine_v4 : public ScummEngine_v5 {
 	friend class ScummEngine_v5;
-public:
 
+public:
 	/**
 	 * Prepared savegame used by the original save/load dialog.
 	 * Must be valid as long as the savescreen is active. As we are not
@@ -79,7 +79,6 @@ protected:
 	void o4_saveLoadGame();
 	void o4_saveLoadVars();
 };
-
 
 } // End of namespace Scumm
 

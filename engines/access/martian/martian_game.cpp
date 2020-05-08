@@ -20,12 +20,12 @@
  *
  */
 
-#include "access/resources.h"
 #include "access/martian/martian_game.h"
+#include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
 #include "access/martian/martian_room.h"
 #include "access/martian/martian_scripts.h"
-#include "access/amazon/amazon_resources.h"
+#include "access/resources.h"
 
 namespace Access {
 
@@ -61,7 +61,7 @@ void MartianEngine::initVariables() {
 	_player->_playerOff = false;
 
 	// Setup timers
-	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
+	const int TIMER_DEFAULTS[] = {4, 10, 8, 1, 1, 1, 1, 2};
 	for (int i = 0; i < 32; ++i) {
 		TimerEntry te;
 		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
@@ -215,7 +215,7 @@ bool MartianEngine::showCredits() {
 	int posX = _creditsStream->readSint16LE();
 	int posY = 0;
 
-	while(posX != -1) {
+	while (posX != -1) {
 		posY = _creditsStream->readSint16LE();
 		int frameNum = _creditsStream->readSint16LE();
 		_screen->plotImage(_introObjects, frameNum, Common::Point(posX, posY));
@@ -272,7 +272,7 @@ void MartianEngine::doCredits() {
 			_events->pollEventsAndWait();
 
 		_screen->forceFadeOut();
-		while (!shouldQuit() && !_events->isKeyMousePressed()&& !showCredits())
+		while (!shouldQuit() && !_events->isKeyMousePressed() && !showCredits())
 			_events->pollEventsAndWait();
 
 		warning("TODO: Free word_21E2B");
@@ -289,7 +289,7 @@ void MartianEngine::setupGame() {
 	}
 
 	// Setup timers
-	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
+	const int TIMER_DEFAULTS[] = {4, 10, 8, 1, 1, 1, 1, 2};
 	for (int i = 0; i < 32; ++i) {
 		TimerEntry te;
 		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;

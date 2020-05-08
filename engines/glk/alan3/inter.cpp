@@ -22,21 +22,21 @@
 
 #include "glk/alan3/inter.h"
 #include "glk/alan3/alan3.h"
-#include "glk/alan3/current.h"
-#include "glk/alan3/exe.h"
-#include "glk/alan3/syserr.h"
-#include "glk/alan3/debug.h"
-#include "glk/alan3/glkio.h"
-#include "glk/alan3/options.h"
-#include "glk/alan3/save.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/output.h"
-#include "glk/alan3/score.h"
-#include "glk/alan3/params.h"
-#include "glk/alan3/instance.h"
-#include "glk/alan3/container.h"
-#include "glk/alan3/location.h"
 #include "glk/alan3/compatibility.h"
+#include "glk/alan3/container.h"
+#include "glk/alan3/current.h"
+#include "glk/alan3/debug.h"
+#include "glk/alan3/exe.h"
+#include "glk/alan3/glkio.h"
+#include "glk/alan3/instance.h"
+#include "glk/alan3/location.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/options.h"
+#include "glk/alan3/output.h"
+#include "glk/alan3/params.h"
+#include "glk/alan3/save.h"
+#include "glk/alan3/score.h"
+#include "glk/alan3/syserr.h"
 
 #ifdef HAVE_GLK
 #define MAP_STDIO_TO_GLK
@@ -49,7 +49,6 @@ namespace Alan3 {
 bool stopAtNextLine = FALSE;
 bool fail = FALSE;
 
-
 /* PRIVATE DATA */
 
 static int pc;
@@ -57,18 +56,15 @@ static Stack stack = NULL;
 
 static void (*interpreterMock)(Aaddr adr) = NULL;
 
-
 /*======================================================================*/
 void setInterpreterMock(void (*mock)(Aaddr adr)) {
 	interpreterMock = mock;
 }
 
-
 /*======================================================================*/
 void setInterpreterStack(Stack theStack) {
 	stack = theStack;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void traceInstruction(const char *str, ...) {
@@ -83,12 +79,10 @@ static void traceInstruction(const char *str, ...) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void traceSkip() {
 	printf("\n    : \t\t\t\t\t\t\t");
 }
-
 
 /*----------------------------------------------------------------------*/
 static void interpretIf(Aword v) {
@@ -97,7 +91,8 @@ static void interpretIf(Aword v) {
 
 	if (!v) {
 		/* Skip to next ELSE or ENDIF on same level */
-		if (traceInstructionOption) traceSkip();
+		if (traceInstructionOption)
+			traceSkip();
 		while (TRUE) {
 			i = memory[pc++];
 			if (I_CLASS(i) == (Aword)C_STMOP)
@@ -127,13 +122,13 @@ static void interpretIf(Aword v) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void interpretElse(void) {
 	int lev = 1;
 	Aword i;
 
-	if (traceInstructionOption) traceSkip();
+	if (traceInstructionOption)
+		traceSkip();
 	while (TRUE) {
 		/* Skip to ENDIF on the same level */
 		i = memory[pc++];
@@ -141,7 +136,8 @@ static void interpretElse(void) {
 			switch (I_OP(i)) {
 			case I_ENDIF:
 				lev--;
-				if (lev == 0) return;
+				if (lev == 0)
+					return;
 				break;
 			case I_IF:
 				lev++;
@@ -152,13 +148,13 @@ static void interpretElse(void) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void goToLOOPEND(void) {
 	int level = 1;
 	int i;
 
-	if (traceInstructionOption) traceSkip();
+	if (traceInstructionOption)
+		traceSkip();
 	while (TRUE) {
 		/* Skip past LOOPEND on the same level */
 		i = memory[pc];
@@ -179,14 +175,14 @@ static void goToLOOPEND(void) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void jumpBackToStartOfMatchingLOOP(void) {
 	int level = 1;
 	int i;
 
-	if (traceInstructionOption) traceSkip();
-	pc--;               /* Ignore the instruction we're on */
+	if (traceInstructionOption)
+		traceSkip();
+	pc--; /* Ignore the instruction we're on */
 	while (TRUE) {
 		/* Skip back past LOOP on the same level */
 		i = memory[--pc];
@@ -207,12 +203,10 @@ static void jumpBackToStartOfMatchingLOOP(void) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void nextLoop(void) {
 	goToLOOPEND();
 }
-
 
 /*----------------------------------------------------------------------*/
 static void endLoop(Aint index, Aint limit) {
@@ -227,12 +221,10 @@ static void endLoop(Aint index, Aint limit) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void stackDup(void) {
 	push(stack, top(stack));
 }
-
 
 /*----------------------------------------------------------------------*/
 static void depexec(Aword v) {
@@ -243,7 +235,8 @@ static void depexec(Aword v) {
 	if (!v) {
 		/* The expression was not true, skip to next CASE on the same
 		   level which could be a DEPCASE or DEPELSE */
-		if (traceInstructionOption) printf("\n    : ");
+		if (traceInstructionOption)
+			printf("\n    : ");
 		while (TRUE) {
 			i = memory[pc++];
 			if (I_CLASS(i) == (Aword)C_STMOP)
@@ -278,7 +271,6 @@ static void depexec(Aword v) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void depcase(void) {
 	int lev = 1;
@@ -290,7 +282,8 @@ static void depcase(void) {
 	  on same level) then return.
 	*/
 
-	if (traceInstructionOption) printf("\n    : ");
+	if (traceInstructionOption)
+		printf("\n    : ");
 	while (TRUE) {
 		i = memory[pc++];
 		if (I_CLASS(i) == (Aword)C_STMOP)
@@ -311,18 +304,19 @@ static void depcase(void) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static const char *booleanValue(Abool value) {
-	if (value) return "   TRUE";
-	else return "  FALSE";
+	if (value)
+		return "   TRUE";
+	else
+		return "  FALSE";
 }
 
 /*----------------------------------------------------------------------*/
 static const char *stringValue(Aptr address) {
 	static char string[1000];
 
-	sprintf(string, "0x%lx (\"%s\")\t\t", (unsigned long) address, (char *)fromAptr(address));
+	sprintf(string, "0x%lx (\"%s\")\t\t", (unsigned long)address, (char *)fromAptr(address));
 	return string;
 }
 
@@ -330,7 +324,7 @@ static const char *stringValue(Aptr address) {
 static const char *pointerValue(Aptr address) {
 	static char string[100];
 
-	sprintf(string, "@%6lx", (unsigned long) address);
+	sprintf(string, "@%6lx", (unsigned long)address);
 	return string;
 }
 
@@ -343,8 +337,10 @@ static void traceStringTopValue() {
 /*----------------------------------------------------------------------*/
 static void tracebooleanTopValue() {
 	if (traceInstructionOption) {
-		if (top(stack)) printf("\t=TRUE\t");
-		else printf("\t=FALSE\t");
+		if (top(stack))
+			printf("\t=TRUE\t");
+		else
+			printf("\t=FALSE\t");
 	}
 }
 
@@ -406,7 +402,6 @@ static const char *printForm(SayForm form) {
 	return "**Unknown!!***";
 }
 
-
 static Aaddr invocation[1000];
 int recursionDepth = 0;
 
@@ -422,15 +417,12 @@ static void checkForRecursion(Aaddr adr) {
 		syserr("Interpreter call stack too deep.");
 }
 
-
 static bool skipStackDump = FALSE; /* Need to be able to skip it for LINE */
-
 
 /*----------------------------------------------------------------------*/
 static bool stillOnSameLine(Aint line, Aint file) {
 	return line != current.sourceLine || file != current.sourceFile;
 }
-
 
 /*======================================================================*/
 void interpret(CONTEXT, Aaddr adr) {
@@ -444,7 +436,8 @@ void interpret(CONTEXT, Aaddr adr) {
 	}
 
 	/* Sanity checks: */
-	if (adr == 0) syserr("Interpreting at address 0.");
+	if (adr == 0)
+		syserr("Interpreting at address 0.");
 	checkForRecursion(adr);
 
 	if (traceInstructionOption)
@@ -460,42 +453,51 @@ void interpret(CONTEXT, Aaddr adr) {
 
 		switch (I_CLASS(i)) {
 		case C_CONST:
-			if (tracePushOption) printf("\n%4x: PUSH  \t%7ld\t\t\t\t\t", pc - 1, (long)I_OP(i));
+			if (tracePushOption)
+				printf("\n%4x: PUSH  \t%7ld\t\t\t\t\t", pc - 1, (long)I_OP(i));
 			push(stack, I_OP(i));
 			if (tracePushOption && traceStackOption)
 				dumpStack(stack);
 			break;
 		case C_CURVAR:
-			if (traceInstructionOption) printf("\n%4x: ", pc - 1);
+			if (traceInstructionOption)
+				printf("\n%4x: ", pc - 1);
 			switch (I_OP(i)) {
 			case V_PARAM:
-				if (traceInstructionOption) printf("PARAM \t%7ld\t\t\t\t=%ld\t", (long)top(stack),
-					                                   (long)globalParameters[top(stack) - 1].instance);
+				if (traceInstructionOption)
+					printf("PARAM \t%7ld\t\t\t\t=%ld\t", (long)top(stack),
+					       (long)globalParameters[top(stack) - 1].instance);
 				push(stack, globalParameters[pop(stack) - 1].instance);
 				break;
 			case V_CURLOC:
-				if (traceInstructionOption) printf("CURLOC \t\t\t\t\t=%d\t", current.location);
+				if (traceInstructionOption)
+					printf("CURLOC \t\t\t\t\t=%d\t", current.location);
 				push(stack, current.location);
 				break;
 			case V_CURACT:
-				if (traceInstructionOption) printf("CURACT \t\t\t\t\t=%d\t", current.actor);
+				if (traceInstructionOption)
+					printf("CURACT \t\t\t\t\t=%d\t", current.actor);
 				push(stack, current.actor);
 				break;
 			case V_CURVRB:
-				if (traceInstructionOption) printf("CURVRB \t\t\t\t\t=%d\t", current.verb);
+				if (traceInstructionOption)
+					printf("CURVRB \t\t\t\t\t=%d\t", current.verb);
 				push(stack, current.verb);
 				break;
 			case V_CURRENT_INSTANCE:
-				if (traceInstructionOption) printf("CURINS \t\t\t\t\t=%d\t", current.instance);
+				if (traceInstructionOption)
+					printf("CURINS \t\t\t\t\t=%d\t", current.instance);
 				push(stack, current.instance);
 				break;
 			case V_SCORE:
-				if (traceInstructionOption) printf("CURSCORE \t\t\t\t\t=%d\t", current.score);
+				if (traceInstructionOption)
+					printf("CURSCORE \t\t\t\t\t=%d\t", current.score);
 				push(stack, current.score);
 				break;
 			case V_MAX_INSTANCE: {
 				int instanceMax = isPreBeta3(header->version) ? header->instanceMax : header->instanceMax - 1;
-				if (traceInstructionOption) printf("MAXINSTANCE \t\t\t\t=%d\t", instanceMax);
+				if (traceInstructionOption)
+					printf("MAXINSTANCE \t\t\t\t=%d\t", instanceMax);
 				push(stack, instanceMax);
 				break;
 			}
@@ -508,7 +510,8 @@ void interpret(CONTEXT, Aaddr adr) {
 			break;
 
 		case C_STMOP:
-			if (traceInstructionOption) printf("\n%4x: ", pc - 1);
+			if (traceInstructionOption)
+				printf("\n%4x: ", pc - 1);
 			switch (I_OP(i)) {
 
 			case I_DUP:
@@ -539,7 +542,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				skipStackDump = TRUE;
 				if (line != 0) {
 					bool atNext = stopAtNextLine && line != current.sourceLine;
-					bool atBreakpoint =  breakpointIndex(file, line) != -1;
+					bool atBreakpoint = breakpointIndex(file, line) != -1;
 					if (traceSourceOption && stillOnSameLine(line, file)) {
 						if (col != 1 || traceInstructionOption)
 							printf("\n");
@@ -562,7 +565,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				Aint len = pop(stack);
 				if (traceInstructionOption) {
 					printf("PRINT \t%7ld, %7ld\t\"", (long)fpos, (long)len);
-					col = 41;       /* To break lines better! */
+					col = 41; /* To break lines better! */
 				}
 				print(fpos, len);
 				if (traceInstructionOption) {
@@ -587,7 +590,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				Aint len = pop(stack);
 				if (traceInstructionOption) {
 					printf("SYSTEM \t%7ld, %7ld\t\"", (long)fpos, (long)len);
-					col = 34;       /* To format it better! */
+					col = 34; /* To format it better! */
 				}
 				sys(fpos, len);
 				if (traceInstructionOption)
@@ -960,7 +963,7 @@ void interpret(CONTEXT, Aaddr adr) {
 				Aid id = pop(stack);
 				if (traceInstructionOption) {
 					printf("DESCRIBE \t%7ld\t\t\t", (long)id);
-					col = 41;       /* To format it better! */
+					col = 41; /* To format it better! */
 				}
 				CALL1(describe, id)
 				if (traceInstructionOption)
@@ -1298,8 +1301,10 @@ void interpret(CONTEXT, Aaddr adr) {
 				Aword v = pop(stack);
 				if (traceInstructionOption) {
 					printf("DEPEXEC \t\t\t");
-					if (v) printf(" TRUE");
-					else printf("FALSE");
+					if (v)
+						printf(" TRUE");
+					else
+						printf("FALSE");
 					printf("\t\t\t\t\t");
 				}
 				depexec(v);
@@ -1419,7 +1424,6 @@ void interpret(CONTEXT, Aaddr adr) {
 	}
 exitInterpreter:
 	recursionDepth--;
-
 }
 
 /*======================================================================*/

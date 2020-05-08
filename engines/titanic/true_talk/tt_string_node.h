@@ -23,9 +23,9 @@
 #ifndef TITANIC_TT_STRING_NODE_H
 #define TITANIC_TT_STRING_NODE_H
 
+#include "titanic/support/exe_resources.h"
 #include "titanic/true_talk/tt_node.h"
 #include "titanic/true_talk/tt_string.h"
-#include "titanic/support/exe_resources.h"
 
 namespace Titanic {
 
@@ -40,11 +40,13 @@ protected:
 	 * Initializes state for the node
 	 */
 	void initialize(TTstringNode *oldNode);
+
 public:
 	TTstring _string;
 	FileHandle _file;
 	int _mode;
 	int _field1C;
+
 public:
 	TTstringNode();
 

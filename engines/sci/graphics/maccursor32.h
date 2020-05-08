@@ -23,11 +23,11 @@
 #ifndef SCI_GRAPHICS_MACCURSOR32_H
 #define SCI_GRAPHICS_MACCURSOR32_H
 
-#include "common/array.h"           // for Array
-#include "common/rect.h"            // for Point, Rect
-#include "common/scummsys.h"        // for int16, byte, uint8
-#include "sci/graphics/cursor32.h"  // for GfxCursor32
-#include "sci/graphics/helpers.h"   // for GuiResourceId
+#include "common/array.h"          // for Array
+#include "common/rect.h"           // for Point, Rect
+#include "common/scummsys.h"       // for int16, byte, uint8
+#include "sci/graphics/cursor32.h" // for GfxCursor32
+#include "sci/graphics/helpers.h"  // for GuiResourceId
 
 namespace Sci {
 

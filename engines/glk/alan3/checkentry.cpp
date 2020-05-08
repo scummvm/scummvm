@@ -29,7 +29,7 @@ namespace Glk {
 namespace Alan3 {
 
 bool checksFailed(CONTEXT, Aaddr adr, bool execute) {
-	CheckEntry *chk = (CheckEntry *) pointerTo(adr);
+	CheckEntry *chk = (CheckEntry *)pointerTo(adr);
 	bool flag;
 
 	if (chk->exp == 0) {

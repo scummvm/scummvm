@@ -23,10 +23,10 @@
 #ifndef SCUMM_PLAYERS_PLAYER_MOD_H
 #define SCUMM_PLAYERS_PLAYER_MOD_H
 
-#include "scumm/scumm.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/mutex.h"
+#include "scumm/scumm.h"
 
 namespace Audio {
 class RateConverter;

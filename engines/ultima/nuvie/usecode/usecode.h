@@ -23,28 +23,28 @@
 #ifndef NUVIE_USECODE_USECODE_H
 #define NUVIE_USECODE_USECODE_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/misc/call_back.h"
-#include "ultima/nuvie/misc/map_entity.h"
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/misc/call_back.h"
+#include "ultima/nuvie/misc/map_entity.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 // The game triggers one of these events on an object to activate its UseCode
 // function(s). The return value meaning is different for each event.
-#define USE_EVENT_USE     0x01 /* return value undefined */
-#define USE_EVENT_LOOK    0x02 /* true: allow search, false: disallow search */
-#define USE_EVENT_PASS    0x04 /* true: do normal move, false: object blocks */
+#define USE_EVENT_USE 0x01     /* return value undefined */
+#define USE_EVENT_LOOK 0x02    /* true: allow search, false: disallow search */
+#define USE_EVENT_PASS 0x04    /* true: do normal move, false: object blocks */
 #define USE_EVENT_MESSAGE 0x08 /* internal message or data return */
-#define USE_EVENT_SEARCH  0x10 /*undefined (true = had objects?); might remove*/
+#define USE_EVENT_SEARCH 0x10  /*undefined (true = had objects?); might remove*/
 //#define USE_EVENT_ON      0x20 /* post-move/idle */
-#define USE_EVENT_MOVE    0x40 /* true: move object, false: don't move object */
-#define USE_EVENT_LOAD    0x80 /* return value undefined */
-#define USE_EVENT_READY   0x0100 /* true: object may be equipped */
-#define USE_EVENT_GET     0x0200 /* true: do normal get */
-#define USE_EVENT_DROP    0x0400 /* true: do normal drop */
+#define USE_EVENT_MOVE 0x40          /* true: move object, false: don't move object */
+#define USE_EVENT_LOAD 0x80          /* return value undefined */
+#define USE_EVENT_READY 0x0100       /* true: object may be equipped */
+#define USE_EVENT_GET 0x0200         /* true: do normal get */
+#define USE_EVENT_DROP 0x0400        /* true: do normal drop */
 #define USE_EVENT_INPUT_CANCEL 0x501 /* note this shares a bit with USE_EVENT_USE so it can pass through uc_event(). return undefined */
 //#define USE_EVENT_NEAR    0x00 /* mirrors; might use ON with distance val */
 //#define USE_EVENT_ATTACK  0x00 /* doors, chests, mirrors */
@@ -164,7 +164,7 @@ protected:
 	Party *party;
 	Script *script;
 
-// pass parameters to usecode functions via items (NULL itemref is unset)
+	// pass parameters to usecode functions via items (NULL itemref is unset)
 	struct {
 		uint32 *uint_ref;
 		sint32 *sint_ref;
@@ -179,7 +179,6 @@ protected:
 	void clear_items();
 
 public:
-
 	UseCode(Game *g, Configuration *cfg);
 	virtual ~UseCode();
 
@@ -187,11 +186,11 @@ public:
 
 	bool use_obj(uint16 x, uint16 y, uint8 z, Obj *src_obj = NULL);
 	bool use_obj(Obj *obj, Obj *src_obj = NULL) {
-		return (use_obj(obj, player->get_actor()));    // ??
+		return (use_obj(obj, player->get_actor())); // ??
 	}
 
 	virtual bool use_obj(Obj *obj, Actor *actor);
-	virtual bool look_obj(Obj *obj, Actor *actor)   {
+	virtual bool look_obj(Obj *obj, Actor *actor) {
 		return (false);
 	}
 	virtual bool pass_obj(Obj *obj, Actor *actor, uint16 x, uint16 y) {
@@ -201,14 +200,14 @@ public:
 		return (false);
 	}
 	virtual bool move_obj(Obj *obj, sint16 rel_x, sint16 rel_y);
-	virtual bool load_obj(Obj *obj)                 {
+	virtual bool load_obj(Obj *obj) {
 		return (false);
 	}
 	virtual bool message_obj(Obj *obj, CallbackMessage msg, void *msg_data) {
 		return (false);
 	}
 	virtual bool ready_obj(Obj *obj, Actor *actor);
-	virtual bool get_obj(Obj *obj, Actor *actor)    {
+	virtual bool get_obj(Obj *obj, Actor *actor) {
 		return (false);
 	}
 	virtual bool drop_obj(Obj *obj, Actor *actor, uint16 x, uint16 y, uint16 qty = 0) {
@@ -216,7 +215,7 @@ public:
 	}
 
 	virtual bool has_usecode(Obj *obj, UseCodeEvent ev = USE_EVENT_USE);
-	virtual bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE)  {
+	virtual bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE) {
 		return (false);
 	}
 	virtual bool has_lookcode(Obj *obj) {
@@ -237,7 +236,7 @@ public:
 	virtual bool cannot_unready(Obj *obj) {
 		return false;
 	}
-	virtual bool has_getcode(Obj *obj)  {
+	virtual bool has_getcode(Obj *obj) {
 		return (has_usecode(obj, USE_EVENT_GET));
 	}
 	virtual bool has_dropcode(Obj *obj) {
@@ -247,43 +246,43 @@ public:
 	bool is_door(Obj *obj) {
 		return (is_locked_door(obj) || is_unlocked_door(obj));
 	}
-	virtual bool is_locked_door(Obj *obj)   {
+	virtual bool is_locked_door(Obj *obj) {
 		return (false);
 	}
 	virtual bool is_unlocked_door(Obj *obj) {
 		return (false);
 	}
-	virtual bool is_closed_door(Obj *obj)   {
+	virtual bool is_closed_door(Obj *obj) {
 		return (false);
 	}
 	virtual bool process_effects(Obj *container_obj, Actor *actor) {
 		return (false);
 	}
-	virtual bool is_food(Obj *obj)          {
+	virtual bool is_food(Obj *obj) {
 		return (false);
 	}
 	virtual bool is_container(Obj *obj);
 	virtual bool is_container(uint16 obj_n, uint8 frame_n) {
 		return (false);
 	}
-	virtual bool is_readable(Obj *obj)      {
+	virtual bool is_readable(Obj *obj) {
 		return (false);
 	}
-	virtual bool is_chest(Obj *obj)         {
+	virtual bool is_chest(Obj *obj) {
 		return (false);
 	}
 
 	void set_itemref(sint32 *val) {
 		items.sint_ref = val;
 	}
-	void set_itemref(Obj *val)   {
+	void set_itemref(Obj *val) {
 		items.obj_ref = val;
 	}
 	void set_itemref(Actor *val, Actor *val2 = NULL) {
 		items.actor_ref = val;
 		items.actor2_ref = val2;
 	}
-	void set_itemref(MapCoord *val)   {
+	void set_itemref(MapCoord *val) {
 		items.mapcoord_ref = val;
 	}
 
@@ -296,10 +295,8 @@ public:
 	bool is_script_running();
 
 protected:
-
 	void toggle_frame(Obj *obj);
 	void dbg_print_event(UseCodeEvent event, Obj *obj);
-
 };
 
 } // End of namespace Nuvie

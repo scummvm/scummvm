@@ -23,16 +23,16 @@
 #ifndef ULTIMA_SHARED_EARLY_ULTIMA_EARLY_H
 #define ULTIMA_SHARED_EARLY_ULTIMA_EARLY_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/endian.h"
 #include "common/hash-str.h"
-#include "common/serializer.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/util.h"
-#include "graphics/surface.h"
 #include "engines/engine.h"
+#include "graphics/surface.h"
 #include "ultima/detection.h"
 
 #include "ultima/shared/engine/ultima.h"
@@ -83,10 +83,12 @@ private:
 	 * Returns the data archive folder and version that's required
 	 */
 	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+
 public:
 	GameBase *_game;
 	MouseCursor *_mouseCursor;
 	Gfx::Screen *_screen;
+
 public:
 	UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription *gameDesc);
 	~UltimaEarlyEngine() override;

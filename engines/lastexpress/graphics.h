@@ -51,7 +51,7 @@ public:
 	void clear(BackgroundType type, const Common::Rect &rect);
 
 	// FIXME this is there for animation until we change it to use the graphic surface here instead of its private ones.
-	Graphics::Surface _screen;      // Actual screen surface
+	Graphics::Surface _screen; // Actual screen surface
 
 	bool draw(Drawable *drawable, BackgroundType type, bool transition = false);
 

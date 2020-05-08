@@ -53,7 +53,7 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const char
 	Common::String choose = _("Choose");
 	char *utf8Choose = utf8.convert(choose.c_str(), choose.size());
 	Common::String cancel = _("Cancel");
-	char* utf8Cancel = utf8.convert(cancel.c_str(), cancel.size());
+	char *utf8Cancel = utf8.convert(cancel.c_str(), cancel.size());
 
 	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 	if (isDirBrowser) {
@@ -86,7 +86,7 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const char
 		ConfMan.set("browser_lastpath", last);
 		g_free(last);
 	}
-	
+
 	g_object_unref(native);
 
 	while (gtk_events_pending())

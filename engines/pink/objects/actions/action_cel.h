@@ -42,7 +42,7 @@ public:
 	void end() override;
 
 	bool needsUpdate() { return _decoder.needsUpdate(); }
-	virtual void update() {};
+	virtual void update(){};
 
 	void pause(bool paused) override;
 
@@ -53,7 +53,6 @@ public:
 	CelDecoder *getDecoder() { return &_decoder; }
 
 	void setCenter(const Common::Point &center);
-
 
 	void loadDecoder();
 

@@ -23,10 +23,10 @@
 #ifndef TITANIC_SAVEABLE_OBJECT_H
 #define TITANIC_SAVEABLE_OBJECT_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 #include "titanic/support/simple_file.h"
 
 namespace Titanic {
@@ -37,9 +37,9 @@ class ClassDef {
 public:
 	const char *_className;
 	ClassDef *_parent;
+
 public:
-	ClassDef(const char *className, ClassDef *parent) :
-		_className(className), _parent(parent) {}
+	ClassDef(const char *className, ClassDef *parent) : _className(className), _parent(parent) {}
 	virtual ~ClassDef() {}
 	virtual CSaveableObject *create();
 };
@@ -47,22 +47,23 @@ public:
 template<typename T>
 class TypeTemplate : public ClassDef {
 public:
-	TypeTemplate(const char *className, ClassDef *parent) :
-		ClassDef(className, parent) {}
+	TypeTemplate(const char *className, ClassDef *parent) : ClassDef(className, parent) {}
 	CSaveableObject *create() override { return new T(); }
 };
 
-#define CLASSDEF \
+#define CLASSDEF            \
 	static ClassDef *_type; \
 	virtual ClassDef *getType() const override { return _type; }
 
 class CSaveableObject {
 	typedef CSaveableObject *(*CreateFunction)();
+
 private:
 	typedef Common::List<ClassDef *> ClassDefList;
 	typedef Common::HashMap<Common::String, CreateFunction> ClassListMap;
 	static ClassDefList *_classDefs;
 	static ClassListMap *_classList;
+
 public:
 	/**
 	 * Sets up the list of saveable object classes
@@ -78,8 +79,9 @@ public:
 	 * Creates a new instance of a saveable object class
 	 */
 	static CSaveableObject *createInstance(const Common::String &name);
+
 public:
-	static ClassDef *_type; \
+	static ClassDef *_type;
 	virtual ClassDef *getType() const { return _type; }
 
 	virtual ~CSaveableObject() {}

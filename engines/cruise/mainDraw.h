@@ -37,11 +37,11 @@ void mainDraw(bool waitFl);
 void flipScreen();
 void buildPolyModel(int X, int Y, int scale, char *ptr2, char *destBuffer, char *dataPtr);
 void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *dataIn, int ys, int xs, uint8 *output, const uint8 *dataBuf);
-void flipPoly(int fileId, int16 *dataPtr, int scale, char** newFrame, int X, int Y, int *outX, int *outY, int *outScale);
+void flipPoly(int fileId, int16 *dataPtr, int scale, char **newFrame, int X, int Y, int *outX, int *outY, int *outScale);
 void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsigned char *dataPtr);
-bool findPoly(char* dataPtr, int x, int y, int zoom, int mouseX, int mouseY);
+bool findPoly(char *dataPtr, int x, int y, int zoom, int mouseX, int mouseY);
 unsigned char *drawPolyMode2(unsigned char *dataPointer, int linesToDraw);
-void calcRGB(uint8* pColorSrc, uint8* pColorDst, int* offsetTable);
+void calcRGB(uint8 *pColorSrc, uint8 *pColorDst, int *offsetTable);
 void drawMessage(const gfxEntryStruct *pGfxPtr, int globalX, int globalY, int width, int newColor, uint8 *ouputPtr);
 
 } // End of namespace Cruise

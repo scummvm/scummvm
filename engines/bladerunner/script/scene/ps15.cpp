@@ -29,13 +29,13 @@ void SceneScriptPS15::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 20, 479, 3);
 	Scene_Exit_Add_2D_Exit(1, 620, 0, 639, 479, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 20, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3,  80, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxPHONE1, 5, 50,  8,  8, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPAGE1,  5, 20, 30, 30,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPAGE2,  5, 20, 30, 30,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPAGE3,  5, 20, 30, 30,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 20,  5,  9,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 20,  5,  9,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3, 80, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxPHONE1, 5, 50, 8, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPAGE1, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPAGE2, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPAGE3, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
 	Actor_Put_In_Set(kActorSergeantWalls, kSetPS15);
 	Actor_Set_At_XYZ(kActorSergeantWalls, -265.4f, -113.43f, -31.29f, 623);
 }
@@ -59,13 +59,9 @@ bool SceneScriptPS15::ClickedOnActor(int actorId) {
 	if (actorId == kActorSergeantWalls) {
 		if (
 #if BLADERUNNER_ORIGINAL_BUGS
-		    (Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
-		     || Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons))
-		    && !Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
+		    (Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm) || Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)) && !Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
 #else
-		    (Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
-		     || Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons))
-		    && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
+		    (Actor_Clue_Query(kActorMcCoy, kClueShippingForm) || Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)) && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -256.0f, -113.43f, 43.51f, 0, true, false, false)) {
@@ -124,15 +120,14 @@ bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
 
 		if (
 #if BLADERUNNER_ORIGINAL_BUGS
-			// the check here ideally should be about kClueShippingForm
-			// although it suffices that we also check for kCluePoliceIssueWeapons (logic AND)
-			// and the additional check for kClueWeaponsOrderForm does not affect anything
+		    // the check here ideally should be about kClueShippingForm
+		    // although it suffices that we also check for kCluePoliceIssueWeapons (logic AND)
+		    // and the additional check for kClueWeaponsOrderForm does not affect anything
 		    Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
 #else
 		    Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		    && Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)
-		) {
+		    && Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 			// McCoy should face the crate when saying "I've got all I can from that."
@@ -154,7 +149,7 @@ bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
 			Actor_Says(kActorSergeantWalls, 170, 13);
 #if BLADERUNNER_ORIGINAL_BUGS
 			// if the player did not get the weapons order form from Guzza's office, they get it here
-			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm,   true, kActorMcCoy);
+			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy);
 			// A bug? Shouldn't the last argument be -1 or kActorSergeantWalls here?
 			Actor_Clue_Acquire(kActorMcCoy, kCluePoliceIssueWeapons, true, kActorMcCoy);
 #else

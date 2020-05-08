@@ -23,8 +23,8 @@
 #ifndef NUVIE_SOUND_ADPLUG_ADPLUG_PLAYER
 #define NUVIE_SOUND_ADPLUG_ADPLUG_PLAYER
 
-#include "ultima/shared/std/string.h"
 #include "ultima/nuvie/sound/adplug/opl.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -38,21 +38,21 @@ public:
 	void seek(unsigned long ms);
 
 	virtual bool load(const Std::string &filename) = 0; // loads file
-	virtual bool update() = 0;          // executes replay code for 1 tick
-	virtual void rewind(int subsong = -1) = 0;  // rewinds to specified subsong
-	virtual float getrefresh() = 0;         // returns needed timer refresh rate
+	virtual bool update() = 0;                          // executes replay code for 1 tick
+	virtual void rewind(int subsong = -1) = 0;          // rewinds to specified subsong
+	virtual float getrefresh() = 0;                     // returns needed timer refresh rate
 
 	/***** Informational methods *****/
 	unsigned long songlength(int subsong = -1);
 
-	virtual Std::string gettype() = 0;  // returns file type
-	virtual Std::string gettitle() {    // returns song title
+	virtual Std::string gettype() = 0; // returns file type
+	virtual Std::string gettitle() {   // returns song title
 		return Std::string();
 	}
-	virtual Std::string getauthor() {   // returns song author name
+	virtual Std::string getauthor() { // returns song author name
 		return Std::string();
 	}
-	virtual Std::string getdesc() {     // returns song description
+	virtual Std::string getdesc() { // returns song description
 		return Std::string();
 	}
 	virtual unsigned int getpatterns() { // returns number of patterns
@@ -61,16 +61,16 @@ public:
 	virtual unsigned int getpattern() { // returns currently playing pattern
 		return 0;
 	}
-	virtual unsigned int getorders() {  // returns size of orderlist
+	virtual unsigned int getorders() { // returns size of orderlist
 		return 0;
 	}
-	virtual unsigned int getorder() {   // returns currently playing song position
+	virtual unsigned int getorder() { // returns currently playing song position
 		return 0;
 	}
-	virtual unsigned int getrow() {     // returns currently playing row
+	virtual unsigned int getrow() { // returns currently playing row
 		return 0;
 	}
-	virtual unsigned int getspeed() {   // returns current song speed
+	virtual unsigned int getspeed() { // returns current song speed
 		return 0;
 	}
 	virtual unsigned int getsubsongs() { // returns number of subsongs
@@ -84,7 +84,7 @@ public:
 	}
 
 protected:
-	Copl        *opl;   // our OPL chip
+	Copl *opl; // our OPL chip
 
 	static const unsigned short note_table[12]; // standard adlib note table
 	static const unsigned char op_table[9];     // the 9 operators as expected by the OPL2

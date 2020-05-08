@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/treasure_loader.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/misc/util.h"
@@ -43,7 +43,7 @@ void TreasureLoader::loadDefaults() {
 	lootkeyvals = config->listKeyValues("game/treasure");
 	KeyMap::const_iterator defaultiter;
 	for (defaultiter = lootkeyvals.begin();
-	        defaultiter != lootkeyvals.end(); ++defaultiter) {
+	     defaultiter != lootkeyvals.end(); ++defaultiter) {
 		TreasureInfo ti;
 		bool ok = internalParse(defaultiter->_value, ti, true);
 		if (ok) {
@@ -53,7 +53,6 @@ void TreasureLoader::loadDefaults() {
 			     << "': " << defaultiter->_value << Std::endl;
 		}
 	}
-
 }
 
 bool TreasureLoader::parse(const Std::string &desc,
@@ -65,7 +64,7 @@ bool TreasureLoader::parse(const Std::string &desc,
 
 	TreasureInfo ti;
 	for (unsigned int i = 0; i < tr.size(); ++i) {
-//		pout << "parse: item=" << tr[i] << Std::endl;
+		//		pout << "parse: item=" << tr[i] << Std::endl;
 		if (internalParse(tr[i], ti, false)) {
 			treasure.push_back(ti);
 		} else {
@@ -87,13 +86,13 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 
 	bool loadedDefault = false;
 
-	Std::vector<Std::pair<Std::string, Std::string> > kv;
+	Std::vector<Std::pair<Std::string, Std::string>> kv;
 	SplitStringKV(desc, ' ', kv);
 
 	for (unsigned int i = 0; i < kv.size(); ++i) {
 		Std::string key = kv[i].first;
 		Std::string val = kv[i].second;
-//		pout << "internalParse: key=" << key << " val=" << val << Std::endl;
+		//		pout << "internalParse: key=" << key << " val=" << val << Std::endl;
 
 		if (key == "shape") {
 			if (!parseUInt32Vector(val, ti._shapes))
@@ -129,7 +128,8 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 				return false;
 			loadedDefault = true;
 		} else if (key == "mult" && !loadingDefault) {
-			if (!loadedDefault) return false;
+			if (!loadedDefault)
+				return false;
 			unsigned int minmult, maxmult;
 			if (!parseUIntRange(val, minmult, maxmult)) {
 				int x;
@@ -171,7 +171,8 @@ bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
 			vec.push_back(x);
 		}
 
-		if (pos != Std::string::npos) pos++;
+		if (pos != Std::string::npos)
+			pos++;
 		val.erase(0, pos);
 	}
 

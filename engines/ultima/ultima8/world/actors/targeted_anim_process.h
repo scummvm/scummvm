@@ -23,9 +23,9 @@
 #ifndef WORLD_ACTORS_TARGETEDANIMPROCESS_H
 #define WORLD_ACTORS_TARGETEDANIMPROCESS_H
 
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/world/actors/animation.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -41,6 +41,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 

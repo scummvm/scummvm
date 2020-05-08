@@ -104,9 +104,7 @@ bool crossBlit(byte *dst, const byte *src,
                const uint w, const uint h,
                const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt) {
 	// Error out if conversion is impossible
-	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
-			 || (dstFmt.bytesPerPixel == 3)
-			 || (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel))
+	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 3) || (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel))
 		return false;
 
 	// Don't perform unnecessary conversion

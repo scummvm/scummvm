@@ -22,15 +22,15 @@
 #include "dragons/minigame2.h"
 #include "dragons/actor.h"
 #include "dragons/actorresource.h"
-#include "dragons/dragons.h"
+#include "dragons/cursor.h"
 #include "dragons/dragonini.h"
+#include "dragons/dragons.h"
 #include "dragons/font.h"
-#include "dragons/talk.h"
 #include "dragons/inventory.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
-#include "dragons/cursor.h"
 #include "dragons/sound.h"
+#include "dragons/talk.h"
 
 namespace Dragons {
 
@@ -52,8 +52,7 @@ Minigame2::Minigame2(DragonsEngine *vm) : _vm(vm), _dat_80093c70(false), _dat_80
 }
 
 static const uint16 unkArray[5] = {
-	0xC, 0xA, 0x8, 0x6, 0x4
-};
+    0xC, 0xA, 0x8, 0x6, 0x4};
 
 void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	short sVar2;
@@ -78,9 +77,9 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	//int iVar20;
 	bool shouldShakeScreen;
 	uint16 local_2e6;
-	int16 actorSequenceIdTbl [15];
-	uint32 textIdTbl [4];
-	uint16 local_2b0 [8];
+	int16 actorSequenceIdTbl[15];
+	uint32 textIdTbl[4];
+	uint16 local_2b0[8];
 	uint16 local_288;
 	uint16 local_286;
 	uint16 local_284;
@@ -95,9 +94,9 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	short local_260;
 	short local_258;
 	short local_256;
-	int16 screenShakeTbl [10];
+	int16 screenShakeTbl[10];
 	uint16 screenShakeCounter;
-	uint8 paletteData [0x200];
+	uint8 paletteData[0x200];
 	uint16 local_28;
 	InventoryState originalInventoryType;
 
@@ -191,17 +190,17 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	loungealotLegActor = _vm->_actorManager->loadActor(0xf, 0, 0x7d, 199, 4);
 	loungealotRightArm = _vm->_actorManager->loadActor(0x10, 0, 0x7d, 199, 4);
 	flickerArm = _vm->_actorManager->loadActor(9, (uint)(uint16)actorSequenceIdTbl[(uint)_dat_80093cb4 * 3 + (uint)_dat_80093cbc],
-											   loungealotLeftUpperArm->_x_pos,
-											   loungealotLeftUpperArm->_y_pos, 4);
+	                                           loungealotLeftUpperArm->_x_pos,
+	                                           loungealotLeftUpperArm->_y_pos, 4);
 	loungealotThumb = _vm->_actorManager->loadActor(0x12, (uint)(uint16)actorSequenceIdTbl[(uint)_dat_80093cb4 * 3 + (uint)_dat_80093cbc],
-													loungealotLeftUpperArm->_x_pos,
-													loungealotLeftUpperArm->_y_pos, 4);
+	                                                loungealotLeftUpperArm->_x_pos,
+	                                                loungealotLeftUpperArm->_y_pos, 4);
 	uVar12 = _vm->_actorManager->loadActor(10, (uint)(uint16)actorSequenceIdTbl[(uint)_dat_80093cb8 * 3 + (uint)_dat_80093cc0],
-										   flickerArm->_x_pos,
-										   flickerArm->_y_pos, 4);
+	                                       flickerArm->_x_pos,
+	                                       flickerArm->_y_pos, 4);
 	uVar13 = _vm->_actorManager->loadActor(0x13, (uint)(uint16)actorSequenceIdTbl[(uint)_dat_80093cb8 * 3 + (uint)_dat_80093cc0],
-										   flickerArm->_x_pos,
-										   flickerArm->_y_pos, 4);
+	                                       flickerArm->_x_pos,
+	                                       flickerArm->_y_pos, 4);
 	flickerPortrait = _vm->_actorManager->loadActor(0x27, 0, 0x10, 0xac, 4);
 	loungealotPortrait = _vm->_actorManager->loadActor(0x27, 1, 0x10, 0x8c, 4);
 	loungealotBigPunchActor->setFlag(ACTOR_FLAG_100);
@@ -232,7 +231,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	flickerPowerMeter->flags &= ~1u;
 	loungealotPowerMeter->flags &= ~1u;
 
-//	EnableVSyncEvent();
+	//	EnableVSyncEvent();
 	loungealotHeadActor->setFlag(ACTOR_FLAG_1);
 	loungealotLeftUpperArm->setFlag(ACTOR_FLAG_1);
 	loungealotLegActor->setFlag(ACTOR_FLAG_1);
@@ -307,20 +306,21 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			flickerPowerMeter->points[1].x = local_27a + 0x27;
 			flickerPowerMeter->points[3].x = local_27a + 0x27;
 			flickerPowerMeter->colour = (uint16)(((int)((uint)local_27a - 1) >> 1) << 5) |
-										(uint16)(((int)(0x40 - (uint)local_27a) >> 1) << 10);
+			                            (uint16)(((int)(0x40 - (uint)local_27a) >> 1) << 10);
 			flickerPowerMeter->flags |= 1;
 		}
 		if (local_278 == 0) {
 			loungealotPowerMeter->flags &= ~1u;
-			if ((local_27a != 0) || (local_258 != 0)) goto LAB_800907c4;
+			if ((local_27a != 0) || (local_258 != 0))
+				goto LAB_800907c4;
 		} else {
 			loungealotPowerMeter->points[1].x = local_278 + 0x27;
 			loungealotPowerMeter->points[3].x = local_278 + 0x27;
 			loungealotPowerMeter->colour = (uint16)(((int)((uint)local_278 - 1) >> 1) << 5) |
-										   (uint16)(((int)(0x40 - (uint)local_278) >> 1) << 10);
+			                               (uint16)(((int)(0x40 - (uint)local_278) >> 1) << 10);
 			loungealotPowerMeter->flags |= 1;
 
-			LAB_800907c4:
+		LAB_800907c4:
 			if (!bVar4) {
 				_vm->_fontManager->drawTextDialogBox(4, 0x14, 0xd, 0x16);
 				_vm->_fontManager->drawTextDialogBox(4, 0x10, 0xd, 0x12);
@@ -348,7 +348,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		uVar12->_x_pos = uVar13->_x_pos;
 		uVar13->_y_pos = sVar3 - flickerArm->_frame->field_10;
 		uVar12->_y_pos = uVar13->_y_pos;
-//		EnableVSyncEvent();
+		//		EnableVSyncEvent();
 		local_282 = _dat_80093cc0;
 		local_286 = _dat_80093cbc;
 		local_284 = _dat_80093cb8;
@@ -366,14 +366,14 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 					} else {
 						local_264 = 0;
 						local_260 = 300;
-//						playSoundFromTxtIndex(textIdTbl[local_262]);
+						//						playSoundFromTxtIndex(textIdTbl[local_262]);
 						loungealotHeadActor->updateSequence((uint)local_2b0[(uint)local_262 * 2]);
 						uVar18 = (uint)local_262;
 						local_262 = local_262 + 1;
 						fun_80093aec_dialog(textIdTbl[uVar18], 0x14, 1);
 						if (local_262 == 3) {
 							while (((_dat_80093cb4 != 2 || (_dat_80093cbc != 0)) ||
-									((_dat_80093cb8 != 2 || (_dat_80093cc0 != 0))))) {
+							        ((_dat_80093cb8 != 2 || (_dat_80093cc0 != 0))))) {
 								_vm->waitForFrames(1);
 								if (flickerArm->isFlagSet(ACTOR_FLAG_4)) {
 									if (_dat_80093cbc != 0) {
@@ -402,13 +402,13 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 									loungealotThumb->updateSequence((uint)(uint16)actorSequenceIdTbl[(uint)_dat_80093cb4 * 3 + (uint)_dat_80093cbc]);
 								}
 								if (uVar12->_sequenceID !=
-									actorSequenceIdTbl[(uint)_dat_80093cb8 * 3 + (uint)_dat_80093cc0]) {
+								    actorSequenceIdTbl[(uint)_dat_80093cb8 * 3 + (uint)_dat_80093cc0]) {
 									uVar12->updateSequence((uint)(uint16)actorSequenceIdTbl[(uint)_dat_80093cb8 * 3 + (uint)_dat_80093cc0]);
 									uVar13->updateSequence((uint)(uint16)actorSequenceIdTbl[(uint)_dat_80093cb8 * 3 + (uint)_dat_80093cc0]);
 								}
 							}
 							_vm->waitForFrames(2 * 0x3c);
-//							DisableVSyncEvent();
+							//							DisableVSyncEvent();
 							memset(paletteData, 0, 0x200);
 							loungealotBigPunchActor->_flags = loungealotBigPunchActor->_flags & 0xfbff;
 							loungealotHeadActor->setFlag(ACTOR_FLAG_400);
@@ -419,7 +419,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 							loungealotThumb->setFlag(ACTOR_FLAG_400);
 							uVar12->setFlag(ACTOR_FLAG_400);
 							uVar13->setFlag(ACTOR_FLAG_400);
-//							EnableVSyncEvent();
+							//							EnableVSyncEvent();
 							_vm->waitForFrames(6);
 							loungealotBigPunchActor->updateSequence(1);
 							loungealotBigPunchActor->waitUntilFlag4IsSet();
@@ -554,11 +554,12 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 									if (local_288 == 0) {
 										local_28 = 0;
 									} else {
-										LAB_800926a4:
+									LAB_800926a4:
 										local_28 = 2;
 									}
 								} else {
-									if (local_288 != 4) goto LAB_800926a4;
+									if (local_288 != 4)
+										goto LAB_800926a4;
 									local_28 = 2;
 								}
 							}
@@ -572,11 +573,12 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 									if (local_284 == 0) {
 										local_28 = 3;
 									} else {
-										LAB_80092754:
+									LAB_80092754:
 										local_28 = 4;
 									}
 								} else {
-									if (local_284 != 4) goto LAB_80092754;
+									if (local_284 != 4)
+										goto LAB_80092754;
 									local_28 = 5;
 								}
 							}
@@ -597,7 +599,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 					loungealotThumb->_flags = loungealotThumb->_flags | 0x1000;
 					_vm->_screen->setScreenShakeOffset(0, 0);
 					if (local_258 == 1) {
-//						playSoundFromTxtIndex(DAT_80063ad0);
+						//						playSoundFromTxtIndex(DAT_80063ad0);
 						loungealotHeadActor->updateSequence(9);
 						fun_80093aec_dialog(0x46BC, 0x14, 1);
 						do {
@@ -606,7 +608,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 						loungealotHeadActor->updateSequence(2);
 						loungealotRightArm->updateSequence(3);
 					} else {
-//						playSoundFromTxtIndex(DAT_80063ad4);
+						//						playSoundFromTxtIndex(DAT_80063ad4);
 						loungealotHeadActor->updateSequence(10);
 						fun_80093aec_dialog(0x4718, 0x14, 1);
 						loungealotRightArm->updateSequence(2);
@@ -664,13 +666,13 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 				local_278 = 0x40;
 			}
 			if (((local_278 == local_27a) || ((local_258 == 2 && (local_278 < local_27a)))) ||
-				((local_258 == 1 && (local_27a < local_278)))) {
+			    ((local_258 == 1 && (local_27a < local_278)))) {
 				if (local_258 == 1) {
-//					playSoundFromTxtIndex(DAT_80063ad8);
+					//					playSoundFromTxtIndex(DAT_80063ad8);
 					loungealotHeadActor->updateSequence(0xb);
 					fun_80093aec_dialog(0x475E, 0x14, 1);
 				} else {
-//					playSoundFromTxtIndex(DAT_80063adc);
+					//					playSoundFromTxtIndex(DAT_80063adc);
 					loungealotHeadActor->updateSequence(0xc);
 					fun_80093aec_dialog(0x4774, 0x14, 1);
 				}
@@ -696,7 +698,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	_vm->fadeToBlack();
 	_vm->_fontManager->clearText();
 	_vm->_sound->PauseCDMusic();
-//	DisableVSyncEvent();
+	//	DisableVSyncEvent();
 	_vm->_dragonINIResource->getRecord(0)->x = 0x91;
 	_vm->_dragonINIResource->getRecord(0)->y = 0x9b;
 	_vm->_dragonINIResource->getRecord(0x123)->x = 0xc3;
@@ -721,7 +723,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	loungealotThumb->clearFlag(ACTOR_FLAG_40);
 	uVar12->clearFlag(ACTOR_FLAG_40);
 	uVar13->clearFlag(ACTOR_FLAG_40);
-//	EnableVSyncEvent();
+	//	EnableVSyncEvent();
 	if (param_3 == 0) {
 		_vm->fadeToBlack();
 		_vm->_screen->clearAllFlatQuads();
@@ -739,7 +741,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 }
 
 void Minigame2::fun_80093aec_dialog(uint32 textId, int16 x, int16 y) {
-	uint16 auStack4024 [2000];
+	uint16 auStack4024[2000];
 	_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 	_vm->_talk->loadText(textId, auStack4024, 2000);
 	_vm->_talk->displayDialogAroundPoint(auStack4024, x, y, 0, 0, textId);
@@ -821,7 +823,7 @@ bool Minigame2::fun_80093248() {
 							if (_dat_80093cbc < _dat_80093cc0) {
 								_dat_80093cb0 = (bool)(_dat_80093cb8 != 0);
 							} else {
-								if ((_dat_80093cac == 0) &&  _vm->getRand(8) < 3) {
+								if ((_dat_80093cac == 0) && _vm->getRand(8) < 3) {
 									if (_vm->getRand(8) < 3) {
 										_dat_80093c70 = true;
 										_dat_80093c74 = 0;
@@ -879,8 +881,8 @@ bool Minigame2::fun_80093800() {
 	} else {
 		uVar2 = false;
 		if (_vm->isSquareButtonPressed() || _vm->isCrossButtonPressed() ||
-			 _vm->isCircleButtonPressed() ||
-			_vm->isTriangleButtonPressed()) {
+		    _vm->isCircleButtonPressed() ||
+		    _vm->isTriangleButtonPressed()) {
 			uVar2 = true;
 		}
 	}
@@ -891,7 +893,7 @@ bool Minigame2::fun_80093a30() {
 	bool uVar1;
 
 	if (_dat_80093ca0 == 0) {
-		uVar1 = (uint) _dat_80093c90 == (uint) _dat_80093cc8 / 3;
+		uVar1 = (uint)_dat_80093c90 == (uint)_dat_80093cc8 / 3;
 	} else {
 		uVar1 = _vm->isL1ButtonPressed(); // TODO || _vm->isL2ButtonPressed();
 	}

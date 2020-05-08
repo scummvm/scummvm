@@ -98,7 +98,7 @@ void MystCursorManager::hideCursor() {
 void MystCursorManager::setCursor(uint16 id) {
 	// Zero means empty cursor
 	if (id == 0) {
-		static const byte emptyCursor[4] = { 0, 0, 0, 0 };
+		static const byte emptyCursor[4] = {0, 0, 0, 0};
 		CursorMan.replaceCursor(&emptyCursor, 2, 2, 0, 0, 0);
 		return;
 	}
@@ -166,11 +166,11 @@ void MacCursorManager::setCursor(uint16 id) {
 	}
 
 	// Try a color cursor first
-	Common::SeekableReadStream *stream = _resFork->getResource(MKTAG('c','r','s','r'), id);
+	Common::SeekableReadStream *stream = _resFork->getResource(MKTAG('c', 'r', 's', 'r'), id);
 
 	// Fall back to monochrome cursors
 	if (!stream)
-		stream = _resFork->getResource(MKTAG('C','U','R','S'), id);
+		stream = _resFork->getResource(MKTAG('C', 'U', 'R', 'S'), id);
 
 	if (stream)
 		setMacCursor(stream);

@@ -22,10 +22,10 @@
 
 #include "kyra/gui/gui_lok.h"
 #include "kyra/engine/kyra_lok.h"
-#include "kyra/graphics/animator_lok.h"
-#include "kyra/text/text.h"
 #include "kyra/engine/timer.h"
 #include "kyra/engine/util.h"
+#include "kyra/graphics/animator_lok.h"
+#include "kyra/text/text.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -198,7 +198,7 @@ void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
 		uint8 screenPal[768];
 
 		if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-			_screen->getRealPalette(0, &screenPal[ 0]);
+			_screen->getRealPalette(0, &screenPal[0]);
 			_screen->getRealPalette(1, &screenPal[96]);
 
 			// Set the interface palette text color to white
@@ -451,8 +451,8 @@ void GUI_LoK::setGUILabels() {
 		_voiceTextString = _vm->_guiStrings[28 + offset];
 
 	_textSpeedString = _vm->_guiStrings[25 + offsetOptions];
-	_onString =  _vm->_guiStrings[20 + offsetOn];
-	_offString =  _vm->_guiStrings[21 + offset];
+	_onString = _vm->_guiStrings[20 + offsetOn];
+	_offString = _vm->_guiStrings[21 + offset];
 	_onCDString = _vm->_guiStrings[21];
 }
 
@@ -598,7 +598,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
-	_menu[2].menuNameString = _vm->_guiStrings[8]; // Select a position to save to:
+	_menu[2].menuNameString = _vm->_guiStrings[8];                                                          // Select a position to save to:
 	_specialSavegameString = _vm->_guiStrings[_vm->gameFlags().platform == Common::kPlatformPC98 ? 10 : 9]; // [ EMPTY SLOT ]
 	for (int i = 0; i < 5; i++)
 		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGame);
@@ -643,7 +643,7 @@ int GUI_LoK::loadGameMenu(Button *button) {
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
 	_specialSavegameString = _vm->_newGameString[0]; //[ START A NEW GAME ]
-	_menu[2].menuNameString = _vm->_guiStrings[7]; // Which game would you like to reload?
+	_menu[2].menuNameString = _vm->_guiStrings[7];   // Which game would you like to reload?
 	for (int i = 0; i < 5; i++)
 		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::loadGame);
 
@@ -925,7 +925,6 @@ void GUI_LoK::setupControls(Menu &menu) {
 		menu.item[1].itemString = _onString; //"On"
 	else
 		menu.item[1].itemString = _offString; //"Off"
-
 
 	switch (_vm->_configWalkspeed) {
 	case 0:

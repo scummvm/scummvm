@@ -33,8 +33,10 @@ class CPhonographLid : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool LockPhonographMsg(CLockPhonographMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 private:
 	bool _open;
+
 public:
 	CLASSDEF;
 	CPhonographLid() : CGameObject(), _open(false) {}

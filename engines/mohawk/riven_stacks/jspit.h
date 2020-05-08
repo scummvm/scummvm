@@ -78,7 +78,7 @@ public:
 
 	// External commands - Play the Whark Game
 	void xschool280_playwhark(const ArgumentArray &args);
-	void xjschool280_resetleft(const ArgumentArray &args); // DVD only
+	void xjschool280_resetleft(const ArgumentArray &args);  // DVD only
 	void xjschool280_resetright(const ArgumentArray &args); // DVD only
 
 	// External commands - Demo-specific

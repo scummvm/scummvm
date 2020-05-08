@@ -25,7 +25,6 @@
 
 namespace LastExpress {
 
-
 } // End of namespace LastExpress
 
 #endif // LASTEXPRESS_ENTITY_INTERN_H

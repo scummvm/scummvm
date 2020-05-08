@@ -20,19 +20,19 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/fonts/font_manager.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/effect.h"
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -145,7 +145,7 @@ MsgText *MsgLine::get_text_at_pos(uint16 pos) {
 uint16 MsgLine::get_display_width() {
 	uint16 len = 0;
 	Std::list<MsgText *>::iterator iter;
-	for (iter = text.begin(); iter != text.end() ; iter++) {
+	for (iter = text.begin(); iter != text.end(); iter++) {
 		MsgText *token = *iter;
 
 		len += token->font->getStringWidth(token->s.c_str());
@@ -194,21 +194,21 @@ MsgScroll::MsgScroll(Configuration *cfg, Font *f) : GUI_Widget(NULL, 0, 0, 0, 0)
 	init(cfg, f);
 
 	switch (game_type) {
-	case NUVIE_GAME_MD :
+	case NUVIE_GAME_MD:
 		scroll_width = MSGSCROLL_MD_WIDTH;
 		scroll_height = MSGSCROLL_MD_HEIGHT;
 		x = 184;
 		y = 128;
 		break;
 
-	case NUVIE_GAME_SE :
+	case NUVIE_GAME_SE:
 		scroll_width = MSGSCROLL_SE_WIDTH;
 		scroll_height = MSGSCROLL_SE_HEIGHT;
 		x = 184;
 		y = 128;
 		break;
-	case NUVIE_GAME_U6 :
-	default :
+	case NUVIE_GAME_U6:
+	default:
 		scroll_width = MSGSCROLL_U6_WIDTH;
 		scroll_height = MSGSCROLL_U6_HEIGHT;
 		x = 176;
@@ -246,14 +246,13 @@ MsgScroll::~MsgScroll() {
 	Std::list<MsgLine *>::iterator msg_line;
 	Std::list<MsgText *>::iterator msg_text;
 
-// delete the scroll buffer
+	// delete the scroll buffer
 	for (msg_line = msg_buf.begin(); msg_line != msg_buf.end(); msg_line++)
 		delete *msg_line;
 
-// delete the holding buffer
+	// delete the holding buffer
 	for (msg_text = holding_buffer.begin(); msg_text != holding_buffer.end(); msg_text++)
 		delete *msg_text;
-
 }
 
 bool MsgScroll::init(const char *player_name) {
@@ -292,8 +291,8 @@ int MsgScroll::print(Std::string format, ...) {
 
 	va_list ap;
 	int printed = 0;
-	static size_t bufsize = 128; // will be resized if needed
-	static char *buffer = (char *) malloc(bufsize); // static so we don't have to reallocate all the time.
+	static size_t bufsize = 128;                   // will be resized if needed
+	static char *buffer = (char *)malloc(bufsize); // static so we don't have to reallocate all the time.
 
 	while (1) {
 		if (buffer == NULL) {
@@ -302,7 +301,7 @@ int MsgScroll::print(Std::string format, ...) {
 			 * but if we're low on memory probably have worse issues...
 			 */
 			bufsize >>= 1;
-			buffer = (char *) malloc(bufsize); // no need to check now.
+			buffer = (char *)malloc(bufsize); // no need to check now.
 			/*
 			 * We don't retry, or if we need e.g. 4 bytes for the format and
 			 * there's only 3 available, we'd grow and shrink forever.
@@ -318,15 +317,15 @@ int MsgScroll::print(Std::string format, ...) {
 		if (printed < 0) {
 			DEBUG(0, LEVEL_ERROR, "MsgScroll::printf: vsnprintf returned < 0: either output error or glibc < 2.1\n");
 			free(buffer);
-			bufsize *= 2; // In case of an output error, we'll just keep doubling until the malloc fails.
-			buffer = (char *) malloc(bufsize); // if this fails, will be caught later on
+			bufsize *= 2;                     // In case of an output error, we'll just keep doubling until the malloc fails.
+			buffer = (char *)malloc(bufsize); // if this fails, will be caught later on
 			/* try again */
 			continue;
 		} else if ((size_t)printed >= bufsize) {
 			DEBUG(0, LEVEL_DEBUGGING, "MsgScroll::printf: needed buffer of %d bytes, only had %d bytes.\n", printed + 1, bufsize);
 			bufsize = printed + 1; //this should be enough
 			free(buffer);
-			buffer = (char *) malloc(bufsize); // if this fails, will be caught later on
+			buffer = (char *)malloc(bufsize); // if this fails, will be caught later on
 			/* try again */
 			continue;
 		}
@@ -351,7 +350,6 @@ void MsgScroll::display_fmt_string(const char *format, ...) {
 }
 
 void MsgScroll::display_string(Std::string s, uint16 length, uint8 lang_num) {
-
 }
 
 void MsgScroll::display_string(Std::string s, bool include_on_map_window) {
@@ -382,7 +380,6 @@ void MsgScroll::display_string(Std::string s, Font *f, uint8 color, bool include
 	holding_buffer.push_back(msg_text);
 
 	process_holding_buffer();
-
 }
 
 // process text tokens till we either run out or hit a page break.
@@ -421,7 +418,8 @@ MsgText *MsgScroll::holding_buffer_get_token() {
 	}
 
 	i = input->s.findFirstOf(" \t\n*<>`", 0);
-	if (i == 0) i++;
+	if (i == 0)
+		i++;
 
 	if (i == -1)
 		i = input->s.length();
@@ -455,30 +453,30 @@ bool MsgScroll::parse_token(MsgText *token) {
 		msg_line = msg_buf.back(); // retrieve the last line from the scroll buffer.
 
 	switch (token->s[0]) {
-	case '\n' :
+	case '\n':
 		add_new_line();
 		break;
 
-	case '\t' :
+	case '\t':
 		set_autobreak(false);
 		break;
 
-	case '`'  :
+	case '`':
 		capitalise_next_letter = true;
 		break;
 
-	case '<'  :
+	case '<':
 		set_font(NUVIE_FONT_GARG); // runic / gargoyle font
 		break;
 
-	case '>'  :
+	case '>':
 		if (is_garg_font()) {
 			set_font(NUVIE_FONT_NORMAL); // english font
 			break;
 		}
-	// Note fall through. ;-) We fall through if we haven't already seen a '<' char
+		// Note fall through. ;-) We fall through if we haven't already seen a '<' char
 
-	default   :
+	default:
 		if (msg_line) {
 			if (can_fit_token_on_msgline(msg_line, token) == false) { // the token is to big for the current line
 				msg_line = add_new_line();
@@ -505,8 +503,7 @@ bool MsgScroll::parse_token(MsgText *token) {
 
 			add_token(token);
 			if (msg_line->total_length == scroll_width // add another line for cursor.
-			        && (talking || Game::get_game()->get_event()->get_mode() == INPUT_MODE
-			            || Game::get_game()->get_event()->get_mode() == KEYINPUT_MODE)) {
+			    && (talking || Game::get_game()->get_event()->get_mode() == INPUT_MODE || Game::get_game()->get_event()->get_mode() == KEYINPUT_MODE)) {
 				msg_line = add_new_line();
 			}
 		}
@@ -592,9 +589,9 @@ bool MsgScroll::set_prompt(const char *new_prompt, Font *f) {
 
 void MsgScroll::display_prompt() {
 	if (!talking && !just_displayed_prompt) {
-//line_count = 0;
+		//line_count = 0;
 		display_string(prompt.s, prompt.font, MSGSCROLL_NO_MAP_DISPLAY);
-//line_count = 0;
+		//line_count = 0;
 
 		clear_page_break();
 		just_displayed_prompt = true;
@@ -654,7 +651,7 @@ void MsgScroll::set_input_mode(bool state, const char *allowed, bool can_escape,
 	}
 	Game::get_game()->get_gui()->lock_input((input_mode && !using_target_cursor) ? this : NULL);
 
-// send whatever input was collected to target that requested it
+	// send whatever input was collected to target that requested it
 	if (do_callback) {
 		CallBack *requestor = callback_target; // copy to temp
 		char *user_data = callback_user_data;
@@ -690,8 +687,7 @@ void MsgScroll::page_up() {
 
 void MsgScroll::page_down() {
 	uint8 i = 0;
-	for (; msg_buf.size() > scroll_height && i < scroll_height
-	        && display_pos < msg_buf.size() - scroll_height ; i++)
+	for (; msg_buf.size() > scroll_height && i < scroll_height && display_pos < msg_buf.size() - scroll_height; i++)
 		display_pos++;
 	if (i > 0)
 		scroll_updated = true;
@@ -751,31 +747,36 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 			key.keycode = Common::KEYCODE_PAGEDOWN;
 			break;
 		default:
-			if (keybinder->handle_always_available_keys(a)) return GUI_YUM;
+			if (keybinder->handle_always_available_keys(a))
+				return GUI_YUM;
 			break;
 		}
 	}
 	switch (key.keycode) {
-	case Common::KEYCODE_UP :
-		if (input_mode) break; //will select printable ascii
+	case Common::KEYCODE_UP:
+		if (input_mode)
+			break; //will select printable ascii
 		move_scroll_up();
 		return (GUI_YUM);
 
 	case Common::KEYCODE_DOWN:
-		if (input_mode) break; //will select printable ascii
+		if (input_mode)
+			break; //will select printable ascii
 		move_scroll_down();
 		return (GUI_YUM);
 	case Common::KEYCODE_PAGEUP:
 		if (Game::get_game()->is_new_style())
 			move_scroll_up();
-		else page_up();
+		else
+			page_up();
 		return (GUI_YUM);
 	case Common::KEYCODE_PAGEDOWN:
 		if (Game::get_game()->is_new_style())
 			move_scroll_down();
-		else page_down();
+		else
+			page_down();
 		return (GUI_YUM);
-	default :
+	default:
 		break;
 	}
 
@@ -812,8 +813,8 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 	case Common::KEYCODE_UP:
 		decrease_input_char();
 		break;
-	case Common::KEYCODE_LEFT :
-	case Common::KEYCODE_BACKSPACE :
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_BACKSPACE:
 		if (input_mode) {
 			if (input_char != 0)
 				input_char = 0;
@@ -821,9 +822,9 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 				input_buf_remove_char();
 		}
 		break;
-	case Common::KEYCODE_LSHIFT :
+	case Common::KEYCODE_LSHIFT:
 		return (GUI_YUM);
-	case Common::KEYCODE_RSHIFT :
+	case Common::KEYCODE_RSHIFT:
 		return (GUI_YUM);
 	default: // alphanumeric characters
 		if (input_mode && is_printable) {
@@ -843,7 +844,6 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 
 	return (GUI_YUM);
 }
-
 
 GUI_status MsgScroll::MouseWheel(sint32 x, sint32 y) {
 	if (page_break) { // any click == scroll-to-end
@@ -882,8 +882,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 		if (input_mode) {
 			token_str = get_token_string_at_pos(x, y);
 			if (permit_input != NULL) {
-				if (strchr(permit_input, token_str[0])
-				        || strchr(permit_input, tolower(token_str[0]))) {
+				if (strchr(permit_input, token_str[0]) || strchr(permit_input, tolower(token_str[0]))) {
 					input_buf_add_char(token_str[0]);
 					set_input_mode(false);
 				}
@@ -919,7 +918,7 @@ Std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 	buf_y = (y - area.top) / 8;
 
 	if (buf_x < 0 || buf_x >= scroll_width || // click not in MsgScroll area.
-	        buf_y < 0 || buf_y >= scroll_height)
+	    buf_y < 0 || buf_y >= scroll_height)
 		return "";
 
 	if (msg_buf.size() <= scroll_height) {
@@ -949,8 +948,6 @@ void MsgScroll::Display(bool full_redraw) {
 	uint16 i;
 	Std::list<MsgLine *>::iterator iter;
 	MsgLine *msg_line = NULL;
-
-
 
 	if (scroll_updated || full_redraw || Game::get_game()->is_original_plus_full_map()) {
 		screen->fill(bg_color, area.left, area.top, area.width(), area.height()); //clear whole scroll
@@ -984,7 +981,6 @@ void MsgScroll::Display(bool full_redraw) {
 	if (show_cursor && (msg_buf.size() <= scroll_height || display_pos == msg_buf.size() - scroll_height)) {
 		drawCursor(area.left + left_margin + 8 * cursor_x, area.top + cursor_y * 8);
 	}
-
 }
 
 inline void MsgScroll::drawLine(Screen *theScreen, MsgLine *msg_line, uint16 line_y) {
@@ -992,7 +988,7 @@ inline void MsgScroll::drawLine(Screen *theScreen, MsgLine *msg_line, uint16 lin
 	Std::list<MsgText *>::iterator iter;
 	uint16 total_length = 0;
 
-	for (iter = msg_line->text.begin(); iter != msg_line->text.end() ; iter++) {
+	for (iter = msg_line->text.begin(); iter != msg_line->text.end(); iter++) {
 		token = *iter;
 		token->font->drawString(theScreen, token->s.c_str(), area.left + left_margin + total_length * 8, area.top + line_y * 8, token->color, font_highlight_color); //FIX for hardcoded font height
 		total_length += token->s.length();
@@ -1012,7 +1008,7 @@ void MsgScroll::drawCursor(uint16 x, uint16 y) {
 		return;
 	}
 	if (page_break) {
-		if (cursor_wait <= 2) // flash arrow
+		if (cursor_wait <= 2)                              // flash arrow
 			font->drawChar(screen, 1, x, y, cursor_color); // down arrow
 	} else
 		font->drawChar(screen, cursor_char + 5, x, y, cursor_color); //spinning ankh
@@ -1024,7 +1020,6 @@ void MsgScroll::drawCursor(uint16 x, uint16 y) {
 	} else
 		cursor_wait++;
 }
-
 
 void MsgScroll::set_page_break() {
 	line_count = 1;
@@ -1045,7 +1040,7 @@ bool MsgScroll::input_buf_add_char(char c) {
 	input_buf.push_back(c);
 	scroll_updated = true;
 
-// Add char to scroll buffer
+	// Add char to scroll buffer
 
 	token.s.assign(&c, 1);
 	token.font = font;
@@ -1076,7 +1071,7 @@ bool MsgScroll::has_input() {
 }
 
 Std::string MsgScroll::get_input() {
-// MsgScroll sets input_mode to false when it receives Common::KEYCODE_ENTER
+	// MsgScroll sets input_mode to false when it receives Common::KEYCODE_ENTER
 	Std::string s;
 
 	if (input_mode == false) {

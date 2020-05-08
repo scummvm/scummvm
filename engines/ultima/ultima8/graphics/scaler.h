@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_SCALER_H
 #define ULTIMA8_GRAPHICS_SCALER_H
 
-#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -32,6 +32,7 @@ namespace Ultima8 {
 /// Base Scaler class
 class Scaler {
 	friend class hqScaler;
+
 protected:
 	// Basic scaler function template
 	typedef bool (*ScalerFunc)(Texture *tex, int32 sx, int32 sy, int32 sw, int32 sh,
@@ -40,23 +41,24 @@ protected:
 	//
 	// Basic scaler functions (filled in by the scalers constructor)
 	//
-	ScalerFunc  Scale16Nat;
-	ScalerFunc  Scale16Sta;
+	ScalerFunc Scale16Nat;
+	ScalerFunc Scale16Sta;
 
-	ScalerFunc  Scale32Nat;
-	ScalerFunc  Scale32Sta;
-	ScalerFunc  Scale32_A888;
-	ScalerFunc  Scale32_888A;
+	ScalerFunc Scale32Nat;
+	ScalerFunc Scale32Sta;
+	ScalerFunc Scale32_A888;
+	ScalerFunc Scale32_888A;
 
 	Scaler() : Scale16Nat(0), Scale16Sta(0), Scale32Nat(0), Scale32Sta(0),
-		Scale32_A888(0), Scale32_888A(0) {}
+	           Scale32_A888(0), Scale32_888A(0) {}
+
 public:
 	//
 	// Scaler Capabilites
 	//
 
-	virtual uint32    ScaleBits() const = 0;          //< bits for supported integer scaling
-	virtual bool      ScaleArbitrary() const = 0;     //< supports arbitrary scaling of any degree
+	virtual uint32 ScaleBits() const = 0;    //< bits for supported integer scaling
+	virtual bool ScaleArbitrary() const = 0; //< supports arbitrary scaling of any degree
 
 	//
 	// Maybe one day... for now we just grab everything from RenderSurface
@@ -72,40 +74,49 @@ public:
 			int y_factor = dh / sh;
 
 			// Not integer
-			if ((x_factor * sw) != dw || (y_factor * sh) != dh) return false;
+			if ((x_factor * sw) != dw || (y_factor * sh) != dh)
+				return false;
 
 			// Don't support this
-			if (!(scale_bits & (1 << x_factor))) return false;
+			if (!(scale_bits & (1 << x_factor)))
+				return false;
 
 			// Don't support this
-			if (!(scale_bits & (1 << y_factor))) return false;
+			if (!(scale_bits & (1 << y_factor)))
+				return false;
 		}
 
 		if (RenderSurface::_format.bytesPerPixel == 4) {
 			if (texture->_format == TEX_FMT_NATIVE || (texture->_format == TEX_FMT_STANDARD &&
-			        RenderSurface::_format.aMask == TEX32_A_MASK && RenderSurface::_format.rMask == TEX32_R_MASK &&
-			        RenderSurface::_format.gMask == TEX32_G_MASK && RenderSurface::_format.bMask == TEX32_B_MASK)) {
+			                                           RenderSurface::_format.aMask == TEX32_A_MASK && RenderSurface::_format.rMask == TEX32_R_MASK &&
+			                                           RenderSurface::_format.gMask == TEX32_G_MASK && RenderSurface::_format.bMask == TEX32_B_MASK)) {
 				if (RenderSurface::_format.aMask == 0xFF000000) {
-					if (!Scale32_A888) return false;
+					if (!Scale32_A888)
+						return false;
 					return Scale32_A888(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 				} else if (RenderSurface::_format.aMask == 0x000000FF) {
-					if (!Scale32_888A) return false;
+					if (!Scale32_888A)
+						return false;
 					return Scale32_888A(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 				} else {
-					if (!Scale32Nat) return false;
+					if (!Scale32Nat)
+						return false;
 					return Scale32Nat(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 				}
 			} else if (texture->_format == TEX_FMT_STANDARD) {
-				if (!Scale32Sta) return false;
+				if (!Scale32Sta)
+					return false;
 				return Scale32Sta(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 			}
 		}
 		if (RenderSurface::_format.bytesPerPixel == 2) {
 			if (texture->_format == TEX_FMT_NATIVE) {
-				if (!Scale16Nat) return false;
+				if (!Scale16Nat)
+					return false;
 				return Scale16Nat(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 			} else if (texture->_format == TEX_FMT_STANDARD) {
-				if (!Scale16Sta) return false;
+				if (!Scale16Sta)
+					return false;
 				return Scale16Sta(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clamp_src);
 			}
 		}
@@ -113,7 +124,7 @@ public:
 		return false;
 	}
 
-	virtual ~Scaler() { }
+	virtual ~Scaler() {}
 };
 
 } // End of namespace Ultima8

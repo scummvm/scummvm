@@ -25,9 +25,9 @@
 
 #include "mohawk/graphics.h"
 
+#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "common/array.h"
 #include "graphics/surface.h"
 
 namespace Mohawk {
@@ -55,7 +55,7 @@ enum BitmapFormat {
 	kPackXDec = 0x0f00,
 	kFlagMASK = 0xf000,
 	kFlag16_80X86 = 0x1000, // 16 bit pixel data has been converted to 80X86 format
-	kFlag24_MAC = 0x1000 // 24 bit pixel data has been converted to MAC 32 bit format
+	kFlag24_MAC = 0x1000    // 24 bit pixel data has been converted to MAC 32 bit format
 };
 
 enum OldBitmapFormat {
@@ -73,7 +73,7 @@ struct BitmapHeader {
 		uint16 tableSize;
 		byte rgbBits;
 		byte colorCount;
-		byte* palette;   // In 8bpp only
+		byte *palette; // In 8bpp only
 	} colorTable;
 };
 

@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 #include "common/timer.h"
 
 #include "graphics/palette.h"
@@ -211,9 +211,9 @@ void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
 	int16 dstpitch = dest->_pitch;
 
 	CLBlitter_CopyView2ViewSimpleSize(view->_bufferPtr + view->_normal._srcTop * srcpitch + view->_normal._srcLeft,
-									  view->_normal._width, srcpitch, view->_normal._height,
-									  dest->_bufferPtr + (dest->_normal._dstTop + view->_normal._dstTop) * dstpitch + dest->_normal._dstLeft + view->_normal._dstLeft,
-									  dest->_normal._width, dstpitch, dest->_normal._height);
+	                                  view->_normal._width, srcpitch, view->_normal._height,
+	                                  dest->_bufferPtr + (dest->_normal._dstTop + view->_normal._dstTop) * dstpitch + dest->_normal._dstLeft + view->_normal._dstLeft,
+	                                  dest->_normal._width, dstpitch, dest->_normal._height);
 }
 
 void CLBlitter_CopyView2Screen(View *view) {

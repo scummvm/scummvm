@@ -61,7 +61,6 @@ public:
 	const char *getDescription() const override {
 		return "Webserver tests";
 	}
-
 };
 
 } // End of namespace Testbed

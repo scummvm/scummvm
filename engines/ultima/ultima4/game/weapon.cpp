@@ -78,29 +78,19 @@ void Weapons::loadConf() {
 /*-------------------------------------------------------------------*/
 
 Weapon::Weapon(WeaponType weaponType, const ConfigElement &conf)
-	: _type(weaponType)
-	, _name(conf.getString("name"))
-	, _abbr(conf.getString("abbr"))
-	, _canUse(0xFF)
-	, _range(0)
-	, _damage(conf.getInt("damage"))
-	, _hitTile("hit_flash")
-	, _missTile("miss_flash")
-	, _leaveTile("")
-	, _flags(0) {
+    : _type(weaponType), _name(conf.getString("name")), _abbr(conf.getString("abbr")), _canUse(0xFF), _range(0), _damage(conf.getInt("damage")), _hitTile("hit_flash"), _missTile("miss_flash"), _leaveTile(""), _flags(0) {
 	static const struct {
 		const char *name;
 		uint flag;
 	} booleanAttributes[] = {
-		{ "lose", WEAP_LOSE },
-		{ "losewhenranged", WEAP_LOSEWHENRANGED },
-		{ "choosedistance", WEAP_CHOOSEDISTANCE },
-		{ "alwayshits", WEAP_ALWAYSHITS },
-		{ "magic", WEAP_MAGIC },
-		{ "attackthroughobjects", WEAP_ATTACKTHROUGHOBJECTS },
-		{ "returns", WEAP_RETURNS },
-		{ "dontshowtravel", WEAP_DONTSHOWTRAVEL }
-	};
+	    {"lose", WEAP_LOSE},
+	    {"losewhenranged", WEAP_LOSEWHENRANGED},
+	    {"choosedistance", WEAP_CHOOSEDISTANCE},
+	    {"alwayshits", WEAP_ALWAYSHITS},
+	    {"magic", WEAP_MAGIC},
+	    {"attackthroughobjects", WEAP_ATTACKTHROUGHOBJECTS},
+	    {"returns", WEAP_RETURNS},
+	    {"dontshowtravel", WEAP_DONTSHOWTRAVEL}};
 
 	/* Get the range of the weapon, whether it is absolute or normal range */
 	Common::String range = conf.getString("range");
@@ -149,7 +139,7 @@ Weapon::Weapon(WeaponType weaponType, const ConfigElement &conf)
 			mask = 0xFF;
 		if (mask == 0) {
 			error("malformed weapons.xml file: constraint has unknown class %s",
-			           i->getString("class").c_str());
+			      i->getString("class").c_str());
 		}
 		if (i->getBool("canuse"))
 			_canUse |= mask;

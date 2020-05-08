@@ -36,6 +36,7 @@ class Font {
 private:
 	const byte *_data;
 	size_t _startingChar, _endingChar;
+
 public:
 	Font(const byte *data, size_t startingChar = 0, size_t charCount = 256);
 
@@ -43,13 +44,13 @@ public:
 	 * Write out a string
 	 */
 	int writeString(Graphics::ManagedSurface &surface, const Common::String &msg,
-		Point &pt, byte color, byte bgColor = 0);
+	                Point &pt, byte color, byte bgColor = 0);
 
 	/**
 	 * Draw a character
 	 */
 	void writeChar(Graphics::ManagedSurface &surface, unsigned char c, Point &pt,
-		byte color, byte bgColor = 0);
+	               byte color, byte bgColor = 0);
 
 	/**
 	 * Return the width of a character

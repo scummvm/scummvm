@@ -40,17 +40,15 @@ enum AchievementsPlatform {
 	UNK_ACHIEVEMENTS = -1
 };
 
-
 /**
  * Per-game achievements information structure item.
  */
 struct AchievementDescription {
-	const char *id;            // achievement internal id, e.g. "ACHIEVEMENT_TIMING"
-	bool isHidden;             // achievement is hidden
-	const char *title;         // achievement displayed text, e.g. "Marathon Runner"
-	const char *comment;       // optional achievement hint / comment, e.g. "Finish the game in less than 4 hours"
+	const char *id;      // achievement internal id, e.g. "ACHIEVEMENT_TIMING"
+	bool isHidden;       // achievement is hidden
+	const char *title;   // achievement displayed text, e.g. "Marathon Runner"
+	const char *comment; // optional achievement hint / comment, e.g. "Finish the game in less than 4 hours"
 };
-
 
 /**
  * Per-game achievements information structure item.
@@ -60,9 +58,8 @@ struct AchievementsInfo {
 	Common::String appId;                               // achievements application ID of given platform
 	Common::Array<AchievementDescription> descriptions; // descriptions of all game achievements
 
-	AchievementsInfo() {platform = Common::UNK_ACHIEVEMENTS;}
+	AchievementsInfo() { platform = Common::UNK_ACHIEVEMENTS; }
 };
-
 
 class AchievementsManager : public Singleton<AchievementsManager> {
 public:
@@ -95,7 +92,6 @@ private:
 
 /** Shortcut for accessing the achievements manager. */
 #define AchMan Common::AchievementsManager::instance()
-
 
 } // End of namespace Common
 

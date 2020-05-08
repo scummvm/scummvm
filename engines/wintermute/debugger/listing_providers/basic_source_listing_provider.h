@@ -23,15 +23,16 @@
 #ifndef BASIC_SOURCE_LISTING_PROVIDER_H_
 #define BASIC_SOURCE_LISTING_PROVIDER_H_
 
-#include "engines/wintermute/debugger/listing_provider.h"
-#include "source_listing_provider.h"
-#include "source_listing.h"
 #include "common/fs.h"
+#include "engines/wintermute/debugger/listing_provider.h"
+#include "source_listing.h"
+#include "source_listing_provider.h"
 
 namespace Wintermute {
 
 class BasicSourceListingProvider : public SourceListingProvider {
 	Common::FSDirectory *_fsDirectory;
+
 public:
 	BasicSourceListingProvider();
 	~BasicSourceListingProvider() override;
@@ -40,5 +41,5 @@ public:
 	Common::String getPath() const override;
 };
 
-}
+} // namespace Wintermute
 #endif /* BASIC_SOURCE_LISTING_PROVIDER_H_ */

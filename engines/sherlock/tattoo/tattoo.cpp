@@ -20,22 +20,21 @@
  *
  */
 
+#include "sherlock/tattoo/tattoo.h"
 #include "common/config-manager.h"
 #include "engines/util.h"
-#include "sherlock/tattoo/tattoo.h"
+#include "sherlock/people.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_resources.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/widget_base.h"
-#include "sherlock/people.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
-TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
-		SherlockEngine(syst, gameDesc), _darts(this), _foolscapWidget(this) {
+TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) : SherlockEngine(syst, gameDesc), _darts(this), _foolscapWidget(this) {
 	_runningProlog = false;
 	_fastMode = false;
 	_allowFastMode = true;
@@ -72,8 +71,8 @@ void TattooEngine::initialize() {
 		peopleNamePtr = fixedText.getText(PEOPLE_DATA[idx].fixedTextId);
 
 		_people->_characters.push_back(PersonData(
-			peopleNamePtr,
-			PEOPLE_DATA[idx].portrait, nullptr, nullptr));
+		    peopleNamePtr,
+		    PEOPLE_DATA[idx].portrait, nullptr, nullptr));
 	}
 
 	// Load the inventory

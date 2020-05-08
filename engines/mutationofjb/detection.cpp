@@ -23,67 +23,56 @@
 #include "mutationofjb/mutationofjb.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
+#include "common/system.h"
 
 #include "engines/advancedDetector.h"
 
 static const PlainGameDescriptor mutationofjbGames[] = {
-	{"mutationofjb", "Mutation of J.B."},
-	{nullptr, nullptr}
-};
+    {"mutationofjb", "Mutation of J.B."},
+    {nullptr, nullptr}};
 
 static const ADGameDescription mutationofjbDescriptions[] = {
-	{
-		"mutationofjb",
-		"",
-		{
-			{"jb.ex_", 0, "934164b09c72fa7167811f448ee0a426", 150048},
-			{"startup.dat", 0, nullptr, -1},
-			{"startupb.dat", 0, nullptr, -1},
-			{"global.atn", 0, nullptr, -1},
-			{"piggy.apk", 0, nullptr, -1},
-			{"foogl.apk", 0, nullptr, -1},
-			{"tosay.ger", 0, nullptr, -1},
-			{"response.ger", 0, nullptr, -1},
-			{"font1.aft", 0, nullptr, -1},
-			{"sysfnt.aft", 0, nullptr, -1},
-			{nullptr, 0, nullptr, 0}
-		},
-		Common::SK_SVK,
-		Common::kPlatformDOS,
-		ADGF_CD,
-		GUIO1(GUIO_NOMIDI)
-	},
-	{
-		"mutationofjb",
-		"",
-		{
-			{"jb.ex_", 0, "8833f22f1763d05eeb909e8626cdec7b", 150800},
-			{"startup.dat", 0, nullptr, -1},
-			{"startupb.dat", 0, nullptr, -1},
-			{"global.atn", 0, nullptr, -1},
-			{"piggy.apk", 0, nullptr, -1},
-			{"foogl.apk", 0, nullptr, -1},
-			{"tosay.ger", 0, nullptr, -1},
-			{"response.ger", 0, nullptr, -1},
-			{"font1.aft", 0, nullptr, -1},
-			{"sysfnt.aft", 0, nullptr, -1},
-			{nullptr, 0, nullptr, 0}
-		},
-		Common::DE_DEU,
-		Common::kPlatformDOS,
-		ADGF_CD,
-		GUIO1(GUIO_NOMIDI)
-	},
-	AD_TABLE_END_MARKER
-};
+    {"mutationofjb",
+     "",
+     {{"jb.ex_", 0, "934164b09c72fa7167811f448ee0a426", 150048},
+      {"startup.dat", 0, nullptr, -1},
+      {"startupb.dat", 0, nullptr, -1},
+      {"global.atn", 0, nullptr, -1},
+      {"piggy.apk", 0, nullptr, -1},
+      {"foogl.apk", 0, nullptr, -1},
+      {"tosay.ger", 0, nullptr, -1},
+      {"response.ger", 0, nullptr, -1},
+      {"font1.aft", 0, nullptr, -1},
+      {"sysfnt.aft", 0, nullptr, -1},
+      {nullptr, 0, nullptr, 0}},
+     Common::SK_SVK,
+     Common::kPlatformDOS,
+     ADGF_CD,
+     GUIO1(GUIO_NOMIDI)},
+    {"mutationofjb",
+     "",
+     {{"jb.ex_", 0, "8833f22f1763d05eeb909e8626cdec7b", 150800},
+      {"startup.dat", 0, nullptr, -1},
+      {"startupb.dat", 0, nullptr, -1},
+      {"global.atn", 0, nullptr, -1},
+      {"piggy.apk", 0, nullptr, -1},
+      {"foogl.apk", 0, nullptr, -1},
+      {"tosay.ger", 0, nullptr, -1},
+      {"response.ger", 0, nullptr, -1},
+      {"font1.aft", 0, nullptr, -1},
+      {"sysfnt.aft", 0, nullptr, -1},
+      {nullptr, 0, nullptr, 0}},
+     Common::DE_DEU,
+     Common::kPlatformDOS,
+     ADGF_CD,
+     GUIO1(GUIO_NOMIDI)},
+    AD_TABLE_END_MARKER};
 
 static const char *const mutationofjbDirectoryGlobs[] = {
-	"data",
-	nullptr
-};
+    "data",
+    nullptr};
 
 class MutationOfJBMetaEngine : public AdvancedMetaEngine {
 public:
@@ -152,7 +141,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(MUTATIONOFJB)
-	REGISTER_PLUGIN_DYNAMIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngine);
+REGISTER_PLUGIN_STATIC(MUTATIONOFJB, PLUGIN_TYPE_ENGINE, MutationOfJBMetaEngine);
 #endif

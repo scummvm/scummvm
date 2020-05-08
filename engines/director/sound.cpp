@@ -23,11 +23,11 @@
 #include "common/file.h"
 #include "common/substream.h"
 
-#include "audio/decoders/wave.h"
+#include "audio/decoders/aiff.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/wave.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
-#include "audio/decoders/aiff.h"
 
 #include "director/director.h"
 #include "director/sound.h"
@@ -50,7 +50,7 @@ DirectorSound::DirectorSound() {
 	_speaker = new Audio::PCSpeaker();
 	_pcSpeakerHandle = new Audio::SoundHandle();
 	_mixer->playStream(Audio::Mixer::kSFXSoundType,
-		_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
+	                   _pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
 }
 
 DirectorSound::~DirectorSound() {
@@ -77,10 +77,10 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 	delete file;
 
 	if (magic1 == MKTAG('R', 'I', 'F', 'F') &&
-		magic2 == MKTAG('W', 'A', 'V', 'E')) {
+	    magic2 == MKTAG('W', 'A', 'V', 'E')) {
 		playWAV(filename, soundChannel);
 	} else if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
-				magic2 == MKTAG('A', 'I', 'F', 'F')) {
+	           magic2 == MKTAG('A', 'I', 'F', 'F')) {
 		playAIFF(filename, soundChannel);
 	} else {
 		warning("Unknown file type for %s", filename.c_str());
@@ -255,7 +255,5 @@ Audio::SeekableAudioStream *SNDDecoder::getAudioStream() {
 Audio::AudioStream *SNDDecoder::getLoopingAudioStream() {
 	return new Audio::LoopingAudioStream(Audio::makeRawStream(_data, _size, _rate, _flags, DisposeAfterUse::NO), 0);
 }
-
-
 
 } // End of namespace Director

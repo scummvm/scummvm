@@ -20,20 +20,20 @@
  *
  */
 #include "dragons/cutscene.h"
-#include "dragons/dragons.h"
 #include "dragons/actor.h"
 #include "dragons/actorresource.h"
 #include "dragons/background.h"
-#include "dragons/inventory.h"
 #include "dragons/cursor.h"
 #include "dragons/dragonini.h"
+#include "dragons/dragons.h"
+#include "dragons/inventory.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
 #include "dragons/talk.h"
 
 namespace Dragons {
 
-CutScene::CutScene(DragonsEngine *vm): _vm(vm) {
+CutScene::CutScene(DragonsEngine *vm) : _vm(vm) {
 	loadPalettes();
 }
 
@@ -59,21 +59,21 @@ void CutScene::scene1() {
 	_vm->_inventory->setActorFlag400();
 	_vm->_cursor->setActorFlag400();
 
-//	scr_tilemap1_w = 0x28;
-//	_actor_8006a3f0 = _actor_8006a3ec;
+	//	scr_tilemap1_w = 0x28;
+	//	_actor_8006a3f0 = _actor_8006a3ec;
 
-//	load_actor_file(0x81);
-//	load_actor_file(0x7d);
-//	load_actor_file(0x7e);
-//	load_actor_file(0x8f);
-//	load_actor_file(0xaa);
+	//	load_actor_file(0x81);
+	//	load_actor_file(0x7d);
+	//	load_actor_file(0x7e);
+	//	load_actor_file(0x8f);
+	//	load_actor_file(0xaa);
 	_vm->setFlags(ENGINE_FLAG_20000);
 	wideAngleEveryoneAtTable();
 	_vm->waitForFrames(0x5a);
 	closeUpShotOnActor(0xd3, 0, 0x233, 0x17a); //close up on king
 	//playSoundFromTxtIndex(0x4e26);
 
-	while (1) {	// In order to avoid gotos
+	while (1) { // In order to avoid gotos
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 4, 0, 0x4e26, 0x2e01) == 2)
 			break;
 
@@ -92,12 +92,12 @@ void CutScene::scene1() {
 			break;
 
 		fadeScreenAndResetActor(_actor_80072de8);
-		wideAngleEveryoneAtTable();  // shot of whole room
+		wideAngleEveryoneAtTable(); // shot of whole room
 
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x5000, 0x2e01) == 2 ||
-			_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_800830c0, 0x1d, 0x1c, 0x5074, 0x501) == 2 ||
-			_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df0, 9, 5, 0x511c, 0xc01) == 2 ||
-			_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_800830c0, 0x1d, 0x1c, 0x5138, 0x501) == 2)
+		    _vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_800830c0, 0x1d, 0x1c, 0x5074, 0x501) == 2 ||
+		    _vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df0, 9, 5, 0x511c, 0xc01) == 2 ||
+		    _vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_800830c0, 0x1d, 0x1c, 0x5138, 0x501) == 2)
 			break;
 
 		closeUpShotOnActor(0xd7, 0, 0x312, 0x260); //close up on flame
@@ -353,7 +353,7 @@ void CutScene::scene1() {
 		_vm->_talk->displayDialogAroundPoint(dialog, 0x14, 6, 0xc01, 0, 0x5ecc);
 		_vm->waitForFrames(0x3c);
 
-		break;	// we do not need to loop in fact
+		break; // we do not need to loop in fact
 	}
 
 	_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
@@ -371,7 +371,6 @@ void CutScene::scene1() {
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
 	cursorInventoryClearFlag400();
 	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
-
 }
 
 //fadeScreenAndResetActor
@@ -380,7 +379,6 @@ void CutScene::fadeScreenAndResetActor(Actor *actor) {
 	//DisableVSyncEvent();
 	actor->reset_maybe();
 	//EnableVSyncEvent();
-
 }
 
 void CutScene::closeUpShotOnActor(uint16 resourceId, uint16 sequenceId, int16 x, uint32 param_4) {
@@ -460,7 +458,6 @@ void CutScene::fun_8003d388() {
 	_vm->waitForFramesAllowSkip(0xe);
 }
 
-
 void CutScene::closeUpKnightsAtTable() {
 	_vm->fadeToBlack();
 	_vm->_actorManager->clearActorFlags(2);
@@ -472,7 +469,6 @@ void CutScene::closeUpKnightsAtTable() {
 	changeBackgroundPosition(1, 0);
 	_vm->waitForFrames(0xf);
 	_vm->fadeFromBlack();
-
 }
 
 uint16 CutScene::fun_8003dab8(uint32 textId, uint16 x, uint16 y, uint16 param_4, int16 param_5) {
@@ -577,7 +573,7 @@ void CutScene::diamondScene() {
 					if (!actorId->waitUntilFlag4IsSetAllowSkip()) {
 						actorId->updateSequence(5);
 						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_01, 0x10, 2, 0x42ac2, 0x3c01) != 2 &&
-							_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02, 1, 0, 0x42b56, 0x2601) != 2) {
+						    _vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02, 1, 0, 0x42b56, 0x2601) != 2) {
 							_vm->waitForFramesAllowSkip(0x3b);
 						}
 					}
@@ -604,19 +600,19 @@ void CutScene::knightsSavedBackAtCastle() {
 	_vm->_inventory->setActorFlag400();
 	_vm->_cursor->setActorFlag400();
 
-//	scr_tilemap1_w = 0x28;
-//	_actor_8006a3f0 = _actor_8006a3ec;
-//	load_actor_file(0x81);
-//	load_actor_file(0x7d);
-//	load_actor_file(0x7e);
-//	load_actor_file(0x8f);
-//	load_actor_file(0xaa);
+	//	scr_tilemap1_w = 0x28;
+	//	_actor_8006a3f0 = _actor_8006a3ec;
+	//	load_actor_file(0x81);
+	//	load_actor_file(0x7d);
+	//	load_actor_file(0x7e);
+	//	load_actor_file(0x8f);
+	//	load_actor_file(0xaa);
 
 	_vm->setFlags(ENGINE_FLAG_20000);
 	closeUpKnightsAtTable();
-//	playSoundFromTxtIndex(0x7854);
+	//	playSoundFromTxtIndex(0x7854);
 
-	while (1) {	// In order to avoid gotos
+	while (1) { // In order to avoid gotos
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 10, 4, 0x7854, 0xc01) == 2)
 			break;
 
@@ -661,7 +657,7 @@ void CutScene::knightsSavedBackAtCastle() {
 		fadeScreenAndResetActor(_actor_80072de8);
 		wideAngleEveryoneAtTable();
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df0, 9, 5, 0x7c20, 0xc01) == 2 ||
-			_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0x17, 0x16, 0x7c9c, 0x701) == 2)
+		    _vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0x17, 0x16, 0x7c9c, 0x701) == 2)
 			break;
 
 		_vm->playOrStopSound(0x800f);
@@ -698,7 +694,7 @@ void CutScene::knightsSavedBackAtCastle() {
 	}
 	_vm->fadeToBlack();
 	//DisableVSyncEvent();
-//	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
+	//	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
 	//EnableVSyncEvent();
 	if (isFlag0x10Set) {
 		_vm->setFlags(ENGINE_FLAG_10);
@@ -733,13 +729,13 @@ void CutScene::flameReturnsCutScene() {
 	_vm->clearFlags(ENGINE_FLAG_10);
 	_vm->_cursor->setActorFlag400();
 	_vm->_inventory->setActorFlag400();
-//	scr_tilemap1_w = 0x28;
-//	_actor_8006a3f0 = _actor_8006a3ec;
-//	load_actor_file(0x81);
-//	load_actor_file(0x7d);
-//	load_actor_file(0x7e);
-//	load_actor_file(0x8f);
-//	load_actor_file(0xaa);
+	//	scr_tilemap1_w = 0x28;
+	//	_actor_8006a3f0 = _actor_8006a3ec;
+	//	load_actor_file(0x81);
+	//	load_actor_file(0x7d);
+	//	load_actor_file(0x7e);
+	//	load_actor_file(0x8f);
+	//	load_actor_file(0xaa);
 	_actor_80063514 = (_actor_80063514 & 0xfffe) | 0x600;
 	fun_8003d388();
 	_actor_80072de8->updateSequence(0x1f);
@@ -754,7 +750,7 @@ void CutScene::flameReturnsCutScene() {
 	_vm->fadeFromBlack();
 	_vm->setFlags(ENGINE_FLAG_20000);
 
-	while (1) {	// In order to avoid gotos
+	while (1) { // In order to avoid gotos
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8ab2, 0x2e01) == 2)
 			break;
 
@@ -771,7 +767,7 @@ void CutScene::flameReturnsCutScene() {
 		_flameActor->waitForWalkToFinish();
 
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_flameActor, 0x1a, 0x19, 0x8bb6, 0x3e01) == 2 ||
-			_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8bd8, 0x2e01) == 2)
+		    _vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8bd8, 0x2e01) == 2)
 			break;
 
 		closeUpShotOnActor(0xd8, 0, 0xfd, 0x60);
@@ -799,9 +795,9 @@ void CutScene::flameReturnsCutScene() {
 		break; // We do not want to loop
 	}
 	_vm->fadeToBlack();
-//	DisableVSyncEvent();
-//	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
-//	EnableVSyncEvent();
+	//	DisableVSyncEvent();
+	//	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
+	//	EnableVSyncEvent();
 	_vm->clearFlags(ENGINE_FLAG_20000);
 	if (engineFlag10Set) {
 		_vm->setFlags(ENGINE_FLAG_10);
@@ -826,21 +822,21 @@ void CutScene::knightsSavedAgain() {
 	_vm->_cursor->setActorFlag400();
 	_vm->_inventory->setActorFlag400();
 
-//	scr_tilemap1_w = 0x28;
-//TODO what is this?	_actor_8006a3f0 = _actor_8006a3ec;
+	//	scr_tilemap1_w = 0x28;
+	//TODO what is this?	_actor_8006a3f0 = _actor_8006a3ec;
 
-//	load_actor_file(0x81);
-//	load_actor_file(0x7d);
-//	load_actor_file(0x7e);
-//	load_actor_file(0x8f);
-//	load_actor_file(0xaa);
+	//	load_actor_file(0x81);
+	//	load_actor_file(0x7d);
+	//	load_actor_file(0x7e);
+	//	load_actor_file(0x8f);
+	//	load_actor_file(0xaa);
 	wideAngleEveryoneAtTable();
 	_vm->setFlags(ENGINE_FLAG_20000);
 	_vm->waitForFramesAllowSkip(0x3b);
 	closeUpShotOnActor(0xd3, 0, 0x233, 0x17a);
 	//playSoundFromTxtIndex(0x9000);
 
-	while (1) {	// In order to avoid gotos
+	while (1) { // In order to avoid gotos
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0xd, 0, 0x9000, 0x2e01) == 2)
 			break;
 
@@ -897,9 +893,9 @@ void CutScene::knightsSavedAgain() {
 		break; // We do not want to loop
 	}
 	_vm->fadeToBlack();
-//	DisableVSyncEvent();
-//	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
-//	EnableVSyncEvent();
+	//	DisableVSyncEvent();
+	//	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
+	//	EnableVSyncEvent();
 	_vm->clearFlags(ENGINE_FLAG_20000);
 	if (engineFlag10Set) {
 		_vm->setFlags(ENGINE_FLAG_10);
@@ -962,6 +958,5 @@ void CutScene::tournamentCutScene() {
 	_vm->setFlags(ENGINE_FLAG_20000);
 	_vm->fadeToBlack();
 }
-
 
 } // End of namespace Dragons

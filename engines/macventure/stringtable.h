@@ -59,7 +59,6 @@ public:
 	}
 
 	~StringTable() {
-
 	}
 
 	const Common::Array<Common::String> &getStrings() {
@@ -72,7 +71,6 @@ public:
 	}
 
 private:
-
 	bool loadStrings() {
 		Common::MacResIDArray resArray;
 		Common::SeekableReadStream *res;
@@ -103,7 +101,6 @@ private:
 	}
 
 private:
-
 	MacVentureEngine *_engine;
 	Common::MacResManager *_resourceManager;
 

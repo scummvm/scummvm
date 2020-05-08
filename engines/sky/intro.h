@@ -23,9 +23,8 @@
 #ifndef SKY_INTRO_H
 #define SKY_INTRO_H
 
-
-#include "common/scummsys.h"
 #include "audio/mixer.h"
+#include "common/scummsys.h"
 
 namespace Sky {
 
@@ -40,6 +39,7 @@ public:
 	Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, Audio::Mixer *mixer, OSystem *system);
 	~Intro();
 	bool doIntro(bool floppyIntro);
+
 private:
 	static uint16 _mainIntroSeq[];
 	static uint16 _floppyIntroSeq[];

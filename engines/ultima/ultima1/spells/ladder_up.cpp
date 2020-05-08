@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/spells/ladder_up.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map_tile.h"
 
 namespace Ultima {

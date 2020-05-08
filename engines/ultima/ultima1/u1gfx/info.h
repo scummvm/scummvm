@@ -38,6 +38,7 @@ protected:
 	 * Draws a prompt character
 	 */
 	void drawPrompt(Shared::Gfx::VisualSurface &surf, const Point &pt) override;
+
 public:
 	/**
 	 * Constructor

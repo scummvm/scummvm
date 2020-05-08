@@ -47,7 +47,7 @@ void Room::mudd4Tick1() {
 }
 
 void Room::mudd4UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  18, true);
+	showText(TX_SPEAKER_KIRK, 18, true);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
@@ -80,11 +80,11 @@ void Room::mudd4UseSpockOnConsole() {
 		showText(TX_SPEAKER_SPOCK, 62, true);
 	} else {
 		showText(TX_SPEAKER_SPOCK, 61, true);
-		showText(TX_SPEAKER_KIRK,  13, true);
+		showText(TX_SPEAKER_KIRK, 13, true);
 		showText(TX_SPEAKER_SPOCK, 62, true);
 		showText(TX_SPEAKER_MCCOY, 48, true);
 		showText(TX_SPEAKER_SPOCK, 59, true);
-		showText(TX_SPEAKER_KIRK,  31, true);
+		showText(TX_SPEAKER_KIRK, 31, true);
 		showText(TX_SPEAKER_SPOCK, 60, true);
 
 		if (!_awayMission->mudd.discoveredBase3System) {
@@ -114,13 +114,12 @@ void Room::mudd4SpockSatInChair() {
 
 void Room::mudd4ShowLeftConsoleMenu() {
 	const TextRef choices[] = {
-		TX_SPEAKER_SPOCK,
-		38,
-		39,
-		40,
-		41,
-		TX_BLANK
-	};
+	    TX_SPEAKER_SPOCK,
+	    38,
+	    39,
+	    40,
+	    41,
+	    TX_BLANK};
 
 	int choice = showMultipleTexts(choices, true);
 
@@ -221,12 +220,11 @@ void Room::mudd4KirkSatInChair() {
 
 void Room::mudd4ShowRightConsoleMenu() {
 	const TextRef choices[] = {
-		TX_SPEAKER_KIRK,
-		2,
-		7,
-		3,	// BUGFIX: this used Spock's voice instead of Kirk's in original
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    2,
+	    7,
+	    3, // BUGFIX: this used Spock's voice instead of Kirk's in original
+	    TX_BLANK};
 
 	int choice = showMultipleTexts(choices, true);
 
@@ -285,7 +283,7 @@ void Room::mudd4KirkUsedCommunications() {
 	} else {
 		if (!_awayMission->mudd.contactedEnterpriseFirstTime) {
 			_awayMission->mudd.missionScore++;
-			showText(TX_SPEAKER_KIRK,  25, true);
+			showText(TX_SPEAKER_KIRK, 25, true);
 			showText(TX_SPEAKER_SCOTT, 2 + SCOTTY_MESSAGE_OFFSET, true);
 
 			if (_awayMission->mudd.torpedoStatus == 1)
@@ -296,12 +294,11 @@ void Room::mudd4KirkUsedCommunications() {
 			showText(TX_SPEAKER_SCOTT, 4 + SCOTTY_MESSAGE_OFFSET, true);
 
 			const TextRef choices[] = {
-				TX_SPEAKER_KIRK,
-				24,
-				33,
-				22,	// ENHANCEMENT: This line was recorded twice (MUD4_022 and MUD4_023). It's used twice, so, might as well make use of the second recording.
-				TX_BLANK
-			};
+			    TX_SPEAKER_KIRK,
+			    24,
+			    33,
+			    22, // ENHANCEMENT: This line was recorded twice (MUD4_022 and MUD4_023). It's used twice, so, might as well make use of the second recording.
+			    TX_BLANK};
 
 			int choice = showMultipleTexts(choices, true);
 
@@ -314,14 +311,13 @@ void Room::mudd4KirkUsedCommunications() {
 			}
 		} else {
 			const TextRef choices[] = {
-				TX_SPEAKER_KIRK,
-				TX_MUD4_019,
-				TX_MUD4_A29,
-				TX_MUD4_023,
-				TX_BLANK
-			};
+			    TX_SPEAKER_KIRK,
+			    TX_MUD4_019,
+			    TX_MUD4_A29,
+			    TX_MUD4_023,
+			    TX_BLANK};
 
-			showText(TX_SPEAKER_KIRK,  20, true);
+			showText(TX_SPEAKER_KIRK, 20, true);
 			showText(TX_SPEAKER_SCOTT, 3 + SCOTTY_MESSAGE_OFFSET, true);
 			int choice = showMultipleTexts(choices);
 
@@ -359,16 +355,12 @@ void Room::mudd4TalkWithMuddAtMissionEnd() {
 void Room::mudd4KirkReachedPositionToTalkToMudd() {
 	_awayMission->disableInput = false;
 
-	if (_awayMission->mudd.discoveredLenseAndDegrimerFunction
-	        || _awayMission->mudd.muddErasedDatabase
-	        || _awayMission->mudd.databaseDestroyed
-	        || !_awayMission->mudd.accessedAlienDatabase) { // NOTE: why this last line? Test this...
+	if (_awayMission->mudd.discoveredLenseAndDegrimerFunction || _awayMission->mudd.muddErasedDatabase || _awayMission->mudd.databaseDestroyed || !_awayMission->mudd.accessedAlienDatabase) { // NOTE: why this last line? Test this...
 		const TextRef choices[] = {
-			TX_SPEAKER_KIRK,
-			 9,
-			16,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    9,
+		    16,
+		    TX_BLANK};
 
 		showText(TX_SPEAKER_MUDD, 66, true);
 		int choice = showMultipleTexts(choices, true);
@@ -378,7 +370,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 			showText(TX_SPEAKER_MUDD, 74, true);
 			showText(TX_SPEAKER_KIRK, 17, true);
 			showText(TX_SPEAKER_MUDD, 72, true);
-			showText(TX_SPEAKER_KIRK,  8, true);
+			showText(TX_SPEAKER_KIRK, 8, true);
 			showText(TX_SPEAKER_MUDD, 68, true);
 			showText(TX_SPEAKER_KIRK, 32, true);
 
@@ -399,10 +391,10 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 				// NOTE: This combination is probably impossible, making this unused?
 				// (Either you give Mudd access to the database, or he destroys it.)
 
-				showText(TX_SPEAKER_MUDD,  71, true);
-				showText(TX_SPEAKER_KIRK,  36, true);
+				showText(TX_SPEAKER_MUDD, 71, true);
+				showText(TX_SPEAKER_KIRK, 36, true);
 				showText(TX_SPEAKER_SPOCK, 29, true);
-				showText(TX_SPEAKER_KIRK,  30, true);
+				showText(TX_SPEAKER_KIRK, 30, true);
 			} else {
 				// Mudd is forced to agree to give samples to a university.
 				showText(TX_SPEAKER_MUDD, 64, true);
@@ -425,11 +417,10 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 		}
 	} else {
 		const TextRef choices[] = {
-			TX_SPEAKER_KIRK,
-			14,
-			21,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    14,
+		    21,
+		    TX_BLANK};
 
 		showText(TX_SPEAKER_MUDD, 65, true);
 		int choice = showMultipleTexts(choices, true);
@@ -439,7 +430,7 @@ void Room::mudd4KirkReachedPositionToTalkToMudd() {
 			showText(TX_SPEAKER_KIRK, 17, true);
 		}
 		showText(TX_SPEAKER_MUDD, 72, true);
-		showText(TX_SPEAKER_KIRK,  8, true);
+		showText(TX_SPEAKER_KIRK, 8, true);
 		showText(TX_SPEAKER_MUDD, 68, true);
 		showText(TX_SPEAKER_KIRK, 32, true);
 
@@ -542,7 +533,7 @@ void Room::mudd4TalkToKirk() {
 
 void Room::mudd4TalkToSpock() {
 	showText(TX_SPEAKER_SPOCK, 63, true);
-	showText(TX_SPEAKER_KIRK,  15, true);
+	showText(TX_SPEAKER_KIRK, 15, true);
 	showText(TX_SPEAKER_MCCOY, 47, true);
 }
 
@@ -571,4 +562,4 @@ void Room::mudd4TouchedHotspot0() { // Trigger door sound
 		playVoc("SMADOOR3");
 }
 
-}
+} // namespace StarTrek

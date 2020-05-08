@@ -87,17 +87,17 @@
 	29042	bassoon1
 */
 
+#include "scumm/players/player_v3m.h"
 #include "common/macresman.h"
 #include "common/translation.h"
 #include "engines/engine.h"
 #include "gui/message.h"
-#include "scumm/players/player_v3m.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
 
 Player_V3M::Player_V3M(ScummEngine *scumm, Audio::Mixer *mixer)
-	: Player_Mac(scumm, mixer, 5, 0x1E, true) {
+    : Player_Mac(scumm, mixer, 5, 0x1E, true) {
 	assert(_vm->_game.id == GID_LOOM);
 
 	// Channel 0 seems to be what was played on low-end macs, that couldn't
@@ -110,11 +110,10 @@ Player_V3M::Player_V3M(ScummEngine *scumm, Audio::Mixer *mixer)
 // can't handle exotic characters like that.
 
 static const char *loomFileNames[] = {
-	"Loom\xAA",
-	"Loom\x99",
-	"Loom\xE2\x84\xA2",
-	"Loom"
-};
+    "Loom\xAA",
+    "Loom\x99",
+    "Loom\xE2\x84\xA2",
+    "Loom"};
 
 bool Player_V3M::checkMusicAvailable() {
 	Common::MacResManager resource;
@@ -126,8 +125,9 @@ bool Player_V3M::checkMusicAvailable() {
 	}
 
 	GUI::MessageDialog dialog(_(
-		"Could not find the 'Loom' Macintosh executable to read the\n"
-		"instruments from. Music will be disabled."), _("OK"));
+	                              "Could not find the 'Loom' Macintosh executable to read the\n"
+	                              "instruments from. Music will be disabled."),
+	                          _("OK"));
 	dialog.runModal();
 	return false;
 }

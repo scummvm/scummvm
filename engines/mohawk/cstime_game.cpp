@@ -21,13 +21,13 @@
  */
 
 #include "mohawk/cstime_game.h"
+#include "common/events.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 #include "mohawk/cstime_ui.h"
 #include "mohawk/cstime_view.h"
 #include "mohawk/resource.h"
 #include "mohawk/sound.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "common/textconsole.h"
 
 namespace Mohawk {
 
@@ -121,7 +121,7 @@ void CSTimeChar::idle() {
 void CSTimeChar::setupAmbientAnims(bool onetime) {
 	CSTimeConversation *conv = _vm->getCase()->getCurrConversation();
 	if (_unknown1 == 0xffff || !_unknown2 || !_ambients.size() || !_resting || !_enabled ||
-		(conv->getState() != (uint)~0 && conv->getSourceChar() == _id)) {
+	    (conv->getState() != (uint)~0 && conv->getSourceChar() == _id)) {
 		setupRestPos();
 		_resting = true;
 		return;
@@ -216,7 +216,7 @@ uint16 CSTimeChar::getChrBaseId() {
 }
 
 uint CSTimeChar::getScriptCount() {
-	static uint bases[4] = { 0, 10, 13, 21 };
+	static uint bases[4] = {0, 10, 13, 21};
 	assert(_unknown1 < 4);
 	return bases[_unknown1] + _ambients.size() + _unknown3;
 }
@@ -273,7 +273,7 @@ void CSTimeChar::installAmbientAnim(uint id, uint32 flags) {
 }
 
 uint16 CSTimeChar::getChrTypeScriptBase() {
-	static uint bases[4] = { 0, 10, 13, 21 };
+	static uint bases[4] = {0, 10, 13, 21};
 	assert(_unknown1 < 4);
 	return bases[_unknown1] + getChrBaseId();
 }
@@ -524,7 +524,7 @@ void CSTimeConversation::mouseDown(Common::Point &pos) {
 
 	for (uint i = 0; i < _itemsToDisplay.size(); i++) {
 		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-		thisRect.top += 1 + i*15;
+		thisRect.top += 1 + i * 15;
 		thisRect.bottom = thisRect.top + 15;
 		if (!thisRect.contains(pos))
 			continue;
@@ -543,7 +543,7 @@ void CSTimeConversation::mouseMove(Common::Point &pos) {
 
 	for (uint i = 0; i < _itemsToDisplay.size(); i++) {
 		Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-		thisRect.top += 1 + i*15;
+		thisRect.top += 1 + i * 15;
 		thisRect.bottom = thisRect.top + 15;
 		if (!thisRect.contains(pos))
 			continue;
@@ -580,7 +580,7 @@ void CSTimeConversation::mouseUp(Common::Point &pos) {
 
 	CSTimeQaR &qar = _qars[_itemsToDisplay[_currEntry]];
 	Common::Rect thisRect = _vm->getInterface()->_dialogTextRect;
-	thisRect.top += 1 + _currEntry*15;
+	thisRect.top += 1 + _currEntry * 15;
 	thisRect.bottom = thisRect.top + 15;
 	if (!thisRect.contains(pos))
 		return;
@@ -1019,19 +1019,19 @@ void CSTimeScene::mouseMove(Common::Point &pos) {
 
 	if (_vm->getInterface()->getState() != kCSTimeInterfaceStateDragging) {
 		switch (_vm->getInterface()->cursorGetShape()) {
-			case 2:
-			case 13:
-				_vm->getInterface()->cursorSetShape(1);
-				break;
-			case 5:
-			case 14:
-				_vm->getInterface()->cursorSetShape(4);
-				break;
-			case 11:
-				_vm->getInterface()->cursorSetShape(10);
-				break;
-			default:
-				break;
+		case 2:
+		case 13:
+			_vm->getInterface()->cursorSetShape(1);
+			break;
+		case 5:
+		case 14:
+			_vm->getInterface()->cursorSetShape(4);
+			break;
+		case 11:
+			_vm->getInterface()->cursorSetShape(10);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -1100,8 +1100,7 @@ void CSTimeScene::idleAmbientAnims() {
 }
 
 bool CSTimeScene::eventIsActive() {
-	return _vm->NISIsRunning() /* TODO || _vm->soundIsPlaying()*/ || _vm->getCurrentEventType() == kCSTimeEventWaitForClick
-		|| _activeChar->_flappingState != 0xffff || _vm->getInterface()->getState() == kCSTimeInterfaceDroppedInventory;
+	return _vm->NISIsRunning() /* TODO || _vm->soundIsPlaying()*/ || _vm->getCurrentEventType() == kCSTimeEventWaitForClick || _activeChar->_flappingState != 0xffff || _vm->getInterface()->getState() == kCSTimeInterfaceDroppedInventory;
 }
 
 void CSTimeScene::cursorOverHotspot(uint id) {
@@ -1211,16 +1210,17 @@ void CSTimeScene::setCursorForCurrentPoint() {
 			continue;
 		if (_hotspots[i].cursor == 2) {
 			_vm->getInterface()->cursorSetShape(13);
-		} else switch (_vm->getInterface()->cursorGetShape()) {
-		case 8:
-			break;
-		case 12:
-			_vm->getInterface()->cursorSetShape(11);
-			break;
-		default:
-			_vm->getInterface()->cursorSetShape(2);
-			break;
-		}
+		} else
+			switch (_vm->getInterface()->cursorGetShape()) {
+			case 8:
+				break;
+			case 12:
+				_vm->getInterface()->cursorSetShape(11);
+				break;
+			default:
+				_vm->getInterface()->cursorSetShape(2);
+				break;
+			}
 		return;
 	}
 
@@ -1230,7 +1230,7 @@ void CSTimeScene::setCursorForCurrentPoint() {
 void CSTimeScene::drawHotspots() {
 	for (uint i = 0; i < _hotspots.size(); i++) {
 		for (uint j = 0; j < _hotspots[i].region._rects.size(); j++) {
-			_vm->_gfx->drawRect(_hotspots[i].region._rects[j], 10 + 5*i);
+			_vm->_gfx->drawRect(_hotspots[i].region._rects[j], 10 + 5 * i);
 		}
 	}
 }

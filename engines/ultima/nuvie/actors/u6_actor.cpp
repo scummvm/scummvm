@@ -21,24 +21,24 @@
  */
 
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
+#include "ultima/nuvie/actors/u6_actor.h"
 #include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/usecode/u6_usecode.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/pathfinder/sched_path_finder.h"
 #include "ultima/nuvie/pathfinder/u6_astar_path.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/actors/u6_actor.h"
+#include "ultima/nuvie/usecode/u6_usecode.h"
 
-#include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/sound/sound_manager.h"
 #include "ultima/nuvie/core/converse.h"
-#include "ultima/nuvie/script/script.h"
 #include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/pathfinder/combat_path_finder.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 #include "ultima/nuvie/actors/u6_actor_types.h"
 #include "ultima/nuvie/actors/u6_work_types.h"
@@ -47,8 +47,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Actor::U6Actor(Map *m, ObjManager *om, GameClock *c): Actor(m, om, c), actor_type(NULL),
-	base_actor_type(NULL) {
+U6Actor::U6Actor(Map *m, ObjManager *om, GameClock *c) : Actor(m, om, c), actor_type(NULL),
+                                                         base_actor_type(NULL) {
 	walk_frame_inc = 1;
 	current_movetype = MOVETYPE_U6_NONE;
 }
@@ -78,34 +78,33 @@ bool U6Actor::init(uint8 obj_status) {
 		clear_surrounding_objs_list(); //clean up the old list if required.
 
 	if (is_alive() && x != 0 && y != 0) { //only try to init multi-tile actors if they are alive.
-		switch (obj_n) { //gather surrounding objects from map if required
-		case OBJ_U6_SHIP :
+		switch (obj_n) {                  //gather surrounding objects from map if required
+		case OBJ_U6_SHIP:
 			init_ship();
 			break;
 
-		case OBJ_U6_HYDRA :
+		case OBJ_U6_HYDRA:
 			init_hydra();
 			break;
 
-		case OBJ_U6_DRAGON :
+		case OBJ_U6_DRAGON:
 			init_dragon();
 			break;
 
-		case OBJ_U6_SILVER_SERPENT :
+		case OBJ_U6_SILVER_SERPENT:
 			init_silver_serpent();
 			break;
 
-		case OBJ_U6_GIANT_SCORPION :
-		case OBJ_U6_GIANT_ANT :
-		case OBJ_U6_COW :
-		case OBJ_U6_ALLIGATOR :
-		case OBJ_U6_HORSE :
-		case OBJ_U6_HORSE_WITH_RIDER :
+		case OBJ_U6_GIANT_SCORPION:
+		case OBJ_U6_GIANT_ANT:
+		case OBJ_U6_COW:
+		case OBJ_U6_ALLIGATOR:
+		case OBJ_U6_HORSE:
+		case OBJ_U6_HORSE_WITH_RIDER:
 			init_splitactor(obj_status);
 			break;
 
-
-		default :
+		default:
 			break;
 		}
 	}
@@ -131,19 +130,19 @@ bool U6Actor::init_ship() {
 	obj2_y = y;
 
 	switch (direction) {
-	case NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		obj1_y = y + 1;
 		obj2_y = y - 1;
 		break;
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		obj1_x = x + 1;
 		obj2_x = x - 1;
 		break;
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		obj1_y = y - 1;
 		obj2_y = y + 1;
 		break;
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		obj1_x = x - 1;
 		obj2_x = x + 1;
 		break;
@@ -169,21 +168,21 @@ bool U6Actor::init_splitactor(uint8 obj_status) {
 	obj_y = y;
 
 	switch (direction) {
-	case NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		obj_y = WRAPPED_COORD(y + 1, z);
 		break;
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		obj_x = WRAPPED_COORD(x - 1, z);
 		break;
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		obj_y = WRAPPED_COORD(y - 1, z);
 		break;
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		obj_x = WRAPPED_COORD(x + 1, z);
 		break;
 	}
 
-// init back object
+	// init back object
 	if (obj_status & OBJ_STATUS_MUTANT) {
 		init_surrounding_obj(obj_x, obj_y, z, obj_n, (get_reverse_direction(direction) * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1));
 	} else {
@@ -203,25 +202,25 @@ bool U6Actor::init_dragon() {
 	wing1_y = wing2_y = y;
 
 	switch (direction) {
-	case NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		head_y = y - 1;
 		tail_y = y + 1;
 		wing1_x = x - 1;
 		wing2_x = x + 1;
 		break;
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		head_x = x + 1;
 		tail_x = x - 1;
 		wing1_y = y - 1;
 		wing2_y = y + 1;
 		break;
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		head_y = y + 1;
 		tail_y = y - 1;
 		wing1_x = x + 1;
 		wing2_x = x - 1;
 		break;
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		head_x = x - 1;
 		tail_x = x + 1;
 		wing1_y = y + 1;
@@ -238,13 +237,13 @@ bool U6Actor::init_dragon() {
 }
 
 bool U6Actor::init_hydra() {
-// For some reason a Hydra has a different object number for its tenticles. :-(
+	// For some reason a Hydra has a different object number for its tenticles. :-(
 
-	init_surrounding_obj(x,   y - 1, z, OBJ_U6_HYDRA_BODY, 0);
+	init_surrounding_obj(x, y - 1, z, OBJ_U6_HYDRA_BODY, 0);
 	init_surrounding_obj(x + 1, y - 1, z, OBJ_U6_HYDRA_BODY, 4);
 	init_surrounding_obj(x + 1, y, z, OBJ_U6_HYDRA_BODY, 8);
 	init_surrounding_obj(x + 1, y + 1, z, OBJ_U6_HYDRA_BODY, 12);
-	init_surrounding_obj(x,   y + 1, z, OBJ_U6_HYDRA_BODY, 16);
+	init_surrounding_obj(x, y + 1, z, OBJ_U6_HYDRA_BODY, 16);
 	init_surrounding_obj(x - 1, y + 1, z, OBJ_U6_HYDRA_BODY, 20);
 	init_surrounding_obj(x - 1, y, z, OBJ_U6_HYDRA_BODY, 24);
 	init_surrounding_obj(x - 1, y - 1, z, OBJ_U6_HYDRA_BODY, 28);
@@ -262,19 +261,19 @@ bool U6Actor::init_silver_serpent() {
 	sz = z;
 
 	switch (direction) {
-	case NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		sy++;
 		tmp_frame_n = 1;
 		break;
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		sx--;
 		tmp_frame_n = 3;
 		break;
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		sy--;
 		tmp_frame_n = 5;
 		break;
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		sx++;
 		tmp_frame_n = 7;
 		break;
@@ -301,7 +300,7 @@ void U6Actor::init_new_silver_serpent() {
 		uint8 tail_frame_n;
 		sint8 x_offset;
 		sint8 y_offset;
-	} movetbl[4] = { {10, 1, 0, 1}, {13, 7, 1, 0}, {12, 5, 0, -1}, {11, 3, -1, 0} };
+	} movetbl[4] = {{10, 1, 0, 1}, {13, 7, 1, 0}, {12, 5, 0, -1}, {11, 3, -1, 0}};
 
 	uint8 i, j;
 	uint16 nx, ny;
@@ -321,7 +320,7 @@ void U6Actor::init_new_silver_serpent() {
 
 		obj = (Obj *)surrounding_objects.back();
 		obj->quality = i + 1; //body segment number
-		obj->qty = id_n; //actor id number
+		obj->qty = id_n;      //actor id number
 
 		j = (j + 1) % 4;
 	}
@@ -337,7 +336,7 @@ void U6Actor::gather_snake_objs_from_map(Obj *start_obj, uint16 ax, uint16 ay, u
 
 	px = ax;
 	py = ay;
-//	pz = az;
+	//	pz = az;
 
 	obj = start_obj;
 	add_surrounding_obj(obj);
@@ -350,42 +349,42 @@ void U6Actor::gather_snake_objs_from_map(Obj *start_obj, uint16 ax, uint16 ay, u
 		//work out the location of the next obj based on the current frame_n and relative movement.
 		switch (obj->frame_n) {
 		//up down
-		case  8 :
+		case 8:
 			if (ny - 1 == py)
 				ny++;
 			else
 				ny--;
 			break;
 		//left right
-		case  9 :
+		case 9:
 			if (nx - 1 == px)
 				nx++;
 			else
 				nx--;
 			break;
 		//up right
-		case 10 :
+		case 10:
 			if (ny - 1 == py)
 				nx++;
 			else
 				ny--;
 			break;
 		//down right
-		case 11 :
+		case 11:
 			if (ny + 1 == py)
 				nx++;
 			else
 				ny++;
 			break;
 		//left down
-		case 12 :
+		case 12:
 			if (nx - 1 == px)
 				ny++;
 			else
 				nx--;
 			break;
 		//left up
-		case 13 :
+		case 13:
 			if (nx - 1 == px)
 				ny--;
 			else
@@ -402,7 +401,6 @@ void U6Actor::gather_snake_objs_from_map(Obj *start_obj, uint16 ax, uint16 ay, u
 		if (obj)
 			add_surrounding_obj(obj);
 	}
-
 }
 
 uint16 U6Actor::get_downward_facing_tile_num() {
@@ -418,9 +416,8 @@ bool U6Actor::updateSchedule(uint8 hour, bool teleport) {
 	bool ret;
 	handle_lightsource(hour);
 
-	if ((ret = Actor::updateSchedule(hour, teleport)) == true) { //walk to next schedule location if required.
-		if (sched[sched_pos] != NULL && (sched[sched_pos]->x != x || sched[sched_pos]->y != y || sched[sched_pos]->z != z
-		                                 || worktype == WORKTYPE_U6_SLEEP)) { // needed to go underneath bed if teleporting
+	if ((ret = Actor::updateSchedule(hour, teleport)) == true) {                                                                                               //walk to next schedule location if required.
+		if (sched[sched_pos] != NULL && (sched[sched_pos]->x != x || sched[sched_pos]->y != y || sched[sched_pos]->z != z || worktype == WORKTYPE_U6_SLEEP)) { // needed to go underneath bed if teleporting
 			set_worktype(WORKTYPE_U6_WALK_TO_LOCATION);
 			MapCoord loc(sched[sched_pos]->x, sched[sched_pos]->y, sched[sched_pos]->z);
 			pathfind_to(loc);
@@ -449,7 +446,8 @@ void U6Actor::set_direction(uint8 d) {
 		return;
 
 	uint8 frames_per_dir = (actor_type->frames_per_direction != 0)
-	                       ? actor_type->frames_per_direction : 4;
+	                           ? actor_type->frames_per_direction
+	                           : 4;
 	if (d >= 4)
 		return;
 
@@ -470,13 +468,13 @@ void U6Actor::set_direction(uint8 d) {
 
 	direction = d;
 
-//only change direction frame if the actor can twitch ie isn't sitting or in bed etc.
+	//only change direction frame if the actor can twitch ie isn't sitting or in bed etc.
 	if (can_move && obj_n != OBJ_U6_SLIME)
 		frame_n = actor_type->tile_start_offset + (direction * actor_type->tiles_per_direction +
-		          (walk_frame * actor_type->tiles_per_frame) + actor_type->tiles_per_frame - 1);
+		                                           (walk_frame * actor_type->tiles_per_frame) + actor_type->tiles_per_frame - 1);
 
-// tangle vines' north and east frames are in the wrong direction
-// FIXME: see if the ActorType values can be changed to fix this
+	// tangle vines' north and east frames are in the wrong direction
+	// FIXME: see if the ActorType values can be changed to fix this
 	if (obj_n == OBJ_U6_TANGLE_VINE)
 		if (direction == NUVIE_DIR_N || direction == NUVIE_DIR_E)
 			frame_n += 3;
@@ -484,7 +482,7 @@ void U6Actor::set_direction(uint8 d) {
 
 void U6Actor::face_location(uint16 lx, uint16 ly) {
 	if (obj_n != OBJ_U6_SILVER_SERPENT //snakes cannot turn on the spot.
-	        && obj_n != OBJ_U6_TANGLE_VINE && obj_n != OBJ_U6_TANGLE_VINE_POD)
+	    && obj_n != OBJ_U6_TANGLE_VINE && obj_n != OBJ_U6_TANGLE_VINE_POD)
 		Actor::face_location(lx, ly);
 
 	return;
@@ -501,17 +499,15 @@ void U6Actor::clear() {
 	return;
 }
 
-
-
 bool U6Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) {
 	assert(new_z < 6);
 
-// bool force_move = flags & ACTOR_FORCE_MOVE;
+	// bool force_move = flags & ACTOR_FORCE_MOVE;
 	bool ret;
 	sint16 rel_x, rel_y;
-//MsgScroll *scroll = Game::get_game()->get_scroll();
+	//MsgScroll *scroll = Game::get_game()->get_scroll();
 	Player *player = Game::get_game()->get_player();
-//Party *party = player->get_party();
+	//Party *party = player->get_party();
 	MapCoord old_pos = get_location();
 
 	if (has_surrounding_objs())
@@ -538,13 +534,14 @@ bool U6Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags
 		Game::get_game()->get_script()->call_actor_map_dmg(this, get_location());
 	}
 
-
 	// temp. fix; this too should be done with UseCode (and don't move the mirror)
 	if (old_pos.y > 0 && new_y > 0) {
 		Obj *old_mirror = obj_manager->get_obj_of_type_from_location(OBJ_U6_MIRROR, old_pos.x, old_pos.y - 1, old_pos.z);
 		Obj *mirror = obj_manager->get_obj_of_type_from_location(OBJ_U6_MIRROR, new_x, new_y - 1, new_z);
-		if (old_mirror && old_mirror->frame_n != 2) old_mirror->frame_n = 0;
-		if (mirror && mirror->frame_n != 2)     mirror->frame_n = 1;
+		if (old_mirror && old_mirror->frame_n != 2)
+			old_mirror->frame_n = 0;
+		if (mirror && mirror->frame_n != 2)
+			mirror->frame_n = 1;
 	}
 
 	// Cyclops: shake ground if player is near
@@ -560,7 +557,7 @@ bool U6Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags
 }
 
 bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) {
-// bool ignore_actors = flags & ACTOR_IGNORE_OTHERS;
+	// bool ignore_actors = flags & ACTOR_IGNORE_OTHERS;
 	Tile *map_tile;
 
 	if (Actor::check_move(new_x, new_y, new_z, flags) == false)
@@ -572,9 +569,9 @@ bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 	switch (current_movetype) {
 	case MOVETYPE_U6_ETHEREAL:
 		return true;
-	case MOVETYPE_U6_NONE :
+	case MOVETYPE_U6_NONE:
 		return false;
-	case MOVETYPE_U6_WATER_HIGH : // for HIGH we only want to move to open water.
+	case MOVETYPE_U6_WATER_HIGH: // for HIGH we only want to move to open water.
 		// No shorelines.
 		map_tile = map->get_tile(new_x, new_y, new_z, MAP_ORIGINAL_TILE);
 		if (map_tile->tile_num >= 16 && map_tile->tile_num <= 47)
@@ -584,12 +581,12 @@ bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 			return false;
 		break;
 
-	case MOVETYPE_U6_WATER_LOW :
+	case MOVETYPE_U6_WATER_LOW:
 		if (!map->is_water(new_x, new_y, new_z))
 			return false;
 		break;
 
-	case MOVETYPE_U6_AIR_LOW :
+	case MOVETYPE_U6_AIR_LOW:
 		map_tile = map->get_tile(new_x, new_y, new_z, MAP_ORIGINAL_TILE);
 		if (map_tile->flags1 & TILEFLAG_WALL) //low air boundry
 			return false;
@@ -600,25 +597,22 @@ bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 			return false;
 		break;
 
-	case MOVETYPE_U6_AIR_HIGH :
+	case MOVETYPE_U6_AIR_HIGH:
 		if (map->is_boundary(new_x, new_y, new_z))
 			return false; //FIX for proper air boundary
 		break;
-	case MOVETYPE_U6_LAND :
-	default :
+	case MOVETYPE_U6_LAND:
+	default:
 		if (map->is_passable(new_x, new_y, new_z) == false) {
 			if (obj_n == OBJ_U6_MOUSE // try to go through mousehole
-			        && (obj_manager->get_obj_of_type_from_location(OBJ_U6_MOUSEHOLE, new_x, new_y, new_z) != NULL
-			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_BARS, new_x, new_y, new_z) != NULL
-			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_PORTCULLIS, new_x, new_y, new_z) != NULL))
+			    && (obj_manager->get_obj_of_type_from_location(OBJ_U6_MOUSEHOLE, new_x, new_y, new_z) != NULL || obj_manager->get_obj_of_type_from_location(OBJ_U6_BARS, new_x, new_y, new_z) != NULL || obj_manager->get_obj_of_type_from_location(OBJ_U6_PORTCULLIS, new_x, new_y, new_z) != NULL))
 				return (true);
 			if (obj_n == OBJ_U6_SILVER_SERPENT //silver serpents can crossover themselves
-			        && obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, new_x, new_y, new_z) != NULL)
+			    && obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, new_x, new_y, new_z) != NULL)
 				return (true);
 
 			return false;
 		}
-
 	}
 
 	return (true);
@@ -651,8 +645,8 @@ bool U6Actor::sit_on_chair(Obj *obj) {
 		}
 
 		//make actor sit on LB's throne.
-		if (obj->obj_n == OBJ_U6_THRONE  && obj->x != x) { //throne is a double width obj. We only sit on the left tile.
-			frame_n = 8 + 3; //sitting facing south.
+		if (obj->obj_n == OBJ_U6_THRONE && obj->x != x) { //throne is a double width obj. We only sit on the left tile.
+			frame_n = 8 + 3;                              //sitting facing south.
 			direction = NUVIE_DIR_S;
 			can_move = false;
 			return true;
@@ -760,17 +754,17 @@ void U6Actor::do_twitch() {
 
 	if (has_surrounding_objs()) {
 		switch (obj_n) {
-		case OBJ_U6_HYDRA :
+		case OBJ_U6_HYDRA:
 			twitch_surrounding_hydra_objs();
 			break;
-		case OBJ_U6_DRAGON :
-		default :
+		case OBJ_U6_DRAGON:
+		default:
 			twitch_surrounding_objs();
 			break;
 		}
 	}
 
-	frame_n = actor_type->tile_start_offset + (direction * actor_type->tiles_per_direction + (walk_frame * actor_type->tiles_per_frame)  + actor_type->tiles_per_frame - 1);
+	frame_n = actor_type->tile_start_offset + (direction * actor_type->tiles_per_direction + (walk_frame * actor_type->tiles_per_frame) + actor_type->tiles_per_frame - 1);
 	if (obj_n == OBJ_U6_WISP) {
 		Game::get_game()->get_map_window()->updateAmbience();
 	}
@@ -825,7 +819,7 @@ void U6Actor::set_asleep(bool val) {
 		}
 	} else {
 		status_flags &= (0xff ^ ACTOR_STATUS_ASLEEP);
-		if (obj_n == base_actor_type->dead_obj_n || obj_n ==  OBJ_U6_PERSON_SLEEPING) {
+		if (obj_n == base_actor_type->dead_obj_n || obj_n == OBJ_U6_PERSON_SLEEPING) {
 			if (worktype == WORKTYPE_U6_SLEEP)
 				can_move = true;
 			actor_type = base_actor_type;
@@ -843,7 +837,7 @@ void U6Actor::set_worktype(uint8 new_worktype, bool init) {
 		frame_n = old_frame_n;
 	}
 
-//reset to base obj_n
+	//reset to base obj_n
 	if ((!is_in_party() || worktype > 0xe) && base_actor_type->base_obj_n != OBJ_U6_NOTHING) //don't revert for party worktypes as they might be riding a horse.
 		set_actor_obj_n(base_actor_type->base_obj_n);
 
@@ -856,31 +850,30 @@ void U6Actor::set_worktype(uint8 new_worktype, bool init) {
 		setup_walk_to_location();
 	}
 
-//FIX from here.
+	//FIX from here.
 
 	switch (worktype) {
-	case WORKTYPE_U6_FACE_NORTH :
+	case WORKTYPE_U6_FACE_NORTH:
 		set_direction(NUVIE_DIR_N);
 		break;
-	case WORKTYPE_U6_FACE_EAST  :
+	case WORKTYPE_U6_FACE_EAST:
 		set_direction(NUVIE_DIR_E);
 		break;
-	case WORKTYPE_U6_FACE_SOUTH :
+	case WORKTYPE_U6_FACE_SOUTH:
 		set_direction(NUVIE_DIR_S);
 		break;
-	case WORKTYPE_U6_FACE_WEST  :
+	case WORKTYPE_U6_FACE_WEST:
 		set_direction(NUVIE_DIR_W);
 		break;
 
-	case WORKTYPE_U6_SLEEP :
+	case WORKTYPE_U6_SLEEP:
 		wt_sleep(init);
 		break;
-	case WORKTYPE_U6_PLAY_LUTE :
+	case WORKTYPE_U6_PLAY_LUTE:
 		wt_play_lute();
 		break;
 	}
 }
-
 
 void U6Actor::pathfind_to(MapCoord &d) {
 	if (pathfinder) {
@@ -894,8 +887,7 @@ void U6Actor::pathfind_to(MapCoord &d) {
 
 void U6Actor::setup_walk_to_location() {
 	if (sched[sched_pos] != NULL) {
-		if (x == sched[sched_pos]->x && y == sched[sched_pos]->y
-		        && z == sched[sched_pos]->z) {
+		if (x == sched[sched_pos]->x && y == sched[sched_pos]->y && z == sched[sched_pos]->z) {
 			set_worktype(sched[sched_pos]->worktype);
 			delete_pathfinder();
 			return;
@@ -904,15 +896,13 @@ void U6Actor::setup_walk_to_location() {
 			work_location.x = sched[sched_pos]->x;
 			work_location.y = sched[sched_pos]->y;
 			work_location.z = sched[sched_pos]->z;
-//            if(!work_location.is_visible() || !get_location().is_visible())
-//                set_pathfinder(new OffScreenPathFinder(this, work_location, new U6AStarPath));
-//            else
+			//            if(!work_location.is_visible() || !get_location().is_visible())
+			//                set_pathfinder(new OffScreenPathFinder(this, work_location, new U6AStarPath));
+			//            else
 			set_pathfinder(new SchedPathFinder(this, work_location, new U6AStarPath));
 		}
 	}
 }
-
-
 
 // wander around but don't cross boundaries or fences. Used for cows and horses.
 // now that hazards are working properly, this isn't needed --SB-X
@@ -968,13 +958,12 @@ void U6Actor::wt_sleep(bool init) {
 		}
 	}
 
-// lay down on the ground using the dead body frame
+	// lay down on the ground using the dead body frame
 	if (actor_type->can_laydown) {
 		old_frame_n = frame_n;
 		obj_n = actor_type->dead_obj_n;
 		frame_n = actor_type->dead_frame_n;
 	}
-
 }
 
 void U6Actor::wt_play_lute() {
@@ -1059,23 +1048,21 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 	sint8 old_pos;
 
 	const uint8 new_frame_n_tbl[5][5] = {
-		{ 8, 10, 0, 13, 0},
-		{12, 9, 0, 0, 13},
-		{ 0, 0, 0, 0, 0},
-		{11, 0, 0, 9, 10},
-		{ 0, 11, 0, 12, 8}
-	};
+	    {8, 10, 0, 13, 0},
+	    {12, 9, 0, 0, 13},
+	    {0, 0, 0, 0, 0},
+	    {11, 0, 0, 9, 10},
+	    {0, 11, 0, 12, 8}};
 
 	const uint8 new_tail_frame_n_tbl[8][6] = {
-		{0, 0, 0, 0, 0, 0},
-		{1, 0, 0, 3, 7, 0},
-		{0, 0, 0, 0, 0, 0},
-		{0, 3, 0, 0, 5, 1},
-		{0, 0, 0, 0, 0, 0},
-		{5, 0, 3, 0, 0, 7},
-		{0, 0, 0, 0, 0, 0},
-		{0, 7, 1, 5, 0, 0}
-	};
+	    {0, 0, 0, 0, 0, 0},
+	    {1, 0, 0, 3, 7, 0},
+	    {0, 0, 0, 0, 0, 0},
+	    {0, 3, 0, 0, 5, 1},
+	    {0, 0, 0, 0, 0, 0},
+	    {5, 0, 3, 0, 0, 7},
+	    {0, 0, 0, 0, 0, 0},
+	    {0, 7, 1, 5, 0, 0}};
 
 	if (surrounding_objects.empty())
 		return;
@@ -1116,25 +1103,24 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 	return;
 }
 
-
 inline void U6Actor::set_direction_of_surrounding_objs(uint8 new_direction) {
 	remove_surrounding_objs_from_map();
 
 	switch (obj_n) {
-	case OBJ_U6_SHIP :
+	case OBJ_U6_SHIP:
 		set_direction_of_surrounding_ship_objs(new_direction);
 		break;
 
-	case OBJ_U6_GIANT_SCORPION :
-	case OBJ_U6_GIANT_ANT :
-	case OBJ_U6_COW :
-	case OBJ_U6_ALLIGATOR :
-	case OBJ_U6_HORSE :
-	case OBJ_U6_HORSE_WITH_RIDER :
+	case OBJ_U6_GIANT_SCORPION:
+	case OBJ_U6_GIANT_ANT:
+	case OBJ_U6_COW:
+	case OBJ_U6_ALLIGATOR:
+	case OBJ_U6_HORSE:
+	case OBJ_U6_HORSE_WITH_RIDER:
 		set_direction_of_surrounding_splitactor_objs(new_direction);
 		break;
 
-	case OBJ_U6_DRAGON :
+	case OBJ_U6_DRAGON:
 		set_direction_of_surrounding_dragon_objs(new_direction);
 		break;
 	}
@@ -1155,30 +1141,30 @@ inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction)
 	(*obj)->x = x;
 	(*obj)->y = y;
 
-	(*obj)->frame_n =  new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1;
+	(*obj)->frame_n = new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1;
 	switch (new_direction) {
-	case NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		if (y == 0)
 			(*obj)->y = pitch - 1;
 		else
 			(*obj)->y = y - 1;
 		break;
 
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		if (x == pitch - 1)
 			(*obj)->x = 0;
 		else
 			(*obj)->x = x + 1;
 		break;
 
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		if (y == pitch - 1)
 			(*obj)->y = 0;
 		else
 			(*obj)->y = y + 1;
 		break;
 
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		if (x == 0)
 			(*obj)->x = pitch - 1;
 		else
@@ -1193,37 +1179,36 @@ inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction)
 	(*obj)->x = x;
 	(*obj)->y = y;
 
-	(*obj)->frame_n =  16 + (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
+	(*obj)->frame_n = 16 + (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
 	switch (new_direction) {
-	case NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		if (y == pitch - 1)
 			(*obj)->y = 0;
 		else
 			(*obj)->y = y + 1;
 		break;
 
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		if (x == 0)
 			(*obj)->x = pitch - 1;
 		else
 			(*obj)->x = x - 1;
 		break;
 
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		if (y == 0)
 			(*obj)->y = pitch - 1;
 		else
 			(*obj)->y = y - 1;
 		break;
 
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		if (x == pitch - 1)
 			(*obj)->x = 0;
 		else
 			(*obj)->x = x + 1;
 		break;
 	}
-
 }
 
 inline void U6Actor::set_direction_of_surrounding_splitactor_objs(uint8 new_direction) {
@@ -1238,41 +1223,40 @@ inline void U6Actor::set_direction_of_surrounding_splitactor_objs(uint8 new_dire
 	if (obj->frame_n < 8)
 		obj->frame_n = (get_reverse_direction(new_direction) * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1); //mutant actor
 	else
-		obj->frame_n =  8 + (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
+		obj->frame_n = 8 + (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
 
 	obj->x = x;
 	obj->y = y;
 
 	switch (new_direction) {
-	case NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		if (y == pitch - 1)
 			obj->y = 0;
 		else
 			obj->y = y + 1;
 		break;
 
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		if (x == 0)
 			obj->x = pitch - 1;
 		else
 			obj->x = x - 1;
 		break;
 
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		if (y == 0)
 			obj->y = pitch - 1;
 		else
 			obj->y = y - 1;
 		break;
 
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		if (x == pitch - 1)
 			obj->x = 0;
 		else
 			obj->x = x + 1;
 		break;
 	}
-
 }
 
 inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_direction) {
@@ -1280,13 +1264,13 @@ inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_directio
 	uint8 frame_offset = (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
 	Obj *head, *tail, *wing1, *wing2;
 
-//NOTE! this is dependent on the order the in which the objects are loaded in U6Actor::init_dragon()
+	//NOTE! this is dependent on the order the in which the objects are loaded in U6Actor::init_dragon()
 
 	obj = surrounding_objects.begin();
 	if (obj == surrounding_objects.end())
 		return;
 	head = *obj;
-	head->frame_n =  8 + frame_offset;
+	head->frame_n = 8 + frame_offset;
 	head->x = x;
 	head->y = y;
 
@@ -1294,7 +1278,7 @@ inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_directio
 	if (obj == surrounding_objects.end())
 		return;
 	tail = *obj;
-	tail->frame_n =  16 + frame_offset;
+	tail->frame_n = 16 + frame_offset;
 	tail->x = x;
 	tail->y = y;
 
@@ -1302,7 +1286,7 @@ inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_directio
 	if (obj == surrounding_objects.end())
 		return;
 	wing1 = *obj;
-	wing1->frame_n =  24 + frame_offset;
+	wing1->frame_n = 24 + frame_offset;
 	wing1->x = x;
 	wing1->y = y;
 
@@ -1310,40 +1294,39 @@ inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_directio
 	if (obj == surrounding_objects.end())
 		return;
 	wing2 = *obj;
-	wing2->frame_n =  32 + frame_offset;
+	wing2->frame_n = 32 + frame_offset;
 	wing2->x = x;
 	wing2->y = y;
 
 	switch (new_direction) {
-	case NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		head->y = y - 1;
 		tail->y = y + 1;
 		wing1->x = x - 1;
 		wing2->x = x + 1;
 		break;
 
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		head->x = x + 1;
 		tail->x = x - 1;
 		wing1->y = y - 1;
 		wing2->y = y + 1;
 		break;
 
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		head->y = y + 1;
 		tail->y = y - 1;
 		wing1->x = x + 1;
 		wing2->x = x - 1;
 		break;
 
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		head->x = x - 1;
 		tail->x = x + 1;
 		wing1->y = y + 1;
 		wing2->y = y - 1;
 		break;
 	}
-
 }
 
 inline void U6Actor::twitch_surrounding_objs() {
@@ -1352,7 +1335,6 @@ inline void U6Actor::twitch_surrounding_objs() {
 	for (obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++) {
 		twitch_obj(*obj);
 	}
-
 }
 
 inline void U6Actor::twitch_surrounding_dragon_objs() {
@@ -1362,7 +1344,7 @@ inline void U6Actor::twitch_surrounding_hydra_objs() {
 	uint8 i;
 	Std::list<Obj *>::iterator obj;
 
-//Note! list order is important here. As it corresponds to the frame order in the tile set. This is defined in init_hydra()
+	//Note! list order is important here. As it corresponds to the frame order in the tile set. This is defined in init_hydra()
 
 	for (i = 0, obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++, i += 4) {
 		if (NUVIE_RAND() % 4 == 0)
@@ -1379,21 +1361,20 @@ inline void U6Actor::twitch_obj(Obj *obj) {
 	}
 
 	switch (obj->obj_n) {
-	case OBJ_U6_GIANT_SCORPION :
-	case OBJ_U6_GIANT_ANT :
-	case OBJ_U6_COW :
-	case OBJ_U6_ALLIGATOR :
-	case OBJ_U6_HORSE :
+	case OBJ_U6_GIANT_SCORPION:
+	case OBJ_U6_GIANT_ANT:
+	case OBJ_U6_COW:
+	case OBJ_U6_ALLIGATOR:
+	case OBJ_U6_HORSE:
 		if (obj->frame_n < 8) { //mutant actor with two heads
 			obj->frame_n = get_reverse_direction(direction) * actor_type->tiles_per_direction +
 			               walk_frame * actor_type->tiles_per_frame;
 			return;
 		}
 		break;
-	default :
+	default:
 		break;
 	}
-
 
 	obj->frame_n = (obj->frame_n / (actor_type->frames_per_direction * 4) * (actor_type->frames_per_direction * 4)) + direction * actor_type->tiles_per_direction +
 	               walk_frame * actor_type->tiles_per_frame;
@@ -1444,7 +1425,6 @@ inline void U6Actor::init_surrounding_obj(uint16 x_, uint16 y_, uint8 z_, uint16
 	return;
 }
 
-
 void U6Actor::die(bool create_body) {
 	Game *game = Game::get_game();
 	Party *party = game->get_party();
@@ -1452,11 +1432,10 @@ void U6Actor::die(bool create_body) {
 	MapCoord actor_loc = get_location();
 
 	if (party->get_member_num(this) == 0) //avatar
-		return; //The avatar can't die. They just get teleported back to LB's castle.
+		return;                           //The avatar can't die. They just get teleported back to LB's castle.
 
 	if (has_surrounding_objs())
 		clear_surrounding_objs_list(true);
-
 
 	set_dead_flag(true); // needed sooner for unready usecode of torches
 	if (game->is_armageddon())
@@ -1466,7 +1445,7 @@ void U6Actor::die(bool create_body) {
 			Obj *dead_body = new Obj;
 			dead_body->obj_n = base_actor_type->dead_obj_n;
 			if (base_actor_type->dead_frame_n == 255) // dog, cat, mouse, deer, wolf, drake, mongbat
-				dead_body->frame_n = frame_n; // same frame the actor died
+				dead_body->frame_n = frame_n;         // same frame the actor died
 			else if (base_actor_type->dead_obj_n == OBJ_U6_BLOOD)
 				dead_body->frame_n = NUVIE_RAND() % 3;
 			else
@@ -1502,21 +1481,12 @@ void U6Actor::die(bool create_body) {
 
 // frozen by worktype or status
 bool U6Actor::is_immobile() {
-	return (((worktype == WORKTYPE_U6_MOTIONLESS
-	          || worktype == WORKTYPE_U6_IMMOBILE) && !is_in_party())
-	        || get_corpser_flag() == true
-	        || is_sleeping() == true
-	        || is_paralyzed() == true
+	return (((worktype == WORKTYPE_U6_MOTIONLESS || worktype == WORKTYPE_U6_IMMOBILE) && !is_in_party()) || get_corpser_flag() == true || is_sleeping() == true || is_paralyzed() == true
 	        /*|| can_move == false*/); // can_move really means can_twitch/animate
 }
 
 bool U6Actor::can_twitch() {
-	return ((can_move == true || obj_n == OBJ_U6_MUSICIAN_PLAYING)
-	        && visible_flag == true
-	        && actor_type->twitch_rand != 0
-	        && get_corpser_flag() == false
-	        && is_sleeping() == false
-	        && is_paralyzed() == false);
+	return ((can_move == true || obj_n == OBJ_U6_MUSICIAN_PLAYING) && visible_flag == true && actor_type->twitch_rand != 0 && get_corpser_flag() == false && is_sleeping() == false && is_paralyzed() == false);
 }
 
 bool U6Actor::can_be_passed(Actor *other) {
@@ -1526,46 +1496,80 @@ bool U6Actor::can_be_passed(Actor *other) {
 
 void U6Actor::print() {
 	Actor::print();
-// might print U6Actor members here
+	// might print U6Actor members here
 }
 
 /* Returns name of NPC worktype/activity (game specific) or NULL. */
 const char *U6Actor::get_worktype_string(uint32 wt) {
 	const char *wt_string = NULL;
-	if (wt == WORKTYPE_U6_MOTIONLESS) wt_string = "Motionless";
-	else if (wt == WORKTYPE_U6_PLAYER) wt_string = "Player";
-	else if (wt == WORKTYPE_U6_IN_PARTY) wt_string = "In Party";
-	else if (wt == WORKTYPE_U6_ANIMAL_WANDER) wt_string = "Graze (animal wander)";
-	else if (wt == WORKTYPE_U6_WALK_TO_LOCATION) wt_string = "Walk to Schedule";
-	else if (wt == WORKTYPE_U6_FACE_NORTH) wt_string = "Stand (North)";
-	else if (wt == WORKTYPE_U6_FACE_SOUTH) wt_string = "Stand (South)";
-	else if (wt == WORKTYPE_U6_FACE_EAST) wt_string = "Stand (East)";
-	else if (wt == WORKTYPE_U6_FACE_WEST) wt_string = "Stand (West)";
-	else if (wt == WORKTYPE_U6_WALK_NORTH_SOUTH) wt_string = "Guard North/South";
-	else if (wt == WORKTYPE_U6_WALK_EAST_WEST) wt_string = "Guard East/West";
-	else if (wt == WORKTYPE_U6_WANDER_AROUND) wt_string = "Wander";
-	else if (wt == WORKTYPE_U6_WORK) wt_string = "Loiter (work)";
-	else if (wt == WORKTYPE_U6_SLEEP) wt_string = "Sleep";
-	else if (wt == WORKTYPE_U6_PLAY_LUTE) wt_string = "Play";
-	else if (wt == WORKTYPE_U6_BEG) wt_string = "Converse";
-	else if (wt == WORKTYPE_U6_COMBAT_FRONT) wt_string = "Combat Front";
-	else if (wt == 0x04) wt_string = "Combat Rear";
-	else if (wt == 0x05) wt_string = "Combat Flank";
-	else if (wt == 0x06) wt_string = "Combat Berserk";
-	else if (wt == 0x07) wt_string = "Combat Retreat";
-	else if (wt == 0x08) wt_string = "Combat Assault/Wild";
-	else if (wt == 0x09) wt_string = "Shy";
-	else if (wt == 0x0a) wt_string = "Like";
-	else if (wt == 0x0b) wt_string = "Unfriendly";
-	else if (wt == 0x0d) wt_string = "Tangle";
-	else if (wt == 0x0e) wt_string = "Immobile";
-	else if (wt == 0x92) wt_string = "Sit";
-	else if (wt == 0x93) wt_string = "Eat";
-	else if (wt == 0x94) wt_string = "Farm";
-	else if (wt == 0x98) wt_string = "Ring Bell";
-	else if (wt == 0x99) wt_string = "Brawl";
-	else if (wt == 0x9a) wt_string = "Mousing";
-	else if (wt == 0x9b) wt_string = "Attack Party";
+	if (wt == WORKTYPE_U6_MOTIONLESS)
+		wt_string = "Motionless";
+	else if (wt == WORKTYPE_U6_PLAYER)
+		wt_string = "Player";
+	else if (wt == WORKTYPE_U6_IN_PARTY)
+		wt_string = "In Party";
+	else if (wt == WORKTYPE_U6_ANIMAL_WANDER)
+		wt_string = "Graze (animal wander)";
+	else if (wt == WORKTYPE_U6_WALK_TO_LOCATION)
+		wt_string = "Walk to Schedule";
+	else if (wt == WORKTYPE_U6_FACE_NORTH)
+		wt_string = "Stand (North)";
+	else if (wt == WORKTYPE_U6_FACE_SOUTH)
+		wt_string = "Stand (South)";
+	else if (wt == WORKTYPE_U6_FACE_EAST)
+		wt_string = "Stand (East)";
+	else if (wt == WORKTYPE_U6_FACE_WEST)
+		wt_string = "Stand (West)";
+	else if (wt == WORKTYPE_U6_WALK_NORTH_SOUTH)
+		wt_string = "Guard North/South";
+	else if (wt == WORKTYPE_U6_WALK_EAST_WEST)
+		wt_string = "Guard East/West";
+	else if (wt == WORKTYPE_U6_WANDER_AROUND)
+		wt_string = "Wander";
+	else if (wt == WORKTYPE_U6_WORK)
+		wt_string = "Loiter (work)";
+	else if (wt == WORKTYPE_U6_SLEEP)
+		wt_string = "Sleep";
+	else if (wt == WORKTYPE_U6_PLAY_LUTE)
+		wt_string = "Play";
+	else if (wt == WORKTYPE_U6_BEG)
+		wt_string = "Converse";
+	else if (wt == WORKTYPE_U6_COMBAT_FRONT)
+		wt_string = "Combat Front";
+	else if (wt == 0x04)
+		wt_string = "Combat Rear";
+	else if (wt == 0x05)
+		wt_string = "Combat Flank";
+	else if (wt == 0x06)
+		wt_string = "Combat Berserk";
+	else if (wt == 0x07)
+		wt_string = "Combat Retreat";
+	else if (wt == 0x08)
+		wt_string = "Combat Assault/Wild";
+	else if (wt == 0x09)
+		wt_string = "Shy";
+	else if (wt == 0x0a)
+		wt_string = "Like";
+	else if (wt == 0x0b)
+		wt_string = "Unfriendly";
+	else if (wt == 0x0d)
+		wt_string = "Tangle";
+	else if (wt == 0x0e)
+		wt_string = "Immobile";
+	else if (wt == 0x92)
+		wt_string = "Sit";
+	else if (wt == 0x93)
+		wt_string = "Eat";
+	else if (wt == 0x94)
+		wt_string = "Farm";
+	else if (wt == 0x98)
+		wt_string = "Ring Bell";
+	else if (wt == 0x99)
+		wt_string = "Brawl";
+	else if (wt == 0x9a)
+		wt_string = "Mousing";
+	else if (wt == 0x9b)
+		wt_string = "Attack Party";
 	return (wt_string);
 }
 
@@ -1621,9 +1625,8 @@ uint8 U6Actor::get_maxmagic() {
 }
 
 bool U6Actor::will_not_talk() {
-	if (worktype == WORKTYPE_U6_COMBAT_RETREAT || worktype == 0x12 // guard arrest player
-	        || Game::get_game()->is_armageddon()
-	        || worktype == WORKTYPE_U6_ATTACK_PARTY || worktype == 0x13) // repel undead and retreat
+	if (worktype == WORKTYPE_U6_COMBAT_RETREAT || worktype == 0x12                                        // guard arrest player
+	    || Game::get_game()->is_armageddon() || worktype == WORKTYPE_U6_ATTACK_PARTY || worktype == 0x13) // repel undead and retreat
 		return true;
 	return false;
 }
@@ -1637,8 +1640,7 @@ void U6Actor::handle_lightsource(uint8 hour) {
 		torch2 = NULL;
 	if (torch || torch2) {
 		U6UseCode *useCode = (U6UseCode *)Game::get_game()->get_usecode();
-		if ((hour < 6 || hour > 18 || (z != 0 && z != 5)
-		        || Game::get_game()->get_weather()->is_eclipse())) {
+		if ((hour < 6 || hour > 18 || (z != 0 && z != 5) || Game::get_game()->get_weather()->is_eclipse())) {
 			if (torch && torch->frame_n == 0) {
 				if (torch->qty != 1)
 					torch->qty = 1;

@@ -23,14 +23,14 @@
 #ifndef LISTING_PROVIDER_H_
 #define LISTING_PROVIDER_H_
 
-#include "listing.h"
 #include "engines/wintermute/debugger/error.h"
+#include "listing.h"
 
 namespace Wintermute {
 
 class ListingProvider {
 public:
-	virtual ~ListingProvider() {};
+	virtual ~ListingProvider(){};
 	/**
 	* Get a listing. When implementing this, the result should be safe to delete for the caller.
 	*/

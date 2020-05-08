@@ -21,8 +21,8 @@
  */
 
 #include "glk/agt/agility.h"
-#include "glk/agt/interp.h"
 #include "glk/agt/exec.h"
+#include "glk/agt/interp.h"
 
 namespace Glk {
 namespace AGT {
@@ -35,14 +35,13 @@ namespace AGT {
 
 #define DEBUG_SCAN 1
 
-#define MAX_REDIR 50000L  /* Maximum number of redirects, to catch
-                infinite loops. If this is 0, allow infinitely
-                many */
+#define MAX_REDIR 50000L /* Maximum number of redirects, to catch \
+	           infinite loops. If this is 0, allow infinitely     \
+	           many */
 
-#define MAX_SUBCALL 2047  /* Maximum number of subroutine calls.
-                 If this is 0, no limit (except for the 
-                 program's stack size). */
-
+#define MAX_SUBCALL 2047 /* Maximum number of subroutine calls. \
+	            If this is 0, no limit (except for the          \
+	            program's stack size). */
 
 /*
 
@@ -63,7 +62,6 @@ run_metacommand
 
 */
 
-
 /* ====================================================================*/
 /*  RUN METACOMMAND: The following are the routines used to execute */
 /*   a single metacommand block.  run_metacommand is invoked by */
@@ -75,13 +73,14 @@ run_metacommand
 /*  Routines used to do type checking for metacommands. */
 /* ------------------------------------------------------------------- */
 
-
 rbool argvalid(int argtype, int arg) {
 	if (argtype & AGT_VAR) { /* We have a variable */
 		/* First, verify that arg actually indexes a variable */
-		if (arg < 0 || arg > VAR_NUM) return 0; /* Nope */
+		if (arg < 0 || arg > VAR_NUM)
+			return 0; /* Nope */
 
-		if (argtype == AGT_VAR) return 1; /* Pure variable; contents don't matter */
+		if (argtype == AGT_VAR)
+			return 1; /* Pure variable; contents don't matter */
 
 		/* Next, verify its contents, using the rest of this routine */
 		arg = agt_var[arg];
@@ -89,14 +88,21 @@ rbool argvalid(int argtype, int arg) {
 	}
 
 	if (argtype < 128) {
-		if (tnoun(arg)) return (argtype & AGT_ITEM) != 0;
-		if (troom(arg)) return (argtype & AGT_ROOM) != 0;
-		if (arg == 0) return (argtype & AGT_NONE) != 0;
-		if (arg == 1) return (argtype & AGT_SELF) != 0;
-		if (tcreat(arg)) return (argtype & AGT_CREAT) != 0;
-		if (arg == 1000) return (argtype & AGT_WORN) != 0;
+		if (tnoun(arg))
+			return (argtype & AGT_ITEM) != 0;
+		if (troom(arg))
+			return (argtype & AGT_ROOM) != 0;
+		if (arg == 0)
+			return (argtype & AGT_NONE) != 0;
+		if (arg == 1)
+			return (argtype & AGT_SELF) != 0;
+		if (tcreat(arg))
+			return (argtype & AGT_CREAT) != 0;
+		if (arg == 1000)
+			return (argtype & AGT_WORN) != 0;
 		return 0;
-	} else switch (argtype) {
+	} else
+		switch (argtype) {
 		case AGT_NUM:
 			return 1;
 		case AGT_DIR:
@@ -126,14 +132,12 @@ rbool argvalid(int argtype, int arg) {
 		case AGT_ROOMFLAG:
 			return (arg >= 1 && arg <= 32);
 		case AGT_EXIT:
-			return (argvalid(AGT_ROOM | AGT_NONE, arg)
-			        || argvalid(AGT_MSG, arg - exitmsg_base)
-			        || (arg < 0 && aver >= AGX00)); /* Treat as verb */
+			return (argvalid(AGT_ROOM | AGT_NONE, arg) || argvalid(AGT_MSG, arg - exitmsg_base) || (arg < 0 && aver >= AGX00)); /* Treat as verb */
 		case AGT_OBJFLAG:
 			return (arg >= 0 && arg < oflag_cnt);
 		case AGT_OBJPROP:
 			return (arg >= 0 && arg < oprop_cnt);
-		case AGT_ATTR:  /* ATTR and PROP are type-checked elsewhere */
+		case AGT_ATTR: /* ATTR and PROP are type-checked elsewhere */
 		case AGT_PROP:
 			return 1;
 		default:
@@ -149,13 +153,14 @@ static rbool argfix(int argtype, int *arg, int optype, rbool *special) {
 	*special = 0;
 	switch (optype) {
 	case 0:
-		break;  /* Direct: The easy case */
-	case 1:  /* Variable */
+		break;            /* Direct: The easy case */
+	case 1:               /* Variable */
 		if (*arg == -1) { /* Top-of-stack */
 			*arg = pop_expr_stack();
 			break;
 		}
-		if (!argvalid(AGT_VAR, *arg)) return 0;
+		if (!argvalid(AGT_VAR, *arg))
+			return 0;
 		*arg = (int)agt_var[*arg];
 		break;
 	case 2:
@@ -190,7 +195,6 @@ static rbool argfix(int argtype, int *arg, int optype, rbool *special) {
 	return argvalid(argtype, *arg);
 }
 
-
 /* These are handled in the order ARG2 then ARG1 so that
    top-of-stack references will pop the stack in that order
    (so that the push-order will corrospond to the argument order) */
@@ -214,7 +218,7 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 	integer op_;
 	int optype;
 	int leng;
-	rbool special_arg1;  /* Is the first argument a special 0-length argument? */
+	rbool special_arg1; /* Is the first argument a special 0-length argument? */
 
 	oprec->negate = oprec->failmsg = oprec->disambig = 0;
 	oprec->errmsg = NULL;
@@ -246,7 +250,8 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 		return 1;
 	}
 
-	if (op_ < 1000) oprec->endor = 0; /* Conditional tokens don't end OR block */
+	if (op_ < 1000)
+		oprec->endor = 0; /* Conditional tokens don't end OR block */
 
 	/* Recall that oprec->disambig is initialized to 0 */
 	switch (op_) {
@@ -257,7 +262,7 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 		oprec->disambig = 1;
 		break; /* YesNo and Chance */
 	case WIN_ACT:
-	case WIN_ACT+1:
+	case WIN_ACT + 1:
 		oprec->disambig = 1;
 		break; /* WinGame, EndGame */
 
@@ -265,12 +270,12 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 	case 1038: /* DoSubroutine, Return */
 	case 1062:
 	case 1115: /* RedirectTo, SetDisambigPriority */
-	case 1132:            /* AND */
+	case 1132: /* AND */
 	case 1149:
 	case 1150: /* Goto and OnFailGoto */
-	case 1151:            /* EndDisambig */
-	case 1152:            /* XRedirect */
-		break;   /* Accept default of 0: these tokens don' trigger disambig */
+	case 1151: /* EndDisambig */
+	case 1152: /* XRedirect */
+		break; /* Accept default of 0: these tokens don' trigger disambig */
 
 	case 1135:
 	case 1137:
@@ -283,7 +288,7 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 	case 1147:
 	case 1159:
 		oprec->endor = 0;
-		break;  /* Operations that only affect the stack don't
+		break; /* Operations that only affect the stack don't
          stop disambiguation, either. They also
          don't mark the end of an OR block */
 
@@ -323,13 +328,15 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 			assert(leng == 2);
 			oprec->arg2 = data[1];
 			oprec->arg1 = 0;
-		} else oprec->arg1 = data[1];
+		} else
+			oprec->arg1 = data[1];
 	}
-	if (leng >= 3) oprec->arg2 = data[2];
-	if (leng >= 4) writeln("INTERNAL ERROR: Too many token arguments.");
+	if (leng >= 3)
+		oprec->arg2 = data[2];
+	if (leng >= 4)
+		writeln("INTERNAL ERROR: Too many token arguments.");
 	return leng;
 }
-
 
 /* decode_args checks and decodes the arguments to metacommand tokens */
 /* Returns false on an error */
@@ -359,16 +366,14 @@ static rbool decode_args(int ip_, op_rec *oprec) {
 		if (grammer_arg && oprec->op <= MAX_COND)
 			return 0;
 		if (!PURE_ERROR) {
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
+			if (DEBUG_AGT_CMD && !supress_debug)
+				debugout("\n");
 			writeln("GAME ERROR: Invalid argument to metacommand token.");
 		}
 		return 0;
 	}
 	return 1;
 }
-
-
-
 
 /* ------------------------------------------------------------------- */
 /*  Subroutine Call Stack routines                                     */
@@ -397,8 +402,6 @@ static rbool decode_args(int ip_, op_rec *oprec) {
     Things continue as usual.
     */
 
-
-
 typedef struct {
 	/* run_metacommand state */
 	short cnum, ip, failaddr;
@@ -411,11 +414,9 @@ typedef struct {
 	word prep;
 } subcall_rec;
 
-
 static subcall_rec *substack = NULL;
 static short subcnt = 0;
 static short subsize = 0;
-
 
 static rbool push_subcall(int cnum, int ip_, int failaddr) {
 	subcall_rec *savestack; /* In case something goes wrong. */
@@ -438,7 +439,6 @@ static rbool push_subcall(int cnum, int ip_, int failaddr) {
 	substack[subcnt - 1].failaddr = failaddr;
 	return 1;
 }
-
 
 /* pop_subcall_grammar is called before this */
 static void pop_subcall(int *rcnum, int *rip, int *rfailaddr) {
@@ -467,7 +467,8 @@ static void push_subcall_grammar(int m_actor, int vcode, int m_dobj, word m_prep
 static rbool pop_subcall_grammar(integer *m_actor, int *vcode,
                                  integer *m_dobj, word *m_prep, integer *m_iobj,
                                  int *cnum) {
-	if (subcnt == 0) return 0;
+	if (subcnt == 0)
+		return 0;
 	vb = substack[subcnt - 1].vb;
 	prep = substack[subcnt - 1].prep;
 	*cnum = substack[subcnt - 1].cnum;
@@ -478,9 +479,6 @@ static rbool pop_subcall_grammar(integer *m_actor, int *vcode,
 	*m_iobj = substack[subcnt - 1].miobj;
 	return 1;
 }
-
-
-
 
 /* ------------------------------------------------------------------- */
 /*  Run Metacommand                                                    */
@@ -498,36 +496,35 @@ static int run_metacommand(int cnum, int *redir_offset)
       5 Is used to go on to the next metacommand after a Return.
       -2 means we're doing disambiguation and just hit an action token. */
 {
-	int ip_, oip;  /* ip_=Instruction pointer, oip=Old instruction pointer */
-	int r;        /* Used to hold return value from token execution */
-	int fail_addr;  /* What address to jump to on failure */
-	rbool fail;    /* Last token was a conditional token that failed */
+	int ip_, oip;                    /* ip_=Instruction pointer, oip=Old instruction pointer */
+	int r;                           /* Used to hold return value from token execution */
+	int fail_addr;                   /* What address to jump to on failure */
+	rbool fail;                      /* Last token was a conditional token that failed */
 	rbool ortrue, blocktrue, orflag; /* OR stuff
                      orflag: Are we in an OR group?
                      ortrue: Is current OR group true?
                      blocktrue: Is current block w/in OR true?
                      */
-	static rbool restart = 0; /* Restarting after subroutine?  */
-	op_rec currop;          /* Information on the current token and its args */
+	static rbool restart = 0;        /* Restarting after subroutine?  */
+	op_rec currop;                   /* Information on the current token and its args */
 
 	fail_addr = 32000; /* Fall off the end when we fail */
 	fail = 0;
 	ip_ = 0;
 	orflag = blocktrue = ortrue = 0;
-	*redir_offset = 1;  /* Default: This is what RedirectTo does.
+	*redir_offset = 1; /* Default: This is what RedirectTo does.
                Only XRedirect can send a different value */
 
-
-	if (restart)  /* finish up Return from subroutine */
+	if (restart) /* finish up Return from subroutine */
 		pop_subcall(&cnum, &ip_, &fail_addr);
 
 	if (DEBUG_AGT_CMD && !supress_debug) {
 		debug_head(cnum);
-		if (restart) debugout("   (Resuming after subroutine)\n");
+		if (restart)
+			debugout("   (Resuming after subroutine)\n");
 	}
 
 	restart = 0;
-
 
 	/* ==========  Main Loop ================= */
 	while (ip_ < command[cnum].cmdsize) {
@@ -537,58 +534,63 @@ static int run_metacommand(int cnum, int *redir_offset)
 
 		/* -------  OR Logic --------------- */
 		if (currop.op == 109) { /* OR */
-			if (!orflag) { /* First OR; set things up */
+			if (!orflag) {      /* First OR; set things up */
 				orflag = 1;
 				ortrue = 0;
 				blocktrue = 1;
 			}
 			blocktrue = blocktrue && !fail; /* Was the previous token true? */
 			fail = 0;
-			ortrue = ortrue || blocktrue; /* OR in last block */
-			blocktrue = 1; /* New block starts out true. */
-		} else if (orflag) { /* we're in the middle of a block */
+			ortrue = ortrue || blocktrue;   /* OR in last block */
+			blocktrue = 1;                  /* New block starts out true. */
+		} else if (orflag) {                /* we're in the middle of a block */
 			blocktrue = blocktrue && !fail; /* Add in previous token */
 			fail = 0;
-			if (currop.endor) {  /* i.e. not a conditional token */
-				orflag = 0;                /* End of OR block */
+			if (currop.endor) {               /* i.e. not a conditional token */
+				orflag = 0;                   /* End of OR block */
 				ortrue = ortrue || blocktrue; /* OR in last block */
-				fail = !ortrue; /* Success of whole group */
+				fail = !ortrue;               /* Success of whole group */
 			}
 		}
 
 		/* ------------  FAILMESSAGE handling ------------- */
-		if (currop.failmsg) {  /* Is the current token a Fail... token? */
-			if (!fail) continue;  /* Skip it; look at next instruction */
+		if (currop.failmsg) { /* Is the current token a Fail... token? */
+			if (!fail)
+				continue; /* Skip it; look at next instruction */
 			/* ErrMessage and ErrStdMessage: set disambiguation score */
 			if (do_disambig) {
 				if (currop.op == 1130 || currop.op == 1131) {
-					if (!decode_args(oip, &currop)) return 2;
+					if (!decode_args(oip, &currop))
+						return 2;
 					disambig_score = currop.arg1;
 					return 2;
-				} else return -2; /* FailMessage counts as an action token */
+				} else
+					return -2; /* FailMessage counts as an action token */
 			}
 			/* Then run the failmessage, skipping the following step... */
 		}
 		/* -------- Failure routines -------------------- */
-		else if (fail) {  /* ... and not failmessage */
+		else if (fail) { /* ... and not failmessage */
 			/* consequences of failure */
 			fail = 0; /* In case fail_addr doesn't point off the edge of the world */
 			ip_ = fail_addr;
 			fail_addr = 32000; /* Reset fail_addr */
-			continue; /* Usually fail_addr will fall off the end, causing this to
+			continue;          /* Usually fail_addr will fall off the end, causing this to
            return 0 */
 		}
 
 		/* - Finish decoding arguments and print out debugging message - */
 		if (!decode_args(oip, &currop)) {
-			if (currop.op < 1000) fail = currop.negate ? 0 : 1;
+			if (currop.op < 1000)
+				fail = currop.negate ? 0 : 1;
 			continue;
 			/* return 2;*/
 		}
 
 		/* -------- Commands that need to be handled specially -------------- */
 		if (currop.op == 109) { /* OR */
-			if (DEBUG_AGT_CMD && !supress_debug) debug_newline(op, 0);
+			if (DEBUG_AGT_CMD && !supress_debug)
+				debug_newline(op, 0);
 			continue; /* OR: skip further processing */
 		}
 
@@ -598,25 +600,29 @@ static int run_metacommand(int cnum, int *redir_offset)
 				return 2;
 			}
 			subcall_arg = currop.arg1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("--> Call\n");
+			if (DEBUG_AGT_CMD && !supress_debug)
+				debugout("--> Call\n");
 			return 4;
 		}
 
 		if (currop.op == 1038) { /* Return */
 			restart = 1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("--> Return\n");
+			if (DEBUG_AGT_CMD && !supress_debug)
+				debugout("--> Return\n");
 			return 5;
 		}
 
 		if (currop.op == 1149) { /* Goto */
 			ip_ = currop.arg1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
+			if (DEBUG_AGT_CMD && !supress_debug)
+				debugout("\n");
 			continue;
 		}
 
 		if (currop.op == 1150) { /* OnFailGoto */
 			fail_addr = currop.arg1;
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("\n");
+			if (DEBUG_AGT_CMD && !supress_debug)
+				debugout("\n");
 			continue;
 		}
 
@@ -625,26 +631,32 @@ static int run_metacommand(int cnum, int *redir_offset)
 
 		/* ---------- Disambiguation Success -------------- */
 		if (do_disambig && currop.disambig) {
-			if (DEBUG_AGT_CMD && !supress_debug) debugout("==> ACTION\n");
+			if (DEBUG_AGT_CMD && !supress_debug)
+				debugout("==> ACTION\n");
 			return -2;
 		}
 
 		/* ---------- Run normal metacommands -------------- */
 		switch (r = exec_instr(&currop)) {
-		case 0:  /* Normal action token or successful conditional token */
-			if (DEBUG_AGT_CMD && !supress_debug) debug_newline(op, 0);
+		case 0: /* Normal action token or successful conditional token */
+			if (DEBUG_AGT_CMD && !supress_debug)
+				debug_newline(op, 0);
 			continue;
 		case 1: /* Conditional token: fail */
 			if (DEBUG_AGT_CMD && !supress_debug) {
-				if (orflag) debugout("  (-->FAIL)\n");
-				else debugout("--->FAIL\n");
+				if (orflag)
+					debugout("  (-->FAIL)\n");
+				else
+					debugout("--->FAIL\n");
 			}
 			fail = 1;
 			continue;
 		default: /* Return explicit value */
 			if (DEBUG_AGT_CMD && !supress_debug) {
-				if (r == 103) debugout("-->Redirect\n");
-				else debugout("==> END\n");
+				if (r == 103)
+					debugout("-->Redirect\n");
+				else
+					debugout("==> END\n");
 			}
 			return r - 100;
 		}
@@ -652,14 +664,11 @@ static int run_metacommand(int cnum, int *redir_offset)
 	return 0;
 }
 
-
-
 /* ====================================================================*/
 /*  SCAN METACOMMAND: These are the routines that scan through the  */
 /*    metacommand headers and find the appropriate ones to execute */
 /*    Redirection is also handled at this level  */
 /* ====================================================================*/
-
 
 /* ------------------------------------------------------------------- */
 /*  Support routines for extracting object information */
@@ -671,21 +680,30 @@ static int run_metacommand(int cnum, int *redir_offset)
 
 static integer expand_redirect(word w) {
 	assert(w != -1); /* <*NONE*> object shouldn't make it this far */
-	if (w == 0 || aver < AGTME10) return -w;
-	if (w == ext_code[wdverb]) return -syntbl[auxsyn[vb]];
-	if (w == ext_code[wdnoun]) return dobj;
-	if (w == ext_code[wdobject]) return iobj;
-	if (w == ext_code[wdname]) return actor;
-	if (w == ext_code[wdadjective]) return -it_adj(dobj);
-	if (w == ext_code[wdprep]) return -prep;
+	if (w == 0 || aver < AGTME10)
+		return -w;
+	if (w == ext_code[wdverb])
+		return -syntbl[auxsyn[vb]];
+	if (w == ext_code[wdnoun])
+		return dobj;
+	if (w == ext_code[wdobject])
+		return iobj;
+	if (w == ext_code[wdname])
+		return actor;
+	if (w == ext_code[wdadjective])
+		return -it_adj(dobj);
+	if (w == ext_code[wdprep])
+		return -prep;
 	return -w;
 }
 
-
 static int extract_actor(int actnum) {
-	if (actnum < 0) actnum = -actnum; /* Erase redirection stuff */
-	if (tcreat(actnum)) return actnum;
-	else return 0;
+	if (actnum < 0)
+		actnum = -actnum; /* Erase redirection stuff */
+	if (tcreat(actnum))
+		return actnum;
+	else
+		return 0;
 }
 
 /* Basically, we need to find an object with a matching noun
@@ -709,22 +727,18 @@ static int extract_obj(word name, word adj) {
 	} else
 		name = -obj;
 
-	if (adj == 0) return -name; /* Adjectives required for CLASS redirect */
-	nounloop(i)
-	if (noun[i].name == name && noun[i].adj == adj) return i + first_noun;
-	creatloop(i)
-	if (creature[i].name == name && creature[i].adj == adj)
-		return i + first_creat;
+	if (adj == 0)
+		return -name; /* Adjectives required for CLASS redirect */
+	nounloop(i) if (noun[i].name == name && noun[i].adj == adj) return i + first_noun;
+	creatloop(i) if (creature[i].name == name && creature[i].adj == adj) return i + first_creat;
 	/* Hmm... just hope it's an internal noun. */
 	writeln("GAME ERROR: Redirect statement with bad object name.");
 	return -name;
 }
 
-
 /* ------------------------------------------------------------------- */
 /*  Redirection Routines     */
 /* ------------------------------------------------------------------- */
-
 
 #define wordcode_fix(w) it_name(expand_redirect(w));
 
@@ -736,10 +750,14 @@ static int extract_obj(word name, word adj) {
 static void fix_objnum(integer *objnum, word match,
                        int real_obj,
                        int actor_, int dobj_, int iobj_) {
-	if (real_obj) *objnum = real_obj;
-	else if (match == ext_code[wdobject]) *objnum = iobj_;
-	else if (match == ext_code[wdnoun]) *objnum = dobj_;
-	else if (match == ext_code[wdname]) *objnum = actor_;
+	if (real_obj)
+		*objnum = real_obj;
+	else if (match == ext_code[wdobject])
+		*objnum = iobj_;
+	else if (match == ext_code[wdnoun])
+		*objnum = dobj_;
+	else if (match == ext_code[wdname])
+		*objnum = actor_;
 }
 
 /* Returns TRUE if we changed *objrec, FALSE otherwise */
@@ -748,13 +766,18 @@ static rbool fix_objrec(parse_rec **objrec, word match,
                         int real_obj,
                         parse_rec *actrec, parse_rec *dobjrec,
                         parse_rec *iobjrec) {
-	if (real_obj) *objrec = make_parserec(real_obj, NULL);
-	else if (match == ext_code[wdobject]) *objrec = copy_parserec(iobjrec);
-	else if (match == ext_code[wdnoun]) *objrec = copy_parserec(dobjrec);
-	else if (match == ext_code[wdname]) *objrec = copy_parserec(actrec);
-	else return 0; /* *objrec unchanged */
+	if (real_obj)
+		*objrec = make_parserec(real_obj, NULL);
+	else if (match == ext_code[wdobject])
+		*objrec = copy_parserec(iobjrec);
+	else if (match == ext_code[wdnoun])
+		*objrec = copy_parserec(dobjrec);
+	else if (match == ext_code[wdname])
+		*objrec = copy_parserec(actrec);
+	else
+		return 0; /* *objrec unchanged */
 
-	return 1;  /* *objrec changed */
+	return 1; /* *objrec changed */
 }
 
 static void objcode_fix(cmd_rec *cmd)
@@ -794,11 +817,13 @@ static void objcode_fix(cmd_rec *cmd)
 	ichange = fix_objrec(&iobj_rec, objword, iobj_obj, saveactrec, savedrec, iobj_rec);
 
 	/* Free up whatever needs freeing */
-	if (achange) rfree(saveactrec);
-	if (dchange) rfree(savedrec);
-	if (ichange) rfree(saveirec);
+	if (achange)
+		rfree(saveactrec);
+	if (dchange)
+		rfree(savedrec);
+	if (ichange)
+		rfree(saveirec);
 }
-
 
 /* Redirection is very superficial-- normally all it does is */
 /* change the matching pattern, not the underlying objects */
@@ -821,37 +846,38 @@ void redirect_exec(cmd_rec *cmd, word *m_actor, int *vcode,
 	objcode_fix(cmd);
 }
 
-
-
-
 /* ------------------------------------------------------------------- */
 /*  Scan Metacommand and the matching function it uses                 */
 /* ------------------------------------------------------------------- */
 
 /* This is used to match the elements of metacommand trigger patterns */
 /* Sees if w2 matches COMMMAND pattern word w1; w1==0 corresponds to ANY */
-#define cmatch(w1,w2) ((w1)==0 || (w1)==(w2) || ((w1)==-1 && (w2)==0))
+#define cmatch(w1, w2) ((w1) == 0 || (w1) == (w2) || ((w1) == -1 && (w2) == 0))
 
 static int cm_actor(int actnum, int actor_)
 /* cmd: actnum,  player entry: actor_ */
 {
-	if (aver < AGX00) return 1; /* Bit of AGT brain-deadness. */
-	if (actnum == 1) return actor_ == 0; /* No actor_: just the player  */
+	if (aver < AGX00)
+		return 1; /* Bit of AGT brain-deadness. */
+	if (actnum == 1)
+		return actor_ == 0; /* No actor_: just the player  */
 	if (tcreat(actnum))
 		return (creat_fix[actor_ - first_creat] == creat_fix[actnum - first_creat]);
-	if (actnum == 2) return (actor_ != 0); /* ANYBODY? */
+	if (actnum == 2)
+		return (actor_ != 0); /* ANYBODY? */
 	return (actor_ == 0);
 }
 
-
 /* Check that the explicit object matches */
 static rbool cm_x_obj(int x_obj, int real_obj) {
-	if (x_obj == 0) return 1; /* No explicit object; automatically match. */
+	if (x_obj == 0)
+		return 1; /* No explicit object; automatically match. */
 	/* Explicit object case */
 	/* In this case, we match against the _real_ object */
 	/* However, we also require a "normal" match */
 	do {
-		if (x_obj == real_obj) return 1;
+		if (x_obj == real_obj)
+			return 1;
 		real_obj = it_class(real_obj);
 	} while (real_obj != 0);
 	return 0;
@@ -862,15 +888,17 @@ static rbool cm_x_obj(int x_obj, int real_obj) {
 /*  --If x_obj(the explicit object) is defined, it must match with
       the "real" object-- that is, the global dobj or iobj value. */
 static rbool cm_obj(word name, word adj, int x_obj, int obj, int real_obj) {
-	if (name == -1) return (obj == 0); /* <NONE> */
+	if (name == -1)
+		return (obj == 0); /* <NONE> */
 
-	if (x_obj && !cm_x_obj(x_obj, real_obj)) return 0;
+	if (x_obj && !cm_x_obj(x_obj, real_obj))
+		return 0;
 
 	/* (Note that ANY does not match ALL) */
 	if (obj == -ext_code[wall])
 		return (name == ext_code[wall] && adj == 0);
 
-	do {  /* Work our way up the class hierarchy */
+	do { /* Work our way up the class hierarchy */
 		if (cmatch(name, it_name(obj)) && cmatch(adj, it_adj(obj)))
 			return 1;
 		obj = it_class(obj);
@@ -879,23 +907,22 @@ static rbool cm_obj(word name, word adj, int x_obj, int obj, int real_obj) {
 	return 0;
 }
 
-
-
 static void scan_dbg(int vcode) {
 	char buff[220];
 	word w;
 
-	if (vcode >= BASE_VERB && vcode < BASE_VERB + DUMB_VERB
-	        && syntbl[synlist[vcode]] != 0)
+	if (vcode >= BASE_VERB && vcode < BASE_VERB + DUMB_VERB && syntbl[synlist[vcode]] != 0)
 		w = syntbl[synlist[vcode]];
-	else w = syntbl[auxsyn[vcode]];
+	else
+		w = syntbl[auxsyn[vcode]];
 
-	if (strlen(dict[w]) > 200) return; /* Just in case... */
+	if (strlen(dict[w]) > 200)
+		return; /* Just in case... */
 	sprintf(buff, "+++++Scanning %s\n", dict[w]);
 	debugout(buff);
 }
 
-#define not_any(n,a) (n!=0 || a!=0)
+#define not_any(n, a) (n != 0 || a != 0)
 
 /* This returns true if we redirect from VERB OBJ {PREP OBJ}
    to something that has fewer objects or no (explicit) preposition.
@@ -910,28 +937,36 @@ static rbool redir_narrows_grammar(cmd_rec *cmd1, cmd_rec *cmd2) {
 
 	/* If we *are* using the new extension, we can just use that info */
 	if (cmd2->objcmd == -1) {
-		if (cmd1->objcmd != -1) return 1;
+		if (cmd1->objcmd != -1)
+			return 1;
 		if (cmd1->prep == -1) {
-			if (cmd1->prep != -1) return 1;
-			if (cmd2->nouncmd == -1 && cmd1->objcmd != -1) return 1;
+			if (cmd1->prep != -1)
+				return 1;
+			if (cmd2->nouncmd == -1 && cmd1->objcmd != -1)
+				return 1;
 		}
 	}
-	if (nomatch_aware) return 0; /* If we are using nomatch, don't need
+	if (nomatch_aware)
+		return 0; /* If we are using nomatch, don't need
                   to go through the rest of this nonsense. */
 
-	if (not_any(cmd2->objcmd, cmd2->obj_adj)) return 0;
-	if (not_any(cmd1->objcmd, cmd1->obj_adj)) return 1;
+	if (not_any(cmd2->objcmd, cmd2->obj_adj))
+		return 0;
+	if (not_any(cmd1->objcmd, cmd1->obj_adj))
+		return 1;
 
-	if (cmd2->prep != 0) return 0;
-	if (cmd1->prep != 0) return 1;
+	if (cmd2->prep != 0)
+		return 0;
+	if (cmd1->prep != 0)
+		return 1;
 
-	if (not_any(cmd2->nouncmd, cmd2->noun_adj)) return 0;
-	if (not_any(cmd1->nouncmd, cmd1->noun_adj)) return 1;
+	if (not_any(cmd2->nouncmd, cmd2->noun_adj))
+		return 0;
+	if (not_any(cmd1->nouncmd, cmd1->noun_adj))
+		return 1;
 
 	return 0; /* They are both all ANY. */
 }
-
-
 
 static rbool cm_command(cmd_rec *cmd,
                         integer m_actor, int m_verb,
@@ -939,17 +974,12 @@ static rbool cm_command(cmd_rec *cmd,
 	if (cmd->verbcmd == 0) { /* ANY */
 		if (cmd->actor == 0 && aver >= AGX00)
 			return (m_verb == 0); /* ANY command: rest of line ignored */
-		/* Else ANY matchs; go on to test other things. */
-	} else if (cmd->verbcmd != m_verb) return 0;
+		                          /* Else ANY matchs; go on to test other things. */
+	} else if (cmd->verbcmd != m_verb)
+		return 0;
 
-	return
-	    cm_actor(cmd->actor, m_actor)
-	    && cm_obj(cmd->nouncmd, cmd->noun_adj, cmd->noun_obj, m_dobj, dobj)
-	    && cmatch(cmd->prep, m_prep)
-	    && cm_obj(cmd->objcmd, cmd->obj_adj, cmd->obj_obj, m_iobj, iobj);
+	return cm_actor(cmd->actor, m_actor) && cm_obj(cmd->nouncmd, cmd->noun_adj, cmd->noun_obj, m_dobj, dobj) && cmatch(cmd->prep, m_prep) && cm_obj(cmd->objcmd, cmd->obj_adj, cmd->obj_obj, m_iobj, iobj);
 }
-
-
 
 static void scan_for_actor(integer m_actor, int *start, int *end) {
 	int i;
@@ -957,27 +987,26 @@ static void scan_for_actor(integer m_actor, int *start, int *end) {
 	assert(m_actor != 0);
 
 	if (aver >= AGX00) {
-		if (start != NULL) *start = verbptr[DIR_ADDR_CODE];
+		if (start != NULL)
+			*start = verbptr[DIR_ADDR_CODE];
 		*end = verbend[DIR_ADDR_CODE];
 		return;
 	}
 	for (i = verbend[DIR_ADDR_CODE]; i > verbptr[DIR_ADDR_CODE]; i--)
-		if (creat_fix[command[i].actor - first_creat]
-		        == creat_fix[m_actor - first_creat]) {
+		if (creat_fix[command[i].actor - first_creat] == creat_fix[m_actor - first_creat]) {
 			i++;
 			break;
 		}
 	*end = i;
 
-	if (start == NULL) return;
+	if (start == NULL)
+		return;
 
 	for (i = verbptr[DIR_ADDR_CODE]; i <= *end; i++)
-		if (creat_fix[command[i].actor - first_creat]
-		        == creat_fix[m_actor - first_creat])
+		if (creat_fix[command[i].actor - first_creat] == creat_fix[m_actor - first_creat])
 			break;
 	*start = i;
 }
-
 
 /* m_<word> are the matching criterion; they have no *neccessary*
   connection to dobj, iobj, etc. */
@@ -996,11 +1025,11 @@ int scan_metacommand(integer m_actor, int vcode,
 	int i, oldi;
 	word m_verb;
 	int scanend;
-	int redir_offset;   /* Used for multiple redirects in the same
+	int redir_offset;    /* Used for multiple redirects in the same
              metacommand (which can occur in AGATE-style
              commands)-- this is used to hold the offset
              of the given redirect. */
-	long redirect_count;  /* This is a safety measure: this keeps track of how
+	long redirect_count; /* This is a safety measure: this keeps track of how
             many redirections have occured on a single turn, and
             if there are "too many" it will issue an error message
             and stop. This is to prevent the system from getting
@@ -1014,12 +1043,14 @@ int scan_metacommand(integer m_actor, int vcode,
 	redirect_count = 0;
 
 	if (mars_fix)
-		if (vcode == 0 || m_actor == 2) return 0;
+		if (vcode == 0 || m_actor == 2)
+			return 0;
 	/* Don't explicity scan ANY metacommands if MARS fix is active. */
-	if (m_actor == -ext_code[weverybody]) m_actor = 2;
+	if (m_actor == -ext_code[weverybody])
+		m_actor = 2;
 
-
-	if (DEBUG_AGT_CMD && DEBUG_SCAN && !supress_debug) scan_dbg(vcode);
+	if (DEBUG_AGT_CMD && DEBUG_SCAN && !supress_debug)
+		scan_dbg(vcode);
 
 	m_verb = syntbl[auxsyn[vcode]];
 	if (m_actor == 0) {
@@ -1042,11 +1073,10 @@ int scan_metacommand(integer m_actor, int vcode,
 				break; /* Go onto next metacommand */
 			case 1:
 				rfree(substack);
-				return 1;  /* Done with metacommands */
+				return 1; /* Done with metacommands */
 			case 2:
 				rfree(substack);
-				return 2;  /* Done with turn */
-
+				return 2; /* Done with turn */
 
 			/* -------- REDIRECTION  ------------ */
 			/* This handles RedirectTo tokens */
@@ -1054,12 +1084,14 @@ int scan_metacommand(integer m_actor, int vcode,
 				oldi = i;
 				i += redir_offset;
 				if (i == last_cmd || command[i].actor > 0) {
-					if (!PURE_ERROR) writeln("GAME ERROR: Invalid REDIRECT token.");
+					if (!PURE_ERROR)
+						writeln("GAME ERROR: Invalid REDIRECT token.");
 					rfree(substack);
 					return 2;
 				}
 				if (MAX_REDIR != 0 && ++redirect_count > MAX_REDIR) {
-					if (!PURE_ERROR) writeln("GAME ERROR: Infinite REDIRECT loop.");
+					if (!PURE_ERROR)
+						writeln("GAME ERROR: Infinite REDIRECT loop.");
 					rfree(substack);
 					return 2;
 				}
@@ -1072,12 +1104,12 @@ int scan_metacommand(integer m_actor, int vcode,
 				   narrower grammer, it will be noted so that certain types
 				   of grammer checking can be disabled. */
 				if (redir_flag != NULL) {
-					if (*redir_flag < 2
-					        && redir_narrows_grammar(&command[oldi], &command[i]))
+					if (*redir_flag < 2 && redir_narrows_grammar(&command[oldi], &command[i]))
 						*redir_flag = 2;
 
 					/* Set *redir_flag to at least 1 if we do *any* redirection. */
-					if (!*redir_flag) *redir_flag = 1;
+					if (!*redir_flag)
+						*redir_flag = 1;
 				}
 
 				/* REDIRECT: Do the actual redirection, building the new command
@@ -1087,7 +1119,7 @@ int scan_metacommand(integer m_actor, int vcode,
 				              &m_dobj, &m_prep, &m_iobj);
 
 				/* REDIRECT: Start scanning again from the beginning */
-				if (!mars_fix) {/* In MARS, we *don't* go back to the top */
+				if (!mars_fix) { /* In MARS, we *don't* go back to the top */
 					if (m_actor != 0)
 						scan_for_actor(m_actor, &i, &scanend);
 					else {
@@ -1105,10 +1137,8 @@ int scan_metacommand(integer m_actor, int vcode,
 				m_verb = syntbl[auxsyn[vcode]];
 				break;
 
-
-
 			/* -------- SUBROUTINE CALL  ------------ */
-			case 4:  /* Subroutine Call -- same idea as RedirectTo,
+			case 4: /* Subroutine Call -- same idea as RedirectTo,
           but less complicated */
 				push_subcall_grammar(m_actor, vcode, m_dobj, m_prep, m_iobj, i);
 				vcode = verb_code(sub_name[subcall_arg - 1]);
@@ -1120,7 +1150,6 @@ int scan_metacommand(integer m_actor, int vcode,
 				scanend = verbend[vcode];
 				m_verb = syntbl[auxsyn[vcode]];
 				break;
-
 
 			/* -------- RETURN  ------------ */
 			case 5: /* Return: pop grammar state, then ... ? */

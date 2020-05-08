@@ -35,7 +35,6 @@
 
 #define DEFAULT_SOURCE_PADDING 5
 
-
 #define STEP_CMD "step"
 #define CONTINUE_CMD "continue"
 #define FINISH_CMD "finish"
@@ -153,6 +152,6 @@ private:
 	void printUsage(const Common::String &command);
 };
 
-}
+} // namespace Wintermute
 
 #endif // WINTERMUTE_DEBUGGER_H

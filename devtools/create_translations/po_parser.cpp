@@ -22,10 +22,10 @@
  * The generated files is used by ScummVM to propose translation of its GUI.
  */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "po_parser.h"
 
@@ -59,7 +59,7 @@ void PoMessageList::insert(const char *msg) {
 	// between the two (i.a. at leftIndex).
 	if (_size + 1 > _allocated) {
 		_allocated += 100;
-		char **newMessages = new char*[_allocated];
+		char **newMessages = new char *[_allocated];
 		for (int i = 0; i < leftIndex; ++i)
 			newMessages[i] = _messages[i];
 		for (int i = leftIndex; i < _size; ++i)
@@ -107,10 +107,8 @@ const char *PoMessageList::operator[](int index) const {
 	return _messages[index];
 }
 
-PoMessageEntryList::PoMessageEntryList(const char *lang) :
-	_lang(NULL), _charset(NULL), _langName(NULL), _langNameAlt(NULL),
-	_list(NULL), _size(0), _allocated(0)
-{
+PoMessageEntryList::PoMessageEntryList(const char *lang) : _lang(NULL), _charset(NULL), _langName(NULL), _langNameAlt(NULL),
+                                                           _list(NULL), _size(0), _allocated(0) {
 	_lang = new char[1 + strlen(lang)];
 	strcpy(_lang, lang);
 	// Set default charset to empty string
@@ -188,7 +186,7 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 	if (context != NULL && *context != '\0') {
 		// Check if we have the same translation for no context
 		int contextIndex = leftIndex - 1;
-		while (contextIndex >= 0 && strcmp (message, _list[contextIndex]->msgid) == 0) {
+		while (contextIndex >= 0 && strcmp(message, _list[contextIndex]->msgid) == 0) {
 			--contextIndex;
 		}
 		++contextIndex;
@@ -196,10 +194,9 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 			return;
 	}
 
-
 	if (_size + 1 > _allocated) {
 		_allocated += 100;
-		PoMessageEntry **newList = new PoMessageEntry*[_allocated];
+		PoMessageEntry **newList = new PoMessageEntry *[_allocated];
 		for (int i = 0; i < leftIndex; ++i)
 			newList[i] = _list[i];
 		for (int i = leftIndex; i < _size; ++i)
@@ -234,7 +231,6 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 		}
 		_size -= removed;
 	}
-
 }
 
 const char *PoMessageEntryList::language() const {
@@ -259,8 +255,7 @@ const PoMessageEntry *PoMessageEntryList::entry(int index) const {
 	return _list[index];
 }
 
-
-PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
+PoMessageEntryList *parsePoFile(const char *file, PoMessageList &messages) {
 	FILE *inFile = fopen(file, "r");
 	if (!inFile)
 		return NULL;
@@ -357,18 +352,29 @@ char *stripLine(char *const line) {
 	// and replace them by the special character so that strcmp() can match them at run time.
 	// Look for the first quote
 	char const *src = line;
-	while (*src != '\0' && *src++ != '"') {}
+	while (*src != '\0' && *src++ != '"') {
+	}
 	// shift characters until we reach the end of the string or an unprotected quote
 	char *dst = line;
 	while (*src != '\0' && *src != '"') {
 		char c = *src++;
 		if (c == '\\') {
 			switch (c = *src++) {
-			case  'n': c = '\n'; break;
-			case  't': c = '\t'; break;
-			case '\"': c = '\"'; break;
-			case '\'': c = '\''; break;
-			case '\\': c = '\\'; break;
+			case 'n':
+				c = '\n';
+				break;
+			case 't':
+				c = '\t';
+				break;
+			case '\"':
+				c = '\"';
+				break;
+			case '\'':
+				c = '\'';
+				break;
+			case '\\':
+				c = '\\';
+				break;
 			default:
 				// Just skip
 				fprintf(stderr, "Unsupported special character \"\\%c\" in string. Please contact ScummVM developers.\n", c);

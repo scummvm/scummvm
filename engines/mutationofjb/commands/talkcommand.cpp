@@ -85,4 +85,4 @@ Common::String TalkCommand::debugString() const {
 	return Common::String::format("TALK %s", modes[static_cast<int>(_mode)]);
 }
 
-}
+} // namespace MutationOfJB

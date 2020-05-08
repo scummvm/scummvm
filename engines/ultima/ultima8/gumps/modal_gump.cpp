@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
+#include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/audio/audio_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -33,14 +33,11 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ModalGump, Gump)
 
 ModalGump::ModalGump() : Gump() {
-
 }
-
 
 ModalGump::ModalGump(int x, int y, int width, int height, uint16 owner,
                      uint32 flags, int32 layer)
-	: Gump(x, y, width, height, owner, flags, layer) {
-
+    : Gump(x, y, width, height, owner, flags, layer) {
 }
 
 ModalGump::~ModalGump() {
@@ -55,12 +52,14 @@ void ModalGump::InitGump(Gump *newparent, bool take_focus) {
 	Kernel::get_instance()->pause();
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->pauseAllSamples();
+	if (ap)
+		ap->pauseAllSamples();
 }
 
 Gump *ModalGump::FindGump(int mx, int my) {
 	Gump *ret = Gump::FindGump(mx, my);
-	if (!ret) ret = this; // we take all mouse input
+	if (!ret)
+		ret = this; // we take all mouse input
 
 	return ret;
 }
@@ -71,7 +70,8 @@ bool ModalGump::PointOnGump(int mx, int my) {
 
 uint16 ModalGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
-	if (!objId_) objId_ = getObjId();
+	if (!objId_)
+		objId_ = getObjId();
 
 	return objId_;
 }
@@ -83,17 +83,18 @@ void ModalGump::Close(bool no_del) {
 	Kernel::get_instance()->unpause();
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->unpauseAllSamples();
+	if (ap)
+		ap->unpauseAllSamples();
 
 	Gump::Close(no_del);
 }
 
 Gump *ModalGump::OnMouseDown(int button, int32 mx, int32 my) {
 	Gump *handled = Gump::OnMouseDown(button, mx, my);
-	if (!handled) handled = this;
+	if (!handled)
+		handled = this;
 	return handled;
 }
-
 
 void ModalGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");

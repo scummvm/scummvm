@@ -23,9 +23,9 @@
 #ifndef SCUMM_IMUSE_H
 #define SCUMM_IMUSE_H
 
+#include "common/mutex.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
-#include "common/mutex.h"
 #include "scumm/music.h"
 
 class MidiDriver;

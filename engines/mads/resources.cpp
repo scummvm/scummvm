@@ -20,16 +20,25 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "mads/resources.h"
 #include "common/archive.h"
+#include "common/scummsys.h"
 #include "common/textconsole.h"
 #include "mads/mads.h"
-#include "mads/resources.h"
 
 namespace MADS {
 
-enum ResourceType {RESTYPE_ROOM, RESTYPE_SC, RESTYPE_TEXT, RESTYPE_QUO, RESTYPE_I,
-	RESTYPE_OB, RESTYPE_FONT, RESTYPE_SOUND, RESTYPE_SPEECH, RESTYPE_HAS_EXT, RESTYPE_NO_EXT};
+enum ResourceType { RESTYPE_ROOM,
+	                RESTYPE_SC,
+	                RESTYPE_TEXT,
+	                RESTYPE_QUO,
+	                RESTYPE_I,
+	                RESTYPE_OB,
+	                RESTYPE_FONT,
+	                RESTYPE_SOUND,
+	                RESTYPE_SPEECH,
+	                RESTYPE_HAS_EXT,
+	                RESTYPE_NO_EXT };
 
 /**
  * HAG Archives implementation
@@ -46,7 +55,7 @@ private:
 
 		HagEntry() : _offset(0), _size(0) {}
 		HagEntry(Common::String resourceName, uint32 offset, uint32 size)
-			: _resourceName(resourceName), _offset(offset), _size(size) {
+		    : _resourceName(resourceName), _offset(offset), _size(size) {
 		}
 	};
 
@@ -78,6 +87,7 @@ private:
 	 * Return a resource type given a resource name
 	 */
 	ResourceType getResourceType(const Common::String &resourceName) const;
+
 public:
 	explicit HagArchive(MADSEngine *vm);
 	~HagArchive() override;
@@ -114,7 +124,7 @@ int HagArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 		for (i = hagIndex._entries.begin(); i != hagIndex._entries.end(); ++i) {
 			list.push_back(Common::ArchiveMemberList::value_type(
-				new Common::GenericArchiveMember((*i)._resourceName, this)));
+			    new Common::GenericArchiveMember((*i)._resourceName, this)));
 			++members;
 		}
 	}
@@ -151,23 +161,22 @@ void HagArchive::loadIndex(MADSEngine *vm) {
 	Common::File hagFile;
 
 	for (int sectionIndex = -1; sectionIndex < 11; ++sectionIndex) {
- 		if (sectionIndex == 0 && !Common::File::exists("SECTION0.HAG"))
+		if (sectionIndex == 0 && !Common::File::exists("SECTION0.HAG"))
 			continue;
 
 		// Dragonsphere does not have some sections - skip them
-		if (vm->getGameID() == GType_Dragonsphere)  {
+		if (vm->getGameID() == GType_Dragonsphere) {
 			if (sectionIndex == 7 || sectionIndex == 8)
 				continue;
 		}
 
 		// Phantom does not have some sections - skip them
-		if (vm->getGameID() == GType_Phantom)  {
+		if (vm->getGameID() == GType_Phantom) {
 			if (sectionIndex == 6 || sectionIndex == 7 || sectionIndex == 8)
 				continue;
 		}
 
-		Common::String filename = (sectionIndex == -1) ? "GLOBAL.HAG" :
-			Common::String::format("SECTION%d.HAG", sectionIndex);
+		Common::String filename = (sectionIndex == -1) ? "GLOBAL.HAG" : Common::String::format("SECTION%d.HAG", sectionIndex);
 		if (sectionIndex == 10) {
 			// Speech
 			if (!Common::File::exists("SPEECH.HAG"))
@@ -181,7 +190,7 @@ void HagArchive::loadIndex(MADSEngine *vm) {
 		// Check for header
 		char headerBuffer[16];
 		if ((hagFile.read(headerBuffer, 16) != 16) ||
-				(strncmp(headerBuffer, MADSCONCAT_STRING, 10) != 0))
+		    (strncmp(headerBuffer, MADSCONCAT_STRING, 10) != 0))
 			error("Invalid HAG file opened");
 
 		// Scan through the HAG index
@@ -206,7 +215,7 @@ void HagArchive::loadIndex(MADSEngine *vm) {
 }
 
 bool HagArchive::getHeaderEntry(const Common::String &resourceName,
-		HagIndex &hagIndex, HagEntry &hagEntry) const {
+                                HagIndex &hagIndex, HagEntry &hagEntry) const {
 	Common::String resName = resourceName;
 	resName.toUppercase();
 	if (resName[0] == '*')
@@ -284,7 +293,7 @@ ResourceType HagArchive::getResourceType(const Common::String &resourceName) con
 	if (extPos) {
 		++extPos;
 		if (!strcmp(extPos, "FL") || !strcmp(extPos, "LBM") || !strcmp(extPos, "ANM") ||
-			!strcmp(extPos, "AA") || !strcmp(extPos, "SS")) {
+		    !strcmp(extPos, "AA") || !strcmp(extPos, "SS")) {
 			return RESTYPE_HAS_EXT;
 		}
 	}
@@ -327,13 +336,13 @@ Common::String Resources::formatName(RESPREFIX resType, int id, const Common::St
 }
 
 Common::String Resources::formatName(int prefix, char asciiCh, int id, EXTTYPE extType,
-		const Common::String &suffix) {
+                                     const Common::String &suffix) {
 	Common::String result;
 	if (prefix <= 0) {
 		result = "*";
 	} else {
 		result = Common::String::format("%s%.3d",
-			(prefix < 100) ? "*SC" : "*RM", prefix);
+		                                (prefix < 100) ? "*SC" : "*RM", prefix);
 	}
 
 	result += Common::String::format("%c", asciiCh);
@@ -369,8 +378,8 @@ Common::String Resources::formatName(int prefix, char asciiCh, int id, EXTTYPE e
 }
 
 Common::String Resources::formatResource(const Common::String &resName,
-		const Common::String &hagFilename) {
-//	int v1 = 0, v2 = 0;
+                                         const Common::String &hagFilename) {
+	//	int v1 = 0, v2 = 0;
 
 	if (resName.hasPrefix("*")) {
 		// Resource file specified

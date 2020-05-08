@@ -39,6 +39,7 @@ class CArm : public CCarry {
 	bool MaitreDHappyMsg(CMaitreDHappyMsg *msg);
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
+
 private:
 	CString _heldItemName;
 	int _puzzleUnused;
@@ -48,6 +49,7 @@ private:
 	Rect _armRect;
 	int _arboretumFrame;
 	int _unlockedFrame;
+
 public:
 	CLASSDEF;
 	CArm();

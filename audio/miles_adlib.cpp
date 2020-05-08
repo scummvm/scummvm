@@ -47,30 +47,27 @@ namespace Audio {
 #define MILES_ADLIB_STEREO_PANNING_THRESHOLD_RIGHT 100
 
 enum kMilesAdLibUpdateFlags {
-	kMilesAdLibUpdateFlags_None    = 0,
-	kMilesAdLibUpdateFlags_Reg_20  = 1 << 0,
-	kMilesAdLibUpdateFlags_Reg_40  = 1 << 1,
-	kMilesAdLibUpdateFlags_Reg_60  = 1 << 2, // register 0x6x + 0x8x
-	kMilesAdLibUpdateFlags_Reg_C0  = 1 << 3,
-	kMilesAdLibUpdateFlags_Reg_E0  = 1 << 4,
-	kMilesAdLibUpdateFlags_Reg_A0  = 1 << 5, // register 0xAx + 0xBx
+	kMilesAdLibUpdateFlags_None = 0,
+	kMilesAdLibUpdateFlags_Reg_20 = 1 << 0,
+	kMilesAdLibUpdateFlags_Reg_40 = 1 << 1,
+	kMilesAdLibUpdateFlags_Reg_60 = 1 << 2, // register 0x6x + 0x8x
+	kMilesAdLibUpdateFlags_Reg_C0 = 1 << 3,
+	kMilesAdLibUpdateFlags_Reg_E0 = 1 << 4,
+	kMilesAdLibUpdateFlags_Reg_A0 = 1 << 5, // register 0xAx + 0xBx
 	kMilesAdLibUpdateFlags_Reg_All = 0x3F
 };
 
 uint16 milesAdLibOperator1Register[MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX] = {
-	0x0000, 0x0001, 0x0002, 0x0008, 0x0009, 0x000A, 0x0010, 0x0011, 0x0012,
-	0x0100, 0x0101, 0x0102, 0x0108, 0x0109, 0x010A, 0x0110, 0x0111, 0x0112
-};
+    0x0000, 0x0001, 0x0002, 0x0008, 0x0009, 0x000A, 0x0010, 0x0011, 0x0012,
+    0x0100, 0x0101, 0x0102, 0x0108, 0x0109, 0x010A, 0x0110, 0x0111, 0x0112};
 
 uint16 milesAdLibOperator2Register[MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX] = {
-	0x0003, 0x0004, 0x0005, 0x000B, 0x000C, 0x000D, 0x0013, 0x0014, 0x0015,
-	0x0103, 0x0104, 0x0105, 0x010B, 0x010C, 0x010D, 0x0113, 0x0114, 0x0115
-};
+    0x0003, 0x0004, 0x0005, 0x000B, 0x000C, 0x000D, 0x0013, 0x0014, 0x0015,
+    0x0103, 0x0104, 0x0105, 0x010B, 0x010C, 0x010D, 0x0113, 0x0114, 0x0115};
 
 uint16 milesAdLibChannelRegister[MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX] = {
-	0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
-	0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107, 0x0108
-};
+    0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
+    0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107, 0x0108};
 
 struct InstrumentEntry {
 	byte bankId;
@@ -91,29 +88,26 @@ struct InstrumentEntry {
 
 // hardcoded, dumped from ADLIB.MDI
 uint16 milesAdLibFrequencyLookUpTable[] = {
-	0x02B2, 0x02B4, 0x02B7, 0x02B9, 0x02BC, 0x02BE, 0x02C1, 0x02C3, 0x02C6, 0x02C9, 0x02CB, 0x02CE,
-	0x02D0, 0x02D3, 0x02D6, 0x02D8, 0x02DB, 0x02DD, 0x02E0, 0x02E3, 0x02E5, 0x02E8, 0x02EB, 0x02ED,
-	0x02F0, 0x02F3, 0x02F6, 0x02F8, 0x02FB, 0x02FE, 0x0301, 0x0303, 0x0306, 0x0309, 0x030C, 0x030F,
-	0x0311, 0x0314, 0x0317, 0x031A, 0x031D, 0x0320, 0x0323, 0x0326, 0x0329, 0x032B, 0x032E, 0x0331,
-	0x0334, 0x0337, 0x033A, 0x033D, 0x0340, 0x0343, 0x0346, 0x0349, 0x034C, 0x034F, 0x0352, 0x0356,
-	0x0359, 0x035C, 0x035F, 0x0362, 0x0365, 0x0368, 0x036B, 0x036F, 0x0372, 0x0375, 0x0378, 0x037B,
-	0x037F, 0x0382, 0x0385, 0x0388, 0x038C, 0x038F, 0x0392, 0x0395, 0x0399, 0x039C, 0x039F, 0x03A3,
-	0x03A6, 0x03A9, 0x03AD, 0x03B0, 0x03B4, 0x03B7, 0x03BB, 0x03BE, 0x03C1, 0x03C5, 0x03C8, 0x03CC,
-	0x03CF, 0x03D3, 0x03D7, 0x03DA, 0x03DE, 0x03E1, 0x03E5, 0x03E8, 0x03EC, 0x03F0, 0x03F3, 0x03F7,
-	0x03FB, 0x03FE, 0xFE01, 0xFE03, 0xFE05, 0xFE07, 0xFE08, 0xFE0A, 0xFE0C, 0xFE0E, 0xFE10, 0xFE12,
-	0xFE14, 0xFE16, 0xFE18, 0xFE1A, 0xFE1C, 0xFE1E, 0xFE20, 0xFE21, 0xFE23, 0xFE25, 0xFE27, 0xFE29,
-	0xFE2B, 0xFE2D, 0xFE2F, 0xFE31, 0xFE34, 0xFE36, 0xFE38, 0xFE3A, 0xFE3C, 0xFE3E, 0xFE40, 0xFE42,
-	0xFE44, 0xFE46, 0xFE48, 0xFE4A, 0xFE4C, 0xFE4F, 0xFE51, 0xFE53, 0xFE55, 0xFE57, 0xFE59, 0xFE5C,
-	0xFE5E, 0xFE60, 0xFE62, 0xFE64, 0xFE67, 0xFE69, 0xFE6B, 0xFE6D, 0xFE6F, 0xFE72, 0xFE74, 0xFE76,
-	0xFE79, 0xFE7B, 0xFE7D, 0xFE7F, 0xFE82, 0xFE84, 0xFE86, 0xFE89, 0xFE8B, 0xFE8D, 0xFE90, 0xFE92,
-	0xFE95, 0xFE97, 0xFE99, 0xFE9C, 0xFE9E, 0xFEA1, 0xFEA3, 0xFEA5, 0xFEA8, 0xFEAA, 0xFEAD, 0xFEAF
-};
+    0x02B2, 0x02B4, 0x02B7, 0x02B9, 0x02BC, 0x02BE, 0x02C1, 0x02C3, 0x02C6, 0x02C9, 0x02CB, 0x02CE,
+    0x02D0, 0x02D3, 0x02D6, 0x02D8, 0x02DB, 0x02DD, 0x02E0, 0x02E3, 0x02E5, 0x02E8, 0x02EB, 0x02ED,
+    0x02F0, 0x02F3, 0x02F6, 0x02F8, 0x02FB, 0x02FE, 0x0301, 0x0303, 0x0306, 0x0309, 0x030C, 0x030F,
+    0x0311, 0x0314, 0x0317, 0x031A, 0x031D, 0x0320, 0x0323, 0x0326, 0x0329, 0x032B, 0x032E, 0x0331,
+    0x0334, 0x0337, 0x033A, 0x033D, 0x0340, 0x0343, 0x0346, 0x0349, 0x034C, 0x034F, 0x0352, 0x0356,
+    0x0359, 0x035C, 0x035F, 0x0362, 0x0365, 0x0368, 0x036B, 0x036F, 0x0372, 0x0375, 0x0378, 0x037B,
+    0x037F, 0x0382, 0x0385, 0x0388, 0x038C, 0x038F, 0x0392, 0x0395, 0x0399, 0x039C, 0x039F, 0x03A3,
+    0x03A6, 0x03A9, 0x03AD, 0x03B0, 0x03B4, 0x03B7, 0x03BB, 0x03BE, 0x03C1, 0x03C5, 0x03C8, 0x03CC,
+    0x03CF, 0x03D3, 0x03D7, 0x03DA, 0x03DE, 0x03E1, 0x03E5, 0x03E8, 0x03EC, 0x03F0, 0x03F3, 0x03F7,
+    0x03FB, 0x03FE, 0xFE01, 0xFE03, 0xFE05, 0xFE07, 0xFE08, 0xFE0A, 0xFE0C, 0xFE0E, 0xFE10, 0xFE12,
+    0xFE14, 0xFE16, 0xFE18, 0xFE1A, 0xFE1C, 0xFE1E, 0xFE20, 0xFE21, 0xFE23, 0xFE25, 0xFE27, 0xFE29,
+    0xFE2B, 0xFE2D, 0xFE2F, 0xFE31, 0xFE34, 0xFE36, 0xFE38, 0xFE3A, 0xFE3C, 0xFE3E, 0xFE40, 0xFE42,
+    0xFE44, 0xFE46, 0xFE48, 0xFE4A, 0xFE4C, 0xFE4F, 0xFE51, 0xFE53, 0xFE55, 0xFE57, 0xFE59, 0xFE5C,
+    0xFE5E, 0xFE60, 0xFE62, 0xFE64, 0xFE67, 0xFE69, 0xFE6B, 0xFE6D, 0xFE6F, 0xFE72, 0xFE74, 0xFE76,
+    0xFE79, 0xFE7B, 0xFE7D, 0xFE7F, 0xFE82, 0xFE84, 0xFE86, 0xFE89, 0xFE8B, 0xFE8D, 0xFE90, 0xFE92,
+    0xFE95, 0xFE97, 0xFE99, 0xFE9C, 0xFE9E, 0xFEA1, 0xFEA3, 0xFEA5, 0xFEA8, 0xFEAA, 0xFEAD, 0xFEAF};
 
 // hardcoded, dumped from ADLIB.MDI
 uint16 milesAdLibVolumeSensitivityTable[] = {
-	82, 85, 88, 91, 94, 97, 100, 103, 106, 109, 112, 115, 118, 121, 124, 127
-};
-
+    82, 85, 88, 91, 94, 97, 100, 103, 106, 109, 112, 115, 118, 121, 124, 127};
 
 class MidiDriver_Miles_AdLib : public MidiDriver {
 public:
@@ -143,75 +137,75 @@ private:
 
 	// Structure to hold information about current status of MIDI Channels
 	struct MidiChannelEntry {
-		byte   currentPatchBank;
-		const  InstrumentEntry *currentInstrumentPtr;
+		byte currentPatchBank;
+		const InstrumentEntry *currentInstrumentPtr;
 		uint16 currentPitchBender;
-		byte   currentPitchRange;
-		byte   currentVoiceProtection;
+		byte currentPitchRange;
+		byte currentVoiceProtection;
 
-		byte   currentVolume;
-		byte   currentVolumeExpression;
+		byte currentVolume;
+		byte currentVolumeExpression;
 
-		byte   currentPanning;
+		byte currentPanning;
 
-		byte   currentModulation;
-		byte   currentSustain;
+		byte currentModulation;
+		byte currentSustain;
 
-		byte   currentActiveVoicesCount;
+		byte currentActiveVoicesCount;
 
 		MidiChannelEntry() : currentPatchBank(0),
-							currentInstrumentPtr(NULL),
-							currentPitchBender(MILES_PITCHBENDER_DEFAULT),
-							currentPitchRange(0),
-							currentVoiceProtection(0),
-							currentVolume(0), currentVolumeExpression(0),
-							currentPanning(0),
-							currentModulation(0),
-							currentSustain(0),
-							currentActiveVoicesCount(0) { }
+		                     currentInstrumentPtr(NULL),
+		                     currentPitchBender(MILES_PITCHBENDER_DEFAULT),
+		                     currentPitchRange(0),
+		                     currentVoiceProtection(0),
+		                     currentVolume(0), currentVolumeExpression(0),
+		                     currentPanning(0),
+		                     currentModulation(0),
+		                     currentSustain(0),
+		                     currentActiveVoicesCount(0) {}
 	};
 
 	// Structure to hold information about current status of virtual FM Voices
 	struct VirtualFmVoiceEntry {
-		bool   inUse;
-		byte   actualMidiChannel;
+		bool inUse;
+		byte actualMidiChannel;
 
-		const  InstrumentEntry *currentInstrumentPtr;
+		const InstrumentEntry *currentInstrumentPtr;
 
-		bool   isPhysical;
-		byte   physicalFmVoice;
+		bool isPhysical;
+		byte physicalFmVoice;
 
 		uint16 currentPriority;
 
-		byte   currentOriginalMidiNote;
-		byte   currentNote;
-		int16  currentTransposition;
-		byte   currentVelocity;
+		byte currentOriginalMidiNote;
+		byte currentNote;
+		int16 currentTransposition;
+		byte currentVelocity;
 
-		bool   sustained;
+		bool sustained;
 
-		VirtualFmVoiceEntry(): inUse(false),
-								actualMidiChannel(0),
-								currentInstrumentPtr(NULL),
-								isPhysical(false), physicalFmVoice(0),
-								currentPriority(0),
-								currentOriginalMidiNote(0),
-								currentNote(0),
-								currentTransposition(0),
-								currentVelocity(0),
-								sustained(false) { }
+		VirtualFmVoiceEntry() : inUse(false),
+		                        actualMidiChannel(0),
+		                        currentInstrumentPtr(NULL),
+		                        isPhysical(false), physicalFmVoice(0),
+		                        currentPriority(0),
+		                        currentOriginalMidiNote(0),
+		                        currentNote(0),
+		                        currentTransposition(0),
+		                        currentVelocity(0),
+		                        sustained(false) {}
 	};
 
 	// Structure to hold information about current status of physical FM Voices
 	struct PhysicalFmVoiceEntry {
-		bool   inUse;
-		byte   virtualFmVoice;
+		bool inUse;
+		byte virtualFmVoice;
 
-		byte   currentB0hReg;
+		byte currentB0hReg;
 
-		PhysicalFmVoiceEntry(): inUse(false),
-								virtualFmVoice(0),
-								currentB0hReg(0) { }
+		PhysicalFmVoiceEntry() : inUse(false),
+		                         virtualFmVoice(0),
+		                         currentB0hReg(0) {}
 	};
 
 	OPL::OPL *_opl;
@@ -233,7 +227,7 @@ private:
 
 	// holds all instruments
 	InstrumentEntry *_instrumentTablePtr;
-	uint16           _instrumentTableCount;
+	uint16 _instrumentTableCount;
 
 	bool circularPhysicalAssignment;
 	byte circularPhysicalAssignmentFmVoice;
@@ -270,8 +264,8 @@ private:
 };
 
 MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount)
-	: _masterVolume(15), _opl(0),
-	  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
+    : _masterVolume(15), _opl(0),
+      _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
 
 	_instrumentTablePtr = instrumentTablePtr;
 	_instrumentTableCount = instrumentTableCount;
@@ -358,7 +352,6 @@ void MidiDriver_Miles_AdLib::resetData() {
 		_midiChannels[midiChannel].currentPitchBender = MILES_PITCHBENDER_DEFAULT;
 		_midiChannels[midiChannel].currentPitchRange = 12;
 	}
-
 }
 
 void MidiDriver_Miles_AdLib::resetAdLib() {
@@ -569,11 +562,11 @@ void MidiDriver_Miles_AdLib::noteOff(byte midiChannel, byte note) {
 }
 
 void MidiDriver_Miles_AdLib::prioritySort() {
-	byte   virtualFmVoice = 0;
+	byte virtualFmVoice = 0;
 	uint16 virtualPriority = 0;
 	uint16 virtualPriorities[MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX];
 	uint16 virtualFmVoicesCount = 0;
-	byte   midiChannel = 0;
+	byte midiChannel = 0;
 
 	memset(&virtualPriorities, 0, sizeof(virtualPriorities));
 
@@ -604,9 +597,9 @@ void MidiDriver_Miles_AdLib::prioritySort() {
 	//
 	while (virtualFmVoicesCount) {
 		uint16 unvoicedHighestPriority = 0;
-		byte   unvoicedHighestFmVoice = 0;
+		byte unvoicedHighestFmVoice = 0;
 		uint16 voicedLowestPriority = 65535;
-		byte   voicedLowestFmVoice = 0;
+		byte voicedLowestFmVoice = 0;
 
 		for (virtualFmVoice = 0; virtualFmVoice < _modeVirtualFmVoicesCount; virtualFmVoice++) {
 			if (_virtualFmVoices[virtualFmVoice].inUse) {
@@ -615,13 +608,13 @@ void MidiDriver_Miles_AdLib::prioritySort() {
 					// currently not physical, so unvoiced
 					if (virtualPriority >= unvoicedHighestPriority) {
 						unvoicedHighestPriority = virtualPriority;
-						unvoicedHighestFmVoice  = virtualFmVoice;
+						unvoicedHighestFmVoice = virtualFmVoice;
 					}
 				} else {
 					// currently physical, so voiced
 					if (virtualPriority <= voicedLowestPriority) {
 						voicedLowestPriority = virtualPriority;
-						voicedLowestFmVoice  = virtualFmVoice;
+						voicedLowestFmVoice = virtualFmVoice;
 					}
 				}
 			}
@@ -712,7 +705,7 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 		return;
 	}
 
-	byte                   physicalFmVoice = _virtualFmVoices[virtualFmVoice].physicalFmVoice;
+	byte physicalFmVoice = _virtualFmVoices[virtualFmVoice].physicalFmVoice;
 	const InstrumentEntry *instrumentPtr = _virtualFmVoices[virtualFmVoice].currentInstrumentPtr;
 
 	uint16 op1Reg = milesAdLibOperator1Register[physicalFmVoice];
@@ -768,10 +761,10 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 
 		volumeOp2 = (volumeOp2 * compositeVolume) / 127;
 
-		volumeOp1 = (~volumeOp1) & 0x3F; // negate it, so we get the proper value for the register
-		volumeOp2 = (~volumeOp2) & 0x3F; // ditto
-		reg40op1  = (reg40op1 & 0xC0) | volumeOp1; // keep "scaling level" and merge in our volume
-		reg40op2  = (reg40op2 & 0xC0) | volumeOp2;
+		volumeOp1 = (~volumeOp1) & 0x3F;          // negate it, so we get the proper value for the register
+		volumeOp2 = (~volumeOp2) & 0x3F;          // ditto
+		reg40op1 = (reg40op1 & 0xC0) | volumeOp1; // keep "scaling level" and merge in our volume
+		reg40op2 = (reg40op2 & 0xC0) | volumeOp2;
 
 		setRegister(0x40 + op1Reg, reg40op1);
 		setRegister(0x40 + op2Reg, reg40op2);
@@ -831,16 +824,16 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 		} else {
 			// turn on note, calculate frequency, octave...
 			int16 pitchBender = _midiChannels[midiChannel].currentPitchBender;
-			byte  pitchRange = _midiChannels[midiChannel].currentPitchRange;
+			byte pitchRange = _midiChannels[midiChannel].currentPitchRange;
 			int16 currentNote = _virtualFmVoices[virtualFmVoice].currentNote;
 			int16 physicalNote = 0;
 			int16 halfTone = 0;
 			uint16 frequency = 0;
 			uint16 frequencyIdx = 0;
-			byte   octave = 0;
+			byte octave = 0;
 
 			pitchBender -= 0x2000;
-			pitchBender = pitchBender >> 5; // divide by 32
+			pitchBender = pitchBender >> 5;         // divide by 32
 			pitchBender = pitchBender * pitchRange; // pitchrange 12: now +0x0C00 to -0xC00
 			// difference between Miles Audio 2 + 3
 			// Miles Audio 2 used a pitch range of 12, which was basically hardcoded
@@ -1064,28 +1057,27 @@ uint32 MidiDriver_Miles_AdLib::property(int prop, uint32 param) {
 
 MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib, Common::SeekableReadStream *streamOPL3) {
 	// Load adlib instrument data from file SAMPLE.AD (OPL3: SAMPLE.OPL)
-	Common::String              timbreFilename;
+	Common::String timbreFilename;
 	Common::SeekableReadStream *timbreStream = nullptr;
 
-	bool          preferOPL3 = false;
+	bool preferOPL3 = false;
 
 	Common::File *fileStream = new Common::File();
-	uint32        fileSize = 0;
-	uint32        fileDataOffset = 0;
-	uint32        fileDataLeft = 0;
+	uint32 fileSize = 0;
+	uint32 fileDataOffset = 0;
+	uint32 fileDataLeft = 0;
 
-
-	uint32        streamSize = 0;
-	byte         *streamDataPtr = nullptr;
+	uint32 streamSize = 0;
+	byte *streamDataPtr = nullptr;
 
 	byte curBankId = 0;
 	byte curPatchId = 0;
 
 	InstrumentEntry *instrumentTablePtr = nullptr;
-	uint16           instrumentTableCount = 0;
+	uint16 instrumentTableCount = 0;
 	InstrumentEntry *instrumentPtr = nullptr;
-	uint32           instrumentOffset = 0;
-	uint16           instrumentDataSize = 0;
+	uint32 instrumentOffset = 0;
+	uint16 instrumentDataSize = 0;
 
 	// Logic:
 	// We prefer OPL3 timbre data in case OPL3 is available in ScummVM
@@ -1219,7 +1211,7 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, c
 			error("MILES-ADLIB: unexpected EOF in instrument file");
 
 		curPatchId = streamDataPtr[fileDataOffset++];
-		curBankId  = streamDataPtr[fileDataOffset++];
+		curBankId = streamDataPtr[fileDataOffset++];
 
 		if ((curBankId == 0xFF) && (curPatchId == 0xFF))
 			break;
@@ -1241,7 +1233,7 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, c
 	fileDataLeft = fileSize;
 	while (1) {
 		curPatchId = streamDataPtr[fileDataOffset++];
-		curBankId  = streamDataPtr[fileDataOffset++];
+		curBankId = streamDataPtr[fileDataOffset++];
 
 		if ((curBankId == 0xFF) && (curPatchId == 0xFF))
 			break;
@@ -1262,7 +1254,7 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, c
 		instrumentPtr->reg60op1 = streamDataPtr[instrumentOffset + 5];
 		instrumentPtr->reg80op1 = streamDataPtr[instrumentOffset + 6];
 		instrumentPtr->regE0op1 = streamDataPtr[instrumentOffset + 7];
-		instrumentPtr->regC0    = streamDataPtr[instrumentOffset + 8];
+		instrumentPtr->regC0 = streamDataPtr[instrumentOffset + 8];
 		instrumentPtr->reg20op2 = streamDataPtr[instrumentOffset + 9];
 		instrumentPtr->reg40op2 = streamDataPtr[instrumentOffset + 10];
 		instrumentPtr->reg60op2 = streamDataPtr[instrumentOffset + 11];

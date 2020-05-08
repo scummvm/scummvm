@@ -20,15 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/util.h"
-#include "ultima/ultima8/misc/istring.h"
 #include "ultima/shared/std/string.h"
+#include "ultima/ultima8/misc/istring.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-template<class T> void StringToArgv(const T &args, Std::vector<T> &argv) {
+template<class T>
+void StringToArgv(const T &args, Std::vector<T> &argv) {
 	// Clear the vector
 	argv.clear();
 
@@ -86,14 +87,16 @@ template<class T> void StringToArgv(const T &args, Std::vector<T> &argv) {
 	}
 
 	// Push any arg if it's left
-	if (!arg.empty()) argv.push_back(arg);
+	if (!arg.empty())
+		argv.push_back(arg);
 }
 
 template void StringToArgv<Std::string>(const Std::string &args, Std::vector<Std::string> &argv);
 template void StringToArgv<istring>(const istring &args, Std::vector<istring> &argv);
 template void StringToArgv<Common::String>(const Common::String &args, Std::vector<Common::String> &argv);
 
-template<class T> void ArgvToString(const Std::vector<T> &argv, T &args) {
+template<class T>
+void ArgvToString(const Std::vector<T> &argv, T &args) {
 	// Clear the string
 	args.clear();
 
@@ -131,8 +134,10 @@ template void ArgvToString<Std::string>(const Std::vector<Std::string> &argv, St
 template void ArgvToString<istring>(const Std::vector<istring> &argv, istring &args);
 template void ArgvToString<Common::String>(const Std::vector<Common::String> &argv, Common::String &args);
 
-template<class T> void TrimSpaces(T &str) {
-	if (str.empty()) return;
+template<class T>
+void TrimSpaces(T &str) {
+	if (str.empty())
+		return;
 
 	typename T::size_type pos1 = str.findFirstNotOf(' ');
 	if (pos1 == T::npos) {
@@ -147,8 +152,8 @@ template<class T> void TrimSpaces(T &str) {
 template void TrimSpaces<Std::string>(Std::string &str);
 template void TrimSpaces<istring>(istring &str);
 
-
-template<class T> void TabsToSpaces(T &str, unsigned int n) {
+template<class T>
+void TabsToSpaces(T &str, unsigned int n) {
 	T repl(n, ' ');
 	typename T::size_type p;
 	while ((p = str.find('\t')) != T::npos)
@@ -158,13 +163,14 @@ template<class T> void TabsToSpaces(T &str, unsigned int n) {
 template void TabsToSpaces<Std::string>(Std::string &str, unsigned int n);
 template void TabsToSpaces<istring>(istring &str, unsigned int n);
 
-
-template<class T> void SplitString(const T &args, char sep,
-                                   Std::vector<T> &argv) {
+template<class T>
+void SplitString(const T &args, char sep,
+                 Std::vector<T> &argv) {
 	// Clear the vector
 	argv.clear();
 
-	if (args.empty()) return;
+	if (args.empty())
+		return;
 
 	typename T::size_type pos, start;
 	start = 0;
@@ -180,19 +186,17 @@ template<class T> void SplitString(const T &args, char sep,
 	}
 }
 
-
 template void SplitString<Std::string>(const Std::string &args, char sep, Std::vector<Std::string> &argv);
 template void SplitString<istring>(const istring &args, char sep, Std::vector<istring> &argv);
 
-
-
-
-template<class T> void SplitStringKV(const T &args, char sep,
-                                     Std::vector<Std::pair<T, T> > &argv) {
+template<class T>
+void SplitStringKV(const T &args, char sep,
+                   Std::vector<Std::pair<T, T>> &argv) {
 	// Clear the vector
 	argv.clear();
 
-	if (args.empty()) return;
+	if (args.empty())
+		return;
 
 	Std::vector<T> keyvals;
 	SplitString(args, sep, keyvals);
@@ -214,8 +218,8 @@ template<class T> void SplitStringKV(const T &args, char sep,
 	}
 }
 
-template void SplitStringKV<Std::string>(const Std::string &args, char sep, Std::vector<Std::pair<Std::string, Std::string> > &argv);
-template void SplitStringKV<istring>(const istring &args, char sep, Std::vector<Std::pair<istring, istring> > &argv);
+template void SplitStringKV<Std::string>(const Std::string &args, char sep, Std::vector<Std::pair<Std::string, Std::string>> &argv);
+template void SplitStringKV<istring>(const istring &args, char sep, Std::vector<Std::pair<istring, istring>> &argv);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

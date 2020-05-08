@@ -20,17 +20,17 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/fonts/font_manager.h"
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/files/nuvie_bmp_file.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
-#include "ultima/nuvie/files/nuvie_bmp_file.h"
-#include "ultima/nuvie/fonts/font_manager.h"
-#include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/fonts/conv_font.h"
+#include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/fonts/u6_font.h"
 #include "ultima/nuvie/fonts/wou_font.h"
+#include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
@@ -91,13 +91,13 @@ bool FontManager::initU6() {
 	if (font_data == NULL)
 		return false;
 
-// english font
+	// english font
 	font = new U6Font();
 	font->init(font_data, 128, 0);
 	fonts.push_back(font);
 	num_fonts++;
 
-// runic & gargoyle font
+	// runic & gargoyle font
 	font = new U6Font();
 	font->init(&font_data[128 * 8], 128, 0);
 	fonts.push_back(font);

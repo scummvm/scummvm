@@ -20,26 +20,26 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/nuvie_io.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/core/converse.h"
-#include "ultima/nuvie/core/timed_event.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/core/map.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/usecode/u6_usecode.h"
-#include "ultima/nuvie/gui/widgets/command_bar.h"
-#include "ultima/nuvie/pathfinder/party_path_finder.h"
 #include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/views/view.h"
-#include "ultima/nuvie/save/obj_list.h"
+#include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/converse.h"
 #include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/core/timed_event.h"
+#include "ultima/nuvie/files/nuvie_io.h"
+#include "ultima/nuvie/gui/widgets/command_bar.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/pathfinder/party_path_finder.h"
+#include "ultima/nuvie/save/obj_list.h"
+#include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/usecode/u6_usecode.h"
+#include "ultima/nuvie/views/view.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -107,7 +107,6 @@ bool Party::load(NuvieIO *objlist) {
 	objlist->seek(OBJLIST_OFFSET_NUM_IN_PARTY);
 	num_in_party = objlist->read1();
 
-
 	objlist->seek(OBJLIST_OFFSET_PARTY_NAMES);
 	for (i = 0; i < num_in_party; i++) {
 		objlist->readToBuf((unsigned char *)member[i].name, PARTY_NAME_MAX_LENGTH + 1); // read in Player name.
@@ -152,7 +151,6 @@ bool Party::save(NuvieIO *objlist) {
 	objlist->seek(OBJLIST_OFFSET_NUM_IN_PARTY);
 	objlist->write1(num_in_party);
 
-
 	objlist->seek(OBJLIST_OFFSET_PARTY_NAMES);
 	for (i = 0; i < num_in_party; i++) {
 		objlist->writeBuf((unsigned char *)member[i].name, PARTY_NAME_MAX_LENGTH + 1);
@@ -179,8 +177,8 @@ bool Party::add_actor(Actor *actor) {
 		strncpy(member[num_in_party].name, converse->npc_name(actor->id_n), PARTY_NAME_MAX_LENGTH + 1);
 		member[num_in_party].name[PARTY_NAME_MAX_LENGTH] = '\0'; // make sure name is terminated
 		member[num_in_party].combat_position = 0;
-//    member[num_in_party].leader_x = member[0].actor->get_location().x;
-//    member[num_in_party].leader_y = member[0].actor->get_location().y;
+		//    member[num_in_party].leader_x = member[0].actor->get_location().x;
+		//    member[num_in_party].leader_y = member[0].actor->get_location().y;
 
 		num_in_party++;
 		reform_party();
@@ -189,7 +187,6 @@ bool Party::add_actor(Actor *actor) {
 
 	return false;
 }
-
 
 // remove actor from member array shuffle remaining actors down if required.
 bool Party::remove_actor(Actor *actor, bool keep_party_flag) {
@@ -257,7 +254,6 @@ bool Party::resurrect_dead_members() {
 	return true;
 }
 
-
 void Party::split_gold() {
 }
 
@@ -290,7 +286,6 @@ char *Party::get_actor_name(uint8 member_num) {
 
 	return member[member_num].name;
 }
-
 
 /* Returns position of actor in party or -1.
  */
@@ -368,8 +363,8 @@ void Party::reform_party() {
 			}
 		}
 		break;
-//        case PARTY_FORM_COMBAT: // positions determined by COMBAT mode
-//            break;
+		//        case PARTY_FORM_COMBAT: // positions determined by COMBAT mode
+		//            break;
 	case PARTY_FORM_REST: // special formation used while Resting
 		member[1].form_x = 0;
 		member[1].form_y = -2;
@@ -400,8 +395,8 @@ void Party::reform_party() {
 			x = (x == 0) ? x - 2 : (x < 0) ? -x : -x - 2;
 			if (x > max_x || (x < 0 && -x > max_x)) { // reached row max.
 				++y;
-				even_row = !even_row; // next row
-				++max_x; // increase row max.
+				even_row = !even_row;  // next row
+				++max_x;               // increase row max.
 				x = even_row ? 0 : -1; // next guy starts at center or left by 2
 			}
 		}
@@ -435,7 +430,7 @@ MapCoord Party::get_leader_location() {
  * formation and leader location.
  */
 MapCoord Party::get_formation_coords(uint8 m) {
-	MapCoord a = get_location(m); // my location
+	MapCoord a = get_location(m);       // my location
 	MapCoord l = get_leader_location(); // leader location
 	sint8 leader = get_leader();
 	if (leader < 0)
@@ -443,19 +438,14 @@ MapCoord Party::get_formation_coords(uint8 m) {
 	uint8 ldir = member[leader].actor->get_direction(); // leader direction
 	// intended location
 	uint16 x = (ldir == NUVIE_DIR_N) ? l.x + member[m].form_x : // X
-	           (ldir == NUVIE_DIR_E) ? l.x - member[m].form_y :
-	           (ldir == NUVIE_DIR_S) ? l.x - member[m].form_x :
-	           (ldir == NUVIE_DIR_W) ? l.x + member[m].form_y : a.x;
+	               (ldir == NUVIE_DIR_E) ? l.x - member[m].form_y : (ldir == NUVIE_DIR_S) ? l.x - member[m].form_x : (ldir == NUVIE_DIR_W) ? l.x + member[m].form_y : a.x;
 	uint16 y = (ldir == NUVIE_DIR_N) ? l.y + member[m].form_y : // Y
-	           (ldir == NUVIE_DIR_E) ? l.y + member[m].form_x :
-	           (ldir == NUVIE_DIR_S) ? l.y - member[m].form_y :
-	           (ldir == NUVIE_DIR_W) ? l.y - member[m].form_x : a.y;
+	               (ldir == NUVIE_DIR_E) ? l.y + member[m].form_x : (ldir == NUVIE_DIR_S) ? l.y - member[m].form_y : (ldir == NUVIE_DIR_W) ? l.y - member[m].form_x : a.y;
 	return (MapCoord(WRAPPED_COORD(x, a.z),
 	                 WRAPPED_COORD(y, a.z),
 	                 a.z // Z
-	                ));
+	                 ));
 }
-
 
 /* Update the actual locations of the party actors on the map, so that they are
  * in the proper formation. */
@@ -480,7 +470,8 @@ void Party::follow(sint8 rel_x, sint8 rel_y) {
 	prev_leader_y = member[leader].actor->y - rel_y;
 	// PASS 1: Keep actors chained together.
 	for (uint32 p = (leader + 1); p < num_in_party; p++) {
-		if (member[p].actor->is_immobile()) continue;
+		if (member[p].actor->is_immobile())
+			continue;
 
 		try_again[p] = false;
 		if (!pathfinder->follow_passA(p))
@@ -488,7 +479,8 @@ void Party::follow(sint8 rel_x, sint8 rel_y) {
 	}
 	// PASS 2: Catch up to party.
 	for (uint32 p = (leader + 1); p < num_in_party; p++) {
-		if (member[p].actor->is_immobile()) continue;
+		if (member[p].actor->is_immobile())
+			continue;
 
 		if (try_again[p])
 			pathfinder->follow_passA(p);
@@ -617,7 +609,7 @@ void Party::set_in_combat_mode(bool value) {
 		for (int p = 0; p < get_party_size(); p++)
 			get_actor(p)->set_worktype(ACTOR_WT_FOLLOW); //set back to follow party leader.
 	}
-//  if(combat_changes_music)
+	//  if(combat_changes_music)
 	update_music();
 	if (game->get_command_bar() != NULL) {
 		game->get_command_bar()->set_combat_mode(in_combat_mode);
@@ -639,13 +631,13 @@ void Party::update_music() {
 	pos = get_leader_location();
 
 	switch (pos.z) {
-	case 0 :
+	case 0:
 		s->musicPlayFrom("random");
 		break;
-	case 5 :
+	case 5:
 		s->musicPlayFrom("gargoyle");
 		break;
-	default :
+	default:
 		s->musicPlayFrom("dungeon");
 		break;
 	}
@@ -661,7 +653,6 @@ void Party::heal() {
 	}
 
 	return;
-
 }
 
 void Party::cure() {
@@ -705,7 +696,6 @@ bool Party::move(uint16 dx, uint16 dy, uint8 dz) {
 	return (true);
 }
 
-
 /* Automatically walk (timed) to a destination, and then teleport to new
  * location (optional). Used to enter/exit dungeons.
  * (step_delay 0 = default speed)
@@ -717,12 +707,11 @@ void Party::walk(MapCoord *walkto, MapCoord *teleport, uint32 step_delay) {
 		new TimedPartyMove(walkto, teleport);
 
 	game->pause_world(); // other actors won't move
-	game->pause_user(); // don't allow input
+	game->pause_user();  // don't allow input
 	// view will snap back to player after everyone has moved
 	game->get_player()->set_mapwindow_centered(false);
 	autowalk = true;
 }
-
 
 /* Enter a moongate and teleport to a new location.
  * (step_delay 0 = default speed)
@@ -735,13 +724,11 @@ void Party::walk(Obj *moongate, MapCoord *teleport, uint32 step_delay) {
 		new TimedPartyMove(&walkto, teleport, moongate);
 
 	game->pause_world(); // other actors won't move
-	game->pause_user(); // don't allow input
+	game->pause_user();  // don't allow input
 	// view will snap back to player after everyone has moved
 	game->get_player()->set_mapwindow_centered(false);
 	autowalk = true;
 }
-
-
 
 /* Automatically walk (timed) to vehicle. (step_delay 0 = default speed)
  */
@@ -756,7 +743,7 @@ void Party::enter_vehicle(Obj *ship_obj, uint32 step_delay) {
 		new TimedPartyMoveToVehicle(&walkto, ship_obj);
 
 	game->pause_world(); // other actors won't move
-	game->pause_user(); // don't allow input
+	game->pause_user();  // don't allow input
 	// view will snap back to player after everyone has moved
 	game->get_player()->set_mapwindow_centered(false);
 	autowalk = true;
@@ -777,7 +764,7 @@ void Party::exit_vehicle(uint16 x, uint16 y, uint16 z) {
 
 	player->set_actor(get_actor(0));
 	player->move(x, y, z, false);
-	vehicle_actor->obj_n = 0;//OBJ_U6_NO_VEHICLE;
+	vehicle_actor->obj_n = 0; //OBJ_U6_NO_VEHICLE;
 	vehicle_actor->frame_n = 0;
 	vehicle_actor->init();
 	vehicle_actor->move(0, 0, 0, ACTOR_FORCE_MOVE);
@@ -846,7 +833,7 @@ void Party::rest_gather() {
 		MapCoord player_loc = player_actor->get_location();
 		rest_campfire = new_obj(OBJ_U6_CAMPFIRE, 1, player_loc.x, player_loc.y, player_loc.z);
 		rest_campfire->set_temporary();
-		rest_campfire->qty = 1; //this is set so the campfire may be destroyed by being attacked.
+		rest_campfire->qty = 1;                                //this is set so the campfire may be destroyed by being attacked.
 		game->get_obj_manager()->add_obj(rest_campfire, true); // addOnTop
 
 		game->get_player()->set_mapwindow_centered(false);
@@ -879,11 +866,9 @@ bool Party::can_rest(Std::string &err_str) {
 			err_str = "- Not while in Combat!";
 		else
 			err_str = "-Not while in Combat!";
-	} else if (is_in_vehicle()
-	           && pActor->get_obj_n() != OBJ_U6_SHIP) // player is a vehicle
+	} else if (is_in_vehicle() && pActor->get_obj_n() != OBJ_U6_SHIP) // player is a vehicle
 		err_str = "-Can not be repaired!";
-	else if (Game::get_game()->get_game_type() == NUVIE_GAME_U6
-	         && game->get_map_window()->in_town())
+	else if (Game::get_game()->get_game_type() == NUVIE_GAME_U6 && game->get_map_window()->in_town())
 		err_str = "-Only in the wilderness!";
 	else if ((enemies = pActor->find_enemies())) {
 		if (Game::get_game()->get_game_type() == NUVIE_GAME_MD)
@@ -893,8 +878,8 @@ bool Party::can_rest(Std::string &err_str) {
 		else
 			err_str = "-Not while foes are near!";
 	} else if ((all_actors = actor_manager->filter_party(actor_manager->filter_distance(actor_manager->get_actor_list(),
-	                         loc.x, loc.y, loc.z, 5)))
-	           && !all_actors->empty() && !is_in_vehicle()) {
+	                                                                                    loc.x, loc.y, loc.z, 5))) &&
+	           !all_actors->empty() && !is_in_vehicle()) {
 		if (Game::get_game()->get_game_type() == NUVIE_GAME_U6)
 			err_str = "-Not while others are near!";
 		else
@@ -902,8 +887,7 @@ bool Party::can_rest(Std::string &err_str) {
 		delete all_actors;
 	} else if (!player->in_party_mode())
 		err_str = "-Not in solo mode!";
-	else if (!is_in_vehicle() && !map_->is_passable(loc.x - 1, loc.y - 1, loc.x + 1, loc.y + 1, loc.z)
-	         && Game::get_game()->get_game_type() != NUVIE_GAME_SE)
+	else if (!is_in_vehicle() && !map_->is_passable(loc.x - 1, loc.y - 1, loc.x + 1, loc.y + 1, loc.z) && Game::get_game()->get_game_type() != NUVIE_GAME_SE)
 		err_str = "-Not enough room!"; // FIXME: for ships the original checks all squares around the ship. Do we really need this?
 	else if (is_horsed())
 		err_str = "-Dismount first!";
@@ -998,8 +982,7 @@ bool Party::has_light_source() {
 		}
 		for (int i = 0; i < num_in_party; i++) {
 			if (member[i].actor->get_num_light_sources() > 0) {
-				if (!game->get_map_window()->tile_is_black(member[i].actor->x, member[i].actor->y)
-				        && member[i].actor->is_nearby(game->get_player()->get_actor())) // within 5 tiles of player
+				if (!game->get_map_window()->tile_is_black(member[i].actor->x, member[i].actor->y) && member[i].actor->is_nearby(game->get_player()->get_actor())) // within 5 tiles of player
 					return true;
 			}
 		}

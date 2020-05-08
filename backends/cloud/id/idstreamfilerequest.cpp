@@ -26,9 +26,8 @@
 namespace Cloud {
 namespace Id {
 
-IdStreamFileRequest::IdStreamFileRequest(IdStorage *storage, Common::String path, Networking::NetworkReadStreamCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _requestedFile(path), _storage(storage), _streamCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+IdStreamFileRequest::IdStreamFileRequest(IdStorage *storage, Common::String path, Networking::NetworkReadStreamCallback cb, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _requestedFile(path), _storage(storage), _streamCallback(cb),
+                                                                                                                                                             _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 

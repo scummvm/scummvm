@@ -37,7 +37,7 @@ void ASSERT(bool exp, const char *desc, ...) {
 }
 
 void xu4_srandom() {
-//    srand((uint)time(nullptr));
+	//    srand((uint)time(nullptr));
 }
 
 int xu4_random(int upperRange) {

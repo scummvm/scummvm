@@ -26,14 +26,14 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/ad/ad_sprite_set.h"
 #include "engines/wintermute/ad/ad_talk_def.h"
+#include "engines/wintermute/ad/ad_sprite_set.h"
 #include "engines/wintermute/ad/ad_talk_node.h"
-#include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {
@@ -48,7 +48,6 @@ AdTalkDef::AdTalkDef(BaseGame *inGame) : BaseObject(inGame) {
 	_defaultSpriteSetFilename = nullptr;
 	_defaultSpriteSet = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkDef::~AdTalkDef() {
@@ -67,7 +66,6 @@ AdTalkDef::~AdTalkDef() {
 	_defaultSpriteSetFilename = nullptr;
 	_defaultSpriteSet = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::loadFile(const char *filename) {
@@ -89,7 +87,6 @@ bool AdTalkDef::loadFile(const char *filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(TALK)
@@ -141,8 +138,7 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 				node = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_DEFAULT_SPRITE:
 			BaseUtils::setString(&_defaultSpriteFilename, params);
@@ -160,9 +156,7 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 				_defaultSpriteSet = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
-		}
-		break;
-
+		} break;
 
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
@@ -201,10 +195,8 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 
-
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::persist(BasePersistenceManager *persistMgr) {
@@ -220,7 +212,6 @@ bool AdTalkDef::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::saveAsText(BaseDynamicBuffer *buffer, int indent) {
@@ -246,7 +237,6 @@ bool AdTalkDef::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::loadDefaultSprite() {
 	if (_defaultSpriteFilename && !_defaultSprite) {
@@ -271,7 +261,6 @@ bool AdTalkDef::loadDefaultSprite() {
 		return STATUS_OK;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdTalkDef::getDefaultSprite(TDirection dir) {

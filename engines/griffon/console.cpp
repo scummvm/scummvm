@@ -28,11 +28,11 @@ namespace Griffon {
 
 Console::Console() {
 	_godMode = kGodModeNone;
-	 registerCmd("godmode", WRAP_METHOD(Console, Cmd_godMode));
-	 registerCmd("nodamage", WRAP_METHOD(Console, Cmd_noDamage));
+	registerCmd("godmode", WRAP_METHOD(Console, Cmd_godMode));
+	registerCmd("nodamage", WRAP_METHOD(Console, Cmd_noDamage));
 }
 
-bool Console::Cmd_godMode(int argc, const char** argv) {
+bool Console::Cmd_godMode(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
 		debugPrintf("Enables/Disables invincibility and megadamage\n");
@@ -48,7 +48,7 @@ bool Console::Cmd_godMode(int argc, const char** argv) {
 	return true;
 }
 
-bool Console::Cmd_noDamage(int argc, const char** argv) {
+bool Console::Cmd_noDamage(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
 		debugPrintf("Enables/Disables invincibility\n");

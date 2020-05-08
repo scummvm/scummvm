@@ -20,7 +20,6 @@
  *
  */
 
-
 #ifndef TEENAGENT_OBJECTS_H
 #define TEENAGENT_OBJECTS_H
 
@@ -31,7 +30,10 @@
 
 namespace TeenAgent {
 
-enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
+enum { kActorUp = 1,
+	   kActorRight = 2,
+	   kActorDown = 3,
+	   kActorLeft = 4 };
 
 struct Rect {
 	int16 left, top, right, bottom;
@@ -157,15 +159,19 @@ protected:
 };
 
 struct Object {
-	byte id; //0
-	Rect rect; //1
-	Rect actorRect; //9
+	byte id;               //0
+	Rect rect;             //1
+	Rect actorRect;        //9
 	byte actorOrientation; //17
-	byte enabled; //18
+	byte enabled;          //18
 	//19
 	Common::String name, description;
 
-	Object(): _base(NULL) { id = 0; actorOrientation = 0; enabled = 0;  }
+	Object() : _base(NULL) {
+		id = 0;
+		actorOrientation = 0;
+		enabled = 0;
+	}
 	void dump(int level = 0) const;
 	void setName(const Common::String &newName);
 	void load(byte *addr);
@@ -182,7 +188,7 @@ struct InventoryObject {
 	byte animated;
 	Common::String name, description;
 
-	InventoryObject(): id(0), animated(0), _base(0) {}
+	InventoryObject() : id(0), animated(0), _base(0) {}
 	void load(byte *addr);
 
 protected:
@@ -230,7 +236,8 @@ struct FadeType {
 };
 
 //\todo move it to util.h?
-template<typename T> inline T SIGN(T x) { return (x > 0) ? 1 : ((x < 0) ? -1 : 0); }
+template<typename T>
+inline T SIGN(T x) { return (x > 0) ? 1 : ((x < 0) ? -1 : 0); }
 
 } // End of namespace TeenAgent
 

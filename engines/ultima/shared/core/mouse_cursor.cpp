@@ -20,9 +20,9 @@
  *
  */
 
+#include "ultima/shared/core/mouse_cursor.h"
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
-#include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/core/file.h"
 #include "ultima/shared/early/ultima_early.h"
 
@@ -41,7 +41,7 @@ void MouseCursor::MouseCursorData::load(Common::SeekableReadStream &s) {
 /*-------------------------------------------------------------------*/
 
 MouseCursor::MouseCursor() {
-/*
+	/*
 	loadCursors();
 	_cursorId = -1;
 	setCursor(0);
@@ -94,7 +94,7 @@ void MouseCursor::setCursor(int cursorId) {
 
 	// Pass the generated surface onto the ScummVM cursor manager
 	CursorMan.replaceCursor(s.getPixels(), CURSOR_WIDTH, CURSOR_HEIGHT,
-		data._hotspot.x, data._hotspot.y, 0xff);
+	                        data._hotspot.x, data._hotspot.y, 0xff);
 }
 
 void MouseCursor::show() {

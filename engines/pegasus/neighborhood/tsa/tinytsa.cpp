@@ -23,16 +23,16 @@
  *
  */
 
+#include "pegasus/neighborhood/tsa/tinytsa.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/aichip.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/norad/constants.h"
-#include "pegasus/neighborhood/tsa/tinytsa.h"
 #include "pegasus/neighborhood/wsc/wsc.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 

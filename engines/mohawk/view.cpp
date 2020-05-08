@@ -21,12 +21,12 @@
  */
 
 #include "mohawk/view.h"
-#include "mohawk/resource.h"
-#include "mohawk/graphics.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/palette.h"
+#include "mohawk/graphics.h"
+#include "mohawk/resource.h"
 
 namespace Mohawk {
 
@@ -95,7 +95,7 @@ void Feature::setNodeDefaults(Feature *prev, Feature *next) {
 	_dirty = true;
 	_needsReset = true;
 	_justReset = false; // old
-	_done = false; // new
+	_done = false;      // new
 
 	_nextTime = 0;
 	_delayTime = 0;
@@ -810,10 +810,9 @@ Feature *View::mergeLists(Feature *root, Feature *mergeRoot) {
 			Common::Rect &checkRect = check->_data.bounds;
 
 			if (prevRect.bottom < checkRect.bottom || (prevRect.bottom == checkRect.bottom && prevRect.left < checkRect.left)) {
-				if (prevRect.bottom < checkRect.top || (
-					(!(check->_flags & kFeatureSortCheckLeft) || prevRect.left >= checkRect.left) &&
-					(!(check->_flags & kFeatureSortCheckTop) || prevRect.top >= checkRect.top) &&
-					(!(check->_flags & kFeatureSortCheckRight) || prevRect.right <= checkRect.right))) {
+				if (prevRect.bottom < checkRect.top || ((!(check->_flags & kFeatureSortCheckLeft) || prevRect.left >= checkRect.left) &&
+				                                        (!(check->_flags & kFeatureSortCheckTop) || prevRect.top >= checkRect.top) &&
+				                                        (!(check->_flags & kFeatureSortCheckRight) || prevRect.right <= checkRect.right))) {
 					// Insert ourselves before this one.
 					prev->_prev = check->_prev;
 					prev->_next = check;

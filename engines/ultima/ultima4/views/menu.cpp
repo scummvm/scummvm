@@ -27,11 +27,10 @@
 namespace Ultima {
 namespace Ultima4 {
 
-Menu::Menu() :
-	_closed(false),
-	_title(""),
-	_titleX(0),
-	_titleY(0) {
+Menu::Menu() : _closed(false),
+               _title(""),
+               _titleX(0),
+               _titleY(0) {
 }
 
 Menu::~Menu() {
@@ -228,7 +227,7 @@ MenuItem *Menu::getItemById(int id) {
 void Menu::activateItemAtPos(TextView *view, const Common::Point &pt) {
 	for (Menu::MenuItemList::iterator it = begin(); it != end(); ++it) {
 		Common::Rect r = view->getTextBounds((*it)->getX(), (*it)->getY(),
-			(*it)->getText().size());
+		                                     (*it)->getText().size());
 
 		if (r.contains(pt)) {
 			activateItem((*it)->getId(), MenuEvent::ACTIVATE);
@@ -243,7 +242,8 @@ void Menu::activateItem(int id, MenuEvent::Type action) {
 	if (id >= 0)
 		mi = getItemById(id);
 	/* or use the current item */
-	else mi = *getCurrent();
+	else
+		mi = *getCurrent();
 
 	if (!mi)
 		error("Error: Unable to find menu item with id '%d'", id);

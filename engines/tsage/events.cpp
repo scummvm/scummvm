@@ -22,14 +22,14 @@
 
 #include "common/events.h"
 #include "common/singleton.h"
-#include "graphics/cursorman.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 
-#include "tsage/events.h"
 #include "tsage/core.h"
+#include "tsage/events.h"
+#include "tsage/globals.h"
 #include "tsage/staticres.h"
 #include "tsage/tsage.h"
-#include "tsage/globals.h"
 
 namespace TsAGE {
 
@@ -53,7 +53,8 @@ bool EventsClass::pollEvent() {
 		GLOBALS._screen.update();
 	}
 
-	if (!g_system->getEventManager()->pollEvent(_event)) return false;
+	if (!g_system->getEventManager()->pollEvent(_event))
+		return false;
 
 	// Handle keypress
 	switch (_event.type) {
@@ -156,7 +157,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// No cursor
 		g_globals->setFlag(122);
 
-		if ((g_vm->getGameID() != GType_Ringworld) || ((g_vm->getGameID() == GType_Ringworld) && (g_vm->getFeatures() & GF_DEMO)))  {
+		if ((g_vm->getGameID() != GType_Ringworld) || ((g_vm->getGameID() == GType_Ringworld) && (g_vm->getFeatures() & GF_DEMO))) {
 			CursorMan.showMouse(false);
 			return;
 		}
@@ -228,7 +229,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 			} else {
 				// Inventory icon
 				cursor = g_resourceManager->getSubResource(10, ((int)cursorType - 1) / 20 + 1,
-					((int)cursorType - 1) % 20 + 1, &size);
+				                                           ((int)cursorType - 1) % 20 + 1, &size);
 				questionEnabled = true;
 			}
 			_currentCursor = cursorType;
@@ -362,7 +363,7 @@ void EventsClass::setCursor(GfxSurface &cursor) {
 
 	const byte *cursorData = (const byte *)s.getPixels();
 	CursorMan.replaceCursor(cursorData, cursor.getBounds().width(), cursor.getBounds().height(),
-		cursor._centroid.x, cursor._centroid.y, cursor._transColor);
+	                        cursor._centroid.x, cursor._centroid.y, cursor._transColor);
 
 	_lastCursor = CURSOR_NONE;
 }
@@ -392,7 +393,7 @@ bool EventsClass::isCursorVisible() const {
 void EventsClass::delay(int numFrames) {
 	while (_frameNumber < (_prevDelayFrame + numFrames)) {
 		uint32 delayAmount = CLIP(_priorFrameTime + GAME_SCRIPT_TIME - g_system->getMillis(),
-			(uint32)0, (uint32)GAME_FRAME_TIME);
+		                          (uint32)0, (uint32)GAME_FRAME_TIME);
 		if (delayAmount > 0)
 			g_system->delayMillis(delayAmount);
 

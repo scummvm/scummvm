@@ -63,8 +63,7 @@ void Intro::introEatMessages() {
 		if (!msg)
 			return;
 
-		if ((msg->_msgClass == kMessageRightClick)
-		 || ((msg->_msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+		if ((msg->_msgClass == kMessageRightClick) || ((msg->_msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
 			_quitIntro = true;
 	}
 }
@@ -149,7 +148,7 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 			uint16 code = msg->_code;
 
 			if ((msgClass == kMessageRightClick) ||
-				((msgClass == kMessageRawKey) && (code == Common::KEYCODE_ESCAPE))) {
+			    ((msgClass == kMessageRawKey) && (code == Common::KEYCODE_ESCAPE))) {
 				_quitIntro = true;
 
 				if (isScreen)
@@ -189,7 +188,7 @@ void Intro::doPictText(const Common::String filename, bool isScreen) {
 			} else
 				drawNextText = true;
 		}
-	}	// while(1)
+	} // while(1)
 }
 
 void Intro::nReadPict(const Common::String filename, bool playOnce, bool noPalChange, bool doBlack, int wait) {
@@ -224,11 +223,10 @@ void Intro::nReadPict(const Common::String filename, bool playOnce, bool noPalCh
 
 void Intro::play() {
 	uint16 palette[16] = {
-		0x0000, 0x0855, 0x0FF9, 0x0EE7,
-		0x0ED5, 0x0DB4, 0x0CA2, 0x0C91,
-		0x0B80, 0x0B80, 0x0B91, 0x0CA2,
-		0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7
-	};
+	    0x0000, 0x0855, 0x0FF9, 0x0EE7,
+	    0x0ED5, 0x0DB4, 0x0CA2, 0x0C91,
+	    0x0B80, 0x0B80, 0x0B91, 0x0CA2,
+	    0x0CB3, 0x0DC4, 0x0DD6, 0x0EE7};
 
 	if (_vm->getPlatform() == Common::kPlatformDOS) {
 		nReadPict("EA0");
@@ -251,8 +249,8 @@ void Intro::play() {
 
 	for (int i = 0; i < 16; i++) {
 		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
-					((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
-					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
+		             ((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+		             (_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
 	_vm->updateEvents();
@@ -301,8 +299,8 @@ void Intro::play() {
 
 	for (int i = 0; i < 16; i++) {
 		palette[i] = ((_vm->_anim->_diffPalette[i * 3] >> 2) << 8) +
-					((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
-					(_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
+		             ((_vm->_anim->_diffPalette[i * 3 + 1] >> 2) << 4) +
+		             (_vm->_anim->_diffPalette[i * 3 + 2] >> 2);
 	}
 
 	doPictText("i.1", true);

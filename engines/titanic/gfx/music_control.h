@@ -32,11 +32,13 @@ class CMusicControl : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+
 public:
 	MusicInstrument _controlArea;
 	int _controlVal;
 	int _controlMax;
 	bool _enabled;
+
 public:
 	CLASSDEF;
 	CMusicControl();

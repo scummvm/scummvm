@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPlugIn, CCarry)
-	ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(UseWithOtherMsg)
 END_MESSAGE_MAP()
 
 CPlugIn::CPlugIn() : CCarry(), _unused(0) {

@@ -20,21 +20,21 @@
  *
  */
 
-#include "common/system.h"
+#include "tsage/core.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
-#include "tsage/tsage.h"
-#include "tsage/core.h"
+#include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/dialogs.h"
 #include "tsage/events.h"
-#include "tsage/scenes.h"
-#include "tsage/staticres.h"
 #include "tsage/globals.h"
-#include "tsage/sound.h"
-#include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/scenes.h"
+#include "tsage/sound.h"
+#include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -43,9 +43,8 @@ namespace TsAGE {
 
 /*--------------------------------------------------------------------------*/
 
-InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description) :
-		_sceneNumber(sceneNumber), _rlbNum(rlbNum), _cursorNum(cursorNum), _cursorId(cursorId),
-		_description(description) {
+InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description) : _sceneNumber(sceneNumber), _rlbNum(rlbNum), _cursorNum(cursorNum), _cursorId(cursorId),
+                                                                                                                          _description(description) {
 	_displayResNum = 3;
 	_iconResNum = 5;
 
@@ -151,7 +150,8 @@ int InvObjectList::getObjectScene(int objectNum) {
 /*--------------------------------------------------------------------------*/
 
 void EventHandler::dispatch() {
-	if (_action) _action->dispatch();
+	if (_action)
+		_action->dispatch();
 }
 
 void EventHandler::setAction(Action *action, EventHandler *endHandler, ...) {
@@ -257,9 +257,12 @@ ObjectMover::~ObjectMover() {
 void ObjectMover::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
 
-	s.syncAsSint16LE(_destPosition.x); s.syncAsSint16LE(_destPosition.y);
-	s.syncAsSint16LE(_moveDelta.x); s.syncAsSint16LE(_moveDelta.y);
-	s.syncAsSint16LE(_moveSign.x); s.syncAsSint16LE(_moveSign.y);
+	s.syncAsSint16LE(_destPosition.x);
+	s.syncAsSint16LE(_destPosition.y);
+	s.syncAsSint16LE(_moveDelta.x);
+	s.syncAsSint16LE(_moveDelta.y);
+	s.syncAsSint16LE(_moveSign.x);
+	s.syncAsSint16LE(_moveSign.y);
 	s.syncAsSint32LE(_minorDiff);
 	s.syncAsSint32LE(_majorDiff);
 	s.syncAsSint32LE(_changeCtr);
@@ -485,11 +488,13 @@ void NpcMover::startMove(SceneObject *sceneObj, va_list va) {
 void PlayerMover::synchronize(Serializer &s) {
 	NpcMover::synchronize(s);
 
-	s.syncAsSint16LE(_finalDest.x); s.syncAsSint16LE(_finalDest.y);
+	s.syncAsSint16LE(_finalDest.x);
+	s.syncAsSint16LE(_finalDest.y);
 	s.syncAsSint32LE(_routeIndex);
 
 	for (int i = 0; i < MAX_ROUTE_SIZE; ++i) {
-		s.syncAsSint16LE(_routeList[i].x); s.syncAsSint16LE(_routeList[i].y);
+		s.syncAsSint16LE(_routeList[i].x);
+		s.syncAsSint16LE(_routeList[i].y);
 	}
 }
 
@@ -505,15 +510,15 @@ void PlayerMover::startMove(SceneObject *sceneObj, va_list va) {
 void PlayerMover::endMove() {
 	while (++_routeIndex != 0) {
 		if ((_routeList[_routeIndex].x == ROUTE_END_VAL) ||
-			(_routeList[_routeIndex].y == ROUTE_END_VAL) ||
-			(_sceneObject->_regionIndex)) {
+		    (_routeList[_routeIndex].y == ROUTE_END_VAL) ||
+		    (_sceneObject->_regionIndex)) {
 			// Movement route is completely finished
 			ObjectMover::endMove();
 			return;
 		}
 
 		if ((_routeList[_routeIndex].x != _sceneObject->_position.x) ||
-			(_routeList[_routeIndex].y != _sceneObject->_position.y))
+		    (_routeList[_routeIndex].y != _sceneObject->_position.y))
 			break;
 	}
 
@@ -631,11 +636,10 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 
 			int listIndex = 0;
 			while (g_globals->_walkRegions._idxList[g_globals->_walkRegions[breakEntry]._idxListIndex + listIndex] !=
-					breakEntry2)
+			       breakEntry2)
 				++listIndex;
 
-			tempList[idx] = g_globals->_walkRegions._idxList2[g_globals->_walkRegions[breakEntry]._idxList2Index
-				+ listIndex];
+			tempList[idx] = g_globals->_walkRegions._idxList2[g_globals->_walkRegions[breakEntry]._idxList2Index + listIndex];
 
 			++endIndex;
 		} while (routeRegions[++idx] != destRegion);
@@ -649,29 +653,29 @@ void PlayerMover::pathfind(Common::Point *routeList, Common::Point srcPos, Commo
 			WRField18 &nextField = g_globals->_walkRegions._field18[nextIdx];
 
 			if (sub_F8E5_calculatePoint(currSrcField._pt1, nextField._pt1,
-					thisField._pt1, thisField._pt2) &&
-				sub_F8E5_calculatePoint(currSrcField._pt1, nextField._pt2,
-					thisField._pt1, thisField._pt2))
+			                            thisField._pt1, thisField._pt2) &&
+			    sub_F8E5_calculatePoint(currSrcField._pt1, nextField._pt2,
+			                            thisField._pt1, thisField._pt2))
 				continue;
 
 			Common::Point tempPt;
 			if (sub_F8E5_calculatePoint(currSrcField._pt1, currDestField._pt1,
-					thisField._pt1, thisField._pt2, &tempPt)) {
+			                            thisField._pt1, thisField._pt2, &tempPt)) {
 				// Add point to the route list
 				currSrcField._pt1 = tempPt;
 				*routeList++ = tempPt;
 			} else {
 				int dist1 =
-					(findDistance(currSrcField._pt1, thisField._pt1) << 1) +
-					(findDistance(thisField._pt1, currDestField._pt1) << 1) +
-					findDistance(thisField._pt1, nextField._pt1) +
-					findDistance(thisField._pt1, nextField._pt2);
+				    (findDistance(currSrcField._pt1, thisField._pt1) << 1) +
+				    (findDistance(thisField._pt1, currDestField._pt1) << 1) +
+				    findDistance(thisField._pt1, nextField._pt1) +
+				    findDistance(thisField._pt1, nextField._pt2);
 
 				int dist2 =
-					(findDistance(currSrcField._pt1, thisField._pt2) << 1) +
-					(findDistance(thisField._pt2, currDestField._pt2) << 1) +
-					findDistance(thisField._pt2, nextField._pt1) +
-					findDistance(thisField._pt2, nextField._pt2);
+				    (findDistance(currSrcField._pt1, thisField._pt2) << 1) +
+				    (findDistance(thisField._pt2, currDestField._pt2) << 1) +
+				    findDistance(thisField._pt2, nextField._pt1) +
+				    findDistance(thisField._pt2, nextField._pt2);
 
 				// Do 1 step of movement, storing the new position in objPos.
 				if (dist1 < dist2) {
@@ -963,7 +967,7 @@ int PlayerMover::findDistance(const Common::Point &pt1, const Common::Point &pt2
 // Calculate intersection of the line segments pt1-pt2 and pt3-pt4.
 // Return true if they intersect, and return the intersection in ptOut.
 bool PlayerMover::sub_F8E5_calculatePoint(const Common::Point &pt1, const Common::Point &pt2, const Common::Point &pt3,
-						  const Common::Point &pt4, Common::Point *ptOut) {
+                                          const Common::Point &pt4, Common::Point *ptOut) {
 	double diffX1 = pt2.x - pt1.x;
 	double diffY1 = pt2.y - pt1.y;
 	double diffX2 = pt4.x - pt3.x;
@@ -1063,7 +1067,7 @@ PaletteModifier::PaletteModifier() {
 
 /*--------------------------------------------------------------------------*/
 
-PaletteModifierCached::PaletteModifierCached(): PaletteModifier() {
+PaletteModifierCached::PaletteModifierCached() : PaletteModifier() {
 	_step = 0;
 	_percent = 0;
 	for (int i = 0; i < 768; i++)
@@ -1352,14 +1356,14 @@ void ScenePalette::loadPalette(const byte *pSrc, int start, int count) {
 
 void ScenePalette::refresh() {
 	// Set indexes for standard colors to closest color in the palette
-	_colors.background = indexOf(255, 255, 255);	// White background
-	_colors.foreground = indexOf(0, 0, 0);			// Black foreground
-	_redColor = indexOf(180, 0, 0);				// Red-ish
-	_greenColor = indexOf(0, 180, 0);				// Green-ish
-	_blueColor = indexOf(0, 0, 180);				// Blue-ish
-	_aquaColor = indexOf(0, 180, 180);				// Aqua
-	_purpleColor = indexOf(180, 0, 180);			// Purple
-	_limeColor = indexOf(180, 180, 0);				// Lime
+	_colors.background = indexOf(255, 255, 255); // White background
+	_colors.foreground = indexOf(0, 0, 0);       // Black foreground
+	_redColor = indexOf(180, 0, 0);              // Red-ish
+	_greenColor = indexOf(0, 180, 0);            // Green-ish
+	_blueColor = indexOf(0, 0, 180);             // Blue-ish
+	_aquaColor = indexOf(0, 180, 180);           // Aqua
+	_purpleColor = indexOf(180, 0, 180);         // Purple
+	_limeColor = indexOf(180, 180, 0);           // Lime
 
 	// Refresh the palette
 	g_system->getPaletteManager()->setPalette((const byte *)&_palette[0], 0, 256);
@@ -1500,7 +1504,6 @@ PaletteFader *ScenePalette::addFader(const byte *arrBufferRGB, int palSize, int 
 	return fader;
 }
 
-
 void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	ScenePalette tempPalette;
 
@@ -1527,9 +1530,8 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 		tempRect.setHeight(T2_GLOBALS._interfaceY);
 
 	g_globals->_screen.copyFrom(g_globals->_sceneManager._scene->_backSurface,
-		tempRect, Rect(0, 0, tempRect.width(), tempRect.height()), NULL);
-	if (g_vm->getGameID() == GType_Ringworld2 && !GLOBALS._player._uiEnabled
-			&& T2_GLOBALS._interfaceY == UI_INTERFACE_Y) {
+	                            tempRect, Rect(0, 0, tempRect.width(), tempRect.height()), NULL);
+	if (g_vm->getGameID() == GType_Ringworld2 && !GLOBALS._player._uiEnabled && T2_GLOBALS._interfaceY == UI_INTERFACE_Y) {
 		g_globals->_screen.fillRect(Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT - 1), 0);
 	}
 
@@ -1575,7 +1577,8 @@ void SceneItem::synchronize(Serializer &s) {
 		s.syncAsSint32LE(useless);
 	}
 
-	s.syncAsSint16LE(_position.x); s.syncAsSint32LE(_position.y);
+	s.syncAsSint16LE(_position.x);
+	s.syncAsSint32LE(_position.y);
 	s.syncAsSint16LE(_yDiff);
 	s.syncAsSint32LE(_sceneRegionId);
 }
@@ -1589,7 +1592,7 @@ bool SceneItem::startAction(CursorType action, Event &event) {
 		doAction(action);
 		return true;
 	} else if ((action == CURSOR_LOOK) || (action == CURSOR_USE) || (action == CURSOR_TALK) ||
-			(action < CURSOR_LOOK)) {
+	           (action < CURSOR_LOOK)) {
 		doAction(action);
 		return true;
 	} else {
@@ -1633,15 +1636,13 @@ bool SceneItem::contains(const Common::Point &pt) {
 		return _bounds.contains(pt.x + sceneBounds.left, pt.y + sceneBounds.top);
 	else
 		return g_globals->_sceneRegions.indexOf(Common::Point(pt.x + sceneBounds.left,
-			pt.y + sceneBounds.top)) == _sceneRegionId;
+		                                                      pt.y + sceneBounds.top)) == _sceneRegionId;
 }
 
 void SceneItem::display(int resNum, int lineNum, ...) {
-	Common::String msg = (!resNum || (resNum == -1)) ? Common::String() :
-		g_resourceManager->getMessage(resNum, lineNum);
+	Common::String msg = (!resNum || (resNum == -1)) ? Common::String() : g_resourceManager->getMessage(resNum, lineNum);
 
-	if ((g_vm->getGameID() != GType_Ringworld) && (g_vm->getGameID() != GType_Ringworld2)
-			&& T2_GLOBALS._uiElements._active)
+	if ((g_vm->getGameID() != GType_Ringworld) && (g_vm->getGameID() != GType_Ringworld2) && T2_GLOBALS._uiElements._active)
 		T2_GLOBALS._uiElements.hide();
 
 	if (g_globals->_sceneObjects->contains(&g_globals->_sceneText)) {
@@ -1768,8 +1769,9 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		g_globals->_sceneText.setup(msg);
 		if (centerText) {
 			g_globals->_sceneText.setPosition(Common::Point(
-				g_globals->_sceneManager._scene->_sceneBounds.left + textRect.left,
-				g_globals->_sceneManager._scene->_sceneBounds.top + textRect.top), 0);
+			                                      g_globals->_sceneManager._scene->_sceneBounds.left + textRect.left,
+			                                      g_globals->_sceneManager._scene->_sceneBounds.top + textRect.top),
+			                                  0);
 		} else {
 			g_globals->_sceneText.setPosition(pos, 0);
 		}
@@ -1777,16 +1779,14 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		g_globals->_sceneText.fixPriority(255);
 
 		// In Return to Ringworld, if in voice mode only, don't show the text
-		if ((g_vm->getGameID() == GType_Ringworld2) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)
-				&& !(R2_GLOBALS._speechSubtitles & SPEECH_TEXT))
+		if ((g_vm->getGameID() == GType_Ringworld2) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE) && !(R2_GLOBALS._speechSubtitles & SPEECH_TEXT))
 			g_globals->_sceneText.hide();
 
 		g_globals->_sceneObjects->draw();
 	}
 
 	// For Return to Ringworld, play the voice overs in sequence
-	if ((g_vm->getGameID() == GType_Ringworld2) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)
-			&& !playList.empty()) {
+	if ((g_vm->getGameID() == GType_Ringworld2) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE) && !playList.empty()) {
 		R2_GLOBALS._playStream.play(*playList.begin(), NULL);
 		playList.pop_front();
 	}
@@ -1797,7 +1797,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 
 		// Keep event on-screen until a mouse or keypress
 		while (!g_vm->shouldQuit() && !g_globals->_events.getEvent(event,
-				EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
+		                                                           EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
 			GLOBALS._screen.update();
 			g_system->delayMillis(10);
 
@@ -1823,8 +1823,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		g_globals->_sceneText.remove();
 	}
 
-	if ((g_vm->getGameID() != GType_Ringworld) && (g_vm->getGameID() != GType_Ringworld2)
-			&& T2_GLOBALS._uiElements._active) {
+	if ((g_vm->getGameID() != GType_Ringworld) && (g_vm->getGameID() != GType_Ringworld2) && T2_GLOBALS._uiElements._active) {
 		// Show user interface
 		T2_GLOBALS._uiElements.show();
 
@@ -1837,14 +1836,14 @@ void SceneItem::display2(int resNum, int lineNum) {
 	switch (g_vm->getGameID()) {
 	case GType_BlueForce:
 		display(resNum, lineNum, SET_WIDTH, 312,
-			SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left,
-			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-			SET_EXT_FGCOLOR, 13, LIST_END);
+		        SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left,
+		        SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+		        SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		        SET_EXT_FGCOLOR, 13, LIST_END);
 		break;
 	case GType_Ringworld2:
 		display(resNum, lineNum, SET_WIDTH, 280, SET_X, 160, SET_Y, 20, SET_POS_MODE, ALIGN_CENTER,
-			SET_EXT_BGCOLOR, 60, LIST_END);
+		        SET_EXT_BGCOLOR, 60, LIST_END);
 		break;
 	default:
 		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
@@ -1856,16 +1855,16 @@ void SceneItem::display(const Common::String &msg) {
 	assert(g_vm->getGameID() == GType_BlueForce);
 
 	display(-1, -1, msg.c_str(),
-		SET_WIDTH, 312,
-		SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left,
-		SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-		SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-		SET_EXT_FGCOLOR, 13, LIST_END);
+	        SET_WIDTH, 312,
+	        SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left,
+	        SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+	        SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+	        SET_EXT_FGCOLOR, 13, LIST_END);
 }
 
 /*--------------------------------------------------------------------------*/
 
-SceneHotspot::SceneHotspot(): SceneItem() {
+SceneHotspot::SceneHotspot() : SceneItem() {
 	_lookLineNum = _useLineNum = _talkLineNum = 0;
 	_resNum = 0;
 }
@@ -2349,7 +2348,7 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 		if ((*i) && ((*i)->_flags & OBJFLAG_CHECK_REGION)) {
 			int objYDiff = (*i)->_position.y - _yDiff;
 			if ((objYDiff >= yPos) && (objYDiff <= newY) &&
-				((*i)->_xs < tempRect.right) && ((*i)->_xe > tempRect.left)) {
+			    ((*i)->_xs < tempRect.right) && ((*i)->_xe > tempRect.left)) {
 				// Found index
 				regionIndex = (*i)->_regionIndex;
 				break;
@@ -2498,7 +2497,8 @@ void SceneObject::synchronize(Serializer &s) {
 
 	s.syncAsUint32LE(_updateStartFrame);
 	s.syncAsUint32LE(_walkStartFrame);
-	s.syncAsSint16LE(_oldPosition.x); s.syncAsSint16LE(_oldPosition.y);
+	s.syncAsSint16LE(_oldPosition.x);
+	s.syncAsSint16LE(_oldPosition.y);
 	s.syncAsSint16LE(_percent);
 	s.syncAsSint16LE(_priority);
 	s.syncAsSint16LE(_angle);
@@ -2518,7 +2518,8 @@ void SceneObject::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_numFrames);
 	s.syncAsSint32LE(_regionIndex);
 	SYNC_POINTER(_mover);
-	s.syncAsSint16LE(_moveDiff.x); s.syncAsSint16LE(_moveDiff.y);
+	s.syncAsSint16LE(_moveDiff.x);
+	s.syncAsSint16LE(_moveDiff.y);
 	s.syncAsSint32LE(_moveRate);
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		s.syncAsSint16LE(_actorDestPos.x);
@@ -2603,7 +2604,6 @@ void SceneObject::dispatch() {
 			else if ((_oldPosition.x != _position.x) || (_oldPosition.y != _position.y)) {
 				setFrame(changeFrame());
 				_oldPosition = _position;
-
 			}
 			break;
 
@@ -2791,7 +2791,7 @@ void SceneObject::draw() {
 				_shadowMap = static_cast<Ringworld2::SceneExt *>(scene)->_shadowPaletteMap;
 
 			GLOBALS.gfxManager().getSurface().copyFrom(frame, frame.getBounds(),
-				destRect, priorityRegion,  _shadowMap);
+			                                           destRect, priorityRegion, _shadowMap);
 			return;
 		}
 		default:
@@ -2819,7 +2819,7 @@ void SceneObject::updateScreen() {
 	}
 
 	if (srcRect.isValidRect()) {
-		Rect destRect  = srcRect;
+		Rect destRect = srcRect;
 		destRect.translate(-sceneBounds.left, -sceneBounds.top);
 		srcRect.translate(-g_globals->_sceneOffset.x, -g_globals->_sceneOffset.y);
 
@@ -2861,8 +2861,7 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum) {
 
 void BackgroundSceneObject::postInit(SceneObjectList *OwnerList) {
 	SceneObjectList dummyList;
-	SceneObjectList *pList = !g_globals->_sceneManager._scene ? &dummyList :
-		&g_globals->_sceneManager._scene->_bgSceneObjects;
+	SceneObjectList *pList = !g_globals->_sceneManager._scene ? &dummyList : &g_globals->_sceneManager._scene->_bgSceneObjects;
 
 	SceneObject::postInit(pList);
 }
@@ -2871,7 +2870,7 @@ void BackgroundSceneObject::draw() {
 	assert(g_globals->_sceneManager._scene);
 	Rect destRect = _bounds;
 	destRect.translate(-g_globals->_sceneManager._scene->_sceneBounds.left,
-		-g_globals->_sceneManager._scene->_sceneBounds.top);
+	                   -g_globals->_sceneManager._scene->_sceneBounds.top);
 	Region *priorityRegion = g_globals->_sceneManager._scene->_priorities.find(_priority);
 	GfxSurface frame = getFrame();
 	g_globals->_sceneManager._scene->_backSurface.copyFrom(frame, destRect, priorityRegion);
@@ -2942,8 +2941,8 @@ void SceneObjectList::draw() {
 		if (g_globals->_scrollFollower) {
 			const Rect &scrollerRect = g_globals->_sceneManager._scrollerRect;
 			Common::Point objPos(
-				g_globals->_scrollFollower->_position.x - g_globals->_sceneManager._scene->_sceneBounds.left,
-				g_globals->_scrollFollower->_position.y - g_globals->_sceneManager._scene->_sceneBounds.top);
+			    g_globals->_scrollFollower->_position.x - g_globals->_sceneManager._scene->_sceneBounds.left,
+			    g_globals->_scrollFollower->_position.y - g_globals->_sceneManager._scene->_sceneBounds.top);
 			int loadCount = 0;
 			int xAmount = 0, yAmount = 0;
 
@@ -2971,7 +2970,7 @@ void SceneObjectList::draw() {
 		if (g_globals->_sceneManager._sceneLoadCount > 0) {
 			--g_globals->_sceneManager._sceneLoadCount;
 			g_globals->_sceneManager._scene->loadBackground(g_globals->_sceneManager._sceneBgOffset.x,
-				g_globals->_sceneManager._sceneBgOffset.y);
+			                                                g_globals->_sceneManager._sceneBgOffset.y);
 		}
 
 		// Set up the flag mask. Currently, paneNum is always set to 0, so the check is meaningless
@@ -2980,7 +2979,7 @@ void SceneObjectList::draw() {
 
 		// Initial loop to set up object list and update object position, priority, and flags
 		for (SynchronizedList<SceneObject *>::iterator i = g_globals->_sceneObjects->begin();
-				i != g_globals->_sceneObjects->end(); ++i) {
+		     i != g_globals->_sceneObjects->end(); ++i) {
 			SceneObject *obj = *i;
 			objList.push_back(obj);
 
@@ -2993,7 +2992,7 @@ void SceneObjectList::draw() {
 			// Handle updating object priority
 			if (!(obj->_flags & OBJFLAG_FIXED_PRIORITY)) {
 				obj->_priority = MIN((int)obj->_position.y,
-					(int)g_globals->_sceneManager._scene->_backgroundBounds.bottom - 1);
+				                     (int)g_globals->_sceneManager._scene->_backgroundBounds.bottom - 1);
 			}
 
 			if ((g_globals->_paneRefreshFlag[paneNum] != 0) || !g_globals->_paneRegions[paneNum].empty()) {
@@ -3121,7 +3120,7 @@ struct SceneObjectLess {
 		else if ((y->_priority == x->_priority) && (y->_position.y > x->_position.y))
 			return true;
 		else if ((y->_priority == x->_priority) && (y->_position.y == x->_position.y) &&
-				 (y->_yDiff > x->_yDiff))
+		         (y->_yDiff > x->_yDiff))
 			return true;
 
 		return false;
@@ -3195,7 +3194,7 @@ void SceneText::setup(const Common::String &msg) {
 	Rect textRect;
 
 	if ((g_vm->getGameID() != GType_Ringworld) && g_globals->_sceneObjects->contains(this) &&
-			(_flags & OBJFLAG_REMOVE)) {
+	    (_flags & OBJFLAG_REMOVE)) {
 		// Trying to setup a SceneText scheduled to be removed, so remove it now
 		_bounds.expandPanes();
 		this->removeObject();
@@ -3243,7 +3242,7 @@ void SceneText::updateScreen() {
 	// FIXME: Hack for Blue Force to handle not refreshing the screen if the user interface
 	// has been re-activated after showing some scene text
 	if ((g_vm->getGameID() == GType_Ringworld) || (_bounds.top < UI_INTERFACE_Y) ||
-			!T2_GLOBALS._uiElements._visible)
+	    !T2_GLOBALS._uiElements._visible)
 		SceneObject::updateScreen();
 }
 
@@ -3335,8 +3334,10 @@ GfxSurface Visage::getFrame(int frameNum) {
 	byte *frameData = _data + offset;
 
 	GfxSurface result = surfaceFromRes(frameData);
-	if (_flipHoriz) flipHorizontal(result);
-	if (_flipVert) flipVertical(result);
+	if (_flipHoriz)
+		flipHorizontal(result);
+	if (_flipVert)
+		flipVertical(result);
 
 	return result;
 }
@@ -3375,7 +3376,7 @@ void Visage::flipVertical(GfxSurface &gfxSurface) {
 
 /*--------------------------------------------------------------------------*/
 
-Player::Player(): SceneObject() {
+Player::Player() : SceneObject() {
 	_canWalk = false;
 	_enabled = false;
 	_uiEnabled = false;
@@ -3398,7 +3399,7 @@ void Player::postInit(SceneObjectList *OwnerList) {
 	_uiEnabled = true;
 	_percent = 100;
 
-	if  (g_vm->getGameID() != GType_Ringworld2) {
+	if (g_vm->getGameID() != GType_Ringworld2) {
 		_moveDiff.x = 4;
 		_moveDiff.y = 2;
 	} else {
@@ -3489,15 +3490,15 @@ void Player::process(Event &event) {
 		_action->process(event);
 
 	if (!event.handled && (event.eventType == EVENT_BUTTON_DOWN) &&
-			(g_globals->_events.getCursor() == CURSOR_WALK) && g_globals->_player._canWalk &&
-			(_position != event.mousePos) && g_globals->_sceneObjects->contains(this)) {
+	    (g_globals->_events.getCursor() == CURSOR_WALK) && g_globals->_player._canWalk &&
+	    (_position != event.mousePos) && g_globals->_sceneObjects->contains(this)) {
 
 		if ((g_vm->getGameID() != GType_Ringworld) && !BF_GLOBALS._player._enabled)
 			return;
 
 		PlayerMover *newMover = new PlayerMover();
 		Common::Point destPos(event.mousePos.x + g_globals->_sceneManager._scene->_sceneBounds.left,
-			event.mousePos.y + g_globals->_sceneManager._scene->_sceneBounds.top);
+		                      event.mousePos.y + g_globals->_sceneManager._scene->_sceneBounds.top);
 
 		addMover(newMover, &destPos, NULL);
 		event.handled = true;
@@ -3689,7 +3690,7 @@ void Region::draw() {
 			rect2.translate(-sceneBounds.left, -sceneBounds.top);
 
 			g_globals->gfxManager().getSurface().copyFrom(g_globals->_sceneManager._scene->_backSurface,
-				rect1, rect2);
+			                                              rect1, rect2);
 		}
 	}
 }
@@ -3719,8 +3720,8 @@ void Region::uniteLine(int yp, LineSliceSet &sliceSet) {
 		while (destIndex < destSet.items.size()) {
 			LineSlice &destSlice = destSet.items[destIndex];
 			if (((srcSlice.xs >= destSlice.xs) && (srcSlice.xs <= destSlice.xe)) ||
-				((srcSlice.xe >= destSlice.xs) && (srcSlice.xe <= destSlice.xe)) ||
-				((srcSlice.xs < destSlice.xs) && (srcSlice.xe > destSlice.xe))) {
+			    ((srcSlice.xe >= destSlice.xs) && (srcSlice.xe <= destSlice.xe)) ||
+			    ((srcSlice.xs < destSlice.xs) && (srcSlice.xe > destSlice.xe))) {
 				// Intersecting, so merge them
 				destSlice.xs = MIN(srcSlice.xs, destSlice.xs);
 				destSlice.xe = MAX(srcSlice.xe, destSlice.xe);
@@ -3931,7 +3932,7 @@ void WalkRegion::process5(int idx1, int idx2) {
 
 void WalkRegion::loadRecords(int yp, int size, int processIndex) {
 	LineSliceSet sliceSet;
-	int sliceCount =  size / 2;
+	int sliceCount = size / 2;
 
 	for (int idx = 0; idx < sliceCount; ++idx, ++processIndex) {
 		while (!_processList[processIndex]._yDiff2)
@@ -4175,7 +4176,6 @@ void WalkRegions::enableRegion(int regionId) {
 	_disabledRegions.remove(regionId);
 }
 
-
 /*--------------------------------------------------------------------------*/
 
 void ScenePriorities::load(int resNum) {
@@ -4330,8 +4330,8 @@ void SceneHandler::process(Event &event) {
 
 	// Check for displaying right-click dialog
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) &&
-			g_globals->_player._uiEnabled &&
-			((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._sceneManager._sceneNumber != 1330))) {
+	    g_globals->_player._uiEnabled &&
+	    ((g_vm->getGameID() != GType_Ringworld2) || (R2_GLOBALS._sceneManager._sceneNumber != 1330))) {
 		g_globals->_game->rightClick();
 
 		event.handled = true;
@@ -4376,8 +4376,7 @@ void SceneHandler::process(Event &event) {
 		}
 
 		// Mouse press handling
-		bool enabled = (g_vm->getGameID() != GType_Ringworld) ? g_globals->_player._enabled :
-			g_globals->_player._uiEnabled;
+		bool enabled = (g_vm->getGameID() != GType_Ringworld) ? g_globals->_player._enabled : g_globals->_player._uiEnabled;
 		if (enabled && (event.eventType == EVENT_BUTTON_DOWN) && !g_globals->_sceneItems.empty()) {
 			// Check if the mouse is on the player
 			if (g_globals->_player.contains(event.mousePos)) {
@@ -4401,7 +4400,7 @@ void SceneHandler::process(Event &event) {
 						event.handled = g_globals->_events.getCursor() != CURSOR_WALK;
 
 						if (g_globals->_player._uiEnabled && g_globals->_player._canWalk &&
-								(g_globals->_events.getCursor() != CURSOR_LOOK)) {
+						    (g_globals->_events.getCursor() != CURSOR_LOOK)) {
 							g_globals->_events.setCursor(CURSOR_WALK);
 						} else if (g_globals->_player._canWalk && (g_globals->_events.getCursor() != CURSOR_LOOK)) {
 							g_globals->_events.setCursor(CURSOR_WALK);

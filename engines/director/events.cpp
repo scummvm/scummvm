@@ -26,9 +26,9 @@
 
 #include "director/director.h"
 #include "director/frame.h"
+#include "director/lingo/lingo.h"
 #include "director/score.h"
 #include "director/sprite.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -79,7 +79,7 @@ void DirectorEngine::processEvents() {
 
 			case Common::EVENT_MOUSEMOVE:
 				sc->_lastEventTime = g_director->getMacTicks();
-				sc->_lastRollTime =	 sc->_lastEventTime;
+				sc->_lastRollTime = sc->_lastEventTime;
 
 				if (_draggingSprite) {
 					Sprite *draggedSprite = currentFrame->_sprites[_draggingSpriteId];

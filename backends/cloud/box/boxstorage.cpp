@@ -22,7 +22,6 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/cloud/box/boxlistdirectorybyidrequest.h"
 #include "backends/cloud/box/boxtokenrefresher.h"
@@ -34,6 +33,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
+#include <curl/curl.h>
 
 namespace Cloud {
 namespace Box {
@@ -42,8 +42,7 @@ namespace Box {
 #define BOX_API_FILES_CONTENT "https://api.box.com/2.0/files/%s/content"
 #define BOX_API_USERS_ME "https://api.box.com/2.0/users/me"
 
-BoxStorage::BoxStorage(Common::String token, Common::String refreshToken, bool enabled):
-	IdStorage(token, refreshToken, enabled) {}
+BoxStorage::BoxStorage(Common::String token, Common::String refreshToken, bool enabled) : IdStorage(token, refreshToken, enabled) {}
 
 BoxStorage::BoxStorage(Common::String code, Networking::ErrorCallback cb) {
 	getAccessToken(code, cb);
@@ -107,8 +106,10 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking
 		quotaUsed = jsonInfo.getVal("space_used")->asIntegerNumber();
 
 	Common::String username = email;
-	if (username == "") username = displayName;
-	if (username == "") username = uid;
+	if (username == "")
+		username = displayName;
+	if (username == "")
+		username = uid;
 	CloudMan.setStorageUsername(kStorageBoxId, username);
 
 	if (outerCallback) {

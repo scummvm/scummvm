@@ -23,9 +23,9 @@
 #ifndef ULTIMA_SHARED_WIDGETS_CREATURE_H
 #define ULTIMA_SHARED_WIDGETS_CREATURE_H
 
-#include "ultima/shared/maps/map_widget.h"
-#include "ultima/shared/maps/map.h"
 #include "common/serializer.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Shared {
@@ -41,10 +41,11 @@ namespace Maps {
 class Creature {
 private:
 	Game *_gameRef;
-//	MapBase *_mapRef;
+	//	MapBase *_mapRef;
 protected:
 	int _hitPoints;
 	bool _isAttacking;
+
 protected:
 	/**
 	 * Returns either the maximum attack distance for a monster, or 0 if the monster is beyond
@@ -61,13 +62,14 @@ protected:
 	 * Handles attacking the player
 	 */
 	virtual void attackParty() {}
+
 public:
 	/**
 	 * Constructor
 	 */
 	Creature(Game *game, MapBase *) : _gameRef(game), _hitPoints(0), _isAttacking(false) {}
 	Creature(Game *game, MapBase *, int hitPoints) : _gameRef(game),
-		_hitPoints(hitPoints), _isAttacking(false) {}
+	                                                 _hitPoints(hitPoints), _isAttacking(false) {}
 
 	/**
 	 * Destructor

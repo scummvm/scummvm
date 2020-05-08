@@ -21,16 +21,16 @@
  */
 
 #include "ultima/ultima1/spells/spell.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
 Spell::Spell(Ultima1Game *game, Character *c, SpellId spellId) : _game(game),
-		_character(c), _spellId(spellId) {
+                                                                 _character(c), _spellId(spellId) {
 	_name = _game->_res->SPELL_NAMES[spellId];
 }
 

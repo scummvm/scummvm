@@ -31,6 +31,7 @@ namespace Titanic {
 class TTsentenceNode : public TTnode {
 public:
 	TTword *_wordP;
+
 public:
 	TTsentenceNode();
 	TTsentenceNode(TTword *word);

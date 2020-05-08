@@ -21,17 +21,17 @@
  */
 
 #include "ultima/nuvie/sound/decoder/random_collection_audio_stream.h"
-#include "ultima/nuvie/core/game.h"
 #include "audio/audiostream.h"
-#include "common/mutex.h"
 #include "audio/mixer.h"
+#include "common/mutex.h"
+#include "ultima/nuvie/core/game.h"
 
 namespace Ultima {
 namespace Nuvie {
 namespace U6Audio {
 
 #pragma mark -
-#pragma mark --- random collection audio stream ---
+#pragma mark--- random collection audio stream ---
 #pragma mark -
 
 class RandomCollectionAudioStreamImpl : public RandomCollectionAudioStream {
@@ -59,9 +59,10 @@ private:
 	DisposeAfterUse::Flag _disposeAfterUse;
 
 	Audio::RewindableAudioStream *_currentStream;
+
 public:
 	RandomCollectionAudioStreamImpl(int rate, bool stereo, Std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse)
-		: _rate(rate), _stereo(stereo), _finished(false), _streams(streams), _disposeAfterUse(disposeAfterUse) {
+	    : _rate(rate), _stereo(stereo), _finished(false), _streams(streams), _disposeAfterUse(disposeAfterUse) {
 		if (_streams.size() > 0)
 			_currentStream = _streams[NUVIE_RAND() % _streams.size()];
 		else
@@ -126,7 +127,7 @@ int RandomCollectionAudioStreamImpl::readBuffer(int16 *buffer, const int numSamp
 }
 
 RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo,
-		Std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse) {
+                                                             Std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse) {
 	return new RandomCollectionAudioStreamImpl(rate, stereo, streams, disposeAfterUse);
 }
 

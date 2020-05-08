@@ -22,10 +22,10 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/graphics/raw_shape_frame.h"
 #include "ultima/ultima8/convert/convert_shape.h"
 #include "ultima/ultima8/convert/u8/convert_shape_u8.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/graphics/raw_shape_frame.h"
 
 #include "common/memstream.h"
 
@@ -36,8 +36,8 @@ namespace Ultima8 {
   parse data and fill class
  */
 RawShapeFrame::RawShapeFrame(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
-                       const uint8 special[256], ConvertShapeFrame *prev) : _line_offsets(0),
-					   _rle_data(nullptr) {
+                             const uint8 special[256], ConvertShapeFrame *prev) : _line_offsets(0),
+                                                                                  _rle_data(nullptr) {
 	// Load it as u8
 	if (!format || format == &U8ShapeFormat || format == &U82DShapeFormat)
 		loadU8Format(data, size);
@@ -50,7 +50,7 @@ RawShapeFrame::RawShapeFrame(const uint8 *data, uint32 size, const ConvertShapeF
 }
 
 RawShapeFrame::~RawShapeFrame() {
-	delete [] _line_offsets;
+	delete[] _line_offsets;
 }
 
 // This will load a u8 style shape 'optimized'.
@@ -128,7 +128,7 @@ void RawShapeFrame::loadGenericFormat(const uint8 *data, uint32 size, const Conv
 		} else {
 			if (ds.size() - ds.pos() < (int32)format->_bytes_line_offset) {
 				warning("going off end of %d buffer at %d reading %d",
-						ds.size(), ds.pos(), format->_bytes_line_offset);
+				        ds.size(), ds.pos(), format->_bytes_line_offset);
 			}
 			_line_offsets[i] = ds.readX(format->_bytes_line_offset) - ((_height - i) * format->_bytes_line_offset);
 		}

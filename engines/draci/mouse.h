@@ -37,7 +37,7 @@ enum CursorType {
 	kHighlightedCursor,
 	kMainMenuCursor,
 	kUninitializedCursor = 100,
-	kItemCursor			// + the index in the BArchive
+	kItemCursor // + the index in the BArchive
 };
 
 class DraciEngine;

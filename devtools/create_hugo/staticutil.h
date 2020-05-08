@@ -33,11 +33,9 @@
 #define NUM_UTIL_TEXT 1
 
 const char *textUtil_v1w[NUM_UTIL_TEXT] = {
-	"I'm afraid all you can do at this point is:\n\n-  Load a saved game (Ctrl+L)\n-  Start a new game (Ctrl+N)\n-  Quit! (Alt+F4)"
-};
+    "I'm afraid all you can do at this point is:\n\n-  Load a saved game (Ctrl+L)\n-  Start a new game (Ctrl+N)\n-  Quit! (Alt+F4)"};
 
 const char *textUtil_v1d[NUM_UTIL_TEXT] = {
-	"I'm afraid all you can do\nat this point is restore\na saved game or quit!"
-};
+    "I'm afraid all you can do\nat this point is restore\na saved game or quit!"};
 
 #endif //STATICENGINE_H

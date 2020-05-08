@@ -42,8 +42,8 @@ bool AgiEngine::checkBlock(int16 x, int16 y) {
 void AgiEngine::changePos(ScreenObjEntry *screenObj) {
 	bool insideBlock;
 	int16 x, y;
-	int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
-	int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
+	int dx[9] = {0, 0, 1, 1, 1, 0, -1, -1, -1};
+	int dy[9] = {0, -1, -1, 0, 1, 1, 1, 0, -1};
 
 	x = screenObj->xPos;
 	y = screenObj->yPos;
@@ -76,7 +76,7 @@ void AgiEngine::motionActivated(ScreenObjEntry *screenObj) {
 		// Cycling active too
 		switch (screenObj->cycle) {
 		case kCycleEndOfLoop: // "end.of.loop"
-		case kCycleRevLoop: // "reverse.loop"
+		case kCycleRevLoop:   // "reverse.loop"
 			// Disable it
 			screenObj->flags &= ~fCycling;
 			screenObj->cycle = kCycleNormal;
@@ -128,7 +128,7 @@ void AgiEngine::motionWander(ScreenObjEntry *screenObj) {
 		}
 
 		while (screenObj->wander_count < 6) {
-			screenObj->wander_count = _rnd->getRandomNumber(50);    // huh?
+			screenObj->wander_count = _rnd->getRandomNumber(50); // huh?
 		}
 	}
 }
@@ -189,7 +189,7 @@ void AgiEngine::motionFollowEgo(ScreenObjEntry *screenObj) {
 		k -= screenObj->stepSize;
 		screenObj->follow_count = k;
 
-		if ((int8) screenObj->follow_count < 0)
+		if ((int8)screenObj->follow_count < 0)
 			screenObj->follow_count = 0;
 	} else {
 		screenObj->direction = dir;
@@ -240,8 +240,7 @@ void AgiEngine::checkAllMotions() {
 	ScreenObjEntry *screenObj;
 
 	for (screenObj = _game.screenObjTable; screenObj < &_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
-		if ((screenObj->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fUpdate | fDrawn)
-		        && screenObj->stepTimeCount == 1) {
+		if ((screenObj->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fUpdate | fDrawn) && screenObj->stepTimeCount == 1) {
 			checkMotion(screenObj);
 		}
 	}
@@ -300,7 +299,7 @@ void AgiEngine::moveObj(ScreenObjEntry *screenObj) {
  * @param  s   step size
  */
 int AgiEngine::getDirection(int16 objX, int16 objY, int16 destX, int16 destY, int16 stepSize) {
-	int dirTable[9] = { 8, 1, 2, 7, 0, 3, 6, 5, 4 };
+	int dirTable[9] = {8, 1, 2, 7, 0, 3, 6, 5, 4};
 	return dirTable[checkStep(destX - objX, stepSize) + 3 * checkStep(destY - objY, stepSize)];
 }
 

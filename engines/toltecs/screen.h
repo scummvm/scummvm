@@ -118,6 +118,7 @@ public:
 	}
 	virtual ~SpriteFilter() {}
 	virtual SpriteReaderStatus readPacket(PixelPacket &packet) = 0;
+
 protected:
 	const SpriteDrawItem *_sprite;
 };
@@ -201,9 +202,8 @@ public:
 
 	uint getFontResIndex(int fontNum) const { return _fontResIndexArray[fontNum]; }
 
-//protected:
+	//protected:
 public:
-
 	struct VerbLineItem {
 		int16 slotIndex;
 		int16 slotOffset;
@@ -245,7 +245,6 @@ public:
 
 	bool createSpriteDrawItem(const DrawRequest &drawRequest, SpriteDrawItem &sprite);
 	void addDrawRequest(const DrawRequest &drawRequest);
-
 };
 
 } // End of namespace Toltecs

@@ -23,8 +23,8 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_TRANSPORT_H
 #define ULTIMA_ULTIMA1_WIDGETS_TRANSPORT_H
 
-#include "ultima/ultima1/widgets/overworld_widget.h"
 #include "ultima/shared/maps/map_base.h"
+#include "ultima/ultima1/widgets/overworld_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -54,6 +54,7 @@ public:
 class Transport : public OverworldWidget {
 protected:
 	uint _transportId;
+
 public:
 	/**
 	 * Constructor
@@ -91,6 +92,7 @@ public:
  */
 class Horse : public Transport {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	DECLARE_WIDGET(Horse);
 	CLASSDEF;
@@ -111,6 +113,7 @@ public:
  */
 class Cart : public Transport {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	DECLARE_WIDGET(Cart);
 	CLASSDEF;
@@ -131,6 +134,7 @@ public:
  */
 class Raft : public Transport {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	DECLARE_WIDGET(Raft);
 	CLASSDEF;
@@ -151,6 +155,7 @@ public:
  */
 class Frigate : public Transport {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	DECLARE_WIDGET(Frigate);
 	CLASSDEF;
@@ -176,6 +181,7 @@ public:
  */
 class Aircar : public Transport {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	DECLARE_WIDGET(Aircar);
 	CLASSDEF;
@@ -201,8 +207,10 @@ public:
  */
 class Shuttle : public Transport {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	uint _space1, _space2;
+
 public:
 	DECLARE_WIDGET(Shuttle);
 	CLASSDEF;
@@ -228,6 +236,7 @@ public:
  */
 class TimeMachine : public Transport {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	DECLARE_WIDGET(TimeMachine);
 	CLASSDEF;

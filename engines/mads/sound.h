@@ -23,8 +23,8 @@
 #ifndef MADS_SOUND_H
 #define MADS_SOUND_H
 
-#include "common/scummsys.h"
 #include "common/queue.h"
+#include "common/scummsys.h"
 
 namespace Audio {
 class Mixer;
@@ -53,6 +53,7 @@ private:
 	bool _newSoundsPaused;
 	Common::Queue<int> _queuedCommands;
 	int _masterVolume;
+
 public:
 	SoundManager(MADSEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();

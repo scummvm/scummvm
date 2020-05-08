@@ -28,7 +28,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-
 enum DebugLevel {
 	// General info debug information
 	MM_INFO = 1,
@@ -49,4 +48,3 @@ typedef uint16 ProcId;
 } // End of namespace Ultima
 
 #endif
-

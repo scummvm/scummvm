@@ -20,12 +20,12 @@
  *
  */
 
+#include "draci/saveload.h"
 #include "draci/draci.h"
 #include "draci/game.h"
-#include "draci/saveload.h"
 
-#include "common/serializer.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/system.h"
 
 #include "graphics/scaler.h"
@@ -51,7 +51,8 @@ WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, DraciSavegame
 	// Read in the string
 	header.saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header.saveName += ch;
 
 	header.date = in->readUint32LE();
 	header.time = in->readUint16LE();

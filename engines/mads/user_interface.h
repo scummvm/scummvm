@@ -23,22 +23,23 @@
 #ifndef MADS_USER_INTERFACE_H
 #define MADS_USER_INTERFACE_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "mads/msurface.h"
 #include "mads/screen.h"
 
 namespace MADS {
 
-enum { IMG_SPINNING_OBJECT = 200, IMG_TEXT_UPDATE = 201 };
+enum { IMG_SPINNING_OBJECT = 200,
+	   IMG_TEXT_UPDATE = 201 };
 
 enum ScrollbarActive {
-	SCROLLBAR_NONE = 0,		// No state
-	SCROLLBAR_UP = 1,		// Up butotn
-	SCROLLBAR_DOWN = 2,		// Down button
-	SCROLLBAR_ELEVATOR = 3,	// Elevator bar
-	SCROLLBAR_THUMB = 4		// Scrollbar thumb
+	SCROLLBAR_NONE = 0,     // No state
+	SCROLLBAR_UP = 1,       // Up butotn
+	SCROLLBAR_DOWN = 2,     // Down button
+	SCROLLBAR_ELEVATOR = 3, // Elevator bar
+	SCROLLBAR_THUMB = 4     // Scrollbar thumb
 };
 
 class AnimFrameEntry;
@@ -65,6 +66,7 @@ public:
 class UISlots : public Common::Array<UISlot> {
 private:
 	MADSEngine *_vm;
+
 public:
 	/**
 	 * Constructor
@@ -97,8 +99,10 @@ public:
 class Conversation {
 private:
 	static MADSEngine *_vm;
+
 public:
 	static void init(MADSEngine *vm);
+
 public:
 	int _globalId;
 	Common::Array<int> _quotes;
@@ -132,6 +136,7 @@ public:
 
 class UserInterface : public MSurface {
 	friend class UISlots;
+
 private:
 	MADSEngine *_vm;
 	int _invSpritesIndex;
@@ -190,6 +195,7 @@ private:
 	 * Draw a UI textual element
 	 */
 	void writeVocab(ScrCategory category, int id);
+
 public:
 	MSurface _surface;
 	UISlots _uiSlots;
@@ -212,6 +218,7 @@ public:
 	uint32 _scrollbarMilliTime;
 	int _scrollbarElevator, _scrollbarOldElevator;
 	ScrollbarActive _scrollbarStrokeType;
+
 public:
 	/**
 	* Constructor
@@ -239,7 +246,7 @@ public:
 	* @param transparencyIndex	Transparency color
 	*/
 	void mergeFrom(BaseSurface *src, const Common::Rect &srcBounds, const Common::Point &destPos,
-		int transparencyIndex = -1);
+	               int transparencyIndex = -1);
 
 	/**
 	 * Loads the animation sprite data for a given inventory object

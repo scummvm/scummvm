@@ -57,7 +57,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
  */
 Audio::AudioStream *makeShortenStream(Common::ReadStream &stream);
 
-} // End of namespace Audio
+} // namespace Saga
 
 #endif
 

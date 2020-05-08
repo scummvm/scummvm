@@ -24,14 +24,14 @@
 #define BACKENDS_NETWORKING_CURL_SESSIONREQUEST_H
 
 #include "backends/networking/curl/curlrequest.h"
-#include "common/memstream.h"
 #include "common/json.h"
+#include "common/memstream.h"
 
 namespace Networking {
 
 #define CURL_SESSION_REQUEST_BUFFER_SIZE 512 * 1024
 
-class SessionRequest: public CurlRequest {
+class SessionRequest : public CurlRequest {
 protected:
 	Common::MemoryWriteStreamDynamic _contentsStream;
 	byte *_buffer;
@@ -59,7 +59,7 @@ public:
 	virtual void restart();
 
 	/** This request DOES NOT delete automatically after calling callbacks. It gets PAUSED, and in order to make it FINISHED (i.e. delete), this method MUST be called. */
-	void close();	
+	void close();
 
 	bool complete();
 	bool success();

@@ -62,7 +62,7 @@ int Processor::save_undo() {
 	diff_size = mem_diff(zmp, prev_zmp, h_dynamic_size, undo_diff);
 	stack_size = _stack + STACK_SIZE - _sp;
 	do {
-		p = (undo_t *) malloc(sizeof(undo_t) + diff_size + stack_size * sizeof(*_sp));
+		p = (undo_t *)malloc(sizeof(undo_t) + diff_size + stack_size * sizeof(*_sp));
 		if (p == nullptr)
 			free_undo(1);
 	} while (!p && undo_count);
@@ -109,7 +109,7 @@ int Processor::restore_undo(void) {
 	_frameCount = curr_undo->frame_count;
 	mem_undiff((zbyte *)(curr_undo + 1), curr_undo->diff_size, prev_zmp);
 	memcpy(_sp, (zbyte *)(curr_undo + 1) + curr_undo->diff_size,
-		curr_undo->stack_size * sizeof(*_sp));
+	       curr_undo->stack_size * sizeof(*_sp));
 
 	curr_undo = curr_undo->prev;
 

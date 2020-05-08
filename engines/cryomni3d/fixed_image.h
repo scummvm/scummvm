@@ -73,7 +73,10 @@ public:
 	void manage();
 	void updateSurface(const Graphics::Surface *newSurface);
 	const Graphics::Surface *surface() const { return _imageSurface; }
-	void changeCallback(CallbackFunctor *callback) { delete _callback; _callback = callback; }
+	void changeCallback(CallbackFunctor *callback) {
+		delete _callback;
+		_callback = callback;
+	}
 	Common::Point getZoneCenter(uint zoneId) const;
 	void disableZone(uint zoneId) { _zones[zoneId].valid = false; }
 

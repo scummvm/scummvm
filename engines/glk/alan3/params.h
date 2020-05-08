@@ -24,30 +24,28 @@
 #define GLK_ALAN3_PARAMS
 
 /* Various utility functions for handling parameters */
-#include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* TYPES */
-struct Parameter {        /* PARAMETER */
-	Aid instance;                  /* Instance code for the parameter (0=multiple) */
+struct Parameter { /* PARAMETER */
+	Aid instance;  /* Instance code for the parameter (0=multiple) */
 	bool isLiteral;
 	bool isPronoun;
 	bool isThem;
-	bool useWords;                 /* Indicate to use words instead of instance code when saying */
-	int firstWord;                 /* Index to first word used by player */
-	int lastWord;                  /* d:o to last */
+	bool useWords;                /* Indicate to use words instead of instance code when saying */
+	int firstWord;                /* Index to first word used by player */
+	int lastWord;                 /* d:o to last */
 	struct Parameter *candidates; /* Array of instances possibly matching this parameter depending on player input */
 };
 
 typedef Parameter *ParameterArray;
 
-
 /* DATA */
 extern Parameter *globalParameters;
-
 
 /* FUNCTIONS */
 /* Single Parameter: */

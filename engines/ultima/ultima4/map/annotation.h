@@ -23,10 +23,10 @@
 #ifndef ULTIMA4_MAP_ANNOTATION_H
 #define ULTIMA4_MAP_ANNOTATION_H
 
+#include "common/list.h"
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/map/map_tile.h"
-#include "common/list.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -114,7 +114,8 @@ public:
 	 * Passes a turn for the annotation
 	 */
 	void passTurn() {
-		if (_ttl > 0) _ttl--;
+		if (_ttl > 0)
+			_ttl--;
 	}
 
 	bool operator==(const Annotation &) const;
@@ -180,7 +181,7 @@ public:
 	int size() const;
 
 private:
-	Annotation::List  _annotations;
+	Annotation::List _annotations;
 	Annotation::List::iterator _it;
 };
 

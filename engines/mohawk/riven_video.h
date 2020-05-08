@@ -82,7 +82,10 @@ public:
 	uint32 getDuration() const;
 
 	/** Move the video to the specified coordinates */
-	void moveTo(uint16 x, uint16 y) { _x = x; _y = y; }
+	void moveTo(uint16 x, uint16 y) {
+		_x = x;
+		_y = y;
+	}
 
 	/** Set the video to loop (true) or not (false) */
 	void setLooping(bool loop) { _loop = loop; }
@@ -113,6 +116,7 @@ public:
 
 	/** Draw the next frame to the system screen */
 	void drawNextFrame();
+
 private:
 	// Non-changing variables
 	MohawkEngine_Riven *_vm;

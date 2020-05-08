@@ -43,7 +43,7 @@ bool ReadPlayerController::keyPressed(int key) {
 	bool valid = ReadChoiceController::keyPressed(key);
 	if (valid) {
 		if (_value < '1' ||
-		        _value > ('0' + g_ultima->_saveGame->_members))
+		    _value > ('0' + g_ultima->_saveGame->_members))
 			_value = '0';
 	} else {
 		_value = '0';

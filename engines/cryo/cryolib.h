@@ -36,13 +36,13 @@ enum {
 	fsFromStart = 1
 };
 
-struct BlitView{
-	int     _srcLeft;
-	int     _srcTop;
-	int     _dstLeft;
-	int     _dstTop;
-	int     _width;
-	int     _height;
+struct BlitView {
+	int _srcLeft;
+	int _srcTop;
+	int _dstLeft;
+	int _dstTop;
+	int _width;
+	int _height;
 };
 
 class View {
@@ -55,28 +55,28 @@ public:
 	void initDatas(int w, int h, void *buffer);
 	void centerIn(View *parent);
 
-	int      _width;
-	int      _height;
-	byte    *_bufferPtr;
-	int16    _pitch;
+	int _width;
+	int _height;
+	byte *_bufferPtr;
+	int16 _pitch;
 	BlitView _normal;
 	BlitView _zoom;
 };
 
 struct color3_t {
-	uint16   r, g, b;
+	uint16 r, g, b;
 };
 
 struct color_t {
-	uint16   a, r, g, b;
+	uint16 a, r, g, b;
 };
 
 struct HNMHeader {
-	int32   _signature;
-	uint16  _width;
-	uint16  _height;
-	int32   _numbFrame;
-	int32   _bufferSize;
+	int32 _signature;
+	uint16 _width;
+	uint16 _height;
+	int32 _numbFrame;
+	int32 _bufferSize;
 };
 
 void SysBeep(int x);

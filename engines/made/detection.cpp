@@ -20,8 +20,8 @@
  *
  */
 
-#include "made/made.h"
 #include "made/detection_tables.h"
+#include "made/made.h"
 
 #include "engines/advancedDetector.h"
 
@@ -43,15 +43,14 @@ uint16 MadeEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
-}
+} // namespace Made
 
 static const PlainGameDescriptor madeGames[] = {
-	{"manhole", "The Manhole"},
-	{"rtz", "Return to Zork"},
-	{"lgop2", "Leather Goddesses of Phobos 2"},
-	{"rodney", "Rodney's Funscreen"},
-	{0, 0}
-};
+    {"manhole", "The Manhole"},
+    {"rtz", "Return to Zork"},
+    {"lgop2", "Leather Goddesses of Phobos 2"},
+    {"rodney", "Rodney's Funscreen"},
+    {0, 0}};
 
 class MadeMetaEngine : public AdvancedMetaEngine {
 public:
@@ -74,17 +73,14 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-
 };
 
 bool MadeMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		false;
+	return false;
 }
 
 bool Made::MadeEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return (f == kSupportsRTL);
 }
 
 bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -111,7 +107,7 @@ ADDetectedGame MadeMetaEngine::fallbackDetect(const FileMap &allFiles, const Com
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADE)
-	REGISTER_PLUGIN_DYNAMIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
+REGISTER_PLUGIN_STATIC(MADE, PLUGIN_TYPE_ENGINE, MadeMetaEngine);
 #endif

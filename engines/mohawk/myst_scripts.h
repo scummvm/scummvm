@@ -149,14 +149,12 @@ protected:
 	typedef Common::Functor2<uint16, const ArgumentsArray &, void> OpcodeProcMyst;
 
 #define REGISTER_OPCODE(op, cls, method) \
-		registerOpcode( \
-			op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method) \
-		)
+	registerOpcode(                      \
+	    op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method))
 
 #define OVERRIDE_OPCODE(op, cls, method) \
-		overrideOpcode( \
-			op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method) \
-		)
+	overrideOpcode(                      \
+	    op, #method, new Common::Functor2Mem<uint16, const ArgumentsArray &, void, cls>(this, &cls::method))
 
 	void registerOpcode(uint16 op, const char *name, OpcodeProcMyst *command);
 	void overrideOpcode(uint16 op, const char *name, OpcodeProcMyst *command);
@@ -164,7 +162,7 @@ protected:
 	uint16 _savedCardId;
 	uint16 _savedMapCardId;
 	uint16 _savedCursorId;
-	int16 _tempVar; // Generic temp var used by the scripts
+	int16 _tempVar;    // Generic temp var used by the scripts
 	uint32 _startTime; // Generic start time used by the scripts
 
 	static const MystStack _stackMap[];

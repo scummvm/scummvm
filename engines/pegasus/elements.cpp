@@ -159,10 +159,10 @@ void DisplayElement::setTriggeredElement(DisplayElement *element) {
 }
 
 bool DisplayElement::validToDraw(DisplayOrder backLayer, DisplayOrder frontLayer) {
-	return	isDisplaying() && _elementIsVisible &&
-			(getObjectID() <= kHighestReservedElementID ||
-			(getDisplayOrder() >= backLayer &&
-			getDisplayOrder() <= frontLayer));
+	return isDisplaying() && _elementIsVisible &&
+	       (getObjectID() <= kHighestReservedElementID ||
+	        (getDisplayOrder() >= backLayer &&
+	         getDisplayOrder() <= frontLayer));
 }
 
 DropHighlight::DropHighlight(const DisplayElementID id) : DisplayElement(id) {
@@ -436,8 +436,7 @@ void Sprite::draw(const Common::Rect &r) {
 	}
 }
 
-SpriteSequence::SpriteSequence(const DisplayElementID id, const DisplayElementID spriteID) :
-		FrameSequence(id), _sprite(spriteID), _transparent(false) {
+SpriteSequence::SpriteSequence(const DisplayElementID id, const DisplayElementID spriteID) : FrameSequence(id), _sprite(spriteID), _transparent(false) {
 }
 
 void SpriteSequence::openFrameSequence() {
@@ -478,10 +477,10 @@ void SpriteSequence::newFrame(const uint16 frame) {
 	_sprite.setCurrentFrameIndex(frame);
 }
 
-#define DRAW_PIXEL() \
-	if (bytesPerPixel == 2) \
+#define DRAW_PIXEL()              \
+	if (bytesPerPixel == 2)       \
 		*((uint16 *)dst) = black; \
-	else \
+	else                          \
 		*((uint32 *)dst) = black; \
 	dst += bytesPerPixel
 

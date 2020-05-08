@@ -24,12 +24,12 @@
 #define SUPERNOVA2_STATE_H
 
 #include "common/events.h"
-#include "common/rect.h"
 #include "common/keyboard.h"
-#include "supernova/room.h"
-#include "supernova/supernova2/rooms.h"
-#include "supernova/sound.h"
+#include "common/rect.h"
 #include "supernova/game-manager.h"
+#include "supernova/room.h"
+#include "supernova/sound.h"
+#include "supernova/supernova2/rooms.h"
 
 namespace Supernova {
 
@@ -68,7 +68,7 @@ struct GameState2 {
 	byte _taxiPossibility;
 };
 
-class GameManager2: public GameManager{
+class GameManager2 : public GameManager {
 public:
 	GameManager2(SupernovaEngine *vm, Sound *sound);
 	~GameManager2() override;
@@ -130,6 +130,6 @@ public:
 	void pressureAlarmEntrance();
 };
 
-}
+} // namespace Supernova
 
 #endif // SUPERNOVA2_STATE_H

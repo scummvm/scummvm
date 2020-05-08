@@ -49,6 +49,7 @@ private:
 	void initObjects();
 	void configSelect();
 	void initVariables();
+
 protected:
 	/**
 	 * Play the game
@@ -59,6 +60,7 @@ protected:
 
 	void setNoteParams();
 	void displayNote(const Common::String &msg);
+
 public:
 	SpriteResource *_spec7Objects;
 
@@ -67,7 +69,7 @@ public:
 
 	void doSpecial5(int param1);
 	void showDeathText(Common::String msg);
-	void establish(int esatabIndex, int sub) override {};
+	void establish(int esatabIndex, int sub) override{};
 };
 
 } // End of namespace Martian

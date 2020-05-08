@@ -23,8 +23,8 @@
 #ifndef MESSAGE_DIALOG_H
 #define MESSAGE_DIALOG_H
 
-#include "gui/dialog.h"
 #include "common/str.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 
@@ -34,7 +34,6 @@ enum {
 	kMessageOK = 1,
 	kMessageCancel = 0
 };
-
 
 /**
  * Simple message dialog ("alert box"): presents a text message in a dialog with up to two buttons.

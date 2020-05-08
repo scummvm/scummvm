@@ -35,9 +35,16 @@ class AvalancheEngine;
 class Animation;
 
 enum Direction {
-	kDirUp = 0, kDirRight, kDirDown, kDirLeft,
-	kDirUpRight, kDirDownRight, kDirDownLeft, kDirUpLeft,
-	kDirStopped, kDirNone = 177
+	kDirUp = 0,
+	kDirRight,
+	kDirDown,
+	kDirLeft,
+	kDirUpRight,
+	kDirDownRight,
+	kDirDownLeft,
+	kDirUpLeft,
+	kDirStopped,
+	kDirNone = 177
 };
 
 class AnimationType {
@@ -47,14 +54,14 @@ public:
 	byte _xLength, _yLength;
 	ManiType *_mani[24];
 	SilType *_sil[24];
-	byte _frameNum; // Number of pictures.
-	byte _seq; // How many in one stride.
+	byte _frameNum;    // Number of pictures.
+	byte _seq;         // How many in one stride.
 	byte _characterId; // The number according to Acci. (1=Avvy, etc.)
-	byte _count; // Counts before changing step.
+	byte _count;       // Counts before changing step.
 
 	Direction _facingDir;
 	byte _stepNum;
-	int16 _x, _y; // Current xy coords.
+	int16 _x, _y;        // Current xy coords.
 	int8 _moveX, _moveY; // Amount to move sprite by, each step.
 	bool _quick, _visible, _homing, _doCheck;
 	int16 _homingX, _homingY; // Homing x & y coords.
@@ -82,7 +89,7 @@ public:
 private:
 	Animation *_anim;
 
-	int16 _oldX[2], _oldY[2];  // Last xy coords.
+	int16 _oldX[2], _oldY[2];         // Last xy coords.
 	Color _fgBubbleCol, _bgBubbleCol; // Foreground & background bubble colors.
 
 	bool checkCollision();
@@ -140,6 +147,7 @@ public:
 
 	void resetVariables();
 	void synchronize(Common::Serializer &sz);
+
 private:
 	Direction _direction; // The direction Avvy is currently facing.
 	Direction _oldDirection;

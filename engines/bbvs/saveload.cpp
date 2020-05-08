@@ -178,7 +178,6 @@ void BbvsEngine::loadgame(const char *filename) {
 	_currActionCommandIndex = -1;
 
 	delete in;
-
 }
 
 Common::Error BbvsEngine::loadGameState(int slot) {

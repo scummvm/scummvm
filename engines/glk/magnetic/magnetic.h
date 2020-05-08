@@ -27,9 +27,9 @@
 
 #include "common/scummsys.h"
 #include "glk/glk_api.h"
-#include "glk/magnetic/magnetic_types.h"
-#include "glk/magnetic/magnetic_defs.h"
 #include "glk/magnetic/detection.h"
+#include "glk/magnetic/magnetic_defs.h"
+#include "glk/magnetic/magnetic_types.h"
 
 namespace Glk {
 namespace Magnetic {
@@ -40,13 +40,12 @@ typedef void (Magnetic::*CommandPtr)(const char *argument);
 
 /* Glk subcommands and handler functions. */
 struct gms_command_t {
-	CommandPtr handler;                 ///< Subcommand handler
-	const char *const command;          ///< Glk subcommand
-	bool takes_argument;                ///< Argument flag
-	bool undo_return;                   ///< "Undo" return value
-} ;
+	CommandPtr handler;        ///< Subcommand handler
+	const char *const command; ///< Glk subcommand
+	bool takes_argument;       ///< Argument flag
+	bool undo_return;          ///< "Undo" return value
+};
 typedef gms_command_t *gms_commandref_t;
-
 
 /**
  * Magnetic game interpreter
@@ -55,6 +54,7 @@ class Magnetic : public GlkAPI {
 public:
 	static const gms_command_t GMS_COMMAND_TABLE[14];
 	static const gms_gamma_t GMS_GAMMA_TABLE[38];
+
 private:
 	GammaMode gms_gamma_mode;
 	bool gms_animation_enabled, gms_prompt_enabled;
@@ -199,13 +199,14 @@ private:
 	 * The following values need to be passed between the startup_code and main
 	 * functions.
 	 */
-	const char *gms_game_message;  /* Error message. */
+	const char *gms_game_message; /* Error message. */
 
 	/*
 	 * Safety flags, to ensure we always get startup before main, and that
 	 * we only get a call to main once.
 	 */
 	int gms_startup_called, gms_main_called;
+
 private:
 	type32 dreg[8], areg[8], i_count, string_size, rseed, pc, arg1i, mem_size;
 	type16 properties, fl_sub, fl_tab, fl_size, fp_tab, fp_size;
@@ -257,17 +258,20 @@ private:
 
 	type8 *_saveData;
 	size_t _saveSize;
+
 private:
 	type8 buffer[80], xpos, bufpos, log_on, ms_gfx_enabled, filename[256];
 	Common::DumpFile *_log1, *_log2;
+
 private:
 	/* Method local statics in original code */
 	glui32 crc_table[BYTE_MAX_VAL + 1];
 	int luminance_weighting;
 	gms_gammaref_t linear_gamma;
-	uint32 pic_current_crc;			/* CRC of the current picture */
-	uint32 hints_current_crc;		/* CRC of hints */
+	uint32 pic_current_crc;   /* CRC of the current picture */
+	uint32 hints_current_crc; /* CRC of hints */
 	bool hints_crc_initialized;
+
 private:
 	/**
 	 * Performs initialization
@@ -390,13 +394,13 @@ private:
 	 * arguments indicate no interest in the return value.
 	 */
 	void gms_graphics_count_colors(type8 bitmap[], type16 width, type16 height,
-		int *color_count, long color_usage[]);
+	                               int *color_count, long color_usage[]);
 
 	/**
 	 * General graphics color conversion
 	 */
 	void gms_graphics_game_to_rgb_color(type16 color, gms_gammaref_t gamma,
-		gms_rgbref_t rgb_color);
+	                                    gms_rgbref_t rgb_color);
 
 	/**
 	 * General graphics color conversion
@@ -426,7 +430,7 @@ private:
 	 * correction.
 	 */
 	long gms_graphics_contrast_variance(type16 palette[], long color_usage[],
-		gms_gammaref_t gamma);
+	                                    gms_gammaref_t gamma);
 
 	/**
 	 * Try to find a gamma correction for the given palette and color usage that
@@ -461,7 +465,7 @@ private:
 	 * too "sunny".
 	 */
 	gms_gammaref_t gms_graphics_select_gamma(type8 bitmap[], type16 width,
-		type16 height, type16 palette[]);
+	                                         type16 height, type16 palette[]);
 
 	/**
 	 * Clear the graphics window, and border and shade the area where the
@@ -469,22 +473,22 @@ private:
 	 * for the picture, in keeping with modern trends.
 	 */
 	void gms_graphics_clear_and_border(winid_t glk_window,
-		int x_offset, int y_offset, int pixel_size, type16 width, type16 height);
+	                                   int x_offset, int y_offset, int pixel_size, type16 width, type16 height);
 
 	/**
 	 * Convert a Magnetic Scrolls color palette to a Glk one, using the given
 	 * gamma corrections.
 	 */
 	void gms_graphics_convert_palette(type16 ms_palette[], gms_gammaref_t gamma,
-		glui32 glk_palette[]);
+	                                  glui32 glk_palette[]);
 
 	/**
 	 * Given a picture width and height, return the x and y offsets to center
 	 * this picture in the current graphics window.
 	 */
 	void gms_graphics_position_picture(winid_t glk_window,
-		int pixel_size, type16 width, type16 height,
-		int *x_offset, int *y_offset);
+	                                   int pixel_size, type16 width, type16 height,
+	                                   int *x_offset, int *y_offset);
 
 	/**
 	 * Apply a single animation frame to the given off-screen image buffer, using
@@ -494,8 +498,8 @@ private:
 	 * Note that 'mask' may be NULL, implying that no frame pixel is transparent.
 	 */
 	void gms_graphics_apply_animation_frame(type8 bitmap[],
-		type16 frame_width, type16 frame_height, type8 mask[],
-		int frame_x, int frame_y, type8 off_screen[], type16 width, type16 height);
+	                                        type16 frame_width, type16 frame_height, type8 mask[],
+	                                        int frame_x, int frame_y, type8 off_screen[], type16 width, type16 height);
 
 	/**
 	 * This function finds and applies the next set of animation frames to the
@@ -520,7 +524,7 @@ private:
 	 * regions needed to render the complete picture.
 	 */
 	int gms_graphics_is_vertex(type8 off_screen[], type16 width, type16 height,
-		int x, int y);
+	                           int x, int y);
 
 	/**
 	 * gms_graphics_compare_layering_inverted()
@@ -550,10 +554,10 @@ private:
 	 * minimize the amount of Glk areas fills needed to render a picture.
 	 */
 	int gms_graphics_compare_layering_inverted(const void *void_first,
-		const void *void_second);
+	                                           const void *void_second);
 
 	void gms_graphics_assign_layers(type8 off_screen[], type8 on_screen[],
-		type16 width, type16 height, int layers[], long layer_usage[]);
+	                                type16 width, type16 height, int layers[], long layer_usage[]);
 
 	/**
 	 * This is a partially optimized point plot.  Given a point in the graphics
@@ -583,13 +587,13 @@ private:
 	 * given point as validated.
 	 */
 	void gms_graphics_paint_region(winid_t glk_window, glui32 palette[], int layers[],
-		type8 off_screen[], type8 on_screen[], int x, int y, int x_offset, int y_offset,
-		int pixel_size, type16 width, type16 height);
-	#endif
+	                               type8 off_screen[], type8 on_screen[], int x, int y, int x_offset, int y_offset,
+	                               int pixel_size, type16 width, type16 height);
+#endif
 
 	void gms_graphics_paint_everything(winid_t glk_window,
-		glui32 palette[], type8 off_screen[], int x_offset, int y_offset,
-		type16 width, type16 height);
+	                                   glui32 palette[], type8 off_screen[], int x_offset, int y_offset,
+	                                   type16 width, type16 height);
 
 	/**
 	 * This is a background function, called on Glk timeouts.  Its job is to
@@ -659,7 +663,7 @@ private:
 	 * gamma and color count values are returned.
 	 */
 	int gms_graphics_get_rendering_details(const char **gamma, int *color_count,
-		int *is_active);
+	                                       int *is_active);
 
 	/**
 	 * Return TRUE if it looks like interpreter graphics are turned on, FALSE
@@ -814,7 +818,6 @@ private:
 	 */
 	void ms_flush();
 
-
 	/*---------------------------------------------------------------------*/
 	/*  Glk port hint functions                                            */
 	/*---------------------------------------------------------------------*/
@@ -876,13 +879,13 @@ private:
 	 * Limited formatting is available.
 	 */
 	void gms_hint_menu_print(int line, int column, const char *string_,
-		glui32 width, glui32 height);
+	                         glui32 width, glui32 height);
 
 	void gms_hint_menu_header(int line, const char *string_,
-		glui32 width, glui32 height);
+	                          glui32 width, glui32 height);
 
 	void gms_hint_menu_justify(int line, const char *left_string,
-		const char *right_string, glui32 width, glui32 height);
+	                           const char *right_string, glui32 width, glui32 height);
 
 	void gms_hint_text_print(const char *string_);
 
@@ -908,40 +911,40 @@ private:
 	 * Update the hints windows for the given folder hint node.
 	 */
 	void gms_hint_display_folder(const struct ms_hint hints_[],
-		const int cursor[], type16 node);
+	                             const int cursor[], type16 node);
 
 	/**
 	 * Update the hints windows for the given text hint node.
 	 */
 	void gms_hint_display_text(const struct ms_hint hints_[],
-		const int cursor[], type16 node);
+	                           const int cursor[], type16 node);
 
 	/**
 	 * Display the given hint using the appropriate display function.
 	 */
 	void gms_hint_display(const struct ms_hint hints_[],
-		const int cursor[], type16 node);
+	                      const int cursor[], type16 node);
 
 	/**
 	 * Handle a Glk keycode for the given folder hint.  Return the next node to
 	 * handle, or the special end-hints on Quit at the root node.
 	 */
 	type16 gms_hint_handle_folder(const ms_hint hints_[],
-		int cursor[], type16 node, glui32 keycode);
+	                              int cursor[], type16 node, glui32 keycode);
 
 	/**
 	 * Handle a Glk keycode for the given text hint.  Return the next node to
 	 * handle.
 	 */
 	type16 gms_hint_handle_text(const ms_hint hints[],
-		int cursor[], type16 node, glui32 keycode);
+	                            int cursor[], type16 node, glui32 keycode);
 
 	/**
 	 * Handle a Glk keycode for the given hint using the appropriate handler
 	 * function.  Return the next node to handle.
 	 */
 	type16 gms_hint_handle(const ms_hint hints_[], int cursor[],
-		type16 node, glui32 keycode);
+	                       type16 node, glui32 keycode);
 
 	/**
 	 * Start game hints.  These are modal, though there's no overriding Glk
@@ -1166,6 +1169,7 @@ private:
 	void write(const char *fmt, ...);
 
 	void writeChar(char c);
+
 private:
 	/* Convert virtual pointer to effective pointer */
 	type8 *effective(type32 ptr);
@@ -1357,6 +1361,7 @@ private:
 
 	/* emulate an instruction [1b7e] */
 	type8 ms_rungame();
+
 private:
 	type8 ms_load_file(const char *name, type8 *ptr, type16 size);
 
@@ -1365,6 +1370,7 @@ private:
 	void script_write(type8 c);
 
 	void transcript_write(type8 c);
+
 public:
 	/**
 	 * Constructor

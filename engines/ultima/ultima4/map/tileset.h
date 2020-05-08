@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_MAP_TILESET_H
 #define ULTIMA4_MAP_TILESET_H
 
-#include "ultima/ultima4/core/types.h"
 #include "common/hash-str.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -59,9 +59,11 @@ public:
  */
 class Tileset {
 	friend class TileSets;
+
 public:
 	typedef Common::HashMap<TileId, Tile *> TileIdMap;
 	typedef Common::HashMap<Common::String, Tile *> TileStrMap;
+
 public:
 	Tileset() : _totalFrames(0), _extends(nullptr) {}
 
@@ -110,7 +112,6 @@ private:
 
 	TileStrMap _nameMap;
 };
-
 
 /**
  * Tile rules container

@@ -23,12 +23,12 @@
 #ifndef TSAGE_RINGWORLD2_VAMPIRE_H
 #define TSAGE_RINGWORLD2_VAMPIRE_H
 
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
-#include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/scenes.h"
+#include "tsage/sound.h"
 
 namespace TsAGE {
 
@@ -38,7 +38,7 @@ using namespace TsAGE;
 
 class Scene1950 : public SceneExt {
 	/* Windows */
-	class KeypadWindow: public ModalWindow {
+	class KeypadWindow : public ModalWindow {
 	public:
 		class KeypadButton : public SceneActor {
 		public:
@@ -131,10 +131,12 @@ class Scene1950 : public SceneExt {
 	public:
 		void changeScene() override;
 	};
+
 private:
 	void initArea();
 	void enterArea();
 	void doButtonPress(int indx);
+
 public:
 	NamedHotspot _background;
 	Keypad _keypad;

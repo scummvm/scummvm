@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_USECODE_UCMACHINE_H
 #define ULTIMA8_USECODE_UCMACHINE_H
 
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
@@ -40,6 +40,7 @@ class idMan;
 
 class UCMachine {
 	friend class Debugger;
+
 public:
 	UCMachine(Intrinsic *iset, unsigned int icount);
 	~UCMachine();
@@ -121,11 +122,16 @@ private:
 	Std::set<uint16> _traceClasses;
 
 	inline bool trace_show(ProcId pid, ObjId objid, uint16 ucclass) {
-		if (!_tracingEnabled) return false;
-		if (_traceAll) return true;
-		if (_traceObjIDs.find(objid) != _traceObjIDs.end()) return true;
-		if (_tracePIDs.find(pid) != _tracePIDs.end()) return true;
-		if (_traceClasses.find(ucclass) != _traceClasses.end()) return true;
+		if (!_tracingEnabled)
+			return false;
+		if (_traceAll)
+			return true;
+		if (_traceObjIDs.find(objid) != _traceObjIDs.end())
+			return true;
+		if (_tracePIDs.find(pid) != _tracePIDs.end())
+			return true;
+		if (_traceClasses.find(ucclass) != _traceClasses.end())
+			return true;
 		return false;
 	}
 

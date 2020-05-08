@@ -48,4 +48,3 @@ PacketizedAudioStream *makeAC3Stream(Common::SeekableReadStream &firstPacket, do
 #endif
 
 #endif
-

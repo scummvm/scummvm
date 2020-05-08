@@ -38,6 +38,7 @@ public:
 	void stop();
 	void update();
 	bool isPlaying() const;
+
 public:
 	IllusionsEngine_BBDOU *_vm;
 	Video::VideoDecoder *_videoDecoder;

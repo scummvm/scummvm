@@ -21,22 +21,21 @@
  */
 
 #include "ultima/ultima1/actions/cast.h"
+#include "ultima/shared/core/character.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/core/character.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
 BEGIN_MESSAGE_MAP(Cast, Action)
-	ON_MESSAGE(CastMsg)
+ON_MESSAGE(CastMsg)
 END_MESSAGE_MAP()
 
 bool Cast::CastMsg(CCastMsg &msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	addInfoMsg(game->_res->ACTION_NAMES[17], false);
-
 
 	return true;
 }

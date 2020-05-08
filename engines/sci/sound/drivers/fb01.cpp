@@ -27,29 +27,28 @@
 #include "sci/util.h"
 
 #include "common/file.h"
+#include "common/mutex.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/mutex.h"
 
 // The original driver uses the master volume setting of the hardware device by sending sysex messages
 // (applies to SCI0 and SCI1). We have a software mastervolume implementation instead. I don't know the
 // reason for this. Nor do I know whether our software effective volume calculation matches the device's
 // internal volume calculation algorithm.
 // I add the original style master volume handling, but make it optional via a #define
-#define		HARDWARE_MASTERVOLUME
+#define HARDWARE_MASTERVOLUME
 
 namespace Sci {
 
 static byte volumeTable[64] = {
-	0x00, 0x10, 0x14, 0x18, 0x1f, 0x26, 0x2a, 0x2e,
-	0x2f, 0x32, 0x33, 0x33, 0x34, 0x35, 0x35, 0x36,
-	0x36, 0x37, 0x37, 0x38, 0x38, 0x38, 0x39, 0x39,
-	0x39, 0x3a, 0x3a, 0x3a, 0x3a, 0x3a, 0x3b, 0x3b,
-	0x3b, 0x3b, 0x3b, 0x3c, 0x3c, 0x3c, 0x3c, 0x3c,
-	0x3d, 0x3d, 0x3d, 0x3d, 0x3d, 0x3e, 0x3e, 0x3e,
-	0x3e, 0x3e, 0x3e, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
-	0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f
-};
+    0x00, 0x10, 0x14, 0x18, 0x1f, 0x26, 0x2a, 0x2e,
+    0x2f, 0x32, 0x33, 0x33, 0x34, 0x35, 0x35, 0x36,
+    0x36, 0x37, 0x37, 0x38, 0x38, 0x38, 0x39, 0x39,
+    0x39, 0x3a, 0x3a, 0x3a, 0x3a, 0x3a, 0x3b, 0x3b,
+    0x3b, 0x3b, 0x3b, 0x3c, 0x3c, 0x3c, 0x3c, 0x3c,
+    0x3d, 0x3d, 0x3d, 0x3d, 0x3d, 0x3e, 0x3e, 0x3e,
+    0x3e, 0x3e, 0x3e, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
+    0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f};
 
 class MidiPlayer_Fb01 : public MidiPlayer {
 public:
@@ -63,7 +62,7 @@ public:
 
 	int open(ResourceManager *resMan) override;
 	void close() override;
-	void initTrack(SciSpan<const byte>& header) override;
+	void initTrack(SciSpan<const byte> &header) override;
 	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
 	bool hasRhythmChannel() const override { return false; }
@@ -100,30 +99,30 @@ private:
 	void sendToChannel(byte channel, byte command, byte op1, byte op2);
 
 	struct Channel {
-		uint8 patch;			// Patch setting
-		uint8 volume;			// Channel volume (0-63)
-		uint8 pan;				// Pan setting (0-127, 64 is center)
-		uint8 holdPedal;		// Hold pedal setting (0 to 63 is off, 127 to 64 is on)
-		uint8 extraVoices;		// The number of additional voices this channel optimally needs
-		uint16 pitchWheel;		// Pitch wheel setting (0-16383, 8192 is center)
-		uint8 lastVoice;		// Last voice used for this MIDI channel
-		bool enableVelocity;	// Enable velocity control (SCI0)
+		uint8 patch;         // Patch setting
+		uint8 volume;        // Channel volume (0-63)
+		uint8 pan;           // Pan setting (0-127, 64 is center)
+		uint8 holdPedal;     // Hold pedal setting (0 to 63 is off, 127 to 64 is on)
+		uint8 extraVoices;   // The number of additional voices this channel optimally needs
+		uint16 pitchWheel;   // Pitch wheel setting (0-16383, 8192 is center)
+		uint8 lastVoice;     // Last voice used for this MIDI channel
+		bool enableVelocity; // Enable velocity control (SCI0)
 
 		Channel() : patch(0), volume(127), pan(64), holdPedal(0), extraVoices(0),
-					pitchWheel(8192), lastVoice(0), enableVelocity(false) { }
+		            pitchWheel(8192), lastVoice(0), enableVelocity(false) {}
 	};
 
 	struct Voice {
-		int8 channel;			// MIDI channel that this voice is assigned to or -1
-		uint8 poly;				// Number of hardware voices (SCI0); for SCI1 we just set this to 1
-		int8 note;				// Currently playing MIDI note or -1
-		int bank;				// Current bank setting or -1
-		int patch;				// Currently playing patch or -1
+		int8 channel; // MIDI channel that this voice is assigned to or -1
+		uint8 poly;   // Number of hardware voices (SCI0); for SCI1 we just set this to 1
+		int8 note;    // Currently playing MIDI note or -1
+		int bank;     // Current bank setting or -1
+		int patch;    // Currently playing patch or -1
 		//uint8 velocity;		// Note velocity
 		//bool isSustained;		// Flag indicating a note that is being sustained by the hold pedal
-		uint16 age;				// Age of the current note
+		uint16 age; // Age of the current note
 
-		Voice() : channel(-1), note(-1), bank(-1), patch(-1), /*velocity(0), isSustained(false),*/ age(0), poly(1) { }
+		Voice() : channel(-1), note(-1), bank(-1), patch(-1), /*velocity(0), isSustained(false),*/ age(0), poly(1) {}
 	};
 
 	bool _playSwitch;
@@ -147,7 +146,7 @@ private:
 };
 
 MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _timerParam(NULL), _timerProc(NULL),
-	_numParts(version > SCI_VERSION_0_LATE ? kVoices : 0), _isOpen(false), _missingFiles(0) {
+                                                       _numParts(version > SCI_VERSION_0_LATE ? kVoices : 0), _isOpen(false), _missingFiles(0) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
@@ -583,7 +582,7 @@ int MidiPlayer_Fb01::open(ResourceManager *resMan) {
 		Common::File f;
 
 		if (f.open("IMF.DRV")) {
-			Common::SpanOwner<SciSpan<const byte> > buf;
+			Common::SpanOwner<SciSpan<const byte>> buf;
 			buf->allocateFromStream(f);
 
 			// Search for start of sound bank
@@ -636,7 +635,7 @@ void MidiPlayer_Fb01::close() {
 		_driver->close();
 }
 
-void MidiPlayer_Fb01::initTrack(SciSpan<const byte>& header) {
+void MidiPlayer_Fb01::initTrack(SciSpan<const byte> &header) {
 	if (!_isOpen || _version > SCI_VERSION_0_LATE)
 		return;
 
@@ -680,7 +679,7 @@ void MidiPlayer_Fb01::initTrack(SciSpan<const byte>& header) {
 		setVoiceParam(i, 1, _voices[i].channel);
 
 	initVoices();
-	
+
 	setVolume(_masterVolume);
 }
 
@@ -798,9 +797,8 @@ byte MidiPlayer_Fb01::getPlayId() const {
 }
 
 const char MidiPlayer_Fb01::_requiredFiles[2][12] = {
-	"'IMF.DRV'",
-	"'PATCH.002'"
-};
+    "'IMF.DRV'",
+    "'PATCH.002'"};
 
 MidiPlayer *MidiPlayer_Fb01_create(SciVersion version) {
 	return new MidiPlayer_Fb01(version);

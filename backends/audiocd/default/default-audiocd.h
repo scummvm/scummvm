@@ -23,8 +23,8 @@
 #ifndef BACKENDS_AUDIOCD_DEFAULT_H
 #define BACKENDS_AUDIOCD_DEFAULT_H
 
-#include "backends/audiocd/audiocd.h"
 #include "audio/mixer.h"
+#include "backends/audiocd/audiocd.h"
 
 namespace Common {
 class String;
@@ -41,7 +41,7 @@ public:
 	virtual bool open();
 	virtual void close();
 	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
-		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
+	                  Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual void stop();
 	virtual bool isPlaying() const;
 	virtual void setVolume(byte volume);

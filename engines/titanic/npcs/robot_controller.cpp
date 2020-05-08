@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CRobotController, CGameObject)
-	ON_MESSAGE(SummonBotMsg)
-	ON_MESSAGE(SummonBotQueryMsg)
+ON_MESSAGE(SummonBotMsg)
+ON_MESSAGE(SummonBotQueryMsg)
 END_MESSAGE_MAP()
 
 CRobotController::CRobotController() : CGameObject(), _robotName("BellBot") {

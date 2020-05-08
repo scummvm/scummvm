@@ -23,27 +23,27 @@
 #include "titanic/npcs/bellbot.h"
 #include "titanic/carry/carry.h"
 #include "titanic/core/room_item.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/game_manager.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/translation.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBellBot, CTrueTalkNPC)
-	ON_MESSAGE(OnSummonBotMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(Use)
-	ON_MESSAGE(DismissBotMsg)
-	ON_MESSAGE(TrueTalkTriggerActionMsg)
-	ON_MESSAGE(MovieFrameMsg)
-	ON_MESSAGE(PutBotBackInHisBoxMsg)
-	ON_MESSAGE(NPCPlayIdleAnimationMsg)
-	ON_MESSAGE(NPCPlayTalkingAnimationMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(TrueTalkGetStateValueMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
+ON_MESSAGE(OnSummonBotMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(Use)
+ON_MESSAGE(DismissBotMsg)
+ON_MESSAGE(TrueTalkTriggerActionMsg)
+ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(PutBotBackInHisBoxMsg)
+ON_MESSAGE(NPCPlayIdleAnimationMsg)
+ON_MESSAGE(NPCPlayTalkingAnimationMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(TrueTalkGetStateValueMsg)
+ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
 END_MESSAGE_MAP()
 
 CBellBot::CBellBot() : CTrueTalkNPC(), _field108(0) {
@@ -73,15 +73,14 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 			const char *_deSound;
 		};
 		static const RoomWave ROOM_WAVES[8] = {
-			{ "EmbLobby",  "z#193.wav", "z#723.wav" },
-			{ "PromenadeDeck", "z#191.wav", "z#721.wav" },
-			{ "Arboretum", "z#195.wav", "z#725.wav" },
-			{ "Frozen Arboretum", "z#195.wav", "z#725.wav" },
-			{ "Bar", "z#194.wav", "z#724.wav" },
-			{ "MusicRoom", "z#192.wav", "z#722.wav" },
-			{ "MusicRoomLobby", "z#192.wav", "z#722.wav" },
-			{ "1stClassRestaurant", "z#190.wav", "z#720.wav" }
-		};
+		    {"EmbLobby", "z#193.wav", "z#723.wav"},
+		    {"PromenadeDeck", "z#191.wav", "z#721.wav"},
+		    {"Arboretum", "z#195.wav", "z#725.wav"},
+		    {"Frozen Arboretum", "z#195.wav", "z#725.wav"},
+		    {"Bar", "z#194.wav", "z#724.wav"},
+		    {"MusicRoom", "z#192.wav", "z#722.wav"},
+		    {"MusicRoomLobby", "z#192.wav", "z#722.wav"},
+		    {"1stClassRestaurant", "z#190.wav", "z#720.wav"}};
 
 		int idx;
 		for (idx = 0; idx < 8; ++idx) {
@@ -109,8 +108,7 @@ bool CBellBot::EnterViewMsg(CEnterViewMsg *msg) {
 	// WORKAROUND: Calling bot in front of doors and then going through them
 	// can leave it in the view. Detect this and properly remove him when
 	// the player returns to that view
-	if (!hasActiveMovie() && msg->_newView == getParent()
-			&& getPetControl()->canSummonBot("BellBot"))
+	if (!hasActiveMovie() && msg->_newView == getParent() && getPetControl()->canSummonBot("BellBot"))
 		petMoveToHiddenRoom();
 
 	return true;
@@ -217,8 +215,7 @@ bool CBellBot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 }
 
 bool CBellBot::MovieFrameMsg(CMovieFrameMsg *msg) {
-	if (clipExistsByStart("Walk Off", msg->_frameNumber)
-			|| clipExistsByStart("Walk On", msg->_frameNumber)) {
+	if (clipExistsByStart("Walk Off", msg->_frameNumber) || clipExistsByStart("Walk On", msg->_frameNumber)) {
 		setPosition(Point(20, 10));
 	}
 
@@ -233,10 +230,9 @@ bool CBellBot::PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg) {
 
 bool CBellBot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 	static const char *const NAMES[] = {
-		"Sway Side To Side", "Hit Head", "Hands On Hips", "Sway",
-		"Hand Wave", "Slow Sway", "Lean Backwards",
-		"Sway Side To Side 2", "Bob Up And Down", nullptr
-	};
+	    "Sway Side To Side", "Hit Head", "Hands On Hips", "Sway",
+	    "Hand Wave", "Slow Sway", "Lean Backwards",
+	    "Sway Side To Side 2", "Bob Up And Down", nullptr};
 
 	msg->_names = NAMES;
 	return true;
@@ -244,13 +240,12 @@ bool CBellBot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 
 bool CBellBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	static const char *const NAMES[] = {
-		"Hand On Hip Talking", "Hand On Hip Talking", "Hand On Hip Talking",
-		"Sway Side To Side", "Lean Forward", "Hit Head", "Confidential Talking",
-		"Hands On Hips", "Hands On Hips", "Hands On Hips", "Sway", "Laugh",
-		"Hand Wave", "Slow Sway", "Lean Backwards", "Sway Side To Side 2",
-		"Bob Up And Down", "Elbow In Hand", "Elbow In Hand", "Elbow In Hand",
-		nullptr
-	};
+	    "Hand On Hip Talking", "Hand On Hip Talking", "Hand On Hip Talking",
+	    "Sway Side To Side", "Lean Forward", "Hit Head", "Confidential Talking",
+	    "Hands On Hips", "Hands On Hips", "Hands On Hips", "Sway", "Laugh",
+	    "Hand Wave", "Slow Sway", "Lean Backwards", "Sway Side To Side 2",
+	    "Bob Up And Down", "Elbow In Hand", "Elbow In Hand", "Elbow In Hand",
+	    nullptr};
 
 	if (msg->_value2 == 2)
 		playClip("Mother Frame");

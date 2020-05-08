@@ -20,30 +20,27 @@
  *
  */
 
-
 #include "video/coktel_decoder.h"
 
-#include "gob/videoplayer.h"
-#include "gob/global.h"
 #include "gob/dataio.h"
-#include "gob/video.h"
 #include "gob/game.h"
-#include "gob/palanim.h"
+#include "gob/global.h"
 #include "gob/inter.h"
 #include "gob/map.h"
+#include "gob/palanim.h"
 #include "gob/sound/sound.h"
+#include "gob/video.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
 VideoPlayer::Properties::Properties() : type(kVideoTypeTry), sprite(Draw::kFrontSurface),
-	x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface), switchColorMode(false),
-	startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
-	breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
-	noBlock(false), loop(false), fade(false), waitEndFrame(true),
-	hasSound(false), canceled(false) {
-
+                                        x(-1), y(-1), width(-1), height(-1), flags(kFlagFrontSurface), switchColorMode(false),
+                                        startFrame(-1), lastFrame(-1), endFrame(-1), forceSeek(false),
+                                        breakKey(kShortKeyEscape), palCmd(8), palStart(0), palEnd(255), palFrame(-1),
+                                        noBlock(false), loop(false), fade(false), waitEndFrame(true),
+                                        hasSound(false), canceled(false) {
 }
-
 
 VideoPlayer::Video::Video() : decoder(0), live(false) {
 }
@@ -62,11 +59,10 @@ void VideoPlayer::Video::close() {
 	live = false;
 }
 
-
-const char *const VideoPlayer::_extensions[] = { "IMD", "IMD", "VMD", "RMD", "SMD" };
+const char *const VideoPlayer::_extensions[] = {"IMD", "IMD", "VMD", "RMD", "SMD"};
 
 VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm), _needBlit(false),
-	_noCursorSwitch(false), _woodruffCohCottWorkaround(false) {
+                                          _noCursorSwitch(false), _woodruffCohCottWorkaround(false) {
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -75,11 +71,11 @@ VideoPlayer::~VideoPlayer() {
 }
 
 void VideoPlayer::evaluateFlags(Properties &properties) {
-	if        (properties.flags & kFlagFrontSurface) {
+	if (properties.flags & kFlagFrontSurface) {
 		properties.sprite = Draw::kFrontSurface;
 	} else if (properties.flags & kFlagOtherSurface) {
 		properties.sprite = properties.x;
-		properties.x      = 0;
+		properties.x = 0;
 	} else if (properties.flags & kFlagScreenSurface) {
 		properties.sprite = 0;
 	} else if (properties.flags & kFlagNoVideo) {
@@ -152,13 +148,13 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 		}
 
 		if (!(properties.flags & kFlagNoVideo) && (properties.sprite >= 0)) {
-			bool ownSurf    = (properties.sprite != Draw::kFrontSurface) && (properties.sprite != Draw::kBackSurface);
+			bool ownSurf = (properties.sprite != Draw::kFrontSurface) && (properties.sprite != Draw::kBackSurface);
 			bool screenSize = properties.flags & kFlagScreenSurface;
 
 			if (ownSurf) {
 				_vm->_draw->_spritesArray[properties.sprite] =
-					_vm->_video->initSurfDesc(screenSize ? _vm->_width  : video->decoder->getWidth(),
-					                          screenSize ? _vm->_height : video->decoder->getHeight(), 0);
+				    _vm->_video->initSurfDesc(screenSize ? _vm->_width : video->decoder->getWidth(),
+				                              screenSize ? _vm->_height : video->decoder->getHeight(), 0);
 			}
 
 			if (!_vm->_draw->_spritesArray[properties.sprite] &&
@@ -176,7 +172,7 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 					video->surface = _vm->_draw->_backSurface;
 
 				video->decoder->setSurfaceMemory(video->surface->getData(),
-						video->surface->getWidth(), video->surface->getHeight(), video->surface->getBPP());
+				                                 video->surface->getWidth(), video->surface->getHeight(), video->surface->getBPP());
 
 				if (!ownSurf || (ownSurf && screenSize)) {
 					if ((properties.x >= 0) || (properties.y >= 0)) {
@@ -294,12 +290,12 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 
 	if (properties.startFrame < 0)
 		properties.startFrame = video->decoder->getCurFrame() + 1;
-	if (properties.lastFrame  < 0)
-		properties.lastFrame  = video->decoder->getFrameCount() - 1;
-	if (properties.endFrame   < 0)
-		properties.endFrame   = properties.lastFrame;
-	if (properties.palFrame   < 0)
-		properties.palFrame   = properties.startFrame;
+	if (properties.lastFrame < 0)
+		properties.lastFrame = video->decoder->getFrameCount() - 1;
+	if (properties.endFrame < 0)
+		properties.endFrame = properties.lastFrame;
+	if (properties.palFrame < 0)
+		properties.palFrame = properties.startFrame;
 
 	properties.startFrame--;
 	properties.endFrame--;
@@ -319,7 +315,7 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 	if (properties.noBlock) {
 		properties.waitEndFrame = false;
 
-		video->live       = true;
+		video->live = true;
 		video->properties = properties;
 
 		updateLive(slot, true);
@@ -453,7 +449,6 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 			video->decoder->seek(0, SEEK_SET, true);
 			video->decoder->enableSound();
 		}
-
 	}
 
 	if (video->decoder->getCurFrame() > properties.startFrame)
@@ -531,7 +526,6 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 		} else if (video->surface == _vm->_draw->_frontSurface) {
 			for (Common::List<Common::Rect>::const_iterator rect = dirtyRects.begin(); rect != dirtyRects.end(); ++rect)
 				_vm->_video->dirtyRectsAdd(rect->left + ignoreBorder, rect->top, rect->right - 1, rect->bottom - 1);
-
 		}
 
 		if (!video->live && ((video->decoder->getCurFrame() - 1) == properties.startFrame))
@@ -568,7 +562,7 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 
 	if (properties.breakKey != 0) {
 		_vm->_util->getMouseState(&_vm->_global->_inter_mouseX,
-				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
+		                          &_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
 
 		_vm->_inter->storeKey(_vm->_util->checkKey());
 
@@ -689,7 +683,7 @@ int32 VideoPlayer::getSubtitleIndex(int slot) const {
 }
 
 void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
-		int16 varFrames, int16 varWidth, int16 varHeight) {
+                                 int16 varFrames, int16 varWidth, int16 varHeight) {
 
 	Properties properties;
 
@@ -699,34 +693,34 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 v
 
 		int16 x = -1, y = -1, width = -1, height = -1;
 
-		x      = video.decoder->getDefaultX();
-		y      = video.decoder->getDefaultY();
-		width  = video.decoder->getWidth();
+		x = video.decoder->getDefaultX();
+		y = video.decoder->getDefaultY();
+		width = video.decoder->getWidth();
 		height = video.decoder->getHeight();
 
 		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
 			video.decoder->getFrameCoords(1, x, y, width, height);
 
-		WRITE_VAR_OFFSET(varX     , x);
-		WRITE_VAR_OFFSET(varY     , y);
+		WRITE_VAR_OFFSET(varX, x);
+		WRITE_VAR_OFFSET(varY, y);
 		WRITE_VAR_OFFSET(varFrames, video.decoder->getFrameCount());
-		WRITE_VAR_OFFSET(varWidth , width);
+		WRITE_VAR_OFFSET(varWidth, width);
 		WRITE_VAR_OFFSET(varHeight, height);
 
 		closeVideo(slot);
 
 	} else {
-		WRITE_VAR_OFFSET(varX     , (uint32) -1);
-		WRITE_VAR_OFFSET(varY     , (uint32) -1);
-		WRITE_VAR_OFFSET(varFrames, (uint32) -1);
-		WRITE_VAR_OFFSET(varWidth , (uint32) -1);
-		WRITE_VAR_OFFSET(varHeight, (uint32) -1);
+		WRITE_VAR_OFFSET(varX, (uint32)-1);
+		WRITE_VAR_OFFSET(varY, (uint32)-1);
+		WRITE_VAR_OFFSET(varFrames, (uint32)-1);
+		WRITE_VAR_OFFSET(varWidth, (uint32)-1);
+		WRITE_VAR_OFFSET(varHeight, (uint32)-1);
 	}
 }
 
 bool VideoPlayer::copyFrame(int slot, Surface &dest,
-		uint16 left, uint16 top, uint16 width, uint16 height, uint16 x, uint16 y,
-		int32 transp) const {
+                            uint16 left, uint16 top, uint16 width, uint16 height, uint16 x, uint16 y,
+                            int32 transp) const {
 
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -786,7 +780,7 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 
 	bool hasExtension = false;
 
-	Common::String base     = file;
+	Common::String base = file;
 	Common::String fileName = file;
 
 	const char *posDot = strrchr(base.c_str(), '.');
@@ -800,11 +794,11 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 		int i;
 		for (i = 0; i < ARRAYSIZE(_extensions); i++) {
 			if (!scumm_stricmp(posDot, _extensions[i])) {
-				if ((properties.type != kVideoTypeTry) && (properties.type == ((Type) i))) {
+				if ((properties.type != kVideoTypeTry) && (properties.type == ((Type)i))) {
 					warning("Attempted to open video \"%s\", but requested a different type", fileName.c_str());
 					return "";
 				}
-				properties.type = (Type) i;
+				properties.type = (Type)i;
 				break;
 			}
 		}
@@ -817,11 +811,11 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 
 		int i;
 		for (i = 0; i < ARRAYSIZE(_extensions); i++) {
-			if ((properties.type == kVideoTypeTry) || (properties.type == ((Type) i))) {
+			if ((properties.type == kVideoTypeTry) || (properties.type == ((Type)i))) {
 				fileName = base + "." + _extensions[i];
 
 				if (_vm->_dataIO->hasFile(fileName)) {
-					properties.type = (Type) i;
+					properties.type = (Type)i;
 					break;
 				}
 			}
@@ -830,7 +824,6 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 			warning("Couldn't open video \"%s\"", file.c_str());
 			return "";
 		}
-
 	}
 
 	return fileName;
@@ -867,7 +860,7 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 		return 0;
 	}
 
-	properties.width  = video->getWidth();
+	properties.width = video->getWidth();
 	properties.height = video->getHeight();
 
 	return video;
@@ -915,8 +908,8 @@ void VideoPlayer::copyPalette(const Video &video, int16 palStart, int16 palEnd) 
 	if (palEnd < 0)
 		palEnd = 255;
 
-	palStart =  palStart      * 3;
-	palEnd   = (palEnd   + 1) * 3;
+	palStart = palStart * 3;
+	palEnd = (palEnd + 1) * 3;
 
 	for (int i = palStart; i <= palEnd; i++)
 		((char *)(_vm->_global->_pPaletteDesc->vgaPal))[i] = video.decoder->getPalette()[i] >> 2;

@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/audio/music_flex.h"
-#include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
+#include "ultima/ultima8/audio/midi_player.h"
+#include "ultima/ultima8/audio/music_flex.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -43,14 +43,16 @@ MusicProcess::MusicProcess() {
 
 uint32 MusicProcess::I_musicStop(const uint8 * /*args*/,
                                  unsigned int /*argsize*/) {
-	if (_theMusicProcess) _theMusicProcess->playMusic_internal(0);
+	if (_theMusicProcess)
+		_theMusicProcess->playMusic_internal(0);
 	return 0;
 }
 
 uint32 MusicProcess::I_playMusic(const uint8 *args,
                                  unsigned int /*argsize*/) {
 	ARG_UINT8(song);
-	if (_theMusicProcess) _theMusicProcess->playMusic(song & 0x7F);
+	if (_theMusicProcess)
+		_theMusicProcess->playMusic(song & 0x7F);
 	return 0;
 }
 

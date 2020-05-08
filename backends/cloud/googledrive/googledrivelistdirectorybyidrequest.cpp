@@ -36,9 +36,8 @@ namespace GoogleDrive {
 #define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files%28id,mimeType,modifiedTime,name,size%29,nextPageToken&orderBy=folder,name"
 //files(id,mimeType,modifiedTime,name,size),nextPageToken
 
-GoogleDriveListDirectoryByIdRequest::GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _requestedId(id), _storage(storage), _listDirectoryCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+GoogleDriveListDirectoryByIdRequest::GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _requestedId(id), _storage(storage), _listDirectoryCallback(cb),
+                                                                                                                                                                                             _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 

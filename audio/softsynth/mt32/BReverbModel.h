@@ -18,10 +18,10 @@
 #ifndef MT32EMU_B_REVERB_MODEL_H
 #define MT32EMU_B_REVERB_MODEL_H
 
-#include "globals.h"
-#include "internals.h"
 #include "Enumerations.h"
 #include "Types.h"
+#include "globals.h"
+#include "internals.h"
 
 namespace MT32Emu {
 

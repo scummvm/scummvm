@@ -33,11 +33,11 @@
 #include "sky/logic.h"
 #include "sky/mouse.h"
 #include "sky/music/musicbase.h"
-#include "sky/text.h"
 #include "sky/screen.h"
 #include "sky/sky.h"
 #include "sky/sound.h"
 #include "sky/struc.h"
+#include "sky/text.h"
 
 namespace Sky {
 
@@ -45,30 +45,30 @@ uint32 Logic::_scriptVariables[NUM_SKY_SCRIPTVARS];
 
 void Logic::setupLogicTable() {
 	static const LogicTable logicTable[] = {
-		&Logic::nop,
-		&Logic::logicScript,	 // 1  script processor
-		&Logic::autoRoute,	 // 2  Make a route
-		&Logic::arAnim,	 // 3  Follow a route
-		&Logic::arTurn,	 // 4  Mega turns araound
-		&Logic::alt,		 // 5  Set up new get-to script
-		&Logic::anim,	 // 6  Follow a sequence
-		&Logic::turn,	 // 7  Mega turning
-		&Logic::cursor,	 // 8  id tracks the pointer
-		&Logic::talk,	 // 9  count down and animate
-		&Logic::listen,	 // 10 player waits for talking id
-		&Logic::stopped,	 // 11 wait for id to move
-		&Logic::choose,	 // 12 wait for player to click
-		&Logic::frames,	 // 13 animate just frames
-		&Logic::pause,	 // 14 Count down to 0 and go
-		&Logic::waitSync,	 // 15 Set to l_script when sync!=0
-		&Logic::simpleAnim,	 // 16 Module anim without x,y's
+	    &Logic::nop,
+	    &Logic::logicScript, // 1  script processor
+	    &Logic::autoRoute,   // 2  Make a route
+	    &Logic::arAnim,      // 3  Follow a route
+	    &Logic::arTurn,      // 4  Mega turns araound
+	    &Logic::alt,         // 5  Set up new get-to script
+	    &Logic::anim,        // 6  Follow a sequence
+	    &Logic::turn,        // 7  Mega turning
+	    &Logic::cursor,      // 8  id tracks the pointer
+	    &Logic::talk,        // 9  count down and animate
+	    &Logic::listen,      // 10 player waits for talking id
+	    &Logic::stopped,     // 11 wait for id to move
+	    &Logic::choose,      // 12 wait for player to click
+	    &Logic::frames,      // 13 animate just frames
+	    &Logic::pause,       // 14 Count down to 0 and go
+	    &Logic::waitSync,    // 15 Set to l_script when sync!=0
+	    &Logic::simpleAnim,  // 16 Module anim without x,y's
 	};
 
 	_logicTable = logicTable;
 }
 
 Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound)
-	: _rnd("sky") {
+    : _rnd("sky") {
 
 	_skyCompact = skyCompact;
 	_skyScreen = skyScreen;
@@ -120,7 +120,7 @@ bool Logic::checkProtection() {
 	if (_scriptVariables[ENTER_DIGITS]) {
 		if (_scriptVariables[CONSOLE_TYPE] == 5) // reactor code
 			_scriptVariables[FS_COMMAND] = 240;
-		else									 // copy protection
+		else // copy protection
 			_scriptVariables[FS_COMMAND] = 337;
 		_scriptVariables[ENTER_DIGITS] = 0;
 		return true;
@@ -152,7 +152,7 @@ void Logic::engine() {
 				_skyGrid->removeObjectFromWalk(_compact);
 
 			Debug::logic(_compact->logic);
-			(this->*_logicTable[_compact->logic]) ();
+			(this->*_logicTable[_compact->logic])();
 
 			if (_compact->status & (1 << 7))
 				_skyGrid->objectToWalk(_compact);
@@ -183,7 +183,7 @@ void Logic::logicScript() {
 	for (;;) {
 		uint16 mode = _compact->mode; // get pointer to current script
 		uint16 scriptNo = SkyCompact::getSub(_compact, mode);
-		uint16 offset   = SkyCompact::getSub(_compact, mode + 2);
+		uint16 offset = SkyCompact::getSub(_compact, mode + 2);
 
 		offset = script(scriptNo, offset);
 		SkyCompact::setSub(_compact, mode + 2, offset);
@@ -199,9 +199,9 @@ void Logic::autoRoute() {
 
 	_compact->downFlag = _skyAutoRoute->autoRoute(_compact);
 	if ((_compact->downFlag == 2) && _skyCompact->cptIsId(_compact, CPT_JOEY) &&
-	   (_compact->mode == 0) && (_compact->baseSub == JOEY_OUT_OF_LIFT)) {
-		   // workaround for script bug #1064113. Details unclear...
-		   _compact->downFlag = 0;
+	    (_compact->mode == 0) && (_compact->baseSub == JOEY_OUT_OF_LIFT)) {
+		// workaround for script bug #1064113. Details unclear...
+		_compact->downFlag = 0;
 	}
 	if (_compact->downFlag != 1) { // route ok
 		_compact->grafixProgId = _compact->animScratchId;
@@ -264,7 +264,7 @@ void Logic::arAnim() {
 
 	while (uint16 id = *logicList++) { // get an id
 
-		if (id == 0xffff) { // address change?
+		if (id == 0xffff) {                                          // address change?
 			logicList = (uint16 *)_skyCompact->fetchCpt(*logicList); // get new logic list
 			continue;
 		}
@@ -272,7 +272,7 @@ void Logic::arAnim() {
 		if (id == (uint16)(_scriptVariables[CUR_ID] & 0xffff)) // is it us?
 			continue;
 
-		_scriptVariables[HIT_ID] = id; // save target id for any possible c_mini_bump
+		_scriptVariables[HIT_ID] = id;   // save target id for any possible c_mini_bump
 		cpt = _skyCompact->fetchCpt(id); // let's have a closer look
 
 		if (!(cpt->status & (1 << ST_COLLISION_BIT))) // can it collide?
@@ -331,7 +331,7 @@ void Logic::arAnim() {
 
 	// ok, there is an at watch - see if it's changed
 
-	if (_compact->atWas == _scriptVariables[_compact->atWatch/4]) { // still the same?
+	if (_compact->atWas == _scriptVariables[_compact->atWatch / 4]) { // still the same?
 		mainAnim();
 		return;
 	}
@@ -388,16 +388,16 @@ void Logic::mainAnim() {
 
 	uint16 arAnimIndex = _compact->arAnimIndex;
 	if (!animList[arAnimIndex / 2]) {
-		 arAnimIndex = 0;
+		arAnimIndex = 0;
 		_compact->arAnimIndex = 0; // reset
 	}
 
 	_compact->arAnimIndex += S_LENGTH;
 
-	*sequence       -= animList[(S_COUNT + arAnimIndex)/2]; // reduce the distance to travel
-	_compact->frame  = animList[(S_FRAME + arAnimIndex)/2]; // new graphic frame
-	_compact->xcood += animList[(S_AR_X  + arAnimIndex)/2]; // update x coordinate
-	_compact->ycood += animList[(S_AR_Y  + arAnimIndex)/2]; // update y coordinate
+	*sequence -= animList[(S_COUNT + arAnimIndex) / 2];      // reduce the distance to travel
+	_compact->frame = animList[(S_FRAME + arAnimIndex) / 2]; // new graphic frame
+	_compact->xcood += animList[(S_AR_X + arAnimIndex) / 2]; // update x coordinate
+	_compact->ycood += animList[(S_AR_Y + arAnimIndex) / 2]; // update y coordinate
 }
 
 void Logic::arTurn() {
@@ -425,7 +425,7 @@ void Logic::anim() {
 	uint16 *grafixProg = _skyCompact->getGrafixPtr(_compact);
 
 	while (*grafixProg) {
-		_compact->grafixProgPos += 3; // all types are 3 words.
+		_compact->grafixProgPos += 3;     // all types are 3 words.
 		if (*grafixProg == LF_START_FX) { // do fx
 			grafixProg++;
 			uint16 sound = *grafixProg++;
@@ -473,59 +473,58 @@ void Logic::cursor() {
 }
 
 static uint16 clickTable[46] = {
-	ID_FOSTER,
-	ID_JOEY,
-	ID_JOBS,
-	ID_LAMB,
-	ID_ANITA,
-	ID_SON,
-	ID_DAD,
-	ID_MONITOR,
-	ID_SHADES,
-	MINI_SS,
-	FULL_SS,
-	ID_FOREMAN,
-	ID_RADMAN,
-	ID_GALLAGER_BEL,
-	ID_BURKE,
-	ID_BODY,
-	ID_HOLO,
-	ID_TREVOR,
-	ID_ANCHOR,
-	ID_WRECK_GUARD,
-	ID_SKORL_GUARD,
+    ID_FOSTER,
+    ID_JOEY,
+    ID_JOBS,
+    ID_LAMB,
+    ID_ANITA,
+    ID_SON,
+    ID_DAD,
+    ID_MONITOR,
+    ID_SHADES,
+    MINI_SS,
+    FULL_SS,
+    ID_FOREMAN,
+    ID_RADMAN,
+    ID_GALLAGER_BEL,
+    ID_BURKE,
+    ID_BODY,
+    ID_HOLO,
+    ID_TREVOR,
+    ID_ANCHOR,
+    ID_WRECK_GUARD,
+    ID_SKORL_GUARD,
 
-	// BASE LEVEL
-	ID_SC30_HENRI,
-	ID_SC31_GUARD,
-	ID_SC32_VINCENT,
-	ID_SC32_GARDENER,
-	ID_SC32_BUZZER,
-	ID_SC36_BABS,
-	ID_SC36_BARMAN,
-	ID_SC36_COLSTON,
-	ID_SC36_GALLAGHER,
-	ID_SC36_JUKEBOX,
-	ID_DANIELLE,
-	ID_SC42_JUDGE,
-	ID_SC42_CLERK,
-	ID_SC42_PROSECUTION,
-	ID_SC42_JOBSWORTH,
+    // BASE LEVEL
+    ID_SC30_HENRI,
+    ID_SC31_GUARD,
+    ID_SC32_VINCENT,
+    ID_SC32_GARDENER,
+    ID_SC32_BUZZER,
+    ID_SC36_BABS,
+    ID_SC36_BARMAN,
+    ID_SC36_COLSTON,
+    ID_SC36_GALLAGHER,
+    ID_SC36_JUKEBOX,
+    ID_DANIELLE,
+    ID_SC42_JUDGE,
+    ID_SC42_CLERK,
+    ID_SC42_PROSECUTION,
+    ID_SC42_JOBSWORTH,
 
-	// UNDERWORLD
-	ID_MEDI,
-	ID_WITNESS,
-	ID_GALLAGHER,
-	ID_KEN,
-	ID_SC76_ANDROID_2,
-	ID_SC76_ANDROID_3,
-	ID_SC81_FATHER,
-	ID_SC82_JOBSWORTH,
+    // UNDERWORLD
+    ID_MEDI,
+    ID_WITNESS,
+    ID_GALLAGHER,
+    ID_KEN,
+    ID_SC76_ANDROID_2,
+    ID_SC76_ANDROID_3,
+    ID_SC81_FATHER,
+    ID_SC82_JOBSWORTH,
 
-	// LINC WORLD
-	ID_HOLOGRAM_B,
-	12289
-};
+    // LINC WORLD
+    ID_HOLOGRAM_B,
+    12289};
 
 void Logic::talk() {
 	// first count through the frames
@@ -544,7 +543,7 @@ void Logic::talk() {
 				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH) && (!_skySound->speechFinished()))
 					_skySound->stopSpeech();
 				if ((_compact->spTextId > 0) &&
-					(_compact->spTextId < 0xFFFF)) {
+				    (_compact->spTextId < 0xFFFF)) {
 
 					_skyCompact->fetchCpt(_compact->spTextId)->status = 0;
 				}
@@ -561,7 +560,7 @@ void Logic::talk() {
 	// If speech is allowed then check for it to finish before finishing animations
 
 	if ((_compact->spTextId == 0xFFFF) && // is this a voc file?
-		(_skySound->speechFinished())) { // finished?
+	    (_skySound->speechFinished())) {  // finished?
 
 		_compact->logic = L_SCRIPT; // restart character control
 
@@ -590,7 +589,8 @@ void Logic::talk() {
 		}
 	}
 
-	if (_skySound->speechFinished()) _compact->spTime--;
+	if (_skySound->speechFinished())
+		_compact->spTime--;
 
 	if (_compact->spTime == 0) {
 
@@ -598,7 +598,7 @@ void Logic::talk() {
 
 		if (_compact->spTextId) {
 			Compact *cpt = _skyCompact->fetchCpt(_compact->spTextId); // get text id to kill
-			cpt->status = 0; // kill the text
+			cpt->status = 0;                                          // kill the text
 		}
 
 		_compact->logic = L_SCRIPT;
@@ -731,17 +731,17 @@ bool Logic::isCollision(Compact *other) {
 	uint16 otherX = other->xcood & ~7;
 	uint16 otherY = other->ycood & ~7;
 	if ((_compact->dir == UPY) || (_compact->dir == DOWNY)) { // If we're looking up or down...
-		otherX -= thisMegaSet->colOffset; // ...then compensate inner otherX offsets
+		otherX -= thisMegaSet->colOffset;                     // ...then compensate inner otherX offsets
 		otherX += otherMegaSet->colOffset;
 	}
 
 	if ((_compact->dir == UPY) || (_compact->dir == DOWNY)) {
 		// Check X coordinate, same for facing up or down
 		if (otherX + otherMegaSet->colWidth < _compact->xcood) // their rightmost
-			return false; // other is left of us
+			return false;                                      // other is left of us
 
 		if (otherX - thisMegaSet->colWidth >= _compact->xcood) // our left, their right
-			return false; // other is right of us
+			return false;                                      // other is right of us
 		// Check Y coordinate according to actual direction
 		if (_compact->dir == UPY) {
 			if (otherY + 8 == _compact->ycood)
@@ -809,318 +809,311 @@ uint32 Logic::pop() {
 
 void Logic::setupMcodeTable() {
 	static const McodeTable mcodeTable[] = {
-		&Logic::fnCacheChip,
-		&Logic::fnCacheFast,
-		&Logic::fnDrawScreen,
-		&Logic::fnAr,
-		&Logic::fnArAnimate,
-		&Logic::fnIdle,
-		&Logic::fnInteract,
-		&Logic::fnStartSub,
-		&Logic::fnTheyStartSub,
-		&Logic::fnAssignBase,
-		&Logic::fnDiskMouse,
-		&Logic::fnNormalMouse,
-		&Logic::fnBlankMouse,
-		&Logic::fnCrossMouse,
-		&Logic::fnCursorRight,
-		&Logic::fnCursorLeft,
-		&Logic::fnCursorDown,
-		&Logic::fnOpenHand,
-		&Logic::fnCloseHand,
-		&Logic::fnGetTo,
-		&Logic::fnSetToStand,
-		&Logic::fnTurnTo,
-		&Logic::fnArrived,
-		&Logic::fnLeaving,
-		&Logic::fnSetAlternate,
-		&Logic::fnAltSetAlternate,
-		&Logic::fnKillId,
-		&Logic::fnNoHuman,
-		&Logic::fnAddHuman,
-		&Logic::fnAddButtons,
-		&Logic::fnNoButtons,
-		&Logic::fnSetStop,
-		&Logic::fnClearStop,
-		&Logic::fnPointerText,
-		&Logic::fnQuit,
-		&Logic::fnSpeakMe,
-		&Logic::fnSpeakMeDir,
-		&Logic::fnSpeakWait,
-		&Logic::fnSpeakWaitDir,
-		&Logic::fnChooser,
-		&Logic::fnHighlight,
-		&Logic::fnTextKill,
-		&Logic::fnStopMode,
-		&Logic::fnWeWait,
-		&Logic::fnSendSync,
-		&Logic::fnSendFastSync,
-		&Logic::fnSendRequest,
-		&Logic::fnClearRequest,
-		&Logic::fnCheckRequest,
-		&Logic::fnStartMenu,
-		&Logic::fnUnhighlight,
-		&Logic::fnFaceId,
-		&Logic::fnForeground,
-		&Logic::fnBackground,
-		&Logic::fnNewBackground,
-		&Logic::fnSort,
-		&Logic::fnNoSpriteEngine,
-		&Logic::fnNoSpritesA6,
-		&Logic::fnResetId,
-		&Logic::fnToggleGrid,
-		&Logic::fnPause,
-		&Logic::fnRunAnimMod,
-		&Logic::fnSimpleMod,
-		&Logic::fnRunFrames,
-		&Logic::fnAwaitSync,
-		&Logic::fnIncMegaSet,
-		&Logic::fnDecMegaSet,
-		&Logic::fnSetMegaSet,
-		&Logic::fnMoveItems,
-		&Logic::fnNewList,
-		&Logic::fnAskThis,
-		&Logic::fnRandom,
-		&Logic::fnPersonHere,
-		&Logic::fnToggleMouse,
-		&Logic::fnMouseOn,
-		&Logic::fnMouseOff,
-		&Logic::fnFetchX,
-		&Logic::fnFetchY,
-		&Logic::fnTestList,
-		&Logic::fnFetchPlace,
-		&Logic::fnCustomJoey,
-		&Logic::fnSetPalette,
-		&Logic::fnTextModule,
-		&Logic::fnChangeName,
-		&Logic::fnMiniLoad,
-		&Logic::fnFlushBuffers,
-		&Logic::fnFlushChip,
-		&Logic::fnSaveCoods,
-		&Logic::fnPlotGrid,
-		&Logic::fnRemoveGrid,
-		&Logic::fnEyeball,
-		&Logic::fnCursorUp,
-		&Logic::fnLeaveSection,
-		&Logic::fnEnterSection,
-		&Logic::fnRestoreGame,
-		&Logic::fnRestartGame,
-		&Logic::fnNewSwingSeq,
-		&Logic::fnWaitSwingEnd,
-		&Logic::fnSkipIntroCode,
-		&Logic::fnBlankScreen,
-		&Logic::fnPrintCredit,
-		&Logic::fnLookAt,
-		&Logic::fnLincTextModule,
-		&Logic::fnTextKill2,
-		&Logic::fnSetFont,
-		&Logic::fnStartFx,
-		&Logic::fnStopFx,
-		&Logic::fnStartMusic,
-		&Logic::fnStopMusic,
-		&Logic::fnFadeDown,
-		&Logic::fnFadeUp,
-		&Logic::fnQuitToDos,
-		&Logic::fnPauseFx,
-		&Logic::fnUnPauseFx,
-		&Logic::fnPrintf
-	};
+	    &Logic::fnCacheChip,
+	    &Logic::fnCacheFast,
+	    &Logic::fnDrawScreen,
+	    &Logic::fnAr,
+	    &Logic::fnArAnimate,
+	    &Logic::fnIdle,
+	    &Logic::fnInteract,
+	    &Logic::fnStartSub,
+	    &Logic::fnTheyStartSub,
+	    &Logic::fnAssignBase,
+	    &Logic::fnDiskMouse,
+	    &Logic::fnNormalMouse,
+	    &Logic::fnBlankMouse,
+	    &Logic::fnCrossMouse,
+	    &Logic::fnCursorRight,
+	    &Logic::fnCursorLeft,
+	    &Logic::fnCursorDown,
+	    &Logic::fnOpenHand,
+	    &Logic::fnCloseHand,
+	    &Logic::fnGetTo,
+	    &Logic::fnSetToStand,
+	    &Logic::fnTurnTo,
+	    &Logic::fnArrived,
+	    &Logic::fnLeaving,
+	    &Logic::fnSetAlternate,
+	    &Logic::fnAltSetAlternate,
+	    &Logic::fnKillId,
+	    &Logic::fnNoHuman,
+	    &Logic::fnAddHuman,
+	    &Logic::fnAddButtons,
+	    &Logic::fnNoButtons,
+	    &Logic::fnSetStop,
+	    &Logic::fnClearStop,
+	    &Logic::fnPointerText,
+	    &Logic::fnQuit,
+	    &Logic::fnSpeakMe,
+	    &Logic::fnSpeakMeDir,
+	    &Logic::fnSpeakWait,
+	    &Logic::fnSpeakWaitDir,
+	    &Logic::fnChooser,
+	    &Logic::fnHighlight,
+	    &Logic::fnTextKill,
+	    &Logic::fnStopMode,
+	    &Logic::fnWeWait,
+	    &Logic::fnSendSync,
+	    &Logic::fnSendFastSync,
+	    &Logic::fnSendRequest,
+	    &Logic::fnClearRequest,
+	    &Logic::fnCheckRequest,
+	    &Logic::fnStartMenu,
+	    &Logic::fnUnhighlight,
+	    &Logic::fnFaceId,
+	    &Logic::fnForeground,
+	    &Logic::fnBackground,
+	    &Logic::fnNewBackground,
+	    &Logic::fnSort,
+	    &Logic::fnNoSpriteEngine,
+	    &Logic::fnNoSpritesA6,
+	    &Logic::fnResetId,
+	    &Logic::fnToggleGrid,
+	    &Logic::fnPause,
+	    &Logic::fnRunAnimMod,
+	    &Logic::fnSimpleMod,
+	    &Logic::fnRunFrames,
+	    &Logic::fnAwaitSync,
+	    &Logic::fnIncMegaSet,
+	    &Logic::fnDecMegaSet,
+	    &Logic::fnSetMegaSet,
+	    &Logic::fnMoveItems,
+	    &Logic::fnNewList,
+	    &Logic::fnAskThis,
+	    &Logic::fnRandom,
+	    &Logic::fnPersonHere,
+	    &Logic::fnToggleMouse,
+	    &Logic::fnMouseOn,
+	    &Logic::fnMouseOff,
+	    &Logic::fnFetchX,
+	    &Logic::fnFetchY,
+	    &Logic::fnTestList,
+	    &Logic::fnFetchPlace,
+	    &Logic::fnCustomJoey,
+	    &Logic::fnSetPalette,
+	    &Logic::fnTextModule,
+	    &Logic::fnChangeName,
+	    &Logic::fnMiniLoad,
+	    &Logic::fnFlushBuffers,
+	    &Logic::fnFlushChip,
+	    &Logic::fnSaveCoods,
+	    &Logic::fnPlotGrid,
+	    &Logic::fnRemoveGrid,
+	    &Logic::fnEyeball,
+	    &Logic::fnCursorUp,
+	    &Logic::fnLeaveSection,
+	    &Logic::fnEnterSection,
+	    &Logic::fnRestoreGame,
+	    &Logic::fnRestartGame,
+	    &Logic::fnNewSwingSeq,
+	    &Logic::fnWaitSwingEnd,
+	    &Logic::fnSkipIntroCode,
+	    &Logic::fnBlankScreen,
+	    &Logic::fnPrintCredit,
+	    &Logic::fnLookAt,
+	    &Logic::fnLincTextModule,
+	    &Logic::fnTextKill2,
+	    &Logic::fnSetFont,
+	    &Logic::fnStartFx,
+	    &Logic::fnStopFx,
+	    &Logic::fnStartMusic,
+	    &Logic::fnStopMusic,
+	    &Logic::fnFadeDown,
+	    &Logic::fnFadeUp,
+	    &Logic::fnQuitToDos,
+	    &Logic::fnPauseFx,
+	    &Logic::fnUnPauseFx,
+	    &Logic::fnPrintf};
 
 	_mcodeTable = mcodeTable;
 }
 
 static const uint32 forwardList1b[] = {
-	JOBS_SPEECH,
-	JOBS_S4,
-	JOBS_ALARMED,
-	JOEY_RECYCLE,
-	SHOUT_SSS,
-	JOEY_MISSION,
-	TRANS_MISSION,
-	SLOT_MISSION,
-	CORNER_MISSION,
-	JOEY_LOGIC,
-	GORDON_SPEECH,
-	JOEY_BUTTON_MISSION,
-	LOB_DAD_SPEECH,
-	LOB_SON_SPEECH,
-	GUARD_SPEECH,
-	MANTRACH_SPEECH,
-	WRECK_SPEECH,
-	ANITA_SPEECH,
-	LAMB_FACTORY,
-	FORE_SPEECH,
-	JOEY_42_MISS,
-	JOEY_JUNCTION_MISS,
-	WELDER_MISSION,
-	JOEY_WELD_MISSION,
-	RADMAN_SPEECH,
-	LINK_7_29,
-	LINK_29_7,
-	LAMB_TO_3,
-	LAMB_TO_2,
-	BURKE_SPEECH,
-	BURKE_1,
-	BURKE_2,
-	DR_BURKE_1,
-	JASON_SPEECH,
-	JOEY_BELLEVUE,
-	ANCHOR_SPEECH,
-	ANCHOR_MISSION,
-	JOEY_PC_MISSION,
-	HOOK_MISSION,
-	TREVOR_SPEECH,
-	JOEY_FACTORY,
-	HELGA_SPEECH,
-	JOEY_HELGA_MISSION,
-	GALL_BELLEVUE,
-	GLASS_MISSION,
-	LAMB_FACT_RETURN,
-	LAMB_LEAVE_GARDEN,
-	LAMB_START_29,
-	LAMB_BELLEVUE,
-	CABLE_MISSION,
-	FOSTER_TOUR,
-	LAMB_TOUR,
-	FOREMAN_LOGIC,
-	LAMB_LEAVE_FACTORY,
-	LAMB_BELL_LOGIC,
-	LAMB_FACT_2,
-	START90,
-	0,
-	0,
-	LINK_28_31,
-	LINK_31_28,
-	EXIT_LINC,
-	DEATH_SCRIPT
-};
+    JOBS_SPEECH,
+    JOBS_S4,
+    JOBS_ALARMED,
+    JOEY_RECYCLE,
+    SHOUT_SSS,
+    JOEY_MISSION,
+    TRANS_MISSION,
+    SLOT_MISSION,
+    CORNER_MISSION,
+    JOEY_LOGIC,
+    GORDON_SPEECH,
+    JOEY_BUTTON_MISSION,
+    LOB_DAD_SPEECH,
+    LOB_SON_SPEECH,
+    GUARD_SPEECH,
+    MANTRACH_SPEECH,
+    WRECK_SPEECH,
+    ANITA_SPEECH,
+    LAMB_FACTORY,
+    FORE_SPEECH,
+    JOEY_42_MISS,
+    JOEY_JUNCTION_MISS,
+    WELDER_MISSION,
+    JOEY_WELD_MISSION,
+    RADMAN_SPEECH,
+    LINK_7_29,
+    LINK_29_7,
+    LAMB_TO_3,
+    LAMB_TO_2,
+    BURKE_SPEECH,
+    BURKE_1,
+    BURKE_2,
+    DR_BURKE_1,
+    JASON_SPEECH,
+    JOEY_BELLEVUE,
+    ANCHOR_SPEECH,
+    ANCHOR_MISSION,
+    JOEY_PC_MISSION,
+    HOOK_MISSION,
+    TREVOR_SPEECH,
+    JOEY_FACTORY,
+    HELGA_SPEECH,
+    JOEY_HELGA_MISSION,
+    GALL_BELLEVUE,
+    GLASS_MISSION,
+    LAMB_FACT_RETURN,
+    LAMB_LEAVE_GARDEN,
+    LAMB_START_29,
+    LAMB_BELLEVUE,
+    CABLE_MISSION,
+    FOSTER_TOUR,
+    LAMB_TOUR,
+    FOREMAN_LOGIC,
+    LAMB_LEAVE_FACTORY,
+    LAMB_BELL_LOGIC,
+    LAMB_FACT_2,
+    START90,
+    0,
+    0,
+    LINK_28_31,
+    LINK_31_28,
+    EXIT_LINC,
+    DEATH_SCRIPT};
 
 static uint32 forwardList1b288[] = {
-	JOBS_SPEECH,
-	JOBS_S4,
-	JOBS_ALARMED,
-	JOEY_RECYCLE,
-	SHOUT_SSS,
-	JOEY_MISSION,
-	TRANS_MISSION,
-	SLOT_MISSION,
-	CORNER_MISSION,
-	JOEY_LOGIC,
-	GORDON_SPEECH,
-	JOEY_BUTTON_MISSION,
-	LOB_DAD_SPEECH,
-	LOB_SON_SPEECH,
-	GUARD_SPEECH,
-	0x68,
-	WRECK_SPEECH,
-	ANITA_SPEECH,
-	LAMB_FACTORY,
-	FORE_SPEECH,
-	JOEY_42_MISS,
-	JOEY_JUNCTION_MISS,
-	WELDER_MISSION,
-	JOEY_WELD_MISSION,
-	RADMAN_SPEECH,
-	LINK_7_29,
-	LINK_29_7,
-	LAMB_TO_3,
-	LAMB_TO_2,
-	0x3147,
-	0x3100,
-	0x3101,
-	0x3102,
-	0x3148,
-	0x3149,
-	0x314A,
-	0x30C5,
-	0x30C6,
-	0x30CB,
-	0x314B,
-	JOEY_FACTORY,
-	0x314C,
-	0x30E2,
-	0x314D,
-	0x310C,
-	LAMB_FACT_RETURN,
-	0x3139,
-	0x313A,
-	0x004F,
-	CABLE_MISSION,
-	FOSTER_TOUR,
-	LAMB_TOUR,
-	FOREMAN_LOGIC,
-	LAMB_LEAVE_FACTORY,
-	0x3138,
-	LAMB_FACT_2,
-	0x004D,
-	0,
-	0,
-	LINK_28_31,
-	LINK_31_28,
-	0x004E,
-	DEATH_SCRIPT
-};
+    JOBS_SPEECH,
+    JOBS_S4,
+    JOBS_ALARMED,
+    JOEY_RECYCLE,
+    SHOUT_SSS,
+    JOEY_MISSION,
+    TRANS_MISSION,
+    SLOT_MISSION,
+    CORNER_MISSION,
+    JOEY_LOGIC,
+    GORDON_SPEECH,
+    JOEY_BUTTON_MISSION,
+    LOB_DAD_SPEECH,
+    LOB_SON_SPEECH,
+    GUARD_SPEECH,
+    0x68,
+    WRECK_SPEECH,
+    ANITA_SPEECH,
+    LAMB_FACTORY,
+    FORE_SPEECH,
+    JOEY_42_MISS,
+    JOEY_JUNCTION_MISS,
+    WELDER_MISSION,
+    JOEY_WELD_MISSION,
+    RADMAN_SPEECH,
+    LINK_7_29,
+    LINK_29_7,
+    LAMB_TO_3,
+    LAMB_TO_2,
+    0x3147,
+    0x3100,
+    0x3101,
+    0x3102,
+    0x3148,
+    0x3149,
+    0x314A,
+    0x30C5,
+    0x30C6,
+    0x30CB,
+    0x314B,
+    JOEY_FACTORY,
+    0x314C,
+    0x30E2,
+    0x314D,
+    0x310C,
+    LAMB_FACT_RETURN,
+    0x3139,
+    0x313A,
+    0x004F,
+    CABLE_MISSION,
+    FOSTER_TOUR,
+    LAMB_TOUR,
+    FOREMAN_LOGIC,
+    LAMB_LEAVE_FACTORY,
+    0x3138,
+    LAMB_FACT_2,
+    0x004D,
+    0,
+    0,
+    LINK_28_31,
+    LINK_31_28,
+    0x004E,
+    DEATH_SCRIPT};
 
 static const uint32 forwardList2b[] = {
-	STD_ON,
-	STD_EXIT_LEFT_ON,
-	STD_EXIT_RIGHT_ON,
-	ADVISOR_188,
-	SHOUT_ACTION,
-	MEGA_CLICK,
-	MEGA_ACTION
-};
+    STD_ON,
+    STD_EXIT_LEFT_ON,
+    STD_EXIT_RIGHT_ON,
+    ADVISOR_188,
+    SHOUT_ACTION,
+    MEGA_CLICK,
+    MEGA_ACTION};
 
 static const uint32 forwardList3b[] = {
-	DANI_SPEECH,
-	DANIELLE_GO_HOME,
-	SPUNKY_GO_HOME,
-	HENRI_SPEECH,
-	BUZZER_SPEECH,
-	FOSTER_VISIT_DANI,
-	DANIELLE_LOGIC,
-	JUKEBOX_SPEECH,
-	VINCENT_SPEECH,
-	EDDIE_SPEECH,
-	BLUNT_SPEECH,
-	DANI_ANSWER_PHONE,
-	SPUNKY_SEE_VIDEO,
-	SPUNKY_BARK_AT_FOSTER,
-	SPUNKY_SMELLS_FOOD,
-	BARRY_SPEECH,
-	COLSTON_SPEECH,
-	GALL_SPEECH,
-	BABS_SPEECH,
-	CHUTNEY_SPEECH,
-	FOSTER_ENTER_COURT
-};
+    DANI_SPEECH,
+    DANIELLE_GO_HOME,
+    SPUNKY_GO_HOME,
+    HENRI_SPEECH,
+    BUZZER_SPEECH,
+    FOSTER_VISIT_DANI,
+    DANIELLE_LOGIC,
+    JUKEBOX_SPEECH,
+    VINCENT_SPEECH,
+    EDDIE_SPEECH,
+    BLUNT_SPEECH,
+    DANI_ANSWER_PHONE,
+    SPUNKY_SEE_VIDEO,
+    SPUNKY_BARK_AT_FOSTER,
+    SPUNKY_SMELLS_FOOD,
+    BARRY_SPEECH,
+    COLSTON_SPEECH,
+    GALL_SPEECH,
+    BABS_SPEECH,
+    CHUTNEY_SPEECH,
+    FOSTER_ENTER_COURT};
 
 static const uint32 forwardList4b[] = {
-	WALTER_SPEECH,
-	JOEY_MEDIC,
-	JOEY_MED_LOGIC,
-	JOEY_MED_MISSION72,
-	KEN_LOGIC,
-	KEN_SPEECH,
-	KEN_MISSION_HAND,
-	SC70_IRIS_OPENED,
-	SC70_IRIS_CLOSED,
-	FOSTER_ENTER_BOARDROOM,
-	BORED_ROOM,
-	FOSTER_ENTER_NEW_BOARDROOM,
-	HOBS_END,
-	SC82_JOBS_SSS
-};
+    WALTER_SPEECH,
+    JOEY_MEDIC,
+    JOEY_MED_LOGIC,
+    JOEY_MED_MISSION72,
+    KEN_LOGIC,
+    KEN_SPEECH,
+    KEN_MISSION_HAND,
+    SC70_IRIS_OPENED,
+    SC70_IRIS_CLOSED,
+    FOSTER_ENTER_BOARDROOM,
+    BORED_ROOM,
+    FOSTER_ENTER_NEW_BOARDROOM,
+    HOBS_END,
+    SC82_JOBS_SSS};
 
 static const uint32 forwardList5b[] = {
-	SET_UP_INFO_WINDOW,
-	SLAB_ON,
-	UP_MOUSE,
-	DOWN_MOUSE,
-	LEFT_MOUSE,
-	RIGHT_MOUSE,
-	DISCONNECT_FOSTER
-};
+    SET_UP_INFO_WINDOW,
+    SLAB_ON,
+    UP_MOUSE,
+    DOWN_MOUSE,
+    LEFT_MOUSE,
+    RIGHT_MOUSE,
+    DISCONNECT_FOSTER};
 
 void Logic::fnExec(uint16 num, uint32 a, uint32 b, uint32 c) {
 	(this->*_mcodeTable[num])(a, b, c);
@@ -1209,7 +1202,7 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 
 		if (!scriptData) { // We need to load the script module
 			_moduleList[moduleNo] = _skyDisk->loadScriptFile(moduleNo + F_MODULE_0);
-			 scriptData = _moduleList[moduleNo]; // module has been loaded
+			scriptData = _moduleList[moduleNo]; // module has been loaded
 		}
 
 		uint16 *moduleStart = scriptData;
@@ -1226,7 +1219,6 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 		if (scriptNo == TREVOR_SPEECH && _scriptVariables[OBJECT_HELD] == IDO_SHADES)
 			_scriptVariables[OBJECT_HELD] = IDO_GLASS;
 
-
 		// Check whether we have an offset or what
 		if (offset)
 			scriptData = moduleStart + offset;
@@ -1236,13 +1228,13 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 		uint32 a = 0, b = 0, c = 0;
 		uint16 command, s;
 
-		while(!restartScript) {
+		while (!restartScript) {
 			command = *scriptData++; // get a command
 			Debug::script(command, scriptData);
 
 			switch (command) {
 			case 0: // push_variable
-				push( _scriptVariables[*scriptData++ / 4] );
+				push(_scriptVariables[*scriptData++ / 4]);
 				break;
 			case 1: // less_than
 				a = pop();
@@ -1284,12 +1276,12 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 			case 7: // minus
 				a = pop();
 				b = pop();
-				push(b-a);
+				push(b - a);
 				break;
 			case 8: // plus
 				a = pop();
 				b = pop();
-				push(b+a);
+				push(b + a);
 				break;
 			case 9: // skip_always
 				s = *scriptData++;
@@ -1304,35 +1296,34 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 					push(0);
 				break;
 			case 11: // call_mcode
-				{
-					a = *scriptData++;
-					assert(a <= 3);
-					// No, I did not forget the "break"s
-					switch (a) {
-					case 3:
-						c = pop();
-						// fall through
-					case 2:
-						b = pop();
-						// fall through
-					case 1:
-						a = pop();
-						// fall through
-					default:
-						break;
-					}
-
-					uint16 mcode = *scriptData++ / 4; // get mcode number
-					Debug::mcode(mcode, a, b, c);
-
-					Compact *saveCpt = _compact;
-					bool ret = (this->*_mcodeTable[mcode]) (a, b, c);
-					_compact = saveCpt;
-
-					if (!ret)
-						return (scriptData - moduleStart);
+			{
+				a = *scriptData++;
+				assert(a <= 3);
+				// No, I did not forget the "break"s
+				switch (a) {
+				case 3:
+					c = pop();
+					// fall through
+				case 2:
+					b = pop();
+					// fall through
+				case 1:
+					a = pop();
+					// fall through
+				default:
+					break;
 				}
-				break;
+
+				uint16 mcode = *scriptData++ / 4; // get mcode number
+				Debug::mcode(mcode, a, b, c);
+
+				Compact *saveCpt = _compact;
+				bool ret = (this->*_mcodeTable[mcode])(a, b, c);
+				_compact = saveCpt;
+
+				if (!ret)
+					return (scriptData - moduleStart);
+			} break;
 			case 12: // more_than
 				a = pop();
 				b = pop();
@@ -1341,7 +1332,7 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 				else
 					push(0);
 				break;
-			case 14: // switch
+			case 14:                   // switch
 				c = s = *scriptData++; // get number of cases
 
 				a = pop(); // and value to switch on
@@ -1359,7 +1350,7 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 					scriptData += *scriptData / 2; // use the default
 				break;
 			case 15: // push_offset
-				push( *(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++) );
+				push(*(uint16 *)_skyCompact->getCompactElem(_compact, *scriptData++));
 				break;
 			case 16: // pop_offset
 				// pop a value into a compact
@@ -1374,12 +1365,12 @@ uint16 Logic::script(uint16 scriptNo, uint16 offset) {
 					push(0);
 				break;
 			case 18: { // skip_nz
-					int16 t = *scriptData++;
-					a = pop();
-					if (a)
-						scriptData += t / 2;
-					break;
-				}
+				int16 t = *scriptData++;
+				a = pop();
+				if (a)
+					scriptData += t / 2;
+				break;
+			}
 			case 13:
 			case 19: // script_exit
 				return 0;
@@ -1406,7 +1397,7 @@ bool Logic::fnCacheFast(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
-	debug(5, "Call: fnDrawScreen(%X, %X)",a,b);
+	debug(5, "Call: fnDrawScreen(%X, %X)", a, b);
 	SkyEngine::_systemVars.currentPalette = a;
 	_skyScreen->fnDrawScreen(a, b);
 
@@ -1482,7 +1473,7 @@ bool Logic::fnAssignBase(uint32 id, uint32 scr, uint32 c) {
 	Compact *cpt = _skyCompact->fetchCpt(id);
 	cpt->mode = C_BASE_MODE;
 	cpt->logic = L_SCRIPT;
-	cpt->baseSub     = (uint16)(scr & 0xffff);
+	cpt->baseSub = (uint16)(scr & 0xffff);
 	cpt->baseSub_off = (uint16)(scr >> 16);
 	return true;
 }
@@ -1542,7 +1533,7 @@ bool Logic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
 
 bool Logic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
 	_compact->upFlag = (uint16)mode; // save mode for action script
-	_compact->mode += 4; // next level up
+	_compact->mode += 4;             // next level up
 	Compact *cpt = _skyCompact->fetchCpt(_compact->place);
 	if (!cpt) {
 		warning("can't find _compact's getToTable. Place compact is NULL");
@@ -1582,7 +1573,7 @@ bool Logic::fnSetToStand(uint32 a, uint32 b, uint32 c) {
 bool Logic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
 	/// turn compact to direction dir
 
-	uint16 curDir = _compact->dir; // get current direction
+	uint16 curDir = _compact->dir;          // get current direction
 	_compact->dir = (uint16)(dir & 0xffff); // set new direction
 
 	uint16 *tt = _skyCompact->getTurnTable(_compact, curDir);
@@ -1601,7 +1592,7 @@ bool Logic::fnTurnTo(uint32 dir, uint32 b, uint32 c) {
 
 bool Logic::fnArrived(uint32 scriptVar, uint32 b, uint32 c) {
 	_compact->leaving = (uint16)(scriptVar & 0xffff);
-	_scriptVariables[scriptVar/4]++;
+	_scriptVariables[scriptVar / 4]++;
 	return true;
 }
 
@@ -1609,7 +1600,7 @@ bool Logic::fnLeaving(uint32 a, uint32 b, uint32 c) {
 	_compact->atWatch = 0;
 
 	if (_compact->leaving) {
-		_scriptVariables[_compact->leaving/4]--;
+		_scriptVariables[_compact->leaving / 4]--;
 		_compact->leaving = 0; // I shall do this only once
 	}
 
@@ -1693,14 +1684,14 @@ bool Logic::fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum) {
 	}
 
 	stdSpeak(_skyCompact->fetchCpt(targetId), mesgNum, animNum, 0);
-	return false;	//drop out of script
+	return false; //drop out of script
 }
 
 bool Logic::fnSpeakMeDir(uint32 targetId, uint32 mesgNum, uint32 animNum) {
 	//must be player so don't cause script to drop out
 	//this function sets the directional option whereby
 	//the anim chosen is linked to c_dir
-	animNum += _compact->dir << 1;	//2 sizes (large and small)
+	animNum += _compact->dir << 1; //2 sizes (large and small)
 	return fnSpeakMe(targetId, mesgNum, animNum);
 }
 
@@ -1793,7 +1784,7 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 		return true;
 
 	_compact->logic = L_CHOOSE; // player frozen until choice made
-	fnAddHuman(0, 0, 0); // bring back mouse
+	fnAddHuman(0, 0, 0);        // bring back mouse
 
 	return false;
 }
@@ -1831,7 +1822,7 @@ bool Logic::fnWeWait(uint32 id, uint32 b, uint32 c) {
 	/// We have hit another mega
 	/// we are going to wait for it to move
 
-	_compact->waitingFor = (uint16) id;
+	_compact->waitingFor = (uint16)id;
 	stopAndWait();
 	return true; // not sure about this
 }
@@ -1872,7 +1863,7 @@ bool Logic::fnCheckRequest(uint32 a, uint32 b, uint32 c) {
 	_compact->actionSub_off = 0;
 
 	_compact->request = 0; // trash request
-	return false; // drop from script
+	return false;          // drop from script
 }
 
 bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
@@ -1915,7 +1906,8 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	for (i = 0; i < ARRAYSIZE(_objectList); i++) {
 		if (_objectList[i])
 			(_skyCompact->fetchCpt(_objectList[i]))->status = ST_LOGIC;
-		else break;
+		else
+			break;
 	}
 
 	// (5) NOW FIND OUT WHICH OBJECT TO START THE DISPLAY FROM (depending on scroll offset)
@@ -1930,7 +1922,7 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 	uint16 rollingX = TOP_LEFT_X + 28;
 	for (i = 0; i < 11; i++) {
 		cpt = _skyCompact->fetchCpt(
-				_objectList[_scriptVariables[SCROLL_OFFSET] + i]);
+		    _objectList[_scriptVariables[SCROLL_OFFSET] + i]);
 
 		cpt->status = ST_MOUSE + ST_FOREGROUND + ST_LOGIC + ST_RECREATE;
 		cpt->screen = (uint16)(_scriptVariables[SCREEN] & 0xffff);
@@ -2123,7 +2115,7 @@ bool Logic::fnDecMegaSet(uint32 a, uint32 b, uint32 c) {
 
 bool Logic::fnSetMegaSet(uint32 mega, uint32 setNo, uint32 c) {
 	Compact *cpt = _skyCompact->fetchCpt(mega);
-	cpt->megaSet = (uint16) (setNo * NEXT_MEGA_SET);
+	cpt->megaSet = (uint16)(setNo * NEXT_MEGA_SET);
 	return true;
 }
 
@@ -2244,7 +2236,7 @@ bool Logic::fnTextModule(uint32 a, uint32 b, uint32 c) {
 
 bool Logic::fnChangeName(uint32 id, uint32 textNo, uint32 c) {
 	Compact *cpt = _skyCompact->fetchCpt(id);
-	cpt->cursorText = (uint16) textNo;
+	cpt->cursorText = (uint16)textNo;
 	return true;
 }
 
@@ -2345,7 +2337,7 @@ bool Logic::fnNewSwingSeq(uint32 a, uint32 b, uint32 c) {
 	if ((a == 85) || (a == 106) || (a == 75) || (a == 15)) {
 		_skyScreen->startSequenceItem((uint16)a);
 	} else {
-		debug(1,"Logic::fnNewSwingSeq: ignored seq %d",a);
+		debug(1, "Logic::fnNewSwingSeq: ignored seq %d", a);
 	}
 	return true;
 }
@@ -2418,7 +2410,8 @@ bool Logic::fnLincTextModule(uint32 textPos, uint32 textNo, uint32 buttonAction)
 	} else if (textPos > 20) { // x coordinate (for numbers)
 		textCpt->xcood = (uint16)textPos;
 		textCpt->ycood = 214;
-	} else warning("::fnLincTextModule: textPos == 20");
+	} else
+		warning("::fnLincTextModule: textPos == 20");
 	textCpt->getToFlag = (uint16)textNo;
 	return true;
 }
@@ -2471,7 +2464,7 @@ bool Logic::fnFadeDown(uint32 a, uint32 b, uint32 c) {
 
 bool Logic::fnFadeUp(uint32 a, uint32 b, uint32 c) {
 	SkyEngine::_systemVars.currentPalette = a;
-	_skyScreen->fnFadeUp(a,b);
+	_skyScreen->fnFadeUp(a, b);
 	return true;
 }
 
@@ -2515,7 +2508,6 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	if (SkyEngine::isCDVersion())
 		speechFileFound = _skySound->startSpeech((uint16)textNum);
 
-
 	// Set the focus region to that area
 	// Calculate the point where the character is
 	int x = target->xcood - TOP_LEFT_X;
@@ -2523,17 +2515,16 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	// TODO: Make the box size change based on the object that has the focus
 	_skyScreen->setFocusRectangle(Common::Rect::center(x, y, 192, 128));
 
-
 	if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) || !speechFileFound) {
 		// form the text sprite, if player wants subtitles or
 		// if we couldn't find the speech file
 		DisplayedText textInfo;
 		textInfo = _skyText->lowTextManager(textNum, FIXED_TEXT_WIDTH, 0, (uint8)target->spColor, true);
 		Compact *textCompact = _skyCompact->fetchCpt(textInfo.compactNum);
-		target->spTextId = textInfo.compactNum;	//So we know what text to kill
+		target->spTextId = textInfo.compactNum; //So we know what text to kill
 		byte *textGfx = textInfo.textData;
 
-		textCompact->screen = target->screen;	//put it on our screen
+		textCompact->screen = target->screen; //put it on our screen
 
 		if (_scriptVariables[SCREEN] == target->screen) { // Only use coordinates if we are on the current screen
 			//talking on-screen
@@ -2543,7 +2534,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 			uint16 xPos = target->xcood + ((DataFileHeader *)targetGfx)->s_offset_x;
 			uint16 width = (((DataFileHeader *)targetGfx)->s_width >> 1);
 
-			xPos += width - (FIXED_TEXT_WIDTH / 2);	//middle of talker
+			xPos += width - (FIXED_TEXT_WIDTH / 2); //middle of talker
 
 			if (xPos < TOP_LEFT_X)
 				xPos = TOP_LEFT_X;
@@ -2564,8 +2555,8 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 
 		} else {
 			//talking off-screen
-			target->spTextId = 0;	//don't kill any text 'cos none was made
-			textCompact->status = 0;	//don't display text
+			target->spTextId = 0;    //don't kill any text 'cos none was made
+			textCompact->status = 0; //don't display text
 		}
 		// In CD version, we're doing the timing by checking when the VOC has stopped playing.
 		// Setting spTime to 10 thus means that we're doing a pause of 10 gamecycles between

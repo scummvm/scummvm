@@ -41,7 +41,7 @@ Common::String toUpperCP895(const Common::String &str);
 template<typename SurfaceType>
 bool clipBounds(Common::Rect &srcBounds, Common::Rect &destBounds, SurfaceType &destSurf) {
 	if (destBounds.left >= destSurf.w || destBounds.top >= destSurf.h ||
-			destBounds.right <= 0 || destBounds.bottom <= 0)
+	    destBounds.right <= 0 || destBounds.bottom <= 0)
 		return false;
 
 	// Clip the bounds if source is too big to fit into destination.
@@ -120,6 +120,6 @@ void blit_if(const Graphics::Surface &src, Graphics::ManagedSurface &dest, const
 	blit_if(src, Common::Rect(0, 0, src.w, src.h), dest, destPos, blitOp);
 }
 
-}
+} // namespace MutationOfJB
 
 #endif

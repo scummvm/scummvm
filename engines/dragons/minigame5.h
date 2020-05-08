@@ -32,6 +32,7 @@ class Minigame5 {
 private:
 	DragonsEngine *_vm;
 	uint16 _dat_800633e6;
+
 public:
 	Minigame5(DragonsEngine *vm);
 

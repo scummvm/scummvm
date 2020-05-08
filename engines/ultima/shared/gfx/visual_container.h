@@ -23,8 +23,8 @@
 #ifndef ULTIMA_SHARED_GFX_VISUAL_CONTAINER_H
 #define ULTIMA_SHARED_GFX_VISUAL_CONTAINER_H
 
-#include "ultima/shared/gfx/visual_item.h"
 #include "ultima/shared/core/message_target.h"
+#include "ultima/shared/gfx/visual_item.h"
 
 namespace Ultima {
 namespace Shared {
@@ -38,22 +38,22 @@ class VisualContainer : public VisualItem {
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	bool MouseWheelMsg(CMouseWheelMsg *msg);
 	bool MouseDragMsg(CMouseDragMsg *msg);
+
 private:
 	VisualItem *_mouseFocusItem;
+
 private:
 	/**
 	 * Called to handle mouse messagaes on the view
 	 */
 	VisualItem *handleMouseMsg(CMouseMsg *msg);
+
 public:
 	CLASSDEF;
 	VisualContainer(TreeItem *parent = nullptr) : VisualItem(parent), _mouseFocusItem(nullptr) {}
-	VisualContainer(const Rect &r, TreeItem *parent = nullptr) :
-		VisualItem(r, parent), _mouseFocusItem(nullptr) {}
-	VisualContainer(const Common::String &name, TreeItem *parent = nullptr) :
-		VisualItem(name, parent), _mouseFocusItem(nullptr) {}
-	VisualContainer(const Common::String &name, const Rect &r, TreeItem *parent = nullptr) :
-		VisualItem(name, r, parent), _mouseFocusItem(nullptr) {}
+	VisualContainer(const Rect &r, TreeItem *parent = nullptr) : VisualItem(r, parent), _mouseFocusItem(nullptr) {}
+	VisualContainer(const Common::String &name, TreeItem *parent = nullptr) : VisualItem(name, parent), _mouseFocusItem(nullptr) {}
+	VisualContainer(const Common::String &name, const Rect &r, TreeItem *parent = nullptr) : VisualItem(name, r, parent), _mouseFocusItem(nullptr) {}
 	~VisualContainer() override {}
 
 	/**

@@ -22,11 +22,11 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/networking/curl/networkreadstream.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "base/version.h"
 #include "common/debug.h"
+#include <curl/curl.h>
 
 namespace Networking {
 
@@ -79,7 +79,7 @@ void NetworkReadStream::initCurl(const char *url, curl_slist *headersList) {
 	_easy = curl_easy_init();
 	curl_easy_setopt(_easy, CURLOPT_WRITEFUNCTION, curlDataCallback);
 	curl_easy_setopt(_easy, CURLOPT_WRITEDATA, this); //so callback can call us
-	curl_easy_setopt(_easy, CURLOPT_PRIVATE, this); //so ConnectionManager can call us when request is complete
+	curl_easy_setopt(_easy, CURLOPT_PRIVATE, this);   //so ConnectionManager can call us when request is complete
 	curl_easy_setopt(_easy, CURLOPT_HEADER, 0L);
 	curl_easy_setopt(_easy, CURLOPT_HEADERDATA, this);
 	curl_easy_setopt(_easy, CURLOPT_HEADERFUNCTION, curlHeadersCallback);
@@ -149,7 +149,7 @@ void NetworkReadStream::setupBufferContents(const byte *buffer, uint32 bufferSiz
 			// CURLOPT_COPYPOSTFIELDS available since curl 7.17.1
 			curl_easy_setopt(_easy, CURLOPT_COPYPOSTFIELDS, buffer);
 #else
-			_bufferCopy = (byte*)malloc(bufferSize);
+			_bufferCopy = (byte *)malloc(bufferSize);
 			memcpy(_bufferCopy, buffer, bufferSize);
 			curl_easy_setopt(_easy, CURLOPT_POSTFIELDS, _bufferCopy);
 #endif
@@ -165,12 +165,11 @@ void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Commo
 
 	for (Common::HashMap<Common::String, Common::String>::iterator i = formFields.begin(); i != formFields.end(); ++i) {
 		CURLFORMcode code = curl_formadd(
-			&formpost,
-			&lastptr,
-			CURLFORM_COPYNAME, i->_key.c_str(),
-			CURLFORM_COPYCONTENTS, i->_value.c_str(),
-			CURLFORM_END
-		);
+		    &formpost,
+		    &lastptr,
+		    CURLFORM_COPYNAME, i->_key.c_str(),
+		    CURLFORM_COPYCONTENTS, i->_value.c_str(),
+		    CURLFORM_END);
 
 		if (code != CURL_FORMADD_OK)
 			warning("NetworkReadStream: field curl_formadd('%s') failed", i->_key.c_str());
@@ -178,12 +177,11 @@ void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Commo
 
 	for (Common::HashMap<Common::String, Common::String>::iterator i = formFiles.begin(); i != formFiles.end(); ++i) {
 		CURLFORMcode code = curl_formadd(
-			&formpost,
-			&lastptr,
-			CURLFORM_COPYNAME, i->_key.c_str(),
-			CURLFORM_FILE, i->_value.c_str(),
-			CURLFORM_END
-		);
+		    &formpost,
+		    &lastptr,
+		    CURLFORM_COPYNAME, i->_key.c_str(),
+		    CURLFORM_FILE, i->_value.c_str(),
+		    CURLFORM_END);
 
 		if (code != CURL_FORMADD_OK)
 			warning("NetworkReadStream: file curl_formadd('%s') failed", i->_key.c_str());
@@ -193,20 +191,17 @@ void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Commo
 	ConnMan.registerEasyHandle(_easy);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
-		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval) : _backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
 	initCurl(url, headersList);
 	setupBufferContents((const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
-		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles, bool keepAlive, long keepAliveIdle, long keepAliveInterval) : _backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
 	initCurl(url, headersList);
 	setupFormMultipart(formFields, formFiles);
 }
 
-NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
-		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
+NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post, bool keepAlive, long keepAliveIdle, long keepAliveInterval) : _backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
 	initCurl(url, headersList);
 	setupBufferContents(buffer, bufferSize, uploading, usingPatch, post);
 }
@@ -395,4 +390,4 @@ void NetworkReadStream::setProgress(uint64 downloaded, uint64 total) {
 	_progressTotal = total;
 }
 
-} // End of namespace Cloud
+} // namespace Networking

@@ -20,14 +20,14 @@
  *
  */
 
-#include "glk/alan3/types.h"
 #include "glk/alan3/rules.h"
-#include "glk/alan3/lists.h"
-#include "glk/alan3/inter.h"
-#include "glk/alan3/debug.h"
-#include "glk/alan3/current.h"
-#include "glk/alan3/options.h"
 #include "glk/alan3/compatibility.h"
+#include "glk/alan3/current.h"
+#include "glk/alan3/debug.h"
+#include "glk/alan3/inter.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/options.h"
+#include "glk/alan3/types.h"
 
 #ifdef HAVE_GLK
 #include "glk/alan3/glkio.h"
@@ -37,9 +37,8 @@ namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA: */
-RuleEntry *rules;         /* Rule table pointer */
+RuleEntry *rules; /* Rule table pointer */
 bool anyRuleRun;
-
 
 /* PRIVATE TYPES: */
 typedef struct RulesAdmin {
@@ -60,7 +59,6 @@ static void clearRulesAdmin(int numRules) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void initRulesAdmin(int numRules) {
 	int r;
@@ -71,20 +69,18 @@ static void initRulesAdmin(int numRules) {
 	setEndOfArray(&rulesAdmin[r]);
 }
 
-
 /*======================================================================*/
 void initRules(Aaddr ruleTableAddress) {
 
-	rules = (RuleEntry *) pointerTo(ruleTableAddress);
+	rules = (RuleEntry *)pointerTo(ruleTableAddress);
 
-	if (ruleCount == 0) {       /* Not initiated */
+	if (ruleCount == 0) { /* Not initiated */
 		for (ruleCount = 0; !isEndOfArray(&rules[ruleCount]); ruleCount++)
 			;
 		initRulesAdmin(ruleCount);
 	}
 	clearRulesAdmin(ruleCount);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void traceRuleStart(CONTEXT, int rule, const char *what) {
@@ -100,7 +96,6 @@ static void traceRuleStart(CONTEXT, int rule, const char *what) {
 static bool detailedTraceOn() {
 	return traceInstructionOption || traceSourceOption || tracePushOption || traceStackOption;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void traceRuleEvaluation(CONTEXT, int rule) {
@@ -138,8 +133,6 @@ static void traceRuleExecution(CONTEXT, int rule) {
 	}
 }
 
-
-
 /*----------------------------------------------------------------------*/
 static void evaluateRulesPreBeta2(CONTEXT) {
 	bool change = TRUE;
@@ -165,7 +158,6 @@ static void evaluateRulesPreBeta2(CONTEXT) {
 			}
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 /* This is how beta2 thought rules should be evaluated:
@@ -205,7 +197,6 @@ static void evaluateRulesBeta2(CONTEXT) {
 	}
 }
 
-
 /*======================================================================*/
 void resetRules() {
 	int i;
@@ -213,7 +204,6 @@ void resetRules() {
 		rulesAdmin[i - 1].alreadyRun = FALSE;
 	}
 }
-
 
 /*======================================================================*/
 void evaluateRules(CONTEXT, RuleEntry ruleList[]) {
@@ -231,8 +221,7 @@ void evaluateRules(CONTEXT, RuleEntry ruleList[]) {
 			FUNC1(evaluate, evaluated_value, ruleList[rule - 1].exp)
 			traceRuleResult(rule, evaluated_value);
 
-			if (evaluated_value == true && rulesAdmin[rule - 1].lastEval == false
-			        && !rulesAdmin[rule - 1].alreadyRun) {
+			if (evaluated_value == true && rulesAdmin[rule - 1].lastEval == false && !rulesAdmin[rule - 1].alreadyRun) {
 				change = TRUE;
 				CALL1(traceRuleExecution, rule)
 				CALL1(interpret, ruleList[rule - 1].stms)
@@ -246,7 +235,6 @@ void evaluateRules(CONTEXT, RuleEntry ruleList[]) {
 		}
 	}
 }
-
 
 /*=======================================================================*/
 void resetAndEvaluateRules(CONTEXT, RuleEntry ruleList[], const byte *version) {

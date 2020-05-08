@@ -25,11 +25,11 @@
 #include "access/martian/martian_game.h"
 
 #include "base/plugins.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
-#include "common/memstream.h"
-#include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
@@ -75,10 +75,9 @@ Common::Platform AccessEngine::getPlatform() const {
 } // End of namespace Access
 
 static const PlainGameDescriptor AccessGames[] = {
-	{"amazon", "Amazon: Guardians of Eden"},
-	{"martian", "Martian Memorandum"},
-	{0, 0}
-};
+    {"amazon", "Amazon: Guardians of Eden"},
+    {"martian", "Martian Memorandum"},
+    {0, 0}};
 
 #include "access/detection_tables.h"
 
@@ -109,20 +108,18 @@ public:
 };
 
 bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSimpleSavesNames);
 }
 
 bool Access::AccessEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 bool AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -208,9 +205,8 @@ SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int
 	return SaveStateDescriptor();
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(ACCESS)
-	REGISTER_PLUGIN_DYNAMIC(ACCESS, PLUGIN_TYPE_ENGINE, AccessMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(ACCESS, PLUGIN_TYPE_ENGINE, AccessMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(ACCESS, PLUGIN_TYPE_ENGINE, AccessMetaEngine);
+REGISTER_PLUGIN_STATIC(ACCESS, PLUGIN_TYPE_ENGINE, AccessMetaEngine);
 #endif

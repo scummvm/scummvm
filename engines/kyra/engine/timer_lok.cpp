@@ -21,8 +21,8 @@
  */
 
 #include "kyra/engine/kyra_lok.h"
-#include "kyra/graphics/animator_lok.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/animator_lok.h"
 
 namespace Kyra {
 
@@ -32,11 +32,11 @@ void KyraEngine_LoK::setupTimers() {
 	for (int i = 0; i <= 4; ++i)
 		_timer->addTimer(i, 0, -1, 1);
 
-	_timer->addTimer(5, 0,  5, 1);
-	_timer->addTimer(6, 0,  7, 1);
-	_timer->addTimer(7, 0,  8, 1);
-	_timer->addTimer(8, 0,  9, 1);
-	_timer->addTimer(9, 0,  7, 1);
+	_timer->addTimer(5, 0, 5, 1);
+	_timer->addTimer(6, 0, 7, 1);
+	_timer->addTimer(7, 0, 8, 1);
+	_timer->addTimer(8, 0, 9, 1);
+	_timer->addTimer(9, 0, 7, 1);
 
 	for (int i = 10; i <= 13; ++i)
 		_timer->addTimer(i, 0, 420, 1);
@@ -69,10 +69,9 @@ void KyraEngine_LoK::setupTimers() {
 
 void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {
 	static const int8 frameTable[] = {
-		4, 5, 4, 5, 4, 5, 0, 1,
-		4, 5, 4, 4, 6, 4, 8, 1,
-		9, 4, -1
-	};
+	    4, 5, 4, 5, 4, 5, 0, 1,
+	    4, 5, 4, 4, 6, 4, 8, 1,
+	    9, 4, -1};
 
 	if (_talkingCharNum < 0)
 		return;
@@ -183,7 +182,7 @@ void KyraEngine_LoK::setWalkspeed(uint8 newSpeed) {
 	if (!_timer)
 		return;
 
-	static const uint8 speeds[] = { 11, 9, 6, 5, 3 };
+	static const uint8 speeds[] = {11, 9, 6, 5, 3};
 
 	assert(newSpeed < ARRAYSIZE(speeds));
 	_timer->setDelay(5, speeds[newSpeed]);

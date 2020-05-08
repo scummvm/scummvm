@@ -20,14 +20,14 @@
  *
  */
 
-#include "neverhood/modules/module2800.h"
 #include "neverhood/modules/module2800_sprites.h"
+#include "neverhood/modules/module2800.h"
 
 namespace Neverhood {
 
 AsScene2803LightCord::AsScene2803LightCord(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int16 x, int16 y)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _fileHash1(fileHash1), _fileHash2(fileHash2),
-	_isPulled(false), _isBusy(false) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene), _fileHash1(fileHash1), _fileHash2(fileHash2),
+      _isPulled(false), _isBusy(false) {
 
 	createSurface(1010, 28, 379);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -99,7 +99,7 @@ void AsScene2803LightCord::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
 }
 
 AsScene2803TestTubeOne::AsScene2803TestTubeOne(NeverhoodEngine *vm, uint32 fileHash1, uint32 fileHash2)
-	: AnimatedSprite(vm, 1200), _fileHash1(fileHash1), _fileHash2(fileHash2) {
+    : AnimatedSprite(vm, 1200), _fileHash1(fileHash1), _fileHash2(fileHash2) {
 
 	createSurface1(fileHash1, 100);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -124,7 +124,7 @@ uint32 AsScene2803TestTubeOne::handleMessage(int messageNum, const MessageParam 
 }
 
 AsScene2803Rope::AsScene2803Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	createSurface(990, 68, 476);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -184,7 +184,7 @@ void AsScene2803Rope::stHide() {
 }
 
 SsScene2804RedButton::SsScene2804RedButton(NeverhoodEngine *vm, Scene2804 *parentScene)
-	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene) {
+    : StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene) {
 
 	loadSprite(getGlobalVar(V_SHRINK_LIGHTS_ON) ? 0x51A10202 : 0x11814A21, kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
@@ -219,7 +219,7 @@ uint32 SsScene2804RedButton::handleMessage(int messageNum, const MessageParam &p
 }
 
 SsScene2804LightCoil::SsScene2804LightCoil(NeverhoodEngine *vm)
-	: StaticSprite(vm, 900) {
+    : StaticSprite(vm, 900) {
 
 	loadSprite(0x8889B008, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
@@ -246,7 +246,7 @@ uint32 SsScene2804LightCoil::handleMessage(int messageNum, const MessageParam &p
 }
 
 SsScene2804LightTarget::SsScene2804LightTarget(NeverhoodEngine *vm)
-	: StaticSprite(vm, 900) {
+    : StaticSprite(vm, 900) {
 
 	loadSprite(0x06092132, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
@@ -273,7 +273,7 @@ uint32 SsScene2804LightTarget::handleMessage(int messageNum, const MessageParam 
 }
 
 SsScene2804Flash::SsScene2804Flash(NeverhoodEngine *vm)
-	: StaticSprite(vm, 900) {
+    : StaticSprite(vm, 900) {
 
 	loadSprite(0x211003A0, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
@@ -287,21 +287,20 @@ void SsScene2804Flash::show() {
 }
 
 SsScene2804BeamCoilBody::SsScene2804BeamCoilBody(NeverhoodEngine *vm)
-	: StaticSprite(vm, 900) {
+    : StaticSprite(vm, 900) {
 
 	loadSprite(0x9A816000, kSLFDefDrawOffset | kSLFDefPosition, 400);
 	setVisible(false);
 }
 
 AsScene2804CrystalWaves::AsScene2804CrystalWaves(NeverhoodEngine *vm, uint crystalIndex)
-	: AnimatedSprite(vm, 1100), _crystalIndex(crystalIndex) {
+    : AnimatedSprite(vm, 1100), _crystalIndex(crystalIndex) {
 
 	static const NPoint kAsScene2804CrystalWavesPoints[] = {
-		{323, 245},
-		{387, 76},
-		{454, 260},
-		{527, 70}
-	};
+	    {323, 245},
+	    {387, 76},
+	    {454, 260},
+	    {527, 70}};
 
 	_x = kAsScene2804CrystalWavesPoints[crystalIndex].x;
 	_y = kAsScene2804CrystalWavesPoints[crystalIndex].y;
@@ -325,27 +324,24 @@ void AsScene2804CrystalWaves::hide() {
 }
 
 static const int16 kAsScene2804CrystalFrameNums[] = {
-	0, 6, 2, 8, 1, 10, 0, 0
-};
+    0, 6, 2, 8, 1, 10, 0, 0};
 
 static const uint32 kAsScene2804CrystalFileHashes[] = {
-	0x000540B0,
-	0x001280D0,
-	0x003D0010,
-	0x00620190,
-	0x00DC0290
-};
+    0x000540B0,
+    0x001280D0,
+    0x003D0010,
+    0x00620190,
+    0x00DC0290};
 
 AsScene2804Crystal::AsScene2804Crystal(NeverhoodEngine *vm, AsScene2804CrystalWaves *asCrystalWaves, uint crystalIndex)
-	: AnimatedSprite(vm, 1100), _asCrystalWaves(asCrystalWaves), _crystalIndex(crystalIndex), _isShowing(false) {
+    : AnimatedSprite(vm, 1100), _asCrystalWaves(asCrystalWaves), _crystalIndex(crystalIndex), _isShowing(false) {
 
 	static const NPoint kAsScene2804CrystalPoints[] = {
-		{204, 196},
-		{272, 316},
-		{334, 206},
-		{410, 334},
-		{470, 180}
-	};
+	    {204, 196},
+	    {272, 316},
+	    {334, 206},
+	    {410, 334},
+	    {470, 180}};
 
 	_colorNum = (int16)getSubVar(VA_CURR_CRYSTAL_COLORS, crystalIndex);
 	_isLightOn = getGlobalVar(V_SHRINK_LIGHTS_ON) != 0;
@@ -407,26 +403,24 @@ void AsScene2804Crystal::activate() {
 }
 
 SsScene2804CrystalButton::SsScene2804CrystalButton(NeverhoodEngine *vm, Scene2804 *parentScene, AsScene2804Crystal *asCrystal, uint crystalIndex)
-	: StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene), _asCrystal(asCrystal), _crystalIndex(crystalIndex) {
+    : StaticSprite(vm, 900), _countdown(0), _parentScene(parentScene), _asCrystal(asCrystal), _crystalIndex(crystalIndex) {
 
 	static const uint32 kSsScene2804CrystalButtonFileHashes1[] = {
-		0x911101B0,
-		0x22226001,
-		0x4444A362,
-		0x888925A4,
-		0x11122829
-	};
+	    0x911101B0,
+	    0x22226001,
+	    0x4444A362,
+	    0x888925A4,
+	    0x11122829};
 
 	static const uint32 kSsScene2804CrystalButtonFileHashes2[] = {
-		0xB500A1A0,
-		0x6A012021,
-		0xD4022322,
-		0xA8042525,
-		0x5008292B
-	};
+	    0xB500A1A0,
+	    0x6A012021,
+	    0xD4022322,
+	    0xA8042525,
+	    0x5008292B};
 
 	loadSprite(getGlobalVar(V_SHRINK_LIGHTS_ON) ? kSsScene2804CrystalButtonFileHashes1[crystalIndex] : kSsScene2804CrystalButtonFileHashes2[crystalIndex],
-		kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
+	           kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 400);
 	setVisible(false);
 	loadSound(0, 0x44045140);
 	SetUpdateHandler(&SsScene2804CrystalButton::update);
@@ -459,7 +453,7 @@ uint32 SsScene2804CrystalButton::handleMessage(int messageNum, const MessagePara
 }
 
 AsScene2804BeamCoil::AsScene2804BeamCoil(NeverhoodEngine *vm, Scene *parentScene, SsScene2804BeamCoilBody *ssBeamCoilBody)
-	: AnimatedSprite(vm, 1400), _parentScene(parentScene), _ssBeamCoilBody(ssBeamCoilBody), _countdown(0) {
+    : AnimatedSprite(vm, 1400), _parentScene(parentScene), _ssBeamCoilBody(ssBeamCoilBody), _countdown(0) {
 
 	createSurface1(0x00494891, 1000);
 	_x = 125;
@@ -539,7 +533,7 @@ uint32 AsScene2804BeamCoil::hmBeaming(int messageNum, const MessageParam &param,
 }
 
 AsScene2804BeamTarget::AsScene2804BeamTarget(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1400) {
+    : AnimatedSprite(vm, 1400) {
 
 	createSurface1(0x03842000, 1000);
 	_x = 475;
@@ -571,7 +565,7 @@ uint32 AsScene2804BeamTarget::handleMessage(int messageNum, const MessageParam &
 }
 
 AsScene2806Spew::AsScene2806Spew(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200) {
+    : AnimatedSprite(vm, 1200) {
 
 	createSurface1(0x04211490, 1200);
 	_x = 378;
@@ -601,45 +595,39 @@ uint32 AsScene2806Spew::handleMessage(int messageNum, const MessageParam &param,
 }
 
 static const uint32 kClass428FileHashes[] = {
-	0x140022CA,
-	0x4C30A602,
-	0xB1633402,
-	0x12982135,
-	0x0540B728,
-	0x002A81E3,
-	0x08982841,
-	0x10982841,
-	0x20982841,
-	0x40982841,
-	0x80982841,
-	0x40800711
-};
+    0x140022CA,
+    0x4C30A602,
+    0xB1633402,
+    0x12982135,
+    0x0540B728,
+    0x002A81E3,
+    0x08982841,
+    0x10982841,
+    0x20982841,
+    0x40982841,
+    0x80982841,
+    0x40800711};
 
 static const int kClass428Countdowns1[] = {
-	18, 16, 10, 0
-};
+    18, 16, 10, 0};
 
 static const int kClass428Countdowns2[] = {
-	9, 9, 8, 8, 5, 5, 0, 0
-};
+    9, 9, 8, 8, 5, 5, 0, 0};
 
 static const uint32 kClass490FileHashes[] = {
-	0x08100071,
-	0x24084215,
-	0x18980A10
-};
+    0x08100071,
+    0x24084215,
+    0x18980A10};
 
 static const int16 kClass490FrameIndices1[] = {
-	0, 8, 15, 19
-};
+    0, 8, 15, 19};
 
 static const int16 kClass490FrameIndices2[] = {
-	0, 4, 8, 11, 15, 17, 19, 0
-};
+    0, 4, 8, 11, 15, 17, 19, 0};
 
 SsScene2808Dispenser::SsScene2808Dispenser(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum, int testTubeIndex)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _testTubeSetNum(testTubeSetNum),
-	_testTubeIndex(testTubeIndex) {
+    : StaticSprite(vm, 900), _parentScene(parentScene), _countdown(0), _testTubeSetNum(testTubeSetNum),
+      _testTubeIndex(testTubeIndex) {
 
 	loadSprite(kClass428FileHashes[testTubeSetNum * 3 + testTubeIndex], kSLFDefDrawOffset | kSLFDefPosition | kSLFDefCollisionBoundsOffset, 1500);
 	setVisible(false);
@@ -678,7 +666,7 @@ void SsScene2808Dispenser::startCountdown(int index) {
 }
 
 AsScene2808TestTube::AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum, int testTubeIndex, SsScene2808Dispenser *ssDispenser)
-	: AnimatedSprite(vm, 1100), _testTubeSetNum(testTubeSetNum), _testTubeIndex(testTubeIndex), _ssDispenser(ssDispenser), _fillLevel(0) {
+    : AnimatedSprite(vm, 1100), _testTubeSetNum(testTubeSetNum), _testTubeIndex(testTubeIndex), _ssDispenser(ssDispenser), _fillLevel(0) {
 
 	if (testTubeSetNum == 0) {
 		_x = 504;
@@ -712,7 +700,6 @@ AsScene2808TestTube::AsScene2808TestTube(NeverhoodEngine *vm, int testTubeSetNum
 
 	if (_fillLevel == 0)
 		setVisible(false);
-
 }
 
 uint32 AsScene2808TestTube::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -760,7 +747,7 @@ void AsScene2808TestTube::flush() {
 }
 
 AsScene2808Handle::AsScene2808Handle(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
-	: AnimatedSprite(vm, 1300), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum), _isActivated(false) {
+    : AnimatedSprite(vm, 1300), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum), _isActivated(false) {
 
 	loadSound(0, 0xE18D1F30);
 	_x = 320;
@@ -819,7 +806,7 @@ void AsScene2808Handle::stActivated() {
 }
 
 AsScene2808Flow::AsScene2808Flow(NeverhoodEngine *vm, Scene *parentScene, int testTubeSetNum)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene), _testTubeSetNum(testTubeSetNum) {
 
 	if (testTubeSetNum == 0) {
 		_x = 312;
@@ -864,7 +851,7 @@ void AsScene2808Flow::stKeepFlowing() {
 }
 
 AsScene2808LightEffect::AsScene2808LightEffect(NeverhoodEngine *vm, int testTubeSetNum)
-	: AnimatedSprite(vm, 800), _countdown(1) {
+    : AnimatedSprite(vm, 800), _countdown(1) {
 
 	_x = 320;
 	_y = 240;
@@ -887,7 +874,7 @@ void AsScene2808LightEffect::update() {
 }
 
 AsScene2809Spew::AsScene2809Spew(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200) {
+    : AnimatedSprite(vm, 1200) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2809Spew::handleMessage);
@@ -917,7 +904,7 @@ uint32 AsScene2809Spew::handleMessage(int messageNum, const MessageParam &param,
 }
 
 AsScene2810Rope::AsScene2810Rope(NeverhoodEngine *vm, Scene *parentScene, int16 x)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	createSurface(990, 68, 476);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -947,7 +934,7 @@ uint32 AsScene2810Rope::handleMessage(int messageNum, const MessageParam &param,
 }
 
 AsScene2812Winch::AsScene2812Winch(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100) {
+    : AnimatedSprite(vm, 1100) {
 
 	createSurface1(0x20DA08A0, 1200);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -980,7 +967,7 @@ uint32 AsScene2812Winch::handleMessage(int messageNum, const MessageParam &param
 }
 
 AsScene2812Rope::AsScene2812Rope(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	createSurface(990, 68, 476);
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -995,7 +982,7 @@ uint32 AsScene2812Rope::handleMessage(int messageNum, const MessageParam &param,
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case NM_KLAYMEN_USE_OBJECT:
-		setDoDeltaX(((Sprite*)sender)->isDoDeltaX() ? 1 : 0);
+		setDoDeltaX(((Sprite *)sender)->isDoDeltaX() ? 1 : 0);
 		stRopingDown();
 		break;
 	case NM_MOVE_TO_BACK:
@@ -1029,7 +1016,7 @@ void AsScene2812Rope::stRopingDown() {
 }
 
 AsScene2812TrapDoor::AsScene2812TrapDoor(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 0x805D0029, 100, 320, 240) {
+    : AnimatedSprite(vm, 0x805D0029, 100, 320, 240) {
 
 	SetMessageHandler(&AsScene2812TrapDoor::handleMessage);
 	_newStickFrameIndex = 0;
@@ -1050,7 +1037,7 @@ uint32 AsScene2812TrapDoor::handleMessage(int messageNum, const MessageParam &pa
 }
 
 KmScene2801::KmScene2801(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -1121,7 +1108,7 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2803::KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	_surface->setClipRects(clipRects, clipRectsCount);
 	_dataResource.load(0x00900849);
@@ -1185,7 +1172,7 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2803Small::KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	_dataResource.load(0x81120132);
 }
@@ -1265,7 +1252,7 @@ void KmScene2803Small::stShrink() {
 }
 
 KmScene2805::KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -1325,8 +1312,8 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2806::KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-	bool needsLargeSurface, NRect *clipRects, uint clipRectsCount)
-	: Klaymen(vm, parentScene, x, y) {
+                         bool needsLargeSurface, NRect *clipRects, uint clipRectsCount)
+    : Klaymen(vm, parentScene, x, y) {
 
 	if (needsLargeSurface) {
 		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
@@ -1385,8 +1372,8 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2809::KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-	bool needsLargeSurface, NRect *clipRects, uint clipRectsCount)
-	: Klaymen(vm, parentScene, x, y) {
+                         bool needsLargeSurface, NRect *clipRects, uint clipRectsCount)
+    : Klaymen(vm, parentScene, x, y) {
 
 	if (needsLargeSurface) {
 		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
@@ -1445,7 +1432,7 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2810Small::KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -1496,7 +1483,7 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 }
 
 KmScene2810::KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, uint clipRectsCount)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	_surface->setClipRects(clipRects, clipRectsCount);
 }
@@ -1590,7 +1577,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2812::KmScene2812(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

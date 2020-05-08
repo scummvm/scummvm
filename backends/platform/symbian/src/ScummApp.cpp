@@ -27,7 +27,7 @@
 
 #if defined(__WINS__) && !defined(S60V3) && !defined(UIQ3)
 extern "C" int _chkstk(int /*a*/) {
-_asm {
+	_asm {
 	push ecx
 	cmp eax,_PAGESIZE_
 	lea ecx,[esp] + 8
@@ -66,7 +66,7 @@ _asm {
 #if !defined(UIQ3) && !defined(S60V3)
 EXPORT_C
 #endif
-CApaApplication* NewApplication() {
+CApaApplication *NewApplication() {
 	// Return pointer to newly created CQMApp
 	return new CScummApp;
 }
@@ -82,7 +82,7 @@ GLDEF_C TInt E32Main() {
 #endif // EPOC_AS_APP
 
 #if !defined(UIQ3) && !defined(S60V3)
-GLDEF_C  TInt E32Dll(TDllReason) {
+GLDEF_C TInt E32Dll(TDllReason) {
 	return KErrNone;
 }
 #endif
@@ -112,8 +112,7 @@ TUid CScummApp::AppDllUid() const {
 	return TUid::Uid(ScummUid);
 }
 
-void CScummApp::GetDataFolder(TDes& aDataFolder)
-{
+void CScummApp::GetDataFolder(TDes &aDataFolder) {
 	aDataFolder = _L("ScummVM");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////

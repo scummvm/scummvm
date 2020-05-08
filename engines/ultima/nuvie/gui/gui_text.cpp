@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui_text.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui_font.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font, uint16 line_length)
-	: GUI_Widget(NULL, x, y, 0, 0) {
+GUI_Text::GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font, uint16 line_length)
+    : GUI_Widget(NULL, x, y, 0, 0) {
 	R = r;
 	G = g;
 	B = b;
@@ -38,9 +38,8 @@ GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font,
 	font = gui_font;
 }
 
-
-GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GUI_Font *gui_font, uint16 line_length)
-	: GUI_Widget(NULL, x, y, 0, 0) {
+GUI_Text::GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GUI_Font *gui_font, uint16 line_length)
+    : GUI_Widget(NULL, x, y, 0, 0) {
 	int w, h;
 
 	R = r;
@@ -68,9 +67,8 @@ GUI_Text::~GUI_Text() {
 	delete[] text;
 }
 
-
 /* Show the widget  */
-void GUI_Text:: Display(bool full_redraw) {
+void GUI_Text::Display(bool full_redraw) {
 	font->setTransparency(true);
 	font->setColoring(R, G, B);
 	font->textOut(surface, area.left, area.top, text, max_width);

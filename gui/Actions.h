@@ -34,7 +34,7 @@ typedef int ActionType;
 class Actions {
 
 public:
-	static Actions* Instance();
+	static Actions *Instance();
 	static void init();
 	virtual void initInstanceMain(OSystem *mainSystem);
 	virtual void initInstanceGame();
@@ -55,7 +55,7 @@ public:
 	bool saveMapping();
 	unsigned int getMapping(ActionType action);
 	void setMapping(ActionType action, unsigned int keyCode);
-	Key& getKeyAction(ActionType action);
+	Key &getKeyAction(ActionType action);
 
 	// Action domain
 	virtual Common::String domain() = 0;
@@ -71,7 +71,7 @@ protected:
 		MAX_ACTIONS = 20
 	};
 
-	static Actions* _instance;
+	static Actions *_instance;
 	OSystem *_mainSystem;
 	Key _key_action[MAX_ACTIONS + 1];
 	bool _action_enabled[MAX_ACTIONS + 1];

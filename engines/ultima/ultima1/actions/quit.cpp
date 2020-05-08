@@ -21,17 +21,17 @@
  */
 
 #include "ultima/ultima1/actions/quit.h"
-#include "ultima/ultima1/u1dialogs/stats.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima1/u1dialogs/stats.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
 BEGIN_MESSAGE_MAP(Quit, Action)
-	ON_MESSAGE(QuitMsg)
+ON_MESSAGE(QuitMsg)
 END_MESSAGE_MAP()
 
 bool Quit::QuitMsg(CQuitMsg &msg) {

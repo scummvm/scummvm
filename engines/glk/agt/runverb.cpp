@@ -21,8 +21,8 @@
  */
 
 #include "glk/agt/agility.h"
-#include "glk/agt/interp.h"
 #include "glk/agt/exec.h"
+#include "glk/agt/interp.h"
 
 namespace Glk {
 namespace AGT {
@@ -37,7 +37,6 @@ namespace AGT {
 
    */
 
-
 /* ------------------------------------------------------------------- */
 /* VERBS: Functions that implement the predefined verbs.   */
 /* ------------------------------------------------------------------- */
@@ -45,7 +44,6 @@ namespace AGT {
 void v_look() {
 	do_look = 1;
 }
-
 
 /* 1=N, etc. */
 static void v_go(int dir) {
@@ -96,9 +94,8 @@ static void v_go(int dir) {
 	   is set, then we don't need to check this) */
 
 	if (dir != 12 && (PURE_HOSTILE || newloc != oldloc + first_room))
-		creatloop(i)
-		if (creature[i].location == loc + first_room &&
-		        creature[i].hostile) {
+		creatloop(i) if (creature[i].location == loc + first_room &&
+		                 creature[i].hostile) {
 			parse_rec tmpcreat;
 			curr_creat_rec = &tmpcreat;
 			make_parserec(i + first_creat, &tmpcreat);
@@ -110,7 +107,7 @@ static void v_go(int dir) {
 	/*  has_seen=room[newloc-first_room].has_seen;*/
 	goto_room(newloc - first_room);
 	if (dir != 12 && newloc != tmploc + first_room) /* SPECIAL */
-		oldloc = tmploc; /* Can backtrack as long as not from special */
+		oldloc = tmploc;                            /* Can backtrack as long as not from special */
 	if (dir == 12 && special_ptr[loc].size > 0)
 		/* need to print special of NEW room */
 		runptr(loc, special_ptr, "INTERNAL ERROR: Invalid special ptr", 0, NULL, NULL);
@@ -118,7 +115,6 @@ static void v_go(int dir) {
 	if (tmploc == loc && dir == 12) /* SPECIAL that sends us nowhere */
 		do_look = 0;
 }
-
 
 /* PUSH, PULL, TURN, PLAY, CHANGE_LOCATIONS */
 static void v_noun(int vc, parse_rec *nounrec) {
@@ -128,12 +124,17 @@ static void v_noun(int vc, parse_rec *nounrec) {
 
 	if (vc == 0 && !it_pushable(dobj_)) {
 		int msgnum;
-		if (!tcreat(dobj_)) msgnum = 172;
+		if (!tcreat(dobj_))
+			msgnum = 172;
 		else if (creature[dobj_ - first_creat].gender == 0)
-			if (creature[dobj_ - first_creat].hostile) msgnum = 167;
-			else msgnum = 168;
-		else if (creature[dobj_ - first_creat].hostile) msgnum = 169;
-		else msgnum = 170;
+			if (creature[dobj_ - first_creat].hostile)
+				msgnum = 167;
+			else
+				msgnum = 168;
+		else if (creature[dobj_ - first_creat].hostile)
+			msgnum = 169;
+		else
+			msgnum = 170;
 		sysmsgd(msgnum, "$You$ can't $verb$ $the_n$$noun$.", nounrec); /* Push */
 		return;
 	}
@@ -228,18 +229,17 @@ static void v_view(parse_rec *nounrec) { /* VIEW a picture */
 	else if (dobj_ == -ext_code[wscene] && room[loc].pict != 0)
 		/* View the room picture */
 		pictcmd(1, pictable[room[loc].pict - 1]);
-	else {  /* room.PIX_bits */
+	else { /* room.PIX_bits */
 		if (dobj_ < 0)
 			for (i = 0; i < maxpix; i++) /* Check them all */
 				if (dobj_ == -pix_name[i] &&
-				        (room[loc].PIX_bits & (1L << i))) {
+				    (room[loc].PIX_bits & (1L << i))) {
 					pictcmd(2, i);
 					return;
 				}
 		sysmsgd(217, "That can't be VIEWed here.", nounrec);
 	}
 }
-
 
 static void v_read(parse_rec *nounrec) {
 	int dobj_;
@@ -260,7 +260,6 @@ static void v_read(parse_rec *nounrec) {
 		       193, nounrec, NULL);
 }
 
-
 static void v_eat(int vc, parse_rec *nounrec) {
 	int dobj_;
 	dobj_ = p_obj(nounrec);
@@ -280,46 +279,45 @@ static void v_eat(int vc, parse_rec *nounrec) {
 
 	sysmsgd(128, "$You$ $verb$ $the_n$$adjective$ $noun$.", nounrec);
 
-	if (noun[dobj_ - first_noun].movable) it_destroy(dobj_);
+	if (noun[dobj_ - first_noun].movable)
+		it_destroy(dobj_);
 	if (noun[dobj_ - first_noun].poisonous) {
 		sysmsgd(129, "Unfortunatly, $n_pro$ $n_was$ poisonous.", nounrec);
 		deadflag = 1;
 	}
 }
 
-
 /* assumes objrec is in the noun range */
 static int can_wear(parse_rec *objrec) {
 	static const char *errs[] = {
-		"$The_n$$noun$ $n_is$ far too heavy to wear.",
-		"$You're$ already loaded down with too much weight as it is.",
-		"$The_n$$noun$ $n_is$ too big and bulky to wear.",
-		"$You're$ wearing too much to also wear $the_n$$noun$."
-	};
+	    "$The_n$$noun$ $n_is$ far too heavy to wear.",
+	    "$You're$ already loaded down with too much weight as it is.",
+	    "$The_n$$noun$ $n_is$ too big and bulky to wear.",
+	    "$You're$ wearing too much to also wear $the_n$$noun$."};
 	int n;
 
 	if (!it_canmove(objrec->obj)) {
 		sysmsgd(202, "$You$ can't move $the_n$$noun$.", objrec);
 	}
 	n = check_fit(objrec->obj, 1000);
-	if (n == FIT_OK /* || n>=FIT_SIZE */)  return 1;
+	if (n == FIT_OK /* || n>=FIT_SIZE */)
+		return 1;
 	sysmsgd(37 + n, errs[n - 1], objrec);
 	return 0;
 }
 
-
 /* assumes objrec is in the noun range */
 static int can_carry(parse_rec *objrec) {
 	static const char *errs[] = {
-		"$The_n$$noun$ $n_is$ far too heavy to carry.",
-		"$You're$ already carrying too much weight as it is.",
-		"$The_n$$noun$ $n_is$ too big and bulky to pick up.",
-		"$You're$ carrying too much to also carry $the_n$$noun$."
-	};
+	    "$The_n$$noun$ $n_is$ far too heavy to carry.",
+	    "$You're$ already carrying too much weight as it is.",
+	    "$The_n$$noun$ $n_is$ too big and bulky to pick up.",
+	    "$You're$ carrying too much to also carry $the_n$$noun$."};
 	int n;
 
 	n = check_fit(objrec->obj, 1);
-	if (n == FIT_OK) return 1;
+	if (n == FIT_OK)
+		return 1;
 	sysmsgd(30 + n - 1, errs[n - 1], objrec);
 	return 0;
 }
@@ -333,9 +331,8 @@ static int v_get(parse_rec *objrec) {
 	/* If there is a hostile creature in the room and PURE_GETHOSTILE isn't
 	   set, then don't let the player pick up anything */
 	if (!PURE_GETHOSTILE)
-		creatloop(i)
-		if (creature[i].location == loc + first_room &&
-		        creature[i].hostile) {
+		creatloop(i) if (creature[i].location == loc + first_room &&
+		                 creature[i].hostile) {
 			parse_rec tmpcreat;
 			make_parserec(i + first_creat, &tmpcreat);
 			curr_creat_rec = &tmpcreat;
@@ -345,8 +342,7 @@ static int v_get(parse_rec *objrec) {
 
 	if (objrec->info == D_ALL) {
 		cnt = 0;
-		nounloop(i)
-		if (noun[i].location == loc + first_room && noun[i].movable) {
+		nounloop(i) if (noun[i].location == loc + first_room && noun[i].movable) {
 			/* Need to add weight/size check */
 			parse_rec tmpnoun;
 			make_parserec(i + first_noun, &tmpnoun);
@@ -359,7 +355,8 @@ static int v_get(parse_rec *objrec) {
 		if (cnt == 0) {
 			sysmsgd(24, "There doesn't seem to be anything here to take.", objrec);
 			return 0;
-		} else return 1;
+		} else
+			return 1;
 	}
 	if (it_door(obj, objrec->noun)) {
 		if (room[loc].locked_door)
@@ -377,7 +374,8 @@ static int v_get(parse_rec *objrec) {
 		sysmsgd(27, "$You$ already have $the_n$$noun$.", objrec);
 		return 1;
 	}
-	if (!can_carry(objrec)) return 0;
+	if (!can_carry(objrec))
+		return 0;
 	get_obj(obj);
 	sysmsgd(8, "$You$ pick up $the_n$$adjective$ $noun$.", objrec);
 	return 1;
@@ -393,11 +391,12 @@ static int v_remove(parse_rec *objrec) {
 			sysmsgd(46, "$You're$ not wearing anything.", objrec);
 			return 0;
 		}
-		safecontloop(i, j, 1000)
-		if (it_canmove(i)) {
+		safecontloop(i, j, 1000) if (it_canmove(i)) {
 			parse_rec tmp;
-			if (PURE_WEAR) drop_obj(i);
-			else it_move(i, 1);  /* Really need to check to make sure
+			if (PURE_WEAR)
+				drop_obj(i);
+			else
+				it_move(i, 1); /* Really need to check to make sure
                    we haven't exceeded weight requirement
                  here */
 			make_parserec(i, &tmp);
@@ -414,8 +413,10 @@ static int v_remove(parse_rec *objrec) {
 		return 0;
 	}
 	sysmsgd(9, "$You$ take off $the_n$$noun$.", objrec);
-	if (PURE_WEAR) drop_obj(obj);  /* Required to be consistent w/ AGT */
-	else v_get(objrec);  /* (trap can_carry problems) */
+	if (PURE_WEAR)
+		drop_obj(obj); /* Required to be consistent w/ AGT */
+	else
+		v_get(objrec); /* (trap can_carry problems) */
 	return 1;
 }
 
@@ -427,12 +428,13 @@ static void v_drop(parse_rec *objrec) {
 	if (obj == ALL_MARK) {
 		if (player_contents == 0)
 			sysmsgd(45, "$You$ don't have anything to drop.", objrec);
-		else safecontloop(i, j, 1) {
-			parse_rec tmp;
-			make_parserec(i, &tmp);
-			drop_obj(i);
-			sysmsgd(9, "$You$ $verb$ $the_n$$noun$.", &tmp);
-		}
+		else
+			safecontloop(i, j, 1) {
+				parse_rec tmp;
+				make_parserec(i, &tmp);
+				drop_obj(i);
+				sysmsgd(9, "$You$ $verb$ $the_n$$noun$.", &tmp);
+			}
 		return;
 	}
 	if (!it_possess(obj)) {
@@ -457,9 +459,8 @@ static void v_wear(parse_rec *objrec) {
 	obj = objrec->obj;
 	if (objrec->info == D_ALL) {
 		cnt = 0;
-		nounloop(i)
-		if (noun[i].location != 1000 && visible(i + first_noun) &&
-		        noun[i].wearable) {
+		nounloop(i) if (noun[i].location != 1000 && visible(i + first_noun) &&
+		                noun[i].wearable) {
 			parse_rec tmp;
 			make_parserec(i + first_noun, &tmp);
 			if (can_wear(&tmp)) {
@@ -482,7 +483,8 @@ static void v_wear(parse_rec *objrec) {
 		sysmsgd(37, "$You$ $are$ already wearing $the_n$$noun$.", objrec);
 		return;
 	}
-	if (!can_wear(objrec)) return;
+	if (!can_wear(objrec))
+		return;
 	sysmsgd(42, "$You$ put on $the_n$$noun$.", objrec);
 	it_move(obj, 1000);
 }
@@ -557,7 +559,8 @@ static int do_lock(uchar l_or_u, parse_rec *nounrec, parse_rec *objrec) {
 
 /* First argument indicates lock or unlock-- 0=lock, 1=unlock */
 static void v_lock(uchar l_or_u, parse_rec *nounrec, parse_rec *objrec) {
-	if (!do_lock(l_or_u, nounrec, objrec)) return;
+	if (!do_lock(l_or_u, nounrec, objrec))
+		return;
 	/* Need to fix these messages: */
 	alt_sysmsg((l_or_u ? 112 : 122),
 	           "$You$ $verb$ $the_n$$noun$ with $the_o$$object$.",
@@ -591,7 +594,8 @@ static void v_open(parse_rec *nounrec, parse_rec *objrec) {
 		return;
 	}
 	if (iobj_ != 0) { /* Need to do unlock action */
-		if (!do_lock(1, nounrec, objrec)) return;
+		if (!do_lock(1, nounrec, objrec))
+			return;
 		/* If something goes wrong, return */
 	}
 	if (noun[dnoun].lockable && noun[dnoun].locked) {
@@ -602,7 +606,8 @@ static void v_open(parse_rec *nounrec, parse_rec *objrec) {
 	if (iobj_ != 0) /* Obviously these messages need improvement */
 		alt_sysmsg(81, "$You$ have opened $the_n$$noun$ with $the_o$$object$.",
 		           nounrec, objrec);
-	else alt_sysmsg(82, "$You$ have opened $the_n$$noun$.", nounrec, objrec);
+	else
+		alt_sysmsg(82, "$You$ have opened $the_n$$noun$.", nounrec, objrec);
 	if (noun[dnoun].contents != 0)
 		alt_sysmsg(187, "Inside, $you$ see the following:", nounrec, objrec);
 	print_contents(dobj_, 1);
@@ -631,7 +636,6 @@ static void v_close(parse_rec *nounrec) {
 	sysmsgd(89, "$You$ have closed $the_n$$noun$.", nounrec);
 }
 
-
 static void v_light(int newstate, parse_rec *nounrec) {
 	int dobj_;
 	dobj_ = p_obj(nounrec);
@@ -644,18 +648,21 @@ static void v_light(int newstate, parse_rec *nounrec) {
 	if (noun[dobj_].on == newstate) {
 		if (newstate)
 			sysmsgd(136, "$The_n$$noun$ $n_is$ already lit.", nounrec);
-		else sysmsgd(141,
-			             "$The_n$$noun$ $n_is$n't lit, so $you$ can't extinguish $n_indir$",
-			             nounrec);
+		else
+			sysmsgd(141,
+			        "$The_n$$noun$ $n_is$n't lit, so $you$ can't extinguish $n_indir$",
+			        nounrec);
 		return;
 	}
 	noun[dobj_].on = newstate;
-	if (newstate) sysmsgd(138, "$The_n$$noun$ $n_is$ now lit.", nounrec);
-	else sysmsgd(143, "$The_n$$noun$ $n_is$ no longer lit.", nounrec);
+	if (newstate)
+		sysmsgd(138, "$The_n$$noun$ $n_is$ now lit.", nounrec);
+	else
+		sysmsgd(143, "$The_n$$noun$ $n_is$ no longer lit.", nounrec);
 }
 
 static void v_turn(word prep_, parse_rec *nounrec) {
-	int newstate;  /* 1=on, 0=off */
+	int newstate; /* 1=on, 0=off */
 	int dobj_;
 	dobj_ = p_obj(nounrec);
 
@@ -683,8 +690,6 @@ static void v_turn(word prep_, parse_rec *nounrec) {
 	sysmsgd(newstate ? 139 : 144, "$The_n$$noun$ $n_is$ now $prep_$.", nounrec);
 }
 
-
-
 /* Missile=1 if actually firing a weapon. */
 static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 	int targ, wep;
@@ -703,7 +708,8 @@ static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 	curr_creat_rec = targrec; /* So error messages will print properly */
 	if (wep > 0 && !player_has(wep)) {
 		alt_sysmsg(98, "(Getting $the_o$$object$ first)", targrec, weprec);
-		if (!v_get(weprec)) return;
+		if (!v_get(weprec))
+			return;
 	}
 	if ((targ > 0 && !tcreat(targ)) || targ < 0) {
 		alt_sysmsg(missile ? 90 : 93,
@@ -724,7 +730,8 @@ static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 			alt_sysmsg(97, "$The_o$$object$ $o_is$ out of ammunition.",
 			           targrec, weprec);
 			return;
-		} else noun[wep - first_noun].num_shots--;
+		} else
+			noun[wep - first_noun].num_shots--;
 	}
 
 	if (targ == 0) {
@@ -740,7 +747,8 @@ static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 	if (wep == 0) { /* and !missile, but that's taken care of above */
 		sysmsgd(creature[targ - first_creat].hostile ? 91 : 92,
 		        "$You$ attack $the_n$$noun$ with $your$ bare hands, but $n_pro$ "
-		        "evades $your$ attack.", targrec);
+		        "evades $your$ attack.",
+		        targrec);
 		return;
 	}
 
@@ -748,15 +756,16 @@ static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 		if (missile)
 			alt_sysmsg(creature[targ - first_creat].hostile ? 99 : 101,
 			           "$You$ shoot $the_n$$noun$; "
-			           "$n_pro$ vanishes in a cloud of red smoke."
-			           , targrec, weprec);
+			           "$n_pro$ vanishes in a cloud of red smoke.",
+			           targrec, weprec);
 		else
 			alt_sysmsg(creature[targ - first_creat].hostile ? 49 : 53,
 			           "$You$ kill $the_o$$object$; "
 			           "$o_pro$ vanishes in a cloud of red smoke.",
 			           weprec, targrec);
 		it_destroy(targ);
-		if (!missile) drop_obj(wep);
+		if (!missile)
+			drop_obj(wep);
 		return;
 	} else {
 		if (!missile) {
@@ -764,11 +773,13 @@ static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 			if (creature[targ - first_creat].hostile) {
 				alt_sysmsg(50, NULL, weprec, targrec); /* Preliminary message */
 				msgnum = 51;
-			} else msgnum = 54;
+			} else
+				msgnum = 54;
 			if (noun[wep - first_noun].drinkable) { /* i.e. a liquid */
 				alt_sysmsg(msgnum + 1, "$You$ splash $the_o$$object$ with "
-				           "$the_n$$noun$, but the liquid quickly evaporates "
-				           "without noticable effect.", weprec, targrec);
+				                       "$the_n$$noun$, but the liquid quickly evaporates "
+				                       "without noticable effect.",
+				           weprec, targrec);
 				it_destroy(wep);
 			} else {
 				alt_sysmsg(msgnum,
@@ -778,16 +789,18 @@ static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 				drop_obj(wep);
 			}
 		} else
-			alt_sysmsg(creature[targ - first_creat].hostile ? 100 : 102 ,
+			alt_sysmsg(creature[targ - first_creat].hostile ? 100 : 102,
 			           "$You$ fire at $the_n$$noun$ with $the_o$$object$, but $your$ "
-			           "shots don't seem to have any effect.", targrec, weprec);
+			           "shots don't seem to have any effect.",
+			           targrec, weprec);
 
 		if (creature[targ - first_creat].hostile &&
-		        ++creature[targ - first_creat].counter >=
+		    ++creature[targ - first_creat].counter >=
 		        creature[targ - first_creat].threshold) {
 			alt_sysmsg(204, "$The_n$$noun$ counterattacks! $N_pro$ fights "
-			           "viciously and $you$ $are$ unable to defend $your$self "
-			           "against $n_indir$.", targrec, weprec);
+			                "viciously and $you$ $are$ unable to defend $your$self "
+			                "against $n_indir$.",
+			           targrec, weprec);
 			deadflag = 1;
 		}
 	}
@@ -803,8 +816,7 @@ static rbool v_put(parse_rec *nounrec, word prep_,
 	dobj_ = p_obj(nounrec);
 	iobj_ = p_obj(objrec);
 
-	in_prep = (prep_ == ext_code[win] || prep_ == ext_code[winto]
-	           || prep_ == ext_code[winside]);
+	in_prep = (prep_ == ext_code[win] || prep_ == ext_code[winto] || prep_ == ext_code[winside]);
 
 	if (prep_ == 0 || iobj_ == 0) {
 		v_drop(nounrec);
@@ -844,7 +856,8 @@ static rbool v_put(parse_rec *nounrec, word prep_,
 	if (player_has(iobj_) && !in_prep) {
 		alt_sysmsg(is_within(iobj_, 1, 0) ? 68 : 69,
 		           "$You$ can't put $the_n$$noun$ $prep_$ something that $you$ "
-		           "$are$ carrying.", nounrec, objrec);
+		           "$are$ carrying.",
+		           nounrec, objrec);
 		return 0;
 	}
 
@@ -864,7 +877,8 @@ static rbool v_put(parse_rec *nounrec, word prep_,
 		if (!troom(parent)) {
 			parse_rec parent_rec;
 			make_parserec(parent, &parent_rec);
-			if (!v_put(nounrec, ext_code[win], &parent_rec, 1)) return 0;
+			if (!v_put(nounrec, ext_code[win], &parent_rec, 1))
+				return 0;
 		} else {
 			if (it_loc(dobj_) == 1000)
 				alt_sysmsg(216, "(Taking $n_indir$ off first)", nounrec, objrec);
@@ -874,14 +888,14 @@ static rbool v_put(parse_rec *nounrec, word prep_,
 		assert(noun[dobj_].pos_prep == 0); /* v_put should have ensured this */
 		noun[dobj_].pos_prep = prep_;
 		noun[dobj_].pos_name = it_name(iobj_);
-		if (iobj_ > 0) noun[dobj_].nearby_noun = iobj_;
+		if (iobj_ > 0)
+			noun[dobj_].nearby_noun = iobj_;
 	}
 	if (!child_proc)
 		alt_sysmsg(67, "$You$ place $the_n$$noun$ $prep_$ $the_o$$object$.",
 		           nounrec, objrec);
 	return 1;
 }
-
 
 /* at, to, in, into, across, inside */
 static void v_throw(parse_rec *nounrec, word prep_, parse_rec *objrec) {
@@ -902,14 +916,14 @@ static void v_throw(parse_rec *nounrec, word prep_, parse_rec *objrec) {
 	if (prep_ != ext_code[wat])
 		v_put(nounrec, prep_, objrec, 0);
 	else /* prep_ is AT */
-		if (!noun[dobj_ - first_noun].movable) {
-			alt_sysmsg(215, "$You$ can't move $the_n$$adjective$ $noun$.",
-			           nounrec, objrec);
-			return;
-		}
-	if (tcreat(iobj_))  /* If a creature, treat as an attack */
+	    if (!noun[dobj_ - first_noun].movable) {
+		alt_sysmsg(215, "$You$ can't move $the_n$$adjective$ $noun$.",
+		           nounrec, objrec);
+		return;
+	}
+	if (tcreat(iobj_)) /* If a creature, treat as an attack */
 		v_attack(0, objrec, nounrec);
-	else {  /* THROW AT somethin inanimate */
+	else { /* THROW AT somethin inanimate */
 		if (dobj_ == iobj_) {
 			alt_sysmsg(56, "$You$ can't $verb$ $the_n$$noun$ $prep_$ $n_indir$self.",
 			           nounrec, objrec);
@@ -922,11 +936,12 @@ static void v_throw(parse_rec *nounrec, word prep_, parse_rec *objrec) {
 			/* A liquid */
 			if (tnoun(iobj_) && noun[iobj_ - first_noun].open)
 				alt_sysmsg(58, "$You$ throw $the_n$$noun$ into $the_o$$object$, "
-				           "but $n_pro$ quickly evaporates.",
+				               "but $n_pro$ quickly evaporates.",
 				           nounrec, objrec);
 			else
 				alt_sysmsg(57, "$The_n$$noun$ splashes on $the_o$$object$ but "
-				           "quickly evaporates.", nounrec, objrec);
+				               "quickly evaporates.",
+				           nounrec, objrec);
 			it_destroy(dobj_);
 		} else { /* _Not_ a liquid: */
 			if (tnoun(iobj_) && noun[iobj_ - first_noun].open)
@@ -937,7 +952,7 @@ static void v_throw(parse_rec *nounrec, word prep_, parse_rec *objrec) {
 					return;
 				} else {
 					alt_sysmsg(205, "You $verb$ $the_n$$noun$ into $the_o$$object$, "
-					           "but there isn't enough room and $n_pro$ falls out.",
+					                "but there isn't enough room and $n_pro$ falls out.",
 					           nounrec, objrec);
 				}
 			else
@@ -950,22 +965,17 @@ static void v_throw(parse_rec *nounrec, word prep_, parse_rec *objrec) {
 	}
 }
 
-
-
 void v_inventory(void) {
 	if (player_contents != 0) {
 		sysmsg(130, "$You're$ carrying:");
-		print_contents(1, 1);  /* obj=1=self, ind_lev=1 */
-	} else sysmsg(131, "$You$ $are$ empty-handed.");
+		print_contents(1, 1); /* obj=1=self, ind_lev=1 */
+	} else
+		sysmsg(131, "$You$ $are$ empty-handed.");
 	if (player_worn != 0) {
 		sysmsg(132, "$You're$ wearing:");
 		print_contents(1000, 1);
 	}
 }
-
-
-
-
 
 static void v_quit(void) {
 	sysmsg(145, "Are you sure you want to quit?");
@@ -977,8 +987,7 @@ static void v_quit(void) {
 
 const char dirname[12][10] = {"north", "south", "east", "west",
                               "northeast", "northwest", "southeast", "southwest",
-                              "up", "down", "in", "out"
-                             };
+                              "up", "down", "in", "out"};
 
 void v_listexit(void) {
 	int i, j, k;
@@ -989,7 +998,8 @@ void v_listexit(void) {
 	}
 	j = k = 0;
 	for (i = 0; i < 12; i++)
-		if (room[loc].path[i] != 0) k++;
+		if (room[loc].path[i] != 0)
+			k++;
 	if (k == 0)
 		sysmsg(224, "There are no immediately visible exits.");
 	else {
@@ -997,25 +1007,24 @@ void v_listexit(void) {
 		for (i = 0; i < 12; i++)
 			if (room[loc].path[i] != 0) {
 				j++;
-				if (j > 1) writestr(", ");
-				if (j > 1 && j == k) writestr("or ");
-				if (i < 8) writestr("the ");
+				if (j > 1)
+					writestr(", ");
+				if (j > 1 && j == k)
+					writestr("or ");
+				if (i < 8)
+					writestr("the ");
 				writestr(dirname[i]);
 			}
 		writeln(".");
 	}
 }
 
-
 static void v_yell(void) {
 	sysmsg(150, "YAAAAEEEEEEEEOOOOOOUUUUUAAAAHHHHHH!!!!!");
 }
 
-
-
 /* ------------------------------------------------------------------- */
 /*  VERB EXECUTION AND GRAMMER CHECKING */
-
 
 static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag) {
 	int i;
@@ -1023,16 +1032,18 @@ static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag
 
 	/* We turn off certain sorts of grammar checking if either PURE_GRAMMAR
 	   is set or there has been signicant redirection. */
-	if (redir_flag < 2) redir_flag = 0;
-	if (PURE_GRAMMAR) redir_flag = 1;
+	if (redir_flag < 2)
+		redir_flag = 0;
+	if (PURE_GRAMMAR)
+		redir_flag = 1;
 
 	/* First of all, no constraints on dummy_verb grammer */
-	if (vb_ >= BASE_VERB && vb_ < TOTAL_VERB) return 0;
+	if (vb_ >= BASE_VERB && vb_ < TOTAL_VERB)
+		return 0;
 
-	if (!(verbflag[vb_]&VERB_TAKEOBJ)
-	        && (dobj_ != 0 || iobj_ != 0 || prep_ > 0)
-	        && vb_ != OLD_VERB + 11) {
-		if (redir_flag) return 0; /* Original AGT doesn't check this. */
+	if (!(verbflag[vb_] & VERB_TAKEOBJ) && (dobj_ != 0 || iobj_ != 0 || prep_ > 0) && vb_ != OLD_VERB + 11) {
+		if (redir_flag)
+			return 0; /* Original AGT doesn't check this. */
 		sysmsg(190, "$Verb$ doesn't take an object.");
 		return -1;
 	}
@@ -1041,12 +1052,16 @@ static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag
 	   check prepositions unless the verb actually accepts at least one.
 	   (this reflects the behavior of the original AGT interpreters). */
 	if (prep_ > 0 && !(redir_flag && syntbl[preplist[vb_]] == 0)) {
-		for (i = preplist[vb_]; syntbl[i] != 0 && syntbl[i] != prep_; i++);
+		for (i = preplist[vb_]; syntbl[i] != 0 && syntbl[i] != prep_; i++)
+			;
 		if (syntbl[i] != prep_) {
 			msgnum = 191;
-			if (vb_ == 15) msgnum = 74; /* Open */
-			if (vb_ == 17) msgnum = 116; /* Lock */
-			if (vb_ == 14) msgnum = 48; /* Throw */
+			if (vb_ == 15)
+				msgnum = 74; /* Open */
+			if (vb_ == 17)
+				msgnum = 116; /* Lock */
+			if (vb_ == 14)
+				msgnum = 48; /* Throw */
 			sysmsg(msgnum, "$Verb$ doesn't take $prep_$ as a preposition.");
 			return -1;
 		}
@@ -1058,14 +1073,15 @@ static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag
 	if (dobj_ == ALL_MARK && vb_ != 33 && vb_ != 41 && vb_ != 51 && vb_ != 52) {
 		/* i.e. verb is not GET,DROP,WEAR,REMOVE */
 		msgnum = 5;
-		if (vb_ == 31) msgnum = 155; /* Talk */
-		if (vb_ == 34) msgnum = 160; /* Ask */
+		if (vb_ == 31)
+			msgnum = 155; /* Talk */
+		if (vb_ == 34)
+			msgnum = 160; /* Ask */
 		sysmsg(5, "You can't use ALL with '$verb$'.");
 		return -1;
 	}
 	return 0;
 }
-
 
 /* This checks to make sure that all of the objects are present */
 static rbool verify_scope(int vb_, parse_rec *nounrec,
@@ -1075,29 +1091,35 @@ static rbool verify_scope(int vb_, parse_rec *nounrec,
 	dobj_ = nounrec->obj;
 	iobj_ = objrec->obj;
 
-	if (!(verbflag[vb_]&VERB_TAKEOBJ)) return 1;
+	if (!(verbflag[vb_] & VERB_TAKEOBJ))
+		return 1;
 	/* No objects (and we've already checked the grammar in
 	a previous routine) */
 
 	if (vb_ == 31 || vb_ == 34) /* TELL, ASK */
-		return 1;  /* These verbs handle this themselves */
+		return 1;               /* These verbs handle this themselves */
 
 	if (dobj_ == 0) {
 		sysmsg(184, "What do $you$ want to $verb$?");
 		return 0;
 	}
-	if (dobj_ != ALL_MARK && !genvisible(nounrec)
-	        && !(it_door(dobj_, nounrec->noun) && /* DOOR object handling */
-	             (vb_ == 33 || vb_ == 15 || vb_ == 16 || vb_ == 17 || vb_ == 18
-	              || vb_ == 29 || vb_ == 24 || vb_ == 22 || vb_ == 21))) {
+	if (dobj_ != ALL_MARK && !genvisible(nounrec) && !(it_door(dobj_, nounrec->noun) && /* DOOR object handling */
+	                                                   (vb_ == 33 || vb_ == 15 || vb_ == 16 || vb_ == 17 || vb_ == 18 || vb_ == 29 || vb_ == 24 || vb_ == 22 || vb_ == 21))) {
 		msgnum = 3;
-		if (vb_ == 33) msgnum = 28; /* Get */
-		if (vb_ == 29) msgnum = 63; /* Put */
-		if (vb_ == 15) msgnum = 75; /* Open */
-		if (vb_ == 16) msgnum = 86; /* Close */
-		if (vb_ == 24) msgnum = 126; /* Drink */
-		if (vb_ == 22) msgnum = 133; /* Read */
-		if (vb_ == 21) msgnum = 179; /* Change_Locations */
+		if (vb_ == 33)
+			msgnum = 28; /* Get */
+		if (vb_ == 29)
+			msgnum = 63; /* Put */
+		if (vb_ == 15)
+			msgnum = 75; /* Open */
+		if (vb_ == 16)
+			msgnum = 86; /* Close */
+		if (vb_ == 24)
+			msgnum = 126; /* Drink */
+		if (vb_ == 22)
+			msgnum = 133; /* Read */
+		if (vb_ == 21)
+			msgnum = 179; /* Change_Locations */
 		sysmsg(msgnum, "$You$ don't see any $noun$ here.");
 		return 0;
 	}
@@ -1105,7 +1127,8 @@ static rbool verify_scope(int vb_, parse_rec *nounrec,
 	if (prep_ != 0 && vb_ != 35) { /* verb 35 is TURN e.g. ON|OFF */
 		if (iobj_ == 0) {
 			msgnum = 214;
-			if (vb_ == 29) msgnum = 70; /* Put */
+			if (vb_ == 29)
+				msgnum = 70; /* Put */
 			sysmsg(msgnum, "What do $you$ want to $verb$ $the_n$$noun$ $prep_$?");
 			return 0;
 		}
@@ -1115,15 +1138,16 @@ static rbool verify_scope(int vb_, parse_rec *nounrec,
 		}
 		if (iobj_ != ALL_MARK && !genvisible(objrec)) {
 			msgnum = 4;
-			if (vb_ == 15) msgnum = 76; /* Open */
-			if (vb_ == 18) msgnum = 207; /* Unlock */
+			if (vb_ == 15)
+				msgnum = 76; /* Open */
+			if (vb_ == 18)
+				msgnum = 207; /* Unlock */
 			sysmsg(msgnum, "$You$ don't see any $object$ here.");
 			return 0;
 		}
 	}
 	return 1;
 }
-
 
 static void exec_verb_info(void) {
 	char *a, *b, *c;
@@ -1132,7 +1156,7 @@ static void exec_verb_info(void) {
 	a = objname(dobj);
 	b = objname(iobj);
 	c = objname(actor);
-	sprintf(buff, "\t\t]]%s, %s %s(%ld) %s %s(%ld)", c, dict[ syntbl[auxsyn[vb]] ],
+	sprintf(buff, "\t\t]]%s, %s %s(%ld) %s %s(%ld)", c, dict[syntbl[auxsyn[vb]]],
 	        a, dobj_rec->num, prep == 0 ? "->" : dict[prep], b, iobj_rec->num);
 	writeln(buff);
 	rfree(a);
@@ -1140,11 +1164,10 @@ static void exec_verb_info(void) {
 	rfree(c);
 }
 
-
 /* Returns true if the turn is done. */
 rbool metacommand_cycle(int save_vb, int *p_redir_flag) {
-	if (!have_meta) return 0;
-
+	if (!have_meta)
+		return 0;
 
 	/* Now check metacommands */
 	if (DEBUG_AGT_CMD)
@@ -1152,8 +1175,7 @@ rbool metacommand_cycle(int save_vb, int *p_redir_flag) {
 	/* ANY metacommands: */
 	supress_debug = !debug_any;
 	clear_stack();
-	if ((PURE_METAVERB || !was_metaverb)
-	        && 2 == scan_metacommand(0, 0, 0, 0, 0, NULL))
+	if ((PURE_METAVERB || !was_metaverb) && 2 == scan_metacommand(0, 0, 0, 0, 0, NULL))
 		return 1;
 
 	supress_debug = 0;
@@ -1181,18 +1203,17 @@ rbool metacommand_cycle(int save_vb, int *p_redir_flag) {
 	return 0;
 }
 
-
-
 /* Execute both meta-commands and more normal commands */
 /* May need tweaking for AGAIN and UNDO */
 void exec_verb(void) {
-	int objswap;  /* 1=if iobj has been moved to dobj */
+	int objswap; /* 1=if iobj has been moved to dobj */
 	/* (Done for metacommands when there is an iobj but no dobj) */
 	rbool turndone;
 	int save_vb;
 	int redir_flag;
 
-	if (DEBUG_EXEC_VERB) exec_verb_info();
+	if (DEBUG_EXEC_VERB)
+		exec_verb_info();
 
 	do_disambig = 0; /* We're doing this for real */
 
@@ -1200,8 +1221,7 @@ void exec_verb(void) {
 	cmd_saveable = 1;
 	redir_flag = 0;
 
-	was_metaverb = (verbflag[vb] & VERB_META)
-	               && actor == 0 && dobj == 0 && prep == 0 && iobj == 0;
+	was_metaverb = (verbflag[vb] & VERB_META) && actor == 0 && dobj == 0 && prep == 0 && iobj == 0;
 
 	/* The following is purely for metacommands */
 	if (dobj == 0 && dobj_rec->info != D_NUM && iobj != 0) {
@@ -1209,7 +1229,8 @@ void exec_verb(void) {
 		rfree(dobj_rec);
 		dobj_rec = copy_parserec(iobj_rec);
 		objswap = 1;
-	} else objswap = 0;
+	} else
+		objswap = 0;
 
 	beforecmd = 1; /* This is for 1.8x support */
 
@@ -1229,13 +1250,18 @@ void exec_verb(void) {
 	else if (!turndone) {
 		/* Execute normal verbs: check grammer and then call */
 		if (!objswap) {
-			if (checkgram(vb, dobj, prep, iobj, redir_flag) == -1) return;
-		} else if (checkgram(vb, 0, prep, iobj, redir_flag) == -1) return;
+			if (checkgram(vb, dobj, prep, iobj, redir_flag) == -1)
+				return;
+		} else if (checkgram(vb, 0, prep, iobj, redir_flag) == -1)
+			return;
 
-		if (!verify_scope(vb, dobj_rec, prep, iobj_rec)) return;
+		if (!verify_scope(vb, dobj_rec, prep, iobj_rec))
+			return;
 
-		if (vb < 13 && vb > 0) v_go(vb);
-		else switch (vb) {
+		if (vb < 13 && vb > 0)
+			v_go(vb);
+		else
+			switch (vb) {
 
 			case 14:
 				v_throw(dobj_rec, prep, iobj_rec);
@@ -1284,23 +1310,23 @@ void exec_verb(void) {
 				break;
 			case 27:
 				sysmsg(149, "Time passes...");
-				break;            /* wait */
+				break; /* wait */
 			case 55:
 				v_go(13);
-				break;  /* magic_word */
+				break; /* magic_word */
 
-			/* case 19: v_look();break;  -- this is moved up above */
+				/* case 19: v_look();break;  -- this is moved up above */
 
 			case 50:
 				runptr(loc, help_ptr, "Sorry, you're on your own here.",
 				       2, NULL, NULL);
-				break;   /* HELP */
+				break; /* HELP */
 			case 32:
 				v_inventory();
 				break;
 			case 56:
 				v_view(dobj_rec);
-				break;  /* VIEW */
+				break; /* VIEW */
 			case 35:
 				if (prep > 0)
 					v_turn(prep, dobj_rec); /* TURN ON|OFF */
@@ -1315,22 +1341,22 @@ void exec_verb(void) {
 				break;
 			case 23:
 				v_eat(0, dobj_rec);
-				break;  /* EAT */
+				break; /* EAT */
 			case 24:
 				v_eat(1, dobj_rec);
-				break;  /* DRINK */
+				break; /* DRINK */
 			case 37:
 				v_noun(1, dobj_rec);
-				break;   /* PULL  */
+				break; /* PULL  */
 			case 38:
 				v_noun(3, dobj_rec);
-				break;  /* PLAY */
+				break; /* PLAY */
 			case 47:
 				v_light(1, dobj_rec);
-				break;   /* LIGHT */
+				break; /* LIGHT */
 			case 48:
 				v_light(0, dobj_rec);
-				break;   /* EXTINGUISH */
+				break; /* EXTINGUISH */
 			case 21:
 				v_noun(4, dobj_rec);
 				break; /* Change Location */
@@ -1340,7 +1366,7 @@ void exec_verb(void) {
 				break;
 			case 33:
 				v_get(dobj_rec);
-				break;    /* ? */
+				break; /* ? */
 			case 52:
 				v_remove(dobj_rec);
 				break;
@@ -1373,7 +1399,7 @@ void exec_verb(void) {
 			case 44:
 				cmd_saveable = 0;
 				verboseflag = 1;
-				v_look();  /* VERBOSE */
+				v_look(); /* VERBOSE */
 				writeln("[Now in VERBOSE mode (room descriptions will be"
 				        " printed every time you enter a room)]");
 				break;
@@ -1394,12 +1420,12 @@ void exec_verb(void) {
 				cmd_saveable = 0;
 				script(0);
 				break;
-			case 58:         /* INSTRUCTIONS */
+			case 58: /* INSTRUCTIONS */
 				agt_clrscr();
 				print_instructions(hold_fc);
 				close_ins_file();
 				break;
-			case (OLD_VERB+1):
+			case (OLD_VERB + 1):
 				cmd_saveable = 0; /* RESTART */
 				if (restart_state == NULL)
 					writeln("Sorry, too little memory to support RESTART.");
@@ -1408,45 +1434,51 @@ void exec_verb(void) {
 					return;
 				}
 				break;
-			case (OLD_VERB+4):
-				cmd_saveable = 0;  /* NOTIFY */
+			case (OLD_VERB + 4):
+				cmd_saveable = 0; /* NOTIFY */
 				notify_flag = !notify_flag;
-				if (notify_flag) writeln("Score notification is now on.");
-				else writeln("Score notification is now off.");
+				if (notify_flag)
+					writeln("Score notification is now on.");
+				else
+					writeln("Score notification is now off.");
 				break;
-			case (OLD_VERB+5):
+			case (OLD_VERB + 5):
 				listexit_flag = 1;
 				writeln("[LISTEXIT mode on: room exits will be listed.]");
 				break; /* LISTEXIT ON */
-			case (OLD_VERB+6):
+			case (OLD_VERB + 6):
 				listexit_flag = 0;
 				writeln("[LISTEXIT mode off: room exits will not be listed.]");
 				break;
-			case (OLD_VERB+7):  /* AGILDEBUG */
-				if (debug_mode) get_debugcmd();
-				else writeln("Nice try.");
+			case (OLD_VERB + 7): /* AGILDEBUG */
+				if (debug_mode)
+					get_debugcmd();
+				else
+					writeln("Nice try.");
 				break;
-			case (OLD_VERB+8): /* LOG, LOG ON */
+			case (OLD_VERB + 8): /* LOG, LOG ON */
 				logon();
 				break;
-			case (OLD_VERB+9): /* LOG OFF */
-				if (logflag & 2) break; /* We're replaying; ignore. */
-				if (logflag & 1) close_pfile(log_out, 5);
+			case (OLD_VERB + 9): /* LOG OFF */
+				if (logflag & 2)
+					break; /* We're replaying; ignore. */
+				if (logflag & 1)
+					close_pfile(log_out, 5);
 				logflag = 0;
 				break;
-			case (OLD_VERB+10): /* REPLAY n */
+			case (OLD_VERB + 10): /* REPLAY n */
 				fast_replay = 0;
 				replay(dobj_rec->num);
 				break;
-			case (OLD_VERB+11): /* REPLAY STEP */
+			case (OLD_VERB + 11): /* REPLAY STEP */
 				fast_replay = 0;
 				replay(-1);
 				break;
-			case (OLD_VERB+13): /* REPLAY FAST */
+			case (OLD_VERB + 13): /* REPLAY FAST */
 				fast_replay = 1;
 				replay(0);
 				break;
-			case (OLD_VERB+12): /* MENU */
+			case (OLD_VERB + 12): /* MENU */
 				if (verbmenu == NULL) {
 					writeln("Sorry, but menus are not supported by this game.");
 					menu_mode = 0;
@@ -1461,13 +1493,13 @@ void exec_verb(void) {
 			case 57: /* AFTER ?!? */
 				writeln("INTERNAL ERROR: Invalid execution of AFTER");
 				break;
-			case (OLD_VERB+14): /* SOUND ON */
+			case (OLD_VERB + 14): /* SOUND ON */
 				musiccmd(8, 0);
 				break;
-			case (OLD_VERB+15): /* SOUND OFF */
+			case (OLD_VERB + 15): /* SOUND OFF */
 				musiccmd(9, 0);
 				break;
-			case (OLD_VERB+16):  /* INTRO */
+			case (OLD_VERB + 16): /* INTRO */
 				agt_clrscr();
 				print_descr(intro_ptr, 1);
 				break;
@@ -1501,7 +1533,7 @@ void exec_verb(void) {
 		supress_debug = !debug_any;
 		clear_stack();
 		if ((PURE_METAVERB || !was_metaverb) &&
-		        2 == scan_metacommand(0, 57, 0, 0, 0, NULL))
+		    2 == scan_metacommand(0, 57, 0, 0, 0, NULL))
 			turndone = 1;
 		supress_debug = 0;
 	}
@@ -1509,14 +1541,9 @@ void exec_verb(void) {
 	/* If the player really typed 'q' and we generated an "EndGame"
 	   metacommand, then really quit. (usually it just gives the
 	   "restart, restore, undo, quit..." message */
-	if (save_vb == 30 && endflag) quitflag = 1;
+	if (save_vb == 30 && endflag)
+		quitflag = 1;
 }
-
-
-
-
-
-
 
 /* We need to be able to handle both NOUN and OBJECT searches */
 /* If obj==0, then we are doing a noun search, otherwise we are doing
@@ -1527,7 +1554,6 @@ void exec_verb(void) {
      Other values may be returned if an ErrMessage token is encountered.
      500 is the cutoff for ALL expansion.
   */
-
 
 int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
                    parse_rec *dorec, word prep_, parse_rec *iorec) {
@@ -1569,7 +1595,7 @@ int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
 		return DISAMBIG_SUCC; /* We matched with something */
 	case 0:
 	case 1:
-		break;  /* Nothing matched, but we still need to check
+		break; /* Nothing matched, but we still need to check
               built-in verbs */
 	case 2:
 		free_all_parserec();
@@ -1581,8 +1607,6 @@ int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
 	free_all_parserec();
 	return 0;
 }
-
-
 
 int check_obj(parse_rec *act, int verbid,
               parse_rec *dorec, word prep_, parse_rec *iorec) {
@@ -1598,7 +1622,8 @@ int check_obj(parse_rec *act, int verbid,
 	if (have_meta) {
 		beforecmd = 1;
 		result = objcheck_cycle(&success, act, verbid, dorec, prep_, iorec);
-		if (success) return result;
+		if (success)
+			return result;
 	}
 
 	/* Check built-in verbs here */
@@ -1606,47 +1631,47 @@ int check_obj(parse_rec *act, int verbid,
 		switch (verbid) {
 		case 14: /* THROW dobj prep_ iobj */
 		case 29: /* PUT dobj prep_ iobj */
-			if (do_disambig == 2 && genvisible(iorec)) return DISAMBIG_SUCC;
+			if (do_disambig == 2 && genvisible(iorec))
+				return DISAMBIG_SUCC;
 		// fallthrough
 		case 41: /* DROP */
-			if (do_disambig == 1 && it_possess(dobj)) return DISAMBIG_SUCC;
+			if (do_disambig == 1 && it_possess(dobj))
+				return DISAMBIG_SUCC;
 			break;
 
 		case 49: /* SHOOT ... AT or WITH ... */
 			if (prep_ == ext_code[wwith]) {
-				if (do_disambig == 1 && tcreat(dobj)) return DISAMBIG_SUCC;
-				else if (do_disambig == 2 && it_possess(iobj) && tnoun(iobj)
-				         && noun[iobj - first_noun].shootable)
+				if (do_disambig == 1 && tcreat(dobj))
 					return DISAMBIG_SUCC;
-			} else {         /* prep_!=wwith */
-				if (do_disambig == 2 && tcreat(iobj)) return DISAMBIG_SUCC;
-				else if (do_disambig == 1 && it_possess(dobj) && tnoun(dobj)
-				         && noun[dobj - first_noun].shootable)
+				else if (do_disambig == 2 && it_possess(iobj) && tnoun(iobj) && noun[iobj - first_noun].shootable)
+					return DISAMBIG_SUCC;
+			} else { /* prep_!=wwith */
+				if (do_disambig == 2 && tcreat(iobj))
+					return DISAMBIG_SUCC;
+				else if (do_disambig == 1 && it_possess(dobj) && tnoun(dobj) && noun[dobj - first_noun].shootable)
 					return DISAMBIG_SUCC;
 			}
 			break;
 
 		case 26: /* ATTACK ... WITH ... */
-			if (do_disambig == 2 && it_possess(iobj)) return DISAMBIG_SUCC;
+			if (do_disambig == 2 && it_possess(iobj))
+				return DISAMBIG_SUCC;
 			if (do_disambig == 1 && tcreat(dobj) && visible(dobj))
 				return DISAMBIG_SUCC;
 			break;
 
-		case 51:  /* WEAR */
+		case 51: /* WEAR */
 			if (do_disambig == 1)
-				if (tnoun(dobj) && visible(dobj) && noun[dobj - first_noun].wearable
-				        && it_loc(dobj) != 1000)
+				if (tnoun(dobj) && visible(dobj) && noun[dobj - first_noun].wearable && it_loc(dobj) != 1000)
 					return DISAMBIG_SUCC;
 			break;
 		case 33: /* GET */
-			if (do_disambig == 1 && tnoun(dobj)
-			        && visible(dobj)
-			        && noun[dobj - first_noun].location != 1
-			        && noun[dobj - first_noun].movable)
+			if (do_disambig == 1 && tnoun(dobj) && visible(dobj) && noun[dobj - first_noun].location != 1 && noun[dobj - first_noun].movable)
 				return (player_has(dobj)) ? 499 : DISAMBIG_SUCC;
 			break;
-		case 52:  /* REMOVE */
-			if (do_disambig == 1 && it_loc(dobj) == 1000) return DISAMBIG_SUCC;
+		case 52: /* REMOVE */
+			if (do_disambig == 1 && it_loc(dobj) == 1000)
+				return DISAMBIG_SUCC;
 			break;
 
 		/* The following could be better, but I don't want to give
@@ -1654,17 +1679,21 @@ int check_obj(parse_rec *act, int verbid,
 		case 15: /* OPEN */
 		case 17: /* LOCK */
 		case 18: /* UNLOCK */
-			if (do_disambig == 2 && it_possess(iobj)) return DISAMBIG_SUCC;
+			if (do_disambig == 2 && it_possess(iobj))
+				return DISAMBIG_SUCC;
 		/* ... fall through ... */
 		default: /* All other verbs just use visibility check */
-			if (do_disambig == 1 && genvisible(dorec)) return DISAMBIG_SUCC;
-			if (do_disambig == 2 && genvisible(iorec)) return DISAMBIG_SUCC;
+			if (do_disambig == 1 && genvisible(dorec))
+				return DISAMBIG_SUCC;
+			if (do_disambig == 2 && genvisible(iorec))
+				return DISAMBIG_SUCC;
 		}
 
 	if (have_meta && TWO_CYCLE) {
 		beforecmd = 0;
 		result = objcheck_cycle(&success, act, verbid, dorec, prep_, iorec);
-		if (success) return result;
+		if (success)
+			return result;
 	}
 
 	return disambig_score; /* Failed to find a match */

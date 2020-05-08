@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/files/u6_lib_n.h"
-#include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/u6_shape.h"
 #include "common/endian.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/files/nuvie_io.h"
+#include "ultima/nuvie/files/u6_lib_n.h"
+#include "ultima/nuvie/files/u6_lzw.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -77,7 +77,6 @@ namespace Nuvie {
  *
  * I hope this clears things up a bit.
  */
-
 
 /*
  * =====================
@@ -244,7 +243,8 @@ bool U6Shape::load(unsigned char *buf) {
 		 */
 		if (!encoded) {
 			memcpy(raw + (hotx + xpos) +
-			       (hoty + ypos) * width, data, num_pixels);
+			           (hoty + ypos) * width,
+			       data, num_pixels);
 			data += num_pixels;
 
 			continue;
@@ -268,10 +268,9 @@ bool U6Shape::load(unsigned char *buf) {
 			 */
 			if (repeat) {
 				memset(raw + (hotx + xpos) +
-				       (hoty + ypos) * width + j,
+				           (hoty + ypos) * width + j,
 				       *data++, num_pixels2);
 			}
-
 
 			/*
 			 * Just fetch as many pixels as num_pixels2
@@ -279,13 +278,13 @@ bool U6Shape::load(unsigned char *buf) {
 			 */
 			else {
 				memcpy(raw + (hotx + xpos) +
-				       (hoty + ypos) * width + j, data,
+				           (hoty + ypos) * width + j,
+				       data,
 				       num_pixels2);
 				data += num_pixels2;
 			}
 			j += num_pixels2;
 		}
-
 	}
 
 	return true;
@@ -335,7 +334,7 @@ Graphics::ManagedSurface *U6Shape::get_shape_surface() {
 
 	// Create the surface
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(width, height,
-		Graphics::PixelFormat::createFormatCLUT8());
+	                                                                 Graphics::PixelFormat::createFormatCLUT8());
 
 	// Copy the raw pixels into it
 	byte *dest = (byte *)surface->getPixels();

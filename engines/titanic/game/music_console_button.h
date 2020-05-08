@@ -32,6 +32,7 @@ class CMusicConsoleButton : public CMusicPlayer {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool SetMusicControlsMsg(CSetMusicControlsMsg *msg);
+
 public:
 	CLASSDEF;
 

@@ -23,10 +23,10 @@
 #ifndef NUVIE_CORE_COMMAND_BAR_NEW_UI_H
 #define NUVIE_CORE_COMMAND_BAR_NEW_UI_H
 
-#include "ultima/shared/std/string.h"
+#include "ultima/nuvie/gui/widgets/command_bar.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/misc/call_back.h"
-#include "ultima/nuvie/gui/widgets/command_bar.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -39,7 +39,7 @@ class GUI_CallBack;
 class Text;
 class Font;
 
-class CommandBarNewUI: public CommandBar {
+class CommandBarNewUI : public CommandBar {
 protected:
 	uint8 cur_pos;
 	uint8 icon_w;
@@ -48,6 +48,7 @@ protected:
 	uint16 num_icons;
 
 	Font *font;
+
 public:
 	CommandBarNewUI(Game *g);
 	~CommandBarNewUI() override;

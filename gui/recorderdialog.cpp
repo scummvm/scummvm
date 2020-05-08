@@ -20,23 +20,22 @@
  *
  */
 
+#include "recorderdialog.h"
 #include "common/algorithm.h"
 #include "common/bufferedstream.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
-#include "common/translation.h"
-#include "gui/widgets/list.h"
-#include "gui/editrecorddialog.h"
 #include "gui/EventRecorder.h"
-#include "gui/message.h"
-#include "common/system.h"
 #include "gui/ThemeEval.h"
+#include "gui/editrecorddialog.h"
 #include "gui/gui-manager.h"
-#include "recorderdialog.h"
+#include "gui/message.h"
+#include "gui/widgets/list.h"
 
 #define MAX_RECORDS_NAMES 0xFF
 
@@ -79,7 +78,7 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 	_container = new GUI::ContainerWidget(this, "RecorderDialog.Thumbnail");
 	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
-		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", "<", nullptr, kPrevScreenshotCmd);
+		new GUI::ButtonWidget(this, "RecorderDialog.NextScreenShotButton", "<", nullptr, kPrevScreenshotCmd);
 		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", ">", nullptr, kNextScreenshotCmd);
 		_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", "0/0");
 		_authorText = new StaticTextWidget(this, "RecorderDialog.Author", _("Author: "));
@@ -88,7 +87,6 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	if (_gfxWidget)
 		_gfxWidget->setGfx(nullptr);
 }
-
 
 void RecorderDialog::reflowLayout() {
 	Dialog::reflowLayout();
@@ -118,10 +116,8 @@ void RecorderDialog::reflowLayout() {
 	}
 }
 
-
-
 void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	switch(cmd) {
+	switch (cmd) {
 	case kEditRecordCmd: {
 		if (_list->getSelected() >= 0) {
 			EditRecordDialog editDlg(_fileHeaders[_list->getSelected()].author, _fileHeaders[_list->getSelected()].name, _fileHeaders[_list->getSelected()].notes);
@@ -140,8 +136,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			updateSelection(true);
 			_playbackFile.close();
 		}
-	}
-		break;
+	} break;
 	case kNextScreenshotCmd:
 		++_currentScreenshot;
 		updateScreenshot();
@@ -153,7 +148,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kDeleteCmd:
 		if (_list->getSelected() >= 0) {
 			MessageDialog alert(_("Do you really want to delete this record?"),
-				_("Delete"), _("Cancel"));
+			                    _("Delete"), _("Cancel"));
 			if (alert.runModal() == GUI::kMessageOK) {
 				_playbackFile.close();
 				g_eventRec.deleteRecord(_fileHeaders[_list->getSelected()].fileName);
@@ -179,8 +174,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_filename = g_eventRec.generateRecordFileName(_target);
 		setResult(kRecordDialogRecord);
 		close();
-		}
-		break;
+	} break;
 	case kPlaybackCmd:
 		if (_list->getSelected() >= 0) {
 			_filename = _fileHeaders[_list->getSelected()].fileName;
@@ -198,7 +192,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 void RecorderDialog::updateList() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::String pattern(_target+".r??");
+	Common::String pattern(_target + ".r??");
 	Common::StringArray files = saveFileMan->listSavefiles(pattern);
 	Common::PlaybackFile file;
 	Common::StringArray namesList;

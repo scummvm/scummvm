@@ -22,83 +22,80 @@
 
 #include "mutationofjb/script.h"
 
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/stream.h"
 #include "common/debug.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/stream.h"
+#include "mutationofjb/commands/additemcommand.h"
+#include "mutationofjb/commands/bitmapvisibilitycommand.h"
+#include "mutationofjb/commands/callmacrocommand.h"
+#include "mutationofjb/commands/camefromcommand.h"
+#include "mutationofjb/commands/changecommand.h"
 #include "mutationofjb/commands/command.h"
+#include "mutationofjb/commands/definestructcommand.h"
+#include "mutationofjb/commands/endblockcommand.h"
+#include "mutationofjb/commands/gotocommand.h"
 #include "mutationofjb/commands/ifcommand.h"
 #include "mutationofjb/commands/ifitemcommand.h"
 #include "mutationofjb/commands/ifpiggycommand.h"
-#include "mutationofjb/commands/endblockcommand.h"
-#include "mutationofjb/commands/changecommand.h"
-#include "mutationofjb/commands/saycommand.h"
-#include "mutationofjb/commands/additemcommand.h"
-#include "mutationofjb/commands/removeitemcommand.h"
-#include "mutationofjb/commands/removeallitemscommand.h"
 #include "mutationofjb/commands/labelcommand.h"
-#include "mutationofjb/commands/gotocommand.h"
-#include "mutationofjb/commands/camefromcommand.h"
-#include "mutationofjb/commands/callmacrocommand.h"
+#include "mutationofjb/commands/loadplayercommand.h"
 #include "mutationofjb/commands/newroomcommand.h"
-#include "mutationofjb/commands/renamecommand.h"
-#include "mutationofjb/commands/definestructcommand.h"
-#include "mutationofjb/commands/talkcommand.h"
+#include "mutationofjb/commands/playanimationcommand.h"
 #include "mutationofjb/commands/randomcommand.h"
+#include "mutationofjb/commands/removeallitemscommand.h"
+#include "mutationofjb/commands/removeitemcommand.h"
+#include "mutationofjb/commands/renamecommand.h"
+#include "mutationofjb/commands/saycommand.h"
 #include "mutationofjb/commands/setcolorcommand.h"
+#include "mutationofjb/commands/setobjectframecommand.h"
 #include "mutationofjb/commands/specialshowcommand.h"
 #include "mutationofjb/commands/switchpartcommand.h"
-#include "mutationofjb/commands/loadplayercommand.h"
-#include "mutationofjb/commands/bitmapvisibilitycommand.h"
-#include "mutationofjb/commands/playanimationcommand.h"
-#include "mutationofjb/commands/setobjectframecommand.h"
+#include "mutationofjb/commands/talkcommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
 
 static CommandParser **getParsers() {
 	static CommandParser *parsers[] = {
-		new IfPiggyCommandParser,
-		new IfItemCommandParser,
-		new IfCommandParser,
-		new CameFromCommandParser,
-		new CallMacroCommandParser,
-		new EndBlockCommandParser,
-		new ChangeDoorCommandParser,
-		new ChangeObjectCommandParser,
-		new ChangeStaticCommandParser,
-		new ChangeSceneCommandParser,
-		new DefineStructCommandParser,
-		new SayCommandParser,
-		new TalkCommandParser,
-		new AddItemCommandParser,
-		new RemoveItemCommandParser,
-		new RemoveAllItemsCommandParser,
-		new RenameCommandParser,
-		new NewRoomCommandParser,
-		new GotoCommandParser,
-		new LabelCommandParser,
-		new RandomCommandParser,
-		new RandomBlockStartParser,
-		new SetColorCommandParser,
-		new SpecialShowCommandParser,
-		new SwitchPartCommandParser,
-		new LoadPlayerCommandParser,
-		new BitmapVisibilityCommandParser,
-		new PlayAnimationCommandParser,
-		new SetObjectFrameCommandParser,
-		nullptr
-	};
+	    new IfPiggyCommandParser,
+	    new IfItemCommandParser,
+	    new IfCommandParser,
+	    new CameFromCommandParser,
+	    new CallMacroCommandParser,
+	    new EndBlockCommandParser,
+	    new ChangeDoorCommandParser,
+	    new ChangeObjectCommandParser,
+	    new ChangeStaticCommandParser,
+	    new ChangeSceneCommandParser,
+	    new DefineStructCommandParser,
+	    new SayCommandParser,
+	    new TalkCommandParser,
+	    new AddItemCommandParser,
+	    new RemoveItemCommandParser,
+	    new RemoveAllItemsCommandParser,
+	    new RenameCommandParser,
+	    new NewRoomCommandParser,
+	    new GotoCommandParser,
+	    new LabelCommandParser,
+	    new RandomCommandParser,
+	    new RandomBlockStartParser,
+	    new SetColorCommandParser,
+	    new SpecialShowCommandParser,
+	    new SwitchPartCommandParser,
+	    new LoadPlayerCommandParser,
+	    new BitmapVisibilityCommandParser,
+	    new PlayAnimationCommandParser,
+	    new SetObjectFrameCommandParser,
+	    nullptr};
 
 	return parsers;
 }
 
-
-ScriptParseContext::ScriptParseContext(Common::SeekableReadStream &stream) :
-	_stream(stream),
-	_currentCommand(nullptr),
-	_lastCommand(nullptr),
-	_pendingRandomCommand(nullptr) {}
+ScriptParseContext::ScriptParseContext(Common::SeekableReadStream &stream) : _stream(stream),
+                                                                             _currentCommand(nullptr),
+                                                                             _lastCommand(nullptr),
+                                                                             _pendingRandomCommand(nullptr) {}
 
 bool ScriptParseContext::readLine(Common::String &line) {
 	do {
@@ -122,7 +119,6 @@ void ScriptParseContext::addConditionalCommand(ConditionalCommand *command, char
 	ConditionalCommandInfo cmi = {command, tag, firstHash};
 	_pendingCondCommands.push_back(cmi);
 }
-
 
 void ScriptExecutionContext::pushReturnCommand(Command *cmd) {
 	_callStack.push(cmd);
@@ -329,4 +325,4 @@ Command *Script::getExtra(const Common::String &name) const {
 	return it->_value;
 }
 
-}
+} // namespace MutationOfJB

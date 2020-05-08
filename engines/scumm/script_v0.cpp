@@ -20,18 +20,17 @@
  *
  */
 
-
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
-#include "scumm/verbs.h"
 #include "scumm/util.h"
+#include "scumm/verbs.h"
 
 namespace Scumm {
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v0, x)
+#define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v0, x)
 
 void ScummEngine_v0::setupOpcodes() {
 	/* 00 */
@@ -390,7 +389,6 @@ void ScummEngine_v0::decodeParseString() {
 
 		if (insertSpace)
 			*ptr++ = ' ';
-
 	}
 	*ptr = 0;
 
@@ -431,7 +429,6 @@ void ScummEngine_v0::flushSentenceLine() {
 		}
 
 		string[i++] = *ptr++;
-
 	}
 	string[i] = 0;
 
@@ -451,7 +448,6 @@ void ScummEngine_v0::drawSentenceObject(int object) {
 		_sentenceBuf += (const char *)temp;
 	}
 }
-
 
 void ScummEngine_v0::drawSentenceLine() {
 	_redrawSentenceLine = false;
@@ -640,7 +636,7 @@ void ScummEngine_v0::setMode(byte mode) {
 		_redrawSentenceLine = false;
 		// Note: do not change freeze state here
 		state = USERSTATE_SET_IFACE |
-			USERSTATE_SET_CURSOR;
+		        USERSTATE_SET_CURSOR;
 
 		break;
 	case kModeKeypad:
@@ -650,8 +646,8 @@ void ScummEngine_v0::setMode(byte mode) {
 		}
 		_redrawSentenceLine = false;
 		state = USERSTATE_SET_IFACE |
-			USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
-			USERSTATE_SET_FREEZE | USERSTATE_FREEZE_ON;
+		        USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
+		        USERSTATE_SET_FREEZE | USERSTATE_FREEZE_ON;
 		break;
 	case kModeNormal:
 	case kModeNoNewKid:
@@ -662,8 +658,8 @@ void ScummEngine_v0::setMode(byte mode) {
 			_drawDemo = false;
 		}
 		state = USERSTATE_SET_IFACE | USERSTATE_IFACE_ALL |
-			USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
-			USERSTATE_SET_FREEZE;
+		        USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
+		        USERSTATE_SET_FREEZE;
 		break;
 	default:
 		error("Invalid mode: %d", mode);
@@ -698,30 +694,30 @@ void ScummEngine_v0::o_lights() {
 void ScummEngine_v0::o_animateActor() {
 	int act = getVarOrDirectByte(PARAM_1);
 	int anim = getVarOrDirectByte(PARAM_2);
-	int8 repeat = (int8) fetchScriptByte();
+	int8 repeat = (int8)fetchScriptByte();
 
-	Actor_v0 *a = (Actor_v0*) derefActor(act, "o_animateActor");
+	Actor_v0 *a = (Actor_v0 *)derefActor(act, "o_animateActor");
 
 	a->_animFrameRepeat = repeat;
 
 	switch (anim) {
 
-		case 0xFE:
-			// 0x6993
-			a->_speaking = 0x80;	// Enabled, but not switching
-			return;
+	case 0xFE:
+		// 0x6993
+		a->_speaking = 0x80; // Enabled, but not switching
+		return;
 
-		case 0xFD:
-			// 0x69A3
-			a->_speaking = 0x00;
-			return;
+	case 0xFD:
+		// 0x69A3
+		a->_speaking = 0x00;
+		return;
 
-		case 0xFF:
-			a->stopActorMoving();
-			return;
+	case 0xFF:
+		a->stopActorMoving();
+		return;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	a->animateActor(anim);
@@ -986,7 +982,6 @@ void ScummEngine_v0::o_setOwnerOf() {
 }
 
 void ScummEngine_v0::o_screenPrepare() {
-
 }
 
 void ScummEngine_v0::resetSentence() {

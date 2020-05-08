@@ -51,23 +51,24 @@ protected:
 	 * Gets the Ultima 1 map
 	 */
 	Maps::MapBase *getMap() const;
+
 public:
 	Common::String _name;
 	uint _tileNum;
+
 public:
 	DECLARE_WIDGET(OverworldWidget)
 
 	/**
 	 * Constructor
 	 */
-	OverworldWidget(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum, const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) :
-		Shared::Maps::MapWidget(game, map, pt, dir), _tileNum(tileNum)  {}
+	OverworldWidget(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum, const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) : Shared::Maps::MapWidget(game, map, pt, dir), _tileNum(tileNum) {}
 
 	/**
 	 * Constructor
 	 */
 	OverworldWidget(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::MapWidget(game, map),
-		_tileNum(0) {}
+	                                                                  _tileNum(0) {}
 
 	/**
 	 * Get the tile number for the person

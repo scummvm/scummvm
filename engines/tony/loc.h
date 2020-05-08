@@ -29,9 +29,9 @@
 #ifndef TONY_LOC_H
 #define TONY_LOC_H
 
+#include "common/file.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/file.h"
 #include "tony/sound.h"
 #include "tony/utils.h"
 
@@ -123,7 +123,7 @@ public:
 
 private:
 	int _speed;
-	RMPoint _pos; // Parent coordinates
+	RMPoint _pos;    // Parent coordinates
 	RMPoint _curPos; // Parent + child coordinates
 	int _bLoop;
 	int _nSlots;
@@ -280,7 +280,7 @@ protected:
 	virtual RMGfxSourceBuffer *newItemSpriteBuffer(int dimx, int dimy, bool bPreRLE);
 };
 
-#define MAXBOXES 50 // Maximum number of allowed boxes
+#define MAXBOXES 50   // Maximum number of allowed boxes
 #define MAXHOTSPOT 20 // Maximum nimber of allowed hotspots
 
 class RMBox {
@@ -486,13 +486,13 @@ private:
 	RMColorMode _cmode;      // Color mode
 	RMGfxSourceBuffer *_buf; // Location picture
 
-	int _nItems;             // Number of objects
-	RMItem *_items;          // Objects
+	int _nItems;    // Number of objects
+	RMItem *_items; // Objects
 
-	RMPoint _curScroll;      // Current scroll position
+	RMPoint _curScroll; // Current scroll position
 	RMPoint _fixedScroll;
 
-	RMPoint _prevScroll;     // Previous scroll position
+	RMPoint _prevScroll; // Previous scroll position
 	RMPoint _prevFixedScroll;
 
 public:

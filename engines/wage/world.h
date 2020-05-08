@@ -48,8 +48,8 @@
 #ifndef WAGE_WORLD_H
 #define WAGE_WORLD_H
 
-#include "wage/entities.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "wage/entities.h"
 
 namespace Wage {
 

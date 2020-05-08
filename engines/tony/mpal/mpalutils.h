@@ -27,7 +27,7 @@
 #include "tony/mpal/memory.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Tony {
@@ -49,7 +49,7 @@ public:
 	bool isValid();
 
 	// Casting for access to data
-	operator const byte*();
+	operator const byte *();
 
 	Common::SeekableReadStream *getReadStream();
 };
@@ -60,7 +60,7 @@ public:
 	~RMResRaw() override;
 
 	const byte *dataPointer();
-	operator const byte*();
+	operator const byte *();
 
 	int width();
 	int height();

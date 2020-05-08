@@ -31,8 +31,8 @@ namespace Shared {
 EMPTY_MESSAGE_MAP(TreeItem, MessageTarget);
 
 TreeItem::TreeItem() : _parent(nullptr), _firstChild(nullptr),
-_nextSibling(nullptr), _priorSibling(nullptr),
-_disposeAfterUse(DisposeAfterUse::NO) {
+                       _nextSibling(nullptr), _priorSibling(nullptr),
+                       _disposeAfterUse(DisposeAfterUse::NO) {
 }
 
 Game *TreeItem::getGame() {

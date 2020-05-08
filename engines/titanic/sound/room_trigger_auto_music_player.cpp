@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CRoomTriggerAutoMusicPlayer, CTriggerAutoMusicPlayer)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(EnterRoomMsg)
 END_MESSAGE_MAP()
 
 void CRoomTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) {

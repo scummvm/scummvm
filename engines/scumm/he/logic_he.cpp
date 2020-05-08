@@ -22,8 +22,8 @@
 
 #ifdef ENABLE_HE
 
-#include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
+#include "scumm/he/intern_he.h"
 
 namespace Scumm {
 

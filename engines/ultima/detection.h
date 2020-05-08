@@ -23,8 +23,8 @@
 #ifndef ULTIMA_DETECTION
 #define ULTIMA_DETECTION
 
-#include "engines/advancedDetector.h"
 #include "backends/keymapper/keymapper.h"
+#include "engines/advancedDetector.h"
 
 #define MAX_SAVES 99
 
@@ -67,6 +67,7 @@ private:
 	 * Gets the game Id given a target string
 	 */
 	static Common::String getGameId(const char *target);
+
 public:
 	UltimaMetaEngine();
 	~UltimaMetaEngine() override {}

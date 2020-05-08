@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -60,7 +60,6 @@ unsigned char *NuvieIO::readBuf(uint32 read_size, uint32 *bytes_read) {
 
 	return buf;
 }
-
 
 // NuvieIOBuffer
 
@@ -102,7 +101,6 @@ void NuvieIOBuffer::close() {
 		free(data);
 
 	data = NULL;
-
 }
 
 uint8 NuvieIOBuffer::read1() {
@@ -157,7 +155,6 @@ bool NuvieIOBuffer::write1(uint8 src) {
 	return true;
 }
 
-
 bool NuvieIOBuffer::write2(uint16 src) {
 	if (pos > size - 2)
 		return false;
@@ -200,7 +197,6 @@ uint32 NuvieIOBuffer::writeBuf(const unsigned char *src, uint32 src_size) {
 uint32 NuvieIOBuffer::write(NuvieIO *src) {
 	return 0;
 }
-
 
 void NuvieIOBuffer::seek(uint32 new_pos) {
 	if (data && new_pos < size)

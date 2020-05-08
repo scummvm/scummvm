@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "graphics/cursorman.h"
 #include "common/events.h"
-#include "common/endian.h"
-#include "engines/util.h"
 #include "access/access.h"
+#include "access/amazon/amazon_resources.h"
 #include "access/events.h"
 #include "access/player.h"
-#include "access/amazon/amazon_resources.h"
+#include "common/endian.h"
+#include "common/scummsys.h"
+#include "engines/util.h"
+#include "graphics/cursorman.h"
 
 #define CURSOR_WIDTH 16
 #define CURSOR_HEIGHT 16
@@ -71,7 +71,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 	if (cursorId == CURSOR_INVENTORY) {
 		// Set the cursor
 		CursorMan.replaceCursor(_invCursor.getPixels(), _invCursor.w, _invCursor.h,
-			_invCursor.w / 2, _invCursor.h / 2, 0);
+		                        _invCursor.w / 2, _invCursor.h / 2, 0);
 	} else {
 		// Get a pointer to the mouse data to use, and get the cursor hotspot
 		const byte *srcP = &_vm->_res->CURSORS[cursorId][0];
@@ -108,7 +108,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 
 		// Set the cursor
 		CursorMan.replaceCursor(cursorSurface.getPixels(), CURSOR_WIDTH, CURSOR_HEIGHT,
-			hotspotX, hotspotY, 0);
+		                        hotspotX, hotspotY, 0);
 
 		// Free the cursor surface
 		cursorSurface.free();
@@ -188,7 +188,7 @@ void EventsManager::pollEvents(bool skipTimers) {
 			_wheelDown = true;
 			return;
 		default:
- 			break;
+			break;
 		}
 	}
 }
@@ -324,9 +324,9 @@ Common::Point EventsManager::calcRawMouse() {
 	Common::Point pt;
 	Screen &screen = *_vm->_screen;
 	pt.x = _mousePos.x - screen._windowXAdd +
-		(_vm->_scrollCol * TILE_WIDTH) + _vm->_scrollX;
+	       (_vm->_scrollCol * TILE_WIDTH) + _vm->_scrollX;
 	pt.y = _mousePos.y - screen._screenYOff - screen._windowYAdd +
-		(_vm->_scrollRow * TILE_HEIGHT) + _vm->_scrollY;
+	       (_vm->_scrollRow * TILE_HEIGHT) + _vm->_scrollY;
 
 	return pt;
 }
@@ -336,8 +336,7 @@ int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
 		if (rects[i].left == -1)
 			return -1;
 
-		if ((_mousePos.x > rects[i].left) && (_mousePos.x < rects[i].right)
-			&& (_mousePos.y > rects[i].top) && (_mousePos.y < rects[i].bottom))
+		if ((_mousePos.x > rects[i].left) && (_mousePos.x < rects[i].right) && (_mousePos.y > rects[i].top) && (_mousePos.y < rects[i].bottom))
 			return i;
 	}
 

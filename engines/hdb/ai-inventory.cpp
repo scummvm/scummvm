@@ -20,8 +20,8 @@
  *
  */
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
+#include "hdb/hdb.h"
 #include "hdb/sound.h"
 #include "hdb/window.h"
 
@@ -315,4 +315,4 @@ bool AI::completeDelivery(const char *id) {
 	return false;
 }
 
-} // End of Namespace
+} // namespace HDB

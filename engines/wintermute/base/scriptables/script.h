@@ -29,9 +29,8 @@
 #ifndef WINTERMUTE_SCSCRIPT_H
 #define WINTERMUTE_SCSCRIPT_H
 
-
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/base/scriptables/dcscript.h"   // Added by ClassView
+#include "engines/wintermute/base/scriptables/dcscript.h" // Added by ClassView
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/persistent.h"
 
@@ -53,9 +52,11 @@ public:
 	bool copyParameters(ScStack *stack);
 
 	void afterLoad();
+
 protected:
 	ScValue *_operand;
 	ScValue *_reg1;
+
 public:
 	bool _freezable;
 	bool resume();
@@ -120,7 +121,6 @@ public:
 		TExternalType *params;
 	} TExternalFunction;
 
-
 	ScStack *_callStack;
 	ScStack *_thisStack;
 	ScStack *_scopeStack;
@@ -135,10 +135,12 @@ public:
 	void cleanup();
 	bool create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner);
 	uint32 _iP;
+
 private:
 	void readHeader();
 	uint32 _bufferSize;
 	byte *_buffer;
+
 public:
 	Common::SeekableReadStream *_scriptStream;
 	ScScript(BaseGame *inGame, ScEngine *engine);
@@ -150,6 +152,7 @@ public:
 	BaseScriptHolder *_owner;
 	ScScript::TExternalFunction *getExternal(char *name);
 	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
+
 private:
 	char **_symbols;
 	uint32 _numSymbols;

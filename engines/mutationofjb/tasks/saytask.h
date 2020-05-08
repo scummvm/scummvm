@@ -50,6 +50,6 @@ private:
 	Common::Rect _boundingBox;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

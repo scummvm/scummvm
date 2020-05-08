@@ -55,27 +55,27 @@ struct AnimDataEntry {
 	byte color;
 };
 
-#define ANIM_RAW 0 // memcpy
-#define ANIM_MASK 1 // convertMask
-#define ANIM_SPRITE 2 // gfxConvertSpriteToRaw
+#define ANIM_RAW 0        // memcpy
+#define ANIM_MASK 1       // convertMask
+#define ANIM_SPRITE 2     // gfxConvertSpriteToRaw
 #define ANIM_MASKSPRITE 3 // gfxConvertSpriteToRaw + generateMask
-#define ANIM_PALSPRITE 5 // convert8BBP
+#define ANIM_PALSPRITE 5  // convert8BBP
 #define ANIM_FULLSPRITE 8 // convert8BBP2
 
 class AnimData {
 private:
-	byte *_data; ///< Image data
-	byte *_mask; ///< Image mask (may be NULL)
-	int16 _fileIdx; ///< Source file index in bundle
+	byte *_data;     ///< Image data
+	byte *_mask;     ///< Image mask (may be NULL)
+	int16 _fileIdx;  ///< Source file index in bundle
 	int16 _frameIdx; ///< Frame number in animation
-	char _name[10]; ///< Part filename
-	int _size; ///< _data/_mask size, internal only
+	char _name[10];  ///< Part filename
+	int _size;       ///< _data/_mask size, internal only
 
 public:
-	uint16 _width; ///< Image width (usually twice the real size)
+	uint16 _width;  ///< Image width (usually twice the real size)
 	uint16 _height; ///< Image height
-	uint16 _bpp; ///< Bit depth/type information
-	uint16 _var1; ///< Something related to width
+	uint16 _bpp;    ///< Bit depth/type information
+	uint16 _var1;   ///< Something related to width
 	int _realWidth; ///< Real image width in bytes
 
 	AnimData();

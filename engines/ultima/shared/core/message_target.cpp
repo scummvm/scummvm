@@ -35,10 +35,9 @@ const MSGMAP *MessageTarget::getMessageMap() const {
 
 const MSGMAP *MessageTarget::getThisMessageMap() {
 	static const MSGMAP_ENTRY _messageEntries[] = {
-		{ (PMSG)nullptr, nullptr }
-	};
+	    {(PMSG) nullptr, nullptr}};
 
-	static const MSGMAP messageMap = { nullptr, &_messageEntries[0] };
+	static const MSGMAP messageMap = {nullptr, &_messageEntries[0]};
 	return &messageMap;
 }
 

@@ -103,8 +103,7 @@ private:
 	}
 };
 
-Win32AudioCDStream::Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry) :
-	_driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry) {
+Win32AudioCDStream::Win32AudioCDStream(HANDLE handle, const TRACK_DATA &startEntry, const TRACK_DATA &endEntry) : _driveHandle(handle), _startEntry(startEntry), _endEntry(endEntry) {
 	// We fill the buffer here already to prevent any out of sync issues due
 	// to the CD not yet having spun up.
 	startTimer(true);
@@ -132,16 +131,15 @@ bool Win32AudioCDStream::readFrame(int frame, int16 *buffer) {
 
 	DWORD bytesReturned;
 	return DeviceIoControl(
-	           _driveHandle,
-	           IOCTL_CDROM_RAW_READ,
-	           &readAudio,
-	           sizeof(readAudio),
-	           buffer,
-	           kBytesPerFrame,
-	           &bytesReturned,
-	           NULL);
+	    _driveHandle,
+	    IOCTL_CDROM_RAW_READ,
+	    &readAudio,
+	    sizeof(readAudio),
+	    buffer,
+	    kBytesPerFrame,
+	    &bytesReturned,
+	    NULL);
 }
-
 
 class Win32AudioCDManager : public DefaultAudioCDManager {
 public:
@@ -151,7 +149,7 @@ public:
 	bool open() override;
 	void close() override;
 	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-			Audio::Mixer::SoundType soundType) override;
+	          Audio::Mixer::SoundType soundType) override;
 
 protected:
 	bool openCD(int drive) override;
@@ -255,7 +253,7 @@ void Win32AudioCDManager::close() {
 }
 
 bool Win32AudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-		Audio::Mixer::SoundType soundType) {
+                               Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
 	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;
@@ -311,14 +309,14 @@ bool Win32AudioCDManager::loadTOC() {
 	DWORD bytesReturned;
 	CDROM_TOC tocData;
 	bool result = DeviceIoControl(
-	                  _driveHandle,
-	                  IOCTL_CDROM_READ_TOC_EX,
-	                  &tocRequest,
-	                  sizeof(tocRequest),
-	                  &tocData,
-	                  sizeof(tocData),
-	                  &bytesReturned,
-	                  NULL);
+	    _driveHandle,
+	    IOCTL_CDROM_READ_TOC_EX,
+	    &tocRequest,
+	    sizeof(tocRequest),
+	    &tocData,
+	    sizeof(tocData),
+	    &bytesReturned,
+	    NULL);
 	if (!result) {
 		debug("Failed to query the CD TOC: %d", (int)GetLastError());
 		return false;

@@ -53,5 +53,3 @@ Common::String SourceListing::getLine(uint n) {
 }
 
 } // End of namespace Wintermute
-
-

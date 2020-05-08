@@ -31,9 +31,11 @@ class CStarlings : public CCharacter {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
+
 private:
 	// This needs to be static to be shared across all starling instances
 	static bool _dead;
+
 public:
 	CLASSDEF;
 	CStarlings();

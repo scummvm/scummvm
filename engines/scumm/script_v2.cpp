@@ -31,11 +31,11 @@
 
 namespace Scumm {
 
-    // Helper functions for ManiacMansion workarounds
-#define MM_SCRIPT(script)  (script + (_game.version == 0 ? 0 : 5))
-#define MM_VALUE(v0,v1)    (_game.version == 0 ? v0 : v1)
+// Helper functions for ManiacMansion workarounds
+#define MM_SCRIPT(script) (script + (_game.version == 0 ? 0 : 5))
+#define MM_VALUE(v0, v1) (_game.version == 0 ? v0 : v1)
 
-#define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v2, x)
+#define OPCODE(i, x) _opcodes[i]._OPCODE(ScummEngine_v2, x)
 
 void ScummEngine_v2::setupOpcodes() {
 	/* 00 */
@@ -393,7 +393,6 @@ void ScummEngine_v2::decodeParseString() {
 
 		if (insertSpace)
 			*ptr++ = ' ';
-
 	}
 	*ptr = 0;
 
@@ -558,7 +557,6 @@ void ScummEngine_v2::o2_setBitVar() {
 		_scummVars[bit_var] |= (1 << bit_offset);
 	else
 		_scummVars[bit_var] &= ~(1 << bit_offset);
-
 }
 
 void ScummEngine_v2::o2_getBitVar() {
@@ -672,10 +670,10 @@ void ScummEngine_v2::o2_actorOps() {
 	a = derefActor(act, "actorOps");
 
 	switch (_opcode) {
-	case 1:		// SO_SOUND
+	case 1: // SO_SOUND
 		a->_sound[0] = arg;
 		break;
-	case 2:		// SO_PALETTE
+	case 2: // SO_PALETTE
 		if (_game.version == 1)
 			i = act;
 		else
@@ -683,13 +681,13 @@ void ScummEngine_v2::o2_actorOps() {
 
 		a->setPalette(i, arg);
 		break;
-	case 3:		// SO_ACTOR_NAME
+	case 3: // SO_ACTOR_NAME
 		loadPtrToResource(rtActorName, a->_number, NULL);
 		break;
-	case 4:		// SO_COSTUME
+	case 4: // SO_COSTUME
 		a->setActorCostume(arg);
 		break;
-	case 5:		// SO_TALK_COLOR
+	case 5: // SO_TALK_COLOR
 		if (_game.id == GID_MANIAC && _game.version == 2 && (_game.features & GF_DEMO) && arg == 1)
 			a->_talkColor = 15;
 		else
@@ -743,14 +741,13 @@ void ScummEngine_v2::o2_drawObject() {
 
 void ScummEngine_v2::o2_resourceRoutines() {
 	const ResType resTypes[] = {
-		rtInvalid,
-		rtInvalid,
-		rtCostume,
-		rtRoom,
-		rtInvalid,
-		rtScript,
-		rtSound
-	};
+	    rtInvalid,
+	    rtInvalid,
+	    rtCostume,
+	    rtRoom,
+	    rtInvalid,
+	    rtScript,
+	    rtSound};
 	int resid = getVarOrDirectByte(PARAM_1);
 	int opcode = fetchScriptByte();
 
@@ -780,20 +777,20 @@ void ScummEngine_v2::o2_verbOps() {
 	int slot, state;
 
 	switch (verb) {
-	case 0:		// SO_DELETE_VERBS
+	case 0: // SO_DELETE_VERBS
 		slot = getVarOrDirectByte(PARAM_1) + 1;
 		assert(0 < slot && slot < _numVerbs);
 		killVerb(slot);
 		break;
 
-	case 0xFF:	// Verb On/Off
+	case 0xFF: // Verb On/Off
 		verb = fetchScriptByte();
 		state = fetchScriptByte();
 		slot = getVerbSlot(verb, 0);
 		_verbs[slot].curmode = state;
 		break;
 
-	default: {	// New Verb
+	default: { // New Verb
 		int x = fetchScriptByte() * 8;
 		int y = fetchScriptByte() * 8;
 		slot = getVarOrDirectByte(PARAM_1) + 1;
@@ -839,26 +836,23 @@ void ScummEngine_v2::o2_verbOps() {
 		// keyboard starts with "azerty", etc.
 		if (_game.platform == Common::kPlatformNES) {
 			static const char keyboard[] = {
-					'q','w','e','r',
-					'a','s','d','f',
-					'z','x','c','v'
-				};
+			    'q', 'w', 'e', 'r',
+			    'a', 's', 'd', 'f',
+			    'z', 'x', 'c', 'v'};
 			if (1 <= slot && slot <= ARRAYSIZE(keyboard))
 				vs->key = keyboard[slot - 1];
 		} else {
 			static const char keyboard[] = {
-					'q','w','e','r','t',
-					'a','s','d','f','g',
-					'z','x','c','v','b'
-				};
+			    'q', 'w', 'e', 'r', 't',
+			    'a', 's', 'd', 'f', 'g',
+			    'z', 'x', 'c', 'v', 'b'};
 			if (1 <= slot && slot <= ARRAYSIZE(keyboard))
 				vs->key = keyboard[slot - 1];
 		}
 
 		// It follows the verb name
 		loadPtrToResource(rtVerb, slot, NULL);
-		}
-		break;
+	} break;
 	}
 
 	// Force redraw of the modified verb slot
@@ -931,9 +925,9 @@ void ScummEngine_v2::o2_doSentence() {
 			ss = vm.slot;
 			for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 				if (st->objectA == ss->number &&
-					ss->freezeResistant == isBackgroundScript &&
-					ss->recursive == isSpecialVerb &&
-					(ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
+				    ss->freezeResistant == isBackgroundScript &&
+				    ss->recursive == isSpecialVerb &&
+				    (ss->where == WIO_ROOM || ss->where == WIO_INVENTORY || ss->where == WIO_FLOBJECT)) {
 					slot = i;
 					break;
 				}
@@ -958,42 +952,42 @@ void ScummEngine_v2::o2_doSentence() {
 }
 
 void ScummEngine_v2::drawPreposition(int index) {
-		// The prepositions, like the fonts, were hard code in the engine. Thus
-		// we have to do that, too, and provde localized versions for all the
-		// languages MM/Zak are available in.
-		const char *prepositions[][5] = {
-			{ " ", " in", " with", " on", " to" },   // English
-			{ " ", " mit", " mit", " mit", " zu" },  // German
-			{ " ", " dans", " avec", " sur", " <" }, // French
-			{ " ", " in", " con", " su", " a" },     // Italian
-			{ " ", " en", " con", " en", " a" },     // Spanish
-			{ " ", " \x7f", " \x7f", " na", " \x7f" },// Russian
-			};
-		int lang;
-		switch (_language) {
-		case Common::DE_DEU:
-			lang = 1;
-			break;
-		case Common::FR_FRA:
-			lang = 2;
-			break;
-		case Common::IT_ITA:
-			lang = 3;
-			break;
-		case Common::ES_ESP:
-			lang = 4;
-			break;
-		case Common::RU_RUS:
-			lang = 5;
-			break;
-		default:
-			lang = 0;	// Default to english
-		}
+	// The prepositions, like the fonts, were hard code in the engine. Thus
+	// we have to do that, too, and provde localized versions for all the
+	// languages MM/Zak are available in.
+	const char *prepositions[][5] = {
+	    {" ", " in", " with", " on", " to"},     // English
+	    {" ", " mit", " mit", " mit", " zu"},    // German
+	    {" ", " dans", " avec", " sur", " <"},   // French
+	    {" ", " in", " con", " su", " a"},       // Italian
+	    {" ", " en", " con", " en", " a"},       // Spanish
+	    {" ", " \x7f", " \x7f", " na", " \x7f"}, // Russian
+	};
+	int lang;
+	switch (_language) {
+	case Common::DE_DEU:
+		lang = 1;
+		break;
+	case Common::FR_FRA:
+		lang = 2;
+		break;
+	case Common::IT_ITA:
+		lang = 3;
+		break;
+	case Common::ES_ESP:
+		lang = 4;
+		break;
+	case Common::RU_RUS:
+		lang = 5;
+		break;
+	default:
+		lang = 0; // Default to english
+	}
 
-		if (_game.platform == Common::kPlatformNES) {
-			_sentenceBuf += (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2);
-		} else
-			_sentenceBuf += prepositions[lang][index];
+	if (_game.platform == Common::kPlatformNES) {
+		_sentenceBuf += (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2);
+	} else
+		_sentenceBuf += prepositions[lang][index];
 }
 
 void ScummEngine_v2::o2_drawSentence() {
@@ -1095,7 +1089,6 @@ void ScummEngine_v2::o2_ifClassOfIs() {
 	int obj = getVarOrDirectWord(PARAM_1);
 	int clsop = getVarOrDirectByte(PARAM_2);
 
-
 	byte *obcd = getOBCDFromObject(obj);
 
 	if (obcd == 0) {
@@ -1188,49 +1181,49 @@ void ScummEngine_v2::o2_startScript() {
 		}
 	}
 
-    // WORKAROUND bug #4556: Purple Tentacle can appear in the lab, after being
-    // chased out and end up stuck in the room. This bug is triggered if the player
-    // enters the lab within 45 minutes of first entering the mansion and has chased Purple Tentacle
-    // out. Eventually the cutscene with Purple Tentacle chasing Sandy in the lab
-    // will play. This script leaves Purple Tentacle in the room causing him to become
-    // a permanent resident.
-    // Our fix is simply to prevent the Cutscene playing, if the lab has already been stormed
-    if (_game.id == GID_MANIAC) {
-        if (_game.version >= 1 && script == 155) {
-            if (VAR(120) == 1)
-                return;
-        }
-        // Script numbers are different in V0
-        if (_game.version == 0 && script == 150) {
-            if (VAR(104) == 1)
-                return;
-        }
-    }
+	// WORKAROUND bug #4556: Purple Tentacle can appear in the lab, after being
+	// chased out and end up stuck in the room. This bug is triggered if the player
+	// enters the lab within 45 minutes of first entering the mansion and has chased Purple Tentacle
+	// out. Eventually the cutscene with Purple Tentacle chasing Sandy in the lab
+	// will play. This script leaves Purple Tentacle in the room causing him to become
+	// a permanent resident.
+	// Our fix is simply to prevent the Cutscene playing, if the lab has already been stormed
+	if (_game.id == GID_MANIAC) {
+		if (_game.version >= 1 && script == 155) {
+			if (VAR(120) == 1)
+				return;
+		}
+		// Script numbers are different in V0
+		if (_game.version == 0 && script == 150) {
+			if (VAR(104) == 1)
+				return;
+		}
+	}
 
 	runScript(script, 0, 0, 0);
 }
 
 void ScummEngine_v2::stopScriptCommon(int script) {
-    // WORKAROUND bug #4112: If you enter the lab while Dr. Fred has the powered turned off
-    // to repair the Zom-B-Matic, the script will be stopped and the power will never turn
-    // back on. This fix forces the power on, when the player enters the lab,
-    // if the script which turned it off is running
-    if (_game.id == GID_MANIAC && _roomResource == 4 && isScriptRunning(MM_SCRIPT(138))) {
+	// WORKAROUND bug #4112: If you enter the lab while Dr. Fred has the powered turned off
+	// to repair the Zom-B-Matic, the script will be stopped and the power will never turn
+	// back on. This fix forces the power on, when the player enters the lab,
+	// if the script which turned it off is running
+	if (_game.id == GID_MANIAC && _roomResource == 4 && isScriptRunning(MM_SCRIPT(138))) {
 
-        if (vm.slot[_currentScript].number == MM_VALUE(130, 163)) {
+		if (vm.slot[_currentScript].number == MM_VALUE(130, 163)) {
 
-            if (script == MM_SCRIPT(138)) {
+			if (script == MM_SCRIPT(138)) {
 
-                int obj = MM_VALUE(124, 157);
-                putState(obj, getState(obj) & ~kObjectState_08);
-            }
-        }
-    }
+				int obj = MM_VALUE(124, 157);
+				putState(obj, getState(obj) & ~kObjectState_08);
+			}
+		}
+	}
 
 	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == 10001) {
-	// FIXME: Nasty hack for bug #915575
-	// Don't let the exit script for room 26 stop the script (116), when
-	// switching to the dungeon (script 89)
+		// FIXME: Nasty hack for bug #915575
+		// Don't let the exit script for room 26 stop the script (116), when
+		// switching to the dungeon (script 89)
 		if (script == MM_SCRIPT(111) && isScriptRunning(MM_SCRIPT(84)))
 			return;
 	}
@@ -1517,7 +1510,7 @@ void ScummEngine_v2::o2_roomOps() {
 
 	_opcode = fetchScriptByte();
 	switch (_opcode & 0x1F) {
-	case 1:			// SO_ROOM_SCROLL
+	case 1: // SO_ROOM_SCROLL
 		a *= 8;
 		b *= 8;
 		if (a < (_screenWidth / 2))
@@ -1531,7 +1524,7 @@ void ScummEngine_v2::o2_roomOps() {
 		VAR(VAR_CAMERA_MIN_X) = a;
 		VAR(VAR_CAMERA_MAX_X) = b;
 		break;
-	case 2:			// SO_ROOM_COLOR
+	case 2: // SO_ROOM_COLOR
 		if (_game.version == 1) {
 			// V1 zak needs to know when room color is changed
 			_roomPalette[0] = 255;
@@ -1557,8 +1550,8 @@ void ScummEngine_v2::o2_cutscene() {
 
 	// Hide inventory, freeze scripts, hide cursor
 	setUserState(USERSTATE_SET_IFACE |
-		USERSTATE_SET_CURSOR |
-		USERSTATE_SET_FREEZE | USERSTATE_FREEZE_ON);
+	             USERSTATE_SET_CURSOR |
+	             USERSTATE_SET_FREEZE | USERSTATE_FREEZE_ON);
 
 	_sentenceNum = 0;
 	stopScript(SENTENCE_SCRIPT);
@@ -1580,7 +1573,7 @@ void ScummEngine_v2::o2_endCutscene() {
 	setUserState(vm.cutSceneData[0] | USERSTATE_SET_IFACE | USERSTATE_SET_CURSOR | USERSTATE_SET_FREEZE);
 
 	if ((_game.id == GID_MANIAC) && !(_game.platform == Common::kPlatformNES)) {
-		camera._mode = (byte) vm.cutSceneData[3];
+		camera._mode = (byte)vm.cutSceneData[3];
 		if (camera._mode == kFollowActorCameraMode) {
 			actorFollowCamera(VAR(VAR_EGO));
 		} else if (vm.cutSceneData[2] != _currentRoom) {
@@ -1617,8 +1610,8 @@ void ScummEngine_v2::o2_pickupObject() {
 	if (getObjectIndex(obj) == -1)
 		return;
 
-	if (whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
-		return;											/* object twice */
+	if (whereIsObject(obj) == WIO_INVENTORY) /* Don't take an */
+		return;                              /* object twice */
 
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
@@ -1628,10 +1621,10 @@ void ScummEngine_v2::o2_pickupObject() {
 
 	runInventoryScript(1);
 	if (_game.platform == Common::kPlatformNES)
-		_sound->addSoundToQueue(51);	// play 'pickup' sound
+		_sound->addSoundToQueue(51); // play 'pickup' sound
 }
 
-void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
+void ScummEngine_v2::o2_cursorCommand() { // TODO: Define the magic numbers
 	uint16 cmd = getVarOrDirectWord(PARAM_1);
 	byte state = cmd >> 8;
 
@@ -1643,21 +1636,21 @@ void ScummEngine_v2::o2_cursorCommand() {	// TODO: Define the magic numbers
 }
 
 void ScummEngine_v2::setUserState(byte state) {
-	if (state & USERSTATE_SET_IFACE) {			// Userface
+	if (state & USERSTATE_SET_IFACE) { // Userface
 		if (_game.platform == Common::kPlatformNES)
 			_userState = (_userState & ~USERSTATE_IFACE_ALL) | (state & USERSTATE_IFACE_ALL);
 		else
 			_userState = state & USERSTATE_IFACE_ALL;
 	}
 
-	if (state & USERSTATE_SET_FREEZE) {		// Freeze
+	if (state & USERSTATE_SET_FREEZE) { // Freeze
 		if (state & USERSTATE_FREEZE_ON)
 			freezeScripts(0);
 		else
 			unfreezeScripts();
 	}
 
-	if (state & USERSTATE_SET_CURSOR) {			// Cursor Show/Hide
+	if (state & USERSTATE_SET_CURSOR) { // Cursor Show/Hide
 		if (_game.platform == Common::kPlatformNES)
 			_userState = (_userState & ~USERSTATE_CURSOR_ON) | (state & USERSTATE_CURSOR_ON);
 		if (state & USERSTATE_CURSOR_ON) {
@@ -1690,7 +1683,7 @@ void ScummEngine_v2::o2_getActorWalkBox() {
 	Actor *a;
 	getResultPos();
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o2_getActorWalkbox");
-	setResult(a->isInCurrentRoom() ? a->_walkbox: 0xFF);
+	setResult(a->isInCurrentRoom() ? a->_walkbox : 0xFF);
 }
 
 void ScummEngine_v2::o2_dummy() {

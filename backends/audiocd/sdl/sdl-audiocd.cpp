@@ -31,15 +31,13 @@
 #include "common/textconsole.h"
 
 SdlAudioCDManager::SdlAudioCDManager()
-	:
-	_cdrom(0),
-	_cdTrack(0),
-	_cdNumLoops(0),
-	_cdStartFrame(0),
-	_cdDuration(0),
-	_cdEndTime(0),
-	_cdStopTime(0) {
-
+    : _cdrom(0),
+      _cdTrack(0),
+      _cdNumLoops(0),
+      _cdStartFrame(0),
+      _cdDuration(0),
+      _cdEndTime(0),
+      _cdStopTime(0) {
 }
 
 SdlAudioCDManager::~SdlAudioCDManager() {
@@ -77,10 +75,10 @@ void SdlAudioCDManager::close() {
 	DefaultAudioCDManager::close();
 
 	if (_cdrom) {
-                SDL_CDStop(_cdrom);
-                SDL_CDClose(_cdrom);
+		SDL_CDStop(_cdrom);
+		SDL_CDClose(_cdrom);
 		_cdrom = 0;
-        }
+	}
 }
 
 void SdlAudioCDManager::stop() {
@@ -92,7 +90,7 @@ void SdlAudioCDManager::stop() {
 }
 
 bool SdlAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
-		Audio::Mixer::SoundType soundType) {
+                             Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
 	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;

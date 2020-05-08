@@ -23,9 +23,9 @@
 #ifndef MUTATIONOFJB_CONDITIONALCOMMAND_H
 #define MUTATIONOFJB_CONDITIONALCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
-#include "common/scummsys.h"
 #include "common/queue.h"
+#include "common/scummsys.h"
+#include "mutationofjb/commands/command.h"
 
 namespace MutationOfJB {
 
@@ -34,8 +34,10 @@ public:
 	ConditionalCommandParser(bool firstHash = false) : _firstHash(firstHash) {}
 	void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
 	void finish(ScriptParseContext &parseCtx) override;
+
 protected:
 	Common::Queue<char> _tags;
+
 private:
 	bool _firstHash;
 };
@@ -51,12 +53,13 @@ public:
 	void setFalseCommand(Command *command);
 
 	Command *next() const override;
+
 protected:
 	Command *_trueCommand;
 	Command *_falseCommand;
 	bool _cachedResult;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

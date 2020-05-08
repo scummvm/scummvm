@@ -43,8 +43,8 @@
 #define DISABLE_FLIPPED_MODE
 #endif
 
-#include "common/scummsys.h"
 #include "common/platform.h"
+#include "common/scummsys.h"
 
 namespace Graphics {
 
@@ -162,6 +162,7 @@ public:
 	virtual uint getCharWidth(uint16 ch) const;
 
 	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2, int maxW, int maxH) const;
+
 private:
 	template<typename Color>
 	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const;
@@ -175,6 +176,7 @@ private:
 #endif
 	const uint8 *makeFatCharacter(const uint8 *glyph, const int w) const;
 	mutable uint8 _tempGlyph2[32];
+
 protected:
 	DrawingMode _drawMode;
 	bool _flippedMode, _fatPrint;
@@ -186,12 +188,12 @@ protected:
 	virtual const uint8 *getCharData(uint16 c) const = 0;
 
 	enum DrawingFeature {
-		kFeatDefault		= 1 << 0,
-		kFeatOutline		= 1 << 1,
-		kFeatShadow			= 1 << 2,
-		kFeatFMTownsShadow	= 1 << 3,
-		kFeatFlipped		= 1 << 4,
-		kFeatFatPrint		= 1 << 5
+		kFeatDefault = 1 << 0,
+		kFeatOutline = 1 << 1,
+		kFeatShadow = 1 << 2,
+		kFeatFMTownsShadow = 1 << 3,
+		kFeatFlipped = 1 << 4,
+		kFeatFatPrint = 1 << 5
 	};
 
 	virtual bool hasFeature(int feat) const = 0;
@@ -208,6 +210,7 @@ public:
 	 * Loads the ROM data from "FMT_FNT.ROM".
 	 */
 	bool loadData();
+
 private:
 	enum {
 		kFont16x16Chars = 7808,
@@ -233,6 +236,7 @@ public:
 	 * Loads the ROM data from "pce.cdbios".
 	 */
 	bool loadData();
+
 private:
 	enum {
 		kFont12x12Chars = 3418
@@ -257,6 +261,7 @@ public:
 	 * Load the font data from "SJIS.FNT".
 	 */
 	bool loadData();
+
 private:
 	uint8 *_fontData16x16;
 	uint _fontData16x16Size;

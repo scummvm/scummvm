@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "xeen/resources.h"
+#include "common/scummsys.h"
 #include "xeen/files.h"
 #include "xeen/xeen.h"
 

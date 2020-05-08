@@ -71,7 +71,6 @@ namespace Alan3 {
 #define READ_MODE "rb"
 #define WRITE_MODE "wb"
 
-
 /****************/
 
 /* don't need TERMIO */
@@ -81,36 +80,35 @@ namespace Alan3 {
 
 #define USE_READLINE
 
-
 /* Native character functions */
-extern int isSpace(unsigned int c);      /* IN - Native character to test */
-extern int isLower(unsigned int c);      /* IN - Native character to test */
-extern int isUpper(unsigned int c);      /* IN - Native character to test */
-extern int isLetter(unsigned int c);     /* IN - Native character to test */
-extern int toLower(unsigned int c);      /* IN - Native character to convert */
-extern int toUpper(unsigned int c);      /* IN - Native character to convert */
-extern char *strlow(char str[]); /* INOUT - Native string to convert */
-extern char *strupp(char str[]); /* INOUT - Native string to convert */
+extern int isSpace(unsigned int c);  /* IN - Native character to test */
+extern int isLower(unsigned int c);  /* IN - Native character to test */
+extern int isUpper(unsigned int c);  /* IN - Native character to test */
+extern int isLetter(unsigned int c); /* IN - Native character to test */
+extern int toLower(unsigned int c);  /* IN - Native character to convert */
+extern int toUpper(unsigned int c);  /* IN - Native character to convert */
+extern char *strlow(char str[]);     /* INOUT - Native string to convert */
+extern char *strupp(char str[]);     /* INOUT - Native string to convert */
 
 /* ISO character functions */
-extern int isISOLetter(int c);  /* IN - ISO character to test */
-extern char IsoToLowerCase(int c); /* IN - ISO character to convert */
-extern char IsoToUpperCase(int c); /* IN - ISO character to convert */
-extern char *stringLower(char str[]); /* INOUT - ISO string to convert */
-extern char *stringUpper(char str[]); /* INOUT - ISO string to convert */
+extern int isISOLetter(int c);                       /* IN - ISO character to test */
+extern char IsoToLowerCase(int c);                   /* IN - ISO character to convert */
+extern char IsoToUpperCase(int c);                   /* IN - ISO character to convert */
+extern char *stringLower(char str[]);                /* INOUT - ISO string to convert */
+extern char *stringUpper(char str[]);                /* INOUT - ISO string to convert */
 extern int compareStrings(char str1[], char str2[]); /* Case-insensitive compare */
 
 /* ISO string conversion functions */
-extern void toIso(char copy[],  /* OUT - Mapped string */
+extern void toIso(char copy[],     /* OUT - Mapped string */
                   char original[], /* IN - string to convert */
-                  int charset); /* IN - The current character set */
+                  int charset);    /* IN - The current character set */
 
-extern void fromIso(char copy[], /* OUT - Mapped string */
+extern void fromIso(char copy[],      /* OUT - Mapped string */
                     char original[]); /* IN - string to convert */
 
-extern void toNative(char copy[], /* OUT - Mapped string */
+extern void toNative(char copy[],     /* OUT - Mapped string */
                      char original[], /* IN - string to convert */
-                     int charset); /* IN - current character set */
+                     int charset);    /* IN - current character set */
 
 extern char *baseNameStart(char *fullPathName);
 

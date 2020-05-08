@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/conversations.h"
-#include "mads/scene.h"
-#include "mads/phantom/phantom_scenes.h"
 #include "mads/phantom/phantom_scenes2.h"
+#include "common/scummsys.h"
+#include "mads/conversations.h"
+#include "mads/mads.h"
+#include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -334,7 +334,6 @@ void Scene201::handleRaoulAnimation() {
 		default:
 			resetFrame = 0;
 			break;
-
 		}
 		break;
 
@@ -402,14 +401,14 @@ void Scene201::handleRaoulAnimation() {
 }
 
 void Scene201::handleSellerAnimation() {
-	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _sellerFrame )
+	if (_scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame() == _sellerFrame)
 		return;
 
 	int random = -1;
 	int resetFrame = -1;
 	_sellerFrame = _scene->_animation[_globals._animationIndexes[1]]->getCurrentFrame();
 
-	switch (_sellerFrame ) {
+	switch (_sellerFrame) {
 	case 1:
 	case 2:
 	case 3:
@@ -821,7 +820,7 @@ void Scene202::actions() {
 	}
 
 	if (_action.isAction(VERB_TALK_TO, NOUN_GENTLEMAN) || _action.isAction(VERB_TALK_TO, NOUN_EDGAR_DEGAS)) {
-		if (!_globals[kDegasNameIsKnown] ) {
+		if (!_globals[kDegasNameIsKnown]) {
 			_vm->_gameConv->run(9);
 			_vm->_gameConv->exportPointer(&_globals[kPlayerScore]);
 			_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
@@ -860,8 +859,7 @@ void Scene202::actions() {
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 14);
 			_game._player.walk(Common::Point(134, 112), FACING_NORTH);
 			_game._player.setWalkTrigger(83);
-			}
-			break;
+		} break;
 
 		case 82:
 			_game._player._visible = true;
@@ -2223,8 +2221,7 @@ void Scene203::handleRichardConversation() {
 			_globals[kDoneRichConv203] = true;
 			_globals[kMadameGiryShowsUp] = true;
 		}
-		}
-		break;
+	} break;
 
 	case 74:
 		_vm->_gameConv->hold();
@@ -2982,7 +2979,7 @@ void Scene203::handleRichardAnimation() {
 		random = _vm->getRandomNumber(1, 45);
 
 		switch (_richardStatus) {
-		case 0 :
+		case 0:
 		case 1:
 		case 2:
 		case 3:
@@ -3057,7 +3054,7 @@ void Scene203::handleRaoulAnimation() {
 		default:
 			random = _vm->getRandomNumber(5, 100);
 			break;
-			}
+		}
 
 		switch (random) {
 		case 1:
@@ -3534,15 +3531,15 @@ void Scene204::step() {
 	}
 
 	if (_game._trigger == 70) {
-		 _globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 8, 1);
-		 _scene->_sequences.setDepth(_globals._sequenceIndexes[3], 10);
-		 _scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -1, -2);
-		 _scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
+		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 8, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 10);
+		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], -1, -2);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	} else if (_game._trigger == 71) {
-		 _vm->_sound->command(25);
-		 _globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
-		 _scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
-		 _game._player._stepEnabled = true;
+		_vm->_sound->command(25);
+		_globals._sequenceIndexes[3] = _scene->_sequences.addStampCycle(_globals._spriteIndexes[3], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
+		_game._player._stepEnabled = true;
 	}
 }
 
@@ -3735,7 +3732,7 @@ void Scene204::actions() {
 			return;
 		}
 
-		if (_action.isObject(NOUN_DECORATIVE_VASE )) {
+		if (_action.isObject(NOUN_DECORATIVE_VASE)) {
 			_vm->_dialogs->show(20424);
 			_action._inProgress = false;
 			return;
@@ -4506,9 +4503,9 @@ void Scene205::step() {
 		handleGiryAnimation();
 
 	if ((_globals[kWalkerConverse] == 2) || (_globals[kWalkerConverse] == 3)) {
-			++_conversationCounter;
-			if (_conversationCounter > 200)
-				_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
+		++_conversationCounter;
+		if (_conversationCounter > 200)
+			_globals[kWalkerConverse] = _vm->getRandomNumber(1, 4);
 	}
 
 	if (_giveTicketFl && !_action.isAction(VERB_GIVE)) {
@@ -4636,10 +4633,7 @@ void Scene205::actions() {
 	}
 
 	if ((_action.isAction(VERB_ENTER)) || (_action.isAction(VERB_OPEN)) || _action.isAction(VERB_UNLOCK) || _action.isAction(VERB_LOCK)) {
-		if (((_action.isObject(NOUN_BOX_FIVE) && ((_globals[kDoorsIn205] == 0) || (_globals[kDoorsIn205] == 2)))
-			|| _action.isAction(VERB_UNLOCK) || _action.isAction(VERB_LOCK))
-			|| ((_action.isObject(NOUN_BOX_NINE) && ((_globals[kDoorsIn205] == 0) || (_globals[kDoorsIn205] == 1))))
-			|| (_action.isObject(NOUN_BOX_SIX)) || (_action.isObject(NOUN_BOX_SEVEN)) || (_action.isObject(NOUN_BOX_EIGHT))) {
+		if (((_action.isObject(NOUN_BOX_FIVE) && ((_globals[kDoorsIn205] == 0) || (_globals[kDoorsIn205] == 2))) || _action.isAction(VERB_UNLOCK) || _action.isAction(VERB_LOCK)) || ((_action.isObject(NOUN_BOX_NINE) && ((_globals[kDoorsIn205] == 0) || (_globals[kDoorsIn205] == 1)))) || (_action.isObject(NOUN_BOX_SIX)) || (_action.isObject(NOUN_BOX_SEVEN)) || (_action.isObject(NOUN_BOX_EIGHT))) {
 			switch (_game._trigger) {
 			case (0):
 				_game._player._stepEnabled = false;
@@ -4660,7 +4654,7 @@ void Scene205::actions() {
 				_scene->_sequences.addTimer(15, 2);
 				_action._inProgress = false;
 				return;
-				}
+			}
 
 			case 2:
 				_scene->deleteSequence(_globals._sequenceIndexes[2]);
@@ -4686,8 +4680,7 @@ void Scene205::actions() {
 			default:
 				break;
 			}
-		} else if (((_action.isObject(NOUN_BOX_FIVE)) && ((_globals[kDoorsIn205] == 3) || (_globals[kDoorsIn205] == 1)))
-			|| ((_action.isObject(NOUN_BOX_NINE)) && ((_globals[kDoorsIn205] == 3) || (_globals[kDoorsIn205] == 2)))) {
+		} else if (((_action.isObject(NOUN_BOX_FIVE)) && ((_globals[kDoorsIn205] == 3) || (_globals[kDoorsIn205] == 1))) || ((_action.isObject(NOUN_BOX_NINE)) && ((_globals[kDoorsIn205] == 3) || (_globals[kDoorsIn205] == 2)))) {
 			switch (_game._trigger) {
 			case (0):
 				_game._player._stepEnabled = false;
@@ -5209,7 +5202,7 @@ void Scene205::handleConversation11() {
 			_vm->_gameConv->hold();
 			_giryStatus = 7;
 			_vm->_gameConv->setInterlocutorTrigger(64);
-			_game._player.walk(Common::Point(225,79), FACING_NORTHEAST);
+			_game._player.walk(Common::Point(225, 79), FACING_NORTHEAST);
 			interlocutorFl = true;
 			_globals[kMadameGiryLocation] = 2;
 			_scene->changeVariant(4);
@@ -6121,8 +6114,7 @@ void Scene206::actions() {
 		}
 	}
 
-	if (_action.isAction(VERB_WALK_BEHIND, NOUN_PANEL) || _action.isAction(VERB_OPEN, NOUN_PANEL)
-	 || ((_game._trigger >= 70) && (_game._trigger < 77))) {
+	if (_action.isAction(VERB_WALK_BEHIND, NOUN_PANEL) || _action.isAction(VERB_OPEN, NOUN_PANEL) || ((_game._trigger >= 70) && (_game._trigger < 77))) {
 		if (_globals[kPanelIn206] == 3) {
 			switch (_game._trigger) {
 			case (0):
@@ -6200,8 +6192,7 @@ void Scene206::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_UNLOCK, NOUN_PANEL) || _action.isAction(VERB_LOCK, NOUN_PANEL) || _action.isAction(VERB_PUT, NOUN_KEY, NOUN_KEYHOLE)
-	 || _action.isAction(VERB_UNLOCK, NOUN_KEYHOLE) || _action.isAction(VERB_LOCK, NOUN_KEYHOLE) || (_game._trigger >= 64)) {
+	if (_action.isAction(VERB_UNLOCK, NOUN_PANEL) || _action.isAction(VERB_LOCK, NOUN_PANEL) || _action.isAction(VERB_PUT, NOUN_KEY, NOUN_KEYHOLE) || _action.isAction(VERB_UNLOCK, NOUN_KEYHOLE) || _action.isAction(VERB_LOCK, NOUN_KEYHOLE) || (_game._trigger >= 64)) {
 		if (_globals[kPanelIn206] >= 1) {
 			switch (_game._trigger) {
 			case (0):
@@ -6220,8 +6211,7 @@ void Scene206::actions() {
 				_game.syncTimers(SYNC_SEQ, _globals._sequenceIndexes[5], SYNC_SEQ, idx);
 				_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[5], false);
 				_scene->_sequences.addTimer(30, 65);
-				}
-				break;
+			} break;
 
 			case 65:
 				_scene->deleteSequence(_globals._sequenceIndexes[5]);
@@ -6403,8 +6393,7 @@ void Scene206::preActions() {
 	if (_action.isAction(VERB_LOOK, NOUN_LEFT_COLUMN))
 		_game._player._needToWalk = true;
 
-	if (_action.isAction(VERB_UNLOCK, NOUN_PANEL) || _action.isAction(VERB_WALK_BEHIND, NOUN_PANEL)
-	 || _action.isAction(VERB_LOCK, NOUN_PANEL) || _action.isAction(VERB_OPEN, NOUN_PANEL))
+	if (_action.isAction(VERB_UNLOCK, NOUN_PANEL) || _action.isAction(VERB_WALK_BEHIND, NOUN_PANEL) || _action.isAction(VERB_LOCK, NOUN_PANEL) || _action.isAction(VERB_OPEN, NOUN_PANEL))
 		_game._player.walk(Common::Point(108, 137), FACING_NORTHWEST);
 
 	if (_action.isObject(NOUN_LEFT_COLUMN) && (_globals[kPanelIn206] == 0))
@@ -6836,7 +6825,6 @@ void Scene208::animateMiddleLeftPeople() {
 	_scene->_sequences.addTimer(delay, 64);
 }
 
-
 void Scene208::animateCenterPeople() {
 	if (_game._trigger != 66)
 		return;
@@ -6997,7 +6985,7 @@ void Scene250::enter() {
 	warning("TODO: Switch to letter box view. See definition of MADS_MENU_Y");
 
 	_game._player._stepEnabled = false;
-	_game._player._visible    = false;
+	_game._player._visible = false;
 
 	_game.loadQuoteSet(0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x41, 0);
 	_globals._animationIndexes[0] = _scene->loadAnimation("*RM150Q1", 1);

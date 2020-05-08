@@ -27,11 +27,10 @@
 //
 // TimerSlot - an event driven thread
 //
-TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback, uint32 interval, void *refCon) :
-	_timer(0),
-	_callback(callback),
-	_interval(interval),
-	_refCon(refCon) {
+TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback, uint32 interval, void *refCon) : _timer(0),
+                                                                                                _callback(callback),
+                                                                                                _interval(interval),
+                                                                                                _refCon(refCon) {
 }
 
 TimerSlot::~TimerSlot() {
@@ -74,7 +73,7 @@ TizenTimerManager::TizenTimerManager() {
 }
 
 TizenTimerManager::~TizenTimerManager() {
-	for (Common::List<TimerSlot *>::iterator it = _timers.begin(); it != _timers.end(); ) {
+	for (Common::List<TimerSlot *>::iterator it = _timers.begin(); it != _timers.end();) {
 		TimerSlot *slot = (*it);
 		slot->Quit();
 		slot->Join();

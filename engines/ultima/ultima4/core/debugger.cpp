@@ -21,12 +21,13 @@
  */
 
 #include "ultima/ultima4/core/debugger.h"
-#include "ultima/ultima4/core/utils.h"
+#include "common/system.h"
 #include "ultima/ultima4/controllers/alpha_action_controller.h"
 #include "ultima/ultima4/controllers/camp_controller.h"
 #include "ultima/ultima4/controllers/read_choice_controller.h"
 #include "ultima/ultima4/controllers/read_dir_controller.h"
 #include "ultima/ultima4/controllers/ztats_controller.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
@@ -34,7 +35,6 @@
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/annotation.h"
@@ -42,7 +42,7 @@
 #include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/ultima4.h"
-#include "common/system.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -163,21 +163,18 @@ void Debugger::prompt() {
 
 bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 	static const char *DUNGEON_DISALLOWED[] = {
-		"attack", "board", "enter", "fire", "jimmy", "locate",
-		"open", "talk", "exit", "yell", nullptr
-	};
+	    "attack", "board", "enter", "fire", "jimmy", "locate",
+	    "open", "talk", "exit", "yell", nullptr};
 	static const char *COMBAT_DISALLOWED[] = {
-		"board", "climb", "descend", "enter", "exit", "fire", "hole",
-		"ignite", "jimmy", "mix", "order", "open", "peer", "quitAndSave",
-		"search", "use", "wear", "yell", nullptr
-	};
+	    "board", "climb", "descend", "enter", "exit", "fire", "hole",
+	    "ignite", "jimmy", "mix", "order", "open", "peer", "quitAndSave",
+	    "search", "use", "wear", "yell", nullptr};
 
 	if (g_context && g_context->_location) {
 		int ctx = g_context->_location->_context;
 		if (ctx & (CTX_DUNGEON | CTX_COMBAT)) {
 			Common::String method = argv[0];
-			const char *const *mth = (ctx & CTX_COMBAT) ?
-				COMBAT_DISALLOWED : DUNGEON_DISALLOWED;
+			const char *const *mth = (ctx & CTX_COMBAT) ? COMBAT_DISALLOWED : DUNGEON_DISALLOWED;
 
 			for (; *mth; ++mth) {
 				if (method.equalsIgnoreCase(*mth)) {
@@ -220,7 +217,7 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &keepRunning) {
 
 void Debugger::getChest(int player) {
 	Common::String param = Common::String::format("%d", player);
-	const char *argv[2] = { "get", param.c_str() };
+	const char *argv[2] = {"get", param.c_str()};
 
 	cmdGetChest(2, argv);
 }
@@ -240,7 +237,7 @@ bool Debugger::cmdMove(int argc, const char **argv) {
 
 	// horse doubles speed (make sure we're on the same map as the previous move first)
 	if (retval & (MOVE_SUCCEEDED | MOVE_SLOWED) &&
-		(g_context->_transportContext == TRANSPORT_HORSE) && g_context->_horseSpeed) {
+	    (g_context->_transportContext == TRANSPORT_HORSE) && g_context->_horseSpeed) {
 		// to give it a smooth look of movement
 		gameUpdateScreen();
 		if (priorMap == g_context->_location->_map->_fname)
@@ -437,9 +434,9 @@ bool Debugger::cmdCastSpell(int argc, const char **argv) {
 			 * Confirmed both mixture loss and mp loss in this situation in the
 			 * original Ultima IV (at least, in the Amiga version.)
 			 */
-			 //c->saveGame->_mixtures[castSpell]--;
+			//c->saveGame->_mixtures[castSpell]--;
 			g_context->_party->member(player)->adjustMp(
-				-g_spells->spellGetRequiredMP(spell));
+			    -g_spells->spellGetRequiredMP(spell));
 		}
 		break;
 	}
@@ -479,8 +476,8 @@ bool Debugger::cmdCamp(int argc, const char **argv) {
 bool Debugger::cmdClimb(int argc, const char **argv) {
 	if (!usePortalAt(g_context->_location, g_context->_location->_coords, ACTION_KLIMB)) {
 		if (g_context->_transportContext == TRANSPORT_BALLOON) {
-				g_ultima->_saveGame->_balloonState = 1;
-				g_context->_opacity = 0;
+			g_ultima->_saveGame->_balloonState = 1;
+			g_context->_opacity = 0;
 			print("Klimb altitude");
 		} else
 			print("%cKlimb what?%c", FG_GREY, FG_WHITE);
@@ -568,7 +565,7 @@ bool Debugger::cmdFire(int argc, const char **argv) {
 
 	// nothing (not even mountains!) can block cannonballs
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), broadsidesDirs, g_context->_location->_coords,
-		1, 3, nullptr, false);
+	                                                        1, 3, nullptr, false);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (fireAt(*i, true))
 			return isDebuggerActive();
@@ -659,8 +656,8 @@ bool Debugger::cmdInteract(int argc, const char **argv) {
 		// When on foot, check for boarding
 		Object *obj = g_context->_location->_map->objectAt(g_context->_location->_coords);
 		if (obj && (obj->getTile().getTileType()->isShip() ||
-				obj->getTile().getTileType()->isHorse() ||
-				obj->getTile().getTileType()->isBalloon()))
+		            obj->getTile().getTileType()->isHorse() ||
+		            obj->getTile().getTileType()->isBalloon()))
 			return cmdBoard(argc, argv);
 	} else if (g_context->_transportContext == TRANSPORT_BALLOON) {
 		// Climb/Descend Balloon
@@ -728,7 +725,7 @@ bool Debugger::cmdJimmy(int argc, const char **argv) {
 		return isDebuggerActive();
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-		1, 1, nullptr, true);
+	                                                        1, 1, nullptr, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (jimmyAt(*i))
 			return isDebuggerActive();
@@ -751,8 +748,8 @@ bool Debugger::cmdLocate(int argc, const char **argv) {
 	else if (g_context->_location->_context & ~(CTX_DUNGEON | CTX_COMBAT)) {
 		if (g_ultima->_saveGame->_sextants >= 1)
 			print("Locate position\nwith sextant\n Latitude: %c'%c\"\nLongitude: %c'%c\"",
-				g_context->_location->_coords.y / 16 + 'A', g_context->_location->_coords.y % 16 + 'A',
-				g_context->_location->_coords.x / 16 + 'A', g_context->_location->_coords.x % 16 + 'A');
+			      g_context->_location->_coords.y / 16 + 'A', g_context->_location->_coords.y % 16 + 'A',
+			      g_context->_location->_coords.x / 16 + 'A', g_context->_location->_coords.x % 16 + 'A');
 		else
 			print("%cLocate position with what?%c", FG_GREY, FG_WHITE);
 	} else {
@@ -871,7 +868,7 @@ bool Debugger::cmdOpenDoor(int argc, const char **argv) {
 		return isDebuggerActive();
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-		1, 1, nullptr, true);
+	                                                        1, 1, nullptr, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (openAt(*i))
 			return isDebuggerActive();
@@ -942,7 +939,7 @@ bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
 
 	PartyMember *p = g_context->_party->member(player);
 	const Weapon *w = g_weapons->get((WeaponType)weapon);
- 
+
 	if (!w) {
 		print("");
 		return isDebuggerActive();
@@ -954,8 +951,7 @@ bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
 	case EQUIP_NONE_LEFT:
 		print("%cNone left!%c", FG_GREY, FG_WHITE);
 		break;
-	case EQUIP_CLASS_RESTRICTED:
-	{
+	case EQUIP_CLASS_RESTRICTED: {
 		Common::String indef_article;
 
 		switch (tolower(w->getName()[0])) {
@@ -973,7 +969,7 @@ bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
 		}
 
 		print("\n%cA %s may NOT use %s %s%c", FG_GREY, getClassName(p->getClass()),
-			indef_article.c_str(), w->getName().c_str(), FG_WHITE);
+		      indef_article.c_str(), w->getName().c_str(), FG_WHITE);
 		break;
 	}
 	}
@@ -1112,7 +1108,7 @@ bool Debugger::cmdTalk(int argc, const char **argv) {
 		return isDebuggerActive();
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
-		1, 2, &Tile::canTalkOverTile, true);
+	                                                        1, 2, &Tile::canTalkOverTile, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (talkAt(*i))
 			return isDebuggerActive();
@@ -1195,7 +1191,6 @@ bool Debugger::cmdYell(int argc, const char **argv) {
 	return isDebuggerActive();
 }
 
-
 bool Debugger::cmd3d(int argc, const char **argv) {
 	if (g_context->_location->_context == CTX_DUNGEON) {
 		print("3-D view %s", DungeonViewer.toggle3DDungeonView() ? "on" : "off");
@@ -1226,7 +1221,7 @@ bool Debugger::cmdAbyss(int argc, const char **argv) {
 bool Debugger::cmdCollisions(int argc, const char **argv) {
 	_collisionOverride = !_collisionOverride;
 	print("Collision detection %s",
-		_collisionOverride ? "off" : "on");
+	      _collisionOverride ? "off" : "on");
 
 	return isDebuggerActive();
 }
@@ -1260,7 +1255,7 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 		return isDebuggerActive();
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir),
-		MASK_DIR_ALL, g_context->_location->_coords, 1, 1, nullptr, true);
+	                                                        MASK_DIR_ALL, g_context->_location->_coords, 1, 1, nullptr, true);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (destroyAt(*i)) {
 			return false;
@@ -1463,7 +1458,7 @@ bool Debugger::cmdKarma(int argc, const char **argv) {
 
 	for (int i = 0; i < 8; ++i) {
 		Common::String line = Common::String::format("%s:",
-			getVirtueName(static_cast<Virtue>(i)));
+		                                             getVirtueName(static_cast<Virtue>(i)));
 		while (line.size() < 13)
 			line += ' ';
 
@@ -1494,17 +1489,17 @@ bool Debugger::cmdLocation(int argc, const char **argv) {
 	if (isDebuggerActive()) {
 		if (g_context->_location->_map->isWorldMap())
 			print("Location: %s x: %d, y: %d",
-				"World Map", pos.x, pos.y);
+			      "World Map", pos.x, pos.y);
 		else
 			print("Location: %s x: %d, y: %d, z: %d",
-				g_context->_location->_map->getName().c_str(), pos.x, pos.y, pos.z);
+			      g_context->_location->_map->getName().c_str(), pos.x, pos.y, pos.z);
 	} else {
 		if (g_context->_location->_map->isWorldMap())
 			print("\nLocation:\n%s\nx: %d\ny: %d", "World Map",
-				pos.x, pos.y);
+			      pos.x, pos.y);
 		else
 			print("\nLocation:\n%s\nx: %d\ny: %d\nz: %d",
-				g_context->_location->_map->getName().c_str(), pos.x, pos.y, pos.z);
+			      g_context->_location->_map->getName().c_str(), pos.x, pos.y, pos.z);
 	}
 
 	return isDebuggerActive();
@@ -1768,7 +1763,7 @@ bool Debugger::cmdWind(int argc, const char **argv) {
 	if (windDir == "lock" || windDir == "l") {
 		g_context->_windLock = !g_context->_windLock;
 		print("Wind direction is %slocked",
-			g_context->_windLock ? "" : "un");
+		      g_context->_windLock ? "" : "un");
 	} else {
 		Direction dir = directionFromName(windDir);
 
@@ -1786,9 +1781,7 @@ bool Debugger::cmdWind(int argc, const char **argv) {
 bool Debugger::cmdListTriggers(int argc, const char **argv) {
 	CombatMap *map = nullptr;
 
-	if (isCombat() && (map = static_cast<CombatController *>(
-			eventHandler->getController())->getMap()) != nullptr
-			&& map->isDungeonRoom()) {
+	if (isCombat() && (map = static_cast<CombatController *>(eventHandler->getController())->getMap()) != nullptr && map->isDungeonRoom()) {
 		Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_prev->_map);
 		assert(dungeon);
 		Trigger *triggers = dungeon->_rooms[dungeon->_currentRoom]._triggers;
@@ -1800,10 +1793,10 @@ bool Debugger::cmdListTriggers(int argc, const char **argv) {
 		for (i = 0; i < 4; i++) {
 			print("%.1d)xy tile xy xy", i + 1);
 			print("  %.1X%.1X  %.3d %.1X%.1X %.1X%.1X",
-				triggers[i].x, triggers[i].y,
-				triggers[i]._tile,
-				triggers[i]._changeX1, triggers[i]._changeY1,
-				triggers[i].changeX2, triggers[i].changeY2);
+			      triggers[i].x, triggers[i].y,
+			      triggers[i]._tile,
+			      triggers[i]._changeX1, triggers[i]._changeY1,
+			      triggers[i].changeX2, triggers[i].changeY2);
 		}
 		prompt();
 		dontEndTurn();

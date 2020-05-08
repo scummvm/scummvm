@@ -36,13 +36,14 @@
 #include "pegasus/util.h"
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 }
 
 namespace Pegasus {
 
 class DisplayElement : public IDObject {
-friend class GraphicsManager;
+	friend class GraphicsManager;
+
 public:
 	DisplayElement(const DisplayElementID);
 	virtual ~DisplayElement();
@@ -52,7 +53,7 @@ public:
 
 	bool validToDraw(DisplayOrder, DisplayOrder);
 
-	virtual void draw(const Common::Rect&) {}
+	virtual void draw(const Common::Rect &) {}
 	bool isDisplaying() { return _elementIsDisplaying; }
 	virtual void startDisplaying();
 	virtual void stopDisplaying();
@@ -102,7 +103,7 @@ public:
 	void setHighlightCornerDiameter(const uint16 diameter) { _cornerDiameter = diameter; }
 	uint16 getHighlightCornerDiameter() const { return _cornerDiameter; }
 
-	void draw(const Common::Rect&) override;
+	void draw(const Common::Rect &) override;
 
 protected:
 	uint32 _highlightColor;
@@ -167,7 +168,8 @@ protected:
 class SpriteFrame;
 
 class Sprite : public DisplayElement {
-friend class SpriteFrame;
+	friend class SpriteFrame;
+
 public:
 	Sprite(const DisplayElementID);
 	~Sprite() override;

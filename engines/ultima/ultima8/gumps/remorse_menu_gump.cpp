@@ -20,31 +20,31 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/remorse_menu_gump.h"
+#include "engines/dialogs.h"
+#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/conf/setting_manager.h"
+#include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/fonts/font.h"
+#include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
-#include "ultima/ultima8/gumps/widgets/button_widget.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
-#include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/gumps/paged_gump.h"
-#include "ultima/ultima8/games/game.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/graphics/fonts/font.h"
-#include "ultima/ultima8/graphics/fonts/rendered_text.h"
-#include "ultima/ultima8/graphics/fonts/font_manager.h"
-#include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/gumps/widgets/edit_widget.h"
+#include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/gumps/u8_save_gump.h"
-#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/gumps/widgets/button_widget.h"
+#include "ultima/ultima8/gumps/widgets/edit_widget.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/meta_engine.h"
-#include "engines/dialogs.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -52,7 +52,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMenuGump, ModalGump)
 
 RemorseMenuGump::RemorseMenuGump()
-	: ModalGump(0, 0, 640, 480, 0, FLAG_DONT_SAVE) {
+    : ModalGump(0, 0, 640, 480, 0, FLAG_DONT_SAVE) {
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
@@ -71,7 +71,6 @@ RemorseMenuGump::RemorseMenuGump()
 RemorseMenuGump::~RemorseMenuGump() {
 	MetaEngine::setGameMenuActive(false);
 }
-
 
 void RemorseMenuGump::Close(bool no_del) {
 	// Restore old music state and palette.
@@ -167,13 +166,13 @@ void RemorseMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	}
 }
 
-
 void RemorseMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
 
 bool RemorseMenuGump::OnKeyDown(int key, int mod) {
-	if (Gump::OnKeyDown(key, mod)) return true;
+	if (Gump::OnKeyDown(key, mod))
+		return true;
 
 	if (key == Common::KEYCODE_ESCAPE) {
 		// FIXME: this check should probably be in Game or GUIApp
@@ -212,8 +211,7 @@ void RemorseMenuGump::selectEntry(int entry) {
 		// Options - show the ScummVM options dialog
 		GUI::ConfigDialog dlg;
 		dlg.runModal();
-	}
-	break;
+	} break;
 	case 5: // Credits
 		Game::get_instance()->playCredits();
 		break;
@@ -226,7 +224,8 @@ void RemorseMenuGump::selectEntry(int entry) {
 }
 
 bool RemorseMenuGump::OnTextInput(int unicode) {
-	if (Gump::OnTextInput(unicode)) return true;
+	if (Gump::OnTextInput(unicode))
+		return true;
 
 	return true;
 }

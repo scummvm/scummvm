@@ -41,7 +41,7 @@ public:
 
 	const AnimWeaponOverlay *getAnimOverlay(uint32 action) const;
 	const WeaponOverlayFrame *getOverlayFrame(uint32 action, int type,
-	        int direction, int frame) const;
+	                                          int direction, int frame) const;
 
 private:
 	Std::vector<AnimWeaponOverlay *> _overlay;

@@ -20,19 +20,19 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/utils.h"
-#include "ultima/ultima4/views/stats.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/armor.h"
 #include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/views/menu.h"
 #include "ultima/ultima4/game/names.h"
 #include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/spell.h"
-#include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/game/weapon.h"
+#include "ultima/ultima4/map/tile.h"
+#include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/views/menu.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -40,11 +40,10 @@ namespace Ultima4 {
 /**
  * StatsArea class implementation
  */
-StatsArea::StatsArea() :
-	_title(STATS_AREA_X * CHAR_WIDTH, 0 * CHAR_HEIGHT, STATS_AREA_WIDTH, 1),
-	_mainArea(STATS_AREA_X * CHAR_WIDTH, STATS_AREA_Y * CHAR_HEIGHT, STATS_AREA_WIDTH, STATS_AREA_HEIGHT),
-	_summary(STATS_AREA_X * CHAR_WIDTH, (STATS_AREA_Y + STATS_AREA_HEIGHT + 1) * CHAR_HEIGHT, STATS_AREA_WIDTH, 1),
-	_view(STATS_PARTY_OVERVIEW) {
+StatsArea::StatsArea() : _title(STATS_AREA_X * CHAR_WIDTH, 0 * CHAR_HEIGHT, STATS_AREA_WIDTH, 1),
+                         _mainArea(STATS_AREA_X * CHAR_WIDTH, STATS_AREA_Y * CHAR_HEIGHT, STATS_AREA_WIDTH, STATS_AREA_HEIGHT),
+                         _summary(STATS_AREA_X * CHAR_WIDTH, (STATS_AREA_Y + STATS_AREA_HEIGHT + 1) * CHAR_HEIGHT, STATS_AREA_WIDTH, 1),
+                         _view(STATS_PARTY_OVERVIEW) {
 	// Generate a formatted Common::String for each menu item,
 	// and then add the item to the menu.  The Y value
 	// for each menu item will be filled in later.
@@ -172,11 +171,11 @@ void StatsArea::update(Aura *aura) {
 }
 
 void StatsArea::update(Party *party, PartyEvent &event) {
-	update();	// Do a full update
+	update(); // Do a full update
 }
 
 void StatsArea::update(Menu *menu, MenuEvent &event) {
-	update();	// Do a full update
+	update(); // Do a full update
 }
 
 void StatsArea::highlightPlayer(int player) {
@@ -257,7 +256,7 @@ void StatsArea::showWeapons() {
 		if (n >= 1) {
 			const char *format = (n >= 10) ? "%c%d-%s" : "%c-%d-%s";
 
-			_mainArea.textAt(col, line++, format, w - WEAP_HANDS + 'A', n, g_weapons->get((WeaponType) w)->getAbbrev().c_str());
+			_mainArea.textAt(col, line++, format, w - WEAP_HANDS + 'A', n, g_weapons->get((WeaponType)w)->getAbbrev().c_str());
 			if (line >= (STATS_AREA_HEIGHT)) {
 				line = 0;
 				col += 8;
@@ -275,7 +274,7 @@ void StatsArea::showArmor() {
 		if (g_ultima->_saveGame->_armor[a] > 0) {
 			const char *format = (g_ultima->_saveGame->_armor[a] >= 10) ? "%c%d-%s" : "%c-%d-%s";
 
-			_mainArea.textAt(0, line++, format, a - ARMR_NONE + 'A', g_ultima->_saveGame->_armor[a], g_armors->get((ArmorType) a)->getName().c_str());
+			_mainArea.textAt(0, line++, format, a - ARMR_NONE + 'A', g_ultima->_saveGame->_armor[a], g_armors->get((ArmorType)a)->getName().c_str());
 		}
 	}
 }
@@ -302,7 +301,7 @@ void StatsArea::showItems() {
 		j = 0;
 		for (i = 0; i < 8; i++) {
 			if (g_ultima->_saveGame->_stones & (1 << i))
-				buffer[j++] = getStoneName((Virtue) i)[0];
+				buffer[j++] = getStoneName((Virtue)i)[0];
 		}
 		buffer[j] = '\0';
 		_mainArea.textAt(0, line++, "Stones:%s", buffer);
@@ -311,7 +310,7 @@ void StatsArea::showItems() {
 		j = 0;
 		for (i = 0; i < 8; i++) {
 			if (g_ultima->_saveGame->_runes & (1 << i))
-				buffer[j++] = getVirtueName((Virtue) i)[0];
+				buffer[j++] = getVirtueName((Virtue)i)[0];
 		}
 		buffer[j] = '\0';
 		_mainArea.textAt(0, line++, "Runes:%s", buffer);
@@ -403,7 +402,8 @@ void StatsArea::resetReagentsMenu() {
 		if (g_ultima->_saveGame->_reagents[i++] > 0) {
 			(*current)->setVisible(true);
 			(*current)->setY(row++);
-		} else (*current)->setVisible(false);
+		} else
+			(*current)->setVisible(false);
 	}
 
 	_reagentsMixMenu.reset(false);

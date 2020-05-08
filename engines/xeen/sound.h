@@ -23,13 +23,12 @@
 #ifndef XEEN_SOUND_H
 #define XEEN_SOUND_H
 
-#include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "xeen/files.h"
 #include "xeen/sound_driver.h"
 
 namespace Xeen {
-
 
 class Sound {
 private:
@@ -41,6 +40,7 @@ private:
 	Audio::SoundHandle _soundHandle;
 	byte _musicPercent;
 	int _musicVolume, _sfxVolume;
+
 private:
 	/**
 	 * Loads effects data that was embedded in the music driver
@@ -56,12 +56,14 @@ private:
 	 * Updates the music and sound effects playing volume
 	 */
 	void updateVolume();
+
 public:
 	bool _fxOn;
 	bool _musicOn;
 	Common::String _currentMusic, _priorMusic;
 	int _musicSide;
 	bool _subtitles;
+
 public:
 	Sound(Audio::Mixer *mixer);
 	virtual ~Sound();

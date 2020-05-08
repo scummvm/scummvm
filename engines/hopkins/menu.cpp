@@ -23,21 +23,26 @@
 #include "hopkins/menu.h"
 
 #include "hopkins/dialogs.h"
-#include "hopkins/files.h"
-#include "hopkins/hopkins.h"
-#include "hopkins/globals.h"
 #include "hopkins/events.h"
+#include "hopkins/files.h"
+#include "hopkins/globals.h"
 #include "hopkins/graphics.h"
+#include "hopkins/hopkins.h"
 #include "hopkins/sound.h"
 
-#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 
 namespace Hopkins {
 
-enum MenuSelection { MENU_NONE = 0, PLAY_GAME = 1, LOAD_GAME = 2, OPTIONS = 3, INTRODUCTION = 4, QUIT = 5 };
+enum MenuSelection { MENU_NONE = 0,
+	                 PLAY_GAME = 1,
+	                 LOAD_GAME = 2,
+	                 OPTIONS = 3,
+	                 INTRODUCTION = 4,
+	                 QUIT = 5 };
 
 MenuManager::MenuManager(HopkinsEngine *vm) {
 	_vm = vm;
@@ -48,7 +53,7 @@ int MenuManager::menu() {
 	MenuSelection menuIndex;
 	Common::Point mousePos;
 	signed int result;
-	int frameIndex[] = { 0, 0, 0, 0, 0 };
+	int frameIndex[] = {0, 0, 0, 0, 0};
 
 	if (_vm->shouldQuit())
 		return -1;
@@ -63,7 +68,7 @@ int MenuManager::menu() {
 		for (int idx = 0; idx < 31; ++idx)
 			_vm->_globals->_inventory[idx] = 0;
 
-		memset(_vm->_globals->_saveData->_data, 0, 2050-50);
+		memset(_vm->_globals->_saveData->_data, 0, 2050 - 50);
 		_vm->_objectsMan->addObject(14);
 		memset(frameIndex, 0, sizeof(int) * ARRAYSIZE(frameIndex));
 

@@ -156,13 +156,20 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1021(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 
-	case 1001: case 1002: case 1003: case 1005:
-	case 1009: case 8221968:
+	case 1001:
+	case 1002:
+	case 1003:
+	case 1005:
+	case 1009:
+	case 8221968:
 		// In the u32, but unused by any of the soccer scripts
 		// 1005 is called from another opcode, however
 		error("Unused soccer u32 opcode %d called", op);
 
-	case 1004: case 1010: case 1015: case 1018:
+	case 1004:
+	case 1010:
+	case 1015:
+	case 1018:
 	case 1020:
 		// Used only by the unaccessible in-game editor (so, fall through)
 
@@ -600,35 +607,33 @@ int LogicHEsoccer::op_1014(int32 srcX, int32 srcY, int32 srcZ, int32 velX, int32
 		adjustedVelY = (double)velY * (double)vecNumerator / (double)vecDenom / 100.0;
 		adjustedVelZ = (double)velZ * (double)vecNumerator / (double)vecDenom / 100.0;
 		break;
-	case 2:
-		{
-			// length of movement vector
-			double v15 = vectorLength((double)velX * (double)vecNumerator / (double)vecDenom, (double)velY * (double)vecNumerator / (double)vecDenom, (double)velZ * (double)vecNumerator / (double)vecDenom);
+	case 2: {
+		// length of movement vector
+		double v15 = vectorLength((double)velX * (double)vecNumerator / (double)vecDenom, (double)velY * (double)vecNumerator / (double)vecDenom, (double)velZ * (double)vecNumerator / (double)vecDenom);
 
-			if (v15 != 0.0) {
-				// add the (scaled) movement vector to the input
-				double v26 = (double)ABS(velX) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
-				srcX = (int)((double)srcX + v26);
-				double v25 = (double)ABS(velY) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
-				srcY = (int)((double)srcY + v25);
-				double v24 = (double)ABS(velZ) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
-				srcZ = (int)((double)srcZ + v24);
-			}
-
-			// srcX = (newX / newZ) * 3869
-			startX = (double)srcX / (double)srcZ * 3869.0;
-			// srcY = (newY - (+524 * 100)) / (newZ * 3869 + (+524 * 100)
-			startY = ((double)srcY - _userDataD[524] * 100.0) / (double)srcZ * 3869.0 + _userDataD[524] * 100.0;
-			// srcZ = 3869
-			startZ = 3869.0;
-			// vectorX = (newX - srcX) / 100
-			adjustedVelX = ((double)srcX - startX) / 100.0;
-			// vectorY = (newY - srcY) / 100
-			adjustedVelY = ((double)srcY - startY) / 100.0;
-			// vectorZ = (newZ - 3869 = srcZ) / 100
-			adjustedVelZ = ((double)srcZ - 3869.0) / 100.0;
+		if (v15 != 0.0) {
+			// add the (scaled) movement vector to the input
+			double v26 = (double)ABS(velX) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
+			srcX = (int)((double)srcX + v26);
+			double v25 = (double)ABS(velY) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
+			srcY = (int)((double)srcY + v25);
+			double v24 = (double)ABS(velZ) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
+			srcZ = (int)((double)srcZ + v24);
 		}
-		break;
+
+		// srcX = (newX / newZ) * 3869
+		startX = (double)srcX / (double)srcZ * 3869.0;
+		// srcY = (newY - (+524 * 100)) / (newZ * 3869 + (+524 * 100)
+		startY = ((double)srcY - _userDataD[524] * 100.0) / (double)srcZ * 3869.0 + _userDataD[524] * 100.0;
+		// srcZ = 3869
+		startZ = 3869.0;
+		// vectorX = (newX - srcX) / 100
+		adjustedVelX = ((double)srcX - startX) / 100.0;
+		// vectorY = (newY - srcY) / 100
+		adjustedVelY = ((double)srcY - startY) / 100.0;
+		// vectorZ = (newZ - 3869 = srcZ) / 100
+		adjustedVelZ = ((double)srcZ - 3869.0) / 100.0;
+	} break;
 	default:
 		break;
 	}
@@ -675,35 +680,35 @@ int LogicHEsoccer::op_1014(int32 srcX, int32 srcY, int32 srcZ, int32 velX, int32
 
 			// output the collision we found
 			switch (requestType) {
-				case 1:
-					for (int i = 0; i < 8; i++)
-						tmpData[i] = collisionInfo[i];
-					v22 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0));
-					v42 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0  + 1.0));
-					v39 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0  + 2.0));
-					setCollisionOutputData(tmpData, 8, dataArrayId, indexArrayId, (int)startX, (int)startY, (int)startZ, v46, v22, v42, v39, outData);
-					for (int i = 0; i < 10; i++)
-						putInArray(outArray, 0, i, outData[i]);
-					break;
-				case 2:
-					// write the object id if collision happened (note that other case can't happen)
-					if (collisionId)
-						writeScummVar(109, (int)collisionInfo[(collisionId - 1) * 8]);
-					else
-						writeScummVar(109, 0);
-					break;
-				case 3:
-					for (int i = 0; i < 8; i++)
-						tmpData[i] = collisionInfo[i];
-					v22 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0));
-					v42 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0  + 1.0));
-					v39 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0  + 2.0));
-					setCollisionOutputData(tmpData, 8, dataArrayId, indexArrayId, (int)startX, (int)startY, (int)startZ, v46, v22, v42, v39, outData);
-					for (int i = 0; i < 10; i++)
-						_internalCollisionOutData[i] = outData[i];
-					break;
-				default:
-					break;
+			case 1:
+				for (int i = 0; i < 8; i++)
+					tmpData[i] = collisionInfo[i];
+				v22 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0));
+				v42 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0 + 1.0));
+				v39 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0 + 2.0));
+				setCollisionOutputData(tmpData, 8, dataArrayId, indexArrayId, (int)startX, (int)startY, (int)startZ, v46, v22, v42, v39, outData);
+				for (int i = 0; i < 10; i++)
+					putInArray(outArray, 0, i, outData[i]);
+				break;
+			case 2:
+				// write the object id if collision happened (note that other case can't happen)
+				if (collisionId)
+					writeScummVar(109, (int)collisionInfo[(collisionId - 1) * 8]);
+				else
+					writeScummVar(109, 0);
+				break;
+			case 3:
+				for (int i = 0; i < 8; i++)
+					tmpData[i] = collisionInfo[i];
+				v22 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0));
+				v42 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0 + 1.0));
+				v39 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0 + 2.0));
+				setCollisionOutputData(tmpData, 8, dataArrayId, indexArrayId, (int)startX, (int)startY, (int)startZ, v46, v22, v42, v39, outData);
+				for (int i = 0; i < 10; i++)
+					_internalCollisionOutData[i] = outData[i];
+				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -790,7 +795,7 @@ int LogicHEsoccer::generateCollisionObjectList(float srcX, float srcY, float src
 
 	for (int i = 0; i < 8; i++) {
 		if (areaEnabled[i]) {
-			uint32 *ptr = _collisionTree +  _collisionTree[i + 2] * 11;
+			uint32 *ptr = _collisionTree + _collisionTree[i + 2] * 11;
 			objCount += addFromCollisionTreeNode(ptr[0], ptr[1], &ptr[2], ptr[10]);
 		}
 	}

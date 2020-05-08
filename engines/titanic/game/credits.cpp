@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CCredits, CGameObject)
-	ON_MESSAGE(SignalObject)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(SignalObject)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
 CCredits::CCredits() : CGameObject(), _fieldBC(-1), _fieldC0(1) {

@@ -21,7 +21,7 @@
  * Tag related methods
  */
 
-#ifndef TINSEL_PDISPLAY_H     // prevent multiple includes
+#ifndef TINSEL_PDISPLAY_H // prevent multiple includes
 #define TINSEL_PDISPLAY_H
 
 namespace Tinsel {
@@ -34,4 +34,4 @@ void EnablePointing();
 
 } // End of namespace Tinsel
 
-#endif		/* TINSEL_PDISPLAY_H */
+#endif /* TINSEL_PDISPLAY_H */

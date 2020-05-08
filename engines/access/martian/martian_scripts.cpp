@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "access/martian/martian_scripts.h"
 #include "access/access.h"
 #include "access/martian/martian_game.h"
 #include "access/martian/martian_resources.h"
-#include "access/martian/martian_scripts.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -330,7 +330,7 @@ void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	}
 }
 
-typedef void(MartianScripts::*MartianScriptMethodPtr)();
+typedef void (MartianScripts::*MartianScriptMethodPtr)();
 
 void MartianScripts::executeCommand(int commandIndex) {
 	Scripts::executeCommand(commandIndex);

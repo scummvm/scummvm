@@ -22,19 +22,19 @@
 
 #include "common/list.h"
 
+#include "gob/anifile.h"
+#include "gob/decfile.h"
+#include "gob/draw.h"
 #include "gob/global.h"
 #include "gob/palanim.h"
-#include "gob/draw.h"
 #include "gob/video.h"
-#include "gob/decfile.h"
-#include "gob/anifile.h"
 
 #include "gob/sound/sound.h"
 
-#include "gob/minigames/geisha/evilfish.h"
-#include "gob/minigames/geisha/oko.h"
-#include "gob/minigames/geisha/meter.h"
 #include "gob/minigames/geisha/diving.h"
+#include "gob/minigames/geisha/evilfish.h"
+#include "gob/minigames/geisha/meter.h"
+#include "gob/minigames/geisha/oko.h"
 
 namespace Gob {
 
@@ -43,61 +43,58 @@ namespace Geisha {
 static const uint8 kAirDecreaseRate = 15;
 
 static const byte kPalette[48] = {
-	0x00, 0x02, 0x12,
-	0x01, 0x04, 0x1D,
-	0x05, 0x08, 0x28,
-	0x0C, 0x0D, 0x33,
-	0x15, 0x14, 0x3F,
-	0x00, 0x3F, 0x00,
-	0x3F, 0x00, 0x00,
-	0x00, 0x00, 0x00,
-	0x21, 0x0D, 0x00,
-	0x2F, 0x1A, 0x04,
-	0x3D, 0x2B, 0x0D,
-	0x10, 0x10, 0x10,
-	0x1A, 0x1A, 0x1A,
-	0x24, 0x24, 0x24,
-	0x00, 0x01, 0x0F,
-	0x3F, 0x3F, 0x3F
-};
+    0x00, 0x02, 0x12,
+    0x01, 0x04, 0x1D,
+    0x05, 0x08, 0x28,
+    0x0C, 0x0D, 0x33,
+    0x15, 0x14, 0x3F,
+    0x00, 0x3F, 0x00,
+    0x3F, 0x00, 0x00,
+    0x00, 0x00, 0x00,
+    0x21, 0x0D, 0x00,
+    0x2F, 0x1A, 0x04,
+    0x3D, 0x2B, 0x0D,
+    0x10, 0x10, 0x10,
+    0x1A, 0x1A, 0x1A,
+    0x24, 0x24, 0x24,
+    0x00, 0x01, 0x0F,
+    0x3F, 0x3F, 0x3F};
 
 enum Animation {
-	kAnimationLungs         =  0,
-	kAnimationHeart         =  1,
-	kAnimationPearl         =  4,
-	kAnimationJellyfish     =  6,
-	kAnimationWater         =  7,
-	kAnimationShot          = 17,
+	kAnimationLungs = 0,
+	kAnimationHeart = 1,
+	kAnimationPearl = 4,
+	kAnimationJellyfish = 6,
+	kAnimationWater = 7,
+	kAnimationShot = 17,
 	kAnimationSwarmRedGreen = 32,
-	kAnimationSwarmOrange   = 33
+	kAnimationSwarmOrange = 33
 };
-
 
 const uint16 Diving::kEvilFishTypes[kEvilFishTypeCount][5] = {
-	{ 0, 14,  8,  9, 3}, // Shark
-	{15,  1, 12, 13, 3}, // Moray
-	{16,  2, 10, 11, 3}  // Ray
+    {0, 14, 8, 9, 3},   // Shark
+    {15, 1, 12, 13, 3}, // Moray
+    {16, 2, 10, 11, 3}  // Ray
 };
 
-const uint16 Diving::kPlantLevel1[] = { 18, 19, 20, 21 };
-const uint16 Diving::kPlantLevel2[] = { 22, 23, 24, 25 };
-const uint16 Diving::kPlantLevel3[] = { 26, 27, 28, 29, 30 };
+const uint16 Diving::kPlantLevel1[] = {18, 19, 20, 21};
+const uint16 Diving::kPlantLevel2[] = {22, 23, 24, 25};
+const uint16 Diving::kPlantLevel3[] = {26, 27, 28, 29, 30};
 
 const Diving::PlantLevel Diving::kPlantLevels[] = {
-	{ 150, ARRAYSIZE(kPlantLevel1), kPlantLevel1 },
-	{ 120, ARRAYSIZE(kPlantLevel2), kPlantLevel2 },
-	{ 108, ARRAYSIZE(kPlantLevel3), kPlantLevel3 },
+    {150, ARRAYSIZE(kPlantLevel1), kPlantLevel1},
+    {120, ARRAYSIZE(kPlantLevel2), kPlantLevel2},
+    {108, ARRAYSIZE(kPlantLevel3), kPlantLevel3},
 };
 
-
 Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
-	_objects(0), _gui(0), _okoAnim(0), _water(0), _lungs(0), _heart(0),
-	_blackPearl(0), _airMeter(0), _healthMeter(0), _isPlaying(false) {
+                                _objects(0), _gui(0), _okoAnim(0), _water(0), _lungs(0), _heart(0),
+                                _blackPearl(0), _airMeter(0), _healthMeter(0), _isPlaying(false) {
 
 	_blackPearl = new Surface(11, 8, 1);
 
-	_airMeter    = new Meter(3  , 195, 40, 2, 5, 7, 40, Meter::kFillToLeft);
-	_healthMeter = new Meter(275, 195, 40, 2, 6, 7,  4, Meter::kFillToLeft);
+	_airMeter = new Meter(3, 195, 40, 2, 5, 7, 40, Meter::kFillToLeft);
+	_healthMeter = new Meter(275, 195, 40, 2, 6, 7, 4, Meter::kFillToLeft);
 
 	for (uint i = 0; i < kEvilFishCount; i++)
 		_evilFish[i].evilFish = 0;
@@ -211,16 +208,16 @@ void Diving::cheatWin() {
 
 void Diving::init() {
 	// Load sounds
-	_vm->_sound->sampleLoad(&_soundShoot     , SOUND_SND, "tirgim.snd");
-	_vm->_sound->sampleLoad(&_soundBreathe   , SOUND_SND, "respir.snd");
+	_vm->_sound->sampleLoad(&_soundShoot, SOUND_SND, "tirgim.snd");
+	_vm->_sound->sampleLoad(&_soundBreathe, SOUND_SND, "respir.snd");
 	_vm->_sound->sampleLoad(&_soundWhitePearl, SOUND_SND, "virtou.snd");
 	_vm->_sound->sampleLoad(&_soundBlackPearl, SOUND_SND, "trouve.snd");
 
 	// Load and initialize sprites and animations
-	_background = new DECFile(_vm, "tperle.dec"  , 320, 200);
-	_objects    = new ANIFile(_vm, "tperle.ani"  , 320);
-	_gui        = new ANIFile(_vm, "tperlcpt.ani", 320);
-	_okoAnim    = new ANIFile(_vm, "tplonge.ani" , 320);
+	_background = new DECFile(_vm, "tperle.dec", 320, 200);
+	_objects = new ANIFile(_vm, "tperle.ani", 320);
+	_gui = new ANIFile(_vm, "tperlcpt.ani", 320);
+	_okoAnim = new ANIFile(_vm, "tplonge.ani", 320);
 
 	_water = new ANIObject(*_objects);
 	_lungs = new ANIObject(*_gui);
@@ -254,8 +251,8 @@ void Diving::init() {
 	}
 
 	for (uint i = 0; i < kPlantCount; i++) {
-		_plant[i].level   = i / kPlantPerLevelCount;
-		_plant[i].deltaX  = (kPlantLevelCount - _plant[i].level) * -2;
+		_plant[i].level = i / kPlantPerLevelCount;
+		_plant[i].deltaX = (kPlantLevelCount - _plant[i].level) * -2;
 
 		_plant[i].x = -1;
 		_plant[i].y = -1;
@@ -378,9 +375,9 @@ void Diving::deinit() {
 	_heart = 0;
 	_lungs = 0;
 
-	_okoAnim    = 0;
-	_gui        = 0;
-	_objects    = 0;
+	_okoAnim = 0;
+	_gui = 0;
+	_objects = 0;
 	_background = 0;
 }
 
@@ -407,9 +404,9 @@ void Diving::initScreen() {
 void Diving::initCursor() {
 	const int index = _vm->_draw->_cursorIndex;
 
-	const int16 left   = index * _vm->_draw->_cursorWidth;
-	const int16 top    = 0;
-	const int16 right  = left + _vm->_draw->_cursorWidth - 1;
+	const int16 left = index * _vm->_draw->_cursorWidth;
+	const int16 top = 0;
+	const int16 right = left + _vm->_draw->_cursorWidth - 1;
 	const int16 bottom = _vm->_draw->_cursorHeight - 1;
 
 	_vm->_draw->_cursorSprites->fillRect(left, top, right, bottom, 0);
@@ -420,7 +417,6 @@ void Diving::initCursor() {
 	_vm->_draw->_cursorHotspotX = 8;
 	_vm->_draw->_cursorHotspotY = 8;
 }
-
 
 void Diving::initPlants() {
 	// Create initial plantlife
@@ -673,7 +669,7 @@ void Diving::foundBlackPearl() {
 	_blackPearlCount++;
 
 	// Put the black pearl drawing into the black pearl box
-	if        (_blackPearlCount == 1) {
+	if (_blackPearlCount == 1) {
 		_vm->_draw->_backSurface->blit(*_blackPearl, 0, 0, 10, 7, 147, 179, 0);
 		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 147, 179, 157, 186);
 	} else if (_blackPearlCount == 2) {
@@ -703,7 +699,7 @@ void Diving::updateAnims() {
 
 	// Clear the previous animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.reverse_begin();
-			 a != _anims.end(); --a) {
+	     a != _anims.end(); --a) {
 
 		if ((*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom))
 			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
@@ -711,7 +707,7 @@ void Diving::updateAnims() {
 
 	// Draw the current animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.begin();
-			 a != _anims.end(); ++a) {
+	     a != _anims.end(); ++a) {
 
 		if ((*a)->draw(*_vm->_draw->_backSurface, left, top, right, bottom))
 			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);

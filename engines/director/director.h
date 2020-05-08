@@ -37,12 +37,12 @@ namespace Common {
 class MacResManager;
 class SeekableReadStream;
 class SeekableSubReadStreamEndian;
-}
+} // namespace Common
 
 namespace Graphics {
 class MacWindowManager;
 typedef Common::Array<byte *> MacPatterns;
-}
+} // namespace Graphics
 
 namespace Director {
 
@@ -60,19 +60,19 @@ class Score;
 class Cast;
 
 enum {
-	kDebugLingoExec			= 1 << 0,
-	kDebugLingoCompile		= 1 << 1,
-	kDebugLoading			= 1 << 2,
-	kDebugImages			= 1 << 3,
-	kDebugText				= 1 << 4,
-	kDebugEvents			= 1 << 5,
-	kDebugLingoParse		= 1 << 6,
-	kDebugLingoCompileOnly	= 1 << 7,
-	kDebugSlow				= 1 << 8,
-	kDebugFast				= 1 << 9,
-	kDebugNoLoop			= 1 << 10,
-	kDebugBytecode			= 1 << 11,
-	kDebugFewFramesOnly		= 1 << 12
+	kDebugLingoExec = 1 << 0,
+	kDebugLingoCompile = 1 << 1,
+	kDebugLoading = 1 << 2,
+	kDebugImages = 1 << 3,
+	kDebugText = 1 << 4,
+	kDebugEvents = 1 << 5,
+	kDebugLingoParse = 1 << 6,
+	kDebugLingoCompileOnly = 1 << 7,
+	kDebugSlow = 1 << 8,
+	kDebugFast = 1 << 9,
+	kDebugNoLoop = 1 << 10,
+	kDebugBytecode = 1 << 11,
+	kDebugFewFramesOnly = 1 << 12
 };
 
 struct MovieReference {

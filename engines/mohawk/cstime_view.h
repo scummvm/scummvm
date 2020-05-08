@@ -33,9 +33,9 @@ public:
 	CSTimeModule(MohawkEngine_CSTime *vm);
 
 	// TODO: these don't really belong here
-	void init() override { }
-	void shutdown() override { }
-	void update() override { }
+	void init() override {}
+	void shutdown() override {}
+	void update() override {}
 
 	void defaultMoveProc(Feature *feature);
 	void defaultDrawProc(Feature *feature);

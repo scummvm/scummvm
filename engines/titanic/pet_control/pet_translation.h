@@ -23,8 +23,8 @@
 #ifndef TITANIC_PET_TRANSLATION_H
 #define TITANIC_PET_TRANSLATION_H
 
-#include "titanic/pet_control/pet_section.h"
 #include "titanic/gfx/text_control.h"
+#include "titanic/pet_control/pet_section.h"
 
 namespace Titanic {
 
@@ -32,11 +32,13 @@ class CPetTranslation : public CPetSection {
 private:
 	CTextControl _message;
 	CTextControl _tooltip;
+
 private:
 	/**
 	 * Setup the control
 	 */
 	bool setupControl(CPetControl *petControl);
+
 public:
 	CPetTranslation();
 

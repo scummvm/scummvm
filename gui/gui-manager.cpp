@@ -20,14 +20,14 @@
  *
  */
 
-#include "common/events.h"
-#include "common/system.h"
-#include "common/util.h"
-#include "common/config-manager.h"
 #include "common/algorithm.h"
+#include "common/config-manager.h"
+#include "common/events.h"
 #include "common/rect.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/util.h"
 #include "gui/EventRecorder.h"
 
 #include "backends/keymapper/action.h"
@@ -35,11 +35,11 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 
-#include "gui/gui-manager.h"
-#include "gui/dialog.h"
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/Tooltip.h"
+#include "gui/dialog.h"
+#include "gui/gui-manager.h"
 #include "gui/widget.h"
 
 #include "graphics/cursorman.h"
@@ -58,7 +58,7 @@ enum {
 
 // Constructor
 GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
-    _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
+                           _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = nullptr;
 	_useStdCursor = false;
 
@@ -250,41 +250,41 @@ void GuiManager::redraw() {
 		shading = ThemeEngine::kShadingNone;
 
 	switch (_redrawStatus) {
-		case kRedrawCloseDialog:
-		case kRedrawFull:
-		case kRedrawTopDialog:
-			_theme->clearAll();
-			_theme->drawToBackbuffer();
+	case kRedrawCloseDialog:
+	case kRedrawFull:
+	case kRedrawTopDialog:
+		_theme->clearAll();
+		_theme->drawToBackbuffer();
 
-			for (DialogStack::size_type i = 0; i < _dialogStack.size() - 1; i++) {
-				_dialogStack[i]->drawDialog(kDrawLayerBackground);
-				_dialogStack[i]->drawDialog(kDrawLayerForeground);
-			}
+		for (DialogStack::size_type i = 0; i < _dialogStack.size() - 1; i++) {
+			_dialogStack[i]->drawDialog(kDrawLayerBackground);
+			_dialogStack[i]->drawDialog(kDrawLayerForeground);
+		}
 
-			// fall through
+		// fall through
 
-		case kRedrawOpenDialog:
-			// This case is an optimization to avoid redrawing the whole dialog
-			// stack when opening a new dialog.
+	case kRedrawOpenDialog:
+		// This case is an optimization to avoid redrawing the whole dialog
+		// stack when opening a new dialog.
 
-			_theme->drawToBackbuffer();
+		_theme->drawToBackbuffer();
 
-			if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 1) {
-				Dialog *previousDialog = _dialogStack[_dialogStack.size() - 2];
-				previousDialog->drawDialog(kDrawLayerForeground);
-			}
+		if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 1) {
+			Dialog *previousDialog = _dialogStack[_dialogStack.size() - 2];
+			previousDialog->drawDialog(kDrawLayerForeground);
+		}
 
-			_theme->applyScreenShading(shading);
-			_dialogStack.top()->drawDialog(kDrawLayerBackground);
+		_theme->applyScreenShading(shading);
+		_dialogStack.top()->drawDialog(kDrawLayerBackground);
 
-			_theme->drawToScreen();
-			_theme->copyBackBufferToScreen();
+		_theme->drawToScreen();
+		_theme->copyBackBufferToScreen();
 
-			_dialogStack.top()->drawDialog(kDrawLayerForeground);
-			break;
+		_dialogStack.top()->drawDialog(kDrawLayerForeground);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	// Redraw the widgets that are marked as dirty
@@ -301,14 +301,14 @@ Dialog *GuiManager::getTopDialog() const {
 	return _dialogStack.top();
 }
 
-void GuiManager::addToTrash(GuiObject* object, Dialog* parent) {
+void GuiManager::addToTrash(GuiObject *object, Dialog *parent) {
 	debug(7, "Adding Gui Object %p to trash", (void *)object);
 	GuiObjectTrashItem t;
 	t.object = object;
 	t.parent = nullptr;
 	// If a dialog was provided, check it is in the dialog stack
 	if (parent != nullptr) {
-		for (uint i = 0 ; i < _dialogStack.size() ; ++i) {
+		for (uint i = 0; i < _dialogStack.size(); ++i) {
 			if (_dialogStack[i] == parent) {
 				t.parent = parent;
 				break;
@@ -319,7 +319,7 @@ void GuiManager::addToTrash(GuiObject* object, Dialog* parent) {
 }
 
 void GuiManager::runLoop() {
-	Dialog * const activeDialog = getTopDialog();
+	Dialog *const activeDialog = getTopDialog();
 	bool didSaveState = false;
 
 	if (activeDialog == nullptr)
@@ -339,7 +339,7 @@ void GuiManager::runLoop() {
 		if (_useStdCursor)
 			setupCursor();
 
-//		_theme->refresh();
+		//		_theme->refresh();
 
 		_redrawStatus = kRedrawFull;
 		redraw();
@@ -508,11 +508,10 @@ void GuiManager::closeTopDialog() {
 
 void GuiManager::setupCursor() {
 	const byte palette[] = {
-		255, 255, 255,
-		255, 255, 255,
-		171, 171, 171,
-		 87,  87,  87
-	};
+	    255, 255, 255,
+	    255, 255, 255,
+	    171, 171, 171,
+	    87, 87, 87};
 
 	CursorMan.pushCursorPalette(palette, 0, 4);
 	CursorMan.pushCursor(nullptr, 0, 0, 0, 0, 0);
@@ -598,10 +597,8 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	case Common::EVENT_RBUTTONDOWN:
 		button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
 		time = _system->getMillis(true);
-		if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-			&& ABS(_lastClick.x - event.mouse.x) < 3
-			&& ABS(_lastClick.y - event.mouse.y) < 3) {
-				_lastClick.count++;
+		if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay) && ABS(_lastClick.x - event.mouse.x) < 3 && ABS(_lastClick.y - event.mouse.y) < 3) {
+			_lastClick.count++;
 		} else {
 			_lastClick.x = event.mouse.x;
 			_lastClick.y = event.mouse.y;
@@ -664,7 +661,7 @@ void GuiManager::initTextToSpeech() {
 	ttsMan->setVolume(volume);
 
 	unsigned voice;
-	if(ConfMan.hasKey("tts_voice"))
+	if (ConfMan.hasKey("tts_voice"))
 		voice = ConfMan.getInt("tts_voice", "scummvm");
 	else
 		voice = 0;

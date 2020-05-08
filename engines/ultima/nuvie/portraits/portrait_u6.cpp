@@ -23,17 +23,17 @@
 #include "ultima/nuvie/core/nuvie_defs.h"
 
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/gui/widgets/console.h"
+#include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_shape.h"
+#include "ultima/nuvie/gui/widgets/console.h"
 #include "ultima/nuvie/screen/dither.h"
-#include "ultima/nuvie/core/game.h"
 
-#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/portraits/portrait_u6.h"
+#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/files/u6_lzw.h"
 #include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/portraits/portrait_u6.h"
 
 #include "ultima/nuvie/core/u6_objects.h"
 
@@ -47,7 +47,6 @@ namespace Nuvie {
 #define PORTRAIT_U6_WISP 192
 #define PORTRAIT_U6_EXODUS 191
 #define PORTRAIT_U6_NOTHING 188
-
 
 bool PortraitU6::init() {
 	Std::string filename;
@@ -102,21 +101,21 @@ uint8 PortraitU6::get_portrait_num(Actor *actor) {
 			num -= 1;
 
 		if (num == (188 - 1))
-			num = PORTRAIT_U6_EXODUS - 1; // Exodus
+			num = PORTRAIT_U6_EXODUS - 1;              // Exodus
 		else if (num >= (192 - 1) && num <= (200 - 1)) // Shrines, Temple of Singularity
 			return (NO_PORTRAIT_FOUND);
-		else if (num > 194) { // there are 194 npc portraits
+		else if (num > 194) {             // there are 194 npc portraits
 			switch (actor->get_obj_n()) { //check for temporary actors with portraits. eg guards and wisps
-			case OBJ_U6_GUARD :
+			case OBJ_U6_GUARD:
 				num = PORTRAIT_U6_GUARD - 1;
 				break;
-			case OBJ_U6_WISP :
+			case OBJ_U6_WISP:
 				num = PORTRAIT_U6_WISP - 1;
 				break;
-			case OBJ_U6_GARGOYLE :
+			case OBJ_U6_GARGOYLE:
 				num = PORTRAIT_U6_GARGOYLE - 1;
 				break;
-			default :
+			default:
 				return NO_PORTRAIT_FOUND;
 			}
 		}

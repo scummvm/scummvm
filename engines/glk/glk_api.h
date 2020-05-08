@@ -23,9 +23,9 @@
 #ifndef GLK_GLK_API_H
 #define GLK_GLK_API_H
 
+#include "glk/blorb.h"
 #include "glk/glk.h"
 #include "glk/glk_types.h"
-#include "glk/blorb.h"
 #include "glk/sound.h"
 #include "glk/time.h"
 #include "glk/windows.h"
@@ -43,7 +43,6 @@ struct gidispatch_function_struct {
 };
 typedef gidispatch_function_struct gidispatch_function_t;
 
-
 /**
  * Implements the GLK interface
  */
@@ -52,6 +51,7 @@ private:
 	bool _gliFirstEvent;
 	unsigned char _charTolowerTable[256];
 	unsigned char _charToupperTable[256];
+
 public:
 	/**
 	 * Constructor
@@ -60,7 +60,7 @@ public:
 	~GlkAPI() override {}
 
 	void glk_exit(void);
-	void glk_set_interrupt_handler(void(*func)(void));
+	void glk_set_interrupt_handler(void (*func)(void));
 	void glk_tick(void);
 
 	uint glk_gestalt(uint id, uint val);
@@ -198,11 +198,11 @@ public:
 
 	bool glk_image_draw(winid_t win, uint image, int val1, int val2);
 	bool glk_image_draw_scaled(winid_t win, uint image,
-		int val1, int val2, uint width, uint height);
+	                           int val1, int val2, uint width, uint height);
 	bool glk_image_draw(winid_t win, const Graphics::Surface &image, uint transColor = (uint)-1,
-		int xp = 0, int yp = 0);
+	                    int xp = 0, int yp = 0);
 	bool glk_image_draw_scaled(winid_t win, const Graphics::Surface &image, uint transColor,
-		int xp, int yp, uint width, uint height);
+	                           int xp, int yp, uint width, uint height);
 
 	bool glk_image_get_info(uint image, uint *width, uint *height);
 
@@ -225,7 +225,7 @@ public:
 
 	uint glk_schannel_play(schanid_t chan, uint snd);
 	uint glk_schannel_play_ext(schanid_t chan, uint snd, uint repeats,
-	                             uint notify);
+	                           uint notify);
 	void glk_schannel_stop(schanid_t chan);
 	void glk_schannel_set_volume(schanid_t chan, uint vol);
 
@@ -237,7 +237,7 @@ public:
 
 	schanid_t glk_schannel_create_ext(uint rock, uint volume);
 	uint glk_schannel_play_multi(schanid_t *chanarray, uint chancount,
-	                               uint *sndarray, uint soundcount, uint notify);
+	                             uint *sndarray, uint soundcount, uint notify);
 	void glk_schannel_pause(schanid_t chan);
 	void glk_schannel_unpause(schanid_t chan);
 	void glk_schannel_set_volume_ext(schanid_t chan, uint vol,
@@ -303,11 +303,11 @@ public:
 
 	/* dispa methods */
 
-	void gidispatch_set_object_registry(gidispatch_rock_t(*regi)(void *obj, uint objclass),
-		void(*unregi)(void *obj, uint objclass, gidispatch_rock_t objrock));
+	void gidispatch_set_object_registry(gidispatch_rock_t (*regi)(void *obj, uint objclass),
+	                                    void (*unregi)(void *obj, uint objclass, gidispatch_rock_t objrock));
 
-	void gidispatch_set_retained_registry(gidispatch_rock_t(*regi)(void *array, uint len, const char *typecode),
-		void(*unregi)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock));
+	void gidispatch_set_retained_registry(gidispatch_rock_t (*regi)(void *array, uint len, const char *typecode),
+	                                      void (*unregi)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock));
 
 	uint32 gidispatch_count_classes() const;
 	const gidispatch_intconst_t *gidispatch_get_class(uint32 index) const;

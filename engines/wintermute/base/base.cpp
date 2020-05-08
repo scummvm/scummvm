@@ -27,10 +27,10 @@
  */
 
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
 
 namespace Wintermute {
 
@@ -40,19 +40,16 @@ BaseClass::BaseClass(BaseGame *gameOwner) {
 	_persistable = true;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseClass::BaseClass() {
 	_gameRef = nullptr;
 	_persistable = true;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 BaseClass::~BaseClass() {
 	_editorProps.clear();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 Common::String BaseClass::getEditorProp(const Common::String &propName, const Common::String &initVal) {
@@ -63,7 +60,6 @@ Common::String BaseClass::getEditorProp(const Common::String &propName, const Co
 		return initVal; // Used to be NULL
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseClass::setEditorProp(const Common::String &propName, const Common::String &propValue) {
@@ -79,8 +75,6 @@ bool BaseClass::setEditorProp(const Common::String &propName, const Common::Stri
 	return STATUS_OK;
 }
 
-
-
 TOKEN_DEF_START
 TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(NAME)
@@ -94,11 +88,9 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 	TOKEN_TABLE(VALUE)
 	TOKEN_TABLE_END
 
-
 	if (!_gameRef->_editorMode) {
 		return STATUS_OK;
 	}
-
 
 	char *params;
 	int cmd;
@@ -140,7 +132,6 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 		default:
 			break;
 		}
-
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		delete[] propName;
@@ -159,7 +150,6 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 		return STATUS_FAILED;
 	}
 
-
 	setEditorProp(propName, propValue);
 
 	delete[] propName;
@@ -169,7 +159,6 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseClass::saveAsText(BaseDynamicBuffer *buffer, int indent) {

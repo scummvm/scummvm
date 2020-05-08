@@ -58,10 +58,10 @@ String pcase(String s);
 String ucase(String s);
 String lcase(String s);
 
-
-template<class T> Common::WriteStream &operator<<(Common::WriteStream &o, Common::Array<T> v) {
+template<class T>
+Common::WriteStream &operator<<(Common::WriteStream &o, Common::Array<T> v) {
 	o << "{ '";
-	for (uint i = 0; i < v.size(); i ++) {
+	for (uint i = 0; i < v.size(); i++) {
 		o << v[i];
 		if (i + 1 < v.size())
 			o << "', '";
@@ -70,7 +70,7 @@ template<class T> Common::WriteStream &operator<<(Common::WriteStream &o, Common
 	return o;
 }
 
-template <class KEYTYPE, class VALTYPE>
+template<class KEYTYPE, class VALTYPE>
 bool has(Common::HashMap<KEYTYPE, VALTYPE, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> m, KEYTYPE key) {
 	return m.contains(key);
 }
@@ -87,7 +87,7 @@ private:
 	};
 
 	Common::WriteStream *logfilestr_;
-//	std::streambuf *cerrbuf_;
+	//	std::streambuf *cerrbuf_;
 	static Nullstreambuf cnull;
 };
 

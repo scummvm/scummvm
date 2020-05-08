@@ -61,7 +61,7 @@ using Shared::CKeypressMsg;
 class GameView : public Shared::Gfx::VisualContainer {
 	/**
 	 * Simple class encapsulating the logic for drawing the Ultima 6 scroll onto a surface
-	 */	
+	 */
 	class Scroll : private Graphics::ManagedSurface {
 	public:
 		/**
@@ -77,18 +77,21 @@ class GameView : public Shared::Gfx::VisualContainer {
 
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
+
 private:
 	Shared::Info *_info;
 	U1Gfx::Status *_status;
-//	Shared::ViewportDungeon *_viewportDungeon;
+	//	Shared::ViewportDungeon *_viewportDungeon;
 	Shared::Actions::Action *_actions[4];
 	Graphics::ManagedSurface _background;
+
 private:
 	/**
 	 * Sets up the background for the screen by adapting the Ultima 6 game background to fit the
 	 * asthetics needed for Ultima 1
 	 */
 	void loadBackground();
+
 public:
 	CLASSDEF;
 	GameView(Shared::TreeItem *parent = nullptr);
@@ -101,7 +104,7 @@ public:
 };
 
 } // End of namespace U6Gfx
-} // End of namespace Shared
+} // namespace Ultima1
 } // End of namespace Ultima
 
 #endif

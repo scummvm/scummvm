@@ -37,21 +37,19 @@ struct MouseCursor {
 };
 
 static const MouseCursor mouseCursors[] = {
-	{ 1, 1, mouseCursorNormal },
-	{ 0, 0, mouseCursorDisk },
-	{ 7, 7, mouseCursorCross },
-	{ 0, 0, mouseCursorNoMouse },
-	{ 10, 6, mouseCursorWalk },
-	{ 10, 6, mouseCursorExit },
-	{ 10, 6, mouseCursorMagnifyingGlass }
-};
+    {1, 1, mouseCursorNormal},
+    {0, 0, mouseCursorDisk},
+    {7, 7, mouseCursorCross},
+    {0, 0, mouseCursorNoMouse},
+    {10, 6, mouseCursorWalk},
+    {10, 6, mouseCursorExit},
+    {10, 6, mouseCursorMagnifyingGlass}};
 
 CursorType currentCursor = CURSOR_NOMOUSE;
 
 static const byte cursorPalette[] = {
-	0, 0, 0,
-	0xff, 0xff, 0xff
-};
+    0, 0, 0,
+    0xff, 0xff, 0xff};
 
 void changeCursor(CursorType eType) {
 	assert(eType >= 0 && eType < CURSOR_MAX);

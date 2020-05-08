@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "tsage/ringworld/ringworld_scenes3.h"
+#include "common/config-manager.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -244,7 +244,7 @@ void Scene2000::Action10::signal() {
 		break;
 	case 2:
 		SceneItem::display(2000, 17, SET_Y, 20, SET_X, 110, SET_FONT, 2, SET_BG_COLOR, -1,
-			SET_FG_COLOR, 17, SET_WIDTH, 200, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, 1, LIST_END);
+		                   SET_FG_COLOR, 17, SET_WIDTH, 200, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, 1, LIST_END);
 		break;
 	case 3:
 		SceneItem::display(0, 0);
@@ -1549,14 +1549,14 @@ void Scene2100::Object2::doAction(int action) {
 				scene->setAction(&scene->_sequenceManager, scene, scene->_sceneMode, NULL);
 			}
 		} else if (g_globals->getFlag(13)) {
-				SceneItem::display2(2100, 31);
+			SceneItem::display2(2100, 31);
 		} else if (g_globals->getFlag(14)) {
-				SceneItem::display2(2100, 32);
+			SceneItem::display2(2100, 32);
 		} else {
-				g_globals->setFlag(14);
-				g_globals->_player.disableControl();
-				scene->_sceneMode = 2108;
-				scene->setAction(&scene->_sequenceManager, scene, 2109, NULL);
+			g_globals->setFlag(14);
+			g_globals->_player.disableControl();
+			scene->_sceneMode = 2108;
+			scene->setAction(&scene->_sequenceManager, scene, 2109, NULL);
 		}
 		break;
 	default:
@@ -1594,16 +1594,15 @@ void Scene2100::Object3::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene2100::Scene2100() :
-		_hotspot1(0, CURSOR_LOOK, 2100, 2, LIST_END),
-		_hotspot5(0, CURSOR_LOOK, 2100, 9, LIST_END),
-		_hotspot6(0, CURSOR_LOOK, 2100, 7, CURSOR_USE, 2100, 8, LIST_END),
-		_hotspot7(0, CURSOR_LOOK, 2100, 7, CURSOR_USE, 2100, 11, LIST_END),
-		_hotspot9(0, CURSOR_LOOK, 2100, 14, LIST_END),
-		_hotspot11(0, CURSOR_LOOK, 2100, 15, CURSOR_USE, 2100, 16, LIST_END),
-		_hotspot12(0, CURSOR_LOOK, 2100, 24, CURSOR_USE, 2100, 25, LIST_END),
-		_hotspot13(0, CURSOR_LOOK, 2100, 17, LIST_END),
-		_hotspot15(0, CURSOR_LOOK, 2100, 22, CURSOR_USE, 2100, 23, LIST_END) {
+Scene2100::Scene2100() : _hotspot1(0, CURSOR_LOOK, 2100, 2, LIST_END),
+                         _hotspot5(0, CURSOR_LOOK, 2100, 9, LIST_END),
+                         _hotspot6(0, CURSOR_LOOK, 2100, 7, CURSOR_USE, 2100, 8, LIST_END),
+                         _hotspot7(0, CURSOR_LOOK, 2100, 7, CURSOR_USE, 2100, 11, LIST_END),
+                         _hotspot9(0, CURSOR_LOOK, 2100, 14, LIST_END),
+                         _hotspot11(0, CURSOR_LOOK, 2100, 15, CURSOR_USE, 2100, 16, LIST_END),
+                         _hotspot12(0, CURSOR_LOOK, 2100, 24, CURSOR_USE, 2100, 25, LIST_END),
+                         _hotspot13(0, CURSOR_LOOK, 2100, 17, LIST_END),
+                         _hotspot15(0, CURSOR_LOOK, 2100, 22, CURSOR_USE, 2100, 23, LIST_END) {
 	_area1.setup(2153, 2, 1, 2100);
 	_area1._pt = Common::Point(200, 31);
 	_area2.setup(2153, 3, 1, 2150);
@@ -1736,8 +1735,8 @@ void Scene2100::postInit(SceneObjectList *OwnerList) {
 	}
 
 	g_globals->_sceneItems.addItems(&_hotspot15, &_hotspot11, &_hotspot10, &_hotspot9, &_hotspot14,
-		&_hotspot13, &_hotspot12, &_hotspot8, &_object1, &_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5,
-		&_hotspot6, &_hotspot7, &_hotspot1, NULL);
+	                                &_hotspot13, &_hotspot12, &_hotspot8, &_object1, &_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5,
+	                                &_hotspot6, &_hotspot7, &_hotspot1, NULL);
 
 	g_globals->_player.postInit();
 	if (g_globals->getFlag(13)) {
@@ -2088,12 +2087,12 @@ void Scene2120::Action1::signal() {
 	case 1:
 		// First page of index
 		SceneItem::display(2120, 0, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOR, 7, SET_BG_COLOR, -1,
-			SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
+		                   SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
 		break;
 	case 2:
 		// Second page of index
 		SceneItem::display(2120, 1, SET_X, 120, SET_FONT, 1, SET_EXT_BGCOLOR, 7, SET_BG_COLOR, -1,
-			SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
+		                   SET_WIDTH, 200, SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
 		break;
 	case 3:
 		// Display an image associated with the encyclopedia entry
@@ -2108,8 +2107,8 @@ void Scene2120::Action1::signal() {
 	case 4:
 		// Display page of text
 		SceneItem::display(2121, _entries[scene->_subjectIndex]._lineNum + scene->_lineOffset,
-			SET_X, 130, SET_FONT, 1, SET_EXT_BGCOLOR, 7, SET_BG_COLOR, -1, SET_WIDTH, 200,
-			SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
+		                   SET_X, 130, SET_FONT, 1, SET_EXT_BGCOLOR, 7, SET_BG_COLOR, -1, SET_WIDTH, 200,
+		                   SET_KEEP_ONSCREEN, -1, SET_TEXT_MODE, 0, LIST_END);
 		_actionIndex = 4;
 		break;
 	default:
@@ -2246,7 +2245,7 @@ void Scene2120::Action1::dispatch() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene2120::Scene2120(): Scene() {
+Scene2120::Scene2120() : Scene() {
 	_listRect = Rect(18, 48, 260, 177);
 	_dbMode = 0;
 	_prevDbMode = 0;
@@ -2554,13 +2553,12 @@ void Scene2150::Hotspot10::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene2150::Scene2150() :
-		_hotspot3(18, CURSOR_LOOK, 2150, 2, CURSOR_USE, 2150, 18, LIST_END),
-		_hotspot5(17, CURSOR_LOOK, 2150, 4, CURSOR_USE, 2150, 18, LIST_END),
-		_hotspot6(0, CURSOR_LOOK, 2150, 5, CURSOR_USE, 2150, 18, LIST_END),
-		_hotspot8(16, CURSOR_LOOK, 2150, 8, LIST_END),
-		_hotspot9(0, CURSOR_LOOK, 2150, 9, CURSOR_USE, 2150, 13, LIST_END),
-		_hotspot11(0, CURSOR_LOOK, 2150, 12, LIST_END) {
+Scene2150::Scene2150() : _hotspot3(18, CURSOR_LOOK, 2150, 2, CURSOR_USE, 2150, 18, LIST_END),
+                         _hotspot5(17, CURSOR_LOOK, 2150, 4, CURSOR_USE, 2150, 18, LIST_END),
+                         _hotspot6(0, CURSOR_LOOK, 2150, 5, CURSOR_USE, 2150, 18, LIST_END),
+                         _hotspot8(16, CURSOR_LOOK, 2150, 8, LIST_END),
+                         _hotspot9(0, CURSOR_LOOK, 2150, 9, CURSOR_USE, 2150, 13, LIST_END),
+                         _hotspot11(0, CURSOR_LOOK, 2150, 12, LIST_END) {
 	_rect1 = Rect(260, 70, 270, 77);
 	_rect2 = Rect(222, 142, 252, 150);
 	_area1.setup(2153, 2, 1, 2100);
@@ -2571,7 +2569,6 @@ Scene2150::Scene2150() :
 	_area3._pt = Common::Point(200, 75);
 	_area4.setup(2153, 1, 1, 10);
 	_area4._pt = Common::Point(237, 77);
-
 }
 
 void Scene2150::postInit(SceneObjectList *OwnerList) {
@@ -2635,7 +2632,7 @@ void Scene2150::postInit(SceneObjectList *OwnerList) {
 	_hotspot11.setBounds(Rect(142, 119, 176, 158));
 
 	g_globals->_sceneItems.addItems(&_hotspot1, &_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5,
-		&_hotspot6, &_hotspot7, &_hotspot10, &_hotspot9, &_hotspot11, &_hotspot8, NULL);
+	                                &_hotspot6, &_hotspot7, &_hotspot10, &_hotspot9, &_hotspot11, &_hotspot8, NULL);
 
 	switch (g_globals->_sceneManager._previousScene) {
 	case 2120:
@@ -2823,7 +2820,7 @@ void Scene2200::Action3::signal() {
 			setDelay(5);
 		} else {
 			for (SynchronizedList<SceneObject *>::iterator i = g_globals->_sceneObjects->begin();
-					i != g_globals->_sceneObjects->end(); ++i) {
+			     i != g_globals->_sceneObjects->end(); ++i) {
 				(*i)->hide();
 			}
 
@@ -2840,7 +2837,7 @@ void Scene2200::Action3::signal() {
 			scene->_hotspot7.setPosition(Common::Point(145, 165));
 
 			SceneItem::display(60, 1, SET_Y, 40, SET_X, 25, SET_FONT, 75, SET_BG_COLOR, -1, SET_FG_COLOR, 34,
-				SET_POS_MODE, 0, SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
+			                   SET_POS_MODE, 0, SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
 			_state = 1;
 			setDelay(1800);
 		}
@@ -2849,7 +2846,7 @@ void Scene2200::Action3::signal() {
 	case 4:
 	case 5:
 		SceneItem::display(60, _actionIndex - 2, SET_Y, 40, SET_X, 25, SET_FONT, 75, SET_BG_COLOR, -1, SET_FG_COLOR, 34,
-			SET_POS_MODE, 0, SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
+		                   SET_POS_MODE, 0, SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(1800);
 		break;
 	case 6:
@@ -2860,7 +2857,7 @@ void Scene2200::Action3::signal() {
 		break;
 	case 7:
 		for (SynchronizedList<SceneObject *>::iterator i = g_globals->_sceneObjects->begin();
-				i != g_globals->_sceneObjects->end(); ++i)
+		     i != g_globals->_sceneObjects->end(); ++i)
 			(*i)->show();
 
 		scene->_hotspot6.remove();
@@ -2985,10 +2982,8 @@ void Scene2200::Hotspot9::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-
-Scene2200::Scene2200() :
-		_hotspot1(0, CURSOR_LOOK, 2200, 5, CURSOR_USE, 2200, 6, LIST_END),
-		_hotspot10(0, CURSOR_LOOK, 2200, 4, LIST_END) {
+Scene2200::Scene2200() : _hotspot1(0, CURSOR_LOOK, 2200, 5, CURSOR_USE, 2200, 6, LIST_END),
+                         _hotspot10(0, CURSOR_LOOK, 2200, 4, LIST_END) {
 }
 
 void Scene2200::postInit(SceneObjectList *OwnerList) {
@@ -3242,7 +3237,6 @@ void Scene2222::postInit(SceneObjectList *OwnerList) {
 	g_globals->_sceneOffset.x = (g_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 }
 
-
 /*--------------------------------------------------------------------------
  * Scene 2230 - Starcraft - Quinn's Room
  *
@@ -3378,14 +3372,12 @@ void Scene2230::Action3::signal() {
 
 void Scene2230::Action4::signal() {
 	switch (_actionIndex++) {
-	case 0:
-		{
-			Common::Point pt(190 + g_globals->_randomSource.getRandomNumber(9), 68);
-			NpcMover *mover = new NpcMover();
-			g_globals->_player.addMover(mover, &pt, this);
-			_actionIndex = 0;
-		}
-		break;
+	case 0: {
+		Common::Point pt(190 + g_globals->_randomSource.getRandomNumber(9), 68);
+		NpcMover *mover = new NpcMover();
+		g_globals->_player.addMover(mover, &pt, this);
+		_actionIndex = 0;
+	} break;
 	default:
 		break;
 	}
@@ -3583,7 +3575,6 @@ void Scene2230::Action8::signal() {
 		break;
 	}
 }
-
 
 /*--------------------------------------------------------------------------*/
 
@@ -3851,7 +3842,7 @@ void Scene2230::postInit(SceneObjectList *OwnerList) {
 	_hotspot12.setBounds(Rect(170, 109, 177, 115));
 
 	g_globals->_sceneItems.addItems(&_hotspot8, &_hotspot5, &_hotspot4, &_hotspot6, &_hotspot7,
-			&_hotspot1, &_hotspot3, NULL);
+	                                &_hotspot1, &_hotspot3, NULL);
 
 	g_globals->_sceneManager._scene->_sceneBounds.contain(g_globals->_sceneManager._scene->_backgroundBounds);
 	g_globals->_sceneOffset.x = (g_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
@@ -4351,15 +4342,14 @@ void Scene2280::Hotspot18::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene2280::Scene2280() :
-		_hotspot3(0, CURSOR_LOOK, 2280, 30, CURSOR_USE, 2280, 31, LIST_END),
-		_hotspot5(0, CURSOR_LOOK, 2280, 35, CURSOR_USE, 2280, 36, LIST_END),
-		_hotspot6(0, CURSOR_LOOK, 2280, 19, CURSOR_USE, 2280, 20, LIST_END),
-		_hotspot9(0, CURSOR_LOOK, 2280, 5, CURSOR_USE, 2280, 6, LIST_END),
-		_hotspot11(0, CURSOR_LOOK, 2280, 7, CURSOR_USE, 2280, 8, LIST_END),
-		_hotspot13(0, CURSOR_LOOK, 2280, 9, CURSOR_USE, 2280, 10, LIST_END),
-		_hotspot15(0, CURSOR_LOOK, 2280, 45, LIST_END),
-		_hotspot16(0, CURSOR_LOOK, 2280, 16, CURSOR_USE, 2280, 42, LIST_END) {
+Scene2280::Scene2280() : _hotspot3(0, CURSOR_LOOK, 2280, 30, CURSOR_USE, 2280, 31, LIST_END),
+                         _hotspot5(0, CURSOR_LOOK, 2280, 35, CURSOR_USE, 2280, 36, LIST_END),
+                         _hotspot6(0, CURSOR_LOOK, 2280, 19, CURSOR_USE, 2280, 20, LIST_END),
+                         _hotspot9(0, CURSOR_LOOK, 2280, 5, CURSOR_USE, 2280, 6, LIST_END),
+                         _hotspot11(0, CURSOR_LOOK, 2280, 7, CURSOR_USE, 2280, 8, LIST_END),
+                         _hotspot13(0, CURSOR_LOOK, 2280, 9, CURSOR_USE, 2280, 10, LIST_END),
+                         _hotspot15(0, CURSOR_LOOK, 2280, 45, LIST_END),
+                         _hotspot16(0, CURSOR_LOOK, 2280, 16, CURSOR_USE, 2280, 42, LIST_END) {
 }
 
 void Scene2280::postInit(SceneObjectList *OwnerList) {
@@ -4470,7 +4460,7 @@ void Scene2280::postInit(SceneObjectList *OwnerList) {
 	}
 
 	g_globals->_sceneItems.addItems(&_hotspot13, &_hotspot11, &_hotspot9, &_hotspot14, &_hotspot7,
-		&_hotspot6, &_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5, &_hotspot1, &_hotspot16, &_hotspot15, NULL);
+	                                &_hotspot6, &_hotspot2, &_hotspot3, &_hotspot4, &_hotspot5, &_hotspot1, &_hotspot16, &_hotspot15, NULL);
 
 	g_globals->_sceneManager._scene->_sceneBounds.contain(g_globals->_sceneManager._scene->_backgroundBounds);
 	g_globals->_sceneOffset.x = (g_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
@@ -4857,12 +4847,11 @@ void Scene2300::Hotspot7::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene2300::Scene2300() :
-		_hotspot11(0, CURSOR_LOOK, 2300, 6, CURSOR_USE, 2300, 14, LIST_END),
-		_hotspot12(0, CURSOR_LOOK, 2300, 5, CURSOR_USE, 2300, 13, LIST_END),
-		_hotspot13(0, CURSOR_LOOK, 2300, 9, CURSOR_USE, 2300, 20, LIST_END),
-		_hotspot14(0, CURSOR_LOOK, 2300, 7, CURSOR_USE, 2300, 15, LIST_END),
-		_hotspot15(0, CURSOR_LOOK, 2300, 1, LIST_END) {
+Scene2300::Scene2300() : _hotspot11(0, CURSOR_LOOK, 2300, 6, CURSOR_USE, 2300, 14, LIST_END),
+                         _hotspot12(0, CURSOR_LOOK, 2300, 5, CURSOR_USE, 2300, 13, LIST_END),
+                         _hotspot13(0, CURSOR_LOOK, 2300, 9, CURSOR_USE, 2300, 20, LIST_END),
+                         _hotspot14(0, CURSOR_LOOK, 2300, 7, CURSOR_USE, 2300, 15, LIST_END),
+                         _hotspot15(0, CURSOR_LOOK, 2300, 1, LIST_END) {
 }
 
 void Scene2300::postInit(SceneObjectList *OwnerList) {
@@ -5016,8 +5005,8 @@ Scene2310::Scene2310() {
 void Scene2310::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	loadScene(2301);
-	Common::Point pointList[5] = { Common::Point(142, 82), Common::Point(158, 82), Common::Point(174, 82),
-		Common::Point(190, 82), Common::Point(205, 82) };
+	Common::Point pointList[5] = {Common::Point(142, 82), Common::Point(158, 82), Common::Point(174, 82),
+	                              Common::Point(190, 82), Common::Point(205, 82)};
 
 	for (int idx = 0; idx < 5; ++idx) {
 		_wireList[idx].postInit();
@@ -5884,7 +5873,7 @@ void Scene2320::Hotspot14::doAction(int action) {
 
 			scene->_sceneMode = 2324;
 			scene->setAction(&scene->_sequenceManager1, scene, 2324, &g_globals->_player, &scene->_hotspot7,
-				&scene->_hotspot8, &scene->_hotspot9, &scene->_hotspot16, NULL);
+			                 &scene->_hotspot8, &scene->_hotspot9, &scene->_hotspot16, NULL);
 		} else if (g_globals->getFlag(13)) {
 			SceneItem::display2(2320, 24);
 		} else if (!g_globals->getFlag(76)) {
@@ -5921,16 +5910,13 @@ void Scene2320::Hotspot15::doAction(int action) {
 	}
 }
 
-
 /*--------------------------------------------------------------------------*/
 
-Scene2320::Scene2320() :
-		_hotspot1(0, CURSOR_LOOK, 2320, 0, LIST_END),
-		_hotspot2(0, CURSOR_LOOK, 2320, 1, LIST_END),
-		_hotspot3(0, CURSOR_LOOK, 2320, 11, LIST_END),
-		_hotspot4(0, CURSOR_LOOK, 2320, 14, LIST_END),
-		_hotspot13(0, CURSOR_LOOK, 2320, 12, LIST_END)
-{
+Scene2320::Scene2320() : _hotspot1(0, CURSOR_LOOK, 2320, 0, LIST_END),
+                         _hotspot2(0, CURSOR_LOOK, 2320, 1, LIST_END),
+                         _hotspot3(0, CURSOR_LOOK, 2320, 11, LIST_END),
+                         _hotspot4(0, CURSOR_LOOK, 2320, 14, LIST_END),
+                         _hotspot13(0, CURSOR_LOOK, 2320, 12, LIST_END) {
 	_area1.setup(2153, 2, 1, 2100);
 	_area1._pt = Common::Point(200, 31);
 	_area2.setup(2153, 3, 1, 2150);
@@ -6171,7 +6157,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 	_hotspot15.setBounds(Rect(191, 53, 205, 63));
 
 	g_globals->_sceneItems.addItems(&_hotspot14, &_hotspot15, &_hotspot5, &_hotspot6, &_hotspot12,
-		&_hotspot13, &_hotspot4, &_hotspot3, &_hotspot2, &_hotspot1, NULL);
+	                                &_hotspot13, &_hotspot4, &_hotspot3, &_hotspot2, &_hotspot1, NULL);
 }
 
 void Scene2320::synchronize(Serializer &s) {

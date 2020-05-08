@@ -21,26 +21,26 @@
  */
 
 #include "ultima/nuvie/keybinding/key_actions.h"
-#include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/core/egg_manager.h"
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/views/inventory_view.h"
-#include "ultima/nuvie/gui/widgets/command_bar.h"
-#include "ultima/nuvie/views/actor_view.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/core/effect.h"
-#include "ultima/nuvie/core/egg_manager.h"
-#include "ultima/nuvie/screen/screen.h"
 #include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/sound/sound_manager.h"
 #include "ultima/nuvie/gui/widgets/background.h"
-#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/gui/widgets/command_bar.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/keybinding/keys.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/nuvie.h"
+#include "ultima/nuvie/screen/screen.h"
+#include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/views/actor_view.h"
+#include "ultima/nuvie/views/inventory_view.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -223,8 +223,7 @@ void ActionNextPartyMember(int const *params) {
 				ACTOR_VIEW->set_party_member(party_num + 1);
 		} else if (!INVENTORY_VIEW->is_picking_pocket()) {
 			uint8 party_num = INVENTORY_VIEW->get_party_member_num();
-			if (PARTY->get_party_size() >= party_num + 2
-			        && INVENTORY_VIEW->set_party_member(party_num + 1))
+			if (PARTY->get_party_size() >= party_num + 2 && INVENTORY_VIEW->set_party_member(party_num + 1))
 				VIEW_MANAGER->set_inventory_mode();
 		}
 	}
@@ -332,7 +331,7 @@ void ActionQuickLoad(int const *params) {
 
 void ActionQuitDialog(int const *params) {
 	if (!EVENT) { // intro or used view ending command line
-	} // FIXME need way to quit
+	}             // FIXME need way to quit
 	else
 		EVENT->quitDialog();
 }
@@ -469,7 +468,7 @@ void ActionUseItem(int const *params) {
 	// try player first
 	Obj *obj = PLAYER->get_actor()->inventory_get_object(obj_n, qual, match_qual, frame_n, match_frame_n);
 	if (!obj && !EVENT->using_control_cheat())
-		obj =  PARTY->get_obj(obj_n, qual, match_qual, frame_n, match_frame_n);
+		obj = PARTY->get_obj(obj_n, qual, match_qual, frame_n, match_frame_n);
 	if (obj) {
 		GAME->get_scroll()->display_string("Use-", MSGSCROLL_NO_MAP_DISPLAY);
 		EVENT->set_mode(USE_MODE);

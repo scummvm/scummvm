@@ -49,8 +49,8 @@ public:
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int  getMusicTimer() override;
-	int  getSoundStatus(int sound) const override;
+	int getMusicTimer() override;
+	int getSoundStatus(int sound) const override;
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 

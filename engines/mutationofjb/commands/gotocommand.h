@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_GOTOCOMMAND_H
 #define MUTATIONOFJB_GOTOCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
 #include "common/str.h"
+#include "mutationofjb/commands/command.h"
 
 namespace MutationOfJB {
 
@@ -46,10 +46,11 @@ public:
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Command *next() const override;
 	Common::String debugString() const override;
+
 private:
 	LabelCommand *_labelCommand;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

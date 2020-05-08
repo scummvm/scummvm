@@ -30,7 +30,6 @@
 
 #include <pthread.h>
 
-
 OSystem::MutexRef PthreadMutexManager::createMutex() {
 	pthread_mutexattr_t attr;
 

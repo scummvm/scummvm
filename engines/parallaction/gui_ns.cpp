@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/hashmap.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 #include "parallaction/gui.h"
@@ -30,7 +30,6 @@
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
-
 namespace Parallaction {
 
 class SplashInputState_NS : public MenuInputState {
@@ -38,16 +37,16 @@ protected:
 	Common::String _slideName;
 	uint32 _timeOut;
 	Common::String _nextState;
-	uint32	_startTime;
+	uint32 _startTime;
 
 	Parallaction *_vm;
 
 public:
 	SplashInputState_NS(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm),
-			_timeOut(0), _startTime(0) {
+	                                                                                             _timeOut(0), _startTime(0) {
 	}
 
-	MenuInputState* run() override {
+	MenuInputState *run() override {
 		uint32 curTime = _vm->_system->getMillis();
 		if (curTime - _startTime > _timeOut) {
 			return _helper->getState(_nextState);
@@ -65,7 +64,7 @@ public:
 class SplashInputState0_NS : public SplashInputState_NS {
 
 public:
-	SplashInputState0_NS(Parallaction *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro0", helper)  {
+	SplashInputState0_NS(Parallaction *vm, MenuInputHelper *helper) : SplashInputState_NS(vm, "intro0", helper) {
 		_slideName = "intro";
 		_timeOut = 2000;
 		_nextState = "intro1";
@@ -82,28 +81,27 @@ public:
 	}
 };
 
-
 class ChooseLanguageInputState_NS : public MenuInputState {
-	#define BLOCK_WIDTH		16
-	#define BLOCK_HEIGHT	24
+#define BLOCK_WIDTH 16
+#define BLOCK_HEIGHT 24
 
-	#define BLOCK_X			112
-	#define BLOCK_Y			130
+#define BLOCK_X 112
+#define BLOCK_Y 130
 
-	#define BLOCK_SELECTION_X		  (BLOCK_X-1)
-	#define BLOCK_SELECTION_Y		  (BLOCK_Y-1)
+#define BLOCK_SELECTION_X (BLOCK_X - 1)
+#define BLOCK_SELECTION_Y (BLOCK_Y - 1)
 
-	#define BLOCK_X_OFFSET	(BLOCK_WIDTH+1)
-	#define BLOCK_Y_OFFSET	9
+#define BLOCK_X_OFFSET (BLOCK_WIDTH + 1)
+#define BLOCK_Y_OFFSET 9
 
-	//	destination slots for code blocks
-	//
-	#define SLOT_X			61
-	#define SLOT_Y			64
-	#define SLOT_WIDTH		(BLOCK_WIDTH+2)
+//	destination slots for code blocks
+//
+#define SLOT_X 61
+#define SLOT_Y 64
+#define SLOT_WIDTH (BLOCK_WIDTH + 2)
 
-	int	_language;
-	bool	_allowChoice;
+	int _language;
+	bool _allowChoice;
 	Common::String _nextState;
 
 	GfxObj *_label;
@@ -120,25 +118,24 @@ public:
 		_label = 0;
 		_blocks = 0;
 
-		_dosLanguageSelectBlocks[0] = Common::Rect(  80, 110, 128, 180 );	// Italian
-		_dosLanguageSelectBlocks[1] = Common::Rect( 129,  85, 177, 155 );	// French
-		_dosLanguageSelectBlocks[2] = Common::Rect( 178,  60, 226, 130 );	// English
-		_dosLanguageSelectBlocks[3] = Common::Rect( 227,  35, 275, 105 );	// German
+		_dosLanguageSelectBlocks[0] = Common::Rect(80, 110, 128, 180); // Italian
+		_dosLanguageSelectBlocks[1] = Common::Rect(129, 85, 177, 155); // French
+		_dosLanguageSelectBlocks[2] = Common::Rect(178, 60, 226, 130); // English
+		_dosLanguageSelectBlocks[3] = Common::Rect(227, 35, 275, 105); // German
 
-		_amigaLanguageSelectBlocks[0] = Common::Rect(  -1,  -1,  -1,  -1 );	// Italian: not supported by Amiga multi-lingual version
-		_amigaLanguageSelectBlocks[1] = Common::Rect( 129,  85, 177, 155 );	// French
-		_amigaLanguageSelectBlocks[2] = Common::Rect( 178,  60, 226, 130 );	// English
-		_amigaLanguageSelectBlocks[3] = Common::Rect( 227,  35, 275, 105 );	// German
-
+		_amigaLanguageSelectBlocks[0] = Common::Rect(-1, -1, -1, -1);    // Italian: not supported by Amiga multi-lingual version
+		_amigaLanguageSelectBlocks[1] = Common::Rect(129, 85, 177, 155); // French
+		_amigaLanguageSelectBlocks[2] = Common::Rect(178, 60, 226, 130); // English
+		_amigaLanguageSelectBlocks[3] = Common::Rect(227, 35, 275, 105); // German
 
 		if (_vm->getPlatform() == Common::kPlatformAmiga) {
 			if (!(_vm->getFeatures() & GF_LANG_MULT)) {
 				if (_vm->getFeatures() & GF_DEMO) {
-					_language = 1;	// Amiga Demo supports English
+					_language = 1; // Amiga Demo supports English
 					_nextState = "startdemo";
 					return;
 				} else {
-					_language = 0;	// The only other non multi-lingual version just supports Italian
+					_language = 0; // The only other non multi-lingual version just supports Italian
 					return;
 				}
 			}
@@ -162,7 +159,7 @@ public:
 		_label = 0;
 	}
 
-	MenuInputState* run() override {
+	MenuInputState *run() override {
 		if (!_allowChoice) {
 			_vm->setInternLanguage(_language);
 			return _helper->getState(_nextState);
@@ -210,7 +207,7 @@ class SelectGameInputState_NS : public MenuInputState {
 	int _choice, _oldChoice;
 	Common::String _nextState[2];
 
-	GfxObj	*_labels[2];
+	GfxObj *_labels[2];
 
 	Parallaction *_vm;
 
@@ -241,7 +238,6 @@ public:
 		_labels[0] = 0;
 		_labels[1] = 0;
 	}
-
 
 	MenuInputState *run() override {
 		int event = _vm->_input->getLastButtonEvent();
@@ -275,33 +271,28 @@ public:
 		_labels[0] = _vm->_gfx->createLabel(_vm->_introFont, newGameMsg[_vm->getInternLanguage()], 1);
 		_labels[1] = _vm->_gfx->createLabel(_vm->_introFont, loadGameMsg[_vm->getInternLanguage()], 1);
 	}
-
 };
 
 const char *SelectGameInputState_NS::newGameMsg[4] = {
-	"NUOVO GIOCO",
-	"NEUF JEU",
-	"NEW GAME",
-	"NEUES SPIEL"
-};
+    "NUOVO GIOCO",
+    "NEUF JEU",
+    "NEW GAME",
+    "NEUES SPIEL"};
 
 const char *SelectGameInputState_NS::loadGameMsg[4] = {
-	"GIOCO SALVATO",
-	"JEU SAUVE'",
-	"SAVED GAME",
-	"SPIEL GESPEICHERT"
-};
-
-
+    "GIOCO SALVATO",
+    "JEU SAUVE'",
+    "SAVED GAME",
+    "SPIEL GESPEICHERT"};
 
 class LoadGameInputState_NS : public MenuInputState {
 	bool _result;
 	Parallaction *_vm;
 
 public:
-	LoadGameInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm), _result(false) { }
+	LoadGameInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm), _result(false) {}
 
-	MenuInputState* run() override {
+	MenuInputState *run() override {
 		if (!_result) {
 			_vm->scheduleLocationSwitch("fogne.dough");
 		}
@@ -312,8 +303,6 @@ public:
 		_result = _vm->_saveLoad->loadGame();
 	}
 };
-
-
 
 class NewGameInputState_NS : public MenuInputState {
 	Parallaction_ns *_vm;
@@ -333,7 +322,7 @@ public:
 		destroyLabels();
 	}
 
-	MenuInputState* run() override {
+	MenuInputState *run() override {
 		int event = _vm->_input->getLastButtonEvent();
 
 		if (event == kMouseLeftUp || event == kMouseRightUp) {
@@ -382,13 +371,10 @@ public:
 };
 
 const char *NewGameInputState_NS::introMsg3[4] = {
-	"PRESS LEFT MOUSE BUTTON",
-	"TO SEE INTRO",
-	"PRESS RIGHT MOUSE BUTTON",
-	"TO START"
-};
-
-
+    "PRESS LEFT MOUSE BUTTON",
+    "TO SEE INTRO",
+    "PRESS RIGHT MOUSE BUTTON",
+    "TO START"};
 
 class StartDemoInputState_NS : public MenuInputState {
 	Parallaction *_vm;
@@ -397,7 +383,7 @@ public:
 	StartDemoInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("startdemo", helper), _vm(vm) {
 	}
 
-	MenuInputState* run() override {
+	MenuInputState *run() override {
 		_vm->scheduleLocationSwitch("fognedemo.dough");
 		_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 		return 0;
@@ -410,11 +396,11 @@ public:
 
 class SelectCharacterInputState_NS : public MenuInputState {
 
-	#define PASSWORD_LEN	6
+#define PASSWORD_LEN 6
 
-	#define CHAR_DINO	0
-	#define CHAR_DONNA	1
-	#define CHAR_DOUGH	2
+#define CHAR_DINO 0
+#define CHAR_DONNA 1
+#define CHAR_DOUGH 2
 
 	Common::Rect _codeSelectBlocks[9];
 	Common::Rect _codeTrueBlocks[9];
@@ -444,15 +430,15 @@ class SelectCharacterInputState_NS : public MenuInputState {
 		return selection;
 	}
 
-	byte	_points[3];
-	bool	_fail;
+	byte _points[3];
+	bool _fail;
 	const uint16 (*_keys)[PASSWORD_LEN];
 	Graphics::Surface _block;
 	Graphics::Surface _emptySlots;
 
-	GfxObj	*_labels[2];
-	uint	_len;
-	uint32	_startTime;
+	GfxObj *_labels[2];
+	uint _len;
+	uint32 _startTime;
 
 	enum {
 		CHOICE,
@@ -461,7 +447,7 @@ class SelectCharacterInputState_NS : public MenuInputState {
 		DELAY
 	};
 
-	uint	_state;
+	uint _state;
 
 	static const char *introMsg1[4];
 	static const char *introMsg2[4];
@@ -469,7 +455,6 @@ class SelectCharacterInputState_NS : public MenuInputState {
 	static const uint16 _amigaKeys[3][PASSWORD_LEN];
 	static const uint16 _pcKeys[3][PASSWORD_LEN];
 	static const char *_charStartLocation[3];
-
 
 public:
 	SelectCharacterInputState_NS(Parallaction_ns *vm, MenuInputHelper *helper) : MenuInputState("selectcharacter", helper), _vm(vm) {
@@ -483,25 +468,25 @@ public:
 		_startTime = 0;
 		_state = 0;
 
-		_codeSelectBlocks[0] = Common::Rect( 111, 129, 127, 153 );	// na
-		_codeSelectBlocks[1] = Common::Rect( 128, 120, 144, 144 );	// wa
-		_codeSelectBlocks[2] = Common::Rect( 145, 111, 161, 135 );	// ra
-		_codeSelectBlocks[3] = Common::Rect( 162, 102, 178, 126 );	// ri
-		_codeSelectBlocks[4] = Common::Rect( 179, 93, 195, 117 );	// i
-		_codeSelectBlocks[5] = Common::Rect( 196, 84, 212, 108 );	// ne
-		_codeSelectBlocks[6] = Common::Rect( 213, 75, 229, 99 );		// ho
-		_codeSelectBlocks[7] = Common::Rect( 230, 66, 246, 90 );		// ki
-		_codeSelectBlocks[8] = Common::Rect( 247, 57, 263, 81 );		// ka
+		_codeSelectBlocks[0] = Common::Rect(111, 129, 127, 153); // na
+		_codeSelectBlocks[1] = Common::Rect(128, 120, 144, 144); // wa
+		_codeSelectBlocks[2] = Common::Rect(145, 111, 161, 135); // ra
+		_codeSelectBlocks[3] = Common::Rect(162, 102, 178, 126); // ri
+		_codeSelectBlocks[4] = Common::Rect(179, 93, 195, 117);  // i
+		_codeSelectBlocks[5] = Common::Rect(196, 84, 212, 108);  // ne
+		_codeSelectBlocks[6] = Common::Rect(213, 75, 229, 99);   // ho
+		_codeSelectBlocks[7] = Common::Rect(230, 66, 246, 90);   // ki
+		_codeSelectBlocks[8] = Common::Rect(247, 57, 263, 81);   // ka
 
-		_codeTrueBlocks[0] = Common::Rect( 112, 130, 128, 154 );
-		_codeTrueBlocks[1] = Common::Rect( 129, 121, 145, 145 );
-		_codeTrueBlocks[2] = Common::Rect( 146, 112, 162, 136 );
-		_codeTrueBlocks[3] = Common::Rect( 163, 103, 179, 127 );
-		_codeTrueBlocks[4] = Common::Rect( 180, 94, 196, 118 );
-		_codeTrueBlocks[5] = Common::Rect( 197, 85, 213, 109 );
-		_codeTrueBlocks[6] = Common::Rect( 214, 76, 230, 100 );
-		_codeTrueBlocks[7] = Common::Rect( 231, 67, 247, 91 );
-		_codeTrueBlocks[8] = Common::Rect( 248, 58, 264, 82 );
+		_codeTrueBlocks[0] = Common::Rect(112, 130, 128, 154);
+		_codeTrueBlocks[1] = Common::Rect(129, 121, 145, 145);
+		_codeTrueBlocks[2] = Common::Rect(146, 112, 162, 136);
+		_codeTrueBlocks[3] = Common::Rect(163, 103, 179, 127);
+		_codeTrueBlocks[4] = Common::Rect(180, 94, 196, 118);
+		_codeTrueBlocks[5] = Common::Rect(197, 85, 213, 109);
+		_codeTrueBlocks[6] = Common::Rect(214, 76, 230, 100);
+		_codeTrueBlocks[7] = Common::Rect(231, 67, 247, 91);
+		_codeTrueBlocks[8] = Common::Rect(248, 58, 264, 82);
 	}
 
 	~SelectCharacterInputState_NS() override {
@@ -584,11 +569,9 @@ public:
 		int character = -1;
 		if (_points[0] >= _points[1] && _points[0] >= _points[2]) {
 			character = CHAR_DINO;
-		} else
-		if (_points[1] >= _points[0] && _points[1] >= _points[2]) {
+		} else if (_points[1] >= _points[0] && _points[1] >= _points[2]) {
 			character = CHAR_DONNA;
-		} else
-		if (_points[2] >= _points[0] && _points[2] >= _points[1]) {
+		} else if (_points[2] >= _points[0] && _points[2] >= _points[1]) {
 			character = CHAR_DOUGH;
 		} else {
 			error("If you read this, either your CPU or transivity is broken (we believe the former)");
@@ -598,8 +581,8 @@ public:
 		_vm->scheduleLocationSwitch(_charStartLocation[character]);
 	}
 
-	MenuInputState* run() override {
-		MenuInputState* nextState = this;
+	MenuInputState *run() override {
+		MenuInputState *nextState = this;
 
 		switch (_state) {
 		case DELAY:
@@ -646,41 +629,37 @@ public:
 };
 
 const char *SelectCharacterInputState_NS::introMsg1[4] = {
-	"INSERISCI IL CODICE",
-	"ENTREZ CODE",
-	"ENTER CODE",
-	"GIB DEN KODE EIN"
-};
+    "INSERISCI IL CODICE",
+    "ENTREZ CODE",
+    "ENTER CODE",
+    "GIB DEN KODE EIN"};
 
 const char *SelectCharacterInputState_NS::introMsg2[4] = {
-	"CODICE ERRATO",
-	"CODE ERRONE",
-	"WRONG CODE",
-	"GIB DEN KODE EIN"
-};
+    "CODICE ERRATO",
+    "CODE ERRONE",
+    "WRONG CODE",
+    "GIB DEN KODE EIN"};
 
 const uint16 SelectCharacterInputState_NS::_amigaKeys[][PASSWORD_LEN] = {
-	{ 5, 3, 6, 2, 2, 7 },		// dino
-	{ 0, 3, 6, 2, 2, 6 },		// donna
-	{ 1, 3 ,7, 2, 4, 6 }		// dough
+    {5, 3, 6, 2, 2, 7}, // dino
+    {0, 3, 6, 2, 2, 6}, // donna
+    {1, 3, 7, 2, 4, 6}  // dough
 };
 
 const uint16 SelectCharacterInputState_NS::_pcKeys[][PASSWORD_LEN] = {
-	{ 5, 3, 6, 1, 4, 7 },		// dino
-	{ 0, 2, 8, 5, 5, 1 },		// donna
-	{ 1, 7 ,7, 2, 2, 6 }		// dough
+    {5, 3, 6, 1, 4, 7}, // dino
+    {0, 2, 8, 5, 5, 1}, // donna
+    {1, 7, 7, 2, 2, 6}  // dough
 };
 
 const char *SelectCharacterInputState_NS::_charStartLocation[] = {
-	"test.dino",
-	"test.donna",
-	"test.dough"
-};
-
+    "test.dino",
+    "test.donna",
+    "test.dough"};
 
 class ShowCreditsInputState_NS : public MenuInputState {
 	Parallaction *_vm;
-	int	_current;
+	int _current;
 	uint32 _startTime;
 
 	struct Credit {
@@ -722,8 +701,7 @@ public:
 		_vm->_gfx->showLabel(_labels[1], CENTER_LABEL_HORIZONTAL, 100);
 	}
 
-
-	MenuInputState* run() override {
+	MenuInputState *run() override {
 		if (_current == -1) {
 			_startTime = _vm->_system->getMillis();
 			_current = 0;
@@ -755,13 +733,12 @@ public:
 };
 
 const ShowCreditsInputState_NS::Credit ShowCreditsInputState_NS::_credits[6] = {
-	{"Music and Sound Effects", "MARCO CAPRELLI"},
-	{"PC Version", "RICCARDO BALLARINO"},
-	{"Project Manager", "LOVRANO CANEPA"},
-	{"Production", "BRUNO BOZ"},
-	{"Special Thanks to", "LUIGI BENEDICENTI - GILDA and DANILO"},
-	{"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"}
-};
+    {"Music and Sound Effects", "MARCO CAPRELLI"},
+    {"PC Version", "RICCARDO BALLARINO"},
+    {"Project Manager", "LOVRANO CANEPA"},
+    {"Production", "BRUNO BOZ"},
+    {"Special Thanks to", "LUIGI BENEDICENTI - GILDA and DANILO"},
+    {"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"}};
 
 class EndIntroInputState_NS : public MenuInputState {
 	Parallaction_ns *_vm;
@@ -784,7 +761,7 @@ public:
 		_label = 0;
 	}
 
-	MenuInputState* run() override {
+	MenuInputState *run() override {
 
 		int event = _vm->_input->getLastButtonEvent();
 		if (event != kMouseLeftUp) {
@@ -811,7 +788,6 @@ public:
 		}
 	}
 };
-
 
 class EndPartInputState_NS : public MenuInputState {
 	Parallaction *_vm;
@@ -857,7 +833,7 @@ public:
 		_labels[3] = 0;
 	}
 
-	MenuInputState* run() override {
+	MenuInputState *run() override {
 		int event = _vm->_input->getLastButtonEvent();
 		if (event != kMouseLeftUp) {
 			return this;
@@ -902,8 +878,8 @@ public:
 // part completion messages
 const char *EndPartInputState_NS::endMsg0[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
 const char *EndPartInputState_NS::endMsg1[] = {"HAI FINITO QUESTA PARTE", "TU AS COMPLETE' CETTE AVENTURE", "YOU HAVE COMPLETED THIS PART", "DU HAST EIN ABENTEUER ERFOLGREICH"};
-const char *EndPartInputState_NS::endMsg2[] = {"ORA COMPLETA IL RESTO ", "AVEC SUCCES.",  "NOW GO ON WITH THE REST OF", "ZU ENDE GEFUHRT"};
-const char *EndPartInputState_NS::endMsg3[] = {"DELL' AVVENTURA",  "CONTINUE AVEC LES AUTRES", "THIS ADVENTURE", "MACH' MIT DEN ANDEREN WEITER"};
+const char *EndPartInputState_NS::endMsg2[] = {"ORA COMPLETA IL RESTO ", "AVEC SUCCES.", "NOW GO ON WITH THE REST OF", "ZU ENDE GEFUHRT"};
+const char *EndPartInputState_NS::endMsg3[] = {"DELL' AVVENTURA", "CONTINUE AVEC LES AUTRES", "THIS ADVENTURE", "MACH' MIT DEN ANDEREN WEITER"};
 // game completion messages
 const char *EndPartInputState_NS::endMsg4[] = {"COMPLIMENTI!", "BRAVO!", "CONGRATULATIONS!", "PRIMA!"};
 const char *EndPartInputState_NS::endMsg5[] = {"HAI FINITO LE TRE PARTI", "TU AS COMPLETE' LES TROIS PARTIES", "YOU HAVE COMPLETED THE THREE PARTS", "DU HAST DREI ABENTEURE ERFOLGREICH"};
@@ -949,6 +925,5 @@ void Parallaction_ns::startEndPartSequence() {
 
 	_input->_inputMode = Input::kInputModeMenu;
 }
-
 
 } // namespace Parallaction

@@ -32,33 +32,32 @@ class CallBack;
 
 // general messages
 typedef enum {
-	CB_TIMED,                /* timer fired (data=uint32:time) */
+	CB_TIMED, /* timer fired (data=uint32:time) */
 
-	ANIM_CB_DONE,            /* animation has finished */
-	ANIM_CB_HIT,             /* animation hit a MapEntity (data=MapEntity) */
-	ANIM_CB_HIT_WORLD,       /* animation hit some other tile on the map (data=MapCoord) */
+	ANIM_CB_DONE,      /* animation has finished */
+	ANIM_CB_HIT,       /* animation hit a MapEntity (data=MapEntity) */
+	ANIM_CB_HIT_WORLD, /* animation hit some other tile on the map (data=MapCoord) */
 
-	EFFECT_CB_COMPLETE,      /* effect has finished */
+	EFFECT_CB_COMPLETE, /* effect has finished */
 
 	CB_DATA_READY,           /* some data is ready to be retrieved (data=char)*/
 	MSGSCROLL_CB_TEXT_READY, /* text is ready to be retrieved (data=Std::string)*/
 	CB_INPUT_CANCELED        /* input canceled by user */
 } CallbackMessage;
 
-
 /* Classes inheriting this can send & receive callback messages.
  */
 class CallBack {
 protected:
-	char *callback_user_data; // data set by Caller
+	char *callback_user_data;  // data set by Caller
 	CallBack *callback_target; // Caller: default CallBack that message() sends to
 
 public:
-	CallBack()  {
+	CallBack() {
 		callback_user_data = NULL;
 		callback_target = NULL;
 	}
-	virtual ~CallBack() { }
+	virtual ~CallBack() {}
 
 	// receive message
 	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) {

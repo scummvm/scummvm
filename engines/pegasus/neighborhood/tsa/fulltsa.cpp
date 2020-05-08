@@ -23,19 +23,19 @@
  *
  */
 
+#include "pegasus/neighborhood/tsa/fulltsa.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/cursor.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/aichip.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
+#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
-#include "pegasus/neighborhood/mars/constants.h"
-#include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/wsc/wsc.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -553,49 +553,48 @@ enum {
 	kPlayingRightComparisonMask = 0x40,
 
 	kPlayingAnyMask = kPlayingTBPMask |
-						kPlayingLeftComparisonMask |
-						kPlayingRightComparisonMask,
+	                  kPlayingLeftComparisonMask |
+	                  kPlayingRightComparisonMask,
 
 	kMonitorPlayingTheory = kMonitorTheory | kPlayingTBPMask,
 	kMonitorPlayingProcedure = kMonitorProcedure | kPlayingTBPMask,
 	kMonitorPlayingBackground = kMonitorBackground | kPlayingTBPMask,
 
 	kMonitorPlayingLeftNoradComparison = kMonitorNoradComparison |
-											kPlayingLeftComparisonMask,
+	                                     kPlayingLeftComparisonMask,
 	kMonitorPlayingRightNoradComparison = kMonitorNoradComparison |
-											kPlayingRightComparisonMask,
+	                                      kPlayingRightComparisonMask,
 	kMonitorPlayingLeftMarsComparison = kMonitorMarsComparison |
-										kPlayingLeftComparisonMask,
+	                                    kPlayingLeftComparisonMask,
 	kMonitorPlayingRightMarsComparison = kMonitorMarsComparison |
-											kPlayingRightComparisonMask,
+	                                     kPlayingRightComparisonMask,
 	kMonitorPlayingLeftCaldoriaComparison = kMonitorCaldoriaComparison |
-											kPlayingLeftComparisonMask,
+	                                        kPlayingLeftComparisonMask,
 	kMonitorPlayingRightCaldoriaComparison = kMonitorCaldoriaComparison |
-												kPlayingRightComparisonMask,
+	                                         kPlayingRightComparisonMask,
 	kMonitorPlayingLeftWSCComparison = kMonitorWSCComparison |
-										kPlayingLeftComparisonMask,
+	                                   kPlayingLeftComparisonMask,
 	kMonitorPlayingRightWSCComparison = kMonitorWSCComparison |
-										kPlayingRightComparisonMask
+	                                    kPlayingRightComparisonMask
 };
 
 static const ExtraID s_historicalLogViews[16] = {
-	kTSA0BComparisonView0000,
-	kTSA0BComparisonView0002,
-	kTSA0BComparisonView0020,
-	kTSA0BComparisonView0022,
-	kTSA0BComparisonView0200,
-	kTSA0BComparisonView0202,
-	kTSA0BComparisonView0220,
-	kTSA0BComparisonView0222,
-	kTSA0BComparisonView2000,
-	kTSA0BComparisonView2002,
-	kTSA0BComparisonView2020,
-	kTSA0BComparisonView2022,
-	kTSA0BComparisonView2200,
-	kTSA0BComparisonView2202,
-	kTSA0BComparisonView2220,
-	kTSA0BComparisonView2222
-};
+    kTSA0BComparisonView0000,
+    kTSA0BComparisonView0002,
+    kTSA0BComparisonView0020,
+    kTSA0BComparisonView0022,
+    kTSA0BComparisonView0200,
+    kTSA0BComparisonView0202,
+    kTSA0BComparisonView0220,
+    kTSA0BComparisonView0222,
+    kTSA0BComparisonView2000,
+    kTSA0BComparisonView2002,
+    kTSA0BComparisonView2020,
+    kTSA0BComparisonView2022,
+    kTSA0BComparisonView2200,
+    kTSA0BComparisonView2202,
+    kTSA0BComparisonView2220,
+    kTSA0BComparisonView2222};
 
 enum {
 	kRedirectionCCRolloverSprite = 0,
@@ -661,7 +660,7 @@ void RipTimer::timeChanged(const TimeValue newTime) {
 }
 
 FullTSA::FullTSA(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "Full TSA", kFullTSAID),
-		_ripTimer(kNoDisplayElement), _sprite1(kNoDisplayElement), _sprite2(kNoDisplayElement), _sprite3(kNoDisplayElement) {
+                                                                    _ripTimer(kNoDisplayElement), _sprite1(kNoDisplayElement), _sprite2(kNoDisplayElement), _sprite3(kNoDisplayElement) {
 	setIsItemTaken(kJourneymanKey);
 	setIsItemTaken(kPegasusBiochip);
 	setIsItemTaken(kMapBiochip);
@@ -964,29 +963,29 @@ void FullTSA::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpe
 		compassMove.insertFaderKnot(exitEntry.movieStart, -180);
 		compassMove.insertFaderKnot(exitEntry.movieStart + kFullTSAFrameDuration * 3, -180);
 		compassMove.insertFaderKnot(exitEntry.movieStart + kFullTSAFrameDuration * 33,
-				getStaticCompassAngle(exitEntry.exitRoom, exitEntry.exitDirection));
+		                            getStaticCompassAngle(exitEntry.exitRoom, exitEntry.exitDirection));
 		break;
 	case MakeRoomView(kTSA11, kEast):
 		if (getCurrentAlternate() == kAltTSARobotsAtReadyRoom) {
 			compassMove.makeTwoKnotFaderSpec(kFullTSAMovieScale, exitEntry.movieStart,
-					getStaticCompassAngle(kTSA11, kEast), exitEntry.movieEnd,
-					getStaticCompassAngle(kTSA13, kEast));
+			                                 getStaticCompassAngle(kTSA11, kEast), exitEntry.movieEnd,
+			                                 getStaticCompassAngle(kTSA13, kEast));
 			compassMove.insertFaderKnot(exitEntry.movieStart + kFullTSAFrameDuration * 13, compassMove.getNthKnotValue(1));
 		}
 		break;
 	case MakeRoomView(kTSA34, kNorth):
 		compassMove.insertFaderKnot(exitEntry.movieStart + kFullTSAFrameDuration * 48,
-				getStaticCompassAngle(exitEntry.room, exitEntry.direction));
+		                            getStaticCompassAngle(exitEntry.room, exitEntry.direction));
 		compassMove.insertFaderKnot(exitEntry.movieStart + kFullTSAFrameDuration * 68,
-				getStaticCompassAngle(exitEntry.exitRoom, exitEntry.exitDirection));
+		                            getStaticCompassAngle(exitEntry.exitRoom, exitEntry.exitDirection));
 		break;
 	case MakeRoomView(kTSA37, kNorth):
 		compassMove.insertFaderKnot(exitEntry.movieStart + kFullTSAFrameDuration * 38,
-				getStaticCompassAngle(exitEntry.room, exitEntry.direction));
+		                            getStaticCompassAngle(exitEntry.room, exitEntry.direction));
 		compassMove.insertFaderKnot(exitEntry.movieStart + kFullTSAFrameDuration * 64,
-				getStaticCompassAngle(exitEntry.room, exitEntry.direction) + kCompassShift * 3 / 2);
+		                            getStaticCompassAngle(exitEntry.room, exitEntry.direction) + kCompassShift * 3 / 2);
 		compassMove.insertFaderKnot(exitEntry.movieStart + kFullTSAFrameDuration * 105,
-				getStaticCompassAngle(exitEntry.exitRoom, exitEntry.exitDirection));
+		                            getStaticCompassAngle(exitEntry.exitRoom, exitEntry.exitDirection));
 		break;
 	default:
 		break;
@@ -999,20 +998,20 @@ void FullTSA::getExtraCompassMove(const ExtraTable::Entry &extraEntry, FaderMove
 	switch (extraEntry.extra) {
 	case kTSA0BEastTurnLeft:
 	case kTSA0BNorthTurnLeft:
-		angle =getStaticCompassAngle(GameState.getCurrentRoom(), GameState.getCurrentDirection());
+		angle = getStaticCompassAngle(GameState.getCurrentRoom(), GameState.getCurrentDirection());
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), extraEntry.movieStart, angle,
-				extraEntry.movieEnd, angle - 60);
+		                                 extraEntry.movieEnd, angle - 60);
 		break;
 	case kTSA0BNorthTurnRight:
 	case kTSA0BWestTurnRight:
 		angle = getStaticCompassAngle(GameState.getCurrentRoom(), GameState.getCurrentDirection());
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), extraEntry.movieStart, angle,
-				extraEntry.movieEnd, angle + 60);
+		                                 extraEntry.movieEnd, angle + 60);
 		break;
 	case kTSA22RedEastZoomInSequence:
 		angle = getStaticCompassAngle(GameState.getCurrentRoom(), GameState.getCurrentDirection());
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), extraEntry.movieStart, angle,
-				extraEntry.movieEnd, angle);
+		                                 extraEntry.movieEnd, angle);
 		compassMove.insertFaderKnot(extraEntry.movieStart + 1200, angle - kCompassShift * 2);
 		compassMove.insertFaderKnot(extraEntry.movieStart + 8160, angle - kCompassShift * 2);
 		compassMove.insertFaderKnot(extraEntry.movieStart + 9840, angle);
@@ -1020,7 +1019,7 @@ void FullTSA::getExtraCompassMove(const ExtraTable::Entry &extraEntry, FaderMove
 	case kTSA23RedWestVaultZoomInSequence:
 		angle = getStaticCompassAngle(GameState.getCurrentRoom(), GameState.getCurrentDirection());
 		compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), extraEntry.movieStart, angle,
-				extraEntry.movieEnd, angle);
+		                                 extraEntry.movieEnd, angle);
 		compassMove.insertFaderKnot(extraEntry.movieStart + 1200, angle - kCompassShift * 2);
 		compassMove.insertFaderKnot(extraEntry.movieStart + 10100, angle - kCompassShift * 2);
 		compassMove.insertFaderKnot(extraEntry.movieStart + 11880, angle);
@@ -1734,7 +1733,7 @@ void FullTSA::initializeTBPMonitor(const int newMode, const ExtraID highlightExt
 		playTBPMonitor();
 	} else {
 		if (GameState.getTSAState() == kTSAPlayerForcedReview && GameState.getTSASeenTheory() &&
-				GameState.getTSASeenBackground() && GameState.getTSASeenProcedure()) {
+		    GameState.getTSASeenBackground() && GameState.getTSASeenProcedure()) {
 			setOffRipAlarm();
 		} else {
 			setCurrentActivation(kActivateTSA0BZoomedIn);
@@ -1753,33 +1752,33 @@ void FullTSA::startUpComparisonMonitor() {
 	releaseSprites();
 
 	_sprite1.addPICTResourceFrame(kComparisonHiliteNoradPICTID, false,
-			kComparisonHiliteNoradLeft - kComparisonHiliteSpriteLeft,
-			kComparisonHiliteNoradTop - kComparisonHiliteSpriteTop);
+	                              kComparisonHiliteNoradLeft - kComparisonHiliteSpriteLeft,
+	                              kComparisonHiliteNoradTop - kComparisonHiliteSpriteTop);
 	_sprite1.addPICTResourceFrame(kComparisonHiliteMarsPICTID, false,
-			kComparisonHiliteMarsLeft - kComparisonHiliteSpriteLeft,
-			 kComparisonHiliteMarsTop - kComparisonHiliteSpriteTop);
+	                              kComparisonHiliteMarsLeft - kComparisonHiliteSpriteLeft,
+	                              kComparisonHiliteMarsTop - kComparisonHiliteSpriteTop);
 	_sprite1.addPICTResourceFrame(kComparisonHiliteCaldoriaPICTID, false,
-			kComparisonHiliteCaldoriaLeft - kComparisonHiliteSpriteLeft,
-			kComparisonHiliteCaldoriaTop - kComparisonHiliteSpriteTop);
+	                              kComparisonHiliteCaldoriaLeft - kComparisonHiliteSpriteLeft,
+	                              kComparisonHiliteCaldoriaTop - kComparisonHiliteSpriteTop);
 	_sprite1.addPICTResourceFrame(kComparisonHiliteWSCPICTID, false,
-			kComparisonHiliteWSCLeft - kComparisonHiliteSpriteLeft,
-			kComparisonHiliteWSCTop - kComparisonHiliteSpriteTop);
+	                              kComparisonHiliteWSCLeft - kComparisonHiliteSpriteLeft,
+	                              kComparisonHiliteWSCTop - kComparisonHiliteSpriteTop);
 
 	_sprite1.setCurrentFrameIndex(0);
 	_sprite1.moveElementTo(kComparisonHiliteSpriteLeft, kComparisonHiliteSpriteTop);
 
 	_sprite2.addPICTResourceFrame(kComparisonChancesNoradPICTID, false,
-			kComparisonChancesNoradLeft - kComparisonChancesSpriteLeft,
-			kComparisonChancesNoradTop - kComparisonChancesSpriteTop);
+	                              kComparisonChancesNoradLeft - kComparisonChancesSpriteLeft,
+	                              kComparisonChancesNoradTop - kComparisonChancesSpriteTop);
 	_sprite2.addPICTResourceFrame(kComparisonChancesMarsPICTID, false,
-			kComparisonChancesMarsLeft - kComparisonChancesSpriteLeft,
-			kComparisonChancesMarsTop - kComparisonChancesSpriteTop);
+	                              kComparisonChancesMarsLeft - kComparisonChancesSpriteLeft,
+	                              kComparisonChancesMarsTop - kComparisonChancesSpriteTop);
 	_sprite2.addPICTResourceFrame(kComparisonChancesCaldoriaPICTID, false,
-			kComparisonChancesCaldoriaLeft - kComparisonChancesSpriteLeft,
-			kComparisonChancesCaldoriaTop - kComparisonChancesSpriteTop);
+	                              kComparisonChancesCaldoriaLeft - kComparisonChancesSpriteLeft,
+	                              kComparisonChancesCaldoriaTop - kComparisonChancesSpriteTop);
 	_sprite2.addPICTResourceFrame(kComparisonChancesWSCPICTID, false,
-			kComparisonChancesWSCLeft - kComparisonChancesSpriteLeft,
-			kComparisonChancesWSCTop - kComparisonChancesSpriteTop);
+	                              kComparisonChancesWSCLeft - kComparisonChancesSpriteLeft,
+	                              kComparisonChancesWSCTop - kComparisonChancesSpriteTop);
 
 	_sprite2.setCurrentFrameIndex(0);
 	_sprite2.moveElementTo(kComparisonChancesSpriteLeft, kComparisonChancesSpriteTop);
@@ -1810,14 +1809,14 @@ void FullTSA::initializeComparisonMonitor(const int newMode, const ExtraID compa
 		showExtraView(comparisonView);
 	} else {
 		if (GameState.getTSAState() == kTSAPlayerInstalledHistoricalLog &&
-				GameState.getTSASeenNoradNormal() &&
-				GameState.getTSASeenNoradAltered() &&
-				GameState.getTSASeenMarsNormal() &&
-				GameState.getTSASeenMarsAltered() &&
-				GameState.getTSASeenCaldoriaNormal() &&
-				GameState.getTSASeenCaldoriaAltered() &&
-				GameState.getTSASeenWSCNormal() &&
-				GameState.getTSASeenWSCAltered()) {
+		    GameState.getTSASeenNoradNormal() &&
+		    GameState.getTSASeenNoradAltered() &&
+		    GameState.getTSASeenMarsNormal() &&
+		    GameState.getTSASeenMarsAltered() &&
+		    GameState.getTSASeenCaldoriaNormal() &&
+		    GameState.getTSASeenCaldoriaAltered() &&
+		    GameState.getTSASeenWSCNormal() &&
+		    GameState.getTSASeenWSCAltered()) {
 			GameState.setTSAState(kTSABossSawHistoricalLog);
 			requestExtraSequence(kTSA0BEastZoomOut, kExtraCompletedFlag, kFilterNoInput);
 			requestExtraSequence(kTSA0BEastTurnLeft, kExtraCompletedFlag, kFilterNoInput);
@@ -1876,7 +1875,7 @@ void FullTSA::playLeftComparison() {
 
 		// Allow clicking...
 		startMovieSequence(GameState.getT0BMonitorStart(), entry.movieEnd,
-				kExtraCompletedFlag, false, JMPPPInput::getClickInputFilter());
+		                   kExtraCompletedFlag, false, JMPPPInput::getClickInputFilter());
 	} else if (_navMovie.isRunning()) {
 		_navMovie.stop();
 	} else {
@@ -1928,7 +1927,7 @@ void FullTSA::playRightComparison() {
 
 		// Allow clicking...
 		startMovieSequence(GameState.getT0BMonitorStart(), entry.movieEnd,
-				kExtraCompletedFlag, false, JMPPPInput::getClickInputFilter());
+		                   kExtraCompletedFlag, false, JMPPPInput::getClickInputFilter());
 	} else if (_navMovie.isRunning()) {
 		_navMovie.stop();
 	} else {
@@ -1949,34 +1948,34 @@ void FullTSA::startUpRobotMonitor() {
 	releaseSprites();
 
 	_sprite1.addPICTResourceFrame(kRedirectionCCRolloverPICTID, true,
-			kRedirectionCCRolloverLeft - kRedirectionSprite1Left,
-			kRedirectionCCRolloverTop - kRedirectionSprite1Top);
+	                              kRedirectionCCRolloverLeft - kRedirectionSprite1Left,
+	                              kRedirectionCCRolloverTop - kRedirectionSprite1Top);
 	_sprite1.addPICTResourceFrame(kRedirectionRRRolloverPICTID, true,
-			kRedirectionRRRolloverLeft - kRedirectionSprite1Left,
-			kRedirectionRRRolloverTop - kRedirectionSprite1Top);
+	                              kRedirectionRRRolloverLeft - kRedirectionSprite1Left,
+	                              kRedirectionRRRolloverTop - kRedirectionSprite1Top);
 	_sprite1.addPICTResourceFrame(kRedirectionFDRolloverPICTID, false,
-			kRedirectionFDRolloverLeft - kRedirectionSprite1Left,
-			kRedirectionFDRolloverTop - kRedirectionSprite1Top);
+	                              kRedirectionFDRolloverLeft - kRedirectionSprite1Left,
+	                              kRedirectionFDRolloverTop - kRedirectionSprite1Top);
 	_sprite1.addPICTResourceFrame(kRedirectionCCDoorPICTID, true,
-			kRedirectionCCDoorLeft - kRedirectionSprite1Left,
-			kRedirectionCCDoorTop - kRedirectionSprite1Top);
+	                              kRedirectionCCDoorLeft - kRedirectionSprite1Left,
+	                              kRedirectionCCDoorTop - kRedirectionSprite1Top);
 	_sprite1.addPICTResourceFrame(kRedirectionRRDoorPICTID, true,
-			kRedirectionRRDoorLeft - kRedirectionSprite1Left,
-			kRedirectionRRDoorTop - kRedirectionSprite1Top);
+	                              kRedirectionRRDoorLeft - kRedirectionSprite1Left,
+	                              kRedirectionRRDoorTop - kRedirectionSprite1Top);
 	_sprite1.addPICTResourceFrame(kRedirectionFDDoorPICTID, false,
-			kRedirectionFDDoorLeft - kRedirectionSprite1Left,
-			kRedirectionFDDoorTop - kRedirectionSprite1Top);
+	                              kRedirectionFDDoorLeft - kRedirectionSprite1Left,
+	                              kRedirectionFDDoorTop - kRedirectionSprite1Top);
 	_sprite1.addPICTResourceFrame(kRedirectionClosePICTID, false,
-			kRedirectionCloseLeft - kRedirectionSprite1Left,
-			kRedirectionCloseTop - kRedirectionSprite1Top);
+	                              kRedirectionCloseLeft - kRedirectionSprite1Left,
+	                              kRedirectionCloseTop - kRedirectionSprite1Top);
 	_sprite1.moveElementTo(kRedirectionSprite1Left, kRedirectionSprite1Top);
 
 	_sprite2.addPICTResourceFrame(kRedirectionSecuredPICTID, false,
-			kRedirectionSecuredLeft - kRedirectionSprite2Left,
-			kRedirectionSecuredTop - kRedirectionSprite2Top);
+	                              kRedirectionSecuredLeft - kRedirectionSprite2Left,
+	                              kRedirectionSecuredTop - kRedirectionSprite2Top);
 	_sprite2.addPICTResourceFrame(kRedirectionNewTargetPICTID, false,
-			kRedirectionNewTargetLeft - kRedirectionSprite2Left,
-			kRedirectionNewTargetTop - kRedirectionSprite2Top);
+	                              kRedirectionNewTargetLeft - kRedirectionSprite2Left,
+	                              kRedirectionNewTargetTop - kRedirectionSprite2Top);
 	_sprite2.moveElementTo(kRedirectionSprite2Left, kRedirectionSprite2Top);
 
 	switch (GameState.getTSAState()) {
@@ -2324,9 +2323,9 @@ void FullTSA::turnTo(const DirectionConstant newDirection) {
 		case kTSAPlayerInstalledHistoricalLog:
 			if (GameState.getTSA0BZoomedIn()) {
 				if ((GameState.getTSASeenNoradNormal() || GameState.getTSASeenNoradAltered()) &&
-						(GameState.getTSASeenMarsNormal() || GameState.getTSASeenMarsAltered()) &&
-						(GameState.getTSASeenCaldoriaNormal() || GameState.getTSASeenCaldoriaAltered()) &&
-						(GameState.getTSASeenWSCNormal() || GameState.getTSASeenWSCAltered())) {
+				    (GameState.getTSASeenMarsNormal() || GameState.getTSASeenMarsAltered()) &&
+				    (GameState.getTSASeenCaldoriaNormal() || GameState.getTSASeenCaldoriaAltered()) &&
+				    (GameState.getTSASeenWSCNormal() || GameState.getTSASeenWSCAltered())) {
 					GameState.setTSAState(kTSABossSawHistoricalLog);
 					startRobotGame();
 				}
@@ -2540,7 +2539,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 				break;
 			default:
 				activateCurrentView(GameState.getCurrentRoom(), GameState.getCurrentDirection(),
-						kSpotOnTurnMask);
+				                    kSpotOnTurnMask);
 				break;
 			}
 			break;
@@ -2577,9 +2576,9 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 			case kTSABossSawHistoricalLog:
 			case kTSAPlayerInstalledHistoricalLog:
 				if ((GameState.getTSASeenNoradNormal() || GameState.getTSASeenNoradAltered()) &&
-						(GameState.getTSASeenMarsNormal() || GameState.getTSASeenMarsAltered()) &&
-						(GameState.getTSASeenCaldoriaNormal() || GameState.getTSASeenCaldoriaAltered()) &&
-						(GameState.getTSASeenWSCNormal() || GameState.getTSASeenWSCAltered())) {
+				    (GameState.getTSASeenMarsNormal() || GameState.getTSASeenMarsAltered()) &&
+				    (GameState.getTSASeenCaldoriaNormal() || GameState.getTSASeenCaldoriaAltered()) &&
+				    (GameState.getTSASeenWSCNormal() || GameState.getTSASeenWSCAltered())) {
 					GameState.setTSAState(kTSABossSawHistoricalLog);
 					startRobotGame();
 				}
@@ -2650,7 +2649,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 				break;
 			default:
 				activateCurrentView(GameState.getCurrentRoom(), GameState.getCurrentDirection(),
-						kSpotOnTurnMask);
+				                    kSpotOnTurnMask);
 				break;
 			}
 			break;
@@ -3075,10 +3074,10 @@ void FullTSA::releaseSprites() {
 
 bool FullTSA::canSolve() {
 	return GameState.getCurrentRoomAndView() == MakeRoomView(kTSA0B, kNorth) &&
-		   GameState.getTSA0BZoomedIn() &&
-		   (GameState.getTSAState() == kRobotsAtCommandCenter ||
-		   GameState.getTSAState() == kRobotsAtFrontDoor ||
-		   GameState.getTSAState() == kRobotsAtReadyRoom);
+	       GameState.getTSA0BZoomedIn() &&
+	       (GameState.getTSAState() == kRobotsAtCommandCenter ||
+	        GameState.getTSAState() == kRobotsAtFrontDoor ||
+	        GameState.getTSAState() == kRobotsAtReadyRoom);
 }
 
 void FullTSA::doSolve() {

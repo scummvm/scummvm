@@ -40,6 +40,7 @@ private:
 	int _tempstringCount;
 
 	char *GetTempString();
+
 public:
 	StringFunctions() : _tempstringCount(0) {
 		Common::fill(&_tempString[0][0], &_tempString[NUM_TEMPSTRINGS][1025], '\0');

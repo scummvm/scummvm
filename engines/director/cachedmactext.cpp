@@ -21,12 +21,12 @@
  */
 
 #include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/mactext.h"
+#include "graphics/macgui/macwindowmanager.h"
 
-#include "director/director.h"
-#include "director/cast.h"
 #include "director/cachedmactext.h"
+#include "director/cast.h"
+#include "director/director.h"
 
 namespace Director {
 
@@ -43,12 +43,12 @@ void CachedMacText::makeMacText() {
 		_align = (Graphics::TextAlign)((int)_textCast->_textAlign + 1);
 
 	Graphics::MacFont *macFont = new Graphics::MacFont(_textCast->_fontId,
-										_textCast->_fontSize,
-										_textCast->_textSlant);
+	                                                   _textCast->_fontSize,
+	                                                   _textCast->_textSlant);
 
 	debugC(5, kDebugText, "CachedMacText::makeMacText(): font id: %d size: %d slant: %d name: %s '%s'",
-		_textCast->_fontId, _textCast->_fontSize, _textCast->_textSlant, macFont->getName().c_str(),
-		Common::toPrintable(_textCast->_ftext).c_str());
+	       _textCast->_fontId, _textCast->_fontSize, _textCast->_textSlant, macFont->getName().c_str(),
+	       Common::toPrintable(_textCast->_ftext).c_str());
 
 	uint color = _wm->findBestColor(_textCast->_palinfo1 & 0xff, _textCast->_palinfo2 & 0xff, _textCast->_palinfo3 & 0xff);
 
@@ -62,13 +62,12 @@ CachedMacText::~CachedMacText() {
 }
 
 CachedMacText::CachedMacText(TextCast *const textCast, int32 bgcolor, int version, int defaultWidth,
-								Graphics::MacWindowManager *const wm) :
-		_surface(NULL), _macText(NULL), _width(defaultWidth), _dirty(true),
-		_textCast(textCast), _wm(wm), _bgcolor(bgcolor), _align(Graphics::kTextAlignLeft) {
+                             Graphics::MacWindowManager *const wm) : _surface(NULL), _macText(NULL), _width(defaultWidth), _dirty(true),
+                                                                     _textCast(textCast), _wm(wm), _bgcolor(bgcolor), _align(Graphics::kTextAlignLeft) {
 
 	debugC(5, kDebugText, "CachedMacText::CachedMacText(): font id: %d '%s'", _textCast->_fontId, Common::toPrintable(_textCast->_ftext).c_str());
 
-	if (_width == -1)  {
+	if (_width == -1) {
 		if (version >= 4) {
 			// This came from frame.cpp
 			_width = _textCast->_initialRect.right;

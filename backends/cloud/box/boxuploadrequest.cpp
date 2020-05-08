@@ -35,9 +35,8 @@ namespace Box {
 
 #define BOX_API_FILES "https://upload.box.com/api/2.0/files"
 
-BoxUploadRequest::BoxUploadRequest(BoxStorage *storage, Common::String path, Common::String localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _localPath(localPath), _uploadCallback(callback),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+BoxUploadRequest::BoxUploadRequest(BoxStorage *storage, Common::String path, Common::String localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _localPath(localPath), _uploadCallback(callback),
+                                                                                                                                                                          _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -53,7 +52,7 @@ void BoxUploadRequest::start() {
 	if (_workingRequest)
 		_workingRequest->finish();
 	_resolvedId = ""; //used to update file contents
-	_parentId = ""; //used to create file within parent directory
+	_parentId = "";   //used to create file within parent directory
 	_ignoreCallback = false;
 
 	resolveId();
@@ -68,14 +67,16 @@ void BoxUploadRequest::resolveId() {
 
 void BoxUploadRequest::idResolvedCallback(Storage::UploadResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	_resolvedId = response.value.id();
 	upload();
 }
 
 void BoxUploadRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	//not resolved => error or no such file
 	if (error.response.contains("no such file found in its parent directory")) {
@@ -130,7 +131,8 @@ void BoxUploadRequest::upload() {
 
 void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
@@ -171,10 +173,10 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 			Common::JSONObject item = entries[0]->asObject();
 
 			if (Networking::CurlJsonRequest::jsonContainsString(item, "id", "BoxUploadRequest") &&
-				Networking::CurlJsonRequest::jsonContainsString(item, "name", "BoxUploadRequest") &&
-				Networking::CurlJsonRequest::jsonContainsString(item, "type", "BoxUploadRequest") &&
-				Networking::CurlJsonRequest::jsonContainsString(item, "modified_at", "BoxUploadRequest") &&
-				Networking::CurlJsonRequest::jsonContainsStringOrIntegerNumber(item, "size", "BoxUploadRequest")) {
+			    Networking::CurlJsonRequest::jsonContainsString(item, "name", "BoxUploadRequest") &&
+			    Networking::CurlJsonRequest::jsonContainsString(item, "type", "BoxUploadRequest") &&
+			    Networking::CurlJsonRequest::jsonContainsString(item, "modified_at", "BoxUploadRequest") &&
+			    Networking::CurlJsonRequest::jsonContainsStringOrIntegerNumber(item, "size", "BoxUploadRequest")) {
 
 				//finished
 				Common::String id = item.getVal("id")->asString();
@@ -214,7 +216,8 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 
 void BoxUploadRequest::notUploadedCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 

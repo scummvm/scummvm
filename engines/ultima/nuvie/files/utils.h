@@ -23,15 +23,15 @@
 #ifndef NUVIE_FILES_UTILS_H
 #define NUVIE_FILES_UTILS_H
 
-#include "ultima/shared/std/string.h" // exception handling include
 #include "common/stream.h"
+#include "ultima/shared/std/string.h" // exception handling include
 
 namespace Ultima {
 namespace Nuvie {
 
 bool openFile(
-    Common::ReadStream *&in,    // Input stream to open.
-    const char *fname           // Filename
+    Common::ReadStream *&in, // Input stream to open.
+    const char *fname        // Filename
 );
 
 extern bool fileExists(const char *fname);

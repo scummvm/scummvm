@@ -20,10 +20,10 @@
 *
 */
 
-#include "common/system.h"          // for OSystem, g_system
-#include "graphics/cursorman.h"     // for CursorMan
-#include "graphics/maccursor.h"     // for MacCursor
 #include "sci/graphics/maccursor32.h"
+#include "common/system.h"      // for OSystem, g_system
+#include "graphics/cursorman.h" // for CursorMan
+#include "graphics/maccursor.h" // for MacCursor
 
 namespace Sci {
 

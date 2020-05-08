@@ -41,6 +41,7 @@ public:
 	bool loadSubtitles(const Common::String &filename, const Common::String &subtitleFile);
 	void display();
 	void update(uint32 frame);
+
 private:
 	Common::Array<SubtitleCard> _subtitles;
 	int32 _lastSample;

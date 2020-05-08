@@ -32,12 +32,14 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-enum Highlight { HL_NO_HIGHLIGHTING, HL_CHANGED_HIGHLIGHTS, HL_SCROLLBAR_ONLY };
+enum Highlight { HL_NO_HIGHLIGHTING,
+	             HL_CHANGED_HIGHLIGHTS,
+	             HL_SCROLLBAR_ONLY };
 
 /**
  * Handles displaying a dialog with conversation options the player can select from
  */
-class WidgetTalk: public WidgetBase {
+class WidgetTalk : public WidgetBase {
 	struct StatementLine {
 		Common::String _line;
 		int _num;
@@ -45,6 +47,7 @@ class WidgetTalk: public WidgetBase {
 		StatementLine() : _num(0) {}
 		StatementLine(const Common::String &line, int num) : _line(line), _num(num) {}
 	};
+
 private:
 	int _talkScrollIndex;
 	Common::Array<StatementLine> _statementLines;
@@ -67,6 +70,7 @@ private:
 	 * by line, as well as which statement a particular line is part of.
 	 */
 	void setStatementLines();
+
 public:
 	WidgetTalk(SherlockEngine *vm);
 	~WidgetTalk() override {}

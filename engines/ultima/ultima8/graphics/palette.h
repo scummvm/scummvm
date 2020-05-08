@@ -28,13 +28,13 @@ namespace Ultima8 {
 
 enum PalTransforms {
 	// Normal untransformed palette
-	Transform_None      = 0,
+	Transform_None = 0,
 
 	// O[i] = I[r]*0.375 + I[g]*0.5 + I[b]*0.125;
 	Transform_Greyscale = 1,
 
 	// O[r] = 0;
-	Transform_NoRed     = 2,
+	Transform_NoRed = 2,
 
 	// O[i] = (I[i] + Grey)*0.25 + 0.1875;
 	Transform_RainStorm = 3,
@@ -45,13 +45,13 @@ enum PalTransforms {
 	Transform_FireStorm = 4,
 
 	// O[i] = I[i]*2 -Grey;
-	Transform_Saturate  = 5,
+	Transform_Saturate = 5,
 
 	// O[g] = I[r]; O[b] = I[g]; O[r] = I[b];
-	Transform_GBR       = 6,
+	Transform_GBR = 6,
 
 	// O[b] = I[r]; O[r] = I[g]; O[g] = I[b];
-	Transform_BRG       = 7
+	Transform_BRG = 7
 };
 
 struct Palette {

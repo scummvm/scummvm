@@ -22,8 +22,8 @@
 
 #include "backends/log/log.h"
 
-#include "common/stream.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/system.h"
 
 #include "base/version.h"
@@ -98,8 +98,8 @@ void Log::printTimeStamp() {
 	curMonth = date.tm_mon + 1; // month is base 0, we need base 1 (1 = january and so on)
 
 	_stream->writeString(Common::String::format("[%d-%02d-%02d %02d:%02d:%02d] ",
-	                     date.tm_year + 1900, curMonth, date.tm_mday,
-	                     date.tm_hour, date.tm_min, date.tm_sec));
+	                                            date.tm_year + 1900, curMonth, date.tm_mday,
+	                                            date.tm_hour, date.tm_min, date.tm_sec));
 }
 
 } // End of namespace Log

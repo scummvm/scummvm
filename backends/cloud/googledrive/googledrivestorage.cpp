@@ -22,11 +22,10 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/cloud/googledrive/googledrivestorage.h"
 #include "backends/cloud/cloudmanager.h"
-#include "backends/cloud/googledrive/googledrivetokenrefresher.h"
 #include "backends/cloud/googledrive/googledrivelistdirectorybyidrequest.h"
+#include "backends/cloud/googledrive/googledrivetokenrefresher.h"
 #include "backends/cloud/googledrive/googledriveuploadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
@@ -34,7 +33,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
-#include "common/debug.h"
+#include <curl/curl.h>
 
 namespace Cloud {
 namespace GoogleDrive {
@@ -43,8 +42,7 @@ namespace GoogleDrive {
 #define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/drive/v3/files"
 #define GOOGLEDRIVE_API_ABOUT "https://www.googleapis.com/drive/v3/about?fields=storageQuota,user"
 
-GoogleDriveStorage::GoogleDriveStorage(Common::String token, Common::String refreshToken, bool enabled):
-	IdStorage(token, refreshToken, enabled) {}
+GoogleDriveStorage::GoogleDriveStorage(Common::String token, Common::String refreshToken, bool enabled) : IdStorage(token, refreshToken, enabled) {}
 
 GoogleDriveStorage::GoogleDriveStorage(Common::String code, Networking::ErrorCallback cb) {
 	getAccessToken(code, cb);
@@ -90,7 +88,7 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 	uint64 quotaUsed = 0, quotaAllocated = 0;
 
 	if (Networking::CurlJsonRequest::jsonContainsAttribute(jsonInfo, "user", "GoogleDriveStorage::infoInnerCallback") &&
-		Networking::CurlJsonRequest::jsonIsObject(jsonInfo.getVal("user"), "GoogleDriveStorage::infoInnerCallback")) {
+	    Networking::CurlJsonRequest::jsonIsObject(jsonInfo.getVal("user"), "GoogleDriveStorage::infoInnerCallback")) {
 		//"me":true, "kind":"drive#user","photoLink": "",
 		//"displayName":"Alexander Tkachev","emailAddress":"alexander@tkachov.ru","permissionId":""
 		Common::JSONObject user = jsonInfo.getVal("user")->asObject();
@@ -103,7 +101,7 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Ne
 	}
 
 	if (Networking::CurlJsonRequest::jsonContainsAttribute(jsonInfo, "storageQuota", "GoogleDriveStorage::infoInnerCallback") &&
-		Networking::CurlJsonRequest::jsonIsObject(jsonInfo.getVal("storageQuota"), "GoogleDriveStorage::infoInnerCallback")) {
+	    Networking::CurlJsonRequest::jsonIsObject(jsonInfo.getVal("storageQuota"), "GoogleDriveStorage::infoInnerCallback")) {
 		//"usageInDrive":"6332462","limit":"18253611008","usage":"6332462","usageInDriveTrash":"0"
 		Common::JSONObject storageQuota = jsonInfo.getVal("storageQuota")->asObject();
 

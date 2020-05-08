@@ -34,20 +34,20 @@ namespace Gob {
 class TOTFile {
 public:
 	enum Function {
-		kFunctionStart  =  0,
+		kFunctionStart = 0,
 		kFunctionCenter = 13
 	};
 
 	struct Properties {
-		uint8  versionMajor;
-		uint8  versionMinor;
+		uint8 versionMajor;
+		uint8 versionMinor;
 		uint32 variablesCount;
 		uint32 textsOffset;
 		uint32 resourcesOffset;
 		uint16 animDataSize;
-		uint8  imFileNumber;
-		uint8  exFileNumber;
-		uint8  communHandling;
+		uint8 imFileNumber;
+		uint8 exFileNumber;
+		uint8 communHandling;
 		uint16 functions[14];
 		uint32 scriptEnd;
 		uint32 textsSize;

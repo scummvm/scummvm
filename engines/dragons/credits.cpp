@@ -24,8 +24,8 @@
 #include "common/system.h"
 #include "dragons/bigfile.h"
 #include "dragons/dragons.h"
-#include "dragons/screen.h"
 #include "dragons/font.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 
@@ -34,7 +34,7 @@ void creditsUpdateFunction() {
 }
 
 Credits::Credits(DragonsEngine *vm, FontManager *fontManager, BigfileArchive *bigfileArchive) : _vm(vm),
-				_fontManager(fontManager), _bigfileArchive(bigfileArchive), _surface(nullptr), _curPtr(nullptr) {
+                                                                                                _fontManager(fontManager), _bigfileArchive(bigfileArchive), _surface(nullptr), _curPtr(nullptr) {
 	_running = false;
 	_updateCounter = 0;
 	_yOffset = 0;
@@ -92,7 +92,6 @@ void Credits::update() {
 				convertToWideChar(line, (const byte *)" ", 40);
 			}
 			_fontManager->_fonts[0]->renderToSurface(_surface, 0, (_yOffset + 200) % 208, line, 40);
-
 		}
 
 	} else {
@@ -103,7 +102,6 @@ void Credits::update() {
 		_running = false;
 		cleanup();
 	}
-
 }
 
 void Credits::convertToWideChar(uint16 *destBuf, const byte *text, uint16 maxLength) {

@@ -28,7 +28,8 @@
 namespace Ultima {
 namespace Std {
 
-enum Precision { hex = 16, dec = 10 };
+enum Precision { hex = 16,
+	             dec = 10 };
 
 extern void memset(void *data, byte val, size_t count);
 extern int memcmp(const void *ptr1, const void *ptr2, size_t num);

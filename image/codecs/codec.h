@@ -23,8 +23,8 @@
 #ifndef IMAGE_CODECS_CODEC_H
 #define IMAGE_CODECS_CODEC_H
 
-#include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Common {
 class SeekableReadStream;

@@ -36,10 +36,10 @@ private:
 	Common::SharedPtr<Common::ArchiveMember> _member;
 	Common::String _publicFolder;
 	Common::String _innerfolder;
+
 public:
 	UltimaDataArchiveMember(Common::SharedPtr<Common::ArchiveMember> member,
-		const Common::String &subfolder) :
-		_member(member), _publicFolder("data/"), _innerfolder(subfolder) {
+	                        const Common::String &subfolder) : _member(member), _publicFolder("data/"), _innerfolder(subfolder) {
 	}
 	~UltimaDataArchiveMember() override {}
 	Common::SeekableReadStream *createReadStream() const override {
@@ -58,16 +58,14 @@ public:
 /*-------------------------------------------------------------------*/
 
 bool UltimaDataArchive::load(const Common::String &subfolder,
-		int reqMajorVersion, int reqMinorVersion, Common::String &errorMsg) {
+                             int reqMajorVersion, int reqMinorVersion, Common::String &errorMsg) {
 	Common::Archive *dataArchive = nullptr;
 	Common::File f;
 
 #ifndef RELEASE_BUILD
 	Common::FSNode folder;
 	if (ConfMan.hasKey("extrapath")) {
-		if ((folder = Common::FSNode(ConfMan.get("extrapath"))).exists()
-				&& (folder = folder.getChild("files")).exists()
-				&& (folder = folder.getChild(subfolder)).exists()) {
+		if ((folder = Common::FSNode(ConfMan.get("extrapath"))).exists() && (folder = folder.getChild("files")).exists() && (folder = folder.getChild(subfolder)).exists()) {
 			f.open(folder.getChild("version.txt"));
 		}
 	}
@@ -75,8 +73,8 @@ bool UltimaDataArchive::load(const Common::String &subfolder,
 #endif
 	if (!f.isOpen()) {
 		if (!Common::File::exists(DATA_FILENAME) ||
-			(dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
-			!f.open(Common::String::format("%s/version.txt", subfolder.c_str()), *dataArchive)) {
+		    (dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
+		    !f.open(Common::String::format("%s/version.txt", subfolder.c_str()), *dataArchive)) {
 			delete dataArchive;
 			errorMsg = Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME);
 			return false;
@@ -97,7 +95,7 @@ bool UltimaDataArchive::load(const Common::String &subfolder,
 	if (major != reqMajorVersion || minor != reqMinorVersion) {
 		delete dataArchive;
 		errorMsg = Common::String::format(_("Out of date engine data. Expected %d.%d, but got version %d.%d"),
-			reqMajorVersion, reqMinorVersion, major, minor);
+		                                  reqMajorVersion, reqMinorVersion, major, minor);
 		return false;
 	}
 
@@ -135,10 +133,10 @@ int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, cons
 
 	// Modify the results to change the filename
 	for (Common::ArchiveMemberList::iterator it = innerList.begin();
-			it != innerList.end(); ++it) {
+	     it != innerList.end(); ++it) {
 		Common::ArchiveMemberPtr member = Common::ArchiveMemberPtr(
-			new UltimaDataArchiveMember(*it, _innerfolder));
-		list.push_back(member);		
+		    new UltimaDataArchiveMember(*it, _innerfolder));
+		list.push_back(member);
 	}
 
 	return result;
@@ -150,9 +148,9 @@ int UltimaDataArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 	// Modify the results to change the filename
 	for (Common::ArchiveMemberList::iterator it = innerList.begin();
-		it != innerList.end(); ++it) {
+	     it != innerList.end(); ++it) {
 		Common::ArchiveMemberPtr member = Common::ArchiveMemberPtr(
-			new UltimaDataArchiveMember(*it, _innerfolder));
+		    new UltimaDataArchiveMember(*it, _innerfolder));
 		list.push_back(member);
 	}
 
@@ -197,7 +195,7 @@ Common::FSNode UltimaDataArchiveProxy::getNode(const Common::String &name) const
 	Common::String remainingName = name.substr(_publicFolder.size());
 	Common::FSNode node = _folder;
 	size_t pos;
-	
+
 	while ((pos = remainingName.findFirstOf('/')) != Common::String::npos) {
 		node = node.getChild(remainingName.substr(0, pos));
 		if (!node.exists())
@@ -209,7 +207,7 @@ Common::FSNode UltimaDataArchiveProxy::getNode(const Common::String &name) const
 	if (!remainingName.empty())
 		node = node.getChild(remainingName);
 
-	return node;	
+	return node;
 }
 
 #endif

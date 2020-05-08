@@ -27,47 +27,46 @@ namespace Glk {
 namespace Hugo {
 
 const char *const HTokens::token[] = {
-	/* 0x00 - 0x0f */
-	"",  "(", ")", ".", ":", "=", "-", "+",
-	"*", "/", "|", ";", "{", "}", "[", "]",
+    /* 0x00 - 0x0f */
+    "", "(", ")", ".", ":", "=", "-", "+",
+    "*", "/", "|", ";", "{", "}", "[", "]",
 
-	/* 0x10 - 0x1f */
-	"#", "~", ">=", "<=", "~=", "&", ">", "<",
-	"if", ",", "else", "elseif", "while", "do", "select", "case",
+    /* 0x10 - 0x1f */
+    "#", "~", ">=", "<=", "~=", "&", ">", "<",
+    "if", ",", "else", "elseif", "while", "do", "select", "case",
 
-	/* 0x20 - 0x2f */
-	"for", "return", "break",  "and", "or", "jump", "run", "is",
-	"not", "true", "false", "local", "verb", "xverb", "held", "multi",
+    /* 0x20 - 0x2f */
+    "for", "return", "break", "and", "or", "jump", "run", "is",
+    "not", "true", "false", "local", "verb", "xverb", "held", "multi",
 
-	/* 0x30 - 0x3f */
-	"multiheld", "newline", "anything", "print",
-	"number", "capital", "text", "graphics",
-	"color", "remove", "move", "to",
-	"parent", "sibling", "child", "youngest",
+    /* 0x30 - 0x3f */
+    "multiheld", "newline", "anything", "print",
+    "number", "capital", "text", "graphics",
+    "color", "remove", "move", "to",
+    "parent", "sibling", "child", "youngest",
 
-	/* 0x40 - 0x4f */
-	"eldest", "younger", "elder", "prop#",
-	"attr#", "var#", "dictentry#", "textdata#",
-	"routine#","debugdata#","objectnum#", "value#",
-	"eol#", "system", "notheld", "multinotheld",
+    /* 0x40 - 0x4f */
+    "eldest", "younger", "elder", "prop#",
+    "attr#", "var#", "dictentry#", "textdata#",
+    "routine#", "debugdata#", "objectnum#", "value#",
+    "eol#", "system", "notheld", "multinotheld",
 
-	/* 0x50 - 0x5f */
-	"window", "random", "word", "locate",
-	"parse$", "children", "in", "pause",
-	"runevents", "arraydata#", "call", "stringdata#",
-	"save", "restore", "quit", "input",
+    /* 0x50 - 0x5f */
+    "window", "random", "word", "locate",
+    "parse$", "children", "in", "pause",
+    "runevents", "arraydata#", "call", "stringdata#",
+    "save", "restore", "quit", "input",
 
-	/* 0x60 - 0x6f */
-	"serial$", "cls", "scripton", "scriptoff",
-	"restart", "hex", "object", "xobject",
-	"string", "array", "printchar", "undo",
-	"dict", "recordon", "recordoff", "writefile",
+    /* 0x60 - 0x6f */
+    "serial$", "cls", "scripton", "scriptoff",
+    "restart", "hex", "object", "xobject",
+    "string", "array", "printchar", "undo",
+    "dict", "recordon", "recordoff", "writefile",
 
-	/* 0x70 - */
-	"readfile", "writeval", "readval", "playback",
-	"colour", "picture", "label#", "sound",
-	"music", "repeat", "addcontext", "video"
-};
+    /* 0x70 - */
+    "readfile", "writeval", "readval", "playback",
+    "colour", "picture", "label#", "sound",
+    "music", "repeat", "addcontext", "video"};
 
 int HTokens::token_hash[TOKENS + 1];
 

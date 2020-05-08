@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "access/amazon/amazon_logic.h"
 #include "access/access.h"
+#include "access/amazon/amazon_game.h"
+#include "access/amazon/amazon_resources.h"
 #include "access/resources.h"
 #include "access/screen.h"
-#include "access/amazon/amazon_game.h"
-#include "access/amazon/amazon_logic.h"
-#include "access/amazon/amazon_resources.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -243,7 +243,7 @@ void Opening::doCredit() {
 		return;
 
 	if (_pCount <= 75)
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], _vm->isDemo()? 24 : 0, Common::Point(90, 35));
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], _vm->isDemo() ? 24 : 0, Common::Point(90, 35));
 	else if (_pCount <= 210)
 		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 1, Common::Point(65, 35));
 	else if (_pCount <= 272)
@@ -271,7 +271,7 @@ void Opening::doCreditDemo() {
 		return;
 
 	if (_pCount <= 75)
-		_vm->_buffer2.plotImage(_vm->_objectsTable[0], _vm->isDemo()? 24 : 0, Common::Point(90, 35));
+		_vm->_buffer2.plotImage(_vm->_objectsTable[0], _vm->isDemo() ? 24 : 0, Common::Point(90, 35));
 	else if (_pCount <= 210)
 		_vm->_buffer2.plotImage(_vm->_objectsTable[0], 25, Common::Point(82, 35));
 	else if (_pCount <= 272) {
@@ -347,7 +347,7 @@ void Opening::doTitle() {
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 		_vm->_buffer1.copyFrom(*_vm->_screen);
 
-		const int COUNTDOWN[6] = { 2, 0x80, 1, 0x7d, 0, 0x87 };
+		const int COUNTDOWN[6] = {2, 0x80, 1, 0x7d, 0, 0x87};
 		for (_pCount = 0; _pCount < 3 && !_vm->shouldQuit(); ++_pCount) {
 			_vm->_buffer2.blitFrom(_vm->_buffer1);
 			int id = COUNTDOWN[_pCount * 2];
@@ -539,7 +539,7 @@ void Opening::doTent() {
 			if (_vm->_video->_videoFrame == 26) {
 				_vm->_sound->playSound(5);
 			} else if (_vm->_video->_videoFrame == 15) {
-				if (step !=3) {
+				if (step != 3) {
 					_vm->_sound->playSound(3);
 					step = 3;
 				}
@@ -566,7 +566,6 @@ Plane::Plane(AmazonEngine *vm) : PannedScene(vm) {
 	_planeCount = 0;
 	_propCount = 0;
 }
-
 
 void Plane::doFlyCell() {
 	SpriteResource *sprites = _vm->_objectsTable[15];
@@ -595,10 +594,8 @@ void Plane::doFlyCell() {
 		--_position.y;
 
 	_vm->_buffer2.plotImage(sprites, 7, _position);
-	_vm->_buffer2.plotImage(sprites, 8 + _propCount, Common::Point(
-		_position.x + 99, _position.y + 10));
-	_vm->_buffer2.plotImage(sprites, 11 + _propCount, Common::Point(
-		_position.x + 104, _position.y + 18));
+	_vm->_buffer2.plotImage(sprites, 8 + _propCount, Common::Point(_position.x + 99, _position.y + 10));
+	_vm->_buffer2.plotImage(sprites, 11 + _propCount, Common::Point(_position.x + 104, _position.y + 18));
 
 	if (++_planeCount >= 30)
 		_planeCount = 0;
@@ -618,7 +615,7 @@ void Plane::doFallCell() {
 
 	SpriteFrame *frame = _vm->_objectsTable[20]->getFrame(_planeCount / 6);
 	Common::Rect r(115, 11, 115 + _vm->_screen->_scaleTable1[frame->w],
-		11 + _vm->_screen->_scaleTable1[frame->h]);
+	               11 + _vm->_screen->_scaleTable1[frame->h]);
 	_vm->_buffer2.sPlotF(frame, r);
 
 	_vm->_scaleI -= 3;
@@ -680,7 +677,7 @@ void Plane::mWhileFly() {
 	_position = Common::Point(20, 29);
 
 	while (!_vm->shouldQuit() && !events.isKeyMousePressed() &&
-		((_vm->_scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth)) {
+	       ((_vm->_scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth)) {
 		events._vbCount = 4;
 		_vm->_scrollX += player._scrollAmount;
 
@@ -730,7 +727,7 @@ void Plane::mWhileFall() {
 	_planeCount = 0;
 
 	while (!_vm->shouldQuit() && !events.isKeyMousePressed() &&
-		(_vm->_scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
+	       (_vm->_scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
 		events._vbCount = 4;
 		_vm->_scrollX += _vm->_player->_scrollAmount;
 
@@ -761,7 +758,7 @@ Jungle::Jungle(AmazonEngine *vm) : CampScene(vm) {
 }
 
 void Jungle::jungleMove() {
-	const static int jungleY[3] = { 27, 30, 29 };
+	const static int jungleY[3] = {27, 30, 29};
 	int count = 1;
 	int frameOffset = 0;
 
@@ -794,14 +791,13 @@ void Jungle::jungleMove() {
 
 void Jungle::initJWalk2() {
 	const int JUNGLE1OBJ[7][4] = {
-		{ 2, 470, 0, 20 },
-		{ 0, 290, 0, 50 },
-		{ 1, 210, 0, 40 },
-		{ 0, 500, 0, 30 },
-		{ 1, 550, 0, 20 },
-		{ 0, 580, 0, 60 },
-		{ 1, 650, 0, 30 }
-	};
+	    {2, 470, 0, 20},
+	    {0, 290, 0, 50},
+	    {1, 210, 0, 40},
+	    {0, 500, 0, 30},
+	    {1, 550, 0, 20},
+	    {0, 580, 0, 60},
+	    {1, 650, 0, 30}};
 
 	Screen &screen = *_vm->_screen;
 	screen.fadeOut();
@@ -854,13 +850,13 @@ void Jungle::mWhileJWalk() {
 	Player &player = *_vm->_player;
 
 	static const int JUNGLE_OBJ[7][4] = {
-		{ 2, 77, 0, 40 },
-		{ 0, 290, 0, 50 },
-		{ 1, 210, 0, 70 },
-		{ 0, 50, 0, 30 },
-		{ 1, 70, 0, 20 },
-		{ 0, -280, 0, 60 },
-		{ 1, -150, 0, 30 },
+	    {2, 77, 0, 40},
+	    {0, 290, 0, 50},
+	    {1, 210, 0, 70},
+	    {0, 50, 0, 30},
+	    {1, 70, 0, 20},
+	    {0, -280, 0, 60},
+	    {1, -150, 0, 30},
 	};
 
 	screen.fadeOut();
@@ -932,7 +928,7 @@ void Jungle::mWhileJWalk2() {
 	initJWalk2();
 
 	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
-		(_vm->_scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth) {
+	       (_vm->_scrollCol + screen._vWindowWidth) != _vm->_room->_playFieldWidth) {
 		_vm->_images.clear();
 		_vm->_events->_vbCount = 6;
 		_pan[0]._pImgNum = _xCount;
@@ -1331,7 +1327,8 @@ void Cast::doCast(int param1) {
 		_vm->copyBlocks();
 
 		for (int idx = 0; idx < 5 && !_vm->shouldQuit() &&
-				!_vm->_events->isKeyMousePressed(); ++idx)
+		                  !_vm->_events->isKeyMousePressed();
+		     ++idx)
 			_vm->_events->pollEventsAndWait();
 
 		if (_vm->_events->isKeyMousePressed())
@@ -1412,7 +1409,7 @@ void River::setRiverPan() {
 }
 
 void River::initRiver() {
-	static const int RIVERVXTBL[3] = { 6719, 7039, 8319 };
+	static const int RIVERVXTBL[3] = {6719, 7039, 8319};
 	Screen &screen = *_vm->_screen;
 
 	_vm->_events->centerMousePos();
@@ -1454,7 +1451,6 @@ void River::initRiver() {
 		_vm->_oldRects.clear();
 		_vm->_newRects.clear();
 		_vm->_events->clearEvents();
-
 	}
 
 	_vm->_player->_scrollAmount = 2;
@@ -1618,8 +1614,8 @@ void River::moveCanoe() {
 		} else if (events._leftButton && mousePos.x < 35 && mousePos.y < 12) {
 			// Clicked on the Skip button. So chicken out
 			_chickenOutFl = true;
-		}  else if ((events._leftButton && pt.y <= _canoeYPos) ||
-			(!events._leftButton && _vm->_player->_move == UP)) {
+		} else if ((events._leftButton && pt.y <= _canoeYPos) ||
+		           (!events._leftButton && _vm->_player->_move == UP)) {
 			// Move canoe up
 			if (_canoeLane > 0) {
 				_canoeDir = -1;
@@ -1700,7 +1696,7 @@ bool River::checkRiverCollide() {
 
 		if ((cur->_lane == _canoeLane) || (cur->_lane == _canoeLane + 1)) {
 			if ((cur->_riverX + cur->_width - 1) >= _canoeVXPos &&
-					cur->_riverX < (_canoeVXPos + 124)) {
+			    cur->_riverX < (_canoeVXPos + 124)) {
 				_vm->_sound->playSound(4);
 				return true;
 			}
@@ -1777,7 +1773,7 @@ void River::mWhileDownRiver() {
 	++_vm->_timers[24]._flag;
 
 	_pNumObj = 14;
-	for (int i = 0; i <_pNumObj; i++) {
+	for (int i = 0; i < _pNumObj; i++) {
 		_pan[i]._pObject = _vm->_objectsTable[33];
 		_pan[i]._pImgNum = DOWNRIVEROBJ[i][0];
 		_pan[i]._pObjX = DOWNRIVEROBJ[i][1];
@@ -1794,7 +1790,7 @@ void River::mWhileDownRiver() {
 	++_vm->_timers[4]._flag;
 
 	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
-		(_vm->_scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
+	       (_vm->_scrollCol + screen._vWindowWidth != _vm->_room->_playFieldWidth)) {
 		_vm->_images.clear();
 		_vm->_events->_vbCount = 6;
 
@@ -1844,7 +1840,7 @@ void River::scrollRiver1() {
 }
 
 void River::doRiver() {
-	static const int RIVERDEATH[5] = { 22, 23, 24, 25, 26 };
+	static const int RIVERDEATH[5] = {22, 23, 24, 25, 26};
 
 	initRiver();
 	_vm->_events->showCursor();
@@ -1902,7 +1898,7 @@ void River::doRiver() {
 			// Allow time for new scrolled river position to be shown
 			_vm->_canSaveLoad = true;
 			while (!_vm->shouldQuit() && _vm->_room->_function == FN_NONE &&
-				_vm->_events->_vbCount > 0) {
+			       _vm->_events->_vbCount > 0) {
 				_vm->_events->pollEventsAndWait();
 			}
 			_vm->_canSaveLoad = false;
@@ -2221,7 +2217,6 @@ void Ant::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_stabFl);
 	}
 }
-
 
 } // End of namespace Amazon
 

@@ -21,8 +21,8 @@
  */
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/events.h"
@@ -35,19 +35,19 @@
 #include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/surface.h"
-#include "graphics/screen.h"
 #include "graphics/palette.h"
+#include "graphics/screen.h"
+#include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 
+#include "supernova/game-manager.h"
 #include "supernova/resman.h"
 #include "supernova/screen.h"
 #include "supernova/sound.h"
 #include "supernova/supernova.h"
 #include "supernova/supernova1/state.h"
 #include "supernova/supernova2/state.h"
-#include "supernova/game-manager.h"
 
 namespace Supernova {
 
@@ -76,18 +76,7 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 }
 
 SupernovaEngine::SupernovaEngine(OSystem *syst)
-	: Engine(syst)
-	, _gm(nullptr)
-	, _sound(nullptr)
-	, _resMan(nullptr)
-	, _screen(nullptr)
-	, _allowLoadGame(true)
-	, _allowSaveGame(true)
-	, _sleepAutoSave(nullptr)
-	, _sleepAuoSaveVersion(-1)
-	, _delay(33)
-	, _textSpeed(kTextSpeed[2])
-	, _improved(false) {
+    : Engine(syst), _gm(nullptr), _sound(nullptr), _resMan(nullptr), _screen(nullptr), _allowLoadGame(true), _allowSaveGame(true), _sleepAutoSave(nullptr), _sleepAuoSaveVersion(-1), _delay(33), _textSpeed(kTextSpeed[2]), _improved(false) {
 	if (ConfMan.hasKey("textspeed"))
 		_textSpeed = ConfMan.getInt("textspeed");
 
@@ -369,7 +358,7 @@ void SupernovaEngine::setTextSpeed() {
 	// Find the closest index in kTextSpeed for the current _textSpeed.
 	// Important note: values in kTextSpeed decrease with the index.
 	int speedIndex = 0;
-	while (speedIndex < 4 && _textSpeed < (kTextSpeed[speedIndex] + kTextSpeed[speedIndex+1]) / 2)
+	while (speedIndex < 4 && _textSpeed < (kTextSpeed[speedIndex] + kTextSpeed[speedIndex + 1]) / 2)
 		++speedIndex;
 
 	char nbString[2];
@@ -467,8 +456,8 @@ Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String 
 	int version = f.readByte();
 	if (version != SUPERNOVA_DAT_VERSION) {
 		GUIErrorMessageFormat(
-			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
-			SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
+		    _("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
+		    SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
 		return nullptr;
 	}
 
@@ -476,7 +465,7 @@ Common::SeekableReadStream *SupernovaEngine::getBlockFromDatFile(Common::String 
 	while (!f.eos()) {
 		int part = f.readByte();
 		gameBlockSize = f.readUint32LE();
-		if (f.eos()){
+		if (f.eos()) {
 			GUIErrorMessageFormat(_("Unable to find block for part %d"), _MSPart);
 			return nullptr;
 		}
@@ -652,7 +641,6 @@ bool SupernovaEngine::quitGameDialog() {
 	return quit;
 }
 
-
 bool SupernovaEngine::canLoadGameStateCurrently() {
 	return _allowLoadGame;
 }
@@ -729,7 +717,7 @@ bool SupernovaEngine::loadGame(int slot) {
 
 	uint saveHeader = savefile->readUint32LE();
 	if ((_MSPart == 1 && saveHeader != SAVEGAME_HEADER) ||
-		(_MSPart == 2 && saveHeader != SAVEGAME_HEADER2)) {
+	    (_MSPart == 2 && saveHeader != SAVEGAME_HEADER2)) {
 		warning("No header found in '%s'", filename.c_str());
 		delete savefile;
 		return false; //Common::kUnknownError
@@ -824,8 +812,8 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 
 void SupernovaEngine::errorTempSave(bool saving) {
 	GUIErrorMessage(saving
-		? "Failed to save temporary game state. Make sure your save game directory is set in ScummVM and that you can write to it."
-		: "Failed to load temporary game state.");
+	                    ? "Failed to save temporary game state. Make sure your save game directory is set in ScummVM and that you can write to it."
+	                    : "Failed to load temporary game state.");
 	error("Unrecoverable error");
 }
 
@@ -833,5 +821,4 @@ void SupernovaEngine::stopSound() {
 	_sound->stop();
 }
 
-
-}
+} // namespace Supernova

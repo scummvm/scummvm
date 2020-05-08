@@ -34,11 +34,24 @@ namespace Scalpel {
 
 // Animation sequence identifiers for characters
 enum ScalpelSequences {
-	WALK_RIGHT = 0, WALK_DOWN = 1, WALK_LEFT = 2, WALK_UP = 3, STOP_LEFT = 4,
-	STOP_DOWN = 5, STOP_RIGHT = 6, STOP_UP = 7, WALK_UPRIGHT = 8,
-	WALK_DOWNRIGHT = 9, WALK_UPLEFT = 10, WALK_DOWNLEFT = 11,
-	STOP_UPRIGHT = 12, STOP_UPLEFT = 13, STOP_DOWNRIGHT = 14,
-	STOP_DOWNLEFT = 15, TALK_RIGHT = 6, TALK_LEFT = 4
+	WALK_RIGHT = 0,
+	WALK_DOWN = 1,
+	WALK_LEFT = 2,
+	WALK_UP = 3,
+	STOP_LEFT = 4,
+	STOP_DOWN = 5,
+	STOP_RIGHT = 6,
+	STOP_UP = 7,
+	WALK_UPRIGHT = 8,
+	WALK_DOWNRIGHT = 9,
+	WALK_UPLEFT = 10,
+	WALK_DOWNLEFT = 11,
+	STOP_UPRIGHT = 12,
+	STOP_UPLEFT = 13,
+	STOP_DOWNRIGHT = 14,
+	STOP_DOWNLEFT = 15,
+	TALK_RIGHT = 6,
+	TALK_LEFT = 4
 };
 
 class ScalpelPerson : public Person {
@@ -83,8 +96,8 @@ public:
 	ScalpelPeople(SherlockEngine *vm);
 	~ScalpelPeople() override {}
 
-	ScalpelPerson &operator[](PeopleId id) { return *(ScalpelPerson  *)_data[id]; }
-	ScalpelPerson  &operator[](int idx) { return *(ScalpelPerson  *)_data[idx]; }
+	ScalpelPerson &operator[](PeopleId id) { return *(ScalpelPerson *)_data[id]; }
+	ScalpelPerson &operator[](int idx) { return *(ScalpelPerson *)_data[idx]; }
 
 	/**
 	 * Setup the data for an animating speaker portrait at the top of the screen

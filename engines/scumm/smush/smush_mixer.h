@@ -23,7 +23,6 @@
 #ifndef SCUMM_SMUSH_MIXER_H
 #define SCUMM_SMUSH_MIXER_H
 
-
 #include "audio/mixer.h"
 #include "common/mutex.h"
 #include "scumm/sound.h"
@@ -40,8 +39,8 @@ class SmushMixer {
 	enum {
 		NUM_CHANNELS = 16
 	};
-private:
 
+private:
 	Audio::Mixer *_mixer;
 	struct channels {
 		int id;
@@ -55,7 +54,6 @@ private:
 	Common::Mutex _mutex;
 
 public:
-
 	SmushMixer(Audio::Mixer *);
 	virtual ~SmushMixer();
 	SmushChannel *findChannel(int32 track);

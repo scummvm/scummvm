@@ -23,8 +23,8 @@
 #ifndef EECDVDFS_H
 #define EECDVDFS_H
 
-#include <tamtypes.h>
 #include "iop/CoDyVDfs/common/codyvdirx.h"
+#include <tamtypes.h>
 
 struct CdClock {
 	u8 stat;
@@ -40,10 +40,10 @@ struct CdClock {
 #ifdef __cplusplus
 extern "C" {
 #endif
-	int initCdvdFs(void);
-	void readRTC(struct CdClock *dest);
-	int driveStop(void);
-	int driveStandby(void);
+int initCdvdFs(void);
+void readRTC(struct CdClock *dest);
+int driveStop(void);
+int driveStandby(void);
 #ifdef __cplusplus
 }
 #endif

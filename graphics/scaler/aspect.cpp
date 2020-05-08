@@ -20,20 +20,19 @@
  *
  */
 
-#include "graphics/scaler/intern.h"
 #include "graphics/scaler/aspect.h"
+#include "graphics/scaler/intern.h"
 
 #ifdef USE_ARM_NEON_ASPECT_CORRECTOR
 #include <arm_neon.h>
 #endif
 
-#define	kSuperFastAndUglyAspectMode	0	// No interpolation at all, but super-fast
-#define	kVeryFastAndGoodAspectMode	1	// Good quality with very good speed
-#define	kFastAndVeryGoodAspectMode	2	// Very good quality with good speed
-#define	kSlowAndPerfectAspectMode	3	// Accurate but slow code
+#define kSuperFastAndUglyAspectMode 0 // No interpolation at all, but super-fast
+#define kVeryFastAndGoodAspectMode 1  // Good quality with very good speed
+#define kFastAndVeryGoodAspectMode 2  // Very good quality with good speed
+#define kSlowAndPerfectAspectMode 3   // Accurate but slow code
 
-#define ASPECT_MODE	kVeryFastAndGoodAspectMode
-
+#define ASPECT_MODE kVeryFastAndGoodAspectMode
 
 #if ASPECT_MODE == kSlowAndPerfectAspectMode
 
@@ -45,7 +44,6 @@ static inline uint16 interpolate5(uint16 A, uint16 B) {
 
 	return (uint16)((r & ColorMask::kRedBlueMask & 0xFF00) | (g & ColorMask::kGreenMask) | (b & ColorMask::kRedBlueMask & 0x00FF));
 }
-
 
 template<typename ColorMask, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
@@ -73,12 +71,12 @@ static void interpolate5LineNeon(uint16 *dst, const uint16 *srcA, const uint16 *
 		uint16x4_t p2_4 = srcA_4;
 
 		uint16x4_t p1_rb_4 = vand_u16(p1_4, kRedBlueMask_4);
-		uint16x4_t p1_g_4  = vand_u16(p1_4, kGreenMask_4);
+		uint16x4_t p1_g_4 = vand_u16(p1_4, kGreenMask_4);
 		uint16x4_t p2_rb_4 = vand_u16(p2_4, kRedBlueMask_4);
-		uint16x4_t p2_g_4  = vand_u16(p2_4, kGreenMask_4);
+		uint16x4_t p2_g_4 = vand_u16(p2_4, kGreenMask_4);
 
 		uint32x4_t tmp_rb_4 = vshrq_n_u32(vmlal_u16(vmull_u16(p2_rb_4, k2_4), p1_rb_4, k1_4), 3);
-		uint32x4_t tmp_g_4  = vshrq_n_u32(vmlal_u16(vmull_u16(p2_g_4, k2_4), p1_g_4, k1_4), 3);
+		uint32x4_t tmp_g_4 = vshrq_n_u32(vmlal_u16(vmull_u16(p2_g_4, k2_4), p1_g_4, k1_4), 3);
 		uint16x4_t p_rb_4 = vmovn_u32(tmp_rb_4);
 		p_rb_4 = vand_u16(p_rb_4, kRedBlueMask_4);
 		uint16x4_t p_g_4 = vmovn_u32(tmp_g_4);
@@ -171,7 +169,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate) {
 		h += m;
 	}
 
-  #if ASPECT_MODE == kVeryFastAndGoodAspectMode
+#if ASPECT_MODE == kVeryFastAndGoodAspectMode
 	// Force x to be even, to ensure aligned memory access (this assumes
 	// that each line starts at an even memory location, but that should
 	// be the case on every target anyway).
@@ -185,7 +183,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate) {
 	// this should actually be faster than having the check for the
 	if (w & 1)
 		w++;
-  #endif
+#endif
 #endif
 }
 
@@ -264,9 +262,9 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 	extern int gBitFormat;
 	if (interpolate) {
 		if (gBitFormat == 565)
-			return stretch200To240Interpolated<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+			return stretch200To240Interpolated<Graphics::ColorMasks<565>>(buf, pitch, width, height, srcX, srcY, origSrcY);
 		else // gBitFormat == 555
-			return stretch200To240Interpolated<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+			return stretch200To240Interpolated<Graphics::ColorMasks<555>>(buf, pitch, width, height, srcX, srcY, origSrcY);
 	} else {
 #endif
 		return stretch200To240Nearest(buf, pitch, width, height, srcX, srcY, origSrcY);

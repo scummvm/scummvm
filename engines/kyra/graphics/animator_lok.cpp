@@ -20,10 +20,10 @@
  *
  */
 
-#include "kyra/engine/kyra_lok.h"
-#include "kyra/graphics/screen.h"
 #include "kyra/graphics/animator_lok.h"
+#include "kyra/engine/kyra_lok.h"
 #include "kyra/engine/sprites.h"
+#include "kyra/graphics/screen.h"
 
 namespace Kyra {
 
@@ -228,12 +228,12 @@ void Animator_LoK::prepDrawAllObjects() {
 
 			// talking head functionallity
 			if (_vm->_talkingCharNum != -1 && (_vm->_currentCharacter->currentAnimFrame != 88 || curObject->index != 0)) {
-				const int16 baseAnimFrameTable1[] = { 0x11, 0x35, 0x59, 0x00, 0x00, 0x00 };
-				const int16 baseAnimFrameTable2[] = { 0x15, 0x39, 0x5D, 0x00, 0x00, 0x00 };
-				const int8 xOffsetTable1[] = { 2, 4, 0, 5, 2, 0, 0, 0 };
-				const int8 xOffsetTable2[] = { 6, 4, 8, 3, 6, 0, 0, 0 };
-				const int8 yOffsetTable1[] = { 0, 8, 1, 1, 0, 0, 0, 0 };
-				const int8 yOffsetTable2[] = { 0, 8, 1, 1, 0, 0, 0, 0 };
+				const int16 baseAnimFrameTable1[] = {0x11, 0x35, 0x59, 0x00, 0x00, 0x00};
+				const int16 baseAnimFrameTable2[] = {0x15, 0x39, 0x5D, 0x00, 0x00, 0x00};
+				const int8 xOffsetTable1[] = {2, 4, 0, 5, 2, 0, 0, 0};
+				const int8 xOffsetTable2[] = {6, 4, 8, 3, 6, 0, 0, 0};
+				const int8 yOffsetTable1[] = {0, 8, 1, 1, 0, 0, 0, 0};
+				const int8 yOffsetTable2[] = {0, 8, 1, 1, 0, 0, 0, 0};
 				if (curObject->index == 0 || curObject->index <= 4) {
 					int shapesIndex = 0;
 					if (curObject->index == _vm->_charSayUnk3) {
@@ -549,7 +549,7 @@ int16 Animator_LoK::fetchAnimWidth(const uint8 *shape, int16 mult) {
 int16 Animator_LoK::fetchAnimHeight(const uint8 *shape, int16 mult) {
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
-	return (int16)(((int8)*(shape + 2)) * mult) >> 8;
+	return (int16)(((int8) * (shape + 2)) * mult) >> 8;
 }
 
 void Animator_LoK::setBrandonAnimSeqSize(int width, int height) {
@@ -628,8 +628,7 @@ void Animator_LoK::animRefreshNPC(int character) {
 
 void Animator_LoK::setCharacterDefaultFrame(int character) {
 	static const uint16 initFrameTable[] = {
-		7, 41, 77, 0, 0
-	};
+	    7, 41, 77, 0, 0};
 	assert(character < ARRAYSIZE(initFrameTable));
 	Character *edit = &_vm->characterList()[character];
 	edit->sceneId = 0xFFFF;
@@ -640,10 +639,9 @@ void Animator_LoK::setCharacterDefaultFrame(int character) {
 
 void Animator_LoK::setCharactersHeight() {
 	static const int8 initHeightTable[] = {
-		48, 40, 48, 47, 56,
-		44, 42, 47, 38, 35,
-		40
-	};
+	    48, 40, 48, 47, 56,
+	    44, 42, 47, 38, 35,
+	    40};
 	for (int i = 0; i < 11; ++i)
 		_vm->characterList()[i].height = initHeightTable[i];
 }

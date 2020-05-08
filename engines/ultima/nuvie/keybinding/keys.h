@@ -23,23 +23,27 @@
 #ifndef NUVIE_KEYBINDING_KEYS_H
 #define NUVIE_KEYBINDING_KEYS_H
 
-#include "ultima/nuvie/keybinding/keys_enum.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
 #include "common/events.h"
 #include "common/hash-str.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/keybinding/keys_enum.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 enum joy_axes_pairs {
-	AXES_PAIR1, AXES_PAIR2, AXES_PAIR3, AXES_PAIR4, UNHANDLED_AXES_PAIR
+	AXES_PAIR1,
+	AXES_PAIR2,
+	AXES_PAIR3,
+	AXES_PAIR4,
+	UNHANDLED_AXES_PAIR
 };
 
 struct str_int_pair {
 	const char *str;
-	int  num;
+	int num;
 };
 
 const int c_maxparams = 1;
@@ -71,12 +75,13 @@ private:
 
 	bool repeat_hat, joy_repeat_enabled; // repeat hat instead of axis when hat is found
 	uint32 next_axes_pair_update, next_axes_pair2_update, next_axes_pair3_update,
-		next_axes_pair4_update, next_joy_repeat_time;
+	    next_axes_pair4_update, next_joy_repeat_time;
 	uint16 pair1_delay, pair2_delay, pair3_delay, pair4_delay, joy_repeat_delay;
 	uint8 x_axis, y_axis, x_axis2, y_axis2, x_axis3, y_axis3, x_axis4, y_axis4;
 	sint8 enable_joystick;
 
 	void LoadFromFileInternal(const char *filename);
+
 public:
 	KeyBinder(Configuration *config);
 	~KeyBinder();
@@ -85,7 +90,7 @@ public:
 	                   int nparams, int *params);
 
 	/* Delete keybinding */
-//	void DelKeyBinding(Common::KeyCode sym, int mod); // unused
+	//	void DelKeyBinding(Common::KeyCode sym, int mod); // unused
 
 	/* Other methods */
 	void Flush() {
@@ -116,12 +121,13 @@ public:
 	Common::KeyCode get_key_from_joy_hat_button(uint8 hat_button);
 	Common::KeyCode get_key_from_joy_events(Common::Event *event);
 	void init_joystick(sint8 joy_num);
-//	SDL_Joystick *get_joystick() { return joystick; }
+	//	SDL_Joystick *get_joystick() { return joystick; }
 	uint32 get_next_joy_repeat_time() {
 		return next_joy_repeat_time;
 	}
 	void set_enable_joy_repeat(bool val) {
-		if (joy_repeat_delay == 10000) return;
+		if (joy_repeat_delay == 10000)
+			return;
 		joy_repeat_enabled = val;
 	}
 	bool is_joy_repeat_enabled() {

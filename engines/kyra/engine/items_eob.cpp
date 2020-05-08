@@ -441,7 +441,6 @@ void EoBCoreEngine::printFullItemName(Item item) {
 			break;
 		}
 
-
 		if (tstr3) {
 			if (!tstr2) {
 				tmpString = tstr3;

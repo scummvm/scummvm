@@ -39,7 +39,6 @@ public:
 	void rewind(void *DecompData) const override;
 
 protected:
-
 	struct RawDecompData {
 		uint32 _pos;
 	};

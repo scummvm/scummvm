@@ -40,7 +40,6 @@ enum IniFlags {
 	INI_FLAG_80 = 0x80
 };
 
-
 struct DragonINI {
 	uint16 id;
 	int16 iptIndex_maybe;
@@ -82,7 +81,6 @@ public:
 	bool isFlicker(DragonINI *ini) {
 		return isFlicker(ini->id);
 	}
-
 };
 
 } // End of namespace Dragons

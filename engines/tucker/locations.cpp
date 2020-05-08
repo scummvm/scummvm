@@ -20,15 +20,15 @@
  *
  */
 
-#include "tucker/tucker.h"
-#include "tucker/graphics.h"
 #include "common/system.h"
 #include "graphics/palette.h"
+#include "tucker/graphics.h"
+#include "tucker/tucker.h"
 
 namespace Tucker {
 
-static const int _data3UpdateLocation1_xTable[] = { 287, 120,  61 };
-static const int _data3UpdateLocation1_yTable[] = { 152,   8,  95 };
+static const int _data3UpdateLocation1_xTable[] = {287, 120, 61};
+static const int _data3UpdateLocation1_yTable[] = {152, 8, 95};
 
 void TuckerEngine::execData3PreUpdate_locationNum1() {
 	if (_flagsTable[1] == 1) {
@@ -70,8 +70,8 @@ void TuckerEngine::execData3PreUpdate_locationNum1Helper1() {
 	} else {
 		setVolumeSound(12, 0);
 	}
-	static const int dxTable[] = {  0, -1, -1, -1, 0, 1, 1,  1 };
-	static const int dyTable[] = { -1, -1,  0,  1, 1, 1, 0, -1 };
+	static const int dxTable[] = {0, -1, -1, -1, 0, 1, 1, 1};
+	static const int dyTable[] = {-1, -1, 0, 1, 1, 1, 0, -1};
 	for (int i = 0; code == 0 && i < 8; ++i) {
 		code = execData3PreUpdate_locationNum1Helper3(dxTable[i], dyTable[i]);
 	}
@@ -79,8 +79,8 @@ void TuckerEngine::execData3PreUpdate_locationNum1Helper1() {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum1Helper2() {
-	static const int dxTable[] = { -95, 84, 110 };
-	static const int dyTable[] = { -50, 46,   0 };
+	static const int dxTable[] = {-95, 84, 110};
+	static const int dyTable[] = {-50, 46, 0};
 	int xPos = 0;
 	int yPos = 0;
 	for (int i = 0; i < 6; i += 2) {
@@ -98,10 +98,10 @@ void TuckerEngine::execData3PreUpdate_locationNum1Helper2() {
 }
 
 int TuckerEngine::execData3PreUpdate_locationNum1Helper3(int dx, int dy) {
-	static const int counterTable[3] = { 30, 50, 70 };
+	static const int counterTable[3] = {30, 50, 70};
 	const int xPos = _updateLocationXPosTable[0] + dx;
 	const int yPos = _updateLocationYPosTable[0] + dy;
-	static const int num[] = { 2, 3, 4, 1 };
+	static const int num[] = {2, 3, 4, 1};
 	for (int i = 0; i < 4; ++i) {
 		if (xPos == _updateLocationXPosTable[num[i]] && yPos == _updateLocationYPosTable[num[i]]) {
 			return 0;
@@ -177,9 +177,9 @@ void TuckerEngine::updateSprite_locationNum2() {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum2() {
-	static const int xPosTable[] = { 110, 117, 127, 146, 160, 183, 195, 210 };
-	static const int yPosTable[] = {  50,  60,  60,  60,  50,  55,  50,  50 };
-	static const int yMaxTable[] = { 100,  97,  94,  91,  89,  86,  83,  80 };
+	static const int xPosTable[] = {110, 117, 127, 146, 160, 183, 195, 210};
+	static const int yPosTable[] = {50, 60, 60, 60, 50, 55, 50, 50};
+	static const int yMaxTable[] = {100, 97, 94, 91, 89, 86, 83, 80};
 	if (_execData3Counter == 0) {
 		_execData3Counter = 1;
 		for (int i = 0; i < 3; ++i) {
@@ -651,11 +651,11 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 	}
 	if (_updateLocationYPosTable2[0] > 0) {
 		const int offset = _updateLocationYPosTable2[0] * 640 + _updateLocationXPosTable2[0];
-		static const int colorsTable[] = { 143, 143, 144, 144, 144, 145, 147, 143, 147 };
+		static const int colorsTable[] = {143, 143, 144, 144, 144, 145, 147, 143, 147};
 		_locationBackgroundGfxBuf[offset] = 142;
 		for (int j = 1; j <= 3; ++j) {
 			for (int i = -1; i <= 1; ++i) {
-				_locationBackgroundGfxBuf[offset + 640 * j + i] = colorsTable[(j - 1) * 3  + i + 1];
+				_locationBackgroundGfxBuf[offset + 640 * j + i] = colorsTable[(j - 1) * 3 + i + 1];
 			}
 		}
 		addDirtyRect(_updateLocationXPosTable2[0] - 1, _updateLocationYPosTable2[0], 3, 4);
@@ -1783,9 +1783,9 @@ void TuckerEngine::updateSprite_locationNum29_2(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum29() {
-	static const uint8 r[] = { 0x0D, 0x0E, 0x0E, 0x0E, 0x0D, 0x0E, 0x0D, 0x0E, 0x0E, 0x0E, 0x0D };
-	static const uint8 g[] = { 0x0E, 0x14, 0x1B, 0x14, 0x0E, 0x0D, 0x0E, 0x14, 0x1B, 0x14, 0x0E };
-	static const uint8 b[] = { 0x2C, 0x34, 0x3B, 0x34, 0x2C, 0x24, 0x2C, 0x34, 0x3B, 0x34, 0x2C };
+	static const uint8 r[] = {0x0D, 0x0E, 0x0E, 0x0E, 0x0D, 0x0E, 0x0D, 0x0E, 0x0E, 0x0E, 0x0D};
+	static const uint8 g[] = {0x0E, 0x14, 0x1B, 0x14, 0x0E, 0x0D, 0x0E, 0x14, 0x1B, 0x14, 0x0E};
+	static const uint8 b[] = {0x2C, 0x34, 0x3B, 0x34, 0x2C, 0x24, 0x2C, 0x34, 0x3B, 0x34, 0x2C};
 	if (_fadePaletteCounter == 16) {
 		++_updateLocationFadePaletteCounter;
 		if (_updateLocationFadePaletteCounter > 10) {
@@ -1858,7 +1858,7 @@ void TuckerEngine::updateSprite_locationNum31_1(int i) {
 }
 
 void TuckerEngine::updateSprite_locationNum32_0(int i) {
-	static const uint8 stateTable[] = { 12, 1, 11, 1, 11, 2, 1, 5, 5, 11, 1, 5, 5, 5 };
+	static const uint8 stateTable[] = {12, 1, 11, 1, 11, 2, 1, 5, 5, 11, 1, 5, 5, 5};
 	++_spritesTable[i]._counter;
 	if (_flagsTable[123] == 2) {
 		_flagsTable[123] = 0;
@@ -2242,7 +2242,7 @@ void TuckerEngine::execData3PreUpdate_locationNum49() {
 			_flagsTable[181] = 3;
 		}
 	}
-	static const int items[] = { 15, 44, 25, 27, 19, 21, 24, 13, 20, 29, 35, 23, 3 };
+	static const int items[] = {15, 44, 25, 27, 19, 21, 24, 13, 20, 29, 35, 23, 3};
 	for (int i = 0; i < 13; ++i) {
 		if (_inventoryItemsState[items[i]] == 1) {
 			_flagsTable[168 + i] = 1;
@@ -2265,7 +2265,7 @@ void TuckerEngine::execData3PreUpdate_locationNum49() {
 			_nextAction = 62;
 			_csDataLoaded = false;
 		} else if (counter == 13 && _flagsTable[236] == 3) {
-			_nextAction =  65;
+			_nextAction = 65;
 			_csDataLoaded = false;
 		}
 	}
@@ -2291,7 +2291,7 @@ void TuckerEngine::updateSprite_locationNum51(int i) {
 	if (i == 2) {
 		_spritesTable[i]._state = 1;
 	} else if (i == 0) {
-		static const int stateTable[] = { 3, 3, 4, 5, 3, 3, 5, 4, 3, 3, 4, 5, 4, 4 };
+		static const int stateTable[] = {3, 3, 4, 5, 3, 3, 5, 4, 3, 3, 4, 5, 4, 4};
 		++_spritesTable[i]._counter;
 		if (_spritesTable[i]._counter > 13) {
 			_spritesTable[i]._counter = 0;
@@ -2305,7 +2305,6 @@ void TuckerEngine::updateSprite_locationNum51(int i) {
 	_spritesTable[i]._colorType = 1;
 	_spritesTable[i]._yMaxBackground = 0;
 }
-
 
 void TuckerEngine::execData3PreUpdate_locationNum52() {
 	if (_selectedObject._xPos > 108 && _panelLockedFlag && _nextAction == 0 && _locationMaskType == 0) {
@@ -3148,7 +3147,7 @@ void TuckerEngine::updateSprite_locationNum72(int i) {
 }
 
 void TuckerEngine::updateSprite_locationNum74(int i) {
-	static const uint8 stateTable[] = { 1, 3, 5, 5, 10, 16, 16 };
+	static const uint8 stateTable[] = {1, 3, 5, 5, 10, 16, 16};
 	int num = _flagsTable[236] - 74;
 	if (stateTable[num] + i == 21) {
 		if (!_updateLocationFlag) {

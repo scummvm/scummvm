@@ -32,10 +32,11 @@ namespace Common {
 class NonCopyable {
 public:
 	NonCopyable() {}
+
 private:
 	// Prevent copying instances by accident
-	NonCopyable(const NonCopyable&);
-	NonCopyable& operator=(const NonCopyable&);
+	NonCopyable(const NonCopyable &);
+	NonCopyable &operator=(const NonCopyable &);
 };
 
 } // End of namespace Common

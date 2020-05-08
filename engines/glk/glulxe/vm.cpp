@@ -28,7 +28,7 @@ namespace Glulxe {
 void Glulxe::setup_vm() {
 	byte buf[4 * 7];
 
-	pc = 0;           // Clear this, so that error messages are cleaner.
+	pc = 0; // Clear this, so that error messages are cleaner.
 	prevpc = 0;
 
 	// Read in all the size constants from the game file header
@@ -52,10 +52,7 @@ void Glulxe::setup_vm() {
 	protectend = 0;
 
 	// Do a few sanity checks.
-	if ((ramstart & 0xFF)
-	        || (endgamefile & 0xFF)
-	        || (origendmem & 0xFF)
-	        || (stacksize & 0xFF)) {
+	if ((ramstart & 0xFF) || (endgamefile & 0xFF) || (origendmem & 0xFF) || (stacksize & 0xFF)) {
 		nonfatal_warning("One of the segment boundaries in the header is not "
 		                 "256-byte aligned.");
 	}

@@ -84,13 +84,12 @@ struct ControlData {
 
 class CommandButton {
 
-enum {
-	kCommandsLeftPadding = 0,
-	kCommandsTopPadding = 0
-};
+	enum {
+		kCommandsLeftPadding = 0,
+		kCommandsTopPadding = 0
+	};
 
 public:
-
 	CommandButton();
 
 	CommandButton(ControlData data, Gui *g);

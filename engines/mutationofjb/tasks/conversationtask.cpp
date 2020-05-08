@@ -282,4 +282,4 @@ uint8 ConversationTask::getSpeechColor(const ConversationLineList::Speech &speec
 	return color;
 }
 
-}
+} // namespace MutationOfJB

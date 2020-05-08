@@ -25,16 +25,16 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CChevCode, CGameObject)
-	ON_MESSAGE(SetChevLiftBits)
-	ON_MESSAGE(SetChevClassBits)
-	ON_MESSAGE(SetChevFloorBits)
-	ON_MESSAGE(SetChevRoomBits)
-	ON_MESSAGE(GetChevLiftNum)
-	ON_MESSAGE(GetChevClassNum)
-	ON_MESSAGE(GetChevFloorNum)
-	ON_MESSAGE(GetChevRoomNum)
-	ON_MESSAGE(CheckChevCode)
-	ON_MESSAGE(GetChevCodeFromRoomNameMsg)
+ON_MESSAGE(SetChevLiftBits)
+ON_MESSAGE(SetChevClassBits)
+ON_MESSAGE(SetChevFloorBits)
+ON_MESSAGE(SetChevRoomBits)
+ON_MESSAGE(GetChevLiftNum)
+ON_MESSAGE(GetChevClassNum)
+ON_MESSAGE(GetChevFloorNum)
+ON_MESSAGE(GetChevRoomNum)
+ON_MESSAGE(CheckChevCode)
+ON_MESSAGE(GetChevCodeFromRoomNameMsg)
 END_MESSAGE_MAP()
 
 void CChevCode::save(SimpleFile *file, int indent) {
@@ -224,28 +224,21 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 		} else {
 			switch (getClassMsg._classNum) {
 			case 1:
-				if (getFloorMsg._floorNum >= 2 && getFloorMsg._floorNum <= 18
-					&& getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 3
-					&& getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
+				if (getFloorMsg._floorNum >= 2 && getFloorMsg._floorNum <= 18 && getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 3 && getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
 					classNum = 1;
 				else
 					classNum = 5;
 				break;
 
 			case 2:
-				if (getFloorMsg._floorNum >= 19 && getFloorMsg._floorNum <= 26
-					&& getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 5
-					&& getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
+				if (getFloorMsg._floorNum >= 19 && getFloorMsg._floorNum <= 26 && getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 5 && getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
 					classNum = 2;
 				else
 					classNum = 5;
 				break;
 
 			case 3:
-				if (getFloorMsg._floorNum >= 27 && getFloorMsg._floorNum <= 37
-					&& getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 18
-					&& (getLiftMsg._liftNum & 1) == 1
-					&& getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
+				if (getFloorMsg._floorNum >= 27 && getFloorMsg._floorNum <= 37 && getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 18 && (getLiftMsg._liftNum & 1) == 1 && getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
 					classNum = 3;
 				else
 					classNum = 5;
@@ -266,14 +259,12 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 
 bool CChevCode::GetChevCodeFromRoomNameMsg(CGetChevCodeFromRoomNameMsg *msg) {
 	static const char *const ROOM_NAMES[13] = {
-		"ParrotLobby", "sculptureChamber", "Bar", "EmbLobby", "MusicRoom",
-		"Titania", "BottomOfWell", "Arboretum", "PromenadeDeck",
-		"FCRestrnt", "CrtrsCham", "BilgeRoom", "Bridge"
-	};
+	    "ParrotLobby", "sculptureChamber", "Bar", "EmbLobby", "MusicRoom",
+	    "Titania", "BottomOfWell", "Arboretum", "PromenadeDeck",
+	    "FCRestrnt", "CrtrsCham", "BilgeRoom", "Bridge"};
 	static const uint CHEV_CODES[13] = {
-		0x1D0D9, 0x465FB, 0xB3D97, 0xCC971, 0xF34DB, 0x8A397, 0x59FAD,
-		0x4D6AF, 0x79C45, 0x196D9, 0x2F86D, 0x3D94B, 0x39FCB
-	};
+	    0x1D0D9, 0x465FB, 0xB3D97, 0xCC971, 0xF34DB, 0x8A397, 0x59FAD,
+	    0x4D6AF, 0x79C45, 0x196D9, 0x2F86D, 0x3D94B, 0x39FCB};
 
 	for (int idx = 0; idx < 13; ++idx) {
 		if (msg->_roomName == ROOM_NAMES[idx]) {

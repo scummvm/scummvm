@@ -36,7 +36,10 @@ enum MissiveOMatMode {
 };
 
 enum MissiveOMatAccount {
-	NO_ACCOUNT = -1, LEOVINUS = 0, SCRALIONTIS = 1, BROBOSTIGON = 2
+	NO_ACCOUNT = -1,
+	LEOVINUS = 0,
+	SCRALIONTIS = 1,
+	BROBOSTIGON = 2
 };
 
 class CMissiveOMat : public CGameObject {
@@ -46,13 +49,16 @@ class CMissiveOMat : public CGameObject {
 	bool TimerMsg(CTimerMsg *msg);
 	bool MissiveOMatActionMsg(CMissiveOMatActionMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 private:
 	CString _welcomeMessages[3];
 	CString _messages[58];
 	CString _from[58];
 	CString _to[58];
+
 private:
 	void loadArray(CString *arr, const CString &resName, int count);
+
 public:
 	MissiveOMatMode _mode;
 	int _totalMessages;
@@ -60,6 +66,7 @@ public:
 	CString _username;
 	CString _password;
 	MissiveOMatAccount _account;
+
 public:
 	CLASSDEF;
 	CMissiveOMat();

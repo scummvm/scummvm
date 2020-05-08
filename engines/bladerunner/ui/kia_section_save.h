@@ -43,30 +43,30 @@ class UIImagePicker;
 
 class KIASectionSave : public KIASectionBase {
 	enum State {
-		kStateNormal    = 0,
+		kStateNormal = 0,
 		kStateOverwrite = 1,
-		kStateDelete    = 2
+		kStateDelete = 2
 	};
 
-	UIContainer   *_uiContainer;
-	UIScrollBox   *_scrollBox;
-	UIInputBox    *_inputBox;
+	UIContainer *_uiContainer;
+	UIScrollBox *_scrollBox;
+	UIInputBox *_inputBox;
 	UIImagePicker *_buttons;
 
-	uint32        _timeLast;
-	uint32        _timeLeft;
+	uint32 _timeLast;
+	uint32 _timeLeft;
 
 	SaveStateList _saveList;
 
-	State         _state;
+	State _state;
 
-	int           _mouseX;
-	int           _mouseY;
+	int _mouseX;
+	int _mouseY;
 
-	int           _hoveredLineId;
-	int           _displayingLineId;
-	int           _selectedLineId;
-	int           _newSaveLineId;
+	int _hoveredLineId;
+	int _displayingLineId;
+	int _selectedLineId;
+	int _newSaveLineId;
 
 public:
 	KIASectionSave(BladeRunnerEngine *vm);

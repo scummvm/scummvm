@@ -20,17 +20,17 @@
  *
  */
 
-#include "common/system.h"
 #include "common/config-manager.h"
-#include "graphics/palette.h"
+#include "common/system.h"
 #include "graphics/cursorman.h"
+#include "graphics/palette.h"
 
+#include "supernova/graphics.h"
 #include "supernova/screen.h"
 #include "supernova/supernova.h"
-#include "supernova/supernova2/state.h"
 #include "supernova/supernova2/rooms.h"
+#include "supernova/supernova2/state.h"
 #include "supernova/supernova2/stringid.h"
-#include "supernova/graphics.h"
 
 namespace Supernova {
 
@@ -51,20 +51,20 @@ Intro2::Intro2(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[7] = Object(_id, kStringDinosaurHead, kStringDefaultDescription, NULLOBJECT, TAKE, 255, 255, 0);
 	_objectState[8] = Object(_id, kStringKeycard, kStringDefaultDescription, MUSCARD, TAKE, 255, 255, 0);
 
-	_introText = 
-		_vm->getGameString(kStringIntro1) + '\0' + 
-		_vm->getGameString(kStringIntro2) + '\0' + 
-		_vm->getGameString(kStringIntro3) + '\0' + 
-		_vm->getGameString(kStringIntro4) + '\0' + 
-		_vm->getGameString(kStringIntro5) + '\0' + 
-		"^Matthias Neef#" + '\0' +
-		"^Sascha Otterbach#" + '\0' +
-		"^Thomas Mazzoni#" + '\0' +
-		"^Matthias Klein#" + '\0' +
-		"^Gerrit Rothmaier#" + '\0' +
-		"^Thomas Hassler#" + '\0' +
-		"^Rene Kach#" + '\0' +
-		'\233' + '\0';
+	_introText =
+	    _vm->getGameString(kStringIntro1) + '\0' +
+	    _vm->getGameString(kStringIntro2) + '\0' +
+	    _vm->getGameString(kStringIntro3) + '\0' +
+	    _vm->getGameString(kStringIntro4) + '\0' +
+	    _vm->getGameString(kStringIntro5) + '\0' +
+	    "^Matthias Neef#" + '\0' +
+	    "^Sascha Otterbach#" + '\0' +
+	    "^Thomas Mazzoni#" + '\0' +
+	    "^Matthias Klein#" + '\0' +
+	    "^Gerrit Rothmaier#" + '\0' +
+	    "^Thomas Hassler#" + '\0' +
+	    "^Rene Kach#" + '\0' +
+	    '\233' + '\0';
 }
 
 void Intro2::onEntrance() {
@@ -119,7 +119,7 @@ void Intro2::titleScreen() {
 
 bool Intro2::displayThoughtMessage(int id) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
-	const Common::String& text = _vm->getGameString(id);
+	const Common::String &text = _vm->getGameString(id);
 	_vm->renderMessage(text, kMessageNormal);
 	if (_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10, key)) {
 		_vm->removeMessage();
@@ -130,20 +130,20 @@ bool Intro2::displayThoughtMessage(int id) {
 }
 
 bool Intro2::thoughts1() {
-	if(_vm->shouldQuit())
+	if (_vm->shouldQuit())
 		return false;
 
 	_vm->setCurrentImage(41);
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
 
-	if(!displayThoughtMessage(kStringIntro6))
+	if (!displayThoughtMessage(kStringIntro6))
 		return false;
 
-	if(!displayThoughtMessage(kStringIntro7))
+	if (!displayThoughtMessage(kStringIntro7))
 		return false;
 
-	if(!displayThoughtMessage(kStringIntro8))
+	if (!displayThoughtMessage(kStringIntro8))
 		return false;
 
 	_vm->paletteFadeOut();
@@ -151,20 +151,20 @@ bool Intro2::thoughts1() {
 }
 
 bool Intro2::thoughts2() {
-	if(_vm->shouldQuit())
+	if (_vm->shouldQuit())
 		return false;
 
 	_vm->setCurrentImage(41);
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
 
-	if(!displayThoughtMessage(kStringIntro9))
+	if (!displayThoughtMessage(kStringIntro9))
 		return false;
 
-	if(!displayThoughtMessage(kStringIntro10))
+	if (!displayThoughtMessage(kStringIntro10))
 		return false;
 
-	if(!displayThoughtMessage(kStringIntro11))
+	if (!displayThoughtMessage(kStringIntro11))
 		return false;
 
 	_vm->paletteFadeOut();
@@ -174,8 +174,7 @@ bool Intro2::thoughts2() {
 	_vm->renderImage(1);
 	_vm->paletteFadeIn();
 
-	for (int i = 0; i < 35; i++)
-	{
+	for (int i = 0; i < 35; i++) {
 		_vm->renderImage((i % 3) + 2);
 		_gm->wait(3);
 	}
@@ -186,13 +185,13 @@ bool Intro2::thoughts2() {
 	_vm->renderImage(1);
 	_vm->paletteFadeIn();
 
-	if(!displayThoughtMessage(kStringIntro12))
+	if (!displayThoughtMessage(kStringIntro12))
 		return false;
 
-	if(!displayThoughtMessage(kStringIntro13))
+	if (!displayThoughtMessage(kStringIntro13))
 		return false;
 
-	if(!displayThoughtMessage(kStringIntro14))
+	if (!displayThoughtMessage(kStringIntro14))
 		return false;
 
 	_vm->paletteFadeOut();
@@ -200,7 +199,7 @@ bool Intro2::thoughts2() {
 }
 
 bool Intro2::tvDialogue() {
-	if(_vm->shouldQuit())
+	if (_vm->shouldQuit())
 		return false;
 
 	_vm->setCurrentImage(39);
@@ -209,8 +208,7 @@ bool Intro2::tvDialogue() {
 	_gm->wait(50);
 	_vm->setCurrentImage(40);
 	_vm->renderImage(0);
-	for (int i = 1; i < 11; i++)
-	{
+	for (int i = 1; i < 11; i++) {
 		_gm->wait(3);
 		_vm->renderImage(i);
 	}
@@ -224,27 +222,27 @@ bool Intro2::tvDialogue() {
 	_vm->setCurrentImage(42);
 	_vm->renderImage(0);
 
-	if(!_gm->talk(1, 1 + kSectionInvert, 0, kMessageLeft, kStringIntroTV1))
+	if (!_gm->talk(1, 1 + kSectionInvert, 0, kMessageLeft, kStringIntroTV1))
 		return false;
 
 	_vm->renderImage(4);
 	_gm->wait(3);
 	_vm->renderImage(6);
 
-	if(!_gm->talk(8, 6, 7, kMessageLeft, kStringIntroTV2))
+	if (!_gm->talk(8, 6, 7, kMessageLeft, kStringIntroTV2))
 		return false;
 
 	_vm->renderImage(10);
 
-	if(!_gm->talkRest(8, 6, _gm->_restTime))
+	if (!_gm->talkRest(8, 6, _gm->_restTime))
 		return false;
 
 	_vm->removeMessage();
 
-	if(!_gm->talk(8, 6, 0, kMessageLeft, kStringIntroTV3))
+	if (!_gm->talk(8, 6, 0, kMessageLeft, kStringIntroTV3))
 		return false;
 
-	if(!_gm->talk(8, 6, 0, kMessageLeft, kStringIntroTV4))
+	if (!_gm->talk(8, 6, 0, kMessageLeft, kStringIntroTV4))
 		return false;
 
 	_vm->renderImage(10 + kSectionInvert);
@@ -253,62 +251,62 @@ bool Intro2::tvDialogue() {
 	_gm->wait(3);
 	_vm->renderImage(7);
 
-	if(!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV5))
+	if (!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV5))
 		return false;
 
-	if(!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV6))
+	if (!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV6))
 		return false;
 
-	if(!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV7))
+	if (!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV7))
 		return false;
 
-	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV8))
+	if (!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV8))
 		return false;
 
-	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV9))
+	if (!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV9))
 		return false;
 
-	if(!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV10))
+	if (!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV10))
 		return false;
 
-	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV11))
+	if (!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV11))
 		return false;
 
-	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV12))
+	if (!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV12))
 		return false;
 
-	if(!_gm->talk(9, 7, 8, kMessageCenter, kStringIntroTV13))
+	if (!_gm->talk(9, 7, 8, kMessageCenter, kStringIntroTV13))
 		return false;
 
 	_vm->renderImage(4);
 
-	if(!_gm->talkRest(9, 7, 1))
+	if (!_gm->talkRest(9, 7, 1))
 		return false;
 
 	_vm->renderImage(4 + kSectionInvert);
 
-	if(!_gm->talkRest(9, 7, 3))
+	if (!_gm->talkRest(9, 7, 3))
 		return false;
 
 	_vm->renderImage(4);
 
-	if(!_gm->talkRest(9, 7, 1))
+	if (!_gm->talkRest(9, 7, 1))
 		return false;
 
 	_vm->renderImage(6);
 
-	if(!_gm->talkRest(9, 7, _gm->_restTime - 5))
+	if (!_gm->talkRest(9, 7, _gm->_restTime - 5))
 		return false;
 
 	_vm->removeMessage();
 
-	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV14))
+	if (!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV14))
 		return false;
 
-	if(!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV15))
+	if (!_gm->talk(3, 3 + kSectionInvert, 0, kMessageRight, kStringIntroTV15))
 		return false;
 
-	if(!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV16))
+	if (!_gm->talk(9, 7, 0, kMessageCenter, kStringIntroTV16))
 		return false;
 
 	return true;
@@ -363,8 +361,7 @@ void TaxiStand::animation() {
 		setSectionVisible(2, kShownFalse);
 		setSectionVisible(3, kShownFalse);
 		setSectionVisible(4, kShownFalse);
-	}
-	else if (isSectionVisible(3))
+	} else if (isSectionVisible(3))
 		setSectionVisible(4, kShownTrue);
 	else if (isSectionVisible(2))
 		setSectionVisible(3, kShownTrue);
@@ -380,7 +377,7 @@ bool TaxiStand::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->taxi();
 	else if ((verb == ACTION_WALK || verb == ACTION_OPEN) && obj1._id == DOOR)
 		_vm->renderMessage(obj1._description);
-	else 
+	else
 		return false;
 	return true;
 }
@@ -408,11 +405,10 @@ void Street::onEntrance() {
 
 void Street::animation() {
 	static int ltab[36] = {
-		8, 9 + kSectionInvert, 10, 11 + kSectionInvert, 6, 12, 13 + kSectionInvert, 9, 14, 15 + kSectionInvert, 19,
-		16, 17 + kSectionInvert, 9 + kSectionInvert, 18, 19 + kSectionInvert, 6 + kSectionInvert, 20, 21 + kSectionInvert,
-		8 + kSectionInvert, 9, 10 + kSectionInvert, 11, 6, 12 + kSectionInvert, 13, 14 + kSectionInvert, 15, 19,
-		16 + kSectionInvert, 17, 18 + kSectionInvert, 19 + kSectionInvert, 6 + kSectionInvert, 20 + kSectionInvert, 21
-	};
+	    8, 9 + kSectionInvert, 10, 11 + kSectionInvert, 6, 12, 13 + kSectionInvert, 9, 14, 15 + kSectionInvert, 19,
+	    16, 17 + kSectionInvert, 9 + kSectionInvert, 18, 19 + kSectionInvert, 6 + kSectionInvert, 20, 21 + kSectionInvert,
+	    8 + kSectionInvert, 9, 10 + kSectionInvert, 11, 6, 12 + kSectionInvert, 13, 14 + kSectionInvert, 15, 19,
+	    16 + kSectionInvert, 17, 18 + kSectionInvert, 19 + kSectionInvert, 6 + kSectionInvert, 20 + kSectionInvert, 21};
 
 	static int i, banks, light;
 
@@ -463,7 +459,8 @@ void Street::animation() {
 			break;
 		}
 		banks++;
-		if (banks == 10) banks = 0;
+		if (banks == 10)
+			banks = 0;
 	}
 	setSectionVisible(ltab[light], kShownTrue);
 	light++;
@@ -487,7 +484,7 @@ bool Street::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->wait((text.size() + 20) * _vm->_textSpeed / 10, true);
 		_vm->removeMessage();
 		return false;
-	} else 
+	} else
 		return false;
 	return true;
 }
@@ -517,7 +514,7 @@ bool Games::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if (verb == ACTION_LOOK && obj1._id == POSTER) {
 		_gm->_state._taxiPossibility &= ~4; // add culture palace
 		return false;
-	} else 
+	} else
 		return false;
 	return true;
 }
@@ -635,7 +632,7 @@ bool Cabin2::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderRoom(*this);
 		_gm->drawGUI();
 		_gm->animationOn();
-	} else 
+	} else
 		return false;
 	return true;
 }
@@ -674,9 +671,8 @@ Kiosk::Kiosk(SupernovaEngine *vm, GameManager2 *gm) {
 
 void Kiosk::onEntrance() {
 	static int dialEntry[2] = {
-		kStringGoodEvening,
-		kStringHello
-	};
+	    kStringGoodEvening,
+	    kStringHello};
 
 	if (!hasSeen()) {
 		_gm->dialog(2, _gm->_dials, dialEntry, 0);
@@ -708,35 +704,32 @@ void Kiosk::animation() {
 
 bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 	static int dialPrice[2] = {
-		kStringWillTakeIt,
-		kStringTooExpensive
-	};
+	    kStringWillTakeIt,
+	    kStringTooExpensive};
 	static int dialSay[3] = {
-		kStringWouldBuy,
-		kStringMeHorstHummel,
-		kStringHaveMusicChip
-	};
+	    kStringWouldBuy,
+	    kStringMeHorstHummel,
+	    kStringHaveMusicChip};
 	static int dialSeller[16][3] = {
-		{kStringGreatMask, kStringThreeYears, kNoString},
-		{kStringStrongDrink, kNoString, kNoString},
-		{kStringMusicDevice, kNoString, kNoString},
-		{kStringArtusToothbrush, kStringSellInBulk, kNoString},
-		{kStringRarityBooks, kNoString, kNoString},
-		{kStringEncyclopedia, kStringLargestDictionary, kStringOver400Words},
-		{kStringNotSale, kNoString, kNoString},
-		{kStringGaveOne, kStringExcited, kNoString},
-		{kStringFromGame, kNoString, kNoString},
-		{kStringRobust, kNoString, kNoString},
-		{kStringCheapSwill, kNoString, kNoString},
-		{kStringCheapSwill, kNoString, kNoString},
-		{kStringCheapSwill, kNoString, kNoString},
-		{kStringCheapSwill, kNoString, kNoString},
-		{kStringStickers, kNoString, kNoString},
-		{kStringDishes, kStringUgly, kStringSellsWell}
-	};
+	    {kStringGreatMask, kStringThreeYears, kNoString},
+	    {kStringStrongDrink, kNoString, kNoString},
+	    {kStringMusicDevice, kNoString, kNoString},
+	    {kStringArtusToothbrush, kStringSellInBulk, kNoString},
+	    {kStringRarityBooks, kNoString, kNoString},
+	    {kStringEncyclopedia, kStringLargestDictionary, kStringOver400Words},
+	    {kStringNotSale, kNoString, kNoString},
+	    {kStringGaveOne, kStringExcited, kNoString},
+	    {kStringFromGame, kNoString, kNoString},
+	    {kStringRobust, kNoString, kNoString},
+	    {kStringCheapSwill, kNoString, kNoString},
+	    {kStringCheapSwill, kNoString, kNoString},
+	    {kStringCheapSwill, kNoString, kNoString},
+	    {kStringCheapSwill, kNoString, kNoString},
+	    {kStringStickers, kNoString, kNoString},
+	    {kStringDishes, kStringUgly, kStringSellsWell}};
 
 	if (verb == ACTION_TAKE && !(obj1._type & CARRIED) &&
-		obj1._id >= BOTTLE && obj1._id <= TOOTHBRUSH) {
+	    obj1._id >= BOTTLE && obj1._id <= TOOTHBRUSH) {
 		int price = 0;
 		switch (obj1._id) {
 		case BOTTLE:
@@ -764,7 +757,7 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 		_gm->drawGUI();
 	} else if (verb == ACTION_LOOK && obj1._id >= BMASK && obj1._id <= FACES) {
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			_gm->reply(dialSeller[obj1._id - BMASK][i], 1, 1 + kSectionInvert);
 		}
 	} else if (verb == ACTION_TALK && obj1._id >= SELLER) {
@@ -785,7 +778,7 @@ bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
 			break;
 		}
 		_gm->drawGUI();
-	} else 
+	} else
 		return false;
 	return true;
 }
@@ -837,22 +830,20 @@ void CulturePalace::notEnoughMoney() {
 
 bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 	static int dial1[3] = {
-		kStringHorstHummel,
-		kStringNiceWeather,
-		kStringTellTicket,
+	    kStringHorstHummel,
+	    kStringNiceWeather,
+	    kStringTellTicket,
 	};
 	static byte dials1[] = {1, 1, 2};
 
 	static int dial2[2] = {
-		kStringHereIsXa,
-		kStringYouAreCrazy
-	};
+	    kStringHereIsXa,
+	    kStringYouAreCrazy};
 	static int dial3[4] = {
-		kString500Xa,
-		kString1000Xa,
-		kString5000Xa,
-		kString10000Xa
-	};
+	    kString500Xa,
+	    kString1000Xa,
+	    kString5000Xa,
+	    kString10000Xa};
 
 	int e;
 	if (verb == ACTION_TALK && obj1._id == AXACUSSER) {
@@ -884,7 +875,7 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->reply(kStringICan, 2, 1);
 				_gm->say(kStringFromWhom);
 				_gm->reply(kStringCost, 2, 1);
-				if(!_gm->_state._money)
+				if (!_gm->_state._money)
 					addSentence(2, 1);
 				else if (_gm->dialog(2, _gm->_dials, dial2, 0)) {
 					_gm->reply(kStringAsYouSay, 2, 1);
@@ -905,8 +896,7 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(1 + kSectionInvert);
 		setSectionVisible(2, kShownFalse);
 		_gm->drawGUI();
-	}
-	else if (verb == ACTION_GIVE && obj2._id == AXACUSSER && _shown[kMaxSection - 2]) {
+	} else if (verb == ACTION_GIVE && obj2._id == AXACUSSER && _shown[kMaxSection - 2]) {
 		_vm->renderImage(1);
 		if (obj1._id != MONEY)
 			notEnoughMoney();
@@ -926,16 +916,16 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->reply(kStringIdiot, 0, 0);
 					_shown[kMaxSection - 2] = false;
 					_shown[kMaxSection - 3] = true;
-					_gm->_rooms[CHECKOUT]->addSentence(1,1);
+					_gm->_rooms[CHECKOUT]->addSentence(1, 1);
 					_gm->drawGUI();
 				} else {
 					notEnoughMoney();
 					_gm->drawGUI();
 				}
-			} else 
+			} else
 				notEnoughMoney();
 		}
-	} else 
+	} else
 		return false;
 	return true;
 }
@@ -973,32 +963,26 @@ void Checkout::animation() {
 
 bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 	static int dialCheckout1[3] = {
-		kStringCheckout1,
-		kStringCheckout2,
-		kStringCheckout3
-	};
+	    kStringCheckout1,
+	    kStringCheckout2,
+	    kStringCheckout3};
 	static int dialCheckout2[2] = {
-		kStringYes2,
-		kStringNo2
-	};
+	    kStringYes2,
+	    kStringNo2};
 	static int dialStage1[3] = {
-		kStringCheckout4,
-		kStringCheckout5,
-		kStringCheckout6
-	};
+	    kStringCheckout4,
+	    kStringCheckout5,
+	    kStringCheckout6};
 	static int dialStage2[2] = {
-		kStringCheckout7,
-		kStringCheckout8
-	};
+	    kStringCheckout7,
+	    kStringCheckout8};
 	static int dialStage3[3] = {
-		kStringCheckout9,
-		kStringCheckout10,
-		kStringCheckout11
-	};
+	    kStringCheckout9,
+	    kStringCheckout10,
+	    kStringCheckout11};
 	static int dialStage4[3] = {
-		kStringCheckout12,
-		kStringCheckout13
-	};
+	    kStringCheckout12,
+	    kStringCheckout13};
 	if (verb == ACTION_WALK && obj1._id == KP_ENTRANCE) {
 		if (_shown[kMaxSection - 4]) {
 			_vm->renderImage(2);
@@ -1042,28 +1026,28 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 					_vm->removeMessage();
 					_gm->dialog(2, _gm->_dials, dialStage4, 0);
 					_vm->playSound(kAudioStage1);
-					while(_vm->_sound->isPlaying())
+					while (_vm->_sound->isPlaying())
 						_gm->wait(1);
 					_vm->playSound(kAudioStage1);
-					while(_vm->_sound->isPlaying())
+					while (_vm->_sound->isPlaying())
 						_gm->wait(1);
 					_vm->playSound(kAudioStage2);
-					while(_vm->_sound->isPlaying())
+					while (_vm->_sound->isPlaying())
 						_gm->wait(1);
 					_vm->playSound(kAudioStage2);
 					_vm->renderMessage(kStringCheckout26, 250, 80);
-					while(_vm->_sound->isPlaying())
+					while (_vm->_sound->isPlaying())
 						_gm->wait(1);
 					_vm->playSound(kAudioStage1);
-					while(_vm->_sound->isPlaying())
+					while (_vm->_sound->isPlaying())
 						_gm->wait(1);
 					_vm->removeMessage();
 					_vm->playSound(kAudioStage2);
 					_vm->renderMessage(kStringCheckout27, 140, 60);
-					while(_vm->_sound->isPlaying())
+					while (_vm->_sound->isPlaying())
 						_gm->wait(1);
 					_vm->playSound(kAudioStage2);
-					while(_vm->_sound->isPlaying())
+					while (_vm->_sound->isPlaying())
 						_gm->wait(1);
 					_gm->wait(2);
 					_vm->removeMessage();
@@ -1091,7 +1075,7 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 		}
 	} else if (verb == ACTION_GIVE && obj1._id == CHIP && obj2._id == AXACUSSER &&
-			_shown[kMaxSection - 2] == 1) {
+	           _shown[kMaxSection - 2] == 1) {
 		_gm->_inventory.remove(obj1);
 		_shown[kMaxSection - 5] = true;
 		_gm->reply(kStringCheckout37, 1, 1 + kSectionInvert);
@@ -1130,8 +1114,8 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 					if (_gm->_rooms[CULTURE_PALACE]->getObject(4)->_type & CARRIED) {
 						_gm->say(kStringCheckout44);
 						return interact(ACTION_GIVE,
-								*_gm->_rooms[CULTURE_PALACE]->getObject(4),
-								*_gm->_rooms[CHECKOUT]->getObject(2));
+						                *_gm->_rooms[CULTURE_PALACE]->getObject(4),
+						                *_gm->_rooms[CHECKOUT]->getObject(2));
 					} else {
 						_gm->say(kStringNo2);
 						_gm->reply(kStringCheckout45, 1, 1 + kSectionInvert);
@@ -1156,16 +1140,15 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 				break;
 			}
 		}
-	} else 
+	} else
 		return false;
 	return true;
 }
 
 void Checkout::shouting() {
 	static int i = 0;
-	switch(i)
-	{
-	case  50:
+	switch (i) {
+	case 50:
 		_vm->renderMessage(kStringShout1, 100, 60);
 		break;
 	case 130:
@@ -1210,38 +1193,39 @@ void Checkout::shouting() {
 	case 1000:
 		_vm->renderMessage(kStringShout15, 100, 65);
 		break;
-	case  70:
-			  // fall through
+	case 70:
+		// fall through
 	case 150:
-			  // fall through
+		// fall through
 	case 220:
-			  // fall through
+		// fall through
 	case 320:
-			  // fall through
+		// fall through
 	case 420:
-			  // fall through
+		// fall through
 	case 470:
-			  // fall through
+		// fall through
 	case 520:
-			  // fall through
+		// fall through
 	case 550:
-			  // fall through
+		// fall through
 	case 630:
-			  // fall through
+		// fall through
 	case 680:
-			  // fall through
+		// fall through
 	case 740:
-			  // fall through
+		// fall through
 	case 820:
-			  // fall through
+		// fall through
 	case 870:
-			  // fall through
+		// fall through
 	case 950:
-			  // fall through
+		// fall through
 	case 1020:
 		_vm->removeMessage();
 		break;
-	default: {} //do nothing
+	default: {
+	} //do nothing
 	}
 	i++;
 }
@@ -1253,7 +1237,7 @@ void Checkout::appearance() {
 	CursorMan.showMouse(false);
 	_vm->playSound(kMusicMadMonkeys);
 	Common::KeyCode k = Common::KEYCODE_INVALID;
-	while(_vm->_sound->isPlaying()) {
+	while (_vm->_sound->isPlaying()) {
 		if (_gm->waitOnInput(1, k))
 			break;
 		shouting();
@@ -1566,27 +1550,25 @@ void Elevator2::animation() {
 
 bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 	static int dialLuke1[4] = {
-		kStringElevator2,
-		kStringElevator3,
-		kStringElevator4,
-		kStringElevator5
-	};
-	static byte dialsLuke1[3] = {2,1,1};
+	    kStringElevator2,
+	    kStringElevator3,
+	    kStringElevator4,
+	    kStringElevator5};
+	static byte dialsLuke1[3] = {2, 1, 1};
 	static int dialBoss1[2] = {
-		kStringElevator6,
-		kStringElevator7
-	};
+	    kStringElevator6,
+	    kStringElevator7};
 	Common::String input;
 
 	if (verb == ACTION_LOOK && obj1._id == DISPLAY) {
 		Common::String format = _vm->getGameString(kStringElevator1);
-		Common::String display = 
-			Common::String::format(format.c_str(), _gm->_state._elevatorE);
+		Common::String display =
+		    Common::String::format(format.c_str(), _gm->_state._elevatorE);
 		_vm->renderMessage(display);
 	} else if (verb == ACTION_PRESS && obj1._id == BELL) {
 		_vm->renderImage(8);
 		_vm->playSound(kAudioElevatorBell);
-		while(_vm->_sound->isPlaying())
+		while (_vm->_sound->isPlaying())
 			_gm->wait(1);
 		_vm->renderImage(8 + kSectionInvert);
 		if (_gm->_state._elevatorNumber == 4 && _gm->_state._elevatorE == 4 && !_gm->_state._toMuseum) {
@@ -1681,8 +1663,8 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringElevator62);
 		do {
 			_gm->edit(input, 237, 66, 2);
-		} while ((_gm->_key.keycode != Common::KEYCODE_RETURN) && 
-				 (_gm->_key.keycode != Common::KEYCODE_ESCAPE) && !_vm->shouldQuit());
+		} while ((_gm->_key.keycode != Common::KEYCODE_RETURN) &&
+		         (_gm->_key.keycode != Common::KEYCODE_ESCAPE) && !_vm->shouldQuit());
 		_vm->removeMessage();
 		if (_gm->_key.keycode == Common::KEYCODE_RETURN && input[0] != 0) {
 			for (unsigned i = 0; i < input.size(); i++) {
@@ -1722,11 +1704,10 @@ bool Elevator2::interact(Action verb, Object &obj1, Object &obj2) {
 
 void Elevator2::jobDescription() {
 	static int dialBoss2[3] = {
-		kStringElevator8,
-		kStringElevator9,
-		kStringElevator10
-	};
-	byte dialsBoss2[4] = {1,1,1,1};
+	    kStringElevator8,
+	    kStringElevator9,
+	    kStringElevator10};
+	byte dialsBoss2[4] = {1, 1, 1, 1};
 
 	_gm->reply(kStringElevator29, 1, 1 + kSectionInvert);
 	_gm->reply(kStringElevator30, 1, 1 + kSectionInvert);
@@ -1905,29 +1886,29 @@ Ship::Ship(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[5] = Object(_id, kStringCable, kStringCableDescription1, RCABLE, COMBINABLE, 255, 255, 0);
 	_objectState[6] = Object(_id, kStringCable, kStringCableDescription2, CABLE, TAKE | COMBINABLE, 255, 255, 8 + kSectionInvert);
 
-	_outroText = 
-		_vm->getGameString(kStringIntro1) + '\0' + 
-		_vm->getGameString(kStringIntro2) + '\0' + 
-		_vm->getGameString(kStringIntro3) + '\0' + 
-		_vm->getGameString(kStringIntro4) + '\0' + 
-		_vm->getGameString(kStringIntro5) + '\0' + 
-		"^Matthias Neef#" + '\0' +
-		"^Sascha Otterbach#" + '\0' +
-		"^Thomas Mazzoni#" + '\0' +
-		"^Matthias Klein#" + '\0' +
-		"^Gerrit Rothmaier#" + '\0' +
-		"^Thomas Hassler#" + '\0' +
-		"^Rene Kach#" + '\0' +
-		'\233' + '\0';
+	_outroText =
+	    _vm->getGameString(kStringIntro1) + '\0' +
+	    _vm->getGameString(kStringIntro2) + '\0' +
+	    _vm->getGameString(kStringIntro3) + '\0' +
+	    _vm->getGameString(kStringIntro4) + '\0' +
+	    _vm->getGameString(kStringIntro5) + '\0' +
+	    "^Matthias Neef#" + '\0' +
+	    "^Sascha Otterbach#" + '\0' +
+	    "^Thomas Mazzoni#" + '\0' +
+	    "^Matthias Klein#" + '\0' +
+	    "^Gerrit Rothmaier#" + '\0' +
+	    "^Thomas Hassler#" + '\0' +
+	    "^Rene Kach#" + '\0' +
+	    '\233' + '\0';
 	Common::String waitString = "##################";
-	_outroText2 = 
-		waitString + '\0' +
-		_vm->getGameString(kStringOutro1) + '\0' + 
-		_vm->getGameString(kStringOutro2) + '\0' + 
-		_vm->getGameString(kStringOutro3) + '\0' + 
-		_vm->getGameString(kStringOutro4) + '\0' + 
-		_vm->getGameString(kStringOutro5) + '\0' + 
-		'\233' + '\0';
+	_outroText2 =
+	    waitString + '\0' +
+	    _vm->getGameString(kStringOutro1) + '\0' +
+	    _vm->getGameString(kStringOutro2) + '\0' +
+	    _vm->getGameString(kStringOutro3) + '\0' +
+	    _vm->getGameString(kStringOutro4) + '\0' +
+	    _vm->getGameString(kStringOutro5) + '\0' +
+	    '\233' + '\0';
 }
 
 void Ship::onEntrance() {
@@ -1951,7 +1932,7 @@ bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawMapExits();
 		}
 	} else if (verb == ACTION_PRESS && obj1._id == DOOR_SWITCH &&
-			!isSectionVisible(7)) {
+	           !isSectionVisible(7)) {
 		_vm->renderImage(3);
 		_gm->wait(2);
 		_vm->renderImage(6);
@@ -2109,10 +2090,10 @@ void Ship::outro() {
 	_vm->playSound(kMusicMadMonkeys);
 	_vm->renderBox(0, 190, 320, 10, kColorBlack);
 	Marquee marquee(_vm->_screen, Marquee::kMarqueeOutro, _outroText.c_str());
-	for(int i = 0; i < 2; i++) {
+	for (int i = 0; i < 2; i++) {
 		while (!_vm->shouldQuit()) {
 			_gm->updateEvents();
-			
+
 			if (!marquee.renderCharacter() || _gm->_mouseClicked || _gm->_keyPressed)
 				break;
 			g_system->updateScreen();
@@ -2123,7 +2104,7 @@ void Ship::outro() {
 	Marquee marquee2(_vm->_screen, Marquee::kMarqueeOutro, _outroText2.c_str());
 	while (!_vm->shouldQuit()) {
 		_gm->updateEvents();
-		
+
 		if (!marquee2.renderCharacter() || _gm->_mouseClicked || _gm->_keyPressed)
 			break;
 		g_system->updateScreen();
@@ -2244,7 +2225,7 @@ bool Pyramid::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 		}
 	} else if (verb == ACTION_PULL && rope != nullptr && !(rope->_type & CARRIED) &&
-			!isSectionVisible(1)) {
+	           !isSectionVisible(1)) {
 		for (int i = 2; i <= 26; i++)
 			_vm->renderImage(i + kSectionInvert);
 		_vm->renderImage(1);
@@ -2327,36 +2308,35 @@ void PyrEntrance::animation() {
 
 bool PyrEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 	static RoomEntry roomTab[29] = {
-		{2, 8, 6, 0, FLOORDOOR},
-		{0, 8, 4, 2, FLOORDOOR_U},
-		{0, 4, 11, 2, PYRAMID},
-		{0, 0, 2, 1, UPSTAIRS1},
-		{1, 1, 2, 3, DOWNSTAIRS1},
-		{0, 5, 8, 3, BOTTOM_RIGHT_DOOR},
-		{0, 4, 8, 1, BOTTOM_LEFT_DOOR},
-		{1, 5, 8, 3, UPPER_DOOR},
-		{1, 4, 8, 1, UPPER_DOOR},
-		{0, 4, 8, 0, UPSTAIRS2},
-		{1, 4, 7, 2, DOWNSTAIRS2},
-		{1, 6, 6, 2, PUZZLE_FRONT},
-		{1, 6, 7, 0, PUZZLE_BEHIND},
-		{0, 3, 6, 0, FORMULA1_N},
-		{0, 3, 7, 0, FORMULA1_F},
-		{0, 4, 6, 0, FORMULA2_N},
-		{0, 4, 7, 0, FORMULA2_F},
-		{0, 8, 9, 2, TOMATO_N},
-		{0, 8, 8, 2, TOMATO_F},
-		{1, 4, 2, 0, MONSTER_F},
-		{1, 10, 8, 0, MONSTER_F},
-		{1, 4, 1, 0, MONSTER1_N},
-		{1, 10, 7, 0, MONSTER2_N},
-		{0, 2, 4, 2, DOWNSTAIRS3},
-		{1, 2, 5, 0, UPSTAIRS3},
-		{1, 2, 5, 3, LCORRIDOR1},
-		{1, 1, 5, 1, LCORRIDOR2},
-		{1, 1, 5, 3, HOLE_ROOM},
-		{0, 7, 4, 0, BST_DOOR}
-	};
+	    {2, 8, 6, 0, FLOORDOOR},
+	    {0, 8, 4, 2, FLOORDOOR_U},
+	    {0, 4, 11, 2, PYRAMID},
+	    {0, 0, 2, 1, UPSTAIRS1},
+	    {1, 1, 2, 3, DOWNSTAIRS1},
+	    {0, 5, 8, 3, BOTTOM_RIGHT_DOOR},
+	    {0, 4, 8, 1, BOTTOM_LEFT_DOOR},
+	    {1, 5, 8, 3, UPPER_DOOR},
+	    {1, 4, 8, 1, UPPER_DOOR},
+	    {0, 4, 8, 0, UPSTAIRS2},
+	    {1, 4, 7, 2, DOWNSTAIRS2},
+	    {1, 6, 6, 2, PUZZLE_FRONT},
+	    {1, 6, 7, 0, PUZZLE_BEHIND},
+	    {0, 3, 6, 0, FORMULA1_N},
+	    {0, 3, 7, 0, FORMULA1_F},
+	    {0, 4, 6, 0, FORMULA2_N},
+	    {0, 4, 7, 0, FORMULA2_F},
+	    {0, 8, 9, 2, TOMATO_N},
+	    {0, 8, 8, 2, TOMATO_F},
+	    {1, 4, 2, 0, MONSTER_F},
+	    {1, 10, 8, 0, MONSTER_F},
+	    {1, 4, 1, 0, MONSTER1_N},
+	    {1, 10, 7, 0, MONSTER2_N},
+	    {0, 2, 4, 2, DOWNSTAIRS3},
+	    {1, 2, 5, 0, UPSTAIRS3},
+	    {1, 2, 5, 3, LCORRIDOR1},
+	    {1, 1, 5, 1, LCORRIDOR2},
+	    {1, 1, 5, 3, HOLE_ROOM},
+	    {0, 7, 4, 0, BST_DOOR}};
 	if (!_gm->move(verb, obj1))
 		return false;
 	if (_gm->_rooms[FLOORDOOR]->isSectionVisible(kMaxSection - 1))
@@ -2365,9 +2345,9 @@ bool PyrEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		roomTab[0]._e = 2;
 	for (int i = 0; i < 29; i++) {
 		if (_gm->_state._pyraE == roomTab[i]._e &&
-			_gm->_state._pyraS == roomTab[i]._s &&
-			_gm->_state._pyraZ == roomTab[i]._z &&
-			_gm->_state._pyraDirection == roomTab[i]._r) {
+		    _gm->_state._pyraS == roomTab[i]._s &&
+		    _gm->_state._pyraZ == roomTab[i]._z &&
+		    _gm->_state._pyraDirection == roomTab[i]._r) {
 			_gm->changeRoom(roomTab[i]._exitRoom);
 			_gm->_newRoom = true;
 			return true;
@@ -2741,11 +2721,10 @@ bool PuzzleFront::interact(Action verb, Object &obj1, Object &obj2) {
 	if (_gm->move(verb, obj1)) {
 		_gm->passageConstruction();
 		_gm->_newRoom = true;
-	} else if ((verb == ACTION_PRESS || (verb == ACTION_WALK && _vm->_improved))
-			&& obj1._id >= PART0 && obj1._id <= PART15) {
+	} else if ((verb == ACTION_PRESS || (verb == ACTION_WALK && _vm->_improved)) && obj1._id >= PART0 && obj1._id <= PART15) {
 		int pos = obj1._id - PART0;
 		int newPos = 0;
-		if (pos > 3  && _gm->_puzzleField[pos - 4] == 255)
+		if (pos > 3 && _gm->_puzzleField[pos - 4] == 255)
 			newPos = pos - 4;
 		else if (pos < 12 && _gm->_puzzleField[pos + 4] == 255)
 			newPos = pos + 4;
@@ -2773,7 +2752,7 @@ bool PuzzleFront::interact(Action verb, Object &obj1, Object &obj2) {
 		for (int i = 0; i < 15; i++)
 			if (_gm->_state._puzzleTab[i] != i)
 				return true;
-		
+
 		_gm->wait(2);
 		_vm->renderImage(16);
 		for (int i = 1; i < 16; i++)
@@ -2786,7 +2765,7 @@ bool PuzzleFront::interact(Action verb, Object &obj1, Object &obj2) {
 		_objectState[2]._id = CORRIDOR;
 		_objectState[2]._description = kStringDefaultDescription;
 		_objectState[2]._click = 0;
-		
+
 		_gm->_rooms[PUZZLE_BEHIND]->setSectionVisible(31, kShownFalse);
 		_gm->_rooms[PUZZLE_BEHIND]->setSectionVisible(26, kShownTrue);
 		_gm->_rooms[PUZZLE_BEHIND]->setSectionVisible(27, kShownTrue);
@@ -3350,13 +3329,13 @@ bool HoleRoom::interact(Action verb, Object &obj1, Object &obj2) {
 	if (_gm->move(verb, obj1)) {
 		_gm->passageConstruction();
 		_gm->_newRoom = true;
-	} else if (verb == ACTION_USE && 
-			   (Object::combine(obj1, obj2, ROPE, G_RIGHT) || 
-				Object::combine(obj1, obj2, ROPE, G_LEFT))) {
+	} else if (verb == ACTION_USE &&
+	           (Object::combine(obj1, obj2, ROPE, G_RIGHT) ||
+	            Object::combine(obj1, obj2, ROPE, G_LEFT))) {
 		_vm->renderMessage(kStringPyramid7);
-	} else if (verb == ACTION_USE && 
-			   (Object::combine(obj1, obj2, TKNIFE, G_RIGHT) || 
-				Object::combine(obj1, obj2, TKNIFE, G_LEFT))) {
+	} else if (verb == ACTION_USE &&
+	           (Object::combine(obj1, obj2, TKNIFE, G_RIGHT) ||
+	            Object::combine(obj1, obj2, TKNIFE, G_LEFT))) {
 		_vm->renderMessage(kStringPyramid8);
 	} else if (verb == ACTION_TAKE && obj1._id == ROPE && !(obj1._type & CARRIED)) {
 		_vm->renderMessage(kStringPyramid9);
@@ -3448,7 +3427,7 @@ bool Floordoor::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if (verb == ACTION_USE && obj1._id == ROPE && isSectionVisible(11)) {
 		_gm->_state._pyraZ = 4;
 		_gm->_state._pyraDirection = 2;
-		_gm->_state._pyraE = 0 ;
+		_gm->_state._pyraE = 0;
 		_gm->changeRoom(FLOORDOOR_U);
 		_gm->_newRoom = true;
 	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, TKNIFE, STONES)) {
@@ -3458,12 +3437,12 @@ bool Floordoor::interact(Action verb, Object &obj1, Object &obj2) {
 		else
 			_gm->_inventory.remove(obj2);
 		_objectState[2]._click = 6;
-	} else if (verb == ACTION_USE && 
-			   (Object::combine(obj1, obj2, TKNIFE, G_RIGHT) ||
-				Object::combine(obj1, obj2, TKNIFE, G_LEFT))) {
+	} else if (verb == ACTION_USE &&
+	           (Object::combine(obj1, obj2, TKNIFE, G_RIGHT) ||
+	            Object::combine(obj1, obj2, TKNIFE, G_LEFT))) {
 		_vm->renderMessage(kStringPyramid8);
 	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, ROPE, TKNIFE) &&
-					isSectionVisible(10)) {
+	           isSectionVisible(10)) {
 		_vm->renderImage(11);
 		setSectionVisible(10, kShownFalse);
 		if (obj1._id == ROPE)
@@ -3473,10 +3452,10 @@ bool Floordoor::interact(Action verb, Object &obj1, Object &obj2) {
 		_objectState[2]._click = 255;
 		_objectState[3]._click = 7;
 		_objectState[3]._type &= ~COMBINABLE;
-	} else if (verb == ACTION_USE && 
-			   (Object::combine(obj1, obj2, ROPE, G_RIGHT) ||
-				Object::combine(obj1, obj2, ROPE, G_LEFT)  ||
-				Object::combine(obj1, obj2, ROPE, STONES))) {
+	} else if (verb == ACTION_USE &&
+	           (Object::combine(obj1, obj2, ROPE, G_RIGHT) ||
+	            Object::combine(obj1, obj2, ROPE, G_LEFT) ||
+	            Object::combine(obj1, obj2, ROPE, STONES))) {
 		_vm->renderMessage(kStringPyramid7);
 	} else if (verb == ACTION_TAKE && obj1._id == ROPE && !(obj1._type & CARRIED)) {
 		_gm->takeObject(obj1);
@@ -3567,7 +3546,7 @@ BstDoor::BstDoor(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[17] = Object(_id, kStringLetter, kStringDefaultDescription, BST16, PRESS, 15, 0, 0);
 	_objectState[18] = Object(_id, kStringDoor, kStringMassive, DOOR, EXIT | OPENABLE | CLOSED, 16, 16, 0, HALL2, 2);
 
-	bool germanPassword[16] =  {false, true, false, false, true, false, true, true, true, false, true, false, false, false, false, false};
+	bool germanPassword[16] = {false, true, false, false, true, false, true, true, true, false, true, false, false, false, false, false};
 	bool englishPassword[16] = {false, true, false, true, false, false, true, false, false, true, true, true, false, false, false, false};
 	if (ConfMan.get("language") == "en")
 		for (int i = 0; i < 16; i++)
@@ -3587,8 +3566,7 @@ bool BstDoor::interact(Action verb, Object &obj1, Object &obj2) {
 	if (_gm->move(verb, obj1)) {
 		_gm->passageConstruction();
 		_gm->_newRoom = true;
-	} else if ((verb == ACTION_PRESS || (verb == ACTION_WALK && _vm->_improved))
-			&& obj1._id >= BST1 && obj1._id <= BST16) {
+	} else if ((verb == ACTION_PRESS || (verb == ACTION_WALK && _vm->_improved)) && obj1._id >= BST1 && obj1._id <= BST16) {
 		int number = obj1._id - (BST1 - 1);
 		if (isSectionVisible(number))
 			_vm->renderImage(number + kSectionInvert);
@@ -3685,7 +3663,8 @@ bool CoffinRoom::interact(Action verb, Object &obj1, Object &obj2) {
 				_vm->playSound(kAudioTaxiOpen);
 			} else
 				_vm->renderMessage(kStringPyramid14);
-		} if (change) {
+		}
+		if (change) {
 			if (isSectionVisible(2) && isSectionVisible(3)) {
 				_vm->playSound(kAudioShip2);
 				_vm->renderImage(4);
@@ -3701,8 +3680,7 @@ bool CoffinRoom::interact(Action verb, Object &obj1, Object &obj2) {
 				setSectionVisible(5, kShownFalse);
 				setSectionVisible(6, kShownFalse);
 				setSectionVisible(7, kShownFalse);
-			}
-			else
+			} else
 				_vm->renderMessage(kStringPyramid15);
 		}
 	} else if (verb == ACTION_LOOK && obj1._id == COFFIN && isSectionVisible(1)) {
@@ -3745,7 +3723,7 @@ bool Mask::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->reply(kStringPyramid18, 3, 3 + kSectionInvert);
 			_gm->reply(kStringPyramid19, 3, 3 + kSectionInvert);
 			_vm->playSound(kAudioAppearance1);
-			while(_vm->_sound->isPlaying())
+			while (_vm->_sound->isPlaying())
 				_gm->wait(1);
 			_vm->paletteFadeOut();
 			_vm->loadGame(kSleepAutosaveSlot);
@@ -3825,8 +3803,8 @@ void Museum::animation() {
 
 bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 	if (verb == ACTION_WALK && obj1._id == MUS_STREET) {
-		if (!_gm->_state._alarmOn && 
-				!(_gm->_rooms[MUS_ROUND]->getObject(4)->_type & CARRIED)) {
+		if (!_gm->_state._alarmOn &&
+		    !(_gm->_rooms[MUS_ROUND]->getObject(4)->_type & CARRIED)) {
 			_vm->renderMessage(kStringMuseum10);
 		} else {
 			_gm->_state._eventTime = kMaxTimerValue;
@@ -3836,7 +3814,7 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 					_vm->stopSound();
 					_gm->_state._sirenOn = false;
 				}
-			} else 
+			} else
 				_vm->renderMessage(kStringMuseum12);
 			_gm->wait(_gm->_messageDuration, true);
 			_vm->removeMessage();
@@ -3866,7 +3844,7 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->drawGUI();
 		}
 	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, SP_KEYCARD, DOOR) &&
-			!(_objectState[2]._type & OPENED)) {
+	           !(_objectState[2]._type & OPENED)) {
 		if (_gm->crackDoor(20)) {
 			_vm->renderImage(1);
 			_objectState[2]._type = EXIT | OPENABLE | OPENED;
@@ -3877,7 +3855,7 @@ bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
 		_objectState[2]._type = EXIT | OPENABLE | CLOSED;
 		_vm->playSound(kAudioElevator1);
 	} else if (verb == ACTION_USE &&
-					Object::combine(obj1, obj2, SP_KEYCARD, BIG_DOOR)) {
+	           Object::combine(obj1, obj2, SP_KEYCARD, BIG_DOOR)) {
 		_vm->renderMessage(kStringMuseum14);
 	} else if (verb == ACTION_WALK && obj1._id == DOOR) {
 		_gm->_state._haste = true;
@@ -3912,9 +3890,9 @@ bool MusEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->_rooms[MUS11]->getObject(2)->_type |= OPENED;
 	else if (verb == ACTION_CLOSE && obj1._id == DOOR)
 		_gm->_rooms[MUS11]->getObject(2)->_type &= ~OPENED;
-	else if (verb == ACTION_USE && 
-				Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) &&
-				!(_objectState[0]._type & OPENED)) {
+	else if (verb == ACTION_USE &&
+	         Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) &&
+	         !(_objectState[0]._type & OPENED)) {
 		if (_gm->crackDoor(20)) {
 			_vm->renderImage(2);
 			_objectState[0]._type = EXIT | OPENABLE | OPENED;
@@ -3922,7 +3900,7 @@ bool MusEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 		return true;
 	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR &&
-			(obj1._type & OPENED)) {
+	           (obj1._type & OPENED)) {
 		_vm->renderImage(2 + kSectionInvert);
 		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
 		_vm->playSound(kAudioElevator1);
@@ -4045,7 +4023,6 @@ Mus4::Mus4(SupernovaEngine *vm, GameManager2 *gm) {
 
 	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 1, 1, 8, MUS5, 22);
 	_objectState[1] = Object(_id, kStringCamera, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 7, 7, 0);
-
 }
 
 void Mus4::onEntrance() {
@@ -4076,7 +4053,6 @@ Mus5::Mus5(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[0] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 0, 0, 7, MUS4, 2);
 	_objectState[1] = Object(_id, kStringDoor, kStringDefaultDescription, ENCRYPTED_DOOR, EXIT | OPENABLE | CLOSED | COMBINABLE, 1, 1, 8, MUS6, 22);
 	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR, EXIT | OPENABLE, 2, 2, 9, MUS9, 5);
-
 }
 
 void Mus5::onEntrance() {
@@ -4090,8 +4066,8 @@ void Mus5::animation() {
 bool Mus5::interact(Action verb, Object &obj1, Object &obj2) {
 	_gm->museumDoorInteract(verb, obj1, obj2);
 	if (verb == ACTION_USE &&
-			Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) && 
-			!(_objectState[1]._type & OPENED)) {
+	    Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) &&
+	    !(_objectState[1]._type & OPENED)) {
 		if (_gm->crackDoor(50)) {
 			_vm->renderImage(8);
 			_objectState[1]._type = EXIT | OPENABLE | OPENED;
@@ -4099,8 +4075,8 @@ bool Mus5::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_rooms[MUS6]->setSectionVisible(7, kShownTrue);
 			_vm->playSound(kAudioTaxiOpen);
 		}
-	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
-				(obj1._type & OPENED)) {
+	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR &&
+	           (obj1._type & OPENED)) {
 		_vm->renderImage(8 + kSectionInvert);
 		_objectState[1]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS6]->getObject(0)->_type = EXIT | OPENABLE | CLOSED;
@@ -4140,8 +4116,8 @@ void Mus6::animation() {
 bool Mus6::interact(Action verb, Object &obj1, Object &obj2) {
 	_gm->museumDoorInteract(verb, obj1, obj2);
 	if (verb == ACTION_USE &&
-			Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) && 
-			!(_objectState[0]._type & OPENED)) {
+	    Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) &&
+	    !(_objectState[0]._type & OPENED)) {
 		if (_gm->crackDoor(50)) {
 			_vm->renderImage(7);
 			_objectState[0]._type = EXIT | OPENABLE | OPENED;
@@ -4149,15 +4125,15 @@ bool Mus6::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_rooms[MUS5]->setSectionVisible(8, kShownTrue);
 			_vm->playSound(kAudioTaxiOpen);
 		}
-	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
-				(obj1._type & OPENED)) {
+	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR &&
+	           (obj1._type & OPENED)) {
 		_vm->renderImage(7 + kSectionInvert);
 		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS5]->getObject(1)->_type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS5]->setSectionVisible(8, kShownFalse);
 		_vm->playSound(kAudioElevator1);
 	} else if (verb == ACTION_USE &&
-			Object::combine(obj1, obj2, SP_KEYCARD, BIG_DOOR))
+	           Object::combine(obj1, obj2, SP_KEYCARD, BIG_DOOR))
 		_vm->renderMessage(kStringMuseum14);
 	else
 		return false;
@@ -4221,8 +4197,8 @@ void Mus8::animation() {
 bool Mus8::interact(Action verb, Object &obj1, Object &obj2) {
 	_gm->museumDoorInteract(verb, obj1, obj2);
 	if (verb == ACTION_USE &&
-			Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) && 
-			!(_objectState[1]._type & OPENED)) {
+	    Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) &&
+	    !(_objectState[1]._type & OPENED)) {
 		if (_gm->crackDoor(50)) {
 			_vm->renderImage(2);
 			_objectState[1]._type = EXIT | OPENABLE | OPENED;
@@ -4230,8 +4206,8 @@ bool Mus8::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_rooms[MUS9]->setSectionVisible(1, kShownTrue);
 			_vm->playSound(kAudioTaxiOpen);
 		}
-	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
-				(obj1._type & OPENED)) {
+	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR &&
+	           (obj1._type & OPENED)) {
 		_vm->renderImage(2 + kSectionInvert);
 		_objectState[1]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS9]->getObject(0)->_type = EXIT | OPENABLE | CLOSED;
@@ -4268,8 +4244,8 @@ void Mus9::animation() {
 bool Mus9::interact(Action verb, Object &obj1, Object &obj2) {
 	_gm->museumDoorInteract(verb, obj1, obj2);
 	if (verb == ACTION_USE &&
-			Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) && 
-			!(_objectState[0]._type & OPENED)) {
+	    Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) &&
+	    !(_objectState[0]._type & OPENED)) {
 		if (_gm->crackDoor(50)) {
 			_vm->renderImage(1);
 			_objectState[0]._type = EXIT | OPENABLE | OPENED;
@@ -4277,16 +4253,16 @@ bool Mus9::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_rooms[MUS8]->setSectionVisible(2, kShownTrue);
 			_vm->playSound(kAudioTaxiOpen);
 		}
-	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
-				(obj1._type & OPENED)) {
+	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR &&
+	           (obj1._type & OPENED)) {
 		_vm->renderImage(1 + kSectionInvert);
 		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS8]->getObject(1)->_type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS8]->setSectionVisible(2, kShownFalse);
 		_vm->playSound(kAudioElevator1);
 	} else if (verb == ACTION_USE &&
-			Object::combine(obj1, obj2, SP_KEYCARD, SMALL_DOOR) &&
-			!(_objectState[2]._type & OPENED)) {
+	           Object::combine(obj1, obj2, SP_KEYCARD, SMALL_DOOR) &&
+	           !(_objectState[2]._type & OPENED)) {
 		if (_gm->crackDoor(50)) {
 			_vm->renderImage(6);
 			setSectionVisible(5, kShownFalse);
@@ -4294,8 +4270,8 @@ bool Mus9::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->_rooms[MUS_ROUND]->getObject(0)->_type = EXIT | OPENABLE | OPENED;
 			_vm->playSound(kAudioTaxiOpen);
 		}
-	} else if (verb == ACTION_CLOSE && obj1._id == SMALL_DOOR && 
-				(obj1._type & OPENED)) {
+	} else if (verb == ACTION_CLOSE && obj1._id == SMALL_DOOR &&
+	           (obj1._type & OPENED)) {
 		_vm->renderImage(5);
 		setSectionVisible(6, kShownFalse);
 		_objectState[2]._type = EXIT | OPENABLE | CLOSED;
@@ -4369,7 +4345,7 @@ bool Mus11::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(3, kShownFalse);
 		_vm->playSound(kAudioTaxiOpen);
 	} else if (verb == ACTION_CLOSE && obj1._id == SMALL_DOOR &&
-			(obj1._type & OPENED)) {
+	           (obj1._type & OPENED)) {
 		obj1._type &= ~OPENED;
 		_vm->renderImage(3);
 		setSectionVisible(4, kShownFalse);
@@ -4404,16 +4380,16 @@ void MusRound::animation() {
 
 bool MusRound::interact(Action verb, Object &obj1, Object &obj2) {
 	if (verb == ACTION_USE &&
-			Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) && 
-			!(_objectState[0]._type & OPENED)) {
+	    Object::combine(obj1, obj2, SP_KEYCARD, ENCRYPTED_DOOR) &&
+	    !(_objectState[0]._type & OPENED)) {
 		if (_gm->crackDoor(50)) {
 			_vm->renderImage(1);
 			_objectState[0]._type = EXIT | OPENABLE | OPENED;
 			_gm->_rooms[MUS9]->getObject(2)->_type = EXIT | OPENABLE | OPENED;
 			_vm->playSound(kAudioTaxiOpen);
 		}
-	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR && 
-				(obj1._type & OPENED)) {
+	} else if (verb == ACTION_CLOSE && obj1._id == ENCRYPTED_DOOR &&
+	           (obj1._type & OPENED)) {
 		_vm->renderImage(1 + kSectionInvert);
 		_objectState[0]._type = EXIT | OPENABLE | CLOSED;
 		_gm->_rooms[MUS9]->getObject(2)->_type = EXIT | OPENABLE | CLOSED;
@@ -4748,14 +4724,14 @@ bool Mus22::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->_inventory.remove(obj2);
 		}
 	} else if (verb == ACTION_TAKE && obj1._id == SUCTION_CUP &&
-			!(obj1._type & CARRIED)) {
+	           !(obj1._type & CARRIED)) {
 		_vm->renderImage(2);
 		setSectionVisible(6, kShownFalse);
 		_vm->renderImage(5);
 		_gm->takeObject(obj1);
 		_vm->renderMessage(kStringMuseum19);
 	} else if (verb == ACTION_USE &&
-			Object::combine(obj1, obj2, ALARM_CRACKER, ALARM_SYSTEM)) {
+	           Object::combine(obj1, obj2, ALARM_CRACKER, ALARM_SYSTEM)) {
 		if (_gm->_state._alarmCracked)
 			_vm->renderMessage(kStringMuseum20);
 		else {
@@ -4774,4 +4750,4 @@ bool Mus22::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-}
+} // namespace Supernova

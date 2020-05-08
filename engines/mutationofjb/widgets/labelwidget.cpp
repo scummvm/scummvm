@@ -28,9 +28,8 @@
 
 namespace MutationOfJB {
 
-LabelWidget::LabelWidget(GuiScreen &gui, const Common::Rect &area) :
-	Widget(gui, area),
-	_backgroundColor(0x00) {}
+LabelWidget::LabelWidget(GuiScreen &gui, const Common::Rect &area) : Widget(gui, area),
+                                                                     _backgroundColor(0x00) {}
 
 uint8 LabelWidget::getBackgroundColor() const {
 	return _backgroundColor;
@@ -61,4 +60,4 @@ void LabelWidget::draw(Graphics::ManagedSurface &surface) {
 	_gui.getGame().getAssets().getSystemFont().drawString(&surface, _text, _area.left, _area.top, _area.width(), LIGHTGRAY, Graphics::kTextAlignCenter);
 }
 
-}
+} // namespace MutationOfJB

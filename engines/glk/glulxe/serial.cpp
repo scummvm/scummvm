@@ -584,7 +584,7 @@ uint Glulxe::write_memstate(dest_t *dest) {
 
 #ifdef SERIALIZE_CACHE_RAM
 	cachepos = 0;
-#else /* SERIALIZE_CACHE_RAM */
+#else  /* SERIALIZE_CACHE_RAM */
 	_gameFile.seek(gamefile_start + ramstart);
 #endif /* SERIALIZE_CACHE_RAM */
 
@@ -594,7 +594,7 @@ uint Glulxe::write_memstate(dest_t *dest) {
 #ifdef SERIALIZE_CACHE_RAM
 			val = ramcache[cachepos];
 			cachepos++;
-#else /* SERIALIZE_CACHE_RAM */
+#else  /* SERIALIZE_CACHE_RAM */
 			val = glk_get_char_stream(gamefile);
 			if (val == -1) {
 				fatal_error("The game file ended unexpectedly while saving.");
@@ -655,7 +655,7 @@ uint Glulxe::read_memstate(dest_t *dest, uint chunklen) {
 
 #ifdef SERIALIZE_CACHE_RAM
 	cachepos = 0;
-#else /* SERIALIZE_CACHE_RAM */
+#else  /* SERIALIZE_CACHE_RAM */
 	_gameFile.seek(gamefile_start + ramstart);
 #endif /* SERIALIZE_CACHE_RAM */
 
@@ -664,7 +664,7 @@ uint Glulxe::read_memstate(dest_t *dest, uint chunklen) {
 #ifdef SERIALIZE_CACHE_RAM
 			val = ramcache[cachepos];
 			cachepos++;
-#else /* SERIALIZE_CACHE_RAM */
+#else  /* SERIALIZE_CACHE_RAM */
 			if (_gameFile.pos() >= _gameFile.size()) {
 				fatal_error("The game file ended unexpectedly while restoring.");
 				val = _gameFile.readByte();
@@ -720,7 +720,7 @@ uint Glulxe::write_heapstate(dest_t *dest, int portable) {
 	return res;
 }
 
-uint Glulxe::write_heapstate_sub(uint sumlen, uint *sumarray, dest_t *dest, int portable)  {
+uint Glulxe::write_heapstate_sub(uint sumlen, uint *sumarray, dest_t *dest, int portable) {
 	uint res, lx;
 
 	/* If we're storing for the purpose of undo, we don't need to do any
@@ -830,8 +830,9 @@ uint Glulxe::write_stackstate(dest_t *dest, int portable) {
 		   If it becomes a practical problem, we can build a stack-frame
 		   array, which requires dynamic allocation. */
 		for (frm = stackptr, frameend = stackptr;
-		        frm != 0 && (frm2 = Stk4(frm - 4)) != lastframe;
-		        frameend = frm, frm = frm2) { };
+		     frm != 0 && (frm2 = Stk4(frm - 4)) != lastframe;
+		     frameend = frm, frm = frm2) {
+		};
 
 		/* Write out the frame. */
 		frm2 = frm;
@@ -932,7 +933,6 @@ uint Glulxe::write_stackstate(dest_t *dest, int portable) {
 					loccount--;
 				} while (loccount);
 				break;
-
 			}
 		}
 
@@ -1046,7 +1046,6 @@ uint Glulxe::read_stackstate(dest_t *dest, uint chunklen, int portable) {
 					loccount--;
 				} while (loccount);
 				break;
-
 			}
 
 			numlocals++;

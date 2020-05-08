@@ -31,26 +31,26 @@
 #ifndef MACVENTURE_MACVENTURE_H
 #define MACVENTURE_MACVENTURE_H
 
-#include "engines/engine.h"
+#include "common/debug.h"
+#include "common/huffman.h"
+#include "common/macresman.h"
+#include "common/random.h"
+#include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/debug.h"
-#include "common/random.h"
-#include "common/macresman.h"
-#include "common/huffman.h"
-#include "common/savefile.h"
+#include "engines/engine.h"
 
 #include "gui/debugger.h"
 
+#include "macventure/controls.h"
 #include "macventure/debug.h"
 #include "macventure/gui.h"
-#include "macventure/world.h"
 #include "macventure/hufflists.h"
-#include "macventure/stringtable.h"
 #include "macventure/script.h"
-#include "macventure/controls.h"
-#include "macventure/windows.h"
 #include "macventure/sound.h"
+#include "macventure/stringtable.h"
+#include "macventure/windows.h"
+#include "macventure/world.h"
 
 struct ADGameDescription;
 
@@ -98,7 +98,6 @@ enum FilePathID {
 	kSoundPathID = 8
 };
 
-
 class GlobalSettings {
 public:
 	GlobalSettings();
@@ -106,8 +105,8 @@ public:
 
 	void loadSettings(Common::SeekableReadStream *dataStream);
 
-// HACK MAybe this should be private, but the class is only here to handle
-// memory allocation/deallocation
+	// HACK MAybe this should be private, but the class is only here to handle
+	// memory allocation/deallocation
 public:
 	uint16 _numObjects;    // number of game objects defined
 	uint16 _numGlobals;    // number of globals defined
@@ -118,12 +117,12 @@ public:
 	uint16 _invLeft;
 	uint16 _invHeight;
 	uint16 _invWidth;
-	uint16 _invOffsetY;    // positioning offset for
-	uint16 _invOffsetX;    // new inventory windows
-	uint16 _defaultFont;   // default font
-	uint16 _defaultSize;   // default font size
+	uint16 _invOffsetY;                // positioning offset for
+	uint16 _invOffsetX;                // new inventory windows
+	uint16 _defaultFont;               // default font
+	uint16 _defaultSize;               // default font size
 	Common::Array<uint8> _attrIndices; // attribute indices into attribute table
-	Common::Array<uint16> _attrMasks;   // attribute masks
+	Common::Array<uint16> _attrMasks;  // attribute masks
 	Common::Array<uint8> _attrShifts;  // attribute bit shifts
 	Common::Array<uint8> _cmdArgCnts;  // command argument counts
 	Common::Array<uint8> _commands;    // command buttons
@@ -321,7 +320,6 @@ private:
 	const char *getGameFileName() const;
 
 private: // Attributes
-
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource *_rnd;
 
@@ -362,9 +360,7 @@ private: // Attributes
 	Common::Array<ObjID> _currentSelection;
 	Common::Point _deltaPoint;
 	Common::String _userInput;
-
 };
-
 
 class Console : public GUI::Debugger {
 public:

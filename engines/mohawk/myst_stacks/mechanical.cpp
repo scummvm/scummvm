@@ -20,15 +20,15 @@
  *
  */
 
+#include "mohawk/myst_stacks/mechanical.h"
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
-#include "mohawk/myst_state.h"
 #include "mohawk/myst_sound.h"
+#include "mohawk/myst_state.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/mechanical.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -36,9 +36,8 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Mechanical::Mechanical(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm, kMechanicalStack),
-		_state(vm->_gameState->_mechanical) {
+Mechanical::Mechanical(MohawkEngine_Myst *vm) : MystScriptParser(vm, kMechanicalStack),
+                                                _state(vm->_gameState->_mechanical) {
 	setupOpcodes();
 
 	_elevatorGoingMiddle = false;
@@ -164,7 +163,7 @@ void Mechanical::runPersistentScripts() {
 }
 
 uint16 Mechanical::getVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 0: // Achenar's Secret Panel State
 		return _state.achenarPanelState;
 	case 1: // Sirrus's Secret Panel State
@@ -191,7 +190,7 @@ uint16 Mechanical::getVar(uint16 var) {
 			return 1; // Open
 		else
 			return 0; // Closed
-	case 10: // Fortress Staircase State
+	case 10:          // Fortress Staircase State
 		return _state.staircaseState;
 	case 11: // Fortress Elevator Rotation Position
 		return _state.elevatorRotation;
@@ -207,8 +206,7 @@ uint16 Mechanical::getVar(uint16 var) {
 	case 15: // Code Lock Execute Button Script
 		if (_mystStaircaseState)
 			return 0;
-		else if (_state.codeShape[0] == 2 && _state.codeShape[1] == 8
-				&& _state.codeShape[2] == 5 && _state.codeShape[3] == 1)
+		else if (_state.codeShape[0] == 2 && _state.codeShape[1] == 8 && _state.codeShape[2] == 5 && _state.codeShape[3] == 1)
 			return 1;
 		else
 			return 2;
@@ -233,7 +231,7 @@ uint16 Mechanical::getVar(uint16 var) {
 }
 
 void Mechanical::toggleVar(uint16 var) {
-	switch(var) {
+	switch (var) {
 	case 0: // Achenar's Secret Panel State
 		_state.achenarPanelState ^= 1;
 		break;
@@ -593,7 +591,7 @@ void Mechanical::elevatorGoMiddle_run() {
 			// Restore button
 			if (_elevatorInCabin) {
 				_vm->_gfx->copyBackBufferToScreen(Common::Rect(10, 137, 61, 165));
-			 }
+			}
 		} else {
 			_elevatorTooLate = true;
 			_elevatorGoingMiddle = false;
@@ -611,7 +609,7 @@ void Mechanical::elevatorGoMiddle_run() {
 				_vm->_gfx->copyImageToBackBuffer(6327, Common::Rect(544, 333));
 				_vm->wait(500);
 				_vm->_sound->playEffect(9120);
-				static uint16 moviePos[2] = { 3540, 5380 };
+				static uint16 moviePos[2] = {3540, 5380};
 				o_elevatorWindowMovie(0, ArgumentsArray(moviePos, ARRAYSIZE(moviePos)));
 				_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 				_vm->_sound->playEffect(10120);
@@ -747,8 +745,7 @@ void Mechanical::fortressRotation_run() {
 	// Myst ME short movie workaround, explained in o_fortressRotation_init
 	if (_fortressRotationShortMovieWorkaround) {
 		// Detect if we just looped
-		if (ABS<int32>(_fortressRotationShortMovieLast - 3680) < 50
-				&& ABS<int32>(moviePosition) < 50) {
+		if (ABS<int32>(_fortressRotationShortMovieLast - 3680) < 50 && ABS<int32>(moviePosition) < 50) {
 			_fortressRotationShortMovieCount++;
 		}
 
@@ -784,8 +781,7 @@ void Mechanical::fortressRotation_run() {
 		}
 
 		// Adjust speed accordingly to acceleration lever
-		newRate +=  (double) (positionInQuarter / 1500.0)
-				* (double) (9 - _fortressRotationSpeed) / 9.0;
+		newRate += (double)(positionInQuarter / 1500.0) * (double)(9 - _fortressRotationSpeed) / 9.0;
 
 		newRate = CLIP<double>(newRate, -2.5, 2.5);
 
@@ -862,7 +858,6 @@ void Mechanical::fortressSimulation_run() {
 		_vm->_sound->stopBackground();
 		_vm->_sound->playEffect(_fortressSimulationStartSound2);
 
-
 		Common::Rect src = Common::Rect(0, 0, 176, 176);
 		Common::Rect dst = Common::Rect(187, 3, 363, 179);
 		_vm->_gfx->copyImageSectionToBackBuffer(6046, src, dst);
@@ -917,8 +912,7 @@ void Mechanical::fortressSimulation_run() {
 			}
 
 			// Adjust speed accordingly to acceleration lever
-			newRate +=  (double) (positionInQuarter / 1500.0)
-					* (double) (9 - _fortressSimulationSpeed) / 9.0;
+			newRate += (double)(positionInQuarter / 1500.0) * (double)(9 - _fortressSimulationSpeed) / 9.0;
 
 			newRate = CLIP<double>(newRate, -2.5, 2.5);
 
@@ -955,7 +949,7 @@ void Mechanical::fortressSimulation_run() {
 			// END HACK
 
 			holo->seek(Audio::Timestamp(0, 1800 * simulationPosition, 600));
-			_vm->playSoundBlocking(	_fortressRotationSounds[simulationPosition]);
+			_vm->playSoundBlocking(_fortressRotationSounds[simulationPosition]);
 
 			_gearsWereRunning = false;
 		}

@@ -34,9 +34,8 @@ namespace Dropbox {
 #define DROPBOX_API_GET_CURRENT_ACCOUNT "https://api.dropboxapi.com/2/users/get_current_account"
 #define DROPBOX_API_GET_SPACE_USAGE "https://api.dropboxapi.com/2/users/get_space_usage"
 
-DropboxInfoRequest::DropboxInfoRequest(Common::String token, Storage::StorageInfoCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _token(token), _infoCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+DropboxInfoRequest::DropboxInfoRequest(Common::String token, Storage::StorageInfoCallback cb, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _token(token), _infoCallback(cb),
+                                                                                                                               _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -92,7 +91,7 @@ void DropboxInfoRequest::userResponseCallback(Networking::JsonResponse response)
 	//Dropbox documentation states there are no errors for this API method
 	Common::JSONObject info = json->asObject();
 	if (Networking::CurlJsonRequest::jsonContainsAttribute(info, "name", "DropboxInfoRequest") &&
-		Networking::CurlJsonRequest::jsonIsObject(info.getVal("name"), "DropboxInfoRequest")) {
+	    Networking::CurlJsonRequest::jsonIsObject(info.getVal("name"), "DropboxInfoRequest")) {
 		Common::JSONObject nameInfo = info.getVal("name")->asObject();
 		if (Networking::CurlJsonRequest::jsonContainsString(nameInfo, "display_name", "DropboxInfoRequest")) {
 			_name = nameInfo.getVal("display_name")->asString();
@@ -156,7 +155,7 @@ void DropboxInfoRequest::quotaResponseCallback(Networking::JsonResponse response
 	uint64 used = info.getVal("used")->asIntegerNumber(), allocated = 0;
 
 	if (Networking::CurlJsonRequest::jsonContainsAttribute(info, "allocation", "DropboxInfoRequest") &&
-		Networking::CurlJsonRequest::jsonIsObject(info.getVal("allocation"), "DropboxInfoRequest")) {
+	    Networking::CurlJsonRequest::jsonIsObject(info.getVal("allocation"), "DropboxInfoRequest")) {
 		Common::JSONObject allocation = info.getVal("allocation")->asObject();
 		if (!Networking::CurlJsonRequest::jsonContainsIntegerNumber(allocation, "allocated", "DropboxInfoRequest")) {
 			error.response = "Passed JSON misses 'allocation/allocated' attribute!";
@@ -174,7 +173,8 @@ void DropboxInfoRequest::quotaResponseCallback(Networking::JsonResponse response
 
 void DropboxInfoRequest::errorCallback(Networking::ErrorResponse error) {
 	_workingRequest = nullptr;
-	if (_ignoreCallback) return;
+	if (_ignoreCallback)
+		return;
 	finishError(error);
 }
 

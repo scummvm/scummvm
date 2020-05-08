@@ -20,18 +20,18 @@
  *
  */
 
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 /* Widget constructors */
-GUI_Widget:: GUI_Widget(void *data) {
+GUI_Widget::GUI_Widget(void *data) {
 	Init(data, 0, 0, 0, 0);
 }
-GUI_Widget:: GUI_Widget(void *data, int x, int y, int w, int h) {
+GUI_Widget::GUI_Widget(void *data, int x, int y, int w, int h) {
 	Init(data, x, y, w, h);
 }
 
@@ -63,9 +63,9 @@ void GUI_Widget::Init(void *data, int x, int y, int w, int h) {
 	parent = NULL;
 
 	update_display = true;
-	set_accept_mouseclick(false); // initializes mouseclick time; SB-X
+	set_accept_mouseclick(false);         // initializes mouseclick time; SB-X
 	delayed_button = Shared::BUTTON_NONE; // optional mouseclick-delay; SB-X
-	held_button = Shared::BUTTON_NONE; // optional mousedown-delay; SB-X
+	held_button = Shared::BUTTON_NONE;    // optional mousedown-delay; SB-X
 	mouse_moved = false;
 
 	int mx = 0, my = 0;
@@ -81,7 +81,6 @@ int GUI_Widget::AddWidget(GUI_Widget *widget) {
 	return 0; //success.
 }
 
-
 /* Mark the widget as visible -- this is the default state */
 void GUI_Widget::Show(void) {
 	status = WIDGET_VISIBLE;
@@ -96,7 +95,7 @@ void GUI_Widget::Hide(void) {
 }
 
 /* Mark the widget as free, so it will be deleted by the GUI */
-void GUI_Widget:: Delete(void) {
+void GUI_Widget::Delete(void) {
 	status = WIDGET_DELETED;
 }
 
@@ -174,18 +173,18 @@ void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 }
 
 /* Report status to GUI */
-int GUI_Widget:: Status(void) {
+int GUI_Widget::Status(void) {
 	return (status);
 }
 
 /* Set the bounds of the widget.
    If 'w' or 'h' is -1, that parameter will not be changed.
  */
-void GUI_Widget:: SetRect(int x, int y, int w, int h) {
+void GUI_Widget::SetRect(int x, int y, int w, int h) {
 	area = Common::Rect(x, y, x + w, y + h);
 }
 
-void GUI_Widget:: SetRect(Common::Rect **bounds) {
+void GUI_Widget::SetRect(Common::Rect **bounds) {
 	int minx, maxx;
 	int miny, maxy;
 	int i, v;
@@ -228,7 +227,7 @@ int GUI_Widget::HitRect(int x, int y, const Common::Rect &rect) {
 
 	hit = 1;
 	if ((x < rect.left) || (x >= rect.right) ||
-	        (y < rect.top) || (y >= rect.bottom)) {
+	    (y < rect.top) || (y >= rect.bottom)) {
 		hit = 0;
 	}
 	return (hit);
@@ -322,7 +321,6 @@ GUI_status GUI_Widget::MouseUp(int x, int y, Shared::MouseButton button) {
 	return (GUI_PASS);
 }
 
-
 GUI_status GUI_Widget::MouseMotion(int x, int y, uint8 state) {
 	return (GUI_PASS);
 }
@@ -381,7 +379,7 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 			else if (button == SDL_BUTTON_WHEELDOWN)
 				return MouseWheel(0, -1);
 #endif
-			return(MouseDown(x, y, button));
+			return (MouseDown(x, y, button));
 		}
 		break;
 	}
@@ -393,7 +391,7 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 		x = event->mouse.x;
 		y = event->mouse.y;
 		button = Shared::whichButton(event->type);
-		if (focused || HitRect(x, y))  {
+		if (focused || HitRect(x, y)) {
 			int rel_time = SDL_GetTicks();
 			int last_rel_time = get_mouseup(button);
 			bool do_mouseclick = get_mousedown(button);
@@ -435,10 +433,10 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 				MouseLeave(state);
 			}
 			/* if widget was clicked before we must let it react*/
-			if (ClickState(1)) return (MouseMotion(-1, -1, state));
+			if (ClickState(1))
+				return (MouseMotion(-1, -1, state));
 		}
-	}
-	break;
+	} break;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
 		return MouseWheel(event->wheel.x, event->wheel.y);
@@ -446,8 +444,7 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 #endif
 	default: {
 		/* Pass it along.. */;
-	}
-	break;
+	} break;
 	}
 	return (GUI_PASS);
 }
@@ -550,10 +547,10 @@ void GUI_Widget::set_mouseup(int set, int button) {
 // mouseup is not cleared because two mouseup times are compared for mouseclicks
 void GUI_Widget::set_mousedown(int set, int button) {
 	if (button <= 0) {
-//        mouseup[0]=mouseup[1]=mouseup[2] = 0;
+		//        mouseup[0]=mouseup[1]=mouseup[2] = 0;
 		mousedown[0] = mousedown[1] = mousedown[2] = set;
 	} else if (button < 4) {
-//        mouseup[button-1] = 0;
+		//        mouseup[button-1] = 0;
 		mousedown[button - 1] = set;
 	}
 }
@@ -567,15 +564,15 @@ GUI_status GUI_Widget::try_mouse_delayed() {
 
 	if (mousedown_time != 0 && time_to_hold >= GUI::mouseclick_delay) {
 		Shared::MouseButton button = held_button;
-		int x, y; // position isn't saved anywhere so we get it here
+		int x, y;                           // position isn't saved anywhere so we get it here
 		screen->get_mouse_location(&x, &y); // hopefully it hasn't changed since MouseDown
-		held_button = Shared::BUTTON_NONE; // no need to clear mousedown time, MouseUp does that
+		held_button = Shared::BUTTON_NONE;  // no need to clear mousedown time, MouseUp does that
 		return (MouseHeld(x, y, button));
 	}
 
 	if (mouseup_time != 0 && time_to_click >= GUI::mouseclick_delay) {
 		Shared::MouseButton button = delayed_button;
-		int x, y; // position isn't saved anywhere so we get it here
+		int x, y;                           // position isn't saved anywhere so we get it here
 		screen->get_mouse_location(&x, &y); // hopefully it hasn't changed since MouseClick/MouseUp
 		delayed_button = Shared::BUTTON_NONE;
 		// before a Double or Delayed click, mouseup time is reset

@@ -23,9 +23,9 @@
 #ifndef ULTIMA_BITMAP_H
 #define ULTIMA_BITMAP_H
 
-#include "ultima/shared/core/lzw.h"
 #include "common/stream.h"
 #include "graphics/managed_surface.h"
+#include "ultima/shared/core/lzw.h"
 
 namespace Ultima {
 namespace Shared {

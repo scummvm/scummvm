@@ -45,6 +45,7 @@ private:
 	uint16 _count;
 	RMS *_rmsObjects;
 	DragonOBD *_dragonOBD;
+
 public:
 	DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD);
 	~DragonRMS();

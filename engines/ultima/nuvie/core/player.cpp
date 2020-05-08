@@ -20,23 +20,23 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/nuvie_io.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/core/obj_manager.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/save/obj_list.h"
-#include "ultima/nuvie/core/u6_objects.h"
-#include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/core/weather.h"
-#include "ultima/nuvie/script/script.h"
 #include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/u6_objects.h"
+#include "ultima/nuvie/core/weather.h"
+#include "ultima/nuvie/files/nuvie_io.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/save/obj_list.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/sound/sound_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -90,7 +90,7 @@ bool Player::load(NuvieIO *objlist) {
 
 	init();
 
-// We can get the name from the player actor. --SB-X
+	// We can get the name from the player actor. --SB-X
 	/* objlist->seek(0xf00);
 
 	 objlist->readToBuf((unsigned char *)name,14); // read in Player name.*/
@@ -177,7 +177,6 @@ Actor *Player::find_actor() {
 	return (actor_manager->get_avatar());
 }
 
-
 // keep MapWindow focused on Player actor, or remove focus
 void Player::set_mapwindow_centered(bool state) {
 	uint16 x, y;
@@ -246,7 +245,6 @@ const char *Player::get_name() {
 	return actor->get_name(true);
 }
 
-
 /* Add to Player karma. Handle appropriately the karma min/max limits. */
 void Player::add_karma(uint8 val) {
 	karma = ((karma + val) <= 99) ? karma + val : 99;
@@ -263,17 +261,17 @@ void Player::subtract_movement_points(uint8 points) {
 
 const char *Player::get_gender_title() {
 	switch (game_type) {
-	case NUVIE_GAME_U6 :
+	case NUVIE_GAME_U6:
 		if (gender == 0)
 			return "milord";
 		else
 			return "milady";
-	case NUVIE_GAME_MD :
+	case NUVIE_GAME_MD:
 		if (gender == 0)
 			return "Sir";
 		else
 			return "Madam";
-	default :
+	default:
 		break;
 	}
 
@@ -283,8 +281,7 @@ const char *Player::get_gender_title() {
 bool Player::check_moveRelative(sint16 rel_x, sint16 rel_y) {
 	if (!actor->moveRelative(rel_x, rel_y, ACTOR_IGNORE_DANGER)) { /**MOVE**/
 		ActorError *ret = actor->get_error();
-		if (ret->err == ACTOR_BLOCKED_BY_ACTOR
-		        && party->contains_actor(ret->blocking_actor) && ret->blocking_actor->is_immobile() == false)
+		if (ret->err == ACTOR_BLOCKED_BY_ACTOR && party->contains_actor(ret->blocking_actor) && ret->blocking_actor->is_immobile() == false)
 			ret->blocking_actor->push(actor, ACTOR_PUSH_HERE);
 		if (!actor->moveRelative(rel_x, rel_y, ACTOR_IGNORE_DANGER)) /**MOVE**/
 			return false;
@@ -295,15 +292,14 @@ bool Player::check_moveRelative(sint16 rel_x, sint16 rel_y) {
 // walk to adjacent square
 void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 	const uint8 raft_movement_tbl[] = {
-		NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_N, NUVIE_DIR_NW, NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_NW, NUVIE_DIR_N,
-		NUVIE_DIR_NE, NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_NE, NUVIE_DIR_N,
-		NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_E, NUVIE_DIR_E, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_NE,
-		NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_SE, NUVIE_DIR_S, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_S, NUVIE_DIR_SE,
-		NUVIE_DIR_S, NUVIE_DIR_SE, NUVIE_DIR_S, NUVIE_DIR_SW, NUVIE_DIR_SE, NUVIE_DIR_S, NUVIE_DIR_S, NUVIE_DIR_SW,
-		NUVIE_DIR_W, NUVIE_DIR_S, NUVIE_DIR_SW, NUVIE_DIR_SW, NUVIE_DIR_SW, NUVIE_DIR_S, NUVIE_DIR_SW, NUVIE_DIR_W,
-		NUVIE_DIR_NW, NUVIE_DIR_W, NUVIE_DIR_SW, NUVIE_DIR_W, NUVIE_DIR_NW, NUVIE_DIR_SW, NUVIE_DIR_W, NUVIE_DIR_W,
-		NUVIE_DIR_NW, NUVIE_DIR_N, NUVIE_DIR_W, NUVIE_DIR_NW, NUVIE_DIR_N, NUVIE_DIR_NW, NUVIE_DIR_W, NUVIE_DIR_NW
-	};
+	    NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_N, NUVIE_DIR_NW, NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_NW, NUVIE_DIR_N,
+	    NUVIE_DIR_NE, NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_NE, NUVIE_DIR_N,
+	    NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_E, NUVIE_DIR_E, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_NE,
+	    NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_SE, NUVIE_DIR_S, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_S, NUVIE_DIR_SE,
+	    NUVIE_DIR_S, NUVIE_DIR_SE, NUVIE_DIR_S, NUVIE_DIR_SW, NUVIE_DIR_SE, NUVIE_DIR_S, NUVIE_DIR_S, NUVIE_DIR_SW,
+	    NUVIE_DIR_W, NUVIE_DIR_S, NUVIE_DIR_SW, NUVIE_DIR_SW, NUVIE_DIR_SW, NUVIE_DIR_S, NUVIE_DIR_SW, NUVIE_DIR_W,
+	    NUVIE_DIR_NW, NUVIE_DIR_W, NUVIE_DIR_SW, NUVIE_DIR_W, NUVIE_DIR_NW, NUVIE_DIR_SW, NUVIE_DIR_W, NUVIE_DIR_W,
+	    NUVIE_DIR_NW, NUVIE_DIR_N, NUVIE_DIR_W, NUVIE_DIR_NW, NUVIE_DIR_N, NUVIE_DIR_NW, NUVIE_DIR_W, NUVIE_DIR_NW};
 	const uint8 ship_cost[8] = {0xA, 5, 3, 4, 5, 4, 3, 5};
 	const uint8 skiff_cost[8] = {3, 4, 5, 7, 0xA, 7, 5, 4};
 
@@ -317,7 +313,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 	if (game_type == NUVIE_GAME_U6) {
 		if (actor->id_n == 0) { // vehicle actor
 			if (actor->obj_n == OBJ_U6_INFLATED_BALLOON &&
-			        (!Game::get_game()->has_free_balloon_movement() || !party->has_obj(OBJ_U6_FAN, 0, false))) {
+			    (!Game::get_game()->has_free_balloon_movement() || !party->has_obj(OBJ_U6_FAN, 0, false))) {
 				can_change_rel_dir = false;
 				uint8 dir = get_reverse_direction(Game::get_game()->get_weather()->get_wind_dir());
 				if (dir == NUVIE_DIR_NONE) {
@@ -358,8 +354,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 
 		ActorMoveFlags move_flags = ACTOR_IGNORE_DANGER | ACTOR_IGNORE_PARTY_MEMBERS;
 		// don't allow diagonal move between blocked tiles (player only)
-		if (rel_x && rel_y && !actor->check_move(x + rel_x, y + 0, z, move_flags)
-		        && !actor->check_move(x + 0, y + rel_y, z, move_flags)) {
+		if (rel_x && rel_y && !actor->check_move(x + rel_x, y + 0, z, move_flags) && !actor->check_move(x + 0, y + rel_y, z, move_flags)) {
 			movementStatus = BLOCKED;
 		}
 	} else if (game_type == NUVIE_GAME_MD) {
@@ -399,7 +394,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 			}
 			if (movementStatus == BLOCKED) {
 				Game::get_game()->get_sound_manager()->playSfx(NUVIE_SFX_BLOCKED);
-				if (actor->id_n == 0) //vehicle actor.
+				if (actor->id_n == 0)         //vehicle actor.
 					actor->set_moves_left(0); //zero movement points here so U6 can change wind direction by advancing game time.
 			}
 		}
@@ -452,7 +447,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 	// update world around player
 	actor_manager->updateActors(x, y, z);
 	obj_manager->update(x, y, z); // remove temporary objs, hatch eggs
-	clock->inc_move_counter(); // doesn't update time
+	clock->inc_move_counter();    // doesn't update time
 	actor_manager->startActors(); // end player turn
 }
 
@@ -470,19 +465,19 @@ void Player::try_open_door(uint16 x, uint16 y, uint8 z) {
 void Player::move(sint16 new_x, sint16 new_y, uint8 new_level, bool teleport) {
 	if (actor->move(new_x, new_y, new_level, ACTOR_FORCE_MOVE)) {
 		//map_window->centerMapOnActor(actor);
-		if (party->is_leader(actor)) { // lead party
+		if (party->is_leader(actor)) {                        // lead party
 			if (actor_manager->get_avatar()->get_hp() == 0) { // need to end turn if Avatar died
 				actor_manager->startActors();
 				return;
 			}
 			party->move(new_x, new_y, new_level); // center everyone first
-			party->follow(0, 0); // then try to move them to correct positions
+			party->follow(0, 0);                  // then try to move them to correct positions
 		}
 		actor_manager->updateActors(new_x, new_y, new_level);
 		if (teleport && new_level != 0 && new_level != 5)
 			Game::get_game()->get_weather()->set_wind_dir(NUVIE_DIR_NONE);
 		obj_manager->update(new_x, new_y, new_level, teleport); // remove temporary objs, hatch eggs
-		// it's still the player's turn
+		                                                        // it's still the player's turn
 	}
 }
 
@@ -504,10 +499,10 @@ void Player::moveDown() {
 
 void Player::pass() {
 	Game::get_game()->get_script()->call_player_pass();
-// uint16 x = actor->x, y = actor->y;
-// uint8 z = actor->z;
+	// uint16 x = actor->x, y = actor->y;
+	// uint8 z = actor->z;
 
-// Move balloon / raft if required.
+	// Move balloon / raft if required.
 	if (game_type == NUVIE_GAME_U6 && (actor->obj_n == OBJ_U6_INFLATED_BALLOON || actor->obj_n == OBJ_U6_RAFT)) {
 		if (Game::get_game()->get_weather()->get_wind_dir() != NUVIE_DIR_NONE) {
 			moveRelative(0, 0);
@@ -518,17 +513,15 @@ void Player::pass() {
 	if (actor->get_moves_left() > 0)
 		actor->set_moves_left(0); // Pass and use up moves
 
-// update world around player
+	// update world around player
 	if (party_mode && party->is_leader(actor)) // lead party
 		party->follow(0, 0);
-// actor_manager->updateActors(x, y, z); // not needed because position is unchanged
+	// actor_manager->updateActors(x, y, z); // not needed because position is unchanged
 	clock->inc_move_counter_by_a_minute(); // doesn't update time
-	actor_manager->startActors(); // end player turn
-//actor_manager->moveActors();
+	actor_manager->startActors();          // end player turn
+	                                       //actor_manager->moveActors();
 	Game::get_game()->time_changed();
 }
-
-
 
 /* Enter party mode, with everyone following actor. (must be in the party)
  */
@@ -540,7 +533,6 @@ bool Player::set_party_mode(Actor *new_actor) {
 	}
 	return (false);
 }
-
 
 /* Enter solo mode as actor. (must be in the party)
  */
@@ -556,7 +548,6 @@ bool Player::set_solo_mode(Actor *new_actor) {
 	}
 	return (false);
 }
-
 
 /* Returns the delay in continuous movement for the actor type we control.
  */
@@ -578,13 +569,12 @@ uint32 Player::get_walk_delay() {
 		return (125); // normal movement about 8 spaces per second
 }
 
-
 /* Returns true if it's time for the player to take another step.
  * (call during continuous movement)
  */
 bool Player::check_walk_delay() {
 	static uint32 walk_delay = 0, // start with no delay
-	              last_time = clock->get_ticks();
+	    last_time = clock->get_ticks();
 	uint32 this_time = clock->get_ticks();
 	uint32 time_passed = this_time - last_time;
 
@@ -620,7 +610,7 @@ void Player::attack_select_init(bool use_attack_text) {
 	Actor *target_actor = NULL;
 
 	switch (target.type) {
-	case TARGET_ACTOR :
+	case TARGET_ACTOR:
 		target_actor = actor_manager->get_actor(target.actor_num);
 		uint16 target_x, target_y;
 		map_window->get_pos(&x, &y, &z);
@@ -633,7 +623,7 @@ void Player::attack_select_init(bool use_attack_text) {
 		}
 		break;
 
-	case TARGET_LOCATION :
+	case TARGET_LOCATION:
 		if (target.loc.z == actor->get_z() && weapon_can_hit(target.loc.x, target.loc.y)) {
 			map_window->get_pos(&x, &y, &z);
 			map_window->moveCursor(target.loc.x - x, target.loc.y - y);
@@ -642,7 +632,7 @@ void Player::attack_select_init(bool use_attack_text) {
 		}
 		break;
 
-	default :
+	default:
 		break;
 	}
 
@@ -713,7 +703,7 @@ void Player::attack(MapCoord target, Actor *target_actor) {
 	} else
 		scroll->display_string("\nOut of range!\n");
 
-//actor_manager->startActors(); // end player turn
+	//actor_manager->startActors(); // end player turn
 	return;
 }
 
@@ -738,8 +728,10 @@ void Player::repairShip() {
 	if (ship->get_obj_n() != OBJ_U6_SHIP)
 		return;
 	// ship actor's health is hull strength
-	if (ship->get_hp() + 5 > 100) ship->set_hp(100);
-	else                       ship->set_hp(ship->get_hp() + 5);
+	if (ship->get_hp() + 5 > 100)
+		ship->set_hp(100);
+	else
+		ship->set_hp(ship->get_hp() + 5);
 
 	scroll->display_fmt_string("Hull Strength: %d%%\n", ship->get_hp());
 

@@ -93,7 +93,7 @@ private:
 	 * @param hidden       true if hidden files should be added, false otherwise
 	 * @param find_data    Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
 	 */
-	static void addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data);
+	static void addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA *find_data);
 
 	/**
 	 * Converts a Unicode string to Ascii format.
@@ -109,7 +109,7 @@ private:
 	 * @param str Common::String to convert from Ascii to Unicode.
 	 * @return str in Unicode format.
 	 */
-	static const TCHAR* toUnicode(const char *str);
+	static const TCHAR *toUnicode(const char *str);
 
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the GetFileAttributes() function.

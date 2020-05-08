@@ -31,6 +31,7 @@ namespace Titanic {
 class CNapkin : public CCarry {
 	DECLARE_MESSAGE_MAP;
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+
 public:
 	CLASSDEF;
 	CNapkin();

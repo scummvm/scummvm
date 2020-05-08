@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GUMPS_SCALERGUMP_H
 #define ULTIMA8_GUMPS_SCALERGUMP_H
 
-#include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -52,9 +52,9 @@ public:
 	void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 	void RenderSurfaceChanged() override;
 	void ParentToGump(int32 &px, int32 &py,
-	                          PointRoundDir r = ROUND_TOPLEFT) override;
+	                  PointRoundDir r = ROUND_TOPLEFT) override;
 	void GumpToParent(int32 &gx, int32 &gy,
-	                          PointRoundDir r = ROUND_TOPLEFT) override;
+	                  PointRoundDir r = ROUND_TOPLEFT) override;
 
 	void GetScaledSize(int32 &sw, int32 &sh) const {
 		sw = _swidth1;

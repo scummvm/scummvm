@@ -20,27 +20,27 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/screen/surface.h"
-#include "ultima/nuvie/screen/scale.h"
 #include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/gui/widgets/background.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/widgets/background.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/scale.h"
+#include "ultima/nuvie/screen/surface.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-#define sqr(a) ((a)*(a))
+#define sqr(a) ((a) * (a))
 
 //Ultima 6 light globe sizes.
 #define NUM_GLOBES 5
 #define SHADING_BORDER 2 // should be the same as MapWindow's TMP_MAP_BORDER
-static const sint32 globeradius[]   = { 36, 112, 148, 192, 448 };
-static const sint32 globeradius_2[] = { 18, 56, 74, 96, 224 };
+static const sint32 globeradius[] = {36, 112, 148, 192, 448};
+static const sint32 globeradius_2[] = {18, 56, 74, 96, 224};
 
 Screen::Screen(Configuration *cfg) {
 	config = cfg;
@@ -138,18 +138,17 @@ bool Screen::toggle_darkness_cheat() {
 	return is_no_darkness;
 }
 
-
 bool Screen::set_palette(uint8 *p) {
 	if (_renderSurface == NULL || p == NULL)
 		return false;
 
-//SDL_SetColors(scaled_surface,palette,0,256);
+	//SDL_SetColors(scaled_surface,palette,0,256);
 	for (int i = 0; i < 256; ++i) {
-		uint32  r = p[i * 3];
-		uint32  g = p[i * 3 + 1];
-		uint32  b = p[i * 3 + 2];
+		uint32 r = p[i * 3];
+		uint32 g = p[i * 3 + 1];
+		uint32 b = p[i * 3 + 2];
 
-		uint32  c = ((r >> RenderSurface::Rloss) << RenderSurface::Rshift) | ((g >> RenderSurface::Gloss) << RenderSurface::Gshift) | ((b >> RenderSurface::Bloss) << RenderSurface::Bshift);
+		uint32 c = ((r >> RenderSurface::Rloss) << RenderSurface::Rshift) | ((g >> RenderSurface::Gloss) << RenderSurface::Gshift) | ((b >> RenderSurface::Bloss) << RenderSurface::Bshift);
 
 		_renderSurface->colour32[i] = c;
 	}
@@ -302,7 +301,6 @@ bool Screen::fill32(uint8 colour_num, uint16 x, uint16 y, sint16 w, sint16 h) {
 	uint32 *pixels;
 	uint16 i, j;
 
-
 	pixels = (uint32 *)_renderSurface->pixels;
 
 	pixels += y * _renderSurface->w + x;
@@ -431,10 +429,10 @@ void Screen::put_pixel(uint8 colour_num, uint16 x, uint16 y) {
 }
 
 void *Screen::get_pixels() {
-//if(scaled_surface == NULL)
-//   return NULL;
+	//if(scaled_surface == NULL)
+	//   return NULL;
 
-//return scaled_surface->pixels;
+	//return scaled_surface->pixels;
 	return NULL;
 }
 
@@ -446,12 +444,12 @@ Graphics::ManagedSurface *Screen::get_sdl_surface() {
 }
 
 bool Screen::blit(int32 dest_x, int32 dest_y, const byte *src_buf, uint16 src_bpp,
-		uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans,
-		Common::Rect *clip_rect, uint8 opacity) {
+                  uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans,
+                  Common::Rect *clip_rect, uint8 opacity) {
 	uint16 src_x = 0;
 	uint16 src_y = 0;
 
-// clip to screen.
+	// clip to screen.
 
 	if (dest_x >= width || dest_y >= height)
 		return false;
@@ -482,7 +480,7 @@ bool Screen::blit(int32 dest_x, int32 dest_y, const byte *src_buf, uint16 src_bp
 	if (dest_y + src_h >= height)
 		src_h = height - dest_y;
 
-//clip to rect if required.
+	//clip to rect if required.
 
 	if (clip_rect) {
 		if (dest_x + src_w < clip_rect->left || dest_y + src_h < clip_rect->top)
@@ -530,17 +528,16 @@ bool Screen::blit(int32 dest_x, int32 dest_y, const byte *src_buf, uint16 src_bp
 	return blit32(dest_x, dest_y, src_buf, src_bpp, src_w, src_h, src_pitch, trans);
 }
 
-
 inline uint16 Screen::blendpixel16(uint16 p, uint16 p1, uint8 opacity) {
-	return (((uint8)(((float)((p1 & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Rshift) |     //R
-	       (((uint8)(((float)((p1 & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Gshift) |    //G
-	       (((uint8)(((float)((p1 & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Bshift);     //B
+	return (((uint8)(((float)((p1 & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Rshift) | //R
+	       (((uint8)(((float)((p1 & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Gshift) | //G
+	       (((uint8)(((float)((p1 & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Bshift);  //B
 }
 
 inline uint32 Screen::blendpixel32(uint32 p, uint32 p1, uint8 opacity) {
-	return (((uint8)(((float)((p1 & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Rshift) |     //R
-	       (((uint8)(((float)((p1 & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Gshift) |    //G
-	       (((uint8)(((float)((p1 & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Bshift);     //B
+	return (((uint8)(((float)((p1 & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Rshift) | //R
+	       (((uint8)(((float)((p1 & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Gshift) | //G
+	       (((uint8)(((float)((p1 & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(opacity) / 255.0f) + (uint8)(((float)((p & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(255 - opacity) / 255.0f)) << _renderSurface->Bshift);  //B
 }
 
 inline bool Screen::blit16(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans) {
@@ -611,7 +608,6 @@ bool Screen::blit32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 sr
 
 	pixels += dest_y * _renderSurface->w + dest_x;
 
-
 	if (trans) {
 		for (i = 0; i < src_h; i++) {
 			for (j = 0; j < src_w; j++) {
@@ -641,7 +637,6 @@ bool Screen::blit32WithOpacity(uint16 dest_x, uint16 dest_y, const byte *src_buf
 	pixels = (uint32 *)_renderSurface->pixels;
 
 	pixels += dest_y * _renderSurface->w + dest_x;
-
 
 	if (trans) {
 		for (i = 0; i < src_h; i++) {
@@ -723,117 +718,170 @@ void Screen::blitbitmap32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uin
 //Globe of r 1 is just a single tile of 2
 
 static const char TileGlobe[][11 * 11] = {
-	{
-		// 1 - magic items
-		1
-	},
-	{
-		// 2- candle, heatsource, fire field, cookfire, stove
-		1, 1, 1,
-		1, 2, 1,
-		1, 1, 1
-	},
-	{
-		// 3 - torch, brazier, campfire, lamppost, candelabra, moongate
-		0, 1, 1, 1, 0,
-		1, 2, 2, 2, 1,
-		1, 2, 3, 2, 1,
-		1, 2, 2, 2, 1,
-		0, 1, 1, 1, 0
-	},
-	{
-		// 4 - 20:00, eclipse, dungeon
-		0, 0, 1, 1, 1, 0, 0,
-		0, 1, 2, 2, 2, 1, 0,
-		1, 2, 3, 3, 3, 2, 1,
-		1, 2, 3, 4, 3, 2, 1,
-		1, 2, 3, 3, 3, 2, 1,
-		0, 1, 2, 2, 2, 1, 0,
-		0, 0, 1, 1, 1, 0, 0
-	},
-	{
-		// 5 - 5:00, 19:50
-		0, 0, 0, 1, 1, 1, 0, 0, 0,
-		0, 1, 1, 2, 2, 2, 1, 1, 0,
-		0, 1, 2, 3, 3, 3, 2, 1, 0,
-		1, 2, 3, 4, 4, 4, 3, 2, 1,
-		1, 2, 3, 4, 4, 4, 3, 2, 1,
-		1, 2, 3, 4, 4, 4, 3, 2, 1,
-		0, 1, 2, 3, 3, 3, 2, 1, 0,
-		0, 1, 1, 2, 2, 2, 1, 1, 0,
-		0, 0, 0, 1, 1, 1, 0, 0, 0,
-	},
-	{
-		// 6 - 5:10, 19:40
-		0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
-		0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0,
-		0, 1, 2, 2, 3, 3, 3, 2, 2, 1, 0,
-		0, 1, 2, 3, 4, 4, 4, 3, 2, 1, 0,
-		1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
-		1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
-		1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
-		0, 1, 2, 3, 4, 4, 4, 3, 2, 1, 0,
-		0, 1, 2, 2, 3, 3, 3, 2, 2, 1, 0,
-		0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0,
-		0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0
-	},
-	{
-		// 7 - 5:20, 19:30
-		0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0,
-		0, 1, 2, 2, 3, 3, 3, 2, 2, 1, 0,
-		1, 2, 3, 3, 4, 4, 4, 3, 3, 2, 1,
-		1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
-		2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
-		2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
-		2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
-		1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
-		1, 2, 3, 3, 4, 4, 4, 3, 3, 2, 1,
-		0, 1, 2, 2, 3, 3, 3, 2, 2, 1, 0,
-		0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0
-	},
-	{
-		// 8- 5:30, 19:20, torch equipped, light spell
-		2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2,
-		2, 2, 3, 3, 4, 4, 4, 3, 3, 2, 2,
-		2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
-		2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
-		2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
-		2, 2, 3, 3, 4, 4, 4, 3, 3, 2, 2,
-		2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2
-	},
-	{
-		// 9 - 5:40, 19:10
-		3, 3, 3, 3, 4, 4, 4, 3, 3, 3, 3,
-		3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3,
-		3, 3, 3, 3, 4, 4, 4, 3, 3, 3, 3
-	},
-	{
-		// 10 - 5:50 19:00
-		3, 3, 3, 4, 4, 4, 4, 4, 3, 3, 3,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
-		3, 3, 3, 4, 4, 4, 4, 4, 3, 3, 3
-	}
-};
+    {// 1 - magic items
+     1},
+    {// 2- candle, heatsource, fire field, cookfire, stove
+     1, 1, 1,
+     1, 2, 1,
+     1, 1, 1},
+    {// 3 - torch, brazier, campfire, lamppost, candelabra, moongate
+     0, 1, 1, 1, 0,
+     1, 2, 2, 2, 1,
+     1, 2, 3, 2, 1,
+     1, 2, 2, 2, 1,
+     0, 1, 1, 1, 0},
+    {// 4 - 20:00, eclipse, dungeon
+     0, 0, 1, 1, 1, 0, 0,
+     0, 1, 2, 2, 2, 1, 0,
+     1, 2, 3, 3, 3, 2, 1,
+     1, 2, 3, 4, 3, 2, 1,
+     1, 2, 3, 3, 3, 2, 1,
+     0, 1, 2, 2, 2, 1, 0,
+     0, 0, 1, 1, 1, 0, 0},
+    {
+        // 5 - 5:00, 19:50
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        0,
+        0,
+        1,
+        2,
+        3,
+        3,
+        3,
+        2,
+        1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        4,
+        4,
+        3,
+        2,
+        1,
+        1,
+        2,
+        3,
+        4,
+        4,
+        4,
+        3,
+        2,
+        1,
+        1,
+        2,
+        3,
+        4,
+        4,
+        4,
+        3,
+        2,
+        1,
+        0,
+        1,
+        2,
+        3,
+        3,
+        3,
+        2,
+        1,
+        0,
+        0,
+        1,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+    },
+    {// 6 - 5:10, 19:40
+     0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
+     0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0,
+     0, 1, 2, 2, 3, 3, 3, 2, 2, 1, 0,
+     0, 1, 2, 3, 4, 4, 4, 3, 2, 1, 0,
+     1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
+     1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
+     1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
+     0, 1, 2, 3, 4, 4, 4, 3, 2, 1, 0,
+     0, 1, 2, 2, 3, 3, 3, 2, 2, 1, 0,
+     0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0,
+     0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
+    {// 7 - 5:20, 19:30
+     0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0,
+     0, 1, 2, 2, 3, 3, 3, 2, 2, 1, 0,
+     1, 2, 3, 3, 4, 4, 4, 3, 3, 2, 1,
+     1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
+     2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
+     2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
+     2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
+     1, 2, 3, 4, 4, 4, 4, 4, 3, 2, 1,
+     1, 2, 3, 3, 4, 4, 4, 3, 3, 2, 1,
+     0, 1, 2, 2, 3, 3, 3, 2, 2, 1, 0,
+     0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0},
+    {// 8- 5:30, 19:20, torch equipped, light spell
+     2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2,
+     2, 2, 3, 3, 4, 4, 4, 3, 3, 2, 2,
+     2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
+     2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
+     2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2,
+     2, 2, 3, 3, 4, 4, 4, 3, 3, 2, 2,
+     2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 2},
+    {// 9 - 5:40, 19:10
+     3, 3, 3, 3, 4, 4, 4, 3, 3, 3, 3,
+     3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     3, 3, 4, 4, 4, 4, 4, 4, 4, 3, 3,
+     3, 3, 3, 3, 4, 4, 4, 3, 3, 3, 3},
+    {// 10 - 5:50 19:00
+     3, 3, 3, 4, 4, 4, 4, 4, 3, 3, 3,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3,
+     3, 3, 3, 4, 4, 4, 4, 4, 3, 3, 3}};
 
 void Screen::clearalphamap8(uint16 x, uint16 y, uint16 w, uint16 h, uint8 opacity, bool party_light_source) {
 	switch (lighting_style) {
@@ -871,11 +919,11 @@ void Screen::clearalphamap8(uint16 x, uint16 y, uint16 w, uint16 h, uint8 opacit
 	}
 	if (shading_ambient == 0xFF) {
 	} else {
-		memset(shading_data, shading_ambient, sizeof(char)*shading_rect.width() * shading_rect.height());
+		memset(shading_data, shading_ambient, sizeof(char) * shading_rect.width() * shading_rect.height());
 	}
 	sint16 x_off;
 	if (Game::get_game()->is_original_plus_full_map())
-		x_off = - Game::get_game()->get_background()->get_border_width();
+		x_off = -Game::get_game()->get_background()->get_border_width();
 	else
 		x_off = 0;
 	//Light globe around the avatar
@@ -893,11 +941,11 @@ void Screen::buildalphamap8() {
 			for (int x = 0; x < globeradius[i]; x++) {
 				float r;
 				//Distance from center
-				r  = sqrtf(sqr((y - globeradius_2[i])) + sqr((x - globeradius_2[i])));
+				r = sqrtf(sqr((y - globeradius_2[i])) + sqr((x - globeradius_2[i])));
 				//Unitize
 				r /= sqrtf(sqr(globeradius_2[i]) + sqr(globeradius_2[i]));
 				//Calculate brightness
-				r  = (float)exp(-(10 * r * r));
+				r = (float)exp(-(10 * r * r));
 				//Fit into a byte
 				r *= 255;
 				//Place it
@@ -924,13 +972,12 @@ void Screen::buildalphamap8() {
 	}
 }
 
-
 void Screen::drawalphamap8globe(sint16 x, sint16 y, uint16 r) {
 	sint16 i, j;
-// check shouldn't be needed since items only have 3 intensites
+	// check shouldn't be needed since items only have 3 intensites
 	//Clamp lighting globe size to 0-4 (5 levels) // 4 - 10 (7 levels) now in orig_style now like original
-//    if( r > NUM_GLOBES && lighting_style != LIGHTING_STYLE_ORIGINAL)
-//        r = NUM_GLOBES;
+	//    if( r > NUM_GLOBES && lighting_style != LIGHTING_STYLE_ORIGINAL)
+	//        r = NUM_GLOBES;
 	if (r < 1)
 		return;
 	if (shading_ambient == 0xFF)
@@ -952,7 +999,7 @@ void Screen::drawalphamap8globe(sint16 x, sint16 y, uint16 r) {
 					continue;
 				if (y + j - rad < 0 || y + j - rad >= shading_rect.height())
 					continue;
-				shading_data[(y + j - rad)*shading_rect.width() + (x + i - rad)] = MIN(shading_data[(y + j - rad) * shading_rect.width() + (x + i - rad)] + TileGlobe[r - 1][j * (rad * 2 + 1) + i], 4);
+				shading_data[(y + j - rad) * shading_rect.width() + (x + i - rad)] = MIN(shading_data[(y + j - rad) * shading_rect.width() + (x + i - rad)] + TileGlobe[r - 1][j * (rad * 2 + 1) + i], 4);
 			}
 		return;
 	}
@@ -965,14 +1012,13 @@ void Screen::drawalphamap8globe(sint16 x, sint16 y, uint16 r) {
 	for (i = -globeradius_2[r]; i < globeradius_2[r]; i++)
 		for (j = -globeradius_2[r]; j < globeradius_2[r]; j++) {
 			if ((y + i) - 1 < 0 ||
-			        (x + j) - 1 < 0 ||
-			        (y + i) + 1 > shading_rect.height() ||
-			        (x + j) + 1 > shading_rect.width())
+			    (x + j) - 1 < 0 ||
+			    (y + i) + 1 > shading_rect.height() ||
+			    (x + j) + 1 > shading_rect.width())
 				continue;
-			shading_data[(y + i)*shading_rect.width() + (x + j)] = MIN(shading_data[(y + i) * shading_rect.width() + (x + j)] + shading_globe[r][(i + globeradius_2[r]) * globeradius[r] + (j + globeradius_2[r])], 255);
+			shading_data[(y + i) * shading_rect.width() + (x + j)] = MIN(shading_data[(y + i) * shading_rect.width() + (x + j)] + shading_globe[r][(i + globeradius_2[r]) * globeradius[r] + (j + globeradius_2[r])], 255);
 		}
 }
-
 
 void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 	//pixel = (dst*(1-alpha))+(src*alpha)   for an interpolation
@@ -1072,7 +1118,6 @@ void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 		src_buf += src_y * shading_rect.width() + src_x;
 	}
 
-
 	switch (_renderSurface->bits_per_pixel) {
 	case 16:
 		uint16 *pixels16;
@@ -1082,9 +1127,9 @@ void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 
 		for (i = 0; i < src_h; i++) {
 			for (j = 0; j < src_w; j++) {
-				pixels16[j] = (((unsigned char)(((float)((pixels16[j] & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Rshift) |      //R
-				              (((unsigned char)(((float)((pixels16[j] & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Gshift) |      //G
-				              (((unsigned char)(((float)((pixels16[j] & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Bshift);       //B
+				pixels16[j] = (((unsigned char)(((float)((pixels16[j] & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Rshift) | //R
+				              (((unsigned char)(((float)((pixels16[j] & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Gshift) | //G
+				              (((unsigned char)(((float)((pixels16[j] & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Bshift);  //B
 			}
 			pixels16 += _renderSurface->w;
 			src_buf += shading_rect.width();
@@ -1100,9 +1145,9 @@ void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 
 		for (i = 0; i < src_h; i++) {
 			for (j = 0; j < src_w; j++) {
-				pixels[j] = (((unsigned char)(((float)((pixels[j] & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Rshift) |      //R
-				            (((unsigned char)(((float)((pixels[j] & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Gshift) |      //G
-				            (((unsigned char)(((float)((pixels[j] & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Bshift);       //B
+				pixels[j] = (((unsigned char)(((float)((pixels[j] & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Rshift) | //R
+				            (((unsigned char)(((float)((pixels[j] & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Gshift) | //G
+				            (((unsigned char)(((float)((pixels[j] & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Bshift);  //B
 			}
 			pixels += _renderSurface->w;
 			src_buf += shading_rect.width();
@@ -1114,14 +1159,12 @@ void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 		break;
 		return;
 	}
-
 }
-
 
 /* Return an 8bit _renderSurface. Source format is assumed to be identical to screen. */
 Graphics::ManagedSurface *Screen::create_sdl_surface_8(byte *src_buf, uint16 src_w, uint16 src_h) {
 	Graphics::ManagedSurface *new_surface = new Graphics::ManagedSurface(src_w, src_h,
-		Graphics::PixelFormat::createFormatCLUT8());
+	                                                                     Graphics::PixelFormat::createFormatCLUT8());
 	byte *pixels = (byte *)new_surface->getPixels();
 
 	if (_renderSurface->bits_per_pixel == 16) {
@@ -1144,13 +1187,12 @@ Graphics::ManagedSurface *Screen::create_sdl_surface_8(byte *src_buf, uint16 src
 	return (new_surface);
 }
 
-
 Graphics::ManagedSurface *Screen::create_sdl_surface_from(byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch) {
 	Graphics::ManagedSurface *new_surface;
 	uint16 i, j;
 
 	new_surface = RenderSurface::createSurface(src_w, src_h,
-		_renderSurface->getFormat());
+	                                           _renderSurface->getFormat());
 
 	if (_renderSurface->bits_per_pixel == 16) {
 		uint16 *pixels = (uint16 *)new_surface->getPixels();
@@ -1175,7 +1217,6 @@ Graphics::ManagedSurface *Screen::create_sdl_surface_from(byte *src_buf, uint16 
 	}
 
 	return new_surface;
-
 }
 
 uint16 Screen::get_pitch() {
@@ -1190,7 +1231,6 @@ void Screen::update() {
 	_rawSurface->markAllDirty();
 	_rawSurface->update();
 }
-
 
 void Screen::update(int x, int y, uint16 w, uint16 h) {
 	if (x < 0)
@@ -1215,13 +1255,13 @@ void Screen::preformUpdate() {
 }
 
 void Screen::lock() {
-// SDL_LockSurface(scaled_surface);
+	// SDL_LockSurface(scaled_surface);
 
 	return;
 }
 
 void Screen::unlock() {
-//SDL_UnlockSurface(scaled_surface);
+	//SDL_UnlockSurface(scaled_surface);
 
 	return;
 }
@@ -1254,10 +1294,11 @@ int Screen::get_screen_bpp() {
 }
 
 void Screen::set_screen_mode() {
-	if (scale_factor == 0) scale_factor = 1;
+	if (scale_factor == 0)
+		scale_factor = 1;
 	scaler = 0;
 	scale_factor = 1;
-		
+
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(width, height, &SCREEN_FORMAT);
 	_rawSurface = new Graphics::Screen(width, height, SCREEN_FORMAT);
@@ -1440,7 +1481,6 @@ byte *Screen::copy_area(Common::Rect *area, byte *buf) {
 	return (copy_area32(area, buf));
 }
 
-
 // byte * -> _renderSurface
 // byte * -> target (src area still means location on screen, not relative to target)
 // (NULL area = entire screen)
@@ -1455,7 +1495,6 @@ void Screen::restore_area(byte *pixels, Common::Rect *area,
 	else
 		restore_area32(pixels, area, target, target_area, free_src);
 }
-
 
 byte *Screen::copy_area32(Common::Rect *area, byte *buf) {
 	uint32 *copied = (uint32 *)buf;
@@ -1500,7 +1539,6 @@ byte *Screen::copy_area32(Common::Rect *area, byte *buf) {
 	return ((byte *)copied);
 }
 
-
 void Screen::restore_area32(byte *pixels, Common::Rect *area,
                             byte *target, Common::Rect *target_area, bool free_src) {
 	uint32 *src = (uint32 *)pixels;
@@ -1520,7 +1558,6 @@ void Screen::restore_area32(byte *pixels, Common::Rect *area,
 		free(pixels);
 	}
 }
-
 
 byte *Screen::copy_area16(Common::Rect *area, byte *buf) {
 	uint16 *copied = (uint16 *)buf;
@@ -1565,7 +1602,6 @@ byte *Screen::copy_area16(Common::Rect *area, byte *buf) {
 	return ((byte *)copied);
 }
 
-
 void Screen::restore_area16(byte *pixels, Common::Rect *area,
                             byte *target, Common::Rect *target_area, bool free_src) {
 	uint16 *src = (uint16 *)pixels;
@@ -1596,7 +1632,6 @@ void Screen::draw_line(int sx, int sy, int ex, int ey, uint8 color) {
 	return;
 }
 
-
 void Screen::get_mouse_location(int *x, int *y) {
 	Common::Point pt = Events::get()->getMousePos();
 	*x = pt.x;
@@ -1617,8 +1652,8 @@ void Screen::scale_sdl_window_coords(sint32 *mx, sint32 *my) {
 		sx = ((float)viewport.width() / width) * sx;
 		sy = ((float)viewport.height() / height) * sy;
 
-		*mx = (sint32)((float) * mx / sx) ;
-		*my = (sint32)((float) * my / sy) ;
+		*mx = (sint32)((float)*mx / sx);
+		*my = (sint32)((float)*my / sy);
 	} else {
 		sint32 w, h;
 		SDL_RenderGetLogicalSize(sdlRenderer, &w, &h);
@@ -1626,8 +1661,8 @@ void Screen::scale_sdl_window_coords(sint32 *mx, sint32 *my) {
 		w = w / width;
 		h = h / height;
 
-		*mx = (sint32)((float) * mx / window_scale_w);
-		*my = (sint32)((float) * my / window_scale_h);
+		*mx = (sint32)((float)*mx / window_scale_w);
+		*my = (sint32)((float)*my / window_scale_h);
 	}
 }
 #endif

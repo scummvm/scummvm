@@ -23,9 +23,9 @@
 #ifndef MUTATIONOFJB_ENDBLOCKCOMMAND_H
 #define MUTATIONOFJB_ENDBLOCKCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
+#include "mutationofjb/commands/command.h"
 
 namespace MutationOfJB {
 
@@ -38,6 +38,7 @@ public:
 	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 	void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
 	void finish(ScriptParseContext &parseCtx) override;
+
 private:
 	bool _elseFound;
 	bool _hashFound;
@@ -67,10 +68,11 @@ public:
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Command *next() const override;
 	Common::String debugString() const override;
+
 private:
 	Command *_nextCmd;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

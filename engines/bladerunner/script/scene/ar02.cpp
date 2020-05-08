@@ -31,44 +31,42 @@ void SceneScriptAR02::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-182.0f, 0.0f, -551.0f, 973);
 	}
-	Scene_Exit_Add_2D_Exit(0,  0, 439, 212, 479, 2);
+	Scene_Exit_Add_2D_Exit(0, 0, 439, 212, 479, 2);
 	Scene_Exit_Add_2D_Exit(1, 81, 202, 215, 406, 3);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,   1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRCAMBR1, 60, 100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1, 50,   1, 1);
-	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM8,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM2,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM3,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM4,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM5,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM6,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM7,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxHCANM1,   3,  30, 16,  16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1, 50, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfx67_0480R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0540R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0560R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0870R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0900R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_0940R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1070R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1080R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM8, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM2, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM3, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM4, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM5, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM6, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM7, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHCANM1, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 180, 16,  25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 180, 16,  25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10, 180, 50, 100,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10, 180, 50, 100,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 10, 180, 50, 100,    0,   0, -101, -101, 0, 0);
-	if (Game_Flag_Query(kFlagSpinnerAtAR01)
-	    && Game_Flag_Query(kFlagAR01toAR02)) {
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 10, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A, 10, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	if (Game_Flag_Query(kFlagSpinnerAtAR01) && Game_Flag_Query(kFlagAR01toAR02)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 1, false);
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Reset(kFlagAR01toAR02);
-	} else if (!Game_Flag_Query(kFlagSpinnerAtAR01)
-	           &&  Game_Flag_Query(kFlagAR01toAR02)) {
+	} else if (!Game_Flag_Query(kFlagSpinnerAtAR01) && Game_Flag_Query(kFlagAR01toAR02)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Reset(kFlagAR01toAR02);
@@ -83,26 +81,18 @@ void SceneScriptAR02::SceneLoaded() {
 	if (!Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 		Item_Add_To_World(kItemScorpions, kModelAnimationCageOfScorpions, kSetAR01_AR02, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
 	}
-	if ( Global_Variable_Query(kVariableChapter) == 4
-	 && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 		Game_Flag_Set(kFlagNotUsed0);
 		Item_Remove_From_World(kItemScorpions);
 	}
 #else
-	if (Global_Variable_Query(kVariableChapter) < 4
-	    && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
-	    && !Game_Flag_Query(kFlagScorpionsInAR02)
-	) {
+	if (Global_Variable_Query(kVariableChapter) < 4 && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions) && !Game_Flag_Query(kFlagScorpionsInAR02)) {
 		// the kFlagScorpionsInAR02 flag helps keep track of the item in AR
 		// and make it not blink in and out of existence
 		// in the transition from AR01 to AR02
 		Game_Flag_Set(kFlagScorpionsInAR02);
 		Item_Add_To_World(kItemScorpions, kModelAnimationCageOfScorpions, kSetAR01_AR02, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
-	} else if (Global_Variable_Query(kVariableChapter) >= 4
-	           && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
-	           && Game_Flag_Query(kFlagScorpionsInAR02)
-	) {
+	} else if (Global_Variable_Query(kVariableChapter) >= 4 && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions) && Game_Flag_Query(kFlagScorpionsInAR02)) {
 		Game_Flag_Reset(kFlagScorpionsInAR02);
 		Item_Remove_From_World(kItemScorpions);
 	}
@@ -123,9 +113,7 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 			Actor_Face_Actor(kActorMcCoy, kActorInsectDealer, true);
 			Actor_Face_Actor(kActorInsectDealer, kActorMcCoy, true);
 			if (Global_Variable_Query(kVariableChapter) == 2) {
-				if (Game_Flag_Query(kFlagAR02InsectDealerInterviewed)
-				    && !Game_Flag_Query(kFlagAR02InsectDealerTalk)
-				) {
+				if (Game_Flag_Query(kFlagAR02InsectDealerInterviewed) && !Game_Flag_Query(kFlagAR02InsectDealerTalk)) {
 					Game_Flag_Set(kFlagAR02InsectDealerTalk);
 					Player_Loses_Control();
 					ADQ_Flush();
@@ -151,9 +139,7 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 					dialogueWithInsectDealer1();
 				}
 			} else if (Global_Variable_Query(kVariableChapter) > 2) {
-				if (Actor_Clue_Query(kActorMcCoy, kCluePeruvianLadyInterview)
-				    && !Actor_Clue_Query(kActorMcCoy, kClueDragonflyCollection)
-				) {
+				if (Actor_Clue_Query(kActorMcCoy, kCluePeruvianLadyInterview) && !Actor_Clue_Query(kActorMcCoy, kClueDragonflyCollection)) {
 					Actor_Says(kActorMcCoy, 205, 16);
 					Actor_Says(kActorInsectDealer, 290, 12);
 					Actor_Says(kActorInsectDealer, 300, 13);
@@ -186,10 +172,10 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 							break;
 						case 1:
 							Global_Variable_Increment(kVariableInsectDealerBanterTalk, 1);
-							Actor_Says(kActorMcCoy, 8920, 13); // I gotta ask you a question.
+							Actor_Says(kActorMcCoy, 8920, 13);       // I gotta ask you a question.
 							Actor_Says(kActorInsectDealer, 410, 13); //	Ah, perhaps you should ask someone else.
 							if (Player_Query_Agenda() == kPlayerAgendaSurly) {
-								Actor_Says(kActorMcCoy, 8450, 14); // Does this badge mean anything to you?
+								Actor_Says(kActorMcCoy, 8450, 14);       // Does this badge mean anything to you?
 								Actor_Says(kActorInsectDealer, 440, 14); // Please, this is all I know.
 								Actor_Modify_Friendliness_To_Other(kActorInsectDealer, kActorMcCoy, -5);
 							}
@@ -232,9 +218,7 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 		}
 	}
 
-	if (actorId == kActorHasan
-	    && Global_Variable_Query(kVariableChapter) == 2
-	) {
+	if (actorId == kActorHasan && Global_Variable_Query(kVariableChapter) == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -240.79f, 0.0f, -1328.89f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorHasan, true);
 			Actor_Face_Actor(kActorHasan, kActorMcCoy, true);
@@ -249,16 +233,13 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 	}
 
 	if (_vm->_cutContent) {
-		if (actorId == kActorHasan
-		    && Global_Variable_Query(kVariableChapter) > 2) {
+		if (actorId == kActorHasan && Global_Variable_Query(kVariableChapter) > 2) {
 
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -240.79f, 0.0f, -1328.89f, 12, true, false, false)) {
 				Actor_Face_Actor(kActorMcCoy, kActorHasan, true);
 				Actor_Face_Actor(kActorHasan, kActorMcCoy, true);
 
-				if (Actor_Clue_Query(kActorMcCoy, kClueStrangeScale1)
-					&& !Game_Flag_Query(kFlagWrongInvestigation)
-				) {
+				if (Actor_Clue_Query(kActorMcCoy, kClueStrangeScale1) && !Game_Flag_Query(kFlagWrongInvestigation)) {
 					dialogueWithHassan();
 				} else {
 					switch (Global_Variable_Query(kVariableHasanBanterTalk)) {
@@ -282,18 +263,17 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 					case 2:
 						// offer to buy snake
 						Global_Variable_Increment(kVariableHasanBanterTalk, 1);
-						if (Player_Query_Agenda() == kPlayerAgendaSurly
-						   || Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) <= 49 ) {
+						if (Player_Query_Agenda() == kPlayerAgendaSurly || Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) <= 49) {
 							Actor_Says(kActorMcCoy, 8915, 14); // You got a minute, pal?
-							Actor_Says(kActorHasan, 260, 14); // My time is quite valuable, noble one
+							Actor_Says(kActorHasan, 260, 14);  // My time is quite valuable, noble one
 							Actor_Modify_Friendliness_To_Other(kActorHasan, kActorMcCoy, -5);
 						} else {
 							Actor_Says(kActorMcCoy, 8615, 13); // Heard anything on the street?
-							Actor_Says(kActorHasan, 250, 13); // I'm afraid not, noble one. But you shall surely be the first to know, if I do hear something.
+							Actor_Says(kActorHasan, 250, 13);  // I'm afraid not, noble one. But you shall surely be the first to know, if I do hear something.
 						}
 						break;
 					default:
-						if (Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) <= 45 ) {
+						if (Actor_Query_Friendliness_To_Other(kActorHasan, kActorMcCoy) <= 45) {
 							Actor_Says(kActorMcCoy, 8940, 13);
 						} else {
 							Actor_Says(kActorMcCoy, 1315, 13);
@@ -318,9 +298,7 @@ bool SceneScriptAR02::ClickedOnItem(int itemId, bool a2) {
 				Actor_Says(kActorMcCoy, 60, 18);
 				Actor_Says(kActorInsectDealer, 20, 14);
 				Game_Flag_Set(kFlagAR02ScorpionsChecked);
-			} else if ( Game_Flag_Query(kFlagAR02ScorpionsChecked)
-			        && !Game_Flag_Query(kFlagAR02StungByScorpion)
-			) {
+			} else if (Game_Flag_Query(kFlagAR02ScorpionsChecked) && !Game_Flag_Query(kFlagAR02StungByScorpion)) {
 				Actor_Says(kActorMcCoy, 65, 21);
 				Actor_Says(kActorInsectDealer, 30, 14);
 				Actor_Says(kActorInsectDealer, 40, 14);
@@ -388,27 +366,22 @@ void SceneScriptAR02::DialogueQueueFlushed(int a1) {
 
 void SceneScriptAR02::dialogueWithInsectDealer1() {
 	Dialogue_Menu_Clear_List();
-	if (Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring)
-	    || Actor_Clue_Query(kActorMcCoy, kClueBombingSuspect)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring) || Actor_Clue_Query(kActorMcCoy, kClueBombingSuspect)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(490, 3, 5, 5); // EARRING
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueDragonflyAnklet)
-	    && !Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring)
-	    && !Actor_Clue_Query(kActorMcCoy, kClueBombingSuspect)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueDragonflyAnklet) && !Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring) && !Actor_Clue_Query(kActorMcCoy, kClueBombingSuspect)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(500, 3, 5, 5); // ANKLET
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(510, 8, 3, -1); // MERCHANDISE
-	Dialogue_Menu_Add_DONE_To_List(520); // DONE
+	Dialogue_Menu_Add_DONE_To_List(520);                      // DONE
 
 	Dialogue_Menu_Appear(320, 240);
 	int answerValue = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
 
 	switch (answerValue) {
-	case 490: // EARRING
-	case 500: // ANKLET
+	case 490:                     // EARRING
+	case 500:                     // ANKLET
 		if (answerValue == 490) { // EARRING
 			Actor_Says(kActorMcCoy, 145, 15);
 		} else { // ANKLET
@@ -441,7 +414,7 @@ void SceneScriptAR02::dialogueWithInsectDealer1() {
 		Actor_Says(kActorInsectDealer, 200, 14);
 		break;
 
-	case 520: // DONE
+	case 520:                             // DONE
 		Actor_Says(kActorMcCoy, 215, 16); // Thanks for your help.
 		break;
 	}
@@ -455,9 +428,7 @@ void SceneScriptAR02::dialogueWithInsectDealerBuyBracelet() {
 		Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(540);
 	}
 
-	if (Global_Variable_Query(kVariableChinyen) >= 15
-	    || Query_Difficulty_Level() == kGameDifficultyEasy
-	) {
+	if (Global_Variable_Query(kVariableChinyen) >= 15 || Query_Difficulty_Level() == kGameDifficultyEasy) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3); // BUY
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(540, 3, 5, 7); // NO THANKS
@@ -493,9 +464,7 @@ void SceneScriptAR02::dialogueWithInsectDealerBuySlug() {
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(530);
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(540);
 
-	if (Global_Variable_Query(kVariableChinyen) >= 125
-	    || Query_Difficulty_Level() == kGameDifficultyEasy
-	) {
+	if (Global_Variable_Query(kVariableChinyen) >= 125 || Query_Difficulty_Level() == kGameDifficultyEasy) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3); // BUY
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(540, 3, 5, 7); // NO THANKS
@@ -532,7 +501,7 @@ void SceneScriptAR02::dialogueWithHassan() {
 	Dialogue_Menu_Disappear();
 
 	switch (answerValue) {
-	case 550: // SCALE
+	case 550:                             // SCALE
 		Actor_Says(kActorMcCoy, 145, 11); // This your work?
 		Actor_Says(kActorHasan, 30, 11);
 		Actor_Says(kActorMcCoy, 160, 11);
@@ -573,9 +542,7 @@ void SceneScriptAR02::dialogueWithHassan() {
 			// Quote 80 is *boop* in ENG and DEU versions
 			// In FRA, ITA versions it is identical to the second half of quote 70, and thus redundant
 			// In ESP version it is the missing second half of quote 70, and is required!
-			if (_vm->_cutContent
-			    && _vm->_language == Common::ES_ESP
-			) {
+			if (_vm->_cutContent && _vm->_language == Common::ES_ESP) {
 				Actor_Says_With_Pause(kActorHasan, 70, 0.0f, 12);
 				Actor_Says(kActorHasan, 80, kAnimationModeTalk);
 			} else {
@@ -588,9 +555,7 @@ void SceneScriptAR02::dialogueWithHassan() {
 			// Quote 130 is *boop* in ENG and DEU versions
 			// In FRA, ITA versions it is identical to the second half of quote 120, and thus redundant
 			// In ESP version it is the missing second half of quote 120, and is required!
-			if (_vm->_cutContent
-			    && _vm->_language == Common::ES_ESP
-			) {
+			if (_vm->_cutContent && _vm->_language == Common::ES_ESP) {
 				Actor_Says_With_Pause(kActorHasan, 120, 0.0f, 13);
 				Actor_Says(kActorHasan, 130, kAnimationModeTalk);
 			} else {
@@ -614,9 +579,7 @@ void SceneScriptAR02::dialogueWithHassanBuySnake() {
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(530);
 	Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(540);
 
-	if (Global_Variable_Query(kVariableChinyen) >= 175
-	    || Query_Difficulty_Level() == kGameDifficultyEasy
-	) {
+	if (Global_Variable_Query(kVariableChinyen) >= 175 || Query_Difficulty_Level() == kGameDifficultyEasy) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3); // BUY
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(540, 3, 5, 7); // NO THANKS

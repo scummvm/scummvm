@@ -23,8 +23,8 @@
 #ifndef GLK_QUEST_STRING
 #define GLK_QUEST_STRING
 
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/str.h"
 
 namespace Glk {
@@ -93,15 +93,14 @@ String operator+(const String &x, const char *y);
 String operator+(const String &x, char y);
 String operator+(char x, const String &y);
 
-
 bool c_equal_i(char ch1, char ch2);
 size_t ci_find(const String &str1, const String &str2);
-bool   ci_equal(const String &str1, const String &str2);
-bool   ci_less_eq(const String &str1, const String &str2);
-bool   ci_less(const String &str1, const String &str2);
-bool   ci_notequal(const String &str1, const String &str2);
-bool   ci_gt_eq(const String &str1, const String &str2);
-bool   ci_gt(const String &str1, const String &str2);
+bool ci_equal(const String &str1, const String &str2);
+bool ci_less_eq(const String &str1, const String &str2);
+bool ci_less(const String &str1, const String &str2);
+bool ci_notequal(const String &str1, const String &str2);
+bool ci_gt_eq(const String &str1, const String &str2);
+bool ci_gt(const String &str1, const String &str2);
 
 class CI_EQUAL {
 public:
@@ -124,8 +123,8 @@ public:
 	}
 };
 
-extern CI_EQUAL   ci_equal_obj;
-extern CI_LESS    ci_less_obj;
+extern CI_EQUAL ci_equal_obj;
+extern CI_LESS ci_less_obj;
 extern CI_LESS_EQ ci_less_eq_obj;
 
 } // End of namespace Quest

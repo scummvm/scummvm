@@ -21,20 +21,20 @@
  */
 
 #include "tsage/ringworld2/ringworld2_speakers.h"
-#include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/graphics.h"
-#include "tsage/staticres.h"
 #include "tsage/ringworld2/ringworld2_scenes0.h"
 #include "tsage/ringworld2/ringworld2_scenes1.h"
 #include "tsage/ringworld2/ringworld2_scenes2.h"
 #include "tsage/ringworld2/ringworld2_scenes3.h"
+#include "tsage/scenes.h"
+#include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
 namespace Ringworld2 {
 
-VisualSpeaker::VisualSpeaker(): Speaker() {
+VisualSpeaker::VisualSpeaker() : Speaker() {
 	_delayAmount = 0;
 	_voiceDelayAmount = 0;
 	_frameNumber = R2_GLOBALS._events.getFrameNumber();
@@ -135,7 +135,7 @@ void VisualSpeaker::dispatch() {
 	}
 
 	if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) && (_numFrames == 2) &&
-			!R2_GLOBALS._playStream.isPlaying()) {
+	    !R2_GLOBALS._playStream.isPlaying()) {
 		_numFrames = 0;
 		_object1.animate(ANIM_MODE_NONE);
 		_object1.setFrame(1);
@@ -223,7 +223,7 @@ void VisualSpeaker::setText(const Common::String &msg) {
 
 	// If subtitles are turned off, don't show the text
 	if ((R2_GLOBALS._speechSubtitles & SPEECH_VOICE) &&
-			!(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
+	    !(R2_GLOBALS._speechSubtitles & SPEECH_TEXT)) {
 		_sceneText.hide();
 	}
 
@@ -293,7 +293,7 @@ void VisualSpeaker::setDelay(int delay) {
 
 //----------------------------------------------------------------------------
 
-SpeakerGameText::SpeakerGameText(): VisualSpeaker() {
+SpeakerGameText::SpeakerGameText() : VisualSpeaker() {
 	_speakerName = "GAMETEXT";
 	_color1 = 8;
 	_color2 = 0;
@@ -552,7 +552,7 @@ void SpeakerJocko3230::animateSpeaker() {
 // Classes related to MIRANDA
 //----------------------------------------------------------------------------
 
-SpeakerMiranda::SpeakerMiranda(): VisualSpeaker() {
+SpeakerMiranda::SpeakerMiranda() : VisualSpeaker() {
 	_speakerName = "MIRANDA";
 	_color1 = 154;
 	_color2 = 0;
@@ -684,7 +684,6 @@ void SpeakerMiranda3375::animateSpeaker() {
 			_object2->addMover(NULL);
 	}
 
-
 	switch (v) {
 	case 0:
 		_object1.animate(ANIM_MODE_2, NULL);
@@ -733,7 +732,6 @@ void SpeakerMiranda3385::animateSpeaker() {
 		if (_object2->_mover)
 			_object2->addMover(NULL);
 	}
-
 
 	switch (v) {
 	case 0:
@@ -784,7 +782,6 @@ void SpeakerMiranda3395::animateSpeaker() {
 		if (_object2->_mover)
 			_object2->addMover(NULL);
 	}
-
 
 	switch (v) {
 	case 0:
@@ -1066,7 +1063,7 @@ void SpeakerNej2800::animateSpeaker() {
 // Classes related to PHARISHA
 //----------------------------------------------------------------------------
 
-SpeakerPharisha::SpeakerPharisha(): VisualSpeaker() {
+SpeakerPharisha::SpeakerPharisha() : VisualSpeaker() {
 	_speakerName = "PHARISHA";
 	_color1 = 151;
 	_color2 = 0;
@@ -1205,7 +1202,7 @@ void SpeakerProtector3600::animateSpeaker() {
 // Classes related to QUINN
 //----------------------------------------------------------------------------
 
-SpeakerQuinn::SpeakerQuinn(): VisualSpeaker() {
+SpeakerQuinn::SpeakerQuinn() : VisualSpeaker() {
 	_speakerName = "QUINN";
 	_color1 = 60;
 	_color2 = 0;
@@ -1512,9 +1509,9 @@ void SpeakerQuinn2800::animateSpeaker() {
 		case 3110:
 			_object1.setZoom(75);
 			if (_object2->_strip == 1)
-				_object1.setup(4061	, 1, 1);
+				_object1.setup(4061, 1, 1);
 			else
-				_object1.setup(4061	, 3, 1);
+				_object1.setup(4061, 3, 1);
 			break;
 		default:
 			break;
@@ -1888,7 +1885,7 @@ void SpeakerQuinn3700::animateSpeaker() {
 // Classes related to QUINNL
 //----------------------------------------------------------------------------
 
-SpeakerQuinnL::SpeakerQuinnL(): SpeakerQuinn() {
+SpeakerQuinnL::SpeakerQuinnL() : SpeakerQuinn() {
 	_speakerName = "QUINNL";
 }
 
@@ -2037,7 +2034,7 @@ void SpeakerRocko3230::animateSpeaker() {
 // Classes related to SEEKER
 //----------------------------------------------------------------------------
 
-SpeakerSeeker::SpeakerSeeker(): VisualSpeaker() {
+SpeakerSeeker::SpeakerSeeker() : VisualSpeaker() {
 	_speakerName = "SEEKER";
 	_color1 = 35;
 	_color2 = 0;
@@ -2055,7 +2052,8 @@ void SpeakerSeeker300::animateSpeaker() {
 	if (!_object2) {
 		if (R2_GLOBALS._player._characterIndex == R2_SEEKER) {
 			_object2 = &R2_GLOBALS._player;
-		} else {assert(R2_GLOBALS._sceneManager._sceneNumber == 300);
+		} else {
+			assert(R2_GLOBALS._sceneManager._sceneNumber == 300);
 			Scene300 *scene = (Scene300 *)R2_GLOBALS._sceneManager._scene;
 			_object2 = &scene->_seeker;
 		}
@@ -2356,7 +2354,6 @@ void SpeakerSeeker3385::animateSpeaker() {
 			_object2->addMover(NULL);
 	}
 
-
 	switch (v) {
 	case 0:
 		_object1.animate(ANIM_MODE_2, NULL);
@@ -2510,7 +2507,6 @@ void SpeakerSeeker3600::animateSpeaker() {
 			_object2->addMover(NULL);
 
 		_object1.setPosition(_object2->_position);
-
 	}
 
 	switch (v) {
@@ -2601,7 +2597,7 @@ void SpeakerSeeker3700::animateSpeaker() {
 // Classes related to SEEKERL
 //----------------------------------------------------------------------------
 
-SpeakerSeekerL::SpeakerSeekerL(): SpeakerSeeker() {
+SpeakerSeekerL::SpeakerSeekerL() : SpeakerSeeker() {
 	_speakerName = "SEEKERL";
 }
 
@@ -2690,7 +2686,7 @@ void SpeakerSoldier300::animateSpeaker() {
 // Classes related to TEAL
 //----------------------------------------------------------------------------
 
-SpeakerTeal::SpeakerTeal(): VisualSpeaker() {
+SpeakerTeal::SpeakerTeal() : VisualSpeaker() {
 	_speakerName = "TEAL";
 	_color1 = 22;
 	_color2 = 0;
@@ -2702,7 +2698,7 @@ SpeakerTeal::SpeakerTeal(): VisualSpeaker() {
 	_numFrames = 0;
 }
 
-SpeakerTealMode7::SpeakerTealMode7(): SpeakerTeal() {
+SpeakerTealMode7::SpeakerTealMode7() : SpeakerTeal() {
 	_displayMode = 7;
 }
 
@@ -2838,7 +2834,7 @@ void SpeakerTeal3400::animateSpeaker() {
 	_object1.setPosition(_object2->_position);
 	_object1.show();
 
-	if (scene ->_sceneMode == 3305) {
+	if (scene->_sceneMode == 3305) {
 		R2_GLOBALS._player.setStrip(6);
 		scene->_companion1.setStrip(6);
 		scene->_companion2.setStrip(6);
@@ -2899,7 +2895,7 @@ void SpeakerTeal3600::animateSpeaker() {
 	}
 	_object1.setPosition(_object2->_position);
 
-	if (scene ->_sceneMode == 3323) {
+	if (scene->_sceneMode == 3323) {
 		_object1.hide();
 		_object2->show();
 	}
@@ -3260,7 +3256,7 @@ void SpeakerWebbster3400::animateSpeaker() {
 
 //----------------------------------------------------------------------------
 
-SpeakerDutyOfficer180::SpeakerDutyOfficer180(): VisualSpeaker() {
+SpeakerDutyOfficer180::SpeakerDutyOfficer180() : VisualSpeaker() {
 	_speakerName = "DUTYOFFICER";
 	_color1 = 5;
 	_color2 = 0;

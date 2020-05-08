@@ -33,6 +33,7 @@ struct WeaponOverlayFrame;
 
 class MainActor : public Actor {
 	friend class Debugger;
+
 public:
 	MainActor();
 	~MainActor() override;
@@ -104,7 +105,6 @@ public:
 	INTRINSIC(I_isAvatarInCombat);
 
 	void getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shape_);
-
 
 protected:
 	void saveData(Common::WriteStream *ws) override;

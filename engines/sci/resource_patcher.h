@@ -24,9 +24,9 @@
 #define SCI_RESOURCE_PATCHER_H
 
 #include "common/language.h"
-#include "sci/sci.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -144,7 +144,7 @@ private:
 	 * Reads an block size from the patch data, validates it, and advances the
 	 * patch data pointer.
 	 */
-	int32 readBlockSize(const byte * &patchData) const;
+	int32 readBlockSize(const byte *&patchData) const;
 };
 } // End of namespace Sci
 

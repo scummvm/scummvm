@@ -21,43 +21,41 @@
  */
 
 #include "titanic/npcs/deskbot.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/game_manager.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/translation.h"
 
 namespace Titanic {
 
 static const char *const TALKING_NAMES[] = {
-	"NeutralTalking", "HandFidget1", "HandFidget2", "LookingAround",
-	"FriendlyTalking", "MoreRudeness", "HandUp", "TapFingers",
-	"WaveOn", "WaveArmsAround", "HandsOverEdge",
-	nullptr
-};
+    "NeutralTalking", "HandFidget1", "HandFidget2", "LookingAround",
+    "FriendlyTalking", "MoreRudeness", "HandUp", "TapFingers",
+    "WaveOn", "WaveArmsAround", "HandsOverEdge",
+    nullptr};
 
 static const char *const IDLE_NAMES[] = {
-	"WaveOn", "HandFidget1", "HandFidget2", "TapFingers", "HandsOverEdge",
-	nullptr
-};
+    "WaveOn", "HandFidget1", "HandFidget2", "TapFingers", "HandsOverEdge",
+    nullptr};
 
 BEGIN_MESSAGE_MAP(CDeskbot, CTrueTalkNPC)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(LeaveViewMsg)
-	ON_MESSAGE(TrueTalkTriggerActionMsg)
-	ON_MESSAGE(NPCPlayTalkingAnimationMsg)
-	ON_MESSAGE(NPCPlayIdleAnimationMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
-	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(TrueTalkTriggerActionMsg)
+ON_MESSAGE(NPCPlayTalkingAnimationMsg)
+ON_MESSAGE(NPCPlayIdleAnimationMsg)
+ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
+ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
 int CDeskbot::_v1;
 int CDeskbot::_v2;
 
 CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false),
-		_classNum(NO_CLASS) {
+                       _classNum(NO_CLASS) {
 }
 
 void CDeskbot::save(SimpleFile *file, int indent) {
@@ -238,14 +236,12 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		}
 		break;
 
-	case 26:
-		{
-			_npcFlags |= NPCFLAG_MOVE_FINISH;
-			CTurnOff turnOff;
-			turnOff.execute(this);
-			lockMouse();
-		}
-		break;
+	case 26: {
+		_npcFlags |= NPCFLAG_MOVE_FINISH;
+		CTurnOff turnOff;
+		turnOff.execute(this);
+		lockMouse();
+	} break;
 
 	default:
 		break;

@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/sprite_process.h"
-#include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/item_factory.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,24 +35,23 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SpriteProcess, Process)
 
 SpriteProcess::SpriteProcess()
-	: Process(), _shape(0), _frame(0), _firstFrame(0), _lastFrame(0),
-	_repeats(0), _delay(0), _x(0), _y(0), _z(0), _delayCounter(0),
-	_initialized(false) {
+    : Process(), _shape(0), _frame(0), _firstFrame(0), _lastFrame(0),
+      _repeats(0), _delay(0), _x(0), _y(0), _z(0), _delayCounter(0),
+      _initialized(false) {
 }
 
 SpriteProcess::SpriteProcess(int shape, int frame, int lastFrame,
                              int repeats, int delay, int x, int y, int z,
-                             bool delayed_init) :
-	_shape(shape), _frame(frame), _firstFrame(frame), _lastFrame(lastFrame),
-	_repeats(repeats), _delay(delay * 2), _x(x), _y(y), _z(z), _delayCounter(0),
-	_initialized(false) {
+                             bool delayed_init) : _shape(shape), _frame(frame), _firstFrame(frame), _lastFrame(lastFrame),
+                                                  _repeats(repeats), _delay(delay * 2), _x(x), _y(y), _z(z), _delayCounter(0),
+                                                  _initialized(false) {
 	if (!delayed_init)
 		init();
 }
 
 void SpriteProcess::init() {
 	Item *item = ItemFactory::createItem(_shape, _frame, 0, Item::FLG_DISPOSABLE,
-		0, 0, Item::EXT_SPRITE, true);
+	                                     0, 0, Item::EXT_SPRITE, true);
 	item->move(_x, _y, _z);
 	setItemNum(item->getObjId());
 	_initialized = true;
@@ -60,11 +59,13 @@ void SpriteProcess::init() {
 
 SpriteProcess::~SpriteProcess(void) {
 	Item *item = getItem(_itemNum);
-	if (item) item->destroy();
+	if (item)
+		item->destroy();
 }
 
 void SpriteProcess::run() {
-	if (!_initialized) init();
+	if (!_initialized)
+		init();
 
 	Item *item = getItem(_itemNum);
 
@@ -127,7 +128,8 @@ void SpriteProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool SpriteProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_shape = static_cast<int>(rs->readUint32LE());
 	_frame = static_cast<int>(rs->readUint32LE());

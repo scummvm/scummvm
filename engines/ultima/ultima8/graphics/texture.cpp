@@ -20,19 +20,18 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/graphics/texture_bitmap.h"
-#include "ultima/ultima8/graphics/texture_targa.h"
-#include "ultima/ultima8/graphics/texture_png.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture_bitmap.h"
+#include "ultima/ultima8/graphics/texture_png.h"
+#include "ultima/ultima8/graphics/texture_targa.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-
 Texture::Texture() : _format(TEX_FMT_STANDARD), _glTex(0),
-	_next(nullptr), _wlog2(-1), _hlog2(-1) {
+                     _next(nullptr), _wlog2(-1), _hlog2(-1) {
 }
 
 //
@@ -44,22 +43,20 @@ Texture::~Texture() {
 //
 // Helper Macro for texture type detection
 //
-#define TRY_TYPE(TextureType)               \
-	tex = new TextureType();                    \
-	/* If read failed, delete the texture. */   \
-	if (!tex->Read(rs)) {                       \
-		delete tex;                             \
-		tex = nullptr;                          \
-	}                                           \
-	else {                                      \
-		/* Worked so return it */               \
-		return tex;                             \
+#define TRY_TYPE(TextureType)                 \
+	tex = new TextureType();                  \
+	/* If read failed, delete the texture. */ \
+	if (!tex->Read(rs)) {                     \
+		delete tex;                           \
+		tex = nullptr;                        \
+	} else {                                  \
+		/* Worked so return it */             \
+		return tex;                           \
 	}
 
 void Texture::create(uint16 width, uint16 height, TextureFormat textureFormat) {
 	_format = textureFormat;
-	create(width, height, (_format == TEX_FMT_NATIVE) ? RenderSurface::getPixelFormat() :
-		Texture::getPixelFormat());
+	create(width, height, (_format == TEX_FMT_NATIVE) ? RenderSurface::getPixelFormat() : Texture::getPixelFormat());
 }
 
 //
@@ -111,10 +108,7 @@ void Texture::loadSurface(const Graphics::Surface *surf) {
 			pixel = (surf->format.bytesPerPixel == 2) ? *((const uint16 *)srcP) : *((const uint32 *)srcP);
 			surf->format.colorToARGB(pixel, a, r, g, b);
 
-			buffer[i++] = (r << TEX32_R_SHIFT)
-				| (g << TEX32_G_SHIFT)
-				| (b << TEX32_B_SHIFT)
-				| (a << TEX32_A_SHIFT);
+			buffer[i++] = (r << TEX32_R_SHIFT) | (g << TEX32_G_SHIFT) | (b << TEX32_B_SHIFT) | (a << TEX32_A_SHIFT);
 		}
 	}
 }
@@ -135,18 +129,14 @@ void Texture::loadSurface8Bit(const Graphics::Surface *surf, const byte *pal) {
 
 		for (int x = 0; x < surf->w; ++x, srcP++) {
 			const byte p = *srcP;
-			const byte r = pal[p*3+0];
-			const byte g = pal[p*3+1];
-			const byte b = pal[p*3+2];
+			const byte r = pal[p * 3 + 0];
+			const byte g = pal[p * 3 + 1];
+			const byte b = pal[p * 3 + 2];
 
-			buffer[i++] = (r << TEX32_R_SHIFT)
-				| (g << TEX32_G_SHIFT)
-				| (b << TEX32_B_SHIFT)
-				| (a << TEX32_A_SHIFT);
+			buffer[i++] = (r << TEX32_R_SHIFT) | (g << TEX32_G_SHIFT) | (b << TEX32_B_SHIFT) | (a << TEX32_A_SHIFT);
 		}
 	}
 }
-
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

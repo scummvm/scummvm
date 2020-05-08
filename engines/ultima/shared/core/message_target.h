@@ -31,7 +31,7 @@ namespace Shared {
 class MessageTarget;
 class CMessage;
 
-typedef bool (MessageTarget:: *PMSG)(CMessage *msg);
+typedef bool (MessageTarget::*PMSG)(CMessage *msg);
 
 struct MSGMAP_ENTRY {
 	PMSG _fn;
@@ -43,60 +43,57 @@ struct MSGMAP {
 	const MSGMAP_ENTRY *lpEntries;
 };
 
-#define DECLARE_MESSAGE_MAP \
-protected: \
+#define DECLARE_MESSAGE_MAP                                   \
+protected:                                                    \
 	static const Ultima::Shared::MSGMAP *getThisMessageMap(); \
 	virtual const Ultima::Shared::MSGMAP *getMessageMap() const override
 
-#define DECLARE_MESSAGE_MAP_BASE \
-protected: \
+#define DECLARE_MESSAGE_MAP_BASE                              \
+protected:                                                    \
 	static const Ultima::Shared::MSGMAP *getThisMessageMap(); \
 	virtual const Ultima::Shared::MSGMAP *getMessageMap() const
 
-#define BEGIN_MESSAGE_MAP(theClass, baseClass) \
+#define BEGIN_MESSAGE_MAP(theClass, baseClass)                                                                  \
 	Ultima::Shared::ClassDef theClass::type() { return Ultima::Shared::ClassDef(#theClass, &baseClass::type); } \
-	const Ultima::Shared::MSGMAP *theClass::getMessageMap() const \
-		{ return getThisMessageMap(); } \
-	const Ultima::Shared::MSGMAP *theClass::getThisMessageMap() \
-	{ \
-		typedef theClass ThisClass;						   \
-		typedef baseClass TheBaseClass;					   \
-		typedef bool (theClass::*FNPTR)(Ultima::Shared::CMessage *msg);    \
+	const Ultima::Shared::MSGMAP *theClass::getMessageMap() const { return getThisMessageMap(); }               \
+	const Ultima::Shared::MSGMAP *theClass::getThisMessageMap() {                                               \
+		typedef theClass ThisClass;                                                                             \
+		typedef baseClass TheBaseClass;                                                                         \
+		typedef bool (theClass::*FNPTR)(Ultima::Shared::CMessage * msg);                                        \
 		static const Ultima::Shared::MSGMAP_ENTRY _messageEntries[] = {
 
 #define ON_MESSAGE(msgClass) \
-	{ static_cast<Ultima::Shared::PMSG>((FNPTR)&ThisClass::msgClass), &C##msgClass::type },
+	{static_cast<Ultima::Shared::PMSG>((FNPTR)&ThisClass::msgClass), &C##msgClass::type},
 
-#define END_MESSAGE_MAP() \
-		{ (Ultima::Shared::PMSG)nullptr, nullptr } \
-	}; \
-		static const Ultima::Shared::MSGMAP messageMap = \
-		{ &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
-		return &messageMap; \
+#define END_MESSAGE_MAP()                                        \
+	{ (Ultima::Shared::PMSG) nullptr, nullptr }                  \
+	}                                                            \
+	;                                                            \
+	static const Ultima::Shared::MSGMAP messageMap =             \
+	    {&TheBaseClass::getThisMessageMap, &_messageEntries[0]}; \
+	return &messageMap;                                          \
 	}
 
-#define EMPTY_MESSAGE_MAP(theClass, baseClass) \
+#define EMPTY_MESSAGE_MAP(theClass, baseClass)                                                                  \
 	Ultima::Shared::ClassDef theClass::type() { return Ultima::Shared::ClassDef(#theClass, &baseClass::type); } \
-	const Ultima::Shared::MSGMAP *theClass::getMessageMap() const \
-		{ return getThisMessageMap(); } \
-	const Ultima::Shared::MSGMAP *theClass::getThisMessageMap() \
-	{ \
-		typedef baseClass TheBaseClass;					   \
-		static const Ultima::Shared::MSGMAP_ENTRY _messageEntries[] = { \
-		{ (Ultima::Shared::PMSG)nullptr, nullptr } \
-	}; \
-		static const Ultima::Shared::MSGMAP messageMap = \
-		{ &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
-		return &messageMap; \
-	} \
+	const Ultima::Shared::MSGMAP *theClass::getMessageMap() const { return getThisMessageMap(); }               \
+	const Ultima::Shared::MSGMAP *theClass::getThisMessageMap() {                                               \
+		typedef baseClass TheBaseClass;                                                                         \
+		static const Ultima::Shared::MSGMAP_ENTRY _messageEntries[] = {                                         \
+		    {(Ultima::Shared::PMSG) nullptr, nullptr}};                                                         \
+		static const Ultima::Shared::MSGMAP messageMap =                                                        \
+		    {&TheBaseClass::getThisMessageMap, &_messageEntries[0]};                                            \
+		return &messageMap;                                                                                     \
+	}                                                                                                           \
 	enum { DUMMY##theClass }
 
 /**
  * The immediate descendant of the base object, this implements the base class for objects
  * that can receive messages
  */
-class MessageTarget: public BaseObject {
+class MessageTarget : public BaseObject {
 	DECLARE_MESSAGE_MAP_BASE;
+
 public:
 	CLASSDEF;
 };

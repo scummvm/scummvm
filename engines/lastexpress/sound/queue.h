@@ -99,7 +99,7 @@ private:
 	uint32 _flag;
 
 	// Entries
-	Common::List<SoundEntry *> _soundList;    ///< List of all sound entries
+	Common::List<SoundEntry *> _soundList; ///< List of all sound entries
 	//void *_soundCacheData;
 
 	// Subtitles

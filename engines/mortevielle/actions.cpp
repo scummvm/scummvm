@@ -25,9 +25,9 @@
  * Copyright (c) 1987-1989 Lankhor
  */
 
-#include "mortevielle/mortevielle.h"
 #include "mortevielle/dialogs.h"
 #include "mortevielle/menu.h"
+#include "mortevielle/mortevielle.h"
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 
@@ -323,21 +323,8 @@ void MortevielleEngine::fctTake() {
 				_crep = 999;
 		}
 	} else {
-		if ( ((_coreVar._currPlace == OWN_ROOM)  && (_num == 3))
-		  || ((_coreVar._currPlace == GREEN_ROOM)  && (_num == 4))
-		  || ((_coreVar._currPlace == PURPLE_ROOM)  && (_num == 1))
-		  || ((_coreVar._currPlace == DARKBLUE_ROOM)  && (_num == 3))
-		  || ((_coreVar._currPlace == BLUE_ROOM)  && (_num == 6))
-		  || ((_coreVar._currPlace == RED_ROOM)  && (_num == 2))
-		  || ((_coreVar._currPlace == BATHROOM)  && (_num == 6))
-		  || ((_coreVar._currPlace == GREEN_ROOM2)  && (_num == 4))
-		  || ((_coreVar._currPlace == JULIA_ROOM) && (_num == 4))
-		  || ((_coreVar._currPlace == DINING_ROOM) && (_num > 2))
-		  || ((_coreVar._currPlace == BUREAU) && (_num == 7))
-		  || ((_coreVar._currPlace == KITCHEN) && (_num == 6))
-		  || ((_coreVar._currPlace == ATTIC) && (_num > 4))
-		  || ((_coreVar._currPlace > ATTIC) && (_coreVar._currPlace != INSIDE_WELL)) )
-		  _crep = 997;
+		if (((_coreVar._currPlace == OWN_ROOM) && (_num == 3)) || ((_coreVar._currPlace == GREEN_ROOM) && (_num == 4)) || ((_coreVar._currPlace == PURPLE_ROOM) && (_num == 1)) || ((_coreVar._currPlace == DARKBLUE_ROOM) && (_num == 3)) || ((_coreVar._currPlace == BLUE_ROOM) && (_num == 6)) || ((_coreVar._currPlace == RED_ROOM) && (_num == 2)) || ((_coreVar._currPlace == BATHROOM) && (_num == 6)) || ((_coreVar._currPlace == GREEN_ROOM2) && (_num == 4)) || ((_coreVar._currPlace == JULIA_ROOM) && (_num == 4)) || ((_coreVar._currPlace == DINING_ROOM) && (_num > 2)) || ((_coreVar._currPlace == BUREAU) && (_num == 7)) || ((_coreVar._currPlace == KITCHEN) && (_num == 6)) || ((_coreVar._currPlace == ATTIC) && (_num > 4)) || ((_coreVar._currPlace > ATTIC) && (_coreVar._currPlace != INSIDE_WELL)))
+			_crep = 997;
 		else if (_coreVar._currPlace == INSIDE_WELL) {
 			_crep = 1504;
 			loseGame();
@@ -684,25 +671,8 @@ void MortevielleEngine::fctOpen() {
 			// display "Already Opened"
 			_crep = 18;
 		else {
-			if (!( ((_num == 3) && ((_coreVar._currPlace == OWN_ROOM)
-				                 || (_coreVar._currPlace == JULIA_ROOM)
-								 || (_coreVar._currPlace == BLUE_ROOM)
-								 || (_coreVar._currPlace == BATHROOM)))
-			    || ((_num == 4) && ((_coreVar._currPlace == GREEN_ROOM)
-				                 || (_coreVar._currPlace == PURPLE_ROOM)
-								 || (_coreVar._currPlace == RED_ROOM)))
-				|| ((_coreVar._currPlace == DARKBLUE_ROOM) && (_num == 5))
-				|| ((_num == 6) && ((_coreVar._currPlace == BATHROOM)
-				                 || (_coreVar._currPlace == DINING_ROOM)
-								 || (_coreVar._currPlace == GREEN_ROOM2)
-								 || (_coreVar._currPlace == ATTIC)))
-				|| ((_coreVar._currPlace == GREEN_ROOM2) && (_num == 2))
-				|| ((_coreVar._currPlace == KITCHEN) && (_num == 7))) ) {
-				if ( ((_coreVar._currPlace > DINING_ROOM) && (_coreVar._currPlace < CELLAR))
-				  || ((_coreVar._currPlace > RED_ROOM) && (_coreVar._currPlace < DINING_ROOM))
-				  || (_coreVar._currPlace == OWN_ROOM)
-				  || (_coreVar._currPlace == PURPLE_ROOM)
-				  || (_coreVar._currPlace == BLUE_ROOM)) {
+			if (!(((_num == 3) && ((_coreVar._currPlace == OWN_ROOM) || (_coreVar._currPlace == JULIA_ROOM) || (_coreVar._currPlace == BLUE_ROOM) || (_coreVar._currPlace == BATHROOM))) || ((_num == 4) && ((_coreVar._currPlace == GREEN_ROOM) || (_coreVar._currPlace == PURPLE_ROOM) || (_coreVar._currPlace == RED_ROOM))) || ((_coreVar._currPlace == DARKBLUE_ROOM) && (_num == 5)) || ((_num == 6) && ((_coreVar._currPlace == BATHROOM) || (_coreVar._currPlace == DINING_ROOM) || (_coreVar._currPlace == GREEN_ROOM2) || (_coreVar._currPlace == ATTIC))) || ((_coreVar._currPlace == GREEN_ROOM2) && (_num == 2)) || ((_coreVar._currPlace == KITCHEN) && (_num == 7)))) {
+				if (((_coreVar._currPlace > DINING_ROOM) && (_coreVar._currPlace < CELLAR)) || ((_coreVar._currPlace > RED_ROOM) && (_coreVar._currPlace < DINING_ROOM)) || (_coreVar._currPlace == OWN_ROOM) || (_coreVar._currPlace == PURPLE_ROOM) || (_coreVar._currPlace == BLUE_ROOM)) {
 					if (getRandomNumber(1, 4) == 3)
 						_soundManager->startSpeech(7, 9, 1);
 				}
@@ -1473,7 +1443,7 @@ void MortevielleEngine::fctDiscuss() {
 					displayQuestionText(lib[icm], 0);
 			}
 
-			if (icm == 23)  {
+			if (icm == 23) {
 				posY = 0;
 				posX = 320;
 			} else
@@ -1495,7 +1465,7 @@ void MortevielleEngine::fctDiscuss() {
 				cx = 41;
 			else
 				cx = 1;
-			cy = ((uint)y >> 3) + 1;      // 0-199 => 1-25
+			cy = ((uint)y >> 3) + 1; // 0-199 => 1-25
 			if ((cy > 23) || ((cx == 41) && ((cy >= 20) && (cy <= 22)))) {
 				if (choice != 0) {
 					posY = ((choice - 1) % 23) << 3;
@@ -1527,7 +1497,7 @@ void MortevielleEngine::fctDiscuss() {
 							displayQuestionText(lib[choice], 0);
 						else
 							displayQuestionText(lib[choice], 1);
-						questionAsked[choice] = ! questionAsked[choice];
+						questionAsked[choice] = !questionAsked[choice];
 					}
 					if ((ix == 46) || (_coreVar._availableQuestion[ix] == '*')) {
 						posY = ((ix - 1) % 23) << 3;
@@ -1540,7 +1510,7 @@ void MortevielleEngine::fctDiscuss() {
 							displayQuestionText(lib[ix], 0);
 						else
 							displayQuestionText(lib[ix], 1);
-						questionAsked[ix] = ! questionAsked[ix];
+						questionAsked[ix] = !questionAsked[ix];
 						choice = ix;
 					} else
 						choice = 0;

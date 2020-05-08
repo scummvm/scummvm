@@ -40,4 +40,4 @@ public:
 	uint32 read(void *buf, uint32 size) override;
 };
 
-} // End of Groovie namespace
+} // namespace Groovie

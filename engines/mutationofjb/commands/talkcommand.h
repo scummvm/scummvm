@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_TALKCOMMAND_H
 #define MUTATIONOFJB_TALKCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/seqcommand.h"
 #include "mutationofjb/tasks/task.h"
 
 namespace MutationOfJB {
@@ -53,6 +53,6 @@ private:
 	TaskPtr _task;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

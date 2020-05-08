@@ -32,32 +32,32 @@ namespace Frotz {
  * Configuration flags
  */
 enum ConfigFlag {
-	CONFIG_BYTE_SWAPPED = 0x01, ///< Story file is byte swapped         - V3 
-	CONFIG_TIME         = 0x02, ///< Status line displays time          - V3 
-	CONFIG_TWODISKS     = 0x04, ///< Story file occupied two disks      - V3 
-	CONFIG_TANDY        = 0x08, ///< Tandy licensed game                - V3 
-	CONFIG_NOSTATUSLINE = 0x10, ///< Interpr can't support status lines - V3 
-	CONFIG_SPLITSCREEN  = 0x20, ///< Interpr supports split screen mode - V3 
-	CONFIG_PROPORTIONAL = 0x40, ///< Interpr uses proportional font     - V3 
-	
-	CONFIG_COLOUR       = 0x01, ///< Interpr supports colour            - V5+
-	CONFIG_PICTURES	    = 0x02, ///< Interpr supports pictures	        - V6 
-	CONFIG_BOLDFACE     = 0x04, ///< Interpr supports boldface style    - V4+
-	CONFIG_EMPHASIS     = 0x08, ///< Interpr supports emphasis style    - V4+
-	CONFIG_FIXED        = 0x10, ///< Interpr supports fixed width style - V4+
-	CONFIG_SOUND	    = 0x20, ///< Interpr supports sound             - V6 
-	CONFIG_TIMEDINPUT   = 0x80, ///< Interpr supports timed input       - V4+
-	
-	SCRIPTING_FLAG	  = 0x0001, ///< Outputting to transscription file  - V1+
-	FIXED_FONT_FLAG   = 0x0002, ///< Use fixed width font               - V3+
-	REFRESH_FLAG 	  = 0x0004, ///< Refresh the screen                 - V6 
-	GRAPHICS_FLAG	  = 0x0008, ///< Game wants to use graphics         - V5+
-	OLD_SOUND_FLAG	  = 0x0010, ///< Game wants to use sound effects    - V3 
-	UNDO_FLAG	  = 0x0010, ///< Game wants to use UNDO feature     - V5+
-	MOUSE_FLAG	  = 0x0020, ///< Game wants to use a mouse          - V5+
-	COLOUR_FLAG	  = 0x0040, ///< Game wants to use colours          - V5+
-	SOUND_FLAG	  = 0x0080, ///< Game wants to use sound effects    - V5+
-	MENU_FLAG	  = 0x0100  ///< Game wants to use menus            - V6 
+	CONFIG_BYTE_SWAPPED = 0x01, ///< Story file is byte swapped         - V3
+	CONFIG_TIME = 0x02,         ///< Status line displays time          - V3
+	CONFIG_TWODISKS = 0x04,     ///< Story file occupied two disks      - V3
+	CONFIG_TANDY = 0x08,        ///< Tandy licensed game                - V3
+	CONFIG_NOSTATUSLINE = 0x10, ///< Interpr can't support status lines - V3
+	CONFIG_SPLITSCREEN = 0x20,  ///< Interpr supports split screen mode - V3
+	CONFIG_PROPORTIONAL = 0x40, ///< Interpr uses proportional font     - V3
+
+	CONFIG_COLOUR = 0x01,     ///< Interpr supports colour            - V5+
+	CONFIG_PICTURES = 0x02,   ///< Interpr supports pictures	        - V6
+	CONFIG_BOLDFACE = 0x04,   ///< Interpr supports boldface style    - V4+
+	CONFIG_EMPHASIS = 0x08,   ///< Interpr supports emphasis style    - V4+
+	CONFIG_FIXED = 0x10,      ///< Interpr supports fixed width style - V4+
+	CONFIG_SOUND = 0x20,      ///< Interpr supports sound             - V6
+	CONFIG_TIMEDINPUT = 0x80, ///< Interpr supports timed input       - V4+
+
+	SCRIPTING_FLAG = 0x0001,  ///< Outputting to transscription file  - V1+
+	FIXED_FONT_FLAG = 0x0002, ///< Use fixed width font               - V3+
+	REFRESH_FLAG = 0x0004,    ///< Refresh the screen                 - V6
+	GRAPHICS_FLAG = 0x0008,   ///< Game wants to use graphics         - V5+
+	OLD_SOUND_FLAG = 0x0010,  ///< Game wants to use sound effects    - V3
+	UNDO_FLAG = 0x0010,       ///< Game wants to use UNDO feature     - V5+
+	MOUSE_FLAG = 0x0020,      ///< Game wants to use a mouse          - V5+
+	COLOUR_FLAG = 0x0040,     ///< Game wants to use colours          - V5+
+	SOUND_FLAG = 0x0080,      ///< Game wants to use sound effects    - V5+
+	MENU_FLAG = 0x0100        ///< Game wants to use menus            - V6
 };
 
 /**
@@ -69,10 +69,10 @@ enum ConfigFlag {
  * different default by changing the definition of ERR_DEFAULT_REPORT_MODE.
  */
 enum ErrorReport {
-	ERR_REPORT_NEVER  = 0,
-	ERR_REPORT_ONCE   = 1,
+	ERR_REPORT_NEVER = 0,
+	ERR_REPORT_ONCE = 1,
 	ERR_REPORT_ALWAYS = 2,
-	ERR_REPORT_FATAL  = 3,
+	ERR_REPORT_FATAL = 3,
 
 	ERR_DEFAULT_REPORT_MODE = ERR_REPORT_NEVER
 };
@@ -81,52 +81,52 @@ enum ErrorReport {
  * Enumeration of the game header byte indexes
  */
 enum HeaderByte {
-	H_VERSION             = 0,
-	H_CONFIG              = 1,
-	H_RELEASE             = 2,
-	H_RESIDENT_SIZE       = 4,
-	H_START_PC            = 6,
-	H_DICTIONARY          = 8,
-	H_OBJECTS             = 10,
-	H_GLOBALS             = 12,
-	H_DYNAMIC_SIZE        = 14,
-	H_FLAGS               = 16,
-	H_SERIAL              = 18,
-	H_ABBREVIATIONS       = 24,
-	H_FILE_SIZE           = 26,
-	H_CHECKSUM            = 28,
-	H_INTERPRETER_NUMBER  = 30,
+	H_VERSION = 0,
+	H_CONFIG = 1,
+	H_RELEASE = 2,
+	H_RESIDENT_SIZE = 4,
+	H_START_PC = 6,
+	H_DICTIONARY = 8,
+	H_OBJECTS = 10,
+	H_GLOBALS = 12,
+	H_DYNAMIC_SIZE = 14,
+	H_FLAGS = 16,
+	H_SERIAL = 18,
+	H_ABBREVIATIONS = 24,
+	H_FILE_SIZE = 26,
+	H_CHECKSUM = 28,
+	H_INTERPRETER_NUMBER = 30,
 	H_INTERPRETER_VERSION = 31,
-	H_SCREEN_ROWS         = 32,
-	H_SCREEN_COLS         = 33,
-	H_SCREEN_WIDTH        = 34,
-	H_SCREEN_HEIGHT       = 36,
-	H_FONT_HEIGHT         = 38,		///< this is the font width in V5
-	H_FONT_WIDTH          = 39,		///< this is the font height in V5
-	H_FUNCTIONS_OFFSET    = 40,
-	H_STRINGS_OFFSET      = 42,
-	H_DEFAULT_BACKGROUND  = 44,
-	H_DEFAULT_FOREGROUND  = 45,
-	H_TERMINATING_KEYS    = 46,
-	H_LINE_WIDTH          = 48,
-	H_STANDARD_HIGH       = 50,
-	H_STANDARD_LOW        = 51,
-	H_ALPHABET            = 52,
-	H_EXTENSION_TABLE     = 54,
-	H_USER_NAME           = 56
+	H_SCREEN_ROWS = 32,
+	H_SCREEN_COLS = 33,
+	H_SCREEN_WIDTH = 34,
+	H_SCREEN_HEIGHT = 36,
+	H_FONT_HEIGHT = 38, ///< this is the font width in V5
+	H_FONT_WIDTH = 39,  ///< this is the font height in V5
+	H_FUNCTIONS_OFFSET = 40,
+	H_STRINGS_OFFSET = 42,
+	H_DEFAULT_BACKGROUND = 44,
+	H_DEFAULT_FOREGROUND = 45,
+	H_TERMINATING_KEYS = 46,
+	H_LINE_WIDTH = 48,
+	H_STANDARD_HIGH = 50,
+	H_STANDARD_LOW = 51,
+	H_ALPHABET = 52,
+	H_EXTENSION_TABLE = 54,
+	H_USER_NAME = 56
 };
 
 /**
  * Header extension fields
  */
 enum {
-	HX_TABLE_SIZE    = 0,
-	HX_MOUSE_X       = 1,
-	HX_MOUSE_Y       = 2,
+	HX_TABLE_SIZE = 0,
+	HX_MOUSE_X = 1,
+	HX_MOUSE_Y = 2,
 	HX_UNICODE_TABLE = 3,
-	HX_FLAGS         = 4,
-	HX_FORE_COLOUR   = 5,
-	HX_BACK_COLOUR   = 6
+	HX_FLAGS = 4,
+	HX_FORE_COLOUR = 5,
+	HX_BACK_COLOUR = 6
 };
 
 /**
@@ -179,6 +179,7 @@ private:
 		char _serial[7];
 	};
 	static const StoryEntry RECORDS[26];
+
 public:
 	zbyte h_version;
 	zbyte h_config;

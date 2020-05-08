@@ -23,8 +23,8 @@
 #ifndef ULTIMA_ULTIMA1_ACTIONS_READY_H
 #define ULTIMA_ULTIMA1_ACTIONS_READY_H
 
-#include "ultima/ultima1/actions/action.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/ultima1/actions/action.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -35,6 +35,7 @@ using Shared::CReadyMsg;
 class Ready : public Action {
 	DECLARE_MESSAGE_MAP;
 	bool ReadyMsg(CReadyMsg &msg);
+
 public:
 	CLASSDEF;
 

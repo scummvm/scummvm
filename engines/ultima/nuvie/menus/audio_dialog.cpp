@@ -20,23 +20,22 @@
  *
  */
 
-
+#include "ultima/nuvie/menus/audio_dialog.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/converse.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/gui_types.h"
+#include "ultima/nuvie/gui/gui_area.h"
 #include "ultima/nuvie/gui/gui_button.h"
+#include "ultima/nuvie/gui/gui_callback.h"
+#include "ultima/nuvie/gui/gui_dialog.h"
 #include "ultima/nuvie/gui/gui_text.h"
 #include "ultima/nuvie/gui/gui_text_toggle_button.h"
-#include "ultima/nuvie/gui/gui_callback.h"
-#include "ultima/nuvie/gui/gui_area.h"
-#include "ultima/nuvie/gui/gui_dialog.h"
-#include "ultima/nuvie/menus/audio_dialog.h"
-#include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/gui/gui_types.h"
 #include "ultima/nuvie/keybinding/keys.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/core/converse.h"
 #include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/sound/sound_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -45,9 +44,9 @@ namespace Nuvie {
 #define AD_HEIGHT 166
 
 AudioDialog::AudioDialog(GUI_CallBack *callback)
-	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - AD_WIDTH) / 2,
-	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - AD_HEIGHT) / 2,
-	             AD_WIDTH, AD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
+    : GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - AD_WIDTH) / 2,
+                 Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - AD_HEIGHT) / 2,
+                 AD_WIDTH, AD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
 	callback_object = callback;
 	init();
 	grab_focus();
@@ -55,8 +54,8 @@ AudioDialog::AudioDialog(GUI_CallBack *callback)
 
 bool AudioDialog::init() {
 	int height = 12;
-	int colX[] = { 213, 243 };
-	int textX[] = { 9, 19, 29 };
+	int colX[] = {213, 243};
+	int textX[] = {9, 19, 29};
 	int buttonY = 9;
 	uint8 textY = 11;
 	uint8 row_h = 13;
@@ -66,38 +65,38 @@ bool AudioDialog::init() {
 	GUI_Widget *widget;
 	GUI_Font *font = GUI::get_gui()->get_font();
 
-	widget = (GUI_Widget *) new GUI_Text(textX[0], textY, 0, 0, 0, "Audio:", font);
+	widget = (GUI_Widget *)new GUI_Text(textX[0], textY, 0, 0, 0, "Audio:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable music:", font);
+	widget = (GUI_Widget *)new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Music volume:", font);
+	widget = (GUI_Widget *)new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Music volume:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Combat changes music:", font);
+	widget = (GUI_Widget *)new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Combat changes music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Vehicle changes music:", font);
+	widget = (GUI_Widget *)new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Vehicle changes music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Conversations stop music:", font);
+	widget = (GUI_Widget *)new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Conversations stop music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Stop music on group change:", font);
+	widget = (GUI_Widget *)new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Stop music on group change:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable sfx:", font);
+	widget = (GUI_Widget *)new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable sfx:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Sfx volume:", font);
+	widget = (GUI_Widget *)new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Sfx volume:", font);
 	AddWidget(widget);
 	bool use_speech_b = (Game::get_game()->get_game_type() == NUVIE_GAME_U6 && has_fmtowns_support(Game::get_game()->get_config()));
 	if (use_speech_b) {
-		widget = (GUI_Widget *) new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable speech:", font);
+		widget = (GUI_Widget *)new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable speech:", font);
 		AddWidget(widget);
 	}
 	char musicBuff[5], sfxBuff[5];
 	int sfxVol_selection, musicVol_selection, num_of_sfxVol, num_of_musicVol;
 	SoundManager *sm = Game::get_game()->get_sound_manager();
-	const char *const enabled_text[] = { "Disabled", "Enabled" };
-	const char *const yes_no_text[] = { "no", "yes" };
+	const char *const enabled_text[] = {"Disabled", "Enabled"};
+	const char *const yes_no_text[] = {"no", "yes"};
 
 	uint8 music_percent = round(sm->get_music_volume() / 2.55); // round needed for 10%, 30%, etc.
 	sprintf(musicBuff, "%u%%", music_percent);
-	const char *const musicVol_text[] = { "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", musicBuff };
+	const char *const musicVol_text[] = {"0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", musicBuff};
 
 	if (music_percent % 10 == 0) {
 		num_of_musicVol = 11;
@@ -109,7 +108,7 @@ bool AudioDialog::init() {
 
 	uint8 sfx_percent = round(sm->get_sfx_volume() / 2.55); // round needed for 10%, 30%, etc.
 	sprintf(sfxBuff, "%u%%", sfx_percent);
-	const char *const sfxVol_text[] = { "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", sfxBuff };
+	const char *const sfxVol_text[] = {"0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", sfxBuff};
 
 	if (sfx_percent % 10 == 0) {
 		num_of_sfxVol = 11;
@@ -211,7 +210,8 @@ GUI_status AudioDialog::KeyDown(const Common::KeyState &key) {
 		button_index[b_index_num]->set_highlighted(true);
 		break;
 	case DO_ACTION_KEY:
-		if (b_index_num != -1) return button_index[b_index_num]->Activate_button();
+		if (b_index_num != -1)
+			return button_index[b_index_num]->Activate_button();
 		break;
 	case CANCEL_ACTION_KEY:
 		return close_dialog();
@@ -242,7 +242,7 @@ GUI_status AudioDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 		if (sfx_selection != 11) {
 			uint8 sfxVol = sfx_selection * 25.5;
 			sm->set_sfx_volume(sfxVol);
-// probably need to update sfx volume if we have background sfx implemented
+			// probably need to update sfx volume if we have background sfx implemented
 			config->set("config/audio/sfx_volume", sfxVol);
 		}
 

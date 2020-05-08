@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "tsage/blue_force/blueforce_scenes1.h"
+#include "common/config-manager.h"
 #include "tsage/dialogs.h"
-#include "tsage/scenes.h"
-#include "tsage/tsage.h"
-#include "tsage/staticres.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
+#include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -44,12 +44,11 @@ void Scene100::Text::dispatch() {
 	Scene100 *scene = (Scene100 *)BF_GLOBALS._sceneManager._scene;
 	Common::Point &pt = scene->_action1._sceneText1._position;
 	scene->_action1._sceneText2.setPosition(Common::Point(pt.x,
-		pt.y + scene->_action1._textHeight));
+	                                                      pt.y + scene->_action1._textHeight));
 }
 
-
 void Scene100::Action1::signal() {
-	static byte black[3] = { 0, 0, 0 };
+	static byte black[3] = {0, 0, 0};
 
 	switch (_actionIndex++) {
 	case 0:
@@ -97,7 +96,7 @@ void Scene100::Action1::setTextStrings(const Common::String &msg1, const Common:
 	_sceneText1.setup(msg1);
 	_sceneText1.fixPriority(255);
 	_sceneText1.setPosition(Common::Point(
-		(SCREEN_WIDTH - _sceneText1.getFrame().getBounds().width()) / 2, 202));
+	    (SCREEN_WIDTH - _sceneText1.getFrame().getBounds().width()) / 2, 202));
 	_sceneText1._moveRate = 30;
 	_sceneText1._moveDiff.y = 1;
 
@@ -167,7 +166,7 @@ void Scene100::Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene100::Scene100(): SceneExt() {
+Scene100::Scene100() : SceneExt() {
 	_index = 0;
 }
 
@@ -303,7 +302,7 @@ void Scene109::Action3::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene109::Scene109(): PalettedScene() {
+Scene109::Scene109() : PalettedScene() {
 }
 
 void Scene109::postInit(SceneObjectList *OwnerList) {
@@ -415,7 +414,7 @@ void Scene110::Action1::signal() {
 		Common::Point pt(123, 121);
 		NpcMover *mover = new NpcMover();
 		scene->_object4.addMover(mover, &pt, this);
-		}
+	}
 		// fall through
 	case 7:
 		setDelay(30);
@@ -491,8 +490,7 @@ void Scene110::Action1::signal() {
 		Common::Point pt(182, 54);
 		NpcMover *mover = new NpcMover();
 		scene->_object5.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 17:
 		scene->_object5.remove();
 		break;
@@ -509,26 +507,22 @@ void Scene110::Action2::signal() {
 		Common::Point pt(152, 94);
 		NpcMover *mover = new NpcMover();
 		scene->_object6.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 1: {
 		Common::Point pt(167, 108);
 		NpcMover *mover = new NpcMover();
 		scene->_object6.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 2: {
 		Common::Point pt(172, 109);
 		NpcMover *mover = new NpcMover();
 		scene->_object6.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 3: {
 		Common::Point pt(179, 117);
 		NpcMover *mover = new NpcMover();
 		scene->_object6.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 4:
 		setDelay(30);
 		break;
@@ -569,8 +563,7 @@ void Scene110::Action3::signal() {
 		Common::Point pt(151, 88);
 		NpcMover *mover = new NpcMover();
 		scene->_object7.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 5:
 		scene->_object7.fixPriority(76);
 		scene->_object7.setStrip(3);
@@ -591,8 +584,7 @@ void Scene110::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_object9.addMover(mover, &pt, this);
 		scene->_sound.play(23);
-		}
-		break;
+	} break;
 	case 8:
 		scene->_object9.remove();
 		BF_GLOBALS._sceneManager.changeScene(125);
@@ -629,8 +621,7 @@ void Scene110::Action4::signal() {
 		Common::Point pt(194, 119);
 		NpcMover *mover = new NpcMover();
 		scene->_object8.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 3:
 		scene->_object1.animate(ANIM_MODE_6, NULL);
 		scene->_object8.setPosition(Common::Point(186, 117));
@@ -676,15 +667,13 @@ void Scene110::Action4::signal() {
 		NpcMover *mover = new NpcMover();
 		scene->_object8.addMover(mover, &pt, this);
 		scene->_object7.setAction(&scene->_action3);
-		}
-		break;
+	} break;
 	case 10: {
 		scene->_object8.fixPriority(77);
 		Common::Point pt(78, 76);
 		NpcMover *mover = new NpcMover();
 		scene->_object8.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 11: {
 		scene->_object8.setPosition(Common::Point(87, 76));
 		scene->_object8.fixPriority(71);
@@ -693,8 +682,7 @@ void Scene110::Action4::signal() {
 		Common::Point pt(103, 74);
 		NpcMover *mover = new NpcMover();
 		scene->_object8.addMover(mover, &pt, this);
-		}
-		break;
+	} break;
 	case 12:
 		scene->_object8.setPosition(Common::Point(119, 59));
 		scene->_object8.setStrip(5);
@@ -993,10 +981,10 @@ bool Scene115::Kate::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 8, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
+		                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+		                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+		                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case CURSOR_TALK:
 		if (BF_INVENTORY.getObjectScene(INV_NAPKIN) == 1) {
@@ -1031,10 +1019,10 @@ bool Scene115::Kate::startAction(CursorType action, Event &event) {
 			}
 		} else
 			SceneItem::display(115, 44, SET_WIDTH, 312,
-					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-					SET_EXT_FGCOLOR, 13, LIST_END);
+			                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+			                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+			                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+			                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case INV_ID:
 		if (scene->_jukeboxPlaying == 0) {
@@ -1051,10 +1039,10 @@ bool Scene115::Kate::startAction(CursorType action, Event &event) {
 			}
 		} else
 			SceneItem::display(115, 44, SET_WIDTH, 312,
-					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-					SET_EXT_FGCOLOR, 13, LIST_END);
+			                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+			                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+			                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+			                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	default:
 		return NamedObject::startAction(action, event);
@@ -1067,10 +1055,10 @@ bool Scene115::Tony::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 7, SET_WIDTH, 312,
-			SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-			SET_EXT_FGCOLOR, 13, LIST_END);
+		                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+		                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+		                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case CURSOR_TALK:
 		if (BF_GLOBALS._dayNumber == 3) {
@@ -1170,17 +1158,17 @@ bool Scene115::Object3::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 9, SET_WIDTH, 312,
-			SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-			SET_EXT_FGCOLOR, 13, LIST_END);
+		                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+		                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+		                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case CURSOR_USE:
 		SceneItem::display(115, 23, SET_WIDTH, 312,
-			SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-			SET_EXT_FGCOLOR, 13, LIST_END);
+		                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+		                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+		                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case CURSOR_TALK: {
 		BF_GLOBALS._player.disableControl();
@@ -1189,7 +1177,7 @@ bool Scene115::Object3::startAction(CursorType action, Event &event) {
 		PlayerMover *mover = new PlayerMover();
 		BF_GLOBALS._player.addMover(mover, &pt, scene);
 		return true;
-		}
+	}
 	default:
 		return NamedObject::startAction(action, event);
 	}
@@ -1201,10 +1189,10 @@ bool Scene115::Object4::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 42, SET_WIDTH, 312,
-			SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-			SET_EXT_FGCOLOR, 13, LIST_END);
+		                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+		                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+		                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case CURSOR_TALK:
 		scene->_sceneMode = 0;
@@ -1238,10 +1226,10 @@ bool Scene115::Jukebox::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_action4);
 		} else
 			SceneItem::display(_resNum, 37, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
+			                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+			                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+			                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+			                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	} else
 		return NamedHotspot::startAction(action, event);
@@ -1286,24 +1274,24 @@ bool Scene115::Item14::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 10, SET_WIDTH, 312,
-			SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-			SET_EXT_FGCOLOR, 13, LIST_END);
+		                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+		                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+		                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case CURSOR_USE:
 		if (BF_GLOBALS._sceneObjects->contains(&scene->_object3))
 			SceneItem::display(115, 23, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
+			                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+			                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+			                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+			                   SET_EXT_FGCOLOR, 13, LIST_END);
 		else
 			SceneItem::display(115, 43, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
+			                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+			                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+			                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+			                   SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	default:
 		return SceneHotspot::startAction(action, event);
@@ -1412,14 +1400,14 @@ void Scene115::Action4::signal() {
 		Common::Point destPos(145, 107);
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 1:
 		BF_GLOBALS._player.setStrip(4);
 		SceneItem::display(115, 27, SET_WIDTH, 312,
-			SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-			SET_EXT_FGCOLOR, 13, LIST_END);
+		                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+		                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+		                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		                   SET_EXT_FGCOLOR, 13, LIST_END);
 		scene->_object12.animate(ANIM_MODE_NONE);
 		setDelay(10);
 		break;
@@ -1505,8 +1493,7 @@ void Scene115::Action7::signal() {
 		PlayerMover *mover = new PlayerMover();
 		Common::Point destPos(142, 105);
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
-		}
-		break;
+	} break;
 	case 1:
 		BF_GLOBALS._player.setStrip(4);
 		if (BF_GLOBALS._kateDialogCtr == 0)
@@ -1587,7 +1574,7 @@ void Scene115::Action9::signal() {
 	}
 }
 
-Scene115::Scene115() : SceneExt () {
+Scene115::Scene115() : SceneExt() {
 	_lineNumModifier = _jukeboxPlaying = _talkToTonyCtr = 0;
 }
 
@@ -1721,14 +1708,14 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 	addTimer(&_itemJukebox);
 	_itemJukebox.setDetails(Rect(147, 45, 179, 91), 115, 25, 26, 27, 1, NULL);
 	//
-	_item6.setDetails(Rect(107, 43, 122,  61), 115, 28, 29, 30, 1, NULL);
-	_item7.setDetails(Rect(180, 33, 230,  63), 115, 31, 32, 33, 1, NULL);
-	_item8.setDetails(Rect(  0, 35,  96,  66), 115, 34, 35, 36, 1, NULL);
-	_item2.setDetails(Rect(  0, 65, 135,  95), 115,  0, 12, 18, 1, NULL);
-	_item4.setDetails(Rect(104,  0, 150,  90), 115,  2, 14, 20, 1, NULL);
-	_item5.setDetails(Rect(148,  0, 320,  93), 115,  3, 14, 20, 1, NULL);
-	_item3.setDetails(Rect(  0, 95, 320, 168), 115,  1, 13, 19, 1, NULL);
-	_item9.setDetails(Rect(  0,  0, 320, 168), 115, 11, 17, 24, 1, NULL);
+	_item6.setDetails(Rect(107, 43, 122, 61), 115, 28, 29, 30, 1, NULL);
+	_item7.setDetails(Rect(180, 33, 230, 63), 115, 31, 32, 33, 1, NULL);
+	_item8.setDetails(Rect(0, 35, 96, 66), 115, 34, 35, 36, 1, NULL);
+	_item2.setDetails(Rect(0, 65, 135, 95), 115, 0, 12, 18, 1, NULL);
+	_item4.setDetails(Rect(104, 0, 150, 90), 115, 2, 14, 20, 1, NULL);
+	_item5.setDetails(Rect(148, 0, 320, 93), 115, 3, 14, 20, 1, NULL);
+	_item3.setDetails(Rect(0, 95, 320, 168), 115, 1, 13, 19, 1, NULL);
+	_item9.setDetails(Rect(0, 0, 320, 168), 115, 11, 17, 24, 1, NULL);
 
 	BF_GLOBALS._player.disableControl();
 	_sceneMode = 5115;
@@ -1744,10 +1731,10 @@ void Scene115::signal() {
 	case 1:
 		BF_GLOBALS._player.updateAngle(_object3._position);
 		SceneItem::display(115, 38 + _lineNumModifier, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
+		                   SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
+		                   SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+		                   SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		                   SET_EXT_FGCOLOR, 13, LIST_END);
 		++_lineNumModifier;
 		if (_lineNumModifier >= 4)
 			_lineNumModifier = 0;
@@ -1798,7 +1785,7 @@ void Scene125::Action1::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 2:
 		owner->animate(ANIM_MODE_4, 4, 1, this);
 		break;
@@ -1812,7 +1799,7 @@ void Scene125::Action1::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 5:
 		owner->remove();
 		break;
@@ -1839,14 +1826,14 @@ void Scene125::Action2::signal() {
 		NpcMover *mover = new NpcMover();
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 3: {
 		scene->_action3.signal();
 		Common::Point destPos(280, 84);
 		NpcMover *mover = new NpcMover();
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 4:
 		BF_GLOBALS._player.animate(ANIM_MODE_5, this);
 		break;
@@ -1855,7 +1842,7 @@ void Scene125::Action2::signal() {
 		NpcMover *mover = new NpcMover();
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 6:
 		BF_GLOBALS._player.setStrip(2);
 		BF_GLOBALS._player.setFrame(1);
@@ -1866,7 +1853,7 @@ void Scene125::Action2::signal() {
 		NpcMover *mover = new NpcMover();
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 8:
 		BF_GLOBALS._player.setStrip(3);
 		BF_GLOBALS._player.setFrame(1);
@@ -1878,7 +1865,7 @@ void Scene125::Action2::signal() {
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
 		BF_GLOBALS._player.setPriority(80);
 		break;
-		}
+	}
 	case 10:
 		BF_GLOBALS._player.setStrip(4);
 		BF_GLOBALS._player.setFrame(1);
@@ -1890,7 +1877,7 @@ void Scene125::Action2::signal() {
 		NpcMover *mover = new NpcMover();
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 12:
 		scene->_action3.signal();
 		BF_GLOBALS._player.remove();
@@ -1921,13 +1908,13 @@ void Scene125::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 2: {
 		Common::Point destPos(275, 84);
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 3:
 		scene->_soundExt2.fadeSound(20);
 		owner->fixPriority(70);
@@ -1938,7 +1925,7 @@ void Scene125::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 5:
 		owner->setStrip(2);
 		owner->setFrame(1);
@@ -1949,7 +1936,7 @@ void Scene125::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 7:
 		owner->setStrip(3);
 		owner->setFrame(1);
@@ -1963,7 +1950,7 @@ void Scene125::Action3::signal() {
 		owner->_moveDiff.y = 6;
 		owner->setPriority(80);
 		break;
-		}
+	}
 	case 9:
 		owner->setPosition(Common::Point(85, 76));
 		owner->setStrip(4);
@@ -1978,7 +1965,7 @@ void Scene125::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 11:
 		break;
 	case 12:
@@ -2074,7 +2061,7 @@ void Scene125::Action4::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 2:
 		owner->animate(ANIM_MODE_5, this);
 		break;
@@ -2083,7 +2070,7 @@ void Scene125::Action4::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 4:
 		owner->remove();
 		break;
@@ -2123,7 +2110,7 @@ void Scene125::Action6::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 2:
 		owner->remove();
 	default:
@@ -2266,7 +2253,7 @@ void Scene140::Action1::signal() {
 		owner->addMover(mover, &destPos, this);
 		owner->_numFrames = 7;
 		break;
-		}
+	}
 	case 4:
 		owner->setStrip(3);
 		owner->setFrame(1);
@@ -2578,7 +2565,7 @@ void Scene160::Action2::signal() {
 		NpcMover *mover = new NpcMover();
 		owner->addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 14:
 		owner->changeZoom(100);
 		owner->setStrip(5);
@@ -2627,15 +2614,15 @@ void Scene160::Action2::signal() {
 		break;
 	case 25:
 		BF_GLOBALS._sound1.fade(0, 10, 10, true, this);
-// FIXME: Currently, fade() doesn't end properly with this song,
-//        thus never returns here. This hack skips the wait and changes
-//        directly to the next scene
-// Start of hack
-//		break;
-//	case 26:
+		// FIXME: Currently, fade() doesn't end properly with this song,
+		//        thus never returns here. This hack skips the wait and changes
+		//        directly to the next scene
+		// Start of hack
+		//		break;
+		//	case 26:
 		setDelay(5);
 		BF_GLOBALS._sound1.stop();
-// End of hack
+		// End of hack
 
 		BF_GLOBALS._sceneManager.changeScene(200);
 		break;
@@ -2666,7 +2653,7 @@ void Scene160::Action3::signal() {
 		NpcMover *mover = new NpcMover();
 		BF_GLOBALS._player.addMover(mover, &destPos, this);
 		break;
-		}
+	}
 	case 2:
 		scene->_action1.signal();
 		scene->_action2.signal();
@@ -2759,7 +2746,7 @@ bool Scene180::GarageExit::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene180::Scene180(): SceneExt() {
+Scene180::Scene180() : SceneExt() {
 	_dispatchMode = 0;
 }
 
@@ -2772,8 +2759,8 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
 	if (((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) ||
-			((BF_GLOBALS._bookmark == bDroppedOffLyle) && (BF_GLOBALS._dayNumber == 3)) ||
-			((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4)))
+	    ((BF_GLOBALS._bookmark == bDroppedOffLyle) && (BF_GLOBALS._dayNumber == 3)) ||
+	    ((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4)))
 		loadScene(999);
 	else
 		loadScene(1180);
@@ -2791,7 +2778,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._driveToScene = 4;
 		BF_GLOBALS._mapLocationId = 4;
 	} else if (((BF_GLOBALS._bookmark == bDroppedOffLyle) && (BF_GLOBALS._dayNumber == 3)) ||
-			((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4))) {
+	           ((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4))) {
 		_sceneMessage.setup(THE_NEXT_DAY);
 		_sceneMode = 6;
 		setAction(&_sceneMessage, this);
@@ -3020,7 +3007,7 @@ void Scene180::signal() {
 		break;
 	case 8:
 		if (BF_GLOBALS.getFlag(fLeftTraceIn900) || BF_GLOBALS.getFlag(fGotPointsForSearchingDA) ||
-				BF_GLOBALS.getFlag(fLeftTraceIn920)) {
+		    BF_GLOBALS.getFlag(fLeftTraceIn920)) {
 			BF_GLOBALS._sound1.fadeOut2(NULL);
 			BF_GLOBALS._driveToScene = 0;
 			BF_GLOBALS._driveFromScene = 0;
@@ -3101,7 +3088,7 @@ void Scene180::dispatch() {
 		BF_GLOBALS._driveFromScene = 0;
 
 		if (BF_GLOBALS.getFlag(fLeftTraceIn900) || BF_GLOBALS.getFlag(fGotPointsForSearchingDA) ||
-				BF_GLOBALS.getFlag(fLeftTraceIn920))
+		    BF_GLOBALS.getFlag(fLeftTraceIn920))
 			BF_GLOBALS._sceneManager.changeScene(271);
 		else
 			BF_GLOBALS._sceneManager.changeScene(270);
@@ -3201,7 +3188,7 @@ void Scene190::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene190::Scene190(): SceneExt() {
+Scene190::Scene190() : SceneExt() {
 	_fieldB52 = true;
 	_cursorVisage.setVisage(1, 8);
 }
@@ -3209,8 +3196,8 @@ Scene190::Scene190(): SceneExt() {
 void Scene190::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._dialogCenter.y = 100;
 	if ((BF_GLOBALS._sceneManager._previousScene == 100) ||
-			(BF_GLOBALS._sceneManager._previousScene == 20)) {
-//		clearScreen();
+	    (BF_GLOBALS._sceneManager._previousScene == 20)) {
+		//		clearScreen();
 	}
 	if (BF_GLOBALS._dayNumber == 0) {
 		// If at start of game, change to first day
@@ -3383,8 +3370,7 @@ void Scene190::process(Event &event) {
 void Scene190::dispatch() {
 	SceneExt::dispatch();
 
-	if (!_action && !_fieldB52 && (BF_GLOBALS._player._position.x >= 310)
-			&& !BF_GLOBALS.getFlag(onBike)) {
+	if (!_action && !_fieldB52 && (BF_GLOBALS._player._position.x >= 310) && !BF_GLOBALS.getFlag(onBike)) {
 		// Handle walking off to the right side of the screen
 		BF_GLOBALS._player.disableControl();
 		_fieldB52 = true;

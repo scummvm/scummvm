@@ -26,7 +26,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CParrotLobbyController, CParrotLobbyObject)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 void CParrotLobbyController::save(SimpleFile *file, int indent) {

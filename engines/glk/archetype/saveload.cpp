@@ -27,7 +27,7 @@
 namespace Glk {
 namespace Archetype {
 
-StatementKind vEndSeq, vContSeq;		// to make BlockWrite happy
+StatementKind vEndSeq, vContSeq; // to make BlockWrite happy
 int Dynamic;
 bool Translating;
 
@@ -42,7 +42,7 @@ void saveload_init() {
 // ===================== Forward Declarations =======================
 
 static void walk_item_list(MissionType mission, Common::Stream *bfile,
-	ListType &elements, ContentType content);
+                           ListType &elements, ContentType content);
 static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_expr);
 static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &the_stmt);
 
@@ -401,7 +401,6 @@ static void walk_expr(MissionType mission, Common::Stream *bfile, ExprTree &the_
 	}
 }
 
-
 // =========================== Statements =========================
 
 // Wrappers
@@ -425,7 +424,7 @@ void dispose_stmt(StatementPtr &the_stmt) {
  * @param the_stmt		pointer to a statement record
  */
 static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &the_stmt) {
-	NodePtr np;				// for appending to lists
+	NodePtr np; // for appending to lists
 	StatementKind sentinel;
 	ExprTree this_expr;
 
@@ -571,7 +570,6 @@ static void walk_stmt(MissionType mission, Common::Stream *bfile, StatementPtr &
 	}
 }
 
-
 // ============================ Objects ===========================
 
 void load_object(Common::ReadStream *f_in, ObjectPtr &the_object) {
@@ -614,7 +612,6 @@ void dispose_object(ObjectPtr &the_object) {
 	delete the_object;
 	the_object = nullptr;
 }
-
 
 // ============================= Object Lists ========================
 

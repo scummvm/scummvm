@@ -39,10 +39,12 @@ namespace Gfx {
 class Popup : public VisualItem {
 	DECLARE_MESSAGE_MAP;
 	bool ShowMsg(CShowMsg &msg);
+
 protected:
 	GameBase *_game;
 	VisualItem *_parentView;
 	TreeItem *_respondTo;
+
 public:
 	CLASSDEF;
 

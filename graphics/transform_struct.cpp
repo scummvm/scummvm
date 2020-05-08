@@ -42,72 +42,72 @@ void TransformStruct::init(Common::Point zoom, uint32 angle, Common::Point hotsp
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, int32 offsetX, int32 offsetY) {
 	init(Common::Point(zoomX, zoomY),
-		angle,
-		Common::Point(hotspotX, hotspotY),
-		false,
-		blendMode,
-		rgbaMod,
-		mirrorX, mirrorY,
-		Common::Point(offsetX, offsetY));
+	     angle,
+	     Common::Point(hotspotX, hotspotY),
+	     false,
+	     blendMode,
+	     rgbaMod,
+	     mirrorX, mirrorY,
+	     Common::Point(offsetX, offsetY));
 }
 
 TransformStruct::TransformStruct(float zoomX, float zoomY, uint32 angle, int32 hotspotX, int32 hotspotY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY, int32 offsetX, int32 offsetY) {
 	init(Common::Point((int)(zoomX / 100.0 * kDefaultZoomX),
-		     (int)(zoomY / 100.0 * kDefaultZoomY)),
-		angle,
-		Common::Point(hotspotX, hotspotY),
-		false,
-		blendMode,
-		rgbaMod,
-		mirrorX, mirrorY,
-		Common::Point(offsetX, offsetY));
+	                   (int)(zoomY / 100.0 * kDefaultZoomY)),
+	     angle,
+	     Common::Point(hotspotX, hotspotY),
+	     false,
+	     blendMode,
+	     rgbaMod,
+	     mirrorX, mirrorY,
+	     Common::Point(offsetX, offsetY));
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, TSpriteBlendMode blendMode, uint32 rgbaMod, bool mirrorX, bool mirrorY) {
 	init(Common::Point(zoomX, zoomY),
-		kDefaultAngle,
-		Common::Point(kDefaultHotspotX, kDefaultHotspotY),
-		false,
-		blendMode,
-		rgbaMod,
-		mirrorX,
-		mirrorY,
-		Common::Point(kDefaultOffsetX, kDefaultOffsetY));
+	     kDefaultAngle,
+	     Common::Point(kDefaultHotspotX, kDefaultHotspotY),
+	     false,
+	     blendMode,
+	     rgbaMod,
+	     mirrorX,
+	     mirrorY,
+	     Common::Point(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 TransformStruct::TransformStruct(int32 zoomX, int32 zoomY, uint32 angle, int32 hotspotX, int32 hotspotY) {
 	init(Common::Point(zoomX, zoomY),
-		angle,
-		Common::Point(hotspotX, hotspotY),
-		true,
-		BLEND_NORMAL,
-		kDefaultRgbaMod,
-		false, false,
-		Common::Point(kDefaultOffsetX, kDefaultOffsetY));
+	     angle,
+	     Common::Point(hotspotX, hotspotY),
+	     true,
+	     BLEND_NORMAL,
+	     kDefaultRgbaMod,
+	     false, false,
+	     Common::Point(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 TransformStruct::TransformStruct(int32 numTimesX, int32 numTimesY) {
 	init(Common::Point(kDefaultZoomX, kDefaultZoomY),
-		kDefaultAngle,
-		Common::Point(kDefaultHotspotX, kDefaultHotspotY),
-		false,
-		BLEND_NORMAL,
-		kDefaultRgbaMod,
-		false, false,
-		Common::Point(kDefaultOffsetX, kDefaultOffsetY));
+	     kDefaultAngle,
+	     Common::Point(kDefaultHotspotX, kDefaultHotspotY),
+	     false,
+	     BLEND_NORMAL,
+	     kDefaultRgbaMod,
+	     false, false,
+	     Common::Point(kDefaultOffsetX, kDefaultOffsetY));
 	_numTimesX = numTimesX;
 	_numTimesY = numTimesY;
 }
 
 TransformStruct::TransformStruct() {
 	init(Common::Point(kDefaultZoomX, kDefaultZoomY),
-		kDefaultAngle,
-		Common::Point(kDefaultHotspotX, kDefaultHotspotY),
-		true,
-		BLEND_NORMAL,
-		kDefaultRgbaMod,
-		false, false,
-		Common::Point(kDefaultOffsetX, kDefaultOffsetY));
+	     kDefaultAngle,
+	     Common::Point(kDefaultHotspotX, kDefaultHotspotY),
+	     true,
+	     BLEND_NORMAL,
+	     kDefaultRgbaMod,
+	     false, false,
+	     Common::Point(kDefaultOffsetX, kDefaultOffsetY));
 }
 
 bool TransformStruct::getMirrorX() const {

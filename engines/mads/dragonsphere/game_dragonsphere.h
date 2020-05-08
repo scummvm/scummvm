@@ -24,16 +24,17 @@
 #define MADS_GAME_DRAGONSPHERE_H
 
 #include "common/scummsys.h"
+#include "mads/dragonsphere/globals_dragonsphere.h"
 #include "mads/game.h"
 #include "mads/globals.h"
-#include "mads/dragonsphere/globals_dragonsphere.h"
 
 namespace MADS {
 
 namespace Dragonsphere {
 
 // TODO: Adapt for Dragonsphere's difficulty setting
-enum StoryMode { STORYMODE_NAUGHTY = 1, STORYMODE_NICE = 2 };
+enum StoryMode { STORYMODE_NAUGHTY = 1,
+	             STORYMODE_NICE = 2 };
 
 enum InventoryObject {
 	OBJ_NONE = -1,
@@ -90,6 +91,7 @@ enum InventoryObject {
 
 class GameDragonsphere : public Game {
 	friend class Game;
+
 protected:
 	GameDragonsphere(MADSEngine *vm);
 
@@ -100,6 +102,7 @@ protected:
 	void setSectionHandler() override;
 
 	void checkShowDialog() override;
+
 public:
 	DragonsphereGlobals _globals;
 	StoryMode _storyMode;
@@ -114,7 +117,6 @@ public:
 
 	void synchronize(Common::Serializer &s, bool phase1) override;
 };
-
 
 class Section1Handler : public SectionHandler {
 public:
@@ -135,7 +137,7 @@ typedef Section1Handler Section6Handler;
 typedef Section1Handler Section7Handler;
 typedef Section1Handler Section8Handler;
 
-} // End of namespace Nebular
+} // namespace Dragonsphere
 
 } // End of namespace MADS
 

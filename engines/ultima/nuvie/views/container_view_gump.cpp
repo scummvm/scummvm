@@ -20,20 +20,20 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/views/container_view_gump.h"
+#include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/u6_objects.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/fonts/font_manager.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_button.h"
-#include "ultima/nuvie/core/u6_objects.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/fonts/font_manager.h"
-#include "ultima/nuvie/views/container_widget_gump.h"
-#include "ultima/nuvie/views/container_view_gump.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/views/container_widget_gump.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -85,7 +85,6 @@ bool ContainerViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, u
 
 void ContainerViewGump::init_container_type(Std::string datadir, Obj *obj_type) {
 
-
 	if (obj_type != NULL) {
 		if (obj_type->is_in_inventory())
 			actor = obj_type->get_actor_holding_obj();
@@ -98,14 +97,11 @@ void ContainerViewGump::init_container_type(Std::string datadir, Obj *obj_type) 
 				return init_barrel(datadir);
 			else if (obj_type->obj_n == OBJ_U6_DEAD_GARGOYLE)
 				return init_corpse(datadir, "corpse_gargoyle_bg.bmp");
-			else if (obj_type->obj_n == OBJ_U6_DEAD_BODY
-			         || obj_type->obj_n == OBJ_U6_GRAVE || obj_type->obj_n == OBJ_U6_REMAINS)
+			else if (obj_type->obj_n == OBJ_U6_DEAD_BODY || obj_type->obj_n == OBJ_U6_GRAVE || obj_type->obj_n == OBJ_U6_REMAINS)
 				return init_corpse(datadir, "corpse_body_bg.bmp");
 			else if (obj_type->obj_n == OBJ_U6_DEAD_CYCLOPS)
 				return init_corpse(datadir, "corpse_cyclops_bg.bmp");
-			else if (obj_type->obj_n == OBJ_U6_DEAD_ANIMAL || obj_type->obj_n == OBJ_U6_MOUSE
-			         || obj_type->obj_n == OBJ_U6_MONGBAT || obj_type->obj_n == OBJ_U6_DRAKE
-			         || obj_type->obj_n == OBJ_U6_REAPER)
+			else if (obj_type->obj_n == OBJ_U6_DEAD_ANIMAL || obj_type->obj_n == OBJ_U6_MOUSE || obj_type->obj_n == OBJ_U6_MONGBAT || obj_type->obj_n == OBJ_U6_DRAKE || obj_type->obj_n == OBJ_U6_REAPER)
 				return init_corpse(datadir, "corpse_animal_bg.bmp");
 		}
 	}
@@ -269,8 +265,8 @@ void ContainerViewGump::set_container_obj(Obj *o) {
 }
 
 void ContainerViewGump::Display(bool full_redraw) {
-//display_level_text();
-//display_spell_list_text();
+	//display_level_text();
+	//display_spell_list_text();
 	Common::Rect dst;
 	dst = area;
 	SDL_BlitSurface(bg_image, NULL, surface, &dst);

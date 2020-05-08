@@ -108,7 +108,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	assert(volumeSizeOfEntry == 14 + 4 + 4 + 4 + 4);
 
-	volumePtrToFileDescriptor = (fileEntry *) mallocAndZero(sizeof(fileEntry) * volumeNumEntry);
+	volumePtrToFileDescriptor = (fileEntry *)mallocAndZero(sizeof(fileEntry) * volumeNumEntry);
 
 	for (int i = 0; i < volumeNumEntry; i++) {
 		volumePtrToFileDescriptor[i].name[0] = 0;
@@ -332,7 +332,7 @@ int16 readVolCnf() {
 		return (0);
 
 	numOfDisks = fileHandle.readSint16BE();
-	/*sizeHEntry =*/ fileHandle.readSint16BE();		// size of one header entry - 20 bytes
+	/*sizeHEntry =*/fileHandle.readSint16BE(); // size of one header entry - 20 bytes
 
 	for (int i = 0; i < numOfDisks; i++) {
 		//      fread(&volumeData[i],20,1,fileHandle);
@@ -349,7 +349,7 @@ int16 readVolCnf() {
 
 		volumeData[i].size = fileHandle.readSint32BE();
 
-		ptr = (dataFileName *) mallocAndZero(volumeData[i].size);
+		ptr = (dataFileName *)mallocAndZero(volumeData[i].size);
 
 		volumeData[i].ptr = ptr;
 
@@ -382,10 +382,10 @@ int16 readVolCnf() {
 		numEntry = fileHandle.readSint16BE();
 		sizeEntry = fileHandle.readSint16BE();
 
-		buffer = (fileEntry *) mallocAndZero(numEntry * sizeEntry);
+		buffer = (fileEntry *)mallocAndZero(numEntry * sizeEntry);
 
 		for (int j = 0; j < numEntry; j++) {
-			fileHandle.seek(4 + j*0x1E);
+			fileHandle.seek(4 + j * 0x1E);
 			fileHandle.read(buffer[j].name, 14);
 			buffer[j].offset = fileHandle.readSint32BE();
 			buffer[j].size = fileHandle.readSint32BE();
@@ -411,7 +411,7 @@ int16 readVolCnf() {
 			} else {
 				char *uncompBuffer = (char *)mallocAndZero(buffer[j].extSize + 500);
 
-				delphineUnpack((uint8 *) uncompBuffer, (const uint8 *) bufferLocal, buffer[j].size);
+				delphineUnpack((uint8 *)uncompBuffer, (const uint8 *)bufferLocal, buffer[j].size);
 
 				Common::File fout;
 				fout.open(nameBuffer, Common::File::kFileWriteMode);
@@ -419,7 +419,6 @@ int16 readVolCnf() {
 					fout.write(uncompBuffer, buffer[j].extSize);
 
 				//MemFree(uncompBuffer);
-
 			}
 
 			MemFree(bufferLocal);

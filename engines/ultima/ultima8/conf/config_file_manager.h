@@ -23,10 +23,10 @@
 #ifndef ULTIMA8_CONF_CONFIGFILEMANAGER_H
 #define ULTIMA8_CONF_CONFIGFILEMANAGER_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/ultima8/misc/istring.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/conf/ini_file.h"
+#include "ultima/ultima8/misc/istring.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -88,14 +88,14 @@ public:
 	//!                   just the last part
 	//! \return the keys. They have no guaranteed order.
 	Std::vector<istring> listKeys(istring section,
-	        bool longformat = false);
+	                              bool longformat = false);
 
 	//! list all sections
 	//! \param root The config root to list all sections in
 	//! \param longformat If true, return the full key name (including section)
 	//! \return the sections. They have no guaranteed order.
 	Std::vector<istring> listSections(istring root,
-	        bool longformat = false);
+	                                  bool longformat = false);
 
 	//! list all key-value pairs in the given section.
 	//! \param section The section to list
@@ -104,7 +104,6 @@ public:
 	KeyMap listKeyValues(istring section, bool longformat = false);
 
 private:
-
 	INIFile *findKeyINI(istring key);
 	INIFile *findWriteINI(istring key);
 

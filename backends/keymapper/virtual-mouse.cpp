@@ -33,16 +33,15 @@
 
 namespace Common {
 
-VirtualMouse::VirtualMouse(EventDispatcher *eventDispatcher) :
-		_eventDispatcher(eventDispatcher),
-		_inputAxisPositionX(0),
-		_inputAxisPositionY(0),
-		_mouseVelocityX(0.f),
-		_mouseVelocityY(0.f),
-		_slowModifier(1.f),
-		_subPixelRemainderX(0.f),
-		_subPixelRemainderY(0.f),
-		_lastUpdateMillis(0) {
+VirtualMouse::VirtualMouse(EventDispatcher *eventDispatcher) : _eventDispatcher(eventDispatcher),
+                                                               _inputAxisPositionX(0),
+                                                               _inputAxisPositionY(0),
+                                                               _mouseVelocityX(0.f),
+                                                               _mouseVelocityY(0.f),
+                                                               _slowModifier(1.f),
+                                                               _subPixelRemainderX(0.f),
+                                                               _subPixelRemainderY(0.f),
+                                                               _lastUpdateMillis(0) {
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 3);
 
@@ -181,8 +180,8 @@ void VirtualMouse::handleAxisMotion(int16 axisPositionX, int16 axisPositionY) {
 	_inputAxisPositionX = axisPositionX;
 	_inputAxisPositionY = axisPositionY;
 
-	float analogX  = (float)_inputAxisPositionX;
-	float analogY  = (float)_inputAxisPositionY;
+	float analogX = (float)_inputAxisPositionX;
+	float analogY = (float)_inputAxisPositionY;
 	float deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
 
 	float magnitude = sqrtf(analogX * analogX + analogY * analogY);
@@ -203,19 +202,19 @@ float VirtualMouse::computeJoystickMouseSpeedFactor() const {
 	case 0:
 		return 0.25; // 0.25 keyboard pointer speed
 	case 1:
-		return 0.5;  // 0.5 speed
+		return 0.5; // 0.5 speed
 	case 2:
 		return 0.75; // 0.75 speed
 	case 3:
-		return 1.0;  // 1.0 speed
+		return 1.0; // 1.0 speed
 	case 4:
 		return 1.25; // 1.25 speed
 	case 5:
-		return 1.5;  // 1.5 speed
+		return 1.5; // 1.5 speed
 	case 6:
 		return 1.75; // 1.75 speed
 	case 7:
-		return 2.0;  // 2.0 speed
+		return 2.0; // 2.0 speed
 	default:
 		return 1.0;
 	}

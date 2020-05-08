@@ -21,8 +21,8 @@
  */
 
 #include "glk/alan3/memory.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/syserr.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -32,8 +32,7 @@ namespace Alan3 {
 Aword *memory = NULL;
 static ACodeHeader dummyHeader; /* Dummy to use until memory allocated */
 ACodeHeader *header = &dummyHeader;
-int memTop = 0;         /* Top of load memory */
-
+int memTop = 0; /* Top of load memory */
 
 /*======================================================================*/
 void *allocate(unsigned long lengthInBytes) {
@@ -45,12 +44,10 @@ void *allocate(unsigned long lengthInBytes) {
 	return p;
 }
 
-
 /*======================================================================*/
 void deallocate(void *ptr) {
 	free(ptr);
 }
-
 
 /*======================================================================*/
 void *duplicate(void *original, unsigned long len) {
@@ -59,7 +56,6 @@ void *duplicate(void *original, unsigned long len) {
 	memcpy(p, original, len);
 	return p;
 }
-
 
 typedef struct {
 	Aptr aptr;
@@ -72,7 +68,8 @@ static int nextAptr = 1;
 
 /*======================================================================*/
 void resetPointerMap(void) {
-	if (pointerMap != NULL) free(pointerMap);
+	if (pointerMap != NULL)
+		free(pointerMap);
 	pointerMap = NULL;
 	pointerMapSize = 0;
 }
@@ -89,7 +86,6 @@ void *fromAptr(Aptr aptr) {
 
 	return pointerMap[index].voidp;
 }
-
 
 /*======================================================================*/
 Aptr toAptr(void *ptr) {

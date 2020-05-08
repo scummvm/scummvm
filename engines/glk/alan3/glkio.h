@@ -24,8 +24,8 @@
 #define GLK_ALAN3_GLKIO
 
 #include "glk/glk_api.h"
-#include "glk/windows.h"
 #include "glk/jumps.h"
+#include "glk/windows.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -36,13 +36,16 @@ private:
 	winid_t glkStatusWin;
 	schanid_t _soundChannel;
 	int _saveSlot;
+
 public:
 	bool onStatusLine;
+
 protected:
 	/**
 	 * Does initialization
 	 */
 	bool initialize();
+
 public:
 	/**
 	 * Constructor

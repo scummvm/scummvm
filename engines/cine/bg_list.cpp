@@ -20,15 +20,14 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/stream.h"
 
+#include "cine/bg_list.h"
 #include "cine/cine.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
 #include "cine/various.h"
-#include "cine/bg_list.h"
 
 namespace Cine {
 

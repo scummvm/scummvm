@@ -29,17 +29,17 @@ void SceneScriptPS07::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3, 80, 0, 1);
-	Ambient_Sounds_Add_Sound(kSfxTUBES1,   5, 20,  5, 10,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC1, 5, 30,  5, 10,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC2, 2, 20,  5, 10,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC3, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC4, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC5, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC6, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC7, 2, 30, 10, 15,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC8, 2, 20, 10, 15,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxLABMISC9, 5, 20, 10, 15,  -70,  70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTUBES4,   5, 30,  5,  8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTUBES1, 5, 20, 5, 10, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC1, 5, 30, 5, 10, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC2, 2, 20, 5, 10, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC3, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC4, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC5, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC6, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC7, 2, 30, 10, 15, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC8, 2, 20, 10, 15, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC9, 5, 20, 10, 15, -70, 70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTUBES4, 5, 30, 5, 8, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptPS07::SceneLoaded() {
@@ -58,9 +58,7 @@ bool SceneScriptPS07::MouseClick(int x, int y) {
 bool SceneScriptPS07::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("L.MOUSE", objectName)) { // this object is restored in the scene (buzzer button)
 		Sound_Play(kSfxLABBUZZ1, 70, 0, 0, 50);
-		if (Actor_Query_Goal_Number(kActorKlein) < kGoalKleinIsAnnoyedByMcCoyInit
-		    && Actor_Query_Goal_Number(kActorKlein) > kGoalKleinDefault
-		) {
+		if (Actor_Query_Goal_Number(kActorKlein) < kGoalKleinIsAnnoyedByMcCoyInit && Actor_Query_Goal_Number(kActorKlein) > kGoalKleinDefault) {
 			Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
 			Actor_Set_Goal_Number(kActorKlein, kGoalKleinGotoLabSpeaker);
 			Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, -3);
@@ -72,11 +70,7 @@ bool SceneScriptPS07::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptPS07::ClickedOnActor(int actorId) {
 	if (actorId == kActorKlein) {
-		if (_vm->_cutContent
-		    && (Actor_Query_Goal_Number(kActorKlein) >= kGoalKleinIsAnnoyedByMcCoyInit
-		        || (Actor_Query_Goal_Number(kActorKlein) < kGoalKleinIsAnnoyedByMcCoyInit
-		            && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 40))
-		) {
+		if (_vm->_cutContent && (Actor_Query_Goal_Number(kActorKlein) >= kGoalKleinIsAnnoyedByMcCoyInit || (Actor_Query_Goal_Number(kActorKlein) < kGoalKleinIsAnnoyedByMcCoyInit && Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 40))) {
 			// Annoyed Dino ignores McCoy
 			return true;
 		} else {
@@ -86,16 +80,7 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 4115, 13);
 			}
 
-			if (!Game_Flag_Query(kFlagPS07KleinTalkClues)
-			    && ((_vm->_cutContent && (Actor_Clue_Query(kActorKlein, kClueShellCasings)
-			                              || Actor_Clue_Query(kActorKlein, kClueOfficersStatement)
-			                              || Actor_Clue_Query(kActorKlein, kCluePaintTransfer)
-			                              || Actor_Clue_Query(kActorKlein, kClueChromeDebris)))
-			        || (!_vm->_cutContent && (Game_Flag_Query(kFlagMcCoyHasShellCasings)
-			                                  || Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
-			                                  || Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
-			                                  || Game_Flag_Query(kFlagMcCoyHasChromeDebris))))
-			) {
+			if (!Game_Flag_Query(kFlagPS07KleinTalkClues) && ((_vm->_cutContent && (Actor_Clue_Query(kActorKlein, kClueShellCasings) || Actor_Clue_Query(kActorKlein, kClueOfficersStatement) || Actor_Clue_Query(kActorKlein, kCluePaintTransfer) || Actor_Clue_Query(kActorKlein, kClueChromeDebris))) || (!_vm->_cutContent && (Game_Flag_Query(kFlagMcCoyHasShellCasings) || Game_Flag_Query(kFlagMcCoyHasOfficersStatement) || Game_Flag_Query(kFlagMcCoyHasPaintTransfer) || Game_Flag_Query(kFlagMcCoyHasChromeDebris))))) {
 				Actor_Face_Actor(kActorKlein, kActorMcCoy, true);
 				Actor_Says(kActorKlein, 30, 12);
 				Game_Flag_Set(kFlagPS07KleinTalkClues);
@@ -107,10 +92,7 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 
 			// Restored cut content version uses Clues system. Klein gets the clues if McCoy has uploaded to the mainframe
 			// The original version takes a shortcut here and uses flags for this (McCoy does not have to upload the clues to the mainframe)
-			if (((_vm->_cutContent && Actor_Clue_Query(kActorKlein, kClueShellCasings))
-			      || (!_vm->_cutContent && Game_Flag_Query(kFlagMcCoyHasShellCasings)))
-			    && !Game_Flag_Query(kFlagPS07KleinTalkShellCasings)
-			) {
+			if (((_vm->_cutContent && Actor_Clue_Query(kActorKlein, kClueShellCasings)) || (!_vm->_cutContent && Game_Flag_Query(kFlagMcCoyHasShellCasings))) && !Game_Flag_Query(kFlagPS07KleinTalkShellCasings)) {
 				Game_Flag_Set(kFlagPS07KleinTalkShellCasings);
 				Actor_Clue_Acquire(kActorMcCoy, kClueLabShellCasings, false, kActorKlein);
 				Actor_Says(kActorKlein, 50, 16);
@@ -124,10 +106,7 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 				return true;
 			}
 
-			if (((_vm->_cutContent && Actor_Clue_Query(kActorKlein, kClueOfficersStatement))
-			      || (!_vm->_cutContent && Game_Flag_Query(kFlagMcCoyHasOfficersStatement)))
-			    && !Game_Flag_Query(kFlagPS07KleinTalkOfficersStatement)
-			) {
+			if (((_vm->_cutContent && Actor_Clue_Query(kActorKlein, kClueOfficersStatement)) || (!_vm->_cutContent && Game_Flag_Query(kFlagMcCoyHasOfficersStatement))) && !Game_Flag_Query(kFlagPS07KleinTalkOfficersStatement)) {
 				Game_Flag_Set(kFlagPS07KleinTalkOfficersStatement);
 				Actor_Clue_Acquire(kActorMcCoy, kClueLabCorpses, false, kActorKlein);
 				Actor_Says(kActorKlein, 100, 13);
@@ -142,10 +121,7 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 				// quote 150 is *boop* in ENG version
 				// it is redundant in DEU and FRA versions (identical to second half of quote 140)
 				// it is required in ESP and ITA versions. It is the missing second half of quote 140.
-				if (_vm->_cutContent
-				    && (_vm->_language == Common::ES_ESP
-				        || _vm->_language == Common::IT_ITA)
-				) {
+				if (_vm->_cutContent && (_vm->_language == Common::ES_ESP || _vm->_language == Common::IT_ITA)) {
 					Actor_Says(kActorKlein, 150, kAnimationModeTalk);
 				}
 				Actor_Says(kActorMcCoy, 4165, 18);
@@ -157,10 +133,7 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 				return true;
 			}
 
-			if (((_vm->_cutContent && Actor_Clue_Query(kActorKlein, kCluePaintTransfer))
-			      || (!_vm->_cutContent && Game_Flag_Query(kFlagMcCoyHasPaintTransfer)))
-			    && !Game_Flag_Query(kFlagPS07KleinTalkPaintTransfer)
-			) {
+			if (((_vm->_cutContent && Actor_Clue_Query(kActorKlein, kCluePaintTransfer)) || (!_vm->_cutContent && Game_Flag_Query(kFlagMcCoyHasPaintTransfer))) && !Game_Flag_Query(kFlagPS07KleinTalkPaintTransfer)) {
 				Game_Flag_Set(kFlagPS07KleinTalkPaintTransfer);
 				Actor_Clue_Acquire(kActorMcCoy, kClueLabPaintTransfer, false, kActorKlein);
 				Actor_Says(kActorKlein, 170, 14);
@@ -180,10 +153,7 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 				return true;
 			}
 
-			if (((_vm->_cutContent && Actor_Clue_Query(kActorKlein, kClueChromeDebris))
-			      || (!_vm->_cutContent && Game_Flag_Query(kFlagMcCoyHasChromeDebris)))
-			    && !Game_Flag_Query(kFlagPS07KleinTalkChromeDebris)
-			) {
+			if (((_vm->_cutContent && Actor_Clue_Query(kActorKlein, kClueChromeDebris)) || (!_vm->_cutContent && Game_Flag_Query(kFlagMcCoyHasChromeDebris))) && !Game_Flag_Query(kFlagPS07KleinTalkChromeDebris)) {
 				Game_Flag_Set(kFlagPS07KleinTalkChromeDebris);
 				Actor_Says(kActorKlein, 220, 12);
 				Actor_Says(kActorMcCoy, 4190, 13);
@@ -194,9 +164,7 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 					// quote 250 is *boop* in ENG version
 					// it is redundant in DEU and FRA versions (identical to second half of quote 240)
 					// it is required in ESP and ITA versions. It is the missing second half of quote 240.
-					if (_vm->_language == Common::ES_ESP
-					    || _vm->_language == Common::IT_ITA
-					) {
+					if (_vm->_language == Common::ES_ESP || _vm->_language == Common::IT_ITA) {
 						Actor_Says(kActorKlein, 250, kAnimationModeTalk);
 					}
 				}
@@ -227,7 +195,6 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 		}
 	}
 	return false;
-
 }
 
 bool SceneScriptPS07::ClickedOnItem(int itemId, bool a2) {
@@ -261,10 +228,7 @@ void SceneScriptPS07::PlayerWalkedIn() {
 }
 
 void SceneScriptPS07::PlayerWalkedOut() {
-	if (!Game_Flag_Query(kFlagPS07KleinInsulted)
-	    && ((_vm->_cutContent && Global_Variable_Query(kVariableChapter) < 4)
-	        || (!_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 1))
-	){
+	if (!Game_Flag_Query(kFlagPS07KleinInsulted) && ((_vm->_cutContent && Global_Variable_Query(kVariableChapter) < 4) || (!_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 1))) {
 		Actor_Set_Goal_Number(kActorKlein, kGoalKleinDefault);
 	}
 }

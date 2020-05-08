@@ -21,9 +21,9 @@
  */
 
 #include "kyra/gui/gui_v2.h"
+#include "kyra/engine/util.h"
 #include "kyra/graphics/screen_v2.h"
 #include "kyra/text/text.h"
-#include "kyra/engine/util.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -152,7 +152,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 
 	uint16 flags = 0;
 
-	if (1/*!_screen_cursorDisable*/) {
+	if (1 /*!_screen_cursorDisable*/) {
 		uint16 inFlags = inputFlag & 0xFF;
 		uint16 temp = 0;
 
@@ -247,7 +247,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 		bool progressSwitch = false;
 		if (!_specialProcessButton) {
 			progressSwitch = progress;
-		} else  {
+		} else {
 			if (_specialProcessButton->flags & 0x40)
 				progressSwitch = (_specialProcessButton == buttonList);
 			else
@@ -266,9 +266,8 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 				combinedFlags >>= 8;
 
 				static const uint16 flagTable[] = {
-					0x000, 0x100, 0x200, 0x100, 0x400, 0x100, 0x400, 0x100, 0x800, 0x100,
-					0x200, 0x100, 0x400, 0x100, 0x400, 0x100
-				};
+				    0x000, 0x100, 0x200, 0x100, 0x400, 0x100, 0x400, 0x100, 0x800, 0x100,
+				    0x200, 0x100, 0x400, 0x100, 0x400, 0x100};
 
 				assert(combinedFlags < ARRAYSIZE(flagTable));
 
@@ -412,8 +411,10 @@ void GUI_v2::renewHighlight(Menu &menu) {
 		return;
 
 	MenuItem &item = menu.item[menu.highlightedItem];
-	int x = item.x + menu.x; int y = item.y + menu.y;
-	int x2 = x + item.width - 1; int y2 = y + item.height - 1;
+	int x = item.x + menu.x;
+	int y = item.y + menu.y;
+	int x2 = x + item.width - 1;
+	int y2 = y + item.height - 1;
 	redrawText(menu);
 	_screen->fillRect(x + 2, y + 2, x2 - 2, y2 - 2, item.bkgdColor);
 	redrawHighlight(menu);
@@ -451,7 +452,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			_screen->_charWidth = -2;
 			int fC = _screen->getTextWidth(s);
 			while (s[0] && fC > 240) {
-				s[strlen(s) - 1]  = 0;
+				s[strlen(s) - 1] = 0;
 				fC = _screen->getTextWidth(s);
 			}
 			_screen->_charWidth = 0;
@@ -782,7 +783,7 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 			of = _screen->setFont(Screen::FID_8_FNT);
 			if (x2 + getCharWidth(inputKey) + 7 < 0x11F) {
 				buffer[curPos] = inputKey;
-				const char text[2] = { buffer[curPos], 0 };
+				const char text[2] = {buffer[curPos], 0};
 				_text->printText(text, x2, y2, c1, c2, c2);
 				x2 += getCharWidth(inputKey);
 				drawTextfieldBlock(x2, y2, c3);

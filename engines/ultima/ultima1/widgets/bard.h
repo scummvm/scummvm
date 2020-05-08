@@ -39,19 +39,20 @@ private:
 	 * @returns		True if player had a weapon to steal
 	 */
 	bool stealWeapon();
+
 protected:
 	/**
 	 * Handles moving creatures
 	 */
 	void movement() override;
+
 public:
 	DECLARE_WIDGET(Bard)
 
 	/**
 	 * Constructor
 	 */
-	Bard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 19, hitPoints) {}
+	Bard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) : Person(game, map, 19, hitPoints) {}
 
 	/**
 	 * Constructor

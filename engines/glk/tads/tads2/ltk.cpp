@@ -21,13 +21,12 @@
  */
 
 #include "glk/tads/tads2/ltk.h"
-#include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/error_handling.h"
+#include "glk/tads/tads2/lib.h"
 
 namespace Glk {
 namespace TADS {
 namespace TADS2 {
-
 
 /*--------------------------------- ltkini ---------------------------------*/
 /*
@@ -36,14 +35,12 @@ namespace TADS2 {
 void ltkini(unsigned short heapsiz) {
 }
 
-
 /*--------------------------------- ltkfre ---------------------------------*/
 /*
  * ltkfre - FREe toolkit context.
  */
 void ltkfre() {
 }
-
 
 /*------------------------------ ltk_suballoc ------------------------------*/
 /*
@@ -53,25 +50,22 @@ void *ltk_suballoc(size_t siz) {
 	return ltk_alloc(siz);
 }
 
-
 /*---------------------------- ltk_sigsuballoc -----------------------------*/
 /*
  * ltk_sigsuballoc - allocate from heap, signal failure.
  */
 void *ltk_sigsuballoc(errcxdef *errcx, size_t siz) {
-  void *ptr;                                     /* ptr to allocated memory */
+	void *ptr; /* ptr to allocated memory */
 
-  /* allocate the memory */
-  if (!(ptr = ltk_suballoc(siz)))
-  {
-    /* signal an error */
-    errsigf(errcx, "LTK", 0);
-  }
+	/* allocate the memory */
+	if (!(ptr = ltk_suballoc(siz))) {
+		/* signal an error */
+		errsigf(errcx, "LTK", 0);
+	}
 
-  /* return the memory */
-  return(ptr);
+	/* return the memory */
+	return (ptr);
 }
-
 
 /*------------------------------ ltk_subfree -------------------------------*/
 /*
@@ -80,7 +74,6 @@ void *ltk_sigsuballoc(errcxdef *errcx, size_t siz) {
 void ltk_subfree(void *ptr) {
 	free(ptr);
 }
-
 
 /*------------------------------- ltk_alloc --------------------------------*/
 /*
@@ -103,17 +96,16 @@ void *ltk_realloc(void *ptr, size_t siz) {
  * ltk_sigalloc - allocate permanent global memory, and signal on failure.
  */
 void *ltk_sigalloc(errcxdef *errcx, size_t siz) {
-  void *ptr;                                 /* pointer to allocated memory */
+	void *ptr; /* pointer to allocated memory */
 
-  if (!(ptr = ltk_alloc(siz))) {
-    /* signal error */
-    errsigf(errcx, "LTK", 0);
-  }
+	if (!(ptr = ltk_alloc(siz))) {
+		/* signal error */
+		errsigf(errcx, "LTK", 0);
+	}
 
-  /* return a ptr to the allocated memory */
-  return ptr;
+	/* return a ptr to the allocated memory */
+	return ptr;
 }
-
 
 /*-------------------------------- ltk_free --------------------------------*/
 /*
@@ -131,11 +123,12 @@ void ltk_free(void *mem) {
 * system.
 */
 void ltk_errlog(void *ctx, const char *fac, int errCode, int argc, erradef *argv) {
-	char buf[128];                                  /* formatted error buffer */
-	char msg[128];                                          /* message buffer */
+	char buf[128]; /* formatted error buffer */
+	char msg[128]; /* message buffer */
 
-															/* $$$ filter out error #504 $$$ */
-	if (errCode == 504) return;
+	/* $$$ filter out error #504 $$$ */
+	if (errCode == 504)
+		return;
 
 	/* get the error message into msg */
 	errmsg((errcxdef *)ctx, msg, sizeof(msg), errCode);
@@ -147,17 +140,16 @@ void ltk_errlog(void *ctx, const char *fac, int errCode, int argc, erradef *argv
 	ltk_dlg("Error", buf);
 }
 
-
 /*-------------------------------- ltk_dlg ---------------------------------*/
 /*
 * ltk_dlg - DiaLog.  Puts the given message in a dialog box.
 */
 void ltk_dlg(const char *title, const char *msg, ...) {
-	va_list  argp;                                             /* printf args */
-	char     inbuf[80];                                       /* input buffer */
-	char     outbuf[160];                    /* allow inbuf to double in size */
+	va_list argp;     /* printf args */
+	char inbuf[80];   /* input buffer */
+	char outbuf[160]; /* allow inbuf to double in size */
 
-											 /* clip the input message, if necessary */
+	/* clip the input message, if necessary */
 	strncpy(inbuf, msg, sizeof(inbuf));
 	inbuf[sizeof(inbuf) - 1] = '\0';
 
@@ -168,7 +160,6 @@ void ltk_dlg(const char *title, const char *msg, ...) {
 	/* display the message */
 	error("%s", outbuf);
 }
-
 
 /*-------------------------------- ltk_beep --------------------------------*/
 /*
@@ -183,7 +174,6 @@ void ltk_beep() {
 */
 void ltk_beg_wait() {
 }
-
 
 /*------------------------------ ltk_end_wait ------------------------------*/
 /*

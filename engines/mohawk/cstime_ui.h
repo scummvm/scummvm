@@ -23,8 +23,8 @@
 #ifndef MOHAWK_CSTIME_UI_H
 #define MOHAWK_CSTIME_UI_H
 
-#include "mohawk/cstime.h"
 #include "graphics/fonts/winfont.h"
+#include "mohawk/cstime.h"
 
 namespace Mohawk {
 

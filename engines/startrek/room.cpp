@@ -20,26 +20,28 @@
  *
  */
 
-#include "startrek/iwfile.h"
 #include "startrek/room.h"
+#include "startrek/iwfile.h"
 #include "startrek/startrek.h"
 
 #include "rooms/function_map.h"
 
 // TODO: Delete this macro, replacing it with the next one.
 // New "[roomName]NumActions" variables need to be made before that.
-#define ADD_ROOM_OLD(ROOM) {\
-		if (name.equalsIgnoreCase(#ROOM)) {\
-			_roomActionList = ROOM##ActionList;\
-			_numRoomActions = ARRAYSIZE(ROOM##ActionList);\
-		}\
+#define ADD_ROOM_OLD(ROOM)                                 \
+	{                                                      \
+		if (name.equalsIgnoreCase(#ROOM)) {                \
+			_roomActionList = ROOM##ActionList;            \
+			_numRoomActions = ARRAYSIZE(ROOM##ActionList); \
+		}                                                  \
 	}
 
-#define ADD_ROOM(ROOM) {\
-		if (name.equalsIgnoreCase(#ROOM)) {\
-			_roomActionList = ROOM##ActionList;\
-			_numRoomActions = ROOM##NumActions;\
-		}\
+#define ADD_ROOM(ROOM)                          \
+	{                                           \
+		if (name.equalsIgnoreCase(#ROOM)) {     \
+			_roomActionList = ROOM##ActionList; \
+			_numRoomActions = ROOM##NumActions; \
+		}                                       \
 	}
 
 namespace StarTrek {
@@ -158,13 +160,13 @@ void Room::loadRoomMessage(const char *text) {
 	Common::String patchedText = patchRoomMessage(text);
 	text = patchedText.c_str();
 
-	char textType = text[10];	// _, U and S: talk message, N: look message, L: look with talker message
-	char numberType = text[11];	// Sxx: Scotty
+	char textType = text[10];   // _, U and S: talk message, N: look message, L: look with talker message
+	char numberType = text[11]; // Sxx: Scotty
 
 	if (text[5] != '\\')
 		error("loadRoomMessage: Invalid message");
 
-	isTalkMessage = (textType == '_' || textType == 'U' || numberType == 'S' || numberType == 'F');	// U = Uhura, S = Scotty, F = followup
+	isTalkMessage = (textType == '_' || textType == 'U' || numberType == 'S' || numberType == 'F'); // U = Uhura, S = Scotty, F = followup
 	isLookMessage = (textType == 'N');
 	isLookWithTalkerMessage = (textType == 'L');
 
@@ -202,56 +204,55 @@ Common::String Room::patchRoomMessage(const char *text) {
 	int i = 0;
 
 	TypoFix typoFixes[] = {
-		{ "#LOV2\\LOV2_012#", "#LOV2\\LOV2_012#", "#LOV1\\LOV1_010#" },	// Audio file missing
-		{ "#LOV3\\LOV3_#",    "#LOV3\\LOV3_#", "#LOV3\\LOV3_000#"},	// Message index missing
-		{ "#LOVA\\LOVA_F08#", "spock", "Spock" },
-		{ "#LOVA\\LOVA_F55#", "sysnthesize", "synthesize" },
-		{ "#FEA3\\FEA3_030#", "#FEA3\\FEA3_030#", "#LOVA\\LOVA_100#" },	// Wrong voice actor
-		{ "#MUD0\\MUD0_023#", "gullability", "gullibility" },
-		{ "#MUD2\\MUD2_002#", "Well, now! I think", "Well, now I think" },
-		{ "#MUD2\\MUD2_014#", "I don't understand enough of the alien's thinking", "I don't understand enough of how the aliens thought," },
-		{ "#MUD3\\MUD3_011#", "to think after all the stunts that Harry has pulled", "to think that after all the stunts that Harry has pulled," },
-		{ "#MUD3\\MUD3_022#", "and they were certain", "and they are certain" },
-		{ "#MUD3\\MUD4_008#", "DId you know", "Did you know" },
-		{ "#FEA1\\FEA1_035#", "before it retreats Captain", "before it retreats, Captain" },
-		{ "#FEA1\\FEA1_041#", "it must have a nasty bite", "it may have a nasty bite" },
-		{ "#FEA3\\FEA3_012#", "he'll be up in about an hour", "he'll be up in about a half hour" },
-		{ "#FEA3\\FEA3_030#", "sHe's dead, Jim!", "He's dead, Jim!" },
-		{ "#FEA5\\FEA5_009#", "those thorns.You might", "those thorns. You might" },
-		{ "#FEA5\\FEA5_018#", "with our phaser not working", "with our phasers not working" },
-		{ "#FEA5\\FEA5_020#", "in a previous life", "in your previous life" },
-		{ "#FEA6\\FEA6_017#", "isn't that just great", "isn't this just great" },
-		{ "#FEA6\\FEA6_019#", "that action, Captain It may", "that action, Captain. It may" },
-		{ "#FEA6\\FEA6N016#", "that attack you", "that attacked you" },
-		{ "#SIN2\\SIN2_012#", "I'm a surgeon not a alien", "I'm a surgeon, not an alien" },
-		{ "#SIN4\\SIN4_023#", "to bypass it's lock system", "to bypass its lock system" },
-		{ "#SIN5\\SIN5N012#", "Sparks explode and", "Sparks fly and" },
-		{ "#TRI0\\TRI0_036#", "the Enterprise!We've", "the Enterprise! We've" },
-		{ "#TRI1\\TRI1_025#", "Male Human-Vulcan", "One male Human-Vulcan" },
-		{ "#TRI1\\TRI1_048#", "with a phaser", "with your phaser" },
-		{ "#TRI2\\TRI2_015#", "Male Human,", "He's a male Human," },
-		{ "#TRI2\\TRI2_017#", "Male Human-Vulcan", "One male Human-Vulcan" },
-		{ "#TRI3\\TRI3_013#", "He's a Male Human", "One male Human" },
-		{ "#TRI3\\TRI3_014#", "Male Human,", "He's a male Human," },
-		{ "#TRI3\\TRI3_016#", "Male Human-Vulcan", "One male Human-Vulcan" },
-		{ "#TRI3\\TRI3U084#", "Captain, come in please!", "Captain, please come in!" },
-		{ "#TRI4\\TRI4_003#", "I didn't want it", "I don't want it" },
-		{ "#TRI4\\TRI4_024#", "a fair trail", "a fair trial" },
-		{ "#TRI4\\TRI4_039#", "what an enemy does not expect", "what the enemy does not expect" },
-		{ "#TRI4\\TRI4_057#", "will believe you", "to believe you" },
-		{ "#TRI5\\TRI5_045#", "at which to transport you", "to which to transport you" },
-		{ "#TRI5\\TRI5N002#", "a beam light", "a beam of light" },
-		{ "#TRI5\\TRI5N016#", "saphire", "sapphire" },
-		{ "#TRI5\\TRI5N017#", "saphire", "sapphire" },
-		{ "#TRI5\\TRI5N018#", "saphire", "sapphire" },
-		{ "#TRI5\\TRI5N019#", "a emerald", "an emerald" },
-		{ "#TRI5\\TRI5N020#", "a emerald", "an emerald" },
-		{ "#TRI5\\TRI5N021#", "a emerald", "an emerald" },
-		{ "#VEN2\\VEN2_050#", "torpedo is loaded", "torpedoes are loaded" },
-		{ "#VEN6\\VEN6_005#", "><upon", "upon" },
-		{ "#VEN8\\VEN8_037#", "Its not", "It's not" },
-		{ "", "", "" }
-	};
+	    {"#LOV2\\LOV2_012#", "#LOV2\\LOV2_012#", "#LOV1\\LOV1_010#"}, // Audio file missing
+	    {"#LOV3\\LOV3_#", "#LOV3\\LOV3_#", "#LOV3\\LOV3_000#"},       // Message index missing
+	    {"#LOVA\\LOVA_F08#", "spock", "Spock"},
+	    {"#LOVA\\LOVA_F55#", "sysnthesize", "synthesize"},
+	    {"#FEA3\\FEA3_030#", "#FEA3\\FEA3_030#", "#LOVA\\LOVA_100#"}, // Wrong voice actor
+	    {"#MUD0\\MUD0_023#", "gullability", "gullibility"},
+	    {"#MUD2\\MUD2_002#", "Well, now! I think", "Well, now I think"},
+	    {"#MUD2\\MUD2_014#", "I don't understand enough of the alien's thinking", "I don't understand enough of how the aliens thought,"},
+	    {"#MUD3\\MUD3_011#", "to think after all the stunts that Harry has pulled", "to think that after all the stunts that Harry has pulled,"},
+	    {"#MUD3\\MUD3_022#", "and they were certain", "and they are certain"},
+	    {"#MUD3\\MUD4_008#", "DId you know", "Did you know"},
+	    {"#FEA1\\FEA1_035#", "before it retreats Captain", "before it retreats, Captain"},
+	    {"#FEA1\\FEA1_041#", "it must have a nasty bite", "it may have a nasty bite"},
+	    {"#FEA3\\FEA3_012#", "he'll be up in about an hour", "he'll be up in about a half hour"},
+	    {"#FEA3\\FEA3_030#", "sHe's dead, Jim!", "He's dead, Jim!"},
+	    {"#FEA5\\FEA5_009#", "those thorns.You might", "those thorns. You might"},
+	    {"#FEA5\\FEA5_018#", "with our phaser not working", "with our phasers not working"},
+	    {"#FEA5\\FEA5_020#", "in a previous life", "in your previous life"},
+	    {"#FEA6\\FEA6_017#", "isn't that just great", "isn't this just great"},
+	    {"#FEA6\\FEA6_019#", "that action, Captain It may", "that action, Captain. It may"},
+	    {"#FEA6\\FEA6N016#", "that attack you", "that attacked you"},
+	    {"#SIN2\\SIN2_012#", "I'm a surgeon not a alien", "I'm a surgeon, not an alien"},
+	    {"#SIN4\\SIN4_023#", "to bypass it's lock system", "to bypass its lock system"},
+	    {"#SIN5\\SIN5N012#", "Sparks explode and", "Sparks fly and"},
+	    {"#TRI0\\TRI0_036#", "the Enterprise!We've", "the Enterprise! We've"},
+	    {"#TRI1\\TRI1_025#", "Male Human-Vulcan", "One male Human-Vulcan"},
+	    {"#TRI1\\TRI1_048#", "with a phaser", "with your phaser"},
+	    {"#TRI2\\TRI2_015#", "Male Human,", "He's a male Human,"},
+	    {"#TRI2\\TRI2_017#", "Male Human-Vulcan", "One male Human-Vulcan"},
+	    {"#TRI3\\TRI3_013#", "He's a Male Human", "One male Human"},
+	    {"#TRI3\\TRI3_014#", "Male Human,", "He's a male Human,"},
+	    {"#TRI3\\TRI3_016#", "Male Human-Vulcan", "One male Human-Vulcan"},
+	    {"#TRI3\\TRI3U084#", "Captain, come in please!", "Captain, please come in!"},
+	    {"#TRI4\\TRI4_003#", "I didn't want it", "I don't want it"},
+	    {"#TRI4\\TRI4_024#", "a fair trail", "a fair trial"},
+	    {"#TRI4\\TRI4_039#", "what an enemy does not expect", "what the enemy does not expect"},
+	    {"#TRI4\\TRI4_057#", "will believe you", "to believe you"},
+	    {"#TRI5\\TRI5_045#", "at which to transport you", "to which to transport you"},
+	    {"#TRI5\\TRI5N002#", "a beam light", "a beam of light"},
+	    {"#TRI5\\TRI5N016#", "saphire", "sapphire"},
+	    {"#TRI5\\TRI5N017#", "saphire", "sapphire"},
+	    {"#TRI5\\TRI5N018#", "saphire", "sapphire"},
+	    {"#TRI5\\TRI5N019#", "a emerald", "an emerald"},
+	    {"#TRI5\\TRI5N020#", "a emerald", "an emerald"},
+	    {"#TRI5\\TRI5N021#", "a emerald", "an emerald"},
+	    {"#VEN2\\VEN2_050#", "torpedo is loaded", "torpedoes are loaded"},
+	    {"#VEN6\\VEN6_005#", "><upon", "upon"},
+	    {"#VEN8\\VEN8_037#", "Its not", "It's not"},
+	    {"", "", ""}};
 
 	// Fix typos where some messages contain a hyphen instead of an underscore
 	// (e.g in LOV2)
@@ -282,17 +283,16 @@ void Room::loadOtherRoomMessages() {
 	uint16 startOffset = readRdfWord(14);
 	// Some RDF files, lile MUDD0, contain text beyond the end offset,
 	// so we read up to the end of the file
-	uint16 endOffset = _rdfSize;	// readRdfWord(16);
+	uint16 endOffset = _rdfSize; // readRdfWord(16);
 	uint16 offset = startOffset;
 	const char *validPrefixes[] = {
-		"BRI", "COM", "DEM", "FEA", "GEN", "LOV", "MUD", "SIN", "TRI", "TUG", "VEN"
-	};
+	    "BRI", "COM", "DEM", "FEA", "GEN", "LOV", "MUD", "SIN", "TRI", "TUG", "VEN"};
 
 	while (offset < endOffset) {
 		uint16 nextOffset = readRdfWord(offset + 4);
 		if (nextOffset >= endOffset)
 			break;
-		
+
 		while (offset < nextOffset) {
 			const char *text = (const char *)_rdfData + offset;
 
@@ -609,7 +609,8 @@ void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {
 	int ticks = 0;
 
 	while (ticks < 5) {
-		while (!_vm->popNextEvent(&event));
+		while (!_vm->popNextEvent(&event))
+			;
 
 		if (event.type == TREKEVENT_TICK)
 			ticks++;
@@ -666,17 +667,16 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 	_vm->_gameMode = GAMEMODE_BEAMDOWN;
 
 	const char *missionNames[] = {
-		"DEMON",
-		"TUG",
-		"LOVE",
-		"MUDD",
-		"FEATHER",
-		"TRIAL",
-		"SINS",
-		"VENG"
-	};
+	    "DEMON",
+	    "TUG",
+	    "LOVE",
+	    "MUDD",
+	    "FEATHER",
+	    "TRIAL",
+	    "SINS",
+	    "VENG"};
 
-	for (int i = 0; i < ARRAYSIZE(missionNames)-1; i++) {
+	for (int i = 0; i < ARRAYSIZE(missionNames) - 1; i++) {
 		if (_vm->_missionName == missionNames[i]) {
 			_vm->_missionToLoad = missionNames[i + 1];
 			break;
@@ -691,7 +691,7 @@ void Room::showGameOverMenu() { // TODO: takes an optional parameter?
 	// TODO: finish. Shouldn't do this within a room due to deletion of current room?
 }
 
-int Room::showCodeInputBox(const char * const *codes) {
+int Room::showCodeInputBox(const char *const *codes) {
 	Common::String inputString = _vm->showCodeInputBox();
 
 	// ENHANCEMENT: Extra condition for "nothing entered"

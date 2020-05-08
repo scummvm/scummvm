@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
 #include "mads/nebular/globals_nebular.h"
+#include "common/config-manager.h"
+#include "common/scummsys.h"
 
 namespace MADS {
 
 namespace Nebular {
 
 NebularGlobals::NebularGlobals()
-	: Globals() {
+    : Globals() {
 	// Initialize lists
 	resize(210);
 	_spriteIndexes.resize(30);
@@ -48,7 +48,6 @@ void NebularGlobals::synchronize(Common::Serializer &s) {
 	_spriteIndexes.synchronize(s);
 	_sequenceIndexes.synchronize(s);
 }
-
 
 } // End of namespace Nebular
 

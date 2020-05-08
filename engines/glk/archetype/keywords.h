@@ -36,7 +36,7 @@ const int SHORT_STR_LEN = 9;
 enum {
 	NUM_RWORDS = 34,
 	NUM_OPERS = 32,
-	MAX_ELEMENTS = 34		// max(NUM_RWORDS, NUM_OPERS)
+	MAX_ELEMENTS = 34 // max(NUM_RWORDS, NUM_OPERS)
 };
 
 enum ReservedWordId {

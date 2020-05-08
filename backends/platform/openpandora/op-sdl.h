@@ -26,10 +26,10 @@
 #if defined(OPENPANDORA)
 
 #include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl-sys.h"
-#include "backends/platform/sdl/posix/posix.h"
 #include "backends/events/openpandora/op-events.h"
 #include "backends/graphics/openpandora/op-graphics.h"
+#include "backends/platform/sdl/posix/posix.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
 class OSystem_OP : public OSystem_POSIX {
 public:

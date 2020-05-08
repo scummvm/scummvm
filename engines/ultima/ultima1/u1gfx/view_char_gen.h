@@ -23,10 +23,10 @@
 #ifndef ULTIMA_ULTIMA1_GFX_VIEW_CHAR_GEN_H
 #define ULTIMA_ULTIMA1_GFX_VIEW_CHAR_GEN_H
 
-#include "ultima/shared/gfx/visual_container.h"
-#include "ultima/shared/gfx/text_input.h"
-#include "ultima/shared/core/party.h"
 #include "graphics/managed_surface.h"
+#include "ultima/shared/core/party.h"
+#include "ultima/shared/gfx/text_input.h"
+#include "ultima/shared/gfx/visual_container.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -34,9 +34,9 @@ namespace U1Gfx {
 
 #define ATTRIBUTE_COUNT 6
 
+using Shared::CHideMsg;
 using Shared::CKeypressMsg;
 using Shared::CShowMsg;
-using Shared::CHideMsg;
 using Shared::CTextInputMsg;
 
 /**
@@ -48,10 +48,19 @@ class ViewCharacterGeneration : public Shared::Gfx::VisualItem {
 	bool ShowMsg(CShowMsg &msg);
 	bool HideMsg(CHideMsg &msg);
 	bool TextInputMsg(CTextInputMsg &msg);
+
 private:
 	enum Flag {
-		FLAG_FRAME = 1, FLAG_POINTS = 2, FLAG_ATTRIBUTES = 4, FLAG_ATTR_POINTERS = 8, FLAG_HELP = 16,
-		FLAG_RACE = 32, FLAG_SEX = 64, FLAG_CLASS = 128, FLAG_NAME = 256, FLAG_SAVE = 512,
+		FLAG_FRAME = 1,
+		FLAG_POINTS = 2,
+		FLAG_ATTRIBUTES = 4,
+		FLAG_ATTR_POINTERS = 8,
+		FLAG_HELP = 16,
+		FLAG_RACE = 32,
+		FLAG_SEX = 64,
+		FLAG_CLASS = 128,
+		FLAG_NAME = 256,
+		FLAG_SAVE = 512,
 		FLAG_INITIAL = FLAG_FRAME | FLAG_POINTS | FLAG_ATTRIBUTES | FLAG_ATTR_POINTERS | FLAG_HELP
 	};
 	uint _flags;
@@ -60,6 +69,7 @@ private:
 	int _selectedAttribute;
 	uint *_attributes[ATTRIBUTE_COUNT];
 	Shared::Gfx::TextInput *_textInput;
+
 private:
 	/**
 	 * Set state within the view
@@ -99,42 +109,43 @@ private:
 	/**
 	 * Draw the sex selection
 	 */
-	 void drawSex(Shared::Gfx::VisualSurface &s);
+	void drawSex(Shared::Gfx::VisualSurface &s);
 
-	 /**
+	/**
 	  * Draw the class selection
 	  */
-	 void drawClass(Shared::Gfx::VisualSurface &s);
+	void drawClass(Shared::Gfx::VisualSurface &s);
 
-	 /**
+	/**
 	  * Draw the name entry
 	  */
-	 void drawName(Shared::Gfx::VisualSurface &s);
+	void drawName(Shared::Gfx::VisualSurface &s);
 
-	 /**
+	/**
 	  * Draw the save prompt
 	  */
-	 void drawSave(Shared::Gfx::VisualSurface &s);
+	void drawSave(Shared::Gfx::VisualSurface &s);
 
-	 /**
+	/**
 	  * Set the character's race
 	  */
-	 void setRace(int raceNum);
+	void setRace(int raceNum);
 
-	 /**
+	/**
 	  * Set the character's sex
 	  */
-	 void setSex(int sexNum);
+	void setSex(int sexNum);
 
-	 /**
+	/**
 	  * Set the character's class
 	  */
-	 void setClass(int classNum);
+	void setClass(int classNum);
 
-	 /**
+	/**
 	  * Set final properties and save the game
 	  */
-	 bool save();
+	bool save();
+
 public:
 	CLASSDEF;
 
@@ -142,7 +153,7 @@ public:
 	 * Constructor
 	 */
 	ViewCharacterGeneration(Shared::TreeItem *parent = nullptr);
-	
+
 	/**
 	 * Destructor
 	 */
@@ -155,7 +166,7 @@ public:
 };
 
 } // End of namespace U1Gfx
-} // End of namespace Shared
+} // namespace Ultima1
 } // End of namespace Ultima
 
 #endif

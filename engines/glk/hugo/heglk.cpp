@@ -41,7 +41,7 @@ void Hugo::hugo_init_screen() {
 	FIXEDLINEHEIGHT = 1;
 
 	hugo_settextwindow(1, 1,
-		SCREENWIDTH/FIXEDCHARWIDTH, SCREENHEIGHT/FIXEDLINEHEIGHT);
+	                   SCREENWIDTH / FIXEDCHARWIDTH, SCREENHEIGHT / FIXEDLINEHEIGHT);
 }
 
 void Hugo::hugo_getline(const char *prmpt) {
@@ -68,8 +68,7 @@ void Hugo::hugo_getline(const char *prmpt) {
 		/* Grab an event */
 		glk_select(&ev);
 
-		switch (ev.type)
-		{
+		switch (ev.type) {
 		case evtype_LineInput:
 			/* (Will always be currentwin, but anyway) */
 			if (ev.window == currentwin) {
@@ -82,9 +81,9 @@ void Hugo::hugo_getline(const char *prmpt) {
 	}
 
 	/* The line we have received in commandbuf is not null-terminated */
-	buffer[ev.val1] = '\0';	/* i.e., the length */
+	buffer[ev.val1] = '\0'; /* i.e., the length */
 
-							/* Copy the input to the script file (if open) */
+	/* Copy the input to the script file (if open) */
 	if (script) {
 		Common::String text = Common::String::format("%s%s\n", prmpt, buffer);
 		script->putBuffer(text.c_str(), text.size());
@@ -102,9 +101,8 @@ int Hugo::hugo_waitforkey() {
 	if (currentwin == nullptr)
 		glk_set_window(currentwin = mainwin);
 
-#if defined (NO_KEYPRESS_CURSOR)
-	if (currentwin != mainwin)
-	{
+#if defined(NO_KEYPRESS_CURSOR)
+	if (currentwin != mainwin) {
 		glk_window_move_cursor(currentwin, currentpos / CHARWIDTH, currentline - 1);
 		hugo_print("*");
 		glk_window_move_cursor(currentwin, currentpos / CHARWIDTH, currentline - 1);
@@ -113,13 +111,11 @@ int Hugo::hugo_waitforkey() {
 
 	glk_request_char_event(currentwin);
 
-	while (!gotchar)
-	{
+	while (!gotchar) {
 		/* Grab an event */
 		glk_select(&ev);
 
-		switch (ev.type)
-		{
+		switch (ev.type) {
 		case evtype_CharInput:
 			/* (Will always be mainwin, but anyway) */
 			if (ev.window == currentwin) {
@@ -132,19 +128,29 @@ int Hugo::hugo_waitforkey() {
 	}
 
 	/* Convert Glk special keycodes: */
-	switch (ev.val1)
-	{
-	case keycode_Left:	ev.val1 = 8;	break;
-	case keycode_Right:	ev.val1 = 21;	break;
-	case keycode_Up:	ev.val1 = 11;	break;
-	case keycode_Down:	ev.val1 = 10;	break;
-	case keycode_Return:	ev.val1 = 13;	break;
-	case keycode_Escape:	ev.val1 = 27;	break;
+	switch (ev.val1) {
+	case keycode_Left:
+		ev.val1 = 8;
+		break;
+	case keycode_Right:
+		ev.val1 = 21;
+		break;
+	case keycode_Up:
+		ev.val1 = 11;
+		break;
+	case keycode_Down:
+		ev.val1 = 10;
+		break;
+	case keycode_Return:
+		ev.val1 = 13;
+		break;
+	case keycode_Escape:
+		ev.val1 = 27;
+		break;
 	}
 
-#if defined (NO_KEYPRESS_CURSOR)
-	if (currentwin != mainwin)
-	{
+#if defined(NO_KEYPRESS_CURSOR)
+	if (currentwin != mainwin) {
 		glk_window_move_cursor(currentwin, currentpos / CHARWIDTH, currentline - 1);
 		hugo_print(" ");
 		glk_window_move_cursor(currentwin, currentpos / CHARWIDTH, currentline - 1);
@@ -165,8 +171,8 @@ int Hugo::hugo_timewait(int n) {
 
 	if (!glk_gestalt(gestalt_Timer, 0))
 		return false;
-	if (n == 0) return true;
-
+	if (n == 0)
+		return true;
 
 	millisecs = 1000 / n;
 	if (millisecs == 0)
@@ -176,11 +182,11 @@ int Hugo::hugo_timewait(int n) {
 	// millisecond delays in Glk (1) because there's no
 	// point, and (2) so that we can tell we're running
 	// under Glk.
-	if (millisecs < 1000) return false;
+	if (millisecs < 1000)
+		return false;
 
 	glk_request_timer_events(millisecs);
-	while (1)
-	{
+	while (1) {
 		glk_select(&ev);
 		if (ev.type == evtype_Timer)
 			break;
@@ -191,17 +197,21 @@ int Hugo::hugo_timewait(int n) {
 
 void Hugo::hugo_clearfullscreen() {
 	glk_window_clear(mainwin);
-	if (secondwin) glk_window_clear(secondwin);
-	if (auxwin) glk_window_clear(auxwin);
+	if (secondwin)
+		glk_window_clear(secondwin);
+	if (auxwin)
+		glk_window_clear(auxwin);
 
 	/* See hugo_print() for the need for this */
-	if (currentwin == mainwin) mainwin_bgcolor = glk_bgcolor;
+	if (currentwin == mainwin)
+		mainwin_bgcolor = glk_bgcolor;
 
 	/* Must be set: */
 	currentpos = 0;
 	currentline = 1;
 
-	if (!inwindow) just_cleared_screen = true;
+	if (!inwindow)
+		just_cleared_screen = true;
 }
 
 void Hugo::hugo_clearwindow() {
@@ -212,20 +222,22 @@ void Hugo::hugo_clearwindow() {
 	unable to comply, don't clear the window, because it's
 	not really a window
 	*/
-	if (inwindow && currentwin == mainwin) return;
-	if (currentwin == nullptr) return;
+	if (inwindow && currentwin == mainwin)
+		return;
+	if (currentwin == nullptr)
+		return;
 
 	glk_window_clear(currentwin);
 
 	/* See hugo_print() for the need for this */
-	if (currentwin == mainwin) mainwin_bgcolor = glk_bgcolor;
+	if (currentwin == mainwin)
+		mainwin_bgcolor = glk_bgcolor;
 
 	/* If we're in a fixed-font (i.e., textgrid) auxiliary
 	window when we call for a clear, close auxwin and reset
 	the current window to mainwin
 	*/
-	if (auxwin)
-	{
+	if (auxwin) {
 		stream_result_t sr;
 
 		glk_window_close(auxwin, &sr);
@@ -237,7 +249,8 @@ void Hugo::hugo_clearwindow() {
 	currentpos = 0;
 	currentline = 1;
 
-	if (!inwindow) just_cleared_screen = true;
+	if (!inwindow)
+		just_cleared_screen = true;
 }
 
 void Hugo::hugo_settextmode() {
@@ -252,69 +265,61 @@ void Hugo::hugo_settextwindow(int left, int top, int right, int bottom) {
 	parameters
 	*/
 	if ((top != 1 || bottom >= physical_windowbottom / FIXEDLINEHEIGHT + 1)
-		/* Pre-v2.4 didn't support proper windowing */
-		&& (game_version >= 24 || !inwindow))
-	{
+	    /* Pre-v2.4 didn't support proper windowing */
+	    && (game_version >= 24 || !inwindow)) {
 		in_valid_window = false;
 
 		/* Glk-illegal floating window; setting currentwin
 		to nullptr will tell hugo_print() not to print in it:
 		*/
-		if (bottom<physical_windowbottom / FIXEDLINEHEIGHT + 1)
-		{
+		if (bottom < physical_windowbottom / FIXEDLINEHEIGHT + 1) {
 			currentwin = nullptr;
 			glk_set_window(mainwin);
 			return;
-		}
-		else
+		} else
 			glk_set_window(currentwin = mainwin);
 	}
 
 	/* Otherwise this is a valid window (positioned along the
 	top of the screen a la a status window), so... */
-	else
-	{
+	else {
 		/* Arbitrary height of 4 lines for pre-v2.4 windows */
-		if (game_version < 24) bottom = 4;
+		if (game_version < 24)
+			bottom = 4;
 
 		/* ...either create a new window if none exists... */
-		if (!secondwin)
-		{
+		if (!secondwin) {
 			glk_stylehint_set(wintype_TextGrid, style_Normal, stylehint_ReverseColor, 1);
 			glk_stylehint_set(wintype_TextGrid, style_Subheader, stylehint_ReverseColor, 1);
 			glk_stylehint_set(wintype_TextGrid, style_Emphasized, stylehint_ReverseColor, 1);
 
 			//winid_t p = glk_window_get_parent(mainwin);
-			secondwin = glk_window_open(mainwin,//p,
-				winmethod_Above | winmethod_Fixed,
-				bottom,
-				wintype_TextGrid,
-				0);
+			secondwin = glk_window_open(mainwin, //p,
+			                            winmethod_Above | winmethod_Fixed,
+			                            bottom,
+			                            wintype_TextGrid,
+			                            0);
 		}
 
 		/* ...or resize the existing one if necessary */
-		else if (bottom != secondwin_bottom)
-		{
+		else if (bottom != secondwin_bottom) {
 			winid_t p;
 
 			p = glk_window_get_parent(secondwin);
 			glk_window_set_arrangement(p,
-				winmethod_Above | winmethod_Fixed,
-				bottom,
-				secondwin);
+			                           winmethod_Above | winmethod_Fixed,
+			                           bottom,
+			                           secondwin);
 		}
 
-		if (secondwin)
-		{
+		if (secondwin) {
 			if (game_version < 24)
 				glk_window_clear(secondwin);
 
 			glk_set_window(currentwin = secondwin);
 			in_valid_window = true;
 			secondwin_bottom = bottom;
-		}
-		else
-		{
+		} else {
 			currentwin = nullptr;
 			glk_set_window(mainwin);
 			secondwin_bottom = 0;
@@ -322,12 +327,12 @@ void Hugo::hugo_settextwindow(int left, int top, int right, int bottom) {
 		}
 	}
 
-	physical_windowleft = (left - 1)*FIXEDCHARWIDTH;
-	physical_windowtop = (top - 1)*FIXEDLINEHEIGHT;
-	physical_windowright = right*FIXEDCHARWIDTH - 1;
-	physical_windowbottom = bottom*FIXEDLINEHEIGHT - 1;
-	physical_windowwidth = (right - left + 1)*FIXEDCHARWIDTH;
-	physical_windowheight = (bottom - top + 1)*FIXEDLINEHEIGHT;
+	physical_windowleft = (left - 1) * FIXEDCHARWIDTH;
+	physical_windowtop = (top - 1) * FIXEDLINEHEIGHT;
+	physical_windowright = right * FIXEDCHARWIDTH - 1;
+	physical_windowbottom = bottom * FIXEDLINEHEIGHT - 1;
+	physical_windowwidth = (right - left + 1) * FIXEDCHARWIDTH;
+	physical_windowheight = (bottom - top + 1) * FIXEDLINEHEIGHT;
 }
 
 int Hugo::heglk_get_linelength() {
@@ -361,30 +366,27 @@ int Hugo::heglk_get_screenheight() {
 }
 
 void Hugo::hugo_settextpos(int x, int y) {
-	if (currentwin == nullptr) return;
+	if (currentwin == nullptr)
+		return;
 
 	// Try to determine if we're trying to position fixed-width text in the main window,
 	// as in a menu, for example
 	if (!just_cleared_screen && !inwindow &&
-		!(glk_current_font & PROP_FONT)
-		&& y != 1			/* not just cls */
-		&& y < SCREENHEIGHT - 0x0f)	/* 0x0f is arbitrary */
+	    !(glk_current_font & PROP_FONT) && y != 1 /* not just cls */
+	    && y < SCREENHEIGHT - 0x0f)               /* 0x0f is arbitrary */
 	{
 		/* See if we're already in the auxiliary window */
-		if (currentwin != auxwin)
-		{
+		if (currentwin != auxwin) {
 			/* If not, create it, making it 100% of
 			mainwin's height
 			*/
-			if (auxwin == nullptr)
-			{
+			if (auxwin == nullptr) {
 				auxwin = glk_window_open(mainwin,
-					winmethod_Below | winmethod_Proportional,
-					100,
-					wintype_TextGrid,
-					0);
-			}
-			else
+				                         winmethod_Below | winmethod_Proportional,
+				                         100,
+				                         wintype_TextGrid,
+				                         0);
+			} else
 				glk_window_clear(auxwin);
 
 			glk_set_window(currentwin = auxwin);
@@ -394,8 +396,7 @@ void Hugo::hugo_settextpos(int x, int y) {
 	/* On the other hand, if we were in a textgrid window and
 	no longer need to be, get out
 	*/
-	else if (auxwin)
-	{
+	else if (auxwin) {
 		stream_result_t sr;
 
 		/* Close auxwin */
@@ -417,7 +418,7 @@ void Hugo::hugo_settextpos(int x, int y) {
 
 	/* Must be set: */
 	currentline = y;
-	currentpos = (x - 1)*CHARWIDTH;   /* Note:  zero-based */
+	currentpos = (x - 1) * CHARWIDTH; /* Note:  zero-based */
 }
 
 void Hugo::hugo_print(const char *a) {
@@ -427,7 +428,8 @@ void Hugo::hugo_print(const char *a) {
 	/* Can't print in a Glk-illegal window since it hasn't been
 	created
 	*/
-	if (currentwin == nullptr) return;
+	if (currentwin == nullptr)
+		return;
 
 	/* In lieu of colors, in case we're highlighting something
 	such as a menu selection:
@@ -448,27 +450,18 @@ void Hugo::hugo_print(const char *a) {
 	already_modified_style = false;
 	*/
 
-	if (a[0] == '\n')
-	{
-		if (!just_printed_linefeed)
-		{
+	if (a[0] == '\n') {
+		if (!just_printed_linefeed) {
 			glk_put_string("\n");
-		}
-		else
+		} else
 			just_printed_linefeed = false;
-	}
-	else if (a[0] == '\r')
-	{
-		if (!just_printed_linefeed)
-		{
+	} else if (a[0] == '\r') {
+		if (!just_printed_linefeed) {
 			glk_put_string("\n");
 			just_printed_linefeed = true;
-		}
-		else
+		} else
 			just_printed_linefeed = false;
-	}
-	else
-	{
+	} else {
 		glk_put_string(a);
 		just_printed_linefeed = false;
 	}
@@ -502,14 +495,12 @@ void Hugo::hugo_font(int f) {
 	/* Workaround to decide if we have to open auxwin for positioned
 	non-proportional text:
 	*/
-	if (!(f & PROP_FONT))
-	{
+	if (!(f & PROP_FONT)) {
 		/* If at top of screen, and changing to a fixed-
 		width font (a situation which wouldn't normally
 		be adjusted for by hugo_settextpos())
 		*/
-		if (!inwindow && currentline == 1 && currentpos == 0 && using_prop_font)
-		{
+		if (!inwindow && currentline == 1 && currentpos == 0 && using_prop_font) {
 			just_cleared_screen = false;
 			hugo_settextpos(1, 2);
 			glk_window_move_cursor(currentwin, 0, 0);
@@ -528,13 +519,18 @@ void Hugo::hugo_setbackcolor(int c) {
 }
 
 int Hugo::hugo_color(int c) {
-	if (c == 16)      c = DEF_FCOLOR;
-	else if (c == 17) c = DEF_BGCOLOR;
-	else if (c == 18) c = DEF_SLFCOLOR;
-	else if (c == 19) c = DEF_SLBGCOLOR;
-	else if (c == 20) c = hugo_color(fcolor);	/* match foreground */
+	if (c == 16)
+		c = DEF_FCOLOR;
+	else if (c == 17)
+		c = DEF_BGCOLOR;
+	else if (c == 18)
+		c = DEF_SLFCOLOR;
+	else if (c == 19)
+		c = DEF_SLBGCOLOR;
+	else if (c == 20)
+		c = hugo_color(fcolor); /* match foreground */
 
-												/* Uncomment this block of code and change "c = ..." values if the system
+	/* Uncomment this block of code and change "c = ..." values if the system
 												palette differs from the Hugo palette.
 
 												If colors are unavailable on the system in question, it may suffice
@@ -565,11 +561,11 @@ int Hugo::hugo_color(int c) {
 
 int Hugo::hugo_charwidth(char a) const {
 	if (a == FORCED_SPACE)
-		return CHARWIDTH;         /* same as ' ' */
+		return CHARWIDTH; /* same as ' ' */
 
 	else if ((unsigned char)a >= ' ') /* alphanumeric characters */
 
-		return CHARWIDTH;         /* for non-proportional */
+		return CHARWIDTH; /* for non-proportional */
 
 	return 0;
 }
@@ -579,10 +575,11 @@ int Hugo::hugo_textwidth(const char *a) const {
 
 	slen = (int)strlen(a);
 
-	for (i = 0; i<slen; i++)
-	{
-		if (a[i] == COLOR_CHANGE) i += 2;
-		else if (a[i] == FONT_CHANGE) i++;
+	for (i = 0; i < slen; i++) {
+		if (a[i] == COLOR_CHANGE)
+			i += 2;
+		else if (a[i] == FONT_CHANGE)
+			i++;
 		else
 			len += hugo_charwidth(a[i]);
 	}
@@ -595,11 +592,13 @@ int Hugo::hugo_strlen(const char *a) const {
 
 	slen = (int)strlen(a);
 
-	for (i = 0; i<slen; i++)
-	{
-		if (a[i] == COLOR_CHANGE) i += 2;
-		else if (a[i] == FONT_CHANGE) i++;
-		else len++;
+	for (i = 0; i < slen; i++) {
+		if (a[i] == COLOR_CHANGE)
+			i += 2;
+		else if (a[i] == FONT_CHANGE)
+			i++;
+		else
+			len++;
 	}
 
 	return len;

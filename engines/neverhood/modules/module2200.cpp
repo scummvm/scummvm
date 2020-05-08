@@ -32,7 +32,7 @@
 namespace Neverhood {
 
 Module2200::Module2200(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+    : Module(vm, parentModule) {
 
 	_vm->_soundMan->addMusic(0x11391412, 0x601C908C);
 
@@ -40,7 +40,6 @@ Module2200::Module2200(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(_vm->gameState().sceneNum, -1);
 	else
 		createScene(0, 0);
-
 }
 
 Module2200::~Module2200() {
@@ -281,7 +280,12 @@ void Module2200::createScene(int sceneNum, int which) {
 }
 
 #define HallOfRecordsSceneLink(nextSceneNum, prevSceneNum) \
-	if (_moduleResult == 1) createScene(nextSceneNum, 0); else if (_moduleResult == 2) createScene(7, 0); else createScene(prevSceneNum, 1)
+	if (_moduleResult == 1)                                \
+		createScene(nextSceneNum, 0);                      \
+	else if (_moduleResult == 2)                           \
+		createScene(7, 0);                                 \
+	else                                                   \
+		createScene(prevSceneNum, 1)
 
 void Module2200::updateScene() {
 	if (!updateChild()) {
@@ -465,7 +469,7 @@ void Module2200::createHallOfRecordsScene(int which, uint32 hallOfRecordsInfoId)
 }
 
 Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isSoundPlaying(false) {
+    : Scene(vm, parentModule), _isSoundPlaying(false) {
 
 	Sprite *tempSprite;
 
@@ -536,7 +540,6 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertSprite<AsScene2201CeilingFan>();
 
 	_vm->_soundMan->addSound(0x04106220, 0x81212040);
-
 }
 
 Scene2201::~Scene2201() {
@@ -594,8 +597,8 @@ uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isSolved(false), _leaveScene(false), _isCubeMoving(false),
-	_ssMovingCube(NULL), _ssDoneMovingCube(NULL) {
+    : Scene(vm, parentModule), _isSolved(false), _leaveScene(false), _isCubeMoving(false),
+      _ssMovingCube(NULL), _ssDoneMovingCube(NULL) {
 
 	_vm->gameModule()->initCubeSymbolsPuzzle();
 
@@ -624,7 +627,6 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_vm->_soundMan->addSound(0x60400854, 0x8101A241);
 	_vm->_soundMan->playSoundLooping(0x8101A241);
-
 }
 
 Scene2202::~Scene2202() {
@@ -662,7 +664,6 @@ void Scene2202::update() {
 			_isSolved = true;
 		}
 	}
-
 }
 
 uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -674,11 +675,11 @@ uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case NM_ANIMATION_UPDATE:
 		_movingCubePosition = (int16)param.asInteger();
-		_ssMovingCube = (Sprite*)sender;
+		_ssMovingCube = (Sprite *)sender;
 		break;
 	case NM_POSITION_CHANGE:
 		_isCubeMoving = false;
-		_ssDoneMovingCube = (Sprite*)sender;
+		_ssDoneMovingCube = (Sprite *)sender;
 		if (param.asInteger() <= 2)
 			_surfacePriority = 100;
 		else if (param.asInteger() >= 3 && param.asInteger() <= 5)
@@ -706,18 +707,17 @@ int16 Scene2202::getFreeCubePosition(int16 cubePosition) {
 }
 
 bool Scene2202::testIsSolved() {
-	return
-		getSubVar(VA_CUBE_POSITIONS, 0) == 0 &&
-		getSubVar(VA_CUBE_POSITIONS, 2) == 2 &&
-		getSubVar(VA_CUBE_POSITIONS, 3) == 3 &&
-		getSubVar(VA_CUBE_POSITIONS, 4) == 4 &&
-		getSubVar(VA_CUBE_POSITIONS, 5) == 5 &&
-		getSubVar(VA_CUBE_POSITIONS, 6) == 6 &&
-		getSubVar(VA_CUBE_POSITIONS, 8) == 7;
+	return getSubVar(VA_CUBE_POSITIONS, 0) == 0 &&
+	       getSubVar(VA_CUBE_POSITIONS, 2) == 2 &&
+	       getSubVar(VA_CUBE_POSITIONS, 3) == 3 &&
+	       getSubVar(VA_CUBE_POSITIONS, 4) == 4 &&
+	       getSubVar(VA_CUBE_POSITIONS, 5) == 5 &&
+	       getSubVar(VA_CUBE_POSITIONS, 6) == 6 &&
+	       getSubVar(VA_CUBE_POSITIONS, 8) == 7;
 }
 
 Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	if (getGlobalVar(V_HAS_FINAL_KEY) && getGlobalVar(V_KEY3_LOCATION) == 0)
 		setGlobalVar(V_KEY3_LOCATION, 1);
@@ -777,7 +777,6 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 		_ssSmallRightDoor->setVisible(false);
 		_klaymen->setClipRect(_leftDoorClipRect);
 	}
-
 }
 
 Scene2203::~Scene2203() {
@@ -831,7 +830,7 @@ uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene2205::handleMessage);
 	SetUpdateHandler(&Scene2205::update);
@@ -880,7 +879,6 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klaymen->setSoundFlag(true);
 
 	loadDataResource(0x00144822);
-
 }
 
 void Scene2205::update() {
@@ -939,11 +937,10 @@ uint32 Scene2205::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 static const int16 kScene2206XPositions[] = {
-	384, 480, 572
-};
+    384, 480, 572};
 
 Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	uint32 fileHash;
 
@@ -960,7 +957,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B8AF8);
 		_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x0E038022, 100, 0);
 		insertScreenMouse(0x83212411);
-		_ssTestTube = insertSprite<SsScene2206TestTube>(this, 1100, /*464, 433, */0x5E00E262);
+		_ssTestTube = insertSprite<SsScene2206TestTube>(this, 1100, /*464, 433, */ 0x5E00E262);
 		_asPlatform = insertSprite<AsScene2206Platform>(0x085E25E0);
 	} else {
 		fileHash = 0xE0102A45;
@@ -972,7 +969,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B8B58);
 		_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x16882608, 100, 0);
 		insertScreenMouse(0x02A41E09);
-		_ssTestTube = insertSprite<SsScene2206TestTube>(this, 1100, /*464, 433, */0x52032563);
+		_ssTestTube = insertSprite<SsScene2206TestTube>(this, 1100, /*464, 433, */ 0x52032563);
 		_asPlatform = insertSprite<AsScene2206Platform>(0x317831A0);
 	}
 
@@ -1014,7 +1011,6 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_klaymen->setSoundFlag(true);
 	_klaymen->setKlaymenIdleTable2();
-
 }
 
 Scene2206::~Scene2206() {
@@ -1089,12 +1085,10 @@ void Scene2206::klaymenBehindSpikes() {
 }
 
 static const uint32 kScene2206MessageIds1[] = {
-	0x004B8998, 0x004B89B8, 0x004B89D8
-};
+    0x004B8998, 0x004B89B8, 0x004B89D8};
 
 static const uint32 kScene2206MessageIds2[] = {
-	0x004B89F8, 0x004B8A20, 0x004B8A48
-};
+    0x004B89F8, 0x004B8A20, 0x004B8A48};
 
 void Scene2206::readClickedColumn() {
 	setGlobalVar(V_CLICKED_COLUMN_INDEX, (_mouseClickPos.x - 354) / 96);
@@ -1110,14 +1104,13 @@ void Scene2206::readClickedColumn() {
 }
 
 static const uint32 kScene2207FileHashes[] = {
-	0x33B1E12E, 0x33D1E12E, 0x3311E12E,
-	0x3291E12E, 0x3191E12E, 0x3791E12E,
-	0x3B91E12E, 0x2391E12E, 0x1391E12E,
-	0x3BB1E12E, 0x23B1E12E, 0x13B1E12E
-};
+    0x33B1E12E, 0x33D1E12E, 0x3311E12E,
+    0x3291E12E, 0x3191E12E, 0x3791E12E,
+    0x3B91E12E, 0x2391E12E, 0x1391E12E,
+    0x3BB1E12E, 0x23B1E12E, 0x13B1E12E};
 
 Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _klaymenAtElevator(true), _elevatorSurfacePriority(0) {
+    : Scene(vm, parentModule), _klaymenAtElevator(true), _elevatorSurfacePriority(0) {
 
 	_vm->gameModule()->initCannonSymbolsPuzzle();
 
@@ -1177,7 +1170,6 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
 	sendMessage(_asElevator, 0x2000, 480);
 
 	loadSound(1, calcHash("fxFogHornSoft"));
-
 }
 
 void Scene2207::update() {
@@ -1295,17 +1287,15 @@ uint32 Scene2207::handleMessage2(int messageNum, const MessageParam &param, Enti
 }
 
 static const uint32 kScene2208FileHashes1[] = {
-	0x041023CB, 0x041020CB, 0x041026CB, 0x04102ACB,
-	0x041032CB, 0x041002CB
-};
+    0x041023CB, 0x041020CB, 0x041026CB, 0x04102ACB,
+    0x041032CB, 0x041002CB};
 
 static const uint32 kScene2208FileHashes2[] = {
-	0x091206C9, 0x091406C9, 0x091806C9, 0x090006C9,
-	0x093006C9, 0x095006C9
-};
+    0x091206C9, 0x091406C9, 0x091806C9, 0x090006C9,
+    0x093006C9, 0x095006C9};
 
 Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _textResource(vm) {
+    : Scene(vm, parentModule), _textResource(vm) {
 
 	SpriteResource spriteResource(_vm);
 	const char *textStart, *textEnd;
@@ -1339,8 +1329,9 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_topBackgroundSurface = new BaseSurface(_vm, 0, 640, 192, "top background");
 	spriteResource.load(!getGlobalVar(V_COLUMN_BACK_NAME)
-		? kScene2208FileHashes1[getGlobalVar(V_CLICKED_COLUMN_INDEX) % 6]
-		: getGlobalVar(V_COLUMN_BACK_NAME), true);
+	                        ? kScene2208FileHashes1[getGlobalVar(V_CLICKED_COLUMN_INDEX) % 6]
+	                        : getGlobalVar(V_COLUMN_BACK_NAME),
+	                    true);
 	_topBackgroundSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
 
 	_bottomBackgroundSurface = new BaseSurface(_vm, 0, 640, 192, "bottom background");
@@ -1364,7 +1355,6 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 		drawRow(_newRowIndex + rowIndex);
 
 	_background->getSurface()->getSysRect().y = _backgroundScrollY;
-
 }
 
 Scene2208::~Scene2208() {
@@ -1412,7 +1402,6 @@ void Scene2208::update() {
 	}
 
 	Scene::update();
-
 }
 
 uint32 Scene2208::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1452,25 +1441,22 @@ void Scene2208::drawRow(int16 rowIndex) {
 		_background->getSurface()->copyFrom(_backgroundSurface->getSurface(), 0, y, sourceRect);
 		if (rowIndex < (int)_strings.size()) {
 			const char *text = _strings[rowIndex];
-			_fontSurface->drawString(_background->getSurface(), 95, y, (const byte*)text);
+			_fontSurface->drawString(_background->getSurface(), 95, y, (const byte *)text);
 		}
 	}
 }
 
 static const int16 kScene2242XPositions[] = {
-	68, 158
-};
+    68, 158};
 
 static const uint32 kScene2242MessageListIds2[] = {
-	0x004B3CB8, 0x004B3CD8
-};
+    0x004B3CB8, 0x004B3CD8};
 
 static const uint32 kScene2242MessageListIds1[] = {
-	0x004B3CF8, 0x004B3D20
-};
+    0x004B3CF8, 0x004B3D20};
 
 Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isKlaymenInLight(false) {
+    : Scene(vm, parentModule), _isKlaymenInLight(false) {
 
 	SetMessageHandler(&Scene2242::handleMessage);
 	SetUpdateHandler(&Scene2242::update);
@@ -1514,7 +1500,6 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_klaymen->setSoundFlag(true);
-
 }
 
 Scene2242::~Scene2242() {
@@ -1576,22 +1561,19 @@ void Scene2242::readClickedColumn() {
 }
 
 static const int16 kHallOfRecordsKlaymenXPos[] = {
-	 68, 157, 246, 335,
-	424, 513, 602
-};
+    68, 157, 246, 335,
+    424, 513, 602};
 
 static const uint32 kHallOfRecordsSceneMessageListIds2[] = {
-	0x004B2978,	0x004B2998,	0x004B29B8,	0x004B29D8,
-	0x004B29F8,	0x004B2A18,	0x004B2A38
-};
+    0x004B2978, 0x004B2998, 0x004B29B8, 0x004B29D8,
+    0x004B29F8, 0x004B2A18, 0x004B2A38};
 
 static const uint32 kHallOfRecordsSceneMessageListIds1[] = {
-	0x004B2A58,	0x004B2A80,	0x004B2AA8,	0x004B2AD0,
-	0x004B2AF8,	0x004B2B20,	0x004B2B48
-};
+    0x004B2A58, 0x004B2A80, 0x004B2AA8, 0x004B2AD0,
+    0x004B2AF8, 0x004B2B20, 0x004B2B48};
 
 HallOfRecordsScene::HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule, int which, uint32 hallOfRecordsInfoId)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	_hallOfRecordsInfo = _vm->_staticData->getHallOfRecordsInfoItem(hallOfRecordsInfoId);
 
@@ -1632,7 +1614,6 @@ HallOfRecordsScene::HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule
 
 	_klaymen->setSoundFlag(true);
 	_klaymen->setKlaymenIdleTable2();
-
 }
 
 HallOfRecordsScene::~HallOfRecordsScene() {
@@ -1672,19 +1653,16 @@ void HallOfRecordsScene::readClickedColumn() {
 }
 
 static const int16 kScene2247XPositions[] = {
-	513, 602
-};
+    513, 602};
 
 static const uint32 kScene2247MessageListIds2[] = {
-	0x004B54A0,	0x004B54C0
-};
+    0x004B54A0, 0x004B54C0};
 
 static const uint32 kScene2247MessageListIds1[] = {
-	0x004B54E0,	0x004B5508
-};
+    0x004B54E0, 0x004B5508};
 
 Scene2247::Scene2247(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	SetMessageHandler(&Scene2247::handleMessage);
 	SetUpdateHandler(&Scene::update);
@@ -1722,7 +1700,6 @@ Scene2247::Scene2247(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_klaymen->setSoundFlag(true);
-
 }
 
 Scene2247::~Scene2247() {

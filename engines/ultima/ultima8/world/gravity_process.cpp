@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/gravity_process.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,12 +36,11 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GravityProcess, Process)
 
 GravityProcess::GravityProcess()
-	: Process(), _xSpeed(0), _ySpeed(0), _zSpeed(0), _gravity(0) {
-
+    : Process(), _xSpeed(0), _ySpeed(0), _zSpeed(0), _gravity(0) {
 }
 
 GravityProcess::GravityProcess(Item *item, int gravity)
-	: _xSpeed(0), _ySpeed(0), _zSpeed(0), _gravity(gravity) {
+    : _xSpeed(0), _ySpeed(0), _zSpeed(0), _gravity(gravity) {
 	assert(item);
 
 	_itemNum = item->getObjId();
@@ -132,7 +131,7 @@ void GravityProcess::run() {
 	}
 #endif
 
-//#define BOUNCE_DIAG
+	//#define BOUNCE_DIAG
 
 	ObjId hititemid;
 	uint8 dirs;
@@ -150,12 +149,10 @@ void GravityProcess::run() {
 
 	// Item was blocked
 
-
 	// We behave differently depending on which direction was blocked.
 	// We only consider stopping to bounce when blocked purely in the
 	// downward-Z direction. Other directions always bounce, reducing speed in
 	// the blocked directions
-
 
 	// only blocked going down?
 	if (dirs == 4 && _zSpeed < 0) {
@@ -188,18 +185,19 @@ void GravityProcess::run() {
 				// Apply an impulse on the x/y plane in a random direction
 				// in a 180 degree pie around the orginal vector in x/y
 				double heading_r = atan2((double)_ySpeed, (double)_xSpeed);
-				double deltah_r = static_cast<double>(getRandom())
-				                  * M_PI / RAND_MAX - M_PI / 2;
+				double deltah_r = static_cast<double>(getRandom()) * M_PI / RAND_MAX - M_PI / 2;
 #ifdef BOUNCE_DIAG
 				double headingold_r = heading_r;
 #endif
 				heading_r += deltah_r;
-				if (heading_r > M_PI) heading_r -= 2 * M_PI;
-				if (heading_r < -M_PI) heading_r += 2 * M_PI;
+				if (heading_r > M_PI)
+					heading_r -= 2 * M_PI;
+				if (heading_r < -M_PI)
+					heading_r += 2 * M_PI;
 				_ySpeed += static_cast<int>(sin(heading_r) *
-				                           static_cast<double>(approx_v));
+				                            static_cast<double>(approx_v));
 				_xSpeed += static_cast<int>(cos(heading_r) *
-				                           static_cast<double>(approx_v));
+				                            static_cast<double>(approx_v));
 
 				if (hititem->getShapeInfo()->is_land()) {
 					// Bouncing off land; this bounce approximates what's
@@ -208,13 +206,16 @@ void GravityProcess::run() {
 					_xSpeed /= 4;
 					_ySpeed /= 4;
 					_zSpeed /= 2;
-					if (_zSpeed == 0) termFlag = true;
+					if (_zSpeed == 0)
+						termFlag = true;
 				} else {
 					// Not on land; this bounce approximates what's seen
 					// in the original U8 when Kilandra's daughters ghost
 					// throws a key at the Avatar's head
-					if (ABS(_ySpeed) > 2) _ySpeed /= 2;
-					if (ABS(_xSpeed) > 2) _xSpeed /= 2;
+					if (ABS(_ySpeed) > 2)
+						_ySpeed /= 2;
+					if (ABS(_xSpeed) > 2)
+						_xSpeed /= 2;
 				}
 #ifdef BOUNCE_DIAG
 				pout << "item " << _itemNum << " bounce ["
@@ -276,10 +277,8 @@ void GravityProcess::run() {
 #endif
 
 		item->setFlag(Item::FLG_BOUNCING);
-
 	}
 }
-
 
 void GravityProcess::terminate() {
 	//signal item GravityProcess is gone
@@ -318,7 +317,8 @@ void GravityProcess::fallStopped() {
 
 			// 'ooof'
 			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc) audioproc->playSFX(51, 250, _itemNum, 0); // CONSTANT!
+			if (audioproc)
+				audioproc->playSFX(51, 250, _itemNum, 0); // CONSTANT!
 		}
 
 		if (!actor->isDead() && actor->getLastAnim() != Animation::die) {
@@ -345,7 +345,6 @@ void GravityProcess::dumpInfo() const {
 	     << _ySpeed << "," << _zSpeed << ")" << Std::endl;
 }
 
-
 void GravityProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
@@ -356,7 +355,8 @@ void GravityProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool GravityProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_gravity = static_cast<int>(rs->readUint32LE());
 	_xSpeed = static_cast<int>(rs->readUint32LE());

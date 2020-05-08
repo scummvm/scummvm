@@ -34,13 +34,12 @@ namespace Common {
 static const uint32 kDelayKeyboardEventMillis = 250;
 static const uint32 kDelayMouseEventMillis = 50;
 
-Keymapper::Keymapper(EventManager *eventMan) :
-		_eventMan(eventMan),
-		_hardwareInputs(nullptr),
-		_backendDefaultBindings(nullptr),
-		_delayedEventSource(new DelayedEventSource()),
-		_enabled(true),
-		_enabledKeymapType(Keymap::kKeymapTypeGame) {
+Keymapper::Keymapper(EventManager *eventMan) : _eventMan(eventMan),
+                                               _hardwareInputs(nullptr),
+                                               _backendDefaultBindings(nullptr),
+                                               _delayedEventSource(new DelayedEventSource()),
+                                               _enabled(true),
+                                               _enabledKeymapType(Keymap::kKeymapTypeGame) {
 	_eventMan->getEventDispatcher()->registerSource(_delayedEventSource, true);
 	resetInputState();
 }
@@ -90,8 +89,7 @@ void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs, KeymapperDefa
 }
 
 void Keymapper::addGlobalKeymap(Keymap *keymap) {
-	assert(keymap->getType() == Keymap::kKeymapTypeGlobal
-	       || keymap->getType() == Keymap::kKeymapTypeGui);
+	assert(keymap->getType() == Keymap::kKeymapTypeGlobal || keymap->getType() == Keymap::kKeymapTypeGui);
 
 	ConfigManager::Domain *keymapperDomain = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 	initKeymap(keymap, keymapperDomain);
@@ -220,7 +218,7 @@ bool Keymapper::mapEvent(const Event &ev, Keymap::KeymapType keymapType, List<Ev
 			// custom action events.
 			if (isMouseEvent(ev) && !isMouseEvent(mappedEvent)) {
 				Event fakeMouseEvent;
-				fakeMouseEvent.type  = EVENT_MOUSEMOVE;
+				fakeMouseEvent.type = EVENT_MOUSEMOVE;
 				fakeMouseEvent.mouse = ev.mouse;
 
 				mappedEvents.push_back(fakeMouseEvent);
@@ -234,9 +232,7 @@ bool Keymapper::mapEvent(const Event &ev, Keymap::KeymapType keymapType, List<Ev
 }
 
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
-	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE
-	           || ev.type == EVENT_WHEELDOWN
-	           || ev.type == EVENT_WHEELUP) {
+	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE || ev.type == EVENT_WHEELDOWN || ev.type == EVENT_WHEELUP) {
 		return kIncomingEventInstant;
 	} else if (ev.type == EVENT_JOYAXIS_MOTION) {
 		if (ev.joystick.axis >= ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
@@ -250,13 +246,7 @@ Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &
 		} else {
 			return kIncomingEventIgnored;
 		}
-	} else if (ev.type == EVENT_KEYDOWN
-	           || ev.type == EVENT_LBUTTONDOWN
-	           || ev.type == EVENT_RBUTTONDOWN
-	           || ev.type == EVENT_MBUTTONDOWN
-	           || ev.type == EVENT_X1BUTTONDOWN
-	           || ev.type == EVENT_X2BUTTONDOWN
-	           || ev.type == EVENT_JOYBUTTON_DOWN) {
+	} else if (ev.type == EVENT_KEYDOWN || ev.type == EVENT_LBUTTONDOWN || ev.type == EVENT_RBUTTONDOWN || ev.type == EVENT_MBUTTONDOWN || ev.type == EVENT_X1BUTTONDOWN || ev.type == EVENT_X2BUTTONDOWN || ev.type == EVENT_JOYBUTTON_DOWN) {
 		return kIncomingEventStart;
 	} else {
 		return kIncomingEventEnd;
@@ -268,8 +258,7 @@ Event Keymapper::executeAction(const Action *action, const Event &incomingEvent)
 
 	IncomingEventType incomingType = convertToIncomingEventType(incomingEvent);
 
-	if (outgoingEvent.type == EVENT_JOYAXIS_MOTION
-	        || outgoingEvent.type == EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
+	if (outgoingEvent.type == EVENT_JOYAXIS_MOTION || outgoingEvent.type == EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
 		if (incomingEvent.type == EVENT_JOYAXIS_MOTION) {
 			// At the moment only half-axes can be bound to actions, hence taking
 			//  the absolute value. If full axes were to be mappable, the action

@@ -36,6 +36,7 @@ private:
 	 * Patches incorrect map objects
 	 */
 	void patchObjects();
+
 public:
 	/**
 	 * Constructor
@@ -50,4 +51,4 @@ public:
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_PATCHER_H */
+#endif /* XEEN_PATCHER_H */

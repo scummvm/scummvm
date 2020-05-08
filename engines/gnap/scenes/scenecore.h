@@ -31,8 +31,8 @@ class GnapEngine;
 
 class Scene {
 public:
-	Scene(GnapEngine *vm) : _vm(vm) {};
-	virtual ~Scene() {};
+	Scene(GnapEngine *vm) : _vm(vm){};
+	virtual ~Scene(){};
 
 	void playRandomSound(int timerIndex);
 	bool clearKeyStatus();
@@ -50,7 +50,7 @@ protected:
 class CutScene : public Scene {
 public:
 	CutScene(GnapEngine *vm);
-	~CutScene() override {};
+	~CutScene() override{};
 
 	int init() override = 0;
 	void updateHotspots() override {}

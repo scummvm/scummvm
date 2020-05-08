@@ -30,6 +30,7 @@ namespace Made {
 class ManholeEgaSoundDecompressor {
 public:
 	void decompress(byte *source, byte *dest, uint32 size);
+
 protected:
 	byte *_source, *_dest;
 	uint32 _size;
@@ -52,7 +53,6 @@ struct SoundEnergyItem {
 };
 
 typedef Common::Array<SoundEnergyItem> SoundEnergyArray;
-
 
 // Persistent data for decompressSound(). When calling decompressSound()
 // repeatedly (for the same stream), pass the same SoundDecoderData object to

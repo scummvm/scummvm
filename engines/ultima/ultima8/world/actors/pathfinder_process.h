@@ -45,9 +45,10 @@ public:
 	void run() override;
 	void terminate() override;
 
-//	virtual void terminate();
+	//	virtual void terminate();
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 

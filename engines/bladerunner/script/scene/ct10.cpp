@@ -106,9 +106,7 @@ bool SceneScriptCT10::ClickedOn3DObject(const char *objectName, bool a2) {
 		return true;
 	}
 
-	if (Object_Query_Click("CABINETTOP", objectName)
-	 || Object_Query_Click("CABINETFRONT", objectName)
-	) {
+	if (Object_Query_Click("CABINETTOP", objectName) || Object_Query_Click("CABINETFRONT", objectName)) {
 		checkCabinet();
 		return true;
 	}

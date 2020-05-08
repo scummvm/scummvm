@@ -20,21 +20,20 @@
  *
  */
 
-#include "common/rational.h"        // for Rational, operator*
-#include "common/system.h"          // for OSystem, g_system
-#include "common/memstream.h"
-#include "graphics/cursorman.h"     // for CursorMan
-#include "graphics/maccursor.h"
-#include "sci/graphics/celobj32.h"  // for CelObjView, CelInfo32, Ratio
 #include "sci/graphics/cursor32.h"
-#include "sci/graphics/frameout.h"  // for GfxFrameout
+#include "common/memstream.h"
+#include "common/rational.h"    // for Rational, operator*
+#include "common/system.h"      // for OSystem, g_system
+#include "graphics/cursorman.h" // for CursorMan
+#include "graphics/maccursor.h"
+#include "sci/graphics/celobj32.h" // for CelObjView, CelInfo32, Ratio
+#include "sci/graphics/frameout.h" // for GfxFrameout
 
 namespace Sci {
 
-GfxCursor32::GfxCursor32() :
-	_hideCount(0),
-	_position(0, 0),
-	_needsPaint(false) {
+GfxCursor32::GfxCursor32() : _hideCount(0),
+                             _position(0, 0),
+                             _needsPaint(false) {
 }
 
 void GfxCursor32::init(const Buffer &outputBuffer) {
@@ -77,7 +76,7 @@ void GfxCursor32::revealCursor() {
 	drawToScreen(_scratch1);
 }
 
-template <bool SKIP>
+template<bool SKIP>
 void GfxCursor32::copy(DrawRegion &target, const DrawRegion &source) {
 	if (source.rect.isEmpty()) {
 		return;
@@ -216,8 +215,8 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 		//      high-resolution cursor representation.
 		bool pixelDouble = false;
 		if (g_sci->_gfxFrameout->isHiRes() &&
-			(g_sci->getGameId() == GID_GK1 ||
-			(g_sci->getGameId() == GID_PQ4 && _width <= 22 && _height <= 22))) {
+		    (g_sci->getGameId() == GID_GK1 ||
+		     (g_sci->getGameId() == GID_PQ4 && _width <= 22 && _height <= 22))) {
 
 			_width *= 2;
 			_height *= 2;

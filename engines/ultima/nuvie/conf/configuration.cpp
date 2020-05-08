@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/misc.h"
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/conf/config_node.h"
-#include "ultima/shared/conf/xml_tree.h"
 #include "common/config-manager.h"
+#include "ultima/nuvie/conf/config_node.h"
+#include "ultima/nuvie/conf/misc.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/shared/conf/xml_tree.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -36,13 +36,13 @@ Configuration::Configuration() : _configChanged(false) {
 	_localKeys["GameType"] = "";
 	_localKeys["GameName"] = "";
 	_localKeys["GameID"] = "";
-	_localKeys["datadir"] = "data";		// This maps to ultima6/ in ultima.dat
+	_localKeys["datadir"] = "data"; // This maps to ultima6/ in ultima.dat
 }
 
 Configuration::~Configuration() {
 	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
-		delete(*i);
+	     i != _trees.end(); ++i) {
+		delete (*i);
 	}
 
 	if (_configChanged)
@@ -65,7 +65,7 @@ bool Configuration::readConfigFile(Std::string fname, Std::string root,
 
 void Configuration::write() {
 	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
+	     i != _trees.end(); ++i) {
 		if (!(*i)->isReadonly())
 			(*i)->write();
 	}
@@ -73,8 +73,8 @@ void Configuration::write() {
 
 void Configuration::clear() {
 	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
-		delete(*i);
+	     i != _trees.end(); ++i) {
+		delete (*i);
 	}
 	_trees.clear();
 }
@@ -83,7 +83,7 @@ void Configuration::value(const Std::string &key, Std::string &ret,
                           const char *defaultvalue) {
 	// Check for a .cfg file value in the trees
 	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
+	     i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
 			return;
@@ -111,7 +111,7 @@ void Configuration::value(const Std::string &key, Std::string &ret,
 void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
 	// Check for a .cfg file value in the trees
 	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
+	     i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
 			return;
@@ -139,7 +139,7 @@ void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
 void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) {
 	// Check for a .cfg file value in the trees
 	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
+	     i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
 			return;
@@ -177,9 +177,9 @@ bool Configuration::set(const Std::string &key, const Std::string &value) {
 	// the correct root.
 
 	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
+	     i != _trees.rend(); ++i) {
 		if (!((*i)->isReadonly()) &&
-		        (*i)->checkRoot(key)) {
+		    (*i)->checkRoot(key)) {
 			(*i)->set(key, value);
 			return true;
 		}
@@ -203,15 +203,14 @@ bool Configuration::set(const Std::string &key, const char *value) {
 	return set(key, Std::string(value));
 }
 
-
 bool Configuration::set(const Std::string &key, int value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
 	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
+	     i != _trees.rend(); ++i) {
 		if (!((*i)->isReadonly()) &&
-		        (*i)->checkRoot(key)) {
+		    (*i)->checkRoot(key)) {
 			(*i)->set(key, value);
 			return true;
 		}
@@ -236,9 +235,9 @@ bool Configuration::set(const Std::string &key, bool value) {
 	// the correct root.
 
 	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
-	        i != _trees.rend(); ++i) {
+	     i != _trees.rend(); ++i) {
 		if (!((*i)->isReadonly()) &&
-		        (*i)->checkRoot(key)) {
+		    (*i)->checkRoot(key)) {
 			(*i)->set(key, value);
 			return true;
 		}
@@ -261,10 +260,10 @@ ConfigNode *Configuration::getNode(const Std::string &key) {
 Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longformat) {
 	Std::set<Std::string> keys;
 	for (Common::Array<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
+	     i != _trees.end(); ++i) {
 		Common::Array<Common::String> k = (*i)->listKeys(key, longformat);
 		for (Common::Array<Common::String>::iterator iter = k.begin();
-		        iter != k.end(); ++iter) {
+		     iter != k.end(); ++iter) {
 			keys.insert(*iter);
 		}
 	}
@@ -273,15 +272,15 @@ Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longf
 
 void Configuration::getSubkeys(KeyTypeList &ktl, Std::string basekey) {
 	for (Std::vector<Shared::XMLTree *>::iterator tree = _trees.begin();
-	        tree != _trees.end(); ++tree) {
+	     tree != _trees.end(); ++tree) {
 		Shared::XMLTree::KeyTypeList l;
 		(*tree)->getSubkeys(l, basekey);
 
 		for (Shared::XMLTree::KeyTypeList::iterator i = l.begin();
-		        i != l.end(); ++i) {
+		     i != l.end(); ++i) {
 			bool found = false;
 			for (KeyTypeList::iterator j = ktl.begin();
-			        j != ktl.end() && !found; ++j) {
+			     j != ktl.end() && !found; ++j) {
 				if (j->first == i->first) {
 					// already have this subkey, so just replace the value
 					j->second = i->second;
@@ -334,8 +333,8 @@ void Configuration::setCommonDefaults(GameId gameType) {
 	set("config/cheats/party_all_the_time", false);
 
 	// game specific settings
-	uint8 bg_color[] = { 218, 136, 216 }; // U6, MD, SE
-	uint8 border_color[] = { 220, 133, 219 }; // U6, MD, SE
+	uint8 bg_color[] = {218, 136, 216};     // U6, MD, SE
+	uint8 border_color[] = {220, 133, 219}; // U6, MD, SE
 
 	int i = 0;
 	if (gameType == GAME_MARTIAN_DREAMS)

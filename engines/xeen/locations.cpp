@@ -29,14 +29,16 @@
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
-#define WAIT(TIME) if (_subtitles.wait(TIME)) goto exit
+#define WAIT(TIME)             \
+	if (_subtitles.wait(TIME)) \
+	goto exit
 
 namespace Xeen {
 namespace Locations {
 
 BaseLocation::BaseLocation(LocationAction action) : ButtonContainer(g_vm),
-		_locationActionId(action), _ccNum(g_vm->_files->_ccNum),
-		_vocName("hello1.voc"), _exitToUi(false) {
+                                                    _locationActionId(action), _ccNum(g_vm->_files->_ccNum),
+                                                    _vocName("hello1.voc"), _exitToUi(false) {
 	_townMaxId = (action >= SPHINX) ? 0 : Res.TOWN_MAXES[_ccNum][action];
 	if (action < NO_ACTION) {
 		_songName = Res.TOWN_ACTION_MUSIC[_ccNum][action];
@@ -71,7 +73,7 @@ int BaseLocation::show() {
 	// Load the needed sprite sets for the location
 	for (uint idx = 0; idx < _townSprites.size(); ++idx) {
 		Common::String shapesName = Common::String::format("%s%d.twn",
-			Res.TOWN_ACTION_SHAPES[_locationActionId], idx + 1);
+		                                                   Res.TOWN_ACTION_SHAPES[_locationActionId], idx + 1);
 		_townSprites[idx].load(shapesName);
 	}
 
@@ -152,15 +154,15 @@ void BaseLocation::drawAnim(bool flag) {
 			if (_ccNum) {
 				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
-					Common::Point(34, 33));
+				                     Common::Point(34, 33));
 				_townSprites[2].draw(0, _vm->getRandomNumber(5) + 3,
-					Common::Point(34, 54));
+				                     Common::Point(34, 54));
 			}
 		} else {
 			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 			if (_ccNum) {
 				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
-					Common::Point(34, 33));
+				                     Common::Point(34, 33));
 			}
 		}
 	} else if (!_ccNum || _locationActionId != TRAINING) {
@@ -174,10 +176,10 @@ void BaseLocation::drawAnim(bool flag) {
 			if (_ccNum) {
 				if (sound.isSoundPlaying() || _animFrame == 1) {
 					_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
-						Common::Point(8, 30));
+					                     Common::Point(8, 30));
 				} else if (_animFrame > 1) {
 					_townSprites[4].draw(0, 13 - _animFrame++,
-						Common::Point(8, 30));
+					                     Common::Point(8, 30));
 					if (_animFrame > 14)
 						_animFrame = 0;
 				}
@@ -209,7 +211,6 @@ void BaseLocation::drawAnim(bool flag) {
 	case TEMPLE:
 		if (sound.isSoundPlaying()) {
 			_townSprites[3].draw(0, _vm->getRandomNumber(2, 4), Common::Point(8, 8));
-
 		}
 		break;
 
@@ -313,16 +314,16 @@ BankLocation::BankLocation() : BaseLocation(BANK) {
 Common::String BankLocation::createLocationText(Character &ch) {
 	Party &party = *g_vm->_party;
 	return Common::String::format(Res.BANK_TEXT,
-		XeenEngine::printMil(party._bankGold).c_str(),
-		XeenEngine::printMil(party._bankGems).c_str(),
-		XeenEngine::printMil(party._gold).c_str(),
-		XeenEngine::printMil(party._gems).c_str());
+	                              XeenEngine::printMil(party._bankGold).c_str(),
+	                              XeenEngine::printMil(party._bankGems).c_str(),
+	                              XeenEngine::printMil(party._gold).c_str(),
+	                              XeenEngine::printMil(party._gems).c_str());
 }
 
 void BankLocation::drawBackground() {
 	if (_ccNum) {
 		_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
-			Common::Point(8, 30));
+		                     Common::Point(8, 30));
 	}
 }
 
@@ -360,9 +361,9 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
 
 	Common::String msg = Common::String::format(Res.GOLD_GEMS,
-		Res.DEPOSIT_WITHDRAWL[whereId],
-		XeenEngine::printMil(gold).c_str(),
-		XeenEngine::printMil(gems).c_str());
+	                                            Res.DEPOSIT_WITHDRAWL[whereId],
+	                                            XeenEngine::printMil(gold).c_str(),
+	                                            XeenEngine::printMil(gems).c_str());
 
 	w.open();
 	w.writeString(msg);
@@ -386,9 +387,9 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 		}
 
 		if ((whereId == WHERE_BANK && !party._bankGems && consType == CONS_GEMS) ||
-			(whereId == WHERE_BANK && !party._bankGold && consType == CONS_GOLD) ||
-			(whereId == WHERE_PARTY && !party._gems && consType == CONS_GEMS) ||
-			(whereId == WHERE_PARTY && !party._gold && consType == CONS_GOLD)) {
+		    (whereId == WHERE_BANK && !party._bankGold && consType == CONS_GOLD) ||
+		    (whereId == WHERE_PARTY && !party._gems && consType == CONS_GEMS) ||
+		    (whereId == WHERE_PARTY && !party._gold && consType == CONS_GOLD)) {
 			party.notEnough(consType, whereId, WHERE_BANK, WT_LOC_WAIT);
 		} else {
 			w.writeString(Res.AMOUNT);
@@ -424,7 +425,7 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 
 			sound.playSound(voc);
 			msg = Common::String::format(Res.GOLD_GEMS_2, Res.DEPOSIT_WITHDRAWL[whereId],
-				XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
+			                             XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
 			w.writeString(msg);
 			w.update();
 		}
@@ -456,7 +457,7 @@ BlacksmithLocation::BlacksmithLocation() : BaseLocation(BLACKSMITH) {
 Common::String BlacksmithLocation::createLocationText(Character &ch) {
 	Party &party = *g_vm->_party;
 	return Common::String::format(Res.BLACKSMITH_TEXT,
-		ch._name.c_str(), XeenEngine::printMil(party._gold).c_str());
+	                              ch._name.c_str(), XeenEngine::printMil(party._gold).c_str());
 }
 
 Character *BlacksmithLocation::doOptions(Character *c) {
@@ -505,10 +506,9 @@ GuildLocation::GuildLocation() : BaseLocation(GUILD) {
 Common::String GuildLocation::createLocationText(Character &ch) {
 	Party &party = *g_vm->_party;
 
-	Common::String desc = !ch.guildMember() ? Res.GUILD_NOT_MEMBER_TEXT :
-		Common::String::format(Res.GUILD_TEXT, ch._name.c_str());
+	Common::String desc = !ch.guildMember() ? Res.GUILD_NOT_MEMBER_TEXT : Common::String::format(Res.GUILD_TEXT, ch._name.c_str());
 	return Common::String::format(Res.GUILD_OPTIONS, desc.c_str(),
-		g_vm->printMil(party._gold).c_str());
+	                              g_vm->printMil(party._gold).c_str());
 }
 
 Character *GuildLocation::doOptions(Character *c) {
@@ -568,7 +568,7 @@ TavernLocation::TavernLocation() : BaseLocation(TAVERN) {
 Common::String TavernLocation::createLocationText(Character &ch) {
 	Party &party = *g_vm->_party;
 	return Common::String::format(Res.TAVERN_TEXT, ch._name.c_str(),
-		Res.FOOD_AND_DRINK, XeenEngine::printMil(party._gold).c_str());
+	                              Res.FOOD_AND_DRINK, XeenEngine::printMil(party._gold).c_str());
 }
 
 Character *TavernLocation::doOptions(Character *c) {
@@ -605,8 +605,8 @@ Character *TavernLocation::doOptions(Character *c) {
 				_v21 = 1;
 
 				windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
-					c->_name.c_str(), Res.GOOD_STUFF,
-					XeenEngine::printMil(party._gold).c_str()));
+				                                               c->_name.c_str(), Res.GOOD_STUFF,
+				                                               XeenEngine::printMil(party._gold).c_str()));
 				drawButtons(&windows[0]);
 				windows[10].update();
 
@@ -681,8 +681,10 @@ Character *TavernLocation::doOptions(Character *c) {
 			idx = 20;
 		}
 
-		Common::String msg = Common::String::format("\x03""c\x0B""012%s",
-			_textStrings[(party._day % 10) + idx].c_str());
+		Common::String msg = Common::String::format("\x03"
+		                                            "c\x0B"
+		                                            "012%s",
+		                                            _textStrings[(party._day % 10) + idx].c_str());
 		Window &w = windows[12];
 		w.open();
 		w.writeString(msg);
@@ -763,8 +765,8 @@ Character *TavernLocation::doOptions(Character *c) {
 		if (!c->noActions()) {
 			if (!_v21) {
 				windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
-					c->_name.c_str(), Res.HAVE_A_DRINK,
-					XeenEngine::printMil(party._gold).c_str()));
+				                                               c->_name.c_str(), Res.HAVE_A_DRINK,
+				                                               XeenEngine::printMil(party._gold).c_str()));
 				drawButtons(&windows[0]);
 				windows[10].update();
 				wait();
@@ -772,8 +774,8 @@ Character *TavernLocation::doOptions(Character *c) {
 				_v21 = 0;
 				if (c->_conditions[DRUNK]) {
 					windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
-						c->_name.c_str(), Res.YOURE_DRUNK,
-						XeenEngine::printMil(party._gold).c_str()));
+					                                               c->_name.c_str(), Res.YOURE_DRUNK,
+					                                               XeenEngine::printMil(party._gold).c_str()));
 					drawButtons(&windows[0]);
 					windows[10].update();
 					wait();
@@ -795,11 +797,14 @@ Character *TavernLocation::doOptions(Character *c) {
 
 					Common::String msg = _textStrings[map.mazeData()._tavernTips + _v24];
 					map.mazeData()._tavernTips = (map.mazeData()._tavernTips + 1) /
-						(_ccNum ? 10 : 15);
+					                             (_ccNum ? 10 : 15);
 
 					Window &w = windows[12];
 					w.open();
-					w.writeString(Common::String::format("\x03""c\x0B""012%s", msg.c_str()));
+					w.writeString(Common::String::format("\x03"
+					                                     "c\x0B"
+					                                     "012%s",
+					                                     msg.c_str()));
 					w.update();
 					wait();
 					w.close();
@@ -909,8 +914,8 @@ Common::String TempleLocation::createLocationText(Character &ch) {
 	_healCost += _v6 + _v5;
 
 	return Common::String::format(Res.TEMPLE_TEXT, ch._name.c_str(),
-		_healCost, _donation, XeenEngine::printK(_uncurseCost).c_str(),
-		XeenEngine::printMil(party._gold).c_str());
+	                              _healCost, _donation, XeenEngine::printK(_uncurseCost).c_str(),
+	                              XeenEngine::printMil(party._gold).c_str());
 }
 
 Character *TempleLocation::doOptions(Character *c) {
@@ -1064,7 +1069,7 @@ Common::String TrainingLocation::createLocationText(Character &ch) {
 		// Need more experience
 		int nextLevel = ch._level._permanent + 1;
 		msg = Common::String::format(Res.EXPERIENCE_FOR_LEVEL,
-			ch._name.c_str(), _experienceToNextLevel, nextLevel);
+		                             ch._name.c_str(), _experienceToNextLevel, nextLevel);
 	} else if (ch._level._permanent >= _maxLevel) {
 		// At maximum level
 		_experienceToNextLevel = 1;
@@ -1073,11 +1078,11 @@ Common::String TrainingLocation::createLocationText(Character &ch) {
 		// Eligble for level increase
 		uint cost = ch._level._permanent * ch._level._permanent * 10;
 		msg = Common::String::format(Res.ELIGIBLE_FOR_LEVEL,
-			ch._name.c_str(), ch._level._permanent + 1, cost);
+		                             ch._name.c_str(), ch._level._permanent + 1, cost);
 	}
 
 	return Common::String::format(Res.TRAINING_TEXT, msg.c_str(),
-		XeenEngine::printMil(party._gold).c_str());
+	                              XeenEngine::printMil(party._gold).c_str());
 }
 
 Character *TrainingLocation::doOptions(Character *c) {
@@ -1121,8 +1126,8 @@ Character *TrainingLocation::doOptions(Character *c) {
 				sound.stopSound();
 				sound.playSound(_ccNum ? "prtygd.voc" : "trainin2.voc", 1);
 
-				c->_experience -=  c->nextExperienceLevel() -
-					(c->getCurrentExperience() - c->_experience);
+				c->_experience -= c->nextExperienceLevel() -
+				                  (c->getCurrentExperience() - c->_experience);
 				c->_level._permanent++;
 
 				if (!_charsTrained[_charIndex]) {
@@ -1156,7 +1161,7 @@ int ArenaLocation::show() {
 	Windows &windows = *g_vm->_windows;
 	int level, howMany;
 	bool check;
-	const char *SUFFIXES[10] = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+	const char *SUFFIXES[10] = {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
 
 	Common::Array<MazeMonster> &monsters = map._mobData._monsters;
 
@@ -1165,7 +1170,7 @@ int ArenaLocation::show() {
 			MazeMonster &monster = monsters[idx];
 			if (monster._position.x != 0x80 && monster._position.y != 0x80) {
 				LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
-					map._events._text[4], 300);
+				                      map._events._text[4], 300);
 				goto exit;
 			}
 		}
@@ -1197,7 +1202,7 @@ int ArenaLocation::show() {
 	check = LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, map._events._text[0].c_str(), 0);
 	if (!check) {
 		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
-			map._events._text[1].c_str(), 300);
+		                      map._events._text[1].c_str(), 300);
 		windows.closeAll();
 		map.load(6);
 		party._mazePosition = Common::Point(12, 4);
@@ -1243,7 +1248,7 @@ int ArenaLocation::show() {
 		mon._position.x = g_vm->getRandomNumber(3, 11);
 		mon._position.y = g_vm->getRandomNumber(2, 10);
 		if ((mon._position.x == 5 || mon._position.x == 10) &&
-			(mon._position.y == 8 || mon._position.y == 4))
+		    (mon._position.y == 8 || mon._position.y == 4))
 			mon._position.y = 5;
 
 		mon._id = g_vm->getRandomNumber(4);
@@ -1282,19 +1287,15 @@ void CutsceneLocation::setNewLocation() {
 /*------------------------------------------------------------------------*/
 
 const int16 REAPER_X1[2][14] = {
-	{ 0, -10, -20, -30, -40, -49, -49, -49, -49, -49, -49, -49, -49, -49 },
-	{ 0, 2, 6, 8, 11, 14, 17, 21, 27, 35, 43, 51, 60, 67 }
-};
+    {0, -10, -20, -30, -40, -49, -49, -49, -49, -49, -49, -49, -49, -49},
+    {0, 2, 6, 8, 11, 14, 17, 21, 27, 35, 43, 51, 60, 67}};
 const int16 REAPER_Y1[2][14] = {
-	{ 0, 12, 25, 37, 45, 50, 56, 61, 67, 72, 78, 83, 89, 94 },
-	{ 0, 6, 12, 17, 23, 29, 36, 42, 49, 54, 61, 68, 73, 77 }
-};
+    {0, 12, 25, 37, 45, 50, 56, 61, 67, 72, 78, 83, 89, 94},
+    {0, 6, 12, 17, 23, 29, 36, 42, 49, 54, 61, 68, 73, 77}};
 const int16 REAPER_X2[14] = {
-	160, 152, 146, 138, 131, 124, 117, 111, 107, 105, 103, 101, 100, 97
-};
+    160, 152, 146, 138, 131, 124, 117, 111, 107, 105, 103, 101, 100, 97};
 const int16 REAPER_X3[14] = {
-	0, -3, -4, -7, -9, -11, -13, -14, -13, -10, -7, -4, 0, -1
-};
+    0, -3, -4, -7, -9, -11, -13, -14, -13, -10, -7, -4, 0, -1};
 
 ReaperCutscene::ReaperCutscene() : CutsceneLocation(REAPER) {
 }
@@ -1568,17 +1569,14 @@ void ReaperCutscene::getNewLocation() {
 /*------------------------------------------------------------------------*/
 
 const int16 GOLEM_X1[2][12] = {
-	{ 0, -5, 0, 6, 10, 13, 17, 20, 23, 26, 29, 31 },
-	{ 0, 0, 1, 1, 1, 0, -9, -20, -21, 0, 0, 0 }
-};
+    {0, -5, 0, 6, 10, 13, 17, 20, 23, 26, 29, 31},
+    {0, 0, 1, 1, 1, 0, -9, -20, -21, 0, 0, 0}};
 const int GOLEM_Y1[2][12] = {
-	{ 0, 0, 0, 0, 0, 5, 10, 15, 20, 25, 30, 35 },
-	{ 0, 6, 12, 18, 24, 30, 29, 23, 25, 0, 0, 0 }
-};
+    {0, 0, 0, 0, 0, 5, 10, 15, 20, 25, 30, 35},
+    {0, 6, 12, 18, 24, 30, 29, 23, 25, 0, 0, 0}};
 const int GOLEM_X2[2][12] = {
-	{ 160, 145, 140, 136, 130, 123, 117, 110, 103, 96, 89, 81 },
-	{ 160, 150, 141, 131, 121, 110, 91, 70, 57, 0, 0, 0 }
-};
+    {160, 145, 140, 136, 130, 123, 117, 110, 103, 96, 89, 81},
+    {160, 150, 141, 131, 121, 110, 91, 70, 57, 0, 0, 0}};
 
 GolemCutscene::GolemCutscene() : CutsceneLocation(GOLEM) {
 }
@@ -1604,9 +1602,9 @@ int GolemCutscene::show() {
 		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sprites1.draw(0, 0,
-			Common::Point(GOLEM_X1[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
+		              Common::Point(GOLEM_X1[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
 		sprites1.draw(0, 1,
-			Common::Point(GOLEM_X2[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
+		              Common::Point(GOLEM_X2[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
 
 		windows[0].update();
 		WAIT(1);
@@ -1623,8 +1621,7 @@ int GolemCutscene::show() {
 		sprites2[_ccNum].draw(0, 1, Common::Point(idx + 160, 0), SPRFLAG_800);
 
 		if (!_ccNum)
-			sprites2[0].draw(0, 2, Common::Point(idx + g_vm->getRandomNumber(9) - 5,
-				g_vm->getRandomNumber(9) - 5), SPRFLAG_800);
+			sprites2[0].draw(0, 2, Common::Point(idx + g_vm->getRandomNumber(9) - 5, g_vm->getRandomNumber(9) - 5), SPRFLAG_800);
 
 		if (!_ccNum && !sound.isSoundPlaying())
 			sound.playSound("ogre.voc");
@@ -1666,8 +1663,7 @@ int GolemCutscene::show() {
 		} else {
 			sprites2[0].draw(0, 0, Common::Point(0, 0));
 			sprites2[0].draw(0, 1, Common::Point(160, 0));
-			sprites2[0].draw(0, 2, Common::Point(g_vm->getRandomNumber(5) - 3,
-				g_vm->getRandomNumber(9) - 3));
+			sprites2[0].draw(0, 2, Common::Point(g_vm->getRandomNumber(5) - 3, g_vm->getRandomNumber(9) - 3));
 		}
 
 		_subtitles.show();
@@ -1708,8 +1704,7 @@ int GolemCutscene::show() {
 		} else {
 			sprites2[0].draw(0, 0, Common::Point(0, 0));
 			sprites2[0].draw(0, 1, Common::Point(160, 0));
-			sprites2[0].draw(0, 2, Common::Point(g_vm->getRandomNumber(5) - 3,
-				g_vm->getRandomNumber(9) - 3));
+			sprites2[0].draw(0, 2, Common::Point(g_vm->getRandomNumber(5) - 3, g_vm->getRandomNumber(9) - 3));
 		}
 
 		windows[0].update();
@@ -1732,9 +1727,9 @@ int GolemCutscene::show() {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sprites1.draw(0, 0,
-				Common::Point(GOLEM_X1[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
+			              Common::Point(GOLEM_X1[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
 			sprites1.draw(0, 1,
-				Common::Point(GOLEM_X2[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
+			              Common::Point(GOLEM_X2[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
 
 			windows[0].update();
 			WAIT(1);
@@ -1852,28 +1847,22 @@ void GolemCutscene::getNewLocation() {
 /*------------------------------------------------------------------------*/
 
 const int16 DWARF_X0[2][13] = {
-	{  0, -5, -7, -8, -11, -9, -3, 1, 6, 10, 15, 18, 23 },
-	{ 0, 4, 6, 8, 11, 12, 15, 17, 19, 22, 25, 0, 0 }
-};
+    {0, -5, -7, -8, -11, -9, -3, 1, 6, 10, 15, 18, 23},
+    {0, 4, 6, 8, 11, 12, 15, 17, 19, 22, 25, 0, 0}};
 const int DWARF_X1[2][13] = {
-	{ 160, 145, 133, 122, 109, 101, 97, 91, 86, 80, 75, 68, 63 },
-	{ 160, 154, 146, 138, 131, 122, 115, 107, 99, 92, 85, 0, 0 }
-};
+    {160, 145, 133, 122, 109, 101, 97, 91, 86, 80, 75, 68, 63},
+    {160, 154, 146, 138, 131, 122, 115, 107, 99, 92, 85, 0, 0}};
 const int DWARF_X2[13] = {
-	0, -1, -4, -7, -9, -13, -15, -18, -21, -23, -25, 0, 0
-};
+    0, -1, -4, -7, -9, -13, -15, -18, -21, -23, -25, 0, 0};
 const int16 DWARF_Y[2][13] = {
-	{ 0, 0, 4, 9, 13, 15, 20, 24, 30, 37, 45, 51, 58 },
-	{ 0, 12, 25, 36, 38, 40, 41, 42, 44, 45, 50, 0, 0 }
-};
+    {0, 0, 4, 9, 13, 15, 20, 24, 30, 37, 45, 51, 58},
+    {0, 12, 25, 36, 38, 40, 41, 42, 44, 45, 50, 0, 0}};
 const int16 DWARF2_X[2][16] = {
-	{ 0, -2, -4, -6, -8, -10, -12, -14, -16, -18, -20, -20, -20, -20, -20, -20 },
-	{ 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150 }
-};
+    {0, -2, -4, -6, -8, -10, -12, -14, -16, -18, -20, -20, -20, -20, -20, -20},
+    {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}};
 const int16 DWARF2_Y[2][16] = {
-	{ 0, 12, 25, 37, 50, 62, 75, 87, 100, 112, 125, 137, 150, 162, 175, 187 },
-	{ 0, 12, 25, 37, 50, 62, 75, 87, 100, 112, 125, 137, 150, 162, 175, 186 }
-};
+    {0, 12, 25, 37, 50, 62, 75, 87, 100, 112, 125, 137, 150, 162, 175, 187},
+    {0, 12, 25, 37, 50, 62, 75, 87, 100, 112, 125, 137, 150, 162, 175, 186}};
 
 DwarfCutscene::DwarfCutscene() : CutsceneLocation(DWARF_MINE) {}
 
@@ -1899,12 +1888,12 @@ int DwarfCutscene::show() {
 
 		screen.blitFrom(savedBg);
 		sprites1.draw(0, 0,
-			Common::Point(DWARF_X0[_ccNum][idx], DWARF_Y[_ccNum][idx]), 0, idx);
+		              Common::Point(DWARF_X0[_ccNum][idx], DWARF_Y[_ccNum][idx]), 0, idx);
 		sprites1.draw(0, 1,
-			Common::Point(DWARF_X1[_ccNum][idx], DWARF_Y[_ccNum][idx]), 0, idx);
+		              Common::Point(DWARF_X1[_ccNum][idx], DWARF_Y[_ccNum][idx]), 0, idx);
 		if (_ccNum)
 			sprites1.draw(0, 2,
-				Common::Point(DWARF_X2[idx], DWARF_Y[_ccNum][idx]), 0, idx);
+			              Common::Point(DWARF_X2[idx], DWARF_Y[_ccNum][idx]), 0, idx);
 
 		windows[0].update();
 		WAIT(1);
@@ -2117,9 +2106,9 @@ void DwarfCutscene::getNewLocation() {
 
 /*------------------------------------------------------------------------*/
 
-static const int SPHINX_X1[9] = { 0, -5, -10, -15, -20, -17, -12, -7, 0 };
-static const int SPHINX_Y1[9] = { 0, 0, 0, 6, 11, 16, 20, 23, 28 };
-static const int SPHINX_X2[9] = { 160, 145, 130, 115, 100, 93, 88, 83, 80 };
+static const int SPHINX_X1[9] = {0, -5, -10, -15, -20, -17, -12, -7, 0};
+static const int SPHINX_Y1[9] = {0, 0, 0, 6, 11, 16, 20, 23, 28};
+static const int SPHINX_X2[9] = {160, 145, 130, 115, 100, 93, 88, 83, 80};
 
 SphinxCutscene::SphinxCutscene() : CutsceneLocation(SPHINX) {
 }
@@ -2282,7 +2271,7 @@ int PyramidLocation::show() {
 		// Playing Clouds or Dark Side on it's own, so can't switch sides
 		Window &win = windows[12];
 		Common::String msg = Common::String::format(Res.MOONS_NOT_ALIGNED,
-			_ccNum ? "Clouds" : "Darkside");
+		                                            _ccNum ? "Clouds" : "Darkside");
 		win.open();
 		win.writeString(msg);
 		win.update();
@@ -2302,8 +2291,7 @@ LocationManager::LocationManager() : _location(nullptr) {
 }
 
 int LocationManager::doAction(int actionId) {
-	LocationAction action = (g_vm->getGameID() == GType_Swords && actionId > 13 && actionId < 18) ?
-		BLACKSMITH : (LocationAction)actionId;
+	LocationAction action = (g_vm->getGameID() == GType_Swords && actionId > 13 && actionId < 18) ? BLACKSMITH : (LocationAction)actionId;
 
 	// Create the desired location
 	switch (action) {
@@ -2373,7 +2361,7 @@ int LocationManager::wait() {
 /*------------------------------------------------------------------------*/
 
 bool LocationMessage::show(int portrait, const Common::String &name,
-		const Common::String &text, int confirm) {
+                           const Common::String &text, int confirm) {
 	LocationMessage *dlg = new LocationMessage();
 	bool result = dlg->execute(portrait, name, text, confirm);
 	delete dlg;
@@ -2382,7 +2370,7 @@ bool LocationMessage::show(int portrait, const Common::String &name,
 }
 
 bool LocationMessage::execute(int portrait, const Common::String &name, const Common::String &text,
-		int confirm) {
+                              int confirm) {
 	EventsManager &events = *g_vm->_events;
 	Interface &intf = *g_vm->_interface;
 	Map &map = *g_vm->_map;
@@ -2408,8 +2396,9 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 	int result = -1;
 	Common::String msgText = text;
 	do {
-		Common::String msg = Common::String::format("\r\v014\x03""c\t125%s\t000\v054%s",
-			name.c_str(), msgText.c_str());
+		Common::String msg = Common::String::format("\r\v014\x03"
+		                                            "c\t125%s\t000\v054%s",
+		                                            name.c_str(), msgText.c_str());
 
 		// Count the number of words
 		const char *msgEnd = w.writeString(msg);
@@ -2420,7 +2409,7 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 				++wordCount;
 		}
 
-		_drawCtr2 = wordCount * 2;	// Set timeout
+		_drawCtr2 = wordCount * 2; // Set timeout
 		_townSprites[1].draw(0, 0, Common::Point(16, 16));
 		_townSprites[0].draw(0, _drawFrameIndex, Common::Point(23, 22));
 		w.update();
@@ -2460,7 +2449,7 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 				break;
 
 			if (confirm || _buttonValue == Common::KEYCODE_ESCAPE ||
-					_buttonValue == Common::KEYCODE_n)
+			    _buttonValue == Common::KEYCODE_n)
 				result = 0;
 			else if (_buttonValue == Common::KEYCODE_y)
 				result = 1;

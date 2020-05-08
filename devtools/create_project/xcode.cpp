@@ -20,16 +20,16 @@
  *
  */
 
-#include "config.h"
 #include "xcode.h"
+#include "config.h"
 
-#include <fstream>
 #include <algorithm>
+#include <fstream>
 
 #ifdef MACOSX
-#include <sstream>
-#include <iomanip>
 #include <CommonCrypto/CommonCrypto.h>
+#include <iomanip>
+#include <sstream>
 
 // If we want to unset the sdk version in the executable to work around bug #11430
 // (blury display on retina screens when building with SDK 10.14+).
@@ -49,8 +49,12 @@ namespace CreateProjectTool {
 #define ADD_DEFINE(defines, name) \
 	defines.push_back(name);
 
-#define REMOVE_DEFINE(defines, name) \
-	{ ValueList::iterator i = std::find(defines.begin(), defines.end(), name); if (i != defines.end()) defines.erase(i); }
+#define REMOVE_DEFINE(defines, name)                                             \
+	{                                                                            \
+		ValueList::iterator i = std::find(defines.begin(), defines.end(), name); \
+		if (i != defines.end())                                                  \
+			defines.erase(i);                                                    \
+	}
 
 #define CONTAINS_DEFINE(defines, name) \
 	(std::find(defines.begin(), defines.end(), name) != defines.end())
@@ -76,23 +80,30 @@ namespace CreateProjectTool {
 #define REMOVE_SETTING(config, key) \
 	config._settings.erase(key);
 
-#define ADD_BUILD_FILE(id, name, fileRefId, comment) { \
-	Object *buildFile = new Object(this, id, name, "PBXBuildFile", "PBXBuildFile", comment); \
-	buildFile->addProperty("fileRef", fileRefId, name, kSettingsNoValue); \
-	_buildFile.add(buildFile); \
-	_buildFile._flags = kSettingsSingleItem; \
-}
+#define ADD_BUILD_FILE(id, name, fileRefId, comment)                                             \
+	{                                                                                            \
+		Object *buildFile = new Object(this, id, name, "PBXBuildFile", "PBXBuildFile", comment); \
+		buildFile->addProperty("fileRef", fileRefId, name, kSettingsNoValue);                    \
+		_buildFile.add(buildFile);                                                               \
+		_buildFile._flags = kSettingsSingleItem;                                                 \
+	}
 
-#define ADD_FILE_REFERENCE(id, name, properties) { \
-	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name); \
-	if (!properties._fileEncoding.empty()) fileRef->addProperty("fileEncoding", properties._fileEncoding, "", kSettingsNoValue); \
-	if (!properties._lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties._lastKnownFileType, "", kSettingsNoValue|kSettingsQuoteVariable); \
-	if (!properties._fileName.empty()) fileRef->addProperty("name", properties._fileName, "", kSettingsNoValue|kSettingsQuoteVariable); \
-	if (!properties._filePath.empty()) fileRef->addProperty("path", properties._filePath, "", kSettingsNoValue|kSettingsQuoteVariable); \
-	if (!properties._sourceTree.empty()) fileRef->addProperty("sourceTree", properties._sourceTree, "", kSettingsNoValue); \
-	_fileReference.add(fileRef); \
-	_fileReference._flags = kSettingsSingleItem; \
-}
+#define ADD_FILE_REFERENCE(id, name, properties)                                                                                     \
+	{                                                                                                                                \
+		Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name);                                  \
+		if (!properties._fileEncoding.empty())                                                                                       \
+			fileRef->addProperty("fileEncoding", properties._fileEncoding, "", kSettingsNoValue);                                    \
+		if (!properties._lastKnownFileType.empty())                                                                                  \
+			fileRef->addProperty("lastKnownFileType", properties._lastKnownFileType, "", kSettingsNoValue | kSettingsQuoteVariable); \
+		if (!properties._fileName.empty())                                                                                           \
+			fileRef->addProperty("name", properties._fileName, "", kSettingsNoValue | kSettingsQuoteVariable);                       \
+		if (!properties._filePath.empty())                                                                                           \
+			fileRef->addProperty("path", properties._filePath, "", kSettingsNoValue | kSettingsQuoteVariable);                       \
+		if (!properties._sourceTree.empty())                                                                                         \
+			fileRef->addProperty("sourceTree", properties._sourceTree, "", kSettingsNoValue);                                        \
+		_fileReference.add(fileRef);                                                                                                 \
+		_fileReference._flags = kSettingsSingleItem;                                                                                 \
+	}
 
 bool producesObjectFileOnOSX(const std::string &fileName) {
 	std::string n, ext;
@@ -128,16 +139,13 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		static const std::string sdl_directory = "/sdl/";
 		static const std::string surfacesdl_directory = "/surfacesdl/";
 		static const std::string doublebufferdl_directory = "/doublebuffersdl/";
-		if (fileID.find(sdl_directory) != std::string::npos
-		 || fileID.find(surfacesdl_directory) != std::string::npos
-		 || fileID.find(doublebufferdl_directory) != std::string::npos) {
+		if (fileID.find(sdl_directory) != std::string::npos || fileID.find(surfacesdl_directory) != std::string::npos || fileID.find(doublebufferdl_directory) != std::string::npos) {
 			return true;
-		 }
+		}
 		if (ext == "icns") {
 			return true;
 		}
-	}
-	else {
+	} else {
 		// macOS target: we skip all files with the "_ios" suffix
 		if (name.length() > 4 && name.substr(name.length() - 4) == "_ios") {
 			return true;
@@ -169,7 +177,7 @@ XcodeProvider::Group::Group(XcodeProvider *objectParent, const std::string &grou
 }
 
 void XcodeProvider::Group::ensureChildExists(const std::string &name) {
-	std::map<std::string, Group*>::iterator it = _childGroups.find(name);
+	std::map<std::string, Group *>::iterator it = _childGroups.find(name);
 	if (it == _childGroups.end()) {
 		Group *child = new Group(_parent, name, this->_treeName + '/' + name, name);
 		_childGroups[name] = child;
@@ -193,7 +201,6 @@ void XcodeProvider::Group::addChildInternal(const std::string &id, const std::st
 	} else {
 		_properties["children"]._flags ^= kSettingsSingleItem;
 	}
-
 }
 
 void XcodeProvider::Group::addChildGroup(const Group *group) {
@@ -245,11 +252,16 @@ XcodeProvider::Group *XcodeProvider::touchGroupsForPath(const std::string &path)
 
 void XcodeProvider::addFileReference(const std::string &id, const std::string &name, FileProperty properties) {
 	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name);
-	if (!properties._fileEncoding.empty()) fileRef->addProperty("fileEncoding", properties._fileEncoding, "", kSettingsNoValue);
-	if (!properties._lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties._lastKnownFileType, "", kSettingsNoValue | kSettingsQuoteVariable);
-	if (!properties._fileName.empty()) fileRef->addProperty("name", properties._fileName, "", kSettingsNoValue | kSettingsQuoteVariable);
-	if (!properties._filePath.empty()) fileRef->addProperty("path", properties._filePath, "", kSettingsNoValue | kSettingsQuoteVariable);
-	if (!properties._sourceTree.empty()) fileRef->addProperty("sourceTree", properties._sourceTree, "", kSettingsNoValue);
+	if (!properties._fileEncoding.empty())
+		fileRef->addProperty("fileEncoding", properties._fileEncoding, "", kSettingsNoValue);
+	if (!properties._lastKnownFileType.empty())
+		fileRef->addProperty("lastKnownFileType", properties._lastKnownFileType, "", kSettingsNoValue | kSettingsQuoteVariable);
+	if (!properties._fileName.empty())
+		fileRef->addProperty("name", properties._fileName, "", kSettingsNoValue | kSettingsQuoteVariable);
+	if (!properties._filePath.empty())
+		fileRef->addProperty("path", properties._filePath, "", kSettingsNoValue | kSettingsQuoteVariable);
+	if (!properties._sourceTree.empty())
+		fileRef->addProperty("sourceTree", properties._sourceTree, "", kSettingsNoValue);
 	_fileReference.add(fileRef);
 	_fileReference._flags = kSettingsSingleItem;
 }
@@ -273,7 +285,7 @@ void XcodeProvider::addBuildFile(const std::string &id, const std::string &name,
 }
 
 XcodeProvider::XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: ProjectProvider(global_warnings, project_warnings, version) {
+    : ProjectProvider(global_warnings, project_warnings, version) {
 	_rootSourceGroup = NULL;
 }
 
@@ -347,11 +359,13 @@ void XcodeProvider::outputMainProjectFile(const BuildSetup &setup) {
 	// Header
 	project << "// !$*UTF8*$!\n"
 	           "{\n"
-	           "\t" << writeSetting("archiveVersion", "1", "", kSettingsNoQuote) << ";\n"
-	           "\tclasses = {\n"
-	           "\t};\n"
-	           "\t" << writeSetting("objectVersion", "46", "", kSettingsNoQuote) << ";\n"
-	           "\tobjects = {\n";
+	           "\t"
+	        << writeSetting("archiveVersion", "1", "", kSettingsNoQuote) << ";\n"
+	                                                                        "\tclasses = {\n"
+	                                                                        "\t};\n"
+	                                                                        "\t"
+	        << writeSetting("objectVersion", "46", "", kSettingsNoQuote) << ";\n"
+	                                                                        "\tobjects = {\n";
 
 	//////////////////////////////////////////////////////////////////////////
 	// List of objects
@@ -370,9 +384,9 @@ void XcodeProvider::outputMainProjectFile(const BuildSetup &setup) {
 	//////////////////////////////////////////////////////////////////////////
 	// Footer
 	project << "\t};\n"
-	           "\t" << writeSetting("rootObject", getHash("PBXProject"), "Project object", kSettingsNoQuote) << ";\n"
-	           "}\n";
-
+	           "\t"
+	        << writeSetting("rootObject", getHash("PBXProject"), "Project object", kSettingsNoQuote) << ";\n"
+	                                                                                                    "}\n";
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -404,17 +418,25 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 	// Nothing to do here
 }
 
-#define DEF_SYSFRAMEWORK(framework) { properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
-	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++); }
+#define DEF_SYSFRAMEWORK(framework)                                                                                                                                     \
+	{                                                                                                                                                                   \
+		properties[framework ".framework"] = FileProperty("wrapper.framework", framework ".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
+		ADD_SETTING_ORDER_NOVALUE(children, getHash(framework ".framework"), framework ".framework", fwOrder++);                                                        \
+	}
 
-#define DEF_SYSTBD(lib) { properties[lib".tbd"] = FileProperty("sourcecode.text-based-dylib-definition", lib".tbd", "usr/lib/" lib ".tbd", "SDKROOT"); \
-	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".tbd"), lib".tbd", fwOrder++); }
+#define DEF_SYSTBD(lib)                                                                                                                \
+	{                                                                                                                                  \
+		properties[lib ".tbd"] = FileProperty("sourcecode.text-based-dylib-definition", lib ".tbd", "usr/lib/" lib ".tbd", "SDKROOT"); \
+		ADD_SETTING_ORDER_NOVALUE(children, getHash(lib ".tbd"), lib ".tbd", fwOrder++);                                               \
+	}
 
-#define DEF_LOCALLIB_STATIC_PATH(path,lib,absolute) { properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
-	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++); }
+#define DEF_LOCALLIB_STATIC_PATH(path, lib, absolute)                                                                     \
+	{                                                                                                                     \
+		properties[lib ".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
+		ADD_SETTING_ORDER_NOVALUE(children, getHash(lib ".a"), lib ".a", fwOrder++);                                      \
+	}
 
 #define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH(lib ".a", lib, false)
-
 
 /**
  * Sets up the frameworks build phase.
@@ -516,7 +538,6 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	_groups.add(frameworksGroup);
 	// Force this to be added as a sub-group in the root.
 	_rootSourceGroup->addChildGroup(frameworksGroup);
-
 
 	// Declare this here, as it's used across all the targets
 	int order = 0;
@@ -708,7 +729,7 @@ void XcodeProvider::setupNativeTarget() {
 	_nativeTarget._comment = "PBXNativeTarget";
 
 	// Just use a hardcoded id for the Products-group
-	Group *productsGroup = new Group(this, "Products", "PBXGroup_CustomTemplate_Products_" , "");
+	Group *productsGroup = new Group(this, "Products", "PBXGroup_CustomTemplate_Products_", "");
 	// Output native target section
 	for (unsigned int i = 0; i < _targets.size(); i++) {
 		Object *target = new Object(this, "PBXNativeTarget_" + _targets[i], "PBXNativeTarget", "PBXNativeTarget", "", _targets[i]);
@@ -761,7 +782,7 @@ void XcodeProvider::setupProject() {
 	project->_properties["knownRegions"] = regions;
 
 	project->addProperty("mainGroup", _rootSourceGroup->getHashRef(), "CustomTemplate", kSettingsNoValue);
-	project->addProperty("productRefGroup", getHash("PBXGroup_CustomTemplate_Products_"), "" , kSettingsNoValue);
+	project->addProperty("productRefGroup", getHash("PBXGroup_CustomTemplate_Products_"), "", kSettingsNoValue);
 	project->addProperty("projectDirPath", _projectRoot, "", kSettingsNoValue | kSettingsQuoteVariable);
 	project->addProperty("projectRoot", "", "", kSettingsNoValue | kSettingsQuoteVariable);
 
@@ -778,7 +799,7 @@ void XcodeProvider::setupProject() {
 	_project.add(project);
 }
 
-XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
+XcodeProvider::ValueList &XcodeProvider::getResourceFiles() const {
 	static ValueList files;
 	if (files.empty()) {
 		files.push_back("gui/themes/scummclassic.zip");
@@ -972,7 +993,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	// Release
 	Object *scummvm_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_NAME "_Release", PROJECT_NAME, "XCBuildConfiguration", "PBXProject", "Release");
 	Property scummvm_Release(scummvm_Debug);
-	REMOVE_SETTING(scummvm_Release, "GCC_C_LANGUAGE_STANDARD");       // Not sure why we remove that, or any of the other warnings
+	REMOVE_SETTING(scummvm_Release, "GCC_C_LANGUAGE_STANDARD"); // Not sure why we remove that, or any of the other warnings
 	REMOVE_SETTING(scummvm_Release, "GCC_WARN_ABOUT_RETURN_TYPE");
 	REMOVE_SETTING(scummvm_Release, "GCC_WARN_UNUSED_VARIABLE");
 	REMOVE_SETTING(scummvm_Release, "ONLY_ACTIVE_ARCH");
@@ -1185,7 +1206,7 @@ void XcodeProvider::setupAdditionalSources(std::string targetName, Property &fil
 void XcodeProvider::setupDefines(const BuildSetup &setup) {
 
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (*i == "USE_NASM")  // Not supported on Mac
+		if (*i == "USE_NASM") // Not supported on Mac
 			continue;
 
 		ADD_DEFINE(_defines, *i);
@@ -1218,7 +1239,7 @@ std::string XcodeProvider::getHash(std::string key) {
 	if (hashIterator != _hashDictionnary.end())
 		return hashIterator->second;
 
-	// Generate a new key from the file hash and insert it into the dictionary
+		// Generate a new key from the file hash and insert it into the dictionary
 #ifdef MACOSX
 	std::string hash = md5(key);
 #else
@@ -1236,11 +1257,11 @@ bool isSeparator(char s) { return (s == '-'); }
 #ifdef MACOSX
 std::string XcodeProvider::md5(std::string key) {
 	unsigned char md[CC_MD5_DIGEST_LENGTH];
-	CC_MD5(key.c_str(), (CC_LONG) key.length(), md);
+	CC_MD5(key.c_str(), (CC_LONG)key.length(), md);
 	std::stringstream stream;
 	stream << std::hex << std::setfill('0') << std::setw(2);
-	for (int i=0; i<CC_MD5_DIGEST_LENGTH; i++) {
-		stream << (unsigned int) md[i];
+	for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+		stream << (unsigned int)md[i];
 	}
 	return stream.str();
 }
@@ -1345,7 +1366,6 @@ std::string XcodeProvider::writeSetting(const std::string &variable, const Setti
 				if (!comment.empty())
 					output += " /* " + comment + " */";
 			}
-
 		}
 		// Add closing ")" on new line
 		newline.resize(newline.size() - 1);
@@ -1371,4 +1391,4 @@ std::string XcodeProvider::writeSetting(const std::string &variable, const Setti
 	return output;
 }
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool

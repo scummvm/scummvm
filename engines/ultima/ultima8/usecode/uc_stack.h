@@ -35,13 +35,13 @@ protected:
 	uint8 *_buf;
 	uint8 *_bufPtr;
 	uint32 _size;
-public:
 
+public:
 	BaseUCStack(uint32 len, uint8 *b) : _buf(b), _size(len) {
 		// stack grows downward, so start at the end of the buffer
 		_bufPtr = _buf + _size;
 	}
-	virtual ~BaseUCStack() { }
+	virtual ~BaseUCStack() {}
 
 	inline uint32 getSize() const {
 		return _size;
@@ -74,13 +74,13 @@ public:
 
 	inline void push2(uint16 val) {
 		_bufPtr -= 2;
-		_bufPtr[0] = static_cast<uint8>(val     & 0xFF);
+		_bufPtr[0] = static_cast<uint8>(val & 0xFF);
 		_bufPtr[1] = static_cast<uint8>((val >> 8) & 0xFF);
 	}
 	inline void push4(uint32 val) {
 		_bufPtr -= 4;
-		_bufPtr[0] = static_cast<uint8>(val      & 0xFF);
-		_bufPtr[1] = static_cast<uint8>((val >> 8)  & 0xFF);
+		_bufPtr[0] = static_cast<uint8>(val & 0xFF);
+		_bufPtr[1] = static_cast<uint8>((val >> 8) & 0xFF);
 		_bufPtr[2] = static_cast<uint8>((val >> 16) & 0xFF);
 		_bufPtr[3] = static_cast<uint8>((val >> 24) & 0xFF);
 	}
@@ -144,15 +144,15 @@ public:
 	//
 
 	inline void assign1(const uint32 offset, const uint8 val) {
-		const_cast<uint8 *>(_buf)[offset]   = static_cast<uint8>(val     & 0xFF);
+		const_cast<uint8 *>(_buf)[offset] = static_cast<uint8>(val & 0xFF);
 	}
 	inline void assign2(const uint32 offset, const uint16 val) {
-		const_cast<uint8 *>(_buf)[offset]   = static_cast<uint8>(val     & 0xFF);
+		const_cast<uint8 *>(_buf)[offset] = static_cast<uint8>(val & 0xFF);
 		const_cast<uint8 *>(_buf)[offset + 1] = static_cast<uint8>((val >> 8) & 0xFF);
 	}
 	inline void assign4(const uint32 offset, const uint32 val) {
-		const_cast<uint8 *>(_buf)[offset]   = static_cast<uint8>(val      & 0xFF);
-		const_cast<uint8 *>(_buf)[offset + 1] = static_cast<uint8>((val >> 8)  & 0xFF);
+		const_cast<uint8 *>(_buf)[offset] = static_cast<uint8>(val & 0xFF);
+		const_cast<uint8 *>(_buf)[offset + 1] = static_cast<uint8>((val >> 8) & 0xFF);
 		const_cast<uint8 *>(_buf)[offset + 2] = static_cast<uint8>((val >> 16) & 0xFF);
 		const_cast<uint8 *>(_buf)[offset + 3] = static_cast<uint8>((val >> 24) & 0xFF);
 	}
@@ -163,9 +163,9 @@ public:
 
 class DynamicUCStack : public BaseUCStack {
 public:
-	DynamicUCStack(uint32 len = 0x1000) : BaseUCStack(len, new uint8[len]) { }
+	DynamicUCStack(uint32 len = 0x1000) : BaseUCStack(len, new uint8[len]) {}
 	~DynamicUCStack() override {
-		delete [] _buf;
+		delete[] _buf;
 	}
 
 #ifdef USE_DYNAMIC_UCSTACK
@@ -177,10 +177,11 @@ public:
 
 #ifndef USE_DYNAMIC_UCSTACK
 class UCStack : public BaseUCStack {
-	uint8   _bufArray[0x1000];
+	uint8 _bufArray[0x1000];
+
 public:
-	UCStack() : BaseUCStack(0x1000, _bufArray) { }
-	~UCStack() override { }
+	UCStack() : BaseUCStack(0x1000, _bufArray) {}
+	~UCStack() override {}
 
 	void save(Common::WriteStream *ws);
 	bool load(Common::ReadStream *rs, uint32 version);

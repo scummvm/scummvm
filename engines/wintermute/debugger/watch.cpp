@@ -21,16 +21,17 @@
  */
 
 #include "watch.h"
-#include "watch_instance.h"
 #include "script_monitor.h"
+#include "watch_instance.h"
 
 namespace Wintermute {
 
-Watch::Watch(const Common::String &filename, const Common::String &symbol, ScriptMonitor* monitor) : _enabled(false), _filename(filename), _symbol(symbol), _monitor(monitor) {}
+Watch::Watch(const Common::String &filename, const Common::String &symbol, ScriptMonitor *monitor) : _enabled(false), _filename(filename), _symbol(symbol), _monitor(monitor) {}
 
-Watch::~Watch() { /* Nothing to take care of in here */ }
+Watch::~Watch() { /* Nothing to take care of in here */
+}
 
-void Watch::trigger(WatchInstance* instance) {
+void Watch::trigger(WatchInstance *instance) {
 	_monitor->onWatch(this, instance->_script);
 }
 
@@ -39,4 +40,4 @@ Common::String Watch::getSymbol() const { return _symbol; }
 bool Watch::isEnabled() const { return _enabled; }
 void Watch::enable() { _enabled = true; }
 void Watch::disable() { _enabled = false; }
-}
+} // namespace Wintermute

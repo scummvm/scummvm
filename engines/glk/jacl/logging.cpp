@@ -21,21 +21,21 @@
  */
 
 #include "glk/jacl/jacl.h"
-#include "glk/jacl/types.h"
-#include "glk/jacl/prototypes.h"
 #include "glk/jacl/language.h"
+#include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
 
-extern char                     user_id[];
-extern char                     prefix[];
+extern char user_id[];
+extern char prefix[];
 
 void log_error(const char *message, int console) {
 	/* LOG A MESSAGE TO THE CONSOLE */
 
-	char            consoleMessage[256];
-	event_t         event;
+	char consoleMessage[256];
+	event_t event;
 
 	// BUILD A STRING SUITABLE FOR DISPLAY ON THE CONSOLE.
 	sprintf(consoleMessage, "ERROR: %s^", message);

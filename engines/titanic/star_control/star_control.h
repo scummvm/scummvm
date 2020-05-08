@@ -38,17 +38,20 @@ class CStarControl : public CGameObject {
 	bool KeyCharMsg(CKeyCharMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
 	bool MovementMsg(CMovementMsg *msg);
+
 private:
 	bool _enabled;
 	CStarField _starField;
 	CStarView _view;
 	Rect _starRect;
 	CPetControl *_petControl;
+
 private:
 	/**
 	 * Called for ever new game frame
 	 */
 	void newFrame();
+
 public:
 	CLASSDEF;
 	CStarControl();

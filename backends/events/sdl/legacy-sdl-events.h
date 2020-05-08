@@ -82,7 +82,6 @@ protected:
 	 * Resets keyboard emulation after a video screen change
 	 */
 	void resetKeyboardEmulation(int16 x_max, int16 y_max);
-
 };
 
 #endif

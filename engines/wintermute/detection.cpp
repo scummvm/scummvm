@@ -21,16 +21,16 @@
  */
 
 #include "engines/advancedDetector.h"
-#include "engines/wintermute/wintermute.h"
-#include "engines/wintermute/game_description.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/game_description.h"
+#include "engines/wintermute/wintermute.h"
 
 #include "common/achievements.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/fs.h"
-#include "common/util.h"
 #include "common/translation.h"
+#include "common/util.h"
 
 #include "engines/metaengine.h"
 
@@ -46,47 +46,38 @@ namespace Wintermute {
  * from the SCI-engine).
  */
 static ADGameDescription s_fallbackDesc = {
-	"",
-	"",
-	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-	Common::UNK_LANG,
-	Common::kPlatformWindows,
-	ADGF_UNSTABLE,
-	GUIO0()
-};
+    "",
+    "",
+    AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+    Common::UNK_LANG,
+    Common::kPlatformWindows,
+    ADGF_UNSTABLE,
+    GUIO0()};
 
 static const ADExtraGuiOptionsMap gameGuiOptions[] = {
-	{
-		GAMEOPTION_SHOW_FPS,
-		{
-			_s("Show FPS-counter"),
-			_s("Show the current number of frames per second in the upper left corner"),
-			"show_fps",
-			false
-		},
-	},
+    {
+        GAMEOPTION_SHOW_FPS,
+        {_s("Show FPS-counter"),
+         _s("Show the current number of frames per second in the upper left corner"),
+         "show_fps",
+         false},
+    },
 
-	{
-		GAMEOPTION_BILINEAR,
-		{
-			_s("Sprite bilinear filtering (SLOW)"),
-			_s("Apply bilinear filtering to individual sprites"),
-			"bilinear_filtering",
-			false
-		}
-	},
+    {GAMEOPTION_BILINEAR,
+     {_s("Sprite bilinear filtering (SLOW)"),
+      _s("Apply bilinear filtering to individual sprites"),
+      "bilinear_filtering",
+      false}},
 
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+    AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 static char s_fallbackExtraBuf[256];
 
 static const char *directoryGlobs[] = {
-	"language", // To detect the various languages
-	"languages", // To detect the various languages
-	"localization", // To detect the various languages
-	0
-};
+    "language",     // To detect the various languages
+    "languages",    // To detect the various languages
+    "localization", // To detect the various languages
+    0};
 
 class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
@@ -144,8 +135,10 @@ public:
 		ADDetectedGame game(&s_fallbackDesc);
 
 		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-			if (file->isDirectory()) continue;
-			if (!file->getName().hasSuffixIgnoreCase(".dcp")) continue;
+			if (file->isDirectory())
+				continue;
+			if (!file->getName().hasSuffixIgnoreCase(".dcp"))
+				continue;
 
 			FileProperties tmp;
 			if (getFileProperties(file->getParent(), allFiles, s_fallbackDesc, file->getName(), tmp)) {
@@ -241,24 +234,23 @@ public:
 		}
 		return result;
 	}
-	
+
 	Common::KeymapArray initKeymaps(const char *target) const override {
 		Common::String gameId = ConfMan.get("gameid", target);
 		const char *gameDescr = "Unknown WME game";
-		for (const PlainGameDescriptor *it = Wintermute::wintermuteGames; it->gameId ; it++ ) {
+		for (const PlainGameDescriptor *it = Wintermute::wintermuteGames; it->gameId; it++) {
 			if (gameId == it->gameId) {
 				gameDescr = it->description;
 			}
 		}
 		return getWintermuteKeymaps(target, gameId, gameDescr);
 	}
-
 };
 
 } // End of namespace Wintermute
 
 #if PLUGIN_ENABLED_DYNAMIC(WINTERMUTE)
-	REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);
+REGISTER_PLUGIN_STATIC(WINTERMUTE, PLUGIN_TYPE_ENGINE, Wintermute::WintermuteMetaEngine);
 #endif

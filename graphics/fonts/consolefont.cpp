@@ -28,15 +28,14 @@ namespace Graphics {
 // |     |
 // +-----+
 static const byte glyph0[] = {
-	0x00,
-	0xA0,
-	0x10,
-	0x80,
-	0x10,
-	0x80,
-	0x50,
-	0x00
-};
+    0x00,
+    0xA0,
+    0x10,
+    0x80,
+    0x10,
+    0x80,
+    0x50,
+    0x00};
 
 // Character 1 (0x01)
 // Box: 5 8 0 -1
@@ -53,15 +52,14 @@ static const byte glyph0[] = {
 // |     |
 // +-----+
 static const byte glyph1[] = {
-	0x00,
-	0x00,
-	0x20,
-	0x70,
-	0xF8,
-	0x70,
-	0x20,
-	0x00
-};
+    0x00,
+    0x00,
+    0x20,
+    0x70,
+    0xF8,
+    0x70,
+    0x20,
+    0x00};
 
 // Character 2 (0x02)
 // Box: 5 8 0 -1
@@ -78,15 +76,14 @@ static const byte glyph1[] = {
 // |* * *|
 // +-----+
 static const byte glyph2[] = {
-	0x50,
-	0xA8,
-	0x50,
-	0xA8,
-	0x50,
-	0xA8,
-	0x50,
-	0xA8
-};
+    0x50,
+    0xA8,
+    0x50,
+    0xA8,
+    0x50,
+    0xA8,
+    0x50,
+    0xA8};
 
 // Character 3 (0x03)
 // Box: 5 8 0 -1
@@ -103,15 +100,14 @@ static const byte glyph2[] = {
 // |  *  |
 // +-----+
 static const byte glyph3[] = {
-	0xA0,
-	0xA0,
-	0xE0,
-	0xA0,
-	0xA0,
-	0x70,
-	0x20,
-	0x20
-};
+    0xA0,
+    0xA0,
+    0xE0,
+    0xA0,
+    0xA0,
+    0x70,
+    0x20,
+    0x20};
 
 // Character 4 (0x04)
 // Box: 5 8 0 -1
@@ -128,15 +124,14 @@ static const byte glyph3[] = {
 // |  *  |
 // +-----+
 static const byte glyph4[] = {
-	0xE0,
-	0x80,
-	0xC0,
-	0xB8,
-	0xA0,
-	0x30,
-	0x20,
-	0x20
-};
+    0xE0,
+    0x80,
+    0xC0,
+    0xB8,
+    0xA0,
+    0x30,
+    0x20,
+    0x20};
 
 // Character 5 (0x05)
 // Box: 5 8 0 -1
@@ -153,15 +148,14 @@ static const byte glyph4[] = {
 // |  * *|
 // +-----+
 static const byte glyph5[] = {
-	0x60,
-	0x80,
-	0x80,
-	0x60,
-	0x30,
-	0x28,
-	0x30,
-	0x28
-};
+    0x60,
+    0x80,
+    0x80,
+    0x60,
+    0x30,
+    0x28,
+    0x30,
+    0x28};
 
 // Character 6 (0x06)
 // Box: 5 8 0 -1
@@ -178,15 +172,14 @@ static const byte glyph5[] = {
 // |  *  |
 // +-----+
 static const byte glyph6[] = {
-	0x80,
-	0x80,
-	0x80,
-	0xE0,
-	0x38,
-	0x20,
-	0x30,
-	0x20
-};
+    0x80,
+    0x80,
+    0x80,
+    0xE0,
+    0x38,
+    0x20,
+    0x30,
+    0x20};
 
 // Character 7 (0x07)
 // Box: 5 8 0 -1
@@ -203,15 +196,14 @@ static const byte glyph6[] = {
 // |     |
 // +-----+
 static const byte glyph7[] = {
-	0x00,
-	0x20,
-	0x50,
-	0x20,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x20,
+    0x50,
+    0x20,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 8 (0x08)
 // Box: 5 8 0 -1
@@ -228,15 +220,14 @@ static const byte glyph7[] = {
 // |     |
 // +-----+
 static const byte glyph8[] = {
-	0x00,
-	0x00,
-	0x20,
-	0x70,
-	0x20,
-	0x00,
-	0x70,
-	0x00
-};
+    0x00,
+    0x00,
+    0x20,
+    0x70,
+    0x20,
+    0x00,
+    0x70,
+    0x00};
 
 // Character 9 (0x09)
 // Box: 5 8 0 -1
@@ -253,15 +244,14 @@ static const byte glyph8[] = {
 // |  ***|
 // +-----+
 static const byte glyph9[] = {
-	0x90,
-	0xD0,
-	0xB0,
-	0x90,
-	0x20,
-	0x20,
-	0x20,
-	0x38
-};
+    0x90,
+    0xD0,
+    0xB0,
+    0x90,
+    0x20,
+    0x20,
+    0x20,
+    0x38};
 
 // Character 10 (0x0A)
 // Box: 5 8 0 -1
@@ -278,15 +268,14 @@ static const byte glyph9[] = {
 // |   * |
 // +-----+
 static const byte glyph10[] = {
-	0xA0,
-	0xA0,
-	0xA0,
-	0x40,
-	0x38,
-	0x10,
-	0x10,
-	0x10
-};
+    0xA0,
+    0xA0,
+    0xA0,
+    0x40,
+    0x38,
+    0x10,
+    0x10,
+    0x10};
 
 // Character 11 (0x0B)
 // Box: 5 8 0 -1
@@ -303,15 +292,14 @@ static const byte glyph10[] = {
 // |     |
 // +-----+
 static const byte glyph11[] = {
-	0x20,
-	0x20,
-	0x20,
-	0xE0,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x20,
+    0x20,
+    0x20,
+    0xE0,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 12 (0x0C)
 // Box: 5 8 0 -1
@@ -328,15 +316,14 @@ static const byte glyph11[] = {
 // |  *  |
 // +-----+
 static const byte glyph12[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xE0,
-	0x20,
-	0x20,
-	0x20,
-	0x20
-};
+    0x00,
+    0x00,
+    0x00,
+    0xE0,
+    0x20,
+    0x20,
+    0x20,
+    0x20};
 
 // Character 13 (0x0D)
 // Box: 5 8 0 -1
@@ -353,15 +340,14 @@ static const byte glyph12[] = {
 // |  *  |
 // +-----+
 static const byte glyph13[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x38,
-	0x20,
-	0x20,
-	0x20,
-	0x20
-};
+    0x00,
+    0x00,
+    0x00,
+    0x38,
+    0x20,
+    0x20,
+    0x20,
+    0x20};
 
 // Character 14 (0x0E)
 // Box: 5 8 0 -1
@@ -378,15 +364,14 @@ static const byte glyph13[] = {
 // |     |
 // +-----+
 static const byte glyph14[] = {
-	0x20,
-	0x20,
-	0x20,
-	0x38,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x20,
+    0x20,
+    0x20,
+    0x38,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 15 (0x0F)
 // Box: 5 8 0 -1
@@ -403,15 +388,14 @@ static const byte glyph14[] = {
 // |  *  |
 // +-----+
 static const byte glyph15[] = {
-	0x20,
-	0x20,
-	0x20,
-	0xF8,
-	0x20,
-	0x20,
-	0x20,
-	0x20
-};
+    0x20,
+    0x20,
+    0x20,
+    0xF8,
+    0x20,
+    0x20,
+    0x20,
+    0x20};
 
 // Character 16 (0x10)
 // Box: 5 8 0 -1
@@ -428,15 +412,14 @@ static const byte glyph15[] = {
 // |     |
 // +-----+
 static const byte glyph16[] = {
-	0xF8,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0xF8,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 17 (0x11)
 // Box: 5 8 0 -1
@@ -453,15 +436,14 @@ static const byte glyph16[] = {
 // |     |
 // +-----+
 static const byte glyph17[] = {
-	0x00,
-	0xF8,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0xF8,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 18 (0x12)
 // Box: 5 8 0 -1
@@ -478,15 +460,14 @@ static const byte glyph17[] = {
 // |     |
 // +-----+
 static const byte glyph18[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xF8,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0xF8,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 19 (0x13)
 // Box: 5 8 0 -1
@@ -503,15 +484,14 @@ static const byte glyph18[] = {
 // |     |
 // +-----+
 static const byte glyph19[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0xF8,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0xF8,
+    0x00};
 
 // Character 20 (0x14)
 // Box: 5 8 0 -1
@@ -528,15 +508,14 @@ static const byte glyph19[] = {
 // |*****|
 // +-----+
 static const byte glyph20[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0xF8
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0xF8};
 
 // Character 21 (0x15)
 // Box: 5 8 0 -1
@@ -553,15 +532,14 @@ static const byte glyph20[] = {
 // |  *  |
 // +-----+
 static const byte glyph21[] = {
-	0x20,
-	0x20,
-	0x20,
-	0x38,
-	0x20,
-	0x20,
-	0x20,
-	0x20
-};
+    0x20,
+    0x20,
+    0x20,
+    0x38,
+    0x20,
+    0x20,
+    0x20,
+    0x20};
 
 // Character 22 (0x16)
 // Box: 5 8 0 -1
@@ -578,15 +556,14 @@ static const byte glyph21[] = {
 // |  *  |
 // +-----+
 static const byte glyph22[] = {
-	0x20,
-	0x20,
-	0x20,
-	0xE0,
-	0x20,
-	0x20,
-	0x20,
-	0x20
-};
+    0x20,
+    0x20,
+    0x20,
+    0xE0,
+    0x20,
+    0x20,
+    0x20,
+    0x20};
 
 // Character 23 (0x17)
 // Box: 5 8 0 -1
@@ -603,15 +580,14 @@ static const byte glyph22[] = {
 // |     |
 // +-----+
 static const byte glyph23[] = {
-	0x20,
-	0x20,
-	0x20,
-	0xF8,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x20,
+    0x20,
+    0x20,
+    0xF8,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 24 (0x18)
 // Box: 5 8 0 -1
@@ -628,15 +604,14 @@ static const byte glyph23[] = {
 // |  *  |
 // +-----+
 static const byte glyph24[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xF8,
-	0x20,
-	0x20,
-	0x20,
-	0x20
-};
+    0x00,
+    0x00,
+    0x00,
+    0xF8,
+    0x20,
+    0x20,
+    0x20,
+    0x20};
 
 // Character 25 (0x19)
 // Box: 5 8 0 -1
@@ -653,15 +628,14 @@ static const byte glyph24[] = {
 // |  *  |
 // +-----+
 static const byte glyph25[] = {
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x20
-};
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x20};
 
 // Character 26 (0x1A)
 // Box: 5 8 0 -1
@@ -678,15 +652,14 @@ static const byte glyph25[] = {
 // |     |
 // +-----+
 static const byte glyph26[] = {
-	0x00,
-	0x10,
-	0x20,
-	0x40,
-	0x20,
-	0x10,
-	0x70,
-	0x00
-};
+    0x00,
+    0x10,
+    0x20,
+    0x40,
+    0x20,
+    0x10,
+    0x70,
+    0x00};
 
 // Character 27 (0x1B)
 // Box: 5 8 0 -1
@@ -703,15 +676,14 @@ static const byte glyph26[] = {
 // |     |
 // +-----+
 static const byte glyph27[] = {
-	0x00,
-	0x40,
-	0x20,
-	0x10,
-	0x20,
-	0x40,
-	0x70,
-	0x00
-};
+    0x00,
+    0x40,
+    0x20,
+    0x10,
+    0x20,
+    0x40,
+    0x70,
+    0x00};
 
 // Character 28 (0x1C)
 // Box: 5 8 0 -1
@@ -728,15 +700,14 @@ static const byte glyph27[] = {
 // |     |
 // +-----+
 static const byte glyph28[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xF8,
-	0x50,
-	0x50,
-	0x50,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0xF8,
+    0x50,
+    0x50,
+    0x50,
+    0x00};
 
 // Character 29 (0x1D)
 // Box: 5 8 0 -1
@@ -753,15 +724,14 @@ static const byte glyph28[] = {
 // |     |
 // +-----+
 static const byte glyph29[] = {
-	0x00,
-	0x00,
-	0x20,
-	0xF0,
-	0x60,
-	0xF0,
-	0x40,
-	0x00
-};
+    0x00,
+    0x00,
+    0x20,
+    0xF0,
+    0x60,
+    0xF0,
+    0x40,
+    0x00};
 
 // Character 30 (0x1E)
 // Box: 5 8 0 -1
@@ -778,15 +748,14 @@ static const byte glyph29[] = {
 // |     |
 // +-----+
 static const byte glyph30[] = {
-	0x00,
-	0x20,
-	0x50,
-	0xE0,
-	0x40,
-	0x50,
-	0xA0,
-	0x00
-};
+    0x00,
+    0x20,
+    0x50,
+    0xE0,
+    0x40,
+    0x50,
+    0xA0,
+    0x00};
 
 // Character 31 (0x1F)
 // Box: 5 8 0 -1
@@ -803,15 +772,14 @@ static const byte glyph30[] = {
 // |     |
 // +-----+
 static const byte glyph31[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x20,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x20,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 32 (0x20)
 // Box: 5 8 0 -1
@@ -828,15 +796,14 @@ static const byte glyph31[] = {
 // |     |
 // +-----+
 static const byte glyph32[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 33 (0x21)
 // Box: 5 8 0 -1
@@ -853,15 +820,14 @@ static const byte glyph32[] = {
 // |     |
 // +-----+
 static const byte glyph33[] = {
-	0x00,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x00,
-	0x20,
-	0x00
-};
+    0x00,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x00,
+    0x20,
+    0x00};
 
 // Character 34 (0x22)
 // Box: 5 8 0 -1
@@ -878,15 +844,14 @@ static const byte glyph33[] = {
 // |     |
 // +-----+
 static const byte glyph34[] = {
-	0x00,
-	0x50,
-	0x50,
-	0x50,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x50,
+    0x50,
+    0x50,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 35 (0x23)
 // Box: 5 8 0 -1
@@ -903,15 +868,14 @@ static const byte glyph34[] = {
 // |     |
 // +-----+
 static const byte glyph35[] = {
-	0x50,
-	0x50,
-	0xF8,
-	0x50,
-	0xF8,
-	0x50,
-	0x50,
-	0x00
-};
+    0x50,
+    0x50,
+    0xF8,
+    0x50,
+    0xF8,
+    0x50,
+    0x50,
+    0x00};
 
 // Character 36 (0x24)
 // Box: 5 8 0 -1
@@ -928,15 +892,14 @@ static const byte glyph35[] = {
 // |     |
 // +-----+
 static const byte glyph36[] = {
-	0x20,
-	0x70,
-	0xA0,
-	0x70,
-	0x28,
-	0x70,
-	0x20,
-	0x00
-};
+    0x20,
+    0x70,
+    0xA0,
+    0x70,
+    0x28,
+    0x70,
+    0x20,
+    0x00};
 
 // Character 37 (0x25)
 // Box: 5 8 0 -1
@@ -953,15 +916,14 @@ static const byte glyph36[] = {
 // |     |
 // +-----+
 static const byte glyph37[] = {
-	0x00,
-	0x40,
-	0x50,
-	0x20,
-	0x50,
-	0x10,
-	0x00,
-	0x00
-};
+    0x00,
+    0x40,
+    0x50,
+    0x20,
+    0x50,
+    0x10,
+    0x00,
+    0x00};
 
 // Character 38 (0x26)
 // Box: 5 8 0 -1
@@ -978,15 +940,14 @@ static const byte glyph37[] = {
 // |     |
 // +-----+
 static const byte glyph38[] = {
-	0x40,
-	0xA0,
-	0xA0,
-	0x40,
-	0xA0,
-	0xA0,
-	0x50,
-	0x00
-};
+    0x40,
+    0xA0,
+    0xA0,
+    0x40,
+    0xA0,
+    0xA0,
+    0x50,
+    0x00};
 
 // Character 39 (0x27)
 // Box: 5 8 0 -1
@@ -1003,15 +964,14 @@ static const byte glyph38[] = {
 // |     |
 // +-----+
 static const byte glyph39[] = {
-	0x00,
-	0x20,
-	0x20,
-	0x20,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x20,
+    0x20,
+    0x20,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 40 (0x28)
 // Box: 5 8 0 -1
@@ -1028,15 +988,14 @@ static const byte glyph39[] = {
 // |     |
 // +-----+
 static const byte glyph40[] = {
-	0x00,
-	0x20,
-	0x40,
-	0x40,
-	0x40,
-	0x40,
-	0x20,
-	0x00
-};
+    0x00,
+    0x20,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x20,
+    0x00};
 
 // Character 41 (0x29)
 // Box: 5 8 0 -1
@@ -1053,15 +1012,14 @@ static const byte glyph40[] = {
 // |     |
 // +-----+
 static const byte glyph41[] = {
-	0x00,
-	0x40,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x40,
-	0x00
-};
+    0x00,
+    0x40,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x40,
+    0x00};
 
 // Character 42 (0x2A)
 // Box: 5 8 0 -1
@@ -1078,15 +1036,14 @@ static const byte glyph41[] = {
 // |     |
 // +-----+
 static const byte glyph42[] = {
-	0x00,
-	0x00,
-	0x90,
-	0x60,
-	0xF0,
-	0x60,
-	0x90,
-	0x00
-};
+    0x00,
+    0x00,
+    0x90,
+    0x60,
+    0xF0,
+    0x60,
+    0x90,
+    0x00};
 
 // Character 43 (0x2B)
 // Box: 5 8 0 -1
@@ -1103,15 +1060,14 @@ static const byte glyph42[] = {
 // |     |
 // +-----+
 static const byte glyph43[] = {
-	0x00,
-	0x00,
-	0x20,
-	0x20,
-	0xF8,
-	0x20,
-	0x20,
-	0x00
-};
+    0x00,
+    0x00,
+    0x20,
+    0x20,
+    0xF8,
+    0x20,
+    0x20,
+    0x00};
 
 // Character 44 (0x2C)
 // Box: 5 8 0 -1
@@ -1128,15 +1084,14 @@ static const byte glyph43[] = {
 // | *   |
 // +-----+
 static const byte glyph44[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x30,
-	0x20,
-	0x40
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x30,
+    0x20,
+    0x40};
 
 // Character 45 (0x2D)
 // Box: 5 8 0 -1
@@ -1153,15 +1108,14 @@ static const byte glyph44[] = {
 // |     |
 // +-----+
 static const byte glyph45[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0xF0,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0xF0,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 46 (0x2E)
 // Box: 5 8 0 -1
@@ -1178,15 +1132,14 @@ static const byte glyph45[] = {
 // |  *  |
 // +-----+
 static const byte glyph46[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x20,
-	0x70,
-	0x20
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x20,
+    0x70,
+    0x20};
 
 // Character 47 (0x2F)
 // Box: 5 8 0 -1
@@ -1203,15 +1156,14 @@ static const byte glyph46[] = {
 // |     |
 // +-----+
 static const byte glyph47[] = {
-	0x00,
-	0x10,
-	0x10,
-	0x20,
-	0x40,
-	0x80,
-	0x80,
-	0x00
-};
+    0x00,
+    0x10,
+    0x10,
+    0x20,
+    0x40,
+    0x80,
+    0x80,
+    0x00};
 
 // Character 48 (0x30)
 // Box: 5 8 0 -1
@@ -1228,15 +1180,14 @@ static const byte glyph47[] = {
 // |     |
 // +-----+
 static const byte glyph48[] = {
-	0x00,
-	0x20,
-	0x50,
-	0x50,
-	0x50,
-	0x50,
-	0x20,
-	0x00
-};
+    0x00,
+    0x20,
+    0x50,
+    0x50,
+    0x50,
+    0x50,
+    0x20,
+    0x00};
 
 // Character 49 (0x31)
 // Box: 5 8 0 -1
@@ -1253,15 +1204,14 @@ static const byte glyph48[] = {
 // |     |
 // +-----+
 static const byte glyph49[] = {
-	0x00,
-	0x20,
-	0x60,
-	0x20,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x00,
+    0x20,
+    0x60,
+    0x20,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 50 (0x32)
 // Box: 5 8 0 -1
@@ -1278,15 +1228,14 @@ static const byte glyph49[] = {
 // |     |
 // +-----+
 static const byte glyph50[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x10,
-	0x60,
-	0x80,
-	0xF0,
-	0x00
-};
+    0x00,
+    0x60,
+    0x90,
+    0x10,
+    0x60,
+    0x80,
+    0xF0,
+    0x00};
 
 // Character 51 (0x33)
 // Box: 5 8 0 -1
@@ -1303,15 +1252,14 @@ static const byte glyph50[] = {
 // |     |
 // +-----+
 static const byte glyph51[] = {
-	0x00,
-	0xF0,
-	0x20,
-	0x60,
-	0x10,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0xF0,
+    0x20,
+    0x60,
+    0x10,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 52 (0x34)
 // Box: 5 8 0 -1
@@ -1328,15 +1276,14 @@ static const byte glyph51[] = {
 // |     |
 // +-----+
 static const byte glyph52[] = {
-	0x00,
-	0x20,
-	0x60,
-	0xA0,
-	0xF0,
-	0x20,
-	0x20,
-	0x00
-};
+    0x00,
+    0x20,
+    0x60,
+    0xA0,
+    0xF0,
+    0x20,
+    0x20,
+    0x00};
 
 // Character 53 (0x35)
 // Box: 5 8 0 -1
@@ -1353,15 +1300,14 @@ static const byte glyph52[] = {
 // |     |
 // +-----+
 static const byte glyph53[] = {
-	0x00,
-	0xF0,
-	0x80,
-	0xE0,
-	0x10,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0xF0,
+    0x80,
+    0xE0,
+    0x10,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 54 (0x36)
 // Box: 5 8 0 -1
@@ -1378,15 +1324,14 @@ static const byte glyph53[] = {
 // |     |
 // +-----+
 static const byte glyph54[] = {
-	0x00,
-	0x60,
-	0x80,
-	0xE0,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0x60,
+    0x80,
+    0xE0,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 55 (0x37)
 // Box: 5 8 0 -1
@@ -1403,15 +1348,14 @@ static const byte glyph54[] = {
 // |     |
 // +-----+
 static const byte glyph55[] = {
-	0x00,
-	0xF0,
-	0x10,
-	0x20,
-	0x20,
-	0x40,
-	0x40,
-	0x00
-};
+    0x00,
+    0xF0,
+    0x10,
+    0x20,
+    0x20,
+    0x40,
+    0x40,
+    0x00};
 
 // Character 56 (0x38)
 // Box: 5 8 0 -1
@@ -1428,15 +1372,14 @@ static const byte glyph55[] = {
 // |     |
 // +-----+
 static const byte glyph56[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x60,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0x60,
+    0x90,
+    0x60,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 57 (0x39)
 // Box: 5 8 0 -1
@@ -1453,15 +1396,14 @@ static const byte glyph56[] = {
 // |     |
 // +-----+
 static const byte glyph57[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0x70,
-	0x10,
-	0x60,
-	0x00
-};
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0x70,
+    0x10,
+    0x60,
+    0x00};
 
 // Character 58 (0x3A)
 // Box: 5 8 0 -1
@@ -1478,15 +1420,14 @@ static const byte glyph57[] = {
 // |     |
 // +-----+
 static const byte glyph58[] = {
-	0x00,
-	0x00,
-	0x60,
-	0x60,
-	0x00,
-	0x60,
-	0x60,
-	0x00
-};
+    0x00,
+    0x00,
+    0x60,
+    0x60,
+    0x00,
+    0x60,
+    0x60,
+    0x00};
 
 // Character 59 (0x3B)
 // Box: 5 8 0 -1
@@ -1503,15 +1444,14 @@ static const byte glyph58[] = {
 // | *   |
 // +-----+
 static const byte glyph59[] = {
-	0x00,
-	0x00,
-	0x30,
-	0x30,
-	0x00,
-	0x30,
-	0x20,
-	0x40
-};
+    0x00,
+    0x00,
+    0x30,
+    0x30,
+    0x00,
+    0x30,
+    0x20,
+    0x40};
 
 // Character 60 (0x3C)
 // Box: 5 8 0 -1
@@ -1528,15 +1468,14 @@ static const byte glyph59[] = {
 // |     |
 // +-----+
 static const byte glyph60[] = {
-	0x00,
-	0x10,
-	0x20,
-	0x40,
-	0x40,
-	0x20,
-	0x10,
-	0x00
-};
+    0x00,
+    0x10,
+    0x20,
+    0x40,
+    0x40,
+    0x20,
+    0x10,
+    0x00};
 
 // Character 61 (0x3D)
 // Box: 5 8 0 -1
@@ -1553,15 +1492,14 @@ static const byte glyph60[] = {
 // |     |
 // +-----+
 static const byte glyph61[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xF0,
-	0x00,
-	0xF0,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0xF0,
+    0x00,
+    0xF0,
+    0x00,
+    0x00};
 
 // Character 62 (0x3E)
 // Box: 5 8 0 -1
@@ -1578,15 +1516,14 @@ static const byte glyph61[] = {
 // |     |
 // +-----+
 static const byte glyph62[] = {
-	0x00,
-	0x40,
-	0x20,
-	0x10,
-	0x10,
-	0x20,
-	0x40,
-	0x00
-};
+    0x00,
+    0x40,
+    0x20,
+    0x10,
+    0x10,
+    0x20,
+    0x40,
+    0x00};
 
 // Character 63 (0x3F)
 // Box: 5 8 0 -1
@@ -1603,15 +1540,14 @@ static const byte glyph62[] = {
 // |     |
 // +-----+
 static const byte glyph63[] = {
-	0x00,
-	0x20,
-	0x50,
-	0x10,
-	0x20,
-	0x00,
-	0x20,
-	0x00
-};
+    0x00,
+    0x20,
+    0x50,
+    0x10,
+    0x20,
+    0x00,
+    0x20,
+    0x00};
 
 // Character 64 (0x40)
 // Box: 5 8 0 -1
@@ -1628,15 +1564,14 @@ static const byte glyph63[] = {
 // |  ** |
 // +-----+
 static const byte glyph64[] = {
-	0x30,
-	0x48,
-	0x98,
-	0xA8,
-	0xA8,
-	0x90,
-	0x40,
-	0x30
-};
+    0x30,
+    0x48,
+    0x98,
+    0xA8,
+    0xA8,
+    0x90,
+    0x40,
+    0x30};
 
 // Character 65 (0x41)
 // Box: 5 8 0 -1
@@ -1653,15 +1588,14 @@ static const byte glyph64[] = {
 // |     |
 // +-----+
 static const byte glyph65[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0xF0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0xF0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 66 (0x42)
 // Box: 5 8 0 -1
@@ -1678,15 +1612,14 @@ static const byte glyph65[] = {
 // |     |
 // +-----+
 static const byte glyph66[] = {
-	0x00,
-	0xE0,
-	0x90,
-	0xE0,
-	0x90,
-	0x90,
-	0xE0,
-	0x00
-};
+    0x00,
+    0xE0,
+    0x90,
+    0xE0,
+    0x90,
+    0x90,
+    0xE0,
+    0x00};
 
 // Character 67 (0x43)
 // Box: 5 8 0 -1
@@ -1703,15 +1636,14 @@ static const byte glyph66[] = {
 // |     |
 // +-----+
 static const byte glyph67[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x80,
-	0x80,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0x60,
+    0x90,
+    0x80,
+    0x80,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 68 (0x44)
 // Box: 5 8 0 -1
@@ -1728,15 +1660,14 @@ static const byte glyph67[] = {
 // |     |
 // +-----+
 static const byte glyph68[] = {
-	0x00,
-	0xE0,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0xE0,
-	0x00
-};
+    0x00,
+    0xE0,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0xE0,
+    0x00};
 
 // Character 69 (0x45)
 // Box: 5 8 0 -1
@@ -1753,15 +1684,14 @@ static const byte glyph68[] = {
 // |     |
 // +-----+
 static const byte glyph69[] = {
-	0x00,
-	0xF0,
-	0x80,
-	0xE0,
-	0x80,
-	0x80,
-	0xF0,
-	0x00
-};
+    0x00,
+    0xF0,
+    0x80,
+    0xE0,
+    0x80,
+    0x80,
+    0xF0,
+    0x00};
 
 // Character 70 (0x46)
 // Box: 5 8 0 -1
@@ -1778,15 +1708,14 @@ static const byte glyph69[] = {
 // |     |
 // +-----+
 static const byte glyph70[] = {
-	0x00,
-	0xF0,
-	0x80,
-	0xE0,
-	0x80,
-	0x80,
-	0x80,
-	0x00
-};
+    0x00,
+    0xF0,
+    0x80,
+    0xE0,
+    0x80,
+    0x80,
+    0x80,
+    0x00};
 
 // Character 71 (0x47)
 // Box: 5 8 0 -1
@@ -1803,15 +1732,14 @@ static const byte glyph70[] = {
 // |     |
 // +-----+
 static const byte glyph71[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x80,
-	0xB0,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0x60,
+    0x90,
+    0x80,
+    0xB0,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 72 (0x48)
 // Box: 5 8 0 -1
@@ -1828,15 +1756,14 @@ static const byte glyph71[] = {
 // |     |
 // +-----+
 static const byte glyph72[] = {
-	0x00,
-	0x90,
-	0x90,
-	0xF0,
-	0x90,
-	0x90,
-	0x90,
-	0x00
-};
+    0x00,
+    0x90,
+    0x90,
+    0xF0,
+    0x90,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 73 (0x49)
 // Box: 5 8 0 -1
@@ -1853,15 +1780,14 @@ static const byte glyph72[] = {
 // |     |
 // +-----+
 static const byte glyph73[] = {
-	0x00,
-	0x70,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x00,
+    0x70,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 74 (0x4A)
 // Box: 5 8 0 -1
@@ -1878,15 +1804,14 @@ static const byte glyph73[] = {
 // |     |
 // +-----+
 static const byte glyph74[] = {
-	0x00,
-	0x70,
-	0x20,
-	0x20,
-	0x20,
-	0xA0,
-	0x40,
-	0x00
-};
+    0x00,
+    0x70,
+    0x20,
+    0x20,
+    0x20,
+    0xA0,
+    0x40,
+    0x00};
 
 // Character 75 (0x4B)
 // Box: 5 8 0 -1
@@ -1903,15 +1828,14 @@ static const byte glyph74[] = {
 // |     |
 // +-----+
 static const byte glyph75[] = {
-	0x00,
-	0x90,
-	0xA0,
-	0xC0,
-	0xA0,
-	0xA0,
-	0x90,
-	0x00
-};
+    0x00,
+    0x90,
+    0xA0,
+    0xC0,
+    0xA0,
+    0xA0,
+    0x90,
+    0x00};
 
 // Character 76 (0x4C)
 // Box: 5 8 0 -1
@@ -1928,15 +1852,14 @@ static const byte glyph75[] = {
 // |     |
 // +-----+
 static const byte glyph76[] = {
-	0x00,
-	0x80,
-	0x80,
-	0x80,
-	0x80,
-	0x80,
-	0xF0,
-	0x00
-};
+    0x00,
+    0x80,
+    0x80,
+    0x80,
+    0x80,
+    0x80,
+    0xF0,
+    0x00};
 
 // Character 77 (0x4D)
 // Box: 5 8 0 -1
@@ -1953,15 +1876,14 @@ static const byte glyph76[] = {
 // |     |
 // +-----+
 static const byte glyph77[] = {
-	0x00,
-	0x90,
-	0xF0,
-	0xF0,
-	0x90,
-	0x90,
-	0x90,
-	0x00
-};
+    0x00,
+    0x90,
+    0xF0,
+    0xF0,
+    0x90,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 78 (0x4E)
 // Box: 5 8 0 -1
@@ -1978,15 +1900,14 @@ static const byte glyph77[] = {
 // |     |
 // +-----+
 static const byte glyph78[] = {
-	0x00,
-	0x90,
-	0xD0,
-	0xF0,
-	0xB0,
-	0xB0,
-	0x90,
-	0x00
-};
+    0x00,
+    0x90,
+    0xD0,
+    0xF0,
+    0xB0,
+    0xB0,
+    0x90,
+    0x00};
 
 // Character 79 (0x4F)
 // Box: 5 8 0 -1
@@ -2003,15 +1924,14 @@ static const byte glyph78[] = {
 // |     |
 // +-----+
 static const byte glyph79[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 80 (0x50)
 // Box: 5 8 0 -1
@@ -2028,15 +1948,14 @@ static const byte glyph79[] = {
 // |     |
 // +-----+
 static const byte glyph80[] = {
-	0x00,
-	0xE0,
-	0x90,
-	0x90,
-	0xE0,
-	0x80,
-	0x80,
-	0x00
-};
+    0x00,
+    0xE0,
+    0x90,
+    0x90,
+    0xE0,
+    0x80,
+    0x80,
+    0x00};
 
 // Character 81 (0x51)
 // Box: 5 8 0 -1
@@ -2053,15 +1972,14 @@ static const byte glyph80[] = {
 // |   * |
 // +-----+
 static const byte glyph81[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0xD0,
-	0xB0,
-	0x60,
-	0x10
-};
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0xD0,
+    0xB0,
+    0x60,
+    0x10};
 
 // Character 82 (0x52)
 // Box: 5 8 0 -1
@@ -2078,15 +1996,14 @@ static const byte glyph81[] = {
 // |     |
 // +-----+
 static const byte glyph82[] = {
-	0x00,
-	0xE0,
-	0x90,
-	0x90,
-	0xE0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x00,
+    0xE0,
+    0x90,
+    0x90,
+    0xE0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 83 (0x53)
 // Box: 5 8 0 -1
@@ -2103,15 +2020,14 @@ static const byte glyph82[] = {
 // |     |
 // +-----+
 static const byte glyph83[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x40,
-	0x20,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0x60,
+    0x90,
+    0x40,
+    0x20,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 84 (0x54)
 // Box: 5 8 0 -1
@@ -2128,15 +2044,14 @@ static const byte glyph83[] = {
 // |     |
 // +-----+
 static const byte glyph84[] = {
-	0x00,
-	0x70,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x00
-};
+    0x00,
+    0x70,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x00};
 
 // Character 85 (0x55)
 // Box: 5 8 0 -1
@@ -2153,15 +2068,14 @@ static const byte glyph84[] = {
 // |     |
 // +-----+
 static const byte glyph85[] = {
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 86 (0x56)
 // Box: 5 8 0 -1
@@ -2178,15 +2092,14 @@ static const byte glyph85[] = {
 // |     |
 // +-----+
 static const byte glyph86[] = {
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x60,
-	0x00
-};
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x60,
+    0x00};
 
 // Character 87 (0x57)
 // Box: 5 8 0 -1
@@ -2203,15 +2116,14 @@ static const byte glyph86[] = {
 // |     |
 // +-----+
 static const byte glyph87[] = {
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0xF0,
-	0xF0,
-	0x90,
-	0x00
-};
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0xF0,
+    0xF0,
+    0x90,
+    0x00};
 
 // Character 88 (0x58)
 // Box: 5 8 0 -1
@@ -2228,15 +2140,14 @@ static const byte glyph87[] = {
 // |     |
 // +-----+
 static const byte glyph88[] = {
-	0x00,
-	0x90,
-	0x90,
-	0x60,
-	0x60,
-	0x90,
-	0x90,
-	0x00
-};
+    0x00,
+    0x90,
+    0x90,
+    0x60,
+    0x60,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 89 (0x59)
 // Box: 5 8 0 -1
@@ -2253,15 +2164,14 @@ static const byte glyph88[] = {
 // |     |
 // +-----+
 static const byte glyph89[] = {
-	0x00,
-	0x88,
-	0x88,
-	0x50,
-	0x20,
-	0x20,
-	0x20,
-	0x00
-};
+    0x00,
+    0x88,
+    0x88,
+    0x50,
+    0x20,
+    0x20,
+    0x20,
+    0x00};
 
 // Character 90 (0x5A)
 // Box: 5 8 0 -1
@@ -2278,15 +2188,14 @@ static const byte glyph89[] = {
 // |     |
 // +-----+
 static const byte glyph90[] = {
-	0x00,
-	0xF0,
-	0x10,
-	0x20,
-	0x40,
-	0x80,
-	0xF0,
-	0x00
-};
+    0x00,
+    0xF0,
+    0x10,
+    0x20,
+    0x40,
+    0x80,
+    0xF0,
+    0x00};
 
 // Character 91 (0x5B)
 // Box: 5 8 0 -1
@@ -2303,15 +2212,14 @@ static const byte glyph90[] = {
 // |     |
 // +-----+
 static const byte glyph91[] = {
-	0x00,
-	0x70,
-	0x40,
-	0x40,
-	0x40,
-	0x40,
-	0x70,
-	0x00
-};
+    0x00,
+    0x70,
+    0x40,
+    0x40,
+    0x40,
+    0x40,
+    0x70,
+    0x00};
 
 // Character 92 (0x5C)
 // Box: 5 8 0 -1
@@ -2328,15 +2236,14 @@ static const byte glyph91[] = {
 // |     |
 // +-----+
 static const byte glyph92[] = {
-	0x00,
-	0x80,
-	0x80,
-	0x40,
-	0x20,
-	0x10,
-	0x10,
-	0x00
-};
+    0x00,
+    0x80,
+    0x80,
+    0x40,
+    0x20,
+    0x10,
+    0x10,
+    0x00};
 
 // Character 93 (0x5D)
 // Box: 5 8 0 -1
@@ -2353,15 +2260,14 @@ static const byte glyph92[] = {
 // |     |
 // +-----+
 static const byte glyph93[] = {
-	0x00,
-	0x70,
-	0x10,
-	0x10,
-	0x10,
-	0x10,
-	0x70,
-	0x00
-};
+    0x00,
+    0x70,
+    0x10,
+    0x10,
+    0x10,
+    0x10,
+    0x70,
+    0x00};
 
 // Character 94 (0x5E)
 // Box: 5 8 0 -1
@@ -2378,15 +2284,14 @@ static const byte glyph93[] = {
 // |     |
 // +-----+
 static const byte glyph94[] = {
-	0x00,
-	0x20,
-	0x50,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x20,
+    0x50,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 95 (0x5F)
 // Box: 5 8 0 -1
@@ -2403,15 +2308,14 @@ static const byte glyph94[] = {
 // |**** |
 // +-----+
 static const byte glyph95[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0xF0
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0xF0};
 
 // Character 96 (0x60)
 // Box: 5 8 0 -1
@@ -2428,15 +2332,14 @@ static const byte glyph95[] = {
 // |     |
 // +-----+
 static const byte glyph96[] = {
-	0x00,
-	0x40,
-	0x20,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x40,
+    0x20,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 97 (0x61)
 // Box: 5 8 0 -1
@@ -2453,15 +2356,14 @@ static const byte glyph96[] = {
 // |     |
 // +-----+
 static const byte glyph97[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x70,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x70,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 98 (0x62)
 // Box: 5 8 0 -1
@@ -2478,15 +2380,14 @@ static const byte glyph97[] = {
 // |     |
 // +-----+
 static const byte glyph98[] = {
-	0x00,
-	0x80,
-	0x80,
-	0xE0,
-	0x90,
-	0x90,
-	0xE0,
-	0x00
-};
+    0x00,
+    0x80,
+    0x80,
+    0xE0,
+    0x90,
+    0x90,
+    0xE0,
+    0x00};
 
 // Character 99 (0x63)
 // Box: 5 8 0 -1
@@ -2503,15 +2404,14 @@ static const byte glyph98[] = {
 // |     |
 // +-----+
 static const byte glyph99[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x30,
-	0x40,
-	0x40,
-	0x30,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x30,
+    0x40,
+    0x40,
+    0x30,
+    0x00};
 
 // Character 100 (0x64)
 // Box: 5 8 0 -1
@@ -2528,15 +2428,14 @@ static const byte glyph99[] = {
 // |     |
 // +-----+
 static const byte glyph100[] = {
-	0x00,
-	0x10,
-	0x10,
-	0x70,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x00,
+    0x10,
+    0x10,
+    0x70,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 101 (0x65)
 // Box: 5 8 0 -1
@@ -2553,15 +2452,14 @@ static const byte glyph100[] = {
 // |     |
 // +-----+
 static const byte glyph101[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x60,
-	0xB0,
-	0xC0,
-	0x60,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x60,
+    0xB0,
+    0xC0,
+    0x60,
+    0x00};
 
 // Character 102 (0x66)
 // Box: 5 8 0 -1
@@ -2578,15 +2476,14 @@ static const byte glyph101[] = {
 // |     |
 // +-----+
 static const byte glyph102[] = {
-	0x00,
-	0x20,
-	0x50,
-	0x40,
-	0xE0,
-	0x40,
-	0x40,
-	0x00
-};
+    0x00,
+    0x20,
+    0x50,
+    0x40,
+    0xE0,
+    0x40,
+    0x40,
+    0x00};
 
 // Character 103 (0x67)
 // Box: 5 8 0 -1
@@ -2603,15 +2500,14 @@ static const byte glyph102[] = {
 // | **  |
 // +-----+
 static const byte glyph103[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x60,
-	0x90,
-	0x70,
-	0x10,
-	0x60
-};
+    0x00,
+    0x00,
+    0x00,
+    0x60,
+    0x90,
+    0x70,
+    0x10,
+    0x60};
 
 // Character 104 (0x68)
 // Box: 5 8 0 -1
@@ -2628,15 +2524,14 @@ static const byte glyph103[] = {
 // |     |
 // +-----+
 static const byte glyph104[] = {
-	0x00,
-	0x80,
-	0x80,
-	0xE0,
-	0x90,
-	0x90,
-	0x90,
-	0x00
-};
+    0x00,
+    0x80,
+    0x80,
+    0xE0,
+    0x90,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 105 (0x69)
 // Box: 5 8 0 -1
@@ -2653,15 +2548,14 @@ static const byte glyph104[] = {
 // |     |
 // +-----+
 static const byte glyph105[] = {
-	0x00,
-	0x20,
-	0x00,
-	0x60,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x00,
+    0x20,
+    0x00,
+    0x60,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 106 (0x6A)
 // Box: 5 8 0 -1
@@ -2678,15 +2572,14 @@ static const byte glyph105[] = {
 // |  *  |
 // +-----+
 static const byte glyph106[] = {
-	0x00,
-	0x10,
-	0x00,
-	0x10,
-	0x10,
-	0x10,
-	0x50,
-	0x20
-};
+    0x00,
+    0x10,
+    0x00,
+    0x10,
+    0x10,
+    0x10,
+    0x50,
+    0x20};
 
 // Character 107 (0x6B)
 // Box: 5 8 0 -1
@@ -2703,15 +2596,14 @@ static const byte glyph106[] = {
 // |     |
 // +-----+
 static const byte glyph107[] = {
-	0x00,
-	0x80,
-	0x80,
-	0x90,
-	0xE0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x00,
+    0x80,
+    0x80,
+    0x90,
+    0xE0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 108 (0x6C)
 // Box: 5 8 0 -1
@@ -2728,15 +2620,14 @@ static const byte glyph107[] = {
 // |     |
 // +-----+
 static const byte glyph108[] = {
-	0x00,
-	0x60,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x00,
+    0x60,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 109 (0x6D)
 // Box: 5 8 0 -1
@@ -2753,15 +2644,14 @@ static const byte glyph108[] = {
 // |     |
 // +-----+
 static const byte glyph109[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xD0,
-	0xA8,
-	0xA8,
-	0xA8,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0xD0,
+    0xA8,
+    0xA8,
+    0xA8,
+    0x00};
 
 // Character 110 (0x6E)
 // Box: 5 8 0 -1
@@ -2778,15 +2668,14 @@ static const byte glyph109[] = {
 // |     |
 // +-----+
 static const byte glyph110[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xE0,
-	0x90,
-	0x90,
-	0x90,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0xE0,
+    0x90,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 111 (0x6F)
 // Box: 5 8 0 -1
@@ -2803,15 +2692,14 @@ static const byte glyph110[] = {
 // |     |
 // +-----+
 static const byte glyph111[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 112 (0x70)
 // Box: 5 8 0 -1
@@ -2828,15 +2716,14 @@ static const byte glyph111[] = {
 // |*    |
 // +-----+
 static const byte glyph112[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xE0,
-	0x90,
-	0xE0,
-	0x80,
-	0x80
-};
+    0x00,
+    0x00,
+    0x00,
+    0xE0,
+    0x90,
+    0xE0,
+    0x80,
+    0x80};
 
 // Character 113 (0x71)
 // Box: 5 8 0 -1
@@ -2853,15 +2740,14 @@ static const byte glyph112[] = {
 // |   * |
 // +-----+
 static const byte glyph113[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x70,
-	0x90,
-	0x70,
-	0x10,
-	0x10
-};
+    0x00,
+    0x00,
+    0x00,
+    0x70,
+    0x90,
+    0x70,
+    0x10,
+    0x10};
 
 // Character 114 (0x72)
 // Box: 5 8 0 -1
@@ -2878,15 +2764,14 @@ static const byte glyph113[] = {
 // |     |
 // +-----+
 static const byte glyph114[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xA0,
-	0xD0,
-	0x80,
-	0x80,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0xA0,
+    0xD0,
+    0x80,
+    0x80,
+    0x00};
 
 // Character 115 (0x73)
 // Box: 5 8 0 -1
@@ -2903,15 +2788,14 @@ static const byte glyph114[] = {
 // |     |
 // +-----+
 static const byte glyph115[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x30,
-	0x60,
-	0x10,
-	0x60,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x30,
+    0x60,
+    0x10,
+    0x60,
+    0x00};
 
 // Character 116 (0x74)
 // Box: 5 8 0 -1
@@ -2928,15 +2812,14 @@ static const byte glyph115[] = {
 // |     |
 // +-----+
 static const byte glyph116[] = {
-	0x00,
-	0x40,
-	0x40,
-	0xE0,
-	0x40,
-	0x50,
-	0x20,
-	0x00
-};
+    0x00,
+    0x40,
+    0x40,
+    0xE0,
+    0x40,
+    0x50,
+    0x20,
+    0x00};
 
 // Character 117 (0x75)
 // Box: 5 8 0 -1
@@ -2953,15 +2836,14 @@ static const byte glyph116[] = {
 // |     |
 // +-----+
 static const byte glyph117[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 118 (0x76)
 // Box: 5 8 0 -1
@@ -2978,15 +2860,14 @@ static const byte glyph117[] = {
 // |     |
 // +-----+
 static const byte glyph118[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x50,
-	0x50,
-	0x50,
-	0x20,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x50,
+    0x50,
+    0x50,
+    0x20,
+    0x00};
 
 // Character 119 (0x77)
 // Box: 5 8 0 -1
@@ -3003,15 +2884,14 @@ static const byte glyph118[] = {
 // |     |
 // +-----+
 static const byte glyph119[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x88,
-	0xA8,
-	0xA8,
-	0x50,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x88,
+    0xA8,
+    0xA8,
+    0x50,
+    0x00};
 
 // Character 120 (0x78)
 // Box: 5 8 0 -1
@@ -3028,15 +2908,14 @@ static const byte glyph119[] = {
 // |     |
 // +-----+
 static const byte glyph120[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x90,
-	0x60,
-	0x60,
-	0x90,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x90,
+    0x60,
+    0x60,
+    0x90,
+    0x00};
 
 // Character 121 (0x79)
 // Box: 5 8 0 -1
@@ -3053,15 +2932,14 @@ static const byte glyph120[] = {
 // | **  |
 // +-----+
 static const byte glyph121[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x90,
-	0x90,
-	0x70,
-	0x90,
-	0x60
-};
+    0x00,
+    0x00,
+    0x00,
+    0x90,
+    0x90,
+    0x70,
+    0x90,
+    0x60};
 
 // Character 122 (0x7A)
 // Box: 5 8 0 -1
@@ -3078,15 +2956,14 @@ static const byte glyph121[] = {
 // |     |
 // +-----+
 static const byte glyph122[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xF0,
-	0x20,
-	0x40,
-	0xF0,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0xF0,
+    0x20,
+    0x40,
+    0xF0,
+    0x00};
 
 // Character 123 (0x7B)
 // Box: 5 8 0 -1
@@ -3103,15 +2980,14 @@ static const byte glyph122[] = {
 // |     |
 // +-----+
 static const byte glyph123[] = {
-	0x30,
-	0x40,
-	0x20,
-	0xC0,
-	0x20,
-	0x40,
-	0x30,
-	0x00
-};
+    0x30,
+    0x40,
+    0x20,
+    0xC0,
+    0x20,
+    0x40,
+    0x30,
+    0x00};
 
 // Character 124 (0x7C)
 // Box: 5 8 0 -1
@@ -3128,15 +3004,14 @@ static const byte glyph123[] = {
 // |     |
 // +-----+
 static const byte glyph124[] = {
-	0x00,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x00
-};
+    0x00,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x00};
 
 // Character 125 (0x7D)
 // Box: 5 8 0 -1
@@ -3153,15 +3028,14 @@ static const byte glyph124[] = {
 // |     |
 // +-----+
 static const byte glyph125[] = {
-	0xC0,
-	0x20,
-	0x40,
-	0x30,
-	0x40,
-	0x20,
-	0xC0,
-	0x00
-};
+    0xC0,
+    0x20,
+    0x40,
+    0x30,
+    0x40,
+    0x20,
+    0xC0,
+    0x00};
 
 // Character 126 (0x7E)
 // Box: 5 8 0 -1
@@ -3178,15 +3052,14 @@ static const byte glyph125[] = {
 // |     |
 // +-----+
 static const byte glyph126[] = {
-	0x00,
-	0x50,
-	0xA0,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x50,
+    0xA0,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 160 (0xA0)
 // Box: 5 8 0 -1
@@ -3203,15 +3076,14 @@ static const byte glyph126[] = {
 // |     |
 // +-----+
 static const byte glyph160[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 161 (0xA1)
 // Box: 5 8 0 -1
@@ -3228,15 +3100,14 @@ static const byte glyph160[] = {
 // |     |
 // +-----+
 static const byte glyph161[] = {
-	0x00,
-	0x20,
-	0x00,
-	0x20,
-	0x20,
-	0x20,
-	0x20,
-	0x00
-};
+    0x00,
+    0x20,
+    0x00,
+    0x20,
+    0x20,
+    0x20,
+    0x20,
+    0x00};
 
 // Character 162 (0xA2)
 // Box: 5 8 0 -1
@@ -3253,15 +3124,14 @@ static const byte glyph161[] = {
 // |  *  |
 // +-----+
 static const byte glyph162[] = {
-	0x00,
-	0x00,
-	0x20,
-	0x70,
-	0xA0,
-	0xA0,
-	0x70,
-	0x20
-};
+    0x00,
+    0x00,
+    0x20,
+    0x70,
+    0xA0,
+    0xA0,
+    0x70,
+    0x20};
 
 // Character 163 (0xA3)
 // Box: 5 8 0 -1
@@ -3278,15 +3148,14 @@ static const byte glyph162[] = {
 // |     |
 // +-----+
 static const byte glyph163[] = {
-	0x00,
-	0x20,
-	0x50,
-	0xE0,
-	0x40,
-	0x50,
-	0xA0,
-	0x00
-};
+    0x00,
+    0x20,
+    0x50,
+    0xE0,
+    0x40,
+    0x50,
+    0xA0,
+    0x00};
 
 // Character 164 (0xA4)
 // Box: 5 8 0 -1
@@ -3303,15 +3172,14 @@ static const byte glyph163[] = {
 // |     |
 // +-----+
 static const byte glyph164[] = {
-	0x00,
-	0x00,
-	0x88,
-	0x70,
-	0x50,
-	0x70,
-	0x88,
-	0x00
-};
+    0x00,
+    0x00,
+    0x88,
+    0x70,
+    0x50,
+    0x70,
+    0x88,
+    0x00};
 
 // Character 165 (0xA5)
 // Box: 5 8 0 -1
@@ -3328,15 +3196,14 @@ static const byte glyph164[] = {
 // |     |
 // +-----+
 static const byte glyph165[] = {
-	0x00,
-	0x88,
-	0x50,
-	0xF8,
-	0x20,
-	0xF8,
-	0x20,
-	0x00
-};
+    0x00,
+    0x88,
+    0x50,
+    0xF8,
+    0x20,
+    0xF8,
+    0x20,
+    0x00};
 
 // Character 166 (0xA6)
 // Box: 5 8 0 -1
@@ -3353,15 +3220,14 @@ static const byte glyph165[] = {
 // |     |
 // +-----+
 static const byte glyph166[] = {
-	0x20,
-	0x20,
-	0x20,
-	0x00,
-	0x20,
-	0x20,
-	0x20,
-	0x00
-};
+    0x20,
+    0x20,
+    0x20,
+    0x00,
+    0x20,
+    0x20,
+    0x20,
+    0x00};
 
 // Character 167 (0xA7)
 // Box: 5 8 0 -1
@@ -3378,15 +3244,14 @@ static const byte glyph166[] = {
 // |     |
 // +-----+
 static const byte glyph167[] = {
-	0x70,
-	0x80,
-	0xE0,
-	0x90,
-	0x70,
-	0x10,
-	0xE0,
-	0x00
-};
+    0x70,
+    0x80,
+    0xE0,
+    0x90,
+    0x70,
+    0x10,
+    0xE0,
+    0x00};
 
 // Character 168 (0xA8)
 // Box: 5 8 0 -1
@@ -3403,15 +3268,14 @@ static const byte glyph167[] = {
 // |     |
 // +-----+
 static const byte glyph168[] = {
-	0x00,
-	0x50,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x50,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 169 (0xA9)
 // Box: 5 8 0 -1
@@ -3428,15 +3292,14 @@ static const byte glyph168[] = {
 // |     |
 // +-----+
 static const byte glyph169[] = {
-	0x00,
-	0x70,
-	0xA8,
-	0xC8,
-	0xC8,
-	0xA8,
-	0x70,
-	0x00
-};
+    0x00,
+    0x70,
+    0xA8,
+    0xC8,
+    0xC8,
+    0xA8,
+    0x70,
+    0x00};
 
 // Character 170 (0xAA)
 // Box: 5 8 0 -1
@@ -3453,15 +3316,14 @@ static const byte glyph169[] = {
 // |     |
 // +-----+
 static const byte glyph170[] = {
-	0x30,
-	0x50,
-	0x30,
-	0x00,
-	0x70,
-	0x00,
-	0x00,
-	0x00
-};
+    0x30,
+    0x50,
+    0x30,
+    0x00,
+    0x70,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 171 (0xAB)
 // Box: 5 8 0 -1
@@ -3478,15 +3340,14 @@ static const byte glyph170[] = {
 // |     |
 // +-----+
 static const byte glyph171[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x50,
-	0xA0,
-	0x50,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x50,
+    0xA0,
+    0x50,
+    0x00,
+    0x00};
 
 // Character 172 (0xAC)
 // Box: 5 8 0 -1
@@ -3503,15 +3364,14 @@ static const byte glyph171[] = {
 // |     |
 // +-----+
 static const byte glyph172[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x70,
-	0x10,
-	0x10,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x70,
+    0x10,
+    0x10,
+    0x00};
 
 // Character 173 (0xAD)
 // Box: 5 8 0 -1
@@ -3528,15 +3388,14 @@ static const byte glyph172[] = {
 // |     |
 // +-----+
 static const byte glyph173[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x70,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x70,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 174 (0xAE)
 // Box: 5 8 0 -1
@@ -3553,15 +3412,14 @@ static const byte glyph173[] = {
 // |     |
 // +-----+
 static const byte glyph174[] = {
-	0x00,
-	0x70,
-	0xE8,
-	0xD8,
-	0xE8,
-	0xD8,
-	0x70,
-	0x00
-};
+    0x00,
+    0x70,
+    0xE8,
+    0xD8,
+    0xE8,
+    0xD8,
+    0x70,
+    0x00};
 
 // Character 175 (0xAF)
 // Box: 5 8 0 -1
@@ -3578,15 +3436,14 @@ static const byte glyph174[] = {
 // |     |
 // +-----+
 static const byte glyph175[] = {
-	0x00,
-	0x70,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x70,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 176 (0xB0)
 // Box: 5 8 0 -1
@@ -3603,15 +3460,14 @@ static const byte glyph175[] = {
 // |     |
 // +-----+
 static const byte glyph176[] = {
-	0x00,
-	0x20,
-	0x50,
-	0x20,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x20,
+    0x50,
+    0x20,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 177 (0xB1)
 // Box: 5 8 0 -1
@@ -3628,15 +3484,14 @@ static const byte glyph176[] = {
 // |     |
 // +-----+
 static const byte glyph177[] = {
-	0x00,
-	0x00,
-	0x20,
-	0x70,
-	0x20,
-	0x00,
-	0x70,
-	0x00
-};
+    0x00,
+    0x00,
+    0x20,
+    0x70,
+    0x20,
+    0x00,
+    0x70,
+    0x00};
 
 // Character 178 (0xB2)
 // Box: 5 8 0 -1
@@ -3653,15 +3508,14 @@ static const byte glyph177[] = {
 // |     |
 // +-----+
 static const byte glyph178[] = {
-	0x20,
-	0x50,
-	0x10,
-	0x20,
-	0x70,
-	0x00,
-	0x00,
-	0x00
-};
+    0x20,
+    0x50,
+    0x10,
+    0x20,
+    0x70,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 179 (0xB3)
 // Box: 5 8 0 -1
@@ -3678,15 +3532,14 @@ static const byte glyph178[] = {
 // |     |
 // +-----+
 static const byte glyph179[] = {
-	0x60,
-	0x10,
-	0x60,
-	0x10,
-	0x60,
-	0x00,
-	0x00,
-	0x00
-};
+    0x60,
+    0x10,
+    0x60,
+    0x10,
+    0x60,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 180 (0xB4)
 // Box: 5 8 0 -1
@@ -3703,15 +3556,14 @@ static const byte glyph179[] = {
 // |     |
 // +-----+
 static const byte glyph180[] = {
-	0x00,
-	0x20,
-	0x40,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x20,
+    0x40,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 181 (0xB5)
 // Box: 5 8 0 -1
@@ -3728,15 +3580,14 @@ static const byte glyph180[] = {
 // |*    |
 // +-----+
 static const byte glyph181[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0xE0,
-	0x80
-};
+    0x00,
+    0x00,
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0xE0,
+    0x80};
 
 // Character 182 (0xB6)
 // Box: 5 8 0 -1
@@ -3753,15 +3604,14 @@ static const byte glyph181[] = {
 // |     |
 // +-----+
 static const byte glyph182[] = {
-	0x00,
-	0x78,
-	0xE8,
-	0xE8,
-	0x68,
-	0x28,
-	0x28,
-	0x00
-};
+    0x00,
+    0x78,
+    0xE8,
+    0xE8,
+    0x68,
+    0x28,
+    0x28,
+    0x00};
 
 // Character 183 (0xB7)
 // Box: 5 8 0 -1
@@ -3778,15 +3628,14 @@ static const byte glyph182[] = {
 // |     |
 // +-----+
 static const byte glyph183[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x20,
-	0x00,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x20,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 184 (0xB8)
 // Box: 5 8 0 -1
@@ -3803,15 +3652,14 @@ static const byte glyph183[] = {
 // | *   |
 // +-----+
 static const byte glyph184[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x20,
-	0x40
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x20,
+    0x40};
 
 // Character 185 (0xB9)
 // Box: 5 8 0 -1
@@ -3828,15 +3676,14 @@ static const byte glyph184[] = {
 // |     |
 // +-----+
 static const byte glyph185[] = {
-	0x20,
-	0x60,
-	0x20,
-	0x20,
-	0x70,
-	0x00,
-	0x00,
-	0x00
-};
+    0x20,
+    0x60,
+    0x20,
+    0x20,
+    0x70,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 186 (0xBA)
 // Box: 5 8 0 -1
@@ -3853,15 +3700,14 @@ static const byte glyph185[] = {
 // |     |
 // +-----+
 static const byte glyph186[] = {
-	0x20,
-	0x50,
-	0x20,
-	0x00,
-	0x70,
-	0x00,
-	0x00,
-	0x00
-};
+    0x20,
+    0x50,
+    0x20,
+    0x00,
+    0x70,
+    0x00,
+    0x00,
+    0x00};
 
 // Character 187 (0xBB)
 // Box: 5 8 0 -1
@@ -3878,15 +3724,14 @@ static const byte glyph186[] = {
 // |     |
 // +-----+
 static const byte glyph187[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xA0,
-	0x50,
-	0xA0,
-	0x00,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0xA0,
+    0x50,
+    0xA0,
+    0x00,
+    0x00};
 
 // Character 188 (0xBC)
 // Box: 5 8 0 -1
@@ -3903,15 +3748,14 @@ static const byte glyph187[] = {
 // |     |
 // +-----+
 static const byte glyph188[] = {
-	0x80,
-	0x80,
-	0x80,
-	0xA0,
-	0x60,
-	0xF0,
-	0x20,
-	0x00
-};
+    0x80,
+    0x80,
+    0x80,
+    0xA0,
+    0x60,
+    0xF0,
+    0x20,
+    0x00};
 
 // Character 189 (0xBD)
 // Box: 5 8 0 -1
@@ -3928,15 +3772,14 @@ static const byte glyph188[] = {
 // |     |
 // +-----+
 static const byte glyph189[] = {
-	0x80,
-	0x80,
-	0xA0,
-	0xD0,
-	0x10,
-	0x20,
-	0x70,
-	0x00
-};
+    0x80,
+    0x80,
+    0xA0,
+    0xD0,
+    0x10,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 190 (0xBE)
 // Box: 5 8 0 -1
@@ -3953,15 +3796,14 @@ static const byte glyph189[] = {
 // |     |
 // +-----+
 static const byte glyph190[] = {
-	0x80,
-	0x40,
-	0x80,
-	0x60,
-	0xA0,
-	0xF0,
-	0x20,
-	0x00
-};
+    0x80,
+    0x40,
+    0x80,
+    0x60,
+    0xA0,
+    0xF0,
+    0x20,
+    0x00};
 
 // Character 191 (0xBF)
 // Box: 5 8 0 -1
@@ -3978,15 +3820,14 @@ static const byte glyph190[] = {
 // |     |
 // +-----+
 static const byte glyph191[] = {
-	0x00,
-	0x20,
-	0x00,
-	0x20,
-	0x40,
-	0x50,
-	0x20,
-	0x00
-};
+    0x00,
+    0x20,
+    0x00,
+    0x20,
+    0x40,
+    0x50,
+    0x20,
+    0x00};
 
 // Character 192 (0xC0)
 // Box: 5 8 0 -1
@@ -4003,15 +3844,14 @@ static const byte glyph191[] = {
 // |     |
 // +-----+
 static const byte glyph192[] = {
-	0x40,
-	0x20,
-	0x60,
-	0x90,
-	0xF0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x40,
+    0x20,
+    0x60,
+    0x90,
+    0xF0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 193 (0xC1)
 // Box: 5 8 0 -1
@@ -4028,15 +3868,14 @@ static const byte glyph192[] = {
 // |     |
 // +-----+
 static const byte glyph193[] = {
-	0x20,
-	0x40,
-	0x60,
-	0x90,
-	0xF0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x20,
+    0x40,
+    0x60,
+    0x90,
+    0xF0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 194 (0xC2)
 // Box: 5 8 0 -1
@@ -4053,15 +3892,14 @@ static const byte glyph193[] = {
 // |     |
 // +-----+
 static const byte glyph194[] = {
-	0x60,
-	0x90,
-	0x60,
-	0x90,
-	0xF0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x60,
+    0x90,
+    0x60,
+    0x90,
+    0xF0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 195 (0xC3)
 // Box: 5 8 0 -1
@@ -4078,15 +3916,14 @@ static const byte glyph194[] = {
 // |     |
 // +-----+
 static const byte glyph195[] = {
-	0x50,
-	0xA0,
-	0x60,
-	0x90,
-	0xF0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x50,
+    0xA0,
+    0x60,
+    0x90,
+    0xF0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 196 (0xC4)
 // Box: 5 8 0 -1
@@ -4103,15 +3940,14 @@ static const byte glyph195[] = {
 // |     |
 // +-----+
 static const byte glyph196[] = {
-	0x90,
-	0x00,
-	0x60,
-	0x90,
-	0xF0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x90,
+    0x00,
+    0x60,
+    0x90,
+    0xF0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 197 (0xC5)
 // Box: 5 8 0 -1
@@ -4128,15 +3964,14 @@ static const byte glyph196[] = {
 // |     |
 // +-----+
 static const byte glyph197[] = {
-	0x60,
-	0x90,
-	0x60,
-	0x90,
-	0xF0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x60,
+    0x90,
+    0x60,
+    0x90,
+    0xF0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 198 (0xC6)
 // Box: 5 8 0 -1
@@ -4153,15 +3988,14 @@ static const byte glyph197[] = {
 // |     |
 // +-----+
 static const byte glyph198[] = {
-	0x00,
-	0x70,
-	0xA0,
-	0xA0,
-	0xF0,
-	0xA0,
-	0xB0,
-	0x00
-};
+    0x00,
+    0x70,
+    0xA0,
+    0xA0,
+    0xF0,
+    0xA0,
+    0xB0,
+    0x00};
 
 // Character 199 (0xC7)
 // Box: 5 8 0 -1
@@ -4178,15 +4012,14 @@ static const byte glyph198[] = {
 // | *   |
 // +-----+
 static const byte glyph199[] = {
-	0x00,
-	0x60,
-	0x90,
-	0x80,
-	0x80,
-	0x90,
-	0x60,
-	0x40
-};
+    0x00,
+    0x60,
+    0x90,
+    0x80,
+    0x80,
+    0x90,
+    0x60,
+    0x40};
 
 // Character 200 (0xC8)
 // Box: 5 8 0 -1
@@ -4203,15 +4036,14 @@ static const byte glyph199[] = {
 // |     |
 // +-----+
 static const byte glyph200[] = {
-	0x40,
-	0x20,
-	0xF0,
-	0x80,
-	0xE0,
-	0x80,
-	0xF0,
-	0x00
-};
+    0x40,
+    0x20,
+    0xF0,
+    0x80,
+    0xE0,
+    0x80,
+    0xF0,
+    0x00};
 
 // Character 201 (0xC9)
 // Box: 5 8 0 -1
@@ -4228,15 +4060,14 @@ static const byte glyph200[] = {
 // |     |
 // +-----+
 static const byte glyph201[] = {
-	0x20,
-	0x40,
-	0xF0,
-	0x80,
-	0xE0,
-	0x80,
-	0xF0,
-	0x00
-};
+    0x20,
+    0x40,
+    0xF0,
+    0x80,
+    0xE0,
+    0x80,
+    0xF0,
+    0x00};
 
 // Character 202 (0xCA)
 // Box: 5 8 0 -1
@@ -4253,15 +4084,14 @@ static const byte glyph201[] = {
 // |     |
 // +-----+
 static const byte glyph202[] = {
-	0x60,
-	0x90,
-	0xF0,
-	0x80,
-	0xE0,
-	0x80,
-	0xF0,
-	0x00
-};
+    0x60,
+    0x90,
+    0xF0,
+    0x80,
+    0xE0,
+    0x80,
+    0xF0,
+    0x00};
 
 // Character 203 (0xCB)
 // Box: 5 8 0 -1
@@ -4278,15 +4108,14 @@ static const byte glyph202[] = {
 // |     |
 // +-----+
 static const byte glyph203[] = {
-	0x90,
-	0x00,
-	0xF0,
-	0x80,
-	0xE0,
-	0x80,
-	0xF0,
-	0x00
-};
+    0x90,
+    0x00,
+    0xF0,
+    0x80,
+    0xE0,
+    0x80,
+    0xF0,
+    0x00};
 
 // Character 204 (0xCC)
 // Box: 5 8 0 -1
@@ -4303,15 +4132,14 @@ static const byte glyph203[] = {
 // |     |
 // +-----+
 static const byte glyph204[] = {
-	0x40,
-	0x20,
-	0x70,
-	0x20,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x40,
+    0x20,
+    0x70,
+    0x20,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 205 (0xCD)
 // Box: 5 8 0 -1
@@ -4328,15 +4156,14 @@ static const byte glyph204[] = {
 // |     |
 // +-----+
 static const byte glyph205[] = {
-	0x10,
-	0x20,
-	0x70,
-	0x20,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x10,
+    0x20,
+    0x70,
+    0x20,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 206 (0xCE)
 // Box: 5 8 0 -1
@@ -4353,15 +4180,14 @@ static const byte glyph205[] = {
 // |     |
 // +-----+
 static const byte glyph206[] = {
-	0x20,
-	0x50,
-	0x70,
-	0x20,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x20,
+    0x50,
+    0x70,
+    0x20,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 207 (0xCF)
 // Box: 5 8 0 -1
@@ -4378,15 +4204,14 @@ static const byte glyph206[] = {
 // |     |
 // +-----+
 static const byte glyph207[] = {
-	0x50,
-	0x00,
-	0x70,
-	0x20,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x50,
+    0x00,
+    0x70,
+    0x20,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 208 (0xD0)
 // Box: 5 8 0 -1
@@ -4403,15 +4228,14 @@ static const byte glyph207[] = {
 // |     |
 // +-----+
 static const byte glyph208[] = {
-	0x00,
-	0x70,
-	0x48,
-	0xE8,
-	0x48,
-	0x48,
-	0x70,
-	0x00
-};
+    0x00,
+    0x70,
+    0x48,
+    0xE8,
+    0x48,
+    0x48,
+    0x70,
+    0x00};
 
 // Character 209 (0xD1)
 // Box: 5 8 0 -1
@@ -4428,15 +4252,14 @@ static const byte glyph208[] = {
 // |     |
 // +-----+
 static const byte glyph209[] = {
-	0x50,
-	0xA0,
-	0x90,
-	0xD0,
-	0xB0,
-	0x90,
-	0x90,
-	0x00
-};
+    0x50,
+    0xA0,
+    0x90,
+    0xD0,
+    0xB0,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 210 (0xD2)
 // Box: 5 8 0 -1
@@ -4453,15 +4276,14 @@ static const byte glyph209[] = {
 // |     |
 // +-----+
 static const byte glyph210[] = {
-	0x40,
-	0x20,
-	0x60,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x40,
+    0x20,
+    0x60,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 211 (0xD3)
 // Box: 5 8 0 -1
@@ -4478,15 +4300,14 @@ static const byte glyph210[] = {
 // |     |
 // +-----+
 static const byte glyph211[] = {
-	0x20,
-	0x40,
-	0x60,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x20,
+    0x40,
+    0x60,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 212 (0xD4)
 // Box: 5 8 0 -1
@@ -4503,15 +4324,14 @@ static const byte glyph211[] = {
 // |     |
 // +-----+
 static const byte glyph212[] = {
-	0x60,
-	0x90,
-	0x60,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x60,
+    0x90,
+    0x60,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 213 (0xD5)
 // Box: 5 8 0 -1
@@ -4528,15 +4348,14 @@ static const byte glyph212[] = {
 // |     |
 // +-----+
 static const byte glyph213[] = {
-	0x50,
-	0xA0,
-	0x60,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x50,
+    0xA0,
+    0x60,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 214 (0xD6)
 // Box: 5 8 0 -1
@@ -4553,15 +4372,14 @@ static const byte glyph213[] = {
 // |     |
 // +-----+
 static const byte glyph214[] = {
-	0x90,
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x90,
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 215 (0xD7)
 // Box: 5 8 0 -1
@@ -4578,15 +4396,14 @@ static const byte glyph214[] = {
 // |     |
 // +-----+
 static const byte glyph215[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x50,
-	0x20,
-	0x50,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x50,
+    0x20,
+    0x50,
+    0x00};
 
 // Character 216 (0xD8)
 // Box: 5 8 0 -1
@@ -4603,15 +4420,14 @@ static const byte glyph215[] = {
 // |     |
 // +-----+
 static const byte glyph216[] = {
-	0x00,
-	0x70,
-	0xB0,
-	0xB0,
-	0xD0,
-	0xD0,
-	0xE0,
-	0x00
-};
+    0x00,
+    0x70,
+    0xB0,
+    0xB0,
+    0xD0,
+    0xD0,
+    0xE0,
+    0x00};
 
 // Character 217 (0xD9)
 // Box: 5 8 0 -1
@@ -4628,15 +4444,14 @@ static const byte glyph216[] = {
 // |     |
 // +-----+
 static const byte glyph217[] = {
-	0x40,
-	0x20,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x40,
+    0x20,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 218 (0xDA)
 // Box: 5 8 0 -1
@@ -4653,15 +4468,14 @@ static const byte glyph217[] = {
 // |     |
 // +-----+
 static const byte glyph218[] = {
-	0x20,
-	0x40,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x20,
+    0x40,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 219 (0xDB)
 // Box: 5 8 0 -1
@@ -4678,15 +4492,14 @@ static const byte glyph218[] = {
 // |     |
 // +-----+
 static const byte glyph219[] = {
-	0x60,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x60,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 220 (0xDC)
 // Box: 5 8 0 -1
@@ -4703,15 +4516,14 @@ static const byte glyph219[] = {
 // |     |
 // +-----+
 static const byte glyph220[] = {
-	0x90,
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x90,
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 221 (0xDD)
 // Box: 5 8 0 -1
@@ -4728,15 +4540,14 @@ static const byte glyph220[] = {
 // |     |
 // +-----+
 static const byte glyph221[] = {
-	0x10,
-	0x20,
-	0x88,
-	0x50,
-	0x20,
-	0x20,
-	0x20,
-	0x00
-};
+    0x10,
+    0x20,
+    0x88,
+    0x50,
+    0x20,
+    0x20,
+    0x20,
+    0x00};
 
 // Character 222 (0xDE)
 // Box: 5 8 0 -1
@@ -4753,15 +4564,14 @@ static const byte glyph221[] = {
 // |     |
 // +-----+
 static const byte glyph222[] = {
-	0x00,
-	0x80,
-	0xE0,
-	0x90,
-	0x90,
-	0xE0,
-	0x80,
-	0x00
-};
+    0x00,
+    0x80,
+    0xE0,
+    0x90,
+    0x90,
+    0xE0,
+    0x80,
+    0x00};
 
 // Character 223 (0xDF)
 // Box: 5 8 0 -1
@@ -4778,15 +4588,14 @@ static const byte glyph222[] = {
 // |     |
 // +-----+
 static const byte glyph223[] = {
-	0x00,
-	0x60,
-	0x90,
-	0xA0,
-	0xA0,
-	0x90,
-	0xA0,
-	0x00
-};
+    0x00,
+    0x60,
+    0x90,
+    0xA0,
+    0xA0,
+    0x90,
+    0xA0,
+    0x00};
 
 // Character 224 (0xE0)
 // Box: 5 8 0 -1
@@ -4803,15 +4612,14 @@ static const byte glyph223[] = {
 // |     |
 // +-----+
 static const byte glyph224[] = {
-	0x40,
-	0x20,
-	0x00,
-	0x70,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x40,
+    0x20,
+    0x00,
+    0x70,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 225 (0xE1)
 // Box: 5 8 0 -1
@@ -4828,15 +4636,14 @@ static const byte glyph224[] = {
 // |     |
 // +-----+
 static const byte glyph225[] = {
-	0x20,
-	0x40,
-	0x00,
-	0x70,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x20,
+    0x40,
+    0x00,
+    0x70,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 226 (0xE2)
 // Box: 5 8 0 -1
@@ -4853,15 +4660,14 @@ static const byte glyph225[] = {
 // |     |
 // +-----+
 static const byte glyph226[] = {
-	0x20,
-	0x50,
-	0x00,
-	0x70,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x20,
+    0x50,
+    0x00,
+    0x70,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 227 (0xE3)
 // Box: 5 8 0 -1
@@ -4878,15 +4684,14 @@ static const byte glyph226[] = {
 // |     |
 // +-----+
 static const byte glyph227[] = {
-	0x50,
-	0xA0,
-	0x00,
-	0x70,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x50,
+    0xA0,
+    0x00,
+    0x70,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 228 (0xE4)
 // Box: 5 8 0 -1
@@ -4903,15 +4708,14 @@ static const byte glyph227[] = {
 // |     |
 // +-----+
 static const byte glyph228[] = {
-	0x00,
-	0x50,
-	0x00,
-	0x70,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x00,
+    0x50,
+    0x00,
+    0x70,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 229 (0xE5)
 // Box: 5 8 0 -1
@@ -4928,15 +4732,14 @@ static const byte glyph228[] = {
 // |     |
 // +-----+
 static const byte glyph229[] = {
-	0x60,
-	0x90,
-	0x60,
-	0x70,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x60,
+    0x90,
+    0x60,
+    0x70,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 230 (0xE6)
 // Box: 5 8 0 -1
@@ -4953,15 +4756,14 @@ static const byte glyph229[] = {
 // |     |
 // +-----+
 static const byte glyph230[] = {
-	0x00,
-	0x00,
-	0x00,
-	0xF0,
-	0x68,
-	0xB0,
-	0x78,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0xF0,
+    0x68,
+    0xB0,
+    0x78,
+    0x00};
 
 // Character 231 (0xE7)
 // Box: 5 8 0 -1
@@ -4978,15 +4780,14 @@ static const byte glyph230[] = {
 // |  *  |
 // +-----+
 static const byte glyph231[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x30,
-	0x40,
-	0x40,
-	0x30,
-	0x20
-};
+    0x00,
+    0x00,
+    0x00,
+    0x30,
+    0x40,
+    0x40,
+    0x30,
+    0x20};
 
 // Character 232 (0xE8)
 // Box: 5 8 0 -1
@@ -5003,15 +4804,14 @@ static const byte glyph231[] = {
 // |     |
 // +-----+
 static const byte glyph232[] = {
-	0x40,
-	0x20,
-	0x00,
-	0x60,
-	0xB0,
-	0xC0,
-	0x60,
-	0x00
-};
+    0x40,
+    0x20,
+    0x00,
+    0x60,
+    0xB0,
+    0xC0,
+    0x60,
+    0x00};
 
 // Character 233 (0xE9)
 // Box: 5 8 0 -1
@@ -5028,15 +4828,14 @@ static const byte glyph232[] = {
 // |     |
 // +-----+
 static const byte glyph233[] = {
-	0x20,
-	0x40,
-	0x00,
-	0x60,
-	0xB0,
-	0xC0,
-	0x60,
-	0x00
-};
+    0x20,
+    0x40,
+    0x00,
+    0x60,
+    0xB0,
+    0xC0,
+    0x60,
+    0x00};
 
 // Character 234 (0xEA)
 // Box: 5 8 0 -1
@@ -5053,15 +4852,14 @@ static const byte glyph233[] = {
 // |     |
 // +-----+
 static const byte glyph234[] = {
-	0x60,
-	0x90,
-	0x00,
-	0x60,
-	0xB0,
-	0xC0,
-	0x60,
-	0x00
-};
+    0x60,
+    0x90,
+    0x00,
+    0x60,
+    0xB0,
+    0xC0,
+    0x60,
+    0x00};
 
 // Character 235 (0xEB)
 // Box: 5 8 0 -1
@@ -5078,15 +4876,14 @@ static const byte glyph234[] = {
 // |     |
 // +-----+
 static const byte glyph235[] = {
-	0x00,
-	0x50,
-	0x00,
-	0x60,
-	0xB0,
-	0xC0,
-	0x60,
-	0x00
-};
+    0x00,
+    0x50,
+    0x00,
+    0x60,
+    0xB0,
+    0xC0,
+    0x60,
+    0x00};
 
 // Character 236 (0xEC)
 // Box: 5 8 0 -1
@@ -5103,15 +4900,14 @@ static const byte glyph235[] = {
 // |     |
 // +-----+
 static const byte glyph236[] = {
-	0x40,
-	0x20,
-	0x00,
-	0x60,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x40,
+    0x20,
+    0x00,
+    0x60,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 237 (0xED)
 // Box: 5 8 0 -1
@@ -5128,15 +4924,14 @@ static const byte glyph236[] = {
 // |     |
 // +-----+
 static const byte glyph237[] = {
-	0x10,
-	0x20,
-	0x00,
-	0x60,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x10,
+    0x20,
+    0x00,
+    0x60,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 238 (0xEE)
 // Box: 5 8 0 -1
@@ -5153,15 +4948,14 @@ static const byte glyph237[] = {
 // |     |
 // +-----+
 static const byte glyph238[] = {
-	0x20,
-	0x50,
-	0x00,
-	0x60,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x20,
+    0x50,
+    0x00,
+    0x60,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 239 (0xEF)
 // Box: 5 8 0 -1
@@ -5178,15 +4972,14 @@ static const byte glyph238[] = {
 // |     |
 // +-----+
 static const byte glyph239[] = {
-	0x00,
-	0x50,
-	0x00,
-	0x60,
-	0x20,
-	0x20,
-	0x70,
-	0x00
-};
+    0x00,
+    0x50,
+    0x00,
+    0x60,
+    0x20,
+    0x20,
+    0x70,
+    0x00};
 
 // Character 240 (0xF0)
 // Box: 5 8 0 -1
@@ -5203,15 +4996,14 @@ static const byte glyph239[] = {
 // |     |
 // +-----+
 static const byte glyph240[] = {
-	0xA0,
-	0x40,
-	0xA0,
-	0x10,
-	0x70,
-	0x90,
-	0x60,
-	0x00
-};
+    0xA0,
+    0x40,
+    0xA0,
+    0x10,
+    0x70,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 241 (0xF1)
 // Box: 5 8 0 -1
@@ -5228,15 +5020,14 @@ static const byte glyph240[] = {
 // |     |
 // +-----+
 static const byte glyph241[] = {
-	0x50,
-	0xA0,
-	0x00,
-	0xE0,
-	0x90,
-	0x90,
-	0x90,
-	0x00
-};
+    0x50,
+    0xA0,
+    0x00,
+    0xE0,
+    0x90,
+    0x90,
+    0x90,
+    0x00};
 
 // Character 242 (0xF2)
 // Box: 5 8 0 -1
@@ -5253,15 +5044,14 @@ static const byte glyph241[] = {
 // |     |
 // +-----+
 static const byte glyph242[] = {
-	0x40,
-	0x20,
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x40,
+    0x20,
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 243 (0xF3)
 // Box: 5 8 0 -1
@@ -5278,15 +5068,14 @@ static const byte glyph242[] = {
 // |     |
 // +-----+
 static const byte glyph243[] = {
-	0x20,
-	0x40,
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x20,
+    0x40,
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 244 (0xF4)
 // Box: 5 8 0 -1
@@ -5303,15 +5092,14 @@ static const byte glyph243[] = {
 // |     |
 // +-----+
 static const byte glyph244[] = {
-	0x60,
-	0x90,
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x60,
+    0x90,
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 245 (0xF5)
 // Box: 5 8 0 -1
@@ -5328,15 +5116,14 @@ static const byte glyph244[] = {
 // |     |
 // +-----+
 static const byte glyph245[] = {
-	0x50,
-	0xA0,
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x50,
+    0xA0,
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 246 (0xF6)
 // Box: 5 8 0 -1
@@ -5353,15 +5140,14 @@ static const byte glyph245[] = {
 // |     |
 // +-----+
 static const byte glyph246[] = {
-	0x00,
-	0x90,
-	0x00,
-	0x60,
-	0x90,
-	0x90,
-	0x60,
-	0x00
-};
+    0x00,
+    0x90,
+    0x00,
+    0x60,
+    0x90,
+    0x90,
+    0x60,
+    0x00};
 
 // Character 247 (0xF7)
 // Box: 5 8 0 -1
@@ -5378,15 +5164,14 @@ static const byte glyph246[] = {
 // |     |
 // +-----+
 static const byte glyph247[] = {
-	0x00,
-	0x00,
-	0x20,
-	0x00,
-	0x70,
-	0x00,
-	0x20,
-	0x00
-};
+    0x00,
+    0x00,
+    0x20,
+    0x00,
+    0x70,
+    0x00,
+    0x20,
+    0x00};
 
 // Character 248 (0xF8)
 // Box: 5 8 0 -1
@@ -5403,15 +5188,14 @@ static const byte glyph247[] = {
 // |     |
 // +-----+
 static const byte glyph248[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x70,
-	0xB0,
-	0xD0,
-	0xE0,
-	0x00
-};
+    0x00,
+    0x00,
+    0x00,
+    0x70,
+    0xB0,
+    0xD0,
+    0xE0,
+    0x00};
 
 // Character 249 (0xF9)
 // Box: 5 8 0 -1
@@ -5428,15 +5212,14 @@ static const byte glyph248[] = {
 // |     |
 // +-----+
 static const byte glyph249[] = {
-	0x40,
-	0x20,
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x40,
+    0x20,
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 250 (0xFA)
 // Box: 5 8 0 -1
@@ -5453,15 +5236,14 @@ static const byte glyph249[] = {
 // |     |
 // +-----+
 static const byte glyph250[] = {
-	0x20,
-	0x40,
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x20,
+    0x40,
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 251 (0xFB)
 // Box: 5 8 0 -1
@@ -5478,15 +5260,14 @@ static const byte glyph250[] = {
 // |     |
 // +-----+
 static const byte glyph251[] = {
-	0x60,
-	0x90,
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x60,
+    0x90,
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 252 (0xFC)
 // Box: 5 8 0 -1
@@ -5503,15 +5284,14 @@ static const byte glyph251[] = {
 // |     |
 // +-----+
 static const byte glyph252[] = {
-	0x00,
-	0x90,
-	0x00,
-	0x90,
-	0x90,
-	0x90,
-	0x70,
-	0x00
-};
+    0x00,
+    0x90,
+    0x00,
+    0x90,
+    0x90,
+    0x90,
+    0x70,
+    0x00};
 
 // Character 253 (0xFD)
 // Box: 5 8 0 -1
@@ -5528,15 +5308,14 @@ static const byte glyph252[] = {
 // | **  |
 // +-----+
 static const byte glyph253[] = {
-	0x20,
-	0x40,
-	0x00,
-	0x90,
-	0x90,
-	0x70,
-	0x90,
-	0x60
-};
+    0x20,
+    0x40,
+    0x00,
+    0x90,
+    0x90,
+    0x70,
+    0x90,
+    0x60};
 
 // Character 254 (0xFE)
 // Box: 5 8 0 -1
@@ -5553,15 +5332,14 @@ static const byte glyph253[] = {
 // |*    |
 // +-----+
 static const byte glyph254[] = {
-	0x00,
-	0x80,
-	0x80,
-	0xE0,
-	0x90,
-	0xE0,
-	0x80,
-	0x80
-};
+    0x00,
+    0x80,
+    0x80,
+    0xE0,
+    0x90,
+    0xE0,
+    0x80,
+    0x80};
 
 // Character 255 (0xFF)
 // Box: 5 8 0 -1
@@ -5578,293 +5356,291 @@ static const byte glyph254[] = {
 // | **  |
 // +-----+
 static const byte glyph255[] = {
-	0x00,
-	0x90,
-	0x00,
-	0x90,
-	0x90,
-	0x70,
-	0x90,
-	0x60
-};
+    0x00,
+    0x90,
+    0x00,
+    0x90,
+    0x90,
+    0x70,
+    0x90,
+    0x60};
 
 // Bitmap pointer table
 const byte *const bitmapTable[] = {
-	glyph0,
-	glyph1,
-	glyph2,
-	glyph3,
-	glyph4,
-	glyph5,
-	glyph6,
-	glyph7,
-	glyph8,
-	glyph9,
-	glyph10,
-	glyph11,
-	glyph12,
-	glyph13,
-	glyph14,
-	glyph15,
-	glyph16,
-	glyph17,
-	glyph18,
-	glyph19,
-	glyph20,
-	glyph21,
-	glyph22,
-	glyph23,
-	glyph24,
-	glyph25,
-	glyph26,
-	glyph27,
-	glyph28,
-	glyph29,
-	glyph30,
-	glyph31,
-	glyph32,
-	glyph33,
-	glyph34,
-	glyph35,
-	glyph36,
-	glyph37,
-	glyph38,
-	glyph39,
-	glyph40,
-	glyph41,
-	glyph42,
-	glyph43,
-	glyph44,
-	glyph45,
-	glyph46,
-	glyph47,
-	glyph48,
-	glyph49,
-	glyph50,
-	glyph51,
-	glyph52,
-	glyph53,
-	glyph54,
-	glyph55,
-	glyph56,
-	glyph57,
-	glyph58,
-	glyph59,
-	glyph60,
-	glyph61,
-	glyph62,
-	glyph63,
-	glyph64,
-	glyph65,
-	glyph66,
-	glyph67,
-	glyph68,
-	glyph69,
-	glyph70,
-	glyph71,
-	glyph72,
-	glyph73,
-	glyph74,
-	glyph75,
-	glyph76,
-	glyph77,
-	glyph78,
-	glyph79,
-	glyph80,
-	glyph81,
-	glyph82,
-	glyph83,
-	glyph84,
-	glyph85,
-	glyph86,
-	glyph87,
-	glyph88,
-	glyph89,
-	glyph90,
-	glyph91,
-	glyph92,
-	glyph93,
-	glyph94,
-	glyph95,
-	glyph96,
-	glyph97,
-	glyph98,
-	glyph99,
-	glyph100,
-	glyph101,
-	glyph102,
-	glyph103,
-	glyph104,
-	glyph105,
-	glyph106,
-	glyph107,
-	glyph108,
-	glyph109,
-	glyph110,
-	glyph111,
-	glyph112,
-	glyph113,
-	glyph114,
-	glyph115,
-	glyph116,
-	glyph117,
-	glyph118,
-	glyph119,
-	glyph120,
-	glyph121,
-	glyph122,
-	glyph123,
-	glyph124,
-	glyph125,
-	glyph126,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	glyph160,
-	glyph161,
-	glyph162,
-	glyph163,
-	glyph164,
-	glyph165,
-	glyph166,
-	glyph167,
-	glyph168,
-	glyph169,
-	glyph170,
-	glyph171,
-	glyph172,
-	glyph173,
-	glyph174,
-	glyph175,
-	glyph176,
-	glyph177,
-	glyph178,
-	glyph179,
-	glyph180,
-	glyph181,
-	glyph182,
-	glyph183,
-	glyph184,
-	glyph185,
-	glyph186,
-	glyph187,
-	glyph188,
-	glyph189,
-	glyph190,
-	glyph191,
-	glyph192,
-	glyph193,
-	glyph194,
-	glyph195,
-	glyph196,
-	glyph197,
-	glyph198,
-	glyph199,
-	glyph200,
-	glyph201,
-	glyph202,
-	glyph203,
-	glyph204,
-	glyph205,
-	glyph206,
-	glyph207,
-	glyph208,
-	glyph209,
-	glyph210,
-	glyph211,
-	glyph212,
-	glyph213,
-	glyph214,
-	glyph215,
-	glyph216,
-	glyph217,
-	glyph218,
-	glyph219,
-	glyph220,
-	glyph221,
-	glyph222,
-	glyph223,
-	glyph224,
-	glyph225,
-	glyph226,
-	glyph227,
-	glyph228,
-	glyph229,
-	glyph230,
-	glyph231,
-	glyph232,
-	glyph233,
-	glyph234,
-	glyph235,
-	glyph236,
-	glyph237,
-	glyph238,
-	glyph239,
-	glyph240,
-	glyph241,
-	glyph242,
-	glyph243,
-	glyph244,
-	glyph245,
-	glyph246,
-	glyph247,
-	glyph248,
-	glyph249,
-	glyph250,
-	glyph251,
-	glyph252,
-	glyph253,
-	glyph254,
-	glyph255
-};
+    glyph0,
+    glyph1,
+    glyph2,
+    glyph3,
+    glyph4,
+    glyph5,
+    glyph6,
+    glyph7,
+    glyph8,
+    glyph9,
+    glyph10,
+    glyph11,
+    glyph12,
+    glyph13,
+    glyph14,
+    glyph15,
+    glyph16,
+    glyph17,
+    glyph18,
+    glyph19,
+    glyph20,
+    glyph21,
+    glyph22,
+    glyph23,
+    glyph24,
+    glyph25,
+    glyph26,
+    glyph27,
+    glyph28,
+    glyph29,
+    glyph30,
+    glyph31,
+    glyph32,
+    glyph33,
+    glyph34,
+    glyph35,
+    glyph36,
+    glyph37,
+    glyph38,
+    glyph39,
+    glyph40,
+    glyph41,
+    glyph42,
+    glyph43,
+    glyph44,
+    glyph45,
+    glyph46,
+    glyph47,
+    glyph48,
+    glyph49,
+    glyph50,
+    glyph51,
+    glyph52,
+    glyph53,
+    glyph54,
+    glyph55,
+    glyph56,
+    glyph57,
+    glyph58,
+    glyph59,
+    glyph60,
+    glyph61,
+    glyph62,
+    glyph63,
+    glyph64,
+    glyph65,
+    glyph66,
+    glyph67,
+    glyph68,
+    glyph69,
+    glyph70,
+    glyph71,
+    glyph72,
+    glyph73,
+    glyph74,
+    glyph75,
+    glyph76,
+    glyph77,
+    glyph78,
+    glyph79,
+    glyph80,
+    glyph81,
+    glyph82,
+    glyph83,
+    glyph84,
+    glyph85,
+    glyph86,
+    glyph87,
+    glyph88,
+    glyph89,
+    glyph90,
+    glyph91,
+    glyph92,
+    glyph93,
+    glyph94,
+    glyph95,
+    glyph96,
+    glyph97,
+    glyph98,
+    glyph99,
+    glyph100,
+    glyph101,
+    glyph102,
+    glyph103,
+    glyph104,
+    glyph105,
+    glyph106,
+    glyph107,
+    glyph108,
+    glyph109,
+    glyph110,
+    glyph111,
+    glyph112,
+    glyph113,
+    glyph114,
+    glyph115,
+    glyph116,
+    glyph117,
+    glyph118,
+    glyph119,
+    glyph120,
+    glyph121,
+    glyph122,
+    glyph123,
+    glyph124,
+    glyph125,
+    glyph126,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    glyph160,
+    glyph161,
+    glyph162,
+    glyph163,
+    glyph164,
+    glyph165,
+    glyph166,
+    glyph167,
+    glyph168,
+    glyph169,
+    glyph170,
+    glyph171,
+    glyph172,
+    glyph173,
+    glyph174,
+    glyph175,
+    glyph176,
+    glyph177,
+    glyph178,
+    glyph179,
+    glyph180,
+    glyph181,
+    glyph182,
+    glyph183,
+    glyph184,
+    glyph185,
+    glyph186,
+    glyph187,
+    glyph188,
+    glyph189,
+    glyph190,
+    glyph191,
+    glyph192,
+    glyph193,
+    glyph194,
+    glyph195,
+    glyph196,
+    glyph197,
+    glyph198,
+    glyph199,
+    glyph200,
+    glyph201,
+    glyph202,
+    glyph203,
+    glyph204,
+    glyph205,
+    glyph206,
+    glyph207,
+    glyph208,
+    glyph209,
+    glyph210,
+    glyph211,
+    glyph212,
+    glyph213,
+    glyph214,
+    glyph215,
+    glyph216,
+    glyph217,
+    glyph218,
+    glyph219,
+    glyph220,
+    glyph221,
+    glyph222,
+    glyph223,
+    glyph224,
+    glyph225,
+    glyph226,
+    glyph227,
+    glyph228,
+    glyph229,
+    glyph230,
+    glyph231,
+    glyph232,
+    glyph233,
+    glyph234,
+    glyph235,
+    glyph236,
+    glyph237,
+    glyph238,
+    glyph239,
+    glyph240,
+    glyph241,
+    glyph242,
+    glyph243,
+    glyph244,
+    glyph245,
+    glyph246,
+    glyph247,
+    glyph248,
+    glyph249,
+    glyph250,
+    glyph251,
+    glyph252,
+    glyph253,
+    glyph254,
+    glyph255};
 
 // Font structure
 static const BdfFontData desc = {
-	"Fixed", // Family name
-	"R", // Slant
-	5, // Max advance
-	8, // Height
-	8, // Size
-	{ 5, 8, 0, -1 }, // Bounding box
-	7, // Ascent
+    "Fixed",       // Family name
+    "R",           // Slant
+    5,             // Max advance
+    8,             // Height
+    8,             // Size
+    {5, 8, 0, -1}, // Bounding box
+    7,             // Ascent
 
-	0, // First character
-	0, // Default character
-	256, // Characters
+    0,   // First character
+    0,   // Default character
+    256, // Characters
 
-	bitmapTable, // Bitmaps
-	0, // Advances
-	0 // Boxes
+    bitmapTable, // Bitmaps
+    0,           // Advances
+    0            // Boxes
 };
 
 DEFINE_FONT(g_consolefont)

@@ -20,9 +20,9 @@
  *
  */
 
+#include "gui/widgets/popup.h"
 #include "common/system.h"
 #include "gui/gui-manager.h"
-#include "gui/widgets/popup.h"
 
 #include "gui/ThemeEval.h"
 
@@ -32,21 +32,20 @@ namespace GUI {
 // PopUpDialog
 //
 
-PopUpDialog::PopUpDialog(Widget *boss, const Common::String &name, int clickX, int clickY):
-		Dialog(name),
-		_boss(boss),
-		// Remember original mouse position
-		_clickX(clickX),
-		_clickY(clickY),
-		_selection(-1),
-		_initialSelection(-1),
-		_openTime(0),
-		_twoColumns(false),
-		_entriesPerColumn(1),
-		_leftPadding(0),
-		_rightPadding(0),
-		_lineHeight(kLineHeight),
-		_lastRead(-1) {
+PopUpDialog::PopUpDialog(Widget *boss, const Common::String &name, int clickX, int clickY) : Dialog(name),
+                                                                                             _boss(boss),
+                                                                                             // Remember original mouse position
+                                                                                             _clickX(clickX),
+                                                                                             _clickY(clickY),
+                                                                                             _selection(-1),
+                                                                                             _initialSelection(-1),
+                                                                                             _openTime(0),
+                                                                                             _twoColumns(false),
+                                                                                             _entriesPerColumn(1),
+                                                                                             _leftPadding(0),
+                                                                                             _rightPadding(0),
+                                                                                             _lineHeight(kLineHeight),
+                                                                                             _lastRead(-1) {
 	_backgroundType = ThemeEngine::kDialogBackgroundNone;
 	_w = _boss->getWidth();
 }
@@ -198,7 +197,7 @@ void PopUpDialog::handleMouseLeft(int button) {
 void PopUpDialog::read(Common::String str) {
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
-			ConfMan.getBool("tts_enabled", "scummvm")) {
+	    ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		ttsMan->say(str);
 	}
@@ -224,16 +223,16 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 		close();
 		break;
 
-	// Keypad & special keys
-	//   - if num lock is set, we ignore the keypress
-	//   - if num lock is not set, we fall down to the special key case
+		// Keypad & special keys
+		//   - if num lock is set, we ignore the keypress
+		//   - if num lock is not set, we fall down to the special key case
 
 	case Common::KEYCODE_KP1:
 		if (state.flags & Common::KBD_NUM)
 			break;
 		// fall through
 	case Common::KEYCODE_END:
-		setSelection(_entries.size()-1);
+		setSelection(_entries.size() - 1);
 		break;
 
 	case Common::KEYCODE_KP2:
@@ -271,7 +270,7 @@ void PopUpDialog::setPosition(int x, int y) {
 }
 
 void PopUpDialog::setPadding(int left, int right) {
-	_leftPadding  = left;
+	_leftPadding = left;
 	_rightPadding = right;
 }
 
@@ -392,13 +391,11 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x + w, y + _lineHeight));
 	} else {
 		g_gui.theme()->drawText(
-			Common::Rect(x + 1, y + 2, x + w, y + 2 + _lineHeight),
-			name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
-			Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding
-		);
+		    Common::Rect(x + 1, y + 2, x + w, y + 2 + _lineHeight),
+		    name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
+		    Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding);
 	}
 }
-
 
 #pragma mark -
 
@@ -407,7 +404,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 //
 
 PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const char *tooltip)
-	: Widget(boss, name, tooltip), CommandSender(boss) {
+    : Widget(boss, name, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
 
@@ -416,7 +413,7 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const char *toolti
 }
 
 PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
-	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
+    : Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
 
@@ -431,7 +428,6 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		popupDialog.setPosition(getAbsX(), getAbsY() - _selectedItem * kLineHeight);
 		popupDialog.setPadding(_leftPadding, _rightPadding);
 		popupDialog.setWidth(getWidth() - kLineHeight + 2);
-
 
 		for (uint i = 0; i < _entries.size(); i++) {
 			popupDialog.appendEntry(_entries[i].name);
@@ -453,13 +449,13 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 
 		// Skip separator entries
 		while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-			_entries[newSelection].name.equals("")) {
+		       _entries[newSelection].name.equals("")) {
 			newSelection += direction;
 		}
 
 		// Just update the selected item when we're in range
 		if ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-			(newSelection != _selectedItem)) {
+		    (newSelection != _selectedItem)) {
 			_selectedItem = newSelection;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
 			markAsDirty();

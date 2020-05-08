@@ -21,15 +21,15 @@
  */
 
 #include "ultima/shared/conf/xml_node.h"
-#include "ultima/shared/conf/xml_tree.h"
 #include "common/file.h"
+#include "ultima/shared/conf/xml_tree.h"
 
 namespace Ultima {
 namespace Shared {
 
 XMLNode::~XMLNode() {
 	for (Common::Array<XMLNode *>::iterator i = _nodeList.begin();
-			i != _nodeList.end(); ++i) {
+	     i != _nodeList.end(); ++i) {
 		delete *i;
 	}
 }
@@ -50,7 +50,7 @@ const Common::String &XMLNode::reference(const Common::String &h, bool &exists) 
 		k = h.substr(h.find('/') + 1);
 		Common::String k2 = k.substr(0, k.find('/'));
 		for (Common::Array<XMLNode *>::iterator it = _nodeList.begin();
-		        it != _nodeList.end(); ++it) {
+		     it != _nodeList.end(); ++it) {
 			if ((*it)->_id == k2)
 				return (*it)->reference(k, exists);
 		}
@@ -59,7 +59,6 @@ const Common::String &XMLNode::reference(const Common::String &h, bool &exists) 
 	exists = false;
 	return _emptyString;
 }
-
 
 const XMLNode *XMLNode::subtree(const Common::String &h) const {
 	if (h.find('/') == Common::String::npos) {
@@ -75,7 +74,7 @@ const XMLNode *XMLNode::subtree(const Common::String &h) const {
 		k = h.substr(h.find('/') + 1);
 		Common::String k2 = k.substr(0, k.find('/'));
 		for (Common::Array<XMLNode *>::const_iterator it = _nodeList.begin();
-		        it != _nodeList.end(); ++it) {
+		     it != _nodeList.end(); ++it) {
 			if ((*it)->_id.equalsIgnoreCase(k2)) {
 				return (*it)->subtree(k);
 			}
@@ -84,7 +83,6 @@ const XMLNode *XMLNode::subtree(const Common::String &h) const {
 
 	return nullptr;
 }
-
 
 Common::String XMLNode::dump(int depth) {
 	Common::String s;
@@ -98,7 +96,7 @@ Common::String XMLNode::dump(int depth) {
 		if (_nodeList.empty() == false)
 			s += "\n";
 		for (Common::Array<XMLNode *>::const_iterator it = _nodeList.begin();
-		        it != _nodeList.end(); ++it) {
+		     it != _nodeList.end(); ++it) {
 			s += (**it).dump(depth + 1);
 		}
 
@@ -140,7 +138,7 @@ void XMLNode::xmlAssign(const Common::String &key, const Common::String &value) 
 	k = key.substr(key.find('/') + 1);
 	Common::String k2 = k.substr(0, k.find('/'));
 	for (Common::Array<XMLNode *>::iterator it = _nodeList.begin();
-	        it != _nodeList.end(); ++it) {
+	     it != _nodeList.end(); ++it) {
 		if ((*it)->_id == k2) {
 			(**it).xmlAssign(k, value);
 			return;
@@ -155,14 +153,13 @@ void XMLNode::xmlAssign(const Common::String &key, const Common::String &value) 
 	(*t).xmlAssign(k, value);
 }
 
-
 void XMLNode::listKeys(const Common::String &key, Common::Array<Common::String> &vs,
-		bool longformat) const {
+                       bool longformat) const {
 	Common::String s(key);
 	s += "/";
 
 	for (Common::Array<XMLNode *>::const_iterator it = _nodeList.begin();
-	        it != _nodeList.end(); ++it) {
+	     it != _nodeList.end(); ++it) {
 		if (!longformat)
 			vs.push_back((*it)->_id);
 		else
@@ -171,7 +168,7 @@ void XMLNode::listKeys(const Common::String &key, Common::Array<Common::String> 
 }
 
 Common::String XMLNode::encodeEntity(const Common::String &s) {
-	Common::String  ret;
+	Common::String ret;
 
 	for (Common::String::const_iterator it = s.begin(); it != s.end(); ++it) {
 		switch (*it) {
@@ -198,7 +195,7 @@ Common::String XMLNode::encodeEntity(const Common::String &s) {
 }
 
 static Common::String decode_entity(const Common::String &s, size_t &pos) {
-//	size_t old_pos = pos;
+	//	size_t old_pos = pos;
 	size_t entityNameLen = s.findFirstOf("; \t\r\n", pos) - pos - 1;
 
 	/* Call me paranoid... but I don't think having an end-of-line or similar
@@ -471,7 +468,7 @@ bool XMLNode::searchPairs(KeyTypeList &ktl, const Common::String &basekey,
 		    then return true, since we've found the key we were looking for.*/
 		if (basekey == currkey + _id) {
 			for (Common::Array<XMLNode *>::iterator i = _nodeList.begin();
-			        i != _nodeList.end(); ++i)
+			     i != _nodeList.end(); ++i)
 				if ((*i)->_id[0] != '!')
 					(*i)->selectPairs(ktl, "");
 			return true;
@@ -479,7 +476,7 @@ bool XMLNode::searchPairs(KeyTypeList &ktl, const Common::String &basekey,
 		/* Else, keep searching for the key under it's subnodes */
 		else
 			for (Common::Array<XMLNode *>::iterator i = _nodeList.begin();
-			        i != _nodeList.end(); ++i)
+			     i != _nodeList.end(); ++i)
 				if ((*i)->searchPairs(ktl, basekey, currkey + _id + '/', pos))
 					return true;
 	}
@@ -491,7 +488,7 @@ void XMLNode::selectPairs(KeyTypeList &ktl, const Common::String currkey) {
 	ktl.push_back(KeyType(currkey + _id, currkey));
 
 	for (Common::Array<XMLNode *>::iterator i = _nodeList.begin();
-	        i != _nodeList.end(); ++i) {
+	     i != _nodeList.end(); ++i) {
 		(*i)->selectPairs(ktl, currkey + _id + '/');
 	}
 }
@@ -535,8 +532,7 @@ void XMLNode::trim(Common::String &s) {
 	// This will properly handle indented XML
 	uint index = 0;
 	while ((index = s.findFirstOf('\n', index + 1)) != Common::String::npos) {
-		while (index < (s.size() - 1) && s[index + 1] != '\r' && s[index + 1] != '\n'
-			&& Common::isSpace(s[index + 1]))
+		while (index < (s.size() - 1) && s[index + 1] != '\r' && s[index + 1] != '\n' && Common::isSpace(s[index + 1]))
 			s.deleteChar(index + 1);
 		if (index > 0 && s[index - 1] == '\r')
 			s.deleteChar(--index);

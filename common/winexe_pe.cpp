@@ -20,12 +20,12 @@
  *
  */
 
+#include "common/winexe_pe.h"
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/winexe_pe.h"
 
 namespace Common {
 
@@ -40,7 +40,8 @@ PEResources::~PEResources() {
 void PEResources::clear() {
 	_sections.clear();
 	_resources.clear();
-	delete _exe; _exe = nullptr;
+	delete _exe;
+	_exe = nullptr;
 }
 
 bool PEResources::loadFromEXE(SeekableReadStream *stream) {
@@ -61,7 +62,7 @@ bool PEResources::loadFromEXE(SeekableReadStream *stream) {
 
 	stream->seek(peOffset);
 
-	if (stream->readUint32BE() != MKTAG('P','E',0,0))
+	if (stream->readUint32BE() != MKTAG('P', 'E', 0, 0))
 		return false;
 
 	stream->skip(2);
@@ -151,7 +152,7 @@ void PEResources::parseResourceLevel(Section &section, uint32 offset, int level)
 			resource.size = _exe->readUint32LE();
 
 			debug(4, "Found resource '%s' '%s' '%s' at %d of size %d", _curType.toString().c_str(),
-					_curID.toString().c_str(), _curLang.toString().c_str(), resource.offset, resource.size);
+			      _curID.toString().c_str(), _curLang.toString().c_str(), resource.offset, resource.size);
 
 			_resources[_curType][_curID][_curLang] = resource;
 		}

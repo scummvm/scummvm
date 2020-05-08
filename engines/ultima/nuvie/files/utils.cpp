@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
 #include "ultima/nuvie/files/utils.h"
-#include "ultima/nuvie/nuvie.h"
 #include "common/file.h"
+#include "ultima/nuvie/nuvie.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -39,16 +39,16 @@ using Std::string;
  */
 
 bool openFile(Common::ReadStream *&in, const char *fname) {
-    Common::File *f = new Common::File();
-    Common::String filename(fname);
+	Common::File *f = new Common::File();
+	Common::String filename(fname);
 
-    if (f->open(filename)) {
-	    in = f;
-	    return true;
-    } else {
-	    delete f;
-	    return false;
-    }
+	if (f->open(filename)) {
+		in = f;
+		return true;
+	} else {
+		delete f;
+		return false;
+	}
 }
 
 /*

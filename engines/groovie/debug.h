@@ -53,6 +53,6 @@ private:
 	bool cmd_dumppal(int argc, const char **argv);
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_DEBUG_H

@@ -64,7 +64,7 @@ long rleDecompressMemory(void *in, long inlen, void **out) {
 		return -1;
 
 	/* decompress file from inlen to outlen */
-	outdata = (byte *) malloc(outlen);
+	outdata = (byte *)malloc(outlen);
 	rleDecompress(indata, inlen, outdata, outlen);
 
 	*out = outdata;

@@ -32,14 +32,14 @@
 #ifdef __MINGW32__
 
 #ifdef _WIN32_WINNT
-	#undef _WIN32_WINNT
+#undef _WIN32_WINNT
 #endif
 #define _WIN32_WINNT 0x0501
-#include <windows.h>
 #include <commctrl.h>
 #include <initguid.h>
-#include <shlwapi.h>
 #include <shlguid.h>
+#include <shlwapi.h>
+#include <windows.h>
 #define CMIC_MASK_ASYNCOK SEE_MASK_ASYNCOK
 
 extern const GUID CLSID_ShellLink;
@@ -48,9 +48,9 @@ extern const GUID CLSID_ShellLink;
 #define SHARD_LINK 0x00000006
 
 // Taskbar GUID definitions
-DEFINE_GUID(CLSID_TaskbarList,0x56fdf344,0xfd6d,0x11d0,0x95,0x8a,0x0,0x60,0x97,0xc9,0xa0,0x90);
-DEFINE_GUID(IID_ITaskbarList3,0xea1afb91,0x9e28,0x4b86,0x90,0xE9,0x9e,0x9f,0x8a,0x5e,0xef,0xaf);
-DEFINE_GUID(IID_IPropertyStore,0x886d8eeb,0x8cf2,0x4446,0x8d,0x02,0xcd,0xba,0x1d,0xbd,0xcf,0x99);
+DEFINE_GUID(CLSID_TaskbarList, 0x56fdf344, 0xfd6d, 0x11d0, 0x95, 0x8a, 0x0, 0x60, 0x97, 0xc9, 0xa0, 0x90);
+DEFINE_GUID(IID_ITaskbarList3, 0xea1afb91, 0x9e28, 0x4b86, 0x90, 0xE9, 0x9e, 0x9f, 0x8a, 0x5e, 0xef, 0xaf);
+DEFINE_GUID(IID_IPropertyStore, 0x886d8eeb, 0x8cf2, 0x4446, 0x8d, 0x02, 0xcd, 0xba, 0x1d, 0xbd, 0xcf, 0x99);
 
 // Property key
 typedef struct _tagpropertykey {
@@ -65,11 +65,16 @@ typedef struct tagPROPVARIANT PROPVARIANT;
 
 // Property store
 DECLARE_INTERFACE_(IPropertyStore, IUnknown) {
-	STDMETHOD (GetCount) (DWORD *cProps) PURE;
-	STDMETHOD (GetAt) (DWORD iProp, PROPERTYKEY *pkey) PURE;
-	STDMETHOD (GetValue) (REFPROPERTYKEY key, PROPVARIANT *pv) PURE;
-	STDMETHOD (SetValue) (REFPROPERTYKEY key, REFPROPVARIANT propvar) PURE;
-	STDMETHOD (Commit) (void) PURE;
+	STDMETHOD(GetCount)
+	(DWORD * cProps) PURE;
+	STDMETHOD(GetAt)
+	(DWORD iProp, PROPERTYKEY * pkey) PURE;
+	STDMETHOD(GetValue)
+	(REFPROPERTYKEY key, PROPVARIANT * pv) PURE;
+	STDMETHOD(SetValue)
+	(REFPROPERTYKEY key, REFPROPVARIANT propvar) PURE;
+	STDMETHOD(Commit)
+	(void)PURE;
 
 private:
 	~IPropertyStore();
@@ -114,29 +119,50 @@ typedef enum TBPFLAG {
 // Taskbar interface
 DECLARE_INTERFACE_(ITaskbarList3, IUnknown) {
 	// IUnknown
-	STDMETHOD(QueryInterface) (THIS_ REFIID riid, void **ppv) PURE;
-	STDMETHOD_(ULONG,AddRef) (THIS) PURE;
-	STDMETHOD_(ULONG,Release) (THIS) PURE;
+	STDMETHOD(QueryInterface)
+	(THIS_ REFIID riid, void **ppv) PURE;
+	STDMETHOD_(ULONG, AddRef)
+	(THIS) PURE;
+	STDMETHOD_(ULONG, Release)
+	(THIS) PURE;
 	// ITaskbarList
-	STDMETHOD(HrInit) (THIS) PURE;
-	STDMETHOD(AddTab) (THIS_ HWND hwnd) PURE;
-	STDMETHOD(DeleteTab) (THIS_ HWND hwnd) PURE;
-	STDMETHOD(ActivateTab) (THIS_ HWND hwnd) PURE;
-	STDMETHOD(SetActiveAlt) (THIS_ HWND hwnd) PURE;
-	STDMETHOD (MarkFullscreenWindow) (THIS_ HWND hwnd, int fFullscreen) PURE;
+	STDMETHOD(HrInit)
+	(THIS) PURE;
+	STDMETHOD(AddTab)
+	(THIS_ HWND hwnd) PURE;
+	STDMETHOD(DeleteTab)
+	(THIS_ HWND hwnd) PURE;
+	STDMETHOD(ActivateTab)
+	(THIS_ HWND hwnd) PURE;
+	STDMETHOD(SetActiveAlt)
+	(THIS_ HWND hwnd) PURE;
+	STDMETHOD(MarkFullscreenWindow)
+	(THIS_ HWND hwnd, int fFullscreen) PURE;
 	// ITaskbarList3
-	STDMETHOD (SetProgressValue) (THIS_ HWND hwnd, ULONGLONG ullCompleted, ULONGLONG ullTotal) PURE;
-	STDMETHOD (SetProgressState) (THIS_ HWND hwnd, TBPFLAG tbpFlags) PURE;
-	STDMETHOD (RegisterTab) (THIS_ HWND hwndTab, HWND hwndMDI) PURE;
-	STDMETHOD (UnregisterTab) (THIS_ HWND hwndTab) PURE;
-	STDMETHOD (SetTabOrder) (THIS_ HWND hwndTab, HWND hwndInsertBefore) PURE;
-	STDMETHOD (SetTabActive) (THIS_ HWND hwndTab, HWND hwndMDI, DWORD dwReserved) PURE;
-	STDMETHOD (ThumbBarAddButtons) (THIS_ HWND hwnd, UINT cButtons, LPTHUMBBUTTON pButton) PURE;
-	STDMETHOD (ThumbBarUpdateButtons) (THIS_ HWND hwnd, UINT cButtons, LPTHUMBBUTTON pButton) PURE;
-	STDMETHOD (ThumbBarSetImageList) (THIS_ HWND hwnd, HIMAGELIST himl) PURE;
-	STDMETHOD (SetOverlayIcon) (THIS_ HWND hwnd, HICON hIcon, LPCWSTR pszDescription) PURE;
-	STDMETHOD (SetThumbnailTooltip) (THIS_ HWND hwnd, LPCWSTR pszTip) PURE;
-	STDMETHOD (SetThumbnailClip) (THIS_ HWND hwnd, RECT *prcClip) PURE;
+	STDMETHOD(SetProgressValue)
+	(THIS_ HWND hwnd, ULONGLONG ullCompleted, ULONGLONG ullTotal) PURE;
+	STDMETHOD(SetProgressState)
+	(THIS_ HWND hwnd, TBPFLAG tbpFlags) PURE;
+	STDMETHOD(RegisterTab)
+	(THIS_ HWND hwndTab, HWND hwndMDI) PURE;
+	STDMETHOD(UnregisterTab)
+	(THIS_ HWND hwndTab) PURE;
+	STDMETHOD(SetTabOrder)
+	(THIS_ HWND hwndTab, HWND hwndInsertBefore) PURE;
+	STDMETHOD(SetTabActive)
+	(THIS_ HWND hwndTab, HWND hwndMDI, DWORD dwReserved) PURE;
+	STDMETHOD(ThumbBarAddButtons)
+	(THIS_ HWND hwnd, UINT cButtons, LPTHUMBBUTTON pButton) PURE;
+	STDMETHOD(ThumbBarUpdateButtons)
+	(THIS_ HWND hwnd, UINT cButtons, LPTHUMBBUTTON pButton) PURE;
+	STDMETHOD(ThumbBarSetImageList)
+	(THIS_ HWND hwnd, HIMAGELIST himl) PURE;
+	STDMETHOD(SetOverlayIcon)
+	(THIS_ HWND hwnd, HICON hIcon, LPCWSTR pszDescription) PURE;
+	STDMETHOD(SetThumbnailTooltip)
+	(THIS_ HWND hwnd, LPCWSTR pszTip) PURE;
+	STDMETHOD(SetThumbnailClip)
+	(THIS_ HWND hwnd, RECT * prcClip) PURE;
 
 private:
 	~ITaskbarList3();

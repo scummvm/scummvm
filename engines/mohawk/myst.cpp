@@ -28,8 +28,8 @@
 #include "common/debug-channels.h"
 #include "common/gui_options.h"
 #include "common/system.h"
-#include "common/translation.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "engines/dialogs.h"
 #include "gui/saveload.h"
@@ -64,8 +64,7 @@
 
 namespace Mohawk {
 
-MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) :
-		MohawkEngine(syst, gamedesc) {
+MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugView, "View", "Track Card File (VIEW) Parsing");
@@ -168,20 +167,19 @@ void MohawkEngine_Myst::cachePreload(uint32 tag, uint16 id) {
 }
 
 static const char *mystFiles[] = {
-	"channel",
-	"credits",
-	"demo",
-	"dunny",
-	"intro",
-	"making",
-	"mechan",
-	"myst",
-	"selen",
-	"slides",
-	"sneak",
-	"stone",
-	"menu"
-};
+    "channel",
+    "credits",
+    "demo",
+    "dunny",
+    "intro",
+    "making",
+    "mechan",
+    "myst",
+    "selen",
+    "slides",
+    "sneak",
+    "stone",
+    "menu"};
 
 // Myst Hardcoded Movie Paths
 // Mechanical Stack Movie "sstairs" referenced in executable, but not used?
@@ -270,7 +268,6 @@ VideoEntryPtr MohawkEngine_Myst::playMovieFullscreen(const Common::String &name,
 	return video;
 }
 
-
 VideoEntryPtr MohawkEngine_Myst::findVideo(const Common::String &name, MystStack stack) {
 	Common::String filename = wrapMovieFilename(name, stack);
 	filename = selectLocalizedMovieFilename(filename);
@@ -298,28 +295,28 @@ void MohawkEngine_Myst::playFlybyMovie(MystStack stack) {
 	bool looping = true;
 
 	switch (stack) {
-		case kSeleniticStack:
-			flyby = "selenitic flyby";
-			break;
-		case kStoneshipStack:
-			flyby = "stoneship flyby";
-			break;
-			// Myst Flyby Movie not used in Original Masterpiece Edition Engine
-			// We play it when first arriving on Myst, and if the user has chosen so.
-		case kMystStack:
-			if (ConfMan.getBool("playmystflyby")) {
-				flyby = "myst flyby";
-				looping = false;
-			}
-			break;
-		case kMechanicalStack:
-			flyby = "mech age flyby";
-			break;
-		case kChannelwoodStack:
-			flyby = "channelwood flyby";
-			break;
-		default:
-			break;
+	case kSeleniticStack:
+		flyby = "selenitic flyby";
+		break;
+	case kStoneshipStack:
+		flyby = "stoneship flyby";
+		break;
+		// Myst Flyby Movie not used in Original Masterpiece Edition Engine
+		// We play it when first arriving on Myst, and if the user has chosen so.
+	case kMystStack:
+		if (ConfMan.getBool("playmystflyby")) {
+			flyby = "myst flyby";
+			looping = false;
+		}
+		break;
+	case kMechanicalStack:
+		flyby = "mech age flyby";
+		break;
+	case kChannelwoodStack:
+		flyby = "channelwood flyby";
+		break;
+	default:
+		break;
 	}
 
 	if (!flyby) {
@@ -446,13 +443,12 @@ Common::Error MohawkEngine_Myst::run() {
 
 const MystLanguage *MohawkEngine_Myst::listLanguages() {
 	static const MystLanguage languages[] = {
-	    { Common::EN_ANY,   "english"  },
-	    { Common::FR_FRA,   "french"   },
-	    { Common::DE_DEU,   "german"   },
-	    { Common::PL_POL,   "polish"   },
-	    { Common::ES_ESP,   "spanish"  },
-	    { Common::UNK_LANG, nullptr    }
-	};
+	    {Common::EN_ANY, "english"},
+	    {Common::FR_FRA, "french"},
+	    {Common::DE_DEU, "german"},
+	    {Common::PL_POL, "polish"},
+	    {Common::ES_ESP, "spanish"},
+	    {Common::UNK_LANG, nullptr}};
 	return languages;
 }
 
@@ -859,8 +855,7 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 
 	// In Myst ME, play a fullscreen flyby movie, except when loading saves.
 	// Also play a flyby when first linking to Myst.
-	if (isGameVariant(GF_ME)
-			&& ((_stack && _stack->getStackId() == kMystStack) || (stackId == kMystStack && card == 4134))) {
+	if (isGameVariant(GF_ME) && ((_stack && _stack->getStackId() == kMystStack) || (stackId == kMystStack && card == 4134))) {
 		playFlybyMovie(stackId);
 	}
 
@@ -963,8 +958,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	_card->enter();
 
 	// The demo resets the cursor at each card change except when in the library
-	if (isGameVariant(GF_DEMO)
-			&& _gameState->_globals.currentAge != kMystLibrary) {
+	if (isGameVariant(GF_DEMO) && _gameState->_globals.currentAge != kMystLibrary) {
 		_cursor->setDefaultCursor();
 	}
 
@@ -1012,28 +1006,28 @@ MystArea *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream
 
 	switch (type) {
 	case kMystAreaAction:
-		resource =  new MystAreaAction(this, type, rlstStream, parent);
+		resource = new MystAreaAction(this, type, rlstStream, parent);
 		break;
 	case kMystAreaVideo:
-		resource =  new MystAreaVideo(this, type, rlstStream, parent);
+		resource = new MystAreaVideo(this, type, rlstStream, parent);
 		break;
 	case kMystAreaActionSwitch:
-		resource =  new MystAreaActionSwitch(this, type, rlstStream, parent);
+		resource = new MystAreaActionSwitch(this, type, rlstStream, parent);
 		break;
 	case kMystAreaImageSwitch:
-		resource =  new MystAreaImageSwitch(this, type, rlstStream, parent);
+		resource = new MystAreaImageSwitch(this, type, rlstStream, parent);
 		break;
 	case kMystAreaSlider:
-		resource =  new MystAreaSlider(this, type, rlstStream, parent);
+		resource = new MystAreaSlider(this, type, rlstStream, parent);
 		break;
 	case kMystAreaDrag:
-		resource =  new MystAreaDrag(this, type, rlstStream, parent);
+		resource = new MystAreaDrag(this, type, rlstStream, parent);
 		break;
 	case kMystVideoInfo:
-		resource =  new MystVideoInfo(this, type, rlstStream, parent);
+		resource = new MystVideoInfo(this, type, rlstStream, parent);
 		break;
 	case kMystAreaHover:
-		resource =  new MystAreaHover(this, type, rlstStream, parent);
+		resource = new MystAreaHover(this, type, rlstStream, parent);
 		break;
 	default:
 		resource = new MystArea(this, type, rlstStream, parent);
@@ -1261,7 +1255,6 @@ void MohawkEngine_Myst::resumeFromMainMenu() {
 
 	_stack = _prevStack;
 	_prevStack.reset();
-
 
 	// Clear the resource cache and image cache
 	_cache.clear();

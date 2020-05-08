@@ -42,7 +42,6 @@ AdPathPoint::AdPathPoint() {
 	_origin = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdPathPoint::AdPathPoint(int initX, int initY, int initDistance) {
 	x = initX;
@@ -53,12 +52,10 @@ AdPathPoint::AdPathPoint(int initX, int initY, int initDistance) {
 	_origin = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdPathPoint::~AdPathPoint() {
 	_origin = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdPathPoint::persist(BasePersistenceManager *persistMgr) {

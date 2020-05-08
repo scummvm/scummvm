@@ -23,8 +23,8 @@
 #ifndef XEEN_SWORDSOFXEEN_SWORDSOFXEEN_H
 #define XEEN_SWORDSOFXEEN_SWORDSOFXEEN_H
 
-#include "xeen/xeen.h"
 #include "xeen/worldofxeen/worldofxeen_cutscenes.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 namespace SwordsOfXeen {
@@ -33,17 +33,18 @@ namespace SwordsOfXeen {
  * Implements a descendant of the base Xeen engine to handle
  * Swords of Xeen specific game code
  */
-class SwordsOfXeenEngine: public XeenEngine {
+class SwordsOfXeenEngine : public XeenEngine {
 private:
 	/**
 	 * Show the ending "You won" screen
 	 */
 	bool showEnding();
+
 protected:
 	/**
 	 * Show the starting sequence/intro
 	 */
-	void showStartup() override { 
+	void showStartup() override {
 		// Swords of Xeen doesn't have a starting title or intro
 		_gameMode = GMODE_MENU;
 	}
@@ -57,6 +58,7 @@ protected:
 	 * Death cutscene
 	 */
 	void death() override;
+
 public:
 	SwordsOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	~SwordsOfXeenEngine() override {}

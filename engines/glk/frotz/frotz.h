@@ -35,6 +35,7 @@ class FrotzScreen;
  */
 class Frotz : public Processor {
 	friend class FrotzScreen;
+
 protected:
 	/**
 	 * Setup the video mode
@@ -45,6 +46,7 @@ protected:
 	 * Create the screen class
 	 */
 	Screen *createScreen() override;
+
 public:
 	/**
 	 * Constructor
@@ -90,7 +92,6 @@ public:
 	 * Saving method not used for Frotz sub-engine
 	 */
 	Common::Error writeGameData(Common::WriteStream *ws) override { return Common::kWritingFailed; }
-
 };
 
 extern Frotz *g_vm;

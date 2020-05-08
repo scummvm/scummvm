@@ -34,7 +34,7 @@ struct SludgeGameDescription {
 };
 
 uint SludgeEngine::getLanguageID() const { return _gameDescription->languageID; }
-const char *SludgeEngine::getGameId() const { return _gameDescription->desc.gameId;}
+const char *SludgeEngine::getGameId() const { return _gameDescription->desc.gameId; }
 uint32 SludgeEngine::getFeatures() const { return _gameDescription->desc.flags; }
 Common::Language SludgeEngine::getLanguage() const { return _gameDescription->desc.language; }
 const char *SludgeEngine::getGameFile() const {
@@ -44,40 +44,36 @@ const char *SludgeEngine::getGameFile() const {
 } // End of namespace Sludge
 
 static const PlainGameDescriptor sludgeGames[] = {
-	{ "sludge",			"Sludge Game" },
-	{ "welcome",		"Welcome Example" },
-	{ "verbcoin",		"Verb Coin" },
-	{ "robinsrescue",	"Robin's Rescue" },
-	{ "outoforder",		"Out Of Order" },
-	{ "frasse",			"Frasse and the Peas of Kejick" },
-	{ "interview",		"The Interview" },
-	{ "life",			"Life Flashes By" },
-	{ "tgttpoacs",		"The Game That Takes Place on a Cruise Ship" },
-	{ "mandy",			"Mandy Christmas Adventure" },
-	{ "cubert",			"Cubert Badbone, P.I." },
-	{ "gjgagsas",		"The Game Jam Game About Games, Secrets and Stuff" },
-	{ "tsotc",			"The Secret of Tremendous Corporation" },
-	{ "nsc",			"Nathan's Second Chance" },
-	{ "atw",			"Above The Waves" },
-	{ "leptonsquest",	"Lepton's Quest" },
-	{ 0, 0 }
-};
+    {"sludge", "Sludge Game"},
+    {"welcome", "Welcome Example"},
+    {"verbcoin", "Verb Coin"},
+    {"robinsrescue", "Robin's Rescue"},
+    {"outoforder", "Out Of Order"},
+    {"frasse", "Frasse and the Peas of Kejick"},
+    {"interview", "The Interview"},
+    {"life", "Life Flashes By"},
+    {"tgttpoacs", "The Game That Takes Place on a Cruise Ship"},
+    {"mandy", "Mandy Christmas Adventure"},
+    {"cubert", "Cubert Badbone, P.I."},
+    {"gjgagsas", "The Game Jam Game About Games, Secrets and Stuff"},
+    {"tsotc", "The Secret of Tremendous Corporation"},
+    {"nsc", "Nathan's Second Chance"},
+    {"atw", "Above The Waves"},
+    {"leptonsquest", "Lepton's Quest"},
+    {0, 0}};
 
 #include "sludge/detection_tables.h"
 
 static Sludge::SludgeGameDescription s_fallbackDesc =
-{
-	{
-		"",
-		"",
-		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-		Common::UNK_LANG,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NOMIDI)
-	},
-	0
-};
+    {
+        {"",
+         "",
+         AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+         Common::UNK_LANG,
+         Common::kPlatformWindows,
+         ADGF_NO_FLAGS,
+         GUIO1(GUIO_NOMIDI)},
+        0};
 
 static char s_fallbackFileNameBuffer[51];
 
@@ -101,10 +97,10 @@ public:
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		const Sludge::SludgeGameDescription *gd = (const Sludge::SludgeGameDescription *)desc;
-			if (gd) {
-				*engine = new Sludge::SludgeEngine(syst, gd);
-			}
-			return gd != 0;
+		if (gd) {
+			*engine = new Sludge::SludgeEngine(syst, gd);
+		}
+		return gd != 0;
 	}
 
 	// for fall back detection
@@ -171,7 +167,7 @@ ADDetectedGame SludgeMetaEngine::fallbackDetect(const FileMap &allFiles, const C
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SLUDGE)
-	REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
+REGISTER_PLUGIN_STATIC(SLUDGE, PLUGIN_TYPE_ENGINE, SludgeMetaEngine);
 #endif

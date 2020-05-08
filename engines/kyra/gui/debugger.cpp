@@ -21,33 +21,33 @@
  */
 
 #include "kyra/gui/debugger.h"
-#include "kyra/engine/kyra_lok.h"
+#include "kyra/engine/eobcommon.h"
 #include "kyra/engine/kyra_hof.h"
+#include "kyra/engine/kyra_lok.h"
+#include "kyra/engine/lol.h"
 #include "kyra/engine/timer.h"
 #include "kyra/resource/resource.h"
-#include "kyra/engine/lol.h"
-#include "kyra/engine/eobcommon.h"
 
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 namespace Kyra {
 
 Debugger::Debugger(KyraEngine_v1 *vm)
-	: ::GUI::Debugger(), _vm(vm) {
+    : ::GUI::Debugger(), _vm(vm) {
 }
 
 void Debugger::initialize() {
-	registerCmd("continue",           WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("screen_debug_mode",  WRAP_METHOD(Debugger, cmdSetScreenDebug));
-	registerCmd("load_palette",       WRAP_METHOD(Debugger, cmdLoadPalette));
-	registerCmd("facings",            WRAP_METHOD(Debugger, cmdShowFacings));
-	registerCmd("gamespeed",          WRAP_METHOD(Debugger, cmdGameSpeed));
-	registerCmd("flags",              WRAP_METHOD(Debugger, cmdListFlags));
-	registerCmd("toggleflag",         WRAP_METHOD(Debugger, cmdToggleFlag));
-	registerCmd("queryflag",          WRAP_METHOD(Debugger, cmdQueryFlag));
-	registerCmd("timers",             WRAP_METHOD(Debugger, cmdListTimers));
-	registerCmd("settimercountdown",  WRAP_METHOD(Debugger, cmdSetTimerCountdown));
+	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("screen_debug_mode", WRAP_METHOD(Debugger, cmdSetScreenDebug));
+	registerCmd("load_palette", WRAP_METHOD(Debugger, cmdLoadPalette));
+	registerCmd("facings", WRAP_METHOD(Debugger, cmdShowFacings));
+	registerCmd("gamespeed", WRAP_METHOD(Debugger, cmdGameSpeed));
+	registerCmd("flags", WRAP_METHOD(Debugger, cmdListFlags));
+	registerCmd("toggleflag", WRAP_METHOD(Debugger, cmdToggleFlag));
+	registerCmd("queryflag", WRAP_METHOD(Debugger, cmdQueryFlag));
+	registerCmd("timers", WRAP_METHOD(Debugger, cmdListTimers));
+	registerCmd("settimercountdown", WRAP_METHOD(Debugger, cmdSetTimerCountdown));
 }
 
 bool Debugger::cmdSetScreenDebug(int argc, const char **argv) {
@@ -198,14 +198,14 @@ bool Debugger::cmdSetTimerCountdown(int argc, const char **argv) {
 #pragma mark -
 
 Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
-	: Debugger(vm), _vm(vm) {
+    : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_LoK::initialize() {
-	registerCmd("enter",              WRAP_METHOD(Debugger_LoK, cmdEnterRoom));
-	registerCmd("scenes",             WRAP_METHOD(Debugger_LoK, cmdListScenes));
-	registerCmd("give",               WRAP_METHOD(Debugger_LoK, cmdGiveItem));
-	registerCmd("birthstones",        WRAP_METHOD(Debugger_LoK, cmdListBirthstones));
+	registerCmd("enter", WRAP_METHOD(Debugger_LoK, cmdEnterRoom));
+	registerCmd("scenes", WRAP_METHOD(Debugger_LoK, cmdListScenes));
+	registerCmd("give", WRAP_METHOD(Debugger_LoK, cmdGiveItem));
+	registerCmd("birthstones", WRAP_METHOD(Debugger_LoK, cmdListBirthstones));
 	Debugger::initialize();
 }
 
@@ -291,12 +291,12 @@ Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_v2::initialize() {
-	registerCmd("character_info",     WRAP_METHOD(Debugger_v2, cmdCharacterInfo));
-	registerCmd("enter",              WRAP_METHOD(Debugger_v2, cmdEnterScene));
-	registerCmd("scenes",             WRAP_METHOD(Debugger_v2, cmdListScenes));
-	registerCmd("scene_info",         WRAP_METHOD(Debugger_v2, cmdSceneInfo));
-	registerCmd("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmdSceneToFacing));
-	registerCmd("give",               WRAP_METHOD(Debugger_v2, cmdGiveItem));
+	registerCmd("character_info", WRAP_METHOD(Debugger_v2, cmdCharacterInfo));
+	registerCmd("enter", WRAP_METHOD(Debugger_v2, cmdEnterScene));
+	registerCmd("scenes", WRAP_METHOD(Debugger_v2, cmdListScenes));
+	registerCmd("scene_info", WRAP_METHOD(Debugger_v2, cmdSceneInfo));
+	registerCmd("scene_to_facing", WRAP_METHOD(Debugger_v2, cmdSceneToFacing));
+	registerCmd("give", WRAP_METHOD(Debugger_v2, cmdGiveItem));
 	Debugger::initialize();
 }
 
@@ -396,7 +396,9 @@ bool Debugger_v2::cmdSceneToFacing(int argc, const char **argv) {
 		int16 exit = -1;
 
 		switch (facing) {
-		case 0: case 1: case 7:
+		case 0:
+		case 1:
+		case 7:
 			exit = _vm->_sceneList[_vm->_currentScene].exit1;
 			break;
 
@@ -404,7 +406,9 @@ bool Debugger_v2::cmdSceneToFacing(int argc, const char **argv) {
 			exit = _vm->_sceneList[_vm->_currentScene].exit2;
 			break;
 
-		case 3: case 4: case 5:
+		case 3:
+		case 4:
+		case 5:
 			exit = _vm->_sceneList[_vm->_currentScene].exit3;
 			break;
 
@@ -447,7 +451,7 @@ Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm) : Debugger_v2(vm), _vm(vm) {
 }
 
 void Debugger_HoF::initialize() {
-	registerCmd("pass_codes",         WRAP_METHOD(Debugger_HoF, cmdPasscodes));
+	registerCmd("pass_codes", WRAP_METHOD(Debugger_HoF, cmdPasscodes));
 	Debugger_v2::initialize();
 }
 
@@ -629,8 +633,8 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 	const uint8 hole = _vm->gameFlags().gameID == GI_EOB1 ? 27 : 38;
 	const uint8 stairsUp = 23;
 	const uint8 stairsDown = 24;
-	const uint8 types[] = { _vm->_teleporterWallId, illusion1, illusion2, stairsUp, stairsDown, hole, plate1, plate2 };
-	const uint8 signs[] = { 'T', 'i', 'i', 'U', 'D', 215, 'O', 'O', 'k' };
+	const uint8 types[] = {_vm->_teleporterWallId, illusion1, illusion2, stairsUp, stairsDown, hole, plate1, plate2};
+	const uint8 signs[] = {'T', 'i', 'i', 'U', 'D', 215, 'O', 'O', 'k'};
 
 	for (int i = 0; i < 1024; ++i) {
 		if (!(i % 0x20))
@@ -649,7 +653,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 			c = 35;
 
 		bool key = false;
-		for (int t = bl->drawObjects; t; ) {
+		for (int t = bl->drawObjects; t;) {
 			EoBItem *itm = &_vm->_items[t];
 			if (itm->type == 38)
 				key = true;
@@ -657,7 +661,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 		}
 
 		if (_vm->_currentBlock == i) {
-			c = 'X';			
+			c = 'X';
 		} else if (key) {
 			c = signs[8];
 		} else {
@@ -668,7 +672,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 				}
 			}
 		}
-		
+
 		debugPrintf("%c", c);
 	}
 	debugPrintf("\n\nParty Position:   %c  Door:             %c  Stairs Up/Down: %c/%c  Plate:      %c   Hole: %c\nSwitch:           %c  Clickable Object: %c  Illusion Wall:  %c    Teleporter: %c   Key:  %c\n\n", 'X', 216, signs[3], signs[4], signs[6], signs[5], '/', 176, signs[1], signs[0], signs[8]);

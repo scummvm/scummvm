@@ -23,10 +23,10 @@
 #ifndef ULTIMA4_CORE_DEBUGGER_H
 #define ULTIMA4_CORE_DEBUGGER_H
 
-#include "ultima/ultima4/core/coords.h"
-#include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/core/debugger_actions.h"
 #include "ultima/shared/engine/debugger.h"
+#include "ultima/ultima4/core/coords.h"
+#include "ultima/ultima4/core/debugger_actions.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -38,6 +38,7 @@ class Debugger : public Shared::Debugger, public DebuggerActions {
 private:
 	MapTile _horse, _ship, _balloon;
 	bool _dontEndTurn;
+
 protected:
 	/**
 	 * Returns true if the debugger is active
@@ -82,6 +83,7 @@ protected:
 	void dontEndTurn() {
 		_dontEndTurn = true;
 	}
+
 private:
 	/**
 	 * Move the avatar in a given direction
@@ -215,7 +217,6 @@ private:
 	 */
 	bool cmdCombatSpeed(int argc, const char **argv);
 
-
 	/**
 	 * Show character stats
 	 */
@@ -240,6 +241,7 @@ private:
 	 * Yell
 	 */
 	bool cmdYell(int argc, const char **argv);
+
 private:
 	/**
 	 * Collision detection on/off
@@ -390,8 +392,10 @@ private:
 	 * Lists the triggers in a dungeon room
 	 */
 	bool cmdListTriggers(int argc, const char **argv);
+
 public:
 	bool _collisionOverride;
+
 public:
 	Debugger();
 	~Debugger() override;

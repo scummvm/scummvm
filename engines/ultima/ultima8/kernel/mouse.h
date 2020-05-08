@@ -23,9 +23,9 @@
 #ifndef ULTIMA8_KERNEL_MOUSE_H
 #define ULTIMA8_KERNEL_MOUSE_H
 
-#include "common/system.h"
 #include "common/rect.h"
 #include "common/stack.h"
+#include "common/system.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima8/graphics/texture.h"
 
@@ -36,8 +36,8 @@ const unsigned int DOUBLE_CLICK_TIMEOUT = 200;
 
 enum MouseButtonState {
 	MBS_DOWN = 0x1,
-	MBS_HANDLED = 0x2,		// Mousedown event handled
-	MBS_RELHANDLED = 0x4	// Mouse release event handled (only used in AvatarMover)
+	MBS_HANDLED = 0x2,   // Mousedown event handled
+	MBS_RELHANDLED = 0x4 // Mouse release event handled (only used in AvatarMover)
 };
 
 struct MButton {
@@ -47,8 +47,7 @@ struct MButton {
 	Common::Point _downPoint;
 	int _state;
 
-	MButton() : _downGump(0), _curDown(0), _lastDown(0), _state(MBS_HANDLED | MBS_RELHANDLED)
-	{
+	MButton() : _downGump(0), _curDown(0), _lastDown(0), _state(MBS_HANDLED | MBS_RELHANDLED) {
 	}
 
 	bool isState(MouseButtonState state) const {
@@ -74,9 +73,8 @@ struct MButton {
 	//! A convenience function - true if the current state is down, unhandled, and within the double click timeout.
 	bool isUnhandledDoubleClick() {
 		return isState(MBS_DOWN) && !isState(MBS_HANDLED) &&
-				(_curDown - _lastDown) <= DOUBLE_CLICK_TIMEOUT;
+		       (_curDown - _lastDown) <= DOUBLE_CLICK_TIMEOUT;
 	}
-
 };
 
 class Gump;
@@ -92,7 +90,7 @@ public:
 		MOUSE_QUILL = 5,
 		MOUSE_MAGGLASS = 6,
 		MOUSE_CROSS = 7,
-		MOUSE_POINTER = 8  //!< Default pointer
+		MOUSE_POINTER = 8 //!< Default pointer
 	};
 
 	enum DraggingState {
@@ -101,10 +99,11 @@ public:
 		DRAG_INVALID = 2,
 		DRAG_TEMPFAIL = 3
 	};
+
 private:
 	static Mouse *_instance;
 	Common::Stack<MouseCursor> _cursors;
-	Texture *_defaultMouse;      //!< Default Pentagram mouse for when there is no GameData
+	Texture *_defaultMouse; //!< Default Pentagram mouse for when there is no GameData
 
 	/**
 	 * Time mouse started flashing, or 0
@@ -122,12 +121,15 @@ private:
 	ObjId _dragging_objId;
 	uint16 _draggingItem_startGump;
 	uint16 _draggingItem_lastGump;
+
 private:
 	void startDragging(int mx, int my);
 	void moveDragging(int mx, int my);
 	void stopDragging(int mx, int my);
+
 public:
 	static Mouse *get_instance() { return _instance; }
+
 public:
 	Mouse();
 

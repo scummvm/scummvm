@@ -30,8 +30,8 @@
 #define WINTERMUTE_BASE_PACKAGE_H
 
 #include "common/archive.h"
-#include "common/stream.h"
 #include "common/fs.h"
+#include "common/stream.h"
 
 namespace Wintermute {
 class BasePackage {

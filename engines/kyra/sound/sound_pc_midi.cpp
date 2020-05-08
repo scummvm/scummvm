@@ -24,8 +24,8 @@
 
 #include "kyra/resource/resource.h"
 
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "gui/message.h"
@@ -70,10 +70,10 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 	// supported games include special General MIDI tracks).
 	if (_type == kMidiMT32 && !_nativeMT32) {
 		::GUI::MessageDialog dialog(_("You appear to be using a General MIDI device,\n"
-									"but your game only supports Roland MT32 MIDI.\n"
-									"We try to map the Roland MT32 instruments to\n"
-									"General MIDI ones. It is still possible that\n"
-									"some tracks sound incorrect."));
+		                              "but your game only supports Roland MT32 MIDI.\n"
+		                              "We try to map the Roland MT32 instruments to\n"
+		                              "General MIDI ones. It is still possible that\n"
+		                              "some tracks sound incorrect."));
 		dialog.runModal();
 	}
 }
@@ -189,7 +189,7 @@ void SoundMidiPC::updateVolumeSettings() {
 void SoundMidiPC::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
-		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : 0;
+		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC *)info) : 0;
 	}
 }
 
@@ -240,7 +240,7 @@ void SoundMidiPC::loadSoundFile(Common::String file) {
 	// we setup sfx to play from music file as well
 	if (_vm->game() == GI_KYRA1) {
 		for (int i = 0; i < 3; ++i) {
-			_output->setSoundSource(i+1);
+			_output->setSoundSource(i + 1);
 			_sfx[i]->loadMusic(_musicFile, fileSize);
 			_sfx[i]->stopPlaying();
 		}
@@ -269,7 +269,7 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 	_sFileName = file;
 
 	for (int i = 0; i < 3; ++i) {
-		_output->setSoundSource(i+1);
+		_output->setSoundSource(i + 1);
 		_sfx[i]->loadMusic(_sfxFile, fileSize);
 		_sfx[i]->stopPlaying();
 	}
@@ -288,7 +288,7 @@ void SoundMidiPC::playTrack(uint8 track) {
 
 	Common::StackLock lock(_mutex);
 	_fadeMusicOut = false;
-	
+
 	_output->setSourceVolume(0, _musicVolume, true);
 
 	_output->initSource(0);
@@ -317,7 +317,7 @@ void SoundMidiPC::playSoundEffect(uint8 track, uint8) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i < 3; ++i) {
 		if (!_sfx[i]->isPlaying()) {
-			_output->initSource(i+1);
+			_output->initSource(i + 1);
 			_sfx[i]->setTrack(track);
 			return;
 		}
@@ -328,9 +328,9 @@ void SoundMidiPC::stopAllSoundEffects() {
 	Common::StackLock lock(_mutex);
 
 	for (int i = 0; i < 3; ++i) {
-		_output->setSoundSource(i+1);
+		_output->setSoundSource(i + 1);
 		_sfx[i]->stopPlaying();
-		_output->deinitSource(i+1);
+		_output->deinitSource(i + 1);
 	}
 }
 
@@ -379,7 +379,7 @@ void SoundMidiPC::onTimer(void *data) {
 			midi->_music->stopPlaying();
 
 			for (int i = 0; i < 3; ++i) {
-				midi->_output->setSoundSource(i+1);
+				midi->_output->setSoundSource(i + 1);
 				midi->_sfx[i]->stopPlaying();
 			}
 
@@ -391,7 +391,7 @@ void SoundMidiPC::onTimer(void *data) {
 	midi->_music->onTimer();
 
 	for (int i = 0; i < 3; ++i) {
-		midi->_output->setSoundSource(i+1);
+		midi->_output->setSoundSource(i + 1);
 		midi->_sfx[i]->onTimer();
 	}
 }
@@ -403,7 +403,7 @@ Common::String SoundMidiPC::getFileName(const Common::String &str) {
 	else if (_type == kMidiGM)
 		file += ".C55";
 	else if (_type == kPCSpkr)
-		file += ".SND";//".PCS";
+		file += ".SND"; //".PCS";
 
 	if (_vm->resource()->exists(file.c_str()))
 		return file;

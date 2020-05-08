@@ -27,7 +27,7 @@
 
 namespace Saga {
 
-#define SPRITE_ZMAX  16
+#define SPRITE_ZMAX 16
 #define SPRITE_ZMASK 0x0F
 
 struct SpriteInfo {

@@ -53,8 +53,8 @@ protected:
 	void putInArray(int arg0, int idx2, int idx1, int val);
 	int32 scummRound(double arg) { return (int32)(arg + 0.5); }
 
-	#define RAD2DEG (180 / M_PI)
-	#define DEG2RAD (M_PI / 180)
+#define RAD2DEG (180 / M_PI)
+#define DEG2RAD (M_PI / 180)
 };
 
 // Logic declarations

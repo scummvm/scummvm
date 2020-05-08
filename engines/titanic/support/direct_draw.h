@@ -23,8 +23,8 @@
 #ifndef TITANIC_DIRECT_DRAW_H
 #define TITANIC_DIRECT_DRAW_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "titanic/support/direct_draw_surface.h"
 
 namespace Titanic {
@@ -38,6 +38,7 @@ public:
 	int _height;
 	int _bpp;
 	int _numBackSurfaces;
+
 public:
 	DirectDraw();
 
@@ -62,6 +63,7 @@ public:
 	DirectDraw _directDraw;
 	DirectDrawSurface *_mainSurface;
 	DirectDrawSurface *_backSurfaces[2];
+
 public:
 	DirectDrawManager(TitanicEngine *vm, bool windowed);
 

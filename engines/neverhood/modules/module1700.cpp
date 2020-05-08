@@ -20,23 +20,22 @@
  *
  */
 
-#include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1700.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/modules/module1700_sprites.h"
 
 namespace Neverhood {
 
 static const uint32 kModule1700SoundList[] = {
-	0xB288D450,
-	0x90804450,
-	0x99801500,
-	0xB288D455,
-	0x93825040,
-	0
-};
+    0xB288D450,
+    0x90804450,
+    0x99801500,
+    0xB288D455,
+    0x93825040,
+    0};
 
 Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+    : Module(vm, parentModule) {
 
 	_vm->_soundMan->addMusic(0x04212331, 0x31114225);
 	_vm->_soundMan->addSoundList(0x04212331, kModule1700SoundList);
@@ -51,7 +50,6 @@ Module1700::Module1700(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene(4, 1);
 	else
 		createScene(4, 3);
-
 }
 
 Module1700::~Module1700() {
@@ -132,14 +130,13 @@ void Module1700::updateScene() {
 }
 
 static const uint32 kScene1705FileHashes[] = {
-	0x910EA801, 0x920EA801, 0x940EA801,
-	0x980EA801, 0x800EA801, 0xB00EA801,
-	0xD00EA801, 0x100EA801, 0x900EA800,
-	0xD10EA801, 0x110EA801, 0x910EA800
-};
+    0x910EA801, 0x920EA801, 0x940EA801,
+    0x980EA801, 0x800EA801, 0xB00EA801,
+    0xD00EA801, 0x100EA801, 0x900EA800,
+    0xD10EA801, 0x110EA801, 0x910EA800};
 
 Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _paletteArea(1) {
+    : Scene(vm, parentModule), _paletteArea(1) {
 
 	Sprite *tempSprite;
 
@@ -200,7 +197,6 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 		tempSprite = insertStaticSprite(0x30303822, 1100);
 		_klaymen->setClipRect(0, tempSprite->getDrawRect().y, _sprite->getDrawRect().x2(), 480);
 	}
-
 }
 
 void Scene1705::update() {

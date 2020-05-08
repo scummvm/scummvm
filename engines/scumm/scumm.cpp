@@ -22,8 +22,8 @@
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/md5.h"
 #include "common/events.h"
+#include "common/md5.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -40,46 +40,46 @@
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
-#include "scumm/imuse/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
-#include "scumm/smush/smush_mixer.h"
-#include "scumm/smush/smush_player.h"
-#include "scumm/players/player_towns.h"
-#include "scumm/insane/insane.h"
 #include "scumm/he/animation_he.h"
+#include "scumm/he/cup_player_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
+#include "scumm/he/moonbase/moonbase.h"
+#include "scumm/he/resource_he.h"
 #include "scumm/he/sound_he.h"
+#include "scumm/he/sprite_he.h"
+#include "scumm/imuse/drivers/amiga.h"
+#include "scumm/imuse/drivers/fmtowns.h"
+#include "scumm/imuse/drivers/mac_m68k.h"
+#include "scumm/imuse/drivers/pcspk.h"
+#include "scumm/imuse/imuse.h"
+#include "scumm/imuse/sysex.h"
+#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/insane/insane.h"
 #include "scumm/object.h"
 #include "scumm/players/player_ad.h"
-#include "scumm/players/player_nes.h"
-#include "scumm/players/player_sid.h"
-#include "scumm/players/player_pce.h"
 #include "scumm/players/player_apple2.h"
+#include "scumm/players/player_he.h"
+#include "scumm/players/player_nes.h"
+#include "scumm/players/player_pce.h"
+#include "scumm/players/player_sid.h"
+#include "scumm/players/player_towns.h"
 #include "scumm/players/player_v1.h"
 #include "scumm/players/player_v2.h"
-#include "scumm/players/player_v2cms.h"
 #include "scumm/players/player_v2a.h"
+#include "scumm/players/player_v2cms.h"
 #include "scumm/players/player_v3a.h"
 #include "scumm/players/player_v3m.h"
 #include "scumm/players/player_v4a.h"
 #include "scumm/players/player_v5m.h"
-#include "scumm/players/player_he.h"
 #include "scumm/resource.h"
-#include "scumm/he/resource_he.h"
-#include "scumm/he/moonbase/moonbase.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
+#include "scumm/smush/smush_mixer.h"
+#include "scumm/smush/smush_player.h"
 #include "scumm/sound.h"
-#include "scumm/imuse/sysex.h"
-#include "scumm/he/sprite_he.h"
-#include "scumm/he/cup_player_he.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
-#include "scumm/imuse/drivers/pcspk.h"
-#include "scumm/imuse/drivers/mac_m68k.h"
-#include "scumm/imuse/drivers/amiga.h"
-#include "scumm/imuse/drivers/fmtowns.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -92,36 +92,32 @@ namespace Scumm {
 // Use g_scumm from error() ONLY
 ScummEngine *g_scumm = 0;
 
-
 struct dbgChannelDesc {
 	const char *channel, *desc;
 	uint32 flag;
 };
 
-
 // Debug channel lookup table for Debugger console
 static const dbgChannelDesc debugChannels[] = {
-	{"SCRIPTS", "Track script execution", DEBUG_SCRIPTS},
-	{"OPCODES", "Track opcode execution", DEBUG_OPCODES},
-	{"IMUSE", "Track iMUSE events", DEBUG_IMUSE},
-	{"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
-	{"VARS", "Track variable changes", DEBUG_VARS},
-	{"ACTORS", "Actor-related debug", DEBUG_ACTORS},
-	{"SOUND", "Sound related debug", DEBUG_SOUND},
-	{"INSANE", "Track INSANE", DEBUG_INSANE},
-	{"SMUSH", "Track SMUSH", DEBUG_SMUSH},
-	{"MOONBASEAI", "Track Moonbase AI", DEBUG_MOONBASE_AI}
-};
+    {"SCRIPTS", "Track script execution", DEBUG_SCRIPTS},
+    {"OPCODES", "Track opcode execution", DEBUG_OPCODES},
+    {"IMUSE", "Track iMUSE events", DEBUG_IMUSE},
+    {"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
+    {"VARS", "Track variable changes", DEBUG_VARS},
+    {"ACTORS", "Actor-related debug", DEBUG_ACTORS},
+    {"SOUND", "Sound related debug", DEBUG_SOUND},
+    {"INSANE", "Track INSANE", DEBUG_INSANE},
+    {"SMUSH", "Track SMUSH", DEBUG_SMUSH},
+    {"MOONBASEAI", "Track Moonbase AI", DEBUG_MOONBASE_AI}};
 
 ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
-	: Engine(syst),
-	  _game(dr.game),
-	  _filenamePattern(dr.fp),
-	  _language(dr.language),
-	  _currentScript(0xFF), // Let debug() work on init stage
-	  _messageDialog(0), _pauseDialog(0), _versionDialog(0),
-	  _rnd("scumm")
-	  {
+    : Engine(syst),
+      _game(dr.game),
+      _filenamePattern(dr.fp),
+      _language(dr.language),
+      _currentScript(0xFF), // Let debug() work on init stage
+      _messageDialog(0), _pauseDialog(0), _versionDialog(0),
+      _rnd("scumm") {
 
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR) {
@@ -131,7 +127,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 			_gdi = new GdiHE16bit(this);
 	} else
 #endif
-	if (_game.heversion > 0) {
+	    if (_game.heversion > 0) {
 		_gdi = new GdiHE(this);
 	} else if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
@@ -148,8 +144,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	for (int i = 0; i < 16; ++i) {
 		char tmpStr[3] = "00";
 		uint tmpVal;
-		tmpStr[0] = dr.md5[2*i];
-		tmpStr[1] = dr.md5[2*i+1];
+		tmpStr[0] = dr.md5[2 * i];
+		tmpStr[1] = dr.md5[2 * i + 1];
 		int res = sscanf(tmpStr, "%x", &tmpVal);
 		assert(res == 1);
 		_gameMD5[i] = (byte)tmpVal;
@@ -361,7 +357,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	VAR_ME = 0xFF;
 	VAR_NUM_ACTOR = 0xFF;
 	VAR_CURRENT_LIGHTS = 0xFF;
-	VAR_CURRENTDRIVE = 0xFF;	// How about merging this with VAR_CURRENTDISK?
+	VAR_CURRENTDRIVE = 0xFF; // How about merging this with VAR_CURRENTDISK?
 	VAR_CURRENTDISK = 0xFF;
 	VAR_TMR_1 = 0xFF;
 	VAR_TMR_2 = 0xFF;
@@ -536,9 +532,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderAmiga:
-		if ((_game.version >= 4 && !(_game.features & GF_16COLOR)
-			&& !(_game.platform == Common::kPlatformAmiga && _renderMode == Common::kRenderEGA))
-			|| (_game.features & GF_OLD256))
+		if ((_game.version >= 4 && !(_game.features & GF_16COLOR) && !(_game.platform == Common::kPlatformAmiga && _renderMode == Common::kRenderEGA)) || (_game.features & GF_OLD256))
 			_renderMode = Common::kRenderDefault;
 		break;
 
@@ -549,7 +543,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_hexdumpScripts = false;
 	_showStack = false;
 
-	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {	// FM-TOWNS V3 games use 320x240
+	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) { // FM-TOWNS V3 games use 320x240
 		_screenWidth = 320;
 		_screenHeight = 240;
 	} else if (_game.version == 8 || _game.heversion >= 71) {
@@ -588,7 +582,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	// Add debug levels
 	for (int i = 0; i < ARRAYSIZE(debugChannels); ++i)
-		DebugMan.addDebugChannel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
+		DebugMan.addDebugChannel(debugChannels[i].flag, debugChannels[i].channel, debugChannels[i].desc);
 
 #ifndef DISABLE_HELP
 	// Create custom GMM dialog providing a help subdialog
@@ -596,7 +590,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_mainMenuDialog = new ScummMenuDialog(this);
 #endif
 }
-
 
 ScummEngine::~ScummEngine() {
 	DebugMan.clearAllDebugChannels();
@@ -662,9 +655,8 @@ ScummEngine::~ScummEngine() {
 	delete _gdi;
 }
 
-
 ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
- : ScummEngine(syst, dr) {
+    : ScummEngine(syst, dr) {
 
 	// All "classic" games (V5 and older) encrypted their data files
 	// with exception of the GF_OLD256 games and the PC-Engine version
@@ -686,13 +678,13 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 }
 
 ScummEngine_v4::ScummEngine_v4(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v5(syst, dr) {
+    : ScummEngine_v5(syst, dr) {
 	_resourceHeaderSize = 6;
 	_game.features |= GF_SMALL_HEADER;
 }
 
 ScummEngine_v3::ScummEngine_v3(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v4(syst, dr) {
+    : ScummEngine_v4(syst, dr) {
 	// All v3 and older games only used 16 colors with exception of the GF_OLD256 games.
 	if (!(_game.features & GF_OLD256))
 		_game.features |= GF_16COLOR;
@@ -705,13 +697,13 @@ ScummEngine_v3::~ScummEngine_v3() {
 }
 
 ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v3(syst, dr) {
+    : ScummEngine_v3(syst, dr) {
 	_resourceHeaderSize = 4;
 	_game.features |= GF_OLD_BUNDLE;
 }
 
 ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v3old(syst, dr) {
+    : ScummEngine_v3old(syst, dr) {
 
 	_inventoryOffset = 0;
 	_flashlight.xStrips = 6;
@@ -729,7 +721,7 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 }
 
 ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v2(syst, dr) {
+    : ScummEngine_v2(syst, dr) {
 	_drawDemo = false;
 	_currentMode = 0;
 	_currentLights = 0;
@@ -748,7 +740,7 @@ ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 
 	DelayReset();
 
-	if (strcmp(dr.fp.pattern, "maniacdemo.d64") == 0 )
+	if (strcmp(dr.fp.pattern, "maniacdemo.d64") == 0)
 		_game.features |= GF_DEMO;
 }
 
@@ -780,7 +772,7 @@ int ScummEngine_v0::DelayCalculateDelta() {
 }
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine(syst, dr) {
+    : ScummEngine(syst, dr) {
 	_blastObjectQueuePos = 0;
 	memset(_blastObjectQueue, 0, sizeof(_blastObjectQueue));
 	_blastTextQueuePos = 0;
@@ -809,7 +801,7 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 }
 
 ScummEngine_v60he::ScummEngine_v60he(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v6(syst, dr) {
+    : ScummEngine_v6(syst, dr) {
 	memset(_hInFileTable, 0, sizeof(_hInFileTable));
 	memset(_hOutFileTable, 0, sizeof(_hOutFileTable));
 
@@ -832,7 +824,7 @@ ScummEngine_v60he::~ScummEngine_v60he() {
 }
 
 ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v60he(syst, dr) {
+    : ScummEngine_v60he(syst, dr) {
 	if (_game.platform == Common::kPlatformMacintosh && (_game.heversion >= 72 && _game.heversion <= 74))
 		_resExtractor = new MacResExtractor(this);
 	else
@@ -866,7 +858,7 @@ ScummEngine_v70he::~ScummEngine_v70he() {
 
 #ifdef ENABLE_HE
 ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v70he(syst, dr) {
+    : ScummEngine_v70he(syst, dr) {
 	_auxBlocksNum = 0;
 	memset(_auxBlocks, 0, sizeof(_auxBlocks));
 	_auxEntriesNum = 0;
@@ -884,7 +876,7 @@ ScummEngine_v71he::~ScummEngine_v71he() {
 }
 
 ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v71he(syst, dr) {
+    : ScummEngine_v71he(syst, dr) {
 	VAR_NUM_ROOMS = 0xFF;
 	VAR_NUM_SCRIPTS = 0xFF;
 	VAR_NUM_SOUNDS = 0xFF;
@@ -898,7 +890,7 @@ ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const DetectorResult &dr)
 }
 
 ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v72he(syst, dr) {
+    : ScummEngine_v72he(syst, dr) {
 	_heSndResId = 0;
 	_curSndId = 0;
 	_sndPtrOffs = 0;
@@ -912,7 +904,7 @@ ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
 }
 
 ScummEngine_v90he::ScummEngine_v90he(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v80he(syst, dr) {
+    : ScummEngine_v80he(syst, dr) {
 	_moviePlay = new MoviePlayer(this, _mixer);
 	_sprite = new Sprite(this);
 
@@ -961,7 +953,7 @@ ScummEngine_v100he::~ScummEngine_v100he() {
 	delete _moonbase;
 }
 
-ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) : Engine(syst){
+ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) : Engine(syst) {
 	_syst = syst;
 	_game = dr.game;
 	_filenamePattern = dr.fp;
@@ -1001,7 +993,7 @@ void ScummEngine_vCUPhe::parseEvents() {
 
 #ifdef ENABLE_SCUMM_7_8
 ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v6(syst, dr) {
+    : ScummEngine_v6(syst, dr) {
 	_verbLineSpacing = 10;
 
 	_smushFrameRate = 0;
@@ -1035,7 +1027,7 @@ ScummEngine_v7::~ScummEngine_v7() {
 }
 
 ScummEngine_v8::ScummEngine_v8(OSystem *syst, const DetectorResult &dr)
-	: ScummEngine_v7(syst, dr) {
+    : ScummEngine_v7(syst, dr) {
 	_objectIDMap = 0;
 	_keyScriptKey = 0;
 	_keyScriptNo = 0;
@@ -1049,7 +1041,7 @@ ScummEngine_v8::~ScummEngine_v8() {
 #endif
 
 #pragma mark -
-#pragma mark --- Initialization ---
+#pragma mark--- Initialization ---
 #pragma mark -
 
 Common::Error ScummEngine::init() {
@@ -1084,7 +1076,7 @@ Common::Error ScummEngine::init() {
 		SearchMan.addSubDirectoryMatching(Common::FSNode("/"), "Volumes/MONKEY3_2/RESOURCE");
 	} else
 #endif
-	if (_game.version == 8)
+	    if (_game.version == 8)
 		// This is for COMI
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
 
@@ -1099,17 +1091,17 @@ Common::Error ScummEngine::init() {
 	if (_filenamePattern.genMethod == kGenDiskNumSteam || _filenamePattern.genMethod == kGenRoomNumSteam) {
 		if (_game.platform == Common::kPlatformWindows) {
 			switch (_game.id) {
-			case GID_INDY3 :
+			case GID_INDY3:
 				SearchMan.addSubDirectoryMatching(gameDataDir, "indy3");
 				break;
-			case GID_INDY4 :
+			case GID_INDY4:
 				SearchMan.addSubDirectoryMatching(gameDataDir, "atlantis");
 				break;
-			case GID_LOOM :
+			case GID_LOOM:
 				SearchMan.addSubDirectoryMatching(gameDataDir, "loom");
 				break;
 #ifdef ENABLE_SCUMM_7_8
-			case GID_DIG :
+			case GID_DIG:
 				SearchMan.addSubDirectoryMatching(gameDataDir, "dig");
 				SearchMan.addSubDirectoryMatching(gameDataDir, "dig/video");
 				break;
@@ -1187,7 +1179,6 @@ Common::Error ScummEngine::init() {
 			assert(_game.version >= 5 && _game.heversion == 0);
 			_fileHandle = new ScummFile();
 			_containerFile = _filenamePattern.pattern;
-
 
 			// We now have to determine the correct _filenamePattern. To do this
 			// we simply hardcode the possibilities.
@@ -1271,9 +1262,9 @@ Common::Error ScummEngine::init() {
 		}
 		if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-			|| _game.platform == Common::kPlatformFMTowns
+		    || _game.platform == Common::kPlatformFMTowns
 #endif
-			) {
+		) {
 #ifdef USE_RGB_COLOR
 			_outputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 
@@ -1307,14 +1298,14 @@ Common::Error ScummEngine::init() {
 #endif
 		} else {
 #ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
-		if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
-			return Common::Error(Common::kUnsupportedColorMode, "This game requires dual graphics layer support which is disabled in this build");
+			if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
+				return Common::Error(Common::kUnsupportedColorMode, "This game requires dual graphics layer support which is disabled in this build");
 #endif
 			initGraphics(screenWidth, screenHeight);
 
 			if (_game.platform == Common::kPlatformNES)
 				_system->fillScreen(0x1d);
-			}
+		}
 	}
 
 	_outputPixelFormat = _system->getScreenFormat();
@@ -1476,7 +1467,7 @@ void ScummEngine::setupCharsetRenderer() {
 			_charset = new CharsetRendererPCE(this);
 		else
 #endif
-		if (_game.platform == Common::kPlatformFMTowns)
+		    if (_game.platform == Common::kPlatformFMTowns)
 			_charset = new CharsetRendererTownsV3(this);
 		else
 			_charset = new CharsetRendererV3(this);
@@ -1525,9 +1516,9 @@ void ScummEngine::resetScumm() {
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		|| (_game.platform == Common::kPlatformFMTowns)
+	    || (_game.platform == Common::kPlatformFMTowns)
 #endif
-		)
+	)
 		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
 #endif
 
@@ -1577,8 +1568,8 @@ void ScummEngine::resetScumm() {
 
 	// Allocate and Initialize actors
 	Actor::kInvalidBox = ((_game.features & GF_SMALL_HEADER) ? kOldInvalidBox : kNewInavlidBox);
-	_actors = new Actor * [_numActors];
-	_sortedActors = new Actor * [_numActors];
+	_actors = new Actor *[_numActors];
+	_sortedActors = new Actor *[_numActors];
 	for (i = 0; i < _numActors; ++i) {
 		if (_game.version == 0)
 			_actors[i] = new Actor_v0(this, i);
@@ -1637,8 +1628,8 @@ void ScummEngine::resetScumm() {
 		VAR(VAR_CAMERA_ACCEL_Y) = 100;
 	} else {
 		if (_game.platform == Common::kPlatformNES) {
-			camera._leftTrigger = 6;	// 6
-			camera._rightTrigger = 21;	// 25
+			camera._leftTrigger = 6;   // 6
+			camera._rightTrigger = 21; // 25
 		} else {
 			camera._leftTrigger = 10;
 			camera._rightTrigger = (_game.heversion >= 71) ? 70 : 30;
@@ -1734,12 +1725,11 @@ void ScummEngine_v2::resetScumm() {
 void ScummEngine_v3::resetScumm() {
 	ScummEngine_v4::resetScumm();
 
-
 	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
 		// Load tile set and palette for the distaff
 		byte *roomptr = getResourceAddress(rtRoom, 90);
 		assert(roomptr);
-		const byte *palPtr = findResourceData(MKTAG('C','L','U','T'), roomptr);
+		const byte *palPtr = findResourceData(MKTAG('C', 'L', 'U', 'T'), roomptr);
 		assert(palPtr - 4);
 		setPCEPaletteFromPtr(palPtr);
 		_gdi->_distaff = true;
@@ -1868,8 +1858,7 @@ void ScummEngine::setupMusic(int midi) {
 		break;
 	}
 
-	if ((_game.id == GID_MONKEY_EGA || (_game.id == GID_LOOM && _game.version == 3))
-	   &&  (_game.platform == Common::kPlatformDOS) && _sound->_musicType == MDT_MIDI) {
+	if ((_game.id == GID_MONKEY_EGA || (_game.id == GID_LOOM && _game.version == 3)) && (_game.platform == Common::kPlatformDOS) && _sound->_musicType == MDT_MIDI) {
 		Common::String fileName;
 		bool missingFile = false;
 		if (_game.id == GID_LOOM) {
@@ -1894,10 +1883,11 @@ void ScummEngine::setupMusic(int midi) {
 
 		if (missingFile) {
 			GUI::MessageDialog dialog(
-				Common::String::format(
-					_("Native MIDI support requires the Roland Upgrade from LucasArts,\n"
-					"but %s is missing. Using AdLib instead."), fileName.c_str()),
-				_("OK"));
+			    Common::String::format(
+			        _("Native MIDI support requires the Roland Upgrade from LucasArts,\n"
+			          "but %s is missing. Using AdLib instead."),
+			        fileName.c_str()),
+			    _("OK"));
 			dialog.runModal();
 			_sound->_musicType = MDT_ADLIB;
 		}
@@ -1923,7 +1913,7 @@ void ScummEngine::setupMusic(int midi) {
 	// Init iMuse
 	if (_game.version >= 7) {
 		// Setup for digital iMuse is performed in another place
-	} else if (_game.platform == Common::kPlatformApple2GS && _game.version == 0){
+	} else if (_game.platform == Common::kPlatformApple2GS && _game.version == 0) {
 		_musicEngine = new Player_AppleII(this, _mixer);
 	} else if (_game.platform == Common::kPlatformC64 && _game.version <= 1) {
 #ifndef DISABLE_SID
@@ -2025,9 +2015,8 @@ void ScummEngine::setupMusic(int midi) {
 		}
 
 		if (_imuse) {
-			_imuse->addSysexHandler
-				(/*IMUSE_SYSEX_ID*/ 0x7D,
-				 (_game.id == GID_SAMNMAX) ? sysexHandler_SamNMax : sysexHandler_Scumm);
+			_imuse->addSysexHandler(/*IMUSE_SYSEX_ID*/ 0x7D,
+			                        (_game.id == GID_SAMNMAX) ? sysexHandler_SamNMax : sysexHandler_Scumm);
 			_imuse->property(IMuse::PROP_GAME_ID, _game.id);
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
@@ -2091,7 +2080,6 @@ void ScummEngine::syncSoundSettings() {
 	if (_game.id == GID_BASEBALL2003) {
 		_scummVars[632] = ConfMan.getBool("subtitles");
 	}
-
 }
 
 void ScummEngine::setTalkSpeed(int talkspeed) {
@@ -2102,9 +2090,8 @@ int ScummEngine::getTalkSpeed() {
 	return (ConfMan.getInt("talkspeed") * 9 + 255 / 2) / 255;
 }
 
-
 #pragma mark -
-#pragma mark --- Main loop ---
+#pragma mark--- Main loop ---
 #pragma mark -
 
 Common::Error ScummEngine::go() {
@@ -2118,7 +2105,7 @@ Common::Error ScummEngine::go() {
 		_saveLoadFlag = 0;
 	}
 
-	int diff = 0;	// Duration of one loop iteration
+	int diff = 0; // Duration of one loop iteration
 
 	while (!shouldQuit()) {
 		// Randomize the PRNG by calling it at regular intervals. This ensures
@@ -2133,8 +2120,8 @@ Common::Error ScummEngine::go() {
 
 		// Determine how long to wait before the next loop iteration should start
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
-		if (delta < 1)	// Ensure we don't get into an endless loop
-			delta = 1;  // by not decreasing sleepers.
+		if (delta < 1) // Ensure we don't get into an endless loop
+			delta = 1; // by not decreasing sleepers.
 
 		// WORKAROUND: Unfortunately the MOS 6502 wasn't always fast enough for MM
 		//  a number of situations can lead to the engine running at less than 60 ticks per second, without this drop
@@ -2152,7 +2139,7 @@ Common::Error ScummEngine::go() {
 		// This is important for the door-closing action in the dungeon,
 		// otherwise (delta < 6) a single kid is able to escape.
 		if (_game.version == 1 && isScriptRunning(137)) {
-				delta = 6;
+			delta = 6;
 		}
 
 		// Wait...
@@ -2166,7 +2153,6 @@ Common::Error ScummEngine::go() {
 
 		// Halt the stop watch and compute how much time this iteration took.
 		diff = _system->getMillis() - diff;
-
 
 		if (shouldQuit()) {
 			// TODO: Maybe perform an autosave on exit?
@@ -2215,7 +2201,7 @@ void ScummEngine::scummLoop(int delta) {
 		VAR(VAR_TMR_2) += delta;
 		VAR(VAR_TMR_3) += delta;
 		if ((_game.id == GID_INDY3 && _game.platform != Common::kPlatformMacintosh) ||
-			_game.id == GID_ZAK) {
+		    _game.id == GID_ZAK) {
 			// Amiga/PC versions of Indy3 set three extra timers
 			// FM-TOWNS version of Zak sets three extra timers
 			VAR(39) += delta;
@@ -2407,7 +2393,7 @@ void ScummEngine::scummLoop_updateScummVars() {
 			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
 		else
 #endif
-			VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT);
+		VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT);
 	} else if (_game.version <= 2) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x >> V12_X_SHIFT;
 	} else {
@@ -2565,7 +2551,7 @@ void ScummEngine_v5::scummLoop_handleActors() {
 	resetActorBgs();
 
 	if (!(getCurrentLights() & LIGHTMODE_room_lights_on) &&
-		  getCurrentLights() & LIGHTMODE_flashlight_on) {
+	    getCurrentLights() & LIGHTMODE_flashlight_on) {
 		drawFlashlight();
 		setActorRedrawFlags();
 	}
@@ -2603,9 +2589,8 @@ void ScummEngine_v7::scummLoop_handleSound() {
 }
 #endif
 
-
 #pragma mark -
-#pragma mark --- SCUMM ---
+#pragma mark--- SCUMM ---
 #pragma mark -
 
 int ScummEngine_v60he::getHETimer(int timer) {
@@ -2658,7 +2643,6 @@ void ScummEngine::restart() {
 	// a save state right after startup ... to this end we could introduce a SaveFile
 	// subclass which is implemented using a memory buffer (i.e. no actual file is
 	// created). Then to restart we just have to load that pseudo save state.
-
 
 	int i;
 
@@ -2765,7 +2749,7 @@ bool ScummEngine::startManiac() {
 }
 
 #pragma mark -
-#pragma mark --- GUI ---
+#pragma mark--- GUI ---
 #pragma mark -
 
 void ScummEngine::pauseEngineIntern(bool pause) {
@@ -2860,21 +2844,19 @@ char ScummEngine::displayMessage(const char *altButton, const char *message, ...
 	return runDialog(dialog);
 }
 
-
 #pragma mark -
-#pragma mark --- Miscellaneous ---
+#pragma mark--- Miscellaneous ---
 #pragma mark -
 
 void ScummEngine::errorString(const char *buf1, char *buf2, int buf2Size) {
 	if (_currentScript != 0xFF) {
 		snprintf(buf2, buf2Size, "(%d:%d:0x%lX): %s", _roomResource,
-			vm.slot[_currentScript].number, (long)(_scriptPointer - _scriptOrgPointer), buf1);
+		         vm.slot[_currentScript].number, (long)(_scriptPointer - _scriptOrgPointer), buf1);
 	} else {
 		strncpy(buf2, buf1, buf2Size);
 		if (buf2Size > 0)
-			buf2[buf2Size-1] = '\0';
+			buf2[buf2Size - 1] = '\0';
 	}
 }
-
 
 } // End of namespace Scumm

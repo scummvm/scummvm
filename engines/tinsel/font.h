@@ -20,7 +20,7 @@
  *
  */
 
-#ifndef TINSEL_FONT_H	// prevent multiple includes
+#ifndef TINSEL_FONT_H // prevent multiple includes
 #define TINSEL_FONT_H
 
 #include "tinsel/dw.h"
@@ -29,7 +29,7 @@ namespace Tinsel {
 
 // A temporary buffer for extracting text into is defined in font.c
 // Accessed using TextBufferAddr(), this is how big it is:
-#define TBUFSZ	512
+#define TBUFSZ 512
 
 class Font {
 public:
@@ -39,7 +39,7 @@ public:
 	/**
 	 * Return address of tBuffer
 	 */
-	char* TextBufferAddr() { return _tBuffer; }
+	char *TextBufferAddr() { return _tBuffer; }
 
 	/**
 	 * Return hTagFont handle.
@@ -97,4 +97,4 @@ private:
 
 } // End of namespace Tinsel
 
-#endif		// TINSEL_FONT_H
+#endif // TINSEL_FONT_H

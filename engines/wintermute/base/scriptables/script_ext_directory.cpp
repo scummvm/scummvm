@@ -27,9 +27,9 @@
  */
 
 #include "engines/wintermute/base/scriptables/script_ext_directory.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
@@ -37,7 +37,6 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-
 
 IMPLEMENT_PERSISTENT(SXDirectory, true)
 
@@ -47,15 +46,11 @@ BaseScriptable *makeSXDirectory(BaseGame *inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 SXDirectory::SXDirectory(BaseGame *inGame) : BaseScriptable(inGame) {
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 SXDirectory::~SXDirectory() {
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
@@ -113,8 +108,8 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 			warning("Directory.%s is not implemented! Returning empty array...", name);
 		}
 
- 		stack->pushNative(array, false);
- 		return STATUS_OK;
+		stack->pushNative(array, false);
+		return STATUS_OK;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -127,13 +122,12 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		warning("Directory.GetDrives is not implemented! Returning empty array...");
 
 		stack->pushInt(0);
- 		stack->pushNative(makeSXArray(_gameRef, stack), false);
- 		return STATUS_OK;
+		stack->pushNative(makeSXArray(_gameRef, stack), false);
+		return STATUS_OK;
 	} else {
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXDirectory::scGetProperty(const Common::String &name) {
@@ -173,7 +167,6 @@ ScValue *SXDirectory::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXDirectory::persist(BasePersistenceManager *persistMgr) {

@@ -29,28 +29,27 @@
  *
  */
 
-#include "common/memstream.h"
 #include "common/debug-channels.h"
+#include "common/memstream.h"
 
-#include "sword25/sword25.h"
 #include "sword25/package/packagemanager.h"
-#include "sword25/script/luascript.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/script/luascript.h"
+#include "sword25/sword25.h"
 
-#include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
-#include "common/lua/lua.h"
-#include "common/lua/lualib.h"
 #include "common/lua/lauxlib.h"
+#include "common/lua/lua.h"
 #include "common/lua/lua_persistence.h"
+#include "common/lua/lualib.h"
 
 namespace Sword25 {
 
-LuaScriptEngine::LuaScriptEngine(Kernel *KernelPtr) :
-	ScriptEngine(KernelPtr),
-	_state(0),
-	_pcallErrorhandlerRegistryIndex(0) {
+LuaScriptEngine::LuaScriptEngine(Kernel *KernelPtr) : ScriptEngine(KernelPtr),
+                                                      _state(0),
+                                                      _pcallErrorhandlerRegistryIndex(0) {
 }
 
 LuaScriptEngine::~LuaScriptEngine() {
@@ -71,12 +70,12 @@ void debugHook(lua_State *L, lua_Debug *ar) {
 
 	debug("LUA: %s %s: %s %d", ar->namewhat, ar->name, ar->short_src, ar->currentline);
 }
-}
+} // namespace
 
 bool LuaScriptEngine::init() {
 	// Lua-State initialisation, as well as standard libaries initialisation
 	_state = luaL_newstate();
-	if (!_state || ! registerStandardLibs() || !registerStandardLibExtensions()) {
+	if (!_state || !registerStandardLibs() || !registerStandardLibExtensions()) {
 		error("Lua could not be initialized.");
 		return false;
 	}
@@ -180,9 +179,8 @@ namespace {
 
 void removeForbiddenFunctions(lua_State *L) {
 	static const char *FORBIDDEN_FUNCTIONS[] = {
-		"dofile",
-		0
-	};
+	    "dofile",
+	    0};
 
 	const char **iterator = FORBIDDEN_FUNCTIONS;
 	while (*iterator) {
@@ -191,7 +189,7 @@ void removeForbiddenFunctions(lua_State *L) {
 		++iterator;
 	}
 }
-}
+} // namespace
 
 bool LuaScriptEngine::registerStandardLibs() {
 	luaL_openlibs(_state);
@@ -215,8 +213,8 @@ bool LuaScriptEngine::executeBuffer(const byte *data, uint size, const Common::S
 	// Run buffer contents
 	if (lua_pcall(_state, 0, 0, -2) != 0) {
 		error("An error occurred while executing \"%s\":\n%s.",
-		               name.c_str(),
-		               lua_tostring(_state, -1));
+		      name.c_str(),
+		      lua_tostring(_state, -1));
 		lua_pop(_state, 2);
 
 		return false;
@@ -245,54 +243,53 @@ const char *PERMANENTS_TABLE_NAME = "Permanents";
 
 // This array contains the name of global Lua objects that should not be persisted
 const char *STANDARD_PERMANENTS[] = {
-	"string",
-	"xpcall",
-	"package",
-	"tostring",
-	"print",
-	"os",
-	"unpack",
-	"require",
-	"getfenv",
-	"setmetatable",
-	"next",
-	"assert",
-	"tonumber",
-	"io",
-	"rawequal",
-	"collectgarbage",
-	"getmetatable",
-	"module",
-	"rawset",
-	"warning",
-	"math",
-	"debug",
-	"pcall",
-	"table",
-	"newproxy",
-	"type",
-	"coroutine",
-	"select",
-	"gcinfo",
-	"pairs",
-	"rawget",
-	"loadstring",
-	"ipairs",
-	"_VERSION",
-	"setfenv",
-	"load",
-	"error",
-	"loadfile",
+    "string",
+    "xpcall",
+    "package",
+    "tostring",
+    "print",
+    "os",
+    "unpack",
+    "require",
+    "getfenv",
+    "setmetatable",
+    "next",
+    "assert",
+    "tonumber",
+    "io",
+    "rawequal",
+    "collectgarbage",
+    "getmetatable",
+    "module",
+    "rawset",
+    "warning",
+    "math",
+    "debug",
+    "pcall",
+    "table",
+    "newproxy",
+    "type",
+    "coroutine",
+    "select",
+    "gcinfo",
+    "pairs",
+    "rawget",
+    "loadstring",
+    "ipairs",
+    "_VERSION",
+    "setfenv",
+    "load",
+    "error",
+    "loadfile",
 
-	"pairs_next",
-	"ipairs_next",
-	"pluto",
-	"Cfg",
-	"Translator",
-	"Persistence",
-	"CommandLine",
-	0
-};
+    "pairs_next",
+    "ipairs_next",
+    "pluto",
+    "Cfg",
+    "Translator",
+    "Persistence",
+    "CommandLine",
+    0};
 
 enum PERMANENT_TABLE_TYPE {
 	PTT_PERSIST,
@@ -464,17 +461,15 @@ bool LuaScriptEngine::unpersist(InputPersistenceBlock &reader) {
 	// __METATABLES is not immediately removed becausen the Metatables are needed
 	// for the finalisers of objects.
 	static const char *clearExceptionsFirstPass[] = {
-		"_G",
-		"__METATABLES",
-		0
-	};
+	    "_G",
+	    "__METATABLES",
+	    0};
 	clearGlobalTable(_state, clearExceptionsFirstPass);
 
 	// In the second pass, the Metatables are removed
 	static const char *clearExceptionsSecondPass[] = {
-		"_G",
-		0
-	};
+	    "_G",
+	    0};
 	clearGlobalTable(_state, clearExceptionsSecondPass);
 
 	// Persisted Lua data

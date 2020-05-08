@@ -61,9 +61,9 @@ private:
 	static const int32 kDefaultScreenWidth = 640;
 
 	enum {
-		kCustomActionVirtualAxisUp    = 10000,
-		kCustomActionVirtualAxisDown  = 10001,
-		kCustomActionVirtualAxisLeft  = 10002,
+		kCustomActionVirtualAxisUp = 10000,
+		kCustomActionVirtualAxisDown = 10001,
+		kCustomActionVirtualAxisLeft = 10002,
 		kCustomActionVirtualAxisRight = 10003,
 		kCustomActionVirtualMouseSlow = 10004
 	};

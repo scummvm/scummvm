@@ -26,20 +26,20 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/ext/wme_galaxy.h"
 #include "engines/metaengine.h"
-#include "engines/wintermute/wintermute.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/ext/wme_galaxy.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(SXWMEGalaxyAPI, false)
 
 BaseScriptable *makeSXWMEGalaxyAPI(BaseGame *inGame, ScStack *stack) {
-	return new SXWMEGalaxyAPI(inGame,  stack);
+	return new SXWMEGalaxyAPI(inGame, stack);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,17 +62,14 @@ void SXWMEGalaxyAPI::init() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 SXWMEGalaxyAPI::~SXWMEGalaxyAPI() {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXWMEGalaxyAPI::scToString() {
 	return "[wmegalaxyapi object]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXWMEGalaxyAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
@@ -112,7 +109,6 @@ bool SXWMEGalaxyAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXWMEGalaxyAPI::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -130,12 +126,10 @@ ScValue *SXWMEGalaxyAPI::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXWMEGalaxyAPI::scSetProperty(const char *name, ScValue *value) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXWMEGalaxyAPI::persist(BasePersistenceManager *persistMgr) {

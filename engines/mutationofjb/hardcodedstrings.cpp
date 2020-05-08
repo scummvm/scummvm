@@ -107,7 +107,6 @@ void HardcodedStrings::loadStrings(Common::Language lang) {
 	if (lang == Common::DE_DEU)
 		_strings[USE] = str;
 
-
 	if (lang == Common::SK_SVK)
 		file.seek(0x1982F);
 	else if (lang == Common::DE_DEU)
@@ -166,4 +165,4 @@ void HardcodedStrings::loadStrings(Common::Language lang) {
 	_strings[SKEPTO_CANNOT_PICKUP_4] = file.readPascalString();
 }
 
-}
+} // namespace MutationOfJB

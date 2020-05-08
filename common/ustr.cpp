@@ -260,7 +260,7 @@ void U32String::erase(uint32 p, uint32 len) {
 		return;
 	}
 
-	for ( ; p + len <= _size; p++) {
+	for (; p + len <= _size; p++) {
 		_str[p] = _str[p + len];
 	}
 	_size -= len;
@@ -476,7 +476,6 @@ void U32String::initWithCStr(const char *str, uint32 len) {
 
 	_str[len] = 0;
 }
-
 
 U32String operator+(const U32String &x, const U32String &y) {
 	U32String temp(x);

@@ -23,9 +23,9 @@
 #ifndef ULTIMA4_GAME_SCRIPT_H
 #define ULTIMA4_GAME_SCRIPT_H
 
-#include "ultima/ultima4/core/types.h"
-#include "ultima/shared/conf/xml_node.h"
 #include "common/file.h"
+#include "ultima/shared/conf/xml_node.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -72,16 +72,16 @@ private:
 		Variable(const Common::String &v);
 		Variable(const int &v);
 
-		int    &getInt();
+		int &getInt();
 		Common::String &getString();
 
-		void    setValue(const int &v);
-		void    setValue(const Common::String &v);
-		void    unset();
+		void setValue(const int &v);
+		void setValue(const Common::String &v);
+		void unset();
 
-		bool    isInt() const;
-		bool    isString() const;
-		bool    isSet() const;
+		bool isInt() const;
+		bool isString() const;
+		bool isSet() const;
 
 	private:
 		int _iVal;
@@ -365,7 +365,7 @@ private:
 	 * Math and comparison functions
 	 */
 
-	 /**
+	/**
 	  * Parses a math Common::String's children into results so
 	  * there is only 1 equation remaining.
 	  *
@@ -420,17 +420,17 @@ private:
 	Shared::XMLNode *_scriptNode;
 	bool _debug;
 
-	State _state;                    /**< The state the script is in */
-	Shared::XMLNode *_currentScript;       /**< The currently running script */
-	Shared::XMLNode *_currentItem;         /**< The current position in the script */
-	Std::list<Shared::XMLNode *> _translationContext;  /**< A list of nodes that make up our translation context */
-	Common::String _target;                  /**< The name of a target script */
-	InputType _inputType;            /**< The type of input required */
-	Common::String _inputName;               /**< The variable in which to place the input (by default, "input") */
-	int _inputMaxLen;                /**< The maximum length allowed for input */
+	State _state;                                     /**< The state the script is in */
+	Shared::XMLNode *_currentScript;                  /**< The currently running script */
+	Shared::XMLNode *_currentItem;                    /**< The current position in the script */
+	Std::list<Shared::XMLNode *> _translationContext; /**< A list of nodes that make up our translation context */
+	Common::String _target;                           /**< The name of a target script */
+	InputType _inputType;                             /**< The type of input required */
+	Common::String _inputName;                        /**< The variable in which to place the input (by default, "input") */
+	int _inputMaxLen;                                 /**< The maximum length allowed for input */
 
-	Common::String _nounName;                /**< The name that identifies a node name of noun nodes */
-	Common::String _idPropName;              /**< The name of the property that uniquely identifies a noun node
+	Common::String _nounName;   /**< The name that identifies a node name of noun nodes */
+	Common::String _idPropName; /**< The name of the property that uniquely identifies a noun node
                                          and is used to find a new translation context */
 
 	Common::String _choices;

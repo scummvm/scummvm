@@ -112,7 +112,6 @@ public:
 	 */
 	virtual int32 pos() const = 0;
 
-
 	// The remaining methods all have default implementations; subclasses
 	// need not (and should not) overload them.
 
@@ -178,7 +177,6 @@ public:
 		writeUint64BE((uint64)value);
 	}
 
-
 	/**
 	 * Write the given 32-bit floating point value stored
 	 * in little endian(LSB first) order into the stream.
@@ -190,7 +188,6 @@ public:
 
 		writeUint32LE(n);
 	}
-
 
 	/**
 	 * Write the given 32-bit floating point value stored
@@ -215,7 +212,6 @@ public:
 
 		writeUint64LE(n);
 	}
-
 
 	/**
 	 * Write the given 64-bit floating point value stored
@@ -304,7 +300,6 @@ public:
 	 * @return the number of bytes which were actually read.
 	 */
 	virtual uint32 read(void *dataPtr, uint32 dataSize) = 0;
-
 
 	// The remaining methods all have default implementations; subclasses
 	// in general should not overload them.
@@ -507,7 +502,6 @@ public:
 		return f;
 	}
 
-
 	/**
 	 * Read a 64-bit floating point value stored in little endian (LSB first)
 	 * order from the stream and return it.
@@ -557,9 +551,7 @@ public:
 	 * @param transformCR	if set (default), then transform \r into \n
 	 */
 	Common::String readPascalString(bool transformCR = true);
-
 };
-
 
 /**
  * Interface for a seekable & readable data stream.
@@ -568,7 +560,6 @@ public:
  */
 class SeekableReadStream : virtual public ReadStream {
 public:
-
 	/**
 	 * Obtains the current value of the stream position indicator of the
 	 * stream.
@@ -632,7 +623,6 @@ public:
 	 * @return a pointer to the read string, or NULL if an error occurred
 	 */
 	virtual char *readLine(char *s, size_t bufSize);
-
 
 	/**
 	 * Reads a full line and returns it as a Common::String. Reading
@@ -708,7 +698,6 @@ class SeekableReadStreamEndian : public SeekableReadStream, public ReadStreamEnd
 public:
 	SeekableReadStreamEndian(bool bigEndian) : ReadStreamEndian(bigEndian) {}
 };
-
 
 } // End of namespace Common
 

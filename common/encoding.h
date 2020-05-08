@@ -27,7 +27,6 @@
 #include "common/str.h"
 #include "common/system.h"
 
-
 namespace Common {
 
 /**
@@ -36,18 +35,18 @@ namespace Common {
  * ScummVM is compiled with or without iconv.
  */
 class Encoding {
-	public:
-		/**
+public:
+	/**
 		 * Constructs everything needed for the conversion between 2 encodings
 		 * and saves the values for future use.
 		 *
 		 * @param to Name of the encoding the strings will be converted to
 		 * @param from Name of the encoding the strings will be converted from
 		 */
-		Encoding(const String &to, const String &from);
-		~Encoding() {};
+	Encoding(const String &to, const String &from);
+	~Encoding(){};
 
-		/**
+	/**
 		 * Converts string between encodings. The resulting string is ended by 
 		 * a character with value 0 (C-like ending for 1 byte per character
 		 * encodings, 2 zero bytes for UTF-16, 4 zero bytes for UTF-32)
@@ -59,9 +58,9 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		char *convert(const char *string, size_t length);
+	char *convert(const char *string, size_t length);
 
-		/**
+	/**
 		 * Static version of the method above.
 		 * Converts string between encodings. The resulting string is ended by 
 		 * a character with value 0 (C-like ending for 1 byte per character
@@ -76,29 +75,29 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *convert(const String &to, const String &from, const char *string, size_t length);
+	static char *convert(const String &to, const String &from, const char *string, size_t length);
 
-		/**
+	/**
 		 * @return The encoding, which is currently being converted from
 		 */
-		String getFrom() {return _from;};
+	String getFrom() { return _from; };
 
-		/**
+	/**
 		 * @param from The encoding, to convert from
 		 */
-		void setFrom(const String &from) {_from = from;};
+	void setFrom(const String &from) { _from = from; };
 
-		/**
+	/**
 		 * @return The encoding, which is currently being converted to
 		 */
-		String getTo() {return _to;};
+	String getTo() { return _to; };
 
-		/**
+	/**
 		 * @param to The encoding, to convert to
 		 */
-		void setTo(const String &to) {_to = to;};
+	void setTo(const String &to) { _to = to; };
 
-		/**
+	/**
 		 * Switches the endianity of a string.
 		 *
 		 * @param string Array containing the characters of a string.
@@ -107,9 +106,9 @@ class Encoding {
 		 *
 		 * @return Array of characters with the opposite endianity
 		 */
-		static char *switchEndian(const char *string, int length, int bitCount);
+	static char *switchEndian(const char *string, int length, int bitCount);
 
-		/**
+	/**
 		 * Computes length (in bytes) of a string in a given encoding. 
 		 * The string must be zero ended. Similar to strlen
 		 * (could be used instead of strlen).
@@ -119,16 +118,16 @@ class Encoding {
 		 *
 		 * @return Size of the string in bytes.
 		 */
-		static size_t stringLength(const char *string, const String &encoding);
-	
-	private:
-		/** The encoding, which is currently being converted to */
-		String _to;
+	static size_t stringLength(const char *string, const String &encoding);
 
-		/** The encoding, which is currently being converted from */
-		String _from;
+private:
+	/** The encoding, which is currently being converted to */
+	String _to;
 
-		/**
+	/** The encoding, which is currently being converted from */
+	String _from;
+
+	/**
 		 * Takes care of transliteration and calls conversion
 		 *
 		 * The result has to be freed after use.
@@ -140,9 +139,9 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *convertWithTransliteration(const String &to, const String &from, const char *string, size_t length);
+	static char *convertWithTransliteration(const String &to, const String &from, const char *string, size_t length);
 
-		/**
+	/**
 		 * Calls as many conversion functions as possible or until the conversion
 		 * succeeds. It first tries to use iconv, then it tries to use platform
 		 * specific functions and after that it tries to use TransMan mapping.
@@ -156,9 +155,9 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *conversion(const String &to, const String &from, const char *string, size_t length);
+	static char *conversion(const String &to, const String &from, const char *string, size_t length);
 
-		/**
+	/**
 		 * Tries to convert the string using iconv.
 		 *
 		 * The result has to be freed after use.
@@ -170,9 +169,9 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *convertIconv(const char *to, const char *from, const char *string, size_t length);
+	static char *convertIconv(const char *to, const char *from, const char *string, size_t length);
 
-		/**
+	/**
 		 * Tries to use the TransMan to convert the string. It can convert only
 		 * between UTF-32 and the current GUI charset. It also tries to convert
 		 * from the current GUI charset to UTF-32 and then it calls convert() again.
@@ -186,9 +185,9 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *convertTransManMapping(const char *to, const char *from, const char *string, size_t length);
+	static char *convertTransManMapping(const char *to, const char *from, const char *string, size_t length);
 
-		/**
+	/**
 		 * Uses conversion table to convert the string to unicode and from that
 		 * to the final encoding. Important encodings, that aren't supported by
 		 * all backends should go here.
@@ -202,9 +201,9 @@ class Encoding {
 		 *
 		 * @return Converted string (must be freed) or nullptr if the conversion failed
 		 */
-		static char *convertConversionTable(const char *to, const char *from, const char *string, size_t length);
+	static char *convertConversionTable(const char *to, const char *from, const char *string, size_t length);
 
-		/**
+	/**
 		 * Transliterates cyrillic string in iso-8859-5 encoding and returns
 		 * it's ASCII (latin) form.
 		 *
@@ -214,9 +213,9 @@ class Encoding {
 		 *
 		 * @return Transliterated string in ASCII (must be freed) or nullptr on fail.
 		 */
-		static char *transliterateCyrillic(const char *string);
+	static char *transliterateCyrillic(const char *string);
 
-		/**
+	/**
 		 * Transliterates cyrillic in UTF-32 string.
 		 *
 		 * The result has to be freed after use.
@@ -226,9 +225,9 @@ class Encoding {
 		 *
 		 * @return Transliterated string in UTF-32 (must be freed) or nullptr on fail.
 		 */
-		static uint32 *transliterateUTF32(const uint32 *string, size_t length);
+	static uint32 *transliterateUTF32(const uint32 *string, size_t length);
 };
 
-}
+} // namespace Common
 
 #endif // COMMON_ENCODING_H

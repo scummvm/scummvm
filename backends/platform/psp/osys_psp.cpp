@@ -22,9 +22,9 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <pspuser.h>
-#include <pspgu.h>
 #include <pspdisplay.h>
+#include <pspgu.h>
+#include <pspuser.h>
 
 #include <time.h>
 #include <zlib.h>
@@ -33,22 +33,22 @@
 #include "common/events.h"
 #include "common/scummsys.h"
 
-#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/osys_psp.h"
 #include "backends/platform/psp/powerman.h"
+#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/rtc.h"
 
+#include "audio/mixer_intern.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/psp/timer.h"
 #include "graphics/surface.h"
-#include "audio/mixer_intern.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
 
 #include "backends/platform/psp/trace.h"
 
-#define	SAMPLES_PER_SEC	44100
+#define SAMPLES_PER_SEC 44100
 
 OSystem_PSP::~OSystem_PSP() {}
 
@@ -69,7 +69,7 @@ void OSystem_PSP::initBackend() {
 	PspRtc::instance();
 
 	_cursor.enableCursorPalette(false);
-	_cursor.setXY(PSP_SCREEN_WIDTH >> 1, PSP_SCREEN_HEIGHT >> 1);	// Mouse in the middle of the screen
+	_cursor.setXY(PSP_SCREEN_WIDTH >> 1, PSP_SCREEN_HEIGHT >> 1); // Mouse in the middle of the screen
 
 	// Set pointers for display manager
 	_displayManager.setCursor(&_cursor);
@@ -94,7 +94,7 @@ void OSystem_PSP::initBackend() {
 	_timerManager = new PspTimerManager();
 
 	PSP_DEBUG_PRINT("calling keyboard.load()\n");
-	_keyboard.load();	// Load virtual keyboard files into memory
+	_keyboard.load(); // Load virtual keyboard files into memory
 
 	setupMixer();
 
@@ -108,8 +108,8 @@ void OSystem_PSP::engineDone() {
 }
 
 bool OSystem_PSP::hasFeature(Feature f) {
-	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette || 
-			f == kFeatureKbdMouseSpeed || f == kFeatureJoystickDeadzone);
+	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette ||
+	        f == kFeatureKbdMouseSpeed || f == kFeatureJoystickDeadzone);
 }
 
 void OSystem_PSP::setFeatureState(Feature f, bool enable) {
@@ -126,7 +126,7 @@ bool OSystem_PSP::getFeatureState(Feature f) {
 	return false;
 }
 
-const OSystem::GraphicsMode* OSystem_PSP::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *OSystem_PSP::getSupportedGraphicsModes() const {
 	return _displayManager.getSupportedGraphicsModes();
 }
 
@@ -194,7 +194,7 @@ void OSystem_PSP::setCursorPalette(const byte *colors, uint start, uint num) {
 	_pendingUpdate = false;
 	_cursor.setCursorPalette(colors, start, num);
 	_cursor.enableCursorPalette(true);
-	_cursor.clearKeyColor();	// Do we need this?
+	_cursor.clearKeyColor(); // Do we need this?
 }
 
 void OSystem_PSP::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
@@ -220,7 +220,7 @@ void OSystem_PSP::unlockScreen() {
 
 void OSystem_PSP::updateScreen() {
 	DEBUG_ENTER_FUNC();
-	_pendingUpdate = !_displayManager.renderAll();	// if we didn't update, we have a pending update
+	_pendingUpdate = !_displayManager.renderAll(); // if we didn't update, we have a pending update
 }
 
 void OSystem_PSP::setShakePos(int shakeXOffset, int shakeYOffset) {
@@ -235,7 +235,7 @@ void OSystem_PSP::showOverlay() {
 	_pendingUpdate = false;
 	_overlay.setVisible(true);
 	_cursor.setLimits(_overlay.getWidth(), _overlay.getHeight());
-	_cursor.useGlobalScaler(false);	// mouse with overlay is 1:1
+	_cursor.useGlobalScaler(false); // mouse with overlay is 1:1
 }
 
 void OSystem_PSP::hideOverlay() {
@@ -243,7 +243,7 @@ void OSystem_PSP::hideOverlay() {
 	_pendingUpdate = false;
 	_overlay.setVisible(false);
 	_cursor.setLimits(_screen.getWidth(), _screen.getHeight());
-	_cursor.useGlobalScaler(true);	// mouse needs to be scaled with screen
+	_cursor.useGlobalScaler(true); // mouse needs to be scaled with screen
 }
 
 void OSystem_PSP::clearOverlay() {
@@ -333,11 +333,11 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 		if (_pendingUpdateCounter >= 4) {
 			PSP_DEBUG_PRINT("servicing pending update\n");
 			updateScreen();
-			if (!_pendingUpdate) 	// we handled the update
+			if (!_pendingUpdate) // we handled the update
 				_pendingUpdateCounter = 0;
 		}
 	} else
-		_pendingUpdateCounter = 0;	// reset the counter, no pending
+		_pendingUpdateCounter = 0; // reset the counter, no pending
 
 	return _inputHandler.getAllInputs(event);
 }
@@ -351,7 +351,7 @@ void OSystem_PSP::delayMillis(uint msecs) {
 }
 
 OSystem::MutexRef OSystem_PSP::createMutex(void) {
-	return (MutexRef) new PspMutex(true);	// start with a full mutex
+	return (MutexRef) new PspMutex(true); // start with a full mutex
 }
 
 void OSystem_PSP::lockMutex(MutexRef mutex) {
@@ -397,7 +397,7 @@ void OSystem_PSP::setupMixer(void) {
 		PSP_ERROR("failed to open audio\n");
 		return;
 	}
-	samplesPerSec = _audio.getFrequency();	// may have been changed by audio system
+	samplesPerSec = _audio.getFrequency(); // may have been changed by audio system
 	_mixer = new Audio::MixerImpl(samplesPerSec);
 	assert(_mixer);
 	_mixer->setReady(true);
@@ -421,7 +421,7 @@ void OSystem_PSP::logMessage(LogMessageType::Type type, const char *message) {
 	fflush(output);
 
 	if (type == LogMessageType::kError)
-		PspDebugTrace(false, "%s", message);	// write to file
+		PspDebugTrace(false, "%s", message); // write to file
 }
 
 void OSystem_PSP::getTimeAndDate(TimeDate &td) const {

@@ -22,21 +22,19 @@
 
 #include "gui/EventRecorder.h"
 
-#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
+#include "audio/audiostream.h"
 #include "audio/mixer_intern.h"
 #include "audio/rate.h"
-#include "audio/audiostream.h"
 #include "audio/timestamp.h"
-
 
 namespace Audio {
 
 #pragma mark -
-#pragma mark --- Channel classes ---
+#pragma mark--- Channel classes ---
 #pragma mark -
-
 
 /**
  * Channel used by the default Mixer implementation.
@@ -169,11 +167,11 @@ private:
 };
 
 #pragma mark -
-#pragma mark --- Mixer ---
+#pragma mark--- Mixer ---
 #pragma mark -
 
 MixerImpl::MixerImpl(uint sampleRate)
-	: _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
+    : _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
 
@@ -220,20 +218,19 @@ void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
 }
 
 void MixerImpl::playStream(
-			SoundType type,
-			SoundHandle *handle,
-			AudioStream *stream,
-			int id, byte volume, int8 balance,
-			DisposeAfterUse::Flag autofreeStream,
-			bool permanent,
-			bool reverseStereo) {
+    SoundType type,
+    SoundHandle *handle,
+    AudioStream *stream,
+    int id, byte volume, int8 balance,
+    DisposeAfterUse::Flag autofreeStream,
+    bool permanent,
+    bool reverseStereo) {
 	Common::StackLock lock(_mutex);
 
 	if (stream == 0) {
 		warning("stream is 0");
 		return;
 	}
-
 
 	assert(_mixerReady);
 
@@ -489,9 +486,8 @@ int MixerImpl::getVolumeForSoundType(SoundType type) const {
 	return _soundTypeSettings[type].volume;
 }
 
-
 #pragma mark -
-#pragma mark --- Channel implementations ---
+#pragma mark--- Channel implementations ---
 #pragma mark -
 
 Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *stream,

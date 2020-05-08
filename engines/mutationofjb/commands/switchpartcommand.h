@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_SWITCHPARTCOMMAND_H
 #define MUTATIONOFJB_SWITCHPARTCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -42,6 +42,6 @@ public:
 	Common::String debugString() const override;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

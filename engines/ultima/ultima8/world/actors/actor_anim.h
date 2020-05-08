@@ -31,6 +31,7 @@ namespace Ultima8 {
 
 class ActorAnim {
 	friend class AnimDat;
+
 public:
 	ActorAnim() {}
 	~ActorAnim() {
@@ -46,7 +47,7 @@ public:
 
 private:
 	Std::vector<AnimAction *> _actions; // list of this actor's actions
-	// (0 if actor doesn't have action)
+	                                    // (0 if actor doesn't have action)
 };
 
 } // End of namespace Ultima8

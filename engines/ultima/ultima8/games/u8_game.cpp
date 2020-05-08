@@ -24,27 +24,27 @@
 
 #include "ultima/ultima8/games/u8_game.h"
 
-#include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/graphics/fade_to_modal_process.h"
-#include "ultima/ultima8/filesys/idata_source.h"
+#include "common/memstream.h"
+#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/xform_blend.h"
+#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/filesys/u8_save_file.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/games/start_u8_process.h"
+#include "ultima/ultima8/graphics/fade_to_modal_process.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/xform_blend.h"
+#include "ultima/ultima8/gumps/credits_gump.h"
+#include "ultima/ultima8/gumps/movie_gump.h"
+#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/gumps/movie_gump.h"
-#include "ultima/ultima8/filesys/raw_archive.h"
-#include "ultima/ultima8/gumps/credits_gump.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/games/start_u8_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "common/memstream.h"
+#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -155,7 +155,6 @@ bool U8Game::startInitialUsecode(int saveSlot) {
 	return true;
 }
 
-
 ProcId U8Game::playIntroMovie(bool fade) {
 	GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
@@ -211,7 +210,8 @@ void U8Game::playCredits() {
 	delete rs;
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
-	if (musicproc) musicproc->playMusic(51); // CONSTANT!
+	if (musicproc)
+		musicproc->playMusic(51); // CONSTANT!
 
 	CreditsGump *gump = new CreditsGump(text);
 	gump->SetFlagWhenFinished("quotes");
@@ -232,13 +232,13 @@ void U8Game::playQuotes() {
 	delete rs;
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
-	if (musicproc) musicproc->playMusic(113); // CONSTANT!
+	if (musicproc)
+		musicproc->playMusic(113); // CONSTANT!
 
 	CreditsGump *gump = new CreditsGump(text, 80);
 	FadeToModalProcess *p = new FadeToModalProcess(gump);
 	Kernel::get_instance()->addProcess(p);
 }
-
 
 void U8Game::writeSaveInfo(Common::WriteStream *ws) {
 	MainActor *av = getMainActor();
@@ -300,7 +300,8 @@ Std::string U8Game::getCreditText(Common::SeekableReadStream *rs) {
 			break;
 		}
 		char d = (c ^ x) & 0xFF;
-		if (d == 0) d = '\n';
+		if (d == 0)
+			d = '\n';
 		text[i] = d;
 	}
 

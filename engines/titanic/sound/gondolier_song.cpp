@@ -25,10 +25,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGondolierSong, CRoomAutoSoundPlayer)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(SignalObject)
-	ON_MESSAGE(SetVolumeMsg)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(SignalObject)
+ON_MESSAGE(SetVolumeMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
 void CGondolierSong::save(SimpleFile *file, int indent) {

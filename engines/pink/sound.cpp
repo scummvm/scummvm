@@ -44,7 +44,7 @@ void Sound::play(Common::SafeSeekableSubReadStream *stream, Audio::Mixer::SoundT
 	else
 		audioStream = wavStream;
 
-	mixer->playStream(type, &_handle , audioStream, -1, volume, balance, DisposeAfterUse::YES);
+	mixer->playStream(type, &_handle, audioStream, -1, volume, balance, DisposeAfterUse::YES);
 }
 
 } // End of namespace Pink

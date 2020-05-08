@@ -37,13 +37,20 @@ class CPetGlyphs;
 class CPetSection;
 class CTextControl;
 
-enum GlyphActionMode { ACTION_REMOVE = 0, ACTION_REMOVED = 1, ACTION_CHANGE = 2 };
+enum GlyphActionMode { ACTION_REMOVE = 0,
+	                   ACTION_REMOVED = 1,
+	                   ACTION_CHANGE = 2 };
 
-enum GlyphFlag { GFLAG_1 = 1, GFLAG_2 = 2, GFLAG_4 = 4, GFLAG_8 = 8, GFLAG_16 = 16 };
+enum GlyphFlag { GFLAG_1 = 1,
+	             GFLAG_2 = 2,
+	             GFLAG_4 = 4,
+	             GFLAG_8 = 8,
+	             GFLAG_16 = 16 };
 
 class CGlyphAction {
 protected:
 	GlyphActionMode _mode;
+
 public:
 	CGlyphAction() : _mode(ACTION_REMOVED) {}
 	CGlyphAction(GlyphActionMode mode) : _mode(mode) {}
@@ -57,9 +64,11 @@ protected:
 	 * Get the overall pet section owner
 	 */
 	CPetSection *getPetSection() const;
+
 public:
 	CPetGfxElement _element;
 	CPetGlyphs *_owner;
+
 public:
 	CPetGlyph() : ListItem(), _owner(nullptr) {}
 
@@ -288,6 +297,7 @@ private:
 	 * Returns true if all the glyphs are in a valid state
 	 */
 	bool areItemsValid() const;
+
 protected:
 	int _firstVisibleIndex;
 	int _totalGlyphs;
@@ -300,11 +310,13 @@ protected:
 	CPetGfxElement _selection;
 	CPetGfxElement _scrollLeft;
 	CPetGfxElement _scrollRight;
+
 protected:
 	/**
 	 * Change the currently selected glyph
 	 */
 	void changeHighlight(int index);
+
 public:
 	CPetGlyphs();
 
@@ -317,7 +329,6 @@ public:
 	 * Clears the glyph list
 	 */
 	void clear();
-
 
 	/**
 	 * The visual dimensions for the control and it's components

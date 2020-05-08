@@ -34,8 +34,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "griffon/griffon.h"
 
@@ -164,7 +164,7 @@ void GriffonEngine::title(int mode) {
 				_shouldQuit = true;
 
 			if (_event.type == Common::EVENT_KEYDOWN) {
-				switch(_event.kbd.keycode) {
+				switch (_event.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
 					if (mode == 1)
 						exitTitle = true;
@@ -180,7 +180,7 @@ void GriffonEngine::title(int mode) {
 						cursel = 0;
 					break;
 				case Common::KEYCODE_RETURN:
-					switch(cursel) {
+					switch (cursel) {
 					case 0:
 						_ticks = g_system->getMillis();
 						ticks1 = _ticks;
@@ -226,25 +226,23 @@ void GriffonEngine::title(int mode) {
 
 void GriffonEngine::configMenu() {
 	static const char *optionTitles[22] = {
-		"", "",
-		"", "", "", "",
-		"", "", "",
-		"Music:", "", "",
-		"Sound Effects:", "", "",
-		"Music Volume:", "",
-		"Effects Volume:", "", "", "", ""
-	};
+	    "", "",
+	    "", "", "", "",
+	    "", "", "",
+	    "Music:", "", "",
+	    "Sound Effects:", "", "",
+	    "Music Volume:", "",
+	    "Effects Volume:", "", "", "", ""};
 	static const char *optionValues[22] = {
-		"", "",
-		"", "", "", "",
-		"", "", "",
-		"On", "Off", "",
-		"On", "Off", "",
-		"[----------]", "",
-		"[----------]", "",
-		"Exit + Save", "",
-		"Exit"
-	};
+	    "", "",
+	    "", "", "", "",
+	    "", "", "",
+	    "On", "Off", "",
+	    "On", "Off", "",
+	    "[----------]", "",
+	    "[----------]", "",
+	    "Exit + Save", "",
+	    "Exit"};
 
 	int cursel = MINCURSEL;
 	bool exitMenu = false;
@@ -255,7 +253,6 @@ void GriffonEngine::configMenu() {
 	configwindow->setAlpha(160, true);
 
 	int ticks1 = _ticks;
-
 
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
@@ -466,7 +463,6 @@ void GriffonEngine::configMenu() {
 		g_system->delayMillis(10);
 	} while (!_shouldQuit && !exitMenu && _gameMode != kGameModeNewGame && _gameMode != kGameModeLoadGame);
 
-
 	configwindow->free();
 	_itemTicks = _ticks + 210;
 }
@@ -556,7 +552,6 @@ void GriffonEngine::saveLoadNew() {
 	_ticks = g_system->getMillis();
 	int ticks1 = _ticks;
 	int tickPause = _ticks + 150;
-
 
 	renderSaveStates();
 
@@ -694,8 +689,7 @@ void GriffonEngine::saveLoadNew() {
 						tickPause = _ticks + 125;
 					}
 					break;
-				default:
-					;
+				default:;
 				}
 			}
 		}
@@ -707,20 +701,20 @@ void GriffonEngine::saveLoadNew() {
 
 		if (curRow == 0) {
 			rcDest.top = 18;
-			switch(curCol) {
-				case 0:
-					rcDest.left = 10;
-					break;
-				case 1:
-					rcDest.left = 108;
-					break;
-				case 2:
-					rcDest.left = 170;
-					break;
-				case 3:
-					rcDest.left = 230;
-				default:
-					break;
+			switch (curCol) {
+			case 0:
+				rcDest.left = 10;
+				break;
+			case 1:
+				rcDest.left = 108;
+				break;
+			case 2:
+				rcDest.left = 170;
+				break;
+			case 3:
+				rcDest.left = 230;
+			default:
+				break;
 			}
 
 			rcDest.left += (int16)(2 + 2 * sin(2 * PI * _itemyloc / 16));
@@ -779,8 +773,6 @@ void GriffonEngine::saveLoadNew() {
 
 		g_system->delayMillis(10);
 	} while (!_shouldQuit);
-
 }
-
 
 } // end of namespace Griffon

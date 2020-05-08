@@ -20,11 +20,11 @@
  *
  */
 
-#include "hdb/hdb.h"
-#include "hdb/ai.h"
 #include "hdb/ai-player.h"
+#include "hdb/ai.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
@@ -56,7 +56,7 @@ AIEntity *AI::spawn(AIType type, AIDir dir, int x, int y, const char *funcInit, 
 	e->level = level;
 	e->value1 = value1;
 	e->value2 = value2;
-	e->animCycle = 2;	// Game frames to wait before animating graphic frames
+	e->animCycle = 2; // Game frames to wait before animating graphic frames
 	e->animDelay = e->animCycle;
 	e->animFrame = 0;
 
@@ -941,20 +941,18 @@ void AI::animateEntity(AIEntity *e) {
 		case AI_LIGHTBARREL:
 		case AI_MAGIC_EGG:
 		case AI_ICE_BLOCK:
-		case AI_FROGSTATUE:
-			{
-				int bgtile = g_hdb->_ai->checkForTouchplate(e->tileX, e->tileY);
-				if (bgtile && !e->touchpWait && e->touchpX != e->tileX && e->touchpY != e->tileY) {
-					if (g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false)) {
-						e->touchpTile = bgtile;
-						e->touchpX = e->tileX;
-						e->touchpY = e->tileY;
-						e->touchpWait = kPlayerTouchPWait;
-					}
+		case AI_FROGSTATUE: {
+			int bgtile = g_hdb->_ai->checkForTouchplate(e->tileX, e->tileY);
+			if (bgtile && !e->touchpWait && e->touchpX != e->tileX && e->touchpY != e->tileY) {
+				if (g_hdb->_ai->checkActionList(e, e->tileX, e->tileY, false)) {
+					e->touchpTile = bgtile;
+					e->touchpX = e->tileX;
+					e->touchpY = e->tileY;
+					e->touchpWait = kPlayerTouchPWait;
 				}
-				_laserRescan = true;
 			}
-			break;
+			_laserRescan = true;
+		} break;
 		default:
 			break;
 		}
@@ -1102,8 +1100,8 @@ void AI::animateEntity(AIEntity *e) {
 				break;
 			}
 			if ((e->tileX + xOff == _waypoints[_numWaypoints - 1].x &&
-				 e->tileY + yOff == _waypoints[_numWaypoints - 1].y) &&
-				 e->level == _waypoints[_numWaypoints - 1].level) {
+			     e->tileY + yOff == _waypoints[_numWaypoints - 1].y) &&
+			    e->level == _waypoints[_numWaypoints - 1].level) {
 				clearWaypoints();
 				_numWaypoints = 1;
 				_waypoints[0].x = e->tileX + xOff;
@@ -1116,9 +1114,9 @@ void AI::animateEntity(AIEntity *e) {
 	}
 
 	// Check for moving up/down stair levels
-//	int bgTileIndex = g_hdb->_map->getMapBGTileIndex(e->tileX, e->tileY); // CHECKME: unused?
+	//	int bgTileIndex = g_hdb->_map->getMapBGTileIndex(e->tileX, e->tileY); // CHECKME: unused?
 	int bgTileFlags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
-//	fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY); // CHECKME: unused?
+	//	fgTileFlags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY); // CHECKME: unused?
 	if (bgTileFlags & kFlagStairTop)
 		e->level = 2;
 	else if (bgTileFlags & kFlagStairBot)
@@ -1347,7 +1345,7 @@ void AI::animateEntity(AIEntity *e) {
 						uint32 flags2 = g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv);
 						if (!(flags2 & (kFlagPushRight | kFlagPushLeft | kFlagPushUp | kFlagPushDown))) {
 							floatEntity(e, STATE_FLOATING);
-							e->value1 = 0x666;	// Don't move me ever again
+							e->value1 = 0x666; // Don't move me ever again
 							return;
 						}
 
@@ -1479,8 +1477,7 @@ void AI::animEntFrames(AIEntity *e) {
 		if (e->animFrame == max - 1)
 			e->state = STATE_DEAD;
 		break;
-	case STATE_HORRIBLE2:
-	{
+	case STATE_HORRIBLE2: {
 		e->draw = _horrible2Gfx[e->animFrame];
 		max = _horrible2Frames;
 		click++;
@@ -1490,8 +1487,7 @@ void AI::animEntFrames(AIEntity *e) {
 		}
 		break;
 	}
-	case STATE_HORRIBLE3:
-	{
+	case STATE_HORRIBLE3: {
 		e->draw = _horrible3Gfx[e->animFrame];
 		max = _horrible3Frames;
 		click++;
@@ -1828,10 +1824,10 @@ void AI::drawLevel2Ents() {
 
 			_entsLevel2[i].draw->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y);
 		} else if (debugFlag)
-			_debugQMark->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y );
+			_debugQMark->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y);
 
 		if (_entsLevel2[i].stunnedWait)
-			 g_hdb->_ai->_stunnedGfx[_stunAnim]->drawMasked(_entsLevel2[i].x , _entsLevel2[i].y);
+			g_hdb->_ai->_stunnedGfx[_stunAnim]->drawMasked(_entsLevel2[i].x, _entsLevel2[i].y);
 	}
 
 	// always draw the player last
@@ -1851,9 +1847,9 @@ void AI::drawLevel2Ents() {
 
 void AI::animGrabbing() {
 	if (_player->state == STATE_GRABUP ||
-		_player->state == STATE_GRABDOWN ||
-		_player->state == STATE_GRABLEFT ||
-		_player->state == STATE_GRABRIGHT)
+	    _player->state == STATE_GRABDOWN ||
+	    _player->state == STATE_GRABLEFT ||
+	    _player->state == STATE_GRABRIGHT)
 		return;
 
 	AIState s = STATE_NONE;
@@ -2072,7 +2068,7 @@ AIEntity *AI::legalMoveOverWater(int tileX, int tileY, int level, int *result) {
 	uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(tileX, tileY);
 	AIEntity *hit = findEntity(tileX, tileY);
 
-	if (level == 1 ? (bgFlags & kFlagMonsterBlock) : (!(fgFlags &kFlagGrating) && ((fgFlags & kFlagSolid) || (bgFlags & kFlagMonsterBlock))))
+	if (level == 1 ? (bgFlags & kFlagMonsterBlock) : (!(fgFlags & kFlagGrating) && ((fgFlags & kFlagSolid) || (bgFlags & kFlagMonsterBlock))))
 		*result = 0;
 	else
 		*result = 1;
@@ -2085,7 +2081,7 @@ AIEntity *AI::legalMoveOverWaterIgnore(int tileX, int tileY, int level, int *res
 	uint32 fgFlags = g_hdb->_map->getMapFGTileFlags(tileX, tileY);
 	AIEntity *hit = findEntityIgnore(tileX, tileY, ignore);
 
-	if (level == 1 ? (bgFlags & kFlagMonsterBlock) : (!(fgFlags &kFlagGrating) && ((fgFlags & kFlagSolid) || (bgFlags & kFlagMonsterBlock))))
+	if (level == 1 ? (bgFlags & kFlagMonsterBlock) : (!(fgFlags & kFlagGrating) && ((fgFlags & kFlagSolid) || (bgFlags & kFlagMonsterBlock))))
 		*result = 0;
 	else
 		*result = 1;
@@ -2099,7 +2095,7 @@ AIEntity *AI::playerCollision(int topBorder, int bottomBorder, int leftBorder, i
 		if (e == _player || !e->onScreen)
 			continue;
 
-		if (e->x > (_player->x - 32 - leftBorder) && e->x < (_player->x + 32 + rightBorder) && e->y >(_player->y - 32 - topBorder) && e->y < (_player->y + 32 + bottomBorder))
+		if (e->x > (_player->x - 32 - leftBorder) && e->x < (_player->x + 32 + rightBorder) && e->y > (_player->y - 32 - topBorder) && e->y < (_player->y + 32 + bottomBorder))
 			return e;
 	}
 	return nullptr;
@@ -2117,7 +2113,7 @@ bool AI::checkPlayerCollision(int x, int y, int border) {
 		return false;
 
 	return (x > (_player->x - 32 + border) && x < (_player->x + 32 - border) &&
-			y > (_player->y - 32 + border) && y < (_player->y + 32 - border));
+	        y > (_player->y - 32 + border) && y < (_player->y + 32 - border));
 }
 
 void AI::clearDiverters() {
@@ -2334,15 +2330,14 @@ void AI::lookAtXY(int x, int y) {
 
 void AI::movePlayer(uint16 buttons) {
 	static const AIState stateList[] = {
-		STATE_ATK_CLUB_UP,	STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,
-		STATE_ATK_STUN_UP,	STATE_ATK_STUN_DOWN, STATE_ATK_STUN_LEFT, STATE_ATK_STUN_RIGHT,
-		STATE_ATK_SLUG_UP,	STATE_ATK_SLUG_DOWN, STATE_ATK_SLUG_LEFT, STATE_ATK_SLUG_RIGHT,
-		STATE_PUSHUP,		STATE_PUSHDOWN,		 STATE_PUSHLEFT,	  STATE_PUSHRIGHT,
-		STATE_GRABUP,		STATE_GRABDOWN,		 STATE_GRABLEFT,	  STATE_GRABRIGHT
-	};
+	    STATE_ATK_CLUB_UP, STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,
+	    STATE_ATK_STUN_UP, STATE_ATK_STUN_DOWN, STATE_ATK_STUN_LEFT, STATE_ATK_STUN_RIGHT,
+	    STATE_ATK_SLUG_UP, STATE_ATK_SLUG_DOWN, STATE_ATK_SLUG_LEFT, STATE_ATK_SLUG_RIGHT,
+	    STATE_PUSHUP, STATE_PUSHDOWN, STATE_PUSHLEFT, STATE_PUSHRIGHT,
+	    STATE_GRABUP, STATE_GRABDOWN, STATE_GRABLEFT, STATE_GRABRIGHT};
 
-	static const int xva[5] = {9, 0, 0,-1, 1};
-	static const int yva[5] = {9,-1, 1, 0, 0};
+	static const int xva[5] = {9, 0, 0, -1, 1};
+	static const int yva[5] = {9, -1, 1, 0, 0};
 
 	if (!_player)
 		return;
@@ -2443,8 +2438,7 @@ void AI::movePlayer(uint16 buttons) {
 					_player->animFrame = 0;
 					_player->animDelay = _player->animCycle;
 					g_hdb->_sound->playSound(SND_CLUB_MISS);
-				}
-				break;
+				} break;
 
 				case ITEM_ROBOSTUNNER: {
 					// it costs 1 gem to attack!
@@ -2461,8 +2455,7 @@ void AI::movePlayer(uint16 buttons) {
 					_player->animFrame = 0;
 					_player->animDelay = _player->animCycle;
 					_player->sequence = 1;
-				}
-				break;
+				} break;
 
 				case ITEM_SLUGSLINGER: {
 					// it costs 1 gem to attack!
@@ -2479,13 +2472,12 @@ void AI::movePlayer(uint16 buttons) {
 					_player->animFrame = 0;
 					_player->animDelay = _player->animCycle;
 					spawn(AI_SLUG_ATTACK, _player->dir, _player->tileX, _player->tileY,
-						nullptr, nullptr, nullptr, DIR_NONE, _player->level, 0, 0, 1);
-				}
-				break;
+					      nullptr, nullptr, nullptr, DIR_NONE, _player->level, 0, 0, 1);
+				} break;
 
 				default:
 					break;
-				}	// switch
+				} // switch
 			}
 			return;
 		}
@@ -2510,7 +2502,7 @@ void AI::movePlayer(uint16 buttons) {
 			g_hdb->useEntity(hit);
 			return;
 		}
-	}	// if kButtonB
+	} // if kButtonB
 
 	if (!onEvenTile(_player->x, _player->y))
 		return;
@@ -2553,7 +2545,7 @@ void AI::movePlayer(uint16 buttons) {
 	if (_playerLock || _numWaypoints)
 		return;
 
-	int	xv = 0, yv = 0;
+	int xv = 0, yv = 0;
 	if (buttons & kButtonUp)
 		yv = -1;
 	else if (buttons & kButtonDown)
@@ -2569,7 +2561,7 @@ void AI::movePlayer(uint16 buttons) {
 
 	// Check if we can move there
 	int nx = _player->tileX + xv;
-	if (!nx)	// Don't allow moving to X-coordinate 0
+	if (!nx) // Don't allow moving to X-coordinate 0
 		return;
 	int ny = _player->tileY + yv;
 
@@ -2599,9 +2591,9 @@ void AI::movePlayer(uint16 buttons) {
 }
 
 void AI::playerUse() {
-	static const int xv[5] = {9, 0, 0,-1, 1};
-	static const int yv[5] = {9,-1, 1, 0, 0};
+	static const int xv[5] = {9, 0, 0, -1, 1};
+	static const int yv[5] = {9, -1, 1, 0, 0};
 
 	g_hdb->setTargetXY(kTileWidth * (_player->tileX + xv[_player->dir]), kTileWidth * (_player->tileY + yv[_player->dir]));
 }
-} // End of Namespace
+} // namespace HDB

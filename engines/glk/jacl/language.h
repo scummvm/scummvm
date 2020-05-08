@@ -42,14 +42,13 @@ namespace JACL {
    LEVEL MESSAGES THAT ARE MOST COMMONLY SEEN DURING THE DEVELOPMENT OF A
    GAME. THESE MESSAGES CANNOT BE OVERRIDDEN BY ANY SPECIFIC GAME. */
 
-
-#define ENGLISH     1
-#define GERMAN      2
-#define FRENCH      3
+#define ENGLISH 1
+#define GERMAN 2
+#define FRENCH 3
 
 #define NATIVE_LANGUAGE ENGLISH
 
-#if NATIVE_LANGUAGE==ENGLISH
+#if NATIVE_LANGUAGE == ENGLISH
 /* GAME MESSAGES */
 #define COMMENT_IGNORED "No transcript running, comment ignored.^"
 #define COMMENT_RECORDED "Comment recorded.^"
@@ -222,7 +221,7 @@ namespace JACL {
 #define CANT_OPEN_SOURCE "Unable to open source file \"%s\", can't continue."
 #endif
 
-#if NATIVE_LANGUAGE==FRENCH
+#if NATIVE_LANGUAGE == FRENCH
 /* GAME MESSAGES */
 #define COMMENT_IGNORED "Pas de transcription en cours, commentaire ignoré.^"
 #define COMMENT_RECORDED "Commentaire enregistré.^"
@@ -395,7 +394,7 @@ namespace JACL {
 #define CANT_OPEN_SOURCE "Unable to open source file \"%s\", can't continue."
 #endif
 
-#if NATIVE_LANGUAGE==GERMAN
+#if NATIVE_LANGUAGE == GERMAN
 /* GAME MESSAGES */
 #define COMMENT_IGNORED "No transcript running, comment ignored.^"
 #define COMMENT_RECORDED "Comment recorded.^"

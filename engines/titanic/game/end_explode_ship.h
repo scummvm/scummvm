@@ -33,9 +33,11 @@ class CEndExplodeShip : public CGameObject {
 	bool TimerMsg(CTimerMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool MovieFrameMsg(CMovieFrameMsg *msg);
+
 public:
 	bool _isExploding;
 	int _unused5;
+
 public:
 	CLASSDEF;
 	CEndExplodeShip() : CGameObject(), _isExploding(false), _unused5(0) {}

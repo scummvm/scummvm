@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CAuditoryCentre, CBrain)
-	ON_MESSAGE(PuzzleSolvedMsg)
+ON_MESSAGE(PuzzleSolvedMsg)
 END_MESSAGE_MAP()
 
 void CAuditoryCentre::save(SimpleFile *file, int indent) {

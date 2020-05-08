@@ -67,7 +67,6 @@ public:
 		EDIT_ESCAPE = 17
 	};
 
-
 protected:
 	Std::string _text;
 	Std::string::size_type _cursor;
@@ -85,7 +84,6 @@ protected:
 	Font *getFont() const;
 
 	RenderedText *_cachedText;
-
 };
 
 } // End of namespace Ultima8

@@ -42,8 +42,10 @@ private:
 	 * that should still be passed onto the game
 	 */
 	bool isSpecialKey(Common::KeyCode key);
+
 public:
 	CInputHandler *_inputHandler;
+
 public:
 	CInputTranslator(CInputHandler *inputHandler);
 

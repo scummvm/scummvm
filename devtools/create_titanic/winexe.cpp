@@ -22,8 +22,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "str.h"
 #include "winexe.h"
+#include "str.h"
 
 namespace Common {
 

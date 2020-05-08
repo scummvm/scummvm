@@ -34,7 +34,10 @@ class DungeonItem;
 namespace Maps {
 
 enum TileId {
-	TILE_WATER = 0, TILE_GRASS = 1, TILE_WOODS = 2, TILE_MOUNTAINS = 3
+	TILE_WATER = 0,
+	TILE_GRASS = 1,
+	TILE_WOODS = 2,
+	TILE_MOUNTAINS = 3
 };
 
 class MapBase;
@@ -46,9 +49,11 @@ class Ultima1Map;
 class U1MapTile : public Shared::Maps::MapTile {
 private:
 	MapBase *_map;
+
 public:
 	int _locationNum;
 	Widgets::DungeonItem *_item;
+
 public:
 	/**
 	 * Constructor

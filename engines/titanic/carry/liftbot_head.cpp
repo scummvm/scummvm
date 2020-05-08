@@ -27,9 +27,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLiftbotHead, CCarry)
-	ON_MESSAGE(UseWithOtherMsg)
-	ON_MESSAGE(UseWithCharMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(UseWithCharMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 CLiftbotHead::CLiftbotHead() : CCarry(), _flag(false) {

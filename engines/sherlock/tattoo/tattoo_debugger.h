@@ -41,4 +41,4 @@ public:
 
 } // End of namespace Sherlock
 
-#endif	/* SHERLOCK_TATTOO_DEBUGGER_H */
+#endif /* SHERLOCK_TATTOO_DEBUGGER_H */

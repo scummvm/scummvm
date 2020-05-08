@@ -45,78 +45,73 @@ struct AudioInfo {
 static Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 
 static const AudioInfo audioInfo1[] = {
-	{44,     0,    -1},
-	{45,     0,    -1},
-	{46,     0,  2510},
-	{46,  2510,  4020},
-	{46,  4020,    -1},
-	{47,     0, 24010},
-	{47, 24010,    -1},
-	{48,     0,  2510},
-	{48,  2510, 10520},
-	{48, 10520, 13530},
-	{48, 13530,    -1},
-	{50,     0, 12786},
-	{50, 12786,    -1},
-	{51,     0,    -1},
-	{53,     0,    -1},
-	{54,     0,  8010},
-	{54,  8010, 24020},
-	{54, 24020, 30030},
-	{54, 30030, 31040},
-	{54, 31040,    -1},
+    {44, 0, -1},
+    {45, 0, -1},
+    {46, 0, 2510},
+    {46, 2510, 4020},
+    {46, 4020, -1},
+    {47, 0, 24010},
+    {47, 24010, -1},
+    {48, 0, 2510},
+    {48, 2510, 10520},
+    {48, 10520, 13530},
+    {48, 13530, -1},
+    {50, 0, 12786},
+    {50, 12786, -1},
+    {51, 0, -1},
+    {53, 0, -1},
+    {54, 0, 8010},
+    {54, 8010, 24020},
+    {54, 24020, 30030},
+    {54, 30030, 31040},
+    {54, 31040, -1},
 };
 
 static const AudioInfo audioInfo2[] = {
-	{55,     18230,    -1},
-	{47,     0,     16010},
-	{47,     16010, 17020},
-	{49,     8010,     -1},
-	{49,     0,      8010},
-	{53,     30020,    -1},
-	{55,     7010,  17020},
-	{55,     0,      7010},
-	{53,     5010,  30020},
-	{55,     18230,    -1},
-	{55,     17020, 18230},
-	{53,     0,      5010},
-	{47,     17020,    -1},
-	{51,     9020,     -1},
-	{51,     0,      6010},
-	{50,     0,        -1},
-	{51,     6010,   9020},
-	{54,     0,        -1},
-	{48,     0,        -1}
-};
+    {55, 18230, -1},
+    {47, 0, 16010},
+    {47, 16010, 17020},
+    {49, 8010, -1},
+    {49, 0, 8010},
+    {53, 30020, -1},
+    {55, 7010, 17020},
+    {55, 0, 7010},
+    {53, 5010, 30020},
+    {55, 18230, -1},
+    {55, 17020, 18230},
+    {53, 0, 5010},
+    {47, 17020, -1},
+    {51, 9020, -1},
+    {51, 0, 6010},
+    {50, 0, -1},
+    {51, 6010, 9020},
+    {54, 0, -1},
+    {48, 0, -1}};
 
 static const byte mouseNormal[64] = {
-	0xff,0x3f,0xff,0x1f,0xff,0x0f,0xff,0x07,
-	0xff,0x03,0xff,0x01,0xff,0x00,0x7f,0x00,
-	0x3f,0x00,0x1f,0x00,0x0f,0x00,0x0f,0x00,
-	0xff,0x00,0x7f,0x18,0x7f,0x38,0x7f,0xfc,
+    0xff, 0x3f, 0xff, 0x1f, 0xff, 0x0f, 0xff, 0x07,
+    0xff, 0x03, 0xff, 0x01, 0xff, 0x00, 0x7f, 0x00,
+    0x3f, 0x00, 0x1f, 0x00, 0x0f, 0x00, 0x0f, 0x00,
+    0xff, 0x00, 0x7f, 0x18, 0x7f, 0x38, 0x7f, 0xfc,
 
-	0x00,0x00,0x00,0x40,0x00,0x60,0x00,0x70,
-	0x00,0x78,0x00,0x7c,0x00,0x7e,0x00,0x7f,
-	0x80,0x7f,0xc0,0x7f,0xe0,0x7f,0x00,0x7e,
-	0x00,0x66,0x00,0x43,0x00,0x03,0x00,0x00
-};
+    0x00, 0x00, 0x00, 0x40, 0x00, 0x60, 0x00, 0x70,
+    0x00, 0x78, 0x00, 0x7c, 0x00, 0x7e, 0x00, 0x7f,
+    0x80, 0x7f, 0xc0, 0x7f, 0xe0, 0x7f, 0x00, 0x7e,
+    0x00, 0x66, 0x00, 0x43, 0x00, 0x03, 0x00, 0x00};
 
 static const byte mouseWait[64] = {
-	0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x80,
-	0x01,0x80,0x01,0x80,0x11,0x88,0x31,0x8c,
-	0x31,0x8c,0x11,0x88,0x01,0x80,0x01,0x80,
-	0x01,0x80,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x80,
+    0x01, 0x80, 0x01, 0x80, 0x11, 0x88, 0x31, 0x8c,
+    0x31, 0x8c, 0x11, 0x88, 0x01, 0x80, 0x01, 0x80,
+    0x01, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 
-	0x00,0x00,0xfe,0x7f,0xf4,0x2f,0xf4,0x2f,
-	0x14,0x28,0x24,0x24,0x44,0x22,0x84,0x21,
-	0x84,0x21,0xc4,0x23,0xe4,0x27,0x74,0x2e,
-	0x34,0x2c,0x14,0x28,0xfe,0x7f,0x00,0x00
-};
-
+    0x00, 0x00, 0xfe, 0x7f, 0xf4, 0x2f, 0xf4, 0x2f,
+    0x14, 0x28, 0x24, 0x24, 0x44, 0x22, 0x84, 0x21,
+    0x84, 0x21, 0xc4, 0x23, 0xe4, 0x27, 0x74, 0x2e,
+    0x34, 0x2c, 0x14, 0x28, 0xfe, 0x7f, 0x00, 0x00};
 
 ResourceManager::ResourceManager(SupernovaEngine *vm)
-	: _audioRate(11931)
-	, _vm(vm) {
+    : _audioRate(11931), _vm(vm) {
 	if (_vm->_MSPart == 1)
 		_soundSamples = new Common::ScopedPtr<Audio::SeekableAudioStream>[kAudioNumSamples1];
 	else if (_vm->_MSPart == 2)
@@ -125,11 +120,11 @@ ResourceManager::ResourceManager(SupernovaEngine *vm)
 }
 
 ResourceManager::~ResourceManager() {
-	if (_vm->_MSPart == 1) {	
+	if (_vm->_MSPart == 1) {
 		for (int i = 0; i < 44; i++)
 			delete _images[i];
 	}
-	if (_vm->_MSPart == 2) {	
+	if (_vm->_MSPart == 2) {
 		for (int i = 0; i < 47; i++)
 			delete _images[i];
 	}
@@ -154,13 +149,11 @@ void ResourceManager::initCursorGraphics() {
 			uint mask = 0x8000 >> bit;
 			uint bitIndex = i * 16 + bit;
 
-			_cursorNormal[bitIndex] = (READ_LE_UINT16(bufferNormal + i) & mask) ?
-										 kColorCursorTransparent : kColorBlack;
+			_cursorNormal[bitIndex] = (READ_LE_UINT16(bufferNormal + i) & mask) ? kColorCursorTransparent : kColorBlack;
 			if (READ_LE_UINT16(bufferNormal + i + 16) & mask)
 				_cursorNormal[bitIndex] = kColorLightRed;
 
-			_cursorWait[bitIndex] = (READ_LE_UINT16(bufferWait + i) & mask) ?
-									   kColorCursorTransparent : kColorBlack;
+			_cursorWait[bitIndex] = (READ_LE_UINT16(bufferWait + i) & mask) ? kColorCursorTransparent : kColorBlack;
 			if (READ_LE_UINT16(bufferWait + i + 16) & mask)
 				_cursorWait[bitIndex] = kColorLightRed;
 		}
@@ -209,7 +202,7 @@ void ResourceManager::loadSound1(AudioId id) {
 
 	byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
 	_soundSamples[id].reset(Audio::makeRawStream(buffer, length, _audioRate,
-												streamFlag, DisposeAfterUse::YES));
+	                                             streamFlag, DisposeAfterUse::YES));
 }
 
 void ResourceManager::loadSound2(AudioId id) {
@@ -234,7 +227,7 @@ void ResourceManager::loadSound2(AudioId id) {
 
 	byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
 	_soundSamples[id].reset(Audio::makeRawStream(buffer, length, _audioRate,
-												streamFlag, DisposeAfterUse::YES));
+	                                             streamFlag, DisposeAfterUse::YES));
 }
 
 void ResourceManager::loadImage(int filenumber) {
@@ -330,9 +323,8 @@ byte *ResourceManager::generateTone(byte *buffer, int frequency, int length, int
 	// Also the length we have is a minimum length, so only increase it.
 	int r = 1 + (length - 1) * frequency / audioRate;
 	length = (1 + 2 * r * audioRate / frequency) / 2;
-	for(; i < length; i++) {
-		buffer[i] = (byte)
-			((table.at((i * frequency) % audioRate) * 127) + 127);
+	for (; i < length; i++) {
+		buffer[i] = (byte)((table.at((i * frequency) % audioRate) * 127) + 127);
 	}
 	return buffer + length;
 }
@@ -344,7 +336,7 @@ void ResourceManager::initSiren() {
 	int length = audioRate / 90; // minimal length of each tone
 
 	// * 60 for the minimal length, another 20 * length as a spare, for longer tones
-	byte *buffer = new byte[length * 80]; 
+	byte *buffer = new byte[length * 80];
 	byte *pBuffer = buffer;
 	Common::SineTable table(audioRate);
 
@@ -357,8 +349,9 @@ void ResourceManager::initSiren() {
 	byte streamFlag = Audio::FLAG_UNSIGNED;
 
 	_sirenStream.reset(Audio::makeLoopingAudioStream(
-			Audio::makeRawStream(buffer, pBuffer - buffer, audioRate,
-									streamFlag, DisposeAfterUse::YES), 0));
+	    Audio::makeRawStream(buffer, pBuffer - buffer, audioRate,
+	                         streamFlag, DisposeAfterUse::YES),
+	    0));
 }
 
 static Common::MemoryReadStream *convertToMod(const char *filename, int version) {
@@ -387,7 +380,7 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 		return nullptr;
 	}
 
-	for (int i = 0 ; i < nbInstr2 ; ++i) {
+	for (int i = 0; i < nbInstr2; ++i) {
 		instr2[i].seg = msnFile.readUint16LE();
 		instr2[i].start = msnFile.readUint16LE();
 		instr2[i].end = msnFile.readUint16LE();
@@ -399,9 +392,9 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 	songLength = msnFile.readSint16LE();
 	msnFile.read(arrangement, 128);
 	patternNumber = msnFile.readSint16LE();
-	for (int p = 0 ; p < patternNumber ; ++p) {
-		for (int n = 0 ; n < 64 ; ++n) {
-			for (int k = 0 ; k < 4 ; ++k) {
+	for (int p = 0; p < patternNumber; ++p) {
+		for (int n = 0; n < 64; ++n) {
+			for (int k = 0; k < 4; ++k) {
 				note2[p][n][k] = msnFile.readSint32LE();
 			}
 		}
@@ -420,7 +413,7 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 
 	// We can't recover some MOD effects since several of them are mapped to 0.
 	// Assume the MSN effect of value 0 is Arpeggio (MOD effect of value 0).
-	const char invConvEff[8] = {0, 1, 2, 3, 10, 12, 13 ,15};
+	const char invConvEff[8] = {0, 1, 2, 3, 10, 12, 13, 15};
 
 	// Reminder from convertToMsn
 	// 31 30 29 28 27 26 25 24 - 23 22 21 20 19 18 17 16 - 15 14 13 12 11 10 09 08 - 07 06 05 04 03 02 01 00
@@ -453,7 +446,7 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 	for (int p = 0; p < patternNumber; ++p) {
 		for (int n = 0; n < 64; ++n) {
 			for (int k = 0; k < 4; ++k) {
-				int32* l = &(note[p][n][k]);
+				int32 *l = &(note[p][n][k]);
 				*l = note2[p][n][k];
 				int32 i = 0;
 				if (nbInstr2 == 22) { // version 1
@@ -487,7 +480,7 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 		// iname is not stored in the mod file. Just set it to 'instrument#'
 		// finetune is not stored either. Assume 0.
 		memset(instr[i].iname, 0, 22);
-		sprintf(instr[i].iname, "instrument%d", i+1);
+		sprintf(instr[i].iname, "instrument%d", i + 1);
 		instr[i].length = 0;
 		instr[i].finetune = 0;
 		instr[i].volume = 0;
@@ -497,7 +490,7 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 		if (i < nbInstr2) {
 			instr[i].length = ((instr2[i].end - instr2[i].start) >> 1);
 			instr[i].loopStart = ((instr2[i].loopStart - instr2[i].start) >> 1);
-			instr[i].loopLength = (( instr2[i].loopEnd - instr2[i].loopStart) >> 1);
+			instr[i].loopLength = ((instr2[i].loopEnd - instr2[i].loopStart) >> 1);
 			instr[i].volume = instr2[i].volume;
 		}
 	}
@@ -510,14 +503,14 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 
 	// The mark cannot be recovered either. Since we have 4 channels and 31 instrument it can be either ID='M.K.' or ID='4CHN'.
 	// Assume 'M.K.'
-	const char mark[4] = { 'M', '.', 'K', '.' };
+	const char mark[4] = {'M', '.', 'K', '.'};
 
 	Common::MemoryWriteStreamDynamic buffer(DisposeAfterUse::NO);
 
 	buffer.write(msnFile.getName(), 19);
 	buffer.writeByte(0);
 
-	for (int i = 0 ; i < 31 ; ++i) {
+	for (int i = 0; i < 31; ++i) {
 		buffer.write(instr[i].iname, 22);
 		buffer.writeUint16BE(instr[i].length);
 		buffer.writeByte(instr[i].finetune);
@@ -530,10 +523,10 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 	buffer.write(arrangement, 128);
 	buffer.write(mark, 4);
 
-	for (int p = 0 ; p < patternNumber ; ++p) {
-		for (int n = 0 ; n < 64 ; ++n) {
-			for (int k = 0 ; k < 4 ; ++k) {
-//				buffer.writeUint32BE(*((uint32*)(note[p][n]+k)));
+	for (int p = 0; p < patternNumber; ++p) {
+		for (int n = 0; n < 64; ++n) {
+			for (int k = 0; k < 4; ++k) {
+				//				buffer.writeUint32BE(*((uint32*)(note[p][n]+k)));
 				buffer.writeSint32BE(note[p][n][k]);
 			}
 		}
@@ -562,4 +555,4 @@ const byte *ResourceManager::getCursor(CursorId id) const {
 	}
 }
 
-}
+} // namespace Supernova

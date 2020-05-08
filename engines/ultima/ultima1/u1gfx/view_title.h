@@ -23,17 +23,17 @@
 #ifndef ULTIMA_ULTIMA1_GFX_VIEW_MAP_H
 #define ULTIMA_ULTIMA1_GFX_VIEW_MAP_H
 
-#include "ultima/shared/gfx/visual_container.h"
-#include "ultima/shared/gfx/bitmap.h"
 #include "graphics/managed_surface.h"
+#include "ultima/shared/gfx/bitmap.h"
+#include "ultima/shared/gfx/visual_container.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-using Shared::CShowMsg;
-using Shared::CKeypressMsg;
 using Shared::CFrameMsg;
+using Shared::CKeypressMsg;
+using Shared::CShowMsg;
 
 /**
  * This class implements the title screen, which shows the copyright screens and Ultima castle screen,
@@ -44,13 +44,19 @@ class ViewTitle : public Shared::Gfx::VisualItem {
 	bool ShowMsg(CShowMsg &msg);
 	bool KeypressMsg(CKeypressMsg &msg);
 	bool FrameMsg(CFrameMsg &msg);
+
 private:
 	Graphics::ManagedSurface _logo, _castle;
 	Graphics::ManagedSurface _flags[3];
-	enum TitleMode { TITLEMODE_COPYRIGHT, TITLEMODE_PRESENTS, TITLEMODE_CASTLE, TITLEMODE_TRADEMARKS, TITLEMODE_MAIN_MENU };
+	enum TitleMode { TITLEMODE_COPYRIGHT,
+		             TITLEMODE_PRESENTS,
+		             TITLEMODE_CASTLE,
+		             TITLEMODE_TRADEMARKS,
+		             TITLEMODE_MAIN_MENU };
 	TitleMode _mode;
 	uint32 _expiryTime;
 	int _counter;
+
 private:
 	/**
 	 * Shows the initial copyright screen
@@ -96,6 +102,7 @@ private:
 	 * Sets the current mode (display) within the title
 	 */
 	void setMode(TitleMode mode);
+
 public:
 	CLASSDEF;
 
@@ -111,7 +118,7 @@ public:
 };
 
 } // End of namespace U1Gfx
-} // End of namespace Shared
+} // namespace Ultima1
 } // End of namespace Ultima
 
 #endif

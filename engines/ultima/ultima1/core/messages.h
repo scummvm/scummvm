@@ -32,7 +32,7 @@ typedef Ultima::CMessage CMessage;
 
 MESSAGE1(CMoveMsg, int, direction, 0);
 
-} // End of namespace Shared
-} // End of namespace Xeen
+} // namespace Ultima1
+} // namespace Ultima
 
 #endif

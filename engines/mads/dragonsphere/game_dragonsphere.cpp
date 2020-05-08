@@ -20,23 +20,23 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "mads/mads.h"
-#include "mads/game.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
+#include "common/config-manager.h"
+#include "common/scummsys.h"
+#include "mads/game.h"
+#include "mads/mads.h"
+#include "mads/msurface.h"
+#include "mads/screen.h"
 //#include "mads/nebular/dialogs_nebular.h"
-#include "mads/dragonsphere/globals_dragonsphere.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
+#include "mads/dragonsphere/globals_dragonsphere.h"
 
 namespace MADS {
 
 namespace Dragonsphere {
 
 GameDragonsphere::GameDragonsphere(MADSEngine *vm)
-	: Game(vm) {
+    : Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
 }
@@ -142,11 +142,10 @@ void GameDragonsphere::unhandledAction() {
 
 void GameDragonsphere::step() {
 	if (_player._visible && _player._stepEnabled && !_player._moving &&
-		(_player._facing == _player._turnToFacing)) {
+	    (_player._facing == _player._turnToFacing)) {
 
 		// TODO
 	}
-
 }
 
 void GameDragonsphere::synchronize(Common::Serializer &s, bool phase1) {

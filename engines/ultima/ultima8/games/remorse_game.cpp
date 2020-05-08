@@ -20,24 +20,24 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/games/remorse_game.h"
+#include "common/memstream.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/filesys/raw_archive.h"
+#include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/graphics/xform_blend.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
+#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/graphics/xform_blend.h"
-#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/filesys/raw_archive.h"
-#include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "common/memstream.h"
+#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -52,7 +52,6 @@ RemorseGame::RemorseGame() : Game() {
 }
 
 RemorseGame::~RemorseGame() {
-
 }
 
 static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
@@ -136,12 +135,11 @@ bool RemorseGame::startInitialUsecode(int saveSlot) {
 	//	return;
 	//}
 
-//	Process* proc = new StartCrusaderProcess();
-//	Kernel::get_instance()->addProcess(proc);
+	//	Process* proc = new StartCrusaderProcess();
+	//	Kernel::get_instance()->addProcess(proc);
 
 	return true;
 }
-
 
 static ProcId playMovie(const char *movieID, bool fade) {
 	const Std::string filename = Std::string::format("@game/flics/%s.avi", movieID);
@@ -165,7 +163,6 @@ ProcId RemorseGame::playEndgameMovie(bool fade) {
 }
 
 void RemorseGame::playCredits() {
-
 }
 
 void RemorseGame::writeSaveInfo(Common::WriteStream *ws) {

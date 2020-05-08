@@ -26,12 +26,12 @@
 /* Header file for instruction execution unit in Alan interpreter */
 
 /* IMPORTS */
-#include "glk/alan3/sysdep.h"
-#include "glk/jumps.h"
-#include "glk/alan3/acode.h"
-#include "glk/alan3/types.h"
-#include "glk/alan3/set.h"
 #include "common/stream.h"
+#include "glk/alan3/acode.h"
+#include "glk/alan3/set.h"
+#include "glk/alan3/sysdep.h"
+#include "glk/alan3/types.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -41,10 +41,9 @@ namespace Alan3 {
 #define ERROR_RETURN 1
 #define UNDO_RETURN 2
 
-
 /* DATA */
 
-extern Common::SeekableReadStream *textFile;		// The text and message file
+extern Common::SeekableReadStream *textFile; // The text and message file
 extern bool printFlag;
 
 /* FUNCTIONS */

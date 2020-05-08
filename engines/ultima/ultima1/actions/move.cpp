@@ -21,22 +21,22 @@
  */
 
 #include "ultima/ultima1/actions/move.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/widgets/transport.h"
-#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
 BEGIN_MESSAGE_MAP(Move, Action)
-	ON_MESSAGE(MoveMsg)
+ON_MESSAGE(MoveMsg)
 END_MESSAGE_MAP()
 
 bool Move::MoveMsg(CMoveMsg &msg) {
 	Maps::Ultima1Map *map = getMap();
-	
+
 	if (map->_mapType == Maps::MAP_DUNGEON) {
 		switch (msg._direction) {
 		case Shared::Maps::DIR_LEFT:

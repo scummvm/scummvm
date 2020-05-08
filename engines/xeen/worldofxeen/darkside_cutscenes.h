@@ -35,6 +35,7 @@ class DarkSideCutscenes : public Cutscenes {
 private:
 	Subtitles _subtitles;
 	SpriteResource _ball, _claw, _dragon1;
+
 private:
 	/**
 	 * Initial animation of the Dragon Pharoah moving his hands to the
@@ -99,17 +100,19 @@ private:
 	/**
 	 * Last part of the Dark Side ending, shows the final score and saves the game/
 	 */
-	 void showDarkSideScore(uint endingScore);
+	void showDarkSideScore(uint endingScore);
 
 	/**
 	 * Shows the Pharaoh ending screen where score text is shown
 	 */
-	 bool showPharaohEndTextInner(const char *msg1, const char *msg2, const char *msg3);
+	bool showPharaohEndTextInner(const char *msg1, const char *msg2, const char *msg3);
+
 protected:
 	/**
 	 * Shows the Pharaoh ending screen where score text is shown
 	 */
 	bool showPharaohEndText(const char *msg1, const char *msg2 = nullptr, const char *msg3 = nullptr);
+
 public:
 	DarkSideCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 

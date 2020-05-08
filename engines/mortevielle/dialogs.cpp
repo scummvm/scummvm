@@ -162,12 +162,11 @@ int DialogManager::show(const Common::String &msg) {
 			id = 0;
 			_vm->_mouse->showMouse();
 		}
-		test3 = (curPos.y > 95) && (curPos.y < 105) && (((curPos.x > limit[1][1]) && (curPos.x < limit[1][2]))
-		                                    || ((curPos.x > limit[2][1]) && (curPos.x < limit[2][2])));
+		test3 = (curPos.y > 95) && (curPos.y < 105) && (((curPos.x > limit[1][1]) && (curPos.x < limit[1][2])) || ((curPos.x > limit[2][1]) && (curPos.x < limit[2][2])));
 	} while (!_vm->getMouseClick());
 	_vm->setMouseClick(false);
 	_vm->_mouse->hideMouse();
-	if (!test3)  {
+	if (!test3) {
 		id = 1;
 		setPosition(1, coldep, esp);
 		Common::String tmp4(" ");
@@ -212,7 +211,7 @@ void DialogManager::decodeAlertDetails(Common::String inputStr, int &choiceNumb,
 		++k;
 	}
 
-	if (empty)  {
+	if (empty) {
 		choiceStr = "";
 		col = 20;
 	} else {
@@ -281,9 +280,9 @@ void DialogManager::setButtonText(Common::String c, int coldep, int nbcase, Comm
  */
 bool DialogManager::showKnowledgeCheck() {
 	const int textIndexArr[10] = {511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
-	const int correctAnswerArr[10] = {4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
+	const int correctAnswerArr[10] = {4, 7, 1, 6, 4, 4, 2, 5, 3, 1};
 
-	Hotspot coor[kMaxHotspots+1];
+	Hotspot coor[kMaxHotspots + 1];
 
 	for (int i = 0; i <= kMaxHotspots; ++i) {
 		coor[i]._rect = Common::Rect();
@@ -421,7 +420,7 @@ void DialogManager::checkForF8(int SpeechNum, bool drawFrame2Fl) {
 		if (_vm->shouldQuit())
 			return;
 	} while (_vm->_key != 66); // keycode for F8
-	// just stop the speech when pressing F8
+	                           // just stop the speech when pressing F8
 #ifdef USE_TTS
 	if (_vm->_soundManager->_ttsMan != nullptr)
 		_vm->_soundManager->_ttsMan->stop();

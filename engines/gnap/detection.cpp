@@ -22,64 +22,27 @@
 
 #include "gnap/gnap.h"
 
+#include "base/plugins.h"
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "base/plugins.h"
+#include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
 static const PlainGameDescriptor gnapGames[] = {
-	{ "gnap", "Gnap" },
-	{ 0, 0 }
-};
+    {"gnap", "Gnap"},
+    {0, 0}};
 
 namespace Gnap {
 
 static const ADGameDescription gameDescriptions[] = {
-	{
-		"gnap", "",
-		{
-			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12515823},
-			AD_LISTEND
-		},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
-	},
-	{
-		"gnap", "",
-		{
-			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 13497301},
-			AD_LISTEND
-		},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
-	},
-	{
-		"gnap", "",
-		{
-			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12995485},
-			AD_LISTEND
-		},
-		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
-	},
-	{
-		"gnap", "Fargus",
-		{
-			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12847726},
-			AD_LISTEND
-		},
-		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
-	},
-	{
-		"gnap", "",
-		{
-			{"stock_n.dat", 0, "9729e1c77a74f2f23c53596fae385bfa", 13428133},
-			AD_LISTEND
-		},
-		Common::PL_POL, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
-	},
+    {"gnap", "", {{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12515823}, AD_LISTEND}, Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()},
+    {"gnap", "", {{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 13497301}, AD_LISTEND}, Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()},
+    {"gnap", "", {{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12995485}, AD_LISTEND}, Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()},
+    {"gnap", "Fargus", {{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12847726}, AD_LISTEND}, Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()},
+    {"gnap", "", {{"stock_n.dat", 0, "9729e1c77a74f2f23c53596fae385bfa", 13428133}, AD_LISTEND}, Common::PL_POL, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()},
 
-	AD_TABLE_END_MARKER
-};
+    AD_TABLE_END_MARKER};
 
 } // End of namespace Gnap
 
@@ -110,21 +73,19 @@ public:
 };
 
 bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate) ||
+	       (f == kSimpleSavesNames);
 }
 
 bool Gnap::GnapEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 void GnapMetaEngine::removeSaveState(const char *target, int slot) const {
@@ -217,7 +178,7 @@ bool GnapMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(GNAP)
-	REGISTER_PLUGIN_DYNAMIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngine);
+REGISTER_PLUGIN_STATIC(GNAP, PLUGIN_TYPE_ENGINE, GnapMetaEngine);
 #endif

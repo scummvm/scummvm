@@ -21,18 +21,18 @@
  */
 
 #include "titanic/game/pickup/pick_up_hose.h"
-#include "titanic/game/broken_pell_base.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/room_item.h"
 #include "titanic/core/view_item.h"
+#include "titanic/game/broken_pell_base.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPickUpHose, CPickUp)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
 bool CPickUpHose::_v1;

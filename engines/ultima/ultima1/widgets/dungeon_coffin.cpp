@@ -22,16 +22,15 @@
 
 #include "ultima/ultima1/widgets/dungeon_coffin.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/maps/map_dungeon.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
+#include "ultima/ultima1/maps/map_tile.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-DungeonCoffin::DungeonCoffin(Ultima1Game *game, Maps::MapBase *map, const Point &pt) :
-		DungeonItem(game, map, UITEM_COFFIN, pt) {
+DungeonCoffin::DungeonCoffin(Ultima1Game *game, Maps::MapBase *map, const Point &pt) : DungeonItem(game, map, UITEM_COFFIN, pt) {
 	_name = game->_res->DUNGEON_ITEM_NAMES[1];
 }
 

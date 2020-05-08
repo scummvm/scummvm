@@ -24,16 +24,16 @@
 
 namespace Common {
 
-const char *kStandardActionInteract      = "INTRCT";
-const char *kStandardActionSkip          = "SKIP";
-const char *kStandardActionPause         = "PAUSE";
-const char *kStandardActionMoveUp        = "UP";
-const char *kStandardActionMoveDown      = "DOWN";
-const char *kStandardActionMoveLeft      = "LEFT";
-const char *kStandardActionMoveRight     = "RIGHT";
-const char *kStandardActionOpenMainMenu  = "MENU";
-const char *kStandardActionLoad          = "LOAD";
-const char *kStandardActionSave          = "SAVE";
-const char *kStandardActionOpenSettings  = "OPTS";
+const char *kStandardActionInteract = "INTRCT";
+const char *kStandardActionSkip = "SKIP";
+const char *kStandardActionPause = "PAUSE";
+const char *kStandardActionMoveUp = "UP";
+const char *kStandardActionMoveDown = "DOWN";
+const char *kStandardActionMoveLeft = "LEFT";
+const char *kStandardActionMoveRight = "RIGHT";
+const char *kStandardActionOpenMainMenu = "MENU";
+const char *kStandardActionLoad = "LOAD";
+const char *kStandardActionSave = "SAVE";
+const char *kStandardActionOpenSettings = "OPTS";
 
 } //namespace Common

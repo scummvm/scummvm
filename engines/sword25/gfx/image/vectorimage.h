@@ -36,9 +36,9 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "sword25/kernel/common.h"
-#include "sword25/gfx/image/image.h"
 #include "common/rect.h"
+#include "sword25/gfx/image/image.h"
+#include "sword25/kernel/common.h"
 
 #include "art.h"
 
@@ -55,8 +55,7 @@ class VectorImage;
 
 class VectorPathInfo {
 public:
-	VectorPathInfo(ArtBpath *vec, int len, uint lineStyle, uint fillStyle0, uint fillStyle1) :
-		_vec(vec), _lineStyle(lineStyle), _fillStyle0(fillStyle0), _fillStyle1(fillStyle1), _len(len) {}
+	VectorPathInfo(ArtBpath *vec, int len, uint lineStyle, uint fillStyle0, uint fillStyle1) : _vec(vec), _lineStyle(lineStyle), _fillStyle0(fillStyle0), _fillStyle1(fillStyle1), _len(len) {}
 
 	VectorPathInfo() {
 		_lineStyle = _fillStyle0 = _fillStyle1 = _len = 0;
@@ -93,6 +92,7 @@ private:
 */
 class VectorImageElement {
 	friend class VectorImage;
+
 public:
 	uint getPathCount() const {
 		return _pathInfos.size();
@@ -142,10 +142,9 @@ private:
 
 	Common::Array<VectorPathInfo> _pathInfos;
 	Common::Array<LineStyleType> _lineStyles;
-	Common::Array<uint32>  _fillStyles;
+	Common::Array<uint32> _fillStyles;
 	Common::Rect _boundingBox;
 };
-
 
 /**
     @brief Eine Vektorgraphik
@@ -209,11 +208,11 @@ public:
 	}
 	bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) override;
 	bool blit(int posX = 0, int posY = 0,
-	                  int flipping = Graphics::FLIP_NONE,
-	                  Common::Rect *pPartRect = NULL,
-	                  uint color = BS_ARGB(255, 255, 255, 255),
-	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0) override;
+	          int flipping = Graphics::FLIP_NONE,
+	          Common::Rect *pPartRect = NULL,
+	          uint color = BS_ARGB(255, 255, 255, 255),
+	          int width = -1, int height = -1,
+	          RectangleList *updateRects = 0) override;
 
 	class SWFBitStream;
 
@@ -222,8 +221,8 @@ private:
 	bool parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBits, uint &numLineBits);
 
 	ArtBpath *storeBez(ArtBpath *bez, int lineStyle, int fillStyle0, int fillStyle1, int *bezNodes, int *bezAllocated);
-	Common::Array<VectorImageElement>    _elements;
-	Common::Rect                         _boundingBox;
+	Common::Array<VectorImageElement> _elements;
+	Common::Rect _boundingBox;
 
 	byte *_pixelData;
 

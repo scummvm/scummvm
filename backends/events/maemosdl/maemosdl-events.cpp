@@ -31,7 +31,6 @@
 namespace Maemo {
 
 MaemoSdlEventSource::MaemoSdlEventSource() : SdlEventSource(), _clickEnabled(true) {
-
 }
 
 struct KeymapEntry {
@@ -41,13 +40,12 @@ struct KeymapEntry {
 };
 
 static const KeymapEntry keymapEntries[] = {
-	{SDLK_F4, Common::KEYCODE_F11, 0},
-	{SDLK_F5, Common::KEYCODE_F12, 0},
-	{SDLK_F6, Common::KEYCODE_F13, 0},
-	{SDLK_F7, Common::KEYCODE_F14, 0},
-	{SDLK_F8, Common::KEYCODE_F15, 0},
-	{SDLK_LAST, Common::KEYCODE_INVALID, 0}
-};
+    {SDLK_F4, Common::KEYCODE_F11, 0},
+    {SDLK_F5, Common::KEYCODE_F12, 0},
+    {SDLK_F6, Common::KEYCODE_F13, 0},
+    {SDLK_F7, Common::KEYCODE_F14, 0},
+    {SDLK_F8, Common::KEYCODE_F15, 0},
+    {SDLK_LAST, Common::KEYCODE_INVALID, 0}};
 
 bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 
@@ -101,7 +99,7 @@ bool MaemoSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 bool MaemoSdlEventSource::toggleClickMode() {
 	_clickEnabled = !_clickEnabled;
 	_graphicsManager->displayMessageOnOSD(
-	  _clickEnabled ? _("Clicking Enabled") : _("Clicking Disabled"));
+	    _clickEnabled ? _("Clicking Enabled") : _("Clicking Disabled"));
 
 	return _clickEnabled;
 }

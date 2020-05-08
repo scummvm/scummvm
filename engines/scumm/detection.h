@@ -129,5 +129,4 @@ struct DetectorResult {
 
 } // End of namespace Scumm
 
-
 #endif

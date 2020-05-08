@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima4/core/lzw/lzw.h"
 #include "ultima/ultima4/core/lzw/u4decode.h"
+#include "ultima/ultima4/core/lzw/lzw.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -50,7 +50,7 @@ long decompress_u4_file(Common::SeekableReadStream *in, long filesize, void **ou
 		return (-1);
 
 	/* load compressed file into compressed_mem[] */
-	compressed_mem = (byte *) malloc(compressed_filesize);
+	compressed_mem = (byte *)malloc(compressed_filesize);
 	in->read(compressed_mem, compressed_filesize);
 
 	/*
@@ -65,7 +65,7 @@ long decompress_u4_file(Common::SeekableReadStream *in, long filesize, void **ou
 	}
 
 	/* decompress file from compressed_mem[] into decompressed_mem[] */
-	decompressed_mem = (byte *) malloc(decompressed_filesize);
+	decompressed_mem = (byte *)malloc(decompressed_filesize);
 
 	/* testing: clear destination mem */
 	memset(decompressed_mem, 0, decompressed_filesize);
@@ -91,7 +91,7 @@ long decompress_u4_memory(void *in, long inlen, void **out) {
 	if (compressed_filesize == 0)
 		return (-1);
 
-	compressed_mem = (byte *) in;
+	compressed_mem = (byte *)in;
 
 	/*
 	 * determine decompressed data size
@@ -105,7 +105,7 @@ long decompress_u4_memory(void *in, long inlen, void **out) {
 	}
 
 	/* decompress file from compressed_mem[] into decompressed_mem[] */
-	decompressed_mem = (byte *) malloc(decompressed_filesize);
+	decompressed_mem = (byte *)malloc(decompressed_filesize);
 
 	/* testing: clear destination mem */
 	memset(decompressed_mem, 0, decompressed_filesize);
@@ -131,7 +131,7 @@ long getFilesize(Common::SeekableReadStream *input_file) {
  */
 byte mightBeValidCompressedFile(Common::SeekableReadStream *input_file) {
 	byte firstByte;
-	byte c1, c2, c3;   /* booleans */
+	byte c1, c2, c3; /* booleans */
 	long input_filesize;
 
 	/*  check if the input file has a valid size             */

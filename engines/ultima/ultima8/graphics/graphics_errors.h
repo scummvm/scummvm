@@ -23,7 +23,6 @@
 #ifndef ULTIMA8_GRAPHICS_GRAPHICSERRORS_H
 #define ULTIMA8_GRAPHICS_GRAPHICSERRORS_H
 
-
 ////////////////////////////////////
 //                                //
 // Graphics Subsystem Error Codes //
@@ -40,36 +39,31 @@ namespace Ultima8 {
 //
 
 // Software Rendering Error Code Base
-#define GR_SOFT_ERROR_BASE                      (GRAPHICS_ERROR_BASE-0x1000)
+#define GR_SOFT_ERROR_BASE (GRAPHICS_ERROR_BASE - 0x1000)
 
 // OpenGL Rendering Error Code Base
-#define GR_OGL_ERROR_BASE                       (GRAPHICS_ERROR_BASE-0x2000)
+#define GR_OGL_ERROR_BASE (GRAPHICS_ERROR_BASE - 0x2000)
 
 // Texture Error Code Base
-#define GR_TEX_ERROR_BASE                       (GRAPHICS_ERROR_BASE-0x3000)
-
+#define GR_TEX_ERROR_BASE (GRAPHICS_ERROR_BASE - 0x3000)
 
 //
 // Generic Graphics Errors
 //
-
 
 //
 // SoftRenderSurface Error Codes
 //
 
 // Surface Locked with NULL SoftRenderSurface::pixels pointer
-#define GR_SOFT_ERROR_LOCKED_NULL_PIXELS        (GR_SOFT_ERROR_BASE-1)
+#define GR_SOFT_ERROR_LOCKED_NULL_PIXELS (GR_SOFT_ERROR_BASE - 1)
 
 // BeginPainting()/EndPainting() Mismatch
-#define GR_SOFT_ERROR_BEGIN_END_MISMATCH        (GR_SOFT_ERROR_BASE-3)
-
+#define GR_SOFT_ERROR_BEGIN_END_MISMATCH (GR_SOFT_ERROR_BASE - 3)
 
 //
 // OpenGL Error Codes
 //
-
-
 
 //
 // Texturing Error Codes

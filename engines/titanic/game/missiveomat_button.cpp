@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMissiveOMatButton, CEditControl)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(VisibleMsg)
-	ON_MESSAGE(MouseDoubleClickMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(MouseDoubleClickMsg)
 END_MESSAGE_MAP()
 
 void CMissiveOMatButton::save(SimpleFile *file, int indent) {

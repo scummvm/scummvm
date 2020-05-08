@@ -20,8 +20,8 @@
  *
  */
 
-#include "startrek/startrek.h"
 #include "startrek/room.h"
+#include "startrek/startrek.h"
 
 namespace StarTrek {
 
@@ -33,12 +33,12 @@ void Room::muddaUseLenseOnDegrimer() {
 
 	// All of these audio files are identical, but there's one for each room.
 	const TextRef text[] = {
-		11,	// MUDD0
-		13,	// MUDD1
-		10,	// MUDD2
-		16,	// MUDD3
-		 9,	// MUDD4
-		 9,	// MUDD5
+	    11, // MUDD0
+	    13, // MUDD1
+	    10, // MUDD2
+	    16, // MUDD3
+	    9,  // MUDD4
+	    9,  // MUDD5
 	};
 
 	giveItem(OBJECT_IALIENDV);
@@ -49,17 +49,17 @@ void Room::muddaUseLenseOnDegrimer() {
 	showDescription(text[_vm->_roomIndex], true);
 }
 
-
 void Room::muddaUseAlienDevice() {
 	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
-	const int deviceObjectIndices[] = { // Each room's object index for the explosion is different
-		9,  // MUDD0
-		13, // MUDD1
-		11, // MUDD2
-		11, // MUDD3
-		9,  // MUDD4
-		11  // MUDD5
+	const int deviceObjectIndices[] = {
+	    // Each room's object index for the explosion is different
+	    9,  // MUDD0
+	    13, // MUDD1
+	    11, // MUDD2
+	    11, // MUDD3
+	    9,  // MUDD4
+	    11  // MUDD5
 	};
 
 	_awayMission->disableInput = true;
@@ -82,18 +82,17 @@ void Room::muddaFiredAlienDevice() {
 	}
 }
 
-
 void Room::muddaUseDegrimer() {
 	assert(_vm->_roomIndex >= 0 && _vm->_roomIndex <= 5);
 
 	// All of these audio files are identical, but there's one for each room.
 	const TextRef text[] = {
-		2,	// MUDD0
-		4,	// MUDD1
-		1,	// MUDD2
-		1,	// MUDD3
-		2,	// MUDD4
-		1,	// MUDD5
+	    2, // MUDD0
+	    4, // MUDD1
+	    1, // MUDD2
+	    1, // MUDD3
+	    2, // MUDD4
+	    1, // MUDD5
 	};
 
 	showDescription(text[_vm->_roomIndex], true);
@@ -112,12 +111,12 @@ void Room::muddaTick() {
 
 	// All of these audio files are identical, but there's one for each room.
 	const TextRef deathText[] = {
-		6,	// MUDD0
-		7,	// MUDD1
-		5,	// MUDD2
-		8,	// MUDD3
-		5,	// MUDD4
-		5	// MUDD5
+	    6, // MUDD0
+	    7, // MUDD1
+	    5, // MUDD2
+	    8, // MUDD3
+	    5, // MUDD4
+	    5  // MUDD5
 	};
 
 	const int TIMER_LENGTH = 27000;
@@ -145,10 +144,10 @@ void Room::muddaTick() {
 			// applies to Kirk, others seem fine...
 			// TODO: check if this is the case across all versions...
 			const char *directions[] = {
-				"weseee", // KIRK
-				"sewene", // SPOCK
-				"nsesss", // MCCOY
-				"ewesww", // REDSHIRT
+			    "weseee", // KIRK
+			    "sewene", // SPOCK
+			    "nsesss", // MCCOY
+			    "ewesww", // REDSHIRT
 			};
 
 			for (int i = OBJECT_KIRK; i <= OBJECT_REDSHIRT; i++) {
@@ -162,4 +161,4 @@ void Room::muddaTick() {
 	}
 }
 
-}
+} // namespace StarTrek

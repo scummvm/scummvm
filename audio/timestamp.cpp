@@ -60,7 +60,7 @@ Timestamp Timestamp::convertToFramerate(uint newFramerate) const {
 		// We round to the nearest (as opposed to always
 		// rounding down), to minimize rounding errors during
 		// round trip conversions.
-		ts._numFrames = (ts._numFrames * q + p/2) / p;
+		ts._numFrames = (ts._numFrames * q + p / 2) / p;
 
 		ts.normalize();
 	}
@@ -118,7 +118,6 @@ int Timestamp::cmp(const Timestamp &ts) const {
 
 	return delta;
 }
-
 
 Timestamp Timestamp::addFrames(int frames) const {
 	Timestamp ts(*this);
@@ -188,7 +187,7 @@ int Timestamp::frameDiff(const Timestamp &ts) const {
 		const uint p = _framerate / g;
 		const uint q = ts._framerate / g;
 
-		delta -= ((long)ts._numFrames * p + q/2) / (long)q;
+		delta -= ((long)ts._numFrames * p + q / 2) / (long)q;
 	}
 
 	return delta / (int)_framerateFactor;
@@ -202,6 +201,5 @@ int Timestamp::msecs() const {
 	// Note that _framerate is always divisible by 1000.
 	return _secs * 1000 + _numFrames / (_framerate / 1000);
 }
-
 
 } // End of namespace Audio

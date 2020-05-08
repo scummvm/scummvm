@@ -21,23 +21,23 @@
  */
 
 #include "ultima/ultima1/u1gfx/view_title.h"
-#include "ultima/ultima1/u1gfx/drawing_support.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/game.h"
+#include "image/bmp.h"
 #include "ultima/shared/core/file.h"
-#include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/early/font_resources.h"
 #include "ultima/shared/early/ultima_early.h"
-#include "image/bmp.h"
+#include "ultima/shared/gfx/text_cursor.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/u1gfx/drawing_support.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(ViewTitle, Shared::Gfx::VisualItem)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(KeypressMsg)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(ShowMsg)
+ON_MESSAGE(KeypressMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
 void load16(Graphics::ManagedSurface &s, Common::ReadStream &in) {
@@ -80,8 +80,8 @@ ViewTitle::ViewTitle(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Title"
 	for (int idx = 0; idx < 3; ++idx) {
 		_flags[idx].create(8, 8);
 		_flags[idx].blitFrom(*src,
-			Common::Rect(idx * 8, 0, (idx + 1) * 8, 8),
-			Common::Point(0, 0));
+		                     Common::Rect(idx * 8, 0, (idx + 1) * 8, 8),
+		                     Common::Point(0, 0));
 	}
 	f.close();
 }
@@ -179,13 +179,13 @@ void ViewTitle::drawTrademarksView() {
 	if (_counter < 32) {
 		s.blitFrom(_logo, Common::Rect(0, 0, _logo.w, _counter + 1), Point(20, 21));
 		s.blitFrom(_logo, Common::Rect(0, _logo.h - _counter - 1, _logo.w, _logo.h),
-			Common::Point(20, 21 + _logo.h - _counter - 1));
+		           Common::Point(20, 21 + _logo.h - _counter - 1));
 	} else {
 		s.writeString(game->_res->TITLE_MESSAGES[9], TextPoint(1, 17));
 		s.writeString(game->_res->TITLE_MESSAGES[10], TextPoint(2, 18));
 		s.writeString(game->_res->TITLE_MESSAGES[11], TextPoint(11, 19));
 		s.writeString(game->_res->TITLE_MESSAGES[12], TextPoint(6, 23));
-	}	
+	}
 }
 
 void ViewTitle::drawMainMenu() {
@@ -205,12 +205,12 @@ void ViewTitle::drawMainMenu() {
 }
 
 void ViewTitle::setTitlePalette() {
-	const byte PALETTE[] = { 0, 1, 2, 3, 4, 5, 6, 7, 56, 57, 58, 59, 60, 61, 62, 63 };
+	const byte PALETTE[] = {0, 1, 2, 3, 4, 5, 6, 7, 56, 57, 58, 59, 60, 61, 62, 63};
 	getGame()->setEGAPalette(PALETTE);
 }
 
 void ViewTitle::setCastlePalette() {
-	const byte PALETTE[] = { 0, 24, 7, 63, 63, 34, 58, 14, 20, 7, 61, 59, 1, 57, 7, 63 };
+	const byte PALETTE[] = {0, 24, 7, 63, 63, 34, 58, 14, 20, 7, 61, 59, 1, 57, 7, 63};
 	getGame()->setEGAPalette(PALETTE);
 }
 
@@ -219,7 +219,7 @@ bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 	if (time < _expiryTime)
 		return true;
 	setDirty();
-	
+
 	switch (_mode) {
 	case TITLEMODE_COPYRIGHT:
 		setMode(TITLEMODE_PRESENTS);
@@ -320,5 +320,5 @@ bool ViewTitle::KeypressMsg(CKeypressMsg &msg) {
 }
 
 } // End of namespace U1Gfx
-} // End of namespace Shared
+} // namespace Ultima1
 } // End of namespace Ultima

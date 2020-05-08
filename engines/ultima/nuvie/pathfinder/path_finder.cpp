@@ -20,19 +20,17 @@
  *
  */
 
-#include "ultima/nuvie/pathfinder/path.h"
 #include "ultima/nuvie/pathfinder/path_finder.h"
+#include "ultima/nuvie/pathfinder/path.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 PathFinder::PathFinder() : start(0, 0, 0), goal(0, 0, 0), loc(0, 0, 0), search(0) {
-
 }
 
 PathFinder::PathFinder(MapCoord s, MapCoord g)
-	: start(s), goal(g), loc(0, 0, 0), search(0) {
-
+    : start(s), goal(g), loc(0, 0, 0), search(0) {
 }
 
 PathFinder::~PathFinder() {

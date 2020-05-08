@@ -40,6 +40,6 @@ private:
 	CGE2Engine *_vm;
 };
 
-} // End of namespace CGE
+} // namespace CGE2
 
 #endif // CGE2_CONSOLE_H

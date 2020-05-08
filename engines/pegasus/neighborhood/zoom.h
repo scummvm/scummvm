@@ -32,7 +32,7 @@
 #include "pegasus/constants.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Pegasus {
@@ -55,7 +55,7 @@ public:
 		HotSpotID hotspot;
 		TimeValue movieStart;
 		TimeValue movieEnd;
-		RoomID	room;
+		RoomID room;
 		DirectionConstant direction;
 	};
 

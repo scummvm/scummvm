@@ -32,25 +32,25 @@ bool BbvsEngine::evalCondition(Conditions &conditions) {
 		switch (condition.cond) {
 		case kCondSceneObjectVerb:
 			result = _activeItemType == KITSceneObject &&
-				condition.value1 == _currVerbNum &&
-				condition.value2 == _activeItemIndex;
+			         condition.value1 == _currVerbNum &&
+			         condition.value2 == _activeItemIndex;
 			break;
 		case kCondBgObjectVerb:
 			result = _activeItemType == kITBgObject &&
-				condition.value1 == _currVerbNum &&
-				condition.value2 == _activeItemIndex;
+			         condition.value1 == _currVerbNum &&
+			         condition.value2 == _activeItemIndex;
 			break;
 		case kCondSceneObjectInventory:
 			result = _activeItemType == KITSceneObject &&
-				_currVerbNum == kVerbInvItem &&
-				condition.value1 == _currInventoryItem &&
-				condition.value2 == _activeItemIndex;
+			         _currVerbNum == kVerbInvItem &&
+			         condition.value1 == _currInventoryItem &&
+			         condition.value2 == _activeItemIndex;
 			break;
 		case kCondBgObjectInventory:
 			result = _activeItemType == kITBgObject &&
-				_currVerbNum == kVerbInvItem &&
-				condition.value1 == _currInventoryItem &&
-				condition.value2 == _activeItemIndex;
+			         _currVerbNum == kVerbInvItem &&
+			         condition.value1 == _currInventoryItem &&
+			         condition.value2 == _activeItemIndex;
 			break;
 		case kCondHasInventoryItem:
 			result = _inventoryItemStatus[condition.value1] != 0;
@@ -72,7 +72,7 @@ bool BbvsEngine::evalCondition(Conditions &conditions) {
 			break;
 		case kCondIsDialogItem:
 			result = _activeItemType == kITDialog &&
-				condition.value1 == _activeItemIndex;
+			         condition.value1 == _activeItemIndex;
 			break;
 		case kCondIsCameraNum:
 			result = condition.value1 == _currCameraNum;
@@ -82,7 +82,7 @@ bool BbvsEngine::evalCondition(Conditions &conditions) {
 			break;
 		case kCondIsButtheadAtBgObject:
 			result = _buttheadObject &&
-				_gameModule->getBgObject(condition.value2)->rect.contains(_buttheadObject->x / 65536, _buttheadObject->y / 65536);
+			         _gameModule->getBgObject(condition.value2)->rect.contains(_buttheadObject->x / 65536, _buttheadObject->y / 65536);
 			break;
 		case kCondIsNotSceneVisited:
 			result = _sceneVisited[_currSceneNum] == 0;
@@ -108,7 +108,7 @@ bool BbvsEngine::evalCameraCondition(Conditions &conditions, int value) {
 		const Condition &condition = conditions.conditions[i];
 		switch (condition.cond) {
 		case kCondHasInventoryItem:
-			result =  _inventoryItemStatus[condition.value1] != 0;
+			result = _inventoryItemStatus[condition.value1] != 0;
 			break;
 		case kCondHasNotInventoryItem:
 			result = _inventoryItemStatus[condition.value1] == 0;
@@ -133,7 +133,7 @@ bool BbvsEngine::evalCameraCondition(Conditions &conditions, int value) {
 			break;
 		case kCondIsCameraNumTransition:
 			result = condition.value1 == _currCameraNum &&
-				condition.value2 == value;
+			         condition.value2 == value;
 			break;
 		case kCondUnused:
 		case kCondSceneObjectVerb:
@@ -162,25 +162,25 @@ int BbvsEngine::evalDialogCondition(Conditions &conditions) {
 		switch (condition.cond) {
 		case kCondSceneObjectVerb:
 			success = _activeItemType == KITSceneObject &&
-				condition.value1 == _currVerbNum &&
-				condition.value2 == _activeItemIndex;
+			          condition.value1 == _currVerbNum &&
+			          condition.value2 == _activeItemIndex;
 			break;
 		case kCondBgObjectVerb:
 			success = _activeItemType == kITBgObject &&
-				condition.value1 == _currVerbNum &&
-				condition.value2 == _activeItemIndex;
+			          condition.value1 == _currVerbNum &&
+			          condition.value2 == _activeItemIndex;
 			break;
 		case kCondSceneObjectInventory:
 			success = _activeItemType == KITSceneObject &&
-				_currVerbNum == kVerbInvItem &&
-				condition.value1 == _currInventoryItem &&
-				condition.value2 == _activeItemIndex;
+			          _currVerbNum == kVerbInvItem &&
+			          condition.value1 == _currInventoryItem &&
+			          condition.value2 == _activeItemIndex;
 			break;
 		case kCondBgObjectInventory:
 			success = _activeItemType == kITBgObject &&
-				_currVerbNum == kVerbInvItem &&
-				condition.value1 == _currInventoryItem &&
-				condition.value2 == _activeItemIndex;
+			          _currVerbNum == kVerbInvItem &&
+			          condition.value1 == _currInventoryItem &&
+			          condition.value2 == _activeItemIndex;
 			break;
 		case kCondHasInventoryItem:
 			success = _inventoryItemStatus[condition.value1] != 0;
@@ -211,7 +211,7 @@ int BbvsEngine::evalDialogCondition(Conditions &conditions) {
 			break;
 		case kCondIsButtheadAtBgObject:
 			success = _buttheadObject &&
-				_gameModule->getBgObject(condition.value2)->rect.contains(_buttheadObject->x / 65536, _buttheadObject->y / 65536);
+			          _gameModule->getBgObject(condition.value2)->rect.contains(_buttheadObject->x / 65536, _buttheadObject->y / 65536);
 			break;
 		case kCondIsNotSceneVisited:
 			success = _sceneVisited[_currSceneNum] == 0;

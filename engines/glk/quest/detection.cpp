@@ -21,11 +21,11 @@
  */
 
 #include "glk/quest/detection.h"
-#include "glk/quest/detection_tables.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/quest/detection_tables.h"
 
 namespace Glk {
 namespace Quest {

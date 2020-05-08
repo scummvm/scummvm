@@ -43,6 +43,7 @@ public:
 	void drawDialog(DrawLayer layerToDraw) override;
 
 	void receivedFocus(int x = -1, int y = -1) override {}
+
 protected:
 	void handleMouseDown(int x, int y, int button, int clickCount) override {
 		close();

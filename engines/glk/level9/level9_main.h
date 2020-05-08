@@ -23,8 +23,8 @@
 #ifndef GLK_LEVEL9_LEVEL9_MAIN
 #define GLK_LEVEL9_LEVEL9_MAIN
 
-#include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
 
 namespace Glk {
@@ -83,8 +83,8 @@ struct Bitmap {
 #define MAX_BITMAP_HEIGHT 218
 
 #define L9WORD(x) READ_LE_UINT16(x)
-#define L9SETWORD(x,val) WRITE_LE_UINT16(x, val)
-#define L9SETDWORD(x,val) WRITE_LE_UINT32(x, val)
+#define L9SETWORD(x, val) WRITE_LE_UINT16(x, val)
+#define L9SETDWORD(x, val) WRITE_LE_UINT32(x, val)
 
 extern byte *startdata;
 extern uint32 FileSize;

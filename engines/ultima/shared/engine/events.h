@@ -23,11 +23,11 @@
 #ifndef ULTIMA_SHARED_ENGINE_EVENTS_H
 #define ULTIMA_SHARED_ENGINE_EVENTS_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/stack.h"
-#include "gui/debugger.h"
 #include "graphics/screen.h"
+#include "gui/debugger.h"
 #include "ultima/shared/core/rect.h"
 
 namespace Ultima {
@@ -36,7 +36,7 @@ namespace Shared {
 #define GAME_FRAME_RATE (1000 / 50)
 #define GAME_FRAME_TIME 50
 #define SCREEN_UPDATE_TIME 10
-#define BUTTON_MASK(MB) (1 << ((int)(MB) - 1))
+#define BUTTON_MASK(MB) (1 << ((int)(MB)-1))
 #define DOUBLE_CLICK_TIME 100
 
 enum MouseButton {
@@ -48,7 +48,11 @@ enum MouseButton {
 };
 
 enum SpecialButtons {
-	MK_LBUTTON = 1, MK_RBUTTON = 2, MK_MBUTTON = 4, MK_SHIFT = 8, MK_CONTROL = 0x10
+	MK_LBUTTON = 1,
+	MK_RBUTTON = 2,
+	MK_MBUTTON = 4,
+	MK_SHIFT = 8,
+	MK_CONTROL = 0x10
 };
 
 /**
@@ -100,6 +104,7 @@ public:
 class CPressTarget : public EventTarget {
 public:
 	bool _pressed;
+
 public:
 	CPressTarget() : _pressed(false) {
 	}
@@ -148,7 +153,7 @@ private:
 	uint32 _playTime;
 	Point _mousePos;
 	uint _specialButtons;
-	uint8  _buttonsDown;
+	uint8 _buttonsDown;
 
 	/**
 	 * Check whether it's time to display the next screen frame
@@ -171,11 +176,13 @@ private:
 	 * Sets whether a given button is depressed
 	 */
 	void setButtonDown(MouseButton button, bool isDown);
+
 protected:
 	/**
 	 * Handles moving to the next game frame
 	 */
 	virtual void nextFrame();
+
 public:
 	EventsManager(EventsCallback *callback);
 	virtual ~EventsManager() {}

@@ -22,9 +22,9 @@
 
 #include "prince/prince.h"
 
-#include "prince/mob.h"
 #include "prince/animation.h"
 #include "prince/font.h"
+#include "prince/mob.h"
 
 namespace Prince {
 

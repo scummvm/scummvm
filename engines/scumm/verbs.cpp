@@ -20,6 +20,7 @@
  *
  */
 
+#include "scumm/verbs.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/he/intern_he.h"
@@ -27,7 +28,6 @@
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
-#include "scumm/verbs.h"
 
 namespace Scumm {
 
@@ -45,53 +45,50 @@ struct VerbSettings {
 };
 
 static const VerbSettings v0VerbTable_English[] = {
-	{kVerbOpen,     8, 0, "Open"},
-	{kVerbClose,    8, 1, "Close"},
-	{kVerbGive,     0, 2, "Give"},
-	{kVerbTurnOn,  32, 0, "Turn on"},
-	{kVerbTurnOff, 32, 1, "Turn off"},
-	{kVerbFix,     32, 2, "Fix"},
-	{kVerbNewKid,  24, 0, "New Kid"},
-	{kVerbUnlock,  24, 1, "Unlock"},
-	{kVerbPush,     0, 0, "Push"},
-	{kVerbPull,     0, 1, "Pull"},
-	{kVerbUse,     24, 2, "Use"},
-	{kVerbRead,     8, 2, "Read"},
-	{kVerbWalkTo,  15, 0, "Walk to"},
-	{kVerbPickUp,  15, 1, "Pick up"},
-	{kVerbWhatIs,  15, 2, "What is"}
-};
+    {kVerbOpen, 8, 0, "Open"},
+    {kVerbClose, 8, 1, "Close"},
+    {kVerbGive, 0, 2, "Give"},
+    {kVerbTurnOn, 32, 0, "Turn on"},
+    {kVerbTurnOff, 32, 1, "Turn off"},
+    {kVerbFix, 32, 2, "Fix"},
+    {kVerbNewKid, 24, 0, "New Kid"},
+    {kVerbUnlock, 24, 1, "Unlock"},
+    {kVerbPush, 0, 0, "Push"},
+    {kVerbPull, 0, 1, "Pull"},
+    {kVerbUse, 24, 2, "Use"},
+    {kVerbRead, 8, 2, "Read"},
+    {kVerbWalkTo, 15, 0, "Walk to"},
+    {kVerbPickUp, 15, 1, "Pick up"},
+    {kVerbWhatIs, 15, 2, "What is"}};
 
 static const VerbSettings v0VerbTable_German[] = {
-	{kVerbOpen,     7, 0, "$ffne"},
-	{kVerbClose,   13, 1, "Schlie*e"},
-	{kVerbGive,     0, 2, "Gebe"},
-	{kVerbTurnOn,  37, 1, "Ein"},
-	{kVerbTurnOff, 37, 0, "Aus"},
-	{kVerbFix,     23, 1, "Repariere"},
-	{kVerbNewKid,  34, 2, "Person"},
-	{kVerbUnlock,  23, 0, "Schlie*e auf"},
-	{kVerbPush,     0, 0, "Dr<cke"},
-	{kVerbPull,     0, 1, "Ziehe"},
-	{kVerbUse,     23, 2, "Benutz"},
-	{kVerbRead,     7, 2, "Lese"},
-	{kVerbWalkTo,  13, 0, "Gehe zu"},
-	{kVerbPickUp,   7, 1, "Nimm"},
-	{kVerbWhatIs,  13, 2, "Was ist"}
-};
+    {kVerbOpen, 7, 0, "$ffne"},
+    {kVerbClose, 13, 1, "Schlie*e"},
+    {kVerbGive, 0, 2, "Gebe"},
+    {kVerbTurnOn, 37, 1, "Ein"},
+    {kVerbTurnOff, 37, 0, "Aus"},
+    {kVerbFix, 23, 1, "Repariere"},
+    {kVerbNewKid, 34, 2, "Person"},
+    {kVerbUnlock, 23, 0, "Schlie*e auf"},
+    {kVerbPush, 0, 0, "Dr<cke"},
+    {kVerbPull, 0, 1, "Ziehe"},
+    {kVerbUse, 23, 2, "Benutz"},
+    {kVerbRead, 7, 2, "Lese"},
+    {kVerbWalkTo, 13, 0, "Gehe zu"},
+    {kVerbPickUp, 7, 1, "Nimm"},
+    {kVerbWhatIs, 13, 2, "Was ist"}};
 
 struct VerbDemo {
 	int color;
 	const char *str;
 };
 static VerbDemo v0DemoStr[] = {
-	{7,  "        MANIAC MANSION DEMO DISK        "},
-	{5,  "          from Lucasfilm Games          "},
-	{5,  "    Copyright = 1987 by Lucasfilm Ltd.  "},
-	{5,  "           All Rights Reserved.         "},
-	{0,  "                                        "},
-	{16, "       Press F7 to return to menu.      "}
-};
+    {7, "        MANIAC MANSION DEMO DISK        "},
+    {5, "          from Lucasfilm Games          "},
+    {5, "    Copyright = 1987 by Lucasfilm Ltd.  "},
+    {5, "           All Rights Reserved.         "},
+    {0, "                                        "},
+    {16, "       Press F7 to return to menu.      "}};
 
 int ScummEngine_v0::verbPrepIdType(int verbid) {
 	switch (verbid) {
@@ -99,7 +96,8 @@ int ScummEngine_v0::verbPrepIdType(int verbid) {
 		return kVerbPrepObject;
 	case kVerbGive:
 		return kVerbPrepTo;
-	case kVerbUnlock: case kVerbFix:
+	case kVerbUnlock:
+	case kVerbFix:
 		return kVerbPrepWith;
 	default:
 		return kVerbPrepNone;
@@ -132,7 +130,6 @@ void ScummEngine_v0::verbDrawDemoString(int VerbDemoNumber) {
 		}
 
 		string[i++] = *ptr++;
-
 	}
 	string[i] = 0;
 
@@ -152,10 +149,10 @@ void ScummEngine_v0::resetVerbs() {
 
 	switch (_language) {
 	case Common::DE_DEU:
-		vtable = (const VerbSettings*)v0VerbTable_German;
+		vtable = (const VerbSettings *)v0VerbTable_German;
 		break;
 	default:
-		vtable = (const VerbSettings*)v0VerbTable_English;
+		vtable = (const VerbSettings *)v0VerbTable_English;
 	}
 
 	for (i = 1; i < 16; i++)
@@ -177,7 +174,7 @@ void ScummEngine_v0::resetVerbs() {
 		vs->prep = verbPrepIdType(vtable[i - 1].id);
 		vs->curRect.left = vtable[i - 1].x_pos * 8;
 		vs->curRect.top = vtable[i - 1].y_pos * 8 + virt->topline + 8;
-		loadPtrToResource(rtVerb, i, (const byte*)vtable[i - 1].name);
+		loadPtrToResource(rtVerb, i, (const byte *)vtable[i - 1].name);
 	}
 }
 
@@ -377,7 +374,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 }
 
 int ScummEngine_v2::checkV2Inventory(int x, int y) {
-	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
+	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48 : 32;
 	int object = 0;
 
 	y -= _virtscr[kVerbVirtScreen].topline;
@@ -414,12 +411,12 @@ void ScummEngine_v2::redrawV2Inventory() {
 	int i;
 	int max_inv;
 	Common::Rect inventoryBox;
-	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
-	int maxChars = (_game.platform == Common::kPlatformNES) ? 13: 18;
+	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48 : 32;
+	int maxChars = (_game.platform == Common::kPlatformNES) ? 13 : 18;
 
 	_mouseOverBoxV2 = -1;
 
-	if (!(_userState & USERSTATE_IFACE_INVENTORY))	// Don't draw inventory unless active
+	if (!(_userState & USERSTATE_IFACE_INVENTORY)) // Don't draw inventory unless active
 		return;
 
 	// Clear on all invocations
@@ -455,7 +452,6 @@ void ScummEngine_v2::redrawV2Inventory() {
 		// Draw it
 		drawString(1, msg);
 	}
-
 
 	// If necessary, draw "up" arrow
 	if (_inventoryOffset > 0) {
@@ -575,11 +571,10 @@ void ScummEngine::checkExecVerbs() {
 			// part of the "Passport to Adventure" demo expects the same keyboard
 			// mapping, even though the full game doesn't.
 			static const int numpad[10] = {
-				'0',
-				335, 336, 337,
-				331, 332, 333,
-				327, 328, 329
-			};
+			    '0',
+			    335, 336, 337,
+			    331, 332, 333,
+			    327, 328, 329};
 			_mouseAndKeyboardStat = numpad[_mouseAndKeyboardStat - '0'];
 		}
 
@@ -594,7 +589,7 @@ void ScummEngine::checkExecVerbs() {
 		}
 
 		if ((_game.platform == Common::kPlatformFMTowns && _game.id == GID_ZAK) &&
-			(_mouseAndKeyboardStat >= 315 && _mouseAndKeyboardStat <= 318)) {
+		    (_mouseAndKeyboardStat >= 315 && _mouseAndKeyboardStat <= 318)) {
 			// Hack: Handle switching to a person via F1-F4 keys.
 			// This feature isn't available in the scripts of the FM-TOWNS version.
 			int fKey = _mouseAndKeyboardStat - 314;
@@ -696,7 +691,7 @@ void ScummEngine_v2::checkExecVerbs() {
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
 		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
-		const int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
+		const int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48 : 32;
 
 		// This could be kUnkVirtScreen.
 		// Fixes bug #1536932: "MANIACNES: Crash on click in speechtext-area"
@@ -844,10 +839,9 @@ void ScummEngine_v0::checkExecVerbs() {
 					if (checkSentenceComplete())
 						execute = true;
 				}
-			// click region: inventory or main screen
+				// click region: inventory or main screen
 			} else if ((zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) ||
-			           (zone->number == kMainVirtScreen))
-			{
+			           (zone->number == kMainVirtScreen)) {
 				int obj = 0;
 
 				// click region: inventory
@@ -862,7 +856,7 @@ void ScummEngine_v0::checkExecVerbs() {
 					// the second object of a give-to command has to be an actor
 					if (_activeVerb == kVerbGive && _activeObject)
 						obj = 0;
-				// click region: main screen
+					// click region: main screen
 				} else if (zone->number == kMainVirtScreen) {
 					// click into main screen
 					if (_activeVerb == kVerbGive && _activeObject) {
@@ -1118,9 +1112,9 @@ void ScummEngine::restoreVerbBG(int verb) {
 	vs = &_verbs[verb];
 	uint8 col =
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		((_game.platform == Common::kPlatformFMTowns) && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && (vs->bkcolor == _townsOverrideShadowColor)) ? 0 :
+	    ((_game.platform == Common::kPlatformFMTowns) && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4) && (vs->bkcolor == _townsOverrideShadowColor)) ? 0 :
 #endif
-		vs->bkcolor;
+	                                                                                                                                                       vs->bkcolor;
 
 	if (vs->oldRect.left != -1) {
 		restoreBackground(vs->oldRect, col);
@@ -1168,7 +1162,7 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 		}
 		imptr = getObjectImage(obim, 1);
 	} else {
-		const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKTAG('I','M','H','D'), obim);
+		const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKTAG('I', 'M', 'H', 'D'), obim);
 		if (_game.version >= 7) {
 			imgw = READ_LE_UINT16(&imhd->v7.width) / 8;
 			imgh = READ_LE_UINT16(&imhd->v7.height) / 8;
@@ -1246,20 +1240,20 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 		error("Can't grab verb image from flobject");
 
 	if (_game.features & GF_OLD_BUNDLE) {
-		for (i = (_numLocalObjects-1); i > 0; i--) {
+		for (i = (_numLocalObjects - 1); i > 0; i--) {
 			if (_objs[i].obj_nr == object) {
 				findObjectInRoom(&foir, foImageHeader, object, room);
 				size = READ_LE_UINT16(foir.obim);
 				byte *ptr = _res->createResource(rtVerb, verb, size + 2);
 				obcdptr = getResourceAddress(rtRoom, room) + getOBCDOffs(object);
-				ptr[0] = *(obcdptr + 9);	// Width
-				ptr[1] = *(obcdptr + 15);	// Height
+				ptr[0] = *(obcdptr + 9);  // Width
+				ptr[1] = *(obcdptr + 15); // Height
 				memcpy(ptr + 2, foir.obim, size);
 				return;
 			}
 		}
 	} else if (_game.features & GF_SMALL_HEADER) {
-		for (i = (_numLocalObjects-1); i > 0; i--) {
+		for (i = (_numLocalObjects - 1); i > 0; i--) {
 			if (_objs[i].obj_nr == object) {
 				// FIXME: the only thing we need from the OBCD is the image size!
 				// So we could use almost the same code (except for offsets)

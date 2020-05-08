@@ -23,8 +23,8 @@
 #ifndef GRAPHICS_EFFECT_H_INCLUDED
 #define GRAPHICS_EFFECT_H_INCLUDED
 
-#include "common/rect.h"
 #include "common/list.h"
+#include "common/rect.h"
 #include "graphics/surface.h"
 
 #include "zvision/zvision.h"
@@ -35,7 +35,6 @@ class ZVision;
 
 class GraphicsEffect {
 public:
-
 	GraphicsEffect(ZVision *engine, uint32 key, Common::Rect region, bool ported) : _engine(engine), _key(key), _region(region), _ported(ported) {
 		_surface.create(_region.width(), _region.height(), _engine->_resourcePixelFormat);
 	}
@@ -66,9 +65,8 @@ protected:
 	bool _ported;
 	Graphics::Surface _surface;
 
-// Static member functions
+	// Static member functions
 public:
-
 };
 
 struct EffectMapUnit {

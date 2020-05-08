@@ -26,17 +26,19 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/ad/ad_game.h"
-#include "engines/wintermute/ad/ad_item.h"
 #include "engines/wintermute/ad/ad_object.h"
+#include "common/str.h"
+#include "common/util.h"
+#include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_inventory.h"
+#include "engines/wintermute/ad/ad_item.h"
 #include "engines/wintermute/ad/ad_layer.h"
 #include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_scene_node.h"
 #include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_waypoint_group.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_frame.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_surface_storage.h"
@@ -44,13 +46,11 @@
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
-#include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/sound/base_sound.h"
-#include "common/str.h"
-#include "common/util.h"
 
 namespace Wintermute {
 
@@ -105,7 +105,6 @@ AdObject::AdObject(BaseGame *inGame) : BaseObject(inGame) {
 	_registerAlias = this;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdObject::~AdObject() {
 	_currentSprite = nullptr; // reference only, don't delete
@@ -142,7 +141,6 @@ AdObject::~AdObject() {
 		_gameRef->unregisterObject(_partEmitter);
 	}
 
-
 	for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
 		_gameRef->unregisterObject(_attachmentsPre[i]);
 	}
@@ -153,7 +151,6 @@ AdObject::~AdObject() {
 	}
 	_attachmentsPost.clear();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::playAnim(const char *filename) {
@@ -176,18 +173,15 @@ bool AdObject::playAnim(const char *filename) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::display() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::update() {
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -261,16 +255,15 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-
 	//////////////////////////////////////////////////////////////////////////
 	// Talk / TalkAsync
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Talk") == 0 || strcmp(name, "TalkAsync") == 0) {
 		stack->correctParams(5);
 
-		const char *text    = stack->pop()->getString();
+		const char *text = stack->pop()->getString();
 		ScValue *soundVal = stack->pop();
-		int duration  = stack->pop()->getInt();
+		int duration = stack->pop()->getInt();
 		ScValue *valStances = stack->pop();
 
 		const char *stances = valStances->isNULL() ? nullptr : valStances->getString();
@@ -329,7 +322,6 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 					break;
 				}
 			}
-
 		}
 
 		if (!regFound) {
@@ -656,7 +648,6 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *AdObject::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -765,7 +756,6 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::scSetProperty(const char *name, ScValue *value) {
 
@@ -836,12 +826,10 @@ bool AdObject::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *AdObject::scToString() {
 	return "[ad object]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::setFont(const char *filename) {
@@ -856,7 +844,6 @@ bool AdObject::setFont(const char *filename) {
 		return STATUS_OK;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 int32 AdObject::getHeight() {
@@ -896,7 +883,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 		_forcedTalkAnimUsed = false;
 	}
 
-	delete(_sentence->_sound);
+	delete (_sentence->_sound);
 	_sentence->_sound = nullptr;
 
 	_sentence->setText(text);
@@ -940,10 +927,9 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	}
 
 	// set duration by text length
-	if (_sentence->_duration <= 0) {// TODO: Avoid longs.
+	if (_sentence->_duration <= 0) { // TODO: Avoid longs.
 		_sentence->_duration = MAX<int32>((size_t)1000, _gameRef->_subtitlesSpeed * strlen(_sentence->_text));
 	}
-
 
 	int32 x, y, width, height;
 
@@ -954,7 +940,6 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 		x -= ((AdGame *)_gameRef)->_scene->getOffsetLeft();
 		y -= ((AdGame *)_gameRef)->_scene->getOffsetTop();
 	}
-
 
 	if (_subtitlesWidth > 0) {
 		width = _subtitlesWidth;
@@ -980,16 +965,13 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 		x = x - width / 2;
 	}
 
-
 	x = MIN(MAX<int32>(0, x), _gameRef->_renderer->getWidth() - width);
 	y = MIN(MAX<int32>(0, y), _gameRef->_renderer->getHeight() - height);
 
 	_sentence->_width = width;
 
-
 	_sentence->_pos.x = x;
 	_sentence->_pos.y = y;
-
 
 	if (_subtitlesModRelative) {
 		_sentence->_pos.x += ((AdGame *)_gameRef)->_scene->getOffsetLeft();
@@ -997,7 +979,6 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	}
 
 	_sentence->_fixedPos = !_subtitlesModRelative;
-
 
 	_sentence->setupTalkFile(sound);
 
@@ -1007,7 +988,6 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 		delete[] sound;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::reset() {
@@ -1024,7 +1004,6 @@ bool AdObject::reset() {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::persist(BasePersistenceManager *persistMgr) {
@@ -1072,7 +1051,6 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::updateSounds() {
 	if (_sentence && _sentence->_sound) {
@@ -1082,7 +1060,6 @@ bool AdObject::updateSounds() {
 	return BaseObject::updateSounds();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::resetSoundPan() {
 	if (_sentence && _sentence->_sound) {
@@ -1090,7 +1067,6 @@ bool AdObject::resetSoundPan() {
 	}
 	return BaseObject::resetSoundPan();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::getExtendedFlag(const char *flagName) {
@@ -1102,7 +1078,6 @@ bool AdObject::getExtendedFlag(const char *flagName) {
 		return BaseObject::getExtendedFlag(flagName);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
@@ -1117,7 +1092,6 @@ bool AdObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::updateBlockRegion() {
@@ -1142,7 +1116,6 @@ AdInventory *AdObject::getInventory() {
 	}
 	return _inventory;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::afterMove() {
@@ -1183,7 +1156,6 @@ bool AdObject::invalidateCurrRegions() {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::getScale(float *scaleX, float *scaleY) {

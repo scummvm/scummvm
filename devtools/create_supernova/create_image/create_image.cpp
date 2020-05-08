@@ -1,9 +1,9 @@
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <cstring>
-#include <iomanip>
-#include <cstdlib>
 
 std::string filenumber;
 
@@ -19,8 +19,8 @@ int writePalette(std::ofstream &output) {
 		palette >> input;
 		if (palette.eof())
 			break;
-		output << (char) input;
-	} while(true);
+		output << (char)input;
+	} while (true);
 	palette.close();
 	return 0;
 }
@@ -34,11 +34,11 @@ int writeSections(std::ofstream &output) {
 	}
 	int numSections;
 	sectionInfo >> numSections;
-	output << (char) numSections;
+	output << (char)numSections;
 
 	int input;
-	char *input_byte = (char *) &input;
-	for(int i = 0; i < numSections; i++) {
+	char *input_byte = (char *)&input;
+	for (int i = 0; i < numSections; i++) {
 		//x1
 		sectionInfo >> input;
 		output << (char)input_byte[0];
@@ -77,11 +77,11 @@ int writeClickFields(std::ofstream &output) {
 	}
 	int numClickFields;
 	clickFieldInfo >> numClickFields;
-	output << (char) numClickFields;
+	output << (char)numClickFields;
 
 	int input;
-	char *input_byte = (char *) &input;
-	for(int i = 0; i < numClickFields; i++) {
+	char *input_byte = (char *)&input;
+	for (int i = 0; i < numClickFields; i++) {
 		//x1
 		clickFieldInfo >> input;
 		output << (char)input_byte[0];
@@ -125,13 +125,15 @@ int writePixelData(std::ofstream &output, int imageNum, int skip) {
 }
 
 void printHelp() {
-	std::cout << "create_image output-prefix file-number bytes-skip" << std::endl << std::endl;
+	std::cout << "create_image output-prefix file-number bytes-skip" << std::endl
+	          << std::endl;
 	std::cout << "	output-prefix: String the created file should begin with" << std::endl;
 	std::cout << "	file-number: Number of the created file and also name of source folder" << std::endl;
 	std::cout << "	bytes-skip: How many bytes to to skip in each .bmp file" << std::endl;
-	std::cout << std::endl << "EXAMPLE:" << std::endl
-		<< "create_image ms2_data 15 1146" << std::endl
-		<< "	creates ms2_data.015 assuming there are the right files inside 015 folder" << std::endl;
+	std::cout << std::endl
+	          << "EXAMPLE:" << std::endl
+	          << "create_image ms2_data 15 1146" << std::endl
+	          << "	creates ms2_data.015 assuming there are the right files inside 015 folder" << std::endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -139,7 +141,7 @@ int main(int argc, char *argv[]) {
 		printHelp();
 		return 0;
 	}
-	if (argc != 4 ) {
+	if (argc != 4) {
 		printHelp();
 		return 1;
 	}
@@ -157,10 +159,10 @@ int main(int argc, char *argv[]) {
 	}
 	// size
 	// just a place holder, will be filled later
-	output << (char) 0x40;
-	output << (char) 0x70;
-	output << (char) 0x01;
-	output << (char) 0x00;
+	output << (char)0x40;
+	output << (char)0x70;
+	output << (char)0x01;
+	output << (char)0x00;
 	if (writePalette(output))
 		return 1;
 	int numImages = writeSections(output);
@@ -169,14 +171,14 @@ int main(int argc, char *argv[]) {
 	if (writeClickFields(output))
 		return 1;
 	// we don't compress the images, so set to 0
-	output << (char) 0; //numRepeat
-	output << (char) 0; //numZw
+	output << (char)0; //numRepeat
+	output << (char)0; //numZw
 	int totalLength = 0;
 	int oldLength = 0;
 	for (int i = 0; i < numImages; i++) {
 		totalLength += writePixelData(output, i, bytesSkip);
 		if (oldLength == totalLength) {
-			std::cerr << "Error while reading the image number: " << i << std::endl; 
+			std::cerr << "Error while reading the image number: " << i << std::endl;
 			return 1;
 		}
 		oldLength = totalLength;
@@ -188,8 +190,8 @@ int main(int argc, char *argv[]) {
 	totalLength -= 0x70;
 	int i = (totalLength & 0xf000) >> 12;
 	int j = totalLength << 4;
-	char *i_p = (char *) &i;
-	char *j_p = (char *) &j;
+	char *i_p = (char *)&i;
+	char *j_p = (char *)&j;
 
 	//writing the size
 	output.seekp(0);

@@ -30,33 +30,29 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-
 /* state ID */
 typedef int re_state_id;
 
 /* invalid state ID - used to mark null machines */
-#define RE_STATE_INVALID   ((re_state_id)-1)
+#define RE_STATE_INVALID ((re_state_id)-1)
 
 /* first valid state ID */
-#define RE_STATE_FIRST_VALID  ((re_state_id)0)
-
+#define RE_STATE_FIRST_VALID ((re_state_id)0)
 
 /* ------------------------------------------------------------------------ */
 /*
  *   Group register structure.  Each register keeps track of the starting
  *   and ending offset of the group's text.  
  */
-typedef struct _re_group_register
-{
-    const char *start_ofs;
-    const char *end_ofs;
+typedef struct _re_group_register {
+	const char *start_ofs;
+	const char *end_ofs;
 
-    _re_group_register() : start_ofs(nullptr), end_ofs(nullptr) {}
+	_re_group_register() : start_ofs(nullptr), end_ofs(nullptr) {}
 } re_group_register;
 
 /* number of group registers we keep */
-#define RE_GROUP_REG_CNT  10
-
+#define RE_GROUP_REG_CNT 10
 
 /* ------------------------------------------------------------------------ */
 /* 
@@ -68,31 +64,29 @@ typedef struct _re_group_register
  */
 typedef struct
 {
-    /* the character we must match to transition to the target state */
-    char ch;
+	/* the character we must match to transition to the target state */
+	char ch;
 
-    /* the target states */
-    re_state_id next_state_1;
-    re_state_id next_state_2;
+	/* the target states */
+	re_state_id next_state_1;
+	re_state_id next_state_2;
 
-    /* character range match table, if used */
-    unsigned char *char_range;
+	/* character range match table, if used */
+	unsigned char *char_range;
 
-    /* flags */
-    unsigned char flags;
+	/* flags */
+	unsigned char flags;
 } re_tuple;
-
 
 /*
  *   Tuple flags 
  */
 
 /* this state is the start of a group - the 'ch' value is the group ID */
-#define RE_STATE_GROUP_BEGIN  0x02
+#define RE_STATE_GROUP_BEGIN 0x02
 
 /* this state is the end of a group - 'ch' is the group ID */
-#define RE_STATE_GROUP_END    0x04
-
+#define RE_STATE_GROUP_END 0x04
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -100,61 +94,57 @@ typedef struct
  *   state of the compilation and stores the resources associated with the
  *   compiled expression.  
  */
-typedef struct _re_context
-{
-    /* error context */
-    errcxdef *errctx;
+typedef struct _re_context {
+	/* error context */
+	errcxdef *errctx;
 
-    /* next available state ID */
-    re_state_id next_state;
+	/* next available state ID */
+	re_state_id next_state;
 
-    /*
+	/*
      *   The array of transition tuples.  We'll allocate this array and
      *   expand it as necessary.  
      */
-    re_tuple *tuple_arr;
+	re_tuple *tuple_arr;
 
-    /* number of transition tuples allocated in the array */
-    int tuples_alloc;
+	/* number of transition tuples allocated in the array */
+	int tuples_alloc;
 
-    /* current group ID */
-    int cur_group;
+	/* current group ID */
+	int cur_group;
 
-    /* group registers */
-    re_group_register regs[RE_GROUP_REG_CNT];
+	/* group registers */
+	re_group_register regs[RE_GROUP_REG_CNT];
 
-    /* 
+	/* 
      *   Buffer for retaining a copy of the last string we scanned.  We
      *   retain our own copy of each string, and point the group registers
      *   into this copy rather than the caller's original string -- this
      *   ensures that the group registers remain valid even after the
      *   caller has deallocated the original string.  
      */
-    char *strbuf;
+	char *strbuf;
 
-    /* length of the string currently in the buffer */
-    size_t curlen;
+	/* length of the string currently in the buffer */
+	size_t curlen;
 
-    /* size of the buffer allocated to strbuf */
-    size_t strbufsiz;
+	/* size of the buffer allocated to strbuf */
+	size_t strbufsiz;
 
-    _re_context() : errctx(nullptr), next_state(0), tuple_arr(nullptr), tuples_alloc(0), cur_group(0), strbuf(nullptr), curlen(0), strbufsiz(0) {}
+	_re_context() : errctx(nullptr), next_state(0), tuple_arr(nullptr), tuples_alloc(0), cur_group(0), strbuf(nullptr), curlen(0), strbufsiz(0) {}
 } re_context;
-
 
 /* ------------------------------------------------------------------------ */
 /*
  *   Status codes 
  */
-typedef enum
-{
-    /* success */
-    RE_STATUS_SUCCESS = 0,
+typedef enum {
+	/* success */
+	RE_STATUS_SUCCESS = 0,
 
-    /* compilation error - group nesting too deep */
-    RE_STATUS_GROUP_NESTING_TOO_DEEP
+	/* compilation error - group nesting too deep */
+	RE_STATUS_GROUP_NESTING_TOO_DEEP
 } re_status_t;
-
 
 /* ------------------------------------------------------------------------ */
 /*

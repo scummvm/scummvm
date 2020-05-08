@@ -32,28 +32,27 @@
 
 namespace CGE2 {
 
-#define kCommandFrameRate  80
+#define kCommandFrameRate 80
 #define kCommandFrameDelay (1000 / kCommandFrameRate)
-#define kNoByte            -1 // Recheck this! We have no proof for it's original value.
-
+#define kNoByte -1 // Recheck this! We have no proof for it's original value.
 
 enum CommandType {
 	kCmdCom0 = 128,
-	kCmdNop,     // NOP                       :: do nothing
-	kCmdUse,     // USE <spr> <cav>|<lab>     :: hint for using
-	kCmdPause,   // PAUSE -1 <dly>            :: delay <dly>/72 seconds
-	kCmdInf,     // INF -1 <ref>              :: show text referrenced by <ref>
-	kCmdCave,    // CAVE -1 <cav>             :: go to board <cav>
-	kCmdSetX,    // SETX <x> <idx>            :: set sprite shift in x axis
-	kCmdSetY,    // SETX <y> <idx>            :: set sprite shift in y axis
-	kCmdSetZ,    // SETX <z> <idx>            :: set sprite shift in z axis
-	kCmdAdd,     // ADD <idx1> <idx2>         :: sum vectors
-	kCmdFlash,   // FLASH -1 0|1              :: lighten whole image (on/off)
-	kCmdCycle,   // CYCLE <cnt>               :: rotate <cnt> colors from 1
-	kCmdClear,   // CLEAR -1 0                :: clear kCmdAIL queue
-	kCmdMouse,   // MOUSE -1 0|1              :: enable mouse (on/off)
-	kCmdMap,     // MAP  0|1 0                :: temporarily turn off map for hero
-	kCmdMidi,    // MIDI -1 <midi>            :: play MIDI referenced by <midi> (-1 = off)
+	kCmdNop,   // NOP                       :: do nothing
+	kCmdUse,   // USE <spr> <cav>|<lab>     :: hint for using
+	kCmdPause, // PAUSE -1 <dly>            :: delay <dly>/72 seconds
+	kCmdInf,   // INF -1 <ref>              :: show text referrenced by <ref>
+	kCmdCave,  // CAVE -1 <cav>             :: go to board <cav>
+	kCmdSetX,  // SETX <x> <idx>            :: set sprite shift in x axis
+	kCmdSetY,  // SETX <y> <idx>            :: set sprite shift in y axis
+	kCmdSetZ,  // SETX <z> <idx>            :: set sprite shift in z axis
+	kCmdAdd,   // ADD <idx1> <idx2>         :: sum vectors
+	kCmdFlash, // FLASH -1 0|1              :: lighten whole image (on/off)
+	kCmdCycle, // CYCLE <cnt>               :: rotate <cnt> colors from 1
+	kCmdClear, // CLEAR -1 0                :: clear kCmdAIL queue
+	kCmdMouse, // MOUSE -1 0|1              :: enable mouse (on/off)
+	kCmdMap,   // MAP  0|1 0                :: temporarily turn off map for hero
+	kCmdMidi,  // MIDI -1 <midi>            :: play MIDI referenced by <midi> (-1 = off)
 
 	kCmdSpr,
 
@@ -101,7 +100,7 @@ public:
 		int _val;
 		void *_spritePtr;
 		CallbackType _cbType;
-	} *_commandList;
+	} * _commandList;
 	static const char *_commandText[];
 	bool _talkEnable;
 
@@ -115,6 +114,7 @@ public:
 	void clear();
 	int getComId(const char *com);
 	const char *getComStr(CommandType cmdType);
+
 private:
 	CGE2Engine *_vm;
 	bool _turbo;

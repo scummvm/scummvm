@@ -21,8 +21,8 @@
  */
 
 #include "common/error.h"
-#include "gui/message.h"
 #include "gui/error.h"
+#include "gui/message.h"
 
 #include "common/translation.h"
 

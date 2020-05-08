@@ -23,12 +23,12 @@
 #ifndef BACKENDS_NETWORKING_CURL_POSTREQUEST_H
 #define BACKENDS_NETWORKING_CURL_POSTREQUEST_H
 
-#include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/request.h"
 
 namespace Networking {
 
-class PostRequest: public Networking::Request {
+class PostRequest : public Networking::Request {
 	Common::String _url;
 	Networking::JSONValueCallback _jsonCallback;
 	Request *_workingRequest;

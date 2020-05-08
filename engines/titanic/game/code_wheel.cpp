@@ -26,48 +26,41 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CodeWheel, CBomb)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(CheckCodeWheelsMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(CheckCodeWheelsMsg)
 END_MESSAGE_MAP()
 
 static const int START_FRAMES_EN[15] = {
-	0, 5, 10, 15, 19, 24, 28, 33, 38, 42, 47, 52, 57, 61, 66
-};
+    0, 5, 10, 15, 19, 24, 28, 33, 38, 42, 47, 52, 57, 61, 66};
 static const int END_FRAMES_EN[15] = {
-	5, 10, 15, 19, 24, 28, 33, 38, 42, 47, 52, 57, 61, 66, 70
-};
+    5, 10, 15, 19, 24, 28, 33, 38, 42, 47, 52, 57, 61, 66, 70};
 
 static const int CORRECT_VALUES_DE[3][8] = {
-	{ 2, 7, 4, 8, 18, 18, 4, 17 },
-	{ 12, 0, 6, 10, 11, 20, 6, 18 },
-	{ 13, 8, 4, 12, 0, 13, 3, 26 }
-};
+    {2, 7, 4, 8, 18, 18, 4, 17},
+    {12, 0, 6, 10, 11, 20, 6, 18},
+    {13, 8, 4, 12, 0, 13, 3, 26}};
 static const int START_FRAMES_DE[28] = {
-	0, 7, 15, 22, 29, 37, 44, 51, 58, 66,
-	73, 80, 88, 95, 102, 110, 117, 125, 132, 139,
-	146, 154, 161, 168, 175, 183, 190, 0
-};
+    0, 7, 15, 22, 29, 37, 44, 51, 58, 66,
+    73, 80, 88, 95, 102, 110, 117, 125, 132, 139,
+    146, 154, 161, 168, 175, 183, 190, 0};
 static const int END_FRAMES_DE[28] = {
-	7, 15, 22, 29, 37, 44, 51, 58, 66, 73,
-	80, 88, 95, 102, 110, 117, 125, 132, 139, 146,
-	154, 161, 168, 175, 183, 190, 198, 0
-};
+    7, 15, 22, 29, 37, 44, 51, 58, 66, 73,
+    80, 88, 95, 102, 110, 117, 125, 132, 139, 146,
+    154, 161, 168, 175, 183, 190, 198, 0};
 static const int START_FRAMES_REV_DE[28] = {
-	390, 383, 375, 368, 361, 353, 346, 339, 331, 324,
-	317, 309, 302, 295, 287, 280, 272, 265, 258, 251,
-	244, 236, 229, 221, 214, 207, 199, 0
-};
+    390, 383, 375, 368, 361, 353, 346, 339, 331, 324,
+    317, 309, 302, 295, 287, 280, 272, 265, 258, 251,
+    244, 236, 229, 221, 214, 207, 199, 0};
 static const int END_FRAMES_REV_DE[28] = {
-	397, 390, 383, 375, 368, 361, 353, 346, 339, 331,
-	324, 317, 309, 302, 295, 287, 280, 272, 265, 258,
-	251, 244, 236, 229, 221, 214, 207, 0
-};
+    397, 390, 383, 375, 368, 361, 353, 346, 339, 331,
+    324, 317, 309, 302, 295, 287, 280, 272, 265, 258,
+    251, 244, 236, 229, 221, 214, 207, 0};
 
 CodeWheel::CodeWheel() : CBomb(), _correctValue(0), _value(4),
-		_matched(false), _column(0), _row(0) {
+                         _matched(false), _column(0), _row(0) {
 }
 
 void CodeWheel::save(SimpleFile *file, int indent) {
@@ -110,13 +103,13 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		_value = (_value + 1) % TRANSLATE(15, 27);
 
 		playMovie(TRANSLATE(START_FRAMES_EN[_value], START_FRAMES_DE[_value]),
-			TRANSLATE(END_FRAMES_EN[_value], END_FRAMES_DE[_value]),
-			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
+		          TRANSLATE(END_FRAMES_EN[_value], END_FRAMES_DE[_value]),
+		          MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 
 	} else {
 		playMovie(TRANSLATE(START_FRAMES_EN[14 - _value] + 68, START_FRAMES_REV_DE[_value]),
-			TRANSLATE(END_FRAMES_EN[14 - _value] + 68, END_FRAMES_REV_DE[_value]),
-			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
+		          TRANSLATE(END_FRAMES_EN[14 - _value] + 68, END_FRAMES_REV_DE[_value]),
+		          MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 
 		_value = (_value <= 0) ? TRANSLATE(14, 26) : _value - 1;
 	}

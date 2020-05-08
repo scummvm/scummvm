@@ -21,9 +21,9 @@
  */
 
 #include "glk/tads/tads.h"
-#include "glk/tads/os_glk.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "glk/tads/os_glk.h"
 
 namespace Glk {
 namespace TADS {

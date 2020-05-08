@@ -22,16 +22,16 @@
 
 #include "common/random.h"
 
-#include "hdb/hdb.h"
-#include "hdb/ai.h"
 #include "hdb/ai-player.h"
+#include "hdb/ai.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
-#include "hdb/sound.h"
-#include "hdb/menu.h"
+#include "hdb/hdb.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
+#include "hdb/menu.h"
 #include "hdb/mpc.h"
+#include "hdb/sound.h"
 #include "hdb/window.h"
 
 namespace HDB {
@@ -88,7 +88,7 @@ void aiPlayerInit2(AIEntity *e) {
 		g_hdb->_ai->_clubRightGfx[3] = g_hdb->_gfx->getPicGfx(CLUBRIGHT3, -1);
 
 		g_hdb->_ai->_clubUpFrames = g_hdb->_ai->_clubDownFrames =
-			g_hdb->_ai->_clubLeftFrames = g_hdb->_ai->_clubRightFrames = 4;
+		    g_hdb->_ai->_clubLeftFrames = g_hdb->_ai->_clubRightFrames = 4;
 
 		g_hdb->_ai->_slugAttackGfx[0] = g_hdb->_gfx->loadPic(SLUG_SHOT1);
 		g_hdb->_ai->_slugAttackGfx[1] = g_hdb->_gfx->loadPic(SLUG_SHOT2);
@@ -191,8 +191,8 @@ void aiPlayerAction(AIEntity *e) {
 			}
 	}
 
-	int xOff[] = {0, 0, -8,-16};
-	int yOff[] = {-8,-24,-16,-16};
+	int xOff[] = {0, 0, -8, -16};
+	int yOff[] = {-8, -24, -16, -16};
 	// If the player is supposed to animate for abit, check for it here
 	switch (e->state) {
 	case STATE_GRABUP:
@@ -271,14 +271,14 @@ void aiPlayerAction(AIEntity *e) {
 			if (hit && hit->level == e->level && !hit->stunnedWait) {
 				switch (hit->type) {
 				case AI_MEERKAT:
-					if (hit->sequence > 2)		// out of the ground?
+					if (hit->sequence > 2) // out of the ground?
 						g_hdb->_ai->stunEnemy(hit, 2);
 					break;
 				case AI_ICEPUFF:
 					if (hit->state == STATE_ICEP_APPEAR ||
-						hit->state == STATE_ICEP_THROWDOWN ||
-						hit->state == STATE_ICEP_THROWLEFT ||
-						hit->state == STATE_ICEP_THROWRIGHT)
+					    hit->state == STATE_ICEP_THROWDOWN ||
+					    hit->state == STATE_ICEP_THROWLEFT ||
+					    hit->state == STATE_ICEP_THROWRIGHT)
 						g_hdb->_ai->stunEnemy(hit, 2);
 					break;
 				case AI_CHICKEN:
@@ -508,8 +508,8 @@ void aiGemAttackInit(AIEntity *e) {
 
 	e->moveSpeed = kPlayerMoveSpeed << 1;
 	g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
-	e->state = STATE_MOVEDOWN;		// so it will draw & animate
-	e->sequence = 0;	// flying out at something
+	e->state = STATE_MOVEDOWN; // so it will draw & animate
+	e->sequence = 0;           // flying out at something
 	e->aiAction = aiGemAttackAction;
 	e->draw = e->movedownGfx[0];
 	g_hdb->_sound->playSound(SND_GEM_THROW);
@@ -571,49 +571,46 @@ void aiGemAttackAction(AIEntity *e) {
 				if (e->value1)
 					e->sequence = 1;
 				else
-					g_hdb->_ai->removeEntity(e);	// bye bye!
+					g_hdb->_ai->removeEntity(e); // bye bye!
 				return;
-			} else if (result) {		// hit a wall
-					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
-					g_hdb->_sound->playSound(SND_INV_SELECT);
-					// come back to daddy?
-					if (e->value1)
-						e->sequence = 1;
-					else {
-						g_hdb->_ai->removeEntity(e);
-						return;
-					}
+			} else if (result) { // hit a wall
+				g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+				g_hdb->_sound->playSound(SND_INV_SELECT);
+				// come back to daddy?
+				if (e->value1)
+					e->sequence = 1;
+				else {
+					g_hdb->_ai->removeEntity(e);
+					return;
+				}
 			} else {
-					g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
-					e->state = STATE_MOVEDOWN;		// so it will draw & animate
+				g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
+				e->state = STATE_MOVEDOWN; // so it will draw & animate
 			}
 			g_hdb->_ai->animateEntity(e);
 		}
 		break;
 		// coming back to daddy?
-	case 1:
-		{
-			AIEntity *p = g_hdb->_ai->getPlayer();
-			if (e->x < p->x)
-				e->x++;
-			else
-				e->x--;
+	case 1: {
+		AIEntity *p = g_hdb->_ai->getPlayer();
+		if (e->x < p->x)
+			e->x++;
+		else
+			e->x--;
 
-			if (e->y < p->y)
-				e->y++;
-			else
-				e->y--;
+		if (e->y < p->y)
+			e->y++;
+		else
+			e->y--;
 
-			if (abs(e->x - p->x) < 4 && abs(e->y - p->y) < 4)
-			{
-				int	amt = g_hdb->_ai->getGemAmount();
-				g_hdb->_ai->setGemAmount(amt + 1);
-				g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
-				g_hdb->_ai->removeEntity(e);
-				g_hdb->_sound->playSound(SND_GET_GEM);
-			}
+		if (abs(e->x - p->x) < 4 && abs(e->y - p->y) < 4) {
+			int amt = g_hdb->_ai->getGemAmount();
+			g_hdb->_ai->setGemAmount(amt + 1);
+			g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+			g_hdb->_ai->removeEntity(e);
+			g_hdb->_sound->playSound(SND_GET_GEM);
 		}
-		break;
+	} break;
 	default:
 		break;
 	}
@@ -720,16 +717,16 @@ void aiCrateAction(AIEntity *e) {
 void aiCrateInit2(AIEntity *e) {
 	// point all crate move frames to the standing one
 	e->movedownFrames =
-		e->moveleftFrames =
-		e->moverightFrames =
-		e->moveupFrames = 1;
+	    e->moveleftFrames =
+	        e->moverightFrames =
+	            e->moveupFrames = 1;
 
 	e->movedownGfx[0] =
-		e->moveupGfx[0] =
-		e->moveleftGfx[0] =
-		e->moverightGfx[0] = e->standdownGfx[0];
+	    e->moveupGfx[0] =
+	        e->moveleftGfx[0] =
+	            e->moverightGfx[0] = e->standdownGfx[0];
 
-	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
+	e->draw = e->standdownGfx[0]; // standing frame - doesn't move
 }
 
 void aiCrateInit(AIEntity *e) {
@@ -751,16 +748,16 @@ void aiBarrelLightAction(AIEntity *e) {
 void aiBarrelLightInit2(AIEntity *e) {
 	// point all light barrel move frames to the standing one
 	e->movedownFrames =
-		e->moveleftFrames =
-		e->moverightFrames =
-		e->moveupFrames = 1;
+	    e->moveleftFrames =
+	        e->moverightFrames =
+	            e->moveupFrames = 1;
 
 	e->movedownGfx[0] =
-		e->moveupGfx[0] =
-		e->moveleftGfx[0] =
-		e->moverightGfx[0] = e->standdownGfx[0];
+	    e->moveupGfx[0] =
+	        e->moveleftGfx[0] =
+	            e->moverightGfx[0] = e->standdownGfx[0];
 
-	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
+	e->draw = e->standdownGfx[0]; // standing frame - doesn't move
 }
 
 void aiBarrelLightInit(AIEntity *e) {
@@ -781,16 +778,16 @@ void aiBarrelHeavyAction(AIEntity *e) {
 void aiBarrelHeavyInit2(AIEntity *e) {
 	// point all heavy barrel move frames to the standing one
 	e->movedownFrames =
-		e->moveleftFrames =
-		e->moverightFrames =
-		e->moveupFrames = 1;
+	    e->moveleftFrames =
+	        e->moverightFrames =
+	            e->moveupFrames = 1;
 
 	e->movedownGfx[0] =
-		e->moveupGfx[0] =
-		e->moveleftGfx[0] =
-		e->moverightGfx[0] = e->standdownGfx[0];
+	    e->moveupGfx[0] =
+	        e->moveleftGfx[0] =
+	            e->moverightGfx[0] = e->standdownGfx[0];
 
-	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
+	e->draw = e->standdownGfx[0]; // standing frame - doesn't move
 }
 
 void aiBarrelHeavyInit(AIEntity *e) {
@@ -818,18 +815,18 @@ void aiBarrelExplodeInit(AIEntity *e) {
 void aiBarrelExplodeInit2(AIEntity *e) {
 	// point all exploding barrel MOVE frames to the standing one
 	e->blinkFrames =
-		e->movedownFrames =
-		e->moveleftFrames =
-		e->moverightFrames =
-		e->moveupFrames = 1;
+	    e->movedownFrames =
+	        e->moveleftFrames =
+	            e->moverightFrames =
+	                e->moveupFrames = 1;
 
 	e->blinkGfx[0] =
-		e->movedownGfx[0] =
-		e->moveupGfx[0] =
-		e->moveleftGfx[0] =
-		e->moverightGfx[0] = e->standdownGfx[0];
+	    e->movedownGfx[0] =
+	        e->moveupGfx[0] =
+	            e->moveleftGfx[0] =
+	                e->moverightGfx[0] = e->standdownGfx[0];
 
-	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
+	e->draw = e->standdownGfx[0]; // standing frame - doesn't move
 }
 
 void aiBarrelExplodeAction(AIEntity *e) {
@@ -840,14 +837,14 @@ void aiBarrelExplodeAction(AIEntity *e) {
 }
 
 void aiBarrelExplodeSpread(AIEntity *e) {
-	static const int xv1[4] = {-1,  1, -1,  0};
-	static const int yv1[4] = {-1, -1,  0, -1};
-	static const int xv2[4] = {1,  0,  1, -1};
-	static const int yv2[4] = {0,  1,  1,  1};
+	static const int xv1[4] = {-1, 1, -1, 0};
+	static const int yv1[4] = {-1, -1, 0, -1};
+	static const int xv2[4] = {1, 0, 1, -1};
+	static const int yv2[4] = {0, 1, 1, 1};
 
-	int	x = e->tileX;
-	int	y = e->tileY;
-	int	index = e->animFrame;
+	int x = e->tileX;
+	int y = e->tileY;
+	int index = e->animFrame;
 
 	// are we just starting an explosion ring?
 	if (e->animDelay != e->animCycle)
@@ -887,7 +884,7 @@ void aiBarrelExplodeSpread(AIEntity *e) {
 			case AI_GATEPUDDLE:
 			case AI_BADFAIRY:
 				g_hdb->_ai->addAnimateTarget(x * kTileWidth,
-					y * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+				                             y * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
 				if (e2->type != AI_LASERBEAM)
 					g_hdb->_ai->removeEntity(e2);
 				break;
@@ -931,7 +928,7 @@ void aiBarrelExplodeSpread(AIEntity *e) {
 			case AI_GATEPUDDLE:
 			case AI_BADFAIRY:
 				g_hdb->_ai->addAnimateTarget(x * kTileWidth,
-					y * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+				                             y * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
 				if (e2->type != AI_LASERBEAM)
 					g_hdb->_ai->removeEntity(e2);
 				break;
@@ -948,7 +945,7 @@ void aiBarrelExplosionEnd(int x, int y) {
 
 void aiBarrelBlowup(AIEntity *e, int x, int y) {
 	g_hdb->_ai->addAnimateTarget(x * kTileWidth,
-		y * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+	                             y * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
 	g_hdb->_map->setExplosion(x, y, 1);
 	g_hdb->_ai->addCallback(AI_BARREL_EXPLOSION_END, x, y, e->animCycle * 4);
 }
@@ -989,32 +986,32 @@ void aiSlugAttackAction(AIEntity *e) {
 
 	uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX, e->tileY);
 	uint32 fg_flags = g_hdb->_map->getMapFGTileFlags(e->tileX, e->tileY);
-	int	result = (e->level == 1 ? (bg_flags & (kFlagSolid)) : !(fg_flags & kFlagGrating) && (bg_flags & (kFlagSolid)));
+	int result = (e->level == 1 ? (bg_flags & (kFlagSolid)) : !(fg_flags & kFlagGrating) && (bg_flags & (kFlagSolid)));
 	if (hit) {
 		g_hdb->_sound->playSound(SND_SLUG_HIT);
 		g_hdb->_sound->playSound(g_hdb->_ai->metalOrFleshSND(hit));
 		switch (hit->type) {
 		case AI_MEERKAT:
-			if (hit->sequence > 2) {		// out of the ground?
+			if (hit->sequence > 2) { // out of the ground?
 				g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 				g_hdb->_ai->stunEnemy(hit, 8);
 			} else {
 				g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
-				e->state = STATE_MOVEDOWN;		// so it will draw & animate
+				e->state = STATE_MOVEDOWN; // so it will draw & animate
 				g_hdb->_ai->animateEntity(e);
 				return;
 			}
 			break;
 		case AI_ICEPUFF:
 			if (hit->state == STATE_ICEP_APPEAR ||
-				hit->state == STATE_ICEP_THROWDOWN ||
-				hit->state == STATE_ICEP_THROWLEFT ||
-				hit->state == STATE_ICEP_THROWRIGHT) {
+			    hit->state == STATE_ICEP_THROWDOWN ||
+			    hit->state == STATE_ICEP_THROWLEFT ||
+			    hit->state == STATE_ICEP_THROWRIGHT) {
 				g_hdb->_ai->addAnimateTarget(hit->x, hit->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 				g_hdb->_ai->stunEnemy(hit, 8);
 			} else {
 				g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
-				e->state = STATE_MOVEDOWN;		// so it will draw & animate
+				e->state = STATE_MOVEDOWN; // so it will draw & animate
 				g_hdb->_ai->animateEntity(e);
 				return;
 			}
@@ -1050,7 +1047,7 @@ void aiSlugAttackAction(AIEntity *e) {
 			break;
 		case AI_DEADEYE:
 			g_hdb->_ai->addAnimateTarget(e->tileX * kTileWidth,
-				e->tileY * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+			                             e->tileY * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
 			g_hdb->_ai->removeEntity(hit);
 			g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
 			break;
@@ -1077,15 +1074,15 @@ void aiSlugAttackAction(AIEntity *e) {
 		default:
 			break;
 		}
-		g_hdb->_ai->removeEntity(e);	// bye bye!
+		g_hdb->_ai->removeEntity(e); // bye bye!
 		return;
-	} else if (result) {		// hit a wall
+	} else if (result) { // hit a wall
 		g_hdb->_sound->playSound(SND_SLUG_HIT);
 		g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 3, ANIM_NORMAL, false, false, GROUP_STEAM_PUFF_SIT);
 		g_hdb->_ai->removeEntity(e);
 	} else {
 		g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
-		e->state = STATE_MOVEDOWN;		// so it will draw & animate
+		e->state = STATE_MOVEDOWN; // so it will draw & animate
 		g_hdb->_ai->animateEntity(e);
 	}
 }
@@ -1095,17 +1092,17 @@ void aiSlugAttackDraw(AIEntity *e, int mx, int my) {
 }
 
 void aiSlugAttackInit(AIEntity *e) {
-	static const int xv[5] = {9,  0, 0, -1, 1};
-	static const int yv[5] = {9, -1, 1,  0, 0};
+	static const int xv[5] = {9, 0, 0, -1, 1};
+	static const int yv[5] = {9, -1, 1, 0, 0};
 
 	if (g_hdb->isDemo())
 		return;
 
 	e->moveSpeed = kPlayerMoveSpeed << 1;
 	g_hdb->_ai->setEntityGoal(e, e->tileX + xv[e->dir], e->tileY + yv[e->dir]);
-	e->draw = nullptr;					// use custom draw function
+	e->draw = nullptr; // use custom draw function
 	e->aiDraw = aiSlugAttackDraw;
-	e->state = STATE_MOVEDOWN;		// so it will draw & animate
+	e->state = STATE_MOVEDOWN; // so it will draw & animate
 	e->aiAction = aiSlugAttackAction;
 	g_hdb->_sound->playSound(SND_SLUG_FIRE);
 }
@@ -1146,18 +1143,18 @@ void aiFrogStatueInit(AIEntity *e) {
 void aiFrogStatueInit2(AIEntity *e) {
 	// point all frog statue MOVE frames to the standing one
 	e->blinkFrames =
-		e->movedownFrames =
-		e->moveleftFrames =
-		e->moverightFrames =
-		e->moveupFrames = 1;
+	    e->movedownFrames =
+	        e->moveleftFrames =
+	            e->moverightFrames =
+	                e->moveupFrames = 1;
 
 	e->blinkGfx[0] =
-		e->movedownGfx[0] =
-		e->moveupGfx[0] =
-		e->moveleftGfx[0] =
-		e->moverightGfx[0] = e->standdownGfx[0];
+	    e->movedownGfx[0] =
+	        e->moveupGfx[0] =
+	            e->moveleftGfx[0] =
+	                e->moverightGfx[0] = e->standdownGfx[0];
 
-	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
+	e->draw = e->standdownGfx[0]; // standing frame - doesn't move
 }
 
 void aiFrogStatueAction(AIEntity *e) {
@@ -1438,16 +1435,16 @@ void aiMagicEggInit(AIEntity *e) {
 void aiMagicEggInit2(AIEntity *e) {
 	// point all magic egg move frames to the standing one
 	e->movedownFrames =
-		e->moveleftFrames =
-		e->moverightFrames =
-		e->moveupFrames = 1;
+	    e->moveleftFrames =
+	        e->moverightFrames =
+	            e->moveupFrames = 1;
 
 	e->movedownGfx[0] =
-		e->moveupGfx[0] =
-		e->moveleftGfx[0] =
-		e->moverightGfx[0] = e->standdownGfx[0];
+	    e->moveupGfx[0] =
+	        e->moveleftGfx[0] =
+	            e->moverightGfx[0] = e->standdownGfx[0];
 
-	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
+	e->draw = e->standdownGfx[0]; // standing frame - doesn't move
 }
 
 void aiMagicEggUse(AIEntity *e) {
@@ -1462,7 +1459,7 @@ void aiMagicEggUse(AIEntity *e) {
 
 		if (spawned) {
 			g_hdb->_ai->addAnimateTarget(e->tileX * kTileWidth,
-			e->tileY * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+			                             e->tileY * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
 
 			if (!g_hdb->isDemo())
 				g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
@@ -1488,16 +1485,16 @@ void aiIceBlockInit(AIEntity *e) {
 void aiIceBlockInit2(AIEntity *e) {
 	// point all ice block move frames to the standing one
 	e->movedownFrames =
-		e->moveleftFrames =
-		e->moverightFrames =
-		e->moveupFrames = 1;
+	    e->moveleftFrames =
+	        e->moverightFrames =
+	            e->moveupFrames = 1;
 
 	e->movedownGfx[0] =
-		e->moveupGfx[0] =
-		e->moveleftGfx[0] =
-		e->moverightGfx[0] = e->standdownGfx[0];
+	    e->moveupGfx[0] =
+	        e->moveleftGfx[0] =
+	            e->moverightGfx[0] = e->standdownGfx[0];
 
-	e->draw = e->standdownGfx[0];			// standing frame - doesn't move
+	e->draw = e->standdownGfx[0]; // standing frame - doesn't move
 }
 
 void aiCabKeyInit(AIEntity *e) {
@@ -1612,7 +1609,7 @@ void aiMonkeystoneInit2(AIEntity *e) {
 }
 
 void aiMonkeystoneUse(AIEntity *e) {
-	int	val = g_hdb->_ai->getMonkeystoneAmount();
+	int val = g_hdb->_ai->getMonkeystoneAmount();
 	Common::String monkString = Common::String::format("You have %d Monkeystone%s!", val, (val > 1) ? "s" : "");
 	g_hdb->_sound->playSound(SND_GET_MONKEYSTONE);
 	g_hdb->_window->openMessageBar(monkString.c_str(), kMsgDelay);
@@ -1769,4 +1766,4 @@ void aiGetItemAction(AIEntity *e) {
 	}
 }
 
-} // End of Namespace
+} // namespace HDB

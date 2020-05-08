@@ -36,8 +36,8 @@
 
 #include "common/system.h"
 
-#include "griffon/griffon.h"
 #include "griffon/console.h"
+#include "griffon/griffon.h"
 
 namespace Griffon {
 
@@ -145,7 +145,6 @@ void GriffonEngine::checkInputs() {
 					_itemTicks = _ticks + ntickdelay;
 					_selEnemyOn = false;
 					_itemSelOn = false;
-
 				}
 
 				if (_curItem == 3 && _player.inventory[kInvNormalKey] > 0 && _canUseKey && _lockType == 1) {
@@ -220,14 +219,13 @@ void GriffonEngine::checkInputs() {
 								goto __exit_do;
 							}
 						} while (1);
-__exit_do:
+					__exit_do:
 
 						if (_postInfoNbr > 0 && !_selEnemyOn) {
 							_selEnemyOn = true;
 							_curEnemy = _lastNpc + 1;
 						}
 					}
-
 				}
 			}
 		} else if (_event.kbd.hasFlags(Common::KBD_ALT)) {
@@ -298,7 +296,6 @@ __exit_do:
 					} while (1);
 					_itemTicks = _ticks + ntickdelay;
 				}
-
 
 				if (_curEnemy > _lastNpc + _postInfoNbr)
 					_curEnemy = 1;
@@ -376,7 +373,7 @@ void GriffonEngine::handleWalking() {
 	if (ramp == 3 && _movingLeft)
 		_movingDown = true;
 
-	uint32 *temp/*, c*/, bgc;
+	uint32 *temp /*, c*/, bgc;
 
 	for (int x = -1; x <= 1; x++) {
 		for (int y = -1; y <= 1; y++) {
@@ -586,7 +583,6 @@ void GriffonEngine::handleWalking() {
 				int snd = playSound(_sfx[kSndPowerUp]);
 				setChannelVolume(snd, config.effectsVol);
 			}
-
 		}
 
 		if (_objectInfo[o].script == 9 && _player.inventory[kInvShock] < 9) {
@@ -601,7 +597,6 @@ void GriffonEngine::handleWalking() {
 				int snd = playSound(_sfx[kSndPowerUp]);
 				setChannelVolume(snd, config.effectsVol);
 			}
-
 		}
 	}
 }

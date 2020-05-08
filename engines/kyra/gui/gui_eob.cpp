@@ -22,16 +22,16 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/engine/eobcommon.h"
 #include "kyra/gui/gui_eob.h"
-#include "kyra/script/script_eob.h"
-#include "kyra/text/text_rpg.h"
+#include "kyra/engine/eobcommon.h"
 #include "kyra/engine/timer.h"
 #include "kyra/engine/util.h"
+#include "kyra/script/script_eob.h"
+#include "kyra/text/text_rpg.h"
 
 #include "backends/keymapper/keymapper.h"
-#include "common/system.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "graphics/scaler.h"
 
 namespace Kyra {
@@ -88,8 +88,8 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 	if (!testCharacter(index, 1))
 		return;
 
-	static const uint16 charPortraitPosX[] = { 8, 80, 184, 256 };
-	static const uint16 charPortraitPosY[] = { 2, 54, 106 };
+	static const uint16 charPortraitPosX[] = {8, 80, 184, 256};
+	static const uint16 charPortraitPosY[] = {2, 54, 106};
 
 	EoBCharacter *c = &_characters[index];
 	int txtCol1 = guiSettings()->colors.guiColorBlack;
@@ -103,8 +103,8 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 	if (_currentControlMode == 0) {
 		int x2 = charPortraitPosX[index & 1];
 		int y2 = charPortraitPosY[index >> 1];
-	
-		_screen->copyRegion(176, 168, x2 , y2, 64, 24, 2, 2, Screen::CR_NO_P_CHECK);
+
+		_screen->copyRegion(176, 168, x2, y2, 64, 24, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(240, 168, x2, y2 + 24, 64, 26, 2, 2, Screen::CR_NO_P_CHECK);
 		int cp = _screen->setCurPage(2);
 
@@ -177,10 +177,10 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			_screen->setFont(cf);
 
 		} else {
-			static const uint16 cm2X1[] = { 179, 272, 301 };
-			static const uint16 cm2Y1[] = { 36, 51, 51 };
-			static const uint16 cm2X2[] = { 271, 300, 318 };
-			static const uint16 cm2Y2[] = { 165, 165, 147 };
+			static const uint16 cm2X1[] = {179, 272, 301};
+			static const uint16 cm2Y1[] = {36, 51, 51};
+			static const uint16 cm2X2[] = {271, 300, 318};
+			static const uint16 cm2Y2[] = {165, 165, 147};
 
 			for (int i = 0; i < 3; i++)
 				_screen->fillRect(cm2X1[i], cm2Y1[i], cm2X2[i], cm2Y2[i], guiSettings()->colors.sfill);
@@ -198,16 +198,16 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			int tY = _flags.use16ColorMode ? 87 : 82;
 			for (int i = 0; i < 3; i++)
 				_screen->printText(_chargenStatStrings[6 + i], tX, tY + i * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-			
+
 			if (_flags.use16ColorMode) {
 				tX += 72;
 				tY -= 27;
-			}			
+			}
 			for (int i = 3; i < 6; i++)
 				_screen->printText(_chargenStatStrings[6 + i], tX, tY + i * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
 
 			_screen->printText(_characterGuiStringsIn[1], 183, tY + 6 * lineH, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
-			
+
 			tY = _flags.use16ColorMode ? 127 : 138;
 			_screen->printText(_characterGuiStringsIn[2], 239, tY, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
 			_screen->printText(_characterGuiStringsIn[3], 278, tY, guiSettings()->colors.guiColorBlack, guiSettings()->colors.sfill);
@@ -217,7 +217,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), tX, tY, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
 			_screen->printText(Common::String::format("%d", c->intelligenceCur).c_str(), tX, tY + lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
 			_screen->printText(Common::String::format("%d", c->wisdomCur).c_str(), tX, tY + 2 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-			
+
 			if (_flags.use16ColorMode) {
 				tX = 285;
 				tY -= 27;
@@ -225,7 +225,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			_screen->printText(Common::String::format("%d", c->dexterityCur).c_str(), tX, tY + 3 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
 			_screen->printText(Common::String::format("%d", c->constitutionCur).c_str(), tX, tY + 4 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
 			_screen->printText(Common::String::format("%d", c->charismaCur).c_str(), tX, tY + 5 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
-			
+
 			if (_flags.use16ColorMode)
 				tX = 255;
 			_screen->printText(Common::String::format("%d", c->armorClass).c_str(), tX, tY + 6 * lineH, guiSettings()->colors.guiColorWhite, guiSettings()->colors.sfill);
@@ -255,8 +255,8 @@ void EoBCoreEngine::gui_drawFaceShape(int index) {
 	if (!testCharacter(index, 1))
 		return;
 
-	static const uint8 xCoords[] = { 8, 80 };
-	static const uint8 yCoords[] = { 11, 63, 115 };
+	static const uint8 xCoords[] = {8, 80};
+	static const uint8 yCoords[] = {11, 63, 115};
 
 	int x = xCoords[index & 1];
 	int y = yCoords[index >> 1];
@@ -313,8 +313,8 @@ void EoBCoreEngine::gui_drawFaceShape(int index) {
 }
 
 void EoBCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
-	static const uint8 xCoords[] = { 40, 112 };
-	static const uint8 yCoords[] = { 11, 27, 63, 79, 115, 131 };
+	static const uint8 xCoords[] = {40, 112};
+	static const uint8 yCoords[] = {11, 27, 63, 79, 115, 131};
 
 	int x = xCoords[charIndex & 1];
 	int y = yCoords[(charIndex & 6) + slot];
@@ -390,8 +390,8 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 	if (_currentControlMode && (index != _updateCharNum))
 		return;
 
-	static const uint8 xCoords[] = { 23, 95 };
-	static const uint8 yCoords[] = { 46, 98, 150 };
+	static const uint8 xCoords[] = {23, 95};
+	static const uint8 yCoords[] = {46, 98, 150};
 
 	int x = xCoords[index & 1];
 	int y = yCoords[index >> 1];
@@ -422,7 +422,6 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 
 		if (!_currentControlMode)
 			_screen->printText(_characterGuiStringsHp[0], x - 13, y - 1, guiSettings()->colors.guiColorBlack, 0);
-
 
 		gui_drawHorizontalBarGraph(x, y, w, h, bgCur, bgMax, col, guiSettings()->colors.barGraph);
 
@@ -464,8 +463,8 @@ void EoBCoreEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32
 void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 	uint8 redGreenColor = (_partyEffectFlags & 0x20000) ? guiSettings()->colors.guiColorLightGreen : ((_configRenderMode == Common::kRenderCGA) ? 3 : guiSettings()->colors.guiColorLightRed);
 
-	static const uint8 xCoords[] = { 8, 80 };
-	static const uint8 yCoords[] = { 2, 54, 106 };
+	static const uint8 xCoords[] = {8, 80};
+	static const uint8 yCoords[] = {2, 54, 106};
 	int x = xCoords[index & 1];
 	int y = yCoords[index >> 1];
 	int xOffset = (_configRenderMode == Common::kRenderCGA) ? 0 : 1;
@@ -575,8 +574,8 @@ void EoBCoreEngine::gui_drawCompass(bool force) {
 	if (_currentDirection == _compassDirection && !force)
 		return;
 
-	static const uint8 shpX[2][3] = { { 0x70, 0x4D, 0x95 }, { 0x72, 0x4F, 0x97 } };
-	static const uint8 shpY[2][3] = { { 0x7F, 0x9A, 0x9A }, { 0x83, 0x9E, 0x9E } };
+	static const uint8 shpX[2][3] = {{0x70, 0x4D, 0x95}, {0x72, 0x4F, 0x97}};
+	static const uint8 shpY[2][3] = {{0x7F, 0x9A, 0x9A}, {0x83, 0x9E, 0x9E}};
 	int g = _flags.gameID == GI_EOB1 ? 0 : 1;
 
 	for (int i = 0; i < 3; i++)
@@ -686,8 +685,8 @@ void EoBCoreEngine::gui_drawSpellbook() {
 	}
 
 	if (_characters[_openBookChar].disabledSlots & 4) {
-		static const uint8 xpos[] = { 0x44, 0x62, 0x80, 0x90 };
-		static const uint8 ypos[] = { 0x82, 0x92, 0x98 };
+		static const uint8 xpos[] = {0x44, 0x62, 0x80, 0x90};
+		static const uint8 ypos[] = {0x82, 0x92, 0x98};
 		for (int yc = 0; yc < 3; yc++) {
 			for (int xc = 0; xc < 4; xc++)
 				_screen->drawShape(_screen->_curPage, _weaponSlotGrid, xpos[xc], ypos[yc], 0);
@@ -705,8 +704,8 @@ void EoBCoreEngine::gui_drawSpellbook() {
 }
 
 void EoBCoreEngine::gui_drawSpellbookScrollArrow(int x, int y, int direction) {
-	static const uint8 x1[] = { 0, 2, 1, 0, 2, 2 };
-	static const uint8 x2[] = { 2, 4, 5, 6, 4, 4 };
+	static const uint8 x1[] = {0, 2, 1, 0, 2, 2};
+	static const uint8 x2[] = {2, 4, 5, 6, 4, 4};
 	if (direction) {
 		_screen->setPagePixel(_screen->_curPage, x + 3, y + 5, 12);
 		for (int i = 1; i < 6; i++)
@@ -849,7 +848,7 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	}
 
 	_screen->copyPage(0, 7);
-	
+
 	// Create a thumbnail from the screen for a possible savegame.
 	// This ensures that all special rendering (EGA dithering, 16bit rendering, Japanese font rendering) will be visible on the thumbnail.
 	::createThumbnailFromScreen(&_thumbNail);
@@ -863,7 +862,7 @@ int EoBCoreEngine::clickedCamp(Button *button) {
 	_screen->setScreenDim(cd);
 
 	_thumbNail.free();
-	 
+
 	drawScene(0);
 
 	for (int i = 0; i < 6; i++)
@@ -934,7 +933,7 @@ int EoBCoreEngine::clickedWeaponSlot(Button *button) {
 	// Fix this using the coordinates from gui_drawWeaponSlot().
 	// The coordinates used in the original are slightly wrong
 	// (most noticeable for characters 5 and 6).
-	static const uint8 sY[] = { 27, 27, 79, 79, 131, 131 };
+	static const uint8 sY[] = {27, 27, 79, 79, 131, 131};
 	int slot = sY[button->arg] > _mouseY ? 0 : 1;
 
 	uint16 flags = _configMouseBtSwap ? _gui->_flagsMouseRight : _gui->_flagsMouseLeft;
@@ -1445,10 +1444,10 @@ void EoBCoreEngine::gui_processInventorySlotClick(int slot) {
 }
 
 GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
-	_menuStringsPrefsTemp = new char*[4];
+	_menuStringsPrefsTemp = new char *[4];
 	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char *));
 
-	_saveSlotStringsTemp = new char*[6];
+	_saveSlotStringsTemp = new char *[6];
 	for (int i = 0; i < 6; i++) {
 		_saveSlotStringsTemp[i] = new char[26];
 		memset(_saveSlotStringsTemp[i], 0, 26);
@@ -1932,7 +1931,7 @@ int GUI_EoB::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 					flgs2 &= 0xFFF9;
 
 					if ((flgs & 0x40) && (!(flgs & 0x80)) && _specialProcessButton && !v8) {
-						static const uint16 flagsTable[] = { 0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000, 0x8000 };
+						static const uint16 flagsTable[] = {0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x4000, 0x8000};
 
 						if (vL) {
 							v16 = flagsTable[_flagsMouseLeft - 1];
@@ -1955,8 +1954,8 @@ int GUI_EoB::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 					if ((flgs & 2) && (flgs2 & 1))
 						flgs2 &= 0xFFFE;
 				} // end if (_vm->_mouseX >= x2 && _vm->_mouseX <= (x2 + buttonList->width)....)
-			} // end if (_prcButtonUnk3)
-		} // end if (_flagsModifier || clickEvt)
+			}     // end if (_prcButtonUnk3)
+		}         // end if (_flagsModifier || clickEvt)
 
 		buttonList->flags = flgs;
 		buttonList->flags2 = flgs2;
@@ -2064,7 +2063,7 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 
 	if (newItem != currentItem) {
 		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0);
-		_screen->printText(strings[simpleMenu_getMenuItem(newItem,  menuItemsMask, itemOffset)], x, y + newItem * lineH , _vm->guiSettings()->colors.guiColorLightRed, 0);
+		_screen->printText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, _vm->guiSettings()->colors.guiColorLightRed, 0);
 		_screen->updateScreen();
 	}
 
@@ -2374,7 +2373,7 @@ bool GUI_EoB::runLoadMenu(int x, int y, bool fromMainMenu) {
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
 		updateSaveSlotsList(_vm->_targetName);
-		
+
 		_vm->useMainMenuGUISettings(fromMainMenu);
 		int slot = selectSaveSlotDialogue(x, y, 1);
 		_vm->useMainMenuGUISettings(false);
@@ -2440,7 +2439,7 @@ bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_y]) {
 			newHighlight = 0;
 			runLoop = false;
-		}  else if (inputFlag == 199 || inputFlag == 201) {
+		} else if (inputFlag == 199 || inputFlag == 201) {
 			if (_vm->posWithinRect(p.x, p.y, x[0], y, x[0] + 32, y + 14)) {
 				newHighlight = 0;
 				runLoop = false;
@@ -2546,7 +2545,6 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	drawMenuButtonBox(x, y, w, 14, false, false);
 	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0, _vm->guiSettings()->colors.guiColorBlack);
 	_screen->updateScreen();
-
 }
 
 void GUI_EoB::updateBoxFrameHighLight(int box) {
@@ -2659,7 +2657,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		}
 
 		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE) {
-			if (pos > 0 && pos < len ) {
+			if (pos > 0 && pos < len) {
 				for (int i = pos; i < len; i++) {
 					if (bytesPerChar == 2 && dest[i * bytesPerChar] & 0x80) {
 						dest[(i - 1) * bytesPerChar] = dest[i * bytesPerChar];
@@ -2738,7 +2736,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 		_screen->copyRegion(0, 191, (x - 1) << 3, y, (destMaxLen + 2) << 3, 9, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->printShadedText(dest, x << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.guiColorBlack);
-		
+
 		if (_vm->_flags.platform == Common::kPlatformFMTowns) {
 			if (pos < len) {
 				sufx[0] = dest[pos * bytesPerChar];
@@ -2746,7 +2744,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			} else {
 				sufx[0] = 32;
 				sufx[1] = 0;
-			}			
+			}
 		} else {
 			sufx[0] = (pos < len) ? dest[pos] : 32;
 		}
@@ -2768,7 +2766,7 @@ int GUI_EoB::checkKatakanaSelection() {
 	if (_vm->_flags.platform != Common::kPlatformFMTowns)
 		return 0;
 
-	static uint16 kanaSelXCrds[] = { 224, 272, 186 };
+	static uint16 kanaSelXCrds[] = {224, 272, 186};
 	Common::Point mousePos = _vm->getMousePos();
 	int highlight = -1;
 	_csjis[0] = _csjis[2] = 0;
@@ -2789,7 +2787,8 @@ int GUI_EoB::checkKatakanaSelection() {
 				_screen->printShadedText(_csjis, x & ~7, y & ~15, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
 			}
 
-			x = 288; y = 168;
+			x = 288;
+			y = 168;
 		}
 	}
 
@@ -2861,7 +2860,7 @@ void GUI_EoB::printKatakanaOptions(int page) {
 	for (int i = 0; i < 4; i++)
 		_screen->printShadedText(_vm->_katakanaLines[page * 4 + i], 152, (i << 4) + 112, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
-	static uint16 kanaSelCrds[] = { 224, 272, 186 };
+	static uint16 kanaSelCrds[] = {224, 272, 186};
 	for (int i = 0; i < 3; i++)
 		_screen->printShadedText(_vm->_katakanaSelectStrings[i], kanaSelCrds[i], 176, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 }
@@ -2883,7 +2882,7 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 	}
 
 	_savegameListSize = targets.size();
-	_savegameList = new char*[_savegameListSize];
+	_savegameList = new char *[_savegameListSize];
 	memset(_savegameList, 0, _savegameListSize * sizeof(char *));
 
 	Common::StringArray::iterator ii = targets.begin();
@@ -2995,7 +2994,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 				_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
 				if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 					TimeDate td;
-					_vm->_system->getTimeAndDate(td);					
+					_vm->_system->getTimeAndDate(td);
 					Common::strlcpy(_saveSlotStringsTemp[slot], Common::String::format(_vm->_saveNamePatterns[_vm->_currentLevel * 2 + _vm->_currentSub], td.tm_mon + 1, td.tm_mday, td.tm_hour, td.tm_min).c_str(), 25);
 					in = strlen(_saveSlotStringsTemp[slot]);
 					of = _vm->screen()->setFont(Screen::FID_6_FNT);
@@ -3529,7 +3528,7 @@ void GUI_EoB::scribeScrollDialogue() {
 						}
 					}
 
-					if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5])  {
+					if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5]) {
 						int t = menuItems[newHighLight] - 1;
 						Item scItem = _vm->_characters[scrollCharacter[t]].inventory[scrollInvSlot[t] - 1];
 						c->mageSpellsAvailableFlags |= (1 << t);
@@ -3558,8 +3557,8 @@ void GUI_EoB::scribeScrollDialogue() {
 }
 
 bool GUI_EoB::restParty() {
-	static const int8 eob1healSpells[] = { 2, 15, 20, 24 };
-	static const int8 eob2healSpells[] = { 3, 16, 20, 28 };
+	static const int8 eob1healSpells[] = {2, 15, 20, 24};
+	static const int8 eob2healSpells[] = {3, 16, 20, 28};
 	const int8 *spells = _vm->game() == GI_EOB1 ? eob1healSpells : eob2healSpells;
 
 	uint8 crs[6];
@@ -3940,8 +3939,8 @@ int GUI_EoB::selectCharacterDialogue(int id) {
 		return -1;
 	}
 
-	static const uint16 selX[] = { 184, 256, 184, 256, 184, 256 };
-	static const uint8 selY[] = { 2, 2, 54, 54, 106, 106};
+	static const uint16 selX[] = {184, 256, 184, 256, 184, 256};
+	static const uint8 selY[] = {2, 2, 54, 54, 106, 106};
 
 	for (int i = 0; i < 6; i++) {
 		if (found[i] != -1 || !_vm->testCharacter(i, 1))
@@ -4207,7 +4206,7 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 	int w = 167;
 	char slotString[26];
 	Common::strlcpy(slotString, slot < 6 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], _vm->gameFlags().platform == Common::kPlatformFMTowns ? 25 : 20);
-	
+
 	if (slot >= 6) {
 		x = _saveSlotX + 118;
 		y = _saveSlotY + 126;
@@ -4251,7 +4250,7 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 		else
 			_screen->printShadedText(s.c_str(), 8, y, highLight ? _vm->guiSettings()->colors.guiColorLightRed : col1, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
 	} else {
-		_screen->fillRect(6, y, 168, y + 8,  _vm->guiSettings()->colors.fill);
+		_screen->fillRect(6, y, 168, y + 8, _vm->guiSettings()->colors.fill);
 	}
 
 	_screen->set16bitShadingLevel(0);
@@ -4266,7 +4265,7 @@ void GUI_EoB::updateOptionsStrings() {
 	Common::strlcpy(_menuStringsPrefsTemp[0], Common::String::format(_vm->_menuStringsPrefs[0], _vm->_menuStringsOnOff[_vm->_configMusic ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[0]) + 8);
 	Common::strlcpy(_menuStringsPrefsTemp[1], Common::String::format(_vm->_menuStringsPrefs[1], _vm->_menuStringsOnOff[_vm->_configSounds ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[1]) + 8);
 	Common::strlcpy(_menuStringsPrefsTemp[2], Common::String::format(_vm->_menuStringsPrefs[2], _vm->_menuStringsOnOff[_vm->_configHpBarGraphs ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[2]) + 8);
-	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_vm->_menuStringsPrefs[3], _vm->gameFlags().platform == Common::kPlatformFMTowns ?	_vm->_2431Strings[_vm->_config2431 ? 0 : 1] : _vm->_menuStringsOnOff[_vm->_configMouse ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[3]) + 8);
+	Common::strlcpy(_menuStringsPrefsTemp[3], Common::String::format(_vm->_menuStringsPrefs[3], _vm->gameFlags().platform == Common::kPlatformFMTowns ? _vm->_2431Strings[_vm->_config2431 ? 0 : 1] : _vm->_menuStringsOnOff[_vm->_configMouse ? 0 : 1]).c_str(), strlen(_vm->_menuStringsPrefs[3]) + 8);
 }
 
 const char *GUI_EoB::getMenuString(int id) {
@@ -4274,7 +4273,7 @@ const char *GUI_EoB::getMenuString(int id) {
 
 	if (id >= 69)
 		return _vm->_menuStringsTransfer[id - 69];
-	else  if (id == 68)
+	else if (id == 68)
 		return _vm->_transferStringsScummVM[0];
 	else if (id == 67)
 		return _vm->_menuStringsDefeat[0];
@@ -4409,35 +4408,34 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 }
 
 const EoBRect16 GUI_EoB::_highlightFrames[] = {
-	{ 0x00B7, 0x0001, 0x00F7, 0x0034 },
-	{ 0x00FF, 0x0001, 0x013F, 0x0034 },
-	{ 0x00B7, 0x0035, 0x00F7, 0x0068 },
-	{ 0x00FF, 0x0035, 0x013F, 0x0068 },
-	{ 0x00B7, 0x0069, 0x00F7, 0x009C },
-	{ 0x00FF, 0x0069, 0x013F, 0x009C },
-	{ 0x0010, 0x003F, 0x0030, 0x0060 },
-	{ 0x0050, 0x003F, 0x0070, 0x0060 },
-	{ 0x0010, 0x007F, 0x0030, 0x00A0 },
-	{ 0x0050, 0x007F, 0x0070, 0x00A0 },
-	{ 0x00B0, 0x0042, 0x00D0, 0x0061 },
-	{ 0x00D0, 0x0042, 0x00F0, 0x0061 },
-	{ 0x00F0, 0x0042, 0x0110, 0x0061 },
-	{ 0x0110, 0x0042, 0x0130, 0x0061 },
-	{ 0x0004, 0x0018, 0x0024, 0x0039 },
-	{ 0x00A3, 0x0018, 0x00C3, 0x0039 },
-	{ 0x0004, 0x0040, 0x0024, 0x0061 },
-	{ 0x00A3, 0x0040, 0x00C3, 0x0061 },
-	{ 0x0004, 0x0068, 0x0024, 0x0089 },
-	{ 0x00A3, 0x0068, 0x00C3, 0x0089 }
-};
+    {0x00B7, 0x0001, 0x00F7, 0x0034},
+    {0x00FF, 0x0001, 0x013F, 0x0034},
+    {0x00B7, 0x0035, 0x00F7, 0x0068},
+    {0x00FF, 0x0035, 0x013F, 0x0068},
+    {0x00B7, 0x0069, 0x00F7, 0x009C},
+    {0x00FF, 0x0069, 0x013F, 0x009C},
+    {0x0010, 0x003F, 0x0030, 0x0060},
+    {0x0050, 0x003F, 0x0070, 0x0060},
+    {0x0010, 0x007F, 0x0030, 0x00A0},
+    {0x0050, 0x007F, 0x0070, 0x00A0},
+    {0x00B0, 0x0042, 0x00D0, 0x0061},
+    {0x00D0, 0x0042, 0x00F0, 0x0061},
+    {0x00F0, 0x0042, 0x0110, 0x0061},
+    {0x0110, 0x0042, 0x0130, 0x0061},
+    {0x0004, 0x0018, 0x0024, 0x0039},
+    {0x00A3, 0x0018, 0x00C3, 0x0039},
+    {0x0004, 0x0040, 0x0024, 0x0061},
+    {0x00A3, 0x0040, 0x00C3, 0x0061},
+    {0x0004, 0x0068, 0x0024, 0x0089},
+    {0x00A3, 0x0068, 0x00C3, 0x0089}};
 
-const uint8 GUI_EoB::_highlightColorTableVGA[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6, 0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00 };
+const uint8 GUI_EoB::_highlightColorTableVGA[] = {0x0F, 0xB0, 0xB2, 0xB4, 0xB6, 0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00};
 
-const uint8 GUI_EoB::_highlightColorTableEGA[] = { 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00 };
+const uint8 GUI_EoB::_highlightColorTableEGA[] = {0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00};
 
-const uint8 GUI_EoB::_highlightColorTableAmiga[] = { 0x13, 0x0B, 0x12, 0x0A, 0x11, 0x09, 0x11, 0x0A, 0x12, 0x0B, 0x00 };
+const uint8 GUI_EoB::_highlightColorTableAmiga[] = {0x13, 0x0B, 0x12, 0x0A, 0x11, 0x09, 0x11, 0x0A, 0x12, 0x0B, 0x00};
 
-const uint8 GUI_EoB::_highlightColorTablePC98[] = { 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00 };
+const uint8 GUI_EoB::_highlightColorTablePC98[] = {0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00};
 
 } // End of namespace Kyra
 

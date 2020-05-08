@@ -84,10 +84,12 @@ private:
 	 * Flags whether to make the party invincible
 	 */
 	bool cmdIntangible(int argc, const char **argv);
+
 public:
 	bool _invincible;
 	bool _intangible;
 	bool _superStrength;
+
 public:
 	Debugger(XeenEngine *vm);
 
@@ -99,4 +101,4 @@ public:
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_DEBUGGER_H */
+#endif /* XEEN_DEBUGGER_H */

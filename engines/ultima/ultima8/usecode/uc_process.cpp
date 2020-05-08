@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/uc_process.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/usecode.h"
-#include "ultima/ultima8/games/game_data.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -33,13 +33,13 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(UCProcess, Process)
 
 UCProcess::UCProcess() : Process(), _classId(0xFFFF), _ip(0xFFFF),
-		_bp(0x0000), _temp32(0) { // !! fixme
+                         _bp(0x0000), _temp32(0) { // !! fixme
 	_usecode = GameData::get_instance()->getMainUsecode();
 }
 
 UCProcess::UCProcess(uint16 classid_, uint16 offset_, uint32 this_ptr,
                      int thissize, const uint8 *args, int argsize)
-	: Process(), _classId(0xFFFF), _ip(0xFFFF), _bp(0x0000), _temp32(0) {
+    : Process(), _classId(0xFFFF), _ip(0xFFFF), _bp(0x0000), _temp32(0) {
 	_usecode = GameData::get_instance()->getMainUsecode();
 
 	load(classid_, offset_, this_ptr, thissize, args, argsize);
@@ -61,8 +61,7 @@ void UCProcess::load(uint16 classid_, uint16 offset_, uint32 this_ptr,
 	// first, push the derefenced this pointer
 	if (this_ptr != 0 && thissize > 0) {
 		_stack.addSP(-thissize);
-		UCMachine::get_instance()->
-		dereferencePointer(this_ptr, _stack.access(), thissize);
+		UCMachine::get_instance()->dereferencePointer(this_ptr, _stack.access(), thissize);
 		thissp = _stack.getSP();
 	}
 
@@ -119,7 +118,7 @@ void UCProcess::freeOnTerminate(uint16 index, int type_) {
 }
 
 void UCProcess::terminate() {
-	Std::list<Std::pair<uint16, int> >::iterator i;
+	Std::list<Std::pair<uint16, int>>::iterator i;
 
 	for (i = _freeOnTerminate.begin(); i != _freeOnTerminate.end(); ++i) {
 		uint16 index = (*i).first;
@@ -149,8 +148,7 @@ void UCProcess::dumpInfo() const {
 	if (_classId == 0xFFFF) {
 		pout.Print("IP undefined\n");
 	} else {
-		const char *classname = GameData::get_instance()->getMainUsecode()->
-		                        get_class_name(_classId);
+		const char *classname = GameData::get_instance()->getMainUsecode()->get_class_name(_classId);
 		pout.Print("classname: %s, IP: %04X:%04X\n", classname, _classId, _ip);
 	}
 }
@@ -163,7 +161,7 @@ void UCProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_ip);
 	ws->writeUint32LE(_temp32);
 	ws->writeUint32LE(static_cast<uint32>(_freeOnTerminate.size()));
-	Std::list<Std::pair<uint16, int> >::iterator iter;
+	Std::list<Std::pair<uint16, int>>::iterator iter;
 	for (iter = _freeOnTerminate.begin(); iter != _freeOnTerminate.end(); ++iter) {
 		ws->writeUint16LE(iter->first);
 		ws->writeUint32LE(static_cast<uint32>(iter->second));
@@ -172,7 +170,8 @@ void UCProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool UCProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_bp = rs->readUint16LE();
 	_classId = rs->readUint16LE();

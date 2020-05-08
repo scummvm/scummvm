@@ -26,7 +26,6 @@
 #include "common/func.h"
 #include "common/str.h"
 
-
 namespace Dragons {
 
 #define DRAGONS_NUM_SEQ_OPCODES 22
@@ -48,12 +47,20 @@ struct OpCall {
 
 // Convenience macros
 #define ARG_SKIP(x) opCall.skip(x);
-#define ARG_BYTE(name) byte name = opCall.readByte(); debug(5, "ARG_BYTE(" #name " = %d)", name);
-#define ARG_INT8(name) int8 name = opCall.readByte(); debug(5, "ARG_INT8(" #name " = %d)", name);
-#define ARG_INT16(name) int16 name = opCall.readSint16(); debug(5, "ARG_INT16(" #name " = %d)", name);
-#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(5, "ARG_UINT32(" #name " = %08X)", name);
+#define ARG_BYTE(name)             \
+	byte name = opCall.readByte(); \
+	debug(5, "ARG_BYTE(" #name " = %d)", name);
+#define ARG_INT8(name)             \
+	int8 name = opCall.readByte(); \
+	debug(5, "ARG_INT8(" #name " = %d)", name);
+#define ARG_INT16(name)               \
+	int16 name = opCall.readSint16(); \
+	debug(5, "ARG_INT16(" #name " = %d)", name);
+#define ARG_UINT32(name)               \
+	uint32 name = opCall.readUint32(); \
+	debug(5, "ARG_UINT32(" #name " = %08X)", name);
 
-typedef Common::Functor2<Actor*, OpCall&, void> SequenceOpcode;
+typedef Common::Functor2<Actor *, OpCall &, void> SequenceOpcode;
 
 class SequenceOpcodes {
 public:
@@ -88,7 +95,6 @@ protected:
 	void opPlaySound(Actor *actor, OpCall &opCall);
 	void opSetXY(Actor *actor, OpCall &opCall);
 	void opSetXYAndStop(Actor *actor, OpCall &opCall);
-
 };
 
 } // End of namespace Dragons

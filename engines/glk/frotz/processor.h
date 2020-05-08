@@ -23,24 +23,28 @@
 #ifndef GLK_FROTZ_PROCESSOR
 #define GLK_FROTZ_PROCESSOR
 
-#include "glk/frotz/mem.h"
-#include "glk/frotz/glk_interface.h"
-#include "glk/frotz/frotz_types.h"
 #include "common/stack.h"
+#include "glk/frotz/frotz_types.h"
+#include "glk/frotz/glk_interface.h"
+#include "glk/frotz/mem.h"
 
 namespace Glk {
 namespace Frotz {
 
 #define TEXT_BUFFER_SIZE 200
 
-#define CODE_BYTE(v)	   v = codeByte()
-#define CODE_WORD(v)       v = codeWord()
-#define CODE_IDX_WORD(v,i) v = codeWordIdx(i)
-#define GET_PC(v)          v = getPC()
-#define SET_PC(v)          setPC(v)
+#define CODE_BYTE(v) v = codeByte()
+#define CODE_WORD(v) v = codeWord()
+#define CODE_IDX_WORD(v, i) v = codeWordIdx(i)
+#define GET_PC(v) v = getPC()
+#define SET_PC(v) setPC(v)
 
 enum string_type {
-	LOW_STRING, ABBREVIATION, HIGH_STRING, EMBEDDED_STRING, VOCABULARY
+	LOW_STRING,
+	ABBREVIATION,
+	HIGH_STRING,
+	EMBEDDED_STRING,
+	VOCABULARY
 };
 
 class Processor;
@@ -52,6 +56,7 @@ typedef void (Processor::*Opcode)();
  */
 class Processor : public GlkInterface, public virtual Mem {
 	friend class Quetzal;
+
 private:
 	static const char *const ERR_MESSAGES[ERR_NUM_ERRORS];
 	static Opcode var_opcodes[64];
@@ -95,6 +100,7 @@ private:
 	bool istream_replay;
 	bool message;
 	Common::FixedStack<Redirect, MAX_NESTING> _redirect;
+
 protected:
 	/**
 	 * \defgroup General support methods
@@ -169,7 +175,7 @@ protected:
 	 * @{
 	 */
 
-	 /**
+	/**
 	  * High level output function.
 	  */
 	void print_char(zchar c);
@@ -184,7 +190,7 @@ protected:
 	 */
 	void print_long(uint value, int base);
 
-	 /**
+	/**
 	  * High level newline function.
 	  */
 	void new_line();
@@ -428,7 +434,7 @@ protected:
 	 * Read a line of input from the current input stream.
 	 */
 	zchar stream_read_input(int max, zchar *buf, zword timeout, zword routine,
-		bool hot_keys, bool no_scripting);
+	                        bool hot_keys, bool no_scripting);
 
 	/*
 	 * script_open
@@ -679,7 +685,7 @@ protected:
 	 */
 	int completion(const zchar *buffer, zchar *result);
 
-	 /**
+	/**
 	  * Convert a Unicode character to lowercase.
 	  * Taken from Zip2000 by Kevin Bracey.
 	  */
@@ -705,7 +711,7 @@ protected:
 	 */
 	zword winarg2();
 
-	 /**@}*/
+	/**@}*/
 protected:
 	/**
 	 * \defgroup General Opcode methods
@@ -860,7 +866,7 @@ protected:
 	 * @{
 	 */
 
-	 /**
+	/**
 	  * Add or remove a menu and branch if successful.
 	  *
 	  * 	zargs[0] = number of menu
@@ -1487,7 +1493,7 @@ protected:
 	 */
 	void z_tokenise();
 
-	 /**@}*/
+	/**@}*/
 
 	/**
 	 * \defgroup Variable Opcode methods
@@ -1624,7 +1630,6 @@ protected:
 	 */
 	void z_set_margins();
 
-
 	/**
 	 * Place a window on the screen.
 	 *
@@ -1692,7 +1697,7 @@ protected:
 	 */
 	void z_picture_table();
 
-	 /**@}*/
+	/**@}*/
 public:
 	/**
 	 * Constructor
@@ -1754,7 +1759,7 @@ public:
 	 */
 	void setPC(uint addr) { pcp = zmp + addr; }
 
-	 /**@}*/
+	/**@}*/
 };
 
 } // End of namespace Frotz

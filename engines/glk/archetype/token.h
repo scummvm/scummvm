@@ -23,8 +23,8 @@
 #ifndef ARCHETYPE_TOKEN
 #define ARCHETYPE_TOKEN
 
-#include "glk/archetype/misc.h"
 #include "common/str.h"
+#include "glk/archetype/misc.h"
 
 namespace Glk {
 namespace Archetype {

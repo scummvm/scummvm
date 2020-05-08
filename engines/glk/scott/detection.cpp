@@ -21,11 +21,11 @@
  */
 
 #include "glk/scott/detection.h"
-#include "glk/scott/detection_tables.h"
-#include "glk/blorb.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/blorb.h"
+#include "glk/scott/detection_tables.h"
 
 namespace Glk {
 namespace Scott {
@@ -45,7 +45,7 @@ GameDescriptor ScottMetaEngine::findGame(const char *gameId) {
 }
 
 bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".saga", ".dat", nullptr };
+	const char *const EXTENSIONS[] = {".saga", ".dat", nullptr};
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {

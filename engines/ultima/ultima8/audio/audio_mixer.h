@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_AUDIO_AUDIOMIXER_H
 #define ULTIMA8_AUDIO_AUDIOMIXER_H
 
-#include "audio/mixer.h"
 #include "audio/mididrv.h"
+#include "audio/mixer.h"
 #include "common/array.h"
 
 namespace Ultima {
@@ -44,8 +44,9 @@ private:
 	MidiPlayer *_midiPlayer;
 	Common::Array<AudioChannel *> _channels;
 
-	void            Lock();
-	void            Unlock();
+	void Lock();
+	void Unlock();
+
 public:
 	AudioMixer(Audio::Mixer *mixer);
 	~AudioMixer();
@@ -54,25 +55,25 @@ public:
 		return _midiPlayer;
 	}
 
-	static AudioMixer  *get_instance() {
+	static AudioMixer *get_instance() {
 		return _audioMixer;
 	}
 
-	void            reset();
-	void            createProcesses();
+	void reset();
+	void createProcesses();
 
-	int             playSample(AudioSample *sample, int loop, int priority, bool paused, uint32 pitch_shift, int lvol, int rvol);
-	bool            isPlaying(int chan);
-	void            stopSample(int chan);
+	int playSample(AudioSample *sample, int loop, int priority, bool paused, uint32 pitch_shift, int lvol, int rvol);
+	bool isPlaying(int chan);
+	void stopSample(int chan);
 
-	void            setPaused(int chan, bool paused);
-	bool            isPaused(int chan);
+	void setPaused(int chan, bool paused);
+	bool isPaused(int chan);
 
-	void            setVolume(int chan, int lvol, int rvol);
-	void            getVolume(int chan, int &lvol, int &rvol);
+	void setVolume(int chan, int lvol, int rvol);
+	void getVolume(int chan, int &lvol, int &rvol);
 
-	void            openMidiOutput();
-	void            closeMidiOutput();
+	void openMidiOutput();
+	void closeMidiOutput();
 };
 
 } // End of namespace Ultima8

@@ -22,232 +22,214 @@
 
 #include "common/events.h"
 
-#include "gob/global.h"
-#include "gob/util.h"
-#include "gob/palanim.h"
-#include "gob/draw.h"
-#include "gob/video.h"
-#include "gob/decfile.h"
-#include "gob/cmpfile.h"
 #include "gob/anifile.h"
 #include "gob/aniobject.h"
+#include "gob/cmpfile.h"
+#include "gob/decfile.h"
+#include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/palanim.h"
+#include "gob/util.h"
+#include "gob/video.h"
 
 #include "gob/sound/sound.h"
 
-#include "gob/minigames/geisha/penetration.h"
 #include "gob/minigames/geisha/meter.h"
 #include "gob/minigames/geisha/mouth.h"
+#include "gob/minigames/geisha/penetration.h"
 
 namespace Gob {
 
 namespace Geisha {
 
-static const int kColorShield    = 11;
-static const int kColorHealth    = 15;
-static const int kColorBlack     = 10;
-static const int kColorFloor     = 13;
+static const int kColorShield = 11;
+static const int kColorHealth = 15;
+static const int kColorBlack = 10;
+static const int kColorFloor = 13;
 static const int kColorFloorText = 14;
-static const int kColorExitText  = 15;
+static const int kColorExitText = 15;
 
 enum Sprite {
 	kSpriteFloorShield = 25,
-	kSpriteExit        = 29,
-	kSpriteFloor       = 30,
-	kSpriteWall        = 31,
-	kSpriteMouthBite   = 32,
-	kSpriteMouthKiss   = 33,
-	kSpriteBulletN     = 65,
-	kSpriteBulletS     = 66,
-	kSpriteBulletW     = 67,
-	kSpriteBulletE     = 68,
-	kSpriteBulletSW    = 85,
-	kSpriteBulletSE    = 86,
-	kSpriteBulletNW    = 87,
-	kSpriteBulletNE    = 88
+	kSpriteExit = 29,
+	kSpriteFloor = 30,
+	kSpriteWall = 31,
+	kSpriteMouthBite = 32,
+	kSpriteMouthKiss = 33,
+	kSpriteBulletN = 65,
+	kSpriteBulletS = 66,
+	kSpriteBulletW = 67,
+	kSpriteBulletE = 68,
+	kSpriteBulletSW = 85,
+	kSpriteBulletSE = 86,
+	kSpriteBulletNW = 87,
+	kSpriteBulletNE = 88
 };
 
 enum Animation {
-	kAnimationEnemyRound         =  0,
-	kAnimationEnemyRoundExplode  =  1,
-	kAnimationEnemySquare        =  2,
-	kAnimationEnemySquareExplode =  3,
-	kAnimationMouthKiss          = 33,
-	kAnimationMouthBite          = 34
+	kAnimationEnemyRound = 0,
+	kAnimationEnemyRoundExplode = 1,
+	kAnimationEnemySquare = 2,
+	kAnimationEnemySquareExplode = 3,
+	kAnimationMouthKiss = 33,
+	kAnimationMouthBite = 34
 };
 
-static const int kMapTileWidth  = 24;
+static const int kMapTileWidth = 24;
 static const int kMapTileHeight = 24;
 
-static const int kPlayAreaX      = 120;
-static const int kPlayAreaY      =   7;
-static const int kPlayAreaWidth  = 192;
+static const int kPlayAreaX = 120;
+static const int kPlayAreaY = 7;
+static const int kPlayAreaWidth = 192;
 static const int kPlayAreaHeight = 113;
 
-static const int kPlayAreaBorderWidth  = kPlayAreaWidth  / 2;
+static const int kPlayAreaBorderWidth = kPlayAreaWidth / 2;
 static const int kPlayAreaBorderHeight = kPlayAreaHeight / 2;
 
-static const int kTextAreaLeft   =   9;
-static const int kTextAreaTop    =   7;
-static const int kTextAreaRight  = 104;
+static const int kTextAreaLeft = 9;
+static const int kTextAreaTop = 7;
+static const int kTextAreaRight = 104;
 static const int kTextAreaBottom = 107;
 
 static const int kTextAreaBigBottom = 142;
 
 const byte Penetration::kPalettes[kFloorCount][3 * kPaletteSize] = {
-	{
-		0x16, 0x16, 0x16,
-		0x12, 0x14, 0x16,
-		0x34, 0x00, 0x25,
-		0x1D, 0x1F, 0x22,
-		0x24, 0x27, 0x2A,
-		0x2C, 0x0D, 0x22,
-		0x2B, 0x2E, 0x32,
-		0x12, 0x09, 0x20,
-		0x3D, 0x3F, 0x00,
-		0x3F, 0x3F, 0x3F,
-		0x00, 0x00, 0x00,
-		0x15, 0x15, 0x3F,
-		0x25, 0x22, 0x2F,
-		0x1A, 0x14, 0x28,
-		0x3F, 0x00, 0x00,
-		0x15, 0x3F, 0x15
-	},
-	{
-		0x16, 0x16, 0x16,
-		0x12, 0x14, 0x16,
-		0x37, 0x00, 0x24,
-		0x1D, 0x1F, 0x22,
-		0x24, 0x27, 0x2A,
-		0x30, 0x0E, 0x16,
-		0x2B, 0x2E, 0x32,
-		0x22, 0x0E, 0x26,
-		0x3D, 0x3F, 0x00,
-		0x3F, 0x3F, 0x3F,
-		0x00, 0x00, 0x00,
-		0x15, 0x15, 0x3F,
-		0x36, 0x28, 0x36,
-		0x30, 0x1E, 0x2A,
-		0x3F, 0x00, 0x00,
-		0x15, 0x3F, 0x15
-	},
-	{
-		0x16, 0x16, 0x16,
-		0x12, 0x14, 0x16,
-		0x3F, 0x14, 0x22,
-		0x1D, 0x1F, 0x22,
-		0x24, 0x27, 0x2A,
-		0x30, 0x10, 0x10,
-		0x2B, 0x2E, 0x32,
-		0x2A, 0x12, 0x12,
-		0x3D, 0x3F, 0x00,
-		0x3F, 0x3F, 0x3F,
-		0x00, 0x00, 0x00,
-		0x15, 0x15, 0x3F,
-		0x3F, 0x23, 0x31,
-		0x39, 0x20, 0x2A,
-		0x3F, 0x00, 0x00,
-		0x15, 0x3F, 0x15
-	}
-};
+    {0x16, 0x16, 0x16,
+     0x12, 0x14, 0x16,
+     0x34, 0x00, 0x25,
+     0x1D, 0x1F, 0x22,
+     0x24, 0x27, 0x2A,
+     0x2C, 0x0D, 0x22,
+     0x2B, 0x2E, 0x32,
+     0x12, 0x09, 0x20,
+     0x3D, 0x3F, 0x00,
+     0x3F, 0x3F, 0x3F,
+     0x00, 0x00, 0x00,
+     0x15, 0x15, 0x3F,
+     0x25, 0x22, 0x2F,
+     0x1A, 0x14, 0x28,
+     0x3F, 0x00, 0x00,
+     0x15, 0x3F, 0x15},
+    {0x16, 0x16, 0x16,
+     0x12, 0x14, 0x16,
+     0x37, 0x00, 0x24,
+     0x1D, 0x1F, 0x22,
+     0x24, 0x27, 0x2A,
+     0x30, 0x0E, 0x16,
+     0x2B, 0x2E, 0x32,
+     0x22, 0x0E, 0x26,
+     0x3D, 0x3F, 0x00,
+     0x3F, 0x3F, 0x3F,
+     0x00, 0x00, 0x00,
+     0x15, 0x15, 0x3F,
+     0x36, 0x28, 0x36,
+     0x30, 0x1E, 0x2A,
+     0x3F, 0x00, 0x00,
+     0x15, 0x3F, 0x15},
+    {0x16, 0x16, 0x16,
+     0x12, 0x14, 0x16,
+     0x3F, 0x14, 0x22,
+     0x1D, 0x1F, 0x22,
+     0x24, 0x27, 0x2A,
+     0x30, 0x10, 0x10,
+     0x2B, 0x2E, 0x32,
+     0x2A, 0x12, 0x12,
+     0x3D, 0x3F, 0x00,
+     0x3F, 0x3F, 0x3F,
+     0x00, 0x00, 0x00,
+     0x15, 0x15, 0x3F,
+     0x3F, 0x23, 0x31,
+     0x39, 0x20, 0x2A,
+     0x3F, 0x00, 0x00,
+     0x15, 0x3F, 0x15}};
 
 const byte Penetration::kMaps[kModeCount][kFloorCount][kMapWidth * kMapHeight] = {
-	{
-		{ // Real mode, floor 0
-			 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,
-			50, 50,  0,  0, 52, 53,  0,  0,  0,  0,  0,  0,  0,  0,  0, 50, 50,
-			50,  0,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0, 50,
-			50,  0,  0, 50,  0,  0, 52, 53,  0,  0,  0,  0,  0,  0, 50,  0, 50,
-			50,  0, 50,  0,  0, 50, 50, 50, 50,  0, 54, 55,  0,  0, 50,  0, 50,
-			50,  0, 50, 49,  0, 50,  0, 52, 53,  0, 50, 50, 50,  0,  0,  0, 50,
-			50, 57,  0, 50,  0,  0,  0, 50, 50, 50,  0,  0, 56, 50, 54, 55, 50,
-			50, 50,  0,  0, 50, 50, 50,  0,  0,  0,  0, 50,  0,  0, 50,  0, 50,
-			50, 51, 50,  0, 54, 55,  0,  0, 50, 50, 50, 50, 52, 53, 50,  0, 50,
-			50,  0, 50,  0,  0,  0,  0,  0, 54, 55,  0,  0,  0, 50,  0,  0, 50,
-			50,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0,  0, 50,
-			50, 50,  0, 52, 53,  0,  0,  0,  0,  0,  0, 52, 53,  0,  0, 50, 50,
-			 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0
-		},
-		{ // Real mode, floor 1
-			 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,
-			50,  0, 52, 53,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 50,
-			50,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0, 50,
-			50,  0, 50, 51, 52, 53,  0,  0, 52, 53,  0,  0,  0,  0, 50,  0, 50,
-			50,  0, 50,  0, 50, 50,  0, 50,  0, 50,  0, 50, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 52, 53,  0,  0,  0,  0,  0, 52, 53,  0, 52, 53, 50,
-			50, 57, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0, 50,
-			50,  0, 50, 52, 53,  0,  0, 52, 53,  0,  0,  0,  0,  0, 54, 55, 50,
-			50,  0, 50,  0, 50,  0, 50, 50,  0, 50, 50,  0, 50,  0, 50, 50, 50,
-			50,  0, 50, 49,  0,  0, 52, 53,  0, 52, 53,  0,  0,  0, 50, 56, 50,
-			50,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0, 50,
-			50,  0,  0,  0,  0,  0,  0,  0, 54, 55,  0,  0,  0,  0,  0,  0, 50,
-			 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0
-		},
-		{ // Real mode, floor 2
-			 0, 50, 50, 50, 50, 50, 50, 50,  0, 50, 50, 50, 50, 50, 50, 50,  0,
-			50, 52, 53,  0,  0,  0,  0, 50, 50, 50,  0,  0,  0,  0, 52, 53, 50,
-			50,  0, 50, 50, 50,  0,  0,  0, 50,  0,  0,  0, 50, 50, 50,  0, 50,
-			50,  0, 50, 52, 53, 50, 50, 52, 53,  0, 50, 50, 54, 55, 50,  0, 50,
-			50,  0, 50,  0,  0,  0,  0, 50,  0, 50,  0,  0,  0,  0, 50,  0, 50,
-			50,  0,  0,  0, 50,  0,  0,  0, 50,  0,  0,  0, 50,  0, 52, 53, 50,
-			 0, 50,  0, 50, 50, 50,  0, 57, 50, 51,  0, 50, 50, 50,  0, 50,  0,
-			50,  0,  0,  0, 50,  0,  0,  0, 50,  0, 52, 53, 50,  0,  0,  0, 50,
-			50,  0, 50,  0,  0,  0,  0, 50, 56, 50,  0,  0,  0,  0, 50,  0, 50,
-			50,  0, 50, 54, 55, 50, 50,  0,  0,  0, 50, 50, 54, 55, 50,  0, 50,
-			50,  0, 50, 50, 50,  0,  0,  0, 50,  0,  0,  0, 50, 50, 50,  0, 50,
-			50, 52, 53,  0,  0,  0,  0, 50, 50, 50,  0,  0,  0,  0, 52, 53, 50,
-			 0, 50, 50, 50, 50, 50, 50, 50,  0, 50, 50, 50, 50, 50, 50, 50,  0
-		}
-	},
-	{
-		{ // Test mode, floor 0
-			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-			50, 56,  0, 50,  0,  0, 52, 53,  0,  0,  0,  0, 52, 53,  0, 51, 50,
-			50,  0,  0, 50,  0,  0,  0, 50,  0, 54, 55, 50,  0, 50, 50, 50, 50,
-			50, 52, 53, 50, 50,  0,  0, 50, 50, 50, 50, 50,  0, 50,  0,  0, 50,
-			50,  0,  0,  0,  0, 56,  0,  0,  0,  0,  0, 50, 49, 50,  0,  0, 50,
-			50,  0, 54, 55,  0, 50, 50, 54, 55,  0, 50, 50, 50,  0,  0,  0, 50,
-			50,  0,  0,  0,  0,  0,  0,  0,  0,  0, 52, 53,  0,  0, 54, 55, 50,
-			50,  0, 50,  0, 50,  0,  0, 50,  0,  0,  0, 50,  0,  0,  0,  0, 50,
-			50,  0, 50,  0, 50, 54, 55, 50,  0, 50, 50, 50,  0, 50,  0,  0, 50,
-			50, 50, 50, 50, 50,  0,  0, 50,  0,  0,  0,  0,  0, 50, 54, 55, 50,
-			50,  0,  0,  0,  0,  0,  0,  0, 50, 50, 50, 50, 50,  0,  0,  0, 50,
-			50, 57,  0, 52, 53,  0,  0,  0,  0, 54, 55,  0,  0,  0,  0, 56, 50,
-			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
-		},
-		{ // Test mode, floor 1
-			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-			50, 52, 53,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 50,
-			50,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 54, 55,  0, 50,
-			50,  0, 50, 52, 53,  0,  0, 50,  0,  0, 54, 55, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50,  0,  0, 52, 53,  0, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50, 50, 50, 50, 50, 49, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50,  0, 50,  0,  0, 50, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50,  0, 50, 51,  0,  0, 52, 53, 50,  0, 50,  0, 50,
-			50, 57, 50,  0, 50,  0, 50, 50, 50, 50, 50, 50, 50,  0, 50,  0, 50,
-			50, 50, 50,  0, 50, 56,  0,  0,  0, 54, 55,  0,  0,  0, 50,  0, 50,
-			50, 56,  0,  0,  0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0, 50,
-			50, 50, 50, 50,  0,  0,  0,  0, 52, 53,  0,  0,  0,  0,  0,  0, 50,
-			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
-		},
-		{ // Test mode, floor 2
-			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-			50, 57, 50, 54, 55,  0, 50, 54, 55,  0, 50,  0, 52, 53, 50, 51, 50,
-			50,  0, 50,  0, 50,  0, 50,  0,  0,  0, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50, 52, 53,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
-			50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,  0, 50,
-			50,  0,  0,  0, 50,  0, 50,  0, 50,  0,  0,  0, 50,  0, 50,  0, 50,
-			50,  0,  0,  0, 50, 52, 53,  0, 50, 52, 53, 56, 50,  0, 54, 55, 50,
-			50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
-		}
-	}
-};
+    {{// Real mode, floor 0
+      0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0,
+      50, 50, 0, 0, 52, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 50,
+      50, 0, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 50,
+      50, 0, 0, 50, 0, 0, 52, 53, 0, 0, 0, 0, 0, 0, 50, 0, 50,
+      50, 0, 50, 0, 0, 50, 50, 50, 50, 0, 54, 55, 0, 0, 50, 0, 50,
+      50, 0, 50, 49, 0, 50, 0, 52, 53, 0, 50, 50, 50, 0, 0, 0, 50,
+      50, 57, 0, 50, 0, 0, 0, 50, 50, 50, 0, 0, 56, 50, 54, 55, 50,
+      50, 50, 0, 0, 50, 50, 50, 0, 0, 0, 0, 50, 0, 0, 50, 0, 50,
+      50, 51, 50, 0, 54, 55, 0, 0, 50, 50, 50, 50, 52, 53, 50, 0, 50,
+      50, 0, 50, 0, 0, 0, 0, 0, 54, 55, 0, 0, 0, 50, 0, 0, 50,
+      50, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 50,
+      50, 50, 0, 52, 53, 0, 0, 0, 0, 0, 0, 52, 53, 0, 0, 50, 50,
+      0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0},
+     {// Real mode, floor 1
+      0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0,
+      50, 0, 52, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50,
+      50, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 50,
+      50, 0, 50, 51, 52, 53, 0, 0, 52, 53, 0, 0, 0, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 50, 0, 50, 0, 50, 0, 50, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 52, 53, 0, 0, 0, 0, 0, 52, 53, 0, 52, 53, 50,
+      50, 57, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 50,
+      50, 0, 50, 52, 53, 0, 0, 52, 53, 0, 0, 0, 0, 0, 54, 55, 50,
+      50, 0, 50, 0, 50, 0, 50, 50, 0, 50, 50, 0, 50, 0, 50, 50, 50,
+      50, 0, 50, 49, 0, 0, 52, 53, 0, 52, 53, 0, 0, 0, 50, 56, 50,
+      50, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 50,
+      50, 0, 0, 0, 0, 0, 0, 0, 54, 55, 0, 0, 0, 0, 0, 0, 50,
+      0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0},
+     {// Real mode, floor 2
+      0, 50, 50, 50, 50, 50, 50, 50, 0, 50, 50, 50, 50, 50, 50, 50, 0,
+      50, 52, 53, 0, 0, 0, 0, 50, 50, 50, 0, 0, 0, 0, 52, 53, 50,
+      50, 0, 50, 50, 50, 0, 0, 0, 50, 0, 0, 0, 50, 50, 50, 0, 50,
+      50, 0, 50, 52, 53, 50, 50, 52, 53, 0, 50, 50, 54, 55, 50, 0, 50,
+      50, 0, 50, 0, 0, 0, 0, 50, 0, 50, 0, 0, 0, 0, 50, 0, 50,
+      50, 0, 0, 0, 50, 0, 0, 0, 50, 0, 0, 0, 50, 0, 52, 53, 50,
+      0, 50, 0, 50, 50, 50, 0, 57, 50, 51, 0, 50, 50, 50, 0, 50, 0,
+      50, 0, 0, 0, 50, 0, 0, 0, 50, 0, 52, 53, 50, 0, 0, 0, 50,
+      50, 0, 50, 0, 0, 0, 0, 50, 56, 50, 0, 0, 0, 0, 50, 0, 50,
+      50, 0, 50, 54, 55, 50, 50, 0, 0, 0, 50, 50, 54, 55, 50, 0, 50,
+      50, 0, 50, 50, 50, 0, 0, 0, 50, 0, 0, 0, 50, 50, 50, 0, 50,
+      50, 52, 53, 0, 0, 0, 0, 50, 50, 50, 0, 0, 0, 0, 52, 53, 50,
+      0, 50, 50, 50, 50, 50, 50, 50, 0, 50, 50, 50, 50, 50, 50, 50, 0}},
+    {{// Test mode, floor 0
+      50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+      50, 56, 0, 50, 0, 0, 52, 53, 0, 0, 0, 0, 52, 53, 0, 51, 50,
+      50, 0, 0, 50, 0, 0, 0, 50, 0, 54, 55, 50, 0, 50, 50, 50, 50,
+      50, 52, 53, 50, 50, 0, 0, 50, 50, 50, 50, 50, 0, 50, 0, 0, 50,
+      50, 0, 0, 0, 0, 56, 0, 0, 0, 0, 0, 50, 49, 50, 0, 0, 50,
+      50, 0, 54, 55, 0, 50, 50, 54, 55, 0, 50, 50, 50, 0, 0, 0, 50,
+      50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 53, 0, 0, 54, 55, 50,
+      50, 0, 50, 0, 50, 0, 0, 50, 0, 0, 0, 50, 0, 0, 0, 0, 50,
+      50, 0, 50, 0, 50, 54, 55, 50, 0, 50, 50, 50, 0, 50, 0, 0, 50,
+      50, 50, 50, 50, 50, 0, 0, 50, 0, 0, 0, 0, 0, 50, 54, 55, 50,
+      50, 0, 0, 0, 0, 0, 0, 0, 50, 50, 50, 50, 50, 0, 0, 0, 50,
+      50, 57, 0, 52, 53, 0, 0, 0, 0, 54, 55, 0, 0, 0, 0, 56, 50,
+      50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50},
+     {// Test mode, floor 1
+      50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+      50, 52, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50,
+      50, 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 54, 55, 0, 50,
+      50, 0, 50, 52, 53, 0, 0, 50, 0, 0, 54, 55, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 0, 0, 52, 53, 0, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 50, 50, 50, 50, 49, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 0, 50, 0, 0, 50, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 0, 50, 51, 0, 0, 52, 53, 50, 0, 50, 0, 50,
+      50, 57, 50, 0, 50, 0, 50, 50, 50, 50, 50, 50, 50, 0, 50, 0, 50,
+      50, 50, 50, 0, 50, 56, 0, 0, 0, 54, 55, 0, 0, 0, 50, 0, 50,
+      50, 56, 0, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 0, 50,
+      50, 50, 50, 50, 0, 0, 0, 0, 52, 53, 0, 0, 0, 0, 0, 0, 50,
+      50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50},
+     {// Test mode, floor 2
+      50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+      50, 57, 50, 54, 55, 0, 50, 54, 55, 0, 50, 0, 52, 53, 50, 51, 50,
+      50, 0, 50, 0, 50, 0, 50, 0, 0, 0, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 52, 53, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50, 0, 50,
+      50, 0, 0, 0, 50, 0, 50, 0, 50, 0, 0, 0, 50, 0, 50, 0, 50,
+      50, 0, 0, 0, 50, 52, 53, 0, 50, 52, 53, 56, 50, 0, 54, 55, 50,
+      50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50}}};
 
-static const int kLanguageCount    = 5;
+static const int kLanguageCount = 5;
 static const int kFallbackLanguage = 2; // English
 
 enum String {
@@ -271,109 +253,108 @@ enum String {
 };
 
 static const char *kStrings[kLanguageCount][kStringCount] = {
-	{ // French
-		"3EME SOUS-SOL",
-		"2EME SOUS-SOL",
-		"1ER SOUS-SOL",
-		"SORTIE REFUSEE",
-		"Vous disposez",
-		"de deux sorties",
-		"d\'une sortie",
-		"pour l\'acc\212s au",
-		"niveau",
-		"sup\202rieur",
-		"- NIVEAU 0 -",
-		"PENETRATION",
-		"REUSSIE",
-		"DANGER",
-		"GYNOIDES",
-		"ACTIVEES"
-	},
-	{ // German
-		// NOTE: The original had very broken German there. We provide proper(ish) German instead.
-		//       B0rken text in the comments after each line
-		"3. UNTERGESCHOSS", // "3. U.-GESCHOSS""
-		"2. UNTERGESCHOSS", // "2. U.-GESCHOSS"
-		"1. UNTERGESCHOSS", // "1. U.-GESCHOSS"
-		"AUSGANG GESPERRT",
-		"Sie haben",
-		"zwei Ausg\204nge", // "zwei Ausgang"
-		"einen Ausgang",    // "Fortsetztung"
-		"um das obere",     // ""
-		"Stockwerk zu",     // ""
-		"erreichen",        // ""
-		"- STOCKWERK 0 -",  // "0 - HOHE"
-		"PENETRATION",      // "DURCHDRIGEN"
-		"ERFOLGREICH",      // "ERFOLG"
-		"GEFAHR",
-		"GYNOIDE",
-		"AKTIVIERT",
-	},
-	{ // English
-		"3RD BASEMENT",
-		"2ND BASEMENT",
-		"1ST BASEMENT",
-		"NO EXIT",
-		"You have",
-		"2 exits",
-		"1 exit",
-		"to reach upper",
-		"level",
-		"",
-		"- 0 LEVEL -",
-		"PENETRATION",
-		"SUCCESSFUL",
-		"DANGER",
-		"GYNOIDES",
-		"ACTIVATED",
-	},
-	{ // Spanish
-		"3ER. SUBSUELO",
-		"2D. SUBSUELO",
-		"1ER. SUBSUELO",
-		"SALIDA RECHAZADA",
-		"Dispones",
-		"de dos salidas",
-		"de una salida",
-		"para acceso al",
-		"nivel",
-		"superior",
-		"- NIVEL 0 -",
-		"PENETRACION",
-		"CONSEGUIDA",
-		"PELIGRO",
-		"GYNOIDAS",
-		"ACTIVADAS",
-	},
-	{ // Italian
-		"SOTTOSUOLO 3",
-		"SOTTOSUOLO 2",
-		"SOTTOSUOLO 1",
-		"NON USCITA",
-		"avete",
-		"due uscite",
-		"un\' uscita",
-		"per accedere al",
-		"livello",
-		"superiore",
-		"- LIVELLO 0 -",
-		"PENETRAZIONE",
-		"RIUSCITA",
-		"PERICOLO",
-		"GYNOIDI",
-		"ATTIVATE",
-	}
-};
+    {// French
+     "3EME SOUS-SOL",
+     "2EME SOUS-SOL",
+     "1ER SOUS-SOL",
+     "SORTIE REFUSEE",
+     "Vous disposez",
+     "de deux sorties",
+     "d\'une sortie",
+     "pour l\'acc\212s au",
+     "niveau",
+     "sup\202rieur",
+     "- NIVEAU 0 -",
+     "PENETRATION",
+     "REUSSIE",
+     "DANGER",
+     "GYNOIDES",
+     "ACTIVEES"},
+    {
+        // German
+        // NOTE: The original had very broken German there. We provide proper(ish) German instead.
+        //       B0rken text in the comments after each line
+        "3. UNTERGESCHOSS", // "3. U.-GESCHOSS""
+        "2. UNTERGESCHOSS", // "2. U.-GESCHOSS"
+        "1. UNTERGESCHOSS", // "1. U.-GESCHOSS"
+        "AUSGANG GESPERRT",
+        "Sie haben",
+        "zwei Ausg\204nge", // "zwei Ausgang"
+        "einen Ausgang",    // "Fortsetztung"
+        "um das obere",     // ""
+        "Stockwerk zu",     // ""
+        "erreichen",        // ""
+        "- STOCKWERK 0 -",  // "0 - HOHE"
+        "PENETRATION",      // "DURCHDRIGEN"
+        "ERFOLGREICH",      // "ERFOLG"
+        "GEFAHR",
+        "GYNOIDE",
+        "AKTIVIERT",
+    },
+    {
+        // English
+        "3RD BASEMENT",
+        "2ND BASEMENT",
+        "1ST BASEMENT",
+        "NO EXIT",
+        "You have",
+        "2 exits",
+        "1 exit",
+        "to reach upper",
+        "level",
+        "",
+        "- 0 LEVEL -",
+        "PENETRATION",
+        "SUCCESSFUL",
+        "DANGER",
+        "GYNOIDES",
+        "ACTIVATED",
+    },
+    {
+        // Spanish
+        "3ER. SUBSUELO",
+        "2D. SUBSUELO",
+        "1ER. SUBSUELO",
+        "SALIDA RECHAZADA",
+        "Dispones",
+        "de dos salidas",
+        "de una salida",
+        "para acceso al",
+        "nivel",
+        "superior",
+        "- NIVEL 0 -",
+        "PENETRACION",
+        "CONSEGUIDA",
+        "PELIGRO",
+        "GYNOIDAS",
+        "ACTIVADAS",
+    },
+    {
+        // Italian
+        "SOTTOSUOLO 3",
+        "SOTTOSUOLO 2",
+        "SOTTOSUOLO 1",
+        "NON USCITA",
+        "avete",
+        "due uscite",
+        "un\' uscita",
+        "per accedere al",
+        "livello",
+        "superiore",
+        "- LIVELLO 0 -",
+        "PENETRAZIONE",
+        "RIUSCITA",
+        "PERICOLO",
+        "GYNOIDI",
+        "ATTIVATE",
+    }};
 
-
-Penetration::MapObject::MapObject(uint16 tX, uint16 tY, uint16 mX, uint16 mY, uint16 w, uint16 h) :
-	tileX(tX), tileY(tY), mapX(mX), mapY(mY), width(w), height(h) {
+Penetration::MapObject::MapObject(uint16 tX, uint16 tY, uint16 mX, uint16 mY, uint16 w, uint16 h) : tileX(tX), tileY(tY), mapX(mX), mapY(mY), width(w), height(h) {
 
 	isBlocking = true;
 }
 
-Penetration::MapObject::MapObject(uint16 tX, uint16 tY, uint16 w, uint16 h) :
-	tileX(tX), tileY(tY), width(w), height(h) {
+Penetration::MapObject::MapObject(uint16 tX, uint16 tY, uint16 w, uint16 h) : tileX(tX), tileY(tY), width(w), height(h) {
 
 	isBlocking = true;
 
@@ -381,7 +362,7 @@ Penetration::MapObject::MapObject(uint16 tX, uint16 tY, uint16 w, uint16 h) :
 }
 
 void Penetration::MapObject::setTileFromMapPosition() {
-	tileX = (mapX + (width  / 2)) / kMapTileWidth;
+	tileX = (mapX + (width / 2)) / kMapTileWidth;
 	tileY = (mapY + (height / 2)) / kMapTileHeight;
 }
 
@@ -400,9 +381,9 @@ bool Penetration::MapObject::isIn(uint16 mX, uint16 mY) const {
 }
 
 bool Penetration::MapObject::isIn(uint16 mX, uint16 mY, uint16 w, uint16 h) const {
-	return isIn(mX        , mY        ) ||
-	       isIn(mX + w - 1, mY        ) ||
-	       isIn(mX        , mY + h - 1) ||
+	return isIn(mX, mY) ||
+	       isIn(mX + w - 1, mY) ||
+	       isIn(mX, mY + h - 1) ||
 	       isIn(mX + w - 1, mY + h - 1);
 }
 
@@ -410,26 +391,19 @@ bool Penetration::MapObject::isIn(const MapObject &obj) const {
 	return isIn(obj.mapX, obj.mapY, obj.width, obj.height);
 }
 
-
-Penetration::ManagedMouth::ManagedMouth(uint16 tX, uint16 tY, MouthType t) :
-	MapObject(tX, tY, 0, 0), mouth(0), type(t) {
-
+Penetration::ManagedMouth::ManagedMouth(uint16 tX, uint16 tY, MouthType t) : MapObject(tX, tY, 0, 0), mouth(0), type(t) {
 }
 
 Penetration::ManagedMouth::~ManagedMouth() {
 	delete mouth;
 }
 
-
-Penetration::ManagedSub::ManagedSub(uint16 tX, uint16 tY) :
-	MapObject(tX, tY, kMapTileWidth, kMapTileHeight), sub(0) {
-
+Penetration::ManagedSub::ManagedSub(uint16 tX, uint16 tY) : MapObject(tX, tY, kMapTileWidth, kMapTileHeight), sub(0) {
 }
 
 Penetration::ManagedSub::~ManagedSub() {
 	delete sub;
 }
-
 
 Penetration::ManagedEnemy::ManagedEnemy() : MapObject(0, 0, 0, 0), enemy(0), dead(false) {
 }
@@ -444,7 +418,6 @@ void Penetration::ManagedEnemy::clear() {
 	enemy = 0;
 }
 
-
 Penetration::ManagedBullet::ManagedBullet() : MapObject(0, 0, 0, 0), bullet(0) {
 }
 
@@ -458,16 +431,15 @@ void Penetration::ManagedBullet::clear() {
 	bullet = 0;
 }
 
-
 Penetration::Penetration(GobEngine *vm) : _vm(vm), _background(0), _sprites(0), _objects(0), _sub(0),
-	_shieldMeter(0), _healthMeter(0), _floor(0), _isPlaying(false) {
+                                          _shieldMeter(0), _healthMeter(0), _floor(0), _isPlaying(false) {
 
 	_background = new Surface(320, 200, 1);
 
 	_shieldMeter = new Meter(11, 119, 92, 3, kColorShield, kColorBlack, 920, Meter::kFillToRight);
 	_healthMeter = new Meter(11, 137, 92, 3, kColorHealth, kColorBlack, 920, Meter::kFillToRight);
 
-	_map = new Surface(kMapWidth  * kMapTileWidth  + kPlayAreaWidth ,
+	_map = new Surface(kMapWidth * kMapTileWidth + kPlayAreaWidth,
 	                   kMapHeight * kMapTileHeight + kPlayAreaHeight, 1);
 }
 
@@ -484,8 +456,8 @@ Penetration::~Penetration() {
 
 bool Penetration::play(bool hasAccessPass, bool hasMaxEnergy, bool testMode) {
 	_hasAccessPass = hasAccessPass;
-	_hasMaxEnergy  = hasMaxEnergy;
-	_testMode      = testMode;
+	_hasMaxEnergy = hasMaxEnergy;
+	_testMode = testMode;
 
 	_isPlaying = true;
 
@@ -540,11 +512,11 @@ void Penetration::cheatWin() {
 
 void Penetration::init() {
 	// Load sounds
-	_vm->_sound->sampleLoad(&_soundShield , SOUND_SND, "boucl.snd");
-	_vm->_sound->sampleLoad(&_soundBite   , SOUND_SND, "pervet.snd");
-	_vm->_sound->sampleLoad(&_soundKiss   , SOUND_SND, "baise.snd");
-	_vm->_sound->sampleLoad(&_soundShoot  , SOUND_SND, "tirgim.snd");
-	_vm->_sound->sampleLoad(&_soundExit   , SOUND_SND, "trouve.snd");
+	_vm->_sound->sampleLoad(&_soundShield, SOUND_SND, "boucl.snd");
+	_vm->_sound->sampleLoad(&_soundBite, SOUND_SND, "pervet.snd");
+	_vm->_sound->sampleLoad(&_soundKiss, SOUND_SND, "baise.snd");
+	_vm->_sound->sampleLoad(&_soundShoot, SOUND_SND, "tirgim.snd");
+	_vm->_sound->sampleLoad(&_soundExit, SOUND_SND, "trouve.snd");
 	_vm->_sound->sampleLoad(&_soundExplode, SOUND_SND, "virmor.snd");
 
 	_quit = false;
@@ -629,7 +601,7 @@ void Penetration::createMap() {
 		for (int x = 0; x < kMapWidth; x++) {
 			const byte mapTile = mapTiles[y * kMapWidth + x];
 
-			const int posX = kPlayAreaBorderWidth  + x * kMapTileWidth;
+			const int posX = kPlayAreaBorderWidth + x * kMapTileWidth;
 			const int posY = kPlayAreaBorderHeight + y * kMapTileHeight;
 
 			switch (mapTile) {
@@ -675,7 +647,7 @@ void Penetration::createMap() {
 				_mouths.push_back(ManagedMouth(x, y, kMouthTypeBite));
 
 				_mouths.back().mouth =
-					new Mouth(*_objects, *_sprites, kAnimationMouthBite, kSpriteMouthBite, kSpriteFloor);
+				    new Mouth(*_objects, *_sprites, kAnimationMouthBite, kSpriteMouthBite, kSpriteFloor);
 
 				_mouths.back().mouth->setPosition(posX, posY);
 				break;
@@ -687,7 +659,7 @@ void Penetration::createMap() {
 				_mouths.push_back(ManagedMouth(x, y, kMouthTypeKiss));
 
 				_mouths.back().mouth =
-					new Mouth(*_objects, *_sprites, kAnimationMouthKiss, kSpriteMouthKiss, kSpriteFloor);
+				    new Mouth(*_objects, *_sprites, kAnimationMouthKiss, kSpriteMouthKiss, kSpriteFloor);
 
 				_mouths.back().mouth->setPosition(posX, posY);
 				break;
@@ -695,11 +667,11 @@ void Penetration::createMap() {
 			case 55: // Right side of kissing mouth
 				break;
 
-			case 56: // Shield lying on the floor
-				_sprites->draw(*_map, kSpriteFloor      , posX    , posY    ); // Floor
+			case 56:                                                           // Shield lying on the floor
+				_sprites->draw(*_map, kSpriteFloor, posX, posY);               // Floor
 				_sprites->draw(*_map, kSpriteFloorShield, posX + 4, posY + 8); // Shield
 
-				_map->fillRect(posX +  4, posY + 8, posX +  7, posY + 18, kColorFloor); // Area left to shield
+				_map->fillRect(posX + 4, posY + 8, posX + 7, posY + 18, kColorFloor);   // Area left to shield
 				_map->fillRect(posX + 17, posY + 8, posX + 20, posY + 18, kColorFloor); // Area right to shield
 
 				_shields.push_back(MapObject(x, y, 0, 0));
@@ -774,7 +746,7 @@ void Penetration::drawFloorText() {
 	const char **strings = kStrings[getLanguage()];
 
 	const char *floorString = 0;
-	if      (_floor == 0)
+	if (_floor == 0)
 		floorString = strings[kString3rdBasement];
 	else if (_floor == 1)
 		floorString = strings[kString2ndBasement];
@@ -791,9 +763,9 @@ void Penetration::drawFloorText() {
 		if (_exits.size() == 1)
 			exitCount = kString1Exit;
 
-		font->drawString(strings[kStringYouHave]    , 10, 38, kColorExitText, kColorBlack, 1, surface);
-		font->drawString(strings[exitCount]         , 10, 53, kColorExitText, kColorBlack, 1, surface);
-		font->drawString(strings[kStringToReach]    , 10, 68, kColorExitText, kColorBlack, 1, surface);
+		font->drawString(strings[kStringYouHave], 10, 38, kColorExitText, kColorBlack, 1, surface);
+		font->drawString(strings[exitCount], 10, 53, kColorExitText, kColorBlack, 1, surface);
+		font->drawString(strings[kStringToReach], 10, 68, kColorExitText, kColorBlack, 1, surface);
 		font->drawString(strings[kStringUpperLevel1], 10, 84, kColorExitText, kColorBlack, 1, surface);
 		font->drawString(strings[kStringUpperLevel2], 10, 98, kColorExitText, kColorBlack, 1, surface);
 
@@ -816,12 +788,12 @@ void Penetration::drawEndText() {
 
 	const char **strings = kStrings[getLanguage()];
 
-	font->drawString(strings[kStringLevel0]     , 11, 21, kColorExitText, kColorBlack, 1, surface);
+	font->drawString(strings[kStringLevel0], 11, 21, kColorExitText, kColorBlack, 1, surface);
 	font->drawString(strings[kStringPenetration], 11, 42, kColorExitText, kColorBlack, 1, surface);
-	font->drawString(strings[kStringSuccessful] , 11, 58, kColorExitText, kColorBlack, 1, surface);
+	font->drawString(strings[kStringSuccessful], 11, 58, kColorExitText, kColorBlack, 1, surface);
 
-	font->drawString(strings[kStringDanger]   , 11,  82, kColorFloorText, kColorBlack, 1, surface);
-	font->drawString(strings[kStringGynoides] , 11,  98, kColorFloorText, kColorBlack, 1, surface);
+	font->drawString(strings[kStringDanger], 11, 82, kColorFloorText, kColorBlack, 1, surface);
+	font->drawString(strings[kStringGynoides], 11, 98, kColorFloorText, kColorBlack, 1, surface);
 	font->drawString(strings[kStringActivated], 11, 113, kColorFloorText, kColorBlack, 1, surface);
 
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kTextAreaLeft, kTextAreaTop, kTextAreaRight, kTextAreaBigBottom);
@@ -854,11 +826,11 @@ void Penetration::initScreen() {
 	setPalette();
 
 	// Draw the shield meter
-	_sprites->draw(*_background,   0,   0,  95,   6, 9, 117, 0); // Meter frame
+	_sprites->draw(*_background, 0, 0, 95, 6, 9, 117, 0);        // Meter frame
 	_sprites->draw(*_background, 271, 176, 282, 183, 9, 108, 0); // Shield
 
 	// Draw the health meter
-	_sprites->draw(*_background,   0,   0,  95,   6, 9, 135, 0); // Meter frame
+	_sprites->draw(*_background, 0, 0, 95, 6, 9, 135, 0);        // Meter frame
 	_sprites->draw(*_background, 283, 176, 292, 184, 9, 126, 0); // Heart
 
 	_vm->_draw->_backSurface->blit(*_background);
@@ -880,22 +852,22 @@ void Penetration::enemiesCreate() {
 		int16 width, height;
 		enemy.enemy->getFrameSize(width, height);
 
-		enemy.width  = width;
+		enemy.width = width;
 		enemy.height = height;
 
 		do {
-			enemy.mapX = _vm->_util->getRandom(kMapWidth)  * kMapTileWidth  + 2;
+			enemy.mapX = _vm->_util->getRandom(kMapWidth) * kMapTileWidth + 2;
 			enemy.mapY = _vm->_util->getRandom(kMapHeight) * kMapTileHeight + 4;
 			enemy.setTileFromMapPosition();
 		} while (isBlocked(enemy, enemy.mapX, enemy.mapY));
 
-		const int posX = kPlayAreaBorderWidth  + enemy.mapX;
+		const int posX = kPlayAreaBorderWidth + enemy.mapX;
 		const int posY = kPlayAreaBorderHeight + enemy.mapY;
 
 		enemy.enemy->setPosition(posX, posY);
 
 		enemy.isBlocking = true;
-		enemy.dead       = false;
+		enemy.dead = false;
 	}
 }
 
@@ -908,7 +880,7 @@ void Penetration::enemyMove(ManagedEnemy &enemy, int x, int y) {
 
 	enemy.setTileFromMapPosition();
 
-	const int posX = kPlayAreaBorderWidth  + enemy.mapX;
+	const int posX = kPlayAreaBorderWidth + enemy.mapX;
 	const int posY = kPlayAreaBorderHeight + enemy.mapY;
 
 	enemy.enemy->setPosition(posX, posY);
@@ -926,15 +898,15 @@ void Penetration::enemiesMove() {
 
 		int x = 0, y = 0;
 
-		if      (enemy.mapX > _sub->mapX)
+		if (enemy.mapX > _sub->mapX)
 			x = -8;
 		else if (enemy.mapX < _sub->mapX)
-			x =  8;
+			x = 8;
 
-		if      (enemy.mapY > _sub->mapY)
+		if (enemy.mapY > _sub->mapY)
 			y = -8;
 		else if (enemy.mapY < _sub->mapY)
-			y =  8;
+			y = 8;
 
 		enemyMove(enemy, x, y);
 	}
@@ -953,7 +925,7 @@ void Penetration::enemyAttack(ManagedEnemy &enemy) {
 }
 
 void Penetration::enemyExplode(ManagedEnemy &enemy) {
-	enemy.dead       = true;
+	enemy.dead = true;
 	enemy.isBlocking = false;
 
 	bool isSquare = enemy.enemy->getAnimation() == kAnimationEnemySquare;
@@ -971,14 +943,14 @@ void Penetration::checkInput() {
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if      (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				_quit = true;
 			else if (event.kbd.keycode == Common::KEYCODE_UP)
-				_keys[kKeyUp   ] = true;
+				_keys[kKeyUp] = true;
 			else if (event.kbd.keycode == Common::KEYCODE_DOWN)
-				_keys[kKeyDown ] = true;
+				_keys[kKeyDown] = true;
 			else if (event.kbd.keycode == Common::KEYCODE_LEFT)
-				_keys[kKeyLeft ] = true;
+				_keys[kKeyLeft] = true;
 			else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
 				_keys[kKeyRight] = true;
 			else if (event.kbd.keycode == Common::KEYCODE_SPACE)
@@ -986,12 +958,12 @@ void Penetration::checkInput() {
 			break;
 
 		case Common::EVENT_KEYUP:
-			if      (event.kbd.keycode == Common::KEYCODE_UP)
-				_keys[kKeyUp   ] = false;
+			if (event.kbd.keycode == Common::KEYCODE_UP)
+				_keys[kKeyUp] = false;
 			else if (event.kbd.keycode == Common::KEYCODE_DOWN)
-				_keys[kKeyDown ] = false;
+				_keys[kKeyDown] = false;
 			else if (event.kbd.keycode == Common::KEYCODE_LEFT)
-				_keys[kKeyLeft ] = false;
+				_keys[kKeyLeft] = false;
 			else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
 				_keys[kKeyRight] = false;
 			else if (event.kbd.keycode == Common::KEYCODE_SPACE)
@@ -1018,7 +990,7 @@ bool Penetration::isBlocked(const MapObject &self, int16 x, int16 y, MapObject *
 
 	if ((x < 0) || (y < 0))
 		return true;
-	if (((x + self.width  - 1) >= (kMapWidth  * kMapTileWidth)) ||
+	if (((x + self.width - 1) >= (kMapWidth * kMapTileWidth)) ||
 	    ((y + self.height - 1) >= (kMapHeight * kMapTileHeight)))
 		return true;
 
@@ -1056,7 +1028,7 @@ void Penetration::findPath(MapObject &obj, int x, int y, MapObject **blockedBy) 
 		uint16 oldY = obj.mapY;
 
 		uint16 newX = obj.mapX;
-		if        (x > 0) {
+		if (x > 0) {
 			newX++;
 			x--;
 		} else if (x < 0) {
@@ -1068,7 +1040,7 @@ void Penetration::findPath(MapObject &obj, int x, int y, MapObject **blockedBy) 
 			obj.mapX = newX;
 
 		uint16 newY = obj.mapY;
-		if        (y > 0) {
+		if (y > 0) {
 			newY++;
 			y--;
 		} else if (y < 0) {
@@ -1120,7 +1092,7 @@ void Penetration::subShoot() {
 
 	setBulletPosition(*_sub, bullet);
 
-	const int posX = kPlayAreaBorderWidth  + bullet.mapX;
+	const int posX = kPlayAreaBorderWidth + bullet.mapX;
 	const int posY = kPlayAreaBorderHeight + bullet.mapY;
 
 	bullet.bullet->setPosition(posX, posY);
@@ -1135,7 +1107,7 @@ void Penetration::subShoot() {
 
 void Penetration::setBulletPosition(const ManagedSub &sub, ManagedBullet &bullet) const {
 	bullet.mapX = sub.mapX;
-	bullet.mapY= sub.mapY;
+	bullet.mapY = sub.mapY;
 
 	int16 sWidth, sHeight;
 	sub.sub->getFrameSize(sWidth, sHeight);
@@ -1148,7 +1120,7 @@ void Penetration::setBulletPosition(const ManagedSub &sub, ManagedBullet &bullet
 		bullet.mapX += sWidth / 2;
 		bullet.mapY -= bHeight;
 
-		bullet.deltaX =  0;
+		bullet.deltaX = 0;
 		bullet.deltaY = -8;
 		break;
 
@@ -1156,7 +1128,7 @@ void Penetration::setBulletPosition(const ManagedSub &sub, ManagedBullet &bullet
 		bullet.mapX += sWidth;
 		bullet.mapY -= bHeight * 2;
 
-		bullet.deltaX =  8;
+		bullet.deltaX = 8;
 		bullet.deltaY = -8;
 		break;
 
@@ -1164,24 +1136,24 @@ void Penetration::setBulletPosition(const ManagedSub &sub, ManagedBullet &bullet
 		bullet.mapX += sWidth;
 		bullet.mapY += sHeight / 2 - bHeight;
 
-		bullet.deltaX =  8;
-		bullet.deltaY =  0;
+		bullet.deltaX = 8;
+		bullet.deltaY = 0;
 		break;
 
 	case Submarine::kDirectionSE:
 		bullet.mapX += sWidth;
 		bullet.mapY += sHeight;
 
-		bullet.deltaX =  8;
-		bullet.deltaY =  8;
+		bullet.deltaX = 8;
+		bullet.deltaY = 8;
 		break;
 
 	case Submarine::kDirectionS:
 		bullet.mapX += sWidth / 2;
 		bullet.mapY += sHeight;
 
-		bullet.deltaX =  0;
-		bullet.deltaY =  8;
+		bullet.deltaX = 0;
+		bullet.deltaY = 8;
 		break;
 
 	case Submarine::kDirectionSW:
@@ -1189,7 +1161,7 @@ void Penetration::setBulletPosition(const ManagedSub &sub, ManagedBullet &bullet
 		bullet.mapY += sHeight;
 
 		bullet.deltaX = -8;
-		bullet.deltaY =  8;
+		bullet.deltaY = 8;
 		break;
 
 	case Submarine::kDirectionW:
@@ -1197,7 +1169,7 @@ void Penetration::setBulletPosition(const ManagedSub &sub, ManagedBullet &bullet
 		bullet.mapY += sHeight / 2 - bHeight;
 
 		bullet.deltaX = -8;
-		bullet.deltaY =  0;
+		bullet.deltaY = 0;
 		break;
 
 	case Submarine::kDirectionNW:
@@ -1270,7 +1242,7 @@ void Penetration::bulletMove(ManagedBullet &bullet) {
 		return;
 	}
 
-	const int posX = kPlayAreaBorderWidth  + bullet.mapX;
+	const int posX = kPlayAreaBorderWidth + bullet.mapX;
 	const int posY = kPlayAreaBorderHeight + bullet.mapY;
 
 	bullet.bullet->setPosition(posX, posY);
@@ -1289,7 +1261,7 @@ void Penetration::checkShotEnemy(MapObject &shotObject) {
 
 Submarine::Direction Penetration::getDirection(int &x, int &y) const {
 	x = _keys[kKeyRight] ? 3 : (_keys[kKeyLeft] ? -3 : 0);
-	y = _keys[kKeyDown ] ? 3 : (_keys[kKeyUp  ] ? -3 : 0);
+	y = _keys[kKeyDown] ? 3 : (_keys[kKeyUp] ? -3 : 0);
 
 	if ((x > 0) && (y > 0))
 		return Submarine::kDirectionSE;
@@ -1333,13 +1305,13 @@ void Penetration::checkMouths() {
 		if (!m->mouth->isDeactivated())
 			continue;
 
-		if ((( m->tileX      == _sub->tileX) && (m->tileY == _sub->tileY)) ||
+		if (((m->tileX == _sub->tileX) && (m->tileY == _sub->tileY)) ||
 		    (((m->tileX + 1) == _sub->tileX) && (m->tileY == _sub->tileY))) {
 
 			m->mouth->activate();
 
 			// Play the mouth sound and do health gain/loss
-			if        (m->type == kMouthTypeBite) {
+			if (m->type == kMouthTypeBite) {
 				_vm->_sound->blasterPlay(&_soundBite, 1, 0);
 				healthLose(230);
 			} else if (m->type == kMouthTypeKiss) {
@@ -1413,14 +1385,14 @@ void Penetration::updateAnims() {
 
 	// Clear the previous map animation frames
 	for (Common::List<ANIObject *>::iterator a = _mapAnims.reverse_begin();
-			 a != _mapAnims.end(); --a) {
+	     a != _mapAnims.end(); --a) {
 
 		(*a)->clear(*_map, left, top, right, bottom);
 	}
 
 	// Draw the current map animation frames
 	for (Common::List<ANIObject *>::iterator a = _mapAnims.begin();
-			 a != _mapAnims.end(); ++a) {
+	     a != _mapAnims.end(); ++a) {
 
 		(*a)->draw(*_map, left, top, right, bottom);
 		(*a)->advance();
@@ -1428,7 +1400,7 @@ void Penetration::updateAnims() {
 
 	// Clear the previous animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.reverse_begin();
-			 a != _anims.end(); --a) {
+	     a != _anims.end(); --a) {
 
 		if ((*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom))
 			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
@@ -1438,14 +1410,14 @@ void Penetration::updateAnims() {
 		// Draw the map
 
 		_vm->_draw->_backSurface->blit(*_map, _sub->mapX, _sub->mapY,
-				_sub->mapX + kPlayAreaWidth - 1, _sub->mapY + kPlayAreaHeight - 1, kPlayAreaX, kPlayAreaY);
+		                               _sub->mapX + kPlayAreaWidth - 1, _sub->mapY + kPlayAreaHeight - 1, kPlayAreaX, kPlayAreaY);
 		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, kPlayAreaX, kPlayAreaY,
-				kPlayAreaX + kPlayAreaWidth - 1, kPlayAreaY + kPlayAreaHeight - 1);
+		                        kPlayAreaX + kPlayAreaWidth - 1, kPlayAreaY + kPlayAreaHeight - 1);
 	}
 
 	// Draw the current animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.begin();
-			 a != _anims.end(); ++a) {
+	     a != _anims.end(); ++a) {
 
 		if ((*a)->draw(*_vm->_draw->_backSurface, left, top, right, bottom))
 			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);

@@ -20,8 +20,8 @@
  *
  */
 
-#include "draci/screen.h"
 #include "draci/surface.h"
+#include "draci/screen.h"
 
 namespace Draci {
 

@@ -20,55 +20,48 @@
  *
  */
 
-#include "xeen/sound.h"
-#include "xeen/xeen.h"
 #include "xeen/worldofxeen/darkside_cutscenes.h"
+#include "xeen/sound.h"
 #include "xeen/worldofxeen/worldofxeen.h"
+#include "xeen/xeen.h"
 
-#define WAIT(TIME) if (_subtitles.wait(TIME)) return false
+#define WAIT(TIME)             \
+	if (_subtitles.wait(TIME)) \
+	return false
 
 namespace Xeen {
-	namespace WorldOfXeen {
+namespace WorldOfXeen {
 
-#define	WAIT_SUBTITLES(time) \
-	_subtitles.show(); \
+#define WAIT_SUBTITLES(time) \
+	_subtitles.show();       \
 	WAIT(time)
 
 static const int PHAROAH_FRAMES[32] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 2, 1,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 2, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 const int PHAROAH_YLIST[32] = {
-	-3, -3, -3, -3, -3, -3, -3, -3, -1, 0, 0, 0, 0, 0, 0, 0,
-	-1, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3
-};
+    -3, -3, -3, -3, -3, -3, -3, -3, -1, 0, 0, 0, 0, 0, 0, 0,
+    -1, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3};
 const int LEFT_CLAW_RUB_X[32] = {
-	223, 208, 187, 158, 129, 104, 85, 70, 61, 53, 49,
-	46, 46, 49, 53, 56, 61, 67, 72, 82, 91, 103,
-	117, 130, 142, 156, 170, 184, 199, 210, 221, 227
-};
+    223, 208, 187, 158, 129, 104, 85, 70, 61, 53, 49,
+    46, 46, 49, 53, 56, 61, 67, 72, 82, 91, 103,
+    117, 130, 142, 156, 170, 184, 199, 210, 221, 227};
 const int LEFT_CLAW_RUB_Y[32] = {
-	116, 111, 105, 103, 101, 96, 93, 92, 92, 95, 98,
-	100, 104, 107, 107, 105, 102, 100, 98, 99, 101, 104,
-	107, 109, 110, 111, 114, 115, 115, 116, 116, 118
-};
+    116, 111, 105, 103, 101, 96, 93, 92, 92, 95, 98,
+    100, 104, 107, 107, 105, 102, 100, 98, 99, 101, 104,
+    107, 109, 110, 111, 114, 115, 115, 116, 116, 118};
 static const int RIGHT_CLAW_IDLE_X[32] = {
-	146, 145, 143, 141, 141, 141, 141, 141, 141, 141, 141, 142, 143, 144, 145, 146,
-	146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146
-};
+    146, 145, 143, 141, 141, 141, 141, 141, 141, 141, 141, 142, 143, 144, 145, 146,
+    146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146};
 static const int RIGHT_CLAW_IDLE_Y[32] = {
-	143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143,
-	143, 143, 144, 145, 145, 145, 145, 145, 145, 145, 145, 144, 143, 143, 143, 143
-};
+    143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143,
+    143, 143, 144, 145, 145, 145, 145, 145, 145, 145, 145, 144, 143, 143, 143, 143};
 const int LEFT_CLAW_IDLE_X[32] = {
-	223, 222, 220, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219,
-	219, 219, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 221
-};
+    223, 222, 220, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219,
+    219, 219, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 221};
 const int LEFT_CLAW_IDLE_Y[32] = {
-	116, 116, 116, 117, 117, 117, 117, 117, 118, 118, 118, 118, 118, 118, 118, 118,
-	118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118
-};
-
+    116, 116, 116, 117, 117, 117, 117, 117, 118, 118, 118, 118, 118, 118, 118, 118,
+    118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118};
 
 bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 	Screen &screen = *g_vm->_screen;
@@ -78,9 +71,8 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 
 	screen.loadPalette("dark.pal");
 	SpriteResource nwc[4] = {
-		SpriteResource("nwc1.int"), SpriteResource("nwc2.int"),
-		SpriteResource("nwc3.int"), SpriteResource("nwc4.int")
-	};
+	    SpriteResource("nwc1.int"), SpriteResource("nwc2.int"),
+	    SpriteResource("nwc3.int"), SpriteResource("nwc4.int")};
 	File voc[3];
 	voc[0].open("dragon1.voc");
 	voc[1].open("dragon2.voc");
@@ -237,14 +229,11 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 	const int XLIST1[] = {
-		0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 58, 60, 62
-	};
+	    0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 58, 60, 62};
 	const int YLIST1[] = {
-		0, 5, 10, 15, 20, 25, 30, 35, 40, 40, 39, 37, 35, 33, 31
-	};
+	    0, 5, 10, 15, 20, 25, 30, 35, 40, 40, 39, 37, 35, 33, 31};
 	const int XLIST2[] = {
-		160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105, 98, 90, 82
-	};
+	    160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105, 98, 90, 82};
 
 	// Play the intro music
 	sound.setMusicPercent(75);
@@ -331,18 +320,16 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		return false;
 	screen.fadeOut();
 
-	const int XLIST3[10] = { 102, 103, 104, 104, 104, 103, 102, 101, 101, 101 };
-	const int YLIST3[10] = { 30, 29, 28, 27, 26, 25, 24, 25, 26, 28 };
+	const int XLIST3[10] = {102, 103, 104, 104, 104, 103, 102, 101, 101, 101};
+	const int YLIST3[10] = {30, 29, 28, 27, 26, 25, 24, 25, 26, 28};
 	const int FRAMES3[70] = {
-		9, 9, 9, 9, 9, 8, 8, 8, 8, 9, 9, 9, 9, 9, 0,
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 8, 8,
-		8, 8, 9, 9, 9, 9, 165, 149, 126, 106, 92, 80, 66, 55, 42,
-		29, 10,  -6, -26, -40, -56, -72, -83, 154, 141, 125, 105, 94, 83, 74,
-		69, 68, 70, 73, 77, 83, 89, 94, 99, 109
-	};
+	    9, 9, 9, 9, 9, 8, 8, 8, 8, 9, 9, 9, 9, 9, 0,
+	    1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 8, 8,
+	    8, 8, 9, 9, 9, 9, 165, 149, 126, 106, 92, 80, 66, 55, 42,
+	    29, 10, -6, -26, -40, -56, -72, -83, 154, 141, 125, 105, 94, 83, 74,
+	    69, 68, 70, 73, 77, 83, 89, 94, 99, 109};
 	const char *const PHAR_VOC[5] = {
-		"pharoh2a.voc", "pharoh2b.voc", "pharoh2c.voc", "pharoh2d.voc", "pharoh2e.voc"
-	};
+	    "pharoh2a.voc", "pharoh2b.voc", "pharoh2c.voc", "pharoh2d.voc", "pharoh2e.voc"};
 
 	SpriteResource dragon("dragon.int");
 	_subtitles.setLine(1);
@@ -395,16 +382,16 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	return true;
 }
 
-#define ANIMATE_PHAROAH \
+#define ANIMATE_PHAROAH         \
 	screen.restoreBackground(); \
-	animatePharoah(clawCtr); \
+	animatePharoah(clawCtr);    \
 	clawCtr = (clawCtr + 1) % 32
 
 bool DarkSideCutscenes::showDarkSideIntro2() {
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 	SpriteResource goon("goon.int"), darkLord("darklord.int"), queen("queen.int"),
-		wizard("wizard.int"), fizzle("fizzle.int"), wizMth("wizmth.int");
+	    wizard("wizard.int"), fizzle("fizzle.int"), wizMth("wizmth.int");
 	int idx, clawCtr;
 
 	screen.loadPalette("dark.pal");
@@ -434,7 +421,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		WAIT(3);
 	}
 
-	const char *const VOC_NAMES[4] = { "queen1.voc", "queen2.voc", "queenhis.voc", "pharoh4.voc" };
+	const char *const VOC_NAMES[4] = {"queen1.voc", "queen2.voc", "queenhis.voc", "pharoh4.voc"};
 	int nwcIndex = 0, vocIndex = 0;
 	do {
 		ANIMATE_PHAROAH;
@@ -452,12 +439,12 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 
 		if (nwcIndex) {
 			queen.draw(0, (nwcIndex >= 17) ? 0 : nwcIndex,
-				Common::Point(9, 57));
+			           Common::Point(9, 57));
 			if (nwcIndex < 17)
 				++nwcIndex;
 		} else {
 			queen.draw(0, (vocIndex == 0) ? 0 : getSpeakingFrame(0, 5),
-				Common::Point(9, 57));
+			           Common::Point(9, 57));
 		}
 
 		_subtitles.show();
@@ -482,7 +469,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 	_subtitles.setLine(12);
 	sound.playVoice("dark3.voc");
 
-	const char *const VOC_NAMES2[2] = { "pharoh5a.voc", "pharoh5b.voc" };
+	const char *const VOC_NAMES2[2] = {"pharoh5a.voc", "pharoh5b.voc"};
 	vocIndex = 0;
 
 	do {
@@ -543,7 +530,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		WAIT(3);
 	}
 
-	const char *const VOC_NAMES3[2] = { "alamar1.voc", "pharoh7t.voc" };
+	const char *const VOC_NAMES3[2] = {"alamar1.voc", "pharoh7t.voc"};
 	vocIndex = nwcIndex = 0;
 	_subtitles.setLine(14);
 
@@ -602,7 +589,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		WAIT(3);
 	}
 
-	const char *const VOC_NAMES4[3] = { "ellinger.voc", "pharoh9a.voc", "pharoh9b.voc" };
+	const char *const VOC_NAMES4[3] = {"ellinger.voc", "pharoh9a.voc", "pharoh9b.voc"};
 	vocIndex = 0;
 
 	do {
@@ -741,8 +728,7 @@ bool DarkSideCutscenes::showDarkSideIntro3() {
 	screen.fadeOut(24);
 
 	SpriteResource end[3] = {
-		SpriteResource("end1.int"), SpriteResource("end2.int"), SpriteResource("end3.int")
-	};
+	    SpriteResource("end1.int"), SpriteResource("end2.int"), SpriteResource("end3.int")};
 	screen.loadBackground("end.raw");
 	screen.saveBackground();
 	screen.fadeIn();
@@ -755,9 +741,9 @@ bool DarkSideCutscenes::showDarkSideIntro3() {
 	}
 
 	SpriteResource title2("title2.int");
-	const byte TITLE_XLIST1[] = { 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55 };
-	const byte TITLE_XLIST2[] = { 160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105 };
-	const byte TITLE_YLIST[] = { 0, 5, 10, 15, 20, 25, 30, 36, 44, 51, 57, 62 };
+	const byte TITLE_XLIST1[] = {0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55};
+	const byte TITLE_XLIST2[] = {160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105};
+	const byte TITLE_YLIST[] = {0, 5, 10, 15, 20, 25, 30, 36, 44, 51, 57, 62};
 
 	screen.saveBackground();
 	WAIT(20);
@@ -969,8 +955,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 
 	// Play landing thud
 	sound.playSound("thud.voc");
-	while (!g_vm->shouldExit() && !events.isKeyMousePressed()
-		&& sound.isSoundPlaying()) {
+	while (!g_vm->shouldExit() && !events.isKeyMousePressed() && sound.isSoundPlaying()) {
 		events.pollEventsAndWait();
 	}
 
@@ -986,10 +971,9 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 
 	// Box opening
 	SpriteResource diskOpen[5] = {
-		SpriteResource("diska.end"), SpriteResource("diskb.end"),
-		SpriteResource("diskc.end"), SpriteResource("diskd.end"),
-		SpriteResource("diske.end")
-	};
+	    SpriteResource("diska.end"), SpriteResource("diskb.end"),
+	    SpriteResource("diskc.end"), SpriteResource("diskd.end"),
+	    SpriteResource("diske.end")};
 	File click("click.voc");
 
 	for (int idx = 0; idx < 34; ++idx) {
@@ -1011,8 +995,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 		diskOpen[idx].clear();
 
 	SpriteResource sc06[2] = {
-		SpriteResource("sc06a.end"), SpriteResource("sc06b.end")
-	};
+	    SpriteResource("sc06a.end"), SpriteResource("sc06b.end")};
 	screen.loadBackground("mainback.raw");
 	screen.saveBackground();
 	sc06[0].draw(0, 0);
@@ -1021,8 +1004,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 
 	// Zoomed out throneroom view of beam coming out of box
 	for (int idx = 0; idx < 20; ++idx) {
-		if (idx == 6 || idx == 8 || idx == 9 || idx == 10
-			|| idx == 13 || idx == 15 || idx == 16)
+		if (idx == 6 || idx == 8 || idx == 9 || idx == 10 || idx == 13 || idx == 15 || idx == 16)
 			sound.playFX(3);
 
 		screen.restoreBackground();
@@ -1038,11 +1020,10 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 
 	// Corak appearing
 	SpriteResource sc07[8] = {
-		SpriteResource("sc07a.end"), SpriteResource("sc07b.end"),
-		SpriteResource("sc07c.end"), SpriteResource("sc07d.end"),
-		SpriteResource("sc07e.end"), SpriteResource("sc07f.end"),
-		SpriteResource("sc07g.end"), SpriteResource("sc07h.end")
-	};
+	    SpriteResource("sc07a.end"), SpriteResource("sc07b.end"),
+	    SpriteResource("sc07c.end"), SpriteResource("sc07d.end"),
+	    SpriteResource("sc07e.end"), SpriteResource("sc07f.end"),
+	    SpriteResource("sc07g.end"), SpriteResource("sc07h.end")};
 
 	screen.loadBackground("sc070001.raw");
 	screen.saveBackground();
@@ -1296,7 +1277,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 	for (int idx = 0; idx < 320; idx += 16) {
 		screen.horizMerge(idx);
 		sc16.draw(0, (val >= 12) ? 11 : val++,
-			Common::Point(idx * -1 + 7, 29));
+		          Common::Point(idx * -1 + 7, 29));
 
 		if (val > 10)
 			sc16.draw(0, 12, Common::Point(273, 70));
@@ -1313,8 +1294,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 
 	// Sheltem protects himself with cloak
 	SpriteResource sc17[2] = {
-		SpriteResource("sc17xa.end"), SpriteResource("sc17xb.end")
-	};
+	    SpriteResource("sc17xa.end"), SpriteResource("sc17xb.end")};
 	screen.restoreBackground();
 	screen.update();
 
@@ -1334,9 +1314,8 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 
 	// Sheltem fires on Corak
 	SpriteResource sc18[4] = {
-		SpriteResource("sc18a.end"), SpriteResource("sc18b.end"),
-		SpriteResource("sc18c.end"), SpriteResource("sc18d.end")
-	};
+	    SpriteResource("sc18a.end"), SpriteResource("sc18b.end"),
+	    SpriteResource("sc18c.end"), SpriteResource("sc18d.end")};
 	screen.loadBackground("sc180001.raw");
 	screen.saveBackground();
 	screen.update();
@@ -1453,7 +1432,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 	for (int idx = SCREEN_WIDTH, xOffset = 0; idx >= 0; idx -= 16, xOffset += 16) {
 		screen.horizMerge(idx);
 		sc22.draw(0, (ctr >= 8) ? 7 : ctr++,
-			Common::Point(xOffset + 156, 28), SPRFLAG_800);
+		          Common::Point(xOffset + 156, 28), SPRFLAG_800);
 		if (ctr > 7)
 			sc22.draw(0, 8, Common::Point(136, 64));
 		screen.update();
@@ -1466,8 +1445,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 
 	// Corak raises shield and blocks sphere
 	SpriteResource sc23[2] = {
-		SpriteResource("sc23a.end"), SpriteResource("sc23b.end")
-	};
+	    SpriteResource("sc23a.end"), SpriteResource("sc23b.end")};
 
 	screen.restoreBackground();
 	screen.update();
@@ -1501,8 +1479,7 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 
 	// Corak does a ricochet shot on Sheltem
 	SpriteResource sc24[2] = {
-		SpriteResource("sc24a.end"), SpriteResource("sc24b.end")
-	};
+	    SpriteResource("sc24a.end"), SpriteResource("sc24b.end")};
 
 	screen.loadBackground("mainback.raw");
 	screen.saveBackground();
@@ -1555,9 +1532,8 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 
 	// I do. Kamakazi time
 	SpriteResource sc26[4] = {
-		SpriteResource("sc26a.end"), SpriteResource("sc26b.end"),
-		SpriteResource("sc26c.end"), SpriteResource("sc26d.end")
-	};
+	    SpriteResource("sc26a.end"), SpriteResource("sc26b.end"),
+	    SpriteResource("sc26c.end"), SpriteResource("sc26d.end")};
 	_subtitles.setLine(30);
 
 	screen.loadBackground("sc260001.raw");
@@ -1565,7 +1541,7 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 	_subtitles.show();
 	sound.playVoice("ido2.voc");
 
-	for (int idx = 0; sound.isSoundPlaying() || _subtitles.active(); ) {
+	for (int idx = 0; sound.isSoundPlaying() || _subtitles.active();) {
 		screen.restoreBackground();
 		sc26[idx / 8].draw(0, idx % 8, Common::Point(58, 25));
 		WAIT(2);
@@ -1605,13 +1581,12 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 	// Vortex is opened and the two are sucked in, obliterating them
 	files.setGameCc(2);
 	SpriteResource sc28[11] = {
-		SpriteResource("sca28.end"), SpriteResource("scb28.end"),
-		SpriteResource("scc28.end"), SpriteResource("scd28.end"),
-		SpriteResource("sce28.end"), SpriteResource("scf28.end"),
-		SpriteResource("scg28.end"), SpriteResource("sch28.end"),
-		SpriteResource("sci28.end"), SpriteResource("sck28.end"),
-		SpriteResource("sck28.end")
-	};
+	    SpriteResource("sca28.end"), SpriteResource("scb28.end"),
+	    SpriteResource("scc28.end"), SpriteResource("scd28.end"),
+	    SpriteResource("sce28.end"), SpriteResource("scf28.end"),
+	    SpriteResource("scg28.end"), SpriteResource("sch28.end"),
+	    SpriteResource("sci28.end"), SpriteResource("sck28.end"),
+	    SpriteResource("sck28.end")};
 
 	sound.playSong("dungeon2.m");
 	screen.fadeOut();
@@ -1643,10 +1618,9 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 
 	// Longshot of castle blowing up
 	SpriteResource sc29[6] = {
-		SpriteResource("sc29a.end"), SpriteResource("sc29b.end"),
-		SpriteResource("sc29c.end"), SpriteResource("sc29d.end"),
-		SpriteResource("sc29e.end"), SpriteResource("sc29f.end")
-	};
+	    SpriteResource("sc29a.end"), SpriteResource("sc29b.end"),
+	    SpriteResource("sc29c.end"), SpriteResource("sc29d.end"),
+	    SpriteResource("sc29e.end"), SpriteResource("sc29f.end")};
 
 	screen.loadBackground("sc290001.raw");
 	screen.saveBackground();
@@ -1718,7 +1692,7 @@ bool DarkSideCutscenes::showPharaohEndTextInner(const char *msg1, const char *ms
 	EventsManager &events = *g_vm->_events;
 	Windows &windows = *g_vm->_windows;
 	int numPages = 0 + (msg1 ? 1 : 0) + (msg2 ? 1 : 0) + (msg3 ? 1 : 0);
-	const char *const text[3] = { msg1, msg2, msg3 };
+	const char *const text[3] = {msg1, msg2, msg3};
 
 	screen.loadBackground("3room.raw");
 	screen.saveBackground();
@@ -1740,11 +1714,11 @@ bool DarkSideCutscenes::showPharaohEndTextInner(const char *msg1, const char *ms
 
 			// Form the text string to display the text
 			Common::String str1 = Common::String::format(Res.PHAROAH_ENDING_TEXT1,
-				text[pageNum]);
+			                                             text[pageNum]);
 			windows[39].writeString(str1);
 
 			Common::String str2 = Common::String::format(Res.PHAROAH_ENDING_TEXT2,
-				text[pageNum]);
+			                                             text[pageNum]);
 			windows[39].writeString(str2);
 
 			windows[0].update();

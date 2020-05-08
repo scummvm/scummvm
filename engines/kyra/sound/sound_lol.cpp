@@ -23,8 +23,8 @@
 #ifdef ENABLE_LOL
 
 #include "kyra/engine/lol.h"
-#include "kyra/sound/sound.h"
 #include "kyra/resource/resource.h"
+#include "kyra/sound/sound.h"
 
 #include "common/system.h"
 
@@ -70,7 +70,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	}
 
 	if (file3.empty()) {
-		for (char i = 0; ; i++) {
+		for (char i = 0;; i++) {
 			char symbol = '0' + i;
 			file1 = Common::String::format("%s%c%c.%s", pattern1.c_str(), (char)speaker, symbol, pattern2.c_str());
 			file2 = Common::String::format("%s%c%c.%s", pattern1.c_str(), '_', symbol, pattern2.c_str());
@@ -168,8 +168,8 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	int16 prIndex = _ingameSoundIndex[track * 2 + 1];
 	uint16 priority = (prIndex > 0) ? (prIndex * volume) >> 8 : -prIndex;
 
-	static const uint8 volTable1[] = { 223, 159, 95, 47, 15, 0 };
-	static const uint8 volTable2[] = { 255, 191, 127, 63, 30, 0 };
+	static const uint8 volTable1[] = {223, 159, 95, 47, 15, 0};
+	static const uint8 volTable2[] = {255, 191, 127, 63, 30, 0};
 
 	for (int i = 0; i < 6; i++) {
 		if (volTable1[i] < volume) {
@@ -210,7 +210,7 @@ bool LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
 		return false;
 
 	if (block != _currentBlock) {
-		static const int8 blockShiftTable[] = { -32, -31, 1, 33, 32, 31, -1, -33 };
+		static const int8 blockShiftTable[] = {-32, -31, 1, 33, 32, 31, -1, -33};
 		uint16 cbl = _currentBlock;
 
 		for (int i = 3; i > 0; i--) {

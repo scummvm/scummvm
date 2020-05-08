@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CTextUp : public CPetGraphic {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 

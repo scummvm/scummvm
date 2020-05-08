@@ -20,7 +20,7 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
@@ -29,11 +29,11 @@
 #undef main
 #endif // main
 
+#include "ultima1_resources.h"
+#include "ultima4_resources.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ultima1_resources.h"
-#include "ultima4_resources.h"
 
 #define VERSION_NUMBER 1
 

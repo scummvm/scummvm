@@ -27,16 +27,16 @@
  */
 
 #include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/base/base_file_manager.h"
-#include "graphics/transparent_surface.h"
-#include "graphics/surface.h"
-#include "image/png.h"
-#include "image/jpeg.h"
-#include "image/bmp.h"
-#include "image/tga.h"
-#include "common/textconsole.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/textconsole.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
+#include "image/bmp.h"
+#include "image/jpeg.h"
+#include "image/png.h"
+#include "image/tga.h"
 
 namespace Wintermute {
 
@@ -48,7 +48,6 @@ BaseImage::BaseImage() {
 	_decoder = nullptr;
 	_deletableSurface = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 BaseImage::~BaseImage() {
@@ -108,7 +107,6 @@ bool BaseImage::saveBMPFile(const Common::String &filename) const {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::resize(int newWidth, int newHeight) {
 	// WME Lite used FILTER_BILINEAR with FreeImage_Rescale here.
@@ -122,7 +120,6 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 	temp.free();
 	return true;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
@@ -210,7 +207,6 @@ bool BaseImage::writeBMPToStream(Common::WriteStream *stream) const {
 	delete surface;
 	return true;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {

@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "gui/EventRecorder.h"
 
 #ifdef ENABLE_EVENTRECORDER
@@ -29,23 +28,22 @@ namespace Common {
 DECLARE_SINGLETON(GUI::EventRecorder);
 }
 
-#include "common/debug-channels.h"
-#include "backends/timer/sdl/sdl-timer.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
+#include "backends/timer/sdl/sdl-timer.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/md5.h"
-#include "gui/gui-manager.h"
-#include "gui/widget.h"
-#include "gui/onscreendialog.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
-#include "graphics/thumbnail.h"
-#include "graphics/surface.h"
 #include "graphics/scaler.h"
+#include "graphics/surface.h"
+#include "graphics/thumbnail.h"
+#include "gui/gui-manager.h"
+#include "gui/onscreendialog.h"
+#include "gui/widget.h"
 
 namespace GUI {
-
 
 const int kMaxRecordsNames = 0x64;
 const int kDefaultScreenshotPeriod = 60000;
@@ -60,7 +58,7 @@ uint32 readTime(Common::ReadStream *inFile) {
 }
 
 void writeTime(Common::WriteStream *outFile, uint32 d) {
-		//Simple RLE compression
+	//Simple RLE compression
 	if (d >= 0xff) {
 		outFile->writeByte(0xff);
 		outFile->writeUint32LE(d);
@@ -184,7 +182,7 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 	if ((_recordMode != kRecorderPlayback) || !_initialized)
 		return false;
 
-	if ((_nextEvent.recordedtype == Common::kRecorderEventTypeTimer) || (_nextEvent.type ==  Common::EVENT_INVALID)) {
+	if ((_nextEvent.recordedtype == Common::kRecorderEventTypeTimer) || (_nextEvent.type == Common::EVENT_INVALID)) {
 		return false;
 	}
 
@@ -246,7 +244,7 @@ uint32 EventRecorder::getRandomSeed(const Common::String &name) {
 }
 
 Common::String EventRecorder::generateRecordFileName(const Common::String &target) {
-	Common::String pattern(target+".r??");
+	Common::String pattern(target + ".r??");
 	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
 	for (int i = 0; i < kMaxRecordsNames; ++i) {
 		Common::String recordName = Common::String::format("%s.r%02d", target.c_str(), i);
@@ -257,7 +255,6 @@ Common::String EventRecorder::generateRecordFileName(const Common::String &targe
 	}
 	return "";
 }
-
 
 void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_fakeMixerManager = new NullSdlMixerManager();
@@ -303,7 +300,6 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	_needRedraw = true;
 	_initialized = true;
 }
-
 
 /**
  * Opens or creates file depend of recording mode.
@@ -371,7 +367,7 @@ SdlMixerManager *EventRecorder::getMixerManager() {
 }
 
 void EventRecorder::getConfigFromDomain(const Common::ConfigManager::Domain *domain) {
-	for (Common::ConfigManager::Domain::const_iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
+	for (Common::ConfigManager::Domain::const_iterator entry = domain->begin(); entry != domain->end(); ++entry) {
 		_playbackFile->getHeader().settingsRecords[entry->_key] = entry->_value;
 	}
 }
@@ -381,7 +377,6 @@ void EventRecorder::getConfig() {
 	getConfigFromDomain(ConfMan.getActiveDomain());
 	_playbackFile->getHeader().settingsRecords["save_slot"] = ConfMan.get("save_slot");
 }
-
 
 void EventRecorder::applyPlaybackSettings() {
 	for (Common::StringMap::const_iterator i = _playbackFile->getHeader().settingsRecords.begin(); i != _playbackFile->getHeader().settingsRecords.end(); ++i) {
@@ -398,9 +393,11 @@ void EventRecorder::applyPlaybackSettings() {
 }
 
 void EventRecorder::removeDifferentEntriesInDomain(Common::ConfigManager::Domain *domain) {
-	for (Common::ConfigManager::Domain::const_iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
+	for (Common::ConfigManager::Domain::const_iterator entry = domain->begin(); entry != domain->end(); ++entry) {
 		if (_playbackFile->getHeader().settingsRecords.find(entry->_key) == _playbackFile->getHeader().settingsRecords.end()) {
-			debugC(1, kDebugLevelEventRec, "playback:action=\"Apply settings\" checksettings:key=%s storedvalue=%s currentvalue="" result=different", entry->_key.c_str(), entry->_value.c_str());
+			debugC(1, kDebugLevelEventRec, "playback:action=\"Apply settings\" checksettings:key=%s storedvalue=%s currentvalue="
+			                               " result=different",
+			       entry->_key.c_str(), entry->_value.c_str());
 			domain->erase(entry->_key);
 		}
 	}
@@ -495,7 +492,7 @@ void EventRecorder::processGameDescription(const ADGameDescription *desc) {
 	}
 }
 
-void EventRecorder::deleteRecord(const Common::String& fileName) {
+void EventRecorder::deleteRecord(const Common::String &fileName) {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
@@ -516,7 +513,7 @@ bool EventRecorder::grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5
 		warning("Can't save screenshot");
 		return false;
 	}
-	Common::MemoryReadStream bitmapStream((const byte*)screen.getPixels(), screen.w * screen.h * screen.format.bytesPerPixel);
+	Common::MemoryReadStream bitmapStream((const byte *)screen.getPixels(), screen.w * screen.h * screen.format.bytesPerPixel);
 	computeStreamMD5(bitmapStream, md5);
 	return true;
 }
@@ -566,10 +563,10 @@ void EventRecorder::preDrawOverlayGui() {
 }
 
 void EventRecorder::postDrawOverlayGui() {
-    if ((_initialized) || (_needRedraw)) {
+	if ((_initialized) || (_needRedraw)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
-	    g_system->hideOverlay();
+		g_system->hideOverlay();
 		_recordMode = oldMode;
 	}
 }
@@ -577,7 +574,7 @@ void EventRecorder::postDrawOverlayGui() {
 Common::StringArray EventRecorder::listSaveFiles(const Common::String &pattern) {
 	if (_recordMode == kRecorderPlayback) {
 		Common::StringArray result;
-		for (Common::HashMap<Common::String, Common::PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
+		for (Common::HashMap<Common::String, Common::PlaybackFile::SaveFileBuffer>::iterator i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
 			if (i->_key.matchString(pattern, false, true)) {
 				result.push_back(i->_key);
 			}
@@ -615,9 +612,9 @@ bool EventRecorder::switchMode() {
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	bool metaInfoSupport = plugin->get<MetaEngine>().hasFeature(MetaEngine::kSavesSupportMetaInfo);
 	bool featuresSupport = metaInfoSupport &&
-						  g_engine->canSaveGameStateCurrently() &&
-						  plugin->get<MetaEngine>().hasFeature(MetaEngine::kSupportsListSaves) &&
-						  plugin->get<MetaEngine>().hasFeature(MetaEngine::kSupportsDeleteSave);
+	                       g_engine->canSaveGameStateCurrently() &&
+	                       plugin->get<MetaEngine>().hasFeature(MetaEngine::kSupportsListSaves) &&
+	                       plugin->get<MetaEngine>().hasFeature(MetaEngine::kSupportsDeleteSave);
 	if (!featuresSupport) {
 		return false;
 	}
@@ -659,10 +656,11 @@ bool EventRecorder::checkForContinueGame() {
 }
 
 void EventRecorder::deleteTemporarySave() {
-	if (_temporarySlot == -1) return;
+	if (_temporarySlot == -1)
+		return;
 	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
 	const Common::String target = ConfMan.getActiveDomainName();
-	 plugin->get<MetaEngine>().removeSaveState(target.c_str(), _temporarySlot);
+	plugin->get<MetaEngine>().removeSaveState(target.c_str(), _temporarySlot);
 	_temporarySlot = -1;
 }
 

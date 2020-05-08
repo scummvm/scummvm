@@ -23,9 +23,8 @@
 #ifndef ILLUSIONS_ILLUSIONS_H
 #define ILLUSIONS_ILLUSIONS_H
 
-#include "illusions/graphics.h"
-#include "audio/mixer.h"
 #include "audio/decoders/aiff.h"
+#include "audio/mixer.h"
 #include "common/array.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -36,6 +35,7 @@
 #include "common/system.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "illusions/graphics.h"
 
 namespace Illusions {
 
@@ -76,7 +76,7 @@ class GameState;
 class ScreenPaletteBase;
 
 enum {
-	kGameIdBBDOU   = 1,
+	kGameIdBBDOU = 1,
 	kGameIdDuckman = 2
 };
 
@@ -85,11 +85,12 @@ public:
 	IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd);
 	~IllusionsEngine() override;
 	const Common::String getTargetName() { return _targetName; }
+
 private:
 	const IllusionsGameDescription *_gameDescription;
 	Graphics::PixelFormat _pixelFormat;
-public:
 
+public:
 	Common::RandomSource *_random;
 	Dictionary *_dict;
 	ResourceSystem *_resSys;
@@ -160,10 +161,10 @@ public:
 	bool calcPointDirection(Common::Point &srcPt, Common::Point &dstPt, uint &facing);
 	bool isSoundActive();
 
-	virtual void updateFader() {};
-	virtual void clearFader() {};
-	virtual void pauseFader() {};
-	virtual void unpauseFader() {};
+	virtual void updateFader(){};
+	virtual void clearFader(){};
+	virtual void pauseFader(){};
+	virtual void unpauseFader(){};
 	virtual bool isVideoPlaying() { return false; }
 
 	void setCurrFontId(uint32 fontId);
@@ -199,7 +200,7 @@ public:
 	virtual void hideCursor() = 0;
 	virtual void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId) = 0;
 	virtual uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
-		uint32 value8, uint32 valueC, uint32 value10) = 0;
+	                                     uint32 value8, uint32 valueC, uint32 value10) = 0;
 
 	// Savegame API
 
@@ -234,7 +235,6 @@ public:
 	bool existsSavegame(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
-
 };
 
 } // End of namespace Illusions

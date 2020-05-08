@@ -65,7 +65,6 @@ public:
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
 protected:
-
 	void set_actor(Actor *a);
 	void left_arrow();
 	void right_arrow();

@@ -23,8 +23,8 @@
 #ifndef ARCHETYPE_SYS_OBJECT
 #define ARCHETYPE_SYS_OBJECT
 
-#include "glk/archetype/string.h"
 #include "glk/archetype/interpreter.h"
+#include "glk/archetype/string.h"
 
 namespace Glk {
 namespace Archetype {

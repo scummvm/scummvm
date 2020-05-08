@@ -31,10 +31,10 @@
 namespace Bbvs {
 
 enum {
-	kMinigameBbLoogie       = 0,
-	kMinigameBbTennis       = 1,
-	kMinigameBbAnt          = 2,
-	kMinigameBbAirGuitar    = 3,
+	kMinigameBbLoogie = 0,
+	kMinigameBbTennis = 1,
+	kMinigameBbAnt = 2,
+	kMinigameBbAirGuitar = 3,
 	kMinigameCount
 };
 
@@ -50,6 +50,7 @@ public:
 	Minigame(BbvsEngine *vm);
 	virtual ~Minigame();
 	virtual bool run(bool fromMainGame) = 0;
+
 protected:
 	BbvsEngine *_vm;
 	SpriteModule *_spriteModule;
@@ -74,7 +75,6 @@ protected:
 
 	void saveHiscore(int minigameNum, int score);
 	int loadHiscore(int minigameNum);
-
 };
 
 } // End of namespace Bbvs

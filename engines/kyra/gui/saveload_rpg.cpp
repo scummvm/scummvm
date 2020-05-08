@@ -25,9 +25,9 @@
 #include "kyra/resource/resource.h"
 #include "kyra/script/script_eob.h"
 
-#include "common/system.h"
 #include "common/savefile.h"
 #include "common/substream.h"
+#include "common/system.h"
 
 namespace Kyra {
 
@@ -108,7 +108,7 @@ void KyraRpgEngine::releaseTempData() {
 void *KyraRpgEngine::generateFlyingObjectTempData(LevelTempData *tmp) {
 	assert(_flyingObjectStructSize == sizeof(EoBFlyingObject));
 	EoBFlyingObject *f = new EoBFlyingObject[_numFlyingObjects];
-	memcpy(f, _flyingObjectsPtr,  sizeof(EoBFlyingObject) * _numFlyingObjects);
+	memcpy(f, _flyingObjectsPtr, sizeof(EoBFlyingObject) * _numFlyingObjects);
 	return f;
 }
 

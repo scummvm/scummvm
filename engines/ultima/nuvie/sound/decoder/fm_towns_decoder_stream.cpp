@@ -17,11 +17,11 @@
  *
  */
 
+#include "ultima/nuvie/sound/decoder/fm_towns_decoder_stream.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/sound/decoder/fm_towns_decoder_stream.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -93,7 +93,7 @@ inline sint16 convert_sample(uint16 raw_sample) {
 #endif
 
 	if (raw_sample & 128)
-		sample = ((sint16)(abs(128 - raw_sample) * 256) ^ 0xffff)  + 1;
+		sample = ((sint16)(abs(128 - raw_sample) * 256) ^ 0xffff) + 1;
 	else
 		sample = raw_sample * 256;
 

@@ -32,7 +32,7 @@ typedef int *IntegerPtr;
 
 int classify_as(progfile &f, int id_number, ClassifyType interpretation, void *ptr_to_data) {
 	IdRecPtr the_id_ptr;
-    String error_string;
+	String error_string;
 	int result = 0;
 
 	if (!index_ident(id_number, the_id_ptr)) {
@@ -45,7 +45,7 @@ int classify_as(progfile &f, int id_number, ClassifyType interpretation, void *p
 		// If the existing id_kind is the DefaultClassification, we're allowed to
 		// change it; otherwise there's a conflict
 		else if (the_id_ptr->id_kind == DefaultClassification) {
-			the_id_ptr->id_kind    = interpretation;
+			the_id_ptr->id_kind = interpretation;
 			the_id_ptr->id_integer = the_id_ptr->id_index;
 
 			switch (the_id_ptr->id_kind) {
@@ -80,7 +80,7 @@ int classify_as(progfile &f, int id_number, ClassifyType interpretation, void *p
 			}
 		} else {
 			error_string = String::format("Identifier type conflict: \"%s\" already declared as ",
-				the_id_ptr->id_name->c_str());
+			                              the_id_ptr->id_name->c_str());
 
 			switch (the_id_ptr->id_kind) {
 			case TYPE_ID:
@@ -131,7 +131,7 @@ void add_undefined(int the_ID) {
 		np = new NodeType();
 		np->key = the_ID;
 		ip = new int();
-		*ip = 1;			// TODO: Should this be 0-based?
+		*ip = 1; // TODO: Should this be 0-based?
 		np->data = ip;
 		insert_item(g_vm->Overlooked, np);
 	}
@@ -179,10 +179,9 @@ bool verify_expr(progfile &f, ExprTree the_expr) {
 			if (the_expr->_data._oper.right->_kind != IDENT) {
 				error_message(f, "Right side of dot must be an identifier");
 				success = false;
-			}
-			else if (the_expr->_data._oper.right->_data._ident.ident_kind != ATTRIBUTE_ID) {
+			} else if (the_expr->_data._oper.right->_data._ident.ident_kind != ATTRIBUTE_ID) {
 				the_expr->_data._oper.right->_data._ident.ident_int = classify_as(f,
-					the_expr->_data._oper.right->_data._ident.ident_int, ATTRIBUTE_ID, nullptr);
+				                                                                  the_expr->_data._oper.right->_data._ident.ident_int, ATTRIBUTE_ID, nullptr);
 			}
 
 			the_expr->_data._oper.right->_data._ident.ident_kind = ATTRIBUTE_ID;
@@ -199,15 +198,14 @@ bool verify_expr(progfile &f, ExprTree the_expr) {
 		case OP_C_MINUS:
 			if (the_expr->_data._oper.left->_kind == IDENT) {
 				get_meaning(the_expr->_data._oper.left->_data._ident.ident_int,
-					the_expr->_data._oper.left->_data._ident.ident_kind, the_expr->_data._oper.left->_data._ident.ident_int);
+				            the_expr->_data._oper.left->_data._ident.ident_kind, the_expr->_data._oper.left->_data._ident.ident_int);
 
 				if (the_expr->_data._oper.left->_data._ident.ident_kind != ATTRIBUTE_ID) {
 					error_message(f, "Left side of assignment is not an attribute");
 					success = false;
 				}
-			}
-			else if (!(the_expr->_data._oper.left->_kind == OPER &&
-				the_expr->_data._oper.left->_data._oper.op_name == OP_DOT)) {
+			} else if (!(the_expr->_data._oper.left->_kind == OPER &&
+			             the_expr->_data._oper.left->_data._oper.op_name == OP_DOT)) {
 				error_message(f, "Left side of assignment must reference an attribute");
 				success = false;
 			}

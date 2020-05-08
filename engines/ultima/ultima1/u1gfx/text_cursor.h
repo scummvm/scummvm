@@ -34,11 +34,13 @@ private:
 	const byte &_fgColor, &_bgColor;
 	int _frameNum;
 	uint32 _lastFrameFrame;
+
 private:
 	/**
 	 * Get the current game milliseconds
 	 */
 	uint32 getTime();
+
 public:
 	/**
 	 * Constructor

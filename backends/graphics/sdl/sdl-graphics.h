@@ -32,7 +32,7 @@
 class SdlEventSource;
 
 #ifndef __SYMBIAN32__
-#define USE_OSD	1
+#define USE_OSD 1
 #endif
 
 /**

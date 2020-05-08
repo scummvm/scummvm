@@ -27,11 +27,9 @@ namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA */
-DictionaryEntry *dictionary;    /* Dictionary pointer */
+DictionaryEntry *dictionary; /* Dictionary pointer */
 int dictionarySize;
-int conjWord;           /* First conjunction in dictionary, for ',' */
-
-
+int conjWord; /* First conjunction in dictionary, for ',' */
 
 /* Word class query methods, move to Word.c */
 /* Word classes are numbers but in the dictionary they are generated as bits */

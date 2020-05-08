@@ -69,13 +69,13 @@ void Room::mudd0Tick60() {
 		_awayMission->mudd.muddFirstRoomState++;
 
 		showText(TX_SPEAKER_MUDD, 37, true);
-		showText(TX_SPEAKER_KIRK,  9, true);
+		showText(TX_SPEAKER_KIRK, 9, true);
 		showText(TX_SPEAKER_MUDD, 28, true);
-		showText(TX_SPEAKER_MCCOY,17, true);
+		showText(TX_SPEAKER_MCCOY, 17, true);
 		showText(TX_SPEAKER_MUDD, 26, true);
-		showText(TX_SPEAKER_KIRK,  6, true);
+		showText(TX_SPEAKER_KIRK, 6, true);
 		showText(TX_SPEAKER_MUDD, 33, true);
-		showText(TX_SPEAKER_KIRK,  5, true);
+		showText(TX_SPEAKER_KIRK, 5, true);
 		showText(TX_SPEAKER_MUDD, 29, true);
 	}
 }
@@ -202,10 +202,9 @@ void Room::mudd0PickedUpLense() {
 }
 
 void Room::mudd0PickedUpItem() {
-	_awayMission->disableInput = false; // NOTE: this was never set to true
-	showDescription(COMMON_MESSAGE_OFFSET + 7, true);	// TX_LOV1N007
+	_awayMission->disableInput = false;               // NOTE: this was never set to true
+	showDescription(COMMON_MESSAGE_OFFSET + 7, true); // TX_LOV1N007
 }
-
 
 void Room::mudd0WalkToSouthDoor() {
 	_roomVar.mudd.walkingToDoor = true;
@@ -261,7 +260,7 @@ void Room::mudd0TalkToKirk() {
 	else {
 		showText(TX_SPEAKER_KIRK, 10, true);
 		showText(TX_SPEAKER_MUDD, 31, true);
-		showText(TX_SPEAKER_KIRK,  7, true);
+		showText(TX_SPEAKER_KIRK, 7, true);
 	}
 }
 
@@ -270,10 +269,10 @@ void Room::mudd0TalkToSpock() {
 		showText(TX_SPEAKER_SPOCK, 22, true);
 	else {
 		showText(TX_SPEAKER_SPOCK, 22, true);
-		showText(TX_SPEAKER_MUDD,  34, true);
+		showText(TX_SPEAKER_MUDD, 34, true);
 		showText(TX_SPEAKER_SPOCK, 23, true);
 		showText(TX_SPEAKER_MCCOY, 15, true);
-		showText(TX_SPEAKER_MUDD,  38, true);
+		showText(TX_SPEAKER_MUDD, 38, true);
 	}
 }
 
@@ -282,8 +281,8 @@ void Room::mudd0TalkToMccoy() {
 		showText(TX_SPEAKER_MCCOY, 16, true);
 	else {
 		showText(TX_SPEAKER_MCCOY, 16, true);
-		showText(TX_SPEAKER_KIRK,   3, true);
-		showText(TX_SPEAKER_MUDD,  27, true);
+		showText(TX_SPEAKER_KIRK, 3, true);
+		showText(TX_SPEAKER_MUDD, 27, true);
 		showText(TX_SPEAKER_MCCOY, 14, true);
 	}
 }
@@ -291,20 +290,20 @@ void Room::mudd0TalkToMccoy() {
 void Room::mudd0TalkToRedshirt() {
 	if (_awayMission->mudd.muddFirstRoomState == 2) {
 		showText(TX_SPEAKER_BUCHERT, 39, true);
-		showText(TX_SPEAKER_KIRK,     8, true);
+		showText(TX_SPEAKER_KIRK, 8, true);
 	} else {
 		showText(TX_SPEAKER_BUCHERT, 40, true);
-		showText(TX_SPEAKER_MUDD,    30, true);
+		showText(TX_SPEAKER_MUDD, 30, true);
 		showText(TX_SPEAKER_BUCHERT, 41, true);
-		showText(TX_SPEAKER_MUDD,    36, true);
+		showText(TX_SPEAKER_MUDD, 36, true);
 	}
 }
 
 void Room::mudd0TalkToMudd() {
-	showText(TX_SPEAKER_MUDD,  32, true);
+	showText(TX_SPEAKER_MUDD, 32, true);
 	showText(TX_SPEAKER_SPOCK, 24, true);
-	showText(TX_SPEAKER_MUDD,  35, true);
-	showText(TX_SPEAKER_KIRK,   4, true);
+	showText(TX_SPEAKER_MUDD, 35, true);
+	showText(TX_SPEAKER_KIRK, 4, true);
 }
 
-}
+} // namespace StarTrek

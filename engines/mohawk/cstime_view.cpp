@@ -20,11 +20,11 @@
  *
  */
 
+#include "mohawk/cstime_view.h"
 #include "mohawk/cstime_game.h" // debugging..
 #include "mohawk/cstime_ui.h"
-#include "mohawk/cstime_view.h"
-#include "mohawk/resource.h"
 #include "mohawk/cursors.h"
+#include "mohawk/resource.h"
 
 #include "common/events.h"
 #include "common/system.h"
@@ -266,7 +266,7 @@ void CSTimeModule::defaultMoveProc(Feature *feature) {
 		if (feature->_done) {
 			if (feature->_flags & kFeatureNewNoLoop) {
 				// FIXME: sync channel reset
-				uint16 unknown184 = 1, unknown186 = 1; // FIXME: XXX
+				uint16 unknown184 = 1, unknown186 = 1;                                                // FIXME: XXX
 				if (feature->_flags & kFeatureDisableOnEnd || (unknown184 != 0 && unknown186 != 0)) { // FIXME: XXX
 					feature->_data.enabled = 0;
 					if (feature->_doneProc) {
@@ -316,8 +316,7 @@ void CSTimeModule::defaultMoveProc(Feature *feature) {
 			done = true;
 			break;
 
-		case 3:
-			{
+		case 3: {
 			int32 pos = ourSCRB->pos();
 			ourSCRB->seek(2);
 			uint16 base = ourSCRB->readUint16BE();
@@ -327,7 +326,7 @@ void CSTimeModule::defaultMoveProc(Feature *feature) {
 				// FIXME: sound?
 			}
 			ourSCRB->skip(size - 4);
-			}
+		}
 			warning("saw feature opcode 0x3 (size %d)", size);
 			break;
 
@@ -542,7 +541,7 @@ void CSTimeModule::dialogTextDrawProc(Feature *feature) {
 
 	Graphics::Surface *screen = _vm->_system->lockScreen();
 	for (uint i = 0; i < lines.size(); i++)
-		font.drawString(screen, lines[i], bounds.left, bounds.top + 1 + i*15, bounds.width(), colors[i], Graphics::kTextAlignCenter);
+		font.drawString(screen, lines[i], bounds.left, bounds.top + 1 + i * 15, bounds.width(), colors[i], Graphics::kTextAlignCenter);
 	_vm->_system->unlockScreen();
 	// FIXME
 }
@@ -564,9 +563,9 @@ void CSTimeModule::bubbleTextDrawProc(Feature *feature) {
 	for (int x = -2; x < 2; x++)
 		for (int y = -1; y < 3; y++)
 			for (uint i = 0; i < lines.size(); i++)
-				font.drawString(screen, lines[i], bounds.left + x, bounds.top + y + i*height, bounds.width(), 241, Graphics::kTextAlignCenter);
+				font.drawString(screen, lines[i], bounds.left + x, bounds.top + y + i * height, bounds.width(), 241, Graphics::kTextAlignCenter);
 	for (uint i = 0; i < lines.size(); i++)
-		font.drawString(screen, lines[i], bounds.left, bounds.top + i*height, bounds.width(), 32, Graphics::kTextAlignCenter);
+		font.drawString(screen, lines[i], bounds.left, bounds.top + i * height, bounds.width(), 32, Graphics::kTextAlignCenter);
 	_vm->_system->unlockScreen();
 }
 

@@ -22,16 +22,16 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/drivers/mlalf98.h"
+#include "kyra/sound/sound_intern.h"
 
 #include "common/config-manager.h"
 
 namespace Kyra {
 
 SoundPC98_EoB::SoundPC98_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer),
-	_vm(vm), _driver(0), _currentResourceSet(-1), _sfxDelay(0), _ready(false) {
+                                                                       _vm(vm), _driver(0), _currentResourceSet(-1), _sfxDelay(0), _ready(false) {
 	memset(_resInfo, 0, sizeof(_resInfo));
 }
 
@@ -54,7 +54,7 @@ bool SoundPC98_EoB::init() {
 
 void SoundPC98_EoB::initAudioResourceInfo(int set, void *info) {
 	delete _resInfo[set];
-	_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : 0;
+	_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC *)info) : 0;
 }
 
 void SoundPC98_EoB::selectAudioResourceSet(int set) {

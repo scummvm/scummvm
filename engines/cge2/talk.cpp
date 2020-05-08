@@ -25,17 +25,17 @@
  * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
-#include "cge2/general.h"
 #include "cge2/talk.h"
+#include "cge2/general.h"
 
 namespace CGE2 {
 
 void CGE2Engine::setAutoColors() {
 	Dac def[4] = {
-		{ 0, 0, 0 },
-		{ 220 >> 2, 220 >> 2, 220 >> 2 },
-		{ 190 >> 2, 190 >> 2, 190 >> 2 },
-		{ 160 >> 2, 160 >> 2, 160 >> 2 },
+	    {0, 0, 0},
+	    {220 >> 2, 220 >> 2, 220 >> 2},
+	    {190 >> 2, 190 >> 2, 190 >> 2},
+	    {160 >> 2, 160 >> 2, 160 >> 2},
 	};
 	Dac pal[kPalCount];
 	_vga->getColors(pal);
@@ -87,7 +87,7 @@ void Font::load() {
 	char tmpStr[kLineMax + 1];
 	int n = 0;
 
-	for (Common::String line = colorFile.readLine(); !colorFile.eos(); line = colorFile.readLine()){
+	for (Common::String line = colorFile.readLine(); !colorFile.eos(); line = colorFile.readLine()) {
 		if (line.empty())
 			continue;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
@@ -110,7 +110,7 @@ uint16 Font::width(const char *text) {
 }
 
 Talk::Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode, ColorBank color, bool wideSpace)
-	: Sprite(vm), _mode(mode), _created(false), _wideSpace(wideSpace), _vm(vm) {
+    : Sprite(vm), _mode(mode), _created(false), _wideSpace(wideSpace), _vm(vm) {
 	_color = _vm->_font->_colorSet[color];
 
 	if (color == kCBRel)
@@ -119,7 +119,7 @@ Talk::Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode, ColorBank color,
 }
 
 Talk::Talk(CGE2Engine *vm, ColorBank color)
-	: Sprite(vm), _mode(kTBPure), _created(false), _wideSpace(false), _vm(vm) {
+    : Sprite(vm), _mode(kTBPure), _created(false), _wideSpace(false), _vm(vm) {
 	_color = _vm->_font->_colorSet[color];
 
 	if (color == kCBRel)
@@ -242,7 +242,7 @@ void Talk::update(const char *text) {
 }
 
 InfoLine::InfoLine(CGE2Engine *vm, uint16 w, ColorBank color)
-: Talk(vm), _oldText(nullptr), _newText(nullptr), _realTime(false), _vm(vm) {
+    : Talk(vm), _oldText(nullptr), _newText(nullptr), _realTime(false), _vm(vm) {
 	_wideSpace = false;
 	BitmapPtr b = new Bitmap[1];
 	if (color == kCBRel)
@@ -262,19 +262,19 @@ void InfoLine::update(const char *text) {
 	uint16 w = _ext->_shpList->_w;
 	uint16 h = _ext->_shpList->_h;
 	uint8 *v = _ext->_shpList->_v;
-	uint16 dsiz = w >> 2;                           // data size (1 plane line size)
-	uint16 lsiz = 2 + dsiz + 2;                     // uint16 for line header, uint16 for gap
-	uint16 psiz = h * lsiz;                         // - last gape, but + plane trailer
-	uint16 size = 4 * psiz;                         // whole map size
+	uint16 dsiz = w >> 2;       // data size (1 plane line size)
+	uint16 lsiz = 2 + dsiz + 2; // uint16 for line header, uint16 for gap
+	uint16 psiz = h * lsiz;     // - last gape, but + plane trailer
+	uint16 size = 4 * psiz;     // whole map size
 	uint8 fg = _color[0];
 	uint8 bg = _color[2];
 
 	// clear whole rectangle
-	memset(v + 2, bg, dsiz);                // data bytes
+	memset(v + 2, bg, dsiz); // data bytes
 	for (byte *pDest = v + lsiz; pDest < (v + psiz); pDest += lsiz) {
 		Common::copy(v, v + lsiz, pDest);
 	}
-	*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI);  // plane trailer uint16
+	*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI); // plane trailer uint16
 	for (byte *pDest = v + psiz; pDest < (v + 4 * psiz); pDest += psiz) {
 		Common::copy(v, v + psiz, pDest);
 	}

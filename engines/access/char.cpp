@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/memstream.h"
-#include "access/access.h"
 #include "access/char.h"
+#include "access/access.h"
 #include "access/amazon/amazon_resources.h"
+#include "common/memstream.h"
 
 namespace Access {
 

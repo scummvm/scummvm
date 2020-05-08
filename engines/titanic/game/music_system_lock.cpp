@@ -21,14 +21,14 @@
  */
 
 #include "titanic/game/music_system_lock.h"
-#include "titanic/core/room_item.h"
 #include "titanic/carry/carry.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMusicSystemLock, CDropTarget)
-	ON_MESSAGE(DropObjectMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(DropObjectMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CMusicSystemLock::save(SimpleFile *file, int indent) {

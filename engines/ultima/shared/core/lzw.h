@@ -23,8 +23,8 @@
 #ifndef ULTIMA_LZW_H
 #define ULTIMA_LZW_H
 
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Shared {
@@ -35,8 +35,10 @@ private:
 	byte _sourceBitsLeft;
 	byte _codeLength;
 	byte _currentByte;
+
 private:
 	uint16 getCode();
+
 public:
 	/**
 	 * Decompresses data

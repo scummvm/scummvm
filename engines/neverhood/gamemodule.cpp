@@ -49,34 +49,33 @@
 namespace Neverhood {
 
 static const uint32 kRadioMusicFileHashes[] = {
-	0x82B22000,
-	0x02B22004,
-	0x42B22000,
-	0x03322008,
-	0x02B22001,
-	0x02B22008,
-	0x02B22020,
-	0x03322001,
-	0x03322002,
-	0x03322004,
-	0x03322040,
-	0x02B22002,
-	0x02B22010,
-	0x03322010,
-	0x02B22040,
-	0x43322000,
-	0x83322000,
-	0x03322020
-};
+    0x82B22000,
+    0x02B22004,
+    0x42B22000,
+    0x03322008,
+    0x02B22001,
+    0x02B22008,
+    0x02B22020,
+    0x03322001,
+    0x03322002,
+    0x03322004,
+    0x03322040,
+    0x02B22002,
+    0x02B22010,
+    0x03322010,
+    0x02B22040,
+    0x43322000,
+    0x83322000,
+    0x03322020};
 
 enum {
-	MENU_MODULE			= 9999
+	MENU_MODULE = 9999
 };
 
 GameModule::GameModule(NeverhoodEngine *vm)
-	: Module(vm, NULL), _moduleNum(-1), _prevChildObject(NULL), _prevModuleNum(-1),
-	_restoreGameRequested(false), _restartGameRequested(false), _canRequestMainMenu(true),
-	_mainMenuRequested(false) {
+    : Module(vm, NULL), _moduleNum(-1), _prevChildObject(NULL), _prevModuleNum(-1),
+      _restoreGameRequested(false), _restartGameRequested(false), _canRequestMainMenu(true),
+      _mainMenuRequested(false) {
 
 	// Other initializations moved to actual engine class
 	_vm->_soundMan->playSoundThree(0x002D0031, 0x08861079);
@@ -327,7 +326,6 @@ uint32 GameModule::getCurrRadioMusicFileHash() {
 	uint musicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
 	return (musicIndex % 5 != 0) ? 0 : kRadioMusicFileHashes[CLIP<uint>(musicIndex / 5, 0, 17)];
 }
-
 
 uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
@@ -694,7 +692,7 @@ void GameModule::updateModule() {
 			createModule(2300, 1);
 			break;
 		case 2300:
-		debug(1, "module 23000 _moduleResult : %d", _moduleResult);
+			debug(1, "module 23000 _moduleResult : %d", _moduleResult);
 			if (_moduleResult == 2)
 				createModule(1200, 0);
 			else if (_moduleResult == 0)
@@ -835,7 +833,7 @@ void GameModule::updateMenuModule() {
 }
 
 NonRepeatingRandomNumbers::NonRepeatingRandomNumbers(Common::RandomSource *rnd, int count)
-	: _rnd(rnd) {
+    : _rnd(rnd) {
 	for (int i = 0; i < count; i++)
 		push_back(i);
 }

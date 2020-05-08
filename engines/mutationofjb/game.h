@@ -110,6 +110,6 @@ private:
 	TaskPtr _activeSayTask;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

@@ -45,7 +45,7 @@ enum {
 	ST_SUCCESS = 0
 };
 
-static inline void clampedAdd(int16& a, int b) {
+static inline void clampedAdd(int16 &a, int b) {
 	int val;
 #ifdef OUTPUT_UNSIGNED_AUDIO
 	val = (a ^ 0x8000) + b;

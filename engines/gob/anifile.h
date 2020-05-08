@@ -23,13 +23,13 @@
 #ifndef GOB_ANIFILE_H
 #define GOB_ANIFILE_H
 
-#include "common/system.h"
-#include "common/str.h"
 #include "common/array.h"
 #include "common/list.h"
+#include "common/str.h"
+#include "common/system.h"
 
 namespace Common {
-	class SeekableSubReadStreamEndian;
+class SeekableSubReadStreamEndian;
 }
 
 namespace Gob {
@@ -75,7 +75,6 @@ public:
 		uint16 height; ///< The maximum height of this animation's frames.
 	};
 
-
 	ANIFile(GobEngine *vm, const Common::String &fileName,
 	        uint16 width = 320, uint8 bpp = 1);
 	~ANIFile();
@@ -109,24 +108,22 @@ private:
 	};
 
 	typedef Common::List<AnimationChunk> ChunkList;
-	typedef Common::Array<ChunkList>     FrameArray;
-	typedef Common::Array<FrameArray>    AnimationFrameArray;
-
+	typedef Common::Array<ChunkList> FrameArray;
+	typedef Common::Array<FrameArray> AnimationFrameArray;
 
 	GobEngine *_vm;
 
 	uint16 _width; ///< The width of a sprite layer.
-	uint8  _bpp;   ///< Number of bytes per pixel in a sprite layer.
+	uint8 _bpp;    ///< Number of bytes per pixel in a sprite layer.
 
 	byte _hasPadding;
 
-	LayerArray          _layers;     ///< The animation sprite layers.
-	AnimationArray      _animations; ///< The animations.
-	AnimationFrameArray _frames;     ///< The animation frames.
+	LayerArray _layers;          ///< The animation sprite layers.
+	AnimationArray _animations;  ///< The animations.
+	AnimationFrameArray _frames; ///< The animation frames.
 
 	uint16 _maxWidth;
 	uint16 _maxHeight;
-
 
 	// Loading helpers
 
@@ -144,7 +141,7 @@ private:
 	                    uint16 &left, uint16 &top, uint16 &right, uint16 &bottom) const;
 
 	void drawLayer(Surface &dest, uint16 layer, uint16 part,
-	              int16 x, int16 y, int32 transp) const;
+	               int16 x, int16 y, int32 transp) const;
 };
 
 } // End of namespace Gob

@@ -28,16 +28,15 @@
 #include "dm/champion.h"
 #include "dm/dungeonman.h"
 #include "dm/eventman.h"
-#include "dm/menus.h"
+#include "dm/group.h"
 #include "dm/inventory.h"
+#include "dm/menus.h"
+#include "dm/movesens.h"
 #include "dm/objectman.h"
+#include "dm/projexpl.h"
+#include "dm/sounds.h"
 #include "dm/text.h"
 #include "dm/timeline.h"
-#include "dm/projexpl.h"
-#include "dm/group.h"
-#include "dm/movesens.h"
-#include "dm/sounds.h"
-
 
 namespace DM {
 
@@ -80,54 +79,54 @@ void ChampionMan::initConstants() {
 	static const char *baseSkillNameDE[4] = {"KAEMPFER", "NINJA", "PRIESTER", "MAGIER"};
 	static const char *baseSkillNameFR[4] = {"GUERRIER", "NINJA", "PRETRE", "SORCIER"};
 	static Box boxChampionIcons[4] = {
-		Box(281, 299,  0, 13),
-		Box(301, 319,  0, 13),
-		Box(301, 319, 15, 28),
-		Box(281, 299, 15, 28)
-	};
+	    Box(281, 299, 0, 13),
+	    Box(301, 319, 0, 13),
+	    Box(301, 319, 15, 28),
+	    Box(281, 299, 15, 28)};
 
 	static Color championColor[4] = {kDMColorLightGreen, kDMColorYellow, kDMColorRed, kDMColorBlue};
 	int16 lightPowerToLightAmount[16] = {0, 5, 12, 24, 33, 40, 46, 51, 59, 68, 76, 82, 89, 94, 97, 100};
-	uint16 slotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
-		/* 30 for champion inventory, 8 for chest */
-		0xFFFF,   /* Ready Hand       Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Action Hand      Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0x0002,   /* Head             Head */
-		0x0008,   /* Torso            Torso */
-		0x0010,   /* Legs             Legs */
-		0x0020,   /* Feet             Feet */
-		0x0100,   /* Pouch 2          Pouch */
-		0x0080,   /* Quiver Line2 1   Quiver 2 */
-		0x0080,   /* Quiver Line1 2   Quiver 2 */
-		0x0080,   /* Quiver Line2 2   Quiver 2 */
-		0x0004,   /* Neck             Neck */
-		0x0100,   /* Pouch 1          Pouch */
-		0x0040,   /* Quiver Line1 1   Quiver 1 */
-		0xFFFF,   /* Backpack Line1 1 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line2 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line2 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line2 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line2 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line2 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line2 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line2 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line2 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line1 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line1 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line1 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line1 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line1 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line1 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line1 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0xFFFF,   /* Backpack Line1 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-		0x0400,   /* Chest 1          Chest */
-		0x0400,   /* Chest 2          Chest */
-		0x0400,   /* Chest 3          Chest */
-		0x0400,   /* Chest 4          Chest */
-		0x0400,   /* Chest 5          Chest */
-		0x0400,   /* Chest 6          Chest */
-		0x0400,   /* Chest 7          Chest */
-		0x0400    /* Chest 8          Chest */
+	uint16 slotMasks[38] = {
+	    // @ G0038_ai_Graphic562_SlotMasks
+	    /* 30 for champion inventory, 8 for chest */
+	    0xFFFF, /* Ready Hand       Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Action Hand      Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0x0002, /* Head             Head */
+	    0x0008, /* Torso            Torso */
+	    0x0010, /* Legs             Legs */
+	    0x0020, /* Feet             Feet */
+	    0x0100, /* Pouch 2          Pouch */
+	    0x0080, /* Quiver Line2 1   Quiver 2 */
+	    0x0080, /* Quiver Line1 2   Quiver 2 */
+	    0x0080, /* Quiver Line2 2   Quiver 2 */
+	    0x0004, /* Neck             Neck */
+	    0x0100, /* Pouch 1          Pouch */
+	    0x0040, /* Quiver Line1 1   Quiver 1 */
+	    0xFFFF, /* Backpack Line1 1 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line2 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line2 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line2 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line2 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line2 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line2 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line2 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line2 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line1 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line1 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line1 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line1 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line1 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line1 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line1 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0xFFFF, /* Backpack Line1 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+	    0x0400, /* Chest 1          Chest */
+	    0x0400, /* Chest 2          Chest */
+	    0x0400, /* Chest 3          Chest */
+	    0x0400, /* Chest 4          Chest */
+	    0x0400, /* Chest 5          Chest */
+	    0x0400, /* Chest 6          Chest */
+	    0x0400, /* Chest 7          Chest */
+	    0x0400  /* Chest 8          Chest */
 	};
 
 	_boxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait
@@ -244,8 +243,8 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 	int16 attack = CLIP<int16>(40, ((skillLevel << 3) + _vm->getRandomNumber(32)), 200);
 	int16 stepEnergy = MAX(5, 11 - skillLevel);
 	_vm->_projexpl->createProjectile(curThing, dungeon._partyMapX, dungeon._partyMapY,
-										  _vm->normalizeModulo4(dungeon._partyDir + side),
-										  dungeon._partyDir, kineticEnergy, attack, stepEnergy);
+	                                 _vm->normalizeModulo4(dungeon._partyDir + side),
+	                                 dungeon._partyDir, kineticEnergy, attack, stepEnergy);
 	_vm->_projectileDisableMovementTicks = 4;
 	_vm->_lastProjectileDisabledMovementDirection = dungeon._partyDir;
 	drawChampionState((ChampionIndex)champIndex);
@@ -253,7 +252,7 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 }
 
 uint16 ChampionMan::getChampionPortraitX(uint16 index) {
-	return ((index) & 0x7) << 5;
+	return ((index)&0x7) << 5;
 }
 
 uint16 ChampionMan::getChampionPortraitY(uint16 index) {
@@ -282,7 +281,6 @@ uint16 ChampionMan::getHandSlotIndex(uint16 slotBoxIndex) {
 	return slotBoxIndex & 0x1;
 }
 
-
 Common::String ChampionMan::getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount) {
 	Common::String valToStr = Common::String::format("%d", val);
 	Common::String result;
@@ -301,8 +299,7 @@ void ChampionMan::applyModifiersToStatistics(Champion *champ, int16 slotIndex, i
 	ThingType thingType = thing.getType();
 
 	bool cursed = false;
-	if (((thingType == kDMThingTypeWeapon) || (thingType == kDMThingTypeArmour))
-		&& (slotIndex >= kDMSlotReadyHand) && (slotIndex <= kDMSlotQuiverLine1_1)) {
+	if (((thingType == kDMThingTypeWeapon) || (thingType == kDMThingTypeArmour)) && (slotIndex >= kDMSlotReadyHand) && (slotIndex <= kDMSlotQuiverLine1_1)) {
 		if (thingType == kDMThingTypeWeapon) {
 			Weapon *weapon = (Weapon *)_vm->_dungeonMan->getThingData(thing);
 			cursed = weapon->getCursed();
@@ -444,9 +441,7 @@ bool ChampionMan::hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing)
 	ObjectMan &objMan = *_vm->_objectMan;
 
 	IconIndice currIconIndex = objMan.getIconIndexInSlotBox(slotBoxIndex);
-	if (((currIconIndex < kDMIconIndiceWeaponDagger) && (currIconIndex >= kDMIconIndiceJunkCompassNorth))
-		|| ((currIconIndex >= kDMIconIndicePotionMaPotionMonPotion) && (currIconIndex <= kDMIconIndicePotionWaterFlask))
-		|| (currIconIndex == kDMIconIndicePotionEmptyFlask)) {
+	if (((currIconIndex < kDMIconIndiceWeaponDagger) && (currIconIndex >= kDMIconIndiceJunkCompassNorth)) || ((currIconIndex >= kDMIconIndicePotionMaPotionMonPotion) && (currIconIndex <= kDMIconIndicePotionWaterFlask)) || (currIconIndex == kDMIconIndicePotionEmptyFlask)) {
 		IconIndice newIconIndex = objMan.getIconIndex(thing);
 		if (newIconIndex != currIconIndex) {
 			if ((slotBoxIndex < kDMSlotBoxInventoryFirstSlot) && !_mousePointerHiddenToDrawChangedObjIconOnScreen) {
@@ -474,9 +469,8 @@ void ChampionMan::drawChangedObjectIcons() {
 	_mousePointerHiddenToDrawChangedObjIconOnScreen = false;
 	IconIndice leaderHandObjIconIndex = _leaderHandObjectIconIndex;
 
-	if (((leaderHandObjIconIndex < kDMIconIndiceWeaponDagger) && (leaderHandObjIconIndex >= kDMIconIndiceJunkCompassNorth))	// < instead of <= is correct
-		|| ((leaderHandObjIconIndex >= kDMIconIndicePotionMaPotionMonPotion) && (leaderHandObjIconIndex <= kDMIconIndicePotionWaterFlask))
-		|| (leaderHandObjIconIndex == kDMIconIndicePotionEmptyFlask)) {
+	if (((leaderHandObjIconIndex < kDMIconIndiceWeaponDagger) && (leaderHandObjIconIndex >= kDMIconIndiceJunkCompassNorth)) // < instead of <= is correct
+	    || ((leaderHandObjIconIndex >= kDMIconIndicePotionMaPotionMonPotion) && (leaderHandObjIconIndex <= kDMIconIndicePotionWaterFlask)) || (leaderHandObjIconIndex == kDMIconIndicePotionEmptyFlask)) {
 		IconIndice iconIndex = objMan.getIconIndex(_leaderHandObject);
 		if (iconIndex != leaderHandObjIconIndex) {
 			_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
@@ -493,8 +487,7 @@ void ChampionMan::drawChangedObjectIcons() {
 		if (invChampOrdinal == _vm->indexToOrdinal(champIndex))
 			continue;
 
-		if (hasObjectIconInSlotBoxChanged(slotBoxIndex, _champions[champIndex].getSlot((ChampionSlot)getHandSlotIndex(slotBoxIndex)))
-			&& (getHandSlotIndex(slotBoxIndex) == kDMSlotActionHand)) {
+		if (hasObjectIconInSlotBoxChanged(slotBoxIndex, _champions[champIndex].getSlot((ChampionSlot)getHandSlotIndex(slotBoxIndex))) && (getHandSlotIndex(slotBoxIndex) == kDMSlotActionHand)) {
 
 			menuMan.drawActionIcon((ChampionIndex)champIndex);
 		}
@@ -569,7 +562,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 			invMan.setDungeonViewPalette();
 			drawChangedObjectIcons();
 		} else if (isInventoryChampion && (slotIndex == kDMSlotActionHand) &&
-			((iconIndex == kDMIconIndiceContainerChestClosed) || ((iconIndex >= kDMIconIndiceScrollOpen) && (iconIndex <= kDMIconIndiceScrollClosed)))) {
+		           ((iconIndex == kDMIconIndiceContainerChestClosed) || ((iconIndex >= kDMIconIndiceScrollOpen) && (iconIndex <= kDMIconIndiceScrollClosed)))) {
 			champ->setAttributeFlag(kDMAttributePanel, true);
 		}
 	} else if (slotIndex == kDMSlotNeck) {
@@ -783,8 +776,7 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 
 		bool skipScaling = false;
 		switch (attackType) {
-		case kDMAttackTypePsychic:
-		{
+		case kDMAttackTypePsychic: {
 			int16 wisdomFactor = 115 - curChampion->_statistics[kDMStatWisdom][kDMStatCurrent];
 			if (wisdomFactor <= 0)
 				attack = 0;
@@ -792,8 +784,7 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 				attack = _vm->getScaledProduct(attack, 6, wisdomFactor);
 
 			skipScaling = true;
-		}
-		break;
+		} break;
 		case kDMAttackTypeMagic:
 			attack = getStatisticAdjustedAttack(curChampion, kDMStatAntimagic, attack);
 			attack -= _party._spellShieldDefense;
@@ -830,7 +821,7 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 
 		int16 adjustedAttack = getStatisticAdjustedAttack(curChampion, kDMStatVitality, _vm->getRandomNumber(128) + 10);
 		if (attack > adjustedAttack) {
-		/* BUG0_45
+			/* BUG0_45
 			This bug is not perceptible because of BUG0_41 that ignores Vitality while determining the
 			probability of being wounded. However if it was fixed, the behavior would be the opposite
 			of what it should: the higher the vitality of a champion, the lower the result of
@@ -1199,9 +1190,9 @@ void ChampionMan::addScentStrength(int16 mapX, int16 mapY, int32 cycleCount) {
 		if (mergeFl)
 			clearFlag(cycleCount, kDMMaskMergeCycles);
 
-		Scent newScent; /* BUG0_00 Useless code */
-		newScent.setMapX(mapX); /* BUG0_00 Useless code */
-		newScent.setMapY(mapY); /* BUG0_00 Useless code */
+		Scent newScent;                                        /* BUG0_00 Useless code */
+		newScent.setMapX(mapX);                                /* BUG0_00 Useless code */
+		newScent.setMapY(mapY);                                /* BUG0_00 Useless code */
 		newScent.setMapIndex(_vm->_dungeonMan->_currMapIndex); /* BUG0_00 Useless code */
 
 		Scent *curScent = _party._scents; /* BUG0_00 Useless code */
@@ -1446,7 +1437,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 				// Check the number of digits and sets the position accordingly.
 				if (pendingDamage < 10) // 1 digit
 					textPosX += 21;
-				else if (pendingDamage < 100)  // 2 digits
+				else if (pendingDamage < 100) // 2 digits
 					textPosX += 18;
 				else // 3 digits
 					textPosX += 15;
@@ -1562,37 +1553,36 @@ void ChampionMan::championKill(uint16 champIndex) {
 
 void ChampionMan::dropAllObjects(uint16 champIndex) {
 	static const int16 slotDropOrder[30] = {
-		kDMSlotFeet,
-		kDMSlotLegs,
-		kDMSlotQuiverLine2_2,
-		kDMSlotQuiverLine1_2,
-		kDMSlotQuiverLine2_1,
-		kDMSlotQuiverLine1_1,
-		kDMSlotPouch_2,
-		kDMSlotPouch1,
-		kDMSlotTorso,
-		kDMSlotBackpackLine1_1,
-		kDMSlotBackpackLine2_2,
-		kDMSlotBackpackLine2_3,
-		kDMSlotBackpackLine2_4,
-		kDMSlotBackpackLine2_5,
-		kDMSlotBackpackLine2_6,
-		kDMSlotBackpackLine2_7,
-		kDMSlotBackpackLine2_8,
-		kDMSlotBackpackLine2_9,
-		kDMSlotBackpackLine1_2,
-		kDMSlotBackpackLine1_3,
-		kDMSlotBackpackLine1_4,
-		kDMSlotBackpackLine1_5,
-		kDMSlotBackpackLine1_6,
-		kDMSlotBackpackLine1_7,
-		kDMSlotBackpackLine1_8,
-		kDMSlotBackpackLine1_9,
-		kDMSlotNeck,
-		kDMSlotHead,
-		kDMSlotReadyHand,
-		kDMSlotActionHand
-	};
+	    kDMSlotFeet,
+	    kDMSlotLegs,
+	    kDMSlotQuiverLine2_2,
+	    kDMSlotQuiverLine1_2,
+	    kDMSlotQuiverLine2_1,
+	    kDMSlotQuiverLine1_1,
+	    kDMSlotPouch_2,
+	    kDMSlotPouch1,
+	    kDMSlotTorso,
+	    kDMSlotBackpackLine1_1,
+	    kDMSlotBackpackLine2_2,
+	    kDMSlotBackpackLine2_3,
+	    kDMSlotBackpackLine2_4,
+	    kDMSlotBackpackLine2_5,
+	    kDMSlotBackpackLine2_6,
+	    kDMSlotBackpackLine2_7,
+	    kDMSlotBackpackLine2_8,
+	    kDMSlotBackpackLine2_9,
+	    kDMSlotBackpackLine1_2,
+	    kDMSlotBackpackLine1_3,
+	    kDMSlotBackpackLine1_4,
+	    kDMSlotBackpackLine1_5,
+	    kDMSlotBackpackLine1_6,
+	    kDMSlotBackpackLine1_7,
+	    kDMSlotBackpackLine1_8,
+	    kDMSlotBackpackLine1_9,
+	    kDMSlotNeck,
+	    kDMSlotHead,
+	    kDMSlotReadyHand,
+	    kDMSlotActionHand};
 
 	uint16 curCell = _champions[champIndex]._cell;
 	DungeonMan &dungeon = *_vm->_dungeonMan;
@@ -1643,8 +1633,7 @@ void ChampionMan::applyTimeEffects() {
 	for (uint16 championIndex = kDMChampionFirst; championIndex < _partyChampionCount; championIndex++, championPtr++) {
 		if (championPtr->_currHealth && (_vm->indexToOrdinal(championIndex) != _candidateChampionOrdinal)) {
 			uint16 wizardSkillLevel = getSkillLevel(championIndex, kDMSkillWizard) + getSkillLevel(championIndex, kDMSkillPriest);
-			if ((championPtr->_currMana < championPtr->_maxMana)
-				&& (timeCriteria < championPtr->_statistics[kDMStatWisdom][kDMStatCurrent] + wizardSkillLevel)) {
+			if ((championPtr->_currMana < championPtr->_maxMana) && (timeCriteria < championPtr->_statistics[kDMStatWisdom][kDMStatCurrent] + wizardSkillLevel)) {
 				int16 manaGain = championPtr->_maxMana / 40;
 				if (_partyIsSleeping)
 					manaGain <<= 1;
@@ -2144,7 +2133,6 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 	evtMan.hideMouse();
 }
 
-
 uint16 ChampionMan::getStaminaAdjustedValue(Champion *champ, int16 val) {
 	int16 currStamina = champ->_currStamina;
 	int16 halfMaxStamina = champ->_maxStamina / 2;
@@ -2172,7 +2160,7 @@ uint16 ChampionMan::getMaximumLoad(Champion *champ) {
 
 void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	static Box boxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth
-	static Box boxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye
+	static Box boxEye = Box(11, 28, 12, 29);   // @ G0049_s_Graphic562_Box_Eye
 
 	int16 championStatusBoxX = champIndex * kDMChampionStatusBoxSpacing;
 	Champion *curChampion = &_champions[champIndex];
@@ -2313,9 +2301,15 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 
 		switch (_vm->getGameLanguage()) { // localized
 		default:
-		case Common::EN_ANY: strcat(_vm->_stringBuildBuffer, "."); break;
-		case Common::DE_DEU: strcat(_vm->_stringBuildBuffer, ","); break;
-		case Common::FR_FRA: strcat(_vm->_stringBuildBuffer, "KG,"); break;
+		case Common::EN_ANY:
+			strcat(_vm->_stringBuildBuffer, ".");
+			break;
+		case Common::DE_DEU:
+			strcat(_vm->_stringBuildBuffer, ",");
+			break;
+		case Common::FR_FRA:
+			strcat(_vm->_stringBuildBuffer, "KG,");
+			break;
 		}
 
 		maxLoad = curChampion->_load - (maxLoad * 10);
@@ -2436,12 +2430,12 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 		display._useByteBoxCoordinates = false;
 		if (isInventoryChamp) {
 			display.blitToBitmap(display.getNativeBitmapOrGraphic(nativeBitmapIndex),
-												display._bitmapViewport, box, 0, 0, 16, k112_byteWidthViewport,
-												kDMColorDarkestGray, display.getPixelHeight(nativeBitmapIndex), k136_heightViewport);
+			                     display._bitmapViewport, box, 0, 0, 16, k112_byteWidthViewport,
+			                     kDMColorDarkestGray, display.getPixelHeight(nativeBitmapIndex), k136_heightViewport);
 		} else {
 			display.blitToBitmap(display.getNativeBitmapOrGraphic(nativeBitmapIndex),
-												display._bitmapScreen, box, 0, 0, 16, k160_byteWidthScreen,
-												kDMColorDarkestGray, display.getPixelHeight(nativeBitmapIndex), k136_heightViewport);
+			                     display._bitmapScreen, box, 0, 0, 16, k160_byteWidthScreen,
+			                     kDMColorDarkestGray, display.getPixelHeight(nativeBitmapIndex), k136_heightViewport);
 		}
 	}
 
@@ -2500,7 +2494,7 @@ void ChampionMan::renameChampion(Champion *champ) {
 			if (_vm->_engineShouldQuit)
 				return;
 			display.updateScreen();
-				//_vm->f22_delay(1);
+			//_vm->f22_delay(1);
 
 			if (eventType == Common::EVENT_LBUTTONDOWN) {
 				// If left mouse button status has changed
@@ -2682,4 +2676,4 @@ uint16 ChampionMan::getSkillLevel(int16 champIndex, uint16 skillIndex) {
 	return skillLevel;
 }
 
-}
+} // namespace DM

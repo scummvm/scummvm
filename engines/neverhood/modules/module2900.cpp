@@ -21,18 +21,18 @@
  */
 
 #include "neverhood/modules/module2900.h"
-#include "neverhood/modules/module2900_sprites.h"
 #include "neverhood/modules/module1100.h"
 #include "neverhood/modules/module1300.h"
 #include "neverhood/modules/module1700.h"
 #include "neverhood/modules/module2000.h"
 #include "neverhood/modules/module2100.h"
 #include "neverhood/modules/module2800.h"
+#include "neverhood/modules/module2900_sprites.h"
 
 namespace Neverhood {
 
 Module2900::Module2900(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule) {
+    : Module(vm, parentModule) {
 
 	_teleporterModuleResult = -1;
 
@@ -129,26 +129,24 @@ void Module2900::updateScene() {
 }
 
 static const uint32 kScene2901FileHashes1[] = {
-	0x023023B4,
-	0x36204507,
-	0x046CF08E,
-	0x9313A237,
-	0xA651F246,
-	0x02108034
-};
+    0x023023B4,
+    0x36204507,
+    0x046CF08E,
+    0x9313A237,
+    0xA651F246,
+    0x02108034};
 
 static const uint32 kScene2901FileHashes2[] = {
-	0x023B002B,
-	0x0450336A,
-	0xCF08A04E,
-	0x3A233939,
-	0x1F242A6D,
-	0x08030029
-};
+    0x023B002B,
+    0x0450336A,
+    0xCF08A04E,
+    0x3A233939,
+    0x1F242A6D,
+    0x08030029};
 
 Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _currLocationButtonNum(which), _selectedButtonNum(which),
-	_currWhirlButtonNum(0), _prevWhirlButtonNum(0), _countdown1(1), _skipCountdown(0), _blinkOn(0) {
+    : Scene(vm, parentModule), _currLocationButtonNum(which), _selectedButtonNum(which),
+      _currWhirlButtonNum(0), _prevWhirlButtonNum(0), _countdown1(1), _skipCountdown(0), _blinkOn(0) {
 
 	_isButton2Broken = getGlobalVar(V_ENTRANCE_OPEN) != 0;
 
@@ -180,7 +178,6 @@ Scene2901::Scene2901(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetUpdateHandler(&Scene2901::update);
 	SetMessageHandler(&Scene2901::handleMessage);
-
 }
 
 void Scene2901::update() {

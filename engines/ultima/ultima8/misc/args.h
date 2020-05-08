@@ -26,60 +26,64 @@
 // Handy argument processor. I'm certain the implementation could be better
 // but it suffices quite well at the moment.
 
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
+#include "ultima/ultima8/misc/common_types.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 class Args {
 public:
-	Args()  { };
-	~Args() { };
+	Args(){};
+	~Args(){};
 
 	struct Option {
-		Option() : option(""), valuetype(no_type) { };
+		Option() : option(""), valuetype(no_type){};
 		// bool
 		Option(const char *option_cstr, bool *value, const bool defaultvalue = true)
-			: option(option_cstr), _bool_val(value), _bool_default(defaultvalue),
-			  valuetype(Option::type_bool) {
-			/**_bool_val=_bool_default;*/ /* Odd... looks like the 'default' value for bool, isn't. It's the value you set it to, if the flag is found*/
-		};
+		    : option(option_cstr), _bool_val(value), _bool_default(defaultvalue),
+		      valuetype(Option::type_bool){
+		          /**_bool_val=_bool_default;*/ /* Odd... looks like the 'default' value for bool, isn't. It's the value you set it to, if the flag is found*/
+		      };
 		// string
 		Option(const char *option_cstr, Std::string *value, const char *defaultvalue = 0)
-			: option(option_cstr), _str_val(value),
-			  _str_default(defaultvalue ? defaultvalue : ""), valuetype(Option::type_str) {
+		    : option(option_cstr), _str_val(value),
+		      _str_default(defaultvalue ? defaultvalue : ""), valuetype(Option::type_str) {
 			*_str_val = _str_default;
 		};
 		// sint
 		Option(const char *option_cstr, int32 *value, const int32 defaultvalue = true)
-			: option(option_cstr), _sint_val(value), _sint_default(defaultvalue),
-			  valuetype(Option::type_sint) {
+		    : option(option_cstr), _sint_val(value), _sint_default(defaultvalue),
+		      valuetype(Option::type_sint) {
 			*_sint_val = _sint_default;
 		};
 		// uint
 		Option(const char *option_cstr, uint32 *value, const uint32 defaultvalue = true)
-			: option(option_cstr), _uint_val(value), _uint_default(defaultvalue),
-			  valuetype(Option::type_uint) {
+		    : option(option_cstr), _uint_val(value), _uint_default(defaultvalue),
+		      valuetype(Option::type_uint) {
 			*_uint_val = _uint_default;
 		};
 
-		~Option() { };
+		~Option(){};
 
 		Std::string option;
 
-		bool        *_bool_val;
+		bool *_bool_val;
 		Std::string *_str_val;
-		int32      *_sint_val;
-		uint32      *_uint_val;
+		int32 *_sint_val;
+		uint32 *_uint_val;
 
-		bool        _bool_default;
+		bool _bool_default;
 		Std::string _str_default;
-		int32      _sint_default;
-		uint32      _uint_default;
+		int32 _sint_default;
+		uint32 _uint_default;
 
-		enum { no_type = 0, type_bool, type_str, type_sint, type_uint } valuetype;
+		enum { no_type = 0,
+			   type_bool,
+			   type_str,
+			   type_sint,
+			   type_uint } valuetype;
 	};
 
 	Std::vector<Option> _options;
@@ -108,4 +112,3 @@ public:
 } // End of namespace Ultima
 
 #endif
-

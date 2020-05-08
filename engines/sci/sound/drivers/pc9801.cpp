@@ -72,7 +72,7 @@ protected:
 		kChanNgEnable = 0x08,
 		kChanNgRestartEnv = 0x10,
 		kChanNgDecrease = 0x20,
-		kChanVbrMode = 0x40, 
+		kChanVbrMode = 0x40,
 		kChanVbrDecrease = 0x80
 	};
 
@@ -100,7 +100,7 @@ protected:
 	uint16 _vbrDecrStep;
 	uint8 _vbrModulationTimer;
 	uint16 _vbrFrequencyModifier;
-	uint8 _vbrCur;		
+	uint8 _vbrCur;
 	uint8 _flags;
 
 	const uint16 *_noteFrequency;
@@ -114,14 +114,14 @@ private:
 	virtual bool prepareFrequencyAndVolume(bool updateVolume);
 	virtual void sendSoundOnOff(bool soundOn) = 0;
 	virtual void sendFrequency() = 0;
-	virtual void sendVolume() = 0;	
+	virtual void sendVolume() = 0;
 
 	uint8 _velo;
 	uint8 _volume;
 	uint8 _program;
 	bool &_soundOn;
 
-	MidiPart_PC9801 **_parts;	
+	MidiPart_PC9801 **_parts;
 	PC98AudioCore *_pc98a;
 	const int _type;
 };
@@ -148,9 +148,9 @@ private:
 
 class SoundChannel_PC9801_FM2OP : public SoundChannel_PC9801 {
 public:
-	SoundChannel_PC9801_FM2OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts,  SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn);
+	SoundChannel_PC9801_FM2OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn);
 	~SoundChannel_PC9801_FM2OP() override {}
-	
+
 	void processNoteEvent(uint8 note, bool soundOn) override;
 	void reset() override;
 
@@ -192,7 +192,7 @@ private:
 		kEnvSSG_decay = 0x01,
 		kEnvSSG_sustain = 0x02,
 		kEnvSSG_attack = 0x03,
-		kEnvSSG_keyOn = 0x10	
+		kEnvSSG_keyOn = 0x10
 	};
 
 	void programChange(uint8 program) override;
@@ -209,7 +209,7 @@ private:
 	uint8 _chanEnableMask2;
 	uint8 _currentLevel;
 	uint8 _ngPhaseStep;
-	uint8 _ngPhase;	
+	uint8 _ngPhase;
 	uint8 _ngEnvelopeTimer;
 	uint8 _ngSpeed;
 	uint8 _ssgEnvelopeTimer;
@@ -290,7 +290,7 @@ public:
 	void initTrack(SciSpan<const byte> &header);
 
 	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
-	uint32 getBaseTempo() override;	
+	uint32 getBaseTempo() override;
 	MidiChannel *allocateChannel() override { return 0; }
 	MidiChannel *getPercussionChannel() override { return 0; }
 
@@ -307,7 +307,7 @@ private:
 
 	static MidiPart_PC9801 **_parts;
 	SoundChannel_PC9801 **_chan;
-	Common::SpanOwner<SciSpan<uint8> > _instrumentData;
+	Common::SpanOwner<SciSpan<uint8>> _instrumentData;
 
 	uint8 _masterVolume;
 	bool _soundOn;
@@ -352,15 +352,15 @@ public:
 };
 
 SoundChannel_PC9801::SoundChannel_PC9801(PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, int type, SciSpan<const uint8> instrumentData, bool &soundOn)
-	: _pc98a(pc98a), _parts(parts), _version(version), _type(type), _instrumentData(instrumentData), _soundOn(soundOn), _assign(0xff), _note(0xff), _velo(0),
-	_volume(0), _transpose(0), _sustain(0), _duration(0), _program(0xff), _vbrInitialDelay(0), _vbrEnvelopeTimer(0),
-	_vbrEnvelopeSpeed(0), _vbrDepthIncr(0), _vbrDecrTime(0), _vbrDepthDecr(0), _vbrIncrTime(0), _vbrSensitivity(0),
-	_vbrFrequencyModifier(0), _vbrIncrStep(0), _vbrDecrStep(0), _vbrModulationTimer(0), _flags(0), _vbrCur(0x80),
-	_frequencyBlock(0), _frequencyCourse(0), _frequencyNoteModifier(0) {
+    : _pc98a(pc98a), _parts(parts), _version(version), _type(type), _instrumentData(instrumentData), _soundOn(soundOn), _assign(0xff), _note(0xff), _velo(0),
+      _volume(0), _transpose(0), _sustain(0), _duration(0), _program(0xff), _vbrInitialDelay(0), _vbrEnvelopeTimer(0),
+      _vbrEnvelopeSpeed(0), _vbrDepthIncr(0), _vbrDecrTime(0), _vbrDepthDecr(0), _vbrIncrTime(0), _vbrSensitivity(0),
+      _vbrFrequencyModifier(0), _vbrIncrStep(0), _vbrDecrStep(0), _vbrModulationTimer(0), _flags(0), _vbrCur(0x80),
+      _frequencyBlock(0), _frequencyCourse(0), _frequencyNoteModifier(0) {
 
-	static const uint16 courseV0[] = { 0x269, 0x28D, 0x2B5, 0x2DE, 0x30A, 0x339, 0x368, 0x39D, 0x3D4, 0x40E, 0x44A, 0x48C };
-	static const uint16 courseV1[] = { 0x26A, 0x28E, 0x2B5, 0x2DF, 0x30A, 0x339, 0x36A, 0x39E, 0x3D5, 0x40F, 0x44D, 0x48F };
-	static const uint16 fine[] = { 0x24, 0x27, 0x2A, 0x2B, 0x2F, 0x31, 0x34, 0x37, 0x3A, 0x3E, 0x42, 0x45 };
+	static const uint16 courseV0[] = {0x269, 0x28D, 0x2B5, 0x2DE, 0x30A, 0x339, 0x368, 0x39D, 0x3D4, 0x40E, 0x44A, 0x48C};
+	static const uint16 courseV1[] = {0x26A, 0x28E, 0x2B5, 0x2DF, 0x30A, 0x339, 0x36A, 0x39E, 0x3D5, 0x40F, 0x44D, 0x48F};
+	static const uint16 fine[] = {0x24, 0x27, 0x2A, 0x2B, 0x2F, 0x31, 0x34, 0x37, 0x3A, 0x3E, 0x42, 0x45};
 
 	_noteFrequency = (version > SCI_VERSION_0_LATE) ? courseV1 : courseV0;
 	_noteFrequencyModifier = fine;
@@ -420,7 +420,7 @@ void SoundChannel_PC9801::update() {
 }
 
 void SoundChannel_PC9801::setVolume(uint8 volume) {
-	static const uint8 volumeTable[] = { 0x7F, 0x7F, 0x30, 0x30, 0x28, 0x28, 0x20, 0x20, 0x18, 0x18, 0x10, 0x10, 0x08, 0x08, 0x00, 0x00 };
+	static const uint8 volumeTable[] = {0x7F, 0x7F, 0x30, 0x30, 0x28, 0x28, 0x20, 0x20, 0x18, 0x18, 0x10, 0x10, 0x08, 0x08, 0x00, 0x00};
 	assert(volume < 16);
 	_volume = volumeTable[volume];
 }
@@ -478,7 +478,7 @@ int SoundChannel_PC9801::recalculateFrequency(uint16 note, uint16 modifier, uint
 
 	uint8 block = (note / 12) - 1;
 	note %= 12;
-	uint16 res =_noteFrequency[note];
+	uint16 res = _noteFrequency[note];
 	uint16 pitchVbrMultiplier = _noteFrequencyModifier[note];
 
 	if (_type != 2)
@@ -504,18 +504,16 @@ int SoundChannel_PC9801::recalculateFrequency(uint16 note, uint16 modifier, uint
 
 uint8 SoundChannel_PC9801::getVolume() {
 	static const uint8 volumeTable1[] = {
-		0x00, 0x0c, 0x0d, 0x0e, 0x0f, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18, 0x1a, 0x1b, 0x1c, 0x1d,
-		0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2d, 0x2d, 0x2e,
-		0x2f, 0x30, 0x31, 0x32, 0x32, 0x33, 0x34, 0x34, 0x35, 0x36,	0x36, 0x37, 0x38, 0x38, 0x39, 0x3a,
-		0x3b, 0x3b,	0x3b, 0x3c, 0x3c, 0x3c, 0x3d, 0x3d, 0x3d, 0x3e, 0x3e, 0x3e,	0x3e, 0x3f, 0x3f, 0x3f
-	};
+	    0x00, 0x0c, 0x0d, 0x0e, 0x0f, 0x11, 0x12, 0x13, 0x14, 0x16, 0x17, 0x18, 0x1a, 0x1b, 0x1c, 0x1d,
+	    0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2d, 0x2d, 0x2e,
+	    0x2f, 0x30, 0x31, 0x32, 0x32, 0x33, 0x34, 0x34, 0x35, 0x36, 0x36, 0x37, 0x38, 0x38, 0x39, 0x3a,
+	    0x3b, 0x3b, 0x3b, 0x3c, 0x3c, 0x3c, 0x3d, 0x3d, 0x3d, 0x3e, 0x3e, 0x3e, 0x3e, 0x3f, 0x3f, 0x3f};
 
 	static const uint8 volumeTable2[] = {
-		0x00, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x61,
-		0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x6f, 0x70,
-		0x71, 0x72, 0x72, 0x73, 0x74, 0x74, 0x75, 0x76, 0x76, 0x77, 0x78, 0x78, 0x79, 0x79, 0x7a, 0x7a,
-		0x7b, 0x7b, 0x7b, 0x7c, 0x7c, 0x7c, 0x7d, 0x7d, 0x7d, 0x7e, 0x7e, 0x7e, 0x7e, 0x7f, 0x7f, 0x7f
-	};
+	    0x00, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x61,
+	    0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x6f, 0x70,
+	    0x71, 0x72, 0x72, 0x73, 0x74, 0x74, 0x75, 0x76, 0x76, 0x77, 0x78, 0x78, 0x79, 0x79, 0x7a, 0x7a,
+	    0x7b, 0x7b, 0x7b, 0x7c, 0x7c, 0x7c, 0x7d, 0x7d, 0x7d, 0x7e, 0x7e, 0x7e, 0x7e, 0x7f, 0x7f, 0x7f};
 
 	uint16 partVolume = ((_assign != 0xFF) ? _parts[_assign]->getCurrentVolume() : 0);
 	if (_version == SCI_VERSION_0_LATE)
@@ -608,20 +606,20 @@ bool SoundChannel_PC9801::prepareFrequencyAndVolume(bool updateVolume) {
 }
 
 SoundChannel_PC9801_FM4OP::SoundChannel_PC9801_FM4OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn)
-	: SoundChannel_PC9801(pc98a, parts, version, 0, instrumentData, soundOn), _carrier(0), _regPrt(id > 2 ? 1 : 0), _regOffs(id % 3),
-	_operatorFlags((id > 2 ? 4 : 0) | (id % 3) | 0xF0), _patchSize(patchSize) {
+    : SoundChannel_PC9801(pc98a, parts, version, 0, instrumentData, soundOn), _carrier(0), _regPrt(id > 2 ? 1 : 0), _regOffs(id % 3),
+      _operatorFlags((id > 2 ? 4 : 0) | (id % 3) | 0xF0), _patchSize(patchSize) {
 	_operatorLevel[0] = _operatorLevel[1] = _operatorLevel[2] = _operatorLevel[3] = 0x7F;
 }
 
 void SoundChannel_PC9801_FM4OP::programChange(uint8 program) {
-	static const uint8 carrier[] = { 0x10, 0x10, 0x10, 0x10, 0x30, 0x70, 0x70, 0xF0 };
-	static const uint8 steps[] = { 0, 16, 8, 24 };
+	static const uint8 carrier[] = {0x10, 0x10, 0x10, 0x10, 0x30, 0x70, 0x70, 0xF0};
+	static const uint8 steps[] = {0, 16, 8, 24};
 	SciSpan<const uint8> data = _instrumentData.subspan(program * _patchSize);
 
 	if (_version == SCI_VERSION_1_LATE) {
 		programChangeInit(data);
 		uint8 pos = 8;
-	
+
 		for (uint8 i = 0x40 + _regOffs; i < 0x50 + _regOffs; i += 4)
 			writeReg(_regPrt, i, 0xFF);
 		for (uint8 i = 0x30 + _regOffs; i < 0x40 + _regOffs; i += 4)
@@ -687,7 +685,7 @@ void SoundChannel_PC9801_FM4OP::sendVolume() {
 			} else {
 				r = 127 - ((127 - r) * vol / 128);
 			}
-		}		
+		}
 		writeReg(_regPrt, 0x40 + (i << 2) + _regOffs, r);
 	}
 }
@@ -701,10 +699,10 @@ void SoundChannel_PC9801_FM4OP::sendFrequency() {
 uint8 SoundChannel_PC9801_FM2OP::_activeOperators = 0;
 
 SoundChannel_PC9801_FM2OP::SoundChannel_PC9801_FM2OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn)
-	: SoundChannel_PC9801(pc98a, parts, version, 1, instrumentData, soundOn), _patchOffset(37), _patchSize(patchSize), _frequencyCourse2(0), _frequencyNoteModifier2(0),
-	_vbrFrequencyModifier2(0), _vbrCur2(0x80), _vbrIncrStep2(0), _vbrDecrStep2(0), _regPrt(id > 3 ? 1 : 0), _regOffs(id & 1) {
+    : SoundChannel_PC9801(pc98a, parts, version, 1, instrumentData, soundOn), _patchOffset(37), _patchSize(patchSize), _frequencyCourse2(0), _frequencyNoteModifier2(0),
+      _vbrFrequencyModifier2(0), _vbrCur2(0x80), _vbrIncrStep2(0), _vbrDecrStep2(0), _regPrt(id > 3 ? 1 : 0), _regOffs(id & 1) {
 
-	static const uint16 opFreqOffset[] = { 0x0000, 0x0600, 0x07CF, 0x0980 };
+	static const uint16 opFreqOffset[] = {0x0000, 0x0600, 0x07CF, 0x0980};
 
 	_operatorLevel[0] = _operatorLevel[1] = 0x7F;
 	_operatorFrqIndex[0] = _operatorFrqIndex[1] = 0;
@@ -729,7 +727,7 @@ void SoundChannel_PC9801_FM2OP::programChange(uint8 program) {
 
 	programChangeInit(data);
 	uint8 pos = 7;
-	
+
 	for (uint8 i = 0x42 + (_regOffs << 2); i < 0x52 + (_regOffs << 2); i += 8)
 		writeReg(_regPrt, i, 0xFF);
 	for (uint8 i = 0x32 + (_regOffs << 2); i < 0x42 + (_regOffs << 2); i += 8)
@@ -851,25 +849,24 @@ void SoundChannel_PC9801_FM2OP::sendFrequency() {
 uint8 SoundChannel_PC9801_SSG::_activeChannnelsStatus = 0x3F;
 
 SoundChannel_PC9801_SSG::SoundChannel_PC9801_SSG(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchOffset, uint8 patchSize, bool &soundOn)
-	: SoundChannel_PC9801(pc98a, parts, version, 2, instrumentData, soundOn), _patchOffset(patchOffset), _patchSize(patchSize), _regOffs(id & 3),
-	_instrumentChanMask(0x3F), _ngPhaseStep(0),	_currentLevel(0), _ssgEnvelopeState(kEnvSSG_silent), _ngEnvelopeTimer(0),
-	_ngSpeed(0), _ngPhase(0), _ssgEnvelopeTimer(0), _ssgLevel(0), _ssgSpeed(0), _ccngEnabled(false) {
-	
-	static const uint16 courseV0[] = {
-		0xfcf, 0xef1, 0xe16, 0xd59, 0xc87, 0xbcd, 0xb27, 0xa93, 0x9ee, 0x96a, 0x8da, 0x865, 0x778, 0x70d, 0x6a6, 0x643,
-		0x5ec, 0x599, 0x545, 0x4f7, 0x4b5, 0x46d, 0x432, 0x3f4, 0x3c5, 0x386, 0x353, 0x325, 0x2f6, 0x2cc, 0x2a3, 0x27d,
-		0x25a, 0x238, 0x218, 0x1fa, 0x1dd, 0x1c3, 0x1a9, 0x192, 0x17b, 0x166, 0x152, 0x13f, 0x12d, 0x11c, 0x10c, 0x0fd,
-		0x0ef, 0x0e1, 0x0d5, 0x0c9, 0x0bd, 0x0b3, 0x0a9, 0x09f, 0x096, 0x08e, 0x086, 0x07e, 0x077, 0x071, 0x06a, 0x064,
-		0x05f, 0x059, 0x054, 0x050, 0x04b, 0x047, 0x043, 0x03f, 0x03c, 0x038, 0x035, 0x032, 0x02f, 0x02d, 0x02a, 0x028,
-		0x026, 0x023, 0x021, 0x020, 0x01e, 0x01c, 0x01b, 0x019, 0x018, 0x016, 0x015, 0x014, 0x013, 0x012, 0x011, 0x010
-	};
+    : SoundChannel_PC9801(pc98a, parts, version, 2, instrumentData, soundOn), _patchOffset(patchOffset), _patchSize(patchSize), _regOffs(id & 3),
+      _instrumentChanMask(0x3F), _ngPhaseStep(0), _currentLevel(0), _ssgEnvelopeState(kEnvSSG_silent), _ngEnvelopeTimer(0),
+      _ngSpeed(0), _ngPhase(0), _ssgEnvelopeTimer(0), _ssgLevel(0), _ssgSpeed(0), _ccngEnabled(false) {
 
-	static const uint16 courseV1[] = { 0x82D, 0x8A9, 0x92D, 0x9B6, 0xA4D, 0xAEA, 0xB90, 0xC40, 0xCFA, 0xDC0, 0xE90, 0xF6F };
-	static const uint16 fine[] = { 0x7C, 0x84, 0x8B, 0x94, 0x9D, 0xA6, 0xB0, 0xBA, 0xC5, 0xD0, 0xDE, 0xEB };
-	static const uint8 noiseFrq[] = { 0x00, 0x01, 0x04, 0x07, 0x0A, 0x0D, 0x10, 0x13, 0x16, 0x19, 0x1C, 0x1F };
-	static const uint8 disableMask[] = { 0xF6, 0xED, 0xDB };
-	static const uint8 enableMask1[] = { 0xBE, 0xBD, 0xBB };
-	static const uint8 enableMask2[] = { 0xB7, 0xAF, 0x9F };
+	static const uint16 courseV0[] = {
+	    0xfcf, 0xef1, 0xe16, 0xd59, 0xc87, 0xbcd, 0xb27, 0xa93, 0x9ee, 0x96a, 0x8da, 0x865, 0x778, 0x70d, 0x6a6, 0x643,
+	    0x5ec, 0x599, 0x545, 0x4f7, 0x4b5, 0x46d, 0x432, 0x3f4, 0x3c5, 0x386, 0x353, 0x325, 0x2f6, 0x2cc, 0x2a3, 0x27d,
+	    0x25a, 0x238, 0x218, 0x1fa, 0x1dd, 0x1c3, 0x1a9, 0x192, 0x17b, 0x166, 0x152, 0x13f, 0x12d, 0x11c, 0x10c, 0x0fd,
+	    0x0ef, 0x0e1, 0x0d5, 0x0c9, 0x0bd, 0x0b3, 0x0a9, 0x09f, 0x096, 0x08e, 0x086, 0x07e, 0x077, 0x071, 0x06a, 0x064,
+	    0x05f, 0x059, 0x054, 0x050, 0x04b, 0x047, 0x043, 0x03f, 0x03c, 0x038, 0x035, 0x032, 0x02f, 0x02d, 0x02a, 0x028,
+	    0x026, 0x023, 0x021, 0x020, 0x01e, 0x01c, 0x01b, 0x019, 0x018, 0x016, 0x015, 0x014, 0x013, 0x012, 0x011, 0x010};
+
+	static const uint16 courseV1[] = {0x82D, 0x8A9, 0x92D, 0x9B6, 0xA4D, 0xAEA, 0xB90, 0xC40, 0xCFA, 0xDC0, 0xE90, 0xF6F};
+	static const uint16 fine[] = {0x7C, 0x84, 0x8B, 0x94, 0x9D, 0xA6, 0xB0, 0xBA, 0xC5, 0xD0, 0xDE, 0xEB};
+	static const uint8 noiseFrq[] = {0x00, 0x01, 0x04, 0x07, 0x0A, 0x0D, 0x10, 0x13, 0x16, 0x19, 0x1C, 0x1F};
+	static const uint8 disableMask[] = {0xF6, 0xED, 0xDB};
+	static const uint8 enableMask1[] = {0xBE, 0xBD, 0xBB};
+	static const uint8 enableMask2[] = {0xB7, 0xAF, 0x9F};
 
 	_noteFrequency = (version > SCI_VERSION_0_LATE) ? courseV1 : courseV0;
 	_noteFrequencyModifier = fine;
@@ -909,7 +906,7 @@ void SoundChannel_PC9801_SSG::programChange(uint8 program) {
 
 	} else {
 		writeReg(0, 13, _selectedInstrument[0]);
-		writeReg(0,  6, _selectedInstrument[1]);
+		writeReg(0, 6, _selectedInstrument[1]);
 		writeReg(0, 11, _selectedInstrument[2]);
 		writeReg(0, 12, _selectedInstrument[3]);
 	}
@@ -984,7 +981,7 @@ void SoundChannel_PC9801_SSG::processSounds() {
 			vol = (uint8)CLIP<int16>(vol + (int8)((_selectedInstrument[20] & 0x0F) << 4), 0, 255);
 		}
 	}
-	
+
 	if (_ssgEnvelopeState == kEnvSSG_silent)
 		vol = 0;
 
@@ -1037,7 +1034,7 @@ void SoundChannel_PC9801_SSG::sendSoundOnOff(bool soundOn) {
 void SoundChannel_PC9801_SSG::sendVolume() {
 	uint8 v1 = getVolume();
 	uint16 r = 0;
-	
+
 	if (_version == SCI_VERSION_1_LATE) {
 		uint8 vol = v1 + (((v1 >> 1) + v1) >> 2);
 
@@ -1051,7 +1048,7 @@ void SoundChannel_PC9801_SSG::sendVolume() {
 			if (r & 0x100)
 				r = (r + vol) & 0xFF;
 		}
-		
+
 		r = (r + 15) >> 4;
 
 	} else {
@@ -1090,7 +1087,7 @@ void SoundChannel_PC9801_SSG::sendActiveChannelsStatus() {
 }
 
 MidiPart_PC9801::MidiPart_PC9801(uint8 id, SoundChannel_PC9801 **channels, uint8 numChan, SciVersion version) : _chan(channels), _id(id), _version(version), _numChan(numChan),
-	_program(0), _volume(0x3f), _sustain(0), _chanMissing(0), _pitchBend(0x2000), _outChan(0), _noteRangeLow(version > SCI_VERSION_0_LATE ? 12 : 24), _noteRangeHigh(version > SCI_VERSION_0_LATE ? 107 : 119) {
+                                                                                                                _program(0), _volume(0x3f), _sustain(0), _chanMissing(0), _pitchBend(0x2000), _outChan(0), _noteRangeLow(version > SCI_VERSION_0_LATE ? 12 : 24), _noteRangeHigh(version > SCI_VERSION_0_LATE ? 107 : 119) {
 }
 
 void MidiPart_PC9801::noteOff(uint8 note) {
@@ -1205,7 +1202,6 @@ void MidiPart_PC9801::pitchBend(int16 val) {
 	}
 }
 
-
 void MidiPart_PC9801::addChannels(int num, int resetMissingChannels, int channelType) {
 	if (resetMissingChannels != -1)
 		_chanMissing = resetMissingChannels;
@@ -1270,7 +1266,7 @@ int MidiPart_PC9801::allocateChannel() {
 	int ld = 0;
 	bool found = false;
 
-	for (bool loop = true; loop; ) {
+	for (bool loop = true; loop;) {
 		if (++chan == _numChan)
 			chan = 0;
 
@@ -1318,9 +1314,9 @@ void MidiPart_PC9801::assignFreeChannels() {
 MidiPart_PC9801 **MidiDriver_PC9801::_parts = 0;
 
 MidiDriver_PC9801::MidiDriver_PC9801(Audio::Mixer *mixer, SciVersion version)
-	: _mixer(mixer), _version(version), _pc98a(0), _chan(0), _numChan(6), _internalVersion(0xFF), _ssgPatchOffset(0xFF), _patchSize(0),
-	_timerProc(0), _timerProcPara(0), _baseTempo(10080), _ready(false), _isOpen(false), _masterVolume(0x0f) ,_soundOn(true), _playID(0),
-	_polyphony(9), _channelMask1(0x10), _channelMask2(0x02) {
+    : _mixer(mixer), _version(version), _pc98a(0), _chan(0), _numChan(6), _internalVersion(0xFF), _ssgPatchOffset(0xFF), _patchSize(0),
+      _timerProc(0), _timerProcPara(0), _baseTempo(10080), _ready(false), _isOpen(false), _masterVolume(0x0f), _soundOn(true), _playID(0),
+      _polyphony(9), _channelMask1(0x10), _channelMask2(0x02) {
 }
 
 MidiDriver_PC9801::~MidiDriver_PC9801() {
@@ -1334,9 +1330,9 @@ int MidiDriver_PC9801::open() {
 	if (!_pc98a) {
 		_pc98a =
 #ifdef SCI_PC98_AUDIO_EXTENDED
-		new PC98AudioCore(_mixer, this, kType86);
+		    new PC98AudioCore(_mixer, this, kType86);
 #else
-		new PC98AudioCore(_mixer, this, kType26);
+		    new PC98AudioCore(_mixer, this, kType26);
 #endif
 	}
 
@@ -1361,7 +1357,7 @@ int MidiDriver_PC9801::open() {
 	} else if (_patchSize == 60 && _ssgPatchOffset == 37)
 		_internalVersion = 2;
 	else if (_patchSize == 81 && _ssgPatchOffset == 58)
-		_internalVersion = 3;	
+		_internalVersion = 3;
 	else
 		return MERR_CANNOT_CONNECT;
 
@@ -1370,21 +1366,20 @@ int MidiDriver_PC9801::open() {
 
 	int config = _internalVersion;
 
-#ifdef	SCI_PC98_AUDIO_EXTENDED
+#ifdef SCI_PC98_AUDIO_EXTENDED
 	_numChan = 9;
 	config = 4;
 #endif
 
 	static const int channelConfig[6][11] = {
-		{  0,  0,  0,  2,  2,  2, -1, -1, -1, -1, -1 },
-		{  0,  0,  0,  2,  2,  2, -1, -1, -1, -1, -1 },
-		{  0,  0,  0,  2,  2,  2, -1, -1, -1, -1, -1 },
-		{  0,  0,  1,  1,  2,  2,  2, -1, -1, -1, -1 },
-		{  0,  0,  0,  0,  0,  0,  2,  2,  2, -1, -1 }
-	};
+	    {0, 0, 0, 2, 2, 2, -1, -1, -1, -1, -1},
+	    {0, 0, 0, 2, 2, 2, -1, -1, -1, -1, -1},
+	    {0, 0, 0, 2, 2, 2, -1, -1, -1, -1, -1},
+	    {0, 0, 1, 1, 2, 2, 2, -1, -1, -1, -1},
+	    {0, 0, 0, 0, 0, 0, 2, 2, 2, -1, -1}};
 
-	_parts = new MidiPart_PC9801*[16];
-	_chan = new SoundChannel_PC9801*[_numChan];
+	_parts = new MidiPart_PC9801 *[16];
+	_chan = new SoundChannel_PC9801 *[_numChan];
 
 	int numSSG = 0;
 	for (int i = 0; i < _numChan; ++i) {
@@ -1517,7 +1512,7 @@ uint32 MidiDriver_PC9801::property(int prop, uint32 param) {
 	if (!_isOpen)
 		return 0;
 
-	switch(prop) {
+	switch (prop) {
 	case MIDI_PROP_MASTER_VOLUME:
 		if (param != 0xffff && param != _masterVolume && param < 16) {
 			_masterVolume = param;
@@ -1556,7 +1551,7 @@ void MidiDriver_PC9801::initTrack(SciSpan<const byte> &header) {
 
 	for (int i = 0; i < numChan; ++i) {
 		_parts[i]->controlChangeVolume(103);
-			
+
 		uint8 num = (_internalVersion == 1) ? (header.getInt8At(readPos) & 0x7F) : 1;
 		readPos++;
 		uint8 flags = header.getInt8At(readPos);
@@ -1603,7 +1598,7 @@ bool MidiDriver_PC9801::loadInstruments(const SciSpan<const uint8> &data) {
 		_instrumentData->allocate(96 * _patchSize);
 		SciSpan<uint8> dst = *_instrumentData;
 
-		for (bool load = true; load; ) {
+		for (bool load = true; load;) {
 			for (int i = 0; i < 48; ++i) {
 				src.subspan(0, _patchSize).copyDataTo(dst);
 				src += 64;
@@ -1659,7 +1654,7 @@ void MidiDriver_PC9801::reset() {
 		flag = 0x40;
 	}
 #endif
-	
+
 	_pc98a->writeReg(0, 0x27, 0x38);
 	_pc98a->writeReg(0, 0x27, 0x3a | flag);
 
@@ -1667,7 +1662,7 @@ void MidiDriver_PC9801::reset() {
 		return;
 
 	for (int i = 0; i < _numChan; ++i)
-		_chan[i]->reset();	
+		_chan[i]->reset();
 }
 
 MidiPlayer_PC9801::MidiPlayer_PC9801(SciVersion version) : MidiPlayer(version) {
@@ -1697,7 +1692,7 @@ void MidiPlayer_PC9801::playSwitch(bool play) {
 
 void MidiPlayer_PC9801::initTrack(SciSpan<const byte> &trackData) {
 	if (_driver)
-		static_cast<MidiDriver_PC9801*>(_driver)->initTrack(trackData);
+		static_cast<MidiDriver_PC9801 *>(_driver)->initTrack(trackData);
 }
 
 MidiPlayer *MidiPlayer_PC9801_create(SciVersion _soundVersion) {
@@ -1705,4 +1700,3 @@ MidiPlayer *MidiPlayer_PC9801_create(SciVersion _soundVersion) {
 }
 
 } // End of namespace Sci
-

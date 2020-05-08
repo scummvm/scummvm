@@ -27,9 +27,8 @@
 #include "common/serializer.h"
 #include "ultima/shared/core/rect.h"
 #include "ultima/shared/maps/map_base.h"
-#include "ultima/shared/maps/map_widget.h"
 #include "ultima/shared/maps/map_tile.h"
-
+#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Shared {
@@ -38,8 +37,11 @@ class Game;
 
 namespace Maps {
 
-#define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, this) 
-#define DECLARE_WIDGET(NAME) virtual const char *getClassName() const override { return #NAME; }
+#define REGISTER_WIDGET(NAME) \
+	if (name == #NAME)        \
+	return new Widgets::NAME(_game, this)
+#define DECLARE_WIDGET(NAME) \
+	virtual const char *getClassName() const override { return #NAME; }
 
 /**
  * Base class for managing maps within the game
@@ -47,6 +49,7 @@ namespace Maps {
 class Map {
 protected:
 	MapBase *_mapArea;
+
 public:
 	/**
 	 * Constructor

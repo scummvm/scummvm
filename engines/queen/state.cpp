@@ -20,18 +20,16 @@
  *
  */
 
-
 #include "queen/state.h"
 
 namespace Queen {
 
 Direction State::findDirection(uint16 state) {
 	static const Direction sd[] = {
-		DIR_BACK,
-		DIR_RIGHT,
-		DIR_LEFT,
-		DIR_FRONT
-	};
+	    DIR_BACK,
+	    DIR_RIGHT,
+	    DIR_LEFT,
+	    DIR_FRONT};
 	return sd[(state >> 2) & 3];
 }
 
@@ -41,11 +39,10 @@ StateTalk State::findTalk(uint16 state) {
 
 StateGrab State::findGrab(uint16 state) {
 	static const StateGrab sg[] = {
-		STATE_GRAB_NONE,
-		STATE_GRAB_DOWN,
-		STATE_GRAB_UP,
-		STATE_GRAB_MID
-	};
+	    STATE_GRAB_NONE,
+	    STATE_GRAB_DOWN,
+	    STATE_GRAB_UP,
+	    STATE_GRAB_MID};
 	return sg[state & 3];
 }
 
@@ -55,26 +52,25 @@ StateOn State::findOn(uint16 state) {
 
 Verb State::findDefaultVerb(uint16 state) {
 	static const Verb sdv[] = {
-		VERB_NONE,
-		VERB_OPEN,
-		VERB_NONE,
-		VERB_CLOSE,
+	    VERB_NONE,
+	    VERB_OPEN,
+	    VERB_NONE,
+	    VERB_CLOSE,
 
-		VERB_NONE,
-		VERB_NONE,
-		VERB_LOOK_AT,
-		VERB_MOVE,
+	    VERB_NONE,
+	    VERB_NONE,
+	    VERB_LOOK_AT,
+	    VERB_MOVE,
 
-		VERB_GIVE,
-		VERB_TALK_TO,
-		VERB_NONE,
-		VERB_NONE,
+	    VERB_GIVE,
+	    VERB_TALK_TO,
+	    VERB_NONE,
+	    VERB_NONE,
 
-		VERB_USE,
-		VERB_NONE,
-		VERB_PICK_UP,
-		VERB_NONE
-	};
+	    VERB_USE,
+	    VERB_NONE,
+	    VERB_PICK_UP,
+	    VERB_NONE};
 	return sdv[(state >> 4) & 0xF];
 }
 

@@ -36,7 +36,7 @@ XMLParser::~XMLParser() {
 	delete _stream;
 
 	for (List<XMLKeyLayout *>::iterator i = _layoutList.begin();
-		i != _layoutList.end(); ++i)
+	     i != _layoutList.end(); ++i)
 		delete *i;
 
 	_layoutList.clear();
@@ -266,7 +266,7 @@ bool XMLParser::vparseIntegerKey(const char *key, int count, va_list args) {
 		while (isSpace(*key))
 			key++;
 
-		num_ptr = va_arg(args, int*);
+		num_ptr = va_arg(args, int *);
 		*num_ptr = strtol(key, &parseEnd, 10);
 
 		key = parseEnd;

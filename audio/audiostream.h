@@ -131,6 +131,7 @@ public:
 	 * Returns number of loops the stream has played.
 	 */
 	uint getCompleteIterations() const { return _completeIterations; }
+
 private:
 	Common::DisposablePtr<RewindableAudioStream> _parent;
 
@@ -255,6 +256,7 @@ public:
 
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
+
 private:
 	Common::DisposablePtr<SeekableAudioStream> _parent;
 
@@ -264,7 +266,6 @@ private:
 
 	bool _done;
 };
-
 
 /**
  * A SubSeekableAudioStream provides access to a SeekableAudioStream
@@ -297,6 +298,7 @@ public:
 	bool seek(const Timestamp &where);
 
 	Timestamp getLength() const { return _length; }
+
 private:
 	Common::DisposablePtr<SeekableAudioStream> _parent;
 
@@ -307,7 +309,6 @@ private:
 
 class QueuingAudioStream : public Audio::AudioStream {
 public:
-
 	/**
 	 * Queue an audio stream for playback. This stream plays all queued
 	 * streams, in the order they were queued. If disposeAfterUse is set to
@@ -404,8 +405,7 @@ public:
  */
 class StatelessPacketizedAudioStream : public PacketizedAudioStream {
 public:
-	StatelessPacketizedAudioStream(uint rate, uint channels) :
-		_rate(rate), _channels(channels), _stream(makeQueuingAudioStream(rate, channels == 2)) {}
+	StatelessPacketizedAudioStream(uint rate, uint channels) : _rate(rate), _channels(channels), _stream(makeQueuingAudioStream(rate, channels == 2)) {}
 	virtual ~StatelessPacketizedAudioStream() {}
 
 	// AudioStream API

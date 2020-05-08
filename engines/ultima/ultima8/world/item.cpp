@@ -20,46 +20,46 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/usecode/usecode.h"
+#include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/world/container.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/graphics/main_shape_archive.h"
+#include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/usecode/uc_stack.h"
-#include "ultima/ultima8/misc/direction.h"
-#include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
-#include "ultima/ultima8/gumps/gump_notify_process.h"
-#include "ultima/ultima8/world/actors/actor_bark_notify_process.h"
+#include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/container_gump.h"
-#include "ultima/ultima8/gumps/paperdoll_gump.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
-#include "ultima/ultima8/world/world_point.h"
-#include "ultima/ultima8/world/gravity_process.h"
-#include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/world/camera_process.h"
-#include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/paperdoll_gump.h"
 #include "ultima/ultima8/gumps/slider_gump.h"
+#include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/usecode/uc_process.h"
-#include "ultima/ultima8/world/destroy_item_process.h"
-#include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/usecode/uc_stack.h"
+#include "ultima/ultima8/usecode/usecode.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/actor_bark_notify_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/camera_process.h"
+#include "ultima/ultima8/world/container.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/destroy_item_process.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/gravity_process.h"
+#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/missile_tracker.h"
+#include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/world/world_point.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -68,14 +68,13 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(Item, Object)
 
 Item::Item()
-	: _shape(0), _frame(0), _x(0), _y(0), _z(0),
-	  _flags(0), _quality(0), _npcNum(0), _mapNum(0),
-	  _extendedFlags(0), _parent(0),
-	  _cachedShape(nullptr), _cachedShapeInfo(nullptr),
-	  _gump(0), _gravityPid(0), _lastSetup(0),
-	  _ix(0), _iy(0), _iz(0) {
+    : _shape(0), _frame(0), _x(0), _y(0), _z(0),
+      _flags(0), _quality(0), _npcNum(0), _mapNum(0),
+      _extendedFlags(0), _parent(0),
+      _cachedShape(nullptr), _cachedShapeInfo(nullptr),
+      _gump(0), _gravityPid(0), _lastSetup(0),
+      _ix(0), _iy(0), _iz(0) {
 }
-
 
 Item::~Item() {
 }
@@ -117,7 +116,8 @@ Container *Item::getParentAsContainer() const {
 Item *Item::getTopItem() {
 	Container *parentItem = getParentAsContainer();
 
-	if (!parentItem) return this;
+	if (!parentItem)
+		return this;
 
 	while (parentItem->getParentAsContainer()) {
 		parentItem = parentItem->getParentAsContainer();
@@ -154,7 +154,8 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 			// If we are flagged as Ethereal, we are already removed
 			if (!(_flags & FLG_ETHEREAL)) {
 				Container *p = getParentAsContainer();
-				if (p) p->removeItem(this);
+				if (p)
+					p->removeItem(this);
 			}
 		} else
 			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent" << Std::endl;
@@ -200,7 +201,8 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	bool dest_fast = map->isChunkFast(X / mapChunkSize, Y / mapChunkSize);
 
 	// No lerping for this move
-	if (no_lerping) _extendedFlags |= EXT_LERP_NOPREV;
+	if (no_lerping)
+		_extendedFlags |= EXT_LERP_NOPREV;
 
 	// If the destination is not in the fast area, and we are in
 	// the fast area, we need to call leaveFastArea, as long as we aren't
@@ -237,12 +239,15 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 	bool ethereal_same = false;
 	if (container->getObjId() == _parent) {
 		// If we are ethereal we'd like to know if we are just being moved back
-		if (_flags & FLG_ETHEREAL) ethereal_same = true;
-		else return true;
+		if (_flags & FLG_ETHEREAL)
+			ethereal_same = true;
+		else
+			return true;
 	}
 
 	// Eh, can't do it
-	if (!container->CanAddItem(this, checkwghtvol)) return false;
+	if (!container->CanAddItem(this, checkwghtvol))
+		return false;
 
 	// It's currently in the ethereal void
 	if (_flags & FLG_ETHEREAL) {
@@ -257,7 +262,8 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 			// If we are flagged as Ethereal, we are already removed
 			if (!(_flags & FLG_ETHEREAL)) {
 				Container *p = getParentAsContainer();
-				if (p) p->removeItem(this);
+				if (p)
+					p->removeItem(this);
 			}
 		} else
 			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent" << Std::endl;
@@ -276,7 +282,8 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 	_flags &= ~(FLG_CONTAINED | FLG_EQUIPPED | FLG_ETHEREAL);
 
 	// Set location to 0,0,0 if we aren't an ethereal item moving back
-	if (!ethereal_same) _x = _y = 0;
+	if (!ethereal_same)
+		_x = _y = 0;
 	_z = 0;
 
 	// Add the item, don't bother with checking weight or vol since we already
@@ -320,7 +327,8 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 
 void Item::moveToEtherealVoid() {
 	// It's already Ethereal
-	if (_flags & FLG_ETHEREAL) return;
+	if (_flags & FLG_ETHEREAL)
+		return;
 
 	// Add it to the ethereal void
 	World::get_instance()->etherealPush(_objId);
@@ -330,7 +338,8 @@ void Item::moveToEtherealVoid() {
 
 		if (_parent) {
 			Container *p = getParentAsContainer();
-			if (p) p->removeItem(this);
+			if (p)
+				p->removeItem(this);
 		} else
 			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no _parent" << Std::endl;
 	} else if (_extendedFlags & EXT_INCURMAP) {
@@ -338,12 +347,13 @@ void Item::moveToEtherealVoid() {
 	}
 
 	// Set the ETHEREAL Flag
-	_flags |=  FLG_ETHEREAL;
+	_flags |= FLG_ETHEREAL;
 }
 
 void Item::returnFromEtherealVoid() {
 	// It's not Ethereal
-	if (!(_flags & FLG_ETHEREAL)) return;
+	if (!(_flags & FLG_ETHEREAL))
+		return;
 
 	// Ok, we can do 2 things here
 	// If an item has the contained or Equipped _flags set, we return it to it's owner
@@ -359,12 +369,12 @@ void Item::returnFromEtherealVoid() {
 	else {
 		move(_x, _y, _z);
 	}
-
 }
 
 void Item::movedByPlayer() {
 	// owned-by-avatar items can't be stolen
-	if (_flags & FLG_OWNED) return;
+	if (_flags & FLG_OWNED)
+		return;
 
 	// Otherwise, player is stealing.
 	// See if anybody is around to notice.
@@ -401,20 +411,23 @@ void Item::getLocationAbsolute(int32 &X, int32 &Y, int32 &Z) const {
 }
 
 void Item::getGumpLocation(int32 &X, int32 &Y) const {
-	if (!_parent) return;
+	if (!_parent)
+		return;
 
 	X = _y & 0xFF;
 	Y = (_y >> 8) & 0xFF;
 }
 
 void Item::setGumpLocation(int32 X, int32 Y) {
-	if (!_parent) return;
+	if (!_parent)
+		return;
 
 	_y = (X & 0xFF) + ((Y & 0xFF) << 8);
 }
 
 void Item::randomGumpLocation() {
-	if (!_parent) return;
+	if (!_parent)
+		return;
 
 	// This sets the coordinates to (255,255) and lets the ContainerGump
 	// randomize the position when it is next opened.
@@ -464,9 +477,12 @@ bool Item::overlaps(Item &item2) const {
 	y2a = y2b - yd;
 	z2b = z2a + zd;
 
-	if (x1b <= x2a || x2b <= x1a) return false;
-	if (y1b <= y2a || y2b <= y1a) return false;
-	if (z1b <= z2a || z2b <= z1a) return false;
+	if (x1b <= x2a || x2b <= x1a)
+		return false;
+	if (y1b <= y2a || y2b <= y1a)
+		return false;
+	if (z1b <= z2a || z2b <= z1a)
+		return false;
 	return true;
 }
 
@@ -485,8 +501,10 @@ bool Item::overlapsxy(Item &item2) const {
 	x2a = x2b - xd;
 	y2a = y2b - yd;
 
-	if (x1b <= x2a || x2b <= x1a) return false;
-	if (y1b <= y2a || y2b <= y1a) return false;
+	if (x1b <= x2a || x2b <= x1a)
+		return false;
+	if (y1b <= y2a || y2b <= y1a)
+		return false;
 	return true;
 }
 
@@ -506,9 +524,12 @@ bool Item::isOn(Item &item2) const {
 	y2a = y2b - yd;
 	z2b = z2a + zd;
 
-	if (x1b <= x2a || x2b <= x1a) return false;
-	if (y1b <= y2a || y2b <= y1a) return false;
-	if (z2b == z1a) return true;
+	if (x1b <= x2a || x2b <= x1a)
+		return false;
+	if (y1b <= y2a || y2b <= y1a)
+		return false;
+	if (z2b == z1a)
+		return true;
 	return false;
 }
 
@@ -574,7 +595,8 @@ ShapeInfo *Item::getShapeInfoFromGameInstance() const {
 }
 
 Shape *Item::getShapeObject() const {
-	if (!_cachedShape) _cachedShape = GameData::get_instance()->getMainShapes()->getShape(_shape);
+	if (!_cachedShape)
+		_cachedShape = GameData::get_instance()->getMainShapes()->getShape(_shape);
 	return _cachedShape;
 }
 
@@ -603,7 +625,6 @@ uint32 Item::getVolume() const {
 	// invisible items (trap markers and such) don't take up volume
 	if (hasFlags(FLG_INVISIBLE))
 		return 0;
-
 
 	uint32 volume = getShapeInfo()->_volume;
 
@@ -779,8 +800,7 @@ bool Item::checkLoopScript(const uint8 *script, uint32 scriptsize) const {
 				stack.push2(1);
 			else
 				stack.push2(0);
-		}
-		break;
+		} break;
 
 		case LS_TOKEN_FRAME: // item _frame
 			stack.push2(static_cast<uint16>(getFrame()));
@@ -824,8 +844,7 @@ bool Item::checkLoopScript(const uint8 *script, uint32 scriptsize) const {
 				stack.push2(1);
 			else
 				stack.push2(0);
-		}
-		break;
+		} break;
 
 		default:
 			perr.Print("Unknown loopscript opcode %02X\n", script[i]);
@@ -837,16 +856,17 @@ bool Item::checkLoopScript(const uint8 *script, uint32 scriptsize) const {
 	return false;
 }
 
-
 int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force, ObjId *hititem, uint8 *dirs) {
 	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	World *world = World::get_instance();
 	CurrentMap *map = world->getCurrentMap();
 
-	if (hititem) *hititem = 0;
-	if (dirs) *dirs = 0;
+	if (hititem)
+		*hititem = 0;
+	if (dirs)
+		*dirs = 0;
 
-	int32 end[3] = { dx, dy, dz };
+	int32 end[3] = {dx, dy, dz};
 
 	int32 start[3];
 	if (_parent) {
@@ -869,14 +889,15 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 	// Ok, now to work out what to do
 
-
 	// the force of the hit, used for the gotHit/hit usecode calls
 	int deltax = ABS(start[0] - end[0]) / 4;
 	int deltay = ABS(start[1] - end[1]) / 4;
 	int deltaz = ABS(start[2] - end[2]);
 	int maxdirdelta = deltay;
-	if (deltay > maxdirdelta) maxdirdelta = deltay;
-	if (deltaz > maxdirdelta) maxdirdelta = deltaz;
+	if (deltay > maxdirdelta)
+		maxdirdelta = deltay;
+	if (deltaz > maxdirdelta)
+		maxdirdelta = deltaz;
 	int hitforce = (deltax + deltay + deltaz + maxdirdelta) / 2;
 
 	// if we are contained, we always teleport
@@ -886,8 +907,10 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			for (it = collisions.begin(); it != collisions.end(); it++) {
 				// Uh oh, we hit something, can't move
 				if (it->_endTime == 0x4000 && !it->_touching && it->_blocking) {
-					if (hititem) *hititem = it->_item;
-					if (dirs) *dirs = it->_dirs;
+					if (hititem)
+						*hititem = it->_item;
+					if (dirs)
+						*dirs = it->_dirs;
 					return 0;
 				}
 			}
@@ -902,7 +925,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 			// Hitting us at the start and end, don't do anything
 			if (!_parent && it->_hitTime == 0x0000 &&
-			        it->_endTime == 0x4000) {
+			    it->_endTime == 0x4000) {
 				continue;
 			}
 			// Hitting us at the end (call hit on us, got hit on them)
@@ -915,14 +938,16 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 			}
 			// Hitting us at the start (call release on us and them)
 			else if (!_parent && it->_hitTime == 0x0000) {
-				if (_objId == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
+				if (_objId == 1)
+					item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
 				item->callUsecodeEvent_release();
 			}
 		}
 
 		// Call release on us
-		if (we_were_released) callUsecodeEvent_release();
+		if (we_were_released)
+			callUsecodeEvent_release();
 
 		// Move US!
 		move(end[0], end[1], end[2]);
@@ -938,13 +963,16 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		if (!force) {
 			for (it = collisions.begin(); it != collisions.end(); it++) {
 				if (it->_blocking && !it->_touching) {
-					if (hititem) *hititem = it->_item;
-					if (dirs) *dirs = it->_dirs;
+					if (hititem)
+						*hititem = it->_item;
+					if (dirs)
+						*dirs = it->_dirs;
 					hit = it->_hitTime;
 					break;
 				}
 			}
-			if (hit < 0) hit = 0;
+			if (hit < 0)
+				hit = 0;
 
 			if (hit != 0x4000) {
 #if 0
@@ -963,10 +991,12 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		bool we_were_released = false;
 		for (it = collisions.begin(); it != collisions.end(); it++) {
 			Item *item = getItem(it->_item);
-			if (!item) continue;
+			if (!item)
+				continue;
 
 			// Did we go past the endpoint of the move?
-			if (it->_hitTime > hit) break;
+			if (it->_hitTime > hit)
+				break;
 
 			uint16 proc_gothit = 0, proc_rel = 0;
 
@@ -982,7 +1012,8 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 			// If not hitting at end, we will need to call release
 			if (it->_endTime < hit) {
-				if (_objId == 1) item->clearExtFlag(Item::EXT_HIGHLIGHT);
+				if (_objId == 1)
+					item->clearExtFlag(Item::EXT_HIGHLIGHT);
 				we_were_released = true;
 				proc_rel = item->callUsecodeEvent_release();
 			}
@@ -995,7 +1026,8 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 		}
 
 		// Call release on us
-		if (we_were_released) callUsecodeEvent_release();
+		if (we_were_released)
+			callUsecodeEvent_release();
 
 		// Move US!
 		move(end[0], end[1], end[2]);
@@ -1015,9 +1047,8 @@ unsigned int Item::countNearby(uint32 shape_, uint16 range) {
 	return itemlist.getSize();
 }
 
-
 uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
-	uint32  class_id = _shape;
+	uint32 class_id = _shape;
 
 	// Non-monster NPCs use _objId/_npcNum + 1024
 	// Note: in the original, a non-monster NPC is specified with
@@ -1030,7 +1061,7 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	// CHECKME: to make Pentagram behave as much like the original as possible,
 	// don't call any usecode if the original would call the wrong class
 	if (_objId < 256 && !(_extendedFlags & EXT_PERMANENT_NPC) &&
-	        !(_flags & FLG_FAST_ONLY))
+	    !(_flags & FLG_FAST_ONLY))
 		return 0;
 
 	// UnkEggs have _quality+0x47F
@@ -1039,97 +1070,99 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 
 	Usecode *u = GameData::get_instance()->getMainUsecode();
 	uint32 offset = u->get_class_event(class_id, event);
-	if (!offset) return 0; // event not found
+	if (!offset)
+		return 0; // event not found
 
 #ifdef DEBUG
 	if (UCMachine::get_instance()->trace_event()) {
 		pout.Print("Item: %d calling usecode event %d @ %04X:%04X\n",
-			_objId, event, class_id, offset);
+		           _objId, event, class_id, offset);
 	}
 #endif
 
 	// FIXME: Disabled usecode except for Use events in crusader for now
-	if (GAME_IS_CRUSADER && event != 1) return 0;
+	if (GAME_IS_CRUSADER && event != 1)
+		return 0;
 
 	return callUsecode(static_cast<uint16>(class_id),
 	                   static_cast<uint16>(offset),
 	                   args, argsize);
 }
 
-uint32 Item::callUsecodeEvent_look() {                          // event 0
-	return callUsecodeEvent(0); // CONSTANT
+uint32 Item::callUsecodeEvent_look() { // event 0
+	return callUsecodeEvent(0);        // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_use() {                           // event 1
-	return callUsecodeEvent(1); // CONSTANT
+uint32 Item::callUsecodeEvent_use() { // event 1
+	return callUsecodeEvent(1);       // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_anim() {                          // event 2
-	return callUsecodeEvent(2); // CONSTANT
+uint32 Item::callUsecodeEvent_anim() { // event 2
+	return callUsecodeEvent(2);        // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_cachein() {                       // event 4
-	return callUsecodeEvent(4); // CONSTANT
+uint32 Item::callUsecodeEvent_cachein() { // event 4
+	return callUsecodeEvent(4);           // CONSTANT
 }
 
 uint32 Item::callUsecodeEvent_hit(uint16 hitter, int16 hitforce) { // event 5
-	DynamicUCStack  arg_stack(4);
+	DynamicUCStack arg_stack(4);
 	arg_stack.push2(hitforce);
 	arg_stack.push2(hitter);
-	return callUsecodeEvent(5, arg_stack.access(), 4);  // CONSTANT 5
+	return callUsecodeEvent(5, arg_stack.access(), 4); // CONSTANT 5
 }
 
 uint32 Item::callUsecodeEvent_gotHit(uint16 hitter, int16 hitforce) { // event 6
-	DynamicUCStack  arg_stack(4);
+	DynamicUCStack arg_stack(4);
 	arg_stack.push2(hitforce);
 	arg_stack.push2(hitter);
-	return callUsecodeEvent(6, arg_stack.access(), 4);  // CONSTANT 6
+	return callUsecodeEvent(6, arg_stack.access(), 4); // CONSTANT 6
 }
 
-uint32 Item::callUsecodeEvent_hatch() {                         // event 7
-	return callUsecodeEvent(7);     // CONSTANT
+uint32 Item::callUsecodeEvent_hatch() { // event 7
+	return callUsecodeEvent(7);         // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_schedule(uint32 time) {           // event 8
-	DynamicUCStack  arg_stack(4);
+uint32 Item::callUsecodeEvent_schedule(uint32 time) { // event 8
+	DynamicUCStack arg_stack(4);
 	arg_stack.push4(time);
-	return callUsecodeEvent(8, arg_stack.access(), 4);  // CONSTANT 8
+	return callUsecodeEvent(8, arg_stack.access(), 4); // CONSTANT 8
 }
 
-uint32 Item::callUsecodeEvent_release() {                       // event 9
-	return callUsecodeEvent(9);     // CONSTANT
+uint32 Item::callUsecodeEvent_release() { // event 9
+	return callUsecodeEvent(9);           // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_combine() {                       // event C
-	return callUsecodeEvent(0xC);   // CONSTANT
+uint32 Item::callUsecodeEvent_combine() { // event C
+	return callUsecodeEvent(0xC);         // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_enterFastArea() {                 // event F
-	return callUsecodeEvent(0xF);   // CONSTANT
+uint32 Item::callUsecodeEvent_enterFastArea() { // event F
+	return callUsecodeEvent(0xF);               // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_leaveFastArea() {                 // event 10
-	return callUsecodeEvent(0x10);  // CONSTANT
+uint32 Item::callUsecodeEvent_leaveFastArea() { // event 10
+	return callUsecodeEvent(0x10);              // CONSTANT
 }
 
-uint32 Item::callUsecodeEvent_cast(uint16 unk) {                // event 11
-	DynamicUCStack  arg_stack(2);
+uint32 Item::callUsecodeEvent_cast(uint16 unk) { // event 11
+	DynamicUCStack arg_stack(2);
 	arg_stack.push2(unk);
 	return callUsecodeEvent(0x11, arg_stack.access(), 2); // CONSTANT 0x11
 }
 
-uint32 Item::callUsecodeEvent_justMoved() {                     // event 12
-	return callUsecodeEvent(0x12);  // CONSTANT
+uint32 Item::callUsecodeEvent_justMoved() { // event 12
+	return callUsecodeEvent(0x12);          // CONSTANT
 }
 
 uint32 Item::callUsecodeEvent_AvatarStoleSomething(uint16 unk) { // event 13
-	DynamicUCStack  arg_stack(2);
+	DynamicUCStack arg_stack(2);
 	arg_stack.push2(unk);
 	return callUsecodeEvent(0x13, arg_stack.access(), 2); // CONSTANT 0x13
 }
 
-uint32 Item::callUsecodeEvent_guardianBark(int16 unk) {         // event 15
-	DynamicUCStack  arg_stack(2);
+uint32 Item::callUsecodeEvent_guardianBark(int16 unk) { // event 15
+	DynamicUCStack arg_stack(2);
 	arg_stack.push2(unk);
 	return callUsecodeEvent(0x15, arg_stack.access(), 2); // CONSTANT 0x15
 }
@@ -1159,7 +1192,8 @@ void Item::destroy(bool delnow) {
 		// we're in a container, so remove self from _parent
 		//!! need to make sure this works for equipped items too...
 		Container *p = getParentAsContainer();
-		if (p) p->removeItem(this);
+		if (p)
+			p->removeItem(this);
 	} else if (_extendedFlags & EXT_INCURMAP) {
 		// remove self from CurrentMap
 		World::get_instance()->getCurrentMap()->removeItemFromList(this, _x, _y);
@@ -1195,8 +1229,8 @@ void Item::setupLerp(int32 gametick) {
 	// No lerping this _frame if Shape Changed, or No lerp is set,
 	// or no last setup, or last setup more than 1 tick ago
 	if ((_lastSetup == 0) || (_lNext._shape != _shape) ||
-	        (_extendedFlags & EXT_LERP_NOPREV) ||
-	        (gametick - _lastSetup) > 1 || _flags & FLG_CONTAINED)
+	    (_extendedFlags & EXT_LERP_NOPREV) ||
+	    (gametick - _lastSetup) > 1 || _flags & FLG_CONTAINED)
 		no_lerp = true;
 
 	// Update the time we were just setup
@@ -1206,10 +1240,12 @@ void Item::setupLerp(int32 gametick) {
 	_extendedFlags &= ~EXT_LERP_NOPREV;
 
 	// Animate it, if needed
-	if ((gametick % 3) == (_objId % 3)) animateItem();
+	if ((gametick % 3) == (_objId % 3))
+		animateItem();
 
 	// Setup the prev values for lerping
-	if (!no_lerp) _lPrev = _lNext;
+	if (!no_lerp)
+		_lPrev = _lNext;
 
 	// Setup next
 	if (_flags & FLG_CONTAINED) {
@@ -1225,7 +1261,8 @@ void Item::setupLerp(int32 gametick) {
 	_lNext._frame = _frame;
 
 	// Setup prev values for not lerping
-	if (no_lerp) _lPrev = _lNext;
+	if (no_lerp)
+		_lPrev = _lNext;
 }
 
 // Animate the item
@@ -1233,7 +1270,8 @@ void Item::animateItem() {
 	ShapeInfo *info = getShapeInfo();
 	Shape *shp = getShapeObject();
 
-	if (!info->_animType) return;
+	if (!info->_animType)
+		return;
 
 	int anim_data = info->_animData;
 	//bool dirty = false;
@@ -1244,30 +1282,35 @@ void Item::animateItem() {
 	switch (info->_animType) {
 	case 2:
 		// 50 % chance
-		if (getRandom() & 1) break;
+		if (getRandom() & 1)
+			break;
 		// Intentional fall-through
 
 	case 1:
 	case 3:
 		// 50 % chance
-		if (anim_data == 1 && (getRandom() & 1)) break;
-		_frame ++;
+		if (anim_data == 1 && (getRandom() & 1))
+			break;
+		_frame++;
 		if (anim_data < 2) {
-			if (shp && _frame == shp->frameCount()) _frame = 0;
+			if (shp && _frame == shp->frameCount())
+				_frame = 0;
 		} else {
 			unsigned int num = (_frame - 1) / anim_data;
-			if (_frame == ((num + 1)*anim_data)) _frame = num * anim_data;
+			if (_frame == ((num + 1) * anim_data))
+				_frame = num * anim_data;
 		}
 		//dirty = true;
 		break;
 
 	case 4:
-		if (!(getRandom() % anim_data)) break;
-		_frame ++;
-		if (shp && _frame == shp->frameCount()) _frame = 0;
+		if (!(getRandom() % anim_data))
+			break;
+		_frame++;
+		if (shp && _frame == shp->frameCount())
+			_frame = 0;
 		//dirty = true;
 		break;
-
 
 	case 5:
 		callUsecodeEvent_anim();
@@ -1276,14 +1319,18 @@ void Item::animateItem() {
 
 	case 6:
 		if (anim_data < 2) {
-			if (_frame == 0) break;
-			_frame ++;
-			if (shp && _frame == shp->frameCount()) _frame = 1;
+			if (_frame == 0)
+				break;
+			_frame++;
+			if (shp && _frame == shp->frameCount())
+				_frame = 1;
 		} else {
-			if (!(_frame % anim_data)) break;
-			_frame ++;
+			if (!(_frame % anim_data))
+				break;
+			_frame++;
 			unsigned int num = (_frame - 1) / anim_data;
-			if (_frame == ((num + 1)*anim_data)) _frame = num * anim_data + 1;
+			if (_frame == ((num + 1) * anim_data))
+				_frame = num * anim_data + 1;
 		}
 		//dirty = true;
 		break;
@@ -1295,11 +1342,11 @@ void Item::animateItem() {
 	//return dirty;
 }
 
-
 // Called when an item has entered the fast area
 void Item::enterFastArea() {
 	//!! HACK to get rid of endless SFX loops
-	if (_shape == 0x2c8) return;
+	if (_shape == 0x2c8)
+		return;
 
 	// Call usecode
 	if (!(_flags & FLG_FASTAREA)) {
@@ -1320,13 +1367,14 @@ void Item::enterFastArea() {
 void Item::leaveFastArea() {
 	// Call usecode
 	if ((!(_flags & FLG_FAST_ONLY) || getShapeInfo()->is_noisy()) &&
-	        (_flags & FLG_FASTAREA))
+	    (_flags & FLG_FASTAREA))
 		callUsecodeEvent_leaveFastArea();
 
 	// If we have a _gump open, close it (unless we're in a container)
 	if (!_parent && (_flags & FLG_GUMP_OPEN)) {
 		Gump *g = Ultima8Engine::get_instance()->getGump(_gump);
-		if (g) g->Close();
+		if (g)
+			g->Close();
 	}
 
 	// Unset the flag
@@ -1339,7 +1387,8 @@ void Item::leaveFastArea() {
 	if ((_flags & FLG_FAST_ONLY) && !getParent()) {
 		// destroy contents if container
 		Container *c = p_dynamic_cast<Container *>(this);
-		if (c) c->destroyContents();
+		if (c)
+			c->destroyContents();
 
 		destroy();
 		// NB: destroy() creates an DestroyItemProcess to actually
@@ -1357,24 +1406,22 @@ void Item::leaveFastArea() {
 }
 
 uint16 Item::openGump(uint32 gumpshape) {
-	if (_flags & FLG_GUMP_OPEN) return 0;
+	if (_flags & FLG_GUMP_OPEN)
+		return 0;
 	assert(_gump == 0);
 	Shape *shapeP = GameData::get_instance()->getGumps()->getShape(gumpshape);
 
 	ContainerGump *cgump;
 
 	if (getObjId() != 1) { //!! constant
-		cgump = new ContainerGump(shapeP, 0, _objId, Gump::FLAG_ITEM_DEPENDENT |
-		                          Gump::FLAG_DRAGGABLE);
+		cgump = new ContainerGump(shapeP, 0, _objId, Gump::FLAG_ITEM_DEPENDENT | Gump::FLAG_DRAGGABLE);
 	} else {
-		cgump = new PaperdollGump(shapeP, 0, _objId, Gump::FLAG_ITEM_DEPENDENT |
-		                          Gump::FLAG_DRAGGABLE);
+		cgump = new PaperdollGump(shapeP, 0, _objId, Gump::FLAG_ITEM_DEPENDENT | Gump::FLAG_DRAGGABLE);
 	}
 	//!!TODO: clean up the way this is set
 	//!! having the itemarea associated with the shapeP through the
 	//!! GumpShapeFlex maybe
-	cgump->setItemArea(GameData::get_instance()->
-	                   getGumps()->getGumpItemArea(gumpshape));
+	cgump->setItemArea(GameData::get_instance()->getGumps()->getGumpItemArea(gumpshape));
 	cgump->InitGump(0);
 	_flags |= FLG_GUMP_OPEN;
 	_gump = cgump->getObjId();
@@ -1383,7 +1430,8 @@ uint16 Item::openGump(uint32 gumpshape) {
 }
 
 void Item::closeGump() {
-	if (!(_flags & FLG_GUMP_OPEN)) return;
+	if (!(_flags & FLG_GUMP_OPEN))
+		return;
 
 	Gump *g = Ultima8Engine::get_instance()->getGump(_gump);
 	assert(g);
@@ -1394,16 +1442,16 @@ void Item::closeGump() {
 	clearGump();
 }
 
-
 void Item::clearGump() {
 	_gump = 0;
 	_flags &= ~FLG_GUMP_OPEN;
 }
 
 int32 Item::ascend(int delta) {
-//	pout << "Ascend: _objId=" << getObjId() << ", delta=" << delta << Std::endl;
+	//	pout << "Ascend: _objId=" << getObjId() << ", delta=" << delta << Std::endl;
 
-	if (delta == 0) return 0x4000;
+	if (delta == 0)
+		return 0x4000;
 
 	// * gather all items on top of this item (recursively?)
 	// * etherealize all those items to get them out of the way
@@ -1418,8 +1466,10 @@ int32 Item::ascend(int delta) {
 	                                      this, true, false, false);
 	for (uint32 i = 0; i < uclist.getSize(); i++) {
 		Item *item = getItem(uclist.getuint16(i));
-		if (!item) continue;
-		if (item->getShapeInfo()->is_fixed()) continue;
+		if (!item)
+			continue;
+		if (item->getShapeInfo()->is_fixed())
+			continue;
 
 		item->moveToEtherealVoid();
 	}
@@ -1430,13 +1480,15 @@ int32 Item::ascend(int delta) {
 	int dist = collideMove(xv, yv, zv + delta, false, false);
 	delta = (delta * dist) / 0x4000;
 
-//	pout << "Ascend: dist=" << dist << Std::endl;
+	//	pout << "Ascend: dist=" << dist << Std::endl;
 
 	// move other items
 	for (uint32 i = 0; i < uclist.getSize(); i++) {
 		Item *item = getItem(uclist.getuint16(i));
-		if (!item) continue;
-		if (item->getShapeInfo()->is_fixed()) continue;
+		if (!item)
+			continue;
+		if (item->getShapeInfo()->is_fixed())
+			continue;
 
 		item->getLocation(_ix, _iy, _iz);
 
@@ -1446,7 +1498,8 @@ int32 Item::ascend(int delta) {
 			// uh oh...
 			// CHECKME: what do we do here?
 			item->move(_ix, _iy, _iz);
-			if (delta < 0) item->fall();
+			if (delta < 0)
+				item->fall();
 		}
 	}
 
@@ -1457,7 +1510,7 @@ GravityProcess *Item::ensureGravityProcess() {
 	GravityProcess *p;
 	if (_gravityPid) {
 		p = p_dynamic_cast<GravityProcess *>(
-		        Kernel::get_instance()->getProcess(_gravityPid));
+		    Kernel::get_instance()->getProcess(_gravityPid));
 	} else {
 		p = new GravityProcess(this, 0);
 		Kernel::get_instance()->addProcess(p);
@@ -1488,7 +1541,8 @@ void Item::grab() {
 
 	for (uint32 i = 0; i < uclist.getSize(); i++) {
 		Item *item = getItem(uclist.getuint16(i));
-		if (!item) continue;
+		if (!item)
+			continue;
 		item->fall();
 	}
 
@@ -1499,19 +1553,17 @@ void Item::grab() {
 
 	for (uint32 i = 0; i < uclist.getSize(); i++) {
 		Item *item = getItem(uclist.getuint16(i));
-		if (!item) continue;
+		if (!item)
+			continue;
 		item->callUsecodeEvent_release();
 	}
-
 }
-
 
 void Item::hurl(int xs, int ys, int zs, int grav) {
 	GravityProcess *p = ensureGravityProcess();
 	p->setGravity(grav);
 	p->move(xs, ys, zs);
 }
-
 
 void Item::explode() {
 	Process *p = new SpriteProcess(578, 20, 34, 1, 1, //!! constants
@@ -1520,7 +1572,8 @@ void Item::explode() {
 
 	int sfx = (getRandom() % 2) ? 31 : 158;
 	AudioProcess *audioproc = AudioProcess::get_instance();
-	if (audioproc) audioproc->playSFX(sfx, 0x60, 0, 0);
+	if (audioproc)
+		audioproc->playSFX(sfx, 0x60, 0, 0);
 
 	int32 xv, yv, zv;
 	getLocation(xv, yv, zv);
@@ -1536,8 +1589,10 @@ void Item::explode() {
 
 	for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
 		Item *item = getItem(itemlist.getuint16(i));
-		if (!item) continue;
-		if (getRange(*item, true) > 160) continue; // check vertical distance
+		if (!item)
+			continue;
+		if (getRange(*item, true) > 160)
+			continue; // check vertical distance
 
 		item->getLocation(xv, yv, zv);
 		int dir = Get_WorldDirection(xv - xv, yv - yv); //!! CHECKME
@@ -1585,13 +1640,16 @@ void Item::receiveHit(uint16 other, int dir, int damage, uint16 type) {
 
 bool Item::canDrag() {
 	ShapeInfo *si = getShapeInfo();
-	if (si->is_fixed()) return false;
-	if (si->_weight == 0) return false;
+	if (si->is_fixed())
+		return false;
+	if (si->_weight == 0)
+		return false;
 
 	Actor *actor = p_dynamic_cast<Actor *>(this);
 	if (actor) {
 		// living actors can't be moved
-		if (!actor->isDead()) return false;
+		if (!actor->isDead())
+			return false;
 	}
 
 	// CHECKME: might need more checks here (weight?)
@@ -1600,12 +1658,14 @@ bool Item::canDrag() {
 }
 
 int Item::getThrowRange() {
-	if (!canDrag()) return 0;
+	if (!canDrag())
+		return 0;
 
 	Actor *avatar = getMainActor();
 
 	int range = 64 - getTotalWeight() + avatar->getStr();
-	if (range < 1) range = 1;
+	if (range < 1)
+		range = 1;
 	range = (range * range) / 2;
 
 	return range;
@@ -1619,14 +1679,16 @@ static bool checkLineOfSightCollisions(
 	int32 blocked_time = 0x4000;
 	for (it = collisions.begin(); it != collisions.end(); it++) {
 		// ignore self and other
-		if (it->_item == item) continue;
+		if (it->_item == item)
+			continue;
 		if (it->_item == other && !usingAlternatePos) {
 			other_hit_time = it->_hitTime;
 			continue;
 		}
 
 		// only touching?
-		if (it->_touching) continue;
+		if (it->_touching)
+			continue;
 
 		// hit something
 		if (it->_blocking && it->_hitTime < blocked_time) {
@@ -1664,16 +1726,19 @@ bool Item::canReach(Item *other, int range,
 	otherYmin = otherY - otherYd;
 
 	// if items are further away than range in any direction, return false
-	if (thisXmin - otherX > range) return false;
-	if (otherXmin - thisX > range) return false;
-	if (thisYmin - otherY > range) return false;
-	if (otherYmin - thisY > range) return false;
-
+	if (thisXmin - otherX > range)
+		return false;
+	if (otherXmin - thisX > range)
+		return false;
+	if (thisYmin - otherY > range)
+		return false;
+	if (otherYmin - thisY > range)
+		return false;
 
 	// if not, do line of sight between origins of items
 	int32 start[3];
 	int32 end[3];
-	int32 dims[3] = { 2, 2, 2 };
+	int32 dims[3] = {2, 2, 2};
 
 	start[0] = thisX;
 	start[1] = thisY;
@@ -1724,18 +1789,23 @@ bool Item::canReach(Item *other, int range,
 
 bool Item::canMergeWith(Item *other) {
 	// can't merge with self
-	if (other->getObjId() == getObjId()) return false;
+	if (other->getObjId() == getObjId())
+		return false;
 
-	if (other->getShape() != getShape()) return false;
+	if (other->getShape() != getShape())
+		return false;
 
 	int family = getFamily();
-	if (family == ShapeInfo::SF_QUANTITY) return true;
+	if (family == ShapeInfo::SF_QUANTITY)
+		return true;
 
-	if (family != ShapeInfo::SF_REAGENT) return false;
+	if (family != ShapeInfo::SF_REAGENT)
+		return false;
 
 	uint32 frame1 = getFrame();
 	uint32 frame2 = other->getFrame();
-	if (frame1 == frame2) return true;
+	if (frame1 == frame2)
+		return true;
 
 	// special cases: necromancy reagents, _shape 395
 	// blood: _frame 0-5
@@ -1745,7 +1815,8 @@ bool Item::canMergeWith(Item *other) {
 	// ex.hood: _frame 10-12
 	// blackmoor: _frame 14-15
 	if (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_U8) {
-		if (getShape() != 395) return false;
+		if (getShape() != 395)
+			return false;
 
 		if (frame1 <= 5 && frame2 <= 5)
 			return true;
@@ -1758,7 +1829,6 @@ bool Item::canMergeWith(Item *other) {
 	}
 	return false;
 }
-
 
 void Item::saveData(Common::WriteStream *ws) {
 	Object::saveData(ws);
@@ -1782,7 +1852,8 @@ void Item::saveData(Common::WriteStream *ws) {
 }
 
 bool Item::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Object::loadData(rs, version)) return false;
+	if (!Object::loadData(rs, version))
+		return false;
 
 	_extendedFlags = rs->readUint16LE();
 	_flags = rs->readUint16LE();
@@ -1815,7 +1886,6 @@ bool Item::loadData(Common::ReadStream *rs, uint32 version) {
 	return true;
 }
 
-
 uint32 Item::I_touch(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL32(); // ARG_ITEM_FROM_PTR(item);
 
@@ -1827,7 +1897,8 @@ uint32 Item::I_touch(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getX(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
@@ -1836,7 +1907,8 @@ uint32 Item::I_getX(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getY(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
@@ -1845,7 +1917,8 @@ uint32 Item::I_getY(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getZ(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
@@ -1854,7 +1927,8 @@ uint32 Item::I_getZ(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getCX(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
@@ -1867,7 +1941,8 @@ uint32 Item::I_getCX(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
@@ -1880,7 +1955,8 @@ uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getCZ(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
@@ -1891,7 +1967,8 @@ uint32 Item::I_getCZ(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UC_PTR(ptr);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
@@ -1908,7 +1985,8 @@ uint32 Item::I_getPoint(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getShape(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getShape();
 }
@@ -1916,7 +1994,8 @@ uint32 Item::I_getShape(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_setShape(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(_shape);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->setShape(_shape);
 	return 0;
@@ -1924,7 +2003,8 @@ uint32 Item::I_setShape(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getFrame(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getFrame();
 }
@@ -1932,7 +2012,8 @@ uint32 Item::I_getFrame(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_setFrame(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(_frame);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->setFrame(_frame);
 	return 0;
@@ -1940,7 +2021,8 @@ uint32 Item::I_setFrame(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getQuality(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	if (item->getFamily() == ShapeInfo::SF_QUALITY)
 		return item->getQuality();
@@ -1950,7 +2032,8 @@ uint32 Item::I_getQuality(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getUnkEggType(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	if (item->getFamily() == ShapeInfo::SF_UNKEGG) {
 		if (GAME_IS_U8) {
@@ -1965,10 +2048,11 @@ uint32 Item::I_getUnkEggType(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getQuantity(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	if (item->getFamily() == ShapeInfo::SF_QUANTITY ||
-	        item->getFamily() == ShapeInfo::SF_REAGENT)
+	    item->getFamily() == ShapeInfo::SF_REAGENT)
 		return item->getQuality();
 	else
 		return 0;
@@ -1976,7 +2060,8 @@ uint32 Item::I_getQuantity(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getContainer(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	//! What do we do if item has no _parent?
 	//! What do we do with equipped items?
@@ -1989,14 +2074,16 @@ uint32 Item::I_getContainer(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getRootContainer(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	Container *_parent = item->getParentAsContainer();
 
 	//! What do we do if item has no _parent?
 	//! What do we do with equipped items?
 
-	if (!_parent) return 0;
+	if (!_parent)
+		return 0;
 
 	while (_parent->getParentAsContainer()) {
 		_parent = _parent->getParentAsContainer();
@@ -2007,21 +2094,24 @@ uint32 Item::I_getRootContainer(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getQ(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getQuality();
 }
 
 uint32 Item::I_getQLo(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getQuality() & 0xFF;
 }
 
 uint32 Item::I_getQHi(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return (item->getQuality() >> 8) & 0xFF;
 }
@@ -2029,7 +2119,8 @@ uint32 Item::I_getQHi(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_setQ(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(q);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->setQuality(q);
 	return 0;
@@ -2038,7 +2129,8 @@ uint32 Item::I_setQ(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_setQLo(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(q);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	uint16 iq = item->getQuality() & 0xFF00;
 
@@ -2049,7 +2141,8 @@ uint32 Item::I_setQLo(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_setQHi(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(q);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	uint16 iq = item->getQuality() & 0x00FF;
 
@@ -2060,7 +2153,8 @@ uint32 Item::I_setQHi(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_setQuality(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(q);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	if (item->getFamily() != ShapeInfo::SF_GENERIC)
 		item->setQuality(q);
@@ -2071,10 +2165,11 @@ uint32 Item::I_setQuality(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_setQuantity(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(q);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	if (item->getFamily() == ShapeInfo::SF_QUANTITY ||
-	        item->getFamily() == ShapeInfo::SF_REAGENT)
+	    item->getFamily() == ShapeInfo::SF_REAGENT)
 		item->setQuality(q);
 
 	return 0;
@@ -2082,7 +2177,8 @@ uint32 Item::I_setQuantity(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getFamily(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getFamily();
 }
@@ -2090,7 +2186,8 @@ uint32 Item::I_getFamily(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_getTypeFlag(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(typeflag);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	ShapeInfo *info = item->getShapeInfo();
 
@@ -2107,7 +2204,8 @@ uint32 Item::I_getTypeFlag(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getStatus(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getFlags();
 }
@@ -2115,7 +2213,8 @@ uint32 Item::I_getStatus(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_orStatus(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(mask);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->_flags |= mask;
 	return 0;
@@ -2124,7 +2223,8 @@ uint32 Item::I_orStatus(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_andStatus(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(mask);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->_flags &= mask;
 	return 0;
@@ -2133,7 +2233,8 @@ uint32 Item::I_andStatus(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_ascend(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_SINT16(delta);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int dist = item->ascend(delta);
 
@@ -2145,15 +2246,17 @@ uint32 Item::I_ascend(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getWeight(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getWeight();
 }
 
 uint32 Item::I_getWeightIncludingContents(const uint8 *args,
-        unsigned int /*argsize*/) {
+                                          unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getTotalWeight();
 }
@@ -2161,11 +2264,14 @@ uint32 Item::I_getWeightIncludingContents(const uint8 *args,
 uint32 Item::I_bark(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_STRING(str);
-	if (id_item == 666) item = getItem(1);
-	if (!item) return 0;    // Hack!
+	if (id_item == 666)
+		item = getItem(1);
+	if (!item)
+		return 0; // Hack!
 
 	uint32 shapenum = item->getShape();
-	if (id_item == 666) shapenum = 666; // Hack for guardian barks
+	if (id_item == 666)
+		shapenum = 666; // Hack for guardian barks
 	Gump *_gump = new BarkGump(item->getObjId(), str, shapenum);
 
 	if (item->getObjId() < 256) { // CONSTANT!
@@ -2182,14 +2288,16 @@ uint32 Item::I_bark(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_look(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->callUsecodeEvent_look();
 }
 
 uint32 Item::I_use(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->callUsecodeEvent_use();
 }
@@ -2198,15 +2306,16 @@ uint32 Item::I_gotHit(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(hitter);
 	ARG_SINT16(unk);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->callUsecodeEvent_gotHit(hitter, unk);
 }
 
-
 uint32 Item::I_enterFastArea(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->callUsecodeEvent_enterFastArea();
 }
@@ -2215,7 +2324,8 @@ uint32 Item::I_ask(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_NULL32(); // ARG_ITEM_FROM_PTR(item); // currently unused.
 	ARG_LIST(answers);
 
-	if (!answers) return 0;
+	if (!answers)
+		return 0;
 
 	// Use AskGump
 	Gump *_gump = new AskGump(1, answers);
@@ -2328,7 +2438,8 @@ uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_destroy(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item || item->getObjId() == 1) return 0;
+	if (!item || item->getObjId() == 1)
+		return 0;
 
 	item->destroy();
 
@@ -2340,7 +2451,8 @@ uint32 Item::I_getFootpadData(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UC_PTR(xptr);
 	ARG_UC_PTR(yptr);
 	ARG_UC_PTR(zptr);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	uint8 buf[2];
 	int32 x, y, z;
@@ -2364,8 +2476,10 @@ uint32 Item::I_getFootpadData(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_overlaps(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_ITEM_FROM_ID(item2);
-	if (!item) return 0;
-	if (!item2) return 0;
+	if (!item)
+		return 0;
+	if (!item2)
+		return 0;
 
 	if (item->overlaps(*item2))
 		return 1;
@@ -2376,8 +2490,10 @@ uint32 Item::I_overlaps(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_overlapsXY(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_ITEM_FROM_ID(item2);
-	if (!item) return 0;
-	if (!item2) return 0;
+	if (!item)
+		return 0;
+	if (!item2)
+		return 0;
 
 	if (item->overlapsxy(*item2))
 		return 1;
@@ -2388,8 +2504,10 @@ uint32 Item::I_overlapsXY(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_isOn(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_ITEM_FROM_ID(item2);
-	if (!item) return 0;
-	if (!item2) return 0;
+	if (!item)
+		return 0;
+	if (!item2)
+		return 0;
 
 	if (item->isOn(*item2))
 		return 1;
@@ -2400,13 +2518,13 @@ uint32 Item::I_isOn(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_getFamilyOfType(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(_shape);
 
-	return GameData::get_instance()->getMainShapes()->
-	       getShapeInfo(_shape)->_family;
+	return GameData::get_instance()->getMainShapes()->getShapeInfo(_shape)->_family;
 }
 
 uint32 Item::I_push(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->moveToEtherealVoid();
 
@@ -2446,7 +2564,8 @@ uint32 Item::I_pop(const uint8 *args, unsigned int /*argsize*/) {
 
 	World *w = World::get_instance();
 
-	if (w->etherealEmpty()) return 0; // no items left on stack
+	if (w->etherealEmpty())
+		return 0; // no items left on stack
 
 	uint16 _objId = w->etherealPeek();
 	Item *item = getItem(_objId);
@@ -2474,7 +2593,8 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 
 	World *w = World::get_instance();
 
-	if (w->etherealEmpty()) return 0; // no items left on stack
+	if (w->etherealEmpty())
+		return 0; // no items left on stack
 
 	uint16 _objId = w->etherealPeek();
 	Item *item = getItem(_objId);
@@ -2505,7 +2625,8 @@ uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
 
 	World *w = World::get_instance();
 
-	if (w->etherealEmpty()) return 0; // no items left on stack
+	if (w->etherealEmpty())
+		return 0; // no items left on stack
 
 	uint16 _objId = w->etherealPeek();
 	Item *item = getItem(_objId);
@@ -2532,7 +2653,8 @@ uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 
 	World *w = World::get_instance();
 
-	if (w->etherealEmpty()) return 0; // no items left on stack
+	if (w->etherealEmpty())
+		return 0; // no items left on stack
 
 	uint16 _objId = w->etherealPeek();
 	Item *item = getItem(_objId);
@@ -2556,7 +2678,8 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(_x);
 	ARG_UINT16(_y);
 	ARG_UINT16(_z);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	//! What should this do to ethereal items?
 
@@ -2568,24 +2691,25 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_WORLDPOINT(point);
-	ARG_UINT16(force); // 0/1
+	ARG_UINT16(force);    // 0/1
 	ARG_UINT16(unknown2); // always 0
 
 	//! What should this do to ethereal items?
 
-//	if (item->canExistAt(point.getX(), point.getY(), point.getZ())) {
-//		item->move(point.getX(), point.getY(), point.getZ());
-//		return 1;
-//	} else {
+	//	if (item->canExistAt(point.getX(), point.getY(), point.getZ())) {
+	//		item->move(point.getX(), point.getY(), point.getZ());
+	//		return 1;
+	//	} else {
 	return item->collideMove(point.getX(), point.getY(), point.getZ(), false, force == 1) == 0x4000;
-//	}
+	//	}
 }
 
 uint32 Item::I_legalMoveToContainer(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_CONTAINER_FROM_PTR(container);
 	ARG_UINT16(unknown); // always 0
-	if (!item || !container) return 0; // shouldn't happen?
+	if (!item || !container)
+		return 0; // shouldn't happen?
 
 	// try to move item to container checking weight and volume
 	return item->moveToContainer(container, true);
@@ -2593,15 +2717,16 @@ uint32 Item::I_legalMoveToContainer(const uint8 *args, unsigned int /*argsize*/)
 
 uint32 Item::I_getEtherealTop(const uint8 * /*args*/, unsigned int /*argsize*/) {
 	World *w = World::get_instance();
-	if (w->etherealEmpty()) return 0; // no items left on stack
+	if (w->etherealEmpty())
+		return 0; // no items left on stack
 	return w->etherealPeek();
 }
-
 
 //!!! is this correct?
 uint32 Item::I_getMapArray(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getMapNum();
 }
@@ -2610,7 +2735,8 @@ uint32 Item::I_getMapArray(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_setMapArray(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(_mapNum);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->setMapNum(_mapNum);
 	return 0;
@@ -2618,7 +2744,8 @@ uint32 Item::I_setMapArray(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_getNpcNum(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->getNpcNum();
 }
@@ -2627,7 +2754,8 @@ uint32 Item::I_getDirToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(_x);
 	ARG_UINT16(_y);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
@@ -2639,7 +2767,8 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(_x);
 	ARG_UINT16(_y);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
@@ -2650,8 +2779,10 @@ uint32 Item::I_getDirFromCoords(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_ITEM_FROM_ID(item2);
-	if (!item) return 0;
-	if (!item2) return 0;
+	if (!item)
+		return 0;
+	if (!item2)
+		return 0;
 
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
@@ -2665,8 +2796,10 @@ uint32 Item::I_getDirToItem(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_getDirFromItem(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_ITEM_FROM_ID(item2);
-	if (!item) return 0;
-	if (!item2) return 0;
+	if (!item)
+		return 0;
+	if (!item2)
+		return 0;
 
 	int32 ix, iy, iz;
 	item->getLocationAbsolute(ix, iy, iz);
@@ -2683,7 +2816,8 @@ uint32 Item::I_hurl(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_SINT16(ys);
 	ARG_SINT16(zs);
 	ARG_SINT16(grav);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->hurl(xs, ys, zs, grav);
 
@@ -2693,9 +2827,10 @@ uint32 Item::I_hurl(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_shoot(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_WORLDPOINT(point);
-	ARG_UINT16(speed); // either 0x20 (fish) or 0x40 (death disk, dart)
+	ARG_UINT16(speed);   // either 0x20 (fish) or 0x40 (death disk, dart)
 	ARG_UINT16(gravity); // either 2 (fish) or 1 (death disk, dart)
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	MissileTracker tracker(item, point.getX(), point.getY(), point.getZ(),
 	                       speed, gravity);
@@ -2706,7 +2841,8 @@ uint32 Item::I_shoot(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_fall(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->fall();
 
@@ -2715,7 +2851,8 @@ uint32 Item::I_fall(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_grab(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->grab();
 
@@ -2731,7 +2868,7 @@ uint32 Item::I_getSliderInput(const uint8 *args, unsigned int /*argsize*/) {
 	UCProcess *current = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getRunningProcess());
 	assert(current);
 
-//	pout << "SliderGump: min=" << minval << ", max=" << maxval << ", step=" << step << Std::endl;
+	//	pout << "SliderGump: min=" << minval << ", max=" << maxval << ", step=" << step << Std::endl;
 
 	SliderGump *_gump = new SliderGump(100, 100, minval, maxval, minval, step);
 	_gump->InitGump(0); // modal _gump
@@ -2745,7 +2882,8 @@ uint32 Item::I_getSliderInput(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_openGump(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(gumpshape);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->openGump(gumpshape);
 	return 0;
@@ -2753,7 +2891,8 @@ uint32 Item::I_openGump(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_closeGump(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->closeGump();
 	return 0;
@@ -2762,14 +2901,16 @@ uint32 Item::I_closeGump(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_guardianBark(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_UINT16(num);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	return item->callUsecodeEvent_guardianBark(num);
 }
 
 uint32 Item::I_getSurfaceWeight(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE);
@@ -2780,7 +2921,8 @@ uint32 Item::I_getSurfaceWeight(const uint8 *args, unsigned int /*argsize*/) {
 	uint32 weight = 0;
 	for (uint32 i = 0; i < uclist.getSize(); i++) {
 		Item *other = getItem(uclist.getuint16(i));
-		if (!other) continue;
+		if (!other)
+			continue;
 		weight += other->getTotalWeight();
 	}
 
@@ -2789,7 +2931,8 @@ uint32 Item::I_getSurfaceWeight(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_isExplosive(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 	return item->getShapeInfo()->is_explode() ? 1 : 0;
 }
 
@@ -2798,8 +2941,9 @@ uint32 Item::I_receiveHit(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(other);
 	ARG_SINT16(dir);
 	ARG_SINT16(damage); // force of the hit
-	ARG_UINT16(type); // hit type
-	if (!item) return 0;
+	ARG_UINT16(type);   // hit type
+	if (!item)
+		return 0;
 
 	item->receiveHit(other, dir, damage, type);
 
@@ -2808,7 +2952,8 @@ uint32 Item::I_receiveHit(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_explode(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
-	if (!item) return 0;
+	if (!item)
+		return 0;
 
 	item->explode();
 	return 0;
@@ -2827,7 +2972,8 @@ uint32 Item::I_igniteChaos(const uint8 *args, unsigned int /*argsize*/) {
 
 	for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
 		Item *item = getItem(itemlist.getuint16(i));
-		if (!item) continue;
+		if (!item)
+			continue;
 		item->use();
 	}
 
@@ -2847,12 +2993,13 @@ uint32 Item::I_canReach(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 }
 
-
 uint32 Item::I_getRange(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_ITEM_FROM_ID(other);
-	if (!item) return 0;
-	if (!other) return 0;
+	if (!item)
+		return 0;
+	if (!other)
+		return 0;
 
 	return item->getRange(*other);
 }
@@ -2860,11 +3007,13 @@ uint32 Item::I_getRange(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(sh);
 
-	if (sh == 0x7FE) return 1;
+	if (sh == 0x7FE)
+		return 1;
 
 	ShapeInfo *info;
 	info = GameData::get_instance()->getMainShapes()->getShapeInfo(sh);
-	if (!info) return 0;
+	if (!info)
+		return 0;
 
 	if (info->_flags & ShapeInfo::SI_CRUS_NPC)
 		return 1;

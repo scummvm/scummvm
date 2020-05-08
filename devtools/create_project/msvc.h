@@ -104,6 +104,6 @@ protected:
 	std::string getPostBuildEvent(bool isWin32, const BuildSetup &setup) const;
 };
 
-} // End of CreateProjectTool namespace
+} // namespace CreateProjectTool
 
 #endif // TOOLS_CREATE_PROJECT_MSVC_H

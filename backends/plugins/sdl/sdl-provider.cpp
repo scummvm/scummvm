@@ -24,8 +24,8 @@
 
 #if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)
 
-#include "backends/plugins/sdl/sdl-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "backends/plugins/sdl/sdl-provider.h"
 #include "common/fs.h"
 
 #include "backends/platform/sdl/sdl-sys.h"
@@ -51,7 +51,7 @@ protected:
 
 public:
 	SDLPlugin(const Common::String &filename)
-		: DynamicPlugin(filename), _dlHandle(0) {}
+	    : DynamicPlugin(filename), _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
@@ -74,10 +74,8 @@ public:
 	}
 };
 
-
-Plugin* SDLPluginProvider::createPlugin(const Common::FSNode &node) const {
+Plugin *SDLPluginProvider::createPlugin(const Common::FSNode &node) const {
 	return new SDLPlugin(node.getPath());
 }
-
 
 #endif // defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)

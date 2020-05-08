@@ -30,10 +30,10 @@
 namespace Glk {
 namespace Alan2 {
 
-extern Aword wrds[];    // List of Parsed Word 
-extern int wrdidx;      // and an index into it
+extern Aword wrds[]; // List of Parsed Word
+extern int wrdidx;   // and an index into it
 
-extern ParamElem *params;   // List of parameters
+extern ParamElem *params; // List of parameters
 extern Boolean plural;
 
 extern LitElem litValues[];

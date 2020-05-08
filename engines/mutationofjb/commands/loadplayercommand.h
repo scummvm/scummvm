@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_LOADPLAYERCOMMAND_H
 #define MUTATIONOFJB_LOADPLAYERCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/seqcommand.h"
 #include "mutationofjb/tasks/task.h"
 
 namespace MutationOfJB {
@@ -50,6 +50,6 @@ private:
 	Common::String _apkFileName;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

@@ -23,19 +23,19 @@
 #include "common/debug-channels.h"
 #include "engines/util.h"
 
-#include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
 #include "tsage/events.h"
-#include "tsage/resources.h"
 #include "tsage/globals.h"
+#include "tsage/resources.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
 TSageEngine *g_vm = NULL;
 
 TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) : Engine(system),
-		_gameDescription(gameDesc) {
+                                                                                  _gameDescription(gameDesc) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");
 
@@ -64,10 +64,9 @@ TSageEngine::~TSageEngine() {
 }
 
 bool TSageEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 void TSageEngine::initialize() {

@@ -38,59 +38,58 @@ namespace {
 #pragma mark - Builtin Shader Sources -
 
 const char *const g_defaultVertexShader =
-	"attribute vec4 position;\n"
-	"attribute vec2 texCoordIn;\n"
-	"attribute vec4 blendColorIn;\n"
-	"\n"
-	"uniform mat4 projection;\n"
-	"\n"
-	"varying vec2 texCoord;\n"
-	"varying vec4 blendColor;\n"
-	"\n"
-	"void main(void) {\n"
-	"\ttexCoord    = texCoordIn;\n"
-	"\tblendColor  = blendColorIn;\n"
-	"\tgl_Position = projection * position;\n"
-	"}\n";
+    "attribute vec4 position;\n"
+    "attribute vec2 texCoordIn;\n"
+    "attribute vec4 blendColorIn;\n"
+    "\n"
+    "uniform mat4 projection;\n"
+    "\n"
+    "varying vec2 texCoord;\n"
+    "varying vec4 blendColor;\n"
+    "\n"
+    "void main(void) {\n"
+    "\ttexCoord    = texCoordIn;\n"
+    "\tblendColor  = blendColorIn;\n"
+    "\tgl_Position = projection * position;\n"
+    "}\n";
 
 const char *const g_defaultFragmentShader =
-	"varying vec2 texCoord;\n"
-	"varying vec4 blendColor;\n"
-	"\n"
-	"uniform sampler2D shaderTexture;\n"
-	"\n"
-	"void main(void) {\n"
-	"\tgl_FragColor = blendColor * texture2D(shaderTexture, texCoord);\n"
-	"}\n";
+    "varying vec2 texCoord;\n"
+    "varying vec4 blendColor;\n"
+    "\n"
+    "uniform sampler2D shaderTexture;\n"
+    "\n"
+    "void main(void) {\n"
+    "\tgl_FragColor = blendColor * texture2D(shaderTexture, texCoord);\n"
+    "}\n";
 
 const char *const g_lookUpFragmentShader =
-	"varying vec2 texCoord;\n"
-	"varying vec4 blendColor;\n"
-	"\n"
-	"uniform sampler2D shaderTexture;\n"
-	"uniform sampler2D palette;\n"
-	"\n"
-	"const float adjustFactor = 255.0 / 256.0 + 1.0 / (2.0 * 256.0);"
-	"\n"
-	"void main(void) {\n"
-	"\tvec4 index = texture2D(shaderTexture, texCoord);\n"
-	"\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * adjustFactor, 0.0));\n"
-	"}\n";
-
+    "varying vec2 texCoord;\n"
+    "varying vec4 blendColor;\n"
+    "\n"
+    "uniform sampler2D shaderTexture;\n"
+    "uniform sampler2D palette;\n"
+    "\n"
+    "const float adjustFactor = 255.0 / 256.0 + 1.0 / (2.0 * 256.0);"
+    "\n"
+    "void main(void) {\n"
+    "\tvec4 index = texture2D(shaderTexture, texCoord);\n"
+    "\tgl_FragColor = blendColor * texture2D(palette, vec2(index.a * adjustFactor, 0.0));\n"
+    "}\n";
 
 // Taken from: https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_03#OpenGL_ES_2_portability
 const char *const g_precisionDefines =
-	"#ifdef GL_ES\n"
-	"\t#if defined(GL_FRAGMENT_PRECISION_HIGH) && GL_FRAGMENT_PRECISION_HIGH == 1\n"
-	"\t\tprecision highp float;\n"
-	"\t#else\n"
-	"\t\tprecision mediump float;\n"
-	"\t#endif\n"
-	"#else\n"
-	"\t#define highp\n"
-	"\t#define mediump\n"
-	"\t#define lowp\n"
-	"#endif\n";
+    "#ifdef GL_ES\n"
+    "\t#if defined(GL_FRAGMENT_PRECISION_HIGH) && GL_FRAGMENT_PRECISION_HIGH == 1\n"
+    "\t\tprecision highp float;\n"
+    "\t#else\n"
+    "\t\tprecision mediump float;\n"
+    "\t#endif\n"
+    "#else\n"
+    "\t#define highp\n"
+    "\t#define mediump\n"
+    "\t#define lowp\n"
+    "#endif\n";
 
 } // End of anonymous namespace
 
@@ -261,10 +260,9 @@ GLshader Shader::compileShader(const char *source, GLenum shaderType) {
 	}
 
 	const char *const shaderSources[] = {
-		versionSource,
-		g_precisionDefines,
-		source
-	};
+	    versionSource,
+	    g_precisionDefines,
+	    source};
 
 	GL_CALL(glShaderSource(handle, ARRAYSIZE(shaderSources), shaderSources, nullptr));
 	GL_CALL(glCompileShader(handle));

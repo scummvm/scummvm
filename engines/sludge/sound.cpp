@@ -26,8 +26,8 @@
 #include "common/memstream.h"
 
 #include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/decoders/wave.h"
 #include "audio/mods/mod_xm_s3m.h"
 
 #include "sludge/allfiles.h"
@@ -55,10 +55,10 @@ SoundManager::SoundManager() {
 SoundManager::~SoundManager() {
 	killSoundStuff();
 
-	delete []_soundCache;
+	delete[] _soundCache;
 	_soundCache = nullptr;
 
-	delete []_modCache;
+	delete[] _modCache;
 	_modCache = nullptr;
 }
 
@@ -138,7 +138,7 @@ void SoundManager::setDefaultSoundVolume(int v) {
 }
 
 void SoundManager::setSoundLoop(int a, int s, int e) {
-//#pragma unused (a,s,e)
+	//#pragma unused (a,s,e)
 }
 
 int SoundManager::findInSoundCache(int a) {
@@ -412,12 +412,12 @@ bool SoundManager::getSoundCacheStack(StackHandler *sH) {
 	return true;
 }
 
-bool SoundManager::deleteSoundFromList(SoundList*&s) {
+bool SoundManager::deleteSoundFromList(SoundList *&s) {
 	// Don't delete a playing sound.
 	if (s->cacheIndex)
 		return false;
 
-	SoundList*o = NULL;
+	SoundList *o = NULL;
 	if (!s->next) {
 		o = s->prev;
 		if (o)
@@ -442,7 +442,7 @@ void SoundManager::handleSoundLists() {
 		return;
 	_isHandlingSoundList = true;
 	for (SoundListHandles::iterator it = _soundListHandles.begin(); it != _soundListHandles.end(); ++it) {
-		SoundList*s = (*it);
+		SoundList *s = (*it);
 		int a = s->cacheIndex;
 		bool remove = false;
 		if (!g_sludge->_mixer->isSoundHandleActive(_soundCache[a].handle)) { // reach the end of stream
@@ -462,7 +462,7 @@ void SoundManager::handleSoundLists() {
 						while (deleteSoundFromList(s))
 							;
 						remove = (s == NULL); // s not null if still playing
-					} else { // repush the next sound list
+					} else {                  // repush the next sound list
 						s->next->vol = _soundCache[a].vol;
 						playSoundList(s->next);
 						remove = true; // remove this one
@@ -483,7 +483,7 @@ void SoundManager::handleSoundLists() {
 }
 
 // loop a list of sound
-void SoundManager::playSoundList(SoundList*s) {
+void SoundManager::playSoundList(SoundList *s) {
 	if (_soundOK) {
 		// Load sound
 		Audio::AudioStream *stream;
@@ -499,13 +499,12 @@ void SoundManager::playSoundList(SoundList*s) {
 			_soundCache[a].vol = _defSoundVol;
 		else
 			_soundCache[a].vol = s->vol;
-		s-> cacheIndex = a;
+		s->cacheIndex = a;
 		g_sludge->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundCache[a].handle, stream, -1, _soundCache[a].vol);
 		_soundCache[a].inSoundList = true;
 
 		// push sound list
 		_soundListHandles.push_back(s);
-
 	}
 }
 

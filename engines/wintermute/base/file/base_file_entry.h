@@ -52,7 +52,6 @@ public:
 	BasePackage *_package;
 	BaseFileEntry();
 	~BaseFileEntry() override;
-
 };
 
 } // End of namespace Wintermute

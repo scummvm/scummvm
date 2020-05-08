@@ -28,8 +28,8 @@
 #include <cxxabi.h>
 #endif
 
-#include "backends/plugins/elf/elf-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
+#include "backends/plugins/elf/elf-provider.h"
 #include "backends/plugins/elf/memory-manager.h"
 
 #include "common/debug.h"
@@ -94,7 +94,7 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	return tmp;
 }
 
- /**
+/**
   * Test the size of the plugin.
   */
 void ELFPlugin::trackSize() {
@@ -171,7 +171,7 @@ void ELFPlugin::unloadPlugin() {
 	}
 }
 
- /**
+/**
   * We override this function in FilePluginProvider to allow the single
   * plugin method to create a non-fragmenting memory allocation. We take
   * the plugins found and tell the memory manager to allocate space for
@@ -202,7 +202,7 @@ bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	Common::String filename = node.getName();
 
 	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") &&
-			!filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin"))
+	    !filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin"))
 		return false;
 
 	return true;

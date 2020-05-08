@@ -23,8 +23,8 @@
 #ifndef GLK_ALAN3_MEMORY
 #define GLK_ALAN3_MEMORY
 
-#include "glk/alan3/sysdep.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/sysdep.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -33,7 +33,6 @@ namespace Alan3 {
 extern Aword *memory;
 extern ACodeHeader *header;
 extern int memTop;
-
 
 /* FUNCTIONS */
 extern void *allocate(unsigned long lengthInBytes);

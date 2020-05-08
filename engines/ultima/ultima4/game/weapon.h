@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_GAME_WEAPON_H
 #define ULTIMA4_GAME_WEAPON_H
 
-#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/filesys/savegame.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -34,18 +34,19 @@ class Weapons;
 
 class Weapon {
 	friend class Weapons;
+
 public:
 	/**< Flags affecting weapon's behavior. @see Weapon::flags */
 	enum Flags {
-		WEAP_LOSE                   = 0x0001,   /**< lost when used */
-		WEAP_LOSEWHENRANGED         = 0x0002,   /**< lost when used for ranged attack */
-		WEAP_CHOOSEDISTANCE         = 0x0004,   /**< allows player to choose attack distance */
-		WEAP_ALWAYSHITS             = 0x0008,   /**< always hits it's target */
-		WEAP_MAGIC                  = 0x0010,   /**< is magical */
-		WEAP_ATTACKTHROUGHOBJECTS   = 0x0040,   /**< can attack through solid objects */
-		WEAP_ABSOLUTERANGE          = 0x0080,   /**< range is absolute (only works at specific distance) */
-		WEAP_RETURNS                = 0x0100,   /**< returns to user after used/thrown */
-		WEAP_DONTSHOWTRAVEL         = 0x0200    /**< do not show animations when attacking */
+		WEAP_LOSE = 0x0001,                 /**< lost when used */
+		WEAP_LOSEWHENRANGED = 0x0002,       /**< lost when used for ranged attack */
+		WEAP_CHOOSEDISTANCE = 0x0004,       /**< allows player to choose attack distance */
+		WEAP_ALWAYSHITS = 0x0008,           /**< always hits it's target */
+		WEAP_MAGIC = 0x0010,                /**< is magical */
+		WEAP_ATTACKTHROUGHOBJECTS = 0x0040, /**< can attack through solid objects */
+		WEAP_ABSOLUTERANGE = 0x0080,        /**< range is absolute (only works at specific distance) */
+		WEAP_RETURNS = 0x0100,              /**< returns to user after used/thrown */
+		WEAP_DONTSHOWTRAVEL = 0x0200        /**< do not show animations when attacking */
 	};
 
 public:
@@ -113,13 +114,13 @@ private:
 
 	WeaponType _type;
 	Common::String _name;
-	Common::String _abbr;            /**< abbreviation for the weapon */
-	byte _canUse;             /**< bitmask of classes that can use weapon */
-	int _range;              /**< range of weapon */
-	int _damage;             /**< damage of weapon */
-	Common::String _hitTile;         /**< tile to display a hit */
-	Common::String _missTile;        /**< tile to display a miss */
-	Common::String _leaveTile;       /**< if the weapon leaves a tile, the tile #, zero otherwise */
+	Common::String _abbr;      /**< abbreviation for the weapon */
+	byte _canUse;              /**< bitmask of classes that can use weapon */
+	int _range;                /**< range of weapon */
+	int _damage;               /**< damage of weapon */
+	Common::String _hitTile;   /**< tile to display a hit */
+	Common::String _missTile;  /**< tile to display a miss */
+	Common::String _leaveTile; /**< if the weapon leaves a tile, the tile #, zero otherwise */
 	unsigned short _flags;
 };
 
@@ -128,6 +129,7 @@ private:
 	bool _confLoaded;
 
 	void loadConf();
+
 public:
 	/**
 	 * Constructor

@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "gui/debugger.h"
 #include "glk/raw_decoder.h"
+#include "gui/debugger.h"
 
 namespace Glk {
 
@@ -43,11 +43,13 @@ private:
 	 * Dump a picture
 	 */
 	bool cmdDumpPic(int argc, const char **argv);
+
 protected:
 	/**
 	 * Convert a numeric string to an integer
 	 */
 	int strToInt(const char *s);
+
 public:
 	Debugger();
 };

@@ -23,8 +23,8 @@
 #ifndef NUVIE_CONF_CONFIG_NODE_H
 #define NUVIE_CONF_CONFIG_NODE_H
 
-#include "ultima/shared/std/string.h"
 #include "ultima/nuvie/conf/configuration.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -32,14 +32,14 @@ namespace Nuvie {
 class ConfigNode {
 	friend class Configuration;
 	ConfigNode(Configuration &config_, Std::string key_)
-		: config(config_), key(key_) {
+	    : config(config_), key(key_) {
 	}
 
 public:
-	~ConfigNode() { }
+	~ConfigNode() {}
 
 	// fix "assignment operator could not be generated" warning
-	const ConfigNode &operator = (const ConfigNode &other) {
+	const ConfigNode &operator=(const ConfigNode &other) {
 		config = other.config;
 		key = other.key;
 		return *this;
@@ -77,7 +77,6 @@ public:
 private:
 	Configuration &config;
 	Std::string key;
-
 };
 
 } // End of namespace Nuvie

@@ -34,8 +34,8 @@
  */
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
@@ -45,8 +45,8 @@
 
 #include "engines/util.h"
 
-#include "griffon/griffon.h"
 #include "griffon/console.h"
+#include "griffon/griffon.h"
 
 namespace Griffon {
 
@@ -186,4 +186,4 @@ Common::Error GriffonEngine::run() {
 	return Common::kNoError;
 }
 
-}
+} // namespace Griffon

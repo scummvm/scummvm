@@ -22,35 +22,35 @@
 
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
 
-extern struct object_type       *object[];
-extern struct integer_type      *integer_table;
-extern struct integer_type      *integer[];
-extern struct function_type     *function_table;
-extern struct string_type       *string_table;
+extern struct object_type *object[];
+extern struct integer_type *integer_table;
+extern struct integer_type *integer[];
+extern struct function_type *function_table;
+extern struct string_type *string_table;
 
-extern schanid_t                sound_channel[];
+extern schanid_t sound_channel[];
 
-extern char                     temp_buffer[];
+extern char temp_buffer[];
 
-extern int                      objects;
-extern int                      integers;
-extern int                      functions;
-extern int                      strings;
-extern int                      player;
+extern int objects;
+extern int integers;
+extern int functions;
+extern int strings;
+extern int player;
 
-extern int                      it;
-extern int                      them[];
-extern int                      her;
-extern int                      him;
-extern int                      parent;
+extern int it;
+extern int them[];
+extern int her;
+extern int him;
+extern int parent;
 
-extern int                      noun[];
+extern int noun[];
 
 bool save_game(strid_t save) {
 	integer_type *current_integer = integer_table;
@@ -124,10 +124,7 @@ bool restore_game(strid_t save, bool warn) {
 	file_functions = read_integer(save);
 	file_strings = read_integer(save);
 
-	if (file_objects != objects
-	        || file_integers != integers
-	        || file_functions != functions
-	        || file_strings != strings) {
+	if (file_objects != objects || file_integers != integers || file_functions != functions || file_strings != strings) {
 		if (warn == FALSE) {
 			log_error(cstring_resolve("BAD_SAVED_GAME")->value, PLUS_STDOUT);
 		}
@@ -175,7 +172,7 @@ bool restore_game(strid_t save, bool warn) {
 
 		if (SOUND_SUPPORTED->value) {
 			// Set the GLK volume
-			g_vm->glk_schannel_set_volume(sound_channel[index], (glui32) counter);
+			g_vm->glk_schannel_set_volume(sound_channel[index], (glui32)counter);
 		}
 	}
 
@@ -184,7 +181,7 @@ bool restore_game(strid_t save, bool warn) {
 	cinteger_resolve("timer")->value = counter;
 
 	// Set the GLK timer
-	g_vm->glk_request_timer_events((glui32) counter);
+	g_vm->glk_request_timer_events((glui32)counter);
 
 	TIME->value = FALSE;
 	return true;
@@ -193,7 +190,7 @@ bool restore_game(strid_t save, bool warn) {
 void write_integer(strid_t stream, int x) {
 	unsigned char c;
 
-	c = (unsigned char)(x) & 0xFF;
+	c = (unsigned char)(x)&0xFF;
 	g_vm->glk_put_char_stream(stream, c);
 	c = (unsigned char)(x >> 8) & 0xFF;
 	g_vm->glk_put_char_stream(stream, c);
@@ -205,17 +202,17 @@ void write_integer(strid_t stream, int x) {
 
 int read_integer(strid_t stream) {
 	int a, b, c, d;
-	a = (int) g_vm->glk_get_char_stream(stream);
-	b = (int) g_vm->glk_get_char_stream(stream);
-	c = (int) g_vm->glk_get_char_stream(stream);
-	d = (int) g_vm->glk_get_char_stream(stream);
+	a = (int)g_vm->glk_get_char_stream(stream);
+	b = (int)g_vm->glk_get_char_stream(stream);
+	c = (int)g_vm->glk_get_char_stream(stream);
+	d = (int)g_vm->glk_get_char_stream(stream);
 	return a | (b << 8) | (c << 16) | (d << 24);
 }
 
 void write_long(strid_t stream, long x) {
 	unsigned char c;
 
-	c = (unsigned char)(x) & 0xFF;
+	c = (unsigned char)(x)&0xFF;
 	g_vm->glk_put_char_stream(stream, c);
 	c = (unsigned char)(x >> 8) & 0xFF;
 	g_vm->glk_put_char_stream(stream, c);
@@ -227,10 +224,10 @@ void write_long(strid_t stream, long x) {
 
 long read_long(strid_t stream) {
 	long a, b, c, d;
-	a = (long) g_vm->glk_get_char_stream(stream);
-	b = (long) g_vm->glk_get_char_stream(stream);
-	c = (long) g_vm->glk_get_char_stream(stream);
-	d = (long) g_vm->glk_get_char_stream(stream);
+	a = (long)g_vm->glk_get_char_stream(stream);
+	b = (long)g_vm->glk_get_char_stream(stream);
+	c = (long)g_vm->glk_get_char_stream(stream);
+	d = (long)g_vm->glk_get_char_stream(stream);
 	return a | (b << 8) | (c << 16) | (d << 24);
 }
 

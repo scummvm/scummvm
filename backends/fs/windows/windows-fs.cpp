@@ -55,7 +55,7 @@ bool WindowsFilesystemNode::isWritable() const {
 	return _access(_path.c_str(), W_OK) == 0;
 }
 
-void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data) {
+void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA *find_data) {
 	WindowsFilesystemNode entry;
 	char *asciiName = toAscii(find_data->cFileName);
 	bool isDirectory;
@@ -71,7 +71,7 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
 
 	if ((!isDirectory && mode == Common::FSNode::kListDirectoriesOnly) ||
-		(isDirectory && mode == Common::FSNode::kListFilesOnly))
+	    (isDirectory && mode == Common::FSNode::kListFilesOnly))
 		return;
 
 	entry._isDirectory = isDirectory;
@@ -86,7 +86,7 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 	list.push_back(new WindowsFilesystemNode(entry));
 }
 
-char* WindowsFilesystemNode::toAscii(TCHAR *str) {
+char *WindowsFilesystemNode::toAscii(TCHAR *str) {
 #ifndef UNICODE
 	return (char *)str;
 #else
@@ -96,7 +96,7 @@ char* WindowsFilesystemNode::toAscii(TCHAR *str) {
 #endif
 }
 
-const TCHAR* WindowsFilesystemNode::toUnicode(const char *str) {
+const TCHAR *WindowsFilesystemNode::toUnicode(const char *str) {
 #ifndef UNICODE
 	return (const TCHAR *)str;
 #else
@@ -171,18 +171,18 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		GetLogicalDriveStrings(sizeof(drive_buffer) / sizeof(TCHAR), drive_buffer);
 
 		for (TCHAR *current_drive = drive_buffer; *current_drive;
-			current_drive += _tcslen(current_drive) + 1) {
-				WindowsFilesystemNode entry;
-				char drive_name[2];
+		     current_drive += _tcslen(current_drive) + 1) {
+			WindowsFilesystemNode entry;
+			char drive_name[2];
 
-				drive_name[0] = toAscii(current_drive)[0];
-				drive_name[1] = '\0';
-				entry._displayName = drive_name;
-				entry._isDirectory = true;
-				entry._isValid = true;
-				entry._isPseudoRoot = false;
-				entry._path = toAscii(current_drive);
-				myList.push_back(new WindowsFilesystemNode(entry));
+			drive_name[0] = toAscii(current_drive)[0];
+			drive_name[1] = '\0';
+			entry._displayName = drive_name;
+			entry._isDirectory = true;
+			entry._isValid = true;
+			entry._isPseudoRoot = false;
+			entry._path = toAscii(current_drive);
+			myList.push_back(new WindowsFilesystemNode(entry));
 		}
 	} else {
 		// Files enumeration

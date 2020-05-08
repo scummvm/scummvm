@@ -30,9 +30,11 @@ namespace Titanic {
 class CGondolier : public CTransport {
 	DECLARE_MESSAGE_MAP;
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
+
 private:
 	static int _v1;
 	static int _v2;
+
 public:
 	CLASSDEF;
 

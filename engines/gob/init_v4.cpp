@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/endian.h"
 #include "common/config-manager.h"
+#include "common/endian.h"
 
+#include "gob/global.h"
 #include "gob/gob.h"
 #include "gob/init.h"
-#include "gob/global.h"
 
 namespace Gob {
 

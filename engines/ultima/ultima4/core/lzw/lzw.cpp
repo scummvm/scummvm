@@ -123,9 +123,9 @@ long generalizedDecompress(WRITE_DECOMP outFunc, byte *compressedMem, byte *deco
 	byte unknownCodeword;
 
 	/* initialize the dictionary and the stack */
-	lzwDictionaryEntry *lzwDictionary = (lzwDictionaryEntry *) malloc(sizeof(lzwDictionaryEntry) * lzwDictionarySize);
+	lzwDictionaryEntry *lzwDictionary = (lzwDictionaryEntry *)malloc(sizeof(lzwDictionaryEntry) * lzwDictionarySize);
 	int codewordsInDictionary = 0;
-	byte *lzwStack = (byte *) malloc(sizeof(byte) * lzwStackSize);
+	byte *lzwStack = (byte *)malloc(sizeof(byte) * lzwStackSize);
 	int elementsInStack = 0;
 
 	/* clear the dictionary */
@@ -159,7 +159,7 @@ long generalizedDecompress(WRITE_DECOMP outFunc, byte *compressedMem, byte *deco
 
 				/* STRING = get translation of OLD_CODE */
 				/* STRING = STRING+CHARACTER            */
-				lzwStack[elementsInStack] = character;   /* push character on the stack */
+				lzwStack[elementsInStack] = character; /* push character on the stack */
 				elementsInStack++;
 
 				getString(old_code, lzwDictionary, lzwStack, &elementsInStack);
@@ -282,7 +282,7 @@ int getNewHashCode(byte root, int codeword, lzwDictionaryEntry *dictionary) {
 	/* probe 3 */
 	do {
 		hashCode = probe3(hashCode);
-	} while (! hashPosFound(hashCode, root, codeword, dictionary));
+	} while (!hashPosFound(hashCode, root, codeword, dictionary));
 
 	return (hashCode);
 }

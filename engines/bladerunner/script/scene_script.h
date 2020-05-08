@@ -48,38 +48,40 @@ public:
 	virtual void DialogueQueueFlushed(int a1) = 0;
 };
 
-#define DECLARE_SCRIPT(name) \
-class SceneScript##name : public SceneScriptBase { \
-public: \
-	SceneScript##name(BladeRunnerEngine *vm) \
-		: SceneScriptBase(vm) \
-	{} \
-	void InitializeScene(); \
-	void SceneLoaded(); \
-	bool MouseClick(int x, int y); \
-	bool ClickedOn3DObject(const char *objectName, bool combatMode); \
-	bool ClickedOnActor(int actorId); \
-	bool ClickedOnItem(int itemId, bool combatMode); \
-	bool ClickedOnExit(int exitId); \
-	bool ClickedOn2DRegion(int region); \
-	void SceneFrameAdvanced(int frame); \
-	void ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet); \
-	void PlayerWalkedIn(); \
-	void PlayerWalkedOut(); \
-	void DialogueQueueFlushed(int a1); \
-private:
-#define END_SCRIPT };
+#define DECLARE_SCRIPT(name)                                                           \
+	class SceneScript##name : public SceneScriptBase {                                 \
+	public:                                                                            \
+		SceneScript##name(BladeRunnerEngine *vm)                                       \
+		    : SceneScriptBase(vm) {}                                                   \
+		void InitializeScene();                                                        \
+		void SceneLoaded();                                                            \
+		bool MouseClick(int x, int y);                                                 \
+		bool ClickedOn3DObject(const char *objectName, bool combatMode);               \
+		bool ClickedOnActor(int actorId);                                              \
+		bool ClickedOnItem(int itemId, bool combatMode);                               \
+		bool ClickedOnExit(int exitId);                                                \
+		bool ClickedOn2DRegion(int region);                                            \
+		void SceneFrameAdvanced(int frame);                                            \
+		void ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet); \
+		void PlayerWalkedIn();                                                         \
+		void PlayerWalkedOut();                                                        \
+		void DialogueQueueFlushed(int a1);                                             \
+                                                                                       \
+	private:
+#define END_SCRIPT \
+	}              \
+	;
 
 DECLARE_SCRIPT(AR01)
-	void dialogueWithFishDealerBuyGoldfish();
+void dialogueWithFishDealerBuyGoldfish();
 END_SCRIPT
 
 DECLARE_SCRIPT(AR02)
-	void dialogueWithInsectDealer1();
-	void dialogueWithInsectDealerBuyBracelet();
-	void dialogueWithInsectDealerBuySlug();
-	void dialogueWithHassan();
-	void dialogueWithHassanBuySnake();
+void dialogueWithInsectDealer1();
+void dialogueWithInsectDealerBuyBracelet();
+void dialogueWithInsectDealerBuySlug();
+void dialogueWithHassan();
+void dialogueWithHassanBuySnake();
 END_SCRIPT
 
 DECLARE_SCRIPT(BB01)
@@ -122,18 +124,18 @@ DECLARE_SCRIPT(BB51)
 END_SCRIPT
 
 DECLARE_SCRIPT(CT01)
-	void dialogueWithHowieLee();
+void dialogueWithHowieLee();
 END_SCRIPT
 
 DECLARE_SCRIPT(CT02)
-	void dialogueWithZuben();
+void dialogueWithZuben();
 END_SCRIPT
 
 DECLARE_SCRIPT(CT03)
 END_SCRIPT
 
 DECLARE_SCRIPT(CT04)
-	void dialogueWithHomeless();
+void dialogueWithHomeless();
 END_SCRIPT
 
 DECLARE_SCRIPT(CT05)
@@ -152,7 +154,7 @@ DECLARE_SCRIPT(CT09)
 END_SCRIPT
 
 DECLARE_SCRIPT(CT10)
-	void checkCabinet();
+void checkCabinet();
 END_SCRIPT
 
 DECLARE_SCRIPT(CT11)
@@ -171,11 +173,11 @@ DECLARE_SCRIPT(DR02)
 END_SCRIPT
 
 DECLARE_SCRIPT(DR03)
-	void dialogueWithChew();
+void dialogueWithChew();
 END_SCRIPT
 
 DECLARE_SCRIPT(DR04)
-	bool farEnoughFromExplosion();
+bool farEnoughFromExplosion();
 END_SCRIPT
 
 DECLARE_SCRIPT(DR05)
@@ -185,8 +187,8 @@ DECLARE_SCRIPT(DR06)
 END_SCRIPT
 
 DECLARE_SCRIPT(HC01)
-	void dialogueWithIzo();
-	void takePhotoAndRunAway();
+void dialogueWithIzo();
+void takePhotoAndRunAway();
 END_SCRIPT
 
 DECLARE_SCRIPT(HC02)
@@ -196,46 +198,46 @@ DECLARE_SCRIPT(HC03)
 END_SCRIPT
 
 DECLARE_SCRIPT(HC04)
-	void dialogueWithIsabella();
+void dialogueWithIsabella();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF01)
-	void dialogueWithMiaAndMurray();
-	void talkWithDektora();
-	void talkWithLucy();
+void dialogueWithMiaAndMurray();
+void talkWithDektora();
+void talkWithLucy();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF02)
 END_SCRIPT
 
 DECLARE_SCRIPT(HF03)
-	void dialogueWithLucy();
+void dialogueWithLucy();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF04)
 END_SCRIPT
 
 DECLARE_SCRIPT(HF05)
-	void talkWithCrazyLegs1();
-	void talkWithCrazyLegs2();
-	void dialogueWithCrazylegs1();
-	void dialogueWithCrazylegs2();
-	void talkWithCrazylegs3(int actorId);
-	void talkWithDektora();
-	void talkWithLucy();
-	void policeAttack();
-	void addAmbientSounds();
-	int getAffectionTowardsActor();
-	int getCompanionActor();
+void talkWithCrazyLegs1();
+void talkWithCrazyLegs2();
+void dialogueWithCrazylegs1();
+void dialogueWithCrazylegs2();
+void talkWithCrazylegs3(int actorId);
+void talkWithDektora();
+void talkWithLucy();
+void policeAttack();
+void addAmbientSounds();
+int getAffectionTowardsActor();
+int getCompanionActor();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF06)
-	void steelInterruption();
-	void addAmbientSounds();
+void steelInterruption();
+void addAmbientSounds();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF07)
-	int getAffectionTowardsActor();
+int getAffectionTowardsActor();
 END_SCRIPT
 
 DECLARE_SCRIPT(KP01)
@@ -245,7 +247,7 @@ DECLARE_SCRIPT(KP02)
 END_SCRIPT
 
 DECLARE_SCRIPT(KP03)
-	void saveSteele();
+void saveSteele();
 END_SCRIPT
 
 DECLARE_SCRIPT(KP04)
@@ -264,31 +266,31 @@ DECLARE_SCRIPT(MA01)
 END_SCRIPT
 
 DECLARE_SCRIPT(MA02)
-	void talkWithRajif();
-	bool isPhoneRinging();
-	void selectNextTvNews();
+void talkWithRajif();
+bool isPhoneRinging();
+void selectNextTvNews();
 END_SCRIPT
 
 //MA03 does not exists
 
 DECLARE_SCRIPT(MA04)
-	bool isPhoneRinging();
-	bool isPhoneMessageWaiting();
-	void phoneCallWithDektora();
-	void phoneCallWithLucy();
-	void phoneCallWithSteele();
-	void phoneCallWithClovis();
-	void turnOnTV();
-	void sleep();
+bool isPhoneRinging();
+bool isPhoneMessageWaiting();
+void phoneCallWithDektora();
+void phoneCallWithLucy();
+void phoneCallWithSteele();
+void phoneCallWithClovis();
+void turnOnTV();
+void sleep();
 END_SCRIPT
 
 DECLARE_SCRIPT(MA05)
-	bool isPhoneRinging();
+bool isPhoneRinging();
 END_SCRIPT
 
 DECLARE_SCRIPT(MA06)
-	bool isElevatorOnDifferentFloor();
-	void activateElevator();
+bool isElevatorOnDifferentFloor();
+void activateElevator();
 END_SCRIPT
 
 DECLARE_SCRIPT(MA07)
@@ -301,78 +303,78 @@ DECLARE_SCRIPT(NR01)
 END_SCRIPT
 
 DECLARE_SCRIPT(NR02)
-	void playNextMusic();
+void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR03)
-	void rotateActorOnTable(int frame);
-	void playNextMusic();
+void rotateActorOnTable(int frame);
+void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR04)
-	void dialogueWithEarlyQ();
-	void druggedEffect(int frame);
-	void playNextMusic();
+void dialogueWithEarlyQ();
+void druggedEffect(int frame);
+void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR05)
-	void rotateActorOnTable(int frame);
-	void talkToBartender();
-	void talkToEarlyQ();
-	void rotateActorOnGround(int actorId);
-	void playNextMusic();
+void rotateActorOnTable(int frame);
+void talkToBartender();
+void talkToEarlyQ();
+void rotateActorOnGround(int actorId);
+void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR06)
-	void playNextMusic();
+void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR07)
-	void dektoraRunAway();
-	void callHolloway();
-	void clickedOnVase();
-	void talkAboutBelt1();
-	void talkAboutBelt2();
-	void talkAboutVoightKampff();
-	void talkAboutSteele();
-	void talkAboutMoonbus();
-	void talkAboutBlackSedan();
-	void talkAboutScorpions();
+void dektoraRunAway();
+void callHolloway();
+void clickedOnVase();
+void talkAboutBelt1();
+void talkAboutBelt2();
+void talkAboutVoightKampff();
+void talkAboutSteele();
+void talkAboutMoonbus();
+void talkAboutBlackSedan();
+void talkAboutScorpions();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR08)
-	void playNextMusic();
+void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR09)
-	void playNextMusic();
+void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR10)
 END_SCRIPT
 
 DECLARE_SCRIPT(NR11)
-	void actorSweepArea(int actorId, signed int frame);
-	void untargetEverything();
+void actorSweepArea(int actorId, signed int frame);
+void untargetEverything();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS01)
 END_SCRIPT
 
 DECLARE_SCRIPT(PS02)
-	void activateElevator();
+void activateElevator();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS03)
 END_SCRIPT
 
 DECLARE_SCRIPT(PS04)
-	void dialogueWithGuzza();
+void dialogueWithGuzza();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS05)
-	void selectNextTvNews();
-	void turnOnTV();
+void selectNextTvNews();
+void turnOnTV();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS06)
@@ -384,31 +386,35 @@ END_SCRIPT
 // PS08 does not exits
 
 DECLARE_SCRIPT(PS09)
-	void dialogueWithGrigorian();
+void dialogueWithGrigorian();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS10)
-	void removeTargets();
-	public:
-	static int getPoliceMazePS10TargetCount();
+void removeTargets();
+
+public:
+static int getPoliceMazePS10TargetCount();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS11)
-	void removeTargets();
-	public:
-	static int getPoliceMazePS11TargetCount();
+void removeTargets();
+
+public:
+static int getPoliceMazePS11TargetCount();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS12)
-	void removeTargets();
-	public:
-	static int getPoliceMazePS12TargetCount();
+void removeTargets();
+
+public:
+static int getPoliceMazePS12TargetCount();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS13)
-	void removeTargets();
-	public:
-	static int getPoliceMazePS13TargetCount();
+void removeTargets();
+
+public:
+static int getPoliceMazePS13TargetCount();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS14)
@@ -418,28 +424,28 @@ DECLARE_SCRIPT(PS15)
 END_SCRIPT
 
 DECLARE_SCRIPT(RC01)
-	void interrogateCrowd();
-	void walkToCenter();
+void interrogateCrowd();
+void walkToCenter();
 END_SCRIPT
 
 DECLARE_SCRIPT(RC02)
-	void dialogueWithRunciter();
+void dialogueWithRunciter();
 END_SCRIPT
 
 DECLARE_SCRIPT(RC03)
-	void talkWithSteele();
+void talkWithSteele();
 END_SCRIPT
 
 DECLARE_SCRIPT(RC04)
-	void dialogueWithBulletBob();
+void dialogueWithBulletBob();
 END_SCRIPT
 
 DECLARE_SCRIPT(RC51)
 END_SCRIPT
 
 DECLARE_SCRIPT(TB02)
-	void dialogueWithTyrellGuard();
-	void dialogueWithSteele();
+void dialogueWithTyrellGuard();
+void dialogueWithSteele();
 END_SCRIPT
 
 DECLARE_SCRIPT(TB03)
@@ -452,14 +458,14 @@ DECLARE_SCRIPT(TB06)
 END_SCRIPT
 
 DECLARE_SCRIPT(TB07)
-	void McCoyTalkWithRachaelAndTyrell();
+void McCoyTalkWithRachaelAndTyrell();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG01)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG02)
-	bool walkToCenter();
+bool walkToCenter();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG03)
@@ -469,8 +475,8 @@ DECLARE_SCRIPT(UG04)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG05)
-	int getAffectionTowardsActor();
-	void endGame();
+int getAffectionTowardsActor();
+void endGame();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG06)
@@ -494,9 +500,9 @@ DECLARE_SCRIPT(UG12)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG13)
-	void talkAboutGuzza();
-	void dialogueWithHomeless1();
-	void dialogueWithHomeless2();
+void talkAboutGuzza();
+void dialogueWithHomeless1();
+void dialogueWithHomeless2();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG14)
@@ -506,15 +512,15 @@ DECLARE_SCRIPT(UG15)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG16)
-	void dialogueWithLuther();
+void dialogueWithLuther();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG17)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG18)
-	void talkWithGuzza();
-	void talkWithClovis();
+void talkWithGuzza();
+void talkWithClovis();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG19)
@@ -526,8 +532,8 @@ END_SCRIPT
 class SceneScript {
 protected:
 	BladeRunnerEngine *_vm;
-	int                _inScriptCounter;
-	SceneScriptBase   *_currentScript;
+	int _inScriptCounter;
+	SceneScriptBase *_currentScript;
 
 public:
 	int _mouseX;

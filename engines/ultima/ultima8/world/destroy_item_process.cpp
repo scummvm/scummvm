@@ -23,8 +23,8 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/world/destroy_item_process.h"
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -33,7 +33,6 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(DestroyItemProcess, Process)
 
 DestroyItemProcess::DestroyItemProcess() : Process() {
-
 }
 
 DestroyItemProcess::DestroyItemProcess(Item *item_) {
@@ -79,7 +78,8 @@ void DestroyItemProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool DestroyItemProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	return true;
 }

@@ -23,8 +23,8 @@
 #ifndef NUVIE_VIEWS_SUN_MOON_STRIP_WIDGET_H
 #define NUVIE_VIEWS_SUN_MOON_STRIP_WIDGET_H
 
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 
 namespace Ultima {
 namespace Nuvie {

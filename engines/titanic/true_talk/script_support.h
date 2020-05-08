@@ -29,7 +29,9 @@ namespace Titanic {
 
 #define DIALS_ARRAY_COUNT 10
 
-enum ScriptArrayFlag { SF_NONE = 0, SF_RANDOM = 1, SF_SEQUENTIAL = 2 };
+enum ScriptArrayFlag { SF_NONE = 0,
+	                   SF_RANDOM = 1,
+	                   SF_SEQUENTIAL = 2 };
 
 struct RoomDialogueId {
 	uint _roomNum;
@@ -58,9 +60,9 @@ struct TTscriptRange {
 	ScriptArrayFlag _mode;
 
 	TTscriptRange() : _id(0), _nextP(nullptr),
-		_priorIndex(0), _mode(SF_NONE) {}
+	                  _priorIndex(0), _mode(SF_NONE) {}
 	TTscriptRange(uint id, const Common::Array<uint> &values, bool isRandom,
-		bool isSequential);
+	              bool isSequential);
 };
 
 struct TTsentenceEntry {
@@ -79,7 +81,7 @@ struct TTsentenceEntry {
 	int _field30;
 
 	TTsentenceEntry() : _field0(0), _category(0), _fieldC(0),
-		_field20(0), _field28(0), _field2C(0), _field30(0) {}
+	                    _field20(0), _field28(0), _field2C(0), _field30(0) {}
 
 	/**
 	* Load an entry from the passed stream, and returns true
@@ -145,6 +147,7 @@ class TThandleQuoteEntries : public Common::Array<TThandleQuoteEntry> {
 public:
 	uint _rangeStart, _rangeEnd;
 	uint _incr;
+
 public:
 	TThandleQuoteEntries() : _rangeStart(0), _rangeEnd(0), _incr(0) {}
 	void load(const char *name);

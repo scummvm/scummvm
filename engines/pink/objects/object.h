@@ -31,7 +31,7 @@ namespace Pink {
 
 class Object {
 public:
-	virtual ~Object() {};
+	virtual ~Object(){};
 
 	virtual void load(Archive &);
 	virtual void deserialize(Archive &);
@@ -42,7 +42,7 @@ class NamedObject : public Object {
 public:
 	NamedObject() {}
 	NamedObject(const Common::String &name)
-			: _name(name) {}
+	    : _name(name) {}
 
 	void deserialize(Archive &archive) override { _name = archive.readString(); }
 

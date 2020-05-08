@@ -21,9 +21,9 @@
  */
 
 #include "glk/alan3/attribute.h"
-#include "glk/alan3/syserr.h"
 #include "glk/alan3/current.h"
 #include "glk/alan3/lists.h"
+#include "glk/alan3/syserr.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -39,14 +39,12 @@ static AttributeEntry *findAttribute(AttributeEntry *attributeTable, int attribu
 	return attribute;
 }
 
-
 /*======================================================================*/
 Aptr getAttribute(AttributeEntry *attributeTable, int attributeCode) {
 	AttributeEntry *attribute = findAttribute(attributeTable, attributeCode);
 
 	return attribute->value;
 }
-
 
 /*======================================================================*/
 void setAttribute(AttributeEntry *attributeTable, int attributeCode, Aptr newValue) {

@@ -108,8 +108,7 @@ void DrasculaEngine::checkObjects() {
 		}
 	}
 
-	if (_mouseX > curX + 2 && _mouseY > curY + 2
-			&& _mouseX < curX + curWidth - 2 && _mouseY < curY + curHeight - 2) {
+	if (_mouseX > curX + 2 && _mouseY > curY + 2 && _mouseX < curX + curWidth - 2 && _mouseY < curY + curHeight - 2) {
 		if (currentChapter == 2 || !_hasName) {
 			strcpy(textName, _textmisc[3]); // "hacker"
 			_hasName = true;
@@ -154,7 +153,6 @@ int DrasculaEngine::removeObject(int obj) {
 
 	return 1;
 }
-
 
 bool DrasculaEngine::pickupObject() {
 	int obj = pickedObject;
@@ -219,8 +217,8 @@ int DrasculaEngine::whichObject() {
 
 	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		if (_mouseX > _itemLocations[n].x && _mouseY > _itemLocations[n].y &&
-			_mouseX < _itemLocations[n].x + OBJWIDTH &&
-			_mouseY < _itemLocations[n].y + OBJHEIGHT) {
+		    _mouseX < _itemLocations[n].x + OBJWIDTH &&
+		    _mouseY < _itemLocations[n].y + OBJHEIGHT) {
 			return n;
 		}
 	}

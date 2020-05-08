@@ -21,8 +21,8 @@
  */
 
 #include "glk/archetype/parser.h"
-#include "glk/archetype/archetype.h"
 #include "common/algorithm.h"
+#include "glk/archetype/archetype.h"
 
 namespace Glk {
 namespace Archetype {
@@ -73,7 +73,7 @@ void normalize_string(const String &first, String &second) {
 
 			if (i > lfirst)
 				done = true;
-		
+
 		} else if (in_word) {
 			if (j < g_vm->Abbreviate) {
 				second = second + locase(first[i]);
@@ -130,9 +130,7 @@ static void parse_sentence_substitute(int start, ParsePtr pp, int &next_starting
 
 	// WORKAROUND: Original encoded object number as two bytes. ScummVM strings don't like
 	// 0 bytes in the middle of the string, so we encode it as plain text
-	g_vm->Command = g_vm->Command.left(start)
-		+ String::format(" %%%d^", pp->object)
-		+ g_vm->Command.mid(start + sublen + 1);
+	g_vm->Command = g_vm->Command.left(start) + String::format(" %%%d^", pp->object) + g_vm->Command.mid(start + sublen + 1);
 
 	next_starting = next_starting - sublen + 4;
 }
@@ -166,7 +164,7 @@ static bool parse_sentence_next_chunk(int &start_at, String &the_chunk, int &nex
 
 void parse_sentence() {
 	const int nfillers = 3;
-	const char *const FILTERS[nfillers] = { " a ", " an ", " the " };
+	const char *const FILTERS[nfillers] = {" a ", " an ", " the "};
 	int next_starting = 0;
 	String s;
 	NodePtr np, near_match, far_match;

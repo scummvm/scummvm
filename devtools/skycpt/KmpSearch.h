@@ -27,6 +27,7 @@ class KmpSearch {
 public:
 	void init(const char *subStr);
 	const char *search(const char *str);
+
 private:
 	char _subStr[256];
 };

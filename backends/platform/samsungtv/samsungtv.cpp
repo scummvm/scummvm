@@ -24,10 +24,10 @@
 
 #if defined(SAMSUNGTV)
 
-#include "backends/platform/samsungtv/samsungtv.h"
 #include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
-#include "backends/saves/default/default-saves.h"
 #include "backends/fs/posix/posix-fs.h"
+#include "backends/platform/samsungtv/samsungtv.h"
+#include "backends/saves/default/default-saves.h"
 #include "common/textconsole.h"
 
 void OSystem_SDL_SamsungTV::initBackend() {
@@ -51,7 +51,8 @@ void OSystem_SDL_SamsungTV::quit() {
 void OSystem_SDL_SamsungTV::fatalError() {
 	delete this;
 	warning("ScummVM: Fatal internal error.");
-	for (;;) {}
+	for (;;) {
+	}
 }
 
 Common::String OSystem_SDL_SamsungTV::getDefaultConfigFileName() {

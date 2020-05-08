@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_SXMATH_H
 #define WINTERMUTE_SXMATH_H
 
-
 #include "engines/wintermute/base/base_scriptable.h"
 
 namespace Wintermute {
@@ -45,7 +44,6 @@ public:
 private:
 	double degreeToRadian(double value);
 	double radianToDegree(double value);
-
 };
 
 } // End of namespace Wintermute

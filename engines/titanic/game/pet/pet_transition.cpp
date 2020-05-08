@@ -21,13 +21,13 @@
  */
 
 #include "titanic/game/pet/pet_transition.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/core/view_item.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPETTransition, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 void CPETTransition::save(SimpleFile *file, int indent) {

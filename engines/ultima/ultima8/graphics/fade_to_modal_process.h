@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_FADETOMODALPROCESS_H
 #define ULTIMA8_GRAPHICS_FADETOMODALPROCESS_H
 
-#include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
+#include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -41,8 +41,8 @@ class FadeToModalProcess : public Process {
 		FS_Finshed
 	} _nextState;
 
-	ModalGump * _modal;
-	PaletteFaderProcess * _fader;
+	ModalGump *_modal;
+	PaletteFaderProcess *_fader;
 
 public:
 	// p_dynamic_class stuff
@@ -53,7 +53,6 @@ public:
 	void onWakeUp() override;
 
 	void run() override;
-
 };
 
 } // End of namespace Ultima8

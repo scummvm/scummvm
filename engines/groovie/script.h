@@ -246,6 +246,6 @@ private:
 	void o2_setscriptend();
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_SCRIPT_H

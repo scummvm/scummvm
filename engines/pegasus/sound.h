@@ -31,7 +31,7 @@
 #include "pegasus/timers.h"
 
 namespace Audio {
-	class SeekableAudioStream;
+class SeekableAudioStream;
 }
 
 namespace Pegasus {

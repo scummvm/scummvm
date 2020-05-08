@@ -25,8 +25,8 @@
 
 /* Header file for action unit of ARUN Alan System interpreter */
 
-#include "glk/jumps.h"
 #include "glk/alan3/params.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {

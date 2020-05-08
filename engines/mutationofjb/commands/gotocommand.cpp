@@ -54,7 +54,6 @@ bool GotoCommandParser::parse(const Common::String &line, ScriptParseContext &pa
 	return true;
 }
 
-
 void GotoCommand::setLabelCommand(LabelCommand *labelCmd) {
 	_labelCommand = labelCmd;
 }
@@ -77,4 +76,4 @@ Common::String GotoCommand::debugString() const {
 	return Common::String::format("GOTO %s", _labelCommand->getName().c_str());
 }
 
-}
+} // namespace MutationOfJB

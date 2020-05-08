@@ -20,16 +20,15 @@
  *
  */
 
-
-#include "common/scummsys.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 
+#include "cine/bg_list.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
-#include "cine/various.h"
-#include "cine/bg_list.h"
 #include "cine/sound.h"
+#include "cine/various.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -273,9 +272,9 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		menuVar = 0;
 
-//		gfxRedrawPage(page0c, page0, page0c, page0, -1);
-//		gfxWaitVBL();
-//		gfxRedrawMouseCursor();
+		//		gfxRedrawPage(page0c, page0, page0c, page0, -1);
+		//		gfxWaitVBL();
+		//		gfxRedrawMouseCursor();
 
 		inMenu = false;
 		allowPlayerInput = 0;
@@ -295,7 +294,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			g_cine->_globalVars[VAR_MOUSE_X_POS_2ND] = 0;
 			g_cine->_globalVars[VAR_MOUSE_Y_POS_2ND] = 0;
 			g_cine->_globalVars[VAR_BYPASS_PROTECTION] = 0; // set to 1 to bypass the copy protection
-			g_cine->_globalVars[VAR_LOW_MEMORY] = 0; // set to 1 to disable some animations, sounds etc.
+			g_cine->_globalVars[VAR_LOW_MEMORY] = 0;        // set to 1 to disable some animations, sounds etc.
 		}
 
 		strcpy(newPrcName, "");

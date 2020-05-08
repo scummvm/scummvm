@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "sword1/memman.h"
 #include "common/textconsole.h"
 #include "common/util.h"

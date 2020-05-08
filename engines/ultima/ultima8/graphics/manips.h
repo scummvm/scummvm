@@ -29,7 +29,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
-template<class uintX> class Manip_Nat2Nat {
+template<class uintX>
+class Manip_Nat2Nat {
 public:
 	static bool are_same() {
 		return true;
@@ -90,7 +91,8 @@ public:
 	}
 };
 
-template<class uintX> class Manip_Sta2Nat {
+template<class uintX>
+class Manip_Sta2Nat {
 public:
 	static bool are_same() {
 		return false;

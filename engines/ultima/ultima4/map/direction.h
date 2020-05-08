@@ -45,9 +45,9 @@ enum Direction {
 #define MASK_DIR_RETREAT (1 << DIR_RETREAT)
 #define MASK_DIR_ALL (MASK_DIR_WEST | MASK_DIR_NORTH | MASK_DIR_EAST | MASK_DIR_EAST | MASK_DIR_SOUTH | MASK_DIR_ADVANCE | MASK_DIR_RETREAT)
 
-#define DIR_IN_MASK(dir,mask) ((1 << (dir)) & (mask))
-#define DIR_ADD_TO_MASK(dir,mask) ((1 << (dir)) | (mask))
-#define DIR_REMOVE_FROM_MASK(dir,mask) ((~(1 << (dir))) & (mask))
+#define DIR_IN_MASK(dir, mask) ((1 << (dir)) & (mask))
+#define DIR_ADD_TO_MASK(dir, mask) ((1 << (dir)) | (mask))
+#define DIR_REMOVE_FROM_MASK(dir, mask) ((~(1 << (dir))) & (mask))
 
 Direction dirReverse(Direction dir);
 Direction dirFromMask(int dir_mask);

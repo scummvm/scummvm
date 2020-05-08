@@ -20,12 +20,11 @@
  *
  */
 
-
 #include "kyra/sound/sound.h"
 #include "kyra/resource/resource.h"
 
-#include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
@@ -36,8 +35,8 @@
 namespace Kyra {
 
 Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
-	: _vm(vm), _mixer(mixer), _soundChannels(), _musicEnabled(1),
-	  _sfxEnabled(true) {
+    : _vm(vm), _mixer(mixer), _soundChannels(), _musicEnabled(1),
+      _sfxEnabled(true) {
 }
 
 Sound::~Sound() {
@@ -165,7 +164,7 @@ bool Sound::allVoiceChannelsPlaying() const {
 #pragma mark -
 
 MixedSoundDriver::MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx)
-	: Sound(vm, mixer), _music(music), _sfx(sfx) {
+    : Sound(vm, mixer), _music(music), _sfx(sfx) {
 }
 
 MixedSoundDriver::~MixedSoundDriver() {
@@ -347,25 +346,24 @@ Audio::SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, Di
 } // end of anonymous namespace
 
 const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
-	{ ".VOC", makeVOCStream },
-	{ "", makeVOCStream },
+    {".VOC", makeVOCStream},
+    {"", makeVOCStream},
 
 #ifdef USE_MAD
-	{ ".VO3", Audio::makeMP3Stream },
-	{ ".MP3", Audio::makeMP3Stream },
+    {".VO3", Audio::makeMP3Stream},
+    {".MP3", Audio::makeMP3Stream},
 #endif // USE_MAD
 
 #ifdef USE_VORBIS
-	{ ".VOG", Audio::makeVorbisStream },
-	{ ".OGG", Audio::makeVorbisStream },
+    {".VOG", Audio::makeVorbisStream},
+    {".OGG", Audio::makeVorbisStream},
 #endif // USE_VORBIS
 
 #ifdef USE_FLAC
-	{ ".VOF", Audio::makeFLACStream },
-	{ ".FLA", Audio::makeFLACStream },
+    {".VOF", Audio::makeFLACStream},
+    {".FLA", Audio::makeFLACStream},
 #endif // USE_FLAC
 
-	{ 0, 0 }
-};
+    {0, 0}};
 
 } // End of namespace Kyra

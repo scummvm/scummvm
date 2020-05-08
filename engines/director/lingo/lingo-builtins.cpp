@@ -22,258 +22,256 @@
 
 #include "common/system.h"
 
-#include "director/director.h"
 #include "director/cast.h"
-#include "director/lingo/lingo.h"
+#include "director/director.h"
+#include "director/frame.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
-#include "director/frame.h"
+#include "director/lingo/lingo.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
 #include "director/util.h"
 
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Director {
 
-#define ARGNUMCHECK(n) \
-	if (nargs != (n)) { \
+#define ARGNUMCHECK(n)                                                                                  \
+	if (nargs != (n)) {                                                                                 \
 		warning("%s: expected %d argument%s, got %d", __FUNCTION__, (n), ((n) == 1 ? "" : "s"), nargs); \
-		g_lingo->dropStack(nargs); \
-		return; \
+		g_lingo->dropStack(nargs);                                                                      \
+		return;                                                                                         \
 	}
 
-#define TYPECHECK(datum,t) \
-	if ((datum).type != (t)) { \
+#define TYPECHECK(datum, t)                                                                               \
+	if ((datum).type != (t)) {                                                                            \
 		warning("%s: %s arg should be of type %s, not %s", __FUNCTION__, #datum, #t, (datum).type2str()); \
-		return; \
+		return;                                                                                           \
 	}
 
-#define TYPECHECK2(datum, t1, t2)	\
-	if ((datum).type != (t1) && (datum).type != (t2)) { \
+#define TYPECHECK2(datum, t1, t2)                                                                                     \
+	if ((datum).type != (t1) && (datum).type != (t2)) {                                                               \
 		warning("%s: %s arg should be of type %s or %s, not %s", __FUNCTION__, #datum, #t1, #t2, (datum).type2str()); \
-		return; \
+		return;                                                                                                       \
 	}
 
-#define ARRBOUNDSCHECK(idx,array) \
-	if ((idx)-1 < 0 || (idx) > (int)(array).u.farr->size()) { \
+#define ARRBOUNDSCHECK(idx, array)                                                                  \
+	if ((idx)-1 < 0 || (idx) > (int)(array).u.farr->size()) {                                       \
 		warning("%s: index out of bounds (%d of %d)", __FUNCTION__, (idx), (array).u.farr->size()); \
-		return; \
+		return;                                                                                     \
 	}
 
 static struct BuiltinProto {
 	const char *name;
 	void (*func)(int);
-	int minArgs;	// -1 -- arglist
+	int minArgs; // -1 -- arglist
 	int maxArgs;
 	bool parens;
 	int version;
 	int type;
 } builtins[] = {
-	// Math
-	{ "abs",			LB::b_abs,			1, 1, true, 2, FBLTIN },	// D2 function
-	{ "atan",			LB::b_atan,			1, 1, true, 4, FBLTIN },	//			D4 f
-	{ "cos",			LB::b_cos,			1, 1, true, 4, FBLTIN },	//			D4 f
-	{ "exp",			LB::b_exp,			1, 1, true, 4, FBLTIN },	//			D4 f
-	{ "float",			LB::b_float,		1, 1, true, 4, FBLTIN },	//			D4 f
-	{ "integer",		LB::b_integer,		1, 1, true, 3, FBLTIN },	//		D3 f
-	{ "log",			LB::b_log,			1, 1, true, 4, FBLTIN },	//			D4 f
-	{ "pi",				LB::b_pi,			0, 0, true, 4, FBLTIN },	//			D4 f
-	{ "power",			LB::b_power,		2, 2, true, 4, FBLTIN },	//			D4 f
-	{ "random",			LB::b_random,		1, 1, true, 2, FBLTIN },	// D2 f
-	{ "sin",			LB::b_sin,			1, 1, true, 4, FBLTIN },	//			D4 f
-	{ "sqrt",			LB::b_sqrt,			1, 1, true, 2, FBLTIN },	// D2 f
-	{ "tan",			LB::b_tan,			1, 1, true, 4, FBLTIN },	//			D4 f
-	// String
-	{ "chars",			LB::b_chars,		3, 3, true, 2, FBLTIN },	// D2 f
-	{ "charToNum",		LB::b_charToNum,	1, 1, true, 2, FBLTIN },	// D2 f
-	{ "delete",			LB::b_delete,		1, 1, true, 3, BLTIN },		//		D3 command
-	{ "hilite",			LB::b_hilite,		1, 1, true, 3, BLTIN },		//		D3 c
-	{ "length",			LB::b_length,		1, 1, true, 2, FBLTIN },	// D2 f
-	{ "numToChar",		LB::b_numToChar,	1, 1, true, 2, FBLTIN },	// D2 f
-	{ "offset",			LB::b_offset,		2, 3, true, 2, FBLTIN },	// D2 f
-	{ "string",			LB::b_string,		1, 1, true, 2, FBLTIN },	// D2 f
-	{ "value",		 	LB::b_value,		1, 1, true, 2, FBLTIN },	// D2 f
-	// Lists
-	{ "add",			LB::b_add,			2, 2, false, 4, BLTIN },	//			D4 c
-	{ "addAt",			LB::b_addAt,		3, 3, false, 4, BLTIN },	//			D4 c
-	{ "addProp",		LB::b_addProp,		3, 3, false, 4, BLTIN },	//			D4 c
-	{ "append",			LB::b_append,		2, 2, false, 4, BLTIN },	//			D4 c
-	{ "count",			LB::b_count,		1, 1, true,  4, FBLTIN },	//			D4 f
-	{ "deleteAt",		LB::b_deleteAt,		2, 2, false, 4, BLTIN },	//			D4 c
-	{ "deleteProp",		LB::b_deleteProp,	2, 2, false, 4, BLTIN },	//			D4 c
-	{ "findPos",		LB::b_findPos,		2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "findPosNear",	LB::b_findPosNear,	2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "getaProp",		LB::b_getaProp,		2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "getAt",			LB::b_getAt,		2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "getLast",		LB::b_getLast,		1, 1, true,  4, FBLTIN },	//			D4 f
-	{ "getOne",			LB::b_getOne,		2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "getPos",			LB::b_getPos,		2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "getProp",		LB::b_getProp,		2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "getPropAt",		LB::b_getPropAt,	2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "list",			LB::b_list,			-1, 0, true, 4, FBLTIN },	//			D4 f
-	{ "listP",			LB::b_listP,		1, 1, true,  4, FBLTIN },	//			D4 f
-	{ "max",			LB::b_max,			-1,0, true,  4, FBLTIN },	//			D4 f
-	{ "min",			LB::b_min,			-1,0, true,  4, FBLTIN },	//			D4 f
-	{ "setaProp",		LB::b_setaProp,		3, 3, false, 4, BLTIN },	//			D4 c
-	{ "setAt",			LB::b_setAt,		3, 3, false, 4, BLTIN },	//			D4 c
-	{ "setProp",		LB::b_setProp,		3, 3, false, 4, BLTIN },	//			D4 c
-	{ "sort",			LB::b_sort,			1, 1, false, 4, BLTIN },	//			D4 c
-	// Files
-	{ "closeDA",	 	LB::b_closeDA, 		0, 0, false, 2, BLTIN },	// D2 c
-	{ "closeResFile",	LB::b_closeResFile,	0, 1, false, 2, BLTIN },	// D2 c
-	{ "closeXlib",		LB::b_closeXlib,	0, 1, false, 2, BLTIN },	// D2 c
-	{ "getNthFileNameInFolder",LB::b_getNthFileNameInFolder,2,2,true,4,FBLTIN },//	D4 f
-		// open															// D2 c
-	{ "openDA",	 		LB::b_openDA, 		1, 1, false, 2, BLTIN },	// D2 c
-	{ "openResFile",	LB::b_openResFile,	1, 1, false, 2, BLTIN },	// D2 c
-	{ "openXlib",		LB::b_openXlib,		1, 1, false, 2, BLTIN },	// D2 c
-	{ "saveMovie",		LB::b_saveMovie,	1, 1, false, 4, BLTIN },	//			D4 c
-	{ "setCallBack",	LB::b_setCallBack,	2, 2, false, 3, BLTIN },	//		D3 c
-	{ "showResFile",	LB::b_showResFile,	0, 1, false, 2, BLTIN },	// D2 c
-	{ "showXlib",		LB::b_showXlib,		0, 1, false, 2, BLTIN },	// D2 c
-	{ "xFactoryList",	LB::b_xFactoryList,	1, 1, true,  3, FBLTIN },	//		D3 f
-	// Control
-	{ "abort",			LB::b_abort,		0, 0, false, 4, BLTIN },	//			D4 c
-	{ "continue",		LB::b_continue,		0, 0, false, 2, BLTIN },	// D2 c
-	{ "dontPassEvent",	LB::b_dontPassEvent,0, 0, false, 2, BLTIN },	// D2 c
-	{ "delay",	 		LB::b_delay,		1, 1, false, 2, BLTIN },	// D2 c
-	{ "do",		 		LB::b_do,			1, 1, false, 2, BLTIN },	// D2 c
-	{ "go",		 		LB::b_go,			1, 2, false, 4, BLTIN },	// 			D4 c
-	{ "halt",	 		LB::b_halt,			0, 0, false, 4, BLTIN },	//			D4 c
-	{ "nothing",		LB::b_nothing,		0, 0, false, 2, BLTIN },	// D2 c
-	{ "pass",			LB::b_pass,			0, 0, false, 4, BLTIN },	//			D4 c
-	{ "pause",			LB::b_pause,		0, 0, false, 2, BLTIN },	// D2 c
-		// play															// D2 c
-	{ "playAccel",		LB::b_playAccel,	-1,0, false, 2, BLTIN },	// D2
-		// play done													// D2
-	{ "preLoad",		LB::b_preLoad,		-1,0, false, 3, BLTIN },	//		D3.1 c
-	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, false, 3, BLTIN },	//		D3.1 c
-	{ "quit",			LB::b_quit,			0, 0, false, 2, BLTIN },	// D2 c
-	{ "restart",		LB::b_restart,		0, 0, false, 2, BLTIN },	// D2 c
-	{ "return",			LB::b_return,		0, 1, false, 2, BLTIN },	// D2 f
-	{ "shutDown",		LB::b_shutDown,		0, 0, false, 2, BLTIN },	// D2 c
-	{ "startTimer",		LB::b_startTimer,	0, 0, false, 2, BLTIN },	// D2 c
-		// when keyDown													// D2
-		// when mouseDown												// D2
-		// when mouseUp													// D2
-		// when timeOut													// D2
-	// Types
-	{ "factory",		LB::b_factoryP,		1, 1, true,  3, FBLTIN },	//		D3
-	{ "floatP",			LB::b_floatP,		1, 1, true,  3, FBLTIN },	//		D3
-	{ "ilk",	 		LB::b_ilk,			1, 2, false, 4, FBLTIN },	//			D4 f
-	{ "integerp",		LB::b_integerp,		1, 1, true,  2, FBLTIN },	// D2 f
-	{ "objectp",		LB::b_objectp,		1, 1, true,  2, FBLTIN },	// D2 f
-	{ "pictureP",		LB::b_pictureP,		1, 1, true,  4, FBLTIN },	//			D4 f
-	{ "stringp",		LB::b_stringp,		1, 1, true,  2, FBLTIN },	// D2 f
-	{ "symbolp",		LB::b_symbolp,		1, 1, true,  2, FBLTIN },	// D2 f
-	{ "voidP",			LB::b_voidP,		1, 1, true,  4, FBLTIN },	//			D4 f
-	// Misc
-	{ "alert",	 		LB::b_alert,		1, 1, false, 2, BLTIN },	// D2 c
-	{ "birth",	 		LB::b_birth,		-1,0, false, 4, FBLTIN },	//			D4 f
-	{ "clearGlobals",	LB::b_clearGlobals,	0, 0, false, 3, BLTIN },	//		D3.1 c
-	{ "cursor",	 		LB::b_cursor,		1, 1, false, 2, BLTIN },	// D2 c
-	{ "framesToHMS",	LB::b_framesToHMS,	4, 4, false, 3, FBLTIN },	//		D3 f
-	{ "HMStoFrames",	LB::b_HMStoFrames,	4, 4, false, 3, FBLTIN },	//		D3 f
-	{ "param",	 		LB::b_param,		1, 1, true,  4, FBLTIN },	//			D4 f
-	{ "printFrom",	 	LB::b_printFrom,	-1,0, false, 2, BLTIN },	// D2 c
-		// put															// D2
-		// set															// D2
-	{ "showGlobals",	LB::b_showGlobals,	0, 0, false, 2, BLTIN },	// D2 c
-	{ "showLocals",		LB::b_showLocals,	0, 0, false, 2, BLTIN },	// D2 c
-	// Score
-	{ "constrainH",		LB::b_constrainH,	2, 2, true,  2, FBLTIN },	// D2 f
-	{ "constrainV",		LB::b_constrainV,	2, 2, true,  2, FBLTIN },	// D2 f
-	{ "copyToClipBoard",LB::b_copyToClipBoard,1,1, false, 4, BLTIN },	//			D4 c
-	{ "duplicate",		LB::b_duplicate,	1, 2, false, 4, BLTIN },	//			D4 c
-	{ "editableText",	LB::b_editableText,	0, 0, false, 2, BLTIN },	// D2, FIXME: the field in D4+
-	{ "erase",			LB::b_erase,		1, 1, false, 4, BLTIN },	//			D4 c
-	{ "findEmpty",		LB::b_findEmpty,	1, 1, true,  4, FBLTIN },	//			D4 f
-		// go															// D2
-	{ "importFileInto",	LB::b_importFileInto,2, 2, false, 4, BLTIN },	//			D4 c
-	{ "installMenu",	LB::b_installMenu,	1, 1, false, 2, BLTIN },	// D2 c
-	{ "label",			LB::b_label,		1, 1, true,  2, FBLTIN },	// D2 f
-	{ "marker",			LB::b_marker,		1, 1, true,  2, FBLTIN },	// D2 f
-	{ "move",			LB::b_move,			1, 2, false, 4, BLTIN },	//			D4 c
-	{ "moveableSprite",	LB::b_moveableSprite,0, 0, false, 2, BLTIN },	// D2, FIXME: the field in D4+
-	{ "pasteClipBoardInto",LB::b_pasteClipBoardInto,1,1,false,4,BLTIN },//			D4 c
-	{ "puppetPalette",	LB::b_puppetPalette, -1,0, false, 2, BLTIN },	// D2 c
-	{ "puppetSound",	LB::b_puppetSound,	-1,0, false, 2, BLTIN },	// D2 c
-	{ "puppetSprite",	LB::b_puppetSprite,	-1,0, false, 2, BLTIN },	// D2 c
-	{ "puppetTempo",	LB::b_puppetTempo,	1, 1, false, 2, BLTIN },	// D2 c
-	{ "puppetTransition",LB::b_puppetTransition,-1,0,false,2, BLTIN },	// D2 c
-	{ "ramNeeded",		LB::b_ramNeeded,	2, 2, true,  3, FBLTIN },	//		D3.1 f
-	{ "rollOver",		LB::b_rollOver,		1, 1, true,  2, FBLTIN },	// D2 f
-	{ "spriteBox",		LB::b_spriteBox,	-1,0, false, 2, BLTIN },	// D2 c
-	{ "unLoad",			LB::b_unLoad,		0, 2, false, 3, BLTIN },	//		D3.1 c
-	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, false, 3, BLTIN },	//		D3.1 c
-	{ "updateStage",	LB::b_updateStage,	0, 0, false, 2, BLTIN },	// D2 c
-	{ "zoomBox",		LB::b_zoomBox,		-1,0, false, 2, BLTIN },	// D2 c
-	// Point
-	{ "point",			LB::b_point,		2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "inside",			LB::b_inside,		2, 2, true,  4, FBLTIN },	//			D4 f
-	{ "intersect",		LB::b_intersect,	2, 2, false, 4, FBLTIN },	//			D4 f
-	{ "map",			LB::b_map,			3, 3, true,  4, FBLTIN },	//			D4 f
-	{ "rect",			LB::b_rect,			4, 4, true,  4, FBLTIN },	//			D4 f
-	{ "union",			LB::b_union,		2, 2, true,  4, FBLTIN },	//			D4 f
-	// Sound
-	{ "beep",	 		LB::b_beep,			0, 1, false, 2, BLTIN },	// D2
-	{ "mci",	 		LB::b_mci,			1, 1, false, 3, BLTIN },	//		D3.1 c
-	{ "mciwait",		LB::b_mciwait,		1, 1, false, 4, BLTIN },	//			D4 c
-	{ "sound",			LB::b_sound,		2, 3, false, 3, BLTIN },	//		D3 c
-	{ "soundBusy",		LB::b_soundBusy,	1, 1, true,  3, FBLTIN },	//		D3 f
-	// Window
-	{ "close",			LB::b_close,		1, 1, false, 4, BLTIN },	//			D4 c
-	{ "forget",			LB::b_forget,		1, 1, false, 4, BLTIN },	//			D4 c
-	{ "inflate",		LB::b_inflate,		3, 3, true,  4, FBLTIN },	//			D4 f
-	{ "moveToBack",		LB::b_moveToBack,	1, 1, false, 4, BLTIN },	//			D4 c
-	{ "moveToFront",	LB::b_moveToFront,	1, 1, false, 4, BLTIN },	//			D4 c
-	// Constants
-	{ "backspace",		LB::b_backspace,	0, 0, false, 2, FBLTIN },	// D2
-	{ "empty",			LB::b_empty,		0, 0, false, 2, FBLTIN },	// D2
-	{ "enter",			LB::b_enter,		0, 0, false, 2, FBLTIN },	// D2
-	{ "false",			LB::b_false,		0, 0, false, 2, FBLTIN },	// D2
-	{ "quote",			LB::b_quote,		0, 0, false, 2, FBLTIN },	// D2
-	{ "scummvm_return",	LB::b_returnconst,	0, 0, false, 2, FBLTIN },	// D2
-	{ "tab",			LB::b_tab,			0, 0, false, 2, FBLTIN },	// D2
-	{ "true",			LB::b_true,			0, 0, false, 2, FBLTIN },	// D2
-	{ "version",		LB::b_version,		0, 0, false, 3, FBLTIN },	//		D3
-	// References
-	{ "cast",			LB::b_cast,			1, 1, false, 4, RBLTIN },	//			D4 f
-	{ "field",			LB::b_field,		1, 1, false, 3, RBLTIN },	//		D3 f
-//	{ "me",				LB::b_me,			-1,0, false, 3, FBLTIN },	//		D3				// works as normal ID, see c_varpush
-	{ "script",			LB::b_script,		1, 1, false, 4, RBLTIN },	//			D4 f
-	{ "window",			LB::b_window,		1, 1, false, 4, RBLTIN },	//			D4 f
-	// Chunk operations
-	{ "numberOfChars",	LB::b_numberofchars,1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "numberOfItems",	LB::b_numberofitems,1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "numberOfLines",	LB::b_numberoflines,1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "numberOfWords",	LB::b_numberofwords,1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "lastCharOf",		LB::b_lastcharof,	1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "lastItemOf",		LB::b_lastitemof,	1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "lastLineOf",		LB::b_lastlineof,	1, 1, false, 4, FBLTIN },	//			D4 f
-	{ "lastWordOf",		LB::b_lastwordof,	1, 1, false, 4, FBLTIN },	//			D4 f
+    // Math
+    {"abs", LB::b_abs, 1, 1, true, 2, FBLTIN},         // D2 function
+    {"atan", LB::b_atan, 1, 1, true, 4, FBLTIN},       //			D4 f
+    {"cos", LB::b_cos, 1, 1, true, 4, FBLTIN},         //			D4 f
+    {"exp", LB::b_exp, 1, 1, true, 4, FBLTIN},         //			D4 f
+    {"float", LB::b_float, 1, 1, true, 4, FBLTIN},     //			D4 f
+    {"integer", LB::b_integer, 1, 1, true, 3, FBLTIN}, //		D3 f
+    {"log", LB::b_log, 1, 1, true, 4, FBLTIN},         //			D4 f
+    {"pi", LB::b_pi, 0, 0, true, 4, FBLTIN},           //			D4 f
+    {"power", LB::b_power, 2, 2, true, 4, FBLTIN},     //			D4 f
+    {"random", LB::b_random, 1, 1, true, 2, FBLTIN},   // D2 f
+    {"sin", LB::b_sin, 1, 1, true, 4, FBLTIN},         //			D4 f
+    {"sqrt", LB::b_sqrt, 1, 1, true, 2, FBLTIN},       // D2 f
+    {"tan", LB::b_tan, 1, 1, true, 4, FBLTIN},         //			D4 f
+    // String
+    {"chars", LB::b_chars, 3, 3, true, 2, FBLTIN},         // D2 f
+    {"charToNum", LB::b_charToNum, 1, 1, true, 2, FBLTIN}, // D2 f
+    {"delete", LB::b_delete, 1, 1, true, 3, BLTIN},        //		D3 command
+    {"hilite", LB::b_hilite, 1, 1, true, 3, BLTIN},        //		D3 c
+    {"length", LB::b_length, 1, 1, true, 2, FBLTIN},       // D2 f
+    {"numToChar", LB::b_numToChar, 1, 1, true, 2, FBLTIN}, // D2 f
+    {"offset", LB::b_offset, 2, 3, true, 2, FBLTIN},       // D2 f
+    {"string", LB::b_string, 1, 1, true, 2, FBLTIN},       // D2 f
+    {"value", LB::b_value, 1, 1, true, 2, FBLTIN},         // D2 f
+    // Lists
+    {"add", LB::b_add, 2, 2, false, 4, BLTIN},                 //			D4 c
+    {"addAt", LB::b_addAt, 3, 3, false, 4, BLTIN},             //			D4 c
+    {"addProp", LB::b_addProp, 3, 3, false, 4, BLTIN},         //			D4 c
+    {"append", LB::b_append, 2, 2, false, 4, BLTIN},           //			D4 c
+    {"count", LB::b_count, 1, 1, true, 4, FBLTIN},             //			D4 f
+    {"deleteAt", LB::b_deleteAt, 2, 2, false, 4, BLTIN},       //			D4 c
+    {"deleteProp", LB::b_deleteProp, 2, 2, false, 4, BLTIN},   //			D4 c
+    {"findPos", LB::b_findPos, 2, 2, true, 4, FBLTIN},         //			D4 f
+    {"findPosNear", LB::b_findPosNear, 2, 2, true, 4, FBLTIN}, //			D4 f
+    {"getaProp", LB::b_getaProp, 2, 2, true, 4, FBLTIN},       //			D4 f
+    {"getAt", LB::b_getAt, 2, 2, true, 4, FBLTIN},             //			D4 f
+    {"getLast", LB::b_getLast, 1, 1, true, 4, FBLTIN},         //			D4 f
+    {"getOne", LB::b_getOne, 2, 2, true, 4, FBLTIN},           //			D4 f
+    {"getPos", LB::b_getPos, 2, 2, true, 4, FBLTIN},           //			D4 f
+    {"getProp", LB::b_getProp, 2, 2, true, 4, FBLTIN},         //			D4 f
+    {"getPropAt", LB::b_getPropAt, 2, 2, true, 4, FBLTIN},     //			D4 f
+    {"list", LB::b_list, -1, 0, true, 4, FBLTIN},              //			D4 f
+    {"listP", LB::b_listP, 1, 1, true, 4, FBLTIN},             //			D4 f
+    {"max", LB::b_max, -1, 0, true, 4, FBLTIN},                //			D4 f
+    {"min", LB::b_min, -1, 0, true, 4, FBLTIN},                //			D4 f
+    {"setaProp", LB::b_setaProp, 3, 3, false, 4, BLTIN},       //			D4 c
+    {"setAt", LB::b_setAt, 3, 3, false, 4, BLTIN},             //			D4 c
+    {"setProp", LB::b_setProp, 3, 3, false, 4, BLTIN},         //			D4 c
+    {"sort", LB::b_sort, 1, 1, false, 4, BLTIN},               //			D4 c
+    // Files
+    {"closeDA", LB::b_closeDA, 0, 0, false, 2, BLTIN},                               // D2 c
+    {"closeResFile", LB::b_closeResFile, 0, 1, false, 2, BLTIN},                     // D2 c
+    {"closeXlib", LB::b_closeXlib, 0, 1, false, 2, BLTIN},                           // D2 c
+    {"getNthFileNameInFolder", LB::b_getNthFileNameInFolder, 2, 2, true, 4, FBLTIN}, //	D4 f
+                                                                                     // open															// D2 c
+    {"openDA", LB::b_openDA, 1, 1, false, 2, BLTIN},                                 // D2 c
+    {"openResFile", LB::b_openResFile, 1, 1, false, 2, BLTIN},                       // D2 c
+    {"openXlib", LB::b_openXlib, 1, 1, false, 2, BLTIN},                             // D2 c
+    {"saveMovie", LB::b_saveMovie, 1, 1, false, 4, BLTIN},                           //			D4 c
+    {"setCallBack", LB::b_setCallBack, 2, 2, false, 3, BLTIN},                       //		D3 c
+    {"showResFile", LB::b_showResFile, 0, 1, false, 2, BLTIN},                       // D2 c
+    {"showXlib", LB::b_showXlib, 0, 1, false, 2, BLTIN},                             // D2 c
+    {"xFactoryList", LB::b_xFactoryList, 1, 1, true, 3, FBLTIN},                     //		D3 f
+    // Control
+    {"abort", LB::b_abort, 0, 0, false, 4, BLTIN},                 //			D4 c
+    {"continue", LB::b_continue, 0, 0, false, 2, BLTIN},           // D2 c
+    {"dontPassEvent", LB::b_dontPassEvent, 0, 0, false, 2, BLTIN}, // D2 c
+    {"delay", LB::b_delay, 1, 1, false, 2, BLTIN},                 // D2 c
+    {"do", LB::b_do, 1, 1, false, 2, BLTIN},                       // D2 c
+    {"go", LB::b_go, 1, 2, false, 4, BLTIN},                       // 			D4 c
+    {"halt", LB::b_halt, 0, 0, false, 4, BLTIN},                   //			D4 c
+    {"nothing", LB::b_nothing, 0, 0, false, 2, BLTIN},             // D2 c
+    {"pass", LB::b_pass, 0, 0, false, 4, BLTIN},                   //			D4 c
+    {"pause", LB::b_pause, 0, 0, false, 2, BLTIN},                 // D2 c
+                                                                   // play															// D2 c
+    {"playAccel", LB::b_playAccel, -1, 0, false, 2, BLTIN},        // D2
+                                                                   // play done													// D2
+    {"preLoad", LB::b_preLoad, -1, 0, false, 3, BLTIN},            //		D3.1 c
+    {"preLoadCast", LB::b_preLoadCast, -1, 0, false, 3, BLTIN},    //		D3.1 c
+    {"quit", LB::b_quit, 0, 0, false, 2, BLTIN},                   // D2 c
+    {"restart", LB::b_restart, 0, 0, false, 2, BLTIN},             // D2 c
+    {"return", LB::b_return, 0, 1, false, 2, BLTIN},               // D2 f
+    {"shutDown", LB::b_shutDown, 0, 0, false, 2, BLTIN},           // D2 c
+    {"startTimer", LB::b_startTimer, 0, 0, false, 2, BLTIN},       // D2 c
+                                                                   // when keyDown													// D2
+                                                                   // when mouseDown												// D2
+                                                                   // when mouseUp													// D2
+                                                                   // when timeOut													// D2
+    // Types
+    {"factory", LB::b_factoryP, 1, 1, true, 3, FBLTIN},  //		D3
+    {"floatP", LB::b_floatP, 1, 1, true, 3, FBLTIN},     //		D3
+    {"ilk", LB::b_ilk, 1, 2, false, 4, FBLTIN},          //			D4 f
+    {"integerp", LB::b_integerp, 1, 1, true, 2, FBLTIN}, // D2 f
+    {"objectp", LB::b_objectp, 1, 1, true, 2, FBLTIN},   // D2 f
+    {"pictureP", LB::b_pictureP, 1, 1, true, 4, FBLTIN}, //			D4 f
+    {"stringp", LB::b_stringp, 1, 1, true, 2, FBLTIN},   // D2 f
+    {"symbolp", LB::b_symbolp, 1, 1, true, 2, FBLTIN},   // D2 f
+    {"voidP", LB::b_voidP, 1, 1, true, 4, FBLTIN},       //			D4 f
+    // Misc
+    {"alert", LB::b_alert, 1, 1, false, 2, BLTIN},               // D2 c
+    {"birth", LB::b_birth, -1, 0, false, 4, FBLTIN},             //			D4 f
+    {"clearGlobals", LB::b_clearGlobals, 0, 0, false, 3, BLTIN}, //		D3.1 c
+    {"cursor", LB::b_cursor, 1, 1, false, 2, BLTIN},             // D2 c
+    {"framesToHMS", LB::b_framesToHMS, 4, 4, false, 3, FBLTIN},  //		D3 f
+    {"HMStoFrames", LB::b_HMStoFrames, 4, 4, false, 3, FBLTIN},  //		D3 f
+    {"param", LB::b_param, 1, 1, true, 4, FBLTIN},               //			D4 f
+    {"printFrom", LB::b_printFrom, -1, 0, false, 2, BLTIN},      // D2 c
+                                                                 // put															// D2
+                                                                 // set															// D2
+    {"showGlobals", LB::b_showGlobals, 0, 0, false, 2, BLTIN},   // D2 c
+    {"showLocals", LB::b_showLocals, 0, 0, false, 2, BLTIN},     // D2 c
+    // Score
+    {"constrainH", LB::b_constrainH, 2, 2, true, 2, FBLTIN},                 // D2 f
+    {"constrainV", LB::b_constrainV, 2, 2, true, 2, FBLTIN},                 // D2 f
+    {"copyToClipBoard", LB::b_copyToClipBoard, 1, 1, false, 4, BLTIN},       //			D4 c
+    {"duplicate", LB::b_duplicate, 1, 2, false, 4, BLTIN},                   //			D4 c
+    {"editableText", LB::b_editableText, 0, 0, false, 2, BLTIN},             // D2, FIXME: the field in D4+
+    {"erase", LB::b_erase, 1, 1, false, 4, BLTIN},                           //			D4 c
+    {"findEmpty", LB::b_findEmpty, 1, 1, true, 4, FBLTIN},                   //			D4 f
+                                                                             // go															// D2
+    {"importFileInto", LB::b_importFileInto, 2, 2, false, 4, BLTIN},         //			D4 c
+    {"installMenu", LB::b_installMenu, 1, 1, false, 2, BLTIN},               // D2 c
+    {"label", LB::b_label, 1, 1, true, 2, FBLTIN},                           // D2 f
+    {"marker", LB::b_marker, 1, 1, true, 2, FBLTIN},                         // D2 f
+    {"move", LB::b_move, 1, 2, false, 4, BLTIN},                             //			D4 c
+    {"moveableSprite", LB::b_moveableSprite, 0, 0, false, 2, BLTIN},         // D2, FIXME: the field in D4+
+    {"pasteClipBoardInto", LB::b_pasteClipBoardInto, 1, 1, false, 4, BLTIN}, //			D4 c
+    {"puppetPalette", LB::b_puppetPalette, -1, 0, false, 2, BLTIN},          // D2 c
+    {"puppetSound", LB::b_puppetSound, -1, 0, false, 2, BLTIN},              // D2 c
+    {"puppetSprite", LB::b_puppetSprite, -1, 0, false, 2, BLTIN},            // D2 c
+    {"puppetTempo", LB::b_puppetTempo, 1, 1, false, 2, BLTIN},               // D2 c
+    {"puppetTransition", LB::b_puppetTransition, -1, 0, false, 2, BLTIN},    // D2 c
+    {"ramNeeded", LB::b_ramNeeded, 2, 2, true, 3, FBLTIN},                   //		D3.1 f
+    {"rollOver", LB::b_rollOver, 1, 1, true, 2, FBLTIN},                     // D2 f
+    {"spriteBox", LB::b_spriteBox, -1, 0, false, 2, BLTIN},                  // D2 c
+    {"unLoad", LB::b_unLoad, 0, 2, false, 3, BLTIN},                         //		D3.1 c
+    {"unLoadCast", LB::b_unLoadCast, 0, 2, false, 3, BLTIN},                 //		D3.1 c
+    {"updateStage", LB::b_updateStage, 0, 0, false, 2, BLTIN},               // D2 c
+    {"zoomBox", LB::b_zoomBox, -1, 0, false, 2, BLTIN},                      // D2 c
+    // Point
+    {"point", LB::b_point, 2, 2, true, 4, FBLTIN},          //			D4 f
+    {"inside", LB::b_inside, 2, 2, true, 4, FBLTIN},        //			D4 f
+    {"intersect", LB::b_intersect, 2, 2, false, 4, FBLTIN}, //			D4 f
+    {"map", LB::b_map, 3, 3, true, 4, FBLTIN},              //			D4 f
+    {"rect", LB::b_rect, 4, 4, true, 4, FBLTIN},            //			D4 f
+    {"union", LB::b_union, 2, 2, true, 4, FBLTIN},          //			D4 f
+    // Sound
+    {"beep", LB::b_beep, 0, 1, false, 2, BLTIN},           // D2
+    {"mci", LB::b_mci, 1, 1, false, 3, BLTIN},             //		D3.1 c
+    {"mciwait", LB::b_mciwait, 1, 1, false, 4, BLTIN},     //			D4 c
+    {"sound", LB::b_sound, 2, 3, false, 3, BLTIN},         //		D3 c
+    {"soundBusy", LB::b_soundBusy, 1, 1, true, 3, FBLTIN}, //		D3 f
+    // Window
+    {"close", LB::b_close, 1, 1, false, 4, BLTIN},             //			D4 c
+    {"forget", LB::b_forget, 1, 1, false, 4, BLTIN},           //			D4 c
+    {"inflate", LB::b_inflate, 3, 3, true, 4, FBLTIN},         //			D4 f
+    {"moveToBack", LB::b_moveToBack, 1, 1, false, 4, BLTIN},   //			D4 c
+    {"moveToFront", LB::b_moveToFront, 1, 1, false, 4, BLTIN}, //			D4 c
+    // Constants
+    {"backspace", LB::b_backspace, 0, 0, false, 2, FBLTIN},        // D2
+    {"empty", LB::b_empty, 0, 0, false, 2, FBLTIN},                // D2
+    {"enter", LB::b_enter, 0, 0, false, 2, FBLTIN},                // D2
+    {"false", LB::b_false, 0, 0, false, 2, FBLTIN},                // D2
+    {"quote", LB::b_quote, 0, 0, false, 2, FBLTIN},                // D2
+    {"scummvm_return", LB::b_returnconst, 0, 0, false, 2, FBLTIN}, // D2
+    {"tab", LB::b_tab, 0, 0, false, 2, FBLTIN},                    // D2
+    {"true", LB::b_true, 0, 0, false, 2, FBLTIN},                  // D2
+    {"version", LB::b_version, 0, 0, false, 3, FBLTIN},            //		D3
+    // References
+    {"cast", LB::b_cast, 1, 1, false, 4, RBLTIN},     //			D4 f
+    {"field", LB::b_field, 1, 1, false, 3, RBLTIN},   //		D3 f
+                                                      //	{ "me",				LB::b_me,			-1,0, false, 3, FBLTIN },	//		D3				// works as normal ID, see c_varpush
+    {"script", LB::b_script, 1, 1, false, 4, RBLTIN}, //			D4 f
+    {"window", LB::b_window, 1, 1, false, 4, RBLTIN}, //			D4 f
+    // Chunk operations
+    {"numberOfChars", LB::b_numberofchars, 1, 1, false, 4, FBLTIN}, //			D4 f
+    {"numberOfItems", LB::b_numberofitems, 1, 1, false, 4, FBLTIN}, //			D4 f
+    {"numberOfLines", LB::b_numberoflines, 1, 1, false, 4, FBLTIN}, //			D4 f
+    {"numberOfWords", LB::b_numberofwords, 1, 1, false, 4, FBLTIN}, //			D4 f
+    {"lastCharOf", LB::b_lastcharof, 1, 1, false, 4, FBLTIN},       //			D4 f
+    {"lastItemOf", LB::b_lastitemof, 1, 1, false, 4, FBLTIN},       //			D4 f
+    {"lastLineOf", LB::b_lastlineof, 1, 1, false, 4, FBLTIN},       //			D4 f
+    {"lastWordOf", LB::b_lastwordof, 1, 1, false, 4, FBLTIN},       //			D4 f
 
-	{ 0, 0, 0, 0, false, 0, 0 }
-};
+    {0, 0, 0, 0, false, 0, 0}};
 
 static const char *predefinedMethods[] = {
-	"mAtFrame",				// D3
-	"mDescribe",			// D3
-	"mDispose",				// D3
-	"mGet",					// D3
-	"mInstanceRespondsTo",	// D3
-	"mMessageList",			// D3
-	"mName",				// D3
-	"mNew",					// D3
-	"mPerform",				// D3
-	"mPut",					// D3
-	"mRespondsTo",			// D3
-	0
-};
+    "mAtFrame",            // D3
+    "mDescribe",           // D3
+    "mDispose",            // D3
+    "mGet",                // D3
+    "mInstanceRespondsTo", // D3
+    "mMessageList",        // D3
+    "mName",               // D3
+    "mNew",                // D3
+    "mPerform",            // D3
+    "mPut",                // D3
+    "mRespondsTo",         // D3
+    0};
 
 void Lingo::initBuiltIns() {
 	for (BuiltinProto *blt = builtins; blt->name; blt++) {
@@ -347,7 +345,6 @@ void Lingo::drop(uint num) {
 	}
 	_stack.remove_at(_stack.size() - 1 - num);
 }
-
 
 ///////////////////
 // Math
@@ -593,10 +590,10 @@ void LB::b_addAt(int nargs) {
 	TYPECHECK(list, ARRAY);
 
 	if (!((uint)index.u.i < list.u.farr->size())) {
-		for (uint i = 0; i < index.u.i-list.u.farr->size()-1; i++)
+		for (uint i = 0; i < index.u.i - list.u.farr->size() - 1; i++)
 			list.u.farr->push_back(Datum(0));
 	}
-	list.u.farr->insert_at(index.u.i-1, value);
+	list.u.farr->insert_at(index.u.i - 1, value);
 }
 
 void LB::b_addProp(int nargs) {
@@ -657,10 +654,10 @@ void LB::b_deleteAt(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
-		list.u.farr->remove_at(index.u.i-1);
+		list.u.farr->remove_at(index.u.i - 1);
 		break;
 	case PARRAY:
-		list.u.parr->remove_at(index.u.i-1);
+		list.u.parr->remove_at(index.u.i - 1);
 		break;
 	default:
 		TYPECHECK2(list, ARRAY, PARRAY);
@@ -682,7 +679,7 @@ void LB::b_deleteProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			list.u.parr->remove_at(index-1);
+			list.u.parr->remove_at(index - 1);
 		}
 		break;
 	}
@@ -725,7 +722,7 @@ void LB::b_findPosNear(int nargs) {
 		p.makeString();
 		p.u.s->toLowercase();
 		if (p.u.s->find(prop.u.s->c_str()) == 0) {
-			d.u.i = i+1;
+			d.u.i = i + 1;
 			break;
 		}
 	}
@@ -748,7 +745,7 @@ void LB::b_getaProp(int nargs) {
 		Datum d;
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			d = *list.u.parr->operator[](index-1).v;
+			d = *list.u.parr->operator[](index - 1).v;
 		}
 		g_lingo->push(d);
 		break;
@@ -770,11 +767,11 @@ void LB::b_getAt(int nargs) {
 	switch (list.type) {
 	case ARRAY:
 		ARRBOUNDSCHECK(index.u.i, list);
-		g_lingo->push(list.u.farr->operator[](index.u.i-1));
+		g_lingo->push(list.u.farr->operator[](index.u.i - 1));
 		break;
 	case PARRAY:
 		ARRBOUNDSCHECK(index.u.i, list);
-		g_lingo->push(*list.u.parr->operator[](index.u.i-1).v);
+		g_lingo->push(*list.u.parr->operator[](index.u.i - 1).v);
 		break;
 	default:
 		TYPECHECK2(list, ARRAY, PARRAY);
@@ -812,7 +809,7 @@ void LB::b_getOne(int nargs) {
 		Datum d;
 		int index = LC::compareArrays(LC::eqData, list, val, true, true).u.i;
 		if (index > 0) {
-			d = *list.u.parr->operator[](index-1).p;
+			d = *list.u.parr->operator[](index - 1).p;
 		}
 		g_lingo->push(d);
 		break;
@@ -868,7 +865,7 @@ void LB::b_getProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			g_lingo->push(*list.u.parr->operator[](index-1).v);
+			g_lingo->push(*list.u.parr->operator[](index - 1).v);
 		} else {
 			error("b_getProp: Property %s not found", prop.makeString()->c_str());
 		}
@@ -889,7 +886,7 @@ void LB::b_getPropAt(int nargs) {
 		index.makeInt();
 	TYPECHECK(index, INT);
 
-	g_lingo->push(*list.u.parr->operator[](index.u.i-1).p);
+	g_lingo->push(*list.u.parr->operator[](index.u.i - 1).p);
 }
 
 void LB::b_list(int nargs) {
@@ -995,7 +992,7 @@ void LB::b_setaProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			*list.u.parr->operator[](index-1).v = value;
+			*list.u.parr->operator[](index - 1).v = value;
 		} else {
 			PCell cell = PCell(prop, value);
 			list.u.parr->push_back(cell);
@@ -1019,7 +1016,7 @@ void LB::b_setAt(int nargs) {
 	switch (list.type) {
 	case ARRAY:
 		if ((uint)index.u.i < list.u.farr->size()) {
-			list.u.farr->operator[](index.u.i-1) = value;
+			list.u.farr->operator[](index.u.i - 1) = value;
 		} else {
 			// TODO: Extend the list if we request an index beyond it
 			ARRBOUNDSCHECK(index.u.i, list);
@@ -1027,7 +1024,7 @@ void LB::b_setAt(int nargs) {
 		break;
 	case PARRAY:
 		ARRBOUNDSCHECK(index.u.i, list);
-		*list.u.parr->operator[](index.u.i-1).v = value;
+		*list.u.parr->operator[](index.u.i - 1).v = value;
 		break;
 	default:
 		TYPECHECK2(list, ARRAY, PARRAY);
@@ -1045,7 +1042,7 @@ void LB::b_setProp(int nargs) {
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 	if (index > 0) {
-		*list.u.parr->operator[](index-1).v = value;
+		*list.u.parr->operator[](index - 1).v = value;
 	} else {
 		warning("b_setProp: Property not found");
 	}
@@ -1055,7 +1052,6 @@ void LB::b_sort(int nargs) {
 	g_lingo->printSTUBWithArglist("b_sort", nargs);
 	g_lingo->dropStack(nargs);
 }
-
 
 ///////////////////
 // Files
@@ -1418,7 +1414,6 @@ void LB::b_voidP(int nargs) {
 	g_lingo->push(d);
 }
 
-
 ///////////////////
 // Misc
 ///////////////////
@@ -1614,7 +1609,7 @@ void LB::b_installMenu(int nargs) {
 			}
 
 			if (!strcmp(p, "@"))
-				p = "\xf0";	// Apple symbol
+				p = "\xf0"; // Apple symbol
 
 			submenu = menu->addMenuItem(nullptr, Common::String(p));
 
@@ -1768,7 +1763,6 @@ void LB::b_puppetSound(int nargs) {
 		else
 			sound->playStream(*sd->getAudioStream(), 1);
 	}
-
 }
 
 void LB::b_puppetSprite(int nargs) {
@@ -1811,7 +1805,7 @@ void LB::b_rollOver(int nargs) {
 
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
-	if (arg >= (int32) frame->_sprites.size()) {
+	if (arg >= (int32)frame->_sprites.size()) {
 		g_lingo->push(d);
 		return;
 	}
@@ -1896,7 +1890,7 @@ void LB::b_zoomBox(int nargs) {
 	box->delay = delayTicks;
 	box->step = 0;
 	box->startTime = g_system->getMillis();
-	box->nextTime  = g_system->getMillis() + 1000 * box->step / 60;
+	box->nextTime = g_system->getMillis() + 1000 * box->step / 60;
 
 	score->addZoomBox(box);
 }
@@ -1910,7 +1904,6 @@ void LB::b_updateStage(int nargs) {
 
 	frame->prepareFrame(score);
 }
-
 
 ///////////////////
 // Window
@@ -1941,7 +1934,6 @@ void LB::b_moveToFront(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
-
 ///////////////////
 // Point
 ///////////////////
@@ -1969,7 +1961,6 @@ void LB::b_rect(int nargs) {
 
 	g_lingo->push(Datum(0));
 }
-
 
 void LB::b_intersect(int nargs) {
 	g_lingo->printSTUBWithArglist("b_intersect", nargs);
@@ -2010,7 +2001,6 @@ void LB::b_union(int nargs) {
 
 	g_lingo->push(Datum(0));
 }
-
 
 ///////////////////
 // Sound
@@ -2263,7 +2253,7 @@ void LB::b_numberofitems(int nargs) {
 	d.makeString();
 	int numberofitems = 1;
 	Common::String contents = *d.u.s;
-	for (uint32 i = 0;  i < d.u.s->size(); i++) {
+	for (uint32 i = 0; i < d.u.s->size(); i++) {
 		if (contents[i] == ',')
 			numberofitems++;
 	}

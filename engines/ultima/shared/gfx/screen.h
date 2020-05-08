@@ -24,18 +24,17 @@
 #define ULTIMA_SHARED_GFX_SCREEN_H
 
 #include "common/list.h"
-#include "ultima/shared/core/rect.h"
 #include "graphics/screen.h"
-#include "ultima/shared/gfx/font.h"
+#include "ultima/shared/core/rect.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/font.h"
 
 namespace Ultima {
 namespace Shared {
 
 namespace Gfx {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-
+#define VGA_COLOR_TRANS(x) ((x)*255 / 63)
 
 /**
  * Base class for an on-screen cursor. Currently used for text cursor display
@@ -58,10 +57,11 @@ public:
 	virtual void draw() = 0;
 };
 
-class Screen: public Graphics::Screen {
+class Screen : public Graphics::Screen {
 private:
 	Cursor *_cursor;
 	bool _drawCursor;
+
 public:
 	/**
 	 * Constructor

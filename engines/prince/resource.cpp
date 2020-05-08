@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/fs.h"
 #include "common/config-manager.h"
+#include "common/fs.h"
 
-#include "prince/prince.h"
-#include "prince/graphics.h"
-#include "prince/debugger.h"
-#include "prince/script.h"
-#include "prince/hero.h"
-#include "prince/resource.h"
 #include "prince/archive.h"
+#include "prince/debugger.h"
+#include "prince/graphics.h"
+#include "prince/hero.h"
+#include "prince/prince.h"
+#include "prince/resource.h"
+#include "prince/script.h"
 
 namespace Prince {
 

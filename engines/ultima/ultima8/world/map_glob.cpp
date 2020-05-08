@@ -22,15 +22,14 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/map_glob.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/world/map_glob.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 MapGlob::MapGlob() {
 }
-
 
 MapGlob::~MapGlob() {
 }

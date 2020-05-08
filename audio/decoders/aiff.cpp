@@ -34,9 +34,9 @@
 #include "common/textconsole.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/3do.h"
 #include "audio/decoders/aiff.h"
 #include "audio/decoders/raw.h"
-#include "audio/decoders/3do.h"
 
 namespace Audio {
 

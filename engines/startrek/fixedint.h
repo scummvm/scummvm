@@ -173,7 +173,6 @@ int32 operator*(const int16 lhs, const TFixedInt<T, totalBits, decimalBits> &rhs
 	return rhs * lhs;
 }
 
-
 // Fixed-point (2.14) number (between -1 and 1)
 typedef TFixedInt<int16, 16, 14> Fixed14;
 

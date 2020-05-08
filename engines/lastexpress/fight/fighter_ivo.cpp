@@ -178,7 +178,7 @@ void FighterOpponentIvo::handleAction(FightAction action) {
 			break;
 
 		if (rnd(100) <= (unsigned int)(_countdown > 2 ? 60 : 75)) {
-			setSequenceAndDraw(3 , kFightSequenceType1);
+			setSequenceAndDraw(3, kFightSequenceType1);
 			if (_opponent->getSequenceIndex() == 4)
 				setSequenceAndDraw(2, kFightSequenceType2);
 		}

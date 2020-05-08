@@ -179,10 +179,9 @@ void Room::demon3FireAtBoulder() {
 		// This should never happen (in the original game, this would cause a stack
 		// misalignment?
 		const char *text[] = {
-			"wes",
-			"There is a boulder check error.",
-			""
-		};
+		    "wes",
+		    "There is a boulder check error.",
+		    ""};
 		showRoomSpecificText(text);
 		break;
 	}
@@ -345,17 +344,16 @@ void Room::demon3RedshirtUsedPanel() {
 		_awayMission->demon.field45 = true;
 	} else {
 		const TextRef textTable[] = {
-			5,
-			33,
-			35,
-			34,
+		    5,
+		    33,
+		    35,
+		    34,
 		};
 
 		TextRef text[] = {
-			TX_SPEAKER_EVERTS,
-			TX_NULL,
-			TX_BLANK
-		};
+		    TX_SPEAKER_EVERTS,
+		    TX_NULL,
+		    TX_BLANK};
 		text[1] = textTable[_awayMission->demon.field41 - 1];
 		showMultipleTexts(text, true);
 		walkCrewman(OBJECT_REDSHIRT, 0xbe, 0x9b, 0);
@@ -463,7 +461,7 @@ void Room::demon3TalkToMiner() {
 }
 
 void Room::demon3TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  2, true);
+	showText(TX_SPEAKER_KIRK, 2, true);
 	showText(TX_SPEAKER_SPOCK, 29, true);
 	showText(TX_SPEAKER_MCCOY, 26, true);
 }
@@ -477,9 +475,8 @@ void Room::demon3TalkToMccoy() {
 		showText(TX_SPEAKER_MCCOY, 14, true);
 	} else {
 		showText(TX_SPEAKER_MCCOY, 25, true);
-		showText(TX_SPEAKER_KIRK,  3, true);
+		showText(TX_SPEAKER_KIRK, 3, true);
 		showText(TX_SPEAKER_MCCOY, 24, true);
-
 	}
 }
 
@@ -487,7 +484,7 @@ void Room::demon3TalkToRedshirt() {
 	// FIXME: this shouldn't work if he's dead. Should it check higher up whether that's
 	// the case?
 	showText(TX_SPEAKER_EVERTS, 36, true);
-	showText(TX_SPEAKER_KIRK,   4, true);
+	showText(TX_SPEAKER_KIRK, 4, true);
 }
 
 void Room::demon3LookAtKirk() {
@@ -559,4 +556,4 @@ void Room::demon3LookAtLight() {
 	showDescription(15, true);
 }
 
-}
+} // namespace StarTrek

@@ -40,10 +40,13 @@ class CHose : public CCarry {
 	bool UseWithCharMsg(CUseWithCharMsg *msg);
 	bool HoseConnectedMsg(CHoseConnectedMsg *msg);
 	bool DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg);
+
 protected:
 	CString _unused1;
+
 public:
 	static CHoseStatics *_statics;
+
 public:
 	CLASSDEF;
 	CHose();

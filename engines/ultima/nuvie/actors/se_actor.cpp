@@ -25,7 +25,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-SEActor::SEActor(Map *m, ObjManager *om, GameClock *c): WOUActor(m, om, c) {
+SEActor::SEActor(Map *m, ObjManager *om, GameClock *c) : WOUActor(m, om, c) {
 }
 
 SEActor::~SEActor() {

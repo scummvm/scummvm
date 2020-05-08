@@ -30,8 +30,10 @@ namespace Titanic {
 class CParrotTrigger : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	int _value;
+
 public:
 	CLASSDEF;
 	CParrotTrigger() : CGameObject(), _value(0x446AB) {}

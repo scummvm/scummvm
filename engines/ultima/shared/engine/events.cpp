@@ -20,21 +20,21 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "graphics/cursorman.h"
 #include "common/events.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "ultima/shared/engine/ultima.h"
+#include "graphics/cursorman.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/shared/engine/ultima.h"
 
 namespace Ultima {
 namespace Shared {
 
 EventsManager::EventsManager(EventsCallback *callback) : _callback(callback), _playTime(0),
-		_gameCounter(0), _frameCounter(0), _priorFrameCounterTime(0), _buttonsDown(0),
-		_specialButtons(0) {
+                                                         _gameCounter(0), _frameCounter(0), _priorFrameCounterTime(0), _buttonsDown(0),
+                                                         _specialButtons(0) {
 }
 
 void EventsManager::showCursor() {
@@ -88,7 +88,7 @@ bool EventsManager::pollEvent(Common::Event &event) {
 		case Common::EVENT_RBUTTONUP:
 			break;
 		default:
- 			break;
+			break;
 		}
 
 		return true;
@@ -173,7 +173,7 @@ void EventsManager::setButtonDown(MouseButton button, bool isDown) {
 		mask = MK_MBUTTON;
 		break;
 	default:
-		break;	
+		break;
 	}
 
 	if (isDown) {
@@ -227,19 +227,16 @@ void EventsManager::handleKbdSpecial(Common::KeyState keyState) {
 		_specialButtons &= ~MK_SHIFT;
 }
 
-
 bool shouldQuit() {
 	return g_engine->shouldQuit();
 }
 
 bool isMouseDownEvent(Common::EventType type) {
-	return type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_RBUTTONDOWN
-		|| type == Common::EVENT_MBUTTONDOWN;
+	return type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_RBUTTONDOWN || type == Common::EVENT_MBUTTONDOWN;
 }
 
 bool isMouseUpEvent(Common::EventType type) {
-	return type == Common::EVENT_LBUTTONUP || type == Common::EVENT_RBUTTONUP
-		|| type == Common::EVENT_MBUTTONUP;
+	return type == Common::EVENT_LBUTTONUP || type == Common::EVENT_RBUTTONUP || type == Common::EVENT_MBUTTONUP;
 }
 
 MouseButton whichButton(Common::EventType type) {

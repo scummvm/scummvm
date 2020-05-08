@@ -20,20 +20,20 @@
  *
  */
 
+#include "access/screen.h"
+#include "access/access.h"
+#include "access/martian/martian_resources.h"
+#include "access/resources.h"
 #include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/rect.h"
-#include "common/textconsole.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 #include "graphics/palette.h"
-#include "access/access.h"
-#include "access/screen.h"
-#include "access/resources.h"
-#include "access/martian/martian_resources.h"
 
 namespace Access {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+#define VGA_COLOR_TRANS(x) ((x)*255 / 63)
 
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	create(320, 200);
@@ -94,7 +94,7 @@ void Screen::update() {
 			_fadeIn = true;
 		return;
 	}
-	markAllDirty();//****DEBUG****
+	markAllDirty(); //****DEBUG****
 	Graphics::Screen::update();
 }
 
@@ -143,7 +143,7 @@ void Screen::updatePalette() {
 
 void Screen::savePalette() {
 	Common::copy(&_rawPalette[0], &_rawPalette[PALETTE_SIZE],
-		&_savedPalettes[_savedPaletteCount][0]);
+	             &_savedPalettes[_savedPaletteCount][0]);
 
 	if (++_savedPaletteCount == 2)
 		_savedPaletteCount = 1;
@@ -154,7 +154,7 @@ void Screen::restorePalette() {
 		_savedPaletteCount = 0;
 
 	Common::copy(&_savedPalettes[_savedPaletteCount][0],
-		&_savedPalettes[_savedPaletteCount][PALETTE_SIZE], &_rawPalette[0]);
+	             &_savedPalettes[_savedPaletteCount][PALETTE_SIZE], &_rawPalette[0]);
 }
 
 void Screen::getPalette(byte *pal) {

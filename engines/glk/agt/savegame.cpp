@@ -20,10 +20,9 @@
  *
  */
 
-
 #include "glk/agt/agility.h"
-#include "glk/agt/interp.h"
 #include "glk/agt/exec.h"
+#include "glk/agt/interp.h"
 
 namespace Glk {
 namespace AGT {
@@ -32,7 +31,6 @@ namespace AGT {
 #define DEBUG_SAVE_SIZE 0
 
 long state_size;
-
 
 /*-------------------------------------------------------------------*/
 /*  INITIALISATION ROUTINES  */
@@ -54,8 +52,10 @@ void init_vals(void)
 		room[i].contents = 0;
 	player_contents = player_worn = 0;
 	for (i = 0; i <= maxnoun - first_noun; i++) {
-		if (player_has(i + first_noun)) totwt += noun[i].weight;
-		if (noun[i].location == 1) totsize += noun[i].size;
+		if (player_has(i + first_noun))
+			totwt += noun[i].weight;
+		if (noun[i].location == 1)
+			totsize += noun[i].size;
 		noun[i].something_pos_near_noun = 0;
 		noun[i].contents = noun[i].next = 0;
 	}
@@ -64,16 +64,13 @@ void init_vals(void)
 	for (i = 0; i <= maxnoun - first_noun; i++) {
 		add_object(noun[i].location, i + first_noun);
 		if (noun[i].nearby_noun >= first_noun &&
-		        noun[i].nearby_noun <= maxnoun)
+		    noun[i].nearby_noun <= maxnoun)
 			noun[noun[i].nearby_noun - first_noun].something_pos_near_noun = 1;
 	}
 	for (i = 0; i <= maxcreat - first_creat; i++)
 		add_object(creature[i].location, i + first_creat);
 	objscore = 0; /* Will need to recompute this ... */
 }
-
-
-
 
 /*-------------------------------------------------------------------*/
 /*  ROUTINES TO SAVE/RESTORE THE GAME STATE */
@@ -90,75 +87,71 @@ void init_vals(void)
 /* There is no difference between signed and unsigned when storing them;
  there will be problems when recovering them again. */
 
-#define g(ft,var) {ft,DT_DEFAULT,&var,0}
-#define r(ft,str,f) {ft,DT_DEFAULT,NULL,offsetof(str,f)}
-#define dptype   {FT_DESCPTR,DT_DESCPTR,NULL,0}
+#define g(ft, var) \
+	{ ft, DT_DEFAULT, &var, 0 }
+#define r(ft, str, f) \
+	{ ft, DT_DEFAULT, NULL, offsetof(str, f) }
+#define dptype \
+	{ FT_DESCPTR, DT_DESCPTR, NULL, 0 }
 
 static file_info fi_savehead[] = {
-	g(FT_INT16, loc), g(FT_INT32, tscore), g(FT_INT16, turncnt),
-	g(FT_BYTE, statusmode),
-	g(FT_BOOL, first_visit_flag), g(FT_BOOL, newlife_flag),
-	g(FT_BOOL, room_firstdesc), g(FT_BOOL, verboseflag),
-	g(FT_BOOL, notify_flag), g(FT_BOOL, listexit_flag),
-	g(FT_BOOL, menu_mode), g(FT_BOOL, sound_on),
-	g(FT_BOOL, agt_answer), g(FT_INT32, agt_number),
-	g(FT_INT16, curr_time), g(FT_INT16, curr_lives),
-	g(FT_INT16, delta_time),
-	endrec
-};
+    g(FT_INT16, loc), g(FT_INT32, tscore), g(FT_INT16, turncnt),
+    g(FT_BYTE, statusmode),
+    g(FT_BOOL, first_visit_flag), g(FT_BOOL, newlife_flag),
+    g(FT_BOOL, room_firstdesc), g(FT_BOOL, verboseflag),
+    g(FT_BOOL, notify_flag), g(FT_BOOL, listexit_flag),
+    g(FT_BOOL, menu_mode), g(FT_BOOL, sound_on),
+    g(FT_BOOL, agt_answer), g(FT_INT32, agt_number),
+    g(FT_INT16, curr_time), g(FT_INT16, curr_lives),
+    g(FT_INT16, delta_time),
+    endrec};
 
 static file_info fi_saveroom[] = {
-	dptype,
-	r(FT_BOOL, room_rec, seen),
-	r(FT_BOOL, room_rec, locked_door),
-	r(FT_INT16, room_rec, oclass),
-	r(FT_INT16, room_rec, points),
-	r(FT_INT16, room_rec, light),
-	r(FT_PATHARRAY, room_rec, path),
-	r(FT_UINT32, room_rec, flag_noun_bits),
-	endrec
-};
+    dptype,
+    r(FT_BOOL, room_rec, seen),
+    r(FT_BOOL, room_rec, locked_door),
+    r(FT_INT16, room_rec, oclass),
+    r(FT_INT16, room_rec, points),
+    r(FT_INT16, room_rec, light),
+    r(FT_PATHARRAY, room_rec, path),
+    r(FT_UINT32, room_rec, flag_noun_bits),
+    endrec};
 
 static file_info fi_savenoun[] = {
-	dptype,
-	r(FT_INT16, noun_rec, location),
-	r(FT_INT16, noun_rec, nearby_noun),
-	r(FT_INT16, noun_rec, num_shots),
-	r(FT_INT16, noun_rec, initdesc),
-	r(FT_INT16, noun_rec, oclass),
-	r(FT_INT16, noun_rec, points),
-	r(FT_INT16, noun_rec, weight),
-	r(FT_INT16, noun_rec, size),
-	r(FT_BOOL, noun_rec, on),
-	r(FT_BOOL, noun_rec, open),
-	r(FT_BOOL, noun_rec, locked),
-	r(FT_BOOL, noun_rec, movable),
-	r(FT_BOOL, noun_rec, seen),
-	r(FT_WORD, noun_rec, pos_prep),
-	r(FT_WORD, noun_rec, pos_name),
-	endrec
-};
+    dptype,
+    r(FT_INT16, noun_rec, location),
+    r(FT_INT16, noun_rec, nearby_noun),
+    r(FT_INT16, noun_rec, num_shots),
+    r(FT_INT16, noun_rec, initdesc),
+    r(FT_INT16, noun_rec, oclass),
+    r(FT_INT16, noun_rec, points),
+    r(FT_INT16, noun_rec, weight),
+    r(FT_INT16, noun_rec, size),
+    r(FT_BOOL, noun_rec, on),
+    r(FT_BOOL, noun_rec, open),
+    r(FT_BOOL, noun_rec, locked),
+    r(FT_BOOL, noun_rec, movable),
+    r(FT_BOOL, noun_rec, seen),
+    r(FT_WORD, noun_rec, pos_prep),
+    r(FT_WORD, noun_rec, pos_name),
+    endrec};
 
 static file_info fi_savecreat[] = {
-	dptype,
-	r(FT_INT16, creat_rec, location),
-	r(FT_INT16, creat_rec, counter),
-	r(FT_INT16, creat_rec, timecounter),
-	r(FT_INT16, creat_rec, initdesc),
-	r(FT_INT16, creat_rec, oclass),
-	r(FT_INT16, creat_rec, points),
-	r(FT_BOOL, creat_rec, groupmemb),
-	r(FT_BOOL, creat_rec, hostile),
-	r(FT_BOOL, creat_rec, seen),
-	endrec
-};
+    dptype,
+    r(FT_INT16, creat_rec, location),
+    r(FT_INT16, creat_rec, counter),
+    r(FT_INT16, creat_rec, timecounter),
+    r(FT_INT16, creat_rec, initdesc),
+    r(FT_INT16, creat_rec, oclass),
+    r(FT_INT16, creat_rec, points),
+    r(FT_BOOL, creat_rec, groupmemb),
+    r(FT_BOOL, creat_rec, hostile),
+    r(FT_BOOL, creat_rec, seen),
+    endrec};
 
 static file_info fi_saveustr[] = {
-	{FT_TLINE, DT_DEFAULT, NULL, 0},
-	endrec
-};
-
-
+    {FT_TLINE, DT_DEFAULT, NULL, 0},
+    endrec};
 
 uchar *getstate(uchar *gs)
 /* Returns block containing game state.
@@ -169,19 +162,20 @@ uchar *getstate(uchar *gs)
 	long bp;
 
 	if (gs == NULL) {
-		rm_trap = 0; /* Don't exit on out-of-memory condition */
+		rm_trap = 0;                       /* Don't exit on out-of-memory condition */
 		gs = (uchar *)rmalloc(state_size); /* This should be enough. */
 		rm_trap = 1;
 		if (gs == NULL) /* This is why we set rm_trap to 0 before calling rmalloc */
 			return NULL;
 		new_block = 1;
-	} else new_block = 0;
+	} else
+		new_block = 0;
 
 	/* First two bytes reserved for block size, which we don't know yet.*/
 	gs[4] = game_sig & 0xFF;
 	gs[5] = (game_sig >> 8) & 0xFF;
 
-	tscore -= objscore;  /* Only include "permanent" part of score;
+	tscore -= objscore; /* Only include "permanent" part of score;
             objscore we can recompute on RESTORE */
 
 	/* Need to setup here */
@@ -219,11 +213,8 @@ uchar *getstate(uchar *gs)
 	return gs;
 }
 
-
-
 void putstate(uchar *gs) { /* Restores games state. */
 	long size, bp, numrec, i;
-
 
 	size = gs[0] + (((long)gs[1]) << 8) + (((long)gs[2]) << 16) + (((long)gs[3]) << 24);
 	if (size != state_size) {
@@ -248,7 +239,6 @@ void putstate(uchar *gs) { /* Restores games state. */
 			}
 		}
 	}
-
 
 	/* setup... */
 	set_internal_buffer(gs);
@@ -291,16 +281,17 @@ void putstate(uchar *gs) { /* Restores games state. */
 	}
 	set_internal_buffer(NULL);
 
-	if (skip_descr)   /* Need to "fix" position information. This is a hack. */
+	if (skip_descr) /* Need to "fix" position information. This is a hack. */
 		/* Basically, this sets the position of each object to its default */
 		/* The problem here is that the usual position info is invalid-- we've
 		   changed games, and hence dictionaries */
 		for (i = 0; i < maxnoun - first_noun; i++) {
 			if (noun[i].position != NULL && noun[i].position[0] != 0)
 				noun[i].pos_prep = -1;
-			else noun[i].pos_prep = 0;
+			else
+				noun[i].pos_prep = 0;
 		}
-	else   /* Rebuild position information */
+	else /* Rebuild position information */
 		for (i = 0; i < maxnoun - first_noun; i++)
 			if (noun[i].pos_prep == -1)
 				noun[i].position = noun[i].initpos;
@@ -311,7 +302,7 @@ void putstate(uchar *gs) { /* Restores games state. */
 	skip_descr = 0; /* If we set this to 1, restore it to its original state */
 	/* Now do some simple consistancy checking on major variables */
 	if (loc > maxroom || loc < 0 || turncnt < 0 ||
-	        curr_lives < 0 || curr_lives > max_lives) {
+	    curr_lives < 0 || curr_lives > max_lives) {
 		error("Error: Save file inconsistent.");
 	}
 }
@@ -320,19 +311,10 @@ void init_state_sys(void)
 /* Initializes the state saving mechanisms */
 /* Mainly it just computes the size of a state block */
 {
-	state_size = compute_recsize(fi_savehead)
-	             + compute_recsize(fi_saveroom) * rangefix(maxroom - first_room + 1)
-	             + compute_recsize(fi_savenoun) * rangefix(maxnoun - first_noun + 1)
-	             + compute_recsize(fi_savecreat) * rangefix(maxcreat - first_creat + 1)
-	             + ft_leng[FT_BYTE] * (FLAG_NUM + 1)
-	             + ft_leng[FT_INT16] * (CNT_NUM + 1)
-	             + ft_leng[FT_INT32] * (VAR_NUM + 1)
-	             + ft_leng[FT_BYTE] * objextsize(0)
-	             + ft_leng[FT_INT32] * objextsize(1)
-	             + 6;  /* Six bytes in header */
-	if (userstr != NULL) state_size += ft_leng[FT_TLINE] * MAX_USTR;
+	state_size = compute_recsize(fi_savehead) + compute_recsize(fi_saveroom) * rangefix(maxroom - first_room + 1) + compute_recsize(fi_savenoun) * rangefix(maxnoun - first_noun + 1) + compute_recsize(fi_savecreat) * rangefix(maxcreat - first_creat + 1) + ft_leng[FT_BYTE] * (FLAG_NUM + 1) + ft_leng[FT_INT16] * (CNT_NUM + 1) + ft_leng[FT_INT32] * (VAR_NUM + 1) + ft_leng[FT_BYTE] * objextsize(0) + ft_leng[FT_INT32] * objextsize(1) + 6; /* Six bytes in header */
+	if (userstr != NULL)
+		state_size += ft_leng[FT_TLINE] * MAX_USTR;
 }
-
 
 /*-------------------------------------------------------------------*/
 /*  SAVE FILE ROUTINES    */

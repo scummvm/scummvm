@@ -23,17 +23,17 @@
 #ifndef ULTIMA_SHARED_GFX_INFO_H
 #define ULTIMA_SHARED_GFX_INFO_H
 
-#include "ultima/shared/gfx/visual_item.h"
-#include "ultima/shared/gfx/text_input.h"
-#include "ultima/shared/gfx/character_input.h"
 #include "common/str-array.h"
+#include "ultima/shared/gfx/character_input.h"
+#include "ultima/shared/gfx/text_input.h"
+#include "ultima/shared/gfx/visual_item.h"
 
 namespace Ultima {
 namespace Shared {
 
-using Shared::CInfoMsg;
 using Shared::CInfoGetCommandKeypress;
 using Shared::CInfoGetInput;
+using Shared::CInfoMsg;
 using Shared::CKeypressMsg;
 
 /**
@@ -46,16 +46,19 @@ class Info : public Gfx::VisualItem {
 	bool InfoGetKeypress(CInfoGetKeypress &msg);
 	bool InfoGetInput(CInfoGetInput &msg);
 	bool KeypressMsg(CKeypressMsg &msg);
+
 private:
 	Common::StringArray _lines;
 	Gfx::TextInput *_textInput;
 	Gfx::CharacterInput *_characterInput;
 	TreeItem *_commandRespondTo;
+
 protected:
 	/**
 	 * Draws a prompt character
 	 */
 	virtual void drawPrompt(Gfx::VisualSurface &surf, const Point &pt) = 0;
+
 public:
 	CLASSDEF;
 

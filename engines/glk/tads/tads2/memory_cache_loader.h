@@ -31,8 +31,8 @@
 #ifndef GLK_TADS_TADS2_MEMORY_CACHE_LOADER
 #define GLK_TADS_TADS2_MEMORY_CACHE_LOADER
 
-#include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/error_handling.h"
+#include "glk/tads/tads2/lib.h"
 
 namespace Glk {
 namespace TADS {
@@ -42,13 +42,13 @@ namespace TADS2 {
  * Loader context
  */
 struct mclcxdef {
-    errcxdef *mclcxerr;			/* error handling context */
+	errcxdef *mclcxerr; /* error handling context */
 };
 
 /**
  * Loader handle
  */
-typedef ulong mclhd;			/* essentially a seek address */
+typedef ulong mclhd; /* essentially a seek address */
 
 } // End of namespace TADS2
 } // End of namespace TADS

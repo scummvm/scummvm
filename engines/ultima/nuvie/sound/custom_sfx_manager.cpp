@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/sound/custom_sfx_manager.h"
 #include "audio/mixer.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "common/file.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/sound/custom_sfx_manager.h"
-#include "common/file.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -45,9 +45,7 @@ CustomSfxManager::CustomSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxMan
 }
 
 CustomSfxManager::~CustomSfxManager() {
-
 }
-
 
 bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Std::map<uint16, uint16> *m) {
 	char seps[] = ";\r\n";
@@ -61,7 +59,7 @@ bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Std::map<uint16,
 		return false;
 	}
 
-	sz = (char *) niof.readAll();
+	sz = (char *)niof.readAll();
 
 	token1 = strtok(sz, seps);
 
@@ -75,7 +73,6 @@ bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Std::map<uint16,
 		token1 = strtok(NULL, seps);
 	}
 
-
 	return true;
 }
 
@@ -83,9 +80,8 @@ bool CustomSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
 	return playSfxLooping(sfx_id, NULL, volume);
 }
 
-
 bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
-	Std::map < uint16, uint16 >::iterator it;
+	Std::map<uint16, uint16>::iterator it;
 
 	it = sfx_map->find((uint16)sfx_id);
 	if (it != sfx_map->end()) {

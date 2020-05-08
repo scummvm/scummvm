@@ -26,11 +26,11 @@
 #include "common/scummsys.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Audio {
-	class AudioStream;
+class AudioStream;
 }
 
 namespace Dragons {
@@ -100,7 +100,7 @@ public:
 	 * Creates a VAB file with both header and body (*.MSF). VabSound will dispose msfData
 	 * @param data
 	 */
-	VabSound(Common::SeekableReadStream* msfData, const DragonsEngine *_vm);
+	VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm);
 
 	/**
 	 * Creates a VAB file with separate header and body (*.VH and *.VB). VabSound will dispose vhData & vbData
@@ -108,7 +108,7 @@ public:
 	 * @param dataHeader
 	 * @param dataBody
 	 */
-	VabSound(Common::SeekableReadStream* vhData, Common::SeekableReadStream* vbData);
+	VabSound(Common::SeekableReadStream *vhData, Common::SeekableReadStream *vbData);
 
 	~VabSound();
 

@@ -24,8 +24,8 @@
 
 #include "common/debug.h"
 #include "common/substream.h"
-#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Mohawk {
 
@@ -57,7 +57,8 @@ bool Archive::openFile(const Common::String &fileName) {
 
 void Archive::close() {
 	_types.clear();
-	delete _stream; _stream = nullptr;
+	delete _stream;
+	_stream = nullptr;
 }
 
 bool Archive::hasResource(uint32 tag, uint16 id) const {
@@ -265,7 +266,7 @@ bool MohawkArchive::openStream(Common::SeekableReadStream *stream) {
 
 		for (uint16 j = 0; j < nameTable.size(); j++) {
 			nameTable[j].offset = stream->readUint16BE();
-			nameTable[j].index  = stream->readUint16BE();
+			nameTable[j].index = stream->readUint16BE();
 
 			debug(4, "Entry[%02x]: Name List Offset = %04x  Index = %04x", j, nameTable[j].offset, nameTable[j].index);
 		}
@@ -357,7 +358,7 @@ bool LivingBooksArchive_v1::openStream(Common::SeekableReadStream *stream) {
 	// NOTE: There are differences besides endianness! (Subtle changes,
 	// but different).
 
-	if (headerSize == 6) { // We're in Big Endian mode (Macintosh)
+	if (headerSize == 6) {      // We're in Big Endian mode (Macintosh)
 		stream->readUint16BE(); // Resource Table Size
 		uint16 typeCount = stream->readUint16BE();
 
@@ -395,7 +396,7 @@ bool LivingBooksArchive_v1::openStream(Common::SeekableReadStream *stream) {
 			debug(3, "\n");
 		}
 	} else if (SWAP_BYTES_32(headerSize) == 6) { // We're in Little Endian mode (Windows)
-		stream->readUint16LE(); // Resource Table Size
+		stream->readUint16LE();                  // Resource Table Size
 		uint16 typeCount = stream->readUint16LE();
 
 		debug(0, "Old Mohawk File (Windows): Number of Resource Types = %04x", typeCount);
@@ -438,7 +439,6 @@ bool LivingBooksArchive_v1::openStream(Common::SeekableReadStream *stream) {
 	_stream = stream;
 	return true;
 }
-
 
 // DOS Archive (v2) code
 // Partially based on the Prince of Persia Format Specifications

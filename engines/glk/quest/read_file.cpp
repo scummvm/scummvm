@@ -21,12 +21,12 @@
  */
 
 #include "glk/quest/read_file.h"
+#include "common/textconsole.h"
+#include "common/util.h"
+#include "glk/quest/geas_runner.h"
 #include "glk/quest/geas_util.h"
 #include "glk/quest/reserved_words.h"
-#include "glk/quest/geas_runner.h"
 #include "glk/quest/streams.h"
-#include "common/util.h"
-#include "common/textconsole.h"
 
 namespace Glk {
 namespace Quest {
@@ -34,7 +34,7 @@ namespace Quest {
 String next_token(String full, uint &tok_start, uint &tok_end, bool cvt_paren) {
 	tok_start = tok_end;
 	while (tok_start < full.size() && Common::isSpace(full[tok_start]))
-		++ tok_start;
+		++tok_start;
 	if (tok_start >= full.size()) {
 		tok_start = tok_end = full.size();
 		//tok_start = tok_end = String::npos;
@@ -44,10 +44,10 @@ String next_token(String full, uint &tok_start, uint &tok_end, bool cvt_paren) {
 	if (full[tok_start] == '{' || full[tok_start] == '}')
 		/* brace is a token by itself */;
 	else if (full[tok_start] == '<') {
-		while (tok_end < full.size() && full [tok_end] != '>')
-			++ tok_end;
+		while (tok_end < full.size() && full[tok_end] != '>')
+			++tok_end;
 		if (full[tok_end] == '>')
-			++ tok_end;
+			++tok_end;
 	} else if (cvt_paren && full[tok_start] == '(') {
 		uint depth = 1;
 		/*
@@ -58,14 +58,14 @@ String next_token(String full, uint &tok_start, uint &tok_end, bool cvt_paren) {
 		     */
 		do {
 			if (full[tok_end] == '(')
-				++ depth;
+				++depth;
 			else if (full[tok_end] == ')')
-				-- depth;
-			++ tok_end;
+				--depth;
+			++tok_end;
 		} while (tok_end < full.size() && depth > 0);
 	} else
 		while (tok_end < full.size() && !Common::isSpace(full[tok_end]))
-			++ tok_end;
+			++tok_end;
 	return full.substr(tok_start, tok_end - tok_start);
 }
 
@@ -79,7 +79,7 @@ String nth_token(String s, int n) {
 	String rv;
 	do
 		rv = next_token(s, x1, x2);
-	while (-- n > 0);
+	while (--n > 0);
 	return rv;
 }
 
@@ -116,7 +116,8 @@ bool is_define(String s, String t) {
 
 bool is_start_textmode(String s) {
 	uint start_char, end_char = 0;
-	if (next_token(s, start_char, end_char) != "define") return false;
+	if (next_token(s, start_char, end_char) != "define")
+		return false;
 	String tmp = next_token(s, start_char, end_char);
 	// SENSITIVE?
 	return tmp == "text" || tmp == "synonyms";
@@ -129,11 +130,10 @@ bool is_end_define(String s) {
 	        next_token(s, start_char, end_char) == "define");
 }
 
-
 extern Common::Array<String> split_lines(String data);
 
 // FIXME: This requires global constructor
-reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) NULL);
+reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *)NULL);
 
 void GeasFile::read_into(const Common::Array<String> &in_data,
                          String in_parent, uint cur_line, bool recurse,
@@ -152,10 +152,10 @@ void GeasFile::read_into(const Common::Array<String> &in_data,
 	String line = in_data[cur_line];
 	// SENSITIVE?
 	assert(first_token(line, t1, t2) == "define");
-	String blocktype = out_block.blocktype = next_token(line, t1, t2);  // "object", or the like
+	String blocktype = out_block.blocktype = next_token(line, t1, t2); // "object", or the like
 	//cerr << "r_i: Pushing back block of type " << blocktype << "\n";
 	type_indecies[blocktype].push_back(blocknum);
-	String name = next_token(line, t1, t2);  // "<itemname>", or the like
+	String name = next_token(line, t1, t2); // "<itemname>", or the like
 
 	// SENSITIVE?
 	if (blocktype == "game") {
@@ -180,14 +180,14 @@ void GeasFile::read_into(const Common::Array<String> &in_data,
 	if (blocktype == "object" && find_by_name("type", "default"))
 		out_data.push_back("type <default>");
 
-	cur_line ++;
+	cur_line++;
 	uint depth = 1;
 	while (cur_line < in_data.size() && depth > 0) {
 		line = in_data[cur_line];
 		if (recurse && is_define(line))
-			++ depth;
+			++depth;
 		else if (is_end_define(in_data[cur_line]))
-			-- depth;
+			--depth;
 		else if (depth == 1) {
 			//cerr << "r_i: Processing line #" << cur_line << ": " << line << endl;
 			//String dup_data = "";
@@ -275,7 +275,7 @@ void GeasFile::read_into(const Common::Array<String> &in_data,
 				rest = next_token(line, t1, t2);
 				if (is_param(rest)) {
 					vstring items = split_param(param_contents(rest));
-					for (uint i = 0; i < items.size(); i ++)
+					for (uint i = 0; i < items.size(); i++)
 						out_data.push_back("properties <" +
 						                   static_eval(items[i]) + ">");
 				} else
@@ -286,7 +286,7 @@ void GeasFile::read_into(const Common::Array<String> &in_data,
 			//if (dup_data != "")
 			//  out_data.push_back (dup_data);
 		}
-		cur_line ++;
+		cur_line++;
 	}
 }
 
@@ -296,37 +296,35 @@ GeasFile::GeasFile(const Common::Array<String> &v, GeasInterface *_gi) : gi(_gi)
 	String parentname, parenttype;
 
 	static String pass_names[] = {
-		"game", "type", "room", "variable", "object", "procedure",
-		"function", "selection", "synonyms", "text", "timer"
-	};
+	    "game", "type", "room", "variable", "object", "procedure",
+	    "function", "selection", "synonyms", "text", "timer"};
 
-	reserved_words recursive_passes("game", "room", (char *) NULL),
-	               object_passes("game", "room", "objects", (char *) NULL);
-
+	reserved_words recursive_passes("game", "room", (char *)NULL),
+	    object_passes("game", "room", "objects", (char *)NULL);
 
 	//Common::Array <GeasBlock> outv;
 	for (uint pass = 0; pass < sizeof(pass_names) / sizeof(*pass_names);
-	        pass ++) {
+	     pass++) {
 		String this_pass = pass_names[pass];
 		bool recursive = recursive_passes[this_pass];
 		//bool is_object = object_passes[this_pass];
 
-		reserved_words actions((char *) NULL), props((char *) NULL);
+		reserved_words actions((char *)NULL), props((char *)NULL);
 		// SENSITIVE?
 		if (this_pass == "room") {
-			props = reserved_words("look", "alias", "prefix", "indescription", "description", "north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "out", "up", "down", (char *) NULL);
-			actions = reserved_words("description", "script", "north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "out", "up", "down", (char *) NULL);
+			props = reserved_words("look", "alias", "prefix", "indescription", "description", "north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "out", "up", "down", (char *)NULL);
+			actions = reserved_words("description", "script", "north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "out", "up", "down", (char *)NULL);
 		}
 		// SENSITIVE?
 		else if (this_pass == "object") {
-			props = reserved_words("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *) NULL);
-			actions = reserved_words("look", "examine", "speak", "take", "gain", "lose", "use", "give", (char *) NULL);
+			props = reserved_words("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *)NULL);
+			actions = reserved_words("look", "examine", "speak", "take", "gain", "lose", "use", "give", (char *)NULL);
 		}
 
 		depth = 0;
-		for (uint i = 0; i < v.size(); i ++)
+		for (uint i = 0; i < v.size(); i++)
 			if (is_define(v[i])) {
-				++ depth;
+				++depth;
 				String blocktype = nth_token(v[i], 2);
 				if (depth == 1) {
 					parenttype = blocktype;
@@ -344,9 +342,8 @@ GeasFile::GeasFile(const Common::Array<String> &v, GeasInterface *_gi) : gi(_gi)
 						read_into(v, "", i, false, props, actions);
 				}
 			} else if (is_end_define(v[i]))
-				-- depth;
+				--depth;
 	}
-
 }
 
 bool decompile(String data, Common::Array<String> &rv);
@@ -386,7 +383,7 @@ Common::WriteStream &operator<<(Common::WriteStream &o, const GeasBlock &gb) {
 	if (gb.parent != "")
 		o << "' and parent '" << gb.parent;
 	o << "'\n";
-	for (uint i = 0; i < gb.data.size(); i ++)
+	for (uint i = 0; i < gb.data.size(); i++)
 		o << "    " << gb.data[i] << "\n";
 	o << "\n";
 	return o;
@@ -394,7 +391,7 @@ Common::WriteStream &operator<<(Common::WriteStream &o, const GeasBlock &gb) {
 
 void print_vblock(Common::WriteStream &o, String blockname, const Common::Array<GeasBlock> &blocks) {
 	o << blockname << ":\n";
-	for (uint i = 0; i < blocks.size(); i ++)
+	for (uint i = 0; i < blocks.size(); i++)
 		o << "  " << blocks[i] << "\n";
 	o << "\n";
 }
@@ -409,9 +406,9 @@ Common::WriteStream &operator<<(Common::WriteStream &o, const GeasFile &gf) {
 	  o << gf.others[i];
 	*/
 	o << "Geas File\n";
-	for (StringArrayIntMap::const_iterator i = gf.type_indecies.begin(); i != gf.type_indecies.end(); i ++) {
+	for (StringArrayIntMap::const_iterator i = gf.type_indecies.begin(); i != gf.type_indecies.end(); i++) {
 		o << "Blocks of type " << (*i)._key << "\n";
-		for (uint j = 0; j < (*i)._value.size(); j ++)
+		for (uint j = 0; j < (*i)._value.size(); j++)
 			o << gf.blocks[(*i)._value[j]];
 		o << "\n";
 	}
@@ -435,51 +432,49 @@ Common::WriteStream &operator<<(Common::WriteStream &o, const GeasFile &gf) {
 }
 
 const char *compilation_tokens[256] = {
-	"", "game", "procedure", "room", "object", "character", "text", "selection",
-	"define", "end", "", "asl-version", "game", "version", "author", "copyright",
-	"info", "start", "possitems", "startitems", "prefix", "look", "out", "gender",
-	"speak", "take", "alias", "place", "east", "north", "west", "south", "give",
-	"hideobject", "hidechar", "showobject", "showchar", "collectable",
-	"collecatbles", "command", "use", "hidden", "script", "font", "default",
-	"fontname", "fontsize", "startscript", "nointro", "indescription",
-	"description", "function", "setvar", "for", "error", "synonyms", "beforeturn",
-	"afterturn", "invisible", "nodebug", "suffix", "startin", "northeast",
-	"northwest", "southeast", "southwest", "items", "examine", "detail", "drop",
-	"everywhere", "nowhere", "on", "anything", "article", "gain", "properties",
-	"type", "action", "displaytype", "override", "enabled", "disabled",
-	"variable", "value", "display", "nozero", "onchange", "timer", "alt", "lib",
-	"up", "down", "gametype", "singleplayer", "multiplayer", "", "", "", "", "",
-	"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-	"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-	"", "", "", "", "", "", "", "", "", "", "", "do", "if", "got", "then", "else",
-	"has", "say", "playwav", "lose", "msg", "not", "playerlose", "playerwin",
-	"ask", "goto", "set", "show", "choice", "choose", "is", "setstring",
-	"displaytext", "exec", "pause", "clear", "debug", "enter", "movechar",
-	"moveobject", "revealchar", "revealobject", "concealchar", "concealobject",
-	"mailto", "and", "or", "outputoff", "outputon", "here", "playmidi", "drop",
-	"helpmsg", "helpdisplaytext", "helpclear", "helpclose", "hide", "show",
-	"move", "conceal", "reveal", "numeric", "String", "collectable", "property",
-	"create", "exit", "doaction", "close", "each", "in", "repeat", "while",
-	"until", "timeron", "timeroff", "stop", "panes", "on", "off", "return",
-	"playmod", "modvolume", "clone", "shellexe", "background", "foreground",
-	"wait", "picture", "nospeak", "animate", "persist", "inc", "dec", "flag",
-	"dontprocess", "destroy", "beforesave", "onload", "", "", "", "", "", "",
-	"", "", "", "", "", "", "", "", "", "", "", ""
-};
-
+    "", "game", "procedure", "room", "object", "character", "text", "selection",
+    "define", "end", "", "asl-version", "game", "version", "author", "copyright",
+    "info", "start", "possitems", "startitems", "prefix", "look", "out", "gender",
+    "speak", "take", "alias", "place", "east", "north", "west", "south", "give",
+    "hideobject", "hidechar", "showobject", "showchar", "collectable",
+    "collecatbles", "command", "use", "hidden", "script", "font", "default",
+    "fontname", "fontsize", "startscript", "nointro", "indescription",
+    "description", "function", "setvar", "for", "error", "synonyms", "beforeturn",
+    "afterturn", "invisible", "nodebug", "suffix", "startin", "northeast",
+    "northwest", "southeast", "southwest", "items", "examine", "detail", "drop",
+    "everywhere", "nowhere", "on", "anything", "article", "gain", "properties",
+    "type", "action", "displaytype", "override", "enabled", "disabled",
+    "variable", "value", "display", "nozero", "onchange", "timer", "alt", "lib",
+    "up", "down", "gametype", "singleplayer", "multiplayer", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "", "", "", "do", "if", "got", "then", "else",
+    "has", "say", "playwav", "lose", "msg", "not", "playerlose", "playerwin",
+    "ask", "goto", "set", "show", "choice", "choose", "is", "setstring",
+    "displaytext", "exec", "pause", "clear", "debug", "enter", "movechar",
+    "moveobject", "revealchar", "revealobject", "concealchar", "concealobject",
+    "mailto", "and", "or", "outputoff", "outputon", "here", "playmidi", "drop",
+    "helpmsg", "helpdisplaytext", "helpclear", "helpclose", "hide", "show",
+    "move", "conceal", "reveal", "numeric", "String", "collectable", "property",
+    "create", "exit", "doaction", "close", "each", "in", "repeat", "while",
+    "until", "timeron", "timeroff", "stop", "panes", "on", "off", "return",
+    "playmod", "modvolume", "clone", "shellexe", "background", "foreground",
+    "wait", "picture", "nospeak", "animate", "persist", "inc", "dec", "flag",
+    "dontprocess", "destroy", "beforesave", "onload", "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "", "", "", ""};
 
 bool decompile(String s, Common::Array<String> &rv) {
 	String cur_line, tok;
 	uint expect_text = 0, obfus = 0;
 	unsigned char ch;
 
-	for (uint i = 8; i < s.size(); i ++) {
+	for (uint i = 8; i < s.size(); i++) {
 		ch = s[i];
 		if (obfus == 1 && ch == 0) {
 			cur_line += "> ";
 			obfus = 0;
 		} else if (obfus == 1)
-			cur_line += char (255 - ch);
+			cur_line += char(255 - ch);
 		else if (obfus == 2 && ch == 254) {
 			obfus = 0;
 			cur_line += " ";
@@ -494,7 +489,7 @@ bool decompile(String s, Common::Array<String> &rv) {
 				rv.push_back(cur_line);
 				cur_line = "";
 			} else
-				cur_line += char (255 - ch);
+				cur_line += char(255 - ch);
 		} else if (obfus == 0 && ch == 10) {
 			cur_line += "<";
 			obfus = 1;
@@ -508,25 +503,18 @@ bool decompile(String s, Common::Array<String> &rv) {
 		} else {
 			tok = compilation_tokens[ch];
 			if ((tok == "text" || tok == "synonyms" || tok == "type") &&
-			        cur_line == "define ")
+			    cur_line == "define ")
 				expect_text = 1;
 			cur_line += tok + " ";
 		}
 	}
 	rv.push_back(cur_line);
 
-	for (uint i = 0; i < rv.size(); i ++)
+	for (uint i = 0; i < rv.size(); i++)
 		cerr << "rv[" << i << "]: " << rv[i] << "\n";
 
 	return true;
 }
-
-
-
-
-
-
-
 
 Common::Array<String> tokenize(String s) {
 	uint tok_start, tok_end;
@@ -549,7 +537,7 @@ void report_error(String s) {
 }
 
 Common::Array<String> split_lines(String data) {
-	Common::Array <String> rv;
+	Common::Array<String> rv;
 	String tmp;
 	uint i = 0;
 	while (i < data.size()) {
@@ -566,26 +554,26 @@ Common::Array<String> split_lines(String data) {
 				if (tmp[tmp.size() - 1] == '_')
 					tmp.erase(tmp.size() - 1);
 				if (i < data.size() && data[i] == '\r' && data[i + 1] == '\n')
-					++ i;
-				++ i;
+					++i;
+				++i;
 				//cerr << "   WSK: data[" << i<< "] == " << int(data[i]) << '\n';
 				while (i < data.size() && data[i] != '\r' &&
-				        data[i] != '\n' && Common::isSpace(data[i])) {
+				       data[i] != '\n' && Common::isSpace(data[i])) {
 					//cerr << "   WS: data[" << i<< "] = " << int(data[i]) << '\n';
-					++ i;
+					++i;
 				}
 				//cerr << "   WS: data[" << i<< "] == " << int(data[i]) << '\n';
-				-- i;
+				--i;
 			} else {
 				//cerr << "Pushing back {<{" << tmp << "}>}\n";
 				rv.push_back(tmp);
 				tmp = "";
 				if (i < data.size() && data[i] == '\r' && data[i + 1] == '\n')
-					++ i;
+					++i;
 			}
 		} else
 			tmp += data[i];
-		++ i;
+		++i;
 	}
 	if (tmp != "")
 		rv.push_back(tmp);
@@ -600,10 +588,6 @@ void say_push(const Common::Array<String> &v) {
 	//cerr << "s_p: Pushing '" << v[v.size() - 1] << "'" << endl;
 }
 
-
-
-
-
 //enum trim_modes { TRIM_SPACES, TRIM_UNDERSCORE, TRIM_BRACE };
 
 //String trim (String s, trim_modes trim_mode = TRIM_SPACES)
@@ -615,18 +599,20 @@ String trim(String s, trim_modes trim_mode) {
 	  cerr << int (s[i]) << "(" << s[i] << "), ";
 	cerr << "]\n";
 	*/
-	for (i = 0; i < s.size() && Common::isSpace(s[i]); i ++)
+	for (i = 0; i < s.size() && Common::isSpace(s[i]); i++)
 		;
-	if (i == s.size()) return "";
-	if ((trim_mode == TRIM_UNDERSCORE   &&  s[i] == '_') ||
-	        (trim_mode == TRIM_BRACE        &&  s[i] == '['))
-		++ i;
-	if (i == s.size()) return "";
-	for (j = s.size() - 1; Common::isSpace(s[j]); j --)
+	if (i == s.size())
+		return "";
+	if ((trim_mode == TRIM_UNDERSCORE && s[i] == '_') ||
+	    (trim_mode == TRIM_BRACE && s[i] == '['))
+		++i;
+	if (i == s.size())
+		return "";
+	for (j = s.size() - 1; Common::isSpace(s[j]); j--)
 		;
 	if ((trim_mode == TRIM_UNDERSCORE && i < s.size() && s[j] == '_') ||
-	        (trim_mode == TRIM_BRACE && i < s.size()      && s[j] == ']'))
-		-- j;
+	    (trim_mode == TRIM_BRACE && i < s.size() && s[j] == ']'))
+		--j;
 	return s.substr(i, j - i + 1);
 }
 
@@ -642,11 +628,11 @@ bool is_balanced(String str) {
 	if (index == -1)
 		return true;
 	int depth;
-	for (depth = 1, index ++;  depth > 0 && index < (int)str.size();  index ++)
+	for (depth = 1, index++; depth > 0 && index < (int)str.size(); index++)
 		if (str[index] == '{')
-			++ depth;
+			++depth;
 		else if (str[index] == '}')
-			-- depth;
+			--depth;
 	return depth == 0;
 }
 
@@ -657,11 +643,11 @@ int count_depth(String str, int count) {
 		index = str.find('{');
 	while (index < (int)str.size()) {
 		if (str[index] == '{')
-			++ count;
+			++count;
 		else if (str[index] == '}')
-			-- count;
+			--count;
 		//cerr << "    After char #" << index << ", count is " << count << endl;
-		++ index;
+		++index;
 	}
 	//cerr << "returning " << count << endl;
 	return count;
@@ -670,7 +656,7 @@ int count_depth(String str, int count) {
 void handle_includes(const Common::Array<String> &in_data, String filename, Common::Array<String> &out_data, GeasInterface *gi) {
 	String line, tok;
 	uint tok_start, tok_end;
-	for (uint ln = 0; ln < in_data.size(); ln ++) {
+	for (uint ln = 0; ln < in_data.size(); ln++) {
 		line = in_data[ln];
 		tok = first_token(line, tok_start, tok_end);
 		if (tok == "!include") {
@@ -684,8 +670,8 @@ void handle_includes(const Common::Array<String> &in_data, String filename, Comm
 			handle_includes(split_lines(gi->get_file(newname)), newname, out_data, gi);
 		} else if (tok == "!QDK") {
 			while (ln < in_data.size() &&
-			        first_token(in_data[ln], tok_start, tok_end) != "!end")
-				++ ln;
+			       first_token(in_data[ln], tok_start, tok_end) != "!end")
+				++ln;
 		} else
 			out_data.push_back(line);
 	}
@@ -703,9 +689,7 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 
 	// TODO: Is it "!=" or "<>" or both, and if both, which has priority?
 	static String comps[][2] = {
-		{ "<>", "!=;" },  { "!=", "!=;" },  { "<=", "lt=;" },  { ">=", "gt=;" },
-		{ "<",  "lt;" },  { ">",  "gt;" },  { "=",  "" }
-	};
+	    {"<>", "!=;"}, {"!=", "!=;"}, {"<=", "lt=;"}, {">=", "gt=;"}, {"<", "lt;"}, {">", "gt;"}, {"=", ""}};
 
 	uint tok_start, tok_end;
 	String tok;
@@ -718,7 +702,7 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 	v.clear();
 
 	StringArrayStringMap addtos;
-	for (uint line = 0; line < v2.size(); line ++) {
+	for (uint line = 0; line < v2.size(); line++) {
 		//cerr << "Line #" << line << ", looking for addtos: " << v2[line] << endl;
 		tok = first_token(v2[line], tok_start, tok_end);
 		if (tok == "!addto") {
@@ -735,18 +719,18 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 				}
 				tok = tok + " " + tmp;
 			}
-			++ line; // skip !addto
+			++line; // skip !addto
 			while (line < v2.size() &&
-			        first_token(v2[line], tok_start, tok_end) != "!end")
-				addtos[tok].push_back(v2[line ++]);
+			       first_token(v2[line], tok_start, tok_end) != "!end")
+				addtos[tok].push_back(v2[line++]);
 		}
 	}
-	for (uint line = 0; line < v2.size(); line ++) {
+	for (uint line = 0; line < v2.size(); line++) {
 		tok = first_token(v2[line], tok_start, tok_end);
 		if (tok == "!addto") {
 			while (line < v2.size() &&
-			        first_token(v2[line], tok_start, tok_end) != "!end")
-				line ++;
+			       first_token(v2[line], tok_start, tok_end) != "!end")
+				line++;
 		} else {
 			v.push_back(v2[line]);
 			if (tok == "define") {
@@ -760,7 +744,7 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 
 				if (addtos.find(tok) != addtos.end()) {
 					Common::Array<String> &lines = addtos[tok];
-					for (uint line2 = 0; line2 < lines.size(); line2 ++)
+					for (uint line2 = 0; line2 < lines.size(); line2++)
 						v.push_back(lines[line2]);
 					addtos.erase(tok);
 				}
@@ -770,9 +754,9 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 	//cerr << "Done looking for addtos" << endl;
 	v2.clear();
 
-	for (StringArrayStringMap::iterator i = addtos.begin(); i != addtos.end(); i ++) {
+	for (StringArrayStringMap::iterator i = addtos.begin(); i != addtos.end(); i++) {
 		v.push_back("define " + i->_key);
-		for (uint j = 0; j < i->_value.size(); j ++)
+		for (uint j = 0; j < i->_value.size(); j++)
 			v.push_back(i->_value[j]);
 		v.push_back("end define");
 	}
@@ -807,21 +791,21 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 	// Loop through the lines.  Look for "if/and/or (.. <.. )" or the like
 	// If there is such a pair, convert the second to "if/and/or is <..;lt;..>"
 
-	for (uint line = 0; line < v.size(); line ++) {
+	for (uint line = 0; line < v.size(); line++) {
 		tok_end = 0;
 		while (tok_end < v[line].size()) {
 			tok = next_token(v[line], tok_start, tok_end, false);
 			if (tok == "if" || tok == "repeat" || tok == "until" ||
-			        tok == "and" || tok == "or") {
+			    tok == "and" || tok == "or") {
 				tok = next_token(v[line], tok_start, tok_end, true);
 				//cerr << "Checking for comparison {" << tok << "}\n";
 				if (tok.size() > 2 && tok[0] == '(' &&
-				        tok [tok.size() - 1] == ')') {
+				    tok[tok.size() - 1] == ')') {
 					//cerr << "   IT IS!\n";
 					tok = tok.substr(1, tok.size() - 2);
 					String str = v[line];
 					int cmp_start;
-					for (uint cmp = 0; cmp < ARRAYSIZE(comps); cmp ++)
+					for (uint cmp = 0; cmp < ARRAYSIZE(comps); cmp++)
 						if ((cmp_start = tok.find(comps[cmp][0])) != -1) {
 							uint cmp_end = cmp_start + comps[cmp][0].size();
 							//cerr << "Changed str from {" << str << "} to {";
@@ -843,7 +827,7 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 
 	// Pass 2:  Extract comments from non-text blocks
 	bool in_text_block = false;
-	for (uint line = 0; line < v.size(); line ++) {
+	for (uint line = 0; line < v.size(); line++) {
 		//cerr << "Checking line '" << v[line] << "' for comments\n";
 		if (!in_text_block && is_start_textmode(v[line]))
 			in_text_block = true;
@@ -869,7 +853,7 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 	// Pass 3: Deinline braces
 	in_text_block = false;
 	int int_proc_count = 0;
-	for (uint line = 0; line < v.size(); line ++) {
+	for (uint line = 0; line < v.size(); line++) {
 		//cerr << "Pass 3, line #" << line << endl;
 		String str = v[line];
 		if (!in_text_block && is_start_textmode(str))
@@ -882,7 +866,6 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 			v.push_back("define procedure <!intproc" +
 			            string_int(++int_proc_count) + ">");
 			//cerr << "Pushing back on v: '" << v[v.size()-1] << "'" << endl;
-
 
 			uint tmp_index = str.find('{');
 			v2.push_back(trim(str.substr(0, tmp_index)) +
@@ -903,7 +886,7 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 			}
 
 			int count = count_depth(str, 0);
-			while (++ line < init_size && count != 0) {
+			while (++line < init_size && count != 0) {
 				str = v[line];
 				count = count_depth(str, count);
 				if (count != 0) {
@@ -937,7 +920,7 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 			v.push_back("end define");
 			//cerr << "Pushing back on v: '" << v[v.size()-1] << "'" << endl;
 			//cerr << "Done with special line" << endl;
-			line --;
+			line--;
 			continue;
 			// The continue is to avoid the v2.push_back(...);
 			// this block pushes stuff onto v2 on its own.
@@ -951,7 +934,7 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 
 	in_text_block = false;
 	int_proc_count = 0;
-	for (uint line = 0; line < v2.size(); line ++) {
+	for (uint line = 0; line < v2.size(); line++) {
 		String str = v2[line];
 		//cerr << "Pass 4, line #" << line << ", " << in_text_block << ": '" << str << "'\n";
 		if (!in_text_block && is_start_textmode(str))
@@ -989,7 +972,6 @@ bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv
 	//return v2;
 }
 
-
 void show_find(String s, char ch) {
 	cerr << "Finding '" << ch << "' in '" << s << "': " << s.find(ch) + 1 << endl;
 }
@@ -1002,13 +984,16 @@ void show_trim(String s) {
 	//cerr << "Trimming '" << s << "': '" << trim (s) << "'\n";
 }
 
-template<class T> Common::Array<T> &operator<< (Common::Array<T> &v, T val) {
+template<class T>
+Common::Array<T> &operator<<(Common::Array<T> &v, T val) {
 	v.push_back(val);
 	return v;
 }
 
-template<class T> class makevector {
+template<class T>
+class makevector {
 	Common::Array<T> dat;
+
 public:
 	makevector<T> &operator<<(T it) {
 		dat.push_back(it);
@@ -1019,7 +1004,7 @@ public:
 	}
 };
 
-Common::Array <String> split(String s, char ch) {
+Common::Array<String> split(String s, char ch) {
 	uint i = 0, j;
 	Common::Array<String> rv;
 	do {

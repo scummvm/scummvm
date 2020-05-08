@@ -26,14 +26,14 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define FONT_COLOR_U6_NORMAL    0x48
+#define FONT_COLOR_U6_NORMAL 0x48
 #define FONT_COLOR_U6_HIGHLIGHT 0x0c
-#define FONT_COLOR_WOU_NORMAL    0
+#define FONT_COLOR_WOU_NORMAL 0
 #define FONT_COLOR_WOU_CONVERSE_INPUT 1
 
 #define FONT_COLOR_WOU_HIGHLIGHT 4
 
-#define FONT_UP_ARROW_CHAR   19
+#define FONT_UP_ARROW_CHAR 19
 #define FONT_DOWN_ARROW_CHAR 20
 
 class Configuration;
@@ -47,10 +47,7 @@ protected:
 	uint8 default_color, default_highlight_color;
 
 private:
-
-
 public:
-
 	Font();
 	virtual ~Font();
 	uint8 getDefaultColor() {
@@ -63,7 +60,7 @@ public:
 		default_highlight_color = color;
 	}
 
-//   bool drawString(Screen *screen, Std::string str, uint16 x, uint16 y);
+	//   bool drawString(Screen *screen, Std::string str, uint16 x, uint16 y);
 	uint16 drawString(Screen *screen, const char *str, uint16 x, uint16 y);
 	uint16 drawString(Screen *screen, const char *str, uint16 x, uint16 y, uint8 color, uint8 highlight_color);
 	uint16 drawString(Screen *screen, const char *str, uint16 string_len, uint16 x, uint16 y, uint8 color, uint8 highlight_color);
@@ -85,9 +82,7 @@ public:
 	}
 
 protected:
-
 	uint8 get_char_num(uint8 c);
-
 };
 
 } // End of namespace Nuvie

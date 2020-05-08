@@ -10,59 +10,61 @@ class SpanTestSuite : public CxxTest::TestSuite {
 		int a;
 	};
 
-	template <typename ValueType, template <typename> class Derived>
+	template<typename ValueType, template<typename> class Derived>
 	class SiblingSpanImpl : public Common::SpanImpl<ValueType, Derived> {
 		typedef Common::SpanImpl<ValueType, Derived> super_type;
+
 	public:
 		COMMON_SPAN_TYPEDEFS
 		SiblingSpanImpl() : super_type() {}
 		SiblingSpanImpl(pointer data_, size_type size_) : super_type(data_, size_) {}
 	};
 
-	template <typename ValueType>
+	template<typename ValueType>
 	class SiblingSpan : public SiblingSpanImpl<ValueType, SiblingSpan> {
 		typedef SiblingSpanImpl<ValueType, ::SpanTestSuite::SiblingSpan> super_type;
+
 	public:
 		COMMON_SPAN_TYPEDEFS
 		SiblingSpan() : super_type() {}
 		SiblingSpan(pointer data_, size_type size_) : super_type(data_, size_) {}
 	};
 
-	template <typename ValueType, template <typename> class Derived>
+	template<typename ValueType, template<typename> class Derived>
 	class SubSpanImpl : public Common::NamedSpanImpl<ValueType, Derived> {
 		typedef Common::NamedSpanImpl<ValueType, Derived> super_type;
+
 	public:
 		COMMON_SPAN_TYPEDEFS
 		SubSpanImpl() : super_type() {}
 		SubSpanImpl(pointer data_,
-					size_type size_,
-					const Common::String &name_ = Common::String(),
-					const size_type sourceByteOffset_ = 0) :
-			super_type(data_, size_, name_, sourceByteOffset_) {}
+		            size_type size_,
+		            const Common::String &name_ = Common::String(),
+		            const size_type sourceByteOffset_ = 0) : super_type(data_, size_, name_, sourceByteOffset_) {}
 
-		template <typename Other>
+		template<typename Other>
 		SubSpanImpl(const Other &other) : super_type(other) {}
 	};
 
-	template <typename ValueType>
+	template<typename ValueType>
 	class SubSpan : public SubSpanImpl<ValueType, SubSpan> {
 		typedef SubSpanImpl<ValueType, ::SpanTestSuite::SubSpan> super_type;
+
 	public:
 		COMMON_SPAN_TYPEDEFS
 		SubSpan() : super_type() {}
 		SubSpan(pointer data_,
-				size_type size_,
-				const Common::String &name_ = Common::String(),
-				const size_type sourceByteOffset_ = 0) :
-			super_type(data_, size_, name_, sourceByteOffset_) {}
+		        size_type size_,
+		        const Common::String &name_ = Common::String(),
+		        const size_type sourceByteOffset_ = 0) : super_type(data_, size_, name_, sourceByteOffset_) {}
 
-		template <typename Other>
+		template<typename Other>
 		SubSpan(const Other &other) : super_type(other) {}
 	};
 
 public:
 	void test_sibling_span() {
-		byte data[] = { 'h', 'e', 'l', 'l', 'o' };
+		byte data[] = {'h', 'e', 'l', 'l', 'o'};
 		SiblingSpan<byte> ss(data, sizeof(data));
 		Common::Span<byte> superInstance = ss;
 		TS_ASSERT_EQUALS(ss.data(), data);
@@ -70,7 +72,7 @@ public:
 	}
 
 	void test_sub_span() {
-		byte data[] = { 'h', 'e', 'l', 'l', 'o' };
+		byte data[] = {'h', 'e', 'l', 'l', 'o'};
 		SubSpan<byte> ss(data, sizeof(data), "custom subspan");
 		Common::NamedSpan<byte> namedSuper = ss;
 		Common::Span<byte> unnamedSuper = ss;
@@ -80,7 +82,7 @@ public:
 	}
 
 	void test_span_iterator_const() {
-		byte data[] = { 'h', 'e', 'l', 'l', 'o' };
+		byte data[] = {'h', 'e', 'l', 'l', 'o'};
 		const Common::Span<byte> span(data, sizeof(data));
 
 		Common::Span<byte>::const_iterator it = span.cbegin();
@@ -132,7 +134,7 @@ public:
 	}
 
 	void test_span_iterator() {
-		byte data[] = { 'h', 'e', 'l', 'l', 'o' };
+		byte data[] = {'h', 'e', 'l', 'l', 'o'};
 		Common::Span<byte> span(data, sizeof(data));
 
 		// empty iterator should default construct OK
@@ -198,7 +200,7 @@ public:
 	}
 
 	void test_span_iterator_integers() {
-		const byte data[] = { 0xFF, 1, 2, 3, 2, 1, 0xFF };
+		const byte data[] = {0xFF, 1, 2, 3, 2, 1, 0xFF};
 		Common::Span<const byte> span(data, sizeof(data));
 		Common::Span<const byte>::const_iterator it = span.cbegin();
 
@@ -240,7 +242,7 @@ public:
 	}
 
 	void test_span_owner() {
-		Common::SpanOwner<Common::Span<byte> > owner;
+		Common::SpanOwner<Common::Span<byte>> owner;
 		owner->allocate(3);
 		owner[0] = 'a';
 		owner[1] = 'b';
@@ -251,7 +253,7 @@ public:
 		}
 
 		{
-			Common::SpanOwner<Common::NamedSpan<byte> > owner2;
+			Common::SpanOwner<Common::NamedSpan<byte>> owner2;
 			TS_ASSERT(owner2->data() == nullptr);
 			owner2->allocateFromSpan(*owner);
 			TS_ASSERT(owner2->data() != nullptr);
@@ -268,7 +270,7 @@ public:
 		}
 
 		{
-			Common::SpanOwner<Common::Span<byte> > owner2;
+			Common::SpanOwner<Common::Span<byte>> owner2;
 			TS_ASSERT(owner2->data() == nullptr);
 			owner2 = owner;
 			TS_ASSERT(owner2->data() != nullptr);
@@ -285,7 +287,7 @@ public:
 		}
 
 		{
-			Common::SpanOwner<Common::Span<byte> > owner2;
+			Common::SpanOwner<Common::Span<byte>> owner2;
 			TS_ASSERT_EQUALS((bool)owner, true);
 			void *dataPtr = owner->data();
 			owner2.moveFrom(owner);
@@ -305,7 +307,7 @@ public:
 		{
 			char *data = new char[6];
 			Common::strlcpy(data, "hello", 6);
-			const Common::SpanOwner<Common::Span<const char> > constOwner(Common::Span<const char>(data, 6));
+			const Common::SpanOwner<Common::Span<const char>> constOwner(Common::Span<const char>(data, 6));
 			TS_ASSERT_EQUALS((*constOwner)[0], 'h');
 			TS_ASSERT_EQUALS(constOwner->getUint8At(1), 'e');
 			TS_ASSERT_EQUALS(constOwner[2], 'l');
@@ -313,14 +315,14 @@ public:
 
 		{
 			TS_ASSERT_EQUALS((bool)owner, false);
-			Common::SpanOwner<Common::Span<byte> > owner2(owner);
+			Common::SpanOwner<Common::Span<byte>> owner2(owner);
 			TS_ASSERT_EQUALS((bool)owner2, false);
 		}
 
 		{
 			owner->allocate(1);
 			TS_ASSERT_EQUALS((bool)owner, true);
-			Common::SpanOwner<Common::Span<byte> > owner2(owner);
+			Common::SpanOwner<Common::Span<byte>> owner2(owner);
 			TS_ASSERT_EQUALS((bool)owner2, true);
 			TS_ASSERT_DIFFERS(owner->data(), owner2->data());
 		}
@@ -334,7 +336,7 @@ public:
 	}
 
 	void test_span_owner_named_span() {
-		Common::SpanOwner<Common::NamedSpan<byte> > owner;
+		Common::SpanOwner<Common::NamedSpan<byte>> owner;
 		owner->allocate(3, "foo");
 		owner[0] = 'a';
 		owner[1] = 'b';
@@ -346,7 +348,7 @@ public:
 		TS_ASSERT(owner->name() == "foo");
 
 		{
-			Common::SpanOwner<Common::NamedSpan<byte> > owner2;
+			Common::SpanOwner<Common::NamedSpan<byte>> owner2;
 			TS_ASSERT(owner2->data() == nullptr);
 			owner2->allocateFromSpan(*owner);
 			TS_ASSERT(owner2->data() != nullptr);
@@ -364,7 +366,7 @@ public:
 		}
 
 		{
-			Common::SpanOwner<Common::NamedSpan<byte> > owner2;
+			Common::SpanOwner<Common::NamedSpan<byte>> owner2;
 			TS_ASSERT_EQUALS((bool)owner, true);
 			void *dataPtr = owner->data();
 			owner2.moveFrom(owner);
@@ -379,7 +381,7 @@ public:
 		{
 			char *data = new char[6];
 			Common::strlcpy(data, "hello", 6);
-			const Common::SpanOwner<Common::NamedSpan<const char> > constOwner(Common::NamedSpan<const char>(data, 6));
+			const Common::SpanOwner<Common::NamedSpan<const char>> constOwner(Common::NamedSpan<const char>(data, 6));
 			TS_ASSERT_EQUALS((*constOwner)[0], 'h');
 			TS_ASSERT_EQUALS(constOwner->getUint8At(1), 'e');
 			TS_ASSERT_EQUALS(constOwner[2], 'l');
@@ -387,14 +389,14 @@ public:
 
 		{
 			TS_ASSERT_EQUALS((bool)owner, false);
-			Common::SpanOwner<Common::NamedSpan<byte> > owner2(owner);
+			Common::SpanOwner<Common::NamedSpan<byte>> owner2(owner);
 			TS_ASSERT_EQUALS((bool)owner2, false);
 		}
 
 		{
 			owner->allocate(1);
 			TS_ASSERT_EQUALS((bool)owner, true);
-			Common::SpanOwner<Common::NamedSpan<byte> > owner2(owner);
+			Common::SpanOwner<Common::NamedSpan<byte>> owner2(owner);
 			TS_ASSERT_EQUALS((bool)owner2, true);
 			TS_ASSERT_DIFFERS(owner->data(), owner2->data());
 		}
@@ -410,7 +412,7 @@ public:
 	void test_span_allocate_from_stream() {
 		byte data[] = "hello";
 		Common::MemoryReadStream stream(data, sizeof(data));
-		Common::SpanOwner<Common::Span<byte> > owner;
+		Common::SpanOwner<Common::Span<byte>> owner;
 		owner->allocateFromStream(stream, 2);
 		TS_ASSERT(owner->data() != data);
 		TS_ASSERT_EQUALS(owner->size(), 2U);
@@ -429,7 +431,7 @@ public:
 		TS_ASSERT_EQUALS(owner[3], 'l');
 		TS_ASSERT_EQUALS(owner[4], 'o');
 
-		Common::SpanOwner<Common::NamedSpan<const byte> > owner2;
+		Common::SpanOwner<Common::NamedSpan<const byte>> owner2;
 		stream.seek(0, SEEK_SET);
 		owner2->allocateFromStream(stream, Common::kSpanMaxSize, "streamname");
 		TS_ASSERT(owner2->data() != data);
@@ -444,7 +446,7 @@ public:
 
 	void test_span_byte() {
 		{
-			byte data[] = { 'h', 'e', 'l', 'l', 'o' };
+			byte data[] = {'h', 'e', 'l', 'l', 'o'};
 			Common::Span<byte> span(data, sizeof(data));
 
 			TS_ASSERT_EQUALS(span.size(), sizeof(data));
@@ -466,7 +468,7 @@ public:
 		}
 
 		{
-			byte data[] = { 'h', 'e', 'l', 'l', 'o' };
+			byte data[] = {'h', 'e', 'l', 'l', 'o'};
 			const Common::Span<const byte> span(data, sizeof(data));
 
 			TS_ASSERT_EQUALS(span.size(), sizeof(data));
@@ -481,7 +483,7 @@ public:
 	}
 
 	void test_span_integers() {
-		const byte data[] = { 0xFF, 1, 2, 3, 2, 1, 0xFF };
+		const byte data[] = {0xFF, 1, 2, 3, 2, 1, 0xFF};
 		Common::Span<const byte> span(data, sizeof(data));
 
 		TS_ASSERT_EQUALS(span[0], 255);
@@ -537,7 +539,7 @@ public:
 
 	void test_span_subspan() {
 		{
-			byte data[] = { 1, 2, 3, 4, 5, 6 };
+			byte data[] = {1, 2, 3, 4, 5, 6};
 			Common::Span<byte> span(data, sizeof(data));
 
 			TS_ASSERT_EQUALS(span.subspan(0).size(), sizeof(data) - 0);
@@ -567,7 +569,7 @@ public:
 		}
 
 		{
-			byte data[] = { 1, 2, 3, 4, 5, 6 };
+			byte data[] = {1, 2, 3, 4, 5, 6};
 			const Common::Span<const byte> span(data, sizeof(data));
 
 			TS_ASSERT_EQUALS(span.subspan(0).size(), sizeof(data) - 0);
@@ -597,7 +599,7 @@ public:
 	}
 
 	void test_span_to_stream() {
-		const byte data[] = { 0, 1, 2, 3 };
+		const byte data[] = {0, 1, 2, 3};
 		Common::Span<const byte> span(data, sizeof(data));
 
 		{
@@ -626,7 +628,7 @@ public:
 	}
 
 	void test_span_copying() {
-		const byte data[] = { 0, 1, 2, 3, 4, 5 };
+		const byte data[] = {0, 1, 2, 3, 4, 5};
 		Common::Span<const byte> span(data, sizeof(data));
 
 		byte targetData[sizeof(data)] = {};
@@ -653,7 +655,7 @@ public:
 		TS_ASSERT(!span.checkInvalidBounds(6, 0));
 		TS_ASSERT(!span.checkInvalidBounds(2, -2));
 		TS_ASSERT(span.checkInvalidBounds(-2, 2)); // negative index disallowed
-		TS_ASSERT(span.checkInvalidBounds(6, 1)); // combined positive overflow (+7)
+		TS_ASSERT(span.checkInvalidBounds(6, 1));  // combined positive overflow (+7)
 		TS_ASSERT(span.checkInvalidBounds(2, -4)); // negative overflow (-2)
 		TS_ASSERT(span.checkInvalidBounds(0, 10)); // delta positive overflow
 
@@ -712,7 +714,7 @@ public:
 	}
 
 	void test_named_span() {
-		byte data[6] = { 0, 1, 2, 3, 4, 5 };
+		byte data[6] = {0, 1, 2, 3, 4, 5};
 		Common::NamedSpan<byte> span(data, sizeof(data), "foo.data");
 		TS_ASSERT_EQUALS(span.name(), "foo.data");
 
@@ -795,7 +797,7 @@ public:
 			Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, sizeof(data));
 			Common::File file;
 			file.open(stream, "test.txt");
-			Common::SpanOwner<Common::NamedSpan<const byte> > fileOwner;
+			Common::SpanOwner<Common::NamedSpan<const byte>> fileOwner;
 			fileOwner->allocateFromStream(file);
 			TS_ASSERT_EQUALS(fileOwner->size(), (uint)file.size());
 			file.close();

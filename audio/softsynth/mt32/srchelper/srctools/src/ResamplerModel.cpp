@@ -19,10 +19,10 @@
 
 #include "../include/ResamplerModel.h"
 
-#include "../include/ResamplerStage.h"
-#include "../include/SincResampler.h"
 #include "../include/IIR2xResampler.h"
 #include "../include/LinearResampler.h"
+#include "../include/ResamplerStage.h"
+#include "../include/SincResampler.h"
 
 namespace SRCTools {
 
@@ -32,7 +32,8 @@ static const unsigned int CHANNEL_COUNT = 2;
 static const unsigned int MAX_SAMPLES_PER_RUN = 4096;
 
 class CascadeStage : public FloatSampleProvider {
-friend void freeResamplerModel(FloatSampleProvider &model, FloatSampleProvider &source);
+	friend void freeResamplerModel(FloatSampleProvider &model, FloatSampleProvider &source);
+
 public:
 	CascadeStage(FloatSampleProvider &source, ResamplerStage &resamplerStage);
 
@@ -50,9 +51,7 @@ private:
 
 class InternalResamplerCascadeStage : public CascadeStage {
 public:
-	InternalResamplerCascadeStage(FloatSampleProvider &useSource, ResamplerStage &useResamplerStage) :
-		CascadeStage(useSource, useResamplerStage)
-	{}
+	InternalResamplerCascadeStage(FloatSampleProvider &useSource, ResamplerStage &useResamplerStage) : CascadeStage(useSource, useResamplerStage) {}
 
 	~InternalResamplerCascadeStage() {
 		delete &resamplerStage;
@@ -120,7 +119,8 @@ void ResamplerModel::freeResamplerModel(FloatSampleProvider &model, FloatSampleP
 	FloatSampleProvider *currentStage = &model;
 	while (currentStage != &source) {
 		CascadeStage *cascadeStage = dynamic_cast<CascadeStage *>(currentStage);
-		if (cascadeStage == NULL) return;
+		if (cascadeStage == NULL)
+			return;
 		FloatSampleProvider &prevStage = cascadeStage->source;
 		delete currentStage;
 		currentStage = &prevStage;
@@ -129,12 +129,10 @@ void ResamplerModel::freeResamplerModel(FloatSampleProvider &model, FloatSampleP
 
 using namespace ResamplerModel;
 
-CascadeStage::CascadeStage(FloatSampleProvider &useSource, ResamplerStage &useResamplerStage) :
-	resamplerStage(useResamplerStage),
-	source(useSource),
-	bufferPtr(buffer),
-	size()
-{}
+CascadeStage::CascadeStage(FloatSampleProvider &useSource, ResamplerStage &useResamplerStage) : resamplerStage(useResamplerStage),
+                                                                                                source(useSource),
+                                                                                                bufferPtr(buffer),
+                                                                                                size() {}
 
 void CascadeStage::getOutputSamples(FloatSample *outBuffer, unsigned int length) {
 	while (length > 0) {

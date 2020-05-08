@@ -30,8 +30,20 @@ namespace Glk {
 namespace Archetype {
 
 enum StatementKind {
-	COMPOUND, ST_EXPR, ST_IF, ST_CASE, ST_FOR, ST_WHILE, ST_BREAK, ST_CREATE,
-	ST_DESTROY, ST_WRITE, ST_WRITES, ST_STOP, CONT_SEQ, END_SEQ
+	COMPOUND,
+	ST_EXPR,
+	ST_IF,
+	ST_CASE,
+	ST_FOR,
+	ST_WHILE,
+	ST_BREAK,
+	ST_CREATE,
+	ST_DESTROY,
+	ST_WRITE,
+	ST_WRITES,
+	ST_STOP,
+	CONT_SEQ,
+	END_SEQ
 };
 
 struct StatementType;

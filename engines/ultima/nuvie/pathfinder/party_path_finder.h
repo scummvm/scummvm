@@ -23,8 +23,8 @@
 #ifndef NUVIE_PATHFINDER_PARTY_PATH_FINDER_H
 #define NUVIE_PATHFINDER_PARTY_PATH_FINDER_H
 
-#include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/party.h"
 
 namespace Ultima {
 namespace Nuvie {

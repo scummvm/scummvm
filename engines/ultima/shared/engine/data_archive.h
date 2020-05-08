@@ -38,18 +38,17 @@ namespace Shared {
  */
 class UltimaDataArchive : public Common::Archive {
 private:
-    Common::Archive *_zip;
+	Common::Archive *_zip;
 	Common::String _publicFolder;
 	Common::String _innerfolder;
 
-
-    UltimaDataArchive(Common::Archive *zip, const Common::String &subfolder) :
-		_zip(zip), _publicFolder("data/"), _innerfolder(subfolder + "/") {}
+	UltimaDataArchive(Common::Archive *zip, const Common::String &subfolder) : _zip(zip), _publicFolder("data/"), _innerfolder(subfolder + "/") {}
 
 	Common::String innerToPublic(const Common::String &filename) const {
 		assert(filename.hasPrefixIgnoreCase(_publicFolder));
 		return _innerfolder + Common::String(filename.c_str() + _publicFolder.size());
 	}
+
 public:
 	/**
 	 * Creates a data archive wrapper for the ultima.dat datafile.
@@ -60,8 +59,9 @@ public:
 	 * if the required data is found, it returns the new archive.
 	 * Otherwise, returns an error message in the errorMsg field
 	 */
-    static bool load(const Common::String &subfolder,
-		int reqMajorVersion, int reqMinorVersion, Common::String &errorMsg);
+	static bool load(const Common::String &subfolder,
+	                 int reqMajorVersion, int reqMinorVersion, Common::String &errorMsg);
+
 public:
 	~UltimaDataArchive() override {
 		delete _zip;
@@ -81,7 +81,7 @@ public:
 	 * @return the number of members added to list
 	 */
 	int listMatchingMembers(Common::ArchiveMemberList &list,
-		const Common::String &pattern) const override;
+	                        const Common::String &pattern) const override;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -95,7 +95,7 @@ public:
 	 * Returns a ArchiveMember representation of the given file.
 	 */
 	const Common::ArchiveMemberPtr getMember(const Common::String &name)
-		const override;
+	    const override;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
@@ -103,7 +103,7 @@ public:
 	 * @return the newly created input stream
 	 */
 	Common::SeekableReadStream *createReadStreamForMember(
-		const Common::String &name) const override;
+	    const Common::String &name) const override;
 };
 
 #ifndef RELEASE_BUILD
@@ -117,6 +117,7 @@ public:
  */
 class UltimaDataArchiveProxy : public Common::Archive {
 	friend class UltimaDataArchive;
+
 private:
 	Common::FSNode _folder;
 	const Common::String _publicFolder;
@@ -127,6 +128,7 @@ private:
 	 * Gets a file node from the passed filename
 	 */
 	Common::FSNode getNode(const Common::String &name) const;
+
 public:
 	~UltimaDataArchiveProxy() override {
 	}
@@ -147,7 +149,7 @@ public:
 	 * @return the number of members added to list
 	 */
 	int listMatchingMembers(Common::ArchiveMemberList &list,
-			const Common::String &pattern) const override {
+	                        const Common::String &pattern) const override {
 		return 0;
 	}
 
@@ -165,7 +167,7 @@ public:
 	 * Returns a ArchiveMember representation of the given file.
 	 */
 	const Common::ArchiveMemberPtr getMember(const Common::String &name)
-		const override;
+	    const override;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
@@ -173,7 +175,7 @@ public:
 	 * @return the newly created input stream
 	 */
 	Common::SeekableReadStream *createReadStreamForMember(
-		const Common::String &name) const override;
+	    const Common::String &name) const override;
 };
 
 #endif

@@ -32,7 +32,6 @@
 
 namespace Wintermute {
 Timer::Timer() : _timer(0), _timerDelta(0), _timerLast(0) {
-
 }
 
 void Timer::setTime(uint32 time) {

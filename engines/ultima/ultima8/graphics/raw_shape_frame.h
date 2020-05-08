@@ -36,8 +36,8 @@ struct ConvertShapeFrame;
  */
 class RawShapeFrame {
 	friend class ShapeFrame;
-public:
 
+public:
 	// parse data.
 	//
 	// You will find this is quite similar to the ConvertShapeFrame except
@@ -45,19 +45,18 @@ public:
 	// only, and for speed when loading.
 
 	RawShapeFrame(const uint8 *data, uint32 size, const ConvertShapeFormat *format = 0,
-	           const uint8 special[256] = 0, ConvertShapeFrame *prev = 0);
+	              const uint8 special[256] = 0, ConvertShapeFrame *prev = 0);
 	~RawShapeFrame();
 
 	void getConvertShapeFrame(ConvertShapeFrame &csf);
 
 private:
+	uint32 _compressed;
+	int32 _width, _height;
+	int32 _xoff, _yoff;
 
-	uint32              _compressed;
-	int32               _width, _height;
-	int32               _xoff, _yoff;
-
-	uint32              *_line_offsets;      // Note these are offsets into rle_data
-	const uint8         *_rle_data;
+	uint32 *_line_offsets; // Note these are offsets into rle_data
+	const uint8 *_rle_data;
 
 	// This will load a u8 style shape 'optimized'.
 	void loadU8Format(const uint8 *data, uint32 size);

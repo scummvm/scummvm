@@ -23,9 +23,9 @@
 #ifndef MADS_FONT_H
 #define MADS_FONT_H
 
-#include "common/scummsys.h"
-#include "common/hashmap.h"
 #include "common/endian.h"
+#include "common/hashmap.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 #include "mads/msurface.h"
 
@@ -34,13 +34,15 @@ namespace MADS {
 #define FONT_CONVERSATION "*FONTCONV.FF"
 #define FONT_INTERFACE "*FONTINTR.FF"
 #define FONT_MAIN "*FONTMAIN.FF"
-#define FONT_MENU "*FONTMENU.FF"	// Not in Rex (uses bitmap files for menu strings)
+#define FONT_MENU "*FONTMENU.FF" // Not in Rex (uses bitmap files for menu strings)
 #define FONT_MISC "*FONTMISC.FF"
-#define FONT_TELE "*FONTTELE.FF"	// Not in Phantom
-#define FONT_PHAN "*FONTPHAN.FF"	// Phantom only
+#define FONT_TELE "*FONTTELE.FF" // Not in Phantom
+#define FONT_PHAN "*FONTPHAN.FF" // Phantom only
 
 enum SelectionMode {
-	SELMODE_UNSELECTED = 0, SELMODE_HIGHLIGHTED = 1, SELMODE_SELECTED = 2
+	SELMODE_UNSELECTED = 0,
+	SELMODE_HIGHLIGHTED = 1,
+	SELMODE_SELECTED = 2
 };
 
 class MADSEngine;
@@ -50,6 +52,7 @@ private:
 	static uint8 _fontColors[4];
 	static MADSEngine *_vm;
 	static Common::HashMap<Common::String, Font *> *_fonts;
+
 public:
 	/**
 	 * Initialize the font system
@@ -65,6 +68,7 @@ public:
 	* Returns a new Font instance using the specified font name
 	*/
 	static Font *getFont(const Common::String &fontName);
+
 private:
 	uint8 _maxWidth, _maxHeight;
 	uint8 *_charWidths;
@@ -75,6 +79,7 @@ private:
 	int getBpp(int charWidth);
 
 	void setFont(const Common::String &filename);
+
 public:
 	Font();
 	Font(const Common::String &filename);
@@ -87,7 +92,7 @@ public:
 	int getWidth(const Common::String &msg, int spaceWidth = -1);
 	int getHeight() const { return _maxHeight; }
 	int writeString(BaseSurface *surface, const Common::String &msg, const Common::Point &pt,
-		int spaceWidth = 0, int width = 0);
+	                int spaceWidth = 0, int width = 0);
 };
 
 } // End of namespace MADS

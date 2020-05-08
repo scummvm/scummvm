@@ -43,31 +43,31 @@ class Set {
 
 	struct Object {
 		Common::String name;
-		BoundingBox    bbox;
-		uint8          isObstacle;
-		uint8          isClickable;
-		uint8          isHotMouse;
-		uint8          isTarget;
-		uint8          unknown1;
+		BoundingBox bbox;
+		uint8 isObstacle;
+		uint8 isClickable;
+		uint8 isHotMouse;
+		uint8 isTarget;
+		uint8 unknown1;
 	};
 
 	struct Walkbox {
 		Common::String name;
-		float          altitude;
-		int            vertexCount;
-		Vector3        vertices[8];
+		float altitude;
+		int vertexCount;
+		Vector3 vertices[8];
 	};
 
 	BladeRunnerEngine *_vm;
 
-	bool        _loaded;
-	int         _objectCount;
-	int         _walkboxCount;
-	Object     *_objects;
-	Walkbox    *_walkboxes;
-	int         _walkboxStepSound[85];
-	int         _footstepSoundOverride;
-//	float       _unknown[10];
+	bool _loaded;
+	int _objectCount;
+	int _walkboxCount;
+	Object *_objects;
+	Walkbox *_walkboxes;
+	int _walkboxStepSound[85];
+	int _footstepSoundOverride;
+	//	float       _unknown[10];
 
 public:
 	SetEffects *_effects;

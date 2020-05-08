@@ -32,7 +32,6 @@ class ScummEngine;
 
 class NutRenderer {
 protected:
-
 	enum {
 		kDefaultTransparentColor = 0,
 		kSmush44TransparentColor = 2

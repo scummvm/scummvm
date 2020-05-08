@@ -23,19 +23,19 @@
 #ifndef ULTIMA4_FILESYS_SAVEGAME_H
 #define ULTIMA4_FILESYS_SAVEGAME_H
 
-#include "common/stream.h"
 #include "common/serializer.h"
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-#define PARTY_SAV_BASE_FILENAME         "party.sav"
-#define MONSTERS_SAV_BASE_FILENAME      "monsters.sav"
-#define OUTMONST_SAV_BASE_FILENAME      "outmonst.sav"
+#define PARTY_SAV_BASE_FILENAME "party.sav"
+#define MONSTERS_SAV_BASE_FILENAME "monsters.sav"
+#define OUTMONST_SAV_BASE_FILENAME "outmonst.sav"
 
-#define MONSTERTABLE_SIZE                32
-#define MONSTERTABLE_CREATURES_SIZE        8
-#define MONSTERTABLE_OBJECTS_SIZE        (MONSTERTABLE_SIZE - MONSTERTABLE_CREATURES_SIZE)
+#define MONSTERTABLE_SIZE 32
+#define MONSTERTABLE_CREATURES_SIZE 8
+#define MONSTERTABLE_OBJECTS_SIZE (MONSTERTABLE_SIZE - MONSTERTABLE_CREATURES_SIZE)
 
 class Object;
 
@@ -126,10 +126,10 @@ enum Virtue {
 };
 
 enum BaseVirtue {
-	VIRT_NONE       = 0x00,
-	VIRT_TRUTH      = 0x01,
-	VIRT_LOVE       = 0x02,
-	VIRT_COURAGE    = 0x04
+	VIRT_NONE = 0x00,
+	VIRT_TRUTH = 0x01,
+	VIRT_LOVE = 0x02,
+	VIRT_COURAGE = 0x04
 };
 
 enum Reagent {
@@ -147,41 +147,41 @@ enum Reagent {
 #define SPELL_MAX 26
 
 enum Item {
-	ITEM_SKULL  = 0x01,
+	ITEM_SKULL = 0x01,
 	ITEM_SKULL_DESTROYED = 0x02,
 	ITEM_CANDLE = 0x04,
-	ITEM_BOOK   = 0x08,
-	ITEM_BELL   = 0x10,
-	ITEM_KEY_C  = 0x20,
-	ITEM_KEY_L  = 0x40,
-	ITEM_KEY_T  = 0x80,
-	ITEM_HORN   = 0x100,
-	ITEM_WHEEL  = 0x200,
+	ITEM_BOOK = 0x08,
+	ITEM_BELL = 0x10,
+	ITEM_KEY_C = 0x20,
+	ITEM_KEY_L = 0x40,
+	ITEM_KEY_T = 0x80,
+	ITEM_HORN = 0x100,
+	ITEM_WHEEL = 0x200,
 	ITEM_CANDLE_USED = 0x400,
 	ITEM_BOOK_USED = 0x800,
 	ITEM_BELL_USED = 0x1000
 };
 
 enum Stone {
-	STONE_BLUE   = 0x01,
+	STONE_BLUE = 0x01,
 	STONE_YELLOW = 0x02,
-	STONE_RED    = 0x04,
-	STONE_GREEN  = 0x08,
+	STONE_RED = 0x04,
+	STONE_GREEN = 0x08,
 	STONE_ORANGE = 0x10,
 	STONE_PURPLE = 0x20,
-	STONE_WHITE  = 0x40,
-	STONE_BLACK  = 0x80
+	STONE_WHITE = 0x40,
+	STONE_BLACK = 0x80
 };
 
 enum Rune {
-	RUNE_HONESTY      = 0x01,
-	RUNE_COMPASSION   = 0x02,
-	RUNE_VALOR        = 0x04,
-	RUNE_JUSTICE      = 0x08,
-	RUNE_SACRIFICE    = 0x10,
-	RUNE_HONOR        = 0x20,
+	RUNE_HONESTY = 0x01,
+	RUNE_COMPASSION = 0x02,
+	RUNE_VALOR = 0x04,
+	RUNE_JUSTICE = 0x08,
+	RUNE_SACRIFICE = 0x10,
+	RUNE_HONOR = 0x20,
 	RUNE_SPIRITUALITY = 0x40,
-	RUNE_HUMILITY     = 0x80
+	RUNE_HUMILITY = 0x80
 };
 
 /**
@@ -219,7 +219,7 @@ struct SaveGameMonsterRecord {
 	byte _unused2;
 
 	SaveGameMonsterRecord() : _tile(0), _x(0), _y(0), _prevTile(0),
-		_prevX(0), _prevY(0), _unused1(0), _unused2(0) {}
+	                          _prevX(0), _prevY(0), _unused1(0), _unused2(0) {}
 
 	static void synchronize(SaveGameMonsterRecord *monsterTable, Common::Serializer &s);
 };

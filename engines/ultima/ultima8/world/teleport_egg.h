@@ -30,6 +30,7 @@ namespace Ultima8 {
 
 class TeleportEgg : public Egg {
 	friend class ItemFactory;
+
 public:
 	TeleportEgg();
 	~TeleportEgg() override;
@@ -46,9 +47,9 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 
 	uint16 hatch() override;
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
-
 };
 
 } // End of namespace Ultima8

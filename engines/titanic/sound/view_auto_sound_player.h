@@ -31,8 +31,10 @@ class CViewAutoSoundPlayer : public CAutoSoundPlayer {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 private:
 	bool _enabled;
+
 public:
 	CLASSDEF;
 	CViewAutoSoundPlayer() : CAutoSoundPlayer(), _enabled(false) {}

@@ -20,10 +20,10 @@
  *
  */
 
-#include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
 #include "toltecs/palette.h"
 #include "toltecs/screen.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
@@ -78,7 +78,6 @@ void AnimationPlayer::start(uint resIndex) {
 	_firstNextFrameOffset = _nextFrameOffset;
 	_firstCurFrameSize = _curFrameSize;
 	_firstNextFrameSize = _nextFrameSize;
-
 }
 
 void AnimationPlayer::nextFrame() {
@@ -120,8 +119,6 @@ void AnimationPlayer::nextFrame() {
 	}
 
 	_vm->_arc->closeResource();
-
-
 }
 
 int16 AnimationPlayer::getStatus() {

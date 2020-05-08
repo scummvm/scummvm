@@ -32,7 +32,7 @@ namespace Cloud {
 namespace Box {
 class BoxStorage;
 
-class BoxUploadRequest: public Networking::Request {
+class BoxUploadRequest : public Networking::Request {
 	BoxStorage *_storage;
 	Common::String _savePath, _localPath;
 	Storage::UploadCallback _uploadCallback;

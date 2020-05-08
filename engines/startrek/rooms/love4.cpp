@@ -37,12 +37,12 @@ void Room::love4Tick1() {
 	playVoc("LOV4LOOP");
 
 	if (_awayMission->love.romulansCured) {
-		loadActorAnim2(OBJECT_ROMULAN_1,  "s3r5r1b", 0x36, 0xb3, 0);
+		loadActorAnim2(OBJECT_ROMULAN_1, "s3r5r1b", 0x36, 0xb3, 0);
 		loadActorAnim2(OBJECT_ROMULAN_2, "s3r5r2b", 0xb9, 0xbb, 0);
 		loadActorAnim2(OBJECT_ROMULAN_3, "s3r5r3b", 0xef, 0xc4, 0);
 		loadActorAnim2(OBJECT_ROMULAN_4, "s3r5r4b", 0x12a, 0xaa, 0);
 	} else {
-		loadActorAnim2(OBJECT_ROMULAN_1,  "s3r5r1a", 0x36, 0xb3, 0);
+		loadActorAnim2(OBJECT_ROMULAN_1, "s3r5r1a", 0x36, 0xb3, 0);
 		loadActorAnim2(OBJECT_ROMULAN_2, "s3r5r2a", 0xb9, 0xbb, 0);
 		loadActorAnim2(OBJECT_ROMULAN_3, "s3r5r3a", 0xef, 0xc4, 0);
 		loadActorAnim2(OBJECT_ROMULAN_4, "s3r5r4a", 0x12a, 0xaa, 0);
@@ -140,9 +140,9 @@ void Room::love4LookAtRomulan() {
 }
 
 void Room::love4TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  05, true);
+	showText(TX_SPEAKER_KIRK, 05, true);
 	showText(TX_SPEAKER_MCCOY, 24, true);
-	showText(TX_SPEAKER_KIRK,  02, true);
+	showText(TX_SPEAKER_KIRK, 02, true);
 }
 
 void Room::love4TalkToMccoy() {
@@ -158,7 +158,7 @@ void Room::love4TalkToRedshirt() {
 
 void Room::love4TalkToSpock() {
 	showText(TX_SPEAKER_SPOCK, 27, true);
-	showText(TX_SPEAKER_KIRK,   3, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 }
 
 void Room::love4TalkToRomulan() {
@@ -185,7 +185,6 @@ void Room::love4UseMTricorderAnywhere() {
 void Room::love4UseSTricorderAnywhere() {
 	spockScan(DIR_S, 6, false, true);
 }
-
 
 // Mccoy walks around to all romulans, giving each the cure
 void Room::love4UseCureOnRomulan() {
@@ -240,7 +239,6 @@ void Room::love4MccoyCuredRomulan1() {
 	_awayMission->disableInput = false;
 }
 
-
 void Room::love4UseWaterOnRomulan() {
 	// BUGFIX: If the romulans are unconscious, you can't use water on them.
 	// In the original, you could use water on them, but there would be no corresponding
@@ -276,7 +274,7 @@ void Room::love4UseWaterOnRomulan() {
 			showDescription(4, true);
 			if (!_awayMission->redshirtDead) {
 				showText(TX_SPEAKER_FERRIS, 29, true);
-				showText(TX_SPEAKER_KIRK,    4, true);
+				showText(TX_SPEAKER_KIRK, 4, true);
 			}
 			showText(TX_SPEAKER_MCCOY, 11, true);
 			loseItem(OBJECT_IH2O);
@@ -296,4 +294,4 @@ void Room::love4UseAnythingOnRomulan() {
 	showText(TX_SPEAKER_MCCOY, 17, true);
 }
 
-}
+} // namespace StarTrek

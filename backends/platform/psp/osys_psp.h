@@ -23,30 +23,29 @@
 #ifndef OSYS_PSP_H
 #define OSYS_PSP_H
 
-#include "common/scummsys.h"
-#include "graphics/surface.h"
-#include "graphics/colormasks.h"
-#include "graphics/palette.h"
 #include "audio/mixer_intern.h"
 #include "backends/base-backend.h"
 #include "backends/fs/psp/psp-fs-factory.h"
+#include "common/scummsys.h"
+#include "graphics/colormasks.h"
+#include "graphics/palette.h"
+#include "graphics/surface.h"
 
-#include "backends/platform/psp/display_client.h"
-#include "backends/platform/psp/default_display_client.h"
-#include "backends/platform/psp/cursor.h"
-#include "backends/platform/psp/pspkeyboard.h"
-#include "backends/platform/psp/image_viewer.h"
-#include "backends/platform/psp/display_manager.h"
-#include "backends/platform/psp/input.h"
 #include "backends/platform/psp/audio.h"
+#include "backends/platform/psp/cursor.h"
+#include "backends/platform/psp/default_display_client.h"
+#include "backends/platform/psp/display_client.h"
+#include "backends/platform/psp/display_manager.h"
+#include "backends/platform/psp/image_viewer.h"
+#include "backends/platform/psp/input.h"
+#include "backends/platform/psp/pspkeyboard.h"
 #include "backends/platform/psp/thread.h"
 
 class OSystem_PSP : public EventsBaseBackend, public PaletteManager {
 private:
-
 	Audio::MixerImpl *_mixer;
-	bool _pendingUpdate;  			// save an update we couldn't perform
-	uint32 _pendingUpdateCounter;	// prevent checking for pending update too often, in a cheap way
+	bool _pendingUpdate;          // save an update we couldn't perform
+	uint32 _pendingUpdateCounter; // prevent checking for pending update too often, in a cheap way
 
 	// All needed sub-members
 	Screen _screen;
@@ -88,10 +87,12 @@ public:
 
 	// Palette related
 	PaletteManager *getPaletteManager() { return this; }
+
 protected:
 	// PaletteManager API
 	void setPalette(const byte *colors, uint start, uint num);
 	void grabPalette(byte *colors, uint start, uint num) const;
+
 public:
 	void setCursorPalette(const byte *colors, uint start, uint num);
 

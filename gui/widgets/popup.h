@@ -23,15 +23,15 @@
 #ifndef GUI_WIDGETS_POPUP_H
 #define GUI_WIDGETS_POPUP_H
 
+#include "common/array.h"
+#include "common/str.h"
 #include "gui/dialog.h"
 #include "gui/widget.h"
-#include "common/str.h"
-#include "common/array.h"
 
 namespace GUI {
 
 enum {
-	kPopUpItemSelectedCmd	= 'POPs'
+	kPopUpItemSelectedCmd = 'POPs'
 };
 
 /**
@@ -45,16 +45,17 @@ class PopUpWidget : public Widget, public CommandSender {
 	typedef Common::String String;
 
 	struct Entry {
-		String	name;
-		uint32	tag;
+		String name;
+		uint32 tag;
 	};
 	typedef Common::Array<Entry> EntryList;
-protected:
-	EntryList		_entries;
-	int				_selectedItem;
 
-	int				_leftPadding;
-	int				_rightPadding;
+protected:
+	EntryList _entries;
+	int _selectedItem;
+
+	int _leftPadding;
+	int _rightPadding;
 
 public:
 	PopUpWidget(GuiObject *boss, const String &name, const char *tooltip = nullptr);
@@ -73,14 +74,23 @@ public:
 	/** Select the first entry matching the given tag. */
 	void setSelectedTag(uint32 tag);
 
-	int getSelected() const						{ return _selectedItem; }
-	uint32 getSelectedTag() const				{ return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
-//	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
+	int getSelected() const { return _selectedItem; }
+	uint32 getSelectedTag() const { return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
+	//	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
 
-	void handleMouseEntered(int button) override	{ if (_selectedItem != -1) read(_entries[_selectedItem].name); setFlags(WIDGET_HILITED); markAsDirty(); }
-	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseEntered(int button) override {
+		if (_selectedItem != -1)
+			read(_entries[_selectedItem].name);
+		setFlags(WIDGET_HILITED);
+		markAsDirty();
+	}
+	void handleMouseLeft(int button) override {
+		clearFlags(WIDGET_HILITED);
+		markAsDirty();
+	}
 
 	void reflowLayout() override;
+
 protected:
 	void drawWidget() override;
 };
@@ -92,22 +102,22 @@ protected:
  */
 class PopUpDialog : public Dialog {
 protected:
-	Widget		*_boss;
-	int			_clickX, _clickY;
-	int			_selection;
-	int			_initialSelection;
-	uint32		_openTime;
-	bool		_twoColumns;
-	int			_entriesPerColumn;
+	Widget *_boss;
+	int _clickX, _clickY;
+	int _selection;
+	int _initialSelection;
+	uint32 _openTime;
+	bool _twoColumns;
+	int _entriesPerColumn;
 
-	int			_leftPadding;
-	int			_rightPadding;
-	int			_lineHeight;
+	int _leftPadding;
+	int _rightPadding;
+	int _lineHeight;
 
-	int			_lastRead;
+	int _lastRead;
 
 	typedef Common::Array<Common::String> EntryList;
-	EntryList		_entries;
+	EntryList _entries;
 
 public:
 	PopUpDialog(Widget *boss, const Common::String &name, int clickX, int clickY);
@@ -117,10 +127,10 @@ public:
 	void drawDialog(DrawLayer layerToDraw) override;
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
-	void handleMouseWheel(int x, int y, int direction) override;	// Scroll through entries with scroll wheel
-	void handleMouseMoved(int x, int y, int button) override;	// Redraw selections depending on mouse position
+	void handleMouseWheel(int x, int y, int direction) override; // Scroll through entries with scroll wheel
+	void handleMouseMoved(int x, int y, int button) override;    // Redraw selections depending on mouse position
 	void handleMouseLeft(int button) override;
-	void handleKeyDown(Common::KeyState state) override;	// Scroll through entries with arrow keys etc.
+	void handleKeyDown(Common::KeyState state) override; // Scroll through entries with arrow keys etc.
 
 	void setPosition(int x, int y);
 	void setPadding(int left, int right);

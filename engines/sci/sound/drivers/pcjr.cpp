@@ -31,23 +31,22 @@ namespace Sci {
 
 #define VOLUME_SHIFT 3
 
-#define BASE_NOTE 129	// A10
-#define BASE_OCTAVE 10	// A10, as I said
+#define BASE_NOTE 129  // A10
+#define BASE_OCTAVE 10 // A10, as I said
 
 static const int freq_table[12] = { // A4 is 440Hz, halftone map is x |-> ** 2^(x/12)
-	28160, // A10
-	29834,
-	31608,
-	33488,
-	35479,
-	37589,
-	39824,
-	42192,
-	44701,
-	47359,
-	50175,
-	53159
-};
+    28160,                          // A10
+    29834,
+    31608,
+    33488,
+    35479,
+    37589,
+    39824,
+    42192,
+    44701,
+    47359,
+    50175,
+    53159};
 
 static inline int get_freq(int note) {
 	int halftone_delta = note - BASE_NOTE;
@@ -66,8 +65,8 @@ public:
 		kMaxChannels = 3
 	};
 
-	MidiDriver_PCJr(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) { }
-	~MidiDriver_PCJr() override { }
+	MidiDriver_PCJr(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) {}
+	~MidiDriver_PCJr() override {}
 
 	// MidiDriver
 	int open() override { return open(kMaxChannels); }
@@ -84,6 +83,7 @@ public:
 	void generateSamples(int16 *buf, int len) override;
 
 	int open(int channels);
+
 private:
 	int _channels_nr;
 	int _global_volume; // Base volume
@@ -174,8 +174,7 @@ void MidiDriver_PCJr::generateSamples(int16 *data, int len) {
 
 		for (chan = 0; chan < _channels_nr; chan++)
 			if (_notes[chan]) {
-				int volume = (_global_volume * _volumes[chan])
-				             >> VOLUME_SHIFT;
+				int volume = (_global_volume * _volumes[chan]) >> VOLUME_SHIFT;
 
 				_freq_count[chan] += freq[chan];
 				while (_freq_count[chan] >= (frequency << 1))
@@ -185,8 +184,7 @@ void MidiDriver_PCJr::generateSamples(int16 *data, int len) {
 					/* Unclean rising edge */
 					int l = volume << 1;
 					result += -volume + (l * _freq_count[chan]) / freq[chan];
-				} else if (_freq_count[chan] >= frequency
-				           && _freq_count[chan] - freq[chan] < frequency) {
+				} else if (_freq_count[chan] >= frequency && _freq_count[chan] - freq[chan] < frequency) {
 					/* Unclean falling edge */
 					int l = volume << 1;
 					result += volume - (l * (_freq_count[chan] - frequency)) / freq[chan];
@@ -257,7 +255,7 @@ MidiPlayer *MidiPlayer_PCJr_create(SciVersion version) {
 
 class MidiPlayer_PCSpeaker : public MidiPlayer_PCJr {
 public:
-	MidiPlayer_PCSpeaker(SciVersion version) : MidiPlayer_PCJr(version) { }
+	MidiPlayer_PCSpeaker(SciVersion version) : MidiPlayer_PCJr(version) {}
 
 	byte getPlayId() const override;
 	int getPolyphony() const override { return 1; }

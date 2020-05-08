@@ -59,9 +59,9 @@ private:
 
 	enum Direction {
 		kSouth = 0, // Starting Island with Myst linking book
-		kEast  = 1, // Island with right half of code
+		kEast = 1,  // Island with right half of code
 		kNorth = 2, // Island with left half of code
-		kWest  = 3  // No island, just water
+		kWest = 3   // No island, just water
 	};
 
 	DECLARE_OPCODE(o_throneEnablePassage);
@@ -112,10 +112,10 @@ private:
 
 	bool _fortressRotationRunning;
 	bool _gearsWereRunning;
-	uint16 _fortressRotationSpeed; // 78
-	uint16 _fortressRotationBrake; // 80
-	uint16 _fortressDirection; // 82
-	uint16 _fortressRotationSounds[4]; // 86 to 92
+	uint16 _fortressRotationSpeed;         // 78
+	uint16 _fortressRotationBrake;         // 80
+	uint16 _fortressDirection;             // 82
+	uint16 _fortressRotationSounds[4];     // 86 to 92
 	MystAreaVideo *_fortressRotationGears; // 172
 
 	bool _fortressRotationShortMovieWorkaround;
@@ -123,12 +123,12 @@ private:
 	uint32 _fortressRotationShortMovieLast;
 
 	bool _fortressSimulationRunning;
-	bool _fortressSimulationInit; // 94
-	uint16 _fortressSimulationSpeed; // 96
-	uint16 _fortressSimulationBrake; // 98
-	uint16 _fortressSimulationStartSound1; // 102
-	uint16 _fortressSimulationStartSound2; // 100
-	MystAreaVideo *_fortressSimulationHolo; // 160
+	bool _fortressSimulationInit;              // 94
+	uint16 _fortressSimulationSpeed;           // 96
+	uint16 _fortressSimulationBrake;           // 98
+	uint16 _fortressSimulationStartSound1;     // 102
+	uint16 _fortressSimulationStartSound2;     // 100
+	MystAreaVideo *_fortressSimulationHolo;    // 160
 	MystAreaVideo *_fortressSimulationStartup; // 164
 
 	// HACK: Support negative rates with edit lists
@@ -137,25 +137,24 @@ private:
 
 	uint16 _elevatorGoingDown; // 112
 
-	float _elevatorRotationSpeed; // 120
+	float _elevatorRotationSpeed;        // 120
 	float _elevatorRotationGearPosition; // 124
-	uint16 _elevatorRotationSoundId; // 128
-	bool _elevatorRotationLeverMoving; // 184
+	uint16 _elevatorRotationSoundId;     // 128
+	bool _elevatorRotationLeverMoving;   // 184
 
 	bool _elevatorGoingMiddle; // 148
 	bool _elevatorTooLate;
 	uint16 _elevatorPosition; // 104
-	bool _elevatorInCabin; // 108
+	bool _elevatorInCabin;    // 108
 	uint16 _elevatorTopCounter;
 	uint32 _elevatorNextTime;
 
 	uint16 _crystalLit; // 130
 
-	bool _birdSinging; // 144
+	bool _birdSinging;          // 144
 	uint32 _birdCrankStartTime; // 136
-	uint32 _birdSingEndTime; // 140
-	MystAreaVideo *_bird; // 152
-
+	uint32 _birdSingEndTime;    // 140
+	MystAreaVideo *_bird;       // 152
 
 	MystAreaVideo *_snakeBox; // 156
 };

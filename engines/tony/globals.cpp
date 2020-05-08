@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "tony/globals.h"
+#include "common/algorithm.h"
 
 namespace Tony {
 

@@ -21,8 +21,8 @@
  */
 
 #include "glk/alan3/parameter_position.h"
-#include "glk/alan3/memory.h"
 #include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -47,7 +47,6 @@ void uncheckAllParameterPositions(ParameterPosition parameterPositions[]) {
 	}
 }
 
-
 /*======================================================================*/
 void copyParameterPositions(ParameterPosition originalParameterPositions[], ParameterPosition parameterPositions[]) {
 	int i;
@@ -55,7 +54,6 @@ void copyParameterPositions(ParameterPosition originalParameterPositions[], Para
 		parameterPositions[i] = originalParameterPositions[i];
 	parameterPositions[i].endOfList = TRUE;
 }
-
 
 /*======================================================================*/
 bool equalParameterPositions(ParameterPosition parameterPositions1[], ParameterPosition parameterPositions2[]) {
@@ -69,7 +67,6 @@ bool equalParameterPositions(ParameterPosition parameterPositions1[], ParameterP
 	return parameterPositions2[i].endOfList;
 }
 
-
 /*======================================================================*/
 int findMultipleParameterPosition(ParameterPosition parameterPositions[]) {
 	Aint parameterNumber;
@@ -78,7 +75,6 @@ int findMultipleParameterPosition(ParameterPosition parameterPositions[]) {
 			return parameterNumber;
 	return -1;
 }
-
 
 /*======================================================================*/
 void markExplicitMultiple(ParameterPosition parameterPositions[], Parameter parameters[]) {

@@ -20,11 +20,11 @@
  *
  */
 
-#include "graphics/scaler/intern.h"
-#include "graphics/scaler/scalebit.h"
-#include "common/util.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/util.h"
+#include "graphics/scaler/intern.h"
+#include "graphics/scaler/scalebit.h"
 
 int gBitFormat = 565;
 
@@ -103,7 +103,7 @@ void InitLUT(Graphics::PixelFormat format) {
 	}
 
 #ifdef USE_NASM
-	hqx_lowbits  = (1 << format.rShift) | (1 << format.gShift) | (1 << format.bShift),
+	hqx_lowbits = (1 << format.rShift) | (1 << format.gShift) | (1 << format.bShift),
 	hqx_low2bits = (3 << format.rShift) | (3 << format.gShift) | (3 << format.bShift),
 	hqx_low3bits = (7 << format.rShift) | (7 << format.gShift) | (7 << format.bShift),
 
@@ -111,17 +111,16 @@ void InitLUT(Graphics::PixelFormat format) {
 
 	// FIXME: The following code only does the right thing
 	// if the color order is RGB or BGR, i.e., green is in the middle.
-	hqx_greenMask   = format.RGBToColor(  0, 255,   0);
-	hqx_redBlueMask = format.RGBToColor(255,   0, 255);
+	hqx_greenMask = format.RGBToColor(0, 255, 0);
+	hqx_redBlueMask = format.RGBToColor(255, 0, 255);
 
 	hqx_green_redBlue_Mask = (hqx_greenMask << 16) | hqx_redBlueMask;
 #endif
 }
 #endif
 
-
 /** Lookup table for the DotMatrix scaler. */
-uint16 g_dotmatrix[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+uint16 g_dotmatrix[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 /** Init the scaler subsystem. */
 void InitScalers(uint32 BitFormat) {
@@ -145,11 +144,11 @@ void InitScalers(uint32 BitFormat) {
 #endif
 
 	// Build dotmatrix lookup table for the DotMatrix scaler.
-	g_dotmatrix[0] = g_dotmatrix[10] = format.RGBToColor( 0, 63,  0);
-	g_dotmatrix[1] = g_dotmatrix[11] = format.RGBToColor( 0,  0, 63);
-	g_dotmatrix[2] = g_dotmatrix[ 8] = format.RGBToColor(63,  0,  0);
-	g_dotmatrix[4] = g_dotmatrix[ 6] =
-		g_dotmatrix[12] = g_dotmatrix[14] = format.RGBToColor(63, 63, 63);
+	g_dotmatrix[0] = g_dotmatrix[10] = format.RGBToColor(0, 63, 0);
+	g_dotmatrix[1] = g_dotmatrix[11] = format.RGBToColor(0, 0, 63);
+	g_dotmatrix[2] = g_dotmatrix[8] = format.RGBToColor(63, 0, 0);
+	g_dotmatrix[4] = g_dotmatrix[6] =
+	    g_dotmatrix[12] = g_dotmatrix[14] = format.RGBToColor(63, 63, 63);
 }
 
 void DestroyScalers() {
@@ -159,13 +158,12 @@ void DestroyScalers() {
 #endif
 }
 
-
 /**
  * Trivial 'scaler' - in fact it doesn't do any scaling but just copies the
  * source to the destination.
  */
 void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height) {
+              int width, int height) {
 	// Spot the case when it can all be done in 1 hit
 	if ((srcPitch == sizeof(uint16) * (uint)width) && (dstPitch == sizeof(uint16) * (uint)width)) {
 		memcpy(dstPtr, srcPtr, sizeof(uint16) * width * height);
@@ -180,21 +178,20 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 
 #ifdef USE_SCALERS
 
-
 #ifdef USE_ARM_SCALER_ASM
-extern "C" void Normal2xARM(const uint8  *srcPtr,
-                                  uint32  srcPitch,
-                                  uint8  *dstPtr,
-                                  uint32  dstPitch,
-                                  int     width,
-                                  int     height);
+extern "C" void Normal2xARM(const uint8 *srcPtr,
+                            uint32 srcPitch,
+                            uint8 *dstPtr,
+                            uint32 dstPitch,
+                            int width,
+                            int height);
 
-void Normal2x(const uint8  *srcPtr,
-                    uint32  srcPitch,
-                    uint8  *dstPtr,
-                    uint32  dstPitch,
-                    int     width,
-                    int     height) {
+void Normal2x(const uint8 *srcPtr,
+              uint32 srcPitch,
+              uint8 *dstPtr,
+              uint32 dstPitch,
+              int width,
+              int height) {
 	Normal2xARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
 
@@ -203,7 +200,7 @@ void Normal2x(const uint8  *srcPtr,
  * Trivial nearest-neighbor 2x scaler.
  */
 void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height) {
+              int width, int height) {
 	uint8 *r;
 
 	assert(IS_ALIGNED(dstPtr, 4));
@@ -227,7 +224,7 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
  * Trivial nearest-neighbor 3x scaler.
  */
 void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							int width, int height) {
+              int width, int height) {
 	uint8 *r;
 	const uint32 dstPitch2 = dstPitch * 2;
 	const uint32 dstPitch3 = dstPitch * 3;
@@ -258,7 +255,7 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
  * See also http://scale2x.sourceforge.net
  */
 void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							 int width, int height) {
+               int width, int height) {
 	scale(2, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, 2, width, height);
 }
 
@@ -267,13 +264,13 @@ void AdvMame2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
  * See also http://scale2x.sourceforge.net
  */
 void AdvMame3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-							 int width, int height) {
+               int width, int height) {
 	scale(3, dstPtr, dstPitch, srcPtr - srcPitch, srcPitch, 2, width, height);
 }
 
 template<typename ColorMask>
 void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-					int width, int height) {
+                  int width, int height) {
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;
 
@@ -300,15 +297,14 @@ void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 
 void TV2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	if (gBitFormat == 565)
-		TV2xTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		TV2xTemplate<Graphics::ColorMasks<565>>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else
-		TV2xTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		TV2xTemplate<Graphics::ColorMasks<555>>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
 
 static inline uint16 DOT_16(const uint16 *dotmatrix, uint16 c, int j, int i) {
 	return c - ((c >> 2) & dotmatrix[((j & 3) << 2) + (i & 3)]);
 }
-
 
 // FIXME: This scaler doesn't quite work. Either it needs to know where on the
 // screen it's drawing, or the dirty rects will have to be adjusted so that
@@ -317,7 +313,7 @@ static inline uint16 DOT_16(const uint16 *dotmatrix, uint16 c, int j, int i) {
 // exercise for the reader.)
 
 void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
-					int width, int height) {
+               int width, int height) {
 
 	const uint16 *dotmatrix = g_dotmatrix;
 

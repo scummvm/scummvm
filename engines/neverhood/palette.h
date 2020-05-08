@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_PALETTE_H
 #define NEVERHOOD_PALETTE_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/entity.h"
+#include "neverhood/neverhood.h"
 
 namespace Neverhood {
 
@@ -52,6 +52,7 @@ public:
 	void fillBaseWhite(int index, int count);
 	void fillBaseBlack(int index, int count);
 	void copyToBasePalette(byte *palette);
+
 protected:
 	int _status;
 	byte *_palette;

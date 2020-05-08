@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/filesys/savegame.h"
+#include "common/savefile.h"
+#include "common/system.h"
+#include "graphics/thumbnail.h"
+#include "ultima/shared/engine/ultima.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
-#include "ultima/shared/engine/ultima.h"
-#include "common/system.h"
-#include "common/savefile.h"
-#include "graphics/thumbnail.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -90,7 +90,6 @@ IDataSource *SavegameReader::getDataSource(const Std::string &name) {
 	return new IBufferDataSource(data, fe._size, false, true);
 }
 
-
 SavegameWriter::SavegameWriter(Common::WriteStream *ws) : _file(ws) {
 	assert(_file);
 }
@@ -99,7 +98,7 @@ SavegameWriter::~SavegameWriter() {
 }
 
 bool SavegameWriter::finish() {
-	 // Write ident and savegame version
+	// Write ident and savegame version
 	_file->writeUint32LE(SAVEGAME_IDENT);
 	_file->writeUint32LE(SAVEGAME_VERSION);
 
@@ -117,7 +116,7 @@ bool SavegameWriter::finish() {
 		_file->writeUint32LE(fe.size());
 		_file->write(&fe[0], fe.size());
 	}
-	
+
 	return true;
 }
 

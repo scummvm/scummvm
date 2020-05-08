@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
 #include "common/stream.h"
+#include "ultima/shared/std/string.h"
 
 #ifndef NUVIE_CONF_MISC_H
 #define NUVIE_CONF_MISC_H

@@ -24,12 +24,12 @@
 #define TSAGE_BLUEFORCE_SPEAKERS_H
 
 #include "common/scummsys.h"
-#include "tsage/converse.h"
-#include "tsage/events.h"
-#include "tsage/core.h"
-#include "tsage/scenes.h"
-#include "tsage/globals.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/converse.h"
+#include "tsage/core.h"
+#include "tsage/events.h"
+#include "tsage/globals.h"
+#include "tsage/scenes.h"
 
 namespace TsAGE {
 
@@ -37,7 +37,7 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-class VisualSpeaker: public Speaker {
+class VisualSpeaker : public Speaker {
 public:
 	NamedObject _object1;
 	CountdownObject _object2;
@@ -45,6 +45,7 @@ public:
 	int _xp;
 	int _numFrames;
 	Common::Point _offsetPos;
+
 public:
 	VisualSpeaker();
 
@@ -55,14 +56,14 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerGameText: public VisualSpeaker {
+class SpeakerGameText : public VisualSpeaker {
 public:
 	SpeakerGameText();
 
 	Common::String getClassName() override { return "SpeakerGameText"; }
 };
 
-class SpeakerSutter: public VisualSpeaker {
+class SpeakerSutter : public VisualSpeaker {
 public:
 	SpeakerSutter();
 
@@ -70,21 +71,21 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerDoug: public VisualSpeaker {
+class SpeakerDoug : public VisualSpeaker {
 public:
 	SpeakerDoug();
 
 	Common::String getClassName() override { return "SpeakerDoug"; }
 };
 
-class SpeakerJakeNoHead: public VisualSpeaker {
+class SpeakerJakeNoHead : public VisualSpeaker {
 public:
 	SpeakerJakeNoHead();
 
 	Common::String getClassName() override { return "SpeakerJakeNoHead"; }
 };
 
-class SpeakerHarrison: public VisualSpeaker {
+class SpeakerHarrison : public VisualSpeaker {
 public:
 	SpeakerHarrison();
 
@@ -92,7 +93,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerJake: public VisualSpeaker {
+class SpeakerJake : public VisualSpeaker {
 public:
 	SpeakerJake();
 
@@ -100,7 +101,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerJakeJacket: public VisualSpeaker {
+class SpeakerJakeJacket : public VisualSpeaker {
 public:
 	SpeakerJakeJacket();
 
@@ -108,7 +109,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerJakeUniform: public VisualSpeaker {
+class SpeakerJakeUniform : public VisualSpeaker {
 public:
 	SpeakerJakeUniform();
 
@@ -116,7 +117,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerJailer: public VisualSpeaker {
+class SpeakerJailer : public VisualSpeaker {
 public:
 	SpeakerJailer();
 
@@ -124,7 +125,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerGreen: public VisualSpeaker {
+class SpeakerGreen : public VisualSpeaker {
 public:
 	SpeakerGreen();
 
@@ -132,7 +133,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerPSutter: public VisualSpeaker {
+class SpeakerPSutter : public VisualSpeaker {
 public:
 	SpeakerPSutter();
 
@@ -140,14 +141,14 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerJakeRadio: public VisualSpeaker {
+class SpeakerJakeRadio : public VisualSpeaker {
 public:
 	SpeakerJakeRadio();
 
 	Common::String getClassName() override { return "SpeakerJakeRadio"; }
 };
 
-class SpeakerLyleHat: public VisualSpeaker {
+class SpeakerLyleHat : public VisualSpeaker {
 public:
 	SpeakerLyleHat();
 
@@ -155,7 +156,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerJordan: public VisualSpeaker {
+class SpeakerJordan : public VisualSpeaker {
 public:
 	SpeakerJordan();
 
@@ -163,7 +164,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerSkip: public VisualSpeaker {
+class SpeakerSkip : public VisualSpeaker {
 public:
 	SpeakerSkip();
 
@@ -171,7 +172,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerSkipB: public VisualSpeaker {
+class SpeakerSkipB : public VisualSpeaker {
 public:
 	SpeakerSkipB();
 
@@ -179,7 +180,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerCarter: public VisualSpeaker {
+class SpeakerCarter : public VisualSpeaker {
 public:
 	SpeakerCarter();
 
@@ -187,7 +188,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerDriver: public VisualSpeaker {
+class SpeakerDriver : public VisualSpeaker {
 public:
 	SpeakerDriver();
 
@@ -195,7 +196,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerShooter: public VisualSpeaker {
+class SpeakerShooter : public VisualSpeaker {
 public:
 	SpeakerShooter();
 
@@ -203,7 +204,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerJim: public VisualSpeaker {
+class SpeakerJim : public VisualSpeaker {
 public:
 	SpeakerJim();
 
@@ -211,7 +212,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerDezi: public VisualSpeaker {
+class SpeakerDezi : public VisualSpeaker {
 public:
 	SpeakerDezi();
 
@@ -219,7 +220,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerJake385: public VisualSpeaker {
+class SpeakerJake385 : public VisualSpeaker {
 public:
 	SpeakerJake385();
 
@@ -227,7 +228,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerLaura: public VisualSpeaker {
+class SpeakerLaura : public VisualSpeaker {
 public:
 	SpeakerLaura();
 
@@ -235,7 +236,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerLauraHeld: public VisualSpeaker {
+class SpeakerLauraHeld : public VisualSpeaker {
 public:
 	SpeakerLauraHeld();
 
@@ -243,7 +244,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerEugene: public VisualSpeaker {
+class SpeakerEugene : public VisualSpeaker {
 public:
 	SpeakerEugene();
 
@@ -251,7 +252,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerWeasel: public VisualSpeaker {
+class SpeakerWeasel : public VisualSpeaker {
 public:
 	SpeakerWeasel();
 
@@ -259,7 +260,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerBilly: public VisualSpeaker {
+class SpeakerBilly : public VisualSpeaker {
 public:
 	SpeakerBilly();
 
@@ -267,7 +268,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerDrunk: public VisualSpeaker {
+class SpeakerDrunk : public VisualSpeaker {
 public:
 	SpeakerDrunk();
 
@@ -275,7 +276,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerGiggles: public VisualSpeaker {
+class SpeakerGiggles : public VisualSpeaker {
 public:
 	SpeakerGiggles();
 
@@ -283,7 +284,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerFBI: public VisualSpeaker {
+class SpeakerFBI : public VisualSpeaker {
 public:
 	SpeakerFBI();
 
@@ -291,7 +292,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerNico: public VisualSpeaker {
+class SpeakerNico : public VisualSpeaker {
 public:
 	SpeakerNico();
 
@@ -299,7 +300,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerDA: public VisualSpeaker {
+class SpeakerDA : public VisualSpeaker {
 public:
 	SpeakerDA();
 
@@ -307,7 +308,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerGrandma: public VisualSpeaker {
+class SpeakerGrandma : public VisualSpeaker {
 public:
 	SpeakerGrandma();
 
@@ -315,7 +316,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerLyle: public VisualSpeaker {
+class SpeakerLyle : public VisualSpeaker {
 public:
 	SpeakerLyle();
 
@@ -323,21 +324,21 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerGranText: public VisualSpeaker {
+class SpeakerGranText : public VisualSpeaker {
 public:
 	SpeakerGranText();
 
 	Common::String getClassName() override { return "SpeakerGranText"; }
 };
 
-class SpeakerLyleText: public VisualSpeaker {
+class SpeakerLyleText : public VisualSpeaker {
 public:
 	SpeakerLyleText();
 
 	Common::String getClassName() override { return "SpeakerLyleText"; }
 };
 
-class SpeakerKate: public VisualSpeaker {
+class SpeakerKate : public VisualSpeaker {
 public:
 	SpeakerKate();
 
@@ -345,7 +346,7 @@ public:
 	void setText(const Common::String &msg) override;
 };
 
-class SpeakerTony: public VisualSpeaker {
+class SpeakerTony : public VisualSpeaker {
 public:
 	SpeakerTony();
 

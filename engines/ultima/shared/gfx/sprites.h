@@ -35,6 +35,7 @@ class Sprite {
 private:
 	Graphics::ManagedSurface _surface;
 	Graphics::ManagedSurface _transSurface;
+
 public:
 	/**
 	 * Constructor
@@ -89,7 +90,7 @@ public:
 class Sprites {
 protected:
 	Common::Array<Sprite> _data;
-	Point _spriteSize;							// Size of individual sprites
+	Point _spriteSize; // Size of individual sprites
 protected:
 	/**
 	 * Load a raw data file containing sprite pixels
@@ -99,6 +100,7 @@ protected:
 	 * @param h				Height of files
 	 */
 	void load(const Common::String &name, uint bpp, uint16 w = 16, uint16 h = 16);
+
 public:
 	/**
 	 * Destructor

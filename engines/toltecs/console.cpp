@@ -31,8 +31,8 @@
 namespace Toltecs {
 
 Console::Console(ToltecsEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
-	registerCmd("dump",			WRAP_METHOD(Console, Cmd_Dump));
+	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("dump", WRAP_METHOD(Console, Cmd_Dump));
 }
 
 Console::~Console() {

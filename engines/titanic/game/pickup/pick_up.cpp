@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPickUp, CGameObject)
-	ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
 void CPickUp::save(SimpleFile *file, int indent) {

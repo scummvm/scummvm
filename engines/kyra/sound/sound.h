@@ -75,7 +75,6 @@ struct SoundResourceInfo_TownsEoB {
 	uint numFiles;
 };
 
-
 struct SoundResourceInfo_AmigaEoB {
 	SoundResourceInfo_AmigaEoB(const char *const *files, int numFiles, const char *const *soundmap, int numSounds) : fileList(files), fileListSize(numFiles), soundList(soundmap), soundListSize(numSounds) {}
 	const char *const *fileList;
@@ -294,6 +293,7 @@ public:
 	 * Reset sound trigger.
 	 */
 	virtual void resetTrigger() {}
+
 protected:
 	enum {
 		kNumChannelHandles = 4
@@ -317,8 +317,8 @@ private:
 	struct SpeechCodecs {
 		const char *fileext;
 		Audio::SeekableAudioStream *(*streamFunc)(
-			Common::SeekableReadStream *stream,
-			DisposeAfterUse::Flag disposeAfterUse);
+		    Common::SeekableReadStream *stream,
+		    DisposeAfterUse::Flag disposeAfterUse);
 	};
 
 	static const SpeechCodecs _supportedCodecs[];
@@ -355,6 +355,7 @@ public:
 
 	void beginFadeOut() override;
 	void pause(bool paused) override;
+
 private:
 	Sound *_music, *_sfx;
 };

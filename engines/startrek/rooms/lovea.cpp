@@ -29,8 +29,8 @@ namespace StarTrek {
 
 // Mccoy or Ferris say something under effects of laughing gas
 void Room::loveaTimer0Expired() {
-	const TextRef ferrisText[] = { 39, 48, 45, 40, 42, 50, 43, 41, 47, 46, 39 };
-	const TextRef mccoyText[] = { 11, 20, 16, 12, 14, 22, 15, 21, 13, 19, 17 };
+	const TextRef ferrisText[] = {39, 48, 45, 40, 42, 50, 43, 41, 47, 46, 39};
+	const TextRef mccoyText[] = {11, 20, 16, 12, 14, 22, 15, 21, 13, 19, 17};
 
 	// BUGFIX: should range from 0-1, not 0-2. Original had "get name errors" when it
 	// rolled a 2.
@@ -52,7 +52,7 @@ void Room::loveaTimer0Expired() {
 	showText(speaker, COMMON_MESSAGE_OFFSET + textTable[randomVal], true);
 
 	if (!_awayMission->love.releasedRomulanLaughingGas) {
-		const int spockText[] = { 29, 33, 26, 124 };
+		const int spockText[] = {29, 33, 26, 124};
 		showText(TX_SPEAKER_SPOCK, COMMON_MESSAGE_OFFSET + spockText[getRandomWordInRange(0, 3)], true);
 
 		// BUG(?): This is in an if statement, meaning the human crewmen stop talking from
@@ -64,7 +64,7 @@ void Room::loveaTimer0Expired() {
 
 // Spock says something under effects of laughing gas
 void Room::loveaTimer1Expired() {
-	const int spockText[] = { 25, 101, 102, 103, 104, 105, 106, 107 };
+	const int spockText[] = {25, 101, 102, 103, 104, 105, 106, 107};
 	showText(TX_SPEAKER_SPOCK, COMMON_MESSAGE_OFFSET + spockText[getRandomWordInRange(0, 7)], true);
 	_awayMission->timers[1] = getRandomWordInRange(200, 400);
 }
@@ -83,7 +83,6 @@ void Room::loveaUseCureSampleOnSpock() {
 	} else
 		showText(TX_SPEAKER_MCCOY, 55 + COMMON_MESSAGE_OFFSET, true);
 }
-
 
 void Room::loveaUseCureOnSpock() {
 	if (_awayMission->love.spockCured)
@@ -107,7 +106,6 @@ void Room::loveaFinishedCuringSpock() {
 	showText(TX_SPEAKER_SPOCK, TX_LOV5C001);
 	_awayMission->love.spockCured = true;
 }
-
 
 // Timer 2 counts down the time until Spock and the Romulans succumb to the virus.
 // BUG(-ish): once Spock is cured, the romulans will never succumb to the virus.
@@ -153,8 +151,8 @@ void Room::loveaUseMTricorderOnSpock() {
 		showText(TX_SPEAKER_MCCOY, 3 + COMMON_MESSAGE_OFFSET, true);
 	else if (_awayMission->love.spockInfectionCounter < 50)
 		showText(TX_SPEAKER_MCCOY, 8 + COMMON_MESSAGE_OFFSET, true);
-	else if (_awayMission->love.spockInfectionCounter < 70) // BUGFIX: < 70 instead of == 70
-		showText(TX_SPEAKER_MCCOY, COMMON_MESSAGE_OFFSET + 10, true);	// TX_TUG2_010
+	else if (_awayMission->love.spockInfectionCounter < 70)           // BUGFIX: < 70 instead of == 70
+		showText(TX_SPEAKER_MCCOY, COMMON_MESSAGE_OFFSET + 10, true); // TX_TUG2_010
 	else if (_awayMission->love.spockInfectionCounter < 100)
 		showText(TX_SPEAKER_MCCOY, 10 + COMMON_MESSAGE_OFFSET, true);
 	else
@@ -198,10 +196,10 @@ void Room::loveaUseCommunicator() {
 	// exact same code.
 	// TODO: perhaps the floppy edition had different text for each case.
 
-	showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
+	showText(TX_SPEAKER_KIRK, TX_MUD4_018);
 	showText(TX_SPEAKER_UHURA, TX_BRIDU146);
-	showText(TX_SPEAKER_KIRK,  41 + COMMON_MESSAGE_OFFSET, true);
+	showText(TX_SPEAKER_KIRK, 41 + COMMON_MESSAGE_OFFSET, true);
 	_awayMission->love.contactedEnterpriseBeforeCure = true;
 }
 
-}
+} // namespace StarTrek

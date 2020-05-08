@@ -41,9 +41,7 @@ void AIScriptMia::Initialize() {
 }
 
 bool AIScriptMia::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorMia) != 300
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorMia) != 300) {
 		Actor_Set_Goal_Number(kActorMia, 300);
 	}
 
@@ -176,9 +174,7 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 bool AIScriptMia::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
-		if (_animationState >= 2
-		 && _animationState <= 4
-		) {
+		if (_animationState >= 2 && _animationState <= 4) {
 			_flag1 = false;
 		} else {
 			_animationFrame = 0;
@@ -214,17 +210,17 @@ bool AIScriptMia::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptMia::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptMia::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptMia::ReachedMovementTrackWaypoint(int waypointId) {

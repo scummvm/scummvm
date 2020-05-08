@@ -26,9 +26,9 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/particles/part_force.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 
@@ -39,11 +39,9 @@ PartForce::PartForce(BaseGame *inGame) : BaseNamedObject(inGame) {
 	_type = FORCE_POINT;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 PartForce::~PartForce(void) {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool PartForce::persist(BasePersistenceManager *persistMgr) {

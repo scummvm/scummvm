@@ -21,9 +21,9 @@
  */
 
 #include "glk/alan3/state_stack.h"
-#include "glk/alan3/syserr.h"
 #include "glk/alan3/memory.h"
 #include "glk/alan3/state.h"
+#include "glk/alan3/syserr.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -31,16 +31,14 @@ namespace Alan3 {
 /* CONSTANTS: */
 #define EXTENT 10
 
-
 /* PRIVATE TYPES: */
 struct StateStackStructure {
 	void **states;
 	char **commands;
 	int stackSize;
-	int stackPointer;   /* Points above used stack, 0 initially */
-	int elementSize;    /* Size of elements in the stack */
+	int stackPointer; /* Points above used stack, 0 initially */
+	int elementSize;  /* Size of elements in the stack */
 };
-
 
 /*----------------------------------------------------------------------*/
 static void *reallocate(void *from, int newSize) {
@@ -59,7 +57,6 @@ StateStackP createStateStack(int elementSize) {
 	return stack;
 }
 
-
 /*======================================================================*/
 void deleteStateStack(StateStackP stateStack) {
 	if (stateStack != NULL) {
@@ -77,12 +74,10 @@ void deleteStateStack(StateStackP stateStack) {
 	}
 }
 
-
 /*======================================================================*/
 bool stateStackIsEmpty(StateStackP stateStack) {
 	return stateStack->stackPointer == 0;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void ensureSpaceForGameState(StateStackP stack) {
@@ -93,7 +88,6 @@ static void ensureSpaceForGameState(StateStackP stack) {
 	}
 }
 
-
 /*======================================================================*/
 void pushGameState(StateStackP stateStack, void *gameState) {
 	void *element = allocate(stateStack->elementSize);
@@ -103,12 +97,10 @@ void pushGameState(StateStackP stateStack, void *gameState) {
 	stateStack->states[stateStack->stackPointer++] = element;
 }
 
-
 /*======================================================================*/
 void attachPlayerCommandsToLastState(StateStackP stateStack, char *playerCommands) {
 	stateStack->commands[stateStack->stackPointer - 1] = scumm_strdup(playerCommands);
 }
-
 
 /*======================================================================*/
 void popGameState(StateStackP stateStack, void *gameState, char **playerCommand) {

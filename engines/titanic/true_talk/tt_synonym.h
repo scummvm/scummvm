@@ -23,8 +23,8 @@
 #ifndef TITANIC_TT_SYNONYM_H
 #define TITANIC_TT_SYNONYM_H
 
-#include "titanic/true_talk/tt_string_node.h"
 #include "titanic/support/simple_file.h"
+#include "titanic/true_talk/tt_string_node.h"
 
 namespace Titanic {
 

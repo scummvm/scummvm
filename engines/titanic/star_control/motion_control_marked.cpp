@@ -27,12 +27,11 @@
 
 namespace Titanic {
 
-CMotionControlMarked::CMotionControlMarked(const CNavigationInfo *src) :
-		CMotionControl(src) {
+CMotionControlMarked::CMotionControlMarked(const CNavigationInfo *src) : CMotionControl(src) {
 }
 
 void CMotionControlMarked::transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation) {
+                                                       const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	if (isLocked())
 		decLockCount();
 

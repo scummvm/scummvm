@@ -20,27 +20,24 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/sound/decoder/adlib_sfx_stream.h"
 #include "ultima/nuvie/sound/adlib_sfx_manager.h"
 #include "audio/mixer.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/sound/decoder/adlib_sfx_stream.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 AdLibSfxManager::AdLibSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
-
 }
 
 AdLibSfxManager::~AdLibSfxManager() {
-
 }
 
 bool AdLibSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
 	return playSfxLooping(sfx_id, NULL, volume);
 }
-
 
 bool AdLibSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
 	AdLibSfxStream *stream = NULL;
@@ -71,7 +68,6 @@ void AdLibSfxManager::playSoundSample(Audio::AudioStream *stream, Audio::SoundHa
 	} else {
 		mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, volume);
 	}
-
 }
 
 } // End of namespace Nuvie

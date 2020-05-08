@@ -21,19 +21,19 @@
  */
 
 #include "ultima/ultima1/u1dialogs/ready.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map.h"
-#include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/text_cursor.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Ready, Dialog)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(CharacterInputMsg)
+ON_MESSAGE(ShowMsg)
+ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
 Ready::Ready(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
@@ -75,8 +75,8 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 		}
 
 		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_armour_SPELL[0], c.equippedWeapon()->_longName.c_str()),
-			true, true);
+		                                  _game->_res->WEAPON_armour_SPELL[0], c.equippedWeapon()->_longName.c_str()),
+		           true, true);
 		hide();
 		break;
 
@@ -88,8 +88,8 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 		}
 
 		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_armour_SPELL[1], c.equippedArmour()->_name.c_str()),
-			true, true);
+		                                  _game->_res->WEAPON_armour_SPELL[1], c.equippedArmour()->_name.c_str()),
+		           true, true);
 		hide();
 		break;
 
@@ -101,8 +101,8 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 		}
 
 		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_armour_SPELL[2], c._spells[c._equippedSpell]->_name.c_str()),
-			true, true);
+		                                  _game->_res->WEAPON_armour_SPELL[2], c._spells[c._equippedSpell]->_name.c_str()),
+		           true, true);
 		hide();
 		break;
 
@@ -124,7 +124,8 @@ void Ready::setMode(Mode mode) {
 			nothing();
 		} else {
 			addInfoMsg(Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
-				_game->_res->WEAPON_armour_SPELL[0]), false, true);
+			                                  _game->_res->WEAPON_armour_SPELL[0]),
+			           false, true);
 			getKeypress();
 		}
 		break;
@@ -134,14 +135,16 @@ void Ready::setMode(Mode mode) {
 			nothing();
 		} else {
 			addInfoMsg(Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
-				_game->_res->WEAPON_armour_SPELL[1]), false, true);
+			                                  _game->_res->WEAPON_armour_SPELL[1]),
+			           false, true);
 			getKeypress();
 		}
 		break;
 
 	case READY_SPELL:
 		addInfoMsg(Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_armour_SPELL[2]), false, true);
+		                                  _game->_res->WEAPON_armour_SPELL[2]),
+		           false, true);
 		getKeypress();
 		break;
 

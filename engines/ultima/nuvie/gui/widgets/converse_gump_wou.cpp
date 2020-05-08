@@ -20,27 +20,27 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/fonts/font_manager.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/misc/sdl_compat.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/portraits/portrait.h"
-#include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/gui/widgets/converse_gump_wou.h"
 #include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/keybinding/keys.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/gui/widgets/background.h"
-#include "ultima/nuvie/files/u6_shape.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/files/nuvie_bmp_file.h"
-#include "ultima/nuvie/views/view_manager.h"
+#include "ultima/nuvie/files/u6_shape.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/background.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/sdl_compat.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/screen/game_palette.h"
 #include "ultima/nuvie/views/md_sky_strip_widget.h"
+#include "ultima/nuvie/views/view_manager.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -50,14 +50,14 @@ namespace Nuvie {
 // ConverseGumpWOU Class
 
 ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
-// uint16 x, y;
+	// uint16 x, y;
 
 	init(cfg, f);
 	Game *game = Game::get_game();
 	game_type = game->get_game_type();
 
-//scroll_width = 20;
-//scroll_height = 18;
+	//scroll_width = 20;
+	//scroll_height = 18;
 
 	set_scroll_dimensions(18, 18);
 
@@ -85,7 +85,7 @@ ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
 	found_break_char = false;
 	left_margin = 8;
 	add_new_line();
-//DEBUG(0, LEVEL_DEBUGGING, "\nMin w = %d\n", frame_w + 12 + 210);
+	//DEBUG(0, LEVEL_DEBUGGING, "\nMin w = %d\n", frame_w + 12 + 210);
 }
 
 ConverseGumpWOU::~ConverseGumpWOU() {
@@ -147,7 +147,7 @@ void ConverseGumpWOU::display_bg() {
 			screen->update(x_off, y_off, 176, 176);
 		} else {
 			screen->blit(x_off, y_off, ptr, 8, 171, 200, bg_w, true); // main bg
-			if (game_w > 323) { // add filler to the right
+			if (game_w > 323) {                                       // add filler to the right
 				ptr += 5;
 				screen->blit(x_off + 171, y_off, ptr, 8, game_w - 323, 200, bg_w, true);
 				screen->fill(game->get_palette()->get_bg_color(), x_off + 171, y_off + 8, game_w - 323, 184); // ovewrite center
@@ -157,15 +157,15 @@ void ConverseGumpWOU::display_bg() {
 		}
 	} else if (game_type == NUVIE_GAME_SE) {
 		ptr += bg_w + 1;
-		screen->fill(0, x_off + 172, y_off, 4, 1); // upper right corner
+		screen->fill(0, x_off + 172, y_off, 4, 1);                        // upper right corner
 		screen->blit(x_off + 1, y_off + 1, ptr, 8, 176, 173, bg_w, true); // main bg
 		// FIXME: will need to add time strip to top once it is coded
 		screen->update(x_off + 1, y_off, 177, 174);
-	} else { // MD
+	} else {                                     // MD
 		screen->fill(0, x_off, y_off, 176, 164); // background has transparent parts that should be black - also adding border to bottom
 		if (game_w == 321)
 			screen->fill(4, x_off + 176, y_off, 1, 1); // overwrite black pixel on top that looks bad
-		else if (game_w > 321) // add right border
+		else if (game_w > 321)                         // add right border
 			screen->fill(0, x_off + 176, y_off, 1, 164);
 		screen->blit(x_off, y_off, ptr, 8, 176, 163, bg_w, true); // main bg
 		if (game->get_view_manager()->get_mdSkyWidget())

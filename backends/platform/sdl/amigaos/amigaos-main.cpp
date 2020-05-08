@@ -45,19 +45,19 @@ int main(int argc, char *argv[]) {
 		TEXT apppath[1024] = "AppPaths";
 
 		if (IDOS->DevNameFromLock(lock,
-			progpath,
-			sizeof(progpath),
-			DN_FULLPATH)) {
+		                          progpath,
+		                          sizeof(progpath),
+		                          DN_FULLPATH)) {
 
 			// Stop any "Insert volume..." type requesters.
 			oldwin = IDOS->SetProcWindow((APTR)-1);
 
 			// Finally, set the variable to the path the executable was run from.
-			IDOS->AddPart( apppath, appname, 1024);
-			IDOS->SetVar( apppath, progpath, -1, GVF_GLOBAL_ONLY|GVF_SAVE_VAR );
+			IDOS->AddPart(apppath, appname, 1024);
+			IDOS->SetVar(apppath, progpath, -1, GVF_GLOBAL_ONLY | GVF_SAVE_VAR);
 
 			// Turn system requesters back on.
-			IDOS->SetProcWindow( oldwin );
+			IDOS->SetProcWindow(oldwin);
 		}
 	}
 

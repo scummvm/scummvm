@@ -35,7 +35,7 @@ namespace Common {
  */
 class MemoryReadStream : public SeekableReadStream {
 private:
-	const byte * const _ptrOrig;
+	const byte *const _ptrOrig;
 	const byte *_ptr;
 	const uint32 _size;
 	uint32 _pos;
@@ -43,19 +43,17 @@ private:
 	bool _eos;
 
 public:
-
 	/**
 	 * This constructor takes a pointer to a memory buffer and a length, and
 	 * wraps it. If disposeMemory is true, the MemoryReadStream takes ownership
 	 * of the buffer and hence free's it when destructed.
 	 */
-	MemoryReadStream(const byte *dataPtr, uint32 dataSize, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) :
-		_ptrOrig(dataPtr),
-		_ptr(dataPtr),
-		_size(dataSize),
-		_pos(0),
-		_disposeMemory(disposeMemory),
-		_eos(false) {}
+	MemoryReadStream(const byte *dataPtr, uint32 dataSize, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : _ptrOrig(dataPtr),
+	                                                                                                                    _ptr(dataPtr),
+	                                                                                                                    _size(dataSize),
+	                                                                                                                    _pos(0),
+	                                                                                                                    _disposeMemory(disposeMemory),
+	                                                                                                                    _eos(false) {}
 
 	~MemoryReadStream() {
 		if (_disposeMemory)
@@ -73,7 +71,6 @@ public:
 	bool seek(int32 offs, int whence = SEEK_SET);
 };
 
-
 /**
  * This is a MemoryReadStream subclass which adds non-endian
  * read methods whose endianness is set on the stream creation.
@@ -81,7 +78,7 @@ public:
 class MemoryReadStreamEndian : public MemoryReadStream, public ReadStreamEndian {
 public:
 	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian)
-		: MemoryReadStream(buf, len), ReadStreamEndian(bigEndian) {}
+	    : MemoryReadStream(buf, len), ReadStreamEndian(bigEndian) {}
 };
 
 /**
@@ -91,10 +88,12 @@ public:
 class MemoryWriteStream : public SeekableWriteStream {
 private:
 	const uint32 _bufSize;
+
 protected:
 	byte *_ptr;
 	uint32 _pos;
 	bool _err;
+
 public:
 	MemoryWriteStream(byte *buf, uint32 len) : _ptr(buf), _bufSize(len), _pos(0), _err(false) {}
 
@@ -126,6 +125,7 @@ public:
 class SeekableMemoryWriteStream : public MemoryWriteStream {
 private:
 	byte *_ptrOrig;
+
 public:
 	SeekableMemoryWriteStream(byte *buf, uint32 len) : MemoryWriteStream(buf, len), _ptrOrig(buf) {}
 
@@ -156,7 +156,6 @@ public:
 		return true;
 	}
 };
-
 
 /**
  * A sort of hybrid between MemoryWriteStream and Array classes. A stream
@@ -189,6 +188,7 @@ protected:
 
 		_size = new_len;
 	}
+
 public:
 	explicit MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _ptr(nullptr), _data(nullptr), _pos(0), _disposeMemory(disposeMemory) {}
 
@@ -275,6 +275,7 @@ private:
 			free(old_data);
 		}
 	}
+
 public:
 	explicit MemoryReadWriteStream(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _data(nullptr), _writePos(0), _readPos(0), _pos(0), _length(0), _disposeMemory(disposeMemory), _eos(false) {}
 
@@ -305,7 +306,8 @@ public:
 			dataSize = _length;
 			_eos = true;
 		}
-		if (dataSize == 0 || _capacity == 0) return 0;
+		if (dataSize == 0 || _capacity == 0)
+			return 0;
 		if (_readPos + dataSize < _capacity) {
 			memcpy(dataPtr, _data + _readPos, dataSize);
 		} else {

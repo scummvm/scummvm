@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/stream.h"
 #include "common/memstream.h"
+#include "common/stream.h"
 
 #include "startrek/iwfile.h"
 #include "startrek/room.h"
@@ -297,7 +297,7 @@ void StarTrekEngine::renderBan(byte *screenPixels, byte *bgPixels, int banFileIn
 
 		int8 b = banFile->readByte();
 
-		if (b == -128) {	// Add value to destination (usually jumping to next row)
+		if (b == -128) { // Add value to destination (usually jumping to next row)
 			uint16 skip = banFile->readUint16();
 			dest1 += skip;
 			dest2 += skip;
@@ -348,9 +348,9 @@ void StarTrekEngine::renderBanAboveSprites() {
 		int16 size = _banFiles[i]->readSint16();
 		if (size != 0) {
 			Common::Rect rect;
-			rect.left   = _banFiles[i]->readSint16();
-			rect.top    = _banFiles[i]->readSint16();
-			rect.right  = _banFiles[i]->readSint16() + 1;
+			rect.left = _banFiles[i]->readSint16();
+			rect.top = _banFiles[i]->readSint16();
+			rect.right = _banFiles[i]->readSint16() + 1;
 			rect.bottom = _banFiles[i]->readSint16() + 1;
 
 			// Draw all sprites in this rectangle to a custom surface, and only update the
@@ -378,14 +378,13 @@ void StarTrekEngine::renderBanAboveSprites() {
 				if (b == -128) {
 					uint16 skip = _banFiles[i]->readUint16();
 					dest += skip;
-					src  += skip;
+					src += skip;
 				} else if (b < 0) {
 					byte c = _banFiles[i]->readByte();
 					if (c == 0) {
 						dest += (-b) + 1;
-						src  += (-b) + 1;
-					}
-					else {
+						src += (-b) + 1;
+					} else {
 						for (int j = 0; j < (-b) + 1; j++)
 							*(dest++) = *(src++);
 					}
@@ -713,8 +712,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 	basename[4] = '\0';
 
 	char c = filename[0];
-	if ((strcmp(basename, "stnd") == 0 || strcmp(basename, "tele") == 0)
-	        && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
+	if ((strcmp(basename, "stnd") == 0 || strcmp(basename, "tele") == 0) && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
 		if (c == 'm') {
 			// Mccoy has the "base" animations for all crewmen
 			bitmapToReturn = new Bitmap(loadBitmapFile(filename));
@@ -806,7 +804,6 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 	return bitmapToReturn;
 }
 
-
 int StarTrekEngine::selectObjectForUseAction() {
 	while (true) {
 		if (!(_awayMission.crewDownBitset & (1 << OBJECT_KIRK)))
@@ -830,14 +827,7 @@ int StarTrekEngine::selectObjectForUseAction() {
 				// Allow this to be processed by main away mission loop
 				break;
 			} else if (event.type == TREKEVENT_KEYDOWN) {
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE
-				        || event.kbd.keycode == Common::KEYCODE_w
-				        || event.kbd.keycode == Common::KEYCODE_t
-				        || event.kbd.keycode == Common::KEYCODE_u
-				        || event.kbd.keycode == Common::KEYCODE_g
-				        || event.kbd.keycode == Common::KEYCODE_l
-				        || event.kbd.keycode == Common::KEYCODE_SPACE
-				        || event.kbd.keycode == Common::KEYCODE_F2) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_t || event.kbd.keycode == Common::KEYCODE_u || event.kbd.keycode == Common::KEYCODE_g || event.kbd.keycode == Common::KEYCODE_l || event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_F2) {
 					// Allow these buttons to be processed by main away mission loop
 					break;
 				} else if (event.kbd.keycode == Common::KEYCODE_i) {
@@ -878,9 +868,7 @@ int StarTrekEngine::selectObjectForUseAction() {
 				return clickedObject;
 			else if (isObjectUnusable(OBJECT_KIRK, ACTION_USE))
 				continue;
-			else if (_room->actionHasCode(ACTION_USE, OBJECT_KIRK, clickedObject, 0)
-			         || _room->actionHasCode(ACTION_GET, clickedObject, 0, 0)
-			         || _room->actionHasCode(ACTION_WALK, clickedObject, 0, 0)) {
+			else if (_room->actionHasCode(ACTION_USE, OBJECT_KIRK, clickedObject, 0) || _room->actionHasCode(ACTION_GET, clickedObject, 0, 0) || _room->actionHasCode(ACTION_WALK, clickedObject, 0, 0)) {
 				_awayMission.activeObject = OBJECT_KIRK;
 				_awayMission.passiveObject = clickedObject;
 				_awayMission.activeAction = ACTION_USE;
@@ -904,26 +892,29 @@ Common::String StarTrekEngine::getCrewmanAnimFilename(int actorIndex, const Comm
 }
 
 void StarTrekEngine::updateMouseBitmap() {
-	const bool worksOnCrewmen[] = { // True if the action reacts with crewmen
-		false, // ACTION_WALK
-		true,  // ACTION_USE
-		false, // ACTION_GET
-		true,  // ACTION_LOOK
-		true   // ACTION_TALK
+	const bool worksOnCrewmen[] = {
+	    // True if the action reacts with crewmen
+	    false, // ACTION_WALK
+	    true,  // ACTION_USE
+	    false, // ACTION_GET
+	    true,  // ACTION_LOOK
+	    true   // ACTION_TALK
 	};
-	const bool worksOnActors[] = { // True if the action reacts with other objects
-		false, // ACTION_WALK
-		true,  // ACTION_USE
-		true,  // ACTION_GET
-		true,  // ACTION_LOOK
-		true   // ACTION_TALK
+	const bool worksOnActors[] = {
+	    // True if the action reacts with other objects
+	    false, // ACTION_WALK
+	    true,  // ACTION_USE
+	    true,  // ACTION_GET
+	    true,  // ACTION_LOOK
+	    true   // ACTION_TALK
 	};
-	const bool worksOnHotspots[] = { // True if the action reacts with hotspots
-		false, // ACTION_WALK
-		true,  // ACTION_USE
-		true,  // ACTION_GET
-		true,  // ACTION_LOOK
-		false  // ACTION_TALK
+	const bool worksOnHotspots[] = {
+	    // True if the action reacts with hotspots
+	    false, // ACTION_WALK
+	    true,  // ACTION_USE
+	    true,  // ACTION_GET
+	    true,  // ACTION_LOOK
+	    false  // ACTION_TALK
 	};
 
 	Common::Point mousePos = _gfx->getMousePos();
@@ -1007,11 +998,10 @@ bool StarTrekEngine::walkActiveObjectToHotspot() {
 
 void StarTrekEngine::showInventoryIcons(bool showItem) {
 	const char *crewmanFilenames[] = {
-		"ikirk",
-		"ispock",
-		"imccoy",
-		"iredshir"
-	};
+	    "ikirk",
+	    "ispock",
+	    "imccoy",
+	    "iredshir"};
 
 	Common::String itemFilename;
 
@@ -1197,12 +1187,12 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		}
 
 		case TREKEVENT_LBUTTONDOWN:
-exitWithSelection:
+		exitWithSelection:
 			displayMenu = false;
 			break;
 
 		case TREKEVENT_RBUTTONDOWN:
-exitWithoutSelection:
+		exitWithoutSelection:
 			displayMenu = false;
 			lastItemIndex = -1;
 			break;
@@ -1301,9 +1291,9 @@ void StarTrekEngine::initStarfieldSprite(Sprite *sprite, Bitmap *bitmap, const C
 }
 
 Bitmap *StarTrekEngine::scaleBitmap(Bitmap *bitmap, Fixed8 scale) {
-	int scaledWidth  = scale.multToInt(bitmap->width);
+	int scaledWidth = scale.multToInt(bitmap->width);
 	int scaledHeight = scale.multToInt(bitmap->height);
-	int origWidth  = bitmap->width;
+	int origWidth = bitmap->width;
 	int origHeight = bitmap->height;
 
 	if (scaledWidth < 1)

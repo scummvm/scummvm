@@ -20,10 +20,10 @@
  *
  */
 
+#include "access/animation.h"
+#include "access/access.h"
 #include "common/endian.h"
 #include "common/memstream.h"
-#include "access/access.h"
-#include "access/animation.h"
 
 namespace Access {
 
@@ -94,13 +94,12 @@ Animation::~Animation() {
 		delete _frames[i];
 }
 
-typedef void(Animation::*AnimationMethodPtr)();
+typedef void (Animation::*AnimationMethodPtr)();
 
 void Animation::animate() {
 	static const AnimationMethodPtr METHODS[8] = {
-	   &Animation::anim0, &Animation::anim1, &Animation::anim2, &Animation::anim3,
-	   &Animation::anim4, &Animation::animNone, &Animation::animNone, &Animation::anim7
-	};
+	    &Animation::anim0, &Animation::anim1, &Animation::anim2, &Animation::anim3,
+	    &Animation::anim4, &Animation::animNone, &Animation::animNone, &Animation::anim7};
 
 	(this->*METHODS[_type])();
 }
@@ -312,7 +311,6 @@ void AnimationManager::loadAnimations(Resource *res) {
 	delete _animation;
 	_animation = new AnimationResource(_vm, res);
 }
-
 
 Animation *AnimationManager::setAnimation(int animId) {
 	Animation *anim = findAnimation(animId);

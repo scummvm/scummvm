@@ -29,27 +29,27 @@
 
 namespace HDB {
 
-#define	CONFIG_MUSICVOL		"music_volume"
-#define	CONFIG_SOUNDVOL		"sound_volume"
-#define	CONFIG_MSTONE7		"hdb_memory_heap"
-#define	CONFIG_MSTONE14		"lua_stack_offset"
-#define	CONFIG_MSTONE21		"fmod_mix_timer"
-#define	CONFIG_SOUNDCACHE	"sound_cache_max"
-#define	CONFIG_GFXCACHE		"gfx_cache_max"
-#define	CONFIG_CHEAT		"hypercheat"
+#define CONFIG_MUSICVOL "music_volume"
+#define CONFIG_SOUNDVOL "sound_volume"
+#define CONFIG_MSTONE7 "hdb_memory_heap"
+#define CONFIG_MSTONE14 "lua_stack_offset"
+#define CONFIG_MSTONE21 "fmod_mix_timer"
+#define CONFIG_SOUNDCACHE "sound_cache_max"
+#define CONFIG_GFXCACHE "gfx_cache_max"
+#define CONFIG_CHEAT "hypercheat"
 
-#define	CONFIG_KEY_UP		"keyup"
-#define	CONFIG_KEY_DOWN		"keydown"
-#define	CONFIG_KEY_LEFT		"keyleft"
-#define	CONFIG_KEY_RIGHT	"keyright"
-#define	CONFIG_KEY_USE		"keyuse"
-#define	CONFIG_VOICES		"voices"
+#define CONFIG_KEY_UP "keyup"
+#define CONFIG_KEY_DOWN "keydown"
+#define CONFIG_KEY_LEFT "keyleft"
+#define CONFIG_KEY_RIGHT "keyright"
+#define CONFIG_KEY_USE "keyuse"
+#define CONFIG_VOICES "voices"
 
-#define	TITLE_DELAY1		2				// time to wait before OOH OOH
-#define	TITLE_DELAY2		0.5				// time to spend doing OOH OOH
-#define	TITLE_DELAY3		1				// time to wait before ending title
+#define TITLE_DELAY1 2   // time to wait before OOH OOH
+#define TITLE_DELAY2 0.5 // time to spend doing OOH OOH
+#define TITLE_DELAY3 1   // time to wait before ending title
 
-#define centerPic(x)	(g_hdb->_screenWidth / 2 - x->_width / 2)
+#define centerPic(x) (g_hdb->_screenWidth / 2 - x->_width / 2)
 
 enum {
 	kStarRedX = 70,
@@ -75,7 +75,6 @@ struct Star {
 
 class Menu {
 public:
-
 	Menu();
 	~Menu();
 
@@ -87,15 +86,15 @@ public:
 	bool startTitle();
 	void drawTitle();
 	void startMenu();
-	void changeToMenu();	// Changing from Intro to Menu
+	void changeToMenu(); // Changing from Intro to Menu
 	void drawMenu();
 	void freeMenu();
 
-	void processInput(int x, int y);	// this is where the items are clicked!
-	void controlsInput(int x, int y);	// take mouse input and pass through to menu
+	void processInput(int x, int y);  // this is where the items are clicked!
+	void controlsInput(int x, int y); // take mouse input and pass through to menu
 	void controlsDraw();
 	void drawNebula();
-	void drawRocketAndSelections();		// draw the background stuff
+	void drawRocketAndSelections(); // draw the background stuff
 	void drawSlider(int x, int y, int offset);
 	void drawToggle(int x, int y, bool flag);
 	void drawWarpScreen();
@@ -184,36 +183,36 @@ public:
 	int _titleCycle;
 	uint32 _titleDelay;
 	bool _titleActive;
-	SoundType _resumeSong;	// the song that was playing before entering the Options screen
+	SoundType _resumeSong; // the song that was playing before entering the Options screen
 
 	Picture *_oohOohGfx;
 	Picture *_titleScreen, *_titleLogo, *_hdbLogoScreen, *_menuBackoutGfx, *_controlButtonGfx, *_controlsGfx, *_menuBackspaceGfx;
 
-	int _rocketY, _rocketYVel, _rocketEx;	// Rocket Vars
-	Picture	*_rocketEx1, *_rocketEx2, *_rocketMain, *_rocketSecond;
-	int	_rocketX;
+	int _rocketY, _rocketYVel, _rocketEx; // Rocket Vars
+	Picture *_rocketEx1, *_rocketEx2, *_rocketMain, *_rocketSecond;
+	int _rocketX;
 
-	int	_nebulaX, _nebulaY, _nebulaYVel, _nebulaWhich;
+	int _nebulaX, _nebulaY, _nebulaYVel, _nebulaWhich;
 	Picture *_nebulaGfx[kNebulaCount];
 
-	Picture	*_newGfx, *_loadGfx, *_optionsGfx, *_quitGfx, *_resumeGfx, *_slotGfx;
-	Picture	*_modePuzzleGfx, *_modeActionGfx, *_modeLoadGfx, *_modeSaveGfx, *_quitScreen;
+	Picture *_newGfx, *_loadGfx, *_optionsGfx, *_quitGfx, *_resumeGfx, *_slotGfx;
+	Picture *_modePuzzleGfx, *_modeActionGfx, *_modeLoadGfx, *_modeSaveGfx, *_quitScreen;
 	Tile *_vortexian[3];
-	Picture	*_star[3], *_warpGfx;
+	Picture *_star[3], *_warpGfx;
 	uint32 _quitTimer;
-	Picture	*_starRedGfx[2], *_starGreenGfx[2], *_starBlueGfx[2], *_versionGfx;
+	Picture *_starRedGfx[2], *_starGreenGfx[2], *_starBlueGfx[2], *_versionGfx;
 	Picture *_screenshots1gfx, *_screenshots1agfx, *_screenshots2gfx, *_demoPlaqueGfx, *_handangoGfx;
 
 	bool _menuActive, _optionsScrolling, _newgameActive, _sayHDB;
-	int	_gamefilesActive, _clickDelay, _saveSlot, _optionsActive, _quitActive, _warpActive;
-	int	_optionsScrollX, _optionsXV, _oBannerY;
-	int	_nextScreen;
+	int _gamefilesActive, _clickDelay, _saveSlot, _optionsActive, _quitActive, _warpActive;
+	int _optionsScrollX, _optionsXV, _oBannerY;
+	int _nextScreen;
 
 	Common::KeyCode _keyAssignUp, _keyAssignDown, _keyAssignLeft, _keyAssignRight, _keyAssignUse;
-	Picture	*_contArrowUp, *_contArrowDown, *_contArrowLeft, *_contArrowRight, *_contAssign, *_warpPlaque;
+	Picture *_contArrowUp, *_contArrowDown, *_contArrowLeft, *_contArrowRight, *_contAssign, *_warpPlaque;
 
-	Picture	*_sliderLeft, *_sliderMid, *_sliderRight, *_sliderKnob;
-	Picture	*_gCheckEmpty, *_gCheckOn, *_gCheckOff, *_gCheckLeft, *_gCheckRight;
+	Picture *_sliderLeft, *_sliderMid, *_sliderRight, *_sliderKnob;
+	Picture *_gCheckEmpty, *_gCheckOn, *_gCheckOff, *_gCheckLeft, *_gCheckRight;
 
 	SoundType _introSong, _titleSong;
 
@@ -222,6 +221,6 @@ public:
 	int _menuKey;
 };
 
-} // End of Namespace
+} // namespace HDB
 
 #endif // !HDB_SOUND_H

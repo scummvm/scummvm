@@ -42,6 +42,7 @@ public:
 	int fnCheckForEvent(Object *cpt, int32 id, int32 pause);
 	void fnIssueEvent(Object *compact, int32 id, int32 event, int32 delay);
 	bool eventValid(int32 event);
+
 private:
 	GlobalEvent _eventPendingList[TOTAL_EVENT_SLOTS];
 };

@@ -23,14 +23,15 @@
 #ifndef ULTIMA8_WORLD_MONSTEREGG_H
 #define ULTIMA8_WORLD_MONSTEREGG_H
 
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 class MonsterEgg : public Item {
 	friend class ItemFactory;
+
 public:
 	MonsterEgg();
 	~MonsterEgg() override;

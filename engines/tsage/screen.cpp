@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "tsage/screen.h"
+#include "common/scummsys.h"
 
 namespace TsAGE {
 
-Screen::Screen(): GfxSurface() {
+Screen::Screen() : GfxSurface() {
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 

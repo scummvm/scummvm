@@ -36,9 +36,9 @@ class RawArchive : public Archive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	RawArchive() : Archive() { }
-	explicit RawArchive(ArchiveFile *af) : Archive(af) { }
-	explicit RawArchive(Common::SeekableReadStream *rs) : Archive(rs) { }
+	RawArchive() : Archive() {}
+	explicit RawArchive(ArchiveFile *af) : Archive(af) {}
+	explicit RawArchive(Common::SeekableReadStream *rs) : Archive(rs) {}
 
 	~RawArchive() override;
 

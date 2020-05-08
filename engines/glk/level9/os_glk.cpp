@@ -21,9 +21,9 @@
  */
 
 #include "glk/level9/os_glk.h"
-#include "glk/level9/level9_main.h"
-#include "glk/level9/level9.h"
 #include "common/textconsole.h"
+#include "glk/level9/level9.h"
+#include "glk/level9/level9_main.h"
 
 namespace Glk {
 namespace Level9 {
@@ -61,7 +61,10 @@ bool gln_loopcheck_enabled, gln_abbreviations_enabled, gln_commands_enabled;
 
 /* Reason for stopping the game, used to detect restarts and ^C exits. */
 enum StopReason {
-	STOP_NONE, STOP_FORCE, STOP_RESTART, STOP_EXIT
+	STOP_NONE,
+	STOP_FORCE,
+	STOP_RESTART,
+	STOP_EXIT
 };
 static StopReason gln_stop_reason;
 
@@ -102,7 +105,7 @@ static BitmapType gln_graphics_bitmap_type = NO_BITMAPS;
 enum { GLN_PALETTE_SIZE = 32 };
 static gln_byte *gln_graphics_bitmap = nullptr;
 static gln_uint16 gln_graphics_width = 0,
-gln_graphics_height = 0;
+                  gln_graphics_height = 0;
 static Colour gln_graphics_palette[GLN_PALETTE_SIZE]; /* = { 0, ... }; */
 static int gln_graphics_picture = -1;
 
@@ -111,8 +114,8 @@ static int gln_graphics_picture = -1;
  * to indicate whether background repaint is stopped or active.
  */
 static int gln_graphics_new_picture = FALSE,
-gln_graphics_repaint = FALSE,
-gln_graphics_active = FALSE;
+           gln_graphics_repaint = FALSE,
+           gln_graphics_active = FALSE;
 
 /*
  * State to monitor the state of interpreter graphics.  The values of the
@@ -125,14 +128,13 @@ enum GraphicsState {
 };
 static GraphicsState gln_graphics_interpreter_state = GLN_GRAPHICS_OFF;
 
-
 /*
  * Pointer to the two graphics buffers, one the off-screen representation
  * of pixels, and the other tracking on-screen data.  These are temporary
  * graphics malloc'ed memory, and should be free'd on exit.
  */
 static gln_byte *gln_graphics_off_screen = nullptr,
-*gln_graphics_on_screen = nullptr;
+                *gln_graphics_on_screen = nullptr;
 
 /*
  * The number of colors used in the palette by the current picture.  Because
@@ -142,7 +144,6 @@ static gln_byte *gln_graphics_off_screen = nullptr,
  * picture update timeout call for a new picture.
  */
 static int gln_graphics_color_count = GLN_PALETTE_SIZE;
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port utility functions                                         */
@@ -210,7 +211,6 @@ static void gln_fatal(const char *string) {
 	                     " this information to simon_baldwin@yahoo.com.\n\n");
 }
 
-
 /*
  * gln_malloc()
  * gln_realloc()
@@ -241,7 +241,6 @@ static void *gln_realloc(void *ptr, size_t size) {
 
 	return pointer;
 }
-
 
 /*
  * gln_strncasecmp()
@@ -360,7 +359,6 @@ static const int GLN_GRAPHICS_BORDER = 1,
  */
 static const int GLN_GRAPHICS_UNUSED_PIXEL = 0xff;
 
-
 /*
  * gln_graphics_open()
  *
@@ -370,15 +368,13 @@ static const int GLN_GRAPHICS_UNUSED_PIXEL = 0xff;
 static int gln_graphics_open() {
 	if (!gln_graphics_window) {
 		gln_graphics_window = g_vm->glk_window_open(gln_main_window,
-		                      winmethod_Above
-		                      | winmethod_Proportional,
-		                      GLN_GRAPHICS_PROPORTION,
-		                      wintype_Graphics, 0);
+		                                            winmethod_Above | winmethod_Proportional,
+		                                            GLN_GRAPHICS_PROPORTION,
+		                                            wintype_Graphics, 0);
 	}
 
 	return gln_graphics_window != nullptr;
 }
-
 
 /*
  * gln_graphics_close()
@@ -391,7 +387,6 @@ static void gln_graphics_close() {
 		gln_graphics_window = nullptr;
 	}
 }
-
 
 /*
  * gln_graphics_start()
@@ -408,7 +403,6 @@ static void gln_graphics_start() {
 	}
 }
 
-
 /*
  * gln_graphics_stop()
  *
@@ -422,7 +416,6 @@ static void gln_graphics_stop() {
 	}
 }
 
-
 /*
  * gln_graphics_are_displayed()
  *
@@ -431,7 +424,6 @@ static void gln_graphics_stop() {
 static int gln_graphics_are_displayed() {
 	return gln_graphics_window != nullptr;
 }
-
 
 /*
  * gln_graphics_paint()
@@ -448,7 +440,6 @@ static void gln_graphics_paint() {
 	}
 }
 
-
 /*
  * gln_graphics_restart()
  *
@@ -463,7 +454,6 @@ static void gln_graphics_restart() {
 		gln_graphics_start();
 	}
 }
-
 
 /*
  * gln_graphics_count_colors()
@@ -500,7 +490,6 @@ static int gln_graphics_count_colors(gln_byte bitmap[], gln_uint16 width, gln_ui
 	return count;
 }
 
-
 /*
  * gln_graphics_split_color()
  * gln_graphics_combine_color()
@@ -511,9 +500,9 @@ static int gln_graphics_count_colors(gln_byte bitmap[], gln_uint16 width, gln_ui
 static void gln_graphics_split_color(glui32 color, gln_rgbref_t rgb_color) {
 	assert(rgb_color);
 
-	rgb_color->red   = (color >> 16) & 0xff;
+	rgb_color->red = (color >> 16) & 0xff;
 	rgb_color->green = (color >> 8) & 0xff;
-	rgb_color->blue  = color & 0xff;
+	rgb_color->blue = color & 0xff;
 }
 
 static glui32 gln_graphics_combine_color(gln_rgbref_t rgb_color) {
@@ -524,7 +513,6 @@ static glui32 gln_graphics_combine_color(gln_rgbref_t rgb_color) {
 	return color;
 }
 
-
 /*
  * gln_graphics_clear_and_border()
  *
@@ -533,7 +521,7 @@ static glui32 gln_graphics_combine_color(gln_rgbref_t rgb_color) {
  * for the picture, in keeping with modern trends.
  */
 static void gln_graphics_clear_and_border(winid_t glk_window, int x_offset, int y_offset,
-		int pixel_size, gln_uint16 width, gln_uint16 height) {
+                                          int pixel_size, gln_uint16 width, gln_uint16 height) {
 	uint background;
 	glui32 fade_color, shading_color;
 	gln_rgb_t rgb_background, rgb_border, rgb_fade;
@@ -566,8 +554,7 @@ static void gln_graphics_clear_and_border(winid_t glk_window, int x_offset, int 
 	 * For very small pictures, just border them, but don't try and
 	 * do any shading.  Failing this check is probably highly unlikely.
 	 */
-	if (width < 2 * GLN_GRAPHICS_SHADE_STEPS
-			|| height < 2 * GLN_GRAPHICS_SHADE_STEPS) {
+	if (width < 2 * GLN_GRAPHICS_SHADE_STEPS || height < 2 * GLN_GRAPHICS_SHADE_STEPS) {
 		/* Paint a rectangle bigger than the picture by border pixels. */
 		g_vm->glk_window_fill_rect(glk_window,
 		                           GLN_GRAPHICS_BORDER_COLOR,
@@ -588,10 +575,8 @@ static void gln_graphics_clear_and_border(winid_t glk_window, int x_offset, int 
 	                           GLN_GRAPHICS_BORDER_COLOR,
 	                           x_offset - GLN_GRAPHICS_BORDER,
 	                           y_offset - GLN_GRAPHICS_BORDER,
-	                           width * pixel_size + GLN_GRAPHICS_BORDER * 2
-	                           + GLN_GRAPHICS_SHADING,
-	                           height * pixel_size + GLN_GRAPHICS_BORDER * 2
-	                           + GLN_GRAPHICS_SHADING);
+	                           width * pixel_size + GLN_GRAPHICS_BORDER * 2 + GLN_GRAPHICS_SHADING,
+	                           height * pixel_size + GLN_GRAPHICS_BORDER * 2 + GLN_GRAPHICS_SHADING);
 
 	/*
 	 * Split the main window background color and the border color into
@@ -605,12 +590,9 @@ static void gln_graphics_clear_and_border(winid_t glk_window, int x_offset, int 
 	 * assuming that the border is always darker than the main window
 	 * background (currently valid, as we're using black).
 	 */
-	rgb_fade.red = (rgb_background.red - rgb_border.red)
-	               / GLN_GRAPHICS_SHADE_STEPS;
-	rgb_fade.green = (rgb_background.green - rgb_border.green)
-	                 / GLN_GRAPHICS_SHADE_STEPS;
-	rgb_fade.blue = (rgb_background.blue - rgb_border.blue)
-	                / GLN_GRAPHICS_SHADE_STEPS;
+	rgb_fade.red = (rgb_background.red - rgb_border.red) / GLN_GRAPHICS_SHADE_STEPS;
+	rgb_fade.green = (rgb_background.green - rgb_border.green) / GLN_GRAPHICS_SHADE_STEPS;
+	rgb_fade.blue = (rgb_background.blue - rgb_border.blue) / GLN_GRAPHICS_SHADE_STEPS;
 
 	/* Combine RGB fade into a single incremental Glk color. */
 	fade_color = gln_graphics_combine_color(&rgb_fade);
@@ -620,21 +602,18 @@ static void gln_graphics_clear_and_border(winid_t glk_window, int x_offset, int 
 	for (index = 0; index < GLN_GRAPHICS_SHADE_STEPS; index++) {
 		/* Shade the two border areas with this color. */
 		g_vm->glk_window_fill_rect(glk_window, shading_color,
-		                           x_offset + width * pixel_size
-		                           + GLN_GRAPHICS_BORDER,
+		                           x_offset + width * pixel_size + GLN_GRAPHICS_BORDER,
 		                           y_offset + index - GLN_GRAPHICS_BORDER,
 		                           GLN_GRAPHICS_SHADING, 1);
 		g_vm->glk_window_fill_rect(glk_window, shading_color,
 		                           x_offset + index - GLN_GRAPHICS_BORDER,
-		                           y_offset + height * pixel_size
-		                           + GLN_GRAPHICS_BORDER,
+		                           y_offset + height * pixel_size + GLN_GRAPHICS_BORDER,
 		                           1, GLN_GRAPHICS_SHADING);
 
 		/* Update the shading color for the fade next iteration. */
 		shading_color -= fade_color;
 	}
 }
-
 
 /*
  * gln_graphics_convert_palette()
@@ -651,9 +630,9 @@ static void gln_graphics_convert_palette(Colour ln_palette[], glui32 glk_palette
 
 		/* Convert color from Level 9 to internal RGB, then to Glk color. */
 		colour = ln_palette[index];
-		gln_color.red   = colour.red;
+		gln_color.red = colour.red;
 		gln_color.green = colour.green;
-		gln_color.blue  = colour.blue;
+		gln_color.blue = colour.blue;
 		glk_palette[index] = gln_graphics_combine_color(&gln_color);
 	}
 }
@@ -666,7 +645,7 @@ static void gln_graphics_convert_palette(Colour ln_palette[], glui32 glk_palette
  * this picture in the current graphics window.
  */
 static void gln_graphics_position_picture(winid_t glk_window, int pixel_size,
-        gln_uint16 width, gln_uint16 height, int *x_offset, int *y_offset) {
+                                          gln_uint16 width, gln_uint16 height, int *x_offset, int *y_offset) {
 	uint window_width, window_height;
 	assert(glk_window && x_offset && y_offset);
 
@@ -677,8 +656,8 @@ static void gln_graphics_position_picture(winid_t glk_window, int pixel_size,
 	 * Calculate and return an x and y offset to use on point plotting, so that
 	 * the image centers inside the graphical window.
 	 */
-	*x_offset = ((int) window_width - width * pixel_size) / 2;
-	*y_offset = ((int) window_height - height * pixel_size) / 2;
+	*x_offset = ((int)window_width - width * pixel_size) / 2;
+	*y_offset = ((int)window_height - height * pixel_size) / 2;
 }
 #endif
 
@@ -709,9 +688,9 @@ static void gln_graphics_position_picture(winid_t glk_window, int pixel_size,
  * minimize the amount of Glk areas fills needed to render a picture.
  */
 struct gln_layering_t {
-	long complexity;  /* Count of vertices for this color. */
-	long usage;       /* Color usage count. */
-	int color;        /* Color index into palette. */
+	long complexity; /* Count of vertices for this color. */
+	long usage;      /* Color usage count. */
+	int color;       /* Color index into palette. */
 };
 
 #ifndef GARGLK
@@ -730,7 +709,7 @@ struct gln_layering_t {
  * regions needed to render the complete picture.
  */
 static int gln_graphics_is_vertex(gln_byte off_screen[], gln_uint16 width, gln_uint16 height,
-	int x, int y) {
+                                  int x, int y) {
 	gln_byte pixel;
 	int above, below, left, right;
 	long index_row;
@@ -762,7 +741,7 @@ static int gln_graphics_is_vertex(gln_byte off_screen[], gln_uint16 width, gln_u
 }
 
 static int gln_graphics_compare_layering_inverted(const void *void_first,
-        const void *void_second) {
+                                                  const void *void_second) {
 	const gln_layering_t *first = (const gln_layering_t *)void_first;
 	const gln_layering_t *second = (const gln_layering_t *)void_second;
 
@@ -774,14 +753,11 @@ static int gln_graphics_compare_layering_inverted(const void *void_first,
 	 * indexes so that colors that render complex shapes come first, non-empty,
 	 * but simpler shaped colors next, and finally all genuinely empty layers.
 	 */
-	return second->complexity > first->complexity ? 1 :
-	       first->complexity > second->complexity ? -1 :
-	       second->usage > first->usage ? 1 :
-	       first->usage > second->usage ? -1 : 0;
+	return second->complexity > first->complexity ? 1 : first->complexity > second->complexity ? -1 : second->usage > first->usage ? 1 : first->usage > second->usage ? -1 : 0;
 }
 
 static void gln_graphics_assign_layers(gln_byte off_screen[], gln_byte on_screen[],
-		gln_uint16 width, gln_uint16 height, int layers[], long layer_usage[]) {
+                                       gln_uint16 width, gln_uint16 height, int layers[], long layer_usage[]) {
 	int index, x, y;
 	long index_row;
 	gln_layering_t layering[GLN_PALETTE_SIZE];
@@ -864,8 +840,8 @@ static void gln_graphics_assign_layers(gln_byte off_screen[], gln_byte on_screen
  * given point as validated.
  */
 static void gln_graphics_paint_region(winid_t glk_window, glui32 palette[], int layers[],
-		gln_byte off_screen[], gln_byte on_screen[], int x, int y, int x_offset, int y_offset,
-		int pixel_size, gln_uint16 width, gln_uint16 height) {
+                                      gln_byte off_screen[], gln_byte on_screen[], int x, int y, int x_offset, int y_offset,
+                                      int pixel_size, gln_uint16 width, gln_uint16 height) {
 	gln_byte pixel;
 	int layer, x_min, x_max, y_min, y_max, x_index, y_index;
 	long index_row;
@@ -886,15 +862,13 @@ static void gln_graphics_paint_region(winid_t glk_window, glui32 palette[], int 
 	for (x_min = x; x_min - 1 >= 0; x_min--) {
 		long index = index_row + x_min - 1;
 
-		if (on_screen[index] == off_screen[index]
-		        && layers[off_screen[index]] != layer)
+		if (on_screen[index] == off_screen[index] && layers[off_screen[index]] != layer)
 			break;
 	}
 	for (x_max = x; x_max + 1 < width; x_max++) {
 		long index = index_row + x_max + 1;
 
-		if (on_screen[index] == off_screen[index]
-		        && layers[off_screen[index]] != layer)
+		if (on_screen[index] == off_screen[index] && layers[off_screen[index]] != layer)
 			break;
 	}
 
@@ -907,24 +881,22 @@ static void gln_graphics_paint_region(winid_t glk_window, glui32 palette[], int 
 	 * As above, an index row removes multiplications from the loops.
 	 */
 	for (y_min = y, index_row = (y - 1) * width;
-	        y_min - 1 >= 0; y_min--, index_row -= width) {
+	     y_min - 1 >= 0; y_min--, index_row -= width) {
 		for (x_index = x_min; x_index <= x_max; x_index++) {
 			long index = index_row + x_index;
 
-			if (on_screen[index] == off_screen[index]
-			        && layers[off_screen[index]] != layer)
+			if (on_screen[index] == off_screen[index] && layers[off_screen[index]] != layer)
 				goto break_y_min;
 		}
 	}
 break_y_min:
 
 	for (y_max = y, index_row = (y + 1) * width;
-	        y_max + 1 < height; y_max++, index_row += width) {
+	     y_max + 1 < height; y_max++, index_row += width) {
 		for (x_index = x_min; x_index <= x_max; x_index++) {
 			long index = index_row + x_index;
 
-			if (on_screen[index] == off_screen[index]
-			        && layers[off_screen[index]] != layer)
+			if (on_screen[index] == off_screen[index] && layers[off_screen[index]] != layer)
 				goto break_y_max;
 		}
 	}
@@ -969,7 +941,7 @@ break_y_max:
 #endif
 
 static void gln_graphics_paint_everything(winid_t glk_window, Colour palette[],
-		gln_byte off_screen[], int x_offset, int y_offset, gln_uint16 width, gln_uint16 height) {
+                                          gln_byte off_screen[], int x_offset, int y_offset, gln_uint16 width, gln_uint16 height) {
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Graphics::ManagedSurface s(width, height, format);
 
@@ -984,14 +956,14 @@ static void gln_graphics_paint_everything(winid_t glk_window, Colour palette[],
 		}
 	}
 
-	#ifdef GFX_SCALE_BY_FACTOR
+#ifdef GFX_SCALE_BY_FACTOR
 	g_vm->glk_image_draw_scaled(glk_window, s, (uint)-1, x_offset, y_offset,
-		width * GLN_GRAPHICS_PIXEL, height * GLN_GRAPHICS_PIXEL);
-	#else
+	                            width * GLN_GRAPHICS_PIXEL, height * GLN_GRAPHICS_PIXEL);
+#else
 	uint winWidth, winHeight;
 	g_vm->glk_window_get_size(glk_window, &winWidth, &winHeight);
 	g_vm->glk_image_draw_scaled(glk_window, s, (uint)-1, 0, 0, winWidth, winHeight);
-	#endif
+#endif
 }
 
 /*
@@ -1012,22 +984,22 @@ static void gln_graphics_paint_everything(winid_t glk_window, Colour palette[],
  * to be rendered.
  */
 static void gln_graphics_timeout() {
-	static glui32 palette[GLN_PALETTE_SIZE];   /* Precomputed Glk palette */
+	static glui32 palette[GLN_PALETTE_SIZE]; /* Precomputed Glk palette */
 
-	static int deferred_repaint = FALSE;       /* Local delayed repaint flag */
-	static int ignore_counter;                 /* Count of calls ignored */
-	static int x_offset, y_offset;             /* Point plot offsets */
+	static int deferred_repaint = FALSE; /* Local delayed repaint flag */
+	static int ignore_counter;           /* Count of calls ignored */
+	static int x_offset, y_offset;       /* Point plot offsets */
 
 #ifndef GARGLK
-	static int yield_counter;                  /* Yields in rendering */
-	static int saved_layer;                    /* Saved current layer */
-	static int saved_x, saved_y;               /* Saved x,y coord */
+	static int yield_counter;    /* Yields in rendering */
+	static int saved_layer;      /* Saved current layer */
+	static int saved_x, saved_y; /* Saved x,y coord */
 
-	static int total_regions;                  /* Debug statistic */
+	static int total_regions; /* Debug statistic */
 #endif
-	gln_byte *on_screen;                       /* On-screen image buffer */
-	gln_byte *off_screen;                      /* Off-screen image buffer */
-	long picture_size;                         /* Picture size in pixels */
+	gln_byte *on_screen;  /* On-screen image buffer */
+	gln_byte *off_screen; /* Off-screen image buffer */
+	long picture_size;    /* Picture size in pixels */
 
 	/* Ignore the call if the current graphics state is inactive. */
 	if (!gln_graphics_active)
@@ -1104,7 +1076,7 @@ static void gln_graphics_timeout() {
 	 * graphics window.
 	 */
 	if (gln_graphics_new_picture || deferred_repaint) {
-		#ifdef GFX_SCALE_BY_FACTOR
+#ifdef GFX_SCALE_BY_FACTOR
 		/*
 		 * Calculate the x and y offset to center the picture in the graphics
 		 * window.
@@ -1113,9 +1085,9 @@ static void gln_graphics_timeout() {
 		                              GLN_GRAPHICS_PIXEL,
 		                              gln_graphics_width, gln_graphics_height,
 		                              &x_offset, &y_offset);
-		#else
+#else
 		x_offset = y_offset = 0;
-		#endif
+#endif
 
 		/*
 		 * Reset all on-screen pixels to an unused value, guaranteed not to
@@ -1145,11 +1117,11 @@ static void gln_graphics_timeout() {
 		/* Clear the graphics window. */
 		gln_graphics_clear_and_border(gln_graphics_window,
 		                              x_offset, y_offset,
-		#ifdef GFX_SCALE_BY_FACTOR
+#ifdef GFX_SCALE_BY_FACTOR
 		                              GLN_GRAPHICS_PIXEL,
-		#else
-										1,
-		#endif
+#else
+		                              1,
+#endif
 		                              gln_graphics_width, gln_graphics_height);
 #ifndef GARGLK
 		/* Start a fresh picture rendering pass. */
@@ -1189,7 +1161,7 @@ static void gln_graphics_timeout() {
 	 */
 	regions = 0;
 	for (layer = saved_layer;
-	        layer < GLN_PALETTE_SIZE && layer_usage[layer] > 0; layer++) {
+	     layer < GLN_PALETTE_SIZE && layer_usage[layer] > 0; layer++) {
 		long index_row;
 
 		/*
@@ -1210,8 +1182,7 @@ static void gln_graphics_timeout() {
 				 * currently invalid (that is, ones whose on-screen represen-
 				 * tation matches the off-screen buffer).
 				 */
-				if (layers[off_screen[index]] == layer
-				        && on_screen[index] != off_screen[index]) {
+				if (layers[off_screen[index]] == layer && on_screen[index] != off_screen[index]) {
 					/*
 					 * Rather than painting just one pixel, here we try to
 					 * paint the maximal region we can for the layer of the
@@ -1264,7 +1235,7 @@ static void gln_graphics_timeout() {
 
 #else
 	gln_graphics_paint_everything(gln_graphics_window, gln_graphics_palette, off_screen,
-		x_offset, y_offset, gln_graphics_width, gln_graphics_height);
+	                              x_offset, y_offset, gln_graphics_width, gln_graphics_height);
 #endif
 
 	/* Stop graphics; there's no more to be done until something restarts us. */
@@ -1307,7 +1278,6 @@ static void gln_graphics_locate_bitmaps(const char *gamefile) {
 	gln_graphics_bitmap_directory = dirname;
 	gln_graphics_bitmap_type = bitmap_type;
 }
-
 
 /*
  * gln_graphics_handle_title_picture()
@@ -1366,7 +1336,6 @@ static void gln_graphics_handle_title_picture() {
 	g_vm->glk_cancel_char_event(gln_main_window);
 	gln_watchdog_tick();
 }
-
 
 /*
  * os_show_bitmap()
@@ -1433,8 +1402,7 @@ void os_show_bitmap(int picture, int x, int y) {
 	 * and start graphics update.  If they're not enabled, the picture details
 	 * will simply stick around in module variables until they are required.
 	 */
-	if (gln_graphics_enabled
-	        && gln_graphics_interpreter_state == GLN_GRAPHICS_BITMAP_MODE) {
+	if (gln_graphics_enabled && gln_graphics_interpreter_state == GLN_GRAPHICS_BITMAP_MODE) {
 		/*
 		 * Ensure graphics on, then set the new picture flag and start the
 		 * updating "thread".  If this is the title picture, start special
@@ -1450,7 +1418,6 @@ void os_show_bitmap(int picture, int x, int y) {
 	}
 }
 
-
 /*
  * gln_graphics_picture_is_available()
  *
@@ -1460,7 +1427,6 @@ void os_show_bitmap(int picture, int x, int y) {
 static int gln_graphics_picture_is_available() {
 	return gln_graphics_bitmap != nullptr;
 }
-
 
 /*
  * gln_graphics_get_picture_details()
@@ -1482,7 +1448,6 @@ static int gln_graphics_get_picture_details(int *width, int *height) {
 	return FALSE;
 }
 
-
 /*
  * gln_graphics_get_rendering_details()
  *
@@ -1498,7 +1463,7 @@ static int gln_graphics_get_picture_details(int *width, int *height) {
  * values are returned.
  */
 static int gln_graphics_get_rendering_details(const char **bitmap_type,
-		int *color_count, int *is_active) {
+                                              int *color_count, int *is_active) {
 	if (gln_graphics_enabled && gln_graphics_are_displayed()) {
 		/*
 		 * Convert the detected bitmap type into a string and return it.
@@ -1562,7 +1527,6 @@ static int gln_graphics_get_rendering_details(const char **bitmap_type,
 	return FALSE;
 }
 
-
 /*
  * gln_graphics_interpreter_enabled()
  *
@@ -1572,7 +1536,6 @@ static int gln_graphics_get_rendering_details(const char **bitmap_type,
 static int gln_graphics_interpreter_enabled() {
 	return gln_graphics_interpreter_state != GLN_GRAPHICS_OFF;
 }
-
 
 /*
  * gln_graphics_cleanup()
@@ -1594,7 +1557,6 @@ static void gln_graphics_cleanup() {
 	gln_graphics_picture = -1;
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port line drawing picture adapter functions                    */
 /*---------------------------------------------------------------------*/
@@ -1605,14 +1567,14 @@ static void gln_graphics_cleanup() {
  * over-vibrant, so to soften it a bit this table uses non-primary colors.
  */
 static const gln_rgb_t GLN_LINEGRAPHICS_COLOR_TABLE[] = {
-	{ 47,  79,  79},  /* DarkSlateGray  [Black] */
-	{238,  44,  44},  /* Firebrick2     [Red] */
-	{ 67, 205, 128},  /* SeaGreen3      [Green] */
-	{238, 201,   0},  /* Gold2          [Yellow] */
-	{ 92, 172, 238},  /* SteelBlue2     [Blue] */
-	{139,  87,  66},  /* LightSalmon4   [Brown] */
-	{175, 238, 238},  /* PaleTurquoise  [Cyan] */
-	{245, 245, 245},  /* WhiteSmoke     [White] */
+    {47, 79, 79},    /* DarkSlateGray  [Black] */
+    {238, 44, 44},   /* Firebrick2     [Red] */
+    {67, 205, 128},  /* SeaGreen3      [Green] */
+    {238, 201, 0},   /* Gold2          [Yellow] */
+    {92, 172, 238},  /* SteelBlue2     [Blue] */
+    {139, 87, 66},   /* LightSalmon4   [Brown] */
+    {175, 238, 238}, /* PaleTurquoise  [Cyan] */
+    {245, 245, 245}, /* WhiteSmoke     [White] */
 };
 
 /*
@@ -1621,16 +1583,15 @@ static const gln_rgb_t GLN_LINEGRAPHICS_COLOR_TABLE[] = {
  * and the array grown.
  */
 struct gln_linegraphics_segment_t {
-	int y;   /* Segment y coordinate */
-	int xl;  /* Segment x left hand side coordinate */
-	int xr;  /* Segment x right hand side coordinate */
-	int dy;  /* Segment y delta */
+	int y;  /* Segment y coordinate */
+	int xl; /* Segment x left hand side coordinate */
+	int xr; /* Segment x right hand side coordinate */
+	int dy; /* Segment y delta */
 };
 
 static gln_linegraphics_segment_t *gln_linegraphics_fill_segments = nullptr;
 static int gln_linegraphics_fill_segments_allocation = 0,
            gln_linegraphics_fill_segments_length = 0;
-
 
 /*
  * gln_linegraphics_create_context()
@@ -1661,7 +1622,6 @@ static void gln_linegraphics_create_context() {
 	gln_graphics_picture = -1;
 }
 
-
 /*
  * gln_linegraphics_clear_context()
  *
@@ -1672,14 +1632,12 @@ static void gln_linegraphics_clear_context() {
 	long picture_bytes;
 
 	/* Get the picture size, and zero all bytes in the bitmap. */
-	picture_bytes = gln_graphics_width
-	                * gln_graphics_height * sizeof(*gln_graphics_bitmap);
+	picture_bytes = gln_graphics_width * gln_graphics_height * sizeof(*gln_graphics_bitmap);
 	memset(gln_graphics_bitmap, 0, picture_bytes);
 
 	/* Clear palette colors to all black. */
 	memset(gln_graphics_palette, 0, sizeof(gln_graphics_palette));
 }
-
 
 /*
  * gln_linegraphics_set_palette_color()
@@ -1689,16 +1647,14 @@ static void gln_linegraphics_clear_context() {
 static void gln_linegraphics_set_palette_color(int colour, int index) {
 	const gln_rgb_t *entry;
 	assert(colour < GLN_PALETTE_SIZE);
-	assert(index < (int)sizeof(GLN_LINEGRAPHICS_COLOR_TABLE)
-	       / (int)sizeof(GLN_LINEGRAPHICS_COLOR_TABLE[0]));
+	assert(index < (int)sizeof(GLN_LINEGRAPHICS_COLOR_TABLE) / (int)sizeof(GLN_LINEGRAPHICS_COLOR_TABLE[0]));
 
 	/* Copy the color table entry to the constructed game palette. */
 	entry = GLN_LINEGRAPHICS_COLOR_TABLE + index;
-	gln_graphics_palette[colour].red   = entry->red;
+	gln_graphics_palette[colour].red = entry->red;
 	gln_graphics_palette[colour].green = entry->green;
-	gln_graphics_palette[colour].blue  = entry->blue;
+	gln_graphics_palette[colour].blue = entry->blue;
 }
-
 
 /*
  * gln_linegraphics_get_pixel()
@@ -1707,19 +1663,16 @@ static void gln_linegraphics_set_palette_color(int colour, int index) {
  * Return and set the bitmap pixel at x,y.
  */
 static gln_byte gln_linegraphics_get_pixel(int x, int y) {
-	assert(x >= 0 && x < gln_graphics_width
-	       && y >= 0 && y < gln_graphics_height);
+	assert(x >= 0 && x < gln_graphics_width && y >= 0 && y < gln_graphics_height);
 
 	return gln_graphics_bitmap[y * gln_graphics_width + x];
 }
 
 static void gln_linegraphics_set_pixel(int x, int y, gln_byte color) {
-	assert(x >= 0 && x < gln_graphics_width
-	       && y >= 0 && y < gln_graphics_height);
+	assert(x >= 0 && x < gln_graphics_width && y >= 0 && y < gln_graphics_height);
 
 	gln_graphics_bitmap[y * gln_graphics_width + x] = color;
 }
-
 
 /*
  * gln_linegraphics_plot_clip()
@@ -1742,7 +1695,7 @@ static void gln_linegraphics_plot_clip(int x, int y, int colour1, int colour2) {
 }
 
 static void gln_linegraphics_draw_line_if(int x1, int y1, int x2, int y2,
-		int colour1, int colour2) {
+                                          int colour1, int colour2) {
 	int x, y, dx, dy, incx, incy, balance;
 
 	/* Ignore any odd request where there will be no colour changes. */
@@ -1806,7 +1759,6 @@ static void gln_linegraphics_draw_line_if(int x1, int y1, int x2, int y2,
 	}
 }
 
-
 /*
  * gln_linegraphics_push_fill_segment()
  * gln_linegraphics_pop_fill_segment()
@@ -1841,7 +1793,7 @@ static void gln_linegraphics_push_fill_segment(int y, int xl, int xr, int dy) {
 		}
 
 		/* Push top of segments stack. */
-		gln_linegraphics_fill_segments[length - 1].y  = y;
+		gln_linegraphics_fill_segments[length - 1].y = y;
 		gln_linegraphics_fill_segments[length - 1].xl = xl;
 		gln_linegraphics_fill_segments[length - 1].xr = xr;
 		gln_linegraphics_fill_segments[length - 1].dy = dy;
@@ -1859,7 +1811,7 @@ static void gln_linegraphics_pop_fill_segment(int *y, int *xl, int *xr, int *dy)
 	length = --gln_linegraphics_fill_segments_length;
 
 	/* Pop top of segments stack. */
-	*y  = gln_linegraphics_fill_segments[length].y;
+	*y = gln_linegraphics_fill_segments[length].y;
 	*xl = gln_linegraphics_fill_segments[length].xl;
 	*xr = gln_linegraphics_fill_segments[length].xr;
 	*dy = gln_linegraphics_fill_segments[length].dy;
@@ -1906,8 +1858,8 @@ static void gln_linegraphics_fill_4way_if(int x, int y, int colour1, int colour2
 			 * now explore adjacent pixels in scan line y.
 			 */
 			for (x = x1;
-			        x >= x_lo && gln_linegraphics_get_pixel(x, y) == colour2;
-			        x--) {
+			     x >= x_lo && gln_linegraphics_get_pixel(x, y) == colour2;
+			     x--) {
 				gln_linegraphics_set_pixel(x, y, colour1);
 			}
 
@@ -1923,8 +1875,8 @@ static void gln_linegraphics_fill_4way_if(int x, int y, int colour1, int colour2
 			x = x1 + 1;
 			do {
 				for (;
-				        x <= x_hi && gln_linegraphics_get_pixel(x, y) == colour2;
-				        x++) {
+				     x <= x_hi && gln_linegraphics_get_pixel(x, y) == colour2;
+				     x++) {
 					gln_linegraphics_set_pixel(x, y, colour1);
 				}
 
@@ -1935,10 +1887,10 @@ static void gln_linegraphics_fill_4way_if(int x, int y, int colour1, int colour2
 					gln_linegraphics_push_fill_segment(y, x2 + 1, x - 1, -dy);
 				}
 
-skip:
+			skip:
 				for (x++;
-				        x <= x2 && gln_linegraphics_get_pixel(x, y) != colour2;
-				        x++)
+				     x <= x2 && gln_linegraphics_get_pixel(x, y) != colour2;
+				     x++)
 					;
 
 				left = x;
@@ -1946,7 +1898,6 @@ skip:
 		}
 	}
 }
-
 
 /*
  * os_cleargraphics()
@@ -1976,7 +1927,6 @@ void os_fill(int x, int y, int colour1, int colour2) {
 	if (gln_graphics_interpreter_state == GLN_GRAPHICS_LINE_MODE)
 		gln_linegraphics_fill_4way_if(x, y, colour1, colour2);
 }
-
 
 /*
  * gln_linegraphics_process()
@@ -2012,7 +1962,6 @@ static void gln_linegraphics_process() {
 	}
 }
 
-
 /*
  * gln_linegraphics_cleanup()
  *
@@ -2027,7 +1976,6 @@ static void gln_linegraphics_cleanup() {
 	gln_linegraphics_fill_segments_length = 0;
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk picture dispatch (bitmap or line), and timer arbitration       */
 /*---------------------------------------------------------------------*/
@@ -2040,7 +1988,6 @@ static int gln_graphics_current_mode = -1;
 
 /* Note indicating if the graphics "thread" is temporarily suspended. */
 static int gln_graphics_suspended = FALSE;
-
 
 /*
  * os_graphics()
@@ -2067,8 +2014,7 @@ void os_graphics(int mode) {
 
 		case 2:
 			/* If no graphics bitmaps were detected, ignore this call. */
-			if (!gln_graphics_bitmap_directory
-			        || gln_graphics_bitmap_type == NO_BITMAPS)
+			if (!gln_graphics_bitmap_directory || gln_graphics_bitmap_type == NO_BITMAPS)
 				return;
 
 			gln_graphics_interpreter_state = GLN_GRAPHICS_BITMAP_MODE;
@@ -2109,7 +2055,6 @@ void os_graphics(int mode) {
 		gln_graphics_current_mode = mode;
 	}
 }
-
 
 /*
  * gln_arbitrate_request_timer_events()
@@ -2153,7 +2098,6 @@ static void gln_arbitrate_request_timer_events(glui32 millisecs) {
 	}
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port infinite loop detection functions                         */
 /*---------------------------------------------------------------------*/
@@ -2177,7 +2121,6 @@ static double gln_watchdog_timeout_secs = 0.0;
 static int gln_watchdog_check_period = 0,
            gln_watchdog_check_counter = 0;
 
-
 /*
  * gln_watchdog_start()
  * gln_watchdog_stop()
@@ -2187,7 +2130,7 @@ static int gln_watchdog_check_period = 0,
 static void gln_watchdog_start(int timeout, int period) {
 	assert(timeout > 0 && period > 0);
 
-	gln_watchdog_timeout_secs = (double) timeout;
+	gln_watchdog_timeout_secs = (double)timeout;
 	gln_watchdog_check_period = period;
 	gln_watchdog_check_counter = period;
 	gln_watchdog_monitor = g_system->getMillis();
@@ -2196,7 +2139,6 @@ static void gln_watchdog_start(int timeout, int period) {
 static void gln_watchdog_stop() {
 	gln_watchdog_timeout_secs = 0;
 }
-
 
 /*
  * gln_watchdog_tick()
@@ -2210,7 +2152,6 @@ static void gln_watchdog_stop() {
 static void gln_watchdog_tick() {
 	gln_watchdog_monitor = g_system->getMillis();
 }
-
 
 /*
  * gln_watchdog_has_timed_out()
@@ -2275,14 +2216,12 @@ static int gln_watchdog_has_timed_out() {
 	return FALSE;
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port status line functions                                     */
 /*---------------------------------------------------------------------*/
 
 /* Default width used for non-windowing Glk status lines. */
 static const int GLN_DEFAULT_STATUS_WIDTH = 74;
-
 
 /*
  * gln_status_update()
@@ -2313,7 +2252,6 @@ static void gln_status_update() {
 		g_vm->glk_set_window(gln_main_window);
 	}
 }
-
 
 /*
  * gln_status_print()
@@ -2355,7 +2293,7 @@ static void gln_status_print() {
 			g_vm->glk_put_string(game_name);
 
 			for (index = strlen(game_name);
-			        index <= GLN_DEFAULT_STATUS_WIDTH; index++)
+			     index <= GLN_DEFAULT_STATUS_WIDTH; index++)
 				g_vm->glk_put_char(' ');
 			g_vm->glk_put_string(" ]\n");
 
@@ -2364,7 +2302,6 @@ static void gln_status_print() {
 		}
 	}
 }
-
 
 /*
  * gln_status_notify()
@@ -2378,7 +2315,6 @@ static void gln_status_notify() {
 	else
 		gln_status_print();
 }
-
 
 /*
  * gln_status_redraw()
@@ -2408,7 +2344,6 @@ static void gln_status_redraw() {
 		gln_status_update();
 	}
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port output functions                                          */
@@ -2444,7 +2379,6 @@ static int gln_output_activity = FALSE;
  */
 static int gln_output_prompt = FALSE;
 
-
 /*
  * gln_output_notify()
  *
@@ -2454,7 +2388,6 @@ static int gln_output_prompt = FALSE;
 static void gln_output_notify() {
 	gln_output_activity = TRUE;
 }
-
 
 /*
  * gln_recent_output()
@@ -2471,7 +2404,6 @@ static int gln_recent_output() {
 
 	return result;
 }
-
 
 /*
  * gln_output_register_help_request()
@@ -2500,7 +2432,6 @@ static void gln_output_provide_help_hint() {
 	}
 }
 
-
 /*
  * gln_game_prompted()
  *
@@ -2516,7 +2447,6 @@ static int gln_game_prompted() {
 
 	return result;
 }
-
 
 /*
  * gln_detect_game_prompt()
@@ -2535,14 +2465,13 @@ static void gln_detect_game_prompt() {
 	 * is any non-space character on that line.
 	 */
 	for (index = gln_output_length - 1;
-	        index >= 0 && gln_output_buffer[index] != '\n'; index--) {
+	     index >= 0 && gln_output_buffer[index] != '\n'; index--) {
 		if (gln_output_buffer[index] != ' ') {
 			gln_output_prompt = TRUE;
 			break;
 		}
 	}
 }
-
 
 /*
  * gln_output_delete()
@@ -2555,7 +2484,6 @@ static void gln_output_delete() {
 	gln_output_buffer = nullptr;
 	gln_output_allocation = gln_output_length = 0;
 }
-
 
 /*
  * gln_output_flush()
@@ -2578,7 +2506,7 @@ static void gln_output_flush() {
 			int index;
 
 			for (index = gln_output_length - 1;
-			        index >= 0 && gln_output_buffer[index] != '\n';)
+			     index >= 0 && gln_output_buffer[index] != '\n';)
 				index--;
 
 			g_vm->glk_put_buffer(gln_output_buffer, index + 1);
@@ -2593,7 +2521,6 @@ static void gln_output_flush() {
 		gln_output_delete();
 	}
 }
-
 
 /*
  * os_printchar()
@@ -2620,7 +2547,6 @@ void os_printchar(char c) {
 	gln_output_buffer[gln_output_length++] = (c == '\r' ? '\n' : c);
 	gln_output_notify();
 }
-
 
 /*
  * gln_styled_string()
@@ -2683,7 +2609,6 @@ static void gln_banner_string(const char *message) {
 
 #endif
 
-
 /*
  * os_flush()
  *
@@ -2698,7 +2623,6 @@ static void gln_banner_string(const char *message) {
  */
 void os_flush() {
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk command escape functions                                       */
@@ -2720,16 +2644,15 @@ static void gln_command_script(const char *argument) {
 			return;
 		}
 
-		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_Transcript
-		          | fileusage_TextMode,
-		          filemode_WriteAppend, 0);
+		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_Transcript | fileusage_TextMode,
+		                                             filemode_WriteAppend, 0);
 		if (!fileref) {
 			gln_standout_string("Glk transcript failed.\n");
 			return;
 		}
 
 		gln_transcript_stream = g_vm->glk_stream_open_file(fileref,
-		                        filemode_WriteAppend, 0);
+		                                                   filemode_WriteAppend, 0);
 		g_vm->glk_fileref_destroy(fileref);
 		if (!gln_transcript_stream) {
 			gln_standout_string("Glk transcript failed.\n");
@@ -2770,7 +2693,6 @@ static void gln_command_script(const char *argument) {
 	}
 }
 
-
 /*
  * gln_command_inputlog()
  *
@@ -2787,16 +2709,15 @@ static void gln_command_inputlog(const char *argument) {
 			return;
 		}
 
-		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord
-		          | fileusage_BinaryMode,
-		          filemode_WriteAppend, 0);
+		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord | fileusage_BinaryMode,
+		                                             filemode_WriteAppend, 0);
 		if (!fileref) {
 			gln_standout_string("Glk input logging failed.\n");
 			return;
 		}
 
 		gln_inputlog_stream = g_vm->glk_stream_open_file(fileref,
-		                      filemode_WriteAppend, 0);
+		                                                 filemode_WriteAppend, 0);
 		g_vm->glk_fileref_destroy(fileref);
 		if (!gln_inputlog_stream) {
 			gln_standout_string("Glk input logging failed.\n");
@@ -2833,7 +2754,6 @@ static void gln_command_inputlog(const char *argument) {
 	}
 }
 
-
 /*
  * gln_command_readlog()
  *
@@ -2850,9 +2770,8 @@ static void gln_command_readlog(const char *argument) {
 			return;
 		}
 
-		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord
-		          | fileusage_BinaryMode,
-		          filemode_Read, 0);
+		fileref = g_vm->glk_fileref_create_by_prompt(fileusage_InputRecord | fileusage_BinaryMode,
+		                                             filemode_Read, 0);
 		if (!fileref) {
 			gln_standout_string("Glk read log failed.\n");
 			return;
@@ -2901,7 +2820,6 @@ static void gln_command_readlog(const char *argument) {
 	}
 }
 
-
 /*
  * gln_command_abbreviations()
  *
@@ -2944,7 +2862,6 @@ static void gln_command_abbreviations(const char *argument) {
 		gln_normal_string(".\n");
 	}
 }
-
 
 /*
  * gln_command_graphics()
@@ -3001,7 +2918,8 @@ static void gln_command_graphics(const char *argument) {
 	else if (strlen(argument) == 0) {
 		gln_normal_string("Glk graphics are available,");
 		gln_normal_string(gln_graphics_enabled
-		                  ? " and enabled.\n" : " but disabled.\n");
+		                      ? " and enabled.\n"
+		                      : " but disabled.\n");
 
 		if (gln_graphics_picture_is_available()) {
 			int width, height;
@@ -3063,7 +2981,6 @@ static void gln_command_graphics(const char *argument) {
 	}
 }
 
-
 /*
  * gln_command_loopchecks()
  *
@@ -3107,7 +3024,6 @@ static void gln_command_loopchecks(const char *argument) {
 	}
 }
 
-
 /*
  * gln_command_locals()
  *
@@ -3150,7 +3066,6 @@ static void gln_command_locals(const char *argument) {
 		gln_normal_string(".\n");
 	}
 }
-
 
 /*
  * gln_command_prompts()
@@ -3198,7 +3113,6 @@ static void gln_command_prompts(const char *argument) {
 	}
 }
 
-
 /*
  * gln_command_print_version_number()
  * gln_command_version()
@@ -3209,9 +3123,9 @@ static void gln_command_print_version_number(glui32 version) {
 	char buffer[64];
 
 	sprintf(buffer, "%lu.%lu.%lu",
-	        (unsigned long) version >> 16,
+	        (unsigned long)version >> 16,
 	        (unsigned long)(version >> 8) & 0xff,
-	        (unsigned long) version & 0xff);
+	        (unsigned long)version & 0xff);
 	gln_normal_string(buffer);
 }
 
@@ -3228,7 +3142,6 @@ static void gln_command_version(const char *argument) {
 	gln_command_print_version_number(version);
 	gln_normal_string(".\n");
 }
-
 
 /*
  * gln_command_commands()
@@ -3263,12 +3176,11 @@ static void gln_command_commands(const char *argument) {
 	}
 }
 
-
 /* Glk subcommands and handler functions. */
 struct gln_command_t {
-	const char *const command;                      /* Glk subcommand. */
-	void (* const handler)(const char *argument);   /* Subcommand handler. */
-	const int takes_argument;                       /* Argument flag. */
+	const char *const command;                   /* Glk subcommand. */
+	void (*const handler)(const char *argument); /* Subcommand handler. */
+	const int takes_argument;                    /* Argument flag. */
 };
 typedef const gln_command_t *gln_commandref_t;
 
@@ -3276,21 +3188,19 @@ static void gln_command_summary(const char *argument);
 static void gln_command_help(const char *argument);
 
 static const gln_command_t GLN_COMMAND_TABLE[] = {
-	{"summary",        gln_command_summary,        FALSE},
-	{"script",         gln_command_script,         TRUE},
-	{"inputlog",       gln_command_inputlog,       TRUE},
-	{"readlog",        gln_command_readlog,        TRUE},
-	{"abbreviations",  gln_command_abbreviations,  TRUE},
-	{"graphics",       gln_command_graphics,       TRUE},
-	{"loopchecks",     gln_command_loopchecks,     TRUE},
-	{"locals",         gln_command_locals,         TRUE},
-	{"prompts",        gln_command_prompts,        TRUE},
-	{"version",        gln_command_version,        FALSE},
-	{"commands",       gln_command_commands,       TRUE},
-	{"help",           gln_command_help,           TRUE},
-	{nullptr, nullptr, FALSE}
-};
-
+    {"summary", gln_command_summary, FALSE},
+    {"script", gln_command_script, TRUE},
+    {"inputlog", gln_command_inputlog, TRUE},
+    {"readlog", gln_command_readlog, TRUE},
+    {"abbreviations", gln_command_abbreviations, TRUE},
+    {"graphics", gln_command_graphics, TRUE},
+    {"loopchecks", gln_command_loopchecks, TRUE},
+    {"locals", gln_command_locals, TRUE},
+    {"prompts", gln_command_prompts, TRUE},
+    {"version", gln_command_version, FALSE},
+    {"commands", gln_command_commands, TRUE},
+    {"help", gln_command_help, TRUE},
+    {nullptr, nullptr, FALSE}};
 
 /*
  * gln_command_summary()
@@ -3306,14 +3216,12 @@ static void gln_command_summary(const char *argument) {
 	 * prompting each to print its current setting.
 	 */
 	for (entry = GLN_COMMAND_TABLE; entry->command; entry++) {
-		if (entry->handler == gln_command_summary
-		        || entry->handler == gln_command_help)
+		if (entry->handler == gln_command_summary || entry->handler == gln_command_help)
 			continue;
 
 		entry->handler("");
 	}
 }
-
 
 /*
  * gln_command_help()
@@ -3494,7 +3402,6 @@ static void gln_command_help(const char *command) {
 		                  "  Sorry.\n");
 }
 
-
 /*
  * gln_command_escape()
  *
@@ -3591,7 +3498,6 @@ static int gln_command_escape(const char *string) {
 	return TRUE;
 }
 
-
 /*
  * gln_command_intercept()
  *
@@ -3662,8 +3568,7 @@ static int gln_command_intercept(char *string) {
 		}
 
 		/* If this command was "restore" or "load", call restore(). */
-		else if (gln_strcasecmp(string_copy, "restore") == 0
-		         || gln_strcasecmp(string_copy, "load") == 0) {
+		else if (gln_strcasecmp(string_copy, "restore") == 0 || gln_strcasecmp(string_copy, "load") == 0) {
 			gln_standout_string("\nRestoring using interpreter\n\n");
 			restore();
 			result = TRUE;
@@ -3673,7 +3578,6 @@ static int gln_command_intercept(char *string) {
 	free(string_copy);
 	return result;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port input functions                                           */
@@ -3695,7 +3599,6 @@ static const glui32 GLN_STOPLIST_TIMEOUT = 50;
 /* Quote used to suppress abbreviation expansion and local commands. */
 static const char GLN_QUOTED_INPUT = '\'';
 
-
 /*
  * Note of when the interpreter is in list output.  The last element of any
  * list generally lacks a terminating newline, and unless we do something
@@ -3703,22 +3606,15 @@ static const char GLN_QUOTED_INPUT = '\'';
  */
 static int gln_inside_list = FALSE;
 
-
 /* Table of single-character command abbreviations. */
 struct gln_abbreviation_t {
-	const char abbreviation;       /* Abbreviation character. */
-	const char *const expansion;   /* Expansion string. */
+	const char abbreviation;     /* Abbreviation character. */
+	const char *const expansion; /* Expansion string. */
 };
 typedef const gln_abbreviation_t *gln_abbreviationref_t;
 
 static const gln_abbreviation_t GLN_ABBREVIATIONS[] = {
-	{'c', "close"},    {'g', "again"},  {'i', "inventory"},
-	{'k', "attack"},   {'l', "look"},   {'p', "open"},
-	{'q', "quit"},     {'r', "drop"},   {'t', "take"},
-	{'x', "examine"},  {'y', "yes"},    {'z', "wait"},
-	{'\0', nullptr}
-};
-
+    {'c', "close"}, {'g', "again"}, {'i', "inventory"}, {'k', "attack"}, {'l', "look"}, {'p', "open"}, {'q', "quit"}, {'r', "drop"}, {'t', "take"}, {'x', "examine"}, {'y', "yes"}, {'z', "wait"}, {'\0', nullptr}};
 
 /*
  * gln_expand_abbreviations()
@@ -3734,12 +3630,11 @@ static void gln_expand_abbreviations(char *buffer, int size) {
 
 	/* Ignore anything that isn't a single letter command. */
 	command = buffer + strspn(buffer, "\t ");
-	if (!(strlen(command) == 1
-	        || (strlen(command) > 1 && Common::isSpace(command[1]))))
+	if (!(strlen(command) == 1 || (strlen(command) > 1 && Common::isSpace(command[1]))))
 		return;
 
 	/* Scan the abbreviations table for a match. */
-	abbreviation = g_vm->glk_char_to_lower((unsigned char) command[0]);
+	abbreviation = g_vm->glk_char_to_lower((unsigned char)command[0]);
 	expansion = nullptr;
 	for (entry = GLN_ABBREVIATIONS; entry->expansion; entry++) {
 		if (entry->abbreviation == abbreviation) {
@@ -3769,7 +3664,6 @@ static void gln_expand_abbreviations(char *buffer, int size) {
 	}
 }
 
-
 /*
  * gln_output_endlist()
  *
@@ -3787,7 +3681,6 @@ static void gln_output_endlist() {
 		gln_inside_list = FALSE;
 	}
 }
-
 
 /*
  * os_input()
@@ -3872,8 +3765,7 @@ gln_bool os_input(char *buffer, int size) {
 	 * If neither abbreviations nor local commands are enabled, nor game
 	 * command interceptions, use the data read above without further massaging.
 	 */
-	if (gln_abbreviations_enabled
-	        || gln_commands_enabled || gln_intercept_enabled) {
+	if (gln_abbreviations_enabled || gln_commands_enabled || gln_intercept_enabled) {
 		char *command;
 
 		/*
@@ -3900,8 +3792,7 @@ gln_bool os_input(char *buffer, int size) {
 
 				posn = strspn(buffer, "\t ");
 				if (gln_strncasecmp(buffer + posn, "help", strlen("help")) == 0) {
-					if (strspn(buffer + posn + strlen("help"), "\t ")
-					        == strlen(buffer + posn + strlen("help"))) {
+					if (strspn(buffer + posn + strlen("help"), "\t ") == strlen(buffer + posn + strlen("help"))) {
 						gln_output_register_help_request();
 					}
 				}
@@ -3939,7 +3830,6 @@ gln_bool os_input(char *buffer, int size) {
 	gln_watchdog_tick();
 	return TRUE;
 }
-
 
 /*
  * os_readchar()
@@ -4114,7 +4004,6 @@ char os_readchar(int millis) {
 	return character;
 }
 
-
 /*
  * os_stoplist()
  *
@@ -4197,7 +4086,6 @@ gln_bool os_stoplist() {
 	return is_stop_confirmed;
 }
 
-
 /*
  * gln_confirm()
  *
@@ -4233,7 +4121,6 @@ static int gln_confirm(const char *prompt) {
 
 	return response == 'Y';
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port event functions                                           */
@@ -4278,7 +4165,6 @@ static void gln_event_wait(glui32 wait_type, event_t *event) {
 	gln_event_wait_2(wait_type, evtype_None, event);
 }
 
-
 /*---------------------------------------------------------------------*/
 /*  Glk port file functions                                            */
 /*---------------------------------------------------------------------*/
@@ -4298,7 +4184,7 @@ gln_bool os_save_file(gln_byte *ptr, int bytes) {
 	gln_output_flush();
 
 	fileref = g_vm->glk_fileref_create_by_prompt(fileusage_SavedGame,
-	          filemode_Write, 0);
+	                                             filemode_Write, 0);
 	if (!fileref) {
 		gln_watchdog_tick();
 		return FALSE;
@@ -4330,7 +4216,7 @@ gln_bool os_load_file(gln_byte *ptr, int *bytes, int max) {
 	gln_output_flush();
 
 	fileref = g_vm->glk_fileref_create_by_prompt(fileusage_SavedGame,
-	          filemode_Read, 0);
+	                                             filemode_Read, 0);
 	if (!fileref) {
 		gln_watchdog_tick();
 		return FALSE;
@@ -4362,7 +4248,6 @@ gln_bool os_load_file(gln_byte *ptr, int *bytes, int max) {
 	gln_watchdog_tick();
 	return TRUE;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Glk port multi-file game functions                                 */
@@ -4450,7 +4335,6 @@ gln_bool os_get_game_file(char *newname, int size) {
 	return TRUE;
 }
 
-
 /*
  * os_set_filenumber()
  *
@@ -4506,7 +4390,6 @@ void os_set_filenumber(char *newname, int size, int file_number) {
 	gln_watchdog_tick();
 }
 
-
 /*
  * os_open_script_file()
  *
@@ -4516,7 +4399,6 @@ void os_set_filenumber(char *newname, int size, int file_number) {
 Common::SeekableReadStream *os_open_script_file() {
 	return nullptr;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  Functions intercepted by link-time wrappers                        */
@@ -4539,17 +4421,16 @@ Common::SeekableReadStream *os_open_script_file() {
 int __wrap_toupper(int ch) {
 	unsigned char uch;
 
-	uch = g_vm->glk_char_to_upper((unsigned char) ch);
-	return (int) uch;
+	uch = g_vm->glk_char_to_upper((unsigned char)ch);
+	return (int)uch;
 }
 
 int __wrap_tolower(int ch) {
 	unsigned char lch;
 
-	lch = g_vm->glk_char_to_lower((unsigned char) ch);
-	return (int) lch;
+	lch = g_vm->glk_char_to_lower((unsigned char)ch);
+	return (int)lch;
 }
-
 
 /*---------------------------------------------------------------------*/
 /*  main() and options parsing                                         */
@@ -4694,7 +4575,7 @@ int gln_startup_code(int argc, char *argv[]) {
 
 	/* Handle command line arguments. */
 	for (argv_index = 1;
-	        argv_index < argc && argv[argv_index][0] == '-'; argv_index++) {
+	     argv_index < argc && argv[argv_index][0] == '-'; argv_index++) {
 		if (strcmp(argv[argv_index], "-ni") == 0) {
 			gln_intercept_enabled = FALSE;
 			continue;
@@ -4751,8 +4632,7 @@ void gln_main(const char *filename) {
 	 * library can't offer both graphics and timers.  We need timers to create
 	 * the background "thread" for picture updates.
 	 */
-	gln_graphics_possible = g_vm->glk_gestalt(gestalt_Graphics, 0)
-	                        && g_vm->glk_gestalt(gestalt_Timer, 0);
+	gln_graphics_possible = g_vm->glk_gestalt(gestalt_Graphics, 0) && g_vm->glk_gestalt(gestalt_Timer, 0);
 
 	/*
 	 * If pictures are impossible, clear pictures enabled flag.  That is, act
@@ -4858,9 +4738,9 @@ void gln_main(const char *filename) {
 		 */
 		if (gln_stop_reason == STOP_NONE || gln_stop_reason == STOP_FORCE) {
 			gln_standout_string(gln_stop_reason == STOP_NONE
-			                    ? "\nThe game has exited.\n"
-			                    : "\nGame exit was forced.  The current game"
-			                    " state is unrecoverable.  Sorry.\n");
+			                        ? "\nThe game has exited.\n"
+			                        : "\nGame exit was forced.  The current game"
+			                          " state is unrecoverable.  Sorry.\n");
 
 			if (gln_confirm("\nDo you want to restart? [Y or N] "))
 				gln_stop_reason = STOP_RESTART;

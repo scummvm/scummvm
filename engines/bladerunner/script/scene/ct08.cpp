@@ -42,15 +42,15 @@ void SceneScriptCT08::InitializeScene() {
 	Actor_Force_Stop_Walking(kActorMcCoy);
 
 	if (Game_Flag_Query(kFlagCT51toCT08)) {
-		Setup_Scene_Information( -11.0f, 0.0f, -156.0f, 769);
+		Setup_Scene_Information(-11.0f, 0.0f, -156.0f, 769);
 	} else if (Game_Flag_Query(kFlagCT06toCT08)) {
-		Setup_Scene_Information(-143.0f, 0.0f,  -92.0f, 420);
+		Setup_Scene_Information(-143.0f, 0.0f, -92.0f, 420);
 	} else {
-		Setup_Scene_Information(-183.0f, 0.0f,  128.0f, 205);
+		Setup_Scene_Information(-183.0f, 0.0f, 128.0f, 205);
 	}
 
-	Scene_Exit_Add_2D_Exit(0,   0,  0,  30, 479, 3);
-	Scene_Exit_Add_2D_Exit(1, 389,  0, 639, 303, 0);
+	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
+	Scene_Exit_Add_2D_Exit(1, 389, 0, 639, 303, 0);
 	Scene_Exit_Add_2D_Exit(2, 115, 87, 137, 267, 3);
 
 	if (Game_Flag_Query(kFlagMcCoyTiedDown)) {
@@ -61,17 +61,17 @@ void SceneScriptCT08::InitializeScene() {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10,   100, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1,  20, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 20, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2A,  80, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  50, 180, 16,  25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR2,   5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDR3,   5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxTHNDER4,  5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 80, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B, 50, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR2, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR3, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagCT51toCT08)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);

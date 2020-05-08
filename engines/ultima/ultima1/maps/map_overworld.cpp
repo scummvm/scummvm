@@ -21,13 +21,12 @@
  */
 
 #include "ultima/ultima1/maps/map_overworld.h"
-#include "ultima/ultima1/widgets/transport.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/widgets/overworld_monster.h"
 #include "ultima/ultima1/widgets/transport.h"
-#include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/maps/map.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -205,9 +204,7 @@ uint MapOverworld::getEnemyVesselCount() const {
 }
 
 void MapOverworld::attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) {
-	
 }
-
 
 } // End of namespace Maps
 } // End of namespace Ultima1

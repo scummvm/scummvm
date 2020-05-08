@@ -43,7 +43,7 @@ public:
 
 protected:
 	void onStart() override;
-	bool isTalk() override { return true; } 
+	bool isTalk() override { return true; }
 
 private:
 	Common::String _vox;

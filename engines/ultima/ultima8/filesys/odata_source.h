@@ -23,11 +23,11 @@
 #ifndef ULTIMA8_FILESYS_ODATASOURCE_H
 #define ULTIMA8_FILESYS_ODATASOURCE_H
 
+#include "common/algorithm.h"
+#include "common/stream.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/shared/std/containers.h"
-#include "common/stream.h"
-#include "common/algorithm.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,10 +45,14 @@ public:
 
 	void writeX(uint32 val, uint32 num_bytes) {
 		assert(num_bytes > 0 && num_bytes <= 4);
-		if (num_bytes == 1) writeByte(static_cast<byte>(val));
-		else if (num_bytes == 2) writeUint16LE(static_cast<uint16>(val));
-		else if (num_bytes == 3) writeUint24LE(val);
-		else writeUint32LE(val);
+		if (num_bytes == 1)
+			writeByte(static_cast<byte>(val));
+		else if (num_bytes == 2)
+			writeUint16LE(static_cast<uint16>(val));
+		else if (num_bytes == 3)
+			writeUint24LE(val);
+		else
+			writeUint32LE(val);
 	}
 
 	virtual void skip(int32 delta) {
@@ -56,8 +60,7 @@ public:
 	};
 };
 
-
-class OAutoBufferDataSource: public ODataSource {
+class OAutoBufferDataSource : public ODataSource {
 protected:
 	uint8 *_buf;
 	uint8 *_bufPtr;
@@ -70,7 +73,8 @@ protected:
 		_loc += num_bytes;
 
 		// Don't need to resize
-		if (_loc <= _size) return;
+		if (_loc <= _size)
+			return;
 
 		// Reallocate the buffer
 		if (_loc > _allocated) {
@@ -82,7 +86,7 @@ protected:
 			uint8 *new_buf = new uint8[_allocated];
 
 			memcpy(new_buf, _buf, _size);
-			delete [] _buf;
+			delete[] _buf;
 
 			_buf = new_buf;
 			_bufPtr = _buf + position;
@@ -106,7 +110,7 @@ public:
 	}
 
 	~OAutoBufferDataSource() override {
-		delete [] _buf;
+		delete[] _buf;
 	}
 
 	uint32 write(const void *b, uint32 len) override {
@@ -119,8 +123,10 @@ public:
 	bool seek(int32 position, int whence = SEEK_SET) override {
 		assert(whence == SEEK_SET);
 		// No seeking past the end of the buffer
-		if (position <= static_cast<int32>(_size)) _loc = position;
-		else _loc = _size;
+		if (position <= static_cast<int32>(_size))
+			_loc = position;
+		else
+			_loc = _size;
 
 		_bufPtr = const_cast<unsigned char *>(_buf) + _loc;
 		return true;
@@ -130,12 +136,14 @@ public:
 		// No seeking past the end
 		if (position >= 0) {
 			_loc += position;
-			if (_loc > _size) _loc = _size;
+			if (_loc > _size)
+				_loc = _size;
 		}
 		// No seeking past the start
 		else {
 			uint32 invpos = -position;
-			if (invpos > _loc) invpos = _loc;
+			if (invpos > _loc)
+				invpos = _loc;
 			_loc -= invpos;
 		}
 		_bufPtr = const_cast<unsigned char *>(_buf) + _loc;

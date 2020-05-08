@@ -1,12 +1,11 @@
 #ifndef __DICE_H
 #define __DICE_H
 
-class Dice
-{
+class Dice {
 public:
-    Dice();
+	Dice();
 
-    unsigned roll();
+	unsigned roll();
 };
 
 #endif // __DICE_H

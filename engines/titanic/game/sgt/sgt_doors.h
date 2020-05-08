@@ -33,9 +33,11 @@ class CSGTDoors : public CGameObject {
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+
 public:
 	int _value1;
 	bool _open;
+
 public:
 	CLASSDEF;
 	CSGTDoors() : CGameObject(), _value1(0), _open(false) {}

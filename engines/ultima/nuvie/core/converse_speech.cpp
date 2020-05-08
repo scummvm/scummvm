@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/converse_speech.h"
 #include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/core/converse_speech.h"
 #include "ultima/nuvie/sound/sound_manager.h"
 
 namespace Ultima {
@@ -36,13 +36,11 @@ ConverseSpeech::ConverseSpeech() {
 	config = NULL;
 }
 
-
 /* Initialize global classes from the game.
  */
 void ConverseSpeech::init(Configuration *cfg) {
 	config = cfg;
 }
-
 
 ConverseSpeech::~ConverseSpeech() {
 }
@@ -71,10 +69,10 @@ void ConverseSpeech::play_speech(uint16 actor_num, uint16 sample_num) {
 	TownsSound sound;
 	SoundManager *sm = Game::get_game()->get_sound_manager();
 
-	if (!sm->is_audio_enabled()  || !sm->is_speech_enabled())
+	if (!sm->is_audio_enabled() || !sm->is_speech_enabled())
 		return;
 
-//translate the converse sample number into the CHAR number in the SPEECH directory if required.
+	//translate the converse sample number into the CHAR number in the SPEECH directory if required.
 
 	if (actor_num == 202) //GUARDS
 		actor_num = 228;
@@ -124,13 +122,13 @@ NuvieIOBuffer *ConverseSpeech::load_speech(Std::string filename, uint16 sample_n
 		upsampled_size = decomp_size + (int)floor((decomp_size - 1) / 4) * (2 + 2 + 2 + 1);
 
 		switch ((decomp_size - 1) % 4) {
-		case 1 :
+		case 1:
 			upsampled_size += 2;
 			break;
-		case 2 :
+		case 2:
 			upsampled_size += 4;
 			break;
-		case 3 :
+		case 3:
 			upsampled_size += 6;
 			break;
 		}
@@ -152,14 +150,14 @@ NuvieIOBuffer *ConverseSpeech::load_speech(Std::string filename, uint16 sample_n
 			sample = convert_sample(raw_audio[j]);
 
 			switch (j % 4) { // calculate the in-between samples using linear interpolation.
-			case 0 :
-			case 1 :
-			case 2 :
+			case 0:
+			case 1:
+			case 2:
 				converted_audio[k + 1] = (sint16)(0.666 * (float)prev_sample + 0.333 * (float)sample);
 				converted_audio[k + 2] = (sint16)(0.333 * (float)prev_sample + 0.666 * (float)sample);
 				k += 2;
 				break;
-			case 3 :
+			case 3:
 				converted_audio[k + 1] = (sint16)(0.5 * (float)(prev_sample + sample));
 				k += 1;
 				break;
@@ -183,7 +181,7 @@ inline sint16 ConverseSpeech::convert_sample(uint16 raw_sample) {
 #endif
 
 	if (raw_sample & 128)
-		sample = ((sint16)(abs(128 - raw_sample) * 256) ^ 0xffff)  + 1;
+		sample = ((sint16)(abs(128 - raw_sample) * 256) ^ 0xffff) + 1;
 	else
 		sample = raw_sample * 256;
 
@@ -201,13 +199,13 @@ void ConverseSpeech::wav_init_header(NuvieIOBuffer *wav_buffer, uint32 audio_len
 	wav_buffer->write4(36 + audio_length * 2); //length of RIFF chunk
 	wav_buffer->writeBuf((const unsigned char *)"WAVE", 4);
 	wav_buffer->writeBuf((const unsigned char *)"fmt ", 4);
-	wav_buffer->write4(16); // length of format chunk
-	wav_buffer->write2(1); // PCM encoding
-	wav_buffer->write2(1); // mono
-	wav_buffer->write4(44100); // sample frequency 16KHz
+	wav_buffer->write4(16);        // length of format chunk
+	wav_buffer->write2(1);         // PCM encoding
+	wav_buffer->write2(1);         // mono
+	wav_buffer->write4(44100);     // sample frequency 16KHz
 	wav_buffer->write4(44100 * 2); // sample rate
-	wav_buffer->write2(2); // BlockAlign
-	wav_buffer->write2(16); // Bits per sample
+	wav_buffer->write2(2);         // BlockAlign
+	wav_buffer->write2(16);        // Bits per sample
 
 	wav_buffer->writeBuf((const unsigned char *)"data", 4);
 	wav_buffer->write4(audio_length * 2); // length of data chunk

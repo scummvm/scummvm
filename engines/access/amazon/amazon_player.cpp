@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "access/access.h"
-#include "access/room.h"
-#include "access/amazon/amazon_game.h"
 #include "access/amazon/amazon_player.h"
+#include "access/access.h"
+#include "access/amazon/amazon_game.h"
 #include "access/amazon/amazon_resources.h"
+#include "access/room.h"
+#include "common/scummsys.h"
 
 namespace Access {
 

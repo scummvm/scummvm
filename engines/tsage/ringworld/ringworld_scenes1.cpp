@@ -22,8 +22,8 @@
 
 #include "tsage/ringworld/ringworld_scenes1.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -226,12 +226,12 @@ void Scene15::Action1::signal() {
 		break;
 	case 1:
 		SceneItem::display(15, 0, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 7,
-				SET_WIDTH, 320, SET_KEEP_ONSCREEN, 1, LIST_END);
+		                   SET_WIDTH, 320, SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(300);
 		break;
 	case 2: {
 		SceneItem::display(15, 1, SET_Y, 20, SET_FONT, 2, SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 7,
-				SET_WIDTH, 320, SET_KEEP_ONSCREEN, 1, LIST_END);
+		                   SET_WIDTH, 320, SET_KEEP_ONSCREEN, 1, LIST_END);
 		scene->_ship.postInit();
 		scene->_ship.setVisage(15);
 		scene->_ship.setPosition(Common::Point(160, -10));
@@ -289,7 +289,7 @@ void Scene20::Action1::signal() {
 		break;
 	case 3:
 		g_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
-		g_globals->_sceneManager.changeScene(30);	// First game scene
+		g_globals->_sceneManager.changeScene(30); // First game scene
 		break;
 	default:
 		break;
@@ -306,7 +306,7 @@ void Scene20::Action2::signal() {
 		break;
 	case 1:
 		SceneItem::display(20, 1, SET_WIDTH, 200, SET_Y, 20, SET_X, 160, SET_KEEP_ONSCREEN, true,
-			SET_EXT_BGCOLOR, 4, LIST_END);
+		                   SET_EXT_BGCOLOR, 4, LIST_END);
 		setDelay(120);
 		break;
 	case 2: {
@@ -586,7 +586,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_assassinShip2.animate(ANIM_MODE_1, NULL);
 
 		if ((g_globals->getFlag(120) && g_globals->getFlag(116)) ||
-				(g_globals->getFlag(117) && g_globals->getFlag(119))) {
+		    (g_globals->getFlag(117) && g_globals->getFlag(119))) {
 			// Successful evasion
 			setAction(&_action3);
 		} else if (g_globals->getFlag(104)) {
@@ -643,8 +643,7 @@ void Scene30::BeamObject::doAction(int action) {
 	case CURSOR_USE: {
 		Scene30 *parent = (Scene30 *)g_globals->_sceneManager._scene;
 		parent->setAction(&parent->_beamAction);
-		}
-		break;
+	} break;
 	default:
 		SceneObject::doAction(action);
 	}
@@ -882,11 +881,10 @@ void Scene30::KzinObject::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene30::Scene30() :
-	_groundHotspot(9, OBJECT_SCANNER, 50, 17, CURSOR_LOOK, 30, 3, CURSOR_USE, 30, 8, LIST_END),
-	_wallsHotspot(8, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 30, 0, CURSOR_USE, 30, 7, LIST_END),
-	_courtyardHotspot(0, CURSOR_LOOK, 30, 4, LIST_END),
-	_treeHotspot(10, OBJECT_SCANNER, 40, 39, CURSOR_LOOK, 30, 5, CURSOR_USE, 30, 9, LIST_END) {
+Scene30::Scene30() : _groundHotspot(9, OBJECT_SCANNER, 50, 17, CURSOR_LOOK, 30, 3, CURSOR_USE, 30, 8, LIST_END),
+                     _wallsHotspot(8, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 30, 0, CURSOR_USE, 30, 7, LIST_END),
+                     _courtyardHotspot(0, CURSOR_LOOK, 30, 4, LIST_END),
+                     _treeHotspot(10, OBJECT_SCANNER, 40, 39, CURSOR_LOOK, 30, 5, CURSOR_USE, 30, 9, LIST_END) {
 }
 
 void Scene30::postInit(SceneObjectList *OwnerList) {
@@ -900,7 +898,6 @@ void Scene30::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerQText);
 	_speakerSText._npc = &_kzin;
 	_speakerQText._npc = &g_globals->_player;
-
 
 	// Setup player
 	g_globals->_player.postInit();
@@ -930,7 +927,7 @@ void Scene30::postInit(SceneObjectList *OwnerList) {
 
 	// Add the objects and hotspots to the scene
 	g_globals->_sceneItems.addItems(&_beam, &_wallsHotspot, &_door, &_treeHotspot, &_groundHotspot,
-		&_courtyardHotspot, NULL);
+	                                &_courtyardHotspot, NULL);
 
 	// Load the scene data
 	loadScene(30);
@@ -1500,13 +1497,12 @@ void Scene40::Item6::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene40::Scene40() :
-	_ball(2, OBJECT_SCANNER, 40, 24, OBJECT_STUNNER, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
-	_window(5, OBJECT_SCANNER, 40, 28, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 2, CURSOR_USE, 40, 30, LIST_END),
-	_entrance(6, OBJECT_SCANNER, 40, 31, OBJECT_STUNNER, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
-	_background(0, CURSOR_LOOK, 40, 11, LIST_END),
-	_emerald(4, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
-	_tree(8, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_LOOK, 40, 3, CURSOR_USE, 40, 41, LIST_END) {
+Scene40::Scene40() : _ball(2, OBJECT_SCANNER, 40, 24, OBJECT_STUNNER, 40, 25, CURSOR_LOOK, 40, 7, CURSOR_USE, 40, 16, LIST_END),
+                     _window(5, OBJECT_SCANNER, 40, 28, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 2, CURSOR_USE, 40, 30, LIST_END),
+                     _entrance(6, OBJECT_SCANNER, 40, 31, OBJECT_STUNNER, 40, 32, CURSOR_LOOK, 40, 5, CURSOR_USE, 40, 33, LIST_END),
+                     _background(0, CURSOR_LOOK, 40, 11, LIST_END),
+                     _emerald(4, OBJECT_SCANNER, 40, 26, OBJECT_STUNNER, 40, 27, CURSOR_LOOK, 40, 9, CURSOR_USE, 40, 17, LIST_END),
+                     _tree(8, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_LOOK, 40, 3, CURSOR_USE, 40, 41, LIST_END) {
 }
 
 void Scene40::postInit(SceneObjectList *OwnerList) {
@@ -1605,7 +1601,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 	_statue._sceneRegionId = 7;
 
 	g_globals->_sceneItems.addItems(&_dyingKzin, &_tree, &_ball, &_statue, &_window, &_entrance,
-			&_pedestal, &_emerald, &_background, NULL);
+	                                &_pedestal, &_emerald, &_background, NULL);
 }
 
 void Scene40::signal() {
@@ -1814,14 +1810,13 @@ void Scene50::RightFlyCycle::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene50::Scene50() :
-		_background(0, CURSOR_LOOK, 50, 3, LIST_END),
-		_item1(0, OBJECT_SCANNER, 50, 15, CURSOR_USE, 50, 16, CURSOR_LOOK, 50, 3, LIST_END),
-		_entrance(0, CURSOR_LOOK, 50, 7, LIST_END),
-		// The original was using dialog 50/3 for CURSOR_LOOK, which is too generic.
-		_bulwark(8, OBJECT_STUNNER, 50, 14, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 30, 0, LIST_END),
-		_tree(9, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_USE, 40, 41, CURSOR_LOOK, 50, 5, LIST_END),
-		_flagstones(10, OBJECT_SCANNER, 50, 17, OBJECT_STUNNER, 50, 18, CURSOR_LOOK, 50, 6, CURSOR_USE, 30, 8, LIST_END) {
+Scene50::Scene50() : _background(0, CURSOR_LOOK, 50, 3, LIST_END),
+                     _item1(0, OBJECT_SCANNER, 50, 15, CURSOR_USE, 50, 16, CURSOR_LOOK, 50, 3, LIST_END),
+                     _entrance(0, CURSOR_LOOK, 50, 7, LIST_END),
+                     // The original was using dialog 50/3 for CURSOR_LOOK, which is too generic.
+                     _bulwark(8, OBJECT_STUNNER, 50, 14, OBJECT_SCANNER, 50, 13, CURSOR_LOOK, 30, 0, LIST_END),
+                     _tree(9, OBJECT_SCANNER, 40, 39, OBJECT_STUNNER, 40, 40, CURSOR_USE, 40, 41, CURSOR_LOOK, 50, 5, LIST_END),
+                     _flagstones(10, OBJECT_SCANNER, 50, 17, OBJECT_STUNNER, 50, 18, CURSOR_LOOK, 50, 6, CURSOR_USE, 30, 8, LIST_END) {
 
 	_doorwayRect = Rect(80, 108, 160, 112);
 }
@@ -2011,8 +2006,8 @@ void Scene60::Action1::signal() {
 	case 6:
 	case 7:
 		SceneItem::display(60, _actionIndex - 4, SET_Y, 40, SET_X, 25, SET_FONT, 75,
-			SET_EXT_BGCOLOR, -1, SET_FG_COLOR, 34, SET_POS_MODE, 0,
-			SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
+		                   SET_EXT_BGCOLOR, -1, SET_FG_COLOR, 34, SET_POS_MODE, 0,
+		                   SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
 		g_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 9:
@@ -2347,12 +2342,11 @@ void Scene60::Item::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene60::Scene60() :
-		_dashboard(0, 12, 12),
-		_intercomm(8, 22, 23),
-		_viewScreen(9, 24, 25),
-		_speedControl(10, 26, 27),
-		_speaker(11, 28, 29) {
+Scene60::Scene60() : _dashboard(0, 12, 12),
+                     _intercomm(8, 22, 23),
+                     _viewScreen(9, 24, 25),
+                     _speedControl(10, 26, 27),
+                     _speaker(11, 28, 29) {
 }
 
 void Scene60::postInit(SceneObjectList *OwnerList) {
@@ -2579,7 +2573,7 @@ void Scene90::Action1::signal() {
 		scene->_headGate.animate(ANIM_MODE_6, NULL);
 
 		SceneItem::display(90, g_globals->getFlag(104) ? 15 : 14,
-			SET_EXT_BGCOLOR, 13, SET_KEEP_ONSCREEN, -1, SET_X, 120, SET_Y, 20, LIST_END);
+		                   SET_EXT_BGCOLOR, 13, SET_KEEP_ONSCREEN, -1, SET_X, 120, SET_Y, 20, LIST_END);
 		break;
 	case 12:
 		SceneItem::display(0, 0);
@@ -2644,13 +2638,12 @@ void Scene90::Guard::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene90::Scene90() :
-		_guardShack(0, CURSOR_LOOK, 90, 9, LIST_END),
-		_shed(0, CURSOR_LOOK, 90, 10, LIST_END),
-		_background(0, CURSOR_LOOK, 90, 11, LIST_END),
-		_headGate(OBJECT_STUNNER, 90, 13, CURSOR_LOOK, 90, 12, CURSOR_USE, 90, 16, LIST_END),
-		_emptyShip(CURSOR_LOOK, 90, 17, LIST_END),
-		_quinnShip(CURSOR_LOOK, 90, 18, CURSOR_USE, 90, 19, LIST_END) {
+Scene90::Scene90() : _guardShack(0, CURSOR_LOOK, 90, 9, LIST_END),
+                     _shed(0, CURSOR_LOOK, 90, 10, LIST_END),
+                     _background(0, CURSOR_LOOK, 90, 11, LIST_END),
+                     _headGate(OBJECT_STUNNER, 90, 13, CURSOR_LOOK, 90, 12, CURSOR_USE, 90, 16, LIST_END),
+                     _emptyShip(CURSOR_LOOK, 90, 17, LIST_END),
+                     _quinnShip(CURSOR_LOOK, 90, 18, CURSOR_USE, 90, 19, LIST_END) {
 }
 
 void Scene90::stripCallback(int v) {
@@ -2774,8 +2767,8 @@ void Scene95::Action1::signal() {
 	case 1:
 		if (_state) {
 			SceneItem::display(95, _state % 2, SET_FONT, 2,
-				SET_EXT_BGCOLOR, -1, SET_EXT_BGCOLOR, 20,
-				SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, SET_TEXT_MODE, 1, LIST_END);
+			                   SET_EXT_BGCOLOR, -1, SET_EXT_BGCOLOR, 20,
+			                   SET_WIDTH, 200, SET_KEEP_ONSCREEN, 1, SET_TEXT_MODE, 1, LIST_END);
 			--_state;
 			_actionIndex = 1;
 		}
@@ -2808,8 +2801,8 @@ void Scene95::Action1::signal() {
 		scene->_object1.addMover(mover2, &pt2, NULL);
 
 		SceneItem::display(95, 2, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 13, SET_WIDTH, 200,
-			SET_KEEP_ONSCREEN, 1, LIST_END);
+		                   SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 13, SET_WIDTH, 200,
+		                   SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
 	}
@@ -2817,14 +2810,14 @@ void Scene95::Action1::signal() {
 		scene->_object3.remove();
 
 		SceneItem::display(95, 3, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 35, SET_WIDTH, 200,
-			SET_KEEP_ONSCREEN, 1, LIST_END);
+		                   SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 35, SET_WIDTH, 200,
+		                   SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
 	case 5:
 		SceneItem::display(95, 4, SET_Y, 45, SET_FONT, 2,
-			SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 35, SET_WIDTH, 200,
-			SET_KEEP_ONSCREEN, 1, LIST_END);
+		                   SET_BG_COLOR, -1, SET_EXT_BGCOLOR, 35, SET_WIDTH, 200,
+		                   SET_KEEP_ONSCREEN, 1, LIST_END);
 		setDelay(240);
 		break;
 	case 6:
@@ -2980,7 +2973,7 @@ void Scene6100::Action3::signal() {
 	case 4:
 		g_globals->setFlag(76);
 		g_globals->_sceneManager.changeScene(
-			(scene->_stripManager._currObj44Id == 135) ? 6100 : 2320);
+		    (scene->_stripManager._currObj44Id == 135) ? 6100 : 2320);
 		remove();
 		break;
 	default:
@@ -3010,15 +3003,17 @@ void Scene6100::Action4::signal() {
 void Scene6100::Action5::dispatch() {
 	Scene6100 *scene = (Scene6100 *)g_globals->_sceneManager._scene;
 	FloatSet zeroSet;
-	const double MULTIPLY_FACTOR = 0.01744;		// 2 * pi / 360
+	const double MULTIPLY_FACTOR = 0.01744; // 2 * pi / 360
 
 	if (scene->_turnAmount) {
 		scene->_angle = (scene->_turnAmount + scene->_angle) % 360;
 
 		for (int objIndex = 1; objIndex <= 3; ++objIndex) {
 			SceneObject *obj = &scene->_object1;
-			if (objIndex == 2) obj = &scene->_object2;
-			if (objIndex == 3) obj = &scene->_object3;
+			if (objIndex == 2)
+				obj = &scene->_object2;
+			if (objIndex == 3)
+				obj = &scene->_object3;
 
 			obj->_position.x += scene->_turnAmount * 2;
 			if (obj->_position.x >= 320)
@@ -3040,7 +3035,7 @@ void Scene6100::Action5::dispatch() {
 	for (int idx = 0; idx < 4; ++idx) {
 		FloatSet tempSet = scene->_objList[idx]->_floats;
 		tempSet.add(-scene->_probe._floats._float1, -scene->_probe._floats._float2,
-			-scene->_probe._floats._float3);
+		            -scene->_probe._floats._float3);
 
 		tempSet.proc1(scene->_angle * MULTIPLY_FACTOR);
 
@@ -3050,7 +3045,7 @@ void Scene6100::Action5::dispatch() {
 		}
 
 		scene->_objList[idx]->_position.x = static_cast<int>(
-			 160.0 - (330.0 / (tempSet._float2 + 330.0) * tempSet._float1));
+		    160.0 - (330.0 / (tempSet._float2 + 330.0) * tempSet._float1));
 		scene->_objList[idx]->dispatch();
 
 		if (tempSet._float2 < 0) {
@@ -3058,14 +3053,14 @@ void Scene6100::Action5::dispatch() {
 
 			if (idx != 3) {
 				scene->_objList[idx]->_floats._float1 =
-					g_globals->_randomSource.getRandomNumber(199);
+				    g_globals->_randomSource.getRandomNumber(199);
 				scene->_objList[idx]->_floats._float2 =
-					g_globals->_randomSource.getRandomNumber(999) + 750.0;
+				    g_globals->_randomSource.getRandomNumber(999) + 750.0;
 
 				scene->_objList[idx]->_floats.proc1(
-					-(scene->_turnAmount * 10 + scene->_angle) * MULTIPLY_FACTOR);
+				    -(scene->_turnAmount * 10 + scene->_angle) * MULTIPLY_FACTOR);
 				scene->_objList[idx]->_floats.add(scene->_probe._floats._float1,
-					scene->_probe._floats._float2, scene->_probe._floats._float3);
+				                                  scene->_probe._floats._float2, scene->_probe._floats._float3);
 			}
 		}
 
@@ -3076,7 +3071,7 @@ void Scene6100::Action5::dispatch() {
 		scene->_objList[idx]->_flags |= OBJFLAG_PANES;
 
 		if ((idx != 3) && (scene->_fadePercent == 100) &&
-				(tempSet.sqrt(zeroSet) < 150.0)) {
+		    (tempSet.sqrt(zeroSet) < 150.0)) {
 			switch (scene->_hitCount++) {
 			case 0:
 				scene->_soundHandler.play(233);
@@ -3221,7 +3216,7 @@ void Scene6100::Item1::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene6100::Scene6100(): Scene() {
+Scene6100::Scene6100() : Scene() {
 	_objList[0] = &_sunflower1;
 	_objList[1] = &_sunflower2;
 	_objList[2] = &_sunflower3;
@@ -3318,7 +3313,7 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 		_objList[idx]->_strip = 2;
 
 		_objList[idx]->setPosition(Common::Point(
-			g_globals->_randomSource.getRandomNumber(319), 60));
+		    g_globals->_randomSource.getRandomNumber(319), 60));
 		_objList[idx]->fixPriority(1);
 		_objList[idx]->changeZoom(-1);
 	}

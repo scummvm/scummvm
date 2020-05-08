@@ -26,11 +26,10 @@
 #include "hopkins/globals.h"
 #include "hopkins/hopkins.h"
 
-
-#include "common/system.h"
 #include "common/savefile.h"
-#include "graphics/surface.h"
+#include "common/system.h"
 #include "graphics/scaler.h"
+#include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 
 namespace Hopkins {
@@ -92,7 +91,8 @@ WARN_UNUSED_RESULT bool SaveLoadManager::readSavegameHeader(Common::InSaveFile *
 	// Read in the string
 	header._saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header._saveName += ch;
 
 	// Get the thumbnail
 	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
@@ -151,7 +151,7 @@ Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName
 
 	/* Create the savegame */
 	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(
-		_vm->getSaveStateName(slot));
+	    _vm->getSaveStateName(slot));
 	if (!savefile)
 		return Common::kCreatingFileFailed;
 
@@ -177,7 +177,7 @@ Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName
 Common::Error SaveLoadManager::loadGame(int slot) {
 	// Try and open the save file for reading
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(
-		_vm->getSaveStateName(slot));
+	    _vm->getSaveStateName(slot));
 	if (!savefile)
 		return Common::kReadingFailed;
 
@@ -215,7 +215,7 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 WARN_UNUSED_RESULT bool SaveLoadManager::readSavegameHeader(int slot, hopkinsSavegameHeader &header, bool skipThumbnail) {
 	// Try and open the save file for reading
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(
-		_vm->getSaveStateName(slot));
+	    _vm->getSaveStateName(slot));
 	if (!savefile)
 		return false;
 
@@ -234,7 +234,7 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 	thumb8.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
 	_vm->_graphicsMan->reduceScreenPart(_vm->_graphicsMan->_frontBuffer, (byte *)thumb8.getPixels(),
-		_vm->_events->_startPos.x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
+	                                    _vm->_events->_startPos.x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
 
 	// Convert the 8-bit pixel to 16 bit surface
 	s->create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
@@ -276,7 +276,6 @@ void SaveLoadManager::syncSavegameData(Common::Serializer &s, int version) {
 	} else {
 		_vm->_globals->_saveData->_mapCarPosX = _vm->_globals->_saveData->_mapCarPosY = 0;
 	}
-
 }
 
 void SaveLoadManager::syncCharacterLocation(Common::Serializer &s, CharacterLocation &item) {

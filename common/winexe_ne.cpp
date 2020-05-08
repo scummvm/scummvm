@@ -20,10 +20,10 @@
  *
  */
 
+#include "common/winexe_ne.h"
 #include "common/debug.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/winexe_ne.h"
 
 namespace Common {
 
@@ -103,12 +103,11 @@ uint32 NEResources::getResourceTableOffset() {
 }
 
 static const char *s_resTypeNames[] = {
-	"", "cursor", "bitmap", "icon", "menu", "dialog", "string",
-	"font_dir", "font", "accelerator", "rc_data", "msg_table",
-	"group_cursor", "", "group_icon", "", "version", "dlg_include",
-	"", "plug_play", "vxd", "ani_cursor", "ani_icon", "html",
-	"manifest"
-};
+    "", "cursor", "bitmap", "icon", "menu", "dialog", "string",
+    "font_dir", "font", "accelerator", "rc_data", "msg_table",
+    "group_cursor", "", "group_icon", "", "version", "dlg_include",
+    "", "plug_play", "vxd", "ani_cursor", "ani_icon", "html",
+    "manifest"};
 
 bool NEResources::readResourceTable(uint32 offset) {
 	if (!_exe)
@@ -137,11 +136,11 @@ bool NEResources::readResourceTable(uint32 offset) {
 
 			// Resource properties
 			res.offset = _exe->readUint16LE() * align;
-			res.size   = _exe->readUint16LE() * align;
-			res.flags  = _exe->readUint16LE();
-			uint16 id  = _exe->readUint16LE();
+			res.size = _exe->readUint16LE() * align;
+			res.flags = _exe->readUint16LE();
+			uint16 id = _exe->readUint16LE();
 			res.handle = _exe->readUint16LE();
-			res.usage  = _exe->readUint16LE();
+			res.usage = _exe->readUint16LE();
 
 			res.type = type;
 

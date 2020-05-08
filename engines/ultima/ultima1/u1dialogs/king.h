@@ -23,15 +23,15 @@
 #ifndef ULTIMA_ULTIMA1_U1DIALOGS_KING_H
 #define ULTIMA_ULTIMA1_U1DIALOGS_KING_H
 
-#include "ultima/ultima1/u1dialogs/dialog.h"
 #include "ultima/shared/gfx/character_input.h"
+#include "ultima/ultima1/u1dialogs/dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CShowMsg;
 using Shared::CCharacterInputMsg;
+using Shared::CShowMsg;
 using Shared::CTextInputMsg;
 
 /**
@@ -42,10 +42,14 @@ class King : public Dialog {
 	bool ShowMsg(CShowMsg &msg);
 	bool CharacterInputMsg(CCharacterInputMsg &msg);
 	bool TextInputMsg(CTextInputMsg &msg);
-	enum KingMode { SELECT, PENCE, SERVICE };
+	enum KingMode { SELECT,
+		            PENCE,
+		            SERVICE };
+
 private:
 	KingMode _mode;
 	uint _kingIndex;
+
 private:
 	/**
 	 * Set the mode
@@ -76,6 +80,7 @@ private:
 	 * Give hit points
 	 */
 	void giveHitPoints(uint amount);
+
 public:
 	CLASSDEF;
 

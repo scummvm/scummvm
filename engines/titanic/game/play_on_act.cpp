@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPlayOnAct, CBackground)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 void CPlayOnAct::save(SimpleFile *file, int indent) {

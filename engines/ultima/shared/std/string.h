@@ -36,6 +36,7 @@ public:
 	private:
 		string *_owner;
 		int _index;
+
 	public:
 		reverse_iterator(string *owner, int index) : _owner(owner), _index(index) {}
 		reverse_iterator() : _owner(0), _index(-1) {}
@@ -59,6 +60,7 @@ public:
 			return !operator==(rhs);
 		}
 	};
+
 public:
 	string() : Common::String() {}
 	string(const char *str) : Common::String(str) {}
@@ -165,7 +167,7 @@ public:
 		return Compare(x) != 0;
 	}
 
-	bool operator !=(const char *x) const {
+	bool operator!=(const char *x) const {
 		return Compare(x) != 0;
 	}
 };

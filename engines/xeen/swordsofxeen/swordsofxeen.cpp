@@ -27,7 +27,7 @@ namespace Xeen {
 namespace SwordsOfXeen {
 
 SwordsOfXeenEngine::SwordsOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
-		: XeenEngine(syst, gameDesc) {
+    : XeenEngine(syst, gameDesc) {
 }
 
 void SwordsOfXeenEngine::showMainMenu() {
@@ -119,7 +119,6 @@ void SwordsOfXeenEngine::showCutscene(const Common::String &name, int status, ui
 	_sound->stopAllAudio();
 	_events->clearEvents();
 	_gameMode = GMODE_MENU;
-
 }
 
 } // End of namespace SwordsOfXeen

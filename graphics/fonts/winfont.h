@@ -29,7 +29,7 @@
 namespace Common {
 class SeekableReadStream;
 class WinResources;
-}
+} // namespace Common
 
 namespace Graphics {
 
@@ -83,13 +83,17 @@ private:
 
 	uint16 _glyphCount;
 	struct GlyphEntry {
-		GlyphEntry() { bitmap = 0; charWidth = 0; offset = 0; }
+		GlyphEntry() {
+			bitmap = 0;
+			charWidth = 0;
+			offset = 0;
+		}
 		~GlyphEntry() { delete[] bitmap; }
 
 		uint16 charWidth;
 		uint32 offset;
 		byte *bitmap;
-	} *_glyphs;
+	} * _glyphs;
 };
 
 } // End of namespace Graphics

@@ -35,28 +35,28 @@
 namespace Glk {
 namespace Scott {
 
-#define LIGHT_SOURCE    9   // Always 9 how odd
-#define CARRIED     255     // Carried
-#define DESTROYED   0       // Destroyed
-#define DARKBIT     15
-#define LIGHTOUTBIT 16      // Light gone out
+#define LIGHT_SOURCE 9 // Always 9 how odd
+#define CARRIED 255    // Carried
+#define DESTROYED 0    // Destroyed
+#define DARKBIT 15
+#define LIGHTOUTBIT 16 // Light gone out
 
 enum GameOption {
-	YOUARE      = 1,        ///< You are not I am
-	SCOTTLIGHT  = 2,        ///< Authentic Scott Adams light messages
-	DEBUGGING   = 4,        ///< Info from database load
-	TRS80_STYLE = 8,        ///< Display in style used on TRS-80
-	PREHISTORIC_LAMP = 16   ///< Destroy the lamp (very old databases)
+	YOUARE = 1,           ///< You are not I am
+	SCOTTLIGHT = 2,       ///< Authentic Scott Adams light messages
+	DEBUGGING = 4,        ///< Info from database load
+	TRS80_STYLE = 8,      ///< Display in style used on TRS-80
+	PREHISTORIC_LAMP = 16 ///< Destroy the lamp (very old databases)
 };
 
-#define TRS80_LINE  "\n<------------------------------------------------------------>\n"
-#define MY_LOC   (_gameHeader._playerRoom)
+#define TRS80_LINE "\n<------------------------------------------------------------>\n"
+#define MY_LOC (_gameHeader._playerRoom)
 
 struct Header {
 	int _unknown;
 	int _numItems;
 	int _numActions;
-	int _numWords;           ///< Smaller of verb/noun is padded to same size
+	int _numWords; ///< Smaller of verb/noun is padded to same size
 	int _numRooms;
 	int _maxCarry;
 	int _playerRoom;
@@ -67,8 +67,8 @@ struct Header {
 	int _treasureRoom;
 
 	Header() : _unknown(0), _numItems(0), _numActions(0), _numWords(0), _numRooms(0),
-		_maxCarry(0), _playerRoom(0), _treasures(0), _wordLength(0), _lightTime(0),
-		_numMessages(0), _treasureRoom(0) {}
+	           _maxCarry(0), _playerRoom(0), _treasures(0), _wordLength(0), _lightTime(0),
+	           _numMessages(0), _treasureRoom(0) {}
 };
 
 struct Action {
@@ -122,18 +122,18 @@ private:
 	Common::Array<Action> _actions;
 	int _lightRefill;
 	char _nounText[16];
-	int _counters[16];   ///< Range unknown
+	int _counters[16]; ///< Range unknown
 	int _currentCounter;
 	int _savedRoom;
-	int _roomSaved[16];  ///< Range unknown
-	int _options;        ///< Option flags set
-	int _width;          ///< Terminal width
-	int _topHeight;      ///< Height of top window
+	int _roomSaved[16]; ///< Range unknown
+	int _options;       ///< Option flags set
+	int _width;         ///< Terminal width
+	int _topHeight;     ///< Height of top window
 
 	bool _splitScreen;
 	winid_t _bottomWindow, _topWindow;
-	uint32 _bitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
-	int _saveSlot;		 ///< Save slot when loading savegame from launcher
+	uint32 _bitFlags; ///< Might be >32 flags - I haven't seen >32 yet
+	int _saveSlot;    ///< Save slot when loading savegame from launcher
 private:
 	/**
 	 * Initialization code
@@ -160,6 +160,7 @@ private:
 	int performActions(int vb, int no);
 
 	void readInts(Common::SeekableReadStream *f, size_t count, ...);
+
 public:
 	/**
 	 * Constructor

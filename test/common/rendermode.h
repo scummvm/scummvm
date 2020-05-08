@@ -1,10 +1,10 @@
-#include <cxxtest/TestSuite.h>
-#include "common/rendermode.h"
 #include "common/gui_options.h"
+#include "common/rendermode.h"
 #include "common/str.h"
+#include <cxxtest/TestSuite.h>
 
 class RenderModeTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_parse_render_mode_good() {
 		/*
 		 * Tests for parseRenderMode.
@@ -23,7 +23,6 @@ class RenderModeTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(Common::parseRenderMode("PC9801"), Common::kRenderPC9801);
 		TS_ASSERT_EQUALS(Common::parseRenderMode("0"), Common::kRenderDefault);
 	}
-
 
 	void test_parse_render_mode_bad() {
 		/*

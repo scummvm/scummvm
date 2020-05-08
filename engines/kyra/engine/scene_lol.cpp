@@ -23,9 +23,9 @@
 #ifdef ENABLE_LOL
 
 #include "kyra/engine/lol.h"
+#include "kyra/engine/timer.h"
 #include "kyra/graphics/screen_lol.h"
 #include "kyra/resource/resource.h"
-#include "kyra/engine/timer.h"
 
 #include "common/endian.h"
 #include "common/system.h"
@@ -158,7 +158,7 @@ void LoLEngine::loadLevelWallData(int index, bool mapShapes) {
 		d += 2;
 
 		if (mapShapes) {
-			int16 sh = (int16) READ_LE_UINT16(d);
+			int16 sh = (int16)READ_LE_UINT16(d);
 			if (sh > 0)
 				_wllShapeMap[c] = assignLevelDecorationShapes(sh);
 			else
@@ -713,7 +713,7 @@ void LoLEngine::calcCoordinates(uint16 &x, uint16 &y, int block, uint16 xOffs, u
 }
 
 void LoLEngine::calcCoordinatesForSingleCharacter(int charNum, uint16 &x, uint16 &y) {
-	static const uint8 xOffsets[] = {  0x80, 0x00, 0x00, 0x40, 0xC0, 0x00, 0x40, 0x80, 0xC0 };
+	static const uint8 xOffsets[] = {0x80, 0x00, 0x00, 0x40, 0xC0, 0x00, 0x40, 0x80, 0xC0};
 	int c = countActiveCharacters();
 	if (!c)
 		return;
@@ -1148,7 +1148,7 @@ void LoLEngine::processGasExplosion(int soundId) {
 	int cp = _screen->setCurPage(2);
 	_screen->copyPage(0, 12);
 
-	static const uint8 sounds[] = { 0x62, 0xA7, 0xA7, 0xA8 };
+	static const uint8 sounds[] = {0x62, 0xA7, 0xA7, 0xA8};
 	snd_playSoundEffect(sounds[soundId], -1);
 
 	uint16 targetBlock = 0;
@@ -1230,7 +1230,6 @@ void LoLEngine::drawScene(int pageNum) {
 
 	_sceneUpdateRequired = false;
 }
-
 
 void LoLEngine::setWallType(int block, int wall, int val) {
 	if (wall == -1) {
@@ -1504,7 +1503,7 @@ void LoLEngine::drawDecorations(int index) {
 						x = _dscShapeX[s] + xOffs + ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8);
 						if (ix == _dscShapeIndex[s]) {
 							x = _dscShapeX[s] - ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8) -
-							     _screen->getShapeScaledWidth(shapeData, scaleW) - xOffs;
+							    _screen->getShapeScaledWidth(shapeData, scaleW) - xOffs;
 						}
 						flags = 0x105;
 					} else {
@@ -1531,7 +1530,7 @@ void LoLEngine::drawDecorations(int index) {
 }
 
 void LoLEngine::drawBlockEffects(int index, int type) {
-	static const uint16 yOffs[] = { 0xFF, 0xFF, 0x80, 0x80 };
+	static const uint16 yOffs[] = {0xFF, 0xFF, 0x80, 0x80};
 	uint8 flg = _visibleBlocks[index]->flags;
 	// flags: 0x10 = ice wall, 0x20 = teleporter, 0x40 = blue slime spot, 0x80 = blood spot
 	if (!(flg & 0xF0))

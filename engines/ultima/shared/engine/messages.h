@@ -23,10 +23,10 @@
 #ifndef ULTIMA_SHARED_ENGINE_MESSAGES_H
 #define ULTIMA_SHARED_ENGINE_MESSAGES_H
 
-#include "common/keyboard.h"
 #include "common/events.h"
-#include "ultima/shared/core/rect.h"
+#include "common/keyboard.h"
 #include "ultima/shared/core/base_object.h"
+#include "ultima/shared/core/rect.h"
 #include "ultima/shared/core/tree_item.h"
 
 namespace Ultima {
@@ -43,43 +43,54 @@ namespace Gfx {
 class VisualItem;
 class TextInput;
 class Popup;
-}
+} // namespace Gfx
 
-#define MESSAGEDEF(theClass) \
+#define MESSAGEDEF(theClass)                                                \
 	static ClassDef type() { return ClassDef(#theClass, &CMessage::type); } \
 	virtual ClassDef getType() const { return type(); }
-#define MESSAGEDEFP(theClass, baseClass) \
+#define MESSAGEDEFP(theClass, baseClass)                                     \
 	static ClassDef type() { return ClassDef(#theClass, &baseClass::type); } \
 	virtual ClassDef getType() const { return type(); }
 
-#define MESSAGE0(NAME) \
-	class NAME: public CMessage { \
-	public: NAME() : CMessage() {} \
-	MESSAGEDEF(NAME); \
+#define MESSAGE0(NAME)             \
+	class NAME : public CMessage { \
+	public:                        \
+		NAME() : CMessage() {}     \
+		MESSAGEDEF(NAME);          \
 	}
-#define MESSAGE1(NAME, F1, N1, V1) \
-	class NAME: public CMessage { \
-	public: F1 _##N1; \
-	NAME(F1 N1 = V1) : CMessage(), _##N1(N1) {} \
-	MESSAGEDEF(NAME); \
+#define MESSAGE1(NAME, F1, N1, V1)                  \
+	class NAME : public CMessage {                  \
+	public:                                         \
+		F1 _##N1;                                   \
+		NAME(F1 N1 = V1) : CMessage(), _##N1(N1) {} \
+		MESSAGEDEF(NAME);                           \
 	}
-#define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) \
-	class NAME: public CMessage { \
-	public: F1 _##N1; F2 _##N2; \
-	NAME(F1 N1 = V1, F2 N2 = V2) : CMessage(), _##N1(N1), _##N2(N2) {} \
-	MESSAGEDEF(NAME); \
+#define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2)                             \
+	class NAME : public CMessage {                                         \
+	public:                                                                \
+		F1 _##N1;                                                          \
+		F2 _##N2;                                                          \
+		NAME(F1 N1 = V1, F2 N2 = V2) : CMessage(), _##N1(N1), _##N2(N2) {} \
+		MESSAGEDEF(NAME);                                                  \
 	}
-#define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) \
-	class NAME: public CMessage { \
-	public: F1 _##N1; F2 _##N2; F3 _##N3; \
-	NAME(F1 N1 = V1, F2 N2 = V2, F3 N3 = V3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
-	MESSAGEDEF(NAME); \
+#define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3)                                        \
+	class NAME : public CMessage {                                                                \
+	public:                                                                                       \
+		F1 _##N1;                                                                                 \
+		F2 _##N2;                                                                                 \
+		F3 _##N3;                                                                                 \
+		NAME(F1 N1 = V1, F2 N2 = V2, F3 N3 = V3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
+		MESSAGEDEF(NAME);                                                                         \
 	}
-#define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) \
-	class NAME: public CMessage { \
-	public: F1 _##N1; F2 _##N2; F3 _##N3; F4 _##N4; \
-	NAME(F1 N1 = V1, F2 N2 = V2, F3 N3 = V3, F4 N4 = V4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
-	MESSAGEDEF(NAME); \
+#define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4)                                                   \
+	class NAME : public CMessage {                                                                                       \
+	public:                                                                                                              \
+		F1 _##N1;                                                                                                        \
+		F2 _##N2;                                                                                                        \
+		F3 _##N3;                                                                                                        \
+		F4 _##N4;                                                                                                        \
+		NAME(F1 N1 = V1, F2 N2 = V2, F3 N3 = V3, F4 N4 = V4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
+		MESSAGEDEF(NAME);                                                                                                \
 	}
 
 /**
@@ -91,6 +102,7 @@ private:
 	 * Find a map entry that supports the given class
 	 */
 	static const MSGMAP_ENTRY *findMapEntry(const TreeItem *treeItem, const ClassDef &classDef);
+
 public:
 	MESSAGEDEFP(CMessage, BaseObject);
 	CMessage();
@@ -100,14 +112,14 @@ public:
 	 * and optionally it's children
 	 */
 	bool execute(TreeItem *target, const ClassDef *classDef = nullptr,
-		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
+	             int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
 
 	/**
 	 * Executes the message, passing it on to the designated target,
 	 * and optionally it's children
 	 */
 	bool execute(const Common::String &target, const ClassDef *classDef = nullptr,
-		int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
+	             int flags = MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED);
 
 	/**
 	 * Makes the passed item execute the message
@@ -126,9 +138,10 @@ public:
 	virtual bool isDoubleClickMsg() const;
 };
 
-
 enum CMouseButton {
-	MB_LEFT = 1, MB_MIDDLE = 2, MB_RIGHT = 4
+	MB_LEFT = 1,
+	MB_MIDDLE = 2,
+	MB_RIGHT = 4
 };
 
 /**
@@ -138,12 +151,12 @@ class CMouseMsg : public CMessage {
 public:
 	int _buttons;
 	Point _mousePos;
+
 public:
 	MESSAGEDEF(CMouseMsg);
 
 	CMouseMsg() : _buttons(0) {}
-	CMouseMsg(const Point &pt, int buttons) :
-		_mousePos(pt), _buttons(buttons) {}
+	CMouseMsg(const Point &pt, int buttons) : _mousePos(pt), _buttons(buttons) {}
 };
 
 /**
@@ -203,11 +216,11 @@ public:
 class CMouseWheelMsg : public CMouseMsg {
 public:
 	bool _wheelUp;
+
 public:
 	MESSAGEDEFP(CMouseWheelMsg, CMouseMsg);
 	CMouseWheelMsg() : CMouseMsg(), _wheelUp(false) {}
-	CMouseWheelMsg(const Point &pt, bool wheelUp) :
-		CMouseMsg(pt, 0), _wheelUp(wheelUp) {}
+	CMouseWheelMsg(const Point &pt, bool wheelUp) : CMouseMsg(pt, 0), _wheelUp(wheelUp) {}
 };
 
 /**

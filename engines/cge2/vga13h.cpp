@@ -25,17 +25,17 @@
  * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
+#include "cge2/vga13h.h"
+#include "cge2/bitmap.h"
+#include "cge2/cge2.h"
+#include "cge2/cge2_main.h"
+#include "cge2/general.h"
+#include "cge2/text.h"
+#include "cge2/vga13h.h"
 #include "common/array.h"
 #include "common/config-manager.h"
 #include "common/rect.h"
 #include "graphics/palette.h"
-#include "cge2/general.h"
-#include "cge2/vga13h.h"
-#include "cge2/bitmap.h"
-#include "cge2/text.h"
-#include "cge2/cge2_main.h"
-#include "cge2/cge2.h"
-#include "cge2/vga13h.h"
 
 namespace CGE2 {
 
@@ -45,7 +45,7 @@ void V3D::sync(Common::Serializer &s) {
 	_z.sync(s);
 }
 
-FXP FXP::operator*(const FXP& x) const {
+FXP FXP::operator*(const FXP &x) const {
 	FXP y;
 	int32 t1 = (v >> 8) * x.v;
 	int32 t2 = ((v & 0xFF) * x.v) >> 8;
@@ -54,7 +54,7 @@ FXP FXP::operator*(const FXP& x) const {
 	return y;
 }
 
-FXP FXP::operator/(const FXP& x) const {
+FXP FXP::operator/(const FXP &x) const {
 	FXP y;
 	if (x.v != 0) {
 		int32 v1 = this->v;
@@ -95,8 +95,8 @@ void FXP::sync(Common::Serializer &s) {
 }
 
 Seq *getConstantSeq(bool seqFlag) {
-	const Seq seq1[] = { { 0, 0, 0, 0, 0, 0 } };
-	const Seq seq2[] = { { 0, 1, 0, 0, 0, 0 }, { 1, 0, 0, 0, 0, 0 } };
+	const Seq seq1[] = {{0, 0, 0, 0, 0, 0}};
+	const Seq seq2[] = {{0, 1, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0}};
 
 	Seq *seq;
 	if (seqFlag) {
@@ -115,26 +115,27 @@ byte Sprite::_constY = 0;
 byte Sprite::_follow = 0;
 
 Seq Sprite::_stdSeq8[] =
-{ { 0, 0, 0, 0, 0, 0 },
-  { 1, 1, 0, 0, 0, 0 },
-  { 2, 2, 0, 0, 0, 0 },
-  { 3, 3, 0, 0, 0, 0 },
-  { 4, 4, 0, 0, 0, 0 },
-  { 5, 5, 0, 0, 0, 0 },
-  { 6, 6, 0, 0, 0, 0 },
-  { 7, 7, 0, 0, 0, 0 },
+    {
+        {0, 0, 0, 0, 0, 0},
+        {1, 1, 0, 0, 0, 0},
+        {2, 2, 0, 0, 0, 0},
+        {3, 3, 0, 0, 0, 0},
+        {4, 4, 0, 0, 0, 0},
+        {5, 5, 0, 0, 0, 0},
+        {6, 6, 0, 0, 0, 0},
+        {7, 7, 0, 0, 0, 0},
 };
 
 SprExt::SprExt(CGE2Engine *vm)
-	: _p0(vm, 0, 0), _p1(vm, 0, 0),
-     _b0(nullptr), _b1(nullptr), _shpList(nullptr),
-     _location(0), _seq(nullptr), _name(nullptr) {
+    : _p0(vm, 0, 0), _p1(vm, 0, 0),
+      _b0(nullptr), _b1(nullptr), _shpList(nullptr),
+      _location(0), _seq(nullptr), _name(nullptr) {
 	for (int i = 0; i < kActions; i++)
 		_actions[i] = nullptr;
 }
 
 Sprite::Sprite(CGE2Engine *vm)
-	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
+    : _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
       _next(nullptr), _prev(nullptr), _time(0),
       _ext(nullptr), _ref(-1), _scene(0), _vm(vm),
       _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
@@ -145,10 +146,10 @@ Sprite::Sprite(CGE2Engine *vm)
 }
 
 Sprite::Sprite(CGE2Engine *vm, BitmapPtr shpP, int cnt)
-	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
-     _next(nullptr), _prev(nullptr), _time(0),
-     _ext(nullptr), _ref(-1), _scene(0), _vm(vm),
-     _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
+    : _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
+      _next(nullptr), _prev(nullptr), _time(0),
+      _ext(nullptr), _ref(-1), _scene(0), _vm(vm),
+      _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
@@ -316,15 +317,15 @@ Sprite *Sprite::expand() {
 	BitmapPtr shplist = new Bitmap[_shpCnt];
 
 	int cnt[kActions],
-		shpcnt = 0,
-		seqcnt = 0,
-		maxnow = 0,
-		maxnxt = 0;
+	    shpcnt = 0,
+	    seqcnt = 0,
+	    maxnow = 0,
+	    maxnxt = 0;
 
 	for (int i = 0; i < kActions; i++)
 		cnt[i] = 0;
 
-	for (int i = 0; i < kActions; i++){
+	for (int i = 0; i < kActions; i++) {
 		byte n = _actionCtrl[i]._cnt;
 		if (n)
 			_ext->_actions[i] = new CommandHandler::Command[n];
@@ -700,7 +701,7 @@ BitmapPtr Sprite::ghost() {
 	bmp->_w = e->_b1->_w;
 	bmp->_h = e->_b1->_h;
 	bmp->_b = new HideDesc[bmp->_h];
-	memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc)* bmp->_h);
+	memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
 	uint8 *v = new uint8[1];
 	*v = (e->_p1.y << 16) + e->_p1.x;
 	bmp->_v = v;
@@ -763,7 +764,7 @@ void Sprite::sync(Common::Serializer &s) {
 	s.syncAsSint16LE(_siz.y);
 
 	s.syncAsUint16LE(_time);
-	for (int i = 0; i < kActions; i++){
+	for (int i = 0; i < kActions; i++) {
 		s.syncAsByte(_actionCtrl[i]._ptr);
 		s.syncAsByte(_actionCtrl[i]._cnt);
 	}
@@ -936,7 +937,7 @@ uint8 Vga::closest(Dac *pal, const uint8 colR, const uint8 colG, const uint8 col
 		uint16 l = pal[i]._r + pal[i]._g + pal[i]._b;
 		if (!l)
 			l++;
-		int  r = f(pal[i]._r, l), g = f(pal[i]._g, l), b = f(pal[i]._b, l);
+		int r = f(pal[i]._r, l), g = f(pal[i]._g, l), b = f(pal[i]._b, l);
 		uint16 D = ((r > R) ? (r - R) : (R - r)) +
 		           ((g > G) ? (g - G) : (G - g)) +
 		           ((b > B) ? (b - B) : (B - b)) +
@@ -965,7 +966,7 @@ uint8 Vga::closest(Dac *pal, Dac x) {
 		long dR = R - pal[n]._r;
 		long dG = G - pal[n]._g;
 		long dB = B - pal[n]._b,
-			d = dR * dR + dG * dG + dB * dB;
+		     d = dR * dR + dG * dG + dB * dB;
 		if (d < D) {
 			idx = n;
 			D = d;
@@ -981,8 +982,8 @@ uint8 *Vga::glass(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB
 	if (x) {
 		for (uint16 i = 0; i < 256; i++) {
 			x[i] = closest(pal, ((uint16)(pal[i]._r) * colR) / 255,
-			                    ((uint16)(pal[i]._g) * colG) / 255,
-			                    ((uint16)(pal[i]._b) * colB) / 255);
+			               ((uint16)(pal[i]._g) * colG) / 255,
+			               ((uint16)(pal[i]._b) * colB) / 255);
 		}
 	}
 	return x;
@@ -1076,7 +1077,7 @@ void Vga::show() {
 			}
 
 			if ((p && spr->_pos3D._z > p->_pos3D._z) ||
-				(n && spr->_pos3D._z < n->_pos3D._z)) {
+			    (n && spr->_pos3D._z < n->_pos3D._z)) {
 				_showQ->insert(_showQ->remove(spr));
 			}
 			spr->_flags._zmov = false;
@@ -1208,7 +1209,7 @@ void Bitmap::hide(V2D pos) {
 	}
 }
 
-Speaker::Speaker(CGE2Engine *vm): Sprite(vm), _vm(vm) {
+Speaker::Speaker(CGE2Engine *vm) : Sprite(vm), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr SP = new Bitmap[2];
 	uint8 *map = Bitmap::makeSpeechBubbleTail(0, _vm->_font->_colorSet);

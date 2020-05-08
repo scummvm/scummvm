@@ -36,7 +36,6 @@ SubtitleRenderer::SubtitleRenderer(ToonEngine *vm) : _vm(vm) {
 SubtitleRenderer::~SubtitleRenderer() {
 }
 
-
 void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber, byte color) {
 	if (!_hasSubtitles || _tw.empty()) {
 		return;
@@ -60,7 +59,7 @@ void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber
 	}
 
 	_vm->drawCustomText(TOON_SCREEN_WIDTH / 2, TOON_SCREEN_HEIGHT, _tw.front()._text.c_str(), _subSurface, color);
-	_vm->_system->copyRectToScreen(_subSurface->getBasePtr(0, 0), _subSurface->pitch, 0, 0, _subSurface->w,  _subSurface->h);
+	_vm->_system->copyRectToScreen(_subSurface->getBasePtr(0, 0), _subSurface->pitch, 0, 0, _subSurface->w, _subSurface->h);
 }
 
 bool SubtitleRenderer::load(const Common::String &video) {
@@ -109,4 +108,4 @@ bool SubtitleRenderer::load(const Common::String &video) {
 	return _hasSubtitles;
 }
 
-}
+} // namespace Toon

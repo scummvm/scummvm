@@ -21,10 +21,10 @@
  */
 
 #include "backends/graphics/opengl/texture.h"
-#include "backends/graphics/opengl/shader.h"
-#include "backends/graphics/opengl/pipelines/pipeline.h"
-#include "backends/graphics/opengl/pipelines/clut8.h"
 #include "backends/graphics/opengl/framebuffer.h"
+#include "backends/graphics/opengl/pipelines/clut8.h"
+#include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/shader.h"
 
 #include "common/algorithm.h"
 #include "common/endian.h"
@@ -91,18 +91,18 @@ void GLTexture::bind() const {
 }
 
 void GLTexture::setSize(uint width, uint height) {
-	const uint oldWidth  = _width;
+	const uint oldWidth = _width;
 	const uint oldHeight = _height;
 
 	if (!g_context.NPOTSupported) {
-		_width  = Common::nextHigher2(width);
+		_width = Common::nextHigher2(width);
 		_height = Common::nextHigher2(height);
 	} else {
-		_width  = width;
+		_width = width;
 		_height = height;
 	}
 
-	_logicalWidth  = width;
+	_logicalWidth = width;
 	_logicalHeight = height;
 
 	// If a size is specified, allocate memory for it.
@@ -154,7 +154,7 @@ void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &sr
 	// 3) Use glTexSubImage2D per line changed. This is what the old OpenGL
 	//    graphics manager did but it is much slower! Thus, we do not use it.
 	GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, area.top, src.w, area.height(),
-	                       _glFormat, _glType, src.getBasePtr(0, area.top)));
+	                        _glFormat, _glType, src.getBasePtr(0, area.top)));
 }
 
 //
@@ -470,7 +470,7 @@ void TextureRGB555::updateGLTexture() {
 		for (int width = dirtyArea.width(); width > 0; --width) {
 			const uint16 color = *src++;
 
-			*dst++ =   ((color & 0x7C00) << 1)                             // R
+			*dst++ = ((color & 0x7C00) << 1)                               // R
 			         | (((color & 0x03E0) << 1) | ((color & 0x0200) >> 4)) // G
 			         | (color & 0x001F);                                   // B
 		}
@@ -489,14 +489,14 @@ TextureRGBA8888Swap::TextureRGBA8888Swap()
 #else
     : FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888
 #endif
-      {
+{
 }
 
 Graphics::PixelFormat TextureRGBA8888Swap::getFormat() const {
 #ifdef SCUMM_LITTLE_ENDIAN
 	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0); // RGBA8888
 #else
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24); // ABGR8888
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);                                            // ABGR8888
 #endif
 }
 
@@ -627,7 +627,7 @@ void TextureCLUT8GPU::setColorKey(uint colorKey) {
 	// to avoid color fringes due to filtering.
 	// Erasing the color data is not a problem as the palette is always fully re-initialized
 	// before setting the key color.
-	_palette[colorKey * 4    ] = 0x00;
+	_palette[colorKey * 4] = 0x00;
 	_palette[colorKey * 4 + 1] = 0x00;
 	_palette[colorKey * 4 + 2] = 0x00;
 	_palette[colorKey * 4 + 3] = 0x00;
@@ -669,9 +669,9 @@ void TextureCLUT8GPU::updateGLTexture() {
 #ifdef SCUMM_LITTLE_ENDIAN
 		                Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24) // ABGR8888
 #else
-		                Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0) // RGBA8888
+		                Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)                                // RGBA8888
 #endif
-		               );
+		);
 
 		_paletteTexture.updateArea(Common::Rect(256, 1), palSurface);
 		_paletteDirty = false;

@@ -22,18 +22,18 @@
  */
 
 #include "tinsel/background.h"
-#include "tinsel/cliprect.h"	// object clip rect defs
+#include "tinsel/cliprect.h" // object clip rect defs
 #include "tinsel/font.h"
 #include "tinsel/graphics.h"
 #include "tinsel/multiobj.h"
-#include "tinsel/sched.h"	// process sheduler defs
 #include "tinsel/object.h"
-#include "tinsel/pid.h"	// process identifiers
+#include "tinsel/pid.h"   // process identifiers
+#include "tinsel/sched.h" // process sheduler defs
 #include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
-Background::Background(Font* font) : _font(font), _pCurBgnd(nullptr), _hBgPal(0), _BGspeed(0), _hBackground(0), _bDoFadeIn(false), _bgReels(0) {
+Background::Background(Font *font) : _font(font), _pCurBgnd(nullptr), _hBgPal(0), _BGspeed(0), _hBackground(0), _bDoFadeIn(false), _bgReels(0) {
 	for (int i = 0; i < MAX_BG; i++) {
 		_pBG[i] = nullptr;
 		_thisAnim[i].pObject = nullptr;
@@ -46,32 +46,33 @@ Background::Background(Font* font) : _font(font), _pCurBgnd(nullptr), _hBgPal(0)
 void Background::InitBackground() {
 	// FIXME: Avoid non-const global vars
 	static PLAYFIELD playfield[] = {
-		{	// FIELD WORLD
-			NULL,		// display list
-			0,			// init field x
-			0,			// init field y
-			0,			// x vel
-			0,			// y vel
-			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
-			false		// moved flag
-		},
-		{	// FIELD STATUS
-			NULL,		// display list
-			0,			// init field x
-			0,			// init field y
-			0,			// x vel
-			0,			// y vel
-			Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),	// clip rect
-			false		// moved flag
-		}
-	};
+	    {
+	        // FIELD WORLD
+	        NULL,                                            // display list
+	        0,                                               // init field x
+	        0,                                               // init field y
+	        0,                                               // x vel
+	        0,                                               // y vel
+	        Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), // clip rect
+	        false                                            // moved flag
+	    },
+	    {
+	        // FIELD STATUS
+	        NULL,                                            // display list
+	        0,                                               // init field x
+	        0,                                               // init field y
+	        0,                                               // x vel
+	        0,                                               // y vel
+	        Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), // clip rect
+	        false                                            // moved flag
+	    }};
 
 	// set current background
 	_pCurBgnd = new BACKGND();
 	_pCurBgnd->rgbSkyColor = BLACK;
 	_pCurBgnd->ptInitWorld = Common::Point(0, 0);
 	_pCurBgnd->rcScrollLimits = Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	_pCurBgnd->refreshRate = 0;	// no background update process
+	_pCurBgnd->refreshRate = 0; // no background update process
 	_pCurBgnd->pXscrollTable = nullptr;
 	_pCurBgnd->pYscrollTable = nullptr;
 	_pCurBgnd->numPlayfields = 2;
@@ -82,7 +83,7 @@ void Background::InitBackground() {
 	SetBgndColor(_pCurBgnd->rgbSkyColor);
 
 	// start of playfield array
-	PLAYFIELD* pPlayfield = _pCurBgnd->fieldArray;
+	PLAYFIELD *pPlayfield = _pCurBgnd->fieldArray;
 
 	// for each background playfield
 	for (int i = 0; i < _pCurBgnd->numPlayfields; i++, pPlayfield++) {
@@ -110,7 +111,7 @@ void Background::InitBackground() {
  */
 
 void Background::PlayfieldSetPos(int which, int newXpos, int newYpos) {
-	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
+	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
 	assert(_pCurBgnd != NULL);
@@ -137,7 +138,7 @@ void Background::PlayfieldSetPos(int which, int newXpos, int newYpos) {
  */
 
 void Background::PlayfieldGetPos(int which, int *pXpos, int *pYpos) {
-	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
+	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
 	assert(_pCurBgnd != NULL);
@@ -171,7 +172,7 @@ int Background::PlayfieldGetCenterX(int which) {
 	pPlayfield = _pCurBgnd->fieldArray + which;
 
 	// get current integer position
-	return fracToInt(pPlayfield->fieldX) + SCREEN_WIDTH/2;
+	return fracToInt(pPlayfield->fieldX) + SCREEN_WIDTH / 2;
 }
 
 /**
@@ -180,7 +181,7 @@ int Background::PlayfieldGetCenterX(int which) {
  */
 
 OBJECT **Background::GetPlayfieldList(int which) {
-	PLAYFIELD *pPlayfield;	// pointer to relavent playfield
+	PLAYFIELD *pPlayfield; // pointer to relavent playfield
 
 	// make sure there is a background
 	assert(_pCurBgnd != NULL);
@@ -202,13 +203,13 @@ OBJECT **Background::GetPlayfieldList(int which) {
  */
 
 void Background::DrawBackgnd() {
-	int i;			// playfield counter
-	PLAYFIELD *pPlay;	// playfield pointer
-	int prevX, prevY;	// save interger part of position
-	Common::Point ptWin;	// window top left
+	int i;               // playfield counter
+	PLAYFIELD *pPlay;    // playfield pointer
+	int prevX, prevY;    // save interger part of position
+	Common::Point ptWin; // window top left
 
 	if (_pCurBgnd == NULL)
-		return;		// no current background
+		return; // no current background
 
 	// scroll each background playfield
 	for (i = 0; i < _pCurBgnd->numPlayfields; i++) {
@@ -236,7 +237,7 @@ void Background::DrawBackgnd() {
 
 		// generate clipping rects for all objects that have moved etc.
 		FindMovingObjects(&pPlay->pDispList, &ptWin,
-			&pPlay->rcClip,	false, pPlay->bMoved);
+		                  &pPlay->rcClip, false, pPlay->bMoved);
 
 		// clear playfield moved flag
 		pPlay->bMoved = false;
@@ -251,7 +252,7 @@ void Background::DrawBackgnd() {
 		// clear the clip rectangle on the virtual screen
 		// for each background playfield
 		for (i = 0; i < _pCurBgnd->numPlayfields; i++) {
-			Common::Rect rcPlayClip;	// clip rect for this playfield
+			Common::Rect rcPlayClip; // clip rect for this playfield
 
 			// get pointer to correct playfield
 			pPlay = _pCurBgnd->fieldArray + i;
@@ -262,7 +263,7 @@ void Background::DrawBackgnd() {
 
 			if (IntersectRectangle(rcPlayClip, pPlay->rcClip, *r))
 				// redraw all objects within this clipping rect
-				UpdateClipRect(&pPlay->pDispList, &ptWin,	&rcPlayClip);
+				UpdateClipRect(&pPlay->pDispList, &ptWin, &rcPlayClip);
 		}
 	}
 
@@ -298,10 +299,10 @@ void Background::SetBackPal(SCNHANDLE hPal) {
 }
 
 void Background::DropBackground() {
-	_pBG[0] = nullptr;	// No background
+	_pBG[0] = nullptr; // No background
 
 	if (!TinselV2)
-		_hBgPal = 0;	// No background palette
+		_hBgPal = 0; // No background palette
 }
 
 void Background::ChangePalette(SCNHANDLE hPal) {

@@ -37,6 +37,7 @@ protected:
 	winid_t story_win, status_win;
 	uint mainfg, mainbg;
 	uint statusfg, statusbg;
+
 public:
 	/**
 	 * Constructor

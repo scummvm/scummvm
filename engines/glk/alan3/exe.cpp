@@ -21,28 +21,28 @@
  */
 
 #include "glk/alan3/exe.h"
+#include "common/stream.h"
 #include "glk/alan3/actor.h"
 #include "glk/alan3/alan3.h"
 #include "glk/alan3/current.h"
 #include "glk/alan3/decode.h"
 #include "glk/alan3/event.h"
 #include "glk/alan3/glkio.h"
-#include "glk/alan3/lists.h"
 #include "glk/alan3/instance.h"
 #include "glk/alan3/inter.h"
+#include "glk/alan3/lists.h"
 #include "glk/alan3/memory.h"
 #include "glk/alan3/msg.h"
-#include "glk/alan3/output.h"
 #include "glk/alan3/options.h"
+#include "glk/alan3/output.h"
 #include "glk/alan3/save.h"
 #include "glk/alan3/score.h"
 #include "glk/alan3/state.h"
-#include "glk/alan3/syserr.h"
 #include "glk/alan3/sysdep.h"
+#include "glk/alan3/syserr.h"
 #include "glk/alan3/types.h"
 #include "glk/alan3/utils.h"
 #include "glk/alan3/word.h"
-#include "common/stream.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -51,7 +51,7 @@ namespace Alan3 {
 Common::SeekableReadStream *textFile;
 
 // PUBLIC DATA - formerly method statics
-bool printFlag;				// Printing already?
+bool printFlag; // Printing already?
 
 /* PRIVATE CONSTANTS */
 
@@ -59,26 +59,26 @@ bool printFlag;				// Printing already?
 
 /*======================================================================*/
 void print(Aword fpos, Aword len) {
-	char str[2 * WIDTH];          /* String buffer */
-	uint outlen = 0;              /* Current output length */
+	char str[2 * WIDTH]; /* String buffer */
+	uint outlen = 0;     /* Current output length */
 	int ch = 0;
 	int i;
-	long savfp = 0;     /* Temporary saved text file position */
+	long savfp = 0; /* Temporary saved text file position */
 	bool savedPrintFlag = printFlag;
-	void *info = NULL;      /* Saved decoding info */
+	void *info = NULL; /* Saved decoding info */
 
+	if (len == 0)
+		return;
 
-	if (len == 0) return;
-
-	if (isHere(HERO, /*TRUE*/ DIRECT)) {   /* Check if the player will see it */
-		if (printFlag) {            /* Already printing? */
+	if (isHere(HERO, /*TRUE*/ DIRECT)) { /* Check if the player will see it */
+		if (printFlag) {                 /* Already printing? */
 			/* Save current text file position and/or decoding info */
 			if (header->pack)
 				info = pushDecode();
 			else
 				savfp = textFile->pos();
 		}
-		printFlag = TRUE;           /* We're printing now! */
+		printFlag = TRUE; /* We're printing now! */
 
 		/* Position to start of text */
 		textFile->seek(fpos + header->stringOffset);
@@ -88,7 +88,7 @@ void print(Aword fpos, Aword len) {
 		for (outlen = 0; outlen != len; outlen = outlen + strlen(str)) {
 			/* Fill the buffer from the beginning */
 			for (i = 0; i <= WIDTH || (i > WIDTH && ch != ' '); i++) {
-				if (outlen + i == len)  /* No more characters? */
+				if (outlen + i == len) /* No more characters? */
 					break;
 				if (header->pack)
 					ch = decodeChar();
@@ -96,7 +96,7 @@ void print(Aword fpos, Aword len) {
 					ch = textFile->readByte();
 
 				if (ch == EOFChar)
-					break;				// Or end of text?
+					break; // Or end of text?
 
 				str[i] = ch;
 			}
@@ -116,12 +116,10 @@ void print(Aword fpos, Aword len) {
 	}
 }
 
-
 /*======================================================================*/
 void sys(Aword fpos, Aword len) {
 	syserr("sys calls are unsupported");
 }
-
 
 /*======================================================================*/
 char *getStringFromFile(Aword fpos, Aword len) {
@@ -145,8 +143,6 @@ char *getStringFromFile(Aword fpos, Aword len) {
 	return buf;
 }
 
-
-
 /*======================================================================*/
 void score(Aword sc) {
 	if (sc == 0) {
@@ -163,12 +159,10 @@ void score(Aword sc) {
 	}
 }
 
-
 /*======================================================================*/
 void visits(Aword v) {
 	current.visits = v;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void sayUndoneCommand(char *words) {
@@ -182,7 +176,6 @@ static void sayUndoneCommand(char *words) {
 	printMessageWithParameters(M_UNDONE, messageParameters);
 }
 
-
 /*======================================================================*/
 void undo(CONTEXT) {
 	forgetGameState();
@@ -195,7 +188,6 @@ void undo(CONTEXT) {
 
 	LONG_JUMP_LABEL("returnUndo")
 }
-
 
 /*======================================================================*/
 void quitGame(CONTEXT) {
@@ -244,8 +236,6 @@ void quitGame(CONTEXT) {
 	syserr("Fallthrough in QUIT");
 }
 
-
-
 /*======================================================================*/
 void restartGame(CONTEXT) {
 	Aint previousLocation = current.location;
@@ -260,8 +250,6 @@ void restartGame(CONTEXT) {
 
 	current.location = previousLocation;
 }
-
-
 
 /*======================================================================*/
 void cancelEvent(Aword theEvent) {
@@ -280,15 +268,14 @@ void cancelEvent(Aword theEvent) {
 		}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void increaseEventQueue(void) {
 	eventQueue = (EventQueueEntry *)realloc(eventQueue, (eventQueueTop + 2) * sizeof(EventQueueEntry));
-	if (eventQueue == NULL) syserr("Out of memory in increaseEventQueue()");
+	if (eventQueue == NULL)
+		syserr("Out of memory in increaseEventQueue()");
 
 	eventQueueSize = eventQueueTop + 2;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void moveEvent(int to, int from) {
@@ -297,12 +284,12 @@ static void moveEvent(int to, int from) {
 	eventQueue[to].where = eventQueue[from].where;
 }
 
-
 /*======================================================================*/
 void schedule(Aword event, Aword where, Aword after) {
 	uint i;
 
-	if (event == 0) syserr("NULL event");
+	if (event == 0)
+		syserr("NULL event");
 
 	cancelEvent(event);
 	/* Check for overflow */
@@ -322,7 +309,6 @@ void schedule(Aword event, Aword where, Aword after) {
 	eventQueueTop++;
 }
 
-
 // TODO Move to string.c?
 /*======================================================================*/
 Aptr concat(Aptr as1, Aptr as2) {
@@ -333,7 +319,6 @@ Aptr concat(Aptr as1, Aptr as2) {
 	strcat(result, s2);
 	return toAptr(result);
 }
-
 
 /*----------------------------------------------------------------------*/
 static char *stripCharsFromStringForwards(int count, char *initialString, char **theRest) {
@@ -369,13 +354,11 @@ static char *stripCharsFromStringBackwards(Aint count, char *initialString, char
 	return strippedString;
 }
 
-
 /*----------------------------------------------------------------------*/
 static int countLeadingBlanks(char *string, int position) {
 	static char blanks[] = " ";
 	return strspn(&string[position], blanks);
 }
-
 
 /*----------------------------------------------------------------------*/
 static int skipWordForwards(char *string, int position) {
@@ -387,7 +370,6 @@ static int skipWordForwards(char *string, int position) {
 		;
 	return i;
 }
-
 
 /*----------------------------------------------------------------------*/
 static char *stripWordsFromStringForwards(Aint count, char *initialString, char **theRest) {
@@ -413,7 +395,6 @@ static char *stripWordsFromStringForwards(Aint count, char *initialString, char 
 	return (stripped);
 }
 
-
 /*----------------------------------------------------------------------*/
 static int skipWordBackwards(char *string, int position) {
 	char separators[] = " .,?";
@@ -423,7 +404,6 @@ static int skipWordBackwards(char *string, int position) {
 		;
 	return i;
 }
-
 
 /*----------------------------------------------------------------------*/
 static int countTrailingBlanks(char *string, int position) {
@@ -437,7 +417,6 @@ static int countTrailingBlanks(char *string, int position) {
 	return (skippedChars);
 }
 
-
 /*----------------------------------------------------------------------*/
 static char *stripWordsFromStringBackwards(Aint count, char *initialString, char **theRest) {
 	int skippedChars;
@@ -450,7 +429,8 @@ static char *stripWordsFromStringBackwards(Aint count, char *initialString, char
 		position -= 1;
 		/* Ignore trailing blanks */
 		skippedChars = countTrailingBlanks(initialString, position);
-		if (position - skippedChars < 0) break; /* No more words to strip */
+		if (position - skippedChars < 0)
+			break; /* No more words to strip */
 		position -= skippedChars;
 		position = skipWordBackwards(initialString, position);
 	}
@@ -469,8 +449,6 @@ static char *stripWordsFromStringBackwards(Aint count, char *initialString, char
 	(*theRest)[position] = '\0';
 	return (stripped);
 }
-
-
 
 /*======================================================================*/
 Aptr strip(bool stripFromBeginningNotEnd, int count, bool stripWordsNotChars, int id, int atr) {
@@ -493,7 +471,6 @@ Aptr strip(bool stripFromBeginningNotEnd, int count, bool stripWordsNotChars, in
 	return toAptr(theStripped);
 }
 
-
 /*======================================================================*/
 int getContainerMember(int container, int index, bool directly) {
 	uint i;
@@ -510,13 +487,11 @@ int getContainerMember(int container, int index, bool directly) {
 	return 0;
 }
 
-
 /***********************************************************************\
 
   Description Handling
 
 \***********************************************************************/
-
 
 /*======================================================================*/
 void empty(CONTEXT, int cnt, int whr) {
@@ -526,8 +501,6 @@ void empty(CONTEXT, int cnt, int whr) {
 		if (isIn(i, cnt, DIRECT))
 			CALL2(locate, i, whr)
 }
-
-
 
 /*======================================================================*/
 void use(CONTEXT, int actor, int script) {
@@ -564,8 +537,6 @@ void stop(int act) {
 	gameStateChanged = TRUE;
 }
 
-
-
 static int randomValue = 0;
 /*----------------------------------------------------------------------*/
 int randomInteger(int from, int to) {
@@ -590,8 +561,6 @@ int randomInteger(int from, int to) {
 	}
 }
 
-
-
 /*----------------------------------------------------------------------*/
 bool between(int val, int low, int high) {
 	if (high > low)
@@ -599,8 +568,6 @@ bool between(int val, int low, int high) {
 	else
 		return high <= val && val <= low;
 }
-
-
 
 /*======================================================================*/
 bool contains(Aptr string, Aptr substring) {
@@ -614,7 +581,6 @@ bool contains(Aptr string, Aptr substring) {
 	return found;
 }
 
-
 /*======================================================================*/
 bool streq(char a[], char b[]) {
 	bool eq;
@@ -626,8 +592,6 @@ bool streq(char a[], char b[]) {
 
 	return eq;
 }
-
-
 
 /*======================================================================*/
 void startTranscript(void) {
@@ -646,7 +610,6 @@ void startTranscript(void) {
 		}
 	}
 }
-
 
 /*======================================================================*/
 void stopTranscript(void) {

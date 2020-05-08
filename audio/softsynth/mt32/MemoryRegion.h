@@ -20,14 +20,21 @@
 
 #include <cstddef>
 
-#include "globals.h"
-#include "Types.h"
 #include "Structures.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
 enum MemoryRegionType {
-	MR_PatchTemp, MR_RhythmTemp, MR_TimbreTemp, MR_Patches, MR_Timbres, MR_System, MR_Display, MR_Reset
+	MR_PatchTemp,
+	MR_RhythmTemp,
+	MR_TimbreTemp,
+	MR_Patches,
+	MR_Timbres,
+	MR_System,
+	MR_Display,
+	MR_Reset
 };
 
 class Synth;
@@ -37,6 +44,7 @@ private:
 	Synth *synth;
 	Bit8u *realMemory;
 	Bit8u *maxTable;
+
 public:
 	MemoryRegionType type;
 	Bit32u startAddr, entrySize, entries;

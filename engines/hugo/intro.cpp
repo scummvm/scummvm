@@ -32,14 +32,14 @@
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
 
-#include "hugo/hugo.h"
-#include "hugo/intro.h"
+#include "hugo/display.h"
 #include "hugo/file.h"
 #include "hugo/game.h"
-#include "hugo/util.h"
-#include "hugo/display.h"
+#include "hugo/hugo.h"
+#include "hugo/intro.h"
 #include "hugo/sound.h"
 #include "hugo/text.h"
+#include "hugo/util.h"
 
 namespace Hugo {
 
@@ -113,8 +113,8 @@ bool intro_v1d::introPlay() {
 			break;
 
 		case 1:
-			_vm->_screen->drawShape(20, 92,_TLIGHTMAGENTA,_TMAGENTA);
-			_vm->_screen->drawShape(250,92,_TLIGHTMAGENTA,_TMAGENTA);
+			_vm->_screen->drawShape(20, 92, _TLIGHTMAGENTA, _TMAGENTA);
+			_vm->_screen->drawShape(250, 92, _TLIGHTMAGENTA, _TMAGENTA);
 
 			// TROMAN, size 10-5
 			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
@@ -295,7 +295,7 @@ void intro_v3d::introInit() {
 	if (_vm->_boot._registered)
 		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
-		sprintf(buffer,"%s  Shareware Version", _vm->getCopyrightString());
+		sprintf(buffer, "%s  Shareware Version", _vm->getCopyrightString());
 
 	// TROMAN, size 10-5
 	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))

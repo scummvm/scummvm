@@ -31,11 +31,11 @@ namespace Glk {
 namespace Frotz {
 
 enum PicturesMode {
-	kMONO  = 0,
-	kTEXT  = 1,
-	kCGA   = 2,
-	kMCGA  = 3,
-	kEGA   = 4,
+	kMONO = 0,
+	kTEXT = 1,
+	kCGA = 2,
+	kMCGA = 3,
+	kEGA = 4,
 	kAmiga = 5
 };
 
@@ -59,14 +59,16 @@ class Pics : public Common::Archive {
 		 * Constructor
 		 */
 		Entry() : _number(0), _width(0), _height(0), _flags(0), _dataOffset(0), _dataSize(0),
-			_paletteOffset(0) {}
+		          _paletteOffset(0) {}
 	};
+
 private:
 	Common::String _filename;
-	Common::Array<Entry> _index;	///< list of entries
+	Common::Array<Entry> _index; ///< list of entries
 	uint _entrySize;
 	uint _version;
 	Common::Array<byte> *_palette;
+
 private:
 	/**
 	 * Returns the filename for the pictures archive
@@ -77,11 +79,13 @@ private:
 	 * Read in the palette
 	 */
 	void loadPalette(Common::File &f, const Entry &e, Common::Array<byte> &palette) const;
+
 public:
 	/**
 	 * Returns true if an mg1 file exists for the game
 	 */
 	static bool exists();
+
 public:
 	/**
 	 * Constructor

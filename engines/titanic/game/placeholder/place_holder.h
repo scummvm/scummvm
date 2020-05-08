@@ -30,6 +30,7 @@ namespace Titanic {
 class CPlaceHolder : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool VisibleMsg(CVisibleMsg *msg);
+
 public:
 	CLASSDEF;
 

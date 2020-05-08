@@ -20,7 +20,7 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
@@ -29,8 +29,8 @@
 #undef main
 #endif // main
 
-#include "file.h"
 #include "swords.h"
+#include "file.h"
 
 #define MONSTERS_COUNT 150
 

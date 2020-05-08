@@ -27,9 +27,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMusicVoiceMute, CMusicControl)
-	ON_MESSAGE(MusicSettingChangedMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(QueryMusicControlSettingMsg)
+ON_MESSAGE(MusicSettingChangedMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(QueryMusicControlSettingMsg)
 END_MESSAGE_MAP()
 
 bool CMusicVoiceMute::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {

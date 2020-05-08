@@ -28,15 +28,15 @@ namespace Ultima8 {
 
 class AudioSample {
 protected:
-	uint32  _sampleRate;
-	uint32  _bits;
-	bool    _stereo;
-	int     _frameSize;
-	uint32  _decompressorSize;
-	uint32  _length;
+	uint32 _sampleRate;
+	uint32 _bits;
+	bool _stereo;
+	int _frameSize;
+	uint32 _decompressorSize;
+	uint32 _length;
 
-	uint32  _bufferSize;
-	uint8   const *_buffer;
+	uint32 _bufferSize;
+	uint8 const *_buffer;
 
 public:
 	AudioSample(const uint8 *buffer, uint32 size, uint32 bits, bool stereo);

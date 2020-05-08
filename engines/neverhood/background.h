@@ -23,9 +23,9 @@
 #ifndef NEVERHOOD_BACKGROUND_H
 #define NEVERHOOD_BACKGROUND_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/entity.h"
 #include "neverhood/graphics.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/resource.h"
 
 namespace Neverhood {
@@ -38,7 +38,8 @@ public:
 	BaseSurface *getSurface() { return _surface; }
 	void createSurface(int surfacePriority, int16 width, int16 height);
 	void load(uint32 fileHash);
-	SpriteResource& getSpriteResource() { return _spriteResource; }
+	SpriteResource &getSpriteResource() { return _spriteResource; }
+
 protected:
 	BaseSurface *_surface;
 	SpriteResource _spriteResource;

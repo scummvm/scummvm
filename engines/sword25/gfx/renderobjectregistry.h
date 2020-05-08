@@ -41,9 +41,8 @@ namespace Sword25 {
 
 class RenderObject;
 
-class RenderObjectRegistry :
-			public ObjectRegistry<RenderObject>,
-			public Common::Singleton<RenderObjectRegistry> {
+class RenderObjectRegistry : public ObjectRegistry<RenderObject>,
+                             public Common::Singleton<RenderObjectRegistry> {
 };
 
 } // End of namespace Sword25

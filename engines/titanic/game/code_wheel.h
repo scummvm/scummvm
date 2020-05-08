@@ -34,12 +34,14 @@ class CodeWheel : public CBomb {
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool CheckCodeWheelsMsg(CCheckCodeWheelsMsg *msg);
+
 private:
 	int _correctValue;
 	int _value;
 	bool _matched;
 	// German specific fields
 	int _row, _column;
+
 public:
 	CLASSDEF;
 	CodeWheel();

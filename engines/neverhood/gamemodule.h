@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_GAMEMODULE_H
 #define NEVERHOOD_GAMEMODULE_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 
 namespace Neverhood {
 
@@ -61,6 +61,7 @@ public:
 	int getPreviousModuleNum() { return _moduleNum; }
 
 	void createModule(int moduleNum, int which);
+
 protected:
 	int _moduleNum;
 	Entity *_prevChildObject;
@@ -82,6 +83,7 @@ public:
 	NonRepeatingRandomNumbers(Common::RandomSource *rnd, int count);
 	int getNumber();
 	void removeNumber(int number);
+
 protected:
 	Common::RandomSource *_rnd;
 };

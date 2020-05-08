@@ -33,10 +33,12 @@ class CHammerDispensor : public CBackground {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 private:
 	bool _isOpen;
 	bool _panUp;
 	int _state;
+
 public:
 	CLASSDEF;
 	CHammerDispensor();

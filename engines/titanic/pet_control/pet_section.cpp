@@ -20,23 +20,20 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/pet_control/pet_section.h"
+#include "common/textconsole.h"
 #include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 static const uint PALETTE1[6] = {
-	0xA7C0DB, 0x9CFFFE, 0x73AEFF, 0xA7C0DB, 0x9CFFFE, 0
-};
+    0xA7C0DB, 0x9CFFFE, 0x73AEFF, 0xA7C0DB, 0x9CFFFE, 0};
 
 static const uint PALETTE2[6] = {
-	0x10101, 0x1013C, 0xC80101, 0x10101, 0x800101, 0
-};
+    0x10101, 0x1013C, 0xC80101, 0x10101, 0x800101, 0};
 
 static const uint PALETTE3[5] = {
-	0x10101, 0x1013C, 0xC80101, 0x10101, 0x800101
-};
+    0x10101, 0x1013C, 0xC80101, 0x10101, 0x800101};
 
 void CPetSection::displayMessage(const CString &msg) {
 	CTextControl *text = getText();
@@ -84,9 +81,12 @@ const uint *CPetSection::getColorTable(int tableNum) {
 	}
 
 	switch (tableNum) {
-	case 1: return PALETTE1;
-	case 2: return PALETTE2;
-	default: return PALETTE3;
+	case 1:
+		return PALETTE1;
+	case 2:
+		return PALETTE2;
+	default:
+		return PALETTE3;
 	}
 }
 

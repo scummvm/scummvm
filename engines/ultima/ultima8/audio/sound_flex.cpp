@@ -22,9 +22,9 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/audio/sound_flex.h"
-#include "ultima/ultima8/audio/sonarc_audio_sample.h"
 #include "ultima/ultima8/audio/raw_audio_sample.h"
+#include "ultima/ultima8/audio/sonarc_audio_sample.h"
+#include "ultima/ultima8/audio/sound_flex.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
 #include "common/memstream.h"
@@ -33,7 +33,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(SoundFlex, Archive)
-
 
 SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nullptr) {
 	uint32 size;
@@ -69,7 +68,7 @@ SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nul
 
 SoundFlex::~SoundFlex() {
 	Archive::uncache();
-	delete [] _samples;
+	delete[] _samples;
 }
 
 AudioSample *SoundFlex::getSample(uint32 index) {
@@ -80,20 +79,23 @@ AudioSample *SoundFlex::getSample(uint32 index) {
 }
 
 void SoundFlex::cache(uint32 index) {
-	if (index >= _count) return;
+	if (index >= _count)
+		return;
 
 	if (!_samples) {
-		_samples = new AudioSample * [_count];
+		_samples = new AudioSample *[_count];
 		Std::memset(_samples, 0, sizeof(AudioSample *) * _count);
 	}
 
-	if (_samples[index]) return;
+	if (_samples[index])
+		return;
 
 	// This will cache the data
 	uint32 size;
 	uint8 *buf = getRawObject(index, &size);
 
-	if (!buf || !size) return;
+	if (!buf || !size)
+		return;
 
 	if (Std::strncmp(reinterpret_cast<const char *>(buf), "ASFX", 4) == 0) {
 		// After the 32 byte header, ASFX (crusader audio) is just raw data in stereo
@@ -105,16 +107,20 @@ void SoundFlex::cache(uint32 index) {
 }
 
 void SoundFlex::uncache(uint32 index) {
-	if (index >= _count) return;
-	if (!_samples) return;
+	if (index >= _count)
+		return;
+	if (!_samples)
+		return;
 
 	delete _samples[index];
 	_samples[index] = nullptr;
 }
 
 bool SoundFlex::isCached(uint32 index) const {
-	if (index >= _count) return false;
-	if (!_samples) return false;
+	if (index >= _count)
+		return false;
+	if (!_samples)
+		return false;
 
 	return (_samples[index] != nullptr);
 }

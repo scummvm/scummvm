@@ -23,8 +23,8 @@
 #include "common/debug.h"
 
 #include "pink/archive.h"
-#include "pink/pink.h"
 #include "pink/objects/walk/walk_location.h"
+#include "pink/pink.h"
 
 namespace Pink {
 

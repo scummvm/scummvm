@@ -29,7 +29,7 @@ namespace Adl {
 
 class AdlEngine_v3 : public AdlEngine_v2 {
 public:
-	~AdlEngine_v3() override { }
+	~AdlEngine_v3() override {}
 
 protected:
 	AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd);

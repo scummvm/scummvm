@@ -39,7 +39,7 @@ void AGOSEngine_Feeble::doOutput(const byte *src, uint len) {
 			if (_curWindow == 3) {
 				if ((_newLines >= _textWindow->scrollY) && (_newLines < (_textWindow->scrollY + 3)))
 					sendWindow(*src);
-				if (*src == '\n')		// Do two top lines of text only
+				if (*src == '\n') // Do two top lines of text only
 					_newLines++;
 				src++;
 			}
@@ -48,7 +48,7 @@ void AGOSEngine_Feeble::doOutput(const byte *src, uint len) {
 				if (_curWindow == 3) {
 					if (_newLines == (_textWindow->scrollY + 7))
 						sendWindow(*src);
-					if (*src == '\n')	// Do two top lines of text only
+					if (*src == '\n') // Do two top lines of text only
 						_newLines++;
 					src++;
 				}
@@ -70,7 +70,7 @@ void AGOSEngine::doOutput(const byte *src, uint len) {
 
 	while (len-- != 0) {
 		if (*src != 12 && _textWindow->iconPtr != NULL &&
-				_fcsData1[idx = getWindowNum(_textWindow)] != 2) {
+		    _fcsData1[idx = getWindowNum(_textWindow)] != 2) {
 
 			_fcsData1[idx] = 2;
 			_fcsData2[idx] = 1;
@@ -223,7 +223,7 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	} else if ((c == 1 && _language != Common::HE_ISR) || (c == 8)) {
 		if (_language == Common::HE_ISR) {
 			if (b >= 64 && b < 91)
-				width = _hebrewCharWidths [b - 64];
+				width = _hebrewCharWidths[b - 64];
 
 			if (window->textLength != 0) {
 				window->textLength--;
@@ -269,7 +269,7 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 
 		if (_language == Common::HE_ISR) {
 			if (c >= 64 && c < 91)
-				width = _hebrewCharWidths [c - 64];
+				width = _hebrewCharWidths[c - 64];
 			window->textColumnOffset -= width;
 			if (window->textColumnOffset >= width) {
 				window->textColumnOffset += 8;
@@ -341,7 +341,7 @@ void AGOSEngine::windowNewLine(WindowBlock *window) {
 	} else {
 		if (window->textRow == window->height) {
 			if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
-				getGameType() == GType_WW) {
+			    getGameType() == GType_WW) {
 				windowScroll(window);
 			}
 		} else {
@@ -360,7 +360,7 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 		uint16 w, h;
 
 		w = window->width * 8;
-		h = (window->height -1) * 8;
+		h = (window->height - 1) * 8;
 
 		dst = (byte *)screen->getBasePtr(window->x * 8, window->y);
 		src = dst + 8 * screen->pitch;

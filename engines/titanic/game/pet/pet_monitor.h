@@ -31,6 +31,7 @@ namespace Titanic {
 class CPETMonitor : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+
 public:
 	CLASSDEF;
 

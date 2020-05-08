@@ -22,18 +22,17 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/networking/curl/curljsonrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include "common/json.h"
+#include <curl/curl.h>
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url) :
-	CurlRequest(nullptr, ecb, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES),
-	_buffer(new byte[CURL_JSON_REQUEST_BUFFER_SIZE]) {}
+CurlJsonRequest::CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url) : CurlRequest(nullptr, ecb, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES),
+                                                                                           _buffer(new byte[CURL_JSON_REQUEST_BUFFER_SIZE]) {}
 
 CurlJsonRequest::~CurlJsonRequest() {
 	delete _jsonCallback;
@@ -50,7 +49,7 @@ char *CurlJsonRequest::getPreparedContents() {
 	uint32 size = _contentsStream.size();
 	for (uint32 i = 0; i < size; ++i) {
 		if (result[i] == '\n')
-				result[i] = ' '; //yeah, kinda stupid
+			result[i] = ' '; //yeah, kinda stupid
 		else if (result[i] < 0x20 || result[i] > 0x7f)
 			result[i] = '.';
 	}
@@ -62,7 +61,8 @@ char *CurlJsonRequest::getPreparedContents() {
 }
 
 void CurlJsonRequest::handle() {
-	if (!_stream) _stream = makeStream();
+	if (!_stream)
+		_stream = makeStream();
 
 	if (_stream) {
 		uint32 readBytes = _stream->read(_buffer, CURL_JSON_REQUEST_BUFFER_SIZE);
@@ -107,7 +107,8 @@ bool CurlJsonRequest::jsonIsObject(Common::JSONValue *item, const char *warningP
 		return false;
 	}
 
-	if (item->isObject()) return true;
+	if (item->isObject())
+		return true;
 
 	warning("%s: passed item is not an object", warningPrefix);
 	debug(9, "%s", item->stringify(true).c_str());
@@ -124,7 +125,8 @@ bool CurlJsonRequest::jsonContainsObject(Common::JSONObject &item, const char *k
 		return false;
 	}
 
-	if (item.getVal(key)->isObject()) return true;
+	if (item.getVal(key)->isObject())
+		return true;
 
 	warning("%s: passed item's \"%s\" attribute is not an object", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
@@ -141,7 +143,8 @@ bool CurlJsonRequest::jsonContainsString(Common::JSONObject &item, const char *k
 		return false;
 	}
 
-	if (item.getVal(key)->isString()) return true;
+	if (item.getVal(key)->isString())
+		return true;
 
 	warning("%s: passed item's \"%s\" attribute is not a string", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
@@ -158,7 +161,8 @@ bool CurlJsonRequest::jsonContainsIntegerNumber(Common::JSONObject &item, const 
 		return false;
 	}
 
-	if (item.getVal(key)->isIntegerNumber()) return true;
+	if (item.getVal(key)->isIntegerNumber())
+		return true;
 
 	warning("%s: passed item's \"%s\" attribute is not an integer", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
@@ -175,7 +179,8 @@ bool CurlJsonRequest::jsonContainsArray(Common::JSONObject &item, const char *ke
 		return false;
 	}
 
-	if (item.getVal(key)->isArray()) return true;
+	if (item.getVal(key)->isArray())
+		return true;
 
 	warning("%s: passed item's \"%s\" attribute is not an array", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());
@@ -192,7 +197,8 @@ bool CurlJsonRequest::jsonContainsStringOrIntegerNumber(Common::JSONObject &item
 		return false;
 	}
 
-	if (item.getVal(key)->isString() || item.getVal(key)->isIntegerNumber()) return true;
+	if (item.getVal(key)->isString() || item.getVal(key)->isIntegerNumber())
+		return true;
 
 	warning("%s: passed item's \"%s\" attribute is neither a string or an integer", warningPrefix, key);
 	debug(9, "%s", item.getVal(key)->stringify(true).c_str());

@@ -48,26 +48,20 @@ Common::Platform CineEngine::getPlatform() const { return _gameDescription->desc
 } // End of namespace Cine
 
 static const PlainGameDescriptor cineGames[] = {
-	{"fw", "Future Wars"},
-	{"os", "Operation Stealth"},
-	{0, 0}
-};
+    {"fw", "Future Wars"},
+    {"os", "Operation Stealth"},
+    {0, 0}};
 
 #include "cine/detection_tables.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false
-		}
-	},
+    {GAMEOPTION_ORIGINAL_SAVELOAD,
+     {_s("Use original save/load screens"),
+      _s("Use the original save/load screens instead of the ScummVM ones"),
+      "originalsaveload",
+      false}},
 
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+    AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
@@ -99,17 +93,15 @@ public:
 };
 
 bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave);
 }
 
 bool Cine::CineEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -208,9 +200,9 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CINE)
-	REGISTER_PLUGIN_DYNAMIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
+REGISTER_PLUGIN_STATIC(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
 #endif
 
 namespace Cine {

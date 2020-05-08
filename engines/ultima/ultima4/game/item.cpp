@@ -21,17 +21,17 @@
  */
 
 #include "ultima/ultima4/game/item.h"
-#include "ultima/ultima4/game/codex.h"
-#include "ultima/ultima4/game/game.h"
-#include "ultima/ultima4/game/names.h"
-#include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/controllers/alpha_action_controller.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/game/codex.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/names.h"
+#include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/game/portal.h"
+#include "ultima/ultima4/game/weapon.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/dungeon.h"
@@ -47,137 +47,78 @@ namespace Ultima4 {
 Items *g_items;
 
 const ItemLocation Items::ITEMS[N_ITEMS] = {
-	{
-		"Mandrake Root", nullptr, "mandrake1",
-		&Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
-	},
-	{
-		"Mandrake Root", nullptr, "mandrake2",
-		&Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY
-	},
-	{
-		"Nightshade", nullptr, "nightshade1",
-		&Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
-	},
-	{
-		"Nightshade", nullptr, "nightshade2",
-		&Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY
-	},
-	{
-		"the Bell of Courage", "bell", "bell",
-		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useBBC, ITEM_BELL, 0
-	},
-	{
-		"the Book of Truth", "book", "book",
-		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useBBC, ITEM_BOOK, 0
-	},
-	{
-		"the Candle of Love", "candle", "candle",
-		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useBBC, ITEM_CANDLE, 0
-	},
-	{
-		"A Silver Horn", "horn", "horn",
-		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useHorn, ITEM_HORN, 0
-	},
-	{
-		"the Wheel from the H.M.S. Cape", "wheel", "wheel",
-		&Items::isItemInInventory, &Items::putItemInInventory, &Items::useWheel, ITEM_WHEEL, 0
-	},
-	{
-		"the Skull of Modain the Wizard", "skull", "skull",
-		&Items::isSkullInInventory, &Items::putItemInInventory, &Items::useSkull, ITEM_SKULL, SC_NEWMOONS
-	},
-	{
-		"the Red Stone", "red", "redstone",
-		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_RED, 0
-	},
-	{
-		"the Orange Stone", "orange", "orangestone",
-		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_ORANGE, 0
-	},
-	{
-		"the Yellow Stone", "yellow", "yellowstone",
-		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_YELLOW, 0
-	},
-	{
-		"the Green Stone", "green", "greenstone",
-		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_GREEN, 0
-	},
-	{
-		"the Blue Stone", "blue", "bluestone",
-		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_BLUE, 0
-	},
-	{
-		"the Purple Stone", "purple", "purplestone",
-		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_PURPLE, 0
-	},
-	{
-		"the Black Stone", "black", "blackstone",
-		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_BLACK, SC_NEWMOONS
-	},
-	{
-		"the White Stone", "white", "whitestone",
-		&Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_WHITE, 0
-	},
+    {"Mandrake Root", nullptr, "mandrake1",
+     &Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY},
+    {"Mandrake Root", nullptr, "mandrake2",
+     &Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_MANDRAKE, SC_NEWMOONS | SC_REAGENTDELAY},
+    {"Nightshade", nullptr, "nightshade1",
+     &Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY},
+    {"Nightshade", nullptr, "nightshade2",
+     &Items::isReagentInInventory, &Items::putReagentInInventory, nullptr, REAG_NIGHTSHADE, SC_NEWMOONS | SC_REAGENTDELAY},
+    {"the Bell of Courage", "bell", "bell",
+     &Items::isItemInInventory, &Items::putItemInInventory, &Items::useBBC, ITEM_BELL, 0},
+    {"the Book of Truth", "book", "book",
+     &Items::isItemInInventory, &Items::putItemInInventory, &Items::useBBC, ITEM_BOOK, 0},
+    {"the Candle of Love", "candle", "candle",
+     &Items::isItemInInventory, &Items::putItemInInventory, &Items::useBBC, ITEM_CANDLE, 0},
+    {"A Silver Horn", "horn", "horn",
+     &Items::isItemInInventory, &Items::putItemInInventory, &Items::useHorn, ITEM_HORN, 0},
+    {"the Wheel from the H.M.S. Cape", "wheel", "wheel",
+     &Items::isItemInInventory, &Items::putItemInInventory, &Items::useWheel, ITEM_WHEEL, 0},
+    {"the Skull of Modain the Wizard", "skull", "skull",
+     &Items::isSkullInInventory, &Items::putItemInInventory, &Items::useSkull, ITEM_SKULL, SC_NEWMOONS},
+    {"the Red Stone", "red", "redstone",
+     &Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_RED, 0},
+    {"the Orange Stone", "orange", "orangestone",
+     &Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_ORANGE, 0},
+    {"the Yellow Stone", "yellow", "yellowstone",
+     &Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_YELLOW, 0},
+    {"the Green Stone", "green", "greenstone",
+     &Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_GREEN, 0},
+    {"the Blue Stone", "blue", "bluestone",
+     &Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_BLUE, 0},
+    {"the Purple Stone", "purple", "purplestone",
+     &Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_PURPLE, 0},
+    {"the Black Stone", "black", "blackstone",
+     &Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_BLACK, SC_NEWMOONS},
+    {"the White Stone", "white", "whitestone",
+     &Items::isStoneInInventory, &Items::putStoneInInventory, &Items::useStone, STONE_WHITE, 0},
 
-	/* handlers for using generic objects */
-	{ nullptr, "stone",  nullptr, &Items::isStoneInInventory, nullptr, &Items::useStone, -1, 0 },
-	{ nullptr, "stones", nullptr, &Items::isStoneInInventory, nullptr, &Items::useStone, -1, 0 },
-	{ nullptr, "key",    nullptr, &Items::isItemInInventory, nullptr, &Items::useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
-	{ nullptr, "keys",   nullptr, &Items::isItemInInventory, nullptr, &Items::useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0 },
+    /* handlers for using generic objects */
+    {nullptr, "stone", nullptr, &Items::isStoneInInventory, nullptr, &Items::useStone, -1, 0},
+    {nullptr, "stones", nullptr, &Items::isStoneInInventory, nullptr, &Items::useStone, -1, 0},
+    {nullptr, "key", nullptr, &Items::isItemInInventory, nullptr, &Items::useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0},
+    {nullptr, "keys", nullptr, &Items::isItemInInventory, nullptr, &Items::useKey, (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T), 0},
 
-	/* Lycaeum telescope */
-	{ nullptr, nullptr, "telescope", nullptr, &Items::useTelescope, nullptr, 0, 0 },
+    /* Lycaeum telescope */
+    {nullptr, nullptr, "telescope", nullptr, &Items::useTelescope, nullptr, 0, 0},
 
-	{
-		"Mystic Armor", nullptr, "mysticarmor",
-		&Items::isMysticInInventory, &Items::putMysticInInventory, nullptr, ARMR_MYSTICROBES, SC_FULLAVATAR
-	},
-	{
-		"Mystic Swords", nullptr, "mysticswords",
-		&Items::isMysticInInventory, &Items::putMysticInInventory, nullptr, WEAP_MYSTICSWORD, SC_FULLAVATAR
-	},
-	{
-		"the sulfury remains of an ancient Sosarian Laser Gun. It turns to ash in your fingers", nullptr, "lasergun", // lol, where'd that come from?
-		//Looks like someone was experimenting with "maps.xml". It effectively increments sulfur ash by one due to '16' being an invalid weapon index.
-		&Items::isWeaponInInventory, &Items::putWeaponInInventory, nullptr, 16, 0
-	},
-	{
-		"the rune of Honesty", nullptr, "honestyrune",
-		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_HONESTY, 0
-	},
-	{
-		"the rune of Compassion", nullptr, "compassionrune",
-		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_COMPASSION, 0
-	},
-	{
-		"the rune of Valor", nullptr, "valorrune",
-		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_VALOR, 0
-	},
-	{
-		"the rune of Justice", nullptr, "justicerune",
-		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_JUSTICE, 0
-	},
-	{
-		"the rune of Sacrifice", nullptr, "sacrificerune",
-		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_SACRIFICE, 0
-	},
-	{
-		"the rune of Honor", nullptr, "honorrune",
-		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_HONOR, 0
-	},
-	{
-		"the rune of Spirituality", nullptr, "spiritualityrune",
-		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_SPIRITUALITY, 0
-	},
-	{
-		"the rune of Humility", nullptr, "humilityrune",
-		&Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_HUMILITY, 0
-	}
-};
+    {"Mystic Armor", nullptr, "mysticarmor",
+     &Items::isMysticInInventory, &Items::putMysticInInventory, nullptr, ARMR_MYSTICROBES, SC_FULLAVATAR},
+    {"Mystic Swords", nullptr, "mysticswords",
+     &Items::isMysticInInventory, &Items::putMysticInInventory, nullptr, WEAP_MYSTICSWORD, SC_FULLAVATAR},
+    {"the sulfury remains of an ancient Sosarian Laser Gun. It turns to ash in your fingers", nullptr, "lasergun", // lol, where'd that come from?
+     //Looks like someone was experimenting with "maps.xml". It effectively increments sulfur ash by one due to '16' being an invalid weapon index.
+     &Items::isWeaponInInventory, &Items::putWeaponInInventory, nullptr, 16, 0},
+    {"the rune of Honesty", nullptr, "honestyrune",
+     &Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_HONESTY, 0},
+    {"the rune of Compassion", nullptr, "compassionrune",
+     &Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_COMPASSION, 0},
+    {"the rune of Valor", nullptr, "valorrune",
+     &Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_VALOR, 0},
+    {"the rune of Justice", nullptr, "justicerune",
+     &Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_JUSTICE, 0},
+    {"the rune of Sacrifice", nullptr, "sacrificerune",
+     &Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_SACRIFICE, 0},
+    {"the rune of Honor", nullptr, "honorrune",
+     &Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_HONOR, 0},
+    {"the rune of Spirituality", nullptr, "spiritualityrune",
+     &Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_SPIRITUALITY, 0},
+    {"the rune of Humility", nullptr, "humilityrune",
+     &Items::isRuneInInventory, &Items::putRuneInInventory, nullptr, RUNE_HUMILITY, 0}};
 
 Items::Items() : destroyAllCreaturesCallback(nullptr),
-		needStoneNames(0), stoneMask(0) {
+                 needStoneNames(0), stoneMask(0) {
 	g_items = this;
 }
 
@@ -236,7 +177,8 @@ bool Items::isStoneInInventory(int virt) {
 	if (virt == -1)
 		return (g_ultima->_saveGame->_stones > 0);
 	/* specific test: does the party have a specific stone? */
-	else return g_ultima->_saveGame->_stones & virt;
+	else
+		return g_ultima->_saveGame->_stones & virt;
 }
 
 void Items::putStoneInInventory(int virt) {
@@ -320,7 +262,6 @@ void Items::putItemInInventory(int item) {
 	case ITEM_WHEEL:
 		itemName = "Wheel";
 		break;
-
 	}
 	U4IOS::testFlightPassCheckPoint("Player got rune: " + itemName);
 #endif
@@ -354,10 +295,12 @@ void Items::useBBC(int item) {
 			U4IOS::testFlightPassCheckPoint("As you light the Candle the Earth Trembles!");
 #endif
 			g_ultima->_saveGame->_items |= ITEM_CANDLE_USED;
-		} else g_screen->screenMessage("\nHmm...No effect!\n");
+		} else
+			g_screen->screenMessage("\nHmm...No effect!\n");
 	}
 	/* somewhere else */
-	else g_screen->screenMessage("\nHmm...No effect!\n");
+	else
+		g_screen->screenMessage("\nHmm...No effect!\n");
 }
 
 void Items::useHorn(int item) {
@@ -369,7 +312,8 @@ void Items::useWheel(int item) {
 	if ((g_context->_transportContext == TRANSPORT_SHIP) && (g_ultima->_saveGame->_shipHull == 50)) {
 		g_screen->screenMessage("\nOnce mounted, the Wheel glows with a blue light!\n");
 		g_context->_party->setShipHull(99);
-	} else g_screen->screenMessage("\nHmm...No effect!\n");
+	} else
+		g_screen->screenMessage("\nHmm...No effect!\n");
 }
 
 void Items::useSkull(int item) {
@@ -414,10 +358,10 @@ void Items::useStone(int item) {
 	MapCoords coords;
 	byte stone = static_cast<byte>(item);
 
-	static byte truth   = STONE_WHITE | STONE_PURPLE | STONE_GREEN  | STONE_BLUE;
-	static byte love    = STONE_WHITE | STONE_YELLOW | STONE_GREEN  | STONE_ORANGE;
-	static byte courage = STONE_WHITE | STONE_RED    | STONE_PURPLE | STONE_ORANGE;
-	static byte *attr   = nullptr;
+	static byte truth = STONE_WHITE | STONE_PURPLE | STONE_GREEN | STONE_BLUE;
+	static byte love = STONE_WHITE | STONE_YELLOW | STONE_GREEN | STONE_ORANGE;
+	static byte courage = STONE_WHITE | STONE_RED | STONE_PURPLE | STONE_ORANGE;
+	static byte *attr = nullptr;
 
 	g_context->_location->getCurrentPosition(&coords);
 
@@ -458,7 +402,8 @@ void Items::useStone(int item) {
 						stoneMask = 0; /* reset the mask so you can try again */
 						return;
 					}
-				} else error("Not in an altar room!");
+				} else
+					error("Not in an altar room!");
 
 				/* see if we have all the stones, if not, get more names! */
 				if (attr && needStoneNames) {
@@ -504,7 +449,8 @@ void Items::useStone(int item) {
 #endif
 						g_screen->screenMessage("\nThou doth find one third of the Three Part Key!\n");
 						g_ultima->_saveGame->_items |= key;
-					} else g_screen->screenMessage("\nHmm...No effect!\n");
+					} else
+						g_screen->screenMessage("\nHmm...No effect!\n");
 
 					stoneMask = 0; /* reset the mask so you can try again */
 				}
@@ -536,13 +482,14 @@ void Items::useStone(int item) {
 	 * in the abyss, on an altar to place the stones
 	 */
 	else if ((g_context->_location->_map->_id == MAP_ABYSS) &&
-			(g_context->_location->_context & CTX_DUNGEON) &&
-			(static_cast<Dungeon *>(g_context->_location->_map)->currentToken() == DUNGEON_ALTAR)) {
+	         (g_context->_location->_context & CTX_DUNGEON) &&
+	         (static_cast<Dungeon *>(g_context->_location->_map)->currentToken() == DUNGEON_ALTAR)) {
 
 		int virtueMask = getBaseVirtues((Virtue)g_context->_location->_coords.z);
 		if (virtueMask > 0)
 			g_screen->screenMessage("\n\nAs thou doth approach, a voice rings out: What virtue dost stem from %s?\n\n", getBaseVirtueName(virtueMask));
-		else g_screen->screenMessage("\n\nA voice rings out:  What virtue exists independently of Truth, Love, and Courage?\n\n");
+		else
+			g_screen->screenMessage("\n\nA voice rings out:  What virtue exists independently of Truth, Love, and Courage?\n\n");
 #ifdef IOS_ULTIMA4
 		U4IOS::IOSConversationHelper::setIntroString("Which virtue?");
 #endif
@@ -572,7 +519,8 @@ void Items::useStone(int item) {
 		U4IOS::IOSConversationHelper::setIntroString("Which color?");
 #endif
 		itemHandleStones(gameGetInput());
-	} else g_screen->screenMessage("\nNo place to Use them!\n");
+	} else
+		g_screen->screenMessage("\nNo place to Use them!\n");
 	// This used to say "\nNo place to Use them!\nHmm...No effect!\n"
 	// That doesn't match U4DOS; does it match another?
 }
@@ -662,7 +610,7 @@ bool Items::itemConditionsMet(byte conditions) {
 	int i;
 
 	if ((conditions & SC_NEWMOONS) &&
-	        !(g_ultima->_saveGame->_trammelPhase == 0 && g_ultima->_saveGame->_feluccaPhase == 0))
+	    !(g_ultima->_saveGame->_trammelPhase == 0 && g_ultima->_saveGame->_feluccaPhase == 0))
 		return false;
 
 	if (conditions & SC_FULLAVATAR) {
@@ -673,7 +621,7 @@ bool Items::itemConditionsMet(byte conditions) {
 	}
 
 	if ((conditions & SC_REAGENTDELAY) &&
-	        (g_ultima->_saveGame->_moves & 0xF0) == g_ultima->_saveGame->_lastReagent)
+	    (g_ultima->_saveGame->_moves & 0xF0) == g_ultima->_saveGame->_lastReagent)
 		return false;
 
 	return true;
@@ -685,7 +633,7 @@ const ItemLocation *Items::itemAtLocation(const Map *map, const Coords &coords) 
 		if (!ITEMS[i]._locationLabel)
 			continue;
 		if (map->getLabel(ITEMS[i]._locationLabel) == coords &&
-		        itemConditionsMet(ITEMS[i]._conditions))
+		    itemConditionsMet(ITEMS[i]._conditions))
 			return &(ITEMS[i]);
 	}
 	return nullptr;
@@ -697,7 +645,7 @@ void Items::itemUse(const Common::String &shortName) {
 
 	for (i = 0; i < N_ITEMS; i++) {
 		if (ITEMS[i]._shortName &&
-		        scumm_stricmp(ITEMS[i]._shortName, shortName.c_str()) == 0) {
+		    scumm_stricmp(ITEMS[i]._shortName, shortName.c_str()) == 0) {
 
 			item = &ITEMS[i];
 
@@ -727,7 +675,7 @@ void Items::itemHandleStones(const Common::String &color) {
 
 	for (int i = 0; i < 8; i++) {
 		if (scumm_stricmp(color.c_str(), getStoneName((Virtue)i)) == 0 &&
-		        isStoneInInventory(1 << i)) {
+		    isStoneInInventory(1 << i)) {
 			found = true;
 			itemUse(color.c_str());
 		}

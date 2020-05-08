@@ -32,21 +32,21 @@
 #include "backends/graphics/openpandora/op-graphics.h"
 #include "backends/platform/openpandora/op-sdl.h"
 
+#include "common/events.h"
 #include "common/translation.h"
 #include "common/util.h"
-#include "common/events.h"
 
 enum {
 	/* Touchscreen TapMode */
-	TAPMODE_LEFT        = 0,
-	TAPMODE_RIGHT       = 1,
-	TAPMODE_HOVER       = 2,
-	TAPMODE_HOVER_DPAD  = 3
+	TAPMODE_LEFT = 0,
+	TAPMODE_RIGHT = 1,
+	TAPMODE_HOVER = 2,
+	TAPMODE_HOVER_DPAD = 3
 };
 
 OPEventSource::OPEventSource()
-	: _buttonStateL(false),
-	  _tapmodeLevel(TAPMODE_LEFT) {
+    : _buttonStateL(false),
+      _tapmodeLevel(TAPMODE_LEFT) {
 }
 
 void OPEventSource::ToggleTapMode() {
@@ -139,7 +139,7 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			break;
 #endif
 		default:
-		  break;
+			break;
 		}
 	}
 

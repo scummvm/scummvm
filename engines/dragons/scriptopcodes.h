@@ -26,7 +26,6 @@
 #include "common/func.h"
 #include "common/str.h"
 
-
 namespace Dragons {
 
 #define DRAGONS_NUM_SCRIPT_OPCODES 0x23
@@ -47,7 +46,7 @@ struct ScriptOpCall {
 	uint32 readUint32();
 };
 
-typedef Common::Functor1<ScriptOpCall&, void> ScriptOpcode;
+typedef Common::Functor1<ScriptOpCall &, void> ScriptOpcode;
 
 class DragonFLG;
 class SpecialOpcodes;
@@ -77,12 +76,11 @@ protected:
 	void freeOpcodes();
 	void updateReturn(ScriptOpCall &scriptOpCall, uint16 size);
 
-
 	// Opcodes
 	void opUnk1(ScriptOpCall &scriptOpCall);
 	void opAddDialogChoice(ScriptOpCall &scriptOpCall);
 	void opPopDialogStack(ScriptOpCall &scriptOpCall);
-	void opExecuteScript(ScriptOpCall &scriptOpCall); //op 4
+	void opExecuteScript(ScriptOpCall &scriptOpCall);     //op 4
 	void opSetActorDirection(ScriptOpCall &scriptOpCall); //op 5
 	void opPerformActionOnObject(ScriptOpCall &scriptOpCall);
 	void opMoveObjectToScene(ScriptOpCall &scriptOpCall);

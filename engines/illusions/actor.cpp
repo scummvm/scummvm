@@ -20,12 +20,12 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/actor.h"
 #include "illusions/camera.h"
 #include "illusions/cursor.h"
 #include "illusions/dictionary.h"
 #include "illusions/fixedpoint.h"
+#include "illusions/illusions.h"
 #include "illusions/input.h"
 #include "illusions/screen.h"
 #include "illusions/scriptopcodes.h"
@@ -55,7 +55,7 @@ void DefaultSequences::set(uint32 sequenceId, uint32 newSequenceId) {
 // Actor
 
 Actor::Actor(IllusionsEngine *vm)
-	: _vm(vm), _pauseCtr(0) {
+    : _vm(vm), _pauseCtr(0) {
 	_pauseCtr = 0;
 	_spriteFlags = 0;
 	_drawFlags = 0;
@@ -99,7 +99,7 @@ Actor::Actor(IllusionsEngine *vm)
 	_notifyId3C = 0;
 
 	_controlRoutine = 0;
-	setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Controls>(_vm->_controls, &Controls::actorControlRoutine));
+	setControlRoutine(new Common::Functor2Mem<Control *, uint32, void, Controls>(_vm->_controls, &Controls::actorControlRoutine));
 
 	_walkCallerThreadId1 = 0;
 	_pathAngle = 0;
@@ -113,7 +113,6 @@ Actor::Actor(IllusionsEngine *vm)
 	_pathPointIndex = 0;
 	_pathPointsCount = 0;
 	_pathNode = 0;
-
 }
 
 Actor::~Actor() {
@@ -187,7 +186,7 @@ bool Actor::findNamedPoint(uint32 namedPointId, Common::Point &pt) {
 // Control
 
 Control::Control(IllusionsEngine *vm)
-	: _vm(vm) {
+    : _vm(vm) {
 	_flags = 0;
 	_pauseCtr = 0;
 	_priority = 0;
@@ -218,7 +217,6 @@ void Control::pause() {
 
 	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200))
 		_actor->destroySurface();
-
 }
 
 void Control::unpause() {
@@ -228,7 +226,7 @@ void Control::unpause() {
 		if (_objectId == Illusions::CURSOR_OBJECT_ID)
 			_vm->setCursorControl(this);
 	}
-  
+
 	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200)) {
 		SurfInfo surfInfo;
 		ActorType *actorType = _vm->_dict->findActorType(_actorTypeId);
@@ -491,8 +489,8 @@ void Control::getCollisionRectAccurate(Common::Rect &collisionRect) {
 
 	if (_actor && _actor->_frameIndex) {
 		collisionRect = Common::Rect(-_position.x, -_position.y,
-			-_position.x + _actor->_surfInfo._dimensions._width - 1,
-			-_position.y + _actor->_surfInfo._dimensions._height - 1);
+		                             -_position.x + _actor->_surfInfo._dimensions._width - 1,
+		                             -_position.y + _actor->_surfInfo._dimensions._height - 1);
 	} else {
 		collisionRect = Common::Rect(_bounds._topLeft.x, _bounds._topLeft.y, _bounds._bottomRight.x, _bounds._bottomRight.y);
 	}
@@ -511,7 +509,6 @@ void Control::getCollisionRectAccurate(Common::Rect &collisionRect) {
 		Common::Point screenOffs = _vm->_camera->getScreenOffset();
 		collisionRect.translate(screenOffs.x, screenOffs.y);
 	}
-
 }
 
 void Control::getCollisionRect(Common::Rect &collisionRect) {
@@ -614,7 +611,7 @@ void Control::sequenceActor() {
 		return;
 
 	OpCall opCall;
-  	bool sequenceFinished = false;
+	bool sequenceFinished = false;
 
 	opCall._result = 0;
 	_actor->_seqCodeValue3 -= _actor->_seqCodeValue1;
@@ -645,7 +642,7 @@ void Control::sequenceActor() {
 		//debug(1, "New frame %d", _actor->_newFrameIndex);
 		setActorFrameIndex(_actor->_newFrameIndex);
 		if (_vm->getGameId() == kGameIdBBDOU &&
-			!(_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE) && (_actor->_flags & Illusions::ACTOR_FLAG_1000) && (_objectId != Illusions::CURSOR_OBJECT_ID)) {
+		    !(_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE) && (_actor->_flags & Illusions::ACTOR_FLAG_1000) && (_objectId != Illusions::CURSOR_OBJECT_ID)) {
 			appearActor();
 			_actor->_flags &= ~Illusions::ACTOR_FLAG_1000;
 		}
@@ -738,8 +735,8 @@ void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 cal
 	pathNode = createPath(destPt);
 
 	if (pathNode->size() == 1 &&
-		_actor->_position.x == (*pathNode)[0].x &&
-		_actor->_position.y == (*pathNode)[0].y) {
+	    _actor->_position.x == (*pathNode)[0].x &&
+	    _actor->_position.y == (*pathNode)[0].y) {
 		delete pathNode;
 		_vm->notifyThreadId(callerThreadId2);
 	} else {
@@ -756,7 +753,6 @@ void Control::startMoveActor(uint32 sequenceId, Common::Point destPt, uint32 cal
 		_actor->_pathPointIndex = 0;
 		_vm->_input->discardEvent(kEventSkip);
 	}
-
 }
 
 PointArray *Control::createPath(Common::Point destPt) {
@@ -836,7 +832,6 @@ void Control::updateActorMovement(uint32 deltaTime) {
 			}
 
 			_actor->_pathFlag50 = true;
-
 		}
 
 		FixedPoint16 deltaX24, deltaY24;
@@ -867,10 +862,10 @@ void Control::updateActorMovement(uint32 deltaTime) {
 		}
 
 		if (ABS(deltaX24) < ABS(deltaX << 16) ||
-			ABS(deltaY24) < ABS(deltaY << 16)) {
+		    ABS(deltaY24) < ABS(deltaY << 16)) {
 			FixedPoint16 newX = (prevPt.x << 16) + deltaX24;
 			FixedPoint16 newY = (prevPt.y << 16) + deltaY24;
-			if (newX == _actor->_posXShl &&	newY == _actor->_posYShl) {
+			if (newX == _actor->_posXShl && newY == _actor->_posYShl) {
 				_actor->_pathCtrX += deltaTime;
 			} else {
 				_actor->_pathCtrX = 0;
@@ -906,7 +901,6 @@ void Control::updateActorMovement(uint32 deltaTime) {
 		}
 
 	} while (fastWalked);
-
 }
 
 void Control::refreshSequenceCode() {
@@ -932,7 +926,7 @@ void Control::fillActor(byte color) {
 bool Control::isPixelCollision(Common::Point &pt) {
 	Frame *frame = &(*_actor->_frames)[_actor->_frameIndex - 1];
 	return _vm->_screen->isSpritePixelSolid(pt, _position, _actor->_position,
-		_actor->_surfInfo, _actor->_scale, frame->_flags, frame->_compressedPixels);
+	                                        _actor->_surfInfo, _actor->_scale, frame->_flags, frame->_compressedPixels);
 }
 
 void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entryTblPtr, uint32 notifyThreadId) {
@@ -989,7 +983,6 @@ void Control::startSequenceActorIntern(uint32 sequenceId, int value, byte *entry
 
 	if (_vm->getGameId() == kGameIdBBDOU)
 		sequenceActor();
-
 }
 
 void Control::execSequenceOpcode(OpCall &opCall) {
@@ -999,7 +992,7 @@ void Control::execSequenceOpcode(OpCall &opCall) {
 // Controls
 
 Controls::Controls(IllusionsEngine *vm)
-	: _vm(vm) {
+    : _vm(vm) {
 	_sequenceOpcodes = new SequenceOpcodes(_vm);
 	_nextTempObjectId = 0;
 }
@@ -1166,7 +1159,7 @@ void Controls::placeDialogItem(uint16 objectNum, uint32 actorTypeId, uint32 sequ
 	control->readPointsConfig(actorType->_pointsConfig);
 	control->_actorTypeId = actorTypeId;
 	control->_actor = actor;
-	actor->setControlRoutine(new Common::Functor2Mem<Control*, uint32, void, Controls>(this, &Controls::dialogItemControlRoutine));
+	actor->setControlRoutine(new Common::Functor2Mem<Control *, uint32, void, Controls>(this, &Controls::dialogItemControlRoutine));
 	actor->_choiceJumpOffs = choiceJumpOffs;
 	actor->createSurface(actorType->_surfInfo);
 	actor->_position = placePt;
@@ -1224,7 +1217,7 @@ void Controls::threadIsDead(uint32 threadId) {
 	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
 		Control *control = *it;
 		if (control->_actor &&
-			(control->_actor->_notifyThreadId1 == threadId || control->_actor->_notifyId3C == threadId)) {
+		    (control->_actor->_notifyThreadId1 == threadId || control->_actor->_notifyId3C == threadId)) {
 			control->_actor->_notifyThreadId1 = 0;
 			control->_actor->_notifyId3C = 0;
 		}
@@ -1279,14 +1272,14 @@ bool Controls::getOverlappedObject(Control *control, Common::Point pt, Control *
 	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
 		Control *testControl = *it;
 		if (testControl != control && testControl->_pauseCtr == 0 &&
-			(testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
-			(!testControl->_actor || (testControl->_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE))) {
+		    (testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
+		    (!testControl->_actor || (testControl->_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE))) {
 			Common::Rect collisionRect;
 			testControl->getCollisionRect(collisionRect);
 			if (!collisionRect.isEmpty() && collisionRect.contains(pt)) {
 				uint32 testPriority = testControl->getOverlapPriority();
 				if ((!foundControl || foundPriority < testPriority) &&
-					testPriority >= minPriorityExt) {
+				    testPriority >= minPriorityExt) {
 					foundControl = testControl;
 					foundPriority = testPriority;
 				}
@@ -1313,15 +1306,15 @@ bool Controls::getOverlappedObjectAccurate(Control *control, Common::Point pt, C
 	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
 		Control *testControl = *it;
 		if (testControl != control && testControl->_pauseCtr == 0 &&
-			(testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
-			(!testControl->_actor || (testControl->_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE))) {
+		    (testControl->_flags & 1) && !(testControl->_flags & 0x10) &&
+		    (!testControl->_actor || (testControl->_actor->_flags & Illusions::ACTOR_FLAG_IS_VISIBLE))) {
 			Common::Rect collisionRect;
 			testControl->getCollisionRectAccurate(collisionRect);
 			if (!collisionRect.isEmpty() && collisionRect.contains(pt) &&
-				(!testControl->_actor || testControl->isPixelCollision(pt))) {
+			    (!testControl->_actor || testControl->isPixelCollision(pt))) {
 				uint32 testPriority = testControl->getOverlapPriority();
 				if ((!foundControl || foundPriority < testPriority) &&
-					testPriority >= minPriorityExt) {
+				    testPriority >= minPriorityExt) {
 					foundControl = testControl;
 					foundPriority = testPriority;
 				}
@@ -1345,11 +1338,11 @@ bool Controls::getDialogItemAtPos(Control *control, Common::Point pt, Control **
 	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
 		Control *testControl = *it;
 		if (testControl != control && testControl->_pauseCtr == 0 &&
-			(testControl->_flags & 1) && (testControl->_flags & 4)) {
+		    (testControl->_flags & 1) && (testControl->_flags & 4)) {
 			Common::Rect collisionRect;
 			testControl->getCollisionRect(collisionRect);
 			if (!collisionRect.isEmpty() && collisionRect.contains(pt) &&
-				(!foundControl || foundControl->_priority < testControl->_priority))
+			    (!foundControl || foundControl->_priority < testControl->_priority))
 				foundControl = testControl;
 		}
 	}
@@ -1362,11 +1355,11 @@ bool Controls::getOverlappedWalkObject(Control *control, Common::Point pt, Contr
 	for (ItemsIterator it = _controls.begin(); it != _controls.end(); ++it) {
 		Control *testControl = *it;
 		if (testControl != control && testControl->_pauseCtr == 0 &&
-			(testControl->_flags & 1)) {
+		    (testControl->_flags & 1)) {
 			Common::Rect collisionRect;
 			testControl->getCollisionRect(collisionRect);
 			if (!collisionRect.isEmpty() && collisionRect.contains(pt) &&
-				(!foundControl || foundControl->_priority < testControl->_priority))
+			    (!foundControl || foundControl->_priority < testControl->_priority))
 				foundControl = testControl;
 		}
 	}
@@ -1437,7 +1430,6 @@ void Controls::actorControlRoutine(Control *control, uint32 deltaTime) {
 			actor->_regionIndex = regionIndex;
 		}
 	}
-
 }
 
 void Controls::dialogItemControlRoutine(Control *control, uint32 deltaTime) {
@@ -1529,6 +1521,5 @@ void Controls::unpauseActors(uint32 objectId) {
 	}
 	_vm->_unpauseControlActorFlag = true;
 }
-
 
 } // End of namespace Illusions

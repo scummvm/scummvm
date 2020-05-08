@@ -23,8 +23,8 @@
 #ifndef NUVIE_FILES_NUVIE_FILE_LIST_H
 #define NUVIE_FILES_NUVIE_FILE_LIST_H
 
-#include "ultima/shared/std/string.h"
 #include "common/fs.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -32,11 +32,10 @@ namespace Nuvie {
 using Std::list;
 using Std::string;
 
-
 #define NUVIE_SORT_TIME_DESC 0x1
-#define NUVIE_SORT_TIME_ASC  0x2
+#define NUVIE_SORT_TIME_ASC 0x2
 #define NUVIE_SORT_NAME_DESC 0x3
-#define NUVIE_SORT_NAME_ASC  0x5
+#define NUVIE_SORT_NAME_ASC 0x5
 
 class Configuration;
 
@@ -60,15 +59,15 @@ protected:
 
 	Std::string search_prefix;
 	uint8 sort_mode;
+
 protected:
 	bool add_filename(const Common::FSNode &file);
-public:
 
+public:
 	NuvieFileList();
 	~NuvieFileList();
 
 	bool open(const char *directory, const char *restrict, uint8 sort_mode);
-
 
 	Std::string *next();
 	Std::string *get_latest();
@@ -78,7 +77,6 @@ public:
 
 	void close();
 };
-
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

@@ -37,6 +37,7 @@ private:
 	void execute(Character *&c, int &charIndex);
 
 	void loadButtons();
+
 public:
 	static void show(XeenEngine *vm, Character *&c, int &charIndex);
 };

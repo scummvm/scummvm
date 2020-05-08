@@ -24,8 +24,8 @@
 
 #include "common/config-manager.h"
 
-#include "backends/platform/androidsdl/androidsdl-sdl.h"
 #include "backends/events/androidsdl/androidsdl-events.h"
+#include "backends/platform/androidsdl/androidsdl-sdl.h"
 #include <SDL_android.h>
 #include <SDL_screenkeyboard.h>
 
@@ -137,7 +137,7 @@ bool OSystem_ANDROIDSDL::hasFeature(Feature f) {
 	if (f == kFeatureFullscreenMode)
 		return false;
 	return (f == kFeatureTouchpadMode ||
-			f == kFeatureOnScreenControl ||
-			f == kFeatureSwapMenuAndBackButtons ||
-			f == OSystem_POSIX::getFeatureState(f));
+	        f == kFeatureOnScreenControl ||
+	        f == kFeatureSwapMenuAndBackButtons ||
+	        f == OSystem_POSIX::getFeatureState(f));
 }

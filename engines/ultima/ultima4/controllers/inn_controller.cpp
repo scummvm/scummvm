@@ -96,7 +96,6 @@ bool InnController::heal() {
 	return healed;
 }
 
-
 void InnController::maybeMeetIsaac() {
 	// Does Isaac the Ghost pay a visit to the Avatar?
 	//  if ((location == skara_brae) && (random(4) = 0) {
@@ -107,14 +106,14 @@ void InnController::maybeMeetIsaac() {
 		assert(city);
 
 		if (city->_extraDialogues.size() == 1 &&
-		        city->_extraDialogues[0]->getName() == "Isaac") {
+		    city->_extraDialogues[0]->getName() == "Isaac") {
 
 			Coords coords(27, xu4_random(3) + 10, g_context->_location->_coords.z);
 
 			// If Isaac is already around, just bring him back to the inn
 			for (ObjectDeque::iterator i = g_context->_location->_map->_objects.begin();
-			        i != g_context->_location->_map->_objects.end();
-			        i++) {
+			     i != g_context->_location->_map->_objects.end();
+			     i++) {
 				Person *p = dynamic_cast<Person *>(*i);
 				if (p && p->getName() == "Isaac") {
 					p->setCoords(coords);
@@ -157,7 +156,6 @@ void InnController::maybeAmbush() {
 			g_screen->screenMessage("\nIn the middle of the night while out on a stroll...\n\n");
 			showMessage = false;
 		}
-
 
 		_map = getCombatMap(mapMgr->get(mapid));
 		g_game->setMap(_map, true, nullptr, this);

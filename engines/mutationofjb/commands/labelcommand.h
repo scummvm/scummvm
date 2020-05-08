@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_LABELCOMMAND_H
 #define MUTATIONOFJB_LABELCOMMAND_H
 
-#include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
@@ -42,10 +42,11 @@ public:
 
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
+
 private:
 	Common::String _name;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

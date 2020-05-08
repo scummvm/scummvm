@@ -23,9 +23,9 @@
 #ifndef ILLUSIONS_BBDOU_BBDOU_SPECIALCODE_H
 #define ILLUSIONS_BBDOU_BBDOU_SPECIALCODE_H
 
+#include "common/hashmap.h"
 #include "illusions/specialcode.h"
 #include "illusions/thread.h"
-#include "common/hashmap.h"
 
 namespace Illusions {
 
@@ -38,7 +38,7 @@ class BbdouInventory;
 struct CursorData;
 struct VerbState;
 
-typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
+typedef Common::Functor1<OpCall &, void> SpecialCodeFunction;
 
 class BbdouSpecialCode;
 
@@ -52,10 +52,11 @@ struct Struct10 {
 class CauseThread_BBDOU : public Thread {
 public:
 	CauseThread_BBDOU(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 callingThreadId,
-		BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId,
-		uint32 verbId, uint32 objectId2, uint32 objectId);
+	                  BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId,
+	                  uint32 verbId, uint32 objectId2, uint32 objectId);
 	void onNotify() override;
 	void onTerminated() override;
+
 public:
 	BbdouSpecialCode *_bbdou;
 	uint32 _cursorObjectId;
@@ -73,10 +74,11 @@ struct RadarMicrophoneZone {
 class RadarMicrophoneThread : public Thread {
 public:
 	RadarMicrophoneThread(IllusionsEngine_BBDOU *vm, uint32 threadId,
-		uint32 callingThreadId, uint32 cursorObjectId);
+	                      uint32 callingThreadId, uint32 cursorObjectId);
 	int onUpdate() override;
 	void addZone(uint32 threadId);
 	void initZones();
+
 public:
 	uint32 _cursorObjectId;
 	uint _zonesCount;
@@ -100,6 +102,7 @@ public:
 	ObjectInteractModeMap();
 	void setObjectInteractMode(uint32 objectId, int value);
 	int getObjectInteractMode(uint32 objectId);
+
 protected:
 	ObjectInteractMode _objectVerbs[512];
 };
@@ -111,8 +114,9 @@ public:
 	void init() override;
 	void run(uint32 specialCodeId, OpCall &opCall) override;
 	void resetBeforeResumeSavegame() override;
+
 public:
-	typedef Common::HashMap<uint32, SpecialCodeFunction*> Map;
+	typedef Common::HashMap<uint32, SpecialCodeFunction *> Map;
 	typedef Map::iterator MapIterator;
 	IllusionsEngine_BBDOU *_vm;
 	Map _map;
@@ -181,22 +185,22 @@ protected:
 	void setCursorControlRoutine(uint32 objectId, int num);
 	Common::Point getBackgroundCursorPos(Common::Point cursorPos);
 	void showBubble(uint32 objectId, uint32 overlappedObjectId, uint32 holdingObjectId,
-		VerbState *verbState, uint32 progResKeywordId);
+	                VerbState *verbState, uint32 progResKeywordId);
 	bool findVerbId(VerbState *verbState, uint32 currOverlappedObjectId, int always0, uint32 &outVerbId);
 	void cursorInteractControlRoutine(Control *cursorControl, uint32 deltaTime);
 	void cursorCrosshairControlRoutine(Control *cursorControl, uint32 deltaTime);
 	bool testVerbId(uint32 verbId, uint32 holdingObjectId, uint32 overlappedObjectId);
 	bool getCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId,
-		uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId);
+	              uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId);
 	bool runCause(Control *cursorControl, CursorData &cursorData,
-		uint32 verbId, uint32 objectId2, uint32 objectId, int soundIndex);
+	              uint32 verbId, uint32 objectId2, uint32 objectId, int soundIndex);
 	uint32 startCauseThread(uint32 cursorObjectId, uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
 	// Salad
 	void initSalad();
 	void addSalad(uint32 sequenceId);
 	// Shooter
 	bool getShooterCause(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId,
-		uint32 &outSceneId, uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId);
+	                     uint32 &outSceneId, uint32 &outVerbId, uint32 &outObjectId2, uint32 &outObjectId);
 };
 
 } // End of namespace Illusions

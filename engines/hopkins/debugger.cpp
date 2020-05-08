@@ -67,7 +67,7 @@ bool Debugger::cmd_ShowCurrentRoom(int argc, const char **argv) {
 }
 
 bool Debugger::cmd_Zones(int argc, const char **argv) {
-if (argc != 2) {
+	if (argc != 2) {
 		debugPrintf("%s: [on | off]\n", argv[0]);
 		return true;
 	} else {
@@ -85,6 +85,5 @@ bool Debugger::cmd_Lines(int argc, const char **argv) {
 		return false;
 	}
 }
-
 
 } // End of namespace Hopkins

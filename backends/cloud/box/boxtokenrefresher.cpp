@@ -22,18 +22,17 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/cloud/box/boxtokenrefresher.h"
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include "common/json.h"
+#include <curl/curl.h>
 
 namespace Cloud {
 namespace Box {
 
-BoxTokenRefresher::BoxTokenRefresher(BoxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url):
-	CurlJsonRequest(callback, ecb, url), _parentStorage(parent) {}
+BoxTokenRefresher::BoxTokenRefresher(BoxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url) : CurlJsonRequest(callback, ecb, url), _parentStorage(parent) {}
 
 BoxTokenRefresher::~BoxTokenRefresher() {}
 

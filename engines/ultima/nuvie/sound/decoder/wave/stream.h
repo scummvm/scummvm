@@ -27,12 +27,11 @@
 #define COMMON_STREAM_H
 
 //#include <stdio.h>
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/sound/mixer/types.h"
 #include "decoder/wave/endian.h"
+#include "ultima/nuvie/sound/mixer/types.h"
+#include "ultima/shared/std/string.h"
 
 namespace Common {
-
 
 class SeekableReadStream;
 
@@ -99,7 +98,6 @@ public:
 	virtual void finalize() {
 		flush();
 	}
-
 
 	// The remaining methods all have default implementations; subclasses
 	// need not (and should not) overload them.
@@ -176,7 +174,6 @@ public:
 	 * @return the number of bytes which were actually read.
 	 */
 	virtual uint32 read(void *dataPtr, uint32 dataSize) = 0;
-
 
 	// The remaining methods all have default implementations; subclasses
 	// in general should not overload them.
@@ -308,9 +305,7 @@ public:
 	 * calling err() and eos().
 	 */
 	SeekableReadStream *readStream(uint32 dataSize);
-
 };
-
 
 /**
  * Interface for a seekable & readable data stream.
@@ -319,7 +314,6 @@ public:
  */
 class SeekableReadStream : virtual public ReadStream {
 public:
-
 	/**
 	 * Obtains the current value of the stream position indicator of the
 	 * stream.
@@ -383,7 +377,6 @@ public:
 	 */
 	virtual char *readLine(char *s, size_t bufSize);
 
-
 	/**
 	 * Reads a full line and returns it as a Common::String. Reading
 	 * stops when the end of a line is reached (CR, CR/LF or LF), and
@@ -442,7 +435,6 @@ public:
 	SeekableReadStreamEndian(bool bigEndian) : ReadStreamEndian(bigEndian) {}
 };
 
-
-}   // End of namespace Common
+} // End of namespace Common
 
 #endif

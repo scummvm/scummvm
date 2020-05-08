@@ -57,7 +57,6 @@ protected:
 	uint16 _flags;
 	Audio::QueuingAudioStream *_audioStream;
 
-
 private:
 	// Synchronization stuff
 	bool _begunPlaying;
@@ -70,6 +69,6 @@ protected:
 	void waitFrame();
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_PLAYER_H

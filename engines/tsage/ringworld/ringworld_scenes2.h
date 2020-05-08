@@ -24,12 +24,12 @@
 #define TSAGE_RINGWORLD_SCENES2_H
 
 #include "common/scummsys.h"
+#include "tsage/core.h"
+#include "tsage/events.h"
+#include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
-#include "tsage/events.h"
-#include "tsage/core.h"
 #include "tsage/scenes.h"
-#include "tsage/globals.h"
 
 namespace TsAGE {
 
@@ -50,6 +50,7 @@ class Scene1000 : public Scene {
 	class Action3 : public Action {
 	private:
 		void zoom(bool up);
+
 	public:
 		void signal() override;
 	};
@@ -69,6 +70,7 @@ class Scene1001 : public Scene {
 	public:
 		void signal() override;
 	};
+
 public:
 	SpeakerQText _speakerQText;
 	SpeakerSL _speakerSL;
@@ -101,6 +103,7 @@ public:
 	public:
 		void signal() override;
 	};
+
 public:
 	SpeakerQText _speakerQText;
 	Action1 _action1;
@@ -120,11 +123,11 @@ public:
 		void signal() override;
 		void dispatch() override;
 	};
+
 public:
 	Action1 _action1;
 
 	void postInit(SceneObjectList *OwnerList = NULL) override;
-
 };
 
 class Scene1500 : public Scene {
@@ -138,6 +141,7 @@ public:
 	public:
 		void signal() override;
 	};
+
 public:
 	ASound _soundHandler;
 	Action1 _action1;

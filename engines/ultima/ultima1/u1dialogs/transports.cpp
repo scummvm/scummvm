@@ -21,16 +21,16 @@
  */
 
 #include "ultima/ultima1/u1dialogs/transports.h"
+#include "ultima/shared/core/str.h"
+#include "ultima/shared/engine/messages.h"
 #include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/widgets/transport.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/shared/engine/messages.h"
-#include "ultima/shared/core/str.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -80,8 +80,7 @@ void Transports::loadOverworldFreeTiles() {
 	}
 
 	_hasFreeTiles = _water != 0 || _woods != 0 || _grass != 0;
-	_isClosed = !_hasFreeTiles || (_hasShuttle && _transportCount == 15)
-		|| (!_grass && _transportCount == 15);
+	_isClosed = !_hasFreeTiles || (_hasShuttle && _transportCount == 15) || (!_grass && _transportCount == 15);
 
 	bool flag = !_hasShuttle && _transportCount == 15;
 	_transports[0] = _transports[1] = (_woods || _grass) && !flag;
@@ -122,7 +121,6 @@ uint Transports::getBuyCost(int transportIndex) const {
 	const Shared::Character &c = *_game->_party;
 	return (200 - c._intelligence) / 5 * transportIndex * transportIndex;
 }
-
 
 void Transports::draw() {
 	BuySellDialog::draw();
@@ -172,8 +170,8 @@ bool Transports::CharacterInputMsg(CCharacterInputMsg &msg) {
 
 	if (_mode == BUY) {
 		if (msg._keyState.keycode >= Common::KEYCODE_a &&
-				msg._keyState.keycode <= Common::KEYCODE_f &&
-				_transports[transportIndex]) {
+		    msg._keyState.keycode <= Common::KEYCODE_f &&
+		    _transports[transportIndex]) {
 			uint cost = getBuyCost(transportIndex + 1);
 			if (cost <= c._coins) {
 				// Display the bought transport name in the info area
@@ -201,8 +199,7 @@ void Transports::addTransport(int transportIndex) {
 	Point delta;
 	Maps::U1MapTile mapTile;
 	const char *const WIDGET_NAMES[6] = {
-		"Horse", "Cart", "Raft", "Frigate", "Aircar", "Shuttle"
-	};
+	    "Horse", "Cart", "Raft", "Frigate", "Aircar", "Shuttle"};
 
 	// Iterate through the tiles surrounding the city/castle
 	for (delta.y = -1; delta.y <= 1; ++delta.y) {
@@ -210,9 +207,7 @@ void Transports::addTransport(int transportIndex) {
 			map->getTileAt(map->getPosition() + delta, &mapTile);
 
 			if (!mapTile._widget && mapTile._locationNum == -1) {
-				if ((transportIndex <= 1 && (mapTile.isOriginalWoods() || (!_woods && mapTile.isOriginalGrass())))
-						|| (transportIndex >= 2 && transportIndex <= 3 && mapTile.isOriginalWater())
-						|| (transportIndex >= 4 && mapTile.isOriginalGrass())) {
+				if ((transportIndex <= 1 && (mapTile.isOriginalWoods() || (!_woods && mapTile.isOriginalGrass()))) || (transportIndex >= 2 && transportIndex <= 3 && mapTile.isOriginalWater()) || (transportIndex >= 4 && mapTile.isOriginalGrass())) {
 					// Add the transport onto the designated tile around the location
 					Shared::Maps::MapWidget *widget = map->createWidget(WIDGET_NAMES[transportIndex]);
 					assert(widget);

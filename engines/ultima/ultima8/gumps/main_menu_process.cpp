@@ -22,11 +22,11 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
 #include "ultima/ultima8/gumps/menu_gump.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -37,7 +37,6 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MainMenuProcess, Process)
 MainMenuProcess::MainMenuProcess() : Process() {
 	_init = false;
 }
-
 
 void MainMenuProcess::run() {
 	MainActor *avatar = getMainActor();
@@ -58,7 +57,8 @@ void MainMenuProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool MainMenuProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	return true;
 }

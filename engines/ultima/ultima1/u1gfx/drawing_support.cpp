@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/u1gfx/drawing_support.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -44,7 +44,6 @@ void DrawingSupport::drawFrame() {
 	_surface.vLine(312, 7, 192, _game->_edgeColor);
 	_surface.hLine(7, 7, 312, _game->_edgeColor);
 	_surface.hLine(7, 192, 312, _game->_edgeColor);
-
 }
 
 void DrawingSupport::drawGameFrame() {
@@ -73,7 +72,7 @@ void DrawingSupport::roundFrameCorners(bool skipBottom) {
 	for (int idx = 1; idx <= 4; ++idx) {
 		_surface.drawLine(0, idx, idx, 0, 0);
 		_surface.drawLine(319 - idx, 0, 319, idx, 0);
-		
+
 		if (!skipBottom) {
 			_surface.drawLine(0, 199 - idx, idx, 199, 0);
 			_surface.drawLine(319, 199 - idx, 319 - idx, 199, 0);

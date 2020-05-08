@@ -44,8 +44,7 @@ void Spells::load() {
 
 int Spells::calcSpellCost(int spellId, int expenseFactor) const {
 	int amount = Res.SPELL_COSTS[spellId];
-	return (amount >= 0) ? (amount * 100) << expenseFactor :
-		(amount * -500) << expenseFactor;
+	return (amount >= 0) ? (amount * 100) << expenseFactor : (amount * -500) << expenseFactor;
 }
 
 int Spells::calcSpellPoints(int spellId, int expenseFactor) const {
@@ -53,37 +52,36 @@ int Spells::calcSpellPoints(int spellId, int expenseFactor) const {
 	return (amount >= 0) ? amount : amount * -1 * expenseFactor;
 }
 
-typedef void(Spells::*SpellMethodPtr)();
+typedef void (Spells::*SpellMethodPtr)();
 
 void Spells::executeSpell(MagicSpell spellId) {
 	static const SpellMethodPtr SPELL_LIST[76] = {
-		&Spells::acidSpray, &Spells::awaken, &Spells::beastMaster,
-		&Spells::bless, &Spells::clairvoyance, &Spells::coldRay,
-		&Spells::createFood, &Spells::cureDisease, &Spells::cureParalysis,
-		&Spells::curePoison, &Spells::cureWounds, &Spells::dancingSword,
-		&Spells::dayOfProtection, &Spells::dayOfSorcery, &Spells::deadlySwarm,
-		&Spells::detectMonster, &Spells::divineIntervention, &Spells::dragonSleep,
-		&Spells::elementalStorm, &Spells::enchantItem, &Spells::energyBlast,
-		&Spells::etherialize, &Spells::fantasticFreeze, &Spells::fieryFlail,
-		&Spells::fingerOfDeath, &Spells::fireball, &Spells::firstAid,
-		&Spells::flyingFist, &Spells::frostbite, &Spells::golemStopper,
-		&Spells::heroism, &Spells::holyBonus, &Spells::holyWord,
-		&Spells::hypnotize, &Spells::identifyMonster, &Spells::implosion,
-		&Spells::incinerate, &Spells::inferno, &Spells::insectSpray,
-		&Spells::itemToGold, &Spells::jump, &Spells::levitate,
-		&Spells::light, &Spells::lightningBolt, &Spells::lloydsBeacon,
-		&Spells::magicArrow, &Spells::massDistortion, &Spells::megaVolts,
-		&Spells::moonRay, &Spells::naturesCure, &Spells::pain,
-		&Spells::poisonVolley, &Spells::powerCure, &Spells::powerShield,
-		&Spells::prismaticLight, &Spells::protectionFromElements, &Spells::raiseDead,
-		&Spells::rechargeItem, &Spells::resurrection, &Spells::revitalize,
-		&Spells::shrapMetal, &Spells::sleep, &Spells::sparks,
-		&Spells::starBurst, &Spells::stoneToFlesh, &Spells::sunRay,
-		&Spells::superShelter, &Spells::suppressDisease, &Spells::suppressPoison,
-		&Spells::teleport, &Spells::timeDistortion, &Spells::townPortal,
-		&Spells::toxicCloud, &Spells::turnUndead, &Spells::walkOnWater,
-		&Spells::wizardEye
-	};
+	    &Spells::acidSpray, &Spells::awaken, &Spells::beastMaster,
+	    &Spells::bless, &Spells::clairvoyance, &Spells::coldRay,
+	    &Spells::createFood, &Spells::cureDisease, &Spells::cureParalysis,
+	    &Spells::curePoison, &Spells::cureWounds, &Spells::dancingSword,
+	    &Spells::dayOfProtection, &Spells::dayOfSorcery, &Spells::deadlySwarm,
+	    &Spells::detectMonster, &Spells::divineIntervention, &Spells::dragonSleep,
+	    &Spells::elementalStorm, &Spells::enchantItem, &Spells::energyBlast,
+	    &Spells::etherialize, &Spells::fantasticFreeze, &Spells::fieryFlail,
+	    &Spells::fingerOfDeath, &Spells::fireball, &Spells::firstAid,
+	    &Spells::flyingFist, &Spells::frostbite, &Spells::golemStopper,
+	    &Spells::heroism, &Spells::holyBonus, &Spells::holyWord,
+	    &Spells::hypnotize, &Spells::identifyMonster, &Spells::implosion,
+	    &Spells::incinerate, &Spells::inferno, &Spells::insectSpray,
+	    &Spells::itemToGold, &Spells::jump, &Spells::levitate,
+	    &Spells::light, &Spells::lightningBolt, &Spells::lloydsBeacon,
+	    &Spells::magicArrow, &Spells::massDistortion, &Spells::megaVolts,
+	    &Spells::moonRay, &Spells::naturesCure, &Spells::pain,
+	    &Spells::poisonVolley, &Spells::powerCure, &Spells::powerShield,
+	    &Spells::prismaticLight, &Spells::protectionFromElements, &Spells::raiseDead,
+	    &Spells::rechargeItem, &Spells::resurrection, &Spells::revitalize,
+	    &Spells::shrapMetal, &Spells::sleep, &Spells::sparks,
+	    &Spells::starBurst, &Spells::stoneToFlesh, &Spells::sunRay,
+	    &Spells::superShelter, &Spells::suppressDisease, &Spells::suppressPoison,
+	    &Spells::teleport, &Spells::timeDistortion, &Spells::townPortal,
+	    &Spells::toxicCloud, &Spells::turnUndead, &Spells::walkOnWater,
+	    &Spells::wizardEye};
 
 	(this->*SPELL_LIST[spellId])();
 }
@@ -146,22 +144,21 @@ void Spells::castItemSpell(int itemSpellId) {
 	}
 
 	static const MagicSpell spells[74] = {
-		NO_SPELL, MS_Light, MS_Awaken, MS_MagicArrow, MS_FirstAid, MS_FlyingFist,
-		MS_EnergyBlast, MS_Sleep, MS_Revitalize, MS_CureWounds, MS_Sparks,
-		MS_Shrapmetal, MS_InsectSpray, MS_ToxicCloud, MS_ProtFromElements, MS_Pain,
-		MS_Jump, MS_BeastMaster, MS_Clairvoyance, MS_TurnUndead, MS_Levitate,
-		MS_WizardEye, MS_Bless, MS_IdentifyMonster, MS_LightningBolt, MS_HolyBonus,
-		MS_PowerCure, MS_NaturesCure, MS_LloydsBeacon, MS_PowerShield, MS_Heroism,
-		MS_Hynotize, MS_WalkOnWater, NO_SPELL, MS_DetectMonster, MS_Fireball,
-		MS_ColdRay, MS_CurePoison, MS_AcidSpray, MS_TimeDistortion, MS_DragonSleep,
-		MS_CureDisease, MS_Teleport, MS_FingerOfDeath, MS_CureParalysis, MS_GolemStopper,
-		MS_PoisonVolley, MS_DeadlySwarm, MS_SuperShelter, MS_DayOfProtection, MS_DayOfProtection,
-		MS_CreateFood, MS_FieryFlail, MS_RechargeItem, MS_FantasticFreeze, MS_TownPortal,
-		MS_StoneToFlesh, MS_RaiseDead, MS_Etheralize, MS_DancingSword, MS_MoonRay,
-		MS_MassDistortion, MS_PrismaticLight, MS_EnchantItem, MS_Incinerate, MS_HolyWord,
-		MS_Resurrection, MS_ElementalStorm, MS_MegaVolts, MS_Inferno, MS_SunRay,
-		MS_Implosion, MS_StarBurst, MS_DivineIntervention
-	};
+	    NO_SPELL, MS_Light, MS_Awaken, MS_MagicArrow, MS_FirstAid, MS_FlyingFist,
+	    MS_EnergyBlast, MS_Sleep, MS_Revitalize, MS_CureWounds, MS_Sparks,
+	    MS_Shrapmetal, MS_InsectSpray, MS_ToxicCloud, MS_ProtFromElements, MS_Pain,
+	    MS_Jump, MS_BeastMaster, MS_Clairvoyance, MS_TurnUndead, MS_Levitate,
+	    MS_WizardEye, MS_Bless, MS_IdentifyMonster, MS_LightningBolt, MS_HolyBonus,
+	    MS_PowerCure, MS_NaturesCure, MS_LloydsBeacon, MS_PowerShield, MS_Heroism,
+	    MS_Hynotize, MS_WalkOnWater, NO_SPELL, MS_DetectMonster, MS_Fireball,
+	    MS_ColdRay, MS_CurePoison, MS_AcidSpray, MS_TimeDistortion, MS_DragonSleep,
+	    MS_CureDisease, MS_Teleport, MS_FingerOfDeath, MS_CureParalysis, MS_GolemStopper,
+	    MS_PoisonVolley, MS_DeadlySwarm, MS_SuperShelter, MS_DayOfProtection, MS_DayOfProtection,
+	    MS_CreateFood, MS_FieryFlail, MS_RechargeItem, MS_FantasticFreeze, MS_TownPortal,
+	    MS_StoneToFlesh, MS_RaiseDead, MS_Etheralize, MS_DancingSword, MS_MoonRay,
+	    MS_MassDistortion, MS_PrismaticLight, MS_EnchantItem, MS_Incinerate, MS_HolyWord,
+	    MS_Resurrection, MS_ElementalStorm, MS_MegaVolts, MS_Inferno, MS_SunRay,
+	    MS_Implosion, MS_StarBurst, MS_DivineIntervention};
 
 	executeSpell(spells[itemSpellId]);
 }
@@ -469,10 +466,9 @@ void Spells::dragonSleep() {
 void Spells::elementalStorm() {
 	Combat &combat = *_vm->_combat;
 	Sound &sound = *_vm->_sound;
-	static const int STORM_FX_LIST[4] = { 13, 14, 15, 17 };
+	static const int STORM_FX_LIST[4] = {13, 14, 15, 17};
 	static const PowType STORM_MA_LIST[4] = {
-		POW_FIREBALL, POW_SPARKS, POW_FROST_WAVE, POW_SPRAY
-	};
+	    POW_FIREBALL, POW_SPARKS, POW_FROST_WAVE, POW_SPRAY};
 
 	combat._monsterDamage = 150;
 	combat._damageType = (DamageType)_vm->getRandomNumber(DT_FIRE, DT_POISON);
@@ -509,12 +505,11 @@ void Spells::etherialize() {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 	Common::Point pt = party._mazePosition + Common::Point(
-		Res.SCREEN_POSITIONING_X[party._mazeDirection][7],
-		Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]
-	);
+	                                             Res.SCREEN_POSITIONING_X[party._mazeDirection][7],
+	                                             Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]);
 
 	if ((map.mazeData()._mazeFlags & RESTRICTION_ETHERIALIZE) ||
-			map.mazeLookup(pt, 0, 0xffff) == INVALID_CELL) {
+	    map.mazeLookup(pt, 0, 0xffff) == INVALID_CELL) {
 		spellFailed();
 	} else {
 		party._mazePosition = pt;
@@ -657,8 +652,7 @@ void Spells::hypnotize() {
 void Spells::identifyMonster() {
 	Combat &combat = *_vm->_combat;
 
-	if (combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1
-		&& combat._attackMonsters[2] == -1) {
+	if (combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1 && combat._attackMonsters[2] == -1) {
 		spellFailed();
 	} else {
 		IdentifyMonster::show(_vm);
@@ -735,9 +729,8 @@ void Spells::jump() {
 			map.getCell(14);
 			if (map._currentSurfaceId != 0 && map._currentWall != 1) {
 				party._mazePosition += Common::Point(
-					Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
-					Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]
-					);
+				    Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
+				    Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]);
 				sound.playFX(51);
 				party._stepped = true;
 				return;
@@ -745,14 +738,13 @@ void Spells::jump() {
 		}
 	} else {
 		Common::Point pt = party._mazePosition + Common::Point(
-			Res.SCREEN_POSITIONING_X[party._mazeDirection][7],
-			Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]);
+		                                             Res.SCREEN_POSITIONING_X[party._mazeDirection][7],
+		                                             Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]);
 		if (!map.mazeLookup(party._mazePosition, Res.MONSTER_GRID_BITMASK[party._mazeDirection]) &&
-			!map.mazeLookup(pt, Res.MONSTER_GRID_BITMASK[party._mazeDirection])) {
+		    !map.mazeLookup(pt, Res.MONSTER_GRID_BITMASK[party._mazeDirection])) {
 			party._mazePosition += Common::Point(
-				Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
-				Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]
-			);
+			    Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
+			    Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]);
 			sound.playFX(51);
 			party._stepped = true;
 			return;

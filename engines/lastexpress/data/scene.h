@@ -74,7 +74,7 @@
 namespace Common {
 class SeekableReadStream;
 class String;
-}
+} // namespace Common
 
 namespace LastExpress {
 

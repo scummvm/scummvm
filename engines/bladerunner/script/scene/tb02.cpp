@@ -65,9 +65,7 @@ void SceneScriptTB02::InitializeScene() {
 		Ambient_Sounds_Add_Sound(kSfx67_1160R, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	}
 
-	if (Game_Flag_Query(kFlagSpinnerAtTB02)
-	 && Global_Variable_Query(kVariableChapter) < 4
-	) {
+	if (Game_Flag_Query(kFlagSpinnerAtTB02) && Global_Variable_Query(kVariableChapter) < 4) {
 		Scene_Exit_Add_2D_Exit(2, 67, 0, 233, 362, 3);
 	}
 
@@ -107,9 +105,7 @@ bool SceneScriptTB02::ClickedOnActor(int actorId) {
 			Actor_Face_Actor(kActorMcCoy, kActorTyrellGuard, true);
 			int chapter = Global_Variable_Query(kVariableChapter);
 			if (chapter == 2) {
-				if ( Game_Flag_Query(kFlagTB02ElevatorToTB05)
-				 && !Game_Flag_Query(kFlagTB05Entered)
-				) {
+				if (Game_Flag_Query(kFlagTB02ElevatorToTB05) && !Game_Flag_Query(kFlagTB05Entered)) {
 					Actor_Says(kActorMcCoy, 5150, 18);
 					Actor_Says(kActorTyrellGuard, 60, 12);
 					Actor_Says(kActorTyrellGuard, 70, 13);
@@ -118,9 +114,7 @@ bool SceneScriptTB02::ClickedOnActor(int actorId) {
 					return true;
 				}
 
-				if (!Game_Flag_Query(kFlagTB02ElevatorToTB05)
-				 && !Game_Flag_Query(kFlagTB05Entered)
-				) {
+				if (!Game_Flag_Query(kFlagTB02ElevatorToTB05) && !Game_Flag_Query(kFlagTB05Entered)) {
 					Game_Flag_Set(kFlagTB02ElevatorToTB05);
 					Actor_Says(kActorMcCoy, 5160, 18);
 					Actor_Says(kActorTyrellGuard, 80, 14);
@@ -287,9 +281,7 @@ void SceneScriptTB02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptTB02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagTB07TyrellMeeting)) {
 		Game_Flag_Reset(kFlagTB07TyrellMeeting);
-		if (Global_Variable_Query(kVariableChapter) == 2
-		 || Global_Variable_Query(kVariableChapter) == 3
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3) {
 			Set_Enter(kSetTB07, kSceneTB07);
 			return; // true;
 		}
@@ -344,17 +336,13 @@ void SceneScriptTB02::PlayerWalkedIn() {
 			Scene_Exit_Add_2D_Exit(1, 430, 235, 487, 396, 0);
 		}
 
-		if ( Game_Flag_Query(kFlagTB05Entered)
-		 && !Game_Flag_Query(kFlagTB02ElevatorToTB05)
-		) {
+		if (Game_Flag_Query(kFlagTB05Entered) && !Game_Flag_Query(kFlagTB02ElevatorToTB05)) {
 			Actor_Says(kActorTyrellGuard, 90, 18);
 			Game_Flag_Set(kFlagTB02ElevatorToTB05);
 			Scene_Exit_Add_2D_Exit(1, 430, 235, 487, 396, 0);
 		}
 
-		if ( Game_Flag_Query(kFlagTB05Entered)
-		 && !Game_Flag_Query(kFlagTB02SteeleTalk)
-		) {
+		if (Game_Flag_Query(kFlagTB05Entered) && !Game_Flag_Query(kFlagTB02SteeleTalk)) {
 			Loop_Actor_Walk_To_Actor(kActorSteele, kActorMcCoy, 36, true, false);
 			Actor_Says(kActorSteele, 2220, 14);
 			Actor_Says(kActorMcCoy, 5245, 13);
@@ -367,9 +355,7 @@ void SceneScriptTB02::PlayerWalkedIn() {
 		return;
 	}
 
-	if ( chapter == 3
-	 && !Game_Flag_Query(kFlagTB02GuardTalk2)
-	) {
+	if (chapter == 3 && !Game_Flag_Query(kFlagTB02GuardTalk2)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -131.28f, 0.79f, 1448.25f, 12, true, false, false);
 		Actor_Says(kActorTyrellGuard, 260, 15);
 		Actor_Says(kActorMcCoy, 5225, 16);
@@ -385,9 +371,7 @@ void SceneScriptTB02::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	if (Global_Variable_Query(kVariableChapter) < 4
-	    && !Game_Flag_Query(kFlagMcCoyInTyrellBuilding)
-	) {
+	if (Global_Variable_Query(kVariableChapter) < 4 && !Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
 		// Acts 2, 3 - use a spinner fly-through transition
 		Outtake_Play(kOuttakeTowards3, true, -1); // available in Acts 1, 2, 3
 	}
@@ -405,9 +389,7 @@ void SceneScriptTB02::dialogueWithTyrellGuard() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(710, 5, 5, 4); // EARRING
 	}
 
-	if (Actor_Clue_Query(kActorMcCoy, kClueVictimInformation)
-	 || Actor_Clue_Query(kActorMcCoy, kClueAttemptedFileAccess)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueVictimInformation) || Actor_Clue_Query(kActorMcCoy, kClueAttemptedFileAccess)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(720, 3, 5, 5); // TYRELL
 	}
 
@@ -475,7 +457,7 @@ void SceneScriptTB02::dialogueWithSteele() {
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(740, 4, 5, 6); // HER CASE
 	DM_Add_To_List_Never_Repeat_Once_Selected(750, 3, 5, 5); // MURDER
-	Dialogue_Menu_Add_DONE_To_List(100); // DONE
+	Dialogue_Menu_Add_DONE_To_List(100);                     // DONE
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();

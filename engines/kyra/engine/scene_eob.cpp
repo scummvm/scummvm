@@ -23,9 +23,9 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/eobcommon.h"
+#include "kyra/engine/timer.h"
 #include "kyra/resource/resource.h"
 #include "kyra/script/script_eob.h"
-#include "kyra/engine/timer.h"
 #include "kyra/sound/sound.h"
 
 #include "common/system.h"
@@ -115,7 +115,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 void EoBCoreEngine::readLevelFileData(int level) {
 	Common::String file;
 	Common::SeekableReadStream *s = 0;
-	static const char *const suffix[] = { "INF", "DRO", "ELO", "JOT", 0 };
+	static const char *const suffix[] = {"INF", "DRO", "ELO", "JOT", 0};
 
 	for (const char *const *sf = suffix; *sf && !s; sf++) {
 		file = Common::String::format("LEVEL%d.%s", level, *sf);
@@ -197,17 +197,17 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(_flags.platform == Common::kPlatformAmiga ? 6 : 0));
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
-			uint16 *src = (uint16*)_screen->getPalette(0).getData();
-			_screen->createFadeTable16bit(src, (uint16*)_greenFadingTable, 4, 75);
-			_screen->createFadeTable16bit(src, (uint16*)_blackFadingTable, 12, 200);
-			_screen->createFadeTable16bit(src, (uint16*)_blueFadingTable, 10, 85);
-			_screen->createFadeTable16bit(src, (uint16*)_lightBlueFadingTable, 11, 125);
-			_screen->createFadeTable16bit(src, (uint16*)_greyFadingTable, 0, 85);
+			uint16 *src = (uint16 *)_screen->getPalette(0).getData();
+			_screen->createFadeTable16bit(src, (uint16 *)_greenFadingTable, 4, 75);
+			_screen->createFadeTable16bit(src, (uint16 *)_blackFadingTable, 12, 200);
+			_screen->createFadeTable16bit(src, (uint16 *)_blueFadingTable, 10, 85);
+			_screen->createFadeTable16bit(src, (uint16 *)_lightBlueFadingTable, 11, 125);
+			_screen->createFadeTable16bit(src, (uint16 *)_greyFadingTable, 0, 85);
 			_screen->setScreenPalette(_screen->getPalette(0));
 		} else if (_flags.platform == Common::kPlatformAmiga) {
 			// Amiga versions don't have shape shading
 		} else if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformPC98) {
-		
+
 		} else if (_configRenderMode != Common::kRenderCGA) {
 			Palette backupPal(256);
 			backupPal.copy(_screen->getPalette(0), 224, 32, 224);
@@ -317,7 +317,7 @@ void EoBCoreEngine::addLevelItems() {
 	}
 }
 
-void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {	
+void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	if (file)
 		strcpy(_lastBlockDataFile, file);
 
@@ -332,7 +332,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	} else if (_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformAmiga || _flags.platform == Common::kPlatformPC98)) {
 		Common::SeekableReadStream *in = _res->createReadStream(fn);
 		vcnSize = _flags.platform == Common::kPlatformPC98 ? in->size() : in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
-		_vcnBlocks = new uint8[vcnSize];			
+		_vcnBlocks = new uint8[vcnSize];
 		if (_flags.platform == Common::kPlatformAmiga) {
 			_screen->getPalette(1).loadAmigaPalette(*in, 1, 5);
 			in->seek(22, SEEK_CUR);
@@ -376,7 +376,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	} else {
 		if (_flags.platform != Common::kPlatformAmiga && !(_flags.gameID == GI_EOB1 && _configRenderMode == Common::kRenderEGA))
 			memcpy(_vcnColTable, colMap, 32);
-		
+
 		memcpy(_vcnBlocks, pos, vcnSize);
 	}
 }
@@ -534,7 +534,7 @@ void EoBCoreEngine::releaseDoorShapes() {
 void EoBCoreEngine::toggleWallState(int wall, int toggle) {
 	wall = wall * 10 + 3;
 
-	for (int i = 0; i < 9 ; i++) {
+	for (int i = 0; i < 9; i++) {
 		if (i == 4)
 			continue;
 
@@ -676,7 +676,6 @@ void EoBCoreEngine::drawDecorations(int index) {
 					} else {
 						x += _levelDecorationProperties[l].shapeX[shpIx];
 						drawBlockObject(0, 2, shapeData, x, _levelDecorationProperties[l].shapeY[shpIx], _sceneShpDim);
-
 					}
 				}
 				l = _levelDecorationProperties[l].next;
@@ -792,7 +791,7 @@ int EoBCoreEngine::clickedDoorPry(uint16 block, uint16 direction) {
 		return 0;
 
 	int d = -1;
-	for (int i = 0; i < 6; i++)  {
+	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 0x0D))
 			continue;
 		if (d >= 0) {
@@ -810,13 +809,13 @@ int EoBCoreEngine::clickedDoorPry(uint16 block, uint16 direction) {
 		return 1;
 	}
 
-	static const uint8 forceDoorChanceTable[] = { 1, 1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 10, 11, 12, 13 };
+	static const uint8 forceDoorChanceTable[] = {1, 1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 10, 11, 12, 13};
 	int s = _characters[d].strengthCur > 18 ? 18 : _characters[d].strengthCur;
 
 	if (rollDice(1, 20) < forceDoorChanceTable[s]) {
 		_txt->printMessage(_pryDoorStrings[_flags.gameID == GI_EOB2 ? 2 : 1]);
 		_levelBlockProperties[block].walls[direction] = _levelBlockProperties[block].walls[direction ^ 2] =
-		            (_levelBlockProperties[block].walls[direction] == (_flags.gameID == GI_EOB2 ? 51 : 30)) ? 8 : 18;
+		    (_levelBlockProperties[block].walls[direction] == (_flags.gameID == GI_EOB2 ? 51 : 30)) ? 8 : 18;
 		openDoor(block);
 	} else {
 		_txt->printMessage(_pryDoorStrings[3]);
@@ -861,7 +860,7 @@ int EoBCoreEngine::specialWallAction(int block, int direction) {
 		break;
 
 	case 5:
-		res =  clickedDoorPry(block, direction);
+		res = clickedDoorPry(block, direction);
 		break;
 
 	case 6:

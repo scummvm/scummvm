@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"

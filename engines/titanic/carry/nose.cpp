@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNose, CHeadPiece)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(UseWithOtherMsg)
 END_MESSAGE_MAP()
 
 CNose::CNose() : CHeadPiece() {

@@ -22,26 +22,26 @@
 
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
 
-extern char                     temp_buffer[];
-extern char                     function_name[];
+extern char temp_buffer[];
+extern char function_name[];
 
-extern struct object_type       *object[];
-extern struct variable_type     *variable[];
+extern struct object_type *object[];
+extern struct variable_type *variable[];
 
-extern const char               *word[];
+extern const char *word[];
 
-extern int                      player;
-extern int                      wp;
-extern int                      objects;
-extern int                      custom_error;
+extern int player;
+extern int wp;
+extern int objects;
+extern int custom_error;
 
-extern int                      spaced;
+extern int spaced;
 
 int check_light(int where) {
 	int index;
@@ -50,8 +50,7 @@ int check_light(int where) {
 		return (TRUE);
 	else {
 		for (index = 1; index <= objects; index++) {
-			if ((object[index]->attributes & LUMINOUS)
-			        && scope(index, "*present"))
+			if ((object[index]->attributes & LUMINOUS) && scope(index, "*present"))
 				return (TRUE);
 		}
 	}

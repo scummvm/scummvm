@@ -25,11 +25,11 @@
 #ifndef NUVIE_GUI_GUI_H
 #define NUVIE_GUI_GUI_H
 
-#include "ultima/nuvie/gui/gui_status.h"
-#include "ultima/nuvie/gui/gui_drag_manager.h"
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
-#include "ultima/nuvie/gui/gui_font.h"
 #include "common/events.h"
+#include "ultima/nuvie/gui/gui_drag_manager.h"
+#include "ultima/nuvie/gui/gui_font.h"
+#include "ultima/nuvie/gui/gui_status.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -43,7 +43,6 @@ class GUI_Color;
 class GUI {
 
 protected:
-
 	static GUI *gui;
 	Configuration *config;
 
@@ -131,16 +130,16 @@ public:
 		return gui;
 	}
 	GUI_Font *get_font();
-	Screen *get_screen()             {
+	Screen *get_screen() {
 		return screen;
 	}
 	GUI_Widget *get_focused_widget() {
 		return focused_widget;
 	}
-	GUI_Widget *get_locked_widget()  {
+	GUI_Widget *get_locked_widget() {
 		return locked_widget;
 	}
-	bool get_block_input()           {
+	bool get_block_input() {
 		return block_input;
 	}
 
@@ -153,7 +152,7 @@ public:
 	GUI_status HandleEvent(Common::Event *event);
 
 	bool set_focus(GUI_Widget *widget);
-	void clear_focus()  {
+	void clear_focus() {
 		set_focus(NULL);
 	}
 	void lock_input(GUI_Widget *widget);
@@ -161,7 +160,7 @@ public:
 		lock_input(NULL);
 		unblock();
 	}
-	void block()   {
+	void block() {
 		block_input = true;
 	}
 	void unblock() {
@@ -175,13 +174,12 @@ public:
 	uint16 get_height() {
 		return screen->get_height();
 	}
-protected:
 
+protected:
 	/* Function to handle a GUI status */
 	void HandleStatus(GUI_status status);
 
 	void CleanupDeletedWidgets(bool redraw = false);
-
 };
 
 } // End of namespace Nuvie

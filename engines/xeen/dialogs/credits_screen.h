@@ -27,11 +27,12 @@
 
 namespace Xeen {
 
-class CreditsScreen: public ButtonContainer {
+class CreditsScreen : public ButtonContainer {
 private:
 	CreditsScreen(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute(const char *content);
+
 public:
 	static void show(XeenEngine *vm);
 };

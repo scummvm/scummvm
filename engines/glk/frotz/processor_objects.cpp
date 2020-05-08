@@ -28,19 +28,19 @@ namespace Frotz {
 #define MAX_OBJECT 2000
 
 enum O1 {
-	O1_PARENT          = 4,
-	O1_SIBLING         = 5,
-	O1_CHILD           = 6,
+	O1_PARENT = 4,
+	O1_SIBLING = 5,
+	O1_CHILD = 6,
 	O1_PROPERTY_OFFSET = 7,
-	O1_SIZE            = 9
+	O1_SIZE = 9
 };
 
 enum O4 {
-	O4_PARENT          = 6,
-	O4_SIBLING         = 8,
-	O4_CHILD           = 10,
+	O4_PARENT = 6,
+	O4_SIBLING = 8,
+	O4_CHILD = 10,
 	O4_PROPERTY_OFFSET = 12,
-	O4_SIZE            = 14
+	O4_SIZE = 14
 };
 
 zword Processor::object_address(zword obj) {
@@ -82,7 +82,7 @@ zword Processor::first_property(zword obj) {
 	zbyte size;
 
 	// Fetch address of object name
-	prop_addr = object_name (obj);
+	prop_addr = object_name(obj);
 
 	// Get length of object name
 	LOW_BYTE(prop_addr, size);
@@ -455,8 +455,10 @@ void Processor::z_get_prop_addr() {
 	}
 
 	if (_storyId == BEYOND_ZORK)
-		if (zargs[0] > MAX_OBJECT)
-			{ store(0); return; }
+		if (zargs[0] > MAX_OBJECT) {
+			store(0);
+			return;
+		}
 
 	// Property id is in bottom five (six) bits
 	mask = (h_version <= V3) ? 0x1f : 0x3f;
@@ -501,7 +503,7 @@ void Processor::z_get_prop_len() {
 		value &= 0x3f;
 
 		if (value == 0)
-			value = 64;        // demanded by Spec 1.0
+			value = 64; // demanded by Spec 1.0
 	}
 
 	// Store length of property

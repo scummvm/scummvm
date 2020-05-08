@@ -37,7 +37,10 @@ struct TreeNode {
 	float value;
 	Node *node;
 
-	TreeNode(float v, Node *n) { value = v; node = n; }
+	TreeNode(float v, Node *n) {
+		value = v;
+		node = n;
+	}
 };
 
 class Tree {

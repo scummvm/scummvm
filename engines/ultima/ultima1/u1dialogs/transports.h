@@ -37,11 +37,13 @@ using Shared::CCharacterInputMsg;
 class Transports : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
 	bool CharacterInputMsg(CCharacterInputMsg &msg) override;
+
 private:
 	uint _water, _woods, _grass;
 	bool _hasFreeTiles, _hasShuttle, _isClosed;
 	uint _transportCount;
 	bool _transports[6];
+
 private:
 	/**
 	 * Calculates the number of free tiles in the overworld
@@ -67,11 +69,13 @@ private:
 	 * Add a transport to the overworld map 
 	 */
 	void addTransport(int transportIndex);
+
 protected:
 	/**
 	 * Set the mode
 	 */
 	void setMode(BuySell mode) override;
+
 public:
 	CLASSDEF;
 

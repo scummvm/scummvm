@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/gumps/target_gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,12 +35,11 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(DesktopGump, Gump)
 bool DesktopGump::_fadedModal = true;
 
 DesktopGump::DesktopGump()
-	: Gump() {
+    : Gump() {
 }
 
-DesktopGump::DesktopGump(int32 x, int32 y, int32 width, int32 height) :
-	Gump(x, y, width, height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP,
-	     LAYER_DESKTOP) {
+DesktopGump::DesktopGump(int32 x, int32 y, int32 width, int32 height) : Gump(x, y, width, height, 0, FLAG_DONT_SAVE | FLAG_CORE_GUMP,
+                                                                             LAYER_DESKTOP) {
 }
 
 DesktopGump::~DesktopGump(void) {
@@ -62,7 +61,7 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 			// If background blanking on modal is enabled...
 			// Background is partially transparent
 			if (_fadedModal && g->IsOfType<ModalGump>() &&
-			        !g->IsOfType<TargetGump>() && !g->IsHidden())
+			    !g->IsOfType<TargetGump>() && !g->IsHidden())
 				surf->FillBlended(0x7F000000, 0, 0, _dims.w, _dims.h);
 
 			g->Paint(surf, lerp_factor, scaled);
@@ -86,7 +85,6 @@ void DesktopGump::DraggingChild(Gump *gump, int mx, int my) {
 }
 
 void DesktopGump::StopDraggingChild(Gump *gump) {
-
 }
 
 void DesktopGump::RenderSurfaceChanged(RenderSurface *surf) {

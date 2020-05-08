@@ -26,9 +26,9 @@
 #define KYRA_LOL_H
 
 #include "kyra/engine/kyra_rpg.h"
-#include "kyra/script/script_tim.h"
-#include "kyra/script/script.h"
 #include "kyra/gui/gui_lol.h"
+#include "kyra/script/script.h"
+#include "kyra/script/script_tim.h"
 #include "kyra/text/text_lol.h"
 
 #include "common/list.h"
@@ -262,12 +262,13 @@ struct MistOfDoomAnimData {
 };
 
 class LoLEngine : public KyraRpgEngine {
-friend class GUI_LoL;
-friend class TextDisplayer_LoL;
-friend class TIMInterpreter_LoL;
-friend class TimAnimator;
-friend class Debugger_LoL;
-friend class HistoryPlayer;
+	friend class GUI_LoL;
+	friend class TextDisplayer_LoL;
+	friend class TIMInterpreter_LoL;
+	friend class TimAnimator;
+	friend class Debugger_LoL;
+	friend class HistoryPlayer;
+
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine() override;
@@ -423,7 +424,7 @@ private:
 	void timerFadeMessageText(int timerNum);
 
 	uint8 getClock2Timer(int index) override { return index < _numClock2Timers ? _clock2Timers[index] : 0; }
-	uint8 getNumClock2Timers() override  { return _numClock2Timers; }
+	uint8 getNumClock2Timers() override { return _numClock2Timers; }
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
@@ -1323,6 +1324,7 @@ public:
 	~HistoryPlayer();
 
 	void play();
+
 private:
 	OSystem *_system;
 	LoLEngine *_vm;

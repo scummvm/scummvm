@@ -51,13 +51,25 @@ class MDSkyStripWidget;
 
 using Std::list;
 
-typedef enum { CURSOR_HEAD, CURSOR_NECK, CURSOR_CHEST, CURSOR_RIGHT_HAND, CURSOR_LEFT_HAND, CURSOR_RIGHT_RING, CURSOR_LEFT_RING, CURSOR_FEET,
-               CURSOR_LEFT, CURSOR_RIGHT, CURSOR_COMBAT, CURSOR_CHECK, CURSOR_HEART, CURSOR_PARTY, CURSOR_INVENTORY
-             } gumpCursorPos;
+typedef enum { CURSOR_HEAD,
+	           CURSOR_NECK,
+	           CURSOR_CHEST,
+	           CURSOR_RIGHT_HAND,
+	           CURSOR_LEFT_HAND,
+	           CURSOR_RIGHT_RING,
+	           CURSOR_LEFT_RING,
+	           CURSOR_FEET,
+	           CURSOR_LEFT,
+	           CURSOR_RIGHT,
+	           CURSOR_COMBAT,
+	           CURSOR_CHECK,
+	           CURSOR_HEART,
+	           CURSOR_PARTY,
+	           CURSOR_INVENTORY
+} gumpCursorPos;
 
 class ViewManager {
 protected:
-
 	Configuration *config;
 	int game_type;
 	GUI *gui;
@@ -87,7 +99,6 @@ protected:
 	Std::string DollDataDirString;
 
 public:
-
 	ViewManager(Configuration *cfg);
 	virtual ~ViewManager();
 
@@ -153,14 +164,13 @@ public:
 	void double_click_obj(Obj *obj);
 	unsigned int get_display_weight(float weight);
 
-// custom doll functions shared between DollWidget and DollViewGump
+	// custom doll functions shared between DollWidget and DollViewGump
 	Std::string getDollDataDirString();
 	Graphics::ManagedSurface *loadAvatarDollImage(Graphics::ManagedSurface *avatar_doll, bool orig = false);
 	Graphics::ManagedSurface *loadCustomActorDollImage(Graphics::ManagedSurface *actor_doll, uint8 actor_num, bool orig = false);
 	Graphics::ManagedSurface *loadGenericDollImage(bool orig);
 
 protected:
-
 	Actor *doll_view_get_next_party_member();
 	DollViewGump *get_doll_view(Actor *actor);
 	ContainerViewGump *get_container_view(Actor *actor, Obj *obj);

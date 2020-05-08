@@ -36,6 +36,7 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::PCSpeaker *_stream;
 	Audio::SoundHandle _handle;
+
 public:
 	PCSpeaker(Audio::Mixer *mixer);
 	~PCSpeaker();

@@ -24,10 +24,10 @@
 #define BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
 
 #include "backends/networking/curl/request.h"
-#include "common/str.h"
-#include "common/singleton.h"
 #include "common/hashmap.h"
 #include "common/mutex.h"
+#include "common/singleton.h"
+#include "common/str.h"
 
 typedef void CURL;
 typedef void CURLM;
@@ -40,8 +40,8 @@ class NetworkReadStream;
 class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	static const uint32 FRAMES_PER_SECOND = 25;
 	static const uint32 TIMER_INTERVAL = 1000000 / FRAMES_PER_SECOND;
-	static const uint32 CLOUD_PERIOD = 1; //every frame
-	static const uint32 CURL_PERIOD = 1; //every frame
+	static const uint32 CLOUD_PERIOD = 1;                       //every frame
+	static const uint32 CURL_PERIOD = 1;                        //every frame
 	static const uint32 DEBUG_PRINT_PERIOD = FRAMES_PER_SECOND; // once per second
 
 	friend void connectionsThread(void *); //calls handle()
@@ -72,7 +72,7 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 		Request *request;
 		RequestCallback onDeleteCallback;
 
-		RequestWithCallback(Request *rq = nullptr, RequestCallback cb = nullptr): request(rq), onDeleteCallback(cb) {}
+		RequestWithCallback(Request *rq = nullptr, RequestCallback cb = nullptr) : request(rq), onDeleteCallback(cb) {}
 	};
 
 	CURLM *_multi;
@@ -124,7 +124,7 @@ public:
 };
 
 /** Shortcut for accessing the connection manager. */
-#define ConnMan     Networking::ConnectionManager::instance()
+#define ConnMan Networking::ConnectionManager::instance()
 
 } // End of namespace Networking
 

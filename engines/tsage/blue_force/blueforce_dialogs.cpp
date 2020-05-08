@@ -20,13 +20,13 @@
  *
  */
 
-#include "tsage/tsage.h"
+#include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
-#include "tsage/staticres.h"
 #include "tsage/globals.h"
-#include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/ringworld/ringworld_logic.h"
+#include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -344,7 +344,7 @@ void AmmoBeltDialog::draw() {
 		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip1Bullets + 1);
 		_clip1Rect.resize(clipSurface, _clip1Rect.left, _clip1Rect.top, 100);
 		g_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip1Rect.left,
-			bounds.top + _clip1Rect.top);
+		                                 bounds.top + _clip1Rect.top);
 	}
 
 	// Draw the second clip if necessary
@@ -352,7 +352,7 @@ void AmmoBeltDialog::draw() {
 		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip2Bullets + 1);
 		_clip2Rect.resize(clipSurface, _clip2Rect.left, _clip2Rect.top, 100);
 		g_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip2Rect.left,
-			bounds.top + _clip2Rect.top);
+		                                 bounds.top + _clip2Rect.top);
 	}
 
 	// If a clip is loaded, draw the 'loaded' portion of the gun
@@ -360,7 +360,7 @@ void AmmoBeltDialog::draw() {
 		GfxSurface loadedSurface = surfaceFromRes(9, 7, 1);
 		_loadedRect.resize(loadedSurface, _loadedRect.left, _loadedRect.top, 100);
 		g_globals->gfxManager().copyFrom(loadedSurface, bounds.left + _loadedRect.left,
-			bounds.top + _loadedRect.top);
+		                                 bounds.top + _loadedRect.top);
 	}
 }
 
@@ -381,7 +381,7 @@ RadioConvDialog::RadioConvDialog() : GfxDialog() {
 	// Set up the button positions and add them to the dialog
 	for (idx = 0; idx < 8; ++idx) {
 		_buttons[idx]._bounds.moveTo((idx % 2) * maxWidth + 2,
-				idx / 2 * _buttons[idx]._bounds.height() + 2);
+		                             idx / 2 * _buttons[idx]._bounds.height() + 2);
 		_buttons[idx]._bounds.setWidth(maxWidth);
 
 		add(&_buttons[idx]);

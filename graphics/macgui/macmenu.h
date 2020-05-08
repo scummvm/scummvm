@@ -30,7 +30,7 @@ namespace Common {
 class U32String;
 class MacResManager;
 class PEResources;
-}
+} // namespace Common
 
 namespace Graphics {
 
@@ -54,8 +54,14 @@ public:
 	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
 	static MacMenu *createMenuFromPEexe(Common::PEResources *exe, MacWindowManager *wm);
 
-	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
-	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) { _unicodeccallback = callback; _cdata = data; }
+	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) {
+		_ccallback = callback;
+		_cdata = data;
+	}
+	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) {
+		_unicodeccallback = callback;
+		_cdata = data;
+	}
 
 	void addStaticMenus(const MacMenuData *data);
 	void calcDimensions();
@@ -82,7 +88,10 @@ public:
 	void disableAllMenus();
 
 	bool isVisible() { return _isVisible; }
-	void setVisible(bool visible) { _isVisible = visible; _contentIsDirty = true; }
+	void setVisible(bool visible) {
+		_isVisible = visible;
+		_contentIsDirty = true;
+	}
 
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 

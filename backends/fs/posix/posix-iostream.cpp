@@ -35,8 +35,7 @@ PosixIoStream *PosixIoStream::makeFromPath(const Common::String &path, bool writ
 	return nullptr;
 }
 
-PosixIoStream::PosixIoStream(void *handle) :
-		StdioStream(handle) {
+PosixIoStream::PosixIoStream(void *handle) : StdioStream(handle) {
 }
 
 int32 PosixIoStream::size() const {

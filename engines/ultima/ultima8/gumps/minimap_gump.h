@@ -23,10 +23,10 @@
 #ifndef ULTIMA8_GUMPS_MINIMAPGUMP_H
 #define ULTIMA8_GUMPS_MINIMAPGUMP_H
 
-#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/graphics/texture.h"
-#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/world/current_map.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -35,12 +35,13 @@ namespace Ultima8 {
 
 class MiniMapGump : public Gump {
 private:
-	Texture             _minimap;
-	unsigned int        _lastMapNum;
+	Texture _minimap;
+	unsigned int _lastMapNum;
 
 	uint32 getPixelAt(int x, int y);
 	void setPixelAt(int x, int y, uint32 pixel);
 	uint32 sampleAtPoint(int x, int y, CurrentMap *map);
+
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -48,10 +49,11 @@ public:
 	MiniMapGump(int x, int y);
 	~MiniMapGump() override;
 
-	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	uint16      TraceObjId(int32 mx, int32 my) override;
+	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	uint16 TraceObjId(int32 mx, int32 my) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

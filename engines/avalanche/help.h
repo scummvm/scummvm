@@ -50,7 +50,7 @@ private:
 	Button _buttons[10];
 	byte _highlightWas;
 	byte _buttonNum; // How many buttons do we have on the screen at the moment?
-	bool _holdLeft; // Is the left mouse button is still being held?
+	bool _holdLeft;  // Is the left mouse button is still being held?
 
 	void switchPage(byte which);
 	Common::String getLine(Common::File &file); // It was a nested function in getMe().

@@ -21,8 +21,8 @@
  */
 
 #include "glk/adrift/scare.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 
 namespace Glk {
 namespace Adrift {
@@ -32,7 +32,6 @@ static const sc_char NUL = '\0';
 
 /* Trace flag, set before running. */
 static sc_bool obj_trace = FALSE;
-
 
 /*
  * obj_is_static()
@@ -77,7 +76,6 @@ sc_bool obj_is_surface(sc_gameref_t game, sc_int object) {
 	return is_surface;
 }
 
-
 /*
  * obj_container_object()
  *
@@ -94,7 +92,6 @@ sc_int obj_container_object(sc_gameref_t game, sc_int n) {
 	}
 	return object - 1;
 }
-
 
 /*
  * obj_container_index()
@@ -113,7 +110,6 @@ sc_int obj_container_index(sc_gameref_t game, sc_int objnum) {
 	return count;
 }
 
-
 /*
  * obj_surface_object()
  *
@@ -131,7 +127,6 @@ sc_int obj_surface_object(sc_gameref_t game, sc_int n) {
 	return object - 1;
 }
 
-
 /*
  * obj_surface_index()
  *
@@ -148,7 +143,6 @@ sc_int obj_surface_index(sc_gameref_t game, sc_int objnum) {
 	}
 	return count;
 }
-
 
 /*
  * obj_stateful_object()
@@ -177,7 +171,6 @@ sc_int obj_stateful_object(sc_gameref_t game, sc_int n) {
 	return object - 1;
 }
 
-
 /*
  * obj_stateful_index()
  *
@@ -204,7 +197,6 @@ sc_int obj_stateful_index(sc_gameref_t game, sc_int objnum) {
 	}
 	return count;
 }
-
 
 /*
  * obj_state_name()
@@ -250,7 +242,6 @@ sc_char *obj_state_name(sc_gameref_t game, sc_int objnum) {
 	return string;
 }
 
-
 /*
  * obj_dynamic_object()
  *
@@ -267,7 +258,6 @@ sc_int obj_dynamic_object(sc_gameref_t game, sc_int n) {
 	}
 	return object - 1;
 }
-
 
 /*
  * obj_wearable_object()
@@ -293,7 +283,6 @@ sc_int obj_wearable_object(sc_gameref_t game, sc_int n) {
 	}
 	return object - 1;
 }
-
 
 /*
  * Size is held in the ten's digit of SizeWeight, and weight in the units.
@@ -375,9 +364,7 @@ sc_int obj_get_weight(sc_gameref_t game, sc_int object) {
 
 		/* Find and add contained or surface objects. */
 		for (other = 0; other < gs_object_count(game); other++) {
-			if ((gs_object_position(game, other) == OBJ_IN_OBJECT
-			        || gs_object_position(game, other) == OBJ_ON_OBJECT)
-			        && gs_object_parent(game, other) == object) {
+			if ((gs_object_position(game, other) == OBJ_IN_OBJECT || gs_object_position(game, other) == OBJ_ON_OBJECT) && gs_object_parent(game, other) == object) {
 				weight += obj_get_weight(game, other);
 			}
 		}
@@ -389,7 +376,6 @@ sc_int obj_get_weight(sc_gameref_t game, sc_int object) {
 	/* Return total weight. */
 	return weight;
 }
-
 
 /*
  * obj_convert_player_limit()
@@ -434,7 +420,6 @@ sc_int obj_get_player_weight_limit(sc_gameref_t game) {
 	return obj_convert_player_limit(max_weight);
 }
 
-
 /*
  * obj_get_container_maxsize()
  * obj_get_container_capacity()
@@ -473,15 +458,13 @@ sc_int obj_get_container_capacity(sc_gameref_t game, sc_int object) {
 	vt_key[0].string = "Objects";
 	vt_key[1].integer = object;
 	vt_key[2].string = "Capacity";
-	capacity = prop_get_integer(bundle, "I<-sis", vt_key)
-	           / OBJ_DIMENSION_DIVISOR;
+	capacity = prop_get_integer(bundle, "I<-sis", vt_key) / OBJ_DIMENSION_DIVISOR;
 
 	if (obj_trace)
 		sc_trace("Object: object %ld has capacity %ld\n", object, capacity);
 
 	return capacity;
 }
-
 
 /* Sit/lie bit mask enumerations. */
 enum {
@@ -514,7 +497,6 @@ sc_int obj_standable_object(sc_gameref_t game, sc_int n) {
 	return object - 1;
 }
 
-
 /*
  * obj_lieable_object()
  *
@@ -540,7 +522,6 @@ sc_int obj_lieable_object(sc_gameref_t game, sc_int n) {
 	return object - 1;
 }
 
-
 /*
  * obj_appears_plural()
  *
@@ -561,9 +542,7 @@ sc_bool obj_appears_plural(sc_gameref_t game, sc_int object) {
 	vt_key[2].string = "Prefix";
 	prefix = prop_get_string(bundle, "S<-sis", vt_key);
 
-	if (!(sc_strempty(prefix)
-	        || sc_compare_word(prefix, "a", 1)
-	        || sc_compare_word(prefix, "an", 2))) {
+	if (!(sc_strempty(prefix) || sc_compare_word(prefix, "a", 1) || sc_compare_word(prefix, "an", 2))) {
 		sc_int length;
 
 		/* Check name for ending in 's', but not 'us'. */
@@ -571,16 +550,13 @@ sc_bool obj_appears_plural(sc_gameref_t game, sc_int object) {
 		name = prop_get_string(bundle, "S<-sis", vt_key);
 		length = strlen(name);
 
-		if (!sc_strempty(name)
-		        && sc_tolower(name[length - 1]) == 's'
-		        && (length < 2 || sc_tolower(name[length - 2]) != 'u'))
+		if (!sc_strempty(name) && sc_tolower(name[length - 1]) == 's' && (length < 2 || sc_tolower(name[length - 2]) != 'u'))
 			return TRUE;
 	}
 
 	/* Doesn't look plural. */
 	return FALSE;
 }
-
 
 /*
  * obj_directly_in_room_internal()
@@ -628,7 +604,8 @@ static sc_bool obj_directly_in_room_internal(sc_gameref_t game, sc_int object, s
 
 		default:
 			sc_fatal("obj_directly_in_room_internal:"
-			         " invalid type, %ld\n", type);
+			         " invalid type, %ld\n",
+			         type);
 			return FALSE;
 		}
 	} else
@@ -648,7 +625,6 @@ sc_bool obj_directly_in_room(sc_gameref_t game, sc_int object, sc_int room) {
 
 	return result;
 }
-
 
 /*
  * obj_indirectly_in_room_internal()
@@ -708,7 +684,8 @@ static sc_bool obj_indirectly_in_room_internal(sc_gameref_t game, sc_int object,
 
 		default:
 			sc_fatal("obj_indirectly_in_room_internal:"
-			         " invalid type, %ld\n", type);
+			         " invalid type, %ld\n",
+			         type);
 			return FALSE;
 		}
 	} else {
@@ -720,18 +697,18 @@ static sc_bool obj_indirectly_in_room_internal(sc_gameref_t game, sc_int object,
 
 		/* Decide depending on positioning. */
 		switch (position) {
-		case OBJ_HIDDEN:       /* Hidden. */
+		case OBJ_HIDDEN: /* Hidden. */
 			return FALSE;
 
-		case OBJ_HELD_PLAYER:  /* Held by player. */
-		case OBJ_WORN_PLAYER:  /* Worn by player. */
+		case OBJ_HELD_PLAYER: /* Held by player. */
+		case OBJ_WORN_PLAYER: /* Worn by player. */
 			return gs_player_in_room(game, room);
 
-		case OBJ_HELD_NPC:     /* Held by NPC. */
-		case OBJ_WORN_NPC:     /* Worn by NPC. */
+		case OBJ_HELD_NPC: /* Held by NPC. */
+		case OBJ_WORN_NPC: /* Worn by NPC. */
 			return npc_in_room(game, parent, room);
 
-		case OBJ_IN_OBJECT: {  /* In another object. */
+		case OBJ_IN_OBJECT: { /* In another object. */
 			sc_int openness;
 
 			openness = gs_object_openness(game, parent);
@@ -744,13 +721,14 @@ static sc_bool obj_indirectly_in_room_internal(sc_gameref_t game, sc_int object,
 			}
 		}
 
-		case OBJ_ON_OBJECT:    /* On another object. */
+		case OBJ_ON_OBJECT: /* On another object. */
 			return obj_indirectly_in_room(game, parent, room);
 
-		default:               /* Within a room. */
+		default: /* Within a room. */
 			if (position > gs_room_count(game) + 1) {
 				sc_error("sc_object_indirectly_in_room:"
-				         " position out of bounds, %ld\n", position);
+				         " position out of bounds, %ld\n",
+				         position);
 			}
 			return position - 1 == room;
 		}
@@ -770,7 +748,6 @@ sc_bool obj_indirectly_in_room(sc_gameref_t game, sc_int object, sc_int room) {
 
 	return result;
 }
-
 
 /*
  * obj_indirectly_held_by_player_internal()
@@ -801,18 +778,18 @@ static sc_bool obj_indirectly_held_by_player_internal(sc_gameref_t game, sc_int 
 
 		/* Decide depending on positioning. */
 		switch (position) {
-		case OBJ_HIDDEN:       /* Hidden. */
+		case OBJ_HIDDEN: /* Hidden. */
 			return FALSE;
 
-		case OBJ_HELD_PLAYER:  /* Held by player. */
-		case OBJ_WORN_PLAYER:  /* Worn by player. */
+		case OBJ_HELD_PLAYER: /* Held by player. */
+		case OBJ_WORN_PLAYER: /* Worn by player. */
 			return TRUE;
 
-		case OBJ_HELD_NPC:     /* Held by NPC. */
-		case OBJ_WORN_NPC:     /* Worn by NPC. */
+		case OBJ_HELD_NPC: /* Held by NPC. */
+		case OBJ_WORN_NPC: /* Worn by NPC. */
 			return FALSE;
 
-		case OBJ_IN_OBJECT: {  /* In another object. */
+		case OBJ_IN_OBJECT: { /* In another object. */
 			sc_int openness;
 
 			openness = gs_object_openness(game, parent);
@@ -825,10 +802,10 @@ static sc_bool obj_indirectly_held_by_player_internal(sc_gameref_t game, sc_int 
 			}
 		}
 
-		case OBJ_ON_OBJECT:    /* On another object. */
+		case OBJ_ON_OBJECT: /* On another object. */
 			return obj_indirectly_held_by_player(game, parent);
 
-		default:               /* Within a room. */
+		default: /* Within a room. */
 			return FALSE;
 		}
 	}
@@ -842,12 +819,12 @@ sc_bool obj_indirectly_held_by_player(sc_gameref_t game, sc_int object) {
 
 	if (obj_trace) {
 		sc_trace("Object: checking for object %ld indirectly"
-		         " held by player, %s\n", object, result ? "true" : "false");
+		         " held by player, %s\n",
+		         object, result ? "true" : "false");
 	}
 
 	return result;
 }
-
 
 /*
  * sc_obj_shows_initial_description()
@@ -892,7 +869,6 @@ sc_bool obj_shows_initial_description(sc_gameref_t game, sc_int object) {
 	return FALSE;
 }
 
-
 /*
  * obj_turn_update()
  * obj_setup_initial()
@@ -904,8 +880,7 @@ void obj_turn_update(sc_gameref_t game) {
 
 	/* Update object seen flag to current state. */
 	for (index_ = 0; index_ < gs_object_count(game); index_++) {
-		if (!gs_object_seen(game, index_)
-		        && obj_indirectly_in_room(game, index_, gs_playerroom(game)))
+		if (!gs_object_seen(game, index_) && obj_indirectly_in_room(game, index_, gs_playerroom(game)))
 			gs_set_object_seen(game, index_, TRUE);
 	}
 }
@@ -914,7 +889,6 @@ void obj_setup_initial(sc_gameref_t game) {
 	/* Set initial seen states for objects. */
 	obj_turn_update(game);
 }
-
 
 /*
  * obj_debug_trace()

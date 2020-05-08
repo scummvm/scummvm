@@ -20,13 +20,13 @@
  *
  */
 
-#include "sludge/allfiles.h"
 #include "sludge/fonttext.h"
+#include "sludge/allfiles.h"
 #include "sludge/graphics.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
-#include "sludge/sprites.h"
 #include "sludge/sludge.h"
+#include "sludge/sprites.h"
 #include "sludge/version.h"
 
 namespace Sludge {
@@ -199,7 +199,7 @@ void TextManager::loadFont(int ssgVersion, Common::SeekableReadStream *stream) {
 			}
 			tmp[256] = 0;
 			charOrder = tmp;
-			delete []tmp;
+			delete[] tmp;
 		} else {
 			charOrder = readString(stream);
 		}

@@ -23,7 +23,6 @@
 #ifndef LURE_DISK_H
 #define LURE_DISK_H
 
-
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "lure/memory.h"
@@ -48,6 +47,7 @@ private:
 	FileEntry _entries[NUM_ENTRIES_IN_HEADER];
 
 	uint8 indexOf(uint16 id, bool suppressError = false);
+
 public:
 	Disk();
 	~Disk();

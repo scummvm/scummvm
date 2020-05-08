@@ -31,8 +31,7 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-RSpit::RSpit(MohawkEngine_Riven *vm) :
-		RivenStack(vm, kStackRspit) {
+RSpit::RSpit(MohawkEngine_Riven *vm) : RivenStack(vm, kStackRspit) {
 
 	REGISTER_COMMAND(RSpit, xrshowinventory);
 	REGISTER_COMMAND(RSpit, xrhideinventory);

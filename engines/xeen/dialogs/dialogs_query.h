@@ -32,6 +32,7 @@ private:
 	Confirm(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	bool execute(const Common::String &msg, int mode);
+
 public:
 	static bool show(XeenEngine *vm, const Common::String &msg, int mode = 0);
 };
@@ -41,6 +42,7 @@ private:
 	YesNo(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	bool execute(bool type, bool townFlag);
+
 public:
 	static bool show(XeenEngine *vm, bool type, bool townFlag = false);
 };

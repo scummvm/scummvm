@@ -4,9 +4,9 @@
 #include "common/substream.h"
 
 class SubReadStreamTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_traverse() {
-		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		byte contents[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 		Common::MemoryReadStream ms(contents, 10);
 
 		int end = 5;
@@ -28,7 +28,7 @@ class SubReadStreamTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_safe_eos() {
-		byte contents[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		byte contents[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 		Common::MemoryReadStream ms(contents, sizeof(contents));
 
 		Common::SafeSeekableSubReadStream ssrs1(&ms, 0, sizeof(contents));

@@ -24,7 +24,6 @@
 #define ULTIMA8_WORLD_ACTORS_PATHFINDER_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
 namespace Ultima {
@@ -34,9 +33,9 @@ class Actor;
 class Item;
 
 struct PathfindingState {
-	PathfindingState() : _x(0), _y(0), _z(0),  _direction(0),
-		_lastAnim(Animation::walk), _flipped(false),
-		_firstStep(true), _combat(false) {};
+	PathfindingState() : _x(0), _y(0), _z(0), _direction(0),
+	                     _lastAnim(Animation::walk), _flipped(false),
+	                     _firstStep(true), _combat(false){};
 	int32 _x, _y, _z;
 	Animation::Sequence _lastAnim;
 	uint32 _direction;
@@ -82,7 +81,6 @@ public:
 	static ObjId _visualDebugActor;
 #endif
 
-
 protected:
 	PathfindingState _start;
 	Actor *_actor;
@@ -100,7 +98,7 @@ protected:
 
 	bool alreadyVisited(int32 x, int32 y, int32 z) const;
 	void newNode(PathNode *oldnode, PathfindingState &state,
-				 unsigned int steps);
+	             unsigned int steps);
 	void expandNode(PathNode *node);
 	unsigned int costHeuristic(PathNode *node);
 	bool checkTarget(PathNode *node) const;

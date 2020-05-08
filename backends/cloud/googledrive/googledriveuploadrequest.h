@@ -32,7 +32,7 @@ namespace Cloud {
 namespace GoogleDrive {
 class GoogleDriveStorage;
 
-class GoogleDriveUploadRequest: public Networking::Request {
+class GoogleDriveUploadRequest : public Networking::Request {
 	GoogleDriveStorage *_storage;
 	Common::String _savePath;
 	Common::SeekableReadStream *_contentsStream;

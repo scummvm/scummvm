@@ -36,9 +36,9 @@
 namespace CryOmni3D {
 
 FontManager::FontManager() : _currentFont(nullptr), _transparentBackground(false),
-	_spaceWidth(0), _charSpacing(0), _lineHeight(30), _foreColor(0), _blockTextRemaining(nullptr),
-	_useSpaceDelimiter(true), _keepASCIIjoined(true), _codepage(Common::kCodePageInvalid),
-	_toUnicode(false) {
+                             _spaceWidth(0), _charSpacing(0), _lineHeight(30), _foreColor(0), _blockTextRemaining(nullptr),
+                             _useSpaceDelimiter(true), _keepASCIIjoined(true), _codepage(Common::kCodePageInvalid),
+                             _toUnicode(false) {
 }
 
 FontManager::~FontManager() {
@@ -69,7 +69,7 @@ void FontManager::loadFonts(const Common::Array<Common::String> &fontFiles,
 	Common::HashMap<Common::String, Graphics::Font *> fontsCache;
 
 	for (Common::Array<Common::String>::const_iterator it = fontFiles.begin(); it != fontFiles.end();
-	        it++) {
+	     it++) {
 		Graphics::Font *fontEntry = fontsCache.getVal(*it, nullptr);
 		if (fontEntry) {
 			_fonts.push_back(fontEntry);
@@ -144,7 +144,7 @@ void FontManager::loadTTFList(const Common::String &ttfList, Common::CodePage co
 
 		// Use 96 dpi as it's the default under Windows
 		Graphics::Font *font = Graphics::findTTFace(fontFiles, uniFontFace, bold, italic, -size,
-		                       96, Graphics::kTTFRenderModeMonochrome);
+		                                            96, Graphics::kTTFRenderModeMonochrome);
 		if (!font) {
 			error("Can't find required face (line %u) in %s", i, fontFile.c_str());
 		}
@@ -369,7 +369,8 @@ void FontManager::calculateWordWrap(const Common::U32String &text,
 
 	while (!wordWrap) {
 		Common::U32String::const_iterator begin = ptr;
-		for (; ptr != text.end() && *ptr != '\r' && (!_useSpaceDelimiter || *ptr != ' '); ptr++) { }
+		for (; ptr != text.end() && *ptr != '\r' && (!_useSpaceDelimiter || *ptr != ' '); ptr++) {
+		}
 		Common::U32String word(begin, ptr);
 		uint width = getStrWidth(word);
 		if (width + offset >= lineWidth) {
@@ -379,7 +380,8 @@ void FontManager::calculateWordWrap(const Common::U32String &text,
 		} else {
 			words.push_back(word);
 			offset += width + _spaceWidth;
-			for (; ptr != text.end() && *ptr == ' '; ptr++) { }
+			for (; ptr != text.end() && *ptr == ' '; ptr++) {
+			}
 			for (; ptr != text.end() && *ptr == '\r'; ptr++) {
 				wordWrap = true;
 				*hasCr = true;

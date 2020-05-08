@@ -34,7 +34,7 @@ class ButtonWidget;
 class CommandSender;
 class GraphicsWidget;
 class SaveLoadChooser;
-}
+} // namespace GUI
 
 class MainMenuDialog : public GUI::Dialog {
 public:
@@ -65,14 +65,14 @@ protected:
 protected:
 	Engine *_engine;
 
-	GUI::GraphicsWidget  *_logo;
+	GUI::GraphicsWidget *_logo;
 
-	GUI::ButtonWidget    *_rtlButton;
-	GUI::ButtonWidget    *_loadButton;
-	GUI::ButtonWidget    *_saveButton;
-	GUI::ButtonWidget    *_helpButton;
+	GUI::ButtonWidget *_rtlButton;
+	GUI::ButtonWidget *_loadButton;
+	GUI::ButtonWidget *_saveButton;
+	GUI::ButtonWidget *_helpButton;
 
-	GUI::Dialog          *_aboutDialog;
+	GUI::Dialog *_aboutDialog;
 
 	GUI::SaveLoadChooser *_loadDialog;
 	GUI::SaveLoadChooser *_saveDialog;

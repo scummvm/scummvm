@@ -46,7 +46,6 @@ private:
 	void addLocationsToVisit();
 	bool isLocationVisited(WalkLocation *location);
 
-
 	WalkMgr *_manager;
 	Common::Array<WalkLocation *> _locations;
 	Common::Array<WalkLocation *> _toVisit;

@@ -38,6 +38,7 @@ class BackgroundResourceLoader {
 private:
 	BigfileArchive *_bigFileArchive;
 	DragonRMS *_dragonRMS;
+
 public:
 	BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS);
 	Background *load(uint32 sceneId);
@@ -133,7 +134,6 @@ private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);
 	Graphics::Surface *initGfxLayer(TileMap &tileMap);
 	void loadGfxLayer(Graphics::Surface *surface, TileMap &tileMap, byte *tiles);
-
 };
 
 class PriorityLayer {
@@ -142,6 +142,7 @@ public:
 	int16 getPriority(Common::Point pos);
 	void overlayTileMap(byte *data, int16 x, int16 y, int16 w, int16 h);
 	void restoreTileMap(int16 x, int16 y, int16 w, int16 h);
+
 protected:
 	int16 _width, _height;
 	int16 _mapWidth, _mapHeight;

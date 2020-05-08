@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CIconNavImage : public CPetGraphic {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 

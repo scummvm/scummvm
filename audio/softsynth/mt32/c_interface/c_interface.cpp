@@ -15,17 +15,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../globals.h"
-#include "../Types.h"
 #include "../File.h"
 #include "../FileStream.h"
-#include "../ROMInfo.h"
-#include "../Synth.h"
 #include "../MidiStreamParser.h"
+#include "../ROMInfo.h"
 #include "../SampleRateConverter.h"
+#include "../Synth.h"
+#include "../Types.h"
+#include "../globals.h"
 
-#include "c_types.h"
 #include "c_interface.h"
+#include "c_types.h"
 
 using namespace MT32Emu;
 
@@ -42,78 +42,77 @@ static mt32emu_service_version getSynthVersionID(mt32emu_service_i) {
 }
 
 static const mt32emu_service_i_v2 SERVICE_VTABLE = {
-	getSynthVersionID,
-	mt32emu_get_supported_report_handler_version,
-	mt32emu_get_supported_midi_receiver_version,
-	mt32emu_get_library_version_int,
-	mt32emu_get_library_version_string,
-	mt32emu_get_stereo_output_samplerate,
-	mt32emu_create_context,
-	mt32emu_free_context,
-	mt32emu_add_rom_data,
-	mt32emu_add_rom_file,
-	mt32emu_get_rom_info,
-	mt32emu_set_partial_count,
-	mt32emu_set_analog_output_mode,
-	mt32emu_open_synth,
-	mt32emu_close_synth,
-	mt32emu_is_open,
-	mt32emu_get_actual_stereo_output_samplerate,
-	mt32emu_flush_midi_queue,
-	mt32emu_set_midi_event_queue_size,
-	mt32emu_set_midi_receiver,
-	mt32emu_parse_stream,
-	mt32emu_parse_stream_at,
-	mt32emu_play_short_message,
-	mt32emu_play_short_message_at,
-	mt32emu_play_msg,
-	mt32emu_play_sysex,
-	mt32emu_play_msg_at,
-	mt32emu_play_sysex_at,
-	mt32emu_play_msg_now,
-	mt32emu_play_msg_on_part,
-	mt32emu_play_sysex_now,
-	mt32emu_write_sysex,
-	mt32emu_set_reverb_enabled,
-	mt32emu_is_reverb_enabled,
-	mt32emu_set_reverb_overridden,
-	mt32emu_is_reverb_overridden,
-	mt32emu_set_reverb_compatibility_mode,
-	mt32emu_is_mt32_reverb_compatibility_mode,
-	mt32emu_is_default_reverb_mt32_compatible,
-	mt32emu_set_dac_input_mode,
-	mt32emu_get_dac_input_mode,
-	mt32emu_set_midi_delay_mode,
-	mt32emu_get_midi_delay_mode,
-	mt32emu_set_output_gain,
-	mt32emu_get_output_gain,
-	mt32emu_set_reverb_output_gain,
-	mt32emu_get_reverb_output_gain,
-	mt32emu_set_reversed_stereo_enabled,
-	mt32emu_is_reversed_stereo_enabled,
-	mt32emu_render_bit16s,
-	mt32emu_render_float,
-	mt32emu_render_bit16s_streams,
-	mt32emu_render_float_streams,
-	mt32emu_has_active_partials,
-	mt32emu_is_active,
-	mt32emu_get_partial_count,
-	mt32emu_get_part_states,
-	mt32emu_get_partial_states,
-	mt32emu_get_playing_notes,
-	mt32emu_get_patch_name,
-	mt32emu_read_memory,
-	mt32emu_get_best_analog_output_mode,
-	mt32emu_set_stereo_output_samplerate,
-	mt32emu_set_samplerate_conversion_quality,
-	mt32emu_select_renderer_type,
-	mt32emu_get_selected_renderer_type,
-	mt32emu_convert_output_to_synth_timestamp,
-	mt32emu_convert_synth_to_output_timestamp,
-	mt32emu_get_internal_rendered_sample_count,
-	mt32emu_set_nice_amp_ramp_enabled,
-	mt32emu_is_nice_amp_ramp_enabled
-};
+    getSynthVersionID,
+    mt32emu_get_supported_report_handler_version,
+    mt32emu_get_supported_midi_receiver_version,
+    mt32emu_get_library_version_int,
+    mt32emu_get_library_version_string,
+    mt32emu_get_stereo_output_samplerate,
+    mt32emu_create_context,
+    mt32emu_free_context,
+    mt32emu_add_rom_data,
+    mt32emu_add_rom_file,
+    mt32emu_get_rom_info,
+    mt32emu_set_partial_count,
+    mt32emu_set_analog_output_mode,
+    mt32emu_open_synth,
+    mt32emu_close_synth,
+    mt32emu_is_open,
+    mt32emu_get_actual_stereo_output_samplerate,
+    mt32emu_flush_midi_queue,
+    mt32emu_set_midi_event_queue_size,
+    mt32emu_set_midi_receiver,
+    mt32emu_parse_stream,
+    mt32emu_parse_stream_at,
+    mt32emu_play_short_message,
+    mt32emu_play_short_message_at,
+    mt32emu_play_msg,
+    mt32emu_play_sysex,
+    mt32emu_play_msg_at,
+    mt32emu_play_sysex_at,
+    mt32emu_play_msg_now,
+    mt32emu_play_msg_on_part,
+    mt32emu_play_sysex_now,
+    mt32emu_write_sysex,
+    mt32emu_set_reverb_enabled,
+    mt32emu_is_reverb_enabled,
+    mt32emu_set_reverb_overridden,
+    mt32emu_is_reverb_overridden,
+    mt32emu_set_reverb_compatibility_mode,
+    mt32emu_is_mt32_reverb_compatibility_mode,
+    mt32emu_is_default_reverb_mt32_compatible,
+    mt32emu_set_dac_input_mode,
+    mt32emu_get_dac_input_mode,
+    mt32emu_set_midi_delay_mode,
+    mt32emu_get_midi_delay_mode,
+    mt32emu_set_output_gain,
+    mt32emu_get_output_gain,
+    mt32emu_set_reverb_output_gain,
+    mt32emu_get_reverb_output_gain,
+    mt32emu_set_reversed_stereo_enabled,
+    mt32emu_is_reversed_stereo_enabled,
+    mt32emu_render_bit16s,
+    mt32emu_render_float,
+    mt32emu_render_bit16s_streams,
+    mt32emu_render_float_streams,
+    mt32emu_has_active_partials,
+    mt32emu_is_active,
+    mt32emu_get_partial_count,
+    mt32emu_get_part_states,
+    mt32emu_get_partial_states,
+    mt32emu_get_playing_notes,
+    mt32emu_get_patch_name,
+    mt32emu_read_memory,
+    mt32emu_get_best_analog_output_mode,
+    mt32emu_set_stereo_output_samplerate,
+    mt32emu_set_samplerate_conversion_quality,
+    mt32emu_select_renderer_type,
+    mt32emu_get_selected_renderer_type,
+    mt32emu_convert_output_to_synth_timestamp,
+    mt32emu_convert_synth_to_output_timestamp,
+    mt32emu_get_internal_rendered_sample_count,
+    mt32emu_set_nice_amp_ramp_enabled,
+    mt32emu_is_nice_amp_ramp_enabled};
 
 } // namespace MT32Emu
 
@@ -134,12 +133,11 @@ namespace MT32Emu {
 
 class DelegatingReportHandlerAdapter : public ReportHandler {
 public:
-	DelegatingReportHandlerAdapter(mt32emu_report_handler_i useReportHandler, void *useInstanceData) :
-		delegate(useReportHandler), instanceData(useInstanceData) {}
+	DelegatingReportHandlerAdapter(mt32emu_report_handler_i useReportHandler, void *useInstanceData) : delegate(useReportHandler), instanceData(useInstanceData) {}
 
 protected:
 	const mt32emu_report_handler_i delegate;
-	void * const instanceData;
+	void *const instanceData;
 
 private:
 	void printDebug(const char *fmt, va_list list) {
@@ -256,8 +254,7 @@ private:
 
 class DelegatingMidiStreamParser : public DefaultMidiStreamParser {
 public:
-	DelegatingMidiStreamParser(const mt32emu_data *useData, mt32emu_midi_receiver_i useMIDIReceiver, void *useInstanceData) :
-		DefaultMidiStreamParser(*useData->synth), delegate(useMIDIReceiver), instanceData(useInstanceData) {}
+	DelegatingMidiStreamParser(const mt32emu_data *useData, mt32emu_midi_receiver_i useMIDIReceiver, void *useInstanceData) : DefaultMidiStreamParser(*useData->synth), delegate(useMIDIReceiver), instanceData(useInstanceData) {}
 
 protected:
 	mt32emu_midi_receiver_i delegate;
@@ -370,7 +367,8 @@ mt32emu_context mt32emu_create_context(mt32emu_report_handler_i report_handler, 
 }
 
 void mt32emu_free_context(mt32emu_context data) {
-	if (data == NULL) return;
+	if (data == NULL)
+		return;
 
 	delete data->srcState->src;
 	data->srcState->src = NULL;
@@ -397,7 +395,8 @@ void mt32emu_free_context(mt32emu_context data) {
 }
 
 mt32emu_return_code mt32emu_add_rom_data(mt32emu_context context, const mt32emu_bit8u *data, size_t data_size, const mt32emu_sha1_digest *sha1_digest) {
-	if (sha1_digest == NULL) return addROMFile(context, new ArrayFile(data, data_size));
+	if (sha1_digest == NULL)
+		return addROMFile(context, new ArrayFile(data, data_size));
 	return addROMFile(context, new ArrayFile(data, data_size, *sha1_digest));
 }
 
@@ -407,7 +406,8 @@ mt32emu_return_code mt32emu_add_rom_file(mt32emu_context context, const char *fi
 	if (fs->open(filename)) {
 		if (fs->getData() != NULL) {
 			rc = addROMFile(context, fs);
-			if (rc > 0) return rc;
+			if (rc > 0)
+				return rc;
 		} else {
 			rc = MT32EMU_RC_FILE_NOT_LOADED;
 		}
@@ -547,22 +547,26 @@ void mt32emu_play_short_message_at(mt32emu_const_context context, mt32emu_bit32u
 }
 
 mt32emu_return_code mt32emu_play_msg(mt32emu_const_context context, mt32emu_bit32u msg) {
-	if (!context->synth->isOpen()) return MT32EMU_RC_NOT_OPENED;
+	if (!context->synth->isOpen())
+		return MT32EMU_RC_NOT_OPENED;
 	return (context->synth->playMsg(msg)) ? MT32EMU_RC_OK : MT32EMU_RC_QUEUE_FULL;
 }
 
 mt32emu_return_code mt32emu_play_sysex(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len) {
-	if (!context->synth->isOpen()) return MT32EMU_RC_NOT_OPENED;
+	if (!context->synth->isOpen())
+		return MT32EMU_RC_NOT_OPENED;
 	return (context->synth->playSysex(sysex, len)) ? MT32EMU_RC_OK : MT32EMU_RC_QUEUE_FULL;
 }
 
 mt32emu_return_code mt32emu_play_msg_at(mt32emu_const_context context, mt32emu_bit32u msg, mt32emu_bit32u timestamp) {
-	if (!context->synth->isOpen()) return MT32EMU_RC_NOT_OPENED;
+	if (!context->synth->isOpen())
+		return MT32EMU_RC_NOT_OPENED;
 	return (context->synth->playMsg(msg, timestamp)) ? MT32EMU_RC_OK : MT32EMU_RC_QUEUE_FULL;
 }
 
 mt32emu_return_code mt32emu_play_sysex_at(mt32emu_const_context context, const mt32emu_bit8u *sysex, mt32emu_bit32u len, mt32emu_bit32u timestamp) {
-	if (!context->synth->isOpen()) return MT32EMU_RC_NOT_OPENED;
+	if (!context->synth->isOpen())
+		return MT32EMU_RC_NOT_OPENED;
 	return (context->synth->playSysex(sysex, len, timestamp)) ? MT32EMU_RC_OK : MT32EMU_RC_QUEUE_FULL;
 }
 

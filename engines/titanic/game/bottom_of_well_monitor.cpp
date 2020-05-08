@@ -25,10 +25,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBottomOfWellMonitor, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 bool CBottomOfWellMonitor::_tvPresent;

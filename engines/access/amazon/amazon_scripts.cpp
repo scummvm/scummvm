@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "access/amazon/amazon_scripts.h"
 #include "access/access.h"
-#include "access/resources.h"
 #include "access/amazon/amazon_game.h"
 #include "access/amazon/amazon_resources.h"
-#include "access/amazon/amazon_scripts.h"
+#include "access/resources.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -208,7 +208,7 @@ void AmazonScripts::mWhile2() {
 }
 
 void AmazonScripts::mWhile(int param1) {
-	switch(param1) {
+	switch (param1) {
 	case 1:
 		mWhile1();
 		break;
@@ -299,12 +299,11 @@ void AmazonScripts::plotInactive() {
 
 	_game->_flags[155] = 0;
 	if (_game->_rawInactiveX >= 152 && _game->_rawInactiveX <= 167 &&
-			_game->_rawInactiveY >= 158 && _game->_rawInactiveY <= 173) {
+	    _game->_rawInactiveY >= 158 && _game->_rawInactiveY <= 173) {
 		_game->_flags[155] = 1;
 	} else {
 		_game->_flags[160] = 0;
-		if (!_game->_jasMayaFlag && _game->_rawInactiveX >= 266 && _game->_rawInactiveX <= 290
-			&& _game->_rawInactiveY >= 70 && _game->_rawInactiveY <= 87) {
+		if (!_game->_jasMayaFlag && _game->_rawInactiveX >= 266 && _game->_rawInactiveX <= 290 && _game->_rawInactiveY >= 70 && _game->_rawInactiveY <= 87) {
 			_game->_flags[160] = 1;
 		}
 	}
@@ -377,15 +376,14 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	}
 }
 
-typedef void(AmazonScripts::*AmazonScriptMethodPtr)();
+typedef void (AmazonScripts::*AmazonScriptMethodPtr)();
 
 void AmazonScripts::executeCommand(int commandIndex) {
 	static const AmazonScriptMethodPtr AMAZON_COMMAND_LIST[] = {
-		&AmazonScripts::cmdHelp_v2, &AmazonScripts::cmdCycleBack,
-		&AmazonScripts::cmdChapter, &AmazonScripts::cmdSetHelp,
-		&AmazonScripts::cmdCenterPanel, &AmazonScripts::cmdMainPanel,
-		&AmazonScripts::CMDRETFLASH
-	};
+	    &AmazonScripts::cmdHelp_v2, &AmazonScripts::cmdCycleBack,
+	    &AmazonScripts::cmdChapter, &AmazonScripts::cmdSetHelp,
+	    &AmazonScripts::cmdCenterPanel, &AmazonScripts::cmdMainPanel,
+	    &AmazonScripts::CMDRETFLASH};
 
 	if (commandIndex >= 73)
 		(this->*AMAZON_COMMAND_LIST[commandIndex - 73])();

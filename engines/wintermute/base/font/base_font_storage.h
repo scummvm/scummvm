@@ -29,10 +29,9 @@
 #ifndef WINTERMUTE_BASE_FONTSTORAGE_H
 #define WINTERMUTE_BASE_FONTSTORAGE_H
 
-
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 

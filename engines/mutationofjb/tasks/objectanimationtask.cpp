@@ -22,10 +22,10 @@
 
 #include "mutationofjb/tasks/objectanimationtask.h"
 
-#include "mutationofjb/tasks/taskmanager.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/room.h"
+#include "mutationofjb/tasks/taskmanager.h"
 
 namespace MutationOfJB {
 
@@ -151,4 +151,4 @@ bool ObjectAnimationTask::handleHardcodedAnimation(Object *const object) {
 	return true;
 }
 
-}
+} // namespace MutationOfJB

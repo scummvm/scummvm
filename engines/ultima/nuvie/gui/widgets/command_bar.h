@@ -23,9 +23,9 @@
 #ifndef NUVIE_CORE_COMMAND_BAR_H
 #define NUVIE_CORE_COMMAND_BAR_H
 
-#include "ultima/shared/std/string.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/misc/call_back.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -47,7 +47,7 @@ class U6Shape;
  * Right click: Set default action.
  * Information: [A]M-DD-YYYY Wind: W[B]
  */
-class CommandBar: public GUI_Widget, public CallBack {
+class CommandBar : public GUI_Widget, public CallBack {
 protected:
 	Game *game;
 	Events *event;
@@ -56,8 +56,8 @@ protected:
 	U6Shape *background; // used to display the WoU command bar backgrounds
 
 	sint8 selected_action; // underlined icon (-1 = none)
-	bool combat_mode; // state of combat icon
-	Std::string wind; // wind direction
+	bool combat_mode;      // state of combat icon
+	Std::string wind;      // wind direction
 	void fill_square(uint8 pal_index);
 
 	uint8 bg_color, font_color;
@@ -80,7 +80,7 @@ public:
 
 	void select_action(sint8 activate);
 	void set_combat_mode(bool mode);
-//    void set_wind(Std::string dir)        { wind = dir; update_display = true; }
+	//    void set_wind(Std::string dir)        { wind = dir; update_display = true; }
 	void set_selected_action(sint8 action) {
 		selected_action = action;
 		update_display = true;
@@ -96,7 +96,7 @@ public:
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
-	bool drag_accept_drop(int x, int y, int message, void *data) override; // needed for !orig_style
+	bool drag_accept_drop(int x, int y, int message, void *data) override;  // needed for !orig_style
 	void drag_perform_drop(int x, int y, int message, void *data) override; // needed for !orig_style
 };
 

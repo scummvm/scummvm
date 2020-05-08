@@ -23,11 +23,11 @@
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
-#include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/googledrive/googledrivestorage.h"
-#include "common/translation.h"
+#include "backends/cloud/onedrive/onedrivestorage.h"
 #include "common/config-manager.h"
 #include "common/str.h"
+#include "common/translation.h"
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
 #endif
@@ -53,11 +53,16 @@ CloudManager::~CloudManager() {
 
 Common::String CloudManager::getStorageConfigName(uint32 index) const {
 	switch (index) {
-	case kStorageNoneId: return "<none>";
-	case kStorageDropboxId: return "Dropbox";
-	case kStorageOneDriveId: return "OneDrive";
-	case kStorageGoogleDriveId: return "GoogleDrive";
-	case kStorageBoxId: return "Box";
+	case kStorageNoneId:
+		return "<none>";
+	case kStorageDropboxId:
+		return "Dropbox";
+	case kStorageOneDriveId:
+		return "OneDrive";
+	case kStorageGoogleDriveId:
+		return "GoogleDrive";
+	case kStorageBoxId:
+		return "Box";
 	default:
 		break;
 	}
@@ -319,7 +324,6 @@ void CloudManager::disconnectStorage(uint32 index) {
 
 	_storages[index] = config;
 }
-
 
 Networking::Request *CloudManager::listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();

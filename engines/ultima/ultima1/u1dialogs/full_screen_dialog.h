@@ -39,6 +39,7 @@ protected:
 	 * Draw the frame
 	 */
 	void drawFrame(const Common::String &title);
+
 public:
 	/**
 	 * Constructor

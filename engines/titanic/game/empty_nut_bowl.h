@@ -33,8 +33,10 @@ class CEmptyNutBowl : public CGameObject {
 	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
 	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CEmptyNutBowl() : CGameObject(), _flag(true) {}

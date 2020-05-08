@@ -22,18 +22,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
 #include "common/system.h"
 #include "common/textconsole.h"
 
 #include "graphics/palette.h"
 
-#include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/screen.h"
+#include "sword2/sword2.h"
 
 namespace Sword2 {
 
@@ -298,7 +297,6 @@ void Screen::setSystemPalette(const byte *colors, uint start, uint num) {
 	} else {
 		_vm->_system->getPaletteManager()->setPalette(colors, start, num);
 	}
-
 }
 
 } // End of namespace Sword2

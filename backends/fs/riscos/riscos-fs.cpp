@@ -27,9 +27,9 @@
 
 #if defined(RISCOS)
 
-#include "backends/platform/sdl/riscos/riscos-utils.h"
 #include "backends/fs/riscos/riscos-fs.h"
 #include "backends/fs/stdiostream.h"
+#include "backends/platform/sdl/riscos/riscos-utils.h"
 #include "common/algorithm.h"
 
 // TODO: Replace use of access()
@@ -171,7 +171,7 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 
 		// Honor the chosen mode
 		if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
-			(mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
+		    (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 			continue;
 
 		myList.push_back(new RISCOSFilesystemNode(entry));
@@ -182,14 +182,14 @@ bool RISCOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 
 AbstractFSNode *RISCOSFilesystemNode::getParent() const {
 	if (_path == "/")
-		return 0;	// The filesystem root has no parent
+		return 0; // The filesystem root has no parent
 
 	const char *start = _path.c_str();
 	const char *end = start + _path.size();
 
 	// Strip of the last component. We make use of the fact that at this
 	// point, _path is guaranteed to be normalized
-	while (end > start && *(end-1) != '/')
+	while (end > start && *(end - 1) != '/')
 		end--;
 
 	if (end == start) {
@@ -200,7 +200,7 @@ AbstractFSNode *RISCOSFilesystemNode::getParent() const {
 		return 0;
 	}
 
-	if (*(end-1) == '/' && end != start + 1)
+	if (*(end - 1) == '/' && end != start + 1)
 		end--;
 
 	return makeNode(Common::String(start, end));
@@ -283,6 +283,6 @@ bool assureDirectoryExists(const Common::String &dir, const char *prefix) {
 	return true;
 }
 
-} // End of namespace RISCOS
+} // namespace Riscos
 
 #endif //#if defined(RISCOS)

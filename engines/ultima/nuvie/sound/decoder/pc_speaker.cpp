@@ -21,9 +21,9 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/decoder/pc_speaker.h"
 #include "audio/mixer.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -32,10 +32,9 @@ namespace Nuvie {
 #define PI 3.14159265358979323846
 #endif
 
-
 #define SPKR_VOLUME 5000
 //#define SPKR_SHIFT 8
-#define SPKR_SPEED (float)((SPKR_VOLUME*2)/0.070f)
+#define SPKR_SPEED (float)((SPKR_VOLUME * 2) / 0.070f)
 
 #define PIT_TICK_RATE 1193182
 
@@ -94,7 +93,6 @@ void PCSpeaker::SetFrequency(uint16 freq, float offset) {
 	//DEBUG(0, LEVEL_DEBUGGING, "new_freq = %d half_period = %f time_left = %f", freq, half_period, time_left);
 
 	//time_left = offset; //half_period;
-
 }
 
 PCSpeaker::PCSpeaker(uint32 mixer_rate) {
@@ -103,7 +101,6 @@ PCSpeaker::PCSpeaker(uint32 mixer_rate) {
 	want_vol = 0.0f; //SPKR_VOLUME;
 	frequency = 0;
 }
-
 
 void PCSpeaker::PCSPEAKER_CallBack(sint16 *stream, const uint32 len) {
 	uint32 i;
@@ -154,4 +151,3 @@ void PCSpeaker::PCSPEAKER_CallBack(sint16 *stream, const uint32 len) {
 
 } // End of namespace Nuvie
 } // End of namespace Ultima
-

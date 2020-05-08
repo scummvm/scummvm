@@ -31,20 +31,20 @@
 namespace Illusions {
 
 enum {
-	MOUSE_NONE         = 0,
-	MOUSE_LEFT_BUTTON  = 1,
+	MOUSE_NONE = 0,
+	MOUSE_LEFT_BUTTON = 1,
 	MOUSE_RIGHT_BUTTON = 2
 };
 
 enum {
-	kEventLeftClick    = 0,
-	kEventRightClick   = 1,
-	kEventInventory    = 2,
-	kEventAbort        = 3,
-	kEventSkip         = 4,
-	kEventF1           = 5,
-	kEventUp           = 6,
-	kEventDown         = 7,
+	kEventLeftClick = 0,
+	kEventRightClick = 1,
+	kEventInventory = 2,
+	kEventAbort = 3,
+	kEventSkip = 4,
+	kEventF1 = 5,
+	kEventUp = 6,
+	kEventDown = 7,
 	kEventMax
 };
 
@@ -58,6 +58,7 @@ class KeyMap : public Common::Array<KeyMapping> {
 public:
 	void addKey(Common::KeyCode key);
 	void addMouseButton(int mouseButton);
+
 protected:
 	void add(Common::KeyCode key, int mouseButton);
 };
@@ -65,11 +66,12 @@ protected:
 class InputEvent {
 public:
 	InputEvent();
-	InputEvent& setBitMask(uint bitMask);
-	InputEvent& addKey(Common::KeyCode key);
-	InputEvent& addMouseButton(int mouseButton);
+	InputEvent &setBitMask(uint bitMask);
+	InputEvent &addKey(Common::KeyCode key);
+	InputEvent &addMouseButton(int mouseButton);
 	uint handle(Common::KeyCode key, int mouseButton, bool down);
 	uint getBitMask() const { return _bitMask; }
+
 protected:
 	uint _bitMask;
 	KeyMap _keyMap;
@@ -89,9 +91,10 @@ public:
 	Common::Point getCursorPosition();
 	void setCursorPosition(Common::Point mousePos);
 	Common::Point getCursorDelta();
-	InputEvent& setInputEvent(uint evt, uint bitMask);
+	InputEvent &setInputEvent(uint evt, uint bitMask);
 	bool isCursorMovedByKeyboard() const { return _cursorMovedByKeyboard; }
 	bool isCheatModeActive();
+
 protected:
 	uint _cheatCodeIndex;
 	uint _buttonStates, _newButtons, _buttonsDown;

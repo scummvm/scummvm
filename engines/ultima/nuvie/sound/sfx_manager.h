@@ -23,9 +23,9 @@
 #ifndef NUVIE_SOUND_SFX_MANAGER_H
 #define NUVIE_SOUND_SFX_MANAGER_H
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
 #include "audio/mixer.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/sfx.h"
 
 namespace Ultima {
@@ -36,8 +36,7 @@ public:
 	SfxManager(Configuration *cfg, Audio::Mixer *m) : config(cfg), mixer(m) {
 		sfx_duration = 0;
 	};
-	virtual ~SfxManager() {};
-
+	virtual ~SfxManager(){};
 
 	virtual bool playSfx(SfxIdType sfx_id, uint8 volume) = 0;
 	virtual bool playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) = 0;

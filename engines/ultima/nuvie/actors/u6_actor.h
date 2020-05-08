@@ -29,17 +29,17 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define MOVETYPE_U6_NONE       0
-#define MOVETYPE_U6_LAND       1
-#define MOVETYPE_U6_WATER_LOW  2 // skiffs, rafts
+#define MOVETYPE_U6_NONE 0
+#define MOVETYPE_U6_LAND 1
+#define MOVETYPE_U6_WATER_LOW 2  // skiffs, rafts
 #define MOVETYPE_U6_WATER_HIGH 3 // ships
-#define MOVETYPE_U6_AIR_LOW    4 // balloon, birds... this movetype cannot cross mountain tops.
-#define MOVETYPE_U6_AIR_HIGH   5 // dragons
-#define MOVETYPE_U6_ETHEREAL   6
+#define MOVETYPE_U6_AIR_LOW 4    // balloon, birds... this movetype cannot cross mountain tops.
+#define MOVETYPE_U6_AIR_HIGH 5   // dragons
+#define MOVETYPE_U6_ETHEREAL 6
 
 #define REMOVE_SURROUNDING_OBJS true
 
-#define ACTOR_MOVEMENT_FLAGS_CORPSER  0x10
+#define ACTOR_MOVEMENT_FLAGS_CORPSER 0x10
 
 typedef struct {
 	uint16 base_obj_n;
@@ -57,9 +57,8 @@ typedef struct {
 	uint8 body_armor_class;
 } U6ActorType;
 
-class U6Actor: public Actor {
+class U6Actor : public Actor {
 protected:
-
 	const U6ActorType *actor_type;
 	const U6ActorType *base_actor_type;
 	uint8 current_movetype;
@@ -67,7 +66,6 @@ protected:
 	sint8 walk_frame_inc; // added to walk_frame each step
 
 public:
-
 	U6Actor(Map *m, ObjManager *om, GameClock *c);
 	~U6Actor() override;
 
@@ -103,7 +101,7 @@ public:
 	}
 	Obj *inventory_get_food(Obj *container = 0) override;
 	uint8 get_maxhp() override {
-		return (((level * 30) <= 255) ? (level * 30) : 255);    // U6
+		return (((level * 30) <= 255) ? (level * 30) : 255); // U6
 	}
 	uint8 get_maxmagic() override;
 

@@ -20,19 +20,18 @@
  *
  */
 
-#include "graphics/font.h"
-#include "graphics/primitives.h"
-#include "common/events.h"
-#include "graphics/macgui/macfontmanager.h"
-#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
+#include "common/events.h"
+#include "graphics/font.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwidget.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/primitives.h"
 #include "image/bmp.h"
 
 namespace Graphics {
 
-BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
-		MacWidget(nullptr, 0, 0, 0, 0, true), _id(id), _editable(editable), _wm(wm) {
+BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) : MacWidget(nullptr, 0, 0, 0, 0, true), _id(id), _editable(editable), _wm(wm) {
 	_callback = 0;
 	_dataPtr = 0;
 
@@ -41,8 +40,7 @@ BaseMacWindow::BaseMacWindow(int id, bool editable, MacWindowManager *wm) :
 	_type = kWindowUnknown;
 }
 
-MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm) :
-		BaseMacWindow(id, editable, wm), _scrollable(scrollable), _resizable(resizable) {
+MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm) : BaseMacWindow(id, editable, wm), _scrollable(scrollable), _resizable(resizable) {
 	_borderIsDirty = true;
 
 	_pattern = 0;
@@ -74,9 +72,9 @@ MacWindow::~MacWindow() {
 }
 
 static const byte noborderData[3][3] = {
-	{ 0, 1, 0 },
-	{ 1, 0, 1 },
-	{ 0, 1, 0 },
+    {0, 1, 0},
+    {1, 0, 1},
+    {0, 1, 0},
 };
 
 void MacWindow::disableBorder() {
@@ -188,12 +186,12 @@ void MacWindow::blit(ManagedSurface *g, Common::Rect &dest) {
 #define ARROW_W 12
 #define ARROW_H 6
 const int arrowPixels[ARROW_H][ARROW_W] = {
-		{0,0,0,0,0,1,1,0,0,0,0,0},
-		{0,0,0,0,1,1,1,1,0,0,0,0},
-		{0,0,0,1,1,1,1,1,1,0,0,0},
-		{0,0,1,1,1,1,1,1,1,1,0,0},
-		{0,1,1,1,1,1,1,1,1,1,1,0},
-		{1,1,1,1,1,1,1,1,1,1,1,1}};
+    {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0},
+    {0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0},
+    {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
+    {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 
 int localColorWhite, localColorBlack;
 
@@ -213,10 +211,10 @@ void MacWindow::updateInnerDims() {
 
 	if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
 		_innerDims = Common::Rect(
-			_dims.left + _macBorder.getOffset().left,
-			_dims.top + _macBorder.getOffset().top,
-			_dims.right - _macBorder.getOffset().right,
-			_dims.bottom - _macBorder.getOffset().bottom);
+		    _dims.left + _macBorder.getOffset().left,
+		    _dims.top + _macBorder.getOffset().top,
+		    _dims.right - _macBorder.getOffset().right,
+		    _dims.bottom - _macBorder.getOffset().bottom);
 	} else {
 		_innerDims = _dims;
 		_innerDims.grow(-kBorderWidth);
@@ -265,19 +263,19 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 
 	prepareBorderSurface(g);
 
-	drawBox(g, x,                    y,                     size,                 size);
-	drawBox(g, x + width - size - 1, y,                     size,                 size);
-	drawBox(g, x + width - size - 1, y + height - size - 1, size,                 size);
-	drawBox(g, x,                    y + height - size - 1, size,                 size);
-	drawBox(g, x + size,             y + 2,                 width - 2 * size - 1, size - 4);
-	drawBox(g, x + size,             y + height - size + 1, width - 2 * size - 1, size - 4);
-	drawBox(g, x + 2,                y + size,              size - 4,             height - 2 * size - 1);
-	drawBox(g, x + width - size + 1, y + size,              size - 4,             height - 2 * size - 1);
+	drawBox(g, x, y, size, size);
+	drawBox(g, x + width - size - 1, y, size, size);
+	drawBox(g, x + width - size - 1, y + height - size - 1, size, size);
+	drawBox(g, x, y + height - size - 1, size, size);
+	drawBox(g, x + size, y + 2, width - 2 * size - 1, size - 4);
+	drawBox(g, x + size, y + height - size + 1, width - 2 * size - 1, size - 4);
+	drawBox(g, x + 2, y + size, size - 4, height - 2 * size - 1);
+	drawBox(g, x + width - size + 1, y + size, size - 4, height - 2 * size - 1);
 
 	if (active) {
-		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8, _wm->_colorBlack);
+		fillRect(g, x + size, y + 5, width - 2 * size - 1, 8, _wm->_colorBlack);
 		fillRect(g, x + size, y + height - 13, width - 2 * size - 1, 8, _wm->_colorBlack);
-		fillRect(g, x + 5,    y + size,        8,                    height - 2 * size - 1, _wm->_colorBlack);
+		fillRect(g, x + 5, y + size, 8, height - 2 * size - 1, _wm->_colorBlack);
 		if (!scrollable) {
 			fillRect(g, x + width - 13, y + size, 8, height - 2 * size - 1, _wm->_colorBlack);
 		} else {
@@ -425,7 +423,7 @@ WindowClick MacWindow::isInBorder(int x, int y) {
 			return kBorderResizeButton;
 
 	if (_scrollable)
-	 	return isInScroll(x, y);
+		return isInScroll(x, y);
 
 	return kBorderBorder;
 }
@@ -505,8 +503,8 @@ bool MacWindow::processEvent(Common::Event &event) {
 		}
 
 		if (_beingResized) {
-			resize(MAX(_borderWidth * 4, _dims.width()  + event.mouse.x - _draggedX),
-				   MAX(_borderWidth * 4, _dims.height() + event.mouse.y - _draggedY));
+			resize(MAX(_borderWidth * 4, _dims.width() + event.mouse.x - _draggedX),
+			       MAX(_borderWidth * 4, _dims.height() + event.mouse.y - _draggedY));
 
 			_draggedX = event.mouse.x;
 			_draggedY = event.mouse.y;

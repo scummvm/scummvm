@@ -20,9 +20,9 @@
  *
  */
 
-#include "director/director.h"
-#include "director/cast.h"
 #include "director/sprite.h"
+#include "director/cast.h"
+#include "director/director.h"
 
 namespace Director {
 
@@ -119,6 +119,5 @@ void Sprite::setPattern(uint16 pattern) {
 		return;
 	}
 }
-
 
 } // End of namespace Director

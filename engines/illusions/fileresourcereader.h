@@ -31,6 +31,7 @@ namespace Illusions {
 class ResourceReaderFileReader : public BaseResourceReader {
 public:
 	byte *readResource(uint32 sceneId, uint32 resId, uint32 &dataSize) override;
+
 protected:
 	Common::String buildResourceFilename(uint32 resId);
 	const char *getResourceExtension(uint32 resId);

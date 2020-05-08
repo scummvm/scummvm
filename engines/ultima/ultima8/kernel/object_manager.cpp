@@ -20,38 +20,37 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/ultima8/misc/id_man.h"
-#include "ultima/ultima8/kernel/object.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/gumps/gump.h"
-#include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/egg.h"
-#include "ultima/ultima8/world/monster_egg.h"
-#include "ultima/ultima8/world/teleport_egg.h"
-#include "ultima/ultima8/world/glob_egg.h"
-#include "ultima/ultima8/gumps/game_map_gump.h"
-#include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
 #include "ultima/ultima8/gumps/bark_gump.h"
 #include "ultima/ultima8/gumps/container_gump.h"
-#include "ultima/ultima8/gumps/paperdoll_gump.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
-#include "ultima/ultima8/gumps/widgets/button_widget.h"
-#include "ultima/ultima8/gumps/widgets/sliding_widget.h"
+#include "ultima/ultima8/gumps/desktop_gump.h"
+#include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/gumps/mini_stats_gump.h"
 #include "ultima/ultima8/gumps/minimap_gump.h"
+#include "ultima/ultima8/gumps/paperdoll_gump.h"
+#include "ultima/ultima8/gumps/widgets/button_widget.h"
+#include "ultima/ultima8/gumps/widgets/sliding_widget.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
+#include "ultima/ultima8/kernel/object.h"
+#include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/egg.h"
+#include "ultima/ultima8/world/glob_egg.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/monster_egg.h"
+#include "ultima/ultima8/world/teleport_egg.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 ObjectManager *ObjectManager::_objectManager = nullptr;
-
 
 // a template class  to prevent having to write a load function for
 // every object separately
@@ -98,13 +97,15 @@ void ObjectManager::reset() {
 	unsigned int i;
 
 	for (i = 0; i < _objects.size(); ++i) {
-		if (_objects[i] == 0) continue;
+		if (_objects[i] == 0)
+			continue;
 #if 0
 		Item *item = p_dynamic_cast<Item *>(_objects[i]);
 		if (item && item->getParent()) continue; // will be deleted by parent
 #endif
 		Gump *gump = p_dynamic_cast<Gump *>(_objects[i]);
-		if (gump && gump->GetParent()) continue; // will be deleted by parent
+		if (gump && gump->GetParent())
+			continue; // will be deleted by parent
 		delete _objects[i];
 	}
 
@@ -112,12 +113,11 @@ void ObjectManager::reset() {
 		assert(_objects[i] == 0);
 	}
 
-
 	//!CONSTANTS
 	_objects.clear();
 	_objects.resize(65536);
 	_objIDs->clearAll(32766);
-	_objIDs->reserveID(666);     // 666 is reserved for the Guardian Bark hack
+	_objIDs->reserveID(666); // 666 is reserved for the Guardian Bark hack
 	_actorIDs->clearAll();
 }
 
@@ -144,7 +144,8 @@ void ObjectManager::objectTypes() {
 	Std::map<Common::String, unsigned int> objecttypes;
 	for (unsigned int i = 1; i < _objects.size(); ++i) {
 		Object *o = _objects[i];
-		if (!o) continue;
+		if (!o)
+			continue;
 		objecttypes[o->GetClassType()._className]++;
 	}
 
@@ -191,7 +192,7 @@ bool ObjectManager::reserveObjId(ObjId objid) {
 
 void ObjectManager::clearObjId(ObjId objid) {
 	// need to make this assert check only permanent NPCs
-//	assert(objid >= 256); // !constant
+	//	assert(objid >= 256); // !constant
 	if (objid >= 256) // !constant
 		_objIDs->clearID(objid);
 	else
@@ -208,24 +209,26 @@ void ObjectManager::allow64kObjects() {
 	_objIDs->setNewMax(65534);
 }
 
-
 void ObjectManager::save(Common::WriteStream *ws) {
 	_objIDs->save(ws);
 	_actorIDs->save(ws);
 
 	for (unsigned int i = 0; i < _objects.size(); ++i) {
 		Object *object = _objects[i];
-		if (!object) continue;
+		if (!object)
+			continue;
 
 		// child items/gumps are saved by their parent.
 		Item *item = p_dynamic_cast<Item *>(object);
-		if (item && item->getParent()) continue;
+		if (item && item->getParent())
+			continue;
 		Gump *gump = p_dynamic_cast<Gump *>(object);
 
 		// don't save Gumps with DONT_SAVE and Gumps with parents, unless
 		// the parent is a core gump
 		// FIXME: This leaks _objIDs. See comment in ObjectManager::load().
-		if (gump && !gump->mustSave(true)) continue;
+		if (gump && !gump->mustSave(true))
+			continue;
 
 		object->save(ws);
 	}
@@ -233,15 +236,17 @@ void ObjectManager::save(Common::WriteStream *ws) {
 	ws->writeUint16LE(0);
 }
 
-
 bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
-	if (!_objIDs->load(rs, version)) return false;
-	if (!_actorIDs->load(rs, version)) return false;
+	if (!_objIDs->load(rs, version))
+		return false;
+	if (!_actorIDs->load(rs, version))
+		return false;
 
 	do {
 		// peek ahead for terminator
 		uint16 classlen = rs->readUint16LE();
-		if (classlen == 0) break;
+		if (classlen == 0)
+			break;
 		char *buf = new char[classlen + 1];
 		rs->read(buf, classlen);
 		buf[classlen] = 0;
@@ -250,7 +255,8 @@ bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
 		delete[] buf;
 
 		Object *obj = loadObject(rs, classname, version);
-		if (!obj) return false;
+		if (!obj)
+			return false;
 
 		// top level gumps have to be added to the correct core gump
 		Gump *gump = p_dynamic_cast<Gump *>(obj);

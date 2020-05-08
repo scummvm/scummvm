@@ -29,7 +29,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-
 /**
  * Encapsulated class for drawing widgets within dungeons
  */
@@ -44,6 +43,7 @@ protected:
 	 * Constructor
 	 */
 	DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId);
+
 public:
 	/**
 	 * Try to open/unlock the item

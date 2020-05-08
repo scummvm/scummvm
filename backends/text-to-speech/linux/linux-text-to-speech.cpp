@@ -28,51 +28,50 @@
 #if defined(USE_TTS) && defined(USE_SPEECH_DISPATCHER) && defined(POSIX)
 #include <speech-dispatcher/libspeechd.h>
 
-#include "common/translation.h"
-#include "common/system.h"
-#include "common/ustr.h"
 #include "common/config-manager.h"
 #include "common/encoding.h"
+#include "common/system.h"
+#include "common/translation.h"
+#include "common/ustr.h"
 #include <pthread.h>
 
 SPDConnection *_connection;
 
-void speech_begin_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
+void speech_begin_callback(size_t msg_id, size_t client_id, SPDNotificationType state) {
 	SpeechDispatcherManager *manager =
-		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	    static_cast<SpeechDispatcherManager *>(g_system->getTextToSpeechManager());
 	manager->updateState(SpeechDispatcherManager::SPEECH_BEGUN);
 }
 
-void speech_end_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
+void speech_end_callback(size_t msg_id, size_t client_id, SPDNotificationType state) {
 	SpeechDispatcherManager *manager =
-		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	    static_cast<SpeechDispatcherManager *>(g_system->getTextToSpeechManager());
 	manager->updateState(SpeechDispatcherManager::SPEECH_ENDED);
 }
 
-void speech_cancel_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
+void speech_cancel_callback(size_t msg_id, size_t client_id, SPDNotificationType state) {
 	SpeechDispatcherManager *manager =
-		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	    static_cast<SpeechDispatcherManager *>(g_system->getTextToSpeechManager());
 	manager->updateState(SpeechDispatcherManager::SPEECH_CANCELED);
 }
 
-void speech_resume_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
+void speech_resume_callback(size_t msg_id, size_t client_id, SPDNotificationType state) {
 	SpeechDispatcherManager *manager =
-		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	    static_cast<SpeechDispatcherManager *>(g_system->getTextToSpeechManager());
 	manager->updateState(SpeechDispatcherManager::SPEECH_RESUMED);
 }
 
-void speech_pause_callback(size_t msg_id, size_t client_id, SPDNotificationType state){
+void speech_pause_callback(size_t msg_id, size_t client_id, SPDNotificationType state) {
 	SpeechDispatcherManager *manager =
-		static_cast<SpeechDispatcherManager *> (g_system->getTextToSpeechManager());
+	    static_cast<SpeechDispatcherManager *>(g_system->getTextToSpeechManager());
 	manager->updateState(SpeechDispatcherManager::SPEECH_PAUSED);
 }
 
-
 void *SpeechDispatcherManager::startSpeech(void *p) {
-	StartSpeechParams *params = (StartSpeechParams *) p;
+	StartSpeechParams *params = (StartSpeechParams *)p;
 	pthread_mutex_lock(params->mutex);
 	if (!_connection || g_system->getTextToSpeechManager()->isPaused() ||
-			params->speechQueue->front().empty()) {
+	    params->speechQueue->front().empty()) {
 		pthread_mutex_unlock(params->mutex);
 		return NULL;
 	}
@@ -88,7 +87,7 @@ void *SpeechDispatcherManager::startSpeech(void *p) {
 }
 
 SpeechDispatcherManager::SpeechDispatcherManager()
-	: _speechState(READY) {
+    : _speechState(READY) {
 	pthread_mutex_init(&_speechMutex, NULL);
 	_params.mutex = &_speechMutex;
 	_params.speechQueue = &_speechQueue;
@@ -140,7 +139,7 @@ SpeechDispatcherManager::~SpeechDispatcherManager() {
 void SpeechDispatcherManager::updateState(SpeechDispatcherManager::SpeechEvent event) {
 	if (_speechState == BROKEN)
 		return;
-	switch(event) {
+	switch (event) {
 	case SPEECH_ENDED:
 		pthread_mutex_lock(&_speechMutex);
 		_speechQueue.pop_front();
@@ -213,7 +212,7 @@ bool SpeechDispatcherManager::say(Common::String str, Action action, Common::Str
 	free(tmpStr);
 
 	if (!_speechQueue.empty() && action == INTERRUPT_NO_REPEAT &&
-			_speechQueue.front() == strUtf8 && isSpeaking()) {
+	    _speechQueue.front() == strUtf8 && isSpeaking()) {
 		_speechQueue.clear();
 		_speechQueue.push_back(strUtf8);
 		pthread_mutex_unlock(&_speechMutex);
@@ -221,7 +220,7 @@ bool SpeechDispatcherManager::say(Common::String str, Action action, Common::Str
 	}
 
 	if (!_speechQueue.empty() && action == QUEUE_NO_REPEAT &&
-			_speechQueue.back() == strUtf8 && isSpeaking()) {
+	    _speechQueue.back() == strUtf8 && isSpeaking()) {
 		pthread_mutex_unlock(&_speechMutex);
 		return true;
 	}
@@ -278,9 +277,8 @@ bool SpeechDispatcherManager::resume() {
 	_speechState = PAUSED;
 	if (!_speechQueue.empty()) {
 		_speechState = SPEAKING;
-		startSpeech((void *) &_params);
-	}
-	else
+		startSpeech((void *)&_params);
+	} else
 		_speechState = READY;
 	return false;
 }
@@ -342,9 +340,9 @@ void SpeechDispatcherManager::createVoice(int typeNumber, Common::TTSVoice::Gend
 	// This pointer will point to data needed for voice switching. It is stored
 	// in the Common::TTSVoice and it is freed by freeVoiceData() once it
 	// is not needed.
-	SPDVoiceType *type = (SPDVoiceType *) malloc(sizeof(SPDVoiceType));
+	SPDVoiceType *type = (SPDVoiceType *)malloc(sizeof(SPDVoiceType));
 	*type = static_cast<SPDVoiceType>(typeNumber);
-	Common::TTSVoice voice(gender, age, (void *) type, description);
+	Common::TTSVoice voice(gender, age, (void *)type, description);
 	_ttsState->_availableVoices.push_back(voice);
 }
 
@@ -381,6 +379,5 @@ void SpeechDispatcherManager::updateVoices() {
 void SpeechDispatcherManager::freeVoiceData(void *data) {
 	free(data);
 }
-
 
 #endif

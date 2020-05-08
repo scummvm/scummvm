@@ -20,9 +20,9 @@
  *
  */
 
-#include "gnap/gnap.h"
 #include "gnap/datarchive.h"
 #include "gnap/gamesys.h"
+#include "gnap/gnap.h"
 #include "gnap/resource.h"
 
 namespace Gnap {
@@ -64,25 +64,23 @@ bool GnapEngine::isPointBlocked(int gridX, int gridY) {
 
 int PlayerGnap::getWalkStopSequenceId(int deltaX, int deltaY) {
 	static const int gnapWalkStopSequenceIds[9] = {
-		0x7BC, 0x7BA, 0x7BA,
-		0x7BC, 0x000, 0x7BA,
-		0x7BB, 0x7B9, 0x7B9
-	};
+	    0x7BC, 0x7BA, 0x7BA,
+	    0x7BC, 0x000, 0x7BA,
+	    0x7BB, 0x7B9, 0x7B9};
 
 	int id = 3 * (deltaX + 1) + deltaY + 1;
-	assert (id >= 0 && id < 9 );
+	assert(id >= 0 && id < 9);
 	return gnapWalkStopSequenceIds[id];
 }
 
 Facing PlayerGnap::getWalkFacing(int deltaX, int deltaY) {
 	static const Facing gnapWalkFacings[9] = {
-		kDirUpLeft, kDirBottomLeft, kDirBottomLeft,
-		kDirUpLeft, kDirIdleLeft, kDirBottomLeft,
-		kDirUpRight, kDirBottomRight, kDirBottomRight
-	};
+	    kDirUpLeft, kDirBottomLeft, kDirBottomLeft,
+	    kDirUpLeft, kDirIdleLeft, kDirBottomLeft,
+	    kDirUpRight, kDirBottomRight, kDirBottomRight};
 
 	int id = 3 * (deltaX + 1) + deltaY + 1;
-	assert (id >= 0 && id < 9 );
+	assert(id >= 0 && id < 9);
 	return gnapWalkFacings[id];
 }
 
@@ -988,7 +986,7 @@ void PlayerPlat::makeRoom() {
 		rndGridY = _vm->getRandom(_vm->_gridMaxY);
 		rndGridX = _vm->getRandom(_vm->_gridMaxX);
 	} while (ABS(rndGridX - _pos.x) > 4 || ABS(rndGridY - _pos.y) > 3 ||
-		_vm->isPointBlocked(rndGridX, rndGridY));
+	         _vm->isPointBlocked(rndGridX, rndGridY));
 	walkTo(Common::Point(rndGridX, rndGridY), -1, -1, 1);
 }
 

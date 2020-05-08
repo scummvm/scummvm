@@ -23,9 +23,9 @@
 #ifndef NUVIE_CORE_CONSOLE_H
 #define NUVIE_CORE_CONSOLE_H
 
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/gui/gui_console.h"
 #include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/conf/configuration.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -46,7 +46,6 @@ public:
 	void AddLine(Std::string line) override;
 
 protected:
-
 };
 
 void ConsoleInit(Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h);

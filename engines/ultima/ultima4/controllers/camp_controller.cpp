@@ -87,7 +87,7 @@ void CampController::begin() {
 		/* Make sure we've waited long enough for camping to be effective */
 		bool healed = false;
 		if (((g_ultima->_saveGame->_moves / CAMP_HEAL_INTERVAL) >= 0x10000) ||
-		        (((g_ultima->_saveGame->_moves / CAMP_HEAL_INTERVAL) & 0xffff) != g_ultima->_saveGame->_lastCamp))
+		    (((g_ultima->_saveGame->_moves / CAMP_HEAL_INTERVAL) & 0xffff) != g_ultima->_saveGame->_lastCamp))
 			healed = heal();
 
 		g_screen->screenMessage(healed ? "Party Healed!\n" : "No effect.\n");

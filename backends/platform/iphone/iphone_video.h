@@ -23,16 +23,16 @@
 #ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
 #define BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
 
-#include <UIKit/UIKit.h>
 #include <Foundation/Foundation.h>
 #include <QuartzCore/QuartzCore.h>
+#include <UIKit/UIKit.h>
 
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/ES1/gl.h>
 #include <OpenGLES/ES1/glext.h>
 
-#include "backends/platform/iphone/iphone_keyboard.h"
 #include "backends/platform/iphone/iphone_common.h"
+#include "backends/platform/iphone/iphone_keyboard.h"
 
 #include "common/list.h"
 

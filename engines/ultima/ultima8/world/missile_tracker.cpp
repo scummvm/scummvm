@@ -25,25 +25,23 @@
 #include "ultima/ultima8/world/missile_tracker.h"
 
 #include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 MissileTracker::MissileTracker(Item *item, int32 sx, int32 sy, int32 sz,
                                int32 tx, int32 ty, int32 tz,
-                               int32 speed, int32 gravity) :
-		_destX(tx), _destY(ty), _destZ(tz), _gravity(gravity) {
+                               int32 speed, int32 gravity) : _destX(tx), _destY(ty), _destZ(tz), _gravity(gravity) {
 	_objId = item->getObjId();
 
 	init(sx, sy, sz, speed);
 }
 
 MissileTracker::MissileTracker(Item *item, int32 tx, int32 ty, int32 tz,
-                               int32 speed, int32 gravity) :
-		  _destX(tx), _destY(ty), _destZ(tz), _gravity(gravity)  {
+                               int32 speed, int32 gravity) : _destX(tx), _destY(ty), _destZ(tz), _gravity(gravity) {
 	assert(item->getParent() == 0);
 
 	_objId = item->getObjId();
@@ -113,7 +111,6 @@ void MissileTracker::init(int32 x, int32 y, int32 z, int32 speed) {
 			_speedZ = speed / 4;
 		else
 			_speedZ = -speed / 4;
-
 	}
 }
 
@@ -166,16 +163,17 @@ bool MissileTracker::isPathClear() {
 		}
 
 		sz -= _gravity;
-		for (int i = 0; i < 3; ++i) start[i] = end[i];
+		for (int i = 0; i < 3; ++i)
+			start[i] = end[i];
 	}
 
 	return true;
 }
 
-
 void MissileTracker::launchItem() {
 	Item *item = getItem(_objId);
-	if (!item) return;
+	if (!item)
+		return;
 
 	item->hurl(_speedX, _speedY, _speedZ, _gravity);
 }

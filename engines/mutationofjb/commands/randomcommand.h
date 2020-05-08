@@ -23,9 +23,9 @@
 #ifndef MUTATIONOFJB_RANDOMCOMMAND_H
 #define MUTATIONOFJB_RANDOMCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
 #include "common/array.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/command.h"
 
 namespace MutationOfJB {
 
@@ -65,6 +65,6 @@ private:
 	Command *_chosenNext;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

@@ -20,20 +20,20 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/animation_tracker.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
-#include "ultima/ultima8/world/actors/anim_action.h"
-#include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/anim_action.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,12 +45,12 @@ static const int watchactor = WATCHACTOR;
 #endif
 
 AnimationTracker::AnimationTracker() : _firstFrame(true), _done(false),
-	_blocked(false), _unsupported(false), _hitObject(0), _mode(NormalMode),
-	_actor(0), _dir(0), _animAction(nullptr), _x(0), _y(0), _z(0),
-	_prevX(0), _prevY(0), _prevZ(0), _startX(0), _startY(0), _startZ(0),
-	_targetDx(0), _targetDy(0), _targetDz(0), _targetOffGroundLeft(0),
-	_firstStep(false), _shapeFrame(0), _currentFrame(0), _startFrame(0),
-	_endFrame(0), _flipped(false) {
+                                       _blocked(false), _unsupported(false), _hitObject(0), _mode(NormalMode),
+                                       _actor(0), _dir(0), _animAction(nullptr), _x(0), _y(0), _z(0),
+                                       _prevX(0), _prevY(0), _prevZ(0), _startX(0), _startY(0), _startZ(0),
+                                       _targetDx(0), _targetDy(0), _targetDz(0), _targetOffGroundLeft(0),
+                                       _firstStep(false), _shapeFrame(0), _currentFrame(0), _startFrame(0),
+                                       _endFrame(0), _flipped(false) {
 }
 
 AnimationTracker::~AnimationTracker() {
@@ -61,8 +61,7 @@ bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
 	assert(actor);
 	_actor = actor->getObjId();
 	uint32 shape = actor->getShape();
-	_animAction = GameData::get_instance()->getMainShapes()->
-	             getAnim(shape, action);
+	_animAction = GameData::get_instance()->getMainShapes()->getAnim(shape, action);
 	if (!_animAction)
 		return false;
 
@@ -75,7 +74,7 @@ bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
 		_firstStep = actor->hasActorFlags(Actor::ACT_FIRSTSTEP);
 	} else {
 		_animAction->getAnimRange(state->_lastAnim, state->_direction,
-		                         state->_firstStep, _dir, _startFrame, _endFrame);
+		                          state->_firstStep, _dir, _startFrame, _endFrame);
 		_flipped = state->_flipped;
 		_firstStep = state->_firstStep;
 		_x = state->_x;
@@ -91,7 +90,6 @@ bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
 		pout << "AnimationTracker: playing " << _startFrame << "-" << _endFrame
 		     << " (_animAction flags: " << Std::hex << _animAction->flags
 		     << Std::dec << ")" << Std::endl;
-
 	}
 #endif
 
@@ -115,7 +113,7 @@ unsigned int AnimationTracker::getNextFrame(unsigned int frame) const {
 	// loop if necessary
 	if (frame >= _animAction->_size) {
 		if (_animAction->_flags & (AnimAction::AAF_LOOPING |
-		                         AnimAction::AAF_LOOPING2)) {
+		                           AnimAction::AAF_LOOPING2)) {
 			// CHECKME: unknown flag
 			frame = 1;
 		} else {
@@ -138,7 +136,8 @@ void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, u
 	max_endx = _x;
 	max_endy = _y;
 
-	if (_done) return;
+	if (_done)
+		return;
 
 	Actor *a = getActor(_actor);
 	assert(a);
@@ -163,7 +162,8 @@ void AnimationTracker::evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, u
 }
 
 bool AnimationTracker::step() {
-	if (_done) return false;
+	if (_done)
+		return false;
 
 	Actor *a = getActor(_actor);
 	assert(a);
@@ -192,7 +192,6 @@ bool AnimationTracker::step() {
 	// reset status flags
 	_unsupported = false;
 	_blocked = false;
-
 
 	_firstFrame = false;
 
@@ -263,16 +262,15 @@ bool AnimationTracker::step() {
 	// Only for particularly large steps we do a full sweepTest
 	if (ABS(dx) >= xd - 8 || ABS(dy) >= yd - 8 || ABS(dz) >= zd - 8) {
 
-		int32 start[3] = { _x, _y, _z };
-		int32 end[3] = { tx, ty, tz };
-		int32 dims[3] = { xd, yd, zd };
+		int32 start[3] = {_x, _y, _z};
+		int32 end[3] = {tx, ty, tz};
+		int32 dims[3] = {xd, yd, zd};
 
 		// Do the sweep test
 		Std::list<CurrentMap::SweepItem> collisions;
 		Std::list<CurrentMap::SweepItem>::iterator it;
 		cm->sweepTest(start, end, dims, a->getShapeInfo()->_flags, a->getObjId(),
 		              false, &collisions);
-
 
 		for (it = collisions.begin(); it != collisions.end(); it++) {
 			// hit something, can't move
@@ -312,11 +310,11 @@ bool AnimationTracker::step() {
 			// dy/dx
 			int descentdelta = 0;
 			if (supportshape == 675)
-				descentdelta = -20;         // Descend
+				descentdelta = -20; // Descend
 			else if (supportshape == 676)
-				descentdelta = 12;          // Ascend
+				descentdelta = 12; // Ascend
 			else if (supportshape == 681)
-				descentdelta = -20;         // Descend
+				descentdelta = -20; // Descend
 
 			if (descentdelta) {
 				if (dy == 0 && dx != 0 && !support->hasFlags(Item::FLG_FLIPPED)) {
@@ -374,10 +372,9 @@ bool AnimationTracker::step() {
 	_y = ty;
 	_z = tz;
 
-
 	// if attack animation, see if we hit something
 	if ((_animAction->_flags & AnimAction::AAF_ATTACK) &&
-	        (_hitObject == 0) && f.attack_range() > 0) {
+	    (_hitObject == 0) && f.attack_range() > 0) {
 		checkWeaponHit();
 	}
 
@@ -385,11 +382,10 @@ bool AnimationTracker::step() {
 		// needs support
 
 		/*bool targetok = */ cm->isValidPosition(tx, ty, tz,
-		        _startX, _startY, _startZ,
-		        xd, yd, zd,
-		        a->getShapeInfo()->_flags,
-		        _actor, &support, 0);
-
+		                                         _startX, _startY, _startZ,
+		                                         xd, yd, zd,
+		                                         a->getShapeInfo()->_flags,
+		                                         _actor, &support, 0);
 
 		if (!support) {
 			_unsupported = true;
@@ -427,7 +423,7 @@ void AnimationTracker::setTargetedMode(int32 x_, int32 y_, int32 z_) {
 
 	for (i = _startFrame; i != _endFrame; i = getNextFrame(i)) {
 		AnimFrame &f = _animAction->frames[_dir][i];
-		totaldir += f._deltaDir;  // This line sometimes seg faults.. ????
+		totaldir += f._deltaDir; // This line sometimes seg faults.. ????
 		totalz += f._deltaZ;
 		if (!(f._flags & AnimFrame::AFF_ONGROUND))
 			++offGround;
@@ -449,9 +445,7 @@ void AnimationTracker::setTargetedMode(int32 x_, int32 y_, int32 z_) {
 			_targetDz = 16;
 		if (_targetDz < -16)
 			_targetDz = -16;
-
 	}
-
 }
 
 void AnimationTracker::checkWeaponHit() {
@@ -459,7 +453,6 @@ void AnimationTracker::checkWeaponHit() {
 
 	const Actor *a = getActor(_actor);
 	assert(a);
-
 
 	Box abox = a->getWorldBox();
 	abox.MoveAbs(_x, _y, _z);
@@ -483,10 +476,12 @@ void AnimationTracker::checkWeaponHit() {
 	ObjId hit = 0;
 	for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
 		ObjId itemid = itemlist.getuint16(i);
-		if (itemid == _actor) continue; // don't want to hit self
+		if (itemid == _actor)
+			continue; // don't want to hit self
 
 		Actor *item = getActor(itemid);
-		if (!item) continue;
+		if (!item)
+			continue;
 
 		Box ibox = item->getWorldBox();
 
@@ -518,7 +513,6 @@ void AnimationTracker::updateState(PathfindingState &state) {
 	state._flipped = _flipped;
 	state._firstStep = _firstStep;
 }
-
 
 void AnimationTracker::updateActorFlags() {
 	Actor *a = getActor(_actor);
@@ -562,7 +556,6 @@ void AnimationTracker::getSpeed(int32 &dx, int32 &dy, int32 &dz) const {
 	dy = _y - _prevY;
 	dz = _z - _prevZ;
 }
-
 
 void AnimationTracker::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(_startFrame);
@@ -625,8 +618,7 @@ bool AnimationTracker::load(Common::ReadStream *rs, uint32 version) {
 	if (shapenum == 0) {
 		_animAction = nullptr;
 	} else {
-		_animAction = GameData::get_instance()->getMainShapes()->
-		             getAnim(shapenum, action);
+		_animAction = GameData::get_instance()->getMainShapes()->getAnim(shapenum, action);
 		assert(_animAction);
 	}
 
@@ -650,7 +642,8 @@ bool AnimationTracker::load(Common::ReadStream *rs, uint32 version) {
 
 			_targetOffGroundLeft = 0;
 			unsigned int i = _currentFrame;
-			if (!_firstFrame) i = getNextFrame(i);
+			if (!_firstFrame)
+				i = getNextFrame(i);
 
 			for (; i != _endFrame; i = getNextFrame(i)) {
 				AnimFrame &f = _animAction->frames[_dir][i];

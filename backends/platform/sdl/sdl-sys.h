@@ -64,50 +64,50 @@
 // It needs various (usually forbidden) symbols from time.h
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_asctime)
-	#undef asctime
-	#define asctime FAKE_asctime
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_asctime)
+#undef asctime
+#define asctime FAKE_asctime
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_clock)
-	#undef clock
-	#define clock FAKE_clock
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_clock)
+#undef clock
+#define clock FAKE_clock
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_ctime)
-	#undef ctime
-	#define ctime FAKE_ctime
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_ctime)
+#undef ctime
+#define ctime FAKE_ctime
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_difftime)
-	#undef difftime
-	#define difftime FAKE_difftime
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_difftime)
+#undef difftime
+#define difftime FAKE_difftime
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getdate)
-	#undef getdate
-	#define getdate FAKE_getdate
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getdate)
+#undef getdate
+#define getdate FAKE_getdate
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_gmtime)
-	#undef gmtime
-	#define gmtime FAKE_gmtime
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_gmtime)
+#undef gmtime
+#define gmtime FAKE_gmtime
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_localtime)
-	#undef localtime
-	#define localtime FAKE_localtime
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_localtime)
+#undef localtime
+#define localtime FAKE_localtime
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mktime)
-	#undef mktime
-	#define mktime FAKE_mktime
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mktime)
+#undef mktime
+#define mktime FAKE_mktime
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_time)
-	#undef time
-	#define time FAKE_time
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_time)
+#undef time
+#define time FAKE_time
+#endif
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
@@ -146,7 +146,7 @@
 
 // Ignore warnings from system headers pulled by SDL
 #pragma warning(push)
-#pragma warning(disable:4121) // alignment of a member was sensitive to packing
+#pragma warning(disable : 4121) // alignment of a member was sensitive to packing
 #include <SDL_syswm.h>
 #pragma warning(pop)
 
@@ -155,12 +155,12 @@
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #undef setjmp
-#define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#define setjmp(a) FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #undef longjmp
-#define longjmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#define longjmp(a, b) FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 #endif
@@ -196,17 +196,17 @@
 // Finally forbid FILE again (if it was forbidden to start with)
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_FILE)
 #undef FILE
-#define FILE	FORBIDDEN_SYMBOL_REPLACEMENT
+#define FILE FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp)
 #undef strcasecmp
-#define strcasecmp     FORBIDDEN_SYMBOL_REPLACEMENT
+#define strcasecmp FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp)
 #undef strncasecmp
-#define strncasecmp    FORBIDDEN_SYMBOL_REPLACEMENT
+#define strncasecmp FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_exit)
@@ -227,50 +227,50 @@
 // re-forbid all those time.h symbols again (if they were forbidden)
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_asctime)
-	#undef asctime
-	#define asctime(a) FORBIDDEN_SYMBOL_REPLACEMENT
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_asctime)
+#undef asctime
+#define asctime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_clock)
-	#undef clock
-	#define clock() FORBIDDEN_SYMBOL_REPLACEMENT
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_clock)
+#undef clock
+#define clock() FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_ctime)
-	#undef ctime
-	#define ctime(a) FORBIDDEN_SYMBOL_REPLACEMENT
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_ctime)
+#undef ctime
+#define ctime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_difftime)
-	#undef difftime
-	#define difftime(a,b) FORBIDDEN_SYMBOL_REPLACEMENT
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_difftime)
+#undef difftime
+#define difftime(a, b) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getdate)
-	#undef getdate
-	#define getdate(a) FORBIDDEN_SYMBOL_REPLACEMENT
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getdate)
+#undef getdate
+#define getdate(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_gmtime)
-	#undef gmtime
-	#define gmtime(a) FORBIDDEN_SYMBOL_REPLACEMENT
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_gmtime)
+#undef gmtime
+#define gmtime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_localtime)
-	#undef localtime
-	#define localtime(a) FORBIDDEN_SYMBOL_REPLACEMENT
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_localtime)
+#undef localtime
+#define localtime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mktime)
-	#undef mktime
-	#define mktime(a) FORBIDDEN_SYMBOL_REPLACEMENT
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mktime)
+#undef mktime
+#define mktime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
-	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_time)
-	#undef time
-	#define time(a) FORBIDDEN_SYMBOL_REPLACEMENT
-	#endif
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_time)
+#undef time
+#define time(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
 

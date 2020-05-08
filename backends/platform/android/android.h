@@ -25,13 +25,13 @@
 
 #if defined(__ANDROID__)
 
-#include "backends/platform/android/portdefs.h"
-#include "common/fs.h"
-#include "common/archive.h"
 #include "audio/mixer_intern.h"
-#include "backends/modular-backend.h"
-#include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/modular-backend.h"
+#include "backends/platform/android/portdefs.h"
+#include "backends/plugins/posix/posix-provider.h"
+#include "common/archive.h"
+#include "common/fs.h"
 
 #include <pthread.h>
 
@@ -43,7 +43,7 @@
 
 extern const char *android_log_tag;
 
-#define _ANDROID_LOG(prio, fmt, args...) __android_log_print(prio, android_log_tag, fmt, ## args)
+#define _ANDROID_LOG(prio, fmt, args...) __android_log_print(prio, android_log_tag, fmt, ##args)
 #define LOGD(fmt, args...) _ANDROID_LOG(ANDROID_LOG_DEBUG, fmt, ##args)
 #define LOGI(fmt, args...) _ANDROID_LOG(ANDROID_LOG_INFO, fmt, ##args)
 #define LOGW(fmt, args...) _ANDROID_LOG(ANDROID_LOG_WARN, fmt, ##args)
@@ -52,7 +52,9 @@ extern const char *android_log_tag;
 #ifdef ANDROID_DEBUG_ENTER
 #define ENTER(fmt, args...) LOGD("%s(" fmt ")", __FUNCTION__, ##args)
 #else
-#define ENTER(fmt, args...) do {  } while (false)
+#define ENTER(fmt, args...) \
+	do {                    \
+	} while (false)
 #endif
 
 class OSystem_Android : public ModularBackend, Common::EventSource {
@@ -132,7 +134,7 @@ public:
 	virtual void getTimeAndDate(TimeDate &t) const;
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
-											int priority = 0);
+	                                       int priority = 0);
 	virtual bool openUrl(const Common::String &url);
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();

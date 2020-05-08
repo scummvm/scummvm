@@ -46,7 +46,7 @@ enum UploadFileHandlerState {
  * default error message handler.
  */
 
-class UploadFileClientHandler: public ClientHandler {
+class UploadFileClientHandler : public ClientHandler {
 	UploadFileHandlerState _state;
 	Common::MemoryReadWriteStream *_headersStream;
 	Common::WriteStream *_contentStream;

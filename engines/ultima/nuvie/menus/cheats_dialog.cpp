@@ -20,24 +20,23 @@
  *
  */
 
-
+#include "ultima/nuvie/menus/cheats_dialog.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/converse.h"
+#include "ultima/nuvie/core/egg_manager.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/gui_types.h"
+#include "ultima/nuvie/gui/gui_area.h"
 #include "ultima/nuvie/gui/gui_button.h"
+#include "ultima/nuvie/gui/gui_callback.h"
+#include "ultima/nuvie/gui/gui_dialog.h"
 #include "ultima/nuvie/gui/gui_text.h"
 #include "ultima/nuvie/gui/gui_text_toggle_button.h"
-#include "ultima/nuvie/gui/gui_callback.h"
-#include "ultima/nuvie/gui/gui_area.h"
-#include "ultima/nuvie/gui/gui_dialog.h"
-#include "ultima/nuvie/menus/cheats_dialog.h"
-#include "ultima/nuvie/core/egg_manager.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/converse.h"
-#include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/gui/gui_types.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -46,41 +45,41 @@ namespace Nuvie {
 #define CD_HEIGHT 101
 
 CheatsDialog::CheatsDialog(GUI_CallBack *callback)
-	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - CD_WIDTH) / 2,
-	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - CD_HEIGHT) / 2,
-	             CD_WIDTH, CD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
+    : GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - CD_WIDTH) / 2,
+                 Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - CD_HEIGHT) / 2,
+                 CD_WIDTH, CD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
 	callback_object = callback;
 	init();
 	grab_focus();
 }
 
 bool CheatsDialog::init() {
-	int textY[] = { 11, 24, 37, 50, 63 };
-	int buttonY[] = { 9, 22, 35, 48, 61, 80 };
-	int colX[] = { 9, 163 };
+	int textY[] = {11, 24, 37, 50, 63};
+	int buttonY[] = {9, 22, 35, 48, 61, 80};
+	int colX[] = {9, 163};
 	int height = 12;
 	b_index_num = -1;
 	last_index = 0;
 	GUI_Widget *widget;
 	GUI *gui = GUI::get_gui();
 
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[0], 0, 0, 0, "Cheats:", gui->get_font());
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY[0], 0, 0, 0, "Cheats:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[1], 0, 0, 0, "Show eggs:", gui->get_font());
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY[1], 0, 0, 0, "Show eggs:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[2], 0, 0, 0, "Enable hackmove:", gui->get_font());
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY[2], 0, 0, 0, "Enable hackmove:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[3], 0, 0, 0, "Anyone will join:", gui->get_font());
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY[3], 0, 0, 0, "Anyone will join:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[4], 0, 0, 0, "Minimum brightness:", gui->get_font());
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY[4], 0, 0, 0, "Minimum brightness:", gui->get_font());
 	AddWidget(widget);
 
 	bool party_all_the_time;
 	Game *game = Game::get_game();
 	Configuration *config = game->get_config();
 	config->value("config/cheats/party_all_the_time", party_all_the_time);
-	const char *const enabled_text[] = { "Disabled", "Enabled" };
-	const char *const yesno_text[] = { "no", "yes" };
+	const char *const enabled_text[] = {"Disabled", "Enabled"};
+	const char *const yesno_text[] = {"no", "yes"};
 	char buff[4];
 	int brightness_selection;
 	int num_of_brightness = 8;
@@ -95,7 +94,7 @@ bool CheatsDialog::init() {
 		brightness_selection = 8; // manually edited setting or old 128
 		sprintf(buff, "%d", min_brightness);
 	}
-	const char *const brightness_text[] = { "0", "20", "40", "60", "80", "100", "120", "255", buff };
+	const char *const brightness_text[] = {"0", "20", "40", "60", "80", "100", "120", "255", buff};
 
 	cheat_button = new GUI_TextToggleButton(this, colX[1] - 30, buttonY[0], 70, height, enabled_text, 2, game->are_cheats_enabled(), gui->get_font(), BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(cheat_button);
@@ -113,7 +112,7 @@ bool CheatsDialog::init() {
 	AddWidget(party_button);
 	button_index[last_index += 1] = party_button;
 
-	brightness_button = new GUI_TextToggleButton(this, colX[1], buttonY[4], 40, height, brightness_text, num_of_brightness, brightness_selection,  gui->get_font(), BUTTON_TEXTALIGN_CENTER, this, 0);
+	brightness_button = new GUI_TextToggleButton(this, colX[1], buttonY[4], 40, height, brightness_text, num_of_brightness, brightness_selection, gui->get_font(), BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(brightness_button);
 	button_index[last_index += 1] = brightness_button;
 
@@ -132,7 +131,7 @@ CheatsDialog::~CheatsDialog() {
 }
 
 GUI_status CheatsDialog::close_dialog() {
-	Delete(); // mark dialog as deleted. it will be freed by the GUI object
+	Delete();                                 // mark dialog as deleted. it will be freed by the GUI object
 	callback_object->callback(0, this, this); // I don't think this does anything atm
 	return GUI_YUM;
 }
@@ -165,7 +164,8 @@ GUI_status CheatsDialog::KeyDown(const Common::KeyState &key) {
 		button_index[b_index_num]->set_highlighted(true);
 		break;
 	case DO_ACTION_KEY:
-		if (b_index_num != -1) return button_index[b_index_num]->Activate_button();
+		if (b_index_num != -1)
+			return button_index[b_index_num]->Activate_button();
 		break;
 	case CANCEL_ACTION_KEY:
 		return close_dialog();

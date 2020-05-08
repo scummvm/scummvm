@@ -21,11 +21,11 @@
  */
 
 #include "ultima/shared/gfx/viewport_dungeon.h"
-#include "ultima/shared/maps/dungeon_widget.h"
-#include "ultima/shared/maps/dungeon_creature.h"
-#include "ultima/shared/maps/map_widget.h"
-#include "ultima/shared/maps/map.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/maps/dungeon_creature.h"
+#include "ultima/shared/maps/dungeon_widget.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Shared {
@@ -79,7 +79,7 @@ void ViewportDungeon::draw() {
 	}
 
 	Point backDelta(delta.x * distance, delta.y * distance),
-		currDelta(delta.x * distance, delta.y * distance);
+	    currDelta(delta.x * distance, delta.y * distance);
 
 	if (isDoor && deltaTile.isWallOrDoorway()) {
 		s.drawWall(0);
@@ -95,7 +95,7 @@ void ViewportDungeon::draw() {
 		for (int index = distance; index; --index) {
 			currDelta -= delta;
 			Point pt = currentPos + currDelta;
-			
+
 			if (!isDoor || index > 1) {
 				map->getTileAt(pt + leftDelta, &leftTile);
 				map->getTileAt(pt + rightDelta, &rightTile);
@@ -154,7 +154,8 @@ void ViewportDungeon::draw() {
 uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
 	Point d = delta;
 	uint distance;
-	for (distance = 1; !isCellOccupied(d); ++distance, d.x += delta.x, d.y += delta.y) {}
+	for (distance = 1; !isCellOccupied(d); ++distance, d.x += delta.x, d.y += delta.y) {
+	}
 
 	return MIN(distance, (uint)5);
 }
@@ -162,7 +163,7 @@ uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
 bool ViewportDungeon::isCellOccupied(const Point &delta) {
 	Maps::Map *map = getGame()->getMap();
 	Point pt = map->getPosition() + delta;
-	
+
 	Maps::MapTile tile;
 	map->getTileAt(pt, &tile);
 	if (tile.isWallOrDoorway())

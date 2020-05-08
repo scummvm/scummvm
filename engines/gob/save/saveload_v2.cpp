@@ -20,23 +20,20 @@
  *
  */
 
-#include "gob/save/saveload.h"
-#include "gob/save/saveconverter.h"
 #include "gob/inter.h"
+#include "gob/save/saveconverter.h"
+#include "gob/save/saveload.h"
 #include "gob/variables.h"
 
 namespace Gob {
 
 SaveLoad_v2::SaveFile SaveLoad_v2::_saveFiles[] = {
-	{  "cat.inf", kSaveModeSave, 0, "savegame"},
-	{  "cat.cat", kSaveModeSave, 0, "savegame"}, // Alternative file
-	{ "save.inf", kSaveModeSave, 0, "temporary sprite"},
-	{ "bloc.inf", kSaveModeSave, 0, "notes"}
-};
+    {"cat.inf", kSaveModeSave, 0, "savegame"},
+    {"cat.cat", kSaveModeSave, 0, "savegame"}, // Alternative file
+    {"save.inf", kSaveModeSave, 0, "temporary sprite"},
+    {"bloc.inf", kSaveModeSave, 0, "notes"}};
 
-
-SaveLoad_v2::GameHandler::File::File(GobEngine *vm, const char *base) :
-	SlotFileIndexed(vm, SaveLoad_v2::kSlotCount, base, "s") {
+SaveLoad_v2::GameHandler::File::File(GobEngine *vm, const char *base) : SlotFileIndexed(vm, SaveLoad_v2::kSlotCount, base, "s") {
 }
 
 SaveLoad_v2::GameHandler::File::~File() {
@@ -59,7 +56,6 @@ int SaveLoad_v2::GameHandler::File::getSlotRemainder(int32 offset) const {
 
 	return ((offset - kIndexSize) % varSize);
 }
-
 
 SaveLoad_v2::GameHandler::GameHandler(GobEngine *vm, const char *target) : SaveHandler(vm) {
 	memset(_index, 0, kIndexSize);
@@ -96,7 +92,7 @@ bool SaveLoad_v2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 	if (offset == 0) {
 		// Save index
 
-		if (((uint32) size) != kIndexSize) {
+		if (((uint32)size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -113,10 +109,10 @@ bool SaveLoad_v2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 		debugC(2, kDebugSaveLoad, "Loading from slot %d", slot);
 
 		if ((slot >= kSlotCount) || (slotRem != 0) ||
-		    (dataVar != 0) || (((uint32) size) != varSize)) {
+		    (dataVar != 0) || (((uint32)size) != varSize)) {
 
 			warning("Invalid loading procedure (%d, %d, %d, %d, %d)",
-					dataVar, size, offset, slot, slotRem);
+			        dataVar, size, offset, slot, slotRem);
 			return false;
 		}
 
@@ -136,8 +132,8 @@ bool SaveLoad_v2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 			// New save, load directly
 			reader = new SaveReader(2, slot, slotFile);
 
-		SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(), 0,
-				_vm->getEndianness(), varSize);
+		SavePartInfo info(kSlotNameLength, (uint32)_vm->getGameType(), 0,
+		                  _vm->getEndianness(), varSize);
 		SavePartVars vars(_vm, varSize);
 
 		if (!reader->load()) {
@@ -181,7 +177,7 @@ bool SaveLoad_v2::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 	if (offset == 0) {
 		// Save index
 
-		if (((uint32) size) != kIndexSize) {
+		if (((uint32)size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -199,10 +195,10 @@ bool SaveLoad_v2::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		debugC(2, kDebugSaveLoad, "Saving to slot %d", slot);
 
 		if ((slot >= kSlotCount) || (slotRem != 0) ||
-		    (dataVar != 0) || (((uint32) size) != varSize)) {
+		    (dataVar != 0) || (((uint32)size) != varSize)) {
 
 			warning("Invalid saving procedure (%d, %d, %d, %d, %d)",
-					dataVar, size, offset, slot, slotRem);
+			        dataVar, size, offset, slot, slotRem);
 			return false;
 		}
 
@@ -217,8 +213,8 @@ bool SaveLoad_v2::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		Common::String slotFile = _slotFile->build(slot);
 
 		SaveWriter writer(2, slot, slotFile);
-		SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(), 0,
-				_vm->getEndianness(), varSize);
+		SavePartInfo info(kSlotNameLength, (uint32)_vm->getGameType(), 0,
+		                  _vm->getEndianness(), varSize);
 		SavePartVars vars(_vm, varSize);
 
 		// Write the description
@@ -242,17 +238,15 @@ void SaveLoad_v2::GameHandler::buildIndex(byte *buffer) const {
 	if (varSize == 0)
 		return;
 
-	SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(),
-			0, _vm->getEndianness(), varSize);
+	SavePartInfo info(kSlotNameLength, (uint32)_vm->getGameType(),
+	                  0, _vm->getEndianness(), varSize);
 
 	SaveConverter_v2 converter(_vm);
 
 	_slotFile->buildIndex(buffer, info, &converter);
 }
 
-
-SaveLoad_v2::SaveLoad_v2(GobEngine *vm, const char *targetName) :
-		SaveLoad(vm) {
+SaveLoad_v2::SaveLoad_v2(GobEngine *vm, const char *targetName) : SaveLoad(vm) {
 
 	_gameHandler = new GameHandler(vm, targetName);
 	_notesHandler = new NotesHandler(600, vm, targetName);

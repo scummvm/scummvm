@@ -23,14 +23,14 @@
 #ifndef ULTIMA4_MAP_DUNGEONVIEW_H
 #define ULTIMA4_MAP_DUNGEONVIEW_H
 
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/map/dungeon.h"
-#include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/views/tileview.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/map/dungeon.h"
 #include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/tileset.h"
+#include "ultima/ultima4/views/tileview.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -61,6 +61,7 @@ class DungeonView : public TileView {
 private:
 	DungeonView(int x, int y, int columns, int rows);
 	bool screen3dDungeonViewEnabled;
+
 public:
 	static DungeonView *_instance;
 	static DungeonView *getInstance();

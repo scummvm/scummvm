@@ -39,6 +39,7 @@ public:
 	uint32 getStartTime() const;
 	BaseQuickMsg(uint32 startTime, const char *text);
 	virtual ~BaseQuickMsg();
+
 private:
 	Common::String _text;
 	uint32 _startTime;

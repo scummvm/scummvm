@@ -23,8 +23,8 @@
 #ifndef TITANIC_CAMERA_H
 #define TITANIC_CAMERA_H
 
-#include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/base_stars.h"
+#include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/viewport.h"
 
 namespace Titanic {
@@ -35,7 +35,10 @@ struct CNavigationInfo;
 class FPoint;
 class SimpleFile;
 
-enum StarLockLevel { ZERO_LOCKED=0, ONE_LOCKED=1, TWO_LOCKED=2, THREE_LOCKED=3 };
+enum StarLockLevel { ZERO_LOCKED = 0,
+	                 ONE_LOCKED = 1,
+	                 TWO_LOCKED = 2,
+	                 THREE_LOCKED = 3 };
 
 /**
  * Implements a reference point from which the starmap can be viewed
@@ -44,12 +47,13 @@ class CCamera {
 private:
 	static FMatrix *_priorOrientation;
 	static FMatrix *_newOrientation;
+
 private:
 	StarLockLevel _lockLevel;
 	FMatrix _lockedStarsPos; // Each row represents the location of a locked star
 	CMotionControl *_motion; // A marked or unmarked camera mover, contains an automover
 	CViewport _viewport;
-	bool _isMoved; // Used in CPetStarfield to determine if a star destination can be set
+	bool _isMoved;            // Used in CPetStarfield to determine if a star destination can be set
 	bool _isInLockingProcess; // The mover/view is homing in on a new star
 private:
 	/**
@@ -68,9 +72,11 @@ private:
 	 * Return whether the handler is locked
 	 */
 	bool isLocked();
+
 public:
 	static void init();
 	static void deinit();
+
 public:
 	CCamera(const CNavigationInfo *data);
 	CCamera(CViewport *src);
@@ -179,7 +185,6 @@ public:
 	 */
 	virtual double getBackClip() const;
 
-
 	virtual StarColor getStarColor() const;
 
 	/**
@@ -221,7 +226,7 @@ public:
 	 * Second is the x center coordinate relative to z
 	 * Third is the first x center pixel offset
 	 * Fourth is the second x center pixel offset
-	 */	
+	 */
 	virtual void getRelativeXCenterPixels(double *v1, double *v2, double *v3, double *v4);
 
 	/**

@@ -29,6 +29,7 @@ namespace Titanic {
 
 class CDontSaveFileItem : public CFileItem {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	CLASSDEF;
 

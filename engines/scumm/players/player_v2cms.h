@@ -23,7 +23,7 @@
 #ifndef SCUMM_PLAYERS_PLAYER_V2CMS_H
 #define SCUMM_PLAYERS_PLAYER_V2CMS_H
 
-#include "scumm/players/player_v2base.h"	// for channel_data
+#include "scumm/players/player_v2base.h" // for channel_data
 
 class CMSEmulator;
 
@@ -42,8 +42,8 @@ public:
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int  getMusicTimer() override;
-	int  getSoundStatus(int sound) const override;
+	int getMusicTimer() override;
+	int getSoundStatus(int sound) const override;
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;

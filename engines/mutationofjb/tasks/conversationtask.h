@@ -40,6 +40,7 @@ public:
 	void update() override;
 
 	void onChoiceClicked(ConversationWidget *, int response, uint32 data) override;
+
 private:
 	void showChoicesOrPick();
 	const ConversationInfo::ItemGroup &getCurrentGroup() const;
@@ -69,4 +70,4 @@ private:
 	ScriptExecutionContext *_innerExecCtx;
 };
 
-}
+} // namespace MutationOfJB

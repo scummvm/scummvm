@@ -23,8 +23,8 @@
 #define ULTIMA4_GAME_OBJECT_H
 
 #include "ultima/ultima4/core/coords.h"
-#include "ultima/ultima4/map/map_tile.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/map/map_tile.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -46,14 +46,13 @@ public:
 		PERSON
 	};
 
-	Object(Type type = UNKNOWN) :
-		_tile(0),
-		_prevTile(0),
-		_movementBehavior(MOVEMENT_FIXED),
-		_objType(type),
-		_focused(false),
-		_visible(true),
-		_animated(true) {
+	Object(Type type = UNKNOWN) : _tile(0),
+	                              _prevTile(0),
+	                              _movementBehavior(MOVEMENT_FIXED),
+	                              _objType(type),
+	                              _focused(false),
+	                              _visible(true),
+	                              _animated(true) {
 	}
 
 	virtual ~Object() {}
@@ -121,7 +120,7 @@ public:
 
 	void setMap(class Map *m);
 	Map *getMap();
-	void remove();  /**< Removes itself from any maps that it is a part of */
+	void remove(); /**< Removes itself from any maps that it is a part of */
 
 	bool setDirection(Direction d);
 
@@ -133,7 +132,7 @@ protected:
 	Coords _coords, _prevCoords;
 	ObjectMovementBehavior _movementBehavior;
 	Type _objType;
-	Std::deque<class Map *> _maps;           /**< A list of maps this object is a part of */
+	Std::deque<class Map *> _maps; /**< A list of maps this object is a part of */
 
 	bool _focused;
 	bool _visible;

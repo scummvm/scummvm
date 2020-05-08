@@ -31,7 +31,7 @@ Common::String MiscTests::getHumanReadableFormat(const TimeDate &td) {
 
 void MiscTests::timerCallback(void *arg) {
 	// Increment arg which actually points to an int
-	int &valToModify = *((int *) arg);
+	int &valToModify = *((int *)arg);
 	valToModify = 999; // some arbitrary value
 }
 
@@ -162,7 +162,7 @@ TestExitStatus MiscTests::testMutexes() {
 
 TestExitStatus MiscTests::testOpenUrl() {
 	Common::String info = "Testing openUrl() method.\n"
-		"In this test we'll try to open scummvm.org in your default browser.";
+	                      "In this test we'll try to open scummvm.org in your default browser.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : openUrl()\n");

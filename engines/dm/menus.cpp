@@ -26,120 +26,120 @@
 */
 
 #include "dm/menus.h"
-#include "dm/gfx.h"
 #include "dm/champion.h"
 #include "dm/dungeonman.h"
-#include "dm/objectman.h"
-#include "dm/inventory.h"
-#include "dm/text.h"
 #include "dm/eventman.h"
-#include "dm/timeline.h"
-#include "dm/movesens.h"
+#include "dm/gfx.h"
 #include "dm/group.h"
+#include "dm/inventory.h"
+#include "dm/movesens.h"
+#include "dm/objectman.h"
 #include "dm/projexpl.h"
 #include "dm/sounds.h"
-
+#include "dm/text.h"
+#include "dm/timeline.h"
 
 namespace DM {
 
 void MenuMan::initConstants() {
-	static unsigned char actionSkillIndex[44] = { // @ G0496_auc_Graphic560_ActionSkillIndex
-		0,  /* N */
-		7,  /* BLOCK */
-		6,  /* CHOP */
-		0,  /* X */
-		14, /* BLOW HORN */
-		12, /* FLIP */
-		9,  /* PUNCH */
-		9,  /* KICK */
-		7,  /* WAR CRY Atari ST Versions 1.0 1987-12-08 1987-12-11 1.1: 14 */
-		9,  /* STAB */
-		8,  /* CLIMB DOWN */
-		14, /* FREEZE LIFE */
-		9,  /* HIT */
-		4,  /* SWING */
-		5,  /* STAB */
-		5,  /* THRUST */
-		5,  /* JAB */
-		7,  /* PARRY */
-		4,  /* HACK */
-		4,  /* BERZERK */
-		16, /* FIREBALL */
-		17, /* DISPELL */
-		14, /* CONFUSE */
-		17, /* LIGHTNING */
-		17, /* DISRUPT */
-		6,  /* MELEE */
-		8,  /* X */
-		3,  /* INVOKE */
-		4,  /* SLASH */
-		4,  /* CLEAVE */
-		6,  /* BASH */
-		6,  /* STUN */
-		11, /* SHOOT */
-		15, /* SPELLSHIELD */
-		15, /* FIRESHIELD */
-		3,  /* FLUXCAGE */
-		13, /* HEAL */
-		14, /* CALM */
-		17, /* LIGHT */
-		18, /* WINDOW */
-		16, /* SPIT */
-		14, /* BRANDISH */
-		10, /* THROW */
-		3   /* FUSE */
+	static unsigned char actionSkillIndex[44] = {
+	    // @ G0496_auc_Graphic560_ActionSkillIndex
+	    0,  /* N */
+	    7,  /* BLOCK */
+	    6,  /* CHOP */
+	    0,  /* X */
+	    14, /* BLOW HORN */
+	    12, /* FLIP */
+	    9,  /* PUNCH */
+	    9,  /* KICK */
+	    7,  /* WAR CRY Atari ST Versions 1.0 1987-12-08 1987-12-11 1.1: 14 */
+	    9,  /* STAB */
+	    8,  /* CLIMB DOWN */
+	    14, /* FREEZE LIFE */
+	    9,  /* HIT */
+	    4,  /* SWING */
+	    5,  /* STAB */
+	    5,  /* THRUST */
+	    5,  /* JAB */
+	    7,  /* PARRY */
+	    4,  /* HACK */
+	    4,  /* BERZERK */
+	    16, /* FIREBALL */
+	    17, /* DISPELL */
+	    14, /* CONFUSE */
+	    17, /* LIGHTNING */
+	    17, /* DISRUPT */
+	    6,  /* MELEE */
+	    8,  /* X */
+	    3,  /* INVOKE */
+	    4,  /* SLASH */
+	    4,  /* CLEAVE */
+	    6,  /* BASH */
+	    6,  /* STUN */
+	    11, /* SHOOT */
+	    15, /* SPELLSHIELD */
+	    15, /* FIRESHIELD */
+	    3,  /* FLUXCAGE */
+	    13, /* HEAL */
+	    14, /* CALM */
+	    17, /* LIGHT */
+	    18, /* WINDOW */
+	    16, /* SPIT */
+	    14, /* BRANDISH */
+	    10, /* THROW */
+	    3   /* FUSE */
 	};
 	static unsigned char actionDisabledTicks[44] = {
-		0,  /* N */
-		6,  /* BLOCK */
-		8,  /* CHOP */
-		0,  /* X */
-		6,  /* BLOW HORN */
-		3,  /* FLIP */
-		1,  /* PUNCH */
-		5,  /* KICK */
-		3,  /* WAR CRY */
-		5,  /* STAB */
-		35, /* CLIMB DOWN */
-		20, /* FREEZE LIFE */
-		4,  /* HIT */
-		6,  /* SWING */
-		10, /* STAB */
-		16, /* THRUST */
-		2,  /* JAB */
-		18, /* PARRY */
-		8,  /* HACK */
-		30, /* BERZERK */
-		42, /* FIREBALL */
-		31, /* DISPELL */
-		10, /* CONFUSE */
-		38, /* LIGHTNING */
-		9,  /* DISRUPT */
-		20, /* MELEE */
-		10, /* X */
-		16, /* INVOKE */
-		4,  /* SLASH */
-		12, /* CLEAVE */
-		20, /* BASH */
-		7,  /* STUN */
-		14, /* SHOOT */
-		30, /* SPELLSHIELD */
-		35, /* FIRESHIELD */
-		2,  /* FLUXCAGE */
-		19, /* HEAL */
-		9,  /* CALM */
-		10, /* LIGHT */
-		15, /* WINDOW */
-		22, /* SPIT */
-		10, /* BRANDISH */
-		0,  /* THROW */
-		2   /* FUSE */
+	    0,  /* N */
+	    6,  /* BLOCK */
+	    8,  /* CHOP */
+	    0,  /* X */
+	    6,  /* BLOW HORN */
+	    3,  /* FLIP */
+	    1,  /* PUNCH */
+	    5,  /* KICK */
+	    3,  /* WAR CRY */
+	    5,  /* STAB */
+	    35, /* CLIMB DOWN */
+	    20, /* FREEZE LIFE */
+	    4,  /* HIT */
+	    6,  /* SWING */
+	    10, /* STAB */
+	    16, /* THRUST */
+	    2,  /* JAB */
+	    18, /* PARRY */
+	    8,  /* HACK */
+	    30, /* BERZERK */
+	    42, /* FIREBALL */
+	    31, /* DISPELL */
+	    10, /* CONFUSE */
+	    38, /* LIGHTNING */
+	    9,  /* DISRUPT */
+	    20, /* MELEE */
+	    10, /* X */
+	    16, /* INVOKE */
+	    4,  /* SLASH */
+	    12, /* CLEAVE */
+	    20, /* BASH */
+	    7,  /* STUN */
+	    14, /* SHOOT */
+	    30, /* SPELLSHIELD */
+	    35, /* FIRESHIELD */
+	    2,  /* FLUXCAGE */
+	    19, /* HEAL */
+	    9,  /* CALM */
+	    10, /* LIGHT */
+	    15, /* WINDOW */
+	    22, /* SPIT */
+	    10, /* BRANDISH */
+	    0,  /* THROW */
+	    2   /* FUSE */
 	};
 
-	_boxActionArea1ActionMenu = Box(224, 319, 77, 97); // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
+	_boxActionArea1ActionMenu = Box(224, 319, 77, 97);  // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
 	_boxActionArea2ActionMenu = Box(224, 319, 77, 109); // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
 	_boxActionArea3ActionMenu = Box(224, 319, 77, 121); // @ G0499_s_Graphic560_Box_ActionArea3ActionsMenu
-	_boxActionArea = Box(224, 319, 77, 121); // @ G0001_s_Graphic562_Box_ActionArea
+	_boxActionArea = Box(224, 319, 77, 121);            // @ G0001_s_Graphic562_Box_ActionArea
 	_boxSpellArea = Box(224, 319, 42, 74);
 
 	for (int i = 0; i < 44; i++) {
@@ -169,7 +169,7 @@ MenuMan::~MenuMan() {
 void MenuMan::drawMovementArrows() {
 	_vm->_eventMan->showMouse();
 	_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxMovementArrows),
-									   &_vm->_displayMan->_boxMovementArrows, k48_byteWidth, kDMColorNoTransparency, 45);
+	                               &_vm->_displayMan->_boxMovementArrows, k48_byteWidth, kDMColorNoTransparency, 45);
 	_vm->_eventMan->hideMouse();
 }
 void MenuMan::clearActingChampion() {
@@ -266,10 +266,7 @@ void MenuMan::refreshActionAreaAndSetChampDirMaxDamageReceived() {
 		int16 champIndex = kDMChampionFirst;
 
 		do {
-			if ((champIndex != champMan._leaderIndex)
-				&& (_vm->indexToOrdinal(champIndex) != champMan._actingChampionOrdinal)
-				&& (champ->_maximumDamageReceived)
-				&& (champ->_dir != champ->_directionMaximumDamageReceived)) {
+			if ((champIndex != champMan._leaderIndex) && (_vm->indexToOrdinal(champIndex) != champMan._actingChampionOrdinal) && (champ->_maximumDamageReceived) && (champ->_dir != champ->_directionMaximumDamageReceived)) {
 
 				champ->_dir = (Direction)champ->_directionMaximumDamageReceived;
 				champ->setAttributeFlag(kDMAttributeIcon, true);
@@ -320,14 +317,14 @@ void MenuMan::drawActionArea() {
 		if (_actionList._actionIndices[1] == kDMActionNone)
 			box = _boxActionArea1ActionMenu;
 		dispMan.blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxMenuActionArea),
-								 &box, k48_byteWidth, kDMColorNoTransparency, 45);
+		                     &box, k48_byteWidth, kDMColorNoTransparency, 45);
 		textMan.printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen,
-											235, 83, kDMColorBlack, kDMColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._actingChampionOrdinal)]._name,
-											k7_ChampionNameMaximumLength, k200_heightScreen);
+		                                235, 83, kDMColorBlack, kDMColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._actingChampionOrdinal)]._name,
+		                                k7_ChampionNameMaximumLength, k200_heightScreen);
 		for (uint16 actionListIndex = 0; actionListIndex < 3; actionListIndex++) {
 			textMan.printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen, 241, 93 + actionListIndex * 12, kDMColorCyan, kDMColorBlack,
-												getActionName(_actionList._actionIndices[actionListIndex]),
-												k12_ActionNameMaximumLength, k200_heightScreen);
+			                                getActionName(_actionList._actionIndices[actionListIndex]),
+			                                k12_ActionNameMaximumLength, k200_heightScreen);
 		}
 	}
 	_vm->_eventMan->showMouse();
@@ -335,16 +332,15 @@ void MenuMan::drawActionArea() {
 }
 
 const char *MenuMan::getActionName(ChampionAction actionIndex) {
-	const char *championActionNames[44] = { // @ G0490_ac_Graphic560_ActionNames
-		"N", "BLOCK", "CHOP", "X", "BLOW HORN", "FLIP", "PUNCH",
-		"KICK", "WAR CRY", "STAB", "CLIMB DOWN", "FREEZE LIFE",
-		"HIT", "SWING", "STAB", "THRUST", "JAB", "PARRY", "HACK",
-		"BERZERK", "FIREBALL", "DISPELL", "CONFUSE", "LIGHTNING",
-		"DISRUPT", "MELEE", "X", "INVOKE", "SLASH", "CLEAVE",
-		"BASH", "STUN", "SHOOT", "SPELLSHIELD", "FIRESHIELD",
-		"FLUXCAGE", "HEAL", "CALM", "LIGHT", "WINDOW", "SPIT",
-		"BRANDISH", "THROW", "FUSE"
-	};
+	const char *championActionNames[44] = {// @ G0490_ac_Graphic560_ActionNames
+	                                       "N", "BLOCK", "CHOP", "X", "BLOW HORN", "FLIP", "PUNCH",
+	                                       "KICK", "WAR CRY", "STAB", "CLIMB DOWN", "FREEZE LIFE",
+	                                       "HIT", "SWING", "STAB", "THRUST", "JAB", "PARRY", "HACK",
+	                                       "BERZERK", "FIREBALL", "DISPELL", "CONFUSE", "LIGHTNING",
+	                                       "DISRUPT", "MELEE", "X", "INVOKE", "SLASH", "CLEAVE",
+	                                       "BASH", "STUN", "SHOOT", "SPELLSHIELD", "FIRESHIELD",
+	                                       "FLUXCAGE", "HEAL", "CALM", "LIGHT", "WINDOW", "SPIT",
+	                                       "BRANDISH", "THROW", "FUSE"};
 
 	return (actionIndex == kDMActionNone) ? "" : championActionNames[actionIndex];
 }
@@ -460,8 +456,7 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 
 	ChampionMan &championMan = *_vm->_championMan;
 
-	if ((champIndex == championMan._magicCasterChampionIndex)
-	|| ((champIndex != kDMChampionNone) && !championMan._champions[champIndex]._currHealth))
+	if ((champIndex == championMan._magicCasterChampionIndex) || ((champIndex != kDMChampionNone) && !championMan._champions[champIndex]._currHealth))
 		return;
 
 	if (championMan._magicCasterChampionIndex == kDMChampionNone) {
@@ -579,8 +574,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			setFlag(curChampion->_attributes, kDMAttributeLoad);
 			championMan.drawChampionState((ChampionIndex)champIndex);
 		}
-		}
-		break;
+	} break;
 	case kDMSpellKindProjectile:
 		if (curChampion->_dir != dungeon._partyDir) {
 			curChampion->_dir = dungeon._partyDir;
@@ -604,22 +598,19 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			lightPower--;
 			championMan._party._magicalLightAmount += championMan._lightPowerToLightAmount[lightPower];
 			createEvent70_light(-lightPower, ticks);
-			}
-			break;
+		} break;
 		case kDMSpellTypeOtherMagicTorch: {
 			ticks = 2000 + ((spellPower - 3) << 7);
 			uint16 lightPower = (spellPower >> 2);
 			lightPower++;
 			championMan._party._magicalLightAmount += championMan._lightPowerToLightAmount[lightPower];
 			createEvent70_light(-lightPower, ticks);
-			}
-			break;
+		} break;
 		case kDMSpellTypeOtherDarkness: {
 			uint16 lightPower = (spellPower >> 2);
 			championMan._party._magicalLightAmount -= championMan._lightPowerToLightAmount[lightPower];
 			createEvent70_light(lightPower, 98);
-			}
-			break;
+		} break;
 		case kDMSpellTypeOtherThievesEye: {
 			newEvent._type = kDMEventTypeThievesEye;
 			championMan._party._event73Count_ThievesEye++;
@@ -627,16 +618,14 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			uint16 spellTicks = spellPower * spellPower;
 			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
-			}
-			break;
+		} break;
 		case kDMSpellTypeOtherInvisibility: {
 			newEvent._type = kDMEventTypeInvisibility;
 			championMan._party._event71Count_Invisibility++;
 			uint16 spellTicks = spellPower;
 			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
-			}
-			break;
+		} break;
 		case kDMSpellTypeOtherPartyShield: {
 			newEvent._type = kDMEventTypePartyShield;
 			newEvent._Bu._defense = spellPower;
@@ -648,8 +637,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			uint16 spellTicks = spellPower * spellPower;
 			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
-			}
-			break;
+		} break;
 		case kDMSpellTypeOtherFootprints: {
 			newEvent._type = kDMEventTypeFootprints;
 			championMan._party._event79Count_Footprints++;
@@ -662,8 +650,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			uint16 spellTicks = spellPower * spellPower;
 			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
-			}
-			break;
+		} break;
 		case kDMSpellTypeOtherZokathra: {
 			Thing unusedObject = dungeon.getUnusedThing(kDMThingTypeJunk);
 			if (unusedObject == _vm->_thingNone)
@@ -685,16 +672,14 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			} else
 				_vm->_moveSens->getMoveResult(unusedObject, kDMMapXNotOnASquare, 0, dungeon._partyMapX, dungeon._partyMapY);
 
-			}
-			break;
+		} break;
 		case kDMSpellTypeOtherFireshield:
 			isPartySpellOrFireShieldSuccessful(curChampion, false, (spellPower * spellPower) + 100, false);
 			break;
 		default:
 			break;
 		}
-		}
-		break;
+	} break;
 	default:
 		break;
 	}
@@ -705,33 +690,32 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 
 Spell *MenuMan::getSpellFromSymbols(byte *symbols) {
 	static Spell SpellsArray[25] = {
-		/* { Symbols, BaseRequiredSkillLevel, SkillIndex, Attributes } */
-		Spell(0x00666F00, 2, 15, 0x7843),
-		Spell(0x00667073, 1, 18, 0x4863),
-		Spell(0x00686D77, 3, 17, 0xB433),
-		Spell(0x00686C00, 3, 19, 0x6C72),
-		Spell(0x00686D76, 3, 18, 0x8423),
-		Spell(0x00686E76, 4, 17, 0x7822),
-		Spell(0x00686F76, 4, 17, 0x5803),
-		Spell(0x00690000, 1, 16, 0x3C53),
-		Spell(0x00696F00, 3, 16, 0xA802),
-		Spell(0x00697072, 4, 13, 0x3C71),
-		Spell(0x00697075, 4, 15, 0x7083),
-		Spell(0x006A6D00, 1, 18, 0x5032),
-		Spell(0x006A6C00, 1, 19, 0x4062),
-		Spell(0x006A6F77, 1, 15, 0x3013),
-		Spell(0x006B0000, 1, 17, 0x3C42),
-		Spell(0x00667000, 2, 15, 0x64C1),
-		Spell(0x00660000, 2, 13, 0x3CB1),
-		Spell(0x00667074, 4, 13, 0x3C81),
-		Spell(0x00667075, 4, 13, 0x3C91),
-		Spell(0x00670000, 1, 13, 0x80E1),
-		Spell(0x00677000, 1, 13, 0x68A1),
-		Spell(0x00687073, 4, 13, 0x3C61),
-		Spell(0x006B7076, 3,  2, 0xFCD1),
-		Spell(0x006B6C00, 2, 19, 0x7831),
-		Spell(0x006B6E76, 0,  3, 0x3C73)
-	};
+	    /* { Symbols, BaseRequiredSkillLevel, SkillIndex, Attributes } */
+	    Spell(0x00666F00, 2, 15, 0x7843),
+	    Spell(0x00667073, 1, 18, 0x4863),
+	    Spell(0x00686D77, 3, 17, 0xB433),
+	    Spell(0x00686C00, 3, 19, 0x6C72),
+	    Spell(0x00686D76, 3, 18, 0x8423),
+	    Spell(0x00686E76, 4, 17, 0x7822),
+	    Spell(0x00686F76, 4, 17, 0x5803),
+	    Spell(0x00690000, 1, 16, 0x3C53),
+	    Spell(0x00696F00, 3, 16, 0xA802),
+	    Spell(0x00697072, 4, 13, 0x3C71),
+	    Spell(0x00697075, 4, 15, 0x7083),
+	    Spell(0x006A6D00, 1, 18, 0x5032),
+	    Spell(0x006A6C00, 1, 19, 0x4062),
+	    Spell(0x006A6F77, 1, 15, 0x3013),
+	    Spell(0x006B0000, 1, 17, 0x3C42),
+	    Spell(0x00667000, 2, 15, 0x64C1),
+	    Spell(0x00660000, 2, 13, 0x3CB1),
+	    Spell(0x00667074, 4, 13, 0x3C81),
+	    Spell(0x00667075, 4, 13, 0x3C91),
+	    Spell(0x00670000, 1, 13, 0x80E1),
+	    Spell(0x00677000, 1, 13, 0x68A1),
+	    Spell(0x00687073, 4, 13, 0x3C61),
+	    Spell(0x006B7076, 3, 2, 0xFCD1),
+	    Spell(0x006B6C00, 2, 19, 0x7831),
+	    Spell(0x006B6E76, 0, 3, 0x3C73)};
 
 	if (*(symbols + 1)) {
 		int16 bitShiftCount = 24;
@@ -742,7 +726,7 @@ Spell *MenuMan::getSpellFromSymbols(byte *symbols) {
 		Spell *curSpell = SpellsArray;
 		int16 spellIndex = 25;
 		while (spellIndex--) {
-			if (curSpell->_symbols & 0xFF000000) { /* If byte 1 of spell is not 0 then the spell includes the power symbol */
+			if (curSpell->_symbols & 0xFF000000) {      /* If byte 1 of spell is not 0 then the spell includes the power symbol */
 				if (curSymbols == curSpell->_symbols) { /* Compare champion symbols, including power symbol, with spell (never used with actual spells) */
 					return curSpell;
 				}
@@ -757,24 +741,21 @@ Spell *MenuMan::getSpellFromSymbols(byte *symbols) {
 
 void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType, uint16 skillIndex) {
 	Common::String messagesEN[4] = {
-		" NEEDS MORE PRACTICE WITH THIS ",
-		" SPELL.",
-		" MUMBLES A MEANINGLESS SPELL.",
-		" NEEDS AN EMPTY FLASK IN HAND FOR POTION."
-	};
+	    " NEEDS MORE PRACTICE WITH THIS ",
+	    " SPELL.",
+	    " MUMBLES A MEANINGLESS SPELL.",
+	    " NEEDS AN EMPTY FLASK IN HAND FOR POTION."};
 	Common::String messagesDE[4] = {
-		" BRAUCHT MEHR UEBUNG MIT DIESEM ",
-		" ZAUBERSPRUCH.",
-		" MURMELT EINEN SINNLOSEN ZAUBERSPRUCH.",
-		" MUSS FUER DEN TRANK EINE LEERE FLASCHE BEREITHALTEN."
-	};
+	    " BRAUCHT MEHR UEBUNG MIT DIESEM ",
+	    " ZAUBERSPRUCH.",
+	    " MURMELT EINEN SINNLOSEN ZAUBERSPRUCH.",
+	    " MUSS FUER DEN TRANK EINE LEERE FLASCHE BEREITHALTEN."};
 	Common::String messagesFR[5] = {
-		" DOIT PRATIQUER DAVANTAGE SON ",
-		"ENVOUTEMENT.",
-		" MARMONNE UNE CONJURATION IMCOMPREHENSIBLE.",
-		" DOIT AVOIR UN FLACON VIDE EN MAIN POUR LA POTION.",
-		"EXORCISME."
-	};
+	    " DOIT PRATIQUER DAVANTAGE SON ",
+	    "ENVOUTEMENT.",
+	    " MARMONNE UNE CONJURATION IMCOMPREHENSIBLE.",
+	    " DOIT AVOIR UN FLACON VIDE EN MAIN POUR LA POTION.",
+	    "EXORCISME."};
 
 	if (skillIndex > kDMSkillWizard)
 		skillIndex = (skillIndex - 4) / 4;
@@ -820,7 +801,7 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 
 Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
 	DungeonMan &dungeon = *_vm->_dungeonMan;
-	for (int16 slotIndex = kDMSlotHead; --slotIndex >= kDMSlotReadyHand; ) {
+	for (int16 slotIndex = kDMSlotHead; --slotIndex >= kDMSlotReadyHand;) {
 		Thing curThing = champ->_slots[slotIndex];
 		if ((curThing != _vm->_thingNone) && (_vm->_objectMan->getIconIndex(curThing) == kDMIconIndicePotionEmptyFlask)) {
 			*potionThing = curThing;
@@ -909,10 +890,10 @@ void MenuMan::drawChampionSymbols(Champion *champ) {
 
 void MenuMan::addChampionSymbol(int16 symbolIndex) {
 	static byte symbolBaseManaCost[4][6] = {
-		{1, 2, 3, 4, 5, 6},   /* Power 1 */
-		{2, 3, 4, 5, 6, 7},   /* Power 2 */
-		{4, 5, 6, 7, 7, 9},   /* Power 3 */
-		{2, 2, 3, 4, 6, 7}    /* Power 4 */
+	    {1, 2, 3, 4, 5, 6}, /* Power 1 */
+	    {2, 3, 4, 5, 6, 7}, /* Power 2 */
+	    {4, 5, 6, 7, 7, 9}, /* Power 3 */
+	    {2, 2, 3, 4, 6, 7}  /* Power 4 */
 	};
 	static byte symbolManaCostMultiplier[6] = {8, 12, 16, 20, 24, 28};
 
@@ -982,96 +963,96 @@ bool MenuMan::didClickTriggerAction(int16 actionListIndex) {
 
 bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	static unsigned char actionStaminaArray[44] = {
-		0,  /* N */
-		4,  /* BLOCK */
-		10, /* CHOP */
-		0,  /* X */
-		1,  /* BLOW HORN */
-		0,  /* FLIP */
-		1,  /* PUNCH */
-		3,  /* KICK */
-		1,  /* WAR CRY */
-		3,  /* STAB */
-		40, /* CLIMB DOWN */
-		3,  /* FREEZE LIFE */
-		3,  /* HIT */
-		2,  /* SWING */
-		4,  /* STAB */
-		17, /* THRUST */
-		3,  /* JAB */
-		1,  /* PARRY */
-		6,  /* HACK */
-		40, /* BERZERK */
-		5,  /* FIREBALL */
-		2,  /* DISPELL */
-		2,  /* CONFUSE */
-		4,  /* LIGHTNING */
-		5,  /* DISRUPT */
-		25, /* MELEE */
-		1,  /* X */
-		2,  /* INVOKE */
-		2,  /* SLASH */
-		10, /* CLEAVE */
-		9,  /* BASH */
-		2,  /* STUN */
-		3,  /* SHOOT */
-		1,  /* SPELLSHIELD */
-		2,  /* FIRESHIELD */
-		6,  /* FLUXCAGE */
-		1,  /* HEAL */
-		1,  /* CALM */
-		3,  /* LIGHT */
-		2,  /* WINDOW */
-		3,  /* SPIT */
-		2,  /* BRANDISH */
-		0,  /* THROW */
-		2   /* FUSE */
+	    0,  /* N */
+	    4,  /* BLOCK */
+	    10, /* CHOP */
+	    0,  /* X */
+	    1,  /* BLOW HORN */
+	    0,  /* FLIP */
+	    1,  /* PUNCH */
+	    3,  /* KICK */
+	    1,  /* WAR CRY */
+	    3,  /* STAB */
+	    40, /* CLIMB DOWN */
+	    3,  /* FREEZE LIFE */
+	    3,  /* HIT */
+	    2,  /* SWING */
+	    4,  /* STAB */
+	    17, /* THRUST */
+	    3,  /* JAB */
+	    1,  /* PARRY */
+	    6,  /* HACK */
+	    40, /* BERZERK */
+	    5,  /* FIREBALL */
+	    2,  /* DISPELL */
+	    2,  /* CONFUSE */
+	    4,  /* LIGHTNING */
+	    5,  /* DISRUPT */
+	    25, /* MELEE */
+	    1,  /* X */
+	    2,  /* INVOKE */
+	    2,  /* SLASH */
+	    10, /* CLEAVE */
+	    9,  /* BASH */
+	    2,  /* STUN */
+	    3,  /* SHOOT */
+	    1,  /* SPELLSHIELD */
+	    2,  /* FIRESHIELD */
+	    6,  /* FLUXCAGE */
+	    1,  /* HEAL */
+	    1,  /* CALM */
+	    3,  /* LIGHT */
+	    2,  /* WINDOW */
+	    3,  /* SPIT */
+	    2,  /* BRANDISH */
+	    0,  /* THROW */
+	    2   /* FUSE */
 	};
 	static unsigned char actionExperienceGainArray[44] = {
-		0,  /* N */
-		8,  /* BLOCK */
-		10, /* CHOP */
-		0,  /* X */
-		0,  /* BLOW HORN */
-		0,  /* FLIP */
-		8,  /* PUNCH */
-		13, /* KICK */
-		7,  /* WAR CRY */
-		15, /* STAB */
-		15, /* CLIMB DOWN */
-		22, /* FREEZE LIFE */
-		10, /* HIT */
-		6,  /* SWING */
-		12, /* STAB */
-		19, /* THRUST */
-		11, /* JAB */
-		17, /* PARRY */
-		9,  /* HACK */
-		40, /* BERZERK */
-		35, /* FIREBALL */
-		25, /* DISPELL */
-		0,  /* CONFUSE */
-		30, /* LIGHTNING */
-		10, /* DISRUPT */
-		24, /* MELEE */
-		0,  /* X */
-		25, /* INVOKE */
-		9,  /* SLASH */
-		12, /* CLEAVE */
-		11, /* BASH */
-		10, /* STUN */
-		20, /* SHOOT Atari ST Versions 1.0 1987-12-08 1987-12-11: 9 */
-		20, /* SPELLSHIELD */
-		20, /* FIRESHIELD */
-		12, /* FLUXCAGE */
-		0,  /* HEAL */
-		0,  /* CALM */
-		20, /* LIGHT */
-		30, /* WINDOW */
-		25, /* SPIT */
-		0,  /* BRANDISH */
-		5,  /* THROW */
-		1   /* FUSE */
+	    0,  /* N */
+	    8,  /* BLOCK */
+	    10, /* CHOP */
+	    0,  /* X */
+	    0,  /* BLOW HORN */
+	    0,  /* FLIP */
+	    8,  /* PUNCH */
+	    13, /* KICK */
+	    7,  /* WAR CRY */
+	    15, /* STAB */
+	    15, /* CLIMB DOWN */
+	    22, /* FREEZE LIFE */
+	    10, /* HIT */
+	    6,  /* SWING */
+	    12, /* STAB */
+	    19, /* THRUST */
+	    11, /* JAB */
+	    17, /* PARRY */
+	    9,  /* HACK */
+	    40, /* BERZERK */
+	    35, /* FIREBALL */
+	    25, /* DISPELL */
+	    0,  /* CONFUSE */
+	    30, /* LIGHTNING */
+	    10, /* DISRUPT */
+	    24, /* MELEE */
+	    0,  /* X */
+	    25, /* INVOKE */
+	    9,  /* SLASH */
+	    12, /* CLEAVE */
+	    11, /* BASH */
+	    10, /* STUN */
+	    20, /* SHOOT Atari ST Versions 1.0 1987-12-08 1987-12-11: 9 */
+	    20, /* SPELLSHIELD */
+	    20, /* FIRESHIELD */
+	    12, /* FLUXCAGE */
+	    0,  /* HEAL */
+	    0,  /* CALM */
+	    20, /* LIGHT */
+	    30, /* WINDOW */
+	    25, /* SPIT */
+	    0,  /* BRANDISH */
+	    5,  /* THROW */
+	    1   /* FUSE */
 	};
 
 	ChampionMan &championMan = *_vm->_championMan;
@@ -1205,8 +1186,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		Thing removedObject = championMan.getObjectRemovedFromSlot(champIndex, kDMSlotReadyHand);
 		_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayIfPrioritized);
 		championMan.championShootProjectile(curChampion, removedObject, weaponInfoActionHand->_kineticEnergy + weaponInfoReadyHand->_kineticEnergy, (weaponInfoActionHand->getShootAttack() + championMan.getSkillLevel(champIndex, kDMSkillShoot)) << 1, stepEnergy);
-		}
-		break;
+	} break;
 	case kDMActionFlip: {
 		const char *messagesEN[2] = {"IT COMES UP HEADS.", "IT COMES UP TAILS."};
 		const char *messagesDE[2] = {"DIE KOPFSEITE IST OBEN.", "DIE ZAHL IST OBEN."};
@@ -1229,8 +1209,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		else
 			printMessageAfterReplacements(message[1]);
 
-		}
-		break;
+	} break;
 	case kDMActionSpellshield:
 	case kDMActionFireshield:
 		if (!isPartySpellOrFireShieldSuccessful(curChampion, actionIndex == kDMActionSpellshield, 280, true)) {
@@ -1297,8 +1276,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			setFlag(curChampion->_attributes, kDMAttributeStatistics);
 			actionPerformed = true;
 		}
-		}
-		break;
+	} break;
 	case kDMActionWindow: {
 		int16 windowTicks = _vm->getRandomNumber(championMan.getSkillLevel(champIndex, actionSkillIndex) + 8) + 5;
 		TimelineEvent newEvent;
@@ -1308,8 +1286,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 		championMan._party._event73Count_ThievesEye++;
 		decrementCharges(curChampion);
-		}
-		break;
+	} break;
 	case kDMActionClimbDown:
 		nextMapX = dungeon._partyMapX;
 		nextMapY = dungeon._partyMapY;
@@ -1342,8 +1319,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			decrementCharges(curChampion);
 		}
 		championMan._party._freezeLifeTicks = MIN(200, championMan._party._freezeLifeTicks + freezeTicks);
-		}
-		break;
+	} break;
 	case kDMActionLight:
 		championMan._party._magicalLightAmount += championMan._lightPowerToLightAmount[2];
 		createEvent70_light(-2, 2500);
@@ -1423,96 +1399,96 @@ void MenuMan::decrementCharges(Champion *champ) {
 
 bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 actionIndex, int16 targetMapX, int16 targetMapY, int16 skillIndex) {
 	static unsigned char actionDamageFactorArray[44] = {
-		0,  /* N */
-		15, /* BLOCK */
-		48, /* CHOP */
-		0,  /* X */
-		0,  /* BLOW HORN */
-		0,  /* FLIP */
-		32, /* PUNCH */
-		48, /* KICK */
-		0,  /* WAR CRY */
-		48, /* STAB */
-		0,  /* CLIMB DOWN */
-		0,  /* FREEZE LIFE */
-		20, /* HIT */
-		16, /* SWING */
-		60, /* STAB */
-		66, /* THRUST */
-		8,  /* JAB */
-		8,  /* PARRY */
-		25, /* HACK */
-		96, /* BERZERK */
-		0,  /* FIREBALL */
-		0,  /* DISPELL */
-		0,  /* CONFUSE */
-		0,  /* LIGHTNING */
-		55, /* DISRUPT */
-		60, /* MELEE */
-		0,  /* X */
-		0,  /* INVOKE */
-		16, /* SLASH */
-		48, /* CLEAVE */
-		50, /* BASH */
-		16, /* STUN */
-		0,  /* SHOOT */
-		0,  /* SPELLSHIELD */
-		0,  /* FIRESHIELD */
-		0,  /* FLUXCAGE */
-		0,  /* HEAL */
-		0,  /* CALM */
-		0,  /* LIGHT */
-		0,  /* WINDOW */
-		0,  /* SPIT */
-		0,  /* BRANDISH */
-		0,  /* THROW */
-		0   /* FUSE */
+	    0,  /* N */
+	    15, /* BLOCK */
+	    48, /* CHOP */
+	    0,  /* X */
+	    0,  /* BLOW HORN */
+	    0,  /* FLIP */
+	    32, /* PUNCH */
+	    48, /* KICK */
+	    0,  /* WAR CRY */
+	    48, /* STAB */
+	    0,  /* CLIMB DOWN */
+	    0,  /* FREEZE LIFE */
+	    20, /* HIT */
+	    16, /* SWING */
+	    60, /* STAB */
+	    66, /* THRUST */
+	    8,  /* JAB */
+	    8,  /* PARRY */
+	    25, /* HACK */
+	    96, /* BERZERK */
+	    0,  /* FIREBALL */
+	    0,  /* DISPELL */
+	    0,  /* CONFUSE */
+	    0,  /* LIGHTNING */
+	    55, /* DISRUPT */
+	    60, /* MELEE */
+	    0,  /* X */
+	    0,  /* INVOKE */
+	    16, /* SLASH */
+	    48, /* CLEAVE */
+	    50, /* BASH */
+	    16, /* STUN */
+	    0,  /* SHOOT */
+	    0,  /* SPELLSHIELD */
+	    0,  /* FIRESHIELD */
+	    0,  /* FLUXCAGE */
+	    0,  /* HEAL */
+	    0,  /* CALM */
+	    0,  /* LIGHT */
+	    0,  /* WINDOW */
+	    0,  /* SPIT */
+	    0,  /* BRANDISH */
+	    0,  /* THROW */
+	    0   /* FUSE */
 	};
 	static unsigned char actionHitProbabilityArray[44] = {
-		0,  /* N */
-		22, /* BLOCK */
-		48, /* CHOP */
-		0,  /* X */
-		0,  /* BLOW HORN */
-		0,  /* FLIP */
-		38, /* PUNCH */
-		28, /* KICK */
-		0,  /* WAR CRY */
-		30, /* STAB */
-		0,  /* CLIMB DOWN */
-		0,  /* FREEZE LIFE */
-		20, /* HIT */
-		32, /* SWING */
-		42, /* STAB */
-		57, /* THRUST */
-		70, /* JAB */
-		18, /* PARRY */
-		27, /* HACK */
-		46, /* BERZERK */
-		0,  /* FIREBALL */
-		0,  /* DISPELL */
-		0,  /* CONFUSE */
-		0,  /* LIGHTNING */
-		46, /* DISRUPT */
-		64, /* MELEE */
-		0,  /* X */
-		0,  /* INVOKE */
-		26, /* SLASH */
-		40, /* CLEAVE */
-		32, /* BASH */
-		50, /* STUN */
-		0,  /* SHOOT */
-		0,  /* SPELLSHIELD */
-		0,  /* FIRESHIELD */
-		0,  /* FLUXCAGE */
-		0,  /* HEAL */
-		0,  /* CALM */
-		0,  /* LIGHT */
-		0,  /* WINDOW */
-		0,  /* SPIT */
-		0,  /* BRANDISH */
-		0,  /* THROW */
-		0   /* FUSE */
+	    0,  /* N */
+	    22, /* BLOCK */
+	    48, /* CHOP */
+	    0,  /* X */
+	    0,  /* BLOW HORN */
+	    0,  /* FLIP */
+	    38, /* PUNCH */
+	    28, /* KICK */
+	    0,  /* WAR CRY */
+	    30, /* STAB */
+	    0,  /* CLIMB DOWN */
+	    0,  /* FREEZE LIFE */
+	    20, /* HIT */
+	    32, /* SWING */
+	    42, /* STAB */
+	    57, /* THRUST */
+	    70, /* JAB */
+	    18, /* PARRY */
+	    27, /* HACK */
+	    46, /* BERZERK */
+	    0,  /* FIREBALL */
+	    0,  /* DISPELL */
+	    0,  /* CONFUSE */
+	    0,  /* LIGHTNING */
+	    46, /* DISRUPT */
+	    64, /* MELEE */
+	    0,  /* X */
+	    0,  /* INVOKE */
+	    26, /* SLASH */
+	    40, /* CLEAVE */
+	    32, /* BASH */
+	    50, /* STUN */
+	    0,  /* SHOOT */
+	    0,  /* SPELLSHIELD */
+	    0,  /* FIRESHIELD */
+	    0,  /* FLUXCAGE */
+	    0,  /* HEAL */
+	    0,  /* CALM */
+	    0,  /* LIGHT */
+	    0,  /* WINDOW */
+	    0,  /* SPIT */
+	    0,  /* BRANDISH */
+	    0,  /* THROW */
+	    0   /* FUSE */
 	};
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
@@ -1526,16 +1502,15 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		uint16 viewCell = _vm->normalizeModulo4(championCell + 4 - champ->_dir);
 		switch (viewCell) {
 		case kDMViewCellBackRight: /* Champion is on the back right of the square and tries to attack a creature in the front right of its square */
-		case kDMViewCellBackLeft: /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
-			{
-				uint16 cellDelta = (viewCell == kDMViewCellBackRight) ? 3 : 1;
-				/* Check if there is another champion in front */
-				if (_vm->_championMan->getIndexInCell(_vm->normalizeModulo4(championCell + cellDelta)) != kDMChampionNone) {
-					_actionDamage = kDMDamageCantReach;
-					return false;
-				}
+		case kDMViewCellBackLeft:  /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
+		{
+			uint16 cellDelta = (viewCell == kDMViewCellBackRight) ? 3 : 1;
+			/* Check if there is another champion in front */
+			if (_vm->_championMan->getIndexInCell(_vm->normalizeModulo4(championCell + cellDelta)) != kDMChampionNone) {
+				_actionDamage = kDMDamageCantReach;
+				return false;
 			}
-			break;
+		} break;
 		default:
 			break;
 		}
@@ -1644,52 +1619,51 @@ void MenuMan::printMessageAfterReplacements(const char *str) {
 
 void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 	static ActionSet actionSets[44] = {
-		/* { ActionIndices[0], ActionIndices[1], ActionIndices[2], ActionProperties[0], ActionProperties[1], Useless } */
-		ActionSet(255, 255, 255, 0x00, 0x00),
-		ActionSet(27,  43,  35, 0x00, 0x00),
-		ActionSet(6,   7,   8, 0x00, 0x00),
-		ActionSet(0,   0,   0, 0x00, 0x00),
-		ActionSet(0,   0,   0, 0x00, 0x00),
-		ActionSet(13, 255, 255, 0x00, 0x00),
-		ActionSet(13,  20, 255, 0x87, 0x00),
-		ActionSet(13,  23, 255, 0x83, 0x00),
-		ActionSet(28,  41,  22, 0x02, 0x83),
-		ActionSet(16,   2,  23, 0x00, 0x84),
-		ActionSet(2,  25,  20, 0x02, 0x86),
-		ActionSet(17,  41,  34, 0x03, 0x05),
-		ActionSet(42,   9,  28, 0x00, 0x02),
-		ActionSet(13,  17,   2, 0x02, 0x03),
-		ActionSet(16,  17,  15, 0x01, 0x05),
-		ActionSet(28,  17,  25, 0x01, 0x05),
-		ActionSet(2,  25,  15, 0x05, 0x06),
-		ActionSet(9,   2,  29, 0x02, 0x05),
-		ActionSet(16,  29,  24, 0x02, 0x04),
-		ActionSet(13,  15,  19, 0x05, 0x07),
-		ActionSet(13,   2,  25, 0x00, 0x05),
-		ActionSet(2,  29,  19, 0x03, 0x08),
-		ActionSet(13,  30,  31, 0x02, 0x04),
-		ActionSet(13,  31,  25, 0x03, 0x06),
-		ActionSet(42,  30, 255, 0x00, 0x00),
-		ActionSet(0,   0,   0, 0x00, 0x00),
-		ActionSet(42,   9, 255, 0x00, 0x00),
-		ActionSet(32, 255, 255, 0x00, 0x00),
-		ActionSet(37,  33,  36, 0x82, 0x03),
-		ActionSet(37,  33,  34, 0x83, 0x84),
-		ActionSet(17,  38,  21, 0x80, 0x83),
-		ActionSet(13,  21,  34, 0x83, 0x84),
-		ActionSet(36,  37,  41, 0x02, 0x03),
-		ActionSet(13,  23,  39, 0x82, 0x84),
-		ActionSet(13,  17,  40, 0x00, 0x83),
-		ActionSet(17,  36,  38, 0x03, 0x84),
-		ActionSet(4, 255, 255, 0x00, 0x00),
-		ActionSet(5, 255, 255, 0x00, 0x00),
-		ActionSet(11, 255, 255, 0x00, 0x00),
-		ActionSet(10, 255, 255, 0x00, 0x00),
-		ActionSet(42,   9, 255, 0x00, 0x00),
-		ActionSet(1,  12, 255, 0x02, 0x00),
-		ActionSet(42, 255, 255, 0x00, 0x00),
-		ActionSet(6,  11, 255, 0x80, 0x00)
-	};
+	    /* { ActionIndices[0], ActionIndices[1], ActionIndices[2], ActionProperties[0], ActionProperties[1], Useless } */
+	    ActionSet(255, 255, 255, 0x00, 0x00),
+	    ActionSet(27, 43, 35, 0x00, 0x00),
+	    ActionSet(6, 7, 8, 0x00, 0x00),
+	    ActionSet(0, 0, 0, 0x00, 0x00),
+	    ActionSet(0, 0, 0, 0x00, 0x00),
+	    ActionSet(13, 255, 255, 0x00, 0x00),
+	    ActionSet(13, 20, 255, 0x87, 0x00),
+	    ActionSet(13, 23, 255, 0x83, 0x00),
+	    ActionSet(28, 41, 22, 0x02, 0x83),
+	    ActionSet(16, 2, 23, 0x00, 0x84),
+	    ActionSet(2, 25, 20, 0x02, 0x86),
+	    ActionSet(17, 41, 34, 0x03, 0x05),
+	    ActionSet(42, 9, 28, 0x00, 0x02),
+	    ActionSet(13, 17, 2, 0x02, 0x03),
+	    ActionSet(16, 17, 15, 0x01, 0x05),
+	    ActionSet(28, 17, 25, 0x01, 0x05),
+	    ActionSet(2, 25, 15, 0x05, 0x06),
+	    ActionSet(9, 2, 29, 0x02, 0x05),
+	    ActionSet(16, 29, 24, 0x02, 0x04),
+	    ActionSet(13, 15, 19, 0x05, 0x07),
+	    ActionSet(13, 2, 25, 0x00, 0x05),
+	    ActionSet(2, 29, 19, 0x03, 0x08),
+	    ActionSet(13, 30, 31, 0x02, 0x04),
+	    ActionSet(13, 31, 25, 0x03, 0x06),
+	    ActionSet(42, 30, 255, 0x00, 0x00),
+	    ActionSet(0, 0, 0, 0x00, 0x00),
+	    ActionSet(42, 9, 255, 0x00, 0x00),
+	    ActionSet(32, 255, 255, 0x00, 0x00),
+	    ActionSet(37, 33, 36, 0x82, 0x03),
+	    ActionSet(37, 33, 34, 0x83, 0x84),
+	    ActionSet(17, 38, 21, 0x80, 0x83),
+	    ActionSet(13, 21, 34, 0x83, 0x84),
+	    ActionSet(36, 37, 41, 0x02, 0x03),
+	    ActionSet(13, 23, 39, 0x82, 0x84),
+	    ActionSet(13, 17, 40, 0x00, 0x83),
+	    ActionSet(17, 36, 38, 0x03, 0x84),
+	    ActionSet(4, 255, 255, 0x00, 0x00),
+	    ActionSet(5, 255, 255, 0x00, 0x00),
+	    ActionSet(11, 255, 255, 0x00, 0x00),
+	    ActionSet(10, 255, 255, 0x00, 0x00),
+	    ActionSet(42, 9, 255, 0x00, 0x00),
+	    ActionSet(1, 12, 255, 0x02, 0x00),
+	    ActionSet(42, 255, 255, 0x00, 0x00),
+	    ActionSet(6, 11, 255, 0x80, 0x00)};
 
 	ChampionMan &championMan = *_vm->_championMan;
 	Champion *curChampion = &championMan._champions[champIndex];
@@ -1853,4 +1827,4 @@ void MenuMan::drawActionDamage(int16 damage) {
 	}
 	_vm->_eventMan->hideMouse();
 }
-}
+} // namespace DM

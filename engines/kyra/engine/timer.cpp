@@ -27,7 +27,7 @@
 namespace Kyra {
 
 namespace {
-struct TimerResync : public Common::UnaryFunction<TimerEntry&, void> {
+struct TimerResync : public Common::UnaryFunction<TimerEntry &, void> {
 	uint32 _tickLength, _curTime;
 	TimerResync(KyraEngine_v1 *vm, uint32 curTime) : _tickLength(vm->tickLength()), _curTime(curTime) {}
 
@@ -46,7 +46,7 @@ struct TimerResync : public Common::UnaryFunction<TimerEntry&, void> {
 	}
 };
 
-struct TimerEqual : public Common::UnaryFunction<const TimerEntry&, bool> {
+struct TimerEqual : public Common::UnaryFunction<const TimerEntry &, bool> {
 	uint8 _id;
 
 	TimerEqual(uint8 id) : _id(id) {}
@@ -132,7 +132,7 @@ void TimerManager::update() {
 void TimerManager::resync() {
 	const uint32 curTime = _isPaused ? _pauseStart : _system->getMillis();
 
-	_nextRun = 0;	// force rerun
+	_nextRun = 0; // force rerun
 	Common::for_each(_timers.begin(), _timers.end(), TimerResync(_vm, curTime));
 }
 

@@ -20,21 +20,21 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/usecode/uc_machine.h"
-#include "ultima/ultima8/kernel/object.h"
-#include "ultima/ultima8/games/game_data.h"
+#include "common/util.h"
+#include "ultima/ultima8/audio/audio_mixer.h"
+#include "ultima/ultima8/audio/audio_sample.h"
+#include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/audio/sound_flex.h"
 #include "ultima/ultima8/audio/speech_flex.h"
-#include "ultima/ultima8/audio/audio_sample.h"
-#include "ultima/ultima8/audio/audio_mixer.h"
-#include "ultima/ultima8/audio/midi_player.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/kernel/object.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/usecode/uc_machine.h"
+#include "ultima/ultima8/world/camera_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/camera_process.h"
-#include "common/util.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -55,7 +55,8 @@ AudioProcess::~AudioProcess(void) {
 
 bool AudioProcess::calculateSoundVolume(ObjId objId, int16 &lVol, int16 &rVol) const {
 	Item *item = getItem(objId);
-	if (!item) return false;
+	if (!item)
+		return false;
 
 	// Need to get items relative coords from avatar
 
@@ -78,18 +79,23 @@ bool AudioProcess::calculateSoundVolume(ObjId objId, int16 &lVol, int16 &rVol) c
 	// Fall off over 350 pixels
 	int limit = 350 * 350;
 	int dist = limit - (x * x + y * y);
-	if (dist < 0) dist = 0;
+	if (dist < 0)
+		dist = 0;
 	dist = (dist * 256) / limit;
 
 	int lbal = 160;
 	int rbal = 160;
 
 	if (x < 0) {
-		if (x < -160) rbal = 0;
-		else rbal = x + 160;
+		if (x < -160)
+			rbal = 0;
+		else
+			rbal = x + 160;
 	} else if (x > 0) {
-		if (x > 160) lbal = 0;
-		else lbal = 160 - x;
+		if (x > 160)
+			lbal = 0;
+		else
+			lbal = 160 - x;
 	}
 
 	lVol = (dist * lbal) / 160;
@@ -146,18 +152,22 @@ bool AudioProcess::continueSpeech(SampleInfo &si) {
 
 	SpeechFlex *speechflex;
 	speechflex = GameData::get_instance()->getSpeechFlex(si._priority);
-	if (!speechflex) return false;
+	if (!speechflex)
+		return false;
 
-	if (si._curSpeechEnd >= si._barked.size()) return false;
+	if (si._curSpeechEnd >= si._barked.size())
+		return false;
 
 	si._curSpeechStart = si._curSpeechEnd;
 	int index = speechflex->getIndexForPhrase(si._barked,
-	            si._curSpeechStart,
-	            si._curSpeechEnd);
-	if (!index) return false;
+	                                          si._curSpeechStart,
+	                                          si._curSpeechEnd);
+	if (!index)
+		return false;
 
 	AudioSample *sample = speechflex->getSample(index);
-	if (!sample) return false;
+	if (!sample)
+		return false;
 
 	// hack to prevent playSample from deleting 'si'
 	si._channel = -1;
@@ -168,7 +178,6 @@ bool AudioProcess::continueSpeech(SampleInfo &si) {
 	si._channel = channel;
 	return true;
 }
-
 
 void AudioProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
@@ -192,7 +201,8 @@ void AudioProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	uint32 count = rs->readByte();
 
@@ -212,7 +222,7 @@ bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
 				rVol = 255;
 			}
 			playSFX(sfxNum, priority, objId, loops, false, pitchShift, volume, lVol, rVol);
-		} else {                // Speech
+		} else { // Speech
 			uint32 slen = rs->readUint32LE();
 
 			char *buf = new char[slen + 1];
@@ -232,7 +242,8 @@ int AudioProcess::playSample(AudioSample *sample, int priority, int loops, uint3
 	AudioMixer *mixer = AudioMixer::get_instance();
 	int channel = mixer->playSample(sample, loops, priority, false, pitchShift, lVol, rVol);
 
-	if (channel == -1) return channel;
+	if (channel == -1)
+		return channel;
 
 	// Erase old sample using channel (if any)
 	Std::list<SampleInfo>::iterator it;
@@ -259,7 +270,7 @@ void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
 		Std::list<SampleInfo>::iterator it;
 		for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 			if (it->_sfxNum == sfxNum && it->_objId == objId &&
-			        it->_loops == loops) {
+			    it->_loops == loops) {
 
 				// Exactly the same (and playing) so just return
 				//if (it->priority == priority)
@@ -277,16 +288,19 @@ void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
 	}
 
 	AudioSample *sample = soundflx->getSample(sfxNum);
-	if (!sample) return;
+	if (!sample)
+		return;
 
 	if (lVol == -1 || rVol == -1) {
 		lVol = 256;
 		rVol = 256;
-		if (objId) calculateSoundVolume(objId, lVol, rVol);
+		if (objId)
+			calculateSoundVolume(objId, lVol, rVol);
 	}
 
 	int channel = playSample(sample, priority, loops, pitchShift, (lVol * volume) / 256, (rVol * volume) / 256);
-	if (channel == -1) return;
+	if (channel == -1)
+		return;
 
 	// Update list
 	_sampleInfo.push_back(SampleInfo(sfxNum, priority, objId, loops, channel, pitchShift, volume, lVol, rVol));
@@ -298,7 +312,8 @@ void AudioProcess::stopSFX(int sfxNum, ObjId objId) {
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		if (it->_sfxNum == sfxNum && it->_objId == objId) {
-			if (mixer->isPlaying(it->_channel)) mixer->stopSample(it->_channel);
+			if (mixer->isPlaying(it->_channel))
+				mixer->stopSample(it->_channel);
 			it = _sampleInfo.erase(it);
 		} else {
 			++it;
@@ -325,7 +340,8 @@ void AudioProcess::setVolumeSFX(int sfxNum, uint8 volume) {
 			it->_volume = volume;
 
 			int lVol = 256, _rVol = 256;
-			if (it->_objId) calculateSoundVolume(it->_objId, it->_lVol, it->_rVol);
+			if (it->_objId)
+				calculateSoundVolume(it->_objId, it->_lVol, it->_rVol);
 			mixer->setVolume(it->_channel, (lVol * it->_volume) / 256, (_rVol * it->_volume) / 256);
 		}
 	}
@@ -338,7 +354,8 @@ void AudioProcess::setVolumeSFX(int sfxNum, uint8 volume) {
 bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId objId, uint32 pitchShift, uint16 volume) {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapeNum);
 
-	if (!speechflex) return false;
+	if (!speechflex)
+		return false;
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
@@ -346,7 +363,7 @@ bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId obj
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 
 		if (it->_sfxNum == -1 && it->_barked == barked &&
-		        it->_priority == shapeNum && it->_objId == objId) {
+		    it->_priority == shapeNum && it->_objId == objId) {
 
 			if (mixer->isPlaying(it->_channel)) {
 				pout << "Speech already playing" << Std::endl;
@@ -363,14 +380,17 @@ bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId obj
 	uint32 speech_start = 0;
 	uint32 speech_end;
 	int index = speechflex->getIndexForPhrase(barked, speech_start, speech_end);
-	if (!index) return false;
+	if (!index)
+		return false;
 
 	AudioSample *sample = speechflex->getSample(index);
-	if (!sample) return false;
+	if (!sample)
+		return false;
 
 	int channel = playSample(sample, 200, 0, pitchShift, volume, volume);
 
-	if (channel == -1) return false;
+	if (channel == -1)
+		return false;
 
 	// Update list
 	_sampleInfo.push_back(SampleInfo(barked, shapeNum, objId, channel,
@@ -381,11 +401,11 @@ bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId obj
 
 uint32 AudioProcess::getSpeechLength(const Std::string &barked, int shapenum) const {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapenum);
-	if (!speechflex) return 0;
+	if (!speechflex)
+		return 0;
 
 	return speechflex->getSpeechLength(barked);
 }
-
 
 void AudioProcess::stopSpeech(const Std::string &barked, int shapenum, ObjId objId) {
 	AudioMixer *mixer = AudioMixer::get_instance();
@@ -393,8 +413,9 @@ void AudioProcess::stopSpeech(const Std::string &barked, int shapenum, ObjId obj
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		if (it->_sfxNum == -1 && it->_priority == shapenum &&
-		        it->_objId == objId && it->_barked == barked) {
-			if (mixer->isPlaying(it->_channel)) mixer->stopSample(it->_channel);
+		    it->_objId == objId && it->_barked == barked) {
+			if (mixer->isPlaying(it->_channel))
+				mixer->stopSample(it->_channel);
 			it = _sampleInfo.erase(it);
 		} else {
 			++it;
@@ -406,7 +427,7 @@ bool AudioProcess::isSpeechPlaying(const Std::string &barked, int shapeNum) {
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
 		if (it->_sfxNum == -1 && it->_priority == shapeNum &&
-		        it->_barked == barked) {
+		    it->_barked == barked) {
 			return true;
 		}
 	}
@@ -416,7 +437,8 @@ bool AudioProcess::isSpeechPlaying(const Std::string &barked, int shapeNum) {
 
 void AudioProcess::pauseAllSamples() {
 	_paused++;
-	if (_paused != 1) return;
+	if (_paused != 1)
+		return;
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
@@ -428,14 +450,13 @@ void AudioProcess::pauseAllSamples() {
 		} else {
 			it = _sampleInfo.erase(it);
 		}
-
 	}
-
 }
 
 void AudioProcess::unpauseAllSamples() {
 	_paused--;
-	if (_paused != 0) return;
+	if (_paused != 0)
+		return;
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
@@ -447,9 +468,7 @@ void AudioProcess::unpauseAllSamples() {
 		} else {
 			it = _sampleInfo.erase(it);
 		}
-
 	}
-
 }
 
 void AudioProcess::stopAllExceptSpeech() {
@@ -458,7 +477,8 @@ void AudioProcess::stopAllExceptSpeech() {
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end();) {
 		if (it->_barked.empty()) {
-			if (mixer->isPlaying(it->_channel)) mixer->stopSample(it->_channel);
+			if (mixer->isPlaying(it->_channel))
+				mixer->stopSample(it->_channel);
 			it = _sampleInfo.erase(it);
 		} else {
 			++it;
@@ -486,8 +506,10 @@ uint32 AudioProcess::I_playSFX(const uint8 *args, unsigned int argsize) {
 	}
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->playSFX(_sfxNum, _priority, objId, 0);
-	else perr << "Error: No AudioProcess" << Std::endl;
+	if (ap)
+		ap->playSFX(_sfxNum, _priority, objId, 0);
+	else
+		perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
@@ -508,8 +530,10 @@ uint32 AudioProcess::I_playAmbientSFX(const uint8 *args, unsigned int argsize) {
 	}
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->playSFX(_sfxNum, _priority, objId, -1, true);
-	else perr << "Error: No AudioProcess" << Std::endl;
+	if (ap)
+		ap->playSFX(_sfxNum, _priority, objId, -1, true);
+	else
+		perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
@@ -529,15 +553,16 @@ uint32 AudioProcess::I_playAmbientSFXCru(const uint8 *args, unsigned int argsize
 			warning("I_playAmbientSFXCru Error: No AudioProcess");
 	}
 	return 0;
-
 }
 
 uint32 AudioProcess::I_isSFXPlaying(const uint8 *args, unsigned int argsize) {
 	ARG_SINT16(_sfxNum);
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) return ap->isSFXPlaying(_sfxNum);
-	else perr << "Error: No AudioProcess" << Std::endl;
+	if (ap)
+		return ap->isSFXPlaying(_sfxNum);
+	else
+		perr << "Error: No AudioProcess" << Std::endl;
 	return 0;
 }
 
@@ -547,8 +572,10 @@ uint32 AudioProcess::I_setVolumeSFX(const uint8 *args, unsigned int /*argsize*/)
 	ARG_UINT8(_volume);
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->setVolumeSFX(_sfxNum, _volume);
-	else perr << "Error: No AudioProcess" << Std::endl;
+	if (ap)
+		ap->setVolumeSFX(_sfxNum, _volume);
+	else
+		perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
@@ -563,8 +590,10 @@ uint32 AudioProcess::I_stopSFX(const uint8 *args, unsigned int argsize) {
 	}
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->stopSFX(_sfxNum, objId);
-	else perr << "Error: No AudioProcess" << Std::endl;
+	if (ap)
+		ap->stopSFX(_sfxNum, objId);
+	else
+		perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }

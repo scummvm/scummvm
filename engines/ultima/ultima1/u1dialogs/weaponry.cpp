@@ -21,12 +21,12 @@
  */
 
 #include "ultima/ultima1/u1dialogs/weaponry.h"
+#include "ultima/shared/core/str.h"
+#include "ultima/shared/engine/messages.h"
 #include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/engine/messages.h"
-#include "ultima/shared/core/str.h"
+#include "ultima/ultima1/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -140,8 +140,8 @@ bool Weaponry::CharacterInputMsg(CCharacterInputMsg &msg) {
 
 	if (_mode == BUY) {
 		if (msg._keyState.keycode >= (int)(Common::KEYCODE_a + _startIndex) &&
-			msg._keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex) &&
-			(int)(msg._keyState.keycode - Common::KEYCODE_a - _startIndex) % 2 == 0) {
+		    msg._keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex) &&
+		    (int)(msg._keyState.keycode - Common::KEYCODE_a - _startIndex) % 2 == 0) {
 			uint weaponNum = msg._keyState.keycode - Common::KEYCODE_a;
 			Weapon &weapon = *static_cast<Weapon *>(c._weapons[weaponNum]);
 
@@ -163,7 +163,7 @@ bool Weaponry::CharacterInputMsg(CCharacterInputMsg &msg) {
 		return true;
 	} else if (_mode == SELL && !c._weapons.hasNothing()) {
 		if (msg._keyState.keycode >= Common::KEYCODE_b &&
-			msg._keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size())) {
+		    msg._keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size())) {
 			uint weaponNum = msg._keyState.keycode - Common::KEYCODE_a;
 			Weapon &weapon = *static_cast<Weapon *>(c._weapons[weaponNum]);
 

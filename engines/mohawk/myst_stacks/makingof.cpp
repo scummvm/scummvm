@@ -20,18 +20,17 @@
  *
  */
 
-#include "mohawk/myst.h"
+#include "mohawk/myst_stacks/makingof.h"
 #include "mohawk/graphics.h"
+#include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/makingof.h"
 
 namespace Mohawk {
 namespace MystStacks {
 
-MakingOf::MakingOf(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm, kMakingOfStack) {
+MakingOf::MakingOf(MohawkEngine_Myst *vm) : MystScriptParser(vm, kMakingOfStack) {
 	setupOpcodes();
 }
 

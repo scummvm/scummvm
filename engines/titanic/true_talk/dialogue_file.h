@@ -41,7 +41,7 @@ struct DialogueResource {
 	DialogueIndexEntry *_entryPtr;
 
 	DialogueResource() : _active(false), _offset(0),
-		_bytesRead(0), _size(0), _entryPtr(nullptr) {}
+	                     _bytesRead(0), _size(0), _entryPtr(nullptr) {}
 
 	/**
 	 * Return the size of a cache entry
@@ -54,11 +54,13 @@ private:
 	File _file;
 	Common::Array<DialogueIndexEntry> _index;
 	Common::Array<DialogueResource> _cache;
+
 private:
 	/**
 	 * Add a dialogue file entry to the active cache
 	 */
 	DialogueResource *addToCache(int index);
+
 public:
 	CDialogueFile(const CString &filename, uint count);
 	~CDialogueFile();

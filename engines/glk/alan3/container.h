@@ -23,8 +23,8 @@
 #ifndef GLK_ALAN3_CONTAINER
 #define GLK_ALAN3_CONTAINER
 
-#include "glk/alan3/types.h"
 #include "glk/alan3/acode.h"
+#include "glk/alan3/types.h"
 #include "glk/jumps.h"
 
 namespace Glk {
@@ -32,7 +32,6 @@ namespace Alan3 {
 
 /* DATA */
 extern ContainerEntry *containers; /* Container table pointer */
-
 
 /* FUNCTIONS */
 extern int containerSize(int container, ATrans trans);

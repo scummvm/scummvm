@@ -28,7 +28,7 @@
 
 namespace Cloud {
 
-class BaseStorage: public Cloud::Storage {
+class BaseStorage : public Cloud::Storage {
 protected:
 	/** Storage's access and refresh tokens. */
 	Common::String _token, _refreshToken;

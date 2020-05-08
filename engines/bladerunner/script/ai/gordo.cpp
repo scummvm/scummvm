@@ -49,24 +49,17 @@ void AIScriptGordo::Initialize() {
 
 bool AIScriptGordo::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 1) {
-		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDefault
-		 && Actor_Query_Friendliness_To_Other(kActorGordo, kActorMcCoy) < 48
-		 && Actor_Query_Is_In_Current_Set(kActorGordo)
-		) {
+		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDefault && Actor_Query_Friendliness_To_Other(kActorGordo, kActorMcCoy) < 48 && Actor_Query_Is_In_Current_Set(kActorGordo)) {
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoCT01StandUp);
 			return true;
 		}
-		if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetCT03_CT04
-		 && Actor_Query_Which_Set_In(kActorGordo) == kSetCT01_CT12
-		) {
+		if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetCT03_CT04 && Actor_Query_Which_Set_In(kActorGordo) == kSetCT01_CT12) {
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoCT01WalkAway);
 			return true;
 		}
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 2
-	 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoWalkAround
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 2 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoWalkAround) {
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoWalkAround);
 	}
 
@@ -80,9 +73,7 @@ bool AIScriptGordo::Update() {
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 4) {
-		if (Actor_Query_Goal_Number(kActorGordo) < 300
-		 && Actor_Query_Goal_Number(kActorGordo) != kGoalGordoNR01Arrested
-		) {
+		if (Actor_Query_Goal_Number(kActorGordo) < 300 && Actor_Query_Goal_Number(kActorGordo) != kGoalGordoNR01Arrested) {
 			Actor_Set_Goal_Number(kActorGordo, 300);
 		} else if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoGone) {
 			Actor_Put_In_Set(kActorGordo, kSetFreeSlotI);
@@ -90,9 +81,7 @@ bool AIScriptGordo::Update() {
 		}
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorGordo) < 400
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorGordo) < 400) {
 		Actor_Set_Goal_Number(kActorGordo, 400);
 	}
 
@@ -112,11 +101,9 @@ void AIScriptGordo::TimerExpired(int timer) {
 }
 
 void AIScriptGordo::CompletedMovementTrack() {
-	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT01Leave
-	 || Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT01WalkAway
-	) {
+	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT01Leave || Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT01WalkAway) {
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoCT01Left);
-		return;// true;
+		return; // true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT05WalkThrough) {
@@ -141,26 +128,24 @@ void AIScriptGordo::CompletedMovementTrack() {
 		}
 		Actor_Clue_Acquire(kActorGordo, kClueMcCoyRetiredZuben, true, -1);
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoCT05Leave);
-		return;// true;
+		return; // true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT05Leave) {
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoCT05Left);
-		return;// true;
+		return; // true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT01WalkToHowieLee) {
 		Actor_Set_Immunity_To_Obstacles(kActorGordo, false);
 		Player_Gains_Control();
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoCT01BidFarewellToHowieLee);
-		return;// true;
+		return; // true;
 	}
 
-	if (Actor_Query_Goal_Number(kActorGordo) > kGoalGordoWalkAround
-	 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoStartChapter3
-	) {
+	if (Actor_Query_Goal_Number(kActorGordo) > kGoalGordoWalkAround && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoStartChapter3) {
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoWalkAround);
-		return;// true;
+		return; // true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02GoToPodium) {
@@ -211,9 +196,7 @@ void AIScriptGordo::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptGordo::ClickedByPlayer() {
 	int goal = Actor_Query_Goal_Number(kActorGordo);
-	if (goal == kGoalGordoGoToDNARow
-	 || goal == kGoalGordoGoToChinaTown
-	) {
+	if (goal == kGoalGordoGoToDNARow || goal == kGoalGordoGoToChinaTown) {
 		talkToMcCoyInCity();
 	} else if (goal == kGoalGordoNR01Arrested) {
 		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
@@ -249,17 +232,13 @@ void AIScriptGordo::ShotAtAndMissed() {
 
 bool AIScriptGordo::ShotAtAndHit() {
 	// Running from NR02
-	if (Actor_Query_Goal_Number(kActorGordo) > 219
-	 && Actor_Query_Goal_Number(kActorGordo) < 223
-	) {
+	if (Actor_Query_Goal_Number(kActorGordo) > 219 && Actor_Query_Goal_Number(kActorGordo) < 223) {
 		Actor_Set_Health(kActorGordo, 50, 50);
 		return true;
 	}
 
 	// Shot as a human
-	if (Actor_Query_Goal_Number(kActorGordo) > 239
-	 && Actor_Query_Goal_Number(kActorGordo) < 245
-	) {
+	if (Actor_Query_Goal_Number(kActorGordo) > 239 && Actor_Query_Goal_Number(kActorGordo) < 245) {
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01Die);
 		Delay(1500);
 		Actor_Voice_Over(2410, kActorVoiceOver);
@@ -325,7 +304,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	switch (newGoalNumber) {
 
-	// chapter 1
+		// chapter 1
 
 	case kGoalGordoDefault:
 		Actor_Put_In_Set(kActorGordo, kSetCT01_CT12);
@@ -376,7 +355,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
 
-	// chapter 2
+		// chapter 2
 
 	case kGoalGordoWalkAround:
 		AI_Movement_Track_Flush(kActorGordo);
@@ -385,9 +364,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		_animationStateNext = 0;
 		unknown();
 		rnd = Random_Query(1, 4);
-		if (Actor_Clue_Query(kActorMcCoy, kClueGordoInterview1)
-		 || Actor_Clue_Query(kActorMcCoy, kClueGordoInterview2)
-		) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueGordoInterview1) || Actor_Clue_Query(kActorMcCoy, kClueGordoInterview2)) {
 			rnd = Random_Query(4, 5);
 		}
 		switch (rnd) {
@@ -468,14 +445,11 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
 
-	// chapter 3
+		// chapter 3
 
 	case kGoalGordoStartChapter3:
 		if (Global_Variable_Query(kVariableHollowayArrest) == 2) {
-			if (Game_Flag_Query(kFlagLucyRanAway)
-			 && Game_Flag_Query(kFlagDektoraRanAway)
-			 && Player_Query_Current_Scene() != kSceneNR02
-			) {
+			if (Game_Flag_Query(kFlagLucyRanAway) && Game_Flag_Query(kFlagDektoraRanAway) && Player_Query_Current_Scene() != kSceneNR02) {
 				Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02WaitAtBar);
 			} else {
 				Actor_Set_Goal_Number(kActorGordo, kGoalGordoGoToFreeSlotGAG);
@@ -1546,17 +1520,17 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptGordo::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptGordo::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptGordo::ReachedMovementTrackWaypoint(int waypointId) {
@@ -1574,10 +1548,7 @@ void AIScriptGordo::FledCombat() {
 void AIScriptGordo::talkToMcCoyInCity() {
 	Player_Loses_Control();
 	Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
-	if (!Game_Flag_Query(kFlagGordoTalk1)
-	    && (!_vm->_cutContent
-	        || Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorGordo) <= 330)
-	) {
+	if (!Game_Flag_Query(kFlagGordoTalk1) && (!_vm->_cutContent || Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorGordo) <= 330)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 6460, 12);
 		AI_Movement_Track_Pause(kActorGordo);
@@ -1606,12 +1577,7 @@ void AIScriptGordo::talkToMcCoyInCity() {
 		Actor_Says(kActorGordo, 970, 12);
 		AI_Movement_Track_Unpause(kActorGordo);
 		Game_Flag_Set(kFlagGordoTalk1);
-	} else if (Game_Flag_Query(kFlagDR05BombExploded)
-	           && !Actor_Clue_Query(kActorMcCoy, kClueGordoInterview1)
-	           && !Actor_Clue_Query(kActorMcCoy, kClueGordoInterview2)
-	           && (!_vm->_cutContent
-	               || Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorGordo) <= 330)
-	) {
+	} else if (Game_Flag_Query(kFlagDR05BombExploded) && !Actor_Clue_Query(kActorMcCoy, kClueGordoInterview1) && !Actor_Clue_Query(kActorMcCoy, kClueGordoInterview2) && (!_vm->_cutContent || Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorGordo) <= 330)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 6485, 12);
 		AI_Movement_Track_Pause(kActorGordo);
@@ -1644,10 +1610,7 @@ void AIScriptGordo::talkToMcCoyInCity() {
 			Actor_Clue_Acquire(kActorMcCoy, kClueGordoInterview2, false, kActorGordo);
 		}
 		AI_Movement_Track_Unpause(kActorGordo);
-	} else if (!Game_Flag_Query(kFlagGordoTalk2)
-	           && (!_vm->_cutContent
-	               || Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorGordo) <= 330)
-	) {
+	} else if (!Game_Flag_Query(kFlagGordoTalk2) && (!_vm->_cutContent || Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorGordo) <= 330)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 6490, 12);
 		AI_Movement_Track_Pause(kActorGordo);
@@ -1667,18 +1630,18 @@ void AIScriptGordo::talkToMcCoyInCity() {
 		AI_Movement_Track_Unpause(kActorGordo);
 	} else {
 		switch (Random_Query(1, 4)) {
-			case 1:
-				Actor_Says(kActorMcCoy, 6460, 13);
-				break;
-			case 2:
-				Actor_Says(kActorMcCoy, 6550, 14);
-				break;
-			case 3:
-				Actor_Says(kActorMcCoy, 365, 12);
-				break;
-			case 4:
-				Actor_Says(kActorMcCoy, 525, 12);
-				break;
+		case 1:
+			Actor_Says(kActorMcCoy, 6460, 13);
+			break;
+		case 2:
+			Actor_Says(kActorMcCoy, 6550, 14);
+			break;
+		case 3:
+			Actor_Says(kActorMcCoy, 365, 12);
+			break;
+		case 4:
+			Actor_Says(kActorMcCoy, 525, 12);
+			break;
 		}
 	}
 
@@ -1711,8 +1674,8 @@ void AIScriptGordo::talkToMcCoyAtNR02() {
 void AIScriptGordo::dialogue2() {
 	Music_Stop(5);
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected(820, -1, 5,  7); // ARREST
-	DM_Add_To_List_Never_Repeat_Once_Selected(830,  7, 5, -1); // LET GO
+	DM_Add_To_List_Never_Repeat_Once_Selected(820, -1, 5, 7); // ARREST
+	DM_Add_To_List_Never_Repeat_Once_Selected(830, 7, 5, -1); // LET GO
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
@@ -1760,9 +1723,7 @@ void AIScriptGordo::dialogue1() {
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(760, 2, 5, 6); // ZUBEN
 	DM_Add_To_List_Never_Repeat_Once_Selected(770, 6, 3, 1); // JOB
-	if (Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)
-	 || Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow)
-	) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom) || Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(780, 5, 5, 5); // BLOND WOMAN
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {

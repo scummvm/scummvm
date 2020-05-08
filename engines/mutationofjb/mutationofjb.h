@@ -31,7 +31,7 @@ struct ADGameDescription;
 namespace Common {
 struct Event;
 class Serializer;
-}
+} // namespace Common
 
 namespace Graphics {
 class Screen;
@@ -87,6 +87,6 @@ private:
 	GuiScreen *_currentScreen;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

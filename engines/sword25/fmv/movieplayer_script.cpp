@@ -29,12 +29,12 @@
  *
  */
 
-#include "common/scummsys.h"	// for USE_THEORADEC
+#include "common/scummsys.h" // for USE_THEORADEC
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/kernel.h"
-#include "sword25/script/script.h"
 #include "sword25/script/luabindhelper.h"
+#include "sword25/script/script.h"
 
 #include "sword25/fmv/movieplayer.h"
 
@@ -133,18 +133,17 @@ int getTime(lua_State *L) {
 const char *LIBRARY_NAME = "Movieplayer";
 
 const luaL_reg LIBRARY_FUNCTIONS[] = {
-	{ "LoadMovie", loadMovie },
-	{ "UnloadMovie", unloadMovie },
-	{ "Play", play },
-	{ "Pause", pause },
-	{ "Update", update },
-	{ "IsMovieLoaded", isMovieLoaded },
-	{ "IsPaused", isPaused },
-	{ "GetScaleFactor", getScaleFactor },
-	{ "SetScaleFactor", setScaleFactor },
-	{ "GetTime", getTime },
-	{ 0, 0 }
-};
+    {"LoadMovie", loadMovie},
+    {"UnloadMovie", unloadMovie},
+    {"Play", play},
+    {"Pause", pause},
+    {"Update", update},
+    {"IsMovieLoaded", isMovieLoaded},
+    {"IsPaused", isPaused},
+    {"GetScaleFactor", getScaleFactor},
+    {"SetScaleFactor", setScaleFactor},
+    {"GetTime", getTime},
+    {0, 0}};
 
 bool MoviePlayer::registerScriptBindings() {
 	ScriptEngine *pScript = Kernel::getInstance()->getScript();
@@ -152,7 +151,8 @@ bool MoviePlayer::registerScriptBindings() {
 	lua_State *L = static_cast<lua_State *>(pScript->getScriptObject());
 	assert(L);
 
-	if (!LuaBindhelper::addFunctionsToLib(L, LIBRARY_NAME, LIBRARY_FUNCTIONS)) return false;
+	if (!LuaBindhelper::addFunctionsToLib(L, LIBRARY_NAME, LIBRARY_FUNCTIONS))
+		return false;
 
 	return true;
 }

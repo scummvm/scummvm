@@ -22,10 +22,10 @@
 
 #include "common/random.h"
 
-#include "hdb/hdb.h"
-#include "hdb/ai.h"
 #include "hdb/ai-player.h"
+#include "hdb/ai.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
 #include "hdb/mpc.h"
@@ -209,10 +209,10 @@ void aiTurnBotInit2(AIEntity *e) {
 }
 
 void aiTurnBotChoose(AIEntity *e) {
-	static const int xvAhead[5] = { 9, 0, 0, -1, 1 };
-	static const int yvAhead[5] = { 9, -1, 1, 0, 0 };
-	static const AIDir turnRight[5] = { DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN };
-	static const AIState dirState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
+	static const int xvAhead[5] = {9, 0, 0, -1, 1};
+	static const int yvAhead[5] = {9, -1, 1, 0, 0};
+	static const AIDir turnRight[5] = {DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN};
+	static const AIState dirState[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
 
 	int xv = xvAhead[e->dir];
 	int yv = yvAhead[e->dir];
@@ -268,7 +268,7 @@ void aiShockBotInit(AIEntity *e) {
 
 void aiShockBotInit2(AIEntity *e) {
 	e->standupFrames = e->standdownFrames = e->standleftFrames = e->standrightFrames =
-		e->moveupFrames = e->moverightFrames = e->moveleftFrames = e->movedownFrames;
+	    e->moveupFrames = e->moverightFrames = e->moveleftFrames = e->movedownFrames;
 
 	for (int i = 0; i < e->movedownFrames; i++)
 		e->standupGfx[i] = e->standleftGfx[i] = e->standrightGfx[i] = e->standdownGfx[i] = e->moveupGfx[i] = e->moveleftGfx[i] = e->moverightGfx[i] = e->movedownGfx[i];
@@ -290,7 +290,6 @@ void aiShockBotAction(AIEntity *e) {
 		g_hdb->_ai->animEntFrames(e);
 		if (e->onScreen)
 			g_hdb->_sound->playSound(SND_SHOCKBOT_AMBIENT);
-
 	}
 
 	if (e->sequence)
@@ -298,8 +297,8 @@ void aiShockBotAction(AIEntity *e) {
 }
 
 void aiShockBotShock(AIEntity *e, int mx, int my) {
-	static const int offX[8] = { -1, 0, 1, 1, 1, 0, -1, -1 };
-	static const int offY[8] = { -1, -1, -1, 0, 1, 1, 1, 0 };
+	static const int offX[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+	static const int offY[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
 
 	// Only on a exact tile boundary do we change the shocked tiles
 	// Start at top left and go around
@@ -312,7 +311,7 @@ void aiShockBotShock(AIEntity *e, int mx, int my) {
 			// Is the shocking tile onScreen?
 			if (g_hdb->_map->checkXYOnScreen((e->tileX + offX[i]) * kTileWidth, (e->tileY + offY[i]) * kTileHeight)) {
 				// Draw shocking tile animation
-				e->special1Gfx[e->animFrame]->drawMasked((e->tileX + offX[i])*kTileWidth - mx, (e->tileY + offY[i])*kTileHeight - my);
+				e->special1Gfx[e->animFrame]->drawMasked((e->tileX + offX[i]) * kTileWidth - mx, (e->tileY + offY[i]) * kTileHeight - my);
 				// Did the player get fried?
 				// Check every 4 frames
 				if (e->onScreen && !e->animFrame && g_hdb->_ai->checkPlayerTileCollision(e->tileX + offX[i], e->tileY + offY[i]) && !g_hdb->_ai->playerDead()) {
@@ -368,29 +367,29 @@ void aiRightBotInit2(AIEntity *e) {
 }
 
 void aiRightBotFindGoal(AIEntity *e) {
-	static const int xvAhead[5] = { 9, 0, 0,-1, 1 };
-	static const int yvAhead[5] = { 9,-1, 1, 0, 0 };
-	static const int xvAToR[5]  = { 9, 1,-1,-1, 1 };
-	static const int yvAToR[5]  = { 9,-1, 1,-1, 1 };
-	static const int xvToR[5]   = { 9, 1,-1, 0, 0 };
-	static const int yvToR[5]   = { 9, 0, 0,-1, 1 };
-	static const int xvToL[5]   = { 9,-1, 1, 0, 0 };
-	static const int yvToL[5]   = { 9, 0, 0, 1,-1 };
+	static const int xvAhead[5] = {9, 0, 0, -1, 1};
+	static const int yvAhead[5] = {9, -1, 1, 0, 0};
+	static const int xvAToR[5] = {9, 1, -1, -1, 1};
+	static const int yvAToR[5] = {9, -1, 1, -1, 1};
+	static const int xvToR[5] = {9, 1, -1, 0, 0};
+	static const int yvToR[5] = {9, 0, 0, -1, 1};
+	static const int xvToL[5] = {9, -1, 1, 0, 0};
+	static const int yvToL[5] = {9, 0, 0, 1, -1};
 
 	AIEntity *p = g_hdb->_ai->getPlayer();
 	int rotate = 0;
 
-	int	xv, yv;
-	int	bg, bg2, bg3;
+	int xv, yv;
+	int bg, bg2, bg3;
 	AIEntity *e1, *e2, *e3;
-	int	sx, sy;
+	int sx, sy;
 
 	do {
-		xv = xvAhead[e->dir];	// Search Ahead
+		xv = xvAhead[e->dir]; // Search Ahead
 		yv = yvAhead[e->dir];
-		int xv2 = xvAToR[e->dir];	// Search Ahead and to the Right
+		int xv2 = xvAToR[e->dir]; // Search Ahead and to the Right
 		int yv2 = yvAToR[e->dir];
-		int xv3 = xvToR[e->dir];	// Search to the Right
+		int xv3 = xvToR[e->dir]; // Search to the Right
 		int yv3 = yvToR[e->dir];
 
 		// Search until we hit a wall...or empty space to our right (and forward)
@@ -571,10 +570,10 @@ void aiPushBotInit2(AIEntity *e) {
 }
 
 void aiPushBotAction(AIEntity *e) {
-	static const AIState moveState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
-	static const int xvAhead[5] = { 9, 0, 0,-1, 1 };
-	static const int yvAhead[5] = { 9,-1, 1, 0, 0 };
-	static const AIDir oneEighty[5] = { DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT };
+	static const AIState moveState[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
+	static const int xvAhead[5] = {9, 0, 0, -1, 1};
+	static const int yvAhead[5] = {9, -1, 1, 0, 0};
+	static const AIDir oneEighty[5] = {DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT};
 
 	AIEntity *e1 = nullptr;
 
@@ -737,7 +736,7 @@ void aiRailRiderAction(AIEntity *e) {
 			ArrowPath *arrowPath;
 			e->tileX = e->x / kTileWidth;
 			e->tileY = e->y / kTileHeight;
-			e->sequence = 3;	// Wait for use
+			e->sequence = 3; // Wait for use
 			e->type = AI_RAILRIDER_ON;
 			e->state = STATE_STANDUP;
 			e->aiAction = aiRailRiderOnAction;
@@ -748,7 +747,7 @@ void aiRailRiderAction(AIEntity *e) {
 				return;
 
 			e->dir = arrowPath->dir;
-			e->value1 = 0;	// Not in a tunnel
+			e->value1 = 0; // Not in a tunnel
 		}
 		break;
 	default:
@@ -780,21 +779,21 @@ void aiRailRiderOnUse(AIEntity *e) {
 	else
 		g_hdb->_ai->setEntityGoal(p, p->tileX + 1, p->tileY);
 
-	e->sequence = -1;	// Waiting for player to board
+	e->sequence = -1; // Waiting for player to board
 }
 
 void aiRailRiderOnAction(AIEntity *e) {
-	static const int xv[5] = { 9, 0, 0, -1, 1 };
-	static const int yv[5] = { 9, -1, 1, 0, 0 };
+	static const int xv[5] = {9, 0, 0, -1, 1};
+	static const int yv[5] = {9, -1, 1, 0, 0};
 
-	AIEntity*p = g_hdb->_ai->getPlayer();
+	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	switch (e->sequence) {
 	// Player is boarding
 	case -1:
 		if (!p->goalX)
 			e->sequence = 1; // Boarded yet?
-		// fallthrough
+		                     // fallthrough
 	// Cycle Animation Frames
 	case 3:
 		if (e->animDelay-- > 0)
@@ -826,7 +825,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 				// Stop Arrow?
 				if (!arrowPath->type) {
 					HereT *h;
-					e->sequence = 4;	// Get Player off RailRider - RIGHT SIDE ONLY
+					e->sequence = 4; // Get Player off RailRider - RIGHT SIDE ONLY
 					p->tileX = e->tileX;
 					p->tileY = e->tileY;
 					p->x = e->x;
@@ -907,7 +906,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 			// Set tunnel destination
 			e->value1 = t.x;
 			e->value2 = t.y;
-			e->dir2 = (AIDir)(t.x + t.y);	// Flag for coming out of tunnel
+			e->dir2 = (AIDir)(t.x + t.y); // Flag for coming out of tunnel
 		}
 
 		// Are we going through a tunnel?
@@ -921,12 +920,12 @@ void aiRailRiderOnAction(AIEntity *e) {
 		} else if (e->dir2 && e->dir2 != (AIDir)(e->tileX + e->tileY))
 			e->dir2 = DIR_NONE;
 		break;
-		}
+	}
 	// Waiting for Player to move to Dest
 	case 4:
 		if (!p->goalX) {
 			g_hdb->_ai->setPlayerLock(false);
-			e->sequence = 3;	// Wait for Use
+			e->sequence = 3; // Wait for Use
 		}
 
 		// Cycle Animation frames
@@ -966,10 +965,10 @@ void aiMaintBotInit2(AIEntity *e) {
 }
 
 void aiMaintBotAction(AIEntity *e) {
-	static const AIState useState[5]   = {STATE_NONE, STATE_USEUP, STATE_USEDOWN, STATE_USELEFT, STATE_USERIGHT};
+	static const AIState useState[5] = {STATE_NONE, STATE_USEUP, STATE_USEDOWN, STATE_USELEFT, STATE_USERIGHT};
 	static const AIState standState[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
-	static const int xvAhead[5]  = {9, 0, 0,-1, 1};
-	static const int yvAhead[5]  = {9,-1, 1, 0, 0};
+	static const int xvAhead[5] = {9, 0, 0, -1, 1};
+	static const int yvAhead[5] = {9, -1, 1, 0, 0};
 	static const int whistles[3] = {SND_MBOT_WHISTLE1, SND_MBOT_WHISTLE2, SND_MBOT_WHISTLE3};
 	static const AIDir lookRight[5] = {DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN};
 	static const AIDir lookLeft[5] = {DIR_NONE, DIR_LEFT, DIR_RIGHT, DIR_DOWN, DIR_UP};
@@ -1022,7 +1021,7 @@ void aiMaintBotAction(AIEntity *e) {
 					break;
 				}
 				break;
-				}
+			}
 			// Play a sound if we used something
 			case 25:
 				e->value1 = 0;
@@ -1064,15 +1063,13 @@ void aiMaintBotAction(AIEntity *e) {
 					g_hdb->_sound->playSound(SND_MBOT_HMMM2);
 				break;
 			// Decide direction and GO
-			case 0:
-				{
-					int dir = (g_hdb->_rnd->getRandomNumber(3)) + 1;
-					e->dir = dirList[dir];
-					g_hdb->_ai->findPath(e);
-					if (e->onScreen && !g_hdb->isDemo())
-						g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(2)]);
-				}
-				break;
+			case 0: {
+				int dir = (g_hdb->_rnd->getRandomNumber(3)) + 1;
+				e->dir = dirList[dir];
+				g_hdb->_ai->findPath(e);
+				if (e->onScreen && !g_hdb->isDemo())
+					g_hdb->_sound->playSound(whistles[g_hdb->_rnd->getRandomNumber(2)]);
+			} break;
 			default:
 				break;
 			}
@@ -1170,7 +1167,8 @@ void aiFourFirerAction(AIEntity *e) {
 	case DIR_UP:
 		if (p->x == e->x && p->y < e->y) {
 			shoot = true;
-			yv = -1; }
+			yv = -1;
+		}
 		break;
 	case DIR_DOWN:
 		if (p->x == e->x && p->y > e->y) {
@@ -1214,7 +1212,7 @@ void aiFourFirerAction(AIEntity *e) {
 			fire->yVel >>= 1;
 		}
 		e->sequence = 16;
-		if (hitPlayer(fire->tileX*kTileWidth, fire->tileY*kTileHeight))
+		if (hitPlayer(fire->tileX * kTileWidth, fire->tileY * kTileHeight))
 			g_hdb->_ai->killPlayer(DEATH_FRIED);
 	}
 }
@@ -1250,19 +1248,17 @@ void aiDeadEyeWalkInPlace(AIEntity *e) {
 	case 40:
 	case 30:
 	case 20:
-	case 10:
-		{
-			int rnd = g_hdb->_rnd->getRandomNumber(3) + 1;
-			e->dir = (AIDir)rnd;
-			e->state = state[rnd];
-			if (e->onScreen) {
-				if (e->sequence == 50)
-					g_hdb->_sound->playSound(SND_DEADEYE_AMB01);
-				else if (e->sequence == 10)
-					g_hdb->_sound->playSound(SND_DEADEYE_AMB02);
-			}
+	case 10: {
+		int rnd = g_hdb->_rnd->getRandomNumber(3) + 1;
+		e->dir = (AIDir)rnd;
+		e->state = state[rnd];
+		if (e->onScreen) {
+			if (e->sequence == 50)
+				g_hdb->_sound->playSound(SND_DEADEYE_AMB01);
+			else if (e->sequence == 10)
+				g_hdb->_sound->playSound(SND_DEADEYE_AMB02);
 		}
-		break;
+	} break;
 	case 0:
 		e->sequence = 64;
 		break;
@@ -1280,7 +1276,7 @@ void aiDeadEyeAction(AIEntity *e) {
 	if (e->sequence) {
 		e->sequence--;
 
-		if (e->blinkFrames)	// Between attacks timer
+		if (e->blinkFrames) // Between attacks timer
 			e->blinkFrames--;
 
 		// Is player visible to us?
@@ -1356,53 +1352,49 @@ void aiDeadEyeAction(AIEntity *e) {
 		case 40:
 		case 30:
 		case 20:
-		case 10:
-			{
-				int dir = g_hdb->_rnd->getRandomNumber(3) + 1;
-				e->dir = (AIDir)dir;
-				e->state = state[dir];
+		case 10: {
+			int dir = g_hdb->_rnd->getRandomNumber(3) + 1;
+			e->dir = (AIDir)dir;
+			e->state = state[dir];
 
-				if (e->onScreen) {
-					if (e->sequence == 50)
-						g_hdb->_sound->playSound(SND_DEADEYE_AMB01);
-					else if (e->sequence == 10)
-						g_hdb->_sound->playSound(SND_DEADEYE_AMB02);
-				}
+			if (e->onScreen) {
+				if (e->sequence == 50)
+					g_hdb->_sound->playSound(SND_DEADEYE_AMB01);
+				else if (e->sequence == 10)
+					g_hdb->_sound->playSound(SND_DEADEYE_AMB02);
 			}
-			break;
-		case 0:
-			{
-				// Pick a random direction and random number of tiles in that direction
-				int dir = g_hdb->_rnd->getRandomNumber(3) + 1;
-				int walk = g_hdb->_rnd->getRandomNumber(4) + 1;
+		} break;
+		case 0: {
+			// Pick a random direction and random number of tiles in that direction
+			int dir = g_hdb->_rnd->getRandomNumber(3) + 1;
+			int walk = g_hdb->_rnd->getRandomNumber(4) + 1;
 
-				e->dir = (AIDir)dir;
-				e->state = state[dir];
+			e->dir = (AIDir)dir;
+			e->state = state[dir];
 
-				int xv = xvAhead[dir] * walk;
-				if (e->tileX + xv < 1)
-					xv = 1 - e->tileX;
-				if (e->tileX + xv > g_hdb->_map->_width)
-					xv = g_hdb->_map->_width - e->tileX - 1;
+			int xv = xvAhead[dir] * walk;
+			if (e->tileX + xv < 1)
+				xv = 1 - e->tileX;
+			if (e->tileX + xv > g_hdb->_map->_width)
+				xv = g_hdb->_map->_width - e->tileX - 1;
 
-				int yv = yvAhead[dir] * walk;
-				if (e->tileY + yv < 1)
-					yv = 1 - e->tileY;
-				if (e->tileY + yv > g_hdb->_map->_height)
-					yv = g_hdb->_map->_height - e->tileY - 1;
+			int yv = yvAhead[dir] * walk;
+			if (e->tileY + yv < 1)
+				yv = 1 - e->tileY;
+			if (e->tileY + yv > g_hdb->_map->_height)
+				yv = g_hdb->_map->_height - e->tileY - 1;
 
-				e->value1 = xvAhead[dir];
-				e->value2 = yvAhead[dir];
-				e->moveSpeed = kPlayerMoveSpeed;
-				int result;
-				AIEntity *hit = g_hdb->_ai->legalMove(e->tileX + xvAhead[e->dir], e->tileY + yvAhead[e->dir], e->level, &result);
-				if (hit && hit->type == AI_GUY)
-					hit = nullptr;
+			e->value1 = xvAhead[dir];
+			e->value2 = yvAhead[dir];
+			e->moveSpeed = kPlayerMoveSpeed;
+			int result;
+			AIEntity *hit = g_hdb->_ai->legalMove(e->tileX + xvAhead[e->dir], e->tileY + yvAhead[e->dir], e->level, &result);
+			if (hit && hit->type == AI_GUY)
+				hit = nullptr;
 
-				if (!hit && result)
-					g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
-			}
-			break;
+			if (!hit && result)
+				g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+		} break;
 		default:
 			break;
 		}
@@ -1454,25 +1446,25 @@ void aiLaserInit2(AIEntity *e) {
 	if (!g_hdb->_ai->_gfxLaserbeamUD[0]) {
 		char name[64];
 		for (int i = 0; i < 4; i++) {
-			sprintf(name, FORCEFIELD_UD"0%d", i + 1);
+			sprintf(name, FORCEFIELD_UD "0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamUD[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCESPLASH_TOP"0%d", i + 1);
+			sprintf(name, FORCESPLASH_TOP "0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamUDTop[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCESPLASH_BTM"0%d", i + 1);
+			sprintf(name, FORCESPLASH_BTM "0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamUDBottom[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCEFIELD_LR"0%d", i + 1);
+			sprintf(name, FORCEFIELD_LR "0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamLR[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCESPLASH_LEFT"0%d", i + 1);
+			sprintf(name, FORCESPLASH_LEFT "0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamLRLeft[i] = g_hdb->_gfx->loadTile(name);
-			sprintf(name, FORCESPLASH_RIGHT"0%d", i + 1);
+			sprintf(name, FORCESPLASH_RIGHT "0%d", i + 1);
 			g_hdb->_ai->_gfxLaserbeamLRRight[i] = g_hdb->_gfx->loadTile(name);
 		}
 	}
 }
 
 void aiLaserAction(AIEntity *e) {
-	static const int xva[] = {9, 0, 0,-1, 1};
-	static const int yva[] = {9,-1, 1, 0, 0};
+	static const int xva[] = {9, 0, 0, -1, 1};
+	static const int yva[] = {9, -1, 1, 0, 0};
 
 	AIEntity *hit = e;
 	int moveOK = 0;
@@ -1589,7 +1581,7 @@ void aiLaserAction(AIEntity *e) {
 					}
 					g_hdb->_ai->removeEntity(hit);
 					g_hdb->_ai->addAnimateTarget(nx * kTileWidth,
-						ny * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
+					                             ny * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GROUP_EXPLOSION_BOOM_SIT);
 					g_hdb->_sound->playSound(SND_BARREL_EXPLODE);
 				}
 			}
@@ -1625,13 +1617,12 @@ void aiLaserAction(AIEntity *e) {
 }
 
 void aiLaserDraw(AIEntity *e, int mx, int my) {
-	int	i;
-	int	frame = e->movedownFrames & 3;
+	int i;
+	int frame = e->movedownFrames & 3;
 	int onScreen = 0;
 
 	switch (e->dir) {
-	case DIR_UP:
-	{
+	case DIR_UP: {
 		for (i = e->value1 - 1; i > e->value2; i--)
 			onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileWidth - my);
 		onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame & 3]->drawMasked(e->x - mx, i * kTileWidth - my);
@@ -1639,10 +1630,8 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
 			g_hdb->_ai->_laserOnScreen = true;
 		}
-	}
-		break;
-	case DIR_DOWN:
-	{
+	} break;
+	case DIR_DOWN: {
 		for (i = e->value1 + 1; i < e->value2; i++)
 			onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileWidth - my);
 		onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i * kTileWidth - my);
@@ -1650,10 +1639,8 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
 			g_hdb->_ai->_laserOnScreen = true;
 		}
-	}
-		break;
-	case DIR_LEFT:
-	{
+	} break;
+	case DIR_LEFT: {
 		for (i = e->value1 - 1; i > e->value2; i--)
 			onScreen += g_hdb->_ai->_gfxLaserbeamLR[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
 		onScreen += g_hdb->_ai->_gfxLaserbeamLRRight[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
@@ -1661,10 +1648,8 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
 			g_hdb->_ai->_laserOnScreen = true;
 		}
-	}
-		break;
-	case DIR_RIGHT:
-	{
+	} break;
+	case DIR_RIGHT: {
 		for (i = e->value1 + 1; i < e->value2; i++)
 			onScreen += g_hdb->_ai->_gfxLaserbeamLR[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
 		onScreen += g_hdb->_ai->_gfxLaserbeamLRLeft[frame]->drawMasked(i * kTileWidth - mx, e->y - my);
@@ -1672,8 +1657,7 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 			g_hdb->_sound->playSoundEx(SND_LASER_LOOP, kLaserChannel, true);
 			g_hdb->_ai->_laserOnScreen = true;
 		}
-	}
-		break;
+	} break;
 	case DIR_NONE:
 	default:
 		break;
@@ -1700,9 +1684,9 @@ void aiDiverterInit2(AIEntity *e) {
 	e->moveleftGfx[0] = e->standleftGfx[0];
 	e->moverightGfx[0] = e->standrightGfx[0];
 	e->movedownFrames =
-		e->moveupFrames =
-		e->moveleftFrames =
-		e->moverightFrames = 1;
+	    e->moveupFrames =
+	        e->moveleftFrames =
+	            e->moverightFrames = 1;
 
 	// this is to handle loadgames...
 	AIDir d = e->dir2;
@@ -1767,12 +1751,12 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 	if (!e->value1 && !e->value2)
 		return;
 
-	int	frame = e->movedownFrames & 3;
+	int frame = e->movedownFrames & 3;
 	int onScreen = 0;
 	int i;
 	switch (e->dir2) {
 	case DIR_UP:
-		if (e->tileY == e->value1 && e->int2) {	// going down or right?
+		if (e->tileY == e->value1 && e->int2) { // going down or right?
 			for (i = e->value1 + 1; i < e->value2; i++)
 				onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
 			onScreen += g_hdb->_ai->_gfxLaserbeamUDTop[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
@@ -1791,7 +1775,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 		}
 		break;
 	case DIR_DOWN:
-		if (e->tileY == e->value1 && e->int2) {	// going down or left?
+		if (e->tileY == e->value1 && e->int2) { // going down or left?
 			for (i = e->value1 + 1; i < e->value2; i++)
 				onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
 			onScreen += g_hdb->_ai->_gfxLaserbeamUDTop[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
@@ -1810,7 +1794,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 		}
 		break;
 	case DIR_LEFT:
-		if (e->tileY == e->value1 && e->int2) {	// going up or left?
+		if (e->tileY == e->value1 && e->int2) { // going up or left?
 			for (i = e->value1 - 1; i > e->value2; i--)
 				onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
 			onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
@@ -1829,7 +1813,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 		}
 		break;
 	case DIR_RIGHT:
-		if (e->tileY == e->value1 && e->int2) {	// going up or right?
+		if (e->tileY == e->value1 && e->int2) { // going up or right?
 			for (i = e->value1 - 1; i > e->value2; i--)
 				onScreen += g_hdb->_ai->_gfxLaserbeamUD[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
 			onScreen += g_hdb->_ai->_gfxLaserbeamUDBottom[frame]->drawMasked(e->x - mx, i * kTileHeight - my);
@@ -1896,8 +1880,8 @@ void aiMeerkatDraw(AIEntity *e, int mx, int my) {
 }
 
 void aiMeerkatAction(AIEntity *e) {
-	static const int gem_xv[] = { 0, 0,-2,-3,-4,-4,-3,-2,-2,-2,-2,-1,-1, 100};
-	static const int gem_yv[] = {-6,-5,-4,-3,-2,-1, 0, 0, 1, 2, 3, 4, 5, 100};
+	static const int gem_xv[] = {0, 0, -2, -3, -4, -4, -3, -2, -2, -2, -2, -1, -1, 100};
+	static const int gem_yv[] = {-6, -5, -4, -3, -2, -1, 0, 0, 1, 2, 3, 4, 5, 100};
 
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
@@ -1905,7 +1889,7 @@ void aiMeerkatAction(AIEntity *e) {
 		// waiting to see the player
 	case 0:
 		if ((abs(p->tileX - e->tileX) <= 1 && p->tileY == e->tileY) ||
-			(abs(p->tileY - e->tileY) <= 1 && p->tileX == e->tileX)) {
+		    (abs(p->tileY - e->tileY) <= 1 && p->tileX == e->tileX)) {
 			e->sequence = 1;
 			e->state = STATE_MEER_MOVE;
 			e->animFrame = 0;
@@ -1987,11 +1971,11 @@ void aiMeerkatAction(AIEntity *e) {
 			e->aiDraw = aiMeerkatDraw;
 			e->value1 = e->x;
 			e->value2 = e->y;
-			e->blinkFrames = 0;		// index into movement table...
+			e->blinkFrames = 0; // index into movement table...
 
 			// figure # of gems to take
 			e->special1Frames = g_hdb->_rnd->getRandomNumber(4) + 1;
-			int	amt = g_hdb->_ai->getGemAmount();
+			int amt = g_hdb->_ai->getGemAmount();
 			if (amt - e->special1Frames < 0)
 				e->special1Frames = amt;
 
@@ -2174,9 +2158,9 @@ void aiFatFrogAction(AIEntity *e) {
 			// animate licking
 
 			// check player death
-			if (((p->tileX == e->tileX && p->tileY == e->tileY + 1) ||					// in front of frog + 1 tile!?
-				(e->value1 > 3 && p->tileX == e->tileX && p->tileY < e->tileY + 3)) &&	// in front of frog + 2 tiles!?
-				g_hdb->_ai->playerDead() == false)
+			if (((p->tileX == e->tileX && p->tileY == e->tileY + 1) ||                  // in front of frog + 1 tile!?
+			     (e->value1 > 3 && p->tileX == e->tileX && p->tileY < e->tileY + 3)) && // in front of frog + 2 tiles!?
+			    g_hdb->_ai->playerDead() == false)
 				g_hdb->_ai->killPlayer(DEATH_NORMAL);
 
 			e->value1++;
@@ -2206,9 +2190,9 @@ void aiFatFrogAction(AIEntity *e) {
 			// animate licking
 
 			// check player death
-			if (((p->tileY == e->tileY && p->tileX == e->tileX - 1) ||					// in front of frog + 1 tile!?
-				(e->value1 > 3 && p->tileY == e->tileY && p->tileX > e->tileX - 3)) &&	// in front of frog + 2 tiles!?
-				g_hdb->_ai->playerDead() == false)
+			if (((p->tileY == e->tileY && p->tileX == e->tileX - 1) ||                  // in front of frog + 1 tile!?
+			     (e->value1 > 3 && p->tileY == e->tileY && p->tileX > e->tileX - 3)) && // in front of frog + 2 tiles!?
+			    g_hdb->_ai->playerDead() == false)
 				g_hdb->_ai->killPlayer(DEATH_NORMAL);
 
 			e->value1++;
@@ -2238,9 +2222,9 @@ void aiFatFrogAction(AIEntity *e) {
 			// animate licking
 			// check player death
 			//
-			if (((p->tileY == e->tileY && p->tileX == e->tileX + 1) ||					// in front of frog + 1 tile!?
-				(e->value1 > 3 && p->tileY == e->tileY && p->tileX < e->tileX + 3)) &&	// in front of frog + 2 tiles!?
-				g_hdb->_ai->playerDead() == false)
+			if (((p->tileY == e->tileY && p->tileX == e->tileX + 1) ||                  // in front of frog + 1 tile!?
+			     (e->value1 > 3 && p->tileY == e->tileY && p->tileX < e->tileX + 3)) && // in front of frog + 2 tiles!?
+			    g_hdb->_ai->playerDead() == false)
 				g_hdb->_ai->killPlayer(DEATH_NORMAL);
 
 			e->value1++;
@@ -2265,7 +2249,7 @@ void aiFatFrogAction(AIEntity *e) {
 }
 
 void aiFatFrogTongueDraw(AIEntity *e, int mx, int my) {
-	int	nx, ny;
+	int nx, ny;
 
 	switch (e->state) {
 	case STATE_LICKDOWN:
@@ -2410,10 +2394,10 @@ void aiGoodFairyInit2(AIEntity *e) {
 
 void aiGoodFairyAction(AIEntity *e) {
 	static const AIState state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
-	static const int xvAhead[5] = {9, 0, 0,-1, 1};
-	static const int yvAhead[5] = {9,-1, 1, 0, 0};
+	static const int xvAhead[5] = {9, 0, 0, -1, 1};
+	static const int yvAhead[5] = {9, -1, 1, 0, 0};
 
-	int	result;
+	int result;
 
 	if (e->sequence) {
 		e->sequence--;
@@ -2423,122 +2407,120 @@ void aiGoodFairyAction(AIEntity *e) {
 		case 19:
 			e->state = STATE_MOVEDOWN;
 			break;
-		case 0:
-			{
-				// Create a GEM?
-				if (g_hdb->_rnd->getRandomNumber(99) > 98) {
-					// spawn a gem in a random direction
-					int	d = g_hdb->_rnd->getRandomNumber(3) + 1;
-					int xv = xvAhead[d];
-					int yv = yvAhead[d];
+		case 0: {
+			// Create a GEM?
+			if (g_hdb->_rnd->getRandomNumber(99) > 98) {
+				// spawn a gem in a random direction
+				int d = g_hdb->_rnd->getRandomNumber(3) + 1;
+				int xv = xvAhead[d];
+				int yv = yvAhead[d];
 
-					e->sequence = 30;
-					e->state = STATE_MOVEDOWN;
-					// is something there already?
-					if ((g_hdb->_ai->findEntityType(AI_CRATE, e->tileX + xv, e->tileY + yv) != nullptr) ||
-						(g_hdb->_ai->findEntityType(AI_LIGHTBARREL, e->tileX + xv, e->tileY + yv) != nullptr))
-						return;
-					int spawnOK;
-					AIEntity *hit = g_hdb->_ai->legalMove(e->tileX + xv, e->tileY + yv, e->level, &spawnOK);
-					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv);
-					if (hit || !spawnOK || (bg_flags & kFlagSpecial))
-						return;
-
-					g_hdb->_ai->spawn(ITEM_GEM_WHITE, e->dir, e->tileX + xv, e->tileY + yv, nullptr, nullptr, nullptr, DIR_NONE, e->level, 0, 0, 1);
-					g_hdb->_ai->addAnimateTarget(e->x + xv * kTileWidth, e->y + yv * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
-					if (e->onScreen) {
-						g_hdb->_sound->playSound(SND_GET_GEM);
-						g_hdb->_sound->playSound(SND_GOOD_FAERIE_SPELL);
-					}
+				e->sequence = 30;
+				e->state = STATE_MOVEDOWN;
+				// is something there already?
+				if ((g_hdb->_ai->findEntityType(AI_CRATE, e->tileX + xv, e->tileY + yv) != nullptr) ||
+				    (g_hdb->_ai->findEntityType(AI_LIGHTBARREL, e->tileX + xv, e->tileY + yv) != nullptr))
 					return;
+				int spawnOK;
+				AIEntity *hit = g_hdb->_ai->legalMove(e->tileX + xv, e->tileY + yv, e->level, &spawnOK);
+				uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + xv, e->tileY + yv);
+				if (hit || !spawnOK || (bg_flags & kFlagSpecial))
+					return;
+
+				g_hdb->_ai->spawn(ITEM_GEM_WHITE, e->dir, e->tileX + xv, e->tileY + yv, nullptr, nullptr, nullptr, DIR_NONE, e->level, 0, 0, 1);
+				g_hdb->_ai->addAnimateTarget(e->x + xv * kTileWidth, e->y + yv * kTileHeight, 0, 3, ANIM_NORMAL, false, false, GEM_FLASH);
+				if (e->onScreen) {
+					g_hdb->_sound->playSound(SND_GET_GEM);
+					g_hdb->_sound->playSound(SND_GOOD_FAERIE_SPELL);
+				}
+				return;
+			}
+
+			int tries = 4;
+			do {
+				// pick a random direction, then a random # of tiles in that direction
+				AIDir d = (AIDir)(g_hdb->_rnd->getRandomNumber(3) + 1);
+				int walk = g_hdb->_rnd->getRandomNumber(4) + 1;
+				AIEntity *p = g_hdb->_ai->getPlayer();
+
+				// if player is within 3 tiles, move closer
+				if (abs(p->tileX - e->tileX) < 3 && abs(p->tileY - e->tileY) < 3) {
+					if (abs(p->tileX - e->tileX) > abs(p->tileY - e->tileY)) {
+					testx:
+						if (p->tileX != e->tileX) {
+							if (p->tileX < e->tileX)
+								d = DIR_LEFT;
+							else
+								d = DIR_RIGHT;
+						} else if (p->tileY != e->tileY)
+							goto testy;
+					} else {
+					testy:
+						if (p->tileY != e->tileY) {
+							if (p->tileY <= e->tileY)
+								d = DIR_UP;
+							else
+								d = DIR_DOWN;
+						} else if (p->tileX != e->tileX)
+							goto testx;
+					}
 				}
 
-				int	tries = 4;
-				do {
-					// pick a random direction, then a random # of tiles in that direction
-					AIDir d = (AIDir)(g_hdb->_rnd->getRandomNumber(3) + 1);
-					int walk = g_hdb->_rnd->getRandomNumber(4) + 1;
-					AIEntity *p = g_hdb->_ai->getPlayer();
+				// special case: if player is exactly 2 tiles away, move out of the way
+				if (abs(p->tileX - e->tileX) == 2 && p->tileY == e->tileY) {
+					int move_ok;
+					d = DIR_UP;
+					AIEntity *h = g_hdb->_ai->legalMoveOverWater(e->tileX, e->tileY - 1, e->level, &move_ok);
+					if (h || !move_ok)
+						d = DIR_DOWN;
+				} else if (abs(p->tileY - e->tileY) == 2 && p->tileX == e->tileX) {
+					int move_ok;
+					d = DIR_LEFT;
+					AIEntity *h = g_hdb->_ai->legalMoveOverWater(e->tileX - 1, e->tileY, e->level, &move_ok);
+					if (h || !move_ok)
+						d = DIR_RIGHT;
+				}
 
-					// if player is within 3 tiles, move closer
-					if (abs(p->tileX - e->tileX) < 3 && abs(p->tileY - e->tileY) < 3) {
-						if (abs(p->tileX - e->tileX) > abs(p->tileY - e->tileY)) {
-						testx:
-							if (p->tileX != e->tileX) {
-								if (p->tileX < e->tileX)
-									d = DIR_LEFT;
-								else
-									d = DIR_RIGHT;
-							} else if (p->tileY != e->tileY)
-								goto testy;
-						} else {
-						testy:
-							if (p->tileY != e->tileY) {
-								if (p->tileY <= e->tileY)
-									d = DIR_UP;
-								else
-									d = DIR_DOWN;
-							} else if (p->tileX != e->tileX)
-								goto testx;
-						}
-					}
+				e->dir = d;
+				int tmpDir = (int)d;
+				e->state = state[tmpDir];
+				int xv = xvAhead[tmpDir] * walk;
+				if (e->tileX + xv < 1)
+					xv = -e->tileX + 1;
+				if (e->tileX + xv > g_hdb->_map->_width)
+					xv = g_hdb->_map->_width - e->tileX - 1;
 
-					// special case: if player is exactly 2 tiles away, move out of the way
-					if (abs(p->tileX - e->tileX) == 2 && p->tileY == e->tileY) {
-						int	move_ok;
-						d = DIR_UP;
-						AIEntity *h = g_hdb->_ai->legalMoveOverWater(e->tileX, e->tileY - 1, e->level, &move_ok);
-						if (h || !move_ok)
-							d = DIR_DOWN;
-					} else if (abs(p->tileY - e->tileY) == 2 && p->tileX == e->tileX) {
-						int	move_ok;
-						d = DIR_LEFT;
-						AIEntity *h = g_hdb->_ai->legalMoveOverWater(e->tileX - 1, e->tileY, e->level, &move_ok);
-						if (h || !move_ok)
-							d = DIR_RIGHT;
-					}
+				int yv = yvAhead[d] * walk;
+				if (e->tileY + yv < 1)
+					yv = -e->tileY + 1;
+				if (e->tileY + yv > g_hdb->_map->_height)
+					yv = g_hdb->_map->_height - e->tileY - 1;
 
-					e->dir = d;
-					int tmpDir = (int)d;
-					e->state = state[tmpDir];
-					int xv = xvAhead[tmpDir] * walk;
-					if (e->tileX + xv < 1)
-						xv = -e->tileX + 1;
-					if (e->tileX + xv > g_hdb->_map->_width)
-						xv = g_hdb->_map->_width - e->tileX - 1;
+				e->value1 = xvAhead[d];
+				e->value2 = yvAhead[d];
+				e->moveSpeed = kPlayerMoveSpeed;
 
-					int yv = yvAhead[d] * walk;
-					if (e->tileY + yv < 1)
-						yv = -e->tileY + 1;
-					if (e->tileY + yv > g_hdb->_map->_height)
-						yv = g_hdb->_map->_height - e->tileY - 1;
+				// make sure we can move over water & white gems, but not fg_hdb->_ai->y blockers and solids
+				AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+				if (hit && ((hit->type == ITEM_GEM_WHITE) || (hit->type == AI_GUY)))
+					hit = nullptr;
+				uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
+				if (result && !hit && !(bg_flags & kFlagSpecial)) {
+					g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+					if (e->onScreen && !g_hdb->_rnd->getRandomNumber(29))
+						g_hdb->_sound->playSound(SND_GOOD_FAERIE_AMBIENT);
+					g_hdb->_ai->animateEntity(e);
+					return;
+				}
+				tries--; // don't lock the system if the fg_hdb->_ai->y is cornered
+			} while (!result && tries);
 
-					e->value1 = xvAhead[d];
-					e->value2 = yvAhead[d];
-					e->moveSpeed = kPlayerMoveSpeed;
-
-					// make sure we can move over water & white gems, but not fg_hdb->_ai->y blockers and solids
-					AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
-					if (hit && ((hit->type == ITEM_GEM_WHITE) || (hit->type == AI_GUY)))
-						hit = nullptr;
-					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
-					if (result && !hit && !(bg_flags & kFlagSpecial)) {
-						g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
-						if (e->onScreen && !g_hdb->_rnd->getRandomNumber(29))
-							g_hdb->_sound->playSound(SND_GOOD_FAERIE_AMBIENT);
-						g_hdb->_ai->animateEntity(e);
-						return;
-					}
-					tries--;		// don't lock the system if the fg_hdb->_ai->y is cornered
-				} while (!result && tries);
-
-				// couldn't find a place to move so just sit here for a sec & try agg_hdb->_ai->
-				e->dir = DIR_NONE;
-				e->state = STATE_MOVEDOWN;
-				e->sequence = 1;
-				e->value1 = e->value2 = e->xVel = e->yVel = 0;
-			}
-			break;
+			// couldn't find a place to move so just sit here for a sec & try agg_hdb->_ai->
+			e->dir = DIR_NONE;
+			e->state = STATE_MOVEDOWN;
+			e->sequence = 1;
+			e->value1 = e->value2 = e->xVel = e->yVel = 0;
+		} break;
 		default:
 			break;
 		}
@@ -2554,7 +2536,7 @@ void aiGoodFairyAction(AIEntity *e) {
 			// did we hit a Fg_hdb->_ai->YSTONE??? if so - teleport the thing at the other end to here!
 			int index = g_hdb->_ai->checkFairystones(e->tileX, e->tileY);
 			if (index >= 0) {
-				int	sx, sy;
+				int sx, sy;
 				g_hdb->_ai->getFairystonesSrc(index, &sx, &sy);
 				AIEntity *hit = g_hdb->_ai->findEntity(sx, sy);
 				if (hit && (hit != g_hdb->_ai->getPlayer())) {
@@ -2612,8 +2594,8 @@ void aiBadFairyInit2(AIEntity *e) {
 void aiBadFairyAction(AIEntity *e) {
 	static const AIState state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
 	static const AIDir opposite[5] = {DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT};
-	static const int xvAhead[5] = {9, 0, 0,-1, 1};
-	static const int yvAhead[5] = {9,-1, 1, 0, 0};
+	static const int xvAhead[5] = {9, 0, 0, -1, 1};
+	static const int yvAhead[5] = {9, -1, 1, 0, 0};
 
 	if (e->sequence) {
 		e->sequence--;
@@ -2623,75 +2605,73 @@ void aiBadFairyAction(AIEntity *e) {
 		case 19:
 			e->state = STATE_MOVEDOWN;
 			break;
-		case 0:
-			{
-				// Create a GATE PUDDLE?
-				if (e->onScreen && (g_hdb->_rnd->getRandomNumber(99) > 90) && g_hdb->getActionMode() && (g_hdb->_ai->getGatePuddles() < kMaxGatePuddles)) {
-					if (e->onScreen)
-						g_hdb->_sound->playSound(SND_BADFAIRY_SPELL);
+		case 0: {
+			// Create a GATE PUDDLE?
+			if (e->onScreen && (g_hdb->_rnd->getRandomNumber(99) > 90) && g_hdb->getActionMode() && (g_hdb->_ai->getGatePuddles() < kMaxGatePuddles)) {
+				if (e->onScreen)
+					g_hdb->_sound->playSound(SND_BADFAIRY_SPELL);
 
-					e->sequence = 30;
-					e->state = STATE_MOVEUP;
-					g_hdb->_ai->spawn(AI_GATEPUDDLE, opposite[e->dir], e->tileX, e->tileY, nullptr, nullptr, nullptr, DIR_NONE, e->level, 0, 0, 1);
-					g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
-					g_hdb->_ai->addGatePuddle(1);
-					if (e->onScreen)
-						g_hdb->_sound->playSound(SND_GATEPUDDLE_SPAWN);
-					return;
+				e->sequence = 30;
+				e->state = STATE_MOVEUP;
+				g_hdb->_ai->spawn(AI_GATEPUDDLE, opposite[e->dir], e->tileX, e->tileY, nullptr, nullptr, nullptr, DIR_NONE, e->level, 0, 0, 1);
+				g_hdb->_ai->addAnimateTarget(e->x, e->y, 0, 7, ANIM_NORMAL, false, false, TELEPORT_FLASH);
+				g_hdb->_ai->addGatePuddle(1);
+				if (e->onScreen)
+					g_hdb->_sound->playSound(SND_GATEPUDDLE_SPAWN);
+				return;
+			}
+
+			int tries = 4;
+			int result;
+			do {
+				// pick a random direction, then a random # of tiles in that direction
+				int d = g_hdb->_rnd->getRandomNumber(3) + 1;
+				int walk = g_hdb->_rnd->getRandomNumber(4) + 1;
+				AIEntity *p = g_hdb->_ai->getPlayer();
+
+				e->dir = (AIDir)d;
+				e->state = state[d];
+				int xv = xvAhead[d] * walk;
+				if (e->tileX + xv < 1)
+					xv = -e->tileX + 1;
+				if (e->tileX + xv > g_hdb->_map->_width)
+					xv = g_hdb->_map->_width - e->tileX - 1;
+
+				int yv = yvAhead[d] * walk;
+				if (e->tileY + yv < 1)
+					yv = -e->tileY + 1;
+				if (e->tileY + yv > g_hdb->_map->_height)
+					yv = g_hdb->_map->_height - e->tileY - 1;
+
+				e->value1 = xvAhead[d];
+				e->value2 = yvAhead[d];
+				e->moveSpeed = kPlayerMoveSpeed;
+				if (!g_hdb->getActionMode())
+					e->moveSpeed >>= 1;
+
+				AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
+				uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
+				if (hit == p && !g_hdb->_ai->playerDead()) {
+					g_hdb->_ai->killPlayer(DEATH_FRIED);
+					hit = nullptr;
 				}
 
-				int	tries = 4;
-				int	result;
-				do {
-					// pick a random direction, then a random # of tiles in that direction
-					int d = g_hdb->_rnd->getRandomNumber(3) + 1;
-					int	walk = g_hdb->_rnd->getRandomNumber(4) + 1;
-					AIEntity *p = g_hdb->_ai->getPlayer();
+				if (!hit && result && !(bg_flags & kFlagSpecial)) {
+					g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
+					g_hdb->_ai->animateEntity(e);
+					if (e->onScreen && !g_hdb->_rnd->getRandomNumber(19))
+						g_hdb->_sound->playSound(SND_BADFAIRY_AMBIENT);
+					return;
+				}
+				tries--; // don't lock the system if the player gets the fairy cornered
+			} while (!result && tries);
 
-					e->dir = (AIDir)d;
-					e->state = state[d];
-					int xv = xvAhead[d] * walk;
-					if (e->tileX + xv < 1)
-						xv = -e->tileX + 1;
-					if (e->tileX + xv > g_hdb->_map->_width)
-						xv = g_hdb->_map->_width - e->tileX - 1;
-
-					int yv = yvAhead[d] * walk;
-					if (e->tileY + yv < 1)
-						yv = -e->tileY + 1;
-					if (e->tileY + yv > g_hdb->_map->_height)
-						yv = g_hdb->_map->_height - e->tileY - 1;
-
-					e->value1 = xvAhead[d];
-					e->value2 = yvAhead[d];
-					e->moveSpeed = kPlayerMoveSpeed;
-					if (!g_hdb->getActionMode())
-						e->moveSpeed >>= 1;
-
-					AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
-					uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
-					if (hit == p && !g_hdb->_ai->playerDead()) {
-						g_hdb->_ai->killPlayer(DEATH_FRIED);
-						hit = nullptr;
-					}
-
-					if (!hit && result && !(bg_flags & kFlagSpecial)) {
-						g_hdb->_ai->setEntityGoal(e, e->tileX + xv, e->tileY + yv);
-						g_hdb->_ai->animateEntity(e);
-						if (e->onScreen && !g_hdb->_rnd->getRandomNumber(19))
-							g_hdb->_sound->playSound(SND_BADFAIRY_AMBIENT);
-						return;
-					}
-					tries--;		// don't lock the system if the player gets the fairy cornered
-				} while (!result && tries);
-
-				// couldn't find a place to move so just sit here for a sec & try again
-				e->dir = DIR_NONE;
-				e->state = STATE_MOVEDOWN;
-				e->sequence = 1;
-				e->value1 = e->value2 = e->xVel = e->yVel = 0;
-			}
-			break;
+			// couldn't find a place to move so just sit here for a sec & try again
+			e->dir = DIR_NONE;
+			e->state = STATE_MOVEDOWN;
+			e->sequence = 1;
+			e->value1 = e->value2 = e->xVel = e->yVel = 0;
+		} break;
 		default:
 			break;
 		}
@@ -2711,7 +2691,7 @@ void aiBadFairyAction(AIEntity *e) {
 		// did we run into a wall, entity, water, slime etc?
 		// if so, pick a new direction!
 		if (onEvenTile(e->x, e->y)) {
-			int	result;
+			int result;
 			AIEntity *hit = g_hdb->_ai->legalMoveOverWater(e->tileX + e->value1, e->tileY + e->value2, e->level, &result);
 			uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(e->tileX + e->value1, e->tileY + e->value2);
 			if (!result || (hit && hit->type != AI_GUY) || (bg_flags & kFlagSpecial)) {
@@ -2743,8 +2723,8 @@ void aiGatePuddleInit2(AIEntity *e) {
 }
 
 void aiGatePuddleAction(AIEntity *e) {
-	static const int xva[5] = {9, 0, 0,-1, 1};
-	static const int yva[5] = {9,-1, 1, 0, 0};
+	static const int xva[5] = {9, 0, 0, -1, 1};
+	static const int yva[5] = {9, -1, 1, 0, 0};
 
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
@@ -2752,7 +2732,7 @@ void aiGatePuddleAction(AIEntity *e) {
 		g_hdb->_ai->animateEntity(e);
 		if (hitPlayer(e->x, e->y)) {
 			for (int i = 0; i < kMaxTeleporters; i++) {
-				if (g_hdb->_ai->_teleporters[i].anim1 == 2) {	// PANIC ZONE?
+				if (g_hdb->_ai->_teleporters[i].anim1 == 2) { // PANIC ZONE?
 					p->tileX = g_hdb->_ai->_teleporters[i].x1;
 					p->tileY = g_hdb->_ai->_teleporters[i].y1;
 					p->x = p->tileX * kTileWidth;
@@ -2787,7 +2767,7 @@ void aiGatePuddleAction(AIEntity *e) {
 					}
 					g_hdb->_ai->_playerEmerging = true;
 					break;
-				} else if (g_hdb->_ai->_teleporters[i].anim2 == 2) {	// PANIC ZONE?
+				} else if (g_hdb->_ai->_teleporters[i].anim2 == 2) { // PANIC ZONE?
 					p->tileX = g_hdb->_ai->_teleporters[i].x2;
 					p->tileY = g_hdb->_ai->_teleporters[i].y2;
 					p->x = p->tileX * kTileWidth;
@@ -2837,7 +2817,7 @@ void aiGatePuddleAction(AIEntity *e) {
 			hit = nullptr;
 
 		if (!hit && move_ok) {
-			uint32	bg_flags = g_hdb->_map->getMapBGTileFlags(nx, ny);
+			uint32 bg_flags = g_hdb->_map->getMapBGTileFlags(nx, ny);
 			// Gate Puddles can't go over METAL!!! It's in their genes...
 			if (!(bg_flags & kFlagMetal)) {
 				if (e->onScreen)
@@ -2960,9 +2940,9 @@ void aiIcePuffSnowballDraw(AIEntity *e, int mx, int my) {
 
 void aiIcePuffInit(AIEntity *e) {
 	// PEEK - but no head up yet
-	e->sequence = 30;				// timed sequence for peeking
-	e->state = STATE_ICEP_PEEK;			// start in PEEK mode
-	e->dir2 = DIR_NONE;					// no snowball out
+	e->sequence = 30;           // timed sequence for peeking
+	e->state = STATE_ICEP_PEEK; // start in PEEK mode
+	e->dir2 = DIR_NONE;         // no snowball out
 	e->aiAction = aiIcePuffAction;
 }
 
@@ -3208,10 +3188,10 @@ void aiBuzzflyAction(AIEntity *e) {
 
 void aiDragonInit(AIEntity *e) {
 	e->state = STATE_STANDDOWN;
-	e->sequence = 0;	// 0 = sleeping
+	e->sequence = 0; // 0 = sleeping
 	e->aiAction = aiDragonAction;
 	e->aiDraw = aiDragonDraw;
-	e->animCycle = 10;	// time between flaps
+	e->animCycle = 10; // time between flaps
 
 	// need to save the dragon's coords and type in the blocking entity for gem-hit-blocking detection
 	AIEntity *block = spawnBlocking(e->tileX - 1, e->tileY, e->level);
@@ -3264,12 +3244,13 @@ void aiDragonAction(AIEntity *e) {
 	// Sleeping, waiting for the player to wake him up
 	case 0:
 		if (e->onScreen &&
-			p->tileX >= e->tileX - 1 &&
-			p->tileX <= e->tileX + 1 &&
-			p->tileY <= e->tileY + 1 &&
-			p->tileY >= e->tileY - 3) {
+		    p->tileX >= e->tileX - 1 &&
+		    p->tileX <= e->tileX + 1 &&
+		    p->tileY <= e->tileY + 1 &&
+		    p->tileY >= e->tileY - 3) {
 			if ((p->state >= STATE_ATK_CLUB_UP &&
-				p->state <= STATE_ATK_SLUG_RIGHT) || g_hdb->_window->inPanicZone()) {
+			     p->state <= STATE_ATK_SLUG_RIGHT) ||
+			    g_hdb->_window->inPanicZone()) {
 				aiDragonWake(e);
 				if (e->onScreen)
 					g_hdb->_sound->playSound(SND_DRAGON_WAKE);
@@ -3306,59 +3287,58 @@ void aiDragonAction(AIEntity *e) {
 			if (e->animFrame >= 1) {
 				e->animFrame = 0;
 				e->sequence = 3;
-				e->animCycle = 2;		// time between flaps
+				e->animCycle = 2; // time between flaps
 			}
 		}
 
 		break;
 
 	// Breathing fire!
-	case 3:
-		{
-			if (hitPlayer(e->x, e->y + 32)) {
-				g_hdb->_ai->killPlayer(DEATH_FRIED);
-				return;
-			}
+	case 3: {
+		if (hitPlayer(e->x, e->y + 32)) {
+			g_hdb->_ai->killPlayer(DEATH_FRIED);
+			return;
+		}
 
-			// whatever entity is in front of the dragon is gettin' USED!
-			AIEntity *hit = g_hdb->_ai->findEntity(e->tileX, e->tileY + 1);
-			if (hit) {
-				switch (hit->type) {
-				case AI_CHICKEN:
-					g_hdb->_ai->addAnimateTarget(hit->tileX * kTileWidth, hit->tileY * kTileHeight, 0, 2, ANIM_NORMAL, false, false, GROUP_ENT_CHICKEN_DIE);
-					g_hdb->_sound->playSound(SND_CHICKEN_DEATH);
-					g_hdb->_ai->removeEntity(hit);
-					e->sequence = 4;
-					break;
-				case AI_MAGIC_EGG:
-				case AI_ICE_BLOCK:
-					aiMagicEggUse(hit);
-					break;
-				default:
-					if (hit->aiUse)
-						hit->aiUse(hit);
-					if (hit->luaFuncUse[0])
-						g_hdb->_lua->callFunction(hit->luaFuncUse, 0);
-				}
-			}
-
-			e->animDelay--;
-
-			if (e->animDelay < 1) {
-				if (e->onScreen && !(e->animFrame & 7))
-					g_hdb->_sound->playSound(SND_DRAGON_BREATHEFIRE);
-
-				e->animDelay = e->animCycle;
-				e->animFrame++;
-				if (e->animFrame >= 30) {
-					e->animFrame = 0;
-					e->sequence = 4;
-					e->animCycle = 10;		// time between flaps
-				}
+		// whatever entity is in front of the dragon is gettin' USED!
+		AIEntity *hit = g_hdb->_ai->findEntity(e->tileX, e->tileY + 1);
+		if (hit) {
+			switch (hit->type) {
+			case AI_CHICKEN:
+				g_hdb->_ai->addAnimateTarget(hit->tileX * kTileWidth, hit->tileY * kTileHeight, 0, 2, ANIM_NORMAL, false, false, GROUP_ENT_CHICKEN_DIE);
+				g_hdb->_sound->playSound(SND_CHICKEN_DEATH);
+				g_hdb->_ai->removeEntity(hit);
+				e->sequence = 4;
+				break;
+			case AI_MAGIC_EGG:
+			case AI_ICE_BLOCK:
+				aiMagicEggUse(hit);
+				break;
+			default:
+				if (hit->aiUse)
+					hit->aiUse(hit);
+				if (hit->luaFuncUse[0])
+					g_hdb->_lua->callFunction(hit->luaFuncUse, 0);
 			}
 		}
 
-		break;
+		e->animDelay--;
+
+		if (e->animDelay < 1) {
+			if (e->onScreen && !(e->animFrame & 7))
+				g_hdb->_sound->playSound(SND_DRAGON_BREATHEFIRE);
+
+			e->animDelay = e->animCycle;
+			e->animFrame++;
+			if (e->animFrame >= 30) {
+				e->animFrame = 0;
+				e->sequence = 4;
+				e->animCycle = 10; // time between flaps
+			}
+		}
+	}
+
+	break;
 
 	// Done burning - flapping wings 3 times
 	case 4:
@@ -3408,4 +3388,4 @@ void aiDragonDraw(AIEntity *e, int mx, int my) {
 	}
 }
 
-} // End of Namespace
+} // namespace HDB

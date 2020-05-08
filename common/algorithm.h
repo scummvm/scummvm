@@ -23,8 +23,8 @@
 #ifndef COMMON_ALGORITHM_H
 #define COMMON_ALGORITHM_H
 
-#include "common/scummsys.h"
 #include "common/func.h"
+#include "common/scummsys.h"
 #include "common/util.h"
 
 namespace Common {
@@ -242,7 +242,7 @@ void sort(T first, T last) {
 // We disable this warning for the affected section of code
 #if defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable: 4146)
+#pragma warning(disable : 4146)
 #endif
 
 /**
@@ -302,10 +302,10 @@ T nextHigher2(T v) {
 template<class It, class Dat>
 void replace(It begin, It end, const Dat &original, const Dat &replaced) {
 	for (; begin != end; ++begin) {
-        if (*begin == original) {
-            *begin = replaced;
-        }
-    }
+		if (*begin == original) {
+			*begin = replaced;
+		}
+	}
 }
 
 } // End of namespace Common

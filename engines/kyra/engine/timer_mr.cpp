@@ -91,7 +91,7 @@ void KyraEngine_MR::setWalkspeed(uint8 speed) {
 void KyraEngine_MR::setCommandLineRestoreTimer(int secs) {
 	if (secs == -1)
 		secs = 32000;
-	_timer->setCountdown(0, secs*60);
+	_timer->setCountdown(0, secs * 60);
 }
 
 void KyraEngine_MR::setNextIdleAnimTimer() {

@@ -69,7 +69,6 @@ static sc_int scr_errors = 0;
 static sc_char *scr_expectation = NULL;
 static sc_char *scr_game_output = NULL;
 
-
 /*
  * scr_set_verbose()
  *
@@ -78,7 +77,6 @@ static sc_char *scr_game_output = NULL;
 void scr_set_verbose(sc_bool flag) {
 	scr_is_verbose = flag;
 }
-
 
 /*
  * scr_test_message()
@@ -109,7 +107,6 @@ void scr_test_failed(const sc_char *format, const sc_char *string) {
 	scr_errors++;
 }
 
-
 /*
  * scr_is_line_type()
  * scr_is_line_comment_or_empty()
@@ -125,8 +122,7 @@ static sc_bool scr_is_line_type(const sc_char *line, sc_char type) {
 }
 
 static sc_bool scr_is_line_comment_or_empty(const sc_char *line) {
-	return scr_is_line_type(line, SCRIPT_COMMENT)
-	       || strspn(line, "\t\n\v\f\r ") == strlen(line);
+	return scr_is_line_type(line, SCRIPT_COMMENT) || strspn(line, "\t\n\v\f\r ") == strlen(line);
 }
 
 static sc_bool scr_is_line_game_command(const sc_char *line) {
@@ -144,7 +140,6 @@ static sc_bool scr_is_line_command(const sc_char *line) {
 static sc_bool scr_is_line_empty_debug_command(const sc_char *line) {
 	return scr_is_line_type(line, DEBUG_COMMAND) && line[1] == NUL;
 }
-
 
 /* Script location, a pair holding the file location and the line number. */
 struct sx_scr_location_t {
@@ -168,7 +163,6 @@ static void scr_restore_location(sx_script script, sx_scr_locationref_t location
 	script->seek(location->position);
 	scr_line_number = location->line_number;
 }
-
 
 /*
  * scr_get_next_line()
@@ -199,7 +193,6 @@ static sc_char *scr_get_next_line(sx_script script) {
 	return line;
 }
 
-
 /*
  * scr_concatenate()
  *
@@ -221,7 +214,6 @@ static sc_char *scr_concatenate(sc_char *string, const sc_char *buffer) {
 
 	return string;
 }
-
 
 /*
  * scr_get_next_section()
@@ -284,7 +276,6 @@ static sc_bool scr_get_next_section(sx_script script, sc_char **command, sc_char
 	return FALSE;
 }
 
-
 /*
  * scr_expect()
  * scr_verify_expectation()
@@ -331,7 +322,6 @@ static void scr_verify_expectation(void) {
 	scr_game_output = NULL;
 }
 
-
 /*
  * scr_execute_debugger_command()
  *
@@ -357,13 +347,13 @@ static void scr_execute_debugger_command(const sc_char *command, sc_char *expect
 
 	if (!status) {
 		scr_test_failed("Script error:"
-		                " Debug command \"%s\" is not valid", command);
+		                " Debug command \"%s\" is not valid",
+		                command);
 	}
 
 	/* Check expectations immediately. */
 	scr_verify_expectation();
 }
-
 
 /*
  * scr_read_line_callback()
@@ -411,7 +401,8 @@ static sc_bool scr_read_line_callback(sc_char *buffer, sc_int length) {
 
 		/* Neither a '~' nor a '>' command. */
 		scr_test_failed("Script error:"
-		                " Command \"%s\" is not valid, ignored", command);
+		                " Command \"%s\" is not valid, ignored",
+		                command);
 		sx_free(command);
 		sx_free(expectation);
 		return FALSE;
@@ -430,7 +421,6 @@ static sc_bool scr_read_line_callback(sc_char *buffer, sc_int length) {
 	return TRUE;
 }
 
-
 /*
  * scr_print_string_callback()
  *
@@ -443,12 +433,10 @@ static void scr_print_string_callback(const sc_char *string) {
 
 	if (scr_game_output) {
 		scr_game_output = (sc_char *)sx_realloc(scr_game_output,
-		                                        strlen(scr_game_output)
-		                                        + strlen(string) + 1);
+		                                        strlen(scr_game_output) + strlen(string) + 1);
 		strcat(scr_game_output, string);
 	}
 }
-
 
 /*
  * scr_start_script()
@@ -514,7 +502,6 @@ void scr_start_script(sc_game game, sx_script script) {
 	sc_set_game_debugger_enabled(scr_game, FALSE);
 }
 
-
 /*
  * scr_finalize_script()
  *
@@ -538,7 +525,8 @@ sc_int scr_finalize_script(void) {
 		} else {
 			/* Complain about script entries ignored because the game ended. */
 			scr_test_failed("Script error:"
-			                " Game completed, command \"%s\" ignored", command);
+			                " Game completed, command \"%s\" ignored",
+			                command);
 			sx_free(command);
 			sx_free(expectation);
 		}

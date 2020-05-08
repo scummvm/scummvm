@@ -26,12 +26,12 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-#include "common/textconsole.h"
-#include "tony/mpal/mpalutils.h"
 #include "tony/font.h"
+#include "common/textconsole.h"
 #include "tony/input.h"
 #include "tony/inventory.h"
 #include "tony/loc.h"
+#include "tony/mpal/mpalutils.h"
 #include "tony/tony.h"
 
 namespace Tony {
@@ -202,12 +202,12 @@ int RMFontWithTables::letterLength(int nChar, int nNext) {
 void RMFontDialog::init() {
 	// bernie: Number of characters in the font
 	int nchars =
-	    112    // base
-	    + 18    // polish
-	    + 66    // russian
-	    + 30    // czech
-	    +  8    // french
-	    +  5;   // deutsch
+	    112  // base
+	    + 18 // polish
+	    + 66 // russian
+	    + 30 // czech
+	    + 8  // french
+	    + 5; // deutsch
 
 	load(RES_F_PARL, nchars, 20, 20);
 
@@ -229,12 +229,12 @@ void RMFontDialog::init() {
 void RMFontMacc::init() {
 	// bernie: Number of characters in the font
 	int nchars =
-	    102    // base
-	    + 18    // polish
-	    + 66    // russian
-	    + 30    // czech
-	    +  8    // francais
-	    +  5;   // deutsch
+	    102  // base
+	    + 18 // polish
+	    + 66 // russian
+	    + 30 // czech
+	    + 8  // francais
+	    + 5; // deutsch
 
 	load(RES_F_MACC, nchars, 11, 16);
 
@@ -256,12 +256,12 @@ void RMFontMacc::init() {
 void RMFontCredits::init() {
 	// bernie: Number of characters in the font
 	int nchars =
-	    112    // base
-	    + 18    // polish
-	    + 66    // russian
-	    + 30    // czech
-	    +  8    // french
-	    +  2;   // deutsch
+	    112  // base
+	    + 18 // polish
+	    + 66 // russian
+	    + 30 // czech
+	    + 8  // french
+	    + 2; // deutsch
 
 	load(RES_F_CREDITS, nchars, 27, 28, RES_F_CPAL);
 
@@ -280,8 +280,8 @@ void RMFontCredits::init() {
 *       RMFontObj Methods
 \****************************************************************************/
 
-#define TOUPPER(a)  ((a) >= 'a' && (a) <= 'z' ? (a) + 'A' - 'a' : (a))
-#define TOLOWER(a)  ((a) >= 'A' && (a) <= 'Z' ? (a) + 'a' - 'A' : (a))
+#define TOUPPER(a) ((a) >= 'a' && (a) <= 'z' ? (a) + 'A' - 'a' : (a))
+#define TOLOWER(a) ((a) >= 'A' && (a) <= 'Z' ? (a) + 'a' - 'A' : (a))
 
 void RMFontObj::setBothCase(int nChar, int nNext, signed char spiazz) {
 	_l2Table[TOUPPER(nChar)][TOUPPER(nNext)] = spiazz;
@@ -293,12 +293,12 @@ void RMFontObj::setBothCase(int nChar, int nNext, signed char spiazz) {
 void RMFontObj::init() {
 	//bernie: Number of characters in the font (solo maiuscolo)
 	int nchars =
-	    85    // base
-	    +  9    // polish
-	    + 33    // russian
-	    + 15    // czech
-	    +  0    // francais (no uppercase chars)
-	    +  1;   // deutsch
+	    85   // base
+	    + 9  // polish
+	    + 33 // russian
+	    + 15 // czech
+	    + 0  // francais (no uppercase chars)
+	    + 1; // deutsch
 
 	load(RES_F_OBJ, nchars, 25, 30);
 
@@ -330,7 +330,7 @@ void RMFontObj::init() {
 *       RMText Methods
 \****************************************************************************/
 
-RMFontColor *RMText::_fonts[4] = { NULL, NULL, NULL, NULL };
+RMFontColor *RMText::_fonts[4] = {NULL, NULL, NULL, NULL};
 
 void RMText::initStatics() {
 	Common::fill(&_fonts[0], &_fonts[4], (RMFontColor *)NULL);
@@ -358,7 +358,7 @@ void RMText::unload() {
 		delete _fonts[1];
 		delete _fonts[2];
 		delete _fonts[3];
-		_fonts[0] =  _fonts[1] = _fonts[2] = _fonts[3] = 0;
+		_fonts[0] = _fonts[1] = _fonts[2] = _fonts[3] = 0;
 	}
 }
 

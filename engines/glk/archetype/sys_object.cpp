@@ -21,30 +21,50 @@
  */
 
 #include "glk/archetype/sys_object.h"
+#include "common/algorithm.h"
+#include "common/debug-channels.h"
+#include "common/savefile.h"
 #include "glk/archetype/archetype.h"
 #include "glk/archetype/game_stat.h"
 #include "glk/archetype/heap_sort.h"
 #include "glk/archetype/parser.h"
-#include "common/algorithm.h"
-#include "common/debug-channels.h"
-#include "common/savefile.h"
 
 namespace Glk {
 namespace Archetype {
 
 enum SysStateType {
-	IDLING, INIT_SORTER, OPEN_SORTER, CLOSE_SORTER, NEXT_SORTED, PLAYER_CMD,
-	NORMALIZE, ABBR, OPEN_PARSER, VERB_LIST, NOUN_LIST, CLOSE_PARSER, INIT_PARSER,
-	WHICH_OBJECT, ROLL_CALL, PRESENT, PARSE, NEXT_OBJECT, DEBUG_MESSAGES,
-	DEBUG_EXPRESSIONS, DEBUG_STATEMENTS, DEBUG_MEMORY, FREE_MEMORY, SAVE_STATE, LOAD_STATE
+	IDLING,
+	INIT_SORTER,
+	OPEN_SORTER,
+	CLOSE_SORTER,
+	NEXT_SORTED,
+	PLAYER_CMD,
+	NORMALIZE,
+	ABBR,
+	OPEN_PARSER,
+	VERB_LIST,
+	NOUN_LIST,
+	CLOSE_PARSER,
+	INIT_PARSER,
+	WHICH_OBJECT,
+	ROLL_CALL,
+	PRESENT,
+	PARSE,
+	NEXT_OBJECT,
+	DEBUG_MESSAGES,
+	DEBUG_EXPRESSIONS,
+	DEBUG_STATEMENTS,
+	DEBUG_MEMORY,
+	FREE_MEMORY,
+	SAVE_STATE,
+	LOAD_STATE
 };
 
 const char *const StateLookup[LOAD_STATE + 1] = {
-	"IDLING", "INIT SORTER", "OPEN SORTER", "CLOSE SORTER", "NEXT SORTED", "PLAYER CMD",
-	"NORMALIZE", "ABBR", "OPEN PARSER", "VERB LIST", "NOUN LIST", "CLOSE PARSER", "INIT PARSER",
-	"WHICH OBJECT", "ROLL CALL", "PRESENT", "PARSE", "NEXT OBJECT", "DEBUG MESSAGES",
-	"DEBUG EXPRESSIONS", "DEBUG STATEMENTS", "DEBUG MEMORY", "FREE MEMORY", "SAVE STATE", "LOAD STATE"
-};
+    "IDLING", "INIT SORTER", "OPEN SORTER", "CLOSE SORTER", "NEXT SORTED", "PLAYER CMD",
+    "NORMALIZE", "ABBR", "OPEN PARSER", "VERB LIST", "NOUN LIST", "CLOSE PARSER", "INIT PARSER",
+    "WHICH OBJECT", "ROLL CALL", "PRESENT", "PARSE", "NEXT OBJECT", "DEBUG MESSAGES",
+    "DEBUG EXPRESSIONS", "DEBUG STATEMENTS", "DEBUG MEMORY", "FREE MEMORY", "SAVE STATE", "LOAD STATE"};
 
 // Global variables which retain the state of the system object between calls
 SysStateType sys_state;
@@ -70,7 +90,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 	int the_caller;
 	int obj_index;
 	String nomatch;
-    NodePtr np;
+	NodePtr np;
 	void *p;
 
 	if (g_vm->shouldQuit())
@@ -95,7 +115,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 				case OPEN_PARSER:
 				case OPEN_SORTER:
 				case WHICH_OBJECT:
-					return;				// come back again!
+					return; // come back again!
 
 				case INIT_SORTER:
 					reinit_heap();
@@ -265,7 +285,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 
 		case FREE_MEMORY:
 			result._kind = NUMERIC;
-			result._data._numeric.acl_int = 0xffff;		// MemAvail;
+			result._data._numeric.acl_int = 0xffff; // MemAvail;
 			sys_state = IDLING;
 			break;
 

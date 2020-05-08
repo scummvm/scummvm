@@ -20,7 +20,7 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
@@ -29,35 +29,34 @@
 #undef main
 #endif // main
 
-#include "file.h"
 #include "clouds.h"
+#include "file.h"
 
 static const char *const MAP_NAMES[86] = {
-	"", "Area A1", "Area A2", "Area A3", "Area A4", "Area B1", "Area B2",
-	"Area B3", "Area B4", "Area C1", "Area C2", "Area C3", "Area C4",
-	"Area D1", "Area D2", "Area D3", "Area D4", "Area E1", "Area E2",
-	"Area E3", "Area E4", "Area F1", "Area F2", "Area F3", "Area F4",
-	"Witch Clouds", "High Magic Clouds", "Clouds of Xeen", "Vertigo",
-	"Nightshadow", "Rivercity", "Asp", "Winterkill", "Dwarf Mine 1",
-	"Dwarf Mine 2", "Dwarf Mine 3", "Dwarf Mine 4", "Dwarf Mine 5",
-	"Deep Mine Alpha", "Deep Mine Theta", "Deep Mine Kappa",
-	"Deep Mine Omega", "Cave of Illusion Level 1", "Cave of Illusion Level 2",
-	"Cave of Illusion Level 3", "Cave of Illusion Level 4",
-	"Volcano Cave Level 1", "Volcano Cave Level 2", "Volcano Cave Level 3",
-	"Shangri-La", "Dragon Cave", "Witch Tower Level 1", "Witch Tower Level 2",
-	"Witch Tower Level 3", "Witch Tower Level 4", "Tower of High Magic Level 1",
-	"Tower of High Magic Level 2", "Tower of High Magic Level 3",
-	"Tower of High Magic Level 4", "Darzog's Tower Level 1",
-	"Darzog's Tower Level 2", "Darzog's Tower Level 3", "Darzog's Tower Level 4",
-	"Burlock Dungeon", "Castle Burlock Level 1", "Castle Burlock Level 2",
-	"Castle Burlock Level 3", "Basenji Dungeon", "Castle Basenji Level 1",
-	"Castle Basenji Level 2", "Castle Basenji Level 3", "Newcastle Dungeon",
-	"Newcastle Foundation", "Newcastle Level 1", "Newcastle Level 2",
-	"Xeen's Castle Level 1", "Xeen's Castle Level 2", "Xeen's Castle Level 3",
-	"Xeen's Castle Level 4", "Ancient Temple of Yak", "Tomb of a 1000 Terrors",
-	"Golem Dungeon", "Sphinx Body", "Sphinx Head", "Sphinx Dungeon",
-	"The Warzone"
-};
+    "", "Area A1", "Area A2", "Area A3", "Area A4", "Area B1", "Area B2",
+    "Area B3", "Area B4", "Area C1", "Area C2", "Area C3", "Area C4",
+    "Area D1", "Area D2", "Area D3", "Area D4", "Area E1", "Area E2",
+    "Area E3", "Area E4", "Area F1", "Area F2", "Area F3", "Area F4",
+    "Witch Clouds", "High Magic Clouds", "Clouds of Xeen", "Vertigo",
+    "Nightshadow", "Rivercity", "Asp", "Winterkill", "Dwarf Mine 1",
+    "Dwarf Mine 2", "Dwarf Mine 3", "Dwarf Mine 4", "Dwarf Mine 5",
+    "Deep Mine Alpha", "Deep Mine Theta", "Deep Mine Kappa",
+    "Deep Mine Omega", "Cave of Illusion Level 1", "Cave of Illusion Level 2",
+    "Cave of Illusion Level 3", "Cave of Illusion Level 4",
+    "Volcano Cave Level 1", "Volcano Cave Level 2", "Volcano Cave Level 3",
+    "Shangri-La", "Dragon Cave", "Witch Tower Level 1", "Witch Tower Level 2",
+    "Witch Tower Level 3", "Witch Tower Level 4", "Tower of High Magic Level 1",
+    "Tower of High Magic Level 2", "Tower of High Magic Level 3",
+    "Tower of High Magic Level 4", "Darzog's Tower Level 1",
+    "Darzog's Tower Level 2", "Darzog's Tower Level 3", "Darzog's Tower Level 4",
+    "Burlock Dungeon", "Castle Burlock Level 1", "Castle Burlock Level 2",
+    "Castle Burlock Level 3", "Basenji Dungeon", "Castle Basenji Level 1",
+    "Castle Basenji Level 2", "Castle Basenji Level 3", "Newcastle Dungeon",
+    "Newcastle Foundation", "Newcastle Level 1", "Newcastle Level 2",
+    "Xeen's Castle Level 1", "Xeen's Castle Level 2", "Xeen's Castle Level 3",
+    "Xeen's Castle Level 4", "Ancient Temple of Yak", "Tomb of a 1000 Terrors",
+    "Golem Dungeon", "Sphinx Body", "Sphinx Head", "Sphinx Dungeon",
+    "The Warzone"};
 
 void writeCloudsData(CCArchive &cc, const char *darkName) {
 	Common::File darkFile;

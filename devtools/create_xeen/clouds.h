@@ -23,8 +23,8 @@
 #ifndef CLOUDS_H
 #define CLOUDS_H
 
-#include "common/scummsys.h"
 #include "cc.h"
+#include "common/scummsys.h"
 
 extern void writeCloudsData(CCArchive &cc, const char *darkName);
 

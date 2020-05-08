@@ -32,7 +32,7 @@ namespace Id {
 
 class IdStorage;
 
-class IdCreateDirectoryRequest: public Networking::Request {
+class IdCreateDirectoryRequest : public Networking::Request {
 	Common::String _requestedParentPath;
 	Common::String _requestedDirectoryName;
 	IdStorage *_storage;
@@ -50,6 +50,7 @@ class IdCreateDirectoryRequest: public Networking::Request {
 	void createdDirectoryCallback(Storage::BoolResponse response);
 	void createdDirectoryErrorCallback(Networking::ErrorResponse error);
 	void finishCreation(bool success);
+
 public:
 	IdCreateDirectoryRequest(IdStorage *storage, Common::String parentPath, Common::String directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
 	virtual ~IdCreateDirectoryRequest();

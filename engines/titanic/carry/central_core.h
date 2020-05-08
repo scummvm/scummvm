@@ -32,6 +32,7 @@ class CCentralCore : public CBrain {
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 	bool DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg);
 	bool DropZoneGotObjectMsg(CDropZoneGotObjectMsg *msg);
+
 public:
 	CLASSDEF;
 

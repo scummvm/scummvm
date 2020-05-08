@@ -63,11 +63,12 @@ typedef struct {
 
 class AdLibChannel : public ChannelBase {
 public:
-	AdLibChannel (OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData);
+	AdLibChannel(OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData);
 	~AdLibChannel() override;
 	uint8 process(uint16 aktTime) override;
 	void updateVolume(uint16 pVolume) override;
 	bool isActive() override;
+
 private:
 	OPL::OPL *_opl;
 	uint8 *_musicData;
@@ -90,20 +91,20 @@ private:
 	void stopNote();
 
 	// Streamfunctions from Command90hTable
-	void com90_caseNoteOff();       // 0
-	void com90_stopChannel();       // 1
-	void com90_setupInstrument();   // 2
-	uint8 com90_updateTempo();      // 3
+	void com90_caseNoteOff();     // 0
+	void com90_stopChannel();     // 1
+	void com90_setupInstrument(); // 2
+	uint8 com90_updateTempo();    // 3
 	//void com90_dummy();           // 4
-	void com90_getFreqOffset();     // 5
-	void com90_getChannelVolume();  // 6
-	void com90_getTremoVibro();     // 7
-	void com90_loopMusic();         // 8
-	void com90_keyOff();            // 9
+	void com90_getFreqOffset();    // 5
+	void com90_getChannelVolume(); // 6
+	void com90_getTremoVibro();    // 7
+	void com90_loopMusic();        // 8
+	void com90_keyOff();           // 9
 	//void com90_error();           // 10
 	//void com90_doLodsb();         // 11
-	void com90_setLoopPoint();      // 12
-	//void com90_do_two_Lodsb();    // 13
+	void com90_setLoopPoint(); // 12
+	                           //void com90_do_two_Lodsb();    // 13
 };
 
 } // End of namespace Sky

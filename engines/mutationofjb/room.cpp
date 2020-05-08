@@ -45,6 +45,7 @@ public:
 	RoomAnimationDecoderCallback(Room &room) : _room(room) {}
 	void onFrame(int frameNo, Graphics::Surface &surface) override;
 	void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+
 private:
 	Room &_room;
 };
@@ -242,4 +243,4 @@ void Room::redraw(bool useBackgroundBuffer) {
 	}
 }
 
-}
+} // namespace MutationOfJB

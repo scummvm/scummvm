@@ -27,7 +27,7 @@
 
 namespace Pink {
 
-template <typename T>
+template<typename T>
 class Array : public Common::Array<T>, public Object {
 public:
 	void deserialize(Archive &archive) override {

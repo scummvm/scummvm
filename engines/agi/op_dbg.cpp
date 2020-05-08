@@ -25,12 +25,11 @@
 
 namespace Agi {
 
-#define ip   (_game.logics[lognum].cIP)
+#define ip (_game.logics[lognum].cIP)
 #define code (_game.logics[lognum].data)
 
 const char *logicNamesIf[] = {
-	"OR", "NOT", "ELSE", "IF"
-};
+    "OR", "NOT", "ELSE", "IF"};
 
 void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 	AgiOpCodeEntry *curOpCodeTable;
@@ -52,7 +51,7 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 	case 0xFF:
 		if (_debug.opcodes) {
 			debugN(0, "%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
-			       "         ",
+			          "         ",
 			       (uint8) * (code + (0 + ip)) & 0xFF,
 			       (uint8) * (code + (1 + ip)) & 0xFF,
 			       (uint8) * (code + (2 + ip)) & 0xFF,
@@ -73,7 +72,7 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 
 		if (_debug.opcodes) {
 			debugN(0, "%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
-			       "         ",
+			          "         ",
 			       (uint8) * (code + (0 + ip)) & 0xFF,
 			       (uint8) * (code + (1 + ip)) & 0xFF,
 			       (uint8) * (code + (2 + ip)) & 0xFF,
@@ -84,7 +83,7 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 			       (uint8) * (code + (7 + ip)) & 0xFF,
 			       (uint8) * (code + (8 + ip)) & 0xFF);
 		}
-		debugN(0, "%s ", (curOpCodeTable + * (code + ip))->name);
+		debugN(0, "%s ", (curOpCodeTable + *(code + ip))->name);
 
 		for (z = 1; parametersLeft > 0;) {
 			if (*c == 'n') {

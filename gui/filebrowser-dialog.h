@@ -49,10 +49,10 @@ public:
 
 protected:
 	EditTextWidget *_fileName;
-	ListWidget	   *_fileList;
+	ListWidget *_fileList;
 	Common::String _fileMask;
 	Common::String _fileExt;
-	int            _mode;
+	int _mode;
 
 	void updateListing();
 	void normalieFileName();

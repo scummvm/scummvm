@@ -23,9 +23,9 @@
 #ifndef NUVIE_CORE_PARTY_H
 #define NUVIE_CORE_PARTY_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -40,7 +40,9 @@ class NuvieIO;
 class PartyPathFinder;
 class PartySeek;
 
-typedef enum { TARGET_ACTOR, TARGET_LOCATION, TARGET_NONE } CombatTargetType;
+typedef enum { TARGET_ACTOR,
+	           TARGET_LOCATION,
+	           TARGET_NONE } CombatTargetType;
 
 struct CombatTarget {
 	CombatTargetType type;
@@ -51,7 +53,7 @@ struct CombatTarget {
 struct PartyMember {
 	char name[14];
 	Actor *actor;
-//bool inactive; // true if not in formation
+	//bool inactive; // true if not in formation
 	uint8 combat_position;
 	sint8 form_x; // relative position left or right of leader
 	sint8 form_y; // relative position in front or in back of leader
@@ -66,11 +68,11 @@ struct PartyMember {
 
 /* party walking formations: */
 #define PARTY_FORM_STANDARD 0
-#define PARTY_FORM_COLUMN   1
-#define PARTY_FORM_ROW      2
-#define PARTY_FORM_DELTA    3
-#define PARTY_FORM_COMBAT   7
-#define PARTY_FORM_REST     8
+#define PARTY_FORM_COLUMN 1
+#define PARTY_FORM_ROW 2
+#define PARTY_FORM_DELTA 3
+#define PARTY_FORM_COMBAT 7
+#define PARTY_FORM_REST 8
 
 /*   0 <- standard  *
  *  1 2             *
@@ -101,12 +103,12 @@ protected:
 
 	PartyMember member[PARTY_MAX_MEMBERS];
 	uint8 lightsources;
-	uint8 num_in_party; // number of party members.
-	uint8 formation; // walking formation
+	uint8 num_in_party;   // number of party members.
+	uint8 formation;      // walking formation
 	uint16 prev_leader_x; // last location of leader
 	uint16 prev_leader_y;
 
-	bool autowalk; // party is automatically walking to a destination
+	bool autowalk;   // party is automatically walking to a destination
 	bool in_vehicle; //Party is in a vehicle.
 	bool in_combat_mode;
 
@@ -115,7 +117,6 @@ protected:
 	Obj *rest_campfire;
 
 public:
-
 	Party(Configuration *cfg);
 	virtual ~Party();
 
@@ -123,7 +124,7 @@ public:
 	virtual bool load(NuvieIO *objlist);
 	virtual bool save(NuvieIO *objlist);
 
-// Basic methods
+	// Basic methods
 	void follow(sint8 rel_x, sint8 rel_y); // follow in direction leader moved
 	bool move(uint16 dx, uint16 dy, uint8 dz);
 	void show(); // Actor::show()
@@ -139,18 +140,18 @@ public:
 	void heal();
 	void cure();
 	void set_ethereal(bool ethereal);
-//void set_active(uint8 member_num, bool state) { member[member_num].inactive = !state; }
+	//void set_active(uint8 member_num, bool state) { member[member_num].inactive = !state; }
 	uint8 get_formation() {
-		return formation;    // walking formation
+		return formation; // walking formation
 	}
 	void set_formation(uint8 val) {
 		formation = val;
 		reform_party();
 	}
-// Properties
+	// Properties
 	uint8 get_party_size();
 	virtual uint8 get_party_max() {
-		return (8);    // U6
+		return (8); // U6
 	}
 	sint8 get_leader(); // returns -1 if party has no leader and can't move
 	MapCoord get_leader_location();
@@ -166,7 +167,7 @@ public:
 	}
 	Actor *get_slowest_actor(); // actor with lowest move count
 
-// Check specific actors
+	// Check specific actors
 	uint8 get_actor_num(uint8 member_num); //get actor id_n from party_member num.
 	Actor *get_actor(uint8 member_num);
 	sint8 get_member_num(Actor *actor);
@@ -179,7 +180,7 @@ public:
 	bool contains_actor(Actor *actor);
 	bool contains_actor(uint8 actor_num);
 
-// Check entire party
+	// Check entire party
 	bool is_at(uint16 x, uint16 y, uint8 z, uint32 threshold = 0);
 	bool is_at(MapCoord &xyz, uint32 threshold = 0);
 	bool is_anyone_at(uint16 x, uint16 y, uint8 z, uint32 threshold = 0);
@@ -192,7 +193,7 @@ public:
 	bool is_everyone_horsed();
 	Obj *get_food(); // used while resting
 
-// Automatic-walking. These methods should be replaced with ActorActions.
+	// Automatic-walking. These methods should be replaced with ActorActions.
 	void walk(MapCoord *walkto, MapCoord *teleport, uint32 step_delay = 0);
 	void walk(MapCoord *walkto, uint32 step_delay = 0) {
 		walk(walkto, NULL, step_delay);
@@ -217,7 +218,7 @@ public:
 		lightsources++; /* fprintf(stderr, "lightsources = %d\n", lightsources); */
 	}
 	void subtract_light_source() { /*assert(lightsources != 0);*/
-		lightsources--; /*fprintf(stderr, "lightsources = %d\n", lightsources); */
+		lightsources--;            /*fprintf(stderr, "lightsources = %d\n", lightsources); */
 	}
 	void update_light_sources();
 
@@ -225,7 +226,6 @@ public:
 
 protected:
 	void reform_party(); // call when adding or removing members
-
 };
 
 } // End of namespace Nuvie

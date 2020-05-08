@@ -27,15 +27,12 @@
 namespace Titanic {
 
 static const PetArea PET_AREAS_EN[5] = {
-	PET_CONVERSATION, PET_INVENTORY, PET_REMOTE,
-	PET_ROOMS, PET_REAL_LIFE
-};
+    PET_CONVERSATION, PET_INVENTORY, PET_REMOTE,
+    PET_ROOMS, PET_REAL_LIFE};
 
 static const PetArea PET_AREAS_DE[6] = {
-	PET_CONVERSATION, PET_TRANSLATION, PET_INVENTORY, PET_REMOTE,
-	PET_ROOMS, PET_REAL_LIFE
-};
-
+    PET_CONVERSATION, PET_TRANSLATION, PET_INVENTORY, PET_REMOTE,
+    PET_ROOMS, PET_REAL_LIFE};
 
 CPetFrame::CPetFrame() : CPetSection() {
 }
@@ -121,18 +118,18 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 
 		// Draw the mode buttons vertically on the right edge of the PET
 		r = Rect(590, 365, 606, 381);
-		const int YLIST_EN[] = { 7, 27, 45, 66, 84 };
-		const int YLIST_DE[] = { 0, 18, 36, 51, 67, 84 };
+		const int YLIST_EN[] = {7, 27, 45, 66, 84};
+		const int YLIST_DE[] = {0, 18, 36, 51, 67, 84};
 		_modeButtons.resize(_petAreas.size());
 		for (uint idx = 0; idx < _modeButtons.size(); ++idx) {
 			_modeButtons[idx].setBounds(r);
 			_modeButtons[idx].translate(TRANSLATE(4, 0),
-				TRANSLATE(YLIST_EN[idx], YLIST_DE[idx]));
+			                            TRANSLATE(YLIST_EN[idx], YLIST_DE[idx]));
 		}
 		setArea(PET_CONVERSATION);
 
 		if (g_language == Common::EN_ANY) {
-			const int XLIST_EN[] = { 73, 54, 85, 109, 38, 71 };
+			const int XLIST_EN[] = {73, 54, 85, 109, 38, 71};
 			for (uint idx = 0; idx < _petAreas.size(); ++idx) {
 				_titles[idx].setBounds(Rect(0, 0, 110, 11));
 				_titles[idx].translate(608 - XLIST_EN[idx], 471);

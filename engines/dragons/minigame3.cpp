@@ -19,17 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/scummsys.h"
-#include "common/rect.h"
-#include "dragons/actor.h"
 #include "dragons/minigame3.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
+#include "dragons/actor.h"
 #include "dragons/dragonini.h"
+#include "dragons/dragons.h"
 #include "dragons/inventory.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
 #include "dragons/sound.h"
 #include "dragons/talk.h"
-#include "dragons/dragons.h"
 
 namespace Dragons {
 
@@ -121,7 +121,6 @@ void Minigame3::run() {
 	UnkStruct UnkStruct_ARRAY_800931a0[4];
 	int16 unkXPosTbl[20];
 
-
 	Common::File *fd = new Common::File();
 	if (!fd->open("arc3.bin")) {
 		error("Failed to open arc1.bin");
@@ -180,7 +179,7 @@ void Minigame3::run() {
 	_vm->_scene->loadScene(6 | 0x8000, 0);
 	_vm->_scene->setFgLayerPriority(4);
 
-// TODO
+	// TODO
 	_vm->_screen->loadPalette(1, _vm->_scene->getPalette());
 	_vm->_screen->loadPalette(4, _vm->_scene->getPalette());
 	_vm->_screen->updatePaletteTransparency(4, 1, 0xff, true);
@@ -193,11 +192,11 @@ void Minigame3::run() {
 	_vm->clearFlags(ENGINE_FLAG_1);
 	_vm->setFlags(ENGINE_FLAG_100);
 	_vm->setFlags(ENGINE_FLAG_1000_SUBTITLES_DISABLED);
-// TODO
-//	memcpy2(auStack1584_palette, scrFileData_maybe, 0x200);
-//	memcpy2(auStack1072_palette, scrFileData_maybe, 0x200);
+	// TODO
+	//	memcpy2(auStack1584_palette, scrFileData_maybe, 0x200);
+	//	memcpy2(auStack1072_palette, scrFileData_maybe, 0x200);
 	local_5b2 = 0x7fff;
-//	DisableVSyncEvent();
+	//	DisableVSyncEvent();
 	int i = 0;
 	while ((int16)i < 4) {
 		bunnyActorTbl[(int16)i] = _vm->_actorManager->loadActor(0x15, 4, 0, 0);
@@ -273,7 +272,7 @@ void Minigame3::run() {
 	tearBlinkActorTbl[1]->_x_pos = 0xbf; //DAT_8009322a_bf;
 	tearBlinkActorTbl[0]->_y_pos = 0xcc;
 	tearBlinkActorTbl[1]->_y_pos = 0xcc;
-//	EnableVSyncEvent();
+	//	EnableVSyncEvent();
 	i = 0;
 	while ((int16)i < 4) {
 		goodRabbitPositionTbl[(int16)i] = 0;
@@ -306,14 +305,14 @@ void Minigame3::run() {
 		}
 		i = i + 1;
 	}
-//TODO why doesn't this work?
-//	do {
-//		iVar3 = (int)(int16)local_16 + 1;
-//		iVar4 = iVar3;
-//		if (iVar3 < 0) {
-//			iVar4 = (int)(int16)local_16 + 4;
-//		}
-//	} while (!bunnyActorTbl[iVar3 + (iVar4 >> 2) * -4]->isFlagSet(ACTOR_FLAG_4));
+	//TODO why doesn't this work?
+	//	do {
+	//		iVar3 = (int)(int16)local_16 + 1;
+	//		iVar4 = iVar3;
+	//		if (iVar3 < 0) {
+	//			iVar4 = (int)(int16)local_16 + 4;
+	//		}
+	//	} while (!bunnyActorTbl[iVar3 + (iVar4 >> 2) * -4]->isFlagSet(ACTOR_FLAG_4));
 	bunnyActorTbl[local_16]->waitUntilFlag4IsSet();
 
 	bunnyActorTbl[(int16)local_16]->updateSequence(0);
@@ -355,8 +354,8 @@ void Minigame3::run() {
 		case 1:
 			if ((bunnyActorTbl[local_1a]->_sequenceID != 5) || ((bunnyActorTbl[local_1a]->_flags & 4) != 0)) {
 				if ((local_56 < 1) ||
-						(((int)bunnyInfo[local_20].x >> 9 <= (int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x ||
-						((int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x <= (int)bunnyInfo[local_1e].x >> 9)))) {
+				    (((int)bunnyInfo[local_20].x >> 9 <= (int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x ||
+				      ((int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x <= (int)bunnyInfo[local_1e].x >> 9)))) {
 					bunnyActorTbl[local_1c]->_x_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x;
 					bunnyActorTbl[local_1a]->_x_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x;
 					bunnyActorTbl[local_1c]->_y_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].y;
@@ -609,7 +608,8 @@ void Minigame3::run() {
 		if (hopCounter == 0x1e) {
 			currentState = 6;
 		}
-		if ((flags & 8) != 0) break;
+		if ((flags & 8) != 0)
+			break;
 		if (local_1c8 == 0) {
 			if (local_1ba == 0) {
 				if (local_1bc == 0) {
@@ -637,9 +637,9 @@ void Minigame3::run() {
 					if (local_14 == 5) {
 						local_14 = 4;
 					}
-					updateBackgroundLayerOffset(2, (int) local_14 * 0x140, 0);
-					updateBackgroundLayerOffset(1, (int) -local_1c0, (int) eyeBgYOffsetTbl[local_1c0 + 10]);
-					updateBackgroundLayerOffset(0, (int) -local_1c0, (int) eyeBgYOffsetTbl[local_1c0 + 10]);
+					updateBackgroundLayerOffset(2, (int)local_14 * 0x140, 0);
+					updateBackgroundLayerOffset(1, (int)-local_1c0, (int)eyeBgYOffsetTbl[local_1c0 + 10]);
+					updateBackgroundLayerOffset(0, (int)-local_1c0, (int)eyeBgYOffsetTbl[local_1c0 + 10]);
 				}
 			} else {
 				local_1ba = local_1ba + -1;
@@ -651,7 +651,7 @@ void Minigame3::run() {
 	while ((int16)i < 3) {
 		local_16 = 0;
 		while ((int16)local_16 < 3) {
-			updateBackgroundLayerOffset(2, ((int) (int16) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
+			updateBackgroundLayerOffset(2, ((int)(int16)local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
 			_vm->waitForFrames(5);
 			local_16 = local_16 + 1;
 		}
@@ -671,7 +671,7 @@ void Minigame3::run() {
 		_vm->waitForFrames(0xf);
 		local_16 = 1;
 		while (-1 < (int16)local_16) {
-			updateBackgroundLayerOffset(2, ((int) (int16) local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
+			updateBackgroundLayerOffset(2, ((int)(int16)local_16 * 0x140 + 0x640) * 0x10000 >> 0x10, 0);
 			_vm->waitForFrames(5);
 			local_16 = local_16 + -1;
 		}
@@ -733,17 +733,17 @@ void Minigame3::run() {
 	_vm->waitForFrames(0x3c * 2);
 	_vm->_sound->PauseCDMusic();
 	_vm->fadeToBlack();
-//	fun_80017f28_noop();
-//	DAT_80093234 = DAT_80093234 + 1;
+	//	fun_80017f28_noop();
+	//	DAT_80093234 = DAT_80093234 + 1;
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
 	flicker->sceneId = 1;
 	_vm->setAllFlags(oldEngineFlags);
 	_vm->setFlags(ENGINE_FLAG_40);
-//	_vm->_screen->loadPalette(1, (uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
-//			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
+	//	_vm->_screen->loadPalette(1, (uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
+	//			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 	_vm->setupPalette1();
-//	_vm->_screen->loadPalette(4, (uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
-//			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
+	//	_vm->_screen->loadPalette(4, (uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
+	//			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 	_vm->_screen->updatePaletteTransparency(4, 1, 0xff, true);
 	_vm->_inventory->setState(origInventoryType);
 	_vm->_scene->setSceneId(origSceneId);
@@ -758,15 +758,15 @@ void Minigame3::fun_80017f70_paletteRelated(uint16 param_1) {
 	if (param_1 > 0x1f) {
 		param_1 = 0x1f;
 	}
-//	uVar1 = IsVSyncEventEnabled & 1;
-//	DisableVSyncEvent();
+	//	uVar1 = IsVSyncEventEnabled & 1;
+	//	DisableVSyncEvent();
 	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
 	_vm->_screen->setPaletteRecord(0, 0x3f, param_1 * 0x421);
-//	load_palette_into_frame_buffer(0, abStack528);
+	//	load_palette_into_frame_buffer(0, abStack528);
 	_vm->_screen->updatePaletteTransparency(0, 0x3f, 0x3f, param_1 == 0x1e ? false : true);
-//	if (uVar1 != 0) {
-//		EnableVSyncEvent();
-//	}
+	//	if (uVar1 != 0) {
+	//		EnableVSyncEvent();
+	//	}
 }
 
 void Minigame3::fun_80017ef0() {

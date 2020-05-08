@@ -1,12 +1,12 @@
-#!/bin/sh
+#!/ bin / sh
 
 echo Quick script to make running configure all the time less painful
 echo and let all the build work be done from the backend/build folder.
 
-# Assume Caanoo toolchain/build env.
+#Assume Caanoo toolchain / build env.
 . /opt/arm-caanoo/environment-setup
 
-# Edit the configure line to suit.
+#Edit the configure line to suit.
 cd ../../../..
 ./configure --backend=caanoo --disable-mt32emu --host=caanoo \
   --disable-alsa --disable-flac \

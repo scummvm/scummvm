@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CDoorbotElevatorHandler, CGameObject)
-	ON_MESSAGE(EnterNodeMsg)
+ON_MESSAGE(EnterNodeMsg)
 END_MESSAGE_MAP()
 
 void CDoorbotElevatorHandler::save(SimpleFile *file, int indent) {

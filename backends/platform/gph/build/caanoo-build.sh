@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/ bin / bash
 
 echo Quick script to make building all the time less painful.
 
-# Set the paths up here to support the build.
+#Set the paths up here to support the build.
 
 cd ../../../..
 

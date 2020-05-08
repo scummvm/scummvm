@@ -21,20 +21,20 @@
  */
 
 #include "titanic/true_talk/tt_vocab.h"
+#include "common/file.h"
+#include "titanic/titanic.h"
+#include "titanic/translation.h"
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_action.h"
 #include "titanic/true_talk/tt_adj.h"
 #include "titanic/true_talk/tt_major_word.h"
 #include "titanic/true_talk/tt_picture.h"
 #include "titanic/true_talk/tt_pronoun.h"
-#include "titanic/titanic.h"
-#include "titanic/translation.h"
-#include "common/file.h"
 
 namespace Titanic {
 
-TTvocab::TTvocab(VocabMode vocabMode): _headP(nullptr), _tailP(nullptr),
-		_word(nullptr), _vocabMode(vocabMode) {
+TTvocab::TTvocab(VocabMode vocabMode) : _headP(nullptr), _tailP(nullptr),
+                                        _word(nullptr), _vocabMode(vocabMode) {
 	load("STVOCAB");
 }
 
@@ -132,8 +132,7 @@ int TTvocab::load(const CString &name) {
 }
 
 void TTvocab::addWord(TTword *word) {
-	TTword *existingWord = g_language == Common::DE_DEU ? nullptr :
-		findWord(word->_text);
+	TTword *existingWord = g_language == Common::DE_DEU ? nullptr : findWord(word->_text);
 
 	if (existingWord) {
 		if (word->_synP) {
@@ -236,9 +235,8 @@ TTword *TTvocab::getSuffixedWord(TTstring &str, TTword **srcWord) const {
 
 	if (g_language == Common::DE_DEU) {
 		static const char *const SUFFIXES[11] = {
-			"est", "em", "en", "er", "es", "et", "st",
-			"s", "e", "n", "t"
-		};
+		    "est", "em", "en", "er", "es", "et", "st",
+		    "s", "e", "n", "t"};
 
 		for (int idx = 0; idx < 11; ++idx) {
 			if (tempStr.hasSuffix(SUFFIXES[idx])) {
@@ -551,7 +549,7 @@ TTword *TTvocab::getPrefixedWord(TTstring &str, TTword **srcWord) const {
 		}
 
 	} else if (tempStr.hasPrefix("hyper") || tempStr.hasPrefix("super") ||
-			tempStr.hasPrefix("ultra")) {
+	           tempStr.hasPrefix("ultra")) {
 		tempStr.deletePrefix(5);
 		word = getPrimeWord(tempStr);
 

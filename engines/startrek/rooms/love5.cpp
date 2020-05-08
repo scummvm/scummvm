@@ -158,11 +158,11 @@ void Room::love5TalkToPreax() {
 			showDescription(06, true);
 		else {
 			const TextRef choices[] = {
-				TX_SPEAKER_KIRK,
-				8,
-				4,
-				6,
-				TX_BLANK,
+			    TX_SPEAKER_KIRK,
+			    8,
+			    4,
+			    6,
+			    TX_BLANK,
 			};
 
 			showText(TX_SPEAKER_PREAX, 59, true);
@@ -190,7 +190,7 @@ void Room::love5TalkToPreax() {
 				break;
 			}
 
-			showText(TX_SPEAKER_KIRK,   02, true);
+			showText(TX_SPEAKER_KIRK, 02, true);
 			showText(TX_SPEAKER_MARCUS, 45, true);
 
 			_awayMission->disableInput = true;
@@ -264,16 +264,16 @@ void Room::love5TalkToDrCheever() {
 }
 
 void Room::love5TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,    3, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 	showText(TX_SPEAKER_MARCUS, 48, true);
-	showText(TX_SPEAKER_KIRK,    9, true);
+	showText(TX_SPEAKER_KIRK, 9, true);
 	showText(TX_SPEAKER_MARCUS, 47, true);
 }
 
 void Room::love5TalkToSpock() {
-	showText(TX_SPEAKER_SPOCK,  36, true);
+	showText(TX_SPEAKER_SPOCK, 36, true);
 	showText(TX_SPEAKER_MARCUS, 51, true);
-	showText(TX_SPEAKER_SPOCK,  TX_G_024);
+	showText(TX_SPEAKER_SPOCK, TX_G_024);
 }
 
 void Room::love5TalkToMccoy() {
@@ -318,7 +318,7 @@ void Room::love5UseWaterOnPreax() {
 	if (_awayMission->love.preaxCured) {
 		showDescription(18, true);
 		showText(TX_SPEAKER_MCCOY, 29, true);
-		showText(TX_SPEAKER_KIRK,  07, true);
+		showText(TX_SPEAKER_KIRK, 07, true);
 		if (!_awayMission->love.gotPointsForHydratingPreax) {
 			_awayMission->love.gotPointsForHydratingPreax = true;
 			_awayMission->love.missionScore++;
@@ -333,9 +333,9 @@ void Room::love5UseWaterOnPreax() {
 			showDescription(17, true);
 			if (!_awayMission->redshirtDead) {
 				showText(TX_SPEAKER_FERRIS, 53, true);
-				showText(TX_SPEAKER_KIRK,   05, true);
+				showText(TX_SPEAKER_KIRK, 05, true);
 			}
-			showText(TX_SPEAKER_MCCOY,  26, true);
+			showText(TX_SPEAKER_MCCOY, 26, true);
 			loseItem(OBJECT_IH2O);
 
 			// BUGFIX: give a point for hydrating the Preax. It's inconsistent to only
@@ -351,7 +351,6 @@ void Room::love5UseWaterOnPreax() {
 void Room::love5UseCureSampleOnPreax() {
 	showText(TX_SPEAKER_MCCOY, 20, true); // BUGFIX: original didn't have correct speaker
 }
-
 
 void Room::love5UseCureOnPreax() {
 	if (!_awayMission->love.preaxCured)
@@ -378,11 +377,9 @@ void Room::love5CuredPreax() {
 	_awayMission->love.preaxCured = true;
 }
 
-
 void Room::love5UseAnythingOnPreax() {
 	showText(TX_SPEAKER_MCCOY, 23, true);
 }
-
 
 // Kirk walks to Cheever, unties him, then walks to Marcus, unties her.
 void Room::love5UseKirkOnMarcusOrCheever() {
@@ -418,4 +415,4 @@ void Room::love5MarcusStoodUp() {
 	showText(TX_SPEAKER_MARCUS, 41, true);
 }
 
-}
+} // namespace StarTrek

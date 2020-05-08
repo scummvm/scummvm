@@ -23,17 +23,19 @@
 #ifndef ACCESS_INVENTORY_H
 #define ACCESS_INVENTORY_H
 
-#include "common/scummsys.h"
+#include "access/asurface.h"
+#include "access/data.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
-#include "access/data.h"
-#include "access/asurface.h"
 
 namespace Access {
 
 enum ItemState {
-	ITEM_NOT_FOUND = 0, ITEM_IN_INVENTORY = 1, ITEM_USED = 2
+	ITEM_NOT_FOUND = 0,
+	ITEM_IN_INVENTORY = 1,
+	ITEM_USED = 2
 };
 
 class InventoryEntry {
@@ -70,6 +72,7 @@ class InventoryManager : public Manager {
 		int _scrollCol;
 		int _scrollRow;
 	};
+
 private:
 	Common::Array<int> _items;
 	Common::Array<Common::Rect> _invCoords;
@@ -108,6 +111,7 @@ private:
 	void combineItems();
 
 	void zoomIcon(int zoomItem, int backItem, int zoomBox, bool shrink);
+
 public:
 	Common::Array<InventoryEntry> _inv;
 	int _startInvItem;
@@ -117,6 +121,7 @@ public:
 	bool _invModeFlag;
 	int _startAboutItem;
 	int _startTravelItem;
+
 public:
 	InventoryManager(AccessEngine *vm);
 

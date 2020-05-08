@@ -73,9 +73,9 @@ void Room::demon4FinishedAnimation2() {
 
 void Room::demon4FinishedAnimation3() {
 	showText(TX_SPEAKER_NAUIAN, 34, true);
-	showText(TX_SPEAKER_KIRK,   10, true);
+	showText(TX_SPEAKER_KIRK, 10, true);
 	showText(TX_SPEAKER_NAUIAN, 35, true);
-	showText(TX_SPEAKER_SPOCK,  30, true);
+	showText(TX_SPEAKER_SPOCK, 30, true);
 
 	_awayMission->disableInput = true;
 	_awayMission->demon.missionScore += 5;
@@ -186,7 +186,7 @@ void Room::demon4UseSkullOnNauian() {
 void Room::demon4KirkReachedNauianWithSkull() {
 	showText(TX_SPEAKER_NAUIAN, 36, true);
 
-	const TextRef choices[] = { TX_SPEAKER_KIRK, 6, 3, 5, TX_BLANK };
+	const TextRef choices[] = {TX_SPEAKER_KIRK, 6, 3, 5, TX_BLANK};
 	int choice = showMultipleTexts(choices, true);
 
 	switch (choice) {
@@ -227,7 +227,7 @@ void Room::demon4TalkToNauian() {
 		_awayMission->demon.metNauian = true;
 		showText(TX_SPEAKER_NAUIAN, 44, true);
 
-		const TextRef choices[] = { TX_SPEAKER_KIRK, 2, 4, 9, TX_BLANK };
+		const TextRef choices[] = {TX_SPEAKER_KIRK, 2, 4, 9, TX_BLANK};
 		int choice = showMultipleTexts(choices, true);
 
 		switch (choice) {
@@ -250,7 +250,7 @@ void Room::demon4TalkToNauian() {
 
 		showText(TX_SPEAKER_NAUIAN, 43, true);
 
-		const TextRef choices2[] = { TX_SPEAKER_KIRK, 8, 7, TX_BLANK };
+		const TextRef choices2[] = {TX_SPEAKER_KIRK, 8, 7, TX_BLANK};
 		choice = showMultipleTexts(choices2, true);
 
 		switch (choice) {
@@ -272,9 +272,9 @@ void Room::demon4TalkToNauian() {
 
 			// BUGFIX: Originally all of these used no audio, despite the files existing
 			// (being used elsewhere).
-			showText(TX_SPEAKER_KIRK,   10, true);
+			showText(TX_SPEAKER_KIRK, 10, true);
 			showText(TX_SPEAKER_NAUIAN, 35, true);
-			showText(TX_SPEAKER_SPOCK,  30, true);
+			showText(TX_SPEAKER_SPOCK, 30, true);
 
 			_awayMission->disableInput = true;
 			_awayMission->demon.missionScore += 5;
@@ -475,7 +475,7 @@ bool Room::demon4ShowSunPuzzle() {
 
 		switch (event.type) {
 		case TREKEVENT_LBUTTONDOWN: {
-lclick:
+		lclick:
 			Common::Point mousePos = _vm->_gfx->getMousePos();
 			if (_vm->_gfx->getSpriteAt(mousePos) == &doneButtonSprite)
 				goto done;
@@ -494,7 +494,7 @@ lclick:
 		}
 
 		case TREKEVENT_RBUTTONDOWN:
-done:
+		done:
 			if (abs(sliderY) <= 2 && abs(sliderR) <= 2 && abs(sliderB) <= 2)
 				solved = true;
 			else
@@ -629,4 +629,4 @@ void Room::demon4UseMTricorderOnSecurityEquipment() {
 	showText(TX_SPEAKER_SPOCK, 26, true); // BUG: Uses spock's voice (speaker says "Spock" too)
 }
 
-}
+} // namespace StarTrek

@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Shared {
 
-typedef void(*DrawWidgetFn)(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color);
+typedef void (*DrawWidgetFn)(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color);
 
 class Game;
 
@@ -42,6 +42,7 @@ private:
 	byte _highlightColor;
 	byte _widgetColor;
 	DrawWidgetFn _widgetFn;
+
 public:
 	/**
 	 * Constructor
@@ -86,7 +87,6 @@ public:
 	void frameRect(const Common::Rect &r, uint32 color) {
 		Gfx::VisualSurface::frameRect(Rect(r.left - 8, r.top - 8, r.right - 8, r.bottom - 8), color);
 	}
-
 
 	/**
 	 * Draws a wall

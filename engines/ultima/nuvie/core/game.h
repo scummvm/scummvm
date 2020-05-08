@@ -23,9 +23,9 @@
 #ifndef NUVIE_CORE_GAME_H
 #define NUVIE_CORE_GAME_H
 
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -65,10 +65,10 @@ class KeyBinder;
 
 typedef enum {
 	PAUSE_UNPAUSED = 0x00,
-	PAUSE_USER     = 0x01, /* Don't allow user-input */
-	PAUSE_ANIMS    = 0x02, /* TileManager & Palette */
-	PAUSE_WORLD    = 0x04, /* game time doesn't pass, freeze actors */
-	PAUSE_ALL      = 0xFF
+	PAUSE_USER = 0x01,  /* Don't allow user-input */
+	PAUSE_ANIMS = 0x02, /* TileManager & Palette */
+	PAUSE_WORLD = 0x04, /* game time doesn't pass, freeze actors */
+	PAUSE_ALL = 0xFF
 } GamePauseState;
 
 class Game {
@@ -157,7 +157,7 @@ public:
 	bool isLoaded() const {
 		return script != nullptr;
 	}
-	GamePauseState get_pause_flags()            {
+	GamePauseState get_pause_flags() {
 		return (pause_flags);
 	}
 	void set_pause_flags(GamePauseState state);
@@ -170,13 +170,13 @@ public:
 	void pause_anims();
 	void pause_world();
 
-	bool paused()       {
+	bool paused() {
 		return (pause_flags);
 	}
-	bool all_paused()   {
+	bool all_paused() {
 		return (pause_flags & PAUSE_ALL);
 	}
-	bool user_paused()  {
+	bool user_paused() {
 		return (pause_flags & PAUSE_USER);
 	}
 	bool anims_paused() {
@@ -310,110 +310,111 @@ public:
 	Std::string get_data_file_path(Std::string datafile);
 
 	/* Return instances of Game classes */
-	static Game *get_game()          {
+	static Game *get_game() {
 		return (game);
 	}
-	Configuration *get_config()       {
+	Configuration *get_config() {
 		return (config);
 	}
-	Script *get_script()              {
+	Script *get_script() {
 		return (script);
 	}
-	Screen *get_screen()              {
+	Screen *get_screen() {
 		return (screen);
 	}
-	Background *get_background()      {
+	Background *get_background() {
 		return (background);
 	}
-	GamePalette *get_palette()        {
+	GamePalette *get_palette() {
 		return (palette);
 	}
-	Dither *get_dither()                  {
+	Dither *get_dither() {
 		return (dither);
 	}
-	FontManager *get_font_manager()   {
+	FontManager *get_font_manager() {
 		return (font_manager);
 	}
-	TileManager *get_tile_manager()   {
+	TileManager *get_tile_manager() {
 		return (tile_manager);
 	}
-	ObjManager *get_obj_manager()     {
+	ObjManager *get_obj_manager() {
 		return (obj_manager);
 	}
 	ActorManager *get_actor_manager() {
 		return (actor_manager);
 	}
-	EggManager *get_egg_manager()     {
+	EggManager *get_egg_manager() {
 		return (egg_manager);
 	}
-	Magic *get_magic()                {
+	Magic *get_magic() {
 		return (magic);
 	}
-	Map *get_game_map()               {
+	Map *get_game_map() {
 		return (game_map);
 	}
-	MapWindow *get_map_window()       {
+	MapWindow *get_map_window() {
 		return (map_window);
 	}
-	MsgScroll *get_scroll()           {
+	MsgScroll *get_scroll() {
 		return (scroll);
 	}
-	Player *get_player()              {
+	Player *get_player() {
 		return (player);
 	}
-	Party *get_party()                {
+	Party *get_party() {
 		return (party);
 	}
-	Converse *get_converse()          {
+	Converse *get_converse() {
 		return (converse);
 	}
 	ConverseGump *get_converse_gump() {
 		return (conv_gump);
 	}
-	ViewManager *get_view_manager()   {
+	ViewManager *get_view_manager() {
 		return (view_manager);
 	}
-	GameClock *get_clock()            {
+	GameClock *get_clock() {
 		return (clock);
 	}
-	Portrait *get_portrait()          {
+	Portrait *get_portrait() {
 		return (portrait);
 	}
-	UseCode *get_usecode()            {
+	UseCode *get_usecode() {
 		return (usecode);
 	}
-	Events *get_event()                {
+	Events *get_event() {
 		return (event);
 	}
-	GUI *get_gui()                    {
+	GUI *get_gui() {
 		return (gui);
 	}
 	SoundManager *get_sound_manager() {
 		return (sound_manager);
 	}
 
-	Cursor *get_cursor()              {
+	Cursor *get_cursor() {
 		return (cursor);
 	}
 	EffectManager *get_effect_manager() {
 		return (effect_manager);
 	}
-	CommandBar *get_command_bar()     {
+	CommandBar *get_command_bar() {
 		return (command_bar);
 	}
 	CommandBar *get_new_command_bar() {
 		return (new_command_bar);
 	}
-	Weather *get_weather()            {
+	Weather *get_weather() {
 		return (weather);
 	}
 
-	Book *get_book()                  {
+	Book *get_book() {
 		return (book);
 	}
-	KeyBinder *get_keybinder()        {
+	KeyBinder *get_keybinder() {
 		return (keybinder);
 	}
+
 protected:
 	void init_converse();
 	void init_converse_gump_settings();

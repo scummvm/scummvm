@@ -21,24 +21,23 @@
  */
 
 #include "ultima/ultima1/u1dialogs/buy_sell_dialog.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map.h"
 #include "ultima/shared/core/str.h"
 #include "ultima/shared/gfx/visual_surface.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(BuySellDialog, Dialog)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(CharacterInputMsg)
+ON_MESSAGE(ShowMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
-BuySellDialog::BuySellDialog(Ultima1Game *game, const Common::String &title) :
-	Dialog(game), _mode(SELECT), _title(title), _charInput(game), _closeCounter(0) {
+BuySellDialog::BuySellDialog(Ultima1Game *game, const Common::String &title) : Dialog(game), _mode(SELECT), _title(title), _charInput(game), _closeCounter(0) {
 	_bounds = Rect(31, 23, 287, 127);
 }
 
@@ -146,5 +145,5 @@ void BuySellDialog::nothing() {
 }
 
 } // End of namespace U1Dialogs
-} // End of namespace Gfx
+} // namespace Ultima1
 } // End of namespace Ultima

@@ -20,27 +20,27 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/map.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/filesys/flex_file.h"
-#include "ultima/ultima8/filesys/raw_archive.h"
-#include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/misc/id_man.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/world/camera_process.h" // for resetting the camera
-#include "ultima/ultima8/gumps/gump.h" // For CloseItemDependents notification
-#include "ultima/ultima8/world/actors/animation.h"
-#include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/filesys/flex_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/filesys/raw_archive.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/gumps/gump.h" // For CloseItemDependents notification
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/memory_manager.h"
+#include "ultima/ultima8/kernel/object_manager.h"
+#include "ultima/ultima8/misc/id_man.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/camera_process.h" // for resetting the camera
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/map.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -55,14 +55,12 @@ World::World() : _currentMap(nullptr) {
 	_world = this;
 }
 
-
 World::~World() {
 	debugN(MM_INFO, "Destroying World...\n");
 	clear();
 
 	_world = nullptr;
 }
-
 
 void World::clear() {
 	unsigned int i;
@@ -129,18 +127,19 @@ bool World::switchMap(uint32 newmap) {
 	//   sets up all NPCs in the new map
 	// reset camera
 
-
 	// kill camera
 	CameraProcess::ResetCameraProcess();
 
 	AudioProcess *ap = AudioProcess::get_instance();
-	if (ap) ap->stopAllExceptSpeech();
+	if (ap)
+		ap->stopAllExceptSpeech();
 
 	// Notify all the gumps of the mapchange
 	Ultima8Engine *gui = Ultima8Engine::get_instance();
 	if (gui) {
 		Gump *desktop = gui->getDesktopGump();
-		if (desktop) desktop->CloseItemDependents();
+		if (desktop)
+			desktop->CloseItemDependents();
 	}
 
 	// get rid of any remaining _ethereal items
@@ -148,7 +147,8 @@ bool World::switchMap(uint32 newmap) {
 		uint16 eth = _ethereal.front();
 		_ethereal.pop_front();
 		Item *i = getItem(eth);
-		if (i) i->destroy();
+		if (i)
+			i->destroy();
 	}
 
 	uint32 oldmap = _currentMap->getNum();
@@ -168,8 +168,7 @@ bool World::switchMap(uint32 newmap) {
 	Kernel::get_instance()->killProcessesNotOfType(0, 1, true);
 
 	pout << "Loading Fixed items in map " << newmap << Std::endl;
-	Common::SeekableReadStream *items = GameData::get_instance()->getFixed()
-	                     ->get_datasource(newmap);
+	Common::SeekableReadStream *items = GameData::get_instance()->getFixed()->get_datasource(newmap);
 	_maps[newmap]->loadFixed(items);
 	delete items;
 
@@ -201,7 +200,6 @@ void World::loadNonFixed(Common::SeekableReadStream *rs) {
 			_maps[i]->loadNonFixed(items);
 
 			delete items;
-
 		}
 	}
 
@@ -275,17 +273,17 @@ void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::Se
 
 		// read npcdata:
 		npcds->seek(i * 0x31);
-		actor->setStr(npcds->readByte()); // 0x00: strength
-		actor->setDex(npcds->readByte()); // 0x01: dexterity
-		actor->setInt(npcds->readByte()); // 0x02: intelligence
-		actor->setHP(npcds->readByte());  // 0x03: hitpoints
-		actor->setDir(npcds->readByte()); // 0x04: direction
-		uint16 la = npcds->readUint16LE();    // 0x05,0x06: last anim
+		actor->setStr(npcds->readByte());  // 0x00: strength
+		actor->setDex(npcds->readByte());  // 0x01: dexterity
+		actor->setInt(npcds->readByte());  // 0x02: intelligence
+		actor->setHP(npcds->readByte());   // 0x03: hitpoints
+		actor->setDir(npcds->readByte());  // 0x04: direction
+		uint16 la = npcds->readUint16LE(); // 0x05,0x06: last anim
 		actor->setLastAnim(static_cast<Animation::Sequence>(la));
-		npcds->skip(1); // 0x07: high byte of framenum
-		npcds->skip(1); // 0x08: current anim frame
-		npcds->skip(1); // 0x09: start Z of current fall
-		npcds->skip(1); // 0x0A: unknown, always zero
+		npcds->skip(1);                  // 0x07: high byte of framenum
+		npcds->skip(1);                  // 0x08: current anim frame
+		npcds->skip(1);                  // 0x09: start Z of current fall
+		npcds->skip(1);                  // 0x0A: unknown, always zero
 		uint8 align = npcds->readByte(); // 0x0B: alignments
 		actor->setAlignment(align & 0x0F);
 		actor->setEnemyAlignment(align & 0xF0);
@@ -295,9 +293,9 @@ void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::Se
 		// Malchir, Vardion, Gorgrond, Beren (0xE0)
 		npcds->skip(14); // 0x0D-0x1A: unknown, always zero
 		actor->clearActorFlag(0xFF);
-		actor->setActorFlag(npcds->readByte()); // 0x1B: flags
-		npcds->skip(1);  // 0x1C: unknown, always zero
-		npcds->skip(16); // 0x1D-0x2C: equipment
+		actor->setActorFlag(npcds->readByte());                 // 0x1B: flags
+		npcds->skip(1);                                         // 0x1C: unknown, always zero
+		npcds->skip(16);                                        // 0x1D-0x2C: equipment
 		int16 mana = static_cast<int16>(npcds->readUint16LE()); // 0x2D,0x2E: mana
 		actor->setMana(mana);
 		actor->clearActorFlag(0xFFFF00);
@@ -310,7 +308,6 @@ void World::loadItemCachNPCData(Common::SeekableReadStream *itemcach, Common::Se
 	delete itemds;
 	delete npcds;
 }
-
 
 void World::worldStats() const {
 	unsigned int i, mapcount = 0;
@@ -380,14 +377,14 @@ void World::saveMaps(Common::WriteStream *ws) {
 	}
 }
 
-
 bool World::loadMaps(Common::ReadStream *rs, uint32 version) {
 	uint32 mapcount = rs->readUint32LE();
 
 	// Map objects have already been created by reset()
 	for (unsigned int i = 0; i < mapcount; ++i) {
 		bool res = _maps[i]->load(rs, version);
-		if (!res) return false;
+		if (!res)
+			return false;
 	}
 
 	return true;

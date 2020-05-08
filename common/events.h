@@ -24,9 +24,9 @@
 #define COMMON_EVENTS_H
 
 #include "common/keyboard.h"
+#include "common/noncopyable.h"
 #include "common/queue.h"
 #include "common/rect.h"
-#include "common/noncopyable.h"
 
 #include "common/list.h"
 #include "common/singleton.h"
@@ -67,7 +67,7 @@ enum EventType {
 	EVENT_SCREEN_CHANGED = 11,
 
 	/** The input devices have changed, input related configuration needs to be re-applied */
-	EVENT_INPUT_CHANGED  = 35,
+	EVENT_INPUT_CHANGED = 35,
 
 	/**
 	 * The backend requests the agi engine's predictive dialog to be shown.
@@ -79,10 +79,10 @@ enum EventType {
 	EVENT_PREDICTIVE_DIALOG = 12,
 
 	EVENT_CUSTOM_BACKEND_ACTION_START = 18,
-	EVENT_CUSTOM_BACKEND_ACTION_END   = 19,
-	EVENT_CUSTOM_BACKEND_ACTION_AXIS  = 34,
-	EVENT_CUSTOM_ENGINE_ACTION_START  = 20,
-	EVENT_CUSTOM_ENGINE_ACTION_END    = 21,
+	EVENT_CUSTOM_BACKEND_ACTION_END = 19,
+	EVENT_CUSTOM_BACKEND_ACTION_AXIS = 34,
+	EVENT_CUSTOM_ENGINE_ACTION_START = 20,
+	EVENT_CUSTOM_ENGINE_ACTION_END = 21,
 
 #ifdef ENABLE_VKEYBD
 	EVENT_VIRTUAL_KEYBOARD = 22,
@@ -170,13 +170,13 @@ enum JoystickAxis {
  *  The list named buttons available from a mouse
  */
 enum MouseButton {
-	MOUSE_BUTTON_LEFT   = 0,
-	MOUSE_BUTTON_RIGHT  = 1,
+	MOUSE_BUTTON_LEFT = 0,
+	MOUSE_BUTTON_RIGHT = 1,
 	MOUSE_BUTTON_MIDDLE = 2,
-	MOUSE_WHEEL_UP      = 3,
-	MOUSE_WHEEL_DOWN    = 4,
-	MOUSE_BUTTON_X1     = 5,
-	MOUSE_BUTTON_X2     = 6
+	MOUSE_WHEEL_UP = 3,
+	MOUSE_WHEEL_DOWN = 4,
+	MOUSE_BUTTON_X1 = 5,
+	MOUSE_BUTTON_X2 = 6
 };
 
 typedef uint32 CustomEventType;
@@ -271,13 +271,14 @@ public:
 class ArtificialEventSource : public EventSource {
 protected:
 	Queue<Event> _artificialEventQueue;
+
 public:
 	void addEvent(const Event &ev) {
 		_artificialEventQueue.push(ev);
 	}
 
 	bool pollEvent(Event &ev) {
-	if (!_artificialEventQueue.empty()) {
+		if (!_artificialEventQueue.empty()) {
 			ev = _artificialEventQueue.pop();
 			return true;
 		} else {
@@ -319,7 +320,7 @@ public:
 	/**
 	 * Notifies the observer of pollEvent() query.
 	 */
-	virtual void notifyPoll() { }
+	virtual void notifyPoll() {}
 };
 
 /**
@@ -400,6 +401,7 @@ public:
 	 * This takes the "autoFree" flag passed to registerObserver into account.
 	 */
 	void unregisterObserver(EventObserver *obs);
+
 private:
 	EventMapper *_mapper;
 
@@ -441,7 +443,6 @@ public:
 		LBUTTON = 1 << MOUSE_BUTTON_LEFT,
 		RBUTTON = 1 << MOUSE_BUTTON_RIGHT
 	};
-
 
 	/**
 	 * Initialize the event manager.

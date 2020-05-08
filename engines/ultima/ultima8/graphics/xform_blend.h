@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_XFORMBLEND_H
 #define ULTIMA8_GRAPHICS_XFORMBLEND_H
 
-#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {

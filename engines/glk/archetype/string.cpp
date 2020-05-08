@@ -51,8 +51,7 @@ int String::lastIndexOf(char c) const {
 }
 
 void String::trim() {
-	while (!empty() && (lastChar() == ' ' || lastChar() == '\t' || lastChar() == '\n'
-			|| lastChar() == '\r'))
+	while (!empty() && (lastChar() == ' ' || lastChar() == '\t' || lastChar() == '\n' || lastChar() == '\r'))
 		deleteLastChar();
 
 	while (hasPrefix(" ") || hasPrefix("\t") || hasPrefix("\n"))

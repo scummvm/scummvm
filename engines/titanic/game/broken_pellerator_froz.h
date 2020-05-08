@@ -33,11 +33,13 @@ class CBrokenPelleratorFroz : public CBrokenPellBase {
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool ActMsg(CActMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
+
 private:
 	CString _exitLeft;
 	CString _exitRight;
 	CString _closeUpWithoutHose;
 	CString _closeUpWithHose;
+
 public:
 	CLASSDEF;
 

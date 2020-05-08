@@ -47,7 +47,6 @@ namespace AGT {
 #endif
 #endif
 
-
 #ifdef UNIX
 /* Needed because we are compiling with ANSI set */
 FILE *popen(const char *, const char *);
@@ -84,8 +83,10 @@ void fontcmd(int cmd, int font)
 */
 {
 #ifdef DEBUG_BELLS_AND_WHISTLES
-	if (cmd == 0) bnw_report("Loading Font", fontlist, font);
-	else if (cmd == 1) bnw_report("Restoring original font", NULL, 0);
+	if (cmd == 0)
+		bnw_report("Loading Font", fontlist, font);
+	else if (cmd == 1)
+		bnw_report("Restoring original font", NULL, 0);
 #endif
 	return;
 }
@@ -97,14 +98,14 @@ void pictcmd(int cmd, int pict)
   */
 {
 #ifdef DEBUG_BELLS_AND_WHISTLES
-	if (cmd == 1) bnw_report("Showing picture", pictlist, pict);
-	else if (cmd == 2) bnw_report("Showing pix", pixlist, pict);
+	if (cmd == 1)
+		bnw_report("Showing picture", pictlist, pict);
+	else if (cmd == 2)
+		bnw_report("Showing pix", pixlist, pict);
 	agt_waitkey();
 #endif
 	return;
 }
-
-
 
 int musiccmd(int cmd, int song)
 /* For cmd=1 or 2, the name of the song is songlist[song]
@@ -122,8 +123,10 @@ int musiccmd(int cmd, int song)
    -2=Is the sound on?  (0=false, -1=true)
 */
 {
-	if (cmd == 8) sound_on = 1;
-	else if (cmd == 9) sound_on = 0;
+	if (cmd == 8)
+		sound_on = 1;
+	else if (cmd == 9)
+		sound_on = 0;
 #ifdef DEBUG_BELLS_AND_WHISTLES
 	switch (cmd) {
 	case 1:
@@ -165,7 +168,7 @@ int musiccmd(int cmd, int song)
 #endif /* REPLACE_BNW */
 
 static char linebuff[100];
-static int lp;  /* Line pointer */
+static int lp; /* Line pointer */
 static rbool savenl = 0;
 static rbool needfill; /* Used for paragraph filling */
 static rbool quotemode = 0;
@@ -173,8 +176,6 @@ static rbool quotemode = 0;
 #ifdef UNIX
 static rbool ispipe[3] = {0, 0, 0}; /* script, log_in, log_out */
 #endif
-
-
 
 void debugout(const char *s) {
 	int i;
@@ -198,15 +199,17 @@ void debugout(const char *s) {
 				agt_newline();
 				lp = 0;
 			} else if (*s == '\t') {
-				for (i = 0; i < 3; i++) linebuff[lp++] = ' ';
-			} else if (*s >= 0 && *s <= 9) linebuff[lp++] = ' ';
-			else linebuff[lp++] = *s;
+				for (i = 0; i < 3; i++)
+					linebuff[lp++] = ' ';
+			} else if (*s >= 0 && *s <= 9)
+				linebuff[lp++] = ' ';
+			else
+				linebuff[lp++] = *s;
 		}
 		linebuff[lp] = 0;
 		agt_puts(linebuff);
 	}
 }
-
 
 int close_pfile(genfile f, int ft)
 /* ft=0 for script, 4 for log_in, 5 for log_out */
@@ -215,8 +218,6 @@ int close_pfile(genfile f, int ft)
 	return 0;
 }
 
-
-
 static char *get_log(void)
 /* Read string from logfile_in */
 {
@@ -224,7 +225,8 @@ static char *get_log(void)
 	static int dead_log;
 
 	if (!filevalid(log_in, fLOG)) { /* We are finishing up */
-		if (++dead_log > 100) fatal("Internal error: LOG.");
+		if (++dead_log > 100)
+			fatal("Internal error: LOG.");
 		assert(BATCH_MODE);
 		s = (char *)rmalloc(2);
 		s[0] = ' ';
@@ -236,7 +238,7 @@ static char *get_log(void)
 	s[0] = ' ';
 	s[1] = 0;
 	(void)textgets(log_in, s, 1000);
-	if (texteof(log_in)) {  /* Reached end of logfile */
+	if (texteof(log_in)) { /* Reached end of logfile */
 		close_pfile(log_in, 1);
 		log_in = BAD_TEXTFILE;
 		if (BATCH_MODE) {
@@ -250,13 +252,15 @@ static char *get_log(void)
 			fast_replay = 0;
 		}
 	} else { /* Need to delay or wait for keypress */
-		if (logdelay == -1) agt_waitkey();
-		else agt_delay(logdelay);
-		if (s[0] != 0) writeln(s);
+		if (logdelay == -1)
+			agt_waitkey();
+		else
+			agt_delay(logdelay);
+		if (s[0] != 0)
+			writeln(s);
 	}
 	return s;
 }
-
 
 static void put_log(const char *s)
 /* Write s to logfile_out */
@@ -266,11 +270,11 @@ static void put_log(const char *s)
 		textputs(log_out, "\n");
 }
 
-
 char *agt_readline(int in_type) {
 	char *s;
 
-	if (PURE_INPUT) agt_textcolor(-1);
+	if (PURE_INPUT)
+		agt_textcolor(-1);
 	if (logflag & 2)
 		s = get_log();
 	else
@@ -291,14 +295,16 @@ char *agt_readline(int in_type) {
 char agt_getchar(void) {
 	char c, *s, buff[2];
 
-	if (PURE_INPUT) agt_textcolor(-1);
+	if (PURE_INPUT)
+		agt_textcolor(-1);
 	if (logflag & 2) {
 		s = get_log();
 		c = s[0];
 		rfree(s);
 	} else
 		c = agt_getkey(1);
-	if (PURE_INPUT) agt_textcolor(-2);
+	if (PURE_INPUT)
+		agt_textcolor(-2);
 	if (logflag & 1) {
 		buff[0] = c;
 		buff[1] = 0;
@@ -331,7 +337,8 @@ void agt_par(rbool b)
 /* be treated as though each line were a new paragraph */
 {
 	par_fill_on = b;
-	if (b == 0 && savenl) agt_newline();
+	if (b == 0 && savenl)
+		agt_newline();
 	savenl = 0;
 	needfill = 0;
 }
@@ -340,8 +347,10 @@ void agt_par(rbool b)
    '\r'; unrecogonized codes are just ignored */
 static uchar xlat_format_code(uchar c) {
 	if (c == 0xFF) {
-		if (fix_ascii) return trans_ibm[0xFF - 0x80];
-		else return 0xFF;
+		if (fix_ascii)
+			return trans_ibm[0xFF - 0x80];
+		else
+			return 0xFF;
 	}
 	return 0;
 }
@@ -353,7 +362,7 @@ static void run_format_code(uchar c) {
 		agt_textcolor(c - 3);
 }
 
-#define format_code(c) ((c>0 && c<=LAST_TEXTCODE)||((uchar)c==FORMAT_CODE))
+#define format_code(c) ((c > 0 && c <= LAST_TEXTCODE) || ((uchar)c == FORMAT_CODE))
 
 void writestr(const char *s) {
 	int i, j;
@@ -362,8 +371,10 @@ void writestr(const char *s) {
 
 	if (savenl) {
 		assert(par_fill_on);
-		if (!isalnum(s[0])) agt_newline();
-		else agt_puts(" ");
+		if (!isalnum(s[0]))
+			agt_newline();
+		else
+			agt_puts(" ");
 		/* If combining two lines, insert a space between them. */
 	}
 	savenl = 0;
@@ -373,18 +384,23 @@ void writestr(const char *s) {
 	while (s[i] != 0) {
 		for (; s[i] != 0 && lp < 90 && curr_x + lp < screen_width; i++)
 			if (s[i] == '\t')
-				for (j = 0; j < TAB_SIZE && curr_x + lp < screen_width; j++) linebuff[lp++] = ' ';
+				for (j = 0; j < TAB_SIZE && curr_x + lp < screen_width; j++)
+					linebuff[lp++] = ' ';
 			else if (format_code(s[i])) {
-				linebuff[lp++] = ' ';    /* Color code */
+				linebuff[lp++] = ' '; /* Color code */
 				break;
 			} else if (s[i] == '\r') { /* New format code */
-				if (s[i + 1] == 0) continue; /* Bogus format code */
-				if (((uchar)s[i + 1]) < FMT_CODE_CNT) break;
+				if (s[i + 1] == 0)
+					continue; /* Bogus format code */
+				if (((uchar)s[i + 1]) < FMT_CODE_CNT)
+					break;
 				c = (char)xlat_format_code((uchar)s[++i]);
-				if (c != 0) linebuff[lp++] = c;
+				if (c != 0)
+					linebuff[lp++] = c;
 			} else if (s[i] == '\n') {
 				break;
-			} else linebuff[lp++] = s[i];
+			} else
+				linebuff[lp++] = s[i];
 
 		linebuff[lp] = 0;
 
@@ -394,19 +410,19 @@ void writestr(const char *s) {
 
 		if (!isspace(s[i]) && !format_code(s[i]) && s[i] != 0) {
 			/* If we aren't conveniently at a break...*/
-			do {    /* Find last space */
+			do { /* Find last space */
 				endmark--;
 			} while (endmark > 0 && !isspace(linebuff[endmark]));
 		}
 
 		if (endmark == 0 && !isspace(linebuff[endmark])) { /* Can't find a break */
-			if (curr_x + lp < screen_width) /* Not a line break */
-				endmark = lp; /* Break at end; it doesn't matter that much */
-			else  /* We _need_ a line break but are having trouble finding one */
-				if (curr_x > 0) /* already stuff on this line printed previously */
-					endmark = 0; /* i.e. print out nothing; move it to next line */
-				else   /* We have a single word that is longer than our line */
-					endmark = screen_width; /* Give up */
+			if (curr_x + lp < screen_width)                /* Not a line break */
+				endmark = lp;                              /* Break at end; it doesn't matter that much */
+			else                                           /* We _need_ a line break but are having trouble finding one */
+			    if (curr_x > 0)                            /* already stuff on this line printed previously */
+				endmark = 0;                               /* i.e. print out nothing; move it to next line */
+			else                                           /* We have a single word that is longer than our line */
+				endmark = screen_width;                    /* Give up */
 		}
 
 		c = linebuff[endmark];
@@ -418,18 +434,21 @@ void writestr(const char *s) {
 		linebuff[endmark] = c;
 
 		if (old_x + lp >= screen_width)
-			/* Need to insert line break and skip any spaces */
+		/* Need to insert line break and skip any spaces */
 		{
-			if (!quotemode) agt_newline();
-			else return; /* In quote mode, just truncate */
+			if (!quotemode)
+				agt_newline();
+			else
+				return; /* In quote mode, just truncate */
 
 			/* Now set up beginning of next line: skip over whitespace */
 			while (endmark < lp && isspace(linebuff[endmark]))
-				endmark++;  /* Eliminate EOL whitespace */
+				endmark++; /* Eliminate EOL whitespace */
 			if (endmark == lp) {
 				/* Nothing left; eliminate whitespace at beginning
 				            of next line */
-				while (isspace(s[i]) && s[i] != '\r') i++;
+				while (isspace(s[i]) && s[i] != '\r')
+					i++;
 				lp = endmark = 0;
 			}
 			needfill = 1;
@@ -440,7 +459,8 @@ void writestr(const char *s) {
 		}
 
 		/* Now copy remaining text */
-		for (j = 0; endmark < lp; j++, endmark++) linebuff[j] = linebuff[endmark];
+		for (j = 0; endmark < lp; j++, endmark++)
+			linebuff[j] = linebuff[endmark];
 		lp = j;
 
 		/* Now to deal with format codes */
@@ -448,8 +468,9 @@ void writestr(const char *s) {
 			i++;
 			if (bold_mode) { /* Translate as BOLD toggle */
 				if (textbold)
-					agt_textcolor(-2);  /* Turn bold off */
-				else agt_textcolor(-1); /* Turn bold on */
+					agt_textcolor(-2); /* Turn bold off */
+				else
+					agt_textcolor(-1); /* Turn bold on */
 				textbold = !textbold;
 			} else /* translate as BLACK */
 				agt_textcolor(0);
@@ -465,8 +486,6 @@ void writestr(const char *s) {
 	}
 }
 
-
-
 void writeln(const char *s) {
 	int i, pad;
 	char *padstr;
@@ -474,7 +493,8 @@ void writeln(const char *s) {
 	if (center_on && (int)strlen(s) + curr_x < screen_width) {
 		pad = (screen_width - strlen(s)) / 2;
 		padstr = (char *)rmalloc((pad + 1) * sizeof(char));
-		for (i = 0; i < pad; i++) padstr[i] = ' ';
+		for (i = 0; i < pad; i++)
+			padstr[i] = ' ';
 		padstr[i] = 0;
 		agt_puts(padstr);
 		rfree(padstr);
@@ -491,19 +511,20 @@ void writeln(const char *s) {
 	   the game author presumably knew what they were doing, so honor their
 	   wishes. */
 	if (par_fill_on && needfill == 1)
-		if (aver >= AGX00) agt_newline();
-		else savenl = 1;
+		if (aver >= AGX00)
+			agt_newline();
+		else
+			savenl = 1;
 	else if (needfill != 2)
 		agt_newline();
 	needfill = 0;
 }
 
-
 static char fixstatchar(uchar c)
 /* Eliminate formating characters in the status line */
 {
 	if (c == '\t' || c <= LAST_TEXTCODE ||
-	        (c == FORMAT_CODE) || c == '\r' || c == '\n')
+	    (c == FORMAT_CODE) || c == '\r' || c == '\n')
 		return ' ';
 	return c;
 }
@@ -518,43 +539,50 @@ void print_statline(void)
 	s = (char *)rmalloc((status_width + 1) * sizeof(char));
 
 	/* If both strings empty, don't print the status line */
-	if (l_stat[0] == 0 && r_stat[0] == 0 && !lastline) return;
+	if (l_stat[0] == 0 && r_stat[0] == 0 && !lastline)
+		return;
 	lastline = (l_stat[0] || r_stat[0]);
 
 	i = status_width - strlen(l_stat) - strlen(r_stat);
 
 	j = 0;
 	if (r_stat[0] == 0) { /* Center the status line */
-		while (j < i / 2) s[j++] = ' ';
+		while (j < i / 2)
+			s[j++] = ' ';
 		i -= j;
 	} else if (i > 6) {
 		s[j++] = ' ';
 		i -= 2;
-	}  /* If statline is wide enough, put a
+	} /* If statline is wide enough, put a
                        space on each side */
 
-	if ((int)strlen(l_stat) < status_width)  /* Copy left side of status line into s*/
-		for (t = l_stat; *t != 0; t++) s[j++] = fixstatchar(*t);
+	if ((int)strlen(l_stat) < status_width) /* Copy left side of status line into s*/
+		for (t = l_stat; *t != 0; t++)
+			s[j++] = fixstatchar(*t);
 
-	for (; i > 0; i--) s[j++] = ' '; /* Insert space between left and right sides */
+	for (; i > 0; i--)
+		s[j++] = ' '; /* Insert space between left and right sides */
 
 	if (j + (int)strlen(r_stat) <= status_width) /*Copy right side into s */
-		for (t = r_stat; *t != 0; t++) s[j++] = fixstatchar(*t);
+		for (t = r_stat; *t != 0; t++)
+			s[j++] = fixstatchar(*t);
 
-	while (j < status_width) s[j++] = ' '; /* Pad any extra width with spaces */
-	s[j] = 0; /* Put end of string marker */
-	agt_statline(s); /* Output it */
+	while (j < status_width)
+		s[j++] = ' '; /* Pad any extra width with spaces */
+	s[j] = 0;         /* Put end of string marker */
+	agt_statline(s);  /* Output it */
 	rfree(s);
 }
-
 
 void padout(int padleng) {
 	int i;
 	char *pstr;
 
-	if (padleng <= 0) return;
+	if (padleng <= 0)
+		return;
 	pstr = (char *)rmalloc(padleng + 1);
-	for (i = 0; i < padleng; i++) pstr[i] = ' ';
+	for (i = 0; i < padleng; i++)
+		pstr[i] = ' ';
 	pstr[padleng] = 0;
 	writestr(pstr);
 	free(pstr);
@@ -564,7 +592,8 @@ static int textwidth(char *s) {
 	int n;
 
 	n = 0;
-	for (; *s != 0; s++) n += (*s == '\t') ? TAB_SIZE : 1;
+	for (; *s != 0; s++)
+		n += (*s == '\t') ? TAB_SIZE : 1;
 	return n;
 }
 
@@ -575,19 +604,22 @@ void textbox(char *(txt[]), int len, unsigned long flags)
 	int *linewidth;
 
 	agt_textcolor(7);
-	if (flags & TB_BOLD) agt_textcolor(-1);
-	else agt_textcolor(-2);
+	if (flags & TB_BOLD)
+		agt_textcolor(-1);
+	else
+		agt_textcolor(-2);
 
 	linewidth = (int *)rmalloc(len * sizeof(int));
 
 	width = 0; /* This contains the maximum width of any line */
 	for (i = 0; i < len; i++) {
 		linewidth[i] = textwidth(txt[i]);
-		if (linewidth[i] > width) width = linewidth[i];
+		if (linewidth[i] > width)
+			width = linewidth[i];
 	}
 
 	agt_makebox(width, len, flags & ~(TB_BOLD | TB_CENTER));
-	quotemode = 1;  /* So newlines will cause truncation rather than a
+	quotemode = 1; /* So newlines will cause truncation rather than a
            real newline */
 	for (i = 0; i < len; i++) {
 		padwidth = width - linewidth[i]; /* Amount of padding we need */
@@ -597,7 +629,8 @@ void textbox(char *(txt[]), int len, unsigned long flags)
 		}
 		writestr(txt[i]);
 		padout(padwidth);
-		if (i != len - 1) agt_qnewline();
+		if (i != len - 1)
+			agt_qnewline();
 	}
 	agt_endbox();
 	quotemode = 0; /* Back to normal */
@@ -605,7 +638,6 @@ void textbox(char *(txt[]), int len, unsigned long flags)
 	agt_textcolor(7);
 	textbold = 0;
 }
-
 
 #ifndef REPLACE_MENU
 
@@ -616,21 +648,25 @@ int agt_menu(const char *header, int size, int width, menuentry *menu)
 	char sbuff[10];
 	int numcol, colheight;
 
-	if (size == 0) return 0;
+	if (size == 0)
+		return 0;
 
 	width = width + 5;
 	numcol = screen_width / width;
 	colheight = size / numcol;
-	if (size % numcol != 0) colheight++;
+	if (size % numcol != 0)
+		colheight++;
 
 	writeln(header);
 	for (i = 0; i < colheight; i++) {
 		for (j = 0; j < numcol; j++) {
-			if (j * colheight + i >= size) break;
+			if (j * colheight + i >= size)
+				break;
 			sprintf(sbuff, "%2d.", j * colheight + i + 1);
 			writestr(sbuff);
 			writestr(menu[j * colheight + i]);
-			if (j < numcol - 1) padout(width - 3 - strlen(menu[j * colheight + i]));
+			if (j < numcol - 1)
+				padout(width - 3 - strlen(menu[j * colheight + i]));
 		}
 		writeln("");
 	}
@@ -645,19 +681,19 @@ int agt_menu(const char *header, int size, int width, menuentry *menu)
 
 #endif /* REPLACE_MENU */
 
-
-
 void prompt_out(int n)
 /* n=1 standard prompt
    n=2 question prompt */
 {
 	agt_textcolor(7);
-	if (PURE_INPUT && n == 1) agt_textcolor(-1);
+	if (PURE_INPUT && n == 1)
+		agt_textcolor(-1);
 	if (n == 1) {
 		agt_newline();
 		gen_sysmsg(1, ">", MSG_MAIN, NULL);
 	}
-	if (n == 2) agt_puts("? ");
+	if (n == 2)
+		agt_puts("? ");
 	agt_textcolor(7);
 }
 
@@ -667,12 +703,10 @@ void agt_waitkey(void) {
 	agt_getkey(0);
 }
 
-
 void wait_return(void) {
 	writeln("          --- HIT ANY KEY ---");
 	agt_waitkey();
 }
-
 
 rbool yesno(const char *s)
 /* True for yes, false for no. */
@@ -689,7 +723,6 @@ rbool yesno(const char *s)
 	} while (c != 'y' && c != 'n' && !quitflag);
 	return (c == 'y');
 }
-
 
 void set_test_mode(fc_type fc) {
 	const char *errstr;
@@ -717,9 +750,7 @@ void set_test_mode(fc_type fc) {
 		fatal("Couldn't open script file.");
 }
 
-
 #ifndef REPLACE_GETFILE
-
 
 #ifdef UNIX_IO
 
@@ -728,7 +759,6 @@ extern const char *extname[]; /* From filename.c */
 static rbool check_fname(char *name, filetype ext) {
 	return 0 == strcmp(name + strlen(name) - strlen(extname[ext]), extname[ext]);
 }
-
 
 static void list_files(char *type, filetype ext) {
 	DIR *currdir;
@@ -743,7 +773,8 @@ static void list_files(char *type, filetype ext) {
 	filecnt = listsize = 0;
 	maxleng = 0;
 	currdir = opendir(".");
-	if (currdir == NULL) return; /* Nothing we can do except give up */
+	if (currdir == NULL)
+		return; /* Nothing we can do except give up */
 	do {
 		entry = readdir(currdir);
 		if (entry != NULL && check_fname(entry->d_name, ext)) {
@@ -758,12 +789,14 @@ static void list_files(char *type, filetype ext) {
 				filelist[filecnt][screen_width - 1] = 0;
 				i = screen_width - 1;
 			}
-			if (i > maxleng) maxleng = i;
+			if (i > maxleng)
+				maxleng = i;
 			filecnt++;
 		}
 	} while (entry != NULL);
 	closedir(currdir);
-	if (filecnt == 0) return; /* No files */
+	if (filecnt == 0)
+		return; /* No files */
 
 	numcols = (screen_width - 1) / (maxleng + 2); /* Two spaces between columns */
 	if (numcols < 1)
@@ -778,7 +811,8 @@ static void list_files(char *type, filetype ext) {
 		writeln("");
 		for (j = 0; j < numcols; j++)
 			if (i + j * height < filecnt) {
-				if (maxleng + 2 <= screen_width - 1) writestr("  ");
+				if (maxleng + 2 <= screen_width - 1)
+					writestr("  ");
 				writestr(filelist[i + j * height]);
 				padout(maxleng - strlen(filelist[i + j * height]));
 				rfree(filelist[i + j * height]);
@@ -788,9 +822,6 @@ static void list_files(char *type, filetype ext) {
 	rfree(filelist);
 }
 #endif /* UNIX_IO */
-
-
-
 
 /* This opens the file refered to by fname and returns it */
 static genfile uf_open(fc_type fc, filetype ext, rbool rw) {
@@ -813,7 +844,8 @@ static genfile uf_open(fc_type fc, filetype ext, rbool rw) {
 		}
 	} else
 		f = readopen(fc, ext, &errstr);
-	if (errstr != NULL) writeln(errstr);
+	if (errstr != NULL)
+		writeln(errstr);
 	return f;
 }
 
@@ -821,14 +853,13 @@ static fc_type last_save = NULL;
 static fc_type last_log = NULL;
 static fc_type last_script = NULL;
 
-
 genfile get_user_file(int ft)
 /* ft= 0:script, 1:save 2:restore, 3:log(read) 4:log(write)  */
 /* Should return file in open state, ready to be read or written to,
    as the case may be */
 {
 	/* int extlen;*/
-	rbool rw;  /* True if writing, false if reading */
+	rbool rw; /* True if writing, false if reading */
 	filetype ext;
 	genfile fd;
 	fc_type def_fc, fc;
@@ -880,7 +911,8 @@ genfile get_user_file(int ft)
 	writestr(" ");
 #endif
 		writestr("Enter ");
-	if (ftype != NULL) writestr(ftype);
+	if (ftype != NULL)
+		writestr(ftype);
 	writestr("file name");
 	if (def_fc != NULL) {
 		char *s;
@@ -892,12 +924,15 @@ genfile get_user_file(int ft)
 	}
 	writestr(": ");
 
-	if (PURE_INPUT) agt_textcolor(-1);
+	if (PURE_INPUT)
+		agt_textcolor(-1);
 	fname = agt_input(4);
-	if (PURE_INPUT) agt_textcolor(-2);
+	if (PURE_INPUT)
+		agt_textcolor(-2);
 
 	/* Delete whitespace before and after the file name. */
-	for (p = fname; isspace(*p); p++);
+	for (p = fname; isspace(*p); p++)
+		;
 	if (*p == 0) { /* Line is all whitespace; use default if there is one */
 		if (def_fc == NULL) {
 			writeln("Never mind.");
@@ -907,11 +942,12 @@ genfile get_user_file(int ft)
 			rfree(fname);
 			fc = def_fc;
 		}
-	} else {   /* Line is _not_ all whitespace: we have a file name */
+	} else { /* Line is _not_ all whitespace: we have a file name */
 		for (q = fname; *p != 0; p++, q++)
 			*q = *p;
 		q--;
-		while (isspace(*q)) q--;
+		while (isspace(*q))
+			q--;
 		q++;
 		*q = 0;
 		fc = init_file_context(fname, ext);
@@ -920,7 +956,8 @@ genfile get_user_file(int ft)
 	fd = uf_open(fc, ext, rw);
 
 	if (!filevalid(fd, ext)) {
-		if (fc != def_fc) release_file_context(&fc);
+		if (fc != def_fc)
+			release_file_context(&fc);
 		return fd;
 	}
 
@@ -941,10 +978,10 @@ genfile get_user_file(int ft)
 		last_log = fc;
 		break;
 	}
-	if (fc != def_fc) release_file_context(&def_fc);
+	if (fc != def_fc)
+		release_file_context(&def_fc);
 	return fd;
 }
-
 
 void set_default_filenames(fc_type fc) {
 	last_save = convert_file_context(fc, fSAV, NULL);
@@ -952,27 +989,24 @@ void set_default_filenames(fc_type fc) {
 	last_script = convert_file_context(fc, fSCR, NULL);
 }
 
-
-
-#endif  /* REPLACE_GETFILE */
-
-
-
+#endif /* REPLACE_GETFILE */
 
 void script(uchar onp) {
 	if (onp == script_on)
-		if (onp == 0) writeln("Scripting wasn't on.");
-		else writeln("Scripting is already on.");
+		if (onp == 0)
+			writeln("Scripting wasn't on.");
+		else
+			writeln("Scripting is already on.");
 	else if (onp == 1) {
 		scriptfile = get_user_file(0);
-		if (filevalid(scriptfile, fSCR)) script_on = 1;
+		if (filevalid(scriptfile, fSCR))
+			script_on = 1;
 	} else if (filevalid(scriptfile, fSCR)) {
 		close_pfile(scriptfile, 0);
 		scriptfile = BAD_TEXTFILE;
 		script_on = 0;
 	}
 }
-
 
 void logon(void) {
 	if (logflag & 1) {
@@ -985,14 +1019,14 @@ void logon(void) {
 }
 
 void replay(int delay) {
-	if (logflag & 2) return; /* Nested replays are meaningless */
+	if (logflag & 2)
+		return; /* Nested replays are meaningless */
 	log_in = get_user_file(3);
 	if (filevalid(log_in, fLOG)) {
 		logflag |= 2;
 		logdelay = delay;
 	}
 }
-
 
 /* These two are intended to be called by the platform-dependent
    interface (e.g. if the user had chosen these from some general purpose
@@ -1014,7 +1048,6 @@ void agt_restart(void) {
 void agt_quit(void) {
 	doing_restore = 4;
 }
-
 
 /* This should be rmalloc'd */
 static fc_type newgame_fc;
@@ -1120,7 +1153,6 @@ void parse_options(char *opt, char *next) {
 extern rbool use_bios;
 #endif
 
-
 int main(int argc, char *argv[]) {
 	int i;
 	char *gamefile;
@@ -1134,15 +1166,15 @@ int main(int argc, char *argv[]) {
 	for (i = 1; i < argc; i++)
 		if (argv[i][0] == '-' && !end_cmd_options)
 			parse_options(argv[i] + 1, argv[i + 1]);
-#ifdef MSDOS  /* For backward compatibility w/ original AGT interpreters */
-		else if (argv[i][0] == '/' && tolower(argv[i][1]) == 'b'
-		         && argv[i][2] == 0)
+#ifdef MSDOS /* For backward compatibility w/ original AGT interpreters */
+		else if (argv[i][0] == '/' && tolower(argv[i][1]) == 'b' && argv[i][2] == 0)
 			biosvar = 1;
 #endif
 		else if (gamefile == NULL)
 			gamefile = argv[i];
-		else fatal("Please specify only one game\n");
-	if (gamefile == NULL)  {
+		else
+			fatal("Please specify only one game\n");
+	if (gamefile == NULL) {
 		helpmsg();
 		exit(EXIT_FAILURE);
 	}

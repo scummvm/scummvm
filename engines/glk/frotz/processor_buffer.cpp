@@ -20,48 +20,47 @@
  *
  */
 
-#include "glk/frotz/processor.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
+#include "glk/frotz/processor.h"
 
 namespace Glk {
 namespace Frotz {
 
 const char *const Processor::ERR_MESSAGES[ERR_NUM_ERRORS] = {
-	"Text buffer overflow",
-	"Store out of dynamic memory",
-	"Division by zero",
-	"Illegal object",
-	"Illegal attribute",
-	"No such property",
-	"Stack overflow",
-	"Call to illegal address",
-	"Call to non-routine",
-	"Stack underflow",
-	"Illegal opcode",
-	"Bad stack frame",
-	"Jump to illegal address",
-	"Can't save while in interrupt",
-	"Nesting stream #3 too deep",
-	"Illegal window",
-	"Illegal window property",
-	"Print at illegal address",
-	"Illegal dictionary word length",
-	"@jin called with object 0",
-	"@get_child called with object 0",
-	"@get_parent called with object 0",
-	"@get_sibling called with object 0",
-	"@get_prop_addr called with object 0",
-	"@get_prop called with object 0",
-	"@put_prop called with object 0",
-	"@clear_attr called with object 0",
-	"@set_attr called with object 0",
-	"@test_attr called with object 0",
-	"@move_object called moving object 0",
-	"@move_object called moving into object 0",
-	"@remove_object called with object 0",
-	"@get_next_prop called with object 0"
-};
+    "Text buffer overflow",
+    "Store out of dynamic memory",
+    "Division by zero",
+    "Illegal object",
+    "Illegal attribute",
+    "No such property",
+    "Stack overflow",
+    "Call to illegal address",
+    "Call to non-routine",
+    "Stack underflow",
+    "Illegal opcode",
+    "Bad stack frame",
+    "Jump to illegal address",
+    "Can't save while in interrupt",
+    "Nesting stream #3 too deep",
+    "Illegal window",
+    "Illegal window property",
+    "Print at illegal address",
+    "Illegal dictionary word length",
+    "@jin called with object 0",
+    "@get_child called with object 0",
+    "@get_parent called with object 0",
+    "@get_sibling called with object 0",
+    "@get_prop_addr called with object 0",
+    "@get_prop called with object 0",
+    "@put_prop called with object 0",
+    "@clear_attr called with object 0",
+    "@set_attr called with object 0",
+    "@test_attr called with object 0",
+    "@move_object called moving object 0",
+    "@move_object called moving into object 0",
+    "@remove_object called with object 0",
+    "@get_next_prop called with object 0"};
 
 void Processor::flush_buffer() {
 	/* Make sure we stop when flush_buffer is called from flush_buffer.
@@ -144,7 +143,7 @@ void Processor::print_long(uint value, int base) {
 	}
 }
 
-void Processor::new_line()  {
+void Processor::new_line() {
 	flush_buffer();
 	stream_new_line();
 }
@@ -155,8 +154,7 @@ void Processor::runtimeError(ErrorCode errNum) {
 	if (errNum <= 0 || errNum > ERR_NUM_ERRORS)
 		return;
 
-	if (_err_report_mode == ERR_REPORT_FATAL
-		|| (!_ignore_errors && errNum <= ERR_MAX_FATAL)) {
+	if (_err_report_mode == ERR_REPORT_FATAL || (!_ignore_errors && errNum <= ERR_MAX_FATAL)) {
 		flush_buffer();
 		error("%s", ERR_MESSAGES[errNum - 1]);
 		return;
@@ -165,8 +163,7 @@ void Processor::runtimeError(ErrorCode errNum) {
 	wasfirst = (_errorCount[errNum - 1] == 0);
 	_errorCount[errNum - 1]++;
 
-	if ((_err_report_mode == ERR_REPORT_ALWAYS)
-		|| (_err_report_mode == ERR_REPORT_ONCE && wasfirst)) {
+	if ((_err_report_mode == ERR_REPORT_ALWAYS) || (_err_report_mode == ERR_REPORT_ONCE && wasfirst)) {
 		offset_t pc;
 		GET_PC(pc);
 		print_string("Warning: ");

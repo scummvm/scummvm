@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLemonDispensor, CBackground)
-	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(FrameMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 bool CLemonDispensor::_isSummer;
@@ -36,7 +36,7 @@ int CLemonDispensor::_hitCounter;
 CGameObject *CLemonDispensor::_draggingObject;
 
 CLemonDispensor::CLemonDispensor() : CBackground(),
-	_unused1(0), _origPt(Point(9, 15)), _onDispensor(false) {
+                                     _unused1(0), _origPt(Point(9, 15)), _onDispensor(false) {
 }
 
 void CLemonDispensor::save(SimpleFile *file, int indent) {
@@ -85,7 +85,7 @@ bool CLemonDispensor::FrameMsg(CFrameMsg *msg) {
 
 	if (_draggingObject) {
 		Point pt(_origPt.x + _draggingObject->_bounds.left,
-			_origPt.y + _draggingObject->_bounds.top);
+		         _origPt.y + _draggingObject->_bounds.top);
 		bool flag = checkPoint(pt, true);
 
 		if (!_onDispensor) {

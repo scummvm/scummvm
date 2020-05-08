@@ -21,8 +21,8 @@
  */
 
 #include "titanic/star_control/viewport.h"
-#include "titanic/star_control/fvector.h"
 #include "titanic/debugger.h"
+#include "titanic/star_control/fvector.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 
@@ -46,8 +46,7 @@ CViewport::CViewport() {
 	_pixel2OffSetX = 0.0;
 }
 
-CViewport::CViewport(CViewport *src) :
-		_orientation(src->_orientation), _currentPose(src->_currentPose), _rawPose(src->_rawPose) {
+CViewport::CViewport(CViewport *src) : _orientation(src->_orientation), _currentPose(src->_currentPose), _rawPose(src->_rawPose) {
 	_position = src->_position;
 	_spin = src->_spin;
 	_frontClip = src->_frontClip;
@@ -86,7 +85,7 @@ void CViewport::load(SimpleFile *file, int param) {
 	_width = widthHeight & 0xffff;
 	_height = widthHeight >> 16;
 	int field24 = file->readNumber(); //0 = White, 2 = Pink
-	_starColor = (StarColor) field24;
+	_starColor = (StarColor)field24;
 
 	for (int idx = 0; idx < 2; ++idx)
 		_valArray[idx] = file->readFloat();
@@ -186,7 +185,7 @@ void CViewport::randomizeOrientation() {
 }
 
 void CViewport::changeStarColorPixel(StarMode mode, double pixelOffSet) {
-	// pixelOffset is usually 0.0, 30.0, or 28000.0 
+	// pixelOffset is usually 0.0, 30.0, or 28000.0
 	if (mode == MODE_PHOTO) {
 		_valArray[0] = pixelOffSet;
 		_valArray[1] = -pixelOffSet;
@@ -225,8 +224,7 @@ FPose CViewport::getRawPose() {
 	return _rawPose;
 }
 
-
-// TODO: should index be used here like 
+// TODO: should index be used here like
 // getRelativePosCentering/getRelativePosCentering2?
 // CCamera::getRelativePosCentering is calling this with an index of
 // 2 which corresponds to _isZero which has value 0.
@@ -242,7 +240,7 @@ FVector CViewport::getRelativePosCentering(int index, const FVector &src) {
 	FVector tv = src.matProdRowVect(pose);
 
 	double val;
-	if (index <2) {
+	if (index < 2) {
 		val = _valArray[index];
 	} else if (index == 2) {
 		val = _isZero;
@@ -252,8 +250,7 @@ FVector CViewport::getRelativePosCentering(int index, const FVector &src) {
 		val = _pixel2OffSetX;
 	}
 
-	dest._x = (val + tv._x)
-		* _centerVector._x / (_centerVector._y * tv._z);
+	dest._x = (val + tv._x) * _centerVector._x / (_centerVector._y * tv._z);
 	dest._y = (tv._y * _centerVector._x) / (_centerVector._z * tv._z);
 	dest._z = tv._z;
 	return dest;
@@ -266,7 +263,7 @@ FVector CViewport::getRelativePosCenteringRaw(int index, const FVector &src) {
 	FVector tv = src.matProdRowVect(pose);
 
 	double val;
-	if (index <2) {
+	if (index < 2) {
 		val = _valArray[index];
 	} else if (index == 2) {
 		val = _isZero;
@@ -276,8 +273,7 @@ FVector CViewport::getRelativePosCenteringRaw(int index, const FVector &src) {
 		val = _pixel2OffSetX;
 	}
 
-	dest._x = (val + tv._x)
-		* _centerVector._x / (_centerVector._y * tv._z);
+	dest._x = (val + tv._x) * _centerVector._x / (_centerVector._y * tv._z);
 	dest._y = (tv._y * _centerVector._x) / (_centerVector._z * tv._z);
 	dest._z = tv._z;
 	return dest;

@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -142,7 +142,7 @@ private:
 	bool _activePrisonerFl;
 
 	int _animationMode;
-	int  _prisonerMessageId;
+	int _prisonerMessageId;
 	int _fieldCollisionCounter;
 
 	uint32 _lastFrameTime;
@@ -304,6 +304,7 @@ private:
 
 	void handleRexDialogues(int quote);
 	void handleSlacheDialogs(int quoteId, int counter, uint32 timer);
+
 public:
 	Scene319(MADSEngine *vm);
 	void synchronize(Common::Serializer &s) override;

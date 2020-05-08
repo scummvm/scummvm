@@ -23,11 +23,11 @@
 #ifndef SCUMM_PLAYERS_PLAYER_APPLEII_H
 #define SCUMM_PLAYERS_PLAYER_APPLEII_H
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "common/mutex.h"
 #include "common/scummsys.h"
 #include "scumm/music.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
 
 namespace Scumm {
 
@@ -142,12 +142,10 @@ private:
 	}
 
 public:
-	SampleConverter() :
-		_cyclesPerSampleFP(0),
-		_missingCyclesFP(0),
-		_sampleCyclesSumFP(0),
-		_volume(_maxVolume)
-	{}
+	SampleConverter() : _cyclesPerSampleFP(0),
+	                    _missingCyclesFP(0),
+	                    _sampleCyclesSumFP(0),
+	                    _volume(_maxVolume) {}
 
 	~SampleConverter() {}
 
@@ -184,7 +182,7 @@ public:
 			cyclesFP -= n;
 			_missingCyclesFP -= n;
 			if (_missingCyclesFP == 0) {
-				addSampleToBuffer(2*32767 * _sampleCyclesSumFP / _cyclesPerSampleFP - 32767);
+				addSampleToBuffer(2 * 32767 * _sampleCyclesSumFP / _cyclesPerSampleFP - 32767);
 			} else {
 				return;
 			}
@@ -214,10 +212,10 @@ private:
 	static const int PREC_SHIFT = 7;
 
 private:
-	int _cyclesPerSampleFP;   /* (fixed precision) */
-	int _missingCyclesFP;     /* (fixed precision) */
-	int _sampleCyclesSumFP;   /* (fixed precision) */
-	int _volume; /* 0 - 256 */
+	int _cyclesPerSampleFP; /* (fixed precision) */
+	int _missingCyclesFP;   /* (fixed precision) */
+	int _sampleCyclesSumFP; /* (fixed precision) */
+	int _volume;            /* 0 - 256 */
 	static const int _maxVolume = 256;
 	SampleBuffer _buffer;
 };
@@ -231,6 +229,7 @@ public:
 	virtual void init(Player_AppleII *player, const byte *params) = 0;
 	/* returns true if finished */
 	virtual bool update() = 0;
+
 protected:
 	Player_AppleII *_player;
 };
@@ -248,8 +247,8 @@ public:
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int  getSoundStatus(int sound) const override;
-	int  getMusicTimer() override;
+	int getSoundStatus(int sound) const override;
+	int getMusicTimer() override;
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;

@@ -21,28 +21,25 @@
  */
 
 #include "glk/alan3/syntax.h"
-#include "glk/alan3/word.h"
-#include "glk/alan3/msg.h"
-#include "glk/alan3/lists.h"
 #include "glk/alan3/compatibility.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/msg.h"
+#include "glk/alan3/word.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA */
-SyntaxEntry *stxs;      /* Syntax table pointer */
-
+SyntaxEntry *stxs; /* Syntax table pointer */
 
 /* PRIVATE TYPES & DATA */
-
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 /*======================================================================*/
 ElementEntry *elementTreeOf(SyntaxEntry *stx) {
-	return (ElementEntry *) pointerTo(stx->elms);
+	return (ElementEntry *)pointerTo(stx->elms);
 }
-
 
 /*----------------------------------------------------------------------*/
 static SyntaxEntry *findSyntaxEntryForPreBeta2(int verbCode, SyntaxEntry *foundStx) {
@@ -55,7 +52,6 @@ static SyntaxEntry *findSyntaxEntryForPreBeta2(int verbCode, SyntaxEntry *foundS
 	return (foundStx);
 }
 
-
 /*----------------------------------------------------------------------*/
 static SyntaxEntry *findSyntaxEntry(int verbCode) {
 	SyntaxEntry *stx;
@@ -66,7 +62,6 @@ static SyntaxEntry *findSyntaxEntry(int verbCode) {
 		}
 	return NULL;
 }
-
 
 /*======================================================================*/
 SyntaxEntry *findSyntaxTreeForVerb(CONTEXT, int verbCode) {
@@ -81,7 +76,6 @@ SyntaxEntry *findSyntaxTreeForVerb(CONTEXT, int verbCode) {
 		R0CALL1(error, M_WHAT)
 	return foundStx;
 }
-
 
 /*======================================================================*/
 char *parameterNameInSyntax(int syntaxNumber, int parameterNumber) {

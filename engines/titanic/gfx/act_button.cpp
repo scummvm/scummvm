@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CActButton, CSTButton)
-	ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseButtonUpMsg)
 END_MESSAGE_MAP()
 
 CActButton::CActButton() : CSTButton() {

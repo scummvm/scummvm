@@ -129,10 +129,10 @@ void DrasculaEngine::showMenu() {
 
 		if (h != 0) {
 			copyBackground(_polX[n], _polY[n], _itemLocations[n].x, _itemLocations[n].y,
-							OBJWIDTH, OBJHEIGHT, srcSurface, screenSurface);
+			               OBJWIDTH, OBJHEIGHT, srcSurface, screenSurface);
 		}
 		copyRect(_x1d_menu[h], _y1d_menu[h], _itemLocations[n].x, _itemLocations[n].y,
-				OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
+		         OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 	}
 
 	if (x < 7)
@@ -146,7 +146,7 @@ void DrasculaEngine::clearMenu() {
 		if (_mouseX > _verbBarX[n] && _mouseX < _verbBarX[n + 1])
 			verbActivated = 0;
 		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
-						OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
+		         OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 		verbActivated = 1;
 	}
 }

@@ -23,12 +23,12 @@
 #ifndef TITANIC_STAR_FIELD_H
 #define TITANIC_STAR_FIELD_H
 
-#include "titanic/star_control/star_field_base.h"
-#include "titanic/star_control/star_closeup.h"
-#include "titanic/star_control/star_markers.h"
-#include "titanic/star_control/star_crosshairs.h"
 #include "titanic/star_control/const_boundaries.h"
 #include "titanic/star_control/constellations.h"
+#include "titanic/star_control/star_closeup.h"
+#include "titanic/star_control/star_crosshairs.h"
+#include "titanic/star_control/star_field_base.h"
+#include "titanic/star_control/star_markers.h"
 
 namespace Titanic {
 
@@ -48,6 +48,7 @@ private:
 	bool _showBox;
 	bool _closeToMarker;
 	bool _isSolved;
+
 private:
 	/**
 	 * Draws the big square box in the middle of the screen
@@ -59,6 +60,7 @@ private:
 	 * is close enough to it, draw a lock line
 	 */
 	void renderLockLine(CSurfaceArea *surfaceArea, CCamera *camera);
+
 public:
 	CStarField();
 
@@ -153,7 +155,7 @@ public:
 	  * Gets the lock distance to a star
 	  */
 	double lockDistance(CSurfaceArea *surfaceArea, CCamera *camera,
-		FVector &screenCoord, FVector &worldCoord, FVector &photoPos);
+	                    FVector &screenCoord, FVector &worldCoord, FVector &photoPos);
 
 	void fn6(CVideoSurface *surface, CCamera *camera);
 
@@ -173,7 +175,7 @@ public:
 	 * Called when the starfield is clicked
 	 */
 	bool mouseButtonDown(CVideoSurface *surface, CCamera *camera,
-		int flags, const Common::Point &pt);
+	                     int flags, const Common::Point &pt);
 
 	/**
 	 * Gets a random star

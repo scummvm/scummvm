@@ -20,8 +20,8 @@
  *
  */
 
-#include "osys_n64.h"
 #include "backends/timer/default/default-timer.h"
+#include "osys_n64.h"
 
 void checkTimers(void) {
 	OSystem_N64 *osys = (OSystem_N64 *)g_system;
@@ -36,11 +36,13 @@ void checkTimers(void) {
 }
 
 void disableAudioPlayback(void) {
-	if (!_audioEnabled) return;
+	if (!_audioEnabled)
+		return;
 
 	_audioEnabled = false;
 
-	while (AI_busy()); // Wait for audio to stop
+	while (AI_busy())
+		; // Wait for audio to stop
 }
 
 void enableAudioPlayback(void) {
@@ -93,7 +95,8 @@ void sndCallback() {
 }
 
 void refillAudioBuffers(void) {
-	if (!_audioEnabled) return;
+	if (!_audioEnabled)
+		return;
 
 	OSystem_N64 *osys = (OSystem_N64 *)g_system;
 	byte *sndBuf;

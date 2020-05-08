@@ -20,17 +20,18 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/point_scaler.h"
 #include "ultima/ultima8/graphics/manips.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 // Very very simple point scaler
-template<class uintX, class Manip, class uintS = uintX> class PointScalerInternal {
+template<class uintX, class Manip, class uintS = uintX>
+class PointScalerInternal {
 public:
-	static bool Scale(Texture *tex  , int32 sx, int32 sy, int32 sw, int32 sh,
+	static bool Scale(Texture *tex, int32 sx, int32 sy, int32 sw, int32 sh,
 	                  uint8 *pixel, int32 dw, int32 dh, int32 pitch, bool clamp_src) {
 		// Source buffer pointers
 		uintS *texel = reinterpret_cast<uintS *>(tex->getPixels()) + (sy * tex->w + sx);
@@ -38,7 +39,6 @@ public:
 		uintS *tline_end = texel + sw;
 		uintS *tex_end = texel + sh * tex->w;
 		int tex_diff = tex->w - sw;
-
 
 		// First detect integer up scalings, since they are 'easy'
 		bool x_intscale = ((dw / sw) * sw) == dw;
@@ -49,7 +49,7 @@ public:
 		//
 		if ((sw * 2 == dw) && (sh * 2 == dh)) {
 			uint8 *pixel2 = pixel + pitch;
-			int p_diff    = (pitch * 2) - (dw * sizeof(uintX));
+			int p_diff = (pitch * 2) - (dw * sizeof(uintX));
 
 			// Src Loop Y
 			do {
@@ -61,12 +61,12 @@ public:
 					*(reinterpret_cast<uintX *>(pixel + sizeof(uintX))) = p;
 					*(reinterpret_cast<uintX *>(pixel2 + 0)) = p;
 					*(reinterpret_cast<uintX *>(pixel2 + sizeof(uintX))) = p;
-					pixel  += sizeof(uintX) * 2;
+					pixel += sizeof(uintX) * 2;
 					pixel2 += sizeof(uintX) * 2;
 					texel++;
 				} while (texel != tline_end);
 
-				pixel  += p_diff;
+				pixel += p_diff;
 				pixel2 += p_diff;
 
 				texel += tex_diff;
@@ -111,7 +111,7 @@ public:
 						px_end += pitch;
 					} while (pixel != py_end);
 
-					pixel  += block_w - block_h;
+					pixel += block_w - block_h;
 					px_end += block_w - block_h;
 					py_end += block_w;
 					texel++;
@@ -256,7 +256,8 @@ public:
 							pixel += sizeof(uintX);
 							pos_x += sw;
 						}
-						if (!next_block) next_block = pixel;
+						if (!next_block)
+							next_block = pixel;
 
 						blockline_start += pitch;
 
@@ -280,9 +281,7 @@ public:
 
 		return true;
 	}
-
 };
-
 
 PointScaler::PointScaler() : Scaler() {
 	Scale16Nat = PointScalerInternal<uint16, Manip_Nat2Nat_16, uint16>::Scale;

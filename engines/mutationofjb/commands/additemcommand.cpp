@@ -50,4 +50,4 @@ Common::String AddItemCommand::debugString() const {
 	return Common::String::format("ADDITEM '%s'", _item.c_str());
 }
 
-}
+} // namespace MutationOfJB

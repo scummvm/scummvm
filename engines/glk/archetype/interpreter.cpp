@@ -58,7 +58,7 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 	int the_number = -1;
 	String s1;
 	void *p;
-    bool boolval = false;
+	bool boolval = false;
 
 	if (target_type == the_scalar._kind)
 		return true;
@@ -74,8 +74,8 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 	}
 
 	switch (the_scalar._kind) {
-    case NUMERIC:
-        dir_from = 'N';
+	case NUMERIC:
+		dir_from = 'N';
 		the_number = the_scalar._data._numeric.acl_int;
 		break;
 
@@ -87,21 +87,21 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 
 	case TEXT_LIT:
 	case QUOTE_LIT:
-        dir_from = 'S';
+		dir_from = 'S';
 		if (index_xarray(g_vm->Literals, the_scalar._data._msgTextQuote.index, p))
 			s1 = *(StringPtr)p;
 		break;
 
 	case STR_PTR:
 		// string memory will be disposed ONLY if successful convert
-        dir_from = 'S';
+		dir_from = 'S';
 		s1 = *the_scalar._data._str.acl_str;
 		break;
 
 	case IDENT:
 		//with the_scalar do begin
-        dir_from = 'S';
-        
+		dir_from = 'S';
+
 		switch (the_scalar._data._ident.ident_kind) {
 		case ENUMERATE_ID:
 			dir_from = 'N';
@@ -157,7 +157,7 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 
 	if (target_type == STR_PTR || target_type == MESSAGE) {
 		if (the_scalar._kind == STR_PTR)
-			FreeDynStr(the_scalar._data._str.acl_str);	// we know this will succeed
+			FreeDynStr(the_scalar._data._str.acl_str); // we know this will succeed
 
 		the_scalar._kind = target_type;
 
@@ -191,7 +191,7 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 			the_scalar._data._numeric.acl_int = boolval ? 1 : 0;
 			break;
 
-		case  'S':
+		case 'S':
 			s1.trim();
 			the_number = s1.val(&code);
 
@@ -200,14 +200,14 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 			} else {
 				// successful
 				if (the_scalar._kind == STR_PTR)
-					FreeDynStr(the_scalar._data._str.acl_str);		// memory no longer needed
+					FreeDynStr(the_scalar._data._str.acl_str); // memory no longer needed
 
 				the_scalar._kind = NUMERIC;
 				the_scalar._data._numeric.acl_int = the_number;
 			}
 
 			return true;
-			
+
 		default:
 			break;
 		}
@@ -246,13 +246,13 @@ bool result_compare(short comparison, ResultType &r1, ResultType &r2) {
 			verdict = r1._data._numeric.acl_int == r2._data._numeric.acl_int;
 			break;
 		case OP_LT:
-			verdict = r1._data._numeric.acl_int <  r2._data._numeric.acl_int;
+			verdict = r1._data._numeric.acl_int < r2._data._numeric.acl_int;
 			break;
 		case OP_LE:
 			verdict = r1._data._numeric.acl_int <= r2._data._numeric.acl_int;
 			break;
 		case OP_GT:
-			verdict = r1._data._numeric.acl_int >  r2._data._numeric.acl_int;
+			verdict = r1._data._numeric.acl_int > r2._data._numeric.acl_int;
 			break;
 		case OP_GE:
 			verdict = r1._data._numeric.acl_int >= r2._data._numeric.acl_int;
@@ -289,7 +289,7 @@ bool result_compare(short comparison, ResultType &r1, ResultType &r2) {
 			switch (comparison) {
 			case OP_EQ:
 			case OP_NE:
-				verdict = r1._data._reserved.keyword ==  r2._data._reserved.keyword;
+				verdict = r1._data._reserved.keyword == r2._data._reserved.keyword;
 				break;
 			default:
 				break;
@@ -301,7 +301,7 @@ bool result_compare(short comparison, ResultType &r1, ResultType &r2) {
 				switch (comparison) {
 				case OP_EQ:
 				case OP_NE:
-					verdict = r1._data._ident.ident_int ==  r2._data._ident.ident_int;
+					verdict = r1._data._ident.ident_int == r2._data._ident.ident_int;
 					break;
 				default:
 					break;
@@ -449,7 +449,7 @@ bool load_game(Common::ReadStream *f_in) {
 
 	if (fileVersion > VERSION_NUM) {
 		g_vm->writeln("This version of PERFORM is %.1f; file version is %.1f",
-			VERSION_NUM, fileVersion);
+		              VERSION_NUM, fileVersion);
 		g_vm->writeln("Cannot PERFORM this file.");
 		return false;
 	}

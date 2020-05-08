@@ -21,16 +21,16 @@
  */
 
 #include "tsage/blue_force/blueforce_speakers.h"
-#include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/graphics.h"
+#include "tsage/scenes.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
 namespace BlueForce {
 
-VisualSpeaker::VisualSpeaker(): Speaker() {
+VisualSpeaker::VisualSpeaker() : Speaker() {
 	_textWidth = 312;
 	_color1 = 19;
 	_hideObjects = false;
@@ -66,7 +66,7 @@ void VisualSpeaker::synchronize(Serializer &s) {
 void VisualSpeaker::startSpeaking(Action *action) {
 	Speaker::startSpeaking(action);
 	_textPos = Common::Point(_offsetPos.x + BF_GLOBALS._sceneManager._scene->_sceneBounds.left,
-		_offsetPos.y + BF_GLOBALS._sceneManager._scene->_sceneBounds.top);
+	                         _offsetPos.y + BF_GLOBALS._sceneManager._scene->_sceneBounds.top);
 	_numFrames = 0;
 }
 
@@ -120,7 +120,7 @@ void VisualSpeaker::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerGameText::SpeakerGameText(): VisualSpeaker() {
+SpeakerGameText::SpeakerGameText() : VisualSpeaker() {
 	_speakerName = "GAMETEXT";
 	_color1 = 8;
 	_color2 = 19;
@@ -144,14 +144,14 @@ void SpeakerSutter::setText(const Common::String &msg) {
 	_object1.fixPriority(254);
 	_object1.changeZoom(100);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(329);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -159,21 +159,21 @@ void SpeakerSutter::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerDoug::SpeakerDoug(): VisualSpeaker() {
+SpeakerDoug::SpeakerDoug() : VisualSpeaker() {
 	_color1 = 32;
 	_speakerName = "DOUG";
 }
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerJakeNoHead::SpeakerJakeNoHead(): VisualSpeaker() {
+SpeakerJakeNoHead::SpeakerJakeNoHead() : VisualSpeaker() {
 	_color1 = 13;
 	_speakerName = "JAKE_NO_HEAD";
 }
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerHarrison::SpeakerHarrison(): VisualSpeaker() {
+SpeakerHarrison::SpeakerHarrison() : VisualSpeaker() {
 	_color1 = 32;
 	_speakerName = "HARRISON";
 }
@@ -186,14 +186,14 @@ void SpeakerHarrison::setText(const Common::String &msg) {
 	_object1.setStrip2(7);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 277,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.fixPriority(255);
 	_object2.setVisage(325);
 	_object2.setStrip2(6);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 277,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -201,7 +201,7 @@ void SpeakerHarrison::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerJake::SpeakerJake(): VisualSpeaker() {
+SpeakerJake::SpeakerJake() : VisualSpeaker() {
 	_color1 = 13;
 	_color2 = 7;
 	_speakerName = "JAKE";
@@ -215,14 +215,14 @@ void SpeakerJake::setText(const Common::String &msg) {
 	_object1.setStrip2(2);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 38,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(1001);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 38,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -230,7 +230,7 @@ void SpeakerJake::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerJakeJacket::SpeakerJakeJacket(): VisualSpeaker() {
+SpeakerJakeJacket::SpeakerJakeJacket() : VisualSpeaker() {
 	_color1 = 13;
 	_color2 = 7;
 	_speakerName = "JAKEJACKET";
@@ -244,14 +244,14 @@ void SpeakerJakeJacket::setText(const Common::String &msg) {
 	_object1.setStrip2(4);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + _xp,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(1001);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + _xp,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -259,7 +259,7 @@ void SpeakerJakeJacket::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerJakeUniform::SpeakerJakeUniform(): VisualSpeaker() {
+SpeakerJakeUniform::SpeakerJakeUniform() : VisualSpeaker() {
 	_color1 = 13;
 	_color2 = 7;
 	_speakerName = "JAKEUNIFORM";
@@ -273,14 +273,14 @@ void SpeakerJakeUniform::setText(const Common::String &msg) {
 	_object1.setStrip2(3);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(1001);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -288,7 +288,7 @@ void SpeakerJakeUniform::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerJailer::SpeakerJailer(): VisualSpeaker() {
+SpeakerJailer::SpeakerJailer() : VisualSpeaker() {
 	_color1 = 13;
 	_color2 = 7;
 	_speakerName = "JAILER";
@@ -302,14 +302,14 @@ void SpeakerJailer::setText(const Common::String &msg) {
 	_object1.setStrip(6);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(395);
 	_object2.setStrip(5);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -317,7 +317,7 @@ void SpeakerJailer::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerGreen::SpeakerGreen(): VisualSpeaker() {
+SpeakerGreen::SpeakerGreen() : VisualSpeaker() {
 	_color1 = 96;
 	_color2 = 99;
 	_speakerName = "GREEN";
@@ -331,7 +331,7 @@ void SpeakerGreen::setText(const Common::String &msg) {
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -339,7 +339,7 @@ void SpeakerGreen::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerPSutter::SpeakerPSutter(): VisualSpeaker() {
+SpeakerPSutter::SpeakerPSutter() : VisualSpeaker() {
 	_color1 = 20;
 	_color2 = 22;
 	_speakerName = "PSUTTER";
@@ -360,7 +360,7 @@ void SpeakerPSutter::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerJakeRadio::SpeakerJakeRadio(): VisualSpeaker() {
+SpeakerJakeRadio::SpeakerJakeRadio() : VisualSpeaker() {
 	_color1 = 13;
 	_color2 = 7;
 	_speakerName = "JAKE_RADIO";
@@ -368,7 +368,7 @@ SpeakerJakeRadio::SpeakerJakeRadio(): VisualSpeaker() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerLyleHat::SpeakerLyleHat(): VisualSpeaker() {
+SpeakerLyleHat::SpeakerLyleHat() : VisualSpeaker() {
 	_color1 = 29;
 	_color2 = 89;
 	_xp = 75;
@@ -383,14 +383,14 @@ void SpeakerLyleHat::setText(const Common::String &msg) {
 	_object1.setStrip2(4);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + _xp,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(278);
 	_object2.setStrip2(2);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + _xp,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -398,7 +398,7 @@ void SpeakerLyleHat::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerJordan::SpeakerJordan(): VisualSpeaker() {
+SpeakerJordan::SpeakerJordan() : VisualSpeaker() {
 	_color1 = 96;
 	_color2 = 93;
 	_speakerName = "JORDAN";
@@ -412,7 +412,7 @@ void SpeakerJordan::setText(const Common::String &msg) {
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 78));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 78));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -420,7 +420,7 @@ void SpeakerJordan::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerSkip::SpeakerSkip(): VisualSpeaker() {
+SpeakerSkip::SpeakerSkip() : VisualSpeaker() {
 	_color1 = 80;
 	_color2 = 82;
 	_speakerName = "SKIP";
@@ -434,14 +434,14 @@ void SpeakerSkip::setText(const Common::String &msg) {
 	_object1.setStrip2(4);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 282,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(345);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 282,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -449,7 +449,7 @@ void SpeakerSkip::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerSkipB::SpeakerSkipB(): VisualSpeaker() {
+SpeakerSkipB::SpeakerSkipB() : VisualSpeaker() {
 	_color1 = 80;
 	_color2 = 82;
 	_speakerName = "SKIPB";
@@ -464,14 +464,14 @@ void SpeakerSkipB::setText(const Common::String &msg) {
 	_object1.setFrame2(3);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 37,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(347);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 37,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -479,7 +479,7 @@ void SpeakerSkipB::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerCarter::SpeakerCarter(): VisualSpeaker() {
+SpeakerCarter::SpeakerCarter() : VisualSpeaker() {
 	_color1 = 89;
 	_color2 = 95;
 	_speakerName = "CARTER";
@@ -505,7 +505,7 @@ void SpeakerCarter::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerDriver::SpeakerDriver(): VisualSpeaker() {
+SpeakerDriver::SpeakerDriver() : VisualSpeaker() {
 	_color1 = 43;
 	_color2 = 70;
 	_speakerName = "DRIVER";
@@ -519,14 +519,14 @@ void SpeakerDriver::setText(const Common::String &msg) {
 	_object1.setStrip2(8);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 263,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(416);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 263,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -534,7 +534,7 @@ void SpeakerDriver::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerShooter::SpeakerShooter(): VisualSpeaker() {
+SpeakerShooter::SpeakerShooter() : VisualSpeaker() {
 	_color1 = 43;
 	_color2 = 70;
 	_speakerName = "SHOOTER";
@@ -548,14 +548,14 @@ void SpeakerShooter::setText(const Common::String &msg) {
 	_object1.setStrip2(7);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 268,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(418);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 268,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -563,7 +563,7 @@ void SpeakerShooter::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerJim::SpeakerJim(): VisualSpeaker() {
+SpeakerJim::SpeakerJim() : VisualSpeaker() {
 	_color1 = 32;
 	_speakerName = "JIM";
 }
@@ -589,7 +589,7 @@ void SpeakerJim::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerDezi::SpeakerDezi(): VisualSpeaker() {
+SpeakerDezi::SpeakerDezi() : VisualSpeaker() {
 	_color1 = 21;
 	_speakerName = "DEZI";
 }
@@ -609,7 +609,7 @@ void SpeakerDezi::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerJake385::SpeakerJake385(): VisualSpeaker() {
+SpeakerJake385::SpeakerJake385() : VisualSpeaker() {
 	_color1 = 13;
 	_speakerName = "JAKE_385";
 }
@@ -634,7 +634,7 @@ void SpeakerJake385::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerLaura::SpeakerLaura(): VisualSpeaker() {
+SpeakerLaura::SpeakerLaura() : VisualSpeaker() {
 	_color1 = 97;
 	_color2 = 105;
 	_speakerName = "LAURA";
@@ -648,7 +648,7 @@ void SpeakerLaura::setText(const Common::String &msg) {
 	_object2.setStrip2(2);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 38,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -656,7 +656,7 @@ void SpeakerLaura::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerLauraHeld::SpeakerLauraHeld(): VisualSpeaker() {
+SpeakerLauraHeld::SpeakerLauraHeld() : VisualSpeaker() {
 	_color1 = 97;
 	_color2 = 105;
 	_speakerName = "LAURAHELD";
@@ -670,7 +670,7 @@ void SpeakerLauraHeld::setText(const Common::String &msg) {
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 120,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 120));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 120));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -678,7 +678,7 @@ void SpeakerLauraHeld::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerEugene::SpeakerEugene(): VisualSpeaker() {
+SpeakerEugene::SpeakerEugene() : VisualSpeaker() {
 	_color1 = 20;
 	_color2 = 22;
 	_speakerName = "EUGENE";
@@ -692,14 +692,14 @@ void SpeakerEugene::setText(const Common::String &msg) {
 	_object1.setStrip2(3);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(465);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -707,7 +707,7 @@ void SpeakerEugene::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerWeasel::SpeakerWeasel(): VisualSpeaker() {
+SpeakerWeasel::SpeakerWeasel() : VisualSpeaker() {
 	_color1 = 8;
 	_color2 = 5;
 	_speakerName = "WEASEL";
@@ -721,13 +721,13 @@ void SpeakerWeasel::setText(const Common::String &msg) {
 	_object1.setStrip2(3);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(464);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -735,7 +735,7 @@ void SpeakerWeasel::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerBilly::SpeakerBilly(): VisualSpeaker() {
+SpeakerBilly::SpeakerBilly() : VisualSpeaker() {
 	_color1 = 20;
 	_color2 = 22;
 	_speakerName = "BILLY";
@@ -749,14 +749,14 @@ void SpeakerBilly::setText(const Common::String &msg) {
 	_object1.setStrip2(7);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(463);
 	_object2.setStrip2(6);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 167));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 167));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -764,7 +764,7 @@ void SpeakerBilly::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerDrunk::SpeakerDrunk(): VisualSpeaker() {
+SpeakerDrunk::SpeakerDrunk() : VisualSpeaker() {
 	_color1 = 21;
 	_speakerName = "DRUNK";
 }
@@ -776,7 +776,7 @@ void SpeakerDrunk::setText(const Common::String &msg) {
 	_object2.setVisage(556);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 52,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -784,7 +784,7 @@ void SpeakerDrunk::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerGiggles::SpeakerGiggles(): VisualSpeaker() {
+SpeakerGiggles::SpeakerGiggles() : VisualSpeaker() {
 	_color1 = 32;
 
 	_speakerName = "GIGGLES";
@@ -798,7 +798,7 @@ void SpeakerGiggles::setText(const Common::String &msg) {
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 262,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -806,7 +806,7 @@ void SpeakerGiggles::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerFBI::SpeakerFBI(): VisualSpeaker() {
+SpeakerFBI::SpeakerFBI() : VisualSpeaker() {
 	_color1 = 27;
 	_color2 = 89;
 
@@ -821,7 +821,7 @@ void SpeakerFBI::setText(const Common::String &msg) {
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 267,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -829,7 +829,7 @@ void SpeakerFBI::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerNico::SpeakerNico(): VisualSpeaker() {
+SpeakerNico::SpeakerNico() : VisualSpeaker() {
 	_color1 = 105;
 	_color2 = 102;
 
@@ -844,14 +844,14 @@ void SpeakerNico::setText(const Common::String &msg) {
 	_object1.setStrip2(2);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 262,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(905);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 262,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -859,7 +859,7 @@ void SpeakerNico::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerDA::SpeakerDA(): VisualSpeaker() {
+SpeakerDA::SpeakerDA() : VisualSpeaker() {
 	_color1 = 82;
 	_color2 = 80;
 
@@ -874,14 +874,14 @@ void SpeakerDA::setText(const Common::String &msg) {
 	_object1.setStrip2(8);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 84,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(915);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 84,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -889,7 +889,7 @@ void SpeakerDA::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerGrandma::SpeakerGrandma(): VisualSpeaker() {
+SpeakerGrandma::SpeakerGrandma() : VisualSpeaker() {
 	_color1 = 20;
 	_color2 = 23;
 
@@ -904,14 +904,14 @@ void SpeakerGrandma::setText(const Common::String &msg) {
 	_object1.setStrip2(4);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 43,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(274);
 	_object2.setStrip2(3);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 43,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -919,7 +919,7 @@ void SpeakerGrandma::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerLyle::SpeakerLyle(): VisualSpeaker() {
+SpeakerLyle::SpeakerLyle() : VisualSpeaker() {
 	_color1 = 29;
 	_color2 = 89;
 
@@ -934,14 +934,14 @@ void SpeakerLyle::setText(const Common::String &msg) {
 	_object1.setStrip2(3);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 75,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(278);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 75,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);
@@ -949,7 +949,7 @@ void SpeakerLyle::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerGranText::SpeakerGranText(): VisualSpeaker() {
+SpeakerGranText::SpeakerGranText() : VisualSpeaker() {
 	_color1 = 20;
 	_color2 = 23;
 
@@ -958,7 +958,7 @@ SpeakerGranText::SpeakerGranText(): VisualSpeaker() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerLyleText::SpeakerLyleText(): VisualSpeaker() {
+SpeakerLyleText::SpeakerLyleText() : VisualSpeaker() {
 	_color1 = 29;
 	_color2 = 89;
 
@@ -967,7 +967,7 @@ SpeakerLyleText::SpeakerLyleText(): VisualSpeaker() {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerKate::SpeakerKate(): VisualSpeaker() {
+SpeakerKate::SpeakerKate() : VisualSpeaker() {
 	_color1 = 108;
 
 	_speakerName = "KATE";
@@ -981,14 +981,14 @@ void SpeakerKate::setText(const Common::String &msg) {
 	_object1.setStrip2(8);
 	_object1.fixPriority(254);
 	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 270,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2.postInit();
 	_object2.setVisage(122);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 270,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	_object2._numFrames = 7;
 	VisualSpeaker::setText(msg);
@@ -997,7 +997,7 @@ void SpeakerKate::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerTony::SpeakerTony(): VisualSpeaker() {
+SpeakerTony::SpeakerTony() : VisualSpeaker() {
 	_color1 = 108;
 	_color2 = 8;
 
@@ -1012,7 +1012,7 @@ void SpeakerTony::setText(const Common::String &msg) {
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 62,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	                                   BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
 	_object2.fixCountdown(8, _numFrames);

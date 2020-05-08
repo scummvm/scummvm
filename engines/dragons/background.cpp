@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/memstream.h"
-#include "common/endian.h"
 #include "dragons/background.h"
+#include "common/endian.h"
+#include "common/memstream.h"
 #include "dragons/screen.h"
 
 namespace Dragons {
@@ -29,7 +29,6 @@ namespace Dragons {
 #define TILE_WIDTH 32
 #define TILE_HEIGHT 8
 #define TILE_SIZE (TILE_WIDTH * TILE_HEIGHT)
-
 
 void PriorityLayer::load(TileMap &tileMap, byte *tiles) {
 	_width = tileMap.w * TILE_WIDTH;
@@ -53,13 +52,13 @@ int16 PriorityLayer::getPriority(Common::Point pos) {
 	const int16 ty = pos.y / TILE_HEIGHT, sy = pos.y % TILE_HEIGHT;
 	uint16 mapIndex = READ_LE_UINT16(_map + 2 * (tx + ty * _mapWidth));
 
-//
-//	byte priority = *(byte *)((((uint)*(uint16 *)
-//			(((int)pos.x / 32) * 2 +
-//			 ((int)pos.y / 8) * (uint)_mapWidth * 2 +
-//					_map) * 32) * 8) +
-//			_values + (((int)pos.y % 8) * 32) +
-//						 ((int)pos.x % 32));
+	//
+	//	byte priority = *(byte *)((((uint)*(uint16 *)
+	//			(((int)pos.x / 32) * 2 +
+	//			 ((int)pos.y / 8) * (uint)_mapWidth * 2 +
+	//					_map) * 32) * 8) +
+	//			_values + (((int)pos.y % 8) * 32) +
+	//						 ((int)pos.x % 32));
 	return _values[mapIndex * TILE_WIDTH * TILE_HEIGHT + sx + sy * TILE_WIDTH] + 1;
 }
 
@@ -81,7 +80,6 @@ void PriorityLayer::restoreTileMap(int16 x, int16 y, int16 w, int16 h) {
 		src += _mapWidth * 2;
 		ptr += _mapWidth * 2;
 	}
-
 }
 
 Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
@@ -109,7 +107,6 @@ Background::~Background() {
 			delete _layerSurface[i];
 		}
 	}
-
 }
 
 bool Background::load(byte *dataStart, uint32 size) {
@@ -120,7 +117,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 	_palette[0] = 0x00; //FIXME update palette
 	_palette[1] = 0x00;
 
-	_scaleLayer.load(stream); // 0x200
+	_scaleLayer.load(stream);      // 0x200
 	_points2 = loadPoints(stream); // 0x280
 	stream.seek(0x305);
 	uint8 tileindexOffset = stream.readByte();
@@ -218,17 +215,17 @@ void drawTileToSurface(Graphics::Surface *surface, byte *palette, byte *tile, ui
 }
 
 Common::Point Background::getPoint2(uint32 pointIndex) {
-	assert (pointIndex < 0x20);
+	assert(pointIndex < 0x20);
 	return _points2[pointIndex];
 }
 
 uint16 Background::getWidth() {
-	assert (_layerSurface[0]);
+	assert(_layerSurface[0]);
 	return _layerSurface[0]->w;
 }
 
 uint16 Background::getHeight() {
-	assert (_layerSurface[0]);
+	assert(_layerSurface[0]);
 	return _layerSurface[0]->h;
 }
 
@@ -245,10 +242,10 @@ void Background::overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int
 		for (int j = 0; j < w; j++) {
 			int16 idx = READ_LE_UINT16(data) + _tileMap[layerNum].tileIndexOffset;
 			drawTileToSurface(_layerSurface[layerNum],
-					_palette,
-					_tileDataOffset + idx * 0x100,
-					(j + x) * TILE_WIDTH,
-					(i + y) * TILE_HEIGHT);
+			                  _palette,
+			                  _tileDataOffset + idx * 0x100,
+			                  (j + x) * TILE_WIDTH,
+			                  (i + y) * TILE_HEIGHT);
 			data += 2;
 		}
 	}
@@ -302,7 +299,8 @@ void Background::setLayerAlphaMode(uint8 layerNumber, AlphaBlendMode mode) {
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(
-	bigFileArchive), _dragonRMS(dragonRMS) {}
+                                                                                                               bigFileArchive),
+                                                                                                           _dragonRMS(dragonRMS) {}
 
 Background *BackgroundResourceLoader::load(uint32 sceneId) {
 	char filename[] = "nnnn.scr";
@@ -338,7 +336,6 @@ uint16 ScaleLayer::getScale(uint16 y) {
 	ScaleBand *pSVar6;
 	int uVar7;
 
-
 	upperYBandIdx = -1;
 	for (int16 i = 0x1f; i >= 0; i--) {
 		yBand = _bands[i]._y;
@@ -347,13 +344,13 @@ uint16 ScaleLayer::getScale(uint16 y) {
 			break;
 		}
 	}
-//	iVar3 = 0x1f0000;
-//	do {
-//		yBand = *(uint16 *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
-//		if ((yBand != 0xffff) && (yBand <= y)) break;
-//		i = i + -1;
-//		iVar3 = i * 0x10000;
-//	} while (-1 < i * 0x10000);
+	//	iVar3 = 0x1f0000;
+	//	do {
+	//		yBand = *(uint16 *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
+	//		if ((yBand != 0xffff) && (yBand <= y)) break;
+	//		i = i + -1;
+	//		iVar3 = i * 0x10000;
+	//	} while (-1 < i * 0x10000);
 	lowerYBandIdx = 32;
 	for (int i = 0; i < 32; i++) {
 		yBand = _bands[i]._y;
@@ -362,16 +359,16 @@ uint16 ScaleLayer::getScale(uint16 y) {
 			break;
 		}
 	}
-//	j = 0;
-//	iVar3 = 0;
-//	do {
-//		lowerYBandIdx = (short)j;
-//		yBand = *(uint16 *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
-//		if ((yBand != 0xffff) && (y <= yBand)) break;
-//		j = j + 1;
-//		lowerYBandIdx = (short)j;
-//		iVar3 = j * 0x10000;
-//	} while (j * 0x10000 >> 0x10 < 0x20);
+	//	j = 0;
+	//	iVar3 = 0;
+	//	do {
+	//		lowerYBandIdx = (short)j;
+	//		yBand = *(uint16 *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
+	//		if ((yBand != 0xffff) && (y <= yBand)) break;
+	//		j = j + 1;
+	//		lowerYBandIdx = (short)j;
+	//		iVar3 = j * 0x10000;
+	//	} while (j * 0x10000 >> 0x10 < 0x20);
 	if ((upperYBandIdx == -1) && (lowerYBandIdx == 0x20)) {
 		return 0x100;
 	}
@@ -382,8 +379,7 @@ uint16 ScaleLayer::getScale(uint16 y) {
 		upperYBandIdx = lowerYBandIdx;
 	}
 
-
-	pSVar6 = &_bands[upperYBandIdx];  //scaleBandTbl + (int)upperYBandIdx;
+	pSVar6 = &_bands[upperYBandIdx]; //scaleBandTbl + (int)upperYBandIdx;
 	uVar7 = (0x21 - (uint)pSVar6->_priority) * 8;
 	uVar1 = uVar7;
 	if (y != pSVar6->_y) {
@@ -405,7 +401,7 @@ uint16 ScaleLayer::getScale(uint16 y) {
 	return uVar1 & 0xfff8u;
 }
 
-ScaleLayer::ScaleLayer(): _savedBands(nullptr) {
+ScaleLayer::ScaleLayer() : _savedBands(nullptr) {
 	for (int i = 0; i < 32; i++) {
 		_bands[i]._y = -1;
 		_bands[i]._priority = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;

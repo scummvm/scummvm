@@ -20,7 +20,7 @@
  *
  */
 
- /*
+/*
  * This code is based on Labyrinth of Time code with assistance of
  *
  * Copyright (c) 1993 Terra Nova Development
@@ -33,72 +33,55 @@
 #include "lab/lab.h"
 
 static const PlainGameDescriptor lab_setting[] = {
-	{ "lab", "Labyrinth of Time" },
-	{ 0, 0 }
-};
+    {"lab", "Labyrinth of Time"},
+    {0, 0}};
 
 static const ADGameDescription labDescriptions[] = {
-	{
-		"lab",
-		"",
-		{
-			{ "doors",       0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
-			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 }, // game/spict/noteold.fon
-			{ NULL, 0, NULL, 0 }
-		},
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NOMIDI)
-	},
-	{
-		"lab",
-		"Lowres",
-		{
-			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
-			{ "64b",     0, "3a84d41bcc6a782f22e8e954bce09721", 39916 }, // game/pict/h2/64b
-			{ NULL, 0, NULL, 0 }
-		},
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		Lab::GF_LOWRES | ADGF_NO_FLAGS,
-		GUIO1(GUIO_NOMIDI)
-	},
-	{
-		"lab",
-		"Rerelease",
-		{
-			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
-			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 }, // game/spict/noteold.fon
-			{ "wyrmkeep",0, "97c7064c54c28b952d37c4ebff6efa50", 52286 }, // game/spict/intro
-			{ NULL, 0, NULL, 0 }
-		},
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NOMIDI)
-	},
-	{
-		"lab",
-		"",
-		AD_ENTRY1s("doors", "7bf458df6ec30cc8ef4665e4d7c77f59", 2537), // game/doors
-		Common::EN_ANY,
-		Common::kPlatformAmiga,
-		Lab::GF_LOWRES | ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)
-	},
-	AD_TABLE_END_MARKER
-};
+    {"lab",
+     "",
+     {{"doors", 0, "d77536010e7e5ae17ee066323ceb9585", 2537},       // game/doors
+      {"noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252}, // game/spict/noteold.fon
+      {NULL, 0, NULL, 0}},
+     Common::EN_ANY,
+     Common::kPlatformDOS,
+     ADGF_NO_FLAGS,
+     GUIO1(GUIO_NOMIDI)},
+    {"lab",
+     "Lowres",
+     {{"doors", 0, "d77536010e7e5ae17ee066323ceb9585", 2537}, // game/doors
+      {"64b", 0, "3a84d41bcc6a782f22e8e954bce09721", 39916},  // game/pict/h2/64b
+      {NULL, 0, NULL, 0}},
+     Common::EN_ANY,
+     Common::kPlatformDOS,
+     Lab::GF_LOWRES | ADGF_NO_FLAGS,
+     GUIO1(GUIO_NOMIDI)},
+    {"lab",
+     "Rerelease",
+     {{"doors", 0, "d77536010e7e5ae17ee066323ceb9585", 2537},       // game/doors
+      {"noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252}, // game/spict/noteold.fon
+      {"wyrmkeep", 0, "97c7064c54c28b952d37c4ebff6efa50", 52286},   // game/spict/intro
+      {NULL, 0, NULL, 0}},
+     Common::EN_ANY,
+     Common::kPlatformWindows,
+     ADGF_NO_FLAGS,
+     GUIO1(GUIO_NOMIDI)},
+    {"lab",
+     "",
+     AD_ENTRY1s("doors", "7bf458df6ec30cc8ef4665e4d7c77f59", 2537), // game/doors
+     Common::EN_ANY,
+     Common::kPlatformAmiga,
+     Lab::GF_LOWRES | ADGF_UNSTABLE,
+     GUIO1(GUIO_NOMIDI)},
+    AD_TABLE_END_MARKER};
 
 static const char *const directoryGlobs[] = {
-		"game",
-		"pict",
-		"spict",
-		"rooms",
-		"h2",
-		"intro",
-		0
-};
+    "game",
+    "pict",
+    "spict",
+    "rooms",
+    "h2",
+    "intro",
+    0};
 
 namespace Lab {
 
@@ -146,22 +129,20 @@ public:
 };
 
 bool LabMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate) ||
+	       (f == kSavesSupportPlayTime) ||
+	       (f == kSimpleSavesNames);
 }
 
 bool Lab::LabEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 SaveStateList LabMetaEngine::listSaves(const char *target) const {
@@ -228,7 +209,7 @@ SaveStateDescriptor LabMetaEngine::querySaveMetaInfos(const char *target, int sl
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(LAB)
-	REGISTER_PLUGIN_DYNAMIC(LAB, PLUGIN_TYPE_ENGINE, LabMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(LAB, PLUGIN_TYPE_ENGINE, LabMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(LAB, PLUGIN_TYPE_ENGINE, LabMetaEngine);
+REGISTER_PLUGIN_STATIC(LAB, PLUGIN_TYPE_ENGINE, LabMetaEngine);
 #endif

@@ -36,11 +36,14 @@ class CPhotograph : public CCarry {
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 	bool ActMsg(CActMsg *msg);
+
 private:
 	static int _v1;
+
 private:
 	int _field12C;
 	int _field130;
+
 public:
 	CLASSDEF;
 	CPhotograph();

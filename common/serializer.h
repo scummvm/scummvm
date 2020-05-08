@@ -23,31 +23,31 @@
 #ifndef COMMON_SERIALIZER_H
 #define COMMON_SERIALIZER_H
 
-#include "common/stream.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 namespace Common {
 
 #define VER(x) Common::Serializer::Version(x)
 
-#define SYNC_AS(SUFFIX,TYPE,SIZE) \
-	template<typename T> \
-	void syncAs ## SUFFIX(T &val, Version minVersion = 0, Version maxVersion = kLastVersion) { \
-		if (_version < minVersion || _version > maxVersion) \
-			return; \
-		if (_loadStream) \
-			val = static_cast<T>(_loadStream->read ## SUFFIX()); \
-		else { \
-			TYPE tmp = val; \
-			_saveStream->write ## SUFFIX(tmp); \
-		} \
-		_bytesSynced += SIZE; \
+#define SYNC_AS(SUFFIX, TYPE, SIZE)                                                          \
+	template<typename T>                                                                     \
+	void syncAs##SUFFIX(T &val, Version minVersion = 0, Version maxVersion = kLastVersion) { \
+		if (_version < minVersion || _version > maxVersion)                                  \
+			return;                                                                          \
+		if (_loadStream)                                                                     \
+			val = static_cast<T>(_loadStream->read##SUFFIX());                               \
+		else {                                                                               \
+			TYPE tmp = val;                                                                  \
+			_saveStream->write##SUFFIX(tmp);                                                 \
+		}                                                                                    \
+		_bytesSynced += SIZE;                                                                \
 	}
 
-#define SYNC_PRIMITIVE(suffix) \
-	template <typename T> \
+#define SYNC_PRIMITIVE(suffix)                           \
+	template<typename T>                                 \
 	static inline void suffix(Serializer &s, T &value) { \
-		s.syncAs##suffix(value); \
+		s.syncAs##suffix(value);                         \
 	}
 
 /**
@@ -94,7 +94,7 @@ protected:
 
 public:
 	Serializer(SeekableReadStream *in, WriteStream *out)
-		: _loadStream(in), _saveStream(out), _bytesSynced(0), _version(0) {
+	    : _loadStream(in), _saveStream(out), _bytesSynced(0), _version(0) {
 		assert(in || out);
 	}
 	virtual ~Serializer() {}
@@ -255,7 +255,7 @@ public:
 		}
 	}
 
-	template <typename T>
+	template<typename T>
 	void syncArray(T *arr, size_t entries, void (*serializer)(Serializer &, T &), Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
 			return;
@@ -269,7 +269,6 @@ public:
 #undef SYNC_PRIMITIVE
 #undef SYNC_AS
 
-
 // Mixin class / interface
 // TODO: Maybe rename this to Syncable ?
 class Serializable {
@@ -279,7 +278,6 @@ public:
 	// Maybe rename this method to "syncWithSerializer" or "syncUsingSerializer" ?
 	virtual void saveLoadWithSerializer(Serializer &ser) = 0;
 };
-
 
 } // End of namespace Common
 

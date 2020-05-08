@@ -26,8 +26,8 @@
 /* Header file for Glk output for Alan interpreter
  */
 
-#include "glk/windows.h"
 #include "glk/alan2/types.h"
+#include "glk/windows.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -51,4 +51,3 @@ extern Boolean readline(char usrbuf[]);
 } // End of namespace Glk
 
 #endif
-

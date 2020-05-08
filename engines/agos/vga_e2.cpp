@@ -22,7 +22,6 @@
 
 // Video script opcodes for Simon1/Simon2
 
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 #include "agos/sound.h"
@@ -30,8 +29,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
-#include "graphics/surface.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 
 namespace AGOS {
 
@@ -356,10 +355,10 @@ void AGOSEngine::fullFade() {
 	uint8 *srcPal, *dstPal;
 	int c, p;
 
-	for (c = 64; c != 0; c --) {
+	for (c = 64; c != 0; c--) {
 		srcPal = _curVgaFile2 + 32;
 		dstPal = _currentPalette;
-		for (p = 768; p !=0; p -= 3) {
+		for (p = 768; p != 0; p -= 3) {
 			uint8 r = srcPal[0] * 4;
 			if (dstPal[0] != r)
 				dstPal[0] += 4;

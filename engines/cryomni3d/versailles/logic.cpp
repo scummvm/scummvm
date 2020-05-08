@@ -34,44 +34,45 @@ namespace CryOmni3D {
 namespace Versailles {
 
 static const char *kImagesObjects[] = {
-	"PAMP.gif",   //  0:  96
-	"PAPT_2.gif", //  1:  98
-	"PAML.gif",   //  2: 101
-	"ESQ1.gif",   //  3: 105a, 106b
-	"ESQ2.gif",   //  4: 105b, 106c
-	"ESQ3.gif",   //  5: 105c
-	"ESQ4.gif",   //  6: 105d, 106a, 107a
-	"ESQ4T.gif",  //  7: 107b
-	"ESQ4D.gif",  //  8: 109
-	"PAMA.gif",   //  9: 115
-	"PAMM1.gif",  // 10: 118a
-	"PAMM2.gif",  // 11: 118b
-	"MEDP.gif",   // 12: 121a
-	"MEDP2.gif",  // 13: 121b
-	"PAMR1.gif",  // 14: 125a
-	"PAMR4.gif",  // 15: 125b
-	"EPIL.gif",   // 16: 126
-	"PAMG.gif",   // 17: 127
-	"PBETE.gif",  // 18: 129
-	"VAU2.gif",   // 19: 131
-	"VAU3.gif",   // 20: 132
-	"GRAV2.gif",  // 21: 134
-	"MEM.gif",    // 22: 137
-	"VS1.gif",    // 23: 138
-	"VS2.gif",    // 24: 139
-	"FAB.gif",    // 25: 141
-	"LABYR.gif",  // 26: 142
+    "PAMP.gif",   //  0:  96
+    "PAPT_2.gif", //  1:  98
+    "PAML.gif",   //  2: 101
+    "ESQ1.gif",   //  3: 105a, 106b
+    "ESQ2.gif",   //  4: 105b, 106c
+    "ESQ3.gif",   //  5: 105c
+    "ESQ4.gif",   //  6: 105d, 106a, 107a
+    "ESQ4T.gif",  //  7: 107b
+    "ESQ4D.gif",  //  8: 109
+    "PAMA.gif",   //  9: 115
+    "PAMM1.gif",  // 10: 118a
+    "PAMM2.gif",  // 11: 118b
+    "MEDP.gif",   // 12: 121a
+    "MEDP2.gif",  // 13: 121b
+    "PAMR1.gif",  // 14: 125a
+    "PAMR4.gif",  // 15: 125b
+    "EPIL.gif",   // 16: 126
+    "PAMG.gif",   // 17: 127
+    "PBETE.gif",  // 18: 129
+    "VAU2.gif",   // 19: 131
+    "VAU3.gif",   // 20: 132
+    "GRAV2.gif",  // 21: 134
+    "MEM.gif",    // 22: 137
+    "VS1.gif",    // 23: 138
+    "VS2.gif",    // 24: 139
+    "FAB.gif",    // 25: 141
+    "LABYR.gif",  // 26: 142
 };
 
 void CryOmni3DEngine_Versailles::setupObjects() {
 	_objects.reserve(51);
 #define SET_OBJECT(cursorId, nameId) _objects.push_back(Object(_sprites, cursorId, nameId))
-#define SET_OBJECT_AND_CB(cursorId, nameId, cb) do { \
-        _objects.push_back(Object(_sprites, cursorId, nameId)); \
-        _objects.back().setViewCallback(new Common::Functor0Mem<void, CryOmni3DEngine_Versailles>(this, &CryOmni3DEngine_Versailles::cb)); \
-    } while (false)
+#define SET_OBJECT_AND_CB(cursorId, nameId, cb)                                                                                            \
+	do {                                                                                                                                   \
+		_objects.push_back(Object(_sprites, cursorId, nameId));                                                                            \
+		_objects.back().setViewCallback(new Common::Functor0Mem<void, CryOmni3DEngine_Versailles>(this, &CryOmni3DEngine_Versailles::cb)); \
+	} while (false)
 #define SET_OBJECT_GENERIC_CB(cursorId, nameId, imageId) SET_OBJECT_AND_CB(cursorId, nameId, genericDisplayObject<imageId>)
-#define SET_OBJECT_CB(cursorId, nameId) SET_OBJECT_AND_CB(cursorId, nameId, obj_ ## nameId)
+#define SET_OBJECT_CB(cursorId, nameId) SET_OBJECT_AND_CB(cursorId, nameId, obj_##nameId)
 	SET_OBJECT(161, 93); // 0
 	SET_OBJECT(107, 94);
 	SET_OBJECT(69, 95);
@@ -245,37 +246,37 @@ void CryOmni3DEngine_Versailles::obj_142() {
 
 void CryOmni3DEngine_Versailles::obj_142hk(Graphics::ManagedSurface &surface) {
 	const Common::Point markers[] = {
-		Common::Point(135, 403), // 14
-		Common::Point(136, 321), // 15
-		Common::Point(225, 109),
-		Common::Point(441,  88),
-		Common::Point(505,  78),
-		Common::Point(550,  82),
-		Common::Point(479, 242), // 20
-		Common::Point(529, 333),
-		Common::Point(466, 407),
-		Common::Point(359, 411),
-		Common::Point(305, 415),
-		Common::Point(217, 405), // 25
-		Common::Point(216, 325),
-		Common::Point(280, 378),
-		Common::Point(340, 313),
-		Common::Point(282, 313),
-		Common::Point(253, 285), // 30
-		Common::Point(225, 258),
-		Common::Point(154, 255),
-		Common::Point(219, 188),
-		Common::Point(294, 251),
-		Common::Point(341, 242), // 35
-		Common::Point(308, 206),
-		Common::Point(270, 172),
-		Common::Point(363, 161),
-		Common::Point(416, 201),
-		Common::Point(513, 195), // 40
-		Common::Point(412, 311),
-		Common::Point(446, 280),
-		Common::Point(377, 347),
-		Common::Point(448, 356),
+	    Common::Point(135, 403), // 14
+	    Common::Point(136, 321), // 15
+	    Common::Point(225, 109),
+	    Common::Point(441, 88),
+	    Common::Point(505, 78),
+	    Common::Point(550, 82),
+	    Common::Point(479, 242), // 20
+	    Common::Point(529, 333),
+	    Common::Point(466, 407),
+	    Common::Point(359, 411),
+	    Common::Point(305, 415),
+	    Common::Point(217, 405), // 25
+	    Common::Point(216, 325),
+	    Common::Point(280, 378),
+	    Common::Point(340, 313),
+	    Common::Point(282, 313),
+	    Common::Point(253, 285), // 30
+	    Common::Point(225, 258),
+	    Common::Point(154, 255),
+	    Common::Point(219, 188),
+	    Common::Point(294, 251),
+	    Common::Point(341, 242), // 35
+	    Common::Point(308, 206),
+	    Common::Point(270, 172),
+	    Common::Point(363, 161),
+	    Common::Point(416, 201),
+	    Common::Point(513, 195), // 40
+	    Common::Point(412, 311),
+	    Common::Point(446, 280),
+	    Common::Point(377, 347),
+	    Common::Point(448, 356),
 	};
 
 	uint id = _currentPlaceId - 14;
@@ -301,89 +302,89 @@ void CryOmni3DEngine_Versailles::obj_142hk(Graphics::ManagedSurface &surface) {
 
 // This array contains images for all paintings it must be kept in sync with _paintingsTitles
 static const char *kImagesPaintings[] = {
-	"10E_1.GIF",      //  0: 41201
-	nullptr,          //  1: 41202
-	"10E_3.GIF",      //  2: 41203
-	"10E_4.GIF",      //  3: 41204
-	"10E_5.GIF",      //  4: 41205
-	"10D_1.GIF",      //  5: 41301
-	"10D_2.GIF",      //  6: 41302
-	"20C_1.GIF",      //  7: 42401
-	"20G_11.GIF",     //  8: 42901
-	"20G_12.GIF",     //  9: 42902
-	"20G_13.GIF",     // 10: 42903
-	"20G_14.GIF",     // 11: 42904
-	"20G_15.GIF",     // 12: 42905
-	"20G_16.GIF",     // 13: 42906
-	"20G_21.GIF",     // 14: 42907
-	"20G_22.GIF",     // 15: 42908
-	"20G_23.GIF",     // 16: 42909
-	"20G_31.GIF",     // 17: 42910
-	"20G_32.GIF",     // 18: 42911
-	"20G_33.GIF",     // 19: 42912
-	"20G_34.GIF",     // 20: 42913
-	"20G_35.GIF",     // 21: 42914
-	"20G_36.GIF",     // 22: 42915
-	"30N_1.GIF",      // 23: 43090
-	"30N_2.GIF",      // 24: 43091
-	"30N_3.GIF",      // 25: 43092
-	"30O_1.GIF",      // 26: 43100
-	"30O_2.GIF",      // 27: 43101
-	"30O_31.GIF",     // 28: 43102
-	"30O_32.GIF",     // 29: 43103
-	"30O_33.GIF",     // 30: 43104
-	"30M_1.GIF",      // 31: 43130
-	"30M_2.GIF",      // 32: 43131
-	"30M_3.GIF",      // 33: 43132
-	"30L_11.GIF",     // 34: 43140
-	"30L_12.GIF",     // 35: 43141
-	"30L_21.GIF",     // 36: 43142
-	nullptr,          // 37: 43143
-	"30L_32.GIF",     // 38: 43144
-	"30J_11.GIF",     // 39: 43150
-	"30J_12.GIF",     // 40: 43151
-	"30J_13.GIF",     // 41: 43152
-	"30J_21.GIF",     // 42: 43153
-	"30J_22.GIF",     // 43: 43154
-	"30J_31.GIF",     // 44: 43155
-	"30J_32.GIF",     // 45: 43156
-	"30J_33.GIF",     // 46: 43157
-	"51A_1.GIF",      // 47: 45260
-	// Now let's put dumb images, those without description and any special action, they are not synced with _paintingsTitles
-	"30Q_1.GIF",      // 48: 43060
-	"30Q_2.GIF",      // 49: 43061
-	"DUC.GIF",        // 50: 46001
-	"COQ.GIF",        // 51: 46002
-	"CHAT.GIF",       // 52: 46003
-	"DRAGON.GIF",     // 53: 46004
-	"GRUE.GIF",       // 54: 46005
-	"RENARD.GIF",     // 55: 46006
-	"POULE.GIF",      // 56: 46007
-	"LOUP.GIF",       // 57: 46008
-	"MILAN.GIF",      // 58: 46009
-	"GRENOU.GIF",     // 59: 46010
-	"AIGLE.GIF",      // 60: 46011
-	"SOURIS.GIF",     // 61: 46012
-	"CYGNE.GIF",      // 62: 46013 and 46440
-	"LOUPTETE.GIF",   // 63: 46014
-	"CANNES.GIF",     // 64: 46015
+    "10E_1.GIF",  //  0: 41201
+    nullptr,      //  1: 41202
+    "10E_3.GIF",  //  2: 41203
+    "10E_4.GIF",  //  3: 41204
+    "10E_5.GIF",  //  4: 41205
+    "10D_1.GIF",  //  5: 41301
+    "10D_2.GIF",  //  6: 41302
+    "20C_1.GIF",  //  7: 42401
+    "20G_11.GIF", //  8: 42901
+    "20G_12.GIF", //  9: 42902
+    "20G_13.GIF", // 10: 42903
+    "20G_14.GIF", // 11: 42904
+    "20G_15.GIF", // 12: 42905
+    "20G_16.GIF", // 13: 42906
+    "20G_21.GIF", // 14: 42907
+    "20G_22.GIF", // 15: 42908
+    "20G_23.GIF", // 16: 42909
+    "20G_31.GIF", // 17: 42910
+    "20G_32.GIF", // 18: 42911
+    "20G_33.GIF", // 19: 42912
+    "20G_34.GIF", // 20: 42913
+    "20G_35.GIF", // 21: 42914
+    "20G_36.GIF", // 22: 42915
+    "30N_1.GIF",  // 23: 43090
+    "30N_2.GIF",  // 24: 43091
+    "30N_3.GIF",  // 25: 43092
+    "30O_1.GIF",  // 26: 43100
+    "30O_2.GIF",  // 27: 43101
+    "30O_31.GIF", // 28: 43102
+    "30O_32.GIF", // 29: 43103
+    "30O_33.GIF", // 30: 43104
+    "30M_1.GIF",  // 31: 43130
+    "30M_2.GIF",  // 32: 43131
+    "30M_3.GIF",  // 33: 43132
+    "30L_11.GIF", // 34: 43140
+    "30L_12.GIF", // 35: 43141
+    "30L_21.GIF", // 36: 43142
+    nullptr,      // 37: 43143
+    "30L_32.GIF", // 38: 43144
+    "30J_11.GIF", // 39: 43150
+    "30J_12.GIF", // 40: 43151
+    "30J_13.GIF", // 41: 43152
+    "30J_21.GIF", // 42: 43153
+    "30J_22.GIF", // 43: 43154
+    "30J_31.GIF", // 44: 43155
+    "30J_32.GIF", // 45: 43156
+    "30J_33.GIF", // 46: 43157
+    "51A_1.GIF",  // 47: 45260
+    // Now let's put dumb images, those without description and any special action, they are not synced with _paintingsTitles
+    "30Q_1.GIF",    // 48: 43060
+    "30Q_2.GIF",    // 49: 43061
+    "DUC.GIF",      // 50: 46001
+    "COQ.GIF",      // 51: 46002
+    "CHAT.GIF",     // 52: 46003
+    "DRAGON.GIF",   // 53: 46004
+    "GRUE.GIF",     // 54: 46005
+    "RENARD.GIF",   // 55: 46006
+    "POULE.GIF",    // 56: 46007
+    "LOUP.GIF",     // 57: 46008
+    "MILAN.GIF",    // 58: 46009
+    "GRENOU.GIF",   // 59: 46010
+    "AIGLE.GIF",    // 60: 46011
+    "SOURIS.GIF",   // 61: 46012
+    "CYGNE.GIF",    // 62: 46013 and 46440
+    "LOUPTETE.GIF", // 63: 46014
+    "CANNES.GIF",   // 64: 46015
 };
 
 // Setup array for all see actions
 void CryOmni3DEngine_Versailles::setupImgScripts() {
 	// First all paintings to keep it simple for counting
-#define SET_SCRIPT_BY_ID(id) _imgScripts[id] = &CryOmni3DEngine_Versailles::img_ ## id
+#define SET_SCRIPT_BY_ID(id) _imgScripts[id] = &CryOmni3DEngine_Versailles::img_##id
 #define SET_SCRIPT_BY_PAINTING(id, image) _imgScripts[id] = &CryOmni3DEngine_Versailles::genericPainting<image>
-	SET_SCRIPT_BY_PAINTING(41201,  0);
+	SET_SCRIPT_BY_PAINTING(41201, 0);
 	SET_SCRIPT_BY_ID(41202);
-	SET_SCRIPT_BY_PAINTING(41203,  2);
-	SET_SCRIPT_BY_PAINTING(41204,  3);
-	SET_SCRIPT_BY_PAINTING(41205,  4);
-	SET_SCRIPT_BY_PAINTING(41301,  5);
-	SET_SCRIPT_BY_PAINTING(41302,  6);
-	SET_SCRIPT_BY_PAINTING(42401,  7);
-	SET_SCRIPT_BY_PAINTING(42901,  8);
-	SET_SCRIPT_BY_PAINTING(42902,  9);
+	SET_SCRIPT_BY_PAINTING(41203, 2);
+	SET_SCRIPT_BY_PAINTING(41204, 3);
+	SET_SCRIPT_BY_PAINTING(41205, 4);
+	SET_SCRIPT_BY_PAINTING(41301, 5);
+	SET_SCRIPT_BY_PAINTING(41302, 6);
+	SET_SCRIPT_BY_PAINTING(42401, 7);
+	SET_SCRIPT_BY_PAINTING(42901, 8);
+	SET_SCRIPT_BY_PAINTING(42902, 9);
 	SET_SCRIPT_BY_PAINTING(42903, 10);
 	SET_SCRIPT_BY_PAINTING(42904, 11);
 	SET_SCRIPT_BY_PAINTING(42905, 12);
@@ -477,13 +478,13 @@ void CryOmni3DEngine_Versailles::genericDumbImage(ZonFixedImage *fimg) {
 }
 
 // Generic handler for interrogation mark action: display the painting title
-#define HANDLE_QUESTION(ID) \
-    do { \
-        if (fimg->_zoneQuestion) { \
-            displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), _paintingsTitles[ID], Common::Point(600, 400), \
-                    Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage)); \
-        } \
-    } while (false)
+#define HANDLE_QUESTION(ID)                                                                                                \
+	do {                                                                                                                   \
+		if (fimg->_zoneQuestion) {                                                                                         \
+			displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), _paintingsTitles[ID], Common::Point(600, 400), \
+			                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));                     \
+		}                                                                                                                  \
+	} while (false)
 
 // Generic handler for paintings fixed images
 template<uint ID>
@@ -500,7 +501,7 @@ void CryOmni3DEngine_Versailles::genericPainting(ZonFixedImage *fimg) {
 }
 
 // Specific fixed images callbacks
-#define IMG_CB(name) void CryOmni3DEngine_Versailles::img_ ## name(ZonFixedImage *fimg)
+#define IMG_CB(name) void CryOmni3DEngine_Versailles::img_##name(ZonFixedImage *fimg)
 
 IMG_CB(31101) {
 	fimg->load("21F_11.GIF");
@@ -517,7 +518,7 @@ IMG_CB(31101) {
 				_gameVariables[GameVariables::kCollectKey] = 1;
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_31101b);
+				                                                                               &CryOmni3DEngine_Versailles::img_31101b);
 				fimg->changeCallback(functor);
 				break;
 			} else if (fimg->_currentZone == 1 && !_inventory.inInventoryByNameID(103)) {
@@ -575,14 +576,14 @@ IMG_CB(31142b) {
 				// Empty drawer
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_31142d);
+				                                                                               &CryOmni3DEngine_Versailles::img_31142d);
 				fimg->changeCallback(functor);
 				break;
 			} else {
 				// Drawer with scissors in it
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_31142c);
+				                                                                               &CryOmni3DEngine_Versailles::img_31142c);
 				fimg->changeCallback(functor);
 				break;
 			}
@@ -606,7 +607,7 @@ IMG_CB(31142c) {
 			// Display empty drawer
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_31142d);
+			                                                                               &CryOmni3DEngine_Versailles::img_31142d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -625,7 +626,7 @@ IMG_CB(31142d) {
 			// Close drawer
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_31142b);
+			                                                                               &CryOmni3DEngine_Versailles::img_31142b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -661,14 +662,14 @@ IMG_CB(31143b) {
 				// Empty drawer
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_31143d);
+				                                                                               &CryOmni3DEngine_Versailles::img_31143d);
 				fimg->changeCallback(functor);
 				break;
 			} else {
 				// Drawer with pamphlet about arts in it
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_31143c);
+				                                                                               &CryOmni3DEngine_Versailles::img_31143c);
 				fimg->changeCallback(functor);
 				break;
 			}
@@ -691,7 +692,7 @@ IMG_CB(31143c) {
 			// Display empty drawer
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_31143d);
+			                                                                               &CryOmni3DEngine_Versailles::img_31143d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -710,7 +711,7 @@ IMG_CB(31143d) {
 			// Close drawer
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_31143b);
+			                                                                               &CryOmni3DEngine_Versailles::img_31143b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -725,7 +726,7 @@ IMG_CB(32120) {
 
 	// Already painted
 	if (_gameVariables[GameVariables::kSketchState] == 3 ||
-	        _gameVariables[GameVariables::kSketchState] == 4) {
+	    _gameVariables[GameVariables::kSketchState] == 4) {
 		fimg->_exit = true;
 		return;
 	}
@@ -780,7 +781,7 @@ IMG_CB(32120) {
 				_gameVariables[GameVariables::kBrushColor] = 2;
 			} else if (fimg->_currentZone == 3) { // on sketch
 				if (fimg->_usedObject->idOBJ() == 111 &&
-				        _gameVariables[GameVariables::kBrushColor] == 1) {
+				    _gameVariables[GameVariables::kBrushColor] == 1) {
 					// Gold brush used on sketch
 					_gameVariables[GameVariables::kSketchState] = 3;
 					playInGameVideo("23I_11");
@@ -791,7 +792,7 @@ IMG_CB(32120) {
 					_inventory.removeByIconID(38);
 					ZonFixedImage::CallbackFunctor *functor =
 					    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-					            &CryOmni3DEngine_Versailles::img_32120b);
+					                                                                               &CryOmni3DEngine_Versailles::img_32120b);
 					fimg->changeCallback(functor);
 					break;
 				} else if (fimg->_usedObject->idOBJ() == 112 &&
@@ -806,7 +807,7 @@ IMG_CB(32120) {
 					_inventory.removeByIconID(38);
 					ZonFixedImage::CallbackFunctor *functor =
 					    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-					            &CryOmni3DEngine_Versailles::img_32120c);
+					                                                                               &CryOmni3DEngine_Versailles::img_32120c);
 					fimg->changeCallback(functor);
 					break;
 				}
@@ -912,7 +913,7 @@ IMG_CB(32204) {
 
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_32204b);
+			                                                                               &CryOmni3DEngine_Versailles::img_32204b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -981,7 +982,7 @@ IMG_CB(34173) {
 
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_34173b);
+			                                                                               &CryOmni3DEngine_Versailles::img_34173b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1008,7 +1009,7 @@ IMG_CB(34173b) {
 
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_34173c);
+			                                                                               &CryOmni3DEngine_Versailles::img_34173c);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1040,7 +1041,7 @@ IMG_CB(34174) {
 			// Open the door
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_34174b);
+			                                                                               &CryOmni3DEngine_Versailles::img_34174b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1061,7 +1062,7 @@ IMG_CB(34174b) {
 				// Open the safe
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_34174c);
+				                                                                               &CryOmni3DEngine_Versailles::img_34174c);
 				fimg->changeCallback(functor);
 				break;
 			}
@@ -1073,7 +1074,7 @@ IMG_CB(34174b) {
 				// Open it
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_34174c);
+				                                                                               &CryOmni3DEngine_Versailles::img_34174c);
 				fimg->changeCallback(functor);
 				break;
 			}
@@ -1086,29 +1087,29 @@ IMG_CB(34174b) {
 IMG_CB(34174c) {
 	// Dispatch to the correct state
 	if (_gameVariables[GameVariables::kCollectVaubanBlueprint1] &&
-	        _gameVariables[GameVariables::kCollectVaubanBlueprint2]) {
+	    _gameVariables[GameVariables::kCollectVaubanBlueprint2]) {
 		// Safe is empty
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_34174f);
+		                                                                               &CryOmni3DEngine_Versailles::img_34174f);
 		fimg->changeCallback(functor);
 		return;
 	}
 	if (!_gameVariables[GameVariables::kCollectVaubanBlueprint1] &&
-	        _gameVariables[GameVariables::kCollectVaubanBlueprint2] == 1) {
+	    _gameVariables[GameVariables::kCollectVaubanBlueprint2] == 1) {
 		// Blueprint 1 is there not the 2nd one
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_34174e);
+		                                                                               &CryOmni3DEngine_Versailles::img_34174e);
 		fimg->changeCallback(functor);
 		return;
 	}
 	if (_gameVariables[GameVariables::kCollectVaubanBlueprint1] &&
-	        !_gameVariables[GameVariables::kCollectVaubanBlueprint2]) {
+	    !_gameVariables[GameVariables::kCollectVaubanBlueprint2]) {
 		// Blueprint 2 is there not the 1st one
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_34174d);
+		                                                                               &CryOmni3DEngine_Versailles::img_34174d);
 		fimg->changeCallback(functor);
 		return;
 	}
@@ -1136,7 +1137,7 @@ IMG_CB(34174c) {
 
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_34174d);
+				                                                                               &CryOmni3DEngine_Versailles::img_34174d);
 				fimg->changeCallback(functor);
 				break;
 			} else if (fimg->_currentZone == 1) {
@@ -1146,7 +1147,7 @@ IMG_CB(34174c) {
 
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_34174e);
+				                                                                               &CryOmni3DEngine_Versailles::img_34174e);
 				fimg->changeCallback(functor);
 				break;
 			}
@@ -1170,7 +1171,7 @@ IMG_CB(34174d) {
 
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_34174f);
+			                                                                               &CryOmni3DEngine_Versailles::img_34174f);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1194,7 +1195,7 @@ IMG_CB(34174e) {
 
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_34174f);
+			                                                                               &CryOmni3DEngine_Versailles::img_34174f);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1214,7 +1215,7 @@ IMG_CB(34174f) {
 			// Close safe
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_34174b);
+			                                                                               &CryOmni3DEngine_Versailles::img_34174b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1282,11 +1283,11 @@ bool CryOmni3DEngine_Versailles::handleSafe(ZonFixedImage *fimg) {
 	return success;
 }
 
-const uint16 CryOmni3DEngine_Versailles::kSafeDigitsX[] = { 267, 318, 370, 421 };
-const uint16 CryOmni3DEngine_Versailles::kSafeDigitsY[] = { 148, 230, 311 };
+const uint16 CryOmni3DEngine_Versailles::kSafeDigitsX[] = {267, 318, 370, 421};
+const uint16 CryOmni3DEngine_Versailles::kSafeDigitsY[] = {148, 230, 311};
 
 void CryOmni3DEngine_Versailles::drawSafeDigits(Graphics::ManagedSurface &surface,
-        const Graphics::Surface(&bmpDigits)[10], const unsigned char (&safeDigits)[kSafeDigitsCount]) {
+                                                const Graphics::Surface (&bmpDigits)[10], const unsigned char (&safeDigits)[kSafeDigitsCount]) {
 	for (uint i = 0; i < ARRAYSIZE(safeDigits); i++) {
 		const Graphics::Surface &digit = bmpDigits[safeDigits[i]];
 		Common::Point dst(kSafeDigitsX[i % 4], kSafeDigitsY[i / 4]);
@@ -1294,7 +1295,7 @@ void CryOmni3DEngine_Versailles::drawSafeDigits(Graphics::ManagedSurface &surfac
 	}
 }
 
-const char *CryOmni3DEngine_Versailles::kSafeDates[] = { "1643", "1668", "1674" };
+const char *CryOmni3DEngine_Versailles::kSafeDates[] = {"1643", "1668", "1674"};
 bool CryOmni3DEngine_Versailles::checkSafeDigits(unsigned char (&safeDigits)[kSafeDigitsCount]) {
 	uint dateChecked;
 	for (dateChecked = 0; dateChecked < ARRAYSIZE(kSafeDates); dateChecked++) {
@@ -1337,7 +1338,7 @@ IMG_CB(41202) {
 				// Open the jar
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_41202b);
+				                                                                               &CryOmni3DEngine_Versailles::img_41202b);
 				fimg->changeCallback(functor);
 				break;
 			} else {
@@ -1361,7 +1362,7 @@ IMG_CB(41202b) {
 			// Go back to jars closed
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_41202);
+			                                                                               &CryOmni3DEngine_Versailles::img_41202);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1372,7 +1373,7 @@ IMG_CB(41202b) {
 			// Go back to jars closed
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_41202);
+			                                                                               &CryOmni3DEngine_Versailles::img_41202);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1409,7 +1410,7 @@ IMG_CB(41801) {
 					// Display empty trunk
 					ZonFixedImage::CallbackFunctor *functor =
 					    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-					            &CryOmni3DEngine_Versailles::img_41801c);
+					                                                                               &CryOmni3DEngine_Versailles::img_41801c);
 					fimg->changeCallback(functor);
 					break;
 				} else {
@@ -1423,7 +1424,7 @@ IMG_CB(41801) {
 
 					ZonFixedImage::CallbackFunctor *functor =
 					    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-					            &CryOmni3DEngine_Versailles::img_41801b);
+					                                                                               &CryOmni3DEngine_Versailles::img_41801b);
 					fimg->changeCallback(functor);
 					break;
 				}
@@ -1458,7 +1459,7 @@ IMG_CB(41801b) {
 			// Go to empty trunk
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_41801c);
+			                                                                               &CryOmni3DEngine_Versailles::img_41801c);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1488,29 +1489,29 @@ IMG_CB(41801c) {
 IMG_CB(41802) {
 	// Dispatch to the correct state
 	if (_gameVariables[GameVariables::kInkSpilled] &&
-	        !_gameVariables[GameVariables::kCollectedPaperOnTable]) {
+	    !_gameVariables[GameVariables::kCollectedPaperOnTable]) {
 		// Draw paper with ink on it
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_41802b);
+		                                                                               &CryOmni3DEngine_Versailles::img_41802b);
 		fimg->changeCallback(functor);
 		return;
 	}
 	if (!_gameVariables[GameVariables::kInkSpilled] &&
-	        _gameVariables[GameVariables::kCollectedPaperOnTable]) {
+	    _gameVariables[GameVariables::kCollectedPaperOnTable]) {
 		// Draw table with ink in inkpot and without paper
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_41802c);
+		                                                                               &CryOmni3DEngine_Versailles::img_41802c);
 		fimg->changeCallback(functor);
 		return;
 	}
 	if (_gameVariables[GameVariables::kInkSpilled] &&
-	        _gameVariables[GameVariables::kCollectedPaperOnTable]) {
+	    _gameVariables[GameVariables::kCollectedPaperOnTable]) {
 		// Draw table with ink directly on table
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_41802d);
+		                                                                               &CryOmni3DEngine_Versailles::img_41802d);
 		fimg->changeCallback(functor);
 		return;
 	}
@@ -1531,7 +1532,7 @@ IMG_CB(41802) {
 			// Draw table with ink in inkpot and without paper
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_41802c);
+			                                                                               &CryOmni3DEngine_Versailles::img_41802c);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1541,7 +1542,7 @@ IMG_CB(41802) {
 			// Draw paper with ink on it
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_41802b);
+			                                                                               &CryOmni3DEngine_Versailles::img_41802b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1588,7 +1589,7 @@ IMG_CB(41802b) {
 			// Draw table with ink spilled and without paper
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_41802d);
+			                                                                               &CryOmni3DEngine_Versailles::img_41802d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1633,7 +1634,7 @@ IMG_CB(41802c) {
 			// Draw table with ink on it
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_41802d);
+			                                                                               &CryOmni3DEngine_Versailles::img_41802d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1701,10 +1702,10 @@ IMG_CB(41802d) {
 IMG_CB(43143) {
 	// Lampoon is there: display it
 	if (!_gameVariables[GameVariables::kCollectLampoonArchitecture] &&
-	        (_currentLevel == 5 || currentGameTime() >= 3)) {
+	    (_currentLevel == 5 || currentGameTime() >= 3)) {
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_43143b);
+		                                                                               &CryOmni3DEngine_Versailles::img_43143b);
 		fimg->changeCallback(functor);
 		return;
 	}
@@ -1740,7 +1741,7 @@ IMG_CB(43143b) {
 			// Display without the lampoon
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43143);
+			                                                                               &CryOmni3DEngine_Versailles::img_43143);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1765,7 +1766,7 @@ IMG_CB(43145) {
 
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_43145b);
+				                                                                               &CryOmni3DEngine_Versailles::img_43145b);
 				fimg->changeCallback(functor);
 				break;
 			} else if (fimg->_currentZone == 1) {
@@ -1777,7 +1778,7 @@ IMG_CB(43145) {
 
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_43145c);
+				                                                                               &CryOmni3DEngine_Versailles::img_43145c);
 				fimg->changeCallback(functor);
 				break;
 			}
@@ -1796,7 +1797,7 @@ IMG_CB(43145b) {
 			// Go back to drawer closed
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43145);
+			                                                                               &CryOmni3DEngine_Versailles::img_43145);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1826,7 +1827,7 @@ IMG_CB(43145c) {
 			// Go back to drawer closed
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43145);
+			                                                                               &CryOmni3DEngine_Versailles::img_43145);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1857,7 +1858,7 @@ IMG_CB(43146) {
 
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_43146b);
+				                                                                               &CryOmni3DEngine_Versailles::img_43146b);
 				fimg->changeCallback(functor);
 				break;
 			} else if (fimg->_currentZone == 1) {
@@ -1869,7 +1870,7 @@ IMG_CB(43146) {
 
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_43146c);
+				                                                                               &CryOmni3DEngine_Versailles::img_43146c);
 				fimg->changeCallback(functor);
 				break;
 			}
@@ -1888,7 +1889,7 @@ IMG_CB(43146b) {
 			// Go back to drawer closed
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43146);
+			                                                                               &CryOmni3DEngine_Versailles::img_43146);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1912,7 +1913,7 @@ IMG_CB(43146c) {
 			// Go back to drawer closed
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43146);
+			                                                                               &CryOmni3DEngine_Versailles::img_43146);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -1936,14 +1937,14 @@ IMG_CB(43160) {
 		// Draw table with paper but without charcoal
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_43160b);
+		                                                                               &CryOmni3DEngine_Versailles::img_43160b);
 		fimg->changeCallback(functor);
 		return;
 	} else if (!inInvCharcoal && inInvPaper) {
 		// Draw table with charcoal but without paper
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_43160c);
+		                                                                               &CryOmni3DEngine_Versailles::img_43160c);
 		fimg->changeCallback(functor);
 		return;
 	}
@@ -1963,7 +1964,7 @@ IMG_CB(43160) {
 				// Draw table with paper but without charcoal
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_43160b);
+				                                                                               &CryOmni3DEngine_Versailles::img_43160b);
 				fimg->changeCallback(functor);
 				break;
 			} else if (fimg->_currentZone == 1) {
@@ -1972,7 +1973,7 @@ IMG_CB(43160) {
 				// Draw table with charcoal but without paper
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_43160c);
+				                                                                               &CryOmni3DEngine_Versailles::img_43160c);
 				fimg->changeCallback(functor);
 				break;
 			}
@@ -1994,7 +1995,7 @@ IMG_CB(43160b) {
 			// Draw table empty
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43160d);
+			                                                                               &CryOmni3DEngine_Versailles::img_43160d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2015,7 +2016,7 @@ IMG_CB(43160c) {
 			// Draw table empty
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43160d);
+			                                                                               &CryOmni3DEngine_Versailles::img_43160d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2054,7 +2055,7 @@ IMG_CB(43190) {
 			}
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43190b);
+			                                                                               &CryOmni3DEngine_Versailles::img_43190b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2077,7 +2078,7 @@ IMG_CB(43190b) {
 			}
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43190c);
+			                                                                               &CryOmni3DEngine_Versailles::img_43190c);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2100,7 +2101,7 @@ IMG_CB(43190c) {
 			}
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43190d);
+			                                                                               &CryOmni3DEngine_Versailles::img_43190d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2123,7 +2124,7 @@ IMG_CB(43190d) {
 			}
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43190e);
+			                                                                               &CryOmni3DEngine_Versailles::img_43190e);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2141,7 +2142,7 @@ IMG_CB(43190e) {
 		if (fimg->_zoneUse) {
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_43190f);
+			                                                                               &CryOmni3DEngine_Versailles::img_43190f);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2170,7 +2171,7 @@ IMG_CB(44071) {
 		// Draw plate with less food
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_44071b);
+		                                                                               &CryOmni3DEngine_Versailles::img_44071b);
 		fimg->changeCallback(functor);
 		return;
 	}
@@ -2190,7 +2191,7 @@ IMG_CB(44071) {
 			// Draw plate with less food
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_44071b);
+			                                                                               &CryOmni3DEngine_Versailles::img_44071b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2215,7 +2216,7 @@ IMG_CB(44161) {
 		// We have collected quill but not solved epigraph yet
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_44161b);
+		                                                                               &CryOmni3DEngine_Versailles::img_44161b);
 		fimg->changeCallback(functor);
 		return;
 	} else if (_gameVariables[GameVariables::kUsedVaubanBlueprint1] == 1 &&
@@ -2223,7 +2224,7 @@ IMG_CB(44161) {
 		// We have used vauban blueprints: display the solution
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_44161f);
+		                                                                               &CryOmni3DEngine_Versailles::img_44161f);
 		fimg->changeCallback(functor);
 		return;
 	} else if (_gameVariables[GameVariables::kCollectQuill] == 1 &&
@@ -2231,7 +2232,7 @@ IMG_CB(44161) {
 		// We have collected quill and epigraph
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_44161c);
+		                                                                               &CryOmni3DEngine_Versailles::img_44161c);
 		fimg->changeCallback(functor);
 		return;
 	}
@@ -2251,14 +2252,14 @@ IMG_CB(44161) {
 			// Try to solve epigraph
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_44161b);
+			                                                                               &CryOmni3DEngine_Versailles::img_44161b);
 			fimg->changeCallback(functor);
 			break;
 		} else if (fimg->_zoneSee) {
 			// Look at blueprints
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_44161d);
+			                                                                               &CryOmni3DEngine_Versailles::img_44161d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2284,7 +2285,7 @@ IMG_CB(44161b) {
 				// No more epigraphe nor quill
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_44161c);
+				                                                                               &CryOmni3DEngine_Versailles::img_44161c);
 				fimg->changeCallback(functor);
 			}
 			// If failed to solve: just display this image again
@@ -2293,7 +2294,7 @@ IMG_CB(44161b) {
 			// Look at blueprints
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_44161d);
+			                                                                               &CryOmni3DEngine_Versailles::img_44161d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2313,7 +2314,7 @@ IMG_CB(44161c) {
 			// Look at blueprints
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_44161d);
+			                                                                               &CryOmni3DEngine_Versailles::img_44161d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2333,7 +2334,7 @@ IMG_CB(44161d) {
 			// Overlay blueprints
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_44161e);
+			                                                                               &CryOmni3DEngine_Versailles::img_44161e);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2359,7 +2360,7 @@ IMG_CB(44161e) {
 			// Look at the final result
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_44161f);
+			                                                                               &CryOmni3DEngine_Versailles::img_44161f);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2418,8 +2419,8 @@ bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
 					continue;
 				}
 				if (keyCode >= Common::KEYCODE_a &&
-				        keyCode <= Common::KEYCODE_z &&
-				        _epigraphContent.contains(keyCode - Common::KEYCODE_a + 'A')) {
+				    keyCode <= Common::KEYCODE_z &&
+				    _epigraphContent.contains(keyCode - Common::KEYCODE_a + 'A')) {
 					password += keyCode - Common::KEYCODE_a + 'A';
 				} else {
 					continue;
@@ -2444,7 +2445,7 @@ bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
 }
 
 void CryOmni3DEngine_Versailles::drawEpigraphLetters(Graphics::ManagedSurface &surface,
-        const Graphics::Surface(&bmpLetters)[28], const Common::String &letters) {
+                                                     const Graphics::Surface (&bmpLetters)[28], const Common::String &letters) {
 	for (uint i = 0; i < letters.size() && i < kEpigraphMaxLetters; i++) {
 		uint letterId = 0;
 		if (letters[i] >= 'A' && letters[i] <= 'Z') {
@@ -2485,21 +2486,21 @@ IMG_CB(45270) {
 				// Open left drawer
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_45270b);
+				                                                                               &CryOmni3DEngine_Versailles::img_45270b);
 				fimg->changeCallback(functor);
 				break;
 			} else if (fimg->_currentZone == 1) {
 				// Open middle drawer
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_45270c);
+				                                                                               &CryOmni3DEngine_Versailles::img_45270c);
 				fimg->changeCallback(functor);
 				break;
 			} else if (fimg->_currentZone == 2) {
 				// Open right drawer
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_45270d);
+				                                                                               &CryOmni3DEngine_Versailles::img_45270d);
 				fimg->changeCallback(functor);
 				break;
 			}
@@ -2524,7 +2525,7 @@ IMG_CB(45270b) {
 			// Close drawer
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_45270);
+			                                                                               &CryOmni3DEngine_Versailles::img_45270);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2548,7 +2549,7 @@ IMG_CB(45270c) {
 			// Close drawer
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_45270);
+			                                                                               &CryOmni3DEngine_Versailles::img_45270);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2567,7 +2568,7 @@ IMG_CB(45270d) {
 			// Close drawer
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_45270);
+			                                                                               &CryOmni3DEngine_Versailles::img_45270);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2592,10 +2593,10 @@ IMG_CB(45280) {
 
 IMG_CB(88001) {
 	if (!_inventory.inInventoryByNameID(121) &&
-	        _gameVariables[GameVariables::kMedalsDrawerStatus] == 3) {
+	    _gameVariables[GameVariables::kMedalsDrawerStatus] == 3) {
 		ZonFixedImage::CallbackFunctor *functor =
 		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-		            &CryOmni3DEngine_Versailles::img_88001c);
+		                                                                               &CryOmni3DEngine_Versailles::img_88001c);
 		fimg->changeCallback(functor);
 		return;
 	}
@@ -2611,7 +2612,7 @@ IMG_CB(88001) {
 			break;
 		}
 		if (fimg->_zoneUse &&
-		        !_inventory.inInventoryByNameID(121)) {
+		    !_inventory.inInventoryByNameID(121)) {
 			// Open the drawer
 
 			playInGameVideo("33P_10");
@@ -2622,7 +2623,7 @@ IMG_CB(88001) {
 
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88001b);
+			                                                                               &CryOmni3DEngine_Versailles::img_88001b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2643,19 +2644,19 @@ IMG_CB(88001b) {
 			// Go back to drawer closed
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88001);
+			                                                                               &CryOmni3DEngine_Versailles::img_88001);
 			fimg->changeCallback(functor);
 			break;
 		}
 		if (fimg->_usedObject &&
-		        fimg->_usedObject->idOBJ() == 114 &&
-		        fimg->_currentZone == 0) {
+		    fimg->_usedObject->idOBJ() == 114 &&
+		    fimg->_currentZone == 0) {
 			// Lay the paper on the medals
 			_inventory.removeByNameID(114);
 
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88001c);
+			                                                                               &CryOmni3DEngine_Versailles::img_88001c);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2674,8 +2675,8 @@ IMG_CB(88001c) {
 			break;
 		}
 		if (fimg->_usedObject &&
-		        fimg->_usedObject->idOBJ() == 113 &&
-		        fimg->_currentZone == 0) {
+		    fimg->_usedObject->idOBJ() == 113 &&
+		    fimg->_currentZone == 0) {
 			// Use charcoal on paper and medals
 			_inventory.removeByNameID(113);
 
@@ -2690,7 +2691,7 @@ IMG_CB(88001c) {
 
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88001);
+			                                                                               &CryOmni3DEngine_Versailles::img_88001);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2719,7 +2720,7 @@ IMG_CB(88002) {
 IMG_CB(88003) {
 	// Dispatch to the correct state
 	if (_gameVariables[GameVariables::kBombState] >= 1 &&
-	        _gameVariables[GameVariables::kBombState] <= 5) {
+	    _gameVariables[GameVariables::kBombState] <= 5) {
 		FixedImgCallback callback = nullptr;
 		switch (_gameVariables[GameVariables::kBombState]) {
 		case 1:
@@ -2764,12 +2765,12 @@ IMG_CB(88003) {
 			break;
 		}
 		if (fimg->_currentZone == 0 && fimg->_usedObject &&
-		        fimg->_usedObject->idOBJ() == 145) {
+		    fimg->_usedObject->idOBJ() == 145) {
 			// Now we know how to reach the bomb
 			_gameVariables[GameVariables::kBombState] = 1;
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88003b);
+			                                                                               &CryOmni3DEngine_Versailles::img_88003b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2807,12 +2808,12 @@ IMG_CB(88003b) {
 			break;
 		}
 		if (fimg->_currentZone == 0 && fimg->_usedObject &&
-		        fimg->_usedObject->idOBJ() == 97) {
+		    fimg->_usedObject->idOBJ() == 97) {
 			// Unlock first line with key 1
 			_gameVariables[GameVariables::kBombState] = 2;
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88003c);
+			                                                                               &CryOmni3DEngine_Versailles::img_88003c);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2842,12 +2843,12 @@ IMG_CB(88003c) {
 			break;
 		}
 		if (fimg->_currentZone == 1 && fimg->_usedObject &&
-		        fimg->_usedObject->idOBJ() == 116) {
+		    fimg->_usedObject->idOBJ() == 116) {
 			// Unlock second line with key 2
 			_gameVariables[GameVariables::kBombState] = 3;
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88003d);
+			                                                                               &CryOmni3DEngine_Versailles::img_88003d);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2877,12 +2878,12 @@ IMG_CB(88003d) {
 			break;
 		}
 		if (fimg->_currentZone == 2 && fimg->_usedObject &&
-		        fimg->_usedObject->idOBJ() == 135) {
+		    fimg->_usedObject->idOBJ() == 135) {
 			// Unlock third line with key 3
 			_gameVariables[GameVariables::kBombState] = 4;
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88003e);
+			                                                                               &CryOmni3DEngine_Versailles::img_88003e);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -2912,12 +2913,12 @@ IMG_CB(88003e) {
 			break;
 		}
 		if (fimg->_currentZone == 3 && fimg->_usedObject &&
-		        fimg->_usedObject->idOBJ() == 136) {
+		    fimg->_usedObject->idOBJ() == 136) {
 			// Unlock fourth line with key 4
 			_gameVariables[GameVariables::kBombState] = 5;
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88003f);
+			                                                                               &CryOmni3DEngine_Versailles::img_88003f);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -3099,116 +3100,112 @@ void CryOmni3DEngine_Versailles::handleBombTranslation(Graphics::ManagedSurface 
 }
 
 const uint16 CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLength][2] = {
-	{
-		{26, 91},
-		{84, 89},
-		{141, 89},
-		{202, 88},
-		{261, 87},
-		{322, 86},
-		{384, 85},
-		{448, 84},
-		{512, 83},
-		{576, 83},
-		{26, 175},
-		{84, 175},
-		{142, 174},
-		{202, 174},
-		{260, 174},
-		{322, 174},
-		{384, 173},
-		{448, 173},
-		{512, 173},
-		{576, 172},
-		{26, 261},
-		{84, 261},
-		{141, 261},
-		{202, 261},
-		{261, 262},
-		{322, 262},
-		{383, 262},
-		{447, 263},
-		{512, 263},
-		{576, 263},
-		{26, 344},
-		{84, 345},
-		{142, 346},
-		{202, 347},
-		{260, 348},
-		{322, 349},
-		{384, 350},
-		{448, 351},
-		{512, 352},
-		{576, 352}
-	},
-	{
-		{42, 26},
-		{100, 24},
-		{155, 22},
-		{214, 19},
-		{271, 18},
-		{330, 15},
-		{389, 14},
-		{451, 11},
-		{515, 8},
-		{576, 6},
-		{45, 102},
-		{100, 102},
-		{156, 101},
-		{215, 100},
-		{272, 99},
-		{331, 98},
-		{391, 97},
-		{453, 96},
-		{515, 94},
-		{578, 94},
-		{44, 184},
-		{101, 184},
-		{157, 184},
-		{215, 183},
-		{272, 183},
-		{331, 183},
-		{391, 182},
-		{453, 182},
-		{515, 182},
-		{577, 181},
-		{44, 267},
-		{101, 267},
-		{157, 267},
-		{215, 268},
-		{272, 268},
-		{331, 268},
-		{390, 269},
-		{453, 269},
-		{515, 269},
-		{578, 269},
-		{45, 348},
-		{101, 349},
-		{156, 349},
-		{215, 351},
-		{271, 351},
-		{331, 351},
-		{391, 353},
-		{453, 354},
-		{515, 355},
-		{577, 356},
-		{44, 434},
-		{101, 435},
-		{156, 436},
-		{215, 437},
-		{272, 437},
-		{331, 437},
-		{391, 439},
-		{453, 440},
-		{515, 441},
-		{578, 442}
-	},
+    {{26, 91},
+     {84, 89},
+     {141, 89},
+     {202, 88},
+     {261, 87},
+     {322, 86},
+     {384, 85},
+     {448, 84},
+     {512, 83},
+     {576, 83},
+     {26, 175},
+     {84, 175},
+     {142, 174},
+     {202, 174},
+     {260, 174},
+     {322, 174},
+     {384, 173},
+     {448, 173},
+     {512, 173},
+     {576, 172},
+     {26, 261},
+     {84, 261},
+     {141, 261},
+     {202, 261},
+     {261, 262},
+     {322, 262},
+     {383, 262},
+     {447, 263},
+     {512, 263},
+     {576, 263},
+     {26, 344},
+     {84, 345},
+     {142, 346},
+     {202, 347},
+     {260, 348},
+     {322, 349},
+     {384, 350},
+     {448, 351},
+     {512, 352},
+     {576, 352}},
+    {{42, 26},
+     {100, 24},
+     {155, 22},
+     {214, 19},
+     {271, 18},
+     {330, 15},
+     {389, 14},
+     {451, 11},
+     {515, 8},
+     {576, 6},
+     {45, 102},
+     {100, 102},
+     {156, 101},
+     {215, 100},
+     {272, 99},
+     {331, 98},
+     {391, 97},
+     {453, 96},
+     {515, 94},
+     {578, 94},
+     {44, 184},
+     {101, 184},
+     {157, 184},
+     {215, 183},
+     {272, 183},
+     {331, 183},
+     {391, 182},
+     {453, 182},
+     {515, 182},
+     {577, 181},
+     {44, 267},
+     {101, 267},
+     {157, 267},
+     {215, 268},
+     {272, 268},
+     {331, 268},
+     {390, 269},
+     {453, 269},
+     {515, 269},
+     {578, 269},
+     {45, 348},
+     {101, 349},
+     {156, 349},
+     {215, 351},
+     {271, 351},
+     {331, 351},
+     {391, 353},
+     {453, 354},
+     {515, 355},
+     {577, 356},
+     {44, 434},
+     {101, 435},
+     {156, 436},
+     {215, 437},
+     {272, 437},
+     {331, 437},
+     {391, 439},
+     {453, 440},
+     {515, 441},
+     {578, 442}},
 };
 
 void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surface,
-        const Graphics::Surface(&bmpLetters)[28], const uint bombPasswordLength,
-        const uint32(&bombPossibilites)[kBombPasswordMaxLength][5],
-        const byte(&bombCurrentLetters)[kBombPasswordMaxLength]) {
+                                                 const Graphics::Surface (&bmpLetters)[28], const uint bombPasswordLength,
+                                                 const uint32 (&bombPossibilites)[kBombPasswordMaxLength][5],
+                                                 const byte (&bombCurrentLetters)[kBombPasswordMaxLength]) {
 	uint table = bombPasswordLength <= kBombPasswordSmallLength ? 0 : 1;
 	if (getLanguage() == Common::JA_JPN) {
 		_fontManager.setCurrentFont(1);
@@ -3248,7 +3245,7 @@ IMG_CB(88004) {
 		if (fimg->_zoneUse) {
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88004b);
+			                                                                               &CryOmni3DEngine_Versailles::img_88004b);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -3272,7 +3269,7 @@ IMG_CB(88004b) {
 		if (fimg->_zoneUse) {
 			ZonFixedImage::CallbackFunctor *functor =
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_88004);
+			                                                                               &CryOmni3DEngine_Versailles::img_88004);
 			fimg->changeCallback(functor);
 			break;
 		}
@@ -3290,8 +3287,8 @@ IMG_CB(88004b) {
 #undef IMG_CB
 
 // Init place and filter event
-#define FILTER_EVENT(level, place) bool CryOmni3DEngine_Versailles::filterEventLevel ## level ## Place ## place(uint *event)
-#define INIT_PLACE(level, place) void CryOmni3DEngine_Versailles::initPlaceLevel ## level ## Place ## place()
+#define FILTER_EVENT(level, place) bool CryOmni3DEngine_Versailles::filterEventLevel##level##Place##place(uint *event)
+#define INIT_PLACE(level, place) void CryOmni3DEngine_Versailles::initPlaceLevel##level##Place##place()
 
 FILTER_EVENT(1, 1) {
 	if (*event > 0 && *event < 9999) {
@@ -3446,8 +3443,8 @@ FILTER_EVENT(2, 1) {
 		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
 		_dialogsMan["{JOUEUR-MONTRE-PAPIER-ECRIT-ENCRE-SYMPATHIQUE}"] = 'N';
 		uint idOBJ = _inventory.selectedObject()->idOBJ();
-		if (idOBJ == 96  || idOBJ == 101 || idOBJ == 115 ||
-		        idOBJ == 125 || idOBJ == 127) {
+		if (idOBJ == 96 || idOBJ == 101 || idOBJ == 115 ||
+		    idOBJ == 125 || idOBJ == 127) {
 			_dialogsMan["{JOUEUR-MONTRE-UN-PAMPHLET}"] = 'Y';
 		} else if (idOBJ == 98) {
 			_dialogsMan["{JOUEUR-MONTRE-PAPIER-ECRIT-ENCRE-SYMPATHIQUE}"] = 'Y';
@@ -3642,7 +3639,7 @@ INIT_PLACE(2, 9) {
 
 FILTER_EVENT(2, 9) {
 	if (*event == 22902 && _inventory.selectedObject() &&
-	        _inventory.selectedObject()->idOBJ() == 105) {
+	    _inventory.selectedObject()->idOBJ() == 105) {
 		_dialogsMan["{JOUEUR-DONNE-ESQUISSES}"] = 'Y';
 
 		_dialogsMan.setIgnoreNoEndOfConversation(true);
@@ -3740,8 +3737,8 @@ FILTER_EVENT(2, 12) {
 		_inventory.deselectObject();
 	} else if (*event == 32120) {
 		if (_inventory.selectedObject() &&
-		        _inventory.selectedObject()->idOBJ() == 107 &&
-		        _gameVariables[GameVariables::kSketchState] == 2) {
+		    _inventory.selectedObject()->idOBJ() == 107 &&
+		    _gameVariables[GameVariables::kSketchState] == 2) {
 			handleFixedImg(&CryOmni3DEngine_Versailles::img_32120);
 		}
 		// We handle use here
@@ -3756,8 +3753,8 @@ FILTER_EVENT(2, 14) {
 
 FILTER_EVENT(3, 3) {
 	if (*event == 23030 && _inventory.selectedObject() &&
-	        _inventory.selectedObject()->idOBJ() == 118 &&
-	        _gameVariables[GameVariables::kDecipherScore]) {
+	    _inventory.selectedObject()->idOBJ() == 118 &&
+	    _gameVariables[GameVariables::kDecipherScore]) {
 		_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-DECHIFFRE-PAR-LULLY}"] = 'Y';
 		_dialogsMan.play("31X_BON");
 
@@ -3775,7 +3772,7 @@ FILTER_EVENT(3, 3) {
 
 FILTER_EVENT(3, 10) {
 	if (*event == 23101 && _inventory.selectedObject() &&
-	        _inventory.selectedObject()->idOBJ() == 120) {
+	    _inventory.selectedObject()->idOBJ() == 120) {
 		_inventory.removeByNameID(120);
 
 		_dialogsMan["{JOUEUR-MONTRE-AUTORISATION-DE-BONTEMPS}"] = 'Y';
@@ -3856,7 +3853,7 @@ FILTER_EVENT(3, 15) {
 FILTER_EVENT(3, 17) {
 	if (*event == 18) {
 		if (_inventory.selectedObject() &&
-		        _inventory.selectedObject()->idOBJ() == 123) {
+		    _inventory.selectedObject()->idOBJ() == 123) {
 			_gameVariables[GameVariables::kUnlockHiddenDoor] = 1;
 			_inventory.removeByNameID(123);
 			return true;
@@ -3950,7 +3947,7 @@ FILTER_EVENT(3, 22) {
 	if (*event == 33220) {
 		if (!_gameVariables[GameVariables::kCollectLampoonArchitecture]) {
 			if (_inventory.selectedObject() &&
-			        _inventory.selectedObject()->idOBJ() == 119) {
+			    _inventory.selectedObject()->idOBJ() == 119) {
 				// Using pool cue
 				_inventory.removeByNameID(119);
 				collectLampoonArchitecture();
@@ -3965,8 +3962,8 @@ FILTER_EVENT(3, 22) {
 	}
 
 	if (*event >= 20000 && *event < 30000 &&
-	        _inventory.selectedObject() &&
-	        _inventory.selectedObject()->idOBJ() == 118) {
+	    _inventory.selectedObject() &&
+	    _inventory.selectedObject()->idOBJ() == 118) {
 		_dialogsMan["{JOUEUR-PRESENTE-PAMPHLET-PARTITION}"] = 'Y';
 		_dialogsMan.play("31L1_LUL");
 
@@ -3978,7 +3975,7 @@ FILTER_EVENT(3, 22) {
 
 		_dialogsMan["{JOUEUR-PRESENTE-PAMPHLET-PARTITION}"] = 'N';
 		if (_dialogsMan["LULLY-DONNE-MISSION1-JOUEUR"] != 'Y' ||
-		        _gameVariables[GameVariables::kDecipherScore]) {
+		    _gameVariables[GameVariables::kDecipherScore]) {
 			_inventory.deselectObject();
 		} else {
 			_inventory.removeByNameID(118);
@@ -3993,7 +3990,7 @@ FILTER_EVENT(3, 23) {
 	}
 
 	if (_inventory.selectedObject() &&
-	        _inventory.selectedObject()->idOBJ() == 140) {
+	    _inventory.selectedObject()->idOBJ() == 140) {
 		_gameVariables[GameVariables::kUnlockedAttic] = 1;
 		_inventory.removeByNameID(140);
 		return true;
@@ -4008,7 +4005,7 @@ FILTER_EVENT(3, 23) {
 
 bool CryOmni3DEngine_Versailles::filterEventLevel3Obj23151() {
 	if (_inventory.selectedObject() &&
-	        _inventory.selectedObject()->idOBJ() == 115) {
+	    _inventory.selectedObject()->idOBJ() == 115) {
 		_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARCHITECTURE}"] = 'Y';
 	} else if (_inventory.selectedObject() &&
 	           _inventory.selectedObject()->idOBJ() == 121 &&
@@ -4110,7 +4107,7 @@ FILTER_EVENT(4, 12_13_14) {
 	}
 
 	if (!_inventory.selectedObject() ||
-	        _inventory.selectedObject()->idOBJ() != 130) {
+	    _inventory.selectedObject()->idOBJ() != 130) {
 		// Not using scope: do nothing
 		return false;
 	}
@@ -4351,8 +4348,8 @@ FILTER_EVENT(5, 16) {
 		// Don't move the ladder when there is a guard
 		if (_placeStates[16].state != 0) {
 			if (!_gameVariables[GameVariables::kOpenedCurtain] &&
-			        _inventory.selectedObject() &&
-			        _inventory.selectedObject()->idOBJ() == 133) {
+			    _inventory.selectedObject() &&
+			    _inventory.selectedObject()->idOBJ() == 133) {
 				// Try to open the curtain
 				if (_gameVariables[GameVariables::kLadderState]) {
 					// Ladder is not near the curtain
@@ -4370,8 +4367,8 @@ FILTER_EVENT(5, 16) {
 	} else if (*event == 28) {
 		// Try to go to scaffolding
 		if (_gameVariables[GameVariables::kLadderState] == 1 &&
-		        _inventory.selectedObject() &&
-		        _inventory.selectedObject()->idOBJ() == 108) {
+		    _inventory.selectedObject() &&
+		    _inventory.selectedObject()->idOBJ() == 108) {
 			// Put the ladder on the scaffolding
 			_inventory.removeByNameID(108);
 			_gameVariables[GameVariables::kLadderState] = 2;
@@ -4441,7 +4438,7 @@ FILTER_EVENT(5, 23) {
 	// Event 32 only
 	// Try to open attic door
 	if (_inventory.selectedObject() &&
-	        _inventory.selectedObject()->idOBJ() == 140) {
+	    _inventory.selectedObject()->idOBJ() == 140) {
 		_gameVariables[GameVariables::kUnlockedAttic] = 1;
 		_inventory.removeByNameID(140);
 		return true;
@@ -4591,7 +4588,7 @@ FILTER_EVENT(6, 3) {
 FILTER_EVENT(6, Orangery) {
 	if (*event == 36000) {
 		if (_inventory.selectedObject() &&
-		        _inventory.selectedObject()->idOBJ() == 143) {
+		    _inventory.selectedObject()->idOBJ() == 143) {
 			_gameVariables[GameVariables::kCombedOrangeTree]++; // Not used afterwards
 			displayMessageBoxWarp(5);
 		}
@@ -4599,7 +4596,7 @@ FILTER_EVENT(6, Orangery) {
 		return false;
 	} else if (*event == 36001) {
 		if (_inventory.selectedObject() &&
-		        _inventory.selectedObject()->idOBJ() == 143) {
+		    _inventory.selectedObject()->idOBJ() == 143) {
 			displayMessageBoxWarp(6);
 		}
 		// Handled here
@@ -4611,7 +4608,7 @@ FILTER_EVENT(6, Orangery) {
 
 FILTER_EVENT(6, 19) {
 	if (*event == 26190 && _inventory.selectedObject() &&
-	        _placeStates[19].state == 0) {
+	    _placeStates[19].state == 0) {
 		if (!_gameVariables[GameVariables::kMaineTalked]) {
 			if (_inventory.selectedObject()->idOBJ() == 144) {
 				_dialogsMan["{JOUEUR-DONNE-AUTRE-MEDICAMENT}"] = 'Y';
@@ -4654,7 +4651,7 @@ FILTER_EVENT(6, 19) {
 FILTER_EVENT(7, 2) {
 	if (*event == 37021) {
 		if (_inventory.selectedObject() &&
-		        _inventory.selectedObject()->idOBJ() == 103) {
+		    _inventory.selectedObject()->idOBJ() == 103) {
 			// Light the candle
 			_inventory.removeByNameID(103);
 			collectObject(102);
@@ -4678,7 +4675,7 @@ FILTER_EVENT(7, 2) {
 		}
 
 		if (_inventory.selectedObject() &&
-		        _inventory.selectedObject()->idOBJ() == 102) {
+		    _inventory.selectedObject()->idOBJ() == 102) {
 			// Now you can go
 			displayMessageBoxWarp(12);
 			_inventory.removeByNameID(102);
@@ -4716,8 +4713,8 @@ FILTER_EVENT(7, 9) {
 FILTER_EVENT(7, 10_11_13) {
 	if (*event == 37131) {
 		if (_inventory.selectedObject() &&
-		        _inventory.selectedObject()->idOBJ() == 143 &&
-		        !_inventory.inInventoryByNameID(136)) {
+		    _inventory.selectedObject()->idOBJ() == 143 &&
+		    !_inventory.inInventoryByNameID(136)) {
 			collectObject(136);
 			// WORKAROUND: Deselect the tool
 			_inventory.deselectObject();
@@ -4726,7 +4723,7 @@ FILTER_EVENT(7, 10_11_13) {
 		return false;
 	} else if (*event == 37132) {
 		if (_inventory.selectedObject() &&
-		        _inventory.selectedObject()->idOBJ() == 143) {
+		    _inventory.selectedObject()->idOBJ() == 143) {
 			// Nothing in this orange tree
 			displayMessageBoxWarp(5);
 		}

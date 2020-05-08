@@ -93,7 +93,6 @@ public:
 
 class AntiAirUnit : public DefenseUnit {
 private:
-
 public:
 	AntiAirUnit(AI *ai);
 	AntiAirUnit(DefenseUnit *inUnit, AI *ai);
@@ -104,7 +103,6 @@ public:
 
 class ShieldUnit : public DefenseUnit {
 private:
-
 public:
 	ShieldUnit(AI *ai);
 	ShieldUnit(DefenseUnit *inUnit, AI *ai);
@@ -115,7 +113,6 @@ public:
 
 class MineUnit : public DefenseUnit {
 private:
-
 public:
 	MineUnit(AI *ai);
 	MineUnit(DefenseUnit *inUnit, AI *ai);
@@ -126,7 +123,6 @@ public:
 
 class HubUnit : public DefenseUnit {
 private:
-
 public:
 	HubUnit(AI *ai);
 	HubUnit(DefenseUnit *inUnit, AI *ai);
@@ -137,7 +133,6 @@ public:
 
 class TowerUnit : public DefenseUnit {
 private:
-
 public:
 	TowerUnit(AI *ai);
 	TowerUnit(DefenseUnit *inUnit, AI *ai);
@@ -148,7 +143,6 @@ public:
 
 class BridgeUnit : public DefenseUnit {
 private:
-
 public:
 	BridgeUnit(AI *ai);
 	BridgeUnit(DefenseUnit *inUnit, AI *ai);
@@ -159,7 +153,6 @@ public:
 
 class EnergyUnit : public DefenseUnit {
 private:
-
 public:
 	EnergyUnit(AI *ai);
 	EnergyUnit(DefenseUnit *inUnit, AI *ai);
@@ -170,7 +163,6 @@ public:
 
 class OffenseUnit : public DefenseUnit {
 private:
-
 public:
 	OffenseUnit(AI *ai);
 	OffenseUnit(DefenseUnit *inUnit, AI *ai);
@@ -181,7 +173,6 @@ public:
 
 class CrawlerUnit : public DefenseUnit {
 private:
-
 public:
 	CrawlerUnit(AI *ai);
 	CrawlerUnit(DefenseUnit *inUnit, AI *ai);

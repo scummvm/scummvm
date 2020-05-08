@@ -31,13 +31,13 @@
 #define SCUMMVM_DONT_DEFINE_TYPES
 
 // Include required headers
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
 #include <ctype.h>
 #include <math.h>
 #include <new>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define double float
 
@@ -61,24 +61,23 @@ void consolePrintf(const char *format, ...);
 }
 #endif
 
-
 #ifdef assert
 #undef assert
 #endif
 
 #ifdef NDEBUG
 
-#define	assert(e)	((void)0)
+#define assert(e) ((void)0)
 
 #else
 
 // FIXME: Shouldn't assert() also bail out / exit / halt the program? Right now we just
 // print an error message...
-#define assert(s) \
-	do { \
-		if (!(s)) { \
+#define assert(s)                                                                                 \
+	do {                                                                                          \
+		if (!(s)) {                                                                               \
 			consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__); \
-		} \
+		}                                                                                         \
 	} while (0)
 
 #endif

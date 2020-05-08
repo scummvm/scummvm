@@ -28,9 +28,9 @@
 #include "lilliput/sound.h"
 #include "lilliput/stream.h"
 
+#include "common/events.h"
 #include "common/file.h"
 #include "common/rect.h"
-#include "common/events.h"
 
 #include "engines/engine.h"
 #include "graphics/palette.h"
@@ -55,29 +55,29 @@ namespace Lilliput {
 static const int kSavegameVersion = 1;
 
 enum GameType {
-	kGameTypeNone  = 0,
+	kGameTypeNone = 0,
 	kGameTypeRobin,
 	kGameTypeRome
 };
 
 enum LilliputDebugChannels {
-	kDebugEngine    = 1 << 0,
-	kDebugScript    = 1 << 1,
-	kDebugSound     = 1 << 2,
+	kDebugEngine = 1 << 0,
+	kDebugScript = 1 << 1,
+	kDebugSound = 1 << 2,
 	kDebugEngineTBC = 1 << 3,
 	kDebugScriptTBC = 1 << 4
 };
 
 enum InterfaceHotspotStatus {
-	kHotspotOff      = 0,
+	kHotspotOff = 0,
 	kHotspotDisabled = 1,
-	kHotspotEnabled  = 2,
+	kHotspotEnabled = 2,
 	kHotspotSelected = 3
 };
 
-#define kSeqNone	0
-#define kSeqNoInc	1 << 0
-#define kSeqRepeat	1 << 1
+#define kSeqNone 0
+#define kSeqNoInc 1 << 0
+#define kSeqRepeat 1 << 1
 
 struct LilliputGameDescription;
 
@@ -118,8 +118,8 @@ public:
 	byte _byte16552;
 	int8 _lastInterfaceHotspotIndex;
 	byte _lastInterfaceHotspotButton; // Unused: set by 2 functions, but never used elsewhere
-	byte _debugFlag; // Mostly useless, as the associated functions are empty
-	byte _debugFlag2; // Unused byte, set by an opcode
+	byte _debugFlag;                  // Mostly useless, as the associated functions are empty
+	byte _debugFlag2;                 // Unused byte, set by an opcode
 
 	byte _codeEntered[3];
 	char _homeInDirLikelyhood[4];

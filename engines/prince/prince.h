@@ -23,16 +23,16 @@
 #ifndef PRINCE_PRINCE_H
 #define PRINCE_PRINCE_H
 
-#include "common/random.h"
-#include "common/system.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
-#include "common/textconsole.h"
-#include "common/rect.h"
-#include "common/events.h"
+#include "common/debug.h"
 #include "common/endian.h"
+#include "common/events.h"
+#include "common/random.h"
+#include "common/rect.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
+#include "common/system.h"
+#include "common/textconsole.h"
 
 #include "image/bmp.h"
 
@@ -78,8 +78,8 @@ class Pscr;
 
 enum {
 	GF_TRANSLATED = 1 << 0,
-	GF_EXTRACTED  = 1 << 1,
-	GF_NOVOICES   = 1 << 2
+	GF_EXTRACTED = 1 << 1,
+	GF_NOVOICES = 1 << 2
 };
 
 struct SavegameHeader {
@@ -100,7 +100,7 @@ struct Text {
 	uint16 _time;
 	uint32 _color;
 
-	Text() : _str(nullptr), _x(0), _y(0), _time(0), _color(255){
+	Text() : _str(nullptr), _x(0), _y(0), _time(0), _color(255) {
 	}
 };
 
@@ -114,27 +114,27 @@ struct AnimListItem {
 	int16 _y;
 	uint16 _loopType;
 	uint16 _nextAnim; // number of animation to do for loop = 3
-	uint16 _flags; // byte 0 - draw masks, byte 1 - draw in front of mask, byte 2 - load but turn off drawing
+	uint16 _flags;    // byte 0 - draw masks, byte 1 - draw in front of mask, byte 2 - load but turn off drawing
 	bool loadFromStream(Common::SeekableReadStream &stream);
 };
 
 struct BAS {
-	int32 _type; // type of sequence
-	int32 _data; // additional data
-	int32 _anims; // number of animations
-	int32 _current; // actual number of animation
-	int32 _counter; // time counter for animation
+	int32 _type;         // type of sequence
+	int32 _data;         // additional data
+	int32 _anims;        // number of animations
+	int32 _current;      // actual number of animation
+	int32 _counter;      // time counter for animation
 	int32 _currRelative; //actual relative number for animation
-	int32 _data2; // additional data for measurements
+	int32 _data2;        // additional data for measurements
 };
 
 const int kStructSizeBAS = 28;
 
 struct BASA {
-	int16 _num;	// animation number
-	int16 _start;	// initial frame
-	int16 _end;	// final frame
-	//int16 _pad;	// fulfilment to 8 bytes
+	int16 _num;   // animation number
+	int16 _start; // initial frame
+	int16 _end;   // final frame
+	              //int16 _pad;	// fulfilment to 8 bytes
 };
 
 const int kStructSizeBASA = 8;
@@ -146,12 +146,12 @@ struct Anim {
 	int16 _usage;
 	int16 _state; // state of animation: 0 - turning on, 1 - turning off
 	int16 _flags;
-	int16 _frame; // number of phase to show
+	int16 _frame;     // number of phase to show
 	int16 _lastFrame; // last phase
 	int16 _loopFrame; // first frame of loop
 	int16 _showFrame; // actual visible frame of animation
-	int16 _loopType;	 // type of loop (0 - last frame; 1 - normal loop (begin from _loopFrame); 2 - no loop; 3 - load new animation)
-	int16 _nextAnim; // number of next animation to load after actual
+	int16 _loopType;  // type of loop (0 - last frame; 1 - normal loop (begin from _loopFrame); 2 - no loop; 3 - load new animation)
+	int16 _nextAnim;  // number of next animation to load after actual
 	int16 _x;
 	int16 _y;
 	int32 _currFrame;
@@ -210,7 +210,7 @@ enum AnimType {
 // Nak (PL - Nakladka)
 struct Mask {
 	uint16 _state; // visible / invisible
-	int16 _flags; // turning on / turning off of an mask
+	int16 _flags;  // turning on / turning off of an mask
 	int16 _x1;
 	int16 _y1;
 	int16 _x2;
@@ -264,11 +264,10 @@ struct DrawNode {
 
 struct DebugChannel {
 
-enum Type {
-	kScript,
-	kEngine
-};
-
+	enum Type {
+		kScript,
+		kEngine
+	};
 };
 
 class PrinceEngine : public Engine {
@@ -376,7 +375,7 @@ public:
 	byte *_transTable;
 
 	int16 _scaleValue; // scale for hero or special shadow animation
-	int16 _lightX; // for hero shadow
+	int16 _lightX;     // for hero shadow
 	int16 _lightY;
 	int32 _shadScaleValue;
 	int32 _shadLineLen;
@@ -427,12 +426,12 @@ public:
 
 	void grabMap();
 
-	int _selectedMob; // number of selected Mob / inventory item
+	int _selectedMob;  // number of selected Mob / inventory item
 	int _selectedItem; // number of item on mouse cursor
 	int _selectedMode;
 	int _currentPointerNumber;
 
-	static const int16 kMaxInv = 90; // max amount of inventory items in whole game
+	static const int16 kMaxInv = 90;    // max amount of inventory items in whole game
 	static const uint16 kMaxItems = 30; // size of inventory
 
 	uint32 _invTxtSize;
@@ -476,10 +475,10 @@ public:
 	int _invHeight;
 	bool _invCurInside;
 	int _mst_shadow;
-	int _mst_shadow2; // blinking after adding new item
+	int _mst_shadow2;   // blinking after adding new item
 	int _candleCounter; // special counter for candle inventory item
-	int _invMaxCount; // time to turn inventory on
-	int _invCounter; // turning on counter
+	int _invMaxCount;   // time to turn inventory on
+	int _invCounter;    // turning on counter
 
 	void inventoryFlagChange(bool inventoryState);
 	bool loadAllInv();
@@ -508,8 +507,8 @@ public:
 	byte *_dialogDat;
 	byte *_dialogData; // on, off flags for lines of dialog text
 
-	byte *_dialogBoxAddr[32]; // adresses of dialog windows
-	byte *_dialogOptAddr[32]; // adresses of dialog options
+	byte *_dialogBoxAddr[32];    // adresses of dialog windows
+	byte *_dialogOptAddr[32];    // adresses of dialog options
 	int _dialogOptLines[4 * 32]; // numbers of initial dialog lines
 
 	byte *_dialogText;
@@ -567,17 +566,17 @@ public:
 	static const int32 kPBW = kMaxPicWidth / 16; // PathBitmapWidth
 	static const int kMinDistance = 2500;
 
-	byte *_roomPathBitmap; // PL - Sala
+	byte *_roomPathBitmap;     // PL - Sala
 	byte *_roomPathBitmapTemp; // PL - SSala
 	byte *_coordsBufEnd;
 	byte *_coordsBuf; // optimal path
-	byte *_coords; // last path point adress from coordsBuf
+	byte *_coords;    // last path point adress from coordsBuf
 	byte *_coordsBuf2;
 	byte *_coords2;
 	byte *_coordsBuf3;
 	byte *_coords3;
 	int _traceLineLen;
-	bool _traceLineFirstPointFlag; // if plotTraceLine after first point
+	bool _traceLineFirstPointFlag;  // if plotTraceLine after first point
 	bool _tracePointFirstPointFlag; // if plotTracePoint after first point
 	byte *_directionTable;
 	int _shanLen;
@@ -691,7 +690,6 @@ private:
 	bool _flicLooped;
 
 	void mainLoop();
-
 };
 
 } // End of namespace Prince

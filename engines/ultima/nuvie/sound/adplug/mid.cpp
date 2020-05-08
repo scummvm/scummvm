@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/u6_lib_n.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/sound/origin_fx_adib_driver.h"
 #include "ultima/nuvie/sound/adplug/mid.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/files/u6_lib_n.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/sound/origin_fx_adib_driver.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -38,42 +38,43 @@ void CmidPlayer::midiprintf(const char *format, ...) {
 }
 #endif
 
-#define LUCAS_STYLE   1
-#define CMF_STYLE     2
-#define MIDI_STYLE    4
-#define SIERRA_STYLE  8
+#define LUCAS_STYLE 1
+#define CMF_STYLE 2
+#define MIDI_STYLE 4
+#define SIERRA_STYLE 8
 
 // AdLib melodic and rhythm mode defines
-#define ADLIB_MELODIC   1
+#define ADLIB_MELODIC 1
 #define ADLIB_RYTHM 0
 
 // File types
-#define FILE_LUCAS      1
-#define FILE_MIDI       2
-#define FILE_CMF        3
-#define FILE_SIERRA     4
-#define FILE_ADVSIERRA  5
-#define FILE_OLDLUCAS   6
+#define FILE_LUCAS 1
+#define FILE_MIDI 2
+#define FILE_CMF 3
+#define FILE_SIERRA 4
+#define FILE_ADVSIERRA 5
+#define FILE_OLDLUCAS 6
 
 CPlayer *CmidPlayer::factory(Copl *newopl) {
 	return new CmidPlayer(newopl);
 }
 
 CmidPlayer::CmidPlayer(Copl *newopl)
-	: CPlayer(newopl), author(&emptystr), title(&emptystr), remarks(&emptystr),
-	  emptystr('\0'), flen(0), data(0) {
+    : CPlayer(newopl), author(&emptystr), title(&emptystr), remarks(&emptystr),
+      emptystr('\0'), flen(0), data(0) {
 	origin_fx_driver = new OriginFXAdLibDriver(Game::get_game()->get_config(), newopl);
 }
 
 CmidPlayer::~CmidPlayer() {
 	if (data)
-		delete [] data;
+		delete[] data;
 
 	delete origin_fx_driver;
 }
 
 unsigned char CmidPlayer::datalook(long pos_) {
-	if (pos_ < 0 || pos_ >= flen) return (0);
+	if (pos_ < 0 || pos_ >= flen)
+		return (0);
 	return (data[pos_]);
 }
 
@@ -124,7 +125,7 @@ bool CmidPlayer::load(Std::string &filename, int song_index) {
 	int good;
 
 	flen = f.get_item_size(song_index);
-	data = new unsigned char [flen];
+	data = new unsigned char[flen];
 	f.get_item(song_index, data);
 	//f->readString((char *)data, flen);
 
@@ -134,24 +135,28 @@ bool CmidPlayer::load(Std::string &filename, int song_index) {
 	subsongs = 0;
 	switch (data[0]) {
 	case 'A':
-		if (data[1] == 'D' && data[2] == 'L') good = FILE_LUCAS;
+		if (data[1] == 'D' && data[2] == 'L')
+			good = FILE_LUCAS;
 		break;
 	case 'M':
-		if (data[1] == 'T' && data[2] == 'h' && data[3] == 'd') good = FILE_MIDI;
+		if (data[1] == 'T' && data[2] == 'h' && data[3] == 'd')
+			good = FILE_MIDI;
 		break;
 	case 'C':
-		if (data[1] == 'T' && data[2] == 'M' && data[3] == 'F') good = FILE_CMF;
+		if (data[1] == 'T' && data[2] == 'M' && data[3] == 'F')
+			good = FILE_CMF;
 		break;
 		break;
 	default:
-		if (data[4] == 'A' && data[5] == 'D') good = FILE_OLDLUCAS;
+		if (data[4] == 'A' && data[5] == 'D')
+			good = FILE_OLDLUCAS;
 		break;
 	}
 
 	if (good != 0)
 		subsongs = 1;
 	else {
-		delete [] data;
+		delete[] data;
 		data = NULL;
 		return false;
 	}
@@ -169,20 +174,18 @@ void CmidPlayer::interrupt_vector() {
 
 bool CmidPlayer::update() {
 	const uint8 adlib_chan_tbl[] = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10,
-		10, 18, 11, 0, 12, 13, 17, 13, 16, 13, 14, 13, 13, 15,
-		13, 19, 0, 0, 0, 0, 21, 0, 0, 0, 26, 26, 25, 20, 20,
-		0, 0, 21, 21, 22, 23, 0, 0, 24, 0, 20, 0
-	};
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10,
+	    10, 18, 11, 0, 12, 13, 17, 13, 16, 13, 14, 13, 13, 15,
+	    13, 19, 0, 0, 0, 0, 21, 0, 0, 0, 26, 26, 25, 20, 20,
+	    0, 0, 21, 21, 22, 23, 0, 0, 24, 0, 20, 0};
 
 	const uint8 adlib_note_tbl[] = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48,
-		48, 48, 48, 0, 48, 42, 71, 42, 71, 47, 71, 47, 52, 79,
-		52, 77, 0, 0, 0, 0, 71, 0, 0, 0, 72, 79, 79, 64, 58,
-		0, 0, 89, 84, 48, 72, 0, 0, 36, 0, 96, 0
-	};
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48,
+	    48, 48, 48, 0, 48, 42, 71, 42, 71, 47, 71, 47, 52, 79,
+	    52, 77, 0, 0, 0, 0, 71, 0, 0, 0, 72, 79, 79, 64, 58,
+	    0, 0, 89, 84, 48, 72, 0, 0, 36, 0, 96, 0};
 
 	//long w,v,note,vel,ctrl,nv,x,l,lnum;
 	long w, v, note, vel, ctrl, x, l, lnum;
@@ -215,7 +218,7 @@ bool CmidPlayer::update() {
 	while (iwait == 0 && ret == 1) {
 		for (curtrack = 0; curtrack < 16; curtrack++)
 			if (track[curtrack].on && track[curtrack].iwait == 0 &&
-			        track[curtrack].pos < track[curtrack].tend) {
+			    track[curtrack].pos < track[curtrack].tend) {
 				pos = track[curtrack].pos;
 
 				v = getnext(1);
@@ -292,12 +295,13 @@ bool CmidPlayer::update() {
 						midiprintf("\n");
 
 						if (datalook(pos) == 0x7d &&
-						        datalook(pos + 1) == 0x10 &&
-						        datalook(pos + 2) < 16) {
+						    datalook(pos + 1) == 0x10 &&
+						    datalook(pos + 2) < 16) {
 							adlib_style = LUCAS_STYLE | MIDI_STYLE;
 							for (i = 0; i < l; i++) {
 								midiprintf("%x ", datalook(pos + i));
-								if ((i - 3) % 10 == 0) midiprintf("\n");
+								if ((i - 3) % 10 == 0)
+									midiprintf("\n");
 							}
 							midiprintf("\n");
 							getnext(1);
@@ -307,9 +311,7 @@ bool CmidPlayer::update() {
 
 							//  getnext(22); //temp
 
-
 							i = (getnext(1) << 4) + getnext(1);
-
 
 							//if ((i&1)==1) ch[c].ins[10]=1;
 
@@ -426,25 +428,23 @@ bool CmidPlayer::update() {
 		iwait = 0;
 		for (curtrack = 0; curtrack < 16; curtrack++)
 			if (track[curtrack].on == 1 &&
-			        track[curtrack].pos < track[curtrack].tend)
+			    track[curtrack].pos < track[curtrack].tend)
 				ret = 1; //not yet..
 
 		if (ret == 1) {
 			iwait = 0xffffff; // bigger than any wait can be!
 			for (curtrack = 0; curtrack < 16; curtrack++)
 				if (track[curtrack].on == 1 &&
-				        track[curtrack].pos < track[curtrack].tend &&
-				        track[curtrack].iwait < iwait)
+				    track[curtrack].pos < track[curtrack].tend &&
+				    track[curtrack].iwait < iwait)
 					iwait = track[curtrack].iwait;
 		}
 	}
-
 
 	if (iwait != 0 && ret == 1) {
 		for (curtrack = 0; curtrack < 16; curtrack++)
 			if (track[curtrack].on)
 				track[curtrack].iwait -= iwait;
-
 
 		fwait = 1.0f / (((float)iwait / (float)deltas) * ((float)msqtr / (float)1000000));
 	} else
@@ -454,7 +454,7 @@ bool CmidPlayer::update() {
 	for (i = 0; i < 16; i++)
 		if (track[i].on) {
 			if (track[i].pos < track[i].tend)
-				;//midiprintf ("<%d:%d>",(int)i,(int)track[i].iwait);
+				; //midiprintf ("<%d:%d>",(int)i,(int)track[i].iwait);
 			else
 				midiprintf("stop");
 		}
@@ -511,17 +511,15 @@ void CmidPlayer::rewind(int subsong) {
 	case FILE_MIDI:
 		if (type != FILE_LUCAS)
 			tins = 128;
-		getnext(9);  /*skip header*/
+		getnext(9);               /*skip header*/
 		track_count = getnext(2); //total number of tracks.
 		deltas = getnext(2);
 		midiprintf("deltas:%ld\n", deltas);
-
 
 		load_ultima_midi_tracks();
 
 		break;
 	}
-
 
 	/*        sprintf(info,"%s\r\nTicks/Quarter Note: %ld\r\n",info,deltas);
 	        sprintf(info,"%sms/Quarter Note: %ld",info,msqtr); */

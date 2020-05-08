@@ -21,18 +21,18 @@
  */
 
 #include "gui/KeysDialog.h"
-#include "gui/Actions.h"
 #include "common/translation.h"
+#include "gui/Actions.h"
 #include <SDL_keyboard.h>
 
 namespace GUI {
 
 enum {
-	kMapCmd	= 'map '
+	kMapCmd = 'map '
 };
 
 KeysDialog::KeysDialog(const Common::String &title)
-	: GUI::Dialog("KeysDialog") {
+    : GUI::Dialog("KeysDialog") {
 
 	new ButtonWidget(this, "KeysDialog.Map", _("Map"), 0, kMapCmd);
 	new ButtonWidget(this, "KeysDialog.Ok", _("OK"), 0, kOKCmd);
@@ -118,7 +118,7 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-void KeysDialog::handleKeyDown(Common::KeyState state){
+void KeysDialog::handleKeyDown(Common::KeyState state) {
 	if (!Actions::Instance()->mappingActive())
 		Dialog::handleKeyDown(state);
 }
@@ -130,7 +130,7 @@ void KeysDialog::handleKeyUp(Common::KeyState state) {
 		Actions::Instance()->setMapping((ActionType)_actionSelected, state.ascii);
 
 		if (state.ascii != 0)
-			selection = Common::String::format(_("Associated key : %s"), SDL_GetKeyName((SDLKey) state.keycode));
+			selection = Common::String::format(_("Associated key : %s"), SDL_GetKeyName((SDLKey)state.keycode));
 		else
 			selection = Common::String::format(_("Associated key : none"));
 

@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLemonOnBar, CPlaceHolder)
-	ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(VisibleMsg)
 END_MESSAGE_MAP()
 
 void CLemonOnBar::save(SimpleFile *file, int indent) {

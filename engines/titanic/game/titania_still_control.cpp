@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CTitaniaStillControl, CGameObject)
-	ON_MESSAGE(SetFrameMsg)
-	ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(SetFrameMsg)
+ON_MESSAGE(VisibleMsg)
 END_MESSAGE_MAP()
 
 void CTitaniaStillControl::save(SimpleFile *file, int indent) {

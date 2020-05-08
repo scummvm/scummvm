@@ -20,24 +20,23 @@
  *
  */
 
-#include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/map/dungeonview.h"
+#include "ultima/shared/std/misc.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
-#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/tileanim.h"
 #include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 DungeonView *DungeonView::_instance = nullptr;
 
-DungeonView::DungeonView(int x, int y, int columns, int rows) : TileView(x, y, rows, columns)
-	, screen3dDungeonViewEnabled(true) {
+DungeonView::DungeonView(int x, int y, int columns, int rows) : TileView(x, y, rows, columns), screen3dDungeonViewEnabled(true) {
 }
 
 DungeonView *DungeonView::getInstance() {
@@ -78,7 +77,7 @@ void DungeonView::display(Context *c, TileView *view) {
 				// This only checks that the tile at y==3 is opaque
 				if (y == 3 && !tiles.front().getTileType()->isOpaque()) {
 					for (int y_obj = farthest_non_wall_tile_visibility; y_obj > y; y_obj--) {
-						Std::vector<MapTile> distant_tiles = getTiles(y_obj     , 0);
+						Std::vector<MapTile> distant_tiles = getTiles(y_obj, 0);
 						DungeonGraphicType distant_type = tilesToGraphic(distant_tiles);
 
 						if ((distant_type == DNGGRAPHIC_DNGTILE) || (distant_type == DNGGRAPHIC_BASETILE))
@@ -117,24 +116,24 @@ void DungeonView::display(Context *c, TileView *view) {
 void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Direction orientation, bool tiledWall) {
 	Image *scaled;
 
-	const static int nscale_vga[] = { 12, 8, 4, 2, 1};
-	const static int nscale_ega[] = { 8, 4, 2, 1, 0};
+	const static int nscale_vga[] = {12, 8, 4, 2, 1};
+	const static int nscale_ega[] = {8, 4, 2, 1, 0};
 
-	const int lscale_vga[] = { 22, 18, 10, 4, 1};
-	const int lscale_ega[] = { 22, 14, 6, 3, 1};
+	const int lscale_vga[] = {22, 18, 10, 4, 1};
+	const int lscale_ega[] = {22, 14, 6, 3, 1};
 
 	const int *lscale;
 	const int *nscale;
 	int offset_multiplier = 0;
 	int offset_adj = 0;
 	if (settings._videoType != "EGA") {
-		lscale = & lscale_vga[0];
-		nscale = & nscale_vga[0];
+		lscale = &lscale_vga[0];
+		nscale = &nscale_vga[0];
 		offset_multiplier = 1;
 		offset_adj = 2;
 	} else {
-		lscale = & lscale_ega[0];
-		nscale = & nscale_ega[0];
+		lscale = &lscale_ega[0];
+		nscale = &nscale_ega[0];
 		offset_adj = 1;
 		offset_multiplier = 4;
 	}
@@ -164,7 +163,7 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
 	}
 
 	if (tiledWall) {
-		int i_x = SCALED((VIEWPORT_W * _tileWidth  / 2) + _bounds.left) - (scaled->width() / 2);
+		int i_x = SCALED((VIEWPORT_W * _tileWidth / 2) + _bounds.left) - (scaled->width() / 2);
 		int i_y = SCALED((VIEWPORT_H * _tileHeight / 2) + _bounds.top) - (scaled->height() / 2);
 		int f_x = i_x + scaled->width();
 		int f_y = i_y + scaled->height();
@@ -174,15 +173,15 @@ void DungeonView::drawInDungeon(Tile *tile, int x_offset, int distance, Directio
 		for (int x = i_x; x < f_x; x += d_x)
 			for (int y = i_y; y < f_y; y += d_y)
 				_animated->drawSubRectOn(this->_screen,
-					x, y, 0, 0, f_x - x, f_y - y);
+				                         x, y, 0, 0, f_x - x, f_y - y);
 	} else {
 		int y_offset = MAX(0, (dscale[distance] - offset_adj) * offset_multiplier);
 		int x = SCALED((VIEWPORT_W * _tileWidth / 2) + _bounds.left) - (scaled->width() / 2);
 		int y = SCALED((VIEWPORT_H * _tileHeight / 2) + _bounds.top + y_offset) - (scaled->height() / 8);
 
 		scaled->drawSubRectOn(this->_screen, x, y, 0, 0,
-			SCALED(_tileWidth * VIEWPORT_W + _bounds.left) - x ,
-			SCALED(_tileHeight * VIEWPORT_H + _bounds.top) - y);
+		                      SCALED(_tileWidth * VIEWPORT_W + _bounds.left) - x,
+		                      SCALED(_tileHeight * VIEWPORT_H + _bounds.top) - y);
 	}
 
 	delete scaled;
@@ -328,88 +327,88 @@ const struct {
 	int vga_x2, vga_y2;
 	const char *subimage2;
 } DNG_GRAPHIC_INFO[] = {
-	{ "dung0_lft_ew", -1, -1, -1, -1, nullptr },
-	{ "dung0_lft_ns", -1, -1, -1, -1, nullptr },
-	{ "dung0_mid_ew", -1, -1, -1, -1, nullptr },
-	{ "dung0_mid_ns", -1, -1, -1, -1, nullptr },
-	{ "dung0_rgt_ew", -1, -1, -1, -1, nullptr },
-	{ "dung0_rgt_ns", -1, -1, -1, -1, nullptr },
+    {"dung0_lft_ew", -1, -1, -1, -1, nullptr},
+    {"dung0_lft_ns", -1, -1, -1, -1, nullptr},
+    {"dung0_mid_ew", -1, -1, -1, -1, nullptr},
+    {"dung0_mid_ns", -1, -1, -1, -1, nullptr},
+    {"dung0_rgt_ew", -1, -1, -1, -1, nullptr},
+    {"dung0_rgt_ns", -1, -1, -1, -1, nullptr},
 
-	{ "dung1_lft_ew", 0, 32, 0, 8, "dung1_xxx_ew" },
-	{ "dung1_lft_ns", 0, 32, 0, 8, "dung1_xxx_ns" },
-	{ "dung1_mid_ew", -1, -1, -1, -1, nullptr },
-	{ "dung1_mid_ns", -1, -1, -1, -1, nullptr },
-	{ "dung1_rgt_ew", 144, 32, 160, 8, "dung1_xxx_ew" },
-	{ "dung1_rgt_ns", 144, 32, 160, 8, "dung1_xxx_ns" },
+    {"dung1_lft_ew", 0, 32, 0, 8, "dung1_xxx_ew"},
+    {"dung1_lft_ns", 0, 32, 0, 8, "dung1_xxx_ns"},
+    {"dung1_mid_ew", -1, -1, -1, -1, nullptr},
+    {"dung1_mid_ns", -1, -1, -1, -1, nullptr},
+    {"dung1_rgt_ew", 144, 32, 160, 8, "dung1_xxx_ew"},
+    {"dung1_rgt_ns", 144, 32, 160, 8, "dung1_xxx_ns"},
 
-	{ "dung2_lft_ew", 0, 64, 0, 48, "dung2_xxx_ew" },
-	{ "dung2_lft_ns", 0, 64, 0, 48, "dung2_xxx_ns" },
-	{ "dung2_mid_ew", -1, -1, -1, -1, nullptr },
-	{ "dung2_mid_ns", -1, -1, -1, -1, nullptr },
-	{ "dung2_rgt_ew", 112, 64, 128, 48, "dung2_xxx_ew" },
-	{ "dung2_rgt_ns", 112, 64, 128, 48, "dung2_xxx_ns" },
+    {"dung2_lft_ew", 0, 64, 0, 48, "dung2_xxx_ew"},
+    {"dung2_lft_ns", 0, 64, 0, 48, "dung2_xxx_ns"},
+    {"dung2_mid_ew", -1, -1, -1, -1, nullptr},
+    {"dung2_mid_ns", -1, -1, -1, -1, nullptr},
+    {"dung2_rgt_ew", 112, 64, 128, 48, "dung2_xxx_ew"},
+    {"dung2_rgt_ns", 112, 64, 128, 48, "dung2_xxx_ns"},
 
-	{ "dung3_lft_ew", 0, 80, 48, 72, "dung3_xxx_ew" },
-	{ "dung3_lft_ns", 0, 80, 48, 72, "dung3_xxx_ns" },
-	{ "dung3_mid_ew", -1, -1, -1, -1, nullptr },
-	{ "dung3_mid_ns", -1, -1, -1, -1, nullptr },
-	{ "dung3_rgt_ew", 96, 80, 104, 72, "dung3_xxx_ew" },
-	{ "dung3_rgt_ns", 96, 80, 104, 72, "dung3_xxx_ns" },
+    {"dung3_lft_ew", 0, 80, 48, 72, "dung3_xxx_ew"},
+    {"dung3_lft_ns", 0, 80, 48, 72, "dung3_xxx_ns"},
+    {"dung3_mid_ew", -1, -1, -1, -1, nullptr},
+    {"dung3_mid_ns", -1, -1, -1, -1, nullptr},
+    {"dung3_rgt_ew", 96, 80, 104, 72, "dung3_xxx_ew"},
+    {"dung3_rgt_ns", 96, 80, 104, 72, "dung3_xxx_ns"},
 
-	{ "dung0_lft_ew_door", -1, -1, -1, -1, nullptr },
-	{ "dung0_lft_ns_door", -1, -1, -1, -1, nullptr },
-	{ "dung0_mid_ew_door", -1, -1, -1, -1, nullptr },
-	{ "dung0_mid_ns_door", -1, -1, -1, -1, nullptr },
-	{ "dung0_rgt_ew_door", -1, -1, -1, -1, nullptr },
-	{ "dung0_rgt_ns_door", -1, -1, -1, -1, nullptr },
+    {"dung0_lft_ew_door", -1, -1, -1, -1, nullptr},
+    {"dung0_lft_ns_door", -1, -1, -1, -1, nullptr},
+    {"dung0_mid_ew_door", -1, -1, -1, -1, nullptr},
+    {"dung0_mid_ns_door", -1, -1, -1, -1, nullptr},
+    {"dung0_rgt_ew_door", -1, -1, -1, -1, nullptr},
+    {"dung0_rgt_ns_door", -1, -1, -1, -1, nullptr},
 
-	{ "dung1_lft_ew_door", 0, 32, 0, 8, "dung1_xxx_ew" },
-	{ "dung1_lft_ns_door", 0, 32, 0, 8, "dung1_xxx_ns" },
-	{ "dung1_mid_ew_door", -1, -1, -1, -1, nullptr },
-	{ "dung1_mid_ns_door", -1, -1, -1, -1, nullptr },
-	{ "dung1_rgt_ew_door", 144, 32, 160, 8, "dung1_xxx_ew" },
-	{ "dung1_rgt_ns_door", 144, 32, 160, 8, "dung1_xxx_ns" },
+    {"dung1_lft_ew_door", 0, 32, 0, 8, "dung1_xxx_ew"},
+    {"dung1_lft_ns_door", 0, 32, 0, 8, "dung1_xxx_ns"},
+    {"dung1_mid_ew_door", -1, -1, -1, -1, nullptr},
+    {"dung1_mid_ns_door", -1, -1, -1, -1, nullptr},
+    {"dung1_rgt_ew_door", 144, 32, 160, 8, "dung1_xxx_ew"},
+    {"dung1_rgt_ns_door", 144, 32, 160, 8, "dung1_xxx_ns"},
 
-	{ "dung2_lft_ew_door", 0, 64, 0, 48, "dung2_xxx_ew" },
-	{ "dung2_lft_ns_door", 0, 64, 0, 48, "dung2_xxx_ns" },
-	{ "dung2_mid_ew_door", -1, -1, -1, -1, nullptr },
-	{ "dung2_mid_ns_door", -1, -1, -1, -1, nullptr },
-	{ "dung2_rgt_ew_door", 112, 64, 128, 48, "dung2_xxx_ew" },
-	{ "dung2_rgt_ns_door", 112, 64, 128, 48, "dung2_xxx_ns" },
+    {"dung2_lft_ew_door", 0, 64, 0, 48, "dung2_xxx_ew"},
+    {"dung2_lft_ns_door", 0, 64, 0, 48, "dung2_xxx_ns"},
+    {"dung2_mid_ew_door", -1, -1, -1, -1, nullptr},
+    {"dung2_mid_ns_door", -1, -1, -1, -1, nullptr},
+    {"dung2_rgt_ew_door", 112, 64, 128, 48, "dung2_xxx_ew"},
+    {"dung2_rgt_ns_door", 112, 64, 128, 48, "dung2_xxx_ns"},
 
-	{ "dung3_lft_ew_door", 0, 80, 48, 72, "dung3_xxx_ew" },
-	{ "dung3_lft_ns_door", 0, 80, 48, 72, "dung3_xxx_ns" },
-	{ "dung3_mid_ew_door", -1, -1, -1, -1, nullptr },
-	{ "dung3_mid_ns_door", -1, -1, -1, -1, nullptr },
-	{ "dung3_rgt_ew_door", 96, 80, 104, 72, "dung3_xxx_ew" },
-	{ "dung3_rgt_ns_door", 96, 80, 104, 72, "dung3_xxx_ns" },
+    {"dung3_lft_ew_door", 0, 80, 48, 72, "dung3_xxx_ew"},
+    {"dung3_lft_ns_door", 0, 80, 48, 72, "dung3_xxx_ns"},
+    {"dung3_mid_ew_door", -1, -1, -1, -1, nullptr},
+    {"dung3_mid_ns_door", -1, -1, -1, -1, nullptr},
+    {"dung3_rgt_ew_door", 96, 80, 104, 72, "dung3_xxx_ew"},
+    {"dung3_rgt_ns_door", 96, 80, 104, 72, "dung3_xxx_ns"},
 
-	{ "dung0_ladderup", -1, -1, -1, -1, nullptr },
-	{ "dung0_ladderup_side", -1, -1, -1, -1, nullptr },
-	{ "dung1_ladderup", -1, -1, -1, -1, nullptr },
-	{ "dung1_ladderup_side", -1, -1, -1, -1, nullptr },
-	{ "dung2_ladderup", -1, -1, -1, -1, nullptr },
-	{ "dung2_ladderup_side", -1, -1, -1, -1, nullptr },
-	{ "dung3_ladderup", -1, -1, -1, -1, nullptr },
-	{ "dung3_ladderup_side", -1, -1, -1, -1, nullptr },
+    {"dung0_ladderup", -1, -1, -1, -1, nullptr},
+    {"dung0_ladderup_side", -1, -1, -1, -1, nullptr},
+    {"dung1_ladderup", -1, -1, -1, -1, nullptr},
+    {"dung1_ladderup_side", -1, -1, -1, -1, nullptr},
+    {"dung2_ladderup", -1, -1, -1, -1, nullptr},
+    {"dung2_ladderup_side", -1, -1, -1, -1, nullptr},
+    {"dung3_ladderup", -1, -1, -1, -1, nullptr},
+    {"dung3_ladderup_side", -1, -1, -1, -1, nullptr},
 
-	{ "dung0_ladderdown", -1, -1, -1, -1, nullptr },
-	{ "dung0_ladderdown_side", -1, -1, -1, -1, nullptr },
-	{ "dung1_ladderdown", -1, -1, -1, -1, nullptr },
-	{ "dung1_ladderdown_side", -1, -1, -1, -1, nullptr },
-	{ "dung2_ladderdown", -1, -1, -1, -1, nullptr },
-	{ "dung2_ladderdown_side", -1, -1, -1, -1, nullptr },
-	{ "dung3_ladderdown", -1, -1, -1, -1, nullptr },
-	{ "dung3_ladderdown_side", -1, -1, -1, -1, nullptr },
+    {"dung0_ladderdown", -1, -1, -1, -1, nullptr},
+    {"dung0_ladderdown_side", -1, -1, -1, -1, nullptr},
+    {"dung1_ladderdown", -1, -1, -1, -1, nullptr},
+    {"dung1_ladderdown_side", -1, -1, -1, -1, nullptr},
+    {"dung2_ladderdown", -1, -1, -1, -1, nullptr},
+    {"dung2_ladderdown_side", -1, -1, -1, -1, nullptr},
+    {"dung3_ladderdown", -1, -1, -1, -1, nullptr},
+    {"dung3_ladderdown_side", -1, -1, -1, -1, nullptr},
 
-	{ "dung0_ladderupdown", -1, -1, -1, -1, nullptr },
-	{ "dung0_ladderupdown_side", -1, -1, -1, -1, nullptr },
-	{ "dung1_ladderupdown", -1, -1, -1, -1, nullptr },
-	{ "dung1_ladderupdown_side", -1, -1, -1, -1, nullptr },
-	{ "dung2_ladderupdown", -1, -1, -1, -1, nullptr },
-	{ "dung2_ladderupdown_side", -1, -1, -1, -1, nullptr },
-	{ "dung3_ladderupdown", -1, -1, -1, -1, nullptr },
-	{ "dung3_ladderupdown_side", -1, -1, -1, -1, nullptr },
+    {"dung0_ladderupdown", -1, -1, -1, -1, nullptr},
+    {"dung0_ladderupdown_side", -1, -1, -1, -1, nullptr},
+    {"dung1_ladderupdown", -1, -1, -1, -1, nullptr},
+    {"dung1_ladderupdown_side", -1, -1, -1, -1, nullptr},
+    {"dung2_ladderupdown", -1, -1, -1, -1, nullptr},
+    {"dung2_ladderupdown_side", -1, -1, -1, -1, nullptr},
+    {"dung3_ladderupdown", -1, -1, -1, -1, nullptr},
+    {"dung3_ladderupdown_side", -1, -1, -1, -1, nullptr},
 };
 
 void DungeonView::drawWall(int xoffset, int distance, Direction orientation, DungeonGraphicType type) {
@@ -427,18 +426,18 @@ void DungeonView::drawWall(int xoffset, int distance, Direction orientation, Dun
 	}
 
 	g_screen->screenDrawImage(DNG_GRAPHIC_INFO[index].subimage, (BORDER_WIDTH + x) * settings._scale,
-	                (BORDER_HEIGHT + y) * settings._scale);
+	                          (BORDER_HEIGHT + y) * settings._scale);
 
 	if (DNG_GRAPHIC_INFO[index].subimage2 != nullptr) {
 		// FIXME: subimage2 is a horrible hack, needs to be cleaned up
 		if (settings._videoType == "EGA")
 			g_screen->screenDrawImage(DNG_GRAPHIC_INFO[index].subimage2,
-				(8 + DNG_GRAPHIC_INFO[index].ega_x2) * settings._scale,
-				(8 + DNG_GRAPHIC_INFO[index].ega_y2) * settings._scale);
+			                          (8 + DNG_GRAPHIC_INFO[index].ega_x2) * settings._scale,
+			                          (8 + DNG_GRAPHIC_INFO[index].ega_y2) * settings._scale);
 		else
 			g_screen->screenDrawImage(DNG_GRAPHIC_INFO[index].subimage2,
-			    (8 + DNG_GRAPHIC_INFO[index].vga_x2) * settings._scale,
-			    (8 + DNG_GRAPHIC_INFO[index].vga_y2) * settings._scale);
+			                          (8 + DNG_GRAPHIC_INFO[index].vga_x2) * settings._scale,
+			                          (8 + DNG_GRAPHIC_INFO[index].vga_y2) * settings._scale);
 	}
 }
 

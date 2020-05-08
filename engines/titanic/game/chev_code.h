@@ -39,8 +39,10 @@ class CChevCode : public CGameObject {
 	bool GetChevRoomNum(CGetChevRoomNum *msg);
 	bool CheckChevCode(CCheckChevCode *msg);
 	bool GetChevCodeFromRoomNameMsg(CGetChevCodeFromRoomNameMsg *msg);
+
 public:
 	int _chevCode;
+
 public:
 	CLASSDEF;
 	CChevCode() : CGameObject(), _chevCode(0) {}

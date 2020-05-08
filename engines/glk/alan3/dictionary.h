@@ -32,8 +32,7 @@ namespace Alan3 {
 /* DATA */
 extern DictionaryEntry *dictionary;
 extern int dictionarySize;
-extern int conjWord;        /* First conjunction in dictionary */
-
+extern int conjWord; /* First conjunction in dictionary */
 
 /* FUNCTIONS */
 extern bool isVerbWord(int wordIndex);

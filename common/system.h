@@ -23,12 +23,12 @@
 #ifndef COMMON_SYSTEM_H
 #define COMMON_SYSTEM_H
 
-#include "common/scummsys.h"
-#include "common/noncopyable.h"
 #include "common/array.h" // For OSystem::getGlobalKeymaps()
-#include "common/list.h" // For OSystem::getSupportedFormats()
-#include "graphics/pixelformat.h"
+#include "common/list.h"  // For OSystem::getSupportedFormats()
+#include "common/noncopyable.h"
+#include "common/scummsys.h"
 #include "graphics/mode.h"
+#include "graphics/pixelformat.h"
 
 namespace Audio {
 class Mixer;
@@ -65,7 +65,7 @@ class KeymapperDefaultBindings;
 class Encoding;
 
 typedef Array<Keymap *> KeymapArray;
-}
+} // namespace Common
 
 class AudioCDManager;
 class FilesystemFactory;
@@ -81,13 +81,13 @@ class PaletteManager;
  * the transition.
  */
 struct TimeDate {
-	int tm_sec;     ///< seconds (0 - 60)
-	int tm_min;     ///< minutes (0 - 59)
-	int tm_hour;    ///< hours (0 - 23)
-	int tm_mday;    ///< day of month (1 - 31)
-	int tm_mon;     ///< month of year (0 - 11)
-	int tm_year;    ///< year - 1900
-	int tm_wday;    ///< days since Sunday (0 - 6)
+	int tm_sec;  ///< seconds (0 - 60)
+	int tm_min;  ///< minutes (0 - 59)
+	int tm_hour; ///< hours (0 - 23)
+	int tm_mday; ///< day of month (1 - 31)
+	int tm_mon;  ///< month of year (0 - 11)
+	int tm_year; ///< year - 1900
+	int tm_wday; ///< days since Sunday (0 - 6)
 };
 
 namespace LogMessageType {
@@ -113,6 +113,7 @@ enum Type {
  */
 class OSystem : Common::NonCopyable {
 	friend class Common::Encoding;
+
 protected:
 	OSystem();
 	virtual ~OSystem();
@@ -236,7 +237,6 @@ private:
 	//@}
 
 public:
-
 	/**
 	 *
 	 * Destoy this OSystem instance.
@@ -264,13 +264,13 @@ public:
 	 * Allows the backend to perform engine specific init.
 	 * Called just before the engine is run.
 	 */
-	virtual void engineInit() { }
+	virtual void engineInit() {}
 
 	/**
 	 * Allows the backend to perform engine specific de-init.
 	 * Called after the engine finishes.
 	 */
-	virtual void engineDone() { }
+	virtual void engineDone() {}
 
 	/** @name Feature flags */
 	//@{
@@ -446,8 +446,6 @@ public:
 
 	//@}
 
-
-
 	/**
 	 * @name Graphics
 	 *
@@ -547,9 +545,9 @@ public:
 	 * @return a list of supported graphics modes
 	 */
 	virtual const GraphicsMode *getSupportedGraphicsModes() const {
-		static const GraphicsMode noGraphicsModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
+		static const GraphicsMode noGraphicsModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0}};
 		return noGraphicsModes;
-    }
+	}
 
 	/**
 	 * Return the ID of the 'default' graphics mode. What exactly this means
@@ -695,7 +693,7 @@ public:
 	 * @return a list of supported stretch modes
 	 */
 	virtual const GraphicsMode *getSupportedStretchModes() const {
-		static const GraphicsMode noStretchModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
+		static const GraphicsMode noStretchModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0}};
 		return noStretchModes;
 	}
 
@@ -735,7 +733,6 @@ public:
 	 * @return the ID of the active stretch mode
 	 */
 	virtual int getStretchMode() const { return 0; }
-
 
 	/**
 	 * Set the size and color format of the virtual screen. Typical sizes include:
@@ -820,14 +817,14 @@ public:
 	 * @see endGFXTransaction
 	 */
 	enum TransactionError {
-		kTransactionSuccess = 0,					/**< Everything fine (use EQUAL check for this one!) */
-		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switching aspect ratio correction mode */
-		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switching fullscreen mode */
-		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switching the GFX graphics mode (setGraphicsMode) */
-		kTransactionSizeChangeFailed = (1 << 3),	/**< Failed switching the screen dimensions (initSize) */
-		kTransactionFormatNotSupported = (1 << 4),	/**< Failed setting the color format */
-		kTransactionFilteringFailed = (1 << 5),		/**< Failed setting the filtering mode */
-		kTransactionStretchModeSwitchFailed = (1 << 6)	/**< Failed setting the stretch mode */
+		kTransactionSuccess = 0,                       /**< Everything fine (use EQUAL check for this one!) */
+		kTransactionAspectRatioFailed = (1 << 0),      /**< Failed switching aspect ratio correction mode */
+		kTransactionFullscreenFailed = (1 << 1),       /**< Failed switching fullscreen mode */
+		kTransactionModeSwitchFailed = (1 << 2),       /**< Failed switching the GFX graphics mode (setGraphicsMode) */
+		kTransactionSizeChangeFailed = (1 << 3),       /**< Failed switching the screen dimensions (initSize) */
+		kTransactionFormatNotSupported = (1 << 4),     /**< Failed setting the color format */
+		kTransactionFilteringFailed = (1 << 5),        /**< Failed setting the filtering mode */
+		kTransactionStretchModeSwitchFailed = (1 << 6) /**< Failed setting the stretch mode */
 	};
 
 	/**
@@ -837,7 +834,6 @@ public:
 	 * @return returns a ORed combination of TransactionError values or 0 on success
 	 */
 	virtual TransactionError endGFXTransaction() { return kTransactionSuccess; }
-
 
 	/**
 	 * Returns the currently set virtual screen height.
@@ -954,7 +950,7 @@ public:
 	 * @param rect A rectangle on the screen to be focused on
 	 * @see clearFocusRectangle
 	 */
-	virtual void setFocusRectangle(const Common::Rect& rect) {}
+	virtual void setFocusRectangle(const Common::Rect &rect) {}
 
 	/**
 	 * Clears the focus set by a call to setFocusRectangle().  This allows the engine
@@ -965,8 +961,6 @@ public:
 	virtual void clearFocusRectangle() {}
 
 	//@}
-
-
 
 	/**
 	 * @name Overlay
@@ -1048,8 +1042,6 @@ public:
 
 	//@}
 
-
-
 	/** @name Mouse
 	 * This is the lower level implementation as provided by the
 	 * backends. The engines should use the Graphics::CursorManager
@@ -1109,8 +1101,6 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
 
 	//@}
-
-
 
 	/** @name Events and Time */
 	//@{
@@ -1178,8 +1168,6 @@ public:
 	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return nullptr; }
 	//@}
 
-
-
 	/**
 	 * @name Mutex handling
 	 * Historically, the OSystem API used to have a method which allowed
@@ -1233,8 +1221,6 @@ public:
 
 	//@}
 
-
-
 	/** @name Sound */
 	//@{
 
@@ -1245,8 +1231,6 @@ public:
 	virtual Audio::Mixer *getMixer() = 0;
 
 	//@}
-
-
 
 	/** @name Audio CD */
 	//@{
@@ -1260,8 +1244,6 @@ public:
 	}
 
 	//@}
-
-
 
 	/** @name Miscellaneous */
 	//@{
@@ -1488,7 +1470,10 @@ public:
 	 *
 	 * @return true if the text was properly set in the clipboard, false otherwise
 	 */
-	virtual bool setTextInClipboard(const Common::String &text) { _clipboard = text; return true; }
+	virtual bool setTextInClipboard(const Common::String &text) {
+		_clipboard = text;
+		return true;
+	}
 
 	/**
 	 * Open the given Url in the default browser (if available on the target
@@ -1502,7 +1487,7 @@ public:
 	 *
 	 * @parem url the URL to open
 	 */
-	virtual bool openUrl(const Common::String &url) {return false; }
+	virtual bool openUrl(const Common::String &url) { return false; }
 
 	/**
 	 * Returns the locale of the system.
@@ -1532,7 +1517,6 @@ public:
 	//@}
 
 protected:
-
 	/**
 	 * This allows derived classes to implement encoding conversion using platform
 	 * specific API.
@@ -1548,7 +1532,6 @@ protected:
 	 */
 	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) { return nullptr; }
 };
-
 
 /** The global OSystem instance. Initialized in main(). */
 extern OSystem *g_system;

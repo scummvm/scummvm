@@ -21,27 +21,27 @@
  */
 
 #include "ultima/ultima4/controllers/intro_controller.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "ultima/ultima4/controllers/menu_controller.h"
-#include "ultima/ultima4/controllers/read_string_controller.h"
 #include "ultima/ultima4/controllers/read_choice_controller.h"
-#include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/views/menu.h"
+#include "ultima/ultima4/controllers/read_string_controller.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/shrine.h"
-#include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/map/tilemap.h"
+#include "ultima/ultima4/map/tileset.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/sound/sound.h"
 #include "ultima/ultima4/ultima4.h"
-#include "common/savefile.h"
-#include "common/system.h"
+#include "ultima/ultima4/views/menu.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -83,25 +83,24 @@ void IntroController::AnimElement::shufflePlotData() {
 	}
 }
 
-IntroBinData::IntroBinData() :
-	_sigData(nullptr),
-	_scriptTable(nullptr),
-	_baseTileTable(nullptr),
-	_beastie1FrameTable(nullptr),
-	_beastie2FrameTable(nullptr) {
+IntroBinData::IntroBinData() : _sigData(nullptr),
+                               _scriptTable(nullptr),
+                               _baseTileTable(nullptr),
+                               _beastie1FrameTable(nullptr),
+                               _beastie2FrameTable(nullptr) {
 }
 
 IntroBinData::~IntroBinData() {
 	if (_sigData)
-		delete [] _sigData;
+		delete[] _sigData;
 	if (_scriptTable)
-		delete [] _scriptTable;
+		delete[] _scriptTable;
 	if (_baseTileTable)
-		delete [] _baseTileTable;
+		delete[] _baseTileTable;
 	if (_beastie1FrameTable)
-		delete [] _beastie1FrameTable;
+		delete[] _beastie1FrameTable;
 	if (_beastie2FrameTable)
-		delete [] _beastie2FrameTable;
+		delete[] _beastie2FrameTable;
 
 	_introQuestions.clear();
 	_introText.clear();
@@ -143,7 +142,7 @@ bool IntroBinData::load() {
 		_scriptTable[i] = f.readByte();
 
 	openFile(f, "intro_base_tile");
-	_baseTileTable = new Tile*[INTRO_BASETILE_TABLE_SIZE];
+	_baseTileTable = new Tile *[INTRO_BASETILE_TABLE_SIZE];
 	for (i = 0; i < INTRO_BASETILE_TABLE_SIZE; i++) {
 		MapTile tile = g_tileMaps->get("base")->translate(f.readByte());
 		_baseTileTable[i] = g_tileSets->get("base")->get(tile._id);
@@ -171,33 +170,33 @@ bool IntroBinData::load() {
 }
 
 IntroController::IntroController() : Controller(1),
-		_backgroundArea(),
-		_menuArea(1 * CHAR_WIDTH, 13 * CHAR_HEIGHT, 38, 11),
-		_extendedMenuArea(2 * CHAR_WIDTH, 10 * CHAR_HEIGHT, 36, 13),
-		_questionArea(INTRO_TEXT_X * CHAR_WIDTH, INTRO_TEXT_Y * CHAR_HEIGHT, INTRO_TEXT_WIDTH, INTRO_TEXT_HEIGHT),
-		_mapArea(BORDER_WIDTH, (TILE_HEIGHT * 6) + BORDER_HEIGHT, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, "base"),
-		_binData(nullptr), _mode(INTRO_TITLES), _answerInd(0), _questionRound(0),
-		_beastie1Cycle(0), _beastie2Cycle(0), _beastieOffset(0),
-		_beastiesVisible(false), _sleepCycles(0), _scrPos(0),
-		_objectStateTable(nullptr), _justInitiatedNewGame(false),
-		_titles(),                   // element list
-		_title(_titles.begin()),     // element iterator
-		_transparentIndex(13),       // palette index for transparency
-		_transparentColor(),         // palette color for transparency
-		_bSkipTitles(false),
-		_useProfile(false) {
+                                     _backgroundArea(),
+                                     _menuArea(1 * CHAR_WIDTH, 13 * CHAR_HEIGHT, 38, 11),
+                                     _extendedMenuArea(2 * CHAR_WIDTH, 10 * CHAR_HEIGHT, 36, 13),
+                                     _questionArea(INTRO_TEXT_X * CHAR_WIDTH, INTRO_TEXT_Y * CHAR_HEIGHT, INTRO_TEXT_WIDTH, INTRO_TEXT_HEIGHT),
+                                     _mapArea(BORDER_WIDTH, (TILE_HEIGHT * 6) + BORDER_HEIGHT, INTRO_MAP_WIDTH, INTRO_MAP_HEIGHT, "base"),
+                                     _binData(nullptr), _mode(INTRO_TITLES), _answerInd(0), _questionRound(0),
+                                     _beastie1Cycle(0), _beastie2Cycle(0), _beastieOffset(0),
+                                     _beastiesVisible(false), _sleepCycles(0), _scrPos(0),
+                                     _objectStateTable(nullptr), _justInitiatedNewGame(false),
+                                     _titles(),               // element list
+                                     _title(_titles.begin()), // element iterator
+                                     _transparentIndex(13),   // palette index for transparency
+                                     _transparentColor(),     // palette color for transparency
+                                     _bSkipTitles(false),
+                                     _useProfile(false) {
 	Common::fill(&_questionTree[0], &_questionTree[15], -1);
 
 	// initialize menus
 	_confMenu.setTitle("XU4 Configuration:", 0, 0);
-	_confMenu.add(MI_CONF_VIDEO,               "\010 Video Options",              2,  2,/*'v'*/  2);
-	_confMenu.add(MI_CONF_SOUND,               "\010 Sound Options",              2,  3,/*'s'*/  2);
-	_confMenu.add(MI_CONF_INPUT,               "\010 Input Options",              2,  4,/*'i'*/  2);
-	_confMenu.add(MI_CONF_SPEED,               "\010 Speed Options",              2,  5,/*'p'*/  3);
-	_confMenu.add(MI_CONF_01, new BoolMenuItem("Game Enhancements         %s",    2,  7,/*'e'*/  5, &_settingsChanged._enhancements));
-	_confMenu.add(MI_CONF_GAMEPLAY,            "\010 Enhanced Gameplay Options",  2,  9,/*'g'*/ 11);
-	_confMenu.add(MI_CONF_INTERFACE,           "\010 Enhanced Interface Options", 2, 10,/*'n'*/ 12);
-	_confMenu.add(CANCEL,                      "\017 Main Menu",                  2, 12,/*'m'*/  2);
+	_confMenu.add(MI_CONF_VIDEO, "\010 Video Options", 2, 2, /*'v'*/ 2);
+	_confMenu.add(MI_CONF_SOUND, "\010 Sound Options", 2, 3, /*'s'*/ 2);
+	_confMenu.add(MI_CONF_INPUT, "\010 Input Options", 2, 4, /*'i'*/ 2);
+	_confMenu.add(MI_CONF_SPEED, "\010 Speed Options", 2, 5, /*'p'*/ 3);
+	_confMenu.add(MI_CONF_01, new BoolMenuItem("Game Enhancements         %s", 2, 7, /*'e'*/ 5, &_settingsChanged._enhancements));
+	_confMenu.add(MI_CONF_GAMEPLAY, "\010 Enhanced Gameplay Options", 2, 9, /*'g'*/ 11);
+	_confMenu.add(MI_CONF_INTERFACE, "\010 Enhanced Interface Options", 2, 10, /*'n'*/ 12);
+	_confMenu.add(CANCEL, "\017 Main Menu", 2, 12, /*'m'*/ 2);
 	_confMenu.addShortcutKey(CANCEL, ' ');
 	_confMenu.setClosesMenu(CANCEL);
 
@@ -206,10 +205,10 @@ IntroController::IntroController() : Controller(1),
 	_confMenu.getItemById(MI_CONF_INTERFACE)->setVisible(settings._enhancements);
 
 	_videoMenu.setTitle("Video Options:", 0, 0);
-	_videoMenu.add(MI_VIDEO_CONF_GFX,                        "\010 Game Graphics Options",  2,  2,/*'g'*/  2);
-	_videoMenu.add(MI_VIDEO_08,         new IntMenuItem("Gamma                %s",  2,  4,/*'a'*/  1, &_settingsChanged._gamma, 50, 150, 10, MENU_OUTPUT_GAMMA));
-	_videoMenu.add(USE_SETTINGS,                   "\010 Use These Settings",  2, 11,/*'u'*/  2);
-	_videoMenu.add(CANCEL,                         "\010 Cancel",              2, 12,/*'c'*/  2);
+	_videoMenu.add(MI_VIDEO_CONF_GFX, "\010 Game Graphics Options", 2, 2, /*'g'*/ 2);
+	_videoMenu.add(MI_VIDEO_08, new IntMenuItem("Gamma                %s", 2, 4, /*'a'*/ 1, &_settingsChanged._gamma, 50, 150, 10, MENU_OUTPUT_GAMMA));
+	_videoMenu.add(USE_SETTINGS, "\010 Use These Settings", 2, 11, /*'u'*/ 2);
+	_videoMenu.add(CANCEL, "\010 Cancel", 2, 12, /*'c'*/ 2);
 	_videoMenu.addShortcutKey(CANCEL, ' ');
 	_videoMenu.setClosesMenu(USE_SETTINGS);
 	_videoMenu.setClosesMenu(CANCEL);
@@ -219,67 +218,66 @@ IntroController::IntroController() : Controller(1),
 	_gfxMenu.add(MI_GFX_TILE_TRANSPARENCY, new BoolMenuItem("Transparency Hack  %s", 2, 4, /*'t'*/ 0, &_settingsChanged._enhancementsOptions._u4TileTransparencyHack));
 	_gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_SIZE, new IntMenuItem("  Shadow Size:     %d", 2, 5, /*'s'*/ 9, &_settingsChanged._enhancementsOptions._u4TrileTransparencyHackShadowBreadth, 0, 16, 1));
 	_gfxMenu.add(MI_GFX_TILE_TRANSPARENCY_SHADOW_OPACITY, new IntMenuItem("  Shadow Opacity:  %d", 2, 6, /*'o'*/ 9, &_settingsChanged._enhancementsOptions._u4TileTransparencyHackPixelShadowOpacity, 8, 256, 8));
-	_gfxMenu.add(MI_VIDEO_02,               new StringMenuItem("Gem Layout         %s",  2,  8,/*'e'*/  1, &_settingsChanged._gemLayout, screenGetGemLayoutNames()));
-	_gfxMenu.add(MI_VIDEO_03,           new StringMenuItem("Line Of Sight      %s",  2,  9,/*'l'*/  0, &_settingsChanged._lineOfSight, screenGetLineOfSightStyles()));
-	_gfxMenu.add(MI_VIDEO_07,           new BoolMenuItem("Screen Shaking     %s",  2, 10,/*'k'*/ 8, &_settingsChanged._screenShakes));
-	_gfxMenu.add(MI_GFX_RETURN,               "\010 Return to Video Options",              2,  12,/*'r'*/  2);
+	_gfxMenu.add(MI_VIDEO_02, new StringMenuItem("Gem Layout         %s", 2, 8, /*'e'*/ 1, &_settingsChanged._gemLayout, screenGetGemLayoutNames()));
+	_gfxMenu.add(MI_VIDEO_03, new StringMenuItem("Line Of Sight      %s", 2, 9, /*'l'*/ 0, &_settingsChanged._lineOfSight, screenGetLineOfSightStyles()));
+	_gfxMenu.add(MI_VIDEO_07, new BoolMenuItem("Screen Shaking     %s", 2, 10, /*'k'*/ 8, &_settingsChanged._screenShakes));
+	_gfxMenu.add(MI_GFX_RETURN, "\010 Return to Video Options", 2, 12, /*'r'*/ 2);
 	_gfxMenu.setClosesMenu(MI_GFX_RETURN);
 
-
 	_soundMenu.setTitle("Sound Options:", 0, 0);
-	_soundMenu.add(MI_SOUND_03, new BoolMenuItem("Fading               %s", 2,  4,/*'f'*/  0, &_settingsChanged._volumeFades));
-	_soundMenu.add(USE_SETTINGS,                 "\010 Use These Settings", 2, 11,/*'u'*/  2);
-	_soundMenu.add(CANCEL,                       "\010 Cancel",             2, 12,/*'c'*/  2);
+	_soundMenu.add(MI_SOUND_03, new BoolMenuItem("Fading               %s", 2, 4, /*'f'*/ 0, &_settingsChanged._volumeFades));
+	_soundMenu.add(USE_SETTINGS, "\010 Use These Settings", 2, 11, /*'u'*/ 2);
+	_soundMenu.add(CANCEL, "\010 Cancel", 2, 12, /*'c'*/ 2);
 	_soundMenu.addShortcutKey(CANCEL, ' ');
 	_soundMenu.setClosesMenu(USE_SETTINGS);
 	_soundMenu.setClosesMenu(CANCEL);
 
 	_inputMenu.setTitle("Mouse Options:", 0, 0);
-	_inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s",      2,  2,/*'m'*/  0, &_settingsChanged._mouseOptions._enabled));
-	_inputMenu.add(USE_SETTINGS,                 "\010 Use These Settings",      2, 11,/*'u'*/  2);
-	_inputMenu.add(CANCEL,                       "\010 Cancel",                  2, 12,/*'c'*/  2);
+	_inputMenu.add(MI_INPUT_03, new BoolMenuItem("Mouse                %s", 2, 2, /*'m'*/ 0, &_settingsChanged._mouseOptions._enabled));
+	_inputMenu.add(USE_SETTINGS, "\010 Use These Settings", 2, 11, /*'u'*/ 2);
+	_inputMenu.add(CANCEL, "\010 Cancel", 2, 12, /*'c'*/ 2);
 	_inputMenu.addShortcutKey(CANCEL, ' ');
 	_inputMenu.setClosesMenu(USE_SETTINGS);
 	_inputMenu.setClosesMenu(CANCEL);
 
 	_speedMenu.setTitle("Speed Options:", 0, 0);
-	_speedMenu.add(MI_SPEED_01, new IntMenuItem("Game Cycles per Second    %3d",      2,  2,/*'g'*/  0, &_settingsChanged._gameCyclesPerSecond, 1, MAX_CYCLES_PER_SECOND, 1));
-	_speedMenu.add(MI_SPEED_02, new IntMenuItem("Battle Speed              %3d",      2,  3,/*'b'*/  0, &_settingsChanged._battleSpeed, 1, MAX_BATTLE_SPEED, 1));
-	_speedMenu.add(MI_SPEED_03, new IntMenuItem("Spell Effect Length       %s",       2,  4,/*'p'*/  1, &_settingsChanged._spellEffectSpeed, 1, MAX_SPELL_EFFECT_SPEED, 1, MENU_OUTPUT_SPELL));
-	_speedMenu.add(MI_SPEED_04, new IntMenuItem("Camping Length            %3d sec",  2,  5,/*'m'*/  2, &_settingsChanged._campTime, 1, MAX_CAMP_TIME, 1));
-	_speedMenu.add(MI_SPEED_05, new IntMenuItem("Inn Rest Length           %3d sec",  2,  6,/*'i'*/  0, &_settingsChanged._innTime, 1, MAX_INN_TIME, 1));
-	_speedMenu.add(MI_SPEED_06, new IntMenuItem("Shrine Meditation Length  %3d sec",  2,  7,/*'s'*/  0, &_settingsChanged._shrineTime, 1, MAX_SHRINE_TIME, 1));
-	_speedMenu.add(MI_SPEED_07, new IntMenuItem("Screen Shake Interval     %3d msec", 2,  8,/*'r'*/  2, &_settingsChanged._shakeInterval, MIN_SHAKE_INTERVAL, MAX_SHAKE_INTERVAL, 10));
-	_speedMenu.add(USE_SETTINGS,                "\010 Use These Settings",            2, 11,/*'u'*/  2);
-	_speedMenu.add(CANCEL,                      "\010 Cancel",                        2, 12,/*'c'*/  2);
+	_speedMenu.add(MI_SPEED_01, new IntMenuItem("Game Cycles per Second    %3d", 2, 2, /*'g'*/ 0, &_settingsChanged._gameCyclesPerSecond, 1, MAX_CYCLES_PER_SECOND, 1));
+	_speedMenu.add(MI_SPEED_02, new IntMenuItem("Battle Speed              %3d", 2, 3, /*'b'*/ 0, &_settingsChanged._battleSpeed, 1, MAX_BATTLE_SPEED, 1));
+	_speedMenu.add(MI_SPEED_03, new IntMenuItem("Spell Effect Length       %s", 2, 4, /*'p'*/ 1, &_settingsChanged._spellEffectSpeed, 1, MAX_SPELL_EFFECT_SPEED, 1, MENU_OUTPUT_SPELL));
+	_speedMenu.add(MI_SPEED_04, new IntMenuItem("Camping Length            %3d sec", 2, 5, /*'m'*/ 2, &_settingsChanged._campTime, 1, MAX_CAMP_TIME, 1));
+	_speedMenu.add(MI_SPEED_05, new IntMenuItem("Inn Rest Length           %3d sec", 2, 6, /*'i'*/ 0, &_settingsChanged._innTime, 1, MAX_INN_TIME, 1));
+	_speedMenu.add(MI_SPEED_06, new IntMenuItem("Shrine Meditation Length  %3d sec", 2, 7, /*'s'*/ 0, &_settingsChanged._shrineTime, 1, MAX_SHRINE_TIME, 1));
+	_speedMenu.add(MI_SPEED_07, new IntMenuItem("Screen Shake Interval     %3d msec", 2, 8, /*'r'*/ 2, &_settingsChanged._shakeInterval, MIN_SHAKE_INTERVAL, MAX_SHAKE_INTERVAL, 10));
+	_speedMenu.add(USE_SETTINGS, "\010 Use These Settings", 2, 11, /*'u'*/ 2);
+	_speedMenu.add(CANCEL, "\010 Cancel", 2, 12, /*'c'*/ 2);
 	_speedMenu.addShortcutKey(CANCEL, ' ');
 	_speedMenu.setClosesMenu(USE_SETTINGS);
 	_speedMenu.setClosesMenu(CANCEL);
 
 	/* move the BATTLE DIFFICULTY, DEBUG, and AUTOMATIC ACTIONS settings to "enhancementsOptions" */
 	_gameplayMenu.setTitle("Enhanced Gameplay Options:", 0, 0);
-	_gameplayMenu.add(MI_GAMEPLAY_01, new StringMenuItem("Battle Difficulty          %s", 2,  2,/*'b'*/  0, &_settingsChanged._battleDiff, settings.getBattleDiffs()));
-	_gameplayMenu.add(MI_GAMEPLAY_02,   new BoolMenuItem("Fixed Chest Traps          %s", 2,  3,/*'t'*/ 12, &_settingsChanged._enhancementsOptions._c64ChestTraps));
-	_gameplayMenu.add(MI_GAMEPLAY_03,   new BoolMenuItem("Gazer Spawns Insects       %s", 2,  4,/*'g'*/  0, &_settingsChanged._enhancementsOptions._gazerSpawnsInsects));
-	_gameplayMenu.add(MI_GAMEPLAY_04,   new BoolMenuItem("Gem View Shows Objects     %s", 2,  5,/*'e'*/  1, &_settingsChanged._enhancementsOptions._peerShowsObjects));
-	_gameplayMenu.add(MI_GAMEPLAY_05,   new BoolMenuItem("Slime Divides              %s", 2,  6,/*'s'*/  0, &_settingsChanged._enhancementsOptions._slimeDivides));
-	_gameplayMenu.add(MI_GAMEPLAY_06,   new BoolMenuItem("Debug Mode (Cheats)        %s", 2,  8,/*'d'*/  0, &_settingsChanged._debug));
-	_gameplayMenu.add(USE_SETTINGS,                      "\010 Use These Settings",       2, 11,/*'u'*/  2);
-	_gameplayMenu.add(CANCEL,                            "\010 Cancel",                   2, 12,/*'c'*/  2);
+	_gameplayMenu.add(MI_GAMEPLAY_01, new StringMenuItem("Battle Difficulty          %s", 2, 2, /*'b'*/ 0, &_settingsChanged._battleDiff, settings.getBattleDiffs()));
+	_gameplayMenu.add(MI_GAMEPLAY_02, new BoolMenuItem("Fixed Chest Traps          %s", 2, 3, /*'t'*/ 12, &_settingsChanged._enhancementsOptions._c64ChestTraps));
+	_gameplayMenu.add(MI_GAMEPLAY_03, new BoolMenuItem("Gazer Spawns Insects       %s", 2, 4, /*'g'*/ 0, &_settingsChanged._enhancementsOptions._gazerSpawnsInsects));
+	_gameplayMenu.add(MI_GAMEPLAY_04, new BoolMenuItem("Gem View Shows Objects     %s", 2, 5, /*'e'*/ 1, &_settingsChanged._enhancementsOptions._peerShowsObjects));
+	_gameplayMenu.add(MI_GAMEPLAY_05, new BoolMenuItem("Slime Divides              %s", 2, 6, /*'s'*/ 0, &_settingsChanged._enhancementsOptions._slimeDivides));
+	_gameplayMenu.add(MI_GAMEPLAY_06, new BoolMenuItem("Debug Mode (Cheats)        %s", 2, 8, /*'d'*/ 0, &_settingsChanged._debug));
+	_gameplayMenu.add(USE_SETTINGS, "\010 Use These Settings", 2, 11, /*'u'*/ 2);
+	_gameplayMenu.add(CANCEL, "\010 Cancel", 2, 12, /*'c'*/ 2);
 	_gameplayMenu.addShortcutKey(CANCEL, ' ');
 	_gameplayMenu.setClosesMenu(USE_SETTINGS);
 	_gameplayMenu.setClosesMenu(CANCEL);
 
 	_interfaceMenu.setTitle("Enhanced Interface Options:", 0, 0);
-	_interfaceMenu.add(MI_INTERFACE_01, new BoolMenuItem("Automatic Actions          %s", 2,  2,/*'a'*/  0, &_settingsChanged._shortcutCommands));
+	_interfaceMenu.add(MI_INTERFACE_01, new BoolMenuItem("Automatic Actions          %s", 2, 2, /*'a'*/ 0, &_settingsChanged._shortcutCommands));
 	/* "(Open, Jimmy, etc.)" */
-	_interfaceMenu.add(MI_INTERFACE_02, new BoolMenuItem("Set Active Player          %s", 2,  4,/*'p'*/ 11, &_settingsChanged._enhancementsOptions._activePlayer));
-	_interfaceMenu.add(MI_INTERFACE_03, new BoolMenuItem("Smart 'Enter' Key          %s", 2,  5,/*'e'*/  7, &_settingsChanged._enhancementsOptions._smartEnterKey));
-	_interfaceMenu.add(MI_INTERFACE_04, new BoolMenuItem("Text Colorization          %s", 2,  6,/*'t'*/  0, &_settingsChanged._enhancementsOptions._textColorization));
-	_interfaceMenu.add(MI_INTERFACE_05, new BoolMenuItem("Ultima V Shrines           %s", 2,  7,/*'s'*/  9, &_settingsChanged._enhancementsOptions._u5Shrines));
-	_interfaceMenu.add(MI_INTERFACE_06, new BoolMenuItem("Ultima V Spell Mixing      %s", 2,  8,/*'m'*/ 15, &_settingsChanged._enhancementsOptions._u5SpellMixing));
-	_interfaceMenu.add(USE_SETTINGS,                     "\010 Use These Settings",       2, 11,/*'u'*/  2);
-	_interfaceMenu.add(CANCEL,                           "\010 Cancel",                   2, 12,/*'c'*/  2);
+	_interfaceMenu.add(MI_INTERFACE_02, new BoolMenuItem("Set Active Player          %s", 2, 4, /*'p'*/ 11, &_settingsChanged._enhancementsOptions._activePlayer));
+	_interfaceMenu.add(MI_INTERFACE_03, new BoolMenuItem("Smart 'Enter' Key          %s", 2, 5, /*'e'*/ 7, &_settingsChanged._enhancementsOptions._smartEnterKey));
+	_interfaceMenu.add(MI_INTERFACE_04, new BoolMenuItem("Text Colorization          %s", 2, 6, /*'t'*/ 0, &_settingsChanged._enhancementsOptions._textColorization));
+	_interfaceMenu.add(MI_INTERFACE_05, new BoolMenuItem("Ultima V Shrines           %s", 2, 7, /*'s'*/ 9, &_settingsChanged._enhancementsOptions._u5Shrines));
+	_interfaceMenu.add(MI_INTERFACE_06, new BoolMenuItem("Ultima V Spell Mixing      %s", 2, 8, /*'m'*/ 15, &_settingsChanged._enhancementsOptions._u5SpellMixing));
+	_interfaceMenu.add(USE_SETTINGS, "\010 Use These Settings", 2, 11, /*'u'*/ 2);
+	_interfaceMenu.add(CANCEL, "\010 Cancel", 2, 12, /*'c'*/ 2);
 	_interfaceMenu.addShortcutKey(CANCEL, ' ');
 	_interfaceMenu.setClosesMenu(USE_SETTINGS);
 	_interfaceMenu.setClosesMenu(CANCEL);
@@ -340,7 +338,7 @@ void IntroController::deleteIntro() {
 	delete _binData;
 	_binData = nullptr;
 
-	delete [] _objectStateTable;
+	delete[] _objectStateTable;
 	_objectStateTable = nullptr;
 
 	imageMgr->freeIntroBackgrounds();
@@ -580,9 +578,8 @@ void IntroController::animateTree(const Common::String &frame) {
 
 void IntroController::drawCard(int pos, int card) {
 	static const char *cardNames[] = {
-		"honestycard", "compassioncard", "valorcard", "justicecard",
-		"sacrificecard", "honorcard", "spiritualitycard", "humilitycard"
-	};
+	    "honestycard", "compassioncard", "valorcard", "justicecard",
+	    "sacrificecard", "honorcard", "spiritualitycard", "humilitycard"};
 
 	ASSERT(pos == 0 || pos == 1, "invalid pos: %d", pos);
 	ASSERT(card >= 0 && card < 8, "invalid card: %d", card);
@@ -631,13 +628,13 @@ void IntroController::updateScreen() {
 			_backgroundArea.draw(BKGD_OPTIONS_BTM, 0, 120);
 		}
 
-		_menuArea.textAt(1,  1, "In another world, in a time to come.");
+		_menuArea.textAt(1, 1, "In another world, in a time to come.");
 		_menuArea.textAt(14, 3, "Options:");
 		_menuArea.optionAt(10, 5, 'r', "%s", _menuArea.colorizeString("Return to the view", FG_YELLOW, 0, 1).c_str());
-		_menuArea.optionAt(10, 6, 'j', "%s", _menuArea.colorizeString("Journey Onward",     FG_YELLOW, 0, 1).c_str());
-		_menuArea.optionAt(10, 7, 'i', "%s", _menuArea.colorizeString("Initiate New Game",  FG_YELLOW, 0, 1).c_str());
-		_menuArea.optionAt(10, 8, 'c', "%s", _menuArea.colorizeString("Configure",          FG_YELLOW, 0, 1).c_str());
-		_menuArea.optionAt(10, 9, 'a', "%s", _menuArea.colorizeString("About",              FG_YELLOW, 0, 1).c_str());
+		_menuArea.optionAt(10, 6, 'j', "%s", _menuArea.colorizeString("Journey Onward", FG_YELLOW, 0, 1).c_str());
+		_menuArea.optionAt(10, 7, 'i', "%s", _menuArea.colorizeString("Initiate New Game", FG_YELLOW, 0, 1).c_str());
+		_menuArea.optionAt(10, 8, 'c', "%s", _menuArea.colorizeString("Configure", FG_YELLOW, 0, 1).c_str());
+		_menuArea.optionAt(10, 9, 'a', "%s", _menuArea.colorizeString("About", FG_YELLOW, 0, 1).c_str());
 		drawBeasties();
 
 		// draw the cursor last
@@ -881,7 +878,7 @@ void IntroController::journeyOnward() {
 		// At this point the game context hasn't been created yet, so we only
 		// want to validate that the given savegame file exists without loading it
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-			g_ultima->getSaveStateName(lastSave));
+		    g_ultima->getSaveStateName(lastSave));
 		validSave = saveFile != nullptr;
 		delete saveFile;
 	}
@@ -994,8 +991,8 @@ void IntroController::update(Menu *menu, MenuEvent &event) {
 
 void IntroController::updateConfMenu(MenuEvent &event) {
 	if (event.getType() == MenuEvent::ACTIVATE ||
-	        event.getType() == MenuEvent::INCREMENT ||
-	        event.getType() == MenuEvent::DECREMENT) {
+	    event.getType() == MenuEvent::INCREMENT ||
+	    event.getType() == MenuEvent::DECREMENT) {
 
 		// show or hide game enhancement options if enhancements are enabled/disabled
 		_confMenu.getItemById(MI_CONF_GAMEPLAY)->setVisible(_settingsChanged._enhancements);
@@ -1043,8 +1040,8 @@ void IntroController::updateConfMenu(MenuEvent &event) {
 
 void IntroController::updateVideoMenu(MenuEvent &event) {
 	if (event.getType() == MenuEvent::ACTIVATE ||
-	        event.getType() == MenuEvent::INCREMENT ||
-	        event.getType() == MenuEvent::DECREMENT) {
+	    event.getType() == MenuEvent::INCREMENT ||
+	    event.getType() == MenuEvent::DECREMENT) {
 
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
@@ -1079,9 +1076,8 @@ void IntroController::updateVideoMenu(MenuEvent &event) {
 
 void IntroController::updateGfxMenu(MenuEvent &event) {
 	if (event.getType() == MenuEvent::ACTIVATE ||
-	        event.getType() == MenuEvent::INCREMENT ||
-	        event.getType() == MenuEvent::DECREMENT) {
-
+	    event.getType() == MenuEvent::INCREMENT ||
+	    event.getType() == MenuEvent::DECREMENT) {
 
 		switch (event.getMenuItem()->getId()) {
 		case MI_GFX_RETURN:
@@ -1099,8 +1095,8 @@ void IntroController::updateGfxMenu(MenuEvent &event) {
 
 void IntroController::updateSoundMenu(MenuEvent &event) {
 	if (event.getType() == MenuEvent::ACTIVATE ||
-	        event.getType() == MenuEvent::INCREMENT ||
-	        event.getType() == MenuEvent::DECREMENT) {
+	    event.getType() == MenuEvent::INCREMENT ||
+	    event.getType() == MenuEvent::DECREMENT) {
 
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
@@ -1125,8 +1121,8 @@ void IntroController::updateSoundMenu(MenuEvent &event) {
 
 void IntroController::updateInputMenu(MenuEvent &event) {
 	if (event.getType() == MenuEvent::ACTIVATE ||
-	        event.getType() == MenuEvent::INCREMENT ||
-	        event.getType() == MenuEvent::DECREMENT) {
+	    event.getType() == MenuEvent::INCREMENT ||
+	    event.getType() == MenuEvent::DECREMENT) {
 
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
@@ -1159,8 +1155,8 @@ void IntroController::updateInputMenu(MenuEvent &event) {
 
 void IntroController::updateSpeedMenu(MenuEvent &event) {
 	if (event.getType() == MenuEvent::ACTIVATE ||
-	        event.getType() == MenuEvent::INCREMENT ||
-	        event.getType() == MenuEvent::DECREMENT) {
+	    event.getType() == MenuEvent::INCREMENT ||
+	    event.getType() == MenuEvent::DECREMENT) {
 
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
@@ -1189,8 +1185,8 @@ void IntroController::updateSpeedMenu(MenuEvent &event) {
 
 void IntroController::updateGameplayMenu(MenuEvent &event) {
 	if (event.getType() == MenuEvent::ACTIVATE ||
-	        event.getType() == MenuEvent::INCREMENT ||
-	        event.getType() == MenuEvent::DECREMENT) {
+	    event.getType() == MenuEvent::INCREMENT ||
+	    event.getType() == MenuEvent::DECREMENT) {
 
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
@@ -1214,8 +1210,8 @@ void IntroController::updateGameplayMenu(MenuEvent &event) {
 
 void IntroController::updateInterfaceMenu(MenuEvent &event) {
 	if (event.getType() == MenuEvent::ACTIVATE ||
-	        event.getType() == MenuEvent::INCREMENT ||
-	        event.getType() == MenuEvent::DECREMENT) {
+	    event.getType() == MenuEvent::INCREMENT ||
+	    event.getType() == MenuEvent::DECREMENT) {
 
 		switch (event.getMenuItem()->getId()) {
 		case USE_SETTINGS:
@@ -1274,7 +1270,7 @@ bool IntroController::doQuestion(int answer) {
 
 	if (_questionTree[_questionRound * 2] > _questionTree[_questionRound * 2 + 1]) {
 		SWAP(_questionTree[_questionRound * 2],
-			_questionTree[_questionRound * 2 + 1]);
+		     _questionTree[_questionRound * 2 + 1]);
 	}
 
 	return false;
@@ -1287,28 +1283,28 @@ void IntroController::initPlayers(SaveGame *saveGame) {
 		ArmorType armor;
 		int level, xp, x, y;
 	} initValuesForClass[] = {
-		{ WEAP_STAFF,  ARMR_CLOTH,   2, 125, 231, 136 }, /* CLASS_MAGE */
-		{ WEAP_SLING,  ARMR_CLOTH,   3, 240,  83, 105 }, /* CLASS_BARD */
-		{ WEAP_AXE,    ARMR_LEATHER, 3, 205,  35, 221 }, /* CLASS_FIGHTER */
-		{ WEAP_DAGGER, ARMR_CLOTH,   2, 175,  59,  44 }, /* CLASS_DRUID */
-		{ WEAP_MACE,   ARMR_LEATHER, 2, 110, 158,  21 }, /* CLASS_TINKER */
-		{ WEAP_SWORD,  ARMR_CHAIN,   3, 325, 105, 183 }, /* CLASS_PALADIN */
-		{ WEAP_SWORD,  ARMR_LEATHER, 2, 150,  23, 129 }, /* CLASS_RANGER */
-		{ WEAP_STAFF,  ARMR_CLOTH,   1,   5, 186, 171 }  /* CLASS_SHEPHERD */
+	    {WEAP_STAFF, ARMR_CLOTH, 2, 125, 231, 136},  /* CLASS_MAGE */
+	    {WEAP_SLING, ARMR_CLOTH, 3, 240, 83, 105},   /* CLASS_BARD */
+	    {WEAP_AXE, ARMR_LEATHER, 3, 205, 35, 221},   /* CLASS_FIGHTER */
+	    {WEAP_DAGGER, ARMR_CLOTH, 2, 175, 59, 44},   /* CLASS_DRUID */
+	    {WEAP_MACE, ARMR_LEATHER, 2, 110, 158, 21},  /* CLASS_TINKER */
+	    {WEAP_SWORD, ARMR_CHAIN, 3, 325, 105, 183},  /* CLASS_PALADIN */
+	    {WEAP_SWORD, ARMR_LEATHER, 2, 150, 23, 129}, /* CLASS_RANGER */
+	    {WEAP_STAFF, ARMR_CLOTH, 1, 5, 186, 171}     /* CLASS_SHEPHERD */
 	};
 	static const struct {
 		const char *name;
 		int str, dex, intel;
 		SexType sex;
 	} initValuesForNpcClass[] = {
-		{ "Mariah",    9, 12, 20, SEX_FEMALE }, /* CLASS_MAGE */
-		{ "Iolo",     16, 19, 13, SEX_MALE },   /* CLASS_BARD */
-		{ "Geoffrey", 20, 15, 11, SEX_MALE },   /* CLASS_FIGHTER */
-		{ "Jaana",    17, 16, 13, SEX_FEMALE }, /* CLASS_DRUID */
-		{ "Julia",    15, 16, 12, SEX_FEMALE }, /* CLASS_TINKER */
-		{ "Dupre",    17, 14, 17, SEX_MALE },   /* CLASS_PALADIN */
-		{ "Shamino",  16, 15, 15, SEX_MALE },   /* CLASS_RANGER */
-		{ "Katrina",  11, 12, 10, SEX_FEMALE }  /* CLASS_SHEPHERD */
+	    {"Mariah", 9, 12, 20, SEX_FEMALE},  /* CLASS_MAGE */
+	    {"Iolo", 16, 19, 13, SEX_MALE},     /* CLASS_BARD */
+	    {"Geoffrey", 20, 15, 11, SEX_MALE}, /* CLASS_FIGHTER */
+	    {"Jaana", 17, 16, 13, SEX_FEMALE},  /* CLASS_DRUID */
+	    {"Julia", 15, 16, 12, SEX_FEMALE},  /* CLASS_TINKER */
+	    {"Dupre", 17, 14, 17, SEX_MALE},    /* CLASS_PALADIN */
+	    {"Shamino", 16, 15, 15, SEX_MALE},  /* CLASS_RANGER */
+	    {"Katrina", 11, 12, 10, SEX_FEMALE} /* CLASS_SHEPHERD */
 	};
 
 	saveGame->_players[0]._class = static_cast<ClassType>(_questionTree[14]);
@@ -1405,19 +1401,18 @@ void IntroController::preloadMap() {
 	}
 }
 
-
 void IntroController::initTitles() {
 	// add the intro elements
 	//          x,  y,   w,  h, method,  delay, duration
 	//
-	addTitle(97,  0, 130, 16, SIGNATURE,   1000, 3000);     // "Lord British"
-	addTitle(148, 17,  24,  4, AND,         1000,  100);    // "and"
-	addTitle(84, 31, 152,  1, BAR,         1000,  500);     // <bar>
-	addTitle(86, 21, 148,  9, ORIGIN,      1000,  100);     // "Origin Systems, Inc."
-	addTitle(133, 33,  54,  5, PRESENT,        0,  100);    // "present"
-	addTitle(59, 33, 202, 46, TITLE,       1000, 5000);     // "Ultima IV"
-	addTitle(40, 80, 240, 13, SUBTITLE,    1000,  100);     // "Quest of the Avatar"
-	addTitle(0, 96, 320, 96, MAP,         1000,  100);      // the map
+	addTitle(97, 0, 130, 16, SIGNATURE, 1000, 3000); // "Lord British"
+	addTitle(148, 17, 24, 4, AND, 1000, 100);        // "and"
+	addTitle(84, 31, 152, 1, BAR, 1000, 500);        // <bar>
+	addTitle(86, 21, 148, 9, ORIGIN, 1000, 100);     // "Origin Systems, Inc."
+	addTitle(133, 33, 54, 5, PRESENT, 0, 100);       // "present"
+	addTitle(59, 33, 202, 46, TITLE, 1000, 5000);    // "Ultima IV"
+	addTitle(40, 80, 240, 13, SUBTITLE, 1000, 100);  // "Quest of the Avatar"
+	addTitle(0, 96, 320, 96, MAP, 1000, 100);        // the map
 
 	// get the source data for the elements
 	getTitleSourceData();
@@ -1431,29 +1426,27 @@ void IntroController::initTitles() {
 
 void IntroController::addTitle(int x, int y, int w, int h, AnimType method, int delay, int duration) {
 	AnimElement data = {
-		x, y,               // source x and y
-		w, h,               // source width and height
-		method,             // render method
-		0,                  // animStep
-		0,                  // animStepMax
-		0,                  // timeBase
-		delay,              // delay before rendering begins
-		duration,           // total animation time
-		nullptr,               // storage for the source image
-		nullptr,               // storage for the animation frame
-		Std::vector<AnimPlot>(),
-		false
-	};             // prescaled
+	    x, y,     // source x and y
+	    w, h,     // source width and height
+	    method,   // render method
+	    0,        // animStep
+	    0,        // animStepMax
+	    0,        // timeBase
+	    delay,    // delay before rendering begins
+	    duration, // total animation time
+	    nullptr,  // storage for the source image
+	    nullptr,  // storage for the animation frame
+	    Std::vector<AnimPlot>(),
+	    false}; // prescaled
 	_titles.push_back(data);
 }
 
 void IntroController::getTitleSourceData() {
-	uint r, g, b, a;        // color values
-	byte *srcData;         // plot data
+	uint r, g, b, a; // color values
+	byte *srcData;   // plot data
 	const int BLUE[16] = {
-		255, 250, 226, 226, 210, 194, 161, 161,
-		129,  97,  97,  64,  64,  32,  32,   0
-	};
+	    255, 250, 226, 226, 210, 194, 161, 161,
+	    129, 97, 97, 64, 64, 32, 32, 0};
 
 	// The BKGD_INTRO image is assumed to have not been
 	// loaded yet.  The unscaled version will be loaded
@@ -1480,10 +1473,10 @@ void IntroController::getTitleSourceData() {
 		if ((_titles[i]._method != SIGNATURE) && (_titles[i]._method != BAR)) {
 			// create a place to store the source image
 			_titles[i]._srcImage = Image::create(
-				_titles[i]._rw * info->_prescale,
-				_titles[i]._rh * info->_prescale,
+			    _titles[i]._rw * info->_prescale,
+			    _titles[i]._rh * info->_prescale,
 			    info->_image->isIndexed() && _titles[i]._method != MAP,
-				Image::HARDWARE);
+			    Image::HARDWARE);
 			if (_titles[i]._srcImage->isIndexed())
 				_titles[i]._srcImage->setPaletteFromImage(info->_image);
 
@@ -1503,7 +1496,7 @@ void IntroController::getTitleSourceData() {
 		case SIGNATURE: {
 			// PLOT: "Lord British"
 			srcData = g_intro->getSigData();
-			RGBA color = info->_image->setColor(0, 255, 255);    // cyan for EGA
+			RGBA color = info->_image->setColor(0, 255, 255); // cyan for EGA
 			int x = 0, y = 0;
 
 			while (srcData[_titles[i]._animStepMax] != 0) {
@@ -1515,13 +1508,12 @@ void IntroController::getTitleSourceData() {
 					color = info->_image->setColor(255, (y == 2 ? 250 : 255), BLUE[y - 1]);
 				}
 				AnimPlot plot = {
-					(uint8)x,
-					(uint8)y,
-					(uint8)color.r,
-					(uint8)color.g,
-					(uint8)color.b,
-					255
-				};
+				    (uint8)x,
+				    (uint8)y,
+				    (uint8)color.r,
+				    (uint8)color.g,
+				    (uint8)color.b,
+				    255};
 				_titles[i]._plotData.push_back(plot);
 				_titles[i]._animStepMax += 2;
 			}
@@ -1530,16 +1522,16 @@ void IntroController::getTitleSourceData() {
 		}
 
 		case BAR: {
-			_titles[i]._animStepMax = _titles[i]._rw;  // image width
+			_titles[i]._animStepMax = _titles[i]._rw; // image width
 			break;
 		}
 
 		case TITLE: {
 			for (int y = 0; y < _titles[i]._rh; y++) {
-				for (int x = 0; x < _titles[i]._rw ; x++) {
+				for (int x = 0; x < _titles[i]._rw; x++) {
 					_titles[i]._srcImage->getPixel(x * info->_prescale, y * info->_prescale, r, g, b, a);
 					if (r || g || b) {
-						AnimPlot plot = { (uint8)(x + 1), (uint8)(y + 1), (uint8)r, (uint8)g, (uint8)b, (uint8)a };
+						AnimPlot plot = {(uint8)(x + 1), (uint8)(y + 1), (uint8)r, (uint8)g, (uint8)b, (uint8)a};
 						_titles[i]._plotData.push_back(plot);
 					}
 				}
@@ -1556,7 +1548,7 @@ void IntroController::getTitleSourceData() {
 			    _transparentColor.g,
 			    _transparentColor.b);
 
-			Image *scaled;      // the scaled and filtered image
+			Image *scaled; // the scaled and filtered image
 			scaled = g_screen->screenScale(_titles[i]._srcImage, settings._scale / info->_prescale, 1, 1);
 			if (_transparentIndex >= 0)
 				scaled->setTransparentIndex(_transparentIndex);
@@ -1570,7 +1562,7 @@ void IntroController::getTitleSourceData() {
 		}
 
 		default: {
-			_titles[i]._animStepMax = _titles[i]._rh ;  // image height
+			_titles[i]._animStepMax = _titles[i]._rh; // image height
 			break;
 		}
 		}
@@ -1582,10 +1574,10 @@ void IntroController::getTitleSourceData() {
 		bool indexed = info->_image->isIndexed() && _titles[i]._method != MAP;
 		// create the initial animation frame
 		_titles[i]._destImage = Image::create(
-			2 + (_titles[i]._prescaled ? SCALED(_titles[i]._rw) : _titles[i]._rw) * info->_prescale ,
+		    2 + (_titles[i]._prescaled ? SCALED(_titles[i]._rw) : _titles[i]._rw) * info->_prescale,
 		    2 + (_titles[i]._prescaled ? SCALED(_titles[i]._rh) : _titles[i]._rh) * info->_prescale,
 		    indexed,
-			Image::HARDWARE);
+		    Image::HARDWARE);
 		if (indexed)
 			_titles[i]._destImage->setPaletteFromImage(info->_image);
 	}
@@ -1597,14 +1589,12 @@ void IntroController::getTitleSourceData() {
 
 	// scale the original image now
 	Image *scaled = g_screen->screenScale(info->_image,
-	                            settings._scale / info->_prescale,
-	                            info->_image->isIndexed(),
-	                            1);
+	                                      settings._scale / info->_prescale,
+	                                      info->_image->isIndexed(),
+	                                      1);
 	delete info->_image;
 	info->_image = scaled;
 }
-
-
 
 #ifdef SLACK_ON_SDL_AGNOSTICISM
 int getTicks() {
@@ -1827,7 +1817,6 @@ bool IntroController::updateTitle() {
 		    SCALED((step + 1) * 8),
 		    SCALED(_title->_srcImage->height()));
 
-
 		// create a destimage for the map tiles
 		int newtime = getTicks();
 		if (newtime > _title->_timeDuration + 250 / 4) {
@@ -1884,7 +1873,7 @@ bool IntroController::updateTitle() {
 
 		if (_title->_method == TITLE) {
 			// assume this is "Ultima IV" and pre-load sound
-//            soundLoad(SOUND_TITLE_FADE);
+			//            soundLoad(SOUND_TITLE_FADE);
 			eventHandler->getTimer()->reset(settings._titleSpeedRandom);
 		} else if (_title->_method == MAP) {
 			eventHandler->getTimer()->reset(settings._titleSpeedOther);
@@ -1905,7 +1894,7 @@ void IntroController::compactTitle() {
 }
 
 void IntroController::drawTitle() {
-	Image *scaled;      // the scaled and filtered image
+	Image *scaled; // the scaled and filtered image
 
 	// blit the scaled and filtered surface to the screen
 	if (_title->_prescaled)
@@ -1915,9 +1904,9 @@ void IntroController::drawTitle() {
 
 	scaled->setTransparentIndex(_transparentIndex);
 	scaled->drawSubRect(
-	    SCALED(_title->_rx),    // dest x, y
+	    SCALED(_title->_rx), // dest x, y
 	    SCALED(_title->_ry),
-	    SCALED(1),              // src x, y, w, h
+	    SCALED(1), // src x, y, w, h
 	    SCALED(1),
 	    SCALED(_title->_rw),
 	    SCALED(_title->_rh));

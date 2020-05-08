@@ -62,7 +62,7 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 
 	while (n < 4) {
 		byte c = _vm->res->eseg.get_byte(addr++);
-		debugC(1, kDebugDialog, "%02x: %c", c, c > 0x20? c: '.');
+		debugC(1, kDebugDialog, "%02x: %c", c, c > 0x20 ? c : '.');
 
 		switch (c) {
 		case 0:

@@ -23,15 +23,20 @@
 #ifndef TITANIC_TT_SCRIPT_BASE_H
 #define TITANIC_TT_SCRIPT_BASE_H
 
-#include "titanic/true_talk/tt_string.h"
 #include "titanic/true_talk/tt_hist.h"
 #include "titanic/true_talk/tt_node.h"
 #include "titanic/true_talk/tt_response.h"
+#include "titanic/true_talk/tt_string.h"
 
 namespace Titanic {
 
 enum ScriptChangedResult {
-	SCR_0 = 0, SCR_1 = 1, SCR_2 = 2, SCR_3 = 3, SCR_4 = 4, SCR_5 = 5
+	SCR_0 = 0,
+	SCR_1 = 1,
+	SCR_2 = 2,
+	SCR_3 = 3,
+	SCR_4 = 4,
+	SCR_5 = 5
 };
 
 class TTsentence;
@@ -39,6 +44,7 @@ class TTsentence;
 class TTscriptBase {
 private:
 	void reset();
+
 protected:
 	TTnode *_nodesP;
 	TThist *_hist1P;
@@ -55,6 +61,7 @@ protected:
 	TTresponse *_respHeadP;
 	TTresponse *_oldResponseP;
 	int _status;
+
 protected:
 	/**
 	 * Delete any responses set up for the script
@@ -88,11 +95,13 @@ protected:
 	 * Get the current state
 	 */
 	int getState() const { return _state; }
+
 public:
 	int _id;
+
 public:
 	TTscriptBase(int scriptId, const char *charClass, int v2, const char *charName,
-		int v3, int v4, int v5, int v6, int v7);
+	             int v3, int v4, int v5, int v6, int v7);
 	virtual ~TTscriptBase();
 
 	virtual void addResponse(const TTstring &str);
@@ -129,9 +138,7 @@ public:
 	 * Gets passed a newly created input wrapper during conversation text processing
 	 */
 	int scriptPreprocess(TTsentence *sentence);
-
 };
-
 
 } // End of namespace Titanic
 

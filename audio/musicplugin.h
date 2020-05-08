@@ -23,8 +23,8 @@
 #ifndef AUDIO_MUSICPLUGIN_H
 #define AUDIO_MUSICPLUGIN_H
 
-#include "base/plugins.h"
 #include "audio/mididrv.h"
+#include "base/plugins.h"
 #include "common/list.h"
 
 namespace Common {

@@ -22,8 +22,8 @@
 
 #include "tsage/blue_force/blueforce_scenes5.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -62,9 +62,9 @@ bool Scene550::Lyle::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_TALK:
 		if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) ||
-				(BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1)) {
+		    (BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1)) {
 			if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) &&
-					(BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1)) {
+			    (BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1)) {
 				BF_GLOBALS.setFlag(fToldLyleOfSchedule);
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 5501;
@@ -128,13 +128,13 @@ bool Scene550::Vechile::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 5510;
 			scene->setAction(&scene->_sequenceManager, scene, BF_GLOBALS.getFlag(fWithLyle) ? 5510 : 5515,
-				&BF_GLOBALS._player, this, NULL);
+			                 &BF_GLOBALS._player, this, NULL);
 		} else if (BF_GLOBALS.getFlag(fToldLyleOfSchedule)) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2;
 			scene->setAction(&scene->_sequenceManager, scene, 5501, &BF_GLOBALS._player, NULL);
 		} else if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) ||
-					(BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1)) {
+		           (BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1)) {
 			if (BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) == 1) {
 				scene->_sceneMode = 5501;
 				scene->_stripManager.start(5511, scene);
@@ -473,7 +473,7 @@ bool Scene551::Drunk::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 5506;
 			scene->setAction(&scene->_sequenceManager, scene, 5506, &BF_GLOBALS._player, this,
-				&scene->_object12, NULL);
+			                 &scene->_object12, NULL);
 		}
 		return true;
 	default:
@@ -510,7 +510,7 @@ void Scene551::TrunkInset::remove() {
 
 	scene->_sceneMode = 0;
 	scene->setAction(&scene->_sequenceManager, scene, 5516, &scene->_harrison,
-		&scene->_patrolCarTrunk, NULL);
+	                 &scene->_patrolCarTrunk, NULL);
 
 	FocusObject::remove();
 }
@@ -638,7 +638,7 @@ bool Scene551::Item4::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene551::Scene551(): Scene550() {
+Scene551::Scene551() : Scene550() {
 	_field1CD0 = _field1CD2 = 0;
 }
 
@@ -909,8 +909,8 @@ void Scene560::Action1::signal() {
 		setDelay(10);
 		break;
 	case 1:
-		 ADD_MOVER(BF_GLOBALS._player, 105, 140);
-		 break;
+		ADD_MOVER(BF_GLOBALS._player, 105, 140);
+		break;
 	case 2:
 		scene->_deskChair.hide();
 
@@ -1223,7 +1223,7 @@ void Scene560::SafeInset::process(Event &event) {
 		}
 
 		if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
-				(event.btnState == BTNSHIFT_RIGHT)) {
+		    (event.btnState == BTNSHIFT_RIGHT)) {
 			BF_GLOBALS._events.setCursor(CURSOR_USE);
 			event.handled = true;
 		}
@@ -1380,7 +1380,7 @@ bool Scene560::Computer::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene560::Scene560(): SceneExt() {
+Scene560::Scene560() : SceneExt() {
 	_field380 = _field11EA = false;
 }
 
@@ -1545,7 +1545,7 @@ void Scene560::signal() {
 
 void Scene560::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
-			(_field380) && !_action) {
+	    (_field380) && !_action) {
 		_destPosition = event.mousePos;
 		BF_GLOBALS._player.disableControl();
 		setAction(&_action2);
@@ -1571,7 +1571,7 @@ void Scene560::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-Scene570::PasswordEntry::PasswordEntry(): EventHandler() {
+Scene570::PasswordEntry::PasswordEntry() : EventHandler() {
 	_passwordStr = SCENE570_PASSWORD;
 }
 
@@ -1688,7 +1688,7 @@ void Scene570::PasswordEntry::checkPassword() {
 	}
 }
 
-Scene570::IconManager::IconManager(): EventHandler() {
+Scene570::IconManager::IconManager() : EventHandler() {
 	_mode = _selectedFolder = _fieldAA = _fieldAC = 0;
 }
 
@@ -1780,7 +1780,7 @@ void Scene570::IconManager::addItem(Icon *item) {
 	_list.push_back(item);
 }
 
-Scene570::Icon::Icon(): NamedObject() {
+Scene570::Icon::Icon() : NamedObject() {
 	_iconId = _folderId = 0;
 	_parentFolderId = 0;
 }
@@ -2288,7 +2288,7 @@ void Scene580::signal() {
 
 void Scene580::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == INV_COLT45) &&
-			BF_GLOBALS._player.contains(event.mousePos)) {
+	    BF_GLOBALS._player.contains(event.mousePos)) {
 		BF_GLOBALS._player.disableControl();
 		SceneItem::display2(350, 26);
 
@@ -2432,7 +2432,7 @@ void Scene590::Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene590::Scene590(): PalettedScene() {
+Scene590::Scene590() : PalettedScene() {
 	_field17DC = _field17DE = _stripNumber = _field17E2 = 0;
 }
 

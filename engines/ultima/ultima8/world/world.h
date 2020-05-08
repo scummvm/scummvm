@@ -56,8 +56,8 @@
 // A clear/reset function would also be useful. (All singletons that store
 //  game data need this, actually.)
 
-#include "ultima/ultima8/misc/common_types.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/misc/common_types.h"
 
 namespace Ultima {
 namespace Ultima8 {

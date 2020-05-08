@@ -23,8 +23,8 @@
 #include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -37,7 +37,7 @@ namespace BlueForce {
 
 void Scene20::Action1::signal() {
 	Scene20 *scene = (Scene20 *)BF_GLOBALS._sceneManager._scene;
-	static byte black[3] = { 0, 0, 0 };
+	static byte black[3] = {0, 0, 0};
 
 	switch (_actionIndex++) {
 	case 0:
@@ -203,7 +203,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 
-Scene50::Tooltip::Tooltip(): SavedObject() {
+Scene50::Tooltip::Tooltip() : SavedObject() {
 	_newSceneNumber = _locationId = 0;
 }
 
@@ -291,7 +291,9 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 					scene->_sceneNumber = 330;
 				} else {
 					scene->_sceneNumber = (BF_GLOBALS._dayNumber != 1) || (BF_GLOBALS._bookmark < bStartOfGame) ||
-						(BF_GLOBALS._bookmark >= bCalledToDomesticViolence) ? 342 : 340;
+					                              (BF_GLOBALS._bookmark >= bCalledToDomesticViolence)
+					                          ? 342
+					                          : 340;
 				}
 				break;
 
@@ -334,7 +336,6 @@ Scene50::Scene50() {
 	_sceneNumber = 0;
 }
 
-
 void Scene50::synchronize(Serializer &s) {
 	if (s.getVersion() >= 10) {
 		SceneExt::synchronize(s);
@@ -373,8 +374,8 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	_location5.set(Rect(383, 57, 402, 70), 380, CITY_HALL_JAIL, 32);
 	_location7.set(Rect(128, 32, 143, 42), 800, JAMISON_RYAN, 128);
 	_location9.set(Rect(349, 125, 359, 132),
-		(BF_GLOBALS._bookmark == bInspectionDone) || (BF_GLOBALS._bookmark == bCalledToDrunkStop) ? 551 : 550,
-		BIKINI_HUT, 16);
+	               (BF_GLOBALS._bookmark == bInspectionDone) || (BF_GLOBALS._bookmark == bCalledToDrunkStop) ? 551 : 550,
+	               BIKINI_HUT, 16);
 
 	_item.setBounds(Rect(0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT));
 	BF_GLOBALS._sceneItems.push_back(&_item);
@@ -501,8 +502,8 @@ void Scene50::process(Event &event) {
 		mouseDown = event.eventType == EVENT_BUTTON_DOWN;
 
 	if (BF_GLOBALS._player._uiEnabled) {
-		Tooltip *tooltipList[9] = { &_location1, &_location2, &_location3, &_location4,
-			&_location5, &_location6, &_location7, &_location8, &_location9 };
+		Tooltip *tooltipList[9] = {&_location1, &_location2, &_location3, &_location4,
+		                           &_location5, &_location6, &_location7, &_location8, &_location9};
 
 		for (int idx = 0; idx < 9; ++idx) {
 			if (tooltipList[idx]->_bounds.contains(pt)) {
@@ -632,7 +633,7 @@ bool Scene60::Item3::startAction(CursorType action, Event &event) {
 bool Scene60::Radio::startAction(CursorType action, Event &event) {
 	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
 
-	switch(action) {
+	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display2(60, 0);
 		break;
@@ -651,13 +652,13 @@ bool Scene60::Radio::startAction(CursorType action, Event &event) {
 bool Scene60::Compartment::startAction(CursorType action, Event &event) {
 	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
 
-	switch(action) {
+	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display2(60, 8);
 		break;
 	case CURSOR_USE:
 		if ((BF_INVENTORY.getObjectScene(INV_TICKET_BOOK) == 1) &&
-				(BF_INVENTORY.getObjectScene(INV_MIRANDA_CARD) == 1)) {
+		    (BF_INVENTORY.getObjectScene(INV_MIRANDA_CARD) == 1)) {
 			SceneItem::display2(60, 9);
 		}
 		break;
@@ -960,7 +961,7 @@ void Scene60::Action3::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene60::Scene60(): SceneExt() {
+Scene60::Scene60() : SceneExt() {
 	_newScene = 0;
 	_sceneNumber = 0;
 	_visage = 0;
@@ -1025,13 +1026,13 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 	loadScene(_sceneNumber);
 
 	if ((_sceneNumber == 1810) && (BF_GLOBALS._dayNumber > 1) &&
-			(BF_GLOBALS._dayNumber < 5) && !BF_GLOBALS.getFlag(fWithLyle) &&
-			((BF_GLOBALS._dayNumber != 4) && (BF_GLOBALS._bookmark >= bEndDayThree))) {
+	    (BF_GLOBALS._dayNumber < 5) && !BF_GLOBALS.getFlag(fWithLyle) &&
+	    ((BF_GLOBALS._dayNumber != 4) && (BF_GLOBALS._bookmark >= bEndDayThree))) {
 		_car.setup(1810, 1, 1, 164, 131, 1);
 	}
 
 	if ((_sceneNumber == 1410) && (BF_GLOBALS._bookmark == bBookedGreen) &&
-			!BF_GLOBALS.getFlag(fDriverOutOfTruck)) {
+	    !BF_GLOBALS.getFlag(fDriverOutOfTruck)) {
 		_object1.postInit();
 		_object1.setVisage(410);
 		_object1.setStrip(6);
@@ -1108,7 +1109,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 	switch (BF_GLOBALS._dayNumber) {
 	case 1:
 		if (BF_GLOBALS.getFlag(onDuty) && (BF_GLOBALS._subFlagBitArr1 & 1) &&
-				(BF_GLOBALS._bookmark < bStartOfGame) && (BF_GLOBALS._sceneManager._previousScene != 342)) {
+		    (BF_GLOBALS._bookmark < bStartOfGame) && (BF_GLOBALS._sceneManager._previousScene != 342)) {
 			setAction(&_action2);
 			if (BF_GLOBALS._sceneManager._previousScene == 342)
 				_newScene = 340;
@@ -1116,8 +1117,8 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		break;
 	case 2:
 		if (BF_GLOBALS.getFlag(onDuty) && ((BF_GLOBALS._subFlagBitArr1 >> 7) & 1) &&
-				(BF_GLOBALS._sceneManager._previousScene != 550) &&
-				(BF_GLOBALS._bookmark < bInspectionDone)) {
+		    (BF_GLOBALS._sceneManager._previousScene != 550) &&
+		    (BF_GLOBALS._bookmark < bInspectionDone)) {
 			setAction(&_action3);
 		}
 		break;
@@ -1143,8 +1144,8 @@ void Scene60::dispatch() {
 	SceneExt::dispatch();
 
 	int idx = BF_GLOBALS._sceneRegions.indexOf(Common::Point(
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.left + BF_GLOBALS._events._mousePos.x,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + BF_GLOBALS._events._mousePos.y));
+	    BF_GLOBALS._sceneManager._scene->_sceneBounds.left + BF_GLOBALS._events._mousePos.x,
+	    BF_GLOBALS._sceneManager._scene->_sceneBounds.top + BF_GLOBALS._events._mousePos.y));
 
 	if (idx == _item3._sceneRegionId) {
 		if (BF_GLOBALS._events.getCursor() != CURSOR_EXIT) {

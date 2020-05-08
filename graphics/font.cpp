@@ -47,7 +47,7 @@ Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, 
 	int width = font.getStringWidth(str);
 
 	if (align == kTextAlignCenter)
-		x = x + (w - width)/2;
+		x = x + (w - width) / 2;
 	else if (align == kTextAlignRight)
 		x = x + w - width;
 	x += deltax;
@@ -104,7 +104,7 @@ void drawStringImpl(const Font &font, Surface *dst, const StringType &str, int x
 	int width = font.getStringWidth(str);
 
 	if (align == kTextAlignCenter)
-		x = x + (w - width)/2;
+		x = x + (w - width) / 2;
 	else if (align == kTextAlignRight)
 		x = x + w - width;
 	x += deltax;
@@ -240,7 +240,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 				c = '\n';
 			}
 			// if wrapping on explicit new lines is disabled, then new line characters should be treated as a single white space char
-			if (!wrapOnExplicitNewLines && c == '\n')  {
+			if (!wrapOnExplicitNewLines && c == '\n') {
 				c = ' ';
 			}
 
@@ -307,8 +307,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 		if (lineWidth > 0) {
 			wrapper.add(line, lineWidth);
 		}
-	} while (evenWidthLinesModeEnabled
-	         && (targetMaxLineWidth > maxWidth));
+	} while (evenWidthLinesModeEnabled && (targetMaxLineWidth > maxWidth));
 	return wrapper.actualMaxLineWidth;
 }
 

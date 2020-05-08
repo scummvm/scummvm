@@ -21,19 +21,19 @@
  */
 
 #include "ultima/ultima1/u1dialogs/drop.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Drop, Dialog)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(CharacterInputMsg)
-	ON_MESSAGE(TextInputMsg)
+ON_MESSAGE(ShowMsg)
+ON_MESSAGE(CharacterInputMsg)
+ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
 Drop::Drop(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
@@ -67,15 +67,15 @@ bool Drop::CharacterInputMsg(CCharacterInputMsg &msg) {
 		break;
 
 	case DROP_WEAPON:
-		if (msg._keyState.keycode >= Common::KEYCODE_b && msg._keyState.keycode < (Common::KEYCODE_b + (int)c._weapons.size())
-			&& !c._weapons[msg._keyState.keycode - Common::KEYCODE_a]->empty()) {
+		if (msg._keyState.keycode >= Common::KEYCODE_b && msg._keyState.keycode < (Common::KEYCODE_b + (int)c._weapons.size()) && !c._weapons[msg._keyState.keycode - Common::KEYCODE_a]->empty()) {
 			// Drop the weapon
 			int weaponNum = msg._keyState.keycode - Common::KEYCODE_a;
 			if (c._weapons[weaponNum]->decrQuantity() && c._equippedWeapon == weaponNum)
 				c.removeWeapon();
 
 			addInfoMsg(Common::String::format("%s%s", _game->_res->DROP_WEAPON,
-				_game->_res->WEAPON_NAMES_UPPERCASE[weaponNum]), true, true);
+			                                  _game->_res->WEAPON_NAMES_UPPERCASE[weaponNum]),
+			           true, true);
 			hide();
 		} else {
 			none();
@@ -83,15 +83,15 @@ bool Drop::CharacterInputMsg(CCharacterInputMsg &msg) {
 		break;
 
 	case DROP_armour:
-		if (msg._keyState.keycode >= Common::KEYCODE_b && msg._keyState.keycode < (Common::KEYCODE_b + (int)c._armour.size())
-			&& c._armour[msg._keyState.keycode - Common::KEYCODE_a]->_quantity > 0) {
+		if (msg._keyState.keycode >= Common::KEYCODE_b && msg._keyState.keycode < (Common::KEYCODE_b + (int)c._armour.size()) && c._armour[msg._keyState.keycode - Common::KEYCODE_a]->_quantity > 0) {
 			// Drop the armor
 			int armorNum = msg._keyState.keycode - Common::KEYCODE_a;
 			if (c._armour[armorNum]->decrQuantity() && c._equippedArmour == armorNum)
 				c.removeArmour();
 
 			addInfoMsg(Common::String::format("%s%s", _game->_res->DROP_armour,
-				_game->_res->ARMOR_NAMES[armorNum]), true, true);
+			                                  _game->_res->ARMOR_NAMES[armorNum]),
+			           true, true);
 			hide();
 		} else {
 			none();
@@ -169,12 +169,13 @@ void Drop::setMode(Mode mode) {
 
 void Drop::nothing() {
 	addInfoMsg(Common::String::format("%s %s", _game->_res->ACTION_NAMES[3],
-		_game->_res->NOTHING), true, true);
+	                                  _game->_res->NOTHING),
+	           true, true);
 	hide();
 }
 
 void Drop::none() {
-	const char *DROPS[4] = { nullptr, _game->_res->DROP_PENCE, _game->_res->DROP_WEAPON, _game->_res->DROP_armour };
+	const char *DROPS[4] = {nullptr, _game->_res->DROP_PENCE, _game->_res->DROP_WEAPON, _game->_res->DROP_armour};
 
 	addInfoMsg(Common::String::format("%s%s", DROPS[_mode], _game->_res->NONE), true, true);
 	hide();
@@ -212,7 +213,7 @@ void Drop::drawDropWeapon() {
 	for (uint idx = 1; idx < c._weapons.size(); ++idx) {
 		if (c._weapons[idx]->_quantity) {
 			Common::String text = Common::String::format("%c) %s", 'a' + idx,
-				_game->_res->WEAPON_NAMES_UPPERCASE[idx]);
+			                                             _game->_res->WEAPON_NAMES_UPPERCASE[idx]);
 			s.writeString(text, TextPoint(15, yp++));
 		}
 	}
@@ -235,7 +236,7 @@ void Drop::drawDropArmor() {
 	for (uint idx = 1; idx < c._armour.size(); ++idx) {
 		if (c._armour[idx]->_quantity) {
 			Common::String text = Common::String::format("%c) %s", 'a' + idx,
-				_game->_res->ARMOR_NAMES[idx]);
+			                                             _game->_res->ARMOR_NAMES[idx]);
 			s.writeString(text, TextPoint(13, yp++));
 		}
 	}

@@ -32,7 +32,7 @@ namespace Id {
 
 class IdStorage;
 
-class IdStreamFileRequest: public Networking::Request {
+class IdStreamFileRequest : public Networking::Request {
 	Common::String _requestedFile;
 	IdStorage *_storage;
 	Networking::NetworkReadStreamCallback _streamCallback;
@@ -45,6 +45,7 @@ class IdStreamFileRequest: public Networking::Request {
 	void streamFileCallback(Networking::NetworkReadStreamResponse response);
 	void streamFileErrorCallback(Networking::ErrorResponse error);
 	void finishStream(Networking::NetworkReadStream *stream);
+
 public:
 	IdStreamFileRequest(IdStorage *storage, Common::String path, Networking::NetworkReadStreamCallback cb, Networking::ErrorCallback ecb);
 	virtual ~IdStreamFileRequest();

@@ -33,9 +33,11 @@ class CMatrixTransform {
 private:
 	double fn2(const CMatrixTransform &src);
 	CMatrixTransform resize(double factor) const;
+
 public:
 	double _field0;
 	FVector _vector;
+
 public:
 	CMatrixTransform() : _field0(1.0) {}
 

@@ -23,8 +23,8 @@
 #ifndef NUVIE_CORE_MSG_SCROLL_H
 #define NUVIE_CORE_MSG_SCROLL_H
 
-#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
+#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/shared/std/containers.h"
 
 #define MSGSCROLL_U6_WIDTH 17
@@ -47,14 +47,12 @@ namespace Nuvie {
 
 using Std::list;
 
-
 class Configuration;
 class Font;
 class Actor;
 
 class MsgText {
 public:
-
 	Font *font;
 	Std::string s;
 	uint8 color;
@@ -75,7 +73,6 @@ public:
 
 class MsgLine {
 public:
-
 	Std::list<MsgText *> text;
 	uint32 total_length;
 
@@ -91,7 +88,7 @@ public:
 	uint16 get_display_width();
 };
 
-class MsgScroll: public GUI_Widget, public CallBack {
+class MsgScroll : public GUI_Widget, public CallBack {
 protected:
 	Configuration *config;
 	int game_type;
@@ -102,12 +99,12 @@ protected:
 	uint16 scroll_width;
 	uint8 left_margin; // margin width in pixels
 
-// set by request_input()
+	// set by request_input()
 	CallBack *callback_target;
 	char *callback_user_data;
 	uint8 input_char;
 	bool input_mode;
-	const char *permit_input; // character list, or 0 = any string
+	const char *permit_input;                     // character list, or 0 = any string
 	bool yes_no_only, aye_nay_only, numbers_only; // limited input selection
 
 	bool page_break;
@@ -132,44 +129,25 @@ private:
 	uint16 screen_x; //x offset to top left corner of MsgScroll
 	uint16 screen_y; //y offset to top left corner of MsgScroll
 
-
-
 	bool keyword_highlight;
-
-
-
 
 	MsgText prompt;
 	Std::list<MsgText *> holding_buffer;
 
-
 	bool show_cursor;
 	bool autobreak; // if true, a page break will be added when the scroll is full
-
-
-
-
-
 
 	bool scroll_updated;
 	uint8 cursor_char;
 	uint16 cursor_x, cursor_y;
 
-
-
-
 	uint16 line_count; // count the number of lines since last page break.
 
 	uint16 display_pos;
 
-
 	bool capitalise_next_letter;
 
-
-
-
 public:
-
 	MsgScroll(Configuration *cfg, Font *f);
 	MsgScroll() : GUI_Widget(NULL, 0, 0, 0, 0) {
 		config = NULL;
@@ -256,7 +234,7 @@ public:
 	void set_input_mode(bool state, const char *allowed = NULL,
 	                    bool can_escape = true, bool use_target_cursor = false,
 	                    bool set_numbers_only_to_true = false);
-	virtual void set_talking(bool state,  Actor *actor = NULL) {
+	virtual void set_talking(bool state, Actor *actor = NULL) {
 		talking = state;
 		input_char = 0;
 	}
@@ -282,7 +260,7 @@ public:
 	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
 	virtual Std::string get_token_string_at_pos(uint16 x, uint16 y);
-//void updateScroll();
+	//void updateScroll();
 	void Display(bool full_redraw) override;
 
 	void clearCursor(uint16 x, uint16 y);
@@ -308,7 +286,6 @@ public:
 	void clear_scroll();
 
 protected:
-
 	void set_scroll_dimensions(uint16 w, uint16 h);
 	void delete_front_line();
 	virtual MsgLine *add_new_line();
@@ -324,8 +301,6 @@ protected:
 	virtual uint8 get_input_font_color() {
 		return font_color;
 	}
-
-
 };
 
 } // End of namespace Nuvie

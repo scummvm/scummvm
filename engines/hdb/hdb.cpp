@@ -25,23 +25,23 @@
 
 #include "engines/util.h"
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/file-manager.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/input.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
 #include "hdb/menu.h"
-#include "hdb/sound.h"
 #include "hdb/mpc.h"
+#include "hdb/sound.h"
 #include "hdb/window.h"
 
 #define CHEAT_PATCHES 0
 
 namespace HDB {
 
-HDBGame* g_hdb;
+HDBGame *g_hdb;
 
 HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	g_hdb = this;
@@ -362,21 +362,19 @@ void HDBGame::paint() {
 	case GAME_PLAY:
 		_gfx->drawPointer();
 		break;
-	case GAME_LOADING:
-		{
-			// clear video, then draw HDB logo
-			drawLoadingScreen();
+	case GAME_LOADING: {
+		// clear video, then draw HDB logo
+		drawLoadingScreen();
 
-			// if the graphic has never been loaded, load it now and leave it in memory
-			if (!_logoGfx)
-				_logoGfx = _gfx->loadPic(TITLELOGO);
-			_logoGfx->drawMasked(_screenWidth / 2 - _logoGfx->_width / 2, 10);
+		// if the graphic has never been loaded, load it now and leave it in memory
+		if (!_logoGfx)
+			_logoGfx = _gfx->loadPic(TITLELOGO);
+		_logoGfx->drawMasked(_screenWidth / 2 - _logoGfx->_width / 2, 10);
 
-			int	x = _screenWidth / 2 - _progressGfx->_width / 2;
-			int pixels = _progressGfx->_width - _progressMarkGfx->_width;
-			_progressXOffset = (int)(((double)pixels / _progressMax) * (double)_progressCurrent) + x;
-		}
-		break;
+		int x = _screenWidth / 2 - _progressGfx->_width / 2;
+		int pixels = _progressGfx->_width - _progressMarkGfx->_width;
+		_progressXOffset = (int)(((double)pixels / _progressMax) * (double)_progressCurrent) + x;
+	} break;
 	default:
 		break;
 	}
@@ -420,10 +418,10 @@ void HDBGame::setTargetXY(int x, int y) {
 
 	// If we're attacking...don't do anything else
 	AIState stateList[] = {
-		STATE_ATK_CLUB_UP,	STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,
-		STATE_ATK_STUN_UP,	STATE_ATK_STUN_DOWN, STATE_ATK_STUN_LEFT, STATE_ATK_STUN_RIGHT,
-		STATE_ATK_SLUG_UP,	STATE_ATK_SLUG_DOWN, STATE_ATK_SLUG_LEFT, STATE_ATK_SLUG_RIGHT,
-		STATE_PUSHUP,		STATE_PUSHDOWN,		 STATE_PUSHLEFT,	  STATE_PUSHRIGHT};
+	    STATE_ATK_CLUB_UP, STATE_ATK_CLUB_DOWN, STATE_ATK_CLUB_LEFT, STATE_ATK_CLUB_RIGHT,
+	    STATE_ATK_STUN_UP, STATE_ATK_STUN_DOWN, STATE_ATK_STUN_LEFT, STATE_ATK_STUN_RIGHT,
+	    STATE_ATK_SLUG_UP, STATE_ATK_SLUG_DOWN, STATE_ATK_SLUG_LEFT, STATE_ATK_SLUG_RIGHT,
+	    STATE_PUSHUP, STATE_PUSHDOWN, STATE_PUSHLEFT, STATE_PUSHRIGHT};
 
 	for (int i = 0; i < 16; i++) {
 		if (p->state == stateList[i])
@@ -550,7 +548,7 @@ void HDBGame::startMoveMap(int x, int y) {
 }
 
 void HDBGame::moveMap(int x, int y) {
-	int	ox, oy;
+	int ox, oy;
 	g_hdb->_map->getMapXY(&ox, &oy);
 
 	ox += (_dx - x) / 8;
@@ -632,7 +630,7 @@ void HDBGame::useEntity(AIEntity *e) {
 		// are we going to push this over a sliding surface? (ok)
 		// are we going to push this into a blocking tile? (not ok)
 		if (e->level == 2) {
-			int	fg_flags = g_hdb->_map->getMapFGTileFlags(chX, chY);
+			int fg_flags = g_hdb->_map->getMapFGTileFlags(chX, chY);
 			if (fg_flags & kFlagSolid) {
 				g_hdb->_sound->playSound(SND_GUY_UHUH);
 				g_hdb->_ai->lookAtXY(chX, chY);
@@ -672,7 +670,7 @@ void HDBGame::useEntity(AIEntity *e) {
 		// don't allow it.
 		flags = g_hdb->_map->getMapBGTileFlags(p->tileX + (xDir >> 1), p->tileY + (yDir >> 1));
 		if (((flags & kFlagRadFloor) == kFlagRadFloor || (flags & kFlagPlasmaFloor) == kFlagPlasmaFloor) &&
-			false == g_hdb->_ai->checkFloating(p->tileX + (xDir >> 1), p->tileY + (yDir >> 1))) {
+		    false == g_hdb->_ai->checkFloating(p->tileX + (xDir >> 1), p->tileY + (yDir >> 1))) {
 			g_hdb->_ai->lookAtEntity(e);
 			g_hdb->_ai->animGrabbing();
 			g_hdb->_sound->playSound(SND_NOPUSH_SIZZLE);
@@ -712,7 +710,7 @@ void HDBGame::useEntity(AIEntity *e) {
 		// everything's clear - time to push!
 		// set goal for pushed object
 		if (e->type != AI_DIVERTER)
-			e->moveSpeed = kPushMoveSpeed;	// push DIVERTERS real fast
+			e->moveSpeed = kPushMoveSpeed; // push DIVERTERS real fast
 		g_hdb->_ai->setEntityGoal(e, chX, chY);
 
 		// Diverters are very special - don't mess with their direction & state!
@@ -741,7 +739,7 @@ void HDBGame::useEntity(AIEntity *e) {
 			xDir = xDir >> 1;
 		if (yDir)
 			yDir = yDir >> 1;
-		if (e->type != AI_DIVERTER)			// push DIVERTERS real fast
+		if (e->type != AI_DIVERTER) // push DIVERTERS real fast
 			p->moveSpeed = kPushMoveSpeed;
 		else
 			p->moveSpeed = kPlayerMoveSpeed;
@@ -851,37 +849,37 @@ void HDBGame::drawLoadingScreen() {
 struct MapName {
 	const char *fName, *printName;
 } static mapNames[] = {
-	{	"MAP00",			"HDS Colby Jack" },
-	{	"MAP01",			"Servandrones, Inc." },
-	{	"MAP02",			"Pushbot Storage" },
-	{	"MAP03",			"Rightbot Problems" },
-	{	"MAP04",			"Shockbot Secrets" },
-	{	"MAP05",			"The Drain Pain" },
-	{	"MAP06",			"Energy Column Tower" },
-	{	"MAP07",			"Water Supply Systems" },
-	{	"MAP08",			"Food Supply Systems" },
-	{	"MAP09",			"Purple Storage Room" },
-	{	"MAP10",			"Back On The Jack" },
-	{	"MAP11",			"Bridia" },
-	{	"MAP12",			"BEAL Offices" },
-	{	"MAP13",			"BEAL Labs" },
-	{	"MAP14",			"Earthen Plain" },
-	{	"MAP15",			"Fatfrog Swamp" },
-	{	"MAP16",			"Fatfrog Deeps" },
-	{	"MAP17",			"Glacier West" },
-	{	"MAP18",			"Glacier East" },
-	{	"MAP19",			"Mystery Pizza Factory" },
-	{	"MAP20",			"Colby Jack Attack" },
-	{	"MAP21",			"Pharitale" },
-	{	"MAP22",			"Happy Meadow" },
-	{	"MAP23",			"Water Caves" },
-	{	"MAP24",			"Rocky Crag" },
-	{	"MAP25",			"Dragon Deeps" },
-	{	"MAP26",			"Lower Dragon Deeps" },
-	{	"MAP27",			"Ice Dragon Valley" },
-	{	"MAP28",			"Faerie Glade" },
-	{	"MAP29",			"Palace In The Clouds" },
-	{	"MAP30",			"Monkeystone Star Zone" },
+    {"MAP00", "HDS Colby Jack"},
+    {"MAP01", "Servandrones, Inc."},
+    {"MAP02", "Pushbot Storage"},
+    {"MAP03", "Rightbot Problems"},
+    {"MAP04", "Shockbot Secrets"},
+    {"MAP05", "The Drain Pain"},
+    {"MAP06", "Energy Column Tower"},
+    {"MAP07", "Water Supply Systems"},
+    {"MAP08", "Food Supply Systems"},
+    {"MAP09", "Purple Storage Room"},
+    {"MAP10", "Back On The Jack"},
+    {"MAP11", "Bridia"},
+    {"MAP12", "BEAL Offices"},
+    {"MAP13", "BEAL Labs"},
+    {"MAP14", "Earthen Plain"},
+    {"MAP15", "Fatfrog Swamp"},
+    {"MAP16", "Fatfrog Deeps"},
+    {"MAP17", "Glacier West"},
+    {"MAP18", "Glacier East"},
+    {"MAP19", "Mystery Pizza Factory"},
+    {"MAP20", "Colby Jack Attack"},
+    {"MAP21", "Pharitale"},
+    {"MAP22", "Happy Meadow"},
+    {"MAP23", "Water Caves"},
+    {"MAP24", "Rocky Crag"},
+    {"MAP25", "Dragon Deeps"},
+    {"MAP26", "Lower Dragon Deeps"},
+    {"MAP27", "Ice Dragon Valley"},
+    {"MAP28", "Faerie Glade"},
+    {"MAP29", "Palace In The Clouds"},
+    {"MAP30", "Monkeystone Star Zone"},
 };
 
 void HDBGame::setInMapName(const char *name) {

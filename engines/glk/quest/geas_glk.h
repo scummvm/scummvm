@@ -29,7 +29,6 @@
 namespace Glk {
 namespace Quest {
 
-
 /* User interface bridge from Geas Core to Glk.
 
   Glk Window arrangment.
@@ -70,6 +69,7 @@ protected:
 	uint make_choice(String, Common::Array<String>) override;
 
 	String absolute_name(String, String) const override;
+
 public:
 	GeasGlkInterface() {
 		;

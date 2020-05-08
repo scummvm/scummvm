@@ -21,8 +21,8 @@
  */
 
 #include "backends/saves/recorder/recorder-saves.h"
-#include "gui/EventRecorder.h"
 #include "common/savefile.h"
+#include "gui/EventRecorder.h"
 
 Common::InSaveFile *RecorderSaveFileManager::openForLoading(const Common::String &filename) {
 	Common::InSaveFile *result = g_eventRec.processSaveStream(filename);
@@ -32,4 +32,3 @@ Common::InSaveFile *RecorderSaveFileManager::openForLoading(const Common::String
 Common::StringArray RecorderSaveFileManager::listSaveFiles(const Common::String &pattern) {
 	return g_eventRec.listSaveFiles(pattern);
 }
-

@@ -51,12 +51,11 @@ void Room::feather0Tick60() {
 
 void Room::feather0TalkToQuetzecoatl() {
 	const TextRef choices[] = {
-		TX_SPEAKER_KIRK,
-		6,
-		7,
-		11,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    6,
+	    7,
+	    11,
+	    TX_BLANK};
 
 	showText(TX_SPEAKER_QUETZECOATL, 28, true);
 	int choice = showMultipleTexts(choices, true);
@@ -64,29 +63,26 @@ void Room::feather0TalkToQuetzecoatl() {
 
 	if (choice == 0) {
 		const TextRef choices0[] = {
-			TX_SPEAKER_KIRK,
-			9,
-			4,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    9,
+		    4,
+		    TX_BLANK};
 		showText(TX_SPEAKER_QUETZECOATL, 32, true);
 		choice = showMultipleTexts(choices0, true);
 	} else if (choice == 1) {
 		const TextRef choices0[] = {
-			TX_SPEAKER_KIRK,
-			2,
-			12,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    2,
+		    12,
+		    TX_BLANK};
 		showText(TX_SPEAKER_QUETZECOATL, 31, true);
 		choice = showMultipleTexts(choices0, true);
 	} else if (choice == 2) {
 		const TextRef choices0[] = {
-			TX_SPEAKER_KIRK,
-			14,
-			8,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    14,
+		    8,
+		    TX_BLANK};
 		showText(TX_SPEAKER_QUETZECOATL, 33, true);
 		choice = showMultipleTexts(choices0, true);
 
@@ -106,11 +102,10 @@ void Room::feather0TalkToQuetzecoatl() {
 		showText(TX_SPEAKER_QUETZECOATL, 26, true);
 
 		const TextRef choices1[] = {
-			TX_SPEAKER_KIRK,
-			13,
-			5,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    13,
+		    5,
+		    TX_BLANK};
 		choice = showMultipleTexts(choices1, true);
 
 		if (choice == 0) {
@@ -221,4 +216,4 @@ void Room::feather0UseMTricorderOnQuetzecoatl() {
 	mccoyScan(DIR_S, 15, false, true);
 }
 
-}
+} // namespace StarTrek

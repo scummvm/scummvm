@@ -27,10 +27,10 @@
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -44,9 +44,11 @@ class Scene20 : public SceneExt {
 	class Action1 : public Action {
 	private:
 		ASoundExt _sound;
+
 	public:
 		void signal() override;
 	};
+
 public:
 	Action1 _action1;
 	ScenePalette _scenePalette;
@@ -56,13 +58,14 @@ public:
 	void postInit(SceneObjectList *OwnerList = NULL) override;
 };
 
-class Scene50: public SceneExt {
-	class Tooltip: public SavedObject {
+class Scene50 : public SceneExt {
+	class Tooltip : public SavedObject {
 	public:
 		Rect _bounds;
 		Common::String _msg;
 		int _newSceneNumber;
 		int _locationId;
+
 	public:
 		Tooltip();
 		void set(const Rect &bounds, int sceneNum, const Common::String &msg, int locationId);
@@ -72,14 +75,15 @@ class Scene50: public SceneExt {
 		Common::String getClassName() override { return "Scene50_Tooltip"; }
 		void synchronize(Serializer &s) override;
 	};
-	class Tooltip2: public Action {
+	class Tooltip2 : public Action {
 	public:
-		Tooltip2(): Action() {}
+		Tooltip2() : Action() {}
 
 		Common::String getClassName() override { return "Scene50_Tooltip2"; }
 		void signal() override;
 		void dispatch() override;
 	};
+
 public:
 	int _sceneNumber;
 	SceneText _text;
@@ -87,6 +91,7 @@ public:
 	Tooltip _location1, _location2, _location3, _location4, _location5;
 	Tooltip _location6, _location7, _location8, _location9;
 	Timer _timer;
+
 public:
 	Scene50();
 
@@ -101,56 +106,59 @@ public:
 
 class Scene60 : public SceneExt {
 	/* Items */
-	class Ignition: public NamedHotspot {
+	class Ignition : public NamedHotspot {
 	private:
 		bool check1();
 		bool check2();
+
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item3: public NamedHotspot {
+	class Item3 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Radio: public NamedHotspot {
+	class Radio : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Compartment: public NamedHotspot {
+	class Compartment : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class MirandaCard: public NamedObject {
+	class MirandaCard : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class TicketBook: public NamedObject {
+	class TicketBook : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class CompartmentDoor: public NamedObject {
+	class CompartmentDoor : public NamedObject {
 	public:
 		bool _flag;
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	private:
 		int useRadio();
+
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
@@ -182,7 +190,6 @@ public:
 	void signal() override;
 	void dispatch() override;
 };
-
 
 } // End of namespace BlueForce
 

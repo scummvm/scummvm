@@ -32,11 +32,16 @@ namespace Glk {
 namespace AGT {
 
 enum DelayMode {
-	DELAY_FULL, DELAY_SHORT, DELAY_OFF
+	DELAY_FULL,
+	DELAY_SHORT,
+	DELAY_OFF
 };
 
 enum FontMode {
-	FONT_AUTOMATIC, FONT_FIXED_WIDTH, FONT_PROPORTIONAL, FONT_DEBUG
+	FONT_AUTOMATIC,
+	FONT_FIXED_WIDTH,
+	FONT_PROPORTIONAL,
+	FONT_DEBUG
 };
 
 /**
@@ -44,8 +49,8 @@ enum FontMode {
  */
 class AGT : public GlkAPI {
 public:
-	const char *gagt_gamefile;      /* Name of game file. */
-	const char *gagt_game_message;  /* Error message. */
+	const char *gagt_gamefile;     /* Name of game file. */
+	const char *gagt_game_message; /* Error message. */
 	DelayMode gagt_delay_mode;
 
 	/**
@@ -70,7 +75,7 @@ public:
 	/* Options that may be turned off or set by command line flags. */
 	FontMode gagt_font_mode;
 	bool gagt_replacement_enabled, gagt_extended_status_enabled,
-		gagt_abbreviations_enabled, gagt_commands_enabled;
+	    gagt_abbreviations_enabled, gagt_commands_enabled;
 
 	/**
 	 * Flag to set if we want to test for a clean exit.  Without this it's a
@@ -78,6 +83,7 @@ public:
 	 * tends to require a broken game file.
 	 */
 	bool gagt_clean_exit_test;
+
 private:
 	/**
 	 * Handles initialization
@@ -88,6 +94,7 @@ private:
 	 * Handles flag setup from configuration
 	 */
 	void initializeSettings();
+
 public:
 	/**
 	 * Constructor

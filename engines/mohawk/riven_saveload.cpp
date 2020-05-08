@@ -20,10 +20,10 @@
  *
  */
 
+#include "mohawk/riven_saveload.h"
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
-#include "mohawk/riven_saveload.h"
 #include "mohawk/riven_stack.h"
 
 #include "common/system.h"
@@ -187,8 +187,7 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 	Common::SeekableReadStream *vers = mhk->getResource(ID_VERS, 1);
 	uint32 saveGameVersion = vers->readUint32BE();
 	delete vers;
-	if ((saveGameVersion == kCDSaveGameVersion && _vm->isGameVariant(GF_DVD))
-		|| (saveGameVersion == kDVDSaveGameVersion && !_vm->isGameVariant(GF_DVD))) {
+	if ((saveGameVersion == kCDSaveGameVersion && _vm->isGameVariant(GF_DVD)) || (saveGameVersion == kDVDSaveGameVersion && !_vm->isGameVariant(GF_DVD))) {
 		warning("Unable to load: Saved game created using an incompatible game version - CD vs DVD");
 		delete mhk;
 		return Common::Error(Common::kUnknownError, "Saved game created using an incompatible game version - CD vs DVD");
@@ -202,8 +201,8 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 		// The original engine stores the variables values in an array. All the slots in
 		// the array may not be in use, which is why it needs a reference counter and
 		// a flag to tell if the value has been set.
-		vars->readUint32BE();	// Reference counter
-		vars->readUint32BE();	// Variable initialized flag
+		vars->readUint32BE(); // Reference counter
+		vars->readUint32BE(); // Variable initialized flag
 		rawVariables.push_back(vars->readUint32BE());
 	}
 
@@ -218,7 +217,7 @@ Common::Error RivenSaveLoad::loadGame(const int slot) {
 	for (uint16 i = 0; i < namesCount; i++)
 		stringOffsets[i] = names->readUint16BE();
 	for (uint16 i = 0; i < namesCount; i++)
-		names->readUint16BE();	// Skip unknown values
+		names->readUint16BE(); // Skip unknown values
 	uint32 curNamesPos = names->pos();
 
 	for (uint32 i = 0; i < namesCount && !names->eos(); i++) {
@@ -424,7 +423,7 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 	if (!saveFile)
 		return Common::kWritingFailed;
 
-	debug (0, "Saving game to \'%s\'", filename.c_str());
+	debug(0, "Saving game to \'%s\'", filename.c_str());
 
 	Common::MemoryWriteStreamDynamic *metaSection = genMETASection(description, autoSave);
 	Common::MemoryWriteStreamDynamic *nameSection = genNAMESection();
@@ -448,16 +447,16 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 
 	// RSRC Header (20 bytes - total: 28)
 	saveFile->writeUint32BE(ID_RSRC);
-	saveFile->writeUint16BE(0x100); // Resource Version (1.0)
-	saveFile->writeUint16BE(1); // Compaction -- original saves have this too
+	saveFile->writeUint16BE(0x100);    // Resource Version (1.0)
+	saveFile->writeUint16BE(1);        // Compaction -- original saves have this too
 	saveFile->writeUint32BE(fileSize); // Subtract off the MHWK header size
-	saveFile->writeUint32BE(28); // Absolute offset: right after both headers
-	saveFile->writeUint16BE(102); // File Table Offset
-	saveFile->writeUint16BE(64); // File Table Size (4 bytes count + 6 entries * 10 bytes per entry)
+	saveFile->writeUint32BE(28);       // Absolute offset: right after both headers
+	saveFile->writeUint16BE(102);      // File Table Offset
+	saveFile->writeUint16BE(64);       // File Table Size (4 bytes count + 6 entries * 10 bytes per entry)
 
 	// Type Table (4 bytes - total: 32)
 	saveFile->writeUint16BE(52); // String table offset After the Type Table Entries
-	saveFile->writeUint16BE(6); // 6 Type Table Entries
+	saveFile->writeUint16BE(6);  // 6 Type Table Entries
 
 	// Hardcode Entries (48 bytes - total: 80)
 	// The original engine relies on the entries being sorted by tag alphabetical order
@@ -595,7 +594,7 @@ Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &desc
 void RivenSaveLoad::deleteSave(const int slot) {
 	Common::String filename = buildSaveFilename(slot);
 
-	debug (0, "Deleting save file \'%s\'", filename.c_str());
+	debug(0, "Deleting save file \'%s\'", filename.c_str());
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 

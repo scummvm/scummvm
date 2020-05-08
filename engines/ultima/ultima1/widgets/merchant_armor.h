@@ -34,12 +34,14 @@ namespace Widgets {
  */
 class MerchantArmor : public Merchant {
 	DECLARE_MESSAGE_MAP;
+
 private:
 	/**
 	 * Handles getting or stealing armor
 	 * @param checkStealing		If set, checks for stealing
 	 */
 	void findArmor(bool checkStealing);
+
 public:
 	DECLARE_WIDGET(MerchantArmor)
 	CLASSDEF;
@@ -47,14 +49,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	MerchantArmor(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Merchant(game, map, 50, hitPoints) {}
+	MerchantArmor(Ultima1Game *game, Maps::MapBase *map, int hitPoints) : Merchant(game, map, 50, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	MerchantArmor(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
-		Merchant(game, map, tileNum, hitPoints) {}
+	MerchantArmor(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) : Merchant(game, map, tileNum, hitPoints) {}
 
 	/**
 	 * Constructor

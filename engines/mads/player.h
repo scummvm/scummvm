@@ -24,8 +24,8 @@
 #define MADS_PLAYER_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
 #include "common/serializer.h"
+#include "common/str.h"
 
 namespace MADS {
 
@@ -39,10 +39,16 @@ class MADSAction;
  * Player facings
  */
 enum Facing {
-	FACING_NORTH = 8, FACING_SOUTH = 2, FACING_EAST = 6, FACING_WEST = 4,
-	FACING_NORTHEAST = 9, FACING_SOUTHEAST = 3,
-	FACING_SOUTHWEST = 1, FACING_NORTHWEST = 7,
-	FACING_NONE = 5, FACING_DUMMY = 0
+	FACING_NORTH = 8,
+	FACING_SOUTH = 2,
+	FACING_EAST = 6,
+	FACING_WEST = 4,
+	FACING_NORTHEAST = 9,
+	FACING_SOUTHEAST = 3,
+	FACING_SOUTHWEST = 1,
+	FACING_NORTHWEST = 7,
+	FACING_NONE = 5,
+	FACING_DUMMY = 0
 };
 
 struct StopWalkerEntry {
@@ -65,6 +71,7 @@ public:
 class Player {
 private:
 	static const int _directionListIndexes[32];
+
 private:
 	MADSEngine *_vm;
 	bool _highSprites;
@@ -112,6 +119,7 @@ private:
 	void changeFacing();
 
 	void activateTrigger();
+
 public:
 	MADSAction *_action;
 
@@ -162,6 +170,7 @@ public:
 	TriggerMode _walkTriggerDest;
 	ActionDetails _walkTriggerAction;
 	StopWalkers _stopWalkers;
+
 public:
 	Player(MADSEngine *vm);
 
@@ -251,7 +260,6 @@ public:
 	void setWalkTrigger(int val);
 
 	void resetFacing(Facing facing);
-
 };
 
 } // End of namespace MADS

@@ -23,9 +23,9 @@
 #ifndef MUTATIONOFJB_IFITEMCOMMAND_H
 #define MUTATIONOFJB_IFITEMCOMMAND_H
 
-#include "mutationofjb/commands/conditionalcommand.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "mutationofjb/commands/conditionalcommand.h"
 
 namespace MutationOfJB {
 
@@ -48,6 +48,6 @@ private:
 	bool _negative;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

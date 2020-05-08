@@ -27,8 +27,8 @@
 
 #if defined(USE_TTS) && defined(MACOSX)
 
-#include "common/text-to-speech.h"
 #include "common/queue.h"
+#include "common/text-to-speech.h"
 
 class MacOSXTextToSpeechManager : public Common::TextToSpeechManager {
 public:
@@ -65,7 +65,7 @@ private:
 	struct SpeechText {
 		Common::String text;
 		Common::String encoding;
-		SpeechText(const Common::String& txt, const Common::String& enc) : text(txt), encoding(enc) {}
+		SpeechText(const Common::String &txt, const Common::String &enc) : text(txt), encoding(enc) {}
 	};
 	Common::Queue<SpeechText> _messageQueue;
 	Common::String _currentSpeech;
@@ -75,4 +75,3 @@ private:
 #endif
 
 #endif // BACKENDS_TEXT_TO_SPEECH_MACOSX_H
-

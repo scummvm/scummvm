@@ -29,9 +29,9 @@ void SceneScriptCT05::InitializeScene() {
 		Game_Flag_Reset(kFlagCT12toCT05);
 		Setup_Scene_Information(-128.42f, -109.91f, 112.83f, 516);
 	} else if (Game_Flag_Query(kFlagCT06toCT05)) {
-		Setup_Scene_Information( 192.35f,   43.09f, 128.97f, 768);
+		Setup_Scene_Information(192.35f, 43.09f, 128.97f, 768);
 	} else {
-		Setup_Scene_Information( -375.0f, -109.91f,  750.0f, 600);
+		Setup_Scene_Information(-375.0f, -109.91f, 750.0f, 600);
 	}
 
 	if (Game_Flag_Query(kFlagCT05WarehouseOpen)) {
@@ -41,10 +41,10 @@ void SceneScriptCT05::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(2, 380, 110, 542, 300, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTROOFL1, 15, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTROOFR1, 15,  100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  13, -100, 1);
-	Ambient_Sounds_Add_Sound(kSfxPSDOOR1,  5, 20,  8, 10, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPSDOOR2,  5, 20,  8, 10, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTROOFR1, 15, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 13, -100, 1);
+	Ambient_Sounds_Add_Sound(kSfxPSDOOR1, 5, 20, 8, 10, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPSDOOR2, 5, 20, 8, 10, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxCTDRONE1, 5, 30, 18, 30, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagCT05WarehouseOpen)) {
@@ -187,10 +187,7 @@ bool SceneScriptCT05::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptCT05::SceneFrameAdvanced(int frame) {
-	if (frame == 7
-	 || frame == 15
-	 || frame == 29
-	) {
+	if (frame == 7 || frame == 15 || frame == 29) {
 		switch (Random_Query(0, 4)) {
 		case 4:
 			Sound_Play(kSfxDRIPPY10, Random_Query(25, 50), -70, -70, 50);
@@ -233,9 +230,7 @@ void SceneScriptCT05::PlayerWalkedIn() {
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 10, false, kAnimationModeIdle);
 		Game_Flag_Reset(kFlagCT06toCT05);
 		Footstep_Sound_Override_Off();
-		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT01Left
-		 && Game_Flag_Query(kFlagCT06ZubenPhoto)
-		) {
+		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT01Left && Game_Flag_Query(kFlagCT06ZubenPhoto)) {
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoCT05WalkThrough);
 		}
 	}

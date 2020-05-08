@@ -20,20 +20,20 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "graphics/thumbnail.h"
 #include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "gui/saveload.h"
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/engine/ultima.h"
+#include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/resources.h"
-#include "ultima/shared/core/mouse_cursor.h"
+#include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/gfx/screen.h"
 #include "ultima/ultima1/game.h"
 
@@ -43,8 +43,7 @@ Shared::UltimaEarlyEngine *g_vm;
 
 namespace Shared {
 
-UltimaEarlyEngine::UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription *gameDesc) :
-		UltimaEngine(syst, gameDesc) {
+UltimaEarlyEngine::UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription *gameDesc) : UltimaEngine(syst, gameDesc) {
 	g_vm = this;
 	_mouseCursor = nullptr;
 	_screen = nullptr;

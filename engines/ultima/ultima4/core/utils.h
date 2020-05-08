@@ -23,11 +23,11 @@
 #ifndef ULTIMA4_CORE_UTILS_H
 #define ULTIMA4_CORE_UTILS_H
 
+#include "common/hash-str.h"
+#include "common/savefile.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/shared/std/containers.h"
-#include "common/savefile.h"
-#include "common/hash-str.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -42,44 +42,56 @@ extern void ASSERT(bool exp, const char *desc, ...);
  */
 inline void AdjustValueMax(int &v, int val, int max) {
 	v += val;
-	if (v > max) v = max;
+	if (v > max)
+		v = max;
 }
 inline void AdjustValueMin(int &v, int val, int min) {
 	v += val;
-	if (v < min) v = min;
+	if (v < min)
+		v = min;
 }
 inline void AdjustValue(int &v, int val, int max, int min) {
 	v += val;
-	if (v > max) v = max;
-	if (v < min) v = min;
+	if (v > max)
+		v = max;
+	if (v < min)
+		v = min;
 }
 
 inline void AdjustValueMax(short &v, int val, int max) {
 	v += val;
-	if (v > max) v = max;
+	if (v > max)
+		v = max;
 }
 inline void AdjustValueMin(short &v, int val, int min) {
 	v += val;
-	if (v < min) v = min;
+	if (v < min)
+		v = min;
 }
 inline void AdjustValue(short &v, int val, int max, int min) {
 	v += val;
-	if (v > max) v = max;
-	if (v < min) v = min;
+	if (v > max)
+		v = max;
+	if (v < min)
+		v = min;
 }
 
 inline void AdjustValueMax(unsigned short &v, int val, int max) {
 	v += val;
-	if (v > max) v = max;
+	if (v > max)
+		v = max;
 }
 inline void AdjustValueMin(unsigned short &v, int val, int min) {
 	v += val;
-	if (v < min) v = min;
+	if (v < min)
+		v = min;
 }
 inline void AdjustValue(unsigned short &v, int val, int max, int min) {
 	v += val;
-	if (v > max) v = max;
-	if (v < min) v = min;
+	if (v > max)
+		v = max;
+	if (v < min)
+		v = min;
 }
 
 /**

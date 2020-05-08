@@ -36,12 +36,12 @@ public:
 	ASpit(MohawkEngine_Riven *vm);
 
 	enum PatchedExternalCommandNameId {
-		kExternalSaveGame    = 20,
+		kExternalSaveGame = 20,
 		kExternalRestoreGame = 21,
-		kExternalResume      = 22,
-		kExternalOptions     = 23,
-		kExternalQuit        = 24,
-		kExternalNewGame     = 25
+		kExternalResume = 22,
+		kExternalOptions = 23,
+		kExternalQuit = 24,
+		kExternalNewGame = 25
 
 	};
 

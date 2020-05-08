@@ -22,28 +22,27 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
+#include "fullpipe/behavior.h"
 #include "fullpipe/constants.h"
-#include "fullpipe/utils.h"
+#include "fullpipe/gameloader.h"
 #include "fullpipe/gfx.h"
+#include "fullpipe/interaction.h"
 #include "fullpipe/messages.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/objectnames.h"
+#include "fullpipe/scene.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/interaction.h"
-#include "fullpipe/gameloader.h"
-#include "fullpipe/behavior.h"
+#include "fullpipe/utils.h"
 
 #include "audio/mixer.h"
 
 namespace Fullpipe {
 
 static const int scene04_speakerPhases[] = {
-	0, 1,  2,  3, -1, -1,
-	0, 2,  3, -1, -1, -1,
-	0, 2, -1, -1, -1, -1
-};
+    0, 1, 2, 3, -1, -1,
+    0, 2, 3, -1, -1, -1,
+    0, 2, -1, -1, -1, -1};
 
 void sceneHandler04_putKozyawkaBack(StaticANIObject *ani);
 
@@ -224,14 +223,10 @@ void scene04_initScene(Scene *sc) {
 bool sceneHandler04_friesAreWalking() {
 	if (g_vars->scene04_dudeOnLadder && g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
 		int col = g_vars->scene04_ladder->collisionDetection(g_fp->_aniMan);
-		if (col >= 3 && col <= 6 ) {
+		if (col >= 3 && col <= 6) {
 			Movement *koz;
 
-			if (!g_vars->scene04_walkingKozyawka
-				 || (koz = g_vars->scene04_walkingKozyawka->_movement) == 0
-				 || koz->_id != MV_KZW_WALKPLANK
-				 || koz->_currDynamicPhaseIndex < 10
-				 || koz->_currDynamicPhaseIndex > 41)
+			if (!g_vars->scene04_walkingKozyawka || (koz = g_vars->scene04_walkingKozyawka->_movement) == 0 || koz->_id != MV_KZW_WALKPLANK || koz->_currDynamicPhaseIndex < 10 || koz->_currDynamicPhaseIndex > 41)
 				return true;
 		}
 	}
@@ -290,8 +285,8 @@ void sceneHandler04_clickButton() {
 
 	if (but) {
 		if (!g_vars->scene04_clock->_movement ||
-			(g_vars->scene04_clock->_movement->_id == MV_CLK_GO && g_vars->scene04_clock->_movement->_currDynamicPhaseIndex > 3 &&
-			 g_vars->scene04_clock->_movement->_currDynamicPhaseIndex < 105)) {
+		    (g_vars->scene04_clock->_movement->_id == MV_CLK_GO && g_vars->scene04_clock->_movement->_currDynamicPhaseIndex > 3 &&
+		     g_vars->scene04_clock->_movement->_currDynamicPhaseIndex < 105)) {
 			if (!g_vars->scene04_hand->_movement && !g_vars->scene04_bottleIsTaken) {
 				but->startAnim(MV_BTN_CLICK, 0, -1);
 				g_vars->scene04_hand->startAnim(MV_HND_POINT, 0, -1);
@@ -379,7 +374,7 @@ void sceneHandler04_clickLadder() {
 			int half = abs(g_vars->scene04_ladder->_height) / 2;
 			int start = g_vars->scene04_ladder->_ladderY - g_vars->scene04_ladder->_ladder_field_24;
 			int min = 2 * h3 + start + half + 1;
-			int max =     h3 + start - half - 1;
+			int max = h3 + start - half - 1;
 
 			if (g_vars->scene04_sceneClickY > max)
 				g_vars->scene04_sceneClickY = max;
@@ -815,28 +810,24 @@ MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
 }
 
 static const int kozTrajectory3[] = {
-	3, 2, 0,
-	3, 2, 0,
-	3, 2, 0
-};
+    3, 2, 0,
+    3, 2, 0,
+    3, 2, 0};
 
 static const int kozTrajectory4[] = {
-	5, 3, 1,
-	5, 4, 1,
-	5, 3, 1
-};
+    5, 3, 1,
+    5, 4, 1,
+    5, 3, 1};
 
 static const int kozTrajectory5[] = {
-	6, 5, 4,
-	6, 5, 4,
-	6, 5, 4
-};
+    6, 5, 4,
+    6, 5, 4,
+    6, 5, 4};
 
 static const int kozTrajectory6[] = {
-	7, 6, 5,
-	7, 6, 5,
-	7, 6, 5
-};
+    7, 6, 5,
+    7, 6, 5,
+    7, 6, 5};
 
 void sceneHandler04_shootKozyawka() {
 	g_vars->scene04_plank->changeStatics2(ST_PNK_WEIGHTRIGHT);
@@ -893,7 +884,7 @@ void sceneHandler04_shootKozyawka() {
 				if (mq) {
 					g_vars->scene04_lastKozyawka = g_vars->scene04_walkingKozyawka;
 
-					if (!mq->chain(g_vars->scene04_walkingKozyawka) )
+					if (!mq->chain(g_vars->scene04_walkingKozyawka))
 						delete mq;
 				}
 			}
@@ -931,7 +922,7 @@ void sceneHandler04_animOutOfBottle(ExCommand *ex) {
 		ExCommand *newex = ex->createClone();
 
 		mq->addExCommandToEnd(newex);
-	  }
+	}
 
 	mq->_flags |= 1;
 	mq->chain(0);
@@ -993,8 +984,7 @@ void sceneHandler04_springWobble() {
 	if (g_vars->scene04_bottleWeight < newdelta)
 		g_vars->scene04_springOffset--;
 
-	if ((oldDynIndex <= g_vars->scene04_bottleWeight && newdelta > g_vars->scene04_bottleWeight)
-		|| (oldDynIndex > g_vars->scene04_bottleWeight && newdelta <= g_vars->scene04_bottleWeight)) {
+	if ((oldDynIndex <= g_vars->scene04_bottleWeight && newdelta > g_vars->scene04_bottleWeight) || (oldDynIndex > g_vars->scene04_bottleWeight && newdelta <= g_vars->scene04_bottleWeight)) {
 		g_vars->scene04_springDelay++;
 
 		if (g_vars->scene04_springOffset && g_vars->scene04_springDelay > 1) {
@@ -1123,7 +1113,7 @@ void sceneHandler04_goClock() {
 }
 
 void sceneHandler04_bigBallOut() {
-	StaticANIObject *ball =  g_fp->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
+	StaticANIObject *ball = g_fp->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
 
 	if (ball && ball->_flags & 4)
 		for (uint i = 0; i < ball->_movements.size(); i++)
@@ -1147,7 +1137,7 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 					if (mq) {
 						mq->addExCommandToEnd(ex->createClone());
 
-						if (mq->chain(g_fp->_aniMan) )
+						if (mq->chain(g_fp->_aniMan))
 							ex->_messageKind = 0;
 						else
 							delete mq;
@@ -1235,7 +1225,7 @@ void sceneHandler04_putKozyawkaBack(StaticANIObject *ani) {
 	g_vars->scene04_walkingKozyawka = 0;
 	g_vars->scene04_lastKozyawka = 0;
 
-	if (g_vars->scene04_kozyawkiAni.size() > 1 )
+	if (g_vars->scene04_kozyawkiAni.size() > 1)
 		g_vars->scene04_objectIsTaken = false;
 
 	if (g_vars->scene04_kozyawkiAni.size() <= 2 || g_vars->scene04_hand->_movement) {
@@ -1247,11 +1237,9 @@ void sceneHandler04_putKozyawkaBack(StaticANIObject *ani) {
 }
 
 void sceneHandler04_bigBallWalkIn() {
-	StaticANIObject *ball =  g_fp->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
+	StaticANIObject *ball = g_fp->_currentScene->getStaticANIObject1ById(ANI_BIGBALL, -1);
 
-	if (g_vars->scene04_dudeOnLadder
-		 && (!ball || !(ball->_flags & 4))
-		 && g_vars->scene04_ladder->collisionDetection(g_fp->_aniMan) > 3) {
+	if (g_vars->scene04_dudeOnLadder && (!ball || !(ball->_flags & 4)) && g_vars->scene04_ladder->collisionDetection(g_fp->_aniMan) > 3) {
 
 		if (!g_fp->_rnd.getRandomNumber(49)) {
 			if (g_vars->scene04_bigBallFromLeft)
@@ -1329,8 +1317,7 @@ void sceneHandler04_updateBottle() {
 }
 
 void sceneHandler04_winArcade() {
-	if (g_fp->getObjectState(sO_LowerPipe) == g_fp->getObjectEnumState(sO_LowerPipe, sO_IsClosed)
-		&& g_vars->scene04_soundPlaying) {
+	if (g_fp->getObjectState(sO_LowerPipe) == g_fp->getObjectEnumState(sO_LowerPipe, sO_IsClosed) && g_vars->scene04_soundPlaying) {
 		g_vars->scene04_clock->changeStatics2(ST_CLK_CLOSED);
 		g_vars->scene04_hand->changeStatics2(ST_HND_EMPTY);
 
@@ -1426,134 +1413,129 @@ int sceneHandler04(ExCommand *ex) {
 		sceneHandler04_testPlank(ex);
 		break;
 
-	case 33:
-		{
-			g_vars->scene04_dudePosX = g_fp->_aniMan->_ox;
-			g_vars->scene04_dudePosY = g_fp->_aniMan->_oy;
+	case 33: {
+		g_vars->scene04_dudePosX = g_fp->_aniMan->_ox;
+		g_vars->scene04_dudePosY = g_fp->_aniMan->_oy;
 
-			int res = 0;
+		int res = 0;
 
-			if (g_fp->_aniMan2) {
-				if (g_fp->_aniMan->_ox < g_fp->_sceneRect.left + 200) {
-					g_fp->_currentScene->_x = g_fp->_aniMan->_ox - g_fp->_sceneRect.left - 300;
-					g_fp->_aniMan->_ox = g_vars->scene04_dudePosX;
-				}
-				if (g_fp->_aniMan->_ox > g_fp->_sceneRect.right - 200) {
-					g_fp->_currentScene->_x = g_fp->_aniMan->_ox - g_fp->_sceneRect.right + 300;
-				}
-
-				res = 1;
+		if (g_fp->_aniMan2) {
+			if (g_fp->_aniMan->_ox < g_fp->_sceneRect.left + 200) {
+				g_fp->_currentScene->_x = g_fp->_aniMan->_ox - g_fp->_sceneRect.left - 300;
+				g_fp->_aniMan->_ox = g_vars->scene04_dudePosX;
+			}
+			if (g_fp->_aniMan->_ox > g_fp->_sceneRect.right - 200) {
+				g_fp->_currentScene->_x = g_fp->_aniMan->_ox - g_fp->_sceneRect.right + 300;
 			}
 
-			g_fp->sceneAutoScrolling();
+			res = 1;
+		}
 
-			if (g_fp->_aniMan2) {
-				if (g_vars->scene04_soundPlaying) {
-					if (g_fp->_aniMan->_movement) {
-						if (g_fp->_aniMan->_movement->_id == MV_MAN_TOLADDER) {
-							g_fp->_aniMan2 = 0;
+		g_fp->sceneAutoScrolling();
 
-							if (g_fp->_sceneRect.left > 380)
-								g_fp->_currentScene->_x = 380 - g_fp->_sceneRect.left;
-						}
+		if (g_fp->_aniMan2) {
+			if (g_vars->scene04_soundPlaying) {
+				if (g_fp->_aniMan->_movement) {
+					if (g_fp->_aniMan->_movement->_id == MV_MAN_TOLADDER) {
+						g_fp->_aniMan2 = 0;
+
+						if (g_fp->_sceneRect.left > 380)
+							g_fp->_currentScene->_x = 380 - g_fp->_sceneRect.left;
 					}
 				}
-			} else {
-				if (g_fp->_aniMan->_movement && g_fp->_aniMan->_movement->_id == MV_MAN_GOD)
-					g_fp->_aniMan2 = g_fp->_aniMan;
 			}
+		} else {
+			if (g_fp->_aniMan->_movement && g_fp->_aniMan->_movement->_id == MV_MAN_GOD)
+				g_fp->_aniMan2 = g_fp->_aniMan;
+		}
 
-			sceneHandler04_springWobble();
+		sceneHandler04_springWobble();
 
-			if (g_vars->scene04_var07 && !g_vars->scene04_handIsDown)
-				sceneHandler04_leaveScene();
+		if (g_vars->scene04_var07 && !g_vars->scene04_handIsDown)
+			sceneHandler04_leaveScene();
 
-			if (g_vars->scene04_bottleIsDropped)
-				sceneHandler04_liftBottle();
+		if (g_vars->scene04_bottleIsDropped)
+			sceneHandler04_liftBottle();
 
-			if (g_vars->scene04_ladderClickable)
-				sceneHandler04_clickLadder();
+		if (g_vars->scene04_ladderClickable)
+			sceneHandler04_clickLadder();
 
-			if (g_vars->scene04_dudeInBottle && g_vars->scene04_hand->_movement)
-				sceneHandler04_animOutOfBottle(0);
+		if (g_vars->scene04_dudeInBottle && g_vars->scene04_hand->_movement)
+			sceneHandler04_animOutOfBottle(0);
 
-			if (g_vars->scene04_coinPut && g_vars->scene04_clockCanGo && !g_vars->scene04_handIsDown && !g_vars->scene04_soundPlaying)
-				sceneHandler04_goClock();
+		if (g_vars->scene04_coinPut && g_vars->scene04_clockCanGo && !g_vars->scene04_handIsDown && !g_vars->scene04_soundPlaying)
+			sceneHandler04_goClock();
 
-			if (g_vars->scene04_dudeOnLadder) {
-				if (!g_vars->scene04_soundPlaying) {
-					g_fp->startSceneTrack();
+		if (g_vars->scene04_dudeOnLadder) {
+			if (!g_vars->scene04_soundPlaying) {
+				g_fp->startSceneTrack();
 
-					g_fp->_behaviorManager->updateBehaviors();
-					return res;
-				}
-
-				g_vars->scene04_bigBallCounter++;
-
-				if (g_vars->scene04_bigBallCounter > 600)
-					sceneHandler04_bigBallWalkIn();
-			}
-
-			if (g_vars->scene04_soundPlaying) {
 				g_fp->_behaviorManager->updateBehaviors();
-
 				return res;
 			}
 
-			g_fp->startSceneTrack();
+			g_vars->scene04_bigBallCounter++;
 
+			if (g_vars->scene04_bigBallCounter > 600)
+				sceneHandler04_bigBallWalkIn();
+		}
+
+		if (g_vars->scene04_soundPlaying) {
 			g_fp->_behaviorManager->updateBehaviors();
 
 			return res;
 		}
-		break;
 
-	case 29:
-		{
-			int picid = g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY);
+		g_fp->startSceneTrack();
 
-			if (g_vars->scene04_dudeInBottle) {
-				sceneHandler04_animOutOfBottle(ex);
+		g_fp->_behaviorManager->updateBehaviors();
 
-				break;
-			}
+		return res;
+	} break;
 
-			if (picid == PIC_SC4_LADDER) {
-				if (!g_vars->scene04_kozyawkaOnLadder) {
-					g_vars->scene04_sceneClickX = ex->_sceneClickX;
-					g_vars->scene04_sceneClickY = ex->_sceneClickY;
+	case 29: {
+		int picid = g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY);
 
-					sceneHandler04_clickLadder();
+		if (g_vars->scene04_dudeInBottle) {
+			sceneHandler04_animOutOfBottle(ex);
 
-					ex->_messageKind = 0;
+			break;
+		}
 
-					break;
-				}
+		if (picid == PIC_SC4_LADDER) {
+			if (!g_vars->scene04_kozyawkaOnLadder) {
+				g_vars->scene04_sceneClickX = ex->_sceneClickX;
+				g_vars->scene04_sceneClickY = ex->_sceneClickY;
 
-				sceneHandler04_gotoLadder(0);
-
-				break;
-			}
-
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
-
-			if ((ani && ani->_id == ANI_PLANK) || picid == PIC_SC4_PLANK) {
-				sceneHandler04_clickPlank();
+				sceneHandler04_clickLadder();
 
 				ex->_messageKind = 0;
-			} else if (g_vars->scene04_dudeOnLadder) {
-				sceneHandler04_leaveLadder(ex);
-			} else if (!ani || !canInteractAny(g_fp->_aniMan, ani, ex->_param)) {
-				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picid, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic,ex->_param)) {
-					if ((g_fp->_sceneRect.right - ex->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (ex->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
-						g_fp->processArcade(ex);
-				}
+				break;
+			}
+
+			sceneHandler04_gotoLadder(0);
+
+			break;
+		}
+
+		StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(ex->_sceneClickX, ex->_sceneClickY);
+
+		if ((ani && ani->_id == ANI_PLANK) || picid == PIC_SC4_PLANK) {
+			sceneHandler04_clickPlank();
+
+			ex->_messageKind = 0;
+		} else if (g_vars->scene04_dudeOnLadder) {
+			sceneHandler04_leaveLadder(ex);
+		} else if (!ani || !canInteractAny(g_fp->_aniMan, ani, ex->_param)) {
+			PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picid, 0);
+
+			if (!pic || !canInteractAny(g_fp->_aniMan, pic, ex->_param)) {
+				if ((g_fp->_sceneRect.right - ex->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (ex->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
+					g_fp->processArcade(ex);
 			}
 		}
-		break;
+	} break;
 
 	case MSG_SC4_HIDEBOOT:
 		g_vars->scene04_boot->_flags &= 0xfffb;
@@ -1587,25 +1569,23 @@ int sceneHandler04(ExCommand *ex) {
 		}
 		break;
 
-	case MSG_SC4_KOZAWFALL:
-		{
-			ExCommand *exnew;
+	case MSG_SC4_KOZAWFALL: {
+		ExCommand *exnew;
 
-			if (g_vars->scene04_kozHeadRaised) {
-				sceneHandler04_putKozyawkaBack(g_vars->scene04_lastKozyawka);
+		if (g_vars->scene04_kozHeadRaised) {
+			sceneHandler04_putKozyawkaBack(g_vars->scene04_lastKozyawka);
 
-				g_vars->scene04_kozHeadRaised = 0;
+			g_vars->scene04_kozHeadRaised = 0;
 
-				exnew = new ExCommand(0, 35, SND_4_010, 0, 0, 0, 1, 0, 0, 0);
-			} else {
-				exnew = new ExCommand(0, 35, SND_4_012, 0, 0, 0, 1, 0, 0, 0);
-			}
-
-			exnew->_z = 5;
-			exnew->_excFlags |= 2;
-			exnew->postMessage();
+			exnew = new ExCommand(0, 35, SND_4_010, 0, 0, 0, 1, 0, 0, 0);
+		} else {
+			exnew = new ExCommand(0, 35, SND_4_012, 0, 0, 0, 1, 0, 0, 0);
 		}
-		break;
+
+		exnew->_z = 5;
+		exnew->_excFlags |= 2;
+		exnew->postMessage();
+	} break;
 
 	case MSG_SC4_MANFROMBOTTLE:
 		sceneHandler04_manFromBottle();

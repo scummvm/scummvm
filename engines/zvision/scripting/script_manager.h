@@ -23,18 +23,18 @@
 #ifndef ZVISION_SCRIPT_MANAGER_H
 #define ZVISION_SCRIPT_MANAGER_H
 
-#include "zvision/scripting/puzzle.h"
 #include "zvision/scripting/control.h"
+#include "zvision/scripting/puzzle.h"
 #include "zvision/scripting/scripting_effect.h"
 
+#include "common/events.h"
 #include "common/hashmap.h"
 #include "common/queue.h"
-#include "common/events.h"
 
 namespace Common {
 class String;
 class SeekableReadStream;
-}
+} // namespace Common
 
 namespace ZVision {
 
@@ -42,9 +42,9 @@ class ZVision;
 
 enum StateKey {
 	StateKey_World = 3,
-	StateKey_Room  = 4,
-	StateKey_Node  = 5,
-	StateKey_View  = 6,
+	StateKey_Room = 4,
+	StateKey_Node = 5,
+	StateKey_View = 6,
 	StateKey_ViewPos = 7,
 	StateKey_KeyPress = 8,
 	StateKey_InventoryItem = 9,
@@ -113,25 +113,24 @@ struct Location {
 	uint32 offset;
 };
 
-inline bool operator==(const Location& lhs, const Location& rhs) {
+inline bool operator==(const Location &lhs, const Location &rhs) {
 	return (
-		lhs.world == rhs.world &&
-		lhs.room == rhs.room &&
-		lhs.node == rhs.node &&
-		lhs.view == rhs.view
-	);
+	    lhs.world == rhs.world &&
+	    lhs.room == rhs.room &&
+	    lhs.node == rhs.node &&
+	    lhs.view == rhs.view);
 }
 
-inline bool operator==(const Location& lhs, const char* rhs) {
+inline bool operator==(const Location &lhs, const char *rhs) {
 	Common::String lhsStr = Common::String::format("%c%c%c%c", lhs.world, lhs.room, lhs.node, lhs.view);
 	return lhsStr == rhs;
 }
 
-inline bool operator!=(const Location& lhs, const Location& rhs) {
+inline bool operator!=(const Location &lhs, const Location &rhs) {
 	return !(lhs == rhs);
 }
 
-inline bool operator!=(const Location& lhs, const char* rhs) {
+inline bool operator!=(const Location &lhs, const char *rhs) {
 	return !(lhs == rhs);
 }
 
@@ -158,7 +157,7 @@ private:
 		PuzzleList privQueueOne;
 		PuzzleList privQueueTwo;
 
-		PuzzleList  puzzles;
+		PuzzleList puzzles;
 		ControlList controls;
 	};
 
@@ -167,7 +166,7 @@ private:
 		ScriptScope *scope;
 	};
 
-	typedef Common::HashMap<uint32, Common::Array<PuzzleRef> > PuzzleMap;
+	typedef Common::HashMap<uint32, Common::Array<PuzzleRef>> PuzzleMap;
 
 	/**
 	 * Holds the global state variable. Do NOT directly modify this. Use the accessors and
@@ -337,7 +336,7 @@ private:
 	 * @param key         Puzzle key (for workarounds)
 	 * @return            Whether any criteria were read
 	 */
-	bool parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList, uint32 key) const;
+	bool parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry>> &criteriaList, uint32 key) const;
 
 	/**
 	 * Parses the stream into a ResultAction objects
@@ -370,6 +369,7 @@ class ValueSlot {
 public:
 	ValueSlot(ScriptManager *scriptManager, const char *slotValue);
 	int16 getValue();
+
 private:
 	int16 value;
 	bool slot;

@@ -20,36 +20,36 @@
  *
  */
 
-#include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
+#include "common/lua/lua.h"
 #include "common/lua/lualib.h"
 
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/u6_objects.h"
+#include "ultima/nuvie/core/cursor.h"
+#include "ultima/nuvie/core/effect.h"
 #include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/core/effect.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/core/magic.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/core/tile_manager.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/views/inventory_view.h"
-#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/core/u6_objects.h"
 #include "ultima/nuvie/core/weather.h"
-#include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/files/tmx_map.h"
+#include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/gui/widgets/console.h"
-#include "ultima/nuvie/core/cursor.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/script/script.h"
 #include "ultima/nuvie/script/script_actor.h"
 #include "ultima/nuvie/script/script_cutscene.h"
-#include "ultima/nuvie/core/magic.h"
-#include "ultima/nuvie/files/tmx_map.h"
-#include "ultima/nuvie/files/u6_lib_n.h"
+#include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/usecode/usecode.h"
+#include "ultima/nuvie/views/inventory_view.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -155,36 +155,32 @@ static int nscript_obj_removefromengine(lua_State *L);
 static int nscript_container_remove_obj(lua_State *L);
 
 static const luaL_Reg nscript_objlib_f[] = {
-	{ "new", nscript_obj_newobj },
-	{ "moveToMap", nscript_obj_movetomap },
-	{ "moveToInv", nscript_obj_movetoinv },
-	{ "moveToCont", nscript_obj_movetocont },
-	{ "removeFromCont", nscript_container_remove_obj },
-	{ "removeFromEngine", nscript_obj_removefromengine },
-	{ "use", nscript_obj_use },
+    {"new", nscript_obj_newobj},
+    {"moveToMap", nscript_obj_movetomap},
+    {"moveToInv", nscript_obj_movetoinv},
+    {"moveToCont", nscript_obj_movetocont},
+    {"removeFromCont", nscript_container_remove_obj},
+    {"removeFromEngine", nscript_obj_removefromengine},
+    {"use", nscript_obj_use},
 
-	{ NULL, NULL }
-};
+    {NULL, NULL}};
 static const luaL_Reg nscript_objlib_m[] = {
-	{ "__index", nscript_obj_get },
-	{ "__newindex", nscript_obj_set },
-	{ "__gc", nscript_obj_gc },
-	{ NULL, NULL }
-};
+    {"__index", nscript_obj_get},
+    {"__newindex", nscript_obj_set},
+    {"__gc", nscript_obj_gc},
+    {NULL, NULL}};
 
 static int nscript_u6link_gc(lua_State *L);
 
 static const struct luaL_Reg nscript_u6linklib_m[] = {
-	{ "__gc", nscript_u6link_gc },
-	{ NULL, NULL }
-};
+    {"__gc", nscript_u6link_gc},
+    {NULL, NULL}};
 
 static int nscript_u6link_recursive_gc(lua_State *L);
 
 static const struct luaL_Reg nscript_u6linkrecursivelib_m[] = {
-	{ "__gc", nscript_u6link_recursive_gc },
-	{ NULL, NULL }
-};
+    {"__gc", nscript_u6link_recursive_gc},
+    {NULL, NULL}};
 
 static int nscript_print(lua_State *L);
 static int nscript_clear_scroll(lua_State *L);
@@ -297,7 +293,6 @@ static int nscript_peer_effect(lua_State *L);
 static int nscript_wing_strike_effect(lua_State *L);
 static int nscript_hail_storm_effect(lua_State *L);
 static int nscript_wizard_eye_effect(lua_State *L);
-
 
 static int nscript_play_end_sequence(lua_State *L);
 
@@ -512,7 +507,6 @@ uint8 ScriptThread::resume(int narg) {
 
 	return state;
 }
-
 
 Script::Script(Configuration *cfg, GUI *gui, SoundManager *sm, nuvie_game_t type) {
 	const char *path;
@@ -875,7 +869,6 @@ Script::Script(Configuration *cfg, GUI *gui, SoundManager *sm, nuvie_game_t type
 
 	path = lua_tolstring(L, -1, &len);
 	DEBUG(0, LEVEL_INFORMATIONAL, "lua path = %s\n", path);
-
 }
 
 Script::~Script() {
@@ -964,19 +957,18 @@ MovementStatus Script::call_player_before_move_action(sint16 *rel_x, sint16 *rel
 		}
 
 		switch (lua_tointeger(L, -3)) {
-		case 0 :
+		case 0:
 			return CAN_MOVE;
-		case 1 :
+		case 1:
 			return BLOCKED;
-		case 2 :
+		case 2:
 			return FORCE_MOVE;
-		default :
+		default:
 			break;
 		}
 	}
 	return CAN_MOVE;
 }
-
 
 bool Script::call_player_post_move_action(bool didMove) {
 	lua_getglobal(L, "player_post_move_action");
@@ -1065,7 +1057,6 @@ bool Script::call_actor_tile_dmg(Actor *actor, uint16 tile_num) {
 	lua_getglobal(L, "actor_tile_dmg");
 	nscript_new_actor_var(L, actor->get_actor_num());
 	lua_pushnumber(L, (lua_Number)tile_num);
-
 
 	return call_function("actor_tile_dmg", 2, 0);
 }
@@ -1577,12 +1568,16 @@ ScriptThread *Script::new_thread_from_string(const char *scriptStr) {
 
 bool nscript_get_location_from_args(lua_State *L, uint16 *x, uint16 *y, uint8 *z, int lua_stack_offset) {
 	if (lua_istable(L, lua_stack_offset)) {
-		if (!get_tbl_field_uint8(L, "z", z, lua_stack_offset)) return false;
-		if (!get_tbl_field_as_wrapped_coord(L, "x", x, *z, lua_stack_offset)) return false;
-		if (!get_tbl_field_as_wrapped_coord(L, "y", y, *z, lua_stack_offset)) return false;
+		if (!get_tbl_field_uint8(L, "z", z, lua_stack_offset))
+			return false;
+		if (!get_tbl_field_as_wrapped_coord(L, "x", x, *z, lua_stack_offset))
+			return false;
+		if (!get_tbl_field_as_wrapped_coord(L, "y", y, *z, lua_stack_offset))
+			return false;
 	} else {
-		if (lua_isnil(L, lua_stack_offset)) return false;
-		*z = (uint8)luaL_checkinteger(L,  lua_stack_offset + 2);
+		if (lua_isnil(L, lua_stack_offset))
+			return false;
+		*z = (uint8)luaL_checkinteger(L, lua_stack_offset + 2);
 		*x = wrap_signed_coord((sint16)luaL_checkinteger(L, lua_stack_offset), *z);
 		*y = wrap_signed_coord((sint16)luaL_checkinteger(L, lua_stack_offset + 1), *z);
 	}
@@ -1640,7 +1635,7 @@ int nscript_obj_new(lua_State *L, Obj *obj) {
 	if (obj == NULL) {
 		obj = new Obj();
 
-		if (lua_gettop(L) > 1) { // do we have arguments?
+		if (lua_gettop(L) > 1) {        // do we have arguments?
 			if (lua_isuserdata(L, 1)) { // do we have an obj
 				if (nscript_obj_init_from_obj(L, obj) == false)
 					return 0;
@@ -1666,7 +1661,7 @@ sint32 nscript_inc_obj_ref_count(Obj *obj) {
 	obj_ref = (ScriptObjRef *)iAVLSearch(script_obj_list, key);
 	if (obj_ref == NULL) {
 		obj->set_in_script(true); // mark as being used by script engine.
-		obj_ref =  new ScriptObjRef();
+		obj_ref = new ScriptObjRef();
 		obj_ref->key._ptr = obj;
 		iAVLInsert(script_obj_list, obj_ref);
 	}
@@ -1684,7 +1679,6 @@ sint32 nscript_dec_obj_ref_count(Obj *obj) {
 	obj_ref = (ScriptObjRef *)iAVLSearch(script_obj_list, key);
 	if (obj_ref == NULL)
 		return -1;
-
 
 	obj_ref->refcount--;
 
@@ -2005,7 +1999,7 @@ static int nscript_obj_get(lua_State *L) {
 		ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 		float weight = obj_manager->get_obj_weight(obj, OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS, OBJ_WEIGHT_DONT_SCALE);
 		weight = floorf(weight); //get rid of the tiny fraction
-		weight /= 10; //now scale.
+		weight /= 10;            //now scale.
 		lua_pushnumber(L, (lua_Number)weight);
 		return 1;
 	}
@@ -2024,7 +2018,6 @@ static int nscript_obj_get(lua_State *L) {
 		lua_pushinteger(L, (int)tile->tile_num);
 		return 1;
 	}
-
 
 	if (!strcmp(key, "getable")) {
 		ObjManager *obj_manager = Game::get_game()->get_obj_manager();
@@ -2147,7 +2140,6 @@ static int nscript_obj_movetoinv(lua_State *L) {
 		//s_obj->obj_ptr = inv_obj;
 	}
 
-
 	return 0;
 }
 
@@ -2233,7 +2225,6 @@ static int nscript_obj_use(lua_State *L) {
 	if (obj) {
 		usecode->use_obj(obj, actor);
 	}
-
 
 	return 0;
 }
@@ -2838,7 +2829,7 @@ Toggle party vehicle mode
  */
 static int nscript_party_set_in_vehicle(lua_State *L) {
 	Party *party = Game::get_game()->get_party();
-	party->set_in_vehicle((bool) lua_toboolean(L, 1));
+	party->set_in_vehicle((bool)lua_toboolean(L, 1));
 	return 0;
 }
 
@@ -3050,7 +3041,7 @@ static int nscript_map_get_impedence(lua_State *L) {
 	bool ignore_objects = true;
 
 	if (lua_gettop(L) >= 4)
-		ignore_objects = (bool) lua_toboolean(L, 4);
+		ignore_objects = (bool)lua_toboolean(L, 4);
 
 	lua_pushinteger(L, map->get_impedance(x, y, z, ignore_objects));
 
@@ -3076,10 +3067,10 @@ static int nscript_map_get_tile_num(lua_State *L) {
 
 	if (lua_istable(L, 1)) {
 		if (lua_gettop(L) >= 2)
-			original_tile = (bool) lua_toboolean(L, 2);
+			original_tile = (bool)lua_toboolean(L, 2);
 	} else {
 		if (lua_gettop(L) >= 4)
-			original_tile = (bool) lua_toboolean(L, 4);
+			original_tile = (bool)lua_toboolean(L, 4);
 	}
 
 	Tile *t = map->get_tile(x, y, z, original_tile);
@@ -3136,12 +3127,12 @@ static int nscript_map_line_test(lua_State *L) {
 	LineTestResult result;
 	bool ret = false;
 
-	uint16 x = (uint16) luaL_checkinteger(L, 1);
-	uint16 y = (uint16) luaL_checkinteger(L, 2);
+	uint16 x = (uint16)luaL_checkinteger(L, 1);
+	uint16 y = (uint16)luaL_checkinteger(L, 2);
 
-	uint16 x1 = (uint16) luaL_checkinteger(L, 3);
-	uint16 y1 = (uint16) luaL_checkinteger(L, 4);
-	uint8 level = (uint8) luaL_checkinteger(L, 5);
+	uint16 x1 = (uint16)luaL_checkinteger(L, 3);
+	uint16 y1 = (uint16)luaL_checkinteger(L, 4);
+	uint8 level = (uint8)luaL_checkinteger(L, 5);
 
 	//FIXME world wrapping for MD
 	if (map->lineTest(x, y, x1, y1, level, LT_HitMissileBoundary, result) == false)
@@ -3167,12 +3158,12 @@ static int nscript_map_line_hit_check(lua_State *L) {
 	Map *map = Game::get_game()->get_game_map();
 	LineTestResult result;
 
-	uint16 x = (uint16) luaL_checkinteger(L, 1);
-	uint16 y = (uint16) luaL_checkinteger(L, 2);
+	uint16 x = (uint16)luaL_checkinteger(L, 1);
+	uint16 y = (uint16)luaL_checkinteger(L, 2);
 
-	uint16 x1 = (uint16) luaL_checkinteger(L, 3);
-	uint16 y1 = (uint16) luaL_checkinteger(L, 4);
-	uint8 level = (uint8) luaL_checkinteger(L, 5);
+	uint16 x1 = (uint16)luaL_checkinteger(L, 3);
+	uint16 y1 = (uint16)luaL_checkinteger(L, 4);
+	uint8 level = (uint8)luaL_checkinteger(L, 5);
 
 	//FIXME world wrapping for MD
 	if (map->lineTest(x, y, x1, y1, level, LT_HitMissileBoundary, result)) {
@@ -3245,9 +3236,9 @@ get a tile flag for a given tile number
 @treturn bool|nil return flag or nil on error
  */
 static int nscript_tile_get_flag(lua_State *L) {
-	uint16 tile_num = (uint16) luaL_checkinteger(L, 1);
-	uint8 flag_set = (uint8) luaL_checkinteger(L, 2);
-	uint8 bit = (uint8) luaL_checkinteger(L, 3);
+	uint16 tile_num = (uint16)luaL_checkinteger(L, 1);
+	uint8 flag_set = (uint8)luaL_checkinteger(L, 2);
+	uint8 bit = (uint8)luaL_checkinteger(L, 3);
 
 	Tile *tile = Game::get_game()->get_tile_manager()->get_original_tile(tile_num);
 
@@ -3275,7 +3266,7 @@ get the description for a given tile number
 @treturn string the descriptive string for the given tile number.
  */
 static int nscript_tile_get_description(lua_State *L) {
-	uint16 tile_num = (uint16) luaL_checkinteger(L, 1);
+	uint16 tile_num = (uint16)luaL_checkinteger(L, 1);
 	lua_pushstring(L, Game::get_game()->get_tile_manager()->lookAtTile(tile_num, 1, false));
 	return 1;
 }
@@ -3297,7 +3288,7 @@ get the tile number for a given animation number
 @treturn int tile number
 */
 static int nscript_anim_get_tile(lua_State *L) {
-	uint16 anim_index = (uint16) luaL_checkinteger(L, 1);
+	uint16 anim_index = (uint16)luaL_checkinteger(L, 1);
 
 	lua_pushinteger(L, Game::get_game()->get_tile_manager()->get_anim_tile(anim_index));
 	return 1;
@@ -3310,8 +3301,8 @@ set the starting animation frame for a given animation number
 @int anim_start_tile the tile number of the start animation
 */
 static int nscript_anim_set_first_frame(lua_State *L) {
-	uint16 anim_index = (uint16) luaL_checkinteger(L, 1);
-	uint16 anim_start_tile = (uint16) luaL_checkinteger(L, 2);
+	uint16 anim_index = (uint16)luaL_checkinteger(L, 1);
+	uint16 anim_start_tile = (uint16)luaL_checkinteger(L, 2);
 
 	Game::get_game()->get_tile_manager()->set_anim_first_frame(anim_index, anim_start_tile);
 	return 0;
@@ -3324,7 +3315,7 @@ get the starting animation frame for a given animation number
 @treturn int tile number of first animation frame
 */
 static int nscript_anim_get_first_frame(lua_State *L) {
-	uint16 anim_index = (uint16) luaL_checkinteger(L, 1);
+	uint16 anim_index = (uint16)luaL_checkinteger(L, 1);
 
 	lua_pushinteger(L, Game::get_game()->get_tile_manager()->get_anim_first_frame(anim_index));
 	return 1;
@@ -3336,7 +3327,7 @@ start playing animation
 @int anim_index index of animation to play
 */
 static int nscript_anim_play(lua_State *L) {
-	uint8 anim_index = (uint8) luaL_checkinteger(L, 1);
+	uint8 anim_index = (uint8)luaL_checkinteger(L, 1);
 	Game::get_game()->get_tile_manager()->anim_play_repeated(anim_index);
 	return 0;
 }
@@ -3347,7 +3338,7 @@ stop playing animation
 @int anim_index index of animation
 */
 static int nscript_anim_stop(lua_State *L) {
-	uint8 anim_index = (uint8) luaL_checkinteger(L, 1);
+	uint8 anim_index = (uint8)luaL_checkinteger(L, 1);
 	Game::get_game()->get_tile_manager()->anim_stop_playing(anim_index);
 	return 0;
 }
@@ -3539,14 +3530,12 @@ static int nscript_hit_anim(lua_State *L) {
 	uint16 targetx = (uint16)luaL_checkinteger(L, 1);
 	uint16 targety = (uint16)luaL_checkinteger(L, 2);
 
-
 	AsyncEffect *e = new AsyncEffect(new HitEffect(MapCoord(targetx, targety)));
 	e->run();
 
 	lua_pushboolean(L, true);
 	return 1;
 }
-
 
 /***
 Call the C++ usecode look function for a given Obj
@@ -3603,8 +3592,8 @@ pixel fade from one tile to another. If to_tile is not supplied the fade to blan
  */
 static int nscript_fade_tile(lua_State *L) {
 	MapCoord loc;
-	Tile *tile_from =  NULL;
-	Tile *tile_to =  NULL;
+	Tile *tile_from = NULL;
+	Tile *tile_to = NULL;
 	TileManager *tm = Game::get_game()->get_tile_manager();
 
 	if (nscript_get_location_from_args(L, &loc.x, &loc.y, &loc.z) == false)
@@ -3616,11 +3605,9 @@ static int nscript_fade_tile(lua_State *L) {
 	if (lua_gettop(L) > 4)
 		tile_to = tm->get_tile((uint16)luaL_checkinteger(L, 5));
 
-
 	AsyncEffect *e = new AsyncEffect(new TileFadeEffect(loc, tile_from, tile_to, FADE_PIXELATED, 10));
-//	AsyncEffect *e = new AsyncEffect(new TileFadeEffect(loc, tile_from, 0, 4, false, 20));
+	//	AsyncEffect *e = new AsyncEffect(new TileFadeEffect(loc, tile_from, 0, 4, false, 20));
 	e->run();
-
 
 	return 0;
 }
@@ -3722,10 +3709,8 @@ static int nscript_hail_storm_effect(lua_State *L) {
 	if (nscript_get_location_from_args(L, &loc.x, &loc.y, &loc.z) == false)
 		return 0;
 
-
 	AsyncEffect *e = new AsyncEffect(new HailStormEffect(loc));
 	e->run();
-
 
 	return 0;
 }
@@ -3745,7 +3730,6 @@ static int nscript_wizard_eye_effect(lua_State *L) {
 
 	AsyncEffect *e = new AsyncEffect(new WizardEyeEffect(loc, duration));
 	e->run(EFFECT_PROCESS_GUI_INPUT);
-
 
 	return 0;
 }
@@ -4483,7 +4467,6 @@ static int nscript_wait(lua_State *L) {
 	AsyncEffect *e = new AsyncEffect(new TimedEffect(duration));
 	e->run(EFFECT_PROCESS_GUI_INPUT);
 
-
 	return 0;
 }
 
@@ -4498,9 +4481,9 @@ Centre the mapwindow at a given location.
 static int nscript_mapwindow_center_at_loc(lua_State *L) {
 	MapWindow *map_window = Game::get_game()->get_map_window();
 
-	uint16 x = (uint16) luaL_checkinteger(L, 1);
-	uint16 y = (uint16) luaL_checkinteger(L, 2);
-	uint8 z = (uint8) luaL_checkinteger(L, 3);
+	uint16 x = (uint16)luaL_checkinteger(L, 1);
+	uint16 y = (uint16)luaL_checkinteger(L, 2);
+	uint8 z = (uint8)luaL_checkinteger(L, 3);
 
 	map_window->centerMap(x, y, z);
 
@@ -4549,9 +4532,9 @@ Set the current location that the mapwindow is displaying. This is the top left 
 static int nscript_mapwindow_set_loc(lua_State *L) {
 	MapWindow *map_window = Game::get_game()->get_map_window();
 
-	uint16 x = (uint16) luaL_checkinteger(L, 1);
-	uint16 y = (uint16) luaL_checkinteger(L, 2);
-	uint8 z = (uint8) luaL_checkinteger(L, 3);
+	uint16 x = (uint16)luaL_checkinteger(L, 1);
+	uint16 y = (uint16)luaL_checkinteger(L, 2);
+	uint8 z = (uint8)luaL_checkinteger(L, 3);
 
 	map_window->moveMap(x, y, z);
 

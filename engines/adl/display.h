@@ -28,7 +28,7 @@
 namespace Common {
 class String;
 struct Point;
-}
+} // namespace Common
 
 namespace Adl {
 
@@ -62,7 +62,7 @@ public:
 	void scrollUp();
 
 protected:
-	Display() :	_textBuf(nullptr), _cursorPos(0), _mode(kModeText), _textWidth(0), _textHeight(0) { }
+	Display() : _textBuf(nullptr), _cursorPos(0), _mode(kModeText), _textWidth(0), _textHeight(0) {}
 
 	void createTextBuffer(uint textWidth, uint textHeight);
 

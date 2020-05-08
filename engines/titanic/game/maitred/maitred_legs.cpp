@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMaitreDLegs, CMaitreDProdReceptor)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(AnimateMaitreDMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(AnimateMaitreDMsg)
 END_MESSAGE_MAP()
 
 void CMaitreDLegs::save(SimpleFile *file, int indent) {
@@ -49,18 +49,15 @@ bool CMaitreDLegs::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CMaitreDLegs::AnimateMaitreDMsg(CAnimateMaitreDMsg *msg) {
 	static const char *const WIGGLE_CLIPS[4] = {
-		"Hip Wiggle", "Knee Bend", "Wire Wiggle", nullptr
-	};
+	    "Hip Wiggle", "Knee Bend", "Wire Wiggle", nullptr};
 	static const char *const FIGHTING_CLIPS[4] = {
-		"Fighting 1", "Fighting 2", "Leg Fidget", nullptr
-	};
+	    "Fighting 1", "Fighting 2", "Leg Fidget", nullptr};
 	static const char *const ARCING_SOUNDS[9] = {
-		"MaitreD Arcing 1.wav", "MaitreD Arcing 2.wav",
-		"MaitreD Arcing 3.wav", "MaitreD Arcing 4.wav",
-		"MaitreD Arcing 5.wav", "MaitreD Arcing 6.wav",
-		"MaitreD Arcing 7.wav", "MaitreD Arcing 8.wav",
-		"MaitreD Arcing 9.wav"
-	};
+	    "MaitreD Arcing 1.wav", "MaitreD Arcing 2.wav",
+	    "MaitreD Arcing 3.wav", "MaitreD Arcing 4.wav",
+	    "MaitreD Arcing 5.wav", "MaitreD Arcing 6.wav",
+	    "MaitreD Arcing 7.wav", "MaitreD Arcing 8.wav",
+	    "MaitreD Arcing 9.wav"};
 
 	switch (msg->_value) {
 	case 0:
@@ -69,7 +66,7 @@ bool CMaitreDLegs::AnimateMaitreDMsg(CAnimateMaitreDMsg *msg) {
 
 			if (getRandomNumber(2) != 0)
 				playSound(ARCING_SOUNDS[getRandomNumber(8)],
-					40 + getRandomNumber(30));
+				          40 + getRandomNumber(30));
 		} else {
 			playClip("Walk Right");
 			_flag = true;

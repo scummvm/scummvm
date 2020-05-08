@@ -20,9 +20,9 @@
  *
  */
 
+#include "ultima/shared/core/lzw.h"
 #include "common/endian.h"
 #include "common/util.h"
-#include "ultima/shared/core/lzw.h"
 
 namespace Ultima {
 namespace Shared {
@@ -39,7 +39,8 @@ void LZW::decompress(Common::ReadStream *source, Common::WriteStream *dest) {
 	byte *copyBuf = new byte[8192];
 
 	struct {
-		uint16 code; byte value;
+		uint16 code;
+		byte value;
 	} codeTable[8192];
 	memset(codeTable, 0, sizeof(codeTable));
 
@@ -95,20 +96,19 @@ void LZW::decompress(Common::ReadStream *source, Common::WriteStream *dest) {
 
 uint16 LZW::getCode() {
 	const byte bitMasks[9] = {
-		0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0x0FF
-	};
+	    0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0x0FF};
 
-	byte   resultBitsLeft = _codeLength;
-	byte   resultBitsPos = 0;
+	byte resultBitsLeft = _codeLength;
+	byte resultBitsPos = 0;
 	uint16 result = 0;
-	byte   currentByte = _currentByte;
-	byte   currentBits = 0;
+	byte currentByte = _currentByte;
+	byte currentBits = 0;
 
 	// Get bits of current byte
 	while (resultBitsLeft) {
 		if (resultBitsLeft < _sourceBitsLeft) {
 			// we need less than we have left
-			currentBits = (currentByte >> (8 - _sourceBitsLeft)) &bitMasks[resultBitsLeft];
+			currentBits = (currentByte >> (8 - _sourceBitsLeft)) & bitMasks[resultBitsLeft];
 			result |= (currentBits << resultBitsPos);
 			_sourceBitsLeft -= resultBitsLeft;
 			resultBitsLeft = 0;

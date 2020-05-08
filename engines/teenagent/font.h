@@ -42,6 +42,7 @@ public:
 
 	byte getHeight() { return _height; }
 	void setShadowColor(byte color) { _shadowColor = color; }
+
 private:
 	byte *_data;
 

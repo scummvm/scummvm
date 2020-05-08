@@ -50,7 +50,6 @@ class U6LList {
 	U6Link *cur;
 
 public:
-
 	U6LList();
 	~U6LList();
 

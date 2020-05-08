@@ -30,7 +30,7 @@ namespace Nuvie {
 
 /* Long-range pathfinder for NPCs.
  */
-class SchedPathFinder: public ActorPathFinder {
+class SchedPathFinder : public ActorPathFinder {
 protected:
 	uint32 prev_step_i, next_step_i; /* step counters */
 
@@ -41,8 +41,8 @@ public:
 	~SchedPathFinder() override;
 
 	bool get_next_move(MapCoord &step) override; /* returns the next step in the path */
-	bool find_path() override; /* gets a NEW path from location->goal */
-	void actor_moved() override; /* update location and step counters */
+	bool find_path() override;                   /* gets a NEW path from location->goal */
+	void actor_moved() override;                 /* update location and step counters */
 
 	bool check_loc(const MapCoord &loc) override; // ignores other actors
 protected:

@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/achievements.h"
 #include "common/debug.h"
 #include "common/system.h"
@@ -30,20 +29,16 @@ namespace Common {
 
 DECLARE_SINGLETON(AchievementsManager);
 
-
 AchievementsManager::AchievementsManager() {
 	_iniFile = nullptr;
 	unsetActiveDomain();
 }
 
-
 AchievementsManager::~AchievementsManager() {
 }
 
 bool AchievementsManager::setActiveDomain(AchievementsPlatform platform, const String &appId) {
-	String prefix = platform == STEAM_ACHIEVEMENTS ? "steam-" + appId :
-					platform == GALAXY_ACHIEVEMENTS ? "galaxy-" + appId :
-					appId;
+	String prefix = platform == STEAM_ACHIEVEMENTS ? "steam-" + appId : platform == GALAXY_ACHIEVEMENTS ? "galaxy-" + appId : appId;
 
 	String iniFileName = prefix + ".dat";
 
@@ -63,7 +58,6 @@ bool AchievementsManager::setActiveDomain(AchievementsPlatform platform, const S
 	return true;
 }
 
-
 bool AchievementsManager::unsetActiveDomain() {
 	_iniFileName = "";
 
@@ -72,7 +66,6 @@ bool AchievementsManager::unsetActiveDomain() {
 
 	return true;
 }
-
 
 bool AchievementsManager::setAchievement(const String &id, const String &displayedMessage) {
 	if (!isReady()) {
@@ -96,7 +89,6 @@ bool AchievementsManager::setAchievement(const String &id, const String &display
 	return true;
 }
 
-
 bool AchievementsManager::isAchieved(const String &id) {
 	if (!isReady()) {
 		return false;
@@ -104,7 +96,6 @@ bool AchievementsManager::isAchieved(const String &id) {
 
 	return _iniFile->hasKey(id, "achievements");
 }
-
 
 bool AchievementsManager::clearAchievement(const String &id) {
 	if (!isReady()) {
@@ -115,7 +106,6 @@ bool AchievementsManager::clearAchievement(const String &id) {
 	_iniFile->saveToSaveFile(_iniFileName);
 	return true;
 }
-
 
 bool AchievementsManager::setStatFloat(const String &id, float value) {
 	if (!isReady()) {
@@ -128,7 +118,6 @@ bool AchievementsManager::setStatFloat(const String &id, float value) {
 	return 0;
 }
 
-
 float AchievementsManager::getStatFloat(const String &id) {
 	if (!isReady()) {
 		return 0.0;
@@ -138,7 +127,6 @@ float AchievementsManager::getStatFloat(const String &id) {
 	_iniFile->getKey(id, "statistics", tmp);
 	return atof(tmp.c_str());
 }
-
 
 bool AchievementsManager::setStatInt(String const &id, int value) {
 	if (!isReady()) {
@@ -151,7 +139,6 @@ bool AchievementsManager::setStatInt(String const &id, int value) {
 	return 0;
 }
 
-
 int AchievementsManager::getStatInt(String const &id) {
 	if (!isReady()) {
 		return 0;
@@ -161,7 +148,6 @@ int AchievementsManager::getStatInt(String const &id) {
 	_iniFile->getKey(id, "statistics", tmp);
 	return atol(tmp.c_str());
 }
-
 
 bool AchievementsManager::resetAllAchievements() {
 	if (!isReady()) {
@@ -173,7 +159,6 @@ bool AchievementsManager::resetAllAchievements() {
 	return 0;
 }
 
-
 bool AchievementsManager::resetAllStats() {
 	if (!isReady()) {
 		return false;
@@ -183,6 +168,5 @@ bool AchievementsManager::resetAllStats() {
 	_iniFile->saveToSaveFile(_iniFileName);
 	return 0;
 }
-
 
 } // End of namespace Common

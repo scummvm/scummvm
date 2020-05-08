@@ -23,8 +23,8 @@
 #ifndef ZVISION_SAVE_MANAGER_H
 #define ZVISION_SAVE_MANAGER_H
 
-#include "common/savefile.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 
 namespace Common {
 class String;
@@ -65,7 +65,7 @@ private:
 
 	enum {
 		SAVE_ORIGINAL = 0,
-		SAVE_VERSION  = 2
+		SAVE_VERSION = 2
 	};
 
 	Common::MemoryWriteStreamDynamic *_tempThumbnail;
@@ -95,6 +95,7 @@ public:
 	void prepareSaveBuffer();
 	void flushSaveBuffer();
 	bool scummVMSaveLoadDialog(bool isSave);
+
 private:
 	void writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName, bool useSaveBuffer);
 };

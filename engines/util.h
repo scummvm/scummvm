@@ -24,10 +24,10 @@
 #define ENGINES_UTIL_H
 
 #include "common/array.h"
-#include "common/scummsys.h"
 #include "common/list.h"
-#include "graphics/pixelformat.h"
+#include "common/scummsys.h"
 #include "graphics/mode.h"
+#include "graphics/pixelformat.h"
 
 /**
  * Setup the backend's graphics mode.

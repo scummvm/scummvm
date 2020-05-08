@@ -21,90 +21,78 @@
  */
 
 #include "titanic/true_talk/tt_npc_script.h"
+#include "common/algorithm.h"
+#include "common/textconsole.h"
 #include "titanic/core/project_item.h"
 #include "titanic/game_manager.h"
 #include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/support/files_manager.h"
-#include "titanic/true_talk/tt_sentence.h"
-#include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/titanic.h"
 #include "titanic/translation.h"
-#include "common/algorithm.h"
-#include "common/textconsole.h"
+#include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/true_talk/tt_sentence.h"
 
 namespace Titanic {
 
 TTsentenceEntries *TTnpcScript::_defaultEntries;
 
 static const char *const ITEMS[] = {
-	"chicken", "napkin", "parrot", "moth", "fuse", "eye", "nose", "ear", "mouth",
-	"auditorycenter", "visioncenter", "olfactorycenter", "speechcenter", "stick",
-	"longstick", "bomb", "lemon", "puree", "television", "hammer", nullptr
-};
+    "chicken", "napkin", "parrot", "moth", "fuse", "eye", "nose", "ear", "mouth",
+    "auditorycenter", "visioncenter", "olfactorycenter", "speechcenter", "stick",
+    "longstick", "bomb", "lemon", "puree", "television", "hammer", nullptr};
 
 struct ItemRec {
 	const char *const _name;
 	uint _id;
 };
 static const ItemRec ARRAY1[] = {
-	{ ITEMS[0], 290138 },
-	{ ITEMS[1], 290139 },
-	{ ITEMS[2], 290141 },
-	{ ITEMS[3], 290142 },
-	{ ITEMS[4], 290153 },
-	{ ITEMS[5], 290158 },
-	{ ITEMS[6], 290159 },
-	{ ITEMS[7], 290160 },
-	{ ITEMS[8], 290161 },
-	{ ITEMS[9], 290162 },
-	{ ITEMS[10], 290163 },
-	{ ITEMS[11], 290164 },
-	{ ITEMS[12], 290165 },
-	{ ITEMS[13], 290166 },
-	{ ITEMS[14], 290166 },
-	{ ITEMS[15], 290178 },
-	{ ITEMS[16], 290174 },
-	{ ITEMS[17], 290175 },
-	{ ITEMS[18], 290176 },
-	{ ITEMS[19], 290179 },
-	{ nullptr, 0 }
-};
+    {ITEMS[0], 290138},
+    {ITEMS[1], 290139},
+    {ITEMS[2], 290141},
+    {ITEMS[3], 290142},
+    {ITEMS[4], 290153},
+    {ITEMS[5], 290158},
+    {ITEMS[6], 290159},
+    {ITEMS[7], 290160},
+    {ITEMS[8], 290161},
+    {ITEMS[9], 290162},
+    {ITEMS[10], 290163},
+    {ITEMS[11], 290164},
+    {ITEMS[12], 290165},
+    {ITEMS[13], 290166},
+    {ITEMS[14], 290166},
+    {ITEMS[15], 290178},
+    {ITEMS[16], 290174},
+    {ITEMS[17], 290175},
+    {ITEMS[18], 290176},
+    {ITEMS[19], 290179},
+    {nullptr, 0}};
 static const uint ARRAY2[] = {
-	290167, 290178, 290183, 290144, 290148, 290151, 290154, 290156, 290158, 290159, 290160, 290161,
-	290162, 290163, 290164, 290165, 290177, 290181, 0
-};
+    290167, 290178, 290183, 290144, 290148, 290151, 290154, 290156, 290158, 290159, 290160, 290161,
+    290162, 290163, 290164, 290165, 290177, 290181, 0};
 static const uint RANDOM1[] = {
-	290184, 290185, 290187, 290188, 290190, 290191, 290193, 290195, 290196, 290197, 290198, 290199,
-	290202, 290205, 0
-};
+    290184, 290185, 290187, 290188, 290190, 290191, 290193, 290195, 290196, 290197, 290198, 290199,
+    290202, 290205, 0};
 static const uint RANDOM2[] = {
-	290186, 290187, 290188, 290190, 290191, 290193, 290194, 290195, 290196, 290197, 290198, 290199,
-	290200, 290201, 290202, 290204, 290205, 0
-};
+    290186, 290187, 290188, 290190, 290191, 290193, 290194, 290195, 290196, 290197, 290198, 290199,
+    290200, 290201, 290202, 290204, 290205, 0};
 static const uint RANDOM3[] = {
-	290188, 290190, 290192, 290194, 290197, 290200, 290201, 290202, 290204, 290205, 0
-};
+    290188, 290190, 290192, 290194, 290197, 290200, 290201, 290202, 290204, 290205, 0};
 static const uint RANDOM4[] = {
-	290206, 290207, 290209, 290210, 290211, 290212, 290216, 290217, 290218, 290219, 290222, 290223, 0
-};
+    290206, 290207, 290209, 290210, 290211, 290212, 290216, 290217, 290218, 290219, 290222, 290223, 0};
 static const uint RANDOM5[] = {
-	290208, 290209, 290210, 290211, 290212, 290214, 290215, 290216, 290217, 290218, 290219, 290221,
-	290222, 290223, 0
-};
+    290208, 290209, 290210, 290211, 290212, 290214, 290215, 290216, 290217, 290218, 290219, 290221,
+    290222, 290223, 0};
 static const uint RANDOM6[] = {
-	290210, 290211, 290213, 290214, 290215, 290220, 290221, 290222, 290223, 0
-};
+    290210, 290211, 290213, 290214, 290215, 290220, 290221, 290222, 290223, 0};
 static const uint RANDOM7[] = {
-	290225, 290226, 290228, 290229, 290230, 290232, 290231, 290235, 290236, 290237, 290238, 290241, 0
-};
+    290225, 290226, 290228, 290229, 290230, 290232, 290231, 290235, 290236, 290237, 290238, 290241, 0};
 static const uint RANDOM8[] = {
-	290227, 290228, 290229, 290230, 290231, 290232, 290233, 290234, 290235, 290236, 290237, 290238,
-	290240, 290241, 0
-};
+    290227, 290228, 290229, 290230, 290231, 290232, 290233, 290234, 290235, 290236, 290237, 290238,
+    290240, 290241, 0};
 static const uint RANDOM9[] = {
-	290228, 290229, 290230, 290232, 290233, 290234, 290239, 290240, 290241, 0
-};
+    290228, 290229, 290230, 290232, 290233, 290234, 290239, 290240, 290241, 0};
 
 /*------------------------------------------------------------------------*/
 
@@ -126,9 +114,8 @@ void TTnpcData::copyData() {
 /*------------------------------------------------------------------------*/
 
 TTnpcScriptBase::TTnpcScriptBase(int charId_, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
-		_charId(charId_), _field54(0), _val2(val2) {
+                                 const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) : TTscriptBase(0, charClass, v2, charName, v3, v4, v5, v6, v7),
+                                                                                                           _charId(charId_), _field54(0), _val2(val2) {
 }
 
 /*------------------------------------------------------------------------*/
@@ -144,10 +131,9 @@ void TTnpcScript::deinit() {
 }
 
 TTnpcScript::TTnpcScript(int charId_, const char *charClass, int v2,
-		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) :
-		TTnpcScriptBase(charId_, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
-		_entryCount(0), _field68(0), _field6C(0), _rangeResetCtr(0),
-		_currentDialNum(0), _dialDelta(0), _field7C(0), _itemStringP(nullptr), _field2CC(false) {
+                         const char *charName, int v3, int val2, int v4, int v5, int v6, int v7) : TTnpcScriptBase(charId_, charClass, v2, charName, v3, val2, v4, v5, v6, v7),
+                                                                                                   _entryCount(0), _field68(0), _field6C(0), _rangeResetCtr(0),
+                                                                                                   _currentDialNum(0), _dialDelta(0), _field7C(0), _itemStringP(nullptr), _field2CC(false) {
 	CTrueTalkManager::_v2 = 0;
 	Common::fill(&_dialValues[0], &_dialValues[DIALS_ARRAY_COUNT], 0);
 
@@ -282,15 +268,15 @@ bool TTnpcScript::handleWord(uint id) const {
 }
 
 int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder) {
+                             uint tag1, uint tag2, uint remainder) {
 	if (_quotes.empty())
 		return 1;
 
 	for (uint idx = 3; idx < _quotes.size(); ++idx) {
 		const TThandleQuoteEntry *qe = &_quotes[idx];
 
-		if (qe->_tag1 == tag1 && 
-				(qe->_tag2 == tag2 || qe->_tag2 < MKTAG('A', 'A', 'A', 'A'))) {
+		if (qe->_tag1 == tag1 &&
+		    (qe->_tag2 == tag2 || qe->_tag2 < MKTAG('A', 'A', 'A', 'A'))) {
 			uint threshold = qe->_tag2;
 			if (threshold > 0 && threshold < 100) {
 				if (!tag2)
@@ -316,7 +302,8 @@ int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *s
 				}
 
 				dialogueId = ((remainder + _quotes._incr) % 100) >= (uint)rangeLimit
-					? quote._tag2 : quote._tag1;
+				                 ? quote._tag2
+				                 : quote._tag1;
 			}
 
 			addResponse(getDialogueId(dialogueId));
@@ -841,12 +828,12 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 			bool flag;
 			if (entry._fieldC || entry._string10.empty()) {
 				flag = sentence->fn1(entry._string8, entry._fieldC,
-					entry._string14, entry._string18, entry._string1C,
-					entry._field20, entry._field28, 0, nullptr);
+				                     entry._string14, entry._string18, entry._string1C,
+				                     entry._field20, entry._field28, 0, nullptr);
 			} else {
 				flag = sentence->fn3(entry._string8, entry._string10,
-					entry._string14, entry._string18, entry._string1C,
-					entry._string24, entry._field28, 0, nullptr);
+				                     entry._string14, entry._string18, entry._string1C,
+				                     entry._string24, entry._field28, 0, nullptr);
 			}
 
 			if (flag) {
@@ -862,7 +849,7 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 						flag = false;
 					} else {
 						int result = doSentenceEntry(entry._field2C & 0xFFFFFF, &entry._field0,
-							roomScript, sentence);
+						                             roomScript, sentence);
 						if (result == 2)
 							return 2;
 						flag = !result;

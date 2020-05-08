@@ -294,7 +294,6 @@ public:
 	int scene04_springDelay;
 	int scene04_musicStage;
 
-
 	StaticANIObject *scene05_handle;
 	StaticANIObject *scene05_wacko;
 	StaticANIObject *scene05_bigHatch;

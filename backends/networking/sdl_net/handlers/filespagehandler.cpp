@@ -58,7 +58,8 @@ Common::String encodeHtmlEntities(Common::String s) {
 			result += "&amp;";
 		else if ((byte)s[i] > (byte)0x7F)
 			result += Common::String::format("&#%d;", (int)s[i]);
-		else result += s[i];
+		else
+			result += s[i];
 	return result;
 }
 
@@ -73,7 +74,7 @@ Common::String getDisplayPath(Common::String s) {
 		return "/";
 	return result;
 }
-}
+} // namespace
 
 bool FilesPageHandler::listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate) {
 	if (path == "" || path == "/") {
@@ -181,31 +182,31 @@ void FilesPageHandler::addItem(Common::String &content, const Common::String &it
 
 void FilesPageHandler::handle(Client &client) {
 	Common::String response =
-		"<html>" \
-		"<head><title>ScummVM</title><meta charset=\"utf-8\"/></head>" \
-		"<body>" \
-		"<p>{create_directory_desc}</p>" \
-		"<form action=\"create\">" \
-		"<input type=\"hidden\" name=\"path\" value=\"{path}\"/>" \
-		"<input type=\"text\" name=\"directory_name\" value=\"\"/>" \
-		"<input type=\"submit\" value=\"{create_directory_button}\"/>" \
-		"</form>" \
-		"<hr/>" \
-		"<p>{upload_file_desc}</p>" \
-		"<form action=\"upload?path={path}\" method=\"post\" enctype=\"multipart/form-data\">" \
-		"<input type=\"file\" name=\"upload_file-f\" allowdirs multiple/>" \
-		"<span>{or_upload_directory_desc}</span>" \
-		"<input type=\"file\" name=\"upload_file-d\" directory webkitdirectory multiple/>" \
-		"<input type=\"submit\" value=\"{upload_file_button}\"/>" \
-		"</form>"
-		"<hr/>" \
-		"<h1>{index_of_directory}</h1>" \
-		"<table>{content}</table>" \
-		"</body>" \
-		"</html>";
+	    "<html>"
+	    "<head><title>ScummVM</title><meta charset=\"utf-8\"/></head>"
+	    "<body>"
+	    "<p>{create_directory_desc}</p>"
+	    "<form action=\"create\">"
+	    "<input type=\"hidden\" name=\"path\" value=\"{path}\"/>"
+	    "<input type=\"text\" name=\"directory_name\" value=\"\"/>"
+	    "<input type=\"submit\" value=\"{create_directory_button}\"/>"
+	    "</form>"
+	    "<hr/>"
+	    "<p>{upload_file_desc}</p>"
+	    "<form action=\"upload?path={path}\" method=\"post\" enctype=\"multipart/form-data\">"
+	    "<input type=\"file\" name=\"upload_file-f\" allowdirs multiple/>"
+	    "<span>{or_upload_directory_desc}</span>"
+	    "<input type=\"file\" name=\"upload_file-d\" directory webkitdirectory multiple/>"
+	    "<input type=\"submit\" value=\"{upload_file_button}\"/>"
+	    "</form>"
+	    "<hr/>"
+	    "<h1>{index_of_directory}</h1>"
+	    "<table>{content}</table>"
+	    "</body>"
+	    "</html>";
 	Common::String itemTemplate = "<tr><td><img src=\"icons/{icon}\"/></td><td><a href=\"{link}\">{name}</a></td><td>{size}</td></tr>\n"; //TODO: load this template too?
 
-																																		  // load stylish response page from the archive
+	// load stylish response page from the archive
 	Common::SeekableReadStream *const stream = HandlerUtils::getArchiveFile(FILES_PAGE_NAME);
 	if (stream)
 		response = HandlerUtils::readEverythingFromStream(stream);
@@ -225,7 +226,7 @@ void FilesPageHandler::handle(Client &client) {
 	replace(response, "{path}", encodeDoubleQuotes(client.queryParameter("path")));
 	replace(response, "{path}", encodeDoubleQuotes(client.queryParameter("path")));
 	replace(response, "{upload_files_button}", HandlerUtils::toUtf8(_("Upload files"))); //tab
-	replace(response, "{upload_file_button}", HandlerUtils::toUtf8(_("Upload files"))); //button in the tab
+	replace(response, "{upload_file_button}", HandlerUtils::toUtf8(_("Upload files")));  //button in the tab
 	replace(response, "{create_directory_desc}", HandlerUtils::toUtf8(_("Type new directory name:")));
 	replace(response, "{upload_file_desc}", HandlerUtils::toUtf8(_("Select a file to upload:")));
 	replace(response, "{or_upload_directory_desc}", HandlerUtils::toUtf8(_("Or select a directory (works in Chrome only):")));

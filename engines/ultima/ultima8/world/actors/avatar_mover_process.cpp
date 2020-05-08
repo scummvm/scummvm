@@ -20,19 +20,19 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/animation.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/conf/setting_manager.h"
+#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/actor_anim_process.h"
-#include "ultima/ultima8/world/actors/targeted_anim_process.h"
+#include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
-#include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -42,11 +42,10 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarMoverProcess, Process)
 
 AvatarMoverProcess::AvatarMoverProcess() : Process(),
-		_lastFrame(0), _lastAttack(0), _idleTime(0),
-		_lastHeadShakeAnim(Animation::lookLeft), _fakeBothButtonClick(false) {
+                                           _lastFrame(0), _lastAttack(0), _idleTime(0),
+                                           _lastHeadShakeAnim(Animation::lookLeft), _fakeBothButtonClick(false) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
-
 
 AvatarMoverProcess::~AvatarMoverProcess() {
 }
@@ -60,7 +59,6 @@ void AvatarMoverProcess::run() {
 		return;
 	_lastFrame = framenum;
 
-
 	MainActor *avatar = getMainActor();
 
 	// busy, so don't move
@@ -68,7 +66,6 @@ void AvatarMoverProcess::run() {
 		_idleTime = 0;
 		return;
 	}
-
 
 	if (avatar->getLastAnim() == Animation::hang) {
 		handleHangingMode();
@@ -99,7 +96,7 @@ void AvatarMoverProcess::handleHangingMode() {
 	bool m0clicked = false;
 	//bool m1clicked = false;
 	if (!_mouseButton[0].isState(MBS_HANDLED) &&
-		!_mouseButton[0].curWithinDblClkTimeout()) {
+	    !_mouseButton[0].curWithinDblClkTimeout()) {
 		m0clicked = true;
 		_mouseButton[0].setState(MBS_HANDLED);
 	}
@@ -111,11 +108,10 @@ void AvatarMoverProcess::handleHangingMode() {
 	_mouseButton[0].setState(MBS_RELHANDLED);
 	_mouseButton[1].setState(MBS_RELHANDLED);
 
-
 	// if left mouse is down, try to climb up
 
 	if (_mouseButton[0].isState(MBS_DOWN) &&
-	        (!_mouseButton[0].isState(MBS_HANDLED) || m0clicked)) {
+	    (!_mouseButton[0].isState(MBS_HANDLED) || m0clicked)) {
 		_mouseButton[0].setState(MBS_HANDLED);
 		_mouseButton[0]._lastDown = 0;
 		MainActor *avatar = getMainActor();
@@ -152,8 +148,8 @@ void AvatarMoverProcess::handleCombatMode() {
 
 	// if we were blocking, and no longer holding the mouse, stop
 	if (lastanim == Animation::startBlock &&
-	        !_mouseButton[0].isState(MBS_DOWN)) {
-//		pout << "AvatarMover: combat stop blocking" << Std::endl;
+	    !_mouseButton[0].isState(MBS_DOWN)) {
+		//		pout << "AvatarMover: combat stop blocking" << Std::endl;
 		waitFor(avatar->doAnim(Animation::stopBlock, direction));
 		return;
 	}
@@ -181,12 +177,12 @@ void AvatarMoverProcess::handleCombatMode() {
 	_mouseButton[1].setState(MBS_RELHANDLED);
 
 	if (_mouseButton[0].isState(MBS_DOWN) &&
-	        _mouseButton[0].isState(MBS_HANDLED) && _mouseButton[0]._lastDown > 0) {
+	    _mouseButton[0].isState(MBS_HANDLED) && _mouseButton[0]._lastDown > 0) {
 		// left click-and-hold = block
 		if (lastanim == Animation::startBlock)
 			return;
 
-//		pout << "AvatarMover: combat block" << Std::endl;
+		//		pout << "AvatarMover: combat block" << Std::endl;
 
 		if (checkTurn(mousedir, false))
 			return;
@@ -201,7 +197,7 @@ void AvatarMoverProcess::handleCombatMode() {
 
 		if (canAttack()) {
 			// double left click = attack
-//			pout << "AvatarMover: combat attack" << Std::endl;
+			//			pout << "AvatarMover: combat attack" << Std::endl;
 
 			if (checkTurn(mousedir, true))
 				return;
@@ -231,7 +227,7 @@ void AvatarMoverProcess::handleCombatMode() {
 
 		if (canAttack()) {
 			// double right click = kick
-//			pout << "AvatarMover: combat kick" << Std::endl;
+			//			pout << "AvatarMover: combat kick" << Std::endl;
 
 			if (checkTurn(mousedir, false))
 				return;
@@ -248,7 +244,7 @@ void AvatarMoverProcess::handleCombatMode() {
 	}
 
 	if (_mouseButton[1].isState(MBS_DOWN) &&
-	        _mouseButton[1].isState(MBS_HANDLED) && _mouseButton[1]._lastDown > 0) {
+	    _mouseButton[1].isState(MBS_HANDLED) && _mouseButton[1]._lastDown > 0) {
 		// right mouse button is down long enough to act on it
 		// if facing right direction, walk
 		//!! TODO: check if you can actually take this step
@@ -345,7 +341,7 @@ void AvatarMoverProcess::handleNormalMode() {
 
 	// check mouse state to see what needs to be done
 	if (!_mouseButton[0].isState(MBS_HANDLED) &&
-		!_mouseButton[0].curWithinDblClkTimeout()) {
+	    !_mouseButton[0].curWithinDblClkTimeout()) {
 		m0clicked = true;
 		_mouseButton[0].setState(MBS_HANDLED);
 	}
@@ -401,8 +397,8 @@ void AvatarMoverProcess::handleNormalMode() {
 
 	// both mouse buttons down and not yet handled, or neither down and we are faking it.
 	if ((!_mouseButton[0].isState(MBS_HANDLED) && !_mouseButton[1].isState(MBS_HANDLED)) ||
-			(_mouseButton[0].isState(MBS_HANDLED) && _mouseButton[1].isState(MBS_HANDLED) &&
-			 _fakeBothButtonClick)) {
+	    (_mouseButton[0].isState(MBS_HANDLED) && _mouseButton[1].isState(MBS_HANDLED) &&
+	     _fakeBothButtonClick)) {
 		// Take action if both were clicked within
 		// double-click timeout of each other.
 		// notice these are all unsigned.
@@ -436,7 +432,7 @@ void AvatarMoverProcess::handleNormalMode() {
 			Animation::Sequence climbanim = Animation::climb72;
 			while (climbanim >= Animation::climb16) {
 				if (avatar->tryAnim(climbanim, direction) ==
-				        Animation::SUCCESS) {
+				    Animation::SUCCESS) {
 					nextanim = climbanim;
 				}
 				climbanim = static_cast<Animation::Sequence>(climbanim - 1);
@@ -458,7 +454,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	}
 
 	if ((!_mouseButton[0].isState(MBS_HANDLED) || m0clicked || _fakeBothButtonClick) &&
-	        _mouseButton[1].isState(MBS_DOWN)) {
+	    _mouseButton[1].isState(MBS_DOWN)) {
 		_mouseButton[0].setState(MBS_HANDLED);
 		_fakeBothButtonClick = false;
 		// We got a left mouse down (or a fake one) while the already
@@ -469,7 +465,7 @@ void AvatarMoverProcess::handleNormalMode() {
 
 		// check if we need to do a running jump
 		if (lastanim == Animation::run ||
-		        lastanim == Animation::runningJump) {
+		    lastanim == Animation::runningJump) {
 			jump(Animation::runningJump, direction);
 		} else if (mouselength > 0) {
 			jump(Animation::jump, direction);
@@ -496,7 +492,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	}
 
 	if (_mouseButton[1].isState(MBS_DOWN) &&
-	        _mouseButton[1].isState(MBS_HANDLED)) {
+	    _mouseButton[1].isState(MBS_HANDLED)) {
 		// right mouse button is down long enough to act on it
 		// if facing right direction, walk
 
@@ -505,9 +501,7 @@ void AvatarMoverProcess::handleNormalMode() {
 		if (mouselength == 1) {
 			nextanim = Animation::walk;
 		} else if (mouselength == 2) {
-			if (lastanim == Animation::run
-			        || lastanim == Animation::runningJump
-			        || lastanim == Animation::walk)
+			if (lastanim == Animation::run || lastanim == Animation::runningJump || lastanim == Animation::walk)
 				nextanim = Animation::run;
 			else
 				nextanim = Animation::walk;
@@ -564,16 +558,16 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 	int stepdir = direction;
 
 	if (res == Animation::FAILURE ||
-	        (action == Animation::step && res == Animation::END_OFF_LAND)) {
+	    (action == Animation::step && res == Animation::END_OFF_LAND)) {
 		int altdir1 = (stepdir + 1) % 8;
 		int altdir2 = (stepdir + 7) % 8;
 
 		res = avatar->tryAnim(action, altdir1);
 		if (res == Animation::FAILURE ||
-		        (action == Animation::step && res == Animation::END_OFF_LAND)) {
+		    (action == Animation::step && res == Animation::END_OFF_LAND)) {
 			res = avatar->tryAnim(action, altdir2);
 			if (res == Animation::FAILURE ||
-			        (action == Animation::step && res == Animation::END_OFF_LAND)) {
+			    (action == Animation::step && res == Animation::END_OFF_LAND)) {
 				// Can't walk in this direction.
 				// Try to take a smaller step
 
@@ -591,12 +585,10 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 		} else {
 			stepdir = altdir1;
 		}
-
-
 	}
 
 	if (action == Animation::step && res == Animation::END_OFF_LAND &&
-	        lastanim != Animation::keepBalance && !adjusted) {
+	    lastanim != Animation::keepBalance && !adjusted) {
 		if (checkTurn(stepdir, false))
 			return;
 		waitFor(avatar->doAnim(Animation::keepBalance, stepdir));
@@ -606,7 +598,6 @@ void AvatarMoverProcess::step(Animation::Sequence action, int direction,
 	if (action == Animation::step && res == Animation::FAILURE) {
 		action = Animation::stand;
 	}
-
 
 	bool moving = (action == Animation::run || action == Animation::walk);
 
@@ -629,7 +620,7 @@ void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
 
 	// airwalk
 	if (avatar->hasActorFlags(Actor::ACT_AIRWALK) &&
-	        action == Animation::jump) {
+	    action == Animation::jump) {
 		waitFor(avatar->doAnim(Animation::airwalkJump, direction));
 		return;
 	}
@@ -655,7 +646,7 @@ void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
 		int maxrange = avatar->getStr() * 32;
 
 		if (target && target->getShapeInfo()->is_land() &&
-		        xrange < maxrange && yrange < maxrange) {
+		    xrange < maxrange && yrange < maxrange) {
 			// Original also only lets you jump at the Z_FACE
 			Process *p = new TargetedAnimProcess(avatar, Animation::jumpUp,
 			                                     direction, coords);
@@ -727,13 +718,13 @@ bool AvatarMoverProcess::checkTurn(int direction, bool moving) {
 	// Note: don't need to turn if moving backward in combat stance
 	// CHECKME: currently, first turn in the right direction
 	if (direction != curdir && !(
-	            combat && ABS(direction - curdir) == 4)) {
+	                               combat && ABS(direction - curdir) == 4)) {
 		Animation::Sequence lastanim = avatar->getLastAnim();
 
 		if (moving &&
-		        (lastanim == Animation::walk || lastanim == Animation::run ||
-		         lastanim == Animation::combatStand) &&
-		        (ABS(direction - curdir) + 1 % 8 <= 2)) {
+		    (lastanim == Animation::walk || lastanim == Animation::run ||
+		     lastanim == Animation::combatStand) &&
+		    (ABS(direction - curdir) + 1 % 8 <= 2)) {
 			// don't need to explicitly do a turn animation
 			return false;
 		}
@@ -794,7 +785,6 @@ void AvatarMoverProcess::OnMouseUp(int button) {
 	_mouseButton[bid].clearState(MBS_RELHANDLED);
 }
 
-
 void AvatarMoverProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
@@ -804,7 +794,8 @@ void AvatarMoverProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool AvatarMoverProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_lastAttack = rs->readUint32LE();
 	_idleTime = rs->readUint32LE();

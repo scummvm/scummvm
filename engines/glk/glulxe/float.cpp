@@ -71,7 +71,7 @@ uint Glulxe::encode_float(gfloat32 val) {
 		mant -= 1.0; /* Get rid of leading 1 */
 	}
 
-	mant *= 8388608.0; /* 2^23 */
+	mant *= 8388608.0;          /* 2^23 */
 	fbits = (uint)(mant + 0.5); /* round mant to nearest int */
 	if (fbits >> 23) {
 		/* The carry propagated out of a string of 23 1 bits. */

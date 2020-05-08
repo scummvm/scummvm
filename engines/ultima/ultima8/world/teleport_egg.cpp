@@ -22,9 +22,9 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/teleport_egg.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,12 +34,12 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportEgg, Egg)
 TeleportEgg::TeleportEgg() {
 }
 
-
 TeleportEgg::~TeleportEgg() {
 }
 
 uint16 TeleportEgg::hatch() {
-	if (!isTeleporter()) return 0; // teleport target
+	if (!isTeleporter())
+		return 0; // teleport target
 
 	// teleport to destination egg
 	perr << "Teleport!!!!!!!!" << Std::endl;
@@ -55,7 +55,8 @@ void TeleportEgg::saveData(Common::WriteStream *ws) {
 }
 
 bool TeleportEgg::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Egg::loadData(rs, version)) return false;
+	if (!Egg::loadData(rs, version))
+		return false;
 
 	return true;
 }

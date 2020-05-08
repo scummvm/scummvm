@@ -33,8 +33,7 @@
 #define NUM_MOUSE_TEXT 2
 
 const char *textMouse[NUM_MOUSE_TEXT] = {
-	"I don't know how to get there!",
-	"Exit"
-};
+    "I don't know how to get there!",
+    "Exit"};
 
 #endif

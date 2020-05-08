@@ -21,10 +21,10 @@
  */
 
 #include "ultima/ultima1/spells/destroy.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map_tile.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map_dungeon.h"
+#include "ultima/ultima1/maps/map_tile.h"
 
 namespace Ultima {
 namespace Ultima1 {

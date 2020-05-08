@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/maps/map_city_castle.h"
+#include "ultima/ultima1/maps/map_overworld.h"
 
 namespace Ultima {
 namespace Ultima1 {

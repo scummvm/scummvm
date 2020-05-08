@@ -71,7 +71,7 @@ private:
 
 	Common::String _resourceName;
 
-	Common::SpanOwner<SciSpan<const byte> > _fileData;
+	Common::SpanOwner<SciSpan<const byte>> _fileData;
 
 	uint32 _lipSyncIDCount;
 	SciSpan<const byte> _lipSyncIDTable;

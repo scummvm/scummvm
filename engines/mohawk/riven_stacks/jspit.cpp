@@ -30,8 +30,7 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-JSpit::JSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackJspit, "jsliders.190", "jsliderbg.190") {
+JSpit::JSpit(MohawkEngine_Riven *vm) : DomeSpit(vm, kStackJspit, "jsliders.190", "jsliderbg.190") {
 
 	REGISTER_COMMAND(JSpit, xreseticons);
 	REGISTER_COMMAND(JSpit, xicon);
@@ -305,15 +304,15 @@ void JSpit::xvga1300_carriage(const ArgumentArray &args) {
 
 	if (gotClick) {
 		RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(3,
-                          kRivenCommandChangeCard, 1, getCardStackId(0x18D4D),
-                          kRivenCommandTransition, 1, kRivenTransitionPanLeft,
-                          kRivenCommandChangeCard, 1, getCardStackId(0x18AB5));
+		                                                              kRivenCommandChangeCard, 1, getCardStackId(0x18D4D),
+		                                                              kRivenCommandTransition, 1, kRivenTransitionPanLeft,
+		                                                              kRivenCommandChangeCard, 1, getCardStackId(0x18AB5));
 		_vm->_scriptMan->runScript(script, false);
 
-// FIXME: kRivenCommandStoreMovieOpcode takes more arguments.. does it work with the original engine?
-//		script = _vm->_scriptMan->createScriptFromData(1,
-//		                  kRivenCommandStoreMovieOpcode, 2, kRivenCommandActivateSLST, 2);
-//		_vm->_scriptMan->runScript(script, false);
+		// FIXME: kRivenCommandStoreMovieOpcode takes more arguments.. does it work with the original engine?
+		//		script = _vm->_scriptMan->createScriptFromData(1,
+		//		                  kRivenCommandStoreMovieOpcode, 2, kRivenCommandActivateSLST, 2);
+		//		_vm->_scriptMan->runScript(script, false);
 
 		// Play carriage ride movie
 		RivenVideo *rideVideo = _vm->_video->openSlot(1);
@@ -321,7 +320,7 @@ void JSpit::xvga1300_carriage(const ArgumentArray &args) {
 
 		// We have arrived at the top
 		script = _vm->_scriptMan->createScriptFromData(1,
-		                  kRivenCommandChangeCard, 1, getCardStackId(0x17167));
+		                                               kRivenCommandChangeCard, 1, getCardStackId(0x17167));
 		_vm->_scriptMan->runScript(script, false);
 
 		_vm->_cursor->showCursor();
@@ -657,7 +656,7 @@ void JSpit::sunnersLowerStairsTimer() {
 			timerTime = _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		} else if (sunnerTime < _vm->getTotalPlayTime()) {
 			RivenVideo *video = _vm->_video->openSlot(_vm->_rnd->getRandomNumberRng(3, 5));
-			sunnersPlayVideo(video,  0xB6CA, true);
+			sunnersPlayVideo(video, 0xB6CA, true);
 
 			timerTime = _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		}
@@ -785,20 +784,20 @@ void JSpit::xjatboundary(const ArgumentArray &args) {
 
 void JSpit::installCardTimer() {
 	switch (getCurrentCardGlobalId()) {
-		case 0x77d6: // Sunners, top of stairs
-			installTimer(TIMER(JSpit, sunnersTopStairsTimer), 500);
-			break;
-		case 0x79bd: // Sunners, middle of stairs
-			installTimer(TIMER(JSpit, sunnersMidStairsTimer), 500);
-			break;
-		case 0x7beb: // Sunners, bottom of stairs
-			installTimer(TIMER(JSpit, sunnersLowerStairsTimer), 500);
-			break;
-		case 0xb6ca: // Sunners, shoreline
-			installTimer(TIMER(JSpit, sunnersBeachTimer), 500);
-			break;
-		default:
-			RivenStack::installCardTimer();
+	case 0x77d6: // Sunners, top of stairs
+		installTimer(TIMER(JSpit, sunnersTopStairsTimer), 500);
+		break;
+	case 0x79bd: // Sunners, middle of stairs
+		installTimer(TIMER(JSpit, sunnersMidStairsTimer), 500);
+		break;
+	case 0x7beb: // Sunners, bottom of stairs
+		installTimer(TIMER(JSpit, sunnersLowerStairsTimer), 500);
+		break;
+	case 0xb6ca: // Sunners, shoreline
+		installTimer(TIMER(JSpit, sunnersBeachTimer), 500);
+		break;
+	default:
+		RivenStack::installCardTimer();
 	}
 }
 

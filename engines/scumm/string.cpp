@@ -20,10 +20,8 @@
  *
  */
 
-
-
-#include "common/config-manager.h"
 #include "audio/mixer.h"
+#include "common/config-manager.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -33,21 +31,18 @@
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #endif
+#include "scumm/he/sound_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/verbs.h"
-#include "scumm/he/sound_he.h"
 
 namespace Scumm {
 
-
-
 #pragma mark -
-#pragma mark --- "High level" message code ---
+#pragma mark--- "High level" message code ---
 #pragma mark -
-
 
 void ScummEngine::printString(int m, const byte *msg) {
 	switch (m) {
@@ -119,11 +114,9 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 	VAR(VAR_KEYPRESS) = runDialog(dialog);
 }
 
-
 #pragma mark -
-#pragma mark --- V6 blast text queue code ---
+#pragma mark--- V6 blast text queue code ---
 #pragma mark -
-
 
 void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
@@ -180,10 +173,10 @@ void ScummEngine_v6::drawBlastTexts() {
 
 				// Some localizations may override colors
 				// See credits in Chinese COMI
-				if (_game.id == GID_CMI &&	_language == Common::ZH_TWN &&
-				      c == '^' && (buf == _blastTextQueue[i].text + 1)) {
+				if (_game.id == GID_CMI && _language == Common::ZH_TWN &&
+				    c == '^' && (buf == _blastTextQueue[i].text + 1)) {
 					if (*buf == 'c') {
-						int color = buf[3] - '0' + 10 *(buf[2] - '0');
+						int color = buf[3] - '0' + 10 * (buf[2] - '0');
 						_charset->setColor(color);
 
 						buf += 4;
@@ -219,11 +212,9 @@ void ScummEngine_v6::removeBlastTexts() {
 	_blastTextQueuePos = 0;
 }
 
-
 #pragma mark -
-#pragma mark --- V7 subtitle queue code ---
+#pragma mark--- V7 subtitle queue code ---
 #pragma mark -
-
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::processSubtitleQueue() {
@@ -262,12 +253,9 @@ void ScummEngine_v7::clearSubtitleQueue() {
 }
 #endif
 
-
-
 #pragma mark -
-#pragma mark --- Core message/subtitle code ---
+#pragma mark--- Core message/subtitle code ---
 #pragma mark -
-
 
 bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 	uint32 talk_sound_a = 0;
@@ -480,16 +468,16 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) {
 	byte *current = text;
 
 	int32 bufferSize = 384;
-	byte * const buff = (byte *)calloc(sizeof(byte), bufferSize);
+	byte *const buff = (byte *)calloc(sizeof(byte), bufferSize);
 	assert(buff);
-	byte * const stack = (byte *)calloc(sizeof(byte), bufferSize);
+	byte *const stack = (byte *)calloc(sizeof(byte), bufferSize);
 	assert(stack);
 
 	while (1) {
 		if (*current == 0x0D || *current == 0 || *current == 0xFF || *current == 0xFE) {
 
 			// ignore the line break for verbs texts
-			if (ignoreVerb && (*(current + 1) ==  8)) {
+			if (ignoreVerb && (*(current + 1) == 8)) {
 				*(current + 1) = *current;
 				*current = 0x08;
 				ipos += 2;
@@ -507,8 +495,8 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) {
 				byte *curr = text + start + ipos - j - 1;
 				// Special cases to preserve original ordering (numbers).
 				if (Common::isDigit(*curr) ||
-						(*curr == (byte)',' && j + 1 < ipos && Common::isDigit(*(curr - 1)) && Common::isDigit(last)) ||
-						(*curr == (byte)'-' && (j + 1 == ipos || Common::isSpace(*(curr - 1))) && Common::isDigit(last))) {
+				    (*curr == (byte)',' && j + 1 < ipos && Common::isDigit(*(curr - 1)) && Common::isDigit(last)) ||
+				    (*curr == (byte)'-' && (j + 1 == ipos || Common::isSpace(*(curr - 1))) && Common::isDigit(last))) {
 					++sthead;
 					stack[sthead] = *curr;
 				} else {
@@ -742,7 +730,7 @@ void ScummEngine::CHARSET_1() {
 		// Handle line breaks for V1-V2
 		if (_game.version <= 2 && _nextLeft >= _screenWidth) {
 			if (!newLine())
-				break;	// FIXME: Is this necessary? Only would be relevant for v0 games
+				break; // FIXME: Is this necessary? Only would be relevant for v0 games
 		}
 
 		_charset->_left = _nextLeft;
@@ -789,7 +777,8 @@ void ScummEngine::CHARSET_1() {
 
 		if (_game.version <= 2) {
 			_talkDelay += _defaultTalkDelay;
-			VAR(VAR_CHARCOUNT)++;
+			VAR(VAR_CHARCOUNT)
+			++;
 		} else {
 			_talkDelay += (int)VAR(VAR_CHARINC);
 		}
@@ -877,7 +866,9 @@ void ScummEngine_v7::CHARSET_1() {
 	if (_string[0].wrapping) {
 		_charset->addLinebreaks(0, _charsetBuffer, _charsetBufPos, _screenWidth - 20);
 
-		struct { int pos, w; } substring[10];
+		struct {
+			int pos, w;
+		} substring[10];
 		int count = 0;
 		int maxLineWidth = 0;
 		int lastPos = 0;
@@ -1064,7 +1055,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			memset(lenbuf, 0, sizeof(lenbuf));
 			int pos = ll;
 			while (ltext[pos]) {
-				if ((ltext[pos] == 0xFF || (_game.version <= 6 && ltext[pos] == 0xFE)) && ltext[pos+1] == 8) {
+				if ((ltext[pos] == 0xFF || (_game.version <= 6 && ltext[pos] == 0xFE)) && ltext[pos + 1] == 8) {
 					break;
 				}
 				pos++;
@@ -1229,12 +1220,12 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				*dst++ = 0x5D;
 				*dst++ = 0x5E;
 				continue;
-			// Code for (C) character
+				// Code for (C) character
 			} else if (chr == 0x1C && src[num] == 0x20) {
 				*dst++ = 0x3E;
 				*dst++ = 0x2A;
 				continue;
-			// Code for " character
+				// Code for " character
 			} else if (chr == 0x19) {
 				*dst++ = 0x2F;
 				continue;
@@ -1289,11 +1280,11 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					// Simply copy these special codes
 					*dst++ = 0xFF;
 					*dst++ = chr;
-					*dst++ = src[num+0];
-					*dst++ = src[num+1];
+					*dst++ = src[num + 0];
+					*dst++ = src[num + 1];
 					if (_game.version == 8) {
-						*dst++ = src[num+2];
-						*dst++ = src[num+3];
+						*dst++ = src[num + 2];
+						*dst++ = src[num + 3];
 					}
 					break;
 				default:
@@ -1303,8 +1294,8 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			}
 		} else {
 			if ((chr != '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
-				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
-				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN && checkSJISCode(lastChr))) {
+			    (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
+			    (_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN && checkSJISCode(lastChr))) {
 				*dst++ = chr;
 			}
 			lastChr = chr;
@@ -1441,11 +1432,9 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 	return 0;
 }
 
-
 #pragma mark -
-#pragma mark --- Charset initialisation ---
+#pragma mark--- Charset initialisation ---
 #pragma mark -
-
 
 #ifdef ENABLE_HE
 void ScummEngine_v80he::initCharset(int charsetno) {
@@ -1469,16 +1458,14 @@ void ScummEngine::initCharset(int charsetno) {
 	memcpy(_charsetColorMap, _charsetData[charsetno], sizeof(_charsetColorMap));
 }
 
-
 #pragma mark -
-#pragma mark --- Translation/localization code ---
+#pragma mark--- Translation/localization code ---
 #pragma mark -
-
 
 #ifdef ENABLE_SCUMM_7_8
 static int indexCompare(const void *p1, const void *p2) {
-	const ScummEngine_v7::LangIndexNode *i1 = (const ScummEngine_v7::LangIndexNode *) p1;
-	const ScummEngine_v7::LangIndexNode *i2 = (const ScummEngine_v7::LangIndexNode *) p2;
+	const ScummEngine_v7::LangIndexNode *i1 = (const ScummEngine_v7::LangIndexNode *)p1;
+	const ScummEngine_v7::LangIndexNode *i2 = (const ScummEngine_v7::LangIndexNode *)p2;
 
 	return strcmp(i1->tag, i2->tag);
 }
@@ -1511,7 +1498,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 	_existLanguageFile = true;
 
 	size = file.size();
-	_languageBuffer = (char *)calloc(1, size+1);
+	_languageBuffer = (char *)calloc(1, size + 1);
 	file.read(_languageBuffer, size);
 	file.close();
 
@@ -1519,7 +1506,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 	char *ptr = _languageBuffer;
 
 	// Count the number of lines in the language file.
-	for (_languageIndexSize = 0; ; _languageIndexSize++) {
+	for (_languageIndexSize = 0;; _languageIndexSize++) {
 		ptr = strpbrk(ptr, "\n\r");
 		if (ptr == NULL)
 			break;
@@ -1541,7 +1528,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 	if (_game.id == GID_DIG) {
 		int lineCount = _languageIndexSize;
 		const char *baseTag = "";
-		byte enc = 0;	// Initially assume the language file is not encoded
+		byte enc = 0; // Initially assume the language file is not encoded
 
 		// We'll determine the real index size as we go.
 		_languageIndexSize = 0;
@@ -1710,7 +1697,6 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 		else if (!strcmp((const char *)text, "Robbins"))
 			text = (const byte *)"/NEST.061/Robbins";
 	}
-
 
 	if (_game.version >= 7 && text[0] == '/') {
 		// Extract the string tag from the text: /..../

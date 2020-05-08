@@ -24,10 +24,10 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "parallaction/debug.h"
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
-#include "parallaction/debug.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 #include "parallaction/walk.h"
@@ -36,15 +36,14 @@ namespace Parallaction {
 Parallaction *g_vm = NULL;
 // public stuff
 
-char		g_saveData1[30] = { '\0' };
-uint32		g_engineFlags = 0;
-uint32		g_globalFlags = 0;
+char g_saveData1[30] = {'\0'};
+uint32 g_engineFlags = 0;
+uint32 g_globalFlags = 0;
 
 // private stuff
 
-Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _location(getGameType()),
-	_dialogueMan(0), _rnd("parallaction") {
+Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _location(getGameType()),
+                                                                                         _dialogueMan(0), _rnd("parallaction") {
 	// Setup mixer
 	syncSoundSettings();
 
@@ -180,7 +179,8 @@ void Parallaction::resumeJobs() {
 AnimationPtr Location::findAnimation(const char *name) {
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); ++it)
-		if (!scumm_stricmp((*it)->_name, name)) return *it;
+		if (!scumm_stricmp((*it)->_name, name))
+			return *it;
 
 	return AnimationPtr();
 }
@@ -203,7 +203,7 @@ void Parallaction::allocateLocationSlot(const char *name) {
 	if (_di == 120)
 		error("No more location slots available. Please report this immediately to ScummVM team");
 
-	if (_currentLocationIndex  == -1) {
+	if (_currentLocationIndex == -1) {
 		Common::strlcpy(_locationNames[_numLocations], name, 10);
 		_currentLocationIndex = _numLocations;
 
@@ -211,7 +211,7 @@ void Parallaction::allocateLocationSlot(const char *name) {
 		_locationNames[_numLocations][0] = '\0';
 		_localFlags[_numLocations] = 0;
 	} else {
-		setLocationFlags(kFlagsVisited);	// 'visited'
+		setLocationFlags(kFlagsVisited); // 'visited'
 	}
 }
 
@@ -359,7 +359,7 @@ void Parallaction::doLocationEnterTransition() {
 	_gfx->freeDialogueObjects();
 
 	// fades maximum intensity palette towards approximation of main palette
-	for (uint16 _si = 0; _si<6; _si++) {
+	for (uint16 _si = 0; _si < 6; _si++) {
 		pal.fadeTo(_gfx->_palette, 4);
 		_gfx->setPalette(pal);
 		_gfx->updateScreen();
@@ -388,7 +388,7 @@ uint32 Parallaction::getLocationFlags() {
 }
 
 void Parallaction::drawAnimation(AnimationPtr anim) {
-	if ((anim->_flags & kFlagsActive) == 0)   {
+	if ((anim->_flags & kFlagsActive) == 0) {
 		return;
 	}
 
@@ -444,8 +444,7 @@ void Parallaction::drawZone(ZonePtr zone) {
 	GfxObj *obj = 0;
 	if (ACTIONTYPE(zone) == kZoneGet) {
 		obj = zone->u._gfxobj;
-	} else
-	if (ACTIONTYPE(zone) == kZoneDoor) {
+	} else if (ACTIONTYPE(zone) == kZoneDoor) {
 		obj = zone->u._gfxobj;
 	}
 
@@ -464,7 +463,7 @@ void Parallaction::updateZones() {
 	// go through all animations and mark/unmark each of them for display
 	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ++ait) {
 		AnimationPtr anim = *ait;
-		if ((anim->_flags & kFlagsRemove) != 0)	{
+		if ((anim->_flags & kFlagsRemove) != 0) {
 			// marks the animation as invisible for this frame
 			_gfx->showGfxObj(anim->gfxobj, false);
 			anim->_flags &= ~(kFlagsActive | kFlagsRemove);
@@ -526,14 +525,13 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 			_balloonMan->setSingleBalloon(data->_examineText, 0, 90, 0, BalloonManager::kNormalColor);
 			Common::Rect r;
 			data->_gfxobj->getRect(0, r);
-			_gfx->setItem(data->_gfxobj, 140, (_screenHeight - r.height())/2);
+			_gfx->setItem(data->_gfxobj, 140, (_screenHeight - r.height()) / 2);
 			_gfx->setItem(_char._head, 100, 152);
 		} else {
 			_balloonMan->setSingleBalloon(data->_examineText, 140, 10, 0, BalloonManager::kNormalColor);
 			_gfx->setItem(_char._talk, 190, 80);
 		}
-	} else
-	if (_gameType == GType_BRA) {
+	} else if (_gameType == GType_BRA) {
 		_balloonMan->setSingleBalloon(data->_examineText, 0, 0, 1, BalloonManager::kNormalColor);
 		_gfx->setItem(_char._talk, 10, 80);
 	}
@@ -578,7 +576,8 @@ void Parallaction::runZone(ZonePtr z) {
 		break;
 
 	case kZoneDoor:
-		if (z->_flags & kFlagsLocked) break;
+		if (z->_flags & kFlagsLocked)
+			break;
 		updateDoor(z, !(z->_flags & kFlagsClosed));
 		break;
 
@@ -622,7 +621,7 @@ void Parallaction::updateDoor(ZonePtr z, bool close) {
 
 	if (z->u._gfxobj) {
 		uint frame = (close ? 0 : 1);
-//		z->u._gfxobj->setFrame(frame);
+		//		z->u._gfxobj->setFrame(frame);
 		z->u._gfxobj->frame = frame;
 	}
 
@@ -663,7 +662,7 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 	// but we need to check it separately here. The same workaround is applied in freeZones.
 	if (((ACTIONTYPE(z) == kZoneMerge) && (((x == z->u._mergeObj1) && (y == z->u._mergeObj2)) || ((x == z->u._mergeObj2) && (y == z->u._mergeObj1)))) ||
-		((ACTIONTYPE(z) == kZoneGet) && ((x == z->u._getIcon) || (y == z->u._getIcon)))) {
+	    ((ACTIONTYPE(z) == kZoneGet) && ((x == z->u._getIcon) || (y == z->u._getIcon)))) {
 
 		// WORKAROUND for bug 2070751: special zones are only used in NS, to allow the
 		// the EXAMINE/USE action to be applied on some particular item in the inventory.
@@ -722,7 +721,7 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 
 		// check if self-use zone (nothing to do with kFlagsSelfuse)
 		if (_gameType == GType_Nippon) {
-			if (z->getX() != -1) {	// no explicit self-use flag in NS
+			if (z->getX() != -1) { // no explicit self-use flag in NS
 				return false;
 			}
 		}
@@ -781,7 +780,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 		AnimationPtr a = *ait;
 
-		_a = (a->_flags & kFlagsActive) ? 1 : 0;	// _a: active Animation
+		_a = (a->_flags & kFlagsActive) ? 1 : 0; // _a: active Animation
 
 		if (!_a) {
 			if (_gameType == GType_BRA && ACTIONTYPE(a) != kZoneTrap) {
@@ -791,9 +790,9 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 		_ef = a->hitFrameRect(_si, _di);
 
-		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1;										 // _b: (no type specified) AND (Animation is not the character)
-		_c = ITEMTYPE(a) ? 0 : 1;															// _c: Animation is not an object
-		_d = (ITEMTYPE(a) != type) ? 0 : 1;													// _d: Animation is an object of the same type
+		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1; // _b: (no type specified) AND (Animation is not the character)
+		_c = ITEMTYPE(a) ? 0 : 1;                             // _c: Animation is not an object
+		_d = (ITEMTYPE(a) != type) ? 0 : 1;                   // _d: Animation is an object of the same type
 
 		if ((_a != 0 && _ef) && ((_b != 0 && _c != 0) || (a->_type == type) || (_d != 0))) {
 			return a;
@@ -805,7 +804,8 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 ZonePtr Location::findZone(const char *name) {
 	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); ++it) {
-		if (!scumm_stricmp((*it)->_name, name)) return *it;
+		if (!scumm_stricmp((*it)->_name, name))
+			return *it;
 	}
 	return findAnimation(name);
 }

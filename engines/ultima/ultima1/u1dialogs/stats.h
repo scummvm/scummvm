@@ -23,15 +23,15 @@
 #ifndef ULTIMA_ULTIMA1_U1DIALOGS_STATS_H
 #define ULTIMA_ULTIMA1_U1DIALOGS_STATS_H
 
-#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
 #include "common/array.h"
+#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CShowMsg;
 using Shared::CCharacterInputMsg;
+using Shared::CShowMsg;
 
 /**
  * Implements the stats/inventory dialog
@@ -40,6 +40,7 @@ class Stats : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
 	bool ShowMsg(CShowMsg &msg);
 	bool CharacterInputMsg(CCharacterInputMsg &msg);
+
 public:
 	/**
 	 * Contains the data for a single stat entry to display
@@ -59,9 +60,11 @@ public:
 	 * @returns			The formatted display of name dots value
 	 */
 	static Common::String formatStat(const char *name, uint value);
+
 private:
 	Common::Array<StatEntry> _stats;
 	uint _startingIndex;
+
 private:
 	/**
 	 * Loads the list of stats to display into an array
@@ -79,6 +82,7 @@ private:
 	 * @returns				Ending text row
 	 */
 	void addStats(const char *const *names, const uint *values, int start, int end, int equippedIndex = -1);
+
 public:
 	CLASSDEF;
 

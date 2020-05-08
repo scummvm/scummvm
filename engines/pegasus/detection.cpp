@@ -22,10 +22,10 @@
 
 #include "base/plugins.h"
 
-#include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "engines/advancedDetector.h"
 
 #include "pegasus/pegasus.h"
 
@@ -40,10 +40,7 @@ enum {
 };
 
 bool PegasusEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL)
-		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
 bool PegasusEngine::isDemo() const {
@@ -69,67 +66,55 @@ bool PegasusEngine::isWindows() const {
 } // End of namespace Pegasus
 
 static const PlainGameDescriptor pegasusGames[] = {
-	{"pegasus", "The Journeyman Project: Pegasus Prime"},
-	{0, 0}
-};
-
+    {"pegasus", "The Journeyman Project: Pegasus Prime"},
+    {0, 0}};
 
 namespace Pegasus {
 
 static const PegasusGameDescription gameDescriptions[] = {
-	{
-		{
-			"pegasus",
-			"",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2009943),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
+    {
+        {"pegasus",
+         "",
+         AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 2009943),
+         Common::EN_ANY,
+         Common::kPlatformMacintosh,
+         ADGF_MACRESFORK,
+         GUIO1(GUIO_NOMIDI)},
+    },
 
-	{
-		{
-			"pegasus",
-			"Demo",
-			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK | ADGF_DEMO,
-			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
-		},
-	},
+    {
+        {"pegasus",
+         "Demo",
+         AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
+         Common::EN_ANY,
+         Common::kPlatformMacintosh,
+         ADGF_MACRESFORK | ADGF_DEMO,
+         GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)},
+    },
 
-	{
-		{
-			"pegasus",
-			"DVD Demo",
-			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
-			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
-		},
-	},
+    {
+        {"pegasus",
+         "DVD Demo",
+         AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
+         Common::EN_ANY,
+         Common::kPlatformMacintosh,
+         ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
+         GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)},
+    },
 
-		{
-		{
-			"pegasus",
-			"DVD Demo",
-			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
-			GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)
-		},
-	},
+    {
+        {"pegasus",
+         "DVD Demo",
+         AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
+         Common::EN_ANY,
+         Common::kPlatformWindows,
+         ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
+         GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)},
+    },
 
-	{ AD_TABLE_END_MARKER }
-};
+    {AD_TABLE_END_MARKER}};
 
 } // End of namespace Pegasus
-
 
 class PegasusMetaEngine : public AdvancedMetaEngine {
 public:
@@ -157,10 +142,7 @@ public:
 };
 
 bool PegasusMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves)
-		|| (f == kSupportsLoadingDuringStartup)
-		|| (f == kSupportsDeleteSave);
+	return (f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup) || (f == kSupportsDeleteSave);
 }
 
 SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
@@ -202,7 +184,7 @@ bool PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PEGASUS)
-	REGISTER_PLUGIN_DYNAMIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
+REGISTER_PLUGIN_STATIC(PEGASUS, PLUGIN_TYPE_ENGINE, PegasusMetaEngine);
 #endif

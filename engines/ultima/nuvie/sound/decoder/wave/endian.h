@@ -57,23 +57,21 @@
  *                              Unlike most other functions these can be used for eg. switch-case labels
  */
 
-
 //
 // GCC specific stuff
 //
 #if defined(__GNUC__)
 #define NORETURN_POST __attribute__((__noreturn__))
 #define PACKED_STRUCT __attribute__((__packed__))
-#define GCC_PRINTF(x,y) __attribute__((__format__(printf, x, y)))
+#define GCC_PRINTF(x, y) __attribute__((__format__(printf, x, y)))
 
 #if !defined(FORCEINLINE) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #define FORCEINLINE inline __attribute__((__always_inline__))
 #endif
 #else
 #define PACKED_STRUCT
-#define GCC_PRINTF(x,y)
+#define GCC_PRINTF(x, y)
 #endif
-
 
 //
 // Fallbacks / default values for various special macros
@@ -84,18 +82,18 @@
 
 // Sanity check
 #if !defined(SCUMM_LITTLE_ENDIAN) && !defined(SCUMM_BIG_ENDIAN)
-#   error No endianness defined
+#error No endianness defined
 #endif
 
-#define SWAP_CONSTANT_32(a) \
+#define SWAP_CONSTANT_32(a)            \
 	((uint32)((((a) >> 24) & 0x00FF) | \
-	          (((a) >>  8) & 0xFF00) | \
-	          (((a) & 0xFF00) <<  8) | \
-	          (((a) & 0x00FF) << 24) ))
+	          (((a) >> 8) & 0xFF00) |  \
+	          (((a)&0xFF00) << 8) |    \
+	          (((a)&0x00FF) << 24)))
 
-#define SWAP_CONSTANT_16(a) \
-	((uint16)((((a) >>  8) & 0x00FF) | \
-	          (((a) <<  8) & 0xFF00) ))
+#define SWAP_CONSTANT_16(a)           \
+	((uint16)((((a) >> 8) & 0x00FF) | \
+	          (((a) << 8) & 0xFF00)))
 
 /**
  * Swap the bytes in a 32 bit word in order to convert LE encoded data to BE
@@ -112,13 +110,17 @@ FORCEINLINE uint32 SWAP_BYTES_32(const uint32 a) {
 		return SWAP_CONSTANT_32(a);
 	} else {
 		uint32 result;
-#   if defined(__psp__)
+#if defined(__psp__)
 		// use special allegrex instruction
-		__asm__("wsbw %0,%1" : "=r"(result) : "r"(a));
-#   else
+		__asm__("wsbw %0,%1"
+		        : "=r"(result)
+		        : "r"(a));
+#else
 		__asm__("wsbh %0,%1\n"
-		        "rotr %0,%0,16" : "=r"(result) : "r"(a));
-#   endif
+		        "rotr %0,%0,16"
+		        : "=r"(result)
+		        : "r"(a));
+#endif
 		return result;
 	}
 }
@@ -142,8 +144,7 @@ FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
 
 inline uint32 SWAP_BYTES_32(uint32 a) {
 	const uint16 low = (uint16)a, high = (uint16)(a >> 16);
-	return ((uint32)(uint16)((low >> 8) | (low << 8)) << 16)
-	       | (uint16)((high >> 8) | (high << 8));
+	return ((uint32)(uint16)((low >> 8) | (low << 8)) << 16) | (uint16)((high >> 8) | (high << 8));
 }
 #endif
 
@@ -162,7 +163,9 @@ FORCEINLINE uint16 SWAP_BYTES_16(const uint16 a) {
 		return SWAP_CONSTANT_16(a);
 	} else {
 		uint16 result;
-		__asm__("wsbh %0,%1" : "=r"(result) : "r"(a));
+		__asm__("wsbh %0,%1"
+		        : "=r"(result)
+		        : "r"(a));
 		return result;
 	}
 }
@@ -172,7 +175,6 @@ inline uint16 SWAP_BYTES_16(const uint16 a) {
 	return (a >> 8) | (a << 8);
 }
 #endif
-
 
 /**
  * A wrapper macro used around four character constants, like 'DATA', to
@@ -195,7 +197,7 @@ inline uint16 SWAP_BYTES_16(const uint16 a) {
 #define MKID_BE(a) SWAP_CONSTANT_32(a)
 
 #else
-#  define MKID_BE(a) ((uint32)(a))
+#define MKID_BE(a) ((uint32)(a))
 #endif
 
 // Functions for reading/writing native Integers,
@@ -254,7 +256,7 @@ FORCEINLINE void WRITE_UINT32(void *ptr, uint32 value) {
 // use software fallback by loading each byte explicitely
 #else
 
-#   if defined(SCUMM_LITTLE_ENDIAN)
+#if defined(SCUMM_LITTLE_ENDIAN)
 
 inline uint16 READ_UINT16(const void *ptr) {
 	const uint8 *b = (const uint8 *)ptr;
@@ -271,13 +273,13 @@ inline void WRITE_UINT16(void *ptr, uint16 value) {
 }
 inline void WRITE_UINT32(void *ptr, uint32 value) {
 	uint8 *b = (uint8 *)ptr;
-	b[0] = (uint8)(value >>  0);
-	b[1] = (uint8)(value >>  8);
+	b[0] = (uint8)(value >> 0);
+	b[1] = (uint8)(value >> 8);
 	b[2] = (uint8)(value >> 16);
 	b[3] = (uint8)(value >> 24);
 }
 
-#   elif defined(SCUMM_BIG_ENDIAN)
+#elif defined(SCUMM_BIG_ENDIAN)
 
 inline uint16 READ_UINT16(const void *ptr) {
 	const uint8 *b = (const uint8 *)ptr;
@@ -296,14 +298,13 @@ inline void WRITE_UINT32(void *ptr, uint32 value) {
 	uint8 *b = (uint8 *)ptr;
 	b[0] = (uint8)(value >> 24);
 	b[1] = (uint8)(value >> 16);
-	b[2] = (uint8)(value >>  8);
-	b[3] = (uint8)(value >>  0);
+	b[2] = (uint8)(value >> 8);
+	b[3] = (uint8)(value >> 0);
 }
-
-#   endif
 
 #endif
 
+#endif
 
 //  Map Funtions for reading/writing BE/LE integers depending on native endianess
 #if defined(SCUMM_LITTLE_ENDIAN)
@@ -333,7 +334,7 @@ inline void WRITE_UINT32(void *ptr, uint32 value) {
 #define CONSTANT_BE_16(a) SWAP_CONSTANT_16(a)
 
 // if the unaligned load and the byteswap take alot instructions its better to directly read and invert
-#   if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
+#if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
 
 inline uint16 READ_BE_UINT16(const void *ptr) {
 	const uint8 *b = (const uint8 *)ptr;
@@ -352,10 +353,10 @@ inline void WRITE_BE_UINT32(void *ptr, uint32 value) {
 	uint8 *b = (uint8 *)ptr;
 	b[0] = (uint8)(value >> 24);
 	b[1] = (uint8)(value >> 16);
-	b[2] = (uint8)(value >>  8);
-	b[3] = (uint8)(value >>  0);
+	b[2] = (uint8)(value >> 8);
+	b[3] = (uint8)(value >> 0);
 }
-#   else
+#else
 
 inline uint16 READ_BE_UINT16(const void *ptr) {
 	return SWAP_BYTES_16(READ_UINT16(ptr));
@@ -370,7 +371,7 @@ inline void WRITE_BE_UINT32(void *ptr, uint32 value) {
 	WRITE_UINT32(ptr, SWAP_BYTES_32(value));
 }
 
-#   endif   // if defined(SCUMM_NEED_ALIGNMENT)
+#endif // if defined(SCUMM_NEED_ALIGNMENT)
 
 #elif defined(SCUMM_BIG_ENDIAN)
 
@@ -401,7 +402,7 @@ inline void WRITE_BE_UINT32(void *ptr, uint32 value) {
 #define CONSTANT_BE_16(a) ((uint16)(a))
 
 // if the unaligned load and the byteswap take alot instructions its better to directly read and invert
-#   if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
+#if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
 
 inline uint16 READ_LE_UINT16(const void *ptr) {
 	const uint8 *b = (const uint8 *)ptr;
@@ -418,12 +419,12 @@ inline void WRITE_LE_UINT16(void *ptr, uint16 value) {
 }
 inline void WRITE_LE_UINT32(void *ptr, uint32 value) {
 	uint8 *b = (uint8 *)ptr;
-	b[0] = (uint8)(value >>  0);
-	b[1] = (uint8)(value >>  8);
+	b[0] = (uint8)(value >> 0);
+	b[1] = (uint8)(value >> 8);
 	b[2] = (uint8)(value >> 16);
 	b[3] = (uint8)(value >> 24);
 }
-#   else
+#else
 
 inline uint16 READ_LE_UINT16(const void *ptr) {
 	return SWAP_BYTES_16(READ_UINT16(ptr));
@@ -438,9 +439,9 @@ inline void WRITE_LE_UINT32(void *ptr, uint32 value) {
 	WRITE_UINT32(ptr, SWAP_BYTES_32(value));
 }
 
-#   endif   // if defined(SCUMM_NEED_ALIGNMENT)
+#endif // if defined(SCUMM_NEED_ALIGNMENT)
 
-#endif  // if defined(SCUMM_LITTLE_ENDIAN)
+#endif // if defined(SCUMM_LITTLE_ENDIAN)
 
 inline uint32 READ_LE_UINT24(const void *ptr) {
 	const uint8 *b = (const uint8 *)ptr;

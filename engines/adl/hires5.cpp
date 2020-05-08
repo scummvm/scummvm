@@ -20,26 +20,25 @@
  *
  */
 
-#include "common/system.h"
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/stream.h"
+#include "common/system.h"
 
 #include "adl/adl_v4.h"
 #include "adl/detection.h"
+#include "adl/disk.h"
 #include "adl/display_a2.h"
 #include "adl/graphics.h"
-#include "adl/disk.h"
 #include "adl/sound.h"
 
 namespace Adl {
 
 class HiRes5Engine : public AdlEngine_v4 {
 public:
-	HiRes5Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v4(syst, gd),
-			_doAnimation(false) { }
+	HiRes5Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v4(syst, gd),
+	                                                            _doAnimation(false) {}
 
 private:
 	// AdlEngine
@@ -88,7 +87,7 @@ Common::String HiRes5Engine::getLine() {
 
 void HiRes5Engine::drawLight(uint index, byte color) const {
 	Display_A2 *display = static_cast<Display_A2 *>(_display);
-	const byte xCoord[5] = { 189, 161, 133, 105, 77 };
+	const byte xCoord[5] = {189, 161, 133, 105, 77};
 	const byte yCoord = 72;
 
 	assert(index < 5);
@@ -337,20 +336,19 @@ void HiRes5Engine::initGameState() {
 
 	// A combined total of 1213 rooms
 	static const byte rooms[kRegions] = {
-		6, 16, 24, 57, 40, 30, 76, 40,
-		54, 38, 44, 21, 26, 42, 49, 32,
-		59, 69, 1, 1, 1, 1, 1, 18,
-		25, 13, 28, 28, 11, 23, 9, 31,
-		6, 29, 29, 34, 9, 10, 95, 86,
-		1
-	};
+	    6, 16, 24, 57, 40, 30, 76, 40,
+	    54, 38, 44, 21, 26, 42, 49, 32,
+	    59, 69, 1, 1, 1, 1, 1, 18,
+	    25, 13, 28, 28, 11, 23, 9, 31,
+	    6, 29, 29, 34, 9, 10, 95, 86,
+	    1};
 
 	initRegions(rooms, kRegions);
 
 	loadRegion(1);
 	_state.room = 5;
 
-	_doAnimation  = false;
+	_doAnimation = false;
 }
 
 void HiRes5Engine::applyRegionWorkarounds() {

@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CChickenCooler, CGameObject)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 void CChickenCooler::save(SimpleFile *file, int indent) {
@@ -61,7 +61,7 @@ bool CChickenCooler::EnterRoomMsg(CEnterRoomMsg *msg) {
 bool CChickenCooler::EnterViewMsg(CEnterViewMsg *msg) {
 	if (!_triggerOnRoomEntry) {
 		for (CGameObject *obj = getMailManFirstObject(); obj;
-				obj = getNextMail(obj)) {
+		     obj = getNextMail(obj)) {
 			if (obj->isEquals("Chicken"))
 				return true;
 		}

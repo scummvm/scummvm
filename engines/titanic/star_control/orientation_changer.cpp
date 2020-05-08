@@ -21,8 +21,8 @@
  */
 
 #include "titanic/star_control/orientation_changer.h"
-#include "titanic/star_control/fpose.h"
 #include "titanic/star_control/fmatrix.h"
+#include "titanic/star_control/fpose.h"
 
 namespace Titanic {
 

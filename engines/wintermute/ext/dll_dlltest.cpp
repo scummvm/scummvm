@@ -29,8 +29,8 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
@@ -49,7 +49,7 @@ bool EmulateDLLTestExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(function->name, "IRC_init") == 0) {
 		stack->correctParams(1);
-		/*const char *name =*/ stack->pop()->getString();
+		/*const char *name =*/stack->pop()->getString();
 
 		// do nothing
 
@@ -66,7 +66,7 @@ bool EmulateDLLTestExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(function->name, "ChangeNick") == 0) {
 		stack->correctParams(1);
-		/*const char *name =*/ stack->pop()->getString();
+		/*const char *name =*/stack->pop()->getString();
 
 		// do nothing
 
@@ -100,8 +100,8 @@ bool EmulateDLLTestExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *this
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(function->name, "IRC_GetChatStrings") == 0) {
 		stack->correctParams(2);
-		/*const char *buffer =*/ stack->pop()->getString();
-		/*int bufferMaxSize =*/ stack->pop()->getInt();
+		/*const char *buffer =*/stack->pop()->getString();
+		/*int bufferMaxSize =*/stack->pop()->getInt();
 
 		// do nothing
 

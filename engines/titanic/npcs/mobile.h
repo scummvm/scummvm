@@ -29,9 +29,11 @@ namespace Titanic {
 
 class CMobile : public CCharacter {
 	DECLARE_MESSAGE_MAP;
+
 protected:
 	Point _pos1;
 	int _fieldDC;
+
 public:
 	CLASSDEF;
 	CMobile();

@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 #include "agos/midi.h"
@@ -30,249 +28,249 @@
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_Simon2, x)
+#define OPCODE(x) _OPCODE(AGOSEngine_Simon2, x)
 
 void AGOSEngine_Simon2::setupOpcodes() {
 	static const OpcodeEntrySimon2 opcodes[] = {
-		/* 00 */
-		OPCODE(o_invalid),
-		OPCODE(o_at),
-		OPCODE(o_notAt),
-		OPCODE(o_invalid),
-		/* 04 */
-		OPCODE(o_invalid),
-		OPCODE(o_carried),
-		OPCODE(o_notCarried),
-		OPCODE(o_isAt),
-		/* 08 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_zero),
-		/* 12 */
-		OPCODE(o_notZero),
-		OPCODE(o_eq),
-		OPCODE(o_notEq),
-		OPCODE(o_gt),
-		/* 16 */
-		OPCODE(o_lt),
-		OPCODE(o_eqf),
-		OPCODE(o_notEqf),
-		OPCODE(o_ltf),
-		/* 20 */
-		OPCODE(o_gtf),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_chance),
-		/* 24 */
-		OPCODE(o_invalid),
-		OPCODE(o_isRoom),
-		OPCODE(o_isObject),
-		OPCODE(o_state),
-		/* 28 */
-		OPCODE(o_oflag),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_destroy),
-		/* 32 */
-		OPCODE(o_invalid),
-		OPCODE(o_place),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 36 */
-		OPCODE(o_copyff),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 40 */
-		OPCODE(o_invalid),
-		OPCODE(o_clear),
-		OPCODE(o_let),
-		OPCODE(o_add),
-		/* 44 */
-		OPCODE(o_sub),
-		OPCODE(o_addf),
-		OPCODE(o_subf),
-		OPCODE(o_mul),
-		/* 48 */
-		OPCODE(o_div),
-		OPCODE(o_mulf),
-		OPCODE(o_divf),
-		OPCODE(o_mod),
-		/* 52 */
-		OPCODE(o_modf),
-		OPCODE(o_random),
-		OPCODE(o_invalid),
-		OPCODE(o_goto),
-		/* 56 */
-		OPCODE(o_oset),
-		OPCODE(o_oclear),
-		OPCODE(o_putBy),
-		OPCODE(o_inc),
-		/* 60 */
-		OPCODE(o_dec),
-		OPCODE(o_setState),
-		OPCODE(o_print),
-		OPCODE(o_message),
-		/* 64 */
-		OPCODE(o_msg),
-		OPCODE(oww_addTextBox),
-		OPCODE(oww_setShortText),
-		OPCODE(oww_setLongText),
-		/* 68 */
-		OPCODE(o_end),
-		OPCODE(o_done),
-		OPCODE(os2_printLongText),
-		OPCODE(o_process),
-		/* 72 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 76 */
-		OPCODE(o_when),
-		OPCODE(o_if1),
-		OPCODE(o_if2),
-		OPCODE(o_isCalled),
-		/* 80 */
-		OPCODE(o_is),
-		OPCODE(o_invalid),
-		OPCODE(o_debug),
-		OPCODE(os2_rescan),
-		/* 84 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_comment),
-		/* 88 */
-		OPCODE(o_haltAnimation),
-		OPCODE(o_restartAnimation),
-		OPCODE(o_getParent),
-		OPCODE(o_getNext),
-		/* 92 */
-		OPCODE(o_getChildren),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 96 */
-		OPCODE(o_picture),
-		OPCODE(o_loadZone),
-		OPCODE(os2_animate),
-		OPCODE(os2_stopAnimate),
-		/* 100 */
-		OPCODE(o_killAnimate),
-		OPCODE(o_defWindow),
-		OPCODE(o_window),
-		OPCODE(o_cls),
-		/* 104 */
-		OPCODE(o_closeWindow),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_addBox),
-		/* 108 */
-		OPCODE(o_delBox),
-		OPCODE(o_enableBox),
-		OPCODE(o_disableBox),
-		OPCODE(o_moveBox),
-		/* 112 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_doIcons),
-		OPCODE(o_isClass),
-		/* 116 */
-		OPCODE(o_setClass),
-		OPCODE(o_unsetClass),
-		OPCODE(o_invalid),
-		OPCODE(o_waitSync),
-		/* 120 */
-		OPCODE(o_sync),
-		OPCODE(o_defObj),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 124 */
-		OPCODE(o_invalid),
-		OPCODE(o_here),
-		OPCODE(o_doClassIcons),
-		OPCODE(os2_playTune),
-		/* 128 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_setAdjNoun),
-		OPCODE(o_invalid),
-		/* 132 */
-		OPCODE(o_saveUserGame),
-		OPCODE(o_loadUserGame),
-		OPCODE(o_invalid),
-		OPCODE(os1_pauseGame),
-		/* 136 */
-		OPCODE(o_copysf),
-		OPCODE(o_restoreIcons),
-		OPCODE(o_freezeZones),
-		OPCODE(o_placeNoIcons),
-		/* 140 */
-		OPCODE(o_clearTimers),
-		OPCODE(o_setDollar),
-		OPCODE(o_isBox),
-		OPCODE(oe2_doTable),
-		/* 144 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 148 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(oe2_storeItem),
-		/* 152 */
-		OPCODE(oe2_getItem),
-		OPCODE(oe2_bSet),
-		OPCODE(oe2_bClear),
-		OPCODE(oe2_bZero),
-		/* 156C */
-		OPCODE(oe2_bNotZero),
-		OPCODE(oe2_getOValue),
-		OPCODE(oe2_setOValue),
-		OPCODE(o_invalid),
-		/* 160 */
-		OPCODE(oe2_ink),
-		OPCODE(os1_screenTextBox),
-		OPCODE(os1_screenTextMsg),
-		OPCODE(os1_playEffect),
-		/* 164 */
-		OPCODE(oe2_getDollar2),
-		OPCODE(oe2_isAdjNoun),
-		OPCODE(oe2_b2Set),
-		OPCODE(oe2_b2Clear),
-		/* 168 */
-		OPCODE(oe2_b2Zero),
-		OPCODE(oe2_b2NotZero),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 172 */
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		OPCODE(oww_lockZones),
-		/* 176 */
-		OPCODE(oww_unlockZones),
-		OPCODE(os2_screenTextPObj),
-		OPCODE(os1_getPathPosn),
-		OPCODE(os1_scnTxtLongText),
-		/* 180 */
-		OPCODE(os2_mouseOn),
-		OPCODE(os2_mouseOff),
-		OPCODE(o_invalid),
-		OPCODE(o_invalid),
-		/* 184 */
-		OPCODE(os1_unloadZone),
-		OPCODE(o_invalid),
-		OPCODE(os1_unfreezeZones),
-		OPCODE(o_invalid),
-		/* 188 */
-		OPCODE(os2_isShortText),
-		OPCODE(os2_clearMarks),
-		OPCODE(os2_waitMark),
+	    /* 00 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_at),
+	    OPCODE(o_notAt),
+	    OPCODE(o_invalid),
+	    /* 04 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_carried),
+	    OPCODE(o_notCarried),
+	    OPCODE(o_isAt),
+	    /* 08 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_zero),
+	    /* 12 */
+	    OPCODE(o_notZero),
+	    OPCODE(o_eq),
+	    OPCODE(o_notEq),
+	    OPCODE(o_gt),
+	    /* 16 */
+	    OPCODE(o_lt),
+	    OPCODE(o_eqf),
+	    OPCODE(o_notEqf),
+	    OPCODE(o_ltf),
+	    /* 20 */
+	    OPCODE(o_gtf),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_chance),
+	    /* 24 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_isRoom),
+	    OPCODE(o_isObject),
+	    OPCODE(o_state),
+	    /* 28 */
+	    OPCODE(o_oflag),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_destroy),
+	    /* 32 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_place),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 36 */
+	    OPCODE(o_copyff),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 40 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_clear),
+	    OPCODE(o_let),
+	    OPCODE(o_add),
+	    /* 44 */
+	    OPCODE(o_sub),
+	    OPCODE(o_addf),
+	    OPCODE(o_subf),
+	    OPCODE(o_mul),
+	    /* 48 */
+	    OPCODE(o_div),
+	    OPCODE(o_mulf),
+	    OPCODE(o_divf),
+	    OPCODE(o_mod),
+	    /* 52 */
+	    OPCODE(o_modf),
+	    OPCODE(o_random),
+	    OPCODE(o_invalid),
+	    OPCODE(o_goto),
+	    /* 56 */
+	    OPCODE(o_oset),
+	    OPCODE(o_oclear),
+	    OPCODE(o_putBy),
+	    OPCODE(o_inc),
+	    /* 60 */
+	    OPCODE(o_dec),
+	    OPCODE(o_setState),
+	    OPCODE(o_print),
+	    OPCODE(o_message),
+	    /* 64 */
+	    OPCODE(o_msg),
+	    OPCODE(oww_addTextBox),
+	    OPCODE(oww_setShortText),
+	    OPCODE(oww_setLongText),
+	    /* 68 */
+	    OPCODE(o_end),
+	    OPCODE(o_done),
+	    OPCODE(os2_printLongText),
+	    OPCODE(o_process),
+	    /* 72 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 76 */
+	    OPCODE(o_when),
+	    OPCODE(o_if1),
+	    OPCODE(o_if2),
+	    OPCODE(o_isCalled),
+	    /* 80 */
+	    OPCODE(o_is),
+	    OPCODE(o_invalid),
+	    OPCODE(o_debug),
+	    OPCODE(os2_rescan),
+	    /* 84 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_comment),
+	    /* 88 */
+	    OPCODE(o_haltAnimation),
+	    OPCODE(o_restartAnimation),
+	    OPCODE(o_getParent),
+	    OPCODE(o_getNext),
+	    /* 92 */
+	    OPCODE(o_getChildren),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 96 */
+	    OPCODE(o_picture),
+	    OPCODE(o_loadZone),
+	    OPCODE(os2_animate),
+	    OPCODE(os2_stopAnimate),
+	    /* 100 */
+	    OPCODE(o_killAnimate),
+	    OPCODE(o_defWindow),
+	    OPCODE(o_window),
+	    OPCODE(o_cls),
+	    /* 104 */
+	    OPCODE(o_closeWindow),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_addBox),
+	    /* 108 */
+	    OPCODE(o_delBox),
+	    OPCODE(o_enableBox),
+	    OPCODE(o_disableBox),
+	    OPCODE(o_moveBox),
+	    /* 112 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_doIcons),
+	    OPCODE(o_isClass),
+	    /* 116 */
+	    OPCODE(o_setClass),
+	    OPCODE(o_unsetClass),
+	    OPCODE(o_invalid),
+	    OPCODE(o_waitSync),
+	    /* 120 */
+	    OPCODE(o_sync),
+	    OPCODE(o_defObj),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 124 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_here),
+	    OPCODE(o_doClassIcons),
+	    OPCODE(os2_playTune),
+	    /* 128 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_setAdjNoun),
+	    OPCODE(o_invalid),
+	    /* 132 */
+	    OPCODE(o_saveUserGame),
+	    OPCODE(o_loadUserGame),
+	    OPCODE(o_invalid),
+	    OPCODE(os1_pauseGame),
+	    /* 136 */
+	    OPCODE(o_copysf),
+	    OPCODE(o_restoreIcons),
+	    OPCODE(o_freezeZones),
+	    OPCODE(o_placeNoIcons),
+	    /* 140 */
+	    OPCODE(o_clearTimers),
+	    OPCODE(o_setDollar),
+	    OPCODE(o_isBox),
+	    OPCODE(oe2_doTable),
+	    /* 144 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 148 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(oe2_storeItem),
+	    /* 152 */
+	    OPCODE(oe2_getItem),
+	    OPCODE(oe2_bSet),
+	    OPCODE(oe2_bClear),
+	    OPCODE(oe2_bZero),
+	    /* 156C */
+	    OPCODE(oe2_bNotZero),
+	    OPCODE(oe2_getOValue),
+	    OPCODE(oe2_setOValue),
+	    OPCODE(o_invalid),
+	    /* 160 */
+	    OPCODE(oe2_ink),
+	    OPCODE(os1_screenTextBox),
+	    OPCODE(os1_screenTextMsg),
+	    OPCODE(os1_playEffect),
+	    /* 164 */
+	    OPCODE(oe2_getDollar2),
+	    OPCODE(oe2_isAdjNoun),
+	    OPCODE(oe2_b2Set),
+	    OPCODE(oe2_b2Clear),
+	    /* 168 */
+	    OPCODE(oe2_b2Zero),
+	    OPCODE(oe2_b2NotZero),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 172 */
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    OPCODE(oww_lockZones),
+	    /* 176 */
+	    OPCODE(oww_unlockZones),
+	    OPCODE(os2_screenTextPObj),
+	    OPCODE(os1_getPathPosn),
+	    OPCODE(os1_scnTxtLongText),
+	    /* 180 */
+	    OPCODE(os2_mouseOn),
+	    OPCODE(os2_mouseOff),
+	    OPCODE(o_invalid),
+	    OPCODE(o_invalid),
+	    /* 184 */
+	    OPCODE(os1_unloadZone),
+	    OPCODE(o_invalid),
+	    OPCODE(os1_unfreezeZones),
+	    OPCODE(o_invalid),
+	    /* 188 */
+	    OPCODE(os2_isShortText),
+	    OPCODE(os2_clearMarks),
+	    OPCODE(os2_waitMark),
 	};
 
 	_opcodesSimon2 = opcodes;
@@ -281,7 +279,7 @@ void AGOSEngine_Simon2::setupOpcodes() {
 
 void AGOSEngine_Simon2::executeOpcode(int opcode) {
 	OpcodeProcSimon2 op = _opcodesSimon2[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 // -----------------------------------------------------------------------
@@ -408,7 +406,6 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 			if (_speech)
 				playSpeech(speechId, vgaSpriteId);
 		}
-
 	}
 
 	if (subObject != NULL && subObject->objectFlags & kOFText && _subtitles) {
@@ -423,11 +420,11 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 				k = (j % 10) * 10;
 				k += j / 10;
 				if (!(j % 10))
-					sprintf(buf,"0%d%s", k, stringPtr);
+					sprintf(buf, "0%d%s", k, stringPtr);
 				else
-					sprintf(buf,"%d%s", k, stringPtr);
+					sprintf(buf, "%d%s", k, stringPtr);
 			} else {
-				sprintf(buf,"%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
+				sprintf(buf, "%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
 			}
 			stringPtr = buf;
 		}

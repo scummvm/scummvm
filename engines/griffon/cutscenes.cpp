@@ -40,98 +40,98 @@
 
 namespace Griffon {
 
-#define POLL_AND_CHECK_QUIT() 		if (g_system->getEventManager()->pollEvent(_event)) { \
-		if (_event.type == Common::EVENT_QUIT) { \
-			_shouldQuit = true; \
-			return; \
-		} \
+#define POLL_AND_CHECK_QUIT()                             \
+	if (g_system->getEventManager()->pollEvent(_event)) { \
+		if (_event.type == Common::EVENT_QUIT) {          \
+			_shouldQuit = true;                           \
+			return;                                       \
+		}                                                 \
 	}
 
-#define CHECK_QUIT() 		if (_event.type == Common::EVENT_QUIT) { \
-		_shouldQuit = true; \
-		return; \
+#define CHECK_QUIT()                         \
+	if (_event.type == Common::EVENT_QUIT) { \
+		_shouldQuit = true;                  \
+		return;                              \
 	}
 
 const char *story[48] = {
-	"The Griffon Legend",
-	"http://syn9.thehideoutgames.com/",
-	"",
-	"Programming/Graphics: Daniel Kennedy",
-	"Music/Sound effects: David Turner",
-	"",
-	"Porting to GCW-Zero: Dmitry Smagin",
-	"",
-	"",
-	"Story",
-	"Ever since I was a child",
-	"I remember being told the",
-	"Legend of the Griffon Knights,",
-	"who rid the world of the",
-	"Dragon Empire.  These great",
-	"heroes inspired us to become",
-	"knights as well.",
-	" ",
-	"Now, 500 years after the war",
-	"ended, the Dragons have",
-	"returned.  Cities are falling",
-	"from the lack of knights to",
-	"protect them.",
-	" ",
-	"We never saw it coming.",
-	" ",
-	"And now, here I am, making",
-	"my way into the lower town",
-	"of Fidelis, a small city on",
-	"the main continent. The rest",
-	"of my men have died over",
-	"the last couple days from",
-	"aerial attacks.",
-	" ",
-	"We believed we could find",
-	"shelter here, only to find",
-	"every last griffon dead,",
-	"the town burned to the ground,",
-	"and transformed into a garrison",
-	"for the Dragon forces.",
-	" ",
-	"In these dark times, I try to",
-	"draw strength from the stories",
-	"of those knights that risked",
-	"everything to protect their homeland,",
-	" ",
-	"and hope that I can die",
-	"with that honor as well."
-};
+    "The Griffon Legend",
+    "http://syn9.thehideoutgames.com/",
+    "",
+    "Programming/Graphics: Daniel Kennedy",
+    "Music/Sound effects: David Turner",
+    "",
+    "Porting to GCW-Zero: Dmitry Smagin",
+    "",
+    "",
+    "Story",
+    "Ever since I was a child",
+    "I remember being told the",
+    "Legend of the Griffon Knights,",
+    "who rid the world of the",
+    "Dragon Empire.  These great",
+    "heroes inspired us to become",
+    "knights as well.",
+    " ",
+    "Now, 500 years after the war",
+    "ended, the Dragons have",
+    "returned.  Cities are falling",
+    "from the lack of knights to",
+    "protect them.",
+    " ",
+    "We never saw it coming.",
+    " ",
+    "And now, here I am, making",
+    "my way into the lower town",
+    "of Fidelis, a small city on",
+    "the main continent. The rest",
+    "of my men have died over",
+    "the last couple days from",
+    "aerial attacks.",
+    " ",
+    "We believed we could find",
+    "shelter here, only to find",
+    "every last griffon dead,",
+    "the town burned to the ground,",
+    "and transformed into a garrison",
+    "for the Dragon forces.",
+    " ",
+    "In these dark times, I try to",
+    "draw strength from the stories",
+    "of those knights that risked",
+    "everything to protect their homeland,",
+    " ",
+    "and hope that I can die",
+    "with that honor as well."};
 
 const char *story2[27] = {
-	"After the fall of Margrave Gradius,",
-	"All the dragons, struck with panic,",
-	"evacuated the city immediately.",
-	" ",
-	"It\'s funny how without a leader",
-	"everyone is so weak.",
-	" ",
-	" ",
-	"But yet another leader will rise,",
-	"and another city will fall.",
-	" ",
-	" ",
-	"I should return home to Asherton",
-	"It\'s time to leave this place",
-	"and cleanse this blood stained",
-	"life of mine.",
-	" ",
-	"No one should have to see as much",
-	"death as I have.",
-	" ",
-	" ",
-	"Before, I said that I wanted",
-	"to die an honorable death.",
-	" ",
-	"Now I say that I have lived an",
-	"honorable life,",
-	"and I am free to die as I please."
-};
+    "After the fall of Margrave Gradius,",
+    "All the dragons, struck with panic,",
+    "evacuated the city immediately.",
+    " ",
+    "It\'s funny how without a leader",
+    "everyone is so weak.",
+    " ",
+    " ",
+    "But yet another leader will rise,",
+    "and another city will fall.",
+    " ",
+    " ",
+    "I should return home to Asherton",
+    "It\'s time to leave this place",
+    "and cleanse this blood stained",
+    "life of mine.",
+    " ",
+    "No one should have to see as much",
+    "death as I have.",
+    " ",
+    " ",
+    "Before, I said that I wanted",
+    "to die an honorable death.",
+    " ",
+    "Now I say that I have lived an",
+    "honorable life,",
+    "and I am free to die as I please."};
 
 void GriffonEngine::showLogos() {
 	_ticks = g_system->getMillis();
@@ -416,7 +416,6 @@ void GriffonEngine::endOfGame() {
 		g_system->delayMillis(10);
 	} while (1);
 
-
 	ticks1 = _ticks;
 	int y1 = 0;
 
@@ -455,7 +454,6 @@ void GriffonEngine::endOfGame() {
 			_fp = 0;
 		}
 	} while (1);
-
 
 	int keywait = 2000 + _ticks;
 
@@ -541,6 +539,5 @@ void GriffonEngine::theEnd() {
 		}
 	}
 }
-
 
 } // end of namespace Griffon

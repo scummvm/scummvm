@@ -28,7 +28,7 @@
 
 @class TextInputHandler;
 
-@interface SoftKeyboard : UIView<UITextViewDelegate> {
+@interface SoftKeyboard : UIView <UITextViewDelegate> {
 	id inputDelegate;
 	TextInputHandler *inputView;
 }

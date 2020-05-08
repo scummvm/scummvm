@@ -69,7 +69,7 @@ namespace TADS {
 
 /* Copies a struct into another.  ANSI C allows the assignment operator
  * to be used with structs. */
-#define OSCPYSTRUCT(x,y) ((x)=(y))
+#define OSCPYSTRUCT(x, y) ((x) = (y))
 
 /* Link error messages into the application. */
 #define ERR_LINK_MESSAGES
@@ -102,31 +102,31 @@ typedef Common::Stream osfildef;
 typedef Common::FSNode *osdirhdl_t;
 
 /* file type/mode bits */
-#define OSFMODE_FILE    S_IFREG
-#define OSFMODE_DIR     S_IFDIR
-#define OSFMODE_CHAR    S_IFCHR
-#define OSFMODE_BLK     S_IFBLK
-#define OSFMODE_PIPE    S_IFIFO
+#define OSFMODE_FILE S_IFREG
+#define OSFMODE_DIR S_IFDIR
+#define OSFMODE_CHAR S_IFCHR
+#define OSFMODE_BLK S_IFBLK
+#define OSFMODE_PIPE S_IFIFO
 #ifdef S_IFLNK
-#define OSFMODE_LINK    S_IFLNK
+#define OSFMODE_LINK S_IFLNK
 #else
-#define OSFMODE_LINK    0
+#define OSFMODE_LINK 0
 #endif
 #ifdef S_IFSOCK
-#define OSFMODE_SOCKET  S_IFSOCK
+#define OSFMODE_SOCKET S_IFSOCK
 #else
-#define OSFMODE_SOCKET  0
+#define OSFMODE_SOCKET 0
 #endif
 
 /* File attribute bits. */
-#define OSFATTR_HIDDEN  0x0001
-#define OSFATTR_SYSTEM  0x0002
-#define OSFATTR_READ    0x0004
-#define OSFATTR_WRITE   0x0008
+#define OSFATTR_HIDDEN 0x0001
+#define OSFATTR_SYSTEM 0x0002
+#define OSFATTR_READ 0x0004
+#define OSFATTR_WRITE 0x0008
 
 /* Get a file's stat() type. */
-int osfmode( const char* fname, int follow_links, unsigned long* mode,
-             unsigned long* attr );
+int osfmode(const char *fname, int follow_links, unsigned long *mode,
+            unsigned long *attr);
 
 #if 0
 /* The maximum width of a line of text.
@@ -154,7 +154,6 @@ int osfmode( const char* fname, int follow_links, unsigned long* mode,
 #define OSFSK_CUR SEEK_CUR /* Set position relative to the current file position. */
 #define OSFSK_END SEEK_END /* Set position relative to the end of the file. */
 
-
 /* ============= Functions follow ================ */
 
 /* Allocate a block of memory of the given size in bytes. */
@@ -177,11 +176,11 @@ int osfmode( const char* fname, int follow_links, unsigned long* mode,
  * We don't provide any kind of "compilation progress display", so we
  * just define this as an empty macro.
  */
-#define os_progress(fname,linenum)
+#define os_progress(fname, linenum)
 
- /* ============= File Access ================ */
+/* ============= File Access ================ */
 
- /*
+/*
  *   Test access to a file - i.e., determine if the file exists.  Returns
  *   zero if the file exists, non-zero if not.  (The semantics may seem
  *   backwards, but this is consistent with the conventions used by most of
@@ -192,8 +191,7 @@ int osfmode( const char* fname, int follow_links, unsigned long* mode,
  */
 int osfacc(const char *fname);
 
-
- /*
+/*
  *   Open text file for reading.  This opens the file with read-only access;
  *   we're not allowed to write to the file using this handle.  Returns NULL
  *   on error.
@@ -492,8 +490,7 @@ int os_rename_file(const char *oldname, const char *newname);
  *   if the file could not be found in any of the standard locations.  
  */
 bool os_locate(const char *fname, int flen, const char *arg0,
-              char *buf, size_t bufsiz);
-
+               char *buf, size_t bufsiz);
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -607,7 +604,6 @@ void os_get_tmp_path(char *buf);
  */
 int os_gen_temp_filename(char *buf, size_t buflen);
 
-
 /* ------------------------------------------------------------------------ */
 /*
 *   Basic directory/folder management routines
@@ -676,7 +672,6 @@ bool os_mkdir(const char *dir, int create_parents);
 *   directories, such as the Unix "." and ".." relative links.)
 */
 bool os_rmdir(const char *dir);
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -859,7 +854,7 @@ void os_get_path_name(char *pathbuf, size_t pathbuflen, const char *fname);
 *.   [home] + [.mjr]deep.gam -> [home.mjr]deep.gam
 */
 void os_build_full_path(char *fullpathbuf, size_t fullpathbuflen,
-	const char *path, const char *filename);
+                        const char *path, const char *filename);
 
 /*
 *   Combine a path and a filename to form a full path to the file.  This is
@@ -884,8 +879,7 @@ void os_build_full_path(char *fullpathbuf, size_t fullpathbuflen,
 *.    [home.mjr] + [-] -> [home.mjr.-]
 */
 void os_combine_paths(char *fullpathbuf, size_t pathbuflen,
-	const char *path, const char *filename);
-
+                      const char *path, const char *filename);
 
 /*
 *   Get the absolute, fully qualified filename for a file.  This fills in
@@ -921,7 +915,7 @@ void os_combine_paths(char *fullpathbuf, size_t pathbuflen,
 *   result buffer exactly as given, and returns false.
 */
 bool os_get_abs_filename(char *result_buf, size_t result_buf_size,
-	const char *filename);
+                         const char *filename);
 
 /*
 *   Get the relative version of the given filename path 'filename', relative
@@ -966,7 +960,7 @@ bool os_get_abs_filename(char *result_buf, size_t result_buf_size,
 *.    SYS$:[mjr.games] | DISK$:[mjr]deep.gam -> DISK$[mjr]deep.gam (ret false)
 */
 bool os_get_rel_path(char *result_buf, size_t result_buf_size,
-	const char *basepath, const char *filename);
+                     const char *basepath, const char *filename);
 
 /*
 *   Determine if the given file is in the given directory.  Returns true if
@@ -1008,9 +1002,7 @@ bool os_get_rel_path(char *result_buf, size_t result_buf_size,
 *   all symbolic links and relative notation before comparing the paths.
 */
 bool os_is_file_in_dir(const char *filename, const char *path,
-	bool include_subdirs, bool match_self);
-
-
+                       bool include_subdirs, bool match_self);
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -1193,7 +1185,6 @@ void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
  */
 void os_cvt_url_dir(char *result_buf, size_t result_buf_size,
                     const char *src_url);
-
 
 } // End of namespace TADS
 } // End of namespace Glk

@@ -36,49 +36,49 @@ namespace CryOmni3D {
 namespace Versailles {
 
 const Versailles_Documentation::TimelineEntry Versailles_Documentation::kTimelineEntries[] = {
-	{ "1638", 340,  15 },
-	{ "1643", 470,  30 },
-	{ "1648", 380,  45 },
-	{ "1649", 500,  60 },
-	{ "1650", 420,  75 },
-	{ "1651", 520,  90 },
-	{ "1652", 450, 105 },
-	{ "1654", 540, 120 },
-	{ "1658", 470, 135 },
-	{ "1659", 550, 150 },
-	{ "1660", 480, 165 },
-	{ "1661", 560, 180 },
-	{ "1662", 490, 195 },
-	{ "1663", 560, 210 },
-	{ "1664", 490, 225 },
-	{ "1665", 560, 240 },
-	{ "1666", 490, 255 },
-	{ "1667", 560, 270 },
-	{ "1668", 490, 285 },
-	{ "1670", 550, 300 },
-	{ "1671", 480, 315 },
-	{ "1672", 540, 330 },
-	{ "1673", 470, 345 },
-	{ "1674", 530, 360 },
-	{ "1675", 460, 375 },
-	{ "1678", 510, 390 },
-	{ "1680", 430, 405 },
-	{ "1681", 490, 420 },
-	{ "1682", 400, 435 },
-	{ "1683", 450, 450 },
-	{ "1684", 156, 444 },
-	{ "1685",  81, 439 },
-	{ "1686", 140, 422 },
-	{ "1687",  73, 413 },
-	{ "1689", 128, 401 },
-	{ "1697",  62, 389 },
-	{ "1700", 121, 378 },
-	{ "1701",  62, 366 },
-	{ "1702", 121, 355 },
-	{ "1709",  62, 344 },
-	{ "1710", 121, 333 },
-	{ "1712",  67, 322 },
-	{ "1715", 128, 311 },
+    {"1638", 340, 15},
+    {"1643", 470, 30},
+    {"1648", 380, 45},
+    {"1649", 500, 60},
+    {"1650", 420, 75},
+    {"1651", 520, 90},
+    {"1652", 450, 105},
+    {"1654", 540, 120},
+    {"1658", 470, 135},
+    {"1659", 550, 150},
+    {"1660", 480, 165},
+    {"1661", 560, 180},
+    {"1662", 490, 195},
+    {"1663", 560, 210},
+    {"1664", 490, 225},
+    {"1665", 560, 240},
+    {"1666", 490, 255},
+    {"1667", 560, 270},
+    {"1668", 490, 285},
+    {"1670", 550, 300},
+    {"1671", 480, 315},
+    {"1672", 540, 330},
+    {"1673", 470, 345},
+    {"1674", 530, 360},
+    {"1675", 460, 375},
+    {"1678", 510, 390},
+    {"1680", 430, 405},
+    {"1681", 490, 420},
+    {"1682", 400, 435},
+    {"1683", 450, 450},
+    {"1684", 156, 444},
+    {"1685", 81, 439},
+    {"1686", 140, 422},
+    {"1687", 73, 413},
+    {"1689", 128, 401},
+    {"1697", 62, 389},
+    {"1700", 121, 378},
+    {"1701", 62, 366},
+    {"1702", 121, 355},
+    {"1709", 62, 344},
+    {"1710", 121, 333},
+    {"1712", 67, 322},
+    {"1715", 128, 311},
 };
 
 void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontManager,
@@ -108,8 +108,8 @@ void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontMan
 	allDocs[allDocsSize] = '\0';
 	allDocsFile.close();
 
-	const char *patterns[] = { "FICH=", nullptr };
-	RecordInfo record = { uint(-1), uint(-1), uint(-1) };
+	const char *patterns[] = {"FICH=", nullptr};
+	RecordInfo record = {uint(-1), uint(-1), uint(-1)};
 
 	char *currentPos = allDocs;
 	char *lastRecordName = nullptr;
@@ -229,58 +229,56 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 		Graphics::Surface highlightedImg;
 
 		Category(const char *record_, const char *bmp_, const Common::Point &imgPos_,
-		         const Common::Rect &linesPos_, const Common::String *title_) :
-			record(record_), bmp(bmp_), imgPos(imgPos_), linesPos(linesPos_), title(title_) { }
+		         const Common::Rect &linesPos_, const Common::String *title_) : record(record_), bmp(bmp_), imgPos(imgPos_), linesPos(linesPos_), title(title_) {}
 	} categories[8] = {
-		Category(
-		    "VA00",
-		    "VA.bmp",
-		    Common::Point(142, 402),
-		    Common::Rect(174, 372, 284, 372),
-		    &(*_messages)[68]),
-		Category(
-		    "VR00",
-		    "VR.bmp",
-		    Common::Point(82, 187),
-		    Common::Rect(89, 187, 217, 212),
-		    &(*_messages)[69]),
-		Category(
-		    "VC00",
-		    "VC.bmp",
-		    Common::Point(176, 105),
-		    Common::Rect(177, 107, 292, 130),
-		    &(*_messages)[70]),
-		Category(
-		    "VT00",
-		    "VH.bmp", //sic
-		    Common::Point(283, 467),
-		    Common::Rect(311, 451, 466, 451),
-		    &(*_messages)[73]),
-		Category(
-		    "VV00",
-		    "VV.bmp",
-		    Common::Point(68, 305),
-		    Common::Rect(94, 292, 300, 292),
-		    &(*_messages)[71]),
-		Category(
-		    "VS00",
-		    "VS.bmp",
-		    Common::Point(321, 70),
-		    Common::Rect(322, 71, 540, 94),
-		    &(*_messages)[72]),
-		Category(
-		    nullptr,
-		    nullptr,
-		    Common::Point(256, 212),
-		    Common::Rect(),
-		    nullptr),
-		Category(
-		    nullptr,
-		    nullptr,
-		    Common::Point(600, 450),
-		    Common::Rect(),
-		    nullptr)
-	};
+	    Category(
+	        "VA00",
+	        "VA.bmp",
+	        Common::Point(142, 402),
+	        Common::Rect(174, 372, 284, 372),
+	        &(*_messages)[68]),
+	    Category(
+	        "VR00",
+	        "VR.bmp",
+	        Common::Point(82, 187),
+	        Common::Rect(89, 187, 217, 212),
+	        &(*_messages)[69]),
+	    Category(
+	        "VC00",
+	        "VC.bmp",
+	        Common::Point(176, 105),
+	        Common::Rect(177, 107, 292, 130),
+	        &(*_messages)[70]),
+	    Category(
+	        "VT00",
+	        "VH.bmp", //sic
+	        Common::Point(283, 467),
+	        Common::Rect(311, 451, 466, 451),
+	        &(*_messages)[73]),
+	    Category(
+	        "VV00",
+	        "VV.bmp",
+	        Common::Point(68, 305),
+	        Common::Rect(94, 292, 300, 292),
+	        &(*_messages)[71]),
+	    Category(
+	        "VS00",
+	        "VS.bmp",
+	        Common::Point(321, 70),
+	        Common::Rect(322, 71, 540, 94),
+	        &(*_messages)[72]),
+	    Category(
+	        nullptr,
+	        nullptr,
+	        Common::Point(256, 212),
+	        Common::Rect(),
+	        nullptr),
+	    Category(
+	        nullptr,
+	        nullptr,
+	        Common::Point(600, 450),
+	        Common::Rect(),
+	        nullptr)};
 	Image::BitmapDecoder bmpDecoder;
 	Common::File file;
 
@@ -346,7 +344,7 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 					foreColor = 241;
 					if (categories[hoveredBox].highlightedImg.getPixels() != nullptr) {
 						docSurface.transBlitFrom(categories[i].highlightedImg, categories[i].imgPos - Common::Point(36,
-						                         65));
+						                                                                                            65));
 					}
 				}
 				_fontManager->setForeColor(foreColor);
@@ -391,8 +389,7 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 					if (categories[hoveredBox].highlightedImg.getPixels() != nullptr) {
 						// Restore original icon
 						const Common::Point &imgPos = categories[hoveredBox].imgPos;
-						docSurface.blitFrom(*bgFrame, Common::Rect(
-						                        imgPos.x - 36, imgPos.y - 65, imgPos.x + 37, imgPos.y + 8),
+						docSurface.blitFrom(*bgFrame, Common::Rect(imgPos.x - 36, imgPos.y - 65, imgPos.x + 37, imgPos.y + 8),
 						                    Common::Point(imgPos.x - 36, imgPos.y - 65));
 					}
 					hoveredBox = uint(-1);
@@ -652,7 +649,7 @@ void Versailles_Documentation::docAreaPrepareNavigation() {
 			_currentMapLayout = true;
 		}
 		if ((id >= 16 && id <= 31) ||
-		        (id >= 35 && id <= 39)) {
+		    (id >= 35 && id <= 39)) {
 			_currentHasMap = true;
 		}
 	} else if (_currentRecord.hasPrefix("VT")) {
@@ -669,7 +666,7 @@ void Versailles_Documentation::docAreaPrepareNavigation() {
 }
 
 void Versailles_Documentation::docAreaPrepareRecord(Graphics::ManagedSurface &surface,
-        MouseBoxes &boxes) {
+                                                    MouseBoxes &boxes) {
 	boxes.reset();
 
 	setupRecordBoxes(true, boxes);
@@ -698,7 +695,7 @@ void Versailles_Documentation::docAreaPrepareRecord(Graphics::ManagedSurface &su
 }
 
 uint Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurface &surface,
-        MouseBoxes &boxes, Common::String &nextRecord) {
+                                                   MouseBoxes &boxes, Common::String &nextRecord) {
 	// Hovering is only handled for timeline entries
 	_engine->setCursor(181);
 	_engine->showMouse(true);
@@ -769,7 +766,7 @@ uint Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurface &sur
 				if (boxes.hitTest(2, mouse) && _currentLinks.size()) {
 					Common::StringArray items;
 					for (Common::Array<LinkInfo>::const_iterator it = _currentLinks.begin(); it != _currentLinks.end();
-					        it++) {
+					     it++) {
 						items.push_back(it->title);
 					}
 					Common::Rect iconRect = boxes.getBoxRect(2);
@@ -880,28 +877,25 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 		Graphics::Surface highlightedImg;
 
 		Area(const Common::Point &areaPos_, const char *bmp_, uint messageId_,
-		     const char *record_ = nullptr) :
-			areaPos(areaPos_.x, areaPos_.y, areaPos_.x, areaPos_.y), record(record_), bmp(bmp_),
-			messageId(messageId_), message(nullptr) { }
-		Area(const Common::Rect &areaPos_, uint messageId_, const char *record_ = nullptr) :
-			areaPos(areaPos_), record(record_), bmp(nullptr), messageId(messageId_), message(nullptr) { }
+		     const char *record_ = nullptr) : areaPos(areaPos_.x, areaPos_.y, areaPos_.x, areaPos_.y), record(record_), bmp(bmp_),
+		                                      messageId(messageId_), message(nullptr) {}
+		Area(const Common::Rect &areaPos_, uint messageId_, const char *record_ = nullptr) : areaPos(areaPos_), record(record_), bmp(nullptr), messageId(messageId_), message(nullptr) {}
 	} areas[] = {
-		Area(Common::Point(174, 181), "APL.bmp", 74),
-		Area(Common::Point(422, 129), "CHAT.bmp", 75, "VS00"),
-		Area(Common::Point(193, 204), "COLN.bmp", 76, "VS02"),
-		Area(Common::Point(327, 269), "LABY.bmp", 77, "VS33"),
-		Area(Common::Point(327, 170), "LATN.bmp", 78),
-		Area(Common::Point(396, 271), "ORG.bmp", 79, "VS32"),
-		Area(Common::Point(385, 203), "PART.bmp", 80, "VS06"),
-		Area(Common::Point(212, 193), "TAP.bmp", 81),
-		Area(Common::Rect(0, 194, 154, 211), 86, "VS09"),
-		Area(Common::Rect(396, 229, 450, 268), 87),
-		Area(Common::Rect(394, 133, 450, 177), 88),
-		Area(Common::Rect(489, 376, 592, 479), 89, "VS07"),
-		Area(Common::Rect(327, 233, 386, 266), 90),
-		Area(Common::Rect(395, 18, 451, 60), 91),
-		Area(Common::Rect(383, 381, 477, 479), 92)
-	};
+	    Area(Common::Point(174, 181), "APL.bmp", 74),
+	    Area(Common::Point(422, 129), "CHAT.bmp", 75, "VS00"),
+	    Area(Common::Point(193, 204), "COLN.bmp", 76, "VS02"),
+	    Area(Common::Point(327, 269), "LABY.bmp", 77, "VS33"),
+	    Area(Common::Point(327, 170), "LATN.bmp", 78),
+	    Area(Common::Point(396, 271), "ORG.bmp", 79, "VS32"),
+	    Area(Common::Point(385, 203), "PART.bmp", 80, "VS06"),
+	    Area(Common::Point(212, 193), "TAP.bmp", 81),
+	    Area(Common::Rect(0, 194, 154, 211), 86, "VS09"),
+	    Area(Common::Rect(396, 229, 450, 268), 87),
+	    Area(Common::Rect(394, 133, 450, 177), 88),
+	    Area(Common::Rect(489, 376, 592, 479), 89, "VS07"),
+	    Area(Common::Rect(327, 233, 386, 266), 90),
+	    Area(Common::Rect(395, 18, 451, 60), 91),
+	    Area(Common::Rect(383, 381, 477, 479), 92)};
 
 	_fontManager->setCurrentFont(0);
 	_fontManager->setTransparentBackground(true);
@@ -985,10 +979,10 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 				}
 				_fontManager->setForeColor(areas[hoveredBox].record == nullptr ? 243 : 240);
 				Graphics::Surface subSurface = mapSurface.getSubArea(Common::Rect(areas[hoveredBox].messagePos.x -
-				                               3,
-				                               areas[hoveredBox].messagePos.y - 3,
-				                               areas[hoveredBox].messagePos.x + _fontManager->getStrWidth(*areas[hoveredBox].message) + 3,
-				                               areas[hoveredBox].messagePos.y + _fontManager->getFontMaxHeight() + 8));
+				                                                                      3,
+				                                                                  areas[hoveredBox].messagePos.y - 3,
+				                                                                  areas[hoveredBox].messagePos.x + _fontManager->getStrWidth(*areas[hoveredBox].message) + 3,
+				                                                                  areas[hoveredBox].messagePos.y + _fontManager->getFontMaxHeight() + 8));
 				_engine->makeTranslucent(subSurface, subSurface);
 				_fontManager->displayStr(areas[hoveredBox].messagePos.x, areas[hoveredBox].messagePos.y,
 				                         *areas[hoveredBox].message);
@@ -1085,42 +1079,40 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 		Common::Rect areaPos2;
 
 		Area(const Common::Rect &areaPos_, const char *record_, bool fillArea_ = true,
-		     uint messageId_ = uint(-1)) :
-			areaPos(areaPos_), record(record_), fillArea(fillArea_), messageId(messageId_) { }
+		     uint messageId_ = uint(-1)) : areaPos(areaPos_), record(record_), fillArea(fillArea_), messageId(messageId_) {}
 		Area(const Common::Rect &areaPos_, const Common::Rect &areaPos1_,
 		     const Common::Rect &areaPos2_, const char *record_, bool fillArea_ = true,
-		     uint messageId_ = uint(-1)) :
-			areaPos(areaPos_), areaPos1(areaPos1_), areaPos2(areaPos2_),
-			record(record_), fillArea(fillArea_), messageId(messageId_) { }
+		     uint messageId_ = uint(-1)) : areaPos(areaPos_), areaPos1(areaPos1_), areaPos2(areaPos2_),
+		                                   record(record_), fillArea(fillArea_), messageId(messageId_) {}
 	} areas[] = {
-		/* 0 */
-		Area(Common::Rect(212, 134, 239, 164), "VS16"),
-		Area(Common::Rect(74, 160, 89, 173), "VS24"),
-		Area(Common::Rect(93, 160, 109, 173), "VS25"),
-		Area(Common::Rect(130, 160, 154, 173), "VS26"),
-		Area(Common::Rect(158, 160, 171, 173), "VS27"),
-		Area(Common::Rect(199, 160, 209, 171), "VS28"),
-		Area(Common::Rect(74, 177, 89, 291), "VS31"),
-		Area(Common::Rect(158, 178, 195, 193), "VS30"),
-		Area(Common::Rect(199, 175, 209, 188), "VS29"),
-		Area(Common::Rect(112, 220, 160, 249), "VS35"),
-		/* 10 */
-		Area(Common::Rect(93, 227, 106, 240), "VS23"),
-		Area(Common::Rect(93, 244, 106, 257), "VS22"),
-		Area(Common::Rect(93, 261, 106, 274), "VS20"),
-		Area(Common::Rect(110, 255, 126, 269), "VS19"),
-		Area(Common::Rect(133, 255, 155, 271), "VS18"),
-		Area(Common::Rect(93, 285, 99, 295), "VS21"),
-		Area(Common::Rect(152, 279, 173, 288), "VS17"),
-		Area(Common::Rect(336, 113, 359, 136), Common::Rect(359, 116, 448, 134), Common::Rect(449, 113, 473, 136), "VS36"),
-		Area(Common::Rect(336, 328, 359, 351), Common::Rect(359, 331, 448, 348), Common::Rect(449, 328, 473, 351), "VS36"),
-		Area(Common::Rect(563, 0, 624, 139), "planG", false, 82),
-		/* 20 */
-		Area(Common::Rect(563, 300, 624, 462), "planG", false, 83),
-		Area(Common::Rect(0, 0, 205, 152), "planG", false, 84),
-		Area(Common::Rect(0, 318, 205, 465), "planG", false, 84),
-		Area(Common::Rect(160, 210, 329, 267), "VS40", false),
-		Area(Common::Rect(330, 158, 561, 315), "planG", false, 85),
+	    /* 0 */
+	    Area(Common::Rect(212, 134, 239, 164), "VS16"),
+	    Area(Common::Rect(74, 160, 89, 173), "VS24"),
+	    Area(Common::Rect(93, 160, 109, 173), "VS25"),
+	    Area(Common::Rect(130, 160, 154, 173), "VS26"),
+	    Area(Common::Rect(158, 160, 171, 173), "VS27"),
+	    Area(Common::Rect(199, 160, 209, 171), "VS28"),
+	    Area(Common::Rect(74, 177, 89, 291), "VS31"),
+	    Area(Common::Rect(158, 178, 195, 193), "VS30"),
+	    Area(Common::Rect(199, 175, 209, 188), "VS29"),
+	    Area(Common::Rect(112, 220, 160, 249), "VS35"),
+	    /* 10 */
+	    Area(Common::Rect(93, 227, 106, 240), "VS23"),
+	    Area(Common::Rect(93, 244, 106, 257), "VS22"),
+	    Area(Common::Rect(93, 261, 106, 274), "VS20"),
+	    Area(Common::Rect(110, 255, 126, 269), "VS19"),
+	    Area(Common::Rect(133, 255, 155, 271), "VS18"),
+	    Area(Common::Rect(93, 285, 99, 295), "VS21"),
+	    Area(Common::Rect(152, 279, 173, 288), "VS17"),
+	    Area(Common::Rect(336, 113, 359, 136), Common::Rect(359, 116, 448, 134), Common::Rect(449, 113, 473, 136), "VS36"),
+	    Area(Common::Rect(336, 328, 359, 351), Common::Rect(359, 331, 448, 348), Common::Rect(449, 328, 473, 351), "VS36"),
+	    Area(Common::Rect(563, 0, 624, 139), "planG", false, 82),
+	    /* 20 */
+	    Area(Common::Rect(563, 300, 624, 462), "planG", false, 83),
+	    Area(Common::Rect(0, 0, 205, 152), "planG", false, 84),
+	    Area(Common::Rect(0, 318, 205, 465), "planG", false, 84),
+	    Area(Common::Rect(160, 210, 329, 267), "VS40", false),
+	    Area(Common::Rect(330, 158, 561, 315), "planG", false, 85),
 	};
 
 	_fontManager->setCurrentFont(0);
@@ -1318,7 +1310,7 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 }
 
 void Versailles_Documentation::inGamePrepareRecord(Graphics::ManagedSurface &surface,
-        MouseBoxes &boxes) {
+                                                   MouseBoxes &boxes) {
 	_categoryStartRecord = "";
 	_categoryEndRecord = "";
 	_categoryTitle = "";
@@ -1350,7 +1342,7 @@ void Versailles_Documentation::inGamePrepareRecord(Graphics::ManagedSurface &sur
 }
 
 uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surface,
-        MouseBoxes &boxes, Common::String &nextRecord) {
+                                                  MouseBoxes &boxes, Common::String &nextRecord) {
 	_engine->setCursor(181);
 	_engine->showMouse(true);
 
@@ -1372,7 +1364,7 @@ uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surf
 				if (boxes.hitTest(2, mouse) && _currentLinks.size()) {
 					Common::StringArray items;
 					for (Common::Array<LinkInfo>::const_iterator it = _currentLinks.begin(); it != _currentLinks.end();
-					        it++) {
+					     it++) {
 						items.push_back(it->title);
 					}
 					Common::Rect iconRect = boxes.getBoxRect(2);
@@ -1401,8 +1393,8 @@ uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surf
 }
 
 void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
-        const Common::String &text, const Common::String &title,
-        const Common::String &subtitle, const Common::String &caption) {
+                                              const Common::String &text, const Common::String &title,
+                                              const Common::String &subtitle, const Common::String &caption) {
 	unsigned char foreColor = 247;
 	Common::String background;
 	Common::Rect blockTitle;
@@ -1453,8 +1445,8 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 	}
 	// Fix of overlapping areas for Chinese and Japanese (as in original binary)
 	if ((_engine->getLanguage() == Common::JA_JPN ||
-	        _engine->getLanguage() == Common::ZH_TWN) &&
-	        !_currentMapLayout) {
+	     _engine->getLanguage() == Common::ZH_TWN) &&
+	    !_currentMapLayout) {
 		blockContent1.bottom += 30;
 		blockContent2.top += 30;
 	}
@@ -1490,8 +1482,8 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 	uint lineHeight = 21;
 
 	if (_engine->getLanguage() == Common::JA_JPN ||
-	        _engine->getLanguage() == Common::KO_KOR ||
-	        _engine->getLanguage() == Common::ZH_TWN) {
+	    _engine->getLanguage() == Common::KO_KOR ||
+	    _engine->getLanguage() == Common::ZH_TWN) {
 		_fontManager->setCurrentFont(8);
 	} else {
 		_fontManager->setCurrentFont(4);
@@ -1621,7 +1613,7 @@ void Versailles_Documentation::setupRecordBoxes(bool inDocArea, MouseBoxes &boxe
 }
 
 void Versailles_Documentation::drawRecordBoxes(Graphics::ManagedSurface &surface, bool inDocArea,
-        MouseBoxes &boxes) {
+                                               MouseBoxes &boxes) {
 	if (_visitTrace.size()) {
 		surface.transBlitFrom(_sprites->getSurface(105), boxes.getBoxOrigin(0), _sprites->getKeyColor(105));
 	}
@@ -1662,9 +1654,9 @@ void Versailles_Documentation::drawRecordBoxes(Graphics::ManagedSurface &surface
 }
 
 uint Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSurface
-        &originalSurface,
-        const Common::Point &anchor, bool rightAligned, uint itemHeight,
-        const Common::StringArray &items) {
+                                                   &originalSurface,
+                                               const Common::Point &anchor, bool rightAligned, uint itemHeight,
+                                               const Common::StringArray &items) {
 
 	uint maxTextWidth = 0;
 
@@ -1868,7 +1860,8 @@ char *Versailles_Documentation::getDocPartAddress(char *start, char *end, const 
 		char *eoa = foundPos;
 
 		// Find next '='
-		for (; eoa < end && *eoa != '\0' && *eoa != '='; eoa++) {}
+		for (; eoa < end && *eoa != '\0' && *eoa != '='; eoa++) {
+		}
 
 		if (eoa == end || *eoa == '\0') {
 			// This is the end of block or data has already been split
@@ -1876,23 +1869,27 @@ char *Versailles_Documentation::getDocPartAddress(char *start, char *end, const 
 		}
 
 		// Go back to start of line
-		for (; eoa != foundPos && *eoa != '\r'; eoa--) {}
+		for (; eoa != foundPos && *eoa != '\r'; eoa--) {
+		}
 		*eoa = '\0';
 	} else {
 		char *eol = foundPos;
-		for (; *eol != '\r' && *eol != '\0'; eol++) {}
+		for (; *eol != '\r' && *eol != '\0'; eol++) {
+		}
 		*eol = '\0';
 	}
 	return foundPos;
 }
 
 static bool hasEqualInLine(const char *text, const char *end) {
-	for (; text < end && *text && *text != '\r' && *text != '='; text++) { }
+	for (; text < end && *text && *text != '\r' && *text != '='; text++) {
+	}
 	return text < end && *text == '=';
 }
 
 static const char *nextLine(const char *text, const char *end) {
-	for (; text < end && *text && *text != '\r'; text++) { }
+	for (; text < end && *text && *text != '\r'; text++) {
+	}
 	return text < end ? text + 1 : end;
 }
 
@@ -1917,19 +1914,19 @@ const char *Versailles_Documentation::getDocTextAddress(char *start, char *end) 
 }
 
 const char *Versailles_Documentation::getRecordCaption(char *start, char *end) {
-	const char *patterns[] = { "LEGENDE=", "LEGENDE =", nullptr };
+	const char *patterns[] = {"LEGENDE=", "LEGENDE =", nullptr};
 	const char *ret = getDocPartAddress(start, end, patterns);
 	return ret;
 }
 
 const char *Versailles_Documentation::getRecordTitle(char *start, char *end) {
-	const char *patterns[] = { "TITRE=", "TITRE =", nullptr };
+	const char *patterns[] = {"TITRE=", "TITRE =", nullptr};
 	const char *ret = getDocPartAddress(start, end, patterns);
 	return ret;
 }
 
 const char *Versailles_Documentation::getRecordSubtitle(char *start, char *end) {
-	const char *patterns[] = { "SOUS-TITRE=", "SOUS_TITRE=", "SOUS-TITRE =", "SOUS_TITRE =", "SOUS TITRE=", nullptr };
+	const char *patterns[] = {"SOUS-TITRE=", "SOUS_TITRE=", "SOUS-TITRE =", "SOUS_TITRE =", "SOUS TITRE=", nullptr};
 	char *ret = getDocPartAddress(start, end, patterns);
 	if (!ret) {
 		return nullptr;
@@ -1937,7 +1934,8 @@ const char *Versailles_Documentation::getRecordSubtitle(char *start, char *end) 
 
 	uint ln = strlen(ret);
 	char *p = ret + ln + 1; // Got to end of line and check next line
-	for (; p < end && *p && *p != '\r' && *p != '=' ; p++) { }
+	for (; p < end && *p && *p != '\r' && *p != '='; p++) {
+	}
 	if (*p == '=') {
 		// Next line has a =, so it's not multiline
 		return ret;
@@ -1952,12 +1950,12 @@ const char *Versailles_Documentation::getRecordSubtitle(char *start, char *end) 
 }
 
 void Versailles_Documentation::getRecordHyperlinks(char *start, char *end,
-        Common::StringArray &hyperlinks) {
-	const char *const hyperlinksPatterns[] = { "SAVOIR-PLUS 1=", "SAVOIR-PLUS 2=", "SAVOIR-PLUS 3=" };
+                                                   Common::StringArray &hyperlinks) {
+	const char *const hyperlinksPatterns[] = {"SAVOIR-PLUS 1=", "SAVOIR-PLUS 2=", "SAVOIR-PLUS 3="};
 
 	hyperlinks.clear();
 	for (uint hyperlinkId = 0; hyperlinkId < ARRAYSIZE(hyperlinksPatterns); hyperlinkId++) {
-		const char *patterns[] = { hyperlinksPatterns[hyperlinkId], nullptr };
+		const char *patterns[] = {hyperlinksPatterns[hyperlinkId], nullptr};
 		const char *ret = getDocPartAddress(start, end, patterns);
 		if (ret) {
 			hyperlinks.push_back(ret);
@@ -1992,8 +1990,8 @@ Common::String Versailles_Documentation::getRecordTitle(const Common::String &re
 }
 
 Common::String Versailles_Documentation::getRecordData(const Common::String &record,
-        Common::String &title, Common::String &subtitle, Common::String &caption,
-        Common::StringArray &hyperlinks) {
+                                                       Common::String &title, Common::String &subtitle, Common::String &caption,
+                                                       Common::StringArray &hyperlinks) {
 	Common::HashMap<Common::String, RecordInfo>::iterator it = _records.find(record);
 	if (it == _records.end()) {
 		warning("Can't find %s record data", record.c_str());
@@ -2026,7 +2024,7 @@ Common::String Versailles_Documentation::getRecordData(const Common::String &rec
 
 	const char *textP = nullptr;
 	if (_multilineAttributes) {
-		const char *patterns[] = { "TEXTE=", "TEXT=", nullptr };
+		const char *patterns[] = {"TEXTE=", "TEXT=", nullptr};
 		textP = getDocPartAddress(recordData, recordDataEnd, patterns);
 	} else {
 		textP = getDocTextAddress(recordData, recordDataEnd);
@@ -2041,7 +2039,7 @@ Common::String Versailles_Documentation::getRecordData(const Common::String &rec
 }
 
 void Versailles_Documentation::convertHyperlinks(const Common::StringArray &hyperlinks,
-        Common::Array<LinkInfo> &links) {
+                                                 Common::Array<LinkInfo> &links) {
 	for (Common::StringArray::const_iterator it = hyperlinks.begin(); it != hyperlinks.end(); it++) {
 		LinkInfo link;
 		link.record = *it;
@@ -2083,7 +2081,8 @@ void Versailles_Documentation::getLinks(const Common::String &record,
 	}
 
 	const char *p = recordStart + pattern.size(); // Go beyond the record name
-	for (; *p != '\r' && *p != '\0'; p++) { } // Goto next line
+	for (; *p != '\r' && *p != '\0'; p++) {
+	} // Goto next line
 	if (!*p) {
 		return;
 	}
@@ -2093,12 +2092,14 @@ void Versailles_Documentation::getLinks(const Common::String &record,
 	while (!finished) {
 		if (!scumm_strnicmp(p, "REM=", 4)) {
 			// Comment: goto next line
-			for (; *p != '\r' && *p != '\0'; p++) { }
+			for (; *p != '\r' && *p != '\0'; p++) {
+			}
 		} else if (!scumm_strnicmp(p, "LIEN=", 5)) {
 			// Link: read it
 			const char *linkStart = p + 5;
 			const char *linkEnd = linkStart;
-			for (; *linkEnd != '\r' && *linkEnd != ' ' && *linkEnd != '\0'; linkEnd++) { }
+			for (; *linkEnd != '\r' && *linkEnd != ' ' && *linkEnd != '\0'; linkEnd++) {
+			}
 			LinkInfo link;
 			link.record = Common::String(linkStart, linkEnd);
 			link.record.toUppercase();
@@ -2106,7 +2107,8 @@ void Versailles_Documentation::getLinks(const Common::String &record,
 			links.push_back(link);
 			// Advance to end of link and finish the line
 			p = linkEnd;
-			for (; *p != '\r' && *p != '\0'; p++) { }
+			for (; *p != '\r' && *p != '\0'; p++) {
+			}
 			//debug("Link %s/%s", link.record.c_str(), link.title.c_str());
 		} else {
 			// Something else: we expect a blank line to continue, else we are on a new record

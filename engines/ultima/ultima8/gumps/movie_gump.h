@@ -55,6 +55,7 @@ public:
 	static ProcId U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack = false);
 
 	bool loadData(Common::ReadStream *rs);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 

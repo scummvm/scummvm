@@ -22,16 +22,16 @@
 
 #include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
 #include "common/endian.h"
-#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #define EUP_EVENT(x) _euphonyEvents.push_back(new EuphonyEvent(this, &EuphonyPlayer::event_##x))
 
 EuphonyPlayer::EuphonyPlayer(Audio::Mixer *mixer) : _partConfig_enable(0), _partConfig_type(0), _partConfig_ordr(0), _partConfig_volume(0),
-	_partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _pendingEventsChain(0), _tempoModifier(0), _bar(0),
-	_beat(0), _defaultBarLength(0), _barLength(0), _playerUpdatesLeft(0), _updatesPerPulseRemainder(0),	_updatesPerPulse(0),
-	_deltaTicks(0), _defaultTempo(0), _trackTempo(0), _tempoControlMode(0), _timerSetting(0), _tempoMode1PulseCounter(0),
-	_parseToBar(0), _tempoMode1UpdateF8(0), _loop(false), _endOfTrack(false), _paused(false), _musicTrackSize(0) {
+                                                    _partConfig_transpose(0), _musicPos(0), _musicStart(0), _playing(false), _pendingEventsChain(0), _tempoModifier(0), _bar(0),
+                                                    _beat(0), _defaultBarLength(0), _barLength(0), _playerUpdatesLeft(0), _updatesPerPulseRemainder(0), _updatesPerPulse(0),
+                                                    _deltaTicks(0), _defaultTempo(0), _trackTempo(0), _tempoControlMode(0), _timerSetting(0), _tempoMode1PulseCounter(0),
+                                                    _parseToBar(0), _tempoMode1UpdateF8(0), _loop(false), _endOfTrack(false), _paused(false), _musicTrackSize(0) {
 	EUP_EVENT(notImpl);
 	EUP_EVENT(noteOn);
 	EUP_EVENT(polyphonicAftertouch);
@@ -288,7 +288,7 @@ void EuphonyPlayer::updatePulseCounters() {
 }
 
 void EuphonyPlayer::updateBeat() {
-	static const uint16 beatLengthTable[] = { 0x180, 0xC0, 0x80, 0x60, 0x40, 0x30, 0x20, 0x18 };
+	static const uint16 beatLengthTable[] = {0x180, 0xC0, 0x80, 0x60, 0x40, 0x30, 0x20, 0x18};
 	uint8 beatsPersBar = (_barLength & 0x0f) + 1;
 	uint8 beatNoteValue = _barLength >> 4;
 
@@ -515,7 +515,7 @@ bool EuphonyPlayer::event_sysex() {
 	sendByte(type, 0xF0);
 	proceedToNextEvent();
 
-	for (bool loop = true; loop; ) {
+	for (bool loop = true; loop;) {
 		for (int i = 0; i < 6; i++) {
 			if (_musicPos[i] != 0xFF) {
 				sendByte(type, _musicPos[i]);
@@ -656,7 +656,6 @@ EuphonyDriver::~EuphonyDriver() {
 	delete[] _channels;
 }
 
-
 bool EuphonyDriver::init() {
 	if (!_intf->init())
 		return false;
@@ -735,7 +734,7 @@ void EuphonyDriver::send(uint8 command) {
 		uint8 cmd = (_currentEvent[0] - 0x80) >> 4;
 		_currentEvent.push_back(command);
 
-		static const uint8 eventSize[] = { 3, 3, 3, 3, 2, 2, 3 };
+		static const uint8 eventSize[] = {3, 3, 3, 3, 2, 2, 3};
 		if (_currentEvent.size() != eventSize[cmd])
 			return;
 

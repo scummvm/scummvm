@@ -23,9 +23,9 @@
  *
  */
 
+#include "pegasus/neighborhood/norad/alpha/panorama.h"
 #include "common/macresman.h"
 #include "common/stream.h"
-#include "pegasus/neighborhood/norad/alpha/panorama.h"
 
 namespace Pegasus {
 
@@ -158,7 +158,7 @@ void Panorama::drawPanorama(const Common::Rect &destRect) {
 //      _panoramaWorld is not allocated.
 //      _panoramaHeight, _stripWidth is correct.
 //      _panoramaMovie is allocated.
-void Panorama::makeNewSurface(const Common::Rect& view) {
+void Panorama::makeNewSurface(const Common::Rect &view) {
 	CoordType stripLeft, stripRight;
 	calcStripRange(view, stripLeft, stripRight);
 
@@ -194,7 +194,7 @@ void Panorama::loadStrips(CoordType stripLeft, CoordType stripRight) {
 
 		if (overlapLeft <= overlapRight) {
 			Common::Rect r1((overlapLeft - _stripLeft) * _stripWidth, 0,
-					(overlapRight - _stripLeft + 1) * _stripWidth, _panoramaHeight);
+			                (overlapRight - _stripLeft + 1) * _stripWidth, _panoramaHeight);
 
 			if (stripLeft < _stripLeft) {
 				Common::Rect bounds;

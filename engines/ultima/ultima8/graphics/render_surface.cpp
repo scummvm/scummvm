@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/soft_render_surface.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/screen.h"
+#include "ultima/ultima8/graphics/soft_render_surface.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -63,8 +63,10 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width, uint32 height, int bpp)
 
 	// Now create the SoftRenderSurface
 	RenderSurface *surf;
-	if (pixelFormat.bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(surface);
-	else surf = new SoftRenderSurface<uint16>(surface);
+	if (pixelFormat.bytesPerPixel == 4)
+		surf = new SoftRenderSurface<uint32>(surface);
+	else
+		surf = new SoftRenderSurface<uint16>(surface);
 
 	// Initialize gamma correction tables
 	for (int i = 0; i < 256; i++) {
@@ -81,8 +83,10 @@ RenderSurface *RenderSurface::CreateSecondaryRenderSurface(uint32 width, uint32 
 	RenderSurface *surf;
 
 	// TODO: Change this
-	if (_format.bytesPerPixel == 4) surf = new SoftRenderSurface<uint32>(width, height);
-	else surf = new SoftRenderSurface<uint16>(width, height);
+	if (_format.bytesPerPixel == 4)
+		surf = new SoftRenderSurface<uint32>(width, height);
+	else
+		surf = new SoftRenderSurface<uint16>(width, height);
 	return surf;
 }
 

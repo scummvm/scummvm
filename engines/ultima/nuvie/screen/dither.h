@@ -33,9 +33,9 @@ class Configuration;
 // Dither modes..
 
 #define DITHER_NONE 0
-#define DITHER_CGA  1
-#define DITHER_EGA  2
-#define DITHER_HRC  3 //FIXME add this mode.
+#define DITHER_CGA 1
+#define DITHER_EGA 2
+#define DITHER_HRC 3 //FIXME add this mode.
 
 class Dither {
 	Configuration *config;
@@ -43,7 +43,6 @@ class Dither {
 	uint8 mode;
 
 public:
-
 	Dither(Configuration *cfg);
 	~Dither();
 	uint8 get_mode() {
@@ -52,10 +51,8 @@ public:
 	bool dither_bitmap(unsigned char *src_buf, uint16 src_w, uint16 src_h, bool has_transparency);
 
 protected:
-
 	bool load_data();
 	void set_mode();
-
 };
 
 } // End of namespace Nuvie

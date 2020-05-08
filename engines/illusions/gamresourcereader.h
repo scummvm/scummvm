@@ -35,6 +35,7 @@ public:
 	ResourceReaderGamArchive(const char *filename);
 	~ResourceReaderGamArchive() override;
 	byte *readResource(uint32 sceneId, uint32 resId, uint32 &dataSize) override;
+
 protected:
 	GamArchive *_gamArchive;
 };

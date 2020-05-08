@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/util.h"
 #include "gui/widgets/scrollcontainer.h"
+#include "common/util.h"
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"
@@ -29,12 +29,12 @@
 namespace GUI {
 
 ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h, uint32 reflowCmd)
-	: Widget(boss, x, y, w, h), CommandSender(nullptr), _reflowCmd(reflowCmd) {
+    : Widget(boss, x, y, w, h), CommandSender(nullptr), _reflowCmd(reflowCmd) {
 	init();
 }
 
 ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogName, uint32 reflowCmd)
-	: Widget(boss, name), CommandSender(nullptr), _reflowCmd(reflowCmd), _dialogName(dialogName) {
+    : Widget(boss, name), CommandSender(nullptr), _reflowCmd(reflowCmd), _dialogName(dialogName) {
 	init();
 }
 
@@ -42,7 +42,7 @@ void ScrollContainerWidget::init() {
 	setFlags(WIDGET_ENABLED);
 	_type = kScrollContainerWidget;
 	_backgroundType = ThemeEngine::kWidgetBackgroundPlain;
-	_verticalScroll = new ScrollBarWidget(this, _w-16, 0, 16, _h);
+	_verticalScroll = new ScrollBarWidget(this, _w - 16, 0, 16, _h);
 	_verticalScroll->setTarget(this);
 	_scrolledX = 0;
 	_scrolledY = 0;
@@ -73,17 +73,18 @@ void ScrollContainerWidget::recalc() {
 	}
 	h = max - min;
 
-	if (h <= _limitH) _scrolledY = 0;
-	if (_scrolledY > h - _limitH) _scrolledY = 0;
+	if (h <= _limitH)
+		_scrolledY = 0;
+	if (_scrolledY > h - _limitH)
+		_scrolledY = 0;
 
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
 	_verticalScroll->_entriesPerPage = _limitH;
 	_verticalScroll->_singleStep = kLineHeight;
 	_verticalScroll->setPos(_w - scrollbarWidth, _scrolledY);
-	_verticalScroll->setSize(scrollbarWidth, _limitH-1);
+	_verticalScroll->setSize(scrollbarWidth, _limitH - 1);
 }
-
 
 ScrollContainerWidget::~ScrollContainerWidget() {}
 

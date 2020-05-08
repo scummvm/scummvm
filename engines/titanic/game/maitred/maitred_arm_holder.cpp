@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMaitreDArmHolder, CDropTarget)
-	ON_MESSAGE(MaitreDArmHolder)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(MaitreDArmHolder)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 void CMaitreDArmHolder::save(SimpleFile *file, int indent) {

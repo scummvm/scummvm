@@ -24,9 +24,9 @@
 #define SCI_ENGINE_SCRIPT_H
 
 #include "common/str.h"
-#include "sci/util.h"
-#include "sci/engine/segment.h"
 #include "sci/engine/script_patches.h"
+#include "sci/engine/segment.h"
+#include "sci/util.h"
 
 namespace Sci {
 
@@ -61,27 +61,27 @@ enum {
 };
 
 struct offsetLookupArrayEntry {
-	uint16    type;       // type of entry
-	uint16    id;         // id of this type, first item inside script data is 1, second item is 2, etc.
-	uint32    offset;     // offset of entry within script resource data
-	uint16    stringSize; // size of string, including terminating [NUL]
+	uint16 type;       // type of entry
+	uint16 id;         // id of this type, first item inside script data is 1, second item is 2, etc.
+	uint32 offset;     // offset of entry within script resource data
+	uint16 stringSize; // size of string, including terminating [NUL]
 };
 
 typedef Common::Array<offsetLookupArrayEntry> offsetLookupArrayType;
 
 class Script : public SegmentObj {
 private:
-	int _nr; /**< Script number */
-	Common::SpanOwner<SciSpan<byte> > _buf; /**< Static data buffer, or NULL if not used */
-	SciSpan<byte> _script; /**< Script size includes alignment byte */
-	SciSpan<byte> _heap; /**< Start of heap if SCI1.1, NULL otherwise */
+	int _nr;                               /**< Script number */
+	Common::SpanOwner<SciSpan<byte>> _buf; /**< Static data buffer, or NULL if not used */
+	SciSpan<byte> _script;                 /**< Script size includes alignment byte */
+	SciSpan<byte> _heap;                   /**< Start of heap if SCI1.1, NULL otherwise */
 
 	int _lockers; /**< Number of classes and objects that require this script */
 
 	SciSpan<const uint16> _exports; /**< Exports block or 0 if not present */
-	uint16 _numExports; /**< Number of export entries */
-	SciSpan<const byte> _synonyms; /**< Synonyms block or 0 if not present */
-	uint16 _numSynonyms; /**< Number of synonym entries */
+	uint16 _numExports;             /**< Number of export entries */
+	SciSpan<const byte> _synonyms;  /**< Synonyms block or 0 if not present */
+	uint16 _numSynonyms;            /**< Number of synonym entries */
 
 	int _codeOffset; /**< The absolute offset of the VM code block */
 
@@ -92,7 +92,7 @@ private:
 	SegmentId _localsSegment; /**< The local variable segment */
 	LocalVariables *_localsBlock;
 
-	ObjMap _objects;	/**< Table for objects, contains property variables */
+	ObjMap _objects; /**< Table for objects, contains property variables */
 
 protected:
 	offsetLookupArrayType _offsetLookupArray; // Table of all elements of currently loaded script, that may get pointed to

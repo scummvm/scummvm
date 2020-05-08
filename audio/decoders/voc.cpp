@@ -22,10 +22,10 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/util.h"
+#include "common/list.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "common/list.h"
+#include "common/util.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
@@ -90,6 +90,7 @@ public:
 	virtual bool seek(const Timestamp &where);
 
 	virtual Timestamp getLength() const { return _length; }
+
 private:
 	void preProcess();
 
@@ -152,8 +153,8 @@ private:
 };
 
 VocStream::VocStream(Common::SeekableReadStream *stream, bool isUnsigned, DisposeAfterUse::Flag disposeAfterUse)
-	: _stream(stream), _disposeAfterUse(disposeAfterUse), _isUnsigned(isUnsigned), _rate(0),
-	  _length(), _blocks(), _curBlock(_blocks.end()), _blockLeft(0), _buffer() {
+    : _stream(stream), _disposeAfterUse(disposeAfterUse), _isUnsigned(isUnsigned), _rate(0),
+      _length(), _blocks(), _curBlock(_blocks.end()), _blockLeft(0), _buffer() {
 	preProcess();
 }
 
@@ -411,7 +412,7 @@ void VocStream::preProcess() {
 					warning("Unhandled codec %d in VOC file", codec);
 					return;
 				}
-				/*uint32 reserved = */_stream->readUint32LE();
+				/*uint32 reserved = */ _stream->readUint32LE();
 				block.sampleBlock.offset = _stream->pos();
 				block.sampleBlock.samples = skip = block.length - 12;
 			}
@@ -438,7 +439,7 @@ void VocStream::preProcess() {
 				return;
 			}
 			block.sampleBlock.rate = getSampleRateFromVOCRate(freqDiv);
-			} break;
+		} break;
 
 		// Repeat start
 		case 6:
@@ -483,7 +484,7 @@ void VocStream::preProcess() {
 			block.sampleBlock.offset = 0;
 			block.sampleBlock.samples = 0;
 			block.sampleBlock.rate = 256000000L / (65536L - freqDiv);
-			} break;
+		} break;
 
 		default:
 			warning("Unhandled code %d in VOC file (len %d)", block.code, block.length);

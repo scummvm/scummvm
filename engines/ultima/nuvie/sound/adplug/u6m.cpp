@@ -20,9 +20,9 @@
  *
  */
 
+#include "ultima/nuvie/sound/adplug/u6m.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/sound/adplug/u6m.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -46,7 +46,6 @@ bool Cu6mPlayer::load(const Std::string &filename) {
 	return (true);
 }
 
-
 bool Cu6mPlayer::update() {
 	if (!driver_active) {
 		driver_active = true;
@@ -58,7 +57,7 @@ bool Cu6mPlayer::update() {
 		// on all Adlib channels: freq slide/vibrato, mute factor slide
 		for (int i = 0; i < 9; i++) {
 			if (channel_freq_signed_delta[i] != 0)
-				// frequency slide + mute factor slide
+			// frequency slide + mute factor slide
 			{
 				// freq slide
 				freq_slide(i);
@@ -68,7 +67,7 @@ bool Cu6mPlayer::update() {
 					mf_slide(i);
 				}
 			} else
-				// vibrato + mute factor slide
+			// vibrato + mute factor slide
 			{
 				// vibrato
 				if ((vb_multiplier[i] != 0) && ((channel_freq[i].hi & 0x20) == 0x20)) {
@@ -88,7 +87,6 @@ bool Cu6mPlayer::update() {
 	return !songend;
 }
 
-
 void Cu6mPlayer::rewind(int subsong) {
 	played_ticks = 0;
 	songend = false;
@@ -98,13 +96,13 @@ void Cu6mPlayer::rewind(int subsong) {
 
 	driver_active = false;
 	song_pos = 0;
-	loop_position = 0;   // position of the loop point
-	read_delay = 0;      // delay (in timer ticks) before further song data is read
+	loop_position = 0; // position of the loop point
+	read_delay = 0;    // delay (in timer ticks) before further song data is read
 
 	for (int i = 0; i < 9; i++) {
 		// frequency
 		channel_freq_signed_delta[i] = 0;
-		channel_freq[i] = freq_word;  // Adlib freq settings for each channel
+		channel_freq[i] = freq_word; // Adlib freq settings for each channel
 
 		// vibrato ("vb")
 		vb_current_value[i] = 0;
@@ -119,16 +117,15 @@ void Cu6mPlayer::rewind(int subsong) {
 		carrier_mf_mod_delay[i] = 0;
 	}
 
-	while (!subsong_stack.empty())      // empty subsong stack
+	while (!subsong_stack.empty()) // empty subsong stack
 		subsong_stack.pop();
 
 	opl->init();
-	out_adlib(1, 32);   // go to OPL2 mode
+	out_adlib(1, 32); // go to OPL2 mode
 }
 
-
 float Cu6mPlayer::getrefresh() {
-	return ((float)60);   // the Ultima 6 music driver expects to be called at 60 Hz
+	return ((float)60); // the Ultima 6 music driver expects to be called at 60 Hz
 }
 
 // ============================================================================================
@@ -139,17 +136,16 @@ float Cu6mPlayer::getrefresh() {
 //
 // ============================================================================================
 
-
 // This function reads the song data and executes the embedded commands.
 void Cu6mPlayer::command_loop() {
-	unsigned char command_byte;   // current command byte
-	int command_nibble_hi;        // command byte, bits 4-7
-	int command_nibble_lo;        // command byte, bite 0-3
-	bool repeat_loop = true;      //
+	unsigned char command_byte; // current command byte
+	int command_nibble_hi;      // command byte, bits 4-7
+	int command_nibble_lo;      // command byte, bite 0-3
+	bool repeat_loop = true;    //
 
 	do {
 		// extract low and high command nibbles
-		command_byte = read_song_byte();   // implicitly increments song_pos
+		command_byte = read_song_byte(); // implicitly increments song_pos
 		command_nibble_hi = command_byte >> 4;
 		command_nibble_lo = command_byte & 0xf;
 
@@ -213,7 +209,6 @@ void Cu6mPlayer::command_loop() {
 	} while (repeat_loop);
 }
 
-
 // --------------------------------------------------------
 //    The commands supported by the U6 music file format
 // --------------------------------------------------------
@@ -231,7 +226,6 @@ void Cu6mPlayer::command_0(int channel) {
 	freq_word = expand_freq_byte(freq_byte);
 	set_adlib_freq(channel, freq_word);
 }
-
 
 // ---------------------------------------------------
 // Set octave and frequency, old note off, new note on
@@ -253,7 +247,6 @@ void Cu6mPlayer::command_1(int channel) {
 	set_adlib_freq(channel, freq_word);
 }
 
-
 // ----------------------------------------
 // Set octave and frequency, note on
 // Format: 2c nn
@@ -269,7 +262,6 @@ void Cu6mPlayer::command_2(int channel) {
 	set_adlib_freq(channel, freq_word);
 }
 
-
 // --------------------------------------
 // Set "carrier mute factor"==not(volume)
 // Format: 3c nn
@@ -283,7 +275,6 @@ void Cu6mPlayer::command_3(int channel) {
 	set_carrier_mf(channel, mf_byte);
 }
 
-
 // ----------------------------------------
 // set "modulator mute factor"==not(volume)
 // Format: 4c nn
@@ -296,7 +287,6 @@ void Cu6mPlayer::command_4(int channel) {
 	set_modulator_mf(channel, mf_byte);
 }
 
-
 // --------------------------------------------
 // Set portamento (pitch slide)
 // Format: 5c nn
@@ -305,7 +295,6 @@ void Cu6mPlayer::command_4(int channel) {
 void Cu6mPlayer::command_5(int channel) {
 	channel_freq_signed_delta[channel] = read_signed_song_byte();
 }
-
 
 // --------------------------------------------
 // Set vibrato paramters
@@ -319,9 +308,8 @@ void Cu6mPlayer::command_6(int channel) {
 
 	vb_parameters = read_song_byte();
 	vb_double_amplitude[channel] = vb_parameters >> 4; // high nibble
-	vb_multiplier[channel] = vb_parameters & 0xF; // low nibble
+	vb_multiplier[channel] = vb_parameters & 0xF;      // low nibble
 }
-
 
 // ----------------------------------------
 // Assign Adlib instrument to Adlib channel
@@ -343,7 +331,6 @@ void Cu6mPlayer::command_7(int channel) {
 	out_adlib(0xC0 + channel, *(song_data + instrument_offset + 10));
 }
 
-
 // -------------------------------------------
 // Branch to a new subsong
 // Format: 81 nn aa bb
@@ -363,7 +350,6 @@ void Cu6mPlayer::command_81() {
 	song_pos = new_ss_info.subsong_start;
 }
 
-
 // ------------------------------------------------------------
 // Stop interpreting commands for this timer tick
 // Format: 82 nn
@@ -372,7 +358,6 @@ void Cu6mPlayer::command_81() {
 void Cu6mPlayer::command_82() {
 	read_delay = read_song_byte();
 }
-
 
 // -----------------------------
 // Adlib instrument data follows
@@ -385,7 +370,6 @@ void Cu6mPlayer::command_83() {
 	song_pos += 11;
 }
 
-
 // ----------------------------------------------
 // Set -1 mute factor slide (upward volume slide)
 // Format: 85 cn
@@ -394,13 +378,12 @@ void Cu6mPlayer::command_83() {
 // ----------------------------------------------
 void Cu6mPlayer::command_85() {
 	unsigned char data_byte = read_song_byte();
-	int channel = data_byte >> 4; // high nibble
+	int channel = data_byte >> 4;                // high nibble
 	unsigned char slide_delay = data_byte & 0xF; // low nibble
 	carrier_mf_signed_delta[channel] = +1;
 	carrier_mf_mod_delay[channel] = slide_delay + 1;
 	carrier_mf_mod_delay_backup[channel] = slide_delay + 1;
 }
-
 
 // ------------------------------------------------
 // Set +1 mute factor slide (downward volume slide)
@@ -410,13 +393,12 @@ void Cu6mPlayer::command_85() {
 // ------------------------------------------------
 void Cu6mPlayer::command_86() {
 	unsigned char data_byte = read_song_byte();
-	int channel = data_byte >> 4; // high nibble
+	int channel = data_byte >> 4;                // high nibble
 	unsigned char slide_delay = data_byte & 0xF; // low nibble
 	carrier_mf_signed_delta[channel] = -1;
 	carrier_mf_mod_delay[channel] = slide_delay + 1;
 	carrier_mf_mod_delay_backup[channel] = slide_delay + 1;
 }
-
 
 // --------------
 // Set loop point
@@ -425,7 +407,6 @@ void Cu6mPlayer::command_86() {
 void Cu6mPlayer::command_E() {
 	loop_position = song_pos;
 }
-
 
 // ---------------------------
 // Return from current subsong
@@ -448,7 +429,6 @@ void Cu6mPlayer::command_F() {
 	}
 }
 
-
 // --------------------
 // Additional functions
 // --------------------
@@ -461,7 +441,6 @@ void Cu6mPlayer::dec_clip(int &param) {
 	}
 }
 
-
 // Returns the byte at the current song position.
 // Side effect: increments song_pos.
 unsigned char Cu6mPlayer::read_song_byte() {
@@ -470,7 +449,6 @@ unsigned char Cu6mPlayer::read_song_byte() {
 	song_pos++;
 	return (song_byte);
 }
-
 
 // Same as read_song_byte(), except that it returns a signed byte
 signed char Cu6mPlayer::read_signed_song_byte() {
@@ -486,16 +464,9 @@ signed char Cu6mPlayer::read_signed_song_byte() {
 	return ((signed char)signed_value);
 }
 
-
 Cu6mPlayer::byte_pair Cu6mPlayer::expand_freq_byte(unsigned char freq_byte) {
 	const byte_pair freq_table[24] = {
-		{0x00, 0x00}, {0x58, 0x01}, {0x82, 0x01}, {0xB0, 0x01},
-		{0xCC, 0x01}, {0x03, 0x02}, {0x41, 0x02}, {0x86, 0x02},
-		{0x00, 0x00}, {0x6A, 0x01}, {0x96, 0x01}, {0xC7, 0x01},
-		{0xE4, 0x01}, {0x1E, 0x02}, {0x5F, 0x02}, {0xA8, 0x02},
-		{0x00, 0x00}, {0x47, 0x01}, {0x6E, 0x01}, {0x9A, 0x01},
-		{0xB5, 0x01}, {0xE9, 0x01}, {0x24, 0x02}, {0x66, 0x02}
-	};
+	    {0x00, 0x00}, {0x58, 0x01}, {0x82, 0x01}, {0xB0, 0x01}, {0xCC, 0x01}, {0x03, 0x02}, {0x41, 0x02}, {0x86, 0x02}, {0x00, 0x00}, {0x6A, 0x01}, {0x96, 0x01}, {0xC7, 0x01}, {0xE4, 0x01}, {0x1E, 0x02}, {0x5F, 0x02}, {0xA8, 0x02}, {0x00, 0x00}, {0x47, 0x01}, {0x6E, 0x01}, {0x9A, 0x01}, {0xB5, 0x01}, {0xE9, 0x01}, {0x24, 0x02}, {0x66, 0x02}};
 
 	int packed_freq;
 	int octave;
@@ -515,7 +486,6 @@ Cu6mPlayer::byte_pair Cu6mPlayer::expand_freq_byte(unsigned char freq_byte) {
 	return (freq_word);
 }
 
-
 void Cu6mPlayer::set_adlib_freq(int channel, Cu6mPlayer::byte_pair freq_word) {
 	out_adlib(0xA0 + channel, freq_word.lo);
 	out_adlib(0xB0 + channel, freq_word.hi);
@@ -523,24 +493,20 @@ void Cu6mPlayer::set_adlib_freq(int channel, Cu6mPlayer::byte_pair freq_word) {
 	channel_freq[channel] = freq_word;
 }
 
-
 // this function sets the Adlib frequency, but does not update the register backups
 void Cu6mPlayer::set_adlib_freq_no_update(int channel, Cu6mPlayer::byte_pair freq_word) {
 	out_adlib(0xA0 + channel, freq_word.lo);
 	out_adlib(0xB0 + channel, freq_word.hi);
 }
 
-
 void Cu6mPlayer::set_carrier_mf(int channel, unsigned char mute_factor) {
 	out_adlib_opcell(channel, true, 0x40, mute_factor);
 	carrier_mf[channel] = mute_factor;
 }
 
-
 void Cu6mPlayer::set_modulator_mf(int channel, unsigned char mute_factor) {
 	out_adlib_opcell(channel, false, 0x40, mute_factor);
 }
-
 
 void Cu6mPlayer::freq_slide(int channel) {
 	byte_pair freq = channel_freq[channel];
@@ -558,7 +524,6 @@ void Cu6mPlayer::freq_slide(int channel) {
 	set_adlib_freq(channel, freq);
 }
 
-
 void Cu6mPlayer::vibrato(int channel) {
 	byte_pair freq;
 
@@ -575,8 +540,7 @@ void Cu6mPlayer::vibrato(int channel) {
 	}
 
 	long freq_word = channel_freq[channel].lo + (channel_freq[channel].hi << 8);
-	freq_word += (vb_current_value[channel] - (vb_double_amplitude[channel] >> 1))
-	             * vb_multiplier[channel];
+	freq_word += (vb_current_value[channel] - (vb_double_amplitude[channel] >> 1)) * vb_multiplier[channel];
 	if (freq_word < 0) {
 		freq_word += 0x10000;
 	}
@@ -588,7 +552,6 @@ void Cu6mPlayer::vibrato(int channel) {
 	freq.hi = (freq_word >> 8) & 0xFF;
 	set_adlib_freq_no_update(channel, freq);
 }
-
 
 void Cu6mPlayer::mf_slide(int channel) {
 	carrier_mf_mod_delay[channel]--;
@@ -607,17 +570,15 @@ void Cu6mPlayer::mf_slide(int channel) {
 	}
 }
 
-
 void Cu6mPlayer::out_adlib(unsigned char adlib_register, unsigned char adlib_data) {
 	opl->write(adlib_register, adlib_data);
 }
 
-
 void Cu6mPlayer::out_adlib_opcell(int channel, bool carrier, unsigned char adlib_register, unsigned char out_byte) {
 	const unsigned char adlib_channel_to_carrier_offset[9] =
-	{0x03, 0x04, 0x05, 0x0B, 0x0C, 0x0D, 0x13, 0x14, 0x15};
+	    {0x03, 0x04, 0x05, 0x0B, 0x0C, 0x0D, 0x13, 0x14, 0x15};
 	const unsigned char adlib_channel_to_modulator_offset[9] =
-	{0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11, 0x12};
+	    {0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11, 0x12};
 
 	if (carrier) {
 		out_adlib(adlib_register + adlib_channel_to_carrier_offset[channel], out_byte);

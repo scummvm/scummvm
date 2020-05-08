@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/ptr.h"
 #include "common/stream.h"
 #include "common/memstream.h"
-#include "common/substream.h"
+#include "common/ptr.h"
 #include "common/str.h"
+#include "common/substream.h"
 
 namespace Common {
 
@@ -216,9 +216,9 @@ uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
 }
 
 SeekableSubReadStream::SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream)
-	: SubReadStream(parentStream, end, disposeParentStream),
-	_parentStream(parentStream),
-	_begin(begin) {
+    : SubReadStream(parentStream, end, disposeParentStream),
+      _parentStream(parentStream),
+      _begin(begin) {
 	assert(_begin <= _end);
 	_pos = _begin;
 	_parentStream->seek(_pos);
@@ -246,7 +246,8 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 	assert(_pos <= _end);
 
 	bool ret = _parentStream->seek(_pos);
-	if (ret) _eos = false; // reset eos on successful seek
+	if (ret)
+		_eos = false; // reset eos on successful seek
 
 	return ret;
 }
@@ -296,17 +297,20 @@ public:
 
 	virtual bool eos() const { return _eos; }
 	virtual bool err() const { return _parentStream->err(); }
-	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
+	virtual void clearErr() {
+		_eos = false;
+		_parentStream->clearErr();
+	}
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 
 BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
-	: _parentStream(parentStream, disposeParentStream),
-	_pos(0),
-	_eos(false),
-	_bufSize(0),
-	_realBufSize(bufSize) {
+    : _parentStream(parentStream, disposeParentStream),
+      _pos(0),
+      _eos(false),
+      _bufSize(0),
+      _realBufSize(bufSize) {
 
 	assert(parentStream);
 	_buf = new byte[bufSize];
@@ -375,7 +379,6 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 
 } // End of anonymous namespace
 
-
 ReadStream *wrapBufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
 	if (parentStream)
 		return new BufferedReadStream(parentStream, bufSize, disposeParentStream);
@@ -393,6 +396,7 @@ namespace {
 class BufferedSeekableReadStream : public BufferedReadStream, public SeekableReadStream {
 protected:
 	SeekableReadStream *_parentStream;
+
 public:
 	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 
@@ -403,8 +407,8 @@ public:
 };
 
 BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
-	: BufferedReadStream(parentStream, bufSize, disposeParentStream),
-	_parentStream(parentStream) {
+    : BufferedReadStream(parentStream, bufSize, disposeParentStream),
+      _parentStream(parentStream) {
 }
 
 bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
@@ -493,9 +497,9 @@ protected:
 
 public:
 	BufferedWriteStream(WriteStream *parentStream, uint32 bufSize)
-		: _parentStream(parentStream),
-		_pos(0),
-		_bufSize(bufSize) {
+	    : _parentStream(parentStream),
+	      _pos(0),
+	      _bufSize(bufSize) {
 
 		assert(parentStream);
 		_buf = new byte[bufSize];
@@ -516,12 +520,12 @@ public:
 		if (_bufSize - _pos >= dataSize) {
 			memcpy(_buf + _pos, dataPtr, dataSize);
 			_pos += dataSize;
-		} else if (_bufSize >= dataSize) {	// check if we can flush the buffer and load the data
+		} else if (_bufSize >= dataSize) { // check if we can flush the buffer and load the data
 			const bool flushResult = flushBuffer();
 			assert(flushResult);
 			memcpy(_buf, dataPtr, dataSize);
 			_pos += dataSize;
-		} else	{	// too big for our buffer
+		} else { // too big for our buffer
 			const bool flushResult = flushBuffer();
 			assert(flushResult);
 			return _parentStream->write(dataPtr, dataSize);
@@ -532,7 +536,6 @@ public:
 	virtual bool flush() { return flushBuffer(); }
 
 	virtual int32 pos() const { return _pos; }
-
 };
 
 } // End of anonymous namespace

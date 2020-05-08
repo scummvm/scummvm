@@ -38,6 +38,7 @@ protected:
 	int _saveSlot;
 
 	void saveData(Common::WriteStream *ws) override;
+
 public:
 	StartU8Process(int saveSlot = -1);
 

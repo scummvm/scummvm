@@ -134,19 +134,19 @@ void LA32WaveGenerator::advancePosition() {
 void LA32WaveGenerator::generateNextSquareWaveLogSample() {
 	Bit32u logSampleValue;
 	switch (phase) {
-		case POSITIVE_RISING_SINE_SEGMENT:
-		case NEGATIVE_FALLING_SINE_SEGMENT:
-			logSampleValue = Tables::getInstance().logsin9[(squareWavePosition >> 9) & 511];
-			break;
-		case POSITIVE_FALLING_SINE_SEGMENT:
-		case NEGATIVE_RISING_SINE_SEGMENT:
-			logSampleValue = Tables::getInstance().logsin9[~(squareWavePosition >> 9) & 511];
-			break;
-		case POSITIVE_LINEAR_SEGMENT:
-		case NEGATIVE_LINEAR_SEGMENT:
-		default:
-			logSampleValue = 0;
-			break;
+	case POSITIVE_RISING_SINE_SEGMENT:
+	case NEGATIVE_FALLING_SINE_SEGMENT:
+		logSampleValue = Tables::getInstance().logsin9[(squareWavePosition >> 9) & 511];
+		break;
+	case POSITIVE_FALLING_SINE_SEGMENT:
+	case NEGATIVE_RISING_SINE_SEGMENT:
+		logSampleValue = Tables::getInstance().logsin9[~(squareWavePosition >> 9) & 511];
+		break;
+	case POSITIVE_LINEAR_SEGMENT:
+	case NEGATIVE_LINEAR_SEGMENT:
+	default:
+		logSampleValue = 0;
+		break;
 	}
 	logSampleValue <<= 2;
 	logSampleValue += amp >> 10;
@@ -273,7 +273,7 @@ void LA32WaveGenerator::initSynth(const bool useSawtoothWaveform, const Bit8u us
 	active = true;
 }
 
-void LA32WaveGenerator::initPCM(const Bit16s * const usePCMWaveAddress, const Bit32u usePCMWaveLength, const bool usePCMWaveLooped, const bool usePCMWaveInterpolated) {
+void LA32WaveGenerator::initPCM(const Bit16s *const usePCMWaveAddress, const Bit32u usePCMWaveLength, const bool usePCMWaveLooped, const bool usePCMWaveInterpolated) {
 	pcmWaveAddress = usePCMWaveAddress;
 	pcmWaveLength = usePCMWaveLength;
 	pcmWaveLooped = usePCMWaveLooped;

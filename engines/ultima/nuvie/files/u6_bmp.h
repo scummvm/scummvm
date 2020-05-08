@@ -30,17 +30,15 @@
 namespace Ultima {
 namespace Nuvie {
 
-class U6Bmp: public U6Shape {
+class U6Bmp : public U6Shape {
 private:
 	unsigned char *data;
 
 public:
-
 	U6Bmp();
 	~U6Bmp() override;
 
 	bool load(Std::string filename) override;
-
 };
 
 } // End of namespace Nuvie

@@ -164,21 +164,21 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 	Image::PICTDecoder::PixMap pixMap = Image::PICTDecoder::readPixMap(*cicnStream);
 
 	// Mask section
-	cicnStream->readUint32BE(); // mask baseAddr
+	cicnStream->readUint32BE();                       // mask baseAddr
 	uint16 maskRowBytes = cicnStream->readUint16BE(); // mask rowBytes
-	cicnStream->skip(3 * 2); // mask rect
+	cicnStream->skip(3 * 2);                          // mask rect
 	/* uint16 maskHeight = */ cicnStream->readUint16BE();
 
 	// Bitmap section
 	cicnStream->readUint32BE(); // baseAddr
 	uint16 rowBytes = cicnStream->readUint16BE();
-	cicnStream->readUint16BE(); // top
-	cicnStream->readUint16BE(); // left
+	cicnStream->readUint16BE();                 // top
+	cicnStream->readUint16BE();                 // left
 	uint16 height = cicnStream->readUint16BE(); // bottom
-	cicnStream->readUint16BE(); // right
+	cicnStream->readUint16BE();                 // right
 
 	// Data section
-	cicnStream->readUint32BE(); // icon handle
+	cicnStream->readUint32BE();              // icon handle
 	cicnStream->skip(maskRowBytes * height); // FIXME: maskHeight doesn't work here, though the specs say it should
 	cicnStream->skip(rowBytes * height);
 

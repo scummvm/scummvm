@@ -58,7 +58,6 @@ public:
 	//!       deleted.
 	void allow64kObjects();
 
-
 	void objectStats();
 	void objectTypes();
 

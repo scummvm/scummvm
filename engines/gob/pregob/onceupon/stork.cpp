@@ -22,20 +22,20 @@
 
 #include "common/str.h"
 
+#include "gob/anifile.h"
 #include "gob/gob.h"
 #include "gob/surface.h"
-#include "gob/anifile.h"
 #include "gob/video.h"
 
 #include "gob/pregob/onceupon/stork.h"
 
 enum Animation {
-	kAnimFlyNearWithBundle    =  9,
-	kAnimFlyFarWithBundle     = 12,
+	kAnimFlyNearWithBundle = 9,
+	kAnimFlyFarWithBundle = 12,
 	kAnimFlyNearWithoutBundle = 10,
-	kAnimFlyFarWithoutBundle  = 13,
-	kAnimBundleNear           = 11,
-	kAnimBundleFar            = 14
+	kAnimFlyFarWithoutBundle = 13,
+	kAnimBundleNear = 11,
+	kAnimBundleFar = 14
 };
 
 namespace Gob {
@@ -80,9 +80,9 @@ void Stork::dropBundle(const BundleDrop &drop) {
 }
 
 bool Stork::draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) {
-	left   = 0x7FFF;
-	top    = 0x7FFF;
-	right  = 0x0000;
+	left = 0x7FFF;
+	top = 0x7FFF;
+	right = 0x0000;
 	bottom = 0x0000;
 
 	bool drawn = ANIObject::draw(dest, left, top, right, bottom);
@@ -102,9 +102,9 @@ bool Stork::draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bo
 		if (bBottom >= 188)
 			dest.blit(*_frame, bLeft, MAX<int16>(188, bTop), bRight, bBottom, bLeft, MAX<int16>(188, bTop));
 
-		left   = MIN(left  , bLeft  );
-		top    = MIN(top   , bTop   );
-		right  = MAX(right , bRight );
+		left = MIN(left, bLeft);
+		top = MIN(top, bTop);
+		right = MAX(right, bRight);
 		bottom = MAX(bottom, bBottom);
 
 		drawn = true;
@@ -114,18 +114,18 @@ bool Stork::draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bo
 }
 
 bool Stork::clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) {
-	left   = 0x7FFF;
-	top    = 0x7FFF;
-	right  = 0x0000;
+	left = 0x7FFF;
+	top = 0x7FFF;
+	right = 0x0000;
 	bottom = 0x0000;
 
 	bool cleared = _bundle->clear(dest, left, top, right, bottom);
 
 	int16 sLeft, sTop, sRight, sBottom;
 	if (ANIObject::clear(dest, sLeft, sTop, sRight, sBottom)) {
-		left   = MIN(left  , sLeft  );
-		top    = MIN(top   , sTop   );
-		right  = MAX(right , sRight );
+		left = MIN(left, sLeft);
+		top = MIN(top, sTop);
+		right = MAX(right, sRight);
 		bottom = MAX(bottom, sBottom);
 
 		cleared = true;
@@ -156,7 +156,7 @@ void Stork::advance() {
 		if (curX >= 330)
 			setState(kStateFlyFarWithBundle, kAnimFlyFarWithBundle, 330);
 
-		if ((curRight  <= _bundleDrop.dropX) &&
+		if ((curRight <= _bundleDrop.dropX) &&
 		    (nextRight >= _bundleDrop.dropX) && _shouldDrop && !_bundleDrop.dropWhileFar)
 			dropBundle(kStateFlyNearWithoutBundle, kAnimFlyNearWithoutBundle);
 
@@ -166,7 +166,7 @@ void Stork::advance() {
 		if (curX <= -80)
 			setState(kStateFlyNearWithBundle, kAnimFlyNearWithBundle, -80);
 
-		if ((curX  >= _bundleDrop.dropX) &&
+		if ((curX >= _bundleDrop.dropX) &&
 		    (nextX <= _bundleDrop.dropX) && _shouldDrop && _bundleDrop.dropWhileFar)
 			dropBundle(kStateFlyFarWithoutBundle, kAnimFlyFarWithoutBundle);
 
@@ -226,7 +226,7 @@ void Stork::setState(State state, uint16 anim, int16 x) {
 
 	int16 pX, pY;
 	getPosition(pX, pY);
-	setPosition( x, pY);
+	setPosition(x, pY);
 }
 
 } // End of namespace OnceUpon

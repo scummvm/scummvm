@@ -25,19 +25,19 @@ class ResamplerStage;
 
 namespace SincResampler {
 
-	ResamplerStage *createSincResampler(const double inputFrequency, const double outputFrequency, const double passbandFrequency, const double stopbandFrequency, const double dbSNR, const unsigned int maxUpsampleFactor);
+ResamplerStage *createSincResampler(const double inputFrequency, const double outputFrequency, const double passbandFrequency, const double stopbandFrequency, const double dbSNR, const unsigned int maxUpsampleFactor);
 
-	namespace Utils {
-		void computeResampleFactors(unsigned int &upsampleFactor, double &downsampleFactor, const double inputFrequency, const double outputFrequency, const unsigned int maxUpsampleFactor);
-		unsigned int greatestCommonDivisor(unsigned int a, unsigned int b);
-	}
+namespace Utils {
+void computeResampleFactors(unsigned int &upsampleFactor, double &downsampleFactor, const double inputFrequency, const double outputFrequency, const unsigned int maxUpsampleFactor);
+unsigned int greatestCommonDivisor(unsigned int a, unsigned int b);
+} // namespace Utils
 
-	namespace KaizerWindow {
-		double estimateBeta(double dbRipple);
-		unsigned int estimateOrder(double dbRipple, double fp, double fs);
-		double bessel(const double x);
-		void windowedSinc(FIRCoefficient kernel[], const unsigned int order, const double fc, const double beta, const double amp);
-	}
+namespace KaizerWindow {
+double estimateBeta(double dbRipple);
+unsigned int estimateOrder(double dbRipple, double fp, double fs);
+double bessel(const double x);
+void windowedSinc(FIRCoefficient kernel[], const unsigned int order, const double fc, const double beta, const double amp);
+} // namespace KaizerWindow
 
 } // namespace SincResampler
 

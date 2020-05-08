@@ -34,12 +34,12 @@
 #include "gui/message.h"
 #include "gui/saveload.h"
 
-#include "graphics/thumbnail.h"
 #include "engines/savestate.h"
+#include "graphics/thumbnail.h"
 
-#include "lab/lab.h"
 #include "lab/dispman.h"
 #include "lab/eventman.h"
+#include "lab/lab.h"
 #include "lab/labsets.h"
 #include "lab/music.h"
 #include "lab/processroom.h"
@@ -47,8 +47,8 @@
 
 namespace Lab {
 
-#define SAVEGAME_ID       MKTAG('L', 'O', 'T', 'S')
-#define SAVEGAME_VERSION  1
+#define SAVEGAME_ID MKTAG('L', 'O', 'T', 'S')
+#define SAVEGAME_VERSION 1
 
 void LabEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
 	out->writeUint32BE(SAVEGAME_ID);
@@ -135,7 +135,6 @@ bool LabEngine::saveGame(int slot, const Common::String desc) {
 
 	// Load scene pic
 	_graphics->readPict(getPictName(false));
-
 
 	writeSaveGameHeader(file, desc);
 	file->writeUint16LE(_roomNum);

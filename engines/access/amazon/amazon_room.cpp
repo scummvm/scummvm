@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "access/amazon/amazon_room.h"
 #include "access/access.h"
-#include "access/resources.h"
 #include "access/amazon/amazon_game.h"
 #include "access/amazon/amazon_resources.h"
-#include "access/amazon/amazon_room.h"
+#include "access/resources.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -75,8 +75,7 @@ void AmazonRoom::reloadRoom() {
 }
 
 void AmazonRoom::reloadRoom1() {
-	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31
-			|| _vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44) {
+	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31 || _vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44) {
 		Resource *spriteData = _vm->_files->loadFile("MAYA.LZ");
 		_game->_inactive._altSpritesPtr = new SpriteResource(_vm, spriteData);
 		delete spriteData;
@@ -98,8 +97,7 @@ void AmazonRoom::reloadRoom1() {
 		_vm->_player->calcManScale();
 	}
 
-	if (_vm->_player->_roomNumber != 20 && _vm->_player->_roomNumber != 24
-			&& _vm->_player->_roomNumber != 33 && _vm->_player->_roomNumber != 45) {
+	if (_vm->_player->_roomNumber != 20 && _vm->_player->_roomNumber != 24 && _vm->_player->_roomNumber != 33 && _vm->_player->_roomNumber != 45) {
 		roomMenu();
 	}
 
@@ -110,8 +108,7 @@ void AmazonRoom::reloadRoom1() {
 
 	if (!_vm->_screen->_vesaMode) {
 		_vm->copyBF2Vid();
-	} else if (_vm->_player->_roomNumber != 20 && _vm->_player->_roomNumber != 24
-			&& _vm->_player->_roomNumber != 33) {
+	} else if (_vm->_player->_roomNumber != 20 && _vm->_player->_roomNumber != 24 && _vm->_player->_roomNumber != 33) {
 		_vm->_screen->setPalette();
 		_vm->copyBF2Vid();
 	}
@@ -151,7 +148,7 @@ void AmazonRoom::roomMenu() {
 	Screen &screen = *_vm->_screen;
 	screen.saveScreen();
 	screen.setDisplayScan();
-	_vm->_destIn = &screen;	// TODO: Redundant
+	_vm->_destIn = &screen; // TODO: Redundant
 	screen.plotImage(spr, 0, Common::Point(0, 177));
 	screen.plotImage(spr, 1, Common::Point(143, 177));
 
@@ -167,7 +164,7 @@ void AmazonRoom::mainAreaClick() {
 
 	if (_selectCommand == -1) {
 		if (player._roomNumber == 42 || player._roomNumber == 44 ||
-				player._roomNumber == 31 || player._roomNumber == 29) {
+		    player._roomNumber == 31 || player._roomNumber == 29) {
 			switch (checkBoxes1(pt)) {
 			case 0:
 				// Make Jason the active player
@@ -190,9 +187,9 @@ void AmazonRoom::mainAreaClick() {
 		player._moveTo = pt;
 		player._playerMove = true;
 	} else if (mousePos.x >= screen._windowXAdd &&
-			mousePos.x <= (screen._windowXAdd + screen._vWindowBytesWide) &&
-			mousePos.y >= screen._windowYAdd &&
-			mousePos.y <= (screen._windowYAdd + screen._vWindowLinesTall)) {
+	           mousePos.x <= (screen._windowXAdd + screen._vWindowBytesWide) &&
+	           mousePos.y >= screen._windowYAdd &&
+	           mousePos.y <= (screen._windowYAdd + screen._vWindowLinesTall)) {
 		if (checkBoxes1(pt) >= 0) {
 			checkBoxes3();
 		}
@@ -206,7 +203,7 @@ void AmazonRoom::walkCursor() {
 	EventsManager &events = *_vm->_events;
 
 	if (_vm->_events->_middleButton || (_vm->_player->_roomNumber == 29 &&
-			events._normalMouse != CURSOR_CROSSHAIRS)) {
+	                                    events._normalMouse != CURSOR_CROSSHAIRS)) {
 		events.forceSetCursor(CURSOR_CROSSHAIRS);
 		_selectCommand = -1;
 		_vm->_boxSelect = true;

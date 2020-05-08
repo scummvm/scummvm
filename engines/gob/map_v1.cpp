@@ -22,10 +22,10 @@
 
 #include "common/memstream.h"
 
-#include "gob/gob.h"
-#include "gob/map.h"
 #include "gob/dataio.h"
+#include "gob/gob.h"
 #include "gob/goblin.h"
+#include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/sound/sound.h"
 
@@ -42,14 +42,14 @@ void Map_v1::init() {
 		return;
 
 	_passWidth = 26;
-	_mapWidth  = 26;
+	_mapWidth = 26;
 	_mapHeight = 28;
 
 	_passMap = new int8[_mapHeight * _mapWidth];
 	memset(_passMap, 0, _mapHeight * _mapWidth * sizeof(int8));
 
-	_itemsMap = new int16*[_mapHeight];
-	 for (int i = 0; i < _mapHeight; i++) {
+	_itemsMap = new int16 *[_mapHeight];
+	for (int i = 0; i < _mapHeight; i++) {
 		_itemsMap[i] = new int16[_mapWidth];
 		memset(_itemsMap[i], 0, _mapWidth * sizeof(int16));
 	}
@@ -97,8 +97,8 @@ void Map_v1::loadMapObjects(const char *avjFile) {
 		}
 
 		for (int i = 0; i < 20; i++) {
-			_itemPoses[i].x      = mapData.readByte();
-			_itemPoses[i].y      = mapData.readByte();
+			_itemPoses[i].x = mapData.readByte();
+			_itemPoses[i].y = mapData.readByte();
 			_itemPoses[i].orient = mapData.readByte();
 		}
 	}
@@ -191,7 +191,7 @@ void Map_v1::loadGoblins(Common::SeekableReadStream &data, uint32 gobsPos) {
 		data.seek(tmpPos);
 
 		_vm->_goblin->_goblins[i]->stateMach =
-				new Goblin::Gob_StateLine[linesCount];
+		    new Goblin::Gob_StateLine[linesCount];
 		for (int state = 0; state < linesCount; ++state)
 			for (int col = 0; col < 6; ++col)
 				_vm->_goblin->_goblins[i]->stateMach[state][col] = 0;
@@ -205,7 +205,7 @@ void Map_v1::loadGoblins(Common::SeekableReadStream &data, uint32 gobsPos) {
 		data.skip(1);
 
 		_vm->_goblin->_goblins[i]->realStateMach =
-			_vm->_goblin->_goblins[i]->stateMach;
+		    _vm->_goblin->_goblins[i]->stateMach;
 		for (int state = 0; state < 40; state++) {
 			for (int col = 0; col < 6; col++) {
 				if (tmpStateData[state * 6 + col] == 0) {
@@ -308,7 +308,7 @@ void Map_v1::loadObjects(Common::SeekableReadStream &data, uint32 objsPos) {
 		data.skip(1);
 
 		_vm->_goblin->_objects[i]->realStateMach =
-			_vm->_goblin->_objects[i]->stateMach;
+		    _vm->_goblin->_objects[i]->stateMach;
 		for (int state = 0; state < 40; state++) {
 			for (int col = 0; col < 6; col++) {
 				if (tmpStateData[state * 6 + col] == 0) {
@@ -359,7 +359,7 @@ void Map_v1::loadObjects(Common::SeekableReadStream &data, uint32 objsPos) {
 	_vm->_goblin->placeObject(_vm->_goblin->_objects[10], 1, 0, 0, 0, 0);
 
 	_vm->_goblin->_objects[10]->realStateMach =
-		_vm->_goblin->_objects[10]->stateMach;
+	    _vm->_goblin->_objects[10]->stateMach;
 	_vm->_goblin->_objects[10]->type = 1;
 	_vm->_goblin->_objects[10]->unk14 = 1;
 }
@@ -383,13 +383,13 @@ void Map_v1::optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) {
 	if (_nearestWayPoint < _nearestDest) {
 		for (int i = _nearestWayPoint; i <= _nearestDest; i++) {
 			if (checkDirectPath(0, _curGoblinX, _curGoblinY,
-				_wayPoints[i].x, _wayPoints[i].y) == 1)
+			                    _wayPoints[i].x, _wayPoints[i].y) == 1)
 				_nearestWayPoint = i;
 		}
 	} else if (_nearestWayPoint > _nearestDest) {
 		for (int i = _nearestWayPoint; i >= _nearestDest; i--) {
 			if (checkDirectPath(0, _curGoblinX, _curGoblinY,
-				_wayPoints[i].x, _wayPoints[i].y) == 1)
+			                    _wayPoints[i].x, _wayPoints[i].y) == 1)
 				_nearestWayPoint = i;
 		}
 	}

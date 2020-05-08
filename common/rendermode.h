@@ -70,7 +70,6 @@ extern String renderMode2GUIO(RenderMode id);
 // TODO: Rename the following to something better; also, document it
 extern String allRenderModesGUIOs();
 
-
 } // End of namespace Common
 
 #endif

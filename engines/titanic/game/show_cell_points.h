@@ -31,9 +31,11 @@ class CShowCellpoints : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 public:
 	CString _npcName;
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CShowCellpoints() : CGameObject(), _flag(false) {}

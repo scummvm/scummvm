@@ -24,18 +24,18 @@
 
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 
-#include "ultima/ultima8/graphics/fonts/font.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/fonts/shape_font.h"
-#include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/ultima8/graphics/fonts/tt_font.h"
-#include "ultima/ultima8/graphics/fonts/jp_font.h"
-#include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/graphics/palette.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "graphics/fonts/ttf.h"
+#include "ultima/ultima8/conf/setting_manager.h"
+#include "ultima/ultima8/filesys/file_system.h"
+#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/fonts/font.h"
+#include "ultima/ultima8/graphics/fonts/font_shape_archive.h"
+#include "ultima/ultima8/graphics/fonts/jp_font.h"
+#include "ultima/ultima8/graphics/fonts/shape_font.h"
+#include "ultima/ultima8/graphics/fonts/tt_font.h"
+#include "ultima/ultima8/graphics/palette.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -77,7 +77,7 @@ void FontManager::resetGameFonts() {
 }
 
 Font *FontManager::getGameFont(unsigned int fontnum,
-        bool allowOverride) {
+                               bool allowOverride) {
 	if (allowOverride && fontnum < _overrides.size() && _overrides[fontnum])
 		return _overrides[fontnum];
 
@@ -89,7 +89,6 @@ Font *FontManager::getTTFont(unsigned int fontnum) {
 		return nullptr;
 	return _ttFonts[fontnum];
 }
-
 
 Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int pointsize) {
 	TTFId id;
@@ -137,7 +136,6 @@ void FontManager::setOverride(unsigned int fontnum, Font *newFont) {
 	_overrides[fontnum] = newFont;
 }
 
-
 bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filename,
                                  int pointsize, uint32 rgb, int bordersize,
                                  bool SJIS) {
@@ -171,8 +169,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 	setOverride(fontnum, font);
 
 	PaletteManager *palman = PaletteManager::get_instance();
-	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>
-	                                   (PaletteManager::Pal_JPFontStart + fontnum);
+	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>(PaletteManager::Pal_JPFontStart + fontnum);
 	palman->duplicate(PaletteManager::Pal_Game, fontpal);
 	Palette *pal = palman->getPalette(fontpal);
 	// TODO: maybe a small gradient
@@ -181,7 +178,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 	for (int i = 1; i < 4; ++i) {
 		pal->_palette[3 * i + 0] = (rgb >> 16) & 0xFF;
 		pal->_palette[3 * i + 1] = (rgb >> 8) & 0xFF;
-		pal->_palette[3 * i + 2] = (rgb) & 0xFF;
+		pal->_palette[3 * i + 2] = (rgb)&0xFF;
 	}
 	palman->updatedFont(fontpal);
 
@@ -191,7 +188,6 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 
 	return true;
 }
-
 
 bool FontManager::loadTTFont(unsigned int fontnum, const Std::string &filename,
                              int pointsize, uint32 rgb, int bordersize) {

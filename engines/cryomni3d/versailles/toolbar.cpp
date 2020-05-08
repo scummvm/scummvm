@@ -88,12 +88,12 @@ void Toolbar::addZone(uint16 cursorMainId, uint16 cursorSecondaryId, Common::Poi
 	rct.moveTo(position);
 
 	// By default it's the secondary image
-	Zone zone = { rct, cursorMainId, cursorSecondaryId, callback, true, false };
+	Zone zone = {rct, cursorMainId, cursorSecondaryId, callback, true, false};
 	_zones.push_back(zone);
 }
 
 Common::Array<Toolbar::Zone>::const_iterator Toolbar::hitTestZones(const Common::Point &mousePos)
-const {
+    const {
 	Common::Array<Zone>::const_iterator it;
 	for (it = _zones.begin(); it != _zones.end(); it++) {
 		if (!it->hidden && it->rect.contains(mousePos) && it->callback) {
@@ -142,7 +142,7 @@ void Toolbar::updateZones() {
 	}
 	// Inventory zones are from 0 to 7
 	for (Common::Array<Zone>::iterator zoneIt = _zones.begin(); zoneIt != _zones.begin() + 8;
-	        zoneIt++, inventoryIt++) {
+	     zoneIt++, inventoryIt++) {
 		if (!_inventoryEnabled) {
 			zoneIt->hidden = true;
 			zoneIt->imageMain = 0;
@@ -205,7 +205,6 @@ uint Toolbar::callbackInventory(uint invId, uint dragStatus) {
 	default:
 		return 0;
 	}
-
 }
 
 uint Toolbar::callbackInventoryPrev(uint dragStatus) {
@@ -409,7 +408,7 @@ bool Toolbar::displayToolbar(const Graphics::Surface *original) {
 	// Prepare the background of the toolbar by making it translucent
 	// Get the lowest part of the image
 	const Graphics::Surface subset = original->getSubArea(Common::Rect(0, original->h - _bgSurface.h,
-	                                 _bgSurface.w, original->h));
+	                                                                   _bgSurface.w, original->h));
 	_engine->makeTranslucent(_bgSurface, subset);
 
 	// WORKAROUND: Reset the inventory status at init to let sprites highlighted until toolbar is hidden
@@ -504,7 +503,7 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 
 		redrawToolbar = false;
 		if (_engine->checkKeysPressed(2, Common::KEYCODE_ESCAPE, Common::KEYCODE_SPACE) ||
-		        _engine->getCurrentMouseButton() == 2) {
+		    _engine->getCurrentMouseButton() == 2) {
 			_engine->waitMouseRelease();
 			exitToolbar = true;
 			break;
@@ -543,7 +542,7 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 		}
 
 		if (_backupSelectedObject != nullptr && !(_mouseInOptions || _mouseInViewObject) &&
-		        !_engine->getCurrentMouseButton()) {
+		    !_engine->getCurrentMouseButton()) {
 			_inventory->setSelectedObject(_backupSelectedObject);
 			_engine->setCursor(_backupSelectedObject->idSl());
 			_backupSelectedObject = nullptr;
@@ -565,7 +564,7 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 					redrawToolbar = true;
 				}
 			}
-			if (!shouldHover && _inventoryHovered != uint(-1) && !_mouseInViewObject)  {
+			if (!shouldHover && _inventoryHovered != uint(-1) && !_mouseInViewObject) {
 				// Remove hovering
 				_inventoryHovered = uint(-1);
 				_inventorySelected = uint(-1);

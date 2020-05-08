@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
-#include "ultima/ultima8/audio/audio_process.h"
-#include "ultima/ultima8/audio/u8_music_process.h"
-#include "ultima/ultima8/audio/remorse_music_process.h"
-#include "ultima/ultima8/audio/audio_channel.h"
-#include "ultima/ultima8/audio/midi_player.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/kernel/core_app.h"
 #include "audio/decoders/raw.h"
+#include "ultima/ultima8/audio/audio_channel.h"
+#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/audio/midi_player.h"
+#include "ultima/ultima8/audio/remorse_music_process.h"
+#include "ultima/ultima8/audio/u8_music_process.h"
+#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -38,7 +38,7 @@ AudioMixer *AudioMixer::_audioMixer = nullptr;
 
 AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(nullptr) {
 	_audioMixer = this;
-	
+
 	_channels.resize(CHANNEL_COUNT);
 	for (int idx = 0; idx < CHANNEL_COUNT; ++idx)
 		_channels[idx] = new AudioChannel(_mixer, SAMPLE_RATE, true);
@@ -94,8 +94,7 @@ int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool pau
 		if (!_channels[i]->isPlaying()) {
 			lowest = i;
 			break;
-		}
-		else if (_channels[i]->getPriority() < priority) {
+		} else if (_channels[i]->getPriority() < priority) {
 			lowprior = _channels[i]->getPriority();
 			lowest = i;
 		}
@@ -148,7 +147,7 @@ void AudioMixer::setPaused(int chan, bool paused) {
 }
 
 bool AudioMixer::isPaused(int chan) {
-	if (chan >= CHANNEL_COUNT|| chan < 0)
+	if (chan >= CHANNEL_COUNT || chan < 0)
 		return false;
 
 	Lock();
@@ -161,7 +160,8 @@ bool AudioMixer::isPaused(int chan) {
 }
 
 void AudioMixer::setVolume(int chan, int lvol, int rvol) {
-	if (chan >= CHANNEL_COUNT || chan < 0) return;
+	if (chan >= CHANNEL_COUNT || chan < 0)
+		return;
 
 	Lock();
 
@@ -171,7 +171,8 @@ void AudioMixer::setVolume(int chan, int lvol, int rvol) {
 }
 
 void AudioMixer::getVolume(int chan, int &lvol, int &rvol) {
-	if (chan >= CHANNEL_COUNT || chan < 0) return;
+	if (chan >= CHANNEL_COUNT || chan < 0)
+		return;
 
 	Lock();
 

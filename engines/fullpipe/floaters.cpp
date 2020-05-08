@@ -20,15 +20,15 @@
  *
  */
 
-#include "fullpipe/fullpipe.h"
 #include "fullpipe/floaters.h"
-#include "fullpipe/utils.h"
-#include "fullpipe/objects.h"
-#include "fullpipe/motion.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/scene.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/fullpipe.h"
+#include "fullpipe/motion.h"
 #include "fullpipe/objectnames.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/statics.h"
+#include "fullpipe/utils.h"
 
 namespace Fullpipe {
 
@@ -234,6 +234,5 @@ void Floaters::stopAll() {
 
 	g_fp->stopAllSoundInstances(SND_CMN_060);
 }
-
 
 } // End of namespace Fullpipe

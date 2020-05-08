@@ -23,8 +23,8 @@
 #ifndef ZVISION_ACTIONS_H
 #define ZVISION_ACTIONS_H
 
-#include "common/str.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace ZVision {
 
@@ -50,6 +50,7 @@ public:
 	 * @return          Should the script system continue to test any remaining puzzles (true) or immediately break and go on to the next frame (false)
 	 */
 	virtual bool execute() = 0;
+
 protected:
 	ZVision *_engine;
 	ScriptManager *_scriptManager;
@@ -192,6 +193,7 @@ class ActionInventory : public ResultAction {
 public:
 	ActionInventory(ZVision *engine, int32 slotkey, const Common::String &line);
 	bool execute() override;
+
 private:
 	int8 _type;
 	int32 _key;
@@ -211,6 +213,7 @@ class ActionMenuBarEnable : public ResultAction {
 public:
 	ActionMenuBarEnable(ZVision *engine, int32 slotkey, const Common::String &line);
 	bool execute() override;
+
 private:
 	uint16 _menus;
 };
@@ -325,6 +328,7 @@ class ActionUnloadAnimation : public ResultAction {
 public:
 	ActionUnloadAnimation(ZVision *engine, int32 slotkey, const Common::String &line);
 	bool execute() override;
+
 private:
 	uint32 _key;
 };
@@ -422,6 +426,7 @@ public:
 	ActionTimer(ZVision *engine, int32 slotkey, const Common::String &line);
 	~ActionTimer() override;
 	bool execute() override;
+
 private:
 	ValueSlot *_time;
 };

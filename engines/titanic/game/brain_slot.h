@@ -34,12 +34,15 @@ class CBrainSlot : public CGameObject {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool ActMsg(CActMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	static int _numAdded;
 	static bool _woken;
+
 public:
 	bool _occupied;
 	CString _target;
+
 public:
 	CLASSDEF;
 	CBrainSlot() : CGameObject(), _occupied(false) {}

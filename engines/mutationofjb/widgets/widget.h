@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_WIDGET_H
 #define MUTATIONOFJB_WIDGET_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 
 namespace Common {
 struct Event;
@@ -65,6 +65,7 @@ public:
 	void update(Graphics::ManagedSurface &);
 
 	virtual void handleEvent(const Common::Event &) {}
+
 protected:
 	virtual void draw(Graphics::ManagedSurface &) = 0;
 
@@ -76,6 +77,6 @@ protected:
 	uint32 _dirtyBits;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

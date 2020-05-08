@@ -194,26 +194,25 @@ protected:
 	DECLARE_OPCODE(o_generatorControlRoom_exit);
 	DECLARE_OPCODE(o_rocketSliders_exit);
 
-
 	MystGameState::Myst &_state;
 
 	bool _generatorControlRoomRunning;
 	uint16 _generatorVoltage; // 58
 
-	uint16 _rocketPianoSound; // 292
+	uint16 _rocketPianoSound;       // 292
 	MystAreaSlider *_rocketSlider1; // 248
 	MystAreaSlider *_rocketSlider2; // 252
 	MystAreaSlider *_rocketSlider3; // 256
 	MystAreaSlider *_rocketSlider4; // 260
 	MystAreaSlider *_rocketSlider5; // 264
-	uint16 _rocketSliderSound; // 294
-	uint16 _rocketLeverPosition; // 296
-	VideoEntryPtr _rocketLinkBook; // 268
+	uint16 _rocketSliderSound;      // 294
+	uint16 _rocketLeverPosition;    // 296
+	VideoEntryPtr _rocketLinkBook;  // 268
 
 	bool _libraryBookPagesTurning;
 	bool _libraryCombinationBookPagesTurning;
-	int16 _libraryBookPage; // 86
-	uint16 _libraryBookNumPages; // 88
+	int16 _libraryBookPage;       // 86
+	uint16 _libraryBookNumPages;  // 88
 	uint16 _libraryBookBaseImage; // 90
 
 	bool _butterfliesMoviePlayed; // 100
@@ -225,18 +224,18 @@ protected:
 
 	bool _libraryBookcaseMoving;
 	MystAreaVideo *_libraryBookcaseMovie; // 104
-	uint16 _libraryBookcaseSoundId; // 284
-	bool _libraryBookcaseChanged; // 288
-	uint16 _libraryBookSound1; // 298
-	uint16 _libraryBookSound2; // 300
+	uint16 _libraryBookcaseSoundId;       // 284
+	bool _libraryBookcaseChanged;         // 288
+	uint16 _libraryBookSound1;            // 298
+	uint16 _libraryBookSound2;            // 300
 
 	uint16 _courtyardBoxSound; // 302
 
 	bool _imagerValidationRunning;
 	MystAreaImageSwitch *_imagerRedButton; // 304
-	uint16 _imagerSound[4]; // 308 to 314
-	uint16 _imagerValidationCard; // 316
-	uint16 _imagerValidationStep; // 318
+	uint16 _imagerSound[4];                // 308 to 314
+	uint16 _imagerValidationCard;          // 316
+	uint16 _imagerValidationStep;          // 318
 
 	bool _imagerRunning;
 	MystAreaVideo *_imagerMovie; // 64
@@ -246,23 +245,23 @@ protected:
 	uint16 _clockTurningWheel;
 
 	VideoEntryPtr _clockGearsVideos[3]; // 148 to 156
-	VideoEntryPtr _clockWeightVideo; // 160
-	uint16 _clockGearsPositions[3]; // 164 to 168
-	uint16 _clockWeightPosition; // 172
-	bool _clockMiddleGearMovedAlone; // 176
-	bool _clockLeverPulled; // 328
+	VideoEntryPtr _clockWeightVideo;    // 160
+	uint16 _clockGearsPositions[3];     // 164 to 168
+	uint16 _clockWeightPosition;        // 172
+	bool _clockMiddleGearMovedAlone;    // 176
+	bool _clockLeverPulled;             // 328
 
 	uint16 _dockVaultState; // 92
 
 	bool _towerRotationMapRunning;
 	bool _towerRotationBlinkLabel;
 	uint16 _towerRotationBlinkLabelCount;
-	uint16 _towerRotationMapInitialized; // 292
+	uint16 _towerRotationMapInitialized;         // 292
 	MystAreaImageSwitch *_towerRotationMapTower; // 108
 	MystAreaImageSwitch *_towerRotationMapLabel; // 112
-	uint16 _towerRotationSpeed; // 124
-	bool _towerRotationMapClicked; // 132
-	bool _towerRotationOverSpot; // 136
+	uint16 _towerRotationSpeed;                  // 124
+	bool _towerRotationMapClicked;               // 132
+	bool _towerRotationOverSpot;                 // 136
 	const Common::Point _towerRotationCenter;
 
 	bool _matchBurning;
@@ -270,7 +269,7 @@ protected:
 	uint16 _cabinDoorOpened; // 56
 	uint16 _cabinHandleDown; // 344
 	uint16 _cabinMatchState; // 60
-	uint32 _matchGoOutTime; // 144
+	uint32 _matchGoOutTime;  // 144
 
 	VideoEntryPtr _cabinFireMovie; // 240
 
@@ -282,10 +281,10 @@ protected:
 	bool _basementPressureIncreasing;
 	bool _basementPressureDecreasing;
 
-	bool _treeStopped; // 236
-	MystAreaImageSwitch *_tree; // 220
-	MystArea *_treeAlcove; // 224
-	uint16 _treeMinPosition; // 228
+	bool _treeStopped;                 // 236
+	MystAreaImageSwitch *_tree;        // 220
+	MystArea *_treeAlcove;             // 224
+	uint16 _treeMinPosition;           // 228
 	uint16 _treeMinAccessiblePosition; // 230
 	uint16 _treeMaxAccessiblePosition; // 232
 
@@ -295,15 +294,15 @@ protected:
 	bool _observatoryYearChanging;
 	bool _observatoryTimeChanging;
 	MystAreaImageSwitch *_observatoryVisualizer; // 184
-	MystAreaImageSwitch *_observatoryGoButton; // 188
-	MystAreaSlider *_observatoryDaySlider; // 192
-	MystAreaSlider *_observatoryMonthSlider; // 196
-	MystAreaSlider *_observatoryYearSlider; // 200
-	MystAreaSlider *_observatoryTimeSlider; // 204
-	uint32 _observatoryLastTime; // 208
-	bool _observatoryNotInitialized; // 212
-	int16 _observatoryIncrement; // 346
-	MystAreaSlider *_observatoryCurrentSlider; // 348
+	MystAreaImageSwitch *_observatoryGoButton;   // 188
+	MystAreaSlider *_observatoryDaySlider;       // 192
+	MystAreaSlider *_observatoryMonthSlider;     // 196
+	MystAreaSlider *_observatoryYearSlider;      // 200
+	MystAreaSlider *_observatoryTimeSlider;      // 204
+	uint32 _observatoryLastTime;                 // 208
+	bool _observatoryNotInitialized;             // 212
+	int16 _observatoryIncrement;                 // 346
+	MystAreaSlider *_observatoryCurrentSlider;   // 348
 
 	bool _greenBookRunning;
 

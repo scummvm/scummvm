@@ -44,13 +44,12 @@ struct EventQueueEntry {
 	void synchronize(Common::Serializer &s);
 };
 
-
 /* DATA */
 /* Event queue */
 extern int eventQueueSize;
 extern EventQueueEntry *eventQueue;
-extern int eventQueueTop;       /* Event queue top pointer */
-extern EventEntry *events;  /* Event table pointer */
+extern int eventQueueTop;  /* Event queue top pointer */
+extern EventEntry *events; /* Event table pointer */
 
 } // End of namespace Alan3
 } // End of namespace Glk

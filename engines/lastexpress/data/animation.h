@@ -69,23 +69,23 @@ private:
 
 	// despite their size field, info chunks don't have a payload
 	enum ChunkType {
-		kChunkTypeNone              = 0,
-		kChunkTypeUnknown1          = 1,
-		kChunkTypeUnknown2          = 2,
-		kChunkTypeAudioInfo         = 3,
-		kChunkTypeUnknown4          = 4,
-		kChunkTypeUnknown5          = 5,
-		kChunkTypeBackground1       = 10,
+		kChunkTypeNone = 0,
+		kChunkTypeUnknown1 = 1,
+		kChunkTypeUnknown2 = 2,
+		kChunkTypeAudioInfo = 3,
+		kChunkTypeUnknown4 = 4,
+		kChunkTypeUnknown5 = 5,
+		kChunkTypeBackground1 = 10,
 		kChunkTypeSelectBackground1 = 11,
-		kChunkTypeBackground2       = 12,
+		kChunkTypeBackground2 = 12,
 		kChunkTypeSelectBackground2 = 13,
-		kChunkTypeOverlay           = 20,
-		kChunkTypeUpdate            = 21,
-		kChunkTypeUpdateTransition  = 22,
-		kChunkTypeSound1            = 30,
-		kChunkTypeSound2            = 31,
-		kChunkTypeAudioData         = 32,
-		kChunkTypeAudioEnd          = 99
+		kChunkTypeOverlay = 20,
+		kChunkTypeUpdate = 21,
+		kChunkTypeUpdateTransition = 22,
+		kChunkTypeSound1 = 30,
+		kChunkTypeSound2 = 31,
+		kChunkTypeAudioData = 32,
+		kChunkTypeAudioEnd = 99
 	};
 
 	struct Chunk {

@@ -21,9 +21,9 @@
  */
 
 #include "glk/debugger.h"
+#include "common/file.h"
 #include "glk/glk.h"
 #include "glk/raw_decoder.h"
-#include "common/file.h"
 #include "graphics/managed_surface.h"
 #include "image/png.h"
 

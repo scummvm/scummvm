@@ -69,4 +69,4 @@ void TaskManager::update() {
 	}
 }
 
-}
+} // namespace MutationOfJB

@@ -21,12 +21,12 @@
  */
 
 #include "glk/alan3/syserr.h"
+#include "common/textconsole.h"
 #include "glk/alan3/current.h"
 #include "glk/alan3/debug.h"
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/output.h"
 #include "glk/alan3/utils.h"
-#include "common/textconsole.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -57,12 +57,10 @@ static void runtimeError(const char *errorClassification, const char *errorDescr
 	::error("%s%s %s", errorClassification, errorDescription, blurb);
 }
 
-
 /*======================================================================*/
 void setSyserrHandler(void (*f)(const char *)) {
 	handler = f;
 }
-
 
 /*======================================================================*/
 // TODO Make syserr() use ... as printf()
@@ -77,7 +75,6 @@ it to support@alanif.se. Thank you!>";
 	} else
 		handler(description);
 }
-
 
 /*======================================================================*/
 void apperr(const char *description) {

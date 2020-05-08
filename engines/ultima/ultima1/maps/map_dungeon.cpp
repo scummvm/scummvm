@@ -21,6 +21,9 @@
 */
 
 #include "ultima/ultima1/maps/map_dungeon.h"
+#include "ultima/ultima1/core/party.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/spells/spell.h"
@@ -28,9 +31,6 @@
 #include "ultima/ultima1/widgets/dungeon_coffin.h"
 #include "ultima/ultima1/widgets/dungeon_monster.h"
 #include "ultima/ultima1/widgets/dungeon_player.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/party.h"
-#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -108,16 +108,15 @@ bool MapDungeon::changeLevel(int delta) {
 			_data[y][x] = getDeterministicRandomNumber(DTILE_HALLWAY, DTILE_DOOR);
 
 	// Set up wall and beams randomly to subdivide the blank columns
-	const byte DATA1[15] = { 8, 5, 2, 8, 1, 5, 4, 6, 1, 3, 7, 3, 9, 2, 6 };
-	const byte DATA2[15] = { 1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 8, 8, 9, 9 };
+	const byte DATA1[15] = {8, 5, 2, 8, 1, 5, 4, 6, 1, 3, 7, 3, 9, 2, 6};
+	const byte DATA2[15] = {1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 8, 8, 9, 9};
 	for (uint ctr = 0; ctr < (_dungeonLevel * 2); ++ctr) {
 		byte newTile = (getDeterministicRandomNumber(0, 255) <= 160) ? DTILE_WALL : DTILE_BEAMS;
 		uint idx = getDeterministicRandomNumber(0, 14);
 
 		if (_dungeonLevel & 1) {
 			_data[DATA2[idx]][DATA1[idx]] = newTile;
-		}
-		else {
+		} else {
 			_data[DATA1[idx]][DATA2[idx]] = newTile;
 		}
 	}
@@ -129,10 +128,7 @@ bool MapDungeon::changeLevel(int delta) {
 		byte currTile = _data[pt.y][pt.x];
 
 		if (currTile != DTILE_WALL && currTile != DTILE_SECRET_DOOR && currTile != DTILE_BEAMS) {
-			_widgets.push_back(Shared::Maps::MapWidgetPtr((getDeterministicRandomNumber(1, 100) & 1) ?
-				(Widgets::DungeonItem *)new Widgets::DungeonChest(_game, this, pt) :
-				(Widgets::DungeonItem *)new Widgets::DungeonCoffin(_game, this, pt)
-				));
+			_widgets.push_back(Shared::Maps::MapWidgetPtr((getDeterministicRandomNumber(1, 100) & 1) ? (Widgets::DungeonItem *)new Widgets::DungeonChest(_game, this, pt) : (Widgets::DungeonItem *)new Widgets::DungeonCoffin(_game, this, pt)));
 		}
 	}
 
@@ -158,7 +154,6 @@ bool MapDungeon::changeLevel(int delta) {
 
 	return true;
 }
-
 
 void MapDungeon::setRandomSeed() {
 	Ultima1Map *map = static_cast<Ultima1Map *>(_game->getMap());
@@ -199,7 +194,7 @@ void MapDungeon::spawnMonsterAt(const Point &pt) {
 		if (monsIdx == _widgets.size()) {
 			// Monster not present, so can be added
 			uint hp = _game->getRandomNumber(1, _dungeonLevel * _dungeonLevel + 1) +
-				(int)monsterId + 10;
+			          (int)monsterId + 10;
 			Widgets::DungeonMonster *monster = new Widgets::DungeonMonster(_game, this, monsterId, hp, pt);
 			addWidget(monster);
 			return;
@@ -285,7 +280,7 @@ void MapDungeon::climb() {
 		addInfoMsg(_game->_res->WHAT);
 		_game->playFX(1);
 	} else if (getDirection() == Shared::Maps::DIR_LEFT || getDirection() == Shared::Maps::DIR_RIGHT) {
-		addInfoMsg(""); 
+		addInfoMsg("");
 		addInfoMsg(_game->_res->FACE_THE_LADDER);
 		_game->playFX(1);
 	} else if (tile._isLadderUp) {
@@ -303,7 +298,7 @@ void MapDungeon::castSpell(uint spellId) {
 
 void MapDungeon::leavingDungeon() {
 	Shared::Character &c = *_game->_party;
-	
+
 	// Don't allow the hit points addition to push the hit point total beyond 9999
 	if (c._hitPoints + _dungeonExitHitPoints > 9999)
 		_dungeonExitHitPoints = 9999 - c._hitPoints;
@@ -317,7 +312,7 @@ void MapDungeon::leavingDungeon() {
 void MapDungeon::attack(int direction, int effectId) {
 	const Character &c = *static_cast<Party *>(_game->_party);
 	Widgets::DungeonMonster *monster = findCreatureInCurrentDirection(
-		c.equippedWeapon()->_distance);
+	    c.equippedWeapon()->_distance);
 	_game->playFX(7);
 
 	if (monster) {

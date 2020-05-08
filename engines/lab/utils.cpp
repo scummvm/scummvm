@@ -188,7 +188,7 @@ void Utils::runLengthDecode(byte *dest, Common::File *sourceFile) {
 			return;
 		} else if (num > '\0') {
 			sourceFile->read(dest, num);
-			dest   += num;
+			dest += num;
 		} else {
 			count = (int16)(-num);
 			num = sourceFile->readSByte();

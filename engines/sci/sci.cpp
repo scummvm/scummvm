@@ -20,34 +20,30 @@
  *
  */
 
-#include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 
-#include "sci/sci.h"
-#include "sci/debug.h"
 #include "sci/console.h"
+#include "sci/debug.h"
 #include "sci/event.h"
+#include "sci/sci.h"
 
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/message.h"
 #include "sci/engine/object.h"
-#include "sci/engine/state.h"
-#include "sci/engine/kernel.h"
-#include "sci/engine/script.h"	// for script_adjust_opcode_formats
+#include "sci/engine/script.h" // for script_adjust_opcode_formats
 #include "sci/engine/script_patches.h"
-#include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/scriptdebug.h"
+#include "sci/engine/selector.h" // for SELECTOR
+#include "sci/engine/state.h"
 
-#include "sci/sound/audio.h"
-#include "sci/sound/music.h"
-#include "sci/sound/sync.h"
-#include "sci/sound/soundcmd.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
@@ -58,13 +54,17 @@
 #include "sci/graphics/menu.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/paint32.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
-#include "sci/graphics/palette.h"
 #include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
+#include "sci/sound/audio.h"
+#include "sci/sound/music.h"
+#include "sci/sound/soundcmd.h"
+#include "sci/sound/sync.h"
 
 #ifdef ENABLE_SCI32
 #include "sci/graphics/controls32.h"
@@ -84,7 +84,7 @@ namespace Sci {
 SciEngine *g_sci = 0;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId)
-		: Engine(syst), _gameDescription(desc), _gameId(gameId), _rng("sci") {
+    : Engine(syst), _gameDescription(desc), _gameId(gameId), _rng("sci") {
 
 	assert(g_sci == 0);
 	g_sci = this;
@@ -141,28 +141,28 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
-	SearchMan.addSubDirectoryMatching(gameDataDir, "actors");	// KQ6 hi-res portraits
-	SearchMan.addSubDirectoryMatching(gameDataDir, "aud");	// resource.aud and audio files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "audio");// resource.aud and audio files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "audiosfx");// resource.aud and audio files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "wav");	// speech files in WAV format
-	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");	// music/sound files in WAV format
-	SearchMan.addSubDirectoryMatching(gameDataDir, "avi");	// AVI movie files for Windows versions
-	SearchMan.addSubDirectoryMatching(gameDataDir, "seq");	// SEQ movie files for DOS versions
-	SearchMan.addSubDirectoryMatching(gameDataDir, "robot");	// robot movie files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "robots");	// robot movie files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "movie");	// VMD movie files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");	// VMD movie files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "music");	// LSL7 music files (GOG version)
-	SearchMan.addSubDirectoryMatching(gameDataDir, "music/22s16");	// LSL7 music files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");	// VMD movie files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "duk");	// Duck movie files in Phantasmagoria 2
-	SearchMan.addSubDirectoryMatching(gameDataDir, "Robot Folder"); // Mac robot files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "Sound Folder"); // Mac audio files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "actors");                    // KQ6 hi-res portraits
+	SearchMan.addSubDirectoryMatching(gameDataDir, "aud");                       // resource.aud and audio files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "audio");                     // resource.aud and audio files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "audiosfx");                  // resource.aud and audio files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "wav");                       // speech files in WAV format
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");                       // music/sound files in WAV format
+	SearchMan.addSubDirectoryMatching(gameDataDir, "avi");                       // AVI movie files for Windows versions
+	SearchMan.addSubDirectoryMatching(gameDataDir, "seq");                       // SEQ movie files for DOS versions
+	SearchMan.addSubDirectoryMatching(gameDataDir, "robot");                     // robot movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "robots");                    // robot movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "movie");                     // VMD movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");                    // VMD movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music");                     // LSL7 music files (GOG version)
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music/22s16");               // LSL7 music files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");                       // VMD movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "duk");                       // Duck movie files in Phantasmagoria 2
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Robot Folder");              // Mac robot files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Sound Folder");              // Mac audio files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices Folder", 0, 2, true); // Mac audio36 files (recursive for Torin)
-	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices"); // Mac audio36 files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices/AUD#"); // LSL6 Mac audio36 files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "VMD Folder"); // Mac VMD files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices");                    // Mac audio36 files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Voices/AUD#");               // LSL6 Mac audio36 files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "VMD Folder");                // Mac VMD files
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
 	// (e.g. KQ Collection 1997) is for the demo of Phantasmagoria, included in the disk
@@ -172,11 +172,11 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 		// installer copies these patches to HDD and gives the HDD directory
 		// top priority)
 		const int priority = _gameId == GID_PHANTASMAGORIA2 ? -1 : 0;
-		SearchMan.addSubDirectoryMatching(gameDataDir, "patches", priority);	// resource patches
+		SearchMan.addSubDirectoryMatching(gameDataDir, "patches", priority); // resource patches
 	}
 
 	// Some releases (e.g. Pointsoft Torin) use a different patch directory name
-	SearchMan.addSubDirectoryMatching(gameDataDir, "patch");	// resource patches
+	SearchMan.addSubDirectoryMatching(gameDataDir, "patch"); // resource patches
 
 	switch (desc->language) {
 	case Common::DE_DEU:
@@ -252,11 +252,11 @@ SciEngine::~SciEngine() {
 	delete[] _opcode_formats;
 
 	delete _scriptPatcher;
-	delete _resMan;	// should be deleted last
+	delete _resMan; // should be deleted last
 	g_sci = 0;
 }
 
-extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
+extern int showScummVMDialog(const Common::String &message, const char *altButton = nullptr, bool alignCenter = true);
 
 Common::Error SciEngine::run() {
 	_resMan = new ResourceManager();
@@ -266,7 +266,7 @@ Common::Error SciEngine::run() {
 
 	// TODO: Add error handling. Check return values of addAppropriateSources
 	// and init. We first have to *add* sensible return values, though ;).
-/*
+	/*
 	if (!_resMan) {
 		warning("No resources found, aborting");
 		return Common::kNoGameDataFoundError;
@@ -386,13 +386,13 @@ Common::Error SciEngine::run() {
 	// which have been patched by Sierra
 	if (getGameId() == GID_KQ7 && ConfMan.getBool("subtitles")) {
 		showScummVMDialog(_("Subtitles are enabled, but subtitling in King's"
-						  " Quest 7 was unfinished and disabled in the release"
-						  " version of the game. ScummVM allows the subtitles"
-						  " to be re-enabled, but because they were removed from"
-						  " the original game, they do not always render"
-						  " properly or reflect the actual game speech."
-						  " This is not a ScummVM bug -- it is a problem with"
-						  " the game's assets."));
+		                    " Quest 7 was unfinished and disabled in the release"
+		                    " version of the game. ScummVM allows the subtitles"
+		                    " to be re-enabled, but because they were removed from"
+		                    " the original game, they do not always render"
+		                    " properly or reflect the actual game speech."
+		                    " This is not a ScummVM bug -- it is a problem with"
+		                    " the game's assets."));
 	}
 
 	// Show a warning if the user has selected a General MIDI device, no GM patch exists
@@ -410,16 +410,16 @@ Common::Error SciEngine::run() {
 			case GID_SQ4:
 			case GID_FAIRYTALES:
 				showScummVMDialog(_("You have selected General MIDI as a sound device. Sierra "
-				                  "has provided after-market support for General MIDI for this "
-				                  "game in their \"General MIDI Utility\". Please, apply this "
-				                  "patch in order to enjoy MIDI music with this game. Once you "
-				                  "have obtained it, you can unpack all of the included *.PAT "
-				                  "files in your ScummVM extras folder and ScummVM will add the "
-				                  "appropriate patch automatically. Alternatively, you can follow "
-				                  "the instructions in the READ.ME file included in the patch and "
-				                  "rename the associated *.PAT file to 4.PAT and place it in the "
-				                  "game folder. Without this patch, General MIDI music for this "
-				                  "game will sound badly distorted."));
+				                    "has provided after-market support for General MIDI for this "
+				                    "game in their \"General MIDI Utility\". Please, apply this "
+				                    "patch in order to enjoy MIDI music with this game. Once you "
+				                    "have obtained it, you can unpack all of the included *.PAT "
+				                    "files in your ScummVM extras folder and ScummVM will add the "
+				                    "appropriate patch automatically. Alternatively, you can follow "
+				                    "the instructions in the READ.ME file included in the patch and "
+				                    "rename the associated *.PAT file to 4.PAT and place it in the "
+				                    "game folder. Without this patch, General MIDI music for this "
+				                    "game will sound badly distorted."));
 				break;
 			default:
 				break;
@@ -429,10 +429,10 @@ Common::Error SciEngine::run() {
 
 	if (gameHasFanMadePatch()) {
 		showScummVMDialog(_("Your game is patched with a fan made script patch. Such patches have "
-		                  "been reported to cause issues, as they modify game scripts extensively. "
-		                  "The issues that these patches fix do not occur in ScummVM, so you are "
-		                  "advised to remove this patch from your game folder in order to avoid "
-		                  "having unexpected errors and/or issues later on."));
+		                    "been reported to cause issues, as they modify game scripts extensively. "
+		                    "The issues that these patches fix do not occur in ScummVM, so you are "
+		                    "advised to remove this patch from your game folder in order to avoid "
+		                    "having unexpected errors and/or issues later on."));
 	}
 
 	if (getGameId() == GID_GK2 && ConfMan.getBool("subtitles") && !_resMan->testResource(ResourceId(kResourceTypeSync, 10))) {
@@ -456,35 +456,34 @@ bool SciEngine::gameHasFanMadePatch() {
 	};
 
 	const FanMadePatchInfo patchInfo[] = {
-		// game        script    size  offset   byte
-		// ** NRS Patches **************************
-		{ GID_HOYLE3,     994,   2580,    656,  0x78 },
-		{ GID_KQ1,         85,   5156,    631,  0x02 },
-		{ GID_LAURABOW2,  994,   4382,      0,  0x00 },
-		{ GID_LONGBOW,    994,   4950,   1455,  0x78 },	// English
-		{ GID_LONGBOW,    994,   5020,   1469,  0x78 },	// German
-		{ GID_LSL1,       803,    592,    342,  0x01 },
-		{ GID_LSL3,       380,   6148,    195,  0x35 },
-		{ GID_LSL5,       994,   4810,   1342,  0x78 },	// English
-		{ GID_LSL5,       994,   4942,   1392,  0x76 },	// German
-		{ GID_PQ1,        994,   4332,   1473,  0x78 },
-		{ GID_PQ2,        200,  10614,      0,  0x00 },
-		{ GID_PQ3,        994,   4686,   1291,  0x78 },	// English
-		{ GID_PQ3,        994,   4734,   1283,  0x78 },	// German
-		{ GID_QFG1VGA,    994,   4388,      0,  0x00 },
-		{ GID_QFG3,       994,   4714,      2,  0x48 },
-		// TODO: Disabled, as it fixes a whole lot of bugs which can't be tested till SCI2.1 support is finished
-		//{ GID_QFG4,       710,  11477,      0,  0x00 },
-		{ GID_SQ1,        994,   4740,      0,  0x00 },
-		{ GID_SQ5,        994,   4142,   1496,  0x78 },	// English/German/French
-		// TODO: Disabled, till we can test the Italian version
-		//{ GID_SQ5,        994,   4148,      0,  0x00 },	// Italian - patched file is the same size as the original
-		// TODO: The bugs in SQ6 can't be tested till SCI2.1 support is finished
-		//{ GID_SQ6,        380,  16308,  15042,  0x0C },	// English
-		//{ GID_SQ6,        380,  11652,      0,  0x00 },	// German - patched file is the same size as the original
-		// ** End marker ***************************
-		{ GID_FANMADE,      0,      0,      0,  0x00 }
-	};
+	    // game        script    size  offset   byte
+	    // ** NRS Patches **************************
+	    {GID_HOYLE3, 994, 2580, 656, 0x78},
+	    {GID_KQ1, 85, 5156, 631, 0x02},
+	    {GID_LAURABOW2, 994, 4382, 0, 0x00},
+	    {GID_LONGBOW, 994, 4950, 1455, 0x78}, // English
+	    {GID_LONGBOW, 994, 5020, 1469, 0x78}, // German
+	    {GID_LSL1, 803, 592, 342, 0x01},
+	    {GID_LSL3, 380, 6148, 195, 0x35},
+	    {GID_LSL5, 994, 4810, 1342, 0x78}, // English
+	    {GID_LSL5, 994, 4942, 1392, 0x76}, // German
+	    {GID_PQ1, 994, 4332, 1473, 0x78},
+	    {GID_PQ2, 200, 10614, 0, 0x00},
+	    {GID_PQ3, 994, 4686, 1291, 0x78}, // English
+	    {GID_PQ3, 994, 4734, 1283, 0x78}, // German
+	    {GID_QFG1VGA, 994, 4388, 0, 0x00},
+	    {GID_QFG3, 994, 4714, 2, 0x48},
+	    // TODO: Disabled, as it fixes a whole lot of bugs which can't be tested till SCI2.1 support is finished
+	    //{ GID_QFG4,       710,  11477,      0,  0x00 },
+	    {GID_SQ1, 994, 4740, 0, 0x00},
+	    {GID_SQ5, 994, 4142, 1496, 0x78}, // English/German/French
+	    // TODO: Disabled, till we can test the Italian version
+	    //{ GID_SQ5,        994,   4148,      0,  0x00 },	// Italian - patched file is the same size as the original
+	    // TODO: The bugs in SQ6 can't be tested till SCI2.1 support is finished
+	    //{ GID_SQ6,        380,  16308,  15042,  0x0C },	// English
+	    //{ GID_SQ6,        380,  11652,      0,  0x00 },	// German - patched file is the same size as the original
+	    // ** End marker ***************************
+	    {GID_FANMADE, 0, 0, 0, 0x00}};
 
 	int curEntry = 0;
 
@@ -510,29 +509,29 @@ bool SciEngine::gameHasFanMadePatch() {
 }
 
 void SciEngine::suggestDownloadGK2SubTitlesPatch() {
-	const char* altButton;
+	const char *altButton;
 	Common::String downloadMessage;
 
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		altButton = _("Download patch");
 		downloadMessage = _("(or click 'Download patch' button. But note - it only downloads, you will have to continue from there)\n");
-	}
-	else {
+	} else {
 		altButton = nullptr;
 		downloadMessage = "";
 	}
 
 	int result = showScummVMDialog(_("GK2 has a fan made subtitles, available thanks to the good persons at SierraHelp.\n\n"
-		"Installation:\n"
-		"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n" +
-		downloadMessage +
-		"- extract zip file\n"
-		"- no need to run the .exe file\n"
-		"- extract the .exe file with a file archiver, like 7-zip\n"
-		"- create a PATCHES subdirectory inside your GK2 directory\n"
-		"- copy the content of GK2Subtitles\\SUBPATCH to the PATCHES subdirectory\n"
-		"- replace files with similar names\n"
-		"- restart the game\n"), altButton, false);
+	                                 "Installation:\n"
+	                                 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n" +
+	                                 downloadMessage +
+	                                 "- extract zip file\n"
+	                                 "- no need to run the .exe file\n"
+	                                 "- extract the .exe file with a file archiver, like 7-zip\n"
+	                                 "- create a PATCHES subdirectory inside your GK2 directory\n"
+	                                 "- copy the content of GK2Subtitles\\SUBPATCH to the PATCHES subdirectory\n"
+	                                 "- replace files with similar names\n"
+	                                 "- restart the game\n"),
+	                               altButton, false);
 	if (!result) {
 		char url[] = "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip";
 		g_system->openUrl(url);
@@ -558,7 +557,7 @@ bool SciEngine::initGame() {
 
 	_gamestate->r_acc = _gamestate->r_prev = NULL_REG;
 
-	_gamestate->_executionStack.clear();    // Start without any execution stack
+	_gamestate->_executionStack.clear(); // Start without any execution stack
 	_gamestate->executionStackBase = -1; // No vm is running yet
 	_gamestate->_executionStackPosChanged = false;
 
@@ -689,7 +688,6 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 		printObject(_gameObjectAddress);
 		error("initStackBaseWithSelector: error while registering the first selector in the call stack");
 	}
-
 }
 
 void SciEngine::runGame() {
@@ -734,7 +732,7 @@ void SciEngine::runGame() {
 			syncSoundSettings();
 			_guestAdditions->syncAudioOptionsFromScummVM();
 		} else {
-			break;	// exit loop
+			break; // exit loop
 		}
 	} while (true);
 }
@@ -768,7 +766,7 @@ void SciEngine::severeError() {
 		}
 	}
 
-	_debugState.runningStep = 0; // Stop multiple execution
+	_debugState.runningStep = 0;             // Stop multiple execution
 	_debugState.seeking = kDebugSeekNothing; // Stop special seeks
 }
 
@@ -800,8 +798,8 @@ bool SciEngine::forceHiresGraphics() const {
 	return _forceHiresGraphics;
 }
 
-bool SciEngine::isBE() const{
-	switch(_gameDescription->platform) {
+bool SciEngine::isBE() const {
+	switch (_gameDescription->platform) {
 	case Common::kPlatformAmiga:
 	case Common::kPlatformMacintosh:
 		return true;
@@ -814,20 +812,20 @@ bool SciEngine::hasParser() const {
 	// Only SCI0, SCI01 and SCI1 EGA games used a parser, along with
 	//  multilingual LSL3 and SQ3 Amiga which are SCI_VERSION_1_MIDDLE
 	return getSciVersion() <= SCI_VERSION_1_EGA_ONLY ||
-			getGameId() == GID_LSL3 || getGameId() == GID_SQ3;
+	       getGameId() == GID_LSL3 || getGameId() == GID_SQ3;
 }
 
 bool SciEngine::hasMacIconBar() const {
 	return _resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1 &&
-			(getGameId() == GID_KQ6 || getGameId() == GID_FREDDYPHARKAS);
+	       (getGameId() == GID_KQ6 || getGameId() == GID_FREDDYPHARKAS);
 }
 
 bool SciEngine::hasMacSaveRestoreDialogs() const {
-    return _gameDescription->platform == Common::kPlatformMacintosh &&
-			(getSciVersion() <= SCI_VERSION_2_1_EARLY ||
-			 getGameId() == GID_GK2 ||
-			 getGameId() == GID_SQ6 ||
-			 getGameId() == GID_LIGHTHOUSE);
+	return _gameDescription->platform == Common::kPlatformMacintosh &&
+	       (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
+	        getGameId() == GID_GK2 ||
+	        getGameId() == GID_SQ6 ||
+	        getGameId() == GID_LIGHTHOUSE);
 }
 
 Common::String SciEngine::getSavegameName(int nr) const {
@@ -877,11 +875,11 @@ int SciEngine::inQfGImportRoom() const {
 
 void SciEngine::showQfgImportMessageBox() const {
 	showScummVMDialog(_("Characters saved inside ScummVM are shown "
-			"automatically. Character files saved in the original "
-			"interpreter need to be put inside ScummVM's saved games "
-			"directory and a prefix needs to be added depending on which "
-			"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
-			"for Quest for Glory 2. Example: 'qfg2-thief.sav'."));
+	                    "automatically. Character files saved in the original "
+	                    "interpreter need to be put inside ScummVM's saved games "
+	                    "directory and a prefix needs to be added depending on which "
+	                    "game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
+	                    "for Quest for Glory 2. Example: 'qfg2-thief.sav'."));
 }
 
 void SciEngine::sleep(uint32 msecs) {

@@ -65,7 +65,7 @@ void ScreenEffects::toggleEntry(int effectId, bool skip) {
 				}
 			}
 			_skipEntries.insert_at(newSlot, effectId);
-		} else if (!skip && foundAt >= 0 ) {
+		} else if (!skip && foundAt >= 0) {
 			_skipEntries.remove_at(foundAt);
 		}
 	} else if (effectId == -1 && !skip) {
@@ -76,7 +76,7 @@ void ScreenEffects::toggleEntry(int effectId, bool skip) {
 
 void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 	uint8 *dataPtr = _data;
-	int dataSize   = _dataSize;
+	int dataSize = _dataSize;
 
 	int entryCount = stream->readUint32LE();
 
@@ -90,11 +90,11 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 	for (Common::Array<Entry>::iterator entry = _entries.begin(); entry != _entries.end(); ++entry) {
 		stream->read(&entry->palette, sizeof(Color256) * 16);
 
-		entry->x      = stream->readUint16LE();
-		entry->y      = stream->readUint16LE();
-		entry->width  = stream->readUint16LE();
+		entry->x = stream->readUint16LE();
+		entry->y = stream->readUint16LE();
+		entry->width = stream->readUint16LE();
 		entry->height = stream->readUint16LE();
-		entry->z      = stream->readUint16LE();
+		entry->z = stream->readUint16LE();
 
 		int entryDataSize = stream->readUint16LE();
 
@@ -167,7 +167,7 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 //}
 
 void ScreenEffects::getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z) const {
-	Color256 color = { 0, 0, 0 };
+	Color256 color = {0, 0, 0};
 	for (Common::Array<const Entry>::iterator entry = _entries.begin(); entry != _entries.end(); ++entry) {
 		uint16 x1 = (x / 2) - entry->x;
 		uint16 y1 = (y / 2) - entry->y;

@@ -22,21 +22,21 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "common/substream.h"
 
 #include "agos/agos.h"
 #include "agos/sound.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
-#include "audio/mixer.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
+#include "audio/mixer.h"
 
 namespace AGOS {
 
@@ -50,6 +50,7 @@ protected:
 	bool _freeOffsets;
 
 	Common::SeekableReadStream *getSoundStream(uint sound) const;
+
 public:
 	BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base, bool bigEndian);
 	BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32 *offsets);
@@ -63,7 +64,7 @@ public:
 };
 
 BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base, bool bigEndian)
-	: _mixer(mixer), _filename(filename), _offsets(NULL) {
+    : _mixer(mixer), _filename(filename), _offsets(NULL) {
 
 	uint res = 0;
 	uint32 size;
@@ -100,7 +101,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32
 }
 
 BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32 *offsets)
-	: _mixer(mixer), _filename(filename), _offsets(offsets), _freeOffsets(false) {
+    : _mixer(mixer), _filename(filename), _offsets(offsets), _freeOffsets(false) {
 }
 
 BaseSound::~BaseSound() {
@@ -141,6 +142,7 @@ private:
 	bool _loop;
 	uint _sound;
 	uint _loopSound;
+
 public:
 	LoopingAudioStream(BaseSound *parent, uint sound, uint loopSound, bool loop);
 	~LoopingAudioStream() override;
@@ -251,7 +253,7 @@ void BaseSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType ty
 class WavSound : public BaseSound {
 public:
 	WavSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0)
-		: BaseSound(mixer, filename, base, false) {}
+	    : BaseSound(mixer, filename, base, false) {}
 	WavSound(Audio::Mixer *mixer, const Common::String &filename, uint32 *offsets) : BaseSound(mixer, filename, offsets) {}
 	Audio::AudioStream *makeAudioStream(uint sound) override;
 };
@@ -268,9 +270,10 @@ Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
 
 class VocSound : public BaseSound {
 	const byte _flags;
+
 public:
 	VocSound(Audio::Mixer *mixer, const Common::String &filename, bool isUnsigned, uint32 base = 0, bool bigEndian = false)
-		: BaseSound(mixer, filename, base, bigEndian), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
+	    : BaseSound(mixer, filename, base, bigEndian), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	Audio::AudioStream *makeAudioStream(uint sound) override;
 };
 
@@ -287,9 +290,10 @@ Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
 // This class is only used by speech in Simon1 Amiga CD32
 class RawSound : public BaseSound {
 	const byte _flags;
+
 public:
 	RawSound(Audio::Mixer *mixer, const Common::String &filename, bool isUnsigned)
-		: BaseSound(mixer, filename, 0, SOUND_BIG_ENDIAN), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
+	    : BaseSound(mixer, filename, 0, SOUND_BIG_ENDIAN), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	Audio::AudioStream *makeAudioStream(uint sound) override;
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) override;
 };
@@ -388,12 +392,11 @@ static BaseSound *makeSound(Audio::Mixer *mixer, const Common::String &basename)
 	return 0;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
 Sound::Sound(AGOSEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer)
-	: _vm(vm), _mixer(mixer) {
+    : _vm(vm), _mixer(mixer) {
 	_voice = 0;
 	_effects = 0;
 
@@ -684,7 +687,7 @@ void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 	memcpy(buffer, soundData, size);
 
 	byte flags = 0;
-	if (_vm->getPlatform() == Common::kPlatformDOS &&  _vm->getGameId() != GID_ELVIRA2)
+	if (_vm->getPlatform() == Common::kPlatformDOS && _vm->getGameId() != GID_ELVIRA2)
 		flags = Audio::FLAG_UNSIGNED;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(buffer, size, freq, flags);

@@ -20,18 +20,17 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/u6_lib_n.h"
-#include "ultima/nuvie/sound/adplug/opl.h"
 #include "ultima/nuvie/sound/origin_fx_adib_driver.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/files/u6_lib_n.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/sound/adplug/opl.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-const uint8 adlib_BD_cmd_tbl[] = { 0, 1, 0, 1, 0, 1, 16, 8, 4, 2, 1 };
-
+const uint8 adlib_BD_cmd_tbl[] = {0, 1, 0, 1, 0, 1, 16, 8, 4, 2, 1};
 
 OriginFXAdLibDriver::OriginFXAdLibDriver(Configuration *cfg, Copl *newopl) {
 
@@ -68,7 +67,7 @@ OriginFXAdLibDriver::OriginFXAdLibDriver(Configuration *cfg, Copl *newopl) {
 
 OriginFXAdLibDriver::~OriginFXAdLibDriver() {
 	if (adlib_tim_data)
-		delete [] adlib_tim_data;
+		delete[] adlib_tim_data;
 }
 
 void OriginFXAdLibDriver::init() {
@@ -100,7 +99,7 @@ void OriginFXAdLibDriver::load_tim_file() {
 
 	f.open(filename, 4, game_type);
 	unsigned char *buf = f.get_item(1);
-	adlib_tim_data = new unsigned char [f.get_item_size(1) - 1];
+	adlib_tim_data = new unsigned char[f.get_item_size(1) - 1];
 	num_tim_records = buf[0];
 	memcpy(adlib_tim_data, &buf[1], f.get_item_size(1) - 1);
 	free(buf);
@@ -109,23 +108,23 @@ void OriginFXAdLibDriver::load_tim_file() {
 		midi_chan_tim_ptr[i] = adlib_tim_data;
 	}
 
-	program_change(0x9 , 0x80);
-	program_change(0xa , 0x72);
-	program_change(0xb , 0x83);
-	program_change(0xc , 0x71);
-	program_change(0xd , 0x86);
-	program_change(0xe , 0x87);
-	program_change(0xf , 0x85);
-	program_change(0x10 , 0x84);
-	program_change(0x11 , 0x81);
-	program_change(0x12 , 0x88);
-	program_change(0x13 , 0x8D);
-	program_change(0x14 , 0x8F);
-	program_change(0x15 , 0x90);
-	program_change(0x16 , 0x91);
-	program_change(0x17 , 0x93);
-	program_change(0x18 , 0x8C);
-	program_change(0x19 , 0x8B);
+	program_change(0x9, 0x80);
+	program_change(0xa, 0x72);
+	program_change(0xb, 0x83);
+	program_change(0xc, 0x71);
+	program_change(0xd, 0x86);
+	program_change(0xe, 0x87);
+	program_change(0xf, 0x85);
+	program_change(0x10, 0x84);
+	program_change(0x11, 0x81);
+	program_change(0x12, 0x88);
+	program_change(0x13, 0x8D);
+	program_change(0x14, 0x8F);
+	program_change(0x15, 0x90);
+	program_change(0x16, 0x91);
+	program_change(0x17, 0x93);
+	program_change(0x18, 0x8C);
+	program_change(0x19, 0x8B);
 }
 
 unsigned char *OriginFXAdLibDriver::get_tim_data(uint8 program_number) {
@@ -152,7 +151,6 @@ void OriginFXAdLibDriver::program_change(sint8 channel, uint8 program_number) {
 			play_note(channel, adlib_ins[i].note, 0); //note off.
 			adlib_ins[i].channel = -1;
 			adlib_ins[i].tim_data = NULL;
-
 		}
 	}
 
@@ -202,7 +200,6 @@ void OriginFXAdLibDriver::pitch_bend(uint8 channel, uint8 pitch_lsb, uint8 pitch
 			midi_write_adlib(0xa0 + i, var_2 & 0xff);
 			midi_write_adlib(0xb0 + i, var_2 >> 8);
 		}
-
 	}
 }
 
@@ -463,7 +460,6 @@ void OriginFXAdLibDriver::write_adlib_instrument(sint8 voice, unsigned char *tim
 		midi_write_adlib(0xe0 + opadd1, *cur_tim_ptr++);
 		midi_write_adlib(0xc0 + voice, *cur_tim_ptr++);
 	}
-
 }
 
 void OriginFXAdLibDriver::interrupt_vector() {

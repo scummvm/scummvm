@@ -20,8 +20,8 @@
  *
  */
 
-#include "glk/agt/agility.h"
 #include "common/str.h"
+#include "glk/agt/agility.h"
 
 namespace Glk {
 namespace AGT {
@@ -40,7 +40,6 @@ namespace AGT {
 /* behavior of the original interpreters */
 /* WARNING: Many of these haven't been tested extenstivly in the non-default
    state. */
-
 
 rbool PURE_ANSWER = 0; /* For ME questions, requires that AND-separated
               answers be in the same order in the player's
@@ -73,7 +72,7 @@ rbool PURE_METAVERB = 1; /* If set, ANY and AFTER commands are run even
                pass). Verb specific metacommands are _always_
                run. */
 
-rbool PURE_ROOMTITLE = 1;  /* If 0, the interpreter will print out room
+rbool PURE_ROOMTITLE = 1; /* If 0, the interpreter will print out room
                names before room descriptions even for
                pre-ME games */
 
@@ -96,7 +95,7 @@ rbool PURE_ADJ = 1; /* Picks noun/syn-matches over pure adj matches
                since in that case pure adjective matches will
                be rejected anyhow. */
 
-rbool PURE_DUMMY = 0;  /* If set, the player can running dummy verbs
+rbool PURE_DUMMY = 0; /* If set, the player can running dummy verbs
              in the game by typing 'dummy_verb3'; otherwise,
              this will produce an error message */
 
@@ -111,20 +110,20 @@ rbool PURE_PROSUB = 0;  /* If clear, then $you$ substitutions are done
             If set, these substitutions are only made
             in internal game messages */
 
-rbool PURE_HOSTILE = 1;  /* =0 Will allow you to leave a room with a hostile
+rbool PURE_HOSTILE = 1;    /* =0 Will allow you to leave a room with a hostile
                creature if you go back the way you came */
-rbool PURE_ALL = 1;      /* =0 will cause the parser to expand ALL */
-rbool PURE_DISAMBIG = 1; /* =0 will cause intelligent disambiguation */
-rbool PURE_GETHOSTILE = 1;  /* =0 will prevent the player from picking things
+rbool PURE_ALL = 1;        /* =0 will cause the parser to expand ALL */
+rbool PURE_DISAMBIG = 1;   /* =0 will cause intelligent disambiguation */
+rbool PURE_GETHOSTILE = 1; /* =0 will prevent the player from picking things
                 up in a room with a hostile creature */
 
-rbool PURE_OBJ_DESC = 1;    /* =0 prevents [providing light] messages
+rbool PURE_OBJ_DESC = 1; /* =0 prevents [providing light] messages
               from being shown */
 
-rbool PURE_ERROR = 0;    /* =1 means no GAME ERROR messages will be printed
+rbool PURE_ERROR = 0; /* =1 means no GAME ERROR messages will be printed
              out */
 
-rbool PURE_SIZE = 1;  /* =0 eliminates size/weight limits on how many
+rbool PURE_SIZE = 1; /* =0 eliminates size/weight limits on how many
               things the player can wear or carry. (But it's
               still impossible to pick things up that are
               in themselves larger than the player's capacity) */
@@ -143,9 +142,8 @@ rbool PURE_AFTER = 1; /* =0 causes LOOK and other end-of-turn events
 
 rbool PURE_PROPER = 1; /* Don't automatically treat creatures as proper nouns */
 
-rbool TWO_CYCLE = 0; /* AGT 1.83-style two-cycle metacommand execution. */
+rbool TWO_CYCLE = 0;     /* AGT 1.83-style two-cycle metacommand execution. */
 rbool FORCE_VERSION = 0; /* Load even if the version is wrong. */
-
 
 /*-------------------------------------------------------------------------*/
 /* .CFG reading routines                                                   */
@@ -163,7 +161,7 @@ rbool FORCE_VERSION = 0; /* Load even if the version is wrong. */
   the game specific configuration file.
       */
 
-#define opt(s) (strcasecmp(optstr[0],s)==0)
+#define opt(s) (strcasecmp(optstr[0], s) == 0)
 
 static void cfg_option(int optnum, char *optstr[], rbool lastpass)
 /* This is passed each of the options; it is responsible for parsing
@@ -175,47 +173,78 @@ static void cfg_option(int optnum, char *optstr[], rbool lastpass)
 {
 	rbool setflag;
 
-	if (optnum == 0 || optstr[0] == NULL) return;
+	if (optnum == 0 || optstr[0] == NULL)
+		return;
 
 	if (strncasecmp(optstr[0], "no_", 3) == 0) {
 		optstr[0] += 3;
 		setflag = 0;
-	} else setflag = 1;
+	} else
+		setflag = 1;
 
-	if (opt("slash_bold")) bold_mode = setflag;
+	if (opt("slash_bold"))
+		bold_mode = setflag;
 	else if (!lastpass) {
 		/* On the first pass, we ignore all but a few options */
 		agil_option(optnum, optstr, setflag, lastpass);
 		return;
-	} else if (opt("irun")) irun_mode = setflag;
-	else if (opt("block_hostile")) PURE_HOSTILE = setflag;
-	else if (opt("get_hostile")) PURE_GETHOSTILE = setflag;
+	} else if (opt("irun"))
+		irun_mode = setflag;
+	else if (opt("block_hostile"))
+		PURE_HOSTILE = setflag;
+	else if (opt("get_hostile"))
+		PURE_GETHOSTILE = setflag;
 	else if (opt("debug")) {
-		if (!agx_file && aver <= AGTME10) debug_mode = setflag;
-		if (setflag == 0) debug_mode = 0; /* Can always turn debugging support off */
-	} else if (opt("pure_answer")) PURE_ANSWER = setflag;
-	else if (opt("const_time")) PURE_TIME = !setflag;
-	else if (opt("fix_multinoun")) PURE_AND = !setflag;
-	else if (opt("fix_metaverb")) PURE_METAVERB = !setflag;
-	else if (opt("roomtitle")) PURE_ROOMTITLE = !setflag;
-	else if (opt("pure_synonym")) PURE_SYN = setflag;
-	else if (opt("adj_noun")) PURE_ADJ = !setflag;
-	else if (opt("pure_dummy")) PURE_DUMMY = setflag;
-	else if (opt("pure_subroutine")) PURE_SUBNAME = setflag;
-	else if (opt("pronoun_subs")) PURE_PROSUB = !setflag;
-	else if (opt("verbose")) verboseflag = setflag;
-	else if (opt("fixed_font")) font_status = 1 + !setflag;
-	else if (opt("alt_any")) mars_fix = setflag;
-	else if (opt("smart_disambig")) PURE_DISAMBIG = !setflag;
-	else if (opt("expand_all")) PURE_ALL = !setflag;
-	else if (opt("object_notes")) PURE_OBJ_DESC = setflag;
-	else if (opt("error")) PURE_ERROR = !setflag;
-	else if (opt("ignore_size")) PURE_SIZE = !setflag;
-	else if (opt("check_grammar")) PURE_GRAMMAR = !setflag;
-	else if (opt("default_errors")) PURE_SYSMSG = !setflag;
-	else if (opt("pure_after")) PURE_AFTER = !setflag;
-	else if (opt("proper_creature")) PURE_PROPER = !setflag;
-	else agil_option(optnum, optstr, setflag, lastpass);
+		if (!agx_file && aver <= AGTME10)
+			debug_mode = setflag;
+		if (setflag == 0)
+			debug_mode = 0; /* Can always turn debugging support off */
+	} else if (opt("pure_answer"))
+		PURE_ANSWER = setflag;
+	else if (opt("const_time"))
+		PURE_TIME = !setflag;
+	else if (opt("fix_multinoun"))
+		PURE_AND = !setflag;
+	else if (opt("fix_metaverb"))
+		PURE_METAVERB = !setflag;
+	else if (opt("roomtitle"))
+		PURE_ROOMTITLE = !setflag;
+	else if (opt("pure_synonym"))
+		PURE_SYN = setflag;
+	else if (opt("adj_noun"))
+		PURE_ADJ = !setflag;
+	else if (opt("pure_dummy"))
+		PURE_DUMMY = setflag;
+	else if (opt("pure_subroutine"))
+		PURE_SUBNAME = setflag;
+	else if (opt("pronoun_subs"))
+		PURE_PROSUB = !setflag;
+	else if (opt("verbose"))
+		verboseflag = setflag;
+	else if (opt("fixed_font"))
+		font_status = 1 + !setflag;
+	else if (opt("alt_any"))
+		mars_fix = setflag;
+	else if (opt("smart_disambig"))
+		PURE_DISAMBIG = !setflag;
+	else if (opt("expand_all"))
+		PURE_ALL = !setflag;
+	else if (opt("object_notes"))
+		PURE_OBJ_DESC = setflag;
+	else if (opt("error"))
+		PURE_ERROR = !setflag;
+	else if (opt("ignore_size"))
+		PURE_SIZE = !setflag;
+	else if (opt("check_grammar"))
+		PURE_GRAMMAR = !setflag;
+	else if (opt("default_errors"))
+		PURE_SYSMSG = !setflag;
+	else if (opt("pure_after"))
+		PURE_AFTER = !setflag;
+	else if (opt("proper_creature"))
+		PURE_PROPER = !setflag;
+	else
+		agil_option(optnum, optstr, setflag, lastpass);
 }
 
 #undef opt
@@ -228,30 +257,33 @@ rbool parse_config_line(char *buff, rbool lastpass) {
 	optc = 0;
 	opt[0] = NULL;
 	for (p = buff; *p; p++) {
-		if (isspace(*p)) {  /* Whitespace */
+		if (isspace(*p)) {           /* Whitespace */
 			if (opt[optc] != NULL) { /*... which means this is the first whitespace */
-				if (optc == 50) return 0; /* Too many */
+				if (optc == 50)
+					return 0; /* Too many */
 				opt[++optc] = NULL;
 			}
 			*p = 0;
-		} else  /* No whitespace */
-			if (opt[optc] == NULL) /* ...this is the first non-whitespace */
-				opt[optc] = p;
+		} else                     /* No whitespace */
+		    if (opt[optc] == NULL) /* ...this is the first non-whitespace */
+			opt[optc] = p;
 	}
-	if (opt[optc] != NULL) opt[++optc] = NULL;
+	if (opt[optc] != NULL)
+		opt[++optc] = NULL;
 	cfg_option(optc, opt, lastpass);
 	return 1;
 }
-
 
 /* For the meaning of lastpass, see comments to cfg_option() above */
 void read_config(genfile cfgfile, rbool lastpass) {
 	char buff[100];
 
-	if (!filevalid(cfgfile, fCFG)) return;
+	if (!filevalid(cfgfile, fCFG))
+		return;
 
 	while (readln(cfgfile, buff, 99)) {
-		if (buff[0] == '#') continue; /* Comments */
+		if (buff[0] == '#')
+			continue; /* Comments */
 		/* Now we parse the line into words, with opt[] pointing at the words
 		   and optc counting how many there are. */
 		if (!parse_config_line(buff, lastpass))
@@ -259,8 +291,6 @@ void read_config(genfile cfgfile, rbool lastpass) {
 	}
 	readclose(cfgfile);
 }
-
-
 
 /*-------------------------------------------------------------------------*/
 /* Read OPT file                                                          */
@@ -302,7 +332,6 @@ void read_opt(fc_type fc) {
 	}
 }
 
-
 /*-------------------------------------------------------------------------*/
 /* Read and process TTL                                                    */
 /*  (most of these routines used to be in agil.c)                          */
@@ -315,14 +344,13 @@ void read_opt(fc_type fc) {
 
 #define SOGCREDIT 7
 static const char *sogauthor[SOGCREDIT] = {
-	"Mark \"Sam\" Baker",
-	"Steve \"Aaargh\" Bauman",
-	"Belisana \"The\" Magnificent",
-	"Mike \"of Locksley\" Laskey",
-	"Judith \"Teela Brown\" Pintar",
-	"Hercules \"The Loyal\" SysOp",
-	"Cindy \"Nearly Amelia\" Yans"
-};
+    "Mark \"Sam\" Baker",
+    "Steve \"Aaargh\" Bauman",
+    "Belisana \"The\" Magnificent",
+    "Mike \"of Locksley\" Laskey",
+    "Judith \"Teela Brown\" Pintar",
+    "Hercules \"The Loyal\" SysOp",
+    "Cindy \"Nearly Amelia\" Yans"};
 
 static rbool check_dollar(char *s)
 /* Determines if s consists of an empty string with a single dollar sign
@@ -331,8 +359,10 @@ static rbool check_dollar(char *s)
 	rbool dfound;
 	dfound = 0;
 	for (; *s != 0; s++)
-		if (*s == '$' && !dfound) dfound = 1;
-		else if (!rspace(*s)) return 0;
+		if (*s == '$' && !dfound)
+			dfound = 1;
+		else if (!rspace(*s))
+			return 0;
 	return dfound;
 }
 
@@ -343,13 +373,15 @@ descr_line *read_ttl(fc_type fc) {
 
 	ttlfile = openfile(fc, fTTL, NULL, 0);
 	/* "Warning: Could not open title file '%s'." */
-	if (!filevalid(ttlfile, fTTL)) return NULL;
+	if (!filevalid(ttlfile, fTTL))
+		return NULL;
 	build_fixchar();
 
 	buff = (descr_line *)rmalloc(sizeof(descr_line));
 	i = 0;
 	while (NULL != (buff[i] = readln(ttlfile, NULL, 0))) {
-		if (strncmp(buff[i], "END OF FILE", 11) == 0) break;
+		if (strncmp(buff[i], "END OF FILE", 11) == 0)
+			break;
 		else if (aver >= AGT18 && aver <= AGT18MAX && check_dollar(buff[i]))
 			statusmode = 4;
 		else {
@@ -365,7 +397,8 @@ descr_line *read_ttl(fc_type fc) {
 
 	rfree(buff[i]);
 	while (buff[i] == NULL || strlen(buff[i]) <= 1) { /* Discard 'empty' lines */
-		if (i == 0) break;
+		if (i == 0)
+			break;
 		rfree(buff[i]);
 		i--;
 	}
@@ -381,20 +414,19 @@ descr_line *read_ttl(fc_type fc) {
 
 void free_ttl(descr_line *title) {
 	int i;
-	if (title == NULL) return;
+	if (title == NULL)
+		return;
 	for (i = 0; title[i] != NULL; i++)
 		rfree(title[i]);
 	rfree(title);
 }
-
 
 /*-------------------------------------------------------------------------*/
 /* Read and convert VOC                                                    */
 /*  (most of these routines used to be in agil.c)                          */
 /*-------------------------------------------------------------------------*/
 
-
-static const char *newvoc[] = { "1 Menu", "1 Restart", "1 Undo" };
+static const char *newvoc[] = {"1 Menu", "1 Restart", "1 Undo"};
 static int newindex = 0; /* Points into newvoc */
 
 void add_verbrec(const char *verb_line, rbool addnew) {
@@ -405,7 +437,7 @@ void add_verbrec(const char *verb_line, rbool addnew) {
 		verbStr.deleteChar(0);
 
 	if (verbStr.empty() || verbStr.hasPrefix("!"))
-		return;		/* Comment or empty line */
+		return; /* Comment or empty line */
 
 	/* The following guarentees automatic initialization of the verbrec structures */
 	if (!addnew)
@@ -455,14 +487,15 @@ void init_verbrec(void)
 	verbinfo = NULL;
 	vm_size = 0;
 	newindex = 0;
-	if (freeze_mode) newindex = 1;  /* Don't include MENU option if we can't
+	if (freeze_mode)
+		newindex = 1; /* Don't include MENU option if we can't
                    use it. */
 }
 
 void finish_verbrec(void) {
-	for (; newindex < 3; newindex++) add_verbrec(newvoc[newindex], 1);
+	for (; newindex < 3; newindex++)
+		add_verbrec(newvoc[newindex], 1);
 }
-
 
 void read_voc(fc_type fc) {
 	char linbuf[80];
@@ -478,28 +511,24 @@ void read_voc(fc_type fc) {
 	}
 }
 
-
-
-
 /*-------------------------------------------------------------------------*/
 /* Read INS file                                                           */
 /*  (most of these routines used to be in agil.c)                          */
 /*-------------------------------------------------------------------------*/
 
-
 static genfile insfile = BAD_TEXTFILE;
 static char *ins_buff;
 
 static descr_line *ins_descr = NULL;
-static int ins_line;  /* Current instruction line */
-
+static int ins_line; /* Current instruction line */
 
 /* Return 1 on success, 0 on failure */
 rbool open_ins_file(fc_type fc, rbool report_error) {
 	ins_buff = NULL;
 	ins_line = 0;
 
-	if (ins_descr != NULL) return 1;
+	if (ins_descr != NULL)
+		return 1;
 
 	if (filevalid(insfile, fINS)) {
 		textrewind(insfile);
@@ -508,7 +537,8 @@ rbool open_ins_file(fc_type fc, rbool report_error) {
 
 	if (agx_file) {
 		ins_descr = read_descr(ins_ptr.start, ins_ptr.size);
-		if (ins_descr != NULL) return 1;
+		if (ins_descr != NULL)
+			return 1;
 
 		/* Note that if the AGX file doesn't contain an INS block, we
 		   don't immediatly give up but try opening <fname>.INS */
@@ -516,8 +546,8 @@ rbool open_ins_file(fc_type fc, rbool report_error) {
 
 	insfile = openfile(fc, fINS,
 	                   report_error
-	                   ? "Sorry, Instructions aren't available for this game"
-	                   : NULL,
+	                       ? "Sorry, Instructions aren't available for this game"
+	                       : NULL,
 	                   0);
 	return (filevalid(insfile, fINS));
 }
@@ -526,7 +556,8 @@ char *read_ins_line(void) {
 	if (ins_descr) {
 		if (ins_descr[ins_line] != NULL)
 			return ins_descr[ins_line++];
-		else return NULL;
+		else
+			return NULL;
 	} else {
 		rfree(ins_buff);
 		ins_buff = readln(insfile, NULL, 0);
@@ -545,8 +576,6 @@ void close_ins_file(void) {
 	}
 }
 
-
-
 descr_line *read_ins(fc_type fc) {
 	descr_line *txt;
 	char *buff;
@@ -554,7 +583,7 @@ descr_line *read_ins(fc_type fc) {
 
 	i = 0;
 	txt = NULL;
-	if (open_ins_file(fc, 0)) {  /* Instruction file exists */
+	if (open_ins_file(fc, 0)) { /* Instruction file exists */
 		while (NULL != (buff = read_ins_line())) {
 			/* Enlarge txt; we use (i+2) here to leave space for the trailing \0 */
 			txt = (descr_line *)rrealloc(txt, sizeof(descr_ptr) * (i + 2));
@@ -567,28 +596,29 @@ descr_line *read_ins(fc_type fc) {
 	return txt;
 }
 
-
 void free_ins(descr_line *instr) {
 	int i;
-	if (instr == NULL) return;
+	if (instr == NULL)
+		return;
 	for (i = 0; instr[i] != NULL; i++)
 		rfree(instr[i]);
 	rfree(instr);
 }
 
-
-
 /* Character translation routines, used by agtread.c and read_ttl() */
 void build_fixchar(void) {
 	int i;
 	for (i = 0; i < 256; i++) {
-		if (i == '\r' || i == '\n') fixchar[i] = ' ';
-		else if (i == '\\' && bold_mode) fixchar[i] = FORMAT_CODE;
+		if (i == '\r' || i == '\n')
+			fixchar[i] = ' ';
+		else if (i == '\\' && bold_mode)
+			fixchar[i] = FORMAT_CODE;
 		else if (i >= 0x80 && fix_ascii_flag)
 			fixchar[i] = trans_ibm[i & 0x7f];
 		else if (i == 0) /* Fix color and blink codes */
 			fixchar[i] = FORMAT_CODE;
-		else fixchar[i] = i;
+		else
+			fixchar[i] = i;
 	}
 }
 

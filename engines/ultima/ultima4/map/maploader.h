@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_MAP_MAPLOADER_H
 #define ULTIMA4_MAP_MAPLOADER_H
 
-#include "ultima/ultima4/map/map.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/map/map.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -37,7 +37,6 @@ struct MapType_Hash {
 		return (uint)v;
 	}
 };
-
 
 /**
  * The generic map loader interface.  Map loaders should override the

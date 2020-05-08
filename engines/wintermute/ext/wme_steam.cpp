@@ -26,20 +26,20 @@
  * Copyright (c) 2013 Jan Nedoma
  */
 
+#include "engines/wintermute/ext/wme_steam.h"
 #include "engines/metaengine.h"
-#include "engines/wintermute/wintermute.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/ext/wme_steam.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(SXSteamAPI, false)
 
 BaseScriptable *makeSXSteamAPI(BaseGame *inGame, ScStack *stack) {
-	return new SXSteamAPI(inGame,  stack);
+	return new SXSteamAPI(inGame, stack);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,17 +62,14 @@ void SXSteamAPI::init() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 SXSteamAPI::~SXSteamAPI() {
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXSteamAPI::scToString() {
 	return "[steamapi object]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXSteamAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
@@ -126,7 +123,7 @@ bool SXSteamAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetAchievementId") == 0) {
 		stack->correctParams(1);
-		uint32 index = (uint32) stack->pop()->getInt();
+		uint32 index = (uint32)stack->pop()->getInt();
 
 		if (index < _achievementsInfo.descriptions.size()) {
 			stack->pushString(_achievementsInfo.descriptions[index].id);
@@ -191,7 +188,6 @@ bool SXSteamAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXSteamAPI::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -237,12 +233,10 @@ ScValue *SXSteamAPI::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXSteamAPI::scSetProperty(const char *name, ScValue *value) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SXSteamAPI::persist(BasePersistenceManager *persistMgr) {

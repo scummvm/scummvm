@@ -22,14 +22,13 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/filesys/u8_save_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/filesys/u8_save_file.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(U8SaveFile, NamedArchiveFile)
-
 
 U8SaveFile::U8SaveFile(Common::SeekableReadStream *rs_) : _rs(rs_), _count(0) {
 	_valid = isU8SaveFile(_rs);
@@ -78,7 +77,8 @@ bool U8SaveFile::readMetadata() {
 bool U8SaveFile::findIndex(const Std::string &name, uint32 &index) const {
 	Std::map<Common::String, uint32>::const_iterator iter;
 	iter = _indices.find(name);
-	if (iter == _indices.end()) return false;
+	if (iter == _indices.end())
+		return false;
 	index = iter->_value;
 	return true;
 }
@@ -103,11 +103,11 @@ uint8 *U8SaveFile::getObject(const Std::string &name, uint32 *sizep) {
 	_rs->seek(offset);
 	_rs->read(object, size);
 
-	if (sizep) *sizep = size;
+	if (sizep)
+		*sizep = size;
 
 	return object;
 }
-
 
 uint32 U8SaveFile::getSize(const Std::string &name) const {
 	uint32 index;

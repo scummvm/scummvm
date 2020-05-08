@@ -23,9 +23,9 @@
 #ifndef SHERLOCK_SCALPEL_SCENE_H
 #define SHERLOCK_SCALPEL_SCENE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "sherlock/objects.h"
 #include "sherlock/scene.h"
@@ -37,13 +37,25 @@ namespace Scalpel {
 
 extern const int FS_TRANS[8];
 
-enum { BLACKWOOD_CAPTURE = 2, BAKER_STREET = 4, DRAWING_ROOM = 12, STATION = 17, PUB_INTERIOR = 19,
-	LAWYER_OFFICE = 27, BAKER_ST_EXTERIOR = 39, RESCUE_ANNA = 52, MOOREHEAD_DEATH = 53, EXIT_GAME = 55,
-	BRUMWELL_SUICIDE = 70, OVERHEAD_MAP2 = 98, DARTS_GAME = 99, OVERHEAD_MAP = 100 };
+enum { BLACKWOOD_CAPTURE = 2,
+	   BAKER_STREET = 4,
+	   DRAWING_ROOM = 12,
+	   STATION = 17,
+	   PUB_INTERIOR = 19,
+	   LAWYER_OFFICE = 27,
+	   BAKER_ST_EXTERIOR = 39,
+	   RESCUE_ANNA = 52,
+	   MOOREHEAD_DEATH = 53,
+	   EXIT_GAME = 55,
+	   BRUMWELL_SUICIDE = 70,
+	   OVERHEAD_MAP2 = 98,
+	   DARTS_GAME = 99,
+	   OVERHEAD_MAP = 100 };
 
 class ScalpelScene : public Scene {
 private:
 	void doBgAnimCheckCursor();
+
 protected:
 	/**
 	 * Loads the data associated for a given scene. The room resource file's format is:
@@ -72,6 +84,7 @@ protected:
 	 * Returns the index of the closest zone to a given point.
 	 */
 	int closestZone(const Common::Point &pt) override;
+
 public:
 	ScalpelScene(SherlockEngine *vm) : Scene(vm) {}
 

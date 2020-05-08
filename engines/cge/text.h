@@ -32,24 +32,24 @@
 
 namespace CGE {
 
-#define kSayExt         ".SAY"
-#define kSysTextMax     1000
-#define kTextNoMouse    95
-#define kInfName        101
-#define kSayName        102
-#define kInfRef         301
-#define kSayRef         302
-
+#define kSayExt ".SAY"
+#define kSysTextMax 1000
+#define kTextNoMouse 95
+#define kInfName 101
+#define kSayName 102
+#define kInfRef 301
+#define kSayRef 302
 
 class Text {
 	struct Handler {
 		int _ref;
 		char *_text;
-	} *_cache;
+	} * _cache;
 	int _size;
 	char _fileName[kPathMax];
 	void load();
 	int16 count();
+
 public:
 	Text(CGEEngine *vm, const char *fname);
 	~Text();
@@ -57,6 +57,7 @@ public:
 	char *getText(int ref);
 	void say(const char *text, Sprite *spr);
 	void sayTime(Sprite *spr);
+
 private:
 	CGEEngine *_vm;
 };

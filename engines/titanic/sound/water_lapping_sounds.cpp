@@ -27,7 +27,7 @@ namespace Titanic {
 EMPTY_MESSAGE_MAP(CWaterLappingSounds, CRoomAutoSoundPlayer);
 
 CWaterLappingSounds::CWaterLappingSounds() : CRoomAutoSoundPlayer(),
-		_value(0) {
+                                             _value(0) {
 	_filename = "z#217.wav";
 	_repeated = false;
 	_startSeconds = 0;

@@ -48,7 +48,7 @@ public:
 	void getDragConstraints(Common::Rect &, Common::Rect &) const;
 
 	void startTracking(const Input &) override;
-	void continueTracking(const Input&) override;
+	void continueTracking(const Input &) override;
 
 	Hotspot *getLastHotspot() const { return _lastHotspot; }
 

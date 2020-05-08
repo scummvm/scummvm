@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "mads/mads.h"
-#include "mads/game.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
 #include "mads/phantom/game_phantom.h"
+#include "common/config-manager.h"
+#include "common/scummsys.h"
+#include "mads/game.h"
+#include "mads/mads.h"
+#include "mads/msurface.h"
+#include "mads/screen.h"
 //#include "mads/nebular/dialogs_nebular.h"
 #include "mads/phantom/globals_phantom.h"
 #include "mads/phantom/phantom_scenes.h"
@@ -35,105 +35,103 @@ namespace MADS {
 
 namespace Phantom {
 
-	Catacombs _easyCatacombs[32] = {
-		{ 401, { -1,  1,  2,  6 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 404, { 10, 11,  3,  0 }, { 2, 3, 0, 1 }, MAZE_EVENT_PUDDLE },
-		{ 404, {  0,  3,  4, -2 }, { 2, 3, 0, 1 }, MAZE_EVENT_BLOCK },
-		{ 401, {  1, 14,  5,  2 }, { 2, 3, 0, 1 }, MAZE_EVENT_POT },
-		{ 453, {  2,  4, -1,  4 }, { 2, 3, 0, 1 }, MAZE_EVENT_DRAIN },
-		{ 403, {  3,  6, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_PLANK },
-		{ 406, { -1,  0, -1,  5 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 453, { -1,  8, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 406, { -1,  9, -1,  7 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 401, {  1, -1, 10,  8 }, { 2, 3, 0, 1 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_SKULL },
-		{ 408, {  9, -1,  1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 453, { 12, -1, -1,  1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_STONE },
-		{ 408, { 13, -1, 11, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 401, { 13, 20, 12, 13 }, { 3, 3, 0, 0 }, MAZE_EVENT_BRICK },
-		{ 453, { 16, 15, -1,  3 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_RAT_NEST },
-		{ 456, { -1, -1, -1, 14 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 404, { -1, 17, 14, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_POT },
-		{ 401, { 18, -1, 19, 16 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 408, { -1, -1, 17, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 403, { 17, -1, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_HOLE | MAZE_EVENT_WEB },
-		{ 403, { 21, 22, -1, 13 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_SKULL },
-		{ 404, { -1, -1, 20, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 406, { -1, 23, -1, 20 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 404, { 24, 23, 23, 22 }, { 2, 2, 1, 1 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_BRICK },
-		{ 401, { -1,  1, 23, 25 }, { 2, 1, 0, 1 }, MAZE_EVENT_PUDDLE | MAZE_EVENT_POT | MAZE_EVENT_BRICK },
-		{ 407, { 29, 24, 28, 26 }, { 3, 3, 1, 1 }, MAZE_EVENT_NONE },
-		{ 401, { 27, 25, 23, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_SKULL },
-		{ 404, { -1, 28, 26, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_FALLEN_BLOCK },
-		{ 456, { -1, 25, -1, 27 }, { 2, 2, 0, 1 }, MAZE_EVENT_NONE },
-		{ 406, { -1, 30, -1, 25 }, { 2, 3, 0, 0 }, MAZE_EVENT_NONE },
-		{ 453, { -3, 30, -1, 29 }, { 2, 3, 0, 1 }, MAZE_EVENT_STONE | MAZE_EVENT_RAT_NEST | MAZE_EVENT_WEB },
-		{ 408, { -5, -1, -4, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_BRICK }
-	};
+Catacombs _easyCatacombs[32] = {
+    {401, {-1, 1, 2, 6}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {404, {10, 11, 3, 0}, {2, 3, 0, 1}, MAZE_EVENT_PUDDLE},
+    {404, {0, 3, 4, -2}, {2, 3, 0, 1}, MAZE_EVENT_BLOCK},
+    {401, {1, 14, 5, 2}, {2, 3, 0, 1}, MAZE_EVENT_POT},
+    {453, {2, 4, -1, 4}, {2, 3, 0, 1}, MAZE_EVENT_DRAIN},
+    {403, {3, 6, -1, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_PLANK},
+    {406, {-1, 0, -1, 5}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {453, {-1, 8, -1, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {406, {-1, 9, -1, 7}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {401, {1, -1, 10, 8}, {2, 3, 0, 1}, MAZE_EVENT_RAT_NEST | MAZE_EVENT_SKULL},
+    {408, {9, -1, 1, -1}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {453, {12, -1, -1, 1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_STONE},
+    {408, {13, -1, 11, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {401, {13, 20, 12, 13}, {3, 3, 0, 0}, MAZE_EVENT_BRICK},
+    {453, {16, 15, -1, 3}, {2, 3, 0, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_RAT_NEST},
+    {456, {-1, -1, -1, 14}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {404, {-1, 17, 14, -1}, {2, 3, 0, 1}, MAZE_EVENT_WEB | MAZE_EVENT_POT},
+    {401, {18, -1, 19, 16}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {408, {-1, -1, 17, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {403, {17, -1, -1, -1}, {2, 3, 0, 1}, MAZE_EVENT_HOLE | MAZE_EVENT_WEB},
+    {403, {21, 22, -1, 13}, {2, 3, 0, 1}, MAZE_EVENT_WEB | MAZE_EVENT_SKULL},
+    {404, {-1, -1, 20, -1}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {406, {-1, 23, -1, 20}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {404, {24, 23, 23, 22}, {2, 2, 1, 1}, MAZE_EVENT_RAT_NEST | MAZE_EVENT_BRICK},
+    {401, {-1, 1, 23, 25}, {2, 1, 0, 1}, MAZE_EVENT_PUDDLE | MAZE_EVENT_POT | MAZE_EVENT_BRICK},
+    {407, {29, 24, 28, 26}, {3, 3, 1, 1}, MAZE_EVENT_NONE},
+    {401, {27, 25, 23, -1}, {2, 3, 0, 1}, MAZE_EVENT_SKULL},
+    {404, {-1, 28, 26, -1}, {2, 3, 0, 1}, MAZE_EVENT_WEB | MAZE_EVENT_FALLEN_BLOCK},
+    {456, {-1, 25, -1, 27}, {2, 2, 0, 1}, MAZE_EVENT_NONE},
+    {406, {-1, 30, -1, 25}, {2, 3, 0, 0}, MAZE_EVENT_NONE},
+    {453, {-3, 30, -1, 29}, {2, 3, 0, 1}, MAZE_EVENT_STONE | MAZE_EVENT_RAT_NEST | MAZE_EVENT_WEB},
+    {408, {-5, -1, -4, -1}, {2, 3, 0, 1}, MAZE_EVENT_WEB | MAZE_EVENT_BRICK}};
 
-	Catacombs _hardCatacombs[62] = {
-		{ 401, { -1,  1,  2,  6 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 404, { 10, 11,  3,  0 }, { 2, 3, 0, 1 }, MAZE_EVENT_PUDDLE },
-		{ 404, {  0,  3,  4, -2 }, { 2, 3, 0, 1 }, MAZE_EVENT_BLOCK },
-		{ 401, {  1, 20,  5,  2 }, { 2, 0, 0, 1 }, MAZE_EVENT_POT },
-		{ 453, {  2,  4, -1,  4 }, { 2, 3, 0, 1 }, MAZE_EVENT_DRAIN },
-		{ 403, {  3,  6, -1,  4 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_PLANK },
-		{ 406, { -1,  0, -1,  5 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 453, { -1,  8, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 406, { -1,  9, -1,  7 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 401, {  1, -1, 10,  8 }, { 0, 3, 0, 1 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_SKULL },
-		{ 408, {  9, -1,  1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 453, { 12, -1, -1,  1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_STONE },
-		{ 408, { 13, -1, 11, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 401, { 13, 21, 12, 13 }, { 3, 3, 0, 0 }, MAZE_EVENT_BRICK },
-		{ 453, { 16, 15, -1, 20 }, { 2, 3, 0, 2 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_BRICK },
-		{ 456, { -1, -1, -1, 14 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 404, { -1, 17, 14, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_POT },
-		{ 401, { 18, -1, 19, 16 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 408, { -1, -1, 17, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 403, { 17, -1, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_HOLE | MAZE_EVENT_WEB },
-		{ 408, {  3, -1, 14, -1 }, { 1, 3, 3, 1 }, MAZE_EVENT_NONE },
-		{ 404, {  9, 30, 22, 13 }, { 0, 3, 0, 1 }, MAZE_EVENT_RAT_NEST },
-		{ 403, { 21, 23, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_HOLE | MAZE_EVENT_WEB },
-		{ 401, { -1, -1, 24, 22 }, { 2, 3, 3, 1 }, MAZE_EVENT_BRICK },
-		{ 406, { -1, 26, -1, 23 }, { 2, 0, 0, 2 }, MAZE_EVENT_NONE },
-		{ 407, { 36, 33, 35, 34 }, { 3, 3, 1, 1 }, MAZE_EVENT_NONE },
-		{ 453, { 24, 27, -1, -1 }, { 1, 0, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 403, { 26, -1, -1, 28 }, { 1, 3, 0, 0 }, MAZE_EVENT_BRICK | MAZE_EVENT_SKULL },
-		{ 404, { 27, 28, 28, 29 }, { 3, 2, 1, 2 }, MAZE_EVENT_NONE },
-		{ 408, { -1, -1, 28, -1 }, { 2, 3, 3, 1 }, MAZE_EVENT_BRICK },
-		{ 406, { -1, 31, -1, 21 }, { 2, 0, 0, 1 }, MAZE_EVENT_NONE },
-		{ 401, { 30, 33,  1, -1 }, { 1, 2, 1, 1 }, MAZE_EVENT_PUDDLE | MAZE_EVENT_POT },
-		{ 456, { -1, 31, -1, 33 }, { 2, 1, 0, 0 }, MAZE_EVENT_NONE },
-		{ 404, { 32, -1, 31, 25 }, { 3, 3, 1, 1 }, MAZE_EVENT_NONE },
-		{ 401, { 46, 25, 31, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_SKULL },
-		{ 401, { -1, 25, 41, -1 }, { 2, 2, 1, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_POT },
-		{ 406, { -1, 37, -1, 25 }, { 2, 3, 0, 0 }, MAZE_EVENT_NONE },
-		{ 453, { -3, 37, -1, 36 }, { 2, 3, 0, 1 }, MAZE_EVENT_STONE | MAZE_EVENT_RAT_NEST | MAZE_EVENT_WEB },
-		{ 408, { 57, -1, 54, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 408, { 40, -1, -4, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_WEB },
-		{ 404, { 40, 40, 39, 53 }, { 1, 0, 0, 1 }, MAZE_EVENT_BLOCK | MAZE_EVENT_FALLEN_BLOCK },
-		{ 456, { -1, 35, -1, 42 }, { 2, 2, 0, 2 }, MAZE_EVENT_NONE },
-		{ 408, { 43, -1, 41, -1 }, { 1, 3, 3, 1 }, MAZE_EVENT_BRICK },
-		{ 406, { -1, 42, -1, 61 }, { 2, 0, 0, 1 }, MAZE_EVENT_NONE },
-		{ 403, { 58, 45, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_RAT_NEST },
-		{ 401, { 34, -1, 46, 44 }, { 0, 3, 0, 1 }, MAZE_EVENT_RAT_NEST | MAZE_EVENT_BRICK },
-		{ 404, { 45, -1, 34, 47 }, { 2, 3, 0, 1 }, MAZE_EVENT_WEB | MAZE_EVENT_FALLEN_BLOCK },
-		{ 406, { -1, 46, -1, 48 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 403, { 49, 47, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_SKULL | MAZE_EVENT_WEB },
-		{ 408, { 50, -1, 48, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 408, { 51, -1, 49, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 408, { 52, -1, 50, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 408, { -1, -1, 51, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK },
-		{ 406, { -1, 40, -1, 54 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 403, { 38, 53, -1, 55 }, { 2, 3, 0, 1 }, MAZE_EVENT_SKULL },
-		{ 453, { 56, 54, -1, -1 }, { 2, 3, 0, 1 }, MAZE_EVENT_BRICK | MAZE_EVENT_WEB },
-		{ 401, { 56, -5, 55, 56 }, { 3, 3, 0, 0 }, MAZE_EVENT_BRICK | MAZE_EVENT_SKULL },
-		{ 404, { -1, 57, 38, 57 }, { 2, 3, 0, 1 }, MAZE_EVENT_POT | MAZE_EVENT_BLOCK },
-		{ 404, { 59, 59, 44, 60 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 404, { 59, 60, 59, 58 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 404, { 61, 58, 59, 59 }, { 2, 3, 0, 1 }, MAZE_EVENT_NONE },
-		{ 404, { 34, 43, 60, 44 }, { 0, 3, 0, 1 }, MAZE_EVENT_NONE }
-	};
+Catacombs _hardCatacombs[62] = {
+    {401, {-1, 1, 2, 6}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {404, {10, 11, 3, 0}, {2, 3, 0, 1}, MAZE_EVENT_PUDDLE},
+    {404, {0, 3, 4, -2}, {2, 3, 0, 1}, MAZE_EVENT_BLOCK},
+    {401, {1, 20, 5, 2}, {2, 0, 0, 1}, MAZE_EVENT_POT},
+    {453, {2, 4, -1, 4}, {2, 3, 0, 1}, MAZE_EVENT_DRAIN},
+    {403, {3, 6, -1, 4}, {2, 3, 0, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_PLANK},
+    {406, {-1, 0, -1, 5}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {453, {-1, 8, -1, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {406, {-1, 9, -1, 7}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {401, {1, -1, 10, 8}, {0, 3, 0, 1}, MAZE_EVENT_RAT_NEST | MAZE_EVENT_SKULL},
+    {408, {9, -1, 1, -1}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {453, {12, -1, -1, 1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_STONE},
+    {408, {13, -1, 11, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {401, {13, 21, 12, 13}, {3, 3, 0, 0}, MAZE_EVENT_BRICK},
+    {453, {16, 15, -1, 20}, {2, 3, 0, 2}, MAZE_EVENT_RAT_NEST | MAZE_EVENT_BRICK},
+    {456, {-1, -1, -1, 14}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {404, {-1, 17, 14, -1}, {2, 3, 0, 1}, MAZE_EVENT_WEB | MAZE_EVENT_POT},
+    {401, {18, -1, 19, 16}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {408, {-1, -1, 17, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {403, {17, -1, -1, -1}, {2, 3, 0, 1}, MAZE_EVENT_HOLE | MAZE_EVENT_WEB},
+    {408, {3, -1, 14, -1}, {1, 3, 3, 1}, MAZE_EVENT_NONE},
+    {404, {9, 30, 22, 13}, {0, 3, 0, 1}, MAZE_EVENT_RAT_NEST},
+    {403, {21, 23, -1, -1}, {2, 3, 0, 1}, MAZE_EVENT_HOLE | MAZE_EVENT_WEB},
+    {401, {-1, -1, 24, 22}, {2, 3, 3, 1}, MAZE_EVENT_BRICK},
+    {406, {-1, 26, -1, 23}, {2, 0, 0, 2}, MAZE_EVENT_NONE},
+    {407, {36, 33, 35, 34}, {3, 3, 1, 1}, MAZE_EVENT_NONE},
+    {453, {24, 27, -1, -1}, {1, 0, 0, 1}, MAZE_EVENT_BRICK},
+    {403, {26, -1, -1, 28}, {1, 3, 0, 0}, MAZE_EVENT_BRICK | MAZE_EVENT_SKULL},
+    {404, {27, 28, 28, 29}, {3, 2, 1, 2}, MAZE_EVENT_NONE},
+    {408, {-1, -1, 28, -1}, {2, 3, 3, 1}, MAZE_EVENT_BRICK},
+    {406, {-1, 31, -1, 21}, {2, 0, 0, 1}, MAZE_EVENT_NONE},
+    {401, {30, 33, 1, -1}, {1, 2, 1, 1}, MAZE_EVENT_PUDDLE | MAZE_EVENT_POT},
+    {456, {-1, 31, -1, 33}, {2, 1, 0, 0}, MAZE_EVENT_NONE},
+    {404, {32, -1, 31, 25}, {3, 3, 1, 1}, MAZE_EVENT_NONE},
+    {401, {46, 25, 31, -1}, {2, 3, 0, 1}, MAZE_EVENT_SKULL},
+    {401, {-1, 25, 41, -1}, {2, 2, 1, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_POT},
+    {406, {-1, 37, -1, 25}, {2, 3, 0, 0}, MAZE_EVENT_NONE},
+    {453, {-3, 37, -1, 36}, {2, 3, 0, 1}, MAZE_EVENT_STONE | MAZE_EVENT_RAT_NEST | MAZE_EVENT_WEB},
+    {408, {57, -1, 54, -1}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {408, {40, -1, -4, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_WEB},
+    {404, {40, 40, 39, 53}, {1, 0, 0, 1}, MAZE_EVENT_BLOCK | MAZE_EVENT_FALLEN_BLOCK},
+    {456, {-1, 35, -1, 42}, {2, 2, 0, 2}, MAZE_EVENT_NONE},
+    {408, {43, -1, 41, -1}, {1, 3, 3, 1}, MAZE_EVENT_BRICK},
+    {406, {-1, 42, -1, 61}, {2, 0, 0, 1}, MAZE_EVENT_NONE},
+    {403, {58, 45, -1, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_RAT_NEST},
+    {401, {34, -1, 46, 44}, {0, 3, 0, 1}, MAZE_EVENT_RAT_NEST | MAZE_EVENT_BRICK},
+    {404, {45, -1, 34, 47}, {2, 3, 0, 1}, MAZE_EVENT_WEB | MAZE_EVENT_FALLEN_BLOCK},
+    {406, {-1, 46, -1, 48}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {403, {49, 47, -1, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_SKULL | MAZE_EVENT_WEB},
+    {408, {50, -1, 48, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {408, {51, -1, 49, -1}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {408, {52, -1, 50, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {408, {-1, -1, 51, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK},
+    {406, {-1, 40, -1, 54}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {403, {38, 53, -1, 55}, {2, 3, 0, 1}, MAZE_EVENT_SKULL},
+    {453, {56, 54, -1, -1}, {2, 3, 0, 1}, MAZE_EVENT_BRICK | MAZE_EVENT_WEB},
+    {401, {56, -5, 55, 56}, {3, 3, 0, 0}, MAZE_EVENT_BRICK | MAZE_EVENT_SKULL},
+    {404, {-1, 57, 38, 57}, {2, 3, 0, 1}, MAZE_EVENT_POT | MAZE_EVENT_BLOCK},
+    {404, {59, 59, 44, 60}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {404, {59, 60, 59, 58}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {404, {61, 58, 59, 59}, {2, 3, 0, 1}, MAZE_EVENT_NONE},
+    {404, {34, 43, 60, 44}, {0, 3, 0, 1}, MAZE_EVENT_NONE}};
 
 GamePhantom::GamePhantom(MADSEngine *vm) : Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
@@ -157,69 +155,69 @@ void GamePhantom::initializeGlobals() {
 	_player._facing = FACING_NORTH;
 	_player._turnToFacing = FACING_NORTH;
 
-	_globals[kTempVar]                 = false;
-	_globals[kRoom103104Transition]    = 1;		// new room
-	_globals[kCurrentYear]             = 1993;
-	_globals[kTrapDoorStatus]          = 0;		// open
-	_globals[kChristineDoorStatus]     = 0;		// Christine is in her room
-	_globals[kSandbagStatus]           = 0;		// sandbag is secure
-	_globals[kJacquesStatus]           = 0;		// alive
-	_globals[kChrisFStatus]            = 1;		// Christine F. is alive in 1993
-	_globals[kBrieTalkStatus]          = 0;		// before Brie motions
-	_globals[kPanelIn206]              = 0;		// not discovered
-	_globals[kFightStatus]             = 0;
-	_globals[kJuliesDoor]              = 1;		// cracked open
-	_globals[kPrompterStandStatus]     = 0;
-	_globals[kChrisDStatus]            = 0;		// before love
-	_globals[kJulieNameIsKnown]        = 0;
-	_globals[kDoorsIn205]              = 0;		// both locked
-	_globals[kMadameGiryLocation]      = 1;		// middle
-	_globals[kTicketPeoplePresent]     = 0;
-	_globals[kCoffinStatus]            = 0;		// closed and locked
-	_globals[kDoneBrieConv203]         = 0;
-	_globals[kFlorentNameIsKnown]      = 0;
-	_globals[kDegasNameIsKnown]        = 0;
-	_globals[kMadameGiryShowsUp]       = false;
-	_globals[kJacquesNameIsKnown]      = 0;
-	_globals[kCharlesNameIsKnown]      = false;
-	_globals[kTopFloorLocked]          = true;
-	_globals[kMadameNameIsKnown]       = 0;
-	_globals[kChrisKickedRaoulOut]     = false;
-	_globals[kLookedAtCase]            = false;
-	_globals[kRingIsOnFinger]          = false;
-	_globals[kHeListened]              = false;
-	_globals[kKnockedOverHead]         = false;
-	_globals[kObservedPhan104]         = false;
-	_globals[kReadBook]                = false;
-	_globals[kCanFindBookInLibrary]    = false;
-	_globals[kLookedAtSkullFace]       = false;
-	_globals[kScannedBookcase]         = false;
-	_globals[kRanConvIn205]            = false;
-	_globals[kDoneRichConv203]         = false;
-	_globals[kHintThatDaaeIsHome1]     = false;
-	_globals[kHintThatDaaeIsHome2]     = false;
-	_globals[kMakeBrieLeave203]        = false;
-	_globals[kMakeRichLeave203]        = false;
-	_globals[kCameFromFade]            = false;
-	_globals[kChristineToldEnvelope]   = false;
-	_globals[kLeaveAngelMusicOn]       = false;
-	_globals[kDoorIn409IsOpen]         = false;
-	_globals[kPriestPistonPuke]        = false;
-	_globals[kCobwebIsCut]             = false;
-	_globals[kChristineIsInBoat]       = false;
-	_globals[kRightDoorIsOpen504]      = false;
-	_globals[kChrisLeft505]            = false;
-	_globals[kChrisWillTakeSeat]       = true;
-	_globals[kFlickedLever1]           = 0;
-	_globals[kFlickedLever2]           = 0;
-	_globals[kFlickedLever3]           = 0;
-	_globals[kFlickedLever4]           = 0;
-	_globals[kPlayerScore]             = 0;
-	_globals[kPlayerScoreFlags]        = 0;
+	_globals[kTempVar] = false;
+	_globals[kRoom103104Transition] = 1; // new room
+	_globals[kCurrentYear] = 1993;
+	_globals[kTrapDoorStatus] = 0;      // open
+	_globals[kChristineDoorStatus] = 0; // Christine is in her room
+	_globals[kSandbagStatus] = 0;       // sandbag is secure
+	_globals[kJacquesStatus] = 0;       // alive
+	_globals[kChrisFStatus] = 1;        // Christine F. is alive in 1993
+	_globals[kBrieTalkStatus] = 0;      // before Brie motions
+	_globals[kPanelIn206] = 0;          // not discovered
+	_globals[kFightStatus] = 0;
+	_globals[kJuliesDoor] = 1; // cracked open
+	_globals[kPrompterStandStatus] = 0;
+	_globals[kChrisDStatus] = 0; // before love
+	_globals[kJulieNameIsKnown] = 0;
+	_globals[kDoorsIn205] = 0;         // both locked
+	_globals[kMadameGiryLocation] = 1; // middle
+	_globals[kTicketPeoplePresent] = 0;
+	_globals[kCoffinStatus] = 0; // closed and locked
+	_globals[kDoneBrieConv203] = 0;
+	_globals[kFlorentNameIsKnown] = 0;
+	_globals[kDegasNameIsKnown] = 0;
+	_globals[kMadameGiryShowsUp] = false;
+	_globals[kJacquesNameIsKnown] = 0;
+	_globals[kCharlesNameIsKnown] = false;
+	_globals[kTopFloorLocked] = true;
+	_globals[kMadameNameIsKnown] = 0;
+	_globals[kChrisKickedRaoulOut] = false;
+	_globals[kLookedAtCase] = false;
+	_globals[kRingIsOnFinger] = false;
+	_globals[kHeListened] = false;
+	_globals[kKnockedOverHead] = false;
+	_globals[kObservedPhan104] = false;
+	_globals[kReadBook] = false;
+	_globals[kCanFindBookInLibrary] = false;
+	_globals[kLookedAtSkullFace] = false;
+	_globals[kScannedBookcase] = false;
+	_globals[kRanConvIn205] = false;
+	_globals[kDoneRichConv203] = false;
+	_globals[kHintThatDaaeIsHome1] = false;
+	_globals[kHintThatDaaeIsHome2] = false;
+	_globals[kMakeBrieLeave203] = false;
+	_globals[kMakeRichLeave203] = false;
+	_globals[kCameFromFade] = false;
+	_globals[kChristineToldEnvelope] = false;
+	_globals[kLeaveAngelMusicOn] = false;
+	_globals[kDoorIn409IsOpen] = false;
+	_globals[kPriestPistonPuke] = false;
+	_globals[kCobwebIsCut] = false;
+	_globals[kChristineIsInBoat] = false;
+	_globals[kRightDoorIsOpen504] = false;
+	_globals[kChrisLeft505] = false;
+	_globals[kChrisWillTakeSeat] = true;
+	_globals[kFlickedLever1] = 0;
+	_globals[kFlickedLever2] = 0;
+	_globals[kFlickedLever3] = 0;
+	_globals[kFlickedLever4] = 0;
+	_globals[kPlayerScore] = 0;
+	_globals[kPlayerScoreFlags] = 0;
 
 	_globals[kMusicSelected] = _vm->getRandomNumber(1, 4);
 
-	_player._spritesPrefix = "RAL";	// Fixed prefix
+	_player._spritesPrefix = "RAL"; // Fixed prefix
 	Player::preloadSequences("RAL", 1);
 }
 
@@ -263,7 +261,7 @@ void GamePhantom::checkShowDialog() {
 
 void GamePhantom::genericObjectExamine() {
 	MADSAction &action = _scene._action;
-	int	id = _objects.getIdFromDesc(action._activeAction._objectNameId);
+	int id = _objects.getIdFromDesc(action._activeAction._objectNameId);
 
 	if (action.isAction(VERB_LOOK, NOUN_RED_FRAME))
 		_vm->_dialogs->showItem(id, (_globals[kCurrentYear] == 1993) ? 802 : 842, 0);
@@ -288,15 +286,13 @@ void GamePhantom::genericObjectExamine() {
 	else if (action.isAction(VERB_LOOK, NOUN_LARGE_NOTE))
 		_vm->_dialogs->showItem(OBJ_LARGE_NOTE, 818, 7);
 	else
-	_vm->_dialogs->showItem(id, 800 + id, 0);
+		_vm->_dialogs->showItem(id, 800 + id, 0);
 }
 
 void GamePhantom::doObjectAction() {
 	MADSAction &action = _scene._action;
 
-	if ((_scene._currentSceneId >= 401) && (_scene._currentSceneId <= 456)
-	 && (action.isObject(NOUN_RED_FRAME) || action.isObject(NOUN_YELLOW_FRAME) || action.isObject(NOUN_GREEN_FRAME) || action.isObject(NOUN_BLUE_FRAME))
-	 && action.isAction(VERB_PUT)) {
+	if ((_scene._currentSceneId >= 401) && (_scene._currentSceneId <= 456) && (action.isObject(NOUN_RED_FRAME) || action.isObject(NOUN_YELLOW_FRAME) || action.isObject(NOUN_GREEN_FRAME) || action.isObject(NOUN_BLUE_FRAME)) && action.isAction(VERB_PUT)) {
 		if (action.isTarget(NOUN_UNLUCKY_ADVENTURER)) {
 			_vm->_dialogs->show(35);
 			action._inProgress = false;
@@ -623,8 +619,7 @@ void GamePhantom::unhandledAction() {
 			messageId = 21;
 		else
 			messageId = 22;
-	} else if ((action.isAction(VERB_UNLOCK) || action.isAction(VERB_LOCK))
-			&& (action.isObject(NOUN_DOOR) || action.isObject(NOUN_LEFT_DOOR) || action.isObject(NOUN_MIDDLE_DOOR) || action.isObject(NOUN_RIGHT_DOOR) || action.isObject(NOUN_TRAP_DOOR)))
+	} else if ((action.isAction(VERB_UNLOCK) || action.isAction(VERB_LOCK)) && (action.isObject(NOUN_DOOR) || action.isObject(NOUN_LEFT_DOOR) || action.isObject(NOUN_MIDDLE_DOOR) || action.isObject(NOUN_RIGHT_DOOR) || action.isObject(NOUN_TRAP_DOOR)))
 		messageId = 32;
 	else if (!action.isAction(VERB_WALK_TO) && !action.isAction(VERB_WALK_ACROSS) && !action.isAction(VERB_WALK_DOWN) && !action.isAction(VERB_WALK_UP)) {
 		if (rndNum < 500)
@@ -638,13 +633,13 @@ void GamePhantom::unhandledAction() {
 }
 
 void GamePhantom::stopWalker() {
-	int state   = _globals[kWalkerConverseState];
+	int state = _globals[kWalkerConverseState];
 	int command = _globals[kWalkerConverse];
 
 	_globals[kWalkerConverseNow] = state;
 
 	if ((_player._facing != FACING_NORTHEAST) && (_player._facing != FACING_NORTHWEST)) {
-		state   = 0;
+		state = 0;
 		command = 0;
 	}
 
@@ -738,15 +733,12 @@ void GamePhantom::stopWalker() {
 		break;
 	}
 
-	_globals[kWalkerConverse]       = command;
+	_globals[kWalkerConverse] = command;
 	_globals[kWalkerConverseState] = state;
 }
 
 void GamePhantom::step() {
-	if (_player._visible  && !_globals[kStopWalkerDisabled]
-	 && (_player._stepEnabled || (_vm->_gameConv->activeConvId() >= 0))
-	 && !_player._moving && (_player._facing == _player._turnToFacing)
-	 && (_scene._frameStartTime >= (uint32)_globals[kWalkerTiming])) {
+	if (_player._visible && !_globals[kStopWalkerDisabled] && (_player._stepEnabled || (_vm->_gameConv->activeConvId() >= 0)) && !_player._moving && (_player._facing == _player._turnToFacing) && (_scene._frameStartTime >= (uint32)_globals[kWalkerTiming])) {
 		if (_player._stopWalkers.empty())
 			stopWalker();
 
@@ -755,7 +747,7 @@ void GamePhantom::step() {
 }
 
 void GamePhantom::stopWalkerBasic() {
-	int rndVal  = _vm->getRandomNumber(1, 30000);
+	int rndVal = _vm->getRandomNumber(1, 30000);
 
 	switch (_player._facing) {
 	case FACING_SOUTH:
@@ -860,14 +852,14 @@ void GamePhantom::setupCatacombs() {
 		_catacombs = _easyCatacombs;
 		_catacombSize = 32;
 
-		_globals[kCatacombs309]      = 2;
-		_globals[kCatacombs309From]  = 3;
-		_globals[kCatacombs409a]     = 30;
+		_globals[kCatacombs309] = 2;
+		_globals[kCatacombs309From] = 3;
+		_globals[kCatacombs409a] = 30;
 		_globals[kCatacombs409aFrom] = 0;
-		_globals[kCatacombs409b]     = 31;
+		_globals[kCatacombs409b] = 31;
 		_globals[kCatacombs409bFrom] = 2;
-		_globals[kCatacombs501]      = 31;
-		_globals[kCatacombs501From]  = 0;
+		_globals[kCatacombs501] = 31;
+		_globals[kCatacombs501From] = 0;
 		break;
 
 	case DIFFICULTY_MEDIUM:
@@ -879,14 +871,14 @@ void GamePhantom::setupCatacombs() {
 		_catacombs = _hardCatacombs;
 		_catacombSize = 62;
 
-		_globals[kCatacombs309]      = 2;
-		_globals[kCatacombs309From]  = 3;
-		_globals[kCatacombs409a]     = 37;
+		_globals[kCatacombs309] = 2;
+		_globals[kCatacombs309From] = 3;
+		_globals[kCatacombs409a] = 37;
 		_globals[kCatacombs409aFrom] = 0;
-		_globals[kCatacombs409b]     = 39;
+		_globals[kCatacombs409b] = 39;
 		_globals[kCatacombs409bFrom] = 2;
-		_globals[kCatacombs501]      = 56;
-		_globals[kCatacombs501From]  = 1;
+		_globals[kCatacombs501] = 56;
+		_globals[kCatacombs501From] = 1;
 		break;
 	}
 }

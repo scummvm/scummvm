@@ -23,8 +23,8 @@
 #ifndef NUVIE_PATHFINDER_SEEK_PATH_H
 #define NUVIE_PATHFINDER_SEEK_PATH_H
 
-#include "ultima/shared/std/containers.h"
 #include "ultima/nuvie/pathfinder/path.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -33,7 +33,7 @@ namespace Nuvie {
  * target. Much of the work doesn't involve finding a path at all, but instead
  * finding the direction closest to the target.
  */
-class SeekPath: public Path {
+class SeekPath : public Path {
 protected:
 	Std::vector<MapCoord> A_scan, B_scan; // nodes of a line scanned by trace_obstacle()
 

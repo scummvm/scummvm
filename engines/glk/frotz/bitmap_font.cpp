@@ -26,8 +26,7 @@ namespace Glk {
 namespace Frotz {
 
 BitmapFont::BitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth) :
-		_startingChar(startingChar), _size(size) {
+                       uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth) : _startingChar(startingChar), _size(size) {
 	assert(src.format.bytesPerPixel == 1);
 	assert((src.w % srcWidth) == 0);
 	assert((src.h % srcHeight) == 0);
@@ -62,7 +61,7 @@ void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint
 }
 
 int BitmapFont::getSourceCharacterWidth(uint charIndex, const Graphics::Surface &src,
-		const Common::Rect &charBounds) {
+                                        const Common::Rect &charBounds) {
 	if (charIndex == 0)
 		// The space character is treated as half the width of bounding area
 		return charBounds.width() / 2;

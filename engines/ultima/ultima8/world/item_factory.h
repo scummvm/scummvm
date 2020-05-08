@@ -32,7 +32,6 @@ class Object;
 
 class ItemFactory {
 public:
-
 	//! create an item.
 	//! look up (where?) what type of item the given shape is, and
 	//! create an instance of the corresponding Item class.

@@ -27,13 +27,13 @@
  */
 
 #include "engines/wintermute/base/base_object.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
@@ -98,12 +98,10 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_blendMode = Graphics::BLEND_NORMAL;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 BaseObject::~BaseObject() {
 	cleanup();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::cleanup() {
@@ -135,7 +133,6 @@ bool BaseObject::cleanup() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseObject::setCaption(const char *caption, int caseVal) {
 	if (caseVal == 0) {
@@ -153,7 +150,6 @@ void BaseObject::setCaption(const char *caption, int caseVal) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *BaseObject::getCaption(int caseVal) {
 	if (caseVal == 0) {
@@ -166,12 +162,10 @@ const char *BaseObject::getCaption(int caseVal) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::listen(BaseScriptHolder *param1, uint32 param2) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -225,7 +219,6 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			_cursor = nullptr;
 		} else {
 			_cursor = nullptr;
-
 		}
 		stack->pushNULL();
 
@@ -479,7 +472,6 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		return STATUS_OK;
 	}
 
-
 	//////////////////////////////////////////////////////////////////////////
 	// SoundFXNone
 	//////////////////////////////////////////////////////////////////////////
@@ -501,8 +493,8 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "SoundFXEcho") == 0) {
 		stack->correctParams(4);
 		_sFXType = SFX_ECHO;
-		_sFXParam1 = (float)stack->pop()->getFloat(0); // Wet/Dry Mix [%] (0-100)
-		_sFXParam2 = (float)stack->pop()->getFloat(0); // Feedback [%] (0-100)
+		_sFXParam1 = (float)stack->pop()->getFloat(0);      // Wet/Dry Mix [%] (0-100)
+		_sFXParam2 = (float)stack->pop()->getFloat(0);      // Feedback [%] (0-100)
 		_sFXParam3 = (float)stack->pop()->getFloat(333.0f); // Left Delay [ms] (1-2000)
 		_sFXParam4 = (float)stack->pop()->getFloat(333.0f); // Right Delay [ms] (1-2000)
 		stack->pushNULL();
@@ -516,10 +508,10 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "SoundFXReverb") == 0) {
 		stack->correctParams(4);
 		_sFXType = SFX_REVERB;
-		_sFXParam1 = (float)stack->pop()->getFloat(0); // In Gain [dB] (-96 - 0)
-		_sFXParam2 = (float)stack->pop()->getFloat(0); // Reverb Mix [dB] (-96 - 0)
+		_sFXParam1 = (float)stack->pop()->getFloat(0);       // In Gain [dB] (-96 - 0)
+		_sFXParam2 = (float)stack->pop()->getFloat(0);       // Reverb Mix [dB] (-96 - 0)
 		_sFXParam3 = (float)stack->pop()->getFloat(1000.0f); // Reverb Time [ms] (0.001 - 3000)
-		_sFXParam4 = (float)stack->pop()->getFloat(0.001f); // HighFreq RT Ratio (0.001 - 0.999)
+		_sFXParam4 = (float)stack->pop()->getFloat(0.001f);  // HighFreq RT Ratio (0.001 - 0.999)
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -527,7 +519,6 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		return BaseScriptHolder::scCallMethod(script, stack, thisStack, name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseObject::scGetProperty(const Common::String &name) {
@@ -733,7 +724,6 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -925,12 +915,10 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *BaseObject::scToString() {
 	return "[object]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::showCursor() {
@@ -941,12 +929,10 @@ bool BaseObject::showCursor() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::persist(BasePersistenceManager *persistMgr) {
@@ -998,12 +984,10 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferFloat(TMEMBER(_sFXParam3));
 	persistMgr->transferFloat(TMEMBER(_sFXParam4));
 
-
 	persistMgr->transferSint32(TMEMBER_INT(_blendMode));
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::setCursor(const char *filename) {
@@ -1023,7 +1007,6 @@ bool BaseObject::setCursor(const char *filename) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::setActiveCursor(const char *filename) {
 	delete _activeCursor;
@@ -1037,30 +1020,25 @@ bool BaseObject::setActiveCursor(const char *filename) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 int32 BaseObject::getHeight() {
 	return 0;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::handleMouse(TMouseEvent event, TMouseButton button) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::handleKeypress(Common::Event *event, bool printable) {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::handleMouseWheel(int32 delta) {
 	return false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
@@ -1115,7 +1093,6 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::stopSFX(bool deleteSound) {
 	if (_sFX) {
@@ -1130,7 +1107,6 @@ bool BaseObject::stopSFX(bool deleteSound) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::pauseSFX() {
 	if (_sFX) {
@@ -1140,7 +1116,6 @@ bool BaseObject::pauseSFX() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::resumeSFX() {
 	if (_sFX) {
@@ -1149,7 +1124,6 @@ bool BaseObject::resumeSFX() {
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::setSFXTime(uint32 time) {
@@ -1161,7 +1135,6 @@ bool BaseObject::setSFXTime(uint32 time) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::setSFXVolume(int volume) {
 	_sFXVolume = volume;
@@ -1171,7 +1144,6 @@ bool BaseObject::setSFXVolume(int volume) {
 		return STATUS_OK;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::updateSounds() {
@@ -1195,7 +1167,7 @@ bool BaseObject::updateOneSound(BaseSound *sound) {
 
 	if (sound) {
 		if (_autoSoundPanning) {
-			ret = sound->setPan(_gameRef->_soundMgr->posToPan(_posX  - _gameRef->_offsetX, _posY - _gameRef->_offsetY));
+			ret = sound->setPan(_gameRef->_soundMgr->posToPan(_posX - _gameRef->_offsetX, _posY - _gameRef->_offsetY));
 		}
 
 		ret = sound->applyFX(_sFXType, _sFXParam1, _sFXParam2, _sFXParam3, _sFXParam4);
@@ -1212,18 +1184,15 @@ bool BaseObject::resetSoundPan() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::getExtendedFlag(const char *flagName) {
 	return false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::isReady() {
 	return _ready;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseObject::setSoundEvent(const char *eventName) {

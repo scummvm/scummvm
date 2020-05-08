@@ -32,7 +32,7 @@ namespace BladeRunner {
 class UIComponent;
 
 class UIContainer : public UIComponent {
-	Common::Array<UIComponent*> _components;
+	Common::Array<UIComponent *> _components;
 
 public:
 	UIContainer(BladeRunnerEngine *vm) : UIComponent(vm) {}
@@ -49,7 +49,6 @@ public:
 	void add(UIComponent *component);
 	void clear();
 };
-
 
 } // End of namespace BladeRunner
 

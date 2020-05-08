@@ -43,13 +43,12 @@ private:
 	uint32 osc_samples;
 
 private:
-
 	NuvieIOFileWrite dataFile;
 	uint32 wav_length;
 
 public:
 	PCSpeaker(uint32 mixer_rate);
-	~PCSpeaker() { }
+	~PCSpeaker() {}
 	void SetOn();
 	void SetOff();
 	void SetFrequency(uint16 freq, float offset = 0.0f);

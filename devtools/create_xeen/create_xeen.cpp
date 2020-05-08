@@ -20,7 +20,7 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 // HACK to allow building with the SDL backend on MinGW
@@ -29,15 +29,15 @@
 #undef main
 #endif // main
 
+#include "cc.h"
+#include "clouds.h"
+#include "constants.h"
+#include "file.h"
+#include "map.h"
+#include "swords.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "cc.h"
-#include "file.h"
-#include "clouds.h"
-#include "swords.h"
-#include "constants.h"
-#include "map.h"
 
 #define VERSION_NUMBER 3
 
@@ -51,7 +51,7 @@ void NORETURN_PRE error(const char *s, ...) {
 void writeVersion(CCArchive &cc) {
 	Common::MemFile f;
 	f.writeLong(VERSION_NUMBER);
-	cc.add("VERSION", f);	
+	cc.add("VERSION", f);
 }
 
 int main(int argc, char *argv[]) {

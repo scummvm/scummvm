@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSGTNavigation, CGameObject)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 CSGTNavigationStatics *CSGTNavigation::_statics;
@@ -63,7 +63,7 @@ bool CSGTNavigation::StatusChangeMsg(CStatusChangeMsg *msg) {
 	CPetControl *pet = getPetControl();
 
 	if (isEquals("SGTLL")) {
-		static const int FRAMES[7] = { 0, 149, 112, 74, 0, 36, 74 };
+		static const int FRAMES[7] = {0, 149, 112, 74, 0, 36, 74};
 		_statics->_miniLiftFloor = msg->_newStatus;
 		if (pet->getRoomsSublevel() != _statics->_miniLiftFloor) {
 			changeView("SGTLittleLift.Node 1.N");
@@ -119,7 +119,7 @@ bool CSGTNavigation::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CSGTNavigation::EnterViewMsg(CEnterViewMsg *msg) {
 	if (isEquals("SGTLL")) {
-		static const int FRAMES[3] = { 0, 36, 74 };
+		static const int FRAMES[3] = {0, 36, 74};
 		CPetControl *pet = getPetControl();
 		loadFrame(FRAMES[pet->getRoomsSublevel() - 1]);
 	}

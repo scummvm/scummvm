@@ -59,7 +59,7 @@ GfxMgr::GfxMgr(AgiBase *vm, GfxFont *font) : _vm(vm), _font(font) {
 	_displayFontWidth = 8;
 	_displayFontHeight = 8;
 
-	_displayWidthMulAdjust = 0; // visualPos * (2+0) = displayPos
+	_displayWidthMulAdjust = 0;  // visualPos * (2+0) = displayPos
 	_displayHeightMulAdjust = 0; // visualPos * (1+0) = displayPos
 
 	_pixels = 0;
@@ -320,8 +320,8 @@ void GfxMgr::copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height
 	// FIXME: Add warnings / debug of clamping?
 	width = CLIP<int16>(width, 0, _displayScreenWidth);
 	height = CLIP<int16>(height, 0, _displayScreenHeight);
-	x = CLIP<int16>(x, 0, _displayScreenWidth-width);
-	y = CLIP<int16>(y, 0, _displayScreenHeight-height);
+	x = CLIP<int16>(x, 0, _displayScreenWidth - width);
+	y = CLIP<int16>(y, 0, _displayScreenHeight - height);
 
 	g_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
 }
@@ -330,15 +330,19 @@ void GfxMgr::copyDisplayRectToScreen(int16 x, int16 adjX, int16 y, int16 adjY, i
 	case DISPLAY_UPSCALED_DISABLED:
 		break;
 	case DISPLAY_UPSCALED_640x400:
-		adjX *= 2; adjY *= 2;
-		adjWidth *= 2; adjHeight *= 2;
+		adjX *= 2;
+		adjY *= 2;
+		adjWidth *= 2;
+		adjHeight *= 2;
 		break;
 	default:
 		assert(0);
 		break;
 	}
-	x += adjX; y += adjY;
-	width += adjWidth; height += adjHeight;
+	x += adjX;
+	y += adjY;
+	width += adjWidth;
+	height += adjHeight;
 	g_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
 }
 void GfxMgr::copyDisplayRectToScreenUsingGamePos(int16 x, int16 y, int16 width, int16 height) {
@@ -441,7 +445,8 @@ void GfxMgr::putPixelOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, byte co
 	case DISPLAY_UPSCALED_DISABLED:
 		break;
 	case DISPLAY_UPSCALED_640x400:
-		adjX *= 2; adjY *= 2;
+		adjX *= 2;
+		adjY *= 2;
 		break;
 	default:
 		assert(0);
@@ -508,13 +513,12 @@ bool GfxMgr::checkControlPixel(int16 x, int16 y, byte viewPriority) {
 	}
 	if (curPriority <= viewPriority)
 		return true; // view priority is higher, draw
-	return false; // view priority is lower, don't draw
+	return false;    // view priority is lower, don't draw
 }
 
 static byte CGA_MixtureColorTable[] = {
-	0x00, 0x08, 0x04, 0x0C, 0x01, 0x09, 0x02, 0x05,
-	0x0A, 0x0D, 0x06, 0x0E, 0x0B, 0x03, 0x07, 0x0F
-};
+    0x00, 0x08, 0x04, 0x0C, 0x01, 0x09, 0x02, 0x05,
+    0x0A, 0x0D, 0x06, 0x0E, 0x0B, 0x03, 0x07, 0x0F};
 
 byte GfxMgr::getCGAMixtureColor(byte color) {
 	return CGA_MixtureColorTable[color & 0x0F];
@@ -547,7 +551,7 @@ void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copy
 
 bool GfxMgr::render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 clipAgainstWidth, int16 clipAgainstHeight) {
 	if ((x >= clipAgainstWidth) || ((x + width - 1) < 0) ||
-	        (y < 0) || ((y + (height - 1)) >= clipAgainstHeight)) {
+	    (y < 0) || ((y + (height - 1)) >= clipAgainstHeight)) {
 		return false;
 	}
 
@@ -686,23 +690,22 @@ void GfxMgr::render_BlockCGA(int16 x, int16 y, int16 width, int16 height, bool c
 }
 
 static const uint8 herculesColorMapping[] = {
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x88, 0x00, 0x00, 0x00, 0x22, 0x00, 0x00, 0x00,
-	0x80, 0x10, 0x02, 0x20, 0x01, 0x08, 0x40, 0x04,
-	0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00,
-	0x22, 0x88, 0x22, 0x88, 0x22, 0x88, 0x22, 0x88,
-	0x88, 0x00, 0x88, 0x00, 0x88, 0x00, 0x88, 0x00,
-	0x11, 0x22, 0x44, 0x88, 0x11, 0x22, 0x44, 0x88,
-	0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA,
-	0x22, 0x00, 0x88, 0x00, 0x22, 0x00, 0x88, 0x00,
-	0xD7, 0xFF, 0x7D, 0xFF, 0xD7, 0xFF, 0x7D, 0xFF,
-	0xDD, 0x55, 0x77, 0xAA, 0xDD, 0x55, 0x77, 0xAA,
-	0x7F, 0xEF, 0xFD, 0xDF, 0xFE, 0xF7, 0xBF, 0xFB,
-	0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF,
-	0x77, 0xBB, 0xDD, 0xEE, 0x77, 0xBB, 0xDD, 0xEE,
-	0x77, 0xFF, 0xFF, 0xFF, 0xDD, 0xFF, 0xFF, 0xFF,
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
-};
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x88, 0x00, 0x00, 0x00, 0x22, 0x00, 0x00, 0x00,
+    0x80, 0x10, 0x02, 0x20, 0x01, 0x08, 0x40, 0x04,
+    0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00,
+    0x22, 0x88, 0x22, 0x88, 0x22, 0x88, 0x22, 0x88,
+    0x88, 0x00, 0x88, 0x00, 0x88, 0x00, 0x88, 0x00,
+    0x11, 0x22, 0x44, 0x88, 0x11, 0x22, 0x44, 0x88,
+    0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA,
+    0x22, 0x00, 0x88, 0x00, 0x22, 0x00, 0x88, 0x00,
+    0xD7, 0xFF, 0x7D, 0xFF, 0xD7, 0xFF, 0x7D, 0xFF,
+    0xDD, 0x55, 0x77, 0xAA, 0xDD, 0x55, 0x77, 0xAA,
+    0x7F, 0xEF, 0xFD, 0xDF, 0xFE, 0xF7, 0xBF, 0xFB,
+    0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF,
+    0x77, 0xBB, 0xDD, 0xEE, 0x77, 0xBB, 0xDD, 0xEE,
+    0x77, 0xFF, 0xFF, 0xFF, 0xDD, 0xFF, 0xFF, 0xFF,
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 // Sierra actually seems to have rendered the whole screen all the time
 void GfxMgr::render_BlockHercules(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
@@ -717,9 +720,9 @@ void GfxMgr::render_BlockHercules(int16 x, int16 y, int16 width, int16 height, b
 
 	uint16 lookupOffset1 = (y * 2 & 0x07);
 	uint16 lookupOffset2 = 0;
-	bool   getUpperNibble = false;
-	byte   herculesColors1 = 0;
-	byte   herculesColors2 = 0;
+	bool getUpperNibble = false;
+	byte herculesColors1 = 0;
+	byte herculesColors2 = 0;
 
 	while (remainingHeight) {
 		remainingWidth = width;
@@ -788,8 +791,8 @@ static const uint8 herculesColorMapping[] = {
 void GfxMgr::transition_Amiga() {
 	uint16 screenPos = 1;
 	uint32 screenStepPos = 1;
-	int16  posY = 0, posX = 0;
-	int16  stepCount = 0;
+	int16 posY = 0, posX = 0;
+	int16 stepCount = 0;
 
 	// disable mouse while transition is taking place
 	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
@@ -855,8 +858,8 @@ void GfxMgr::transition_Amiga() {
 void GfxMgr::transition_AtariSt() {
 	uint16 screenPos = 1;
 	uint32 screenStepPos = 1;
-	int16  posY = 0, posX = 0;
-	int16  stepCount = 0;
+	int16 posY = 0, posX = 0;
+	int16 stepCount = 0;
 
 	// disable mouse while transition is taking place
 	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
@@ -886,7 +889,8 @@ void GfxMgr::transition_AtariSt() {
 				}
 				break;
 			case DISPLAY_UPSCALED_640x400:
-				posX *= 2; posY *= 2;
+				posX *= 2;
+				posY *= 2;
 				posY += _renderStartDisplayOffsetY; // adjust to only update the main area, not the status bar
 				for (int16 multiPixel = 0; multiPixel < 8; multiPixel++) {
 					screenStepPos = (posY * _displayScreenWidth) + posX;
@@ -985,7 +989,7 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 	// coordinate translation: visual-screen -> display-screen
 	translateVisualRectToDisplayScreen(x, y, width, height);
 
-	y = y + _renderStartDisplayOffsetY;	// drawDisplayRect paints anywhere on the whole screen, our coordinate is within playscreen
+	y = y + _renderStartDisplayOffsetY; // drawDisplayRect paints anywhere on the whole screen, our coordinate is within playscreen
 
 	// draw box background
 	drawDisplayRect(x, y, width, height, backgroundColor);
@@ -1010,7 +1014,7 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 	case Common::kRenderHercA:
 	case Common::kRenderHercG:
 		lineColor = 0; // change linecolor to black
-		// fall through
+		               // fall through
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderVGA:
@@ -1034,7 +1038,7 @@ void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte c
 	case Common::kRenderHercA:
 		if (color)
 			color = 1; // change any color except black to green/amber
-		// fall through
+		               // fall through
 	case Common::kRenderEGA:
 	default:
 		drawDisplayRectEGA(x, y, width, height, color);
@@ -1048,12 +1052,16 @@ void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte c
 void GfxMgr::drawDisplayRect(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight, byte color, bool copyToScreen) {
 	switch (_upscaledHires) {
 	case DISPLAY_UPSCALED_DISABLED:
-		x += adjX; y += adjY;
-		width += adjWidth; height += adjHeight;
+		x += adjX;
+		y += adjY;
+		width += adjWidth;
+		height += adjHeight;
 		break;
 	case DISPLAY_UPSCALED_640x400:
-		x += adjX * 2; y += adjY * 2;
-		width += adjWidth * 2; height += adjHeight * 2;
+		x += adjX * 2;
+		y += adjY * 2;
+		width += adjWidth * 2;
+		height += adjHeight * 2;
 		break;
 	default:
 		assert(0);
@@ -1105,8 +1113,8 @@ void GfxMgr::drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byt
 void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foreground, byte background, bool disabledLook) {
 	int16 x = column;
 	int16 y = row;
-	byte  transformXOR = 0;
-	byte  transformOR = 0;
+	byte transformXOR = 0;
+	byte transformOR = 0;
 
 	translateFontPosToDisplayScreen(x, y);
 
@@ -1152,14 +1160,14 @@ void GfxMgr::drawStringOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, const
 }
 
 void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte foreground, byte background, byte transformXOR, byte transformOR) {
-	int16       curX, curY;
+	int16 curX, curY;
 	const byte *fontData;
-	bool        fontIsHires = _font->isFontHires();
-	int16       fontHeight = fontIsHires ? 16 : FONT_DISPLAY_HEIGHT;
-	int16       fontWidth = fontIsHires ? 16 : FONT_DISPLAY_WIDTH;
-	int16       fontBytesPerCharacter = fontIsHires ? 32 : FONT_BYTES_PER_CHARACTER;
-	byte        curByte = 0;
-	uint16      curBit;
+	bool fontIsHires = _font->isFontHires();
+	int16 fontHeight = fontIsHires ? 16 : FONT_DISPLAY_HEIGHT;
+	int16 fontWidth = fontIsHires ? 16 : FONT_DISPLAY_WIDTH;
+	int16 fontBytesPerCharacter = fontIsHires ? 32 : FONT_BYTES_PER_CHARACTER;
+	byte curByte = 0;
+	uint16 curBit;
 
 	// get font data of specified character
 	fontData = _font->getFontData() + character * fontBytesPerCharacter;
@@ -1173,7 +1181,7 @@ void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte
 				curByte ^= transformXOR;
 				curByte |= transformOR;
 				fontData++;
-				curBit  = 0x80;
+				curBit = 0x80;
 			}
 			if (curByte & curBit) {
 				putFontPixelOnDisplay(x, y, curX, curY, foreground, fontIsHires);
@@ -1338,7 +1346,6 @@ int16 GfxMgr::priorityFromY(int16 yPos) {
 	return _priorityTable[yPos];
 }
 
-
 /**
  * Initialize the color palette
  * This function initializes the color palette using the specified
@@ -1349,7 +1356,7 @@ int16 GfxMgr::priorityFromY(int16 yPos) {
  * @param toBits      Bits per destination color component.
  */
 void GfxMgr::initPalette(uint8 *destPalette, const uint8 *paletteData, uint colorCount, uint fromBits, uint toBits) {
-	const uint srcMax  = (1 << fromBits) - 1;
+	const uint srcMax = (1 << fromBits) - 1;
 	const uint destMax = (1 << toBits) - 1;
 	for (uint colorNr = 0; colorNr < colorCount; colorNr++) {
 		for (uint componentNr = 0; componentNr < 3; componentNr++) { // Convert RGB components

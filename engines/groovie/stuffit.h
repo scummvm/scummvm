@@ -26,7 +26,7 @@
 namespace Common {
 class Archive;
 class String;
-}
+} // namespace Common
 
 namespace Groovie {
 

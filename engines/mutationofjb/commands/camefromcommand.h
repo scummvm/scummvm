@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_CAMEFROMCOMMAND_H
 #define MUTATIONOFJB_CAMEFROMCOMMAND_H
 
-#include "mutationofjb/commands/conditionalcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/conditionalcommand.h"
 
 namespace MutationOfJB {
 
@@ -39,10 +39,11 @@ public:
 	CameFromCommand(uint8 sceneId) : _sceneId(sceneId) {}
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
+
 private:
 	uint8 _sceneId;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

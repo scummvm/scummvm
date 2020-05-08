@@ -45,21 +45,21 @@ class Font : public Graphics::Font {
 		int dataOffset;
 	};
 
-	uint32                   _characterCount;
-	int                      _maxWidth;
-	int                      _maxHeight;
+	uint32 _characterCount;
+	int _maxWidth;
+	int _maxHeight;
 	Common::Array<Character> _characters;
-	int                      _dataSize;
-	uint16                  *_data;
-	int                      _screenWidth;
-	int                      _screenHeight;
-	int                      _spacing;
-	bool                     _useFontColor;
+	int _dataSize;
+	uint16 *_data;
+	int _screenWidth;
+	int _screenHeight;
+	int _spacing;
+	bool _useFontColor;
 
 public:
 	~Font() override;
 
-	static Font* load(BladeRunnerEngine *vm, const Common::String &fileName, int spacing, bool useFontColor);
+	static Font *load(BladeRunnerEngine *vm, const Common::String &fileName, int spacing, bool useFontColor);
 
 	int getFontHeight() const override;
 	int getMaxCharWidth() const override;

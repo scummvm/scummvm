@@ -181,14 +181,13 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
                        int align, int siz, int siz_units,
                        unsigned long style);
 
-
 /*
  *   insertion positions 
  */
-#define OS_BANNER_FIRST   1
-#define OS_BANNER_LAST    2
-#define OS_BANNER_BEFORE  3
-#define OS_BANNER_AFTER   4
+#define OS_BANNER_FIRST 1
+#define OS_BANNER_LAST 2
+#define OS_BANNER_BEFORE 3
+#define OS_BANNER_AFTER 4
 
 /*
  *   banner types 
@@ -207,7 +206,7 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   a fixed-pitch font will allow the calling code to rely on using spaces
  *   to align text within the window.  
  */
-#define OS_BANNER_TYPE_TEXT       1
+#define OS_BANNER_TYPE_TEXT 1
 
 /* 
  *   "Text grid" window.  This type of window is similar to an normal text
@@ -232,23 +231,21 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   implementations must use fixed-pitch fonts for these windows.  This
  *   applies even to platforms where proportional fonts are available.  
  */
-#define OS_BANNER_TYPE_TEXTGRID   2
-
+#define OS_BANNER_TYPE_TEXTGRID 2
 
 /* 
  *   banner alignment types 
  */
-#define OS_BANNER_ALIGN_TOP       0
-#define OS_BANNER_ALIGN_BOTTOM    1
-#define OS_BANNER_ALIGN_LEFT      2
-#define OS_BANNER_ALIGN_RIGHT     3
+#define OS_BANNER_ALIGN_TOP 0
+#define OS_BANNER_ALIGN_BOTTOM 1
+#define OS_BANNER_ALIGN_LEFT 2
+#define OS_BANNER_ALIGN_RIGHT 3
 
 /*
  *   size units 
  */
-#define OS_BANNER_SIZE_PCT  1
-#define OS_BANNER_SIZE_ABS  2
-
+#define OS_BANNER_SIZE_PCT 1
+#define OS_BANNER_SIZE_ABS 2
 
 /* 
  *   banner style flags 
@@ -264,14 +261,14 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   Note that character-mode platforms generally do NOT respect the border
  *   style, since doing so takes up too much screen space.  
  */
-#define OS_BANNER_STYLE_BORDER     0x00000001
+#define OS_BANNER_STYLE_BORDER 0x00000001
 
 /*
  *   The banner has a vertical/horizontal scrollbar.  Character-mode
  *   platforms generally do not support scrollbars.  
  */
-#define OS_BANNER_STYLE_VSCROLL    0x00000002
-#define OS_BANNER_STYLE_HSCROLL    0x00000004
+#define OS_BANNER_STYLE_VSCROLL 0x00000002
+#define OS_BANNER_STYLE_HSCROLL 0x00000004
 
 /* 
  *   Automatically scroll the banner vertically/horizontally whenever new
@@ -353,7 +350,7 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   assume auto-vscroll when this style is set.  This style can be ignored
  *   with text grid windows.  
  */
-#define OS_BANNER_STYLE_MOREMODE  0x00000040
+#define OS_BANNER_STYLE_MOREMODE 0x00000040
 
 /*
  *   This banner is a horizontal/vertical "strut" for sizing purposes.  This
@@ -365,9 +362,8 @@ void *os_banner_create(void *parent, int where, void *other, int wintype,
  *   parent's overall content size is the larger of the parent's internal
  *   content size and this banner's content size.  
  */
-#define OS_BANNER_STYLE_HSTRUT    0x00000080
-#define OS_BANNER_STYLE_VSTRUT    0x00000100
-
+#define OS_BANNER_STYLE_HSTRUT 0x00000080
+#define OS_BANNER_STYLE_VSTRUT 0x00000100
 
 /* 
  *   Delete a banner.  This removes the banner from the display, which
@@ -416,25 +412,24 @@ void os_banner_orphan(void *banner_handle);
  *   Banner information structure.  This is filled in by the system-specific
  *   implementation in os_banner_getinfo().  
  */
-struct os_banner_info_t
-{
-    /* alignment */
-    int align;
+struct os_banner_info_t {
+	/* alignment */
+	int align;
 
-    /* style flags - these indicate the style flags actually in use */
-    unsigned long style;
+	/* style flags - these indicate the style flags actually in use */
+	unsigned long style;
 
-    /* 
+	/* 
      *   Actual on-screen size of the banner, in rows and columns.  If the
      *   banner is displayed in a proportional font or can display multiple
      *   fonts of different sizes, this is approximated by the number of "0"
      *   characters in the window's default font that will fit in the
      *   window's display area.  
      */
-    int rows;
-    int columns;
+	int rows;
+	int columns;
 
-    /*
+	/*
      *   Actual on-screen size of the banner in pixels.  This is meaningful
      *   only for full HTML interpreter; for text-only interpreters, these
      *   are always set to zero.
@@ -443,10 +438,10 @@ struct os_banner_info_t
      *   aren't meaningful unless this is a full HTML interpreter.  Text-only
      *   interpreters should always set these to zero, even on GUI OS's.  
      */
-    int pix_width;
-    int pix_height;
+	int pix_width;
+	int pix_height;
 
-    /* 
+	/* 
      *   OS line wrapping flag.  If this is set, the window uses OS-level
      *   line wrapping because the window uses a proportional font, so the
      *   caller does not need to (and should not) perform line breaking in
@@ -456,7 +451,7 @@ struct os_banner_info_t
      *   Callers can note this information once and expect it to remain
      *   fixed through the window's lifetime.  
      */
-    int os_line_wrap;
+	int os_line_wrap;
 };
 typedef struct os_banner_info_t os_banner_info_t;
 

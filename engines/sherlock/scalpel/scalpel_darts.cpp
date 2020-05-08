@@ -47,8 +47,7 @@ enum {
 #define OPPONENTS_COUNT 4
 
 const char *const OPPONENT_NAMES[OPPONENTS_COUNT] = {
-	"Skipper", "Willy", "Micky", "Tom"
-};
+    "Skipper", "Willy", "Micky", "Tom"};
 
 /*----------------------------------------------------------------*/
 
@@ -103,7 +102,7 @@ void Darts::playDarts() {
 			_roundScore += lastDart;
 
 			screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(DART_INFO_X, DART_INFO_Y - 1),
-				Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+			                               Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			screen.print(Common::Point(DART_INFO_X, DART_INFO_Y), DART_COL_FORE, "Dart # %d", idx + 1);
 			screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 10), DART_COL_FORE, "Scored %d points", lastDart);
 
@@ -155,7 +154,7 @@ void Darts::playDarts() {
 			}
 
 			screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(DART_INFO_X, DART_INFO_Y - 1),
-				Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+			                               Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 		}
 
@@ -227,7 +226,8 @@ void Darts::showNames(int playerNum) {
 		screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y), color, "Holmes");
 
 	screen._backBuffer1.fillRect(Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10,
-		STATUS_INFO_X + 31, STATUS_INFO_Y + 12), color);
+	                                          STATUS_INFO_X + 31, STATUS_INFO_Y + 12),
+	                             color);
 	screen.slamArea(STATUS_INFO_X, STATUS_INFO_Y + 10, 31, 12);
 
 	// Second player
@@ -235,13 +235,14 @@ void Darts::showNames(int playerNum) {
 
 	if (playerNum != 0)
 		screen.print(Common::Point(STATUS_INFO_X + 50, STATUS_INFO_Y), PLAYER_COLOR + 3,
-			"%s", _opponent.c_str());
+		             "%s", _opponent.c_str());
 	else
 		screen.print(Common::Point(STATUS_INFO_X + 50, STATUS_INFO_Y), color,
-			"%s", _opponent.c_str());
+		             "%s", _opponent.c_str());
 
 	screen._backBuffer1.fillRect(Common::Rect(STATUS_INFO_X + 50, STATUS_INFO_Y + 10,
-		STATUS_INFO_X + 81, STATUS_INFO_Y + 12), color);
+	                                          STATUS_INFO_X + 81, STATUS_INFO_Y + 12),
+	                             color);
 	screen.slamArea(STATUS_INFO_X + 50, STATUS_INFO_Y + 10, 81, 12);
 
 	// Make a copy of the back buffer to the secondary one
@@ -254,7 +255,7 @@ void Darts::showStatus(int playerNum) {
 
 	// Copy scoring screen from secondary back buffer. This will erase any previously displayed status/score info
 	screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 10),
-		Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, SHERLOCK_SCREEN_WIDTH, STATUS_INFO_Y + 48));
+	                               Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, SHERLOCK_SCREEN_WIDTH, STATUS_INFO_Y + 48));
 
 	color = (playerNum == 0) ? PLAYER_COLOR : DART_COL_FORE;
 	screen.print(Common::Point(STATUS_INFO_X + 6, STATUS_INFO_Y + 13), color, "%d", _dartScore1);
@@ -293,7 +294,7 @@ int Darts::throwDart(int dartNum, int computer) {
 		return 0;
 
 	screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(DART_INFO_X, DART_INFO_Y - 1),
-		Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+	                               Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 	screen.slamRect(Common::Rect(DART_INFO_X, DART_INFO_Y - 1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 	// If it's a computer player, choose a dart destination
@@ -310,9 +311,9 @@ int Darts::throwDart(int dartNum, int computer) {
 	// Copy the bars to the secondary back buffer so that they remain fixed at their selected values
 	// whilst the dart is being animated at being thrown at the board
 	screen._backBuffer2.SHblitFrom(screen._backBuffer1, Common::Point(DARTBARHX - 1, DARTHORIZY - 1),
-		Common::Rect(DARTBARHX - 1, DARTHORIZY - 1, DARTBARHX + DARTBARSIZE + 3, DARTHORIZY + 10));
+	                               Common::Rect(DARTBARHX - 1, DARTHORIZY - 1, DARTBARHX + DARTBARSIZE + 3, DARTHORIZY + 10));
 	screen._backBuffer2.SHblitFrom(screen._backBuffer1, Common::Point(DARTBARVX - 1, DARTHEIGHTY - 1),
-		Common::Rect(DARTBARVX - 1, DARTHEIGHTY - 1, DARTBARVX + 11, DARTHEIGHTY + DARTBARSIZE + 3));
+	                               Common::Rect(DARTBARVX - 1, DARTHEIGHTY - 1, DARTBARVX + 11, DARTHEIGHTY + DARTBARSIZE + 3));
 
 	// Convert height and width to relative range of -50 to 50, where 0,0 is the exact centre of the board
 	height -= 50;
@@ -455,7 +456,7 @@ Common::Point Darts::getComputerDartDest(int playerNum) {
 		// Aim for the bullseye
 		target.x = target.y = 76;
 
-		if (_level <= 1 &&  _vm->getRandomNumber(1) == 1) {
+		if (_level <= 1 && _vm->getRandomNumber(1) == 1) {
 			// Introduce margin of error
 			target.x += _vm->getRandomNumber(21) - 10;
 			target.y += _vm->getRandomNumber(21) - 10;

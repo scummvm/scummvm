@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CFan, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CFan::save(SimpleFile *file, int indent) {

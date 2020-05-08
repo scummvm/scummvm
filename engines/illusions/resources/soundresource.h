@@ -36,6 +36,7 @@ public:
 	~SoundGroupResourceLoader() override {}
 	void load(Resource *resource) override;
 	bool isFlag(int flag) override;
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -54,6 +55,7 @@ public:
 	SoundGroupResource();
 	~SoundGroupResource();
 	void load(byte *data, uint32 dataSize);
+
 public:
 	uint _soundEffectsCount;
 	SoundEffect *_soundEffects;
@@ -64,6 +66,7 @@ public:
 	SoundGroupInstance(IllusionsEngine *vm);
 	void load(Resource *resource) override;
 	void unload() override;
+
 public:
 	IllusionsEngine *_vm;
 	SoundGroupResource *_soundGroupResource;

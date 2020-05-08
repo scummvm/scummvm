@@ -21,10 +21,10 @@
  */
 
 #include "sherlock/tattoo/widget_tooltip.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_map.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -48,7 +48,7 @@ void WidgetTooltipBase::draw() {
 		// Draw the widget directly onto the screen. Unlike other widgets, we don't draw to the back buffer,
 		// since nothing should be drawing on top of tooltips, so there's no need to store in the back buffer
 		screen.SHtransBlitFrom(_surface, Common::Point(_bounds.left - screen._currentScroll.x,
-			_bounds.top - screen._currentScroll.y));
+		                                               _bounds.top - screen._currentScroll.y));
 
 		// Store a copy of the drawn area for later erasing
 		_oldBounds = _bounds;
@@ -69,7 +69,7 @@ void WidgetTooltipBase::erase() {
 
 /*----------------------------------------------------------------*/
 
-WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetTooltipBase (vm), _offsetY(0) {
+WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetTooltipBase(vm), _offsetY(0) {
 }
 
 void WidgetTooltip::setText(const Common::String &str) {
@@ -178,10 +178,10 @@ void WidgetSceneTooltip::handleEvents() {
 
 	// See if thay are pointing at a different object and we need to regenerate the tooltip text
 	if (ui._bgFound != ui._oldBgFound || (ui._bgFound != -1 && _surface.empty()) ||
-			ui._arrowZone != ui._oldArrowZone || (ui._arrowZone != -1 && _surface.empty())) {
+	    ui._arrowZone != ui._oldArrowZone || (ui._arrowZone != -1 && _surface.empty())) {
 		// See if there is a new object to display text for
 		if ((ui._bgFound != -1 && (ui._bgFound != ui._oldBgFound || (ui._bgFound != -1 && _surface.empty()))) ||
-				(ui._arrowZone != -1 && (ui._arrowZone != ui._oldArrowZone || (ui._arrowZone != -1 && _surface.empty())))) {
+		    (ui._arrowZone != -1 && (ui._arrowZone != ui._oldArrowZone || (ui._arrowZone != -1 && _surface.empty())))) {
 			Common::String str;
 			if (ui._bgFound != -1) {
 				// Clear the Arrow Zone fields so it won't think we're displaying an Arrow Zone cursor
@@ -189,8 +189,7 @@ void WidgetSceneTooltip::handleEvents() {
 					ui._arrowZone = ui._oldArrowZone = -1;
 
 				// Get the description string
-				str = (ui._bgFound < 1000) ? scene._bgShapes[ui._bgFound]._description :
-					people[ui._bgFound - 1000]._description;
+				str = (ui._bgFound < 1000) ? scene._bgShapes[ui._bgFound]._description : people[ui._bgFound - 1000]._description;
 
 				// WORKAORUND: On the train ride to Cambridge, don't show any tooltips
 				if (scene._currentScene == TRAIN_RIDE)

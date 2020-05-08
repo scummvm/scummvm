@@ -23,7 +23,7 @@
 #ifndef NUVIE_FONTS_U6_FONT_H
 #define NUVIE_FONTS_U6_FONT_H
 
-#define FONT_COLOR_U6_NORMAL    0x48
+#define FONT_COLOR_U6_NORMAL 0x48
 #define FONT_COLOR_U6_HIGHLIGHT 0x0c
 
 #include "ultima/nuvie/fonts/font.h"
@@ -39,7 +39,6 @@ private:
 	unsigned char *font_data;
 
 public:
-
 	U6Font();
 	~U6Font() override;
 
@@ -53,8 +52,8 @@ public:
 	}
 	uint16 drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 	                uint8 color) override;
-protected:
 
+protected:
 };
 
 } // End of namespace Nuvie

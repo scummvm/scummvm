@@ -23,8 +23,6 @@
 #ifndef ULTIMA4_CONTROLLERS_COMBAT_CONTROLLER_H
 #define ULTIMA4_CONTROLLERS_COMBAT_CONTROLLER_H
 
-#include "ultima/ultima4/map/direction.h"
-#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/controllers/controller.h"
 #include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/core/types.h"
@@ -33,12 +31,14 @@
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/map/direction.h"
+#include "ultima/ultima4/map/map.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-#define AREA_CREATURES   16
-#define AREA_PLAYERS    8
+#define AREA_CREATURES 16
+#define AREA_PLAYERS 8
 
 class CombatMap;
 class Creature;
@@ -60,6 +60,7 @@ typedef enum {
 class CombatController : public Controller, public Observer<Party *, PartyEvent &>, public TurnCompleter {
 protected:
 	CombatController();
+
 public:
 	CombatController(CombatMap *m);
 	CombatController(MapId id);
@@ -122,7 +123,7 @@ public:
 	/**
 	 * Generate the number of creatures in a group.
 	 */
-	int  initialNumberOfCreatures(const Creature *creature) const;
+	int initialNumberOfCreatures(const Creature *creature) const;
 
 	/**
 	 * Returns true if the player has won.

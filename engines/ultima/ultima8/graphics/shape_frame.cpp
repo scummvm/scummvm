@@ -22,15 +22,14 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/raw_shape_frame.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-ShapeFrame::ShapeFrame(const RawShapeFrame *rawframe) :
-		_xoff(rawframe->_xoff), _yoff(rawframe->_yoff),
-		_width(rawframe->_width), _height(rawframe->_height) {
+ShapeFrame::ShapeFrame(const RawShapeFrame *rawframe) : _xoff(rawframe->_xoff), _yoff(rawframe->_yoff),
+                                                        _width(rawframe->_width), _height(rawframe->_height) {
 
 	_pixels = new uint8[_width * _height];
 	_mask = new uint8[_width * _height];
@@ -69,14 +68,12 @@ ShapeFrame::ShapeFrame(const RawShapeFrame *rawframe) :
 			}
 
 		} while (xpos < _width);
-
 	}
-
 }
 
 ShapeFrame::~ShapeFrame() {
-	delete [] _pixels;
-	delete [] _mask;
+	delete[] _pixels;
+	delete[] _mask;
 }
 
 // Checks to see if the frame has a pixel at the point

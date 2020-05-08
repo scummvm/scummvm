@@ -23,8 +23,8 @@
 #ifndef __PS2INPUT_H__
 #define __PS2INPUT_H__
 
-#include "common/system.h"
 #include "common/keyboard.h"
+#include "common/system.h"
 
 class OSystem_PS2;
 class Ps2Pad;
@@ -40,6 +40,7 @@ public:
 	void newRange(uint16 minx, uint16 miny, uint16 maxx, uint16 maxy);
 	bool pollEvent(Common::Event *event);
 	void warpTo(uint16 x, uint16 y);
+
 private:
 	int mapKey(int key, int mod);
 	bool getKeyEvent(Common::Event *event, uint16 buttonCode, bool down);

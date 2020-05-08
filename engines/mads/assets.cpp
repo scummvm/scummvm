@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
 #include "mads/assets.h"
+#include "common/scummsys.h"
 #include "mads/compression.h"
 #include "mads/events.h"
+#include "mads/mads.h"
 #include "mads/palette.h"
 
 namespace MADS {
@@ -148,14 +148,14 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 		frameSizes.push_back(frameSize);
 
 		frame._bounds.left = spriteStream->readSint16LE();
-		frame._bounds.top  = spriteStream->readSint16LE();
+		frame._bounds.top = spriteStream->readSint16LE();
 		frame._bounds.setWidth(spriteStream->readUint16LE());
 		frame._bounds.setHeight(spriteStream->readUint16LE());
 
 		if (curFrame == 0)
 			debugC(1, kDebugGraphics, "%i frames, x = %i, y = %i, w = %i, h = %i\n",
-			_frameCount, frame._bounds.left, frame._bounds.top,
-			frame._bounds.width(), frame._bounds.height());
+			       _frameCount, frame._bounds.left, frame._bounds.top,
+			       frame._bounds.width(), frame._bounds.height());
 
 		if (_mode == 0) {
 			// Create a frame and decompress the raw pixel data
@@ -172,8 +172,7 @@ void SpriteAsset::load(Common::SeekableReadStream *stream, int flags) {
 		for (curFrame = 0; curFrame < _frameCount; curFrame++) {
 			FabDecompressor fab;
 
-			int srcSize = (curFrame == (_frameCount - 1)) ? spriteDataStream->size() - _frameOffsets[curFrame] :
-				_frameOffsets[curFrame + 1] - _frameOffsets[curFrame];
+			int srcSize = (curFrame == (_frameCount - 1)) ? spriteDataStream->size() - _frameOffsets[curFrame] : _frameOffsets[curFrame + 1] - _frameOffsets[curFrame];
 			byte *srcData = new byte[srcSize];
 			assert(srcData);
 			spriteDataStream->read(srcData, srcSize);

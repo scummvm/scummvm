@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -46,8 +46,7 @@ static const int remAskShapeId = 0;
 static const int remYesShapeId = 19;
 static const int remNoShapeId = 20;
 
-
-QuitGump::QuitGump(): ModalGump(0, 0, 5, 5), _yesWidget(0), _noWidget(0) {
+QuitGump::QuitGump() : ModalGump(0, 0, 5, 5), _yesWidget(0), _noWidget(0) {
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
 	mouse->setMouseCursor(Mouse::MOUSE_HAND);
@@ -116,7 +115,6 @@ void QuitGump::InitGump(Gump *newparent, bool take_focus) {
 	_noWidget = widget->getObjId();
 }
 
-
 void QuitGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
@@ -125,8 +123,7 @@ bool QuitGump::OnKeyDown(int key, int mod) {
 	switch (key) {
 	case Common::KEYCODE_ESCAPE: {
 		Close();
-	}
-	break;
+	} break;
 	default:
 		break;
 	}

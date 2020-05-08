@@ -27,10 +27,9 @@
 
 #if defined(USE_TTS) && defined(WIN32)
 
-#include "common/text-to-speech.h"
-#include "common/str.h"
 #include "common/list.h"
-
+#include "common/str.h"
+#include "common/text-to-speech.h"
 
 class WindowsTextToSpeechManager : public Common::TextToSpeechManager {
 public:
@@ -85,7 +84,6 @@ private:
 	SpeechParameters _threadParams;
 	HANDLE _speechMutex;
 };
-
 
 #endif
 

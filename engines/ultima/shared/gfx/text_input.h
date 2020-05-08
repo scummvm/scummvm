@@ -35,11 +35,13 @@ namespace Gfx {
 class TextInput : public Popup {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
+
 private:
 	bool _isNumeric;
 	size_t _maxCharacters;
 	Common::String _text;
 	byte _color;
+
 public:
 	CLASSDEF;
 	TextInput(GameBase *game) : Popup(game), _isNumeric(false), _maxCharacters(0), _color(0) {}
@@ -59,7 +61,7 @@ public:
 	 * @remarks		Generates a TextInputMsg message with the text when Enter or escape is pressed
 	 */
 	void show(const Point &pt, bool isNumeric, size_t maxCharacters, byte color,
-		TreeItem *respondTo = nullptr);
+	          TreeItem *respondTo = nullptr);
 };
 
 } // End of namespace Gfx

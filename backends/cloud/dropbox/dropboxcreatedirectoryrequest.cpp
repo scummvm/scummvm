@@ -32,9 +32,8 @@ namespace Dropbox {
 
 #define DROPBOX_API_CREATE_FOLDER "https://api.dropboxapi.com/2/files/create_folder"
 
-DropboxCreateDirectoryRequest::DropboxCreateDirectoryRequest(Common::String token, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _token(token), _path(path), _boolCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+DropboxCreateDirectoryRequest::DropboxCreateDirectoryRequest(Common::String token, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _token(token), _path(path), _boolCallback(cb),
+                                                                                                                                                                   _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -72,7 +71,8 @@ void DropboxCreateDirectoryRequest::responseCallback(Networking::JsonResponse re
 		delete json;
 		return;
 	}
-	if (response.request) _date = response.request->date();
+	if (response.request)
+		_date = response.request->date();
 
 	Networking::ErrorResponse error(this, "DropboxCreateDirectoryRequest::responseCallback: unknown error");
 	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;

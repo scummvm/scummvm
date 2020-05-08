@@ -22,27 +22,27 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/cloud/dropbox/dropboxstorage.h"
+#include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/dropbox/dropboxcreatedirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxinforequest.h"
 #include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxuploadrequest.h"
-#include "backends/cloud/cloudmanager.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
+#include <curl/curl.h>
 
 namespace Cloud {
 namespace Dropbox {
 
 #define DROPBOX_API_FILES_DOWNLOAD "https://content.dropboxapi.com/2/files/download"
 
-DropboxStorage::DropboxStorage(Common::String accessToken, bool enabled): BaseStorage(accessToken, "", enabled) {}
+DropboxStorage::DropboxStorage(Common::String accessToken, bool enabled) : BaseStorage(accessToken, "", enabled) {}
 
-DropboxStorage::DropboxStorage(Common::String code, Networking::ErrorCallback cb): BaseStorage() {
+DropboxStorage::DropboxStorage(Common::String code, Networking::ErrorCallback cb) : BaseStorage() {
 	getAccessToken(code, cb);
 }
 
@@ -109,7 +109,7 @@ DropboxStorage *DropboxStorage::loadFromConfig(Common::String keyPrefix) {
 		return nullptr;
 	}
 
-	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);	
+	Common::String accessToken = ConfMan.get(keyPrefix + "access_token", ConfMan.kCloudDomain);
 	return new DropboxStorage(accessToken, loadIsEnabledFlag(keyPrefix));
 }
 

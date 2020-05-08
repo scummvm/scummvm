@@ -34,9 +34,8 @@ namespace Dropbox {
 #define DROPBOX_API_FILES_UPLOAD "https://content.dropboxapi.com/2/files/upload"
 #define DROPBOX_API_FILES_UPLOAD_SESSION "https://content.dropboxapi.com/2/files/upload_session/"
 
-DropboxUploadRequest::DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _token(token), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+DropboxUploadRequest::DropboxUploadRequest(Common::String token, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _token(token), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
+                                                                                                                                                                                               _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -156,8 +155,8 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 		}
 
 		if (Networking::CurlJsonRequest::jsonContainsString(object, "path_lower", "DropboxUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsString(object, "server_modified", "DropboxUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsIntegerNumber(object, "size", "DropboxUploadRequest")) {
+		    Networking::CurlJsonRequest::jsonContainsString(object, "server_modified", "DropboxUploadRequest") &&
+		    Networking::CurlJsonRequest::jsonContainsIntegerNumber(object, "size", "DropboxUploadRequest")) {
 			//finished
 			Common::String path = object.getVal("path_lower")->asString();
 			uint32 size = object.getVal("size")->asIntegerNumber();

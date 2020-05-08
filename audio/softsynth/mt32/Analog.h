@@ -18,10 +18,10 @@
 #ifndef MT32EMU_ANALOG_H
 #define MT32EMU_ANALOG_H
 
-#include "globals.h"
-#include "internals.h"
 #include "Enumerations.h"
 #include "Types.h"
+#include "globals.h"
+#include "internals.h"
 
 namespace MT32Emu {
 

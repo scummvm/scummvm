@@ -39,12 +39,15 @@ class CLightSwitch : public CBackground {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+
 public:
 	static bool _flag;
+
 private:
 	int _fieldE0;
 	int _fieldE4;
 	bool _turnOnTV;
+
 public:
 	CLASSDEF;
 	CLightSwitch();

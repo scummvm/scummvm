@@ -45,10 +45,10 @@
  *
  */
 
-#include "common/file.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "common/debug.h"
+#include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -56,12 +56,12 @@
 
 #include "gui/saveload.h"
 
-#include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "graphics/thumbnail.h"
 
+#include "wage/entities.h"
 #include "wage/wage.h"
 #include "wage/world.h"
-#include "wage/entities.h"
 
 #define SAVEGAME_CURRENT_VERSION 1
 
@@ -88,14 +88,14 @@ static const uint32 WAGEflag = MKTAG('W', 'A', 'G', 'E');
 #define GET_HEX_OFFSET(ptr, baseOffset, entrySize) ((ptr) == nullptr ? -1 : ((baseOffset) + (entrySize) * (ptr)->_index))
 #define GET_HEX_CHR_OFFSET(ptr) GET_HEX_OFFSET((ptr), chrsHexOffset, CHR_SIZE)
 #define GET_HEX_OBJ_OFFSET(ptr) GET_HEX_OFFSET((ptr), objsHexOffset, OBJ_SIZE)
-#define GET_HEX_SCENE_OFFSET(ptr) ((ptr) == nullptr ? -1 : \
-	((ptr) == _world->_storageScene ? 0 : (SCENES_INDEX + getSceneIndex(_world->_player->_currentScene) * SCENE_SIZE)))
+#define GET_HEX_SCENE_OFFSET(ptr) ((ptr) == nullptr ? -1 : ((ptr) == _world->_storageScene ? 0 : (SCENES_INDEX + getSceneIndex(_world->_player->_currentScene) * SCENE_SIZE)))
 
 int WageEngine::getSceneIndex(Scene *scene) const {
 	assert(scene);
 	Common::Array<Scene *> &orderedScenes = _world->_orderedScenes;
 	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
-		if (orderedScenes[i] == scene) return i-1;
+		if (orderedScenes[i] == scene)
+			return i - 1;
 	}
 
 	warning("Scene's index not found");
@@ -161,7 +161,8 @@ Scene *WageEngine::getSceneByOffset(int offset) const {
 	}
 
 	if (sceneIndex >= 0 && (uint)sceneIndex < _world->_orderedScenes.size()) {
-		if (sceneIndex == 0) return _world->_storageScene;
+		if (sceneIndex == 0)
+			return _world->_storageScene;
 		return _world->_orderedScenes[sceneIndex];
 	}
 
@@ -182,12 +183,12 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 
 	// Counters
 	out->writeSint16LE(_world->_scenes.size()); //numScenes
-	out->writeSint16LE(_world->_chrs.size()); //numChars
-	out->writeSint16LE(_world->_objs.size()); //numObjs
+	out->writeSint16LE(_world->_chrs.size());   //numChars
+	out->writeSint16LE(_world->_objs.size());   //numObjs
 
 	// Hex Offsets
 	int chrsHexOffset = SCENES_INDEX + _world->_scenes.size() * SCENE_SIZE; //chrs start after scenes
-	int objsHexOffset = chrsHexOffset + _world->_chrs.size() * CHR_SIZE; //objs start after chrs
+	int objsHexOffset = chrsHexOffset + _world->_chrs.size() * CHR_SIZE;    //objs start after chrs
 	out->writeSint32LE(chrsHexOffset);
 	out->writeSint32LE(objsHexOffset);
 
@@ -199,8 +200,8 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 
 	// More Counters
 	out->writeSint32LE(playerContext._visits); //visitNum
-	out->writeSint32LE(_loopCount); //loopNum
-	out->writeSint32LE(playerContext._kills); //killNum
+	out->writeSint32LE(_loopCount);            //loopNum
+	out->writeSint32LE(playerContext._kills);  //killNum
 
 	// Hex offset to player character
 	out->writeSint32LE(GET_HEX_CHR_OFFSET(player)); //getPlayerHexOffset() == getHexOffsetForChr(player)
@@ -224,10 +225,10 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::MAGIC_ARMOR])); //sprtArmIndex
 
 	// TODO:
-	out->writeUint16LE(0xffff);	// ???? - always FFFF
-	out->writeUint16LE(0xffff);	// ???? - always FFFF
-	out->writeUint16LE(0xffff);	// ???? - always FFFF
-	out->writeUint16LE(0xffff);	// ???? - always FFFF
+	out->writeUint16LE(0xffff); // ???? - always FFFF
+	out->writeUint16LE(0xffff); // ???? - always FFFF
+	out->writeUint16LE(0xffff); // ???? - always FFFF
+	out->writeUint16LE(0xffff); // ???? - always FFFF
 
 	// did a character just escape?
 	out->writeSint32LE(GET_HEX_CHR_OFFSET(_running)); //getRunCharHexOffset() == getHexOffsetForChr(running)
@@ -235,13 +236,13 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	// players experience points
 	out->writeSint32LE(playerContext._experience);
 
-	out->writeSint16LE(_aim); //aim
+	out->writeSint16LE(_aim);         //aim
 	out->writeSint16LE(_opponentAim); //opponentAim
 
 	// TODO:
-	out->writeSint16LE(0x0000);	// always 0
-	out->writeSint16LE(0x0000);	// always 0
-	out->writeSint16LE(0x0000);	// always 0
+	out->writeSint16LE(0x0000); // always 0
+	out->writeSint16LE(0x0000); // always 0
+	out->writeSint16LE(0x0000); // always 0
 
 	// Base character stats
 	out->writeByte(playerContext._statVariables[PHYS_STR_BAS]); //state.getBasePhysStr()
@@ -255,7 +256,7 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	out->writeByte(playerContext._statVariables[PHYS_SPE_BAS]); //state.getBaseRunSpeed()
 
 	// TODO:
-	out->writeByte(0x0A);		// ???? - always seems to be 0x0A
+	out->writeByte(0x0A); // ???? - always seems to be 0x0A
 
 	// write user vars
 	for (uint32 i = 0; i < 26 * 9; ++i)
@@ -407,8 +408,8 @@ int WageEngine::loadGame(int slotId) {
 
 	// More Counters
 	int visitNum = data->readSint32LE(); //visitNum
-	int loopNum = data->readSint32LE(); //loopNum
-	int killNum = data->readSint32LE(); //killNum
+	int loopNum = data->readSint32LE();  //loopNum
+	int killNum = data->readSint32LE();  //killNum
 
 	// Hex offset to player character
 	int playerOffset = data->readSint32LE();
@@ -455,17 +456,17 @@ int WageEngine::loadGame(int slotId) {
 	// wearing spiritual armor?
 	int spiritualArmorOffset = data->readSint32LE(); //sprtArmIndex
 
-	data->readSint16LE();	// FFFF
-	data->readSint16LE();	// FFFF
-	data->readSint16LE();	// FFFF
-	data->readSint16LE();	// FFFF
+	data->readSint16LE(); // FFFF
+	data->readSint16LE(); // FFFF
+	data->readSint16LE(); // FFFF
+	data->readSint16LE(); // FFFF
 
 	/* int runCharOffset = */ data->readSint32LE();
 
 	// players experience points
 	int exp = data->readSint32LE(); // @ playerContext._experience
 
-	int aim = data->readSint16LE(); //aim
+	int aim = data->readSint16LE();         //aim
 	int opponentAim = data->readSint16LE(); //opponentAim
 
 	data->readSint16LE(); // 0000
@@ -630,7 +631,7 @@ int WageEngine::loadGame(int slotId) {
 		int value = data->readByte();
 		int type = data->readByte();
 		int damage = data->readByte();
-		int attackType= data->readByte();
+		int attackType = data->readByte();
 		int numberOfUses = data->readSint16LE();
 
 		Obj *obj = orderedObjs[i];
@@ -767,4 +768,4 @@ bool WageEngine::scummVMSaveLoadDialog(bool isSave) {
 	return saveGameState(slot, desc).getCode() == Common::kNoError;
 }
 
-} // End of namespace Agi
+} // namespace Wage

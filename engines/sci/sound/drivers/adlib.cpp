@@ -49,8 +49,8 @@ public:
 	};
 
 	MidiDriver_AdLib(SciVersion version) : _version(version), _isSCI0(version < SCI_VERSION_1_EARLY), _playSwitch(true), _masterVolume(15),
-		_numVoiceMax(version == SCI_VERSION_0_EARLY ? 8 : kVoices), _rhythmKeyMap(), _opl(0), _adlibTimerParam(0), _adlibTimerProc(0), _stereo(false), _isOpen(false) { }
-	~MidiDriver_AdLib() override { }
+	                                       _numVoiceMax(version == SCI_VERSION_0_EARLY ? 8 : kVoices), _rhythmKeyMap(), _opl(0), _adlibTimerParam(0), _adlibTimerProc(0), _stereo(false), _isOpen(false) {}
+	~MidiDriver_AdLib() override {}
 
 	// MidiDriver
 	int open() override { return -1; } // Dummy implementation (use openAdLib)
@@ -87,18 +87,18 @@ private:
 		bool vibrato;
 		bool envelopeType;
 		bool kbScaleRate;
-		byte frequencyMult;		// (0-15)
-		byte kbScaleLevel;		// (0-3)
-		byte totalLevel;		// (0-63, 0=max, 63=min)
-		byte attackRate;		// (0-15)
-		byte decayRate;			// (0-15)
-		byte sustainLevel;		// (0-15)
-		byte releaseRate;		// (0-15)
-		byte waveForm;			// (0-3)
+		byte frequencyMult; // (0-15)
+		byte kbScaleLevel;  // (0-3)
+		byte totalLevel;    // (0-63, 0=max, 63=min)
+		byte attackRate;    // (0-15)
+		byte decayRate;     // (0-15)
+		byte sustainLevel;  // (0-15)
+		byte releaseRate;   // (0-15)
+		byte waveForm;      // (0-3)
 	};
 
 	struct AdLibModulator {
-		byte feedback;			// (0-7)
+		byte feedback; // (0-7)
 		bool algorithm;
 	};
 
@@ -108,32 +108,32 @@ private:
 	};
 
 	struct Channel {
-		uint8 patch;			// Patch setting
-		uint8 volume;			// Channel volume (0-63)
-		uint8 pan;				// Pan setting (0-127, 64 is center)
-		uint8 holdPedal;		// Hold pedal setting (0 to 63 is off, 127 to 64 is on)
-		uint8 extraVoices;		// The number of additional voices this channel optimally needs
-		uint16 pitchWheel;		// Pitch wheel setting (0-16383, 8192 is center)
-		uint8 lastVoice;		// Last voice used for this MIDI channel
-		bool enableVelocity;	// Enable velocity control (SCI0)
-		uint8 voices;			// Number of voices currently used by this channel
-		uint8 mappedVoices;		// Number of voices currently mapped to this channel
+		uint8 patch;         // Patch setting
+		uint8 volume;        // Channel volume (0-63)
+		uint8 pan;           // Pan setting (0-127, 64 is center)
+		uint8 holdPedal;     // Hold pedal setting (0 to 63 is off, 127 to 64 is on)
+		uint8 extraVoices;   // The number of additional voices this channel optimally needs
+		uint16 pitchWheel;   // Pitch wheel setting (0-16383, 8192 is center)
+		uint8 lastVoice;     // Last voice used for this MIDI channel
+		bool enableVelocity; // Enable velocity control (SCI0)
+		uint8 voices;        // Number of voices currently used by this channel
+		uint8 mappedVoices;  // Number of voices currently mapped to this channel
 
 		Channel() : patch(0), volume(63), pan(64), holdPedal(0), extraVoices(0),
-					pitchWheel(8192), lastVoice(0), enableVelocity(false), voices(0),
-					mappedVoices(0) { }
+		            pitchWheel(8192), lastVoice(0), enableVelocity(false), voices(0),
+		            mappedVoices(0) {}
 	};
 
 	struct AdLibVoice {
-		int8 channel;			// MIDI channel that is currently using this voice, or -1
-		int8 mappedChannel;		// MIDI channel that this voice is mapped to, or -1
-		int8 note;				// Currently playing MIDI note or -1
-		int patch;				// Currently playing patch or -1
-		uint8 velocity;			// Note velocity
-		bool isSustained;		// Flag indicating a note that is being sustained by the hold pedal
-		uint16 age;				// Age of the current note
+		int8 channel;       // MIDI channel that is currently using this voice, or -1
+		int8 mappedChannel; // MIDI channel that this voice is mapped to, or -1
+		int8 note;          // Currently playing MIDI note or -1
+		int patch;          // Currently playing patch or -1
+		uint8 velocity;     // Note velocity
+		bool isSustained;   // Flag indicating a note that is being sustained by the hold pedal
+		uint16 age;         // Age of the current note
 
-		AdLibVoice() : channel(-1), mappedChannel(-1), note(-1), patch(-1), velocity(0), isSustained(false), age(0) { }
+		AdLibVoice() : channel(-1), mappedChannel(-1), note(-1), patch(-1), velocity(0), isSustained(false), age(0) {}
 	};
 
 	bool _stereo;
@@ -146,7 +146,7 @@ private:
 	const uint8 _numVoiceMax;
 	Channel _channels[MIDI_CHANNELS];
 	AdLibVoice _voices[kVoices];
-	Common::SpanOwner<SciSpan<const byte> > _rhythmKeyMap;
+	Common::SpanOwner<SciSpan<const byte>> _rhythmKeyMap;
 	Common::Array<AdLibPatch> _patches;
 	Common::List<int> _voiceQueue;
 
@@ -196,40 +196,36 @@ public:
 };
 
 static const byte registerOffset[MidiDriver_AdLib::kVoices] = {
-	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11, 0x12
-};
+    0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11, 0x12};
 
 static const byte velocityMap1[64] = {
-	0x00, 0x0c, 0x0d, 0x0e, 0x0f, 0x11, 0x12, 0x13,
-	0x14, 0x16, 0x17, 0x18, 0x1a, 0x1b, 0x1c, 0x1d,
-	0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26,
-	0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2d, 0x2d, 0x2e,
-	0x2f, 0x30, 0x31, 0x32, 0x32, 0x33, 0x34, 0x34,
-	0x35, 0x36, 0x36, 0x37, 0x38, 0x38, 0x39, 0x3a,
-	0x3b, 0x3b, 0x3b, 0x3c, 0x3c, 0x3c, 0x3d, 0x3d,
-	0x3d, 0x3e, 0x3e, 0x3e, 0x3e, 0x3f, 0x3f, 0x3f
-};
+    0x00, 0x0c, 0x0d, 0x0e, 0x0f, 0x11, 0x12, 0x13,
+    0x14, 0x16, 0x17, 0x18, 0x1a, 0x1b, 0x1c, 0x1d,
+    0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26,
+    0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2d, 0x2d, 0x2e,
+    0x2f, 0x30, 0x31, 0x32, 0x32, 0x33, 0x34, 0x34,
+    0x35, 0x36, 0x36, 0x37, 0x38, 0x38, 0x39, 0x3a,
+    0x3b, 0x3b, 0x3b, 0x3c, 0x3c, 0x3c, 0x3d, 0x3d,
+    0x3d, 0x3e, 0x3e, 0x3e, 0x3e, 0x3f, 0x3f, 0x3f};
 
 static const byte velocityMap2[64] = {
-	0x00, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a,
-	0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x21,
-	0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29,
-	0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x2f, 0x30,
-	0x31, 0x32, 0x32, 0x33, 0x34, 0x34, 0x35, 0x36,
-	0x36, 0x37, 0x38, 0x38, 0x39, 0x39, 0x3a, 0x3a,
-	0x3b, 0x3b, 0x3b, 0x3c, 0x3c, 0x3c, 0x3d, 0x3d,
-	0x3d, 0x3e, 0x3e, 0x3e, 0x3e, 0x3f, 0x3f, 0x3f
-};
+    0x00, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a,
+    0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x21,
+    0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29,
+    0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x2f, 0x30,
+    0x31, 0x32, 0x32, 0x33, 0x34, 0x34, 0x35, 0x36,
+    0x36, 0x37, 0x38, 0x38, 0x39, 0x39, 0x3a, 0x3a,
+    0x3b, 0x3b, 0x3b, 0x3c, 0x3c, 0x3c, 0x3d, 0x3d,
+    0x3d, 0x3e, 0x3e, 0x3e, 0x3e, 0x3f, 0x3f, 0x3f};
 
 // One octave with three pitch wheel positions after each note
 static const int adlibFreq[48] = {
-	0x157, 0x15c, 0x161, 0x166, 0x16b, 0x171, 0x176, 0x17b,
-	0x181, 0x186, 0x18c, 0x192, 0x198, 0x19e, 0x1a4, 0x1aa,
-	0x1b0, 0x1b6, 0x1bd, 0x1c3, 0x1ca, 0x1d0, 0x1d7, 0x1de,
-	0x1e5, 0x1ec, 0x1f3, 0x1fa, 0x202, 0x209, 0x211, 0x218,
-	0x220, 0x228, 0x230, 0x238, 0x241, 0x249, 0x252, 0x25a,
-	0x263, 0x26c, 0x275, 0x27e, 0x287, 0x290, 0x29a, 0x2a4
-};
+    0x157, 0x15c, 0x161, 0x166, 0x16b, 0x171, 0x176, 0x17b,
+    0x181, 0x186, 0x18c, 0x192, 0x198, 0x19e, 0x1a4, 0x1aa,
+    0x1b0, 0x1b6, 0x1bd, 0x1c3, 0x1ca, 0x1d0, 0x1d7, 0x1de,
+    0x1e5, 0x1ec, 0x1f3, 0x1fa, 0x202, 0x209, 0x211, 0x218,
+    0x220, 0x228, 0x230, 0x238, 0x241, 0x249, 0x252, 0x25a,
+    0x263, 0x26c, 0x275, 0x27e, 0x287, 0x290, 0x29a, 0x2a4};
 
 int MidiDriver_AdLib::openAdLib() {
 	_stereo = STEREO;
@@ -838,8 +834,7 @@ void MidiDriver_AdLib::setOperator(int reg, AdLibOperator &op) {
 	setRegister(0x40 + reg, (op.kbScaleLevel << 6) | op.totalLevel);
 	setRegister(0x60 + reg, (op.attackRate << 4) | op.decayRate);
 	setRegister(0x80 + reg, (op.sustainLevel << 4) | op.releaseRate);
-	setRegister(0x20 + reg, (op.amplitudeMod << 7) | (op.vibrato << 6)
-				| (op.envelopeType << 5) | (op.kbScaleRate << 4) | op.frequencyMult);
+	setRegister(0x20 + reg, (op.amplitudeMod << 7) | (op.vibrato << 6) | (op.envelopeType << 5) | (op.kbScaleRate << 4) | op.frequencyMult);
 	setRegister(0xE0 + reg, op.waveForm);
 }
 
@@ -894,7 +889,7 @@ bool MidiDriver_AdLib::loadResource(const SciSpan<const byte> &data) {
 }
 
 uint32 MidiDriver_AdLib::property(int prop, uint32 param) {
-	switch(prop) {
+	switch (prop) {
 	case MIDI_PROP_MASTER_VOLUME:
 		if (param != 0xffff)
 			_masterVolume = param;
@@ -904,7 +899,6 @@ uint32 MidiDriver_AdLib::property(int prop, uint32 param) {
 	}
 	return 0;
 }
-
 
 int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 	assert(resMan != NULL);
@@ -930,7 +924,7 @@ int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 			if (size == 5684 || size == 5720 || size == 5727) {
 				ok = f.seek(0x45a);
 				if (ok) {
-					Common::SpanOwner<SciSpan<const byte> > patchData;
+					Common::SpanOwner<SciSpan<const byte>> patchData;
 					patchData->allocateFromStream(f, patchSize);
 					ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(*patchData);
 				}

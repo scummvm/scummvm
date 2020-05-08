@@ -23,12 +23,12 @@
 #ifndef ULTIMA8_AUDIO_REMORSEMUSICPROCESS_H
 #define ULTIMA8_AUDIO_REMORSEMUSICPROCESS_H
 
-#include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -47,7 +47,7 @@ protected:
 	void playMusic_internal(int track);
 
 private:
-	int _currentTrack;      //! Currently playing track (don't save)
+	int _currentTrack; //! Currently playing track (don't save)
 
 	//! Is the current music "combat" music
 	bool _combatMusicActive;

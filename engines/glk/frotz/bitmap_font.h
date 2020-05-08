@@ -39,18 +39,19 @@ private:
 	Common::Array<Graphics::ManagedSurface> _chars;
 	size_t _startingChar;
 	Common::Point _size;
+
 protected:
 	/**
 	 * Calculate a character width 
 	 */
 	int getSourceCharacterWidth(uint charIndex, const Graphics::Surface &src,
-		const Common::Rect &charBounds);
+	                            const Common::Rect &charBounds);
 
 	/**
 	 * Constructor
 	 */
 	BitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth);
+	           uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth);
 
 public:
 	/**
@@ -83,10 +84,8 @@ public:
 	 * Constructor
 	 */
 	FixedWidthBitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ') :
-		BitmapFont(src, size, srcWidth, srcHeight, startingChar, true) {}
+	                     uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ') : BitmapFont(src, size, srcWidth, srcHeight, startingChar, true) {}
 };
-
 
 /**
  * Subclass for fixed width fonts
@@ -97,8 +96,7 @@ public:
 	 * Constructor
 	 */
 	VariableWidthBitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ') :
-		BitmapFont(src, size, srcWidth, srcHeight, startingChar, false) {}
+	                        uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ') : BitmapFont(src, size, srcWidth, srcHeight, startingChar, false) {}
 };
 
 } // End of namespace Frotz

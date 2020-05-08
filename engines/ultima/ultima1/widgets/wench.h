@@ -31,11 +31,13 @@ namespace Widgets {
 
 class Wench : public Person {
 	DECLARE_MESSAGE_MAP;
+
 protected:
 	/**
 	 * Handles moving creatures
 	 */
 	void movement() override;
+
 public:
 	DECLARE_WIDGET(Wench)
 	CLASSDEF;
@@ -43,14 +45,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	Wench(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 50, hitPoints) {}
+	Wench(Ultima1Game *game, Maps::MapBase *map, int hitPoints) : Person(game, map, 50, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Wench(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
-		Person(game, map, tileNum, hitPoints) {}
+	Wench(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) : Person(game, map, tileNum, hitPoints) {}
 
 	/**
 	 * Constructor

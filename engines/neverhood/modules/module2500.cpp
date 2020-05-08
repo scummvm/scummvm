@@ -20,41 +20,37 @@
  *
  */
 
-#include "neverhood/modules/module1600.h"	// for Scene1608
-#include "neverhood/modules/module1600_sprites.h"
 #include "neverhood/modules/module2500.h"
+#include "neverhood/modules/module1600.h" // for Scene1608
+#include "neverhood/modules/module1600_sprites.h"
 #include "neverhood/modules/module2500_sprites.h"
-#include "neverhood/modules/module2700.h"	// for Scene2704
+#include "neverhood/modules/module2700.h" // for Scene2704
 #include "neverhood/modules/module2700_sprites.h"
 
 namespace Neverhood {
 
 static const uint32 kScene2505StaticSprites[] = {
-	0x4000A226, 0
-};
+    0x4000A226, 0};
 
-static const NRect kScene2505ClipRect = { 0, 0, 564, 480 };
+static const NRect kScene2505ClipRect = {0, 0, 564, 480};
 
 static const uint32 kScene2506StaticSprites[] = {
-	0x4027AF02, 0
-};
+    0x4027AF02, 0};
 
-static const NRect kScene2506ClipRect = { 0, 0, 640, 441 };
+static const NRect kScene2506ClipRect = {0, 0, 640, 441};
 
 static const uint32 kScene2508StaticSprites1[] = {
-	0x2F08E610, 0xD844E6A0, 0
-};
+    0x2F08E610, 0xD844E6A0, 0};
 
-static const NRect kScene2508ClipRect1 = { 0, 0, 594, 448 };
+static const NRect kScene2508ClipRect1 = {0, 0, 594, 448};
 
 static const uint32 kScene2508StaticSprites2[] = {
-	0x2F08E610, 0
-};
+    0x2F08E610, 0};
 
-static const NRect kScene2508ClipRect2 = { 0, 0, 594, 448 };
+static const NRect kScene2508ClipRect2 = {0, 0, 594, 448};
 
 Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _soundIndex(0) {
+    : Module(vm, parentModule), _soundIndex(0) {
 
 	_vm->_soundMan->addMusic(0x29220120, 0x05343184);
 	_vm->_soundMan->startMusic(0x05343184, 0, 0);
@@ -69,7 +65,6 @@ Module2500::Module2500(NeverhoodEngine *vm, Module *parentModule, int which)
 	loadSound(1, 0x00880CC0);
 	loadSound(2, 0x00880CCC);
 	loadSound(3, 0x00880CC0);
-
 }
 
 Module2500::~Module2500() {
@@ -228,7 +223,7 @@ void Module2500::createScene2704(int which, uint32 sceneInfoId, int16 value, con
 }
 
 Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B2628));
 	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B264C));
@@ -265,7 +260,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		// 1: Klaymen entering riding the car on the left track
 		// 2: Klaymen entering riding the car on the bottom track
 		addSprite(_asCar);
-		_kmScene2501 = (Klaymen*)new KmScene2501(_vm, this, 275, 393);
+		_kmScene2501 = (Klaymen *)new KmScene2501(_vm, this, 275, 393);
 		_klaymenInCar = true;
 		sendMessage(_kmScene2501, 0x2000, 1);
 		_kmScene2501->setDoDeltaX(1);
@@ -312,7 +307,6 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_carStatus = 0;
-
 }
 
 Scene2501::~Scene2501() {
@@ -487,7 +481,7 @@ void Scene2501::updateKlaymenClipRect() {
 }
 
 Scene2504::Scene2504(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule) {
+    : Scene(vm, parentModule) {
 
 	Sprite *ssButton;
 

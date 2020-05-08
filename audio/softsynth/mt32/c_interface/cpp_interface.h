@@ -23,8 +23,8 @@
 #include "../globals.h"
 #include "c_types.h"
 
-#include "../Types.h"
 #include "../Enumerations.h"
+#include "../Types.h"
 
 #if MT32EMU_API_TYPE == 2
 
@@ -32,7 +32,6 @@ extern "C" {
 
 /** Returns mt32emu_service_i interface. */
 mt32emu_service_i mt32emu_get_service_i();
-
 }
 
 #define mt32emu_get_supported_report_handler_version i.v0->getSupportedReportHandlerVersionID
@@ -116,11 +115,11 @@ namespace MT32Emu {
 
 namespace CppInterfaceImpl {
 
-static const mt32emu_report_handler_i NULL_REPORT_HANDLER = { NULL };
+static const mt32emu_report_handler_i NULL_REPORT_HANDLER = {NULL};
 static mt32emu_report_handler_i getReportHandlerThunk();
 static mt32emu_midi_receiver_i getMidiReceiverThunk();
 
-}
+} // namespace CppInterfaceImpl
 
 /*
  * The classes below correspond to the interfaces defined in c_types.h and provided for convenience when using C++.
@@ -174,7 +173,10 @@ public:
 #else
 	explicit Service(mt32emu_context context = NULL) : c(context) {}
 #endif
-	~Service() { if (c != NULL) mt32emu_free_context(c); }
+	~Service() {
+		if (c != NULL)
+			mt32emu_free_context(c);
+	}
 
 	// Context-independent methods
 
@@ -193,9 +195,17 @@ public:
 	// Context-dependent methods
 
 	mt32emu_context getContext() { return c; }
-	void createContext(mt32emu_report_handler_i report_handler = CppInterfaceImpl::NULL_REPORT_HANDLER, void *instance_data = NULL) { freeContext(); c = mt32emu_create_context(report_handler, instance_data); }
+	void createContext(mt32emu_report_handler_i report_handler = CppInterfaceImpl::NULL_REPORT_HANDLER, void *instance_data = NULL) {
+		freeContext();
+		c = mt32emu_create_context(report_handler, instance_data);
+	}
 	void createContext(IReportHandler &report_handler) { createContext(CppInterfaceImpl::getReportHandlerThunk(), &report_handler); }
-	void freeContext() { if (c != NULL) { mt32emu_free_context(c); c = NULL; } }
+	void freeContext() {
+		if (c != NULL) {
+			mt32emu_free_context(c);
+			c = NULL;
+		}
+	}
 	mt32emu_return_code addROMData(const Bit8u *data, size_t data_size, const mt32emu_sha1_digest *sha1_digest = NULL) { return mt32emu_add_rom_data(c, data, data_size, sha1_digest); }
 	mt32emu_return_code addROMFile(const char *filename) { return mt32emu_add_rom_file(c, filename); }
 	void getROMInfo(mt32emu_rom_info *rom_info) { mt32emu_get_rom_info(c, rom_info); }
@@ -346,24 +356,23 @@ static void onProgramChanged(void *instance_data, mt32emu_bit8u part_num, const 
 
 static mt32emu_report_handler_i getReportHandlerThunk() {
 	static const mt32emu_report_handler_i_v0 REPORT_HANDLER_V0_THUNK = {
-		getReportHandlerVersionID,
-		printDebug,
-		onErrorControlROM,
-		onErrorPCMROM,
-		showLCDMessage,
-		onMIDIMessagePlayed,
-		onMIDIQueueOverflow,
-		onMIDISystemRealtime,
-		onDeviceReset,
-		onDeviceReconfig,
-		onNewReverbMode,
-		onNewReverbTime,
-		onNewReverbLevel,
-		onPolyStateChanged,
-		onProgramChanged
-	};
+	    getReportHandlerVersionID,
+	    printDebug,
+	    onErrorControlROM,
+	    onErrorPCMROM,
+	    showLCDMessage,
+	    onMIDIMessagePlayed,
+	    onMIDIQueueOverflow,
+	    onMIDISystemRealtime,
+	    onDeviceReset,
+	    onDeviceReconfig,
+	    onNewReverbMode,
+	    onNewReverbTime,
+	    onNewReverbLevel,
+	    onPolyStateChanged,
+	    onProgramChanged};
 
-	static const mt32emu_report_handler_i REPORT_HANDLER_THUNK = { &REPORT_HANDLER_V0_THUNK };
+	static const mt32emu_report_handler_i REPORT_HANDLER_THUNK = {&REPORT_HANDLER_V0_THUNK};
 
 	return REPORT_HANDLER_THUNK;
 }
@@ -386,13 +395,12 @@ static void handleSystemRealtimeMessage(void *instance_data, const mt32emu_bit8u
 
 static mt32emu_midi_receiver_i getMidiReceiverThunk() {
 	static const mt32emu_midi_receiver_i_v0 MIDI_RECEIVER_V0_THUNK = {
-		getMidiReceiverVersionID,
-		handleShortMessage,
-		handleSysex,
-		handleSystemRealtimeMessage
-	};
+	    getMidiReceiverVersionID,
+	    handleShortMessage,
+	    handleSysex,
+	    handleSystemRealtimeMessage};
 
-	static const mt32emu_midi_receiver_i MIDI_RECEIVER_THUNK = { &MIDI_RECEIVER_V0_THUNK };
+	static const mt32emu_midi_receiver_i MIDI_RECEIVER_THUNK = {&MIDI_RECEIVER_V0_THUNK};
 
 	return MIDI_RECEIVER_THUNK;
 }

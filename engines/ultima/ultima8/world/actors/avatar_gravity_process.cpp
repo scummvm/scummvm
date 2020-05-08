@@ -22,12 +22,12 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,13 +36,11 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(AvatarGravityProcess, GravityProcess)
 
 AvatarGravityProcess::AvatarGravityProcess()
-	: GravityProcess() {
-
+    : GravityProcess() {
 }
 
 AvatarGravityProcess::AvatarGravityProcess(MainActor *avatar, int gravity_)
-	: GravityProcess(avatar, gravity_) {
-
+    : GravityProcess(avatar, gravity_) {
 }
 
 void AvatarGravityProcess::run() {
@@ -73,13 +71,13 @@ void AvatarGravityProcess::run() {
 	}
 }
 
-
 void AvatarGravityProcess::saveData(Common::WriteStream *ws) {
 	GravityProcess::saveData(ws);
 }
 
 bool AvatarGravityProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!GravityProcess::loadData(rs, version)) return false;
+	if (!GravityProcess::loadData(rs, version))
+		return false;
 
 	return true;
 }

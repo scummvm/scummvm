@@ -27,8 +27,7 @@
 
 @class iPhoneView;
 
-
-@interface iOS7AppDelegate : NSObject<UIApplicationDelegate>
+@interface iOS7AppDelegate : NSObject <UIApplicationDelegate>
 
 + (iOS7AppDelegate *)iOS7AppDelegate;
 + (iPhoneView *)iPhoneView;

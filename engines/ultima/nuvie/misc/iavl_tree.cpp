@@ -28,17 +28,16 @@ namespace Nuvie {
 
 static iAVLNode *iAVLCloseSearchNode(iAVLTree const *avltree, iAVLKey key);
 static void iAVLRebalanceNode(iAVLTree *avltree, iAVLNode *avlnode);
-static void iAVLFreeBranch(iAVLNode *avlnode, void (freeitem)(void *item));
+static void iAVLFreeBranch(iAVLNode *avlnode, void(freeitem)(void *item));
 static void iAVLFillVacancy(iAVLTree *avltree,
                             iAVLNode *origparent, iAVLNode **superparent,
                             iAVLNode *left, iAVLNode *right);
 
-#define MAX(x, y)      ((x) > (y) ? (x) : (y))
-#define MIN(x, y)      ((x) < (y) ? (x) : (y))
-#define L_DEPTH(n)     ((n)->left ? (n)->left->depth : 0)
-#define R_DEPTH(n)     ((n)->right ? (n)->right->depth : 0)
-#define CALC_DEPTH(n)  (MAX(L_DEPTH(n), R_DEPTH(n)) + 1)
-
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#define L_DEPTH(n) ((n)->left ? (n)->left->depth : 0)
+#define R_DEPTH(n) ((n)->right ? (n)->right->depth : 0)
+#define CALC_DEPTH(n) (MAX(L_DEPTH(n), R_DEPTH(n)) + 1)
 
 /*
  * AVLAllocTree:
@@ -48,7 +47,7 @@ static void iAVLFillVacancy(iAVLTree *avltree,
  * On success, a pointer to the malloced AVLTree is returned.  If there
  * was a malloc failure, then NULL is returned.
  */
-iAVLTree *iAVLAllocTree(iAVLKey(*getkey)(void const *item)) {
+iAVLTree *iAVLAllocTree(iAVLKey (*getkey)(void const *item)) {
 	iAVLTree *rc;
 
 	rc = (iAVLTree *)malloc(sizeof(iAVLTree));
@@ -61,19 +60,18 @@ iAVLTree *iAVLAllocTree(iAVLKey(*getkey)(void const *item)) {
 	return rc;
 }
 
-
 /*
  * AVLFreeTree:
  * Free all memory used by this AVL tree.  If freeitem is not NULL, then
  * it is assumed to be a destructor for the items reference in the AVL
  * tree, and they are deleted as well.
  */
-void iAVLFreeTree(iAVLTree *avltree, void (freeitem)(void *item)) {
+void iAVLFreeTree(iAVLTree *avltree, void(freeitem)(void *item)) {
 	iAVLCleanTree(avltree, freeitem);
 	free(avltree);
 }
 
-void iAVLCleanTree(iAVLTree *avltree, void (freeitem)(void *item)) {
+void iAVLCleanTree(iAVLTree *avltree, void(freeitem)(void *item)) {
 	if (avltree->top)
 		iAVLFreeBranch(avltree->top, freeitem);
 
@@ -140,7 +138,6 @@ int iAVLInsert(iAVLTree *avltree, void *item) {
 	return 0;
 }
 
-
 /*
  * iAVLSearch:
  * Return a pointer to the item with the given key in the AVL tree.  If
@@ -156,7 +153,6 @@ void *iAVLSearch(iAVLTree const *avltree, iAVLKey key) {
 
 	return NULL;
 }
-
 
 /*
  * iAVLDelete:
@@ -190,7 +186,6 @@ int iAVLDelete(iAVLTree *avltree, iAVLKey key) {
 	return 0;
 }
 
-
 /*
  * iAVLFirst:
  * Initializes an iAVLCursor object and returns the item with the lowest
@@ -207,12 +202,12 @@ void *iAVLFirst(iAVLCursor *avlcursor, iAVLTree const *avltree) {
 	}
 
 	for (avlnode = avltree->top;
-	        avlnode->left != NULL;
-	        avlnode = avlnode->left);
+	     avlnode->left != NULL;
+	     avlnode = avlnode->left)
+		;
 	avlcursor->curnode = avlnode;
 	return avlnode->item;
 }
-
 
 /*
  * iAVLNext:
@@ -227,8 +222,9 @@ void *iAVLNext(iAVLCursor *avlcursor) {
 
 	if (avlnode->right != NULL) {
 		for (avlnode = avlnode->right;
-		        avlnode->left != NULL;
-		        avlnode = avlnode->left);
+		     avlnode->left != NULL;
+		     avlnode = avlnode->left)
+			;
 		avlcursor->curnode = avlnode;
 		return avlnode->item;
 	}
@@ -245,7 +241,6 @@ void *iAVLNext(iAVLCursor *avlcursor) {
 	avlcursor->curnode = avlnode->parent;
 	return avlnode->parent->item;
 }
-
 
 /*
  * iAVLCloseSearchNode:
@@ -279,7 +274,6 @@ iAVLNode *iAVLCloseSearchNode(iAVLTree const *avltree, iAVLKey key) {
 		}
 	}
 }
-
 
 /*
  * iAVLRebalanceNode:
@@ -390,7 +384,6 @@ void iAVLRebalanceNode(iAVLTree *avltree, iAVLNode *avlnode) {
 	}
 }
 
-
 /*
  * iAVLFreeBranch:
  * Free memory used by this node and its item.  If the freeitem argument
@@ -398,7 +391,7 @@ void iAVLRebalanceNode(iAVLTree *avltree, iAVLNode *avlnode) {
  * memory as well.  In other words, the freeitem function is a
  * destructor for the items in the tree.
  */
-void iAVLFreeBranch(iAVLNode *avlnode, void (freeitem)(void *item)) {
+void iAVLFreeBranch(iAVLNode *avlnode, void(freeitem)(void *item)) {
 	if (avlnode->left)
 		iAVLFreeBranch(avlnode->left, freeitem);
 	if (avlnode->right)
@@ -407,7 +400,6 @@ void iAVLFreeBranch(iAVLNode *avlnode, void (freeitem)(void *item)) {
 		freeitem(avlnode->item);
 	free(avlnode);
 }
-
 
 /*
  * iAVLFillVacancy:
@@ -430,7 +422,8 @@ void iAVLFillVacancy(iAVLTree *avltree,
 	}
 
 	else {
-		for (avlnode = left; avlnode->right != NULL; avlnode = avlnode->right);
+		for (avlnode = left; avlnode->right != NULL; avlnode = avlnode->right)
+			;
 
 		if (avlnode == left) {
 			balnode = avlnode;

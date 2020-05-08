@@ -21,10 +21,10 @@
  */
 
 #include "glk/alan3/set.h"
-#include "glk/alan3/lists.h"
-#include "glk/alan3/syserr.h"
-#include "glk/alan3/memory.h"
 #include "glk/alan3/instance.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/syserr.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -43,7 +43,6 @@ Set *newSet(int allocation) {
 	return theSet;
 }
 
-
 /*======================================================================*/
 void initSets(SetInitEntry *initTable) {
 	SetInitEntry *init;
@@ -58,18 +57,15 @@ void initSets(SetInitEntry *initTable) {
 	}
 }
 
-
 /*======================================================================*/
 int setSize(Set *theSet) {
 	return theSet->size;
 }
 
-
 /*======================================================================*/
 void clearSet(Set *theSet) {
 	theSet->size = 0;
 }
-
 
 /*======================================================================*/
 Set *copySet(Set *theSet) {
@@ -81,14 +77,12 @@ Set *copySet(Set *theSet) {
 	return nset;
 }
 
-
 /*======================================================================*/
 Aword getSetMember(Set *theSet, Aint theMember) {
 	if (theMember > theSet->size || theMember < 1)
 		apperr("Accessing nonexisting member in a set");
 	return theSet->members[theMember - 1];
 }
-
 
 /*======================================================================*/
 bool inSet(Set *theSet, Aword member) {
@@ -99,7 +93,6 @@ bool inSet(Set *theSet, Aword member) {
 			return TRUE;
 	return FALSE;
 }
-
 
 /*=======================================================================*/
 Set *setUnion(Set *set1, Set *set2) {
@@ -113,10 +106,10 @@ Set *setUnion(Set *set1, Set *set2) {
 	return theUnion;
 }
 
-
 /*=======================================================================*/
 void addToSet(Set *theSet, Aword newMember) {
-	if (inSet(theSet, newMember)) return;
+	if (inSet(theSet, newMember))
+		return;
 	if (theSet->size == theSet->allocated) {
 		theSet->allocated += EXTENT;
 		theSet->members = (Aword *)realloc(theSet->members, theSet->allocated * sizeof(theSet->members[0]));
@@ -125,12 +118,12 @@ void addToSet(Set *theSet, Aword newMember) {
 	theSet->size++;
 }
 
-
 /*=======================================================================*/
 void removeFromSet(Set *theSet, Aword member) {
 	int i, j;
 
-	if (!inSet(theSet, member)) return;
+	if (!inSet(theSet, member))
+		return;
 
 	for (i = 0; i < theSet->size; i++) {
 		if ((Aword)theSet->members[i] == member) {
@@ -142,12 +135,12 @@ void removeFromSet(Set *theSet, Aword member) {
 	}
 }
 
-
 /*=======================================================================*/
 bool equalSets(Set *set1, Set *set2) {
 	int i;
 
-	if (set1->size != set2->size) return FALSE;
+	if (set1->size != set2->size)
+		return FALSE;
 
 	for (i = 0; i < set1->size; i++) {
 		if (!inSet(set2, set1->members[i]))
@@ -155,7 +148,6 @@ bool equalSets(Set *set1, Set *set2) {
 	}
 	return TRUE;
 }
-
 
 /*======================================================================*/
 void freeSet(Set *theSet) {

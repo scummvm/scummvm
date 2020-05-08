@@ -27,9 +27,9 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/ptr.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "common/ptr.h"
 #include "graphics/surface.h"
 
 namespace TeenAgent {
@@ -106,7 +106,8 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 }
 
 static uint findInStr(const Common::String &str, char c, uint pos = 0) {
-	while (pos < str.size() && str[pos] != c) ++pos;
+	while (pos < str.size() && str[pos] != c)
+		++pos;
 	return pos;
 }
 

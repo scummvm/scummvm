@@ -23,31 +23,31 @@
 #include "Gs2dScreen.h"
 #include "GsDefs.h"
 
-#include <libmc.h>
 #include "icon.h"
+#include <libmc.h>
 
 const char _info[] = "ScummVM\nFolder";
 
 const iconIVECTOR _bgcolor[4] = {
-	{  68,  23, 116,  0 }, // top left
-	{ 255, 255, 255,  0 }, // top right
-	{ 255, 255, 255,  0 }, // bottom left
-	{  68,  23, 116,  0 }, // bottom right
+    {68, 23, 116, 0},   // top left
+    {255, 255, 255, 0}, // top right
+    {255, 255, 255, 0}, // bottom left
+    {68, 23, 116, 0},   // bottom right
 };
 
 const iconFVECTOR _lightdir[3] = {
-	{ 0.5, 0.5, 0.5, 0.0 },
-	{ 0.0,-0.4,-0.1, 0.0 },
-	{-0.5,-0.5, 0.5, 0.0 },
+    {0.5, 0.5, 0.5, 0.0},
+    {0.0, -0.4, -0.1, 0.0},
+    {-0.5, -0.5, 0.5, 0.0},
 };
 
 const iconFVECTOR _lightcol[3] = {
-	{ 0.3, 0.3, 0.3, 0.00 },
-	{ 0.4, 0.4, 0.4, 0.00 },
-	{ 0.5, 0.5, 0.5, 0.00 },
+    {0.3, 0.3, 0.3, 0.00},
+    {0.4, 0.4, 0.4, 0.00},
+    {0.5, 0.5, 0.5, 0.00},
 };
 
-const iconFVECTOR _ambient = { 0.50, 0.50, 0.50, 0.00 };
+const iconFVECTOR _ambient = {0.50, 0.50, 0.50, 0.00};
 
 // Source File: stdico2.rle
 // Orig. Offset: 0 / 0x00000000
@@ -930,8 +930,7 @@ const uint8 _rleIcoData[14018] = {
     0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F,
     0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F, 0x98, 0x5F,
     0x98, 0x5F, 0x98, 0x5F, 0x97, 0x5F, 0x97, 0x5F, 0xB8, 0x5F, 0xDB, 0x6B, 0xFE, 0x7B, 0x3F, 0x08,
-    0x00, 0x00
-};
+    0x00, 0x00};
 
 uint16 PS2Icon::decompressData(uint16 **data) {
 	uint16 inPos = 1;
@@ -941,12 +940,12 @@ uint16 PS2Icon::decompressData(uint16 **data) {
 	uint16 outPos = 0;
 
 	while (outPos < resSize) {
-	uint16 len = rleData[inPos++];
-	while (len--)
-		resData[outPos++] = 0x7FFF;
-	len = rleData[inPos++];
-	while (len--)
-		resData[outPos++] = rleData[inPos++];
+		uint16 len = rleData[inPos++];
+		while (len--)
+			resData[outPos++] = 0x7FFF;
+		len = rleData[inPos++];
+		while (len--)
+			resData[outPos++] = rleData[inPos++];
 	}
 	assert(outPos == resSize);
 

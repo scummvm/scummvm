@@ -31,10 +31,12 @@ namespace Shared {
 /**
  * Derived tree item class that adds a name that can be used to direct messages to later
  */
-class NamedItem: public TreeItem {
+class NamedItem : public TreeItem {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	Common::String _name;
+
 public:
 	CLASSDEF;
 	NamedItem() {}

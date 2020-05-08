@@ -23,9 +23,9 @@
 #ifndef NUVIE_ACTORS_ACTOR_MANAGER_H
 #define NUVIE_ACTORS_ACTOR_MANAGER_H
 
-#include "ultima/shared/std/string.h"
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/misc/actor_list.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -37,8 +37,6 @@ class TileManager;
 class GameClock;
 class MapCoord;
 
-
-
 #define ACTORMANAGER_MAX_ACTORS 256
 
 class ActorManager {
@@ -46,9 +44,9 @@ class ActorManager {
 	TileManager *tile_manager;
 	ObjManager *obj_manager;
 
-	bool update; // ActorManager is not paused
-	bool wait_for_player; // Player's turn; wait until updateActors() is called
-	bool combat_movement; // Defines actor movement type (individual/party)
+	bool update;                   // ActorManager is not paused
+	bool wait_for_player;          // Player's turn; wait until updateActors() is called
+	bool combat_movement;          // Defines actor movement type (individual/party)
 	bool should_clean_temp_actors; // If set, temp actors are cleaned when > 19 tiles from player.
 
 	Map *map;
@@ -64,7 +62,6 @@ class ActorManager {
 	MapCoord *cmp_actor_loc; // data for sort_distance() & cmp_distance_to_loc()
 
 public:
-
 	ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c);
 	~ActorManager();
 
@@ -73,15 +70,15 @@ public:
 
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
-// ActorList
-	ActorList *get_actor_list(); // *returns a NEW list*
+	// ActorList
+	ActorList *get_actor_list();                                           // *returns a NEW list*
 	ActorList *sort_nearest(ActorList *list, uint16 x, uint16 y, uint8 z); // ascending distance
 	ActorList *filter_distance(ActorList *list, uint16 x, uint16 y, uint8 z, uint16 dist);
 	ActorList *filter_alignment(ActorList *list, uint8 align);
 	ActorList *filter_party(ActorList *list);
 
 	Actor *get_actor(uint8 actor_num);
-	Actor *get_actor(uint16 x, uint16 y, uint8 z,  bool inc_surrounding_objs = true, Actor *excluded_actor = NULL);
+	Actor *get_actor(uint16 x, uint16 y, uint8 z, bool inc_surrounding_objs = true, Actor *excluded_actor = NULL);
 	Actor *get_actor_holding_obj(Obj *obj);
 
 	Actor *get_avatar();
@@ -94,7 +91,7 @@ public:
 	void set_update(bool u) {
 		update = u;
 	}
-	bool get_update()       {
+	bool get_update() {
 		return (update);
 	}
 	void set_combat_movement(bool c);
@@ -121,7 +118,6 @@ public:
 	}
 
 protected:
-
 	Actor *get_multi_tile_actor(uint16 x, uint16 y, uint8 z);
 
 	bool loadActorSchedules();
@@ -135,7 +131,6 @@ protected:
 	inline void clean_temp_actor(Actor *actor);
 
 private:
-
 	bool loadCustomTiles(nuvie_game_t game_type);
 	void loadNPCTiles(Std::string datadir);
 	void loadAvatarTiles(Std::string datadir);

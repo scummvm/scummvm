@@ -76,8 +76,7 @@ private:
 		Common::Archive *archive;
 		Common::String _mountPath;
 
-		ArchiveEntry(Common::Archive *archive_, const Common::String &mountPath_):
-			archive(archive_), _mountPath(mountPath_) {
+		ArchiveEntry(Common::Archive *archive_, const Common::String &mountPath_) : archive(archive_), _mountPath(mountPath_) {
 		}
 		~ArchiveEntry() {
 			delete archive;
@@ -98,8 +97,8 @@ public:
 	~PackageManager() override;
 
 	enum FILE_TYPES {
-		FT_DIRECTORY    = (1 << 0),
-		FT_FILE         = (1 << 1)
+		FT_DIRECTORY = (1 << 0),
+		FT_FILE = (1 << 1)
 	};
 
 	/**

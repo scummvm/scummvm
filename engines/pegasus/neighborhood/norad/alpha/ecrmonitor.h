@@ -27,8 +27,8 @@
 #define PEGASUS_NEIGHBORHOOD_NORAD_ALPHA_ecrMONITOR_H
 
 #include "pegasus/interaction.h"
-#include "pegasus/notification.h"
 #include "pegasus/neighborhood/norad/alpha/panoramascroll.h"
+#include "pegasus/notification.h"
 
 namespace Pegasus {
 

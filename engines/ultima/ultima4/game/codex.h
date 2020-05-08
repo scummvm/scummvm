@@ -52,6 +52,7 @@ private:
 	Common::Array<Common::String> _virtueQuestions;
 	Common::Array<Common::String> _endgameText1;
 	Common::Array<Common::String> _endgameText2;
+
 private:
 	/**
 	 * Initializes the Chamber of the Codex sequence (runs from codexStart())
@@ -91,6 +92,7 @@ private:
 	 */
 	static bool handleInfinityAnyKey(int key, void *data);
 	static bool handleEndgameAnyKey(int key, void *data);
+
 public:
 	/**
 	 * Constructor

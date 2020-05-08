@@ -21,20 +21,19 @@
  */
 
 #include "sherlock/tattoo/tattoo_scene.h"
+#include "sherlock/events.h"
+#include "sherlock/people.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo.h"
-#include "sherlock/events.h"
-#include "sherlock/people.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
 const int FS_TRANS[8] = {
-	STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN, STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
-};
+    STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN, STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT};
 
 /*----------------------------------------------------------------*/
 
@@ -45,12 +44,9 @@ struct ShapeEntry {
 	int _yp;
 	int _ordering;
 
-	ShapeEntry(TattooPerson *person, int yp, int ordering) :
-		_shape(nullptr), _person(person), _yp(yp), _isAnimation(false), _ordering(ordering) {}
-	ShapeEntry(Object *shape, int yp, int ordering) :
-		_shape(shape), _person(nullptr), _yp(yp), _isAnimation(false), _ordering(ordering) {}
-	ShapeEntry(int yp, int ordering) :
-		_shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true), _ordering(ordering) {}
+	ShapeEntry(TattooPerson *person, int yp, int ordering) : _shape(nullptr), _person(person), _yp(yp), _isAnimation(false), _ordering(ordering) {}
+	ShapeEntry(Object *shape, int yp, int ordering) : _shape(shape), _person(nullptr), _yp(yp), _isAnimation(false), _ordering(ordering) {}
+	ShapeEntry(int yp, int ordering) : _shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true), _ordering(ordering) {}
 };
 typedef Common::List<ShapeEntry> ShapeList;
 
@@ -150,7 +146,7 @@ void TattooScene::drawAllShapes() {
 	// Draw the animation if it is behind the person
 	if (_activeCAnim.active() && _activeCAnim._zPlacement == BEHIND)
 		screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
-			(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+		                                    (_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 
 	screen.resetDisplayBounds();
 
@@ -160,11 +156,9 @@ void TattooScene::drawAllShapes() {
 
 		if (obj._type == ACTIVE_BG_SHAPE && (obj._misc == NORMAL_BEHIND || obj._misc == NORMAL_FORWARD)) {
 			if (obj._scaleVal == SCALE_THRESHOLD)
-				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->_offset.y +
-					obj._imageFrame->_height, ordering++));
+				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->_offset.y + obj._imageFrame->_height, ordering++));
 			else
-				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->sDrawYOffset(obj._scaleVal) +
-					obj._imageFrame->sDrawYSize(obj._scaleVal), ordering++));
+				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->sDrawYOffset(obj._scaleVal) + obj._imageFrame->sDrawYSize(obj._scaleVal), ordering++));
 		}
 	}
 
@@ -172,10 +166,12 @@ void TattooScene::drawAllShapes() {
 	if (_activeCAnim.active() && (_activeCAnim._zPlacement == NORMAL_BEHIND || _activeCAnim._zPlacement == NORMAL_FORWARD)) {
 		if (_activeCAnim._scaleVal == SCALE_THRESHOLD)
 			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame._offset.y +
-				_activeCAnim._imageFrame._height, ordering++));
+			                                   _activeCAnim._imageFrame._height,
+			                               ordering++));
 		else
 			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame.sDrawYOffset(_activeCAnim._scaleVal) +
-				_activeCAnim._imageFrame.sDrawYSize(_activeCAnim._scaleVal), ordering++));
+			                                   _activeCAnim._imageFrame.sDrawYSize(_activeCAnim._scaleVal),
+			                               ordering++));
 	}
 
 	// Queue all active characters for drawing
@@ -197,11 +193,11 @@ void TattooScene::drawAllShapes() {
 				screen._backBuffer1.SHblitFrom(*se._shape->_imageFrame, se._shape->_position);
 			else
 				screen._backBuffer1.SHtransBlitFrom(*se._shape->_imageFrame, se._shape->_position,
-					se._shape->_flags & OBJ_FLIPPED, 0, se._shape->_scaleVal);
+				                                    se._shape->_flags & OBJ_FLIPPED, 0, se._shape->_scaleVal);
 		} else if (se._isAnimation) {
 			// It's an active animation
 			screen._backBuffer1.SHtransBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
-				(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+			                                    (_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 		} else {
 			// Drawing person
 			TattooPerson &p = *se._person;
@@ -212,8 +208,7 @@ void TattooScene::drawAllShapes() {
 
 			if (p._tempScaleVal == SCALE_THRESHOLD) {
 				p._tempX += adjust.x;
-				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
-					- p.frameHeight() - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
+				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER - p.frameHeight() - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
 			} else {
 				if (adjust.x) {
 					if (!p._tempScaleVal)
@@ -242,8 +237,7 @@ void TattooScene::drawAllShapes() {
 						++adjust.y;
 				}
 
-				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
-					- p._imageFrame->sDrawYSize(p._tempScaleVal) - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
+				screen._backBuffer1.SHtransBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER - p._imageFrame->sDrawYSize(p._tempScaleVal) - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
 			}
 		}
 	}
@@ -292,8 +286,7 @@ void TattooScene::checkBgShapes() {
 			_activeCAnim._zPlacement = BEHIND;
 			break;
 		case 1:
-			_activeCAnim._zPlacement = ((_activeCAnim._position.y + _activeCAnim._imageFrame._frame.h - 1)) ?
-				NORMAL_FORWARD : NORMAL_BEHIND;
+			_activeCAnim._zPlacement = ((_activeCAnim._position.y + _activeCAnim._imageFrame._frame.h - 1)) ? NORMAL_FORWARD : NORMAL_BEHIND;
 			break;
 		case 2:
 			_activeCAnim._zPlacement = FORWARD;
@@ -453,13 +446,12 @@ void TattooScene::updateBackground() {
 					p._type = INVALID;
 				} else {
 					if (p._tempScaleVal == SCALE_THRESHOLD) {
-						screen.flushImage(p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
-							- p._imageFrame->_width), &p._oldPosition.x, &p._oldPosition.y, &p._oldSize.x, &p._oldSize.y);
-					}  else {
+						screen.flushImage(p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER - p._imageFrame->_width), &p._oldPosition.x, &p._oldPosition.y, &p._oldSize.x, &p._oldSize.y);
+					} else {
 						int ts = p._imageFrame->sDrawYSize(p._tempScaleVal);
 						int ty = p._position.y / FIXED_INT_MULTIPLIER - ts;
 						screen.flushScaleImage(p._imageFrame, Common::Point(p._tempX, ty),
-							&p._oldPosition.x, &p._oldPosition.y, &p._oldSize.x, &p._oldSize.y, p._tempScaleVal);
+						                       &p._oldPosition.x, &p._oldPosition.y, &p._oldSize.x, &p._oldSize.y, p._tempScaleVal);
 					}
 				}
 			}
@@ -473,10 +465,10 @@ void TattooScene::updateBackground() {
 			if (_goToScene == -1) {
 				if (obj._scaleVal == SCALE_THRESHOLD)
 					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
-						&obj._oldSize.x, &obj._oldSize.y);
+					                  &obj._oldSize.x, &obj._oldSize.y);
 				else
 					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
-						&obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
+					                       &obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
 
 				if (obj._type == REMOVE)
 					obj._type = INVALID;
@@ -494,10 +486,10 @@ void TattooScene::updateBackground() {
 			} else if (obj._type == HIDE_SHAPE) {
 				if (obj._scaleVal == SCALE_THRESHOLD)
 					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
-						&obj._oldSize.x, &obj._oldSize.y);
+					                  &obj._oldSize.x, &obj._oldSize.y);
 				else
 					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
-						&obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
+					                       &obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
 				obj._type = HIDDEN;
 			}
 		}
@@ -520,13 +512,12 @@ void TattooScene::doBgAnimDrawSprites() {
 					person._type = INVALID;
 				} else {
 					if (person._tempScaleVal == SCALE_THRESHOLD) {
-						screen.flushImage(person._imageFrame, Common::Point(person._tempX, person._position.y / FIXED_INT_MULTIPLIER
-							- person.frameHeight()), &person._oldPosition.x, &person._oldPosition.y, &person._oldSize.x, &person._oldSize.y);
-					}  else {
+						screen.flushImage(person._imageFrame, Common::Point(person._tempX, person._position.y / FIXED_INT_MULTIPLIER - person.frameHeight()), &person._oldPosition.x, &person._oldPosition.y, &person._oldSize.x, &person._oldSize.y);
+					} else {
 						int ts = person._imageFrame->sDrawYSize(person._tempScaleVal);
-						int ty  = person._position.y / FIXED_INT_MULTIPLIER - ts;
+						int ty = person._position.y / FIXED_INT_MULTIPLIER - ts;
 						screen.flushScaleImage(person._imageFrame, Common::Point(person._tempX, ty),
-							&person._oldPosition.x, &person._oldPosition.y, &person._oldSize.x, &person._oldSize.y, person._tempScaleVal);
+						                       &person._oldPosition.x, &person._oldPosition.y, &person._oldSize.x, &person._oldSize.y, person._tempScaleVal);
 					}
 				}
 			}
@@ -540,10 +531,10 @@ void TattooScene::doBgAnimDrawSprites() {
 			if (_goToScene == -1) {
 				if (obj._scaleVal == SCALE_THRESHOLD)
 					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
-					&obj._oldSize.x, &obj._oldSize.y);
+					                  &obj._oldSize.x, &obj._oldSize.y);
 				else
 					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
-					&obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
+					                       &obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
 
 				if (obj._type == REMOVE)
 					obj._type = INVALID;
@@ -561,10 +552,10 @@ void TattooScene::doBgAnimDrawSprites() {
 			} else if (obj._type == HIDE_SHAPE) {
 				if (obj._scaleVal == SCALE_THRESHOLD)
 					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
-						&obj._oldSize.x, &obj._oldSize.y);
+					                  &obj._oldSize.x, &obj._oldSize.y);
 				else
 					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
-						&obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
+					                       &obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
 				obj._type = HIDDEN;
 			}
 		}
@@ -576,7 +567,7 @@ void TattooScene::doBgAnimDrawSprites() {
 		} else {
 			screen.slamRect(_activeCAnim._removeBounds);
 			_activeCAnim._removeBounds = Common::Rect(0, 0, 0, 0);
-			_activeCAnim._zPlacement = -1;		// Reset _zPlacement so we don't REMOVE again
+			_activeCAnim._zPlacement = -1; // Reset _zPlacement so we don't REMOVE again
 		}
 	}
 }
@@ -769,7 +760,7 @@ int TattooScene::findBgShape(const Common::Point &pt) {
 		Object &o = _bgShapes[idx];
 
 		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN &&
-				(o._aType <= PERSON || (ui._menuMode == LAB_MODE && o._aType == SOLID))) {
+		    (o._aType <= PERSON || (ui._menuMode == LAB_MODE && o._aType == SOLID))) {
 			if (o.getNewBounds().contains(pt))
 				result = idx;
 		} else if (o._type == NO_SHAPE) {
@@ -790,8 +781,7 @@ int TattooScene::findBgShape(const Common::Point &pt) {
 				charRect = Common::Rect(person.frameWidth(), person.frameHeight());
 			else
 				charRect = Common::Rect(person._imageFrame->sDrawXSize(scaleVal), person._imageFrame->sDrawYSize(scaleVal));
-			charRect.moveTo(person._position.x / FIXED_INT_MULTIPLIER, person._position.y / FIXED_INT_MULTIPLIER
-				- charRect.height());
+			charRect.moveTo(person._position.x / FIXED_INT_MULTIPLIER, person._position.y / FIXED_INT_MULTIPLIER - charRect.height());
 
 			if (charRect.contains(pt))
 				result = 1000 + idx;
@@ -829,8 +819,7 @@ int TattooScene::closestZone(const Common::Point &pt) {
 
 		// Check the distance from the point to the upper left of the zone
 		d = ABS((int)(r.left - pt.x)) + ABS((int)(r.top - pt.y));
-		if (d < dist)
-		{
+		if (d < dist) {
 			dist = d;
 			zone = idx;
 		}

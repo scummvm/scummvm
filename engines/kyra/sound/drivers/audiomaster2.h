@@ -26,13 +26,13 @@
 #define KYRA_SOUND_AUDIOMASTER2_H
 
 namespace Audio {
-	class Mixer;
+class Mixer;
 }
 
 namespace Common {
-	class SeekableReadStream;
-	class String;
-}
+class SeekableReadStream;
+class String;
+} // namespace Common
 
 namespace Kyra {
 

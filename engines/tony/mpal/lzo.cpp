@@ -68,8 +68,8 @@ namespace Tony {
 
 namespace MPAL {
 
-#define pd(a, b)       ((uint32) ((a) - (b)))
-#define TEST_IP        (ip < ip_end)
+#define pd(a, b) ((uint32)((a) - (b)))
+#define TEST_IP (ip < ip_end)
 
 #define M2_MAX_OFFSET 0x0800
 
@@ -82,7 +82,7 @@ int lzo1x_decompress(const byte *in, uint32 in_len, byte *out, uint32 *out_len) 
 	uint32 t = 0;
 	const byte *m_pos;
 
-	const byte * const ip_end = in + in_len;
+	const byte *const ip_end = in + in_len;
 
 	*out_len = 0;
 
@@ -120,7 +120,7 @@ int lzo1x_decompress(const byte *in, uint32 in_len, byte *out, uint32 *out_len) 
 			*op++ = *ip++;
 		} while (--t > 0);
 
-first_literal_run:
+	first_literal_run:
 		t = *ip++;
 		if (t >= 16)
 			goto match;
@@ -136,7 +136,7 @@ first_literal_run:
 		goto match_done;
 
 		do {
-match:
+		match:
 			if (t >= 64) {
 				m_pos = op - 1;
 				m_pos -= (t >> 2) & 7;
@@ -183,7 +183,7 @@ match:
 
 			assert(t > 0);
 			{
-copy_match:
+			copy_match:
 				*op++ = *m_pos++;
 				*op++ = *m_pos++;
 				do {
@@ -191,12 +191,12 @@ copy_match:
 				} while (--t > 0);
 			}
 
-match_done:
+		match_done:
 			t = ip[-2] & 3;
 			if (t == 0)
 				break;
 
-match_next:
+		match_next:
 			assert(t > 0);
 			assert(t < 4);
 			*op++ = *ip++;
@@ -212,9 +212,7 @@ match_next:
 eof_found:
 	assert(t == 1);
 	*out_len = pd(op, out);
-	return (ip == ip_end ? LZO_E_OK :
-	        (ip < ip_end  ? LZO_E_INPUT_NOT_CONSUMED : LZO_E_INPUT_OVERRUN));
-
+	return (ip == ip_end ? LZO_E_OK : (ip < ip_end ? LZO_E_INPUT_NOT_CONSUMED : LZO_E_INPUT_OVERRUN));
 }
 
 } // end of namespace MPAL

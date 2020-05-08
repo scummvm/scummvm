@@ -63,6 +63,7 @@ class MapBase {
 	struct MapCellsRow {
 	private:
 		Common::Array<MapCell> _data;
+
 	public:
 		byte &operator[](int idx) { return _data[idx]; }
 		byte operator[](int idx) const { return _data[idx]; }
@@ -78,9 +79,9 @@ class MapBase {
 	 * as a convenience to be alongside the current party position
 	 */
 	struct ViewportPosition {
-		Point _topLeft;					// Top, left tile position for viewport
-		Point _size;					// Size of the viewport. Just in case we ever allow it to change
-		MapId _mapId;					// Maze the viewport is for. Used to detect when the map changes
+		Point _topLeft; // Top, left tile position for viewport
+		Point _size;    // Size of the viewport. Just in case we ever allow it to change
+		MapId _mapId;   // Maze the viewport is for. Used to detect when the map changes
 
 		/**
 		 * Constructor
@@ -107,15 +108,15 @@ class MapBase {
 	};
 
 private:
-//	Map *_map;							// Map manager reference
-	Game *_game;						// Game reference
-	bool _mapModified;					// Tiles have been dynamically changed
+	//	Map *_map;							// Map manager reference
+	Game *_game;       // Game reference
+	bool _mapModified; // Tiles have been dynamically changed
 protected:
-	MapId _mapId;						// The map Id
-	uint _mapIndex;						// Index of map within the group of same maps
-	uint _mapStyle;						// Map style category for towns & castles
-	ViewportPosition _viewportPos;		// Viewport position
-	Common::Array<MapCellsRow> _data;	// Data for the map
+	MapId _mapId;                     // The map Id
+	uint _mapIndex;                   // Index of map within the group of same maps
+	uint _mapStyle;                   // Map style category for towns & castles
+	ViewportPosition _viewportPos;    // Viewport position
+	Common::Array<MapCellsRow> _data; // Data for the map
 protected:
 	/**
 	 * Set the size of the map
@@ -129,18 +130,19 @@ protected:
 	 * @param replaceLine	If true, replaces the current last line
 	 */
 	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
+
 public:
-	Point _size;						// X, Y size of the map
-	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
-	Common::String _name;				// Name of map, if applicable
-	MapWidget *_playerWidget;			// Current means of transport, even if on foot
-	WidgetsArray _widgets;				// Party, monsteres, transports, etc.
+	Point _size;              // X, Y size of the map
+	Point _tilesPerOrigTile;  // For enhanced modes, number of tiles per original game tile
+	Common::String _name;     // Name of map, if applicable
+	MapWidget *_playerWidget; // Current means of transport, even if on foot
+	WidgetsArray _widgets;    // Party, monsteres, transports, etc.
 public:
 	/**
 	 * Constructor
 	 */
-	MapBase(Game *game, Map *) : _game(game),_playerWidget(nullptr),
-		_mapModified(false), _mapId(0), _mapIndex(0), _mapStyle(0) {}
+	MapBase(Game *game, Map *) : _game(game), _playerWidget(nullptr),
+	                             _mapModified(false), _mapId(0), _mapIndex(0), _mapStyle(0) {}
 
 	/**
 	 * Destructor

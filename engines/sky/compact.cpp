@@ -20,117 +20,116 @@
  *
  */
 
-
+#include "sky/compact.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "sky/compact.h"
 #include "gui/message.h"
-#include <stddef.h>	// for ptrdiff_t
+#include <stddef.h> // for ptrdiff_t
 
 namespace Sky {
 
-#define	SKY_CPT_SIZE	419427
+#define SKY_CPT_SIZE 419427
 
-#define OFFS(type,item) ((uint32)(((ptrdiff_t)(&((type *)42)->item))-42))
-#define MK32(type,item) OFFS(type, item),0,0,0
-#define MK16(type,item) OFFS(type, item),0
+#define OFFS(type, item) ((uint32)(((ptrdiff_t)(&((type *)42)->item)) - 42))
+#define MK32(type, item) OFFS(type, item), 0, 0, 0
+#define MK16(type, item) OFFS(type, item), 0
 #define MK32_A5(type, item) MK32(type, item[0]), MK32(type, item[1]), \
-	MK32(type, item[2]), MK32(type, item[3]), MK32(type, item[4])
+	                        MK32(type, item[2]), MK32(type, item[3]), MK32(type, item[4])
 
 static const uint32 compactOffsets[] = {
-	MK16(Compact, logic),
-	MK16(Compact, status),
-	MK16(Compact, sync),
-	MK16(Compact, screen),
-	MK16(Compact, place),
-	MK32(Compact, getToTableId),
-	MK16(Compact, xcood),
-	MK16(Compact, ycood),
-	MK16(Compact, frame),
-	MK16(Compact, cursorText),
-	MK16(Compact, mouseOn),
-	MK16(Compact, mouseOff),
-	MK16(Compact, mouseClick),
-	MK16(Compact, mouseRelX),
-	MK16(Compact, mouseRelY),
-	MK16(Compact, mouseSizeX),
-	MK16(Compact, mouseSizeY),
-	MK16(Compact, actionScript),
-	MK16(Compact, upFlag),
-	MK16(Compact, downFlag),
-	MK16(Compact, getToFlag),
-	MK16(Compact, flag),
-	MK16(Compact, mood),
-	MK32(Compact, grafixProgId),
-	MK16(Compact, offset),
-	MK16(Compact, mode),
-	MK16(Compact, baseSub),
-	MK16(Compact, baseSub_off),
-	MK16(Compact, actionSub),
-	MK16(Compact, actionSub_off),
-	MK16(Compact, getToSub),
-	MK16(Compact, getToSub_off),
-	MK16(Compact, extraSub),
-	MK16(Compact, extraSub_off),
-	MK16(Compact, dir),
-	MK16(Compact, stopScript),
-	MK16(Compact, miniBump),
-	MK16(Compact, leaving),
-	MK16(Compact, atWatch),
-	MK16(Compact, atWas),
-	MK16(Compact, alt),
-	MK16(Compact, request),
-	MK16(Compact, spWidth_xx),
-	MK16(Compact, spColor),
-	MK16(Compact, spTextId),
-	MK16(Compact, spTime),
-	MK16(Compact, arAnimIndex),
-	MK32(Compact, turnProgId),
-	MK16(Compact, waitingFor),
-	MK16(Compact, arTargetX),
-	MK16(Compact, arTargetY),
-	MK32(Compact, animScratchId),
-	MK16(Compact, megaSet),
+    MK16(Compact, logic),
+    MK16(Compact, status),
+    MK16(Compact, sync),
+    MK16(Compact, screen),
+    MK16(Compact, place),
+    MK32(Compact, getToTableId),
+    MK16(Compact, xcood),
+    MK16(Compact, ycood),
+    MK16(Compact, frame),
+    MK16(Compact, cursorText),
+    MK16(Compact, mouseOn),
+    MK16(Compact, mouseOff),
+    MK16(Compact, mouseClick),
+    MK16(Compact, mouseRelX),
+    MK16(Compact, mouseRelY),
+    MK16(Compact, mouseSizeX),
+    MK16(Compact, mouseSizeY),
+    MK16(Compact, actionScript),
+    MK16(Compact, upFlag),
+    MK16(Compact, downFlag),
+    MK16(Compact, getToFlag),
+    MK16(Compact, flag),
+    MK16(Compact, mood),
+    MK32(Compact, grafixProgId),
+    MK16(Compact, offset),
+    MK16(Compact, mode),
+    MK16(Compact, baseSub),
+    MK16(Compact, baseSub_off),
+    MK16(Compact, actionSub),
+    MK16(Compact, actionSub_off),
+    MK16(Compact, getToSub),
+    MK16(Compact, getToSub_off),
+    MK16(Compact, extraSub),
+    MK16(Compact, extraSub_off),
+    MK16(Compact, dir),
+    MK16(Compact, stopScript),
+    MK16(Compact, miniBump),
+    MK16(Compact, leaving),
+    MK16(Compact, atWatch),
+    MK16(Compact, atWas),
+    MK16(Compact, alt),
+    MK16(Compact, request),
+    MK16(Compact, spWidth_xx),
+    MK16(Compact, spColor),
+    MK16(Compact, spTextId),
+    MK16(Compact, spTime),
+    MK16(Compact, arAnimIndex),
+    MK32(Compact, turnProgId),
+    MK16(Compact, waitingFor),
+    MK16(Compact, arTargetX),
+    MK16(Compact, arTargetY),
+    MK32(Compact, animScratchId),
+    MK16(Compact, megaSet),
 };
 
 static const uint32 megaSetOffsets[] = {
-	MK16(MegaSet, gridWidth),
-	MK16(MegaSet, colOffset),
-	MK16(MegaSet, colWidth),
-	MK16(MegaSet, lastChr),
-	MK32(MegaSet, animUpId),
-	MK32(MegaSet, animDownId),
-	MK32(MegaSet, animLeftId),
-	MK32(MegaSet, animRightId),
-	MK32(MegaSet, standUpId),
-	MK32(MegaSet, standDownId),
-	MK32(MegaSet, standLeftId),
-	MK32(MegaSet, standRightId),
-	MK32(MegaSet, standTalkId),
+    MK16(MegaSet, gridWidth),
+    MK16(MegaSet, colOffset),
+    MK16(MegaSet, colWidth),
+    MK16(MegaSet, lastChr),
+    MK32(MegaSet, animUpId),
+    MK32(MegaSet, animDownId),
+    MK32(MegaSet, animLeftId),
+    MK32(MegaSet, animRightId),
+    MK32(MegaSet, standUpId),
+    MK32(MegaSet, standDownId),
+    MK32(MegaSet, standLeftId),
+    MK32(MegaSet, standRightId),
+    MK32(MegaSet, standTalkId),
 };
 
 static const uint32 turnTableOffsets[] = {
-	MK32_A5(TurnTable, turnTableUp),
-	MK32_A5(TurnTable, turnTableDown),
-	MK32_A5(TurnTable, turnTableLeft),
-	MK32_A5(TurnTable, turnTableRight),
-	MK32_A5(TurnTable, turnTableTalk),
+    MK32_A5(TurnTable, turnTableUp),
+    MK32_A5(TurnTable, turnTableDown),
+    MK32_A5(TurnTable, turnTableLeft),
+    MK32_A5(TurnTable, turnTableRight),
+    MK32_A5(TurnTable, turnTableTalk),
 };
 
-#define COMPACT_SIZE (sizeof(compactOffsets)/sizeof(uint32))
-#define MEGASET_SIZE (sizeof(megaSetOffsets)/sizeof(uint32))
-#define TURNTABLE_SIZE (sizeof(turnTableOffsets)/sizeof(uint32))
+#define COMPACT_SIZE (sizeof(compactOffsets) / sizeof(uint32))
+#define MEGASET_SIZE (sizeof(megaSetOffsets) / sizeof(uint32))
+#define TURNTABLE_SIZE (sizeof(turnTableOffsets) / sizeof(uint32))
 
 SkyCompact::SkyCompact() {
 	_cptFile = new Common::File();
 	Common::String filename = "sky.cpt";
 	if (!_cptFile->open(filename.c_str())) {
-                Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
-                GUIErrorMessage(msg);
-                error("%s", msg.c_str());
+		Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
+		GUIErrorMessage(msg);
+		error("%s", msg.c_str());
 	}
 
 	uint16 fileVersion = _cptFile->readUint16LE();
@@ -145,18 +144,18 @@ SkyCompact::SkyCompact() {
 
 	// set the necessary data structs up...
 	_numDataLists = _cptFile->readUint16LE();
-	_cptNames	  = (char***)malloc(_numDataLists * sizeof(char**));
-	_dataListLen  = (uint16 *)malloc(_numDataLists * sizeof(uint16));
-	_cptSizes	  = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
-	_cptTypes	  = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
-	_compacts	  = (Compact***)malloc(_numDataLists * sizeof(Compact**));
+	_cptNames = (char ***)malloc(_numDataLists * sizeof(char **));
+	_dataListLen = (uint16 *)malloc(_numDataLists * sizeof(uint16));
+	_cptSizes = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
+	_cptTypes = (uint16 **)malloc(_numDataLists * sizeof(uint16 *));
+	_compacts = (Compact ***)malloc(_numDataLists * sizeof(Compact **));
 
 	for (int i = 0; i < _numDataLists; i++) {
 		_dataListLen[i] = _cptFile->readUint16LE();
-		_cptNames[i] = (char**)malloc(_dataListLen[i] * sizeof(char *));
+		_cptNames[i] = (char **)malloc(_dataListLen[i] * sizeof(char *));
 		_cptSizes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
 		_cptTypes[i] = (uint16 *)malloc(_dataListLen[i] * sizeof(uint16));
-		_compacts[i] = (Compact**)malloc(_dataListLen[i] * sizeof(Compact *));
+		_compacts[i] = (Compact **)malloc(_dataListLen[i] * sizeof(Compact *));
 	}
 
 	uint32 rawSize = _cptFile->readUint32LE() * sizeof(uint16);
@@ -267,7 +266,7 @@ SkyCompact::~SkyCompact() {
 #define SCUMMVM_BROKEN_TALK_INDEX 158
 void SkyCompact::checkAndFixOfficerBluntError() {
 	// Retrieve the table with the animation ids to use for talking
-	uint16 *talkTable = (uint16*)fetchCpt(CPT_TALK_TABLE_LIST);
+	uint16 *talkTable = (uint16 *)fetchCpt(CPT_TALK_TABLE_LIST);
 	if (talkTable[SCUMMVM_BROKEN_TALK_INDEX] == ID_SC31_GUARD_TALK) {
 		debug(1, "SKY.CPT with Officer Blunt bug encountered, fixing talk gfx.");
 		talkTable[SCUMMVM_BROKEN_TALK_INDEX] = ID_SC31_GUARD_TALK2;
@@ -294,7 +293,7 @@ Compact *SkyCompact::fetchCptInfo(uint16 cptId, uint16 *elems, uint16 *type, cha
 	if (elems)
 		*elems = _cptSizes[cptId >> 12][cptId & 0xFFF];
 	if (type)
-		*type  = _cptTypes[cptId >> 12][cptId & 0xFFF];
+		*type = _cptTypes[cptId >> 12][cptId & 0xFFF];
 	if (name) {
 		if (_cptNames[cptId >> 12][cptId & 0xFFF] != NULL)
 			strcpy(name, _cptNames[cptId >> 12][cptId & 0xFFF]);
@@ -382,9 +381,9 @@ MegaSet *SkyCompact::getMegaSet(Compact *cpt) {
 		return &cpt->megaSet0;
 	case NEXT_MEGA_SET:
 		return &cpt->megaSet1;
-	case NEXT_MEGA_SET*2:
+	case NEXT_MEGA_SET * 2:
 		return &cpt->megaSet2;
-	case NEXT_MEGA_SET*3:
+	case NEXT_MEGA_SET * 3:
 		return &cpt->megaSet3;
 	default:
 		error("Invalid MegaSet (%d)", cpt->megaSet);
@@ -425,11 +424,11 @@ uint16 *SkyCompact::getTurnTable(Compact *cpt, uint16 dir) {
 
 void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 	if (off < COMPACT_SIZE)
-		return((uint8 *)cpt + compactOffsets[off]);
+		return ((uint8 *)cpt + compactOffsets[off]);
 	off -= COMPACT_SIZE;
 
 	if (off < MEGASET_SIZE)
-		return((uint8 *)&(cpt->megaSet0) + megaSetOffsets[off]);
+		return ((uint8 *)&(cpt->megaSet0) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
@@ -437,7 +436,7 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 
 	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
-		return((uint8 *)&(cpt->megaSet1) + megaSetOffsets[off]);
+		return ((uint8 *)&(cpt->megaSet1) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
@@ -445,7 +444,7 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 
 	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
-		return((uint8 *)&(cpt->megaSet2) + megaSetOffsets[off]);
+		return ((uint8 *)&(cpt->megaSet2) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
@@ -453,7 +452,7 @@ void *SkyCompact::getCompactElem(Compact *cpt, uint16 off) {
 
 	off -= TURNTABLE_SIZE;
 	if (off < MEGASET_SIZE)
-		return((uint8 *)&(cpt->megaSet3) + megaSetOffsets[off]);
+		return ((uint8 *)&(cpt->megaSet3) + megaSetOffsets[off]);
 
 	off -= MEGASET_SIZE;
 	if (off < TURNTABLE_SIZE)
@@ -520,14 +519,13 @@ uint16 SkyCompact::giveDataListLen(uint16 listNum) {
 }
 
 const char *const SkyCompact::_typeNames[NUM_CPT_TYPES] = {
-	"null",
-	"COMPACT",
-	"TURNTABLE",
-	"ANIM SEQ",
-	"UNKNOWN",
-	"GETTOTABLE",
-	"AR BUFFER",
-	"MAIN LIST"
-};
+    "null",
+    "COMPACT",
+    "TURNTABLE",
+    "ANIM SEQ",
+    "UNKNOWN",
+    "GETTOTABLE",
+    "AR BUFFER",
+    "MAIN LIST"};
 
 } // End of namespace Sky

@@ -54,7 +54,7 @@ bool SherlockLogo::canSaveGameStateCurrently() {
 
 void SherlockLogo::processEvent(Event &event) {
 	if (event.eventType == EVENT_BUTTON_DOWN || (event.eventType == EVENT_KEYPRESS &&
-			event.kbd.keycode == Common::KEYCODE_ESCAPE))
+	                                             event.kbd.keycode == Common::KEYCODE_ESCAPE))
 		quitGame();
 }
 

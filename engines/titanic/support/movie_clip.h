@@ -44,10 +44,12 @@ private:
 	Common::List<void *> _items;
 	CString _string2;
 	CString _string3;
+
 public:
 	CString _name;
 	int _startFrame;
 	int _endFrame;
+
 public:
 	CLASSDEF;
 	CMovieClip();
@@ -67,7 +69,7 @@ public:
 /**
  * Movie clip list
  */
-class CMovieClipList: public List<CMovieClip> {
+class CMovieClipList : public List<CMovieClip> {
 public:
 	/**
 	 * Finds and returns a movie clip in the list by name

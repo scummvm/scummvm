@@ -54,7 +54,8 @@ public:
 /**
  * Derived array class
  */
-template<class T>class Array : public Common::Array<T> {
+template<class T>
+class Array : public Common::Array<T> {
 public:
 	/**
 	 * Return the index in the array of a passed item

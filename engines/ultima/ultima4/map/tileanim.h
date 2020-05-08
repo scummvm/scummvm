@@ -91,6 +91,7 @@ public:
 	TileAnimScrollTransform(int increment);
 	void draw(Image *dest, Tile *tile, MapTile &mapTile) override;
 	bool drawsTile() const override;
+
 private:
 	int _increment, _current, _lastOffset;
 };
@@ -109,6 +110,7 @@ public:
 	 * Advance the frame by one and draw it!
 	 */
 	bool drawsTile() const override;
+
 protected:
 	int _currentFrame;
 };
@@ -150,11 +152,11 @@ public:
 	void add(TileAnimTransform *);
 	virtual bool isInContext(Tile *t, MapTile &mapTile, Direction d) = 0;
 	TileAnimTransformList &getTransforms() {
-		return _animTransforms;   /**< Returns a list of transformations under the context. */
+		return _animTransforms; /**< Returns a list of transformations under the context. */
 	}
 	virtual ~TileAnimContext() {}
-private:
 
+private:
 	TileAnimTransformList _animTransforms;
 };
 
@@ -204,7 +206,7 @@ public:
 	/* returns the frame to set the mapTile to (only relevent if persistent) */
 	void draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir);
 
-	int _random;   /* true if the tile animation occurs randomely */
+	int _random; /* true if the tile animation occurs randomely */
 };
 
 /**

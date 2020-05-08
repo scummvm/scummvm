@@ -20,9 +20,9 @@
  *
  */
 
-#include "agi/preagi.h"
 #include "agi/preagi_troll.h"
 #include "agi/graphics.h"
+#include "agi/preagi.h"
 
 #include "common/events.h"
 #include "common/textconsole.h"
@@ -624,7 +624,6 @@ void TrollEngine::gameLoop() {
 			break;
 		}
 	}
-
 }
 
 void TrollEngine::fillOffsets() {
@@ -718,12 +717,11 @@ void TrollEngine::init() {
 	_picture->setPictureVersion(AGIPIC_V15);
 	//SetScreenPar(320, 200, (char *)ibm_fontdata);
 
-	const int gaps[] = { 0x3A40,  0x4600,  0x4800,  0x5800,  0x5a00,  0x6a00,
-	                     0x6c00,  0x7400,  0x7600,  0x7c00,  0x7e00,  0x8e00,
-	                     0x9000,  0xa000,  0xa200,  0xb200,  0xb400,  0xc400,
-	                     0xc600,  0xd600,  0xd800,  0xe800,  0xea00,  0xfa00,
-	                     0xfc00,  0x10c00, 0x10e00, 0x11e00, 0x12000, 0x13000
-	                   };
+	const int gaps[] = {0x3A40, 0x4600, 0x4800, 0x5800, 0x5a00, 0x6a00,
+	                    0x6c00, 0x7400, 0x7600, 0x7c00, 0x7e00, 0x8e00,
+	                    0x9000, 0xa000, 0xa200, 0xb200, 0xb400, 0xc400,
+	                    0xc600, 0xd600, 0xd800, 0xe800, 0xea00, 0xfa00,
+	                    0xfc00, 0x10c00, 0x10e00, 0x11e00, 0x12000, 0x13000};
 
 	Common::File infile;
 	if (!infile.open(IDA_TRO_BINNAME))

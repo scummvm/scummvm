@@ -32,8 +32,10 @@ class CPETSounds : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool PETPlaySoundMsg(CPETPlaySoundMsg *msg);
 	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+
 public:
 	uint _ticks;
+
 public:
 	CLASSDEF;
 	CPETSounds() : CGameObject(), _ticks(0) {}

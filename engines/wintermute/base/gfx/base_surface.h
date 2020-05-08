@@ -36,7 +36,7 @@
 
 namespace Wintermute {
 
-class BaseSurface: public BaseClass {
+class BaseSurface : public BaseClass {
 public:
 	virtual bool invalidate();
 	virtual bool prepareToDraw();
@@ -80,7 +80,7 @@ public:
 		return _height;
 	}
 	Common::String getFileNameStr() { return _filename; }
-	const char* getFileName() { return _filename.c_str(); }
+	const char *getFileName() { return _filename.c_str(); }
 	//void SetWidth(int Width) { _width = Width;    }
 	//void SetHeight(int Height){ _height = Height; }
 protected:
@@ -93,7 +93,6 @@ protected:
 	Common::String _filename;
 	int32 _height;
 	int32 _width;
-
 };
 
 } // End of namespace Wintermute

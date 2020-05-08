@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_ADSCALELEVEL_H
 #define WINTERMUTE_ADSCALELEVEL_H
 
-
 #include "engines/wintermute/base/base_object.h"
 
 namespace Wintermute {
@@ -43,6 +42,7 @@ public:
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	float getScale() const;
+
 private:
 	float _scale;
 };

@@ -24,8 +24,8 @@
 
 #include "gob/gob.h"
 #include "gob/scenery.h"
-#include "gob/util.h"
 #include "gob/sound/sound.h"
+#include "gob/util.h"
 
 namespace Gob {
 
@@ -35,7 +35,7 @@ Scenery_v1::Scenery_v1(GobEngine *vm) : Scenery(vm) {
 int16 Scenery_v1::loadAnim(char search) {
 	if (_vm->_sound->cdIsPlaying()) {
 		while (_vm->_sound->cdGetTrackPos() != -1)
-		    _vm->_util->longDelay(50);
+			_vm->_util->longDelay(50);
 
 		_vm->_sound->cdStop();
 	}

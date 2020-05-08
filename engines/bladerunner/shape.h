@@ -26,7 +26,6 @@
 #include "common/array.h"
 #include "common/str.h"
 
-
 namespace Common {
 class SeekableReadStream;
 }
@@ -42,8 +41,8 @@ class BladeRunnerEngine;
 class Shape {
 	friend class Shapes;
 
-	int   _width;
-	int   _height;
+	int _width;
+	int _height;
 	byte *_data;
 
 	bool load(Common::SeekableReadStream *stream);

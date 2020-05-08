@@ -33,8 +33,10 @@ class CGetLiftEye2 : public CGameObject {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool VisibleMsg(CVisibleMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	static CString *_destObject;
+
 public:
 	CLASSDEF;
 	static void init();

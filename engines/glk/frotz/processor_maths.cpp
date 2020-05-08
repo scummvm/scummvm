@@ -37,7 +37,7 @@ void Processor::z_art_shift() {
 	if ((short)zargs[1] > 0)
 		store((zword)((short)zargs[0] << (short)zargs[1]));
 	else
-		store((zword)((short)zargs[0] >> - (short)zargs[1]));
+		store((zword)((short)zargs[0] >> -(short)zargs[1]));
 }
 
 void Processor::z_div() {
@@ -49,10 +49,7 @@ void Processor::z_div() {
 
 void Processor::z_je() {
 	branch(
-		zargc > 1 && (zargs[0] == zargs[1] || (
-		zargc > 2 && (zargs[0] == zargs[2] || (
-		zargc > 3 && (zargs[0] == zargs[3])))))
-	);
+	    zargc > 1 && (zargs[0] == zargs[1] || (zargc > 2 && (zargs[0] == zargs[2] || (zargc > 3 && (zargs[0] == zargs[3]))))));
 }
 
 void Processor::z_jg() {
@@ -71,7 +68,7 @@ void Processor::z_log_shift() {
 	if ((short)zargs[1] > 0)
 		store((zword)(zargs[0] << (short)zargs[1]));
 	else
-		store((zword)(zargs[0] >> - (short)zargs[1]));
+		store((zword)(zargs[0] >> -(short)zargs[1]));
 }
 
 void Processor::z_mod() {

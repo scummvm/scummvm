@@ -23,10 +23,10 @@
 #ifndef STARTREK_ROOM_H
 #define STARTREK_ROOM_H
 
-#include "common/rect.h"
-#include "common/ptr.h"
-#include "common/str.h"
 #include "common/hashmap.h"
+#include "common/ptr.h"
+#include "common/rect.h"
+#include "common/str.h"
 
 #include "startrek/action.h"
 #include "startrek/awaymission.h"
@@ -42,7 +42,7 @@ namespace StarTrek {
 class StarTrekEngine;
 class Room;
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 // Per-room action functions
 struct RoomAction {
@@ -50,12 +50,12 @@ struct RoomAction {
 	void (Room::*funcPtr)();
 };
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 // Offsets of data in RDF files
 
 const int RDF_BAN_DATA_START = 0x1e;
-const int RDF_BAN_DATA_END   = 0x20;
+const int RDF_BAN_DATA_END = 0x20;
 const int RDF_WARP_ROOM_INDICES = 0x22;
 const int RDF_ROOM_ENTRY_POSITIONS = 0x2a;
 const int RDF_BEAM_IN_POSITIONS = 0xaa;
@@ -119,7 +119,7 @@ public:
 	uint16 getFirstHotspot() {
 		return readRdfWord(0x12);
 	}
-	uint16 getHotspotEnd()   {
+	uint16 getHotspotEnd() {
 		return readRdfWord(0x14);
 	}
 
@@ -127,13 +127,13 @@ public:
 	uint16 getFirstWarpPolygonOffset() {
 		return readRdfWord(0x16);
 	}
-	uint16 getWarpPolygonEndOffset()   {
+	uint16 getWarpPolygonEndOffset() {
 		return readRdfWord(0x18);
 	}
 	uint16 getFirstDoorPolygonOffset() {
 		return readRdfWord(0x1a);
 	}
-	uint16 getDoorPolygonEndOffset()   {
+	uint16 getDoorPolygonEndOffset() {
 		return readRdfWord(0x1c);
 	}
 
@@ -182,7 +182,6 @@ private:
 
 	int findFunctionPointer(int action, void (Room::*funcPtr)());
 
-
 	// Interface for room-specific code
 	/**
 	 * Cmd 0x00
@@ -228,7 +227,7 @@ private:
 	 * Cmd 0x08
 	 */
 	void walkCrewman(int actorIndex, int16 destX, int16 destY, uint16 finishedAnimActionParam = 0);
-	void walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)());      // Cmd 0x08
+	void walkCrewmanC(int actorIndex, int16 destX, int16 destY, void (Room::*funcPtr)()); // Cmd 0x08
 
 public:
 	/**
@@ -277,7 +276,7 @@ private:
 	 * Takes a list of codes (ending with nullptr) and returns the index of the matched
 	 * code (plus one), or 0 if no code was matched.
 	 */
-	int showCodeInputBox(const char * const *codes);
+	int showCodeInputBox(const char *const *codes);
 	/**
 	 * Cmd 0x14: Show a map of the republic for mission 7
 	 */
@@ -1292,7 +1291,6 @@ public:
 	void loveaUseAmmonia();
 	void loveaUseCommunicator();
 
-
 	// MUDD0
 	void mudd0Tick1();
 	void mudd0Tick50();
@@ -1881,7 +1879,6 @@ public:
 	void feather7KirkSatDown();
 	void feather7ReadyToBeamOut();
 
-
 	// TRIAL0
 	void trial0Tick1();
 	void trial0Tick40();
@@ -2196,7 +2193,6 @@ public:
 	void trial5UseBlueGem2OnHole3();
 	void trial5UseBlueGem3OnHole3();
 	void trial5UseMedkitAnywhere();
-
 
 	// SINS0
 	void sins0Tick1();
@@ -2882,9 +2878,9 @@ public:
 	union {
 		struct {
 			// demon0
-			byte bottomDoorCounter; // 0xca
-			byte topDoorCounter; // 0xcb
-			bool movingToTopDoor; // 0xcc
+			byte bottomDoorCounter;  // 0xca
+			byte topDoorCounter;     // 0xcb
+			bool movingToTopDoor;    // 0xcc
 			bool movingToBottomDoor; // 0xcd
 
 			// demon1
@@ -2895,42 +2891,42 @@ public:
 			char d6[10];
 
 			// demon3
-			bool shootingBoulder; // 0xca
-			bool boulder1Shot; // 0xcb
-			byte boulderBeingShot; // 0xcc
-			bool kirkInPosition; // 0xcd
+			bool shootingBoulder;    // 0xca
+			bool boulder1Shot;       // 0xcb
+			byte boulderBeingShot;   // 0xcc
+			bool kirkInPosition;     // 0xcd
 			bool redshirtInPosition; // 0xce
-			bool spockInPosition; // 0xcf
-			bool mccoyInPosition; // 0xd0
-			bool inFiringPosition; // 0xd1
-			bool kirkPhaserOut; // 0xd3
-			char boulderAnim[10]; // 0xd4
-			int16 usedPhaserOnDoor; // 0xd6
+			bool spockInPosition;    // 0xcf
+			bool mccoyInPosition;    // 0xd0
+			bool inFiringPosition;   // 0xd1
+			bool kirkPhaserOut;      // 0xd3
+			char boulderAnim[10];    // 0xd4
+			int16 usedPhaserOnDoor;  // 0xd6
 
 			// demon4
 			bool triedToShootNauian; // 0xca
-			bool nauianEmerged; // 0xcb
-			bool disabledSecurity; // 0xcc
-			bool cd; // 0xcd
+			bool nauianEmerged;      // 0xcb
+			bool disabledSecurity;   // 0xcc
+			bool cd;                 // 0xcd
 			byte crewReadyToBeamOut; // 0xce
 			int16 crewmanUsingPanel; // 0xcf
 
 			// demon5
-			bool scannedRoberts; // 0xca
-			bool scannedChub; // 0xcb
-			bool scannedGrisnash; // 0xcc
-			bool scannedStephen; // 0xcd
-			byte numScanned; // 0xce
-			byte numTalkedTo; // 0xcf
-			bool talkedToRoberts; // 0xd0
-			bool talkedToChub; // 0xd1
+			bool scannedRoberts;   // 0xca
+			bool scannedChub;      // 0xcb
+			bool scannedGrisnash;  // 0xcc
+			bool scannedStephen;   // 0xcd
+			byte numScanned;       // 0xce
+			byte numTalkedTo;      // 0xcf
+			bool talkedToRoberts;  // 0xd0
+			bool talkedToChub;     // 0xd1
 			bool talkedToGrisnash; // 0xd2
-			bool talkedToStephen; // 0xd3
+			bool talkedToStephen;  // 0xd3
 
 			// demon6
 			bool insultedStephenRecently; // 0xca
-			bool stephenInRoom; // 0xcb
-			bool caseOpened; // 0xcd
+			bool stephenInRoom;           // 0xcb
+			bool caseOpened;              // 0xcd
 
 			// common
 			bool movingToDoor;
@@ -3015,20 +3011,20 @@ public:
 			bool heardSummaryOfVirus; // 0xda
 
 			// love1
-			TextRef dyingSpeaker; // 0xcf
+			TextRef dyingSpeaker;          // 0xcf
 			int16 crewmanUsingFreezerRetX; // 0xd1
 			int16 crewmanUsingFreezerRetY; // 0xd3
-			int16 crewmanUsingDevice; // 0xd9
-			int16 itemInNozzle; // 0xdd
-			char bottleAnimation[10]; // 0xdf
+			int16 crewmanUsingDevice;      // 0xd9
+			int16 itemInNozzle;            // 0xdd
+			char bottleAnimation[10];      // 0xdf
 
 			// love2
-			byte canisterType; // 0xca
-			byte cb; // 0xcb
-			int16 canisterItem; // 0xce
-			char canisterAnim[10]; // 0xd0
-			int16 chamberObject; // 0xd2
-			char chamberInputAnim[10]; // 0xd6
+			byte canisterType;          // 0xca
+			byte cb;                    // 0xcb
+			int16 canisterItem;         // 0xce
+			char canisterAnim[10];      // 0xd0
+			int16 chamberObject;        // 0xd2
+			char chamberInputAnim[10];  // 0xd6
 			char chamberOutputAnim[10]; // 0xd8
 
 			// love3
@@ -3053,10 +3049,10 @@ public:
 				uint16 tmp = 0;
 				uint32 tmp2 = 0;
 				byte tmp3[10];
-				ser.syncAsSint16LE(tmp);	// consoleCrewman
-				ser.syncBytes((byte *)tmp3, 10);	// consoleAnimation
-				ser.syncAsSint32LE(tmp2);	// consoleSpeaker
-				ser.syncAsSint32LE(tmp2);	// consoleText
+				ser.syncAsSint16LE(tmp);         // consoleCrewman
+				ser.syncBytes((byte *)tmp3, 10); // consoleAnimation
+				ser.syncAsSint32LE(tmp2);        // consoleSpeaker
+				ser.syncAsSint32LE(tmp2);        // consoleText
 
 				// love1
 				ser.syncAsSint32LE(dyingSpeaker);
@@ -3096,10 +3092,10 @@ public:
 		struct {
 			// mudd3
 			bool suggestedUsingTricorders; // 0xca
-			bool tricordersUnavailable; // 0xcb
+			bool tricordersUnavailable;    // 0xcb
 
 			// mudd4
-			bool usingLeftConsole; // 0xca
+			bool usingLeftConsole;      // 0xca
 			bool kirkUsingRightConsole; // 0xcb
 
 			// common
@@ -3121,14 +3117,14 @@ public:
 
 		struct {
 			// feather1
-			byte snakeInHole; // 0xca
-			bool scannedSnake; // 0xcb
+			byte snakeInHole;    // 0xca
+			bool scannedSnake;   // 0xcb
 			byte crewEscaped[4]; // 0xcc
 			byte crewmanClimbingVine;
 
 			// feather2
 			bool showedSnakeToTlaoxac; // 0xca
-			bool tlaoxacUnconscious; // 0xcb
+			bool tlaoxacUnconscious;   // 0xcb
 
 			// feather6
 			bool usedRockOnCrystalsOnce;
@@ -3161,7 +3157,7 @@ public:
 			bool phaserOnKill;
 
 			// trial5
-			int16 itemToUse; // 0x1386
+			int16 itemToUse;   // 0x1386
 			int16 objectToUse; // 0x1388
 			int16 hole;
 
@@ -3180,7 +3176,7 @@ public:
 		struct {
 			// sins5
 			byte numCrewmenInPositionForWire; // 0xca
-			byte numCrewmenReadyToBeamOut; // 0xcb
+			byte numCrewmenReadyToBeamOut;    // 0xcb
 
 			void saveLoadWithSerializer(Common::Serializer &ser) {
 				ser.syncAsByte(numCrewmenInPositionForWire);
@@ -3199,9 +3195,9 @@ public:
 			bool usingMedkitOnBrittany;
 
 			// veng6
-			byte kirkAndSpockReadyToAttachLeftCable; // 0xca
+			byte kirkAndSpockReadyToAttachLeftCable;  // 0xca
 			byte kirkAndSpockReadyToAttachRightCable; // 0xcb
-			byte cableInUse; // 0xcc
+			byte cableInUse;                          // 0xcc
 
 			// venga (common)
 			bool walkingToDoor; // 0xcb (veng1), 0xca (veng4)

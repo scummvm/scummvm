@@ -21,14 +21,13 @@
  */
 
 #include "ultima/ultima4/events/timed_event_mgr.h"
-#include "ultima/ultima4/gfx/screen.h"
 #include "common/system.h"
+#include "ultima/ultima4/gfx/screen.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-TimedEventMgr::TimedEventMgr(int baseInterval) :
-		_baseInterval(baseInterval), _lastTickTime(0), _locked(false) {
+TimedEventMgr::TimedEventMgr(int baseInterval) : _baseInterval(baseInterval), _lastTickTime(0), _locked(false) {
 }
 
 void TimedEventMgr::poll() {
@@ -47,11 +46,10 @@ void TimedEventMgr::reset(uint interval) {
 
 /*-------------------------------------------------------------------*/
 
-TimedEvent::TimedEvent(TimedEvent::Callback cb, int i, void *d) :
-	_callback(cb),
-	_data(d),
-	_interval(i),
-	_current(0) {
+TimedEvent::TimedEvent(TimedEvent::Callback cb, int i, void *d) : _callback(cb),
+                                                                  _data(d),
+                                                                  _interval(i),
+                                                                  _current(0) {
 }
 
 TimedEvent::Callback TimedEvent::getCallback() const {
@@ -128,7 +126,6 @@ void TimedEventMgr::lock() {
 void TimedEventMgr::unlock() {
 	_locked = false;
 }
-
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

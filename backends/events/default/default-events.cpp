@@ -24,25 +24,24 @@
 
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
-#include "common/system.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
 #include "backends/events/default/default-events.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/virtual-mouse.h"
 #include "backends/vkeybd/virtual-keyboard.h"
+#include "common/config-manager.h"
+#include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "gui/message.h"
 
-DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
-	_buttonState(0),
-	_modifierState(0),
-	_shouldQuit(false),
-	_shouldRTL(false),
-	_confirmExitDialogActive(false) {
+DefaultEventManager::DefaultEventManager(Common::EventSource *boss) : _buttonState(0),
+                                                                      _modifierState(0),
+                                                                      _shouldQuit(false),
+                                                                      _shouldRTL(false),
+                                                                      _confirmExitDialogActive(false) {
 
 	assert(boss);
 

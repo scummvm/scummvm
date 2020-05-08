@@ -46,6 +46,7 @@ public:
 	~ScreenEffects();
 	void run(int16 effectNum, Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);
 	void flash(int count, byte *palette, int colorCount);
+
 private:
 	Screen *_screen;
 	byte *_fxPalette;

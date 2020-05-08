@@ -21,8 +21,8 @@
  */
 
 #include "glk/adrift/scare.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 #include "glk/jumps.h"
 
 namespace Glk {
@@ -51,11 +51,20 @@ static sc_bool uip_trace = FALSE;
 /* Enumeration of tokens.  TOK_NONE represents a non-occurring token. */
 enum sc_uip_tok_t {
 	TOK_NONE = 0,
-	TOK_CHOICE, TOK_CHOICE_END, TOK_OPTIONAL, TOK_OPTIONAL_END,
+	TOK_CHOICE,
+	TOK_CHOICE_END,
+	TOK_OPTIONAL,
+	TOK_OPTIONAL_END,
 	TOK_ALTERNATES_SEPARATOR,
-	TOK_WILDCARD, TOK_WHITESPACE, TOK_WORD, TOK_VARIABLE,
-	TOK_CHARACTER_REFERENCE, TOK_OBJECT_REFERENCE, TOK_NUMBER_REFERENCE,
-	TOK_TEXT_REFERENCE, TOK_EOS
+	TOK_WILDCARD,
+	TOK_WHITESPACE,
+	TOK_WORD,
+	TOK_VARIABLE,
+	TOK_CHARACTER_REFERENCE,
+	TOK_OBJECT_REFERENCE,
+	TOK_NUMBER_REFERENCE,
+	TOK_TEXT_REFERENCE,
+	TOK_EOS
 };
 
 /*
@@ -69,17 +78,7 @@ struct sc_uip_token_entry_t {
 };
 
 static const sc_uip_token_entry_t UIP_TOKENS[] = {
-	{"[", 1, TOK_CHOICE}, {"]", 1, TOK_CHOICE_END},
-	{"{", 1, TOK_OPTIONAL}, {"}", 1, TOK_OPTIONAL_END},
-	{"/", 1, TOK_ALTERNATES_SEPARATOR},
-	{"*", 1, TOK_WILDCARD},
-	{"%character%", 11, TOK_CHARACTER_REFERENCE},
-	{"%object%", 8, TOK_OBJECT_REFERENCE},
-	{"%number%", 8, TOK_NUMBER_REFERENCE},
-	{"%text%", 6, TOK_TEXT_REFERENCE},
-	{NULL, 0, TOK_NONE}
-};
-
+    {"[", 1, TOK_CHOICE}, {"]", 1, TOK_CHOICE_END}, {"{", 1, TOK_OPTIONAL}, {"}", 1, TOK_OPTIONAL_END}, {"/", 1, TOK_ALTERNATES_SEPARATOR}, {"*", 1, TOK_WILDCARD}, {"%character%", 11, TOK_CHARACTER_REFERENCE}, {"%object%", 8, TOK_OBJECT_REFERENCE}, {"%number%", 8, TOK_NUMBER_REFERENCE}, {"%text%", 6, TOK_TEXT_REFERENCE}, {NULL, 0, TOK_NONE}};
 
 /*
  * Tokenizer variables.  The temporary is used for keeping word token values.
@@ -92,7 +91,6 @@ static const sc_char *uip_token_value;
 enum { UIP_ALLOCATION_AVOIDANCE_SIZE = 128 };
 static sc_char uip_static_temporary[UIP_ALLOCATION_AVOIDANCE_SIZE];
 static sc_char *uip_temporary = NULL;
-
 
 /*
  * uip_tokenize_start()
@@ -110,7 +108,7 @@ static void uip_tokenize_start(const sc_char *pattern) {
 
 		/* Compare table lengths with string lengths. */
 		for (entry = UIP_TOKENS; entry->name; entry++) {
-			if (entry->length != (sc_int) strlen(entry->name)) {
+			if (entry->length != (sc_int)strlen(entry->name)) {
 				sc_fatal("uip_tokenize_start:"
 				         " table string length is wrong for \"%s\"\n",
 				         entry->name);
@@ -127,7 +125,8 @@ static void uip_tokenize_start(const sc_char *pattern) {
 	/* Set up temporary; static if long enough, otherwise allocated. */
 	required = strlen(pattern) + 1;
 	uip_temporary = (required > UIP_ALLOCATION_AVOIDANCE_SIZE)
-	                ? (sc_char *)sc_malloc(required) : uip_static_temporary;
+	                    ? (sc_char *)sc_malloc(required)
+	                    : uip_static_temporary;
 }
 
 static void uip_tokenize_end(void) {
@@ -138,7 +137,6 @@ static void uip_tokenize_end(void) {
 	uip_pattern = NULL;
 	uip_index = 0;
 }
-
 
 /*
  * uip_next_token()
@@ -159,8 +157,7 @@ static sc_uip_tok_t uip_next_token(void) {
 	/* If whitespace, skip it, then return a whitespace token. */
 	if (sc_isspace(uip_pattern[uip_index])) {
 		uip_index++;
-		while (sc_isspace(uip_pattern[uip_index])
-		        && uip_pattern[uip_index] != NUL)
+		while (sc_isspace(uip_pattern[uip_index]) && uip_pattern[uip_index] != NUL)
 			uip_index++;
 		uip_token_value = NULL;
 		return TOK_WHITESPACE;
@@ -186,8 +183,7 @@ static sc_uip_tok_t uip_next_token(void) {
 	 * here or earlier, so we have to save the variable's name, and retrieve
 	 * it when we come to try the match.
 	 */
-	if (sscanf(uip_pattern + uip_index, "%%%[^%]%c", uip_temporary, &close) == 2
-	        && close == PERCENT) {
+	if (sscanf(uip_pattern + uip_index, "%%%[^%]%c", uip_temporary, &close) == 2 && close == PERCENT) {
 		uip_index += strlen(uip_temporary) + 2;
 		uip_token_value = uip_temporary;
 		return TOK_VARIABLE;
@@ -202,7 +198,6 @@ static sc_uip_tok_t uip_next_token(void) {
 	uip_index += strlen(uip_temporary);
 	return TOK_WORD;
 }
-
 
 /*
  * uip_current_token_value()
@@ -221,7 +216,6 @@ static const sc_char *uip_current_token_value(void) {
 	return uip_token_value;
 }
 
-
 /*
  * Parsed pattern tree node definition.   The tree is a left child, right
  * sibling representation, with token type, and word at nodes of type TOK_WORD.
@@ -230,9 +224,18 @@ static const sc_char *uip_current_token_value(void) {
  */
 enum sc_pttype_t {
 	NODE_UNUSED = 0,
-	NODE_CHOICE, NODE_OPTIONAL, NODE_WILDCARD, NODE_WHITESPACE,
-	NODE_CHARACTER_REFERENCE, NODE_OBJECT_REFERENCE, NODE_TEXT_REFERENCE,
-	NODE_NUMBER_REFERENCE, NODE_WORD, NODE_VARIABLE, NODE_LIST, NODE_EOS
+	NODE_CHOICE,
+	NODE_OPTIONAL,
+	NODE_WILDCARD,
+	NODE_WHITESPACE,
+	NODE_CHARACTER_REFERENCE,
+	NODE_OBJECT_REFERENCE,
+	NODE_TEXT_REFERENCE,
+	NODE_NUMBER_REFERENCE,
+	NODE_WORD,
+	NODE_VARIABLE,
+	NODE_LIST,
+	NODE_EOS
 };
 struct sc_ptnode_s {
 	struct sc_ptnode_s *left_child;
@@ -267,7 +270,8 @@ static sc_int uip_node_pool_available = UIP_NODE_POOL_SIZE;
  * to avoid a lot of small allocations we use a pool of short strings, used
  * first, then by straight malloc() should the pool empty.
  */
-enum { UIP_WORD_POOL_SIZE = 64, UIP_SHORT_WORD_SIZE = 16 };
+enum { UIP_WORD_POOL_SIZE = 64,
+	   UIP_SHORT_WORD_SIZE = 16 };
 struct sc_ptshortword_t {
 	sc_bool is_in_use;
 	sc_char word[UIP_SHORT_WORD_SIZE];
@@ -280,7 +284,6 @@ static sc_int uip_word_pool_available = UIP_WORD_POOL_SIZE;
 // Forward declarations
 static void uip_parse_list(CONTEXT, sc_ptnoderef_t list);
 
-
 /*
  * uip_parse_matc
  *
@@ -292,11 +295,10 @@ static void uip_parse_match(CONTEXT, sc_uip_tok_t token) {
 	else {
 		/* Syntax error. */
 		sc_error("uip_parse_match: syntax error, expected %ld, got %ld\n",
-		         (sc_int) uip_parse_lookahead, (sc_int) token);
+		         (sc_int)uip_parse_lookahead, (sc_int)token);
 		LONG_JUMP;
 	}
 }
-
 
 /*
  * uip_new_word()
@@ -347,7 +349,6 @@ static sc_char *uip_new_word(const sc_char *word) {
 	}
 }
 
-
 /*
  * uip_free_word()
  *
@@ -379,7 +380,6 @@ static void uip_free_word(sc_char *word) {
 	} else
 		sc_free(word);
 }
-
 
 /*
  * uip_new_node()
@@ -429,7 +429,6 @@ static sc_ptnoderef_t uip_new_node(sc_pttype_t type) {
 	return node;
 }
 
-
 /*
  * uip_destroy_node()
  *
@@ -454,7 +453,6 @@ static void uip_destroy_node(sc_ptnoderef_t node) {
 		uip_node_pool_available++;
 	}
 }
-
 
 /*
  * uip_parse_new_list()
@@ -484,7 +482,6 @@ static void uip_parse_alternatives(CONTEXT, sc_ptnoderef_t node) {
 		child = child->right_sibling;
 	}
 }
-
 
 /*
  * uip_parse_element()
@@ -543,7 +540,7 @@ static sc_ptnoderef_t uip_parse_element(CONTEXT) {
 			node = uip_new_node(NODE_TEXT_REFERENCE);
 			break;
 		default:
-			sc_fatal("uip_parse_element: invalid token, %ld\n", (sc_int) token);
+			sc_fatal("uip_parse_element: invalid token, %ld\n", (sc_int)token);
 		}
 		break;
 
@@ -580,7 +577,8 @@ static sc_ptnoderef_t uip_parse_element(CONTEXT) {
 	default:
 		/* Syntax error. */
 		sc_error("uip_parse_element: syntax error,"
-		         " unexpected token, %ld\n", (sc_int) uip_parse_lookahead);
+		         " unexpected token, %ld\n",
+		         (sc_int)uip_parse_lookahead);
 		LONG_JUMP0;
 	}
 
@@ -588,7 +586,6 @@ static sc_ptnoderef_t uip_parse_element(CONTEXT) {
 	assert(node);
 	return node;
 }
-
 
 /*
  * uip_parse_list()
@@ -629,8 +626,7 @@ static void uip_parse_list(CONTEXT, sc_ptnoderef_t list) {
 				 * choice or option.  In this case, add an (invented) whitespace
 				 * node, to ensure a match with suitable input.
 				 */
-				if ((child->type == NODE_OPTIONAL || child->type == NODE_CHOICE)
-				        && (node->type == NODE_OPTIONAL || node->type == NODE_CHOICE)) {
+				if ((child->type == NODE_OPTIONAL || child->type == NODE_CHOICE) && (node->type == NODE_OPTIONAL || node->type == NODE_CHOICE)) {
 					sc_ptnoderef_t whitespace;
 
 					/* Interpose invented whitespace. */
@@ -646,7 +642,6 @@ static void uip_parse_list(CONTEXT, sc_ptnoderef_t list) {
 		}
 	}
 }
-
 
 /*
  * uip_destroy_tree()
@@ -664,7 +659,6 @@ static void uip_destroy_tree(sc_ptnoderef_t node) {
 	}
 }
 
-
 /*
  * uip_debug_dump_node()
  * uip_debug_dump()
@@ -680,7 +674,7 @@ static void uip_debug_dump_node(sc_ptnoderef_t node, sc_int depth) {
 		for (index_ = 0; index_ < depth; index_++)
 			sc_trace("  ");
 
-		sc_trace("%p", (void *) node);
+		sc_trace("%p", (void *)node);
 		switch (node->type) {
 		case NODE_CHOICE:
 			sc_trace(", choice");
@@ -719,13 +713,13 @@ static void uip_debug_dump_node(sc_ptnoderef_t node, sc_int depth) {
 			sc_trace(", <eos>");
 			break;
 		default:
-			sc_trace(", unknown type %ld", (sc_int) node->type);
+			sc_trace(", unknown type %ld", (sc_int)node->type);
 			break;
 		}
 		if (node->left_child)
-			sc_trace(", left child %p", (void *) node->left_child);
+			sc_trace(", left child %p", (void *)node->left_child);
 		if (node->right_sibling)
-			sc_trace(", right sibling %p", (void *) node->right_sibling);
+			sc_trace(", right sibling %p", (void *)node->right_sibling);
 		sc_trace("\n");
 
 		/* Recursively dump left child, then siblings. */
@@ -743,7 +737,6 @@ static void uip_debug_dump(void) {
 	} else
 		sc_trace("uip_parse_tree = (nil)\n");
 }
-
 
 /* String matching variables. */
 static const sc_char *uip_string = NULL;
@@ -772,7 +765,6 @@ static void uip_match_end(void) {
 	uip_game = NULL;
 }
 
-
 /*
  * uip_get_game()
  *
@@ -783,7 +775,6 @@ static sc_gameref_t uip_get_game(void) {
 	assert(gs_is_game_valid(uip_game));
 	return uip_game;
 }
-
 
 /* Forward declaration of low level node matcher. */
 static sc_bool uip_match_node(sc_ptnoderef_t node);
@@ -1067,7 +1058,6 @@ static sc_bool uip_match_wildcard(sc_ptnoderef_t node) {
 	return TRUE;
 }
 
-
 /*
  * uip_match_number()
  * uip_match_text()
@@ -1161,7 +1151,6 @@ static sc_bool uip_match_text(sc_ptnoderef_t node) {
 	}
 }
 
-
 /*
  * uip_skip_article()
  *
@@ -1187,7 +1176,6 @@ static sc_int uip_skip_article(const sc_char *string, sc_int start) {
 		posn++;
 	return posn;
 }
-
 
 /*
  * uip_compare_reference()
@@ -1242,7 +1230,6 @@ static sc_int uip_compare_reference(const sc_char *words) {
 	return 0;
 }
 
-
 /*
  * uip_compare_prefixed_name()
  *
@@ -1257,7 +1244,7 @@ static sc_int uip_compare_prefixed_name(const sc_char *prefix, const sc_char *na
 
 	/* Create a prefixed string, using the local buffer if possible. */
 	required = strlen(prefix) + strlen(name) + 2;
-	string = required > (sc_int) sizeof(buffer) ? (sc_char *)sc_malloc(required) : buffer;
+	string = required > (sc_int)sizeof(buffer) ? (sc_char *)sc_malloc(required) : buffer;
 	sprintf(string, "%s %s", prefix, name);
 
 	/* Check against the prefixed name first, free string if required. */
@@ -1272,7 +1259,6 @@ static sc_int uip_compare_prefixed_name(const sc_char *prefix, const sc_char *na
 	/* Return the count of characters consumed in matching. */
 	return extent;
 }
-
 
 /*
  * uip_match_remainder()
@@ -1307,7 +1293,6 @@ static sc_bool uip_match_remainder(sc_ptnoderef_t node, sc_int extent) {
 	/* Return TRUE if the pattern remainder matched. */
 	return matched;
 }
-
 
 /*
  * uip_match_character()
@@ -1406,7 +1391,6 @@ static sc_bool uip_match_character(sc_ptnoderef_t node) {
 	return FALSE;
 }
 
-
 /*
  * uip_match_object()
  *
@@ -1504,7 +1488,6 @@ static sc_bool uip_match_object(sc_ptnoderef_t node) {
 	return FALSE;
 }
 
-
 /*
  * uip_match_node()
  *
@@ -1554,12 +1537,11 @@ static sc_bool uip_match_node(sc_ptnoderef_t node) {
 		match = uip_match_text(node);
 		break;
 	default:
-		sc_fatal("uip_match_node: invalid type, %ld\n", (sc_int) node->type);
+		sc_fatal("uip_match_node: invalid type, %ld\n", (sc_int)node->type);
 	}
 
 	return match;
 }
-
 
 /*
  * uip_cleanse_string()
@@ -1597,7 +1579,6 @@ static sc_char *uip_free_cleansed_string(sc_char *string, const sc_char *buffer)
 	return NULL;
 }
 
-
 /*
  * uip_debug_trace()
  *
@@ -1606,7 +1587,6 @@ static sc_char *uip_free_cleansed_string(sc_char *string, const sc_char *buffer)
 void uip_debug_trace(sc_bool flag) {
 	uip_trace = flag;
 }
-
 
 /*
  * uip_match()
@@ -1667,7 +1647,6 @@ sc_bool uip_match(const sc_char *pattern, const sc_char *string, sc_gameref_t ga
 		sc_trace("UIParser: %s\n", match ? "MATCHED!" : "No match");
 	return match;
 }
-
 
 /*
  * uip_replace_pronouns()
@@ -1809,7 +1788,6 @@ sc_char *uip_replace_pronouns(sc_gameref_t game, const sc_char *string) {
 	return buffer;
 }
 
-
 /*
  * uip_assign_pronouns()
  *
@@ -1846,10 +1824,7 @@ void uip_assign_pronouns(sc_gameref_t game, const sc_char *string) {
 			count = 0;
 			object = -1;
 			for (index_ = 0; index_ < gs_object_count(game); index_++) {
-				if (game->object_references[index_]
-				        && gs_object_seen(game, index_)
-				        && obj_indirectly_in_room(game,
-				                                  index_, gs_playerroom(game))) {
+				if (game->object_references[index_] && gs_object_seen(game, index_) && obj_indirectly_in_room(game, index_, gs_playerroom(game))) {
 					count++;
 					object = index_;
 				}
@@ -1871,9 +1846,7 @@ void uip_assign_pronouns(sc_gameref_t game, const sc_char *string) {
 			count = 0;
 			npc = -1;
 			for (index_ = 0; index_ < gs_npc_count(game); index_++) {
-				if (game->npc_references[index_]
-				        && gs_npc_seen(game, index_)
-				        && npc_in_room(game, index_, gs_playerroom(game))) {
+				if (game->npc_references[index_] && gs_npc_seen(game, index_) && npc_in_room(game, index_, gs_playerroom(game))) {
 					count++;
 					npc = index_;
 				}
@@ -1897,7 +1870,8 @@ void uip_assign_pronouns(sc_gameref_t game, const sc_char *string) {
 
 					if (uip_trace) {
 						sc_trace("UIParser: 3.8 pronouns"
-						         " 'him' and 'her' assigned %ld\n", npc);
+						         " 'him' and 'her' assigned %ld\n",
+						         npc);
 					}
 				} else {
 					/* Find the NPC gender, so we know the pronoun to assign. */
@@ -1919,7 +1893,8 @@ void uip_assign_pronouns(sc_gameref_t game, const sc_char *string) {
 						break;
 					default:
 						sc_error("uip_assign_pronouns:"
-						         " unknown gender, %ld\n", gender);
+						         " unknown gender, %ld\n",
+						         gender);
 					}
 
 					if (uip_trace)

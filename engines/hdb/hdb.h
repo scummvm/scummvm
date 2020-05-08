@@ -23,15 +23,15 @@
 #ifndef HDB_HDB_H
 #define HDB_HDB_H
 
+#include "common/fs.h"
+#include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/savefile.h"
-#include "common/fs.h"
 
 #include "engines/engine.h"
 
 namespace Common {
-	class RandomSource;
+class RandomSource;
 }
 
 namespace HDB {
@@ -62,7 +62,7 @@ enum {
 	kAnimFastFrames = kAnimFrameDelay * 2
 };
 
-}
+} // namespace HDB
 
 struct ADGameDescription;
 
@@ -85,42 +85,42 @@ enum GameState {
 };
 
 enum Flag {
-	kFlagOK				= 0x0,
-	kFlagPlayerBlock	= 0x1,
-	kFlagMonsterBlock	= 0x2,
-	kFlagSolid			= 0x3,
-	kFlagItemDie		= 0x4,
-	kFlagPlayerDie		= 0x8,
-	kFlagMonsterDie		= 0x10,
-	kFlagInvisible		= 0x20,
-	kFlagMetal			= 0x40,
-	kFlagForeground		= 0x80,
-	kFlagMonsterHurt	= 0x100,
-	kFlagPushUp			= 0x200,
-	kFlagPushRight		= 0x400,
-	kFlagPushDown		= 0x800,
-	kFlagPushLeft		= 0x1000,
-	kFlagLightSink		= 0x2000,
-	kFlagSlime			= 0x201C,
-	kFlagHeavySink		= 0x4000,
-	kFlagWater			= 0x401C,
-	kFlagLightMelt		= 0x8000,
-	kFlagHeavyMelt		= 0x10000,
-	kFlagSlide			= 0x20000,
-	kFlagEnergyFloor	= 0x40000,
-	kFlagPlasmaFloor	= 0x6000D,
-	kFlagRadFloor		= 0x6800D,
-	kFlagTeleport		= 0x80000,
-	kFlagSpecial		= 0x100000,
-	kFlagIce			= 0x120000,
-	kFlagStairBot		= 0x200000,
-	kFlagStairTop		= 0x400000,
-	kFlagAnimSlow		= 0x800000,
-	kFlagAnimMedium		= 0x1000000,
-	kFlagAnimFast		= 0x1800000,
-	kFlagMasked			= 0x2000000,
-	kFlagGrating		= 0x4000000,
-	kFlagPlummet		= 0x8000000
+	kFlagOK = 0x0,
+	kFlagPlayerBlock = 0x1,
+	kFlagMonsterBlock = 0x2,
+	kFlagSolid = 0x3,
+	kFlagItemDie = 0x4,
+	kFlagPlayerDie = 0x8,
+	kFlagMonsterDie = 0x10,
+	kFlagInvisible = 0x20,
+	kFlagMetal = 0x40,
+	kFlagForeground = 0x80,
+	kFlagMonsterHurt = 0x100,
+	kFlagPushUp = 0x200,
+	kFlagPushRight = 0x400,
+	kFlagPushDown = 0x800,
+	kFlagPushLeft = 0x1000,
+	kFlagLightSink = 0x2000,
+	kFlagSlime = 0x201C,
+	kFlagHeavySink = 0x4000,
+	kFlagWater = 0x401C,
+	kFlagLightMelt = 0x8000,
+	kFlagHeavyMelt = 0x10000,
+	kFlagSlide = 0x20000,
+	kFlagEnergyFloor = 0x40000,
+	kFlagPlasmaFloor = 0x6000D,
+	kFlagRadFloor = 0x6800D,
+	kFlagTeleport = 0x80000,
+	kFlagSpecial = 0x100000,
+	kFlagIce = 0x120000,
+	kFlagStairBot = 0x200000,
+	kFlagStairTop = 0x400000,
+	kFlagAnimSlow = 0x800000,
+	kFlagAnimMedium = 0x1000000,
+	kFlagAnimFast = 0x1800000,
+	kFlagMasked = 0x2000000,
+	kFlagGrating = 0x4000000,
+	kFlagPlummet = 0x8000000
 };
 
 struct Save {
@@ -222,8 +222,8 @@ public:
 	}
 	void changeGameState();
 	void paint();
-	void moveMap(int x, int y);	// Get Stylus Coords and Scroll
-	void startMoveMap(int x, int y);	// Start Dragging Map
+	void moveMap(int x, int y);      // Get Stylus Coords and Scroll
+	void startMoveMap(int x, int y); // Start Dragging Map
 
 	void setTargetXY(int x, int y);
 	void useEntity(AIEntity *e);
@@ -331,7 +331,6 @@ public:
 	Common::InSaveFile *_currentInSaveFile;
 
 private:
-
 	uint32 _timePlayed;
 	uint32 _timeSlice, _prevTimeSlice;
 	uint32 _timeSeconds;
@@ -349,7 +348,7 @@ private:
 	bool _cheating;
 	int _debugFlag;
 	Tile *_debugLogo;
-	int _dx, _dy;	// DEBUG : for dragging map
+	int _dx, _dy; // DEBUG : for dragging map
 
 	char _currentMapname[64];
 	char _lastMapname[64];
@@ -357,7 +356,7 @@ private:
 	char _currentLuaName[64];
 	char _lastLuaName[64];
 
-	char _inMapName[32];	// Name Inside Map file
+	char _inMapName[32]; // Name Inside Map file
 
 	int32 _monkeystone7;
 	int32 _monkeystone14;
@@ -368,13 +367,12 @@ private:
 
 	struct {
 		bool active;
-		int  slot;
+		int slot;
 	} _saveInfo, _loadInfo;
-
 };
 
 extern HDBGame *g_hdb;
 
-}// End of namespace HDB
+} // End of namespace HDB
 
 #endif

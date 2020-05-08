@@ -40,7 +40,7 @@ void GraphicsManager::killZBuffer() {
 		for (int i = 0; i < _zBuffer->numPanels; ++i) {
 			_zBuffer->sprites[i].free();
 		}
-		delete []_zBuffer->sprites;
+		delete[] _zBuffer->sprites;
 		_zBuffer->sprites = nullptr;
 	}
 	_zBuffer->numPanels = 0;
@@ -75,7 +75,7 @@ bool GraphicsManager::setZBuffer(int num) {
 		return true;
 	}
 
-	debug (kSludgeDebugGraphics, "Setting zBuffer");
+	debug(kSludgeDebugGraphics, "Setting zBuffer");
 	uint32 stillToGo = 0;
 	int yPalette[16], sorted[16];
 
@@ -96,18 +96,18 @@ bool GraphicsManager::setZBuffer(int num) {
 
 	uint width, height;
 	switch (readStream->readByte()) {
-		case 0:
-			width = 640;
-			height = 480;
-			break;
+	case 0:
+		width = 640;
+		height = 480;
+		break;
 
-		case 1:
-			width = readStream->readUint16BE();
-			height = readStream->readUint16BE();
-			break;
+	case 1:
+		width = readStream->readUint16BE();
+		height = readStream->readUint16BE();
+		break;
 
-		default:
-			return fatal("Extended Z-buffer format not supported in this version of the SLUDGE engine");
+	default:
+		return fatal("Extended Z-buffer format not supported in this version of the SLUDGE engine");
 	}
 	if (width != _sceneWidth || height != _sceneHeight) {
 		Common::String tmp = Common::String::format("Z-w: %d Z-h:%d w: %d, h:%d", width, height, _sceneWidth, _sceneHeight);

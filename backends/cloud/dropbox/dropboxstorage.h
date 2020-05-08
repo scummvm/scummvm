@@ -24,13 +24,13 @@
 #define BACKENDS_CLOUD_DROPBOX_STORAGE_H
 
 #include "backends/cloud/basestorage.h"
-#include "common/callback.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "common/callback.h"
 
 namespace Cloud {
 namespace Dropbox {
 
-class DropboxStorage: public Cloud::BaseStorage {
+class DropboxStorage : public Cloud::BaseStorage {
 	/** This private constructor is called from loadFromConfig(). */
 	DropboxStorage(Common::String token, bool enabled);
 

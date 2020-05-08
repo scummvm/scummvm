@@ -50,6 +50,7 @@ class Creature : public StandardWidget {
 protected:
 	int _hitPoints;
 	bool _isAttacking;
+
 protected:
 	/**
 	 * Returns either the maximum attack distance for a monster, or 0 if the monster is beyond
@@ -66,15 +67,15 @@ protected:
 	 * Handles attacks
 	 */
 	virtual void attack() {}
+
 public:
 	/**
 	 * Constructor
 	 */
 	Creature(Game *game, Map::MapBase *map) : StandardWidget(game, map), _hitPoints(0), _isAttacking(false) {}
 	Creature(Game *game, Map::MapBase *map, int hitPoints) : StandardWidget(game, map),
-		_hitPoints(hitPoints), _isAttacking(false) {}
-	Creature(Game *game, Map::MapBase *map, int hitPoints, const Point &pt, Direction dir = DIR_NONE) :
-		StandardWidget(game, map, pt, dir), _hitPoints(hitPoints), _isAttacking(false) {}
+	                                                         _hitPoints(hitPoints), _isAttacking(false) {}
+	Creature(Game *game, Map::MapBase *map, int hitPoints, const Point &pt, Direction dir = DIR_NONE) : StandardWidget(game, map, pt, dir), _hitPoints(hitPoints), _isAttacking(false) {}
 
 	/**
 	 * Destructor
@@ -99,7 +100,6 @@ public:
 	bool isDead() const { return _hitPoints <= 0; }
 };
 
-
 /**
  * Base class for things that appear within the dungeons
  */
@@ -110,8 +110,7 @@ public:
 	 */
 	DungeonWidget(Game *game, Map::MapBase *map) : MapWidget(game, map) {}
 	DungeonWidget(Game *game, Map::MapBase *map, const Point &pt, Direction dir = DIR_NONE) : MapWidget(game, map, pt, dir) {}
-	DungeonWidget(Game *game, Map::MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) :
-		MapWidget(game, map, name, pt, dir) {}
+	DungeonWidget(Game *game, Map::MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) : MapWidget(game, map, name, pt, dir) {}
 
 	/**
 	 * Destructor

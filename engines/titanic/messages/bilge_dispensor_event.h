@@ -34,9 +34,11 @@ class CBilgeDispensorEvent : public CAutoSoundEvent {
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
+
 private:
 	uint _ticksDelayEnd;
 	int _soundHandle;
+
 public:
 	CLASSDEF;
 	CBilgeDispensorEvent() : CAutoSoundEvent(), _ticksDelayEnd(0), _soundHandle(-1) {}

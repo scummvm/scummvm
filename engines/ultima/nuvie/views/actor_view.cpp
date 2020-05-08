@@ -20,18 +20,18 @@
  *
  */
 
+#include "ultima/nuvie/views/actor_view.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/gui/gui_button.h"
+#include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/portraits/portrait.h"
 #include "ultima/nuvie/script/script.h"
 #include "ultima/nuvie/views/view.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/portraits/portrait.h"
-#include "ultima/nuvie/views/actor_view.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/keybinding/keys.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -39,8 +39,7 @@ namespace Nuvie {
 extern GUI_status inventoryViewButtonCallback(void *data);
 extern GUI_status partyViewButtonCallback(void *data);
 
-#define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
-
+#define MD Game::get_game()->get_game_type() == NUVIE_GAME_MD
 
 ActorView::ActorView(Configuration *cfg) : View(cfg) {
 	portrait = NULL;
@@ -76,14 +75,17 @@ bool ActorView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y,
 bool ActorView::set_party_member(uint8 party_member) {
 	in_party = false;
 
-	if (View::set_party_member(party_member)
-	        && !Game::get_game()->get_event()->using_control_cheat()) {
+	if (View::set_party_member(party_member) && !Game::get_game()->get_event()->using_control_cheat()) {
 		in_party = true;
-		if (party_button) party_button->Show();
+		if (party_button)
+			party_button->Show();
 	} else {
-		if (left_button) left_button->Hide();
-		if (right_button) right_button->Hide();
-		if (party_button) party_button->Hide();
+		if (left_button)
+			left_button->Hide();
+		if (right_button)
+			right_button->Hide();
+		if (party_button)
+			party_button->Hide();
 	}
 
 	if (portrait) { // this might not be set yet. if called from View::init()
@@ -102,7 +104,6 @@ bool ActorView::set_party_member(uint8 party_member) {
 
 	return true;
 }
-
 
 void ActorView::Display(bool full_redraw) {
 
@@ -126,12 +127,11 @@ void ActorView::Display(bool full_redraw) {
 		             8, 16, 16, 16, true, NULL);
 		screen->update(cursor_pos.px, cursor_pos.py, 16, 16);
 	}
-
 }
 
 void ActorView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 	int x_off = 0; // U6 and MD
-	int y = 80; // U6
+	int y = 80;    // U6
 	Tile *tile;
 	Graphics::ManagedSurface *button_image;
 	Graphics::ManagedSurface *button_image2;
@@ -142,7 +142,7 @@ void ActorView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 	} else if (MD)
 		y = 100;
 
-//FIX need to handle clicked button image, check image free on destruct.
+	//FIX need to handle clicked button image, check image free on destruct.
 
 	tile = tile_manager->get_tile(MD ? 282 : 387); //left arrow icon
 	button_image = tmp_screen->create_sdl_surface_from(tile->data, 8, 16, 16, 16);
@@ -208,7 +208,7 @@ void ActorView::display_actor_stats() {
 		x_off = -1;
 	} else if (Game::get_game()->get_game_type() == NUVIE_GAME_SE) {
 		x_off = 2;
-		y_off = - 6;
+		y_off = -6;
 	}
 
 	hp_text_color = actor->get_hp_text_color();
@@ -306,7 +306,7 @@ GUI_status ActorView::KeyDown(const Common::KeyState &key) {
 	case SOUTH_KEY:
 		break;
 	default:
-//			set_show_cursor(false); // newAction() can move cursor here
+		//			set_show_cursor(false); // newAction() can move cursor here
 		return GUI_PASS;
 	}
 	return (GUI_YUM);

@@ -25,8 +25,8 @@
 
 #if defined(POSIX) && defined(USE_SYSDIALOGS) && defined(USE_GTK)
 
-#include "common/fs.h"
 #include "common/dialogs.h"
+#include "common/fs.h"
 
 class GtkDialogManager : public Common::DialogManager {
 public:

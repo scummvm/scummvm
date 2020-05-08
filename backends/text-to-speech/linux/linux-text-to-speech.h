@@ -27,10 +27,10 @@
 
 #if defined(USE_TTS) && defined(USE_SPEECH_DISPATCHER) && defined(POSIX)
 
-#include "common/text-to-speech.h"
-#include "common/str.h"
 #include "common/list.h"
 #include "common/mutex.h"
+#include "common/str.h"
+#include "common/text-to-speech.h"
 
 struct StartSpeechParams {
 	pthread_mutex_t *mutex;

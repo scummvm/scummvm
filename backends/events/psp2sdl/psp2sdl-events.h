@@ -33,23 +33,24 @@ class PSP2EventSource : public SdlEventSource {
 public:
 	PSP2EventSource();
 	bool pollEvent(Common::Event &event) override;
+
 protected:
 	void preprocessEvents(SDL_Event *event) override;
-private:
 
+private:
 	enum {
-		MAX_NUM_FINGERS = 3, // number of fingers to track per panel
-		MAX_TAP_TIME = 250, // taps longer than this will not result in mouse click events
-		MAX_TAP_MOTION_DISTANCE = 10, // max distance finger motion in Vita screen pixels to be considered a tap
+		MAX_NUM_FINGERS = 3,           // number of fingers to track per panel
+		MAX_TAP_TIME = 250,            // taps longer than this will not result in mouse click events
+		MAX_TAP_MOTION_DISTANCE = 10,  // max distance finger motion in Vita screen pixels to be considered a tap
 		SIMULATED_CLICK_DURATION = 50, // time in ms how long simulated mouse clicks should be
-		MULTIPLIER = 16 // multiplier for sub-pixel resolution
+		MULTIPLIER = 16                // multiplier for sub-pixel resolution
 	};
 
 	typedef struct {
 		int id; // -1: no touch
 		Uint32 timeLastDown;
-		int lastX; // last known screen coordinates
-		int lastY; // last known screen coordinates
+		int lastX;       // last known screen coordinates
+		int lastY;       // last known screen coordinates
 		float lastDownX; // SDL touch coordinates when last pressed down
 		float lastDownY; // SDL touch coordinates when last pressed down
 	} Touch;

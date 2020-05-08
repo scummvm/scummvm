@@ -23,8 +23,8 @@
 #ifndef TOLTECS_ANIMATION_H
 #define TOLTECS_ANIMATION_H
 
-#include "toltecs/toltecs.h"
 #include "toltecs/resource.h"
+#include "toltecs/toltecs.h"
 
 namespace Toltecs {
 
@@ -41,7 +41,7 @@ public:
 	void saveState(Common::WriteStream *out);
 	void loadState(Common::ReadStream *in);
 
-//protected:
+	//protected:
 public:
 	ToltecsEngine *_vm;
 
@@ -60,7 +60,6 @@ public:
 	uint32 _firstNextFrameOffset, _firstCurFrameSize, _firstNextFrameSize;
 
 	void unpackFrame();
-
 };
 
 } // End of namespace Toltecs

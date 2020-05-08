@@ -23,9 +23,9 @@
 #ifndef ULTIMA4_MAP_TILEMAP_H
 #define ULTIMA4_MAP_TILEMAP_H
 
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/map/map_tile.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -38,8 +38,10 @@ class TileMaps;
  */
 class TileMap {
 	friend class TileMaps;
+
 private:
 	Std::map<uint, MapTile> _tileMap;
+
 public:
 	/**
 	 * Translates a raw index to a MapTile.
@@ -57,6 +59,7 @@ private:
 	 * xu4 tile ids.
 	 */
 	void load(const ConfigElement &tilemapConf);
+
 public:
 	/**
 	 * Constructor
@@ -90,5 +93,3 @@ extern TileMaps *g_tileMaps;
 } // End of namespace Ultima
 
 #endif
-
-

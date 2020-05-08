@@ -20,17 +20,16 @@
  *
  */
 
-#include "ultima/shared/engine/input_handler.h"
 #include "ultima/shared/engine/input_translator.h"
-#include "ultima/shared/engine/events.h"
-#include "ultima/shared/engine/messages.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/engine/events.h"
+#include "ultima/shared/engine/input_handler.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Shared {
 
-InputTranslator::InputTranslator(InputHandler *inputHandler) :
-	_inputHandler(inputHandler) {
+InputTranslator::InputTranslator(InputHandler *inputHandler) : _inputHandler(inputHandler) {
 	inputHandler->setTranslator(this);
 }
 

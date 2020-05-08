@@ -29,28 +29,26 @@
 namespace Plumbers {
 const char *PlumbersGame::getGameId() const { return _gameDescription->gameId; }
 Common::Platform PlumbersGame::getPlatform() const { return _gameDescription->platform; }
-}
+} // namespace Plumbers
 
 static const PlainGameDescriptor plumbersGames[] = {
-	{"plumbers", "Plumbers Don't Wear Ties!"},
-	{0, 0}
-};
+    {"plumbers", "Plumbers Don't Wear Ties!"},
+    {0, 0}};
 
 namespace Plumbers {
 
 static const ADGameDescription gameDescriptions[] = {
-	// Plumbers PC version
-	{
-		"plumbers",
-		0,
-		AD_ENTRY1s("GAME.BIN", 0, 41622),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NOMIDI)
-	},
+    // Plumbers PC version
+    {
+        "plumbers",
+        0,
+        AD_ENTRY1s("GAME.BIN", 0, 41622),
+        Common::EN_ANY,
+        Common::kPlatformWindows,
+        ADGF_NO_FLAGS,
+        GUIO1(GUIO_NOMIDI)},
 
-	/*
+    /*
 	// Plumbers 3DO version
 	{
 		"plumbers",
@@ -63,8 +61,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	*/
 
-	AD_TABLE_END_MARKER
-};
+    AD_TABLE_END_MARKER};
 
 } // End of namespace Plumbers
 

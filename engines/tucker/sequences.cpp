@@ -30,8 +30,8 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
-#include "tucker/tucker.h"
 #include "tucker/graphics.h"
+#include "tucker/tucker.h"
 
 namespace Tucker {
 
@@ -44,8 +44,8 @@ void TuckerEngine::handleIntroSequence() {
 }
 
 void TuckerEngine::handleCreditsSequence() {
-	static const int _creditsSequenceTimecounts[] = { 200, 350, 650, 850, 1150, 1450, 12000 };
-	static const int _creditsSequenceSpriteCounts[] = { 1, 1, 5, 0, 6, 6, 0 };
+	static const int _creditsSequenceTimecounts[] = {200, 350, 650, 850, 1150, 1450, 12000};
+	static const int _creditsSequenceSpriteCounts[] = {1, 1, 5, 0, 6, 6, 0};
 	int counter4 = 0;
 	int counter3 = 0;
 	int num = 0;
@@ -83,7 +83,7 @@ void TuckerEngine::handleCreditsSequence() {
 			Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf, 320, 320, 200);
 		} else {
 			Graphics::copyRect(_locationBackgroundGfxBuf, 640, imgBuf + imgNum * 64000, 320, 320, 200);
-			static const int yPosTable[] = { 48, 60, 80, 92, 104, 116 };
+			static const int yPosTable[] = {48, 60, 80, 92, 104, 116};
 			for (int i = 0; i < 6; ++i) {
 				drawCreditsString(5, yPosTable[i], counter2 * 6 + i);
 			}
@@ -467,7 +467,7 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 		if (_part == kPartThree && _selectedObjectNum == 45) {
 			for (int i = 0; i < 13; ++i) {
 				const int offset = _dataTable[204 + i]._yDest * 640 + _dataTable[204 + i]._xDest;
-				static const int itemsTable[] = { 15, 44, 25, 19, 21, 24, 12, 27, 20, 29, 35, 23, 3 };
+				static const int itemsTable[] = {15, 44, 25, 19, 21, 24, 12, 27, 20, 29, 35, 23, 3};
 				if (_inventoryItemsState[itemsTable[i]] > 1) {
 					Graphics::decodeRLE(_locationBackgroundGfxBuf + _scrollOffset + offset, _data3GfxBuf + _dataTable[204 + i]._sourceOffset, _dataTable[204 + i]._xSize, _dataTable[204 + i]._ySize);
 				}
@@ -489,7 +489,7 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 }
 
 AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, CompressedSound *sound, int num)
-	: _system(system), _mixer(mixer), _event(event), _compressedSound(sound), _seqNum(num) {
+    : _system(system), _mixer(mixer), _event(event), _compressedSound(sound), _seqNum(num) {
 	memset(_animationPalette, 0, sizeof(_animationPalette));
 	_soundSeqDataCount = 0;
 	_soundSeqDataIndex = 0;
@@ -516,19 +516,17 @@ AnimationSequencePlayer::~AnimationSequencePlayer() {
 
 void AnimationSequencePlayer::mainLoop() {
 	static const SequenceUpdateFunc _demoSeqUpdateFuncs[] = {
-		{ 13, 2, &AnimationSequencePlayer::loadIntroSeq13_14, &AnimationSequencePlayer::playIntroSeq13_14 },
-		{ 15, 2, &AnimationSequencePlayer::loadIntroSeq15_16, &AnimationSequencePlayer::playIntroSeq15_16 },
-		{ 27, 2, &AnimationSequencePlayer::loadIntroSeq27_28, &AnimationSequencePlayer::playIntroSeq27_28 },
-		{  1, 0, nullptr,                                     nullptr                                     }
-	};
+	    {13, 2, &AnimationSequencePlayer::loadIntroSeq13_14, &AnimationSequencePlayer::playIntroSeq13_14},
+	    {15, 2, &AnimationSequencePlayer::loadIntroSeq15_16, &AnimationSequencePlayer::playIntroSeq15_16},
+	    {27, 2, &AnimationSequencePlayer::loadIntroSeq27_28, &AnimationSequencePlayer::playIntroSeq27_28},
+	    {1, 0, nullptr, nullptr}};
 	static const SequenceUpdateFunc _gameSeqUpdateFuncs[] = {
-		{ 17, 1, &AnimationSequencePlayer::loadIntroSeq17_18, &AnimationSequencePlayer::playIntroSeq17_18 },
-		{ 19, 1, &AnimationSequencePlayer::loadIntroSeq19_20, &AnimationSequencePlayer::playIntroSeq19_20 },
-		{  3, 2, &AnimationSequencePlayer::loadIntroSeq3_4,   &AnimationSequencePlayer::playIntroSeq3_4   },
-		{  9, 2, &AnimationSequencePlayer::loadIntroSeq9_10,  &AnimationSequencePlayer::playIntroSeq9_10  },
-		{ 21, 2, &AnimationSequencePlayer::loadIntroSeq21_22, &AnimationSequencePlayer::playIntroSeq21_22 },
-		{  1, 0, nullptr,                                     nullptr                                     }
-	};
+	    {17, 1, &AnimationSequencePlayer::loadIntroSeq17_18, &AnimationSequencePlayer::playIntroSeq17_18},
+	    {19, 1, &AnimationSequencePlayer::loadIntroSeq19_20, &AnimationSequencePlayer::playIntroSeq19_20},
+	    {3, 2, &AnimationSequencePlayer::loadIntroSeq3_4, &AnimationSequencePlayer::playIntroSeq3_4},
+	    {9, 2, &AnimationSequencePlayer::loadIntroSeq9_10, &AnimationSequencePlayer::playIntroSeq9_10},
+	    {21, 2, &AnimationSequencePlayer::loadIntroSeq21_22, &AnimationSequencePlayer::playIntroSeq21_22},
+	    {1, 0, nullptr, nullptr}};
 	switch (_seqNum) {
 	case kFirstAnimationSequenceDemo:
 		_updateFunc = _demoSeqUpdateFuncs;
@@ -630,7 +628,6 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 		default:
 			break;
 		}
-
 	}
 	return stream;
 }
@@ -660,7 +657,7 @@ void AnimationSequencePlayer::updateSounds() {
 		case 1:
 			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != nullptr) {
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], Audio::makeLoopingAudioStream(s, 0),
-				                        -1, scaleMixerVolume(p->volume));
+				                   -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 2:
@@ -702,7 +699,7 @@ void AnimationSequencePlayer::fadeInPalette() {
 	for (int step = 0; step < 64; ++step) {
 		if (fadeColors) {
 			fadeColors = false;
-			for (int i = 0; i < 3*256; ++i) {
+			for (int i = 0; i < 3 * 256; ++i) {
 				if (paletteBuffer[i] < _animationPalette[i]) {
 					const int color = paletteBuffer[i] + 4;
 					paletteBuffer[i] = MIN<int>(color, _animationPalette[i]);
@@ -718,12 +715,12 @@ void AnimationSequencePlayer::fadeInPalette() {
 
 void AnimationSequencePlayer::fadeOutPalette() {
 	uint8 paletteBuffer[256 * 3];
-	memcpy(paletteBuffer, _animationPalette, 3*256);
+	memcpy(paletteBuffer, _animationPalette, 3 * 256);
 	bool fadeColors = true;
 	for (int step = 0; step < 64; ++step) {
 		if (fadeColors) {
 			fadeColors = false;
-			for (int i = 0; i < 3*256; ++i) {
+			for (int i = 0; i < 3 * 256; ++i) {
 				if (paletteBuffer[i] > 0) {
 					const int color = paletteBuffer[i] - 4;
 					paletteBuffer[i] = MAX<int>(0, color);
@@ -855,12 +852,12 @@ void AnimationSequencePlayer::initPicPart4() {
 }
 
 void AnimationSequencePlayer::drawPicPart4() {
-	static const uint8 offsets[] = { 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+	static const uint8 offsets[] = {1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1};
 	if (_updateScreenIndex == -1) {
 		memcpy(_animationPalette, _picBufPtr + 32, 3 * 256);
 	}
 	if (_updateScreenCounter == 0) {
-		static const uint8 counter[] = { 1, 2, 3, 4, 5, 35, 5, 4, 3, 2, 1 };
+		static const uint8 counter[] = {1, 2, 3, 4, 5, 35, 5, 4, 3, 2, 1};
 		++_updateScreenIndex;
 		assert(_updateScreenIndex < ARRAYSIZE(counter));
 		_updateScreenCounter = counter[_updateScreenIndex];

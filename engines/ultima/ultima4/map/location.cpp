@@ -21,16 +21,16 @@
  */
 
 #include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
-#include "ultima/ultima4/game/creature.h"
-#include "ultima/ultima4/events/event_handler.h"
-#include "ultima/ultima4/game/game.h"
-#include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/game/object.h"
-#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/events/event_handler.h"
+#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/creature.h"
+#include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/object.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/tileset.h"
 
 namespace Ultima {
@@ -156,9 +156,9 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 	tiles.push_back(tileFromMapData);
 
 	// But if the base tile requires a background, we must find it
-	if (tileType->isLandForeground()    ||
-	        tileType->isWaterForeground()   ||
-	        tileType->isLivingObject()) {
+	if (tileType->isLandForeground() ||
+	    tileType->isWaterForeground() ||
+	    tileType->isLivingObject()) {
 
 		tiles.push_back(getReplacementTile(coords, tileType));
 	}
@@ -169,7 +169,7 @@ Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
 TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 	Std::map<TileId, int> validMapTileCount;
 
-	const static int dirs[][2] = {{ -1, 0}, {1, 0}, {0, -1}, {0, 1}};
+	const static int dirs[][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 	const static int dirs_per_step = sizeof(dirs) / sizeof(*dirs);
 	int loop_count = 0;
 
@@ -197,7 +197,7 @@ TileId Location::getReplacementTile(MapCoords atCoords, const Tile *forTile) {
 			}
 
 			if ((tileType->isReplacement() && (forTile->isLandForeground() || forTile->isLivingObject())) ||
-			        (tileType->isWaterReplacement() && forTile->isWaterForeground())) {
+			    (tileType->isWaterReplacement() && forTile->isWaterForeground())) {
 				Std::map<TileId, int>::iterator validCount = validMapTileCount.find(tileType->getId());
 
 				if (validCount == validMapTileCount.end()) {
@@ -265,7 +265,6 @@ MoveResult Location::move(Direction dir, bool userEvent) {
 
 	return event._result;
 }
-
 
 void locationFree(Location **stack) {
 	delete locationPop(stack);

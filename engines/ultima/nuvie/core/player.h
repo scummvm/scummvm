@@ -23,8 +23,8 @@
 #ifndef NUVIE_CORE_PLAYER_H
 #define NUVIE_CORE_PLAYER_H
 
-#include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/core/obj_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -50,20 +50,19 @@ class Player {
 	ActorManager *actor_manager;
 	ObjManager *obj_manager;
 
-// char name[14]; We can get the name from the player actor. --SB-X
+	// char name[14]; We can get the name from the player actor. --SB-X
 	uint8 gender;
 
 	uint8 questf;
 	uint8 karma;
 	uint8 gargishf; // learned Gargish
-	uint8 alcohol; // number of alcoholic drinks consumed
+	uint8 alcohol;  // number of alcoholic drinks consumed
 
 	MapWindow *map_window;
 
 	sint8 current_weapon;
 
 public:
-
 	Player(Configuration *cfg);
 
 	bool init(ObjManager *om, ActorManager *am, MapWindow *mw, GameClock *c, Party *p);
@@ -74,7 +73,7 @@ public:
 	Actor *find_actor();
 	void update_player(Actor *next_player);
 
-	bool is_mapwindow_centered()            {
+	bool is_mapwindow_centered() {
 		return (mapwindow_centered);
 	}
 	void set_mapwindow_centered(bool state);
@@ -83,19 +82,19 @@ public:
 		return (get_actor()->get_actor_num() == 0);
 	}
 
-	Party *get_party()      {
+	Party *get_party() {
 		return (party);
 	}
 	bool set_party_mode(Actor *new_actor);
 	bool set_solo_mode(Actor *new_actor);
-	bool in_party_mode()    {
+	bool in_party_mode() {
 		return (party_mode);
 	}
 
 	void set_karma(uint8 val) {
 		karma = val;
 	}
-	uint8 get_karma()         {
+	uint8 get_karma() {
 		return (karma);
 	}
 	void add_karma(uint8 val = 1);
@@ -115,13 +114,13 @@ public:
 	void set_quest_flag(uint8 val) {
 		questf = val;
 	}
-	uint8 get_quest_flag()         {
+	uint8 get_quest_flag() {
 		return (questf);
 	}
 	void set_gargish_flag(uint8 val) {
 		gargishf = val;
 	}
-	uint8 get_gargish_flag()          {
+	uint8 get_gargish_flag() {
 		return (gargishf);
 	}
 
@@ -135,7 +134,7 @@ public:
 		gender = val;
 	}
 	const char *get_gender_title();
-	uint8 get_gender()         {
+	uint8 get_gender() {
 		return (gender);
 	}
 
@@ -163,7 +162,6 @@ public:
 	}
 
 protected:
-
 	bool attack_select_weapon_at_location(sint8 location, bool add_newline = false, bool use_attack_text = true);
 };
 

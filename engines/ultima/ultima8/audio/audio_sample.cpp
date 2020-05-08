@@ -20,20 +20,19 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_sample.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-AudioSample::AudioSample(const uint8 *buffer, uint32 size, uint32 bits, bool stereo) :
-	_sampleRate(0), _bits(bits), _stereo(stereo),
-	_frameSize(0), _decompressorSize(0), _length(0),
-	_bufferSize(size), _buffer(buffer) {
+AudioSample::AudioSample(const uint8 *buffer, uint32 size, uint32 bits, bool stereo) : _sampleRate(0), _bits(bits), _stereo(stereo),
+                                                                                       _frameSize(0), _decompressorSize(0), _length(0),
+                                                                                       _bufferSize(size), _buffer(buffer) {
 }
 
 AudioSample::~AudioSample(void) {
-	delete [] _buffer;
+	delete[] _buffer;
 }
 
 } // End of namespace Ultima8

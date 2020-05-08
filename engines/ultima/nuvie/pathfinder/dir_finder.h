@@ -30,7 +30,7 @@ class MapCoord;
 
 class DirFinder {
 public:
-	DirFinder() { }
+	DirFinder() {}
 
 	static void get_adjacent_dir(sint8 &xdir, sint8 &ydir, sint8 rotate);
 	static uint8 get_nuvie_dir(sint16 xrel, sint16 yrel);

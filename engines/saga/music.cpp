@@ -24,18 +24,18 @@
 
 #include "saga/saga.h"
 
-#include "saga/resource.h"
 #include "saga/music.h"
+#include "saga/resource.h"
 
 #include "audio/audiostream.h"
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
-#include "audio/midiparser_qt.h"
-#include "audio/miles.h"
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/midiparser_qt.h"
+#include "audio/miles.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
@@ -160,7 +160,6 @@ void MusicDriver::pause() {
 void MusicDriver::resume() {
 	_isPlaying = true;
 }
-
 
 Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_currentVolume = 0;
@@ -303,7 +302,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		realTrackNumber = resourceId + 1;
 	} else if (_vm->getGameId() == GID_DINO || _vm->getGameId() == GID_FTA2) {
 		realTrackNumber = resourceId + 1;
-		uint32 musicTrackTag = MKTAG('X','M','I', (byte)(resourceId + 1));
+		uint32 musicTrackTag = MKTAG('X', 'M', 'I', (byte)(resourceId + 1));
 		resourceId = _musicContext->getEntryNum(musicTrackTag);
 	}
 
@@ -316,7 +315,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
 		if (stream) {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
-			                        Audio::makeLoopingAudioStream(stream, (flags == MUSIC_LOOP) ? 0 : 1));
+			                   Audio::makeLoopingAudioStream(stream, (flags == MUSIC_LOOP) ? 0 : 1));
 			_digitalMusic = true;
 			return;
 		}
@@ -336,11 +335,11 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 				int offs = (_digitalMusicContext->isCompressed()) ? 9 : 0;
 
 				Common::SeekableSubReadStream *musicStream = new Common::SeekableSubReadStream(musicFile,
-							(uint32)resData->offset + offs, (uint32)resData->offset + resData->size - offs);
+				                                                                               (uint32)resData->offset + offs, (uint32)resData->offset + resData->size - offs);
 
 				if (!_digitalMusicContext->isCompressed()) {
 					byte musicFlags = Audio::FLAG_STEREO |
-										Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+					                  Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
 					if (_vm->isBigEndian())
 						musicFlags &= ~Audio::FLAG_LITTLE_ENDIAN;
@@ -350,7 +349,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					// are much larger. Thus, we use this simple heuristic to determine if we got
 					// mono music in the ITE demos or not.
 					if (!strcmp(_digitalMusicContext->fileName(), "musicd.rsc") &&
-						_digitalMusicContext->fileSize() < 8000000)
+					    _digitalMusicContext->fileSize() < 8000000)
 						musicFlags &= ~Audio::FLAG_STEREO;
 
 					audioStream = Audio::makeRawStream(musicStream, 11025, musicFlags, DisposeAfterUse::YES);
@@ -359,15 +358,15 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					musicFile->seek((uint32)resData->offset, SEEK_SET);
 					byte identifier = musicFile->readByte();
 
-					if (identifier == 0) {		// MP3
+					if (identifier == 0) { // MP3
 #ifdef USE_MAD
 						audioStream = Audio::makeMP3Stream(musicStream, DisposeAfterUse::YES);
 #endif
-					} else if (identifier == 1) {	// OGG
+					} else if (identifier == 1) { // OGG
 #ifdef USE_VORBIS
 						audioStream = Audio::makeVorbisStream(musicStream, DisposeAfterUse::YES);
 #endif
-					} else if (identifier == 2) {	// FLAC
+					} else if (identifier == 2) { // FLAC
 #ifdef USE_FLAC
 						audioStream = Audio::makeFLACStream(musicStream, DisposeAfterUse::YES);
 #endif
@@ -384,13 +383,13 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		debug(2, "Playing digitized music");
 		if (loopStart) {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
-			                        new Audio::SubLoopingAudioStream(audioStream,
-			                        (flags == MUSIC_LOOP ? 0 : 1),
-			                        Audio::Timestamp(0, loopStart, audioStream->getRate()),
-			                        audioStream->getLength()));
+			                   new Audio::SubLoopingAudioStream(audioStream,
+			                                                    (flags == MUSIC_LOOP ? 0 : 1),
+			                                                    Audio::Timestamp(0, loopStart, audioStream->getRate()),
+			                                                    audioStream->getLength()));
 		} else {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
-			                        Audio::makeLoopingAudioStream(audioStream, (flags == MUSIC_LOOP ? 0 : 1)));
+			                   Audio::makeLoopingAudioStream(audioStream, (flags == MUSIC_LOOP ? 0 : 1)));
 		}
 		_digitalMusic = true;
 		return;

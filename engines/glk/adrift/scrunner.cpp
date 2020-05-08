@@ -21,8 +21,8 @@
  */
 
 #include "glk/adrift/adrift.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 #include "glk/adrift/serialization.h"
 
 namespace Glk {
@@ -35,7 +35,6 @@ static const sc_char SPECIAL_PATTERN = '#';
 static const sc_char WILDCARD_PATTERN = '*';
 static const sc_char *const WHITESPACE = "\t\n\v\f\r ";
 static const sc_char *const SEPARATORS = ".,";
-
 
 /*
  * run_is_task_function()
@@ -105,370 +104,332 @@ static sc_bool run_is_task_function(const sc_char *pattern, sc_gameref_t game) {
 	return TRUE;
 }
 
-
 /* Structure used to associate a pattern with a handler function. */
 struct sc_commands_s {
 	const sc_char *const command;
-	sc_bool(*const handler)(sc_gameref_t game);
+	sc_bool (*const handler)(sc_gameref_t game);
 };
 typedef sc_commands_s sc_commands_t;
 typedef sc_commands_t *sc_commandsref_t;
 
 /* Movement commands for the four point compass. */
 static sc_commands_t MOVE_COMMANDS_4[] = {
-	{"{go {to {the}}} [north/n]", lib_cmd_go_north},
-	{"{go {to {the}}} [east/e]", lib_cmd_go_east},
-	{"{go {to {the}}} [south/s]", lib_cmd_go_south},
-	{"{go {to {the}}} [west/w]", lib_cmd_go_west},
-	{"{go {to {the}}} [up/u]", lib_cmd_go_up},
-	{"{go {to {the}}} [down/d]", lib_cmd_go_down},
-	{"{go {to {the}}} [in]", lib_cmd_go_in},
-	{"{go {to {the}}} [out/o]", lib_cmd_go_out},
-	{NULL, NULL}
-};
+    {"{go {to {the}}} [north/n]", lib_cmd_go_north},
+    {"{go {to {the}}} [east/e]", lib_cmd_go_east},
+    {"{go {to {the}}} [south/s]", lib_cmd_go_south},
+    {"{go {to {the}}} [west/w]", lib_cmd_go_west},
+    {"{go {to {the}}} [up/u]", lib_cmd_go_up},
+    {"{go {to {the}}} [down/d]", lib_cmd_go_down},
+    {"{go {to {the}}} [in]", lib_cmd_go_in},
+    {"{go {to {the}}} [out/o]", lib_cmd_go_out},
+    {NULL, NULL}};
 
 /* Movement commands for the eight point compass. */
 static sc_commands_t MOVE_COMMANDS_8[] = {
-	{"{go {to {the}}} [north/n]", lib_cmd_go_north},
-	{"{go {to {the}}} [east/e]", lib_cmd_go_east},
-	{"{go {to {the}}} [south/s]", lib_cmd_go_south},
-	{"{go {to {the}}} [west/w]", lib_cmd_go_west},
-	{"{go {to {the}}} [up/u]", lib_cmd_go_up},
-	{"{go {to {the}}} [down/d]", lib_cmd_go_down},
-	{"{go {to {the}}} [in]", lib_cmd_go_in},
-	{"{go {to {the}}} [out/o]", lib_cmd_go_out},
-	{"{go {to {the}}} [northeast/north-east/ne]", lib_cmd_go_northeast},
-	{"{go {to {the}}} [southeast/south-east/se]", lib_cmd_go_southeast},
-	{"{go {to {the}}} [northwest/north-west/nw]", lib_cmd_go_northwest},
-	{"{go {to {the}}} [southwest/south-west/sw]", lib_cmd_go_southwest},
-	{NULL, NULL}
-};
+    {"{go {to {the}}} [north/n]", lib_cmd_go_north},
+    {"{go {to {the}}} [east/e]", lib_cmd_go_east},
+    {"{go {to {the}}} [south/s]", lib_cmd_go_south},
+    {"{go {to {the}}} [west/w]", lib_cmd_go_west},
+    {"{go {to {the}}} [up/u]", lib_cmd_go_up},
+    {"{go {to {the}}} [down/d]", lib_cmd_go_down},
+    {"{go {to {the}}} [in]", lib_cmd_go_in},
+    {"{go {to {the}}} [out/o]", lib_cmd_go_out},
+    {"{go {to {the}}} [northeast/north-east/ne]", lib_cmd_go_northeast},
+    {"{go {to {the}}} [southeast/south-east/se]", lib_cmd_go_southeast},
+    {"{go {to {the}}} [northwest/north-west/nw]", lib_cmd_go_northwest},
+    {"{go {to {the}}} [southwest/south-west/sw]", lib_cmd_go_southwest},
+    {NULL, NULL}};
 
 /* "Priority" library commands, may take precedence over the game. */
 static sc_commands_t PRIORITY_COMMANDS[] = {
 
-	/* Acquisition of and disposal of inventory. */
-	{
-		"[[get/take/remove/extract] [all/everything] from/empty] %object%",
-		lib_cmd_take_all_from
-	},
-	{
-		"[[get/take/remove/extract] [all/everything] from/empty] %object%"
-		" [[except/but] {for}/apart from] %text%",
-		lib_cmd_take_from_except_multiple
-	},
-	{
-		"[get/take/remove/extract] [all/everything]"
-		" [[except/but] {for}/apart from] %text% from %object%",
-		lib_cmd_take_from_except_multiple
-	},
-	{
-		"[get/take/remove/extract] %text% from %object%",
-		lib_cmd_take_from_multiple
-	},
-	{"[get/take] [all/everything] from %character%", lib_cmd_take_all_from_npc},
-	{
-		"[get/take] [all/everything] from %character%"
-		" [[except/but] {for}/apart from] %text%",
-		lib_cmd_take_from_npc_except_multiple
-	},
-	{
-		"[get/take] [all/everything]"
-		" [[except/but] {for}/apart from] %text% from %character%",
-		lib_cmd_take_from_npc_except_multiple
-	},
-	{"[get/take] %text% from %character%", lib_cmd_take_from_npc_multiple},
-	{
-		"[[get/take/pick up] [all/everything]/pick [all/everything] up]",
-		lib_cmd_take_all
-	},
-	{
-		"[get/take/pick up] [all/everything] [[except/but] {for}/apart from] %text%",
-		lib_cmd_take_except_multiple
-	},
-	{"[get/take/pick up] %text%", lib_cmd_take_multiple},
-	{"pick %text% up", lib_cmd_take_multiple},
-	{
-		"[[drop/put down] [all/everything]/put [all/everything] down]",
-		lib_cmd_drop_all
-	},
-	{
-		"[drop/put down] [all/everything] [[except/but] {for}/apart from] %text%",
-		lib_cmd_drop_except_multiple
-	},
-	{"[drop/put down] %text%", lib_cmd_drop_multiple},
-	{"put %text% down", lib_cmd_drop_multiple},
-	{NULL, NULL}
-};
+    /* Acquisition of and disposal of inventory. */
+    {
+        "[[get/take/remove/extract] [all/everything] from/empty] %object%",
+        lib_cmd_take_all_from},
+    {"[[get/take/remove/extract] [all/everything] from/empty] %object%"
+     " [[except/but] {for}/apart from] %text%",
+     lib_cmd_take_from_except_multiple},
+    {"[get/take/remove/extract] [all/everything]"
+     " [[except/but] {for}/apart from] %text% from %object%",
+     lib_cmd_take_from_except_multiple},
+    {"[get/take/remove/extract] %text% from %object%",
+     lib_cmd_take_from_multiple},
+    {"[get/take] [all/everything] from %character%", lib_cmd_take_all_from_npc},
+    {"[get/take] [all/everything] from %character%"
+     " [[except/but] {for}/apart from] %text%",
+     lib_cmd_take_from_npc_except_multiple},
+    {"[get/take] [all/everything]"
+     " [[except/but] {for}/apart from] %text% from %character%",
+     lib_cmd_take_from_npc_except_multiple},
+    {"[get/take] %text% from %character%", lib_cmd_take_from_npc_multiple},
+    {"[[get/take/pick up] [all/everything]/pick [all/everything] up]",
+     lib_cmd_take_all},
+    {"[get/take/pick up] [all/everything] [[except/but] {for}/apart from] %text%",
+     lib_cmd_take_except_multiple},
+    {"[get/take/pick up] %text%", lib_cmd_take_multiple},
+    {"pick %text% up", lib_cmd_take_multiple},
+    {"[[drop/put down] [all/everything]/put [all/everything] down]",
+     lib_cmd_drop_all},
+    {"[drop/put down] [all/everything] [[except/but] {for}/apart from] %text%",
+     lib_cmd_drop_except_multiple},
+    {"[drop/put down] %text%", lib_cmd_drop_multiple},
+    {"put %text% down", lib_cmd_drop_multiple},
+    {NULL, NULL}};
 
 /* Standard library commands, other than movement and priority above. */
 static sc_commands_t STANDARD_COMMANDS[] = {
 
-	/* Inventory, and general investigation of surroundings. */
-	{"[inventory/inv/i]", lib_cmd_inventory},
-	{"[x/ex/exam/examine/l/look {at}] {{the} [room/location]}", lib_cmd_look},
-	{"[x/ex/exam/examine/look {at/in}] %object%", lib_cmd_examine_object},
-	{"[x/ex/exam/examine/look {at}] %character%", lib_cmd_examine_npc},
-	{"[x/ex/exam/examine/look {at}] [me/self/myself]", lib_cmd_examine_self},
-	{"[x/ex/exam/examine/look {at}] all", lib_cmd_examine_all},
+    /* Inventory, and general investigation of surroundings. */
+    {"[inventory/inv/i]", lib_cmd_inventory},
+    {"[x/ex/exam/examine/l/look {at}] {{the} [room/location]}", lib_cmd_look},
+    {"[x/ex/exam/examine/look {at/in}] %object%", lib_cmd_examine_object},
+    {"[x/ex/exam/examine/look {at}] %character%", lib_cmd_examine_npc},
+    {"[x/ex/exam/examine/look {at}] [me/self/myself]", lib_cmd_examine_self},
+    {"[x/ex/exam/examine/look {at}] all", lib_cmd_examine_all},
 
-	/* Attempted acquisition of and disposal of NPCs. */
-	{"[get/take/pick up] %character%", lib_cmd_take_npc},
-	{"pick %character% up", lib_cmd_take_npc},
+    /* Attempted acquisition of and disposal of NPCs. */
+    {"[get/take/pick up] %character%", lib_cmd_take_npc},
+    {"pick %character% up", lib_cmd_take_npc},
 
-	/* Manipulating selected objects. */
-	{"put [all/everything] [in/into/inside {of}] %object%", lib_cmd_put_all_in},
-	{
-		"put [all/everything] [[except/but] {for}/apart from] %text%"
-		" [in/into/inside {of}] %object%", lib_cmd_put_in_except_multiple
-	},
-	{"put %text% [in/into/inside {of}] %object%", lib_cmd_put_in_multiple},
-	{"put [all/everything] [on/onto/on top of] %object%", lib_cmd_put_all_on},
-	{
-		"put [all/everything] [[except/but] {for}/apart from] %text%"
-		" [on/onto/on top of] %object%", lib_cmd_put_on_except_multiple
-	},
-	{"put %text% [on/onto/on top of] %object%", lib_cmd_put_on_multiple},
-	{"open %object%", lib_cmd_open_object},
-	{"close %object%", lib_cmd_close_object},
-	{"unlock %object% with %text%", lib_cmd_unlock_object_with},
-	{"lock %object% with %text%", lib_cmd_lock_object_with},
-	{"unlock %object%", lib_cmd_unlock_object},
-	{"lock %object%", lib_cmd_lock_object},
-	{"read %object%", lib_cmd_read_object},
-	{"read *", lib_cmd_read_other},
-	{"give %object% to %character%", lib_cmd_give_object_npc},
-	{"sit {down/up} [on/in] %object%", lib_cmd_sit_on_object},
-	{"stand {up/down} [on/in] %object%", lib_cmd_stand_on_object},
-	{"[lie/lay] on %object%", lib_cmd_lie_on_object},
-	{"get {down/up} off %object%", lib_cmd_get_off_object},
-	{"get off", lib_cmd_get_off},
-	{"sit {down/up} {[on/in] {the} [ground/floor]}", lib_cmd_sit_on_floor},
-	{"stand {up/down} {[on/in] {the} [ground/floor]}", lib_cmd_stand_on_floor},
-	{"[lie/lay] {down/up} {[on/in] {the} [ground/floor]}", lib_cmd_lie_on_floor},
-	{"eat %object%", lib_cmd_eat_object},
+    /* Manipulating selected objects. */
+    {"put [all/everything] [in/into/inside {of}] %object%", lib_cmd_put_all_in},
+    {"put [all/everything] [[except/but] {for}/apart from] %text%"
+     " [in/into/inside {of}] %object%",
+     lib_cmd_put_in_except_multiple},
+    {"put %text% [in/into/inside {of}] %object%", lib_cmd_put_in_multiple},
+    {"put [all/everything] [on/onto/on top of] %object%", lib_cmd_put_all_on},
+    {"put [all/everything] [[except/but] {for}/apart from] %text%"
+     " [on/onto/on top of] %object%",
+     lib_cmd_put_on_except_multiple},
+    {"put %text% [on/onto/on top of] %object%", lib_cmd_put_on_multiple},
+    {"open %object%", lib_cmd_open_object},
+    {"close %object%", lib_cmd_close_object},
+    {"unlock %object% with %text%", lib_cmd_unlock_object_with},
+    {"lock %object% with %text%", lib_cmd_lock_object_with},
+    {"unlock %object%", lib_cmd_unlock_object},
+    {"lock %object%", lib_cmd_lock_object},
+    {"read %object%", lib_cmd_read_object},
+    {"read *", lib_cmd_read_other},
+    {"give %object% to %character%", lib_cmd_give_object_npc},
+    {"sit {down/up} [on/in] %object%", lib_cmd_sit_on_object},
+    {"stand {up/down} [on/in] %object%", lib_cmd_stand_on_object},
+    {"[lie/lay] on %object%", lib_cmd_lie_on_object},
+    {"get {down/up} off %object%", lib_cmd_get_off_object},
+    {"get off", lib_cmd_get_off},
+    {"sit {down/up} {[on/in] {the} [ground/floor]}", lib_cmd_sit_on_floor},
+    {"stand {up/down} {[on/in] {the} [ground/floor]}", lib_cmd_stand_on_floor},
+    {"[lie/lay] {down/up} {[on/in] {the} [ground/floor]}", lib_cmd_lie_on_floor},
+    {"eat %object%", lib_cmd_eat_object},
 
-	/* Dressing up, and dressing down. */
-	{
-		"[[wear/put on/don] [all/everything]/put [all/everything] on]",
-		lib_cmd_wear_all
-	},
-	{
-		"[wear/put on/don] [all/everything] [[except/but] {for}/apart from] %text%",
-		lib_cmd_wear_except_multiple
-	},
-	{"[wear/put on/don] %text%", lib_cmd_wear_multiple},
-	{"put %text% on", lib_cmd_wear_multiple},
-	{
-		"[[remove/take off/doff] [all/everything]/take [all/everything] off/strip]",
-		lib_cmd_remove_all
-	},
-	{
-		"[remove/take off/doff] [all/everything]"
-		" [[except/but] {for}/apart from] %text%",
-		lib_cmd_remove_except_multiple
-	},
-	{"[remove/take off/doff] %text%", lib_cmd_remove_multiple},
-	{"take %text% off", lib_cmd_remove_multiple},
+    /* Dressing up, and dressing down. */
+    {
+        "[[wear/put on/don] [all/everything]/put [all/everything] on]",
+        lib_cmd_wear_all},
+    {"[wear/put on/don] [all/everything] [[except/but] {for}/apart from] %text%",
+     lib_cmd_wear_except_multiple},
+    {"[wear/put on/don] %text%", lib_cmd_wear_multiple},
+    {"put %text% on", lib_cmd_wear_multiple},
+    {"[[remove/take off/doff] [all/everything]/take [all/everything] off/strip]",
+     lib_cmd_remove_all},
+    {"[remove/take off/doff] [all/everything]"
+     " [[except/but] {for}/apart from] %text%",
+     lib_cmd_remove_except_multiple},
+    {"[remove/take off/doff] %text%", lib_cmd_remove_multiple},
+    {"take %text% off", lib_cmd_remove_multiple},
 
-	/* Selected NPC interactions and conversation. */
-	{"ask %character% about %text%", lib_cmd_ask_npc_about},
-	{
-		"[attack/hit/kick/slap/shoot/stab] %character% with %object%",
-		lib_cmd_attack_npc_with
-	},
-	{"[attack/shoot] %character%", lib_cmd_attack_npc},
+    /* Selected NPC interactions and conversation. */
+    {"ask %character% about %text%", lib_cmd_ask_npc_about},
+    {"[attack/hit/kick/slap/shoot/stab] %character% with %object%",
+     lib_cmd_attack_npc_with},
+    {"[attack/shoot] %character%", lib_cmd_attack_npc},
 
-	/* More movement, waiting, and miscellaneous administrative commands. */
-	{"[goto/go {to}] %text%", lib_cmd_go_room},
-	{"[goto/go {to}] *", lib_cmd_print_room_exits},
-	{"[exit/exits/directions/where]", lib_cmd_print_room_exits},
-	{"[wait/z] %number%", lib_cmd_wait_number},
-	{"[wait/z]", lib_cmd_wait},
-	{"save", lib_cmd_save},
-	{"[restore/load]", lib_cmd_restore},
-	{"restart", lib_cmd_restart},
-	{"[again/g]", lib_cmd_again},
-	{"[redo /!]%number%", lib_cmd_redo_number},
-	{"[redo /!]%text%", lib_cmd_redo_text},
-	{"[redo/!]", lib_cmd_redo_last},
-	{"[quit/q]", lib_cmd_quit},
-	{"turns", lib_cmd_turns},
-	{"score", lib_cmd_score},
-	{"undo", lib_cmd_undo},
-	{"[hist/history] %number%", lib_cmd_history_number},
-	{"[hist/history]", lib_cmd_history},
-	{"[hint/hints]", lib_cmd_hints},
-	{"verbose", lib_cmd_verbose},
-	{"brief", lib_cmd_brief},
-	{"[notify/notification] %text%", lib_cmd_notify_on_off},
-	{"[notify/notification]", lib_cmd_notify},
-	{"time", lib_cmd_time},
-	{"date", lib_cmd_date},
-	{"[help/commands]", lib_cmd_help},
-	{"[gpl/license]", lib_cmd_license},
-	{"[about/info/information/author]", lib_cmd_information},
-	{"[clear/cls/clr]", lib_cmd_clear},
-	{"status{line}", lib_cmd_statusline},
-	{"version", lib_cmd_version},
+    /* More movement, waiting, and miscellaneous administrative commands. */
+    {"[goto/go {to}] %text%", lib_cmd_go_room},
+    {"[goto/go {to}] *", lib_cmd_print_room_exits},
+    {"[exit/exits/directions/where]", lib_cmd_print_room_exits},
+    {"[wait/z] %number%", lib_cmd_wait_number},
+    {"[wait/z]", lib_cmd_wait},
+    {"save", lib_cmd_save},
+    {"[restore/load]", lib_cmd_restore},
+    {"restart", lib_cmd_restart},
+    {"[again/g]", lib_cmd_again},
+    {"[redo /!]%number%", lib_cmd_redo_number},
+    {"[redo /!]%text%", lib_cmd_redo_text},
+    {"[redo/!]", lib_cmd_redo_last},
+    {"[quit/q]", lib_cmd_quit},
+    {"turns", lib_cmd_turns},
+    {"score", lib_cmd_score},
+    {"undo", lib_cmd_undo},
+    {"[hist/history] %number%", lib_cmd_history_number},
+    {"[hist/history]", lib_cmd_history},
+    {"[hint/hints]", lib_cmd_hints},
+    {"verbose", lib_cmd_verbose},
+    {"brief", lib_cmd_brief},
+    {"[notify/notification] %text%", lib_cmd_notify_on_off},
+    {"[notify/notification]", lib_cmd_notify},
+    {"time", lib_cmd_time},
+    {"date", lib_cmd_date},
+    {"[help/commands]", lib_cmd_help},
+    {"[gpl/license]", lib_cmd_license},
+    {"[about/info/information/author]", lib_cmd_information},
+    {"[clear/cls/clr]", lib_cmd_clear},
+    {"status{line}", lib_cmd_statusline},
+    {"version", lib_cmd_version},
 
-	{"[locate/where {is/are}/find] %object%", lib_cmd_locate_object},
-	{"[locate/where {is}/find] %character%", lib_cmd_locate_npc},
+    {"[locate/where {is/are}/find] %object%", lib_cmd_locate_object},
+    {"[locate/where {is}/find] %character%", lib_cmd_locate_npc},
 
-	{"[count/num]", lib_cmd_count},
+    {"[count/num]", lib_cmd_count},
 
-	/* Standard response commands; no real action, just output. */
-	{"[get/take/pick up] *", lib_cmd_get_what},
-	{"open *", lib_cmd_open_what},
-	{"close *", lib_cmd_close_other},
-	{"give %object% *", lib_cmd_give_object},
-	{"give *", lib_cmd_give_what},
-	{"lock %text%", lib_cmd_lock_other},
-	{"lock", lib_cmd_lock_what},
-	{"unlock %text%", lib_cmd_unlock_other},
-	{"unlock", lib_cmd_unlock_what},
-	{"sit {down/up} [on/in] *", lib_cmd_sit_other},
-	{"stand {up/down} [on/in] *", lib_cmd_stand_other},
-	{"[lie/lay] {down/up} [on/in] *", lib_cmd_lie_other},
-	{"[remove/take off/doff] *", lib_cmd_remove_what},
-	{"[drop/put down] *", lib_cmd_drop_what},
-	{"[wear/put on/don] *", lib_cmd_wear_what},
-	{
-		"[shit/fuck/bastard/cunt/crap/hell/shag/bollocks/bollox/bugger] *",
-		lib_cmd_profanity
-	},
-	{"[x/examine/look {at}] *", lib_cmd_examine_other},
-	{"[locate/where {is/are}/find] *", lib_cmd_locate_other},
-	{"[cp/mv/ln/ls] *", lib_cmd_unix_like},
-	{"dir *", lib_cmd_dos_like},
-	{"ask %character% *", lib_cmd_ask_npc},
-	{"ask %object% *", lib_cmd_ask_object},
-	{"ask *", lib_cmd_ask_other},
-	{"block %object% *", lib_cmd_block_object},
-	{"block %text%", lib_cmd_block_other},
-	{"block", lib_cmd_block_what},
-	{"[break/destroy/smash] %object% *", lib_cmd_break_object},
-	{"[break/destroy/smash] %text%", lib_cmd_break_other},
-	{"break", lib_cmd_break_what},
-	{"destroy", lib_cmd_destroy_what},
-	{"smash", lib_cmd_smash_what},
-	{"buy %object% *", lib_cmd_buy_object},
-	{"buy %text%", lib_cmd_buy_other},
-	{"buy", lib_cmd_buy_what},
-	{"clean %object% *", lib_cmd_clean_object},
-	{"clean %text%", lib_cmd_clean_other},
-	{"clean", lib_cmd_clean_what},
-	{"climb %object% *", lib_cmd_climb_object},
-	{"climb %text%", lib_cmd_climb_other},
-	{"climb", lib_cmd_climb_what},
-	{"cry *", lib_cmd_cry},
-	{"cut %object% *", lib_cmd_cut_object},
-	{"cut %text%", lib_cmd_cut_other},
-	{"cut", lib_cmd_cut_what},
-	{"dance *", lib_cmd_dance},
-	{"drink %object% *", lib_cmd_drink_object},
-	{"drink %text%", lib_cmd_drink_other},
-	{"drink", lib_cmd_drink_what},
-	{"eat *", lib_cmd_eat_other},
-	{"feed *", lib_cmd_feed},
-	{"feel *", lib_cmd_feel},
-	{"fight *", lib_cmd_fight},
-	{"fix %object% *", lib_cmd_fix_object},
-	{"fix %text%", lib_cmd_fix_other},
-	{"fix", lib_cmd_fix_what},
-	{"fly *", lib_cmd_fly},
-	{"hint *", lib_cmd_hint},
-	{"hit %character%", lib_cmd_attack_npc},
-	{"hit %object% *", lib_cmd_hit_object},
-	{"hit %text%", lib_cmd_hit_other},
-	{"hit", lib_cmd_hit_what},
-	{"hum *", lib_cmd_hum},
-	{"jump *", lib_cmd_jump},
-	{"kick %character%", lib_cmd_attack_npc},
-	{"kick %object% *", lib_cmd_kick_object},
-	{"kick %text%", lib_cmd_kick_other},
-	{"kick", lib_cmd_kick_what},
-	{"kiss %character% *", lib_cmd_kiss_npc},
-	{"kiss %object% *", lib_cmd_kiss_object},
-	{"kiss *", lib_cmd_kiss_other},
-	{"kill *", lib_cmd_kill_other},
-	{"lift %object% *", lib_cmd_lift_object},
-	{"lift %text%", lib_cmd_lift_other},
-	{"lift", lib_cmd_lift_what},
-	{"light %object% *", lib_cmd_light_object},
-	{"light %text%", lib_cmd_light_other},
-	{"light", lib_cmd_light_what},
-	{"listen *", lib_cmd_listen},
-	{"mend %object% *", lib_cmd_mend_object},
-	{"mend %text%", lib_cmd_mend_other},
-	{"mend", lib_cmd_mend_what},
-	{"move %object% *", lib_cmd_move_object},
-	{"move %text%", lib_cmd_move_other},
-	{"move", lib_cmd_move_what},
-	{"please *", lib_cmd_please},
-	{"press %object% *", lib_cmd_press_object},
-	{"press %text%", lib_cmd_press_other},
-	{"press", lib_cmd_press_what},
-	{"pull %object% *", lib_cmd_pull_object},
-	{"pull %text%", lib_cmd_pull_other},
-	{"pull", lib_cmd_pull_what},
-	{"punch *", lib_cmd_punch},
-	{"push %object% *", lib_cmd_push_object},
-	{"push %text%", lib_cmd_push_other},
-	{"push", lib_cmd_push_what},
-	{"repair %object% *", lib_cmd_repair_object},
-	{"repair %text%", lib_cmd_repair_other},
-	{"repair", lib_cmd_repair_what},
-	{"rub %object% *", lib_cmd_rub_object},
-	{"rub %text%", lib_cmd_rub_other},
-	{"rub", lib_cmd_rub_what},
-	{"run *", lib_cmd_run},
-	{"say *", lib_cmd_say},
-	{"sell %object% *", lib_cmd_sell_object},
-	{"sell %text%", lib_cmd_sell_other},
-	{"sell", lib_cmd_sell_what},
-	{"shake %object% *", lib_cmd_shake_object},
-	{"shake %text%", lib_cmd_shake_other},
-	{"shake", lib_cmd_shake_what},
-	{"shout *", lib_cmd_shout},
-	{"sing *", lib_cmd_sing},
-	{"sleep *", lib_cmd_sleep},
-	{"smell %object% *", lib_cmd_smell_object},
-	{"smell *", lib_cmd_smell_other},
-	{"stop %object% *", lib_cmd_stop_object},
-	{"stop %text%", lib_cmd_stop_other},
-	{"stop", lib_cmd_stop_what},
-	{"suck %object% *", lib_cmd_suck_object},
-	{"suck %text%", lib_cmd_suck_other},
-	{"suck", lib_cmd_suck_what},
-	{"talk *", lib_cmd_talk},
-	{"thank *", lib_cmd_thank},
-	{"turn %object% *", lib_cmd_turn_object},
-	{"turn %text%", lib_cmd_turn_other},
-	{"turn", lib_cmd_turn_what},
-	{"touch %object% *", lib_cmd_touch_object},
-	{"touch %text%", lib_cmd_touch_other},
-	{"touch", lib_cmd_touch_what},
-	{"unblock %object% *", lib_cmd_unblock_object},
-	{"unblock %text%", lib_cmd_unblock_other},
-	{"unblock", lib_cmd_unblock_what},
-	{"wash %object% *", lib_cmd_wash_object},
-	{"wash %text%", lib_cmd_wash_other},
-	{"wash", lib_cmd_wash_what},
-	{"whistle *", lib_cmd_whistle},
-	{"[why/when/what/can/how] *", lib_cmd_interrogation},
-	{"xyzzy *", lib_cmd_xyzzy},
-	{"campbell", lib_cmd_egotistic},
-	{"[yes/no] *", lib_cmd_yes_or_no},
-	{"* %object% *", lib_cmd_verb_object},
-	{"* %character% *", lib_cmd_verb_npc},
+    /* Standard response commands; no real action, just output. */
+    {"[get/take/pick up] *", lib_cmd_get_what},
+    {"open *", lib_cmd_open_what},
+    {"close *", lib_cmd_close_other},
+    {"give %object% *", lib_cmd_give_object},
+    {"give *", lib_cmd_give_what},
+    {"lock %text%", lib_cmd_lock_other},
+    {"lock", lib_cmd_lock_what},
+    {"unlock %text%", lib_cmd_unlock_other},
+    {"unlock", lib_cmd_unlock_what},
+    {"sit {down/up} [on/in] *", lib_cmd_sit_other},
+    {"stand {up/down} [on/in] *", lib_cmd_stand_other},
+    {"[lie/lay] {down/up} [on/in] *", lib_cmd_lie_other},
+    {"[remove/take off/doff] *", lib_cmd_remove_what},
+    {"[drop/put down] *", lib_cmd_drop_what},
+    {"[wear/put on/don] *", lib_cmd_wear_what},
+    {"[shit/fuck/bastard/cunt/crap/hell/shag/bollocks/bollox/bugger] *",
+     lib_cmd_profanity},
+    {"[x/examine/look {at}] *", lib_cmd_examine_other},
+    {"[locate/where {is/are}/find] *", lib_cmd_locate_other},
+    {"[cp/mv/ln/ls] *", lib_cmd_unix_like},
+    {"dir *", lib_cmd_dos_like},
+    {"ask %character% *", lib_cmd_ask_npc},
+    {"ask %object% *", lib_cmd_ask_object},
+    {"ask *", lib_cmd_ask_other},
+    {"block %object% *", lib_cmd_block_object},
+    {"block %text%", lib_cmd_block_other},
+    {"block", lib_cmd_block_what},
+    {"[break/destroy/smash] %object% *", lib_cmd_break_object},
+    {"[break/destroy/smash] %text%", lib_cmd_break_other},
+    {"break", lib_cmd_break_what},
+    {"destroy", lib_cmd_destroy_what},
+    {"smash", lib_cmd_smash_what},
+    {"buy %object% *", lib_cmd_buy_object},
+    {"buy %text%", lib_cmd_buy_other},
+    {"buy", lib_cmd_buy_what},
+    {"clean %object% *", lib_cmd_clean_object},
+    {"clean %text%", lib_cmd_clean_other},
+    {"clean", lib_cmd_clean_what},
+    {"climb %object% *", lib_cmd_climb_object},
+    {"climb %text%", lib_cmd_climb_other},
+    {"climb", lib_cmd_climb_what},
+    {"cry *", lib_cmd_cry},
+    {"cut %object% *", lib_cmd_cut_object},
+    {"cut %text%", lib_cmd_cut_other},
+    {"cut", lib_cmd_cut_what},
+    {"dance *", lib_cmd_dance},
+    {"drink %object% *", lib_cmd_drink_object},
+    {"drink %text%", lib_cmd_drink_other},
+    {"drink", lib_cmd_drink_what},
+    {"eat *", lib_cmd_eat_other},
+    {"feed *", lib_cmd_feed},
+    {"feel *", lib_cmd_feel},
+    {"fight *", lib_cmd_fight},
+    {"fix %object% *", lib_cmd_fix_object},
+    {"fix %text%", lib_cmd_fix_other},
+    {"fix", lib_cmd_fix_what},
+    {"fly *", lib_cmd_fly},
+    {"hint *", lib_cmd_hint},
+    {"hit %character%", lib_cmd_attack_npc},
+    {"hit %object% *", lib_cmd_hit_object},
+    {"hit %text%", lib_cmd_hit_other},
+    {"hit", lib_cmd_hit_what},
+    {"hum *", lib_cmd_hum},
+    {"jump *", lib_cmd_jump},
+    {"kick %character%", lib_cmd_attack_npc},
+    {"kick %object% *", lib_cmd_kick_object},
+    {"kick %text%", lib_cmd_kick_other},
+    {"kick", lib_cmd_kick_what},
+    {"kiss %character% *", lib_cmd_kiss_npc},
+    {"kiss %object% *", lib_cmd_kiss_object},
+    {"kiss *", lib_cmd_kiss_other},
+    {"kill *", lib_cmd_kill_other},
+    {"lift %object% *", lib_cmd_lift_object},
+    {"lift %text%", lib_cmd_lift_other},
+    {"lift", lib_cmd_lift_what},
+    {"light %object% *", lib_cmd_light_object},
+    {"light %text%", lib_cmd_light_other},
+    {"light", lib_cmd_light_what},
+    {"listen *", lib_cmd_listen},
+    {"mend %object% *", lib_cmd_mend_object},
+    {"mend %text%", lib_cmd_mend_other},
+    {"mend", lib_cmd_mend_what},
+    {"move %object% *", lib_cmd_move_object},
+    {"move %text%", lib_cmd_move_other},
+    {"move", lib_cmd_move_what},
+    {"please *", lib_cmd_please},
+    {"press %object% *", lib_cmd_press_object},
+    {"press %text%", lib_cmd_press_other},
+    {"press", lib_cmd_press_what},
+    {"pull %object% *", lib_cmd_pull_object},
+    {"pull %text%", lib_cmd_pull_other},
+    {"pull", lib_cmd_pull_what},
+    {"punch *", lib_cmd_punch},
+    {"push %object% *", lib_cmd_push_object},
+    {"push %text%", lib_cmd_push_other},
+    {"push", lib_cmd_push_what},
+    {"repair %object% *", lib_cmd_repair_object},
+    {"repair %text%", lib_cmd_repair_other},
+    {"repair", lib_cmd_repair_what},
+    {"rub %object% *", lib_cmd_rub_object},
+    {"rub %text%", lib_cmd_rub_other},
+    {"rub", lib_cmd_rub_what},
+    {"run *", lib_cmd_run},
+    {"say *", lib_cmd_say},
+    {"sell %object% *", lib_cmd_sell_object},
+    {"sell %text%", lib_cmd_sell_other},
+    {"sell", lib_cmd_sell_what},
+    {"shake %object% *", lib_cmd_shake_object},
+    {"shake %text%", lib_cmd_shake_other},
+    {"shake", lib_cmd_shake_what},
+    {"shout *", lib_cmd_shout},
+    {"sing *", lib_cmd_sing},
+    {"sleep *", lib_cmd_sleep},
+    {"smell %object% *", lib_cmd_smell_object},
+    {"smell *", lib_cmd_smell_other},
+    {"stop %object% *", lib_cmd_stop_object},
+    {"stop %text%", lib_cmd_stop_other},
+    {"stop", lib_cmd_stop_what},
+    {"suck %object% *", lib_cmd_suck_object},
+    {"suck %text%", lib_cmd_suck_other},
+    {"suck", lib_cmd_suck_what},
+    {"talk *", lib_cmd_talk},
+    {"thank *", lib_cmd_thank},
+    {"turn %object% *", lib_cmd_turn_object},
+    {"turn %text%", lib_cmd_turn_other},
+    {"turn", lib_cmd_turn_what},
+    {"touch %object% *", lib_cmd_touch_object},
+    {"touch %text%", lib_cmd_touch_other},
+    {"touch", lib_cmd_touch_what},
+    {"unblock %object% *", lib_cmd_unblock_object},
+    {"unblock %text%", lib_cmd_unblock_other},
+    {"unblock", lib_cmd_unblock_what},
+    {"wash %object% *", lib_cmd_wash_object},
+    {"wash %text%", lib_cmd_wash_other},
+    {"wash", lib_cmd_wash_what},
+    {"whistle *", lib_cmd_whistle},
+    {"[why/when/what/can/how] *", lib_cmd_interrogation},
+    {"xyzzy *", lib_cmd_xyzzy},
+    {"campbell", lib_cmd_egotistic},
+    {"[yes/no] *", lib_cmd_yes_or_no},
+    {"* %object% *", lib_cmd_verb_object},
+    {"* %character% *", lib_cmd_verb_npc},
 
-	/* SCARE debugger hook command, placed last just in case... */
-	{"{#}debug{ger}", debug_cmd_debugger},
+    /* SCARE debugger hook command, placed last just in case... */
+    {"{#}debug{ger}", debug_cmd_debugger},
 
-	{NULL, NULL}
-};
-
+    {NULL, NULL}};
 
 /*
  * run_priority_commands()
@@ -536,7 +497,6 @@ static sc_bool run_standard_commands(sc_gameref_t game, const sc_char *string) {
 	return FALSE;
 }
 
-
 /*
  * run_update_status()
  *
@@ -578,7 +538,6 @@ static void run_update_status(sc_gameref_t game) {
 	game->status_line = filtered;
 }
 
-
 /*
  * run_notify_score_change()
  *
@@ -596,8 +555,7 @@ static void run_notify_score_change(sc_gameref_t game) {
 	 * Do nothing if no undo available, or if notification is off, or if we've
 	 * already done this once this turn.
 	 */
-	if (!game->undo_available
-	        || !game->notify_score_change || game->has_notified)
+	if (!game->undo_available || !game->notify_score_change || game->has_notified)
 		return;
 
 	/* Note any change in the score. */
@@ -615,7 +573,6 @@ static void run_notify_score_change(sc_gameref_t game) {
 	game->has_notified = TRUE;
 }
 
-
 /*
  * run_match_task_common()
  * run_match_task_commands()
@@ -628,7 +585,7 @@ static void run_notify_score_change(sc_gameref_t game) {
  * are selected by 'forwards'.
  */
 static sc_bool run_match_task_common(sc_gameref_t game, sc_int task, const sc_char *string,
-		sc_bool forwards, sc_bool is_library, sc_bool is_normal) {
+                                     sc_bool forwards, sc_bool is_library, sc_bool is_normal) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[4];
 	sc_int command_count, command;
@@ -678,7 +635,7 @@ static sc_bool run_match_task_common(sc_gameref_t game, sc_int task, const sc_ch
 }
 
 static sc_bool run_match_task_commands(sc_gameref_t game, sc_int task,
-		const sc_char *string, sc_bool forwards, sc_bool is_library) {
+                                       const sc_char *string, sc_bool forwards, sc_bool is_library) {
 	/*
 	 * Match tasks using the normal pattern matcher, with or without any note
 	 * about whether the call is from the library.
@@ -687,11 +644,10 @@ static sc_bool run_match_task_commands(sc_gameref_t game, sc_int task,
 }
 
 static sc_bool run_match_task_functions(sc_gameref_t game, sc_int task,
-		const sc_char *string, sc_bool forwards) {
+                                        const sc_char *string, sc_bool forwards) {
 	/* Match tasks against "task command functions". */
 	return run_match_task_common(game, task, string, forwards, FALSE, FALSE);
 }
-
 
 /*
  * run_task_is_unrestricted()
@@ -734,14 +690,14 @@ static sc_bool run_task_is_loudly_restricted(sc_gameref_t game, sc_int task) {
 	if (!restr_eval_task_restrictions(game, task,
 	                                  &restrictions_passed, &fail_message)) {
 		sc_error("run_task_is_loudly_restricted:"
-		         " restrictions error, %ld\n", task);
+		         " restrictions error, %ld\n",
+		         task);
 		return TRUE;
 	}
 
 	/* Return TRUE if the task is restricted and indicates why. */
 	return !restrictions_passed && (fail_message != NULL);
 }
-
 
 /*
  * run_game_commands_common()
@@ -779,7 +735,7 @@ static sc_bool run_task_is_loudly_restricted(sc_gameref_t game, sc_int task) {
  * handlers and get_all/drop_all handlers.  No pressure, then.
  */
 static sc_bool run_game_commands_common(sc_gameref_t game, const sc_char *string,
-		sc_bool include_restrictions, sc_bool is_library) {
+                                        sc_bool include_restrictions, sc_bool is_library) {
 	sc_bool is_matched = FALSE, is_handled = FALSE;
 	sc_bool *is_matching;
 	sc_int task_count, task, direction;
@@ -813,9 +769,8 @@ static sc_bool run_game_commands_common(sc_gameref_t game, const sc_char *string
 		for (direction = 0; direction < 2; direction++) {
 			const sc_bool is_forwards = !direction;
 
-			if (task_can_run_task_directional(game, task, is_forwards)
-			        && run_match_task_commands(game, task, string,
-			                                   is_forwards, is_library)) {
+			if (task_can_run_task_directional(game, task, is_forwards) && run_match_task_commands(game, task, string,
+			                                                                                      is_forwards, is_library)) {
 				if (run_task_is_unrestricted(game, task)) {
 					if (task_run_task(game, task, is_forwards))
 						is_handled = TRUE;
@@ -851,9 +806,8 @@ static sc_bool run_game_commands_common(sc_gameref_t game, const sc_char *string
 			for (direction = 0; direction < 2; direction++) {
 				const sc_bool is_forwards = !direction;
 
-				if (task_can_run_task_directional(game, task, is_forwards)
-				        && run_match_task_commands(game, task, string,
-				                                   is_forwards, is_library)) {
+				if (task_can_run_task_directional(game, task, is_forwards) && run_match_task_commands(game, task, string,
+				                                                                                      is_forwards, is_library)) {
 					if (run_task_is_loudly_restricted(game, task)) {
 						if (task_run_task(game, task, is_forwards)) {
 							is_handled = TRUE;
@@ -873,7 +827,7 @@ static sc_bool run_game_commands_common(sc_gameref_t game, const sc_char *string
 }
 
 static sc_bool run_game_commands_in_parser_context(sc_gameref_t game,
-		const sc_char *string, sc_bool include_restrictions) {
+                                                   const sc_char *string, sc_bool include_restrictions) {
 	/*
 	 * Try game commands, either with or without restrictions, and all full and
 	 * complete parse matching (no special case for game commands that begin
@@ -890,7 +844,6 @@ static sc_bool run_game_commands_in_library_context(sc_gameref_t game, const sc_
 	 */
 	return run_game_commands_common(game, string, TRUE, TRUE);
 }
-
 
 /*
  * run_game_functions()
@@ -915,15 +868,13 @@ static void run_game_functions(sc_gameref_t game, const sc_char *string) {
 		for (direction = 0; direction < 2; direction++) {
 			const sc_bool is_forwards = !direction;
 
-			if (task_can_run_task_directional(game, task, is_forwards)
-			        && run_match_task_functions(game, task, string, is_forwards)) {
+			if (task_can_run_task_directional(game, task, is_forwards) && run_match_task_functions(game, task, string, is_forwards)) {
 				if (run_task_is_unrestricted(game, task))
 					task_run_task(game, task, is_forwards);
 			}
 		}
 	}
 }
-
 
 /*
  * run_all_commands()
@@ -997,7 +948,6 @@ static sc_bool run_all_commands(sc_gameref_t game, const sc_char *string) {
 sc_bool run_game_task_commands(sc_gameref_t game, const sc_char *string) {
 	return run_game_commands_in_library_context(game, string);
 }
-
 
 /*
  * run_player_input()
@@ -1077,8 +1027,7 @@ static sc_bool run_player_input(sc_gameref_t game) {
 		 * with similar inputs.
 		 */
 		length = (line_buffer[0] == NUL) ? 0 : 1;
-		while (line_buffer[length] != NUL
-		        && strchr(SEPARATORS, line_buffer[length]) == NULL)
+		while (line_buffer[length] != NUL && strchr(SEPARATORS, line_buffer[length]) == NULL)
 			length++;
 
 		/*
@@ -1091,8 +1040,7 @@ static sc_bool run_player_input(sc_gameref_t game) {
 		line_element[length] = NUL;
 
 		extent = length;
-		extent += (line_buffer[length] == NUL
-		           || strchr(SEPARATORS, line_buffer[length]) == NULL) ? 0 : 1;
+		extent += (line_buffer[length] == NUL || strchr(SEPARATORS, line_buffer[length]) == NULL) ? 0 : 1;
 		extent += strspn(line_buffer + extent, WHITESPACE);
 		memmove(line_buffer,
 		        line_buffer + extent, strlen(line_buffer) - extent + 1);
@@ -1110,7 +1058,7 @@ static sc_bool run_player_input(sc_gameref_t game) {
 	 * the original line element.
 	 */
 	command = replaced ? sc_normalize_string(replaced)
-	          : (filtered ? sc_normalize_string(filtered) : line_element);
+	                   : (filtered ? sc_normalize_string(filtered) : line_element);
 	if (command != line_element) {
 		if_print_tag(SC_TAG_ITALICS, "");
 		if_print_character('[');
@@ -1193,8 +1141,7 @@ static sc_bool run_player_input(sc_gameref_t game) {
 	 * and return straight away.  Do the same if this was an undo, detected by
 	 * noting that undo is no longer available, where it was on entry.
 	 */
-	if (game->do_restart || game->do_restore
-	        || (was_undo_available && !game->undo_available)) {
+	if (game->do_restart || game->do_restore || (was_undo_available && !game->undo_available)) {
 		line_buffer[0] = NUL;
 		return status;
 	}
@@ -1230,7 +1177,6 @@ static sc_bool run_player_input(sc_gameref_t game) {
 
 	return status;
 }
-
 
 /*
  * run_main_loop()
@@ -1412,7 +1358,6 @@ static void run_main_loop(CONTEXT, sc_gameref_t game) {
 	run_player_input(game);
 }
 
-
 /*
  * run_create()
  *
@@ -1477,7 +1422,6 @@ sc_gameref_t run_create(sc_read_callbackref_t callback, void *opaque) {
 	return game;
 }
 
-
 /*
  * run_restart_handler()
  *
@@ -1522,7 +1466,6 @@ static void run_restart_handler(sc_gameref_t game) {
 	res_cancel_resources(game);
 }
 
-
 /*
  * run_restore_handler()
  *
@@ -1542,7 +1485,6 @@ static void run_restore_handler(sc_gameref_t game) {
 	 */
 	game->stop_sound = TRUE;
 }
-
 
 /*
  * run_quit_handler()
@@ -1568,7 +1510,6 @@ static void run_quit_handler(sc_gameref_t game) {
 	assert(!game->is_running);
 	run_player_input(game);
 }
-
 
 /*
  * run_interpret()
@@ -1622,7 +1563,6 @@ void run_interpret(CONTEXT, sc_gameref_t game) {
 	run_quit_handler(game);
 }
 
-
 /*
  * run_destroy()
  *
@@ -1674,7 +1614,6 @@ void run_destroy(sc_gameref_t game) {
 	gs_destroy(game);
 }
 
-
 /*
  * run_quit()
  *
@@ -1694,7 +1633,6 @@ void run_quit(CONTEXT, sc_gameref_t game) {
 	game->is_running = FALSE;
 	LONG_JUMP;
 }
-
 
 /*
  * run_restart()
@@ -1720,7 +1658,6 @@ void run_restart(CONTEXT, sc_gameref_t game) {
 	run_restart_handler(game);
 	game->is_running = FALSE;
 }
-
 
 /*
  * run_save()
@@ -1796,7 +1733,6 @@ sc_bool run_restore_prompted(CONTEXT, sc_gameref_t game) {
 	return run_restore_common(context, game, NULL, NULL);
 }
 
-
 /*
  * run_undo()
  *
@@ -1852,7 +1788,6 @@ sc_bool run_undo(CONTEXT, sc_gameref_t game) {
 	return FALSE;
 }
 
-
 /*
  * run_is_running()
  *
@@ -1863,7 +1798,6 @@ sc_bool run_is_running(sc_gameref_t game) {
 
 	return game->is_running;
 }
-
 
 /*
  * run_has_completed()
@@ -1877,7 +1811,6 @@ sc_bool run_has_completed(sc_gameref_t game) {
 	return game->has_completed;
 }
 
-
 /*
  * run_is_undo_available()
  *
@@ -1890,7 +1823,6 @@ sc_bool run_is_undo_available(sc_gameref_t game) {
 	return game->undo_available || memo_is_load_available(memento);
 }
 
-
 /*
  * run_get_attributes()
  * run_set_attributes()
@@ -1898,9 +1830,9 @@ sc_bool run_is_undo_available(sc_gameref_t game) {
  * Get and set selected game attributes.
  */
 void run_get_attributes(sc_gameref_t game, const sc_char **game_name, const sc_char **game_author,
-		const sc_char **game_compile_date, sc_int *turns, sc_int *score, sc_int *max_score,
-		const sc_char **current_room_name, const sc_char **status_line, const sc_char **preferred_font,
-		sc_bool *bold_room_names, sc_bool *verbose, sc_bool *notify_score_change) {
+                        const sc_char **game_compile_date, sc_int *turns, sc_int *score, sc_int *max_score,
+                        const sc_char **current_room_name, const sc_char **status_line, const sc_char **preferred_font,
+                        sc_bool *bold_room_names, sc_bool *verbose, sc_bool *notify_score_change) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_vartype_t vt_key[2];
@@ -1977,7 +1909,7 @@ void run_get_attributes(sc_gameref_t game, const sc_char **game_name, const sc_c
 }
 
 void run_set_attributes(sc_gameref_t game, sc_bool bold_room_names, sc_bool verbose,
-		sc_bool notify_score_change) {
+                        sc_bool notify_score_change) {
 	assert(gs_is_game_valid(game));
 
 	/* Set game options. */
@@ -1985,7 +1917,6 @@ void run_set_attributes(sc_gameref_t game, sc_bool bold_room_names, sc_bool verb
 	game->verbose = verbose;
 	game->notify_score_change = notify_score_change;
 }
-
 
 /*
  * run_hint_iterate()
@@ -2028,7 +1959,6 @@ sc_hintref_t run_hint_iterate(sc_gameref_t game, sc_hintref_t hint) {
 	return task < gs_task_count(game) ? game->tasks + task : NULL;
 }
 
-
 /*
  * run_get_hint_common()
  * run_get_hint_question()
@@ -2043,7 +1973,7 @@ sc_hintref_t run_hint_iterate(sc_gameref_t game, sc_hintref_t hint) {
  * Hint strings are NULL if empty (not defined by the game).
  */
 static const sc_char *run_get_hint_common(sc_gameref_t game, sc_hintref_t hint,
-		const sc_char * (*handler)(sc_gameref_t, sc_int)) {
+                                          const sc_char *(*handler)(sc_gameref_t, sc_int)) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	const sc_var_setref_t vars = gs_get_vars(game);
 	sc_int task;

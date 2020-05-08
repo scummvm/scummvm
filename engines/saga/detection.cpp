@@ -27,15 +27,15 @@
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
-#include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 #include "graphics/thumbnail.h"
 
 #include "saga/animation.h"
 #include "saga/displayinfo.h"
 #include "saga/events.h"
-#include "saga/resource.h"
 #include "saga/interface.h"
+#include "saga/resource.h"
 #include "saga/scene.h"
 
 namespace Saga {
@@ -77,15 +77,14 @@ int SagaEngine::getStartSceneNumber() const { return _gameDescription->startScen
 const GamePatchDescription *SagaEngine::getPatchDescriptions() const { return _gameDescription->patchDescriptions; }
 const ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _gameDescription->desc.filesDescriptions; }
 
-}
+} // namespace Saga
 
 static const PlainGameDescriptor sagaGames[] = {
-	{"ite", "Inherit the Earth: Quest for the Orb"},
-	{"ihnm", "I Have No Mouth and I Must Scream"},
-	{"dino", "Dinotopia"},
-	{"fta2", "Faery Tale Adventure II: Halls of the Dead"},
-	{0, 0}
-};
+    {"ite", "Inherit the Earth: Quest for the Orb"},
+    {"ihnm", "I Have No Mouth and I Must Scream"},
+    {"dino", "Dinotopia"},
+    {"fta2", "Faery Tale Adventure II: Halls of the Dead"},
+    {0, 0}};
 
 #include "saga/detection_tables.h"
 
@@ -102,22 +101,22 @@ public:
 		return "SAGA ["
 
 #if defined(ENABLE_IHNM) && defined(ENABLE_SAGA2)
-			"all games"
+		       "all games"
 #else
-			"ITE"
+		       "ITE"
 
 #if defined(ENABLE_IHNM)
-			", IHNM"
+		       ", IHNM"
 #endif
 
 #if defined(ENABLE_SAGA2)
-			", SAGA2 games"
+		       ", SAGA2 games"
 #endif
 
 #endif
-		"]";
+		       "]";
 
-;
+		;
 	}
 
 	const char *getOriginalCopyright() const override {
@@ -138,22 +137,20 @@ public:
 };
 
 bool SagaMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate) ||
+	       (f == kSavesSupportPlayTime) ||
+	       (f == kSimpleSavesNames);
 }
 
 bool Saga::SagaEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -214,7 +211,7 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	if (in) {
 		uint32 type = in->readUint32BE();
-		in->readUint32LE();		// size
+		in->readUint32LE(); // size
 		uint32 version = in->readUint32LE();
 		char name[SAVE_TITLE_SIZE];
 		in->read(name, sizeof(name));
@@ -234,7 +231,7 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 		if (version < 4)
 			warning("This savegame is not endian-safe. There may be problems");
 
-		if (type != MKTAG('S','A','G','A')) {
+		if (type != MKTAG('S', 'A', 'G', 'A')) {
 			error("SagaEngine::load wrong save game format");
 		}
 
@@ -280,9 +277,9 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SAGA)
-	REGISTER_PLUGIN_DYNAMIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
+REGISTER_PLUGIN_STATIC(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
 #endif
 
 namespace Saga {
@@ -296,21 +293,21 @@ bool SagaEngine::initGame() {
 
 const GameDisplayInfo &SagaEngine::getDisplayInfo() {
 	switch (_gameDescription->gameId) {
-		case GID_ITE:
-			return ITE_DisplayInfo;
+	case GID_ITE:
+		return ITE_DisplayInfo;
 #ifdef ENABLE_IHNM
-		case GID_IHNM:
-			return IHNM_DisplayInfo;
+	case GID_IHNM:
+		return IHNM_DisplayInfo;
 #endif
 #ifdef ENABLE_SAGA2
-		case GID_DINO:
-			return FTA2_DisplayInfo;	// TODO
-		case GID_FTA2:
-			return FTA2_DisplayInfo;
+	case GID_DINO:
+		return FTA2_DisplayInfo; // TODO
+	case GID_FTA2:
+		return FTA2_DisplayInfo;
 #endif
-		default:
-			error("getDisplayInfo: Unknown game ID");
-			return ITE_DisplayInfo;		// for compilers that don't support NORETURN
+	default:
+		error("getDisplayInfo: Unknown game ID");
+		return ITE_DisplayInfo; // for compilers that don't support NORETURN
 	}
 }
 
@@ -331,22 +328,22 @@ Common::Error SagaEngine::loadGameState(int slot) {
 	load(calcSaveFileName((uint)slot));
 	syncSoundSettings();
 
-	return Common::kNoError;	// TODO: return success/failure
+	return Common::kNoError; // TODO: return success/failure
 }
 
 Common::Error SagaEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	save(calcSaveFileName((uint)slot), desc.c_str());
-	return Common::kNoError;	// TODO: return success/failure
+	return Common::kNoError; // TODO: return success/failure
 }
 
 bool SagaEngine::canLoadGameStateCurrently() {
 	return !_scene->isInIntro() &&
-		(_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
+	       (_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
 }
 
 bool SagaEngine::canSaveGameStateCurrently() {
 	return !_scene->isInIntro() &&
-		(_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
+	       (_interface->getMode() == kPanelMain || _interface->getMode() == kPanelChapterSelection);
 }
 
 } // End of namespace Saga

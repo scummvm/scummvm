@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/screen/dither.h"
 #include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/files/nuvie_io_file.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/dither.h"
+#include "ultima/nuvie/screen/screen.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -164,7 +164,6 @@ void GamePalette::rotatePalette() {
 		counter = 1;
 	} else
 		counter = 0;
-
 }
 
 } // End of namespace Nuvie

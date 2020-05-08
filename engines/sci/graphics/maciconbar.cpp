@@ -20,13 +20,13 @@
  *
  */
 
-#include "sci/sci.h"
+#include "sci/graphics/maciconbar.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
+#include "sci/sci.h"
 
 #include "common/memstream.h"
 #include "common/system.h"

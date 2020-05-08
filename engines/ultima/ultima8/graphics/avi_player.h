@@ -44,12 +44,11 @@ public:
 
 	void start() override;
 	void stop() override;
-	bool isPlaying() const override{
+	bool isPlaying() const override {
 		return _playing;
 	}
 
 private:
-
 	bool _playing;
 	Video::AVIDecoder *_decoder;
 	Texture _currentFrame;
@@ -60,7 +59,6 @@ private:
 	uint32 _xoff;
 	uint32 _yoff;
 	bool _doubleSize;
-
 };
 
 } // End of namespace Ultima8

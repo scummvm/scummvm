@@ -29,11 +29,11 @@
 #include "bladerunner/bladerunner.h"
 
 #include "common/debug.h"
-#include "common/stream.h"
 #include "common/random.h"
+#include "common/stream.h"
 
 namespace Common {
-	class MemoryReadStream;
+class MemoryReadStream;
 }
 
 namespace BladeRunner {
@@ -195,16 +195,15 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panStart, i
 	}
 
 	int channel = _vm->_audioMixer->play(
-		type,
-		audioStream,
-		priority,
-		flags & kAudioPlayerLoop,
-		actualVolume,
-		panStart,
-		mixerChannelEnded,
-		this,
-		audioStream->getLength()
-		);
+	    type,
+	    audioStream,
+	    priority,
+	    flags & kAudioPlayerLoop,
+	    actualVolume,
+	    panStart,
+	    mixerChannelEnded,
+	    this,
+	    audioStream->getLength());
 
 	if (channel == -1) {
 		delete audioStream;
@@ -217,10 +216,10 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panStart, i
 	}
 
 	_tracks[track].isActive = true;
-	_tracks[track].channel  = channel;
+	_tracks[track].channel = channel;
 	_tracks[track].priority = priority;
-	_tracks[track].volume   = actualVolume;
-	_tracks[track].stream   = audioStream;
+	_tracks[track].volume = actualVolume;
+	_tracks[track].stream = audioStream;
 
 	return track;
 }

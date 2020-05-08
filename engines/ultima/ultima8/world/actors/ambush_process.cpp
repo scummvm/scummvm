@@ -23,8 +23,8 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/world/actors/ambush_process.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -34,7 +34,6 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(AmbushProcess, Process)
 
 AmbushProcess::AmbushProcess() : Process(), _delayCount(0) {
-
 }
 
 AmbushProcess::AmbushProcess(Actor *actor) : _delayCount(0) {
@@ -52,9 +51,9 @@ void AmbushProcess::run() {
 
 	Actor *a = getActor(_itemNum);
 	if (!a) {
-	   // this shouldn't happen
-	   terminate();
-	   return;
+		// this shouldn't happen
+		terminate();
+		return;
 	}
 
 	CombatProcess *cp = a->getCombatProcess();
@@ -82,7 +81,8 @@ void AmbushProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool AmbushProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_delayCount = rs->readUint32LE();
 

@@ -36,8 +36,8 @@ namespace Saga {
 
 #ifdef ENABLE_IHNM
 
-static int metaResourceTable[] = { 0, 326, 517, 677, 805, 968, 1165, 0, 1271 };
-static int metaResourceTableDemo[] = { 0, 0, 0, 0, 0, 0, 0, 285, 0 };
+static int metaResourceTable[] = {0, 326, 517, 677, 805, 968, 1165, 0, 1271};
+static int metaResourceTableDemo[] = {0, 0, 0, 0, 0, 0, 0, 285, 0};
 
 void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	if (chapter < 0)
@@ -93,8 +93,8 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	}
 
 	_vm->_actor->loadActorList(actorsEntrance, _metaResource.actorCount,
-						  _metaResource.actorsResourceID, _metaResource.protagStatesCount,
-						  _metaResource.protagStatesResourceID);
+	                           _metaResource.actorsResourceID, _metaResource.protagStatesCount,
+	                           _metaResource.protagStatesResourceID);
 
 	_vm->_actor->_protagonist->_sceneNumber = _metaResource.sceneIndex;
 
@@ -109,7 +109,7 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	debug(0, "Going to read %d of %d", chapter, _vm->_sndRes->_fxTableIDs[chapter]);
 	_vm->_resource->loadResource(soundContext, _vm->_sndRes->_fxTableIDs[chapter],
-								 resourceData);
+	                             resourceData);
 
 	if (resourceData.empty()) {
 		error("Resource::loadGlobalResources Can't load sound effects for current track");

@@ -26,14 +26,14 @@
  */
 
 #include "cge/sound.h"
-#include "cge/text.h"
-#include "cge/cge_main.h"
-#include "common/config-manager.h"
-#include "common/memstream.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+#include "cge/cge_main.h"
+#include "cge/text.h"
+#include "common/config-manager.h"
+#include "common/memstream.h"
 
 namespace CGE {
 
@@ -87,12 +87,12 @@ void Sound::play(DataCk *wav, int pan) {
 void Sound::sndDigiStart(SmpInfo *PSmpInfo) {
 	// Create an audio stream wrapper for sound
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(PSmpInfo->_saddr,
-		PSmpInfo->_slen, DisposeAfterUse::NO);
+	                                                                PSmpInfo->_slen, DisposeAfterUse::NO);
 	_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	// Start the new sound
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle,
-		Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
+	                        Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
 
 	// CGE pan:
 	// 8 = Center

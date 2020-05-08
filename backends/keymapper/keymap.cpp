@@ -33,15 +33,13 @@
 
 namespace Common {
 
-Keymap::Keymap(KeymapType type, const String &id, const String &description) :
-		_type(type),
-		_id(id),
-		_description(description),
-		_enabled(true),
-		_configDomain(nullptr),
-		_hardwareInputSet(nullptr),
-		_backendDefaultBindings(nullptr) {
-
+Keymap::Keymap(KeymapType type, const String &id, const String &description) : _type(type),
+                                                                               _id(id),
+                                                                               _description(description),
+                                                                               _enabled(true),
+                                                                               _configDomain(nullptr),
+                                                                               _hardwareInputSet(nullptr),
+                                                                               _backendDefaultBindings(nullptr) {
 }
 
 Keymap::~Keymap() {
@@ -267,17 +265,17 @@ void Keymap::registerMappings(Action *action, const StringArray &hwInputIds) {
 	assert(_hardwareInputSet);
 
 	for (uint i = 0; i < hwInputIds.size(); i++) {
-			HardwareInput hwInput = _hardwareInputSet->findHardwareInput(hwInputIds[i]);
+		HardwareInput hwInput = _hardwareInputSet->findHardwareInput(hwInputIds[i]);
 
-			if (hwInput.type == kHardwareInputTypeInvalid) {
-				// Silently ignore unknown hardware ids because the current device may not have inputs matching the defaults
-				debug(1, "HardwareInput with ID '%s' not known", hwInputIds[i].c_str());
-				continue;
-			}
-
-			// map the key
-			registerMapping(action, hwInput);
+		if (hwInput.type == kHardwareInputTypeInvalid) {
+			// Silently ignore unknown hardware ids because the current device may not have inputs matching the defaults
+			debug(1, "HardwareInput with ID '%s' not known", hwInputIds[i].c_str());
+			continue;
 		}
+
+		// map the key
+		registerMapping(action, hwInput);
+	}
 }
 
 void Keymap::saveMappings() {
@@ -317,7 +315,8 @@ bool Keymap::areMappingsIdentical(const Array<HardwareInput> &mappingsA, const S
 	for (uint i = 0; i < mappingsB.size(); i++) {
 		// We resolve the hardware input to make sure it is not a default for some hardware we don't have currently
 		HardwareInput mappingB = _hardwareInputSet->findHardwareInput(mappingsB[i]);
-		if (mappingB.type == kHardwareInputTypeInvalid) continue;
+		if (mappingB.type == kHardwareInputTypeInvalid)
+			continue;
 
 		for (uint j = 0; j < mappingsA.size(); j++) {
 			if (mappingsA[j].id == mappingB.id) {

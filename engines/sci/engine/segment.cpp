@@ -22,14 +22,14 @@
 
 #include "common/endian.h"
 
-#include "sci/sci.h"
-#include "sci/engine/kernel.h"
 #include "sci/engine/features.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/object.h"
-#include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
-#include "sci/engine/segment.h"
+#include "sci/engine/script.h" // for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/engine/seg_manager.h"
+#include "sci/engine/segment.h"
 #include "sci/engine/state.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -83,7 +83,7 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 
 SegmentRef SegmentObj::dereference(reg_t pointer) {
 	error("Error: Trying to dereference pointer %04x:%04x to inappropriate segment",
-		          PRINT_REG(pointer));
+	      PRINT_REG(pointer));
 	return SegmentRef();
 }
 
@@ -91,7 +91,7 @@ SegmentRef SegmentObj::dereference(reg_t pointer) {
 
 Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
-//	assert(addr.segment == _segId);
+	//	assert(addr.segment == _segId);
 
 	if (!isValidEntry(addr.getOffset())) {
 		error("Unexpected request for outgoing references from clone at %04x:%04x", PRINT_REG(addr));
@@ -127,12 +127,11 @@ void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 	freeEntry(addr.getOffset());
 }
 
-
 //-------------------- locals --------------------
 
 SegmentRef LocalVariables::dereference(reg_t pointer) {
 	SegmentRef ret;
-	ret.isRaw = false;	// reg_t based data!
+	ret.isRaw = false; // reg_t based data!
 	ret.maxSize = (_locals.size() - pointer.getOffset() / 2) * 2;
 
 	if (pointer.getOffset() & 1) {
@@ -144,8 +143,8 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 		ret.reg = &_locals[pointer.getOffset() / 2];
 	} else {
 		if ((g_sci->getEngineState()->currentRoomNumber() == 160 ||
-			 g_sci->getEngineState()->currentRoomNumber() == 220)
-			&& g_sci->getGameId() == GID_LAURABOW2) {
+		     g_sci->getEngineState()->currentRoomNumber() == 220) &&
+		    g_sci->getGameId() == GID_LAURABOW2) {
 			// WORKAROUND: Happens in two places during the intro of LB2CD, both
 			// from kMemory(peek):
 			// - room 160: Heap 160 has 83 local variables (0-82), and the game
@@ -175,12 +174,11 @@ Common::Array<reg_t> LocalVariables::listAllOutgoingReferences(reg_t addr) const
 	return tmp;
 }
 
-
 //-------------------- stack --------------------
 
 SegmentRef DataStack::dereference(reg_t pointer) {
 	SegmentRef ret;
-	ret.isRaw = false;	// reg_t based data!
+	ret.isRaw = false; // reg_t based data!
 	ret.maxSize = (_capacity - pointer.getOffset() / 2) * 2;
 
 	if (pointer.getOffset() & 1) {

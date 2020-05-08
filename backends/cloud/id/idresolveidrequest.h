@@ -32,7 +32,7 @@ namespace Id {
 
 class IdStorage;
 
-class IdResolveIdRequest: public Networking::Request {
+class IdResolveIdRequest : public Networking::Request {
 	Common::String _requestedPath;
 	IdStorage *_storage;
 	Storage::UploadCallback _uploadCallback;
@@ -46,6 +46,7 @@ class IdResolveIdRequest: public Networking::Request {
 	void listedDirectoryCallback(Storage::FileArrayResponse response);
 	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
 	void finishFile(StorageFile file);
+
 public:
 	IdResolveIdRequest(IdStorage *storage, Common::String path, Storage::UploadCallback cb, Networking::ErrorCallback ecb, bool recursive = false); //TODO: why upload?
 	virtual ~IdResolveIdRequest();

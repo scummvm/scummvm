@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/kernel/memory_manager.h"
 #include "ultima/ultima8/kernel/segmented_allocator.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -39,7 +39,7 @@ MemoryManager::MemoryManager() {
 	_allocators[1] = new SegmentedAllocator(4224, 25);
 
 	setAllocationFunctions(MemoryManager::allocate,
-	                                  MemoryManager::deallocate);
+	                       MemoryManager::deallocate);
 }
 
 MemoryManager::~MemoryManager() {

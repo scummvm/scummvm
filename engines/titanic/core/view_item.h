@@ -37,8 +37,10 @@ class CViewItem : public CNamedItem {
 	bool MouseMoveMsg(CMouseMoveMsg *msg);
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	bool MovementMsg(CMovementMsg *msg);
+
 private:
 	CTreeItem *_buttonUpTargets[4];
+
 private:
 	/**
 	 * Sets the angle of the view relative to the node it belongs to
@@ -60,13 +62,16 @@ private:
 	 * receive any mouse click
 	 */
 	CTreeItem *getItemAtPoint(const Point &pt);
+
 protected:
 	int _field24;
 	CResourceKey _resourceKey;
 	Point _viewPos;
+
 public:
 	int _viewNumber;
 	double _angle;
+
 public:
 	CLASSDEF;
 	CViewItem();

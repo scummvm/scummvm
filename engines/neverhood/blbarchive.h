@@ -65,6 +65,7 @@ public:
 	uint getCount() { return _entries.size(); }
 	Common::SeekableReadStream *createStream(uint index);
 	Common::SeekableReadStream *createStream(BlbArchiveEntry *entry);
+
 private:
 	Common::File _fd;
 	Common::Mutex _mutex;

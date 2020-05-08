@@ -38,10 +38,12 @@ private:
 	static const uint _INTRO_FRAMES_WAIT[8][32];
 	static const byte _DECODE_TABLE1[256];
 	static const byte _DECODE_TABLE2[256];
+
 private:
 	Subtitles _subtitles;
 	SpriteResource _mirror, _mirrBack;
 	int _mergeX;
+
 private:
 	void loadScreen(const Common::String &name);
 
@@ -80,6 +82,7 @@ private:
 	 * Shows part 5 of the Clouds of Xeen ending, final king display
 	 */
 	bool showCloudsEnding5();
+
 public:
 	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm), _mergeX(0) {}
 

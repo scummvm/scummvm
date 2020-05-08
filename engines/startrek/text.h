@@ -23,7 +23,6 @@
 #ifndef STARTREK_TEXT_H
 #define STARTREK_TEXT_H
 
-
 namespace StarTrek {
 
 // The type to use for text references (values of "GameStringIDs" enum).
@@ -51,10 +50,10 @@ enum GroundTextIDs {
 	GROUNDTX_MCCOY_SCAN = 0x55,
 	GROUNDTX_USE_MEDKIT = 0x56,
 
-	GROUNDTX_PHASER_ON_MCCOY = 0x57, // 8 variations
-	GROUNDTX_PHASER_ON_SPOCK = 0x5f, // 8 variations
+	GROUNDTX_PHASER_ON_MCCOY = 0x57,    // 8 variations
+	GROUNDTX_PHASER_ON_SPOCK = 0x5f,    // 8 variations
 	GROUNDTX_PHASER_ON_REDSHIRT = 0x67, // 8 variations
-	GROUNDTX_PHASER_ANYWHERE = 0x6f, // 7 variations
+	GROUNDTX_PHASER_ANYWHERE = 0x6f,    // 7 variations
 
 	GROUNDTX_USE_COMMUNICATOR = 0x76,
 	GROUNDTX_NOTHING_HAPPENS = 0x77,
@@ -66,7 +65,7 @@ enum GroundTextIDs {
 enum GameStringIDs {
 	TX_BLANK = -1,
 	TX_NULL = 0,
-	TX_BLANK_OLD = 1,	// unused, kept as filler
+	TX_BLANK_OLD = 1, // unused, kept as filler
 	TX_DIALOG_ERROR,
 	TX_ANIMATION_ERROR,
 
@@ -156,9 +155,9 @@ enum GameStringIDs {
 	TX_COMPU192,
 	TX_COMPU193,
 
-	TX_DEM0N009,	// kept because it's also used as an enhancement in mudd1 and mudd3
-	TX_DEM0C001,	// "C" = "Custom" (no ID originally assigned)
-	TX_DEM3_019,	// kept because it's also used as an enhancement in venga
+	TX_DEM0N009, // kept because it's also used as an enhancement in mudd1 and mudd3
+	TX_DEM0C001, // "C" = "Custom" (no ID originally assigned)
+	TX_DEM3_019, // kept because it's also used as an enhancement in venga
 	TX_DEM3_A32,
 
 	TX_TUG2J003,
@@ -176,11 +175,11 @@ enum GameStringIDs {
 	TX_MUD0_018,
 	TX_MUD0_019,
 	TX_MUD0_020,
-	TX_MUD1N014,	// kept because it's also used as an enhancement in veng6
-	TX_MUD2_040,	// kept as it's used as an enhancement in LOVEA
+	TX_MUD1N014, // kept because it's also used as an enhancement in veng6
+	TX_MUD2_040, // kept as it's used as an enhancement in LOVEA
 	TX_MUD4_018,
-	TX_MUD4_019,	// kept for now because of TX_MUD4_A29
-	TX_MUD4_023,	// kept for now because of TX_MUD4_A29
+	TX_MUD4_019, // kept for now because of TX_MUD4_A29
+	TX_MUD4_023, // kept for now because of TX_MUD4_A29
 	TX_MUD4_A29,
 
 	TX_FEA1_A46,

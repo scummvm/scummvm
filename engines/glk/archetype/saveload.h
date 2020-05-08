@@ -28,29 +28,34 @@
  * be able to throw away the old before loading in the new
  */
 
+#include "common/stream.h"
 #include "glk/archetype/linked_list.h"
 #include "glk/archetype/statement.h"
-#include "common/stream.h"
 
 namespace Glk {
 namespace Archetype {
 
-enum ContentType { STMT_LIST, EXPR_LIST, CASE_LIST };
-enum MissionType { LOAD, DUMP, FREE, DISPLAY };
+enum ContentType { STMT_LIST,
+	               EXPR_LIST,
+	               CASE_LIST };
+enum MissionType { LOAD,
+	               DUMP,
+	               FREE,
+	               DISPLAY };
 
 struct ObjectType {
-	int inherited_from;		// index to Type_List
+	int inherited_from; // index to Type_List
 	ListType attributes;
 	ListType methods;
 	StatementPtr other;
 
 	ObjectType() : inherited_from(0), attributes(nullptr), methods(nullptr),
-		other(nullptr) {}
+	               other(nullptr) {}
 };
 typedef ObjectType *ObjectPtr;
 
 // Global variables
-extern StatementKind vEndSeq, vContSeq;		// to make BlockWrite happy
+extern StatementKind vEndSeq, vContSeq; // to make BlockWrite happy
 extern int Dynamic;
 extern bool Translating;
 

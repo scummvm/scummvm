@@ -47,6 +47,7 @@ public:
 	void stop();
 	void drawNextLine();
 	void updateTexts(int yIncr);
+
 protected:
 	IllusionsEngine_BBDOU *_vm;
 	uint32 _endSignalPropertyId;
@@ -72,6 +73,7 @@ public:
 	void onNotify() override;
 	void onResume() override;
 	void onTerminated() override;
+
 public:
 	BbdouCredits *_credits;
 	float _speedModifier;

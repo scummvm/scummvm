@@ -26,8 +26,7 @@
 
 namespace Networking {
 
-Session::Session(Common::String prefix):
-	_prefix(prefix), _request(nullptr) {}
+Session::Session(Common::String prefix) : _prefix(prefix), _request(nullptr) {}
 
 Session::~Session() {
 	close();

@@ -21,11 +21,11 @@
  */
 
 #include "glk/jacl/detection.h"
-#include "glk/jacl/detection_tables.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/jacl/detection_tables.h"
 
 namespace Glk {
 namespace JACL {

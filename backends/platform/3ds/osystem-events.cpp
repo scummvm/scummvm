@@ -25,9 +25,9 @@
 #include "backends/platform/3ds/osystem.h"
 
 #include "backends/keymapper/action.h"
-#include "backends/keymapper/keymapper-defaults.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper-defaults.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 #include "backends/platform/3ds/config.h"
@@ -45,33 +45,30 @@ static InputMode savedInputMode = MODE_DRAG;
 static aptHookCookie cookie;
 
 static const Common::HardwareInputTableEntry ctrJoystickButtons[] = {
-    { "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("A")           },
-    { "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("B")           },
-    { "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("X")           },
-    { "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("Y")           },
-    { "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Select")      },
-    { "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Start")       },
-    { "JOY_LEFT_STICK",     Common::JOYSTICK_BUTTON_LEFT_STICK,     _s("ZL")          },
-    { "JOY_RIGHT_STICK",    Common::JOYSTICK_BUTTON_RIGHT_STICK,    _s("ZR")          },
-    { "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
-    { "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
-    { "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
-    { "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
-    { "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
-    { "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
-    { nullptr,              0,                                      nullptr           }
-};
+    {"JOY_A", Common::JOYSTICK_BUTTON_A, _s("A")},
+    {"JOY_B", Common::JOYSTICK_BUTTON_B, _s("B")},
+    {"JOY_X", Common::JOYSTICK_BUTTON_X, _s("X")},
+    {"JOY_Y", Common::JOYSTICK_BUTTON_Y, _s("Y")},
+    {"JOY_BACK", Common::JOYSTICK_BUTTON_BACK, _s("Select")},
+    {"JOY_START", Common::JOYSTICK_BUTTON_START, _s("Start")},
+    {"JOY_LEFT_STICK", Common::JOYSTICK_BUTTON_LEFT_STICK, _s("ZL")},
+    {"JOY_RIGHT_STICK", Common::JOYSTICK_BUTTON_RIGHT_STICK, _s("ZR")},
+    {"JOY_LEFT_SHOULDER", Common::JOYSTICK_BUTTON_LEFT_SHOULDER, _s("L")},
+    {"JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")},
+    {"JOY_UP", Common::JOYSTICK_BUTTON_DPAD_UP, _s("D-pad Up")},
+    {"JOY_DOWN", Common::JOYSTICK_BUTTON_DPAD_DOWN, _s("D-pad Down")},
+    {"JOY_LEFT", Common::JOYSTICK_BUTTON_DPAD_LEFT, _s("D-pad Left")},
+    {"JOY_RIGHT", Common::JOYSTICK_BUTTON_DPAD_RIGHT, _s("D-pad Right")},
+    {nullptr, 0, nullptr}};
 
 static const Common::AxisTableEntry ctrJoystickAxes[] = {
-    { "JOY_LEFT_STICK_X", Common::JOYSTICK_AXIS_LEFT_STICK_X, Common::kAxisTypeFull, _s("C-Pad X") },
-    { "JOY_LEFT_STICK_Y", Common::JOYSTICK_AXIS_LEFT_STICK_Y, Common::kAxisTypeFull, _s("C-Pad Y") },
-    { nullptr,            0,                                  Common::kAxisTypeFull, nullptr       }
-};
+    {"JOY_LEFT_STICK_X", Common::JOYSTICK_AXIS_LEFT_STICK_X, Common::kAxisTypeFull, _s("C-Pad X")},
+    {"JOY_LEFT_STICK_Y", Common::JOYSTICK_AXIS_LEFT_STICK_Y, Common::kAxisTypeFull, _s("C-Pad Y")},
+    {nullptr, 0, Common::kAxisTypeFull, nullptr}};
 
 const Common::HardwareInputTableEntry ctrMouseButtons[] = {
-    { "MOUSE_LEFT",   Common::MOUSE_BUTTON_LEFT,   _s("Touch") },
-    { nullptr,        0,                           nullptr     }
-};
+    {"MOUSE_LEFT", Common::MOUSE_BUTTON_LEFT, _s("Touch")},
+    {nullptr, 0, nullptr}};
 
 static const int16 CIRCLE_MAX = 160;
 
@@ -95,7 +92,7 @@ static void eventThreadFunc(void *arg) {
 	auto eventQueue = (Common::Queue<Common::Event> *)arg;
 
 	uint32 touchStartTime = osys->getMillis();
-	touchPosition  lastTouch  = {0, 0};
+	touchPosition lastTouch = {0, 0};
 	circlePosition lastCircle = {0, 0};
 	int borderSnapZone = 6;
 	Common::Event event;
@@ -168,15 +165,15 @@ static void eventThreadFunc(void *arg) {
 		hidCircleRead(&circle);
 
 		if (circle.dx != lastCircle.dx) {
-			event.type              = Common::EVENT_JOYAXIS_MOTION;
-			event.joystick.axis     = Common::JOYSTICK_AXIS_LEFT_STICK_X;
+			event.type = Common::EVENT_JOYAXIS_MOTION;
+			event.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_X;
 			event.joystick.position = (int32)circle.dx * Common::JOYAXIS_MAX / CIRCLE_MAX;
 			pushEventQueue(eventQueue, event);
 		}
 
 		if (circle.dy != lastCircle.dy) {
-			event.type              = Common::EVENT_JOYAXIS_MOTION;
-			event.joystick.axis     = Common::JOYSTICK_AXIS_LEFT_STICK_Y;
+			event.type = Common::EVENT_JOYAXIS_MOTION;
+			event.joystick.axis = Common::JOYSTICK_AXIS_LEFT_STICK_Y;
 			event.joystick.position = -(int32)circle.dy * Common::JOYAXIS_MAX / CIRCLE_MAX;
 			pushEventQueue(eventQueue, event);
 		}
@@ -184,20 +181,20 @@ static void eventThreadFunc(void *arg) {
 		lastCircle = circle;
 
 		// Button events
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_L,      Common::JOYSTICK_BUTTON_LEFT_SHOULDER);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_R,      Common::JOYSTICK_BUTTON_RIGHT_SHOULDER);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_A,      Common::JOYSTICK_BUTTON_A);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_B,      Common::JOYSTICK_BUTTON_B);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_X,      Common::JOYSTICK_BUTTON_X);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_Y,      Common::JOYSTICK_BUTTON_Y);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_DUP,    Common::JOYSTICK_BUTTON_DPAD_UP);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_DDOWN,  Common::JOYSTICK_BUTTON_DPAD_DOWN);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_DLEFT,  Common::JOYSTICK_BUTTON_DPAD_LEFT);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_L, Common::JOYSTICK_BUTTON_LEFT_SHOULDER);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_R, Common::JOYSTICK_BUTTON_RIGHT_SHOULDER);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_A, Common::JOYSTICK_BUTTON_A);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_B, Common::JOYSTICK_BUTTON_B);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_X, Common::JOYSTICK_BUTTON_X);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_Y, Common::JOYSTICK_BUTTON_Y);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_DUP, Common::JOYSTICK_BUTTON_DPAD_UP);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_DDOWN, Common::JOYSTICK_BUTTON_DPAD_DOWN);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_DLEFT, Common::JOYSTICK_BUTTON_DPAD_LEFT);
 		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_DRIGHT, Common::JOYSTICK_BUTTON_DPAD_RIGHT);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_START,  Common::JOYSTICK_BUTTON_START);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_START, Common::JOYSTICK_BUTTON_START);
 		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_SELECT, Common::JOYSTICK_BUTTON_BACK);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_ZL,     Common::JOYSTICK_BUTTON_LEFT_STICK);
-		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_ZR,     Common::JOYSTICK_BUTTON_RIGHT_STICK);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_ZL, Common::JOYSTICK_BUTTON_LEFT_STICK);
+		doJoyEvent(eventQueue, keysPressed, keysReleased, KEY_ZR, Common::JOYSTICK_BUTTON_RIGHT_STICK);
 	}
 }
 
@@ -205,31 +202,31 @@ static void aptHookFunc(APT_HookType hookType, void *param) {
 	OSystem_3DS *osys = (OSystem_3DS *)g_system;
 
 	switch (hookType) {
-		case APTHOOK_ONSUSPEND:
-		case APTHOOK_ONSLEEP:
-			if (g_engine) {
-				g_engine->pauseEngine(true);
-			}
-			osys->sleeping = true;
-			if (R_SUCCEEDED(gspLcdInit())) {
-				GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
-				gspLcdExit();
-			}
-			break;
-		case APTHOOK_ONRESTORE:
-		case APTHOOK_ONWAKEUP:
-			if (g_engine) {
-				g_engine->pauseEngine(false);
-			}
-			osys->sleeping = false;
-			loadConfig();
-			break;
-		default: {
-			Common::StackLock lock(*eventMutex);
-			Common::Event event;
-			event.type = Common::EVENT_QUIT;
-			g_system->getEventManager()->pushEvent(event);
+	case APTHOOK_ONSUSPEND:
+	case APTHOOK_ONSLEEP:
+		if (g_engine) {
+			g_engine->pauseEngine(true);
 		}
+		osys->sleeping = true;
+		if (R_SUCCEEDED(gspLcdInit())) {
+			GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
+			gspLcdExit();
+		}
+		break;
+	case APTHOOK_ONRESTORE:
+	case APTHOOK_ONWAKEUP:
+		if (g_engine) {
+			g_engine->pauseEngine(false);
+		}
+		osys->sleeping = false;
+		loadConfig();
+		break;
+	default: {
+		Common::StackLock lock(*eventMutex);
+		Common::Event event;
+		event.type = Common::EVENT_QUIT;
+		g_system->getEventManager()->pushEvent(event);
+	}
 	}
 }
 
@@ -286,10 +283,10 @@ void OSystem_3DS::transformPoint(touchPosition &point) {
 
 void OSystem_3DS::clipPoint(touchPosition &point) {
 	if (_overlayVisible) {
-		point.px = CLIP<uint16>(point.px, 0, getOverlayWidth()  - 1);
+		point.px = CLIP<uint16>(point.px, 0, getOverlayWidth() - 1);
 		point.py = CLIP<uint16>(point.py, 0, getOverlayHeight() - 1);
 	} else {
-		point.px = CLIP<uint16>(point.px, 0, _gameTopTexture.actualWidth  - 1);
+		point.px = CLIP<uint16>(point.px, 0, _gameTopTexture.actualWidth - 1);
 		point.py = CLIP<uint16>(point.py, 0, _gameTopTexture.actualHeight - 1);
 	}
 }
@@ -370,8 +367,7 @@ bool OSystem_3DS::pollEvent(Common::Event &event) {
 }
 
 bool OSystem_3DS::notifyEvent(const Common::Event &event) {
-	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START
-	        && event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_END) {
+	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START && event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_END) {
 		return false; // We're only interested in custom backend events
 	}
 
@@ -454,10 +450,10 @@ void OSystem_3DS::runOptionsDialog() {
 	if (result > 0) {
 		int oldScreen = config.screen;
 
-		config.showCursor   = dialog.getShowCursor();
+		config.showCursor = dialog.getShowCursor();
 		config.snapToBorder = dialog.getSnapToBorder();
 		config.stretchToFit = dialog.getStretchToFit();
-		config.screen       = dialog.getScreen();
+		config.screen = dialog.getScreen();
 
 		saveConfig();
 		loadConfig();

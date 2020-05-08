@@ -23,8 +23,8 @@
 #ifndef ANDROID_GRAPHICS_H
 #define ANDROID_GRAPHICS_H
 
-#include "common/scummsys.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
+#include "common/scummsys.h"
 
 class AndroidGraphicsManager : public OpenGL::OpenGLGraphicsManager {
 public:
@@ -49,7 +49,6 @@ protected:
 	void refreshScreen();
 
 	void *getProcAddress(const char *name) const;
-
 };
 
 #endif

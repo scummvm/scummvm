@@ -20,9 +20,9 @@
  *
  */
 
+#include "glk/adrift/scgamest.h"
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
-#include "glk/adrift/scgamest.h"
 
 namespace Glk {
 namespace Adrift {
@@ -46,7 +46,7 @@ void gs_move_player_to_room(sc_gameref_t game, sc_int room) {
 		game->playerroom = room;
 	else
 		game->playerroom = lib_random_roomgroup_member(game,
-		                   room - game->room_count);
+		                                               room - game->room_count);
 
 	game->playerparent = -1;
 	game->playerposition = 0;
@@ -57,7 +57,6 @@ sc_bool gs_player_in_room(sc_gameref_t game, sc_int room) {
 	return game->playerroom == room;
 }
 
-
 /*
  * gs_in_range()
  *
@@ -66,7 +65,6 @@ sc_bool gs_player_in_room(sc_gameref_t game, sc_int room) {
 static sc_bool gs_in_range(sc_int value, sc_int limit) {
 	return value >= 0 && value < limit;
 }
-
 
 /*
  * gs_*()
@@ -92,7 +90,6 @@ sc_memo_setref_t gs_get_memento(sc_gameref_t gs) {
 	assert(gs_is_game_valid(gs));
 	return gs->memento;
 }
-
 
 /*
  * Game accessors and mutators for the player.
@@ -127,7 +124,6 @@ sc_int gs_playerparent(sc_gameref_t gs) {
 	return gs->playerparent;
 }
 
-
 /*
  * Game accessors and mutators for events.
  */
@@ -161,7 +157,6 @@ void gs_decrement_event_time(sc_gameref_t gs, sc_int event) {
 	gs->events[event].time--;
 }
 
-
 /*
  * Game accessors and mutators for rooms.
  */
@@ -179,7 +174,6 @@ sc_bool gs_room_seen(sc_gameref_t gs, sc_int room) {
 	assert(gs_is_game_valid(gs) && gs_in_range(room, gs->room_count));
 	return gs->rooms[room].visited;
 }
-
 
 /*
  * Game accessors and mutators for tasks.
@@ -208,7 +202,6 @@ sc_bool gs_task_scored(sc_gameref_t gs, sc_int task) {
 	assert(gs_is_game_valid(gs) && gs_in_range(task, gs->task_count));
 	return gs->tasks[task].scored;
 }
-
 
 /*
  * Game accessors and mutators for objects.
@@ -328,8 +321,7 @@ static void gs_object_to_room_unchecked(sc_gameref_t gs, sc_int object, sc_int r
 
 void gs_object_move_onto(sc_gameref_t gs, sc_int object, sc_int onto) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
-	if (gs->objects[object].position != OBJ_ON_OBJECT
-	        || gs->objects[object].parent != onto) {
+	if (gs->objects[object].position != OBJ_ON_OBJECT || gs->objects[object].parent != onto) {
 		gs_object_move_onto_unchecked(gs, object, onto);
 		gs->objects[object].unmoved = FALSE;
 	}
@@ -337,8 +329,7 @@ void gs_object_move_onto(sc_gameref_t gs, sc_int object, sc_int onto) {
 
 void gs_object_move_into(sc_gameref_t gs, sc_int object, sc_int into) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
-	if (gs->objects[object].position != OBJ_IN_OBJECT
-	        || gs->objects[object].parent != into) {
+	if (gs->objects[object].position != OBJ_IN_OBJECT || gs->objects[object].parent != into) {
 		gs_object_move_into_unchecked(gs, object, into);
 		gs->objects[object].unmoved = FALSE;
 	}
@@ -362,8 +353,7 @@ void gs_object_player_get(sc_gameref_t gs, sc_int object) {
 
 void gs_object_npc_get(sc_gameref_t gs, sc_int object, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
-	if (gs->objects[object].position != OBJ_HELD_NPC
-	        || gs->objects[object].parent != npc) {
+	if (gs->objects[object].position != OBJ_HELD_NPC || gs->objects[object].parent != npc) {
 		gs_object_npc_get_unchecked(gs, object, npc);
 		gs->objects[object].unmoved = FALSE;
 	}
@@ -379,8 +369,7 @@ void gs_object_player_wear(sc_gameref_t gs, sc_int object) {
 
 void gs_object_npc_wear(sc_gameref_t gs, sc_int object, sc_int npc) {
 	assert(gs_is_game_valid(gs) && gs_in_range(object, gs->object_count));
-	if (gs->objects[object].position != OBJ_WORN_NPC
-	        || gs->objects[object].parent != npc) {
+	if (gs->objects[object].position != OBJ_WORN_NPC || gs->objects[object].parent != npc) {
 		gs_object_npc_wear_unchecked(gs, object, npc);
 		gs->objects[object].unmoved = FALSE;
 	}
@@ -393,7 +382,6 @@ void gs_object_to_room(sc_gameref_t gs, sc_int object, sc_int room) {
 		gs->objects[object].unmoved = FALSE;
 	}
 }
-
 
 /*
  * Game accessors and mutators for NPCs.
@@ -449,24 +437,20 @@ sc_int gs_npc_walkstep_count(sc_gameref_t gs, sc_int npc) {
 }
 
 void gs_set_npc_walkstep(sc_gameref_t gs,
-                    sc_int npc, sc_int walk, sc_int walkstep) {
-	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count)
-	       && gs_in_range(walk, gs->npcs[npc].walkstep_count));
+                         sc_int npc, sc_int walk, sc_int walkstep) {
+	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count) && gs_in_range(walk, gs->npcs[npc].walkstep_count));
 	gs->npcs[npc].walksteps[walk] = walkstep;
 }
 
 sc_int gs_npc_walkstep(sc_gameref_t gs, sc_int npc, sc_int walk) {
-	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count)
-	       && gs_in_range(walk, gs->npcs[npc].walkstep_count));
+	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count) && gs_in_range(walk, gs->npcs[npc].walkstep_count));
 	return gs->npcs[npc].walksteps[walk];
 }
 
 void gs_decrement_npc_walkstep(sc_gameref_t gs, sc_int npc, sc_int walk) {
-	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count)
-	       && gs_in_range(walk, gs->npcs[npc].walkstep_count));
+	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count) && gs_in_range(walk, gs->npcs[npc].walkstep_count));
 	gs->npcs[npc].walksteps[walk]--;
 }
-
 
 /*
  * Convenience functions for bulk clearance of references.
@@ -494,7 +478,6 @@ void gs_clear_multiple_references(sc_gameref_t gs) {
 	memset(gs->multiple_references,
 	       FALSE, gs->object_count * sizeof(*gs->multiple_references));
 }
-
 
 /*
  * gs_create()
@@ -574,30 +557,29 @@ sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterr
 			vt_key[2].string = "InitialPosition";
 			initialposition = prop_get_integer(bundle, "I<-sis", vt_key);
 			switch (initialposition) {
-			case 0:            /* Hidden. */
+			case 0: /* Hidden. */
 				gs_object_make_hidden_unchecked(game, index_);
 				break;
 
-			case 1:            /* Held. */
-				if (initialparent == 0)   /* By player. */
+			case 1:                     /* Held. */
+				if (initialparent == 0) /* By player. */
 					gs_object_player_get_unchecked(game, index_);
-				else                      /* By NPC. */
+				else /* By NPC. */
 					gs_object_npc_get_unchecked(game, index_, initialparent - 1);
 				break;
 
-			case 2:            /* In container. */
+			case 2: /* In container. */
 				gs_object_move_into_unchecked(game, index_,
 				                              obj_container_object(game, initialparent));
 				break;
 
-			case 3:            /* On surface. */
+			case 3: /* On surface. */
 				gs_object_move_onto_unchecked(game, index_,
 				                              obj_surface_object(game, initialparent));
 				break;
 
-			default:           /* In room, or worn by player/NPC. */
-				if (initialposition >= 4
-				        && initialposition < 4 + game->room_count) {
+			default: /* In room, or worn by player/NPC. */
+				if (initialposition >= 4 && initialposition < 4 + game->room_count) {
 					gs_object_to_room_unchecked(game,
 					                            index_, initialposition - 4);
 				} else if (initialposition == 4 + game->room_count) {
@@ -713,8 +695,7 @@ sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterr
 		walkstep_count = prop_get_child_count(bundle, "I<-sis", vt_key);
 
 		game->npcs[index_].walkstep_count = walkstep_count;
-		game->npcs[index_].walksteps = (sc_int *)sc_malloc(walkstep_count
-		                               * sizeof(*game->npcs[0].walksteps));
+		game->npcs[index_].walksteps = (sc_int *)sc_malloc(walkstep_count * sizeof(*game->npcs[0].walksteps));
 
 		for (walk = 0; walk < walkstep_count; walk++)
 			gs_set_npc_walkstep(game, index_, walk, 0);
@@ -790,7 +771,6 @@ sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterr
 	return game;
 }
 
-
 /*
  * gs_is_game_valid()
  *
@@ -799,7 +779,6 @@ sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterr
 sc_bool gs_is_game_valid(const sc_gameref_t game) {
 	return game && game->magic == GAME_MAGIC;
 }
-
 
 /*
  * gs_string_copy()
@@ -818,7 +797,6 @@ static void gs_string_copy(sc_char **to_string, const sc_char *from_string) {
 	} else
 		*to_string = NULL;
 }
-
 
 /*
  * gs_copy()
@@ -904,8 +882,7 @@ void gs_copy(sc_gameref_t to, sc_gameref_t from) {
 		/* Copy over NPC walks information. */
 		assert(to->npcs[npc].walkstep_count == from->npcs[npc].walkstep_count);
 		memcpy(to->npcs[npc].walksteps, from->npcs[npc].walksteps,
-		       from->npcs[npc].walkstep_count
-		       * sizeof(*from->npcs[npc].walksteps));
+		       from->npcs[npc].walkstep_count * sizeof(*from->npcs[npc].walksteps));
 	}
 
 	/* Copy over player information. */
@@ -960,7 +937,6 @@ void gs_copy(sc_gameref_t to, sc_gameref_t from) {
 	to->her_npc = from->her_npc;
 	to->it_npc = from->it_npc;
 }
-
 
 /*
  * gs_destroy()

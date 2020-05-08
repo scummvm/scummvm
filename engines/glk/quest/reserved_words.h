@@ -23,9 +23,9 @@
 #ifndef GLK_QUEST_RESERVED_WORDS
 #define GLK_QUEST_RESERVED_WORDS
 
-#include "glk/quest/string.h"
 #include "common/hashmap.h"
 #include "common/stream.h"
+#include "glk/quest/string.h"
 
 namespace Glk {
 namespace Quest {

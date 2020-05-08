@@ -23,10 +23,10 @@
 #ifndef SUPERNOVA_GAME_MANAGER_H
 #define SUPERNOVA_GAME_MANAGER_H
 
-#include "common/events.h"
-#include "common/rect.h"
-#include "common/keyboard.h"
 #include "common/error.h"
+#include "common/events.h"
+#include "common/keyboard.h"
+#include "common/rect.h"
 #include "supernova/room.h"
 #include "supernova/sound.h"
 
@@ -34,15 +34,20 @@ namespace Supernova {
 
 const int32 kMaxTimerValue = 0x7FFFFFFF;
 
-enum EventFunction { kNoFn, kSupernovaFn, kGuardReturnedFn, kGuardWalkFn, kTaxiFn, kSearchStartFn, kSoberFn, kPyramidEndFn, kCaughtFn};
-
+enum EventFunction { kNoFn,
+	                 kSupernovaFn,
+	                 kGuardReturnedFn,
+	                 kGuardWalkFn,
+	                 kTaxiFn,
+	                 kSearchStartFn,
+	                 kSoberFn,
+	                 kPyramidEndFn,
+	                 kCaughtFn };
 
 class Inventory {
 public:
 	Inventory(Object *nullObject, int &inventoryScroll)
-		: _numObjects(0)
-		, _nullObject(nullObject)
-	    , _inventoryScroll(inventoryScroll) {
+	    : _numObjects(0), _nullObject(nullObject), _inventoryScroll(inventoryScroll) {
 		for (int i = 0; i < kMaxCarry; ++i)
 			_inventory[i] = nullptr;
 	}
@@ -188,7 +193,7 @@ public:
 	virtual void saveTime();
 	void setAnimationTimer(int ticks);
 	void dead(int messageId);
-	int  dialog(int num, byte rowLength[6], int text[6], int number);
+	int dialog(int num, byte rowLength[6], int text[6], int number);
 	void sentence(int number, bool brightness);
 	void say(int textId);
 	void say(const char *text);
@@ -198,6 +203,6 @@ public:
 	virtual void takeMoney(int amount);
 };
 
-}
+} // namespace Supernova
 
 #endif // SUPERNOVA_GAME_MANAGER_H

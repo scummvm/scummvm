@@ -120,7 +120,6 @@ private:
 	int16 _x; ///< The current X position.
 	int16 _y; ///< The current Y position.
 
-
 	bool drawCMP(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 	bool drawANI(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 };

@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/conf/ini_file.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/filesys/idata_source.h"
@@ -32,12 +32,11 @@ namespace Ultima8 {
 using Std::string;
 
 INIFile::INIFile()
-	: _isFile(false), _readOnly(false) {
-
+    : _isFile(false), _readOnly(false) {
 }
 
 INIFile::INIFile(string fname, istring root)
-	: _root(root), _isFile(false), _readOnly(false) {
+    : _root(root), _isFile(false), _readOnly(false) {
 	readConfigFile(fname);
 }
 
@@ -95,7 +94,8 @@ string INIFile::Section::dump() {
 
 bool INIFile::readConfigFile(string fname) {
 	IDataSource *f = FileSystem::get_instance()->ReadFile(fname, true);
-	if (!f) return false;
+	if (!f)
+		return false;
 
 	string sbuf, line;
 	while (!f->eos()) {
@@ -118,7 +118,6 @@ bool INIFile::readConfigFile(string fname) {
 	return true;
 }
 
-
 static void rtrim(string &s) {
 	string::size_type pos = s.findLastNotOf(" \t");
 	if (pos != string::npos) {
@@ -138,7 +137,6 @@ static void ltrim(string &s) {
 		s.clear();
 	}
 }
-
 
 // Large parts of the following function are borrowed from ScummVM's
 // config-manager.cpp, copyright (C) 2001-2004 The ScummVM project
@@ -294,7 +292,8 @@ void INIFile::write() {
 		return;
 
 	Common::WriteStream *f = FileSystem::get_instance()->WriteFile(_filename, true);
-	if (!f) return;
+	if (!f)
+		return;
 
 	Std::string s = dump();
 	const char *cstr = s.c_str();
@@ -305,10 +304,12 @@ void INIFile::write() {
 
 bool INIFile::stripRoot(istring &key) {
 	string::size_type pos = key.find('/');
-	if (pos == istring::npos) return false;
+	if (pos == istring::npos)
+		return false;
 
 	istring keyroot = key.substr(0, pos);
-	if (keyroot != _root) return false;
+	if (keyroot != _root)
+		return false;
 
 	key.erase(0, pos + 1);
 
@@ -329,7 +330,8 @@ bool INIFile::splitKey(istring key, istring &section, istring &sectionkey) {
 	// TODO: more sanity checks might be nice
 
 	string::size_type pos = key.find('/');
-	if (pos == istring::npos || pos + 1 >= key.size()) return false;
+	if (pos == istring::npos || pos + 1 >= key.size())
+		return false;
 
 	section = key.substr(0, pos);
 	sectionkey = key.substr(pos + 1);
@@ -338,18 +340,21 @@ bool INIFile::splitKey(istring key, istring &section, istring &sectionkey) {
 }
 
 bool INIFile::hasSection(istring section) {
-	if (!stripRoot(section)) return false;
+	if (!stripRoot(section))
+		return false;
 
 	return (getSection(section) != nullptr);
 }
 
 bool INIFile::hasKey(istring key) {
-	if (!stripRoot(key)) return false;
+	if (!stripRoot(key))
+		return false;
 	istring s, k;
 	splitKey(key, s, k);
 
 	Section *section = getSection(s);
-	if (!section) return false;
+	if (!section)
+		return false;
 
 	return section->hasKey(k);
 }
@@ -359,15 +364,18 @@ bool INIFile::checkRoot(istring key) {
 }
 
 bool INIFile::value(istring key, string &ret) {
-	if (!stripRoot(key)) return false;
+	if (!stripRoot(key))
+		return false;
 	istring s, k;
 	splitKey(key, s, k);
 
 	Section *section = getSection(s);
-	if (!section) return false;
+	if (!section)
+		return false;
 
 	KeyValue *kv = section->getKey(k);
-	if (!kv) return false;
+	if (!kv)
+		return false;
 
 	ret = kv->_value;
 	return true;
@@ -377,7 +385,8 @@ bool INIFile::value(istring key, int &ret) {
 	string stringval;
 	bool found = value(key, stringval);
 
-	if (!found) return false;
+	if (!found)
+		return false;
 
 	ret = Std::strtol(stringval.c_str(), 0, 0);
 	return true;
@@ -387,14 +396,16 @@ bool INIFile::value(istring key, bool &ret) {
 	istring stringval;
 	bool found = value(key, stringval);
 
-	if (!found) return false;
+	if (!found)
+		return false;
 
 	ret = (stringval == "yes" || stringval == "true");
 	return true;
 }
 
 void INIFile::set(istring key, string strValue) {
-	if (!stripRoot(key)) return;
+	if (!stripRoot(key))
+		return;
 	istring s, k;
 	splitKey(key, s, k);
 
@@ -430,7 +441,8 @@ void INIFile::set(istring key, bool boolValue) {
 }
 
 void INIFile::unset(istring key) {
-	if (!stripRoot(key)) return;
+	if (!stripRoot(key))
+		return;
 	istring s, k;
 	splitKey(key, s, k);
 
@@ -442,10 +454,12 @@ void INIFile::unset(istring key) {
 
 void INIFile::listKeys(Std::set<istring> &_keys, istring section_,
                        bool longformat) {
-	if (!stripRoot(section_)) return;
+	if (!stripRoot(section_))
+		return;
 
 	Section *section = getSection(section_);
-	if (!section) return;
+	if (!section)
+		return;
 
 	Std::list<KeyValue>::iterator i;
 	for (i = section->_keys.begin(); i != section->_keys.end(); ++i) {
@@ -473,10 +487,12 @@ void INIFile::listSections(Std::set<istring> &sections_, bool longformat) {
 }
 
 void INIFile::listKeyValues(KeyMap &keyvalues, istring section_, bool longformat) {
-	if (!stripRoot(section_)) return;
+	if (!stripRoot(section_))
+		return;
 
 	Section *section = getSection(section_);
-	if (!section) return;
+	if (!section)
+		return;
 
 	Std::list<KeyValue>::iterator i;
 	for (i = section->_keys.begin(); i != section->_keys.end(); ++i) {

@@ -25,8 +25,8 @@
 namespace Glk {
 namespace Quest {
 
-CI_EQUAL   ci_equal_obj;
-CI_LESS    ci_less_obj;
+CI_EQUAL ci_equal_obj;
+CI_LESS ci_less_obj;
 CI_LESS_EQ ci_less_eq_obj;
 
 String operator+(const String &x, const String &y) {

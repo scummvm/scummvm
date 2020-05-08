@@ -35,14 +35,14 @@ bool PrinceEngine::spriteCheck(int sprWidth, int sprHeight, int destX, int destY
 	destX -= _picWindowX;
 	destY -= _picWindowY;
 
-	 // if x1 is on visible part of screen
+	// if x1 is on visible part of screen
 	if (destX < 0) {
 		if (destX + sprWidth < 1) {
 			//x2 is negative - out of window
 			return false;
 		}
 	}
-	 // if x1 is outside of screen on right side
+	// if x1 is outside of screen on right side
 	if (destX >= kNormalWidth) {
 		return false;
 	}

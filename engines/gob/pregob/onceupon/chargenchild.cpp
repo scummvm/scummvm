@@ -20,17 +20,17 @@
  *
  */
 
-#include "gob/surface.h"
 #include "gob/anifile.h"
+#include "gob/surface.h"
 
 #include "gob/pregob/onceupon/chargenchild.h"
 
 enum Animation {
-	kAnimWalkLeft  =  0,
-	kAnimWalkRight =  1,
-	kAnimJumpLeft  =  2,
-	kAnimJumpRight =  3,
-	kAnimTapFoot   = 14
+	kAnimWalkLeft = 0,
+	kAnimWalkRight = 1,
+	kAnimJumpLeft = 2,
+	kAnimJumpRight = 3,
+	kAnimTapFoot = 14
 };
 
 namespace Gob {
@@ -103,13 +103,13 @@ void CharGenChild::advance() {
 }
 
 CharGenChild::Sound CharGenChild::shouldPlaySound() const {
-	const uint16 anim  = getAnimation();
+	const uint16 anim = getAnimation();
 	const uint16 frame = getFrame();
 
 	if (((anim == kAnimWalkLeft) || (anim == kAnimWalkRight)) && ((frame == 1) || (frame == 6)))
 		return kSoundWalk;
 
-	if (((anim == kAnimJumpLeft) || (anim == kAnimJumpRight)) &&  (frame == 0))
+	if (((anim == kAnimJumpLeft) || (anim == kAnimJumpRight)) && (frame == 0))
 		return kSoundJump;
 
 	return kSoundNone;

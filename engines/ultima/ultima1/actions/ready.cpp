@@ -21,16 +21,16 @@
  */
 
 #include "ultima/ultima1/actions/ready.h"
-#include "ultima/ultima1/u1dialogs/ready.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/u1dialogs/ready.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
 BEGIN_MESSAGE_MAP(Ready, Action)
-	ON_MESSAGE(ReadyMsg)
+ON_MESSAGE(ReadyMsg)
 END_MESSAGE_MAP()
 
 bool Ready::ReadyMsg(CReadyMsg &msg) {

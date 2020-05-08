@@ -27,10 +27,10 @@
 
 #include "pink/archive.h"
 #include "pink/director.h"
-#include "pink/pink.h"
-#include "pink/objects/actors/actor.h"
 #include "pink/objects/actions/action_text.h"
+#include "pink/objects/actors/actor.h"
 #include "pink/objects/pages/page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -71,8 +71,8 @@ void ActionText::deserialize(Archive &archive) {
 
 void ActionText::toConsole() const {
 	debugC(6, kPinkDebugLoadingObjects, "\tActionText: _name = %s, _fileName = %s, "
-				  "_xLeft = %u, _yTop = %u, _xRight = %u, _yBottom = %u _centered = %u, _scrollBar = %u, _textColor = %u _backgroundColor = %u",
-		  _name.c_str(), _fileName.c_str(), _xLeft, _yTop, _xRight, _yBottom, _centered, _scrollBar, _textRGB, _backgroundRGB);
+	                                    "_xLeft = %u, _yTop = %u, _xRight = %u, _yBottom = %u _centered = %u, _scrollBar = %u, _textColor = %u _backgroundColor = %u",
+	       _name.c_str(), _fileName.c_str(), _xLeft, _yTop, _xRight, _yBottom, _centered, _scrollBar, _textRGB, _backgroundRGB);
 }
 
 void ActionText::start() {
@@ -85,7 +85,7 @@ void ActionText::start() {
 	stream->read(str, stream->size());
 	delete stream;
 
-	switch(_actor->getPage()->getGame()->getLanguage()) {
+	switch (_actor->getPage()->getGame()->getLanguage()) {
 	case Common::RU_RUS:
 		_text = Common::String(str).decode(Common::kWindows1251);
 		break;
@@ -98,13 +98,13 @@ void ActionText::start() {
 
 	delete[] str;
 
-	while ( _text.size() > 0 && (_text[ _text.size() - 1 ] == '\n' || _text[ _text.size() - 1 ] == '\r') )
+	while (_text.size() > 0 && (_text[_text.size() - 1] == '\n' || _text[_text.size() - 1] == '\r'))
 		_text.deleteLastChar();
 
 	if (_scrollBar) {
 		Graphics::MacFont *font = new Graphics::MacFont;
 		_txtWnd = director->getWndManager().addTextWindow(font, _textColorIndex, _backgroundColorIndex,
-														  _xRight - _xLeft, align, nullptr, false);
+		                                                  _xRight - _xLeft, align, nullptr, false);
 		_txtWnd->disableBorder();
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
@@ -137,7 +137,7 @@ void ActionText::draw(Graphics::ManagedSurface *surface) {
 	text.drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft, _yTop));
 }
 
-#define BLUE(rgb) ((rgb) & 0xFF)
+#define BLUE(rgb) ((rgb)&0xFF)
 #define GREEN(rgb) (((rgb) >> 8) & 0xFF)
 #define RED(rgb) (((rgb) >> 16) & 0xFF)
 

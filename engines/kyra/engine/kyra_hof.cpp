@@ -21,32 +21,31 @@
  */
 
 #include "kyra/engine/kyra_hof.h"
-#include "kyra/resource/resource.h"
-#include "kyra/text/text_hof.h"
 #include "kyra/engine/timer.h"
-#include "kyra/gui/debugger.h"
 #include "kyra/engine/util.h"
+#include "kyra/gui/debugger.h"
+#include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
+#include "kyra/text/text_hof.h"
 
-#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 namespace Kyra {
 
 const KyraEngine_v2::EngineDesc KyraEngine_HoF::_hofEngineDesc = {
-	// Generic shape related
-	64,
-	KyraEngine_HoF::_characterFrameTable,
+    // Generic shape related
+    64,
+    KyraEngine_HoF::_characterFrameTable,
 
-	// Scene script
-	8,
+    // Scene script
+    8,
 
-	// Animation script specific
-	33,
+    // Animation script specific
+    33,
 
-	// Item specific
-	175
-};
+    // Item specific
+    175};
 
 KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEngine_v2(system, flags, _hofEngineDesc), _updateFunctor(this, &KyraEngine_HoF::update) {
 	_screen = 0;
@@ -331,20 +330,20 @@ void KyraEngine_HoF::startup() {
 	_screen->_curPage = 0;
 
 	_talkObjectList = new TalkObject[72];
-	memset(_talkObjectList, 0, sizeof(TalkObject)*72);
+	memset(_talkObjectList, 0, sizeof(TalkObject) * 72);
 	_shapeDescTable = new ShapeDesc[55];
-	memset(_shapeDescTable, 0, sizeof(ShapeDesc)*55);
+	memset(_shapeDescTable, 0, sizeof(ShapeDesc) * 55);
 
 	for (int i = 9; i <= 32; ++i) {
-		_shapeDescTable[i-9].width = 30;
-		_shapeDescTable[i-9].height = 55;
-		_shapeDescTable[i-9].xAdd = -15;
-		_shapeDescTable[i-9].yAdd = -50;
+		_shapeDescTable[i - 9].width = 30;
+		_shapeDescTable[i - 9].height = 55;
+		_shapeDescTable[i - 9].xAdd = -15;
+		_shapeDescTable[i - 9].yAdd = -50;
 	}
 
 	for (int i = 19; i <= 24; ++i) {
-		_shapeDescTable[i-9].width = 53;
-		_shapeDescTable[i-9].yAdd = -51;
+		_shapeDescTable[i - 9].width = 53;
+		_shapeDescTable[i - 9].yAdd = -51;
 	}
 
 	_gfxBackUpRect = new uint8[_screen->getRectSize(32, 32)];
@@ -364,7 +363,7 @@ void KyraEngine_HoF::startup() {
 	clearAnimObjects();
 
 	for (int i = 0; i < 19; ++i)
-		memset(_conversationState[i], -1, sizeof(int8)*14);
+		memset(_conversationState[i], -1, sizeof(int8) * 14);
 	clearCauldronTable();
 	memset(_inputColorCode, -1, sizeof(_inputColorCode));
 	memset(_newSceneDlgState, 0, sizeof(_newSceneDlgState));
@@ -372,7 +371,7 @@ void KyraEngine_HoF::startup() {
 		resetCauldronStateTable(i);
 
 	_sceneList = new SceneDesc[86];
-	memset(_sceneList, 0, sizeof(SceneDesc)*86);
+	memset(_sceneList, 0, sizeof(SceneDesc) * 86);
 	_sceneListSize = 86;
 	runStartScript(1, 0);
 	loadNPCScript();
@@ -680,7 +679,7 @@ void KyraEngine_HoF::updateMouse() {
 
 	for (int i = 0; i < _specialExitCount; ++i) {
 		if (checkSpecialSceneExit(i, mouse.x, mouse.y)) {
-			switch (_specialExitTable[20+i]) {
+			switch (_specialExitTable[20 + i]) {
 			case 0:
 				type = -6;
 				shapeIndex = 1;
@@ -732,30 +731,39 @@ void KyraEngine_HoF::updateMouse() {
 			if (_itemInHand == kItemNone)
 				_screen->setMouseCursor(0, 0, getShapePtr(0));
 			else
-				_screen->setMouseCursor(8, 15, getShapePtr(_itemInHand+64));
+				_screen->setMouseCursor(8, 15, getShapePtr(_itemInHand + 64));
 		}
 	}
 }
 
 void KyraEngine_HoF::cleanup() {
-	delete[] _inventoryButtons; _inventoryButtons = 0;
+	delete[] _inventoryButtons;
+	_inventoryButtons = 0;
 
-	delete[] _gamePlayBuffer; _gamePlayBuffer = 0;
-	delete[] _unkBuf500Bytes; _unkBuf500Bytes = 0;
-	delete[] _unkBuf200kByte; _unkBuf200kByte = 0;
+	delete[] _gamePlayBuffer;
+	_gamePlayBuffer = 0;
+	delete[] _unkBuf500Bytes;
+	_unkBuf500Bytes = 0;
+	delete[] _unkBuf200kByte;
+	_unkBuf200kByte = 0;
 
 	freeSceneShapePtrs();
 
 	if (_optionsBuffer != _cCodeBuffer)
 		delete[] _optionsBuffer;
 	_optionsBuffer = 0;
-	delete[] _cCodeBuffer; _cCodeBuffer = 0;
-	delete[] _chapterBuffer; _chapterBuffer = 0;
+	delete[] _cCodeBuffer;
+	_cCodeBuffer = 0;
+	delete[] _chapterBuffer;
+	_chapterBuffer = 0;
 
-	delete[] _talkObjectList; _talkObjectList = 0;
-	delete[] _shapeDescTable; _shapeDescTable = 0;
+	delete[] _talkObjectList;
+	_talkObjectList = 0;
+	delete[] _shapeDescTable;
+	_shapeDescTable = 0;
 
-	delete[] _gfxBackUpRect; _gfxBackUpRect = 0;
+	delete[] _gfxBackUpRect;
+	_gfxBackUpRect = 0;
 
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i) {
 		delete _sceneAnimMovie[i];
@@ -797,11 +805,10 @@ void KyraEngine_HoF::loadChapterBuffer(int chapter) {
 	char tempString[14];
 
 	static const char *const chapterFilenames[] = {
-		"CH1.XXX", "CH2.XXX", "CH3.XXX", "CH4.XXX", "CH5.XXX"
-	};
+	    "CH1.XXX", "CH2.XXX", "CH3.XXX", "CH4.XXX", "CH5.XXX"};
 
 	assert(chapter >= 1 && chapter <= ARRAYSIZE(chapterFilenames));
-	strcpy(tempString, chapterFilenames[chapter-1]);
+	strcpy(tempString, chapterFilenames[chapter - 1]);
 	changeFileExtension(tempString);
 
 	delete[] _chapterBuffer;
@@ -818,7 +825,7 @@ void KyraEngine_HoF::changeFileExtension(char *buffer) {
 }
 
 uint8 *KyraEngine_HoF::getTableEntry(uint8 *buffer, int id) {
-	return buffer + READ_LE_UINT16(buffer + (id<<1));
+	return buffer + READ_LE_UINT16(buffer + (id << 1));
 }
 
 char *KyraEngine_HoF::getTableString(int id, uint8 *buffer, int decode) {
@@ -932,7 +939,7 @@ void KyraEngine_HoF::loadItemShapes() {
 	_screen->loadBitmap("_ITEMS.CSH", 3, 3, 0);
 
 	for (int i = 64; i <= 239; ++i)
-		addShapeToPool(_screen->getCPagePtr(3), i, i-64);
+		addShapeToPool(_screen->getCPagePtr(3), i, i - 64);
 
 	_res->loadFileToBuf("_ITEMHT.DAT", _itemHtDat, sizeof(_itemHtDat));
 	assert(_res->getFileSize("_ITEMHT.DAT") == sizeof(_itemHtDat));
@@ -949,7 +956,7 @@ void KyraEngine_HoF::loadCharacterShapes(int shapes) {
 
 	uint8 *data = _res->fileData(file, 0);
 	for (int i = 9; i <= 32; ++i)
-		addShapeToPool(data, i, i-9);
+		addShapeToPool(data, i, i - 9);
 	delete[] data;
 
 	_characterShapeFile = shapes;
@@ -962,7 +969,7 @@ void KyraEngine_HoF::loadInventoryShapes() {
 	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
 
 	for (int i = 0; i < 10; ++i)
-		addShapeToPool(_screen->encodeShape(_inventoryX[i], _inventoryY[i], 16, 16, 0), 240+i);
+		addShapeToPool(_screen->encodeShape(_inventoryX[i], _inventoryY[i], 16, 16, 0), 240 + i);
 
 	_screen->_curPage = curPageBackUp;
 }
@@ -1025,7 +1032,7 @@ void KyraEngine_HoF::resetScaleTable() {
 
 void KyraEngine_HoF::setScaleTableItem(int item, int data) {
 	if (item >= 1 && item <= 15)
-		_scaleTable[item-1] = (data << 8) / 100;
+		_scaleTable[item - 1] = (data << 8) / 100;
 }
 
 int KyraEngine_HoF::getScale(int x, int y) {
@@ -1034,12 +1041,12 @@ int KyraEngine_HoF::getScale(int x, int y) {
 
 void KyraEngine_HoF::setDrawLayerTableEntry(int entry, int data) {
 	if (entry >= 1 && entry <= 15)
-		_drawLayerTable[entry-1] = data;
+		_drawLayerTable[entry - 1] = data;
 }
 
 int KyraEngine_HoF::getDrawLayer(int x, int y) {
 	int layer = _screen->getLayer(x, y);
-	layer = _drawLayerTable[layer-1];
+	layer = _drawLayerTable[layer - 1];
 	if (layer < 0)
 		layer = 0;
 	else if (layer >= 7)
@@ -1291,8 +1298,8 @@ bool KyraEngine_HoF::checkCharCollision(int x, int y) {
 int KyraEngine_HoF::initAnimationShapes(uint8 *filedata) {
 	const int lastEntry = MIN(_animShapeLastEntry, 31);
 	for (int i = 0; i < lastEntry; ++i) {
-		addShapeToPool(filedata, i+33, i);
-		ShapeDesc *desc = &_shapeDescTable[24+i];
+		addShapeToPool(filedata, i + 33, i);
+		ShapeDesc *desc = &_shapeDescTable[24 + i];
 		desc->xAdd = _animShapeXAdd;
 		desc->yAdd = _animShapeYAdd;
 		desc->width = _animShapeWidth;
@@ -1303,7 +1310,7 @@ int KyraEngine_HoF::initAnimationShapes(uint8 *filedata) {
 
 void KyraEngine_HoF::uninitAnimationShapes(int count, uint8 *filedata) {
 	for (int i = 0; i < count; ++i)
-		remShapeFromPool(i+33);
+		remShapeFromPool(i + 33);
 	delete[] filedata;
 	setNextIdleAnimTimer();
 }
@@ -1314,12 +1321,10 @@ void KyraEngine_HoF::setNextIdleAnimTimer() {
 
 void KyraEngine_HoF::showIdleAnim() {
 	static const uint8 scriptMinTable[] = {
-		0x00, 0x05, 0x07, 0x08, 0x00, 0x09, 0x0A, 0x0B, 0xFF, 0x00
-	};
+	    0x00, 0x05, 0x07, 0x08, 0x00, 0x09, 0x0A, 0x0B, 0xFF, 0x00};
 
 	static const uint8 scriptMaxTable[] = {
-		0x04, 0x06, 0x07, 0x08, 0x04, 0x09, 0x0A, 0x0B, 0xFF, 0x00
-	};
+	    0x04, 0x06, 0x07, 0x08, 0x04, 0x09, 0x0A, 0x0B, 0xFF, 0x00};
 
 	if (queryGameFlag(0x159) && _flags.isTalkie)
 		return;
@@ -1332,8 +1337,8 @@ void KyraEngine_HoF::showIdleAnim() {
 		if (_characterShapeFile > 8)
 			return;
 
-		int scriptMin = scriptMinTable[_characterShapeFile-1];
-		int scriptMax = scriptMaxTable[_characterShapeFile-1];
+		int scriptMin = scriptMinTable[_characterShapeFile - 1];
+		int scriptMax = scriptMaxTable[_characterShapeFile - 1];
 		int script = 0;
 
 		if (scriptMin < scriptMax) {
@@ -1358,9 +1363,8 @@ void KyraEngine_HoF::runIdleScript(int script) {
 	} else {
 		// FIXME: move this to staticres.cpp?
 		static const char *const idleScriptFiles[] = {
-			"_IDLHAIR.EMC", "_IDLDUST.EMC", "_IDLLEAN.EMC", "_IDLDIRT.EMC", "_IDLTOSS.EMC", "_IDLNOSE.EMC",
-			"_IDLBRSH.EMC", "_Z3IDLE.EMC", "_Z4IDLE.EMC", "_Z6IDLE.EMC", "_Z7IDLE.EMC", "_Z8IDLE.EMC"
-		};
+		    "_IDLHAIR.EMC", "_IDLDUST.EMC", "_IDLLEAN.EMC", "_IDLDIRT.EMC", "_IDLTOSS.EMC", "_IDLNOSE.EMC",
+		    "_IDLBRSH.EMC", "_Z3IDLE.EMC", "_Z4IDLE.EMC", "_Z6IDLE.EMC", "_Z7IDLE.EMC", "_Z8IDLE.EMC"};
 
 		runAnimationScript(idleScriptFiles[script], 1, 1, 1, 1);
 	}
@@ -1442,7 +1446,7 @@ void KyraEngine_HoF::snd_loadSoundFile(int id) {
 		return;
 
 	assert(id < _trackMapSize);
-	int file = _trackMap[id*2];
+	int file = _trackMap[id * 2];
 	_curSfxFile = _curMusicTheme = file;
 	_sound->loadSoundFile(file);
 }
@@ -1456,8 +1460,8 @@ void KyraEngine_HoF::playVoice(int high, int low) {
 }
 
 void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
-	static const uint8 volTable1[] = { 223, 159, 95, 47, 15, 0 };
-	static const uint8 volTable2[] = { 100, 75, 50, 25, 12, 0 };
+	static const uint8 volTable1[] = {223, 159, 95, 47, 15, 0};
+	static const uint8 volTable2[] = {100, 75, 50, 25, 12, 0};
 
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		if (track == 10)
@@ -1577,11 +1581,15 @@ void KyraEngine_HoF::updateInvWsa() {
 
 	if (_invWsa.sfx == -2) {
 		switch (_invWsa.curFrame) {
-		case 9: case 27: case 40:
+		case 9:
+		case 27:
+		case 40:
 			snd_playSoundEffect(0x39);
 			break;
 
-		case 18: case 34: case 44:
+		case 18:
+		case 34:
+		case 44:
 			snd_playSoundEffect(0x33);
 			break;
 
@@ -1599,7 +1607,7 @@ void KyraEngine_HoF::displayInvWsaLastFrame() {
 	if (!_invWsa.wsa)
 		return;
 
-	_invWsa.wsa->displayFrame(_invWsa.lastFrame-1, _invWsa.page, 0, 0, 0, 0, 0);
+	_invWsa.wsa->displayFrame(_invWsa.lastFrame - 1, _invWsa.page, 0, 0, 0, 0, 0);
 
 	if (_invWsa.page)
 		_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);
@@ -1617,7 +1625,7 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 	Common::SeekableReadStream *file = _res->createReadStream("_POTIONS.PAL");
 	if (!file)
 		error("Couldn't load cauldron palette");
-	file->seek(state*18, SEEK_SET);
+	file->seek(state * 18, SEEK_SET);
 	_screen->getPalette(2).loadVGAPalette(*file, 241, 6);
 	delete file;
 	file = 0;
@@ -1643,7 +1651,7 @@ void KyraEngine_HoF::clearCauldronTable() {
 
 void KyraEngine_HoF::addFrontCauldronTable(int item) {
 	for (int i = 23; i >= 0; --i)
-		_cauldronTable[i+1] = _cauldronTable[i];
+		_cauldronTable[i + 1] = _cauldronTable[i];
 	_cauldronTable[0] = item;
 }
 
@@ -1679,12 +1687,12 @@ void KyraEngine_HoF::cauldronItemAnim(int item) {
 
 	if (itemIsFlask(item)) {
 		setHandItem(19);
-		delayUntil(_system->getMillis()+_tickLength*30);
+		delayUntil(_system->getMillis() + _tickLength * 30);
 		setHandItem(18);
 	} else {
 		_screen->hideMouse();
 		backUpGfxRect32x32(x, y);
-		uint8 *shape = getShapePtr(item+64);
+		uint8 *shape = getShapePtr(item + 64);
 
 		int curY = y;
 		for (int i = 0; i < 12; i += 2, curY += 2) {
@@ -1789,7 +1797,7 @@ void KyraEngine_HoF::cauldronRndPaletteFade() {
 	Common::SeekableReadStream *file = _res->createReadStream("_POTIONS.PAL");
 	if (!file)
 		error("Couldn't load cauldron palette");
-	file->seek(index*18, SEEK_SET);
+	file->seek(index * 18, SEEK_SET);
 	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
 	snd_playSoundEffect(0x6A);
 	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
@@ -1832,9 +1840,9 @@ void KyraEngine_HoF::listItemsInCauldron() {
 		objectChat(getTableString(0xF7, _cCodeBuffer, 1), 0, 0x83, 0xF7);
 
 		char buffer[80];
-		for (int i = 0; i < itemsInCauldron-1; ++i) {
+		for (int i = 0; i < itemsInCauldron - 1; ++i) {
 			char *str = buffer;
-			strcpy(str, getTableString(_cauldronTable[i]+54, _cCodeBuffer, 1));
+			strcpy(str, getTableString(_cauldronTable[i] + 54, _cCodeBuffer, 1));
 			if (_lang == 1) {
 				if (*str == 37)
 					str += 2;
@@ -1842,11 +1850,11 @@ void KyraEngine_HoF::listItemsInCauldron() {
 			strcpy((char *)_unkBuf500Bytes, "...");
 			strcat((char *)_unkBuf500Bytes, str);
 			strcat((char *)_unkBuf500Bytes, "...");
-			objectChat((const char *)_unkBuf500Bytes, 0, 0x83, _cauldronTable[i]+54);
+			objectChat((const char *)_unkBuf500Bytes, 0, 0x83, _cauldronTable[i] + 54);
 		}
 
 		char *str = buffer;
-		strcpy(str, getTableString(_cauldronTable[itemsInCauldron-1]+54, _cCodeBuffer, 1));
+		strcpy(str, getTableString(_cauldronTable[itemsInCauldron - 1] + 54, _cCodeBuffer, 1));
 		if (_lang == 1) {
 			if (*str == 37)
 				str += 2;
@@ -1854,7 +1862,7 @@ void KyraEngine_HoF::listItemsInCauldron() {
 		strcpy((char *)_unkBuf500Bytes, "...");
 		strcat((char *)_unkBuf500Bytes, str);
 		strcat((char *)_unkBuf500Bytes, ".");
-		objectChat((const char *)_unkBuf500Bytes, 0, 0x83, _cauldronTable[itemsInCauldron-1]+54);
+		objectChat((const char *)_unkBuf500Bytes, 0, 0x83, _cauldronTable[itemsInCauldron - 1] + 54);
 	}
 }
 
@@ -1926,7 +1934,7 @@ void KyraEngine_HoF::registerDefaultSettings() {
 }
 
 void KyraEngine_HoF::writeSettings() {
-	ConfMan.setInt("talkspeed", ((_configTextspeed-2) * 255) / 95);
+	ConfMan.setInt("talkspeed", ((_configTextspeed - 2) * 255) / 95);
 
 	switch (_lang) {
 	case 1:
@@ -1958,7 +1966,7 @@ void KyraEngine_HoF::readSettings() {
 	KyraEngine_v2::readSettings();
 
 	int talkspeed = ConfMan.getInt("talkspeed");
-	_configTextspeed = (talkspeed*95)/255 + 2;
+	_configTextspeed = (talkspeed * 95) / 255 + 2;
 }
 
 } // End of namespace Kyra

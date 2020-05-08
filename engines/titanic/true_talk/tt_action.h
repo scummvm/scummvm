@@ -30,8 +30,10 @@ namespace Titanic {
 class TTaction : public TTmajorWord {
 private:
 	static bool _staticFlag;
+
 protected:
 	int _field30;
+
 public:
 	TTaction(const TTstring &str, WordClass wordClass, int val2, int val3, int val4);
 	TTaction(const TTaction *src);

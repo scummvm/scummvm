@@ -37,20 +37,20 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 		Testsuite::logPrintf("Info! Skipping test : testConversionUnicodeMachineEndian\n");
 		return kTestSkipped;
 	}
-					   //  |dolar|   cent    |     euro       |
+	//  |dolar|   cent    |     euro       |
 	unsigned char utf8[] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0};
 #ifdef SCUMM_BIG_ENDIAN
-							//| dolar |  cent  |    euro   |
+	//| dolar |  cent  |    euro   |
 	unsigned char utf16be[] = {0, 0x24, 0, 0xA2, 0x20, 0xAC, 0, 0};
-							//| dolar       |  cent        |    euro  
+	//| dolar       |  cent        |    euro
 	unsigned char utf32be[] = {0, 0, 0, 0x24, 0, 0, 0, 0xA2, 0, 0, 0x20, 0xAC, 0, 0, 0, 0};
 
 	unsigned char *utf16 = utf16be;
 	unsigned char *utf32 = utf32be;
 #else
-							//| dolar |  cent  |    euro   |
+	//| dolar |  cent  |    euro   |
 	unsigned char utf16le[] = {0x24, 0, 0xA2, 0, 0xAC, 0x20, 0, 0};
-							//| dolar       |  cent        |    euro
+	//| dolar       |  cent        |    euro
 	unsigned char utf32le[] = {0x24, 0, 0, 0, 0xA2, 0, 0, 0, 0xAC, 0x20, 0, 0, 0, 0, 0, 0};
 
 	unsigned char *utf16 = utf16le;
@@ -60,7 +60,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	// UTF16 to UTF8
 	Common::Encoding converter("UTF-8", "UTF-16");
 
-	char *result = converter.convert((char *) utf16, 6);
+	char *result = converter.convert((char *)utf16, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-8 conversion isn't available");
 		return kTestFailed;
@@ -72,7 +72,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-8", "UTF-16", (char *) utf16, 6);
+	result = Common::Encoding::convert("UTF-8", "UTF-16", (char *)utf16, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-8 conversion isn't available");
 		return kTestFailed;
@@ -87,7 +87,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	// UTF32 to UTF8
 	converter.setFrom("UTF-32");
 
-	result = converter.convert((char *) utf32, 12);
+	result = converter.convert((char *)utf32, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-8 conversion isn't available");
 		return kTestFailed;
@@ -99,7 +99,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-8", "UTF-32", (char *) utf32, 12);
+	result = Common::Encoding::convert("UTF-8", "UTF-32", (char *)utf32, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-8 conversion isn't available");
 		return kTestFailed;
@@ -114,7 +114,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	// UTF32 to UTF16
 	converter.setTo("UTF-16");
 
-	result = converter.convert((char *) utf32, 12);
+	result = converter.convert((char *)utf32, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -126,7 +126,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-16", "UTF-32", (char *) utf32, 12);
+	result = Common::Encoding::convert("UTF-16", "UTF-32", (char *)utf32, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -141,7 +141,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	// UTF8 to UTF16
 	converter.setFrom("UTF-8");
 
-	result = converter.convert((char *) utf8, 6);
+	result = converter.convert((char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -153,7 +153,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-16", "UTF-8", (char *) utf8, 6);
+	result = Common::Encoding::convert("UTF-16", "UTF-8", (char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -168,7 +168,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	// UTF8 to UTF32
 	converter.setTo("UTF-32");
 
-	result = converter.convert((char *) utf8, 6);
+	result = converter.convert((char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -180,7 +180,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-32", "UTF-8", (char *) utf8, 6);
+	result = Common::Encoding::convert("UTF-32", "UTF-8", (char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -195,7 +195,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	// UTF16 to UTF32
 	converter.setFrom("UTF-16");
 
-	result = converter.convert((char *) utf16, 6);
+	result = converter.convert((char *)utf16, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -207,7 +207,7 @@ TestExitStatus Encodingtests::testConversionUnicodeMachineEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-32", "UTF-16", (char *) utf16, 6);
+	result = Common::Encoding::convert("UTF-32", "UTF-16", (char *)utf16, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -232,17 +232,17 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 		Testsuite::logPrintf("Info! Skipping test : testConversionUnicodeBigEndian\n");
 		return kTestSkipped;
 	}
-					   //  |dolar|   cent    |     euro       |
+	//  |dolar|   cent    |     euro       |
 	unsigned char utf8[] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0};
-							//| dolar |  cent  |    euro   |
+	//| dolar |  cent  |    euro   |
 	unsigned char utf16be[] = {0, 0x24, 0, 0xA2, 0x20, 0xAC, 0, 0};
-							//| dolar       |  cent        |    euro  
+	//| dolar       |  cent        |    euro
 	unsigned char utf32be[] = {0, 0, 0, 0x24, 0, 0, 0, 0xA2, 0, 0, 0x20, 0xAC, 0, 0, 0, 0};
 
 	// UTF16 to UTF8
 	Common::Encoding converter("UTF-8", "UTF-16BE");
 
-	char *result = converter.convert((char *) utf16be, 6);
+	char *result = converter.convert((char *)utf16be, 6);
 
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-8 conversion isn't available");
@@ -255,7 +255,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-8", "UTF-16BE", (char *) utf16be, 6);
+	result = Common::Encoding::convert("UTF-8", "UTF-16BE", (char *)utf16be, 6);
 
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-8 conversion isn't available");
@@ -271,7 +271,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	// UTF32 to UTF8
 	converter.setFrom("UTF-32BE");
 
-	result = converter.convert((char *) utf32be, 12);
+	result = converter.convert((char *)utf32be, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-8 conversion isn't available");
 		return kTestFailed;
@@ -283,7 +283,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-8", "UTF-32BE", (char *) utf32be, 12);
+	result = Common::Encoding::convert("UTF-8", "UTF-32BE", (char *)utf32be, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-8 conversion isn't available");
 		return kTestFailed;
@@ -298,7 +298,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	// UTF32 to UTF16
 	converter.setTo("UTF-16BE");
 
-	result = converter.convert((char *) utf32be, 12);
+	result = converter.convert((char *)utf32be, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -310,7 +310,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-16BE", "UTF-32BE", (char *) utf32be, 12);
+	result = Common::Encoding::convert("UTF-16BE", "UTF-32BE", (char *)utf32be, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -325,7 +325,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	// UTF8 to UTF16
 	converter.setFrom("UTF-8");
 
-	result = converter.convert((char *) utf8, 6);
+	result = converter.convert((char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -337,7 +337,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-16BE", "UTF-8", (char *) utf8, 6);
+	result = Common::Encoding::convert("UTF-16BE", "UTF-8", (char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -352,7 +352,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	// UTF8 to UTF32
 	converter.setTo("UTF-32BE");
 
-	result = converter.convert((char *) utf8, 6);
+	result = converter.convert((char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -364,7 +364,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-32BE", "UTF-8", (char *) utf8, 6);
+	result = Common::Encoding::convert("UTF-32BE", "UTF-8", (char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -379,7 +379,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	// UTF16 to UTF32
 	converter.setFrom("UTF-16BE");
 
-	result = converter.convert((char *) utf16be, 6);
+	result = converter.convert((char *)utf16be, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -391,7 +391,7 @@ TestExitStatus Encodingtests::testConversionUnicodeBigEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-32BE", "UTF-16BE", (char *) utf16be, 6);
+	result = Common::Encoding::convert("UTF-32BE", "UTF-16BE", (char *)utf16be, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -415,17 +415,17 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 		Testsuite::logPrintf("Info! Skipping test : testConversionUnicodeLittleEndian\n");
 		return kTestSkipped;
 	}
-					   //  |dolar|   cent    |     euro       |
+	//  |dolar|   cent    |     euro       |
 	unsigned char utf8[] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0};
-							//| dolar |  cent  |    euro   |
+	//| dolar |  cent  |    euro   |
 	unsigned char utf16le[] = {0x24, 0, 0xA2, 0, 0xAC, 0x20, 0, 0};
-							//| dolar       |  cent        |    euro
+	//| dolar       |  cent        |    euro
 	unsigned char utf32le[] = {0x24, 0, 0, 0, 0xA2, 0, 0, 0, 0xAC, 0x20, 0, 0, 0, 0, 0, 0};
 
 	// UTF16 to UTF8
 	Common::Encoding converter("UTF-8", "UTF-16LE");
 
-	char *result = converter.convert((char *) utf16le, 6);
+	char *result = converter.convert((char *)utf16le, 6);
 
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-8 conversion isn't available");
@@ -438,7 +438,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-8", "UTF-16LE", (char *) utf16le, 6);
+	result = Common::Encoding::convert("UTF-8", "UTF-16LE", (char *)utf16le, 6);
 
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-8 conversion isn't available");
@@ -454,7 +454,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	// UTF32 to UTF8
 	converter.setFrom("UTF-32LE");
 
-	result = converter.convert((char *) utf32le, 12);
+	result = converter.convert((char *)utf32le, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-8 conversion isn't available");
 		return kTestFailed;
@@ -466,7 +466,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-8", "UTF-32LE", (char *) utf32le, 12);
+	result = Common::Encoding::convert("UTF-8", "UTF-32LE", (char *)utf32le, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-8 conversion isn't available");
 		return kTestFailed;
@@ -481,7 +481,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	// UTF32 to UTF16
 	converter.setTo("UTF-16LE");
 
-	result = converter.convert((char *) utf32le, 12);
+	result = converter.convert((char *)utf32le, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -493,7 +493,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-16LE", "UTF-32LE", (char *) utf32le, 12);
+	result = Common::Encoding::convert("UTF-16LE", "UTF-32LE", (char *)utf32le, 12);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-32 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -508,7 +508,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	// UTF8 to UTF16
 	converter.setFrom("UTF-8");
 
-	result = converter.convert((char *) utf8, 6);
+	result = converter.convert((char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -520,7 +520,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-16LE", "UTF-8", (char *) utf8, 6);
+	result = Common::Encoding::convert("UTF-16LE", "UTF-8", (char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-16 conversion isn't available");
 		return kTestFailed;
@@ -535,7 +535,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	// UTF8 to UTF32
 	converter.setTo("UTF-32LE");
 
-	result = converter.convert((char *) utf8, 6);
+	result = converter.convert((char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -547,7 +547,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-32LE", "UTF-8", (char *) utf8, 6);
+	result = Common::Encoding::convert("UTF-32LE", "UTF-8", (char *)utf8, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-8 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -562,7 +562,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	// UTF16 to UTF32
 	converter.setFrom("UTF-16LE");
 
-	result = converter.convert((char *) utf16le, 6);
+	result = converter.convert((char *)utf16le, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -574,7 +574,7 @@ TestExitStatus Encodingtests::testConversionUnicodeLittleEndian() {
 	}
 	free(result);
 
-	result = Common::Encoding::convert("UTF-32LE", "UTF-16LE", (char *) utf16le, 6);
+	result = Common::Encoding::convert("UTF-32LE", "UTF-16LE", (char *)utf16le, 6);
 	if (result == NULL) {
 		Testsuite::logPrintf("UTF-16 to UTF-32 conversion isn't available");
 		return kTestFailed;
@@ -598,7 +598,7 @@ TestExitStatus Encodingtests::testCyrillicTransliteration() {
 		Testsuite::logPrintf("Info! Skipping test : testCyrillicTransliteration\n");
 		return kTestSkipped;
 	}
-	unsigned char utf8[] = {/* Z */0xD0, 0x97, /* d */ 0xD0, 0xB4, /* r */ 0xD1, 0x80, /* a */ 0xD0, 0xB0, /* v */ 0xD0, 0xB2, /* s */ 0xD1, 0x81, /* t */ 0xD1, 0x82, /* v */ 0xD0, 0xB2, /* u */ 0xD1, 0x83, /* j */ 0xD0, 0xB9, /* t */ 0xD1, 0x82, /* e */ 0xD0, 0xB5, 0};
+	unsigned char utf8[] = {/* Z */ 0xD0, 0x97, /* d */ 0xD0, 0xB4, /* r */ 0xD1, 0x80, /* a */ 0xD0, 0xB0, /* v */ 0xD0, 0xB2, /* s */ 0xD1, 0x81, /* t */ 0xD1, 0x82, /* v */ 0xD0, 0xB2, /* u */ 0xD1, 0x83, /* j */ 0xD0, 0xB9, /* t */ 0xD1, 0x82, /* e */ 0xD0, 0xB5, 0};
 	unsigned char iso_8859_5[] = {0xB7, 0xD4, 0xE0, 0xD0, 0xD2, 0xE1, 0xE2, 0xD2, 0xE3, 0xD9, 0xE2, 0xD5, 0};
 	unsigned char ascii[] = "Zdravstvujte";
 

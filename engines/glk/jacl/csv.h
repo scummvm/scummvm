@@ -39,32 +39,30 @@ namespace JACL {
 #define CSV_ETOOBIG 3  /* Buffer larger than SIZE_MAX needed */
 #define CSV_EINVALID 4 /* Invalid code,should never be received from csv_error*/
 
-
 /* parser options */
-#define CSV_STRICT 1    /* enable strict mode */
-#define CSV_REPALL_NL 2 /* report all unquoted carriage returns and linefeeds */
-#define CSV_STRICT_FINI 4 /* causes csv_fini to return CSV_EPARSE if last
-                             field is quoted and doesn't containg ending 
-                             quote */
+#define CSV_STRICT 1      /* enable strict mode */
+#define CSV_REPALL_NL 2   /* report all unquoted carriage returns and linefeeds */
+#define CSV_STRICT_FINI 4 /* causes csv_fini to return CSV_EPARSE if last \
+	                         field is quoted and doesn't containg ending  \
+	                         quote */
 #define CSV_APPEND_NULL 8 /* Ensure that all fields are null-ternimated */
 
-
 /* Character values */
-#define CSV_TAB    0x09
-#define CSV_SPACE  0x20
-#define CSV_CR     0x0d
-#define CSV_LF     0x0a
-#define CSV_COMMA  0x2c
-#define CSV_QUOTE  0x22
+#define CSV_TAB 0x09
+#define CSV_SPACE 0x20
+#define CSV_CR 0x0d
+#define CSV_LF 0x0a
+#define CSV_COMMA 0x2c
+#define CSV_QUOTE 0x22
 
 struct csv_parser {
-	int pstate;         /* Parser state */
-	int quoted;         /* Is the current field a quoted field? */
-	size_t spaces;      /* Number of continious spaces after quote or in a non-quoted field */
-	unsigned char *entry_buf;    /* Entry buffer */
-	size_t entry_pos;   /* Current position in entry_buf (and current size of entry) */
-	size_t entry_size;  /* Size of entry buffer */
-	int status;         /* Operation status */
+	int pstate;               /* Parser state */
+	int quoted;               /* Is the current field a quoted field? */
+	size_t spaces;            /* Number of continious spaces after quote or in a non-quoted field */
+	unsigned char *entry_buf; /* Entry buffer */
+	size_t entry_pos;         /* Current position in entry_buf (and current size of entry) */
+	size_t entry_size;        /* Size of entry buffer */
+	int status;               /* Operation status */
 	unsigned char options;
 	unsigned char quote_char;
 	unsigned char delim_char;

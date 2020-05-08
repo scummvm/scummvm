@@ -52,6 +52,7 @@ private:
 	uint16 _actor_80063514; //flags
 
 	byte *_palettes;
+
 public:
 	CutScene(DragonsEngine *vm);
 

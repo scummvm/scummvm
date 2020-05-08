@@ -21,8 +21,8 @@
  */
 
 #include "titanic/room_flags.h"
-#include "titanic/titanic.h"
 #include "titanic/support/strings.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -47,34 +47,32 @@ struct SuccUBusFlagsEntry {
 
 #define TRANSPORT_ROOMS_SIZE 6
 const TransportFlagsEntry TRANSPORT_ROOMS[TRANSPORT_ROOMS_SIZE] = {
-	{ "TopOfWell", 0xDF4D1 },
-	{ "Pellerator", 0xC95E9 },
-	{ "Dome", 0xAD171 },
-	{ "Lift", 0x96E45 },
-	{ "SGTLeisure", 0x5D3AD },
-	{ "ServiceElevator", 0x68797 }
-};
+    {"TopOfWell", 0xDF4D1},
+    {"Pellerator", 0xC95E9},
+    {"Dome", 0xAD171},
+    {"Lift", 0x96E45},
+    {"SGTLeisure", 0x5D3AD},
+    {"ServiceElevator", 0x68797}};
 
 #define SUCCUBUS_ROOMS_SIZE 17
 const SuccUBusFlagsEntry SUCCUBUS_ROOMS[SUCCUBUS_ROOMS_SIZE] = {
-	{ "ParrotLobby", 0x1D0D9, THIRD_CLASS },
-	{ "SculptureChamber", 0x465FB, SECOND_CLASS },
-	{ "Bar", 0x0B3D97, SECOND_CLASS },
-	{ "EmbLobby", 0x0CC971, THIRD_CLASS },
-	{ "MoonEmbLobby", 0x0CC971, THIRD_CLASS },
-	{ "MusicRoom", 0x0F34DB, SECOND_CLASS },
-	{ "MusicRoomLobby", 0x0F34DB, SECOND_CLASS },
-	{ "Titania", 0x8A397, THIRD_CLASS },
-	{ "BottomOfWell", 0x59FAD, THIRD_CLASS },
-	{ "Arboretum", 0x4D6AF, FIRST_CLASS },
-	{ "PromenadeDeck", 0x79C45, SECOND_CLASS },
-	{ "1stClassRestaurant", 0x896B9, FIRST_CLASS },
-	{ "CreatorsChamber", 0x2F86D, SECOND_CLASS },
-	{ "CreatorsChamberOn", 0x2F86D, SECOND_CLASS },
-	{ "BilgeRoom", 0x3D94B, THIRD_CLASS },
-	{ "BilgeRoomWith", 0x3D94B, THIRD_CLASS },
-	{ "Bridge", 0x39FCB, THIRD_CLASS }
-};
+    {"ParrotLobby", 0x1D0D9, THIRD_CLASS},
+    {"SculptureChamber", 0x465FB, SECOND_CLASS},
+    {"Bar", 0x0B3D97, SECOND_CLASS},
+    {"EmbLobby", 0x0CC971, THIRD_CLASS},
+    {"MoonEmbLobby", 0x0CC971, THIRD_CLASS},
+    {"MusicRoom", 0x0F34DB, SECOND_CLASS},
+    {"MusicRoomLobby", 0x0F34DB, SECOND_CLASS},
+    {"Titania", 0x8A397, THIRD_CLASS},
+    {"BottomOfWell", 0x59FAD, THIRD_CLASS},
+    {"Arboretum", 0x4D6AF, FIRST_CLASS},
+    {"PromenadeDeck", 0x79C45, SECOND_CLASS},
+    {"1stClassRestaurant", 0x896B9, FIRST_CLASS},
+    {"CreatorsChamber", 0x2F86D, SECOND_CLASS},
+    {"CreatorsChamberOn", 0x2F86D, SECOND_CLASS},
+    {"BilgeRoom", 0x3D94B, THIRD_CLASS},
+    {"BilgeRoomWith", 0x3D94B, THIRD_CLASS},
+    {"Bridge", 0x39FCB, THIRD_CLASS}};
 
 int CRoomFlags::getConditionally() const {
 	if (getRoomArea() != 5 || getRoomCategory())
@@ -182,7 +180,7 @@ CString CRoomFlags::getRoomDesc() const {
 		case 0xCC971:
 			return str[THE_EMBARKATION_LOBBY];
 		case 0xF34DB:
-			return  str[THE_MUSIC_ROOM];
+			return str[THE_MUSIC_ROOM];
 		default:
 			break;
 		}
@@ -486,8 +484,8 @@ bool CRoomFlags::compareLocation(uint flags1, uint flags2) {
 	CRoomFlags f2(flags2);
 
 	return f1.getElevatorNum() == f2.getElevatorNum() &&
-		f1.getFloorNum() == f2.getFloorNum() &&
-		f1.getRoomNum() == f2.getRoomNum();
+	       f1.getFloorNum() == f2.getFloorNum() &&
+	       f1.getRoomNum() == f2.getRoomNum();
 }
 
 bool CRoomFlags::isTitania(uint flags1, uint flags2) {

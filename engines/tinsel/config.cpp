@@ -25,11 +25,11 @@
 
 #include "tinsel/config.h"
 #include "tinsel/dw.h"
-#include "tinsel/sound.h"
 #include "tinsel/music.h"
+#include "tinsel/sound.h"
 
-#include "common/file.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 
 #include "audio/mixer.h"
 
@@ -46,7 +46,6 @@ Config::Config(TinselEngine *vm) : _vm(vm) {
 	_language = TXT_ENGLISH;
 	_isAmericanEnglishVersion = false;
 }
-
 
 /**
  * Write settings to config manager and flush the config file to disk.
@@ -124,7 +123,7 @@ void Config::readFromDisk() {
 	_language = TXT_ENGLISH;
 	Common::Language lang = _vm->getLanguage();
 	if (lang == Common::UNK_LANG && ConfMan.hasKey("language"))
-		lang = Common::parseLanguage(ConfMan.get("language"));	// For multi-lingual versions, fall back to user settings
+		lang = Common::parseLanguage(ConfMan.get("language")); // For multi-lingual versions, fall back to user settings
 	switch (lang) {
 	case Common::FR_FRA:
 		_language = TXT_FRENCH;
@@ -168,7 +167,7 @@ void Config::readFromDisk() {
 		// 4 FLAGS version supports French, German, Spanish, Italian
 		// Fall back to German if necessary
 		if (_language != TXT_FRENCH && _language != TXT_GERMAN &&
-				_language != TXT_SPANISH && _language != TXT_ITALIAN) {
+		    _language != TXT_SPANISH && _language != TXT_ITALIAN) {
 			_language = TXT_GERMAN;
 			_useSubtitles = true;
 		}

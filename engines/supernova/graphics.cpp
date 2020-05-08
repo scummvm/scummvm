@@ -21,11 +21,11 @@
  */
 
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "common/config-manager.h"
-#include "common/memstream.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
@@ -37,7 +37,7 @@
 namespace Supernova {
 
 MSNImage::MSNImage(SupernovaEngine *vm)
-	: _vm(vm) {
+    : _vm(vm) {
 	_palette = nullptr;
 	_encodedImage = nullptr;
 	_filenumber = -1;
@@ -77,8 +77,7 @@ bool MSNImage::init(int filenumber) {
 			return false;
 		}
 		loadStream(file);
-	}
-	else if (_vm->_MSPart == 2) {
+	} else if (_vm->_MSPart == 2) {
 		if (!loadFromEngineDataFile()) {
 			if (!file.open(Common::String::format("ms2_data.%03d", filenumber))) {
 				warning("Image data file ms2_data.%03d could not be read!", filenumber);
@@ -139,10 +138,10 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
 	uint size = 0;
-	size  = (stream.readUint16LE() + 0xF) >> 4;
+	size = (stream.readUint16LE() + 0xF) >> 4;
 	size |= (stream.readUint16LE() & 0xF) << 12;
-	size += 0x70;    // zus_paragraph
-	size *= 16;      // a paragraph is 16 bytes
+	size += 0x70; // zus_paragraph
+	size *= 16;   // a paragraph is 16 bytes
 	_encodedImage = new byte[size];
 
 	_palette = new byte[717];
@@ -234,7 +233,7 @@ bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 
 bool MSNImage::loadSections() {
 	bool isNewspaper = (_vm->_MSPart == 1 && (_filenumber == 1 || _filenumber == 2)) ||
-					   (_vm->_MSPart == 2 && _filenumber == 38);
+	                   (_vm->_MSPart == 2 && _filenumber == 38);
 	int imageWidth = isNewspaper ? 640 : 320;
 	int imageHeight = isNewspaper ? 480 : 200;
 	_pitch = imageWidth;
@@ -283,9 +282,9 @@ void MSNImage::destroy() {
 		_encodedImage = nullptr;
 	}
 	for (Common::Array<Graphics::Surface *>::iterator it = _sectionSurfaces.begin();
-		 it != _sectionSurfaces.end(); ++it) {
+	     it != _sectionSurfaces.end(); ++it) {
 		(*it)->free();
 	}
 }
 
-}
+} // namespace Supernova

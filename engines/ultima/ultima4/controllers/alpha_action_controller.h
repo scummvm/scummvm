@@ -37,9 +37,9 @@ class AlphaActionController : public WaitableController<int> {
 private:
 	char _lastValidLetter;
 	Common::String _prompt;
+
 public:
-	AlphaActionController(char letter, const Common::String &p) :
-		WaitableController<int>(-1), _lastValidLetter(letter), _prompt(p) {}
+	AlphaActionController(char letter, const Common::String &p) : WaitableController<int>(-1), _lastValidLetter(letter), _prompt(p) {}
 
 	bool keyPressed(int key) override;
 	void keybinder(KeybindingAction action) override;

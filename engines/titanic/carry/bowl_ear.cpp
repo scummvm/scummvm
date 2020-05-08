@@ -25,10 +25,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBowlEar, CEar)
-	ON_MESSAGE(PETGainedObjectMsg)
-	ON_MESSAGE(ReplaceBowlAndNutsMsg)
-	ON_MESSAGE(NutPuzzleMsg)
-	ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(ReplaceBowlAndNutsMsg)
+ON_MESSAGE(NutPuzzleMsg)
+ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
 void CBowlEar::save(SimpleFile *file, int indent) {

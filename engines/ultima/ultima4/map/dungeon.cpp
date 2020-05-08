@@ -21,18 +21,18 @@
  */
 
 #include "ultima/ultima4/map/dungeon.h"
-#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/item.h"
+#include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/gfx/screen.h"
+#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/map/tilemap.h"
-#include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -56,9 +56,9 @@ void DngRoom::load(Common::SeekableReadStream &s) {
 	for (i = 0; i < 16; ++i)
 		_creatureStart[i].y = s.readByte();
 
-	#define READ_DIR(DIR, XY) \
-		for (i = 0; i < 8; ++i) \
-			_partyStart[i][DIR].XY = s.readByte()
+#define READ_DIR(DIR, XY)   \
+	for (i = 0; i < 8; ++i) \
+	_partyStart[i][DIR].XY = s.readByte()
 
 	READ_DIR(DIR_NORTH, x);
 	READ_DIR(DIR_NORTH, y);
@@ -69,15 +69,15 @@ void DngRoom::load(Common::SeekableReadStream &s) {
 	READ_DIR(DIR_WEST, x);
 	READ_DIR(DIR_WEST, y);
 
-	#undef READ_DIR
+#undef READ_DIR
 }
 
 void DngRoom::hythlothFix7() {
 	int i;
 
 	// Update party start positions when entering from the east
-	const byte X1[8] = { 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA },
-		Y1[8] = { 0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1 };
+	const byte X1[8] = {0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA},
+	           Y1[8] = {0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1};
 
 	for (i = 0; i < 8; ++i)
 		_partyStart[i]._eastStart.x = X1[i];
@@ -85,8 +85,8 @@ void DngRoom::hythlothFix7() {
 		_partyStart[i]._eastStart.y = Y1[i];
 
 	// Update party start positions when entering from the south
-	const byte X2[8] = { 0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1 },
-		Y2[8] = { 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA };
+	const byte X2[8] = {0x3, 0x2, 0x3, 0x2, 0x1, 0x3, 0x2, 0x1},
+	           Y2[8] = {0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA, 0xA};
 
 	for (i = 0; i < 8; ++i)
 		_partyStart[i]._southStart.x = X2[i];
@@ -98,8 +98,8 @@ void DngRoom::hythlothFix9() {
 	int i;
 
 	// Update the starting position of monsters 7, 8, and 9
-	const byte X1[3] = { 0x4, 0x6, 0x5 },
-		Y1[3] = { 0x5, 0x5, 0x6 };
+	const byte X1[3] = {0x4, 0x6, 0x5},
+	           Y1[3] = {0x5, 0x5, 0x6};
 
 	for (i = 0; i < 3; ++i)
 		_creatureStart[i + 7].x = X1[i];
@@ -107,8 +107,8 @@ void DngRoom::hythlothFix9() {
 		_creatureStart[i + 7].y = Y1[i];
 
 	// Update party start positions when entering from the west
-	const byte X2[8] = { 0x2, 0x2, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0 },
-		Y2[8] = { 0x9, 0x8, 0x9, 0x8, 0x7, 0x9, 0x8, 0x7 };
+	const byte X2[8] = {0x2, 0x2, 0x1, 0x1, 0x1, 0x0, 0x0, 0x0},
+	           Y2[8] = {0x9, 0x8, 0x9, 0x8, 0x7, 0x9, 0x8, 0x7};
 
 	for (i = 0; i < 8; ++i)
 		_partyStart[i]._westStart.x = X2[i];
@@ -119,13 +119,12 @@ void DngRoom::hythlothFix9() {
 	// and removing the walls at the lower-left corner thereby creating
 	// a connection to room 8
 	const Coords tile[6] = {
-		Coords(5, 5, 0x3C),  // Chest
-		Coords(0, 7, 0x16),  // Floor
-		Coords(1, 7, 0x16),
-		Coords(0, 8, 0x16),
-		Coords(1, 8, 0x16),
-		Coords(0, 9, 0x16)
-	};
+	    Coords(5, 5, 0x3C), // Chest
+	    Coords(0, 7, 0x16), // Floor
+	    Coords(1, 7, 0x16),
+	    Coords(0, 8, 0x16),
+	    Coords(1, 8, 0x16),
+	    Coords(0, 9, 0x16)};
 
 	for (i = 0; i < 6; ++i) {
 		const int index = (tile[i].y * CON_WIDTH) + tile[i].x;
@@ -136,7 +135,7 @@ void DngRoom::hythlothFix9() {
 /*-------------------------------------------------------------------*/
 
 Dungeon::Dungeon() : _nRooms(0), _rooms(nullptr),
-		_roomMaps(nullptr), _currentRoom(0) {
+                     _roomMaps(nullptr), _currentRoom(0) {
 	Common::fill(&_partyStartX[0], &_partyStartX[8], 0);
 	Common::fill(&_partyStartY[0], &_partyStartY[8], 0);
 }
@@ -147,14 +146,13 @@ Common::String Dungeon::getName() {
 
 DungeonToken Dungeon::tokenForTile(MapTile tile) {
 	const static Common::String tileNames[] = {
-		"brick_floor", "up_ladder", "down_ladder", "up_down_ladder", "chest",
-		"unimpl_ceiling_hole", "unimpl_floor_hole", "magic_orb",
-		"ceiling_hole", "fountain",
-		"brick_floor", "dungeon_altar", "dungeon_door", "dungeon_room",
-		"secret_door", "brick_wall", ""
-	};
+	    "brick_floor", "up_ladder", "down_ladder", "up_down_ladder", "chest",
+	    "unimpl_ceiling_hole", "unimpl_floor_hole", "magic_orb",
+	    "ceiling_hole", "fountain",
+	    "brick_floor", "dungeon_altar", "dungeon_door", "dungeon_room",
+	    "secret_door", "brick_wall", ""};
 
-	const static Common::String fieldNames[] = { "poison_field", "energy_field", "fire_field", "sleep_field", "" };
+	const static Common::String fieldNames[] = {"poison_field", "energy_field", "fire_field", "sleep_field", ""};
 
 	int i;
 	Tile *t = _tileSet->get(tile.getId());
@@ -238,7 +236,7 @@ void dungeonDrinkFountain() {
 
 	Dungeon *dungeon = dynamic_cast<Dungeon *>(g_context->_location->_map);
 	assert(dungeon);
-	FountainType type = (FountainType) dungeon->currentSubToken();
+	FountainType type = (FountainType)dungeon->currentSubToken();
 
 	switch (type) {
 	/* plain fountain */
@@ -250,7 +248,8 @@ void dungeonDrinkFountain() {
 	case FOUNTAIN_HEALING:
 		if (g_context->_party->member(player)->heal(HT_FULLHEAL))
 			g_screen->screenMessage("\nAhh-Refreshing!\n");
-		else g_screen->screenMessage("\nHmmm--No Effect!\n");
+		else
+			g_screen->screenMessage("\nHmmm--No Effect!\n");
 		break;
 
 	/* acid fountain */
@@ -263,7 +262,8 @@ void dungeonDrinkFountain() {
 	case FOUNTAIN_CURE:
 		if (g_context->_party->member(player)->heal(HT_CURE))
 			g_screen->screenMessage("\nHmmm--Delicious!\n");
-		else g_screen->screenMessage("\nHmmm--No Effect!\n");
+		else
+			g_screen->screenMessage("\nHmmm--No Effect!\n");
 		break;
 
 	/* poison fountain */
@@ -273,7 +273,8 @@ void dungeonDrinkFountain() {
 			g_context->_party->member(player)->applyEffect(EFFECT_POISON);
 			g_context->_party->member(player)->applyDamage(100); /* 100 damage to drinker also */
 			g_screen->screenMessage("\nArgh-Choke-Gasp!\n");
-		} else g_screen->screenMessage("\nHmm--No Effect!\n");
+		} else
+			g_screen->screenMessage("\nHmm--No Effect!\n");
 		break;
 
 	default:
@@ -373,7 +374,7 @@ bool Dungeon::ladderUpAt(MapCoords coords) {
 	Annotation::List a = _annotations->allAt(coords);
 
 	if (tokenAt(coords) == DUNGEON_LADDER_UP ||
-	        tokenAt(coords) == DUNGEON_LADDER_UPDOWN)
+	    tokenAt(coords) == DUNGEON_LADDER_UPDOWN)
 		return true;
 
 	if (a.size() > 0) {
@@ -390,7 +391,7 @@ bool Dungeon::ladderDownAt(MapCoords coords) {
 	Annotation::List a = _annotations->allAt(coords);
 
 	if (tokenAt(coords) == DUNGEON_LADDER_DOWN ||
-	        tokenAt(coords) == DUNGEON_LADDER_UPDOWN)
+	    tokenAt(coords) == DUNGEON_LADDER_UPDOWN)
 		return true;
 
 	if (a.size() > 0) {

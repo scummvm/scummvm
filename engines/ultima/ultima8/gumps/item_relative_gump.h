@@ -40,27 +40,28 @@ public:
 	ItemRelativeGump(int32 x, int32 y, int32 width, int32 height, uint16 owner, uint32 flags = 0, int32 layer = LAYER_NORMAL);
 	~ItemRelativeGump() override;
 
-	void        InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Paint the Gump (RenderSurface is relative to parent).
 	// Calls PaintThis and PaintChildren.
-	void        Paint(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void Paint(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	void        ParentToGump(int32 &px, int32 &py,
-	                                 PointRoundDir r = ROUND_TOPLEFT) override;
-	void        GumpToParent(int32 &gx, int32 &gy,
-	                                 PointRoundDir r = ROUND_TOPLEFT) override;
+	void ParentToGump(int32 &px, int32 &py,
+	                  PointRoundDir r = ROUND_TOPLEFT) override;
+	void GumpToParent(int32 &gx, int32 &gy,
+	                  PointRoundDir r = ROUND_TOPLEFT) override;
 
-	void        Move(int32 x, int32 y) override;
+	void Move(int32 x, int32 y) override;
 
-	bool                loadData(Common::ReadStream *rs, uint32 version);
+	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
-	void        saveData(Common::WriteStream *ws) override;
+	void saveData(Common::WriteStream *ws) override;
 
-	virtual void        GetItemLocation(int32 lerp_factor);
+	virtual void GetItemLocation(int32 lerp_factor);
 
 	//! Move Gump so that it totally overlaps parent.
-	void                MoveOnScreen();
+	void MoveOnScreen();
 };
 
 } // End of namespace Ultima8

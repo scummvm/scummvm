@@ -27,7 +27,7 @@
 #include "common/str.h"
 #include "sci/engine/object.h"
 #include "sci/engine/vm.h"
-#include "sci/engine/vm_types.h"	// for reg_t
+#include "sci/engine/vm_types.h" // for reg_t
 #include "sci/util.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/palette32.h"
@@ -36,12 +36,12 @@
 namespace Sci {
 
 struct SegmentRef {
-	bool isRaw;	///< true if data is raw, false if it is a reg_t sequence
+	bool isRaw; ///< true if data is raw, false if it is a reg_t sequence
 	union {
 		byte *raw;
 		reg_t *reg;
 	};
-	int maxSize;	///< number of available bytes
+	int maxSize; ///< number of available bytes
 
 	// FIXME: Perhaps a generic 'offset' is more appropriate here
 	bool skipByte; ///< true if referencing the 2nd data byte of *reg, false otherwise
@@ -57,7 +57,6 @@ struct SegmentRef {
 	bool isValid() const { return (isRaw ? raw != 0 : reg != 0); }
 };
 
-
 enum SegmentType {
 	SEG_TYPE_INVALID = 0,
 	SEG_TYPE_SCRIPT = 1,
@@ -69,7 +68,7 @@ enum SegmentType {
 	SEG_TYPE_NODES = 7,
 	SEG_TYPE_HUNK = 8,
 	SEG_TYPE_DYNMEM = 9,
-	// 10 used to be string fragments, now obsolete
+// 10 used to be string fragments, now obsolete
 
 #ifdef ENABLE_SCI32
 	SEG_TYPE_ARRAY = 11,
@@ -150,7 +149,7 @@ struct LocalVariables : public SegmentObj {
 	Common::Array<reg_t> _locals;
 
 public:
-	LocalVariables(): SegmentObj(SEG_TYPE_LOCALS), script_id(0) { }
+	LocalVariables() : SegmentObj(SEG_TYPE_LOCALS), script_id(0) {}
 
 	bool isValidOffset(uint32 offset) const override {
 		return offset < _locals.size() * 2;
@@ -168,7 +167,7 @@ struct DataStack : SegmentObj {
 	reg_t *_entries;
 
 public:
-	DataStack() : SegmentObj(SEG_TYPE_STACK), _capacity(0), _entries(NULL) { }
+	DataStack() : SegmentObj(SEG_TYPE_STACK), _capacity(0), _entries(NULL) {}
 	~DataStack() override {
 		free(_entries);
 		_entries = NULL;
@@ -235,7 +234,7 @@ struct SegmentObjTable : public SegmentObj {
 	};
 	enum { HEAPENTRY_INVALID = -1 };
 
-	int first_free; /**< Beginning of a singly linked list for entries */
+	int first_free;   /**< Beginning of a singly linked list for entries */
 	int entries_used; /**< Statistical information */
 
 	typedef Common::Array<Entry> ArrayType;
@@ -274,7 +273,7 @@ public:
 			uint newIdx = _table.size();
 			_table.push_back(Entry());
 			_table.back().data = new T;
-			_table[newIdx].next_free = newIdx;	// Tag as 'valid'
+			_table[newIdx].next_free = newIdx; // Tag as 'valid'
 			return newIdx;
 		}
 	}
@@ -315,7 +314,6 @@ public:
 	const T &operator[](uint index) const { return at(index); }
 };
 
-
 /* CloneTable */
 struct CloneTable : public SegmentObjTable<Clone> {
 	CloneTable() : SegmentObjTable<Clone>(SEG_TYPE_CLONES) {}
@@ -325,7 +323,6 @@ struct CloneTable : public SegmentObjTable<Clone> {
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
-
 
 /* NodeTable */
 struct NodeTable : public SegmentObjTable<Node> {
@@ -339,7 +336,6 @@ struct NodeTable : public SegmentObjTable<Node> {
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
 
-
 /* ListTable */
 struct ListTable : public SegmentObjTable<List> {
 	ListTable() : SegmentObjTable<List>(SEG_TYPE_LISTS) {}
@@ -351,7 +347,6 @@ struct ListTable : public SegmentObjTable<List> {
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
-
 
 /* HunkTable */
 struct HunkTable : public SegmentObjTable<Hunk> {
@@ -379,7 +374,6 @@ struct HunkTable : public SegmentObjTable<Hunk> {
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 };
-
 
 // Free-style memory
 struct DynMem : public SegmentObj {
@@ -415,26 +409,25 @@ public:
 #pragma mark Arrays
 
 enum SciArrayType {
-	kArrayTypeInt16   = 0,
-	kArrayTypeID      = 1,
-	kArrayTypeByte    = 2,
-	kArrayTypeString  = 3,
+	kArrayTypeInt16 = 0,
+	kArrayTypeID = 1,
+	kArrayTypeByte = 2,
+	kArrayTypeString = 3,
 	// Type 4 was for 32-bit integers; never used
 	kArrayTypeInvalid = 5
 };
 
 enum SciArrayTrim {
-	kArrayTrimRight  = 1, ///< Trim whitespace after the last non-whitespace character
+	kArrayTrimRight = 1,  ///< Trim whitespace after the last non-whitespace character
 	kArrayTrimCenter = 2, ///< Trim whitespace between non-whitespace characters
-	kArrayTrimLeft   = 4  ///< Trim whitespace before the first non-whitespace character
+	kArrayTrimLeft = 4    ///< Trim whitespace before the first non-whitespace character
 };
 
 class SciArray : public Common::Serializable {
 public:
-	SciArray() :
-		_type(kArrayTypeInvalid),
-		_size(0),
-		_data(nullptr) {}
+	SciArray() : _type(kArrayTypeInvalid),
+	             _size(0),
+	             _data(nullptr) {}
 
 	SciArray(const SciArray &array) {
 		_type = array._type;
@@ -480,7 +473,7 @@ public:
 	 */
 	void setType(const SciArrayType type) {
 		assert(_type == kArrayTypeInvalid);
-		switch(type) {
+		switch (type) {
 		case kArrayTypeInt16:
 		case kArrayTypeID:
 			_elementSize = sizeof(reg_t);
@@ -553,7 +546,7 @@ public:
 			assert(index < _size);
 		}
 
-		switch(_type) {
+		switch (_type) {
 		case kArrayTypeInt16:
 		case kArrayTypeID:
 			return ((reg_t *)_data)[index];
@@ -585,7 +578,7 @@ public:
 			assert(index < _size);
 		}
 
-		switch(_type) {
+		switch (_type) {
 		case kArrayTypeInt16:
 		case kArrayTypeID:
 			((reg_t *)_data)[index] = value;
@@ -873,7 +866,7 @@ public:
 
 	Common::String toDebugString() const {
 		const char *type;
-		switch(_type) {
+		switch (_type) {
 		case kArrayTypeID:
 			type = "reg_t";
 			break;
@@ -918,13 +911,13 @@ enum {
 	kDefaultSkipColor = 250
 };
 
-#define BITMAP_PROPERTY(size, property, offset)\
-inline uint##size get##property() const {\
-	return READ_SCI11ENDIAN_UINT##size(_data + (offset));\
-}\
-inline void set##property(uint##size value) {\
-	WRITE_SCI11ENDIAN_UINT##size(_data + (offset), (value));\
-}
+#define BITMAP_PROPERTY(size, property, offset)                  \
+	inline uint##size get##property() const {                    \
+		return READ_SCI11ENDIAN_UINT##size(_data + (offset));    \
+	}                                                            \
+	inline void set##property(uint##size value) {                \
+		WRITE_SCI11ENDIAN_UINT##size(_data + (offset), (value)); \
+	}
 
 struct BitmapTable;
 
@@ -954,15 +947,15 @@ public:
 		// scaling resolutions other than the default (320x200). Perhaps SCI3 used
 		// the extra bytes, or there is some reason why they tried to align the header
 		// size with other headers like pic headers?
-//		uint32 bitmapHeaderSize;
-//		if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
-//			bitmapHeaderSize = 46;
-//		} else if (getSciVersion() == SCI_VERSION_2_1_EARLY) {
-//			bitmapHeaderSize = 40;
-//		} else {
-//			bitmapHeaderSize = 36;
-//		}
-//		return bitmapHeaderSize;
+		//		uint32 bitmapHeaderSize;
+		//		if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
+		//			bitmapHeaderSize = 46;
+		//		} else if (getSciVersion() == SCI_VERSION_2_1_EARLY) {
+		//			bitmapHeaderSize = 40;
+		//		} else {
+		//			bitmapHeaderSize = 36;
+		//		}
+		//		return bitmapHeaderSize;
 		return 46;
 	}
 
@@ -1068,9 +1061,8 @@ public:
 
 	inline Common::Point getOrigin() const {
 		return Common::Point(
-			(int16)READ_SCI11ENDIAN_UINT16(_data + 4),
-			(int16)READ_SCI11ENDIAN_UINT16(_data + 6)
-		);
+		    (int16)READ_SCI11ENDIAN_UINT16(_data + 4),
+		    (int16)READ_SCI11ENDIAN_UINT16(_data + 6));
 	}
 
 	inline void setOrigin(const Common::Point &origin) {
@@ -1176,12 +1168,12 @@ public:
 
 	Common::String toString() const {
 		return Common::String::format("%dx%d; res %dx%d; origin %dx%d; skip color %u; %s; %s)",
-			getWidth(), getHeight(),
-			getXResolution(), getYResolution(),
-			getOrigin().x, getOrigin().y,
-			getSkipColor(),
-			getRemap() ? "remap" : "no remap",
-			getShouldGC() ? "GC" : "no GC");
+		                              getWidth(), getHeight(),
+		                              getXResolution(), getYResolution(),
+		                              getOrigin().x, getOrigin().y,
+		                              getSkipColor(),
+		                              getRemap() ? "remap" : "no remap",
+		                              getShouldGC() ? "GC" : "no GC");
 	}
 };
 
@@ -1202,7 +1194,6 @@ struct BitmapTable : public SegmentObjTable<SciBitmap> {
 };
 
 #endif
-
 
 } // End of namespace Sci
 

@@ -39,13 +39,12 @@
 
 namespace Image {
 
-PNGDecoder::PNGDecoder() :
-        _outputSurface(0),
-        _palette(0),
-        _paletteColorCount(0),
-        _skipSignature(false),
-		_keepTransparencyPaletted(false),
-		_transparentColor(-1) {
+PNGDecoder::PNGDecoder() : _outputSurface(0),
+                           _palette(0),
+                           _paletteColorCount(0),
+                           _skipSignature(false),
+                           _keepTransparencyPaletted(false),
+                           _transparentColor(-1) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -175,7 +174,6 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_palette[(i * 3)] = palette[i].red;
 			_palette[(i * 3) + 1] = palette[i].green;
 			_palette[(i * 3) + 2] = palette[i].blue;
-
 		}
 
 		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
@@ -203,7 +201,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		if (bitDepth < 8)
 			png_set_expand(pngPtr);
 		if (colorType == PNG_COLOR_TYPE_GRAY ||
-			colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+		    colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 			png_set_gray_to_rgb(pngPtr);
 
 		if (colorType != PNG_COLOR_TYPE_RGB_ALPHA)

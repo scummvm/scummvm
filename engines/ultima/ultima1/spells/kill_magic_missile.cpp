@@ -21,19 +21,19 @@
  */
 
 #include "ultima/ultima1/spells/kill_magic_missile.h"
-#include "ultima/ultima1/game.h"
+#include "ultima/shared/maps/map_widget.h"
 #include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/widgets/dungeon_monster.h"
-#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
 BEGIN_MESSAGE_MAP(KillMagicMIssile, Spell)
-	ON_MESSAGE(CharacterInputMsg)
+ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
 void KillMagicMIssile::cast(Maps::MapBase *map) {

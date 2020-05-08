@@ -29,22 +29,20 @@
 #ifndef WINTERMUTE_BASE_SOUNDBUFFER_H
 #define WINTERMUTE_BASE_SOUNDBUFFER_H
 
-
-#include "engines/wintermute/base/base.h"
 #include "audio/mixer.h"
 #include "common/stream.h"
+#include "engines/wintermute/base/base.h"
 
 namespace Audio {
 class SeekableAudioStream;
 class SoundHandle;
-}
+} // namespace Audio
 
 namespace Wintermute {
 
 class BaseFile;
 class BaseSoundBuffer : public BaseClass {
 public:
-
 	BaseSoundBuffer(BaseGame *inGame);
 	~BaseSoundBuffer() override;
 

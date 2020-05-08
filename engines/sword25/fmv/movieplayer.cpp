@@ -34,17 +34,17 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#include "sword25/sword25.h"	// for kDebugScript
 #include "sword25/fmv/movieplayer.h"
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/panel.h"
 #include "sword25/kernel/kernel.h"
 #include "sword25/package/packagemanager.h"
+#include "sword25/sword25.h" // for kDebugScript
 
 namespace Sword25 {
 
 #ifndef FLT_EPSILON
-#define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
+#define FLT_EPSILON 1.192092896e-07F /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 #endif
 
 #ifdef USE_THEORADEC

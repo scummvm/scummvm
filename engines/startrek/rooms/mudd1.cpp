@@ -35,7 +35,7 @@
 #define HOTSPOT_BLUE_BUTTON 0x23
 #define HOTSPOT_YELLOW_BUTTON 0x24
 #define HOTSPOT_PURPLE_BUTTON 0x25
-#define HOTSPOT_WEST_DOOR  0x26
+#define HOTSPOT_WEST_DOOR 0x26
 #define HOTSPOT_NORTH_DOOR 0x27
 #define HOTSPOT_SOUTH_DOOR 0x28
 
@@ -64,10 +64,9 @@ void Room::mudd1Timer1Expired() {
 }
 
 void Room::mudd1UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  1, true);
+	showText(TX_SPEAKER_KIRK, 1, true);
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
-
 
 void Room::mudd1UseSpockOnBlueButton() { // Loads up the torpedo
 	if (!_awayMission->mudd.torpedoLoaded) {
@@ -104,7 +103,6 @@ void Room::mudd1CraneFinishedMoving() {
 		showText(TX_SPEAKER_SPOCK, 16, true);
 }
 
-
 void Room::mudd1UseSpockOnYellowButton() { // Unloads the torpedo
 	if (_awayMission->mudd.torpedoLoaded) {
 		_awayMission->crewDirectionsAfterWalk[OBJECT_SPOCK] = DIR_E;
@@ -125,7 +123,6 @@ void Room::mudd1SpockPressedYellowButton() {
 	loadActorAnimC(OBJECT_CRANE_ANIMATION, "s4wbsb", -1, -1, &Room::mudd1CraneFinishedMoving);
 	_awayMission->mudd.torpedoLoaded = false;
 }
-
 
 void Room::mudd1UseSpockOnRedButton() {
 	if (_awayMission->mudd.torpedoLoaded) {
@@ -154,12 +151,11 @@ void Room::mudd1SpockPressedRedButton() {
 	_awayMission->mudd.knowAboutTorpedo = true;
 
 	const TextRef choices[] = {
-		TX_SPEAKER_KIRK,
-		4,
-		3,
-		7,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    4,
+	    3,
+	    7,
+	    TX_BLANK};
 
 	int choice = showMultipleTexts(choices, true);
 
@@ -175,7 +171,7 @@ void Room::mudd1SpockPressedRedButton() {
 
 	case 1:
 		showText(TX_SPEAKER_KIRK, 7, true);
-	// fall through
+		// fall through
 
 	case 2:
 		_awayMission->mudd.torpedoStatus = 1;
@@ -194,9 +190,9 @@ void Room::mudd1GetTorpedo() {
 void Room::mudd1UseSTricorderOnTorpedo() {
 	spockScan(DIR_W, 25, false, true);
 	showText(TX_SPEAKER_BUCHERT, 27, true);
-	showText(TX_SPEAKER_SPOCK,   20, true);
+	showText(TX_SPEAKER_SPOCK, 20, true);
 	showText(TX_SPEAKER_BUCHERT, 28, true);
-	showText(TX_SPEAKER_SPOCK,   24, true);
+	showText(TX_SPEAKER_SPOCK, 24, true);
 }
 
 void Room::mudd1UseSTricorderOnTorpedoLauncher() {
@@ -266,14 +262,14 @@ void Room::mudd1LookAtYellowButton() {
 }
 
 void Room::mudd1TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  6, true);
+	showText(TX_SPEAKER_KIRK, 6, true);
 	showText(TX_SPEAKER_MCCOY, 13, true);
-	showText(TX_SPEAKER_KIRK,  5, true);
+	showText(TX_SPEAKER_KIRK, 5, true);
 }
 
 void Room::mudd1TalkToSpock() {
 	showText(TX_SPEAKER_SPOCK, 19, true);
-	showText(TX_SPEAKER_KIRK,  8, true);
+	showText(TX_SPEAKER_KIRK, 8, true);
 }
 
 void Room::mudd1TalkToMccoy() {
@@ -282,7 +278,7 @@ void Room::mudd1TalkToMccoy() {
 
 void Room::mudd1TalkToRedshirt() {
 	showText(TX_SPEAKER_BUCHERT, 26, true);
-	showText(TX_SPEAKER_KIRK,    9, true);
+	showText(TX_SPEAKER_KIRK, 9, true);
 }
 
 void Room::mudd1WalkToSouthDoor() {
@@ -323,4 +319,4 @@ void Room::mudd1TouchedHotspot0() { // Trigger door at west of room
 	}
 }
 
-}
+} // namespace StarTrek

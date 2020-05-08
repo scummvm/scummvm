@@ -47,15 +47,17 @@ void Memory::dealloc(void *block) {
 /*--------------------------------------------------------------------------*/
 
 MemoryBlock::MemoryBlock(uint32 size1) {
-	_data = (uint8 *) malloc(size1);
-	if (!_data) error ("Failed allocating memory block");
+	_data = (uint8 *)malloc(size1);
+	if (!_data)
+		error("Failed allocating memory block");
 	_size = size1;
 }
 
 MemoryBlock::MemoryBlock(MemoryBlock *src) {
 	_size = src->size();
-	_data = (uint8 *) malloc(_size);
-	if (!_data) error ("Failed allocating memory block");
+	_data = (uint8 *)malloc(_size);
+	if (!_data)
+		error("Failed allocating memory block");
 	memcpy(_data, src->data(), _size);
 }
 
@@ -94,9 +96,9 @@ void MemoryBlock::copyFrom(const byte *src, uint32 srcPos, uint32 destPos, uint3
 void MemoryBlock::reallocate(uint32 size1) {
 	_size = size1;
 
-	byte *tmp = (byte *) realloc(_data, size1);
+	byte *tmp = (byte *)realloc(_data, size1);
 	if (!tmp)
-		error ("[MemoryBlock::reallocate] Failed reallocating memory block");
+		error("[MemoryBlock::reallocate] Failed reallocating memory block");
 
 	_data = tmp;
 }

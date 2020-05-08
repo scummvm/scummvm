@@ -26,15 +26,15 @@
 #include "common/error.h"
 #include "common/stream.h"
 
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/constants.h"
 #include "pegasus/elements.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/surface.h"
-#include "pegasus/ai/ai_area.h"
-#include "pegasus/items/item.h"
-#include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/inventory/inventoryitem.h"
+#include "pegasus/items/item.h"
+#include "pegasus/items/itemlist.h"
+#include "pegasus/pegasus.h"
+#include "pegasus/surface.h"
 
 namespace Pegasus {
 

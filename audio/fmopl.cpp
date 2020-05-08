@@ -39,13 +39,13 @@ namespace OPL {
 
 #ifdef USE_ALSA
 namespace ALSA {
-	OPL *create(Config::OplType type);
+OPL *create(Config::OplType type);
 } // End of namespace ALSA
 #endif // USE_ALSA
 
 #ifdef ENABLE_OPL2LPT
 namespace OPL2LPT {
-	OPL *create(Config::OplType type);
+OPL *create(Config::OplType type);
 } // End of namespace OPL2LPT
 #endif // ENABLE_OPL2LPT
 
@@ -68,23 +68,22 @@ OPL::OPL() {
 }
 
 const Config::EmulatorDescription Config::_drivers[] = {
-	{ "auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
-	{ "mame", _s("MAME OPL emulator"), kMame, kFlagOpl2 },
+    {"auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+    {"mame", _s("MAME OPL emulator"), kMame, kFlagOpl2},
 #ifndef DISABLE_DOSBOX_OPL
-	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+    {"db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 #endif
 #ifndef DISABLE_NUKED_OPL
-	{ "nuked", _s("Nuked OPL emulator"), kNuked, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+    {"nuked", _s("Nuked OPL emulator"), kNuked, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 #endif
 #ifdef USE_ALSA
-	{ "alsa", _s("ALSA Direct FM"), kALSA, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+    {"alsa", _s("ALSA Direct FM"), kALSA, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 #endif
 #ifdef ENABLE_OPL2LPT
-	{ "opl2lpt", _s("OPL2LPT"), kOPL2LPT, kFlagOpl2},
-	{ "opl3lpt", _s("OPL3LPT"), kOPL3LPT, kFlagOpl2 | kFlagOpl3 },
+    {"opl2lpt", _s("OPL2LPT"), kOPL2LPT, kFlagOpl2},
+    {"opl3lpt", _s("OPL3LPT"), kOPL3LPT, kFlagOpl2 | kFlagOpl3},
 #endif
-	{ 0, 0, 0, 0 }
-};
+    {0, 0, 0, 0}};
 
 Config::DriverId Config::parse(const Common::String &name) {
 	for (int i = 0; _drivers[i].name; ++i) {
@@ -302,11 +301,10 @@ void RealOPL::onTimer() {
 			(*_callback)();
 }
 
-EmulatedOPL::EmulatedOPL() :
-	_nextTick(0),
-	_samplesPerTick(0),
-	_baseFreq(0),
-	_handle(new Audio::SoundHandle()) {
+EmulatedOPL::EmulatedOPL() : _nextTick(0),
+                             _samplesPerTick(0),
+                             _baseFreq(0),
+                             _handle(new Audio::SoundHandle()) {
 }
 
 EmulatedOPL::~EmulatedOPL() {

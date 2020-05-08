@@ -29,11 +29,11 @@
 #undef main
 #endif // main
 
+#include "create_cryomni3d_dat.h"
+#include "util.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
-#include "util.h"
-#include "create_cryomni3d_dat.h"
 
 struct Parts {
 	size_t (*writeHeader)(FILE *f, uint32 offset, uint32 size);
@@ -42,12 +42,13 @@ struct Parts {
 	uint32 size;
 };
 
-#define DEFINE_GAME_PLATFORM_LANG_FUNCS(game, platform, lang) \
-    size_t write ## game ## _ ## platform ## _ ## lang ## _Header(FILE *f, \
-                                   uint32 offset, uint32 size); \
-    size_t write ## game ## _ ## platform ## _ ## lang ## _Data(FILE *f);
-#define GAME_PLATFORM_LANG_PART(game, platform, lang) { write ## game ## _ ## platform ## _ ## lang ## _Header, \
-    write ## game ## _ ## platform ## _ ## lang ## _Data, 0, 0 }
+#define DEFINE_GAME_PLATFORM_LANG_FUNCS(game, platform, lang)                      \
+	size_t write##game##_##platform##_##lang##_Header(FILE *f,                     \
+	                                                  uint32 offset, uint32 size); \
+	size_t write##game##_##platform##_##lang##_Data(FILE *f);
+#define GAME_PLATFORM_LANG_PART(game, platform, lang) \
+	{ write##game##_##platform##_##lang##_Header,     \
+	  write##game##_##platform##_##lang##_Data, 0, 0 }
 
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, FR)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, BR)
@@ -60,15 +61,15 @@ DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, KO)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, ZT)
 
 static Parts gamesParts[] = {
-	GAME_PLATFORM_LANG_PART(Versailles, ALL, FR),
-	GAME_PLATFORM_LANG_PART(Versailles, ALL, BR),
-	GAME_PLATFORM_LANG_PART(Versailles, ALL, DE),
-	GAME_PLATFORM_LANG_PART(Versailles, ALL, EN),
-	GAME_PLATFORM_LANG_PART(Versailles, ALL, ES),
-	GAME_PLATFORM_LANG_PART(Versailles, ALL, IT),
-	GAME_PLATFORM_LANG_PART(Versailles, ALL, JA),
-	GAME_PLATFORM_LANG_PART(Versailles, ALL, KO),
-	GAME_PLATFORM_LANG_PART(Versailles, ALL, ZT),
+    GAME_PLATFORM_LANG_PART(Versailles, ALL, FR),
+    GAME_PLATFORM_LANG_PART(Versailles, ALL, BR),
+    GAME_PLATFORM_LANG_PART(Versailles, ALL, DE),
+    GAME_PLATFORM_LANG_PART(Versailles, ALL, EN),
+    GAME_PLATFORM_LANG_PART(Versailles, ALL, ES),
+    GAME_PLATFORM_LANG_PART(Versailles, ALL, IT),
+    GAME_PLATFORM_LANG_PART(Versailles, ALL, JA),
+    GAME_PLATFORM_LANG_PART(Versailles, ALL, KO),
+    GAME_PLATFORM_LANG_PART(Versailles, ALL, ZT),
 };
 
 #define CRYOMNI3D_DAT_VER 1 // 32-bit integer

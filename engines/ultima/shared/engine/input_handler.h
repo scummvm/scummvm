@@ -23,8 +23,8 @@
 #ifndef ULTIMA_SHARED_ENGINE_INPUT_HANDLER_H
 #define ULTIMA_SHARED_ENGINE_INPUT_HANDLER_H
 
-#include "ultima/shared/engine/input_translator.h"
 #include "ultima/shared/core/tree_item.h"
+#include "ultima/shared/engine/input_translator.h"
 
 namespace Ultima {
 namespace Shared {
@@ -42,6 +42,7 @@ private:
 	 * Dispatches a message to the project
 	 */
 	void dispatchMessage(CMessage *msg);
+
 public:
 	GameBase *_game;
 	InputTranslator *_inputTranslator;
@@ -51,6 +52,7 @@ public:
 	Point _dragStartPos;
 	int _lockCount;
 	bool _abortMessage;
+
 public:
 	InputHandler(GameBase *game);
 	~InputHandler();

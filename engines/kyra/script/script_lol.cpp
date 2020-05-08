@@ -23,8 +23,8 @@
 #ifdef ENABLE_LOL
 
 #include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
 #include "kyra/engine/timer.h"
+#include "kyra/graphics/screen_lol.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
 
@@ -179,7 +179,6 @@ int LoLEngine::olol_moveParty(EMCState *script) {
 
 	return 1;
 }
-
 
 int LoLEngine::olol_delay(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_delay(%p) (%d)", (const void *)script, stackPos(0));
@@ -742,7 +741,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 
 int LoLEngine::olol_triggerDoorSwitch(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_triggerDoorSwitch(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	processDoorSwitch(stackPos(0)/*, (_wllWallFlags[_levelBlockProperties[stackPos(0)].walls[0]] & 8) ? 0 : 1*/, stackPos(1));
+	processDoorSwitch(stackPos(0) /*, (_wllWallFlags[_levelBlockProperties[stackPos(0)].walls[0]] & 8) ? 0 : 1*/, stackPos(1));
 	return 1;
 }
 
@@ -939,14 +938,14 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 
 	l->maxWidth = shpWidthMax;
 
-	l->fightingStats[0] = (stackPos(2) << 8) / 100;     // hit chance
-	l->fightingStats[1] = 256;                          //
-	l->fightingStats[2] = (stackPos(3) << 8) / 100;     // protection
-	l->fightingStats[3] = stackPos(4);                  // evade chance
-	l->fightingStats[4] = (stackPos(5) << 8) / 100;     // speed
-	l->fightingStats[5] = (stackPos(6) << 8) / 100;     //
-	l->fightingStats[6] = (stackPos(7) << 8) / 100;     //
-	l->fightingStats[7] = (stackPos(8) << 8) / 100;     //
+	l->fightingStats[0] = (stackPos(2) << 8) / 100; // hit chance
+	l->fightingStats[1] = 256;                      //
+	l->fightingStats[2] = (stackPos(3) << 8) / 100; // protection
+	l->fightingStats[3] = stackPos(4);              // evade chance
+	l->fightingStats[4] = (stackPos(5) << 8) / 100; // speed
+	l->fightingStats[5] = (stackPos(6) << 8) / 100; //
+	l->fightingStats[6] = (stackPos(7) << 8) / 100; //
+	l->fightingStats[7] = (stackPos(8) << 8) / 100; //
 	l->fightingStats[8] = 0;
 
 	for (int i = 0; i < 8; i++) {
@@ -1058,7 +1057,7 @@ int LoLEngine::olol_createHandItem(EMCState *script) {
 int LoLEngine::olol_playAttackSound(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playAttackSound(%p) (%d)", (const void *)script, stackPos(0));
 
-	static const uint8 sounds[] = { 12, 62, 63 };
+	static const uint8 sounds[] = {12, 62, 63};
 	int d = stackPos(0);
 
 	if ((d < 70 || d > 74) && (d < 81 || d > 89) && (d < 93 || d > 97) && (d < 102 || d > 106))
@@ -1306,7 +1305,7 @@ int LoLEngine::olol_healCharacter(EMCState *script) {
 int LoLEngine::olol_drawExitButton(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drawExitButton(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 
-	static const uint8 printPara[] = { 0x90, 0x78, 0x0C, 0x9F, 0x80, 0x1E };
+	static const uint8 printPara[] = {0x90, 0x78, 0x0C, 0x9F, 0x80, 0x1E};
 
 	int cp = _screen->setCurPage(0);
 	Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);

@@ -20,30 +20,30 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/core/magic.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/u6_objects.h"
+#include "ultima/nuvie/core/weather.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/usecode/usecode.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_yes_no_dialog.h"
 #include "ultima/nuvie/gui/widgets/console.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/core/obj_manager.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/views/spell_view.h"
-#include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/core/u6_objects.h"
-#include "ultima/nuvie/core/magic.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/misc/u6_llist.h"
-#include "ultima/nuvie/core/effect.h"
-#include "ultima/nuvie/core/weather.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/usecode/usecode.h"
+#include "ultima/nuvie/views/spell_view.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -68,7 +68,6 @@ const char *syllable[26] = {"An ", "Bet ", "Corp ", "Des ", "Ex ", "Flam ", "Gra
 const char *reagent[8] = {"mandrake root", "nightshade", "black pearl", "blood moss", "spider silk", "garlic", "ginseng", "sulfurous ash"}; // check names
 const int obj_n_reagent[8] = {OBJ_U6_MANDRAKE_ROOT, OBJ_U6_NIGHTSHADE, OBJ_U6_BLACK_PEARL, OBJ_U6_BLOOD_MOSS, OBJ_U6_SPIDER_SILK, OBJ_U6_GARLIC, OBJ_U6_GINSENG, OBJ_U6_SULFUROUS_ASH};
 
-
 Magic::Magic() {
 	event = NULL;
 	target_object = NULL;
@@ -76,12 +75,14 @@ Magic::Magic() {
 	spellbook_obj = NULL;
 	state = 0;
 
-	for (uint16 index = 0; index < 256; index++) spell[index] = NULL;
+	for (uint16 index = 0; index < 256; index++)
+		spell[index] = NULL;
 	clear_cast_buffer();
 }
 
 Magic::~Magic() {
-	for (uint16 index = 0; index < 256; index++) delete(spell[index]);
+	for (uint16 index = 0; index < 256; index++)
+		delete (spell[index]);
 }
 
 bool Magic::init(Events *evt) {
@@ -135,7 +136,6 @@ bool Magic::cast() {
 
 	Game::get_game()->get_view_manager()->close_spell_mode();
 
-
 	cast_buffer_str[cast_buffer_len] = '\0';
 	DEBUG(0, LEVEL_DEBUGGING, "Trying to cast '%s'\n", cast_buffer_str);
 	/* decode the invocation */
@@ -165,11 +165,12 @@ bool Magic::cast() {
 		event->scroll->display_string("\nThat spell is not in thy spellbook!\n");
 		return false;
 	}
-//20110701 Pieter Luteijn: add an assert(spell[index]) to be sure it's not NULL?
+	//20110701 Pieter Luteijn: add an assert(spell[index]) to be sure it's not NULL?
 	if (cast_buffer_len != 0) {
 		event->scroll->display_string("\n(");
 		event->scroll->display_string(spell[index]->name);
-		event->scroll->display_string(")\n");;
+		event->scroll->display_string(")\n");
+		;
 	} else {
 		event->scroll->display_string(spell[index]->name);
 		event->scroll->display_string("\n\"");
@@ -197,7 +198,6 @@ bool Magic::cast() {
 	//DEBUG(0,LEVEL_DEBUGGING,"script: %s\n",spell[index]->script);
 	/* end debug block */
 
-
 	if (Game::get_game()->user_paused()) //event->mode == WAIT_MODE)
 		return false;
 
@@ -215,7 +215,7 @@ bool Magic::cast() {
 
 	if (right && right->obj_n != OBJ_U6_SPELLBOOK)
 		right = NULL;
-	if (left && left->obj_n !=  OBJ_U6_SPELLBOOK)
+	if (left && left->obj_n != OBJ_U6_SPELLBOOK)
 		left = NULL;
 
 	if (right == NULL && left == NULL) {
@@ -254,7 +254,6 @@ bool Magic::cast() {
 		event->scroll->display_string("\nNot enough magic points.\n");
 		return false;
 	}
-
 
 	// reagents available
 	for (uint8 shift = 0; shift < 8; shift++) {
@@ -383,7 +382,7 @@ bool Magic::spellbook_has_spell(Obj *book, uint8 spell_index) {
 		return false;
 
 	if (book->find_in_container(OBJ_U6_SPELL, MAGIC_ALL_SPELLS, OBJ_MATCH_QUALITY) ||
-	        book->find_in_container(OBJ_U6_SPELL, spell_index, OBJ_MATCH_QUALITY)) {
+	    book->find_in_container(OBJ_U6_SPELL, spell_index, OBJ_MATCH_QUALITY)) {
 		return true;
 	}
 
@@ -401,28 +400,28 @@ bool Magic::process_script_return(uint8 ret) {
 	uint32 nturns;
 	uint8 *cb_msgid;
 	switch (ret) {
-	case NUVIE_SCRIPT_FINISHED :
+	case NUVIE_SCRIPT_FINISHED:
 		delete magic_script;
 		magic_script = NULL;
 		state = MAGIC_STATE_READY;
 		break;
-	case NUVIE_SCRIPT_GET_TARGET :
+	case NUVIE_SCRIPT_GET_TARGET:
 		state = MAGIC_STATE_ACQUIRE_TARGET;
 		break;
-	case NUVIE_SCRIPT_GET_DIRECTION :
+	case NUVIE_SCRIPT_GET_DIRECTION:
 		state = MAGIC_STATE_ACQUIRE_DIRECTION;
 		break;
-	case NUVIE_SCRIPT_GET_INV_OBJ :
+	case NUVIE_SCRIPT_GET_INV_OBJ:
 		state = MAGIC_STATE_ACQUIRE_INV_OBJ;
 		break;
-	case NUVIE_SCRIPT_GET_OBJ :
+	case NUVIE_SCRIPT_GET_OBJ:
 		state = MAGIC_STATE_ACQUIRE_OBJ;
 		break;
-	case NUVIE_SCRIPT_GET_SPELL :
+	case NUVIE_SCRIPT_GET_SPELL:
 		state = MAGIC_STATE_ACQUIRE_SPELL;
 		break;
 
-	case NUVIE_SCRIPT_ADVANCE_GAME_TIME :
+	case NUVIE_SCRIPT_ADVANCE_GAME_TIME:
 		nturns = magic_script->get_data();
 		DEBUG(0, LEVEL_DEBUGGING, "Magic: Advance %d turns\n", nturns);
 		cb_msgid = new uint8;
@@ -430,11 +429,11 @@ bool Magic::process_script_return(uint8 ret) {
 		new GameTimedCallback((CallBack *)this, cb_msgid, nturns);
 		break;
 
-	case NUVIE_SCRIPT_TALK_TO_ACTOR :
+	case NUVIE_SCRIPT_TALK_TO_ACTOR:
 		state = MAGIC_STATE_TALK_TO_ACTOR;
 		break;
 
-	default :
+	default:
 		DEBUG(0, LEVEL_WARNING, "Unknown ScriptThread return code!\n");
 		break;
 	}
@@ -467,7 +466,8 @@ uint16 Magic::callback(uint16 msg, CallBack *caller, void *data) {
 				if (cast_buffer_len > 0) {
 					cast_buffer_len--; // back up a syllable FIXME, doesn't handle automatically inserted newlines, so we need to keep track more. (THAT SHOULD BE DONE BY MSGSCROLL)
 					size_t len = strlen(syllable[cast_buffer_str[cast_buffer_len] - Common::KEYCODE_a]);
-					while (len--) event->scroll->remove_char();
+					while (len--)
+						event->scroll->remove_char();
 					event->scroll->Display(true);
 					return 1; // handled the event
 				}
@@ -476,7 +476,7 @@ uint16 Magic::callback(uint16 msg, CallBack *caller, void *data) {
 		} // MAGIC_STATE_SELECT_SPELL
 		if (state == MAGIC_STATE_ACQUIRE_TARGET) {
 			if (sym >= Common::KEYCODE_1 && sym <= Common::KEYCODE_9) {
-				cast();//event->player->get_party()->get_actor(sym - 48-1));
+				cast(); //event->player->get_party()->get_actor(sym - 48-1));
 				event->cancel_key_redirect();
 				return 1; // handled the event
 			}
@@ -492,10 +492,10 @@ uint16 Magic::callback(uint16 msg, CallBack *caller, void *data) {
 		return 0;
 	} else if (magic_script) {
 		switch (msg) {
-		case NUVIE_SCRIPT_GET_TARGET :
+		case NUVIE_SCRIPT_GET_TARGET:
 			process_script_return(magic_script->resume_with_location(MapCoord(200, 200, 0))); //FIXME need to get real loc.
 			break;
-		case NUVIE_SCRIPT_GET_DIRECTION :
+		case NUVIE_SCRIPT_GET_DIRECTION:
 			process_script_return(magic_script->resume_with_direction(NUVIE_DIR_N)); //FIXME need to get real dir.
 			break;
 		}

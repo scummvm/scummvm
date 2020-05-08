@@ -23,8 +23,8 @@
 #ifndef TITANIC_MUSIC_SONG_H
 #define TITANIC_MUSIC_SONG_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 
 namespace Titanic {
 
@@ -39,6 +39,7 @@ public:
 	Common::Array<CValuePair> _data;
 	int _minVal;
 	int _range;
+
 public:
 	CMusicSong(int index);
 	~CMusicSong();
@@ -60,8 +61,10 @@ private:
 	int _field1C;
 	char _currentChar;
 	int _numValue;
+
 private:
 	void skipSpaces();
+
 public:
 	CSongParser(const char *str);
 

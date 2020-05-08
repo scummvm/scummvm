@@ -20,49 +20,44 @@
  *
  */
 
-#include "dragons/actor.h"
-#include "dragons/dragons.h"
-#include "dragons/dragonini.h"
-#include "dragons/background.h"
 #include "dragons/inventory.h"
+#include "dragons/actor.h"
+#include "dragons/background.h"
 #include "dragons/bag.h"
+#include "dragons/dragonini.h"
+#include "dragons/dragons.h"
 #include "dragons/scene.h"
-#include "dragons/talk.h"
 #include "dragons/screen.h"
+#include "dragons/talk.h"
 
 namespace Dragons {
-
 
 static const struct {
 	int x, y;
 } positionTable[4] = {
-	{   2,   0 },
-	{ 206,   0 },
-	{   2, 158 },
-	{ 206, 158 }
-};
+    {2, 0},
+    {206, 0},
+    {2, 158},
+    {206, 158}};
 
 static const int16 bagBounceTable[4] = {
-	-5, -0xa, -5, 0
-};
+    -5, -0xa, -5, 0};
 
 static const int16 invXPosTable[41] = {
-	0x0080, 0x00a0, 0x00c0, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-	0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-	0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-	0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-	0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-	0x0100
-};
+    0x0080, 0x00a0, 0x00c0, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+    0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+    0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+    0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+    0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+    0x0100};
 
 static const int16 invYPosTable[41] = {
-	0x0028, 0x0028, 0x0028, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040,
-	0x0040, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058,
-	0x0058, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070,
-	0x0070, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088,
-	0x0088, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0,
-	0x00a0
-};
+    0x0028, 0x0028, 0x0028, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040,
+    0x0040, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058,
+    0x0058, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070,
+    0x0070, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088,
+    0x0088, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0,
+    0x00a0};
 
 Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_state = Closed;
@@ -87,7 +82,7 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 	_actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(0);
 	_actor->_flags |= (ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
-					   ACTOR_FLAG_200);
+	                   ACTOR_FLAG_200);
 	_sequenceId = 0;
 	_state = Closed;
 	_previousState = Closed;
@@ -99,7 +94,6 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 
 	loadInventoryItemsFromSave();
 }
-
 
 void Inventory::loadScene(uint32 sceneId) {
 	if (_state == Closed) {
@@ -262,8 +256,7 @@ uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if (_inventoryItemTbl[i]) {
 			Actor *item = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
-			if (item->_x_pos - 0x10 <= x && x < item->_x_pos + 0x10
-					&& item->_y_pos - 0xc <= y && y < item->_y_pos + 0xc) {
+			if (item->_x_pos - 0x10 <= x && x < item->_x_pos + 0x10 && item->_y_pos - 0xc <= y && y < item->_y_pos + 0xc) {
 				return _inventoryItemTbl[i];
 			}
 		}
@@ -381,9 +374,9 @@ bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		Actor *actor = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 		if ((((actor->_x_pos - 0x10 <= x) &&
-				(x < actor->_x_pos + 0x10)) &&
-				(actor->_y_pos - 0xc <= y)) &&
-				(y < actor->_y_pos + 0xc)) {
+		      (x < actor->_x_pos + 0x10)) &&
+		     (actor->_y_pos - 0xc <= y)) &&
+		    (y < actor->_y_pos + 0xc)) {
 			_inventoryItemTbl[i] = iniId;
 			return true;
 		}

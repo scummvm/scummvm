@@ -26,9 +26,9 @@
 #include "graphics/managed_surface.h"
 
 namespace Common {
-	class SineTable;
-	class CosineTable;
-}
+class SineTable;
+class CosineTable;
+} // namespace Common
 
 namespace HDB {
 
@@ -45,7 +45,7 @@ struct TileLookup {
 
 struct GfxCache {
 	char name[32];
-	bool status;	// false = tileGfx, true = picGfx
+	bool status; // false = tileGfx, true = picGfx
 	union {
 		Tile *tileGfx;
 		Picture *picGfx;
@@ -57,21 +57,20 @@ struct GfxCache {
 };
 
 struct FontInfo {
-	int		type;		// 0 = mono, 1 = proportional
-	int		numChars;	// how many characters in font
-	int		height;		// height of entire font
-	int		kerning;	// space between chars
-	int		leading;	// space between lines
+	int type;     // 0 = mono, 1 = proportional
+	int numChars; // how many characters in font
+	int height;   // height of entire font
+	int kerning;  // space between chars
+	int leading;  // space between lines
 };
 
 struct CharInfo {
-	int16 width;	// Character width in pixels
-	int32 offset;	// From the start of the font charInfo chunk
+	int16 width;  // Character width in pixels
+	int32 offset; // From the start of the font charInfo chunk
 };
 
 class Gfx {
 public:
-
 	Gfx();
 	~Gfx();
 
@@ -164,7 +163,7 @@ private:
 
 	Common::Array<GfxCache *> *_gfxCache;
 
-	int _currentSky;	// 0 if no Sky, 1+ for which Sky to use
+	int _currentSky; // 0 if no Sky, 1+ for which Sky to use
 	struct {
 		bool active;
 		bool stayFaded;
@@ -175,14 +174,14 @@ private:
 		int curStep;
 	} _fadeInfo;
 
-#define MAX_SNOW                50                              // how many snowflakes onscreen
-#define MAX_SNOW_XV             12
+#define MAX_SNOW 50 // how many snowflakes onscreen
+#define MAX_SNOW_XV 12
 	struct {
-		bool    active;
-		double  x[MAX_SNOW];
-		double  y[MAX_SNOW];
-		double  yv[MAX_SNOW];
-		int     xvindex[MAX_SNOW];
+		bool active;
+		double x[MAX_SNOW];
+		double y[MAX_SNOW];
+		double yv[MAX_SNOW];
+		int xvindex[MAX_SNOW];
 	} _snowInfo;
 
 	struct {
@@ -195,9 +194,9 @@ private:
 		uint16 color;
 	} _stars3DSlow[kNum3DStars];
 
-	int _tileSkyStars; // Index of sky_stars tile
+	int _tileSkyStars;     // Index of sky_stars tile
 	int _tileSkyStarsLeft; // Left-scrolling stars, slow
-	int _tileSkyClouds; // Index of sky_stars tile
+	int _tileSkyClouds;    // Index of sky_stars tile
 	Picture *_starField[4];
 	Picture *_snowflake;
 	Picture *_skyClouds;
@@ -214,7 +213,7 @@ private:
 
 	// Cursor
 	int _cursorX, _cursorY;
-	Picture *_mousePointer[8];	// Gfx for screen pointer (4 Animations)
+	Picture *_mousePointer[8]; // Gfx for screen pointer (4 Animations)
 	int _pointerDisplayable;
 	bool _showCursor;
 
@@ -234,7 +233,6 @@ private:
 
 class Picture {
 public:
-
 	Picture();
 	~Picture();
 
@@ -256,7 +254,6 @@ private:
 
 class Tile {
 public:
-
 	Tile();
 	~Tile();
 
@@ -267,6 +264,7 @@ public:
 	uint32 _flags;
 
 	char *getName() { return _name; }
+
 private:
 	char _name[64];
 

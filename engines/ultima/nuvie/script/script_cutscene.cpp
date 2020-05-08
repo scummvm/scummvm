@@ -22,31 +22,31 @@
 
 #include "common/lua/lauxlib.h"
 
+#include "common/system.h"
+#include "ultima/nuvie/core/cursor.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
+#include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/misc/u6_line_walker.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/sound/sound_manager.h"
 #include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/fonts/wou_font.h"
-#include "ultima/nuvie/core/cursor.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_line_walker.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/game_palette.h"
 #include "ultima/nuvie/script/script_cutscene.h"
-#include "common/system.h"
+#include "ultima/nuvie/sound/sound_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 #define DELUXE_PAINT_MAGIC 0x4d524f46 // "FORM"
 
-#define INPUT_KEY_RIGHT 79 | (1<<30)
-#define INPUT_KEY_LEFT 80 | (1<<30)
-#define INPUT_KEY_DOWN  81 | (1<<30)
-#define INPUT_KEY_UP  82 | (1<<30)
+#define INPUT_KEY_RIGHT 79 | (1 << 30)
+#define INPUT_KEY_LEFT 80 | (1 << 30)
+#define INPUT_KEY_DOWN 81 | (1 << 30)
+#define INPUT_KEY_UP 82 | (1 << 30)
 
 static ScriptCutscene *cutScene = NULL;
 ScriptCutscene *get_cutscene() {
@@ -76,11 +76,10 @@ static int nscript_image_bubble_effect_add_color(lua_State *L);
 static int nscript_image_bubble_effect(lua_State *L);
 
 static const struct luaL_Reg nscript_imagelib_m[] = {
-	{ "__index", nscript_image_get },
-	{ "__newindex", nscript_image_set },
-	{ "__gc", nscript_image_gc },
-	{ NULL, NULL }
-};
+    {"__index", nscript_image_get},
+    {"__newindex", nscript_image_set},
+    {"__gc", nscript_image_gc},
+    {NULL, NULL}};
 
 static int nscript_sprite_set(lua_State *L);
 static int nscript_sprite_get(lua_State *L);
@@ -89,11 +88,10 @@ bool nscript_new_sprite_var(lua_State *L, CSSprite *image);
 static int nscript_sprite_gc(lua_State *L);
 
 static const struct luaL_Reg nscript_spritelib_m[] = {
-	{ "__index", nscript_sprite_get },
-	{ "__newindex", nscript_sprite_set },
-	{ "__gc", nscript_sprite_gc },
-	{ NULL, NULL }
-};
+    {"__index", nscript_sprite_get},
+    {"__newindex", nscript_sprite_set},
+    {"__gc", nscript_sprite_gc},
+    {NULL, NULL}};
 
 static int nscript_sprite_new(lua_State *L);
 static int nscript_sprite_move_to_front(lua_State *L);
@@ -293,7 +291,6 @@ static int nscript_image_set(lua_State *L) {
 	return 0;
 }
 
-
 static int nscript_image_get(lua_State *L) {
 	CSImage **s_image;
 	CSImage *image;
@@ -431,7 +428,7 @@ static int nscript_image_load(lua_State *L) {
 
 static int nscript_image_load_all(lua_State *L) {
 	const char *filename = lua_tostring(L, 1);
-	Std::vector<Std::vector<CSImage *> > images = cutScene->load_all_images(filename);
+	Std::vector<Std::vector<CSImage *>> images = cutScene->load_all_images(filename);
 
 	if (images.empty()) {
 		return 0;
@@ -536,7 +533,6 @@ static int nscript_image_bubble_effect(lua_State *L) {
 
 			data++;
 		}
-
 	}
 	return 0;
 }
@@ -675,12 +671,11 @@ static int nscript_sprite_set(lua_State *L) {
 	}
 	if (!strcmp(key, "text_align")) {
 		int align_val = lua_tointeger(L, 3);
-		sprite->text_align = (uint8) align_val;
+		sprite->text_align = (uint8)align_val;
 		return 0;
 	}
 	return 0;
 }
-
 
 static int nscript_sprite_get(lua_State *L) {
 	CSSprite **s_sprite;
@@ -1000,8 +995,8 @@ static int nscript_input_poll(lua_State *L) {
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 
 		if (event.type == Common::EVENT_JOYAXIS_MOTION ||
-				event.type == Common::EVENT_JOYBUTTON_DOWN ||
-				event.type == Common::EVENT_JOYBUTTON_UP) {
+		    event.type == Common::EVENT_JOYBUTTON_DOWN ||
+		    event.type == Common::EVENT_JOYBUTTON_UP) {
 			event.kbd.flags = 0;
 			event.kbd.keycode = keybinder->get_key_from_joy_events(&event);
 			if (event.kbd.keycode == Common::KEYCODE_INVALID)
@@ -1014,9 +1009,7 @@ static int nscript_input_poll(lua_State *L) {
 		if (event.type == Common::EVENT_KEYDOWN) {
 			Common::KeyState key = event.kbd;
 
-			if ((((key.flags & Common::KBD_CAPS) == Common::KBD_CAPS
-					&& (key.flags & Common::KBD_SHIFT) == 0) || ((key.flags & Common::KBD_CAPS) == 0 && (key.flags & Common::KBD_SHIFT)))
-			        && key.keycode >= Common::KEYCODE_a && key.keycode <= Common::KEYCODE_z)
+			if ((((key.flags & Common::KBD_CAPS) == Common::KBD_CAPS && (key.flags & Common::KBD_SHIFT) == 0) || ((key.flags & Common::KBD_CAPS) == 0 && (key.flags & Common::KBD_SHIFT))) && key.keycode >= Common::KEYCODE_a && key.keycode <= Common::KEYCODE_z)
 				key.keycode = (Common::KeyCode)(key.keycode - 32);
 			if (key.keycode > 0xFF || !Common::isPrint((char)key.keycode) || (key.flags & Common::KBD_ALT) || (key.flags & Common::KBD_CTRL)) {
 				ActionType a = keybinder->get_ActionType(key);
@@ -1040,7 +1033,8 @@ static int nscript_input_poll(lua_State *L) {
 					key.keycode = Common::KEYCODE_RETURN;
 					break;
 				default:
-					if (keybinder->handle_always_available_keys(a)) return 0;
+					if (keybinder->handle_always_available_keys(a))
+						return 0;
 					break;
 				}
 			}
@@ -1093,7 +1087,7 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 	x_off = Game::get_game()->get_game_x_offset();
 	y_off = Game::get_game()->get_game_y_offset();
 
-	x_off += (Game::get_game()->get_game_width() - 320) / 2; // center it
+	x_off += (Game::get_game()->get_game_width() - 320) / 2;  // center it
 	y_off += (Game::get_game()->get_game_height() - 200) / 2; // center it
 
 	nuvie_game_t game_type = Game::get_game()->get_game_type();
@@ -1108,7 +1102,6 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 
 	//FIXME this should be loaded by script.
 	Std::string path;
-
 
 	font = new WOUFont();
 
@@ -1236,13 +1229,13 @@ CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) 
 	return image;
 }
 
-Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char *filename) {
+Std::vector<Std::vector<CSImage *>> ScriptCutscene::load_all_images(const char *filename) {
 	Std::string path;
 	CSImage *image = NULL;
 
 	config_get_path(config, filename, path);
 
-	Std::vector<Std::vector<CSImage *> > v;
+	Std::vector<Std::vector<CSImage *>> v;
 	U6Lzw lzw;
 
 	U6Lib_n lib_n;
@@ -1298,7 +1291,6 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 		free(buf);
 
 	return v;
-
 }
 
 void load_images_from_lib(Std::vector<CSImage *> *images, U6Lib_n *lib, uint32 index) {
@@ -1412,7 +1404,7 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 			if (tokens.size() > 1)
 				new_space = floor((width - (len - space_width * (tokens.size() - 1))) / (tokens.size() - 1));
 
-			for (it = tokens.begin() ; it != tokens.end() ; it++) {
+			for (it = tokens.begin(); it != tokens.end(); it++) {
 				*x = ((WOUFont *)font)->drawStringToShape(image->shp, (*it).c_str(), *x, *y, color);
 				*x += new_space;
 			}
@@ -1432,7 +1424,7 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 
 	list<Std::string>::iterator it;
 
-	for (it = tokens.begin() ; it != tokens.end() ; it++) {
+	for (it = tokens.begin(); it != tokens.end(); it++) {
 		*x = ((WOUFont *)font)->drawStringToShape(image->shp, (*it).c_str(), *x, *y, color);
 		*x += space_width;
 	}
@@ -1446,7 +1438,6 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 		*x = ((WOUFont *)font)->drawStringToShape(image->shp, token.c_str(), *x, *y, color);
 	}
 
-
 	//font->drawStringToShape(image->shp, string, x, y, color);
 }
 
@@ -1457,7 +1448,6 @@ void ScriptCutscene::load_palette(const char *filename, int idx) {
 	Std::string path;
 
 	config_get_path(config, filename, path);
-
 
 	if (file.open(path.c_str()) == false) {
 		DEBUG(0, LEVEL_ERROR, "loading palette.\n");
@@ -1486,8 +1476,9 @@ void ScriptCutscene::load_palette(const char *filename, int idx) {
 				int byte_pos = (i * 3 * 6 + j * 6) / 8;
 				int shift_val = (i * 3 * 6 + j * 6) % 8;
 				int color = ((buf[byte_pos] +
-				              (buf[byte_pos + 1] << 8))
-				             >> shift_val) & 0x3F;
+				              (buf[byte_pos + 1] << 8)) >>
+				             shift_val) &
+				            0x3F;
 				unpacked_palette[i * 3 + j] = (uint8)(color << 2);
 			}
 		}
@@ -1592,7 +1583,7 @@ void ScriptCutscene::Display(bool full_redraw) {
 						if (s->text_color == 0xffff) {
 							font->drawString(screen, s->text.c_str(), s->x + x_off, s->y + y_off);
 						} else {
-							font->drawString(screen, s->text.c_str(), s->x + x_off, s->y + y_off, (uint8) s->text_color, (uint8) s->text_color);
+							font->drawString(screen, s->text.c_str(), s->x + x_off, s->y + y_off, (uint8)s->text_color, (uint8)s->text_color);
 						}
 					}
 				}
@@ -1619,14 +1610,13 @@ void ScriptCutscene::Hide() {
 }
 
 void ScriptCutscene::display_wrapped_text(CSSprite *s) {
-	uint8 text_color = (uint8) s->text_color;
+	uint8 text_color = (uint8)s->text_color;
 
 	size_t start = 0;
 	size_t found;
 	Std::string str = s->text + "^";
 	Std::list<Std::string> tokens;
 	int y = s->y;
-
 
 	Std::string line = "";
 
@@ -1750,16 +1740,16 @@ void CSStarFieldImage::updateEffect() {
 	for (int i = 0; i < STAR_FIELD_NUM_STARS; i++) {
 		if (stars[i].line == NULL) {
 			switch (NUVIE_RAND() % 4) {
-			case 0 :
+			case 0:
 				stars[i].line = new U6LineWalker(w / 2, h / 2, 0, NUVIE_RAND() % h);
 				break;
-			case 1 :
+			case 1:
 				stars[i].line = new U6LineWalker(w / 2, h / 2, w - 1, NUVIE_RAND() % h);
 				break;
-			case 2 :
+			case 2:
 				stars[i].line = new U6LineWalker(w / 2, h / 2, NUVIE_RAND() % w, 0);
 				break;
-			case 3 :
+			case 3:
 				stars[i].line = new U6LineWalker(w / 2, h / 2, NUVIE_RAND() % w, h - 1);
 				break;
 			}

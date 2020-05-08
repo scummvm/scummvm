@@ -33,10 +33,10 @@ class TextResource;
 class TextResource {
 	BladeRunnerEngine *_vm;
 
-	uint32  _count;
+	uint32 _count;
 	uint32 *_ids;
 	uint32 *_offsets;
-	char   *_strings;
+	char *_strings;
 
 public:
 	TextResource(BladeRunnerEngine *vm);

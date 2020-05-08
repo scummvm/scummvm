@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/filesys/file_system.h"
-#include "ultima/shared/std/string.h"
-#include "ultima/ultima8/ultima8.h"
-#include "common/system.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/system.h"
+#include "ultima/shared/std/string.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,7 +36,7 @@ using Std::string;
 FileSystem *FileSystem::_fileSystem = nullptr;
 
 FileSystem::FileSystem(bool noforced)
-	: _noForcedVPaths(noforced), _allowDataOverride(true) {
+    : _noForcedVPaths(noforced), _allowDataOverride(true) {
 	debugN(MM_INFO, "Creating FileSystem...\n");
 
 	_fileSystem = this;
@@ -48,7 +48,6 @@ FileSystem::~FileSystem() {
 
 	_fileSystem = nullptr;
 }
-
 
 // Open a streaming file as readable. Streamed (0 on failure)
 IDataSource *FileSystem::ReadFile(const string &vfn, bool is_text) {
@@ -121,8 +120,7 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 	return false;
 }
 
-
-bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
+bool FileSystem::rawOpen(Common::WriteStream *&out, const string &fname) {
 	string name = fname;
 	switch_slashes(name);
 
@@ -157,7 +155,7 @@ bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 void FileSystem::switch_slashes(string &name) {
 	for (string::iterator X = name.begin(); X != name.end(); ++X) {
 		if (*X == '\\')
-			*X =  '/';
+			*X = '/';
 	}
 }
 
@@ -167,7 +165,8 @@ void FileSystem::switch_slashes(string &name) {
  */
 
 bool FileSystem::base_to_uppercase(string &str, int count) {
-	if (count <= 0) return true;
+	if (count <= 0)
+		return true;
 
 	int todo = count;
 	// Go backwards.
@@ -207,7 +206,7 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 	// memory path is reserved
 	if (vp == "@memory" || vp.substr(0, 8) == "@memory/") {
 		warning("Error mounting virtual path \"%s\": \"@memory\" is a reserved virtual path name",
-			vp.c_str());
+		        vp.c_str());
 		return false;
 	}
 
@@ -222,7 +221,7 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 			if (!create) {
 #ifdef DEBUG
 				warning("Problem mounting virtual path \"%s\": directory not found: %s",
-					vp.c_str(), fullpath.c_str());
+				        vp.c_str(), fullpath.c_str());
 #endif
 				return false;
 			} else {
@@ -268,9 +267,9 @@ bool FileSystem::rewrite_virtual_path(string &vfn) const {
 	string::size_type pos = vfn.size();
 
 	while ((pos = vfn.rfind('/', pos)) != Std::string::npos) {
-//		perr << vfn << ", " << vfn.substr(0, pos) << ", " << pos << Std::endl;
+		//		perr << vfn << ", " << vfn.substr(0, pos) << ", " << pos << Std::endl;
 		Std::map<Common::String, string>::const_iterator p = _virtualPaths.find(
-		            vfn.substr(0, pos));
+		    vfn.substr(0, pos));
 
 		if (p != _virtualPaths.end()) {
 			ret = true;
@@ -285,11 +284,11 @@ bool FileSystem::rewrite_virtual_path(string &vfn) const {
 	}
 
 	// We will allow all paths to work
-	if (_noForcedVPaths) ret = true;
+	if (_noForcedVPaths)
+		ret = true;
 
 	return ret;
 }
-
 
 bool FileSystem::IsDir(const string &path) {
 	Common::FSNode node(path);

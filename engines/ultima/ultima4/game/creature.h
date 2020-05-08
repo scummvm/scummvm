@@ -23,10 +23,10 @@
 #ifndef ULTIMA4_GAME_CREATURE_H
 #define ULTIMA4_GAME_CREATURE_H
 
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/map/movement.h"
-#include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -49,93 +49,93 @@ typedef Std::vector<class Creature *> CreatureVector;
 /* Creature ids */
 
 typedef enum {
-	HORSE1_ID       = 0,
-	HORSE2_ID       = 1,
+	HORSE1_ID = 0,
+	HORSE2_ID = 1,
 
-	MAGE_ID         = 2,
-	BARD_ID         = 3,
-	FIGHTER_ID      = 4,
-	DRUID_ID        = 5,
-	TINKER_ID       = 6,
-	PALADIN_ID      = 7,
-	RANGER_ID       = 8,
-	SHEPHERD_ID     = 9,
+	MAGE_ID = 2,
+	BARD_ID = 3,
+	FIGHTER_ID = 4,
+	DRUID_ID = 5,
+	TINKER_ID = 6,
+	PALADIN_ID = 7,
+	RANGER_ID = 8,
+	SHEPHERD_ID = 9,
 
-	GUARD_ID        = 10,
-	VILLAGER_ID     = 11,
-	SINGINGBARD_ID  = 12,
-	JESTER_ID       = 13,
-	BEGGAR_ID       = 14,
-	CHILD_ID        = 15,
-	BULL_ID         = 16,
-	LORDBRITISH_ID  = 17,
+	GUARD_ID = 10,
+	VILLAGER_ID = 11,
+	SINGINGBARD_ID = 12,
+	JESTER_ID = 13,
+	BEGGAR_ID = 14,
+	CHILD_ID = 15,
+	BULL_ID = 16,
+	LORDBRITISH_ID = 17,
 
-	PIRATE_ID       = 18,
-	NIXIE_ID        = 19,
-	GIANT_SQUID_ID  = 20,
-	SEA_SERPENT_ID  = 21,
-	SEAHORSE_ID     = 22,
-	WHIRLPOOL_ID    = 23,
-	STORM_ID        = 24,
-	RAT_ID          = 25,
-	BAT_ID          = 26,
+	PIRATE_ID = 18,
+	NIXIE_ID = 19,
+	GIANT_SQUID_ID = 20,
+	SEA_SERPENT_ID = 21,
+	SEAHORSE_ID = 22,
+	WHIRLPOOL_ID = 23,
+	STORM_ID = 24,
+	RAT_ID = 25,
+	BAT_ID = 26,
 	GIANT_SPIDER_ID = 27,
-	GHOST_ID        = 28,
-	SLIME_ID        = 29,
-	TROLL_ID        = 30,
-	GREMLIN_ID      = 31,
-	MIMIC_ID        = 32,
-	REAPER_ID       = 33,
+	GHOST_ID = 28,
+	SLIME_ID = 29,
+	TROLL_ID = 30,
+	GREMLIN_ID = 31,
+	MIMIC_ID = 32,
+	REAPER_ID = 33,
 	INSECT_SWARM_ID = 34,
-	GAZER_ID        = 35,
-	PHANTOM_ID      = 36,
-	ORC_ID          = 37,
-	SKELETON_ID     = 38,
-	ROGUE_ID        = 39,
-	PYTHON_ID       = 40,
-	ETTIN_ID        = 41,
-	HEADLESS_ID     = 42,
-	CYCLOPS_ID      = 43,
-	WISP_ID         = 44,
-	EVILMAGE_ID     = 45,
-	LICH_ID         = 46,
-	LAVA_LIZARD_ID  = 47,
-	ZORN_ID         = 48,
-	DAEMON_ID       = 49,
-	HYDRA_ID        = 50,
-	DRAGON_ID       = 51,
-	BALRON_ID       = 52
+	GAZER_ID = 35,
+	PHANTOM_ID = 36,
+	ORC_ID = 37,
+	SKELETON_ID = 38,
+	ROGUE_ID = 39,
+	PYTHON_ID = 40,
+	ETTIN_ID = 41,
+	HEADLESS_ID = 42,
+	CYCLOPS_ID = 43,
+	WISP_ID = 44,
+	EVILMAGE_ID = 45,
+	LICH_ID = 46,
+	LAVA_LIZARD_ID = 47,
+	ZORN_ID = 48,
+	DAEMON_ID = 49,
+	HYDRA_ID = 50,
+	DRAGON_ID = 51,
+	BALRON_ID = 52
 } CreatureType;
 
 typedef enum {
-	MATTR_STEALFOOD     = 0x1,
-	MATTR_STEALGOLD     = 0x2,
-	MATTR_CASTS_SLEEP   = 0x4,
-	MATTR_UNDEAD        = 0x8,
-	MATTR_GOOD          = 0x10,
-	MATTR_WATER         = 0x20,
+	MATTR_STEALFOOD = 0x1,
+	MATTR_STEALGOLD = 0x2,
+	MATTR_CASTS_SLEEP = 0x4,
+	MATTR_UNDEAD = 0x8,
+	MATTR_GOOD = 0x10,
+	MATTR_WATER = 0x20,
 	MATTR_NONATTACKABLE = 0x40,
-	MATTR_NEGATE        = 0x80,
-	MATTR_CAMOUFLAGE    = 0x100,
-	MATTR_NOATTACK      = 0x200,
-	MATTR_AMBUSHES      = 0x400,
-	MATTR_RANDOMRANGED  = 0x800,
-	MATTR_INCORPOREAL   = 0x1000,
-	MATTR_NOCHEST       = 0x2000,
-	MATTR_DIVIDES       = 0x4000,
+	MATTR_NEGATE = 0x80,
+	MATTR_CAMOUFLAGE = 0x100,
+	MATTR_NOATTACK = 0x200,
+	MATTR_AMBUSHES = 0x400,
+	MATTR_RANDOMRANGED = 0x800,
+	MATTR_INCORPOREAL = 0x1000,
+	MATTR_NOCHEST = 0x2000,
+	MATTR_DIVIDES = 0x4000,
 	MATTR_SPAWNSONDEATH = 0x8000,
 	MATTR_FORCE_OF_NATURE = 0x10000
 } CreatureAttrib;
 
 typedef enum {
-	MATTR_STATIONARY        = 0x1,
-	MATTR_WANDERS           = 0x2,
-	MATTR_SWIMS             = 0x4,
-	MATTR_SAILS             = 0x8,
-	MATTR_FLIES             = 0x10,
-	MATTR_TELEPORT          = 0x20,
-	MATTR_CANMOVECREATURES  = 0x40,
-	MATTR_CANMOVEAVATAR     = 0x80
+	MATTR_STATIONARY = 0x1,
+	MATTR_WANDERS = 0x2,
+	MATTR_SWIMS = 0x4,
+	MATTR_SAILS = 0x8,
+	MATTR_FLIES = 0x10,
+	MATTR_TELEPORT = 0x20,
+	MATTR_CANMOVECREATURES = 0x40,
+	MATTR_CANMOVEAVATAR = 0x80
 } CreatureMovementAttrib;
 
 typedef enum {
@@ -366,22 +366,22 @@ protected:
 	Common::String _name;
 	Common::String _rangedHitTile;
 	Common::String _rangedMissTile;
-	CreatureId     _id;
+	CreatureId _id;
 	Common::String _camouflageTile;
-	CreatureId     _leader;
-	int            _baseHp;
-	int            _hp;
-	StatusList     _status;
-	int            _xp;
-	byte  _ranged;
+	CreatureId _leader;
+	int _baseHp;
+	int _hp;
+	StatusList _status;
+	int _xp;
+	byte _ranged;
 	Common::String _worldRangedTile;
-	bool           _leavesTile;
+	bool _leavesTile;
 	CreatureAttrib _mAttr;
 	CreatureMovementAttrib _movementAttr;
-	SlowedType     _slowedType;
-	int            _encounterSize;
-	byte  _resists;
-	CreatureId     _spawn;
+	SlowedType _slowedType;
+	int _encounterSize;
+	byte _resists;
+	CreatureId _spawn;
 };
 
 /**

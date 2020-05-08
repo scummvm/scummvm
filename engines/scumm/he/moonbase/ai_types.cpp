@@ -20,9 +20,9 @@
  *
  */
 
+#include "scumm/he/moonbase/ai_types.h"
 #include "common/textconsole.h"
 #include "scumm/scumm.h"
-#include "scumm/he/moonbase/ai_types.h"
 
 namespace Scumm {
 

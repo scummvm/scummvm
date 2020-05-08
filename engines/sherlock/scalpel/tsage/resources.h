@@ -23,12 +23,12 @@
 #ifndef SHERLOCK_SCALPEL_TSAGE_RESOURCES_H
 #define SHERLOCK_SCALPEL_TSAGE_RESOURCES_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
 #include "common/list.h"
-#include "common/str.h"
+#include "common/scummsys.h"
 #include "common/str-array.h"
+#include "common/str.h"
 #include "common/util.h"
 #include "graphics/surface.h"
 #include "sherlock/screen.h"
@@ -42,11 +42,39 @@ const uint32 MEMORY_ENTRY_ID = 0xE11DA722;
 
 const int MEMORY_POOL_SIZE = 1000;
 
-enum ResourceType { RES_LIBRARY, RES_STRIP, RES_IMAGE, RES_PALETTE, RES_VISAGE, RES_SOUND, RES_MESSAGE,
-		RES_FONT, RES_POINTER, RES_BANK, RES_SND_DRIVER, RES_PRIORITY, RES_CONTROL, RES_WALKRGNS,
-		RES_BITMAP, RES_SAVE, RES_SEQUENCE,
-		// Return to Ringworld specific resource types
-		RT17, RT18, RT19, RT20, RT21, RT22, RT23, RT24, RT25, RT26, RT27, RT28, RT29, RT30, RT31
+enum ResourceType { RES_LIBRARY,
+	                RES_STRIP,
+	                RES_IMAGE,
+	                RES_PALETTE,
+	                RES_VISAGE,
+	                RES_SOUND,
+	                RES_MESSAGE,
+	                RES_FONT,
+	                RES_POINTER,
+	                RES_BANK,
+	                RES_SND_DRIVER,
+	                RES_PRIORITY,
+	                RES_CONTROL,
+	                RES_WALKRGNS,
+	                RES_BITMAP,
+	                RES_SAVE,
+	                RES_SEQUENCE,
+	                // Return to Ringworld specific resource types
+	                RT17,
+	                RT18,
+	                RT19,
+	                RT20,
+	                RT21,
+	                RT22,
+	                RT23,
+	                RT24,
+	                RT25,
+	                RT26,
+	                RT27,
+	                RT28,
+	                RT29,
+	                RT30,
+	                RT31
 };
 
 class SectionEntry {
@@ -95,6 +123,7 @@ private:
 	Common::ReadStream &_stream;
 	uint8 _remainder, _bitsLeft;
 	byte readByte() { return _stream.eos() ? 0 : _stream.readByte(); }
+
 public:
 	BitReader(Common::ReadStream &s) : _stream(s) {
 		numBits = 9;
@@ -109,6 +138,7 @@ public:
 class TLib {
 private:
 	Common::StringArray _resStrings;
+
 private:
 	Common::File _file;
 	Common::String _filename;
@@ -120,6 +150,7 @@ private:
 
 	static bool scanIndex(Common::File &f, ResourceType resType, int rlbNum, int resNum, ResourceEntry &resEntry);
 	static void loadSection(Common::File &f, ResourceList &resources);
+
 public:
 	TLib(const Common::String &filename);
 	~TLib();

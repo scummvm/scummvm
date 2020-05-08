@@ -20,12 +20,12 @@
  *
  */
 
+#include "common/str.h"
 #include "common/hash-str.h"
 #include "common/list.h"
 #include "common/memorypool.h"
-#include "common/str.h"
-#include "common/util.h"
 #include "common/mutex.h"
+#include "common/util.h"
 
 namespace Common {
 
@@ -50,7 +50,7 @@ void unlockMemoryPoolMutex() {
 }
 
 void String::releaseMemoryPoolMutex() {
-	if (g_refCountPoolMutex){
+	if (g_refCountPoolMutex) {
 		g_system->deleteMutex(g_refCountPoolMutex);
 		g_refCountPoolMutex = nullptr;
 	}
@@ -101,7 +101,7 @@ void String::initWithCStr(const char *str, uint32 len) {
 }
 
 String::String(const String &str)
-	: _size(str._size) {
+    : _size(str._size) {
 	if (str.isStorageIntern()) {
 		// String in internal storage: just copy it
 		memcpy(_storage, str._storage, _builtinCapacity);
@@ -117,7 +117,7 @@ String::String(const String &str)
 }
 
 String::String(char c)
-	: _size(0), _str(_storage) {
+    : _size(0), _str(_storage) {
 
 	_storage[0] = c;
 	_storage[1] = 0;
@@ -165,12 +165,11 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 	if (new_size < curCapacity)
 		newCapacity = curCapacity;
 	else
-		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
+		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size + 1));
 
 	// Allocate new storage
 	newStorage = new char[newCapacity];
 	assert(newStorage);
-
 
 	// Copy old data if needed, elsewise reset the new storage.
 	if (keep_old) {
@@ -410,7 +409,8 @@ bool String::contains(char x) const {
 uint64 String::asUint64() const {
 	uint64 result = 0;
 	for (uint32 i = 0; i < _size; ++i) {
-		if (_str[i] < '0' || _str[i] > '9') break;
+		if (_str[i] < '0' || _str[i] > '9')
+			break;
 		result = result * 10L + (_str[i] - '0');
 	}
 	return result;
@@ -453,7 +453,7 @@ void String::erase(uint32 p, uint32 len) {
 		return;
 	}
 
-	for ( ; p + len <= _size; p++) {
+	for (; p + len <= _size; p++) {
 		_str[p] = _str[p + len];
 	}
 	_size -= len;
@@ -582,12 +582,12 @@ void String::replace(iterator begin_, iterator end_, const char *str) {
 }
 
 void String::replace(uint32 posOri, uint32 countOri, const String &str,
-					 uint32 posDest, uint32 countDest) {
+                     uint32 posDest, uint32 countDest) {
 	replace(posOri, countOri, str._str, posDest, countDest);
 }
 
 void String::replace(uint32 posOri, uint32 countOri, const char *str,
-					 uint32 posDest, uint32 countDest) {
+                     uint32 posDest, uint32 countDest) {
 
 	ensureCapacity(_size + countDest - countOri, true);
 
@@ -601,7 +601,7 @@ void String::replace(uint32 posOri, uint32 countOri, const char *str,
 		for (uint32 i = _size; i >= posOri + countDest; i--)
 			_str[i] = _str[i - offset];
 
-	} else if (countOri > countDest){
+	} else if (countOri > countDest) {
 		uint32 offset = countOri - countDest; ///< Number of positions that we have to pull back
 
 		// Pull the remainder string back
@@ -614,7 +614,6 @@ void String::replace(uint32 posOri, uint32 countOri, const char *str,
 	// Copy the replaced part of the string
 	for (uint32 i = 0; i < countDest; i++)
 		_str[posOri + i] = str[posDest + i];
-
 }
 
 uint32 String::find(const String &str, uint32 pos) const {
@@ -705,7 +704,6 @@ String String::vformat(const char *fmt, va_list args) {
 
 	return output;
 }
-
 
 size_t String::find(char c, size_t pos) const {
 	const char *p = strchr(_str + pos, c);
@@ -831,7 +829,7 @@ bool String::operator!=(const String &x) const {
 	return !equals(x);
 }
 
-bool String::operator !=(const char *x) const {
+bool String::operator!=(const char *x) const {
 	assert(x != nullptr);
 	return !equals(x);
 }
@@ -854,11 +852,11 @@ bool String::operator>=(const String &x) const {
 
 #pragma mark -
 
-bool operator==(const char* y, const String &x) {
+bool operator==(const char *y, const String &x) {
 	return (x == y);
 }
 
-bool operator!=(const char* y, const String &x) {
+bool operator!=(const char *y, const String &x) {
 	return x != y;
 }
 
@@ -1089,7 +1087,7 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 
 		default:
 			if ((!ignoreCase && *pat != *str) ||
-				(ignoreCase && tolower(*pat) != tolower(*str))) {
+			    (ignoreCase && tolower(*pat) != tolower(*str))) {
 				if (p) {
 					// No match, oops -> try to backtrack
 					pat = p;
@@ -1097,8 +1095,7 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 					if (!*str)
 						return !*pat;
 					break;
-				}
-				else
+				} else
 					return false;
 			}
 			// fallthrough
@@ -1140,7 +1137,7 @@ String tag2string(uint32 tag) {
 size_t strlcpy(char *dst, const char *src, size_t size) {
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
-	const char * const srcStart = src;
+	const char *const srcStart = src;
 
 	// In case a non-empty size was specified we
 	// copy over (size - 1) bytes at max.
@@ -1178,11 +1175,11 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
-	const char * const srcStart = src;
+	const char *const srcStart = src;
 
 	// Our backup of the destination's start, we need
 	// this to calculate the destination's length.
-	const char * const dstStart = dst;
+	const char *const dstStart = dst;
 
 	// Search the end of the destination, but do not
 	// move past the terminating zero.
@@ -1227,11 +1224,18 @@ size_t strnlen(const char *src, size_t maxSize) {
 String toPrintable(const String &in, bool keepNewLines) {
 	Common::String res;
 
-	const char *tr = "\x01\x01\x02\x03\x04\x05\x06" "a"
-				  //"\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
-					   "b" "t" "n" "v" "f" "r\x0e\x0f"
-					"\x10\x11\x12\x13\x14\x15\x16\x17"
-					"\x18\x19\x1a" "e\x1c\x1d\x1e\x1f";
+	const char *tr = "\x01\x01\x02\x03\x04\x05\x06"
+	                 "a"
+	                 //"\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
+	                 "b"
+	                 "t"
+	                 "n"
+	                 "v"
+	                 "f"
+	                 "r\x0e\x0f"
+	                 "\x10\x11\x12\x13\x14\x15\x16\x17"
+	                 "\x18\x19\x1a"
+	                 "e\x1c\x1d\x1e\x1f";
 
 	for (const byte *p = (const byte *)in.c_str(); *p; p++) {
 		if (*p == '\n') {
@@ -1252,7 +1256,7 @@ String toPrintable(const String &in, bool keepNewLines) {
 				else
 					res += tr[*p];
 			} else {
-				res += *p;	// We will escape it
+				res += *p; // We will escape it
 			}
 		} else if (*p > 0x7e) {
 			res += Common::String::format("\\x%02x", *p);

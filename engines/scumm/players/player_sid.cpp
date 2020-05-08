@@ -22,10 +22,10 @@
 
 #ifndef DISABLE_SID
 
-#include "engines/engine.h"
 #include "scumm/players/player_sid.h"
-#include "scumm/scumm.h"
 #include "audio/mixer.h"
+#include "engines/engine.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
@@ -53,46 +53,42 @@ struct TimingProps {
 };
 
 static const TimingProps timingProps[2] = {
-	{ 17734472.0 / 18, 312 * 63 }, // PAL:  312*63 cycles/frame @  985248 Hz (~50Hz)
-	{ 14318180.0 / 14, 263 * 65 }  // NTSC: 263*65 cycles/frame @ 1022727 Hz (~60Hz)
+    {17734472.0 / 18, 312 * 63}, // PAL:  312*63 cycles/frame @  985248 Hz (~50Hz)
+    {14318180.0 / 14, 263 * 65}  // NTSC: 263*65 cycles/frame @ 1022727 Hz (~60Hz)
 };
 
 static const uint8 BITMASK[7] = {
-	0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40
-};
+    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40};
 static const uint8 BITMASK_INV[7] = {
-	0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF
-};
+    0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF};
 
 static const int SID_REG_OFFSET[7] = {
-	0, 7, 14, 21, 2, 9, 16
-};
+    0, 7, 14, 21, 2, 9, 16};
 
 // NTSC frequency table (also used for PAL versions).
 // FREQ_TBL[i] = tone_freq[i] * 2^24 / clockFreq
 static const uint16 FREQ_TBL[97] = {
-	0x0000, 0x010C, 0x011C, 0x012D, 0x013E, 0x0151, 0x0166, 0x017B,
-	0x0191, 0x01A9, 0x01C3, 0x01DD, 0x01FA, 0x0218, 0x0238, 0x025A,
-	0x027D, 0x02A3, 0x02CC, 0x02F6, 0x0323, 0x0353, 0x0386, 0x03BB,
-	0x03F4, 0x0430, 0x0470, 0x04B4, 0x04FB, 0x0547, 0x0598, 0x05ED,
-	0x0647, 0x06A7, 0x070C, 0x0777, 0x07E9, 0x0861, 0x08E1, 0x0968,
-	0x09F7, 0x0A8F, 0x0B30, 0x0BDA, 0x0C8F, 0x0D4E, 0x0E18, 0x0EEF,
-	0x0FD2, 0x10C3, 0x11C3, 0x12D1, 0x13EF, 0x151F, 0x1660, 0x17B5,
-	0x191E, 0x1A9C, 0x1C31, 0x1DDF, 0x1FA5, 0x2187, 0x2386, 0x25A2,
-	0x27DF, 0x2A3E, 0x2CC1, 0x2F6B, 0x323C, 0x3539, 0x3863, 0x3BBE,
-	0x3F4B, 0x430F, 0x470C, 0x4B45, 0x4FBF, 0x547D, 0x5983, 0x5ED6,
-	0x6479, 0x6A73, 0x70C7, 0x777C, 0x7E97, 0x861E, 0x8E18, 0x968B,
-	0x9F7E, 0xA8FA, 0xB306, 0xBDAC, 0xC8F3, 0xD4E6, 0xE18F, 0xEEF8,
-	0xFD2E
-};
+    0x0000, 0x010C, 0x011C, 0x012D, 0x013E, 0x0151, 0x0166, 0x017B,
+    0x0191, 0x01A9, 0x01C3, 0x01DD, 0x01FA, 0x0218, 0x0238, 0x025A,
+    0x027D, 0x02A3, 0x02CC, 0x02F6, 0x0323, 0x0353, 0x0386, 0x03BB,
+    0x03F4, 0x0430, 0x0470, 0x04B4, 0x04FB, 0x0547, 0x0598, 0x05ED,
+    0x0647, 0x06A7, 0x070C, 0x0777, 0x07E9, 0x0861, 0x08E1, 0x0968,
+    0x09F7, 0x0A8F, 0x0B30, 0x0BDA, 0x0C8F, 0x0D4E, 0x0E18, 0x0EEF,
+    0x0FD2, 0x10C3, 0x11C3, 0x12D1, 0x13EF, 0x151F, 0x1660, 0x17B5,
+    0x191E, 0x1A9C, 0x1C31, 0x1DDF, 0x1FA5, 0x2187, 0x2386, 0x25A2,
+    0x27DF, 0x2A3E, 0x2CC1, 0x2F6B, 0x323C, 0x3539, 0x3863, 0x3BBE,
+    0x3F4B, 0x430F, 0x470C, 0x4B45, 0x4FBF, 0x547D, 0x5983, 0x5ED6,
+    0x6479, 0x6A73, 0x70C7, 0x777C, 0x7E97, 0x861E, 0x8E18, 0x968B,
+    0x9F7E, 0xA8FA, 0xB306, 0xBDAC, 0xC8F3, 0xD4E6, 0xE18F, 0xEEF8,
+    0xFD2E};
 
-static const int SONG_CHANNEL_OFFSET[3] = { 6, 8, 10 };
-static const int RES_ID_CHANNEL[3] = { 3, 4, 5 };
+static const int SONG_CHANNEL_OFFSET[3] = {6, 8, 10};
+static const int RES_ID_CHANNEL[3] = {3, 4, 5};
 
-#define LOBYTE_(a) ((a) & 0xFF)
+#define LOBYTE_(a) ((a)&0xFF)
 #define HIBYTE_(a) (((a) >> 8) & 0xFF)
 
-#define GETBIT(var, pos) ((var) & (1<<(pos)))
+#define GETBIT(var, pos) ((var) & (1 << (pos)))
 
 void Player_SID::handleMusicBuffer() { // $33cd
 	int channel = 2;
@@ -106,7 +102,7 @@ void Player_SID::handleMusicBuffer() { // $33cd
 		if (setupSongFileData() == 1)
 			return;
 
-		uint8* l_chanFileDataPtr = chanFileData[channel];
+		uint8 *l_chanFileDataPtr = chanFileData[channel];
 
 		uint16 l_freq = 0;
 		bool l_keepFreq = false;
@@ -149,7 +145,7 @@ void Player_SID::handleMusicBuffer() { // $33cd
 
 		if (local1 != 0) {
 			// TODO: signed or unsigned?
-			uint16 offset = READ_LE_UINT16(&actSongFileData[local1*2 + 12]);
+			uint16 offset = READ_LE_UINT16(&actSongFileData[local1 * 2 + 12]);
 			l_chanFileDataPtr = actSongFileData + offset;
 
 			// next five bytes: freqDelta, attack, sustain and phase bit
@@ -184,8 +180,8 @@ void Player_SID::handleMusicBuffer() { // $33cd
 
 		_soundQueue[channel] = RES_ID_CHANNEL[channel];
 		processSongData(channel);
-		_soundQueue[channel+4] = RES_ID_CHANNEL[channel];
-		processSongData(channel+4);
+		_soundQueue[channel + 4] = RES_ID_CHANNEL[channel];
+		processSongData(channel + 4);
 		--channel;
 	}
 }
@@ -255,7 +251,7 @@ void Player_SID::resetPlayerState() { // $48f7
 void Player_SID::resetSID() { // $48D8
 	SIDReg24 = 0x0f;
 
-	SID_Write( 4, 0);
+	SID_Write(4, 0);
 	SID_Write(11, 0);
 	SID_Write(18, 0);
 	SID_Write(23, 0);
@@ -344,9 +340,9 @@ void Player_SID::processSongData(int channel) { // $4939
 		return;
 	}
 
-	vec20[channel] = songFileOrChanBufData; // chanBuf (4C1C)
+	vec20[channel] = songFileOrChanBufData;                                         // chanBuf (4C1C)
 	songPosPtr[channel] = songFileOrChanBufData + songFileOrChanBufOffset[channel]; // chanBuf (4C1C)
-	uint8* ptr1 = songPosPtr[channel];
+	uint8 *ptr1 = songPosPtr[channel];
 
 	int y = -1;
 	if (channel < 4) {
@@ -375,7 +371,7 @@ void Player_SID::processSongData(int channel) { // $4939
 	readSongChunk(channel);
 }
 
-void Player_SID::readSetSIDFilterAndProps(int *offset, uint8* dataPtr) {  // $49e7
+void Player_SID::readSetSIDFilterAndProps(int *offset, uint8 *dataPtr) { // $49e7
 	SIDReg23 |= dataPtr[*offset];
 	SID_Write(23, SIDReg23);
 	++*offset;
@@ -415,7 +411,7 @@ void Player_SID::readSongChunk(int channel) { // $4a6b
 			return;
 		}
 
-		uint8* ptr1 = songPosPtr[channel];
+		uint8 *ptr1 = songPosPtr[channel];
 
 		//curChannelActive = true;
 
@@ -451,12 +447,12 @@ void Player_SID::readSongChunk(int channel) { // $4a6b
 		// frequency
 		if (GETBIT(l_cmdByte, 2)) {
 			y += 2;
-			freqReg[channel] = READ_LE_UINT16(&ptr1[y-1]);
+			freqReg[channel] = READ_LE_UINT16(&ptr1[y - 1]);
 			if (!GETBIT(l_cmdByte, 6)) {
 				y += 2;
-				freqDeltaCounter[channel] = READ_LE_UINT16(&ptr1[y-1]);
+				freqDeltaCounter[channel] = READ_LE_UINT16(&ptr1[y - 1]);
 				y += 2;
-				freqDelta[channel] = READ_LE_UINT16(&ptr1[y-1]);
+				freqDelta[channel] = READ_LE_UINT16(&ptr1[y - 1]);
 			} else {
 				resetFreqDelta(channel);
 			}
@@ -476,7 +472,7 @@ void Player_SID::readSongChunk(int channel) { // $4a6b
 			sustainReg[channel] = ptr1[y];
 
 			// set attack (1) or release (0) phase
-			waveCtrlReg[channel]  |= (l_cmdByte & 0x01);
+			waveCtrlReg[channel] |= (l_cmdByte & 0x01);
 		}
 
 		if (GETBIT(l_cmdByte, 4)) {
@@ -485,11 +481,11 @@ void Player_SID::readSongChunk(int channel) { // $4a6b
 
 			// pulse width
 			if (isVoiceChannel && GETBIT(curByte, 0)) {
-				int reg = SID_REG_OFFSET[channel+4];
+				int reg = SID_REG_OFFSET[channel + 4];
 
 				y += 2;
-				SID_Write(reg, ptr1[y-1]);
-				SID_Write(reg+1, ptr1[y]);
+				SID_Write(reg, ptr1[y - 1]);
+				SID_Write(reg + 1, ptr1[y]);
 			}
 
 			if (GETBIT(curByte, 1)) {
@@ -497,7 +493,7 @@ void Player_SID::readSongChunk(int channel) { // $4a6b
 				readSetSIDFilterAndProps(&y, ptr1);
 
 				y += 2;
-				SID_Write(21, ptr1[y-1]);
+				SID_Write(21, ptr1[y - 1]);
 				SID_Write(22, ptr1[y]);
 			}
 
@@ -505,7 +501,7 @@ void Player_SID::readSongChunk(int channel) { // $4a6b
 				resetFreqDelta(channel);
 
 				y += 2;
-				freqDeltaCounter[channel] = READ_LE_UINT16(&ptr1[y-1]);
+				freqDeltaCounter[channel] = READ_LE_UINT16(&ptr1[y - 1]);
 			}
 		}
 
@@ -548,18 +544,18 @@ void Player_SID::setSIDFreqAS(int channel) { // $4be6
 	if (swapVarLoaded)
 		return;
 	int reg = SID_REG_OFFSET[channel];
-	SID_Write(reg,   LOBYTE_(freqReg[channel]));   // freq/pulseWidth voice 1/2/3
-	SID_Write(reg+1, HIBYTE_(freqReg[channel]));
+	SID_Write(reg, LOBYTE_(freqReg[channel])); // freq/pulseWidth voice 1/2/3
+	SID_Write(reg + 1, HIBYTE_(freqReg[channel]));
 	if (channel < 3) {
-		SID_Write(reg+5, attackReg[channel]); // attack
-		SID_Write(reg+6, sustainReg[channel]); // sustain
+		SID_Write(reg + 5, attackReg[channel]);  // attack
+		SID_Write(reg + 6, sustainReg[channel]); // sustain
 	}
 }
 
 void Player_SID::setSIDWaveCtrlReg(int channel) { // $4C0D
 	if (channel < 3) {
 		int reg = SID_REG_OFFSET[channel];
-		SID_Write(reg+4, waveCtrlReg[channel]);
+		SID_Write(reg + 4, waveCtrlReg[channel]);
 	}
 }
 
@@ -623,8 +619,7 @@ void Player_SID::func_4F45(int channel) { // $4F45
 			else if (channel < 3)
 				clearSIDWaveform(channel);
 		} else if (channel < 3 && bgSoundActive && swapPrepared &&
-		    !(filterSwapped && filterUsed))
-		{
+		           !(filterSwapped && filterUsed)) {
 			busyChannelBits |= BITMASK[channel];
 			useSwapVars(channel);
 			waveCtrlReg[channel] |= 0x01;
@@ -721,8 +716,7 @@ void Player_SID::releaseChannel(int channel) {
 		return;
 	}
 	if ((SIDReg23 != SIDReg23Stuff) &&
-	    (SIDReg23 & 0x07) == 0)
-	{
+	    (SIDReg23 & 0x07) == 0) {
 		if (filterUsed) {
 			func_4F45(3);
 			stopChannel(3);
@@ -762,12 +756,12 @@ void Player_SID::swapVars(int channel, int swapIndex) { // $51a5
 	SWAP(channelMap[channel], swapVec479C[swapIndex]);
 	SWAP(songPosUpdateCounter[channel], swapSongPosUpdateCounter[swapIndex]);
 	SWAP(waveCtrlReg[channel], swapWaveCtrlReg[swapIndex]);
-	SWAP(songPosPtr[channel],  swapSongPosPtr[swapIndex]);
-	SWAP(freqReg[channel],  swapFreqReg[swapIndex]);
+	SWAP(songPosPtr[channel], swapSongPosPtr[swapIndex]);
+	SWAP(freqReg[channel], swapFreqReg[swapIndex]);
 	SWAP(freqDeltaCounter[channel], swapVec11[swapIndex]);
 	SWAP(freqDelta[channel], swapVec10[swapIndex]);
 	SWAP(vec20[channel], swapVec20[swapIndex]);
-	SWAP(songFileOrChanBufOffset[channel],  swapVec8[swapIndex]);
+	SWAP(songFileOrChanBufOffset[channel], swapVec8[swapIndex]);
 }
 
 void Player_SID::resetSwapVars() { // $52d0
@@ -800,8 +794,8 @@ void Player_SID::prepareSwapVars(int channel) { // $52E5
 			resetSwapVars();
 		}
 		swapVars(channel, 0);
-		if (busyChannelBits & BITMASK[channel+4]) {
-			swapVars(channel+4, 1);
+		if (busyChannelBits & BITMASK[channel + 4]) {
+			swapVars(channel + 4, 1);
 			pulseWidthSwapped = true;
 		}
 	} else if (channel == 3) {
@@ -821,8 +815,8 @@ void Player_SID::useSwapVars(int channel) { // $5342
 	swapVars(channel, 0);
 	setSIDFreqAS(channel);
 	if (pulseWidthSwapped) {
-		swapVars(channel+4, 1);
-		setSIDFreqAS(channel+4);
+		swapVars(channel + 4, 1);
+		setSIDFreqAS(channel + 4);
 	}
 	if (filterSwapped) {
 		swapVars(3, 2);
@@ -891,7 +885,7 @@ void Player_SID::initMusic(int songResIndex) { // $7de6
 	}
 
 	// song base address
-	uint8* songFileDataPtr = _music;
+	uint8 *songFileDataPtr = _music;
 	actSongFileData = _music;
 
 	initializing = true;
@@ -926,14 +920,14 @@ void Player_SID::initMusic(int songResIndex) { // $7de6
 
 // params:
 //   channel: channel 0..2
-void Player_SID::func_7eae(int channel, uint8* songFileDataPtr) {
+void Player_SID::func_7eae(int channel, uint8 *songFileDataPtr) {
 	int pos = SONG_CHANNEL_OFFSET[channel];
 	chanDataOffset[channel] = READ_LE_UINT16(&songFileDataPtr[pos]);
 	chanFileData[channel] = songFileDataPtr + chanDataOffset[channel];
 
 	//vec5[channel+4] = vec5[channel] = CHANNEL_BUFFER_ADDR[RES_ID_CHANNEL[channel]]; // not used
-	vec6[channel+4] = 0x0019;
-	vec6[channel]   = 0x0008;
+	vec6[channel + 4] = 0x0019;
+	vec6[channel] = 0x0008;
 
 	func_819b(channel);
 
@@ -951,7 +945,7 @@ void Player_SID::buildStepTbl(int step) { // $82B4
 	stepTbl[0] = 0;
 	stepTbl[1] = step - 2;
 	for (int i = 2; i < 33; ++i) {
-		stepTbl[i] = stepTbl[i-1] + step;
+		stepTbl[i] = stepTbl[i - 1] + step;
 	}
 }
 
@@ -1212,31 +1206,24 @@ Player_SID::Player_SID(ScummEngine *scumm, Audio::Mixer *mixer) {
 	 */
 
 	const uint8 chanBuffer_const[3][45] = {
-		{
-			0x00,0x00,0x00,0x00,0x7f,0x01,0x19,0x00,
-			0x00,0x00,0x2d,0x00,0x00,0x00,0x00,0x00,
-			0x00,0x00,0xf0,0x40,0x10,0x04,0x00,0x00,
-			0x00,0x04,0x27,0x03,0xff,0xff,0x01,0x00,
-			0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-			0x00,0x00,0x00,0x00,0x00
-		},
-		{
-			0x00,0x00,0x00,0x00,0x7f,0x01,0x19,0x00,
-			0x00,0x00,0x2d,0x00,0x00,0x00,0x00,0x00,
-			0x00,0x00,0xf0,0x20,0x10,0x04,0x00,0x00,
-			0x00,0x04,0x27,0x03,0xff,0xff,0x02,0x00,
-			0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-			0x00,0x00,0x00,0x00,0x00
-		},
-		{
-			0x00,0x00,0x00,0x00,0x7f,0x01,0x19,0x00,
-			0x00,0x00,0x2d,0x00,0x00,0x00,0x00,0x00,
-			0x00,0x00,0xf0,0x20,0x10,0x04,0x00,0x00,
-			0x00,0x04,0x27,0x03,0xff,0xff,0x02,0x00,
-			0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-			0x00,0x00,0x00,0x00,0x00
-		}
-	};
+	    {0x00, 0x00, 0x00, 0x00, 0x7f, 0x01, 0x19, 0x00,
+	     0x00, 0x00, 0x2d, 0x00, 0x00, 0x00, 0x00, 0x00,
+	     0x00, 0x00, 0xf0, 0x40, 0x10, 0x04, 0x00, 0x00,
+	     0x00, 0x04, 0x27, 0x03, 0xff, 0xff, 0x01, 0x00,
+	     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	     0x00, 0x00, 0x00, 0x00, 0x00},
+	    {0x00, 0x00, 0x00, 0x00, 0x7f, 0x01, 0x19, 0x00,
+	     0x00, 0x00, 0x2d, 0x00, 0x00, 0x00, 0x00, 0x00,
+	     0x00, 0x00, 0xf0, 0x20, 0x10, 0x04, 0x00, 0x00,
+	     0x00, 0x04, 0x27, 0x03, 0xff, 0xff, 0x02, 0x00,
+	     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	     0x00, 0x00, 0x00, 0x00, 0x00},
+	    {0x00, 0x00, 0x00, 0x00, 0x7f, 0x01, 0x19, 0x00,
+	     0x00, 0x00, 0x2d, 0x00, 0x00, 0x00, 0x00, 0x00,
+	     0x00, 0x00, 0xf0, 0x20, 0x10, 0x04, 0x00, 0x00,
+	     0x00, 0x04, 0x27, 0x03, 0xff, 0xff, 0x02, 0x00,
+	     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	     0x00, 0x00, 0x00, 0x00, 0x00}};
 	memcpy(chanBuffer, chanBuffer_const, sizeof(chanBuffer_const));
 
 	for (int i = 0; i < 7; ++i) {
@@ -1275,7 +1262,7 @@ uint8 *Player_SID::getResource(int resID) {
 	case 3:
 	case 4:
 	case 5:
-		return 	chanBuffer[resID-3];
+		return chanBuffer[resID - 3];
 	default:
 		return _vm->getResourceAddress(rtSound, resID);
 	}
@@ -1308,16 +1295,16 @@ void Player_SID::SID_Write(int reg, uint8 data) {
 void Player_SID::initSID() {
 	_sid = new Resid::SID();
 	_sid->set_sampling_parameters(
-		timingProps[_videoSystem].clockFreq,
-		_sampleRate);
+	    timingProps[_videoSystem].clockFreq,
+	    _sampleRate);
 	_sid->enable_filter(true);
 
 	_sid->reset();
 	// Synchronize the waveform generators (must occur after reset)
-	_sid->write( 4, 0x08);
+	_sid->write(4, 0x08);
 	_sid->write(11, 0x08);
 	_sid->write(18, 0x08);
-	_sid->write( 4, 0x00);
+	_sid->write(4, 0x00);
 	_sid->write(11, 0x00);
 	_sid->write(18, 0x00);
 }

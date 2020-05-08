@@ -164,15 +164,14 @@ void Scores::fill() {
 	}
 
 	// Network sorting using Bose-Nelson Algorithm
-	const byte network[32] = { // Bose-Nelson
-		1,2, 3,4, 5,6,
-		0,2, 3,5, 4,6,
-		0,1, 4,5, 2,6,
-		0,4, 1,5,
-		0,3, 2,5,
-		1,3, 2,4,
-		2,3
-	};
+	const byte network[32] = {// Bose-Nelson
+	                          1, 2, 3, 4, 5, 6,
+	                          0, 2, 3, 5, 4, 6,
+	                          0, 1, 4, 5, 2, 6,
+	                          0, 4, 1, 5,
+	                          0, 3, 2, 5,
+	                          1, 3, 2, 4,
+	                          2, 3};
 
 	for (int i = 0; i < 32; i += 2) {
 		int i1 = network[i], i2 = network[i + 1];

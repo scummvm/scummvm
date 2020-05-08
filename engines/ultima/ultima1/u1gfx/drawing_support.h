@@ -39,11 +39,13 @@ class DrawingSupport {
 private:
 	Shared::Gfx::VisualSurface _surface;
 	Ultima1Game *_game;
+
 private:
 	/**
 	 * Tweaks the edges of a drawn border to give it a rounded effect
 	 */
 	void roundFrameCorners(bool skipBottom = false);
+
 public:
 	/**
 	 * Constructor
@@ -73,7 +75,7 @@ public:
 };
 
 } // End of namespace U1Gfx
-} // End of namespace Shared
+} // namespace Ultima1
 } // End of namespace Ultima
 
 #endif

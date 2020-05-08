@@ -29,16 +29,14 @@
 namespace MT32Emu {
 
 static const Bit8u PartialStruct[13] = {
-	0, 0, 2, 2, 1, 3,
-	3, 0, 3, 0, 2, 1, 3
-};
+    0, 0, 2, 2, 1, 3,
+    3, 0, 3, 0, 2, 1, 3};
 
 static const Bit8u PartialMixStruct[13] = {
-	0, 1, 0, 1, 1, 0,
-	1, 3, 3, 2, 2, 2, 2
-};
+    0, 1, 0, 1, 1, 0,
+    1, 3, 3, 2, 2, 2, 2};
 
-RhythmPart::RhythmPart(Synth *useSynth, unsigned int usePartNum): Part(useSynth, usePartNum) {
+RhythmPart::RhythmPart(Synth *useSynth, unsigned int usePartNum) : Part(useSynth, usePartNum) {
 	strcpy(name, "Rhythm");
 	rhythmTemp = &synth->mt32ram.rhythmTemp[0];
 	refresh();
@@ -215,7 +213,7 @@ void RhythmPart::setProgram(unsigned int patchNum) {
 	synth->printDebug("%s: Attempt to set program (%d) on rhythm is invalid", name, patchNum);
 }
 #else
-void RhythmPart::setProgram(unsigned int) { }
+void RhythmPart::setProgram(unsigned int) {}
 #endif
 
 void Part::setProgram(unsigned int patchNum) {
@@ -384,7 +382,7 @@ void RhythmPart::noteOn(unsigned int midiKey, unsigned int velocity) {
 	unsigned int drumNum = key - 24;
 	int drumTimbreNum = rhythmTemp[drumNum].timbre;
 	const int drumTimbreCount = 64 + synth->controlROMMap->timbreRCount; // 94 on MT-32, 128 on LAPC-I/CM32-L
-	if (drumTimbreNum == 127 || drumTimbreNum >= drumTimbreCount) { // timbre #127 is OFF, no sense to play it
+	if (drumTimbreNum == 127 || drumTimbreNum >= drumTimbreCount) {      // timbre #127 is OFF, no sense to play it
 		synth->printDebug("%s: Attempted to play unmapped key %d (velocity %d)", name, midiKey, velocity);
 		return;
 	}
@@ -473,7 +471,8 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 	if ((patchTemp->patch.assignMode & 2) == 0) {
 		// Single-assign mode
 		abortFirstPoly(key);
-		if (synth->isAbortingPoly()) return;
+		if (synth->isAbortingPoly())
+			return;
 	}
 
 	if (!synth->partialManager->freePartials(needPartials, partNum)) {
@@ -483,7 +482,8 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 #endif
 		return;
 	}
-	if (synth->isAbortingPoly()) return;
+	if (synth->isAbortingPoly())
+		return;
 
 	Poly *poly = synth->partialManager->assignPolyToPart(this);
 	if (poly == NULL) {
@@ -677,7 +677,7 @@ Poly *PolyList::takeFirst() {
 	return oldFirst;
 }
 
-void PolyList::remove(Poly * const polyToRemove) {
+void PolyList::remove(Poly *const polyToRemove) {
 	if (polyToRemove == firstPoly) {
 		takeFirst();
 		return;

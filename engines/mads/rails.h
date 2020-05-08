@@ -23,9 +23,9 @@
 #ifndef MADS_RAILS_H
 #define MADS_RAILS_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/stack.h"
 #include "mads/msurface.h"
@@ -63,6 +63,7 @@ private:
 	int _next;
 	int _tempRoute[MAX_ROUTE_NODES];
 	Common::Stack<int> _routeIndexes;
+
 private:
 	/**
 	* Change the position of a walking node. Doing so causes a recalculation of the
@@ -71,6 +72,7 @@ private:
 	void setNodePosition(int nodeIndex, const Common::Point &pt);
 
 	int getRouteFlags(const Common::Point &src, const Common::Point &dest);
+
 public:
 	/**
 	 * Constructor
@@ -121,7 +123,7 @@ public:
 	const WalkNode &popNode();
 
 	void resetNext() { _next = 0; }
-	int  getNext() { return _next; }
+	int getNext() { return _next; }
 
 	/**
 	 * Synchronize the data for the route
@@ -130,7 +132,6 @@ public:
 
 	void disableNode(int idx);
 	void disableLine(int from, int to);
-
 };
 
 } // End of namespace MADS

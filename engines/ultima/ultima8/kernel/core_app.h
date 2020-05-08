@@ -23,11 +23,11 @@
 #ifndef ULTIMA8_KERNEL_COREAPP_H
 #define ULTIMA8_KERNEL_COREAPP_H
 
-#include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/misc/args.h"
-#include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "ultima/detection.h"
+#include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/misc/args.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -38,12 +38,10 @@ class ConfigFileManager;
 class SettingManager;
 struct GameInfo;
 
-
 #define GAME_IS_U8 (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_U8)
 #define GAME_IS_REMORSE (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_REMORSE)
 #define GAME_IS_REGRET (CoreApp::get_instance()->getGameInfo()->_type == GameInfo::GAME_REGRET)
 #define GAME_IS_CRUSADER (GAME_IS_REMORSE || GAME_IS_REGRET)
-
 
 class CoreApp {
 public:
@@ -100,7 +98,7 @@ private:
 	virtual void sysInit();
 
 	//! parse commandline arguments
-	void ParseArgs(int argc, const char *const  *argv);
+	void ParseArgs(int argc, const char *const *argv);
 
 	//! Fill a GameInfo struct for the give game name
 	//! \param game The id of the game to check (from pentagram.cfg)

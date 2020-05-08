@@ -23,20 +23,34 @@
 #ifndef GLK_FROTZ_WINDOWS
 #define GLK_FROTZ_WINDOWS
 
-#include "glk/windows.h"
 #include "glk/frotz/frotz_types.h"
+#include "glk/windows.h"
 
 namespace Glk {
 namespace Frotz {
 
-#include "glk/windows.h"
 #include "glk/utils.h"
+#include "glk/windows.h"
 
 enum WindowProperty {
-	Y_POS = 0, X_POS = 1, Y_SIZE = 2, X_SIZE = 3, Y_CURSOR = 4, X_CURSOR = 5,
-	LEFT_MARGIN = 6, RIGHT_MARGIN = 7, NEWLINE_INTERRUPT = 8, INTERRUPT_COUNTDOWN = 9,
-	TEXT_STYLE = 10, COLOUR_DATA = 11, FONT_NUMBER = 12, FONT_SIZE = 13, ATTRIBUTES = 14,
-	LINE_COUNT = 15, TRUE_FG_COLOR = 16, TRUE_BG_COLOR = 17
+	Y_POS = 0,
+	X_POS = 1,
+	Y_SIZE = 2,
+	X_SIZE = 3,
+	Y_CURSOR = 4,
+	X_CURSOR = 5,
+	LEFT_MARGIN = 6,
+	RIGHT_MARGIN = 7,
+	NEWLINE_INTERRUPT = 8,
+	INTERRUPT_COUNTDOWN = 9,
+	TEXT_STYLE = 10,
+	COLOUR_DATA = 11,
+	FONT_NUMBER = 12,
+	FONT_SIZE = 13,
+	ATTRIBUTES = 14,
+	LINE_COUNT = 15,
+	TRUE_FG_COLOR = 16,
+	TRUE_BG_COLOR = 17
 };
 
 class Windows;
@@ -54,6 +68,7 @@ class Window {
 	private:
 		Window *_owner;
 		WindowProperty _prop;
+
 	public:
 		/**
 		 * Constructor
@@ -75,11 +90,13 @@ class Window {
 			return *this;
 		}
 	};
+
 private:
 	Windows *_windows;
 	int _index;
 	winid_t _win;
 	uint _properties[TRUE_BG_COLOR + 1];
+
 private:
 	/**
 	 * Get a property value
@@ -115,6 +132,7 @@ private:
 	 * Get the bounding area for the window
 	 */
 	Rect getBounds() const;
+
 public:
 	int _currFont;
 	int _prevFont;
@@ -124,6 +142,7 @@ public:
 	int _quotes;
 	int _dashes;
 	int _spaces;
+
 public:
 	/**
 	 * Constructor
@@ -240,11 +259,13 @@ public:
 class Windows {
 private:
 	Window _windows[8];
+
 public:
 	winid_t _background;
 	Window &_lower;
 	Window &_upper;
 	int _cwin;
+
 public:
 	/**
 	 * Constructor

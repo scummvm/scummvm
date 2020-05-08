@@ -29,11 +29,11 @@
  *
  */
 
-#include "sword25/sword25.h"	// for kDebugResource
 #include "sword25/kernel/resmanager.h"
 #include "sword25/kernel/resource.h"
 #include "sword25/kernel/resservice.h"
 #include "sword25/package/packagemanager.h"
+#include "sword25/sword25.h" // for kDebugResource
 
 namespace Sword25 {
 
@@ -62,7 +62,7 @@ ResourceManager::~ResourceManager() {
 		};
 
 		// Delete the resource
-		delete(*iter);
+		delete (*iter);
 	}
 }
 
@@ -116,7 +116,7 @@ void ResourceManager::deleteResourcesIfNecessary() {
 
 		// Only unlock image/animation resources
 		if ((*iter)->getFileName().hasSuffix(".swf") ||
-			(*iter)->getFileName().hasSuffix(".png")) {
+		    (*iter)->getFileName().hasSuffix(".png")) {
 
 			warning("Forcibly unlocking %s", (*iter)->getFileName().c_str());
 

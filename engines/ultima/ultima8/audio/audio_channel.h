@@ -39,23 +39,24 @@ private:
 
 	Audio::SoundHandle _soundHandle;
 	Audio::Mixer *_mixer;
-	uint32          _decompressorSize;  // Persistent data for the decompressor
-	uint32          _frameSize;         //
+	uint32 _decompressorSize; // Persistent data for the decompressor
+	uint32 _frameSize;        //
 
-	int32           _loop;
-	AudioSample     *_sample;
+	int32 _loop;
+	AudioSample *_sample;
 
 	// Info for sampling
-	uint32          _frameEvenOdd;  // which buffer is 'frame0'
-	int             _lVol, _rVol;   // 0-256
-	uint32          _pitchShift;    // 0x10000 = no shift
-	int             _priority;      // anything.
-	bool            _paused;        // true/false
+	uint32 _frameEvenOdd; // which buffer is 'frame0'
+	int _lVol, _rVol;     // 0-256
+	uint32 _pitchShift;   // 0x10000 = no shift
+	int _priority;        // anything.
+	bool _paused;         // true/false
 private:
 	/**
 	 * Decompresses the next frame of sample data
 	 */
 	void decompressNextFrame();
+
 public:
 	AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo);
 	~AudioChannel(void);
@@ -63,7 +64,7 @@ public:
 	void stop();
 
 	void playSample(AudioSample *sample, int loop, int priority, bool paused,
-		uint32 pitchShift, int lvol, int rvol);
+	                uint32 pitchShift, int lvol, int rvol);
 
 	void playMusicStream(Audio::AudioStream *stream);
 

@@ -169,6 +169,7 @@ public:
 
 	void init(StaticData data, Animation anim);
 	int handle(int dim);
+
 private:
 	KyraEngine_v1 *_vm;
 	Screen *_screen;
@@ -192,6 +193,6 @@ private:
 	void printString(const char *string, int x, int y, int col1, int col2, int flags, ...) GCC_PRINTF(2, 8);
 };
 
-} // end of namesapce Kyra
+} // namespace Kyra
 
 #endif

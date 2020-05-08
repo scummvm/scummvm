@@ -23,8 +23,8 @@
 #ifndef GLK_TADS_TADS2_LINE_SOURCE_FILE
 #define GLK_TADS_TADS2_LINE_SOURCE_FILE
 
-#include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/debug.h"
+#include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/line_source.h"
 #include "glk/tads/tads2/object.h"
 
@@ -43,35 +43,35 @@ struct tokpdef;
  *   in the object of the p-code for the start of the line 
  */
 struct linfinfo {
-    /* 
+	/* 
      *   OPCLINE data (file seek position or line number, depending on how
      *   the game was compiled: -ds -> file seek offset, -ds2 -> line
      *   number) 
      */
-    ulong fpos;
-    
-    /* object number */
-    objnum objn;
+	ulong fpos;
 
-    /* offset from start of code */
-    uint ofs;
+	/* object number */
+	objnum objn;
+
+	/* offset from start of code */
+	uint ofs;
 };
 
 /* 
  *   file line source 
  */
 struct linfdef {
-    lindef    linflin;                                   /* superclass data */
-    osfildef *linffp;                  /* file pointer for this line source */
-    char      linfbuf[100];                 /* buffer for the line contents */
-    int       linfbufnxt;         /* offset in buffer of start of next line */
-    int       linfnxtlen;                /* length of data after linfbufnxt */
-    ulong     linfnum;                               /* current line number */
-    ulong     linfseek;                    /* seek position of current line */
-    mcmcxdef *linfmem;                            /* memory manager context */
-    mcmon     linfpg[LINFPGMAX];             /* pages for debugging records */
-    ulong     linfcrec;        /* number of debugger records written so far */
-    char      linfnam[1];                        /* name of file being read */
+	lindef linflin;          /* superclass data */
+	osfildef *linffp;        /* file pointer for this line source */
+	char linfbuf[100];       /* buffer for the line contents */
+	int linfbufnxt;          /* offset in buffer of start of next line */
+	int linfnxtlen;          /* length of data after linfbufnxt */
+	ulong linfnum;           /* current line number */
+	ulong linfseek;          /* seek position of current line */
+	mcmcxdef *linfmem;       /* memory manager context */
+	mcmon linfpg[LINFPGMAX]; /* pages for debugging records */
+	ulong linfcrec;          /* number of debugger records written so far */
+	char linfnam[1];         /* name of file being read */
 };
 
 /* initialize a file line source, opening the file for the line source */
@@ -158,9 +158,9 @@ void linf_copy_linerecs(linfdef *linf, linfinfo *info);
 
 /* debugging echo */
 #ifdef DEBUG
-# define LINFDEBUG(x) x
+#define LINFDEBUG(x) x
 #else /* DEBUG */
-# define LINFDEBUG(x)
+#define LINFDEBUG(x)
 #endif /* DEBUG */
 
 } // End of namespace TADS2

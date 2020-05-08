@@ -20,31 +20,38 @@
  *
  */
 
+#include "dragons/scriptopcodes.h"
+#include "dragons/actor.h"
 #include "dragons/actorresource.h"
 #include "dragons/cursor.h"
-#include "dragons/dragons.h"
 #include "dragons/dragonflg.h"
-#include "dragons/dragonini.h"
 #include "dragons/dragonimg.h"
+#include "dragons/dragonini.h"
 #include "dragons/dragonobd.h"
+#include "dragons/dragons.h"
 #include "dragons/inventory.h"
 #include "dragons/scene.h"
-#include "dragons/scriptopcodes.h"
-#include "dragons/specialopcodes.h"
-#include "dragons/actor.h"
-#include "dragons/sound.h"
-#include "dragons/talk.h"
 #include "dragons/screen.h"
-
+#include "dragons/sound.h"
+#include "dragons/specialopcodes.h"
+#include "dragons/talk.h"
 
 namespace Dragons {
 
 // Convenience macros
 #define ARG_SKIP(x) scriptOpCall.skip(x);
-#define ARG_BYTE(name) byte name = scriptOpCall.readByte(); debug(5, "ARG_BYTE(" #name " = %d)", name);
-#define ARG_INT8(name) int8 name = scriptOpCall.readByte(); debug(5, "ARG_INT8(" #name " = %d)", name);
-#define ARG_INT16(name) int16 name = scriptOpCall.readSint16(); debug(5, "ARG_INT16(" #name " = %d)", name);
-#define ARG_UINT32(name) uint32 name = scriptOpCall.readUint32(); debug(5, "ARG_UINT32(" #name " = %08X)", name);
+#define ARG_BYTE(name)                   \
+	byte name = scriptOpCall.readByte(); \
+	debug(5, "ARG_BYTE(" #name " = %d)", name);
+#define ARG_INT8(name)                   \
+	int8 name = scriptOpCall.readByte(); \
+	debug(5, "ARG_INT8(" #name " = %d)", name);
+#define ARG_INT16(name)                     \
+	int16 name = scriptOpCall.readSint16(); \
+	debug(5, "ARG_INT16(" #name " = %d)", name);
+#define ARG_UINT32(name)                     \
+	uint32 name = scriptOpCall.readUint32(); \
+	debug(5, "ARG_UINT32(" #name " = %08X)", name);
 
 // ScriptOpCall
 
@@ -68,7 +75,7 @@ uint32 ScriptOpCall::readUint32() {
 	return value;
 }
 
-ScriptOpCall::ScriptOpCall(byte *start, uint32 length): _op(0), _result(0), _field8(0) {
+ScriptOpCall::ScriptOpCall(byte *start, uint32 length) : _op(0), _result(0), _field8(0) {
 	_code = _base = start;
 	_codeEnd = _code + length;
 }
@@ -76,7 +83,7 @@ ScriptOpCall::ScriptOpCall(byte *start, uint32 length): _op(0), _result(0), _fie
 // ScriptOpcodes
 
 ScriptOpcodes::ScriptOpcodes(DragonsEngine *vm, DragonFLG *dragonFLG)
-	: _vm(vm), _dragonFLG(dragonFLG), _numDialogStackFramesToPop(0) {
+    : _vm(vm), _dragonFLG(dragonFLG), _numDialogStackFramesToPop(0) {
 	_specialOpCodes = new SpecialOpcodes(_vm);
 	initOpcodes();
 	_scriptTargetINI = 0;
@@ -94,8 +101,8 @@ void ScriptOpcodes::execOpcode(ScriptOpCall &scriptOpCall) {
 	(*_opcodes[scriptOpCall._op])(scriptOpCall);
 }
 
-typedef Common::Functor1Mem<ScriptOpCall&, void, ScriptOpcodes> ScriptOpcodeI;
-#define OPCODE(op, func) \
+typedef Common::Functor1Mem<ScriptOpCall &, void, ScriptOpcodes> ScriptOpcodeI;
+#define OPCODE(op, func)                                          \
 	_opcodes[op] = new ScriptOpcodeI(this, &ScriptOpcodes::func); \
 	_opcodeNames[op] = #func;
 
@@ -153,14 +160,12 @@ void ScriptOpcodes::updateReturn(ScriptOpCall &scriptOpCall, uint16 size) {
 	// scriptOpCall._deltaOfs = size * 2 + 2;
 }
 
-
 void ScriptOpcodes::runScript(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._field8 = 0;
 	scriptOpCall._result = 0;
 	_numDialogStackFramesToPop = 0;
 	executeScriptLoop(scriptOpCall);
 }
-
 
 void ScriptOpcodes::runScript3(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._field8 = 3;
@@ -178,29 +183,29 @@ bool ScriptOpcodes::runScript4(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
-//
-//	if (scriptOpCall._code >= scriptOpCall._codeEnd || scriptOpCall._result & 1) {
-//		return;
-//	}
-//
-//	if (_vm->isFlagSet(ENGINE_FLAG_100000)) {
-//		return;
-//	}
-//
-//	if (_vm->isFlagSet(ENGINE_FLAG_80000)) {
-//		//TODO
-////		if (IsPressedStart(0)) {
-////			getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
-////		}
-//	}
-//
-//	uint16 opcode = READ_LE_UINT16(scriptOpCall._code) & 0x7fff;
-//
-//	scriptOpCall._op = (byte) opcode;
-//	if (opcode < DRAGONS_NUM_SCRIPT_OPCODES) {
-//		execOpcode(scriptOpCall);
-//	}
-//
+	//
+	//	if (scriptOpCall._code >= scriptOpCall._codeEnd || scriptOpCall._result & 1) {
+	//		return;
+	//	}
+	//
+	//	if (_vm->isFlagSet(ENGINE_FLAG_100000)) {
+	//		return;
+	//	}
+	//
+	//	if (_vm->isFlagSet(ENGINE_FLAG_80000)) {
+	//		//TODO
+	////		if (IsPressedStart(0)) {
+	////			getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
+	////		}
+	//	}
+	//
+	//	uint16 opcode = READ_LE_UINT16(scriptOpCall._code) & 0x7fff;
+	//
+	//	scriptOpCall._op = (byte) opcode;
+	//	if (opcode < DRAGONS_NUM_SCRIPT_OPCODES) {
+	//		execOpcode(scriptOpCall);
+	//	}
+	//
 	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1)) {
 
 		if (_vm->isFlagSet(ENGINE_FLAG_100000)) {
@@ -209,9 +214,9 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 
 		if (_vm->isFlagSet(ENGINE_FLAG_80000)) {
 			//TODO
-//		if (IsPressedStart(0)) {
-//			getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
-//		}
+			//		if (IsPressedStart(0)) {
+			//			getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
+			//		}
 		}
 
 		uint16 opcode = READ_LE_UINT16(scriptOpCall._code) & 0x7fff;
@@ -219,7 +224,7 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 		if (opcode >= DRAGONS_NUM_SCRIPT_OPCODES) {
 			return; //TODO should continue here.
 		}
-		scriptOpCall._op = (byte) opcode;
+		scriptOpCall._op = (byte)opcode;
 		execOpcode(scriptOpCall);
 
 		if (_numDialogStackFramesToPop != 0) {
@@ -237,9 +242,7 @@ void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field4);
 	ARG_INT16(field6);
 
-	if ((field2 >> _vm->_cursor->_data_800728b0_cursor_seqID) & 1
-			&& (_vm->_cursor->_data_800728b0_cursor_seqID < 5 || field4 == _scriptTargetINI)
-			&& scriptOpCall._field8 == 1) {
+	if ((field2 >> _vm->_cursor->_data_800728b0_cursor_seqID) & 1 && (_vm->_cursor->_data_800728b0_cursor_seqID < 5 || field4 == _scriptTargetINI) && scriptOpCall._field8 == 1) {
 		scriptOpCall._code -= 8;
 		scriptOpCall._result |= 1;
 	} else {
@@ -287,7 +290,7 @@ void ScriptOpcodes::opPopDialogStack(ScriptOpCall &scriptOpCall) {
 void ScriptOpcodes::opExecuteScript(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(obdOffset);
-	byte *data =_vm->_dragonOBD->getObdAtOffset(obdOffset);
+	byte *data = _vm->_dragonOBD->getObdAtOffset(obdOffset);
 
 	ScriptOpCall newScriptOpCall(data + 4, READ_LE_UINT32(data));
 	newScriptOpCall._field8 = scriptOpCall._field8;
@@ -324,7 +327,7 @@ void ScriptOpcodes::opPerformActionOnObject(ScriptOpCall &scriptOpCall) {
 	int32 uVar2 = _vm->_cursor->_sequenceID;
 	bool isEngineFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
 	_vm->clearFlags(ENGINE_FLAG_8);
-//	DisableVSyncEvent();
+	//	DisableVSyncEvent();
 	_vm->_cursor->_iniUnderCursor = srcINI;
 	_vm->_cursor->_sequenceID = 0;
 
@@ -335,7 +338,7 @@ void ScriptOpcodes::opPerformActionOnObject(ScriptOpCall &scriptOpCall) {
 	_scriptTargetINI = targetINI;
 	_vm->_cursor->_data_800728b0_cursor_seqID = _vm->_cursor->_sequenceID;
 	_vm->_cursor->_performActionTargetINI = _vm->_cursor->_iniUnderCursor;
-//	EnableVSyncEvent();
+	//	EnableVSyncEvent();
 	_vm->performAction();
 	if (isEngineFlag8Set) {
 		_vm->setFlags(ENGINE_FLAG_8);
@@ -433,7 +436,7 @@ void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
 			}
 			DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 			_vm->_cursor->updatePosition(flicker->actor->_x_pos - _vm->_scene->_camera.x,
-										 flicker->actor->_y_pos - (_vm->_scene->_camera.y + 0x1e));
+			                             flicker->actor->_y_pos - (_vm->_scene->_camera.y + 0x1e));
 			_vm->_cursor->_data_800728b0_cursor_seqID = 5;
 			_vm->_cursor->_sequenceID = 5;
 			_vm->_cursor->_objectInHandSequenceID = _vm->getINI(field2 - 1)->inventorySequenceId * 2 + 10;
@@ -519,7 +522,7 @@ void ScriptOpcodes::opUnk15PropertiesRelated(ScriptOpCall &scriptOpCall) {
 
 			runScript(localScriptOpCall);
 
-			scriptOpCall._code = (scriptOpCall._code - ((uint)*(scriptOpCall._code + 2) + 2));
+			scriptOpCall._code = (scriptOpCall._code - ((uint) * (scriptOpCall._code + 2) + 2));
 		} else {
 			break;
 		}
@@ -575,7 +578,6 @@ bool ScriptOpcodes::evaluateExpression(ScriptOpCall &scriptOpCall) {
 			if (*codePtrOffsetA & 4) {
 				t2 = getINIField(READ_LE_INT16(codePtrOffsetA - 6) - 1, READ_LE_INT16(codePtrOffset2));
 				debug(3, "Op13 get here!! & 4 read ini field ini: %X fieldOffset: %X value: %d", READ_LE_INT16(codePtrOffsetA - 6) - 1, READ_LE_INT16(codePtrOffset2), t2);
-
 			}
 
 			if (!(*codePtrOffsetA & 7)) {
@@ -609,7 +611,6 @@ bool ScriptOpcodes::evaluateExpression(ScriptOpCall &scriptOpCall) {
 			if (*(codePtrOffsetA + 1) == 2 && t0 < t2) {
 				value = 1;
 			}
-
 		}
 
 		if (*codePtrOffsetA & 0x20) {
@@ -666,7 +667,7 @@ void ScriptOpcodes::opPlayOrStopSound(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(soundId);
 
 	if (scriptOpCall._field8 == 0) {
-		_vm->playOrStopSound((uint16) soundId);
+		_vm->playOrStopSound((uint16)soundId);
 	}
 }
 
@@ -803,8 +804,8 @@ void ScriptOpcodes::opMoveActorToObject(ScriptOpCall &scriptOpCall) {
 	bool bVar1 = false;
 	DragonINI *firstIni = _vm->getINI(field4 - 1);
 	DragonINI *secondIni = _vm->getINI(field2 - 1);
-//	secondIndexIntoINI = (uint)field2 - 1;
-//	firstIndexIntoINI = (uint)field4 - 1;
+	//	secondIndexIntoINI = (uint)field2 - 1;
+	//	firstIndexIntoINI = (uint)field4 - 1;
 	if ((field6 & 0x8000) != 0) {
 		bVar1 = (field6 != -1);
 	}
@@ -846,7 +847,7 @@ void ScriptOpcodes::opMoveActorToObject(ScriptOpCall &scriptOpCall) {
 			secondIni->actor->updateSequence(field6 & 0x7fff);
 		}
 		secondIni->actor->_walkSpeed =
-				someBooleanFlag;
+		    someBooleanFlag;
 	}
 	int16 newXPosAgain = 0;
 	int16 newYPosAgain = 0;
@@ -949,18 +950,18 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 		int y = img->field_e == 0 ? img->y : img->y << 3;
 
 		_vm->_talk->FUN_8003239c(dialog,
-				(int)(((uint)img->field_a - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
-				(int)(((y - 8) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
-				READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
-				1,
-				ini->actor, startSequenceId, endSequenceId, textIndex);
+		                         (int)(((uint)img->field_a - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
+		                         (int)(((y - 8) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
+		                         READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
+		                         1,
+		                         ini->actor, startSequenceId, endSequenceId, textIndex);
 	} else {
 		_vm->_talk->FUN_8003239c(dialog,
-								 (int)(((uint)ini->actor->_x_pos - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
-								 (int)(((ini->actor->_y_pos - ini->actor->getFrameYOffset()) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
-								 READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
-								 1,
-								 ini->actor, startSequenceId, endSequenceId, textIndex);
+		                         (int)(((uint)ini->actor->_x_pos - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
+		                         (int)(((ini->actor->_y_pos - ini->actor->getFrameYOffset()) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
+		                         READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
+		                         1,
+		                         ini->actor, startSequenceId, endSequenceId, textIndex);
 	}
 }
 
@@ -1059,7 +1060,7 @@ void ScriptOpcodes::setVariable(ScriptOpCall &scriptOpCall) {
 
 		if (s2Type == ini) {
 			setINIField(field4 - 1, field2, s2);
-		} else  { //var type
+		} else { //var type
 			_vm->setVar(field2, s2);
 		}
 	}
@@ -1069,21 +1070,36 @@ uint16 ScriptOpcodes::getINIField(uint32 iniIndex, uint16 fieldOffset) {
 	DragonINI *ini = _vm->getINI(iniIndex);
 
 	switch (fieldOffset) {
-	case 0 : return ini->iptIndex_maybe;
-	case 4 : return ini->actorResourceId;
-	case 6 : return ini->sequenceId;
-	case 0xC  : return ini->sceneId;
-	case 0xE  : return ini->direction;
-	case 0x10 : return ini->counter;
-	case 0x12  : return ini->objectState;
-	case 0x14 : return ini->objectState2;
-	case 0x16 : return ini->x;
-	case 0x18 : return ini->y;
-	case 0x1A : return ini->flags;
-	case 0x1C : return ini->baseXOffset;
-	case 0x1E : return ini->baseYOffset;
-	case 0x20 : return ini->direction2;
-	default: error("getINIField() Invalid fieldOffset 0x%X", fieldOffset);
+	case 0:
+		return ini->iptIndex_maybe;
+	case 4:
+		return ini->actorResourceId;
+	case 6:
+		return ini->sequenceId;
+	case 0xC:
+		return ini->sceneId;
+	case 0xE:
+		return ini->direction;
+	case 0x10:
+		return ini->counter;
+	case 0x12:
+		return ini->objectState;
+	case 0x14:
+		return ini->objectState2;
+	case 0x16:
+		return ini->x;
+	case 0x18:
+		return ini->y;
+	case 0x1A:
+		return ini->flags;
+	case 0x1C:
+		return ini->baseXOffset;
+	case 0x1E:
+		return ini->baseYOffset;
+	case 0x20:
+		return ini->direction2;
+	default:
+		error("getINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
 }
 
@@ -1091,23 +1107,51 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 	DragonINI *ini = _vm->getINI(iniIndex);
 
 	switch (fieldOffset) {
-	case 0 : ini->iptIndex_maybe = value; break;
-	case 4 : ini->actorResourceId = value; break;
-	case 6 : ini->sequenceId = value; break;
-	case 0xc : ini->sceneId = value; break;
-	case 0xe : ini->direction = value; break;
-	case 0x10 : ini->counter = value; break;
-	case 0x12 : ini->objectState = value; break;
-	case 0x14 : ini->objectState2 = value; break;
-	case 0x16 : ini->x = value; break;
-	case 0x18 : ini->y = value; break;
-	case 0x1A : ini->flags = value; break;
-	case 0x1C : ini->baseXOffset = value; break;
-	case 0x1E : ini->baseYOffset = value; break;
-	case 0x20 : ini->direction2 = value; break;
-	default: error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
+	case 0:
+		ini->iptIndex_maybe = value;
+		break;
+	case 4:
+		ini->actorResourceId = value;
+		break;
+	case 6:
+		ini->sequenceId = value;
+		break;
+	case 0xc:
+		ini->sceneId = value;
+		break;
+	case 0xe:
+		ini->direction = value;
+		break;
+	case 0x10:
+		ini->counter = value;
+		break;
+	case 0x12:
+		ini->objectState = value;
+		break;
+	case 0x14:
+		ini->objectState2 = value;
+		break;
+	case 0x16:
+		ini->x = value;
+		break;
+	case 0x18:
+		ini->y = value;
+		break;
+	case 0x1A:
+		ini->flags = value;
+		break;
+	case 0x1C:
+		ini->baseXOffset = value;
+		break;
+	case 0x1E:
+		ini->baseYOffset = value;
+		break;
+	case 0x20:
+		ini->direction2 = value;
+		break;
+	default:
+		error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
-
 }
 
 void ScriptOpcodes::opUnk16(ScriptOpCall &scriptOpCall) {
@@ -1128,9 +1172,7 @@ void ScriptOpcodes::opWaitForActorSequenceToFinish(ScriptOpCall &scriptOpCall) {
 			_vm->waitForFrames(1);
 		}
 	}
-
 }
-
 
 void ScriptOpcodes::opDialogAtPoint(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
@@ -1147,9 +1189,9 @@ void ScriptOpcodes::opDialogAtPoint(ScriptOpCall &scriptOpCall) {
 	dialog[0] = 0;
 	_vm->_talk->loadText(field2, dialog, 2000);
 
-//	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
-//		dialogText = (uint8 *)load_string_from_dragon_txt(offset, acStack2016);
-//	}
+	//	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
+	//		dialogText = (uint8 *)load_string_from_dragon_txt(offset, acStack2016);
+	//	}
 
 	if (fieldA != 0) {
 		fieldA = READ_LE_INT16(_vm->_dragonOBD->getFromOpt(fieldA - 1) + 6);
@@ -1166,7 +1208,6 @@ void ScriptOpcodes::opExecuteObjectSceneScript(ScriptOpCall &scriptOpCall) {
 		_vm->_scriptOpcodes->runScript(newCall);
 	}
 	scriptOpCall._code += size;
-
 }
 
 void ScriptOpcodes::opUpdatePaletteCycling(ScriptOpCall &scriptOpCall) {
@@ -1241,7 +1282,6 @@ void ScriptOpcodes::opSetActorFlag0x1000(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
-
 }
 
 void ScriptOpcodes::loadTalkDialogEntries(ScriptOpCall &scriptOpCall) {
@@ -1250,7 +1290,6 @@ void ScriptOpcodes::loadTalkDialogEntries(ScriptOpCall &scriptOpCall) {
 	_vm->_talk->clearDialogEntries();
 	_numDialogStackFramesToPop = 0;
 	executeScriptLoop(scriptOpCall);
-
 }
 
 } // End of namespace Dragons

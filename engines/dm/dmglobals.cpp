@@ -27,17 +27,17 @@
 
 #include "common/system.h"
 
+#include "dm/champion.h"
 #include "dm/dm.h"
-#include "dm/gfx.h"
 #include "dm/dungeonman.h"
 #include "dm/eventman.h"
-#include "dm/menus.h"
-#include "dm/champion.h"
-#include "dm/loadsave.h"
-#include "dm/objectman.h"
+#include "dm/gfx.h"
 #include "dm/inventory.h"
-#include "dm/text.h"
+#include "dm/loadsave.h"
+#include "dm/menus.h"
 #include "dm/movesens.h"
+#include "dm/objectman.h"
+#include "dm/text.h"
 
 namespace DM {
 

@@ -23,8 +23,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE2900_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE2900_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
@@ -34,6 +34,7 @@ namespace Neverhood {
 class SsScene2901LocationButton : public StaticSprite {
 public:
 	SsScene2901LocationButton(NeverhoodEngine *vm, Scene *parentScene, int which, uint index);
+
 protected:
 	Scene *_parentScene;
 	uint _index;
@@ -47,6 +48,7 @@ public:
 	SsScene2901LocationButtonLight(NeverhoodEngine *vm, int which, uint index);
 	void show();
 	void hide();
+
 protected:
 	uint _index;
 };
@@ -59,6 +61,7 @@ public:
 class SsScene2901BigButton : public StaticSprite {
 public:
 	SsScene2901BigButton(NeverhoodEngine *vm, Scene *parentScene, int which);
+
 protected:
 	Scene *_parentScene;
 	int _which;

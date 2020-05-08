@@ -32,6 +32,7 @@ private:
 	SpriteResource _iconSprites;
 	Common::String _btnSoundText, _btnMusicText;
 	bool _debugFlag;
+
 private:
 	ControlPanel(XeenEngine *vm) : ButtonContainer(vm), _debugFlag(false) {}
 
@@ -54,6 +55,7 @@ private:
 	 * Gets the current time
 	 */
 	Common::String getTimeText() const;
+
 public:
 	/**
 	 * Show the control panel

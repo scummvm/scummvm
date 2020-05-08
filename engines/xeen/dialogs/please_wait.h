@@ -30,6 +30,7 @@ namespace Xeen {
 class PleaseWait {
 private:
 	Common::String _msg;
+
 public:
 	PleaseWait(bool isOops = false);
 	~PleaseWait();

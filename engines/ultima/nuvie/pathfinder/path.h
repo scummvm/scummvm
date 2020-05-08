@@ -36,9 +36,9 @@ class MapCoord;
  */
 class Path {
 protected:
-	MapCoord *path; // list of tiles in the path, set by create_path()
+	MapCoord *path;    // list of tiles in the path, set by create_path()
 	uint32 step_count; // number of locations in the path
-	uint32 path_size; // allocated elements in list
+	uint32 path_size;  // allocated elements in list
 	PathFinder *pf;
 
 	void add_step(MapCoord loc);

@@ -23,7 +23,7 @@
 #ifndef TOLTECS_SOUND_H
 #define TOLTECS_SOUND_H
 
-#include "audio/mixer.h"	// for Audio::SoundHandle
+#include "audio/mixer.h" // for Audio::SoundHandle
 
 #include "toltecs/toltecs.h"
 
@@ -32,10 +32,10 @@ namespace Toltecs {
 // 0x1219
 
 enum SoundChannelType {
-	kChannelTypeEmpty		= 0,
-	kChannelTypeBackground	= -1,
-	kChannelTypeSfx			= -2,
-	kChannelTypeSpeech		= -3
+	kChannelTypeEmpty = 0,
+	kChannelTypeBackground = -1,
+	kChannelTypeSfx = -2,
+	kChannelTypeSpeech = -3
 };
 
 struct SoundChannel {
@@ -72,7 +72,6 @@ protected:
 	void internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 panning);
 	Audio::Mixer::SoundType getScummVMSoundType(SoundChannelType type) const;
 };
-
 
 } // End of namespace Toltecs
 

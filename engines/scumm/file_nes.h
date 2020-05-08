@@ -63,7 +63,6 @@ public:
 		NES_PREPLIST
 	};
 
-
 private:
 	Common::SeekableReadStream *_stream;
 	ROMset _ROMset;

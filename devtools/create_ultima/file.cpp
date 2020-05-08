@@ -34,7 +34,6 @@ uint32 File::computeMD5() {
 	return total;
 }
 
-
 void Surface::setPaletteEntry(byte index, byte r, byte g, byte b) {
 	byte *pal = _palette + index * 3;
 	pal[0] = r;
@@ -46,26 +45,26 @@ void Surface::saveToFile(const char *filename) {
 	WriteFile f(filename);
 	f.writeByte('B');
 	f.writeByte('M');
-	f.writeLong(0x436 + _w * _h + 2);	// File size
-	f.writeWord(0);			// Custom 1
-	f.writeWord(0);			// Custom 2
-	f.writeLong(0x436);		// Pixels offset
+	f.writeLong(0x436 + _w * _h + 2); // File size
+	f.writeWord(0);                   // Custom 1
+	f.writeWord(0);                   // Custom 2
+	f.writeLong(0x436);               // Pixels offset
 
 	int pitch = _w;
 	if (pitch % 4)
 		pitch += 4 - (pitch % 4);
 
-	f.writeLong(40);		// Info size
-	f.writeLong(_w);		// Width
-	f.writeLong(_h);		// Height
-	f.writeWord(1);			// # Planes
-	f.writeWord(8);			// Bits per pixel
-	f.writeLong(0);			// Compression
-	f.writeLong(pitch * _h);	// Image size
-	f.writeLong(3790);		// Pixels per meter X
-	f.writeLong(3800);		// Pixels per meter Y
-	f.writeLong(0);			// color count
-	f.writeLong(0);			// important colors
+	f.writeLong(40);         // Info size
+	f.writeLong(_w);         // Width
+	f.writeLong(_h);         // Height
+	f.writeWord(1);          // # Planes
+	f.writeWord(8);          // Bits per pixel
+	f.writeLong(0);          // Compression
+	f.writeLong(pitch * _h); // Image size
+	f.writeLong(3790);       // Pixels per meter X
+	f.writeLong(3800);       // Pixels per meter Y
+	f.writeLong(0);          // color count
+	f.writeLong(0);          // important colors
 
 	// Palette
 	byte *pal = _palette;

@@ -20,31 +20,30 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/xform_blend.h"
 #include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 const uint8 U8XFormPal[1024] = {
-	0,  0,  0,  0,
-	0,  0,  0,  0,
-	0,  0,  0,  0,
-	0,  0,  0,  0,
-	0,  0,  0,  0,
-	0,  0,  0,  0,
-	0,  0,  0,  0,
-	0,  0,  0,  0,
-	48, 48, 48, 80, // (green->dark grey)
-	24, 24, 24, 80, // (black->vdark grey)
-	64, 64, 24, 64, // (yellow)
-	80, 80, 80, 80, // (white->grey)
-	180, 90, 0,  80, // (red->orange)
-	0,  0,  252, 40, // (blue)
-	0,  0,  104, 40, // (blue)
-	0,  0,  0,  0
-};
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    48, 48, 48, 80, // (green->dark grey)
+    24, 24, 24, 80, // (black->vdark grey)
+    64, 64, 24, 64, // (yellow)
+    80, 80, 80, 80, // (white->grey)
+    180, 90, 0, 80, // (red->orange)
+    0, 0, 252, 40,  // (blue)
+    0, 0, 104, 40,  // (blue)
+    0, 0, 0, 0};
 
 #if 0
 //
@@ -53,13 +52,15 @@ const uint8 U8XFormPal[1024] = {
 
 // BlendFunc is always glBlendFunc (GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-#define XFORM_BLEND_FUNC(ra,ga,ba,a) { \
-		r*=255-a; \
-		g*=255-a; \
-		b*=255-a; \
-		r+=ra*255; \
-		g+=ga*255; \
-		b+=ba*255; }
+#define XFORM_BLEND_FUNC(ra, ga, ba, a) \
+	{                                   \
+		r *= 255 - a;                   \
+		g *= 255 - a;                   \
+		b *= 255 - a;                   \
+		r += ra * 255;                  \
+		g += ga * 255;                  \
+		b += ba * 255;                  \
+	}
 
 //
 // Colour 8 (green->dark grey)

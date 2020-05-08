@@ -25,8 +25,8 @@
 #include "zvision/scripting/control.h"
 #include "zvision/scripting/script_manager.h"
 
-#include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/zvision.h"
 
 #include "common/stream.h"
 

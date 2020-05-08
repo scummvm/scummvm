@@ -74,9 +74,9 @@ namespace MPAL {
  * values are errors, positive values will be used for special but
  * normal events.
  */
-#define LZO_E_OK                    0
-#define LZO_E_INPUT_OVERRUN         (-4)
-#define LZO_E_INPUT_NOT_CONSUMED    (-8)
+#define LZO_E_OK 0
+#define LZO_E_INPUT_OVERRUN (-4)
+#define LZO_E_INPUT_NOT_CONSUMED (-8)
 
 /**
  * Decompresses an LZO compressed resource

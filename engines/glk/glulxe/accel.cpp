@@ -29,7 +29,7 @@ namespace Glulxe {
  * Git passes along function arguments in reverse order. To make our lives more interesting
  */
 #ifdef ARGS_REVERSED
-#define ARG(argv, argc, ix) (argv[(argc-1)-ix])
+#define ARG(argv, argc, ix) (argv[(argc - 1) - ix])
 #else
 #define ARG(argv, argc, ix) (argv[ix])
 #endif
@@ -38,12 +38,12 @@ namespace Glulxe {
  * Any function can be called with any number of arguments. This macro lets us snarf a given argument,
  * or zero if it wasn't supplied.
  */
-#define ARG_IF_GIVEN(argv, argc, ix)  ((argc > ix) ? (ARG(argv, argc, ix)) : 0)
+#define ARG_IF_GIVEN(argv, argc, ix) ((argc > ix) ? (ARG(argv, argc, ix)) : 0)
 
 acceleration_func Glulxe::accel_find_func(uint index) {
 	switch (index) {
 	case 0:
-		return nullptr;     // 0 always means no acceleration
+		return nullptr; // 0 always means no acceleration
 	case 1:
 		return &Glulxe::func_1_z__region;
 	case 2:
@@ -118,8 +118,7 @@ void Glulxe::accel_set_func(uint index, uint addr) {
 	}
 
 	if (!accelentries) {
-		accelentries = (accelentry_t **)glulx_malloc(ACCEL_HASH_SIZE
-		               * sizeof(accelentry_t *));
+		accelentries = (accelentry_t **)glulx_malloc(ACCEL_HASH_SIZE * sizeof(accelentry_t *));
 		if (!accelentries)
 			fatal_error("Cannot malloc acceleration table.");
 		for (bucknum = 0; bucknum < ACCEL_HASH_SIZE; bucknum++)

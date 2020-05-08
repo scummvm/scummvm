@@ -32,172 +32,156 @@
 namespace AGOS {
 
 static const char *const russian_verb_names[] = {
-	"Ietj _",
-	"Qnotrft< pa",
-	"Nt_r[t<",
-	"Ecjdat<",
-	"Q=fst<",
-	"C^]t<",
-	"Ha_r[t<",
-	"Isqom<^ocat<",
-	"Docorjt<",
-	"Qp]t<",
-	"Neft<",
-	"Eat<"
-};
+    "Ietj _",
+    "Qnotrft< pa",
+    "Nt_r[t<",
+    "Ecjdat<",
+    "Q=fst<",
+    "C^]t<",
+    "Ha_r[t<",
+    "Isqom<^ocat<",
+    "Docorjt<",
+    "Qp]t<",
+    "Neft<",
+    "Eat<"};
 
 static const char *const hebrew_verb_names[] = {
-	"LJ @L",
-	"DQZKL RL",
-	"TZG",
-	"DFF",
-	"@KEL",
-	"DXM",
-	"QBEX",
-	"DYZNY",
-	"CAX @L",
-	"DQX",
-	"LAY",
-	"ZO"
-};
+    "LJ @L",
+    "DQZKL RL",
+    "TZG",
+    "DFF",
+    "@KEL",
+    "DXM",
+    "QBEX",
+    "DYZNY",
+    "CAX @L",
+    "DQX",
+    "LAY",
+    "ZO"};
 
 static const char *const spanish_verb_names[] = {
-	"Caminar",
-	"Mirar",
-	"Abrir",
-	"Mover",
-	"Consumir",
-	"Coger",
-	"Cerrar",
-	"Usar",
-	"Hablar",
-	"Quitar",
-	"Llevar",
-	"Dar"
-};
+    "Caminar",
+    "Mirar",
+    "Abrir",
+    "Mover",
+    "Consumir",
+    "Coger",
+    "Cerrar",
+    "Usar",
+    "Hablar",
+    "Quitar",
+    "Llevar",
+    "Dar"};
 
 static const char *const italian_verb_names[] = {
-	"Vai verso",
-	"Osserva",
-	"Apri",
-	"Sposta",
-	"Mangia",
-	"Raccogli",
-	"Chiudi",
-	"Usa",
-	"Parla a",
-	"Togli",
-	"Indossa",
-	"Dai"
-};
+    "Vai verso",
+    "Osserva",
+    "Apri",
+    "Sposta",
+    "Mangia",
+    "Raccogli",
+    "Chiudi",
+    "Usa",
+    "Parla a",
+    "Togli",
+    "Indossa",
+    "Dai"};
 
 static const char *const french_verb_names[] = {
-	"Aller vers",
-	"Regarder",
-	"Ouvrir",
-	"D/placer",
-	"Consommer",
-	"Prendre",
-	"Fermer",
-	"Utiliser",
-	"Parler ;",
-	"Enlever",
-	"Mettre",
-	"Donner"
-};
+    "Aller vers",
+    "Regarder",
+    "Ouvrir",
+    "D/placer",
+    "Consommer",
+    "Prendre",
+    "Fermer",
+    "Utiliser",
+    "Parler ;",
+    "Enlever",
+    "Mettre",
+    "Donner"};
 
 static const char *const german_verb_names[] = {
-	"Gehe zu",
-	"Schau an",
-	";ffne",
-	"Bewege",
-	"Verzehre",
-	"Nimm",
-	"Schlie+e",
-	"Benutze",
-	"Rede mit",
-	"Entferne",
-	"Trage",
-	"Gib"
-};
+    "Gehe zu",
+    "Schau an",
+    ";ffne",
+    "Bewege",
+    "Verzehre",
+    "Nimm",
+    "Schlie+e",
+    "Benutze",
+    "Rede mit",
+    "Entferne",
+    "Trage",
+    "Gib"};
 
 static const char *const english_verb_names[] = {
-	"Walk to",
-	"Look at",
-	"Open",
-	"Move",
-	"Consume",
-	"Pick up",
-	"Close",
-	"Use",
-	"Talk to",
-	"Remove",
-	"Wear",
-	"Give"
-};
+    "Walk to",
+    "Look at",
+    "Open",
+    "Move",
+    "Consume",
+    "Pick up",
+    "Close",
+    "Use",
+    "Talk to",
+    "Remove",
+    "Wear",
+    "Give"};
 
 static const char *const czech_verb_names[] = {
-	"Jit",
-	"Podivat se",
-	"Otevrit",
-	"Pohnout s",
-	"Snist",
-	"Sebrat",
-	"Zavrit",
-	"Pouzit",
-	"Mluvit s",
-	"Odstranit",
-	"Oblect",
-	"Dat"
-};
+    "Jit",
+    "Podivat se",
+    "Otevrit",
+    "Pohnout s",
+    "Snist",
+    "Sebrat",
+    "Zavrit",
+    "Pouzit",
+    "Mluvit s",
+    "Odstranit",
+    "Oblect",
+    "Dat"};
 
 static const char *const russian_verb_prep_names[] = {
-	"", "", "", "",
-	"", "", "", "s yfn?",
-	"", "", "", "_onu ?"
-};
+    "", "", "", "",
+    "", "", "", "s yfn?",
+    "", "", "", "_onu ?"};
 
 static const char *const hebrew_verb_prep_names[] = {
-	"", "", "", "",
-	"", "", "", "RM ND ?",
-	"", "", "", "LNI ?"
-};
+    "", "", "", "",
+    "", "", "", "RM ND ?",
+    "", "", "", "LNI ?"};
 
 static const char *const spanish_verb_prep_names[] = {
-	"", "", "", "",
-	"", "", "", "^con qu/?",
-	"", "", "", "^a qui/n?"
-};
+    "", "", "", "",
+    "", "", "", "^con qu/?",
+    "", "", "", "^a qui/n?"};
 
 static const char *const italian_verb_prep_names[] = {
-	"", "", "", "",
-	"", "", "", "con cosa ?",
-	"", "", "", "a chi ?"
-};
+    "", "", "", "",
+    "", "", "", "con cosa ?",
+    "", "", "", "a chi ?"};
 
 static const char *const french_verb_prep_names[] = {
-	"", "", "", "",
-	"", "", "", "avec quoi ?",
-	"", "", "", "; qui ?"
-};
+    "", "", "", "",
+    "", "", "", "avec quoi ?",
+    "", "", "", "; qui ?"};
 
 static const char *const german_verb_prep_names[] = {
-	"", "", "", "",
-	"", "", "", "mit was ?",
-	"", "", "", "zu wem ?"
-};
+    "", "", "", "",
+    "", "", "", "mit was ?",
+    "", "", "", "zu wem ?"};
 
 static const char *const english_verb_prep_names[] = {
-	"", "", "", "",
-	"", "", "", "with what ?",
-	"", "", "", "to whom ?"
-};
+    "", "", "", "",
+    "", "", "", "with what ?",
+    "", "", "", "to whom ?"};
 
 static const char *const czech_verb_prep_names[] = {
-	"", "", "", "",
-	"", "", "", "s cim ?",
-	"", "", "", "komu ?"
-};
+    "", "", "", "",
+    "", "", "", "s cim ?",
+    "", "", "", "komu ?"};
 
 #ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::clearName() {
@@ -250,13 +234,12 @@ void AGOSEngine::clearName() {
 }
 
 static const byte convertVerbID[9] = {
-	0, 1, 5, 11, 8, 7, 10, 3, 2
-};
+    0, 1, 5, 11, 8, 7, 10, 3, 2};
 
 void AGOSEngine::printVerbOf(uint hitarea_id) {
 	const char *txt;
-	const char * const *verb_names;
-	const char * const *verb_prep_names;
+	const char *const *verb_names;
+	const char *const *verb_prep_names;
 
 	hitarea_id -= 101;
 	if (getGameType() == GType_SIMON2)
@@ -334,7 +317,7 @@ void AGOSEngine::showActionString(const byte *string) {
 		return;
 
 	// Arisme : hack for long strings in the French version
-	if ((strlen((const char*)string) - 1) <= len)
+	if ((strlen((const char *)string) - 1) <= len)
 		x = (len - (strlen((const char *)string) - 1)) * 3;
 	else
 		x = 0;
@@ -471,7 +454,7 @@ void AGOSEngine::disableBox(uint hitarea) {
 		ha->flags |= kBFBoxDead;
 		ha->flags &= ~kBFBoxSelected;
 		if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-			hitarea == 102) {
+		    hitarea == 102) {
 			resetVerbs();
 		}
 	}
@@ -583,7 +566,7 @@ void AGOSEngine::resetVerbs() {
 	if (getGameType() == GType_SIMON2) {
 		id = 2;
 		if (!getBitFlag(79))
-		id = (_mouse.y >= 136) ? 102 : 101;
+			id = (_mouse.y >= 136) ? 102 : 101;
 	} else {
 		id = (_mouse.y >= 136) ? 102 : 101;
 	}
@@ -625,7 +608,7 @@ void AGOSEngine_Feeble::setVerb(HitArea *ha) {
 	}
 
 	_mouseCursor = cursor;
-	_mouseAnimMax = (cursor == 4) ? 14: 16;
+	_mouseAnimMax = (cursor == 4) ? 14 : 16;
 	_mouseAnim = 1;
 	_needHitAreaRecalc++;
 	_verbHitArea = cursor + 300;
@@ -721,12 +704,12 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		if (ha->flags & kBFBoxInUse) {
 			if (!(ha->flags & kBFBoxDead)) {
 				if (x >= ha->x && y >= ha->y &&
-						x - ha->x < ha->width && y - ha->y < ha->height && priority <= ha->priority) {
+				    x - ha->x < ha->width && y - ha->y < ha->height && priority <= ha->priority) {
 					priority = ha->priority;
 					best_ha = ha;
 				} else {
 					if (ha->flags & kBFBoxSelected) {
-						hitarea_leave(ha , true);
+						hitarea_leave(ha, true);
 						ha->flags &= ~kBFBoxSelected;
 					}
 				}
@@ -817,12 +800,12 @@ void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {
 		if (ha->flags & kBFBoxInUse) {
 			if (!(ha->flags & kBFBoxDead)) {
 				if (x_ >= ha->x && y_ >= ha->y &&
-						x_ - ha->x < ha->width && y_ - ha->y < ha->height && priority <= ha->priority) {
+				    x_ - ha->x < ha->width && y_ - ha->y < ha->height && priority <= ha->priority) {
 					priority = ha->priority;
 					best_ha = ha;
 				} else {
 					if (ha->flags & kBFBoxSelected) {
-						hitarea_leave(ha , true);
+						hitarea_leave(ha, true);
 						ha->flags &= ~kBFBoxSelected;
 					}
 				}
@@ -857,7 +840,7 @@ void AGOSEngine_Waxworks::boxController(uint x, uint y, uint mode) {
 				_variableArray[400] = x;
 				_variableArray[401] = y;
 			} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2 ||
-				getGameType() == GType_FF) {
+			           getGameType() == GType_FF) {
 				_variableArray[1] = x;
 				_variableArray[2] = y;
 			}

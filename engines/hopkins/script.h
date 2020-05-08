@@ -25,8 +25,8 @@
 
 #include "hopkins/globals.h"
 
-#include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace Hopkins {
@@ -35,6 +35,7 @@ class ScriptManager {
 private:
 	HopkinsEngine *_vm;
 	int checkOpcode(const byte *dataP);
+
 public:
 	bool _tempObjectFl;
 

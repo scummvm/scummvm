@@ -33,7 +33,9 @@ namespace MADS {
 namespace Phantom {
 
 enum Difficulty {
-	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
+	DIFFICULTY_HARD = 1,
+	DIFFICULTY_MEDIUM = 2,
+	DIFFICULTY_EASY = 3
 };
 
 enum InventoryObject {
@@ -109,10 +111,10 @@ protected:
 	void setSectionHandler() override;
 
 	void checkShowDialog() override;
+
 public:
 	PhantomGlobals _globals;
 	Difficulty _difficulty;
-
 
 	Globals &globals() override { return _globals; }
 
@@ -147,7 +149,7 @@ typedef Section1Handler Section3Handler;
 typedef Section1Handler Section4Handler;
 typedef Section1Handler Section5Handler;
 
-} // End of namespace Nebular
+} // namespace Phantom
 
 } // End of namespace MADS
 

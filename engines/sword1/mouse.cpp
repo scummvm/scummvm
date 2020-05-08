@@ -24,15 +24,15 @@
 
 #include "graphics/cursorman.h"
 
-#include "sword1/mouse.h"
-#include "sword1/menu.h"
-#include "sword1/screen.h"
 #include "sword1/logic.h"
-#include "sword1/resman.h"
+#include "sword1/menu.h"
+#include "sword1/mouse.h"
 #include "sword1/objectman.h"
+#include "sword1/resman.h"
+#include "sword1/screen.h"
+#include "sword1/sword1.h"
 #include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
-#include "sword1/sword1.h"
 
 namespace Sword1 {
 
@@ -47,7 +47,7 @@ Mouse::~Mouse() {
 	setLuggage(0, 0);
 	setPointer(0, 0);
 
-	for (uint8 cnt = 0; cnt < 17; cnt++)     // close mouse cursor resources
+	for (uint8 cnt = 0; cnt < 17; cnt++) // close mouse cursor resources
 		_resMan->resClose(MSE_POINTER + cnt);
 }
 
@@ -94,7 +94,7 @@ void Mouse::addToList(int id, Object *compact) {
 }
 
 void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
-	_state = 0; // all mouse events are flushed after one cycle.
+	_state = 0;       // all mouse events are flushed after one cycle.
 	if (_lastState) { // delay all events by one cycle to notice L_button + R_button clicks correctly.
 		_state = _lastState | eventFlags;
 		_lastState = 0;
@@ -110,13 +110,13 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 
 	_mouse.x = x;
 	_mouse.y = y;
-	if (!(Logic::_scriptVars[MOUSE_STATUS] & 1)) {  // no human?
+	if (!(Logic::_scriptVars[MOUSE_STATUS] & 1)) { // no human?
 		_numObjs = 0;
 		return; // no human, so we don't want the mouse engine
 	}
 
 	if (!Logic::_scriptVars[TOP_MENU_DISABLED]) {
-		if (y < 40) { // okay, we are in the top menu.
+		if (y < 40) {          // okay, we are in the top menu.
 			if (!_inTopMenu) { // are we just entering it?
 				if (!Logic::_scriptVars[OBJECT_HELD])
 					_menu->fnStartMenu();
@@ -144,10 +144,10 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		for (uint16 priority = 0; (priority < 10) && (!touchedId); priority++) {
 			for (uint16 cnt = 0; (cnt < _numObjs) && (!touchedId); cnt++) {
 				if ((_objList[cnt].compact->o_priority == priority) &&
-				        (Logic::_scriptVars[MOUSE_X] >= (uint32)_objList[cnt].compact->o_mouse_x1) &&
-				        (Logic::_scriptVars[MOUSE_X] <= (uint32)_objList[cnt].compact->o_mouse_x2) &&
-				        (Logic::_scriptVars[MOUSE_Y] >= (uint32)_objList[cnt].compact->o_mouse_y1) &&
-				        (Logic::_scriptVars[MOUSE_Y] <= (uint32)_objList[cnt].compact->o_mouse_y2)) {
+				    (Logic::_scriptVars[MOUSE_X] >= (uint32)_objList[cnt].compact->o_mouse_x1) &&
+				    (Logic::_scriptVars[MOUSE_X] <= (uint32)_objList[cnt].compact->o_mouse_x2) &&
+				    (Logic::_scriptVars[MOUSE_Y] >= (uint32)_objList[cnt].compact->o_mouse_y1) &&
+				    (Logic::_scriptVars[MOUSE_Y] <= (uint32)_objList[cnt].compact->o_mouse_y2)) {
 					touchedId = _objList[cnt].id;
 					clicked = cnt;
 				}
@@ -159,8 +159,8 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 				_logic->runMouseScript(NULL, _getOff);
 				_getOff = 0;
 			}
-			if (touchedId) { // there's something new selected, now.
-				if (_objList[clicked].compact->o_mouse_on)  //run its get on
+			if (touchedId) {                               // there's something new selected, now.
+				if (_objList[clicked].compact->o_mouse_on) //run its get on
 					_logic->runMouseScript(_objList[clicked].compact, _objList[clicked].compact->o_mouse_on);
 
 				_getOff = _objList[clicked].compact->o_mouse_off; //setup get-off for later

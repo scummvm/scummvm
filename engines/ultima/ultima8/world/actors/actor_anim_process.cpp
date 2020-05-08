@@ -22,30 +22,30 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/world/actors/animation.h"
-#include "ultima/ultima8/graphics/anim_dat.h"
-#include "ultima/ultima8/world/actors/anim_action.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/misc/direction.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/gravity_process.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/world/loop_script.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/actors/animation_tracker.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/conf/setting_manager.h"
-#include "ultima/ultima8/world/actors/combat_process.h"
-#include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/graphics/palette_fader_process.h"
-#include "ultima/ultima8/world/create_item_process.h"
-#include "ultima/ultima8/world/destroy_item_process.h"
+#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/kernel/delay_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/world/actors/actor_anim_process.h"
+#include "ultima/ultima8/world/actors/anim_action.h"
+#include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/world/actors/animation_tracker.h"
+#include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/create_item_process.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/gravity_process.h"
+#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/sprite_process.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -60,16 +60,15 @@ static const int watchactor = WATCHACTOR;
 DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess, Process)
 
 ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr),
-	_dir(0), _action(Animation::walk), _steps(0), _firstFrame(true),
-	_currentStep(0), _repeatCounter(0), _animAborted(false),
-	_attackedSomething(false) {
+                                       _dir(0), _action(Animation::walk), _steps(0), _firstFrame(true),
+                                       _currentStep(0), _repeatCounter(0), _animAborted(false),
+                                       _attackedSomething(false) {
 }
 
 ActorAnimProcess::ActorAnimProcess(Actor *actor, Animation::Sequence action,
-                                   uint32 dir, uint32 steps) :
-		_dir(dir), _action(action), _steps(steps), _tracker(nullptr),
-		_firstFrame(true), _currentStep(0), _repeatCounter(0),
-		_animAborted(false), _attackedSomething(false)  {
+                                   uint32 dir, uint32 steps) : _dir(dir), _action(action), _steps(steps), _tracker(nullptr),
+                                                               _firstFrame(true), _currentStep(0), _repeatCounter(0),
+                                                               _animAborted(false), _attackedSomething(false) {
 	assert(actor);
 	_itemNum = actor->getObjId();
 
@@ -122,7 +121,6 @@ bool ActorAnimProcess::init() {
 	actor->_lastAnim = _action;
 	actor->_direction = _dir;
 
-
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
 		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
@@ -132,7 +130,6 @@ bool ActorAnimProcess::init() {
 
 	return true;
 }
-
 
 void ActorAnimProcess::run() {
 	if (_firstFrame) {
@@ -224,9 +221,8 @@ void ActorAnimProcess::run() {
 				return;
 			}
 
-
 			if (_tracker->isBlocked() &&
-			        !(_tracker->getAnimAction()->_flags & AnimAction::AAF_UNSTOPPABLE)) {
+			    !(_tracker->getAnimAction()->_flags & AnimAction::AAF_UNSTOPPABLE)) {
 				// FIXME: For blocked large _steps we may still want to do
 				//        a partial move. (But how would that work with
 				//        repeated frames?)
@@ -251,7 +247,6 @@ void ActorAnimProcess::run() {
 					a->fall();
 				}
 
-
 				terminate();
 				return;
 			}
@@ -260,7 +255,8 @@ void ActorAnimProcess::run() {
 		AnimFrame *curframe = _tracker->getAnimFrame();
 		if (curframe && curframe->_sfx) {
 			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc) audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
+			if (audioproc)
+				audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
 		}
 
 		if (curframe && (curframe->_flags & AnimFrame::AFF_SPECIAL)) {
@@ -269,7 +265,6 @@ void ActorAnimProcess::run() {
 			// throw skull-fireball when ghost attacks, ...
 			doSpecial();
 		}
-
 
 		// attacking?
 		if (!_attackedSomething) {
@@ -321,14 +316,17 @@ void ActorAnimProcess::run() {
 		     << ") sfx " << _tracker->getAnimFrame()->sfx
 		     << " rep " << _repeatCounter << " ";
 
-		if (_tracker->isDone()) pout << "D";
-		if (_tracker->isBlocked()) pout << "B";
-		if (_tracker->isUnsupported()) pout << "U";
-		if (_tracker->hitSomething()) pout << "H";
+		if (_tracker->isDone())
+			pout << "D";
+		if (_tracker->isBlocked())
+			pout << "B";
+		if (_tracker->isUnsupported())
+			pout << "U";
+		if (_tracker->hitSomething())
+			pout << "H";
 		pout << Std::endl;
 	}
 #endif
-
 
 	if (_repeatCounter == _tracker->getAnimAction()->_frameRepeat) {
 		if (_tracker->isUnsupported()) {
@@ -357,12 +355,12 @@ void ActorAnimProcess::doSpecial() {
 	assert(a);
 
 	// play SFX when Avatar draws/sheathes weapon
-	if (_itemNum == 1 && (_action == Animation::readyWeapon ||
-	                      _action == Animation::unreadyWeapon) &&
-	        a->getEquip(ShapeInfo::SE_WEAPON) != 0) {
+	if (_itemNum == 1 && (_action == Animation::readyWeapon || _action == Animation::unreadyWeapon) &&
+	    a->getEquip(ShapeInfo::SE_WEAPON) != 0) {
 		int sfx = (getRandom() % 2) ? 0x51 : 0x52; // constants!
 		AudioProcess *audioproc = AudioProcess::get_instance();
-		if (audioproc) audioproc->playSFX(sfx, 0x60, 1, 0);
+		if (audioproc)
+			audioproc->playSFX(sfx, 0x60, 1, 0);
 		return;
 	}
 
@@ -372,10 +370,12 @@ void ActorAnimProcess::doSpecial() {
 		if (_action == Animation::attack) {
 			// fireball on attack
 			unsigned int skullcount = a->countNearby(0x19d, 6 * 256);
-			if (skullcount > 5) return;
+			if (skullcount > 5)
+				return;
 
 			Actor *skull = Actor::createActor(0x19d, 0);
-			if (!skull) return;
+			if (!skull)
+				return;
 			skull->setFlag(Item::FLG_FAST_ONLY);
 			int32 x, y, z;
 			a->getLocation(x, y, z);
@@ -385,7 +385,8 @@ void ActorAnimProcess::doSpecial() {
 		} else if (a->getMapNum() != 54) { // Khumash-Gor doesn't summon ghouls
 			// otherwise, summon ghoul
 			unsigned int ghoulcount = a->countNearby(0x8e, 8 * 256);
-			if (ghoulcount > 2) return;
+			if (ghoulcount > 2)
+				return;
 
 			int32 x, y, z;
 			a->getLocation(x, y, z);
@@ -393,7 +394,8 @@ void ActorAnimProcess::doSpecial() {
 			y += (getRandom() % (6 * 256)) - 3 * 256;
 
 			Actor *ghoul = Actor::createActor(0x8e, 0);
-			if (!ghoul) return;
+			if (!ghoul)
+				return;
 			ghoul->setFlag(Item::FLG_FAST_ONLY);
 			if (!ghoul->canExistAt(x, y, z, true)) {
 				ghoul->destroy();
@@ -436,7 +438,8 @@ void ActorAnimProcess::doSpecial() {
 
 		// find items directly below
 		cm->surfaceSearch(&itemlist, script, sizeof(script), a, false, true);
-		if (itemlist.getSize() == 0) return;
+		if (itemlist.getSize() == 0)
+			return;
 
 		Item *f = getItem(itemlist.getuint16(0));
 		assert(f);
@@ -472,7 +475,8 @@ void ActorAnimProcess::doSpecial() {
 
 		if (sfx) {
 			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc) audioproc->playSFX(sfx, 0x60, _itemNum, 0, false, 0x10000 + (getRandom() & 0x1FFF) - 0x1000);
+			if (audioproc)
+				audioproc->playSFX(sfx, 0x60, _itemNum, 0, false, 0x10000 + (getRandom() & 0x1FFF) - 0x1000);
 		}
 
 		if (splash) {
@@ -482,9 +486,7 @@ void ActorAnimProcess::doSpecial() {
 			Kernel::get_instance()->addProcess(sp);
 		}
 	}
-
 }
-
 
 void ActorAnimProcess::doHitSpecial(Item *hit) {
 	Actor *a = getActor(_itemNum);
@@ -501,14 +503,16 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 		ObjId weaponid = av->getEquip(ShapeInfo::SE_WEAPON);
 		Item *weapon = getItem(weaponid);
 
-		if (!weapon) return;
+		if (!weapon)
+			return;
 
 		uint32 weaponshape = weapon->getShape();
 
 		switch (weaponshape) {
 		case 0x32F: // magic hammer
-			if (audioproc) audioproc->playSFX(23, 0x60, 1, 0, false,
-				                                  0x10000 + (getRandom() & 0x1FFF) - 0x1000);
+			if (audioproc)
+				audioproc->playSFX(23, 0x60, 1, 0, false,
+				                   0x10000 + (getRandom() & 0x1FFF) - 0x1000);
 			break;
 		case 0x330: { // Slayer
 			// if we killed somebody, thunder&lightning
@@ -527,15 +531,18 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 					sfx = 96;
 					break;
 				}
-				if (audioproc) audioproc->playSFX(sfx, 0x60, 1, 0);
+				if (audioproc)
+					audioproc->playSFX(sfx, 0x60, 1, 0);
 			}
 			break;
 		}
 		case 0x331: { // Flame Sting
 			int sfx = 33;
-			if (getRandom() % 2 == 0) sfx = 101;
-			if (audioproc) audioproc->playSFX(sfx, 0x60, 1, 0, false,
-				                                  0x10000 + (getRandom() & 0x1FFF) - 0x1000);
+			if (getRandom() % 2 == 0)
+				sfx = 101;
+			if (audioproc)
+				audioproc->playSFX(sfx, 0x60, 1, 0, false,
+				                   0x10000 + (getRandom() & 0x1FFF) - 0x1000);
 
 			int32 x, y, z;
 			a->getLocation(x, y, z);
@@ -560,8 +567,8 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 			ProcId dp1id = kernel->addProcess(dp1);
 
 			CreateItemProcess *cip = new CreateItemProcess(400, 0, 0,
-			        Item::FLG_FAST_ONLY,
-			        0, 0, 0, fx, fy, fz);
+			                                               Item::FLG_FAST_ONLY,
+			                                               0, 0, 0, fx, fy, fz);
 			ProcId cipid = kernel->addProcess(cip);
 
 			DelayProcess *dp2 = new DelayProcess(60 + (getRandom() % 60)); //2-4s
@@ -585,12 +592,9 @@ void ActorAnimProcess::doHitSpecial(Item *hit) {
 			break;
 		}
 
-		return ;
+		return;
 	}
-
 }
-
-
 
 void ActorAnimProcess::terminate() {
 #ifdef WATCHACTOR
@@ -654,7 +658,8 @@ void ActorAnimProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool ActorAnimProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_firstFrame = (rs->readByte() != 0);
 	_animAborted = (rs->readByte() != 0);

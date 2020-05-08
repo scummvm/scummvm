@@ -21,19 +21,19 @@
  */
 
 #include "glk/frotz/pics.h"
-#include "glk/frotz/pics_decoder.h"
-#include "glk/glk.h"
 #include "common/algorithm.h"
 #include "common/memstream.h"
+#include "glk/frotz/pics_decoder.h"
+#include "glk/glk.h"
 
 namespace Glk {
 namespace Frotz {
 
 enum {
-	PIC_FILE_HEADER_FLAGS      = 1,
+	PIC_FILE_HEADER_FLAGS = 1,
 	PIC_FILE_HEADER_NUM_IMAGES = 4,
 	PIC_FILE_HEADER_ENTRY_SIZE = 8,
-	PIC_FILE_HEADER_VERSION    = 14
+	PIC_FILE_HEADER_VERSION = 14
 };
 
 Pics::Pics() : Common::Archive(), _filename(getFilename()) {

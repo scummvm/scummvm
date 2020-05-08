@@ -37,9 +37,9 @@
 \***********************************************************************/
 
 #include "glk/level9/level9_main.h"
-#include "glk/level9/level9.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "glk/level9/level9.h"
 
 namespace Glk {
 namespace Level9 {
@@ -63,7 +63,8 @@ struct SaveStruct {
 };
 
 /* Enumerations */
-enum L9MsgTypes { MSGT_V1, MSGT_V2 };
+enum L9MsgTypes { MSGT_V1,
+	              MSGT_V2 };
 
 /*
     Graphics type    Resolution     Scale stack reset
@@ -73,7 +74,10 @@ enum L9MsgTypes { MSGT_V1, MSGT_V2 };
     GFX_V3B          160 x 96             no
     GFX_V3C          320 x 96             no
 */
-enum L9GfxTypes { GFX_V2, GFX_V3A, GFX_V3B, GFX_V3C };
+enum L9GfxTypes { GFX_V2,
+	              GFX_V3A,
+	              GFX_V3B,
+	              GFX_V3C };
 
 /* Global Variables */
 L9BYTE *startfile, *pictureaddress, *picturedata;
@@ -149,90 +153,87 @@ L9BOOL GetWordV2(char *buff, int Word);
 L9BOOL GetWordV3(char *buff, int Word);
 void show_picture(int pic);
 
-
 #ifdef CODEFOLLOW
 #define CODEFOLLOWFILE "c:\\temp\\level9.txt"
 FILE *f;
 L9UINT16 *cfvar, *cfvar2;
 const char *const codes[] = {
-	"Goto",
-	"intgosub",
-	"intreturn",
-	"printnumber",
-	"messagev",
-	"messagec",
-	"function",
-	"input",
-	"varcon",
-	"varvar",
-	"_add",
-	"_sub",
-	"ilins",
-	"ilins",
-	"jump",
-	"Exit",
-	"ifeqvt",
-	"ifnevt",
-	"ifltvt",
-	"ifgtvt",
-	"screen",
-	"cleartg",
-	"picture",
-	"getnextobject",
-	"ifeqct",
-	"ifnect",
-	"ifltct",
-	"ifgtct",
-	"printinput",
-	"ilins",
-	"ilins",
-	"ilins",
+    "Goto",
+    "intgosub",
+    "intreturn",
+    "printnumber",
+    "messagev",
+    "messagec",
+    "function",
+    "input",
+    "varcon",
+    "varvar",
+    "_add",
+    "_sub",
+    "ilins",
+    "ilins",
+    "jump",
+    "Exit",
+    "ifeqvt",
+    "ifnevt",
+    "ifltvt",
+    "ifgtvt",
+    "screen",
+    "cleartg",
+    "picture",
+    "getnextobject",
+    "ifeqct",
+    "ifnect",
+    "ifltct",
+    "ifgtct",
+    "printinput",
+    "ilins",
+    "ilins",
+    "ilins",
 };
 const char *const functions[] = {
-	"calldriver",
-	"L9Random",
-	"save",
-	"restore",
-	"clearworkspace",
-	"clearstack"
-};
+    "calldriver",
+    "L9Random",
+    "save",
+    "restore",
+    "clearworkspace",
+    "clearstack"};
 const char *const drivercalls[] = {
-	"init",
-	"drivercalcchecksum",
-	"driveroswrch",
-	"driverosrdch",
-	"driverinputline",
-	"driversavefile",
-	"driverloadfile",
-	"settext",
-	"resettask",
-	"returntogem",
-	"10 *",
-	"loadgamedatafile",
-	"randomnumber",
-	"13 *",
-	"driver14",
-	"15 *",
-	"driverclg",
-	"line",
-	"fill",
-	"driverchgcol",
-	"20 *",
-	"21 *",
-	"ramsave",
-	"ramload",
-	"24 *",
-	"lensdisplay",
-	"26 *",
-	"27 *",
-	"28 *",
-	"29 *",
-	"allocspace",
-	"31 *",
-	"showbitmap",
-	"33 *",
-	"checkfordisc"
-};
+    "init",
+    "drivercalcchecksum",
+    "driveroswrch",
+    "driverosrdch",
+    "driverinputline",
+    "driversavefile",
+    "driverloadfile",
+    "settext",
+    "resettask",
+    "returntogem",
+    "10 *",
+    "loadgamedatafile",
+    "randomnumber",
+    "13 *",
+    "driver14",
+    "15 *",
+    "driverclg",
+    "line",
+    "fill",
+    "driverchgcol",
+    "20 *",
+    "21 *",
+    "ramsave",
+    "ramload",
+    "24 *",
+    "lensdisplay",
+    "26 *",
+    "27 *",
+    "28 *",
+    "29 *",
+    "allocspace",
+    "31 *",
+    "showbitmap",
+    "33 *",
+    "checkfordisc"};
 #endif
 
 void level9_initialize() {
@@ -265,7 +266,8 @@ void initdict(L9BYTE *ptr) {
 }
 
 char getdictionarycode() {
-	if (unpackcount != 8) return unpackbuf[unpackcount++];
+	if (unpackcount != 8)
+		return unpackbuf[unpackcount++];
 	else {
 		/* unpackbytes */
 		L9BYTE d1 = *dictptr++, d2;
@@ -287,8 +289,10 @@ char getdictionarycode() {
 }
 
 int getdictionary(int d0) {
-	if (d0 >= 0x1a) return getlongcode();
-	else return d0 + 0x61;
+	if (d0 >= 0x1a)
+		return getlongcode();
+	else
+		return d0 + 0x61;
 }
 
 int getlongcode() {
@@ -304,12 +308,14 @@ int getlongcode() {
 }
 
 void printchar(char c) {
-	if (Cheating) return;
+	if (Cheating)
+		return;
 
 	if (c & 128)
 		lastchar = (c &= 0x7f);
 	else if (c != 0x20 && c != 0x0d && (c < '\"' || c >= '.')) {
-		if (lastchar == '!' || lastchar == '?' || lastchar == '.') c = toupper(c);
+		if (lastchar == '!' || lastchar == '?' || lastchar == '.')
+			c = toupper(c);
 		lastchar = c;
 	}
 	/* eat multiple CRs */
@@ -323,7 +329,8 @@ void printchar(char c) {
 
 void printstring(const char *buf) {
 	int i;
-	for (i = 0; i < (int) strlen(buf); i++) printchar(buf[i]);
+	for (i = 0; i < (int)strlen(buf); i++)
+		printchar(buf[i]);
 }
 
 void printdecimald0(int d0) {
@@ -333,13 +340,16 @@ void printdecimald0(int d0) {
 }
 
 void printautocase(int d0) {
-	if (d0 & 128) printchar((char) d0);
+	if (d0 & 128)
+		printchar((char)d0);
 	else {
-		if (wordcase) printchar((char) toupper(d0));
-		else if (d5 < 6) printchar((char) d0);
+		if (wordcase)
+			printchar((char)toupper(d0));
+		else if (d5 < 6)
+			printchar((char)d0);
 		else {
 			wordcase = 0;
-			printchar((char) toupper(d0));
+			printchar((char)toupper(d0));
 		}
 	}
 }
@@ -355,7 +365,8 @@ void displaywordref(L9UINT16 Off) {
 		L9BYTE *a0, *oPtr, *a3;
 		int d0, d2, i;
 
-		if (mdtmode == 1) printchar(0x20);
+		if (mdtmode == 1)
+			printchar(0x20);
 		mdtmode = 1;
 
 		/* setindex */
@@ -379,45 +390,53 @@ void displaywordref(L9UINT16 Off) {
 		/* dwr04b */
 		Off++;
 		initdict(a0);
-		a3 = (L9BYTE *) threechars; /* a3 not set in original, prevent possible spam */
+		a3 = (L9BYTE *)threechars; /* a3 not set in original, prevent possible spam */
 
 		/* dwr05 */
 		while (TRUE) {
 			d0 = getdictionarycode();
 			if (d0 < 0x1c) {
 				/* dwr06 */
-				if (d0 >= 0x1a) d0 = getlongcode();
-				else d0 += 0x61;
+				if (d0 >= 0x1a)
+					d0 = getlongcode();
+				else
+					d0 += 0x61;
 				*a3++ = d0;
 			} else {
 				d0 &= 3;
-				a3 = (L9BYTE *) threechars + d0;
-				if (--Off == 0) break;
+				a3 = (L9BYTE *)threechars + d0;
+				if (--Off == 0)
+					break;
 			}
 		}
-		for (i = 0; i < d0; i++) printautocase(threechars[i]);
+		for (i = 0; i < d0; i++)
+			printautocase(threechars[i]);
 
 		/* dwr10 */
 		while (TRUE) {
 			d0 = getdictionarycode();
-			if (d0 >= 0x1b) return;
+			if (d0 >= 0x1b)
+				return;
 			printautocase(getdictionary(d0));
 		}
 	}
 
 	else {
-		if (d5 & 2) printchar(0x20); /* prespace */
+		if (d5 & 2)
+			printchar(0x20); /* prespace */
 		mdtmode = 2;
 		Off &= 0x7f;
-		if (Off != 0x7e) printchar((char)Off);
-		if (d5 & 1) printchar(0x20); /* postspace */
+		if (Off != 0x7e)
+			printchar((char)Off);
+		if (d5 & 1)
+			printchar(0x20); /* postspace */
 	}
 }
 
 int getmdlength(L9BYTE **Ptr) {
 	int tot = 0, len;
 	do {
-		len = (*(*Ptr)++ -1) & 0x3f;
+		len = (*(*Ptr)++ - 1) & 0x3f;
 		tot += len;
 	} while (len == 0x3f);
 	return tot;
@@ -441,10 +460,12 @@ void printmessage(int Msg) {
 		}
 		Msg--;
 	}
-	if (Msg < 0 || *Msgptr & 128) return;
+	if (Msg < 0 || *Msgptr & 128)
+		return;
 
 	len = getmdlength(&Msgptr);
-	if (len == 0) return;
+	if (len == 0)
+		return;
 
 	while (len) {
 		Data = *Msgptr++;
@@ -456,7 +477,8 @@ void printmessage(int Msg) {
 		} else {
 			Off = (wordtable[Data * 2] << 8) + wordtable[Data * 2 + 1];
 		}
-		if (Off == 0x8f80) break;
+		if (Off == 0x8f80)
+			break;
 		displaywordref(Off);
 	}
 }
@@ -468,12 +490,14 @@ int msglenV2(L9BYTE **ptr) {
 	L9BYTE a;
 
 	/* catch berzerking code */
-	if (*ptr >= startdata + FileSize) return 0;
+	if (*ptr >= startdata + FileSize)
+		return 0;
 
 	while ((a = **ptr) == 0) {
 		(*ptr)++;
 
-		if (*ptr >= startdata + FileSize) return 0;
+		if (*ptr >= startdata + FileSize)
+			return 0;
 
 		i += 255;
 	}
@@ -482,15 +506,18 @@ int msglenV2(L9BYTE **ptr) {
 }
 
 void printcharV2(char c) {
-	if (c == 0x25) c = 0xd;
-	else if (c == 0x5f) c = 0x20;
+	if (c == 0x25)
+		c = 0xd;
+	else if (c == 0x5f)
+		c = 0x20;
 	printautocase(c);
 }
 
 void displaywordV2(L9BYTE *ptr, int msg) {
 	int n;
 	L9BYTE a;
-	if (msg == 0) return;
+	if (msg == 0)
+		return;
 	while (--msg) {
 		ptr += msglenV2(&ptr);
 	}
@@ -498,16 +525,20 @@ void displaywordV2(L9BYTE *ptr, int msg) {
 
 	while (--n > 0) {
 		a = *++ptr;
-		if (a < 3) return;
+		if (a < 3)
+			return;
 
-		if (a >= 0x5e) displaywordV2(startmdV2 - 1, a - 0x5d);
-		else printcharV2((char)(a + 0x1d));
+		if (a >= 0x5e)
+			displaywordV2(startmdV2 - 1, a - 0x5d);
+		else
+			printcharV2((char)(a + 0x1d));
 	}
 }
 
 int msglenV1(L9BYTE **ptr) {
 	L9BYTE *ptr2 = *ptr;
-	while (ptr2 < startdata + FileSize && *ptr2++ != 1);
+	while (ptr2 < startdata + FileSize && *ptr2++ != 1)
+		;
 	return ptr2 - *ptr;
 }
 
@@ -521,10 +552,13 @@ void displaywordV1(L9BYTE *ptr, int msg) {
 
 	while (--n > 0) {
 		a = *ptr++;
-		if (a < 3) return;
+		if (a < 3)
+			return;
 
-		if (a >= 0x5e) displaywordV1(startmdV2, a - 0x5e);
-		else printcharV2((char)(a + 0x1d));
+		if (a >= 0x5e)
+			displaywordV1(startmdV2, a - 0x5e);
+		else
+			printcharV2((char)(a + 0x1d));
 	}
 }
 
@@ -532,16 +566,19 @@ L9BOOL amessageV2(L9BYTE *ptr, int msg, long *w, long *c) {
 	int n;
 	L9BYTE a;
 	static int depth = 0;
-	if (msg == 0) return FALSE;
+	if (msg == 0)
+		return FALSE;
 	while (--msg) {
 		ptr += msglenV2(&ptr);
 	}
-	if (ptr >= startdata + FileSize) return FALSE;
+	if (ptr >= startdata + FileSize)
+		return FALSE;
 	n = msglenV2(&ptr);
 
 	while (--n > 0) {
 		a = *++ptr;
-		if (a < 3) return TRUE;
+		if (a < 3)
+			return TRUE;
 
 		if (a >= 0x5e) {
 			if (++depth > 10 || !amessageV2(startmdV2 - 1, a - 0x5d, w, c)) {
@@ -551,8 +588,10 @@ L9BOOL amessageV2(L9BYTE *ptr, int msg, long *w, long *c) {
 			depth--;
 		} else {
 			char ch = a + 0x1d;
-			if (ch == 0x5f || ch == ' ')(*w)++;
-			else (*c)++;
+			if (ch == 0x5f || ch == ' ')
+				(*w)++;
+			else
+				(*c)++;
 		}
 	}
 	return TRUE;
@@ -566,12 +605,14 @@ L9BOOL amessageV1(L9BYTE *ptr, int msg, long *w, long *c) {
 	while (msg--) {
 		ptr += msglenV1(&ptr);
 	}
-	if (ptr >= startdata + FileSize) return FALSE;
+	if (ptr >= startdata + FileSize)
+		return FALSE;
 	n = msglenV1(&ptr);
 
 	while (--n > 0) {
 		a = *ptr++;
-		if (a < 3) return TRUE;
+		if (a < 3)
+			return TRUE;
 
 		if (a >= 0x5e) {
 			if (++depth > 10 || !amessageV1(startmdV2, a - 0x5e, w, c)) {
@@ -581,8 +622,10 @@ L9BOOL amessageV1(L9BYTE *ptr, int msg, long *w, long *c) {
 			depth--;
 		} else {
 			char ch = a + 0x1d;
-			if (ch == 0x5f || ch == ' ')(*w)++;
-			else (*c)++;
+			if (ch == 0x5f || ch == ' ')
+				(*w)++;
+			else
+				(*c)++;
 		}
 	}
 	return TRUE;
@@ -596,9 +639,10 @@ L9BOOL analyseV2(double *wl) {
 		if (amessageV2(startmd, i, &w, &c)) {
 			words += w;
 			chars += c;
-		} else return FALSE;
+		} else
+			return FALSE;
 	}
-	*wl = words ? (double) chars / words : 0.0;
+	*wl = words ? (double)chars / words : 0.0;
 	return TRUE;
 }
 
@@ -610,20 +654,24 @@ L9BOOL analyseV1(double *wl) {
 		if (amessageV1(startmd, i, &w, &c)) {
 			words += w;
 			chars += c;
-		} else return FALSE;
+		} else
+			return FALSE;
 	}
 
-	*wl = words ? (double) chars / words : 0.0;
+	*wl = words ? (double)chars / words : 0.0;
 	return TRUE;
 }
 
 void printmessageV2(int Msg) {
-	if (L9MsgType == MSGT_V2) displaywordV2(startmd, Msg);
-	else displaywordV1(startmd, Msg);
+	if (L9MsgType == MSGT_V2)
+		displaywordV2(startmd, Msg);
+	else
+		displaywordV1(startmd, Msg);
 }
 
 void L9Allocate(L9BYTE **ptr, L9UINT32 Size) {
-	if (*ptr) free(*ptr);
+	if (*ptr)
+		free(*ptr);
 	*ptr = (L9BYTE *)malloc(Size);
 	if (*ptr == nullptr) {
 		error("Unable to allocate memory for the game! Exiting...");
@@ -677,7 +725,8 @@ L9BOOL findsubs(L9BYTE *testptr, L9UINT32 testsize, L9BYTE **picdata, L9UINT32 *
 	int i, j, length, count;
 	L9BYTE *picptr, *startptr, *tmpptr;
 
-	if (testsize < 16) return FALSE;
+	if (testsize < 16)
+		return FALSE;
 
 	/*
 	    Try to traverse the graphics subroutines.
@@ -878,8 +927,7 @@ L9BOOL intinitialise(const char *filename, char *picname) {
 			picturesize = 0;
 		}
 	} else {
-		if (!findsubs(startdata, FileSize, &picturedata, &picturesize)
-		        && !findsubs(startfile, startdata - startfile, &picturedata, &picturesize)) {
+		if (!findsubs(startdata, FileSize, &picturedata, &picturesize) && !findsubs(startfile, startdata - startfile, &picturedata, &picturesize)) {
 			picturedata = nullptr;
 			picturesize = 0;
 		}
@@ -894,7 +942,8 @@ L9BOOL intinitialise(const char *filename, char *picname) {
 
 static byte calcChecksum(byte *ptr, uint32 num) {
 	byte d1 = 0;
-	while (num-- != 0) d1 += *ptr++;
+	while (num-- != 0)
+		d1 += *ptr++;
 	return d1;
 }
 
@@ -912,7 +961,8 @@ L9UINT16 getcon() {
 	if (code & 64) {
 		/* getconsmall */
 		return *codeptr++;
-	} else return movewa5d0();
+	} else
+		return movewa5d0();
 }
 
 L9BYTE *getaddr() {
@@ -1216,12 +1266,16 @@ void calldriver() {
 
 	if (d0 == 0x16 || d0 == 0x17) {
 		int d1 = *a6;
-		if (d1 > 0xfa) *a6 = 1;
-		else if (d1 + 1 >= RAMSAVESLOTS) *a6 = 0xff;
+		if (d1 > 0xfa)
+			*a6 = 1;
+		else if (d1 + 1 >= RAMSAVESLOTS)
+			*a6 = 0xff;
 		else {
 			*a6 = 0;
-			if (d0 == 0x16) ramsave(d1 + 1);
-			else ramload(d1 + 1);
+			if (d0 == 0x16)
+				ramsave(d1 + 1);
+			else
+				ramload(d1 + 1);
 		}
 		*list9startptr = *a6;
 	} else if (d0 == 0x0b) {
@@ -1237,7 +1291,8 @@ void calldriver() {
 			os_set_filenumber(NewName, MAX_PATH, *a6);
 		}
 		LoadGame2(NewName, nullptr);
-	} else driver(d0, a6);
+	} else
+		driver(d0, a6);
 }
 
 void L9Random() {
@@ -1268,11 +1323,14 @@ void save() {
 	strcpy(workspace.filename, LastGame);
 
 	checksum = 0;
-	for (i = 0; i < (int)sizeof(GameState); i++) checksum += ((L9BYTE *) &workspace)[i];
+	for (i = 0; i < (int)sizeof(GameState); i++)
+		checksum += ((L9BYTE *)&workspace)[i];
 	workspace.checksum = checksum;
 
-	if (os_save_file((L9BYTE *) &workspace, sizeof(workspace))) printstring("\rGame saved.\r");
-	else printstring("\rUnable to save game.\r");
+	if (os_save_file((L9BYTE *)&workspace, sizeof(workspace)))
+		printstring("\rGame saved.\r");
+	else
+		printstring("\rUnable to save game.\r");
 }
 
 L9BOOL CheckFile(GameState *gs) {
@@ -1280,12 +1338,14 @@ L9BOOL CheckFile(GameState *gs) {
 	int i;
 	char c = 'Y';
 
-	if (gs->Id != L9_ID) return FALSE;
+	if (gs->Id != L9_ID)
+		return FALSE;
 	checksum = gs->checksum;
 	gs->checksum = 0;
 	for (i = 0; i < (int)sizeof(GameState); i++)
-		checksum -= *((L9BYTE *) gs + i);
-	if (checksum) return FALSE;
+		checksum -= *((L9BYTE *)gs + i);
+	if (checksum)
+		return FALSE;
 	if (scumm_stricmp(gs->filename, LastGame)) {
 		printstring("\rWarning: game path name does not match, you may be about to load this position file into the wrong story file.\r");
 		printstring("Are you sure you want to restore? (Y/N)");
@@ -1312,7 +1372,7 @@ void NormalRestore() {
 		error("\rWord is: %s\r", ibuff);
 	}
 
-	if (os_load_file((L9BYTE *) &temp, &Bytes, sizeof(GameState))) {
+	if (os_load_file((L9BYTE *)&temp, &Bytes, sizeof(GameState))) {
 		if (Bytes == V1FILESIZE) {
 			printstring("\rGame restored.\r");
 			memset(workspace.listarea, 0, LISTAREASIZE);
@@ -1324,13 +1384,14 @@ void NormalRestore() {
 		} else {
 			printstring("\rSorry, unrecognised format. Unable to restore\r");
 		}
-	} else printstring("\rUnable to restore game.\r");
+	} else
+		printstring("\rUnable to restore game.\r");
 }
 
 void restore() {
 	int Bytes;
 	GameState temp;
-	if (os_load_file((L9BYTE *) &temp, &Bytes, sizeof(GameState))) {
+	if (os_load_file((L9BYTE *)&temp, &Bytes, sizeof(GameState))) {
 		if (Bytes == V1FILESIZE) {
 			printstring("\rGame restored.\r");
 			/* only copy in workspace */
@@ -1344,7 +1405,8 @@ void restore() {
 		} else {
 			printstring("\rSorry, unrecognised format. Unable to restore\r");
 		}
-	} else printstring("\rUnable to restore game.\r");
+	} else
+		printstring("\rUnable to restore game.\r");
 }
 
 void playback() {
@@ -1458,8 +1520,9 @@ void function() {
 		workspace.stackptr = 0;
 		break;
 	case 250:
-		printstring((char *) codeptr);
-		while (*codeptr++);
+		printstring((char *)codeptr);
+		while (*codeptr++)
+			;
 		break;
 
 	default:
@@ -1473,7 +1536,8 @@ void findmsgequiv(int d7) {
 
 	do {
 		d4++;
-		if (a2 > endmd) return;
+		if (a2 > endmd)
+			return;
 		d0 = *a2;
 		if (d0 & 0x80) {
 			a2++;
@@ -1482,7 +1546,8 @@ void findmsgequiv(int d7) {
 			int d6 = getmdlength(&a2);
 			do {
 				int d1;
-				if (d6 == 0) break;
+				if (d6 == 0)
+					break;
 
 				d1 = *a2++;
 				d6--;
@@ -1498,7 +1563,8 @@ void findmsgequiv(int d7) {
 							list9ptr[1] = d0;
 							list9ptr[0] = d0 >> 8;
 							list9ptr += 2;
-							if (list9ptr >= list9startptr + 0x20) return;
+							if (list9ptr >= list9startptr + 0x20)
+								return;
 						}
 					}
 				}
@@ -1513,14 +1579,16 @@ void findmsgequiv(int d7) {
 L9BOOL unpackword() {
 	L9BYTE *a3;
 
-	if (unpackd3 == 0x1b) return TRUE;
+	if (unpackd3 == 0x1b)
+		return TRUE;
 
-	a3 = (L9BYTE *) threechars + (unpackd3 & 3);
+	a3 = (L9BYTE *)threechars + (unpackd3 & 3);
 
 	/*uw01 */
 	while (TRUE) {
 		L9BYTE d0 = getdictionarycode();
-		if (dictptr >= endwdp5) return TRUE;
+		if (dictptr >= endwdp5)
+			return TRUE;
 		if (d0 >= 0x1b) {
 			*a3 = 0;
 			unpackd3 = d0;
@@ -1539,11 +1607,16 @@ L9BOOL initunpack(L9BYTE *ptr) {
 int partword(char c) {
 	c = tolower(c);
 
-	if (c == 0x27 || c == 0x2d) return 0;
-	if (c < 0x30) return 1;
-	if (c < 0x3a) return 0;
-	if (c < 0x61) return 1;
-	if (c < 0x7b) return 0;
+	if (c == 0x27 || c == 0x2d)
+		return 0;
+	if (c < 0x30)
+		return 1;
+	if (c < 0x3a)
+		return 0;
+	if (c < 0x61)
+		return 1;
+	if (c < 0x7b)
+		return 0;
 	return 1;
 }
 
@@ -1602,18 +1675,21 @@ L9BOOL GetWordV3(char *buff, int Word) {
 
 	while (Word--) {
 		if (unpackword()) {
-			if (++subdict == dictdatalen) return FALSE;
+			if (++subdict == dictdatalen)
+				return FALSE;
 			initunpack(startdata + L9WORD(dictdata + (subdict << 2)));
 			Word++; /* force unpack again */
 		}
 	}
 	strcpy(buff, threechars);
-	for (i = 0; i < (int)strlen(buff); i++) buff[i] &= 0x7f;
+	for (i = 0; i < (int)strlen(buff); i++)
+		buff[i] &= 0x7f;
 	return TRUE;
 }
 
 L9BOOL CheckHash() {
-	if (scumm_stricmp(ibuff, "#cheat") == 0) StartCheat();
+	if (scumm_stricmp(ibuff, "#cheat") == 0)
+		StartCheat();
 	else if (scumm_stricmp(ibuff, "#save") == 0) {
 		save();
 		return TRUE;
@@ -1629,7 +1705,8 @@ L9BOOL CheckHash() {
 		printstring("\r");
 		while ((g_vm->_detection._gameType <= L9_V2) ? GetWordV2(ibuff, CheatWord++) : GetWordV3(ibuff, CheatWord++)) {
 			error("%s ", ibuff);
-			if (os_stoplist() || !Running) break;
+			if (os_stoplist() || !Running)
+				break;
 		}
 		printstring("\r");
 		return TRUE;
@@ -1675,7 +1752,8 @@ L9BOOL corruptinginput() {
 	list9ptr = list9startptr;
 
 	if (ibuffptr == nullptr) {
-		if (Cheating) NextCheat();
+		if (Cheating)
+			NextCheat();
 		else {
 			/* flush */
 			os_flush();
@@ -1697,10 +1775,10 @@ L9BOOL corruptinginput() {
 			/* force CR but prevent others */
 			os_printchar(lastactualchar = '\r');
 		}
-		ibuffptr = (L9BYTE *) ibuff;
+		ibuffptr = (L9BYTE *)ibuff;
 	}
 
-	a2 = (L9BYTE *) obuff;
+	a2 = (L9BYTE *)obuff;
 	a6 = ibuffptr;
 
 	/*ip05 */
@@ -1711,7 +1789,8 @@ L9BOOL corruptinginput() {
 			L9SETWORD(list9ptr, 0);
 			return TRUE;
 		}
-		if (partword((char)d0) == 0) break;
+		if (partword((char)d0) == 0)
+			break;
 		if (d0 != 0x20) {
 			ibuffptr = a6;
 			L9SETWORD(list9ptr, 0);
@@ -1727,10 +1806,11 @@ L9BOOL corruptinginput() {
 	/*ip06loop */
 	do {
 		d0 = *a6++;
-		if (partword((char)d0) == 1) break;
+		if (partword((char)d0) == 1)
+			break;
 		d0 = tolower(d0);
 		*a2++ = d0;
-	} while (a2 < (L9BYTE *) obuff + 0x1f);
+	} while (a2 < (L9BYTE *)obuff + 0x1f);
 	/*ip06a */
 	*a2 = 0x20;
 	a6--;
@@ -1751,7 +1831,8 @@ L9BOOL corruptinginput() {
 		if (d0 < 0x1a) {
 			d1 = d0 << 2;
 			d0 = obuff[1];
-			if (d0 != 0x20) d1 += ((d0 - 0x61) >> 3) & 3;
+			if (d0 != 0x20)
+				d1 += ((d0 - 0x61) >> 3) & 3;
 		}
 		/*ip13 */
 		if (d1 >= d2) {
@@ -1771,13 +1852,15 @@ L9BOOL corruptinginput() {
 		d1++;
 		if (unpackword()) {
 			/* ip21b */
-			if (abrevword == -1) break; /* goto ip22 */
-			else d0 = abrevword; /* goto ip18b */
+			if (abrevword == -1)
+				break; /* goto ip22 */
+			else
+				d0 = abrevword; /* goto ip18b */
 		} else {
-			L9BYTE *a1 = (L9BYTE *) threechars;
+			L9BYTE *a1 = (L9BYTE *)threechars;
 			int d6 = -1;
 
-			a0 = (L9BYTE *) obuff;
+			a0 = (L9BYTE *)obuff;
 			/*ip15 */
 			do {
 				d6++;
@@ -1787,11 +1870,16 @@ L9BOOL corruptinginput() {
 
 			if (d2 != 0x20) {
 				/* ip17 */
-				if (abrevword == -1) continue;
-				else d0 = -1;
-			} else if (d0 == 0) d0 = d1;
-			else if (abrevword != -1) break;
-			else if (d6 >= 4) d0 = d1;
+				if (abrevword == -1)
+					continue;
+				else
+					d0 = -1;
+			} else if (d0 == 0)
+				d0 = d1;
+			else if (abrevword != -1)
+				break;
+			else if (d6 >= 4)
+				d0 = d1;
 			else {
 				abrevword = d1;
 				continue;
@@ -1839,12 +1927,14 @@ L9BOOL GetWordV2(char *buff, int Word) {
 		do {
 			x = *ptr++;
 		} while (x > 0 && x < 0x7f);
-		if (x == 0) return FALSE; /* no more words */
+		if (x == 0)
+			return FALSE; /* no more words */
 		ptr++;
 	}
 	do {
 		x = *ptr++;
-		if (!IsDictionaryChar(x & 0x7f)) return FALSE;
+		if (!IsDictionaryChar(x & 0x7f))
+			return FALSE;
 		*buff++ = x & 0x7f;
 	} while (x > 0 && x < 0x7f);
 	*buff = 0;
@@ -1856,7 +1946,8 @@ L9BOOL inputV2(int *wordcount) {
 	L9BYTE *ibuffp, *obuffptr, *ptr, *list0ptr;
 	char *iptr;
 
-	if (Cheating) NextCheat();
+	if (Cheating)
+		NextCheat();
 	else {
 		os_flush();
 		lastchar = lastactualchar = '.';
@@ -1878,24 +1969,27 @@ L9BOOL inputV2(int *wordcount) {
 		os_printchar(lastactualchar = '\r');
 	}
 	/* add space onto end */
-	ibuffp = (L9BYTE *) strchr(ibuff, 0);
+	ibuffp = (L9BYTE *)strchr(ibuff, 0);
 	*ibuffp++ = 32;
 	*ibuffp = 0;
 
 	*wordcount = 0;
-	ibuffp = (L9BYTE *) ibuff;
-	obuffptr = (L9BYTE *) obuff;
+	ibuffp = (L9BYTE *)ibuff;
+	obuffptr = (L9BYTE *)obuff;
 	/* ibuffp=76,77 */
 	/* obuffptr=84,85 */
 	/* list0ptr=7c,7d */
 	list0ptr = dictdata;
 
-	while (*ibuffp == 32) ++ibuffp;
+	while (*ibuffp == 32)
+		++ibuffp;
 
 	ptr = ibuffp;
 	do {
-		while (*ptr == 32) ++ptr;
-		if (*ptr == 0) break;
+		while (*ptr == 32)
+			++ptr;
+		if (*ptr == 0)
+			break;
 		(*wordcount)++;
 		do {
 			a = *++ptr;
@@ -1904,22 +1998,26 @@ L9BOOL inputV2(int *wordcount) {
 
 	while (TRUE) {
 		ptr = ibuffp; /* 7a,7b */
-		while (*ibuffp == 32) ++ibuffp;
+		while (*ibuffp == 32)
+			++ibuffp;
 
 		while (TRUE) {
 			a = *ibuffp;
 			x = *list0ptr++;
 
-			if (a == 32) break;
+			if (a == 32)
+				break;
 			if (a == 0) {
 				*obuffptr++ = 0;
 				return TRUE;
 			}
 
 			++ibuffp;
-			if (!IsDictionaryChar(x & 0x7f)) x = 0;
+			if (!IsDictionaryChar(x & 0x7f))
+				x = 0;
 			if (tolower(x & 0x7f) != tolower(a)) {
-				while (x > 0 && x < 0x7f) x = *list0ptr++;
+				while (x > 0 && x < 0x7f)
+					x = *list0ptr++;
 				if (x == 0) {
 					do {
 						a = *ibuffp++;
@@ -1928,14 +2026,16 @@ L9BOOL inputV2(int *wordcount) {
 							return TRUE;
 						}
 					} while (a != 32);
-					while (*ibuffp == 32) ++ibuffp;
+					while (*ibuffp == 32)
+						++ibuffp;
 					list0ptr = dictdata;
 					ptr = ibuffp;
 				} else {
 					list0ptr++;
 					ibuffp = ptr;
 				}
-			} else if (x >= 0x7f) break;
+			} else if (x >= 0x7f)
+				break;
 		}
 
 		a = *ibuffp;
@@ -1945,9 +2045,11 @@ L9BOOL inputV2(int *wordcount) {
 			continue;
 		}
 		--list0ptr;
-		while (*list0ptr++ < 0x7e);
+		while (*list0ptr++ < 0x7e)
+			;
 		*obuffptr++ = *list0ptr;
-		while (*ibuffp == 32) ++ibuffp;
+		while (*ibuffp == 32)
+			++ibuffp;
 		list0ptr = dictdata;
 	}
 }
@@ -1966,14 +2068,15 @@ void input() {
 	if (g_vm->_detection._gameType <= L9_V2) {
 		int wordcount;
 		if (inputV2(&wordcount)) {
-			L9BYTE *obuffptr = (L9BYTE *) obuff;
+			L9BYTE *obuffptr = (L9BYTE *)obuff;
 			codeptr++;
 			*getvar() = *obuffptr++;
 			*getvar() = *obuffptr++;
 			*getvar() = *obuffptr;
 			*getvar() = wordcount;
 		}
-	} else if (corruptinginput()) codeptr += 5;
+	} else if (corruptinginput())
+		codeptr += 5;
 }
 
 void varcon() {
@@ -2053,18 +2156,21 @@ notfn4:
 
 	do {
 		*d4 = *a0++;
-		if (((*d4) & 0x10) == 0 || ((*d4) & 0xf) != d6) a0++;
-		else if (*a0++ == d7) return;
+		if (((*d4) & 0x10) == 0 || ((*d4) & 0xf) != d6)
+			a0++;
+		else if (*a0++ == d7)
+			return;
 		/* exit6noinc */
-		if ((*d4) & 0x80)(*d5p)++;
+		if ((*d4) & 0x80)
+			(*d5p)++;
 	} while (*d4);
 	*d5p = 0;
 }
 
 void Exit() {
 	L9BYTE d4, d5v;
-	L9BYTE d7 = (L9BYTE) * getvar();
-	L9BYTE d6 = (L9BYTE) * getvar();
+	L9BYTE d7 = (L9BYTE)*getvar();
+	L9BYTE d6 = (L9BYTE)*getvar();
 #ifdef CODEFOLLOW
 	fprintf(f, " d7=%d d6=%d", d7, d6);
 #endif
@@ -2082,7 +2188,8 @@ void ifeqvt() {
 	L9UINT16 d0 = *getvar();
 	L9UINT16 d1 = *getvar();
 	L9BYTE *a0 = getaddr();
-	if (d0 == d1) codeptr = a0;
+	if (d0 == d1)
+		codeptr = a0;
 
 #ifdef CODEFOLLOW
 	fprintf(f, " if Var[%d]=Var[%d] goto %d (%s)", cfvar2 - workspace.vartable, cfvar - workspace.vartable, (L9UINT32)(a0 - acodeptr), d0 == d1 ? "Yes" : "No");
@@ -2093,7 +2200,8 @@ void ifnevt() {
 	L9UINT16 d0 = *getvar();
 	L9UINT16 d1 = *getvar();
 	L9BYTE *a0 = getaddr();
-	if (d0 != d1) codeptr = a0;
+	if (d0 != d1)
+		codeptr = a0;
 
 #ifdef CODEFOLLOW
 	fprintf(f, " if Var[%d]!=Var[%d] goto %d (%s)", cfvar2 - workspace.vartable, cfvar - workspace.vartable, (L9UINT32)(a0 - acodeptr), d0 != d1 ? "Yes" : "No");
@@ -2104,7 +2212,8 @@ void ifltvt() {
 	L9UINT16 d0 = *getvar();
 	L9UINT16 d1 = *getvar();
 	L9BYTE *a0 = getaddr();
-	if (d0 < d1) codeptr = a0;
+	if (d0 < d1)
+		codeptr = a0;
 
 #ifdef CODEFOLLOW
 	fprintf(f, " if Var[%d]<Var[%d] goto %d (%s)", cfvar2 - workspace.vartable, cfvar - workspace.vartable, (L9UINT32)(a0 - acodeptr), d0 < d1 ? "Yes" : "No");
@@ -2115,7 +2224,8 @@ void ifgtvt() {
 	L9UINT16 d0 = *getvar();
 	L9UINT16 d1 = *getvar();
 	L9BYTE *a0 = getaddr();
-	if (d0 > d1) codeptr = a0;
+	if (d0 > d1)
+		codeptr = a0;
 
 #ifdef CODEFOLLOW
 	fprintf(f, " if Var[%d]>Var[%d] goto %d (%s)", cfvar2 - workspace.vartable, cfvar - workspace.vartable, (L9UINT32)(a0 - acodeptr), d0 > d1 ? "Yes" : "No");
@@ -2139,17 +2249,15 @@ void detect_gfx_mode() {
 			gfx_mode = GFX_V3A;
 		else if (strstr(FirstLine, "secret diary of adrian mole") != 0)
 			gfx_mode = GFX_V3A;
-		else if ((strstr(FirstLine, "worm in paradise") != 0)
-		         && (strstr(FirstLine, "silicon dreams") == 0))
+		else if ((strstr(FirstLine, "worm in paradise") != 0) && (strstr(FirstLine, "silicon dreams") == 0))
 			gfx_mode = GFX_V3A;
 		else if (strstr(FirstLine, "growing pains of adrian mole") != 0)
 			gfx_mode = GFX_V3B;
 		else if (strstr(FirstLine, "jewels of darkness") != 0 && picturesize < 11000)
 			gfx_mode = GFX_V3B;
 		else if (strstr(FirstLine, "silicon dreams") != 0) {
-			if (picturesize > 11000
-			        || (startdata[0] == 0x14 && startdata[1] == 0x7d)  /* Return to Eden /SD (PC) */
-			        || (startdata[0] == 0xd7 && startdata[1] == 0x7c)) /* Worm in Paradise /SD (PC) */
+			if (picturesize > 11000 || (startdata[0] == 0x14 && startdata[1] == 0x7d) /* Return to Eden /SD (PC) */
+			    || (startdata[0] == 0xd7 && startdata[1] == 0x7c))                    /* Worm in Paradise /SD (PC) */
 				gfx_mode = GFX_V3C;
 			else
 				gfx_mode = GFX_V3B;
@@ -2416,7 +2524,7 @@ void icolour(int d7) {
 }
 
 void size(int d7) {
-	static int sizetable[7] = { 0x02, 0x04, 0x06, 0x07, 0x09, 0x0c, 0x10 };
+	static int sizetable[7] = {0x02, 0x04, 0x06, 0x07, 0x09, 0x0c, 0x10};
 
 	d7 &= 7;
 	if (d7) {
@@ -2440,7 +2548,7 @@ void gintfill(int d7) {
 		d7 = gintcolour;
 	else
 		d7 &= 3;
-	/* fillb */
+		/* fillb */
 
 #ifdef L9DEBUG
 	printf("gfx - gintfill (%d,%d) colours %d,%d", drawx, drawy, d7 & 3, option & 3);
@@ -2599,7 +2707,8 @@ void absrunsub(int d0) {
 	L9BYTE *a5;
 	if (!findsub(d0, &a5))
 		return;
-	while (getinstruction(&a5));
+	while (getinstruction(&a5))
+		;
 }
 
 void show_picture(int pic) {
@@ -2670,7 +2779,8 @@ void initgetobj() {
 	int i;
 	numobjectfound = 0;
 	object = 0;
-	for (i = 0; i < 32; i++) gnoscratch[i] = 0;
+	for (i = 0; i < 32; i++)
+		gnoscratch[i] = 0;
 }
 
 void getnextobject() {
@@ -2697,7 +2807,8 @@ void getnextobject() {
 			break;
 		}
 
-		if (numobjectfound == 0) inithisearchpos = d3;
+		if (numobjectfound == 0)
+			inithisearchpos = d3;
 
 		/* gnonext */
 		do {
@@ -2705,7 +2816,8 @@ void getnextobject() {
 				/* gnomaybefound */
 				int d6 = list3ptr[object] & 0x1f;
 				if (d6 != d3) {
-					if (d6 == 0 || d3 == 0) continue;
+					if (d6 == 0 || d3 == 0)
+						continue;
 					if (d3 != 0x1f) {
 						gnoscratch[d6] = d6;
 						continue;
@@ -2742,10 +2854,12 @@ void getnextobject() {
 		if (gnosp != 128) {
 			d3 = gnostack[gnosp++];
 			d4 = gnostack[gnosp++];
-		} else d3 = d4 = 0;
+		} else
+			d3 = d4 = 0;
 
 		numobjectfound = 0;
-		if (d3 == 0x1f) searchdepth++;
+		if (d3 == 0x1f)
+			searchdepth++;
 
 		initgetobj();
 	} while (d4);
@@ -2763,7 +2877,8 @@ void ifeqct() {
 	L9UINT16 d0 = *getvar();
 	L9UINT16 d1 = getcon();
 	L9BYTE *a0 = getaddr();
-	if (d0 == d1) codeptr = a0;
+	if (d0 == d1)
+		codeptr = a0;
 #ifdef CODEFOLLOW
 	fprintf(f, " if Var[%d]=%d goto %d (%s)", cfvar - workspace.vartable, d1, (L9UINT32)(a0 - acodeptr), d0 == d1 ? "Yes" : "No");
 #endif
@@ -2773,7 +2888,8 @@ void ifnect() {
 	L9UINT16 d0 = *getvar();
 	L9UINT16 d1 = getcon();
 	L9BYTE *a0 = getaddr();
-	if (d0 != d1) codeptr = a0;
+	if (d0 != d1)
+		codeptr = a0;
 #ifdef CODEFOLLOW
 	fprintf(f, " if Var[%d]!=%d goto %d (%s)", cfvar - workspace.vartable, d1, (L9UINT32)(a0 - acodeptr), d0 != d1 ? "Yes" : "No");
 #endif
@@ -2783,7 +2899,8 @@ void ifltct() {
 	L9UINT16 d0 = *getvar();
 	L9UINT16 d1 = getcon();
 	L9BYTE *a0 = getaddr();
-	if (d0 < d1) codeptr = a0;
+	if (d0 < d1)
+		codeptr = a0;
 #ifdef CODEFOLLOW
 	fprintf(f, " if Var[%d]<%d goto %d (%s)", cfvar - workspace.vartable, d1, (L9UINT32)(a0 - acodeptr), d0 < d1 ? "Yes" : "No");
 #endif
@@ -2793,16 +2910,18 @@ void ifgtct() {
 	L9UINT16 d0 = *getvar();
 	L9UINT16 d1 = getcon();
 	L9BYTE *a0 = getaddr();
-	if (d0 > d1) codeptr = a0;
+	if (d0 > d1)
+		codeptr = a0;
 #ifdef CODEFOLLOW
 	fprintf(f, " if Var[%d]>%d goto %d (%s)", cfvar - workspace.vartable, d1, (L9UINT32)(a0 - acodeptr), d0 > d1 ? "Yes" : "No");
 #endif
 }
 
 void printinput() {
-	L9BYTE *ptr = (L9BYTE *) obuff;
+	L9BYTE *ptr = (L9BYTE *)obuff;
 	char c;
-	while ((c = *ptr++) != ' ') printchar(c);
+	while ((c = *ptr++) != ' ')
+		printchar(c);
 
 #ifdef L9DEBUG
 	printf("printinput");
@@ -2845,9 +2964,11 @@ void listhandler() {
 		fprintf(f, " list %d [%d]=Var[%d] (=%d)", code & 0x1f, offset, var - workspace.vartable, val);
 #endif
 
-		if (a4 >= MinAccess && a4 < MaxAccess) *a4 = (L9BYTE) val;
+		if (a4 >= MinAccess && a4 < MaxAccess)
+			*a4 = (L9BYTE)val;
 #ifdef L9DEBUG
-		else printf("Out of range list access");
+		else
+			printf("Out of range list access");
 #endif
 	} else if (code >= 0xc0) {
 		/* listv1c */
@@ -2859,10 +2980,12 @@ void listhandler() {
 		a4 += offset;
 		var = getvar();
 		fprintf(f, " Var[%d]= list %d [%d])", var - workspace.vartable, code & 0x1f, offset);
-		if (a4 >= MinAccess && a4 < MaxAccess) fprintf(f, " (=%d)", *a4);
+		if (a4 >= MinAccess && a4 < MaxAccess)
+			fprintf(f, " (=%d)", *a4);
 #endif
 
-		if (a4 >= MinAccess && a4 < MaxAccess) *var = *a4;
+		if (a4 >= MinAccess && a4 < MaxAccess)
+			*var = *a4;
 		else {
 			*var = 0;
 #ifdef L9DEBUG
@@ -2880,10 +3003,12 @@ void listhandler() {
 		var = getvar();
 
 		fprintf(f, " Var[%d] =list %d [%d]", var - workspace.vartable, code & 0x1f, offset);
-		if (a4 >= MinAccess && a4 < MaxAccess) fprintf(f, " (=%d)", *a4);
+		if (a4 >= MinAccess && a4 < MaxAccess)
+			fprintf(f, " (=%d)", *a4);
 #endif
 
-		if (a4 >= MinAccess && a4 < MaxAccess) *var = *a4;
+		if (a4 >= MinAccess && a4 < MaxAccess)
+			*var = *a4;
 		else {
 			*var = 0;
 #ifdef L9DEBUG
@@ -2902,9 +3027,11 @@ void listhandler() {
 		fprintf(f, " list %d [%d]=Var[%d] (=%d)", code & 0x1f, offset, var - workspace.vartable, val);
 #endif
 
-		if (a4 >= MinAccess && a4 < MaxAccess) *a4 = (L9BYTE) val;
+		if (a4 >= MinAccess && a4 < MaxAccess)
+			*a4 = (L9BYTE)val;
 #ifdef L9DEBUG
-		else printf("Out of range list access");
+		else
+			printf("Out of range list access");
 #endif
 	}
 }
@@ -3037,7 +3164,8 @@ L9BOOL LoadGame2(const char *filename, char *picname) {
 	ibuffptr = nullptr;
 
 	/* intstart */
-	if (!intinitialise(filename, picname)) return FALSE;
+	if (!intinitialise(filename, picname))
+		return FALSE;
 	/*  if (!checksumgamedata()) return FALSE; */
 
 	codeptr = acodeptr;
@@ -3055,7 +3183,7 @@ L9BOOL LoadGame(const char *filename, char *picname) {
 	clearworkspace();
 	workspace.stackptr = 0;
 	/* need to clear listarea as well */
-	memset((L9BYTE *) workspace.listarea, 0, LISTAREASIZE);
+	memset((L9BYTE *)workspace.listarea, 0, LISTAREASIZE);
 	return ret;
 }
 

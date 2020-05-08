@@ -43,6 +43,7 @@ private:
 	 * Called for a princess being saved
 	 */
 	void princessSaved();
+
 public:
 	DECLARE_WIDGET(UrbanPlayer)
 

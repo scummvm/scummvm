@@ -23,9 +23,9 @@
 #ifndef GLK_STREAMS_H
 #define GLK_STREAMS_H
 
-#include "common/scummsys.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "glk/glk_types.h"
 
@@ -110,8 +110,7 @@ struct FileReference {
 };
 
 typedef FileReference *frefid_t;
-typedef Common::Array< Common::SharedPtr<FileReference> > FileRefArray;
-
+typedef Common::Array<Common::SharedPtr<FileReference>> FileRefArray;
 
 /**
  * Base class for streams
@@ -127,6 +126,7 @@ public:
 	uint _readCount;
 	uint _writeCount;
 	bool _readable, _writable;
+
 public:
 	/**
 	 * Constructor
@@ -289,12 +289,12 @@ typedef Stream *strid_t;
 class WindowStream : public Stream {
 private:
 	Window *_window;
+
 public:
 	/**
 	 * Constructor
 	 */
-	WindowStream(Streams *streams, Window *window, uint rock = 0, bool unicode = true) :
-		Stream(streams, false, true, rock, unicode), _window(window) {}
+	WindowStream(Streams *streams, Window *window, uint rock = 0, bool unicode = true) : Stream(streams, false, true, rock, unicode), _window(window) {}
 
 	/**
 	 * Destructor
@@ -359,12 +359,13 @@ public:
  */
 class MemoryStream : public Stream {
 private:
-	void *_buf;     ///< unsigned char* for latin1, uint* for unicode
+	void *_buf; ///< unsigned char* for latin1, uint* for unicode
 	void *_bufPtr;
 	void *_bufEnd;
 	void *_bufEof;
 	size_t _bufLen; ///< # of bytes for latin1, # of 4-byte words for unicode
 	gidispatch_rock_t _arrayRock;
+
 public:
 	/**
 	 * Constructor
@@ -438,7 +439,7 @@ class IOStream : public Stream {
 private:
 	Common::SeekableReadStream *_inStream;
 	Common::WriteStream *_outStream;
-	uint _lastOp;                 ///< 0, filemode_Write, or filemode_Read
+	uint _lastOp; ///< 0, filemode_Write, or filemode_Read
 private:
 	/**
 	 * Ensure the stream is ready for the given operation
@@ -454,21 +455,20 @@ private:
 	 * Get a UTF8 character
 	 */
 	int getCharUtf8();
+
 protected:
 	bool _textFile;
+
 public:
 	/**
 	 * Constructor
 	 */
-	IOStream(Streams *streams, bool readable, bool writable, uint rock, bool unicode) :
-		Stream(streams, readable, writable, rock, unicode) {}
+	IOStream(Streams *streams, bool readable, bool writable, uint rock, bool unicode) : Stream(streams, readable, writable, rock, unicode) {}
 	IOStream(Streams *streams, uint rock = 0) : Stream(streams, false, false, rock, false),
-		_inStream(nullptr), _outStream(nullptr), _lastOp(0), _textFile(false) {}
-	IOStream(Streams *streams, Common::SeekableReadStream *inStream, uint rock = 0) :
-		Stream(streams, true, false, rock, false), _inStream(inStream), _outStream(nullptr), _lastOp(0), _textFile(false) {}
-	IOStream(Streams *streams, Common::WriteStream *outStream, uint rock = 0) :
-		Stream(streams, false, true, rock, false), _inStream(nullptr), _outStream(outStream), _lastOp(0), _textFile(false) {}
-	 
+	                                            _inStream(nullptr), _outStream(nullptr), _lastOp(0), _textFile(false) {}
+	IOStream(Streams *streams, Common::SeekableReadStream *inStream, uint rock = 0) : Stream(streams, true, false, rock, false), _inStream(inStream), _outStream(nullptr), _lastOp(0), _textFile(false) {}
+	IOStream(Streams *streams, Common::WriteStream *outStream, uint rock = 0) : Stream(streams, false, true, rock, false), _inStream(nullptr), _outStream(outStream), _lastOp(0), _textFile(false) {}
+
 	/**
 	 * Sets the stream to use
 	 */
@@ -562,6 +562,7 @@ private:
 	Common::File _file;
 	Common::InSaveFile *_inSave;
 	Common::OutSaveFile *_outSave;
+
 public:
 	/**
 	 * Constructor
@@ -579,10 +580,12 @@ public:
  */
 class Streams {
 	friend class Stream;
+
 private:
 	Stream *_streamList;
 	Stream *_currentStream;
 	FileRefArray _fileReferences;
+
 private:
 	/**
 	 * Adds a created stream to the list
@@ -593,6 +596,7 @@ private:
 	 * Remove a stream
 	 */
 	void removeStream(Stream *stream);
+
 public:
 	/**
 	 * Constructor

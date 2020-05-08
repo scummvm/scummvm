@@ -43,17 +43,12 @@ void AIScriptGeneralDoll::Initialize() {
 }
 
 bool AIScriptGeneralDoll::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 2
-	 && Actor_Query_Goal_Number(kActorGeneralDoll) <= 101
-	 && Player_Query_Current_Scene() == kSceneBB05
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 2 && Actor_Query_Goal_Number(kActorGeneralDoll) <= 101 && Player_Query_Current_Scene() == kSceneBB05) {
 		Actor_Set_Goal_Number(kActorGeneralDoll, 101);
 		return true;
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 3
-	 && Actor_Query_Goal_Number(kActorGeneralDoll) < 200
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorGeneralDoll) < 200) {
 		return true;
 	}
 
@@ -153,9 +148,7 @@ void AIScriptGeneralDoll::ShotAtAndMissed() {
 bool AIScriptGeneralDoll::ShotAtAndHit() {
 	AI_Movement_Track_Flush(kActorGeneralDoll);
 	Global_Variable_Increment(kVariableGeneralDollShot, 1);
-	if (!Game_Flag_Query(kFlagGeneralDollShot)
-	 &&  Global_Variable_Query(kVariableGeneralDollShot) == 1
-	) {
+	if (!Game_Flag_Query(kFlagGeneralDollShot) && Global_Variable_Query(kVariableGeneralDollShot) == 1) {
 		Sound_Play(kSfxSERVOD1, 100, 0, 0, 50);
 		Game_Flag_Set(kFlagGeneralDollShot);
 		Actor_Set_Goal_Number(kActorGeneralDoll, 104);
@@ -376,17 +369,17 @@ bool AIScriptGeneralDoll::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptGeneralDoll::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptGeneralDoll::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptGeneralDoll::ReachedMovementTrackWaypoint(int waypointId) {

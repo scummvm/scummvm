@@ -66,16 +66,14 @@
  * for Mobile Lua (http://luaos.net/pages/mobile-lua.php)
  */
 
-
 #include "lua_persistence_util.h"
 
 #include "common/scummsys.h"
 
-#include "lobject.h"
-#include "lstate.h"
 #include "lgc.h"
+#include "lobject.h"
 #include "lopcodes.h"
-
+#include "lstate.h"
 
 namespace Lua {
 

@@ -61,128 +61,127 @@
 namespace StarTrek {
 
 extern const RoomAction veng2ActionList[] = {
-	{ {ACTION_TICK,          1, 0, 0}, &Room::veng2Tick1 },
-	{ {ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::veng2Timer0Expired },
-	{ {ACTION_TICK,         40, 0, 0}, &Room::veng2Timer0Expired },
-	{ {ACTION_DONE_ANIM,     5, 0, 0}, &Room::veng2ElasiShipDecloaked },
-	{ {ACTION_TIMER_EXPIRED, 2, 0, 0}, &Room::veng2Timer2Expired },
-	{ {ACTION_TOUCHED_WARP,  1, 0, 0}, &Room::veng2TouchedDoor },
+    {{ACTION_TICK, 1, 0, 0}, &Room::veng2Tick1},
+    {{ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::veng2Timer0Expired},
+    {{ACTION_TICK, 40, 0, 0}, &Room::veng2Timer0Expired},
+    {{ACTION_DONE_ANIM, 5, 0, 0}, &Room::veng2ElasiShipDecloaked},
+    {{ACTION_TIMER_EXPIRED, 2, 0, 0}, &Room::veng2Timer2Expired},
+    {{ACTION_TOUCHED_WARP, 1, 0, 0}, &Room::veng2TouchedDoor},
 
-	{ {ACTION_LOOK, OBJECT_VIEWSCREEN,         0, 0}, &Room::veng2LookAtViewscreen },
-	{ {ACTION_LOOK, HOTSPOT_VIEWSCREEN,        0, 0}, &Room::veng2LookAtViewscreen },
-	{ {ACTION_LOOK, OBJECT_MIDDLE_CONSOLE,     0, 0}, &Room::veng2LookAtMiddleConsole },
-	{ {ACTION_LOOK, HOTSPOT_MIDDLE_CONSOLE,    0, 0}, &Room::veng2LookAtMiddleConsole },
-	{ {ACTION_LOOK, OBJECT_DAMAGE_DISPLAY_1,   0, 0}, &Room::veng2LookAtDamageDisplay },
-	{ {ACTION_LOOK, OBJECT_DAMAGE_DISPLAY_2,   0, 0}, &Room::veng2LookAtDamageDisplay },
-	{ {ACTION_LOOK, HOTSPOT_DAMAGE_DISPLAY,    0, 0}, &Room::veng2LookAtDamageDisplay },
-	{ {ACTION_LOOK, OBJECT_STRICORDER,         0, 0}, &Room::veng2LookAtSTricorder },
-	{ {ACTION_LOOK, OBJECT_MTRICORDER,         0, 0}, &Room::veng2LookAtMTricorder },
-	{ {ACTION_LOOK, OBJECT_TORPEDO_BUTTON,     0, 0}, &Room::veng2LookAtTorpedoButton },
-	{ {ACTION_LOOK, HOTSPOT_TORPEDO_BUTTON,    0, 0}, &Room::veng2LookAtTorpedoButton },
-	{ {ACTION_LOOK, HOTSPOT_TORPEDO_CONTROL,   0, 0}, &Room::veng2LookAtTorpedoControl },
-	{ {ACTION_LOOK, OBJECT_IMPULSE_CONSOLE,    0, 0}, &Room::veng2LookAtImpulseConsole },
-	{ {ACTION_LOOK, HOTSPOT_IMPULSE_CONSOLE,   0, 0}, &Room::veng2LookAtImpulseConsole },
-	{ {ACTION_LOOK, OBJECT_MAIN_COMPUTER,      0, 0}, &Room::veng2LookAtMainComputer },
-	{ {ACTION_LOOK, HOTSPOT_MAIN_COMPUTER,     0, 0}, &Room::veng2LookAtMainComputer },
-	{ {ACTION_LOOK, OBJECT_DECK,               0, 0}, &Room::veng2LookAtRecordDeck },
-	{ {ACTION_LOOK, OBJECT_DECK_IO_CONSOLE,    0, 0}, &Room::veng2LookAtDeckIOConsole },
-	{ {ACTION_LOOK, HOTSPOT_DECK_IO_CONSOLE,   0, 0}, &Room::veng2LookAtDeckIOConsole },
-	{ {ACTION_LOOK, HOTSPOT_DECK_IO_SLOT,      0, 0}, &Room::veng2LookAtDeckIOConsole },
-	{ {ACTION_LOOK, OBJECT_KIRK,               0, 0}, &Room::veng2LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,              0, 0}, &Room::veng2LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,              0, 0}, &Room::veng2LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,           0, 0}, &Room::veng2LookAtRedshirt },
-	{ {ACTION_LOOK, 0xff,                      0, 0}, &Room::veng2LookAnywhere },
-	{ {ACTION_TALK, OBJECT_KIRK,               0, 0}, &Room::veng2TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK,              0, 0}, &Room::veng2TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,              0, 0}, &Room::veng2TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT,           0, 0}, &Room::veng2TalkToRedshirt },
+    {{ACTION_LOOK, OBJECT_VIEWSCREEN, 0, 0}, &Room::veng2LookAtViewscreen},
+    {{ACTION_LOOK, HOTSPOT_VIEWSCREEN, 0, 0}, &Room::veng2LookAtViewscreen},
+    {{ACTION_LOOK, OBJECT_MIDDLE_CONSOLE, 0, 0}, &Room::veng2LookAtMiddleConsole},
+    {{ACTION_LOOK, HOTSPOT_MIDDLE_CONSOLE, 0, 0}, &Room::veng2LookAtMiddleConsole},
+    {{ACTION_LOOK, OBJECT_DAMAGE_DISPLAY_1, 0, 0}, &Room::veng2LookAtDamageDisplay},
+    {{ACTION_LOOK, OBJECT_DAMAGE_DISPLAY_2, 0, 0}, &Room::veng2LookAtDamageDisplay},
+    {{ACTION_LOOK, HOTSPOT_DAMAGE_DISPLAY, 0, 0}, &Room::veng2LookAtDamageDisplay},
+    {{ACTION_LOOK, OBJECT_STRICORDER, 0, 0}, &Room::veng2LookAtSTricorder},
+    {{ACTION_LOOK, OBJECT_MTRICORDER, 0, 0}, &Room::veng2LookAtMTricorder},
+    {{ACTION_LOOK, OBJECT_TORPEDO_BUTTON, 0, 0}, &Room::veng2LookAtTorpedoButton},
+    {{ACTION_LOOK, HOTSPOT_TORPEDO_BUTTON, 0, 0}, &Room::veng2LookAtTorpedoButton},
+    {{ACTION_LOOK, HOTSPOT_TORPEDO_CONTROL, 0, 0}, &Room::veng2LookAtTorpedoControl},
+    {{ACTION_LOOK, OBJECT_IMPULSE_CONSOLE, 0, 0}, &Room::veng2LookAtImpulseConsole},
+    {{ACTION_LOOK, HOTSPOT_IMPULSE_CONSOLE, 0, 0}, &Room::veng2LookAtImpulseConsole},
+    {{ACTION_LOOK, OBJECT_MAIN_COMPUTER, 0, 0}, &Room::veng2LookAtMainComputer},
+    {{ACTION_LOOK, HOTSPOT_MAIN_COMPUTER, 0, 0}, &Room::veng2LookAtMainComputer},
+    {{ACTION_LOOK, OBJECT_DECK, 0, 0}, &Room::veng2LookAtRecordDeck},
+    {{ACTION_LOOK, OBJECT_DECK_IO_CONSOLE, 0, 0}, &Room::veng2LookAtDeckIOConsole},
+    {{ACTION_LOOK, HOTSPOT_DECK_IO_CONSOLE, 0, 0}, &Room::veng2LookAtDeckIOConsole},
+    {{ACTION_LOOK, HOTSPOT_DECK_IO_SLOT, 0, 0}, &Room::veng2LookAtDeckIOConsole},
+    {{ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::veng2LookAtKirk},
+    {{ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::veng2LookAtSpock},
+    {{ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::veng2LookAtMccoy},
+    {{ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::veng2LookAtRedshirt},
+    {{ACTION_LOOK, 0xff, 0, 0}, &Room::veng2LookAnywhere},
+    {{ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::veng2TalkToKirk},
+    {{ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::veng2TalkToSpock},
+    {{ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::veng2TalkToMccoy},
+    {{ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::veng2TalkToRedshirt},
 
-	{ {ACTION_USE, OBJECT_ITECH, OBJECT_DECK_IO_CONSOLE,   0}, &Room::veng2UseTechJournalOnDeckIOConsole },
-	{ {ACTION_USE, OBJECT_ITECH, HOTSPOT_DECK_IO_CONSOLE,  0}, &Room::veng2UseTechJournalOnDeckIOConsole },
-	{ {ACTION_USE, OBJECT_ITECH, HOTSPOT_DECK_IO_SLOT,     0}, &Room::veng2UseTechJournalOnDeckIOConsole },
-	{ {ACTION_DONE_WALK, 22,                            0, 0}, &Room::veng2ReachedDeckIOWithTechJournal },
-	{ {ACTION_DONE_ANIM, 23,                            0, 0}, &Room::veng2DoneReadingTechJournal },
-	{ {ACTION_USE, OBJECT_IDECK, OBJECT_DECK_IO_CONSOLE,   0}, &Room::veng2UseLogOnDeckIOConsole },
-	{ {ACTION_USE, OBJECT_IDECK, HOTSPOT_DECK_IO_CONSOLE,  0}, &Room::veng2UseLogOnDeckIOConsole },
-	{ {ACTION_USE, OBJECT_IDECK, HOTSPOT_DECK_IO_SLOT,     0}, &Room::veng2UseLogOnDeckIOConsole },
-	{ {ACTION_DONE_WALK, 24,                            0, 0}, &Room::veng2ReachedDeckIOWithLog },
-	{ {ACTION_DONE_ANIM, 25,                            0, 0}, &Room::veng2LoadedLog },
-	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK,              0}, &Room::veng2UseCommunicator },
+    {{ACTION_USE, OBJECT_ITECH, OBJECT_DECK_IO_CONSOLE, 0}, &Room::veng2UseTechJournalOnDeckIOConsole},
+    {{ACTION_USE, OBJECT_ITECH, HOTSPOT_DECK_IO_CONSOLE, 0}, &Room::veng2UseTechJournalOnDeckIOConsole},
+    {{ACTION_USE, OBJECT_ITECH, HOTSPOT_DECK_IO_SLOT, 0}, &Room::veng2UseTechJournalOnDeckIOConsole},
+    {{ACTION_DONE_WALK, 22, 0, 0}, &Room::veng2ReachedDeckIOWithTechJournal},
+    {{ACTION_DONE_ANIM, 23, 0, 0}, &Room::veng2DoneReadingTechJournal},
+    {{ACTION_USE, OBJECT_IDECK, OBJECT_DECK_IO_CONSOLE, 0}, &Room::veng2UseLogOnDeckIOConsole},
+    {{ACTION_USE, OBJECT_IDECK, HOTSPOT_DECK_IO_CONSOLE, 0}, &Room::veng2UseLogOnDeckIOConsole},
+    {{ACTION_USE, OBJECT_IDECK, HOTSPOT_DECK_IO_SLOT, 0}, &Room::veng2UseLogOnDeckIOConsole},
+    {{ACTION_DONE_WALK, 24, 0, 0}, &Room::veng2ReachedDeckIOWithLog},
+    {{ACTION_DONE_ANIM, 25, 0, 0}, &Room::veng2LoadedLog},
+    {{ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::veng2UseCommunicator},
 
-	{ {ACTION_USE, OBJECT_KIRK, OBJECT_TORPEDO_BUTTON,     0}, &Room::veng2UseKirkOnTorpedoButton },
-	{ {ACTION_USE, OBJECT_KIRK, HOTSPOT_TORPEDO_BUTTON,    0}, &Room::veng2UseKirkOnTorpedoButton },
-	{ {ACTION_DONE_WALK, 18,                            0, 0}, &Room::veng2UseKirkReachedTorpedoButton },
-	{ {ACTION_DONE_ANIM, 19,                            0, 0}, &Room::veng2KirkFiredTorpedo },
-	{ {ACTION_DONE_ANIM, 7,                             0, 0}, &Room::veng2TorpedoStruckElasiShip },
-	{ {ACTION_DONE_ANIM, 6,                             0, 0}, &Room::veng2ElasiRetreated },
-	{ {ACTION_DONE_WALK, 1,                             0, 0}, &Room::veng2CrewmanInPositionToBeamOut },
-	{ {ACTION_DONE_WALK, 2,                             0, 0}, &Room::veng2CrewmanInPositionToBeamOut },
-	{ {ACTION_DONE_WALK, 3,                             0, 0}, &Room::veng2CrewmanInPositionToBeamOut },
-	{ {ACTION_DONE_WALK, 4,                             0, 0}, &Room::veng2CrewmanInPositionToBeamOut },
+    {{ACTION_USE, OBJECT_KIRK, OBJECT_TORPEDO_BUTTON, 0}, &Room::veng2UseKirkOnTorpedoButton},
+    {{ACTION_USE, OBJECT_KIRK, HOTSPOT_TORPEDO_BUTTON, 0}, &Room::veng2UseKirkOnTorpedoButton},
+    {{ACTION_DONE_WALK, 18, 0, 0}, &Room::veng2UseKirkReachedTorpedoButton},
+    {{ACTION_DONE_ANIM, 19, 0, 0}, &Room::veng2KirkFiredTorpedo},
+    {{ACTION_DONE_ANIM, 7, 0, 0}, &Room::veng2TorpedoStruckElasiShip},
+    {{ACTION_DONE_ANIM, 6, 0, 0}, &Room::veng2ElasiRetreated},
+    {{ACTION_DONE_WALK, 1, 0, 0}, &Room::veng2CrewmanInPositionToBeamOut},
+    {{ACTION_DONE_WALK, 2, 0, 0}, &Room::veng2CrewmanInPositionToBeamOut},
+    {{ACTION_DONE_WALK, 3, 0, 0}, &Room::veng2CrewmanInPositionToBeamOut},
+    {{ACTION_DONE_WALK, 4, 0, 0}, &Room::veng2CrewmanInPositionToBeamOut},
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_TORPEDO_BUTTON,   0}, &Room::veng2UseSTricorderOnTorpedoButton }, // FIXME: hotspots?
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_MIDDLE_CONSOLE,   0}, &Room::veng2UseSTricorderOnMiddleConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_MIDDLE_CONSOLE,  0}, &Room::veng2UseSTricorderOnMiddleConsole },
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_TORPEDO_BUTTON, 0}, &Room::veng2UseSTricorderOnTorpedoButton}, // FIXME: hotspots?
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_MIDDLE_CONSOLE, 0}, &Room::veng2UseSTricorderOnMiddleConsole},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_MIDDLE_CONSOLE, 0}, &Room::veng2UseSTricorderOnMiddleConsole},
 
-	{ {ACTION_USE, OBJECT_KIRK,     HOTSPOT_TORPEDO_CONTROL, 0}, &Room::veng2UseSTricorderOnTorpedoControl },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_TORPEDO_CONTROL, 0}, &Room::veng2UseSTricorderOnTorpedoControl },
-	{ {ACTION_USE, OBJECT_SPOCK,    HOTSPOT_TORPEDO_CONTROL, 0}, &Room::veng2UseSTricorderOnTorpedoControl },
+    {{ACTION_USE, OBJECT_KIRK, HOTSPOT_TORPEDO_CONTROL, 0}, &Room::veng2UseSTricorderOnTorpedoControl},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_TORPEDO_CONTROL, 0}, &Room::veng2UseSTricorderOnTorpedoControl},
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_TORPEDO_CONTROL, 0}, &Room::veng2UseSTricorderOnTorpedoControl},
 
-	{ {ACTION_USE, OBJECT_KIRK,     OBJECT_IMPULSE_CONSOLE,  0}, &Room::veng2UseImpulseConsole },
-	{ {ACTION_USE, OBJECT_SPOCK,    OBJECT_IMPULSE_CONSOLE,  0}, &Room::veng2UseImpulseConsole },
-	{ {ACTION_USE, OBJECT_KIRK,     HOTSPOT_IMPULSE_CONSOLE, 0}, &Room::veng2UseImpulseConsole },
-	{ {ACTION_USE, OBJECT_SPOCK,    HOTSPOT_IMPULSE_CONSOLE, 0}, &Room::veng2UseImpulseConsole },
-	{ {ACTION_DONE_WALK, 20,                              0, 0}, &Room::veng2SpockReachedImpulseConsole },
-	{ {ACTION_DONE_ANIM, 21,                              0, 0}, &Room::veng2SpockUsedImpulseConsole },
+    {{ACTION_USE, OBJECT_KIRK, OBJECT_IMPULSE_CONSOLE, 0}, &Room::veng2UseImpulseConsole},
+    {{ACTION_USE, OBJECT_SPOCK, OBJECT_IMPULSE_CONSOLE, 0}, &Room::veng2UseImpulseConsole},
+    {{ACTION_USE, OBJECT_KIRK, HOTSPOT_IMPULSE_CONSOLE, 0}, &Room::veng2UseImpulseConsole},
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_IMPULSE_CONSOLE, 0}, &Room::veng2UseImpulseConsole},
+    {{ACTION_DONE_WALK, 20, 0, 0}, &Room::veng2SpockReachedImpulseConsole},
+    {{ACTION_DONE_ANIM, 21, 0, 0}, &Room::veng2SpockUsedImpulseConsole},
 
-	{ {ACTION_USE, OBJECT_KIRK,     OBJECT_MAIN_COMPUTER,  0}, &Room::veng2UseMainComputer },
-	{ {ACTION_USE, OBJECT_SPOCK,    OBJECT_MAIN_COMPUTER,  0}, &Room::veng2UseMainComputer },
-	{ {ACTION_USE, OBJECT_KIRK,     HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseMainComputer },
-	{ {ACTION_USE, OBJECT_SPOCK,    HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseMainComputer },
+    {{ACTION_USE, OBJECT_KIRK, OBJECT_MAIN_COMPUTER, 0}, &Room::veng2UseMainComputer},
+    {{ACTION_USE, OBJECT_SPOCK, OBJECT_MAIN_COMPUTER, 0}, &Room::veng2UseMainComputer},
+    {{ACTION_USE, OBJECT_KIRK, HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseMainComputer},
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseMainComputer},
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_MAIN_COMPUTER,  0}, &Room::veng2UseSTricorderOnMainComputer },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseSTricorderOnMainComputer },
-	{ {ACTION_DONE_WALK, 10,                            0, 0}, &Room::veng2SpockReachedMainComputerToPutTricorder },
-	{ {ACTION_DONE_ANIM, 11,                            0, 0}, &Room::veng2AttachedSTricorderToComputer },
-	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MAIN_COMPUTER,  0}, &Room::veng2UseMTricorderOnMainComputer },
-	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseMTricorderOnMainComputer },
-	{ {ACTION_DONE_WALK, 12,                            0, 0}, &Room::veng2MccoyReachedMainComputerToPutTricorder },
-	{ {ACTION_DONE_ANIM, 13,                            0, 0}, &Room::veng2AttachedMTricorderToComputer },
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_MAIN_COMPUTER, 0}, &Room::veng2UseSTricorderOnMainComputer},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseSTricorderOnMainComputer},
+    {{ACTION_DONE_WALK, 10, 0, 0}, &Room::veng2SpockReachedMainComputerToPutTricorder},
+    {{ACTION_DONE_ANIM, 11, 0, 0}, &Room::veng2AttachedSTricorderToComputer},
+    {{ACTION_USE, OBJECT_IMTRICOR, OBJECT_MAIN_COMPUTER, 0}, &Room::veng2UseMTricorderOnMainComputer},
+    {{ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseMTricorderOnMainComputer},
+    {{ACTION_DONE_WALK, 12, 0, 0}, &Room::veng2MccoyReachedMainComputerToPutTricorder},
+    {{ACTION_DONE_ANIM, 13, 0, 0}, &Room::veng2AttachedMTricorderToComputer},
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_DECK_IO_CONSOLE, 0}, &Room::veng2UseSTricorderOnDeckIOConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DECK_IO_SLOT,   0}, &Room::veng2UseSTricorderOnDeckIOConsole },
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_DECK_IO_CONSOLE, 0}, &Room::veng2UseSTricorderOnDeckIOConsole},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DECK_IO_SLOT, 0}, &Room::veng2UseSTricorderOnDeckIOConsole},
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_IMPULSE_CONSOLE,  0}, &Room::veng2UseSTricorderOnImpulseConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_IMPULSE_CONSOLE, 0}, &Room::veng2UseSTricorderOnImpulseConsole },
-	{ {ACTION_USE, OBJECT_IFUSION, HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseFusionPackOnMainComputer },
-	{ {ACTION_USE, OBJECT_IFUSION, OBJECT_MAIN_COMPUTER,  0}, &Room::veng2UseFusionPackOnMainComputer },
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_IMPULSE_CONSOLE, 0}, &Room::veng2UseSTricorderOnImpulseConsole},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_IMPULSE_CONSOLE, 0}, &Room::veng2UseSTricorderOnImpulseConsole},
+    {{ACTION_USE, OBJECT_IFUSION, HOTSPOT_MAIN_COMPUTER, 0}, &Room::veng2UseFusionPackOnMainComputer},
+    {{ACTION_USE, OBJECT_IFUSION, OBJECT_MAIN_COMPUTER, 0}, &Room::veng2UseFusionPackOnMainComputer},
 
-	{ {ACTION_GET, OBJECT_DECK, 0, 0}, &Room::veng2GetLogDeck },
-	{ {ACTION_DONE_WALK, 8,     0, 0}, &Room::veng2ReachedLogDeck },
-	{ {ACTION_DONE_ANIM, 9,     0, 0}, &Room::veng2PickedUpLogDeck },
+    {{ACTION_GET, OBJECT_DECK, 0, 0}, &Room::veng2GetLogDeck},
+    {{ACTION_DONE_WALK, 8, 0, 0}, &Room::veng2ReachedLogDeck},
+    {{ACTION_DONE_ANIM, 9, 0, 0}, &Room::veng2PickedUpLogDeck},
 
-	{ {ACTION_GET, OBJECT_STRICORDER, 0, 0}, &Room::veng2GetSTricorder },
-	{ {ACTION_DONE_WALK, 14,          0, 0}, &Room::veng2ReachedSTricorderToGet },
-	{ {ACTION_DONE_ANIM, 15,          0, 0}, &Room::veng2PickedUpSTricorder },
-	{ {ACTION_GET, OBJECT_MTRICORDER, 0, 0}, &Room::veng2GetMTricorder },
-	{ {ACTION_DONE_WALK, 16,          0, 0}, &Room::veng2ReachedMTricorderToGet },
-	{ {ACTION_DONE_ANIM, 17,          0, 0}, &Room::veng2PickedUpMTricorder },
+    {{ACTION_GET, OBJECT_STRICORDER, 0, 0}, &Room::veng2GetSTricorder},
+    {{ACTION_DONE_WALK, 14, 0, 0}, &Room::veng2ReachedSTricorderToGet},
+    {{ACTION_DONE_ANIM, 15, 0, 0}, &Room::veng2PickedUpSTricorder},
+    {{ACTION_GET, OBJECT_MTRICORDER, 0, 0}, &Room::veng2GetMTricorder},
+    {{ACTION_DONE_WALK, 16, 0, 0}, &Room::veng2ReachedMTricorderToGet},
+    {{ACTION_DONE_ANIM, 17, 0, 0}, &Room::veng2PickedUpMTricorder},
 
-	// Common code
-	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
+    // Common code
+    {{ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick},
+    {{ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::vengaUsePhaserAnywhere},
+    {{ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::vengaUsePhaserAnywhere},
+    {{ACTION_LOOK, OBJECT_IHYPO, 0, 0}, &Room::vengaLookAtHypo},
 
-	// ENHANCEMENTs
-	{ {ACTION_USE, OBJECT_KIRK, HOTSPOT_TORPEDO_CONTROL,     0}, &Room::veng2UseKirkOnTorpedoButton },
-	// TODO: uncomment
-//	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DECK_IO_CONSOLE, 0}, &Room::veng2UseSTricorderOnDeckIOConsole },
+    // ENHANCEMENTs
+    {{ACTION_USE, OBJECT_KIRK, HOTSPOT_TORPEDO_CONTROL, 0}, &Room::veng2UseKirkOnTorpedoButton},
+    // TODO: uncomment
+    //	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DECK_IO_CONSOLE, 0}, &Room::veng2UseSTricorderOnDeckIOConsole },
 };
 
 extern const int veng2NumActions = ARRAYSIZE(veng2ActionList);
-
 
 #define STRICORDER_POS_X 0x45
 #define STRICORDER_POS_Y 0x71
@@ -201,7 +200,6 @@ extern const int veng2NumActions = ARRAYSIZE(veng2ActionList);
 
 #define TORPEDO_BUTTON_X 0x97
 #define TORPEDO_BUTTON_Y 0x74
-
 
 void Room::veng2Tick1() {
 	if (!_awayMission->veng.tookRecordDeckFromAuxilaryControl)
@@ -256,8 +254,8 @@ void Room::veng2Timer0Expired() { // Elasi decloak if they haven't already
 void Room::veng2ElasiShipDecloaked() {
 	_awayMission->disableInput = false;
 
-	showText(TX_SPEAKER_KIJE,  93, true);
-	showText(TX_SPEAKER_KIRK,  19, true);
+	showText(TX_SPEAKER_KIJE, 93, true);
+	showText(TX_SPEAKER_KIRK, 19, true);
 	showText(TX_SPEAKER_SPOCK, 76, true);
 	showText(TX_SPEAKER_MCCOY, 42, true);
 	if (_awayMission->veng.poweredSystem != 2) {
@@ -273,37 +271,36 @@ void Room::veng2Timer2Expired() { // Elasi hail the Enterprise if they haven't a
 	_awayMission->veng.elasiHailedRepublic = true;
 
 	showText(TX_SPEAKER_SPOCK, 73, true);
-	showText(TX_SPEAKER_KIRK,  16, true);
+	showText(TX_SPEAKER_KIRK, 16, true);
 	loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2p1", VIEWSCREEN_X, VIEWSCREEN_Y);
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 109, true);
-	showText(TX_SPEAKER_KIRK,          27, true);
+	showText(TX_SPEAKER_KIRK, 27, true);
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 113, true);
-	showText(TX_SPEAKER_KIRK,          10, true);
+	showText(TX_SPEAKER_KIRK, 10, true);
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 103, true);
-	showText(TX_SPEAKER_KIRK,          06, true);
+	showText(TX_SPEAKER_KIRK, 06, true);
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 111, true);
-	showText(TX_SPEAKER_KIRK,          20, true);
+	showText(TX_SPEAKER_KIRK, 20, true);
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 112, true);
 
 	const TextRef choices[] = {
-		TX_SPEAKER_KIRK,
-		12, 11,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    12, 11,
+	    TX_BLANK};
 
 	int choice = showMultipleTexts(choices, true);
 
 	if (choice == 0) {
 		showText(TX_SPEAKER_ELASI_CAPTAIN, 99, true);
-		showText(TX_SPEAKER_KIRK,           8, true);
+		showText(TX_SPEAKER_KIRK, 8, true);
 	}
 
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 105, true);
-	showText(TX_SPEAKER_KIRK,          21, true);
+	showText(TX_SPEAKER_KIRK, 21, true);
 	showText(TX_SPEAKER_ELASI_CAPTAIN, 102, true);
-	showText(TX_SPEAKER_SPOCK,         72, true);
-	showText(TX_SPEAKER_MCCOY,         44, true);
-	showText(TX_SPEAKER_KIRK,          22, true);
+	showText(TX_SPEAKER_SPOCK, 72, true);
+	showText(TX_SPEAKER_MCCOY, 44, true);
+	showText(TX_SPEAKER_KIRK, 22, true);
 
 	loadActorAnim2(OBJECT_VIEWSCREEN, "s7r2u2", VIEWSCREEN_X, VIEWSCREEN_Y);
 	_awayMission->veng.counterUntilElasiAttack = 27000;
@@ -319,7 +316,7 @@ void Room::veng2LookAtViewscreen() {
 	if (!_awayMission->veng.elasiShipDecloaked)
 		showDescription(22, true);
 	else
-		showDescription( 2, true);
+		showDescription(2, true);
 }
 
 void Room::veng2LookAtMiddleConsole() {
@@ -387,7 +384,7 @@ void Room::veng2LookAtImpulseConsole() {
 
 void Room::veng2LookAtMainComputer() {
 	if (_awayMission->veng.tricordersPluggedIntoComputer == 0)
-		showDescription( 3, true);
+		showDescription(3, true);
 	else if (_awayMission->veng.tricordersPluggedIntoComputer == 1) // Med tricorder plugged in
 		showDescription(23, true);
 	else if (_awayMission->veng.tricordersPluggedIntoComputer == 2) // Sci tricorder plugged in
@@ -417,7 +414,7 @@ void Room::veng2LookAtMccoy() {
 }
 
 void Room::veng2LookAtRedshirt() {
-	showDescription( 4, true);
+	showDescription(4, true);
 }
 
 void Room::veng2LookAnywhere() {
@@ -434,7 +431,7 @@ void Room::veng2TalkToKirk() {
 void Room::veng2TalkToSpock() {
 	if (_awayMission->veng.countdownStarted) {
 		showText(TX_SPEAKER_SPOCK, 75, true);
-		showText(TX_SPEAKER_KIRK,   9, true);
+		showText(TX_SPEAKER_KIRK, 9, true);
 	} else
 		showText(TX_SPEAKER_SPOCK, TX_VEN4_017);
 }
@@ -442,14 +439,14 @@ void Room::veng2TalkToSpock() {
 void Room::veng2TalkToMccoy() {
 	if (_awayMission->veng.countdownStarted) {
 		showText(TX_SPEAKER_MCCOY, 41, true);
-		showText(TX_SPEAKER_KIRK,   7, true);
+		showText(TX_SPEAKER_KIRK, 7, true);
 	} else
 		showText(TX_SPEAKER_MCCOY, 39, true);
 }
 
 void Room::veng2TalkToRedshirt() {
 	if (_awayMission->veng.countdownStarted) {
-		showText(TX_SPEAKER_KIJE,  94, true);
+		showText(TX_SPEAKER_KIJE, 94, true);
 		showText(TX_SPEAKER_SPOCK, 78, true);
 	} else
 		showText(TX_SPEAKER_KIJE, 86, true);
@@ -472,7 +469,7 @@ void Room::veng2DoneReadingTechJournal() {
 	_awayMission->disableInput = false;
 	showText(TX_SPEAKER_SPOCK, 70, true);
 	showText(TX_SPEAKER_MCCOY, 43, true);
-	showText(TX_SPEAKER_KIRK,  17, true);
+	showText(TX_SPEAKER_KIRK, 17, true);
 	showText(TX_SPEAKER_SPOCK, 81, true);
 	_awayMission->veng.readEngineeringJournal = true;
 }
@@ -510,10 +507,9 @@ void Room::veng2UseCommunicator() {
 		showText(TX_SPEAKER_ELASI_CAPTAIN, 98, true);
 	else if (_awayMission->veng.countdownStarted) {
 		const TextRef choices[] = {
-			TX_SPEAKER_KIRK,
-			TX_VEN2_HAIL_ELASI, TX_VEN2_HAIL_ENT, TX_VEN2_CANCEL,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    TX_VEN2_HAIL_ELASI, TX_VEN2_HAIL_ENT, TX_VEN2_CANCEL,
+		    TX_BLANK};
 		int choice = showMultipleTexts(choices);
 
 		if (choice == 0) { // Hail Elasi
@@ -524,10 +520,9 @@ void Room::veng2UseCommunicator() {
 				showText(TX_SPEAKER_ELASI_CAPTAIN, 108, true);
 
 				const TextRef choices2[] = {
-					TX_SPEAKER_KIRK,
-					15, 29,
-					TX_BLANK
-				};
+				    TX_SPEAKER_KIRK,
+				    15, 29,
+				    TX_BLANK};
 				choice = showMultipleTexts(choices2, true);
 
 				if (choice == 0) { // "We don't have it yet"
@@ -546,9 +541,9 @@ void Room::veng2UseCommunicator() {
 	} else if (_awayMission->veng.elasiShipDecloaked) {
 		showText(TX_SPEAKER_SPOCK, 66, true);
 	} else {
-		showText(TX_SPEAKER_KIRK,  TX_MUD4_018);
+		showText(TX_SPEAKER_KIRK, TX_MUD4_018);
 		showText(TX_SPEAKER_UHURA, TX_VEN2U093);
-		showText(TX_SPEAKER_KIRK,  28, true);
+		showText(TX_SPEAKER_KIRK, 28, true);
 	}
 }
 
@@ -559,7 +554,7 @@ void Room::veng2UseKirkOnTorpedoButton() {
 		showText(TX_SPEAKER_SPOCK, 58, true);
 	else if (!_awayMission->veng.elasiShieldsDown)
 		showText(TX_SPEAKER_SPOCK, 54, true); // Probably unused; weapons can't be powered while elasi shields are up?
-	else { // Fire on the defenseless Elasi
+	else {                                    // Fire on the defenseless Elasi
 		_awayMission->disableInput = true;
 		walkCrewmanC(OBJECT_KIRK, 0x90, 0x95, &Room::veng2UseKirkReachedTorpedoButton);
 		_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_N;
@@ -587,17 +582,17 @@ void Room::veng2TorpedoStruckElasiShip() {
 }
 
 void Room::veng2ElasiRetreated() {
-	showText(TX_SPEAKER_UHURA,  94, true);
-	showText(TX_SPEAKER_KIRK,   26, true);
+	showText(TX_SPEAKER_UHURA, 94, true);
+	showText(TX_SPEAKER_KIRK, 26, true);
 	showText(TX_SPEAKER_CHEKOV, 115, true);
-	showText(TX_SPEAKER_KIRK,   13, true);
-	showText(TX_SPEAKER_SCOTT,  9 + SCOTTY_MESSAGE_OFFSET, true);
+	showText(TX_SPEAKER_KIRK, 13, true);
+	showText(TX_SPEAKER_SCOTT, 9 + SCOTTY_MESSAGE_OFFSET, true);
 	_awayMission->veng.firedTorpedo = true;
 
-	walkCrewmanC(OBJECT_KIRK,     0xec,  0x9d, &Room::veng2CrewmanInPositionToBeamOut);
-	walkCrewmanC(OBJECT_SPOCK,    0xd5,  0x96, &Room::veng2CrewmanInPositionToBeamOut);
-	walkCrewmanC(OBJECT_MCCOY,    0x101, 0x95, &Room::veng2CrewmanInPositionToBeamOut);
-	walkCrewmanC(OBJECT_REDSHIRT, 0xec,  0x8c, &Room::veng2CrewmanInPositionToBeamOut);
+	walkCrewmanC(OBJECT_KIRK, 0xec, 0x9d, &Room::veng2CrewmanInPositionToBeamOut);
+	walkCrewmanC(OBJECT_SPOCK, 0xd5, 0x96, &Room::veng2CrewmanInPositionToBeamOut);
+	walkCrewmanC(OBJECT_MCCOY, 0x101, 0x95, &Room::veng2CrewmanInPositionToBeamOut);
+	walkCrewmanC(OBJECT_REDSHIRT, 0xec, 0x8c, &Room::veng2CrewmanInPositionToBeamOut);
 }
 
 void Room::veng2CrewmanInPositionToBeamOut() {
@@ -659,10 +654,10 @@ void Room::veng2UseSTricorderOnTorpedoControl() {
 
 void Room::veng2UseImpulseConsole() {
 	if (!_awayMission->veng.impulseEnginesOn) {
-		showText(TX_SPEAKER_KIRK,   3, true);
+		showText(TX_SPEAKER_KIRK, 3, true);
 		showText(TX_SPEAKER_SPOCK, 63, true);
 	} else if (_awayMission->veng.tricordersPluggedIntoComputer != 3) {
-		showText(TX_SPEAKER_KIRK,   3, true);
+		showText(TX_SPEAKER_KIRK, 3, true);
 		showText(TX_SPEAKER_SPOCK, 57, true);
 	} else {
 		_awayMission->disableInput = true;
@@ -680,15 +675,14 @@ void Room::veng2SpockUsedImpulseConsole() {
 
 	// Choose where to transfer power
 	const TextRef choices[] = {
-		TX_NULL,
-		TX_VEN2_WEA, TX_VEN2_SHI, TX_VEN2_TRA,
-		TX_BLANK
-	};
+	    TX_NULL,
+	    TX_VEN2_WEA, TX_VEN2_SHI, TX_VEN2_TRA,
+	    TX_BLANK};
 	int choice = showMultipleTexts(choices);
 
 	if (choice == 0) { // Weapons
 		if (_awayMission->veng.toldElasiToBeamOver) {
-powerWeapons:
+		powerWeapons:
 			if (_awayMission->veng.poweredSystem == 2) {
 				playVoc("LD6BMOFF");
 				loadActorAnim2(OBJECT_DAMAGE_DISPLAY_1, "s7r2sh3", DAMAGE_DISPLAY_1_X, DAMAGE_DISPLAY_1_Y);
@@ -710,7 +704,7 @@ powerWeapons:
 			showText(TX_SPEAKER_KIJE, 91, true);
 		else
 			goto powerWeapons;
-	} else if (choice == 1) { // Shields
+	} else if (choice == 1) {                      // Shields
 		if (_awayMission->veng.poweredSystem == 2) // Shields already powered
 			showText(TX_SPEAKER_KIJE, 89, true);
 		else if (_awayMission->veng.toldElasiToBeamOver)
@@ -726,11 +720,11 @@ powerWeapons:
 		if (_awayMission->veng.countdownStarted) {
 			showText(TX_SPEAKER_SPOCK, 34, true);
 			if (_awayMission->veng.havePowerPack) {
-				showText(TX_SPEAKER_KIRK,  18, true);
+				showText(TX_SPEAKER_KIRK, 18, true);
 				showText(TX_SPEAKER_SPOCK, 77, true);
 			}
 		} else if (_awayMission->veng.poweredSystem == 3) // Transporter already powered
-			showText(TX_SPEAKER_KIJE, 90, true); // BUGFIX: audio didn't play properly
+			showText(TX_SPEAKER_KIJE, 90, true);          // BUGFIX: audio didn't play properly
 		else {
 			if (_awayMission->veng.poweredSystem == 2) {
 				playVoc("LD6BMOFF"); // ENHANCEMENT: make this consistent with the weapons code
@@ -744,18 +738,17 @@ powerWeapons:
 			}
 		}
 	}
-
 }
 
 void Room::veng2UseMainComputer() {
 	showText(TX_SPEAKER_KIRK, 02, true);
 	if (_awayMission->veng.tricordersPluggedIntoComputer != 3) {
 		spockScan(DIR_W, 79, true);
-		showText(TX_SPEAKER_KIRK,  24, true);
+		showText(TX_SPEAKER_KIRK, 24, true);
 		showText(TX_SPEAKER_SPOCK, 80, true);
 		showText(TX_SPEAKER_MCCOY, 45, true);
 		showText(TX_SPEAKER_SPOCK, 74, true);
-		showText(TX_SPEAKER_KIJE,  96, true);
+		showText(TX_SPEAKER_KIJE, 96, true);
 		_awayMission->veng.scannedMainComputer = true;
 	} else
 		showText(TX_SPEAKER_SPOCK, 59, true);
@@ -912,4 +905,4 @@ void Room::veng2PickedUpMTricorder() {
 	showDescription(13, true);
 }
 
-}
+} // namespace StarTrek

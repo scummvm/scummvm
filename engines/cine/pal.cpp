@@ -20,9 +20,9 @@
  *
  */
 
+#include "cine/pal.h"
 #include "cine/cine.h"
 #include "cine/various.h"
-#include "cine/pal.h"
 #include "common/system.h" // For g_system->getPaletteManager()->setPalette
 #include "common/textconsole.h"
 
@@ -79,7 +79,6 @@ int16 findPaletteFromName(const char *fileName) {
 	}
 
 	return -1;
-
 }
 
 void loadRelatedPalette(const char *fileName) {
@@ -119,7 +118,7 @@ bool isBigEndian(const EndianType endian) {
 #elif defined(SCUMM_LITTLE_ENDIAN)
 	return false;
 #else
-	#error No endianness defined
+#error No endianness defined
 #endif
 }
 
@@ -237,18 +236,18 @@ Palette &Palette::saturatedAddColor(Palette &output, byte firstIndex, byte lastI
 
 Palette &Palette::saturatedAddColor(Palette &output, byte firstIndex, byte lastIndex, signed rSource, signed gSource, signed bSource, const Graphics::PixelFormat &sourceFormat) const {
 	// Convert the source color to the internal color format ensuring that no divide by zero will happen
-	const signed r = ((signed) _format.rMax()) * rSource / MAX<int>(sourceFormat.rMax(), 1);
-	const signed g = ((signed) _format.gMax()) * gSource / MAX<int>(sourceFormat.gMax(), 1);
-	const signed b = ((signed) _format.bMax()) * bSource / MAX<int>(sourceFormat.bMax(), 1);
+	const signed r = ((signed)_format.rMax()) * rSource / MAX<int>(sourceFormat.rMax(), 1);
+	const signed g = ((signed)_format.gMax()) * gSource / MAX<int>(sourceFormat.gMax(), 1);
+	const signed b = ((signed)_format.bMax()) * bSource / MAX<int>(sourceFormat.bMax(), 1);
 
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }
 
 Palette &Palette::saturatedAddNormalizedGray(Palette &output, byte firstIndex, byte lastIndex, int grayDividend, int grayDenominator) const {
 	assert(grayDenominator != 0);
-	const signed r = ((signed) _format.rMax()) * grayDividend / grayDenominator;
-	const signed g = ((signed) _format.gMax()) * grayDividend / grayDenominator;
-	const signed b = ((signed) _format.bMax()) * grayDividend / grayDenominator;
+	const signed r = ((signed)_format.rMax()) * grayDividend / grayDenominator;
+	const signed g = ((signed)_format.gMax()) * grayDividend / grayDenominator;
+	const signed b = ((signed)_format.bMax()) * grayDividend / grayDenominator;
 
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }
@@ -272,8 +271,8 @@ Palette &Palette::clear() {
 }
 
 Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian) {
-	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough input space
-	assert(format.aLoss == 8); // No alpha
+	assert(format.bytesPerPixel * numColors <= size);                                   // Make sure there's enough input space
+	assert(format.aLoss == 8);                                                          // No alpha
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, format.rBits() - 1)) / 8); // R must be inside one byte
 	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, format.gBits() - 1)) / 8); // G must be inside one byte
 	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, format.bBits() - 1)) / 8); // B must be inside one byte
@@ -306,8 +305,8 @@ byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat form
 }
 
 byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian, const byte firstIndex) const {
-	assert(format.bytesPerPixel * numColors <= size); // Make sure there's enough output space
-	assert(format.aLoss == 8); // No alpha
+	assert(format.bytesPerPixel * numColors <= size);                                   // Make sure there's enough output space
+	assert(format.aLoss == 8);                                                          // No alpha
 	assert(format.rShift / 8 == (format.rShift + MAX<int>(0, format.rBits() - 1)) / 8); // R must be inside one byte
 	assert(format.gShift / 8 == (format.gShift + MAX<int>(0, format.gBits() - 1)) / 8); // G must be inside one byte
 	assert(format.bShift / 8 == (format.bShift + MAX<int>(0, format.bBits() - 1)) / 8); // B must be inside one byte

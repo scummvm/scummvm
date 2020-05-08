@@ -39,7 +39,7 @@ class CharGenChild : public ANIObject {
 public:
 	enum Sound {
 		kSoundNone = 0,
-		kSoundWalk    ,
+		kSoundWalk,
 		kSoundJump
 	};
 

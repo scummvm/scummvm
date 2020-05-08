@@ -35,8 +35,7 @@
 
 namespace Sword25 {
 
-TimedRenderObject::TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES type, uint handle) :
-	RenderObject(pParent, type, handle) {
+TimedRenderObject::TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES type, uint handle) : RenderObject(pParent, type, handle) {
 	assert(getManager());
 	getManager()->attatchTimedRenderObject(this->getHandle());
 }

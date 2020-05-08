@@ -20,17 +20,17 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/map.h"
-#include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/container.h"
-#include "ultima/ultima8/kernel/object_manager.h"
-#include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/graphics/shape_info.h" // debugging only
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/games/game_info.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
+#include "ultima/ultima8/graphics/shape_info.h" // debugging only
+#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/kernel/object_manager.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/world/container.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/item_factory.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -39,7 +39,6 @@ namespace Ultima8 {
 
 Map::Map(uint32 mapNum) : _mapNum(mapNum) {
 }
-
 
 Map::~Map() {
 	clear();
@@ -63,7 +62,6 @@ void Map::loadNonFixed(Common::SeekableReadStream *rs) {
 	loadFixedFormatObjects(_dynamicItems, rs, 0);
 }
 
-
 // Utility function for fixing up map bugs: shift a coordinate to a
 // different z without changing its on-screen position.
 static void shiftCoordsToZ(int32 &x, int32 &y, int32 &z, int32 newz) {
@@ -75,14 +73,12 @@ static void shiftCoordsToZ(int32 &x, int32 &y, int32 &z, int32 newz) {
 	z = newz;
 }
 
-
 void Map::addMapFix(uint32 shape, uint32 frame, int32 x, int32 y, int32 z) {
 	Item *item = ItemFactory::createItem(shape, frame, 0, 0, 0, 0,
-										 Item::EXT_FIXED, false);
+	                                     Item::EXT_FIXED, false);
 	item->setLocation(x, y, z);
 	_fixedItems.push_back(item);
 }
-
 
 void Map::loadFixed(Common::SeekableReadStream *rs) {
 	loadFixedFormatObjects(_fixedItems, rs, Item::EXT_FIXED);
@@ -142,7 +138,7 @@ void Map::loadFixed(Common::SeekableReadStream *rs) {
 				int32 x, y, z;
 				(*iter)->getLocation(x, y, z);
 				if ((x == 23007 && y == 21343) || (x == 23135 && y == 21471) ||
-				        (x == 23135 && y == 21343)) {
+				    (x == 23135 && y == 21343)) {
 					shiftCoordsToZ(x, y, z, 40);
 					(*iter)->setLocation(x, y, z);
 				}
@@ -177,16 +173,15 @@ void Map::loadFixed(Common::SeekableReadStream *rs) {
 				int32 x, y, z;
 				(*iter)->getLocation(x, y, z);
 				if ((x == 9151 && y == 24127) || (x == 9279 && y == 23999) ||
-				        (x == 9535 && y == 23615) || (x == 9151 && y == 23487) ||
-				        (x == 10303 && y == 23487) || (x == 9919 && y == 23487) ||
-				        (x == 10559 && y == 23487)) {
+				    (x == 9535 && y == 23615) || (x == 9151 && y == 23487) ||
+				    (x == 10303 && y == 23487) || (x == 9919 && y == 23487) ||
+				    (x == 10559 && y == 23487)) {
 					shiftCoordsToZ(x, y, z, 48);
 					(*iter)->setLocation(x, y, z);
 				}
 			}
 		}
 	}
-
 }
 
 void Map::unloadFixed() {
@@ -199,11 +194,13 @@ void Map::unloadFixed() {
 }
 
 void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
-								 Common::SeekableReadStream *rs,
+                                 Common::SeekableReadStream *rs,
                                  uint32 extendedflags) {
-	if (!rs) return;
+	if (!rs)
+		return;
 	uint32 size = rs->size();
-	if (size == 0) return;
+	if (size == 0)
+		return;
 
 	uint32 itemcount = size / 16;
 
@@ -250,9 +247,9 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 		if (!item) {
 			pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << Std::hex << flags << Std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next;
 
-			ShapeInfo *info = GameData::get_instance()->getMainShapes()->
-			                  getShapeInfo(shape);
-			if (info) pout << ", family = " << info->_family;
+			ShapeInfo *info = GameData::get_instance()->getMainShapes()->getShapeInfo(shape);
+			if (info)
+				pout << ", family = " << info->_family;
 			pout << Std::endl;
 
 			pout << "Couldn't create item" << Std::endl;
@@ -284,7 +281,6 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 	}
 }
 
-
 void Map::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(static_cast<uint32>(_dynamicItems.size()));
 
@@ -294,14 +290,14 @@ void Map::save(Common::WriteStream *ws) {
 	}
 }
 
-
 bool Map::load(Common::ReadStream *rs, uint32 version) {
 	uint32 itemcount = rs->readUint32LE();
 
 	for (unsigned int i = 0; i < itemcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
 		Item *item = p_dynamic_cast<Item *>(obj);
-		if (!item) return false;
+		if (!item)
+			return false;
 		_dynamicItems.push_back(item);
 	}
 

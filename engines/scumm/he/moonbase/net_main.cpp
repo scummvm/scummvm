@@ -24,8 +24,8 @@
 
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
-#include "scumm/he/moonbase/net_main.h"
 #include "scumm/he/moonbase/net_defines.h"
+#include "scumm/he/moonbase/net_main.h"
 
 namespace Scumm {
 
@@ -66,7 +66,7 @@ int Net::hostGame(char *sessionName, char *userName) {
 			closeProvider();
 		}
 	} else {
-		_vm->displayMessage(0, "Error creating session \"%s\"", userName );
+		_vm->displayMessage(0, "Error creating session \"%s\"", userName);
 
 		closeProvider();
 	}
@@ -83,8 +83,8 @@ int Net::addUser(char *shortName, char *longName) {
 	debug(1, "Net::addUser(\"%s\", \"%s\")", shortName, longName); // PN_AddUser
 
 	Networking::PostRequest rq(_serverprefix + "/adduser",
-		new Common::Callback<Net, Common::JSONValue *>(this, &Net::addUserCallback),
-		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::addUserErrorCallback));
+	                           new Common::Callback<Net, Common::JSONValue *>(this, &Net::addUserCallback),
+	                           new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::addUserErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
 	snprintf(buf, MAX_PACKET_SIZE, "{\"shortname\":\"%s\",\"longname\":\"%s\",\"sessionid\":%d}", shortName, longName, _sessionid);
@@ -95,7 +95,7 @@ int Net::addUser(char *shortName, char *longName) {
 
 	_myUserId = -1;
 
-	while(rq.state() == Networking::PROCESSING) {
+	while (rq.state() == Networking::PROCESSING) {
 		g_system->delayMillis(5);
 	}
 
@@ -143,8 +143,8 @@ int Net::createSession(char *name) {
 	debug(1, "Net::createSession(\"%s\")", name); // PN_CreateSession
 
 	Networking::PostRequest rq(_serverprefix + "/createsession",
-		new Common::Callback<Net, Common::JSONValue *>(this, &Net::createSessionCallback),
-		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::createSessionErrorCallback));
+	                           new Common::Callback<Net, Common::JSONValue *>(this, &Net::createSessionCallback),
+	                           new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::createSessionErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
 	snprintf(buf, MAX_PACKET_SIZE, "{\"name\":\"%s\"}", name);
@@ -155,7 +155,7 @@ int Net::createSession(char *name) {
 
 	_sessionid = -1;
 
-	while(rq.state() == Networking::PROCESSING) {
+	while (rq.state() == Networking::PROCESSING) {
 		g_system->delayMillis(5);
 	}
 
@@ -205,8 +205,8 @@ int Net::endSession() {
 	debug(1, "Net::endSession()"); // PN_EndSession
 
 	Networking::PostRequest rq(_serverprefix + "/endsession",
-		new Common::Callback<Net, Common::JSONValue *>(this, &Net::endSessionCallback),
-		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::endSessionErrorCallback));
+	                           new Common::Callback<Net, Common::JSONValue *>(this, &Net::endSessionCallback),
+	                           new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::endSessionErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
 	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"userid\":%d}", _sessionid, _myUserId);
@@ -215,7 +215,7 @@ int Net::endSession() {
 
 	rq.start();
 
-	while(rq.state() == Networking::PROCESSING) {
+	while (rq.state() == Networking::PROCESSING) {
 		g_system->delayMillis(5);
 	}
 
@@ -232,13 +232,12 @@ void Net::endSessionErrorCallback(Networking::ErrorResponse error) {
 	_lastResult = 0;
 }
 
-
 void Net::disableSessionJoining() {
 	debug(1, "Net::disableSessionJoining()"); // PN_DisableSessionPlayerJoin
 
 	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/disablesession",
-		nullptr,
-		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::disableSessionJoiningErrorCallback));
+	                                                          nullptr,
+	                                                          new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::disableSessionJoiningErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
 	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d}", _sessionid);
@@ -290,8 +289,8 @@ bool Net::destroyPlayer(int32 playerDPID) {
 	debug(1, "Net::destroyPlayer(%d)", playerDPID);
 
 	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/removeuser",
-		nullptr,
-		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::destroyPlayerErrorCallback));
+	                                                          nullptr,
+	                                                          new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::destroyPlayerErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
 	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"userid\":%d}", _sessionid, playerDPID);
@@ -310,12 +309,12 @@ void Net::destroyPlayerErrorCallback(Networking::ErrorResponse error) {
 }
 
 int32 Net::startQuerySessions() {
-	if (!_sessionsBeingQueried) { // Do not run parallel queries
+	if (!_sessionsBeingQueried) {              // Do not run parallel queries
 		debug(1, "Net::startQuerySessions()"); // StartQuerySessions
 
 		Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/lobbies",
-			new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
-			new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
+		                                                          new Common::Callback<Net, Common::JSONValue *>(this, &Net::startQuerySessionsCallback),
+		                                                          new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::startQuerySessionsErrorCallback));
 
 		_sessionsBeingQueried = true;
 
@@ -424,9 +423,10 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 	// Since I am lazy, instead of constructing the JSON object manually
 	// I'd rather parse it
 	Common::String res = Common::String::format(
-		"{\"sessionid\":%d, \"from\":%d, \"to\":%d, \"toparam\": %d, "
-		"\"type\":%d, \"timestamp\": %d, \"size\": 1, \"data\": { %s } }", _sessionid, _myUserId,
-		typeOfSend, sendTypeParam, type, g_system->getMillis(), data.c_str());
+	    "{\"sessionid\":%d, \"from\":%d, \"to\":%d, \"toparam\": %d, "
+	    "\"type\":%d, \"timestamp\": %d, \"size\": 1, \"data\": { %s } }",
+	    _sessionid, _myUserId,
+	    typeOfSend, sendTypeParam, type, g_system->getMillis(), data.c_str());
 
 	byte *buf = (byte *)malloc(res.size() + 1);
 	strncpy((char *)buf, res.c_str(), res.size());
@@ -434,8 +434,8 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 	debug(2, "Package to send: %s", res.c_str());
 
 	Networking::PostRequest *rq = new Networking::PostRequest(_serverprefix + "/packet",
-		nullptr,
-		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteSendDataErrorCallback));
+	                                                          nullptr,
+	                                                          new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteSendDataErrorCallback));
 
 	rq->setPostData(buf, res.size());
 	rq->setContentType("application/json");
@@ -479,11 +479,11 @@ void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int a
 	ScummEngine_v100he::ArrayHeader *ah = (ScummEngine_v100he::ArrayHeader *)_vm->getResourceAddress(rtString, arrayIndex & ~0x33539000);
 
 	Common::String jsonData = Common::String::format(
-		"\"type\":%d, \"dim1start\":%d, \"dim1end\":%d, \"dim2start\":%d, \"dim2end\":%d, \"data\": [",
-		ah->type, ah->dim1start, ah->dim1end, ah->dim2start, ah->dim2end);
+	    "\"type\":%d, \"dim1start\":%d, \"dim1end\":%d, \"dim2start\":%d, \"dim2end\":%d, \"data\": [",
+	    ah->type, ah->dim1start, ah->dim1end, ah->dim2start, ah->dim2end);
 
 	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
-		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
+	             (FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
 
 	for (int i = 0; i < size; i++) {
 		int32 data;
@@ -591,8 +591,8 @@ void Net::getProviderName(int providerIndex, char *buffer, int length) {
 
 bool Net::remoteReceiveData() {
 	Networking::PostRequest rq(_serverprefix + "/getpacket",
-		new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteReceiveDataCallback),
-		new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteReceiveDataErrorCallback));
+	                           new Common::Callback<Net, Common::JSONValue *>(this, &Net::remoteReceiveDataCallback),
+	                           new Common::Callback<Net, Networking::ErrorResponse>(this, &Net::remoteReceiveDataErrorCallback));
 
 	char *buf = (char *)malloc(MAX_PACKET_SIZE);
 	snprintf(buf, MAX_PACKET_SIZE, "{\"sessionid\":%d, \"playerid\":%d}", _sessionid, _myUserId);
@@ -604,7 +604,7 @@ bool Net::remoteReceiveData() {
 
 	rq.start();
 
-	while(rq.state() == Networking::PROCESSING) {
+	while (rq.state() == Networking::PROCESSING) {
 		g_system->delayMillis(5);
 	}
 
@@ -617,39 +617,35 @@ bool Net::remoteReceiveData() {
 	uint32 *params;
 
 	switch (type) {
-	case PACKETTYPE_REMOTESTARTSCRIPT:
-		{
-			int datalen = _packetdata->child("data")->child("params")->asArray().size();
-			params = (uint32 *)_tmpbuffer;
+	case PACKETTYPE_REMOTESTARTSCRIPT: {
+		int datalen = _packetdata->child("data")->child("params")->asArray().size();
+		params = (uint32 *)_tmpbuffer;
 
-			for (int i = 0; i < datalen; i++) {
-				*params = _packetdata->child("data")->child("params")->asArray()[i]->asIntegerNumber();
-				params++;
-			}
-
-			_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
+		for (int i = 0; i < datalen; i++) {
+			*params = _packetdata->child("data")->child("params")->asArray()[i]->asIntegerNumber();
+			params++;
 		}
-		break;
 
-	case PACKETTYPE_REMOTESTARTSCRIPTRETURN:
-		{
-			int datalen = _packetdata->child("data")->child("params")->asArray().size();
-			params = (uint32 *)_tmpbuffer;
+		_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
+	} break;
 
-			for (int i = 0; i < datalen; i++) {
-				*params = _packetdata->child("data")->child("params")->asArray()[i]->asIntegerNumber();
-				params++;
-			}
+	case PACKETTYPE_REMOTESTARTSCRIPTRETURN: {
+		int datalen = _packetdata->child("data")->child("params")->asArray().size();
+		params = (uint32 *)_tmpbuffer;
 
-			_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
-			int result = _vm->pop();
-
-			Common::String res = Common::String::format("\"result\": %d, \"callid\": %d", result,
-					(int)_packetdata->child("data")->child("callid")->asIntegerNumber());
-
-			remoteSendData(PN_SENDTYPE_INDIVIDUAL, from, PACKETTYPE_REMOTESTARTSCRIPTRESULT, res);
+		for (int i = 0; i < datalen; i++) {
+			*params = _packetdata->child("data")->child("params")->asArray()[i]->asIntegerNumber();
+			params++;
 		}
-		break;
+
+		_vm->runScript(_vm->VAR(_vm->VAR_REMOTE_START_SCRIPT), 1, 0, (int *)_tmpbuffer);
+		int result = _vm->pop();
+
+		Common::String res = Common::String::format("\"result\": %d, \"callid\": %d", result,
+		                                            (int)_packetdata->child("data")->child("callid")->asIntegerNumber());
+
+		remoteSendData(PN_SENDTYPE_INDIVIDUAL, from, PACKETTYPE_REMOTESTARTSCRIPTRESULT, res);
+	} break;
 
 	case PACKETTYPE_REMOTESTARTSCRIPTRESULT:
 		//
@@ -658,54 +654,52 @@ bool Net::remoteReceiveData() {
 
 		break;
 
-	case PACKETTYPE_REMOTESENDSCUMMARRAY:
-		{
-			int newArray = 0;
+	case PACKETTYPE_REMOTESENDSCUMMARRAY: {
+		int newArray = 0;
 
-			// Assume that the packet data contains a "SCUMM PACKAGE"
-			// and unpack it into an scumm array :-)
+		// Assume that the packet data contains a "SCUMM PACKAGE"
+		// and unpack it into an scumm array :-)
 
-			int dim1start = _packetdata->child("data")->child("dim1start")->asIntegerNumber();
-			int dim1end   = _packetdata->child("data")->child("dim1end")->asIntegerNumber();
-			int dim2start = _packetdata->child("data")->child("dim2start")->asIntegerNumber();
-			int dim2end   = _packetdata->child("data")->child("dim2end")->asIntegerNumber();
-			int atype     = _packetdata->child("data")->child("type")->asIntegerNumber();
+		int dim1start = _packetdata->child("data")->child("dim1start")->asIntegerNumber();
+		int dim1end = _packetdata->child("data")->child("dim1end")->asIntegerNumber();
+		int dim2start = _packetdata->child("data")->child("dim2start")->asIntegerNumber();
+		int dim2end = _packetdata->child("data")->child("dim2end")->asIntegerNumber();
+		int atype = _packetdata->child("data")->child("type")->asIntegerNumber();
 
-			byte *data = _vm->defineArray(0, atype, dim2start, dim2end, dim1start, dim1end, true, &newArray);
+		byte *data = _vm->defineArray(0, atype, dim2start, dim2end, dim1start, dim1end, true, &newArray);
 
-			int32 size = (dim1end - dim1start + 1) * (dim2end - dim2start + 1);
+		int32 size = (dim1end - dim1start + 1) * (dim2end - dim2start + 1);
 
-			int32 value;
+		int32 value;
 
-			for (int i = 0; i < size; i++) {
-				value = _packetdata->child("data")->child("data")->asArray()[i]->asIntegerNumber();
+		for (int i = 0; i < size; i++) {
+			value = _packetdata->child("data")->child("data")->asArray()[i]->asIntegerNumber();
 
-				switch (atype) {
-				case ScummEngine_v100he::kByteArray:
-				case ScummEngine_v100he::kStringArray:
-					data[i] = value;
-					break;
+			switch (atype) {
+			case ScummEngine_v100he::kByteArray:
+			case ScummEngine_v100he::kStringArray:
+				data[i] = value;
+				break;
 
-				case ScummEngine_v100he::kIntArray:
-					WRITE_LE_UINT16(data + i * 2, value);
-					break;
+			case ScummEngine_v100he::kIntArray:
+				WRITE_LE_UINT16(data + i * 2, value);
+				break;
 
-				case ScummEngine_v100he::kDwordArray:
-					WRITE_LE_UINT32(data + i * 4, value);
-					break;
+			case ScummEngine_v100he::kDwordArray:
+				WRITE_LE_UINT32(data + i * 4, value);
+				break;
 
-				default:
-					error("Net::remoteReceiveData(): Unknown array type %d", atype);
-				}
+			default:
+				error("Net::remoteReceiveData(): Unknown array type %d", atype);
 			}
-
-			memset(_tmpbuffer, 0, 25 * 4);
-			WRITE_UINT32(_tmpbuffer, newArray);
-
-			// Quick start the script (1st param is the new array)
-			_vm->runScript(_vm->VAR(_vm->VAR_NETWORK_RECEIVE_ARRAY_SCRIPT), 1, 0, (int *)_tmpbuffer);
 		}
-		break;
+
+		memset(_tmpbuffer, 0, 25 * 4);
+		WRITE_UINT32(_tmpbuffer, newArray);
+
+		// Quick start the script (1st param is the new array)
+		_vm->runScript(_vm->VAR(_vm->VAR_NETWORK_RECEIVE_ARRAY_SCRIPT), 1, 0, (int *)_tmpbuffer);
+	} break;
 
 	default:
 		warning("Moonbase: Received unknown network command %d", type);
@@ -724,7 +718,6 @@ void Net::remoteReceiveDataCallback(Common::JSONValue *response) {
 void Net::remoteReceiveDataErrorCallback(Networking::ErrorResponse error) {
 	warning("Error in remoteReceiveData(): %ld %s", error.httpResponseCode, error.response.c_str());
 }
-
 
 void Net::doNetworkOnceAFrame(int msecs) {
 	if (_sessionid == -1 || _myUserId == -1)

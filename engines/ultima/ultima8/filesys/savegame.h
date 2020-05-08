@@ -23,11 +23,11 @@
 #ifndef ULTIMA8_FILESYS_SAVEGAME_H
 #define ULTIMA8_FILESYS_SAVEGAME_H
 
-#include "ultima/shared/std/string.h"
 #include "common/hashmap.h"
 #include "common/stream.h"
 #include "engines/metaengine.h"
 #include "graphics/surface.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -42,16 +42,21 @@ class SavegameReader {
 		uint _size;
 		FileEntry() : _offset(0), _size(0) {}
 	};
+
 private:
 	ExtendedSavegameHeader _header;
 	Common::HashMap<Common::String, FileEntry> _index;
 	Common::SeekableReadStream *_file;
 	uint32 _version;
+
 public:
 	explicit SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly = false);
 	~SavegameReader();
 
-	enum State { SAVE_CORRUPT, SAVE_VALID, SAVE_OUT_OF_DATE, SAVE_TOO_RECENT };
+	enum State { SAVE_CORRUPT,
+		         SAVE_VALID,
+		         SAVE_OUT_OF_DATE,
+		         SAVE_TOO_RECENT };
 	State isValid() const;
 
 	uint32 getVersion() const { return _version; }
@@ -70,9 +75,11 @@ class SavegameWriter {
 		Std::string _name;
 		FileEntry() : Common::Array<byte>() {}
 	};
+
 private:
 	Common::WriteStream *_file;
 	Common::Array<FileEntry> _index;
+
 public:
 	explicit SavegameWriter(Common::WriteStream *ws);
 	virtual ~SavegameWriter();

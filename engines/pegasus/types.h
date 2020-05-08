@@ -84,7 +84,7 @@ typedef byte TurnDirection;
 // Meant to be room in low 16 bits and direction in high 16 bits.
 typedef uint32 RoomViewID;
 
-#define MakeRoomView(room, direction) (((RoomViewID) (room)) | (((RoomViewID) (direction)) << 16))
+#define MakeRoomView(room, direction) (((RoomViewID)(room)) | (((RoomViewID)(direction)) << 16))
 
 typedef uint32 ExtraID;
 

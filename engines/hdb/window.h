@@ -42,48 +42,48 @@ enum PZValue {
 };
 
 struct DialogInfo {
-	char		title[64];				// TITLE string
-	int			tileIndex;					// this is for a character picture
-	char		string[160];			// actual text in the dialog
+	char title[64];   // TITLE string
+	int tileIndex;    // this is for a character picture
+	char string[160]; // actual text in the dialog
 
-	bool		active;					// is it drawing or not?
-	int			x, y;					// where to draw dialog
-	int			width, height;			// size of the dialog itself
-	int			titleWidth;
-	Picture		*gfx;					// character tile (picture)
-	int			more;					// whether we want to draw the MORE icon or not
-	int			el, er, et, eb;			// saves the text edges
-	char		luaMore[64];			// the name of the function to call after clicking the MORE button
+	bool active;       // is it drawing or not?
+	int x, y;          // where to draw dialog
+	int width, height; // size of the dialog itself
+	int titleWidth;
+	Picture *gfx;       // character tile (picture)
+	int more;           // whether we want to draw the MORE icon or not
+	int el, er, et, eb; // saves the text edges
+	char luaMore[64];   // the name of the function to call after clicking the MORE button
 
 	DialogInfo() : tileIndex(0), active(false), x(0), y(0),
-		width(0), height(0), titleWidth(0), gfx(nullptr), more(0), el(0), er(0), et(0),
-		eb(0) {
-			title[0] = 0;
-			string[0] = 0;
-			luaMore[0] = 0;
-		}
+	               width(0), height(0), titleWidth(0), gfx(nullptr), more(0), el(0), er(0), et(0),
+	               eb(0) {
+		title[0] = 0;
+		string[0] = 0;
+		luaMore[0] = 0;
+	}
 };
 
 struct DialogChoiceInfo {
-	char		title[64];				// TITLE string
-	char		text[160];				// actual text in the dialog
-	char		func[64];				// function to call with result
+	char title[64]; // TITLE string
+	char text[160]; // actual text in the dialog
+	char func[64];  // function to call with result
 
-	bool		active;					// is it drawing or not?
-	int			x, y;					// where to draw dialog
-	int			width, height;			// size of the dialog itself
-	int			textHeight;				// height of everything above choices
-	int			titleWidth;
-	int			el, er, et, eb;			// saves the text edges
-	uint32		timeout;				// timeout value!
+	bool active;       // is it drawing or not?
+	int x, y;          // where to draw dialog
+	int width, height; // size of the dialog itself
+	int textHeight;    // height of everything above choices
+	int titleWidth;
+	int el, er, et, eb; // saves the text edges
+	uint32 timeout;     // timeout value!
 
-	int			selection;				// which choice we've made
-	int			numChoices;			// how many choices possible
-	char		choices[10][64];		// ptrs to choice text
+	int selection;        // which choice we've made
+	int numChoices;       // how many choices possible
+	char choices[10][64]; // ptrs to choice text
 
 	DialogChoiceInfo() : active(false), x(0), y(0),
-		width(0), height(0), textHeight(0), titleWidth(0), el(0), er(0), et(0),
-		eb(0), timeout(0), selection(0), numChoices(0) {
+	                     width(0), height(0), textHeight(0), titleWidth(0), el(0), er(0), et(0),
+	                     eb(0), timeout(0), selection(0), numChoices(0) {
 		title[0] = 0;
 		text[0] = 0;
 		func[0] = 0;
@@ -93,11 +93,11 @@ struct DialogChoiceInfo {
 };
 
 struct MessageInfo {
-	bool		active;
-	char		title[128];
-	int			timer;
-	int			x, y;
-	int			width, height;
+	bool active;
+	char title[128];
+	int timer;
+	int x, y;
+	int width, height;
 
 	MessageInfo() : active(false), timer(0), x(0), y(0), width(0), height(0) {
 		title[0] = 0;
@@ -123,7 +123,7 @@ struct DlvsInfo {
 	bool go1, go2, go3;
 
 	DlvsInfo() : x(0), y(0), width(0), height(0), active(false), selected(0),
-		animate(false), delay1(0), delay2(0), delay3(0), go1(false), go2(false), go3(false) {}
+	             animate(false), delay1(0), delay2(0), delay3(0), go1(false), go2(false), go3(false) {}
 };
 
 struct PanicZone {
@@ -132,7 +132,7 @@ struct PanicZone {
 	int timer;
 	int x1, y1;
 	int x2, y2;
-	int xv, yv;		// for both
+	int xv, yv; // for both
 	int numberTime;
 	int numberTimeMaster;
 	int numberValue;
@@ -141,7 +141,7 @@ struct PanicZone {
 	Picture *gfxNumber[10];
 
 	PanicZone() : active(false), sequence(0), timer(0), x1(0), y1(0), x2(0), y2(0), xv(0), yv(0),
-		numberTime(0), numberTimeMaster(0), numberValue(0), gfxPanic(nullptr), gfxZone(nullptr) {
+	              numberTime(0), numberTimeMaster(0), numberValue(0), gfxPanic(nullptr), gfxZone(nullptr) {
 		memset(&gfxFace, 0, sizeof(gfxFace));
 		memset(&gfxNumber, 0, sizeof(gfxNumber));
 	}
@@ -295,9 +295,9 @@ public:
 	int _openDialogTextRight;
 	int _textOutCenterX;
 	int _pauseY;
-	int _tryY1;	// TRY
-	int _tryY2;			// AGAIN
-	int _tryRestartY;	// (ok)
+	int _tryY1;       // TRY
+	int _tryY2;       // AGAIN
+	int _tryRestartY; // (ok)
 	int _panicXStop;
 	int _panicZoneFaceX;
 
@@ -308,9 +308,8 @@ public:
 	PanicZone _pzInfo, _tempPzInfo;
 
 private:
-
 	DialogInfo _dialogInfo;
-	uint32 _dialogDelay;	// Used for Cinematics
+	uint32 _dialogDelay; // Used for Cinematics
 
 	DialogChoiceInfo _dialogChoiceInfo;
 
@@ -347,6 +346,6 @@ private:
 	int _infobarDimmed;
 };
 
-} // End of Namespace
+} // namespace HDB
 
 #endif // !HDB_WINDOW_H

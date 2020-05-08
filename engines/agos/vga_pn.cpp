@@ -210,7 +210,7 @@ void AGOSEngine_PN::clearVideoWindow(uint16 num, uint16 color) {
 		memset(dst, color, vlut[2] * 16);
 		dst += screen->pitch;
 	}
-	 _system->unlockScreen();
+	_system->unlockScreen();
 }
 
 } // End of namespace AGOS

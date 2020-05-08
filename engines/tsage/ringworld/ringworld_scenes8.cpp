@@ -20,11 +20,11 @@
  *
  */
 
-#include "graphics/cursorman.h"
 #include "tsage/ringworld/ringworld_scenes8.h"
+#include "graphics/cursorman.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -675,7 +675,6 @@ void Scene7000::signal() {
 		break;
 	}
 }
-
 
 /*--------------------------------------------------------------------------
  * Scene 7100 - Underwater: swimming
@@ -1408,14 +1407,12 @@ void Scene7300::Action2::signal() {
 	case 0:
 		setDelay(5);
 		break;
-	case 1:
-		{
-			NpcMover *mover1 = new NpcMover();
-			Common::Point pt(g_globals->_randomSource.getRandomNumber(3) + 203, g_globals->_randomSource.getRandomNumber(3) + 96);
-			scene->_object3.addMover(mover1, &pt, this);
-			_actionIndex = 0;
-		}
-		break;
+	case 1: {
+		NpcMover *mover1 = new NpcMover();
+		Common::Point pt(g_globals->_randomSource.getRandomNumber(3) + 203, g_globals->_randomSource.getRandomNumber(3) + 96);
+		scene->_object3.addMover(mover1, &pt, this);
+		_actionIndex = 0;
+	} break;
 	default:
 		break;
 	}
@@ -1430,14 +1427,12 @@ void Scene7300::Action3::signal() {
 	case 0:
 		setDelay(5);
 		break;
-	case 1:
-		{
-			NpcMover *mover1 = new NpcMover();
-			Common::Point pt(g_globals->_randomSource.getRandomNumber(5) + 76, g_globals->_randomSource.getRandomNumber(5) + 78);
-			scene->_object1.addMover(mover1, &pt, this);
-			_actionIndex = 0;
-		}
-		break;
+	case 1: {
+		NpcMover *mover1 = new NpcMover();
+		Common::Point pt(g_globals->_randomSource.getRandomNumber(5) + 76, g_globals->_randomSource.getRandomNumber(5) + 78);
+		scene->_object1.addMover(mover1, &pt, this);
+		_actionIndex = 0;
+	} break;
 	default:
 		break;
 	}
@@ -1672,7 +1667,7 @@ void Scene7600::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene7700::Action1::signal() {
-	SceneObjectExt *fmtObj = (SceneObjectExt *) _endHandler;
+	SceneObjectExt *fmtObj = (SceneObjectExt *)_endHandler;
 	switch (_actionIndex++) {
 	case 0: {
 		PlayerMover *mover1 = new PlayerMover();
@@ -2178,33 +2173,33 @@ void Scene7700::Object9::doAction(int action) {
 	Scene7700 *scene = (Scene7700 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
-		case CURSOR_LOOK:
-			SceneItem::display2(7700, 49);
-			break;
-		case CURSOR_USE:
-			SceneItem::display2(7701, 42);
-			break;
-		case CURSOR_TALK:
-			SceneItem::display2(7702, 4);
-			break;
-		case OBJECT_KEY:
-			if (_frame == 1) {
-				if (!g_globals->getFlag(80)) {
-					scene->_object10.postInit();
-					scene->_object10.setVisage(7701);
-					scene->_object10.setStrip(4);
-					scene->_object10.setPosition(Common::Point(159, 136));
-					g_globals->_sceneItems.push_front(&scene->_object10);
-					scene->_object10.fixPriority(240);
-				}
-
-				scene->_soundHandler.play(262);
-				scene->_object14.animate(ANIM_MODE_5, NULL);
+	case CURSOR_LOOK:
+		SceneItem::display2(7700, 49);
+		break;
+	case CURSOR_USE:
+		SceneItem::display2(7701, 42);
+		break;
+	case CURSOR_TALK:
+		SceneItem::display2(7702, 4);
+		break;
+	case OBJECT_KEY:
+		if (_frame == 1) {
+			if (!g_globals->getFlag(80)) {
+				scene->_object10.postInit();
+				scene->_object10.setVisage(7701);
+				scene->_object10.setStrip(4);
+				scene->_object10.setPosition(Common::Point(159, 136));
+				g_globals->_sceneItems.push_front(&scene->_object10);
+				scene->_object10.fixPriority(240);
 			}
-			g_globals->_events.setCursor(CURSOR_WALK);
-			break;
-		default:
-			SceneHotspot::doAction(action);
+
+			scene->_soundHandler.play(262);
+			scene->_object14.animate(ANIM_MODE_5, NULL);
+		}
+		g_globals->_events.setCursor(CURSOR_WALK);
+		break;
+	default:
+		SceneHotspot::doAction(action);
 	}
 }
 
@@ -2231,37 +2226,37 @@ void Scene7700::Object11::doAction(int action) {
 	Scene7700 *scene = (Scene7700 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
-		case OBJECT_SCANNER:
-			if (_frame != 1)
-				SceneItem::display2(7701, 44);
-			else
-				SceneItem::doAction(action);
-			break;
-		case CURSOR_LOOK:
-			if (_frame != 1)
-				SceneItem::display2(7700, 9);
-			else
-				SceneItem::display2(7700, 52);
-			break;
-		case CURSOR_USE:
-			if (_frame != 1) {
-				SceneItem::display2(7701, 8);
-			} else {
-				g_globals->setFlag(49);
-				g_globals->_player.disableControl();
-				scene->_sceneMode = 7706;
-				scene->setAction(&scene->_sequenceManager, scene, 7706, &g_globals->_player, this, NULL);
-			}
-			break;
-		case OBJECT_EMPTY_JAR:
-			RING_INVENTORY._emptyJar._sceneNumber = 0;
-			RING_INVENTORY._jar._sceneNumber = 1;
+	case OBJECT_SCANNER:
+		if (_frame != 1)
+			SceneItem::display2(7701, 44);
+		else
+			SceneItem::doAction(action);
+		break;
+	case CURSOR_LOOK:
+		if (_frame != 1)
+			SceneItem::display2(7700, 9);
+		else
+			SceneItem::display2(7700, 52);
+		break;
+	case CURSOR_USE:
+		if (_frame != 1) {
+			SceneItem::display2(7701, 8);
+		} else {
+			g_globals->setFlag(49);
 			g_globals->_player.disableControl();
-			scene->_sceneMode = 7710;
-			scene->setAction(&scene->_sequenceManager, scene, 7710, &g_globals->_player, NULL);
-			break;
-		default:
-			SceneHotspot::doAction(action);
+			scene->_sceneMode = 7706;
+			scene->setAction(&scene->_sequenceManager, scene, 7706, &g_globals->_player, this, NULL);
+		}
+		break;
+	case OBJECT_EMPTY_JAR:
+		RING_INVENTORY._emptyJar._sceneNumber = 0;
+		RING_INVENTORY._jar._sceneNumber = 1;
+		g_globals->_player.disableControl();
+		scene->_sceneMode = 7710;
+		scene->setAction(&scene->_sequenceManager, scene, 7710, &g_globals->_player, NULL);
+		break;
+	default:
+		SceneHotspot::doAction(action);
 	}
 }
 

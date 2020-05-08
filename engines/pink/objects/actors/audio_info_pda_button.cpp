@@ -20,10 +20,10 @@
  *
  */
 
-#include "pink/pink.h"
 #include "pink/objects/actors/audio_info_pda_button.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -34,7 +34,7 @@ void AudioInfoPDAButton::toConsole() const {
 	}
 }
 
-void AudioInfoPDAButton::onMouseOver(const Common::Point point, CursorMgr *mgr)  {
+void AudioInfoPDAButton::onMouseOver(const Common::Point point, CursorMgr *mgr) {
 	mgr->setCursor(kClickableFirstFrameCursor, point, Common::String());
 }
 

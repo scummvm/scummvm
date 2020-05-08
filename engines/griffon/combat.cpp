@@ -34,8 +34,8 @@
  *
  */
 
-#include "griffon/griffon.h"
 #include "griffon/console.h"
+#include "griffon/griffon.h"
 
 namespace Griffon {
 
@@ -435,7 +435,7 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 					_spellInfo[i].strength = 1.5f;
 			}
 
-			switch(spellnum) {
+			switch (spellnum) {
 			case 1:
 				if (config.effects) {
 					int snd = playSound(_sfx[kSndThrow]);
@@ -482,8 +482,7 @@ void GriffonEngine::castSpell(int spellnum, float homex, float homey, float enem
 					}
 				}
 				_spellInfo[i].nfballs = nballs;
-				}
-				break;
+			} break;
 			case 8:
 			case 9:
 				if (config.effects) {
@@ -600,7 +599,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		_player.exp += _npcInfo[npcnum].maxhp;
 
 		if (_npcInfo[npcnum].spriteset == kMonsterBabyDragon || _npcInfo[npcnum].spriteset == kMonsterPriest ||
-				_npcInfo[npcnum].spriteset == kMonsterRedDragon) {
+		    _npcInfo[npcnum].spriteset == kMonsterRedDragon) {
 			int ff = (int)(RND() * _player.level * 3);
 			if (ff == 0) {
 				float npx = _npcInfo[npcnum].x + 12;
@@ -615,7 +614,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		if (_npcInfo[npcnum].spriteset == kMonsterOneWing || _npcInfo[npcnum].spriteset == kMonsterTwoWing ||
-					_npcInfo[npcnum].spriteset == kMonsterBlackKnight || _npcInfo[npcnum].spriteset == kMonsterFireHydra) {
+		    _npcInfo[npcnum].spriteset == kMonsterBlackKnight || _npcInfo[npcnum].spriteset == kMonsterFireHydra) {
 			int ff = (int)(RND() * _player.level);
 			if (ff == 0) {
 				float npx = _npcInfo[npcnum].x + 12;
@@ -630,7 +629,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 		}
 
 		if (_npcInfo[npcnum].spriteset == kMonsterTwoWing || _npcInfo[npcnum].spriteset == kMonsterDragon2 ||
-				_npcInfo[npcnum].spriteset == kMonsterFireHydra) {
+		    _npcInfo[npcnum].spriteset == kMonsterFireHydra) {
 			int ff = (int)(RND() * _player.level * 2);
 			if (ff == 0) {
 				float npx = _npcInfo[npcnum].x + 12;
@@ -764,7 +763,6 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 				_scriptFlag[kScriptFindSword][0] = 1;
 				_clipBg2->fillRect(rcDest, _clipBg->format.RGBToColor(255, 255, 255));
 			}
-
 		}
 
 		// gardens master key script
@@ -1028,6 +1026,5 @@ void GriffonEngine::damagePlayer(int damage) {
 
 	_player.pause = _ticks + 1000;
 }
-
 
 } // end of namespace Griffon

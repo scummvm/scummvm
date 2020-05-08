@@ -23,9 +23,9 @@
 #ifndef NUVIE_CORE_TIMED_EVENT_H
 #define NUVIE_CORE_TIMED_EVENT_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/misc/call_back.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -45,8 +45,9 @@ class TimedEvent;
  */
 class TimeQueue {
 	Std::list<TimedEvent *> tq;
+
 public:
-	TimeQueue() : tq() { }
+	TimeQueue() : tq() {}
 	~TimeQueue() {
 		clear();
 	}
@@ -60,10 +61,9 @@ public:
 	TimedEvent *pop_timer();
 	bool delete_timer(TimedEvent *tevent);
 
-	bool call_timer(uint32 now); // activate
+	bool call_timer(uint32 now);  // activate
 	void call_timers(uint32 now); // activate all
 };
-
 
 #define TIMER_IMMEDIATE true
 #define TIMER_DELAYED false
@@ -77,18 +77,19 @@ public:
 class TimedEvent {
 	friend class TimeQueue;
 	friend class Events;
+
 protected:
-	TimeQueue *tq; // the TimeQueue; so we can add ourself
+	TimeQueue *tq;      // the TimeQueue; so we can add ourself
 	uint32 delay, time; // timer delay, and next absolute time to activate
 	sint8 repeat_count; // repeat how many times? (-1=infinite;0=stop)
-	bool ignore_pause; // activates even if game is paused
-	bool real_time; // time and delay is in milliseconds (false=game ticks/turns)
+	bool ignore_pause;  // activates even if game is paused
+	bool real_time;     // time and delay is in milliseconds (false=game ticks/turns)
 	bool tq_can_delete; // can TimeQueue delete this TimedEvent when done?
-	bool defunct; // deleted; don't activate (use to stop timers from outside)
+	bool defunct;       // deleted; don't activate (use to stop timers from outside)
 
 public:
 	TimedEvent(uint32 reltime, bool immediate = TIMER_DELAYED, bool realtime = TIMER_REALTIME);
-	virtual ~TimedEvent() { }
+	virtual ~TimedEvent() {}
 	virtual void timed(uint32 evtime) {
 		DEBUG(0, LEVEL_ERROR, "TimedEvent: undefined timer method\n");
 	}
@@ -98,7 +99,8 @@ protected:
 	// NOTE: potential for bug here, this doesn't prevent it from being called once more
 	void stop() {
 		repeat_count = 0;
-		if (!tq_can_delete) dequeue();
+		if (!tq_can_delete)
+			dequeue();
 	}
 	// repeat once (or for requested count)
 	void repeat(uint32 count = 1) {
@@ -106,7 +108,7 @@ protected:
 	}
 
 public:
-	void queue(); // set tq, add to tq
+	void queue();   // set tq, add to tq
 	void dequeue(); // remove from tq, clear tq
 
 	void set_time(); // set `time' from `delay'
@@ -116,14 +118,14 @@ public:
 	}
 };
 
-
 /* Print to stdout. (timer test)
  */
 class TimedMessage : public TimedEvent {
 	Std::string msg;
+
 public:
 	TimedMessage(uint32 reltime, const char *m, bool repeating = false)
-		: TimedEvent(reltime), msg(m) {
+	    : TimedEvent(reltime), msg(m) {
 		repeat_count = repeating ? -1 : 0;
 	}
 	void timed(uint32 evtime) override {
@@ -131,20 +133,19 @@ public:
 	}
 };
 
-
 /* Move the party to/from a dungeon or ladder or moongate. Characters off-screen
  * will teleport.
  */
 class TimedPartyMove : public TimedEvent, public CallBack {
 protected:
 	MapWindow *map_window;
-	Party *party; // the party
-	MapCoord *dest; // destination, where all actors walk to and disappear
-	MapCoord *target; // where they reappear at the new plane
-	uint32 moves_left; // walk timeout
-	Obj *moongate; // if using a moongate
+	Party *party;          // the party
+	MapCoord *dest;        // destination, where all actors walk to and disappear
+	MapCoord *target;      // where they reappear at the new plane
+	uint32 moves_left;     // walk timeout
+	Obj *moongate;         // if using a moongate
 	uint8 wait_for_effect; // waiting for a visual effect to complete if not 0
-	Actor *actor_to_hide; // this actor has reached exit and should be hidden
+	Actor *actor_to_hide;  // this actor has reached exit and should be hidden
 	bool falling_in;
 
 public:
@@ -164,7 +165,6 @@ protected:
 	void change_location();
 };
 
-
 /* Move the party into a vehicle and start it when everyone is there.
  */
 class TimedPartyMoveToVehicle : public TimedPartyMove {
@@ -173,7 +173,6 @@ public:
 	TimedPartyMoveToVehicle(MapCoord *d, Obj *obj, uint32 step_delay = 125);
 	void timed(uint32 evtime) override;
 };
-
 
 #if 0
 class TimedRTC : public TimedEvent {
@@ -186,7 +185,6 @@ public:
 	}
 };
 #endif
-
 
 //FIXME: It isnt container search. Its a msgscroll effect to print one line at a time.
 /* Dump one item at a time out of a container, and print it's name to MsgScroll.
@@ -202,7 +200,6 @@ public:
 	void timed(uint32 evtime) override;
 };
 
-
 /* Send timer message to callback target after `wait_time' is up, passing it
  * some target-defined data.
  *  new TimedCallback(PowderKeg, (void *)my_powderkeg_data, time_to_explode);
@@ -211,20 +208,18 @@ class TimedCallback : public TimedEvent, public CallBack {
 public:
 	TimedCallback(CallBack *t, void *d, uint32 wait_time,
 	              bool repeat = false);
-	~TimedCallback() override {  }
+	~TimedCallback() override {}
 	void timed(uint32 evtime) override;
 	void clear_target() {
 		set_target(NULL);
 	}
 };
 
-
 class GameTimedCallback : public TimedCallback {
 public:
 	GameTimedCallback(CallBack *t, void *d, uint32 wait_time, bool repeat = false);
-	~GameTimedCallback() override {  }
+	~GameTimedCallback() override {}
 };
-
 
 /* Advance gameclock up to 24hours from start time. The callback is used every
  * hour from the start time, up to and including the stop time.
@@ -233,15 +228,16 @@ class TimedAdvance : public TimedCallback {
 	GameClock *_clock;
 	uint16 advance; // minutes requested
 	uint8 minutes_this_hour;
+
 protected:
-	uint16 minutes; // minutes advanced
-	uint16 rate; // rate is minutes-per-second
+	uint16 minutes;     // minutes advanced
+	uint16 rate;        // rate is minutes-per-second
 	uint32 prev_evtime; // last time the timer was called
 
 public:
 	TimedAdvance(uint8 hours, uint16 r = 60);
 	TimedAdvance(Std::string timestring, uint16 r = 60); // "HH:MM"
-	~TimedAdvance() override { }
+	~TimedAdvance() override {}
 
 	void init(uint16 min, uint16 r); // start time advance
 
@@ -249,7 +245,6 @@ public:
 	bool time_passed(); // returns true if stop time has passed
 	void get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring);
 };
-
 
 /* Camping in the wilderness. Move everyone into a circle and place a campfire
  * in the center.
@@ -272,10 +267,11 @@ class TimedRest : public TimedAdvance {
 	Party *party;
 	MsgScroll *scroll;
 	Actor *lookout;
-	bool sleeping; // false: mealtime, true: sleeping
+	bool sleeping;       // false: mealtime, true: sleeping
 	uint8 print_message; // which message is to be printed next
 	Obj *campfire;
 	uint8 number_that_had_food;
+
 public:
 	TimedRest(uint8 hours, Actor *lookout, Obj *campfire_obj);
 	~TimedRest() override;

@@ -40,16 +40,16 @@ private:
 	Actor *_dat_80090438;
 	Actor *_dat_8009043c;
 
-
 public:
 	uint16 _layer2XOffset;
 
 	Minigame4(DragonsEngine *vm);
 
 	void run();
+
 private:
-	void actorTalk(Actor *actorId,uint16 param_2,uint32 textIndex);
-	void actorDialog(Actor *actorId,uint16 param_2,uint32 textIndex);
+	void actorTalk(Actor *actorId, uint16 param_2, uint32 textIndex);
+	void actorDialog(Actor *actorId, uint16 param_2, uint32 textIndex);
 	uint16 runDanceBattle();
 	uint16 singleDanceRound(uint16 desiredPosition, uint16 duration);
 	void resetActors();

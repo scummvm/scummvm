@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "tsage/blue_force/blueforce_scenes3.h"
-#include "tsage/scenes.h"
-#include "tsage/tsage.h"
-#include "tsage/staticres.h"
+#include "common/config-manager.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
+#include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -65,7 +65,7 @@ bool Scene300::Item1::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 305;
 		scene->setAction(&scene->_sequenceManager1, scene, 305, &BF_GLOBALS._player,
-			&scene->_object8, NULL);
+		                 &scene->_object8, NULL);
 		return true;
 	} else {
 		return NamedHotspot::startAction(action, event);
@@ -111,7 +111,7 @@ void Scene300::Action1::signal() {
 		break;
 	case 2: {
 		ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x - 8,
-			BF_GLOBALS._player._position.y);
+		          BF_GLOBALS._player._position.y);
 		break;
 	}
 	case 3:
@@ -135,7 +135,7 @@ void Scene300::Action2::signal() {
 		break;
 	case 2: {
 		ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x + 8,
-			BF_GLOBALS._player._position.y);
+		          BF_GLOBALS._player._position.y);
 		break;
 	}
 	case 3:
@@ -157,7 +157,7 @@ void Scene300::Action3::signal() {
 		break;
 	case 1:
 		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 306, &BF_GLOBALS._player,
-			&scene->_object8, NULL);
+		                             &scene->_object8, NULL);
 		break;
 	case 2:
 		SceneItem::display2(300, 35);
@@ -229,8 +229,8 @@ void Scene300::Action5::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene300::Scene300(): SceneExt(), _object13(3000), _object14(3001), _object15(3002),
-			_object16(3003) {
+Scene300::Scene300() : SceneExt(), _object13(3000), _object14(3001), _object15(3002),
+                       _object16(3003) {
 	_field2760 = _field2762 = 0;
 }
 
@@ -563,11 +563,11 @@ void Scene300::dispatch() {
 		}
 
 		if ((BF_GLOBALS._player._position.y < 59) && (BF_GLOBALS._player._position.x > 137) &&
-				(_sceneMode != 6308) && (_sceneMode != 7308)) {
+		    (_sceneMode != 6308) && (_sceneMode != 7308)) {
 			_sceneMode = 6308;
 			BF_GLOBALS._player.disableControl();
 			ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x + 20,
-				BF_GLOBALS._player._position.y - 5);
+			          BF_GLOBALS._player._position.y - 5);
 		}
 
 		if (BF_GLOBALS._player._position.x <= 5)
@@ -724,7 +724,7 @@ bool Scene315::Barry::startAction(CursorType action, Event &event) {
 	case INV_22_SNUB:
 		BF_GLOBALS._player.disableControl();
 		if ((BF_GLOBALS.getFlag(fCuffedFrankie) && (BF_INVENTORY._bookingFrankie._sceneNumber == 0)) ||
-				(!BF_GLOBALS.getFlag(fCuffedFrankie) && (BF_INVENTORY._bookingGang._sceneNumber == 0))) {
+		    (!BF_GLOBALS.getFlag(fCuffedFrankie) && (BF_INVENTORY._bookingGang._sceneNumber == 0))) {
 			scene->_stripNumber = 3174;
 			scene->setAction(&scene->_action1);
 		} else {
@@ -901,7 +901,7 @@ bool Scene315::Object2::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3156;
 		scene->setAction(&scene->_sequenceManager, scene, BF_GLOBALS.getFlag(onDuty) ? 3156 : 3168,
-			&BF_GLOBALS._player, this, NULL);
+		                 &BF_GLOBALS._player, this, NULL);
 		return true;
 	default:
 		return NamedObject::startAction(action, event);
@@ -1119,7 +1119,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		_object8.setFrame(8);
 		_sceneMode = (BF_GLOBALS._dayNumber == 1) ? 3152 : 3155;
 		setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, &_object6,
-			&_object7, &_object8, NULL);
+		          &_object7, &_object8, NULL);
 		break;
 	case 300:
 	default:
@@ -1354,21 +1354,21 @@ void Scene315::dispatch() {
 			SceneItem::display2(315, 28);
 			_sceneMode = 3150;
 			ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x + 30,
-				BF_GLOBALS._player._position.y + 15);
+			          BF_GLOBALS._player._position.y + 15);
 		} else if (BF_GLOBALS._player._position.y > 156) {
 			BF_GLOBALS._player.disableControl();
 			_field1B68 = true;
 			SceneItem::display2(315, 28);
 			_sceneMode = 3150;
 			ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x + 30,
-				BF_GLOBALS._player._position.y - 24);
+			          BF_GLOBALS._player._position.y - 24);
 		}
-	}  else if (BF_GLOBALS._player.getRegionIndex() == 1) {
+	} else if (BF_GLOBALS._player.getRegionIndex() == 1) {
 		BF_GLOBALS._player.disableControl();
 		_field1B68 = true;
 		_sceneMode = 11;
 		ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x - 30,
-			BF_GLOBALS._player._position.y - 5);
+		          BF_GLOBALS._player._position.y - 5);
 	} else if (BF_GLOBALS._player._position.y > 156) {
 		BF_GLOBALS._player.disableControl();
 		_field1B68 = true;
@@ -1380,7 +1380,7 @@ void Scene315::dispatch() {
 		} else {
 			_sceneMode = 10;
 			ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x - 150,
-				BF_GLOBALS._player._position.y + 120);
+			          BF_GLOBALS._player._position.y + 120);
 		}
 	}
 }
@@ -1523,7 +1523,7 @@ void Scene330::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._sceneManager._previousScene == 50) {
 		// Coming from map
 		if ((BF_GLOBALS._driveFromScene == 340) || (BF_GLOBALS._driveFromScene == 342) ||
-				(BF_GLOBALS._driveFromScene == 330)) {
+		    (BF_GLOBALS._driveFromScene == 330)) {
 			if (BF_GLOBALS.getFlag(fWithLyle)) {
 				_seqNumber = 3304;
 			} else {
@@ -1538,7 +1538,7 @@ void Scene330::postInit(SceneObjectList *OwnerList) {
 			_seqNumber = 3301;
 
 			if ((BF_GLOBALS._dayNumber == 1) && (BF_GLOBALS._bookmark >= bStartOfGame) &&
-					(BF_GLOBALS._bookmark < bCalledToDomesticViolence)) {
+			    (BF_GLOBALS._bookmark < bCalledToDomesticViolence)) {
 				BF_GLOBALS._player.animate(ANIM_MODE_2);
 			}
 		}
@@ -1549,7 +1549,7 @@ void Scene330::postInit(SceneObjectList *OwnerList) {
 		_sound2.play(123);
 
 		if ((BF_GLOBALS._dayNumber == 1) && (BF_GLOBALS._bookmark >= bStartOfGame) &&
-				(BF_GLOBALS._bookmark < bCalledToDomesticViolence)) {
+		    (BF_GLOBALS._bookmark < bCalledToDomesticViolence)) {
 			BF_GLOBALS._player.animate(ANIM_MODE_2);
 		}
 	}
@@ -1566,10 +1566,10 @@ void Scene330::remove() {
 
 void Scene330::signal() {
 	if ((BF_GLOBALS._driveFromScene == 330) || (BF_GLOBALS._driveFromScene == 340) ||
-			(BF_GLOBALS._driveFromScene == 342)) {
+	    (BF_GLOBALS._driveFromScene == 342)) {
 		// Leaving marina
 		if ((BF_GLOBALS._dayNumber != 1) || (BF_GLOBALS._bookmark < bStartOfGame) ||
-				(BF_GLOBALS._bookmark >= bCalledToDomesticViolence))
+		    (BF_GLOBALS._bookmark >= bCalledToDomesticViolence))
 			// Leave scene normally
 			BF_GLOBALS._sceneManager.changeScene(BF_GLOBALS._driveToScene);
 		else {
@@ -1583,7 +1583,7 @@ void Scene330::signal() {
 		BF_GLOBALS.clearFlag(onBike);
 
 		if ((BF_GLOBALS._dayNumber != 1) || (BF_GLOBALS._bookmark < bStartOfGame) ||
-				(BF_GLOBALS._bookmark >= bCalledToDomesticViolence))
+		    (BF_GLOBALS._bookmark >= bCalledToDomesticViolence))
 			BF_GLOBALS._sceneManager.changeScene(342);
 		else
 			BF_GLOBALS._sceneManager.changeScene(340);
@@ -1667,7 +1667,6 @@ bool Scene340::Harrison::startAction(CursorType action, Event &event) {
 	}
 }
 
-
 /*--------------------------------------------------------------------------*/
 
 bool Scene340::Item1::startAction(CursorType action, Event &event) {
@@ -1728,8 +1727,8 @@ void Scene340::Action1::signal() {
 			setAction(&scene->_action8, this);
 		} else if (!_action) {
 			BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this,
-					MIN(BF_GLOBALS._marinaWomanCtr, 3) + 2340, &scene->_woman, &scene->_child,
-					&scene->_object4, NULL);
+			                             MIN(BF_GLOBALS._marinaWomanCtr, 3) + 2340, &scene->_woman, &scene->_child,
+			                             &scene->_object4, NULL);
 		}
 		break;
 	case 3:
@@ -2016,7 +2015,7 @@ void Scene340::Timer2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene340::Scene340(): PalettedScene() {
+Scene340::Scene340() : PalettedScene() {
 	_seqNumber1 = _womanDialogCount = _backupPresent = 0;
 }
 
@@ -2128,7 +2127,9 @@ void Scene340::postInit(SceneObjectList *OwnerList) {
 	default:
 		_sound1.fadeSound(35);
 		BF_GLOBALS._sound1.fadeSound((BF_GLOBALS._bookmark < bStartOfGame) ||
-				(BF_GLOBALS._bookmark > bCalledToDomesticViolence) ? 10 : 19);
+		                                     (BF_GLOBALS._bookmark > bCalledToDomesticViolence)
+		                                 ? 10
+		                                 : 19);
 		_seqNumber1 = 342;
 		break;
 	}
@@ -2168,7 +2169,7 @@ void Scene340::signal() {
 void Scene340::process(Event &event) {
 	// Check for gun being clicked on player
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == INV_COLT45) &&
-			BF_GLOBALS._player.contains(event.mousePos)) {
+	    BF_GLOBALS._player.contains(event.mousePos)) {
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 0;
 		SceneItem::display2(350, 26);
@@ -2316,7 +2317,7 @@ void Scene342::Timer1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene342::Scene342(): PalettedScene() {
+Scene342::Scene342() : PalettedScene() {
 	_field1A1A = 0;
 }
 
@@ -2396,7 +2397,9 @@ void Scene342::postInit(SceneObjectList *OwnerList) {
 		if (BF_GLOBALS._sceneManager._previousScene != 60) {
 			_sound1.fadeSound(35);
 			BF_GLOBALS._sound1.fadeSound((BF_GLOBALS._bookmark < bStartOfGame) ||
-				(BF_GLOBALS._bookmark > bCalledToDomesticViolence) ? 10 : 19);
+			                                     (BF_GLOBALS._bookmark > bCalledToDomesticViolence)
+			                                 ? 10
+			                                 : 19);
 		}
 
 		if (BF_GLOBALS.getFlag(fWithLyle)) {
@@ -2465,7 +2468,7 @@ void Scene342::signal() {
 void Scene342::process(Event &event) {
 	// Check for gun being clicked on player
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == INV_COLT45) &&
-			BF_GLOBALS._player.contains(event.mousePos)) {
+	    BF_GLOBALS._player.contains(event.mousePos)) {
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 0;
 		SceneItem::display2(350, 26);
@@ -2555,7 +2558,7 @@ bool Scene350::Yacht::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if ((BF_GLOBALS._dayNumber != 1)  || !BF_GLOBALS.getFlag(onDuty) || (BF_GLOBALS._bookmark < bStartOfGame)) {
+		if ((BF_GLOBALS._dayNumber != 1) || !BF_GLOBALS.getFlag(onDuty) || (BF_GLOBALS._bookmark < bStartOfGame)) {
 			if ((BF_GLOBALS._dayNumber == 1) || (BF_GLOBALS._dayNumber == 4)) {
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 1;
@@ -2567,7 +2570,7 @@ bool Scene350::Yacht::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 1;
 			BF_GLOBALS._player.disableControl();
 			scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(gunDrawn) ? 3504 : 3505,
-				&BF_GLOBALS._player, &scene->_yachtDoor, NULL);
+			                 &BF_GLOBALS._player, &scene->_yachtDoor, NULL);
 			return true;
 		}
 		break;
@@ -2654,7 +2657,7 @@ void Scene350::Timer1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene350::Scene350(): SceneExt() {
+Scene350::Scene350() : SceneExt() {
 	_field1D44 = _field1D46 = 0;
 }
 
@@ -2738,7 +2741,7 @@ void Scene350::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS.clearFlag(gunDrawn);
 
 		if ((BF_GLOBALS._dayNumber == 1) && (BF_GLOBALS._bookmark < bCalledToDomesticViolence) &&
-				BF_GLOBALS.getFlag(fBackupIn350)) {
+		    BF_GLOBALS.getFlag(fBackupIn350)) {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 0;
 			setAction(&_sequenceManager1, this, 3509, &_harrison, NULL);
@@ -2764,7 +2767,9 @@ void Scene350::signal() {
 		break;
 	case 2:
 		BF_GLOBALS._sceneManager.changeScene((BF_GLOBALS._dayNumber != 1) ||
-			(BF_GLOBALS._bookmark < bStartOfGame) || (BF_GLOBALS._bookmark >= bCalledToDomesticViolence) ? 342 : 340);
+		                                             (BF_GLOBALS._bookmark < bStartOfGame) || (BF_GLOBALS._bookmark >= bCalledToDomesticViolence)
+		                                         ? 342
+		                                         : 340);
 		break;
 	case 3:
 		BF_GLOBALS._player.setStrip(8);
@@ -2802,7 +2807,7 @@ void Scene350::signal() {
 void Scene350::process(Event &event) {
 	// Check for gun being clicked on player
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == INV_COLT45) &&
-			BF_GLOBALS._player.contains(event.mousePos)) {
+	    BF_GLOBALS._player.contains(event.mousePos)) {
 		BF_GLOBALS._player.disableControl();
 
 		if (!BF_GLOBALS.getFlag(onDuty)) {
@@ -2851,7 +2856,7 @@ void Scene350::process(Event &event) {
 
 void Scene350::checkGun() {
 	if ((BF_GLOBALS._dayNumber != 1) || (BF_GLOBALS._bookmark < bStartOfGame) ||
-			(BF_GLOBALS._bookmark >= bCalledToDomesticViolence) || BF_GLOBALS.getFlag(fRandomShot350)) {
+	    (BF_GLOBALS._bookmark >= bCalledToDomesticViolence) || BF_GLOBALS.getFlag(fRandomShot350)) {
 		SceneItem::display2(350, 27);
 	} else {
 		BF_GLOBALS.setFlag(fRandomShot350);
@@ -3300,7 +3305,6 @@ bool Scene355::Item4::startAction(CursorType action, Event &event) {
 	}
 }
 
-
 bool Scene355::Pouch::startAction(CursorType action, Event &event) {
 	Scene355 *scene = (Scene355 *)BF_GLOBALS._sceneManager._scene;
 
@@ -3350,7 +3354,7 @@ bool Scene355::Item11::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_WALK:
 		return (BF_GLOBALS._bookmark == bStartOfGame) || (BF_GLOBALS._bookmark == bCalledToDomesticViolence) ||
-			(BF_GLOBALS._bookmark == bArrestedGreen);
+		       (BF_GLOBALS._bookmark == bArrestedGreen);
 	case CURSOR_LOOK:
 		SceneItem::display2(355, 7);
 		return true;
@@ -3459,7 +3463,7 @@ void Scene355::Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene355::Scene355(): PalettedScene() {
+Scene355::Scene355() : PalettedScene() {
 	_nextSceneMode = 0;
 	_modeFlag = false;
 }
@@ -3548,7 +3552,7 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 	case 1:
 		if (!BF_GLOBALS.getFlag(onDuty))
 			_doorway._onDuty = true;
-		else if (BF_INVENTORY.getObjectScene(INV_GREENS_GUN)  == 320)
+		else if (BF_INVENTORY.getObjectScene(INV_GREENS_GUN) == 320)
 			_doorway._onDuty = true;
 		break;
 	case 2:
@@ -3604,7 +3608,7 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 		}
 
 		if ((BF_INVENTORY.getObjectScene(INV_RAGS) == 0) && (BF_INVENTORY.getObjectScene(INV_JAR) == 0) &&
-				(BF_INVENTORY.getObjectScene(INV_FLARE) == 0)) {
+		    (BF_INVENTORY.getObjectScene(INV_FLARE) == 0)) {
 			BF_GLOBALS._sound1.changeSound(103);
 
 			_object9.postInit();
@@ -3648,7 +3652,7 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 			}
 
 			if ((BF_GLOBALS._bookmark == bFinishedWGreen) && BF_GLOBALS._sceneObjects->contains(&_lyle) &&
-					!BF_GLOBALS.getFlag(iWasAmbushed)) {
+			    !BF_GLOBALS.getFlag(iWasAmbushed)) {
 				BF_GLOBALS.setFlag(iWasAmbushed);
 				BF_GLOBALS._player.disableControl();
 
@@ -3942,7 +3946,7 @@ void Scene355::signal() {
 	case 9988:
 		T2_GLOBALS._uiElements.addScore(30);
 		if ((BF_INVENTORY.getObjectScene(INV_RAGS) == 0) && (BF_INVENTORY.getObjectScene(INV_JAR) == 0) &&
-				(BF_INVENTORY.getObjectScene(INV_FLARE) == 0)) {
+		    (BF_INVENTORY.getObjectScene(INV_FLARE) == 0)) {
 			_green.postInit();
 			_green.setVisage(373);
 			_green.setPosition(Common::Point(-10, -10));
@@ -4057,7 +4061,7 @@ void Scene355::process(Event &event) {
 		}
 
 		if ((_sceneMode != 2357) && (_sceneMode != 1357) && !BF_GLOBALS.getFlag(greenTaken) &&
-				(event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == INV_COLT45)) {
+		    (event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == INV_COLT45)) {
 			if (BF_GLOBALS._player.contains(event.mousePos)) {
 				BF_GLOBALS._player.disableControl();
 				if (BF_GLOBALS.getFlag(gunDrawn)) {
@@ -4493,7 +4497,7 @@ void Scene360::signal() {
 		BF_GLOBALS.setFlag(gunDrawn);
 		BF_GLOBALS._deathReason = BF_GLOBALS.getFlag(fBackupIn350) ? 2 : 1;
 		BF_GLOBALS._player.setPosition(Common::Point(BF_GLOBALS._player._position.x - 20,
-			BF_GLOBALS._player._position.y + 1));
+		                                             BF_GLOBALS._player._position.y + 1));
 		_sceneMode = 3610;
 		setAction(&_sequenceManager1, this, 3610, &_slidingDoor, &_object2, &BF_GLOBALS._player, NULL);
 		break;
@@ -4525,7 +4529,7 @@ void Scene360::signal() {
 		// Original game was only using at this place visage 1363.
 		// This workaround allow Harrison to keep his gun handy
 		// when entering the romm (if required)
-		if (! BF_GLOBALS.getFlag(gunDrawn))
+		if (!BF_GLOBALS.getFlag(gunDrawn))
 			_harrison.setVisage(1363);
 		else
 			_harrison.setVisage(363);
@@ -4559,7 +4563,7 @@ void Scene360::process(Event &event) {
 	SceneExt::process(event);
 
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == INV_COLT45) &&
-			BF_GLOBALS._player.contains(event.mousePos) && !BF_GLOBALS.getFlag(greenTaken)) {
+	    BF_GLOBALS._player.contains(event.mousePos) && !BF_GLOBALS.getFlag(greenTaken)) {
 		// Player clicked gun on themselves
 		if (BF_GLOBALS.getFlag(gunDrawn)) {
 			// Handle holstering gun
@@ -4615,7 +4619,7 @@ void Scene360::dispatch() {
 		}
 
 		if ((BF_GLOBALS._player._position.x <= 168) && !BF_GLOBALS.getFlag(greenTaken) &&
-				!BF_GLOBALS.getFlag(gunDrawn)) {
+		    !BF_GLOBALS.getFlag(gunDrawn)) {
 			// Moving to doorway without drawn gun before Green is captured
 			BF_GLOBALS._player.disableControl();
 			BF_GLOBALS._player.addMover(NULL);
@@ -4698,7 +4702,7 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 			++_talkCount;
 			scene->_sceneMode = 3708;
 			scene->setAction(&scene->_sequenceManager, scene, 3708, this, &scene->_laura, &scene->_harrison,
-				&scene->_object5, &scene->_greensGun, NULL);
+			                 &scene->_object5, &scene->_greensGun, NULL);
 			break;
 		case 3:
 			scene->_sceneMode = BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 1 ? 3713 : 2;
@@ -4762,7 +4766,7 @@ bool Scene370::Harrison::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 3;
 			scene->_stripManager.start(3714, scene);
 		} else if ((BF_INVENTORY.getObjectScene(INV_GREENS_KNIFE) == 1) ||
-				((BF_INVENTORY.getObjectScene(INV_GREENS_GUN) == 1) && BF_GLOBALS._sceneObjects->contains(&scene->_laura))) {
+		           ((BF_INVENTORY.getObjectScene(INV_GREENS_GUN) == 1) && BF_GLOBALS._sceneObjects->contains(&scene->_laura))) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 3716;
 			scene->setAction(&scene->_sequenceManager, scene, 3716, &BF_GLOBALS._player, &scene->_green, this, NULL);
@@ -4835,7 +4839,7 @@ bool Scene370::Item6::startAction(CursorType action, Event &event) {
 		return true;
 	} else if (action == INV_COLT45) {
 		if (BF_GLOBALS._sceneObjects->contains(&scene->_green) && (BF_INVENTORY.getObjectScene(INV_GREENS_GUN) != 370) &&
-				(BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 1)) {
+		    (BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 1)) {
 			BF_GLOBALS._player.disableControl();
 			scene->_green.setAction(NULL);
 			scene->_sceneMode = 3703;
@@ -4848,7 +4852,6 @@ bool Scene370::Item6::startAction(CursorType action, Event &event) {
 	else // If any other action
 		return SceneHotspot::startAction(action, event);
 }
-
 
 bool Scene370::Exit::startAction(CursorType action, Event &event) {
 	Scene370 *scene = (Scene370 *)BF_GLOBALS._sceneManager._scene;
@@ -5094,7 +5097,7 @@ void Scene370::dispatch() {
 	SceneExt::dispatch();
 
 	if ((BF_GLOBALS._player._position.x >= 316) && !BF_GLOBALS._sceneObjects->contains(&_laura) &&
-				!BF_GLOBALS._sceneObjects->contains(&_green)) {
+	    !BF_GLOBALS._sceneObjects->contains(&_green)) {
 		if (BF_GLOBALS._bookmark < bArrestedGreen) {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 3712;
@@ -5454,8 +5457,7 @@ bool Scene385::Exit::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-
-Scene385::Scene385(): SceneExt() {
+Scene385::Scene385() : SceneExt() {
 	_talkAction = 0;
 	_jimFlag = false;
 }
@@ -5642,7 +5644,7 @@ bool Scene390::BookingForms::startAction(CursorType action, Event &event) {
 		} else if (!BF_GLOBALS.getFlag(onDuty)) {
 			SceneItem::display2(390, 22);
 		} else if (((BF_GLOBALS._bookmark < bLauraToParamedics) && BF_GLOBALS.getFlag(greenTaken)) ||
-				((BF_GLOBALS._bookmark >= bStoppedFrankie) && !BF_GLOBALS.getFlag(frankInJail) && (BF_GLOBALS._dayNumber == 1))) {
+		           ((BF_GLOBALS._bookmark >= bStoppedFrankie) && !BF_GLOBALS.getFlag(frankInJail) && (BF_GLOBALS._dayNumber == 1))) {
 			BF_GLOBALS._player.disableControl();
 			++_flag;
 			scene->_sceneMode = 3902;

@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima4/map/tilemap.h"
-#include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/map/tileset.h"
 
 namespace Ultima {
@@ -118,7 +118,8 @@ void TileMaps::load(const ConfigElement &tilemapConf) {
 TileMap *TileMaps::get(Common::String name) {
 	if (find(name) != end())
 		return (*this)[name];
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 /*-------------------------------------------------------------------*/

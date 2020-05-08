@@ -38,9 +38,11 @@ class CEnterExitSecClassMiniLift : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
+
 private:
 	static CEnterExitSecClassMiniLiftStatics *_statics;
 	int _roomNum;
+
 public:
 	CLASSDEF;
 	CEnterExitSecClassMiniLift() : CGameObject(), _roomNum(0) {}

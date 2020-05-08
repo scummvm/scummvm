@@ -20,17 +20,17 @@
  *
  */
 
-#include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/spell.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/game/creature.h"
-#include "ultima/ultima4/game/moongate.h"
-#include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
-#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/debugger.h"
+#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event_handler.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/creature.h"
+#include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/moongate.h"
+#include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/direction.h"
@@ -60,58 +60,46 @@ static const struct {
 	SpellCastError err;
 	const char *msg;
 } SPELL_ERROR_MSGS[] = {
-	{ CASTERR_NOMIX, "None Mixed!\n" },
-	{ CASTERR_MPTOOLOW, "Not Enough MP!\n" },
-	{ CASTERR_FAILED, "Failed!\n" },
-	{ CASTERR_WRONGCONTEXT, "Not here!\n" },
-	{ CASTERR_COMBATONLY, "Combat only!\nFailed!\n" },
-	{ CASTERR_DUNGEONONLY, "Dungeon only!\nFailed!\n" },
-	{ CASTERR_WORLDMAPONLY, "Outdoors only!\nFailed!\n" }
-};
+    {CASTERR_NOMIX, "None Mixed!\n"},
+    {CASTERR_MPTOOLOW, "Not Enough MP!\n"},
+    {CASTERR_FAILED, "Failed!\n"},
+    {CASTERR_WRONGCONTEXT, "Not here!\n"},
+    {CASTERR_COMBATONLY, "Combat only!\nFailed!\n"},
+    {CASTERR_DUNGEONONLY, "Dungeon only!\nFailed!\n"},
+    {CASTERR_WORLDMAPONLY, "Outdoors only!\nFailed!\n"}};
 
 const Spell Spells::SPELL_LIST[N_SPELLS] = {
-	{ "Awaken",       GINSENG | GARLIC,         CTX_ANY,        TRANSPORT_ANY,  &Spells::spellAwaken,  Spell::PARAM_PLAYER,  5 },
-	{
-		"Blink",        SILK | MOSS,              CTX_WORLDMAP,   TRANSPORT_FOOT_OR_HORSE,
-		&Spells::spellBlink,   Spell::PARAM_DIR,     15
-	},
-	{ "Cure",         GINSENG | GARLIC,         CTX_ANY,        TRANSPORT_ANY,  &Spells::spellCure,    Spell::PARAM_PLAYER,  5 },
-	{ "Dispell",      ASH | GARLIC | PEARL,     CTX_ANY,        TRANSPORT_ANY,  &Spells::spellDispel,  Spell::PARAM_DIR,     20 },
-	{
-		"Energy Field", ASH | SILK | PEARL, (LocationContext)(CTX_COMBAT | CTX_DUNGEON),
-		TRANSPORT_ANY,  &Spells::spellEField,  Spell::PARAM_TYPEDIR, 10
-	},
-	{ "Fireball",     ASH | PEARL,              CTX_COMBAT,     TRANSPORT_ANY,  &Spells::spellFireball, Spell::PARAM_DIR,     15 },
-	{
-		"Gate",         ASH | PEARL | MANDRAKE,   CTX_WORLDMAP,   TRANSPORT_FOOT_OR_HORSE,
-		&Spells::spellGate,    Spell::PARAM_PHASE,   40
-	},
-	{ "Heal",         GINSENG | SILK,           CTX_ANY,        TRANSPORT_ANY,  &Spells::spellHeal,    Spell::PARAM_PLAYER,  10 },
-	{ "Iceball",      PEARL | MANDRAKE,         CTX_COMBAT,     TRANSPORT_ANY,  &Spells::spellIceball, Spell::PARAM_DIR,     20 },
-	{
-		"Jinx",         PEARL | NIGHTSHADE | MANDRAKE,
-		CTX_ANY,        TRANSPORT_ANY,  &Spells::spellJinx,    Spell::PARAM_NONE,    30
-	},
-	{ "Kill",         PEARL | NIGHTSHADE,       CTX_COMBAT,     TRANSPORT_ANY,  &Spells::spellKill,    Spell::PARAM_DIR,     25 },
-	{ "Light",        ASH,                      CTX_DUNGEON,    TRANSPORT_ANY,  &Spells::spellLight,   Spell::PARAM_NONE,    5 },
-	{ "Magic missile", ASH | PEARL,             CTX_COMBAT,     TRANSPORT_ANY,  &Spells::spellMMissle, Spell::PARAM_DIR,     5 },
-	{ "Negate",       ASH | GARLIC | MANDRAKE,  CTX_ANY,        TRANSPORT_ANY,  &Spells::spellNegate,  Spell::PARAM_NONE,    20 },
-	{ "Open",         ASH | MOSS,               CTX_ANY,        TRANSPORT_ANY,  &Spells::spellOpen,    Spell::PARAM_NONE,    5 },
-	{ "Protection",   ASH | GINSENG | GARLIC,   CTX_ANY,        TRANSPORT_ANY,  &Spells::spellProtect, Spell::PARAM_NONE,    15 },
-	{ "Quickness",    ASH | GINSENG | MOSS,     CTX_ANY,        TRANSPORT_ANY,  &Spells::spellQuick,   Spell::PARAM_NONE,    20 },
-	{
-		"Resurrect",    ASH | GINSENG | GARLIC | SILK | MOSS | MANDRAKE,
-		CTX_NON_COMBAT, TRANSPORT_ANY,  &Spells::spellRez,     Spell::PARAM_PLAYER,  45
-	},
-	{ "Sleep",        SILK | GINSENG,           CTX_COMBAT,     TRANSPORT_ANY,  &Spells::spellSleep,   Spell::PARAM_NONE,    15 },
-	{ "Tremor",       ASH | MOSS | MANDRAKE,    CTX_COMBAT,     TRANSPORT_ANY,  &Spells::spellTremor,  Spell::PARAM_NONE,    30 },
-	{ "Undead",       ASH | GARLIC,             CTX_COMBAT,     TRANSPORT_ANY,  &Spells::spellUndead,  Spell::PARAM_NONE,    15 },
-	{ "View",         NIGHTSHADE | MANDRAKE,    CTX_NON_COMBAT, TRANSPORT_ANY,  &Spells::spellView,    Spell::PARAM_NONE,    15 },
-	{ "Winds",        ASH | MOSS,               CTX_WORLDMAP,   TRANSPORT_ANY,  &Spells::spellWinds,   Spell::PARAM_FROMDIR, 10 },
-	{ "X-it",         ASH | SILK | MOSS,        CTX_DUNGEON,    TRANSPORT_ANY,  &Spells::spellXit,     Spell::PARAM_NONE,    15 },
-	{ "Y-up",         SILK | MOSS,              CTX_DUNGEON,    TRANSPORT_ANY,  &Spells::spellYup,     Spell::PARAM_NONE,    10 },
-	{ "Z-down",       SILK | MOSS,              CTX_DUNGEON,    TRANSPORT_ANY,  &Spells::spellZdown,   Spell::PARAM_NONE,    5 }
-};
+    {"Awaken", GINSENG | GARLIC, CTX_ANY, TRANSPORT_ANY, &Spells::spellAwaken, Spell::PARAM_PLAYER, 5},
+    {"Blink", SILK | MOSS, CTX_WORLDMAP, TRANSPORT_FOOT_OR_HORSE,
+     &Spells::spellBlink, Spell::PARAM_DIR, 15},
+    {"Cure", GINSENG | GARLIC, CTX_ANY, TRANSPORT_ANY, &Spells::spellCure, Spell::PARAM_PLAYER, 5},
+    {"Dispell", ASH | GARLIC | PEARL, CTX_ANY, TRANSPORT_ANY, &Spells::spellDispel, Spell::PARAM_DIR, 20},
+    {"Energy Field", ASH | SILK | PEARL, (LocationContext)(CTX_COMBAT | CTX_DUNGEON),
+     TRANSPORT_ANY, &Spells::spellEField, Spell::PARAM_TYPEDIR, 10},
+    {"Fireball", ASH | PEARL, CTX_COMBAT, TRANSPORT_ANY, &Spells::spellFireball, Spell::PARAM_DIR, 15},
+    {"Gate", ASH | PEARL | MANDRAKE, CTX_WORLDMAP, TRANSPORT_FOOT_OR_HORSE,
+     &Spells::spellGate, Spell::PARAM_PHASE, 40},
+    {"Heal", GINSENG | SILK, CTX_ANY, TRANSPORT_ANY, &Spells::spellHeal, Spell::PARAM_PLAYER, 10},
+    {"Iceball", PEARL | MANDRAKE, CTX_COMBAT, TRANSPORT_ANY, &Spells::spellIceball, Spell::PARAM_DIR, 20},
+    {"Jinx", PEARL | NIGHTSHADE | MANDRAKE,
+     CTX_ANY, TRANSPORT_ANY, &Spells::spellJinx, Spell::PARAM_NONE, 30},
+    {"Kill", PEARL | NIGHTSHADE, CTX_COMBAT, TRANSPORT_ANY, &Spells::spellKill, Spell::PARAM_DIR, 25},
+    {"Light", ASH, CTX_DUNGEON, TRANSPORT_ANY, &Spells::spellLight, Spell::PARAM_NONE, 5},
+    {"Magic missile", ASH | PEARL, CTX_COMBAT, TRANSPORT_ANY, &Spells::spellMMissle, Spell::PARAM_DIR, 5},
+    {"Negate", ASH | GARLIC | MANDRAKE, CTX_ANY, TRANSPORT_ANY, &Spells::spellNegate, Spell::PARAM_NONE, 20},
+    {"Open", ASH | MOSS, CTX_ANY, TRANSPORT_ANY, &Spells::spellOpen, Spell::PARAM_NONE, 5},
+    {"Protection", ASH | GINSENG | GARLIC, CTX_ANY, TRANSPORT_ANY, &Spells::spellProtect, Spell::PARAM_NONE, 15},
+    {"Quickness", ASH | GINSENG | MOSS, CTX_ANY, TRANSPORT_ANY, &Spells::spellQuick, Spell::PARAM_NONE, 20},
+    {"Resurrect", ASH | GINSENG | GARLIC | SILK | MOSS | MANDRAKE,
+     CTX_NON_COMBAT, TRANSPORT_ANY, &Spells::spellRez, Spell::PARAM_PLAYER, 45},
+    {"Sleep", SILK | GINSENG, CTX_COMBAT, TRANSPORT_ANY, &Spells::spellSleep, Spell::PARAM_NONE, 15},
+    {"Tremor", ASH | MOSS | MANDRAKE, CTX_COMBAT, TRANSPORT_ANY, &Spells::spellTremor, Spell::PARAM_NONE, 30},
+    {"Undead", ASH | GARLIC, CTX_COMBAT, TRANSPORT_ANY, &Spells::spellUndead, Spell::PARAM_NONE, 15},
+    {"View", NIGHTSHADE | MANDRAKE, CTX_NON_COMBAT, TRANSPORT_ANY, &Spells::spellView, Spell::PARAM_NONE, 15},
+    {"Winds", ASH | MOSS, CTX_WORLDMAP, TRANSPORT_ANY, &Spells::spellWinds, Spell::PARAM_FROMDIR, 10},
+    {"X-it", ASH | SILK | MOSS, CTX_DUNGEON, TRANSPORT_ANY, &Spells::spellXit, Spell::PARAM_NONE, 15},
+    {"Y-up", SILK | MOSS, CTX_DUNGEON, TRANSPORT_ANY, &Spells::spellYup, Spell::PARAM_NONE, 10},
+    {"Z-down", SILK | MOSS, CTX_DUNGEON, TRANSPORT_ANY, &Spells::spellZdown, Spell::PARAM_NONE, 5}};
 
 /*-------------------------------------------------------------------*/
 
@@ -248,7 +236,7 @@ int Spells::spellMix(uint spell, const Ingredients *ingredients) {
 
 	regmask = 0;
 	for (reg = 0; reg < REAG_MAX; reg++) {
-		if (ingredients->getReagent((Reagent) reg) > 0)
+		if (ingredients->getReagent((Reagent)reg) > 0)
 			regmask |= (1 << reg);
 	}
 
@@ -314,7 +302,7 @@ bool Spells::spellCast(uint spell, int character, int param, SpellCastError *err
 		/* recalculate spell speed - based on 5/sec */
 		float MP_OF_LARGEST_SPELL = 45;
 		int spellMp = SPELL_LIST[spell]._mp;
-		time = int(10000.0 / settings._spellEffectSpeed  *  spellMp / MP_OF_LARGEST_SPELL);
+		time = int(10000.0 / settings._spellEffectSpeed * spellMp / MP_OF_LARGEST_SPELL);
 		soundPlay(SOUND_PREMAGIC_MANA_JUMBLE, false, time);
 		EventHandler::wait_msecs(time);
 		g_spells->spellEffect(spell + 'a', subject, SOUND_MAGIC);
@@ -339,12 +327,10 @@ void Spells::spellMagicAttack(const Common::String &tilename, Direction dir, int
 
 	MapTile tile = g_context->_location->_map->_tileSet->getByName(tilename)->getId();
 
-	int attackDamage = ((minDamage >= 0) && (minDamage < maxDamage)) ?
-	                   xu4_random((maxDamage + 1) - minDamage) + minDamage :
-	                   maxDamage;
+	int attackDamage = ((minDamage >= 0) && (minDamage < maxDamage)) ? xu4_random((maxDamage + 1) - minDamage) + minDamage : maxDamage;
 
 	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, (*party)[controller->getFocus()]->getCoords(),
-	                           1, 11, Tile::canAttackOverTile, false);
+	                                                        1, 11, Tile::canAttackOverTile, false);
 	for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 		if (spellMagicAttackAt(*i, tile, attackDamage))
 			return;
@@ -353,7 +339,7 @@ void Spells::spellMagicAttack(const Common::String &tilename, Direction dir, int
 
 bool Spells::spellMagicAttackAt(const Coords &coords, MapTile attackTile, int attackDamage) {
 	bool objectHit = false;
-//    int attackdelay = MAX_BATTLE_SPEED - settings.battleSpeed;
+	//    int attackdelay = MAX_BATTLE_SPEED - settings.battleSpeed;
 	CombatMap *cm = getCombatMap();
 
 	Creature *creature = cm->creatureAt(coords);
@@ -366,7 +352,6 @@ bool Spells::spellMagicAttackAt(const Coords &coords, MapTile attackTile, int at
 		/* show the 'hit' tile */
 		soundPlay(SOUND_NPC_STRUCK);
 		GameController::flashTile(coords, attackTile, 3);
-
 
 		/* apply the damage to the creature */
 		CombatController *controller = spellCombatController();
@@ -433,7 +418,8 @@ int Spells::spellBlink(int dir) {
 			failed = 1;
 
 		g_context->_location->_coords = coords;
-	} else failed = 1;
+	} else
+		failed = 1;
 
 	return (failed ? 0 : 1);
 }
@@ -547,7 +533,8 @@ int Spells::spellEField(int param) {
 		 * The code below seems to produce this behaviour.
 		 */
 		const Tile *tile = g_context->_location->_map->tileTypeAt(coords, WITH_GROUND_OBJECTS);
-		if (!tile->isWalkable()) return 0;
+		if (!tile->isWalkable())
+			return 0;
 
 		/* Get rid of old field, if any */
 		Annotation::List a = g_context->_location->_map->_annotations->allAt(coords);
@@ -653,7 +640,7 @@ int Spells::spellSleep(int unused) {
 		Coords coords = m->getCoords();
 		GameController::flashTile(coords, "wisp", 1);
 		if ((m->getResists() != EFFECT_SLEEP) &&
-		        xu4_random(0xFF) >= m->getHp()) {
+		    xu4_random(0xFF) >= m->getHp()) {
 			soundPlay(SOUND_POISON_EFFECT);
 			m->putToSleep();
 			GameController::flashTile(coords, "sleep_field", 3);
@@ -671,7 +658,6 @@ int Spells::spellTremor(int unused) {
 
 	for (i = creatures.begin(); i != creatures.end(); i++) {
 		Creature *m = *i;
-
 
 		Coords coords = m->getCoords();
 		//GameController::flashTile(coords, "rocks", 1);

@@ -34,8 +34,7 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-TSpit::TSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackTspit, "tsliders.190", "tsliderbg.190") {
+TSpit::TSpit(MohawkEngine_Riven *vm) : DomeSpit(vm, kStackTspit, "tsliders.190", "tsliderbg.190") {
 
 	REGISTER_COMMAND(TSpit, xtexterior300_telescopedown);
 	REGISTER_COMMAND(TSpit, xtexterior300_telescopeup);
@@ -75,7 +74,7 @@ void TSpit::xtexterior300_telescopedown(const ArgumentArray &args) {
 		// We're not at the bottom, and we can move down again
 
 		// Play a piece of the moving down movie
-		static const uint32 timeIntervals[] = { 4320, 3440, 2660, 1760, 880, 0 };
+		static const uint32 timeIntervals[] = {4320, 3440, 2660, 1760, 880, 0};
 		uint16 movieCode = telescopeCover ? 1 : 2;
 		RivenVideo *video = _vm->_video->openSlot(movieCode);
 		video->enable();
@@ -122,7 +121,7 @@ void TSpit::xtexterior300_telescopeup(const ArgumentArray &args) {
 	}
 
 	// Play a piece of the moving up movie
-	static const uint32 timeIntervals[] = { 0, 800, 1680, 2560, 3440, 4320 };
+	static const uint32 timeIntervals[] = {0, 800, 1680, 2560, 3440, 4320};
 	uint16 movieCode = _vm->_vars["ttelecover"] ? 4 : 5;
 	RivenVideo *video = _vm->_video->openSlot(movieCode);
 	video->enable();
@@ -197,7 +196,7 @@ static const int kSmallMarbleWidth = 4;
 static const int kSmallMarbleHeight = 2;
 //static const int kLargeMarbleSize = 8;
 static const int kMarbleHotspotSize = 13;
-static const char *s_marbleNames[] = { "tred", "torange", "tyellow", "tgreen", "tblue", "tviolet" };
+static const char *s_marbleNames[] = {"tred", "torange", "tyellow", "tgreen", "tblue", "tviolet"};
 
 // Marble Puzzle helper functions
 // The y portion takes the upper 16 bits, while the x portion takes the lower 16 bits
@@ -219,8 +218,8 @@ static byte getMarbleY(uint32 var) { // Give that that Y you old hag! </bad Sein
 
 static Common::Rect generateMarbleGridRect(uint16 x, uint16 y) {
 	// x/y in terms of 0!
-	static const int marbleGridOffsetX[] = { 134, 202, 270, 338, 406 };
-	static const int marbleGridOffsetY[] = {  24,  92, 159, 227, 295 };
+	static const int marbleGridOffsetX[] = {134, 202, 270, 338, 406};
+	static const int marbleGridOffsetY[] = {24, 92, 159, 227, 295};
 
 	uint16 offsetX = marbleGridOffsetX[x / 5] + (x % 5) * kMarbleHotspotSize;
 	uint16 offsetY = marbleGridOffsetY[y / 5] + (y % 5) * kMarbleHotspotSize;
@@ -231,7 +230,7 @@ void TSpit::xt7500_checkmarbles(const ArgumentArray &args) {
 	// Set apower if the marbles are in their correct spot.
 
 	bool valid = true;
-	static const uint32 marbleFinalValues[] = { 1114121, 1441798, 0, 65552, 65558, 262146 };
+	static const uint32 marbleFinalValues[] = {1114121, 1441798, 0, 65552, 65558, 262146};
 
 	for (uint16 i = 0; i < kMarbleCount; i++)
 		if (_vm->_vars[s_marbleNames[i]] != marbleFinalValues[i]) {
@@ -254,18 +253,15 @@ void TSpit::xt7600_setupmarbles(const ArgumentArray &args) {
 
 	// Convert from marble X coordinate to screen X coordinate
 	static const uint16 xPosOffsets[] = {
-			246, 245, 244, 243, 243, 241, 240, 240, 239, 238, 237, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 226, 225
-	};
+	    246, 245, 244, 243, 243, 241, 240, 240, 239, 238, 237, 237, 236, 235, 234, 233, 232, 231, 230, 229, 228, 227, 226, 226, 225};
 
 	// Convert from marble Y coordinate to screen Y coordinate
 	static const uint16 yPosOffsets[] = {
-			261, 263, 265, 267, 268, 270, 272, 274, 276, 278, 281, 284, 285, 288, 290, 293, 295, 298, 300, 303, 306, 309, 311, 314, 316
-	};
+	    261, 263, 265, 267, 268, 270, 272, 274, 276, 278, 281, 284, 285, 288, 290, 293, 295, 298, 300, 303, 306, 309, 311, 314, 316};
 
 	// Handle spacing for y coordinates due to the angle
 	static const double yAdjusts[] = {
-			4.56, 4.68, 4.76, 4.84, 4.84, 4.96, 5.04, 5.04, 5.12, 5.2, 5.28, 5.28, 5.36, 5.44, 5.4, 5.6, 5.72, 5.8, 5.88, 5.96, 6.04, 6.12, 6.2, 6.2, 6.28
-	};
+	    4.56, 4.68, 4.76, 4.84, 4.84, 4.96, 5.04, 5.04, 5.12, 5.2, 5.28, 5.28, 5.36, 5.44, 5.4, 5.6, 5.72, 5.8, 5.88, 5.96, 6.04, 6.12, 6.2, 6.2, 6.28};
 
 	// Waffle state of 0 is up, 1 down
 	bool waffleDown = _vm->_vars["twaffle"] != 0;
@@ -281,8 +277,8 @@ void TSpit::xt7600_setupmarbles(const ArgumentArray &args) {
 		if (var == 0) {
 			// The marble is still in its initial place
 			// (Note that this is still drawn even if the waffle is down)
-			static const uint16 defaultX[] = { 375, 377, 379, 381, 383, 385 };
-			static const uint16 defaultY[] = { 253, 257, 261, 265, 268, 273 };
+			static const uint16 defaultX[] = {375, 377, 379, 381, 383, 385};
+			static const uint16 defaultY[] = {253, 257, 261, 265, 268, 273};
 			_vm->_gfx->copyImageToScreen(baseBitmapId + i, defaultX[i], defaultY[i], defaultX[i] + kSmallMarbleWidth, defaultY[i] + kSmallMarbleHeight);
 		} else if (waffleDown) {
 			// The marble is on the grid and the waffle is down
@@ -304,7 +300,7 @@ void TSpit::setMarbleHotspots() {
 
 		if (marblePos == 0) // In the receptacle
 			marbleHotspot->setRect(_marbleBaseHotspots[i]);
-		else                 // On the grid
+		else // On the grid
 			marbleHotspot->setRect(generateMarbleGridRect(getMarbleX(marblePos), getMarbleY(marblePos)));
 	}
 }

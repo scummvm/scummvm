@@ -28,8 +28,8 @@
 #include "hopkins/hopkins.h"
 #include "hopkins/objects.h"
 
-#include "common/system.h"
 #include "common/file.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 namespace Hopkins {
@@ -115,7 +115,7 @@ void FontManager::showText(int idx) {
  */
 void FontManager::hideText(int idx) {
 	if ((idx - 5) > MAX_TEXT)
-			error("Attempted to display text > MAX_TEXT.");
+		error("Attempted to display text > MAX_TEXT.");
 
 	TxtItem &txt = _text[idx - 5];
 	txt._textOnFl = false;
@@ -177,12 +177,12 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			int height = _text[idx]._height;
 			int width = _text[idx]._width;
 			_vm->_graphicsMan->restoreSurfaceRect(
-				_vm->_graphicsMan->_frontBuffer,
-				_text[idx]._textBlock,
-				xp,
-				yp,
-				_text[idx]._width,
-				_text[idx]._height);
+			    _vm->_graphicsMan->_frontBuffer,
+			    _text[idx]._textBlock,
+			    xp,
+			    yp,
+			    _text[idx]._width,
+			    _text[idx]._height);
 			_vm->_graphicsMan->addDirtyRect(xp, yp, xp + width, yp + height);
 		}
 	} else {

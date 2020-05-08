@@ -30,7 +30,7 @@ namespace Level9 {
 Level9 *g_vm = nullptr;
 
 Level9::Level9(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_detection(startdata, FileSize) {
+                                                                    _detection(startdata, FileSize) {
 	g_vm = this;
 }
 

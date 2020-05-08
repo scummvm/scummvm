@@ -16,59 +16,59 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "common/file.h"
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 #include "glk/jacl/version.h"
-#include "common/file.h"
 
 namespace Glk {
 namespace JACL {
 
-extern char         text_buffer[];
-extern char         temp_buffer[];
-extern const char   *word[];
-extern short int    quoted[];
-extern short int    punctuated[];
-extern int          wp;
+extern char text_buffer[];
+extern char temp_buffer[];
+extern const char *word[];
+extern short int quoted[];
+extern short int punctuated[];
+extern int wp;
 
-extern char         user_id[];
-extern char         prefix[];
-extern char         game_path[];
-extern char         game_file[];
-extern char         processed_file[];
+extern char user_id[];
+extern char prefix[];
+extern char game_path[];
+extern char game_file[];
+extern char processed_file[];
 
-extern short int    encrypted;
+extern short int encrypted;
 
-extern char         include_directory[];
-extern char         temp_directory[];
+extern char include_directory[];
+extern char temp_directory[];
 
-extern char         error_buffer[];
+extern char error_buffer[];
 
-int                 lines_written;
+int lines_written;
 
 Common::WriteStream *outputFile = NULL;
 Common::SeekableReadStream *inputFile = NULL;
 
-char                *stripped_line;
+char *stripped_line;
 
 /* INDICATES THAT THE CURRENT '.j2' FILE BEING WORKED
  * WITH BEING PREPARED FOR RELEASE (DON'T INCLUDE DEBUG LIBARIES) */
-short int           release = FALSE;
+short int release = FALSE;
 
 /* INDICATES THAT THE CURRENT '.j2' FILE BEING WORKED
  * SHOULD BE ENCRYPTED */
-short int           do_encrypt = TRUE;
+short int do_encrypt = TRUE;
 
 /* INDICATES THAT THE CURRENT '.processed' FILE BRING WRITTEN SHOULD NOW
  * HAVE EACH LINE ENCRYPTED AS THE FIRST NONE COMMENT LINE HAS BEEN HIT */
-short int           encrypting = FALSE;
+short int encrypting = FALSE;
 
 int jpp() {
 	// TODO: Find out if this is actually used
 #ifdef UNUSED
-	int             game_version;
+	int game_version;
 
 	lines_written = 0;
 
@@ -126,7 +126,7 @@ int jpp() {
 		}
 	}
 
-	if (process_file(game_file, (const char *) NULL) == FALSE) {
+	if (process_file(game_file, (const char *)NULL) == FALSE) {
 		return (FALSE);
 	}
 
@@ -140,10 +140,10 @@ int jpp() {
 }
 
 int process_file(const char *sourceFile1, char *sourceFile2) {
-	char            temp_buffer1[1025];
-	char            temp_buffer2[1025];
+	char temp_buffer1[1025];
+	char temp_buffer2[1025];
 	Common::File *srcFile = NULL;
-	char           *includeFile = NULL;
+	char *includeFile = NULL;
 
 	/* THIS FUNCTION WILL CREATE A PROCESSED FILE THAT HAS HAD ALL
 	 * LEADING AND TRAILING WHITE SPACE REMOVED AND ALL INCLUDED
@@ -174,7 +174,7 @@ int process_file(const char *sourceFile1, char *sourceFile2) {
 
 	while (srcFile->pos() < srcFile->size() && *text_buffer != 0) {
 		if (!strncmp(text_buffer, "#include", 8) ||
-		        (!strncmp(text_buffer, "#debug", 6) & !release)) {
+		    (!strncmp(text_buffer, "#debug", 6) & !release)) {
 			includeFile = strrchr(text_buffer, '"');
 
 			if (includeFile != NULL)

@@ -82,6 +82,6 @@ private:
 	uint8 _threshold;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

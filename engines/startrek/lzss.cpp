@@ -23,8 +23,8 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "common/memstream.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 
 #include "startrek/lzss.h"
@@ -32,7 +32,7 @@
 namespace StarTrek {
 
 Common::SeekableReadStream *decodeLZSS(Common::SeekableReadStream *indata, uint32 uncompressedSize) {
-	uint32 N = 0x1000; /* History buffer size */
+	uint32 N = 0x1000;            /* History buffer size */
 	byte *histbuff = new byte[N]; /* History buffer */
 	memset(histbuff, 0, N);
 	uint32 outstreampos = 0;
@@ -82,4 +82,3 @@ Common::SeekableReadStream *decodeLZSS(Common::SeekableReadStream *indata, uint3
 }
 
 } // End of namespace StarTrek
-

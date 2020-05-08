@@ -20,16 +20,16 @@
  *
  */
 
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/stream.h"
-#include "common/memstream.h"
 
-#include "sci/sci.h"
 #include "sci/engine/file.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
@@ -51,10 +51,9 @@ uint32 MemoryDynamicRWStream::read(void *dataPtr, uint32 dataSize) {
 SaveFileRewriteStream::SaveFileRewriteStream(const Common::String &fileName,
                                              Common::SeekableReadStream *inFile,
                                              kFileOpenMode mode,
-                                             bool compress) :
-	MemoryDynamicRWStream(DisposeAfterUse::YES),
-	_fileName(fileName),
-	_compress(compress) {
+                                             bool compress) : MemoryDynamicRWStream(DisposeAfterUse::YES),
+                                                              _fileName(fileName),
+                                                              _compress(compress) {
 	const bool truncate = (mode == kFileOpenModeCreate);
 	const bool seekToEnd = (mode == kFileOpenModeOpenOrCreate);
 
@@ -207,7 +206,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 		outFile = stream;
 	} else
 #endif
-	if (mode == kFileOpenModeOpenOrFail) {
+	    if (mode == kFileOpenModeOpenOrFail) {
 		// Try to open file, abort if not possible
 		inFile = saveFileMan->openForLoading(wrappedName);
 		// If no matching savestate exists: fall back to reading from a regular
@@ -350,8 +349,8 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 
 		// exclude new game and autosave slots, except for QFG3/4,
 		//  whose autosave should appear as a normal saved game
-		if (g_sci->getGameId() != GID_QFG3 && 
-			g_sci->getGameId() != GID_QFG4) {
+		if (g_sci->getGameId() != GID_QFG3 &&
+		    g_sci->getGameId() != GID_QFG4) {
 			const int id = strtol(filename.end() - 3, NULL, 10);
 			if (id == kNewGameId || id == kAutoSaveId) {
 				continue;
@@ -487,7 +486,6 @@ bool FileHandle::isOpen() const {
 	return _in || _out;
 }
 
-
 void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask) {
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 	Common::StringArray foundFiles = saveFileMan->listSavefiles(fileMask);
@@ -507,7 +505,7 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 			int32 testfileSize = testfile->size();
 			delete testfile;
 			if (testfileSize > 1024) // check, if larger than 1k. in that case its a saved game.
-				continue; // and we dont want to have those in the list
+				continue;            // and we dont want to have those in the list
 
 			if (!titleAdded) {
 				_files.push_back(title);

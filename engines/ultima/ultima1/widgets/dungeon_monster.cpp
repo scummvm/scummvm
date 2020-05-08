@@ -21,26 +21,24 @@
  */
 
 #include "ultima/ultima1/widgets/dungeon_monster.h"
+#include "ultima/shared/core/utils.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/maps/map_dungeon.h"
 #include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/shared/core/utils.h"
-#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 DungeonMonster::DungeonMonster(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId monsterId,
-		int hitPoints, const Point &pt) :
-		DungeonWidget(game, map, monsterId, pt), Shared::Maps::DungeonCreature(game, map, hitPoints) {
+                               int hitPoints, const Point &pt) : DungeonWidget(game, map, monsterId, pt), Shared::Maps::DungeonCreature(game, map, hitPoints) {
 	_name = getGame()->_res->DUNGEON_MONSTER_NAMES[_widgetId];
 }
 
-DungeonMonster::DungeonMonster(Ultima1Game *game, Maps::MapBase *map) :
-		DungeonWidget(game, map), Shared::Maps::DungeonCreature(game, map) {
+DungeonMonster::DungeonMonster(Ultima1Game *game, Maps::MapBase *map) : DungeonWidget(game, map), Shared::Maps::DungeonCreature(game, map) {
 }
 
 void DungeonMonster::synchronize(Common::Serializer &s) {
@@ -53,8 +51,7 @@ void DungeonMonster::synchronize(Common::Serializer &s) {
 }
 
 bool DungeonMonster::isBlockingView() const {
-	return _widgetId != MONSTER_INVISIBLE_SEEKER && _widgetId != MONSTER_MIMIC
-		&& _widgetId != MONSTER_GELATINOUS_CUBE;
+	return _widgetId != MONSTER_INVISIBLE_SEEKER && _widgetId != MONSTER_MIMIC && _widgetId != MONSTER_GELATINOUS_CUBE;
 }
 
 void DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
@@ -107,7 +104,7 @@ Shared::Maps::MapWidget::CanMove DungeonMonster::canMoveTo(const Point &destPos)
 Shared::Maps::MapWidget::CanMove DungeonMonster::canMoveTo(Shared::Maps::MapBase *map, MapWidget *widget, const Point &destPos) {
 	// Get the details of the position
 	Shared::Maps::MapTile currTile, destTile;
-	
+
 	map->getTileAt(map->getPosition(), &currTile);
 	map->getTileAt(destPos, &destTile);
 
@@ -131,7 +128,7 @@ void DungeonMonster::attackParty() {
 	bool isHit = true;
 
 	// Get tile details for both the player and the attacking creature
-	Maps::U1MapTile playerTile,creatureTile;
+	Maps::U1MapTile playerTile, creatureTile;
 	_map->getTileAt(playerPos, &playerTile);
 	_map->getTileAt(_position, &creatureTile);
 
@@ -171,8 +168,7 @@ void DungeonMonster::attackParty() {
 					// TODO: May need to worry about word wrapping long line
 					addInfoMsg(Common::String::format(game->_res->THIEF_STOLE,
 
-						Shared::isVowel(c._weapons[weaponNum]->_longName.firstChar()) ? game->_res->AN : game->_res->A
-					));
+					                                  Shared::isVowel(c._weapons[weaponNum]->_longName.firstChar()) ? game->_res->AN : game->_res->A));
 					c._weapons[weaponNum]->decrQuantity();
 					break;
 				}
@@ -202,8 +198,7 @@ void DungeonMonster::attackMonster(uint effectNum, uint agility, uint damage) {
 			flag = false;
 	}
 
-	if (game->getRandomNumber(1, 100) <= agility && !playerTile._isWall && !playerTile._isSecretDoor
-			&& !playerTile._isBeams && flag) {
+	if (game->getRandomNumber(1, 100) <= agility && !playerTile._isWall && !playerTile._isSecretDoor && !playerTile._isBeams && flag) {
 		// Play effect and add hit message
 		game->playFX(effectNum);
 		if (damage != ITS_OVER_9000)
@@ -214,7 +209,7 @@ void DungeonMonster::attackMonster(uint effectNum, uint agility, uint damage) {
 			_hitPoints -= damage;
 		} else {
 			addInfoMsg(Common::String::format("%s %s", _name.c_str(),
-				damage == ITS_OVER_9000 ? game->_res->DESTROYED : game->_res->KILLED));
+			                                  damage == ITS_OVER_9000 ? game->_res->DESTROYED : game->_res->KILLED));
 			monsterDead();
 
 			// Give some treasure

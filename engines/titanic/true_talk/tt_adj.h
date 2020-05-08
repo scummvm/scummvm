@@ -30,8 +30,10 @@ namespace Titanic {
 class TTadj : public TTmajorWord {
 private:
 	static bool _staticFlag;
+
 protected:
 	int _val;
+
 public:
 	TTadj(TTstring &str, WordClass wordClass, int val2, int val3, int val4);
 	TTadj(const TTadj *src);

@@ -23,10 +23,10 @@
 #ifndef KYRA_SCRIPT_H
 #define KYRA_SCRIPT_H
 
-#include "common/stream.h"
 #include "common/array.h"
 #include "common/func.h"
 #include "common/iff_container.h"
+#include "common/stream.h"
 
 namespace Kyra {
 
@@ -55,12 +55,12 @@ struct EMCState {
 	int16 retValue;
 	uint16 bp;
 	uint16 sp;
-	int16 regs[30];           // VM registers
-	int16 stack[kStackSize];  // VM stack
+	int16 regs[30];          // VM registers
+	int16 stack[kStackSize]; // VM stack
 };
 
-#define stackPos(x) (script->stack[script->sp+x])
-#define stackPosString(x) ((const char *)&script->dataPtr->text[READ_BE_UINT16(&script->dataPtr->text[stackPos(x)<<1])])
+#define stackPos(x) (script->stack[script->sp + x])
+#define stackPosString(x) ((const char *)&script->dataPtr->text[READ_BE_UINT16(&script->dataPtr->text[stackPos(x) << 1])])
 
 class Resource;
 class KyraEngine_v1;
@@ -98,9 +98,9 @@ public:
 
 		_formChunk.size = (_formChunk.size + 1) & ~1;
 
-		if (_formType == MKTAG('E','M','C','2'))
+		if (_formType == MKTAG('E', 'M', 'C', '2'))
 			_formChunk.size -= 8;
-		else if (_formType == MKTAG('A','V','F','S'))
+		else if (_formType == MKTAG('A', 'V', 'F', 'S'))
 			_formChunk.size += 4;
 	}
 };
@@ -118,6 +118,7 @@ public:
 	bool isValid(EMCState *script);
 
 	bool run(EMCState *script);
+
 protected:
 	KyraEngine_v1 *_vm;
 	int16 _parameter;
@@ -134,6 +135,7 @@ protected:
 	};
 
 	const OpcodeEntry *_opcodes;
+
 private:
 	void op_jmp(EMCState *);
 	void op_setRetValue(EMCState *);

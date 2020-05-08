@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 enum kRC51Loops {
 	kRC51LoopInshotFromRC02 = 0,
-	kRC51LoopMainLoop       = 1
+	kRC51LoopMainLoop = 1
 };
 
 enum kRC51Exits {

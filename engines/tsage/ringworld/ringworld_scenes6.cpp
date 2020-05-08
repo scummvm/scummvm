@@ -22,8 +22,8 @@
 
 #include "tsage/ringworld/ringworld_scenes6.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -52,7 +52,7 @@ void Scene5000::Action1::signal() {
 	case 3:
 		scene->_hotspot1._moveDiff.y = 1;
 		scene->_hotspot4.setPosition(Common::Point(scene->_hotspot1._position.x,
-			scene->_hotspot1._position.y + 15));
+		                                           scene->_hotspot1._position.y + 15));
 		scene->_hotspot4.show();
 		setDelay(15);
 		break;
@@ -109,7 +109,7 @@ void Scene5000::Action1::dispatch() {
 
 	if ((_actionIndex == 5) || (_actionIndex == 6)) {
 		scene->_hotspot4.setPosition(Common::Point(scene->_hotspot1._position.x,
-			scene->_hotspot1._position.y + 15));
+		                                           scene->_hotspot1._position.y + 15));
 	}
 }
 
@@ -437,20 +437,18 @@ void Scene5000::HotspotGroup1::doAction(int action) {
 }
 /*--------------------------------------------------------------------------*/
 
-Scene5000::Scene5000() :
-		_hotspot1(0, CURSOR_LOOK, 5000, 3, LIST_END),
-		_hotspot12(0, CURSOR_LOOK, 5000, 6, CURSOR_USE, 5000, 7, OBJECT_STUNNER, 5000, 14,
-				OBJECT_SCANNER, 5000, 16, LIST_END),
-		_hotspot13(0, CURSOR_LOOK, 5000, 8, CURSOR_USE, 5000, 9, OBJECT_STUNNER, 5000, 0,
-				OBJECT_SCANNER, 5000, 16, LIST_END),
-		_hotspot14(0, CURSOR_LOOK, 5000, 8, CURSOR_USE, 5000, 9, OBJECT_STUNNER, 5000, 0,
-				OBJECT_SCANNER, 5000, 16, LIST_END),
-		_hotspot15(0, CURSOR_LOOK, 5000, 2, OBJECT_STUNNER, 5000, 15, LIST_END),
-		_hotspot16(0, CURSOR_LOOK, 5000, 4, CURSOR_USE, 5000, 5, LIST_END),
-		_hotspot17(0, CURSOR_LOOK, 5000, 1, LIST_END),
-		_hotspot18(0, CURSOR_LOOK, 5000, 0, LIST_END) {
+Scene5000::Scene5000() : _hotspot1(0, CURSOR_LOOK, 5000, 3, LIST_END),
+                         _hotspot12(0, CURSOR_LOOK, 5000, 6, CURSOR_USE, 5000, 7, OBJECT_STUNNER, 5000, 14,
+                                    OBJECT_SCANNER, 5000, 16, LIST_END),
+                         _hotspot13(0, CURSOR_LOOK, 5000, 8, CURSOR_USE, 5000, 9, OBJECT_STUNNER, 5000, 0,
+                                    OBJECT_SCANNER, 5000, 16, LIST_END),
+                         _hotspot14(0, CURSOR_LOOK, 5000, 8, CURSOR_USE, 5000, 9, OBJECT_STUNNER, 5000, 0,
+                                    OBJECT_SCANNER, 5000, 16, LIST_END),
+                         _hotspot15(0, CURSOR_LOOK, 5000, 2, OBJECT_STUNNER, 5000, 15, LIST_END),
+                         _hotspot16(0, CURSOR_LOOK, 5000, 4, CURSOR_USE, 5000, 5, LIST_END),
+                         _hotspot17(0, CURSOR_LOOK, 5000, 1, LIST_END),
+                         _hotspot18(0, CURSOR_LOOK, 5000, 0, LIST_END) {
 }
-
 
 void Scene5000::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
@@ -532,7 +530,7 @@ void Scene5000::postInit(SceneObjectList *OwnerList) {
 	_hotspot12.setBounds(Rect(230, 143, 244, 150));
 
 	g_globals->_sceneItems.addItems(&_hotspot9, &_hotspot10, &_hotspot11, &_hotspot8, &_hotspot13,
-		&_hotspot14, &_hotspot12, &_hotspot15, &_hotspot17, &_hotspot18, &_hotspot16, NULL);
+	                                &_hotspot14, &_hotspot12, &_hotspot15, &_hotspot17, &_hotspot18, &_hotspot16, NULL);
 
 	switch (g_globals->_sceneManager._previousScene) {
 	case 1000:
@@ -780,7 +778,6 @@ void Scene5100::Action3::signal() {
 
 			scene->_hotspot2.setStrip2(2);
 			ADD_PLAYER_MOVER_NULL(scene->_hotspot2, 10, 140);
-
 		}
 
 		g_globals->_player.setVisage(2672);
@@ -965,7 +962,7 @@ void Scene5100::Hotspot9::doAction(int action) {
 		g_globals->_player.disableControl();
 		scene->_sceneMode = 5116;
 		scene->setAction(&scene->_sequenceManager, scene, 5116, &g_globals->_player, this, &scene->_hotspot10,
-				&scene->_hotspot4, NULL);
+		                 &scene->_hotspot4, NULL);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -1090,9 +1087,8 @@ void Scene5100::Hotspot20::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene5100::Scene5100() :
-		_hotspot16(0, CURSOR_LOOK, 5100, 48, LIST_END),
-		_hotspot21(0, CURSOR_LOOK, 5100, 4, CURSOR_USE, 5100, 5, LIST_END) {
+Scene5100::Scene5100() : _hotspot16(0, CURSOR_LOOK, 5100, 48, LIST_END),
+                         _hotspot21(0, CURSOR_LOOK, 5100, 4, CURSOR_USE, 5100, 5, LIST_END) {
 }
 
 void Scene5100::postInit(SceneObjectList *OwnerList) {
@@ -1196,7 +1192,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (g_globals->getFlag(60) && (RING_INVENTORY._stasisBox._sceneNumber == 1) &&
-			g_globals->getFlag(107) && g_globals->getFlag(67)) {
+	    g_globals->getFlag(107) && g_globals->getFlag(67)) {
 		_hotspot8.postInit();
 		_hotspot8.setVisage(2806);
 		_hotspot8.setPosition(Common::Point(557, 178));
@@ -1419,12 +1415,12 @@ void Scene5100::dispatch() {
 		_soundHandler.play(207);
 		_sceneMode = 5103;
 		setAction(&_sequenceManager, this, (g_globals->_player._position.x >= 966) ? 5104 : 5103,
-				&g_globals->_player, &_hotspot15, NULL);
+		          &g_globals->_player, &_hotspot15, NULL);
 	}
 
 	if (g_globals->getFlag(61) && !g_globals->getFlag(62) &&
-			((g_globals->_player._position.x - _hotspot2._position.x) < 160) &&
-			(g_globals->_sceneManager._previousScene != 5200) && (_sceneMode != 5150)) {
+	    ((g_globals->_player._position.x - _hotspot2._position.x) < 160) &&
+	    (g_globals->_sceneManager._previousScene != 5200) && (_sceneMode != 5150)) {
 		setAction(NULL);
 		_sceneMode = 5150;
 		_soundHandler.play(208);
@@ -1637,12 +1633,10 @@ void Scene5200::Hotspot14::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene5200::Scene5200() :
-		_hotspot11(0, CURSOR_LOOK, 5200, 0, CURSOR_USE, 5200, 13, LIST_END),
-		_hotspot12(10, CURSOR_LOOK, 5200, 9, LIST_END),
-		_hotspot13(8, CURSOR_LOOK, 5200, 0, CURSOR_USE, 5200, 13, LIST_END) {
+Scene5200::Scene5200() : _hotspot11(0, CURSOR_LOOK, 5200, 0, CURSOR_USE, 5200, 13, LIST_END),
+                         _hotspot12(10, CURSOR_LOOK, 5200, 9, LIST_END),
+                         _hotspot13(8, CURSOR_LOOK, 5200, 0, CURSOR_USE, 5200, 13, LIST_END) {
 }
-
 
 void Scene5200::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
@@ -2026,7 +2020,7 @@ void Scene5300::Hotspot6::doAction(int action) {
 			RING_INVENTORY._vial._sceneNumber = 1;
 
 			scene->setAction(&scene->_sequenceManager, scene, 5307, &scene->_hotspot1, &g_globals->_player,
-				&scene->_hotspot4, NULL);
+			                 &scene->_hotspot4, NULL);
 		}
 		break;
 	default:
@@ -2076,8 +2070,7 @@ void Scene5300::Hotspot8::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene5300::Scene5300() :
-	_hotspot3(0, CURSOR_LOOK, 5300, 3, CURSOR_USE, 5300, 16, LIST_END) {
+Scene5300::Scene5300() : _hotspot3(0, CURSOR_LOOK, 5300, 3, CURSOR_USE, 5300, 16, LIST_END) {
 }
 
 void Scene5300::synchronize(Serializer &s) {

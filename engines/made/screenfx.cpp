@@ -28,20 +28,17 @@
 namespace Made {
 
 const byte ScreenEffects::vfxOffsTable[64] = {
-	5, 2, 6, 1, 4, 7, 3, 0,
-	7, 4, 0, 3, 6, 1, 5, 2,
-	2, 5, 1, 6, 3, 0, 4, 7,
-	0, 3, 7, 4, 1, 6, 2, 5,
-	4, 0, 2, 5, 7, 3, 1, 6,
-	1, 6, 4, 0, 2, 5, 7, 3,
-	6, 1, 3, 7, 5, 2, 0, 4,
-	3, 7, 5, 2, 0, 4, 6, 1
-};
+    5, 2, 6, 1, 4, 7, 3, 0,
+    7, 4, 0, 3, 6, 1, 5, 2,
+    2, 5, 1, 6, 3, 0, 4, 7,
+    0, 3, 7, 4, 1, 6, 2, 5,
+    4, 0, 2, 5, 7, 3, 1, 6,
+    1, 6, 4, 0, 2, 5, 7, 3,
+    6, 1, 3, 7, 5, 2, 0, 4,
+    3, 7, 5, 2, 0, 4, 6, 1};
 
 const byte ScreenEffects::vfxOffsIndexTable[8] = {
-	6, 7, 2, 3, 4, 5, 0, 1
-};
-
+    6, 7, 2, 3, 4, 5, 0, 1};
 
 ScreenEffects::ScreenEffects(Screen *screen) : _screen(screen) {
 	vfxOffsTablePtr = &vfxOffsTable[6 * 8];
@@ -68,7 +65,7 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 
 	switch (effectNum) {
 
-	case 0:		// No effect
+	case 0: // No effect
 		vfx00(surface, palette, newPalette, colorCount);
 		break;
 
@@ -92,11 +89,11 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 		vfx05(surface, palette, newPalette, colorCount);
 		break;
 
-	case 6:		// "Curtain open" effect
+	case 6: // "Curtain open" effect
 		vfx06(surface, palette, newPalette, colorCount);
 		break;
 
-	case 7:		// "Curtain close" effect
+	case 7: // "Curtain close" effect
 		vfx07(surface, palette, newPalette, colorCount);
 		break;
 
@@ -104,27 +101,27 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 		vfx08(surface, palette, newPalette, colorCount);
 		break;
 
-	case 9:		// "Checkerboard" effect
+	case 9: // "Checkerboard" effect
 		vfx09(surface, palette, newPalette, colorCount);
 		break;
 
-	case 10:	// "Screen wipe in", left to right
+	case 10: // "Screen wipe in", left to right
 		vfx10(surface, palette, newPalette, colorCount);
 		break;
 
-	case 11:	// "Screen wipe in", right to left
+	case 11: // "Screen wipe in", right to left
 		vfx11(surface, palette, newPalette, colorCount);
 		break;
 
-	case 12:	// "Screen wipe in", top to bottom
+	case 12: // "Screen wipe in", top to bottom
 		vfx12(surface, palette, newPalette, colorCount);
 		break;
 
-	case 13:	// "Screen wipe in", bottom to top
+	case 13: // "Screen wipe in", bottom to top
 		vfx13(surface, palette, newPalette, colorCount);
 		break;
 
-	case 14:	// "Screen open" effect
+	case 14: // "Screen open" effect
 		vfx14(surface, palette, newPalette, colorCount);
 		break;
 
@@ -136,7 +133,7 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 		vfx16(surface, palette, newPalette, colorCount);
 		break;
 
-	case 17:	// Palette fadeout/fadein
+	case 17: // Palette fadeout/fadein
 		vfx17(surface, palette, newPalette, colorCount);
 		break;
 
@@ -155,9 +152,7 @@ void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palet
 	default:
 		vfx00(surface, palette, newPalette, colorCount);
 		warning("Unimplemented visual effect %d", effectNum);
-
 	}
-
 }
 
 void ScreenEffects::flash(int flashCount, byte *palette, int colorCount) {
@@ -203,7 +198,7 @@ void ScreenEffects::startBlendedPalette(byte *palette, byte *newPalette, int col
 void ScreenEffects::stepBlendedPalette() {
 	if (_blendedPaletteStatus._active && _blendedPaletteStatus._value <= _blendedPaletteStatus._maxValue) {
 		setBlendedPalette(_blendedPaletteStatus._palette, _blendedPaletteStatus._newPalette,
-			_blendedPaletteStatus._colorCount, _blendedPaletteStatus._value, _blendedPaletteStatus._maxValue);
+		                  _blendedPaletteStatus._colorCount, _blendedPaletteStatus._value, _blendedPaletteStatus._maxValue);
 		if (_blendedPaletteStatus._value == _blendedPaletteStatus._maxValue)
 			_blendedPaletteStatus._value++;
 		else
@@ -277,14 +272,12 @@ void ScreenEffects::copyFxRect(Graphics::Surface *surface, int16 x1, int16 y1, i
 
 		source += 320;
 		dest += 320;
-
 	}
 
 	vfxHeight = (vfxHeight + 1) & 7;
 	vfxOffsTablePtr = &vfxOffsTable[vfxOffsIndexTable[vfxHeight] * 8];
 
 	_screen->unlockScreen();
-
 }
 
 // No effect
@@ -508,7 +501,6 @@ void ScreenEffects::vfx17(Graphics::Surface *surface, byte *palette, byte *newPa
 	_screen->setRGBPalette(palette, 0, colorCount);
 
 	_screen->setPaletteLock(savedPaletteLock);
-
 }
 
 // "Screen slide in" left to right

@@ -20,9 +20,9 @@
  *
  */
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
 #include "hdb/sound.h"
@@ -31,42 +31,41 @@
 namespace HDB {
 
 static const char *cineTypeStr[] = {
-	"C_NO_COMMAND",
-	"C_STOPCINE",
-	"C_LOCKPLAYER",
-	"C_UNLOCKPLAYER",
-	"C_SETCAMERA",
-	"C_MOVECAMERA",
-	"C_WAIT",
-	"C_WAITUNTILDONE",
-	"C_MOVEENTITY",
-	"C_DIALOG",
-	"C_ANIMENTITY",
-	"C_RESETCAMERA",
-	"C_SETENTITY",
-	"C_STARTMAP",
-	"C_MOVEPIC",
-	"C_MOVEMASKEDPIC",
-	"C_DRAWPIC",
-	"C_DRAWMASKEDPIC",
-	"C_FADEIN",
-	"C_FADEOUT",
-	"C_SPAWNENTITY",
-	"C_PLAYSOUND",
-	"C_CLEAR_FG",
-	"C_SET_FG",
-	"C_SET_BG",
-	"C_FUNCTION",
-	"C_ENTITYFACE",
-	"C_USEENTITY",
-	"C_REMOVEENTITY",
-	"C_SETANIMFRAME",
-	"C_TEXTOUT",
-	"C_CENTERTEXTOUT",
-	"C_PLAYVOICE",
+    "C_NO_COMMAND",
+    "C_STOPCINE",
+    "C_LOCKPLAYER",
+    "C_UNLOCKPLAYER",
+    "C_SETCAMERA",
+    "C_MOVECAMERA",
+    "C_WAIT",
+    "C_WAITUNTILDONE",
+    "C_MOVEENTITY",
+    "C_DIALOG",
+    "C_ANIMENTITY",
+    "C_RESETCAMERA",
+    "C_SETENTITY",
+    "C_STARTMAP",
+    "C_MOVEPIC",
+    "C_MOVEMASKEDPIC",
+    "C_DRAWPIC",
+    "C_DRAWMASKEDPIC",
+    "C_FADEIN",
+    "C_FADEOUT",
+    "C_SPAWNENTITY",
+    "C_PLAYSOUND",
+    "C_CLEAR_FG",
+    "C_SET_FG",
+    "C_SET_BG",
+    "C_FUNCTION",
+    "C_ENTITYFACE",
+    "C_USEENTITY",
+    "C_REMOVEENTITY",
+    "C_SETANIMFRAME",
+    "C_TEXTOUT",
+    "C_CENTERTEXTOUT",
+    "C_PLAYVOICE",
 
-	"C_ENDLIST"
-};
+    "C_ENDLIST"};
 
 void AI::processCines() {
 	if (!_cineActive)
@@ -92,42 +91,38 @@ void AI::processCines() {
 
 	for (uint i = 0; i < _cine.size(); i++) {
 		debug(3, "processCines: [%d] %s now: %d  start: %d delay: %d", i, cineTypeStr[_cine[i]->cmdType],
-				g_system->getMillis(), _cine[i]->start, _cine[i]->delay);
+		      g_system->getMillis(), _cine[i]->start, _cine[i]->delay);
 
 		switch (_cine[i]->cmdType) {
-		case C_STOPCINE:
-			{
-				char func[64];
-				memset(func, 0, 64);
+		case C_STOPCINE: {
+			char func[64];
+			memset(func, 0, 64);
 
-				if (_cine[i]->title)
-					Common::strlcpy(func, _cine[i]->title, 64);
+			if (_cine[i]->title)
+				Common::strlcpy(func, _cine[i]->title, 64);
 
-				cineCleanup();
-				if (func[0])
-					g_hdb->_lua->callFunction(func, 0);
-			}
-			break;
-		case C_STARTMAP:
-			{
-				const char *title = _cine[i]->title;
-				// free all gfx alloc'ed during cine
-				cineFreeGfx();
-				_cineActive = false;
-				_playerLock = false;
-				_cameraLock = false;
-				g_hdb->_window->setInfobarDark(0);
-				g_hdb->_gfx->setPointerState(1);
-				_cine.resize(0);
-				_numCineFreeList = 0;
-				_numCineBlitList = 0;
-				// if cine is aborted and an abort function was specified, call it
-				if (_cineAborted && _cineAbortFunc)
-					g_hdb->_lua->callFunction(_cineAbortFunc, 0);
-				g_hdb->changeMap(title);
-				return;
-			}
-			break;
+			cineCleanup();
+			if (func[0])
+				g_hdb->_lua->callFunction(func, 0);
+		} break;
+		case C_STARTMAP: {
+			const char *title = _cine[i]->title;
+			// free all gfx alloc'ed during cine
+			cineFreeGfx();
+			_cineActive = false;
+			_playerLock = false;
+			_cameraLock = false;
+			g_hdb->_window->setInfobarDark(0);
+			g_hdb->_gfx->setPointerState(1);
+			_cine.resize(0);
+			_numCineFreeList = 0;
+			_numCineBlitList = 0;
+			// if cine is aborted and an abort function was specified, call it
+			if (_cineAborted && _cineAbortFunc)
+				g_hdb->_lua->callFunction(_cineAbortFunc, 0);
+			g_hdb->changeMap(title);
+			return;
+		} break;
 		case C_LOCKPLAYER:
 			_playerLock = true;
 			complete = true;
@@ -146,15 +141,13 @@ void AI::processCines() {
 			_cameraLock = true;
 			complete = true;
 			break;
-		case C_RESETCAMERA:
-			{
-				_cameraLock = false;
-				int px, py;
-				g_hdb->_ai->getPlayerXY(&px, &py);
-				g_hdb->_map->centerMapXY(px + 16, py + 16);
-				complete = true;
-			}
-			break;
+		case C_RESETCAMERA: {
+			_cameraLock = false;
+			int px, py;
+			g_hdb->_ai->getPlayerXY(&px, &py);
+			g_hdb->_map->centerMapXY(px + 16, py + 16);
+			complete = true;
+		} break;
 		case C_MOVECAMERA:
 			_cameraLock = true;
 			if (!(_cine[i]->start)) {
@@ -247,48 +240,44 @@ void AI::processCines() {
 				}
 			}
 			break;
-		case C_SETANIMFRAME:
-			{
-				AIEntity *e = locateEntity(_cine[i]->title);
-				if (e) {
-					e->state = (AIState)_cine[i]->start;
-					e->animFrame = _cine[i]->end;
-					e->animDelay = e->animCycle;
-					animEntFrames(e);
-					e->state = STATE_NONE;
-					complete = true;
-				}
-			}
-			break;
-		case C_ENTITYFACE:
-			{
-				AIEntity *e = locateEntity(_cine[i]->title);
-
-				if (e) {
-					int d = (int)_cine[i]->x;
-					e->dir = (AIDir)d;
-					switch (e->dir) {
-					case DIR_UP:
-						e->state = STATE_STANDUP;
-						break;
-					case DIR_DOWN:
-						e->state = STATE_STANDDOWN;
-						break;
-					case DIR_LEFT:
-						e->state = STATE_STANDLEFT;
-						break;
-					case DIR_RIGHT:
-						e->state = STATE_STANDRIGHT;
-						break;
-					default:
-						break;
-					}
-				} else
-					warning("Can't find %s to ENTITYFACE", _cine[i]->title);
-
+		case C_SETANIMFRAME: {
+			AIEntity *e = locateEntity(_cine[i]->title);
+			if (e) {
+				e->state = (AIState)_cine[i]->start;
+				e->animFrame = _cine[i]->end;
+				e->animDelay = e->animCycle;
+				animEntFrames(e);
+				e->state = STATE_NONE;
 				complete = true;
 			}
-			break;
+		} break;
+		case C_ENTITYFACE: {
+			AIEntity *e = locateEntity(_cine[i]->title);
+
+			if (e) {
+				int d = (int)_cine[i]->x;
+				e->dir = (AIDir)d;
+				switch (e->dir) {
+				case DIR_UP:
+					e->state = STATE_STANDUP;
+					break;
+				case DIR_DOWN:
+					e->state = STATE_STANDDOWN;
+					break;
+				case DIR_LEFT:
+					e->state = STATE_STANDLEFT;
+					break;
+				case DIR_RIGHT:
+					e->state = STATE_STANDRIGHT;
+					break;
+				default:
+					break;
+				}
+			} else
+				warning("Can't find %s to ENTITYFACE", _cine[i]->title);
+
+			complete = true;
+		} break;
 		case C_DIALOG:
 			if (_cine[i]->start) {
 				g_hdb->_window->openDialog(_cine[i]->title, -1, _cine[i]->string, 0, nullptr);
@@ -311,32 +300,28 @@ void AI::processCines() {
 			} else if (!g_hdb->_window->textOutActive())
 				complete = true;
 			break;
-		case C_DRAWPIC:
-			{
-				Picture *p = cineFindInBlitList(_cine[i]->id);
-				if (p == nullptr) {
-					p = g_hdb->_gfx->loadPic(_cine[i]->string);
-					cineAddToFreeList(p);
-					cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, false);
-				}
-				_cine[i]->pic = p;
-				_cine[i]->pic->draw((int)_cine[i]->x, (int)_cine[i]->y);
-				complete = true;
+		case C_DRAWPIC: {
+			Picture *p = cineFindInBlitList(_cine[i]->id);
+			if (p == nullptr) {
+				p = g_hdb->_gfx->loadPic(_cine[i]->string);
+				cineAddToFreeList(p);
+				cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, false);
 			}
-			break;
-		case C_DRAWMASKEDPIC:
-			{
-				Picture *p = cineFindInBlitList(_cine[i]->id);
-				if (p == nullptr) {
-					p = g_hdb->_gfx->loadPic(_cine[i]->string);
-					cineAddToFreeList(p);
-					cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, true);
-				}
-				_cine[i]->pic = p;
-				_cine[i]->pic->drawMasked((int)_cine[i]->x, (int)_cine[i]->y);
-				complete = true;
+			_cine[i]->pic = p;
+			_cine[i]->pic->draw((int)_cine[i]->x, (int)_cine[i]->y);
+			complete = true;
+		} break;
+		case C_DRAWMASKEDPIC: {
+			Picture *p = cineFindInBlitList(_cine[i]->id);
+			if (p == nullptr) {
+				p = g_hdb->_gfx->loadPic(_cine[i]->string);
+				cineAddToFreeList(p);
+				cineAddToBlitList(_cine[i]->id, p, (int)_cine[i]->x, (int)_cine[i]->y, true);
 			}
-			break;
+			_cine[i]->pic = p;
+			_cine[i]->pic->drawMasked((int)_cine[i]->x, (int)_cine[i]->y);
+			complete = true;
+		} break;
 
 		case C_MOVEPIC:
 			if (!_cine[i]->start) {
@@ -417,23 +402,19 @@ void AI::processCines() {
 			} else if (!g_hdb->_gfx->isFadeActive())
 				complete = true;
 			break;
-		case C_SPAWNENTITY:
-			{
-				int x2 = (int)_cine[i]->x2;
-				int y2 = (int)_cine[i]->y2;
-				spawn((AIType)x2, (AIDir)y2, (int)_cine[i]->x, (int)_cine[i]->y, _cine[i]->title, _cine[i]->string,
-					_cine[i]->id, (AIDir)_cine[i]->start, (int)_cine[i]->end, (int)_cine[i]->delay, (int)_cine[i]->speed, 1);
-				complete = true;
-			}
-			break;
-		case C_REMOVEENTITY:
-			{
-				AIEntity *e = locateEntity(_cine[i]->string);
-				if (e)
-					removeEntity(e);
-				complete = true;
-			}
-			break;
+		case C_SPAWNENTITY: {
+			int x2 = (int)_cine[i]->x2;
+			int y2 = (int)_cine[i]->y2;
+			spawn((AIType)x2, (AIDir)y2, (int)_cine[i]->x, (int)_cine[i]->y, _cine[i]->title, _cine[i]->string,
+			      _cine[i]->id, (AIDir)_cine[i]->start, (int)_cine[i]->end, (int)_cine[i]->delay, (int)_cine[i]->speed, 1);
+			complete = true;
+		} break;
+		case C_REMOVEENTITY: {
+			AIEntity *e = locateEntity(_cine[i]->string);
+			if (e)
+				removeEntity(e);
+			complete = true;
+		} break;
 		case C_CLEAR_FG:
 			g_hdb->_map->setMapFGTileIndex((int)_cine[i]->x, (int)_cine[i]->y, -1);
 			g_hdb->_map->removeFGTileAnimation((int)_cine[i]->x, (int)_cine[i]->y);
@@ -675,7 +656,7 @@ void AI::cineEntityFace(const char *luaName, double dir) {
 }
 
 void AI::cineSpawnEntity(AIType t, AIDir d, int x, int y, const char *func_init, const char *func_action,
-				const char *func_use, AIDir d2, int level, int value1, int value2) {
+                         const char *func_use, AIDir d2, int level, int value1, int value2) {
 	CineCommand *cmd = new CineCommand;
 	cmd->cmdType = C_SPAWNENTITY;
 	cmd->x2 = (double)t;
@@ -776,8 +757,8 @@ void AI::cineMovePic(const char *id, const char *pic, int x1, int y1, int x2, in
 	cmd->x2 = x2;
 	cmd->y2 = y2;
 	cmd->speed = speed;
-	cmd->xv = ((double)(x2-x1)) / (double)speed;
-	cmd->yv = ((double)(y2-y1)) / (double)speed;
+	cmd->xv = ((double)(x2 - x1)) / (double)speed;
+	cmd->yv = ((double)(y2 - y1)) / (double)speed;
 	cmd->start = 0;
 	cmd->string = pic;
 	cmd->id = id;
@@ -797,8 +778,8 @@ void AI::cineMoveMaskedPic(const char *id, const char *pic, int x1, int y1, int 
 	cmd->x2 = x2;
 	cmd->y2 = y2;
 	cmd->speed = speed;
-	cmd->xv = ((double)(x2-x1)) / (double)speed;
-	cmd->yv = ((double)(y2-y1)) / (double)speed;
+	cmd->xv = ((double)(x2 - x1)) / (double)speed;
+	cmd->yv = ((double)(y2 - y1)) / (double)speed;
 	cmd->start = 0;
 	cmd->string = pic;
 	cmd->id = id;
@@ -879,4 +860,4 @@ void AI::cineFunction(const char *func) {
 	_cine.push_back(cmd);
 }
 
-} // End of Namespace
+} // namespace HDB

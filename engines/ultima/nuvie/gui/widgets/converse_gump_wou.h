@@ -23,9 +23,9 @@
 #ifndef NUVIE_CORE_CONVERSE_GUMP_WOU_H
 #define NUVIE_CORE_CONVERSE_GUMP_WOU_H
 
-#include "ultima/nuvie/misc/call_back.h"
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
+#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
@@ -39,7 +39,7 @@ class Font;
 class MsgScroll;
 class Actor;
 
-class ConverseGumpWOU: public MsgScroll {
+class ConverseGumpWOU : public MsgScroll {
 
 	uint8 converse_bg_color;
 
@@ -49,8 +49,8 @@ class ConverseGumpWOU: public MsgScroll {
 
 	nuvie_game_t game_type;
 	bool found_break_char;
-public:
 
+public:
 	ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s);
 	~ConverseGumpWOU() override;
 
@@ -94,7 +94,6 @@ public:
 	}
 
 protected:
-
 	void input_add_string(Std::string token_str);
 	void process_page_break() override;
 	uint8 get_input_font_color() override {
@@ -103,7 +102,6 @@ protected:
 	void display_bg();
 
 private:
-
 	Graphics::ManagedSurface *bg_image;
 };
 

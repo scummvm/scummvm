@@ -46,6 +46,7 @@ private:
 	 * Loads buttons for the menu
 	 */
 	void loadButtons();
+
 public:
 	/**
 	 * Shows the main menu

@@ -21,11 +21,6 @@
  */
 
 #include "ultima/ultima4/sound/sound.h"
-#include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/sound/music.h"
-#include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/ultima4/core/utils.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
@@ -33,6 +28,11 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
 #include "common/file.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/sound/music.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -145,8 +145,8 @@ void SoundManager::play_sys(Sound sound, bool onlyOnce, int specificDurationMill
 	if (specificDurationMilli == -1) {
 		// Play a single sound effect
 		_mixer->playStream(Audio::Mixer::kSFXSoundType,
-			&_soundHandle, _sounds[sound], -1, Audio::Mixer::kMaxChannelVolume,
-			0, DisposeAfterUse::NO);
+		                   &_soundHandle, _sounds[sound], -1, Audio::Mixer::kMaxChannelVolume,
+		                   0, DisposeAfterUse::NO);
 	} else {
 		// Play a sound effect, looping if necessary, for a given duration
 		// TODO: Better handle cases where a number of loops won't fit
@@ -156,11 +156,11 @@ void SoundManager::play_sys(Sound sound, bool onlyOnce, int specificDurationMill
 		assert(loops >= 0);
 
 		Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(
-			_sounds[sound], loops, DisposeAfterUse::NO);
+		    _sounds[sound], loops, DisposeAfterUse::NO);
 
 		_mixer->playStream(Audio::Mixer::kSFXSoundType,
-			&_soundHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume,
-			0, DisposeAfterUse::NO);
+		                   &_soundHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume,
+		                   0, DisposeAfterUse::NO);
 	}
 }
 

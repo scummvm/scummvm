@@ -22,10 +22,10 @@
 
 #include "common/debug.h"
 #include "common/rect.h"
-#include "image/png.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"
-#include "graphics/palette.h"
+#include "image/png.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
@@ -35,13 +35,13 @@
 #include "sludge/imgloader.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
-#include "sludge/speech.h"
-#include "sludge/statusba.h"
-#include "sludge/zbuffer.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
+#include "sludge/speech.h"
+#include "sludge/statusba.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
+#include "sludge/zbuffer.h"
 
 namespace Sludge {
 
@@ -84,20 +84,20 @@ bool Parallax::add(uint16 v, uint16 fracX, uint16 fracY) {
 	// 65535 is the value of AUTOFIT constant in Sludge
 	if (fracX == 65535) {
 		nP->wrapS = false;
-//		if (nP->surface.w < _winWidth) {
-//			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
-//			return false;
-//		}
+		//		if (nP->surface.w < _winWidth) {
+		//			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
+		//			return false;
+		//		}
 	} else {
 		nP->wrapS = true;
 	}
 
 	if (fracY == 65535) {
 		nP->wrapT = false;
-//		if (nP->surface.h < _winHeight) {
-//			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
-//			return false;
-//		}
+		//		if (nP->surface.h < _winHeight) {
+		//			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
+		//			return false;
+		//		}
 	} else {
 		nP->wrapT = true;
 	}
@@ -171,7 +171,7 @@ void GraphicsManager::nosnapshot() {
 
 void GraphicsManager::saveSnapshot(Common::WriteStream *stream) {
 	if (_snapshotSurface.getPixels()) {
-		stream->writeByte(1);               // 1 for snapshot follows
+		stream->writeByte(1); // 1 for snapshot follows
 		Image::writePNG(*stream, _snapshotSurface);
 	} else {
 		stream->writeByte(0);
@@ -330,10 +330,10 @@ void GraphicsManager::hardScroll(int distance) {
 	// copy part of the backdrop to it
 	if (distance > 0) {
 		_backdropSurface.copyRectToSurface(_origBackdropSurface, 0, 0,
-				Common::Rect(0, distance, _backdropSurface.w, _backdropSurface.h));
+		                                   Common::Rect(0, distance, _backdropSurface.w, _backdropSurface.h));
 	} else {
 		_backdropSurface.copyRectToSurface(_origBackdropSurface, 0, -distance,
-				Common::Rect(0, 0, _backdropSurface.w, _backdropSurface.h + distance));
+		                                   Common::Rect(0, 0, _backdropSurface.w, _backdropSurface.h + distance));
 	}
 }
 
@@ -541,14 +541,17 @@ bool GraphicsManager::getRGBIntoStack(uint x, uint y, StackHandler *sH) {
 	byte *target = (byte *)_renderSurface.getBasePtr(x, y);
 
 	newValue.setVariable(SVT_INT, target[1]);
-	if (!addVarToStackQuick(newValue, sH->first)) return false;
+	if (!addVarToStackQuick(newValue, sH->first))
+		return false;
 	sH->last = sH->first;
 
 	newValue.setVariable(SVT_INT, target[2]);
-	if (!addVarToStackQuick(newValue, sH->first)) return false;
+	if (!addVarToStackQuick(newValue, sH->first))
+		return false;
 
 	newValue.setVariable(SVT_INT, target[3]);
-	if (!addVarToStackQuick(newValue, sH->first)) return false;
+	if (!addVarToStackQuick(newValue, sH->first))
+		return false;
 
 	return true;
 }

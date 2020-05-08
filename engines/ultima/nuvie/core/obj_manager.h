@@ -23,11 +23,11 @@
 #ifndef NUVIE_CORE_OBJ_MANAGER_H
 #define NUVIE_CORE_OBJ_MANAGER_H
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/nuvie/misc/iavl_tree.h"
-#include "ultima/nuvie/core/tile_manager.h"
-#include "ultima/nuvie/misc/u6_llist.h"
 #include "ultima/nuvie/core/obj.h"
+#include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/misc/iavl_tree.h"
+#include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -41,9 +41,9 @@ class MapCoord;
 class Actor;
 
 //is_passable return codes
-#define OBJ_NO_OBJ       0
+#define OBJ_NO_OBJ 0
 #define OBJ_NOT_PASSABLE 1
-#define OBJ_PASSABLE     2
+#define OBJ_PASSABLE 2
 
 #define OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS true
 #define OBJ_WEIGHT_EXCLUDE_CONTAINER_ITEMS false
@@ -78,7 +78,7 @@ class ObjManager {
 	int game_type;
 	EggManager *egg_manager;
 	TileManager *tile_manager;
-//chunk object trees.
+	//chunk object trees.
 	iAVLTree *surface[64];
 	iAVLTree *dungeon[5];
 
@@ -102,7 +102,6 @@ class ObjManager {
 	bool custom_actor_tiles;
 
 public:
-
 	ObjManager(Configuration *cfg, TileManager *tm, EggManager *em);
 	~ObjManager();
 
@@ -130,16 +129,16 @@ public:
 	void set_usecode(UseCode *uc) {
 		usecode = uc;
 	}
-	UseCode *get_usecode()        {
+	UseCode *get_usecode() {
 		return (usecode);
 	}
 	EggManager *get_egg_manager() {
 		return (egg_manager);
 	}
 
-//U6LList *get_obj_superchunk(uint16 x, uint16 y, uint8 level);
+	//U6LList *get_obj_superchunk(uint16 x, uint16 y, uint8 level);
 	bool is_boundary(uint16 x, uint16 y, uint8 level, uint8 boundary_type = TILEFLAG_BOUNDARY, Obj *excluded_obj = NULL);
-//bool is_door(Obj * obj);
+	//bool is_door(Obj * obj);
 	bool is_damaging(uint16 x, uint16 y, uint8 level);
 	uint8 is_passable(uint16 x, uint16 y, uint8 level);
 	bool is_forced_passable(uint16 x, uint16 y, uint8 level);
@@ -177,13 +176,12 @@ public:
 	bool actor_has_inventory(uint16 actor_num);
 
 	Obj *find_next_obj(uint8 level, Obj *prev_obj, bool match_frame_n = OBJ_NOMATCH_FRAME_N, bool match_quality = OBJ_MATCH_QUALITY);
-	Obj *find_obj(uint8 level, uint16 obj_n, uint8 quality, bool match_quality = OBJ_MATCH_QUALITY, uint16 frame_n = 0, bool match_frame_n = OBJ_NOMATCH_FRAME_N,  Obj **prev_obj = NULL);
+	Obj *find_obj(uint8 level, uint16 obj_n, uint8 quality, bool match_quality = OBJ_MATCH_QUALITY, uint16 frame_n = 0, bool match_frame_n = OBJ_NOMATCH_FRAME_N, Obj **prev_obj = NULL);
 
 	bool move(Obj *obj, uint16 x, uint16 y, uint8 level);
 	bool add_obj(Obj *obj, bool addOnTop = false);
 	bool remove_obj_from_map(Obj *obj);
 	bool remove_obj_type_from_location(uint16 obj_n, uint16 x, uint16 y, uint8 z);
-
 
 	Obj *copy_obj(Obj *obj);
 	const char *look_obj(Obj *obj, bool show_prefix = false);
@@ -214,12 +212,10 @@ public:
 	bool moveto_container(Obj *obj, Obj *container_obj, bool stack = true);
 
 protected:
-
 	void remove_obj(Obj *obj);
 
 	bool load_basetile();
 	bool load_weight_table();
-
 
 	bool addObjToContainer(U6LList *list, Obj *obj);
 	Obj *loadObj(NuvieIO *buf);
@@ -227,7 +223,7 @@ protected:
 
 	iAVLKey get_obj_tree_key(Obj *obj);
 	iAVLKey get_obj_tree_key(uint16 x, uint16 y, uint8 level);
-//inline U6LList *ObjManager::get_schunk_list(uint16 x, uint16 y, uint8 level);
+	//inline U6LList *ObjManager::get_schunk_list(uint16 x, uint16 y, uint8 level);
 
 	bool temp_obj_list_add(Obj *obj);
 	bool temp_obj_list_remove(Obj *obj);

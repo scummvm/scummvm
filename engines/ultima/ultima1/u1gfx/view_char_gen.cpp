@@ -21,27 +21,26 @@
  */
 
 #include "ultima/ultima1/u1gfx/view_char_gen.h"
-#include "ultima/ultima1/u1gfx/drawing_support.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map.h"
-#include "ultima/ultima1/u1gfx/text_cursor.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/shared/gfx/text_input.h"
 #include "ultima/shared/early/font_resources.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/gfx/text_input.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/u1gfx/drawing_support.h"
+#include "ultima/ultima1/u1gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(ViewCharacterGeneration, Shared::Gfx::VisualItem)
-	ON_MESSAGE(KeypressMsg)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(TextInputMsg)
+ON_MESSAGE(KeypressMsg)
+ON_MESSAGE(ShowMsg)
+ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
-ViewCharacterGeneration::ViewCharacterGeneration(Shared::TreeItem *parent) :
-		Shared::Gfx::VisualItem("CharGen", Rect(0, 0, 320, 200), parent) {
+ViewCharacterGeneration::ViewCharacterGeneration(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("CharGen", Rect(0, 0, 320, 200), parent) {
 	_textInput = new Shared::Gfx::TextInput(getGame());
 }
 
@@ -142,9 +141,9 @@ void ViewCharacterGeneration::drawPointsRemaining(Shared::Gfx::VisualSurface &s)
 void ViewCharacterGeneration::drawAttributes(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[2],
-		_character->_strength, _character->_agility, _character->_stamina,
-		_character->_charisma, _character->_wisdom, _character->_intelligence),
-		TextPoint(12, 6));
+	                                     _character->_strength, _character->_agility, _character->_stamina,
+	                                     _character->_charisma, _character->_wisdom, _character->_intelligence),
+	              TextPoint(12, 6));
 }
 
 void ViewCharacterGeneration::drawAttributePointers(Shared::Gfx::VisualSurface &s) {
@@ -170,10 +169,10 @@ void ViewCharacterGeneration::drawRace(Shared::Gfx::VisualSurface &s) {
 	s.fillRect(TextRect(2, 16, 37, 21), game->_bgColor);
 
 	s.writeString(game->_res->CHAR_GEN_TEXT[6], TextPoint(3, 17));
-	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4], 
-		game->_res->RACE_NAMES[0], game->_res->RACE_NAMES[1],
-		game->_res->RACE_NAMES[2], game->_res->RACE_NAMES[3]),
-		TextPoint(12, 19));
+	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4],
+	                                     game->_res->RACE_NAMES[0], game->_res->RACE_NAMES[1],
+	                                     game->_res->RACE_NAMES[2], game->_res->RACE_NAMES[3]),
+	              TextPoint(12, 19));
 }
 
 void ViewCharacterGeneration::drawSex(Shared::Gfx::VisualSurface &s) {
@@ -185,7 +184,8 @@ void ViewCharacterGeneration::drawSex(Shared::Gfx::VisualSurface &s) {
 	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
 	s.writeString(game->_res->CHAR_GEN_TEXT[7], TextPoint(3, 17));
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[5],
-		game->_res->SEX_NAMES[0], game->_res->SEX_NAMES[1]), TextPoint(12, 19));
+	                                     game->_res->SEX_NAMES[0], game->_res->SEX_NAMES[1]),
+	              TextPoint(12, 19));
 }
 
 void ViewCharacterGeneration::drawClass(Shared::Gfx::VisualSurface &s) {
@@ -197,9 +197,9 @@ void ViewCharacterGeneration::drawClass(Shared::Gfx::VisualSurface &s) {
 	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
 	s.writeString(game->_res->CHAR_GEN_TEXT[8], TextPoint(3, 17));
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4],
-		game->_res->CLASS_NAMES[0], game->_res->CLASS_NAMES[1],
-		game->_res->CLASS_NAMES[2], game->_res->CLASS_NAMES[3]),
-		TextPoint(12, 19));
+	                                     game->_res->CLASS_NAMES[0], game->_res->CLASS_NAMES[1],
+	                                     game->_res->CLASS_NAMES[2], game->_res->CLASS_NAMES[3]),
+	              TextPoint(12, 19));
 }
 
 void ViewCharacterGeneration::drawName(Shared::Gfx::VisualSurface &s) {
@@ -370,7 +370,7 @@ bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg &msg) {
 	if (!msg._escaped && !msg._text.empty()) {
 		// Name provided
 		_character->_name = msg._text;
-		
+
 		_textInput->hide();
 		setMode(FLAG_SAVE);
 	}
@@ -393,14 +393,14 @@ bool ViewCharacterGeneration::save() {
 	_character->_food = 200;
 	_character->_experience = 0;
 	_character->_equippedWeapon = 1;
-	_character->_weapons[1]->_quantity = 1;			// Dagger
+	_character->_weapons[1]->_quantity = 1; // Dagger
 	_character->_equippedArmour = 1;
-	_character->_armour[1]->_quantity = 1;			// Leather armour
+	_character->_armour[1]->_quantity = 1; // Leather armour
 	_character->_equippedSpell = 0;
 
 	return g_vm->saveGameDialog();
 }
 
 } // End of namespace U1Gfx
-} // End of namespace Shared
+} // namespace Ultima1
 } // End of namespace Ultima

@@ -31,11 +31,14 @@ class CRestaurantPanHandler : public CMovePlayerTo {
 	DECLARE_MESSAGE_MAP;
 	bool ArmPickedUpFromTableMsg(CArmPickedUpFromTableMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 protected:
 	CString _armDestination;
 	CString _armlessDestination;
+
 public:
 	static bool _armPickedUp;
+
 public:
 	CLASSDEF;
 

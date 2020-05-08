@@ -34,7 +34,7 @@ void Wench::movement() {
 		// Get a random new position
 		Point delta = getRandomMoveDelta();
 		Point newPos = _position + delta;
-		
+
 		if (canMoveTo(newPos) == YES) {
 			_position = newPos;
 			_game->playFX(4);

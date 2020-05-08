@@ -23,55 +23,55 @@
 #ifndef ULTIMA4_CORE_SETTINGS_H
 #define ULTIMA4_CORE_SETTINGS_H
 
+#include "common/hash-str.h"
+#include "ultima/shared/conf/conf_serializer.h"
 #include "ultima/ultima4/core/observable.h"
 #include "ultima/ultima4/core/types.h"
-#include "ultima/shared/conf/conf_serializer.h"
-#include "common/hash-str.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-#define MIN_SHAKE_INTERVAL              50
+#define MIN_SHAKE_INTERVAL 50
 
-#define MAX_BATTLE_SPEED                10
-#define MAX_KEY_DELAY                   1000
-#define MAX_KEY_INTERVAL                100
-#define MAX_CYCLES_PER_SECOND           20
-#define MAX_SPELL_EFFECT_SPEED          10
-#define MAX_CAMP_TIME                   10
-#define MAX_INN_TIME                    10
-#define MAX_SHRINE_TIME                 20
-#define MAX_SHAKE_INTERVAL              200
-#define MAX_VOLUME                      10
+#define MAX_BATTLE_SPEED 10
+#define MAX_KEY_DELAY 1000
+#define MAX_KEY_INTERVAL 100
+#define MAX_CYCLES_PER_SECOND 20
+#define MAX_SPELL_EFFECT_SPEED 10
+#define MAX_CAMP_TIME 10
+#define MAX_INN_TIME 10
+#define MAX_SHRINE_TIME 20
+#define MAX_SHAKE_INTERVAL 200
+#define MAX_VOLUME 10
 
-#define DEFAULT_GEM_LAYOUT              "Standard"
-#define DEFAULT_LINEOFSIGHT             "DOS"
-#define DEFAULT_SCREEN_SHAKES           1
-#define DEFAULT_GAMMA                   100
-#define DEFAULT_VOLUME_FADES            1
-#define DEFAULT_SHORTCUT_COMMANDS       0
-#define DEFAULT_KEY_DELAY               500
-#define DEFAULT_KEY_INTERVAL            30
-#define DEFAULT_FILTER_MOVE_MESSAGES    0
-#define DEFAULT_BATTLE_SPEED            5
-#define DEFAULT_ENHANCEMENTS            1
-#define DEFAULT_CYCLES_PER_SECOND       4
+#define DEFAULT_GEM_LAYOUT "Standard"
+#define DEFAULT_LINEOFSIGHT "DOS"
+#define DEFAULT_SCREEN_SHAKES 1
+#define DEFAULT_GAMMA 100
+#define DEFAULT_VOLUME_FADES 1
+#define DEFAULT_SHORTCUT_COMMANDS 0
+#define DEFAULT_KEY_DELAY 500
+#define DEFAULT_KEY_INTERVAL 30
+#define DEFAULT_FILTER_MOVE_MESSAGES 0
+#define DEFAULT_BATTLE_SPEED 5
+#define DEFAULT_ENHANCEMENTS 1
+#define DEFAULT_CYCLES_PER_SECOND 4
 #define DEFAULT_ANIMATION_FRAMES_PER_SECOND 24
-#define DEFAULT_DEBUG                   0
-#define DEFAULT_VALIDATE_XML            1
-#define DEFAULT_SPELL_EFFECT_SPEED      10
-#define DEFAULT_CAMP_TIME               10
-#define DEFAULT_INN_TIME                8
-#define DEFAULT_SHRINE_TIME             16
-#define DEFAULT_SHAKE_INTERVAL          100
-#define DEFAULT_BATTLE_DIFFICULTY       "Normal"
-#define DEFAULT_LOGGING                 ""
-#define DEFAULT_TITLE_SPEED_RANDOM      150
-#define DEFAULT_TITLE_SPEED_OTHER       30
+#define DEFAULT_DEBUG 0
+#define DEFAULT_VALIDATE_XML 1
+#define DEFAULT_SPELL_EFFECT_SPEED 10
+#define DEFAULT_CAMP_TIME 10
+#define DEFAULT_INN_TIME 8
+#define DEFAULT_SHRINE_TIME 16
+#define DEFAULT_SHAKE_INTERVAL 100
+#define DEFAULT_BATTLE_DIFFICULTY "Normal"
+#define DEFAULT_LOGGING ""
+#define DEFAULT_TITLE_SPEED_RANDOM 150
+#define DEFAULT_TITLE_SPEED_OTHER 30
 
 //--Tile transparency stuff
-#define DEFAULT_SHADOW_PIXEL_OPACITY    64
-#define DEFAULT_SHADOW_PIXEL_SIZE       2
+#define DEFAULT_SHADOW_PIXEL_OPACITY 64
+#define DEFAULT_SHADOW_PIXEL_SIZE 2
 
 struct SettingsEnhancementOptions {
 	bool _activePlayer;
@@ -85,8 +85,8 @@ struct SettingsEnhancementOptions {
 	bool _smartEnterKey;
 	bool _peerShowsObjects;
 	bool _u4TileTransparencyHack;
-	int  _u4TileTransparencyHackPixelShadowOpacity;
-	int  _u4TrileTransparencyHackShadowBreadth;
+	int _u4TileTransparencyHackPixelShadowOpacity;
+	int _u4TrileTransparencyHackShadowBreadth;
 
 	bool operator==(const SettingsEnhancementOptions &s) const;
 };
@@ -147,9 +147,11 @@ public:
  */
 class Settings : public SettingsData, public Observable<Settings *> {
 	typedef Common::HashMap<Common::String, Common::String> SettingsMap;
+
 private:
 	static Settings *_instance;
 	Std::vector<Common::String> _battleDiffs;
+
 private:
 	/**
 	 * Default contructor.  Settings is a singleton so this is private.
@@ -160,6 +162,7 @@ private:
 	 * Synchronize settings with ConfMan
 	 */
 	void synchronize(Shared::ConfSerializer &s);
+
 public:
 	/* Methods */
 

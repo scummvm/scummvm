@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/fast_area_vis_gump.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,10 +45,10 @@ void FastAreaVisGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sca
 	surf->Fill32(0xFF0000, 0, 0, MAP_NUM_CHUNKS + 2, MAP_NUM_CHUNKS + 2);
 	surf->Fill32(0, 1, 1, MAP_NUM_CHUNKS, MAP_NUM_CHUNKS);
 
-
 	for (int yp = 0; yp < MAP_NUM_CHUNKS; yp++)
 		for (int xp = 0; xp < MAP_NUM_CHUNKS; xp++)
-			if (currentmap->isChunkFast(xp, yp)) surf->Fill32(0xFFFFFFFF, xp + 1, yp + 1, 1, 1);
+			if (currentmap->isChunkFast(xp, yp))
+				surf->Fill32(0xFFFFFFFF, xp + 1, yp + 1, 1, 1);
 }
 
 uint16 FastAreaVisGump::TraceObjId(int32 mx, int32 my) {

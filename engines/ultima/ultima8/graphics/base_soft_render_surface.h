@@ -23,9 +23,9 @@
 #ifndef ULTIMA8_GRAPHICS_BASESOFTRENDERSURFACE_H
 #define ULTIMA8_GRAPHICS_BASESOFTRENDERSURFACE_H
 
+#include "graphics/managed_surface.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/misc/rect.h"
-#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -38,35 +38,35 @@ namespace Ultima8 {
 class BaseSoftRenderSurface : public RenderSurface {
 protected:
 	// Frame buffer
-	uint8           *_pixels;                // Pointer to logical pixel 0,0
-	uint8           *_pixels00;              // Pointer to physical pixel 0,0
+	uint8 *_pixels;   // Pointer to logical pixel 0,0
+	uint8 *_pixels00; // Pointer to physical pixel 0,0
 
 	// Depth Buffer
-	uint16          *_zBuffer;               // Pointer to logical pixel 0,0
-	uint8           *_zBuffer00;             // Pointer to physical pixel 0,0
+	uint16 *_zBuffer;  // Pointer to logical pixel 0,0
+	uint8 *_zBuffer00; // Pointer to physical pixel 0,0
 
 	// Pixel Format (also see 'Colour shifting values' later)
-	int             _bytesPerPixel;          // 2 or 4
-	int             _bitsPerPixel;           // 16 or 32
-	int             _formatType;             // 16, 555, 565, 32 or 888
+	int _bytesPerPixel; // 2 or 4
+	int _bitsPerPixel;  // 16 or 32
+	int _formatType;    // 16, 555, 565, 32 or 888
 
 	// Dimensions
-	int32           _ox, _oy;                // Physical Pixel for Logical Origin
-	int32           _width, _height;         // Width and height
-	int32           _pitch;                  // Frame buffer pitch (bytes) (could be negated)
-	int32           _zPitch;                 // Z Buffer pitch (bytes) (could be negated)
-	bool            _flipped;
+	int32 _ox, _oy;        // Physical Pixel for Logical Origin
+	int32 _width, _height; // Width and height
+	int32 _pitch;          // Frame buffer pitch (bytes) (could be negated)
+	int32 _zPitch;         // Z Buffer pitch (bytes) (could be negated)
+	bool _flipped;
 
 	// Clipping Rectangle
 	Rect _clipWindow;
 
 	// Locking count
-	uint32          _lockCount;              // Number of locks on surface
+	uint32 _lockCount; // Number of locks on surface
 
 	Graphics::ManagedSurface *_surface;
 
 	// Renderint to a texture
-	Texture         *_rttTex;
+	Texture *_rttTex;
 
 	// Create from a managed surface
 	BaseSoftRenderSurface(Graphics::ManagedSurface *);
@@ -77,15 +77,15 @@ protected:
 	// Create Generic
 	BaseSoftRenderSurface(int w, int h, int bpp, int rsft, int gsft, int bsft, int asft);
 	BaseSoftRenderSurface(int w, int h, uint8 *buf);
-	virtual ECode GenericLock()  {
+	virtual ECode GenericLock() {
 		return P_NO_ERROR;
 	}
-	virtual ECode GenericUnlock()  {
+	virtual ECode GenericUnlock() {
 		return P_NO_ERROR;
 	}
 
 	// Update the Pixels Pointer
-	void    SetPixelsPointer() {
+	void SetPixelsPointer() {
 		uint8 *pix00 = _pixels00;
 		uint8 *zbuf00 = _zBuffer00;
 
@@ -99,7 +99,6 @@ protected:
 	}
 
 public:
-
 	// Virtual Destructor
 	~BaseSoftRenderSurface() override;
 
@@ -118,7 +117,6 @@ public:
 
 	// Get the surface as a Texture. Only valid for SecondaryRenderSurfaces
 	Texture *GetSurfaceAsTexture() override;
-
 
 	//
 	// Surface Properties

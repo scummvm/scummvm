@@ -24,8 +24,8 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/file.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 
 #include "director/director.h"
 
@@ -62,50 +62,47 @@ Common::String DirectorEngine::getEXEName() const {
 }
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	return (f == kSupportsRTL);
 }
 
 } // End of Namespace Director
 
 static const PlainGameDescriptor directorGames[] = {
-	{ "director",	"Macromedia Director Game" },
-	{ "directortest",	"Macromedia Director Test Target" },
-	{ "directortest-all",	"Macromedia Director All Movies Test Target" },
-	{ "theapartment",	"The Apartment, Interactive demo" },
-	{ "gundam0079",	"Gundam 0079: The War for Earth" },
-	{ "jewels",		"Jewels of the Oracle" },
-	{ "jman",		"The Journeyman Project" },
-	{ "majestic",	"Majestic Part I: Alien Encounter" },
-	{ "mediaband",	"Meet Mediaband" },
-	{ "melements",	"Masters of the Elements" },
-	{ "spyclub",	"Spy Club" },
-	{ "amber",		"AMBER: Journeys Beyond"},
-	{ "vvvampire",	"Victor Vector & Yondo: The Vampire's Coffin"},
-	{ "vvdinosaur",	"Victor Vector & Yondo: The Last Dinosaur Egg"},
-	{ "warlock", 	"Spaceship Warlock"},
-	{ "ernie",		"Ernie"},
-	{ "id4p1",      "iD4 Mission Disk 1 - Alien Supreme Commander" },
-	{ "id4p2",      "iD4 Mission Disk 2 - Alien Science Officer" },
-	{ "id4p3",      "iD4 Mission Disk 3 - Warrior Alien" },
-	{ "id4p4",      "iD4 Mission Disk 4 - Alien Navigator" },
-	{ "id4p5",      "iD4 Mission Disk 5 - Captain Steve Hiller" },
-	{ "id4p6",      "iD4 Mission Disk 6 - Dave's Computer" },
-	{ "id4p7",      "iD4 Mission Disk 7 - President Whitmore" },
-	{ "id4p8",      "iD4 Mission Disk 8 - Alien Attack Fighter" },
-	{ "id4p9",      "iD4 Mission Disk 9 - FA-18 Fighter Jet" },
-	{ "id4p10",     "iD4 Mission Disk 10 - Alien Bomber" },
-	{ "id4p11",     "iD4 Mission Disk 11 - Area 51" },
-	{ "chopsuey",   "Chop Suey" },
-	{ 0, 0 }
-};
+    {"director", "Macromedia Director Game"},
+    {"directortest", "Macromedia Director Test Target"},
+    {"directortest-all", "Macromedia Director All Movies Test Target"},
+    {"theapartment", "The Apartment, Interactive demo"},
+    {"gundam0079", "Gundam 0079: The War for Earth"},
+    {"jewels", "Jewels of the Oracle"},
+    {"jman", "The Journeyman Project"},
+    {"majestic", "Majestic Part I: Alien Encounter"},
+    {"mediaband", "Meet Mediaband"},
+    {"melements", "Masters of the Elements"},
+    {"spyclub", "Spy Club"},
+    {"amber", "AMBER: Journeys Beyond"},
+    {"vvvampire", "Victor Vector & Yondo: The Vampire's Coffin"},
+    {"vvdinosaur", "Victor Vector & Yondo: The Last Dinosaur Egg"},
+    {"warlock", "Spaceship Warlock"},
+    {"ernie", "Ernie"},
+    {"id4p1", "iD4 Mission Disk 1 - Alien Supreme Commander"},
+    {"id4p2", "iD4 Mission Disk 2 - Alien Science Officer"},
+    {"id4p3", "iD4 Mission Disk 3 - Warrior Alien"},
+    {"id4p4", "iD4 Mission Disk 4 - Alien Navigator"},
+    {"id4p5", "iD4 Mission Disk 5 - Captain Steve Hiller"},
+    {"id4p6", "iD4 Mission Disk 6 - Dave's Computer"},
+    {"id4p7", "iD4 Mission Disk 7 - President Whitmore"},
+    {"id4p8", "iD4 Mission Disk 8 - Alien Attack Fighter"},
+    {"id4p9", "iD4 Mission Disk 9 - FA-18 Fighter Jet"},
+    {"id4p10", "iD4 Mission Disk 10 - Alien Bomber"},
+    {"id4p11", "iD4 Mission Disk 11 - Area 51"},
+    {"chopsuey", "Chop Suey"},
+    {0, 0}};
 
 #include "director/detection_tables.h"
 
 static const char *directoryGlobs[] = {
-	"install",
-	0
-};
+    "install",
+    0};
 
 class DirectorMetaEngine : public AdvancedMetaEngine {
 public:
@@ -140,18 +137,15 @@ bool DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 static Director::DirectorGameDescription s_fallbackDesc = {
-	{
-		"director",
-		"",
-		AD_ENTRY1(0, 0),
-		Common::UNK_LANG,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
-	Director::GID_GENERIC,
-	0
-};
+    {"director",
+     "",
+     AD_ENTRY1(0, 0),
+     Common::UNK_LANG,
+     Common::kPlatformWindows,
+     ADGF_NO_FLAGS,
+     GUIO0()},
+    Director::GID_GENERIC,
+    0};
 
 static char s_fallbackFileNameBuffer[51];
 
@@ -252,7 +246,7 @@ ADDetectedGame DirectorMetaEngine::fallbackDetect(const FileMap &allFiles, const
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(DIRECTOR)
-	REGISTER_PLUGIN_DYNAMIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
+REGISTER_PLUGIN_STATIC(DIRECTOR, PLUGIN_TYPE_ENGINE, DirectorMetaEngine);
 #endif

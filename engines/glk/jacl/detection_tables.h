@@ -20,26 +20,24 @@
  *
  */
 
-#include "engines/game.h"
 #include "common/gui_options.h"
 #include "common/language.h"
+#include "engines/game.h"
 
 namespace Glk {
 namespace JACL {
 
 const PlainGameDescriptor JACL_GAME_LIST[] = {
-	{ "prisonbreak", "Prisoner Break" },
-	{ "unholygrail", "The Unholy Grail" },
+    {"prisonbreak", "Prisoner Break"},
+    {"unholygrail", "The Unholy Grail"},
 
-	{ nullptr, nullptr }
-};
+    {nullptr, nullptr}};
 
 const GlkDetectionEntry JACL_GAMES[] = {
-	DT_ENTRY0("prisonbreak", "e2e85c5e60a63575bf0cd0481f0f3958", 199403),
-	DT_ENTRY0("unholygrail", "7d40e485c8cf8c9d5c4958a79337d6c7", 447833),
+    DT_ENTRY0("prisonbreak", "e2e85c5e60a63575bf0cd0481f0f3958", 199403),
+    DT_ENTRY0("unholygrail", "7d40e485c8cf8c9d5c4958a79337d6c7", 447833),
 
-	DT_END_MARKER
-};
+    DT_END_MARKER};
 
 } // End of namespace JACL
 } // End of namespace Glk

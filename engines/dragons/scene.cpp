@@ -20,24 +20,23 @@
  *
  */
 #include "dragons/scene.h"
-#include "dragons/dragons.h"
 #include "dragons/actor.h"
+#include "dragons/actorresource.h"
 #include "dragons/background.h"
-#include "dragons/cursor.h"
 #include "dragons/credits.h"
-#include "dragons/dragonini.h"
+#include "dragons/cursor.h"
 #include "dragons/dragonimg.h"
+#include "dragons/dragonini.h"
+#include "dragons/dragons.h"
 #include "dragons/font.h"
 #include "dragons/inventory.h"
 #include "dragons/screen.h"
-#include "dragons/actorresource.h"
 #include "dragons/scriptopcodes.h"
 
 namespace Dragons {
 
-
 Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader)
-		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
+    : _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
 	_mapTransitionEffectSceneID = 2;
 	_data_800633ee = 0;
 
@@ -97,9 +96,9 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	uint16 sceneIdStripped = (uint16)sceneId & ~0x8000;
 	if (sceneIdStripped == 0x18 || sceneIdStripped == 0x26 || sceneIdStripped == 0x7 ||
-			sceneIdStripped == 0x17 || sceneIdStripped == 0x5 || sceneIdStripped == 0x19 ||
-			sceneIdStripped == 0x34 || sceneIdStripped == 0x1d || sceneIdStripped == 0x6) {
-//		buf2048bytes = buf2048bytes + 0x1800;
+	    sceneIdStripped == 0x17 || sceneIdStripped == 0x5 || sceneIdStripped == 0x19 ||
+	    sceneIdStripped == 0x34 || sceneIdStripped == 0x1d || sceneIdStripped == 0x6) {
+		//		buf2048bytes = buf2048bytes + 0x1800;
 		// error("0x8002f404"); //TODO do we need this logic?
 	}
 
@@ -153,11 +152,11 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		byte *cursorPalette = _vm->_cursor->getPalette();
 		byte *stagePalette = _stage->getPalette();
 		for (int i = 0xc0; i < 0x100; i++) {
-			stagePalette[i * 2] = cursorPalette[(i-0xc0) * 2];
-			stagePalette[i * 2 + 1] = cursorPalette[(i-0xc0) * 2 + 1];
+			stagePalette[i * 2] = cursorPalette[(i - 0xc0) * 2];
+			stagePalette[i * 2 + 1] = cursorPalette[(i - 0xc0) * 2 + 1];
 		}
 	}
-	for (int i = 1; i < 0x100; i ++) {
+	for (int i = 1; i < 0x100; i++) {
 		byte *stagePalette = _stage->getPalette();
 		uint16 c = READ_LE_INT16(stagePalette + i * 2);
 		if ((c & 0x7fff) == 0) {
@@ -166,7 +165,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	}
 	_screen->loadPalette(0, _stage->getPalette());
 
-	for (int i = 1; i < 0x100; i ++) {
+	for (int i = 1; i < 0x100; i++) {
 		byte *stagePalette = _stage->getPalette();
 		uint16 c = READ_LE_INT16(stagePalette + i * 2);
 		if ((c & 0x7fff) == 0) {
@@ -262,14 +261,14 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 					} else {
 						actor->_flags &= 0xbfff;
 					}
-//
-//				Graphics::Surface *s = actor->getCurrentFrame();
-//				int x = ini->x - actor->_frame_vram_x;
-//				int y = ini->y - actor->_frame_vram_y;
-//				if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
-//					debug("Actor %d, %d %d (%d, %d)", actor->_actorID, ini->actorResourceId, ini->flags, ini->x, ini->y);
-//					_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
-//				}
+					//
+					//				Graphics::Surface *s = actor->getCurrentFrame();
+					//				int x = ini->x - actor->_frame_vram_x;
+					//				int y = ini->y - actor->_frame_vram_y;
+					//				if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
+					//					debug("Actor %d, %d %d (%d, %d)", actor->_actorID, ini->actorResourceId, ini->flags, ini->x, ini->y);
+					//					_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
+					//				}
 				}
 				// _stage->getFgLayer()->drawLine(ini->x, ini->y, ini->x + 8, ini->y + 8, 0x7c00);
 				//break;
@@ -287,7 +286,6 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		ini->actor->setFlag(ACTOR_FLAG_100);
 		ini->actor->_priorityLayer = 0;
 	}
-
 
 	if (flicker && flicker->sceneId != 0) {
 		flicker->direction2 = _vm->_flickerInitialSceneDirection;
@@ -332,7 +330,6 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		ScriptOpCall scriptOpCall(obd + 4, READ_LE_UINT32(obd));
 		_scriptOpcodes->runScript(scriptOpCall);
 	}
-
 }
 
 void Scene::draw() {
@@ -373,10 +370,10 @@ void Scene::draw() {
 			}
 
 			if (actor->_flags & ACTOR_FLAG_40 &&
-					!(actor->_flags & ACTOR_FLAG_400) &&
-					actor->_surface &&
-					actor->_frame->width != 0 &&
-					actor->_frame->height != 0) {
+			    !(actor->_flags & ACTOR_FLAG_400) &&
+			    actor->_surface &&
+			    actor->_frame->width != 0 &&
+			    actor->_frame->height != 0) {
 				Graphics::Surface *s = actor->_surface;
 				if (actor->_priorityLayer == priority) { //} && x + s->w < 320 && y + s->h < 200) {
 					if (!actor->isFlagSet(ACTOR_FLAG_80)) {
@@ -386,9 +383,9 @@ void Scene::draw() {
 					int y = actor->_y_pos - (actor->_frame->yOffset * actor->_scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.y);
 
 					debug(5, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
-						  y,
-						  s->w, s->h, actor->_priorityLayer, actor->_scale);
-						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);
+					      y,
+					      s->w, s->h, actor->_priorityLayer, actor->_scale);
+					_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);
 					if (_vm->isDebugMode()) {
 						_screen->drawRect(0x7fff, Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
 						drawActorNumber(x + s->w, y + 8, actor->_actorID);
@@ -437,7 +434,7 @@ uint16 Scene::getStageHeight() {
 }
 
 void Scene::loadImageOverlay(uint16 iptId) {
-	Img *img =_vm->_dragonImg->getImg(iptId);
+	Img *img = _vm->_dragonImg->getImg(iptId);
 	if (img->h != 0) {
 		if (img->field_e <= 2) {
 			_stage->overlayImage(img->layerNum - 1, img->data, img->x, img->y, img->w, img->h);
@@ -450,7 +447,7 @@ void Scene::loadImageOverlay(uint16 iptId) {
 }
 
 void Scene::removeImageOverlay(uint16 iptId) {
-	Img *img =_vm->_dragonImg->getImg(iptId);
+	Img *img = _vm->_dragonImg->getImg(iptId);
 	_stage->restoreTiles(img->layerNum - 1, img->x, img->y, img->w, img->h);
 	_stage->restorePriorityTileMap(img->x, img->y, img->w, img->h);
 }
@@ -483,7 +480,6 @@ void Scene::setStagePalette(byte *newPalette) {
 	_stage->setPalette(newPalette);
 }
 
-
 void Scene::drawActorNumber(int16 x, int16 y, uint16 actorId) {
 	uint16 text[30];
 	char text8[15];
@@ -506,21 +502,21 @@ Common::Point Scene::getLayerOffset(uint8 layerNumber) {
 
 void Scene::drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface *surface) {
 	Common::Point offset = _stage->getLayerOffset(layerNumber);
-//	Common::Rect clippedRect = _screen->clipRectToRect(offset.x, offset.y, rect, Common::Rect(_stage->getBgLayer()->w, _stage->getBgLayer()->h));
+	//	Common::Rect clippedRect = _screen->clipRectToRect(offset.x, offset.y, rect, Common::Rect(_stage->getBgLayer()->w, _stage->getBgLayer()->h));
 	rect.left += rect.left + offset.x < 0 ? -(rect.left + offset.x) : offset.x;
 	if (rect.right + offset.x > surface->w) {
 		rect.right = surface->w - 1;
 	} else {
 		rect.right += offset.x;
 	}
-//	clippedRect.right += offset.x < 0 ? -offset.x : 0;
+	//	clippedRect.right += offset.x < 0 ? -offset.x : 0;
 	rect.top += rect.top + offset.y < 0 ? -(rect.top + offset.y) : offset.y;
 	if (rect.bottom + offset.y > surface->h) {
 		rect.bottom = surface->h - 1;
 	} else {
 		rect.bottom += offset.y;
 	}
-//	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
+	//	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
 	_screen->copyRectToSurface8bppWrappedX(*surface, _screen->getPalette(0), rect, _stage->getLayerAlphaMode(layerNumber));
 }
 

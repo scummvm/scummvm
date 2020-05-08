@@ -135,12 +135,12 @@ bool ZBuffer::decodeData(const uint8 *data, int size) {
 		return false;
 	}
 
-	uint32 width, height, complete;// , unk0;
+	uint32 width, height, complete; // , unk0;
 
-	width    = READ_LE_UINT32(data + 0);
-	height   = READ_LE_UINT32(data + 4);
+	width = READ_LE_UINT32(data + 0);
+	height = READ_LE_UINT32(data + 4);
 	complete = READ_LE_UINT32(data + 8);
-	/*unk0 =*/ READ_LE_UINT32(data + 12);
+	/*unk0 =*/READ_LE_UINT32(data + 12);
 
 	if (width != (uint32)_width || height != (uint32)_height) {
 		warning("zbuffer size mismatch (%d, %d) != (%d, %d)", _width, _height, width, height);

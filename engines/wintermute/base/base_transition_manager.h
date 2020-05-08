@@ -46,7 +46,6 @@ public:
 	BaseTransitionMgr(BaseGame *inGame);
 	~BaseTransitionMgr() override;
 	TTransitionType _type;
-
 };
 
 } // End of namespace Wintermute

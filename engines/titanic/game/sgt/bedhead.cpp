@@ -28,8 +28,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBedhead, CSGTStateRoom)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(TurnOff)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
 void BedheadEntry::load(Common::SeekableReadStream *s) {
@@ -104,9 +104,7 @@ bool CBedhead::TurnOn(CTurnOn *msg) {
 
 		for (uint idx = 0; idx < data->size(); ++idx) {
 			const BedheadEntry &entry = (*data)[idx];
-			if ((entry._name1 == _statics->_tv || entry._name1 == "Any")
-					&& (entry._name2 == _statics->_vase || entry._name2 == "Any")
-					&& (entry._name3 == _statics->_desk || entry._name3 == "Any")) {
+			if ((entry._name1 == _statics->_tv || entry._name1 == "Any") && (entry._name2 == _statics->_vase || entry._name2 == "Any") && (entry._name3 == _statics->_desk || entry._name3 == "Any")) {
 				CVisibleMsg visibleMsg(false);
 				visibleMsg.execute("Bedfoot");
 				setVisible(true);
@@ -151,9 +149,7 @@ bool CBedhead::TurnOff(CTurnOff *msg) {
 
 	for (uint idx = 0; idx < data->size(); ++idx) {
 		const BedheadEntry &entry = (*data)[idx];
-		if ((entry._name1 == _statics->_tv || entry._name1 == "Any")
-			&& (entry._name2 == _statics->_vase || entry._name2 == "Any")
-			&& (entry._name3 == _statics->_desk || entry._name3 == "Any")) {
+		if ((entry._name1 == _statics->_tv || entry._name1 == "Any") && (entry._name2 == _statics->_vase || entry._name2 == "Any") && (entry._name3 == _statics->_desk || entry._name3 == "Any")) {
 			CVisibleMsg visibleMsg(false);
 			visibleMsg.execute("Bedfoot");
 			setVisible(true);

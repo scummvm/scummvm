@@ -23,8 +23,8 @@
 #ifndef NUVIE_VIEWS_CONTAINER_WIDGET_GUMP_H
 #define NUVIE_VIEWS_CONTAINER_WIDGET_GUMP_H
 
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/views/container_widget.h"
 
 namespace Ultima {
@@ -54,8 +54,8 @@ public:
 	GUI_status KeyDown(const Common::KeyState &key) override;
 
 	void set_actor(Actor *a) override;
-private:
 
+private:
 	void cursor_right();
 	void cursor_left();
 	void cursor_up();

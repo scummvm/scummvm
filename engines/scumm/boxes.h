@@ -34,22 +34,22 @@ namespace Scumm {
 #define SIZEOF_BOX_V8 52
 
 typedef enum {
-	kBoxXFlip		= 0x08,
-	kBoxYFlip		= 0x10,
-	kBoxIgnoreScale	= 0x20,
-	kBoxPlayerOnly	= 0x20,
-	kBoxLocked		= 0x40,
-	kBoxInvisible	= 0x80
+	kBoxXFlip = 0x08,
+	kBoxYFlip = 0x10,
+	kBoxIgnoreScale = 0x20,
+	kBoxPlayerOnly = 0x20,
+	kBoxLocked = 0x40,
+	kBoxInvisible = 0x80
 } BoxFlags;
 
-struct BoxCoords {			/* Box coordinates */
+struct BoxCoords { /* Box coordinates */
 	Common::Point ul;
 	Common::Point ur;
 	Common::Point ll;
 	Common::Point lr;
 };
 
-int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& outY);
+int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16 &outX, int16 &outY);
 
 } // End of namespace Scumm
 

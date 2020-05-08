@@ -23,8 +23,8 @@
 #ifndef DRACI_BARCHIVE_H
 #define DRACI_BARCHIVE_H
 
-#include "common/str.h"
 #include "common/file.h"
+#include "common/str.h"
 
 namespace Draci {
 
@@ -37,7 +37,7 @@ struct BAFile {
 	uint32 _offset;   ///< Offset of file inside archive
 	byte *_data;
 	byte _crc;
-	byte _stopper;    ///< Not used in BAR files, needed for DFW
+	byte _stopper; ///< Not used in BAR files, needed for DFW
 
 	/** Releases the file data (for memory considerations) */
 	void close() {
@@ -50,8 +50,7 @@ class BArchive {
 public:
 	BArchive() : _files(NULL), _fileCount(0), _opened(false) {}
 
-	BArchive(const Common::String &path) :
-	_files(NULL), _fileCount(0), _opened(false) {
+	BArchive(const Common::String &path) : _files(NULL), _fileCount(0), _opened(false) {
 		openArchive(path);
 	}
 
@@ -80,12 +79,12 @@ private:
 	// File stream header data
 	static const uint _fileHeaderSize = 6;
 
-	Common::String _path;    ///< Path to file
-	BAFile *_files;          ///< Internal array of files
-	uint _fileCount;         ///< Number of files in archive
-	bool _isDFW;             ///< True if the archive is in DFW format, false otherwise
-	bool _opened;            ///< True if the archive is opened, false otherwise
-	Common::File _f;         ///< Opened file handle
+	Common::String _path; ///< Path to file
+	BAFile *_files;       ///< Internal array of files
+	uint _fileCount;      ///< Number of files in archive
+	bool _isDFW;          ///< True if the archive is in DFW format, false otherwise
+	bool _opened;         ///< True if the archive is opened, false otherwise
+	Common::File _f;      ///< Opened file handle
 
 	void openDFW(const Common::String &path);
 	BAFile *loadFileDFW(uint i);

@@ -23,9 +23,9 @@
 #ifndef ILLUSIONS_DUCKMAN_DUCKMAN_DIALOG_H
 #define ILLUSIONS_DUCKMAN_DUCKMAN_DIALOG_H
 
-#include "illusions/illusions.h"
 #include "common/algorithm.h"
 #include "common/stack.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -41,6 +41,7 @@ public:
 	void addDialogItem(int16 choiceJumpOffs, uint32 sequenceId);
 	void startDialog(int16 *choiceOfsPtr, uint32 actorTypeId, uint32 callerThreadId);
 	void updateDialogState();
+
 public:
 	IllusionsEngine_Duckman *_vm;
 	Common::Array<DialogItem> _dialogItems;

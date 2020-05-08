@@ -23,8 +23,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "backends/platform/3ds/config.h"
-#include "backends/platform/3ds/osystem.h"
 #include "backends/platform/3ds/options-dialog.h"
+#include "backends/platform/3ds/osystem.h"
 #include "common/config-manager.h"
 
 namespace _3DS {

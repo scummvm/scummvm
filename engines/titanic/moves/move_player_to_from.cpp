@@ -21,13 +21,13 @@
  */
 
 #include "titanic/moves/move_player_to_from.h"
-#include "titanic/core/view_item.h"
 #include "titanic/core/link_item.h"
+#include "titanic/core/view_item.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMovePlayerToFrom, CMovePlayerTo)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
 CMovePlayerToFrom::CMovePlayerToFrom() : CMovePlayerTo() {

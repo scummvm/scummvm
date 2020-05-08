@@ -27,27 +27,23 @@
 #include "griffon/griffon.h"
 
 static const PlainGameDescriptor griffonGames[] = {
-	{"griffon", "The Griffon Legend"},
-	{NULL, NULL}
-};
+    {"griffon", "The Griffon Legend"},
+    {NULL, NULL}};
 
 namespace Griffon {
 static const ADGameDescription gameDescriptions[] = {
-	{
-		"griffon",
-		NULL,
-		AD_ENTRY1s("objectdb.dat", "ec5371da28f01ccf88980b32d9de2232", 27754),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-		GUIO1(GUIO_NOMIDI)
-	},
+    {"griffon",
+     NULL,
+     AD_ENTRY1s("objectdb.dat", "ec5371da28f01ccf88980b32d9de2232", 27754),
+     Common::EN_ANY,
+     Common::kPlatformWindows,
+     ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+     GUIO1(GUIO_NOMIDI)},
 
-	AD_TABLE_END_MARKER
-};
+    AD_TABLE_END_MARKER};
 }
 
-class GriffonMetaEngine: public AdvancedMetaEngine {
+class GriffonMetaEngine : public AdvancedMetaEngine {
 public:
 	GriffonMetaEngine() : AdvancedMetaEngine(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames) {
 	}
@@ -76,10 +72,9 @@ public:
 };
 
 bool Griffon::GriffonEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 bool GriffonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

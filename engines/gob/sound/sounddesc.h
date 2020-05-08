@@ -50,9 +50,9 @@ public:
 
 	byte *getData() { return _dataPtr; }
 
-	uint32    size()         const { return _size;     }
-	bool      empty()        const { return !_dataPtr; }
-	SoundType getType()      const { return _type;     }
+	uint32 size() const { return _size; }
+	bool empty() const { return !_dataPtr; }
+	SoundType getType() const { return _type; }
 
 	bool isId(int16 id) const { return _dataPtr && (_id == id); }
 

@@ -22,12 +22,12 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/glob_egg.h"
-#include "ultima/ultima8/world/map_glob.h"
 #include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/world/item_factory.h"
-#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/world/current_map.h"
+#include "ultima/ultima8/world/glob_egg.h"
+#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/map_glob.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -41,7 +41,6 @@ GlobEgg::GlobEgg() {
 GlobEgg::~GlobEgg() {
 }
 
-
 // Called when an item has entered the fast area
 void GlobEgg::enterFastArea() {
 	uint32 coordmask = ~0x1FFU;
@@ -54,7 +53,8 @@ void GlobEgg::enterFastArea() {
 	// Expand it
 	if (!(_flags & FLG_FASTAREA)) {
 		MapGlob *glob = GameData::get_instance()->getGlob(_quality);
-		if (!glob) return;
+		if (!glob)
+			return;
 
 		Std::vector<GlobItem>::iterator iter;
 		for (iter = glob->_contents.begin(); iter != glob->_contents.end(); ++iter) {
@@ -63,7 +63,6 @@ void GlobEgg::enterFastArea() {
 			                                     0,
 			                                     FLG_DISPOSABLE | FLG_FAST_ONLY,
 			                                     0, 0, 0, true);
-
 
 			// calculate object's world position
 			int32 itemx = (_x & coordmask) + (globitem.x << coordshift) + 1;
@@ -82,7 +81,8 @@ void GlobEgg::saveData(Common::WriteStream *ws) {
 }
 
 bool GlobEgg::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Item::loadData(rs, version)) return false;
+	if (!Item::loadData(rs, version))
+		return false;
 
 	return true;
 }

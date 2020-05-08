@@ -36,6 +36,7 @@ public:
 	~MidiGroupResourceLoader() override {}
 	void load(Resource *resource) override;
 	bool isFlag(int flag) override;
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -51,6 +52,7 @@ public:
 	MidiGroupResource();
 	~MidiGroupResource();
 	void load(byte *data, uint32 dataSize);
+
 public:
 	uint _midiMusicCount;
 	MidiMusic *_midiMusic;
@@ -61,8 +63,9 @@ public:
 	MidiGroupInstance(IllusionsEngine *vm);
 	void load(Resource *resource) override;
 	void unload() override;
+
 public:
-	IllusionsEngine *_vm;	
+	IllusionsEngine *_vm;
 	MidiGroupResource *_midiGroupResource;
 	uint32 _resId;
 };

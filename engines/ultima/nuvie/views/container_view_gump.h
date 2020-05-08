@@ -88,10 +88,9 @@ public:
 		return DraggableView::MoveRelative(dx, dy);
 	}
 
-
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
-protected:
 
+protected:
 	void init_container_type(Std::string datadir, Obj *obj_type);
 	void init_backpack(Std::string datadir, bool extend_area_w);
 	void init_chest(Std::string datadir);
@@ -102,7 +101,6 @@ protected:
 
 	void left_arrow();
 	void right_arrow();
-
 };
 
 } // End of namespace Nuvie

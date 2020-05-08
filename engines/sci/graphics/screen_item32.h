@@ -30,8 +30,8 @@
 namespace Sci {
 
 enum ScaleSignals32 {
-	kScaleSignalNone           = 0,
-	kScaleSignalManual         = 1,
+	kScaleSignalNone = 0,
+	kScaleSignalManual = 1,
 	kScaleSignalVanishingPoint = 2
 };
 

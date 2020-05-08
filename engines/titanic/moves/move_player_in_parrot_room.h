@@ -32,6 +32,7 @@ class CMovePlayerInParrotRoom : public CMovePlayerTo {
 	bool ActMsg(CActMsg *msg);
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MovementMsg(CMovementMsg *msg);
+
 public:
 	CLASSDEF;
 	CMovePlayerInParrotRoom();

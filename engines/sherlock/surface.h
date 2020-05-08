@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_SURFACE_H
 #define SHERLOCK_SURFACE_H
 
-#include "common/rect.h"
 #include "common/platform.h"
+#include "common/rect.h"
 #include "graphics/screen.h"
 #include "sherlock/fonts.h"
 #include "sherlock/image_file.h"
@@ -39,7 +39,7 @@ namespace Sherlock {
  * drawing code. It also introduces a series of drawing method stubs that the 3DO
  * Serrated Scalpel screen overrides to implement sprite doubling
  */
-class BaseSurface: public Graphics::Screen, public Fonts {
+class BaseSurface : public Graphics::Screen, public Fonts {
 public:
 	/**
 	 * Constructor
@@ -77,13 +77,13 @@ public:
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
 	virtual void SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+	                             bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
 
 	/**
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
 	virtual void SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+	                             bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
 
 	/**
 	 * Fill a given area of the surface with a given color
@@ -120,6 +120,7 @@ protected:
 	* surfaces we don't need dirty rects to be tracked
 	*/
 	void addDirtyRect(const Common::Rect &r) override {}
+
 public:
 	Surface() : BaseSurface() {}
 	Surface(int width_, int height_) : BaseSurface(width_, height_) {}

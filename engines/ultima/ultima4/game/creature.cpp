@@ -21,14 +21,14 @@
  */
 
 #include "ultima/ultima4/game/creature.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/game/game.h"
-#include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/controllers/combat_controller.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/game.h"
+#include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/textcolor.h"
 #include "ultima/ultima4/map/location.h"
@@ -49,10 +49,10 @@ bool isCreature(Object *punknown) {
 }
 
 Creature::Creature(MapTile tile) : Object(Object::CREATURE),
-		_id(0), _leader(0), _baseHp(0), _hp(0), _xp(0), _ranged(0),
-		_leavesTile(false), _mAttr(MATTR_STEALFOOD),
-		_movementAttr(MATTR_STATIONARY), _slowedType(SLOWED_BY_NOTHING),
-		_encounterSize(0), _resists(0), _spawn(0) {
+                                   _id(0), _leader(0), _baseHp(0), _hp(0), _xp(0), _ranged(0),
+                                   _leavesTile(false), _mAttr(MATTR_STEALFOOD),
+                                   _movementAttr(MATTR_STATIONARY), _slowedType(SLOWED_BY_NOTHING),
+                                   _encounterSize(0), _resists(0), _spawn(0) {
 	const Creature *m = creatureMgr->getByTile(tile);
 	if (m)
 		*this = *m;
@@ -65,68 +65,62 @@ void Creature::load(const ConfigElement &conf) {
 		const char *name;
 		uint mask;
 	} booleanAttributes[] = {
-		{ "undead", MATTR_UNDEAD },
-		{ "good", MATTR_GOOD },
-		{ "swims", MATTR_WATER },
-		{ "sails", MATTR_WATER },
-		{ "cantattack", MATTR_NONATTACKABLE },
-		{ "camouflage", MATTR_CAMOUFLAGE },
-		{ "wontattack", MATTR_NOATTACK },
-		{ "ambushes", MATTR_AMBUSHES },
-		{ "incorporeal", MATTR_INCORPOREAL },
-		{ "nochest", MATTR_NOCHEST },
-		{ "divides", MATTR_DIVIDES },
-		{ "forceOfNature", MATTR_FORCE_OF_NATURE }
-	};
+	    {"undead", MATTR_UNDEAD},
+	    {"good", MATTR_GOOD},
+	    {"swims", MATTR_WATER},
+	    {"sails", MATTR_WATER},
+	    {"cantattack", MATTR_NONATTACKABLE},
+	    {"camouflage", MATTR_CAMOUFLAGE},
+	    {"wontattack", MATTR_NOATTACK},
+	    {"ambushes", MATTR_AMBUSHES},
+	    {"incorporeal", MATTR_INCORPOREAL},
+	    {"nochest", MATTR_NOCHEST},
+	    {"divides", MATTR_DIVIDES},
+	    {"forceOfNature", MATTR_FORCE_OF_NATURE}};
 
 	/* steals="" */
 	static const struct {
 		const char *name;
 		uint mask;
 	} steals[] = {
-		{ "food", MATTR_STEALFOOD },
-		{ "gold", MATTR_STEALGOLD }
-	};
+	    {"food", MATTR_STEALFOOD},
+	    {"gold", MATTR_STEALGOLD}};
 
 	/* casts="" */
 	static const struct {
 		const char *name;
 		uint mask;
 	} casts[] = {
-		{ "sleep", MATTR_CASTS_SLEEP },
-		{ "negate", MATTR_NEGATE }
-	};
+	    {"sleep", MATTR_CASTS_SLEEP},
+	    {"negate", MATTR_NEGATE}};
 
 	/* movement="" */
 	static const struct {
 		const char *name;
 		uint mask;
 	} movement[] = {
-		{ "none", MATTR_STATIONARY },
-		{ "wanders", MATTR_WANDERS }
-	};
+	    {"none", MATTR_STATIONARY},
+	    {"wanders", MATTR_WANDERS}};
 
 	/* boolean attributes that affect movement */
 	static const struct {
 		const char *name;
 		uint mask;
 	} movementBoolean[] = {
-		{ "swims", MATTR_SWIMS },
-		{ "sails", MATTR_SAILS },
-		{ "flies", MATTR_FLIES },
-		{ "teleports", MATTR_TELEPORT },
-		{ "canMoveOntoCreatures", MATTR_CANMOVECREATURES },
-		{ "canMoveOntoAvatar", MATTR_CANMOVEAVATAR }
-	};
+	    {"swims", MATTR_SWIMS},
+	    {"sails", MATTR_SAILS},
+	    {"flies", MATTR_FLIES},
+	    {"teleports", MATTR_TELEPORT},
+	    {"canMoveOntoCreatures", MATTR_CANMOVECREATURES},
+	    {"canMoveOntoAvatar", MATTR_CANMOVEAVATAR}};
 
 	static const struct {
 		const char *name;
 		TileEffect effect;
 	} effects[] = {
-		{ "fire", EFFECT_FIRE },
-		{ "poison", EFFECT_POISONFIELD },
-		{ "sleep", EFFECT_SLEEP }
-	};
+	    {"fire", EFFECT_FIRE},
+	    {"poison", EFFECT_POISONFIELD},
+	    {"sleep", EFFECT_SLEEP}};
 
 	_name = conf.getString("name");
 	_id = static_cast<unsigned short>(conf.getInt("id"));
@@ -174,7 +168,7 @@ void Creature::load(const ConfigElement &conf) {
 
 	/* get ranged miss tile */
 	if (conf.exists("rangedmisstile")) {
-		if (conf.getString("rangedmisstile") ==  "random")
+		if (conf.getString("rangedmisstile") == "random")
 			_mAttr = static_cast<CreatureAttrib>(_mAttr | MATTR_RANDOMRANGED);
 		else
 			setMissTile(conf.getString("rangedmisstile"));
@@ -249,7 +243,7 @@ bool Creature::isAttackable() const {
 	return true;
 }
 
-int  Creature::getDamage() const {
+int Creature::getDamage() const {
 	int damage, val, x;
 	val = _baseHp;
 	x = xu4_random(val >> 2);
@@ -265,7 +259,8 @@ int Creature::setInitialHp(int points) {
 		_hp = points;
 
 	/* make sure the creature doesn't flee initially */
-	if (_hp < 24) _hp = 24;
+	if (_hp < 24)
+		_hp = 24;
 
 	return _hp;
 }
@@ -306,7 +301,6 @@ CreatureStatus Creature::getState() const {
 		return MSTAT_LIGHTLYWOUNDED;
 	else
 		return MSTAT_BARELYWOUNDED;
-
 }
 
 bool Creature::specialAction() {
@@ -336,7 +330,7 @@ bool Creature::specialAction() {
 		*/
 		if (mapdist <= 3 && xu4_random(2) == 0 && (g_context->_location->_context & CTX_CITY) == 0) {
 			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, _coords,
-			                           1, 3, nullptr, false);
+			                                                        1, 3, nullptr, false);
 			for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 				if (creatureRangeAttack(*i, this))
 					break;
@@ -351,13 +345,13 @@ bool Creature::specialAction() {
 		retval = true;
 		broadsidesDirs = dirGetBroadsidesDirs(_tile.getDirection());
 
-		if ((((dx == 0) && (dy <= 3)) ||          /* avatar is close enough and on the same column, OR */
-		        ((dy == 0) && (dx <= 3))) &&         /* avatar is close enough and on the same row, AND */
-		        ((broadsidesDirs & dir) > 0)) { /* pirate ship is firing broadsides */
+		if ((((dx == 0) && (dy <= 3)) ||    /* avatar is close enough and on the same column, OR */
+		     ((dy == 0) && (dx <= 3))) &&   /* avatar is close enough and on the same row, AND */
+		    ((broadsidesDirs & dir) > 0)) { /* pirate ship is firing broadsides */
 
 			// nothing (not even mountains!) can block cannonballs
 			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, broadsidesDirs, _coords,
-			                           1, 3, nullptr, false);
+			                                                        1, 3, nullptr, false);
 			for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 				if (fireAt(*i, false))
 					break;
@@ -400,18 +394,18 @@ bool Creature::specialEffect() {
 
 		/* See if the storm is on top of any objects and destroy them! */
 		for (i = g_context->_location->_map->_objects.begin();
-		        i != g_context->_location->_map->_objects.end();) {
+		     i != g_context->_location->_map->_objects.end();) {
 
 			obj = *i;
 			if (this != obj &&
-			        obj->getCoords() == _coords) {
+			    obj->getCoords() == _coords) {
 				/* Converged with an object, destroy the object! */
 				i = g_context->_location->_map->removeObject(i);
 				retval = true;
-			} else i++;
+			} else
+				i++;
 		}
-	}
-	break;
+	} break;
 
 	case WHIRLPOOL_ID: {
 		ObjectDeque::iterator i;
@@ -432,12 +426,12 @@ bool Creature::specialEffect() {
 
 		/* See if the whirlpool is on top of any objects and destroy them! */
 		for (i = g_context->_location->_map->_objects.begin();
-		        i != g_context->_location->_map->_objects.end();) {
+		     i != g_context->_location->_map->_objects.end();) {
 
 			obj = *i;
 
 			if (this != obj &&
-			        obj->getCoords() == _coords) {
+			    obj->getCoords() == _coords) {
 
 				Creature *m = dynamic_cast<Creature *>(obj);
 
@@ -449,7 +443,8 @@ bool Creature::specialEffect() {
 				} else {
 					i++;
 				}
-			} else i++;
+			} else
+				i++;
 		}
 	}
 
@@ -514,12 +509,11 @@ void Creature::act(CombatController *controller) {
 
 	switch (action) {
 	case CA_ATTACK:
-		soundPlay(SOUND_NPC_ATTACK, false);                                    // NPC_ATTACK, melee
+		soundPlay(SOUND_NPC_ATTACK, false); // NPC_ATTACK, melee
 
 		if (controller->attackHit(this, target)) {
-			soundPlay(SOUND_PC_STRUCK, false);                                 // PC_STRUCK, melee and ranged
+			soundPlay(SOUND_PC_STRUCK, false); // PC_STRUCK, melee and ranged
 			GameController::flashTile(target->getCoords(), "hit_flash", 4);
-
 
 			if (!dealDamage(target, getDamage()))
 				target = nullptr;
@@ -527,13 +521,13 @@ void Creature::act(CombatController *controller) {
 			if (target && isPartyMember(target)) {
 				/* steal gold if the creature steals gold */
 				if (stealsGold() && xu4_random(4) == 0) {
-					soundPlay(SOUND_ITEM_STOLEN, false);                       // ITEM_STOLEN, gold
+					soundPlay(SOUND_ITEM_STOLEN, false); // ITEM_STOLEN, gold
 					g_context->_party->adjustGold(-(xu4_random(0x3f)));
 				}
 
 				/* steal food if the creature steals food */
 				if (stealsFood()) {
-					soundPlay(SOUND_ITEM_STOLEN, false);                       // ITEM_STOLEN, food
+					soundPlay(SOUND_ITEM_STOLEN, false); // ITEM_STOLEN, food
 					g_context->_party->adjustFood(-2500);
 				}
 			}
@@ -598,10 +592,10 @@ void Creature::act(CombatController *controller) {
 		// figure out which direction to fire the weapon
 		int dir = m_coords.getRelativeDirection(p_coords);
 
-		soundPlay(SOUND_NPC_ATTACK, false);                                    // NPC_ATTACK, ranged
+		soundPlay(SOUND_NPC_ATTACK, false); // NPC_ATTACK, ranged
 
 		Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, m_coords,
-		                           1, 11, &Tile::canAttackOverTile, false);
+		                                                        1, 11, &Tile::canAttackOverTile, false);
 		bool hit = false;
 		for (Std::vector<Coords>::iterator i = path.begin(); i != path.end(); i++) {
 			if (controller->rangedAttack(*i, this)) {
@@ -643,7 +637,8 @@ void Creature::addStatus(StatusType s) {
 		_status.pop_back();
 		_status.push_back(s);
 		_status.push_back(prev);
-	} else _status.push_back(s);
+	} else
+		_status.push_back(s);
 }
 
 void Creature::applyTileEffect(TileEffect effect) {
@@ -654,7 +649,7 @@ void Creature::applyTileEffect(TileEffect effect) {
 		case EFFECT_SLEEP:
 			/* creature fell asleep! */
 			if ((_resists != EFFECT_SLEEP) &&
-			        (xu4_random(0xFF) >= _hp))
+			    (xu4_random(0xFF) >= _hp))
 				putToSleep();
 			break;
 
@@ -735,8 +730,8 @@ StatusType Creature::getStatus() const {
 
 bool Creature::isAsleep() const {
 	for (StatusList::const_iterator itr = this->_status.begin();
-	        itr != this->_status.end();
-	        ++itr)
+	     itr != this->_status.end();
+	     ++itr)
 		if (*itr == STAT_SLEEPING)
 			return true;
 	return false;
@@ -774,13 +769,14 @@ Creature *Creature::nearestOpponent(int *dist, bool ranged) {
 		/* if a party member, find a creature. If a creature, find a party member */
 		/* if jinxed is false, find anything that isn't self */
 		if ((amPlayer != fightingPlayer) ||
-		        (jinx && !amPlayer && *i != this)) {
+		    (jinx && !amPlayer && *i != this)) {
 			MapCoords objCoords = (*i)->getCoords();
 
 			/* if ranged, get the distance using diagonals, otherwise get movement distance */
 			if (ranged)
 				d = objCoords.distance(getCoords());
-			else d = objCoords.movementDistance(getCoords());
+			else
+				d = objCoords.movementDistance(getCoords());
 
 			/* skip target 50% of time if same distance */
 			if (d < leastDist || (d == leastDist && xu4_random(2) == 0)) {
@@ -808,7 +804,8 @@ void Creature::removeStatus(StatusType s) {
 	for (i = _status.begin(); i != _status.end();) {
 		if (*i == s)
 			i = _status.erase(i);
-		else i++;
+		else
+			i++;
 	}
 
 	// Just to be sure, if a player is poisoned from a savegame, then they won't have
@@ -919,8 +916,8 @@ Creature *CreatureMgr::getByTile(MapTile tile) {
 			return i->_value;
 	}
 
-//    if (tile.id)
-//      warning("Did not find creature for tile %d", tile.id);
+	//    if (tile.id)
+	//      warning("Did not find creature for tile %d", tile.id);
 	return nullptr;
 }
 
@@ -928,7 +925,8 @@ Creature *CreatureMgr::getById(CreatureId id) {
 	CreatureMap::const_iterator i = _creatures.find(id);
 	if (i != _creatures.end())
 		return i->_value;
-	else return nullptr;
+	else
+		return nullptr;
 }
 
 Creature *CreatureMgr::getByName(Common::String name) {
@@ -1008,7 +1006,8 @@ Creature *CreatureMgr::randomAmbushing() {
 				if (numAmbushingCreatures == randCreature)
 					return i->_value;
 				/* move on to the next creature */
-				else numAmbushingCreatures++;
+				else
+					numAmbushingCreatures++;
 			}
 		}
 	}

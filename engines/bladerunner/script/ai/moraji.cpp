@@ -42,10 +42,7 @@ void AIScriptMoraji::Initialize() {
 }
 
 bool AIScriptMoraji::Update() {
-	if ( Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault
-	 &&  Player_Query_Current_Scene() == kSceneDR05
-	 && !Game_Flag_Query(kFlagDR05BombActivated)
-	) {
+	if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault && Player_Query_Current_Scene() == kSceneDR05 && !Game_Flag_Query(kFlagDR05BombActivated)) {
 		AI_Countdown_Timer_Reset(kActorMoraji, kActorTimerAIScriptCustomTask2);
 		int bombTime = 30; // Original value
 		if (_vm->_cutContent && Query_Difficulty_Level() == kGameDifficultyEasy)
@@ -69,10 +66,7 @@ void AIScriptMoraji::TimerExpired(int timer) {
 	if (timer == kActorTimerAIScriptCustomTask2) {
 		AI_Countdown_Timer_Reset(kActorMoraji, kActorTimerAIScriptCustomTask2);
 
-		if (Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiJump
-		 && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiLayDown
-		 && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiPerished
-		) {
+		if (Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiJump && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiLayDown && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiPerished) {
 			Game_Flag_Set(kFlagDR05BombWillExplode);
 		}
 		return; //true;
@@ -156,7 +150,7 @@ bool AIScriptMoraji::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		// applies only when shot inside the Dermo Design Lab
 		Actor_Set_Targetable(kActorMoraji, false);
 #if BLADERUNNER_ORIGINAL_BUGS
-		Sound_Play(kSfxFEMHURT2, 100, 0, 0, 50);	// Original code has female scream here (FEMHURT2)
+		Sound_Play(kSfxFEMHURT2, 100, 0, 0, 50); // Original code has female scream here (FEMHURT2)
 #else
 		Sound_Play_Speech_Line(kActorMoraji, 9020, 50, 0, 50); // fix: Use Moraji's death SPCHSFX, also lower volume
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -393,9 +387,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 bool AIScriptMoraji::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
-		if (_animationState != 12
-		 && Actor_Query_Goal_Number(kActorMoraji) != 11
-		) {
+		if (_animationState != 12 && Actor_Query_Goal_Number(kActorMoraji) != 11) {
 			_animationState = 0;
 			_animationFrame = 0;
 		}
@@ -462,17 +454,17 @@ bool AIScriptMoraji::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptMoraji::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptMoraji::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptMoraji::ReachedMovementTrackWaypoint(int waypointId) {

@@ -23,8 +23,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
-#include "graphics/surface.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -201,9 +201,9 @@ void AGOSEngine::animateSprites() {
 	restoreBackGround();
 
 	vsp = _vgaSprites;
-	for (; vsp->id !=0; vsp++) {
+	for (; vsp->id != 0; vsp++) {
 		if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-			!(vsp->windowNum & 0x8000)) {
+		    !(vsp->windowNum & 0x8000)) {
 			continue;
 		}
 
@@ -338,7 +338,6 @@ restart:
 
 	if (_newDirtyClip != 0)
 		goto restart;
-
 }
 
 void AGOSEngine::dirtyClipCheck(int16 x, int16 y, int16 w, int16 h) {
@@ -432,7 +431,7 @@ void AGOSEngine::restoreBackGround() {
 		animTable--;
 
 		if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-			!(animTable->windowNum & 0x8000)) {
+		    !(animTable->windowNum & 0x8000)) {
 			continue;
 		}
 
@@ -474,7 +473,7 @@ void AGOSEngine::restoreBackGround() {
 
 void AGOSEngine::saveBackGround(VgaSprite *vsp) {
 	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAtariST &&
-		(getFeatures() & GF_DEMO)) {
+	    (getFeatures() & GF_DEMO)) {
 		return;
 	}
 
@@ -530,7 +529,6 @@ void AGOSEngine::displayBoxStars() {
 		color = 225;
 
 	uint curHeight = (getGameType() == GType_SIMON2) ? _boxStarHeight : 134;
-
 
 	for (int i = 0; i < 5; i++) {
 		ha = _hitAreas;

@@ -21,25 +21,25 @@
  */
 
 #include "ultima/shared/conf/xml_tree.h"
-#include "ultima/shared/conf/xml_node.h"
-#include "ultima/shared/std/misc.h"
 #include "common/algorithm.h"
 #include "common/file.h"
+#include "ultima/shared/conf/xml_node.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Shared {
 
 XMLTree::XMLTree() : _tree(nullptr), _isFile(false),
-		_readOnly(false) {
+                     _readOnly(false) {
 }
 
 XMLTree::XMLTree(const Common::String &fname) : _tree(nullptr), _isFile(true),
-	  _readOnly(false) {
+                                                _readOnly(false) {
 	readConfigFile(fname);
 }
 
 XMLTree::XMLTree(Common::SeekableReadStream *stream)
-		: _tree(nullptr), _isFile(true), _readOnly(false) {
+    : _tree(nullptr), _isFile(true), _readOnly(false) {
 	readConfigStream(stream);
 }
 
@@ -82,7 +82,7 @@ bool XMLTree::readConfigStream(Common::SeekableReadStream *stream) {
 		return false;
 
 	delete[] buf;
-	_isFile = true;		// readConfigString sets _isFile = false
+	_isFile = true; // readConfigString sets _isFile = false
 	return true;
 }
 

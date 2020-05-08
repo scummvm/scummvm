@@ -23,8 +23,8 @@
 #ifndef KYRA_SPRITES_H
 #define KYRA_SPRITES_H
 
-#include "kyra/engine/kyra_lok.h"
 #include "common/random.h"
+#include "kyra/engine/kyra_lok.h"
 
 namespace Kyra {
 
@@ -81,6 +81,7 @@ public:
 	int getDrawLayer(int y);
 
 	int _sceneAnimatorBeaconFlag;
+
 protected:
 	void freeSceneShapes();
 

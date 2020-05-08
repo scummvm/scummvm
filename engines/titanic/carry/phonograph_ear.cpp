@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPhonographEar, CEar)
-	ON_MESSAGE(CorrectMusicPlayedMsg)
-	ON_MESSAGE(PETGainedObjectMsg)
-	ON_MESSAGE(TimerMsg)
+ON_MESSAGE(CorrectMusicPlayedMsg)
+ON_MESSAGE(PETGainedObjectMsg)
+ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
 void CPhonographEar::save(SimpleFile *file, int indent) {

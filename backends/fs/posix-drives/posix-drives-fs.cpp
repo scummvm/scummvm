@@ -37,10 +37,9 @@ DrivePOSIXFilesystemNode::Config::Config() {
 	bufferSize = 0; // Use the default stdio buffer size
 }
 
-DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const Common::String &path, const Config &config) :
-		POSIXFilesystemNode(path),
-		_isPseudoRoot(false),
-		_config(config) {
+DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const Common::String &path, const Config &config) : POSIXFilesystemNode(path),
+                                                                                                       _isPseudoRoot(false),
+                                                                                                       _config(config) {
 
 	if (isDrive(path)) {
 		_isDirectory = true;
@@ -54,9 +53,8 @@ DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const Common::String &path, c
 	}
 }
 
-DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const Config &config) :
-		_isPseudoRoot(true),
-		_config(config) {
+DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const Config &config) : _isPseudoRoot(true),
+                                                                           _config(config) {
 	_isDirectory = true;
 	_isValid = false;
 }
@@ -168,7 +166,7 @@ bool DrivePOSIXFilesystemNode::getChildren(AbstractFSList &list, AbstractFSNode:
 
 			// Honor the chosen mode
 			if ((mode == Common::FSNode::kListFilesOnly && child->isDirectory()) ||
-				(mode == Common::FSNode::kListDirectoriesOnly && !child->isDirectory())) {
+			    (mode == Common::FSNode::kListDirectoriesOnly && !child->isDirectory())) {
 				delete child;
 				continue;
 			}
@@ -200,6 +198,5 @@ bool DrivePOSIXFilesystemNode::isDrive(const Common::String &path) const {
 	DrivesArray::const_iterator drive = Common::find(_config.drives.begin(), _config.drives.end(), normalizedPath);
 	return drive != _config.drives.end();
 }
-
 
 #endif //#if defined(POSIX)

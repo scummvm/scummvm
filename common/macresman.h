@@ -32,8 +32,8 @@
 
 #include "common/array.h"
 #include "common/fs.h"
-#include "common/str.h"
 #include "common/str-array.h"
+#include "common/str.h"
 
 #ifndef COMMON_MACRESMAN_H
 #define COMMON_MACRESMAN_H
@@ -184,7 +184,7 @@ public:
 	/**
 	 * Dump contents of the archive to ./dumps directory
 	 */
-	 void dumpRaw();
+	void dumpRaw();
 
 private:
 	SeekableReadStream *_stream;
@@ -261,7 +261,7 @@ private:
 	uint32 _mapLength;
 	ResMap _resMap;
 	ResType *_resTypes;
-	ResPtr  *_resLists;
+	ResPtr *_resLists;
 };
 
 } // End of namespace Common

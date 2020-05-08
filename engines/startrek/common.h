@@ -28,7 +28,7 @@
 namespace Common {
 struct Rect;
 class Serializer;
-}
+} // namespace Common
 
 namespace StarTrek {
 

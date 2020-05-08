@@ -60,7 +60,7 @@ public:
 	void copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, int page2, int w2, int h2, int x2, int y2, int w3, int h3, int mode, ...);
 
 	// palette stuff
-	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
+	void fadeToBlack(int delay = 0x54, const UpdateFunctor *upFunc = 0);
 	void fadeToPalette1(int delay);
 	void loadSpecialColors(Palette &dst);
 	void copyColor(int dstColorIndex, int srcColorIndex);

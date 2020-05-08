@@ -21,71 +21,69 @@
  * Data structures used for handling backgrounds
  */
 
-#ifndef TINSEL_BACKGND_H     // prevent multiple includes
+#ifndef TINSEL_BACKGND_H // prevent multiple includes
 #define TINSEL_BACKGND_H
 
 #include "common/coroutines.h"
 #include "common/frac.h"
 #include "common/rect.h"
-#include "tinsel/anim.h"	// for ANIM
-#include "tinsel/dw.h"	// for SCNHANDLE
-#include "tinsel/object.h"	// for POBJECT
-#include "tinsel/palette.h"	// palette definitions
+#include "tinsel/anim.h"    // for ANIM
+#include "tinsel/dw.h"      // for SCNHANDLE
+#include "tinsel/object.h"  // for POBJECT
+#include "tinsel/palette.h" // palette definitions
 
 namespace Tinsel {
 
 struct OBJECT;
 
-
 /** Scrolling padding. Needed because scroll process does not normally run on every frame */
 enum {
-	SCROLLX_PAD	= 64,
-	SCROLLY_PAD	= 64
+	SCROLLX_PAD = 64,
+	SCROLLY_PAD = 64
 };
 
 /** When module BLK_INFO list is this long, switch from a binary to linear search */
-#define	LINEAR_SEARCH	5
+#define LINEAR_SEARCH 5
 
 /** background playfield structure - a playfield is a container for modules */
 struct PLAYFIELD {
-	OBJECT *pDispList;	///< object display list for this playfield
-	frac_t fieldX;		///< current world x position of playfield
-	frac_t fieldY;		///< current world y position of playfield
-	frac_t fieldXvel;	///< current x velocity of playfield
-	frac_t fieldYvel;	///< current y velocity of playfield
-	Common::Rect rcClip;	///< clip rectangle for this playfield
-	bool bMoved;		///< set when playfield has moved
+	OBJECT *pDispList;   ///< object display list for this playfield
+	frac_t fieldX;       ///< current world x position of playfield
+	frac_t fieldY;       ///< current world y position of playfield
+	frac_t fieldXvel;    ///< current x velocity of playfield
+	frac_t fieldYvel;    ///< current y velocity of playfield
+	Common::Rect rcClip; ///< clip rectangle for this playfield
+	bool bMoved;         ///< set when playfield has moved
 };
 
 /** multi-playfield background structure - a backgnd is a container of playfields */
 struct BACKGND {
-	COLORREF rgbSkyColor;	///< background sky color
-	Common::Point ptInitWorld;		///< initial world position
-	Common::Rect rcScrollLimits;	///< scroll limits
-	int refreshRate;		///< background update process refresh rate
-	frac_t *pXscrollTable;	///< pointer to x direction scroll table for this background
-	frac_t *pYscrollTable;	///< pointer to y direction scroll table for this background
-	int numPlayfields;		///< number of playfields for this background
-	PLAYFIELD *fieldArray;	///< pointer to array of all playfields for this background
-	bool bAutoErase;		///< when set - screen is cleared before anything is plotted (unused)
+	COLORREF rgbSkyColor;        ///< background sky color
+	Common::Point ptInitWorld;   ///< initial world position
+	Common::Rect rcScrollLimits; ///< scroll limits
+	int refreshRate;             ///< background update process refresh rate
+	frac_t *pXscrollTable;       ///< pointer to x direction scroll table for this background
+	frac_t *pYscrollTable;       ///< pointer to y direction scroll table for this background
+	int numPlayfields;           ///< number of playfields for this background
+	PLAYFIELD *fieldArray;       ///< pointer to array of all playfields for this background
+	bool bAutoErase;             ///< when set - screen is cleared before anything is plotted (unused)
 };
-
 
 /*----------------------------------------------------------------------*\
 |*			Background Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-#define MAX_BG	10
+#define MAX_BG 10
 
 class Font;
 
 class Background {
 public:
-	Background(Font* font);
+	Background(Font *font);
 
 	void InitBackground();
 
-	void DrawBackgnd();		// Draws all playfields for the current background
+	void DrawBackgnd(); // Draws all playfields for the current background
 
 	/**
 	 * Called before scene change.
@@ -99,23 +97,23 @@ public:
 
 	void StartupBackground(CORO_PARAM, SCNHANDLE hFilm);
 
-	void PlayfieldSetPos(		// Sets the xy position of the specified playfield in the current background
-		int which,		// which playfield
-		int newXpos,		// new x position
-		int newYpos);		// new y position
+	void PlayfieldSetPos( // Sets the xy position of the specified playfield in the current background
+	    int which,        // which playfield
+	    int newXpos,      // new x position
+	    int newYpos);     // new y position
 
-	void PlayfieldGetPos(		// Returns the xy position of the specified playfield in the current background
-		int which,		// which playfield
-		int* pXpos,		// returns current x position
-		int* pYpos);		// returns current y position
+	void PlayfieldGetPos( // Returns the xy position of the specified playfield in the current background
+	    int which,        // which playfield
+	    int *pXpos,       // returns current x position
+	    int *pYpos);      // returns current y position
 
-	int PlayfieldGetCenterX(	// Returns the xy position of the specified playfield in the current background
-		int which);		// which playfield
+	int PlayfieldGetCenterX( // Returns the xy position of the specified playfield in the current background
+	    int which);          // which playfield
 
-	OBJECT** GetPlayfieldList(	// Returns the display list for the specified playfield
-		int which);		// which playfield
+	OBJECT **GetPlayfieldList( // Returns the display list for the specified playfield
+	    int which);            // which playfield
 
-	OBJECT* GetBgObject() { return _pBG[0]; }
+	OBJECT *GetBgObject() { return _pBG[0]; }
 
 	void ChangePalette(SCNHANDLE hPal);
 
@@ -150,17 +148,17 @@ private:
 	// current background
 	BACKGND *_pCurBgnd;
 
-	SCNHANDLE _hBgPal;	// Background's palette
+	SCNHANDLE _hBgPal; // Background's palette
 	int _BGspeed;
-	SCNHANDLE _hBackground;	// Current scene handle - stored in case of Save_Scene()
+	SCNHANDLE _hBackground; // Current scene handle - stored in case of Save_Scene()
 	bool _bDoFadeIn;
 
 public:
 	int _bgReels;
 	POBJECT _pBG[MAX_BG];
-	ANIM	_thisAnim[MAX_BG];	// used by BGmainProcess()
+	ANIM _thisAnim[MAX_BG]; // used by BGmainProcess()
 };
 
 } // End of namespace Tinsel
 
-#endif	// TINSEL_BACKGND_H
+#endif // TINSEL_BACKGND_H

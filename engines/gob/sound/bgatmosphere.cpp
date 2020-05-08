@@ -28,8 +28,7 @@
 
 namespace Gob {
 
-BackgroundAtmosphere::BackgroundAtmosphere(Audio::Mixer &mixer) :
-	SoundMixer(mixer, Audio::Mixer::kMusicSoundType), _rnd("gobBA") {
+BackgroundAtmosphere::BackgroundAtmosphere(Audio::Mixer &mixer) : SoundMixer(mixer, Audio::Mixer::kMusicSoundType), _rnd("gobBA") {
 
 	_playMode = Sound::kPlayModeLinear;
 	_queuePos = -1;
@@ -109,7 +108,6 @@ void BackgroundAtmosphere::getNextQueuePos() {
 	case Sound::kPlayModeRandom:
 		_queuePos = _rnd.getRandomNumber(_queue.size() - 1);
 		break;
-
 	}
 }
 

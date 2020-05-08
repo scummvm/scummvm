@@ -57,4 +57,4 @@ Common::String SetColorCommand::debugString() const {
 	return Common::String::format("SETCOL %u", _color);
 }
 
-}
+} // namespace MutationOfJB

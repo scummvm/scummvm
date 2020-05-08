@@ -27,18 +27,18 @@
 #include "common/scummsys.h"
 #ifdef USE_FREETYPE2
 
-#include "graphics/fonts/ttf.h"
 #include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 #include "graphics/surface.h"
 
+#include "common/config-manager.h"
 #include "common/encoding.h"
 #include "common/file.h"
-#include "common/config-manager.h"
+#include "common/hashmap.h"
+#include "common/memstream.h"
+#include "common/ptr.h"
 #include "common/singleton.h"
 #include "common/stream.h"
-#include "common/memstream.h"
-#include "common/hashmap.h"
-#include "common/ptr.h"
 #include "common/unzip.h"
 
 #include <ft2build.h>
@@ -50,20 +50,20 @@
 #include FT_TRUETYPE_TABLES_H
 #include FT_TRUETYPE_TAGS_H
 
-#if (FREETYPE_MAJOR > 2 ||                                                          \
-        (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 3 ||                              \
-                                 (FREETYPE_MINOR == 3 && FREETYPE_PATCH >= 8))))
+#if (FREETYPE_MAJOR > 2 ||                          \
+     (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 3 || \
+                              (FREETYPE_MINOR == 3 && FREETYPE_PATCH >= 8))))
 // FT2.3.8+, nothing to do, FT_GlyphSlot_Own_Bitmap is in FT_BITMAP_H
 #define FAKE_BOLD 2
-#elif (FREETYPE_MAJOR > 2 ||                                                        \
-        (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 2 ||                              \
-                                 (FREETYPE_MINOR == 2 && FREETYPE_PATCH >= 0))))
+#elif (FREETYPE_MAJOR > 2 ||                          \
+       (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 2 || \
+                                (FREETYPE_MINOR == 2 && FREETYPE_PATCH >= 0))))
 // FT2.2.0+ have FT_GlyphSlot_Own_Bitmap in FT_SYNTHESIS_H
 #include FT_SYNTHESIS_H
 #define FAKE_BOLD 2
-#elif (FREETYPE_MAJOR > 2 ||                                                        \
-        (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 1 ||                              \
-                                 (FREETYPE_MINOR == 1 && FREETYPE_PATCH >= 10))))
+#elif (FREETYPE_MAJOR > 2 ||                          \
+       (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 1 || \
+                                (FREETYPE_MINOR == 1 && FREETYPE_PATCH >= 10))))
 // FT2.1.10+ don't have FT_GlyphSlot_Own_Bitmap but they have FT_Bitmap_Embolden, do workaround
 #define FAKE_BOLD 1
 #else
@@ -97,6 +97,7 @@ public:
 
 	bool loadFont(const uint8 *file, const int32 face_index, const uint32 size, FT_Face &face);
 	void closeFont(FT_Face &face);
+
 private:
 	FT_Library _library;
 	bool _initialized;
@@ -153,6 +154,7 @@ public:
 	virtual Common::Rect getBoundingBox(uint32 chr) const;
 
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+
 private:
 	bool _initialized;
 	FT_Face _face;
@@ -454,8 +456,7 @@ int TTFFont::readPointSizeFromVDMXTable(int height) const {
 		uint8 yRatio1 = vdmxBuf->readByte();
 		uint8 yRatio2 = vdmxBuf->readByte();
 
-		if ((xRatio == 1 && yRatio1 <= 1 && yRatio2 >= 1)
-		    || (xRatio == 0 && yRatio1 == 0 && yRatio2 == 0)) {
+		if ((xRatio == 1 && yRatio1 <= 1 && yRatio2 >= 1) || (xRatio == 0 && yRatio1 == 0 && yRatio2 == 0)) {
 			selectedRatio = i;
 			break;
 		}
@@ -716,7 +717,7 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 		// That's 26.6 fixed-point units
 		if (FT_Bitmap_Embolden(_face->glyph->library, &_face->glyph->bitmap, 1 << 6, 0))
 			return false;
-		
+
 		bitmap = &_face->glyph->bitmap;
 #elif FAKE_BOLD >= 1
 		FT_Bitmap_New(&ownBitmap);
@@ -739,7 +740,6 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 	} else {
 		bitmap = &_face->glyph->bitmap;
 	}
-
 
 	glyph.image.create(bitmap->width, bitmap->rows, PixelFormat::createFormatCLUT8());
 
@@ -865,9 +865,9 @@ static bool matchFaceName(const Common::U32String &faceName, const FT_Face &face
 		}
 
 		if (aname.platform_id == TT_PLATFORM_MICROSOFT &&
-		        aname.language_id != TT_MS_LANGID_ENGLISH_UNITED_STATES) {
+		    aname.language_id != TT_MS_LANGID_ENGLISH_UNITED_STATES) {
 			if (aname.encoding_id == TT_MS_ID_SYMBOL_CS ||
-			        aname.encoding_id == TT_MS_ID_UNICODE_CS) {
+			    aname.encoding_id == TT_MS_ID_UNICODE_CS) {
 				// MS local name in UTF-16
 				char *u32 = Common::Encoding::convert("utf-32", "utf-16be", (char *)aname.string, aname.string_len);
 				Common::U32String localName((uint32 *)u32);
@@ -900,8 +900,8 @@ Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32St
 
 	uint8 *bestTTFFile = nullptr;
 	uint32 bestSize = 0;
-	uint32 bestFaceId = (uint32) -1;
-	uint32 bestPenalty = (uint32) -1;
+	uint32 bestFaceId = (uint32)-1;
+	uint32 bestPenalty = (uint32)-1;
 
 	for (Common::Array<Common::String>::const_iterator it = files.begin(); it != files.end(); it++) {
 		Common::File ttf;
@@ -967,7 +967,7 @@ Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32St
 				// Better font
 				// Cleanup old best font if it's not the same file as the current one
 				if (bestTTFFile != ttfFile) {
-					delete [] bestTTFFile;
+					delete[] bestTTFFile;
 				}
 
 				bestPenalty = penalty;
@@ -979,7 +979,7 @@ Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32St
 
 		// Don't free the file if it has been elected the best
 		if (bestTTFFile != ttfFile) {
-			delete [] ttfFile;
+			delete[] ttfFile;
 		}
 		ttfFile = nullptr;
 	}
@@ -1002,7 +1002,7 @@ Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32St
 	if (!font->load(bestTTFFile, bestSize, bestFaceId, bold, italic, size, sizeMode,
 	                dpi, renderMode, mapping)) {
 		delete font;
-		delete [] bestTTFFile;
+		delete[] bestTTFFile;
 		return nullptr;
 	}
 
@@ -1016,4 +1016,3 @@ DECLARE_SINGLETON(Graphics::TTFLibrary);
 } // End of namespace Common
 
 #endif
-

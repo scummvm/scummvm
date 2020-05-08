@@ -233,5 +233,4 @@ void FontManager::load(Font *font1, Font *font2) {
 	_font2 = font2;
 }
 
-
 } // End of namespace Access

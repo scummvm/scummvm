@@ -20,17 +20,18 @@
  *
  */
 
-#include "common/debug-channels.h"
-#include "common/scummsys.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 
 #include "engines/util.h"
 
+#include "testbed/encoding.h"
 #include "testbed/events.h"
 #include "testbed/fs.h"
 #include "testbed/graphics.h"
@@ -38,7 +39,6 @@
 #include "testbed/misc.h"
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
-#include "testbed/encoding.h"
 #include "testbed/testbed.h"
 #ifdef USE_CLOUD
 #include "testbed/cloud.h"
@@ -90,7 +90,7 @@ void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	default:
 		break;
 
-	case kCmdRerunTestbed :
+	case kCmdRerunTestbed:
 		ConfParams.setRerunFlag(true);
 		cmd = GUI::kCloseCmd;
 		break;
@@ -104,7 +104,7 @@ bool TestbedEngine::hasFeature(EngineFeature f) const {
 }
 
 TestbedEngine::TestbedEngine(OSystem *syst)
- : Engine(syst) {
+    : Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
@@ -146,9 +146,9 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	ts = new MidiTestSuite();
 	_testsuiteList.push_back(ts);
 #ifdef USE_TTS
-	 // TextToSpeech
-	 ts = new SpeechTestSuite();
-	 _testsuiteList.push_back(ts);
+	// TextToSpeech
+	ts = new SpeechTestSuite();
+	_testsuiteList.push_back(ts);
 #endif
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// Cloud

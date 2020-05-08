@@ -42,10 +42,10 @@ public:
 	void loadLanguageSetting(Common::SeekableReadStream *readStream);
 
 private:
-	uint _languageID; // id of selected language
-	int _languageIdx; // index of selected language in table
-	uint _numLanguages; // number of existing languages in game
-	uint *_languageTable; // indexes of existing languages
+	uint _languageID;               // id of selected language
+	int _languageIdx;               // index of selected language in table
+	uint _numLanguages;             // number of existing languages in game
+	uint *_languageTable;           // indexes of existing languages
 	Common::String *_languageNames; // language names
 
 	int getLanguageForFileB();

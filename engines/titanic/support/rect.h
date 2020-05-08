@@ -28,7 +28,11 @@
 namespace Titanic {
 
 enum Quadrant {
-	Q_CENTER = 0, Q_LEFT, Q_RIGHT, Q_TOP, Q_BOTTOM
+	Q_CENTER = 0,
+	Q_LEFT,
+	Q_RIGHT,
+	Q_TOP,
+	Q_BOTTOM
 };
 
 typedef Common::Point Point;

@@ -3,9 +3,9 @@
 #include "common/memstream.h"
 
 class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_seek_set() {
-		byte contents[] = { 'a', 'b', '\n', '\n', 'c', '\n' };
+		byte contents[] = {'a', 'b', '\n', '\n', 'c', '\n'};
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);
 
 		ms.seek(0, SEEK_SET);
@@ -22,7 +22,7 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_seek_cur() {
-		byte contents[] = { 'a', 'b', '\n', '\n', 'c' };
+		byte contents[] = {'a', 'b', '\n', '\n', 'c'};
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);
 
 		ms.seek(3, SEEK_CUR);
@@ -43,7 +43,7 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_seek_end() {
-		byte contents[] = { 'a', 'b', '\n', '\n', 'c' };
+		byte contents[] = {'a', 'b', '\n', '\n', 'c'};
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);
 
 		ms.seek(0, SEEK_END);
@@ -60,7 +60,7 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_seek_read_le() {
-		byte contents[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		byte contents[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);
 
 		TS_ASSERT_EQUALS(ms.readUint16LE(), 0x0201UL);
@@ -75,7 +75,7 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_seek_read_be() {
-		byte contents[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		byte contents[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);
 
 		TS_ASSERT_EQUALS(ms.readUint16BE(), 0x0102UL);
@@ -90,7 +90,7 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_seek_read_le2() {
-		byte contents[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		byte contents[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);
 
 		TS_ASSERT_EQUALS(ms.readUint16(), 0x0201UL);
@@ -105,7 +105,7 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_seek_read_be2() {
-		byte contents[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		byte contents[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), true);
 
 		TS_ASSERT_EQUALS(ms.readUint16(), 0x0102UL);

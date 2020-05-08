@@ -32,9 +32,9 @@
 #include "backends/graphics/gph/gph-graphics.h"
 #include "backends/platform/gph/gph-hw.h"
 
-#include "common/util.h"
 #include "common/events.h"
 #include "common/translation.h"
+#include "common/util.h"
 
 #define JOY_DEADZONE 2200
 
@@ -47,33 +47,33 @@
 /*         The Caanoo has an analogue stick so no digital DPAD */
 enum {
 	/* Joystick Buttons */
-	BUTTON_A            = 0,
-	BUTTON_X            = 1,
-	BUTTON_B            = 2,
-	BUTTON_Y            = 3,
-	BUTTON_L            = 4,
-	BUTTON_R            = 5,
-	BUTTON_HOME         = 6,    // Home
-	BUTTON_HOLD         = 7,    // Hold (on Power)
-	BUTTON_HELP         = 8,    // Help I
-	BUTTON_HELP2        = 9,    // Help II
-	BUTTON_CLICK        = 10    // Stick Click
+	BUTTON_A = 0,
+	BUTTON_X = 1,
+	BUTTON_B = 2,
+	BUTTON_Y = 3,
+	BUTTON_L = 4,
+	BUTTON_R = 5,
+	BUTTON_HOME = 6,  // Home
+	BUTTON_HOLD = 7,  // Hold (on Power)
+	BUTTON_HELP = 8,  // Help I
+	BUTTON_HELP2 = 9, // Help II
+	BUTTON_CLICK = 10 // Stick Click
 };
 
 enum {
 	/* Unused Joystick Buttons on the Caanoo */
-	BUTTON_VOLUP        = 51,
-	BUTTON_VOLDOWN      = 52,
-	BUTTON_UP           = 53,
-	BUTTON_UPLEFT       = 54,
-	BUTTON_LEFT         = 55,
-	BUTTON_DOWNLEFT     = 56,
-	BUTTON_DOWN         = 57,
-	BUTTON_DOWNRIGHT    = 58,
-	BUTTON_RIGHT        = 59,
-	BUTTON_UPRIGHT      = 60,
-	BUTTON_MENU         = 61,
-	BUTTON_SELECT       = 62
+	BUTTON_VOLUP = 51,
+	BUTTON_VOLDOWN = 52,
+	BUTTON_UP = 53,
+	BUTTON_UPLEFT = 54,
+	BUTTON_LEFT = 55,
+	BUTTON_DOWNLEFT = 56,
+	BUTTON_DOWN = 57,
+	BUTTON_DOWNRIGHT = 58,
+	BUTTON_RIGHT = 59,
+	BUTTON_UPRIGHT = 60,
+	BUTTON_MENU = 61,
+	BUTTON_SELECT = 62
 };
 
 #elif defined(GP2XWIZ)
@@ -81,68 +81,68 @@ enum {
 /* Wiz: Main Joystick Mappings */
 enum {
 	/* DPAD */
-	BUTTON_UP           = 0,
-	BUTTON_UPLEFT       = 1,
-	BUTTON_LEFT         = 2,
-	BUTTON_DOWNLEFT     = 3,
-	BUTTON_DOWN         = 4,
-	BUTTON_DOWNRIGHT    = 5,
-	BUTTON_RIGHT        = 6,
-	BUTTON_UPRIGHT      = 7,
+	BUTTON_UP = 0,
+	BUTTON_UPLEFT = 1,
+	BUTTON_LEFT = 2,
+	BUTTON_DOWNLEFT = 3,
+	BUTTON_DOWN = 4,
+	BUTTON_DOWNRIGHT = 5,
+	BUTTON_RIGHT = 6,
+	BUTTON_UPRIGHT = 7,
 	/* Joystick Buttons */
-	BUTTON_MENU         = 8,
-	BUTTON_SELECT       = 9,
-	BUTTON_L            = 10,
-	BUTTON_R            = 11,
-	BUTTON_A            = 12,
-	BUTTON_B            = 13,
-	BUTTON_X            = 14,
-	BUTTON_Y            = 15,
-	BUTTON_VOLUP        = 16,
-	BUTTON_VOLDOWN      = 17
+	BUTTON_MENU = 8,
+	BUTTON_SELECT = 9,
+	BUTTON_L = 10,
+	BUTTON_R = 11,
+	BUTTON_A = 12,
+	BUTTON_B = 13,
+	BUTTON_X = 14,
+	BUTTON_Y = 15,
+	BUTTON_VOLUP = 16,
+	BUTTON_VOLDOWN = 17
 };
 
 enum {
 	/* Unused Joystick Buttons on the Wiz */
-	BUTTON_HOME         = 51,
-	BUTTON_HOLD         = 52,
-	BUTTON_CLICK        = 53,
-	BUTTON_HELP         = 54,
-	BUTTON_HELP2        = 55
+	BUTTON_HOME = 51,
+	BUTTON_HOLD = 52,
+	BUTTON_CLICK = 53,
+	BUTTON_HELP = 54,
+	BUTTON_HELP2 = 55
 };
 
 #elif defined(GP2X)
 
 enum {
 	/* DPAD/Stick */
-	BUTTON_UP           = 0,
-	BUTTON_UPLEFT       = 1,
-	BUTTON_LEFT         = 2,
-	BUTTON_DOWNLEFT     = 3,
-	BUTTON_DOWN         = 4,
-	BUTTON_DOWNRIGHT    = 5,
-	BUTTON_RIGHT        = 6,
-	BUTTON_UPRIGHT      = 7,
+	BUTTON_UP = 0,
+	BUTTON_UPLEFT = 1,
+	BUTTON_LEFT = 2,
+	BUTTON_DOWNLEFT = 3,
+	BUTTON_DOWN = 4,
+	BUTTON_DOWNRIGHT = 5,
+	BUTTON_RIGHT = 6,
+	BUTTON_UPRIGHT = 7,
 	/* Joystick Buttons */
-	BUTTON_MENU         = 8,    // Start on F100 GP2X
-	BUTTON_SELECT       = 9,
-	BUTTON_L            = 10,
-	BUTTON_R            = 11,
-	BUTTON_A            = 12,
-	BUTTON_B            = 13,
-	BUTTON_X            = 14,
-	BUTTON_Y            = 15,
-	BUTTON_VOLUP        = 16,
-	BUTTON_VOLDOWN      = 17,
-	BUTTON_CLICK        = 18
+	BUTTON_MENU = 8, // Start on F100 GP2X
+	BUTTON_SELECT = 9,
+	BUTTON_L = 10,
+	BUTTON_R = 11,
+	BUTTON_A = 12,
+	BUTTON_B = 13,
+	BUTTON_X = 14,
+	BUTTON_Y = 15,
+	BUTTON_VOLUP = 16,
+	BUTTON_VOLDOWN = 17,
+	BUTTON_CLICK = 18
 };
 
 enum {
 	/* Unused Joystick Buttons on the GP2X */
-	BUTTON_HOME         = 51,
-	BUTTON_HOLD         = 52,
-	BUTTON_HELP         = 53,
-	BUTTON_HELP2        = 54
+	BUTTON_HOME = 51,
+	BUTTON_HOLD = 52,
+	BUTTON_HELP = 53,
+	BUTTON_HELP2 = 54
 };
 
 #else
@@ -150,47 +150,47 @@ enum {
 /* Main Joystick Button Mappings */
 enum {
 	/* Joystick Buttons */
-	BUTTON_A            = 0,
-	BUTTON_B            = 1,
-	BUTTON_X            = 2,
-	BUTTON_Y            = 3,
-	BUTTON_L            = 4,
-	BUTTON_R            = 5,
-	BUTTON_SELECT       = 6,
-	BUTTON_MENU         = 7,
-	BUTTON_CLICK        = 8    // Stick Click
+	BUTTON_A = 0,
+	BUTTON_B = 1,
+	BUTTON_X = 2,
+	BUTTON_Y = 3,
+	BUTTON_L = 4,
+	BUTTON_R = 5,
+	BUTTON_SELECT = 6,
+	BUTTON_MENU = 7,
+	BUTTON_CLICK = 8 // Stick Click
 };
 
 enum {
 	/* Unused Joystick Buttons */
-	BUTTON_VOLUP        = 51,
-	BUTTON_VOLDOWN      = 52,
-	BUTTON_UP           = 53,
-	BUTTON_UPLEFT       = 54,
-	BUTTON_LEFT         = 55,
-	BUTTON_DOWNLEFT     = 56,
-	BUTTON_DOWN         = 57,
-	BUTTON_DOWNRIGHT    = 58,
-	BUTTON_RIGHT        = 59,
-	BUTTON_UPRIGHT      = 60,
-	BUTTON_HOME         = 61,    // Home
-	BUTTON_HOLD         = 62,    // Hold (on Power)
-	BUTTON_HELP         = 63,    // Help I
-	BUTTON_HELP2        = 64     // Help II
+	BUTTON_VOLUP = 51,
+	BUTTON_VOLDOWN = 52,
+	BUTTON_UP = 53,
+	BUTTON_UPLEFT = 54,
+	BUTTON_LEFT = 55,
+	BUTTON_DOWNLEFT = 56,
+	BUTTON_DOWN = 57,
+	BUTTON_DOWNRIGHT = 58,
+	BUTTON_RIGHT = 59,
+	BUTTON_UPRIGHT = 60,
+	BUTTON_HOME = 61, // Home
+	BUTTON_HOLD = 62, // Hold (on Power)
+	BUTTON_HELP = 63, // Help I
+	BUTTON_HELP2 = 64 // Help II
 };
 
 #endif
 
 enum {
 	/* Touchscreen TapMode */
-	TAPMODE_LEFT        = 0,
-	TAPMODE_RIGHT       = 1,
-	TAPMODE_HOVER       = 2
+	TAPMODE_LEFT = 0,
+	TAPMODE_RIGHT = 1,
+	TAPMODE_HOVER = 2
 };
 
 GPHEventSource::GPHEventSource()
-	: _buttonStateL(false),
-	  _tapmodeLevel(TAPMODE_LEFT) {
+    : _buttonStateL(false),
+      _tapmodeLevel(TAPMODE_LEFT) {
 }
 
 void GPHEventSource::ToggleTapMode() {
@@ -221,7 +221,6 @@ bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 		event.type = Common::EVENT_MOUSEMOVE;
 	else
 		event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
-
 
 	// update KbdMouse
 	_km.x = ev.button.x * MULTIPLIER;
@@ -311,7 +310,7 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 			_km.x_vel = -1 * MULTIPLIER;
 			_km.x_down_count = 1;
 		} else {
-				_km.x_vel = -4 * MULTIPLIER;
+			_km.x_vel = -4 * MULTIPLIER;
 		}
 		if (_km.y_down_count != 2) {
 			_km.y_vel = -1 * MULTIPLIER;

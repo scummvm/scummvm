@@ -23,10 +23,10 @@
 #include "teenagent/pack.h"
 #include "teenagent/teenagent.h"
 
-#include "common/util.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/util.h"
 
 namespace TeenAgent {
 

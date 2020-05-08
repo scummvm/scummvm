@@ -21,8 +21,8 @@
  */
 
 #include "glk/unicode.h"
-#include "glk/unicode_gen.h"
 #include "common/textconsole.h"
+#include "glk/unicode_gen.h"
 
 namespace Glk {
 
@@ -34,7 +34,7 @@ size_t strlen_uni(const uint32 *s) {
 }
 
 uint bufferChangeCase(uint32 *buf, uint len, uint numchars, BufferChangeCase destcase,
-						BufferChangeCond cond, int changerest) {
+                      BufferChangeCond cond, int changerest) {
 	uint ix, jx;
 	uint32 *outbuf;
 	uint32 *newoutbuf;

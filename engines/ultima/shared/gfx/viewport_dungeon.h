@@ -23,8 +23,8 @@
 #ifndef ULTIMA_SHARED_GFX_VIEWPORT_DUNGEON_H
 #define ULTIMA_SHARED_GFX_VIEWPORT_DUNGEON_H
 
-#include "ultima/shared/gfx/visual_item.h"
 #include "ultima/shared/gfx/dungeon_surface.h"
+#include "ultima/shared/gfx/visual_item.h"
 #include "ultima/shared/maps/map_tile.h"
 
 namespace Ultima {
@@ -32,6 +32,7 @@ namespace Shared {
 
 class ViewportDungeon : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
+
 private:
 	/**
 	 * Returns the distance to an occupied cell, if any
@@ -62,11 +63,13 @@ private:
 	 * Draw a cell to the left
 	 */
 	void drawRightCell(uint distance, const Maps::MapTile &tile);
+
 protected:
 	/**
 	 * Returns the surface for rendering the dungeon
 	 */
 	virtual DungeonSurface getSurface() = 0;
+
 public:
 	CLASSDEF;
 	ViewportDungeon(TreeItem *parent) : Gfx::VisualItem("ViewportDungeon", Rect(8, 8, 312, 152), parent) {}

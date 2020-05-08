@@ -22,8 +22,8 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -32,15 +32,13 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TeleportToEggProcess, Process)
 
 TeleportToEggProcess::TeleportToEggProcess() : Process(),
-	_mapNum(0), _teleportId(0) {
+                                               _mapNum(0), _teleportId(0) {
 }
-
 
 TeleportToEggProcess::TeleportToEggProcess(int mapNum, int teleportId)
-	: _mapNum(mapNum), _teleportId(teleportId) {
+    : _mapNum(mapNum), _teleportId(teleportId) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
-
 
 void TeleportToEggProcess::run() {
 	MainActor *av = getMainActor();
@@ -58,7 +56,8 @@ void TeleportToEggProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool TeleportToEggProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_mapNum = static_cast<int>(rs->readUint32LE());
 	_teleportId = static_cast<int>(rs->readUint32LE());

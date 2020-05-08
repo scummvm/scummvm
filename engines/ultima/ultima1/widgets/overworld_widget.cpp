@@ -21,11 +21,11 @@
  */
 
 #include "ultima/ultima1/widgets/overworld_widget.h"
-#include "ultima/ultima1/maps/map_base.h"
-#include "ultima/ultima1/maps/map_tile.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima1/maps/map_base.h"
+#include "ultima/ultima1/maps/map_tile.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -55,7 +55,6 @@ Shared::Maps::MapWidget::CanMove OverworldWidget::canMoveTo(const Point &destPos
 	// Default mobility for most monsters and transports is overland only
 	return tile.isGround() ? Shared::Maps::MapWidget::YES : Shared::Maps::MapWidget::NO;
 }
-
 
 } // End of namespace Widgets
 } // End of namespace Ultima1

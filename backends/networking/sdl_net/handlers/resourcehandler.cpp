@@ -32,21 +32,33 @@ ResourceHandler::~ResourceHandler() {}
 
 const char *ResourceHandler::determineMimeType(Common::String &filename) {
 	// text
-	if (filename.hasSuffix(".html")) return "text/html";
-	if (filename.hasSuffix(".css")) return "text/css";
-	if (filename.hasSuffix(".txt")) return "text/plain";
-	if (filename.hasSuffix(".js")) return "application/javascript";
+	if (filename.hasSuffix(".html"))
+		return "text/html";
+	if (filename.hasSuffix(".css"))
+		return "text/css";
+	if (filename.hasSuffix(".txt"))
+		return "text/plain";
+	if (filename.hasSuffix(".js"))
+		return "application/javascript";
 
 	// images
-	if (filename.hasSuffix(".jpeg") || filename.hasSuffix(".jpg") || filename.hasSuffix(".jpe")) return "image/jpeg";
-	if (filename.hasSuffix(".gif")) return "image/gif";
-	if (filename.hasSuffix(".png")) return "image/png";
-	if (filename.hasSuffix(".svg")) return "image/svg+xml";
-	if (filename.hasSuffix(".tiff")) return "image/tiff";
-	if (filename.hasSuffix(".ico")) return "image/vnd.microsoft.icon";
-	if (filename.hasSuffix(".wbmp")) return "image/vnd.wap.wbmp";
+	if (filename.hasSuffix(".jpeg") || filename.hasSuffix(".jpg") || filename.hasSuffix(".jpe"))
+		return "image/jpeg";
+	if (filename.hasSuffix(".gif"))
+		return "image/gif";
+	if (filename.hasSuffix(".png"))
+		return "image/png";
+	if (filename.hasSuffix(".svg"))
+		return "image/svg+xml";
+	if (filename.hasSuffix(".tiff"))
+		return "image/tiff";
+	if (filename.hasSuffix(".ico"))
+		return "image/vnd.microsoft.icon";
+	if (filename.hasSuffix(".wbmp"))
+		return "image/vnd.wap.wbmp";
 
-	if (filename.hasSuffix(".zip")) return "application/zip";
+	if (filename.hasSuffix(".zip"))
+		return "application/zip";
 	return "application/octet-stream";
 }
 

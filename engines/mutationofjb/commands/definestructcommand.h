@@ -32,11 +32,12 @@ public:
 
 class DefineStructCommand : public SeqCommand {
 public:
-	DefineStructCommand(const ConversationInfo& convInfo) : _conversationInfo(convInfo) {}
+	DefineStructCommand(const ConversationInfo &convInfo) : _conversationInfo(convInfo) {}
 	Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Common::String debugString() const override;
+
 private:
 	ConversationInfo _conversationInfo;
 };
 
-}
+} // namespace MutationOfJB

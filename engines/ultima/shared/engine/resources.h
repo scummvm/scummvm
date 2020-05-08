@@ -27,8 +27,8 @@
 #include "common/archive.h"
 #include "common/array.h"
 #include "common/memstream.h"
-#include "common/str.h"
 #include "common/serializer.h"
+#include "common/str.h"
 #include "ultima/shared/core/file.h"
 
 #define STRING_BUFFER_SIZE 32768
@@ -46,8 +46,10 @@ private:
 	File _file;
 	char _buffer[STRING_BUFFER_SIZE];
 	char *_bufferP;
+
 protected:
 	Common::String _filename;
+
 protected:
 	/**
 	 * Constructor
@@ -74,6 +76,7 @@ protected:
 	virtual void syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3);
 	virtual void syncBytes(byte *vals, size_t count);
 	virtual void syncBytes2D(byte *vals, size_t count1, size_t count2);
+
 public:
 	/**
 	 * Loads in a resource
@@ -90,6 +93,7 @@ class LocalResourceFile : public ResourceFile {
 private:
 	Common::MemoryWriteStreamDynamic _file;
 	Resources *_owner;
+
 protected:
 	/**
 	 * Constructor
@@ -100,7 +104,7 @@ protected:
 	 * Constructor
 	 */
 	LocalResourceFile(Resources *owner, const Common::String &filename) : ResourceFile(filename),
-		_owner(owner), _file(DisposeAfterUse::YES) {}
+	                                                                      _owner(owner), _file(DisposeAfterUse::YES) {}
 
 	/**
 	 * Return true if in saving mode
@@ -116,6 +120,7 @@ protected:
 	void syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3) override;
 	void syncBytes(byte *vals, size_t count) override;
 	void syncBytes2D(byte *vals, size_t count1, size_t count2) override;
+
 public:
 	/**
 	 * Write out the resource to the in-memory resource store
@@ -140,8 +145,10 @@ class Resources : public Common::Archive {
 		 */
 		void load(File &f);
 	};
+
 private:
 	Common::Array<LocalResource> _localResources;
+
 public:
 	/**
 	 * Constructor
@@ -168,7 +175,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	bool hasFile(const Common::String &name) const  override;
+	bool hasFile(const Common::String &name) const override;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -176,19 +183,19 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	int listMembers(Common::ArchiveMemberList &list) const  override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const  override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.
 	 * @return the newly created input stream
 	 */
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const  override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 };
 
 } // End of namespace Shared

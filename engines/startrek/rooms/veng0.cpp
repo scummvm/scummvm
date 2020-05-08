@@ -38,76 +38,75 @@
 namespace StarTrek {
 
 extern const RoomAction veng0ActionList[] = {
-	{ {ACTION_TICK, 1,  0, 0}, &Room::veng0Tick1 },
-	{ {ACTION_TICK, 10, 0, 0}, &Room::veng0Tick10 },
-	{ {ACTION_TICK, 50, 0, 0}, &Room::veng0Tick50 },
-	{ {ACTION_TOUCHED_WARP, 1, 0, 0}, &Room::veng0TouchedDoor },
+    {{ACTION_TICK, 1, 0, 0}, &Room::veng0Tick1},
+    {{ACTION_TICK, 10, 0, 0}, &Room::veng0Tick10},
+    {{ACTION_TICK, 50, 0, 0}, &Room::veng0Tick50},
+    {{ACTION_TOUCHED_WARP, 1, 0, 0}, &Room::veng0TouchedDoor},
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_COMPUTER_BANK, 0}, &Room::veng0UseSTricorderOnComputerBank },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_CHAIR,         0}, &Room::veng0UseSTricorderOnChair },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_VIEWSCREEN,    0}, &Room::veng0UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_ISTRICOR, 0xff,                  0}, &Room::veng0UseSTricorderAnywhere },
-	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_BEAM,           0}, &Room::veng0UseMccoyOnBeam },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_BEAM,           0}, &Room::veng0UseSTricorderOnBeam },
-	{ {ACTION_USE, OBJECT_SPOCK,    OBJECT_BEAM,           0}, &Room::veng0UseSTricorderOnBeam },
-	{ {ACTION_USE, OBJECT_REDSHIRT, OBJECT_BEAM,           0}, &Room::veng0UseRedshirtOnBeam },
-	{ {ACTION_USE, OBJECT_SPOCK,    HOTSPOT_HELM_CONSOLE,  0}, &Room::veng0UseSpockOnConsole },
-	{ {ACTION_USE, OBJECT_SPOCK,    HOTSPOT_NAV_CONSOLE,   0}, &Room::veng0UseSpockOnConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_HELM_CONSOLE,  0}, &Room::veng0UseSpockOnConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_NAV_CONSOLE,   0}, &Room::veng0UseSpockOnConsole },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_HELM_CONSOLE,  0}, &Room::veng0UseRedshirtOnConsole },
-	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_NAV_CONSOLE,   0}, &Room::veng0UseRedshirtOnConsole },
-	{ {ACTION_USE, OBJECT_IPHASERS, OBJECT_BEAM,           0}, &Room::veng0UsePhaserOnBeam },
-	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_BEAM,           0}, &Room::veng0UsePhaserOnBeam },
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_COMPUTER_BANK, 0}, &Room::veng0UseSTricorderOnComputerBank},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_CHAIR, 0}, &Room::veng0UseSTricorderOnChair},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_VIEWSCREEN, 0}, &Room::veng0UseSTricorderAnywhere},
+    {{ACTION_USE, OBJECT_ISTRICOR, 0xff, 0}, &Room::veng0UseSTricorderAnywhere},
+    {{ACTION_USE, OBJECT_MCCOY, OBJECT_BEAM, 0}, &Room::veng0UseMccoyOnBeam},
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_BEAM, 0}, &Room::veng0UseSTricorderOnBeam},
+    {{ACTION_USE, OBJECT_SPOCK, OBJECT_BEAM, 0}, &Room::veng0UseSTricorderOnBeam},
+    {{ACTION_USE, OBJECT_REDSHIRT, OBJECT_BEAM, 0}, &Room::veng0UseRedshirtOnBeam},
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_HELM_CONSOLE, 0}, &Room::veng0UseSpockOnConsole},
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_NAV_CONSOLE, 0}, &Room::veng0UseSpockOnConsole},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_HELM_CONSOLE, 0}, &Room::veng0UseSpockOnConsole},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_NAV_CONSOLE, 0}, &Room::veng0UseSpockOnConsole},
+    {{ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_HELM_CONSOLE, 0}, &Room::veng0UseRedshirtOnConsole},
+    {{ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_NAV_CONSOLE, 0}, &Room::veng0UseRedshirtOnConsole},
+    {{ACTION_USE, OBJECT_IPHASERS, OBJECT_BEAM, 0}, &Room::veng0UsePhaserOnBeam},
+    {{ACTION_USE, OBJECT_IPHASERK, OBJECT_BEAM, 0}, &Room::veng0UsePhaserOnBeam},
 
-	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_PATTERSON, 0}, &Room::veng0UseMccoyOnDeadCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_PATTERSON, 0}, &Room::veng0UseMccoyOnDeadCrewman },
-	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_CREWMAN_2, 0}, &Room::veng0UseMccoyOnDeadCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  HOTSPOT_CREWMAN_2, 0}, &Room::veng0UseMccoyOnDeadCrewman },
-	{ {ACTION_USE, OBJECT_IMEDKIT,  HOTSPOT_PATTERSON, 0}, &Room::veng0UseMccoyOnDeadCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_CREWMAN_2, 0}, &Room::veng0UseMccoyOnDeadCrewman },
+    {{ACTION_USE, OBJECT_MCCOY, HOTSPOT_PATTERSON, 0}, &Room::veng0UseMccoyOnDeadCrewman},
+    {{ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_PATTERSON, 0}, &Room::veng0UseMccoyOnDeadCrewman},
+    {{ACTION_USE, OBJECT_MCCOY, HOTSPOT_CREWMAN_2, 0}, &Room::veng0UseMccoyOnDeadCrewman},
+    {{ACTION_USE, OBJECT_IMEDKIT, HOTSPOT_CREWMAN_2, 0}, &Room::veng0UseMccoyOnDeadCrewman},
+    {{ACTION_USE, OBJECT_IMEDKIT, HOTSPOT_PATTERSON, 0}, &Room::veng0UseMccoyOnDeadCrewman},
+    {{ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_CREWMAN_2, 0}, &Room::veng0UseMccoyOnDeadCrewman},
 
-	{ {ACTION_USE, OBJECT_ILMD, OBJECT_BEAM, 0}, &Room::veng0UseSawOnBeam },
-	{ {ACTION_DONE_WALK, 1,               0, 0}, &Room::veng0KirkReachedSaw },
-	{ {ACTION_TIMER_EXPIRED, 0,           0, 0}, &Room::veng0Timer0Expired },
-	{ {ACTION_DONE_ANIM, 2,               0, 0}, &Room::veng0DoneCuttingBeam },
+    {{ACTION_USE, OBJECT_ILMD, OBJECT_BEAM, 0}, &Room::veng0UseSawOnBeam},
+    {{ACTION_DONE_WALK, 1, 0, 0}, &Room::veng0KirkReachedSaw},
+    {{ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::veng0Timer0Expired},
+    {{ACTION_DONE_ANIM, 2, 0, 0}, &Room::veng0DoneCuttingBeam},
 
-	{ {ACTION_GET,  OBJECT_BEAM,           0, 0}, &Room::veng0GetBeam },
-	{ {ACTION_TALK, OBJECT_KIRK,           0, 0}, &Room::veng0TalkToKirk },
-	{ {ACTION_TALK, OBJECT_MCCOY,          0, 0}, &Room::veng0TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_SPOCK,          0, 0}, &Room::veng0TalkToSpock },
-	{ {ACTION_TALK, OBJECT_REDSHIRT,       0, 0}, &Room::veng0TalkToRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_PATTERSON,     0, 0}, &Room::veng0LookAtPatterson },
-	{ {ACTION_LOOK, HOTSPOT_CREWMAN_2,     0, 0}, &Room::veng0LookAtDeadCrewman2 },
-	{ {ACTION_LOOK, HOTSPOT_COMPUTER_BANK, 0, 0}, &Room::veng0LookAtComputerBank },
-	{ {ACTION_LOOK, HOTSPOT_CHAIR,         0, 0}, &Room::veng0LookAtChair },
-	{ {ACTION_LOOK, OBJECT_KIRK,           0, 0}, &Room::veng0LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,          0, 0}, &Room::veng0LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,          0, 0}, &Room::veng0LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,       0, 0}, &Room::veng0LookAtRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_VIEWSCREEN,    0, 0}, &Room::veng0LookAtViewscreen },
-	{ {ACTION_LOOK, HOTSPOT_HELM_CONSOLE,  0, 0}, &Room::veng0LookAtHelmConsole },
-	{ {ACTION_LOOK, HOTSPOT_NAV_CONSOLE,   0, 0}, &Room::veng0LookAtNavConsole },
-	{ {ACTION_LOOK, OBJECT_BEAM,           0, 0}, &Room::veng0LookAtBeam },
-	{ {ACTION_LOOK, 0xff,                  0, 0}, &Room::veng0LookAnywhere },
-	{ {ACTION_LOOK, HOTSPOT_CREWMAN_1,     0, 0}, &Room::veng0LookAtDeadCrewman1 },
+    {{ACTION_GET, OBJECT_BEAM, 0, 0}, &Room::veng0GetBeam},
+    {{ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::veng0TalkToKirk},
+    {{ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::veng0TalkToMccoy},
+    {{ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::veng0TalkToSpock},
+    {{ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::veng0TalkToRedshirt},
+    {{ACTION_LOOK, HOTSPOT_PATTERSON, 0, 0}, &Room::veng0LookAtPatterson},
+    {{ACTION_LOOK, HOTSPOT_CREWMAN_2, 0, 0}, &Room::veng0LookAtDeadCrewman2},
+    {{ACTION_LOOK, HOTSPOT_COMPUTER_BANK, 0, 0}, &Room::veng0LookAtComputerBank},
+    {{ACTION_LOOK, HOTSPOT_CHAIR, 0, 0}, &Room::veng0LookAtChair},
+    {{ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::veng0LookAtKirk},
+    {{ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::veng0LookAtSpock},
+    {{ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::veng0LookAtMccoy},
+    {{ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::veng0LookAtRedshirt},
+    {{ACTION_LOOK, HOTSPOT_VIEWSCREEN, 0, 0}, &Room::veng0LookAtViewscreen},
+    {{ACTION_LOOK, HOTSPOT_HELM_CONSOLE, 0, 0}, &Room::veng0LookAtHelmConsole},
+    {{ACTION_LOOK, HOTSPOT_NAV_CONSOLE, 0, 0}, &Room::veng0LookAtNavConsole},
+    {{ACTION_LOOK, OBJECT_BEAM, 0, 0}, &Room::veng0LookAtBeam},
+    {{ACTION_LOOK, 0xff, 0, 0}, &Room::veng0LookAnywhere},
+    {{ACTION_LOOK, HOTSPOT_CREWMAN_1, 0, 0}, &Room::veng0LookAtDeadCrewman1},
 
-	{ {ACTION_USE, OBJECT_IMEDKIT,  HOTSPOT_CREWMAN_1, 0}, &Room::veng0UseMccoyOnLivingCrewman },
-	{ {ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_CREWMAN_1, 0}, &Room::veng0UseMccoyOnLivingCrewman },
-	{ {ACTION_USE, OBJECT_MCCOY,    HOTSPOT_CREWMAN_1, 0}, &Room::veng0UseMccoyOnLivingCrewman },
-	{ {ACTION_DONE_WALK, 3,                         0, 0}, &Room::veng0MccoyReachedCrewman },
-	{ {ACTION_DONE_ANIM, 1,                         0, 0}, &Room::veng0MccoyScannedCrewman },
+    {{ACTION_USE, OBJECT_IMEDKIT, HOTSPOT_CREWMAN_1, 0}, &Room::veng0UseMccoyOnLivingCrewman},
+    {{ACTION_USE, OBJECT_IMTRICOR, HOTSPOT_CREWMAN_1, 0}, &Room::veng0UseMccoyOnLivingCrewman},
+    {{ACTION_USE, OBJECT_MCCOY, HOTSPOT_CREWMAN_1, 0}, &Room::veng0UseMccoyOnLivingCrewman},
+    {{ACTION_DONE_WALK, 3, 0, 0}, &Room::veng0MccoyReachedCrewman},
+    {{ACTION_DONE_ANIM, 1, 0, 0}, &Room::veng0MccoyScannedCrewman},
 
-	// Common code
-	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
-	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
+    // Common code
+    {{ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick},
+    {{ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::vengaUsePhaserAnywhere},
+    {{ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::vengaUsePhaserAnywhere},
+    {{ACTION_LOOK, OBJECT_IHYPO, 0, 0}, &Room::vengaLookAtHypo},
+    {{ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator},
 };
 
 extern const int veng0NumActions = ARRAYSIZE(veng0ActionList);
-
 
 void Room::veng0Tick1() {
 	playVoc("VEN0LOOP");
@@ -131,19 +130,19 @@ void Room::veng0Tick50() {
 	if (!_awayMission->veng.enteredRoom0FirstTime) {
 		_awayMission->veng.enteredRoom0FirstTime = true;
 		showText(TX_SPEAKER_MCCOY, 18, true);
-		showText(TX_SPEAKER_KIRK,   6, true);
+		showText(TX_SPEAKER_KIRK, 6, true);
 		showText(TX_SPEAKER_SCOTT, 12 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_KIRK,   8, true);
+		showText(TX_SPEAKER_KIRK, 8, true);
 		showText(TX_SPEAKER_SCOTT, 52 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_KIRK,   7, true);
+		showText(TX_SPEAKER_KIRK, 7, true);
 		showText(TX_SPEAKER_SPOCK, 30, true);
 		showText(TX_SPEAKER_SCOTT, 15 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_KIRK,   5, true);
+		showText(TX_SPEAKER_KIRK, 5, true);
 		showText(TX_SPEAKER_CHEKOV, 39, true);
-		showText(TX_SPEAKER_KIRK,   9, true);
+		showText(TX_SPEAKER_KIRK, 9, true);
 		showText(TX_SPEAKER_SCOTT, 54 + SCOTTY_MESSAGE_OFFSET, true);
-		showText(TX_SPEAKER_KIRK,  11, true);
-		showText(TX_SPEAKER_KIRK,  10, true);
+		showText(TX_SPEAKER_KIRK, 11, true);
+		showText(TX_SPEAKER_KIRK, 10, true);
 		showText(TX_SPEAKER_MCCOY, 17, true);
 		_awayMission->veng.enterpriseLeftForDistressCall = true;
 	}
@@ -160,7 +159,7 @@ void Room::veng0UseSTricorderOnComputerBank() {
 		_awayMission->veng.field6c = true;
 
 		spockScan(DIR_S, 28, false, true);
-		showText(TX_SPEAKER_KIRK,   2, true);
+		showText(TX_SPEAKER_KIRK, 2, true);
 		showText(TX_SPEAKER_SPOCK, 29, true);
 		showText(TX_SPEAKER_MCCOY, 20, true);
 		showText(TX_SPEAKER_SPOCK, 31, true);
@@ -176,7 +175,7 @@ void Room::veng0UseSTricorderOnChair() {
 		spockScan(DIR_S, 32, false, true);
 		showText(TX_SPEAKER_PATTERSON, 35, true);
 		showText(TX_SPEAKER_SPOCK, 33, true);
-		showText(TX_SPEAKER_KIRK,   4, true);
+		showText(TX_SPEAKER_KIRK, 4, true);
 	} else
 		showText(TX_SPEAKER_SPOCK, 26, true);
 }
@@ -358,4 +357,4 @@ void Room::veng0MccoyScannedCrewman() {
 	_awayMission->disableInput = false;
 }
 
-}
+} // namespace StarTrek

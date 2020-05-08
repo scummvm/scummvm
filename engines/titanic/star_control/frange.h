@@ -31,6 +31,7 @@ class FRange {
 private:
 	FVector _min;
 	FVector _max;
+
 public:
 	FRange();
 

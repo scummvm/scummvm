@@ -25,9 +25,9 @@
 
 #include "zvision/scripting/control.h"
 
-#include "common/rect.h"
-#include "common/events.h"
 #include "common/array.h"
+#include "common/events.h"
+#include "common/rect.h"
 
 namespace ZVision {
 

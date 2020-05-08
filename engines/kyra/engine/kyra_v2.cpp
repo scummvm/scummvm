@@ -165,7 +165,7 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 
 bool KyraEngine_v2::checkSpecialSceneExit(int num, int x, int y) {
 	if (_specialExitTable[0 + num] > x || _specialExitTable[5 + num] > y ||
-	        _specialExitTable[10 + num] < x || _specialExitTable[15 + num] < y)
+	    _specialExitTable[10 + num] < x || _specialExitTable[15 + num] < y)
 		return false;
 	return true;
 }

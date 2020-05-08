@@ -23,7 +23,7 @@
 #ifndef BLADERUNNER_UI_COMPONENT_H
 #define BLADERUNNER_UI_COMPONENT_H
 
-namespace Common{
+namespace Common {
 struct KeyState;
 }
 

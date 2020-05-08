@@ -25,9 +25,9 @@
  * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
-#include "cge2/text.h"
 #include "cge2/vmenu.h"
 #include "cge2/events.h"
+#include "cge2/text.h"
 
 namespace CGE2 {
 
@@ -83,7 +83,7 @@ MenuBar::MenuBar(CGE2Engine *vm, uint16 w, byte *c) : Talk(vm) {
 VMenu *VMenu::_addr = nullptr;
 
 VMenu::VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank col)
-	: Talk(vm, vmGather(list), kTBRect, col), _menu(list), _bar(nullptr), _items(list.size()), _vm(vm) {
+    : Talk(vm, vmGather(list), kTBRect, col), _menu(list), _bar(nullptr), _items(list.size()), _vm(vm) {
 	delete[] _vmgt; // Lefotver of vmGather.
 
 	_addr = this;
@@ -120,7 +120,6 @@ char *VMenu::vmGather(Common::Array<Choice *> list) {
 
 	return _vmgt;
 }
-
 
 VMenu::~VMenu() {
 	_addr = nullptr;

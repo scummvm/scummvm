@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "glk/jacl/csv.h"
 
 namespace Glk {
@@ -30,10 +29,10 @@ namespace JACL {
 
 //#define MAX_INT ((size_t)-1)
 
-#define ROW_NOT_BEGUN           0
-#define FIELD_NOT_BEGUN         1
-#define FIELD_BEGUN             2
-#define FIELD_MIGHT_HAVE_ENDED  3
+#define ROW_NOT_BEGUN 0
+#define FIELD_NOT_BEGUN 1
+#define FIELD_BEGUN 2
+#define FIELD_MIGHT_HAVE_ENDED 3
 
 #define MAX_INT 0x7fff
 
@@ -49,34 +48,33 @@ namespace JACL {
 
 #define MEM_BLK_SIZE 128
 
-#define SUBMIT_FIELD(p) \
-	do { \
-		if (!quoted) \
-			entry_pos -= spaces; \
-		if (p->options & CSV_APPEND_NULL) \
-			((p)->entry_buf[entry_pos+1]) = '\0'; \
-		if (cb1) \
-			cb1(p->entry_buf, entry_pos, data); \
-		pstate = FIELD_NOT_BEGUN; \
-		entry_pos = quoted = spaces = 0; \
+#define SUBMIT_FIELD(p)                             \
+	do {                                            \
+		if (!quoted)                                \
+			entry_pos -= spaces;                    \
+		if (p->options & CSV_APPEND_NULL)           \
+			((p)->entry_buf[entry_pos + 1]) = '\0'; \
+		if (cb1)                                    \
+			cb1(p->entry_buf, entry_pos, data);     \
+		pstate = FIELD_NOT_BEGUN;                   \
+		entry_pos = quoted = spaces = 0;            \
 	} while (0)
 
-#define SUBMIT_ROW(p, c) \
-	do { \
-		if (cb2) \
-			cb2(c, data); \
-		pstate = ROW_NOT_BEGUN; \
+#define SUBMIT_ROW(p, c)                 \
+	do {                                 \
+		if (cb2)                         \
+			cb2(c, data);                \
+		pstate = ROW_NOT_BEGUN;          \
 		entry_pos = quoted = spaces = 0; \
 	} while (0)
 
 #define SUBMIT_CHAR(p, c) ((p)->entry_buf[entry_pos++] = (c))
 
 static const char *csv_errors[] = {"success",
-                             "error parsing data while strict checking enabled",
-                             "memory exhausted while increasing buffer size",
-                             "data size too large",
-                             "invalid status code"
-                            };
+                                   "error parsing data while strict checking enabled",
+                                   "memory exhausted while increasing buffer size",
+                                   "data size too large",
+                                   "invalid status code"};
 
 int csv_error(struct csv_parser *p) {
 	/* Return the current status of the parser */
@@ -157,7 +155,6 @@ int csv_fini(struct csv_parser *p, void (*cb1)(void *, size_t, void *), void (*c
 	if (p == NULL)
 		return -1;
 
-
 	if (p->pstate == FIELD_BEGUN && p->quoted && p->options & CSV_STRICT && p->options & CSV_STRICT_FINI) {
 		/* Current field is quoted, no end-quote was seen, and CSV_STRICT_FINI is set */
 		p->status = CSV_EPARSE;
@@ -166,7 +163,7 @@ int csv_fini(struct csv_parser *p, void (*cb1)(void *, size_t, void *), void (*c
 
 	switch (p->pstate) {
 	case FIELD_MIGHT_HAVE_ENDED:
-		p->entry_pos -= p->spaces + 1;  /* get rid of spaces and original quote */
+		p->entry_pos -= p->spaces + 1; /* get rid of spaces and original quote */
 	/* Fall-through */
 	case FIELD_NOT_BEGUN:
 	case FIELD_BEGUN:
@@ -175,7 +172,7 @@ int csv_fini(struct csv_parser *p, void (*cb1)(void *, size_t, void *), void (*c
 		SUBMIT_FIELD(p);
 		SUBMIT_ROW(p, -1);
 	case ROW_NOT_BEGUN: /* Already ended properly */
-		;
+	    ;
 	default:
 		break;
 	}
@@ -190,12 +187,14 @@ int csv_fini(struct csv_parser *p, void (*cb1)(void *, size_t, void *), void (*c
 
 void csv_set_delim(struct csv_parser *p, unsigned char c) {
 	/* Set the delimiter */
-	if (p) p->delim_char = c;
+	if (p)
+		p->delim_char = c;
 }
 
 void csv_set_quote(struct csv_parser *p, unsigned char c) {
 	/* Set the quote character */
-	if (p) p->quote_char = c;
+	if (p)
+		p->quote_char = c;
 }
 
 unsigned char csv_get_delim(struct csv_parser *p) {
@@ -210,27 +209,32 @@ unsigned char csv_get_quote(struct csv_parser *p) {
 
 void csv_set_space_func(struct csv_parser *p, int (*f)(unsigned char)) {
 	/* Set the space function */
-	if (p) p->is_space = f;
+	if (p)
+		p->is_space = f;
 }
 
 void csv_set_term_func(struct csv_parser *p, int (*f)(unsigned char)) {
 	/* Set the term function */
-	if (p) p->is_term = f;
+	if (p)
+		p->is_term = f;
 }
 
 void csv_set_realloc_func(struct csv_parser *p, void *(*f)(void *, size_t)) {
 	/* Set the realloc function used to increase buffer size */
-	if (p && f) p->realloc_func = f;
+	if (p && f)
+		p->realloc_func = f;
 }
 
 void csv_set_free_func(struct csv_parser *p, void (*f)(void *)) {
 	/* Set the free function used to free the buffer */
-	if (p && f) p->free_func = f;
+	if (p && f)
+		p->free_func = f;
 }
 
 void csv_set_blk_size(struct csv_parser *p, size_t size) {
 	/* Set the block size used to increment buffer size */
-	if (p) p->blk_size = size;
+	if (p)
+		p->blk_size = size;
 }
 
 size_t csv_get_buffer_size(struct csv_parser *p) {
@@ -274,9 +278,9 @@ static int csv_increase_buffer(struct csv_parser *p) {
 
 size_t csv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(void *, size_t, void *),
                  void (*cb2)(int c, void *), void *data) {
-	unsigned const char *us = (unsigned const char *)s;  /* Access input data as array of unsigned char */
-	unsigned char c;              /* The character we are currently processing */
-	size_t pos = 0;               /* The number of characters we have processed in this call */
+	unsigned const char *us = (unsigned const char *)s; /* Access input data as array of unsigned char */
+	unsigned char c;                                    /* The character we are currently processing */
+	size_t pos = 0;                                     /* The number of characters we have processed in this call */
 
 	/* Store key fields into local variables for performance */
 	unsigned char delim = p->delim_char;
@@ -287,7 +291,6 @@ size_t csv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(vo
 	int pstate = p->pstate;
 	size_t spaces = p->spaces;
 	size_t entry_pos = p->entry_pos;
-
 
 	if (!p->entry_buf && pos < len) {
 		/* Buffer hasn't been allocated yet and len > 0 */
@@ -317,7 +320,7 @@ size_t csv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(vo
 				if (pstate == FIELD_NOT_BEGUN) {
 					SUBMIT_FIELD(p);
 					SUBMIT_ROW(p, (unsigned char)c);
-				} else {  /* ROW_NOT_BEGUN */
+				} else { /* ROW_NOT_BEGUN */
 					/* Don't submit empty rows by default */
 					if (p->options & CSV_REPALL_NL) {
 						SUBMIT_ROW(p, (unsigned char)c);
@@ -330,14 +333,14 @@ size_t csv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(vo
 			} else if (c == quote) { /* Quote */
 				pstate = FIELD_BEGUN;
 				quoted = 1;
-			} else {               /* Anything else */
+			} else { /* Anything else */
 				pstate = FIELD_BEGUN;
 				quoted = 0;
 				SUBMIT_CHAR(p, c);
 			}
 			break;
 		case FIELD_BEGUN:
-			if (c == quote) {         /* Quote */
+			if (c == quote) { /* Quote */
 				if (quoted) {
 					SUBMIT_CHAR(p, c);
 					pstate = FIELD_MIGHT_HAVE_ENDED;
@@ -351,13 +354,13 @@ size_t csv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(vo
 					SUBMIT_CHAR(p, c);
 					spaces = 0;
 				}
-			} else if (c == delim) {  /* Comma */
+			} else if (c == delim) { /* Comma */
 				if (quoted) {
 					SUBMIT_CHAR(p, c);
 				} else {
 					SUBMIT_FIELD(p);
 				}
-			} else if (is_term ? is_term(c) : c == CSV_CR || c == CSV_LF) {  /* Carriage Return or Line Feed */
+			} else if (is_term ? is_term(c) : c == CSV_CR || c == CSV_LF) { /* Carriage Return or Line Feed */
 				if (!quoted) {
 					SUBMIT_FIELD(p);
 					SUBMIT_ROW(p, (unsigned char)c);
@@ -367,24 +370,24 @@ size_t csv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(vo
 			} else if (!quoted && (is_space ? is_space(c) : c == CSV_SPACE || c == CSV_TAB)) { /* Tab or space for non-quoted field */
 				SUBMIT_CHAR(p, c);
 				spaces++;
-			} else {  /* Anything else */
+			} else { /* Anything else */
 				SUBMIT_CHAR(p, c);
 				spaces = 0;
 			}
 			break;
 		case FIELD_MIGHT_HAVE_ENDED:
 			/* This only happens when a quote character is encountered in a quoted field */
-			if (c == delim) {  /* Comma */
-				entry_pos -= spaces + 1;  /* get rid of spaces and original quote */
+			if (c == delim) {            /* Comma */
+				entry_pos -= spaces + 1; /* get rid of spaces and original quote */
 				SUBMIT_FIELD(p);
-			} else if (is_term ? is_term(c) : c == CSV_CR || c == CSV_LF) {  /* Carriage Return or Line Feed */
-				entry_pos -= spaces + 1;  /* get rid of spaces and original quote */
+			} else if (is_term ? is_term(c) : c == CSV_CR || c == CSV_LF) { /* Carriage Return or Line Feed */
+				entry_pos -= spaces + 1;                                    /* get rid of spaces and original quote */
 				SUBMIT_FIELD(p);
 				SUBMIT_ROW(p, (unsigned char)c);
-			} else if (is_space ? is_space(c) : c == CSV_SPACE || c == CSV_TAB) {  /* Space or Tab */
+			} else if (is_space ? is_space(c) : c == CSV_SPACE || c == CSV_TAB) { /* Space or Tab */
 				SUBMIT_CHAR(p, c);
 				spaces++;
-			} else if (c == quote) {  /* Quote */
+			} else if (c == quote) { /* Quote */
 				if (spaces) {
 					/* STRICT ERROR - unescaped double quote */
 					if (p->options & CSV_STRICT) {
@@ -398,7 +401,7 @@ size_t csv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(vo
 					/* Two quotes in a row */
 					pstate = FIELD_BEGUN;
 				}
-			} else {  /* Anything else */
+			} else { /* Anything else */
 				/* STRICT ERROR - unescaped double quote */
 				if (p->options & CSV_STRICT) {
 					p->status = CSV_EPARSE;
@@ -437,18 +440,21 @@ size_t csv_write(void *dest, size_t dest_size, const void *src, size_t src_size)
 		if (*csrc == '"') {
 			if (dest_size > chars)
 				*cdest++ = '"';
-			if (chars < MAX_INT) chars++;
+			if (chars < MAX_INT)
+				chars++;
 		}
 		if (dest_size > chars)
 			*cdest++ = *csrc;
-		if (chars < MAX_INT) chars++;
+		if (chars < MAX_INT)
+			chars++;
 		src_size--;
 		csrc++;
 	}
 
 	if (dest_size > chars)
 		*cdest = '"';
-	if (chars < MAX_INT) chars++;
+	if (chars < MAX_INT)
+		chars++;
 
 	return chars;
 }
@@ -493,18 +499,21 @@ size_t csv_write2(void *dest, size_t dest_size, const void *src, size_t src_size
 		if (*csrc == quote) {
 			if (dest_size > chars)
 				*cdest++ = quote;
-			if (chars < MAX_INT) chars++;
+			if (chars < MAX_INT)
+				chars++;
 		}
 		if (dest_size > chars)
 			*cdest++ = *csrc;
-		if (chars < MAX_INT) chars++;
+		if (chars < MAX_INT)
+			chars++;
 		src_size--;
 		csrc++;
 	}
 
 	if (dest_size > chars)
 		*cdest = quote;
-	if (chars < MAX_INT) chars++;
+	if (chars < MAX_INT)
+		chars++;
 
 	return chars;
 }

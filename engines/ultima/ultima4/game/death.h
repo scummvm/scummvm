@@ -33,6 +33,7 @@ private:
 	int timerCount;
 	uint timerMsg;
 	bool deathSequenceRunning;
+
 private:
 	/**
 	 * Timer
@@ -40,6 +41,7 @@ private:
 	static void deathTimer(void *data);
 
 	void revive();
+
 public:
 	/**
 	 * Constructor

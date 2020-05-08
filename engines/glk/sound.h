@@ -23,10 +23,10 @@
 #ifndef GLK_SOUND_H
 #define GLK_SOUND_H
 
-#include "glk/glk_types.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/array.h"
+#include "glk/glk_types.h"
 
 namespace Glk {
 
@@ -44,9 +44,11 @@ private:
 	uint _notify;
 	Audio::SoundHandle _handle;
 	uint _defaultVolume;
+
 public:
 	uint _rock;
 	gidispatch_rock_t _dispRock;
+
 public:
 	/**
 	 * Constructor
@@ -99,13 +101,16 @@ typedef SoundChannel *schanid_t;
  */
 class Sounds {
 	friend class SoundChannel;
+
 private:
 	Common::Array<schanid_t> _sounds;
+
 private:
 	/**
 	 * Remove a sound from the sounds list
 	 */
 	void removeSound(schanid_t snd);
+
 public:
 	~Sounds();
 

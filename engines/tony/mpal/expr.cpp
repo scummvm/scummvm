@@ -25,8 +25,8 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
-#include "tony/mpal/mpal.h"
 #include "tony/mpal/memory.h"
+#include "tony/mpal/mpal.h"
 #include "tony/mpal/mpaldll.h"
 #include "tony/tony.h"
 
@@ -46,7 +46,7 @@ static byte *duplicateExpression(MpalHandle h) {
 	orig = (byte *)globalLock(h);
 
 	int num = *(byte *)orig;
-	LpExpression one = (LpExpression)(orig+1);
+	LpExpression one = (LpExpression)(orig + 1);
 
 	clone = (byte *)globalAlloc(GMEM_FIXED, sizeof(Expression) * num + 1);
 	LpExpression two = (LpExpression)(clone + 1);
@@ -201,7 +201,7 @@ const byte *parseExpression(const byte *lpBuf, MpalHandle *h) {
 
 	LpExpression cur = (LpExpression)(start + 1);
 
-	for (uint32 i = 0;i < num; i++) {
+	for (uint32 i = 0; i < num; i++) {
 		cur->_type = *(lpBuf);
 
 		// *(lpBuf + 1) contains the unary operator, unused => skipped

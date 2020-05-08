@@ -43,6 +43,7 @@ class DuckmanInventory {
 public:
 	DuckmanInventory(IllusionsEngine_Duckman *vm);
 	~DuckmanInventory();
+
 public:
 	IllusionsEngine_Duckman *_vm;
 	Common::Array<DMInventorySlot> _inventorySlots;

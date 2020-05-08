@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/conversations.h"
-#include "mads/scene.h"
-#include "mads/phantom/phantom_scenes.h"
 #include "mads/phantom/phantom_scenes5.h"
+#include "common/scummsys.h"
+#include "mads/conversations.h"
+#include "mads/mads.h"
+#include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -187,7 +187,6 @@ void Scene501::step() {
 		break;
 	}
 
-
 	switch (_game._trigger) {
 	case 60:
 		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 8, 1);
@@ -211,8 +210,7 @@ void Scene501::step() {
 		_scene->setDynamicAnim(idx, _globals._animationIndexes[0], 1);
 		_scene->setDynamicAnim(idx, _globals._animationIndexes[0], 2);
 		_scene->setDynamicAnim(idx, _globals._animationIndexes[0], 3);
-		}
-		break;
+	} break;
 
 	case 90:
 		_globals[kPlayerScore] += 5;
@@ -242,7 +240,7 @@ void Scene501::step() {
 
 		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 124) {
 			_scene->_hotspots.activateAtPos(NOUN_CHRISTINE, false, Common::Point(125, 94));
-			_scene->_hotspots.activateAtPos(NOUN_CHRISTINE, true , Common::Point(113, 93));
+			_scene->_hotspots.activateAtPos(NOUN_CHRISTINE, true, Common::Point(113, 93));
 		}
 
 		if (_scene->_animation[_globals._animationIndexes[0]]->getCurrentFrame() == 125)
@@ -304,8 +302,7 @@ void Scene501::actions() {
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[3], false);
 			_scene->_sequences.addTimer(15, 2);
 			_vm->_sound->command(74);
-			}
-			break;
+		} break;
 
 		case 2:
 			_scene->deleteSequence(_globals._sequenceIndexes[3]);
@@ -349,8 +346,7 @@ void Scene501::actions() {
 					_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[3], false);
 					_scene->_sequences.addTimer(15, 2);
 					_vm->_sound->command(74);
-					}
-					break;
+				} break;
 
 				case 2:
 					_scene->deleteSequence(_globals._sequenceIndexes[3]);
@@ -433,8 +429,7 @@ void Scene501::actions() {
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 66);
 					_vm->_sound->command(24);
-					}
-					break;
+				} break;
 
 				case 66:
 					_game._player.walk(Common::Point(319, 116), FACING_NORTHWEST);
@@ -480,8 +475,7 @@ void Scene501::actions() {
 					_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[3], false);
 					_scene->_sequences.addTimer(15, 2);
 					_vm->_sound->command(73);
-						}
-						break;
+				} break;
 
 				case 2:
 					_scene->deleteSequence(_globals._sequenceIndexes[3]);
@@ -677,7 +671,7 @@ Scene502::Scene502(MADSEngine *vm) : Scene5xx(vm) {
 
 Scene502::~Scene502() {
 	if (_cyclePointer)
-		delete(_cyclePointer);
+		delete (_cyclePointer);
 }
 
 void Scene502::synchronize(Common::Serializer &s) {
@@ -1099,8 +1093,7 @@ void Scene502::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_CLIMB_THROUGH, NOUN_TRAP_DOOR)
-	 && (_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK) || _game._objects.isInInventory(OBJ_CABLE_HOOK))) {
+	if (_action.isAction(VERB_CLIMB_THROUGH, NOUN_TRAP_DOOR) && (_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK) || _game._objects.isInInventory(OBJ_CABLE_HOOK))) {
 		_vm->_dialogs->show(50228);
 		_action._inProgress = false;
 		return;
@@ -1191,8 +1184,7 @@ void Scene502::actions() {
 			return;
 		}
 
-		if (_action.isObject(NOUN_ROPE) && !_game._objects.isInInventory(OBJ_ROPE)
-		 && !_game._objects.isInInventory(OBJ_CABLE_HOOK) && !_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK)) {
+		if (_action.isObject(NOUN_ROPE) && !_game._objects.isInInventory(OBJ_ROPE) && !_game._objects.isInInventory(OBJ_CABLE_HOOK) && !_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK)) {
 			_vm->_dialogs->show(50233);
 			_action._inProgress = false;
 			return;
@@ -1211,8 +1203,7 @@ void Scene502::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_ROPE) && !_game._objects.isInInventory(OBJ_ROPE)
-	 && !_game._objects.isInInventory(OBJ_CABLE_HOOK) && !_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK)) {
+	if (_action.isAction(VERB_TAKE, NOUN_ROPE) && !_game._objects.isInInventory(OBJ_ROPE) && !_game._objects.isInInventory(OBJ_CABLE_HOOK) && !_game._objects.isInInventory(OBJ_ROPE_WITH_HOOK)) {
 		_vm->_dialogs->show(50234);
 		_action._inProgress = false;
 		return;
@@ -1655,8 +1646,7 @@ void Scene502::handlePanelAnimation() {
 			_scene->_sequences.addTimer(5, 113);
 			break;
 		}
-		}
-		break;
+	} break;
 
 	case 113: {
 		switch (_panelPushedNum) {
@@ -1769,8 +1759,7 @@ void Scene502::handlePanelAnimation() {
 			_scene->deleteSequence(_globals._sequenceIndexes[6]);
 			_globals._animationIndexes[0] = _scene->loadAnimation(formAnimName('t', 1), 80);
 		}
-		}
-		break;
+	} break;
 
 	default:
 		break;
@@ -1944,7 +1933,7 @@ void Scene504::enter() {
 
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_2");
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACERAL", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
-				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEXDFR",PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
+				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEXDFR", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEPHN", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 
 				_globals._animationIndexes[3] = _scene->loadAnimation(formAnimName('p', 3), 0);
@@ -2103,7 +2092,7 @@ void Scene504::enter() {
 
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*CHR_3");
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACERAL", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
-				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEXDFR",PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
+				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEXDFR", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 				_globals._spriteIndexes[6] = _scene->_sprites.addSprites("*FACEPHN", PALFLAG_ALL_TO_CLOSEST | PALFLAG_ANY_TO_CLOSEST);
 
 				_globals._animationIndexes[3] = _scene->loadAnimation(formAnimName('p', 3), 0);
@@ -2628,9 +2617,7 @@ void Scene504::preActions() {
 			_game._player.walk(Common::Point(33, 116), FACING_NORTHWEST);
 	}
 
-	if ((_globals[kFightStatus] == 0) && (_globals[kCoffinStatus] == 2) && !_game._visitedScenes.exists(506)
-	 && !_action.isAction(VERB_LOOK) && !_action.isAction(VERB_LOOK_AT) && !_action.isAction(VERB_ATTACK)
-	 && !_action.isAction(VERB_TAKE, NOUN_SWORD) && !_action.isAction(VERB_TALK_TO, NOUN_PHANTOM)) {
+	if ((_globals[kFightStatus] == 0) && (_globals[kCoffinStatus] == 2) && !_game._visitedScenes.exists(506) && !_action.isAction(VERB_LOOK) && !_action.isAction(VERB_LOOK_AT) && !_action.isAction(VERB_ATTACK) && !_action.isAction(VERB_TAKE, NOUN_SWORD) && !_action.isAction(VERB_TALK_TO, NOUN_PHANTOM)) {
 		_vm->_dialogs->show(50430);
 		_game._player.cancelCommand();
 	}
@@ -3014,7 +3001,7 @@ void Scene504::handleChairAnimation() {
 		}
 
 		if (_chairStatus == 0) {
-			if (_vm->getRandomNumber(1,5) == 1)
+			if (_vm->getRandomNumber(1, 5) == 1)
 				resetFrame = _vm->getRandomNumber(24, 30);
 			else
 				resetFrame = _chairFrame - 1;
@@ -3427,8 +3414,7 @@ void Scene505::actions() {
 			int skullSeqIdx = _scene->_sequences.startPingPongCycle(sprIdx, false, 5, 2);
 			_scene->_sequences.setAnimRange(skullSeqIdx, -1, -2);
 			_scene->_sequences.setDepth(skullSeqIdx, 1);
-				}
-				break;
+		} break;
 
 		case 2:
 			_game.syncTimers(SYNC_PLAYER, 0, SYNC_SEQ, _globals._sequenceIndexes[0]);
@@ -4142,7 +4128,6 @@ void Scene506::actions() {
 		_action._inProgress = false;
 		return;
 	}
-
 
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) || _action.isAction(VERB_OPEN, NOUN_DOOR)) {
 		if (_scene->_customDest.x < 150) {

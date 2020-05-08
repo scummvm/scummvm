@@ -20,16 +20,15 @@
  *
  */
 
-
 #include "common/system.h"
 #include "common/timer.h"
 
 #include "scumm/actor.h"
-#include "scumm/scumm_v7.h"
-#include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "scumm/imuse_digi/dimuse_track.h"
+#include "scumm/scumm_v7.h"
+#include "scumm/sound.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -279,9 +278,8 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 					}
 					if (sync_size < 0)
 						sync_ptr -= 4;
-					else
-						if (READ_BE_UINT16(sync_ptr) > msPos)
-							sync_ptr -= 4;
+					else if (READ_BE_UINT16(sync_ptr) > msPos)
+						sync_ptr -= 4;
 
 					width = sync_ptr[2];
 					height = sync_ptr[3];

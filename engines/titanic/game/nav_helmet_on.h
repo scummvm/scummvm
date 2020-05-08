@@ -31,8 +31,10 @@ namespace Titanic {
 class CNavHelmetOn : public CNavHelmet {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+
 private:
 	CString _target;
+
 public:
 	CLASSDEF;
 	CNavHelmetOn() : CNavHelmet(), _target("NULL") {}

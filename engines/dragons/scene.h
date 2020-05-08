@@ -83,6 +83,7 @@ public:
 	Common::Point getLayerOffset(uint8 layerNumber);
 	ScaleLayer *getScaleLayer();
 	void setLayerAlphaMode(uint8 layerNumber, AlphaBlendMode mode);
+
 private:
 	void resetActorFrameFlags();
 	void drawActorNumber(int16 x, int16 y, uint16 actorId);

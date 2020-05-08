@@ -85,7 +85,6 @@ Sound::~Sound() {
 	delete[] loadedSoundData;
 }
 
-
 void Sound::clearAllMidiSlots() {
 	for (int i = 0; i < NUM_MIDI_SLOTS; i++) {
 		clearMidiSlot(i);
@@ -372,7 +371,6 @@ void Sound::checkLoopMusic() {
 	// TODO
 	// It might be better to get rid of this altogether and deal with it in callbacks...
 }
-
 
 // XMIDI or SM sound
 void Sound::loadPCMusicFile(const Common::String &baseSoundName) {

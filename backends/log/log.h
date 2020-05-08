@@ -100,6 +100,7 @@ public:
 	 *                           a new line.
 	 */
 	void print(const char *message, const bool printTimeOnNewline = true);
+
 private:
 	/**
 	 * Prints a time stamp in the form: "[YYYY-MM-DD HH:MM:SS] ".

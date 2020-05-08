@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBirdSong, CRoomAutoSoundPlayer)
-	ON_MESSAGE(TurnOn)
-	ON_MESSAGE(SignalObject)
+ON_MESSAGE(TurnOn)
+ON_MESSAGE(SignalObject)
 END_MESSAGE_MAP()
 
 void CBirdSong::save(SimpleFile *file, int indent) {

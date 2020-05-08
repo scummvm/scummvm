@@ -21,8 +21,8 @@
  */
 
 #include "glk/frotz/quetzal.h"
-#include "glk/frotz/processor.h"
 #include "common/memstream.h"
+#include "glk/frotz/processor.h"
 
 namespace Glk {
 namespace Frotz {
@@ -32,14 +32,16 @@ namespace Frotz {
  */
 enum ParseState {
 	GOT_HEADER = 0x01,
-	GOT_STACK  = 0x02,
+	GOT_STACK = 0x02,
 	GOT_MEMORY = 0x04,
-	GOT_NONE   = 0x00,
-	GOT_ALL    = 0x07,
-	GOT_ERROR  = 0x80
+	GOT_NONE = 0x00,
+	GOT_ALL = 0x07,
+	GOT_ERROR = 0x80
 };
 
-#define WRITE_RUN(RUN) ws.writeByte(0); ws.writeByte((byte)(RUN))
+#define WRITE_RUN(RUN) \
+	ws.writeByte(0);   \
+	ws.writeByte((byte)(RUN))
 
 bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::String &desc) {
 	Processor &p = *proc;
@@ -101,7 +103,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 		// We construct a list of frame indices, most recent first, in `frames'.
 		// These indices are the offsets into the `stack' array of the word before
 		// the first word pushed in each frame.
-		frames[0] = p._sp - p._stack;	// The frame we'd get by doing a call now.
+		frames[0] = p._sp - p._stack; // The frame we'd get by doing a call now.
 		for (i = p._fp - p._stack + 4, n = 0; i < STACK_SIZE + 4; i = p._stack[i - 3] + 5)
 			frames[++n] = i;
 
@@ -118,7 +120,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 
 		// Write out the rest of the stack frames.
 		for (i = n; i > 0; --i) {
-			zword *pf = p._stack + frames[i] - 4;	// Points to call frame
+			zword *pf = p._stack + frames[i] - 4; // Points to call frame
 			nvars = (pf[0] & 0x0F00) >> 8;
 			nargs = pf[0] & 0x00FF;
 			nstk = frames[i] - frames[i - 1] - nvars - 4;
@@ -135,7 +137,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 			case 0x1000:
 				// Procedure
 				var = 0;
-				pc = (pc << 8) | 0x10 | nvars;	// Set procedure flag
+				pc = (pc << 8) | 0x10 | nvars; // Set procedure flag
 				break;
 
 			default:
@@ -143,7 +145,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 				return 0;
 			}
 			if (nargs != 0)
-				nargs = (1 << nargs) - 1;	// Make args into bitmap
+				nargs = (1 << nargs) - 1; // Make args into bitmap
 
 			// Write the main part of the frame...
 			ws.writeUint32BE(pc);
@@ -152,7 +154,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 			ws.writeUint16BE(nstk);
 
 			// Write the variables and eval stack
-			for (j = 0, --pf; j<nvars + nstk; ++j, --pf)
+			for (j = 0, --pf; j < nvars + nstk; ++j, --pf)
 				ws.writeUint16BE(*pf);
 		}
 	}
@@ -169,7 +171,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 	uint tmpl, currlen;
 	offset_t pc;
 	zword tmpw;
-	int fatal = 0;	// Set to -1 when errors must be fatal.
+	int fatal = 0; // Set to -1 when errors must be fatal.
 	zbyte progress = GOT_NONE;
 	int i, x, y;
 
@@ -221,7 +223,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 			x = s->readByte();
 			pc |= (uint)x;
 
-			fatal = -1;		// Setting PC means errors must be fatal
+			fatal = -1; // Setting PC means errors must be fatal
 			p.setPC(pc);
 			break;
 
@@ -233,7 +235,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 			}
 			progress |= GOT_STACK;
 
-			fatal = -1;		// Setting SP means errors must be fatal
+			fatal = -1; // Setting SP means errors must be fatal
 			p._sp = p._stack + STACK_SIZE;
 
 			// All versions other than V6 may use evaluation stack outside any function context.
@@ -261,8 +263,9 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 
 			// We now proceed to load the main block of stack frames
 			for (p._fp = p._stack + STACK_SIZE, p._frameCount = 0;
-					currlen > 0; currlen -= 8, ++p._frameCount) {
-				if (currlen < 8)				return fatal;
+			     currlen > 0; currlen -= 8, ++p._frameCount) {
+				if (currlen < 8)
+					return fatal;
 				if (p._sp - p._stack < 4) {
 					// No space for frame
 					p.print_string("Save-file has too much stack (and I can't cope).\n");
@@ -271,7 +274,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 
 				// Read PC, procedure flag and formal param count
 				tmpl = s->readUint32BE();
-				y = (int)(tmpl & 0x0F);		// Number of formals
+				y = (int)(tmpl & 0x0F); // Number of formals
 				tmpw = y << 8;
 
 				// Read result variable
@@ -279,12 +282,12 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 
 				// Check the procedure flag...
 				if (tmpl & 0x10) {
-					tmpw |= 0x1000;		// It's a procedure
-					tmpl >>= 8;			// Shift to get PC value
+					tmpw |= 0x1000; // It's a procedure
+					tmpl >>= 8;     // Shift to get PC value
 				} else {
 					// Functions have type 0, so no need to or anything
-					tmpl >>= 8;			// Shift to get PC value
-					--tmpl;				// Point at result byte. */
+					tmpl >>= 8; // Shift to get PC value
+					--tmpl;     // Point at result byte. */
 
 					// Sanity check on result variable...
 					if (p[tmpl] != (zbyte)x) {
@@ -293,14 +296,14 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 					}
 				}
 
-				*--p._sp = (zword)(tmpl >> 9);		// High part of PC
-				*--p._sp = (zword)(tmpl & 0x1FF);	// Low part of PC
-				*--p._sp = (zword)(p._fp - p._stack - 1);	// FP
+				*--p._sp = (zword)(tmpl >> 9);            // High part of PC
+				*--p._sp = (zword)(tmpl & 0x1FF);         // Low part of PC
+				*--p._sp = (zword)(p._fp - p._stack - 1); // FP
 
 				// Read and process argument mask
 				x = s->readByte();
-				++x;		// Should now be a power of 2
-				for (i = 0; i<8; ++i)
+				++x; // Should now be a power of 2
+				for (i = 0; i < 8; ++i)
 					if (x & (1 << i))
 						break;
 				if (x ^ (1 << i)) {
@@ -310,19 +313,19 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 				}
 
 				*--p._sp = tmpw | i;
-				p._fp = p._sp;	// FP for next frame
+				p._fp = p._sp; // FP for next frame
 
 				// Read amount of eval stack used
 				tmpw = s->readUint16BE();
 
-				tmpw += y;	// Amount of stack + number of locals
+				tmpw += y; // Amount of stack + number of locals
 				if (p._sp - p._stack <= tmpw) {
 					p.print_string("Save-file has too much stack (and I can't cope).\n");
 					return fatal;
 				}
 				if (currlen < (uint)tmpw * 2)
 					return fatal;
-				
+
 				for (i = 0; i < tmpw; ++i)
 					--*p._sp = s->readUint16BE();
 				currlen -= tmpw * 2;
@@ -335,8 +338,8 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 		case ID_CMem:
 			if (!(progress & GOT_MEMORY)) {
 				_storyFile->seek(0);
-				
-				i = 0;	// Bytes written to data area
+
+				i = 0; // Bytes written to data area
 				for (; currlen > 0; --currlen) {
 					x = s->readByte();
 					if (x == 0) {
@@ -367,7 +370,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 					if (i > p.h_dynamic_size) {
 						p.print_string("warning: `CMem' chunk too long!\n");
 						s->skip(currlen);
-						break;	// Keep going; there may be a `UMem' too
+						break; // Keep going; there may be a `UMem' too
 					}
 				}
 
@@ -376,7 +379,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 					p[i] = _storyFile->readByte();
 
 				if (currlen == 0)
-					progress |= GOT_MEMORY;		// Only if succeeded
+					progress |= GOT_MEMORY; // Only if succeeded
 				break;
 			}
 			break;
@@ -387,13 +390,13 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 				// Must be exactly the right size
 				if (currlen == p.h_dynamic_size) {
 					if (s->read(p.zmp, currlen) == currlen) {
-						progress |= GOT_MEMORY;	// Only on success
+						progress |= GOT_MEMORY; // Only on success
 						break;
 					}
 				} else {
 					p.print_string("`UMem' chunk wrong size!\n");
 				}
-				
+
 				// Fall into default action (skip chunk) on errors
 			}
 			break;

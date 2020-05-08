@@ -31,6 +31,7 @@
 class RISCOSSdlEventSource : public SdlEventSource {
 public:
 	RISCOSSdlEventSource();
+
 protected:
 	bool handleSysWMEvent(SDL_Event &ev, Common::Event &event) override;
 };

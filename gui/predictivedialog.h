@@ -23,9 +23,9 @@
 #ifndef GUI_PREDICTIVEDIALOG_H
 #define GUI_PREDICTIVEDIALOG_H
 
-#include "gui/dialog.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 
@@ -48,23 +48,23 @@ public:
 
 private:
 	enum ButtonId {
-		kButton1Act   = 0,
-		kButton2Act   = 1,
-		kButton3Act   = 2,
-		kButton4Act   = 3,
-		kButton5Act   = 4,
-		kButton6Act   = 5,
-		kButton7Act   = 6,
-		kButton8Act   = 7,
-		kButton9Act   = 8,
-		kNextAct      = 9,
-		kAddAct       = 10,
-		kDelAct       = 11,
-		kCancelAct    = 12,
-		kOkAct        = 13,
-		kModeAct      = 14,
-		kButton0Act   = 15,
-		kNoAct        = -1
+		kButton1Act = 0,
+		kButton2Act = 1,
+		kButton3Act = 2,
+		kButton4Act = 3,
+		kButton5Act = 4,
+		kButton6Act = 5,
+		kButton7Act = 6,
+		kButton8Act = 7,
+		kButton9Act = 8,
+		kNextAct = 9,
+		kAddAct = 10,
+		kDelAct = 11,
+		kCancelAct = 12,
+		kOkAct = 13,
+		kModeAct = 14,
+		kButton0Act = 15,
+		kNoAct = -1
 	};
 
 	enum {
@@ -111,6 +111,7 @@ private:
 	void mergeDicts();
 
 	void updateHighLightedButton(ButtonId active);
+
 private:
 	Dict _unitedDict;
 	Dict _predictiveDict;
@@ -147,7 +148,7 @@ private:
 
 private:
 	EditTextWidget *_editText;
-	ButtonWidget   *_button[kButtonCount];
+	ButtonWidget *_button[kButtonCount];
 };
 
 } // namespace GUI

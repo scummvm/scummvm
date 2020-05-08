@@ -54,7 +54,6 @@ public:
 	GUI_status KeyDown(const Common::KeyState &key) override;
 
 protected:
-
 };
 
 } // End of namespace Nuvie

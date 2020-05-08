@@ -22,9 +22,9 @@
 
 #include "scumm/he/intern_he.h"
 
-#include "scumm/he/moonbase/moonbase.h"
-#include "scumm/he/moonbase/ai_tree.h"
 #include "scumm/he/moonbase/ai_main.h"
+#include "scumm/he/moonbase/ai_tree.h"
+#include "scumm/he/moonbase/moonbase.h"
 
 namespace Scumm {
 
@@ -164,7 +164,6 @@ Node *Tree::aStarSearch() {
 
 	return retNode;
 }
-
 
 Node *Tree::aStarSearch_singlePassInit() {
 	Node *retNode = NULL;

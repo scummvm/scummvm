@@ -22,23 +22,23 @@
 
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
 
-#define FIRST_LIST      noun_number-2
-#define SECOND_LIST     noun_number
+#define FIRST_LIST noun_number - 2
+#define SECOND_LIST noun_number
 
-int                             object_list[4][MAX_OBJECTS];
-int                             multiple_resolved[MAX_OBJECTS];
+int object_list[4][MAX_OBJECTS];
+int multiple_resolved[MAX_OBJECTS];
 
 // THIS IS THE NUMBER OF OBJECTS LEFT IN THE LIST
-int                             list_size[4];
+int list_size[4];
 
 // THIS IS THE INDEX OF THE FINAL OBJECT
-int                             max_size[4];
+int max_size[4];
 
 /* object_list[] HAS THE FOLLOWING INDEXES:
  * noun1            : 0
@@ -47,68 +47,68 @@ int                             max_size[4];
  * noun2 EXCEPTIONS : 3
  */
 
-int                             selection;
+int selection;
 
-int                             matches = 0;
-int                             highest_confidence = 0;
-int                             prime_suspect = 0;
-int                             done = 0;
-int                             backup_pointer = 0;
-int                             everything = 0;
+int matches = 0;
+int highest_confidence = 0;
+int prime_suspect = 0;
+int done = 0;
+int backup_pointer = 0;
+int everything = 0;
 
-int                             confidence[MAX_OBJECTS];
-int                             possible_objects[MAX_OBJECTS];
+int confidence[MAX_OBJECTS];
+int possible_objects[MAX_OBJECTS];
 
-int                             it;
-int                             them[MAX_OBJECTS];
-int                             her;
-int                             him;
-int                             parent;
+int it;
+int them[MAX_OBJECTS];
+int her;
+int him;
+int parent;
 
-int                             custom_error;
+int custom_error;
 
-int                             oops_word;
-int                             last_exact;
+int oops_word;
+int last_exact;
 
-char                            *expected_scope[3];
+char *expected_scope[3];
 
 // THIS ARRAY DEFINES THE OBJECTS THAT THE CURRENT OBJECTS ARE
 // SUPPOSED TO BE A CHILD OF
-int                             from_objects[MAX_OBJECTS];
+int from_objects[MAX_OBJECTS];
 
-int                             after_from;
-const char                      *from_word;
+int after_from;
+const char *from_word;
 
-int                             object_expected = FALSE;
+int object_expected = FALSE;
 
-char                            default_function[84];
-char                            object_name[84];
+char default_function[84];
+char object_name[84];
 
-char                            base_function[84];
-char                            before_function[84];
-char                            after_function[84];
-char                            local_after_function[84];
+char base_function[84];
+char before_function[84];
+char after_function[84];
+char local_after_function[84];
 
-extern char                     text_buffer[];
-extern char                     function_name[];
-extern char                     temp_buffer[];
-extern char                     error_buffer[];
-extern char                     override_[];
-extern const char               *word[];
+extern char text_buffer[];
+extern char function_name[];
+extern char temp_buffer[];
+extern char error_buffer[];
+extern char override_[];
+extern const char *word[];
 
-extern int                      quoted[];
+extern int quoted[];
 
-extern struct object_type       *object[];
-extern int                      objects;
+extern struct object_type *object[];
+extern int objects;
 
-extern int                      noun[];
-extern int                      wp;
-extern int                      player;
+extern int noun[];
+extern int wp;
+extern int player;
 
-extern struct word_type         *grammar_table;
-extern struct function_type     *executing_function;
-extern struct object_type       *object[];
-extern struct variable_type     *variable[];
+extern struct word_type *grammar_table;
+extern struct function_type *executing_function;
+extern struct object_type *object[];
+extern struct variable_type *variable[];
 
 void parser() {
 	// THIS FUNCTION COMPARES THE WORDS IN THE PLAYER'S COMMAND TO THE
@@ -117,8 +117,8 @@ void parser() {
 	struct word_type *pointer;
 	struct word_type *matched_word = NULL;
 
-	int             index;
-	int             current_noun = 0;
+	int index;
+	int current_noun = 0;
 
 	// RESET TO START OF PROCESSING
 
@@ -362,7 +362,8 @@ void parser() {
 int first_available(int list_number) {
 	int index;
 
-	if (list_size[list_number] == 0) return (0);
+	if (list_size[list_number] == 0)
+		return (0);
 
 	//printf("--- looking for next object in list\n");
 	for (index = 0; index < max_size[list_number]; index++) {
@@ -524,7 +525,6 @@ void call_functions(const char *base_name) {
 	if (execute("+after") != FALSE)
 		return;
 
-
 	//sprintf(temp_buffer, "TIME = %d", TIME->value);
 	//log_error(temp_buffer, PLUS_STDERR);
 
@@ -621,9 +621,7 @@ int is_terminator(struct word_type *scope_word) {
 			/* LOOP THROUGH ALL WORDS IN THE NEXT LEVEL OF THE
 			 * GRAMMAR TABLE. THESE ARE THE WORDS THAT MARK THE END
 			 * OF THE OBJECT REFERENCE PART OF THE COMMAND */
-			if (!strcmp(word[wp], terminator->word)
-			        || (!strcmp(terminator->word, "$integer")
-			            && validate(word[wp]))) {
+			if (!strcmp(word[wp], terminator->word) || (!strcmp(terminator->word, "$integer") && validate(word[wp]))) {
 				return (TRUE);
 			}
 		} while ((terminator = terminator->next_sibling) != NULL);
@@ -636,9 +634,9 @@ int build_object_list(struct word_type *scope_word, int noun_number) {
 	/* THIS FUNCTION BUILDS A LIST OF OBJECTS FROM THE PLAYER'S COMMAND
 	 * AND RETURNS THE NUMBER OF OBJECTS IN THAT LIST */
 
-	int             index, counter;
-	int             resolved_object;
-	const char      *except_word;
+	int index, counter;
+	int resolved_object;
+	const char *except_word;
 
 	//printf("--- entering build object list starting at %s with a scope_word of %s\n", word[wp], scope_word->word);
 	/* LOOK AHEAD FOR A FROM CLAUSE AND STORE from_object IF SO */
@@ -656,7 +654,7 @@ int build_object_list(struct word_type *scope_word, int noun_number) {
 		 * MORE OBJECTS TO RESOLVE */
 
 		if (!strcmp(word[wp], cstring_resolve("BUT_WORD")->value) ||
-		        !strcmp(word[wp], cstring_resolve("EXCEPT_WORD")->value)) {
+		    !strcmp(word[wp], cstring_resolve("EXCEPT_WORD")->value)) {
 			/* START ADDING ALL FUTURE RESOLVED OBJECTS TO A SECOND LIST
 			 * TO REMOVE FROM THE FIRST */
 			except_word = word[wp];
@@ -764,7 +762,7 @@ int build_object_list(struct word_type *scope_word, int noun_number) {
 					 * LIST, REMOVE IT */
 					//printf("--- comparing %s = %s\n", object[object_list[FIRST_LIST][counter]]->label, object[object_list[SECOND_LIST][index]]->label);
 					if (object_list[FIRST_LIST][counter] ==
-					        object_list[SECOND_LIST][index]) {
+					    object_list[SECOND_LIST][index]) {
 
 						//printf("--- removing object %s\n", object[object_list[FIRST_LIST][counter]]->label);
 						object_list[FIRST_LIST][counter] = 0;
@@ -790,7 +788,7 @@ int build_object_list(struct word_type *scope_word, int noun_number) {
 		/* THE LIST IS NOW EMPTY, DISPLAY ' I DON'T SEE WHAT YOU
 		 * ARE REFERRING TO.' ERROR */
 		if (!strcmp(scope_word->word, "*held") ||
-		        !strcmp(scope_word->word, "**held")) {
+		    !strcmp(scope_word->word, "**held")) {
 			write_text(cstring_resolve("NONE_HELD")->value);
 		} else {
 			write_text(cstring_resolve("NO_OBJECTS")->value);
@@ -841,9 +839,9 @@ void add_all(struct word_type *scope_word, int noun_number) {
 
 	for (index = 1; index <= objects; index++) {
 		if ((object[index]->MASS < HEAVY) &&
-		        !(object[index]->attributes & LOCATION)) {
+		    !(object[index]->attributes & LOCATION)) {
 			if (is_direct_child_of_from(index) &&
-			        scope(index, scope_word->word, RESTRICT)) {
+			    scope(index, scope_word->word, RESTRICT)) {
 				//printf("--- objects parent is %s\n", object[object[index]->PARENT]->label);
 				add_to_list(noun_number, index);
 			}
@@ -926,7 +924,8 @@ int get_from_object(struct word_type *scope_word, int noun_number) {
 			//printf("--- from is a terminator, don't get a from object\n");
 			return (TRUE);
 		}
-		while ((terminator = terminator->next_sibling) != NULL);
+		while ((terminator = terminator->next_sibling) != NULL)
+			;
 	}
 
 	/* LOOP FROM THE CURRENT WORD TO THE NEXT TERMINATOR AND LOOK FOR THE
@@ -1064,11 +1063,9 @@ void add_to_list(int noun_number, int resolved_object) {
 	/* AND SET IT, THEM, HER AND HIM */
 	if (!(object[resolved_object]->attributes & ANIMATE))
 		it = resolved_object;
-	if (object[resolved_object]->attributes & ANIMATE
-	        && object[resolved_object]->attributes & FEMALE)
+	if (object[resolved_object]->attributes & ANIMATE && object[resolved_object]->attributes & FEMALE)
 		her = resolved_object;
-	if (object[resolved_object]->attributes & ANIMATE
-	        && !(object[resolved_object]->attributes & FEMALE))
+	if (object[resolved_object]->attributes & ANIMATE && !(object[resolved_object]->attributes & FEMALE))
 		him = resolved_object;
 
 	//printf("--- adding_object %s to list %d at index %d\n", object[resolved_object]->label, noun_number, max_size[noun_number]);
@@ -1083,14 +1080,14 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 	 * POINTED TO BY THE PASSED pointer */
 
 	/* THIS IS SET TO TRUE WHEN THE CURRENT WORD MATCHES THE CURRENT OBJECT */
-	int             object_matched;
+	int object_matched;
 
 	/* THIS IS SET TO > 0 WHEN THE PLURAL FORM OF AN OBJECT IS USED */
-	int             return_limit = 0;
+	int return_limit = 0;
 
-	int             index;
-	int             counter;
-	int             first_word = TRUE;
+	int index;
+	int counter;
+	int first_word = TRUE;
 
 	struct word_type *terminator = scope_word->first_child;
 	struct name_type *current_name;
@@ -1166,15 +1163,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 				 * GRAMMAR TABLE. THESE ARE THE WORDS THAT MARK THE END
 				 * OF THE OBJECT REFERENCE PART OF THE COMMAND */
 				//printf("--- checking terminator word %s\n", terminator->word);
-				if (!strcmp(word[wp], terminator->word)
-				        || (!strcmp(word[wp], cstring_resolve("FROM_WORD")->value))
-				        || (!strcmp(word[wp], cstring_resolve("AND_WORD")->value))
-				        || (!strcmp(word[wp], "comma"))
-				        || (!strcmp(word[wp], cstring_resolve("BUT_WORD")->value))
-				        || (!strcmp(word[wp], cstring_resolve("THEN_WORD")->value))
-				        || (!strcmp(word[wp], cstring_resolve("EXCEPT_WORD")->value))
-				        || (!strcmp(terminator->word, "$integer")
-				            && validate(word[wp]))) {
+				if (!strcmp(word[wp], terminator->word) || (!strcmp(word[wp], cstring_resolve("FROM_WORD")->value)) || (!strcmp(word[wp], cstring_resolve("AND_WORD")->value)) || (!strcmp(word[wp], "comma")) || (!strcmp(word[wp], cstring_resolve("BUT_WORD")->value)) || (!strcmp(word[wp], cstring_resolve("THEN_WORD")->value)) || (!strcmp(word[wp], cstring_resolve("EXCEPT_WORD")->value)) || (!strcmp(terminator->word, "$integer") && validate(word[wp]))) {
 					if (!matches) {
 						/* A TERMINATOR HAS BEEN FOUND BEFORE A
 						 * SINGLE MATCHING OBJECT NAME. */
@@ -1251,7 +1240,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 				object_matched = FALSE;
 
 				if (!strcmp(cstring_resolve("IT_WORD")->value, word[wp]) ||
-				        !strcmp(cstring_resolve("ITSELF_WORD")->value, word[wp])) {
+				    !strcmp(cstring_resolve("ITSELF_WORD")->value, word[wp])) {
 					if (it == FALSE) {
 						no_it();
 						return (FALSE);
@@ -1434,12 +1423,12 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 		 * SHOULD THIS COMMAND TURN OUT TO BE INVALID */
 		object_expected = TRUE;
 
-		wp = backup_pointer;    /* BACK UP THE CURRENT WORD POINTER.
+		wp = backup_pointer; /* BACK UP THE CURRENT WORD POINTER.
                                  * SO THE PARSER CAN INVESTIAGE THE
                                  * POSIBILITY THAT THIS ISN'T A
                                  * REFERENCE TO AN OBJECT AT ALL */
 
-		return (FALSE);         /* RETURN TO PARSER WITH NO MATCHING
+		return (FALSE); /* RETURN TO PARSER WITH NO MATCHING
                                  * OBJECT HAVING BEEN FOUND. */
 	}
 
@@ -1461,7 +1450,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 		 * LIMIT, REMOVE IT IF IT IS PART OF THE SCENERY */
 		if (confidence[index] == 1 && return_limit > 1) {
 			if ((object[index]->MASS >= HEAVY) ||
-			        (object[index]->attributes & LOCATION)) {
+			    (object[index]->attributes & LOCATION)) {
 				matches--;
 				confidence[index] = 0;
 				//printf("--- removing %s for being scenery\n", object[index]->label);
@@ -1823,7 +1812,7 @@ int find_parent(int index) {
 	//printf("--- find parent of %s\n", object[index]->label);
 
 	if (!(object[index]->attributes & LOCATION) &&
-	        object[index]->PARENT != NOWHERE) {
+	    object[index]->PARENT != NOWHERE) {
 
 		parent = object[index]->PARENT;
 		//printf("--- parent is %s\n", object[parent]->label);
@@ -1833,9 +1822,7 @@ int find_parent(int index) {
 			sprintf(error_buffer, SELF_REFERENCE, executing_function->name, object[index]->label);
 			log_error(error_buffer, PLUS_STDOUT);
 			return (FALSE);
-		} else  if (!(object[parent]->attributes & LOCATION)
-		            && ((object[parent]->attributes & CLOSED && object[parent]->attributes & CONTAINER)
-		                || object[parent]->attributes & CONCEALING)) {
+		} else if (!(object[parent]->attributes & LOCATION) && ((object[parent]->attributes & CLOSED && object[parent]->attributes & CONTAINER) || object[parent]->attributes & CONCEALING)) {
 			//printf("--- %s is closed, so return FALSE\n", object[parent]->label);
 			return (FALSE);
 		} else if (parent == HERE || parent == HELD) {
@@ -1868,7 +1855,7 @@ int parent_of(int parent_, int child, int restricted) {
 	 * OBJECT WITH A mass OF heavy OR LESS THAT IS NOT THE SUPPLIED
 	 * PARENT ie. DON'T ACCEPT OBJECTS IN SUB OBJECTS */
 
-	int             index;
+	int index;
 
 	//printf("--- parent_ is %s, child is %s\n", object[parent_]->label, object[child]->label);
 	if (child == parent_) {
@@ -1885,9 +1872,7 @@ int parent_of(int parent_, int child, int restricted) {
 			log_error(error_buffer, PLUS_STDOUT);
 			//printf("--- self parent_.\n");
 			return (FALSE);
-		} else  if (!(object[index]->attributes & LOCATION)
-		            && ((object[index]->attributes & CLOSED && object[index]->attributes & CONTAINER)
-		                || object[index]->attributes & CONCEALING)) {
+		} else if (!(object[index]->attributes & LOCATION) && ((object[index]->attributes & CLOSED && object[index]->attributes & CONTAINER) || object[index]->attributes & CONCEALING)) {
 			/* THE CHILDS PARENT IS CLOSED OR CONCEALING - CANT BE SEEN */
 			//printf("--- parent_ %s is closed\n", object[index]->label);
 			return (FALSE);

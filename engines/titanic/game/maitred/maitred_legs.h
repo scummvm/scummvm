@@ -31,8 +31,10 @@ class CMaitreDLegs : public CMaitreDProdReceptor {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool AnimateMaitreDMsg(CAnimateMaitreDMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CMaitreDLegs() : CMaitreDProdReceptor(), _flag(true) {}

@@ -30,8 +30,10 @@ namespace Titanic {
 class CMovieTester : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 public:
 	int _movieNumFrames, _movieFrameNum;
+
 public:
 	CLASSDEF;
 	CMovieTester() : CGameObject(), _movieNumFrames(0), _movieFrameNum(0) {}

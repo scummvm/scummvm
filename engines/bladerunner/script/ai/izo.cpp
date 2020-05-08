@@ -51,39 +51,26 @@ void AIScriptIzo::Initialize() {
 }
 
 bool AIScriptIzo::Update() {
-	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoStopRunning
-	 && Player_Query_Current_Scene() == kSceneUG02
-	) {
+	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoStopRunning && Player_Query_Current_Scene() == kSceneUG02) {
 		Actor_Set_Targetable(kActorIzo, true);
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoRunToRC03);
 		return true;
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 3
-	 && Actor_Query_Goal_Number(kActorIzo) == kGoalIzoGone
-	 && Actor_Query_Which_Set_In(kActorIzo) == kSetRC03
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorIzo) == kGoalIzoGone && Actor_Query_Which_Set_In(kActorIzo) == kSetRC03) {
 		Actor_Put_In_Set(kActorIzo, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorIzo, 41, 0);
 	}
 
-	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoDefault
-	 && Player_Query_Current_Scene() == kSceneTB02
-	) {
+	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoDefault && Player_Query_Current_Scene() == kSceneTB02) {
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoGoToHC03);
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorIzo) < kGoalIzoGone
-	 && Actor_Query_Goal_Number(kActorIzo) < 300
-	 && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorIzo) < kGoalIzoGone && Actor_Query_Goal_Number(kActorIzo) < 300 && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested) {
 		Actor_Set_Goal_Number(kActorIzo, 300);
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorIzo) < 400
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorIzo) < 400) {
 		Actor_Set_Goal_Number(kActorIzo, 400);
 	}
 
@@ -116,22 +103,10 @@ void AIScriptIzo::CompletedMovementTrack() {
 		Scene_Exits_Enable();
 #else
 		// prevent re-apprehending of Izo
-		if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGetArrested
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoRC03RanAwayDone
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDie
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDieHidden
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleApprehendIzo
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleArrestIzo
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation
-		) {
+		if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGetArrested && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoRC03RanAwayDone && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDie && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDieHidden && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleApprehendIzo && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleArrestIzo && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03 && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation) {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
+#endif          // BLADERUNNER_ORIGINAL_BUGS
 		return; //true;
 
 	case kGoalIzoRC03RunAway:
@@ -147,7 +122,7 @@ void AIScriptIzo::CompletedMovementTrack() {
 		// In this case, Izo would remain stuck standing still in RC03 forever (in Act 2)
 		// This makes him teleport elsewhere (behavior similar to when he's arrested)
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoRC03RanAwayDone);
-#endif // BLADERUNNER_ORIGINAL_BUGS
+#endif          // BLADERUNNER_ORIGINAL_BUGS
 		return; //true;
 
 	case kGoalIzoGetArrested:
@@ -187,9 +162,7 @@ void AIScriptIzo::ClickedByPlayer() {
 		return; //true;
 	}
 
-	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRunToRC03
-	 && Player_Query_Current_Set() == kSetUG02
-	) {
+	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRunToRC03 && Player_Query_Current_Set() == kSetUG02) {
 		Player_Loses_Control();
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoStopRunning);
 		Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
@@ -209,22 +182,10 @@ void AIScriptIzo::ClickedByPlayer() {
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
 #else
 		// prevent re-apprehending of Izo
-		if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGetArrested
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoRC03RanAwayDone
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDie
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDieHidden
-		    && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleApprehendIzo
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleArrestIzo
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03
-		    && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation
-		) {
+		if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGetArrested && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoRC03RanAwayDone && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDie && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDieHidden && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleApprehendIzo && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleArrestIzo && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleIzoBlockedByMcCoy && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleShootIzo && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleLeaveRC03 && Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGoToPoliceStation) {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
+#endif          // BLADERUNNER_ORIGINAL_BUGS
 		return; //true;
 	}
 
@@ -260,10 +221,7 @@ void AIScriptIzo::ShotAtAndMissed() {
 }
 
 bool AIScriptIzo::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk
-	 || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run
-	 || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03RunAway
-	) {
+	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03RunAway) {
 		Actor_Set_Health(kActorIzo, 50, 50);
 
 		if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk) {
@@ -273,9 +231,7 @@ bool AIScriptIzo::ShotAtAndHit() {
 	} else {
 		AI_Movement_Track_Flush(kActorIzo);
 		Global_Variable_Increment(kVariableIzoShot, 1);
-		if (!Game_Flag_Query(kFlagIzoShot)
-		 &&  Global_Variable_Query(kVariableIzoShot) == 1
-		) {
+		if (!Game_Flag_Query(kFlagIzoShot) && Global_Variable_Query(kVariableIzoShot) == 1) {
 			Game_Flag_Set(kFlagIzoShot);
 			_animationFrame = 0;
 			_animationState = 19;
@@ -315,13 +271,7 @@ int AIScriptIzo::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId)
 }
 
 bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 200
-	 || newGoalNumber == kGoalIzoDie
-	 || newGoalNumber == kGoalIzoDieHidden
-	 || newGoalNumber == kGoalIzoGotArrested
-	 || newGoalNumber == kGoalIzoRC03RanAwayDone
-	 || newGoalNumber == kGoalIzoEscape
-	) {
+	if (newGoalNumber == 200 || newGoalNumber == kGoalIzoDie || newGoalNumber == kGoalIzoDieHidden || newGoalNumber == kGoalIzoGotArrested || newGoalNumber == kGoalIzoRC03RanAwayDone || newGoalNumber == kGoalIzoEscape) {
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow, true);
 	}
 
@@ -409,11 +359,11 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 115:
 		AI_Movement_Track_Flush(kActorIzo);
-		AI_Movement_Track_Append(kActorIzo, 39, 60);     // kSetFreeSlotG
+		AI_Movement_Track_Append(kActorIzo, 39, 60); // kSetFreeSlotG
 		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
-			AI_Movement_Track_Append(kActorIzo, 33, 0);  // kSetFreeSlotA
+			AI_Movement_Track_Append(kActorIzo, 33, 0); // kSetFreeSlotA
 		} else {
-			AI_Movement_Track_Append(kActorIzo, 34, 0);  // kSetFreeSlotB
+			AI_Movement_Track_Append(kActorIzo, 34, 0); // kSetFreeSlotB
 		}
 		AI_Movement_Track_Repeat(kActorIzo);
 		Game_Flag_Set(kFlagDNARowAvailable);
@@ -437,7 +387,7 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalIzoGoToHC03:
 		AI_Movement_Track_Flush(kActorIzo);
-		AI_Movement_Track_Append(kActorIzo, 149, 0);                       // kSetHC01_HC02_HC03_HC04
+		AI_Movement_Track_Append(kActorIzo, 149, 0); // kSetHC01_HC02_HC03_HC04
 		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
 			AI_Movement_Track_Append(kActorIzo, 39, 5);                    // kSetFreeSlotG
 			AI_Movement_Track_Append(kActorIzo, 34, Random_Query(10, 20)); // kSetFreeSlotB
@@ -514,7 +464,6 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 9999:
 		return true;
-
 	}
 
 	return false;
@@ -630,9 +579,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 9) {
 			Actor_Combat_AI_Hit_Attempt(kActorIzo);
 		}
-		if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoWaitingAtRC03
-		 && _animationFrame == 6
-		) {
+		if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoWaitingAtRC03 && _animationFrame == 6) {
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDodge);
 		}
 		Actor_Query_Goal_Number(kActorIzo);
@@ -673,11 +620,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 	case 15:
 		*animation = _animationFrame + 280;
 		++_animationFrame;
-		if (_animationFrame >= 2
-		 && (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk
-		  || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run
-		 )
-		) {
+		if (_animationFrame >= 2 && (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk || Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Run)) {
 			*animation = 297;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -797,7 +740,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		*animation = 311;
 		++_animationFrame;
 		if (_animationFrame == 6) {
-			Scene_Loop_Set_Default(0); // // HC01 - MainLoop
+			Scene_Loop_Set_Default(0);                             // // HC01 - MainLoop
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true); // HC01 - IzoFlashLoop
 			Player_Set_Combat_Mode(kActorSteele);
 		}
@@ -1062,17 +1005,17 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptIzo::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptIzo::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptIzo::ReachedMovementTrackWaypoint(int waypointId) {
@@ -1091,7 +1034,7 @@ void AIScriptIzo::dialogueWithIzo() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(10, 8, -1, -1); // LUCY  // A bug? This is a wrong option
 	}
 
-	DM_Add_To_List_Never_Repeat_Once_Selected(20, 3, 7, 4); // REFERENCE  // A bug? This is a wrong option
+	DM_Add_To_List_Never_Repeat_Once_Selected(20, 3, 7, 4);  // REFERENCE  // A bug? This is a wrong option
 	DM_Add_To_List_Never_Repeat_Once_Selected(30, -1, 3, 7); // DONE // A bug? why not Dialogue_Menu_Add_DONE_To_List?
 
 	Dialogue_Menu_Appear(320, 240);
@@ -1099,7 +1042,7 @@ void AIScriptIzo::dialogueWithIzo() {
 	Dialogue_Menu_Disappear();
 
 	switch (input) {
-	case 0: // MOTIVES -> Should be "LET GO"?
+	case 0:                                // MOTIVES -> Should be "LET GO"?
 		Actor_Says(kActorMcCoy, 5470, 15); // Get lost, Izo. Take off.
 		Actor_Says(kActorIzo, 710, 13);    //
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoEscape);
@@ -1131,7 +1074,7 @@ void AIScriptIzo::dialogueWithIzo() {
 		Player_Gains_Control();
 		break;
 
-	case 20: // REFERENCE -> Should be VOIGT-KAMPFF
+	case 20:                               // REFERENCE -> Should be VOIGT-KAMPFF
 		Actor_Says(kActorMcCoy, 5480, 18); // Look, just come along with me. You're gonna have to take a little personality test.
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoEscape);
 		Player_Gains_Control();

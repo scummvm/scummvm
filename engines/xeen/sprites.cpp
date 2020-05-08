@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "xeen/sprites.h"
 #include "common/archive.h"
 #include "common/memstream.h"
+#include "common/scummsys.h"
 #include "common/textconsole.h"
-#include "xeen/xeen.h"
 #include "xeen/screen.h"
-#include "xeen/sprites.h"
+#include "xeen/xeen.h"
 
 #include "graphics/palette.h"
 
@@ -112,23 +112,23 @@ void SpriteResource::clear() {
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		uint flags, int scale) {
+                          uint flags, int scale) {
 	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
 }
 
 void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
-		uint flags, int scale) {
+                          uint flags, int scale) {
 	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
 }
 
 void SpriteResource::draw(int windowIndex, int frame, const Common::Point &destPos,
-		uint flags, int scale) {
+                          uint flags, int scale) {
 	Window &win = (*g_vm->_windows)[windowIndex];
 	draw(win, frame, destPos, flags, scale);
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, uint flags, int scale) {
+                          const Common::Rect &bounds, uint flags, int scale) {
 	Common::Rect r = bounds;
 	if (flags & SPRFLAG_BOTTOM_CLIPPED)
 		r.clip(SCREEN_WIDTH, _clippedBottom);
@@ -193,12 +193,11 @@ Common::Point SpriteResource::getFrameSize(int frame) const {
 /*------------------------------------------------------------------------*/
 
 void SpriteDrawer::draw(XSurface &dest, uint16 offset, const Common::Point &pt,
-		const Common::Rect &clipRect, uint flags, int scale) {
+                        const Common::Rect &clipRect, uint flags, int scale) {
 	static const uint SCALE_TABLE[] = {
-		0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
-		0xAAAA, 0xAA8A, 0x8A8A, 0x8A88, 0x8888, 0x8880, 0x8080, 0x8000
-	};
-	static const int PATTERN_STEPS[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
+	    0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
+	    0xAAAA, 0xAA8A, 0x8A8A, 0x8A88, 0x8888, 0x8880, 0x8080, 0x8000};
+	static const int PATTERN_STEPS[] = {0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3};
 
 	assert((scale & SCALE_MASK) < 16);
 	uint16 scaleMask = SCALE_TABLE[scale & SCALE_MASK];
@@ -282,17 +281,18 @@ void SpriteDrawer::draw(XSurface &dest, uint16 offset, const Common::Point &pt,
 			// Build up the line
 			int byteCount, opr1, opr2;
 			int32 pos;
-			for (byteCount = 1; byteCount < lineLength; ) {
+			for (byteCount = 1; byteCount < lineLength;) {
 				// The next byte is an opcode that determines what operators are to follow and how to interpret them.
-				int opcode = f.readByte(); ++byteCount;
+				int opcode = f.readByte();
+				++byteCount;
 
 				// Decode the opcode
 				int len = opcode & 0x1F;
 				int cmd = (opcode & 0xE0) >> 5;
 
 				switch (cmd) {
-				case 0:   // The following len + 1 bytes are stored as indexes into the color table.
-				case 1:   // The following len + 33 bytes are stored as indexes into the color table.
+				case 0: // The following len + 1 bytes are stored as indexes into the color table.
+				case 1: // The following len + 33 bytes are stored as indexes into the color table.
 					for (int i = 0; i < opcode + 1; ++i, ++byteCount) {
 						byte b = f.readByte();
 						*lineP = b;
@@ -300,16 +300,18 @@ void SpriteDrawer::draw(XSurface &dest, uint16 offset, const Common::Point &pt,
 					}
 					break;
 
-				case 2:   // The following byte is an index into the color table, draw it len + 3 times.
-					opr1 = f.readByte(); ++byteCount;
+				case 2: // The following byte is an index into the color table, draw it len + 3 times.
+					opr1 = f.readByte();
+					++byteCount;
 					for (int i = 0; i < len + 3; ++i) {
 						*lineP = opr1;
 						lineP += xInc;
 					}
 					break;
 
-				case 3:   // Stream copy command.
-					opr1 = f.readUint16LE(); byteCount += 2;
+				case 3: // Stream copy command.
+					opr1 = f.readUint16LE();
+					byteCount += 2;
 					pos = f.pos();
 					f.seek(-opr1, SEEK_CUR);
 
@@ -321,9 +323,11 @@ void SpriteDrawer::draw(XSurface &dest, uint16 offset, const Common::Point &pt,
 					f.seek(pos, SEEK_SET);
 					break;
 
-				case 4:   // The following two bytes are indexes into the color table, draw the pair len + 2 times.
-					opr1 = f.readByte(); ++byteCount;
-					opr2 = f.readByte(); ++byteCount;
+				case 4: // The following two bytes are indexes into the color table, draw the pair len + 2 times.
+					opr1 = f.readByte();
+					++byteCount;
+					opr2 = f.readByte();
+					++byteCount;
 					for (int i = 0; i < len + 2; ++i) {
 						*lineP = opr1;
 						lineP += xInc;
@@ -332,17 +336,18 @@ void SpriteDrawer::draw(XSurface &dest, uint16 offset, const Common::Point &pt,
 					}
 					break;
 
-				case 5:   // Skip len + 1 pixels
+				case 5: // Skip len + 1 pixels
 					lineP += (len + 1) * xInc;
 					break;
 
-				case 6:   // Pattern command.
+				case 6: // Pattern command.
 				case 7:
 					// The pattern command has a different opcode format
 					len = opcode & 0x07;
 					cmd = (opcode >> 2) & 0x0E;
 
-					opr1 = f.readByte(); ++byteCount;
+					opr1 = f.readByte();
+					++byteCount;
 					for (int i = 0; i < len + 3; ++i) {
 						*lineP = opr1;
 						lineP += xInc;
@@ -433,14 +438,12 @@ void SpriteDrawer::rcr(uint16 &val, bool &cf) {
 /*------------------------------------------------------------------------*/
 
 const byte DRAWER1_OFFSET[24] = {
-	0x30, 0xC0, 0xB0, 0x10, 0x41, 0x20, 0x40, 0x21, 0x48, 0x46, 0x43, 0x40,
-	0xD0, 0xD3, 0xD6, 0xD8, 0x01, 0x04, 0x07, 0x0A, 0xEA, 0xEE, 0xF2, 0xF6
-};
+    0x30, 0xC0, 0xB0, 0x10, 0x41, 0x20, 0x40, 0x21, 0x48, 0x46, 0x43, 0x40,
+    0xD0, 0xD3, 0xD6, 0xD8, 0x01, 0x04, 0x07, 0x0A, 0xEA, 0xEE, 0xF2, 0xF6};
 
 const byte DRAWER1_MASK[24] = {
-	0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x0F, 0x07, 0x07, 0x07, 0x07,
-	0x07, 0x07, 0x07, 0x07, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x07, 0x07
-};
+    0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x0F, 0x07, 0x07, 0x07, 0x07,
+    0x07, 0x07, 0x07, 0x07, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x07, 0x07};
 
 SpriteDrawer1::SpriteDrawer1(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
 	_offset = DRAWER1_OFFSET[index];
@@ -454,25 +457,22 @@ void SpriteDrawer1::drawPixel(byte *dest, byte pixel) {
 /*------------------------------------------------------------------------*/
 
 const byte DRAWER2_MASK1[32] = {
-	3, 0, 3, 0, 3, 0, 3, 0, 2, 0, 2, 0, 2, 0, 2, 0,
-	1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+    3, 0, 3, 0, 3, 0, 3, 0, 2, 0, 2, 0, 2, 0, 2, 0,
+    1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 const byte DRAWER2_MASK2[16] = {
-	0x7E, 0x7E, 0x7E, 0x7E, 0x3E, 0x3E, 0x3E, 0x3E,
-	0x1E, 0x1E, 0x1E, 0x1E, 0x0E, 0x0E, 0x0E, 0x0E
-};
+    0x7E, 0x7E, 0x7E, 0x7E, 0x3E, 0x3E, 0x3E, 0x3E,
+    0x1E, 0x1E, 0x1E, 0x1E, 0x0E, 0x0E, 0x0E, 0x0E};
 
 const int8 DRAWER2_DELTA[64] = {
-	-3, 3, 0, 0, 0, 0, 0, 0,
-	-5, 5, 0, 0, 0, 0, 0, 0,
-	-7, 7, 0, 0, 0, 0, 0, 0,
-	-9, 9, 0, 0, 0, 0, 0, 0,
-	-7, 7, 0, 0, 0, 0, 0, 0,
-	-9, 9, 0, 0, 0, 0, 0, 0,
-	-11, 11, 0, 0, 0, 0, 0, 0,
-	-13, 13, 0, 0, 0, 0, 0, 0
-};
+    -3, 3, 0, 0, 0, 0, 0, 0,
+    -5, 5, 0, 0, 0, 0, 0, 0,
+    -7, 7, 0, 0, 0, 0, 0, 0,
+    -9, 9, 0, 0, 0, 0, 0, 0,
+    -7, 7, 0, 0, 0, 0, 0, 0,
+    -9, 9, 0, 0, 0, 0, 0, 0,
+    -11, 11, 0, 0, 0, 0, 0, 0,
+    -13, 13, 0, 0, 0, 0, 0, 0};
 
 SpriteDrawer2::SpriteDrawer2(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
 	_mask1 = DRAWER2_MASK1[index];
@@ -492,7 +492,7 @@ void SpriteDrawer2::drawPixel(byte *dest, byte pixel) {
 
 	dest += DRAWER2_DELTA[(_random2 & _mask1 & _mask2) / 2];
 	if (dest >= _destLeft && dest < _destRight) {
-		dest += _pitch * DRAWER2_DELTA[((_random2 >> 8) &_mask1 &_mask2) / 2];
+		dest += _pitch * DRAWER2_DELTA[((_random2 >> 8) & _mask1 & _mask2) / 2];
 
 		if (dest >= _destTop && dest < _destBottom) {
 			*dest = pixel;
@@ -502,8 +502,8 @@ void SpriteDrawer2::drawPixel(byte *dest, byte pixel) {
 
 /*------------------------------------------------------------------------*/
 
-const uint16 DRAWER3_MASK[4] = { 1, 3, 7, 15 };
-const uint16 DRAWER3_OFFSET[4] = { 1, 2, 4, 8 };
+const uint16 DRAWER3_MASK[4] = {1, 3, 7, 15};
+const uint16 DRAWER3_OFFSET[4] = {1, 2, 4, 8};
 
 SpriteDrawer3::SpriteDrawer3(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
 	_offset = DRAWER3_OFFSET[index];
@@ -538,7 +538,7 @@ void SpriteDrawer3::drawPixel(byte *dest, byte pixel) {
 
 /*------------------------------------------------------------------------*/
 
-const byte DRAWER4_THRESHOLD[4] = { 4, 7, 10, 13 };
+const byte DRAWER4_THRESHOLD[4] = {4, 7, 10, 13};
 
 SpriteDrawer4::SpriteDrawer4(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
 	_threshold = DRAWER4_THRESHOLD[index];
@@ -551,7 +551,7 @@ void SpriteDrawer4::drawPixel(byte *dest, byte pixel) {
 
 /*------------------------------------------------------------------------*/
 
-const uint16 DRAWER5_THRESHOLD[4] = { 0x3333, 0x6666, 0x999A, 0xCCCD };
+const uint16 DRAWER5_THRESHOLD[4] = {0x3333, 0x6666, 0x999A, 0xCCCD};
 
 SpriteDrawer5::SpriteDrawer5(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
 	_threshold = DRAWER5_THRESHOLD[index];
@@ -573,7 +573,7 @@ void SpriteDrawer5::drawPixel(byte *dest, byte pixel) {
 
 /*------------------------------------------------------------------------*/
 
-const byte DRAWER6_MASK[16] = { 1, 2, 4, 8, 1, 3, 7, 15, 8, 12, 14, 15, 1, 2, 1, 2 };
+const byte DRAWER6_MASK[16] = {1, 2, 4, 8, 1, 3, 7, 15, 8, 12, 14, 15, 1, 2, 1, 2};
 
 SpriteDrawer6::SpriteDrawer6(byte *data, size_t filesize, int index) : SpriteDrawer(data, filesize) {
 	_mask = DRAWER6_MASK[index];

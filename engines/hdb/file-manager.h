@@ -24,7 +24,7 @@
 #define HDB_FILE_MANAGER_H
 
 namespace Common {
-	class File;
+class File;
 }
 
 #define MPCIterator Common::Array<MPCEntry *>::iterator
@@ -45,21 +45,19 @@ enum DataType {
 };
 
 struct MPCEntry {
-	char	filename[64];	// filename
-	int32	offset;			// offset in MSD file of data
-	int32	length;			// compressed length of data
-	int32	ulength;		// uncompressed length
-	DataType	type;		// type of data
+	char filename[64]; // filename
+	int32 offset;      // offset in MSD file of data
+	int32 length;      // compressed length of data
+	int32 ulength;     // uncompressed length
+	DataType type;     // type of data
 };
 
 class FileMan {
 private:
-
 	Common::File *_mpcFile;
 	Common::Array<MPCEntry *> _dir;
 
 public:
-
 	FileMan();
 	~FileMan();
 
@@ -76,7 +74,6 @@ public:
 	int32 getLength(const char *string, DataType type);
 	int getCount(const char *subString, DataType type);
 	Common::Array<const char *> *findFiles(const char *string, DataType type);
-
 };
 
 } // End of Namespace HDB

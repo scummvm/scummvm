@@ -24,10 +24,10 @@
 #define BACKENDS_NETWORKING_CURL_CURLREQUEST_H
 
 #include "backends/networking/curl/request.h"
-#include "common/str.h"
 #include "common/array.h"
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/str.h"
 
 struct curl_slist;
 
@@ -38,7 +38,7 @@ class NetworkReadStream;
 typedef Response<NetworkReadStream *> NetworkReadStreamResponse;
 typedef Common::BaseCallback<NetworkReadStreamResponse> *NetworkReadStreamCallback;
 
-class CurlRequest: public Request {
+class CurlRequest : public Request {
 protected:
 	Common::String _url;
 	NetworkReadStream *_stream;
@@ -48,7 +48,7 @@ protected:
 	Common::HashMap<Common::String, Common::String> _formFiles;
 	byte *_bytesBuffer;
 	uint32 _bytesBufferSize;
-	bool _uploading; //using PUT method
+	bool _uploading;  //using PUT method
 	bool _usingPatch; //using PATCH method
 	bool _keepAlive;
 	long _keepAliveIdle, _keepAliveInterval;

@@ -21,23 +21,23 @@
  */
 
 #include "ultima/ultima4/game/death.h"
+#include "common/system.h"
+#include "ultima/ultima4/controllers/wait_controller.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/portal.h"
-#include "ultima/ultima4/views/stats.h"
-#include "ultima/ultima4/controllers/wait_controller.h"
-#include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/map/location.h"
+#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/mapmgr.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/ultima4.h"
-#include "common/system.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -50,18 +50,17 @@ Death *g_death;
 #define REVIVE_CASTLE_Y 8
 
 const struct {
-	int _timeout;			///< pause in seconds
-	const char *_text;		///< text of message
+	int _timeout;      ///< pause in seconds
+	const char *_text; ///< text of message
 } DEATH_MSGS[] = {
-	{ 5, "\n\n\nAll is Dark...\n" },
-	{ 5, "\nBut wait...\n" },
-	{ 5, "Where am I?...\n" },
-	{ 5, "Am I dead?...\n" },
-	{ 5, "Afterlife?...\n" },
-	{ 5, "You hear:\n    %s\n" },
-	{ 5, "I feel motion...\n" },
-	{ 5, "\nLord British says: I have pulled thy spirit and some possessions from the void.  Be more careful in the future!\n\n\020" }
-};
+    {5, "\n\n\nAll is Dark...\n"},
+    {5, "\nBut wait...\n"},
+    {5, "Where am I?...\n"},
+    {5, "Am I dead?...\n"},
+    {5, "Afterlife?...\n"},
+    {5, "You hear:\n    %s\n"},
+    {5, "I feel motion...\n"},
+    {5, "\nLord British says: I have pulled thy spirit and some possessions from the void.  Be more careful in the future!\n\n\020"}};
 
 #define N_MSGS (sizeof(DEATH_MSGS) / sizeof(DEATH_MSGS[0]))
 

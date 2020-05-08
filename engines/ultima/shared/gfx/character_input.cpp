@@ -21,16 +21,16 @@
  */
 
 #include "ultima/shared/gfx/character_input.h"
-#include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/early/game_base.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
 BEGIN_MESSAGE_MAP(CharacterInput, Popup)
-	ON_MESSAGE(KeypressMsg)
+ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
 void CharacterInput::show(const Point &pt, byte color, TreeItem *respondTo) {

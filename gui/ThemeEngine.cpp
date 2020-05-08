@@ -20,29 +20,29 @@
  *
  */
 
-#include "common/system.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/unzip.h"
+#include "common/system.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
+#include "common/unzip.h"
 
+#include "graphics/VectorRenderer.h"
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
-#include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
-#include "graphics/VectorRenderer.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/ttf.h"
+#include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 #include "image/bmp.h"
 #include "image/png.h"
 
-#include "gui/widget.h"
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
@@ -87,7 +87,6 @@ struct WidgetDrawData {
 
 	DrawLayer _layer;
 
-
 	/**
 	 * Calculates the background threshold offset of a given DrawData item.
 	 * After fully loading all DrawSteps of a DrawData item, this function must be
@@ -102,82 +101,81 @@ struct WidgetDrawData {
  *  Data definitions for theme engine elements
  *********************************************************/
 struct DrawDataInfo {
-	DrawData id;        ///< The actual ID of the DrawData item.
-	const char *name;   ///< The name of the DrawData item as it appears in the Theme Description files
-	DrawLayer layer;    ///< Sets whether this item is part of the foreground or background layer of its dialog
-	DrawData parent;    ///< Parent DrawData item, for items that overlay. E.g. kDDButtonIdle -> kDDButtonHover
+	DrawData id;      ///< The actual ID of the DrawData item.
+	const char *name; ///< The name of the DrawData item as it appears in the Theme Description files
+	DrawLayer layer;  ///< Sets whether this item is part of the foreground or background layer of its dialog
+	DrawData parent;  ///< Parent DrawData item, for items that overlay. E.g. kDDButtonIdle -> kDDButtonHover
 };
 
 /**
  * Default values for each DrawData item.
  */
 static const DrawDataInfo kDrawDataDefaults[] = {
-	{kDDMainDialogBackground,         "mainmenu_bg",          kDrawLayerBackground,   kDDNone},
-	{kDDSpecialColorBackground,       "special_bg",           kDrawLayerBackground,   kDDNone},
-	{kDDPlainColorBackground,         "plain_bg",             kDrawLayerBackground,   kDDNone},
-	{kDDTooltipBackground,            "tooltip_bg",           kDrawLayerBackground,   kDDNone},
-	{kDDDefaultBackground,            "default_bg",           kDrawLayerBackground,   kDDNone},
-	{kDDTextSelectionBackground,      "text_selection",       kDrawLayerForeground,  kDDNone},
-	{kDDTextSelectionFocusBackground, "text_selection_focus", kDrawLayerForeground,  kDDNone},
+    {kDDMainDialogBackground, "mainmenu_bg", kDrawLayerBackground, kDDNone},
+    {kDDSpecialColorBackground, "special_bg", kDrawLayerBackground, kDDNone},
+    {kDDPlainColorBackground, "plain_bg", kDrawLayerBackground, kDDNone},
+    {kDDTooltipBackground, "tooltip_bg", kDrawLayerBackground, kDDNone},
+    {kDDDefaultBackground, "default_bg", kDrawLayerBackground, kDDNone},
+    {kDDTextSelectionBackground, "text_selection", kDrawLayerForeground, kDDNone},
+    {kDDTextSelectionFocusBackground, "text_selection_focus", kDrawLayerForeground, kDDNone},
 
-	{kDDWidgetBackgroundDefault,    "widget_default",   kDrawLayerBackground,   kDDNone},
-	{kDDWidgetBackgroundSmall,      "widget_small",     kDrawLayerBackground,   kDDNone},
-	{kDDWidgetBackgroundEditText,   "widget_textedit",  kDrawLayerBackground,   kDDNone},
-	{kDDWidgetBackgroundSlider,     "widget_slider",    kDrawLayerBackground,   kDDNone},
+    {kDDWidgetBackgroundDefault, "widget_default", kDrawLayerBackground, kDDNone},
+    {kDDWidgetBackgroundSmall, "widget_small", kDrawLayerBackground, kDDNone},
+    {kDDWidgetBackgroundEditText, "widget_textedit", kDrawLayerBackground, kDDNone},
+    {kDDWidgetBackgroundSlider, "widget_slider", kDrawLayerBackground, kDDNone},
 
-	{kDDButtonIdle,                 "button_idle",      kDrawLayerBackground,   kDDNone},
-	{kDDButtonHover,                "button_hover",     kDrawLayerForeground,   kDDButtonIdle},
-	{kDDButtonDisabled,             "button_disabled",  kDrawLayerBackground,   kDDNone},
-	{kDDButtonPressed,              "button_pressed",   kDrawLayerForeground,   kDDButtonIdle},
+    {kDDButtonIdle, "button_idle", kDrawLayerBackground, kDDNone},
+    {kDDButtonHover, "button_hover", kDrawLayerForeground, kDDButtonIdle},
+    {kDDButtonDisabled, "button_disabled", kDrawLayerBackground, kDDNone},
+    {kDDButtonPressed, "button_pressed", kDrawLayerForeground, kDDButtonIdle},
 
-	{kDDDropDownButtonIdle,         "dropdown_button_idle",          kDrawLayerBackground, kDDNone},
-	{kDDDropDownButtonHoverLeft,    "dropdown_button_hover_left",    kDrawLayerForeground, kDDDropDownButtonIdle},
-	{kDDDropDownButtonHoverRight,   "dropdown_button_hover_right",   kDrawLayerForeground, kDDDropDownButtonIdle},
-	{kDDDropDownButtonDisabled,     "dropdown_button_disabled",      kDrawLayerForeground, kDDNone},
-	{kDDDropDownButtonPressedLeft,  "dropdown_button_pressed_left",  kDrawLayerForeground, kDDDropDownButtonIdle},
-	{kDDDropDownButtonPressedRight, "dropdown_button_pressed_right", kDrawLayerForeground, kDDDropDownButtonIdle},
+    {kDDDropDownButtonIdle, "dropdown_button_idle", kDrawLayerBackground, kDDNone},
+    {kDDDropDownButtonHoverLeft, "dropdown_button_hover_left", kDrawLayerForeground, kDDDropDownButtonIdle},
+    {kDDDropDownButtonHoverRight, "dropdown_button_hover_right", kDrawLayerForeground, kDDDropDownButtonIdle},
+    {kDDDropDownButtonDisabled, "dropdown_button_disabled", kDrawLayerForeground, kDDNone},
+    {kDDDropDownButtonPressedLeft, "dropdown_button_pressed_left", kDrawLayerForeground, kDDDropDownButtonIdle},
+    {kDDDropDownButtonPressedRight, "dropdown_button_pressed_right", kDrawLayerForeground, kDDDropDownButtonIdle},
 
-	{kDDSliderFull,                 "slider_full",      kDrawLayerForeground,  kDDNone},
-	{kDDSliderHover,                "slider_hover",     kDrawLayerForeground,  kDDNone},
-	{kDDSliderDisabled,             "slider_disabled",  kDrawLayerForeground,  kDDNone},
+    {kDDSliderFull, "slider_full", kDrawLayerForeground, kDDNone},
+    {kDDSliderHover, "slider_hover", kDrawLayerForeground, kDDNone},
+    {kDDSliderDisabled, "slider_disabled", kDrawLayerForeground, kDDNone},
 
-	{kDDCheckboxDefault,            "checkbox_default",           kDrawLayerBackground,   kDDNone},
-	{kDDCheckboxDisabled,           "checkbox_disabled",          kDrawLayerBackground,   kDDNone},
-	{kDDCheckboxSelected,           "checkbox_selected",          kDrawLayerForeground,  kDDCheckboxDefault},
-	{kDDCheckboxDisabledSelected,   "checkbox_disabled_selected", kDrawLayerForeground,  kDDCheckboxDisabled},
+    {kDDCheckboxDefault, "checkbox_default", kDrawLayerBackground, kDDNone},
+    {kDDCheckboxDisabled, "checkbox_disabled", kDrawLayerBackground, kDDNone},
+    {kDDCheckboxSelected, "checkbox_selected", kDrawLayerForeground, kDDCheckboxDefault},
+    {kDDCheckboxDisabledSelected, "checkbox_disabled_selected", kDrawLayerForeground, kDDCheckboxDisabled},
 
-	{kDDRadiobuttonDefault,         "radiobutton_default",      kDrawLayerBackground,   kDDNone},
-	{kDDRadiobuttonDisabled,        "radiobutton_disabled",     kDrawLayerBackground,   kDDNone},
-	{kDDRadiobuttonSelected,        "radiobutton_selected",     kDrawLayerForeground,  kDDRadiobuttonDefault},
+    {kDDRadiobuttonDefault, "radiobutton_default", kDrawLayerBackground, kDDNone},
+    {kDDRadiobuttonDisabled, "radiobutton_disabled", kDrawLayerBackground, kDDNone},
+    {kDDRadiobuttonSelected, "radiobutton_selected", kDrawLayerForeground, kDDRadiobuttonDefault},
 
-	{kDDTabActive,                  "tab_active",               kDrawLayerForeground,  kDDTabInactive},
-	{kDDTabInactive,                "tab_inactive",             kDrawLayerBackground,   kDDNone},
-	{kDDTabBackground,              "tab_background",           kDrawLayerBackground,   kDDNone},
+    {kDDTabActive, "tab_active", kDrawLayerForeground, kDDTabInactive},
+    {kDDTabInactive, "tab_inactive", kDrawLayerBackground, kDDNone},
+    {kDDTabBackground, "tab_background", kDrawLayerBackground, kDDNone},
 
-	{kDDScrollbarBase,              "scrollbar_base",           kDrawLayerBackground,   kDDNone},
+    {kDDScrollbarBase, "scrollbar_base", kDrawLayerBackground, kDDNone},
 
-	{kDDScrollbarButtonIdle,        "scrollbar_button_idle",    kDrawLayerBackground,   kDDNone},
-	{kDDScrollbarButtonHover,       "scrollbar_button_hover",   kDrawLayerForeground,  kDDScrollbarButtonIdle},
+    {kDDScrollbarButtonIdle, "scrollbar_button_idle", kDrawLayerBackground, kDDNone},
+    {kDDScrollbarButtonHover, "scrollbar_button_hover", kDrawLayerForeground, kDDScrollbarButtonIdle},
 
-	{kDDScrollbarHandleIdle,        "scrollbar_handle_idle",    kDrawLayerForeground,  kDDNone},
-	{kDDScrollbarHandleHover,       "scrollbar_handle_hover",   kDrawLayerForeground,  kDDScrollbarBase},
+    {kDDScrollbarHandleIdle, "scrollbar_handle_idle", kDrawLayerForeground, kDDNone},
+    {kDDScrollbarHandleHover, "scrollbar_handle_hover", kDrawLayerForeground, kDDScrollbarBase},
 
-	{kDDPopUpIdle,                  "popup_idle",       kDrawLayerBackground,   kDDNone},
-	{kDDPopUpHover,                 "popup_hover",      kDrawLayerForeground,  kDDPopUpIdle},
-	{kDDPopUpDisabled,              "popup_disabled",   kDrawLayerBackground,   kDDNone},
+    {kDDPopUpIdle, "popup_idle", kDrawLayerBackground, kDDNone},
+    {kDDPopUpHover, "popup_hover", kDrawLayerForeground, kDDPopUpIdle},
+    {kDDPopUpDisabled, "popup_disabled", kDrawLayerBackground, kDDNone},
 
-	{kDDCaret,                      "caret",        kDrawLayerForeground,  kDDNone},
-	{kDDSeparator,                  "separator",    kDrawLayerBackground,   kDDNone},
+    {kDDCaret, "caret", kDrawLayerForeground, kDDNone},
+    {kDDSeparator, "separator", kDrawLayerBackground, kDDNone},
 };
 
 /**********************************************************
  * ThemeEngine class
  *********************************************************/
-ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
-	_system(nullptr), _vectorRenderer(nullptr),
-	_layerToDraw(kDrawLayerBackground), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
-	_font(nullptr), _initOk(false), _themeOk(false), _enabled(false), _themeFiles(),
-	_cursor(nullptr) {
+ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) : _system(nullptr), _vectorRenderer(nullptr),
+                                                                 _layerToDraw(kDrawLayerBackground), _bytesPerPixel(0), _graphicsMode(kGfxDisabled),
+                                                                 _font(nullptr), _initOk(false), _themeOk(false), _enabled(false), _themeFiles(),
+                                                                 _cursor(nullptr) {
 
 	_system = g_system;
 	_parser = new ThemeParser(this);
@@ -251,16 +249,14 @@ ThemeEngine::~ThemeEngine() {
 	delete[] _cursor;
 }
 
-
-
 /**********************************************************
  * Rendering mode management
  *********************************************************/
 const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
-	{ _s("Disabled GFX"), _sc("Disabled GFX", "lowres"), "none", kGfxDisabled },
-	{ _s("Standard renderer"), _s("Standard"), "normal", kGfxStandard },
+    {_s("Disabled GFX"), _sc("Disabled GFX", "lowres"), "none", kGfxDisabled},
+    {_s("Standard renderer"), _s("Standard"), "normal", kGfxStandard},
 #ifndef DISABLE_FANCY_THEMES
-	{ _s("Antialiased renderer"), _s("Antialiased"), "antialias", kGfxAntialias }
+    {_s("Antialiased renderer"), _s("Antialiased"), "antialias", kGfxAntialias}
 #endif
 };
 
@@ -268,9 +264,9 @@ const uint ThemeEngine::_rendererModesSize = ARRAYSIZE(ThemeEngine::_rendererMod
 
 const ThemeEngine::GraphicsMode ThemeEngine::_defaultRendererMode =
 #ifndef DISABLE_FANCY_THEMES
-	ThemeEngine::kGfxAntialias;
+    ThemeEngine::kGfxAntialias;
 #else
-	ThemeEngine::kGfxStandard;
+    ThemeEngine::kGfxStandard;
 #endif
 
 ThemeEngine::GraphicsMode ThemeEngine::findMode(const Common::String &cfg) {
@@ -290,10 +286,6 @@ const char *ThemeEngine::findModeConfigName(GraphicsMode mode) {
 
 	return findModeConfigName(kGfxDisabled);
 }
-
-
-
-
 
 /**********************************************************
  * Theme setup/initialization
@@ -412,7 +404,6 @@ void ThemeEngine::disable() {
 
 	hideCursor();
 
-
 	_enabled = false;
 }
 
@@ -457,7 +448,7 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 void WidgetDrawData::calcBackgroundOffset() {
 	uint maxShadow = 0, maxBevel = 0;
 	for (Common::List<Graphics::DrawStep>::const_iterator step = _steps.begin();
-	        step != _steps.end(); ++step) {
+	     step != _steps.end(); ++step) {
 		if ((step->autoWidth || step->autoHeight) && step->shadow > maxShadow)
 			maxShadow = step->shadow;
 
@@ -480,8 +471,6 @@ void ThemeEngine::restoreBackground(Common::Rect r) {
 
 	addDirtyRect(r);
 }
-
-
 
 /**********************************************************
  * Theme elements management
@@ -522,9 +511,9 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Com
 		Common::String localized = FontMan.genLocalizedFontFilename(file);
 		const Common::String charset
 #ifdef USE_TRANSLATION
-		                            (TransMan.getCurrentCharset())
+		    (TransMan.getCurrentCharset())
 #endif
-		                            ;
+		        ;
 
 		// Try localized fonts
 		_texts[textId]->_fontPtr = loadFont(localized, scalableFile, charset, pointsize, textId == kTextDataDefault);
@@ -542,8 +531,8 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Com
 				Common::TextToSpeechManager *ttsMan;
 				if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
 					ttsMan->setLanguage("en");
-#endif // USE_TTS
-#endif // USE_TRANSLATION
+#endif                        // USE_TTS
+#endif                        // USE_TRANSLATION
 				return false; // fall-back attempt failed
 			}
 			// Success in fall-back attempt to standard (non-localized) font.
@@ -552,19 +541,18 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Com
 #ifdef USE_TRANSLATION
 			TransMan.setLanguage("C");
 #ifdef USE_TTS
-				Common::TextToSpeechManager *ttsMan;
-				if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
-					ttsMan->setLanguage("en");
+			Common::TextToSpeechManager *ttsMan;
+			if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
+				ttsMan->setLanguage("en");
 #endif // USE_TTS
-#endif // USE_TRANSLATION
-			// Returning true here, would allow falling back to standard fonts for the missing ones,
-			// but that leads to "garbage" glyphs being displayed on screen for non-Latin languages
+#endif // USE_TRANSLATION                                                                    \
+    // Returning true here, would allow falling back to standard fonts for the missing ones, \
+    // but that leads to "garbage" glyphs being displayed on screen for non-Latin languages
 			return false;
 		}
 	}
 
 	return true;
-
 }
 
 bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
@@ -701,7 +689,6 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 	return true;
 }
 
-
 /**********************************************************
  * Theme XML loading
  *********************************************************/
@@ -801,7 +788,6 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 
 	_themeName.clear();
 
-
 	//
 	// Now that we have a Common::Archive, verify that it contains a valid THEMERC File
 	//
@@ -848,8 +834,6 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 	assert(!_themeName.empty());
 	return true;
 }
-
-
 
 /**********************************************************
  * Draw Date descriptors drawing functions
@@ -906,15 +890,18 @@ void ThemeEngine::drawDDText(TextData type, TextColor color, const Common::Rect 
 	area.clip(_screen.w, _screen.h);
 
 	Common::Rect dirty = drawableTextArea;
-	if (dirty.isEmpty()) dirty = area;
-	else dirty.clip(area);
+	if (dirty.isEmpty())
+		dirty = area;
+	else
+		dirty.clip(area);
 
 	if (!_clip.isEmpty()) {
 		dirty.clip(_clip);
 	}
 
 	// HACK: One small pixel should be invisible enough
-	if (dirty.isEmpty()) dirty = Common::Rect(0, 0, 1, 1);
+	if (dirty.isEmpty())
+		dirty = Common::Rect(0, 0, 1, 1);
 
 	if (restoreBg)
 		restoreBackground(dirty);
@@ -975,7 +962,7 @@ void ThemeEngine::drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth
 
 	// Center the text in the button without using the area of the drop down button
 	Common::Rect textRect = r;
-	textRect.left  = r.left  + dropdownWidth;
+	textRect.left = r.left + dropdownWidth;
 	textRect.right = r.right - dropdownWidth;
 	drawDDText(getTextData(dd), getTextColor(dd), textRect, str, false, true, _widgets[dd]->_textAlignH,
 	           _widgets[dd]->_textAlignV);
@@ -1217,7 +1204,6 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 			activePos = width;
 			continue;
 		}
-
 
 		Common::Rect tabRect(r.left + width, r.top, r.left + width + tabWidths[i], r.top + tabHeight);
 		drawDD(kDDTabInactive, tabRect);
@@ -1485,7 +1471,6 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	return true;
 }
 
-
 /**********************************************************
  * Legacy GUI::Theme support functions
  *********************************************************/
@@ -1641,7 +1626,6 @@ Common::String ThemeEngine::genCacheFilename(const Common::String &filename) con
 	return Common::String();
 }
 
-
 /**********************************************************
  * Static Theme XML functions
  *********************************************************/
@@ -1781,7 +1765,7 @@ void ThemeEngine::listUsableThemes(Common::Archive &archive, Common::List<ThemeD
 	Common::ArchiveMemberList fileList;
 	archive.listMatchingMembers(fileList, "*.zip");
 	for (Common::ArchiveMemberList::iterator i = fileList.begin();
-	        i != fileList.end(); ++i) {
+	     i != fileList.end(); ++i) {
 		td.name.clear();
 		if (themeConfigUsable(**i, td.name)) {
 			td.filename = (*i)->getName();
@@ -1856,7 +1840,7 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 		return;
 
 	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i)
-		listUsableThemes(*i, list, depth == -1 ? - 1 : depth - 1);
+		listUsableThemes(*i, list, depth == -1 ? -1 : depth - 1);
 }
 
 Common::String ThemeEngine::getThemeFile(const Common::String &id) {

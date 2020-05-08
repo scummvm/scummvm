@@ -31,6 +31,7 @@ class CTitaniaStillControl : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool SetFrameMsg(CSetFrameMsg *msg);
 	bool VisibleMsg(CVisibleMsg *msg);
+
 public:
 	CLASSDEF;
 

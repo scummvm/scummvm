@@ -25,8 +25,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-ReadIntController::ReadIntController(int maxlen, int screenX, int screenY) :
-		ReadStringController(maxlen, screenX, screenY, "0123456789 \n\r\010") {}
+ReadIntController::ReadIntController(int maxlen, int screenX, int screenY) : ReadStringController(maxlen, screenX, screenY, "0123456789 \n\r\010") {}
 
 int ReadIntController::get(int maxlen, int screenX, int screenY, EventHandler *eh) {
 	if (!eh)

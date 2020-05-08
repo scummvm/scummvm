@@ -53,6 +53,7 @@ public:
 	int getSpriteCount() { return _spritesCount; }
 	Sprite getSprite(int index);
 	Palette getPalette();
+
 protected:
 	byte *_spriteData;
 	int _spriteDataSize;

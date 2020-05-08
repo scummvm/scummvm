@@ -33,14 +33,14 @@ class String;
  * List of game language.
  */
 enum Language {
-	ZH_ANY,     // Generic Chinese (when only one game version exist)
+	ZH_ANY, // Generic Chinese (when only one game version exist)
 	ZH_CNA,
 	ZH_TWN,
 	HR_HRV,
 	CZ_CZE,
 	DA_DAN,
 	NL_NLD,
-	EN_ANY,     // Generic English (when only one game version exist)
+	EN_ANY, // Generic English (when only one game version exist)
 	EN_GRB,
 	EN_USA,
 	ET_EST,
@@ -66,7 +66,7 @@ enum Language {
 	UA_UKR,
 	SR_SER,
 
-	UNK_LANG = -1	// Use default language (i.e. none specified)
+	UNK_LANG = -1 // Use default language (i.e. none specified)
 };
 
 struct LanguageDescription {
@@ -77,7 +77,6 @@ struct LanguageDescription {
 };
 
 extern const LanguageDescription g_languages[];
-
 
 /** Convert a string containing a language name into a Language enum value. */
 extern Language parseLanguage(const String &str);

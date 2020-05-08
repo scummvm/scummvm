@@ -27,17 +27,17 @@
  */
 
 #include "engines/wintermute/base/font/base_font_truetype.h"
-#include "engines/wintermute/utils/string_util.h"
+#include "common/unzip.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
-#include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/utils/string_util.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
-#include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
-#include "common/unzip.h"
+#include "graphics/fonts/ttf.h"
 
 namespace Wintermute {
 
@@ -77,7 +77,6 @@ BaseFontTT::~BaseFontTT(void) {
 	delete _deletableFont;
 	_font = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseFontTT::clearCache() {
@@ -140,13 +139,11 @@ int BaseFontTT::getTextHeight(const byte *text, int width) {
 		textStr = StringUtil::ansiToWide((const char *)text, _charset);
 	}
 
-
 	int textWidth, textHeight;
 	measureText(textStr, width, -1, textWidth, textHeight);
 
 	return textHeight;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
@@ -221,7 +218,6 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 		}
 	}
 
-
 	// and paint it
 	if (surface) {
 		Rect32 rc;
@@ -238,8 +234,6 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 			renderer->_forceAlphaColor = origForceAlpha;
 		}
 	}
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -268,7 +262,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 
 	// TODO: This debug call does not work with WideString because text.c_str() returns an uint32 array.
 	//debugC(kWintermuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
-//	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	//	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _gameRef->_renderer->getPixelFormat());
 	uint32 useColor = 0xffffffff;
@@ -307,12 +301,10 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	// TODO: _isUnderline, _isBold, _isItalic, _isStriked
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 int BaseFontTT::getLetterHeight() {
 	return (int)getLineHeight();
 }
-
 
 //////////////////////////////////////////////////////////////////////
 bool BaseFontTT::loadFile(const Common::String &filename) {
@@ -334,7 +326,6 @@ bool BaseFontTT::loadFile(const Common::String &filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(TTFONT)
@@ -419,15 +410,13 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 			int r, g, b;
 			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
 			baseColor = BYTETORGBA(r, g, b, RGBCOLGetA(baseColor));
-		}
-		break;
+		} break;
 
 		case TOKEN_ALPHA: {
 			int a;
 			parser.scanStr(params, "%d", &a);
 			baseColor = BYTETORGBA(RGBCOLGetR(baseColor), RGBCOLGetG(baseColor), RGBCOLGetB(baseColor), a);
-		}
-		break;
+		} break;
 
 		case TOKEN_LAYER: {
 			BaseTTFontLayer *layer = new BaseTTFontLayer;
@@ -438,8 +427,7 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 				layer = nullptr;
 				cmd = PARSERR_TOKENNOTFOUND;
 			}
-		}
-		break;
+		} break;
 
 		default:
 			break;
@@ -463,7 +451,6 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 
 	return initFont();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, char *buffer) {
@@ -492,15 +479,13 @@ bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, char *buffer) {
 			int r, g, b;
 			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
 			layer->_color = BYTETORGBA(r, g, b, RGBCOLGetA(layer->_color));
-		}
-		break;
+		} break;
 
 		case TOKEN_ALPHA: {
 			int a;
 			parser.scanStr(params, "%d", &a);
 			layer->_color = BYTETORGBA(RGBCOLGetR(layer->_color), RGBCOLGetG(layer->_color), RGBCOLGetB(layer->_color), a);
-		}
-		break;
+		} break;
 
 		default:
 			break;
@@ -513,7 +498,6 @@ bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, char *buffer) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 	BaseFont::persist(persistMgr);
@@ -525,7 +509,6 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_fontHeight));
 	persistMgr->transferCharPtr(TMEMBER(_fontFile));
 	persistMgr->transferSint32(TMEMBER_INT(_charset));
-
 
 	// persist layers
 	int32 numLayers;
@@ -554,7 +537,6 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseFontTT::afterLoad() {

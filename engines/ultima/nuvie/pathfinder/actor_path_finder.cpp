@@ -20,21 +20,19 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/pathfinder/path.h"
 #include "ultima/nuvie/pathfinder/actor_path_finder.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/pathfinder/path.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 ActorPathFinder::ActorPathFinder(Actor *a, MapCoord g)
-	: PathFinder(a->get_location(), g), actor(a) {
-
+    : PathFinder(a->get_location(), g), actor(a) {
 }
 
 ActorPathFinder::~ActorPathFinder() {
-
 }
 
 bool ActorPathFinder::get_next_move(MapCoord &step) {
@@ -68,8 +66,10 @@ void ActorPathFinder::get_closest_dir(MapCoord &rel_step) {
 	rel_step.z = loc.z;
 
 	uint16 dx = loc.xdistance(goal), dy = loc.ydistance(goal);
-	if (dx > dy) rel_step.sy = 0;
-	else if (dx < dy) rel_step.sx = 0;
+	if (dx > dy)
+		rel_step.sy = 0;
+	else if (dx < dy)
+		rel_step.sx = 0;
 }
 
 bool ActorPathFinder::check_loc(const MapCoord &mapLoc) {
@@ -85,13 +85,17 @@ bool ActorPathFinder::search_towards_target(const MapCoord &g, MapCoord &rel_ste
 		return true;
 	bool try_ccw = check_dir_and_distance(mapLoc, g, ccw_rel_step, -1); // check adjacent directions
 	bool try_cw = check_dir_and_distance(mapLoc, g, cw_rel_step, 1);
-	if (!try_ccw) try_ccw = check_dir_and_distance(mapLoc, g, ccw_rel_step, -2); // check perpendicular directions
-	if (!try_cw) try_cw = check_dir_and_distance(mapLoc, g, cw_rel_step, 2);
+	if (!try_ccw)
+		try_ccw = check_dir_and_distance(mapLoc, g, ccw_rel_step, -2); // check perpendicular directions
+	if (!try_cw)
+		try_cw = check_dir_and_distance(mapLoc, g, cw_rel_step, 2);
 	if (!try_ccw && !try_cw)
 		return false;
 	rel_step = ccw_rel_step;
-	if (!try_ccw) rel_step = cw_rel_step;
-	else if (!try_cw) rel_step = ccw_rel_step;
+	if (!try_ccw)
+		rel_step = cw_rel_step;
+	else if (!try_cw)
+		rel_step = ccw_rel_step;
 	else { // both valid, use closest
 		MapCoord ccw_step = mapLoc.abs_coords(ccw_rel_step.sx, ccw_rel_step.sy);
 		MapCoord cw_step = mapLoc.abs_coords(cw_rel_step.sx, cw_rel_step.sy);

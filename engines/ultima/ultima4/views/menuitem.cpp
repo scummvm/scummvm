@@ -20,20 +20,20 @@
  *
  */
 
-#include "ultima/ultima4/views/menu.h"
 #include "ultima/ultima4/views/menuitem.h"
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/views/menu.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-MenuItem::MenuItem(Common::String t, short x, short y, int sc) :
-	_id(-1), _x(x), _y(y), _text(t), _highlighted(false),
-	_selected(false), _visible(true), _scOffset(sc), _closesMenu(false) {
+MenuItem::MenuItem(Common::String t, short x, short y, int sc) : _id(-1), _x(x), _y(y), _text(t), _highlighted(false),
+                                                                 _selected(false), _visible(true), _scOffset(sc), _closesMenu(false) {
 	// if the sc/scOffset is outside the range of the text string, assert
 	ASSERT(sc == -1 || (sc >= 0 && sc <= (int)_text.size()), "sc value of %d out of range!", sc);
-	if (sc != -1) addShortcutKey(tolower(_text[sc]));
+	if (sc != -1)
+		addShortcutKey(tolower(_text[sc]));
 }
 
 int MenuItem::getId() const {
@@ -103,11 +103,10 @@ void MenuItem::setClosesMenu(bool closesMenu) {
 	this->_closesMenu = closesMenu;
 }
 
-BoolMenuItem::BoolMenuItem(Common::String text, short xp, short yp, int shortcutKey, bool *val) :
-	MenuItem(text, xp, yp, shortcutKey),
-	_val(val),
-	_on("On"),
-	_off("Off") {
+BoolMenuItem::BoolMenuItem(Common::String text, short xp, short yp, int shortcutKey, bool *val) : MenuItem(text, xp, yp, shortcutKey),
+                                                                                                  _val(val),
+                                                                                                  _on("On"),
+                                                                                                  _off("Off") {
 }
 
 BoolMenuItem *BoolMenuItem::setValueStrings(const Common::String &onString, const Common::String &offString) {
@@ -124,16 +123,15 @@ Common::String BoolMenuItem::getText() const {
 
 void BoolMenuItem::activate(MenuEvent &event) {
 	if (event.getType() == MenuEvent::DECREMENT ||
-	        event.getType() == MenuEvent::INCREMENT ||
-	        event.getType() == MenuEvent::ACTIVATE)
+	    event.getType() == MenuEvent::INCREMENT ||
+	    event.getType() == MenuEvent::ACTIVATE)
 		*_val = !(*_val);
 }
 
 StringMenuItem::StringMenuItem(Common::String text, short xp, short yp, int shortcutKey,
-                               Common::String *val, const Std::vector<Common::String> &validSettings) :
-	MenuItem(text, xp, yp, shortcutKey),
-	_val(val),
-	_validSettings(validSettings) {
+                               Common::String *val, const Std::vector<Common::String> &validSettings) : MenuItem(text, xp, yp, shortcutKey),
+                                                                                                        _val(val),
+                                                                                                        _validSettings(validSettings) {
 }
 
 Common::String StringMenuItem::getText() const {
@@ -166,13 +164,12 @@ void StringMenuItem::activate(MenuEvent &event) {
 }
 
 IntMenuItem::IntMenuItem(Common::String text, short xp, short yp, int shortcutKey, int *val,
-                         int min, int max, int increment, menuOutputType output) :
-	MenuItem(text, xp, yp, shortcutKey),
-	_val(val),
-	_min(min),
-	_max(max),
-	_increment(increment),
-	_output(output) {
+                         int min, int max, int increment, menuOutputType output) : MenuItem(text, xp, yp, shortcutKey),
+                                                                                   _val(val),
+                                                                                   _min(min),
+                                                                                   _max(max),
+                                                                                   _increment(increment),
+                                                                                   _output(output) {
 }
 
 Common::String IntMenuItem::getText() const {

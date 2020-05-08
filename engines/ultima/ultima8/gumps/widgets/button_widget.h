@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GUMPS_WIDGETS_BUTTONWIDGET_H
 #define ULTIMA8_GUMPS_WIDGETS_BUTTONWIDGET_H
 
-#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/graphics/frame_id.h"
+#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -62,9 +62,9 @@ public:
 	//void SetShapeUp(Shape *_shape, uint32 frameNum);
 
 	enum Message {
-		BUTTON_CLICK        = 0,
-		BUTTON_UP           = 1,
-		BUTTON_DOUBLE       = 2
+		BUTTON_CLICK = 0,
+		BUTTON_UP = 1,
+		BUTTON_DOUBLE = 2
 	};
 
 protected:
@@ -79,6 +79,7 @@ protected:
 
 public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

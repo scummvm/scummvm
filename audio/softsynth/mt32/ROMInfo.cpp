@@ -38,23 +38,23 @@ static const ROMInfo *getKnownROMInfoFromList(Bit32u index) {
 	static const ROMInfo PCM_MT32 = {524288, "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252", ROMInfo::PCM, "pcm_mt32", "MT-32 PCM ROM", ROMInfo::Full, NULL};
 	static const ROMInfo PCM_CM32L = {1048576, "289cc298ad532b702461bfc738009d9ebe8025ea", ROMInfo::PCM, "pcm_cm32l", "CM-32L/CM-64/LAPC-I PCM ROM", ROMInfo::Full, NULL};
 
-	static const ROMInfo * const ROM_INFOS[] = {
-		&CTRL_MT32_V1_04,
-		&CTRL_MT32_V1_05,
-		&CTRL_MT32_V1_06,
-		&CTRL_MT32_V1_07,
-		&CTRL_MT32_BLUER,
-		&CTRL_MT32_V2_04,
-		&CTRL_CM32L_V1_00,
-		&CTRL_CM32L_V1_02,
-		&PCM_MT32,
-		&PCM_CM32L,
-		NULL};
+	static const ROMInfo *const ROM_INFOS[] = {
+	    &CTRL_MT32_V1_04,
+	    &CTRL_MT32_V1_05,
+	    &CTRL_MT32_V1_06,
+	    &CTRL_MT32_V1_07,
+	    &CTRL_MT32_BLUER,
+	    &CTRL_MT32_V2_04,
+	    &CTRL_CM32L_V1_00,
+	    &CTRL_CM32L_V1_02,
+	    &PCM_MT32,
+	    &PCM_CM32L,
+	    NULL};
 
 	return ROM_INFOS[index];
 }
 
-const ROMInfo* ROMInfo::getROMInfo(File *file) {
+const ROMInfo *ROMInfo::getROMInfo(File *file) {
 	size_t fileSize = file->getSize();
 	for (Bit32u i = 0; getKnownROMInfoFromList(i) != NULL; i++) {
 		const ROMInfo *romInfo = getKnownROMInfoFromList(i);
@@ -66,18 +66,18 @@ const ROMInfo* ROMInfo::getROMInfo(File *file) {
 }
 
 void ROMInfo::freeROMInfo(const ROMInfo *romInfo) {
-	(void) romInfo;
+	(void)romInfo;
 }
 
 static Bit32u getROMCount() {
 	Bit32u count;
-	for(count = 0; getKnownROMInfoFromList(count) != NULL; count++) {
+	for (count = 0; getKnownROMInfoFromList(count) != NULL; count++) {
 	}
 	return count;
 }
 
-const ROMInfo** ROMInfo::getROMInfoList(Bit32u types, Bit32u pairTypes) {
-	const ROMInfo **romInfoList = new const ROMInfo*[getROMCount() + 1];
+const ROMInfo **ROMInfo::getROMInfoList(Bit32u types, Bit32u pairTypes) {
+	const ROMInfo **romInfoList = new const ROMInfo *[getROMCount() + 1];
 	const ROMInfo **currentROMInList = romInfoList;
 	for (Bit32u i = 0; getKnownROMInfoFromList(i) != NULL; i++) {
 		const ROMInfo *romInfo = getKnownROMInfoFromList(i);
@@ -93,14 +93,13 @@ void ROMInfo::freeROMInfoList(const ROMInfo **romInfoList) {
 	delete[] romInfoList;
 }
 
-ROMImage::ROMImage(File *useFile) : file(useFile), romInfo(ROMInfo::getROMInfo(file))
-{}
+ROMImage::ROMImage(File *useFile) : file(useFile), romInfo(ROMInfo::getROMInfo(file)) {}
 
 ROMImage::~ROMImage() {
 	ROMInfo::freeROMInfo(romInfo);
 }
 
-const ROMImage* ROMImage::makeROMImage(File *file) {
+const ROMImage *ROMImage::makeROMImage(File *file) {
 	return new ROMImage(file);
 }
 
@@ -108,11 +107,11 @@ void ROMImage::freeROMImage(const ROMImage *romImage) {
 	delete romImage;
 }
 
-File* ROMImage::getFile() const {
+File *ROMImage::getFile() const {
 	return file;
 }
 
-const ROMInfo* ROMImage::getROMInfo() const {
+const ROMInfo *ROMImage::getROMInfo() const {
 	return romInfo;
 }
 

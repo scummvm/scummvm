@@ -61,17 +61,17 @@ protected:
 	bool _useBompPalette;
 
 	// pointer to various parts of the costume resource
-	const AkosHeader *akhd;	// header
+	const AkosHeader *akhd; // header
 
-	const byte *akpl;		// palette data
-	const byte *akci;		// CostumeInfo table
-	const byte *aksq;		// command sequence
-	const AkosOffset *akof;	// offsets into ci and cd table
-	const byte *akcd;		// costume data (contains the data for the codecs)
+	const byte *akpl;       // palette data
+	const byte *akci;       // CostumeInfo table
+	const byte *aksq;       // command sequence
+	const AkosOffset *akof; // offsets into ci and cd table
+	const byte *akcd;       // costume data (contains the data for the codecs)
 
-	const byte *akct;		// HE specific: condition table
-	const byte *rgbs;		// HE specific: RGB table
-	const uint8 *xmap;		// HE specific: shadow color table
+	const byte *akct;  // HE specific: condition table
+	const byte *rgbs;  // HE specific: RGB table
+	const uint8 *xmap; // HE specific: shadow color table
 
 	struct {
 		bool repeatMode;

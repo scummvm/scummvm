@@ -40,9 +40,9 @@ public:
 	explicit Console();
 	~Console(void) override {}
 
-	bool Cmd_godMode(int argc, const char** argv);
-	bool Cmd_noDamage(int argc, const char** argv);
+	bool Cmd_godMode(int argc, const char **argv);
+	bool Cmd_noDamage(int argc, const char **argv);
 };
-}
+} // namespace Griffon
 
 #endif

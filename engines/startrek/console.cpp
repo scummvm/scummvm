@@ -28,9 +28,9 @@
 namespace StarTrek {
 
 Console::Console(StarTrekEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
-	registerCmd("actions",		WRAP_METHOD(Console, Cmd_Actions));
-	registerCmd("text",			WRAP_METHOD(Console, Cmd_Text));
+	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("actions", WRAP_METHOD(Console, Cmd_Actions));
+	registerCmd("text", WRAP_METHOD(Console, Cmd_Text));
 }
 
 Console::~Console() {
@@ -111,40 +111,39 @@ bool Console::Cmd_Text(int argc, const char **argv) {
 
 Common::String Console::EventToString(uint32 action) {
 	const char *actions[] = {
-		"Tick",
-		"Walk",
-		"Use",
-		"Get",
-		"Look",
-		"Talk"
-	};
+	    "Tick",
+	    "Walk",
+	    "Use",
+	    "Get",
+	    "Look",
+	    "Talk"};
 
-	byte verb =            action & 0xff;
-	byte subject = (action >>  8) & 0xff;
-	byte b2 =      (action >> 16) & 0xff;
-	byte b3 =      (action >> 24) & 0xff;
+	byte verb = action & 0xff;
+	byte subject = (action >> 8) & 0xff;
+	byte b2 = (action >> 16) & 0xff;
+	byte b3 = (action >> 24) & 0xff;
 
 	String retString;
 	switch (verb) {
-	case 0:	// Tick
+	case 0: // Tick
 		retString = Common::String::format("Tick %d", (subject | (b2 << 8)));
 		break;
 	case 2: // Use
 		retString = Common::String(actions[verb]) + " " + ItemToString(subject) + ", " + ItemToString(b2);
 		break;
-	case 1:	// Walk
-	case 3:	// Get
-	case 4:	// Look
-	case 5:	// Talk
+	case 1: // Walk
+	case 3: // Get
+	case 4: // Look
+	case 5: // Talk
 		retString = Common::String(actions[verb]) + " " + ItemToString(subject);
 		break;
-	case 6:	// Warp touched
+	case 6: // Warp touched
 		retString = Common::String::format("Touched warp %d", subject);
 		break;
-	case 7:	// Hotspot touched
+	case 7: // Hotspot touched
 		retString = Common::String::format("Touched hotspot %d", subject);
 		break;
-	case 8:	// Timer expired
+	case 8: // Timer expired
 		retString = Common::String::format("Timer %d expired", subject);
 		break;
 	case 10: // Animation finished
@@ -168,80 +167,79 @@ Common::String Console::EventToString(uint32 action) {
 }
 
 const char *itemNames[] = {
-	"IPHASERS",
-	"IPHASERK",
-	"IHAND",
-	"IROCK",
-	"ISTRICOR",
-	"IMTRICOR",
-	"IDEADGUY",
-	"ICOMM",
-	"IPBC",
-	"IRLG",
-	"IWRENCH",
-	"IINSULAT",
-	"ISAMPLE",
-	"ICURE",
-	"IDISHES",
-	"IRT",
-	"IRTWB",
-	"ICOMBBIT",
-	"IJNKMETL",
-	"IWIRING",
-	"IWIRSCRP",
-	"IPWF",
-	"IPWE",
-	"IDEADPH",
-	"IBOMB",
-	"IMETAL",
-	"ISKULL",
-	"IMINERAL",
-	"IMETEOR",
-	"ISHELLS",
-	"IDEGRIME",
-	"ILENSES",
-	"IDISKS",
-	"IANTIGRA",
-	"IN2GAS",
-	"IO2GAS",
-	"IH2GAS",
-	"IN2O",
-	"INH3",
-	"IH2O",
-	"IWROD",
-	"IIROD",
-	"IREDGEM_A",
-	"IREDGEM_B",
-	"IREDGEM_C",
-	"IGRNGEM_A",
-	"IGRNGEM_B",
-	"IGRNGEM_C",
-	"IBLUGEM_A",
-	"IBLUGEM_B",
-	"IBLUGEM_C",
-	"ICONECT",
-	"IS8ROCKS",
-	"IIDCARD",
-	"ISNAKE",
-	"IFERN",
-	"ICRYSTAL",
-	"IKNIFE",
-	"IDETOXIN",
-	"IBERRY",
-	"IDOOVER",
-	"IALIENDV",
-	"ICAPSULE",
-	"IMEDKIT",
-	"IBEAM",
-	"IDRILL",
-	"IHYPO",
-	"IFUSION",
-	"ICABLE1",
-	"ICABLE2",
-	"ILMD",
-	"IDECK",
-	"ITECH"
-};
+    "IPHASERS",
+    "IPHASERK",
+    "IHAND",
+    "IROCK",
+    "ISTRICOR",
+    "IMTRICOR",
+    "IDEADGUY",
+    "ICOMM",
+    "IPBC",
+    "IRLG",
+    "IWRENCH",
+    "IINSULAT",
+    "ISAMPLE",
+    "ICURE",
+    "IDISHES",
+    "IRT",
+    "IRTWB",
+    "ICOMBBIT",
+    "IJNKMETL",
+    "IWIRING",
+    "IWIRSCRP",
+    "IPWF",
+    "IPWE",
+    "IDEADPH",
+    "IBOMB",
+    "IMETAL",
+    "ISKULL",
+    "IMINERAL",
+    "IMETEOR",
+    "ISHELLS",
+    "IDEGRIME",
+    "ILENSES",
+    "IDISKS",
+    "IANTIGRA",
+    "IN2GAS",
+    "IO2GAS",
+    "IH2GAS",
+    "IN2O",
+    "INH3",
+    "IH2O",
+    "IWROD",
+    "IIROD",
+    "IREDGEM_A",
+    "IREDGEM_B",
+    "IREDGEM_C",
+    "IGRNGEM_A",
+    "IGRNGEM_B",
+    "IGRNGEM_C",
+    "IBLUGEM_A",
+    "IBLUGEM_B",
+    "IBLUGEM_C",
+    "ICONECT",
+    "IS8ROCKS",
+    "IIDCARD",
+    "ISNAKE",
+    "IFERN",
+    "ICRYSTAL",
+    "IKNIFE",
+    "IDETOXIN",
+    "IBERRY",
+    "IDOOVER",
+    "IALIENDV",
+    "ICAPSULE",
+    "IMEDKIT",
+    "IBEAM",
+    "IDRILL",
+    "IHYPO",
+    "IFUSION",
+    "ICABLE1",
+    "ICABLE2",
+    "ILMD",
+    "IDECK",
+    "ITECH"};
 
 Common::String Console::ItemToString(byte index) {
 	if (index == 0)

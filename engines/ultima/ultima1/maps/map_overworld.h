@@ -30,7 +30,9 @@ namespace Ultima1 {
 namespace Maps {
 
 enum OverworldTile {
-	OTILE_OCEAN = 0, OTILE_GRASS = 1, OTILE_WOODS = 2
+	OTILE_OCEAN = 0,
+	OTILE_GRASS = 1,
+	OTILE_WOODS = 2
 };
 
 class MapOverworld : public MapBase {
@@ -39,6 +41,7 @@ private:
 	 * Load widget list for the map
 	 */
 	void loadWidgets();
+
 public:
 	MapOverworld(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map) {}
 	~MapOverworld() override {}

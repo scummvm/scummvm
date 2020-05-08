@@ -51,14 +51,14 @@ private:
 			byte sample;
 			byte volume;
 			byte note;
-			Channel(): sample(0), volume(0x40), note(0) {}
+			Channel() : sample(0), volume(0x40), note(0) {}
 		} channels[3];
 	};
 
 	struct Sample {
 		byte *data;
 		uint size;
-		Sample(): data(0), size(0) {}
+		Sample() : data(0), size(0) {}
 		~Sample() { delete[] data; }
 
 		void resize(uint s) {
@@ -81,6 +81,6 @@ private:
 	void interrupt() override;
 };
 
-} // End of namespace Teen
+} // namespace TeenAgent
 
 #endif // TEEN_MUSIC_H

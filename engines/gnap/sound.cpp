@@ -43,7 +43,6 @@ void SoundMan::playSound(int resourceId, bool looping) {
 	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &soundItem._handle, audioStream);
 
 	_items.push_back(soundItem);
-
 }
 
 void SoundMan::stopSound(int resourceId) {

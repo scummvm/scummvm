@@ -23,20 +23,20 @@
 #ifndef __PS2FILE_IO__
 #define __PS2FILE_IO__
 
-#include <stdio.h>	// FIXME: Only for FILE -- get rid of this!
+#include <stdio.h> // FIXME: Only for FILE -- get rid of this!
 
-#include "common/scummsys.h"
 #include "common/noncopyable.h"
+#include "common/scummsys.h"
 #include "common/stream.h"
 
 enum {
-	CACHE_SIZE              = 2048 * 32,
-	MAX_READ_STEP           = 2048 * 16,
-	MAX_CACHED_FILES        = 6,
-	CACHE_READ_THRESHOLD    = 16 * 2048,
-	CACHE_FILL_MIN          = 2048 * 24,
-	READ_ALIGN              = 64,   // align all reads to the size of an EE cache line
-	READ_ALIGN_MASK         = READ_ALIGN - 1
+	CACHE_SIZE = 2048 * 32,
+	MAX_READ_STEP = 2048 * 16,
+	MAX_CACHED_FILES = 6,
+	CACHE_READ_THRESHOLD = 16 * 2048,
+	CACHE_FILL_MIN = 2048 * 24,
+	READ_ALIGN = 64, // align all reads to the size of an EE cache line
+	READ_ALIGN_MASK = READ_ALIGN - 1
 };
 
 // TODO: Make this a subclass of SeekableReadStream & WriteStream
@@ -55,7 +55,6 @@ public:
 	virtual bool getErr();
 	virtual void setErr(bool);
 
-
 private:
 	void cacheReadAhead();
 	void cacheReadSync();
@@ -72,7 +71,6 @@ private:
 	bool _eof;
 	bool _err;
 	int _sema;
-
 
 	uint8 *_cacheBuf;
 	bool _cacheOpRunning;

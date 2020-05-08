@@ -32,7 +32,7 @@ namespace Nuvie {
 
 using Std::vector;
 
-#define GAMECLOCK_TICKS_PER_MINUTE   4
+#define GAMECLOCK_TICKS_PER_MINUTE 4
 
 #define GAMECLOCK_NUM_TIMERS 16
 
@@ -42,7 +42,7 @@ using Std::vector;
 #define GAMECLOCK_TIMER_U6_TIME_STOP 14
 #define GAMECLOCK_TIMER_U6_ECLIPSE 15
 
-#define GAMECLOCK_TIMER_MD_BLUE_BERRY 16*3
+#define GAMECLOCK_TIMER_MD_BLUE_BERRY 16 * 3
 
 class Configuration;
 class NuvieIO;
@@ -60,12 +60,12 @@ class GameClock {
 
 	uint32 move_counter; // player steps taken since start
 	uint32 time_counter; // game minutes
-// uint32 tick_counter; // moves/turns since last minute
+	                     // uint32 tick_counter; // moves/turns since last minute
 
 	char date_string[11];
 	char time_string[11];
 
-//bool active; // clock is active and running (false = paused)
+	//bool active; // clock is active and running (false = paused)
 
 	vector<uint8> timers;
 	uint8 num_timers;
@@ -73,15 +73,14 @@ class GameClock {
 	uint8 rest_counter; //hours until the party will heal again while resting.
 
 public:
-
 	GameClock(Configuration *cfg, nuvie_game_t type);
 	~GameClock();
 
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
 
-//void set_active(bool state) { active = state; }
-//bool get_active()           { return(active); }
+	//void set_active(bool state) { active = state; }
+	//bool get_active()           { return(active); }
 
 	void inc_move_counter();
 	void inc_move_counter_by_a_minute();
@@ -115,13 +114,13 @@ public:
 	}
 
 	uint32 get_ticks() {
-		return (SDL_GetTicks());    // milliseconds since start
+		return (SDL_GetTicks()); // milliseconds since start
 	}
 	uint32 get_game_ticks() {
-		return (time_counter/**GAMECLOCK_TICKS_PER_MINUTE+tick_counter*/);
+		return (time_counter /**GAMECLOCK_TICKS_PER_MINUTE+tick_counter*/);
 	}
-// uint32 get_time()  { return(time_counter); } // get_game_ticks() is preferred
-	uint32 get_turn()  {
+	// uint32 get_time()  { return(time_counter); } // get_game_ticks() is preferred
+	uint32 get_turn() {
 		return (move_counter);
 	}
 
@@ -129,7 +128,7 @@ public:
 	uint8 get_timer(uint8 timer_num);
 	void update_timers(uint8 amount);
 
-//MD berry counters
+	//MD berry counters
 	uint8 get_purple_berry_counter(uint8 actor_num) {
 		return get_timer(actor_num * 3);
 	}
@@ -141,7 +140,6 @@ public:
 	}
 
 protected:
-
 	void init();
 	inline void update_day_of_week();
 

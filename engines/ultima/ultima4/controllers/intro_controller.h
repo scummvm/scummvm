@@ -23,14 +23,14 @@
 #ifndef ULTIMA4_CONTROLLERS_INTRO_CONTROLLER_H
 #define ULTIMA4_CONTROLLERS_INTRO_CONTROLLER_H
 
+#include "ultima/shared/core/file.h"
 #include "ultima/ultima4/controllers/controller.h"
 #include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/views/imageview.h"
 #include "ultima/ultima4/views/menu.h"
 #include "ultima/ultima4/views/textview.h"
-#include "ultima/ultima4/views/imageview.h"
 #include "ultima/ultima4/views/tileview.h"
-#include "ultima/shared/core/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -47,6 +47,7 @@ private:
 	IntroBinData(const IntroBinData &);
 	const IntroBinData &operator=(const IntroBinData &);
 	void openFile(Shared::File &f, const Common::String &name);
+
 public:
 	IntroBinData();
 	~IntroBinData();
@@ -63,7 +64,6 @@ public:
 	Std::vector<Common::String> _introQuestions;
 	Std::vector<Common::String> _introGypsy;
 };
-
 
 /**
  * Controls the title animation sequences, including the traditional
@@ -267,9 +267,9 @@ private:
 	 * The states of the intro.
 	 */
 	enum {
-		INTRO_TITLES,                       // displaying the animated intro titles
-		INTRO_MAP,                          // displaying the animated intro map
-		INTRO_MENU,                         // displaying the main menu: journey onward, etc.
+		INTRO_TITLES, // displaying the animated intro titles
+		INTRO_MAP,    // displaying the animated intro map
+		INTRO_MENU,   // displaying the main menu: journey onward, etc.
 		INTRO_ABOUT
 	} _mode;
 
@@ -346,7 +346,7 @@ private:
 	int _beastieOffset;
 	bool _beastiesVisible;
 	int _sleepCycles;
-	int _scrPos;  /* current position in the script table */
+	int _scrPos; /* current position in the script table */
 	IntroObjectState *_objectStateTable;
 
 	bool _justInitiatedNewGame;
@@ -375,17 +375,17 @@ private:
 	struct AnimElement {
 		void shufflePlotData();
 
-		int _rx, _ry;                         // screen/source x and y
-		int _rw, _rh;                         // source width and height
-		AnimType _method;                    // render method
-		int _animStep;                       // tracks animation position
+		int _rx, _ry;     // screen/source x and y
+		int _rw, _rh;     // source width and height
+		AnimType _method; // render method
+		int _animStep;    // tracks animation position
 		int _animStepMax;
-		int _timeBase;                       // initial animation time
-		int _timeDelay;                      // delay before rendering begins
-		int _timeDuration;                   // total animation time
-		Image *_srcImage;                    // storage for the source image
-		Image *_destImage;                   // storage for the animation frame
-		Std::vector <AnimPlot> _plotData;    // plot data
+		int _timeBase;                   // initial animation time
+		int _timeDelay;                  // delay before rendering begins
+		int _timeDuration;               // total animation time
+		Image *_srcImage;                // storage for the source image
+		Image *_destImage;               // storage for the animation frame
+		Std::vector<AnimPlot> _plotData; // plot data
 		bool _prescaled;
 	};
 
@@ -415,11 +415,11 @@ private:
 	 */
 	void skipTitles();
 
-	Std::vector<AnimElement> _titles;            // list of title elements
-	Std::vector<AnimElement>::iterator _title;   // current title element
+	Std::vector<AnimElement> _titles;          // list of title elements
+	Std::vector<AnimElement>::iterator _title; // current title element
 
-	int _transparentIndex;           // palette index for transparency
-	RGBA _transparentColor;     // palette color for transparency
+	int _transparentIndex;  // palette index for transparency
+	RGBA _transparentColor; // palette color for transparency
 
 	bool _bSkipTitles;
 

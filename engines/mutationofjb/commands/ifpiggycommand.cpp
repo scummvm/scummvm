@@ -21,10 +21,10 @@
  */
 
 #include "mutationofjb/commands/ifpiggycommand.h"
+#include "common/str.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/util.h"
-#include "common/str.h"
 
 /** @file
  * "IFPIGGY"
@@ -55,7 +55,6 @@ bool IfPiggyCommandParser::parse(const Common::String &line, ScriptParseContext 
 	return true;
 }
 
-
 Command::ExecuteResult IfPiggyCommand::execute(ScriptExecutionContext &scriptExecCtx) {
 	_cachedResult = scriptExecCtx.getGameData()._currentAPK == "piggy.apk";
 
@@ -66,4 +65,4 @@ Common::String IfPiggyCommand::debugString() const {
 	return "IFPIGGY";
 }
 
-}
+} // namespace MutationOfJB

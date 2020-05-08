@@ -21,10 +21,10 @@
  */
 
 #include "ultima/shared/maps/map_widget.h"
-#include "ultima/shared/maps/map_base.h"
-#include "ultima/shared/maps/map_tile.h"
 #include "ultima/shared/early/game.h"
 #include "ultima/shared/gfx/visual_item.h"
+#include "ultima/shared/maps/map_base.h"
+#include "ultima/shared/maps/map_tile.h"
 
 namespace Ultima {
 namespace Shared {

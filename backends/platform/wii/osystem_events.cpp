@@ -22,8 +22,8 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include <unistd.h>
 #include <malloc.h>
+#include <unistd.h>
 
 #include "osystem.h"
 
@@ -35,8 +35,8 @@
 #include <wiikeyboard/keyboard.h>
 #endif
 
-#include "common/config-manager.h"
 #include "backends/timer/default/default-timer.h"
+#include "common/config-manager.h"
 
 #define TIMER_THREAD_STACKSIZE (1024 * 32)
 #define TIMER_THREAD_PRIO 64
@@ -71,73 +71,72 @@
 
 #ifdef USE_WII_KBD
 static int keymap[][3] = {
-	{ KS_Return, Common::KEYCODE_RETURN, Common::ASCII_RETURN },
-	{ KS_Up, Common::KEYCODE_UP, 0 },
-	{ KS_Down, Common::KEYCODE_DOWN, 0 },
-	{ KS_Left, Common::KEYCODE_LEFT, 0 },
-	{ KS_Right, Common::KEYCODE_RIGHT, 0 },
-	{ KS_Shift_L, Common::KEYCODE_LSHIFT, 0 },
-	{ KS_Shift_R, Common::KEYCODE_RSHIFT, 0 },
-	{ KS_Control_L, Common::KEYCODE_LCTRL, 0 },
-	{ KS_Control_R, Common::KEYCODE_RCTRL, 0 },
-	{ KS_Alt_L, Common::KEYCODE_LALT, 0 },
-	{ KS_Alt_R, Common::KEYCODE_RALT, 0 },
-	{ KS_Meta_L, Common::KEYCODE_LMETA, 0 },
-	{ KS_Meta_R, Common::KEYCODE_RMETA, 0 },
-	{ KS_KP_0, Common::KEYCODE_KP0, '0' },
-	{ KS_KP_1, Common::KEYCODE_KP1, '1' },
-	{ KS_KP_2, Common::KEYCODE_KP2, '2' },
-	{ KS_KP_3, Common::KEYCODE_KP3, '3' },
-	{ KS_KP_4, Common::KEYCODE_KP4, '4' },
-	{ KS_KP_5, Common::KEYCODE_KP5, '5' },
-	{ KS_KP_6, Common::KEYCODE_KP6, '6' },
-	{ KS_KP_7, Common::KEYCODE_KP7, '7' },
-	{ KS_KP_8, Common::KEYCODE_KP8, '8' },
-	{ KS_KP_9, Common::KEYCODE_KP9, '9' },
-	{ KS_Home, Common::KEYCODE_HOME, 0 },
-	{ KS_Insert, Common::KEYCODE_INSERT, 0 },
-	{ KS_End, Common::KEYCODE_END, 0 },
-	{ KS_Prior, Common::KEYCODE_PAGEUP, 0 },
-	{ KS_Next, Common::KEYCODE_PAGEDOWN, 0 },
-	{ KS_f1, Common::KEYCODE_F1, Common::ASCII_F1 },
-	{ KS_f2, Common::KEYCODE_F2, Common::ASCII_F2 },
-	{ KS_f3, Common::KEYCODE_F3, Common::ASCII_F3 },
-	{ KS_f4, Common::KEYCODE_F4, Common::ASCII_F4 },
-	{ KS_f5, Common::KEYCODE_F5, Common::ASCII_F5 },
-	{ KS_f6, Common::KEYCODE_F6, Common::ASCII_F6 },
-	{ KS_f7, Common::KEYCODE_F7, Common::ASCII_F7 },
-	{ KS_f8, Common::KEYCODE_F8, Common::ASCII_F8 },
-	{ KS_f9, Common::KEYCODE_F9, Common::ASCII_F9 },
-	{ KS_f10, Common::KEYCODE_F10, Common::ASCII_F10 },
-	{ KS_f11, Common::KEYCODE_F11, Common::ASCII_F11 },
-	{ KS_f12, Common::KEYCODE_F12, Common::ASCII_F12 },
-	{ KS_f13, Common::KEYCODE_F13, 0 },
-	{ KS_f14, Common::KEYCODE_F14, 0 },
-	{ KS_f15, Common::KEYCODE_F15, 0 },
-	{ KS_F1, Common::KEYCODE_F1, Common::ASCII_F1 },
-	{ KS_F2, Common::KEYCODE_F2, Common::ASCII_F2 },
-	{ KS_F3, Common::KEYCODE_F3, Common::ASCII_F3 },
-	{ KS_F4, Common::KEYCODE_F4, Common::ASCII_F4 },
-	{ KS_F5, Common::KEYCODE_F5, Common::ASCII_F5 },
-	{ KS_F6, Common::KEYCODE_F6, Common::ASCII_F6 },
-	{ KS_F7, Common::KEYCODE_F7, Common::ASCII_F7 },
-	{ KS_F8, Common::KEYCODE_F8, Common::ASCII_F8 },
-	{ KS_F9, Common::KEYCODE_F9, Common::ASCII_F9 },
-	{ KS_F10, Common::KEYCODE_F10, Common::ASCII_F10 },
-	{ KS_F11, Common::KEYCODE_F11, Common::ASCII_F11 },
-	{ KS_F12, Common::KEYCODE_F12, Common::ASCII_F12 },
-	{ KS_F13, Common::KEYCODE_F13, 0 },
-	{ KS_F14, Common::KEYCODE_F14, 0 },
-	{ KS_F15, Common::KEYCODE_F15, 0 },
-	{ KS_KP_Separator, Common::KEYCODE_KP_PERIOD, '.' },
-	{ KS_KP_Divide, Common::KEYCODE_KP_DIVIDE, '/' },
-	{ KS_KP_Multiply, Common::KEYCODE_KP_MULTIPLY, '*' },
-	{ KS_KP_Add, Common::KEYCODE_KP_PLUS, '+' },
-	{ KS_KP_Subtract, Common::KEYCODE_KP_MINUS, '-' },
-	{ KS_KP_Equal, Common::KEYCODE_KP_EQUALS, '=' },
-	{ KS_KP_Enter, Common::KEYCODE_KP_ENTER, Common::ASCII_RETURN },
-	{ 0, 0, 0 }
-};
+    {KS_Return, Common::KEYCODE_RETURN, Common::ASCII_RETURN},
+    {KS_Up, Common::KEYCODE_UP, 0},
+    {KS_Down, Common::KEYCODE_DOWN, 0},
+    {KS_Left, Common::KEYCODE_LEFT, 0},
+    {KS_Right, Common::KEYCODE_RIGHT, 0},
+    {KS_Shift_L, Common::KEYCODE_LSHIFT, 0},
+    {KS_Shift_R, Common::KEYCODE_RSHIFT, 0},
+    {KS_Control_L, Common::KEYCODE_LCTRL, 0},
+    {KS_Control_R, Common::KEYCODE_RCTRL, 0},
+    {KS_Alt_L, Common::KEYCODE_LALT, 0},
+    {KS_Alt_R, Common::KEYCODE_RALT, 0},
+    {KS_Meta_L, Common::KEYCODE_LMETA, 0},
+    {KS_Meta_R, Common::KEYCODE_RMETA, 0},
+    {KS_KP_0, Common::KEYCODE_KP0, '0'},
+    {KS_KP_1, Common::KEYCODE_KP1, '1'},
+    {KS_KP_2, Common::KEYCODE_KP2, '2'},
+    {KS_KP_3, Common::KEYCODE_KP3, '3'},
+    {KS_KP_4, Common::KEYCODE_KP4, '4'},
+    {KS_KP_5, Common::KEYCODE_KP5, '5'},
+    {KS_KP_6, Common::KEYCODE_KP6, '6'},
+    {KS_KP_7, Common::KEYCODE_KP7, '7'},
+    {KS_KP_8, Common::KEYCODE_KP8, '8'},
+    {KS_KP_9, Common::KEYCODE_KP9, '9'},
+    {KS_Home, Common::KEYCODE_HOME, 0},
+    {KS_Insert, Common::KEYCODE_INSERT, 0},
+    {KS_End, Common::KEYCODE_END, 0},
+    {KS_Prior, Common::KEYCODE_PAGEUP, 0},
+    {KS_Next, Common::KEYCODE_PAGEDOWN, 0},
+    {KS_f1, Common::KEYCODE_F1, Common::ASCII_F1},
+    {KS_f2, Common::KEYCODE_F2, Common::ASCII_F2},
+    {KS_f3, Common::KEYCODE_F3, Common::ASCII_F3},
+    {KS_f4, Common::KEYCODE_F4, Common::ASCII_F4},
+    {KS_f5, Common::KEYCODE_F5, Common::ASCII_F5},
+    {KS_f6, Common::KEYCODE_F6, Common::ASCII_F6},
+    {KS_f7, Common::KEYCODE_F7, Common::ASCII_F7},
+    {KS_f8, Common::KEYCODE_F8, Common::ASCII_F8},
+    {KS_f9, Common::KEYCODE_F9, Common::ASCII_F9},
+    {KS_f10, Common::KEYCODE_F10, Common::ASCII_F10},
+    {KS_f11, Common::KEYCODE_F11, Common::ASCII_F11},
+    {KS_f12, Common::KEYCODE_F12, Common::ASCII_F12},
+    {KS_f13, Common::KEYCODE_F13, 0},
+    {KS_f14, Common::KEYCODE_F14, 0},
+    {KS_f15, Common::KEYCODE_F15, 0},
+    {KS_F1, Common::KEYCODE_F1, Common::ASCII_F1},
+    {KS_F2, Common::KEYCODE_F2, Common::ASCII_F2},
+    {KS_F3, Common::KEYCODE_F3, Common::ASCII_F3},
+    {KS_F4, Common::KEYCODE_F4, Common::ASCII_F4},
+    {KS_F5, Common::KEYCODE_F5, Common::ASCII_F5},
+    {KS_F6, Common::KEYCODE_F6, Common::ASCII_F6},
+    {KS_F7, Common::KEYCODE_F7, Common::ASCII_F7},
+    {KS_F8, Common::KEYCODE_F8, Common::ASCII_F8},
+    {KS_F9, Common::KEYCODE_F9, Common::ASCII_F9},
+    {KS_F10, Common::KEYCODE_F10, Common::ASCII_F10},
+    {KS_F11, Common::KEYCODE_F11, Common::ASCII_F11},
+    {KS_F12, Common::KEYCODE_F12, Common::ASCII_F12},
+    {KS_F13, Common::KEYCODE_F13, 0},
+    {KS_F14, Common::KEYCODE_F14, 0},
+    {KS_F15, Common::KEYCODE_F15, 0},
+    {KS_KP_Separator, Common::KEYCODE_KP_PERIOD, '.'},
+    {KS_KP_Divide, Common::KEYCODE_KP_DIVIDE, '/'},
+    {KS_KP_Multiply, Common::KEYCODE_KP_MULTIPLY, '*'},
+    {KS_KP_Add, Common::KEYCODE_KP_PLUS, '+'},
+    {KS_KP_Subtract, Common::KEYCODE_KP_MINUS, '-'},
+    {KS_KP_Equal, Common::KEYCODE_KP_EQUALS, '='},
+    {KS_KP_Enter, Common::KEYCODE_KP_ENTER, Common::ASCII_RETURN},
+    {0, 0, 0}};
 #endif
 
 static lwpq_t timer_queue;
@@ -146,10 +145,10 @@ static u8 *timer_stack;
 static bool timer_thread_running = false;
 static bool timer_thread_quit = false;
 
-static void * timer_thread_func(void *arg) {
+static void *timer_thread_func(void *arg) {
 	while (!timer_thread_quit) {
 		DefaultTimerManager *tm =
-			(DefaultTimerManager *) g_system->getTimerManager();
+		    (DefaultTimerManager *)g_system->getTimerManager();
 		tm->handler();
 
 		usleep(1000 * 10);
@@ -161,15 +160,15 @@ static void * timer_thread_func(void *arg) {
 void OSystem_Wii::initEvents() {
 	timer_thread_quit = false;
 
-	timer_stack = (u8 *) memalign(32, TIMER_THREAD_STACKSIZE);
+	timer_stack = (u8 *)memalign(32, TIMER_THREAD_STACKSIZE);
 	if (timer_stack) {
 		memset(timer_stack, 0, TIMER_THREAD_STACKSIZE);
 
 		LWP_InitQueue(&timer_queue);
 
 		s32 res = LWP_CreateThread(&timer_thread, timer_thread_func, NULL,
-									timer_stack, TIMER_THREAD_STACKSIZE,
-									TIMER_THREAD_PRIO);
+		                           timer_stack, TIMER_THREAD_STACKSIZE,
+		                           TIMER_THREAD_PRIO);
 
 		if (res) {
 			printf("ERROR creating timer thread: %ld\n", res);
@@ -218,7 +217,7 @@ void OSystem_Wii::deinitEvents() {
 void OSystem_Wii::updateEventScreenResolution() {
 #ifndef GAMECUBE
 	WPAD_SetVRes(WPAD_CHAN_0, _currentWidth + _currentWidth / 5,
-					_currentHeight + _currentHeight / 5);
+	             _currentHeight + _currentHeight / 5);
 #endif
 }
 
@@ -283,17 +282,17 @@ bool OSystem_Wii::pollKeyboard(Common::Event &event) {
 #endif
 
 #define PAD_EVENT(pad_button, kbd_keycode, kbd_ascii, modifier) \
-	do { \
-		if ((bd | bu) & pad_button) { \
-			if (bd & pad_button) \
-				event.type = Common::EVENT_KEYDOWN; \
-			else \
-				event.type = Common::EVENT_KEYUP; \
-			event.kbd.keycode = kbd_keycode; \
-			event.kbd.ascii = kbd_ascii; \
-			event.kbd.flags = modifier; \
-			return true; \
-		} \
+	do {                                                        \
+		if ((bd | bu) & pad_button) {                           \
+			if (bd & pad_button)                                \
+				event.type = Common::EVENT_KEYDOWN;             \
+			else                                                \
+				event.type = Common::EVENT_KEYUP;               \
+			event.kbd.keycode = kbd_keycode;                    \
+			event.kbd.ascii = kbd_ascii;                        \
+			event.kbd.flags = modifier;                         \
+			return true;                                        \
+		}                                                       \
 	} while (0)
 
 bool OSystem_Wii::pollEvent(Common::Event &event) {
@@ -334,7 +333,7 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 
 		if (bh & PADS_UP) {
 			PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5,
-						Common::KBD_CTRL);
+			          Common::KBD_CTRL);
 
 			if (bd & PADS_R) {
 				_consoleVisible = !_consoleVisible;
@@ -419,12 +418,12 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 	if (time - _lastPadCheck > PAD_CHECK_TIME) {
 		_lastPadCheck = time;
 
-		if (abs (PAD_StickX(0)) > _padSensitivity)
+		if (abs(PAD_StickX(0)) > _padSensitivity)
 			mx += PAD_StickX(0) /
-					(_padAcceleration * _overlayWidth / _currentWidth);
-		if (abs (PAD_StickY(0)) > _padSensitivity)
+			      (_padAcceleration * _overlayWidth / _currentWidth);
+		if (abs(PAD_StickY(0)) > _padSensitivity)
 			my -= PAD_StickY(0) /
-					(_padAcceleration * _overlayHeight / _currentHeight);
+			      (_padAcceleration * _overlayHeight / _currentHeight);
 
 		if (mx < 0)
 			mx = 0;

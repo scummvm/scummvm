@@ -51,12 +51,12 @@ enum ErrorCode {
 	UNKNOWN_ERROR
 };
 
-
 class Error {
 	const ErrorLevel _errorLevel;
 	const ErrorCode _errorCode;
 	const int _errorExtraInt;
 	const Common::String _errorExtraString;
+
 public:
 	Error(ErrorLevel, ErrorCode);
 	Error(ErrorLevel, ErrorCode, int errorExtraInt);

@@ -195,7 +195,7 @@ bool blur_createSettings(int numParams, VariableStack *&stack) {
 					if (error.empty()) {
 						for (int x = 0; x < width; x++) {
 							int arraySlot = x + (y * width);
-//							s_matrixEffectData[arraySlot] = (rand() % 4);
+							//							s_matrixEffectData[arraySlot] = (rand() % 4);
 							if (!eachNumber->thisVar.getValueType(s_matrixEffectData[arraySlot], SVT_INT)) {
 								error = "";
 								break;

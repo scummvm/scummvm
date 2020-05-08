@@ -48,6 +48,7 @@ public:
 
 	typedef uint32 value_type;
 	typedef uint32 unsigned_type;
+
 private:
 	/**
 	 * The size of the internal storage. Increasing this means less heap
@@ -65,8 +66,7 @@ private:
 	 * Pointer to the actual string storage. Either points to _storage,
 	 * or to a block allocated on the heap via malloc.
 	 */
-	value_type  *_str;
-
+	value_type *_str;
 
 	union {
 		/**
@@ -79,7 +79,7 @@ private:
 		 */
 		struct {
 			mutable int *_refCount;
-			uint32       _capacity;
+			uint32 _capacity;
 		} _extern;
 	};
 
@@ -147,7 +147,7 @@ public:
 	bool contains(value_type x) const;
 
 	inline const value_type *c_str() const { return _str; }
-	inline uint32 size() const             { return _size; }
+	inline uint32 size() const { return _size; }
 
 	inline bool empty() const { return (_size == 0); }
 
@@ -199,8 +199,8 @@ public:
 	uint32 find(value_type x, uint32 pos = 0) const;
 	uint32 find(const U32String &str, uint32 pos = 0) const;
 
-	typedef value_type *        iterator;
-	typedef const value_type *  const_iterator;
+	typedef value_type *iterator;
+	typedef const value_type *const_iterator;
 
 	iterator begin() {
 		// Since the user could potentially
@@ -224,8 +224,8 @@ public:
 		return begin() + size();
 	}
 
-    /** Python-like method **/
-    String encode(CodePage page = kUtf8) const;
+	/** Python-like method **/
+	String encode(CodePage page = kUtf8) const;
 
 private:
 	void makeUnique();

@@ -21,13 +21,13 @@
  */
 
 #include "glk/frotz/pics_decoder.h"
-#include "glk/frotz/pics.h"
 #include "common/memstream.h"
+#include "glk/frotz/pics.h"
 
 namespace Glk {
 namespace Frotz {
 
-#define MAX_BIT 512		/* Must be less than or equal to CODE_TABLE_SIZE */
+#define MAX_BIT 512 /* Must be less than or equal to CODE_TABLE_SIZE */
 #define CODE_SIZE 8
 #define CODE_TABLE_SIZE 4096
 #define PREFIX 0
@@ -39,6 +39,7 @@ namespace Frotz {
 class Compress {
 private:
 	byte _codeBuffer[CODE_TABLE_SIZE];
+
 public:
 	short _nextCode;
 	short _sLen;
@@ -55,9 +56,8 @@ public:
 };
 
 static short MASK[16] = {
-	0x0000, 0x0001, 0x0003, 0x0007, 0x000f, 0x001f, 0x003f, 0x007f,
-	0x00ff, 0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff
-};
+    0x0000, 0x0001, 0x0003, 0x0007, 0x000f, 0x001f, 0x003f, 0x007f,
+    0x00ff, 0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff};
 
 short Compress::readCode(Common::ReadStream &src) {
 	short code, bsize, tlen, tptr;
@@ -102,7 +102,7 @@ PictureDecoder::~PictureDecoder() {
 }
 
 Common::SeekableReadStream *PictureDecoder::decode(Common::ReadStream &src, uint flags,
-		const Common::Array<byte> &palette, uint display, size_t width, size_t height) {
+                                                   const Common::Array<byte> &palette, uint display, size_t width, size_t height) {
 	Common::MemoryWriteStreamDynamic out(DisposeAfterUse::NO);
 	short code_table[CODE_TABLE_SIZE][2];
 	byte buffer[CODE_TABLE_SIZE];

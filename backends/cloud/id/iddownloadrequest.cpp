@@ -21,15 +21,14 @@
  */
 
 #include "backends/cloud/id/iddownloadrequest.h"
-#include "backends/cloud/id/idstorage.h"
 #include "backends/cloud/downloadrequest.h"
+#include "backends/cloud/id/idstorage.h"
 
 namespace Cloud {
 namespace Id {
 
-IdDownloadRequest::IdDownloadRequest(IdStorage *storage, Common::String remotePath, Common::String localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _requestedFile(remotePath), _requestedLocalFile(localPath), _storage(storage), _boolCallback(cb),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+IdDownloadRequest::IdDownloadRequest(IdStorage *storage, Common::String remotePath, Common::String localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _requestedFile(remotePath), _requestedLocalFile(localPath), _storage(storage), _boolCallback(cb),
+                                                                                                                                                                         _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 

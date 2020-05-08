@@ -23,9 +23,9 @@
 #ifndef XEEN_WORLDOFXEEN_WORLDOFXEEN_MENU_H
 #define XEEN_WORLDOFXEEN_WORLDOFXEEN_MENU_H
 
-#include "xeen/xeen.h"
-#include "xeen/dialogs/dialogs.h"
 #include "common/array.h"
+#include "xeen/dialogs/dialogs.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
@@ -38,6 +38,7 @@ private:
 	uint _frameCount;
 	Common::Array<SpriteResource> _backgroundSprites;
 	MenuContainerDialog *_dialog;
+
 protected:
 	/**
 	 * Draws the main menu background
@@ -53,11 +54,13 @@ protected:
 	 * Shows the main menu dialog
 	 */
 	virtual void showMenuDialog() = 0;
+
 public:
 	/**
 	 * Show the main menu for the correct game
 	 */
 	static void show();
+
 public:
 	/**
 	 * Constructor
@@ -93,6 +96,7 @@ protected:
 	 * Shows the main menu dialog
 	 */
 	void showMenuDialog() override;
+
 public:
 	CloudsMainMenuContainer();
 };
@@ -100,6 +104,7 @@ public:
 class DarkSideMainMenuContainer : public MainMenuContainer {
 private:
 	SpriteResource _background;
+
 protected:
 	/**
 	 * Called when the menu screen is first shown
@@ -110,6 +115,7 @@ protected:
 	* Shows the main menu dialog
 	*/
 	void showMenuDialog() override;
+
 public:
 	DarkSideMainMenuContainer();
 };
@@ -125,6 +131,7 @@ protected:
 	* Shows the main menu dialog
 	*/
 	void showMenuDialog() override;
+
 public:
 	WorldOfXeenMainMenuContainer();
 };
@@ -140,6 +147,7 @@ protected:
 	* Shows the main menu dialog
 	*/
 	void showMenuDialog() override;
+
 public:
 	WorldOfXeenCDMainMenuContainer();
 };
@@ -147,6 +155,7 @@ public:
 class MenuContainerDialog : public ButtonContainer {
 protected:
 	MainMenuContainer *_owner;
+
 public:
 	/**
 	 * Constructor
@@ -192,17 +201,18 @@ public:
 	 * Handles events
 	 */
 	bool handleEvents() override;
-
 };
 
 class CloudsMenuDialog : public MainMenuDialog {
 private:
 	SpriteResource _buttonSprites;
+
 private:
 	/**
 	 * Loads buttons for the dialog
 	 */
 	void loadButtons();
+
 public:
 	/**
 	 * Constructor
@@ -229,11 +239,13 @@ class DarkSideMenuDialog : public MainMenuDialog {
 private:
 	SpriteResource _buttonSprites;
 	bool _firstDraw;
+
 private:
 	/**
 	 * Loads buttons for the dialog
 	 */
 	void loadButtons();
+
 public:
 	/**
 	 * Constructor
@@ -259,11 +271,13 @@ public:
 class WorldMenuDialog : public MainMenuDialog {
 private:
 	SpriteResource _buttonSprites;
+
 private:
 	/**
 	* Loads buttons for the dialog
 	*/
 	void loadButtons();
+
 public:
 	/**
 	 * Constructor
@@ -289,11 +303,13 @@ public:
 class OtherOptionsDialog : public MenuContainerDialog {
 private:
 	SpriteResource _buttonSprites;
+
 private:
 	/**
 	* Loads buttons for the dialog
 	*/
 	void loadButtons();
+
 public:
 	/**
 	 * Constructor

@@ -23,25 +23,20 @@
 #ifndef NEVERHOOD_MODULES_MODULE1200_SPRITES_H
 #define NEVERHOOD_MODULES_MODULE1200_SPRITES_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
 
 // Used for both the scene sprites and the scene itself (for clipping)
 static const NPoint kScene1201PointArray[] = {
-	{218, 193}, {410, 225}, {368, 277},
-	{194, 227}, {366, 174}, {458, 224},
-	{242, 228}, {512, 228}, {458, 277},
-	{217, 233}, {458, 173}, {410, 276},
-	{203, 280}, {371, 226}, {508, 279},
-	{230, 273}, {410, 171}, {493, 174}
-};
+    {218, 193}, {410, 225}, {368, 277}, {194, 227}, {366, 174}, {458, 224}, {242, 228}, {512, 228}, {458, 277}, {217, 233}, {458, 173}, {410, 276}, {203, 280}, {371, 226}, {508, 279}, {230, 273}, {410, 171}, {493, 174}};
 
 class AsScene1201Tape : public AnimatedSprite {
 public:
 	AsScene1201Tape(NeverhoodEngine *vm, Scene *parentScene, uint32 nameHash, int surfacePriority, int16 x, int16 y, uint32 fileHash);
+
 protected:
 	Scene *_parentScene;
 	uint32 _nameHash;
@@ -51,6 +46,7 @@ protected:
 class AsScene1201TntManRope : public AnimatedSprite {
 public:
 	AsScene1201TntManRope(NeverhoodEngine *vm, bool isDummyHanging);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -58,6 +54,7 @@ protected:
 class AsScene1201RightDoor : public AnimatedSprite {
 public:
 	AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klaymen, bool isOpen);
+
 protected:
 	Sprite *_klaymen;
 	int _countdown;
@@ -71,6 +68,7 @@ protected:
 class AsScene1201KlaymenHead : public AnimatedSprite {
 public:
 	AsScene1201KlaymenHead(NeverhoodEngine *vm);
+
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -79,6 +77,7 @@ class AsScene1201TntMan : public AnimatedSprite {
 public:
 	AsScene1201TntMan(NeverhoodEngine *vm, Scene *parentScene, Sprite *asTntManRope, bool isDown);
 	~AsScene1201TntMan() override;
+
 protected:
 	Scene *_parentScene;
 	Sprite *_asTntManRope;
@@ -96,6 +95,7 @@ class AsScene1201TntManFlame : public AnimatedSprite {
 public:
 	AsScene1201TntManFlame(NeverhoodEngine *vm, Sprite *asTntMan);
 	~AsScene1201TntManFlame() override;
+
 protected:
 	Sprite *_asTntMan;
 	void update();
@@ -105,6 +105,7 @@ protected:
 class AsScene1201Match : public AnimatedSprite {
 public:
 	AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene);
+
 protected:
 	Scene *_parentScene;
 	int _countdown;
@@ -123,6 +124,7 @@ protected:
 class AsScene1201Creature : public AnimatedSprite {
 public:
 	AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen);
+
 protected:
 	Scene *_parentScene;
 	Sprite *_klaymen;
@@ -142,6 +144,7 @@ protected:
 class AsScene1201LeftDoor : public AnimatedSprite {
 public:
 	AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klaymen);
+
 protected:
 	Sprite *_klaymen;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -156,6 +159,7 @@ public:
 class AsScene1202TntItem : public AnimatedSprite {
 public:
 	AsScene1202TntItem(NeverhoodEngine *vm, Scene *parentScene, int index);
+
 protected:
 	Scene *_parentScene;
 	int _itemIndex, _newPosition;
@@ -170,6 +174,7 @@ protected:
 class KmScene1201 : public Klaymen {
 public:
 	KmScene1201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
+
 protected:
 	void stCloseEyes();
 	void stTumbleHeadless();

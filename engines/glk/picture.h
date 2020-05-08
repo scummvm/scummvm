@@ -34,6 +34,7 @@ namespace Glk {
 struct Picture : Graphics::ManagedSurface {
 private:
 	int _transColor;
+
 public:
 	int _refCount;
 	uint _id;
@@ -92,6 +93,7 @@ private:
 	Common::Array<PictureEntry> _store;
 	Common::Array<uint> _adaptivePics;
 	Common::Array<byte> _savedPalette;
+
 private:
 	/**
 	 * Stores an original picture in the store
@@ -102,6 +104,7 @@ private:
 	 * Stores a scaled picture in the store
 	 */
 	void storeScaled(Picture *pic);
+
 public:
 	/**
 	 * Constructor

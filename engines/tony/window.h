@@ -29,8 +29,8 @@
 #ifndef TONY_WINDOW_H
 #define TONY_WINDOW_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "tony/game.h"
 
 namespace Tony {
@@ -38,7 +38,8 @@ namespace Tony {
 class RMSnapshot {
 private:
 	// Buffer used to convert to RGB
-	byte _rgb[RM_SX *RM_SY * 3];
+	byte _rgb[RM_SX * RM_SY * 3];
+
 public:
 	/**
 	 * Take a screenshot

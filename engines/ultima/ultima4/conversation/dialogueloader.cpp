@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
+#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader_hw.h"
 #include "ultima/ultima4/conversation/dialogueloader_lb.h"
 #include "ultima/ultima4/conversation/dialogueloader_tlk.h"
@@ -41,7 +41,7 @@ DialogueLoaders::DialogueLoaders() {
 
 DialogueLoaders::~DialogueLoaders() {
 	for (Common::HashMap<Common::String, DialogueLoader *>::iterator it = _loaders.begin();
-			it != _loaders.end(); ++it)
+	     it != _loaders.end(); ++it)
 		delete it->_value;
 	g_loaders = nullptr;
 }

@@ -23,23 +23,22 @@
 #ifndef PARALLACTION_GUI_H
 #define PARALLACTION_GUI_H
 
-#include "common/system.h"
 #include "common/hashmap.h"
+#include "common/system.h"
 
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
-
 
 namespace Parallaction {
 
 class MenuInputState;
 
 class MenuInputHelper {
-	typedef	Common::HashMap<Common::String, MenuInputState *> StateMap;
+	typedef Common::HashMap<Common::String, MenuInputState *> StateMap;
 
-	StateMap	_map;
-	MenuInputState	*_state;
+	StateMap _map;
+	MenuInputState *_state;
 	MenuInputState *_newState;
 
 public:
@@ -76,14 +75,13 @@ public:
 		_helper->addState(name, this);
 	}
 
-	Common::String	_name;
+	Common::String _name;
 
-	virtual ~MenuInputState() { }
+	virtual ~MenuInputState() {}
 
-	virtual MenuInputState* run() = 0;
+	virtual MenuInputState *run() = 0;
 	virtual void enter() = 0;
 };
-
 
 } // namespace Parallaction
 

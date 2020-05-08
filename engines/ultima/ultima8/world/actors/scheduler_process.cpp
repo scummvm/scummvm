@@ -22,9 +22,9 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/actors/scheduler_process.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/scheduler_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -48,12 +48,13 @@ void SchedulerProcess::run() {
 			// CHECKME: is this the right time to pass? CONSTANT
 			uint32 stime = Ultima8Engine::get_instance()->getGameTimeInSeconds() / 60;
 			ProcId schedpid = a->callUsecodeEvent_schedule(stime);
-			if (schedpid) waitFor(schedpid);
+			if (schedpid)
+				waitFor(schedpid);
 		}
 
 		_nextActor++;
 		if (_nextActor == 256) { // CONSTANT
-			_nextActor = 0; // done
+			_nextActor = 0;      // done
 #if 0
 			pout << "Scheduler: finished run at "
 			     << Kernel::get_instance()->getFrameNum() << Std::endl;
@@ -85,7 +86,8 @@ void SchedulerProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool SchedulerProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_lastRun = rs->readUint32LE();
 	_nextActor = rs->readUint16LE();

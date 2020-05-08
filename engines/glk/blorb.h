@@ -23,10 +23,10 @@
 #ifndef GLK_BLORB_H
 #define GLK_BLORB_H
 
-#include "glk/glk_types.h"
-#include "glk/streams.h"
 #include "common/archive.h"
 #include "common/array.h"
+#include "glk/glk_types.h"
+#include "glk/streams.h"
 
 namespace Glk {
 
@@ -66,7 +66,7 @@ enum {
 	ID_SAAI = MKTAG('S', 'A', 'A', 'I'),
 
 	ID_JPEG = MKTAG('J', 'P', 'E', 'G'),
-	ID_PNG  = MKTAG('P', 'N', 'G', ' '),
+	ID_PNG = MKTAG('P', 'N', 'G', ' '),
 	ID_Rect = MKTAG('R', 'e', 'c', 't'),
 
 	ID_MIDI = MKTAG('M', 'I', 'D', 'I'),
@@ -85,7 +85,7 @@ private:
 	Common::String _filename;
 	Common::FSNode _fileNode;
 	InterpreterType _interpType;
-	Common::Array<ChunkEntry> _chunks;	///< list of chunk descriptors
+	Common::Array<ChunkEntry> _chunks; ///< list of chunk descriptors
 private:
 	/**
 	 * Parses the Blorb file index to load in a list of the chunks
@@ -96,6 +96,7 @@ private:
 	 * Add possible Blorb filenames for Infocom games
 	 */
 	static void getInfocomBlorbFilenames(Common::StringArray &filenames, const Common::String &gameId);
+
 public:
 	/**
 	 * Constructor
@@ -158,7 +159,7 @@ public:
 	 * Return a list of possible filenames for blorb files
 	 */
 	static void getBlorbFilenames(const Common::String &srcFilename, Common::StringArray &filenames,
-		InterpreterType interpType, const Common::String &gameId);
+	                              InterpreterType interpType, const Common::String &gameId);
 };
 
 } // End of namespace Glk

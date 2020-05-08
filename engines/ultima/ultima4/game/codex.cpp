@@ -21,18 +21,18 @@
  */
 
 #include "ultima/ultima4/game/codex.h"
-#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event_handler.h"
+#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/item.h"
-#include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/game/names.h"
-#include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
-#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -64,7 +64,7 @@ void Codex::deinit() {
 void Codex::start() {
 	init();
 
-	// Disable the whirlpool cursor and black out the screen	
+	// Disable the whirlpool cursor and black out the screen
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
@@ -72,19 +72,19 @@ void Codex::start() {
 	g_screen->screenUpdate(&g_game->_mapArea, false, true);
 
 	// Make the avatar alone
-	
+
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
-	g_context->_stats->update(true);     // show just the avatar
+	g_context->_stats->update(true); // show just the avatar
 	g_screen->update();
 
 	// Change the view mode so the dungeon doesn't get shown
-	
+
 	gameSetViewMode(VIEW_CODEX);
 
 	g_screen->screenMessage("\n\n\n\nThere is a sudden darkness, and you find yourself alone in an empty chamber.\n");
 	EventHandler::sleep(4000);
 
-	// Check to see if you have the 3-part key	
+	// Check to see if you have the 3-part key
 	if ((g_ultima->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) != (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
 		eject(CODEX_EJECT_NO_3_PART_KEY);
 		return;
@@ -98,7 +98,7 @@ void Codex::start() {
 
 	g_screen->screenMessage("\nA voice rings out:\n\"What is the Word of Passage?\"\n\n");
 
-	// Get the Word of Passage	
+	// Get the Word of Passage
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationHelper::setIntroString("What is the Word of Passage?");
 #endif
@@ -109,15 +109,14 @@ void Codex::eject(CodexEjectCode code) {
 	const struct {
 		int x, y;
 	} startLocations[] = {
-		{ 231, 136 },
-		{ 83, 105 },
-		{ 35, 221 },
-		{ 59, 44 },
-		{ 158, 21 },
-		{ 105, 183 },
-		{ 23, 129 },
-		{ 186, 171 }
-	};
+	    {231, 136},
+	    {83, 105},
+	    {35, 221},
+	    {59, 44},
+	    {158, 21},
+	    {105, 183},
+	    {23, 129},
+	    {186, 171}};
 
 	switch (code) {
 	case CODEX_EJECT_NO_3_PART_KEY:
@@ -251,10 +250,9 @@ void Codex::handleWOP(const Common::String &word) {
 
 void Codex::handleVirtues(const Common::String &virtue) {
 	static const char *codexImageNames[] = {
-		BKGD_HONESTY, BKGD_COMPASSN, BKGD_VALOR, BKGD_JUSTICE,
-		BKGD_SACRIFIC, BKGD_HONOR, BKGD_SPIRIT, BKGD_HUMILITY,
-		BKGD_TRUTH, BKGD_LOVE, BKGD_COURAGE
-	};
+	    BKGD_HONESTY, BKGD_COMPASSN, BKGD_VALOR, BKGD_JUSTICE,
+	    BKGD_SACRIFIC, BKGD_HONOR, BKGD_SPIRIT, BKGD_HUMILITY,
+	    BKGD_TRUTH, BKGD_LOVE, BKGD_COURAGE};
 
 	static int current = 0;
 	static int tries = 1;
@@ -268,7 +266,7 @@ void Codex::handleVirtues(const Common::String &virtue) {
 
 	// answered with the correct one of eight virtues
 	if ((current < VIRT_MAX) &&
-	        (scumm_stricmp(virtue.c_str(), getVirtueName(static_cast<Virtue>(current))) == 0)) {
+	    (scumm_stricmp(virtue.c_str(), getVirtueName(static_cast<Virtue>(current))) == 0)) {
 
 		g_screen->screenDrawImageInMapArea(codexImageNames[current]);
 		g_screen->screenRedrawMapArea();
@@ -388,7 +386,8 @@ void Codex::handleInfinity(const Common::String &answer) {
 		impureThoughts();
 		g_screen->screenMessage("\nAbove the din, the voice asks:\n\nIf all eight virtues of the Avatar combine into and are derived from the Three Principles of Truth, Love and Courage...");
 		eventHandler->pushKeyHandler(&handleInfinityAnyKey);
-	} else eject(CODEX_EJECT_BAD_INFINITY);
+	} else
+		eject(CODEX_EJECT_BAD_INFINITY);
 }
 
 bool Codex::handleEndgameAnyKey(int key, void *data) {
@@ -417,7 +416,7 @@ bool Codex::handleEndgameAnyKey(int key, void *data) {
 		// CONGRATULATIONS!... you have completed the game in x turns
 		g_screen->screenDisableCursor();
 		g_screen->screenMessage("%s%d%s", g_codex->_endgameText2[index - 7].c_str(),
-			g_ultima->_saveGame->_moves, g_codex->_endgameText2[index - 6].c_str());
+		                        g_ultima->_saveGame->_moves, g_codex->_endgameText2[index - 6].c_str());
 #ifdef IOS_ULTIMA4
 		U4IOS::endChoiceConversation();
 #endif

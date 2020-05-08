@@ -23,18 +23,17 @@
 #include "common/lua/lauxlib.h"
 
 #include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/core/converse.h"
+#include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/script/script_actor.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/core/effect.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/core/converse.h"
 #include "ultima/nuvie/usecode/usecode.h"
 #include "ultima/nuvie/views/portrait_view.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -165,134 +164,129 @@ static int nscript_actor_get_number_of_schedules(lua_State *L);
 static int nscript_actor_get_schedule(lua_State *L);
 
 static const struct luaL_Reg nscript_actorlib_f[] = {
-	{ "new", nscript_actor_new },
-	{ "clone", nscript_actor_clone },
-	{ "kill", nscript_actor_kill },
-	{ "hit", nscript_actor_hit },
-	{ "get_range", nscript_actor_get_range },
-	{ "resurrect", nscript_actor_resurrect },
-	{ "move", nscript_actor_move },
-	{ "walk_path", nscript_actor_walk_path },
-	{ "get", nscript_get_actor_from_num },
-	{ "get_player_actor", nscript_get_player_actor },
-	{ "inv_add_obj", nscript_actor_inv_add_obj },
-	{ "inv_remove_obj", nscript_actor_inv_remove_obj },
-	{ "inv_remove_obj_qty", nscript_actor_inv_remove_obj_qty },
-	{ "inv_get_readied_obj_n", nscript_actor_inv_get_readied_obj_n },
-	{ "inv_ready_obj", nscript_actor_inv_ready_obj },
-	{ "inv_unready_obj", nscript_actor_inv_unready_obj },
-	{ "inv_has_obj_n", nscript_actor_inv_has_obj_n },
-	{ "inv_get_obj_n", nscript_actor_inv_get_obj_n },
-	{ "inv_get_obj_total_qty", nscript_actor_inv_get_obj_total_qty },
-	{ "is_at_scheduled_location", nscript_actor_is_at_scheduled_location },
-	{ "can_carry_obj", nscript_actor_can_carry_obj },
-	{ "can_carry_obj_weight", nscript_actor_can_carry_obj_weight },
-	{ "black_fade_effect", nscript_actor_black_fade_effect },
-	{ "fade_out", nscript_actor_fade_out_effect },
-	{ "show_portrait", nscript_actor_show_portrait },
-	{ "hide_portrait", nscript_actor_hide_portrait },
-	{ "talk", nscript_actor_talk },
-	{ "unlink_surrounding_objs", nscript_actor_unlink_surrounding_objs },
-	{ "use", nscript_actor_use },
-	{ "get_talk_flag", nscript_actor_get_talk_flag },
-	{ "set_talk_flag", nscript_actor_set_talk_flag },
-	{ "clear_talk_flag", nscript_actor_clear_talk_flag },
-	{ "get_number_of_schedules", nscript_actor_get_number_of_schedules },
-	{ "get_schedule", nscript_actor_get_schedule },
+    {"new", nscript_actor_new},
+    {"clone", nscript_actor_clone},
+    {"kill", nscript_actor_kill},
+    {"hit", nscript_actor_hit},
+    {"get_range", nscript_actor_get_range},
+    {"resurrect", nscript_actor_resurrect},
+    {"move", nscript_actor_move},
+    {"walk_path", nscript_actor_walk_path},
+    {"get", nscript_get_actor_from_num},
+    {"get_player_actor", nscript_get_player_actor},
+    {"inv_add_obj", nscript_actor_inv_add_obj},
+    {"inv_remove_obj", nscript_actor_inv_remove_obj},
+    {"inv_remove_obj_qty", nscript_actor_inv_remove_obj_qty},
+    {"inv_get_readied_obj_n", nscript_actor_inv_get_readied_obj_n},
+    {"inv_ready_obj", nscript_actor_inv_ready_obj},
+    {"inv_unready_obj", nscript_actor_inv_unready_obj},
+    {"inv_has_obj_n", nscript_actor_inv_has_obj_n},
+    {"inv_get_obj_n", nscript_actor_inv_get_obj_n},
+    {"inv_get_obj_total_qty", nscript_actor_inv_get_obj_total_qty},
+    {"is_at_scheduled_location", nscript_actor_is_at_scheduled_location},
+    {"can_carry_obj", nscript_actor_can_carry_obj},
+    {"can_carry_obj_weight", nscript_actor_can_carry_obj_weight},
+    {"black_fade_effect", nscript_actor_black_fade_effect},
+    {"fade_out", nscript_actor_fade_out_effect},
+    {"show_portrait", nscript_actor_show_portrait},
+    {"hide_portrait", nscript_actor_hide_portrait},
+    {"talk", nscript_actor_talk},
+    {"unlink_surrounding_objs", nscript_actor_unlink_surrounding_objs},
+    {"use", nscript_actor_use},
+    {"get_talk_flag", nscript_actor_get_talk_flag},
+    {"set_talk_flag", nscript_actor_set_talk_flag},
+    {"clear_talk_flag", nscript_actor_clear_talk_flag},
+    {"get_number_of_schedules", nscript_actor_get_number_of_schedules},
+    {"get_schedule", nscript_actor_get_schedule},
 
-	{ NULL, NULL }
-};
+    {NULL, NULL}};
 static const struct luaL_Reg nscript_actorlib_m[] = {
-	{ "__index", nscript_actor_get },
-	{ "__newindex", nscript_actor_set },
-	{ NULL, NULL }
-};
-
+    {"__index", nscript_actor_get},
+    {"__newindex", nscript_actor_set},
+    {NULL, NULL}};
 
 //Actor variables - must be in alphabetical order
 static const char *actor_set_vars[] = {
-	"align",
-	"asleep",
-	"base_obj_n",
-	"charmed",
-	"cold",
-	"combat_mode",
-	"corpser_flag",
-	"cursed",
-	"dex",
-	"direction",
-	"exp",
-	"frame_n",
-	"frenzy",
-	"hit_flag",
-	"hp",
-	"hypoxia",
-	"int",
-	"level",
-	"magic",
-	"mpts",
-	"obj_flag_0",
-	"obj_n",
-	"old_align",
-	"paralyzed",
-	"poisoned",
-	"protected",
-	"str",
-	"visible",
-	"wt",
-	"x",
-	"y",
-	"z"
-};
+    "align",
+    "asleep",
+    "base_obj_n",
+    "charmed",
+    "cold",
+    "combat_mode",
+    "corpser_flag",
+    "cursed",
+    "dex",
+    "direction",
+    "exp",
+    "frame_n",
+    "frenzy",
+    "hit_flag",
+    "hp",
+    "hypoxia",
+    "int",
+    "level",
+    "magic",
+    "mpts",
+    "obj_flag_0",
+    "obj_n",
+    "old_align",
+    "paralyzed",
+    "poisoned",
+    "protected",
+    "str",
+    "visible",
+    "wt",
+    "x",
+    "y",
+    "z"};
 
 //Actor variables - must be in alphabetical order
 static const char *actor_get_vars[] = {
-	"actor_num",
-	"align",
-	"alive",
-	"asleep",
-	"base_obj_n",
-	"charmed",
-	"cold",
-	"combat_mode",
-	"corpser_flag",
-	"cursed",
-	"dex",
-	"direction",
-	"exp",
-	"frame_n",
-	"frenzy",
-	"hit_flag",
-	"hp",
-	"hypoxia",
-	"in_party",
-	"in_vehicle",
-	"int",
-	"level",
-	"luatype",
-	"magic",
-	"max_hp",
-	"mpts",
-	"name",
-	"obj_flag_0",
-	"obj_n",
-	"old_align",
-	"old_frame_n",
-	"paralyzed",
-	"poisoned",
-	"protected",
-	"sched_loc",
-	"sched_wt",
-	"str",
-	"temp",
-	"tile_num",
-	"visible",
-	"wt",
-	"x",
-	"xyz",
-	"y",
-	"z"
-};
+    "actor_num",
+    "align",
+    "alive",
+    "asleep",
+    "base_obj_n",
+    "charmed",
+    "cold",
+    "combat_mode",
+    "corpser_flag",
+    "cursed",
+    "dex",
+    "direction",
+    "exp",
+    "frame_n",
+    "frenzy",
+    "hit_flag",
+    "hp",
+    "hypoxia",
+    "in_party",
+    "in_vehicle",
+    "int",
+    "level",
+    "luatype",
+    "magic",
+    "max_hp",
+    "mpts",
+    "name",
+    "obj_flag_0",
+    "obj_n",
+    "old_align",
+    "old_frame_n",
+    "paralyzed",
+    "poisoned",
+    "protected",
+    "sched_loc",
+    "sched_wt",
+    "str",
+    "temp",
+    "tile_num",
+    "visible",
+    "wt",
+    "x",
+    "xyz",
+    "y",
+    "z"};
 
 //Actor set
 static int nscript_actor_set_align(Actor *actor, lua_State *L);
@@ -329,39 +323,38 @@ static int nscript_actor_set_y(Actor *actor, lua_State *L);
 static int nscript_actor_set_z(Actor *actor, lua_State *L);
 
 int (*actor_set_func[])(Actor *, lua_State *) = {
-	nscript_actor_set_align,
-	nscript_actor_set_asleep_flag,
-	nscript_actor_set_base_obj_n,
-	nscript_actor_set_charmed_flag,
-	nscript_actor_set_cold_flag,
-	nscript_actor_set_combat_mode,
-	nscript_actor_set_corpser_flag,
-	nscript_actor_set_cursed_flag,
-	nscript_actor_set_dexterity,
-	nscript_actor_set_direction,
-	nscript_actor_set_exp,
-	nscript_actor_set_frame_n,
-	nscript_actor_set_frenzy,
-	nscript_actor_set_hit,
-	nscript_actor_set_hp,
-	nscript_actor_set_hypoxia,
-	nscript_actor_set_intelligence,
-	nscript_actor_set_level,
-	nscript_actor_set_magic,
-	nscript_actor_set_movement_pts,
-	nscript_actor_set_obj_flag_0,
-	nscript_actor_set_obj_n,
-	nscript_actor_set_old_align,
-	nscript_actor_set_paralyzed_flag,
-	nscript_actor_set_poisoned_flag,
-	nscript_actor_set_protected_flag,
-	nscript_actor_set_strength,
-	nscript_actor_set_visible_flag,
-	nscript_actor_set_worktype,
-	nscript_actor_set_x,
-	nscript_actor_set_y,
-	nscript_actor_set_z
-};
+    nscript_actor_set_align,
+    nscript_actor_set_asleep_flag,
+    nscript_actor_set_base_obj_n,
+    nscript_actor_set_charmed_flag,
+    nscript_actor_set_cold_flag,
+    nscript_actor_set_combat_mode,
+    nscript_actor_set_corpser_flag,
+    nscript_actor_set_cursed_flag,
+    nscript_actor_set_dexterity,
+    nscript_actor_set_direction,
+    nscript_actor_set_exp,
+    nscript_actor_set_frame_n,
+    nscript_actor_set_frenzy,
+    nscript_actor_set_hit,
+    nscript_actor_set_hp,
+    nscript_actor_set_hypoxia,
+    nscript_actor_set_intelligence,
+    nscript_actor_set_level,
+    nscript_actor_set_magic,
+    nscript_actor_set_movement_pts,
+    nscript_actor_set_obj_flag_0,
+    nscript_actor_set_obj_n,
+    nscript_actor_set_old_align,
+    nscript_actor_set_paralyzed_flag,
+    nscript_actor_set_poisoned_flag,
+    nscript_actor_set_protected_flag,
+    nscript_actor_set_strength,
+    nscript_actor_set_visible_flag,
+    nscript_actor_set_worktype,
+    nscript_actor_set_x,
+    nscript_actor_set_y,
+    nscript_actor_set_z};
 
 //Actor get
 static int nscript_actor_get_actor_num(Actor *actor, lua_State *L);
@@ -411,53 +404,51 @@ static int nscript_actor_get_y(Actor *actor, lua_State *L);
 static int nscript_actor_get_z(Actor *actor, lua_State *L);
 
 int (*actor_get_func[])(Actor *, lua_State *) = {
-	nscript_actor_get_actor_num,
-	nscript_actor_get_align,
-	nscript_actor_get_alive,
-	nscript_actor_get_asleep_flag,
-	nscript_actor_get_base_obj_n,
-	nscript_actor_get_charmed_flag,
-	nscript_actor_get_cold_flag,
-	nscript_actor_get_combat_mode,
-	nscript_actor_get_corpser_flag,
-	nscript_actor_get_cursed_flag,
-	nscript_actor_get_dexterity,
-	nscript_actor_get_direction,
-	nscript_actor_get_exp,
-	nscript_actor_get_frame_n,
-	nscript_actor_get_frenzy,
-	nscript_actor_get_hit_flag,
-	nscript_actor_get_hp,
-	nscript_actor_get_hypoxia,
-	nscript_actor_get_in_party_status,
-	nscript_actor_get_in_vehicle,
-	nscript_actor_get_intelligence,
-	nscript_actor_get_level,
-	nscript_actor_get_luatype,
-	nscript_actor_get_magic,
-	nscript_actor_get_max_hp,
-	nscript_actor_get_movement_pts,
-	nscript_actor_get_name,
-	nscript_actor_get_obj_flag_0,
-	nscript_actor_get_obj_n,
-	nscript_actor_get_old_align,
-	nscript_actor_get_old_frame_n,
-	nscript_actor_get_paralyzed_flag,
-	nscript_actor_get_poisoned_flag,
-	nscript_actor_get_protected_flag,
-	nscript_actor_get_sched_loc,
-	nscript_actor_get_sched_worktype,
-	nscript_actor_get_strength,
-	nscript_actor_get_temp_status,
-	nscript_actor_get_tile_num,
-	nscript_actor_get_visible_flag,
-	nscript_actor_get_worktype,
-	nscript_actor_get_x,
-	nscript_actor_get_xyz,
-	nscript_actor_get_y,
-	nscript_actor_get_z
-};
-
+    nscript_actor_get_actor_num,
+    nscript_actor_get_align,
+    nscript_actor_get_alive,
+    nscript_actor_get_asleep_flag,
+    nscript_actor_get_base_obj_n,
+    nscript_actor_get_charmed_flag,
+    nscript_actor_get_cold_flag,
+    nscript_actor_get_combat_mode,
+    nscript_actor_get_corpser_flag,
+    nscript_actor_get_cursed_flag,
+    nscript_actor_get_dexterity,
+    nscript_actor_get_direction,
+    nscript_actor_get_exp,
+    nscript_actor_get_frame_n,
+    nscript_actor_get_frenzy,
+    nscript_actor_get_hit_flag,
+    nscript_actor_get_hp,
+    nscript_actor_get_hypoxia,
+    nscript_actor_get_in_party_status,
+    nscript_actor_get_in_vehicle,
+    nscript_actor_get_intelligence,
+    nscript_actor_get_level,
+    nscript_actor_get_luatype,
+    nscript_actor_get_magic,
+    nscript_actor_get_max_hp,
+    nscript_actor_get_movement_pts,
+    nscript_actor_get_name,
+    nscript_actor_get_obj_flag_0,
+    nscript_actor_get_obj_n,
+    nscript_actor_get_old_align,
+    nscript_actor_get_old_frame_n,
+    nscript_actor_get_paralyzed_flag,
+    nscript_actor_get_poisoned_flag,
+    nscript_actor_get_protected_flag,
+    nscript_actor_get_sched_loc,
+    nscript_actor_get_sched_worktype,
+    nscript_actor_get_strength,
+    nscript_actor_get_temp_status,
+    nscript_actor_get_tile_num,
+    nscript_actor_get_visible_flag,
+    nscript_actor_get_worktype,
+    nscript_actor_get_x,
+    nscript_actor_get_xyz,
+    nscript_actor_get_y,
+    nscript_actor_get_z};
 
 static int nscript_map_get_actor(lua_State *L);
 static int nscript_update_actor_schedules(lua_State *L);
@@ -1155,8 +1146,8 @@ static int nscript_actor_get_range(lua_State *L) {
 	actor = nscript_get_actor_from_args(L);
 	if (actor == NULL)
 		return 0;
-	uint16 target_x = (uint16) luaL_checkinteger(L, 2);
-	uint16 target_y = (uint16) luaL_checkinteger(L, 3);
+	uint16 target_x = (uint16)luaL_checkinteger(L, 2);
+	uint16 target_y = (uint16)luaL_checkinteger(L, 3);
 	lua_pushinteger(L, actor->get_range(target_x, target_y));
 	return 1;
 }
@@ -1472,7 +1463,6 @@ static int nscript_actor_inv_remove_obj(lua_State *L) {
 
 	obj = *s_obj;
 
-
 	actor->inventory_remove_obj(obj);
 
 	return 0;
@@ -1496,7 +1486,6 @@ static int nscript_actor_inv_remove_obj_qty(lua_State *L) {
 
 	uint16 obj_n = (uint16)lua_tointeger(L, 2);
 	uint16 qty = (uint16)lua_tointeger(L, 3);
-
 
 	lua_pushinteger(L, actor->inventory_del_object(obj_n, qty, 0));
 

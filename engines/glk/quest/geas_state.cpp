@@ -42,7 +42,7 @@ void Serializer::sync(String &s) {
 	if (isLoading())
 		s = String(str.c_str());
 }
-	
+
 void Serializer::sync(PropertyRecord &pr) {
 	sync(pr.name);
 	sync(pr.data);
@@ -89,7 +89,7 @@ void Serializer::sync(GeasState &gs) {
 
 void SVarRecord::sync(Serializer &s) {
 	s.sync(name);
-	
+
 	uint count = data.size();
 	s.syncAsUint32LE(count);
 	if (s.isLoading())
@@ -119,7 +119,7 @@ GeasState::GeasState(GeasInterface &gi, const GeasFile &gf) {
 	running = false;
 
 	cerr << "GeasState::GeasState()" << endl;
-	for (uint i = 0; i < gf.size("game"); i ++) {
+	for (uint i = 0; i < gf.size("game"); i++) {
 		//const GeasBlock &go = gf.game[i];
 		//register_block ("game", "game");
 		ObjectRecord data;
@@ -131,7 +131,7 @@ GeasState::GeasState(GeasInterface &gi, const GeasFile &gf) {
 	}
 
 	cerr << "GeasState::GeasState() done setting game" << endl;
-	for (uint i = 0; i < gf.size("room"); i ++) {
+	for (uint i = 0; i < gf.size("room"); i++) {
 		const GeasBlock &go = gf.block("room", i);
 		ObjectRecord data;
 		//data.name = go.lname;
@@ -159,12 +159,12 @@ GeasState::GeasState(GeasInterface &gi, const GeasFile &gf) {
 	}
 
 	cerr << "GeasState::GeasState() done setting objects" << endl;
-	for (uint i = 0; i < gf.size("timer"); i ++) {
+	for (uint i = 0; i < gf.size("timer"); i++) {
 		const GeasBlock &go = gf.block("timer", i);
 		//cerr << "GS::GS: Handling timer " << go << "\n";
 		TimerRecord tr;
 		String interval = "", status = "";
-		for (uint j = 0; j < go.data.size(); j ++) {
+		for (uint j = 0; j < go.data.size(); j++) {
 			String line = go.data[j];
 			uint c1, c2;
 			String tok = first_token(line, c1, c2);
@@ -193,12 +193,12 @@ GeasState::GeasState(GeasInterface &gi, const GeasFile &gf) {
 	}
 
 	cerr << "GeasState::GeasState() done with timers" << endl;
-	for (uint i = 0; i < gf.size("variable"); i ++) {
+	for (uint i = 0; i < gf.size("variable"); i++) {
 		const GeasBlock &go(gf.block("variable", i));
 		cerr << "GS::GS: Handling variable #" << i << ": " << go << endl;
 		String vartype;
 		String value;
-		for (uint j = 0; j < go.data.size(); j ++) {
+		for (uint j = 0; j < go.data.size(); j++) {
 			String line = go.data[j];
 			cerr << "   Line #" << j << " of var: \"" << line << "\"" << endl;
 			uint c1, c2;
@@ -206,11 +206,9 @@ GeasState::GeasState(GeasInterface &gi, const GeasFile &gf) {
 			if (tok == "type") {
 				tok = next_token(line, c1, c2);
 				if (tok == "")
-					gi.debug_print(String("Missing variable type in ")
-					               + string_geas_block(go));
+					gi.debug_print(String("Missing variable type in ") + string_geas_block(go));
 				else if (vartype != "")
-					gi.debug_print(String("Redefining var. type in ")
-					               + string_geas_block(go));
+					gi.debug_print(String("Redefining var. type in ") + string_geas_block(go));
 				else if (tok == "numeric" || tok == "String")
 					vartype = tok;
 				else
@@ -278,7 +276,7 @@ Common::WriteStream &operator<<(Common::WriteStream &o, const ExitRecord er) {
 
 Common::WriteStream &operator<<(Common::WriteStream &o, const TimerRecord &tr) {
 	return o << tr.name << ": " << (tr.is_running ? "" : "not ") << "running ("
-		<< tr.timeleft << " // " << tr.interval << ")";
+	         << tr.timeleft << " // " << tr.interval << ")";
 }
 
 Common::WriteStream &operator<<(Common::WriteStream &o, const SVarRecord &sr) {

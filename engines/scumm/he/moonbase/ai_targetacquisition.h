@@ -47,7 +47,11 @@ private:
 	AI *_ai;
 
 public:
-	Sortie(AI *ai) { _ai = ai; _unitType = 0; _shotPosX = _shotPosY = 0; }
+	Sortie(AI *ai) {
+		_ai = ai;
+		_unitType = 0;
+		_shotPosX = _shotPosY = 0;
+	}
 	~Sortie() override;
 
 	static void setSourcePos(int x, int y) {
@@ -92,7 +96,6 @@ public:
 
 	int numChildrenToGen() override;
 	IContainedObject *createChildObj(int, int &completionFlag) override;
-
 
 	float calcH() override;
 	int checkSuccess() override;

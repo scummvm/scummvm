@@ -21,13 +21,13 @@
  */
 
 #include "sherlock/tattoo/widget_talk.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_journal.h"
 #include "sherlock/tattoo/tattoo_people.h"
-#include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_scene.h"
+#include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -88,12 +88,10 @@ void WidgetTalk::load() {
 
 	if (scaleVal == SCALE_THRESHOLD) {
 		pt.x += people[0].frameWidth() / 2;
-		pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES].frameHeight()
-			- _bounds.height() - _surface.fontHeight();
+		pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES].frameHeight() - _bounds.height() - _surface.fontHeight();
 	} else {
 		pt.x += people[HOLMES]._imageFrame->sDrawXSize(scaleVal) / 2;
-		pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES]._imageFrame->sDrawYSize(scaleVal)
-			- _bounds.height() - _surface.fontHeight();
+		pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES]._imageFrame->sDrawYSize(scaleVal) - _bounds.height() - _surface.fontHeight();
 	}
 
 	_bounds.moveTo(pt);
@@ -188,8 +186,7 @@ void WidgetTalk::handleEvents() {
 				}
 			}
 
-			events.warpMouse(Common::Point(mousePos.x, _bounds.top + _surface.fontHeight() + 2 + (_surface.fontHeight() + 1)
-				* (_selector - _talkScrollIndex)));
+			events.warpMouse(Common::Point(mousePos.x, _bounds.top + _surface.fontHeight() + 2 + (_surface.fontHeight() + 1) * (_selector - _talkScrollIndex)));
 			_selector = _statementLines[_selector]._num;
 		}
 	}
@@ -386,13 +383,12 @@ void WidgetTalk::render(Highlight highlightMode) {
 		// Main drawing loop
 		for (uint idx = _talkScrollIndex; idx < _statementLines.size() && yp < (_bounds.height() - _surface.fontHeight()); ++idx) {
 			if (highlightMode == HL_NO_HIGHLIGHTING || _statementLines[idx]._num == _selector ||
-					_statementLines[idx]._num == _oldSelector) {
+			    _statementLines[idx]._num == _oldSelector) {
 				// Erase the line contents
 				_surface.fillRect(Common::Rect(3, yp, _surface.width() - BUTTON_SIZE - 3, yp + _surface.fontHeight()), TRANSPARENCY);
 
 				// Different coloring based on whether the option has been previously chosen or not
-				byte color = (!talk._talkHistory[talk._converseNum][_statementLines[idx]._num]) ?
-					INFO_TOP : INFO_BOTTOM;
+				byte color = (!talk._talkHistory[talk._converseNum][_statementLines[idx]._num]) ? INFO_TOP : INFO_BOTTOM;
 
 				if (_statementLines[idx]._num == _selector && highlightMode == HL_CHANGED_HIGHLIGHTS)
 					color = COMMAND_HIGHLIGHTED;

@@ -99,7 +99,6 @@ int Node::generateChildren() {
 	return errorCode;
 }
 
-
 int Node::generateNextChild() {
 	int numChildren = _contents->numChildrenToGen();
 

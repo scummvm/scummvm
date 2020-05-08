@@ -40,6 +40,7 @@ class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
 	StaticTextWidget *_label, *_percentLabel;
 	SliderWidget *_progressBar;
 	bool _close;
+
 public:
 	SaveLoadCloudSyncProgressDialog(bool canRunInBackground);
 	~SaveLoadCloudSyncProgressDialog() override;
@@ -110,16 +111,16 @@ protected:
 	*/
 	virtual void listSaves();
 
-	const bool				_saveMode;
-	const MetaEngine		*_metaEngine;
-	bool					_delSupport;
-	bool					_metaInfoSupport;
-	bool					_thumbnailSupport;
-	bool					_saveDateSupport;
-	bool					_playTimeSupport;
-	Common::String			_target;
+	const bool _saveMode;
+	const MetaEngine *_metaEngine;
+	bool _delSupport;
+	bool _metaInfoSupport;
+	bool _thumbnailSupport;
+	bool _saveDateSupport;
+	bool _playTimeSupport;
+	Common::String _target;
 	bool _dialogWasShown;
-	SaveStateList			_saveList;
+	SaveStateList _saveList;
 
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	ButtonWidget *_listButton;
@@ -133,6 +134,7 @@ protected:
 class SaveLoadChooserSimple : public SaveLoadChooserDialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
+
 public:
 	SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode);
 
@@ -148,21 +150,23 @@ public:
 
 	void open() override;
 	void close() override;
+
 protected:
 	void updateSaveList() override;
+
 private:
 	int runIntern() override;
 
-	ListWidget		*_list;
-	ButtonWidget	*_chooseButton;
-	ButtonWidget	*_deleteButton;
-	GraphicsWidget	*_gfxWidget;
-	ContainerWidget	*_container;
-	StaticTextWidget	*_date;
-	StaticTextWidget	*_time;
-	StaticTextWidget	*_playtime;
+	ListWidget *_list;
+	ButtonWidget *_chooseButton;
+	ButtonWidget *_deleteButton;
+	GraphicsWidget *_gfxWidget;
+	ContainerWidget *_container;
+	StaticTextWidget *_date;
+	StaticTextWidget *_time;
+	StaticTextWidget *_playtime;
 
-	String					_resultString;
+	String _resultString;
 
 	void addThumbnailContainer();
 	void updateSelection(bool redraw);
@@ -182,8 +186,10 @@ public:
 	void setTargetSlot(int slot) { _targetSlot = slot; }
 
 	void open() override;
+
 protected:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+
 private:
 	int _targetSlot;
 	StaticTextWidget *_title;
@@ -204,10 +210,12 @@ public:
 	SaveLoadChooserType getType() const override { return kSaveLoadDialogGrid; }
 
 	void close() override;
+
 protected:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleMouseWheel(int x, int y, int direction) override;
 	void updateSaveList() override;
+
 private:
 	int runIntern() override;
 
@@ -231,8 +239,8 @@ private:
 		SlotButton() : container(nullptr), button(nullptr), description(nullptr) {}
 		SlotButton(ContainerWidget *c, PicButtonWidget *b, StaticTextWidget *d) : container(c), button(b), description(d) {}
 
-		ContainerWidget  *container;
-		PicButtonWidget  *button;
+		ContainerWidget *container;
+		PicButtonWidget *button;
 		StaticTextWidget *description;
 
 		void setVisible(bool state) {

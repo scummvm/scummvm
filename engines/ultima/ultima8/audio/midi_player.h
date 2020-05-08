@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_AUDIO_MIDI_PLAYER_H
 #define ULTIMA8_AUDIO_MIDI_PLAYER_H
 
-#include "audio/mixer.h"
 #include "audio/midiplayer.h"
+#include "audio/mixer.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -54,6 +54,7 @@ public:
 		assert(seq == 0 || seq == 1);
 		return _callbackData[seq];
 	}
+
 private:
 	bool _isFMSynth;
 	static byte _callbackData[2];

@@ -23,14 +23,14 @@
 #ifndef KYRA_SCREEN_H
 #define KYRA_SCREEN_H
 
-#include "common/util.h"
+#include "common/array.h"
 #include "common/func.h"
 #include "common/list.h"
-#include "common/array.h"
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
 #include "common/stream.h"
-#include "common/ptr.h"
+#include "common/util.h"
 
 class OSystem;
 
@@ -98,7 +98,7 @@ public:
 	* Sets a text 16bit palette map. Only used in in EOB II FM-Towns. The map contains 2 entries.
 	*/
 	virtual void set16bitColorMap(const uint16 *src) {}
-	
+
 	enum FontStyle {
 		kFSNone = 0,
 		kFSLeftShadow,
@@ -365,16 +365,16 @@ public:
 	};
 
 	enum DrawShapeFlags {
-		DSF_X_FLIPPED  = 0x01,
-		DSF_Y_FLIPPED  = 0x02,
-		DSF_SCALE      = 0x04,
+		DSF_X_FLIPPED = 0x01,
+		DSF_Y_FLIPPED = 0x02,
+		DSF_SCALE = 0x04,
 		DSF_WND_COORDS = 0x10,
-		DSF_CENTER     = 0x20,
+		DSF_CENTER = 0x20,
 
-		DSF_SHAPE_FADING		= 0x100,
-		DSF_TRANSPARENCY		= 0x1000,
-		DSF_BACKGROUND_FADING	= 0x2000,
-		DSF_CUSTOM_PALETTE		= 0x8000
+		DSF_SHAPE_FADING = 0x100,
+		DSF_TRANSPARENCY = 0x1000,
+		DSF_BACKGROUND_FADING = 0x2000,
+		DSF_CUSTOM_PALETTE = 0x8000
 	};
 
 	enum FontId {
@@ -424,7 +424,7 @@ public:
 	void shakeScreen(int times);
 
 	// page functions
-	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags=0);
+	void copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags = 0);
 	void copyPage(uint8 srcPage, uint8 dstPage);
 
 	void copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest);
@@ -442,8 +442,8 @@ public:
 	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
 
 	// palette handling
-	void fadeFromBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
-	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
+	void fadeFromBlack(int delay = 0x54, const UpdateFunctor *upFunc = 0);
+	void fadeToBlack(int delay = 0x54, const UpdateFunctor *upFunc = 0);
 
 	virtual void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0);
 	virtual void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff);
@@ -515,7 +515,7 @@ public:
 	void rectClip(int &x, int &y, int w, int h);
 
 	// misc
-	virtual void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
+	virtual void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip = false);
 
 	virtual bool loadPalette(const char *filename, Palette &pal);
 	bool loadPaletteTable(const char *filename, int firstPalette);
@@ -586,8 +586,10 @@ protected:
 
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 
-	template<bool noXor> static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
-	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
+	template<bool noXor>
+	static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
+	template<bool noXor>
+	static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
 
 	uint8 *_pagePtrs[16];
 	uint8 *_sjisOverlayPtrs[SCREEN_OVLS_NUM];
@@ -605,7 +607,7 @@ protected:
 	Common::RenderMode _renderMode;
 	int _bytesPerPixel;
 	int _screenPageSize;
-	
+
 	Common::SharedPtr<Graphics::FontSJIS> _sjisFontShared;
 	uint8 _sjisInvisibleColor;
 	bool _sjisMixedFontMode;

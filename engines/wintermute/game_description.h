@@ -33,6 +33,6 @@ struct WMEGameDescription {
 	WMETargetExecutable targetExecutable;
 };
 
-}
+} // namespace Wintermute
 
-#endif  /* WINTERMUTE_GAME_DESCRIPTION_H_ */
+#endif /* WINTERMUTE_GAME_DESCRIPTION_H_ */

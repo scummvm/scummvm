@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/filesys/archive.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/archive_file.h"
-#include "ultima/ultima8/filesys/named_archive_file.h"
 #include "ultima/ultima8/filesys/flex_file.h"
+#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/filesys/named_archive_file.h"
 #include "ultima/ultima8/filesys/u8_save_file.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -44,7 +44,6 @@ Archive::~Archive() {
 	_sources.clear();
 }
 
-
 Archive::Archive(ArchiveFile *af) : _count(0) {
 	addSource(af);
 }
@@ -57,7 +56,8 @@ bool Archive::addSource(ArchiveFile *af) {
 	_sources.push_back(af);
 
 	uint32 indexcount = af->getIndexCount();
-	if (indexcount > _count) _count = indexcount;
+	if (indexcount > _count)
+		_count = indexcount;
 
 	return true;
 }
@@ -65,7 +65,8 @@ bool Archive::addSource(ArchiveFile *af) {
 bool Archive::addSource(Common::SeekableReadStream *rs) {
 	ArchiveFile *s = nullptr;
 
-	if (!rs) return false;
+	if (!rs)
+		return false;
 
 	if (FlexFile::isFlexFile(rs)) {
 		s = new FlexFile(rs);
@@ -73,7 +74,8 @@ bool Archive::addSource(Common::SeekableReadStream *rs) {
 		s = new U8SaveFile(rs);
 	}
 
-	if (!s) return false;
+	if (!s)
+		return false;
 	if (!s->isValid()) {
 		delete s;
 		return false;
@@ -102,7 +104,8 @@ uint8 *Archive::getRawObject(uint32 index, uint32 *sizep) {
 
 uint32 Archive::getRawSize(uint32 index) const {
 	ArchiveFile *f = findArchiveFile(index);
-	if (!f) return 0;
+	if (!f)
+		return 0;
 
 	return f->getSize(index);
 }

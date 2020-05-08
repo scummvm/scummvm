@@ -39,32 +39,31 @@ public:
 
 	float length() const;
 
-	inline Vector2 &operator= (const Vector2 &other) {
+	inline Vector2 &operator=(const Vector2 &other) {
 		x = other.x;
 		y = other.y;
 
 		return *this;
 	}
 
-	inline Vector2 operator+ (const Vector2 &other) const {
+	inline Vector2 operator+(const Vector2 &other) const {
 		return Vector2(x + other.x, y + other.y);
 	}
 
-	inline Vector2 operator- (const Vector2 &other) const {
+	inline Vector2 operator-(const Vector2 &other) const {
 		return Vector2(x - other.x, y - other.y);
 	}
 
-	inline Vector2 operator* (const float scalar) const {
+	inline Vector2 operator*(const float scalar) const {
 		return Vector2(x * scalar, y * scalar);
 	}
 
-	inline Vector2 &operator+= (const Vector2 &other) {
+	inline Vector2 &operator+=(const Vector2 &other) {
 		x += other.x;
 		y += other.y;
 
 		return *this;
 	}
-
 
 	float x;
 	float y;

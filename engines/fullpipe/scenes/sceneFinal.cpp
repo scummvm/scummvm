@@ -22,16 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
+#include "fullpipe/interaction.h"
 
 #include "fullpipe/modal.h"
 
@@ -164,7 +164,7 @@ int sceneHandlerFinal(ExCommand *cmd) {
 		if (g_fp->_aniMan2) {
 			g_vars->sceneFinal_var03 = g_fp->_aniMan2->_ox;
 
-			if (g_vars->sceneFinal_var03 < 450 && g_vars->sceneFinal_var02 >= 450 )
+			if (g_vars->sceneFinal_var03 < 450 && g_vars->sceneFinal_var02 >= 450)
 				sceneHandlerFinal_fallCoin();
 
 			g_vars->sceneFinal_var02 = g_vars->sceneFinal_var03;

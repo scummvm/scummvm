@@ -21,13 +21,13 @@
  */
 
 #include "graphics/thumbnail.h"
-#include "graphics/scaler.h"
-#include "graphics/colormasks.h"
-#include "common/endian.h"
 #include "common/algorithm.h"
-#include "common/system.h"
+#include "common/endian.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/colormasks.h"
+#include "graphics/scaler.h"
 
 namespace Graphics {
 
@@ -42,7 +42,7 @@ struct ThumbnailHeader {
 	PixelFormat format;
 };
 
-#define ThumbnailHeaderSize (4+4+1+2+2+(1+4+4))
+#define ThumbnailHeaderSize (4 + 4 + 1 + 2 + 2 + (1 + 4 + 4))
 
 enum HeaderState {
 	/// There is no header present
@@ -58,7 +58,7 @@ HeaderState loadHeader(Common::SeekableReadStream &in, ThumbnailHeader &header, 
 	// We also accept the bad 'BMHT' header here, for the sake of compatibility
 	// with some older savegames which were written incorrectly due to a bug in
 	// ScummVM which wrote the thumb header type incorrectly on LE systems.
-	if (header.type != MKTAG('T','H','M','B') && header.type != MKTAG('B','M','H','T')) {
+	if (header.type != MKTAG('T', 'H', 'M', 'B') && header.type != MKTAG('B', 'M', 'H', 'T')) {
 		if (outputWarnings)
 			warning("couldn't find thumbnail header type");
 		return kHeaderNone;
@@ -186,14 +186,14 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail
 			for (uint x = 0; x < thumbnail->w; ++x) {
 				*pixels++ = in.readUint16BE();
 			}
-			} break;
+		} break;
 
 		case 4: {
 			uint32 *pixels = (uint32 *)thumbnail->getBasePtr(0, y);
 			for (uint x = 0; x < thumbnail->w; ++x) {
 				*pixels++ = in.readUint32BE();
 			}
-			} break;
+		} break;
 
 		default:
 			assert(0);
@@ -223,8 +223,8 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	}
 
 	ThumbnailHeader header;
-	header.type = MKTAG('T','H','M','B');
-	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.format.bytesPerPixel;
+	header.type = MKTAG('T', 'H', 'M', 'B');
+	header.size = ThumbnailHeaderSize + thumb.w * thumb.h * thumb.format.bytesPerPixel;
 	header.version = THMB_VERSION;
 	header.width = thumb.w;
 	header.height = thumb.h;
@@ -254,14 +254,14 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 			for (uint x = 0; x < thumb.w; ++x) {
 				out.writeUint16BE(*pixels++);
 			}
-			} break;
+		} break;
 
 		case 4: {
 			const uint32 *pixels = (const uint32 *)thumb.getBasePtr(0, y);
 			for (uint x = 0; x < thumb.w; ++x) {
 				out.writeUint32BE(*pixels++);
 			}
-			} break;
+		} break;
 
 		default:
 			assert(0);
@@ -270,7 +270,6 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 
 	return true;
 }
-
 
 /**
  * Returns an array indicating which pixels of a source image horizontally or vertically get

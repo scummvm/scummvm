@@ -25,8 +25,8 @@
 
 #include "mads/resources.h"
 
-#include "common/array.h"
 #include "audio/mixer.h"
+#include "common/array.h"
 
 namespace MADS {
 
@@ -50,7 +50,7 @@ public:
 	void setVolume(int volume);
 	bool isPlaying() const;
 
- private:
+private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _handle;
 	uint32 _gameID;

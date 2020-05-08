@@ -43,10 +43,10 @@ public:
 	virtual void setCount(int count);
 
 	// Implementation of the EventSource interface
-        virtual bool pollEvent(Common::Event &event);
+	virtual bool pollEvent(Common::Event &event);
 
 private:
-	GMainLoop          *_loop;
+	GMainLoop *_loop;
 	UnityLauncherEntry *_launcher;
 };
 

@@ -20,10 +20,10 @@
  *
  */
 
-#include "draci/draci.h"
-#include "draci/game.h"
 #include "draci/mouse.h"
 #include "draci/barchive.h"
+#include "draci/draci.h"
+#include "draci/game.h"
 #include "draci/screen.h"
 #include "draci/sprite.h"
 
@@ -68,8 +68,8 @@ void Mouse::handleEvent(Common::Event event) {
 
 	case Common::EVENT_MOUSEMOVE:
 		debugC(6, kDraciGeneralDebugLevel, "Mouse move (x: %u y: %u)", _x, _y);
-		_x = (uint16) event.mouse.x;
-		_y = (uint16) event.mouse.y;
+		_x = (uint16)event.mouse.x;
+		_y = (uint16)event.mouse.y;
 		break;
 
 	default:
@@ -105,13 +105,13 @@ void Mouse::setCursorType(CursorType cur) {
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColors);
 	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(),
-	        sp.getWidth() / 2, sp.getHeight() / 2, 255);
+	                        sp.getWidth() / 2, sp.getHeight() / 2, 255);
 }
 
 void Mouse::loadItemCursor(const GameItem *item, bool highlighted) {
 	const int itemID = item->_absNum;
 	const int archiveIndex = 2 * itemID + (highlighted ? 1 : 0);
-	CursorType newCursor = static_cast<CursorType> (kItemCursor + archiveIndex);
+	CursorType newCursor = static_cast<CursorType>(kItemCursor + archiveIndex);
 	if (newCursor == getCursorType()) {
 		return;
 	}
@@ -123,7 +123,7 @@ void Mouse::loadItemCursor(const GameItem *item, bool highlighted) {
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColors);
 	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(),
-	        sp.getWidth() / 2, sp.getHeight() / 2, 255);
+	                        sp.getWidth() / 2, sp.getHeight() / 2, 255);
 }
 
 } // End of namespace Draci

@@ -30,28 +30,26 @@
 ** (c) 1997  Lance Ewing
 ***************************************************************************/
 
-#include "agi/agi.h"
 #include "agi/lzw.h"
+#include "agi/agi.h"
 
 #include "common/textconsole.h"
 
 namespace Agi {
 
-
 class LZWDecoder {
 private:
-
 	enum {
-		MAXBITS     = 12,
-		TABLE_SIZE  = 18041,    // strange number
-		START_BITS  = 9
+		MAXBITS = 12,
+		TABLE_SIZE = 18041, // strange number
+		START_BITS = 9
 	};
 
 	int32 BITS, MAX_VALUE, MAX_CODE;
 	uint32 *prefixCode;
 	uint8 *appendCharacter;
 	uint8 *decodeStack;
-	int32 inputBitCount;    // Number of bits in input bit buffer
+	int32 inputBitCount; // Number of bits in input bit buffer
 	uint32 inputBitBuffer;
 
 public:
@@ -70,7 +68,7 @@ LZWDecoder::LZWDecoder() {
 	decodeStack = (uint8 *)calloc(1, 8192);
 	prefixCode = (uint32 *)malloc(TABLE_SIZE * sizeof(uint32));
 	appendCharacter = (uint8 *)malloc(TABLE_SIZE * sizeof(uint8));
-	inputBitCount = 0;  // Number of bits in input bit buffer
+	inputBitCount = 0; // Number of bits in input bit buffer
 	inputBitBuffer = 0L;
 	BITS = MAX_VALUE = MAX_CODE = 0;
 }

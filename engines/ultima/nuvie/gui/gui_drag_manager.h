@@ -23,8 +23,8 @@
 #ifndef NUVIE_GUI_GUI_DRAG_MANAGER_H
 #define NUVIE_GUI_GUI_DRAG_MANAGER_H
 
-#include "ultima/nuvie/gui/gui_status.h"
 #include "ultima/nuvie/gui/gui_drag_area.h"
+#include "ultima/nuvie/gui/gui_status.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -37,7 +37,6 @@ class Screen;
 class GUI_DragManager {
 
 protected:
-
 	Screen *screen;
 
 	GUI_DragArea *drag_source;
@@ -46,15 +45,14 @@ protected:
 	bool is_out_of_range;
 
 public:
-
 	GUI_DragManager(Screen *s);
 
 	GUI_status start_drag(GUI_DragArea *src, int msg, void *d, unsigned char *icon_buf, uint16 w, uint16 h, uint8 bpp, bool out_of_range = false);
 	void drop(GUI_DragArea *drag_target, int x, int y);
 
-// let us find out where the drag originated, because we might
-// need to do something different depending on where a dragged
-// object is coming from.
+	// let us find out where the drag originated, because we might
+	// need to do something different depending on where a dragged
+	// object is coming from.
 	GUI_DragArea *get_source();
 
 	void draw(int x, int y);

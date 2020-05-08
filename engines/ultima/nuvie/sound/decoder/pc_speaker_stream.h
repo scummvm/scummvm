@@ -23,9 +23,9 @@
 #ifndef NUVIE_SOUND_MIXER_DECODER_PC_SPEAKER_STREAM_H
 #define NUVIE_SOUND_MIXER_DECODER_PC_SPEAKER_STREAM_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/sound/decoder/pc_speaker.h"
 #include "audio/audiostream.h"
+#include "ultima/nuvie/sound/decoder/pc_speaker.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -71,11 +71,9 @@ protected:
 	bool finished;
 };
 
-
 class PCSpeakerFreqStream : public PCSpeakerStream {
 public:
 	PCSpeakerFreqStream() {
-
 	}
 
 	PCSpeakerFreqStream(uint start, uint16 d);
@@ -84,17 +82,14 @@ public:
 	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 protected:
-
 	uint32 frequency;
 	uint32 duration;
 	uint32 total_samples_played;
-
 };
 
 class PCSpeakerSweepFreqStream : public PCSpeakerStream {
 public:
 	PCSpeakerSweepFreqStream() {
-
 	}
 
 	PCSpeakerSweepFreqStream(uint start, uint end, uint16 d, uint16 s);
@@ -103,7 +98,6 @@ public:
 	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 protected:
-
 	uint32 start_freq;
 	uint32 finish_freq;
 	uint32 cur_freq;
@@ -116,13 +110,11 @@ protected:
 	uint32 total_samples_played;
 	uint32 num_steps;
 	uint32 cur_step;
-
 };
 
 class PCSpeakerRandomStream : public PCSpeakerStream {
 public:
 	PCSpeakerRandomStream() {
-
 	}
 
 	PCSpeakerRandomStream(uint start, uint16 d, uint16 s);
@@ -132,7 +124,6 @@ public:
 	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 protected:
-
 	uint16 base_val;
 	uint16 duration;
 	uint16 stepping;
@@ -143,13 +134,11 @@ protected:
 	uint32 samples_per_step;
 	uint32 num_steps;
 	uint32 cur_step;
-
 };
 
 class PCSpeakerStutterStream : public PCSpeakerStream {
 public:
 	PCSpeakerStutterStream() {
-
 	}
 
 	PCSpeakerStutterStream(sint16 a0, uint16 a2, uint16 a4, uint16 a6, uint16 a8);
@@ -158,7 +147,6 @@ public:
 	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 protected:
-
 	sint16 arg_0;
 	uint16 arg_2;
 	uint16 arg_4;
@@ -169,7 +157,6 @@ protected:
 	uint16 cx;
 	float delay;
 	float delay_remaining;
-
 };
 
 Audio::AudioStream *makePCSpeakerSlugDissolveSfxStream(uint rate);

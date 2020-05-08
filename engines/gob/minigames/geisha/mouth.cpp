@@ -108,17 +108,17 @@ bool Mouth::draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bo
 		int16 fLeft, fRight, fTop, fBottom;
 		bool drawn = false;
 
-		left   = 0x7FFF;
-		top    = 0x7FFF;
-		right  =      0;
-		bottom =      0;
+		left = 0x7FFF;
+		top = 0x7FFF;
+		right = 0;
+		bottom = 0;
 
 		for (int i = 0; i < kFloorCount; i++) {
 			if (_floor[i]->draw(dest, fLeft, fTop, fRight, fBottom)) {
-				drawn  = true;
-				left   = MIN(left  , fLeft);
-				top    = MIN(top   , fTop);
-				right  = MAX(right , fRight);
+				drawn = true;
+				left = MIN(left, fLeft);
+				top = MIN(top, fTop);
+				right = MAX(right, fRight);
 				bottom = MAX(bottom, fBottom);
 			}
 		}
@@ -129,7 +129,7 @@ bool Mouth::draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bo
 	return false;
 }
 
-bool Mouth::clear(Surface &dest, int16 &left , int16 &top, int16 &right, int16 &bottom) {
+bool Mouth::clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) {
 	// If the mouth is deactivated, clear the default mouth sprite
 	if (_state == kStateDeactivated)
 		return _sprite->clear(dest, left, top, right, bottom);
@@ -143,17 +143,17 @@ bool Mouth::clear(Surface &dest, int16 &left , int16 &top, int16 &right, int16 &
 		int16 fLeft, fRight, fTop, fBottom;
 		bool cleared = false;
 
-		left   = 0x7FFF;
-		top    = 0x7FFF;
-		right  =      0;
-		bottom =      0;
+		left = 0x7FFF;
+		top = 0x7FFF;
+		right = 0;
+		bottom = 0;
 
 		for (int i = 0; i < kFloorCount; i++) {
 			if (_floor[i]->clear(dest, fLeft, fTop, fRight, fBottom)) {
-				cleared  = true;
-				left   = MIN(left  , fLeft);
-				top    = MIN(top   , fTop);
-				right  = MAX(right , fRight);
+				cleared = true;
+				left = MIN(left, fLeft);
+				top = MIN(top, fTop);
+				right = MAX(right, fRight);
 				bottom = MAX(bottom, fBottom);
 			}
 		}

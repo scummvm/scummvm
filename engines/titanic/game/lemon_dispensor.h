@@ -32,6 +32,7 @@ class CLemonDispensor : public CBackground {
 	bool FrameMsg(CFrameMsg *msg);
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 private:
 	static bool _isSummer;
 	static bool _lemonDropped;
@@ -41,6 +42,7 @@ private:
 	int _unused1;
 	Point _origPt;
 	bool _onDispensor;
+
 public:
 	CLASSDEF;
 	CLemonDispensor();

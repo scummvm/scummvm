@@ -30,7 +30,8 @@
 namespace Glk {
 namespace TADS {
 
-enum TADSOption { OPTION_TADS2 = 0, OPTION_TADS3 = 1 };
+enum TADSOption { OPTION_TADS2 = 0,
+	              OPTION_TADS3 = 1 };
 
 /**
  * Meta engine for TADS interpreter

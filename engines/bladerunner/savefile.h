@@ -36,7 +36,7 @@ namespace Common {
 class OutSaveFile;
 class String;
 struct Rect;
-}
+} // namespace Common
 
 namespace BladeRunner {
 
@@ -44,16 +44,15 @@ class Vector2;
 class Vector3;
 class BoundingBox;
 
-
 struct SaveFileHeader {
-	uint8              _version;
-	Common::String     _name;
-	int                _year;
-	int                _month;
-	int                _day;
-	int                _hour;
-	int                _minute;
-	uint32             _playTime;
+	uint8 _version;
+	Common::String _name;
+	int _year;
+	int _month;
+	int _day;
+	int _hour;
+	int _minute;
+	uint32 _playTime;
 	Graphics::Surface *_thumbnail;
 };
 
@@ -67,8 +66,8 @@ public:
 	// ----------
 	//        2:: max of 32 characters for the saved game name
 	//        3:: max of 41 characters for the saved game name (this matches the original game's setting)
-	static const uint32 kNameLengthV2  = 32;
-	static const uint32 kNameLength    = 41;
+	static const uint32 kNameLengthV2 = 32;
+	static const uint32 kNameLength = 41;
 	static const uint32 kThumbnailSize = 9600; // 80x60x16bpp
 
 	static SaveStateList list(const Common::String &target);
@@ -81,7 +80,6 @@ public:
 
 	static bool readHeader(Common::SeekableReadStream &in, SaveFileHeader &header, bool skipThumbnail = true);
 	static bool writeHeader(Common::WriteStream &out, SaveFileHeader &header);
-
 };
 
 class SaveFileWriteStream : public Common::WriteStream {

@@ -40,19 +40,19 @@ class UIContainer;
 class UIScrollBox;
 
 class KIASectionLoad : public KIASectionBase {
-	UIContainer  *_uiContainer;
-	UIScrollBox  *_scrollBox;
+	UIContainer *_uiContainer;
+	UIScrollBox *_scrollBox;
 
-	uint32        _timeLast;
-	uint32        _timeLeft;
+	uint32 _timeLast;
+	uint32 _timeLeft;
 
 	SaveStateList _saveList;
 
-	int           _hoveredLineId;
-	int           _displayingLineId;
-	int           _newGameEasyLineId;
-	int           _newGameMediumLineId;
-	int           _newGameHardLineId;
+	int _hoveredLineId;
+	int _displayingLineId;
+	int _newGameEasyLineId;
+	int _newGameMediumLineId;
+	int _newGameHardLineId;
 
 public:
 	KIASectionLoad(BladeRunnerEngine *vm);

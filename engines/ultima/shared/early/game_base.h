@@ -23,8 +23,8 @@
 #ifndef ULTIMA_SHARED_EARLY_GAME_BASE_H
 #define ULTIMA_SHARED_EARLY_GAME_BASE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/input_handler.h"
@@ -69,6 +69,7 @@ private:
 	bool isMouseControlEnabled() const { return true; }
 
 	void changeView(const Common::String &name);
+
 protected:
 	uint32 _priorLeftDownTime;
 	uint32 _priorMiddleDownTime;
@@ -78,9 +79,11 @@ protected:
 	InputHandler _inputHandler;
 	InputTranslator _inputTranslator;
 	Gfx::Font *_font;
+
 public:
 	Gfx::TextCursor *_textCursor;
 	uint _videoMode;
+
 public:
 	/**
 	 * Constructor

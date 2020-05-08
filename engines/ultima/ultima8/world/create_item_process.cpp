@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/create_item_process.h"
-#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/item_factory.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -32,10 +32,9 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(CreateItemProcess, Process)
 
 CreateItemProcess::CreateItemProcess()
-	: Process(), _shape(0), _frame(0), _quality(0), _flags(0),
-	_npcNum(0), _mapNum(0), _extendedFlags(0),
-	_x(0), _y(0), _z(0) {
-
+    : Process(), _shape(0), _frame(0), _quality(0), _flags(0),
+      _npcNum(0), _mapNum(0), _extendedFlags(0),
+      _x(0), _y(0), _z(0) {
 }
 
 CreateItemProcess::CreateItemProcess(uint32 shape, uint32 frame,
@@ -43,10 +42,9 @@ CreateItemProcess::CreateItemProcess(uint32 shape, uint32 frame,
                                      uint16 npcnum, uint16 mapnum,
                                      uint32 extendedflags,
                                      int32 x, int32 y, int32 z)
-	: _shape(shape), _frame(frame), _quality(quality), _flags(flags),
-	  _npcNum(npcnum), _mapNum(mapnum), _extendedFlags(extendedflags),
-	  _x(x), _y(y), _z(z) {
-
+    : _shape(shape), _frame(frame), _quality(quality), _flags(flags),
+      _npcNum(npcnum), _mapNum(mapnum), _extendedFlags(extendedflags),
+      _x(x), _y(y), _z(z) {
 }
 
 CreateItemProcess::~CreateItemProcess(void) {
@@ -78,7 +76,8 @@ void CreateItemProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool CreateItemProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_shape = rs->readUint32LE();
 	_frame = rs->readUint32LE();

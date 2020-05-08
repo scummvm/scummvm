@@ -20,7 +20,7 @@
  *
  */
 
- /*
+/*
  * This code is based on Labyrinth of Time code with assistance of
  *
  * Copyright (c) 1993 Terra Nova Development

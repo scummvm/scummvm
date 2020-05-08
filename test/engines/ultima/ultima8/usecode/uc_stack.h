@@ -1,11 +1,11 @@
-#include <cxxtest/TestSuite.h>
 #include "engines/ultima/ultima8/usecode/uc_stack.h"
+#include <cxxtest/TestSuite.h>
 /**
  * Test suite for the functions in engines/ultima/ultima8/usecode/uc_stack.h
  */
 
 class U8UCStackTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	U8UCStackTestSuite() {
 	}
 
@@ -22,7 +22,7 @@ class U8UCStackTestSuite : public CxxTest::TestSuite {
 		test_for_stack(stack2);
 	}
 
-	private:
+private:
 	void test_for_stack(Ultima::Ultima8::BaseUCStack &s) {
 		TS_ASSERT_EQUALS(s.stacksize(), 0);
 		s.push4(0xDEADBEEF);
@@ -38,7 +38,6 @@ class U8UCStackTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(s.stacksize(), 0);
 		TS_ASSERT_EQUALS(s.getSP(), s.getSize());
 		s.push4(0xCAFEF00D);
-		TS_ASSERT_EQUALS(s.getSP(), s.getSize()-4);
+		TS_ASSERT_EQUALS(s.getSP(), s.getSize() - 4);
 	}
-
 };

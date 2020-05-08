@@ -20,14 +20,13 @@
  *
  */
 
+#include "base/plugins.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
 
 #include "chewy/chewy.h"
-
 
 namespace Chewy {
 
@@ -43,70 +42,63 @@ Common::Language ChewyEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-}
+} // namespace Chewy
 
 static const PlainGameDescriptor chewyGames[] = {
-	{"chewy", "Chewy: Esc from F5"},
-	{0, 0}
-};
+    {"chewy", "Chewy: Esc from F5"},
+    {0, 0}};
 
 static const char *directoryGlobs[] = {
-	"txt",
-	0
-};
+    "txt",
+    0};
 
 namespace Chewy {
 
 static const ChewyGameDescription gameDescriptions[] = {
 
-	{
-		{
-			"chewy",
-			0,
-			AD_ENTRY1s("atds.tap", "e6050c144dd4f23d79ea4f89a8ef306e", 218857),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
+    {
+        {"chewy",
+         0,
+         AD_ENTRY1s("atds.tap", "e6050c144dd4f23d79ea4f89a8ef306e", 218857),
+         Common::EN_ANY,
+         Common::kPlatformDOS,
+         ADGF_NO_FLAGS,
+         GUIO1(GUIO_NOMIDI)},
+    },
 
-	{
-		// Chewy - ESC von F5 - German
-		// Master version 1.1 (CHEWY.EXE - offset 0x8AB28)
-		// The source CD-ROM has the Matrix code SONOPRESS R-7885 B
-		// The disc contains several demos and files from 1996
-		// Provided by lotharsm
-		{
-			"chewy",
-			0,
-			AD_ENTRY1s("atds.tap", "c117e884cc5b4bbe50ae1217d13916c4", 231071),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
+    {
+        // Chewy - ESC von F5 - German
+        // Master version 1.1 (CHEWY.EXE - offset 0x8AB28)
+        // The source CD-ROM has the Matrix code SONOPRESS R-7885 B
+        // The disc contains several demos and files from 1996
+        // Provided by lotharsm
+        {
+            "chewy",
+            0,
+            AD_ENTRY1s("atds.tap", "c117e884cc5b4bbe50ae1217d13916c4", 231071),
+            Common::DE_DEU,
+            Common::kPlatformDOS,
+            ADGF_NO_FLAGS,
+            GUIO1(GUIO_NOMIDI)},
+    },
 
-	{
-		// Chewy - ESC von F5 - German
-		// Master version 1.0 (CHEWY.EXE - offset 0x8AB10)
-		// The source CD-ROM has the Matrix code SONOPRESS M-2742 A
-		// CD-ROM has the label "CHEWY_V1_0"
-		// Provided by lotharsm
-		{
-			"chewy",
-			0,
-			AD_ENTRY1s("atds.tap", "e22f97761c0e7772ec99660f2277b1a4", 231001),
-			Common::DE_DEU,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
+    {
+        // Chewy - ESC von F5 - German
+        // Master version 1.0 (CHEWY.EXE - offset 0x8AB10)
+        // The source CD-ROM has the Matrix code SONOPRESS M-2742 A
+        // CD-ROM has the label "CHEWY_V1_0"
+        // Provided by lotharsm
+        {
+            "chewy",
+            0,
+            AD_ENTRY1s("atds.tap", "e22f97761c0e7772ec99660f2277b1a4", 231001),
+            Common::DE_DEU,
+            Common::kPlatformDOS,
+            ADGF_NO_FLAGS,
+            GUIO1(GUIO_NOMIDI)},
+    },
 
-	{ AD_TABLE_END_MARKER }
-};
+    {AD_TABLE_END_MARKER}};
 
 } // End of namespace Chewy
 
@@ -138,21 +130,19 @@ public:
 };
 
 bool ChewyMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate) ||
+	       (f == kSavesSupportPlayTime);
 }
 
 bool Chewy::ChewyEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 bool ChewyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -182,7 +172,7 @@ SaveStateDescriptor ChewyMetaEngine::querySaveMetaInfos(const char *target, int 
 } // End of namespace Chewy
 
 #if PLUGIN_ENABLED_DYNAMIC(CHEWY)
-	REGISTER_PLUGIN_DYNAMIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngine);
+REGISTER_PLUGIN_STATIC(CHEWY, PLUGIN_TYPE_ENGINE, ChewyMetaEngine);
 #endif

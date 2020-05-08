@@ -20,10 +20,14 @@
  *
  */
 
+#include "ultima/ultima4/gfx/screen.h"
+#include "common/system.h"
+#include "engines/util.h"
+#include "graphics/cursorman.h"
 #include "ultima/ultima4/controllers/intro_controller.h"
 #include "ultima/ultima4/core/config.h"
-#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/context.h"
@@ -31,18 +35,14 @@
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
-#include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/gfx/textcolor.h"
+#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/map/dungeonview.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/tileanim.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/views/tileview.h"
-#include "ultima/ultima4/map/annotation.h"
 #include "ultima/ultima4/ultima4.h"
-#include "common/system.h"
-#include "engines/util.h"
-#include "graphics/cursorman.h"
+#include "ultima/ultima4/views/tileview.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -50,14 +50,14 @@ namespace Ultima4 {
 #define MOUSE_CURSOR_SIZE 20
 #define DBL_MAX 1e99
 #define BUFFER_SIZE 1024
- 
+
 Screen *g_screen;
 
 Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
-		_gemLayout(nullptr), _tileAnims(nullptr), _charSetInfo(nullptr),
-		_gemTilesInfo(nullptr), _needPrompt(1), _currentCycle(0),
-		_cursorStatus(0), _cursorEnabled(1), _frameDuration(0),
-		_continueScreenRefresh(true) {
+                   _gemLayout(nullptr), _tileAnims(nullptr), _charSetInfo(nullptr),
+                   _gemTilesInfo(nullptr), _needPrompt(1), _currentCycle(0),
+                   _cursorStatus(0), _cursorEnabled(1), _frameDuration(0),
+                   _continueScreenRefresh(true) {
 	g_screen = this;
 	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
 	Common::fill(&_los[0][0], &_los[0][0] + (VIEWPORT_W * VIEWPORT_H), 0);
@@ -130,7 +130,7 @@ void Screen::clear() {
 
 	Std::vector<Layout *>::const_iterator i;
 	for (i = _layouts.begin(); i != _layouts.end(); ++i)
-		delete(*i);
+		delete (*i);
 	_layouts.clear();
 
 	ImageMgr::destroy();
@@ -170,7 +170,7 @@ void Screen::setMouseCursor(MouseCursor cursor) {
 
 		const uint TRANSPARENT = format.RGBToColor(0x80, 0x80, 0x80);
 		CursorMan.replaceCursor(c->getPixels(), MOUSE_CURSOR_SIZE, MOUSE_CURSOR_SIZE,
-			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &format);
+		                        c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &format);
 	}
 }
 
@@ -218,13 +218,13 @@ MouseCursorSurface *Screen::loadMouseCursor(Shared::File &src) {
 }
 
 void Screen::screenReInit() {
-	g_intro->deleteIntro();			// delete intro stuff
-	g_tileSets->unloadAllImages();	// unload tilesets, which will be reloaded lazily as needed
+	g_intro->deleteIntro();        // delete intro stuff
+	g_tileSets->unloadAllImages(); // unload tilesets, which will be reloaded lazily as needed
 	ImageMgr::destroy();
 	_tileAnims = nullptr;
 	clear();
-	init();           // Re-init screen stuff (loading new backgrounds, etc.)
-	g_intro->init();  // Re-fix the backgrounds loaded and scale images, etc.
+	init();          // Re-init screen stuff (loading new backgrounds, etc.)
+	g_intro->init(); // Re-fix the backgrounds loaded and scale images, etc.
 }
 
 void Screen::screenTextAt(int x, int y, const char *fmt, ...) {
@@ -373,7 +373,7 @@ void Screen::screenLoadGraphicsFromConf() {
 
 Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 	Layout *layout;
-	static const char *typeEnumStrings[] = { "standard", "gem", "dungeon_gem", nullptr };
+	static const char *typeEnumStrings[] = {"standard", "gem", "dungeon_gem", nullptr};
 
 	layout = new Layout();
 	layout->_name = conf.getString("name");
@@ -395,13 +395,12 @@ Layout *Screen::screenLoadLayoutFromConf(const ConfigElement &conf) {
 	return layout;
 }
 
-
 Std::vector<MapTile> Screen::screenViewportTile(uint width, uint height, int x, int y, bool &focus) {
 	MapCoords center = g_context->_location->_coords;
 	static MapTile grass = g_context->_location->_map->_tileSet->getByName("grass")->getId();
 
 	if (g_context->_location->_map->_width <= width &&
-	        g_context->_location->_map->_height <= height) {
+	    g_context->_location->_map->_height <= height) {
 		center.x = g_context->_location->_map->_width / 2;
 		center.y = g_context->_location->_map->_height / 2;
 	}
@@ -533,9 +532,9 @@ void Screen::screenDrawImageInMapArea(const Common::String &name) {
 		error("ERROR 1004: Unable to load data files");
 
 	info->_image->drawSubRect(BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
-	    BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
-	    VIEWPORT_W * TILE_WIDTH * settings._scale,
-	    VIEWPORT_H * TILE_HEIGHT * settings._scale);
+	                          BORDER_WIDTH * settings._scale, BORDER_HEIGHT * settings._scale,
+	                          VIEWPORT_W * TILE_WIDTH * settings._scale,
+	                          VIEWPORT_H * TILE_HEIGHT * settings._scale);
 }
 
 void Screen::screenTextColor(int color) {
@@ -569,8 +568,8 @@ void Screen::screenShowChar(int chr, int x, int y) {
 	}
 
 	_charSetInfo->_image->drawSubRect(x * _charSetInfo->_image->width(), y * (CHAR_HEIGHT * settings._scale),
-	                                 0, chr * (CHAR_HEIGHT * settings._scale),
-	                                 _charSetInfo->_image->width(), CHAR_HEIGHT * settings._scale);
+	                                  0, chr * (CHAR_HEIGHT * settings._scale),
+	                                  _charSetInfo->_image->width(), CHAR_HEIGHT * settings._scale);
 }
 
 void Screen::screenScrollMessageArea() {
@@ -585,7 +584,6 @@ void Screen::screenScrollMessageArea() {
 	                      (TEXT_AREA_Y + 1) * CHAR_HEIGHT * settings._scale,
 	                      TEXT_AREA_W * _charSetInfo->_image->width(),
 	                      (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings._scale);
-
 
 	screen->fillRect(TEXT_AREA_X * _charSetInfo->_image->width(),
 	                 TEXT_AREA_Y * CHAR_HEIGHT * settings._scale + (TEXT_AREA_H - 1) * CHAR_HEIGHT * settings._scale,
@@ -623,12 +621,8 @@ void Screen::screenUpdateMoons() {
 	}
 	/* show the current moons (non-combat) */
 	else if ((g_context->_location->_context & CTX_NON_COMBAT) == g_context->_location->_context) {
-		trammelChar = (g_ultima->_saveGame->_trammelPhase == 0) ?
-		              MOON_CHAR + 7 :
-		              MOON_CHAR + g_ultima->_saveGame->_trammelPhase - 1;
-		feluccaChar = (g_ultima->_saveGame->_feluccaPhase == 0) ?
-		              MOON_CHAR + 7 :
-		              MOON_CHAR + g_ultima->_saveGame->_feluccaPhase - 1;
+		trammelChar = (g_ultima->_saveGame->_trammelPhase == 0) ? MOON_CHAR + 7 : MOON_CHAR + g_ultima->_saveGame->_trammelPhase - 1;
+		feluccaChar = (g_ultima->_saveGame->_feluccaPhase == 0) ? MOON_CHAR + 7 : MOON_CHAR + g_ultima->_saveGame->_feluccaPhase - 1;
 
 		screenShowChar(trammelChar, 11, 0);
 		screenShowChar(feluccaChar, 12, 0);
@@ -647,7 +641,7 @@ void Screen::screenUpdateWind() {
 	/* show the wind direction */
 	else if ((g_context->_location->_context & CTX_NON_COMBAT) == g_context->_location->_context) {
 		screenEraseTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
-		screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Wind %5s", getDirectionName((Direction) g_context->_windDirection));
+		screenTextAt(WIND_AREA_X, WIND_AREA_Y, "Wind %5s", getDirectionName((Direction)g_context->_windDirection));
 	}
 	screenRedrawTextArea(WIND_AREA_X, WIND_AREA_Y, WIND_AREA_W, WIND_AREA_H);
 }
@@ -681,7 +675,7 @@ void Screen::screenSetCursorPos(int x, int y) {
 	_cursorPos.y = y;
 }
 
-void Screen::screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
+void Screen::screenFindLineOfSight(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
 	if (!g_context)
@@ -716,36 +710,36 @@ void Screen::screenFindLineOfSight(Std::vector <MapTile> viewportTiles[VIEWPORT_
 		error("unknown line of sight style %s!\n", settings._lineOfSight.c_str());
 }
 
-void Screen::screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
+void Screen::screenFindLineOfSightDOS(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
 	_los[VIEWPORT_W / 2][VIEWPORT_H / 2] = 1;
 
 	for (x = VIEWPORT_W / 2 - 1; x >= 0; x--)
 		if (_los[x + 1][VIEWPORT_H / 2] &&
-		        !viewportTiles[x + 1][VIEWPORT_H / 2].front().getTileType()->isOpaque())
+		    !viewportTiles[x + 1][VIEWPORT_H / 2].front().getTileType()->isOpaque())
 			_los[x][VIEWPORT_H / 2] = 1;
 
 	for (x = VIEWPORT_W / 2 + 1; x < VIEWPORT_W; x++)
 		if (_los[x - 1][VIEWPORT_H / 2] &&
-		        !viewportTiles[x - 1][VIEWPORT_H / 2].front().getTileType()->isOpaque())
+		    !viewportTiles[x - 1][VIEWPORT_H / 2].front().getTileType()->isOpaque())
 			_los[x][VIEWPORT_H / 2] = 1;
 
 	for (y = VIEWPORT_H / 2 - 1; y >= 0; y--)
 		if (_los[VIEWPORT_W / 2][y + 1] &&
-		        !viewportTiles[VIEWPORT_W / 2][y + 1].front().getTileType()->isOpaque())
+		    !viewportTiles[VIEWPORT_W / 2][y + 1].front().getTileType()->isOpaque())
 			_los[VIEWPORT_W / 2][y] = 1;
 
 	for (y = VIEWPORT_H / 2 + 1; y < VIEWPORT_H; y++)
 		if (_los[VIEWPORT_W / 2][y - 1] &&
-		        !viewportTiles[VIEWPORT_W / 2][y - 1].front().getTileType()->isOpaque())
+		    !viewportTiles[VIEWPORT_W / 2][y - 1].front().getTileType()->isOpaque())
 			_los[VIEWPORT_W / 2][y] = 1;
 
 	for (y = VIEWPORT_H / 2 - 1; y >= 0; y--) {
 
 		for (x = VIEWPORT_W / 2 - 1; x >= 0; x--) {
 			if (_los[x][y + 1] &&
-			        !viewportTiles[x][y + 1].front().getTileType()->isOpaque())
+			    !viewportTiles[x][y + 1].front().getTileType()->isOpaque())
 				_los[x][y] = 1;
 			else if (_los[x + 1][y] &&
 			         !viewportTiles[x + 1][y].front().getTileType()->isOpaque())
@@ -757,7 +751,7 @@ void Screen::screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPO
 
 		for (x = VIEWPORT_W / 2 + 1; x < VIEWPORT_W; x++) {
 			if (_los[x][y + 1] &&
-			        !viewportTiles[x][y + 1].front().getTileType()->isOpaque())
+			    !viewportTiles[x][y + 1].front().getTileType()->isOpaque())
 				_los[x][y] = 1;
 			else if (_los[x - 1][y] &&
 			         !viewportTiles[x - 1][y].front().getTileType()->isOpaque())
@@ -772,7 +766,7 @@ void Screen::screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPO
 
 		for (x = VIEWPORT_W / 2 - 1; x >= 0; x--) {
 			if (_los[x][y - 1] &&
-			        !viewportTiles[x][y - 1].front().getTileType()->isOpaque())
+			    !viewportTiles[x][y - 1].front().getTileType()->isOpaque())
 				_los[x][y] = 1;
 			else if (_los[x + 1][y] &&
 			         !viewportTiles[x + 1][y].front().getTileType()->isOpaque())
@@ -784,7 +778,7 @@ void Screen::screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPO
 
 		for (x = VIEWPORT_W / 2 + 1; x < VIEWPORT_W; x++) {
 			if (_los[x][y - 1] &&
-			        !viewportTiles[x][y - 1].front().getTileType()->isOpaque())
+			    !viewportTiles[x][y - 1].front().getTileType()->isOpaque())
 				_los[x][y] = 1;
 			else if (_los[x - 1][y] &&
 			         !viewportTiles[x - 1][y].front().getTileType()->isOpaque())
@@ -796,7 +790,7 @@ void Screen::screenFindLineOfSightDOS(Std::vector <MapTile> viewportTiles[VIEWPO
 	}
 }
 
-void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
+void Screen::screenFindLineOfSightEnhanced(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]) {
 	int x, y;
 
 	/*
@@ -812,23 +806,23 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 	 * ...etc...
 	 */
 	const int shadowRaster[14][13] = {
-		{ 6, __VCH, 4, _N_CH, 1, __VCH, 3, _N___, 1, ___CH, 1, __VCH, 1 },    // raster_1_0
-		{ 6, __VC_, 1, _NVCH, 2, __VC_, 1, _NVCH, 3, _NVCH, 2, _NVCH, 1 },    // raster_1_1
-		//
-		{ 4, __VCH, 3, _N__H, 1, ___CH, 1, __VCH, 1,     0, 0,     0, 0 },    // raster_2_0
-		{ 6, __VC_, 2, _N_CH, 1, __VCH, 2, _N_CH, 1, __VCH, 1, _N__H, 1 },    // raster_2_1
-		{ 6, __V__, 1, _NVCH, 1, __VC_, 1, _NVCH, 1, __VC_, 1, _NVCH, 1 },    // raster_2_2
-		//
-		{ 2, __VCH, 2, _N__H, 2,     0, 0,     0, 0,     0, 0,     0, 0 },    // raster_3_0
-		{ 3, __VC_, 2, _N_CH, 1, __VCH, 1,     0, 0,     0, 0,     0, 0 },    // raster_3_1
-		{ 3, __VC_, 1, _NVCH, 2, _N_CH, 1,     0, 0,     0, 0,     0, 0 },    // raster_3_2
-		{ 3, _NVCH, 1, __V__, 1, _NVCH, 1,     0, 0,     0, 0,     0, 0 },    // raster_3_3
-		//
-		{ 2, __VCH, 1, _N__H, 1,     0, 0,     0, 0,     0, 0,     0, 0 },    // raster_4_0
-		{ 2, __VC_, 1, _N__H, 1,     0, 0,     0, 0,     0, 0,     0, 0 },    // raster_4_1
-		{ 2, __VC_, 1, _N_CH, 1,     0, 0,     0, 0,     0, 0,     0, 0 },    // raster_4_2
-		{ 2, __V__, 1, _NVCH, 1,     0, 0,     0, 0,     0, 0,     0, 0 },    // raster_4_3
-		{ 2, __V__, 1, _NVCH, 1,     0, 0,     0, 0,     0, 0,     0, 0 }     // raster_4_4
+	    {6, __VCH, 4, _N_CH, 1, __VCH, 3, _N___, 1, ___CH, 1, __VCH, 1}, // raster_1_0
+	    {6, __VC_, 1, _NVCH, 2, __VC_, 1, _NVCH, 3, _NVCH, 2, _NVCH, 1}, // raster_1_1
+	    //
+	    {4, __VCH, 3, _N__H, 1, ___CH, 1, __VCH, 1, 0, 0, 0, 0},         // raster_2_0
+	    {6, __VC_, 2, _N_CH, 1, __VCH, 2, _N_CH, 1, __VCH, 1, _N__H, 1}, // raster_2_1
+	    {6, __V__, 1, _NVCH, 1, __VC_, 1, _NVCH, 1, __VC_, 1, _NVCH, 1}, // raster_2_2
+	    //
+	    {2, __VCH, 2, _N__H, 2, 0, 0, 0, 0, 0, 0, 0, 0},     // raster_3_0
+	    {3, __VC_, 2, _N_CH, 1, __VCH, 1, 0, 0, 0, 0, 0, 0}, // raster_3_1
+	    {3, __VC_, 1, _NVCH, 2, _N_CH, 1, 0, 0, 0, 0, 0, 0}, // raster_3_2
+	    {3, _NVCH, 1, __V__, 1, _NVCH, 1, 0, 0, 0, 0, 0, 0}, // raster_3_3
+	    //
+	    {2, __VCH, 1, _N__H, 1, 0, 0, 0, 0, 0, 0, 0, 0}, // raster_4_0
+	    {2, __VC_, 1, _N__H, 1, 0, 0, 0, 0, 0, 0, 0, 0}, // raster_4_1
+	    {2, __VC_, 1, _N_CH, 1, 0, 0, 0, 0, 0, 0, 0, 0}, // raster_4_2
+	    {2, __V__, 1, _NVCH, 1, 0, 0, 0, 0, 0, 0, 0, 0}, // raster_4_3
+	    {2, __V__, 1, _NVCH, 1, 0, 0, 0, 0, 0, 0, 0, 0}  // raster_4_4
 	};
 
 	/*
@@ -845,30 +839,30 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 	for (octant = 0; octant < _OCTANTS; octant++) {
 		switch (octant) {
 		case 0:
-			xSign =  1;
-			ySign =  1;
+			xSign = 1;
+			ySign = 1;
 			reflect = false;
-			break;        // lower-right
+			break; // lower-right
 		case 1:
-			xSign =  1;
-			ySign =  1;
+			xSign = 1;
+			ySign = 1;
 			reflect = true;
 			break;
 		case 2:
-			xSign =  1;
+			xSign = 1;
 			ySign = -1;
 			reflect = true;
-			break;        // lower-left
+			break; // lower-left
 		case 3:
 			xSign = -1;
-			ySign =  1;
+			ySign = 1;
 			reflect = false;
 			break;
 		case 4:
 			xSign = -1;
 			ySign = -1;
 			reflect = false;
-			break;        // upper-left
+			break; // upper-left
 		case 5:
 			xSign = -1;
 			ySign = -1;
@@ -876,11 +870,11 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 			break;
 		case 6:
 			xSign = -1;
-			ySign =  1;
+			ySign = 1;
 			reflect = true;
-			break;        // upper-right
+			break; // upper-right
 		case 7:
-			xSign =  1;
+			xSign = 1;
 			ySign = -1;
 			reflect = false;
 			break;
@@ -891,8 +885,8 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 		yOrigin = VIEWPORT_H / 2;
 
 		// make sure the segment doesn't reach out of bounds
-		int maxWidth      = xOrigin;
-		int maxHeight     = yOrigin;
+		int maxWidth = xOrigin;
+		int maxHeight = yOrigin;
 		int currentRaster = 0;
 
 		// just in case the viewport isn't square, swap the width and height
@@ -949,7 +943,7 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 					} else if ((currentCol == 4) && (currentRow == 3)) {
 						currentRaster = 12;
 					} else {
-						currentRaster = 13;    // currentCol and currentRow must equal 4
+						currentRaster = 13; // currentCol and currentRow must equal 4
 					}
 
 					xTileOffset = 0;
@@ -958,7 +952,7 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 					//========================================
 					for (int currentSegment = 0; currentSegment < shadowRaster[currentRaster][0]; currentSegment++) {
 						// each shadow segment is 2 bytes
-						int shadowType   = shadowRaster[currentRaster][currentSegment * 2 + 1];
+						int shadowType = shadowRaster[currentRaster][currentSegment * 2 + 1];
 						int shadowLength = shadowRaster[currentRaster][currentSegment * 2 + 2];
 
 						// update the raster length to make sure it fits in the viewport
@@ -968,7 +962,7 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 						if (shadowType & 0x80) {
 							// remove the flag from the shadowType
 							shadowType ^= _N___;
-//                            if (currentRow + yTileOffset >= maxHeight) {
+							//                            if (currentRow + yTileOffset >= maxHeight) {
 							if (currentRow + yTileOffset > maxHeight) {
 								break;
 							}
@@ -984,31 +978,31 @@ void Screen::screenFindLineOfSightEnhanced(Std::vector <MapTile> viewportTiles[V
 						 * horizontal shadow edge accuracy isn't important
 						 */
 						// if reflecting the octant, swap the edges
-//                        if (reflect) {
-//                            int shadowTemp = 0;
-//                            // swap the vertical and horizontal shadow edges
-//                            if (shadowType & __V__) { shadowTemp |= ____H; }
-//                            if (shadowType & ___C_) { shadowTemp |= ___C_; }
-//                            if (shadowType & ____H) { shadowTemp |= __V__; }
-//                            shadowType = shadowTemp;
-//                        }
+						//                        if (reflect) {
+						//                            int shadowTemp = 0;
+						//                            // swap the vertical and horizontal shadow edges
+						//                            if (shadowType & __V__) { shadowTemp |= ____H; }
+						//                            if (shadowType & ___C_) { shadowTemp |= ___C_; }
+						//                            if (shadowType & ____H) { shadowTemp |= __V__; }
+						//                            shadowType = shadowTemp;
+						//                        }
 
 						for (int currentShadow = 1; currentShadow <= shadowLength; currentShadow++) {
 							// apply the shadow to the shadowMap
 							if (reflect) {
-								_los[xTile + ((yTileOffset) * ySign)][yTile + ((currentShadow + xTileOffset) * xSign)] |= shadowType;
+								_los[xTile + ((yTileOffset)*ySign)][yTile + ((currentShadow + xTileOffset) * xSign)] |= shadowType;
 							} else {
-								_los[xTile + ((currentShadow + xTileOffset) * xSign)][yTile + ((yTileOffset) * ySign)] |= shadowType;
+								_los[xTile + ((currentShadow + xTileOffset) * xSign)][yTile + ((yTileOffset)*ySign)] |= shadowType;
 							}
 						}
 						xTileOffset += shadowLength;
-					}  // for (int currentSegment = 0; currentSegment < shadowRaster[currentRaster][0]; currentSegment++)
-					//========================================
+					} // for (int currentSegment = 0; currentSegment < shadowRaster[currentRaster][0]; currentSegment++)
+					  //========================================
 
-				}  // if (viewportTiles[xTile][yTile].front().getTileType()->isOpaque())
-			}  // for (int currentRow = 0; currentRow <= currentCol; currentRow++)
-		}  // for (int currentCol = 1; currentCol <= _NUM_RASTERS_COLS; currentCol++)
-	}  // for (octant = 0; octant < _OCTANTS; octant++)
+				} // if (viewportTiles[xTile][yTile].front().getTileType()->isOpaque())
+			}     // for (int currentRow = 0; currentRow <= currentCol; currentRow++)
+		}         // for (int currentCol = 1; currentCol <= _NUM_RASTERS_COLS; currentCol++)
+	}             // for (octant = 0; octant < _OCTANTS; octant++)
 
 	// go through all tiles on the viewable area and set the appropriate visibility
 	for (y = 0; y < VIEWPORT_H; y++) {
@@ -1046,8 +1040,8 @@ int Screen::screenPointsOnSameSideOfLine(int x1, int y1, int x2, int y2, double 
 	}
 
 	if ((p1 > 0.0 && p2 > 0.0) ||
-	        (p1 < 0.0 && p2 < 0.0) ||
-	        (p1 == 0.0 && p2 == 0.0))
+	    (p1 < 0.0 && p2 < 0.0) ||
+	    (p1 == 0.0 && p2 == 0.0))
 		return 1;
 
 	return 0;
@@ -1076,9 +1070,9 @@ int Screen::screenPointInMouseArea(int x, int y, const MouseArea *area) {
 	/* two points define a rectangle */
 	if (area->_nPoints == 2) {
 		if (x >= (int)(area->_point[0].x * settings._scale) &&
-				y >= (int)(area->_point[0].y * settings._scale) &&
-				x < (int)(area->_point[1].x * settings._scale) &&
-				y < (int)(area->_point[1].y * settings._scale)) {
+		    y >= (int)(area->_point[0].y * settings._scale) &&
+		    x < (int)(area->_point[1].x * settings._scale) &&
+		    y < (int)(area->_point[1].y * settings._scale)) {
 			return 1;
 		}
 	}
@@ -1086,9 +1080,9 @@ int Screen::screenPointInMouseArea(int x, int y, const MouseArea *area) {
 	/* three points define a triangle */
 	else if (area->_nPoints == 3) {
 		return screenPointInTriangle(x, y,
-			area->_point[0].x * settings._scale, area->_point[0].y * settings._scale,
-			area->_point[1].x * settings._scale, area->_point[1].y * settings._scale,
-			area->_point[2].x * settings._scale, area->_point[2].y * settings._scale);
+		                             area->_point[0].x * settings._scale, area->_point[0].y * settings._scale,
+		                             area->_point[1].x * settings._scale, area->_point[1].y * settings._scale,
+		                             area->_point[2].x * settings._scale, area->_point[2].y * settings._scale);
 	}
 
 	return 0;
@@ -1148,11 +1142,11 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 		Std::map<Common::String, int>::iterator charIndex = _dungeonTileChars.find(t.getTileType()->getName());
 		if (charIndex != _dungeonTileChars.end()) {
 			_charSetInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
-			                                 (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,
-			                                 0,
-			                                 charIndex->_value * layout->_tileShape.y * settings._scale,
-			                                 layout->_tileShape.x * settings._scale,
-			                                 layout->_tileShape.y * settings._scale);
+			                                  (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,
+			                                  0,
+			                                  charIndex->_value * layout->_tileShape.y * settings._scale,
+			                                  layout->_tileShape.x * settings._scale,
+			                                  layout->_tileShape.y * settings._scale);
 		}
 	} else {
 		if (_gemTilesInfo == nullptr) {
@@ -1163,11 +1157,11 @@ void Screen::screenShowGemTile(Layout *layout, Map *map, MapTile &t, bool focus,
 
 		if (tile < 128) {
 			_gemTilesInfo->_image->drawSubRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
-			                                  (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,
-			                                  0,
-			                                  tile * layout->_tileShape.y * settings._scale,
-			                                  layout->_tileShape.x * settings._scale,
-			                                  layout->_tileShape.y * settings._scale);
+			                                   (layout->_viewport.top + (y * layout->_tileShape.y)) * settings._scale,
+			                                   0,
+			                                   tile * layout->_tileShape.y * settings._scale,
+			                                   layout->_tileShape.x * settings._scale,
+			                                   layout->_tileShape.y * settings._scale);
 		} else {
 			Image *screen = imageMgr->get("screen")->_image;
 			screen->fillRect((layout->_viewport.left + (x * layout->_tileShape.x)) * settings._scale,
@@ -1207,12 +1201,11 @@ void Screen::screenGemUpdate() {
 
 	Layout *layout = screenGetGemLayout(g_context->_location->_map);
 
-
 	// TODO: Move the code responsible for determining 'peer' visibility to a non SDL specific part of the code.
 	if (g_context->_location->_map->_type == Map::DUNGEON) {
 		//DO THE SPECIAL DUNGEON MAP TRAVERSAL
-		Std::vector<Std::vector<int> > drawnTiles(layout->_viewport.width(), Std::vector<int>(layout->_viewport.height(), 0));
-		Common::List<Std::pair<int, int> > coordStack;
+		Std::vector<Std::vector<int>> drawnTiles(layout->_viewport.width(), Std::vector<int>(layout->_viewport.height(), 0));
+		Common::List<Std::pair<int, int>> coordStack;
 
 		//Put the avatar's position on the stack
 		int center_x = layout->_viewport.width() / 2 - 1;
@@ -1232,24 +1225,22 @@ void Screen::screenGemUpdate() {
 			y = currentXY.second;
 
 			if (x < 0 || x >= layout->_viewport.width() ||
-			        y < 0 || y >= layout->_viewport.height())
-				continue;   //Skip out of range tiles
+			    y < 0 || y >= layout->_viewport.height())
+				continue; //Skip out of range tiles
 
 			if (drawnTiles[x][y])
-				continue;   //Skip already considered tiles
+				continue; //Skip already considered tiles
 
 			drawnTiles[x][y] = 1;
 
 			// DRAW THE ACTUAL TILE
 			bool focus;
 
-
 			Std::vector<MapTile> tiles = screenViewportTile(layout->_viewport.width(),
-			                             layout->_viewport.height(), x - center_x + avt_x, y - center_y + avt_y, focus);
+			                                                layout->_viewport.height(), x - center_x + avt_x, y - center_y + avt_y, focus);
 			tile = tiles.front();
 
 			TileId avatarTileId = g_context->_location->_map->_tileSet->getByName("avatar")->getId();
-
 
 			if (!weAreDrawingTheAvatarTile) {
 				//Hack to avoid showing the avatar tile multiple times in cycling dungeon maps
@@ -1259,21 +1250,21 @@ void Screen::screenGemUpdate() {
 
 			screenShowGemTile(layout, g_context->_location->_map, tile, focus, x, y);
 
-			if (!tile.getTileType()->isOpaque() || tile.getTileType()->isWalkable() ||  weAreDrawingTheAvatarTile) {
+			if (!tile.getTileType()->isOpaque() || tile.getTileType()->isWalkable() || weAreDrawingTheAvatarTile) {
 				//Continue the search so we can see through all walkable objects, non-opaque objects (like creatures)
 				//or the avatar position in those rare circumstances where he is stuck in a wall
 
 				//by adding all relative adjacency combinations to the stack for drawing
-				coordStack.push_back(Std::pair<int, int>(x   + 1 ,   y   - 1));
-				coordStack.push_back(Std::pair<int, int>(x   + 1 ,   y));
-				coordStack.push_back(Std::pair<int, int>(x   + 1 ,   y   + 1));
+				coordStack.push_back(Std::pair<int, int>(x + 1, y - 1));
+				coordStack.push_back(Std::pair<int, int>(x + 1, y));
+				coordStack.push_back(Std::pair<int, int>(x + 1, y + 1));
 
-				coordStack.push_back(Std::pair<int, int>(x       ,   y   - 1));
-				coordStack.push_back(Std::pair<int, int>(x       ,   y   + 1));
+				coordStack.push_back(Std::pair<int, int>(x, y - 1));
+				coordStack.push_back(Std::pair<int, int>(x, y + 1));
 
-				coordStack.push_back(Std::pair<int, int>(x   - 1 ,   y   - 1));
-				coordStack.push_back(Std::pair<int, int>(x   - 1 ,   y));
-				coordStack.push_back(Std::pair<int, int>(x   - 1 ,   y   + 1));
+				coordStack.push_back(Std::pair<int, int>(x - 1, y - 1));
+				coordStack.push_back(Std::pair<int, int>(x - 1, y));
+				coordStack.push_back(Std::pair<int, int>(x - 1, y + 1));
 
 				// We only draw the avatar tile once, it is the first tile drawn
 				weAreDrawingTheAvatarTile = false;
@@ -1286,7 +1277,8 @@ void Screen::screenGemUpdate() {
 			for (y = 0; y < layout->_viewport.height(); y++) {
 				bool focus;
 				tile = screenViewportTile(layout->_viewport.width(), layout->_viewport.height(),
-				                          x, y, focus).front();
+				                          x, y, focus)
+				           .front();
 				screenShowGemTile(layout, g_context->_location->_map, tile, focus, x, y);
 			}
 		}
@@ -1298,7 +1290,6 @@ void Screen::screenGemUpdate() {
 	screenUpdateMoons();
 	screenUpdateWind();
 }
-
 
 void Screen::screenRedrawTextArea(int x, int y, int width, int height) {
 	g_system->updateScreen();
@@ -1383,11 +1374,10 @@ Image *Screen::screenScaleDown(Image *src, int scale) {
 
 #ifdef IOS_ULTIMA4
 //Unsure if implementation required in iOS.
-void inline screenLock() {};
-void inline screenUnlock() {};
-void inline screenWait(int numberOfAnimationFrames) {};
+void inline screenLock(){};
+void inline screenUnlock(){};
+void inline screenWait(int numberOfAnimationFrames){};
 #endif
-
 
 const Std::vector<Common::String> &screenGetFilterNames() {
 	return g_screen->_filterNames;

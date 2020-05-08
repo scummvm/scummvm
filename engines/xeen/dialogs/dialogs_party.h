@@ -80,6 +80,7 @@ private:
 	void startingCharChanged(int firstDisplayChar);
 
 	int selectCharacter(bool isDelete, int firstDisplayChar);
+
 public:
 	/**
 	 * Show the Party dialog

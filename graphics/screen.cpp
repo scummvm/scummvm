@@ -20,22 +20,22 @@
  *
  */
 
-#include "common/system.h"
-#include "common/algorithm.h"
 #include "graphics/screen.h"
+#include "common/algorithm.h"
+#include "common/system.h"
 #include "graphics/palette.h"
 
 namespace Graphics {
 
-Screen::Screen(): ManagedSurface() {
+Screen::Screen() : ManagedSurface() {
 	create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 }
 
-Screen::Screen(int width, int height): ManagedSurface() {
+Screen::Screen(int width, int height) : ManagedSurface() {
 	create(width, height);
 }
 
-Screen::Screen(int width, int height, PixelFormat pixelFormat): ManagedSurface() {
+Screen::Screen(int width, int height, PixelFormat pixelFormat) : ManagedSurface() {
 	create(width, height, pixelFormat);
 }
 
@@ -49,7 +49,7 @@ void Screen::update() {
 		const Common::Rect &r = *i;
 		const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
 		g_system->copyRectToScreen(srcP, pitch, r.left, r.top,
-			r.width(), r.height());
+		                           r.width(), r.height());
 	}
 
 	// Signal the physical screen to update

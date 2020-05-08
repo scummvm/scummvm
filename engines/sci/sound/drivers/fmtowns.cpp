@@ -60,7 +60,8 @@ private:
 };
 
 class TownsMidiPart {
-friend class MidiDriver_FMTowns;
+	friend class MidiDriver_FMTowns;
+
 public:
 	TownsMidiPart(MidiDriver_FMTowns *driver, uint8 id);
 	~TownsMidiPart() {}
@@ -94,8 +95,9 @@ private:
 };
 
 class MidiDriver_FMTowns : public MidiDriver, public TownsAudioInterfacePluginDriver {
-friend class TownsChannel;
-friend class TownsMidiPart;
+	friend class TownsChannel;
+	friend class TownsMidiPart;
+
 public:
 	MidiDriver_FMTowns(Audio::Mixer *mixer, SciVersion version);
 	~MidiDriver_FMTowns() override;
@@ -372,7 +374,7 @@ int TownsMidiPart::allocateChannel() {
 	int ld = 0;
 	bool found = false;
 
-	for (bool loop = true; loop; ) {
+	for (bool loop = true; loop;) {
 		if (++chan == 6)
 			chan = 0;
 
@@ -406,10 +408,10 @@ int TownsMidiPart::allocateChannel() {
 
 MidiDriver_FMTowns::MidiDriver_FMTowns(Audio::Mixer *mixer, SciVersion version) : _version(version), _timerProc(0), _timerProcPara(0), _baseTempo(10080), _ready(false), _isOpen(false), _masterVolume(0x0f), _soundOn(true) {
 	_intf = new TownsAudioInterface(mixer, this, true);
-	_out = new TownsChannel*[6];
+	_out = new TownsChannel *[6];
 	for (int i = 0; i < 6; i++)
 		_out[i] = new TownsChannel(this, i);
-	_parts = new TownsMidiPart*[16];
+	_parts = new TownsMidiPart *[16];
 	for (int i = 0; i < 16; i++)
 		_parts[i] = new TownsMidiPart(this, i);
 }
@@ -528,7 +530,7 @@ void MidiDriver_FMTowns::send(uint32 b) {
 }
 
 uint32 MidiDriver_FMTowns::property(int prop, uint32 param) {
-	switch(prop) {
+	switch (prop) {
 	case MIDI_PROP_MASTER_VOLUME:
 		if (param != 0xffff) {
 			_masterVolume = param;
@@ -570,7 +572,7 @@ void MidiDriver_FMTowns::timerCallback(int timerId) {
 }
 
 int MidiDriver_FMTowns::getChannelVolume(uint8 midiPart) {
-	static const uint8 volumeTable[] = { 0x00, 0x0D, 0x1B, 0x28, 0x36, 0x43, 0x51, 0x5F, 0x63, 0x67, 0x6B, 0x6F, 0x73, 0x77, 0x7B, 0x7F };
+	static const uint8 volumeTable[] = {0x00, 0x0D, 0x1B, 0x28, 0x36, 0x43, 0x51, 0x5F, 0x63, 0x67, 0x6B, 0x6F, 0x73, 0x77, 0x7B, 0x7F};
 	int tableIndex = (_version == SCI_VERSION_1_EARLY) ? _masterVolume : (_parts[midiPart]->_volume * (_masterVolume + 1)) >> 6;
 	assert(tableIndex < 16);
 	return volumeTable[tableIndex];
@@ -658,4 +660,3 @@ MidiPlayer *MidiPlayer_FMTowns_create(SciVersion _soundVersion) {
 }
 
 } // End of namespace Sci
-

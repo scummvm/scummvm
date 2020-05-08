@@ -29,8 +29,8 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 

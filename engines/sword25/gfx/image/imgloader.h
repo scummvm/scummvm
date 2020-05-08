@@ -32,8 +32,8 @@
 #ifndef SWORD25_IMGLOADER_H
 #define SWORD25_IMGLOADER_H
 
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/graphicengine.h"
+#include "sword25/kernel/common.h"
 
 namespace Graphics {
 struct Surface;
@@ -48,10 +48,9 @@ namespace Sword25 {
  */
 class ImgLoader {
 protected:
-	ImgLoader() {}	// Protected constructor to prevent instances
+	ImgLoader() {} // Protected constructor to prevent instances
 
 public:
-
 	/**
 	 * Decode an image.
 	 * @param[in] fileDatePtr	pointer to the image data
@@ -67,7 +66,7 @@ public:
 	                           Graphics::Surface *dest);
 
 	static bool decodeThumbnailImage(const byte *pFileData, uint fileSize,
-	                           Graphics::Surface *dest);
+	                                 Graphics::Surface *dest);
 };
 
 } // End of namespace Sword25

@@ -23,9 +23,9 @@
 #ifndef MUTATIONOFJB_CALLMACROCOMMAND_H
 #define MUTATIONOFJB_CALLMACROCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "mutationofjb/commands/command.h"
 
 namespace MutationOfJB {
 
@@ -47,12 +47,13 @@ public:
 	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	Command *next() const override;
 	Common::String debugString() const override;
+
 private:
 	Common::String _macroName;
 	Command *_returnCommand;
 	Command *_callCommand;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

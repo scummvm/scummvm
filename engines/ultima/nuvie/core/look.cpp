@@ -20,19 +20,19 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/look.h"
 #include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/core/look.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 Look::Look(Configuration *cfg)
-	: look_data(NULL), desc_buf(NULL) {
+    : look_data(NULL), desc_buf(NULL) {
 	config = cfg;
 
 	look_tbl[2047] = NULL;
@@ -58,14 +58,14 @@ bool Look::init() {
 	config->value("config/GameType", game_type);
 
 	switch (game_type) {
-	case NUVIE_GAME_U6 :
+	case NUVIE_GAME_U6:
 		config_get_path(config, "look.lzd", filename);
 		look_data = lzw.decompress_file(filename, decomp_size);
 		if (look_data == NULL)
 			return false;
 		break;
-	case NUVIE_GAME_MD :
-	case NUVIE_GAME_SE :
+	case NUVIE_GAME_MD:
+	case NUVIE_GAME_SE:
 		U6Lib_n lib_file;
 		config_get_path(config, "look.lzc", filename);
 		if (lib_file.open(filename, 4, game_type) == false)
@@ -75,7 +75,7 @@ bool Look::init() {
 	}
 
 	ptr = look_data;
-// i: current string pos, j: last string pos
+	// i: current string pos, j: last string pos
 	for (i = 0, j = 0; i < 2048;) {
 		// get number of string
 		i = ptr[0] + (ptr[1] << 8);
@@ -98,12 +98,12 @@ bool Look::init() {
 			look_tbl[j] = s;
 	}
 
-// fill remaining strings with "Nothing"
+	// fill remaining strings with "Nothing"
 	for (i = j; i < 2048; i++) {
 		look_tbl[i] = look_tbl[0]; // nothing
 	}
 
-// allocate space for description buffer
+	// allocate space for description buffer
 	desc_buf = (char *)malloc(max_len + 1);
 	if (desc_buf == NULL)
 		return false;
@@ -124,7 +124,7 @@ const char *Look::get_description(uint16 tile_num, bool *plural) {
 	desc = look_tbl[tile_num];
 
 	len = strlen(desc);
- 
+
 	for (i = 0, j = 0; i < len;) {
 		if (desc[i] == '\\' || desc[i] == '/') {
 			has_plural = true;

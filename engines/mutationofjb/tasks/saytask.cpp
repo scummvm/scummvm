@@ -22,11 +22,11 @@
 
 #include "mutationofjb/tasks/saytask.h"
 
-#include "mutationofjb/tasks/taskmanager.h"
 #include "mutationofjb/assets.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/room.h"
+#include "mutationofjb/tasks/taskmanager.h"
 #include "mutationofjb/util.h"
 
 #include "graphics/managed_surface.h"
@@ -101,4 +101,4 @@ void SayTask::finish() {
 	}
 }
 
-}
+} // namespace MutationOfJB

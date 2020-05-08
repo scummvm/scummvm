@@ -25,13 +25,13 @@
 
 #include "backends/cloud/storagefile.h"
 #include "backends/cloud/storageinfo.h"
-#include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curlrequest.h"
+#include "backends/networking/curl/request.h"
 #include "common/array.h"
 #include "common/callback.h"
 #include "common/mutex.h"
-#include "common/stream.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 namespace GUI {
 
@@ -46,7 +46,7 @@ class FolderDownloadRequest;
 
 class Storage {
 public:
-	typedef Networking::Response<Common::Array<StorageFile>&> FileArrayResponse;
+	typedef Networking::Response<Common::Array<StorageFile> &> FileArrayResponse;
 	typedef Networking::Response<StorageInfo> StorageInfoResponse;
 	typedef Networking::Response<bool> BoolResponse;
 	typedef Networking::Response<StorageFile> UploadResponse;

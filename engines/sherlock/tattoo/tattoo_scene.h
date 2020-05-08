@@ -34,7 +34,12 @@ namespace Tattoo {
 extern const int FS_TRANS[8];
 
 enum {
-	STARTING_GAME_SCENE = 1, WEARY_PUNT = 52, TRAIN_RIDE = 69, STARTING_INTRO_SCENE = 91, OVERHEAD_MAP2 = 90, OVERHEAD_MAP = 100
+	STARTING_GAME_SCENE = 1,
+	WEARY_PUNT = 52,
+	TRAIN_RIDE = 69,
+	STARTING_INTRO_SCENE = 91,
+	OVERHEAD_MAP2 = 90,
+	OVERHEAD_MAP = 100
 };
 
 struct SceneTripEntry {
@@ -44,7 +49,7 @@ struct SceneTripEntry {
 
 	SceneTripEntry() : _flag(0), _sceneNumber(0), _numTimes(0) {}
 	SceneTripEntry(int flag, int sceneNumber, int numTimes) : _flag(flag),
-		_sceneNumber(sceneNumber), _numTimes(numTimes) {}
+	                                                          _sceneNumber(sceneNumber), _numTimes(numTimes) {}
 };
 
 class TattooScene : public Scene {
@@ -66,6 +71,7 @@ private:
 	 *		the scene number being entered
 	 */
 	void setNPCPath(int npc);
+
 protected:
 	/**
 	 * Loads the data associated for a given scene. The room resource file's format is:
@@ -104,10 +110,12 @@ protected:
 	 * Returns the index of the closest zone to a given point.
 	 */
 	int closestZone(const Common::Point &pt) override;
+
 public:
 	StreamingImageFile _activeCAnim;
 	Common::Array<SceneTripEntry> _sceneTripCounters;
 	bool _labTableScene;
+
 public:
 	TattooScene(SherlockEngine *vm);
 

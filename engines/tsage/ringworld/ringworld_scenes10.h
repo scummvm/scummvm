@@ -24,12 +24,12 @@
 #define TSAGE_RINGWORLD_SCENES10_H
 
 #include "common/scummsys.h"
+#include "tsage/core.h"
+#include "tsage/events.h"
+#include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
-#include "tsage/events.h"
-#include "tsage/core.h"
 #include "tsage/scenes.h"
-#include "tsage/globals.h"
 
 namespace TsAGE {
 
@@ -50,7 +50,7 @@ public:
 };
 
 class Scene2 : public Scene {
-public :
+public:
 	int _sceneState;
 
 	Scene2();
@@ -72,6 +72,7 @@ class Scene9100 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
@@ -80,7 +81,7 @@ public:
 	SceneObject _object4;
 	SceneObject _object5;
 	SceneObject _object6;
-	SceneHotspot1  _hotspotSlave;
+	SceneHotspot1 _hotspotSlave;
 	NamedHotspot _hotspotSoiledClothes;
 	NamedHotspot _hotspotCleanedClothes;
 	NamedHotspot _hotspotIsland;
@@ -98,6 +99,7 @@ class Scene9150 : public Scene2 {
 		void signal() override;
 		void dispatch() override;
 	};
+
 public:
 	SequenceManager _sequenceManager1;
 	SequenceManager _sequenceManager2;
@@ -121,10 +123,11 @@ public:
 };
 
 class Scene9200 : public Scene2 {
-	class SceneHotspot1 : public NamedHotspot{
+	class SceneHotspot1 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SceneObject _object1;
@@ -210,15 +213,16 @@ public:
 };
 
 class Scene9400 : public Scene2 {
-	class SceneHotspot7 : public NamedHotspot{
+	class SceneHotspot7 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class SceneHotspot8 : public NamedHotspot{
+	class SceneHotspot8 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	Scene9400();
 	SequenceManager _sequenceManager;
@@ -257,15 +261,16 @@ class Scene9450 : public Scene2 {
 		void dispatch() override;
 	};
 
-	class Hotspot1 : public NamedHotspot{
+	class Hotspot1 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot3 : public NamedHotspot{
+	class Hotspot3 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SceneObject _object1;
 	SequenceManager _sequenceManager1;
@@ -296,22 +301,22 @@ public:
 };
 
 class Scene9500 : public Scene2 {
-	class Hotspot1 : public NamedHotspot{
+	class Hotspot1 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot2 : public NamedHotspot{
+	class Hotspot2 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot3 : public NamedHotspot{
+	class Hotspot3 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot4 : public NamedHotspot{
+	class Hotspot4 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
@@ -376,50 +381,51 @@ public:
 };
 
 class Scene9850 : public Scene {
-	class Object6 : public SceneObject{
+	class Object6 : public SceneObject {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Object7 : public SceneObjectExt{
+	class Object7 : public SceneObjectExt {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot12 : public NamedHotspot{
+	class Hotspot12 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot14 : public NamedHotspot{
+	class Hotspot14 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot16 : public NamedHotspot{
+	class Hotspot16 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot17 : public NamedHotspot{
+	class Hotspot17 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot18 : public NamedHotspot{
+	class Hotspot18 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot19 : public NamedHotspot{
+	class Hotspot19 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
 
-	class Hotspot20 : public NamedHotspot{
+	class Hotspot20 : public NamedHotspot {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SceneObject _objDoor;
@@ -520,7 +526,6 @@ class Scene9999 : public Scene {
 	};
 
 public:
-
 	Action1 _action1;
 	Action2 _action2;
 	Action _action3;

@@ -27,8 +27,8 @@
 #define PEGASUS_ITEMS_INVENTORY_AIRMASK_H
 
 #include "pegasus/hotspot.h"
-#include "pegasus/timers.h"
 #include "pegasus/items/inventory/inventoryitem.h"
+#include "pegasus/timers.h"
 
 namespace Pegasus {
 

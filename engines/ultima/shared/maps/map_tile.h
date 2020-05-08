@@ -36,23 +36,24 @@ class MapWidget;
  */
 class MapTile {
 public:
-	int _tileId;							// Original tile Id
-	int _tileDisplayNum;					// Tile number to display. Can differ from tileId, such as tiles in the
-											// city for talking/stealing to merchants showing as ground
-	Common::Array<MapWidget *> _widgets;	// Widgets on the tile, if any
-	int _widgetNum;							// Widget number of first widget, if any
-	MapWidget *_widget;						// Pointer tofirst widget on tile, if any
-	// Dungeon tile flags 
+	int _tileId;                         // Original tile Id
+	int _tileDisplayNum;                 // Tile number to display. Can differ from tileId, such as tiles in the
+	                                     // city for talking/stealing to merchants showing as ground
+	Common::Array<MapWidget *> _widgets; // Widgets on the tile, if any
+	int _widgetNum;                      // Widget number of first widget, if any
+	MapWidget *_widget;                  // Pointer tofirst widget on tile, if any
+	// Dungeon tile flags
 	bool _isDoor, _isSecretDoor;
 	bool _isLadderUp, _isLadderDown;
 	bool _isWall, _isHallway, _isBeams;
+
 public:
 	/**
 	 * Constructor
 	 */
 	MapTile() : _tileDisplayNum(-1), _tileId(-1), _widgetNum(-1), _widget(0),
-		_isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false),
-		_isHallway(false), _isBeams(false) {}
+	            _isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false),
+	            _isHallway(false), _isBeams(false) {}
 
 	/**
 	 * Destructor

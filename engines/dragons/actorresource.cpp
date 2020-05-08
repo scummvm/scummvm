@@ -19,22 +19,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "dragons/actorresource.h"
 #include "common/debug.h"
 #include "common/memstream.h"
-#include "graphics/surface.h"
 #include "dragons/actorfiles.h"
 #include "dragons/bigfile.h"
-#include "dragons/actorresource.h"
+#include "graphics/surface.h"
 
 namespace Dragons {
 
-
 ActorResourceLoader::ActorResourceLoader(BigfileArchive *bigFileArchive) : _bigFileArchive(bigFileArchive) {
-
 }
 
 ActorResource *ActorResourceLoader::load(uint32 resourceId) {
-	assert (resourceId < DRAGONS_NUM_ACTOR_FILES);
+	assert(resourceId < DRAGONS_NUM_ACTOR_FILES);
 	ActorResource *actorResource = new ActorResource();
 	const char *filename = actorResourceFiles[resourceId];
 	uint32 size;
@@ -59,13 +57,13 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 	stream.read(_palette, 512);
 	_palette[0] = 0;
 	_palette[1] = 0;
-//	_palette[1] = 0x80; // set alpha (bit 15) on first palette entry.
+	//	_palette[1] = 0x80; // set alpha (bit 15) on first palette entry.
 
-//	for (int i = 1; i < 0x100; i++) {
-//		if (_palette[i * 2] == 0 && _palette[i * 2 + 1] == 0) {
-//			_palette[i * 2 + 1] = 0x80;
-//		}
-//	}
+	//	for (int i = 1; i < 0x100; i++) {
+	//		if (_palette[i * 2] == 0 && _palette[i * 2 + 1] == 0) {
+	//			_palette[i * 2 + 1] = 0x80;
+	//		}
+	//	}
 
 	stream.seek(frameOffset);
 
@@ -87,8 +85,8 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 		_frames[i].frameDataOffset = &dataStart[frameDataOffset];
 		_frames[i].flags = stream.readUint16LE();
 		_frames[i].field_c = stream.readUint16LE();
-//		debug(3, "Frame[%d] @%X, xOffset: %d field_2: %d (%d, %d) offset: %X, flags: %X field_c: %d",
-//				i, offset, _frames[i].xOffset, _frames[i].yOffset, _frames[i].width, _frames[i].height, frameDataOffset, _frames[i].flags, _frames[i].field_c);
+		//		debug(3, "Frame[%d] @%X, xOffset: %d field_2: %d (%d, %d) offset: %X, flags: %X field_c: %d",
+		//				i, offset, _frames[i].xOffset, _frames[i].yOffset, _frames[i].width, _frames[i].height, frameDataOffset, _frames[i].flags, _frames[i].field_c);
 	}
 
 	return false;
@@ -144,7 +142,7 @@ Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame, byte *palett
 }
 
 ActorFrame *ActorResource::getFrameHeader(uint16 frameNumber) {
-	assert (frameNumber < _framesCount);
+	assert(frameNumber < _framesCount);
 
 	return &_frames[frameNumber];
 }
@@ -187,8 +185,8 @@ byte *ActorResource::getPalette() {
 }
 
 ActorResource::ActorResource() : _id(0), _data(nullptr), _fileSize(0), _frames(nullptr),
-														   _framesCount(0),
-														   _sequenceTableOffset(0) {
+                                 _framesCount(0),
+                                 _sequenceTableOffset(0) {
 	memset(_palette, 0, 512);
 }
 

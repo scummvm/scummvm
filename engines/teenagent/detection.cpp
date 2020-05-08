@@ -20,65 +20,56 @@
  *
  */
 
-#include "common/system.h"
-#include "common/savefile.h"
 #include "common/algorithm.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "graphics/thumbnail.h"
 #include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
-#include "graphics/thumbnail.h"
 
 static const PlainGameDescriptor teenAgentGames[] = {
-	{ "teenagent", "Teen Agent" },
-	{ 0, 0 }
-};
+    {"teenagent", "Teen Agent"},
+    {0, 0}};
 
 static const ADGameDescription teenAgentGameDescriptions[] = {
-	{
-		"teenagent",
-		"",
-		{
-			{"off.res", 0, NULL, -1},
-			{"on.res", 0, NULL, -1},
-			{"ons.res", 0, NULL, -1},
-			{"varia.res", 0, NULL, -1},
-			{"lan_000.res", 0, NULL, -1},
-			{"lan_500.res", 0, NULL, -1},
-			{"mmm.res", 0, NULL, -1},
-			{"sam_mmm.res", 0, NULL, -1},
-			{"sam_sam.res", 0, NULL, -1},
-			//{"unlogic.res", 0, NULL, -1}, //skipped if not present
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
-	},
-	{
-		"teenagent",
-		"",
-		{
-			{"off.res", 0, NULL, -1},
-			{"on.res", 0, NULL, -1},
-			{"ons.res", 0, NULL, -1},
-			{"varia.res", 0, NULL, -1},
-			{"lan_000.res", 0, NULL, -1},
-			{"lan_500.res", 0, NULL, -1},
-			{"sam_sam.res", 0, NULL, -1},
-			{"voices.res", 0, NULL, -1},
-			{"cdlogo.res", 0, NULL, -1},
-			AD_LISTEND
-		},
-		Common::CZ_CZE,
-		Common::kPlatformDOS,
-		ADGF_CD,
-		GUIO1(GUIO_NOMIDI)
-	},
-	AD_TABLE_END_MARKER,
+    {"teenagent",
+     "",
+     {{"off.res", 0, NULL, -1},
+      {"on.res", 0, NULL, -1},
+      {"ons.res", 0, NULL, -1},
+      {"varia.res", 0, NULL, -1},
+      {"lan_000.res", 0, NULL, -1},
+      {"lan_500.res", 0, NULL, -1},
+      {"mmm.res", 0, NULL, -1},
+      {"sam_mmm.res", 0, NULL, -1},
+      {"sam_sam.res", 0, NULL, -1},
+      //{"unlogic.res", 0, NULL, -1}, //skipped if not present
+      AD_LISTEND},
+     Common::EN_ANY,
+     Common::kPlatformDOS,
+     ADGF_NO_FLAGS,
+     GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
+    {"teenagent",
+     "",
+     {{"off.res", 0, NULL, -1},
+      {"on.res", 0, NULL, -1},
+      {"ons.res", 0, NULL, -1},
+      {"varia.res", 0, NULL, -1},
+      {"lan_000.res", 0, NULL, -1},
+      {"lan_500.res", 0, NULL, -1},
+      {"sam_sam.res", 0, NULL, -1},
+      {"voices.res", 0, NULL, -1},
+      {"cdlogo.res", 0, NULL, -1},
+      AD_LISTEND},
+     Common::CZ_CZE,
+     Common::kPlatformDOS,
+     ADGF_CD,
+     GUIO1(GUIO_NOMIDI)},
+    AD_TABLE_END_MARKER,
 };
 
 enum {
@@ -192,7 +183,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TEENAGENT)
-	REGISTER_PLUGIN_DYNAMIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
+REGISTER_PLUGIN_STATIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
 #endif

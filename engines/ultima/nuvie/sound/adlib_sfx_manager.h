@@ -23,11 +23,11 @@
 #ifndef NUVIE_SOUND_ADLIB_SFX_MANAGER_H
 #define NUVIE_SOUND_ADLIB_SFX_MANAGER_H
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "audio/mixer.h"
-#include "ultima/nuvie/sound/sfx_manager.h"
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/sound/sfx_manager.h"
 
 namespace Ultima {
 namespace Nuvie {

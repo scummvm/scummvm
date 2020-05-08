@@ -67,7 +67,7 @@ public:
 
 	uint16 _scriptId;
 	uint16 _scriptCastIndex;
-	byte _colorcode;  // x40 editable, 0x80 moveable
+	byte _colorcode; // x40 editable, 0x80 moveable
 	byte _blendAmount;
 	uint32 _unk3;
 

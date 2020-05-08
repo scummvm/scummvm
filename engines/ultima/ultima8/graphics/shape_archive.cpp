@@ -22,10 +22,10 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/graphics/shape_archive.h"
-#include "ultima/ultima8/graphics/shape.h"
-#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/convert/convert_shape.h"
+#include "ultima/ultima8/graphics/palette.h"
+#include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_archive.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -45,45 +45,55 @@ Shape *ShapeArchive::getShape(uint32 shapenum) {
 }
 
 void ShapeArchive::cache(uint32 shapenum) {
-	if (shapenum >= _count) return;
-	if (_shapes.empty()) _shapes.resize(_count);
+	if (shapenum >= _count)
+		return;
+	if (_shapes.empty())
+		_shapes.resize(_count);
 
-	if (_shapes[shapenum]) return;
+	if (_shapes[shapenum])
+		return;
 
 	uint32 shpsize;
 	uint8 *data = getRawObject(shapenum, &shpsize);
 
-	if (!data || shpsize == 0) return;
+	if (!data || shpsize == 0)
+		return;
 
 	// Auto detect format
 	if (!_format) {
 		_format = Shape::DetectShapeFormat(data, shpsize);
-		if (_format) pout << "Detected Shape Format: " << _format->_name << Std::endl;
+		if (_format)
+			pout << "Detected Shape Format: " << _format->_name << Std::endl;
 	}
 
 	if (!_format) {
-		delete [] data;
+		delete[] data;
 		perr << "Error: Unable to detect shape format for flex." << Std::endl;
 		return;
 	}
 
 	Shape *shape = new Shape(data, shpsize, _format, _id, shapenum);
-	if (_palette) shape->setPalette(_palette);
+	if (_palette)
+		shape->setPalette(_palette);
 
 	_shapes[shapenum] = shape;
 }
 
 void ShapeArchive::uncache(uint32 shapenum) {
-	if (shapenum >= _count) return;
-	if (_shapes.empty()) return;
+	if (shapenum >= _count)
+		return;
+	if (_shapes.empty())
+		return;
 
 	delete _shapes[shapenum];
 	_shapes[shapenum] = nullptr;
 }
 
 bool ShapeArchive::isCached(uint32 shapenum) const {
-	if (shapenum >= _count) return false;
-	if (_shapes.empty()) return false;
+	if (shapenum >= _count)
+		return false;
+	if (_shapes.empty())
+		return false;
 
 	return (_shapes[shapenum] != nullptr);
 }

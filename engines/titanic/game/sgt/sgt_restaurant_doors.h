@@ -30,8 +30,10 @@ namespace Titanic {
 class CSGTRestaurantDoors : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+
 private:
 	int _fieldBC;
+
 public:
 	CLASSDEF;
 	CSGTRestaurantDoors() : CGameObject(), _fieldBC(0) {}

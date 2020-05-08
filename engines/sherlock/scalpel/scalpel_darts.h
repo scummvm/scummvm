@@ -114,6 +114,7 @@ private:
 	 * Returns the center position for the area of the dartboard with a given number
 	 */
 	bool findNumberOnBoard(int aim, Common::Point &pt);
+
 public:
 	Darts(ScalpelEngine *vm);
 

@@ -35,12 +35,12 @@ class ActorDialogueQueue {
 	static const uint kMaxEntries = 25;
 
 	struct Entry {
-		bool   isNotPause;
-		bool   isPause;
-		int    actorId;
-		int    sentenceId;
-		int    animationMode;
-		int32  delay;
+		bool isNotPause;
+		bool isPause;
+		int actorId;
+		int sentenceId;
+		int animationMode;
+		int32 delay;
 
 		Entry();
 	};
@@ -48,14 +48,14 @@ class ActorDialogueQueue {
 	BladeRunnerEngine *_vm;
 
 	Common::Array<Entry> _entries;
-	bool                 _isNotPause;
-	int                  _actorId;
-	int                  _sentenceId;
-	int                  _animationMode;
-	int                  _animationModePrevious;
-	bool                 _isPause;
-	int32                _delay;
-	uint32               _timeLast;
+	bool _isNotPause;
+	int _actorId;
+	int _sentenceId;
+	int _animationMode;
+	int _animationModePrevious;
+	bool _isPause;
+	int32 _delay;
+	uint32 _timeLast;
 
 public:
 	ActorDialogueQueue(BladeRunnerEngine *vm);

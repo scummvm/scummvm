@@ -33,6 +33,7 @@ public:
 	int16 pop();
 	int16 peek();
 	int16 *topPtr();
+
 protected:
 	int _stackPos;
 	int16 _stack[256];

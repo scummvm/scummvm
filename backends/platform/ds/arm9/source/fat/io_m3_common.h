@@ -42,6 +42,6 @@
 #define M3_MODE_ROM 0x00400004
 #define M3_MODE_MEDIA 0x00400003
 
-extern void _M3_changeMode (u32 mode);
+extern void _M3_changeMode(u32 mode);
 
 #endif // IO_M3_COMMON_H

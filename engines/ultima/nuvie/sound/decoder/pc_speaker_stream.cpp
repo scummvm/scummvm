@@ -17,9 +17,9 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/decoder/pc_speaker_stream.h"
 #include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -36,9 +36,7 @@ PCSpeakerFreqStream::PCSpeakerFreqStream(uint freq, uint16 d) {
 	total_samples_played = 0;
 }
 
-
 PCSpeakerFreqStream::~PCSpeakerFreqStream() {
-
 }
 
 uint32 PCSpeakerFreqStream::getLengthInMsec() {
@@ -57,7 +55,7 @@ int PCSpeakerFreqStream::readBuffer(sint16 *buffer, const int numSamples) {
 	if (frequency != 0)
 		pcspkr->PCSPEAKER_CallBack(buffer, samples);
 	else
-		memset(buffer, 0, sizeof(sint16)*numSamples);
+		memset(buffer, 0, sizeof(sint16) * numSamples);
 
 	total_samples_played += samples;
 
@@ -85,15 +83,12 @@ PCSpeakerSweepFreqStream::PCSpeakerSweepFreqStream(uint start, uint end, uint16 
 	pcspkr->SetOn();
 	pcspkr->SetFrequency(start_freq);
 
-
 	total_samples_played = 0;
 	cur_step = 0;
 	DEBUG(0, LEVEL_DEBUGGING, "num_steps = %d freq_step = %d samples_per_step = %f\n", num_steps, freq_step, samples_per_step);
 }
 
-
 PCSpeakerSweepFreqStream::~PCSpeakerSweepFreqStream() {
-
 }
 
 uint32 PCSpeakerSweepFreqStream::getLengthInMsec() {
@@ -137,7 +132,6 @@ int PCSpeakerSweepFreqStream::readBuffer(sint16 *buffer, const int numSamples) {
 
 			cur_step++;
 		}
-
 	}
 
 	total_samples_played += i;
@@ -150,7 +144,6 @@ int PCSpeakerSweepFreqStream::readBuffer(sint16 *buffer, const int numSamples) {
 
 	return i;
 }
-
 
 //**************** PCSpeakerRandomStream
 
@@ -177,12 +170,9 @@ PCSpeakerRandomStream::PCSpeakerRandomStream(uint freq, uint16 d, uint16 s) {
 	samples_per_step = s * (SPKR_OUTPUT_RATE / 20 / 800); //1255);
 	total_samples_played = 0;
 	DEBUG(0, LEVEL_DEBUGGING, "num_steps = %d samples_per_step = %d\n", num_steps, samples_per_step);
-
 }
 
-
 PCSpeakerRandomStream::~PCSpeakerRandomStream() {
-
 }
 
 uint32 PCSpeakerRandomStream::getLengthInMsec() {
@@ -223,7 +213,7 @@ int PCSpeakerRandomStream::readBuffer(sint16 *buffer, const int numSamples) {
 		pcspkr->PCSPEAKER_CallBack(&buffer[i], n);
 		sample_pos += n;
 		i += n;
-//		DEBUG(0, LEVEL_DEBUGGING, "n = %d\n", n);
+		//		DEBUG(0, LEVEL_DEBUGGING, "n = %d\n", n);
 		if (sample_pos >= samples_per_step) {
 			//DEBUG(0, LEVEL_DEBUGGING, "samples_per_step = %d period = %d\n", samples_per_step, period);
 			pcspkr->SetFrequency(getNextFreqValue());
@@ -232,7 +222,6 @@ int PCSpeakerRandomStream::readBuffer(sint16 *buffer, const int numSamples) {
 		}
 
 		s += n;
-
 	}
 
 	total_samples_played += s;
@@ -267,18 +256,14 @@ PCSpeakerStutterStream::PCSpeakerStutterStream(sint16 a0, uint16 a2, uint16 a4, 
 	//samples_per_step = s * (SPKR_OUTPUT_RATE / 20 / 800); //1255);
 	//total_samples_played = 0;
 	//DEBUG(0, LEVEL_DEBUGGING, "num_steps = %d samples_per_step = %d\n", num_steps, samples_per_step);
-
 }
 
-
 PCSpeakerStutterStream::~PCSpeakerStutterStream() {
-
 }
 
 uint32 PCSpeakerStutterStream::getLengthInMsec() {
 	return (uint32)((arg_4 * delay) / (getRate() / 1000.0f));
 }
-
 
 int PCSpeakerStutterStream::readBuffer(sint16 *buffer, const int numSamples) {
 	uint32 s = 0;
@@ -344,7 +329,6 @@ Audio::AudioStream *makePCSpeakerGlassSfxStream(uint rate) {
 
 	return stream;
 }
-
 
 Audio::AudioStream *makePCSpeakerMagicCastingP1SfxStream(uint rate, uint8 magic_circle) {
 	//Audio::QueuingAudioStream *stream = Audio::makeQueuingAudioStream(rate, false);

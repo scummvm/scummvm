@@ -20,8 +20,8 @@
  *
  */
 
-#include "illusions/illusions.h"
 #include "illusions/scriptstack.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 

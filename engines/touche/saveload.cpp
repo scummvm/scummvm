@@ -20,9 +20,8 @@
  *
  */
 
-
-#include "common/textconsole.h"
 #include "common/savefile.h"
+#include "common/textconsole.h"
 
 #include "touche/graphics.h"
 #include "touche/touche.h"
@@ -308,8 +307,8 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	_inventoryStateTable[2].displayOffset = 0;
 	drawInventory(_currentKeyCharNum, 1);
 	Graphics::copyRect(_offscreenBuffer, kScreenWidth, 0, 0,
-	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
-	  kScreenWidth, kRoomHeight);
+	                   _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
+	                   kScreenWidth, kRoomHeight);
 	updateRoomRegions();
 	_fullRedrawCounter = 1;
 	_roomNeedRedraw = false;

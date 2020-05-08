@@ -23,11 +23,11 @@
 #ifndef SCUMM_CHARSET_H
 #define SCUMM_CHARSET_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "graphics/sjis.h"
-#include "scumm/scumm.h"
 #include "scumm/gfx.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
@@ -41,10 +41,8 @@ static inline bool checkSJISCode(byte c) {
 	return false;
 }
 
-
 class CharsetRenderer {
 public:
-
 	Common::Rect _str;
 
 	int _top;
@@ -57,8 +55,8 @@ protected:
 public:
 	bool _center;
 
-	bool _hasMask;	// True if "removable" text is visible somewhere (should be called _hasText or so)
-	VirtScreenNumber _textScreenID;	// ID of the virtual screen on which the text is visible.
+	bool _hasMask;                  // True if "removable" text is visible somewhere (should be called _hasText or so)
+	VirtScreenNumber _textScreenID; // ID of the virtual screen on which the text is visible.
 
 	bool _blitAlso;
 	bool _firstChar;
@@ -86,7 +84,10 @@ public:
 	virtual int getCharHeight(byte chr) { return getFontHeight(); }
 	virtual int getCharWidth(uint16 chr) = 0;
 
-	virtual void setColor(byte color) { _color = color; translateColor(); }
+	virtual void setColor(byte color) {
+		_color = color;
+		translateColor();
+	}
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -123,7 +124,7 @@ protected:
 	virtual void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
 
 public:
-	CharsetRendererPC(ScummEngine *vm) : CharsetRendererCommon(vm), _shadowType(kNoShadowType) { }
+	CharsetRendererPC(ScummEngine *vm) : CharsetRendererCommon(vm), _shadowType(kNoShadowType) {}
 };
 
 class CharsetRendererClassic : public CharsetRendererPC {
@@ -273,6 +274,5 @@ public:
 #endif
 
 } // End of namespace Scumm
-
 
 #endif

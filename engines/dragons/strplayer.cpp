@@ -19,10 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "video/psx_decoder.h"
+#include "dragons/strplayer.h"
 #include "dragons/dragons.h"
 #include "dragons/screen.h"
-#include "dragons/strplayer.h"
+#include "video/psx_decoder.h"
 
 namespace Dragons {
 

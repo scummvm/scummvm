@@ -24,12 +24,12 @@
 #include "mads/mads.h"
 
 #include "base/plugins.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
-#include "common/memstream.h"
-#include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 #include "mads/events.h"
@@ -69,66 +69,49 @@ Common::Platform MADSEngine::getPlatform() const {
 } // End of namespace MADS
 
 static const PlainGameDescriptor MADSGames[] = {
-	{"dragonsphere", "Dragonsphere"},
-	{"nebular", "Rex Nebular and the Cosmic Gender Bender"},
-	{"phantom", "Return of the Phantom"},
-	{0, 0}
-};
+    {"dragonsphere", "Dragonsphere"},
+    {"nebular", "Rex Nebular and the Cosmic Gender Bender"},
+    {"phantom", "Return of the Phantom"},
+    {0, 0}};
 
-#define GAMEOPTION_EASY_MOUSE          GUIO_GAMEOPTIONS1
-#define GAMEOPTION_ANIMATED_INVENTORY  GUIO_GAMEOPTIONS2
-#define GAMEOPTION_ANIMATED_INTERFACE  GUIO_GAMEOPTIONS3
-#define GAMEOPTION_NAUGHTY_MODE        GUIO_GAMEOPTIONS4
+#define GAMEOPTION_EASY_MOUSE GUIO_GAMEOPTIONS1
+#define GAMEOPTION_ANIMATED_INVENTORY GUIO_GAMEOPTIONS2
+#define GAMEOPTION_ANIMATED_INTERFACE GUIO_GAMEOPTIONS3
+#define GAMEOPTION_NAUGHTY_MODE GUIO_GAMEOPTIONS4
 //#define GAMEOPTION_GRAPHICS_DITHERING  GUIO_GAMEOPTIONS5
 
 #ifdef USE_TTS
-#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS5
+#define GAMEOPTION_TTS_NARRATOR GUIO_GAMEOPTIONS5
 #endif
 
 #include "mads/detection_tables.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_EASY_MOUSE,
-		{
-			_s("Easy mouse interface"),
-			_s("Shows object names when hovering the mouse over them"),
-			"EasyMouse",
-			true
-		}
-	},
+    {GAMEOPTION_EASY_MOUSE,
+     {_s("Easy mouse interface"),
+      _s("Shows object names when hovering the mouse over them"),
+      "EasyMouse",
+      true}},
 
-	{
-		GAMEOPTION_ANIMATED_INVENTORY,
-		{
-			_s("Animated inventory items"),
-			_s("Animated inventory items"),
-			"InvObjectsAnimated",
-			true
-		}
-	},
+    {GAMEOPTION_ANIMATED_INVENTORY,
+     {_s("Animated inventory items"),
+      _s("Animated inventory items"),
+      "InvObjectsAnimated",
+      true}},
 
-	{
-		GAMEOPTION_ANIMATED_INTERFACE,
-		{
-			_s("Animated game interface"),
-			_s("Animated game interface"),
-			"TextWindowAnimated",
-			true
-		}
-	},
+    {GAMEOPTION_ANIMATED_INTERFACE,
+     {_s("Animated game interface"),
+      _s("Animated game interface"),
+      "TextWindowAnimated",
+      true}},
 
-	{
-		GAMEOPTION_NAUGHTY_MODE,
-		{
-			_s("Naughty game mode"),
-			_s("Naughty game mode"),
-			"NaughtyMode",
-			true
-		}
-	},
+    {GAMEOPTION_NAUGHTY_MODE,
+     {_s("Naughty game mode"),
+      _s("Naughty game mode"),
+      "NaughtyMode",
+      true}},
 
-	/*{
+/*{
 		GAMEOPTION_GRAPHICS_DITHERING,
 		{
 			_s("Graphics dithering"),
@@ -138,20 +121,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},*/
 
-	#ifdef USE_TTS
-	{
-		GAMEOPTION_TTS_NARRATOR,
-		{
-			_s("TTS Narrator"),
-			_s("Use TTS to read the descriptions (if TTS is available)"),
-			"tts_narrator",
-			false
-		}
-	},
-	#endif
+#ifdef USE_TTS
+    {GAMEOPTION_TTS_NARRATOR,
+     {_s("TTS Narrator"),
+      _s("Use TTS to read the descriptions (if TTS is available)"),
+      "tts_narrator",
+      false}},
+#endif
 
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+    AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 class MADSMetaEngine : public AdvancedMetaEngine {
 public:
@@ -180,20 +158,18 @@ public:
 };
 
 bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-	    (f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSimpleSavesNames);
 }
 
 bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 bool MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -268,9 +244,8 @@ SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int s
 	return SaveStateDescriptor();
 }
 
-
 #if PLUGIN_ENABLED_DYNAMIC(MADS)
-	REGISTER_PLUGIN_DYNAMIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
+REGISTER_PLUGIN_STATIC(MADS, PLUGIN_TYPE_ENGINE, MADSMetaEngine);
 #endif

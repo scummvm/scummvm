@@ -23,9 +23,9 @@
 #ifndef XEEN_MAP_H
 #define XEEN_MAP_H
 
-#include "common/stream.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/stream.h"
 #include "xeen/combat.h"
 #include "xeen/files.h"
 #include "xeen/party.h"
@@ -42,13 +42,18 @@ namespace Xeen {
 class XeenEngine;
 
 enum MonsterType {
-	MONSTER_MONSTERS = 0, MONSTER_ANIMAL = 1, MONSTER_INSECT = 2,
-	MONSTER_HUMANOID = 3, MONSTER_UNDEAD = 4, MONSTER_GOLEM = 5,
+	MONSTER_MONSTERS = 0,
+	MONSTER_ANIMAL = 1,
+	MONSTER_INSECT = 2,
+	MONSTER_HUMANOID = 3,
+	MONSTER_UNDEAD = 4,
+	MONSTER_GOLEM = 5,
 	MONSTER_DRAGON = 6
 };
 
 enum MapId {
-	XEEN_CASTLE1 = 75, XEEN_CASTLE4 = 78
+	XEEN_CASTLE1 = 75,
+	XEEN_CASTLE4 = 78
 };
 
 class MonsterStruct {
@@ -84,17 +89,18 @@ public:
 	int _animationEffect;
 	int _fx;
 	Common::String _attackVoc;
+
 public:
 	MonsterStruct();
 	MonsterStruct(Common::String name, int experience, int hp, int accuracy,
-		int speed, int numberOfAttacks, CharacterClass hatesClass, int strikes,
-		int dmgPerStrike, DamageType attackType, SpecialAttack specialAttack,
-		int hitChance, int rangeAttack, MonsterType monsterType,
-		int fireResistence, int electricityResistence, int coldResistence,
-		int poisonResistence, int energyResistence, int magicResistence,
-		int phsyicalResistence, int field29, int gold, int gems, int itemDrop,
-		bool flying, int imageNumber, int loopAnimation, int animationEffect,
-		int field32, Common::String attackVoc);
+	              int speed, int numberOfAttacks, CharacterClass hatesClass, int strikes,
+	              int dmgPerStrike, DamageType attackType, SpecialAttack specialAttack,
+	              int hitChance, int rangeAttack, MonsterType monsterType,
+	              int fireResistence, int electricityResistence, int coldResistence,
+	              int poisonResistence, int energyResistence, int magicResistence,
+	              int phsyicalResistence, int field29, int gold, int gems, int itemDrop,
+	              bool flying, int imageNumber, int loopAnimation, int animationEffect,
+	              int field32, Common::String attackVoc);
 
 	void synchronize(Common::SeekableReadStream &s);
 };
@@ -102,6 +108,7 @@ public:
 class MonsterData : public Common::Array<MonsterStruct> {
 private:
 	void synchronize(Common::SeekableReadStream &s);
+
 public:
 	MonsterData();
 
@@ -114,6 +121,7 @@ public:
 	int _east;
 	int _south;
 	int _west;
+
 public:
 	SurroundingMazes();
 
@@ -134,6 +142,7 @@ public:
 	int _bashGrate;
 	int _bashWall;
 	int _chance2Run;
+
 public:
 	MazeDifficulties();
 
@@ -144,26 +153,45 @@ public:
 };
 
 enum MazeFlags {
-	OUTFLAG_GRATE = 0x80, OUTFLAG_DRAIN = 0x20, OUTFLAG_OBJECT_EXISTS = 0x08,
-	INFLAG_INSIDE = 0x08, FLAG_AUTOEXECUTE_EVENT = 0x10,
-	RESTRICTION_ETHERIALIZE = 0x40, RESTRICTION_80 = 0x80,
-	RESTRICTION_TOWN_PORTAL = 0x100, RESTRICTION_SUPER_SHELTER = 0x200,
-	RESTRICTION_TIME_DISTORTION = 0x400, RESTRICTION_LLOYDS_BEACON = 0x800,
-	RESTRICTION_TELPORT = 0x1000, RESTRICTION_2000 = 0x2000,
-	RESTRICTION_REST = 0x4000, RESTRICTION_SAVE = 0x8000,
+	OUTFLAG_GRATE = 0x80,
+	OUTFLAG_DRAIN = 0x20,
+	OUTFLAG_OBJECT_EXISTS = 0x08,
+	INFLAG_INSIDE = 0x08,
+	FLAG_AUTOEXECUTE_EVENT = 0x10,
+	RESTRICTION_ETHERIALIZE = 0x40,
+	RESTRICTION_80 = 0x80,
+	RESTRICTION_TOWN_PORTAL = 0x100,
+	RESTRICTION_SUPER_SHELTER = 0x200,
+	RESTRICTION_TIME_DISTORTION = 0x400,
+	RESTRICTION_LLOYDS_BEACON = 0x800,
+	RESTRICTION_TELPORT = 0x1000,
+	RESTRICTION_2000 = 0x2000,
+	RESTRICTION_REST = 0x4000,
+	RESTRICTION_SAVE = 0x8000,
 
 	FLAG_GROUND_BITS = 7
 };
 
-enum MazeFlags2 { FLAG_IS_OUTDOORS = 0x8000, FLAG_IS_DARK = 0x4000 };
+enum MazeFlags2 { FLAG_IS_OUTDOORS = 0x8000,
+	              FLAG_IS_DARK = 0x4000 };
 
 enum SurfaceType {
 	SURFTYPE_DEFAULT = 0,
-	SURFTYPE_WATER = 0, SURFTYPE_DIRT = 1, SURFTYPE_GRASS = 2,
-	SURFTYPE_SNOW = 3, SURFTYPE_SWAMP = 4, SURFTYPE_LAVA = 5,
-	SURFTYPE_DESERT = 6, SURFTYPE_ROAD = 7, SURFTYPE_DWATER = 8,
-	SURFTYPE_TFLR = 9, SURFTYPE_SKY = 10, SURFTYPE_CROAD = 11,
-	SURFTYPE_SEWER = 12, SURFTYPE_CLOUD = 13, SURFTYPE_SCORCH = 14,
+	SURFTYPE_WATER = 0,
+	SURFTYPE_DIRT = 1,
+	SURFTYPE_GRASS = 2,
+	SURFTYPE_SNOW = 3,
+	SURFTYPE_SWAMP = 4,
+	SURFTYPE_LAVA = 5,
+	SURFTYPE_DESERT = 6,
+	SURFTYPE_ROAD = 7,
+	SURFTYPE_DWATER = 8,
+	SURFTYPE_TFLR = 9,
+	SURFTYPE_SKY = 10,
+	SURFTYPE_CROAD = 11,
+	SURFTYPE_SEWER = 12,
+	SURFTYPE_CLOUD = 13,
+	SURFTYPE_SCORCH = 14,
 	SURFTYPE_SPACE = 15
 };
 
@@ -175,7 +203,7 @@ union MazeWallLayers {
 		uint _wallWest : 4;
 	} _indoors;
 	struct MazeWallOutdoors {
-		uint _surfaceId : 4;		// SurfaceType, but needs to be unsigned
+		uint _surfaceId : 4; // SurfaceType, but needs to be unsigned
 		uint _iMiddle : 4;
 		uint _iTop : 4;
 		uint _iOverlay : 4;
@@ -212,6 +240,7 @@ public:
 
 	// Misc fields
 	int _mazeId;
+
 public:
 	MazeData();
 
@@ -235,6 +264,7 @@ public:
 	Common::Point _pos;
 	int _id;
 	Direction _direction;
+
 public:
 	MobStruct();
 
@@ -295,6 +325,7 @@ public:
 	int _spriteId;
 	Direction _direction;
 	SpriteResource *_sprites;
+
 public:
 	MazeWallItem();
 };
@@ -312,6 +343,7 @@ class Map;
 
 class MonsterObjectData {
 	friend class Map;
+
 public:
 	struct SpriteResourceEntry {
 		int _spriteId;
@@ -319,23 +351,26 @@ public:
 		SpriteResource _attackSprites;
 
 		SpriteResourceEntry() { _spriteId = -1; }
-		SpriteResourceEntry(int spriteId): _spriteId(spriteId) { }
+		SpriteResourceEntry(int spriteId) : _spriteId(spriteId) {}
 
 		/**
 		 * Returns true if no sprite id is specified
 		 */
 		bool isEmpty() const { return _spriteId == -1; }
 	};
+
 private:
 	XeenEngine *_vm;
 	Common::Array<SpriteResourceEntry> _monsterSprites;
 	Common::Array<SpriteResourceEntry> _monsterAttackSprites;
 	Common::Array<SpriteResourceEntry> _wallItemSprites;
+
 public:
 	Common::Array<MazeObject> _objects;
 	Common::Array<MazeMonster> _monsters;
 	Common::Array<MazeWallItem> _wallItems;
 	Common::Array<SpriteResourceEntry> _objectSprites;
+
 public:
 	MonsterObjectData(XeenEngine *vm);
 
@@ -362,6 +397,7 @@ public:
 		int _right;
 	};
 	HeadEntry _data[MAP_HEIGHT][MAP_WIDTH];
+
 public:
 	HeadData();
 
@@ -370,8 +406,12 @@ public:
 	HeadEntry *operator[](int y) { return &_data[y][0]; }
 };
 
-struct AnimationFrame { int _front, _left, _back, _right; };
-struct AnimationFlipped { bool _front, _left, _back, _right; };
+struct AnimationFrame {
+	int _front, _left, _back, _right;
+};
+struct AnimationFlipped {
+	bool _front, _left, _back, _right;
+};
 struct AnimationEntry {
 	union {
 		AnimationFrame _positions;
@@ -440,6 +480,7 @@ private:
 	 * maps in the eight cardinal directions
 	 */
 	void findMap(int mapId = -1);
+
 public:
 	Common::String _mazeName;
 	bool _isOutdoors;
@@ -465,6 +506,7 @@ public:
 	bool _currentSteppedOn;
 	int _loadCcNum;
 	int _sideTownPortal;
+
 public:
 	Map(XeenEngine *vm);
 
@@ -541,4 +583,4 @@ public:
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_MAP_H */
+#endif /* XEEN_MAP_H */

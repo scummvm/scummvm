@@ -36,7 +36,7 @@ namespace CryOmni3D {
 
 class CryoExtFont : public Graphics::Font {
 public:
-	CryoExtFont() : _height(0), _maxAdvance(0), _crf(nullptr), _codepage(Common::kCodePageInvalid) { }
+	CryoExtFont() : _height(0), _maxAdvance(0), _crf(nullptr), _codepage(Common::kCodePageInvalid) {}
 	virtual ~CryoExtFont();
 
 	void load(const Common::String &fontFile, Common::CodePage encoding);

@@ -32,9 +32,9 @@
 #ifndef SWORD25_DYNAMIC_BITMAP_H
 #define SWORD25_DYNAMIC_BITMAP_H
 
-#include "sword25/kernel/common.h"
 #include "sword25/gfx/bitmap.h"
 #include "sword25/gfx/image/renderedimage.h"
+#include "sword25/kernel/common.h"
 
 #include "common/ptr.h"
 

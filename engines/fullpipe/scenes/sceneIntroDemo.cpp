@@ -24,9 +24,9 @@
 
 #include "fullpipe/constants.h"
 #include "fullpipe/gameloader.h"
+#include "fullpipe/modal.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
-#include "fullpipe/modal.h"
 #include "fullpipe/statics.h"
 
 namespace Fullpipe {

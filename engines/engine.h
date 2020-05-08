@@ -23,12 +23,12 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
-#include "common/scummsys.h"
-#include "common/str.h"
 #include "common/language.h"
 #include "common/platform.h"
 #include "common/queue.h"
+#include "common/scummsys.h"
 #include "common/singleton.h"
+#include "common/str.h"
 
 class OSystem;
 class MetaEngine;
@@ -44,18 +44,17 @@ class TimerManager;
 class FSNode;
 class SeekableReadStream;
 class WriteStream;
-}
+} // namespace Common
 namespace GUI {
 class Debugger;
 class Dialog;
-}
+} // namespace GUI
 
 /**
  * Initializes graphics and shows error message.
  */
 void GUIErrorMessage(const Common::String &msg);
 void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
-
 
 class Engine {
 public:
@@ -113,9 +112,8 @@ private:
 	 * Optional debugger for the engine
 	 */
 	GUI::Debugger *_debugger;
+
 public:
-
-
 	/**
 	 * A feature in this context means an ability of the engine which can be
 	 * either available or not.
@@ -158,8 +156,6 @@ public:
 		 */
 		kSupportsChangingOptionsDuringRuntime
 	};
-
-
 
 	/** @name Overloadable methods
 	 *
@@ -321,9 +317,7 @@ protected:
 
 	//@}
 
-
 public:
-
 	/**
 	 * Request the engine to quit. Sends a EVENT_QUIT event to the Event
 	 * Manager.
@@ -393,7 +387,6 @@ public:
 public:
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();
-
 
 	/**
 	 * Checks for whether it's time to do an autosave, and if so, does it.

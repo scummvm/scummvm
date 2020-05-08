@@ -25,13 +25,13 @@
  * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
-#include "gui/saveload.h"
-#include "common/config-manager.h"
 #include "common/events.h"
-#include "common/translation.h"
+#include "cge2/cge2_main.h"
 #include "cge2/events.h"
 #include "cge2/text.h"
-#include "cge2/cge2_main.h"
+#include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
 
 namespace CGE2 {
 
@@ -90,9 +90,9 @@ void Keyboard::newKeyboard(Common::Event &event) {
 		CGE2Event &evt = _vm->_eventManager->getNextEvent();
 		evt._x = 0;
 		evt._y = 0;
-		evt._keyCode = event.kbd.keycode;   // Keycode
-		evt._mask = kEventKeyb;             // Event mask
-		evt._spritePtr = _client;           // Sprite pointer
+		evt._keyCode = event.kbd.keycode; // Keycode
+		evt._mask = kEventKeyb;           // Event mask
+		evt._spritePtr = _client;         // Sprite pointer
 	}
 }
 
@@ -231,7 +231,7 @@ void EventManager::handleEvents() {
 				e._y -= _vm->_mouse->_siz.y;
 				if (_vm->_mouse->_hold && (e._spritePtr != _vm->_mouse->_hold)) {
 					_vm->_mouse->_hold->touch(e._mask | kEventAttn,
-						V2D(_vm, e._x - _vm->_mouse->_hold->_pos2D.x, e._y - _vm->_mouse->_hold->_pos2D.y), e._keyCode);
+					                          V2D(_vm, e._x - _vm->_mouse->_hold->_pos2D.x, e._y - _vm->_mouse->_hold->_pos2D.y), e._keyCode);
 				}
 				// update mouse cursor position
 				if (e._mask & kMouseRoll)

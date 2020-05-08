@@ -37,8 +37,10 @@ class Rect;
 class CGameView {
 protected:
 	CGameManager *_gameManager;
+
 public:
 	CVideoSurface *_surface;
+
 public:
 	CGameView();
 	virtual ~CGameView();
@@ -73,9 +75,10 @@ public:
 	void drawView();
 };
 
-class CSTGameView: public CGameView {
+class CSTGameView : public CGameView {
 private:
 	CMainGameWindow *_gameWindow;
+
 public:
 	CSTGameView(CMainGameWindow *gameWindow);
 

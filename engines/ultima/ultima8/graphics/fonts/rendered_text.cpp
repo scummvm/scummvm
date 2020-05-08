@@ -20,8 +20,8 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -29,9 +29,8 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(RenderedText)
 
 RenderedText::RenderedText()
-	: _width(-1), _height(-1), _vLead(0) {
+    : _width(-1), _height(-1), _vLead(0) {
 }
-
 
 RenderedText::~RenderedText() {
 }

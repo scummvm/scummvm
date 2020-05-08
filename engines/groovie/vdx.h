@@ -78,6 +78,6 @@ private:
 	void fadeIn(uint8 *palette);
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_VDX_H

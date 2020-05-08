@@ -23,11 +23,11 @@
 #ifndef NUVIE_SOUND_PC_SPEAKER_SFX_MANAGER_H
 #define NUVIE_SOUND_PC_SPEAKER_SFX_MANAGER_H
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "audio/mixer.h"
-#include "ultima/nuvie/sound/sfx_manager.h"
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/sound/sfx_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -42,7 +42,6 @@ public:
 
 private:
 	void playSoundSample(Audio::AudioStream *stream, Audio::SoundHandle *looping_handle, uint8 volume);
-
 };
 
 } // End of namespace Nuvie

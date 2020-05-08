@@ -23,8 +23,8 @@
 #ifndef TONY_MPAL_MEMORY
 #define TONY_MPAL_MEMORY
 
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 
 namespace Tony {
 
@@ -45,6 +45,7 @@ struct MemoryItem {
 class MemoryManager {
 private:
 	static MemoryItem *getItem(MpalHandle handle);
+
 public:
 	static MpalHandle allocate(uint32 size, uint flags);
 	static void *alloc(uint32 size, uint flags);
@@ -56,13 +57,13 @@ public:
 };
 
 // defines
-#define globalAlloc(flags, size)    MemoryManager::alloc(size, flags)
+#define globalAlloc(flags, size) MemoryManager::alloc(size, flags)
 #define globalAllocate(flags, size) MemoryManager::allocate(size, flags)
-#define globalFree(handle)          MemoryManager::freeBlock(handle)
-#define globalDestroy(handle)       MemoryManager::destroyItem(handle)
-#define globalLock(handle)          MemoryManager::lockItem(handle)
-#define globalUnlock(handle)        MemoryManager::unlockItem(handle)
-#define globalSize(handle)          MemoryManager::getSize(handle)
+#define globalFree(handle) MemoryManager::freeBlock(handle)
+#define globalDestroy(handle) MemoryManager::destroyItem(handle)
+#define globalLock(handle) MemoryManager::lockItem(handle)
+#define globalUnlock(handle) MemoryManager::unlockItem(handle)
+#define globalSize(handle) MemoryManager::getSize(handle)
 
 #define GMEM_FIXED 1
 #define GMEM_MOVEABLE 2

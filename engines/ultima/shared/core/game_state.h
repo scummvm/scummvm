@@ -23,9 +23,9 @@
 #ifndef ULTIMA_SHARED_CORE_GAME_STATE_H
 #define ULTIMA_SHARED_CORE_GAME_STATE_H
 
-#include "ultima/shared/core/rect.h"
 #include "ultima/shared/core/character.h"
 #include "ultima/shared/core/map.h"
+#include "ultima/shared/core/rect.h"
 
 namespace Ultima {
 namespace Shared {
@@ -33,12 +33,17 @@ namespace Shared {
 class Game;
 
 enum VideoMode {
-	UNSET = -1, CGA = 0, EGA = 1, TGA = 2, VGA_ENHANCED = 3
+	UNSET = -1,
+	CGA = 0,
+	EGA = 1,
+	TGA = 2,
+	VGA_ENHANCED = 3
 };
 
 class GameState {
 protected:
 	Game *_game;
+
 public:
 	/**
 	 * Position in the world map. This is stored separately from the map so that the same point can
@@ -80,6 +85,7 @@ public:
 	 * Stores the base random seed used for generating deterministic dungeon levels
 	 */
 	uint32 _randomSeed;
+
 public:
 	/**
 	 * Constructor

@@ -20,10 +20,10 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/memstream.h"
-#include "common/stack.h"
 #include "sherlock/scalpel/tsage/resources.h"
+#include "common/memstream.h"
+#include "common/scummsys.h"
+#include "common/stack.h"
 
 namespace Sherlock {
 namespace Scalpel {
@@ -132,7 +132,7 @@ Common::SeekableReadStream *TLib::getResource(uint16 id, bool suppressErrors) {
 	uint bytesWritten = 0;
 
 	uint16 ctrCurrent = 0x102, ctrMax = 0x200;
-	uint16 word_48050 = 0, currentToken = 0, word_48054 =0;
+	uint16 word_48050 = 0, currentToken = 0, word_48054 = 0;
 	byte byte_49068 = 0, byte_49069 = 0;
 
 	const uint tableSize = 0x1000;
@@ -317,7 +317,7 @@ void TLib::getPalette(byte palette[PALETTE_SIZE], int paletteNum) {
  * in the index, return the index entry for it, and move the file to the start of the resource
  */
 bool TLib::scanIndex(Common::File &f, ResourceType resType, int rlbNum, int resNum,
-									  ResourceEntry &resEntry) {
+                     ResourceEntry &resEntry) {
 	// Load the root section index
 	ResourceList resList;
 	loadSection(f, resList);
@@ -345,7 +345,7 @@ void TLib::loadSection(Common::File &f, ResourceList &resources) {
 	if (f.readUint32BE() != 0x544D492D)
 		error("Data block is not valid Rlb data");
 
-	/*uint8 unknown1 = */f.readByte();
+	/*uint8 unknown1 = */ f.readByte();
 	uint16 numEntries = f.readByte();
 
 	for (uint i = 0; i < numEntries; ++i) {

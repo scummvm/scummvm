@@ -27,29 +27,28 @@ namespace Gob {
 namespace Geisha {
 
 enum Animation {
-	kAnimationDriveS   =  4,
-	kAnimationDriveE   =  5,
-	kAnimationDriveN   =  6,
-	kAnimationDriveW   =  7,
-	kAnimationDriveSE  =  8,
-	kAnimationDriveNE  =  9,
-	kAnimationDriveSW  = 10,
-	kAnimationDriveNW  = 11,
-	kAnimationShootS   = 12,
-	kAnimationShootN   = 13,
-	kAnimationShootW   = 14,
-	kAnimationShootE   = 15,
-	kAnimationShootNE  = 16,
-	kAnimationShootSE  = 17,
-	kAnimationShootSW  = 18,
-	kAnimationShootNW  = 19,
+	kAnimationDriveS = 4,
+	kAnimationDriveE = 5,
+	kAnimationDriveN = 6,
+	kAnimationDriveW = 7,
+	kAnimationDriveSE = 8,
+	kAnimationDriveNE = 9,
+	kAnimationDriveSW = 10,
+	kAnimationDriveNW = 11,
+	kAnimationShootS = 12,
+	kAnimationShootN = 13,
+	kAnimationShootW = 14,
+	kAnimationShootE = 15,
+	kAnimationShootNE = 16,
+	kAnimationShootSE = 17,
+	kAnimationShootSW = 18,
+	kAnimationShootNW = 19,
 	kAnimationExplodeN = 28,
 	kAnimationExplodeS = 29,
 	kAnimationExplodeW = 30,
 	kAnimationExplodeE = 31,
-	kAnimationExit     = 32
+	kAnimationExit = 32
 };
-
 
 Submarine::Submarine(const ANIFile &ani) : ANIObject(ani), _state(kStateMove), _direction(kDirectionNone) {
 	turn(kDirectionN);
@@ -74,7 +73,7 @@ void Submarine::turn(Direction to) {
 
 void Submarine::move() {
 	uint16 frame = getFrame();
-	uint16 anim  = (_state == kStateShoot) ? directionToShoot(_direction) : directionToMove(_direction);
+	uint16 anim = (_state == kStateShoot) ? directionToShoot(_direction) : directionToMove(_direction);
 
 	setAnimation(anim);
 	setFrame(frame);

@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/conversations.h"
-#include "mads/scene.h"
-#include "mads/phantom/phantom_scenes.h"
 #include "mads/phantom/phantom_scenes4.h"
+#include "common/scummsys.h"
+#include "mads/conversations.h"
+#include "mads/mads.h"
+#include "mads/phantom/phantom_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -204,7 +204,7 @@ void Scene401::enter() {
 
 		Common::Point pos = _scene->_sprites[_globals._spriteIndexes[9]]->getFramePos(0);
 		_greenFrameHostpotId = _scene->_dynamicHotspots.add(NOUN_GREEN_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
-		_scene->_dynamicHotspots.setPosition(_greenFrameHostpotId , Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+		_scene->_dynamicHotspots.setPosition(_greenFrameHostpotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
 	}
 
 	if (_game._objects[OBJ_BLUE_FRAME]._roomNumber == _globals[kCatacombsRoom] + 600) {
@@ -272,7 +272,7 @@ void Scene401::actions() {
 
 						Common::Point pos = _scene->_sprites[_globals._spriteIndexes[9]]->getFramePos(0);
 						_greenFrameHostpotId = _scene->_dynamicHotspots.add(NOUN_GREEN_FRAME, VERB_WALK_TO, SYNTAX_SINGULAR, EXT_NONE, Common::Rect(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 1));
-						_scene->_dynamicHotspots.setPosition(_greenFrameHostpotId , Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
+						_scene->_dynamicHotspots.setPosition(_greenFrameHostpotId, Common::Point(pos.x + 12, pos.y), FACING_NORTHWEST);
 					}
 
 					if (_action.isObject(NOUN_BLUE_FRAME)) {
@@ -336,7 +336,7 @@ void Scene401::actions() {
 
 					if (_action.isObject(NOUN_GREEN_FRAME)) {
 						_scene->deleteSequence(_globals._sequenceIndexes[10]);
-						_scene->_dynamicHotspots.remove(_greenFrameHostpotId );
+						_scene->_dynamicHotspots.remove(_greenFrameHostpotId);
 						_game._objects.addToInventory(OBJ_GREEN_FRAME);
 					}
 
@@ -485,7 +485,6 @@ void Scene401::actions() {
 			return;
 		}
 
-
 		if (_action.isObject(NOUN_BROKEN_POT)) {
 			_vm->_dialogs->show(40122);
 			_action._inProgress = false;
@@ -539,9 +538,7 @@ void Scene401::preActions() {
 			_takingFrameInRoomFl = true;
 	}
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME)
-	 || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_game._player._needToWalk = false;
 		else {
@@ -733,8 +730,7 @@ void Scene403::step() {
 }
 
 void Scene403::actions() {
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_vm->_dialogs->show(29);
 		else {
@@ -809,8 +805,7 @@ void Scene403::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
+	if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
 		if ((_takingFrameInRoomFl || _game._trigger)) {
 			switch (_game._trigger) {
 			case (0):
@@ -1037,8 +1032,7 @@ void Scene403::preActions() {
 			_takingFrameInRoomFl = true;
 	}
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_game._player._needToWalk = false;
 		else {
@@ -1103,7 +1097,6 @@ void Scene404::enter() {
 	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 1));
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 2));
 	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('f', 3));
-
 
 	if (_game.exitCatacombs(0) == -1) {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1));
@@ -1245,8 +1238,7 @@ void Scene404::step() {
 }
 
 void Scene404::actions() {
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_vm->_dialogs->show(29);
 		else {
@@ -1539,8 +1531,7 @@ void Scene404::preActions() {
 			_takingFrameInRoomFl = true;
 	}
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_game._player._needToWalk = false;
 		else {
@@ -1655,8 +1646,7 @@ void Scene406::step() {
 }
 
 void Scene406::actions() {
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_vm->_dialogs->show(29);
 		else {
@@ -1731,8 +1721,7 @@ void Scene406::actions() {
 		return;
 	}
 
-	if (_action.isAction(VERB_TAKE)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
+	if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
 		if ((_takingFrameInRoomFl || _game._trigger)) {
 			switch (_game._trigger) {
 			case (0):
@@ -1944,8 +1933,7 @@ void Scene406::preActions() {
 			_takingFrameInRoomFl = true;
 	}
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_game._player._needToWalk = false;
 		else {
@@ -2390,8 +2378,7 @@ void Scene407::preActions() {
 			_takingFrameInRoomFl = true;
 	}
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if ((_frameInRoomFl) || (_game._player._playerPos.y < 30) || (_scene->_customDest.y < 30))
 			_game._player._needToWalk = false;
 		else {
@@ -2400,8 +2387,7 @@ void Scene407::preActions() {
 		}
 	}
 
-	if (_action.isAction(VERB_TAKE)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
+	if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
 		if (_takingFrameInRoomFl && (_game._player._playerPos.y < 30))
 			_game._player._needToWalk = false;
 	}
@@ -2419,7 +2405,7 @@ void Scene407::preActions() {
 		_game._player._needToWalk = false;
 
 	if (_action.isAction(VERB_WALK_TO, NOUN_WALL) && (_game._player._playerPos.y > 30) && (_scene->_customDest.x > 160) && (_scene->_customDest.x < 190))
-			_game._player._needToWalk = false;
+		_game._player._needToWalk = false;
 }
 
 /*------------------------------------------------------------------------*/
@@ -2586,8 +2572,7 @@ void Scene408::step() {
 }
 
 void Scene408::actions() {
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_vm->_dialogs->show(29);
 		else {
@@ -2662,9 +2647,7 @@ void Scene408::actions() {
 		return;
 	}
 
-
-	if (_action.isAction(VERB_TAKE)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
+	if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
 		if ((_takingFrameInRoomFl || _game._trigger)) {
 			switch (_game._trigger) {
 			case (0):
@@ -2880,8 +2863,7 @@ void Scene408::preActions() {
 			_takingFrameInRoomFl = true;
 	}
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_game._player._needToWalk = false;
 		else {
@@ -3093,7 +3075,7 @@ void Scene409::actions() {
 			_scene->_sequences.setSeqPlayer(_globals._sequenceIndexes[8], false);
 			_scene->_sequences.addTimer(30, 2);
 			_action._inProgress = false;
-			}
+		}
 			return;
 
 		case 2:
@@ -3201,8 +3183,7 @@ void Scene409::actions() {
 	}
 
 	if (_action.isAction(VERB_TAKE)) {
-		if ((_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))
-		 && (_takingFrameInRoomFl || _game._trigger)) {
+		if ((_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME)) && (_takingFrameInRoomFl || _game._trigger)) {
 			switch (_game._trigger) {
 			case (0):
 				_game._player._stepEnabled = false;
@@ -3362,27 +3343,27 @@ void Scene409::actions() {
 		}
 
 		if (_action.isObject(NOUN_RED_FRAME) && !_game._objects.isInInventory(OBJ_RED_FRAME)) {
-				_vm->_dialogs->showItem(OBJ_RED_FRAME, 802, 0);
-				_action._inProgress = false;
-				return;
+			_vm->_dialogs->showItem(OBJ_RED_FRAME, 802, 0);
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_GREEN_FRAME) && !_game._objects.isInInventory(OBJ_GREEN_FRAME)) {
-				_vm->_dialogs->showItem(OBJ_GREEN_FRAME, 819, 0);
-				_action._inProgress = false;
-				return;
+			_vm->_dialogs->showItem(OBJ_GREEN_FRAME, 819, 0);
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_BLUE_FRAME) && !_game._objects.isInInventory(OBJ_BLUE_FRAME)) {
-				_vm->_dialogs->showItem(OBJ_BLUE_FRAME, 817, 0);
-				_action._inProgress = false;
-				return;
+			_vm->_dialogs->showItem(OBJ_BLUE_FRAME, 817, 0);
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_YELLOW_FRAME) && !_game._objects.isInInventory(OBJ_YELLOW_FRAME)) {
-				_vm->_dialogs->showItem(OBJ_YELLOW_FRAME, 804, 0);
-				_action._inProgress = false;
-				return;
+			_vm->_dialogs->showItem(OBJ_YELLOW_FRAME, 804, 0);
+			_action._inProgress = false;
+			return;
 		}
 
 		if (_action.isObject(NOUN_SWORD) && _game._objects.isInRoom(OBJ_SWORD)) {
@@ -3482,8 +3463,7 @@ void Scene409::preActions() {
 			_takingFrameInRoomFl = true;
 	}
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_game._player._needToWalk = false;
 		else {
@@ -4179,7 +4159,6 @@ void Scene453::enter() {
 	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('f', 2));
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('f', 3));
 
-
 	if (_game.exitCatacombs(0) == -1) {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 1));
 		_scene->drawToBackground(_globals._spriteIndexes[1], 1, Common::Point(-32000, -32000), 0, 100);
@@ -4801,9 +4780,7 @@ void Scene456::actions() {
 		}
 	}
 
-
-	if (_action.isAction(VERB_TAKE)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
+	if (_action.isAction(VERB_TAKE) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_GREEN_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME))) {
 		if ((_takingFrameInRoomFl || _game._trigger)) {
 			switch (_game._trigger) {
 			case (0):
@@ -4960,8 +4937,7 @@ void Scene456::preActions() {
 			_takingFrameInRoomFl = true;
 	}
 
-	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR)
-	 && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
+	if (_action.isAction(VERB_PUT) && _action.isTarget(NOUN_FLOOR) && (_action.isObject(NOUN_RED_FRAME) || _action.isObject(NOUN_BLUE_FRAME) || _action.isObject(NOUN_YELLOW_FRAME) || _action.isObject(NOUN_GREEN_FRAME))) {
 		if (_frameInRoomFl)
 			_game._player._needToWalk = false;
 		else {

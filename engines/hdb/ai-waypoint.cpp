@@ -20,9 +20,9 @@
  *
  */
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/map.h"
 #include "hdb/sound.h"
 
@@ -55,7 +55,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 		// trace from player to new spot
 		// return value of 0 only means a diagonal was selected!
 		if (!traceStraightPath(px, py, &nx, &ny, &level)) {
-			int	tx, ty, tx2, ty2;
+			int tx, ty, tx2, ty2;
 
 			// it didn't work, so player is probably trying some diagonal movement.
 			// let's break it down into two waypoints: one horz, one vert
@@ -63,7 +63,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 			ty = py;
 			tx2 = nx;
 			ty2 = ny;
-			int	lvl1, lvl2;
+			int lvl1, lvl2;
 
 			lvl1 = lvl2 = level;
 
@@ -89,7 +89,7 @@ void AI::addWaypoint(int px, int py, int x, int y, int level) {
 				if (onEvenTile(_player->x, _player->y))
 					setEntityGoal(_player, tx, ty);
 			} else {
-newpath:
+			newpath:
 				tx = px;
 				ty = ny;
 				tx2 = nx;
@@ -133,7 +133,7 @@ newpath:
 		level = _waypoints[_numWaypoints - 1].level;
 
 		if (!traceStraightPath(_waypoints[_numWaypoints - 1].x, _waypoints[_numWaypoints - 1].y, &nx, &ny, &level)) {
-			int		tx, ty, tx2, ty2;
+			int tx, ty, tx2, ty2;
 
 			// it didn't work, so player is probably trying some diagonal movement.
 			// let's break it down into two waypoints: one horz, one vert
@@ -145,7 +145,7 @@ newpath:
 			ty = py;
 			tx2 = nx;
 			ty2 = ny;
-			int	lvl1, lvl2;
+			int lvl1, lvl2;
 
 			lvl1 = lvl2 = level;
 
@@ -174,7 +174,7 @@ newpath:
 					g_hdb->_sound->playSound(SND_MENU_SLIDER);
 				}
 			} else {
-newpath2:
+			newpath2:
 				tx = px;
 				ty = ny;
 				tx2 = nx;
@@ -288,7 +288,7 @@ bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
 			// if it's blocking, is it rad or plasma? (might be melted stuff on it)
 			if (!ok) {
 				ok = ((flags & kFlagPlasmaFloor) == kFlagPlasmaFloor) +
-					((flags & kFlagRadFloor) == kFlagRadFloor);
+				     ((flags & kFlagRadFloor) == kFlagRadFloor);
 				e = findEntity(x1, y1);
 				if (e && g_hdb->_ai->walkThroughEnt(e->type))
 					entOK = true;
@@ -297,21 +297,20 @@ bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
 				else
 					ok = false;
 			} else if (ok &&
-				((flags & kFlagWater) == kFlagWater ||
-				(flags & kFlagSlime) == kFlagSlime)) {
+			           ((flags & kFlagWater) == kFlagWater ||
+			            (flags & kFlagSlime) == kFlagSlime)) {
 				// if it's non-blocking, is there water or slime?
 				e = findEntity(x1, y1);
 				if (e && g_hdb->_ai->walkThroughEnt(e->type))
 					entOK = true;
+				else if (e && (e->state == STATE_FLOATING || e->state == STATE_MELTED || e == _player))
+					entOK = ok = true;
 				else
-					if (e && (e->state == STATE_FLOATING || e->state == STATE_MELTED || e == _player))
-						entOK = ok = true;
-					else
-						ok = false;
-				}
+					ok = false;
+			}
 		} else {
 			// Floor level 2
-			if (g_hdb->_map->getMapFGTileIndex(x1, y1) >= 0)			// is there a foregnd tile? its flags take precedence on Level 2
+			if (g_hdb->_map->getMapFGTileIndex(x1, y1) >= 0) // is there a foregnd tile? its flags take precedence on Level 2
 				ok = !(g_hdb->_map->getMapFGTileFlags(x1, y1) & (kFlagPlayerBlock | kFlagMonsterBlock));
 			else {
 				flags = g_hdb->_map->getMapBGTileFlags(x1, y1);
@@ -319,26 +318,25 @@ bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
 				// if it's blocking, is it rad or plasma? (might be melted stuff on it)
 				if (!ok) {
 					ok = ((flags & kFlagPlasmaFloor) == kFlagPlasmaFloor) +
-						((flags & kFlagRadFloor) == kFlagRadFloor);
+					     ((flags & kFlagRadFloor) == kFlagRadFloor);
 					e = findEntity(x1, y1);
 					if (e && g_hdb->_ai->walkThroughEnt(e->type))
 						entOK = true;
 					else if (ok && e && (e->state == STATE_FLOATING || e->state == STATE_MELTED || e == _player))
-							entOK = ok = true;
+						entOK = ok = true;
 					else
 						ok = false;
 				} else if (ok &&
-					((flags & kFlagWater) == kFlagWater ||
-					(flags & kFlagSlime) == kFlagSlime)) {
+				           ((flags & kFlagWater) == kFlagWater ||
+				            (flags & kFlagSlime) == kFlagSlime)) {
 					// if it's non-blocking, is there water or slime?
 					e = findEntity(x1, y1);
 					if (e && g_hdb->_ai->walkThroughEnt(e->type))
 						entOK = true;
+					else if (e && (e->state == STATE_FLOATING || e->state == STATE_MELTED || e == _player))
+						entOK = ok = true;
 					else
-						if (e && (e->state == STATE_FLOATING || e->state == STATE_MELTED || e == _player))
-							entOK = ok = true;
-						else
-							ok = false;
+						ok = false;
 				}
 			}
 		}
@@ -371,7 +369,7 @@ bool AI::traceStraightPath(int x1, int y1, int *x2, int *y2, int *level) {
 				// yes! are we at desired location?
 				return true;
 			}
-		} else	{
+		} else {
 			// solid tile! back up one and return!
 			*x2 = x1 - xVel;
 			*y2 = y1 - yVel;
@@ -425,15 +423,15 @@ void AI::drawWayPoints() {
 	static int alpha = 255;
 	static int aVel = -4;
 
-	int	mapX, mapY;
+	int mapX, mapY;
 	g_hdb->_map->getMapXY(&mapX, &mapY);
 
 	for (int i = 0; i < _numWaypoints; i++) {
-		int	x = _waypoints[i].x * kTileWidth;
-		int	y = _waypoints[i].y * kTileHeight;
+		int x = _waypoints[i].x * kTileWidth;
+		int y = _waypoints[i].y * kTileHeight;
 
 		if (x > mapX - 32 && (x < (mapX + g_hdb->_screenWidth)) &&
-			y > mapY - 32 && (y < (mapY + g_hdb->_screenHeight)))
+		    y > mapY - 32 && (y < (mapY + g_hdb->_screenHeight)))
 			_waypointGfx[anim]->drawMasked(x - mapX, y - mapY, alpha);
 	}
 
@@ -461,4 +459,4 @@ void AI::drawWayPoints() {
 		anim = 0;
 }
 
-} // End of Namespace
+} // namespace HDB

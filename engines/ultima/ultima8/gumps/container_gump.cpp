@@ -20,26 +20,26 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/container_gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/main_shape_archive.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/container.h"
-#include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/graphics/main_shape_archive.h"
-#include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/gumps/slider_gump.h"
+#include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/slider_gump.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/container.h"
+#include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/split_item_process.h"
-#include "ultima/ultima8/gumps/game_map_gump.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -47,16 +47,15 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ContainerGump, ItemRelativeGump)
 
 ContainerGump::ContainerGump()
-	: ItemRelativeGump(), _displayDragging(false), _draggingShape(0),
-	  _draggingFrame(0), _draggingFlags(0), _draggingX(0), _draggingY(0) {
-
+    : ItemRelativeGump(), _displayDragging(false), _draggingShape(0),
+      _draggingFrame(0), _draggingFlags(0), _draggingX(0), _draggingY(0) {
 }
 
 ContainerGump::ContainerGump(Shape *shape, uint32 frameNum, uint16 owner,
                              uint32 flags, int32 layer)
-	: ItemRelativeGump(0, 0, 5, 5, owner, flags, layer),
-	  _displayDragging(false), _draggingShape(0), _draggingFrame(0),
-	  _draggingFlags(0), _draggingX(0), _draggingY(0) {
+    : ItemRelativeGump(0, 0, 5, 5, owner, flags, layer),
+      _displayDragging(false), _draggingShape(0), _draggingFrame(0),
+      _draggingFlags(0), _draggingX(0), _draggingY(0) {
 	_shape = shape;
 	_frameNum = frameNum;
 }
@@ -73,14 +72,14 @@ void ContainerGump::InitGump(Gump *newparent, bool take_focus) {
 	// make every item enter the fast area
 	Container *c = getContainer(_owner);
 
-	if (!c) return; // Container gone!?
+	if (!c)
+		return; // Container gone!?
 
 	Std::list<Item *> &contents = c->_contents;
 	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		(*iter)->enterFastArea();
 	}
-
 
 	// Position isn't like in the original
 	// U8 puts a container gump slightly to the left of an object
@@ -102,7 +101,6 @@ void ContainerGump::getItemCoords(Item *item, int32 &itemx, int32 &itemy) {
 	itemx += _itemArea.x;
 	itemy += _itemArea.y;
 }
-
 
 void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	// paint self
@@ -137,24 +135,22 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 		surf->Paint(s, item->getFrame(), itemx, itemy);
 	}
 
-
 	if (_displayDragging) {
 		int32 itemx, itemy;
 		itemx = _draggingX + _itemArea.x;
 		itemy = _draggingY + _itemArea.y;
-		Shape *s = GameData::get_instance()->getMainShapes()->
-		           getShape(_draggingShape);
+		Shape *s = GameData::get_instance()->getMainShapes()->getShape(_draggingShape);
 		assert(s);
 		surf->PaintInvisible(s, _draggingFrame, itemx, itemy, false, (_draggingFlags & Item::FLG_FLIPPED) != 0);
 	}
-
 }
 
 // Find object (if any) at (mx,my)
 // (mx,my) are relative to parent
 uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
-	if (objId_ && objId_ != 65535) return objId_;
+	if (objId_ && objId_ != 65535)
+		return objId_;
 
 	ParentToGump(mx, my);
 
@@ -194,10 +190,13 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 bool ContainerGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
                                       int32 lerp_factor) {
 	Item *item = getItem(itemid);
-	if (!item) return false;
+	if (!item)
+		return false;
 	Item *parent_ = item->getParentAsContainer();
-	if (!parent_) return false;
-	if (parent_->getObjId() != _owner) return false;
+	if (!parent_)
+		return false;
+	if (parent_->getObjId() != _owner)
+		return false;
 
 	//!!! need to use lerp_factor
 
@@ -244,7 +243,8 @@ void ContainerGump::GetItemLocation(int32 lerp_factor) {
 	gump->GumpToScreenSpace(gx, gy);
 
 	// Convert the screenspace coords into the coords of us
-	if (_parent) _parent->ScreenSpaceToGump(gx, gy);
+	if (_parent)
+		_parent->ScreenSpaceToGump(gx, gy);
 
 	// Set x and y, and center us over it
 	_ix = gx - _dims.w / 2;
@@ -255,7 +255,8 @@ void ContainerGump::Close(bool no_del) {
 	// close any gumps belonging to contents
 	// and make every item leave the fast area
 	Container *c = getContainer(_owner);
-	if (!c) return; // Container gone!?
+	if (!c)
+		return; // Container gone!?
 
 	Std::list<Item *> &contents = c->_contents;
 	Std::list<Item *>::iterator iter = contents.begin();
@@ -266,7 +267,7 @@ void ContainerGump::Close(bool no_del) {
 		if (g) {
 			g->Close(); //!! what about no_del?
 		}
-		item->leaveFastArea();  // Can destroy the item
+		item->leaveFastArea(); // Can destroy the item
 	}
 
 	Item *o = getItem(_owner);
@@ -287,8 +288,8 @@ Container *ContainerGump::getTargetContainer(Item *item, int mx, int my) {
 	if (targetcontainer) {
 		ShapeInfo *targetinfo = targetcontainer->getShapeInfo();
 		if ((targetcontainer->getObjId() == item->getObjId()) ||
-		        targetinfo->is_land() ||
-		        targetcontainer->hasFlags(Item::FLG_IN_NPC_LIST)) {
+		    targetinfo->is_land() ||
+		    targetcontainer->hasFlags(Item::FLG_IN_NPC_LIST)) {
 			targetcontainer = nullptr;
 		}
 	}
@@ -299,10 +300,10 @@ Container *ContainerGump::getTargetContainer(Item *item, int mx, int my) {
 	return targetcontainer;
 }
 
-
 Gump *ContainerGump::OnMouseDown(int button, int32 mx, int32 my) {
 	Gump *handled = Gump::OnMouseDown(button, mx, my);
-	if (handled) return handled;
+	if (handled)
+		return handled;
 
 	// only interested in left clicks
 	if (button == Shared::BUTTON_LEFT)
@@ -358,7 +359,6 @@ void ContainerGump::OnMouseDouble(int button, int32 mx, int32 my) {
 	}
 }
 
-
 bool ContainerGump::StartDraggingItem(Item *item, int mx, int my) {
 	// probably don't need to check if item can be moved, since it shouldn't
 	// be in a container otherwise
@@ -368,7 +368,8 @@ bool ContainerGump::StartDraggingItem(Item *item, int mx, int my) {
 
 	// check if the container the item is in is in range
 	MainActor *avatar = getMainActor();
-	if (!avatar->canReach(c, 128)) return false;
+	if (!avatar->canReach(c, 128))
+		return false;
 
 	int32 itemx, itemy;
 	getItemCoords(item, itemx, itemy);
@@ -409,9 +410,9 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 	assert(fr);
 
 	if (_draggingX - fr->_xoff < 0 ||
-	        _draggingX - fr->_xoff + fr->_width > _itemArea.w ||
-	        _draggingY - fr->_yoff < 0 ||
-	        _draggingY - fr->_yoff + fr->_height > _itemArea.h) {
+	    _draggingX - fr->_xoff + fr->_width > _itemArea.w ||
+	    _draggingY - fr->_yoff < 0 ||
+	    _draggingY - fr->_yoff + fr->_height > _itemArea.h) {
 		_displayDragging = false;
 		return false;
 	}
@@ -430,9 +431,9 @@ void ContainerGump::DraggingItemLeftGump(Item *item) {
 	_displayDragging = false;
 }
 
-
 void ContainerGump::StopDraggingItem(Item *item, bool moved) {
-	if (!moved) return; // nothing to do
+	if (!moved)
+		return; // nothing to do
 }
 
 void ContainerGump::DropItem(Item *item, int mx, int my) {
@@ -444,9 +445,8 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 	Item *targetitem = getItem(TraceObjId(px, py));
 	Container *targetcontainer = p_dynamic_cast<Container *>(targetitem);
 
-
 	if (item->getShapeInfo()->hasQuantity() &&
-	        item->getQuality() > 1) {
+	    item->getQuality() > 1) {
 		// more than one, so see if we should ask if we should split it up
 
 		Item *splittarget = nullptr;
@@ -459,16 +459,15 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 		if (!splittarget) {
 			// create new item
 			splittarget = ItemFactory::createItem(
-			                  item->getShape(), item->getFrame(), 0,
-			                  item->getFlags() & (Item::FLG_DISPOSABLE | Item::FLG_OWNED | Item::FLG_INVISIBLE | Item::FLG_FLIPPED | Item::FLG_FAST_ONLY | Item::FLG_LOW_FRICTION), item->getNpcNum(), item->getMapNum(),
-			                  item->getExtFlags() & (Item::EXT_SPRITE | Item::EXT_HIGHLIGHT | Item::EXT_TRANSPARENT), true);
+			    item->getShape(), item->getFrame(), 0,
+			    item->getFlags() & (Item::FLG_DISPOSABLE | Item::FLG_OWNED | Item::FLG_INVISIBLE | Item::FLG_FLIPPED | Item::FLG_FAST_ONLY | Item::FLG_LOW_FRICTION), item->getNpcNum(), item->getMapNum(),
+			    item->getExtFlags() & (Item::EXT_SPRITE | Item::EXT_HIGHLIGHT | Item::EXT_TRANSPARENT), true);
 			if (!splittarget) {
 				perr << "ContainerGump failed to create item ("
 				     << item->getShape() << "," << item->getFrame()
 				     << ") while splitting" << Std::endl;
 				return;
 			}
-
 
 			if (targetcontainer) {
 				splittarget->moveToContainer(targetcontainer);
@@ -544,7 +543,8 @@ void ContainerGump::saveData(Common::WriteStream *ws) {
 }
 
 bool ContainerGump::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!ItemRelativeGump::loadData(rs, version)) return false;
+	if (!ItemRelativeGump::loadData(rs, version))
+		return false;
 
 	int32 iax = static_cast<int32>(rs->readUint32LE());
 	int32 iay = static_cast<int32>(rs->readUint32LE());

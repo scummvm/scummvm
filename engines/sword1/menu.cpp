@@ -20,15 +20,14 @@
  *
  */
 
-
 #include "sword1/menu.h"
-#include "sword1/resman.h"
 #include "common/scummsys.h"
-#include "common/util.h"
 #include "common/system.h"
-#include "sword1/mouse.h"
-#include "sword1/screen.h"
+#include "common/util.h"
 #include "sword1/logic.h"
+#include "sword1/mouse.h"
+#include "sword1/resman.h"
+#include "sword1/screen.h"
 
 namespace Sword1 {
 
@@ -40,26 +39,24 @@ enum {
 };
 
 const byte Menu::_fadeEffectTop[64] = {
-	1, 7, 5, 3, 2, 4, 6, 0,
-	3, 1, 7, 5, 4, 6, 0, 2,
-	5, 3, 1, 7, 6, 0, 2, 4,
-	7, 5, 3, 1, 0, 2, 4, 6,
-	7, 5, 3, 1, 0, 2, 4, 6,
-	5, 3, 1, 7, 6, 0, 2, 4,
-	3, 1, 7, 5, 4, 6, 0, 2,
-	1, 7, 5, 3, 2, 4, 6, 0
-};
+    1, 7, 5, 3, 2, 4, 6, 0,
+    3, 1, 7, 5, 4, 6, 0, 2,
+    5, 3, 1, 7, 6, 0, 2, 4,
+    7, 5, 3, 1, 0, 2, 4, 6,
+    7, 5, 3, 1, 0, 2, 4, 6,
+    5, 3, 1, 7, 6, 0, 2, 4,
+    3, 1, 7, 5, 4, 6, 0, 2,
+    1, 7, 5, 3, 2, 4, 6, 0};
 
 const byte Menu::_fadeEffectBottom[64] = {
-	7, 6, 5, 4, 3, 2, 1, 0,
-	0, 7, 6, 5, 4, 3, 2, 1,
-	1, 0, 7, 6, 5, 4, 3, 2,
-	2, 1, 0, 7, 6, 5, 4, 3,
-	3, 2, 1, 0, 7, 6, 5, 4,
-	4, 3, 2, 1, 0, 7, 6, 5,
-	5, 4, 3, 2, 1, 0, 7, 6,
-	6, 5, 4, 3, 2, 1, 0, 7
-};
+    7, 6, 5, 4, 3, 2, 1, 0,
+    0, 7, 6, 5, 4, 3, 2, 1,
+    1, 0, 7, 6, 5, 4, 3, 2,
+    2, 1, 0, 7, 6, 5, 4, 3,
+    3, 2, 1, 0, 7, 6, 5, 4,
+    4, 3, 2, 1, 0, 7, 6, 5,
+    5, 4, 3, 2, 1, 0, 7, 6,
+    6, 5, 4, 3, 2, 1, 0, 7};
 
 MenuIcon::MenuIcon(uint8 menuType, uint8 menuPos, uint32 resId, uint32 frame, Screen *screen) {
 	_menuType = menuType;
@@ -192,7 +189,7 @@ uint8 Menu::checkMenuClick(uint8 menuType) {
 							if (Logic::_scriptVars[OBJECT_HELD] == _menuList[cnt]) {
 								_mouse->setLuggage(0, 0);
 								Logic::_scriptVars[OBJECT_HELD] = 0; // reselected => deselect it
-							} else { // the player is clicking another item on this one.
+							} else {                                 // the player is clicking another item on this one.
 								// run its use-script, if there is one
 								Logic::_scriptVars[SECOND_ITEM] = _menuList[cnt];
 								_mouse->setLuggage(0, 0);
@@ -334,8 +331,8 @@ void Menu::showMenu(uint8 menuType) {
 }
 
 void Menu::fnStartMenu() {
-	Logic::_scriptVars[OBJECT_HELD]  = 0; // icon no longer selected
-	Logic::_scriptVars[SECOND_ITEM]  = 0; // second icon no longer selected (after using one on another)
+	Logic::_scriptVars[OBJECT_HELD] = 0;  // icon no longer selected
+	Logic::_scriptVars[SECOND_ITEM] = 0;  // second icon no longer selected (after using one on another)
 	Logic::_scriptVars[MENU_LOOKING] = 0; // no longer 'looking at' an icon
 	buildMenu();
 	showMenu(MENU_TOP);

@@ -20,12 +20,12 @@
  *
  */
 
+#include "common/str.h"
+#include "glk/jacl/csv.h"
 #include "glk/jacl/jacl.h"
 #include "glk/jacl/language.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
-#include "glk/jacl/csv.h"
-#include "common/str.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
@@ -38,18 +38,18 @@ struct flock {
 	long l_pid;
 };
 
-#define F_DUPFD  0
-#define F_GETFD  1
-#define F_SETFD  2
-#define F_GETFL  3
-#define F_SETFL  4
-#define F_GETLK  5
-#define F_SETLK  6
+#define F_DUPFD 0
+#define F_GETFD 1
+#define F_SETFD 2
+#define F_GETFL 3
+#define F_SETFL 4
+#define F_GETLK 5
+#define F_SETLK 6
 #define F_SETLKW 7
 
-#define F_RDLCK  0
-#define F_WRLCK  1
-#define F_UNLCK  2
+#define F_RDLCK 0
+#define F_WRLCK 1
+#define F_UNLCK 2
 
 int fcntl(int __fd, int __cmd, ...) {
 	return 0;
@@ -77,55 +77,51 @@ const char *strcasestr(const char *s, const char *find) {
 
 #define MAX_TRY 10
 
-flock           read_lck;
-int             read_fd;
-flock           write_lck;
-int             write_fd;
+flock read_lck;
+int read_fd;
+flock write_lck;
+int write_fd;
 
 char *url_encode(char *str);
 char to_hex(char code);
 
 const char *location_attributes[] = {
-	"VISITED ", "DARK ", "ON_WATER ", "UNDER_WATER ", "WITHOUT_AIR ", "OUTDOORS ",
-	"MID_AIR ", "TIGHT_ROPE ", "POLLUTED ", "SOLVED ", "MID_WATER ", "DARKNESS ",
-	"MAPPED ", "KNOWN ",
-	NULL
-};
+    "VISITED ", "DARK ", "ON_WATER ", "UNDER_WATER ", "WITHOUT_AIR ", "OUTDOORS ",
+    "MID_AIR ", "TIGHT_ROPE ", "POLLUTED ", "SOLVED ", "MID_WATER ", "DARKNESS ",
+    "MAPPED ", "KNOWN ",
+    NULL};
 
 const char *object_attributes[] = {
-	"CLOSED ", "LOCKED ", "DEAD ", "IGNITABLE ", "WORN ", "CONCEALING ",
-	"LUMINOUS ", "WEARABLE ", "CLOSABLE ", "LOCKABLE ", "ANIMATE ", "LIQUID ",
-	"CONTAINER ", "SURFACE ", "PLURAL ", "FLAMMABLE ", "BURNING ", "LOCATION ",
-	"ON ", "DAMAGED ", "FEMALE ", "POSSESSIVE ", "OUT_OF_REACH ", "TOUCHED ",
-	"SCORED ", "SITTING ", "NPC ", "DONE ", "GAS ", "NO_TAB ",
-	"NOT_IMPORTANT ", NULL
-};
+    "CLOSED ", "LOCKED ", "DEAD ", "IGNITABLE ", "WORN ", "CONCEALING ",
+    "LUMINOUS ", "WEARABLE ", "CLOSABLE ", "LOCKABLE ", "ANIMATE ", "LIQUID ",
+    "CONTAINER ", "SURFACE ", "PLURAL ", "FLAMMABLE ", "BURNING ", "LOCATION ",
+    "ON ", "DAMAGED ", "FEMALE ", "POSSESSIVE ", "OUT_OF_REACH ", "TOUCHED ",
+    "SCORED ", "SITTING ", "NPC ", "DONE ", "GAS ", "NO_TAB ",
+    "NOT_IMPORTANT ", NULL};
 
 const char *object_elements[] = {
-	"parent", "capacity", "mass", "bearing", "velocity", "next", "previous",
-	"child", "index", "status", "state", "counter", "points", "class", "x", "y",
-	NULL
-};
+    "parent", "capacity", "mass", "bearing", "velocity", "next", "previous",
+    "child", "index", "status", "state", "counter", "points", "class", "x", "y",
+    NULL};
 
 const char *location_elements[] = {
-	"north", "south", "east", "west", "northeast", "northwest", "southeast",
-	"southwest", "up", "down", "in", "out", "points", "class", "x", "y",
-	NULL
-};
+    "north", "south", "east", "west", "northeast", "northwest", "southeast",
+    "southwest", "up", "down", "in", "out", "points", "class", "x", "y",
+    NULL};
 
-struct csv_parser               parser_csv;
-char                            in_name[1024];
-char                            out_name[1024];
-Common::SeekableReadStream     *infile;
-Common::WriteStream            *outfile;
+struct csv_parser parser_csv;
+char in_name[1024];
+char out_name[1024];
+Common::SeekableReadStream *infile;
+Common::WriteStream *outfile;
 
-int                             stack = 0;
-int                             proxy_stack = 0;
+int stack = 0;
+int proxy_stack = 0;
 
-int                             field_no = 0;
+int field_no = 0;
 
-struct stack_type               backup[STACK_SIZE];
-struct proxy_type               proxy_backup[STACK_SIZE];
+struct stack_type backup[STACK_SIZE];
+struct proxy_type proxy_backup[STACK_SIZE];
 
 struct function_type *resolved_function = NULL;
 struct string_type *resolved_string = NULL;
@@ -138,135 +134,135 @@ struct cinteger_type *new_cinteger = NULL;
 struct cinteger_type *current_cinteger = NULL;
 struct cinteger_type *previous_cinteger = NULL;
 
-long                            bit_mask;
-extern int                      encrypted;
-extern int                      after_from;
-extern int                      last_exact;
+long bit_mask;
+extern int encrypted;
+extern int after_from;
+extern int last_exact;
 
-extern char                     temp_directory[];
-extern char                     data_directory[];
-char                            csv_buffer[1024];
+extern char temp_directory[];
+extern char data_directory[];
+char csv_buffer[1024];
 
-int                             resolved_attribute;
+int resolved_attribute;
 
 /* THE ITERATION VARIABLE USED FOR LOOPS */
-int                             *loop_integer = NULL;
-int                             *select_integer = NULL;
+int *loop_integer = NULL;
+int *select_integer = NULL;
 
-int                             criterion_value = 0;
-int                             criterion_type = 0;
-int                             criterion_negate = FALSE;
-int                             current_level;
-int                             execution_level;
-int                             *ask_integer;
-int                             new_x;
-int                             new_y;
+int criterion_value = 0;
+int criterion_type = 0;
+int criterion_negate = FALSE;
+int current_level;
+int execution_level;
+int *ask_integer;
+int new_x;
+int new_y;
 
-int                             interrupted = FALSE;
-char                            string_buffer[2048];
-char                            argument_buffer[1024];
+int interrupted = FALSE;
+char string_buffer[2048];
+char argument_buffer[1024];
 #ifdef GLK
-extern schanid_t                sound_channel[];
-extern strid_t                  game_stream;
-extern winid_t                  mainwin;
-extern winid_t                  statuswin;
-extern winid_t                  current_window;
+extern schanid_t sound_channel[];
+extern strid_t game_stream;
+extern winid_t mainwin;
+extern winid_t statuswin;
+extern winid_t current_window;
 
-extern strid_t                  mainstr;
-extern strid_t                  statusstr;
-extern strid_t                  quotestr;
-extern strid_t                  inputstr;
-int                             top_of_loop = 0;
-int                             top_of_select = 0;
-int                             top_of_while = 0;
-int                             top_of_iterate = 0;
-int                             top_of_update = 0;
-int                             top_of_do_loop = 0;
+extern strid_t mainstr;
+extern strid_t statusstr;
+extern strid_t quotestr;
+extern strid_t inputstr;
+int top_of_loop = 0;
+int top_of_select = 0;
+int top_of_while = 0;
+int top_of_iterate = 0;
+int top_of_update = 0;
+int top_of_do_loop = 0;
 #else
-extern FILE                     *file;
-char                            option_buffer[2024];
-int                             style_stack[100];
-int                             style_index = 0;
-long                            top_of_loop = 0;
-long                            top_of_select = 0;
-long                            top_of_while = 0;
-long                            top_of_iterate = 0;
-long                            top_of_update = 0;
-long                            top_of_do_loop = 0;
+extern FILE *file;
+char option_buffer[2024];
+int style_stack[100];
+int style_index = 0;
+long top_of_loop = 0;
+long top_of_select = 0;
+long top_of_while = 0;
+long top_of_iterate = 0;
+long top_of_update = 0;
+long top_of_do_loop = 0;
 
 #endif
 
 #ifdef __NDS__
-extern int                      bold_mode;
-extern int                      pre_mode;
-extern int                      reverse_mode;
-extern int                      input_mode;
-extern int                      subheader_mode;
-extern int                      note_mode;
+extern int bold_mode;
+extern int pre_mode;
+extern int reverse_mode;
+extern int input_mode;
+extern int subheader_mode;
+extern int note_mode;
 #endif
 
-extern char                     user_id[];
-extern char                     prefix[];
-extern char                     text_buffer[];
-extern char                     chunk_buffer[];
-extern const char               *word[];
+extern char user_id[];
+extern char prefix[];
+extern char text_buffer[];
+extern char chunk_buffer[];
+extern const char *word[];
 
-extern char                     bookmark[];
-extern char                     file_prompt[];
+extern char bookmark[];
+extern char file_prompt[];
 
 /* CONTAINED IN PARSER.C */
-extern int                      object_list[4][MAX_OBJECTS];
-extern int                      list_size[];
-extern int                      max_size[];
+extern int object_list[4][MAX_OBJECTS];
+extern int list_size[];
+extern int max_size[];
 
 /* CONTAINED IN ENCAPSULATE.C */
-extern int                      quoted[];
+extern int quoted[];
 
-extern struct object_type       *object[];
-extern struct integer_type      *integer_table;
-extern struct integer_type      *integer[];
-extern struct cinteger_type     *cinteger_table;
-extern struct attribute_type    *attribute_table;
-extern struct string_type       *string_table;
-extern struct string_type       *cstring_table;
-extern struct function_type     *function_table;
-extern struct function_type     *executing_function;
-extern struct command_type      *completion_list;
-extern struct word_type         *grammar_table;
-extern struct synonym_type      *synonym_table;
-extern struct filter_type       *filter_table;
+extern struct object_type *object[];
+extern struct integer_type *integer_table;
+extern struct integer_type *integer[];
+extern struct cinteger_type *cinteger_table;
+extern struct attribute_type *attribute_table;
+extern struct string_type *string_table;
+extern struct string_type *cstring_table;
+extern struct function_type *function_table;
+extern struct function_type *executing_function;
+extern struct command_type *completion_list;
+extern struct word_type *grammar_table;
+extern struct synonym_type *synonym_table;
+extern struct filter_type *filter_table;
 
-extern char                     function_name[];
-extern char                     temp_buffer[];
-extern char                     error_buffer[];
-extern char                     proxy_buffer[];
+extern char function_name[];
+extern char temp_buffer[];
+extern char error_buffer[];
+extern char proxy_buffer[];
 
-extern char                     default_function[];
-extern char                     override_[];
+extern char default_function[];
+extern char override_[];
 
-extern int                      noun[];
-extern int                      wp;
-extern int                      start_of_this_command;
-extern int                      start_of_last_command;
-extern int                      buffer_index;
-extern int                      objects;
-extern int                      integers;
-extern int                      player;
-extern int                      oec;
-extern int                      *object_element_address;
-extern int                      *object_backup_address;
-extern int                      walkthru_running;
+extern int noun[];
+extern int wp;
+extern int start_of_this_command;
+extern int start_of_last_command;
+extern int buffer_index;
+extern int objects;
+extern int integers;
+extern int player;
+extern int oec;
+extern int *object_element_address;
+extern int *object_backup_address;
+extern int walkthru_running;
 
 // VALUES FROM LOADER
-extern int                      value_resolved;
+extern int value_resolved;
 
-extern Common::WriteStream     *transcript;
-extern char                     margin_string[];
+extern Common::WriteStream *transcript;
+extern char margin_string[];
 
-char                            integer_buffer[16];
-char                            called_name[1024];
-char                            scope_criterion[24];
-const char                      *output;
+char integer_buffer[16];
+char called_name[1024];
+char scope_criterion[24];
+const char *output;
 
 void terminate(int code) {
 	// FREE ANY EXTRA RAM ALLOCATED BY THE CSV PARSER
@@ -274,7 +270,7 @@ void terminate(int code) {
 
 #ifdef GLK
 	int index;
-	event_t         event;
+	event_t event;
 
 	// FLUSH THE GLK WINDOW SO THE ERROR GETS DISPLAYED IMMEDIATELY.
 	g_vm->glk_select_poll(&event);
@@ -293,7 +289,7 @@ void terminate(int code) {
 
 	g_vm->glk_exit();
 #else
-	if (file != NULL)           /* CLOSE THE GAME FILE */
+	if (file != NULL) /* CLOSE THE GAME FILE */
 		fclose(file);
 
 	exit(code);
@@ -301,7 +297,7 @@ void terminate(int code) {
 }
 
 void build_proxy() {
-	int             index;
+	int index;
 
 	proxy_buffer[0] = 0;
 
@@ -343,7 +339,6 @@ void cb1(void *s, size_t i, void *not_used) {
 		write_text(temp_buffer);
 		write_text("^");
 	}
-
 }
 
 void cb2(int c, void *not_used) {
@@ -356,29 +351,28 @@ void cb2(int c, void *not_used) {
 }
 
 int execute(const char *funcname) {
-	int             index;
-	int             counter;
-	int            *container;
+	int index;
+	int counter;
+	int *container;
 
-	int             object_1,
-	                object_2;
+	int object_1,
+	    object_2;
 
 	if (g_vm->shouldQuit())
 		return 0;
 
 	/* THESE VARIABLE KEEP TRACK OF if AND endif COMMANDS TO DECIDE WHETHER
 	 *THE CURRENT LINE OF CODE SHOULD BE EXECUTED OR NOT */
-	int             currentLevel = 0;
-	int             executionLevel = 0;
+	int currentLevel = 0;
+	int executionLevel = 0;
 
 	/* THESE ARE USED AS FILE POINTER OFFSETS TO RETURN TO FIXED
 	 * POINTS IN THE GAME FILE */
 #ifdef GLK
-	int         before_command = 0;
+	int before_command = 0;
 #else
-	long            before_command = 0;
+	long before_command = 0;
 #endif
-
 
 	strncpy(called_name, funcname, 1023);
 
@@ -423,18 +417,20 @@ int execute(const char *funcname) {
 #ifdef GLK
 	g_vm->glk_stream_set_position(game_stream, executing_function->position, seekmode_Start);
 	before_command = executing_function->position;
-	(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+	(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 #else
 	fseek(file, executing_function->position, SEEK_SET);
 	before_command = executing_function->position;
 	fgets(text_buffer, 1024, file);
 #endif
 
-	if (encrypted) jacl_decrypt(text_buffer);
+	if (encrypted)
+		jacl_decrypt(text_buffer);
 
 	while (text_buffer[0] != 125 && !interrupted) {
 		encapsulate();
-		if (word[0] == NULL);
+		if (word[0] == NULL)
+			;
 		else if (!strcmp(word[0], "endwhile")) {
 			currentLevel--;
 			if (currentLevel < executionLevel) {
@@ -490,12 +486,13 @@ int execute(const char *funcname) {
 			// SKIP THIS BLOCK OF PLAIN TEXT UNTIL IT FINDS A
 			// LINE THAT STARTS WITH A '.' OR A '}'
 #ifdef GLK
-			(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+			(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 #else
 			fgets(text_buffer, 1024, file);
 #endif
 
-			if (encrypted) jacl_decrypt(text_buffer);
+			if (encrypted)
+				jacl_decrypt(text_buffer);
 
 			while (text_buffer[0] != '.') {
 				if (text_buffer[0] == '}') {
@@ -505,13 +502,13 @@ int execute(const char *funcname) {
 
 				// GET THE NEXT LINE
 #ifdef GLK
-				(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+				(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 #else
 				fgets(text_buffer, 1024, file);
 #endif
 
-				if (encrypted) jacl_decrypt(text_buffer);
-
+				if (encrypted)
+					jacl_decrypt(text_buffer);
 			}
 		} else if (!strcmp(word[0], "endif")) {
 			currentLevel--;
@@ -571,7 +568,6 @@ int execute(const char *funcname) {
 #else
 						fseek(file, top_of_do_loop, SEEK_SET);
 #endif
-
 					}
 				}
 			} else if (!strcmp(word[0], "iterate")) {
@@ -621,7 +617,7 @@ int execute(const char *funcname) {
 							i = strlen(csv_buffer);
 							//sprintf (temp_buffer, "Read ~%s~ with %d bytes.^", csv_buffer, i);
 							//write_text(temp_buffer);
-							if (csv_parse(&parser_csv, csv_buffer, i, cb1, cb2, (void *) NULL) != (uint)i) {
+							if (csv_parse(&parser_csv, csv_buffer, i, cb1, cb2, (void *)NULL) != (uint)i) {
 								sprintf(error_buffer, "Error parsing file: %s\n", csv_strerror(csv_error(&parser_csv)));
 								log_error(error_buffer, PLUS_STDOUT);
 								delete infile;
@@ -644,12 +640,12 @@ int execute(const char *funcname) {
 				write_lck.l_type = F_WRLCK; // SETTING A WRITE LOCK
 				write_lck.l_whence = 0;     // OFFSET l_start FROM BEGINNING OF FILE
 				write_lck.l_start = 0LL;
-				write_lck.l_len = 0LL;      // UNTIL THE END OF THE FILE ADDRESS SPACE
+				write_lck.l_len = 0LL; // UNTIL THE END OF THE FILE ADDRESS SPACE
 
-				read_lck.l_type = F_RDLCK;  // SETTING A READ LOCK
-				read_lck.l_whence = 0;      // OFFSET l_start FROM BEGINNING OF FILE
+				read_lck.l_type = F_RDLCK; // SETTING A READ LOCK
+				read_lck.l_whence = 0;     // OFFSET l_start FROM BEGINNING OF FILE
 				read_lck.l_start = 0LL;
-				read_lck.l_len = 0LL;       // UNTIL THE END OF THE FILE ADDRESS SPACE
+				read_lck.l_len = 0LL; // UNTIL THE END OF THE FILE ADDRESS SPACE
 
 				// A NEW iterate LOOP MEANS STARTING BACK AT THE FIRST FIELD
 				field_no = 0;
@@ -749,10 +745,10 @@ int execute(const char *funcname) {
 							infile->read(csv_buffer, 1024);
 							if (infile->pos() < infile->size()) {
 								i = strlen(csv_buffer);
-								if (csv_parse(&parser_csv, csv_buffer, i, cb1, cb2, (int *) &field_no) != (uint)i) {
+								if (csv_parse(&parser_csv, csv_buffer, i, cb1, cb2, (int *)&field_no) != (uint)i) {
 									sprintf(error_buffer, "Error parsing file: %s\n", csv_strerror(csv_error(&parser_csv)));
 									log_error(error_buffer, PLUS_STDOUT);
-									read_lck.l_type = F_UNLCK;  // SETTING A READ LOCK
+									read_lck.l_type = F_UNLCK; // SETTING A READ LOCK
 									fcntl(read_fd, F_SETLK, &read_lck);
 									delete infile;
 									infile = NULL;
@@ -765,7 +761,7 @@ int execute(const char *funcname) {
 								fcntl(write_fd, F_SETLK, &write_lck);
 								delete outfile;
 
-								read_lck.l_type = F_UNLCK;  // REMOVE THE READ LOCK
+								read_lck.l_type = F_UNLCK; // REMOVE THE READ LOCK
 								fcntl(read_fd, F_SETLK, &read_lck);
 								delete infile;
 
@@ -882,10 +878,7 @@ int execute(const char *funcname) {
 				}
 
 				// DETERMINE THE CRITERION FOR SELETION
-				if (!strcmp(argument_buffer, "*held")
-				        || !strcmp(argument_buffer, "*here")
-				        || !strcmp(argument_buffer, "*anywhere")
-				        || !strcmp(argument_buffer, "*present")) {
+				if (!strcmp(argument_buffer, "*held") || !strcmp(argument_buffer, "*here") || !strcmp(argument_buffer, "*anywhere") || !strcmp(argument_buffer, "*present")) {
 					criterion_type = CRI_SCOPE;
 					strncpy(scope_criterion, argument_buffer, 20);
 				} else if ((criterion_value = attribute_resolve(argument_buffer))) {
@@ -916,12 +909,13 @@ int execute(const char *funcname) {
 				if (*select_integer == 0) {
 					// THERE ARE NO MATCHING OBJECTS SO JUMP TO THE endselect
 #ifdef GLK
-					(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+					(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 #else
 					fgets(text_buffer, 1024, file);
 #endif
 
-					if (encrypted) jacl_decrypt(text_buffer);
+					if (encrypted)
+						jacl_decrypt(text_buffer);
 
 					while (text_buffer[0] != '}') {
 						encapsulate();
@@ -929,7 +923,7 @@ int execute(const char *funcname) {
 							break;
 						}
 #ifdef GLK
-						(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+						(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 #else
 						fgets(text_buffer, 1024, file);
 #endif
@@ -1026,7 +1020,7 @@ int execute(const char *funcname) {
 						volume = volume * 655;
 
 						/* SET THE VOLUME */
-						g_vm->glk_schannel_set_volume(sound_channel[channel], (glui32) volume);
+						g_vm->glk_schannel_set_volume(sound_channel[channel], (glui32)volume);
 					}
 				}
 			} else if (!strcmp(word[0], "timer")) {
@@ -1038,10 +1032,11 @@ int execute(const char *funcname) {
 					} else {
 						index = value_of(word[1], TRUE);
 						/* DON'T ALLOW NEGATIVE VALUES, BUT NO UPPER LIMIT */
-						if (index < 0) index = 0;
+						if (index < 0)
+							index = 0;
 
 						/* SET THE GLK TIMER */
-						g_vm->glk_request_timer_events((glui32) index);
+						g_vm->glk_request_timer_events((glui32)index);
 
 						/* EXPOSE THE CURRENT VALUE THROUGH A JACL CONSTANT
 						   SO THAT GAME CODE CAN READ THE IT */
@@ -1077,7 +1072,7 @@ int execute(const char *funcname) {
 						noproprun();
 						return (exit_function(TRUE));
 					} else {
-						if (g_vm->glk_schannel_play_ext(sound_channel[channel], (glui32) value_of(word[1], TRUE), repeats, channel + 1) == 0) {
+						if (g_vm->glk_schannel_play_ext(sound_channel[channel], (glui32)value_of(word[1], TRUE), repeats, channel + 1) == 0) {
 							/* THE CHANNEL NUMBER IS PASSED SO THAT THE SOUND
 							 * NOTIFICATION EVENT CAN USE THE INFORMATION
 							 * IT HAS 1 ADDED TO IT SO THAT IT IS A NON-ZERO
@@ -1094,7 +1089,7 @@ int execute(const char *funcname) {
 						noproprun();
 						return (exit_function(TRUE));
 					} else {
-						if (!g_vm->loadingSavegame() && g_vm->glk_image_draw(mainwin, (glui32) value_of(word[1], TRUE), imagealign_InlineDown, 0) == 0) {
+						if (!g_vm->loadingSavegame() && g_vm->glk_image_draw(mainwin, (glui32)value_of(word[1], TRUE), imagealign_InlineDown, 0) == 0) {
 							sprintf(error_buffer, "Unable to draw image: %ld", value_of(word[1], FALSE));
 							log_error(error_buffer, PLUS_STDERR);
 						}
@@ -1183,8 +1178,7 @@ int execute(const char *funcname) {
 					noproprun();
 					return (exit_function(TRUE));
 				} else {
-					if (!strcmp(word[1], "bold")
-					        || !strcmp(word[1], "emphasised")) {
+					if (!strcmp(word[1], "bold") || !strcmp(word[1], "emphasised")) {
 						g_vm->glk_set_style(style_Emphasized);
 					} else if (!strcmp(word[1], "note")) {
 						g_vm->glk_set_style(style_Note);
@@ -1194,15 +1188,13 @@ int execute(const char *funcname) {
 						g_vm->glk_set_style(style_Header);
 					} else if (!strcmp(word[1], "subheader")) {
 						g_vm->glk_set_style(style_Subheader);
-					} else if (!strcmp(word[1], "reverse")
-					           || !strcmp(word[1], "inverse")) {
+					} else if (!strcmp(word[1], "reverse") || !strcmp(word[1], "inverse")) {
 						if (current_window == mainwin) {
 							g_vm->glk_set_style(style_User2);
 						} else {
 							g_vm->glk_set_style(style_User1);
 						}
-					} else if (!strcmp(word[1], "pre")
-					           || !strcmp(word[1], "preformatted")) {
+					} else if (!strcmp(word[1], "pre") || !strcmp(word[1], "preformatted")) {
 						g_vm->glk_set_style(style_Preformatted);
 					} else if (!strcmp(word[1], "normal")) {
 						g_vm->glk_set_style(style_Normal);
@@ -1228,7 +1220,7 @@ int execute(const char *funcname) {
 					noproprun(0);
 					return (exit_function(TRUE));
 				} else {
-					printf("\x1b[%d;%dH", (int) value_of(word[1], TRUE), (int) value_of(word[2], TRUE));
+					printf("\x1b[%d;%dH", (int)value_of(word[1], TRUE), (int)value_of(word[2], TRUE));
 				}
 			} else if (!strcmp(word[0], "stop")) {
 			} else if (!strcmp(word[0], "volume")) {
@@ -1316,31 +1308,28 @@ int execute(const char *funcname) {
 					noproprun();
 					return (exit_function(TRUE));
 				} else {
-					if (!strcmp(word[1], "bold")
-					        || !strcmp(word[1], "emphasised")) {
-						printf("\x1b[37;1m");   // SET TO BRIGHT WHITE
+					if (!strcmp(word[1], "bold") || !strcmp(word[1], "emphasised")) {
+						printf("\x1b[37;1m"); // SET TO BRIGHT WHITE
 						bold_mode = TRUE;
 					} else if (!strcmp(word[1], "note")) {
-						printf("\x1b[34;1m");   // SET TO BRIGHT BLUE
+						printf("\x1b[34;1m"); // SET TO BRIGHT BLUE
 						note_mode = TRUE;
 					} else if (!strcmp(word[1], "input")) {
-						printf("\x1b[32;0m");   // SET TO DIM GREEN
+						printf("\x1b[32;0m"); // SET TO DIM GREEN
 						input_mode = TRUE;
 					} else if (!strcmp(word[1], "header")) {
-						printf("\x1b[37;0m");   // SET TO DIM WHITE
+						printf("\x1b[37;0m"); // SET TO DIM WHITE
 					} else if (!strcmp(word[1], "subheader")) {
-						printf("\x1b[33;1m");   // SET TO BRIGHT YELLOW
+						printf("\x1b[33;1m"); // SET TO BRIGHT YELLOW
 						subheader_mode = TRUE;
-					} else if (!strcmp(word[1], "reverse")
-					           || !strcmp(word[1], "inverse")) {
-						printf("\x1b[7m");  // SET TO DIM WHITE
+					} else if (!strcmp(word[1], "reverse") || !strcmp(word[1], "inverse")) {
+						printf("\x1b[7m"); // SET TO DIM WHITE
 						reverse_mode = TRUE;
-					} else if (!strcmp(word[1], "pre")
-					           || !strcmp(word[1], "preformatted")) {
-						printf("\x1b[37;0m");   // SET TO DIM WHITE
+					} else if (!strcmp(word[1], "pre") || !strcmp(word[1], "preformatted")) {
+						printf("\x1b[37;0m"); // SET TO DIM WHITE
 						pre_mode = TRUE;
 					} else if (!strcmp(word[1], "normal")) {
-						printf("\x1b[37;0m");   // SET TO DIM WHITE
+						printf("\x1b[37;0m"); // SET TO DIM WHITE
 						bold_mode = FALSE;
 						pre_mode = FALSE;
 						reverse_mode = FALSE;
@@ -1379,7 +1368,6 @@ int execute(const char *funcname) {
 					write_text(option_buffer);
 					list_output(index, TRUE);
 					write_text(temp_buffer);
-
 				}
 			} else if (!strcmp(word[0], "getenv")) {
 				struct string_type *resolved_setstring = NULL;
@@ -1486,8 +1474,7 @@ int execute(const char *funcname) {
 					noproprun();
 					return (exit_function(TRUE));
 				} else {
-					if (!strcmp(word[1], "bold")
-					        || !strcmp(word[1], "emphasised")) {
+					if (!strcmp(word[1], "bold") || !strcmp(word[1], "emphasised")) {
 						write_text("<b>");
 						style_stack[style_index++] = BOLD;
 					} else if (!strcmp(word[1], "note")) {
@@ -1502,12 +1489,10 @@ int execute(const char *funcname) {
 					} else if (!strcmp(word[1], "subheader")) {
 						write_text("<h2>");
 						style_stack[style_index++] = SUBHEADER;
-					} else if (!strcmp(word[1], "reverse")
-					           || !strcmp(word[1], "inverse")) {
+					} else if (!strcmp(word[1], "reverse") || !strcmp(word[1], "inverse")) {
 						write_text("<b>");
 						style_stack[style_index++] = REVERSE;
-					} else if (!strcmp(word[1], "pre")
-					           || !strcmp(word[1], "preformatted")) {
+					} else if (!strcmp(word[1], "pre") || !strcmp(word[1], "preformatted")) {
 						write_text("<pre>");
 						style_stack[style_index++] = PRE;
 					} else if (!strcmp(word[1], "normal")) {
@@ -1657,7 +1642,7 @@ int execute(const char *funcname) {
 						g_vm->glk_set_style(style_Note);
 #else
 #ifdef __NDS__
-						printf("\x1b[34;1m");   // SET TO BRIGHT BLUE
+						printf("\x1b[34;1m"); // SET TO BRIGHT BLUE
 						note_mode = TRUE;
 #else
 						write_text("<b><i>");
@@ -1675,7 +1660,7 @@ int execute(const char *funcname) {
 						g_vm->glk_set_style(style_Normal);
 #else
 #ifdef __NDS__
-						printf("\x1b[37;0m");   // SET TO DIM WHITE
+						printf("\x1b[37;0m"); // SET TO DIM WHITE
 						note_mode = FALSE;
 #else
 						write_text("</i></b>");
@@ -1693,12 +1678,13 @@ int execute(const char *funcname) {
 				// DISPLAYS A BLOCK OF PLAIN TEXT UNTIL IT FINDS A
 				// LINE THAT STARTS WITH A '.' OR A '}'
 #ifdef GLK
-				(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+				(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 #else
 				fgets(text_buffer, 1024, file);
 #endif
 
-				if (encrypted) jacl_decrypt(text_buffer);
+				if (encrypted)
+					jacl_decrypt(text_buffer);
 
 				while (text_buffer[0] != '.' && text_buffer[0] != '}') {
 					index = 0;
@@ -1744,12 +1730,13 @@ int execute(const char *funcname) {
 
 					// GET THE NEXT LINE
 #ifdef GLK
-					(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+					(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 #else
 					fgets(text_buffer, 1024, file);
 #endif
 
-					if (encrypted) jacl_decrypt(text_buffer);
+					if (encrypted)
+						jacl_decrypt(text_buffer);
 				}
 			} else if (!strcmp(word[0], "mesg")) {
 				for (counter = 1; word[counter] != NULL && counter < MAX_WORDS; counter++) {
@@ -1856,7 +1843,7 @@ int execute(const char *funcname) {
 						return (exit_function(TRUE));
 					} else {
 						*split_container = 0;
-						match = source;     // THERE IS ALWAYS ONE MATCH, EVEN IF
+						match = source; // THERE IS ALWAYS ONE MATCH, EVEN IF
 						// NO DELIMETERS ARE FOUND
 
 						while ((match = strstr(source, delimiter))) {
@@ -1971,10 +1958,10 @@ int execute(const char *funcname) {
 						badptrrun(word[1], object_1);
 						return (exit_function(TRUE));
 					} else {
-						new_position((double) object[object_1]->X,
-						             (double) object[object_1]->Y,
-						             (double) object[object_1]->BEARING,
-						             (double) object[object_1]->VELOCITY);
+						new_position((double)object[object_1]->X,
+						             (double)object[object_1]->Y,
+						             (double)object[object_1]->BEARING,
+						             (double)object[object_1]->VELOCITY);
 
 						object[object_1]->X = new_x;
 						object[object_1]->Y = new_y;
@@ -2004,13 +1991,11 @@ int execute(const char *funcname) {
 							badptrrun(word[3], object_2);
 							return (exit_function(TRUE));
 						} else {
-							if (container != NULL
-							        && object_1 != FALSE
-							        && object_2 != FALSE) {
-								*container = bearing((double) object[object_1]->X,
-								                     (double) object[object_1]->Y,
-								                     (double) object[object_2]->X,
-								                     (double) object[object_2]->Y);
+							if (container != NULL && object_1 != FALSE && object_2 != FALSE) {
+								*container = bearing((double)object[object_1]->X,
+								                     (double)object[object_1]->Y,
+								                     (double)object[object_2]->X,
+								                     (double)object[object_2]->Y);
 							}
 						}
 					}
@@ -2036,17 +2021,19 @@ int execute(const char *funcname) {
 							badptrrun(word[3], object_2);
 							return (exit_function(TRUE));
 						} else {
-							if (container != NULL
-							        && object_1 != FALSE
-							        && object_2 != FALSE) {
+							if (container != NULL && object_1 != FALSE && object_2 != FALSE) {
 								*container = distance((double)
-								                      object[object_1]->X,
+								                          object[object_1]
+								                              ->X,
 								                      (double)
-								                      object[object_1]->Y,
+								                          object[object_1]
+								                              ->Y,
 								                      (double)
-								                      object[object_2]->X,
+								                          object[object_2]
+								                              ->X,
 								                      (double)
-								                      object[object_2]->Y);
+								                          object[object_2]
+								                              ->Y);
 							}
 						}
 					}
@@ -2074,9 +2061,7 @@ int execute(const char *funcname) {
 							badptrrun(word[3], object_2);
 							return (exit_function(TRUE));
 						} else {
-							if (container != NULL
-							        && object_1 != FALSE
-							        && object_2 != FALSE) {
+							if (container != NULL && object_1 != FALSE && object_2 != FALSE) {
 								if (!strcmp(word[0], "dir_to")) {
 									*container = find_route(object_1, object_2, TRUE);
 								} else {
@@ -2203,7 +2188,7 @@ int execute(const char *funcname) {
 								if (first == FALSE) {
 									outfile->writeByte(',');
 								}
-								csv_fwrite(outfile, output, (size_t) strlen(output));
+								csv_fwrite(outfile, output, (size_t)strlen(output));
 								first = FALSE;
 							}
 						}
@@ -2235,7 +2220,7 @@ int execute(const char *funcname) {
 								if (first == FALSE) {
 									outfile->writeByte(',');
 								}
-								csv_fwrite(outfile, output, (size_t) strlen(output));
+								csv_fwrite(outfile, output, (size_t)strlen(output));
 								first = FALSE;
 							}
 						}
@@ -2341,15 +2326,7 @@ int execute(const char *funcname) {
 				        executing_function->name, word[0]);
 				log_error(error_buffer, PLUS_STDOUT);
 			}
-		} else if (!strcmp(word[wp], "if")
-		           || !strcmp(word[wp], "ifall")
-		           || !strcmp(word[wp], "ifstring")
-		           || !strcmp(word[wp], "ifstringall")
-		           || !strcmp(word[wp], "ifexecute")
-		           || !strcmp(word[wp], "iterate")
-		           || !strcmp(word[wp], "update")
-		           || !strcmp(word[wp], "while")
-		           || !strcmp(word[wp], "whileall")) {
+		} else if (!strcmp(word[wp], "if") || !strcmp(word[wp], "ifall") || !strcmp(word[wp], "ifstring") || !strcmp(word[wp], "ifstringall") || !strcmp(word[wp], "ifexecute") || !strcmp(word[wp], "iterate") || !strcmp(word[wp], "update") || !strcmp(word[wp], "while") || !strcmp(word[wp], "whileall")) {
 			currentLevel++;
 		}
 
@@ -2358,12 +2335,13 @@ int execute(const char *funcname) {
 			return 0;
 
 		before_command = g_vm->glk_stream_get_position(game_stream);
-		(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32) 1024);
+		(void)glk_get_bin_line_stream(game_stream, text_buffer, (glui32)1024);
 #else
 		before_command = ftell(file);
 		fgets(text_buffer, 1024, file);
 #endif
-		if (encrypted) jacl_decrypt(text_buffer);
+		if (encrypted)
+			jacl_decrypt(text_buffer);
 	};
 
 	return (exit_function(TRUE));
@@ -2371,7 +2349,7 @@ int execute(const char *funcname) {
 
 int exit_function(int return_code) {
 	if (infile != NULL) {
-		read_lck.l_type = F_UNLCK;  // SETTING A READ LOCK
+		read_lck.l_type = F_UNLCK; // SETTING A READ LOCK
 		fcntl(read_fd, F_SETLK, &read_lck);
 		delete infile;
 		infile = NULL;
@@ -2409,10 +2387,10 @@ char *object_names(int object_index, char *names_buffer) {
 int distance(double x1, double y1, double x2, double y2) {
 	/* THIS FUNCTION CALCULATES THE DISTANCE BETWEEN TWO POINTS IN A
 	   TWO-DIMENSIONAL PLANE */
-	double          delta_x,
-	                delta_y;
-	double          distance,
-	                total;
+	double delta_x,
+	    delta_y;
+	double distance,
+	    total;
 
 	/*
 	 * Object two in which quadrant compared to object one? 0 x = opp, y =
@@ -2453,13 +2431,13 @@ int distance(double x1, double y1, double x2, double y2) {
 
 	distance = sqrt(total);
 
-	return ((int) distance);
+	return ((int)distance);
 }
 
 void new_position(double x1, double y1, double bearing, double velocity) {
-	double          delta_x,
-	                delta_y;
-	double          radians;
+	double delta_x,
+	    delta_y;
+	double radians;
 
 	/*
 	 * Object two in which quadrant compared to object one? 0 x = opp, y =
@@ -2502,11 +2480,11 @@ void new_position(double x1, double y1, double bearing, double velocity) {
 }
 
 int bearing(double x1, double y1, double x2, double y2) {
-	int             quadrant;
-	double          delta_x,
-	                delta_y;
-	double          oppoadj;
-	double          bearing;
+	int quadrant;
+	double delta_x,
+	    delta_y;
+	double oppoadj;
+	double bearing;
 
 	/*
 	 * Object two in which quadrant compared to object one? 0 x = opp, y =
@@ -2542,22 +2520,22 @@ int bearing(double x1, double y1, double x2, double y2) {
 	bearing = bearing / (2.0 * M_PI) * 360.;
 	bearing = bearing + (90 * quadrant);
 
-	return ((int) bearing);
+	return ((int)bearing);
 }
 
 void set_arguments(const char *function_call) {
 	/* THIS FUNCTION CREATES AN ARRAY OF JACL INTEGER CONSTANTS TO
 	   REPRESENT THE ARGUMENTS PASSED TO A JACL FUNCTION */
-	int             index,
-	                counter,
-	                length;
-	int             position = 0; /* STORE THE INDEX OF THE WORD */
+	int index,
+	    counter,
+	    length;
+	int position = 0; /* STORE THE INDEX OF THE WORD */
 	/* SETTING new_word TO FALSE SKIPS THE FIRST */
 	/* WORD WHICH IS THE FUNCTION NAME */
-	int             new_word = FALSE;
+	int new_word = FALSE;
 
-	char            *arg_ptr[MAX_WORDS];
-	int             arg_value[MAX_WORDS];
+	char *arg_ptr[MAX_WORDS];
+	int arg_value[MAX_WORDS];
 
 	struct integer_type *resolved_integer;
 	struct cinteger_type *resolved_cinteger;
@@ -2626,7 +2604,8 @@ void set_arguments(const char *function_call) {
 	/* CREATE A CONSTANT FOR EACH ARGUMENT AFTER THE CORE FUNCTION NAME */
 	index = 0;
 	while (arg_ptr[index] != NULL) {
-		if (index == 0) noun[3] = arg_value[index];
+		if (index == 0)
+			noun[3] = arg_value[index];
 		add_cinteger("arg", arg_value[index]);
 		//printf("--- %s = %s\n", arg_ptr[index], arg_text_of(arg_ptr[index]));
 		add_cstring("string_arg", arg_text_of(arg_ptr[index]));
@@ -2644,7 +2623,8 @@ void pop_stack() {
 
 	/* RECREATE THE arg ARRAY FOR THIS STACK FRAME */
 	for (index = 0; index < backup[stack].argcount; index++) {
-		if (index == 0) noun[3] = backup[stack].arguments[0];
+		if (index == 0)
+			noun[3] = backup[stack].arguments[0];
 		add_cinteger("arg", backup[stack].arguments[index]);
 	}
 
@@ -2707,7 +2687,6 @@ void pop_stack() {
 #else
 	fseek(file, backup[stack].address, SEEK_SET);
 #endif
-
 }
 
 void push_stack(int32 file_pointer) {
@@ -2866,8 +2845,7 @@ void push_proxy() {
 		/* PUSH ALL THE RESOLVED OBJECTS ONTO THE STACK */
 		for (index = 0; index < 4; index++) {
 			for (counter = 0; counter < max_size[index]; counter++) {
-				proxy_backup[proxy_stack].object_list[index][counter]
-				    =   object_list[index][counter];
+				proxy_backup[proxy_stack].object_list[index][counter] = object_list[index][counter];
 			}
 			proxy_backup[proxy_stack].list_size[index] = list_size[index];
 			proxy_backup[proxy_stack].max_size[index] = max_size[index];
@@ -2917,7 +2895,7 @@ void push_proxy() {
 int condition() {
 	/* COMPARE GROUPS OF TWO ELEMENTS. RETURN TRUE IF ANY ONE GROUP OF
 	 * ELEMENTS COMPARE 'TRUE' */
-	int             first;
+	int first;
 
 	first = 1;
 
@@ -2933,7 +2911,7 @@ int condition() {
 int and_condition() {
 	/* COMPARE GROUPS OF TWO ELEMENTS. RETURN FALSE IF ANY ONE GROUP OF
 	 * ELEMENTS COMPARE 'FALSE' */
-	int             first;
+	int first;
 
 	first = 1;
 
@@ -2947,8 +2925,8 @@ int and_condition() {
 }
 
 int logic_test(int first) {
-	long            index,
-	                compare;
+	long index,
+	    compare;
 
 	resolved_attribute = FALSE;
 
@@ -3004,20 +2982,17 @@ int logic_test(int first) {
 				return (!(object[index]->user_attributes & compare));
 			}
 		}
-	else if (!strcmp(word[first + 1], "!=")
-	         || !strcmp(word[first + 1], "<>")) {
+	else if (!strcmp(word[first + 1], "!=") || !strcmp(word[first + 1], "<>")) {
 		if (index != compare)
 			return (TRUE);
 		else
 			return (FALSE);
-	} else if (!strcmp(word[first + 1], ">=")
-	           || !strcmp(word[first + 1], "=>")) {
+	} else if (!strcmp(word[first + 1], ">=") || !strcmp(word[first + 1], "=>")) {
 		if (index >= compare)
 			return (TRUE);
 		else
 			return (FALSE);
-	} else if (!strcmp(word[first + 1], "<=")
-	           || !strcmp(word[first + 1], "=<")) {
+	} else if (!strcmp(word[first + 1], "<=") || !strcmp(word[first + 1], "=<")) {
 		if (index <= compare)
 			return (TRUE);
 		else
@@ -3064,7 +3039,7 @@ int logic_test(int first) {
 }
 
 int strcondition() {
-	int             first;
+	int first;
 
 	first = 1;
 
@@ -3078,7 +3053,7 @@ int strcondition() {
 }
 
 int and_strcondition() {
-	int             first;
+	int first;
 
 	first = 1;
 
@@ -3092,8 +3067,8 @@ int and_strcondition() {
 }
 
 int str_test(int first) {
-	const char  *index;
-	const char  *compare;
+	const char *index;
+	const char *compare;
 
 	// GET THE TWO STRING VALUES TO COMPARE
 
@@ -3155,7 +3130,7 @@ void add_cinteger(const char *name, int value) {
 	/* THIS FUNCTION ADDS A NEW JACL CONSTANT TO THE LIST */
 
 	if ((new_cinteger = (struct cinteger_type *)
-	                    malloc(sizeof(struct cinteger_type))) == NULL)
+	         malloc(sizeof(struct cinteger_type))) == NULL)
 		outofmem();
 	else {
 		if (cinteger_table == NULL) {
@@ -3213,7 +3188,7 @@ void add_cstring(const char *name, const char *value) {
 	/* ADD A STRING CONSTANT WITH THE SUPPLIED NAME AND VALUE */
 
 	if ((new_string = (struct string_type *)
-	                  malloc(sizeof(struct string_type))) == NULL)
+	         malloc(sizeof(struct string_type))) == NULL)
 		outofmem();
 	else {
 		if (cstring_table == NULL) {
@@ -3260,7 +3235,7 @@ void clear_cstring(const char *name) {
 	}
 }
 
-void inspect(int object_num)  {
+void inspect(int object_num) {
 	// THIS FUNCTION DISPLAYS THE STATE OF A JACL OBJECT FOR DEBUGGING
 
 	int index, attribute_value;
@@ -3354,7 +3329,7 @@ int grand_of(int child, int objs_only) {
 	/* objs_only ARGUMENT TELLS FUNCTION TO IGNORE OBJECT IF IT IS IN A
 	 * LOCATION */
 
-	int             parent;
+	int parent;
 
 	if (object[child]->PARENT != NOWHERE) {
 		/* STORE THE CHILDS PARENT OBJECT */

@@ -25,15 +25,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "common/str.h"
-#include "common/stream.h"
-#include "common/util.h"
 #include "common/archive.h"
 #include "common/debug.h"
+#include "common/str.h"
+#include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
-#include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/asset-archive.h"
+#include "backends/platform/android/jni-android.h"
 
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
@@ -45,7 +45,7 @@ public:
 
 	virtual bool eos() const { return _eos; }
 
-	virtual void clearErr() {_eos = false; }
+	virtual void clearErr() { _eos = false; }
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 
@@ -64,8 +64,7 @@ private:
 	bool _eos;
 };
 
-AssetInputStream::AssetInputStream(AAssetManager *as, const Common::String &path) :
-	_eos(false), _pos(0) {
+AssetInputStream::AssetInputStream(AAssetManager *as, const Common::String &path) : _eos(false), _pos(0) {
 	_asset = AAssetManager_open(as, path.c_str(), AASSET_MODE_RANDOM);
 	_len = AAsset_getLength(_asset);
 }

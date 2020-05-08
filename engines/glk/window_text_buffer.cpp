@@ -35,13 +35,12 @@ namespace Glk {
  */
 #define SLOP (2 * GLI_SUBPIX)
 
-
 TextBufferWindow::TextBufferWindow(Windows *windows, uint rock) : TextWindow(windows, rock),
-		_font(g_conf->_propInfo), _historyPos(0), _historyFirst(0), _historyPresent(0),
-		_lastSeen(0), _scrollPos(0), _scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1),
-		_inBuf(nullptr), _lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0),
-		_ladjn(0), _radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr), _spaced(0), _dashed(0),
-		_copyBuf(0), _copyPos(0) {
+                                                                  _font(g_conf->_propInfo), _historyPos(0), _historyFirst(0), _historyPresent(0),
+                                                                  _lastSeen(0), _scrollPos(0), _scrollMax(0), _scrollBack(SCROLLBACK), _width(-1), _height(-1),
+                                                                  _inBuf(nullptr), _lineTerminators(nullptr), _echoLineInput(true), _ladjw(0), _radjw(0),
+                                                                  _ladjn(0), _radjn(0), _numChars(0), _chars(nullptr), _attrs(nullptr), _spaced(0), _dashed(0),
+                                                                  _copyBuf(0), _copyPos(0) {
 	_type = wintype_TextBuffer;
 	_history.resize(HISTORYLEN);
 
@@ -161,7 +160,8 @@ void TextBufferWindow::reflow() {
 			alignbuf[x] = imagealign_MarginLeft;
 			pictbuf[x] = _lines[k]._lPic;
 
-			if (pictbuf[x]) pictbuf[x]->increment();
+			if (pictbuf[x])
+				pictbuf[x]->increment();
 			hyperbuf[x] = _lines[k]._lHyper;
 			x++;
 		}
@@ -170,7 +170,8 @@ void TextBufferWindow::reflow() {
 			offsetbuf[x] = p;
 			alignbuf[x] = imagealign_MarginRight;
 			pictbuf[x] = _lines[k]._rPic;
-			if (pictbuf[x]) pictbuf[x]->increment();
+			if (pictbuf[x])
+				pictbuf[x]->increment();
 			hyperbuf[x] = _lines[k]._rHyper;
 			x++;
 		}
@@ -306,11 +307,11 @@ void TextBufferWindow::putText(const char *buf, int len, int pos, int oldlen) {
 
 	if (diff != 0 && pos + oldlen < _numChars) {
 		memmove(_chars + pos + len,
-				_chars + pos + oldlen,
-				(_numChars - (pos + oldlen)) * 4);
+		        _chars + pos + oldlen,
+		        (_numChars - (pos + oldlen)) * 4);
 		memmove(_attrs + pos + len,
-				_attrs + pos + oldlen,
-				(_numChars - (pos + oldlen)) * sizeof(Attributes));
+		        _attrs + pos + oldlen,
+		        (_numChars - (pos + oldlen)) * sizeof(Attributes));
 	}
 	if (len > 0) {
 		for (int i = 0; i < len; i++) {
@@ -338,11 +339,11 @@ void TextBufferWindow::putTextUni(const uint32 *buf, int len, int pos, int oldle
 
 	if (diff != 0 && pos + oldlen < _numChars) {
 		memmove(_chars + pos + len,
-				_chars + pos + oldlen,
-				(_numChars - (pos + oldlen)) * 4);
+		        _chars + pos + oldlen,
+		        (_numChars - (pos + oldlen)) * 4);
 		memmove(_attrs + pos + len,
-				_attrs + pos + oldlen,
-				(_numChars - (pos + oldlen)) * sizeof(Attributes));
+		        _attrs + pos + oldlen,
+		        (_numChars - (pos + oldlen)) * sizeof(Attributes));
 	}
 	if (len > 0) {
 		int i;
@@ -441,9 +442,7 @@ void TextBufferWindow::putCharUni(uint32 ch) {
 		}
 	}
 
-	if (_font._spaces && _attr.style != style_Preformatted
-			&& _styles[_attr.style].bg == color
-			&& !_styles[_attr.style].reverse) {
+	if (_font._spaces && _attr.style != style_Preformatted && _styles[_attr.style].bg == color && !_styles[_attr.style].reverse) {
 		// turn (period space space) into (period space)
 		if (_font._spaces == 1) {
 			if (ch == '.')
@@ -479,9 +478,7 @@ void TextBufferWindow::putCharUni(uint32 ch) {
 
 	// kill spaces at the end for line width calculation
 	linelen = _numChars;
-	while (linelen > 1 && _chars[linelen - 1] == ' '
-			&& _styles[_attrs[linelen - 1].style].bg == color
-			&& !_styles[_attrs[linelen - 1].style].reverse)
+	while (linelen > 1 && _chars[linelen - 1] == ' ' && _styles[_attrs[linelen - 1].style].bg == color && !_styles[_attrs[linelen - 1].style].reverse)
 		linelen--;
 
 	if (calcWidth(_chars, _attrs, 0, linelen, -1) >= pw) {
@@ -540,9 +537,11 @@ void TextBufferWindow::clear() {
 	for (i = 0; i < _scrollBack; i++) {
 		_lines[i]._len = 0;
 
-		if (_lines[i]._lPic) _lines[i]._lPic->decrement();
+		if (_lines[i]._lPic)
+			_lines[i]._lPic->decrement();
 		_lines[i]._lPic = nullptr;
-		if (_lines[i]._rPic) _lines[i]._rPic->decrement();
+		if (_lines[i]._rPic)
+			_lines[i]._rPic->decrement();
 		_lines[i]._rPic = nullptr;
 
 		_lines[i]._lHyper = 0;
@@ -566,9 +565,7 @@ void TextBufferWindow::click(const Point &newPos) {
 	int gh = false;
 	int gs = false;
 
-	if (_lineRequest || _charRequest
-			|| _lineRequestUni || _charRequestUni
-			|| _moreRequest || _scrollRequest)
+	if (_lineRequest || _charRequest || _lineRequestUni || _charRequestUni || _moreRequest || _scrollRequest)
 		_windows->setFocus(this);
 
 	if (_hyperRequest) {
@@ -838,7 +835,8 @@ void TextBufferWindow::redraw() {
 		// check if part of line is selected
 		if (selBuf) {
 			selrow = g_vm->_selection->getSelection(Rect(x0 / GLI_SUBPIX, y,
-													x1 / GLI_SUBPIX, y + _font._leading), &sx0, &sx1);
+			                                             x1 / GLI_SUBPIX, y + _font._leading),
+			                                        &sx0, &sx1);
 			selleft = (sx0 == x0 / GLI_SUBPIX);
 			selright = (sx1 == x1 / GLI_SUBPIX);
 		} else {
@@ -858,7 +856,7 @@ void TextBufferWindow::redraw() {
 		// repaint previously selected lines if needed
 		if (ln._repaint && !Windows::_forceRedraw)
 			_windows->redrawRect(Rect(x0 / GLI_SUBPIX, y,
-									  x1 / GLI_SUBPIX, y + _font._leading));
+			                          x1 / GLI_SUBPIX, y + _font._leading));
 
 		// keep selected line dirty and flag for repaint
 		if (!selrow) {
@@ -876,14 +874,12 @@ void TextBufferWindow::redraw() {
 
 		// kill spaces at the end unless they're a different color
 		color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-		while (i > 0 && linelen > 1 && ln._chars[linelen - 1] == ' '
-				&& _styles[ln._attrs[linelen - 1].style].bg == color
-				&& !_styles[ln._attrs[linelen - 1].style].reverse)
-			linelen --;
+		while (i > 0 && linelen > 1 && ln._chars[linelen - 1] == ' ' && _styles[ln._attrs[linelen - 1].style].bg == color && !_styles[ln._attrs[linelen - 1].style].reverse)
+			linelen--;
 
 		// kill characters that would overwrite the scroll bar
 		while (linelen > 1 && calcWidth(ln._chars, ln._attrs, 0, linelen, -1) >= pw)
-			linelen --;
+			linelen--;
 
 		/*
 		 * count spaces and width for justification
@@ -891,7 +887,7 @@ void TextBufferWindow::redraw() {
 		if (_font._justify && !ln._newLine && i > 0) {
 			for (a = 0, nsp = 0; a < linelen; a++)
 				if (ln._chars[a] == ' ')
-					nsp ++;
+					nsp++;
 			w = calcWidth(ln._chars, ln._attrs, 0, linelen, 0);
 			if (nsp)
 				spw = (x1 - x0 - ln._lm - ln._rm - 2 * SLOP - w) / nsp;
@@ -922,7 +918,7 @@ void TextBufferWindow::redraw() {
 					for (tsc = 0; tsc < linelen; tsc++) {
 						tsw = calcWidth(ln._chars, ln._attrs, 0, tsc, spw) / GLI_SUBPIX;
 						if (tsw + tx >= sx0 ||
-								((tsw + tx + GLI_SUBPIX) >= sx0 && ln._chars[tsc] != ' ')) {
+						    ((tsw + tx + GLI_SUBPIX) >= sx0 && ln._chars[tsc] != ' ')) {
 							lsc = tsc;
 							selchar = true;
 							break;
@@ -962,14 +958,14 @@ void TextBufferWindow::redraw() {
 
 		// clear any stored hyperlink coordinates
 		g_vm->_selection->putHyperlink(0, x0 / GLI_SUBPIX, y,
-									   x1 / GLI_SUBPIX, y + _font._leading);
+		                               x1 / GLI_SUBPIX, y + _font._leading);
 
 		/*
 		 * fill in background colors
 		 */
 		color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
 		screen.fillRect(Rect::fromXYWH(x0 / GLI_SUBPIX, y, (x1 - x0) / GLI_SUBPIX, _font._leading),
-						color);
+		                color);
 
 		x = x0 + SLOP + ln._lm;
 		a = 0;
@@ -980,13 +976,14 @@ void TextBufferWindow::redraw() {
 				color = ln._attrs[a].attrBg(_styles);
 				w = screen.stringWidthUni(font, Common::U32String(ln._chars + a, b - a), spw);
 				screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, _font._leading),
-								color);
+				                color);
 				if (link) {
 					screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + _font._baseLine + 1,
-												   w / GLI_SUBPIX + 1, _font._linkStyle), _font._linkColor);
+					                               w / GLI_SUBPIX + 1, _font._linkStyle),
+					                _font._linkColor);
 					g_vm->_selection->putHyperlink(link, x / GLI_SUBPIX, y,
-												   x / GLI_SUBPIX + w / GLI_SUBPIX,
-												   y + _font._leading);
+					                               x / GLI_SUBPIX + w / GLI_SUBPIX,
+					                               y + _font._leading);
 				}
 				x += w;
 				a = b;
@@ -999,10 +996,11 @@ void TextBufferWindow::redraw() {
 		screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, _font._leading), color);
 		if (link) {
 			screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + _font._baseLine + 1,
-										   w / GLI_SUBPIX + 1, _font._linkStyle), _font._linkColor);
+			                               w / GLI_SUBPIX + 1, _font._linkStyle),
+			                _font._linkColor);
 			g_vm->_selection->putHyperlink(link, x / GLI_SUBPIX, y,
-										   x / GLI_SUBPIX + w / GLI_SUBPIX,
-										   y + _font._leading);
+			                               x / GLI_SUBPIX + w / GLI_SUBPIX,
+			                               y + _font._leading);
 		}
 		x += w;
 
@@ -1031,7 +1029,7 @@ void TextBufferWindow::redraw() {
 				font = ln._attrs[a].attrFont(_styles);
 				color = link ? _font._linkColor : ln._attrs[a].attrFg(_styles);
 				x = screen.drawStringUni(Point(x, y + _font._baseLine),
-										 font, color, Common::U32String(ln._chars + a, b - a), spw);
+				                         font, color, Common::U32String(ln._chars + a, b - a), spw);
 				a = b;
 			}
 		}
@@ -1049,7 +1047,7 @@ void TextBufferWindow::redraw() {
 		y = y0 + (_height - 1) * _font._leading;
 
 		g_vm->_selection->putHyperlink(0, x0 / GLI_SUBPIX, y,
-									   x1 / GLI_SUBPIX, y + _font._leading);
+		                               x1 / GLI_SUBPIX, y + _font._leading);
 
 		color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
 		screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, x1 / GLI_SUBPIX - x / GLI_SUBPIX, _font._leading), color);
@@ -1065,7 +1063,7 @@ void TextBufferWindow::redraw() {
 
 		color = Windows::_overrideFgSet ? _font._moreColor : _fgColor;
 		screen.drawString(Point(x, y + _font._baseLine),
-						  _font._moreFont, color, _font._morePrompt);
+		                  _font._moreFont, color, _font._morePrompt);
 		y1 = y; // don't want pictures overdrawing "[more]"
 
 		// try to claim the focus
@@ -1087,14 +1085,14 @@ void TextBufferWindow::redraw() {
 		if (ln._lPic) {
 			if (y < y1 && y + ln._lPic->h > y0) {
 				ln._lPic->drawPicture(Point(x0 / GLI_SUBPIX, y),
-					Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
+				                      Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
 				link = ln._lHyper;
 				hy0 = y > y0 ? y : y0;
 				hy1 = y + ln._lPic->h < y1 ? y + ln._lPic->h : y1;
 				hx0 = x0 / GLI_SUBPIX;
 				hx1 = x0 / GLI_SUBPIX + ln._lPic->w < x1 / GLI_SUBPIX
-					  ? x0 / GLI_SUBPIX + ln._lPic->w
-					  : x1 / GLI_SUBPIX;
+				          ? x0 / GLI_SUBPIX + ln._lPic->w
+				          : x1 / GLI_SUBPIX;
 				g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
 			}
 		}
@@ -1102,13 +1100,13 @@ void TextBufferWindow::redraw() {
 		if (ln._rPic) {
 			if (y < y1 && y + ln._rPic->h > y0) {
 				ln._rPic->drawPicture(Point(x1 / GLI_SUBPIX - ln._rPic->w, y),
-					Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
+				                      Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
 				link = ln._rHyper;
 				hy0 = y > y0 ? y : y0;
 				hy1 = y + ln._rPic->h < y1 ? y + ln._rPic->h : y1;
 				hx0 = x1 / GLI_SUBPIX - ln._rPic->w > x0 / GLI_SUBPIX
-					  ? x1 / GLI_SUBPIX - ln._rPic->w
-					  : x0 / GLI_SUBPIX;
+				          ? x1 / GLI_SUBPIX - ln._rPic->w
+				          : x0 / GLI_SUBPIX;
 				hx1 = x1 / GLI_SUBPIX;
 				g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
 			}
@@ -1149,9 +1147,11 @@ void TextBufferWindow::redraw() {
 
 		for (i = 0; i < g_conf->_scrollWidth / 2 + 1; i++) {
 			screen.fillRect(Rect::fromXYWH(x0 + g_conf->_scrollWidth / 2 - i,
-										   y0 - g_conf->_scrollWidth / 2 + i, i * 2, 1), g_conf->_scrollFg);
+			                               y0 - g_conf->_scrollWidth / 2 + i, i * 2, 1),
+			                g_conf->_scrollFg);
 			screen.fillRect(Rect::fromXYWH(x0 + g_conf->_scrollWidth / 2 - i,
-										   y1 + g_conf->_scrollWidth / 2 - i, i * 2, 1), g_conf->_scrollFg);
+			                               y1 + g_conf->_scrollWidth / 2 - i, i * 2, 1),
+			                g_conf->_scrollFg);
 		}
 	}
 
@@ -1171,7 +1171,7 @@ void TextBufferWindow::redraw() {
 }
 
 int TextBufferWindow::acceptScroll(uint arg) {
-	int pageht = _height - 2;        // 1 for prompt, 1 for overlap
+	int pageht = _height - 2; // 1 for prompt, 1 for overlap
 	int startpos = _scrollPos;
 
 	switch (arg) {
@@ -1223,9 +1223,7 @@ void TextBufferWindow::acceptReadChar(uint arg) {
 	if (_height < 2)
 		_scrollPos = 0;
 
-	if (_scrollPos
-			|| arg == keycode_PageUp
-			|| arg == keycode_MouseWheelUp) {
+	if (_scrollPos || arg == keycode_PageUp || arg == keycode_MouseWheelUp) {
 		acceptScroll(arg);
 		return;
 	}
@@ -1523,8 +1521,7 @@ void TextBufferWindow::scrollOneLine(bool forced) {
 	_lastSeen++;
 	_scrollMax++;
 
-	if (_scrollMax > _scrollBack - 1
-			|| _lastSeen > _scrollBack - 1)
+	if (_scrollMax > _scrollBack - 1 || _lastSeen > _scrollBack - 1)
 		scrollResize();
 
 	if (_lastSeen >= _height)
@@ -1566,7 +1563,7 @@ void TextBufferWindow::scrollOneLine(bool forced) {
 	_lines[0]._rPic = nullptr;
 	_lines[0]._lHyper = 0;
 	_lines[0]._rHyper = 0;
-	
+
 	Common::fill(_chars, _chars + TBLINELEN, ' ');
 	Attributes *a = _attrs;
 	for (int i = 0; i < TBLINELEN; ++i, ++a)
@@ -1575,7 +1572,6 @@ void TextBufferWindow::scrollOneLine(bool forced) {
 	_numChars = 0;
 
 	touchScroll();
-
 }
 
 void TextBufferWindow::scrollResize() {
@@ -1614,7 +1610,7 @@ int TextBufferWindow::calcWidth(const uint32 *chars, const Attributes *attrs, in
 	for (b = startchar; b < numChars; b++) {
 		if (attrs[a] != attrs[b]) {
 			w += screen.stringWidthUni(attrs[a].attrFont(_styles),
-									   Common::U32String(chars + a, b - a), spw);
+			                           Common::U32String(chars + a, b - a), spw);
 			a = b;
 		}
 	}
@@ -1639,8 +1635,8 @@ void TextBufferWindow::flowBreak() {
 /*--------------------------------------------------------------------------*/
 
 TextBufferWindow::TextBufferRow::TextBufferRow() : _len(0), _newLine(0), _dirty(false),
-	_repaint(false), _lPic(nullptr), _rPic(nullptr), _lHyper(0), _rHyper(0),
-	_lm(0), _rm(0) {
+                                                   _repaint(false), _lPic(nullptr), _rPic(nullptr), _lHyper(0), _rHyper(0),
+                                                   _lm(0), _rm(0) {
 	Common::fill(&_chars[0], &_chars[TBLINELEN], 0);
 }
 

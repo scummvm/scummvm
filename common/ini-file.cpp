@@ -152,7 +152,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 				warning("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
 				kv.key = String(t);
 				kv.value.clear();
-			}  else {
+			} else {
 				// Extract the key/value pair
 				kv.key = String(t, p);
 				kv.value = String(p + 1);
@@ -207,7 +207,7 @@ bool INIFile::saveToSaveFile(const String &filename) {
 bool INIFile::saveToStream(WriteStream &stream) {
 	for (List<Section>::iterator i = _sections.begin(); i != _sections.end(); ++i) {
 		// Write out the section comment, if any
-		if (! i->comment.empty()) {
+		if (!i->comment.empty()) {
 			stream.writeString(i->comment);
 		}
 
@@ -220,7 +220,7 @@ bool INIFile::saveToStream(WriteStream &stream) {
 		// Write out the key/value pairs
 		for (List<KeyValue>::iterator kv = i->keys.begin(); kv != i->keys.end(); ++kv) {
 			// Write out the comment, if any
-			if (! kv->comment.empty()) {
+			if (!kv->comment.empty()) {
 				stream.writeString(kv->comment);
 			}
 			// Write out the key/value pair
@@ -297,7 +297,6 @@ void INIFile::renameSection(const String &oldName, const String &newName) {
 	// - merge the two sections "oldName" and "newName"
 }
 
-
 bool INIFile::hasKey(const String &key, const String &section) const {
 	if (!isValidName(key)) {
 		warning("Invalid key name: %s", key.c_str());
@@ -328,7 +327,7 @@ void INIFile::removeKey(const String &key, const String &section) {
 
 	Section *s = getSection(section);
 	if (s)
-		 s->removeKey(key);
+		s->removeKey(key);
 }
 
 bool INIFile::getKey(const String &key, const String &section, String &value) const {
@@ -409,7 +408,7 @@ bool INIFile::Section::hasKey(const String &key) const {
 	return getKey(key) != nullptr;
 }
 
-const INIFile::KeyValue* INIFile::Section::getKey(const String &key) const {
+const INIFile::KeyValue *INIFile::Section::getKey(const String &key) const {
 	for (List<KeyValue>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
 		if (key.equalsIgnoreCase(i->key)) {
 			return &(*i);

@@ -30,6 +30,7 @@ namespace Titanic {
 class CServiceElevatorDoor : public CDoorAutoSoundEvent {
 	DECLARE_MESSAGE_MAP;
 	bool PreEnterNodeMsg(CPreEnterNodeMsg *msg);
+
 public:
 	CLASSDEF;
 	CServiceElevatorDoor();

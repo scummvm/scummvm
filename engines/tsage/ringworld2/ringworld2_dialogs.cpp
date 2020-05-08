@@ -22,13 +22,13 @@
 
 #include "common/translation.h"
 
-#include "tsage/tsage.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
-#include "tsage/staticres.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld2/ringworld2_dialogs.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 

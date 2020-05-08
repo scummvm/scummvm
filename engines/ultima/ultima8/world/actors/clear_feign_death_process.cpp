@@ -22,9 +22,9 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/world/actors/clear_feign_death_process.h"
-#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/clear_feign_death_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -34,7 +34,6 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ClearFeignDeathProcess, Process)
 
 ClearFeignDeathProcess::ClearFeignDeathProcess() : Process() {
-
 }
 
 ClearFeignDeathProcess::ClearFeignDeathProcess(Actor *actor_) {
@@ -56,7 +55,8 @@ void ClearFeignDeathProcess::run() {
 	a->clearActorFlag(Actor::ACT_FEIGNDEATH);
 
 	AudioProcess *audioproc = AudioProcess::get_instance();
-	if (audioproc) audioproc->playSFX(59, 0x60, _itemNum, 0);
+	if (audioproc)
+		audioproc->playSFX(59, 0x60, _itemNum, 0);
 
 	// done
 	terminate();
@@ -67,7 +67,8 @@ void ClearFeignDeathProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool ClearFeignDeathProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	return true;
 }

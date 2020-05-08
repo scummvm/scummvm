@@ -32,8 +32,7 @@
 namespace Mohawk {
 namespace RivenStacks {
 
-OSpit::OSpit(MohawkEngine_Riven *vm) :
-		RivenStack(vm, kStackOspit) {
+OSpit::OSpit(MohawkEngine_Riven *vm) : RivenStack(vm, kStackOspit) {
 
 	REGISTER_COMMAND(OSpit, xorollcredittime);
 	REGISTER_COMMAND(OSpit, xbookclick);
@@ -51,7 +50,7 @@ void OSpit::xorollcredittime(const ArgumentArray &args) {
 	// we should be using the Tay end game sequences.
 	if (_vm->_vars["returnstackid"] == kStackRspit) {
 		RivenScriptPtr script = _vm->_scriptMan->createScriptWithCommand(
-				new RivenStackChangeCommand(_vm, kStackRspit, 0x3338, true, false));
+		    new RivenStackChangeCommand(_vm, kStackRspit, 0x3338, true, false));
 		_vm->_scriptMan->runScript(script, false);
 		return;
 	}
@@ -59,11 +58,11 @@ void OSpit::xorollcredittime(const ArgumentArray &args) {
 	// You used the trap book... why? What were you thinking?
 	uint32 gehnState = _vm->_vars["agehn"];
 
-	if (gehnState == 0)         // Gehn who?
+	if (gehnState == 0) // Gehn who?
 		runEndGame(1, 9500, 1225);
-	else if (gehnState == 4)    // You freed him? Are you kidding me?
+	else if (gehnState == 4) // You freed him? Are you kidding me?
 		runEndGame(2, 12000, 558);
-	else                        // You already spoke with Gehn. What were you thinking?
+	else // You already spoke with Gehn. What were you thinking?
 		runEndGame(3, 8000, 857);
 }
 
@@ -108,25 +107,25 @@ void OSpit::xbookclick(const ArgumentArray &args) {
 		if (mouseIsDown()) {
 			if (hotspotRect.contains(getMousePosition())) {
 				// OK, we've used the trap book! We go for ride lady!
-				_vm->_video->closeVideos();                          // Stop all videos
-				_vm->_cursor->setCursor(kRivenHideCursor);          // Hide the cursor
+				_vm->_video->closeVideos();                // Stop all videos
+				_vm->_cursor->setCursor(kRivenHideCursor); // Hide the cursor
 				_vm->_gfx->scheduleTransition(kRivenTransitionBlend);
-				_vm->getCard()->drawPicture(3);                  // Black out the screen
-				_vm->_sound->playSound(0);                          // Play the link sound
+				_vm->getCard()->drawPicture(3); // Black out the screen
+				_vm->_sound->playSound(0);      // Play the link sound
 				_vm->delay(12000);
-				_vm->getCard()->playMovie(7);    // Activate Gehn Link Video
-				RivenVideo *linkVideo = _vm->_video->openSlot(1);             // Play Gehn Link Video
+				_vm->getCard()->playMovie(7);                     // Activate Gehn Link Video
+				RivenVideo *linkVideo = _vm->_video->openSlot(1); // Play Gehn Link Video
 				linkVideo->playBlocking();
 				_vm->_vars["ocage"] = 1;
-				_vm->_vars["agehn"] = 4;                            // Set Gehn to the trapped state
-				_vm->_vars["atrapbook"] = 1;                        // We've got the trap book again
-				_vm->_sound->playSound(0);                          // Play the link sound again
+				_vm->_vars["agehn"] = 4;     // Set Gehn to the trapped state
+				_vm->_vars["atrapbook"] = 1; // We've got the trap book again
+				_vm->_sound->playSound(0);   // Play the link sound again
 				_vm->_gfx->scheduleTransition(kRivenTransitionBlend);
-				_vm->changeToCard(_vm->getStack()->getCardStackId(0x2885));    // Link out!
+				_vm->changeToCard(_vm->getStack()->getCardStackId(0x2885)); // Link out!
 				_vm->_inventory->forceVisible(true);
 				_vm->delay(2000);
 				_vm->_inventory->forceVisible(false);
-				_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
+				_vm->_scriptMan->stopAllScripts(); // Stop all running scripts (so we don't remain in the cage)
 				return;
 			}
 		}

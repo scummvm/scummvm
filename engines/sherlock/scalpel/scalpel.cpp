@@ -20,21 +20,21 @@
  *
  */
 
+#include "sherlock/scalpel/scalpel.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "gui/saveload.h"
-#include "common/translation.h"
-#include "sherlock/scalpel/scalpel.h"
+#include "sherlock/animation.h"
+#include "sherlock/music.h"
+#include "sherlock/scalpel/3do/movie_decoder.h"
+#include "sherlock/scalpel/3do/scalpel_3do_screen.h"
 #include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/scalpel_screen.h"
-#include "sherlock/scalpel/3do/scalpel_3do_screen.h"
 #include "sherlock/scalpel/tsage/logo.h"
 #include "sherlock/sherlock.h"
-#include "sherlock/music.h"
-#include "sherlock/animation.h"
-#include "sherlock/scalpel/3do/movie_decoder.h"
 
 namespace Sherlock {
 
@@ -45,59 +45,51 @@ namespace Scalpel {
 // The following are a list of filenames played in the prologue that have
 // special effects associated with them at specific frames
 static const char *const PROLOGUE_NAMES[PROLOGUE_NAMES_COUNT] = {
-	"subway1", "subway2", "finale2", "suicid", "coff3", "coff4"
-};
+    "subway1", "subway2", "finale2", "suicid", "coff3", "coff4"};
 
 static const int PROLOGUE_FRAMES[6][9] = {
-	{ 4, 26, 54, 72, 92, 134, FRAMES_END },
-	{ 2, 80, 95, 117, 166, FRAMES_END },
-	{ 1, FRAMES_END },
-	{ 42, FRAMES_END },
-	{ FRAMES_END },
-	{ FRAMES_END }
-};
+    {4, 26, 54, 72, 92, 134, FRAMES_END},
+    {2, 80, 95, 117, 166, FRAMES_END},
+    {1, FRAMES_END},
+    {42, FRAMES_END},
+    {FRAMES_END},
+    {FRAMES_END}};
 
 #define TITLE_NAMES_COUNT 7
 
 // Title animations file list
 static const char *const TITLE_NAMES[TITLE_NAMES_COUNT] = {
-	"27pro1", "14note", "coff1", "coff2", "coff3", "coff4", "14kick"
-};
+    "27pro1", "14note", "coff1", "coff2", "coff3", "coff4", "14kick"};
 
 static const int TITLE_FRAMES[7][9] = {
-	{ 29, 131, FRAMES_END },
-	{ 55, 80, 95, 117, 166, FRAMES_END },
-	{ 15, FRAMES_END },
-	{ 4, 37, 92, FRAMES_END },
-	{ 2, 43, FRAMES_END },
-	{ 2, FRAMES_END },
-	{ 10, 50, FRAMES_END }
-};
+    {29, 131, FRAMES_END},
+    {55, 80, 95, 117, 166, FRAMES_END},
+    {15, FRAMES_END},
+    {4, 37, 92, FRAMES_END},
+    {2, 43, FRAMES_END},
+    {2, FRAMES_END},
+    {10, 50, FRAMES_END}};
 
 #define NUM_PLACES 100
 
 static const int MAP_X[NUM_PLACES] = {
-	0, 368, 0, 219, 0, 282, 0, 43, 0, 0, 396, 408, 0, 0, 0, 568, 37, 325,
-	28, 0, 263, 36, 148, 469, 342, 143, 443, 229, 298, 0, 157, 260, 432,
-	174, 0, 351, 0, 528, 0, 136, 0, 0, 0, 555, 165, 0, 506, 0, 0, 344, 0, 0
-};
+    0, 368, 0, 219, 0, 282, 0, 43, 0, 0, 396, 408, 0, 0, 0, 568, 37, 325,
+    28, 0, 263, 36, 148, 469, 342, 143, 443, 229, 298, 0, 157, 260, 432,
+    174, 0, 351, 0, 528, 0, 136, 0, 0, 0, 555, 165, 0, 506, 0, 0, 344, 0, 0};
 static const int MAP_Y[NUM_PLACES] = {
-	0, 147, 0, 166, 0, 109, 0, 61, 0, 0, 264, 70, 0, 0, 0, 266, 341, 30, 275,
-	0, 294, 146, 311, 230, 184, 268, 133, 94, 207, 0, 142, 142, 330, 255, 0,
-	37, 0, 70, 0, 116, 0, 0, 0, 50, 21, 0, 303, 0, 0, 229, 0, 0
-};
+    0, 147, 0, 166, 0, 109, 0, 61, 0, 0, 264, 70, 0, 0, 0, 266, 341, 30, 275,
+    0, 294, 146, 311, 230, 184, 268, 133, 94, 207, 0, 142, 142, 330, 255, 0,
+    37, 0, 70, 0, 116, 0, 0, 0, 50, 21, 0, 303, 0, 0, 229, 0, 0};
 
 static const int MAP_TRANSLATE[NUM_PLACES] = {
-	0, 0, 0, 1, 0, 2, 0, 3, 4, 0, 4, 6, 0, 0, 0, 8, 9, 10, 11, 0, 12, 13, 14, 7,
-	15, 16, 17, 18, 19, 0, 20, 21, 22, 23, 0, 24, 0, 25, 0, 26, 0, 0, 0, 27,
-	28, 0, 29, 0, 0, 30, 0
-};
+    0, 0, 0, 1, 0, 2, 0, 3, 4, 0, 4, 6, 0, 0, 0, 8, 9, 10, 11, 0, 12, 13, 14, 7,
+    15, 16, 17, 18, 19, 0, 20, 21, 22, 23, 0, 24, 0, 25, 0, 26, 0, 0, 0, 27,
+    28, 0, 29, 0, 0, 30, 0};
 
 static const byte MAP_SEQUENCES[3][MAX_FRAME] = {
-	{ 1, 1, 2, 3, 4, 0 },		// Overview Still
-	{ 5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0 },
-	{ 5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0 }
-};
+    {1, 1, 2, 3, 4, 0}, // Overview Still
+    {5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0},
+    {5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0}};
 
 #define MAX_PEOPLE 66
 
@@ -109,73 +101,72 @@ struct PeopleData {
 };
 
 const PeopleData PEOPLE_DATA[MAX_PEOPLE] = {
-	{ "HOLM", kFixedText_People_SherlockHolmes, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "WATS", kFixedText_People_DrWatson, { 6, 0, 0 }, { 5, 5, 6, 7, 8, 7, 8, 6, 0, 0 } },
-	{ "LEST", kFixedText_People_InspectorLestrade, { 4, 0, 0 }, { 2, 0, 0 } },
-	{ "CON1", kFixedText_People_ConstableOBrien, { 2, 0, 0 }, { 1, 0, 0 } },
-	{ "CON2", kFixedText_People_ConstableLewis, { 2, 0, 0 }, { 1, 0, 0 } },
-	{ "SHEI", kFixedText_People_SheilaParker, { 2, 0, 0 }, { 2, 3, 0, 0 } },
-	{ "HENR", kFixedText_People_HenryCarruthers, { 3, 0, 0 }, { 3, 0, 0 } },
-	{ "LESL", kFixedText_People_Lesley, { 9, 0, 0 }, { 1, 2, 3, 2, 1, 2, 3, 0, 0 } },
-	{ "USH1", kFixedText_People_AnUsher, { 13, 0, 0 }, { 13, 14, 0, 0 } },
-	{ "USH2", kFixedText_People_AnUsher, { 2, 0, 0 }, { 2, 0, 0 } },
-	{ "FRED", kFixedText_People_FredrickEpstein, { 4, 0, 0 }, { 1, 2, 3, 4, 3, 4, 3, 2, 0, 0 } },
-	{ "WORT", kFixedText_People_MrsWorthington, { 9, 0, 0 }, { 8, 0, 0 } },
-	{ "COAC", kFixedText_People_TheCoach, { 2, 0, 0 }, { 1, 2, 3, 4, 5, 4, 3, 2, 0, 0 } },
-	{ "PLAY", kFixedText_People_APlayer, { 8, 0, 0 }, { 7, 8, 0, 0 } },
-	{ "WBOY", kFixedText_People_Tim, { 13, 0, 0 }, { 12, 13, 0, 0 } },
-	{ "JAME", kFixedText_People_JamesSanders, { 6, 0, 0 }, { 3, 4, 0, 0 } },
-	{ "BELL", kFixedText_People_Belle, { 1, 0, 0 }, { 4, 5, 0, 0 } },
-	{ "GIRL", kFixedText_People_CleaningGirl, { 20, 0, 0 }, { 14, 15, 16, 17, 18, 19, 20, 20, 20, 0, 0 } },
-	{ "EPST", kFixedText_People_FredrickEpstein, { 17, 0, 0 }, { 16, 17, 18, 18, 18, 17, 17, 0, 0 } },
-	{ "WIGG", kFixedText_People_Wiggins, { 3, 0, 0 }, { 2, 3, 0, 0 } },
-	{ "PAUL", kFixedText_People_Paul, { 2, 0, 0 }, { 1, 2, 0, 0 } },
-	{ "BART", kFixedText_People_TheBartender, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "DIRT", kFixedText_People_ADirtyDrunk, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "SHOU", kFixedText_People_AShoutingDrunk, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "STAG", kFixedText_People_AStaggeringDrunk, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "BOUN", kFixedText_People_TheBouncer, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "SAND", kFixedText_People_JamesSanders, { 6, 0, 0 }, { 5, 6, 0, 0 } },
-	{ "CORO", kFixedText_People_TheCoroner, { 6, 0, 0 }, { 4, 5, 0, 0 } },
-	{ "EQUE", kFixedText_People_ReginaldSnipes, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "GEOR", kFixedText_People_GeorgeBlackwood, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "LARS", kFixedText_People_Lars, { 7, 0, 0 }, { 5, 6, 0, 0 } },
-	{ "PARK", kFixedText_People_SheilaParker, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "CHEM", kFixedText_People_TheChemist, { 8, 0, 0 }, { 8, 9, 0, 0 } },
-	{ "GREG", kFixedText_People_InspectorGregson, { 6, 0, 0 }, { 5, 6, 0, 0 } },
-	{ "LAWY", kFixedText_People_JacobFarthington, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "MYCR", kFixedText_People_Mycroft, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "SHER", kFixedText_People_OldSherman, { 7, 0, 0 }, { 7, 8, 0, 0 } },
-	{ "CHMB", kFixedText_People_Richard, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "BARM", kFixedText_People_TheBarman, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "DAND", kFixedText_People_ADandyPlayer, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "ROUG", kFixedText_People_ARoughlookingPlayer, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "SPEC", kFixedText_People_ASpectator, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "HUNT", kFixedText_People_RobertHunt, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "VIOL", kFixedText_People_Violet, { 3, 0, 0 }, { 3, 4, 0, 0 } },
-	{ "PETT", kFixedText_People_Pettigrew, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "APPL", kFixedText_People_Augie, { 8, 0, 0 }, { 14, 15, 0, 0 } },
-	{ "ANNA", kFixedText_People_AnnaCarroway, { 16, 0, 0 }, { 3, 4, 5, 6, 0, 0 } },
-	{ "GUAR", kFixedText_People_AGuard, { 1, 0, 0 }, { 4, 5, 6, 0, 0 } },
-	{ "ANTO", kFixedText_People_AntonioCaruso, { 8, 0, 0 }, { 7, 8, 0, 0 } },
-	{ "TOBY", kFixedText_People_TobyTheDog, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "KING", kFixedText_People_SimonKingsley, { 13, 0, 0 }, { 13, 14, 0, 0 } },
-	{ "ALFR", kFixedText_People_Alfred, { 2, 0, 0 }, { 2, 3, 0, 0 } },
-	{ "LADY", kFixedText_People_LadyBrumwell, { 1, 0, 0 }, { 3, 4, 0, 0 } },
-	{ "ROSA", kFixedText_People_MadameRosa, { 1, 0, 0 }, { 1, 30, 0, 0 } },
-	{ "LADB", kFixedText_People_LadyBrumwell, { 1, 0, 0 }, { 3, 4, 0, 0 } },
-	{ "MOOR", kFixedText_People_JosephMoorehead, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "BEAL", kFixedText_People_MrsBeale, { 5, 0, 0 }, { 14, 15, 16, 17, 18, 19, 20, 0, 0 } },
-	{ "LION", kFixedText_People_Felix, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "HOLL", kFixedText_People_Hollingston, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "CALL", kFixedText_People_ConstableCallaghan, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "JERE", kFixedText_People_SergeantDuncan, { 2, 0, 0 }, { 1, 1, 2, 2, 0, 0 } },
-	{ "LORD", kFixedText_People_LordBrumwell, { 1, 0, 0 }, { 9, 10, 0, 0 } },
-	{ "NIGE", kFixedText_People_NigelJaimeson, { 1, 0, 0 }, { 1, 2, 0, 138, 3, 4, 0, 138, 0, 0 } },
-	{ "JONA", kFixedText_People_Jonas, { 1, 0, 0 }, { 1, 8, 0, 0 } },
-	{ "DUGA", kFixedText_People_ConstableDugan, { 1, 0, 0 }, { 1, 0, 0 } },
-	{ "INSP", kFixedText_People_InspectorLestrade, { 4, 0, 0 }, { 2, 0, 0 } }
-};
+    {"HOLM", kFixedText_People_SherlockHolmes, {1, 0, 0}, {1, 0, 0}},
+    {"WATS", kFixedText_People_DrWatson, {6, 0, 0}, {5, 5, 6, 7, 8, 7, 8, 6, 0, 0}},
+    {"LEST", kFixedText_People_InspectorLestrade, {4, 0, 0}, {2, 0, 0}},
+    {"CON1", kFixedText_People_ConstableOBrien, {2, 0, 0}, {1, 0, 0}},
+    {"CON2", kFixedText_People_ConstableLewis, {2, 0, 0}, {1, 0, 0}},
+    {"SHEI", kFixedText_People_SheilaParker, {2, 0, 0}, {2, 3, 0, 0}},
+    {"HENR", kFixedText_People_HenryCarruthers, {3, 0, 0}, {3, 0, 0}},
+    {"LESL", kFixedText_People_Lesley, {9, 0, 0}, {1, 2, 3, 2, 1, 2, 3, 0, 0}},
+    {"USH1", kFixedText_People_AnUsher, {13, 0, 0}, {13, 14, 0, 0}},
+    {"USH2", kFixedText_People_AnUsher, {2, 0, 0}, {2, 0, 0}},
+    {"FRED", kFixedText_People_FredrickEpstein, {4, 0, 0}, {1, 2, 3, 4, 3, 4, 3, 2, 0, 0}},
+    {"WORT", kFixedText_People_MrsWorthington, {9, 0, 0}, {8, 0, 0}},
+    {"COAC", kFixedText_People_TheCoach, {2, 0, 0}, {1, 2, 3, 4, 5, 4, 3, 2, 0, 0}},
+    {"PLAY", kFixedText_People_APlayer, {8, 0, 0}, {7, 8, 0, 0}},
+    {"WBOY", kFixedText_People_Tim, {13, 0, 0}, {12, 13, 0, 0}},
+    {"JAME", kFixedText_People_JamesSanders, {6, 0, 0}, {3, 4, 0, 0}},
+    {"BELL", kFixedText_People_Belle, {1, 0, 0}, {4, 5, 0, 0}},
+    {"GIRL", kFixedText_People_CleaningGirl, {20, 0, 0}, {14, 15, 16, 17, 18, 19, 20, 20, 20, 0, 0}},
+    {"EPST", kFixedText_People_FredrickEpstein, {17, 0, 0}, {16, 17, 18, 18, 18, 17, 17, 0, 0}},
+    {"WIGG", kFixedText_People_Wiggins, {3, 0, 0}, {2, 3, 0, 0}},
+    {"PAUL", kFixedText_People_Paul, {2, 0, 0}, {1, 2, 0, 0}},
+    {"BART", kFixedText_People_TheBartender, {1, 0, 0}, {1, 0, 0}},
+    {"DIRT", kFixedText_People_ADirtyDrunk, {1, 0, 0}, {1, 0, 0}},
+    {"SHOU", kFixedText_People_AShoutingDrunk, {1, 0, 0}, {1, 0, 0}},
+    {"STAG", kFixedText_People_AStaggeringDrunk, {1, 0, 0}, {1, 0, 0}},
+    {"BOUN", kFixedText_People_TheBouncer, {1, 0, 0}, {1, 0, 0}},
+    {"SAND", kFixedText_People_JamesSanders, {6, 0, 0}, {5, 6, 0, 0}},
+    {"CORO", kFixedText_People_TheCoroner, {6, 0, 0}, {4, 5, 0, 0}},
+    {"EQUE", kFixedText_People_ReginaldSnipes, {1, 0, 0}, {1, 0, 0}},
+    {"GEOR", kFixedText_People_GeorgeBlackwood, {1, 0, 0}, {1, 0, 0}},
+    {"LARS", kFixedText_People_Lars, {7, 0, 0}, {5, 6, 0, 0}},
+    {"PARK", kFixedText_People_SheilaParker, {1, 0, 0}, {1, 0, 0}},
+    {"CHEM", kFixedText_People_TheChemist, {8, 0, 0}, {8, 9, 0, 0}},
+    {"GREG", kFixedText_People_InspectorGregson, {6, 0, 0}, {5, 6, 0, 0}},
+    {"LAWY", kFixedText_People_JacobFarthington, {1, 0, 0}, {1, 0, 0}},
+    {"MYCR", kFixedText_People_Mycroft, {1, 0, 0}, {1, 0, 0}},
+    {"SHER", kFixedText_People_OldSherman, {7, 0, 0}, {7, 8, 0, 0}},
+    {"CHMB", kFixedText_People_Richard, {1, 0, 0}, {1, 0, 0}},
+    {"BARM", kFixedText_People_TheBarman, {1, 0, 0}, {1, 0, 0}},
+    {"DAND", kFixedText_People_ADandyPlayer, {1, 0, 0}, {1, 0, 0}},
+    {"ROUG", kFixedText_People_ARoughlookingPlayer, {1, 0, 0}, {1, 0, 0}},
+    {"SPEC", kFixedText_People_ASpectator, {1, 0, 0}, {1, 0, 0}},
+    {"HUNT", kFixedText_People_RobertHunt, {1, 0, 0}, {1, 0, 0}},
+    {"VIOL", kFixedText_People_Violet, {3, 0, 0}, {3, 4, 0, 0}},
+    {"PETT", kFixedText_People_Pettigrew, {1, 0, 0}, {1, 0, 0}},
+    {"APPL", kFixedText_People_Augie, {8, 0, 0}, {14, 15, 0, 0}},
+    {"ANNA", kFixedText_People_AnnaCarroway, {16, 0, 0}, {3, 4, 5, 6, 0, 0}},
+    {"GUAR", kFixedText_People_AGuard, {1, 0, 0}, {4, 5, 6, 0, 0}},
+    {"ANTO", kFixedText_People_AntonioCaruso, {8, 0, 0}, {7, 8, 0, 0}},
+    {"TOBY", kFixedText_People_TobyTheDog, {1, 0, 0}, {1, 0, 0}},
+    {"KING", kFixedText_People_SimonKingsley, {13, 0, 0}, {13, 14, 0, 0}},
+    {"ALFR", kFixedText_People_Alfred, {2, 0, 0}, {2, 3, 0, 0}},
+    {"LADY", kFixedText_People_LadyBrumwell, {1, 0, 0}, {3, 4, 0, 0}},
+    {"ROSA", kFixedText_People_MadameRosa, {1, 0, 0}, {1, 30, 0, 0}},
+    {"LADB", kFixedText_People_LadyBrumwell, {1, 0, 0}, {3, 4, 0, 0}},
+    {"MOOR", kFixedText_People_JosephMoorehead, {1, 0, 0}, {1, 0, 0}},
+    {"BEAL", kFixedText_People_MrsBeale, {5, 0, 0}, {14, 15, 16, 17, 18, 19, 20, 0, 0}},
+    {"LION", kFixedText_People_Felix, {1, 0, 0}, {1, 0, 0}},
+    {"HOLL", kFixedText_People_Hollingston, {1, 0, 0}, {1, 0, 0}},
+    {"CALL", kFixedText_People_ConstableCallaghan, {1, 0, 0}, {1, 0, 0}},
+    {"JERE", kFixedText_People_SergeantDuncan, {2, 0, 0}, {1, 1, 2, 2, 0, 0}},
+    {"LORD", kFixedText_People_LordBrumwell, {1, 0, 0}, {9, 10, 0, 0}},
+    {"NIGE", kFixedText_People_NigelJaimeson, {1, 0, 0}, {1, 2, 0, 138, 3, 4, 0, 138, 0, 0}},
+    {"JONA", kFixedText_People_Jonas, {1, 0, 0}, {1, 8, 0, 0}},
+    {"DUGA", kFixedText_People_ConstableDugan, {1, 0, 0}, {1, 0, 0}},
+    {"INSP", kFixedText_People_InspectorLestrade, {4, 0, 0}, {2, 0, 0}}};
 
 uint INFO_BLACK;
 uint BORDER_COLOR;
@@ -199,8 +190,7 @@ uint PEN_COLOR;
 
 #define FROM_RGB(r, g, b) pixelFormatRGB565.RGBToColor(r, g, b)
 
-ScalpelEngine::ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
-		SherlockEngine(syst, gameDesc) {
+ScalpelEngine::ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) : SherlockEngine(syst, gameDesc) {
 	_darts = nullptr;
 	_mapResult = 0;
 
@@ -258,8 +248,8 @@ void ScalpelEngine::setupGraphics() {
 
 		// First try for a 640x400 mode
 		g_system->beginGFXTransaction();
-			initCommonGFX();
-			g_system->initSize(640, 400, &pixelFormatRGB565);
+		initCommonGFX();
+		g_system->initSize(640, 400, &pixelFormatRGB565);
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 		if (gfxError == OSystem::kTransactionSuccess) {
@@ -281,8 +271,8 @@ void ScalpelEngine::initialize() {
 	_darts = new Darts(this);
 
 	_flags.resize(100 * 8);
-	_flags[3] = true;		// Turn on Alley
-	_flags[39] = true;		// Turn on Baker Street
+	_flags[3] = true;  // Turn on Alley
+	_flags[39] = true; // Turn on Baker Street
 
 	if (!isDemo()) {
 		// Load the map co-ordinates for each scene and sequence data
@@ -302,7 +292,7 @@ void ScalpelEngine::initialize() {
 	for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
 		peopleNamePtr = fixedText.getText(PEOPLE_DATA[idx].fixedTextId);
 		_people->_characters.push_back(PersonData(peopleNamePtr, PEOPLE_DATA[idx].portrait,
-			PEOPLE_DATA[idx].stillSequences, PEOPLE_DATA[idx].talkSequences));
+		                                          PEOPLE_DATA[idx].stillSequences, PEOPLE_DATA[idx].talkSequences));
 	}
 
 	_animation->setPrologueNames(&PROLOGUE_NAMES[0], PROLOGUE_NAMES_COUNT);
@@ -645,7 +635,7 @@ bool ScalpelEngine::scrollCredits() {
 	_screen->_backBuffer1.SHblitFrom(*_screen);
 
 	// Loop for showing the credits
-	for(int idx = 0; idx < 600 && !_events->kbHit() && !shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 600 && !_events->kbHit() && !shouldQuit(); ++idx) {
 		// Copy the entire screen background before writing text
 		_screen->SHblitFrom(_screen->_backBuffer1);
 
@@ -658,7 +648,7 @@ bool ScalpelEngine::scrollCredits() {
 		// Don't show credit text on the top and bottom ten rows of the screen
 		_screen->SHblitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, _screen->width(), 10));
 		_screen->SHblitFrom(_screen->_backBuffer1, Common::Point(0, _screen->height() - 10),
-			Common::Rect(0, _screen->height() - 10, _screen->width(), _screen->height()));
+		                    Common::Rect(0, _screen->height() - 10, _screen->width(), _screen->height()));
 
 		_events->delay(100);
 	}
@@ -962,34 +952,34 @@ void ScalpelEngine::loadInventory() {
 	ScalpelFixedText &fixedText = *(ScalpelFixedText *)_fixedText;
 	Inventory &inv = *_inventory;
 
-	Common::String fixedText_Message    = fixedText.getText(kFixedText_InitInventory_Message);
+	Common::String fixedText_Message = fixedText.getText(kFixedText_InitInventory_Message);
 	Common::String fixedText_HolmesCard = fixedText.getText(kFixedText_InitInventory_HolmesCard);
-	Common::String fixedText_Tickets    = fixedText.getText(kFixedText_InitInventory_Tickets);
-	Common::String fixedText_CuffLink   = fixedText.getText(kFixedText_InitInventory_CuffLink);
-	Common::String fixedText_WireHook   = fixedText.getText(kFixedText_InitInventory_WireHook);
-	Common::String fixedText_Note       = fixedText.getText(kFixedText_InitInventory_Note);
-	Common::String fixedText_OpenWatch  = fixedText.getText(kFixedText_InitInventory_OpenWatch);
-	Common::String fixedText_Paper      = fixedText.getText(kFixedText_InitInventory_Paper);
-	Common::String fixedText_Letter     = fixedText.getText(kFixedText_InitInventory_Letter);
-	Common::String fixedText_Tarot      = fixedText.getText(kFixedText_InitInventory_Tarot);
-	Common::String fixedText_OrnateKey  = fixedText.getText(kFixedText_InitInventory_OrnateKey);
+	Common::String fixedText_Tickets = fixedText.getText(kFixedText_InitInventory_Tickets);
+	Common::String fixedText_CuffLink = fixedText.getText(kFixedText_InitInventory_CuffLink);
+	Common::String fixedText_WireHook = fixedText.getText(kFixedText_InitInventory_WireHook);
+	Common::String fixedText_Note = fixedText.getText(kFixedText_InitInventory_Note);
+	Common::String fixedText_OpenWatch = fixedText.getText(kFixedText_InitInventory_OpenWatch);
+	Common::String fixedText_Paper = fixedText.getText(kFixedText_InitInventory_Paper);
+	Common::String fixedText_Letter = fixedText.getText(kFixedText_InitInventory_Letter);
+	Common::String fixedText_Tarot = fixedText.getText(kFixedText_InitInventory_Tarot);
+	Common::String fixedText_OrnateKey = fixedText.getText(kFixedText_InitInventory_OrnateKey);
 	Common::String fixedText_PawnTicket = fixedText.getText(kFixedText_InitInventory_PawnTicket);
 
 	// Initial inventory
 	inv._holdings = 2;
-	inv.push_back(InventoryItem(0,     "Message", fixedText_Message,    "_ITEM03A"));
+	inv.push_back(InventoryItem(0, "Message", fixedText_Message, "_ITEM03A"));
 	inv.push_back(InventoryItem(0, "Holmes Card", fixedText_HolmesCard, "_ITEM07A"));
 
 	// Hidden items
-	inv.push_back(InventoryItem(95,  "Tickets",     fixedText_Tickets,    "_ITEM10A"));
-	inv.push_back(InventoryItem(138, "Cuff Link",   fixedText_CuffLink,   "_ITEM04A"));
-	inv.push_back(InventoryItem(138, "Wire Hook",   fixedText_WireHook,   "_ITEM06A"));
-	inv.push_back(InventoryItem(150, "Note",        fixedText_Note,       "_ITEM13A"));
-	inv.push_back(InventoryItem(481, "Open Watch",  fixedText_OpenWatch,  "_ITEM62A"));
-	inv.push_back(InventoryItem(481, "Paper",       fixedText_Paper,      "_ITEM44A"));
-	inv.push_back(InventoryItem(532, "Letter",      fixedText_Letter,     "_ITEM68A"));
-	inv.push_back(InventoryItem(544, "Tarot",       fixedText_Tarot,      "_ITEM71A"));
-	inv.push_back(InventoryItem(544, "Ornate Key",  fixedText_OrnateKey,  "_ITEM70A"));
+	inv.push_back(InventoryItem(95, "Tickets", fixedText_Tickets, "_ITEM10A"));
+	inv.push_back(InventoryItem(138, "Cuff Link", fixedText_CuffLink, "_ITEM04A"));
+	inv.push_back(InventoryItem(138, "Wire Hook", fixedText_WireHook, "_ITEM06A"));
+	inv.push_back(InventoryItem(150, "Note", fixedText_Note, "_ITEM13A"));
+	inv.push_back(InventoryItem(481, "Open Watch", fixedText_OpenWatch, "_ITEM62A"));
+	inv.push_back(InventoryItem(481, "Paper", fixedText_Paper, "_ITEM44A"));
+	inv.push_back(InventoryItem(532, "Letter", fixedText_Letter, "_ITEM68A"));
+	inv.push_back(InventoryItem(544, "Tarot", fixedText_Tarot, "_ITEM71A"));
+	inv.push_back(InventoryItem(544, "Ornate Key", fixedText_OrnateKey, "_ITEM70A"));
 	inv.push_back(InventoryItem(586, "Pawn ticket", fixedText_PawnTicket, "_ITEM16A"));
 }
 
@@ -1106,23 +1096,23 @@ void ScalpelEngine::startScene() {
 
 		switch (_scene->_goToScene) {
 		case 52:
-			_scene->_goToScene = LAWYER_OFFICE;		// Go to the Lawyer's Office
-			_map->_bigPos = Common::Point(0, 0);	// Overland scroll position
-			_map->_overPos = Common::Point(22900 - 600, 9400 + 900);	// Overland position
+			_scene->_goToScene = LAWYER_OFFICE;                      // Go to the Lawyer's Office
+			_map->_bigPos = Common::Point(0, 0);                     // Overland scroll position
+			_map->_overPos = Common::Point(22900 - 600, 9400 + 900); // Overland position
 			_map->_oldCharPoint = LAWYER_OFFICE;
 			break;
 
 		case 53:
-			_scene->_goToScene = STATION;			// Go to St. Pancras Station
-			_map->_bigPos = Common::Point(0, 0);	// Overland scroll position
-			_map->_overPos = Common::Point(32500 - 600, 3000 + 900);	// Overland position
+			_scene->_goToScene = STATION;                            // Go to St. Pancras Station
+			_map->_bigPos = Common::Point(0, 0);                     // Overland scroll position
+			_map->_overPos = Common::Point(32500 - 600, 3000 + 900); // Overland position
 			_map->_oldCharPoint = STATION;
 			break;
 
 		default:
-			_scene->_goToScene = BAKER_STREET;		// Back to Baker st.
-			_map->_bigPos = Common::Point(0, 0);	// Overland scroll position
-			_map->_overPos = Common::Point(14500 - 600, 8400 + 900);	// Overland position
+			_scene->_goToScene = BAKER_STREET;                       // Back to Baker st.
+			_map->_bigPos = Common::Point(0, 0);                     // Overland scroll position
+			_map->_overPos = Common::Point(14500 - 600, 8400 + 900); // Overland position
 			_map->_oldCharPoint = BAKER_STREET;
 			break;
 		}
@@ -1158,7 +1148,7 @@ void ScalpelEngine::eraseBrumwellMirror() {
 	// If player is in range of the mirror, then restore background from the secondary back buffer
 	if (Common::Rect(70, 100, 200, 200).contains(pt)) {
 		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(137, 18),
-			Common::Rect(137, 18, 184, 74));
+		                                 Common::Rect(137, 18, 184, 74));
 	}
 }
 
@@ -1168,7 +1158,7 @@ void ScalpelEngine::doBrumwellMirror() {
 
 	Common::Point pt((*_people)[HOLMES]._position.x / FIXED_INT_MULTIPLIER, (*_people)[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 	int frameNum = player._walkSequences[player._sequenceNumber][player._frameNumber] +
-		player._walkSequences[player._sequenceNumber][0] - 2;
+	               player._walkSequences[player._sequenceNumber][0] - 2;
 
 	switch ((*_people)[HOLMES]._sequenceNumber) {
 	case WALK_DOWN:
@@ -1216,24 +1206,22 @@ void ScalpelEngine::doBrumwellMirror() {
 		ImageFrame &imageFrame = (*people[HOLMES]._images)[frameNum];
 
 		// Draw the mirror image of Holmes
-		bool flipped = people[HOLMES]._sequenceNumber == WALK_LEFT || people[HOLMES]._sequenceNumber == STOP_LEFT
-			|| people[HOLMES]._sequenceNumber == WALK_UPRIGHT || people[HOLMES]._sequenceNumber == STOP_UPRIGHT
-			|| people[HOLMES]._sequenceNumber == WALK_DOWNLEFT || people[HOLMES]._sequenceNumber == STOP_DOWNLEFT;
+		bool flipped = people[HOLMES]._sequenceNumber == WALK_LEFT || people[HOLMES]._sequenceNumber == STOP_LEFT || people[HOLMES]._sequenceNumber == WALK_UPRIGHT || people[HOLMES]._sequenceNumber == STOP_UPRIGHT || people[HOLMES]._sequenceNumber == WALK_DOWNLEFT || people[HOLMES]._sequenceNumber == STOP_DOWNLEFT;
 		_screen->_backBuffer1.SHtransBlitFrom(imageFrame, pt + Common::Point(38, -imageFrame._frame.h - 25), flipped);
 
 		// Redraw the mirror borders to prevent the drawn image of Holmes from appearing outside of the mirror
 		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(114, 18),
-			Common::Rect(114, 18, 137, 114));
+		                                 Common::Rect(114, 18, 137, 114));
 		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(137, 70),
-			Common::Rect(137, 70, 142, 114));
+		                                 Common::Rect(137, 70, 142, 114));
 		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(142, 71),
-			Common::Rect(142, 71, 159, 114));
+		                                 Common::Rect(142, 71, 159, 114));
 		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(159, 72),
-			Common::Rect(159, 72, 170, 116));
+		                                 Common::Rect(159, 72, 170, 116));
 		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(170, 73),
-			Common::Rect(170, 73, 184, 114));
+		                                 Common::Rect(170, 73, 184, 114));
 		_screen->_backBuffer1.SHblitFrom(_screen->_backBuffer2, Common::Point(184, 18),
-			Common::Rect(184, 18, 212, 114));
+		                                 Common::Rect(184, 18, 212, 114));
 	}
 }
 
@@ -1244,7 +1232,6 @@ void ScalpelEngine::flushBrumwellMirror() {
 	if (Common::Rect(70, 100, 200, 200).contains(pt))
 		_screen->slamArea(137, 18, 47, 56);
 }
-
 
 void ScalpelEngine::showScummVMSaveDialog() {
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -1335,7 +1322,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 						for (int downscaleX = 0; downscaleX < width / 2; downscaleX++) {
 							// get 4 pixel colors
 							uint16 downscaleColor = *downscaleSource1Ptr;
-							uint32 downscaleRed = downscaleColor >> 11; // 5 bits
+							uint32 downscaleRed = downscaleColor >> 11;           // 5 bits
 							uint32 downscaleGreen = (downscaleColor >> 5) & 0x3f; // 6 bits
 							uint32 downscaleBlue = downscaleColor & 0x1f;
 

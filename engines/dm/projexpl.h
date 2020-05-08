@@ -42,30 +42,31 @@ class Projectile;
 
 class ProjExpl {
 	DMEngine *_vm;
+
 public:
-	int16 _creatureDamageOutcome; // @ G0364_i_CreatureDamageOutcome
+	int16 _creatureDamageOutcome;     // @ G0364_i_CreatureDamageOutcome
 	int16 _secondaryDirToOrFromParty; // @ G0363_i_SecondaryDirectionToOrFromParty
-	int32 _lastCreatureAttackTime; // @ G0361_l_LastCreatureAttackTime
-	bool _createLauncherProjectile; // @ G0365_B_CreateLauncherProjectile
-	int16 _projectilePoisonAttack; // @ G0366_i_ProjectilePoisonAttack
-	int16 _projectileAttackType; // @ G0367_i_ProjectileAttackType
-	int32 _lastPartyMovementTime; // @ G0362_l_LastPartyMovementTime
+	int32 _lastCreatureAttackTime;    // @ G0361_l_LastCreatureAttackTime
+	bool _createLauncherProjectile;   // @ G0365_B_CreateLauncherProjectile
+	int16 _projectilePoisonAttack;    // @ G0366_i_ProjectilePoisonAttack
+	int16 _projectileAttackType;      // @ G0367_i_ProjectileAttackType
+	int32 _lastPartyMovementTime;     // @ G0362_l_LastPartyMovementTime
 
 	explicit ProjExpl(DMEngine *vm);
 
 	void createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell, Direction dir,
-							   byte kineticEnergy, byte attack, byte stepEnergy); // @ F0212_PROJECTILE_Create
+	                      byte kineticEnergy, byte attack, byte stepEnergy); // @ F0212_PROJECTILE_Create
 	bool hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, int16 mapYCombo,
-										  int16 cell, Thing projectileThing); // @ F0217_PROJECTILE_HasImpactOccured
+	                                 int16 cell, Thing projectileThing);   // @ F0217_PROJECTILE_HasImpactOccured
 	uint16 getProjectileImpactAttack(Projectile *projectile, Thing thing); // @ F0216_PROJECTILE_GetImpactAttack
 	void createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
-							  uint16 mapYCombo, uint16 cell); // @ F0213_EXPLOSION_Create
-	int16 projectileGetImpactCount(int16 impactType, int16 mapX, int16 mapY, int16 cell); // @ F0218_PROJECTILE_GetImpactCount
-	void projectileDeleteEvent(Thing thing); // @ F0214_PROJECTILE_DeleteEvent
+	                     uint16 mapYCombo, uint16 cell);                                    // @ F0213_EXPLOSION_Create
+	int16 projectileGetImpactCount(int16 impactType, int16 mapX, int16 mapY, int16 cell);   // @ F0218_PROJECTILE_GetImpactCount
+	void projectileDeleteEvent(Thing thing);                                                // @ F0214_PROJECTILE_DeleteEvent
 	void projectileDelete(Thing projectileThing, Thing *groupSlot, int16 mapX, int16 mapY); // @ F0215_PROJECTILE_Delete
-	void processEvents48To49(TimelineEvent *event); // @ F0219_PROJECTILE_ProcessEvents48To49_Projectile
-	void processEvent25(TimelineEvent *event); // @ F0220_EXPLOSION_ProcessEvent25_Explosion
+	void processEvents48To49(TimelineEvent *event);                                         // @ F0219_PROJECTILE_ProcessEvents48To49_Projectile
+	void processEvent25(TimelineEvent *event);                                              // @ F0220_EXPLOSION_ProcessEvent25_Explosion
 };
-}
+} // namespace DM
 
 #endif

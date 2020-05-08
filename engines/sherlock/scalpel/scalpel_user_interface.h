@@ -56,9 +56,10 @@ enum {
 
 class Settings;
 
-class ScalpelUserInterface: public UserInterface {
+class ScalpelUserInterface : public UserInterface {
 	friend class Settings;
 	friend class Sherlock::Talk;
+
 private:
 	char _keyPress;
 	int _lookHelp;
@@ -72,6 +73,7 @@ private:
 	Common::String _cAnimStr;
 	Common::String _descStr;
 	int _find;
+
 private:
 	/**
 	 * Draws the image for a user interface button in the down/pressed state.
@@ -149,15 +151,16 @@ private:
 	 * Checks to see whether a USE action is valid on the given object
 	 */
 	void checkUseAction(const UseType *use, const Common::String &invName, FixedTextActionId fixedTextActionId,
-		int objNum, bool giveMode);
+	                    int objNum, bool giveMode);
 
 	/**
 	 * Print the previously selected object's decription
 	 */
 	void printObjectDesc(const Common::String &str, bool firstTime);
+
 public:
 	ImageFile *_controlPanel;
-        ImageFile *_controls;
+	ImageFile *_controls;
 	int _oldUse;
 
 	byte _hotkeyLook;
@@ -169,9 +172,9 @@ public:
 	byte _hotkeyInventory;
 	byte _hotkeyUse;
 	byte _hotkeyGive;
-	byte _hotkeyJournal; // not used for 3DO
-	byte _hotkeyFiles; // not used for 3DO
-	byte _hotkeySetUp; // SetUp-button is in the spot of Journal for 3DO
+	byte _hotkeyJournal;  // not used for 3DO
+	byte _hotkeyFiles;    // not used for 3DO
+	byte _hotkeySetUp;    // SetUp-button is in the spot of Journal for 3DO
 	byte _hotkeyLoadGame; // 3DO
 	byte _hotkeySaveGame; // 3DO
 
@@ -199,6 +202,7 @@ public:
 	void examine();
 
 	void offsetButton3DO(Common::Point &pt, int num);
+
 public:
 	/**
 	 * Resets the user interface

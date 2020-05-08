@@ -25,8 +25,8 @@
 #ifndef NEVERHOOD_MODULES_MODULE1500_H
 #define NEVERHOOD_MODULES_MODULE1500_H
 
-#include "neverhood/neverhood.h"
 #include "neverhood/module.h"
+#include "neverhood/neverhood.h"
 #include "neverhood/scene.h"
 #include "neverhood/smackerscene.h"
 
@@ -35,6 +35,7 @@ namespace Neverhood {
 class Module1500 : public Module {
 public:
 	Module1500(NeverhoodEngine *vm, Module *parentModule, int which);
+
 protected:
 	int _sceneNum;
 	void createScene(int sceneNum, int which);
@@ -44,6 +45,7 @@ protected:
 class Scene1501 : public Scene {
 public:
 	Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3);
+
 protected:
 	int _countdown1;
 	int _countdown2;

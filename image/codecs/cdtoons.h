@@ -51,7 +51,10 @@ public:
 	Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 	bool containsPalette() const { return true; }
-	const byte *getPalette() { _dirtyPalette = false; return _palette; }
+	const byte *getPalette() {
+		_dirtyPalette = false;
+		return _palette;
+	}
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 private:

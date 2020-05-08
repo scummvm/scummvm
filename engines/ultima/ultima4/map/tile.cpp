@@ -22,17 +22,17 @@
 
 #include "ultima/ultima4/map/tile.h"
 #include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/game/creature.h"
 #include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imagemgr.h"
 #include "ultima/ultima4/gfx/screen.h"
 #include "ultima/ultima4/map/location.h"
-#include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/map/tileanim.h"
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -40,31 +40,14 @@ namespace Ultima4 {
 TileId Tile::_nextId = 0;
 
 Tile::Tile(Tileset *tileset)
-	: _id(_nextId++)
-	, _name()
-	, _tileSet(tileset)
-	, _w(0)
-	, _h(0)
-	, _frames(0)
-	, _scale(1)
-	, _anim(nullptr)
-	, _opaque(false)
-	, _foreground()
-	, _waterForeground()
-	, rule(nullptr)
-	, _imageName()
-	, _looksLike()
-	, _image(nullptr)
-	, _tiledInDungeon(false)
-	, _directions()
-	, _animationRule("") {
+    : _id(_nextId++), _name(), _tileSet(tileset), _w(0), _h(0), _frames(0), _scale(1), _anim(nullptr), _opaque(false), _foreground(), _waterForeground(), rule(nullptr), _imageName(), _looksLike(), _image(nullptr), _tiledInDungeon(false), _directions(), _animationRule("") {
 }
 
 void Tile::loadProperties(const ConfigElement &conf) {
 	if (conf.getName() != "tile")
 		return;
 
-	_name = conf.getString("name");	// Get the name of the tile
+	_name = conf.getString("name"); // Get the name of the tile
 
 	// Get the animation for the tile, if one is specified
 	if (conf.exists("animation")) {
@@ -83,7 +66,8 @@ void Tile::loadProperties(const ConfigElement &conf) {
 		rule = g_tileRules->findByName(conf.getString("rule"));
 		if (rule == nullptr)
 			rule = g_tileRules->findByName("default");
-	} else rule = g_tileRules->findByName("default");
+	} else
+		rule = g_tileRules->findByName("default");
 
 	// Get the number of frames the tile has
 	_frames = conf.getInt("frames", 1);
@@ -98,8 +82,8 @@ void Tile::loadProperties(const ConfigElement &conf) {
 
 	if (conf.exists("directions")) {
 		Common::String dirs = conf.getString("directions");
-		if (dirs.size() != (unsigned) _frames)
-			error("Error: %ld directions for tile but only %d frames", (long) dirs.size(), _frames);
+		if (dirs.size() != (unsigned)_frames)
+			error("Error: %ld directions for tile but only %d frames", (long)dirs.size(), _frames);
 		for (unsigned i = 0; i < dirs.size(); i++) {
 			if (dirs[i] == 'w')
 				_directions.push_back(DIR_WEST);
@@ -148,15 +132,13 @@ void Tile::loadImage() {
 				_frames = 4;
 		}
 
-
 		if (info->_image)
 			info->_image->alphaOff();
 
 		if (info) {
-			_w = (subimage ? subimage->width() *_scale : info->_width * _scale / info->_prescale);
+			_w = (subimage ? subimage->width() * _scale : info->_width * _scale / info->_prescale);
 			_h = (subimage ? (subimage->height() * _scale) / _frames : (info->_height * _scale / info->_prescale) / _frames);
 			_image = Image::create(_w, _h * _frames, false, Image::HARDWARE);
-
 
 			//info->image->alphaOff();
 
@@ -166,8 +148,8 @@ void Tile::loadImage() {
 
 			if (subimage) {
 				tiles->drawSubRectOn(_image, 0, 0,
-					subimage->left * _scale, subimage->top * _scale,
-					subimage->width() * _scale, subimage->height() * _scale);
+				                     subimage->left * _scale, subimage->top * _scale,
+				                     subimage->width() * _scale, subimage->height() * _scale);
 			} else {
 				tiles->drawOn(_image, 0, 0);
 			}
@@ -184,8 +166,6 @@ void Tile::loadImage() {
 		/* if we have animations, we always used 'animated' to draw from */
 		//if (anim)
 		//    image->alphaOff();
-
-
 	}
 }
 
@@ -220,7 +200,7 @@ Direction Tile::directionForFrame(int frame) const {
 }
 
 int Tile::frameForDirection(Direction d) const {
-	for (int i = 0; (unsigned) i < _directions.size() && i < _frames; i++) {
+	for (int i = 0; (unsigned)i < _directions.size() && i < _frames; i++) {
 		if (_directions[i] == d)
 			return i;
 	}

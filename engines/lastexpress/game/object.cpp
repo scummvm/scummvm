@@ -70,8 +70,7 @@ void Objects::update(ObjectIndex index, EntityIndex entity, ObjectLocation statu
 
 	// Compartments
 	if (original_status != status && (original_status == kObjectLocation2 || status == kObjectLocation2)) {
-		if ((index >= kObjectCompartment1 && index <= kObjectCompartment8)
-		   || (index >= kObjectCompartmentA && index <= kObjectCompartmentF)) {
+		if ((index >= kObjectCompartment1 && index <= kObjectCompartment8) || (index >= kObjectCompartmentA && index <= kObjectCompartmentF)) {
 			getScenes()->updateDoorsAndClock();
 		}
 	}

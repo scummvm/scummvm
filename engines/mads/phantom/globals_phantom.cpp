@@ -20,9 +20,9 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
 #include "mads/phantom/globals_phantom.h"
+#include "common/config-manager.h"
+#include "common/scummsys.h"
 
 namespace MADS {
 
@@ -43,7 +43,6 @@ void PhantomGlobals::synchronize(Common::Serializer &s) {
 	_sequenceIndexes.synchronize(s);
 	_animationIndexes.synchronize(s);
 }
-
 
 } // End of namespace Phantom
 

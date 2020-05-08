@@ -23,12 +23,11 @@
 #ifndef SCUMM_UTIL_H
 #define SCUMM_UTIL_H
 
-
 #include "common/scummsys.h"
 
 namespace Scumm {
 
-#define revBitMask(x)	(0x80 >> (x))
+#define revBitMask(x) (0x80 >> (x))
 
 /* Direction conversion functions (between old dir and new dir format) */
 int newDirToOldDir(int dir);

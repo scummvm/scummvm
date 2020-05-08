@@ -39,28 +39,26 @@ void SceneScriptRC02::InitializeScene() {
 	if (Game_Flag_Query(kFlagRC51Available)) {
 		Scene_Exit_Add_2D_Exit(kRC02ExitRC51, 265, 58, 346, 154, 0);
 	}
-	if (_vm->_cutContent
-	    && Global_Variable_Query(kVariableChapter) == 1
-	    && !Game_Flag_Query(kFlagRC02McCoyCommentsOnVideoScreens)) {
-		Scene_2D_Region_Add(0, 187, 104, 235, 150);// broken screen
+	if (_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 1 && !Game_Flag_Query(kFlagRC02McCoyCommentsOnVideoScreens)) {
+		Scene_2D_Region_Add(0, 187, 104, 235, 150); // broken screen
 	}
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   50,   1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxWINDLOP8, 75,   1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxWINDLOP8, 75, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 30, 100, 1);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP3,   5, 20, 10, 10, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSWEEP4,   5, 20, 10, 10, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPETDEAD1, 5, 40,  6,  6, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPETDEAD3, 5, 40,  6,  6, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPETDEAD4, 5, 40,  6,  6, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxPETDEAD5, 5, 40,  6,  6, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    250, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    330, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 20, 10, 10, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 20, 10, 10, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPETDEAD1, 5, 40, 6, 6, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPETDEAD3, 5, 40, 6, 6, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPETDEAD4, 5, 40, 6, 6, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPETDEAD5, 5, 40, 6, 6, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary, 250, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary, 330, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorOfficerGrayford, 380, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorOfficerGrayford, 510, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,       80, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,      160, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSIREN2,  20, 80, 10, 20,  100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher, 80, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher, 160, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Sound(kSfxSIREN2, 20, 80, 10, 20, 100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptRC02::SceneLoaded() {
@@ -85,10 +83,7 @@ void SceneScriptRC02::SceneLoaded() {
 	Unclickable_Object("GRL_DSKLEG");
 	Unclickable_Object("CURTAIN");
 	if (_vm->_cutContent) {
-		if (Global_Variable_Query(kVariableChapter) == 1
-		    && !Game_Flag_Query(kFlagMcCoyCommentsOnMurderedAnimals)
-		    && !Actor_Clue_Query(kActorMcCoy, kClueLabCorpses)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 1 && !Game_Flag_Query(kFlagMcCoyCommentsOnMurderedAnimals) && !Actor_Clue_Query(kActorMcCoy, kClueLabCorpses)) {
 			Clickable_Object("DRAPE01");
 			Clickable_Object("DRAPE02");
 			Clickable_Object("DRAPE03");
@@ -130,12 +125,8 @@ bool SceneScriptRC02::MouseClick(int x, int y) {
 }
 
 bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
-	if ( Object_Query_Click("SCRTY CA03", objectName)
-	 && !Actor_Clue_Query(kActorMcCoy, kClueRuncitersVideo)
-	) {
-		if (Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-		 && Actor_Query_Is_In_Current_Set(kActorRunciter)
-		) {
+	if (Object_Query_Click("SCRTY CA03", objectName) && !Actor_Clue_Query(kActorMcCoy, kClueRuncitersVideo)) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA) && Actor_Query_Is_In_Current_Set(kActorRunciter)) {
 			AI_Movement_Track_Pause(kActorRunciter);
 			Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
 			Actor_Says(kActorMcCoy, 4545, 14);
@@ -168,21 +159,8 @@ bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
 		}
 	}
 
-	if (_vm->_cutContent
-	    && Global_Variable_Query(kVariableChapter) == 1
-	    && !Game_Flag_Query(kFlagMcCoyCommentsOnMurderedAnimals)
-	    && !Actor_Clue_Query(kActorMcCoy, kClueLabCorpses)
-	    && (Object_Query_Click("DRAPE01", objectName)
-	        || Object_Query_Click("DRAPE02", objectName)
-	        || Object_Query_Click("DRAPE03", objectName)
-	        || Object_Query_Click("DRAPE04", objectName)
-	        || Object_Query_Click("DRAPE05", objectName)
-	        || Object_Query_Click("DRAPE06", objectName)
-	        || Object_Query_Click("DRAPE07", objectName))
-	) {
-		if (Player_Query_Agenda() == kPlayerAgendaSurly
-		    || (Player_Query_Agenda() == kPlayerAgendaErratic && Random_Query(0, 1) == 1)
-		) {
+	if (_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 1 && !Game_Flag_Query(kFlagMcCoyCommentsOnMurderedAnimals) && !Actor_Clue_Query(kActorMcCoy, kClueLabCorpses) && (Object_Query_Click("DRAPE01", objectName) || Object_Query_Click("DRAPE02", objectName) || Object_Query_Click("DRAPE03", objectName) || Object_Query_Click("DRAPE04", objectName) || Object_Query_Click("DRAPE05", objectName) || Object_Query_Click("DRAPE06", objectName) || Object_Query_Click("DRAPE07", objectName))) {
+		if (Player_Query_Agenda() == kPlayerAgendaSurly || (Player_Query_Agenda() == kPlayerAgendaErratic && Random_Query(0, 1) == 1)) {
 			Actor_Voice_Over(1940, kActorVoiceOver);
 			// Note: Quote 1950 is *boop* in ENG version
 			//       However it is voiced in FRA, DEU, ESP and ITA versions
@@ -190,11 +168,7 @@ bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
 			//       "Seeing them slaughtered was worse than any of my nightmares."
 			//       In DEU and ITA it seems to be the second (missing) half of the previous quote (1940)
 			//       and it is required for those.
-			if (_vm->_language == Common::FR_FRA
-			    || _vm->_language == Common::DE_DEU
-			    || _vm->_language == Common::ES_ESP
-			    || _vm->_language == Common::IT_ITA
-			) {
+			if (_vm->_language == Common::FR_FRA || _vm->_language == Common::DE_DEU || _vm->_language == Common::ES_ESP || _vm->_language == Common::IT_ITA) {
 				Actor_Voice_Over(1950, kActorVoiceOver);
 			}
 		} else {
@@ -217,17 +191,12 @@ bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
 
 void SceneScriptRC02::dialogueWithRunciter() {
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected( 0, 5, 6, 2);     // MOTIVES
-	DM_Add_To_List_Never_Repeat_Once_Selected(10, 5, 4, 8);     // LUCY
-	if (Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewB1)
-	 || Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewB2)
-	) {
+	DM_Add_To_List_Never_Repeat_Once_Selected(0, 5, 6, 2);  // MOTIVES
+	DM_Add_To_List_Never_Repeat_Once_Selected(10, 5, 4, 8); // LUCY
+	if (Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewB1) || Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewB2)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(20, 6, 4, 5); // REFERENCE
 	}
-	if (_vm->_cutContent
-	     && (!Game_Flag_Query(kFlagRC02RunciterVKChosen)
-	         && (!Actor_Clue_Query(kActorMcCoy, kClueVKRunciterHuman) && !Actor_Clue_Query(kActorMcCoy, kClueVKRunciterReplicant)))
-	){
+	if (_vm->_cutContent && (!Game_Flag_Query(kFlagRC02RunciterVKChosen) && (!Actor_Clue_Query(kActorMcCoy, kClueVKRunciterHuman) && !Actor_Clue_Query(kActorMcCoy, kClueVKRunciterReplicant)))) {
 		Dialogue_Menu_Clear_Never_Repeat_Was_Selected_Flag(200);
 		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
 	}
@@ -339,9 +308,7 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 				return true;
 			}
 
-			if (!Game_Flag_Query(kFlagRC02RunciterTalkWithGun)
-			 && !Game_Flag_Query(kFlagRC02RunciterTalk2)
-			) {
+			if (!Game_Flag_Query(kFlagRC02RunciterTalkWithGun) && !Game_Flag_Query(kFlagRC02RunciterTalk2)) {
 				Actor_Says(kActorMcCoy, 4690, 11);
 				Actor_Says(kActorMcCoy, 4695, 13);
 				Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
@@ -432,10 +399,7 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptRC02::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == kItemShellCasingA
-	 || itemId == kItemShellCasingB
-	 || itemId == kItemShellCasingC
-	) {
+	if (itemId == kItemShellCasingA || itemId == kItemShellCasingB || itemId == kItemShellCasingC) {
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemShellCasingA, 24, true, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemShellCasingA, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueShellCasings, true, -1);
@@ -456,7 +420,7 @@ bool SceneScriptRC02::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -71.51f, -1238.89f, 108587.15f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagRC02toRC01);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxBRBED5,   1);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxBRBED5, 1);
 			Ambient_Sounds_Remove_Looping_Sound(kSfxWINDLOP8, 1);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxRCRAIN1, 100, -101, 1);
 			Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterDefault);
@@ -477,11 +441,7 @@ bool SceneScriptRC02::ClickedOnExit(int exitId) {
 
 bool SceneScriptRC02::ClickedOn2DRegion(int region) {
 
-	if (_vm->_cutContent
-	    && Global_Variable_Query(kVariableChapter) == 1
-	    && !Game_Flag_Query(kFlagRC02McCoyCommentsOnVideoScreens)
-	    && region == 0
-	) {
+	if (_vm->_cutContent && Global_Variable_Query(kVariableChapter) == 1 && !Game_Flag_Query(kFlagRC02McCoyCommentsOnVideoScreens) && region == 0) {
 		Game_Flag_Set(kFlagRC02McCoyCommentsOnVideoScreens);
 		Scene_2D_Region_Remove(0);
 		Actor_Voice_Over(9025, kActorMcCoy);
@@ -513,14 +473,10 @@ void SceneScriptRC02::PlayerWalkedIn() {
 			Actor_Clue_Acquire(kActorMcCoy, kClueGracefulFootprints, true, -1);
 			Game_Flag_Set(kFlagRC02Entered);
 		}
-		if (Actor_Query_Which_Set_In(kActorRunciter) == kSetRC02_RC51
-		 && Actor_Query_Goal_Number(kActorRunciter) < kGoalRunciterRC02Wait
-		) {
+		if (Actor_Query_Which_Set_In(kActorRunciter) == kSetRC02_RC51 && Actor_Query_Goal_Number(kActorRunciter) < kGoalRunciterRC02Wait) {
 			Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterRC02WalkAround);
 		}
-		if ( Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterRC02Wait
-		 && !Game_Flag_Query(kFlagRC02EnteredChapter4)
-		) {
+		if (Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterRC02Wait && !Game_Flag_Query(kFlagRC02EnteredChapter4)) {
 			Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 			Actor_Says(kActorRunciter, 370, 12);
 			Actor_Says(kActorRunciter, 380, 14);

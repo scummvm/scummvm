@@ -25,9 +25,9 @@
 
 #include "kyra/kyra_v1.h"
 
+#include "common/func.h"
 #include "common/list.h"
 #include "common/stream.h"
-#include "common/func.h"
 
 namespace Kyra {
 
@@ -97,6 +97,7 @@ class PauseTimer {
 public:
 	PauseTimer(TimerManager &timer) : _timer(timer) { _timer.pause(true); }
 	~PauseTimer() { _timer.pause(false); }
+
 private:
 	TimerManager &_timer;
 };

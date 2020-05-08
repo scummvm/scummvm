@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -39,7 +38,7 @@ uint AGOSEngine::getWindowNum(WindowBlock *window) {
 			return i;
 
 	error("getWindowNum: not found");
-	return 0;	// for compilers that don't support NORETURN
+	return 0; // for compilers that don't support NORETURN
 }
 
 WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fillColor, uint textColor) {

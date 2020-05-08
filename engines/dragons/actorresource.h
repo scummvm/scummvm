@@ -57,6 +57,7 @@ public:
 class ActorResource {
 public:
 	uint32 _id;
+
 private:
 	byte *_data;
 	int32 _fileSize;

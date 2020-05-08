@@ -38,7 +38,6 @@ class GamePalette {
 	uint8 bg_color;
 
 public:
-
 	GamePalette(Screen *s, Configuration *cfg);
 	~GamePalette();
 	void rotatePalette();
@@ -50,7 +49,6 @@ public:
 	bool loadPaletteIntoBuffer(unsigned char *pal);
 
 protected:
-
 	bool loadPalette();
 };
 

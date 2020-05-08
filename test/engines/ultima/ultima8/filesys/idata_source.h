@@ -1,11 +1,11 @@
-#include <cxxtest/TestSuite.h>
 #include "engines/ultima/ultima8/filesys/idata_source.h"
+#include <cxxtest/TestSuite.h>
 /**
  * Test suite for the functions in engines/ultima/ultima8/filesys/idata_source.h
  */
 
 class U8IDataSourceTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	U8IDataSourceTestSuite() {
 	}
 
@@ -20,7 +20,7 @@ class U8IDataSourceTestSuite : public CxxTest::TestSuite {
 	void test_ibuffer_source() {
 		uint8 buf[256];
 		for (int i = 0; i < 255; i++) {
-			buf[i] = 0x80 + i+1;
+			buf[i] = 0x80 + i + 1;
 		}
 
 		Ultima::Ultima8::IBufferDataSource source(buf, 256, false, false);
@@ -60,5 +60,4 @@ class U8IDataSourceTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(source.eos());
 		*/
 	}
-
 };

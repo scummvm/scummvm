@@ -83,6 +83,7 @@ private:
 
 	void free();
 	void dualWrite(uint8 index, uint8 reg, uint8 val);
+
 public:
 	OPL(Config::OplType type);
 	~OPL();

@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/actors/actor_bark_notify_process.h"
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/animation.h"
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/actor_anim_process.h"
+#include "ultima/ultima8/world/actors/animation.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -36,20 +36,20 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ActorBarkNotifyProcess, GumpNotifyProcess)
 
 ActorBarkNotifyProcess::ActorBarkNotifyProcess()
-	: GumpNotifyProcess() {
+    : GumpNotifyProcess() {
 }
 
 ActorBarkNotifyProcess::ActorBarkNotifyProcess(uint16 it)
-	: GumpNotifyProcess(it) {
+    : GumpNotifyProcess(it) {
 }
 
 ActorBarkNotifyProcess::~ActorBarkNotifyProcess(void) {
 }
 
-
 void ActorBarkNotifyProcess::run() {
 	Actor *a = getActor(_itemNum);
-	if (!a) return;
+	if (!a)
+		return;
 
 	if (a->isDead() || !a->hasAnim(Animation::talk))
 		return;
@@ -80,7 +80,8 @@ void ActorBarkNotifyProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool ActorBarkNotifyProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!GumpNotifyProcess::loadData(rs, version)) return false;
+	if (!GumpNotifyProcess::loadData(rs, version))
+		return false;
 
 	return true;
 }

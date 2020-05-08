@@ -21,12 +21,12 @@
  */
 
 #include "glk/alan3/actor.h"
-#include "glk/alan3/instance.h"
-#include "glk/alan3/memory.h"
-#include "glk/alan3/lists.h"
-#include "glk/alan3/inter.h"
-#include "glk/alan3/msg.h"
 #include "glk/alan3/container.h"
+#include "glk/alan3/instance.h"
+#include "glk/alan3/inter.h"
+#include "glk/alan3/lists.h"
+#include "glk/alan3/memory.h"
+#include "glk/alan3/msg.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -36,7 +36,7 @@ ScriptEntry *scriptOf(int actor) {
 	ScriptEntry *scr;
 
 	if (admin[actor].script != 0) {
-		for (scr = (ScriptEntry *) pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++)
+		for (scr = (ScriptEntry *)pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++)
 			if (scr->code == admin[actor].script)
 				break;
 		if (!isEndOfArray(scr))
@@ -45,20 +45,19 @@ ScriptEntry *scriptOf(int actor) {
 	return NULL;
 }
 
-
 /*======================================================================*/
 StepEntry *stepOf(int actor) {
 	StepEntry *step;
 	ScriptEntry *scr = scriptOf(actor);
 
-	if (scr == NULL) return NULL;
+	if (scr == NULL)
+		return NULL;
 
 	step = (StepEntry *)pointerTo(scr->steps);
 	step = &step[admin[actor].step];
 
 	return step;
 }
-
 
 /*======================================================================*/
 void describeActor(CONTEXT, int actor) {

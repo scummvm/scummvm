@@ -20,14 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "mads/mads.h"
-#include "mads/compression.h"
-#include "mads/resources.h"
-#include "mads/scene.h"
-#include "mads/nebular/game_nebular.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "common/config-manager.h"
+#include "common/scummsys.h"
+#include "mads/compression.h"
+#include "mads/mads.h"
+#include "mads/nebular/game_nebular.h"
 #include "mads/nebular/nebular_scenes1.h"
 #include "mads/nebular/nebular_scenes2.h"
 #include "mads/nebular/nebular_scenes3.h"
@@ -36,6 +34,8 @@
 #include "mads/nebular/nebular_scenes6.h"
 #include "mads/nebular/nebular_scenes7.h"
 #include "mads/nebular/nebular_scenes8.h"
+#include "mads/resources.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -52,243 +52,243 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 
 	switch (scene._nextSceneId) {
 	// Scene group #1 (ship, ocean, cave)
-	case 101:	// Ship, cockpit
+	case 101: // Ship, cockpit
 		return new Scene101(vm);
-	case 102:	// Ship, dining room
+	case 102: // Ship, dining room
 		return new Scene102(vm);
-	case 103:	// Ship, engine room
+	case 103: // Ship, engine room
 		return new Scene103(vm);
-	case 104:	// Ocean, northwest cliff
+	case 104: // Ocean, northwest cliff
 		return new Scene104(vm);
-	case 105:	// Ocean, northeast cliff with mine
+	case 105: // Ocean, northeast cliff with mine
 		return new Scene105(vm);
-	case 106:	// Ocean, outside ship
+	case 106: // Ocean, outside ship
 		return new Scene106(vm);
-	case 107:	// Ocean, bushes
+	case 107: // Ocean, bushes
 		return new Scene107(vm);
-	case 108:	// Ocean, southwest cliff
+	case 108: // Ocean, southwest cliff
 		return new Scene108(vm);
-	case 109:	// Ocean, tunnel
+	case 109: // Ocean, tunnel
 		return new Scene109(vm);
-	case 110:	// Ocean, cave with tunnel
+	case 110: // Ocean, cave with tunnel
 		return new Scene110(vm);
-	case 111:	// Cave with pool and opening
+	case 111: // Cave with pool and opening
 		return new Scene111(vm);
-	case 112:	// cutscene, looking at view screen
+	case 112: // cutscene, looking at view screen
 		return new Scene112(vm);
 
 	// Scene group #2 (island)
-	case 201:	// outside teleporter
+	case 201: // outside teleporter
 		return new Scene201(vm);
-	case 202:	// village
+	case 202: // village
 		return new Scene202(vm);
-	case 203:	// tree with Rhotunda (fat woman)
+	case 203: // tree with Rhotunda (fat woman)
 		return new Scene203(vm);
-	case 205:	// village
+	case 205: // village
 		return new Scene205(vm);
-	case 207:	// outside witch doctor's hut
+	case 207: // outside witch doctor's hut
 		return new Scene207(vm);
-	case 208:	// pit with leaves (trap)
+	case 208: // pit with leaves (trap)
 		return new Scene208(vm);
-	case 209:	// palm tree and bamboo plant
+	case 209: // palm tree and bamboo plant
 		return new Scene209(vm);
-	case 210:	// outside native woman's hut
+	case 210: // outside native woman's hut
 		return new Scene210(vm);
-	case 211:	// palm tree with monkey
+	case 211: // palm tree with monkey
 		return new Scene211(vm);
-	case 212:	// outside cave
+	case 212: // outside cave
 		return new Scene212(vm);
-	case 213:	// inside teleporter
+	case 213: // inside teleporter
 		return new Scene213(vm);
-	case 214:	// inside witch doctor's hut
+	case 214: // inside witch doctor's hut
 		return new Scene214(vm);
-	case 215:	// inside native woman's hut
+	case 215: // inside native woman's hut
 		return new Scene215(vm);
-	case 216:	// cutscene, monitor showing Rex and native woman
+	case 216: // cutscene, monitor showing Rex and native woman
 		return new Scene216(vm);
 
 	// Scene group #3 (women's base, cell block)
-	case 301:	// outside teleporter (before chaos)
+	case 301: // outside teleporter (before chaos)
 		return new Scene301(vm);
-	case 302:	// room with statue (before chaos)
+	case 302: // room with statue (before chaos)
 		return new Scene302(vm);
-	case 303:	// western corridor (before chaos)
+	case 303: // western corridor (before chaos)
 		return new Scene303(vm);
-	case 304:	// crossing with traffic light (before chaos)
+	case 304: // crossing with traffic light (before chaos)
 		return new Scene304(vm);
-	case 307:	// Rex's cell (before chaos)
+	case 307: // Rex's cell (before chaos)
 		return new Scene307(vm);
-	case 308:	// sauropod's cell (before chaos)
+	case 308: // sauropod's cell (before chaos)
 		return new Scene308(vm);
-	case 309:	// multihand monster's cell (before chaos)
+	case 309: // multihand monster's cell (before chaos)
 		return new Scene309(vm);
-	case 310:	// empty cell (before chaos)
+	case 310: // empty cell (before chaos)
 		return new Scene310(vm);
-	case 311:	// warden's desk (before chaos)
+	case 311: // warden's desk (before chaos)
 		return new Scene311(vm);
-	case 313:	// air shaft overview
+	case 313: // air shaft overview
 		return new Scene313(vm);
-	case 316:	// Gender Bender
+	case 316: // Gender Bender
 		return new Scene316(vm);
-	case 318:	// doctor's gurney
+	case 318: // doctor's gurney
 		return new Scene318(vm);
-	case 319:	// doctor Slache closeup (lying on the gurney)
+	case 319: // doctor Slache closeup (lying on the gurney)
 		return new Scene319(vm);
-	case 320:	// warden's desk closeup / monitors
+	case 320: // warden's desk closeup / monitors
 		return new Scene320(vm);
-	case 321:	// gender bender sex change sequence
+	case 321: // gender bender sex change sequence
 		return new Scene321(vm);
-	case 322:	// inside teleporter
+	case 322: // inside teleporter
 		return new Scene322(vm);
-	case 351:	// outside teleporter (after chaos)
+	case 351: // outside teleporter (after chaos)
 		return new Scene351(vm);
-	case 352:	// room with statue (after chaos)
+	case 352: // room with statue (after chaos)
 		return new Scene352(vm);
-	case 353:	// western corridor (after chaos)
+	case 353: // western corridor (after chaos)
 		return new Scene353(vm);
-	case 354:	// crossing with traffic light (after chaos)
+	case 354: // crossing with traffic light (after chaos)
 		return new Scene354(vm);
-	case 357:	// Rex's cell (after chaos)
+	case 357: // Rex's cell (after chaos)
 		return new Scene357(vm);
-	case 358:	// sauropod's cell (after chaos)
+	case 358: // sauropod's cell (after chaos)
 		return new Scene358(vm);
-	case 359:	// multihand monster's cell (after chaos)
+	case 359: // multihand monster's cell (after chaos)
 		return new Scene359(vm);
-	case 360:	// empty cell (after chaos)
+	case 360: // empty cell (after chaos)
 		return new Scene360(vm);
-	case 361:	// warden's desk (after chaos)
+	case 361: // warden's desk (after chaos)
 		return new Scene361(vm);
-	case 366:	// air shaft ending at Gender Bender
+	case 366: // air shaft ending at Gender Bender
 		return new Scene366(vm);
-	case 387:	// air shaft ending at cell
+	case 387: // air shaft ending at cell
 		return new Scene387(vm);
-	case 388:	// air shaft ending at sauropod's cell
+	case 388: // air shaft ending at sauropod's cell
 		return new Scene388(vm);
-	case 389:	// air shaft ending at multihand monster's cell (before chaos)
+	case 389: // air shaft ending at multihand monster's cell (before chaos)
 		return new Scene389(vm);
-	case 390:	// air shaft ending at cell
+	case 390: // air shaft ending at cell
 		return new Scene390(vm);
-	case 391:	// air shaft ending at warden's desk
+	case 391: // air shaft ending at warden's desk
 		return new Scene391(vm);
-	case 399:	// air shaft ending at multihand monster's cell (after chaos)
+	case 399: // air shaft ending at multihand monster's cell (after chaos)
 		return new Scene399(vm);
 
 	// Scene group #4 (women's base)
-	case 401:	// outside bar
+	case 401: // outside bar
 		return new Scene401(vm);
-	case 402:	// inside bar
+	case 402: // inside bar
 		return new Scene402(vm);
-	case 405:	// outside armory
+	case 405: // outside armory
 		return new Scene405(vm);
-	case 406:	// outside storage room
+	case 406: // outside storage room
 		return new Scene406(vm);
-	case 407:	// eastern corridor
+	case 407: // eastern corridor
 		return new Scene407(vm);
-	case 408:	// inside armory
+	case 408: // inside armory
 		return new Scene408(vm);
-	case 409:	// inside female only teleporter
+	case 409: // inside female only teleporter
 		return new Scene409(vm);
-	case 410:	// inside storage room
+	case 410: // inside storage room
 		return new Scene410(vm);
-	case 411:	// lab
+	case 411: // lab
 		return new Scene411(vm);
-	case 413:	// outside female only teleporter
+	case 413: // outside female only teleporter
 		return new Scene413(vm);
 
 	// Scene group #5 (men's city, lower floor)
-	case 501:	// outside car
+	case 501: // outside car
 		return new Scene501(vm);
-	case 502:	// inside male only teleporter
+	case 502: // inside male only teleporter
 		return new Scene502(vm);
-	case 503:	// guard tower
+	case 503: // guard tower
 		return new Scene503(vm);
-	case 504:	// inside car
+	case 504: // inside car
 		return new Scene504(vm);
-	case 505:	// car view screen
+	case 505: // car view screen
 		return new Scene505(vm);
-	case 506:	// shopping street
+	case 506: // shopping street
 		return new Scene506(vm);
-	case 507:	// inside software house
+	case 507: // inside software house
 		return new Scene507(vm);
-	case 508:	// laser cannon
+	case 508: // laser cannon
 		return new Scene508(vm);
-	case 511:	// outside pleasure dome
+	case 511: // outside pleasure dome
 		return new Scene511(vm);
-	case 512:	// inside pleasure dome
+	case 512: // inside pleasure dome
 		return new Scene512(vm);
-	case 513:	// outside mall
+	case 513: // outside mall
 		return new Scene513(vm);
-	case 515:	// overview
+	case 515: // overview
 		return new Scene515(vm);
-	case 551:	// outside teleporter (with skeleton)
+	case 551: // outside teleporter (with skeleton)
 		return new Scene551(vm);
 
 	// Scene group #6 (men's city, upper floor)
-	case 601:	// outside Bruce's house
+	case 601: // outside Bruce's house
 		return new Scene601(vm);
-	case 602:	// Bruce's house, living room
+	case 602: // Bruce's house, living room
 		return new Scene602(vm);
-	case 603:	// Bruce's house, bedroom
+	case 603: // Bruce's house, bedroom
 		return new Scene603(vm);
-	case 604:	// viewport
+	case 604: // viewport
 		return new Scene604(vm);
-	case 605:	// viewport closeup
+	case 605: // viewport closeup
 		return new Scene605(vm);
-	case 607:	// outside Abdul's garage
+	case 607: // outside Abdul's garage
 		return new Scene607(vm);
-	case 608:	// inside Abdul's garage
+	case 608: // inside Abdul's garage
 		return new Scene608(vm);
-	case 609:	// outside Buckluster video store
+	case 609: // outside Buckluster video store
 		return new Scene609(vm);
-	case 610:	// inside Buckluster video store
+	case 610: // inside Buckluster video store
 		return new Scene610(vm);
-	case 611:	// back alley
+	case 611: // back alley
 		return new Scene611(vm);
-	case 612:	// expressway / maintenance building
+	case 612: // expressway / maintenance building
 		return new Scene612(vm);
-	case 620:	// cutscene, viewport glass breaking
+	case 620: // cutscene, viewport glass breaking
 		return new Scene620(vm);
 
 	// Scene group #7 (submerged men's city / upper floor)
-	case 701:	// outside elevator (after city is submerged)
+	case 701: // outside elevator (after city is submerged)
 		return new Scene701(vm);
-	case 702:	// outside teleporter (after city is submerged)
+	case 702: // outside teleporter (after city is submerged)
 		return new Scene702(vm);
-	case 703:	// water
+	case 703: // water
 		return new Scene703(vm);
-	case 704:	// water, building in the distance
+	case 704: // water, building in the distance
 		return new Scene704(vm);
-	case 705:	// water, outside building
+	case 705: // water, outside building
 		return new Scene705(vm);
-	case 706:	// inside building, pedestral room, outside teleporter
+	case 706: // inside building, pedestral room, outside teleporter
 		return new Scene706(vm);
-	case 707:	// teleporter
+	case 707: // teleporter
 		return new Scene707(vm);
-	case 710:	// looking at pedestral room through binoculars
+	case 710: // looking at pedestral room through binoculars
 		return new Scene710(vm);
-	case 711:	// inside teleporter
+	case 711: // inside teleporter
 		return new Scene711(vm);
-	case 751:	// outside elevator (before city is submerged)
+	case 751: // outside elevator (before city is submerged)
 		return new Scene751(vm);
-	case 752:	// outside teleporter (before city is submerged)
+	case 752: // outside teleporter (before city is submerged)
 		return new Scene752(vm);
 
 	// Scene group #8
-	case 801:	// control room, outside teleporter
+	case 801: // control room, outside teleporter
 		return new Scene801(vm);
-	case 802:	// launch pad with destroyed ship
+	case 802: // launch pad with destroyed ship
 		return new Scene802(vm);
-	case 803:	// empty launch pad
+	case 803: // empty launch pad
 		return new Scene803(vm);
-	case 804:	// inside Rex's ship - cockpit
+	case 804: // inside Rex's ship - cockpit
 		return new Scene804(vm);
-	case 805:	// service panel
+	case 805: // service panel
 		return new Scene805(vm);
-	case 807:	// teleporter
+	case 807: // teleporter
 		return new Scene807(vm);
-	case 808:	// antigrav control
+	case 808: // antigrav control
 		return new Scene808(vm);
-	case 810:	// cutscene: Rex's ship leaving the planet
+	case 810: // cutscene: Rex's ship leaving the planet
 		return new Scene810(vm);
 
 	default:
@@ -299,14 +299,14 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 /*------------------------------------------------------------------------*/
 
 NebularScene::NebularScene(MADSEngine *vm) : SceneLogic(vm),
-		_globals(static_cast<GameNebular *>(vm->_game)->_globals),
-		_game(*static_cast<GameNebular *>(vm->_game)),
-		_action(vm->_game->_scene._action) {
+                                             _globals(static_cast<GameNebular *>(vm->_game)->_globals),
+                                             _game(*static_cast<GameNebular *>(vm->_game)),
+                                             _action(vm->_game->_scene._action) {
 }
 
 Common::String NebularScene::formAnimName(char sepChar, int suffixNum) {
 	return Resources::formatName(_scene->_currentSceneId, sepChar, suffixNum,
-		EXT_NONE, "");
+	                             EXT_NONE, "");
 }
 
 /*------------------------------------------------------------------------*/
@@ -441,8 +441,7 @@ void SceneTeleporter::teleporterHandleKey() {
 		if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
 			_vm->_events->hideCursor();
 
-		}
-		break;
+	} break;
 
 	case 1:
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_SPRITE, 3, 3);
@@ -528,14 +527,14 @@ void SceneTeleporter::teleporterHandleKey() {
 }
 
 void SceneTeleporter::teleporterEnter() {
-	_game._player._visible   = false;
+	_game._player._visible = false;
 	_game._player._stepEnabled = (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL);
 	_scene->_kernelMessages._talkFont = _vm->_font->getFont(FONT_TELE);
 	_scene->_textSpacing = 0;
-	_curCode   = 0;
+	_curCode = 0;
 	_digitCount = 0;
-	_finishedCodeCounter       = 0;
-	_curMessageId        = -1;
+	_finishedCodeCounter = 0;
+	_curMessageId = -1;
 	_msgText = "_";
 
 	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG)
@@ -546,7 +545,7 @@ void SceneTeleporter::teleporterEnter() {
 
 	_globals[kTeleporterDestination] = _scene->_priorSceneId;
 	_vm->_palette->setEntry(252, 63, 63, 0);
-	_vm->_palette->setEntry(253, 0,  0, 0);
+	_vm->_palette->setEntry(253, 0, 0, 0);
 	_teleporterSceneId = _scene->_priorSceneId;
 	if (_teleporterSceneId == 202)
 		_teleporterSceneId = 201;
@@ -579,7 +578,7 @@ bool SceneTeleporter::teleporterActions() {
 	bool retVal = false;
 
 	if (_action.isAction(VERB_PRESS) || _action.isAction(VERB_PUSH)) {
-		static int _buttonList[12] = { NOUN_0_KEY, NOUN_1_KEY, NOUN_2_KEY, NOUN_3_KEY, NOUN_4_KEY, NOUN_5_KEY, NOUN_6_KEY, NOUN_7_KEY, NOUN_8_KEY, NOUN_9_KEY, NOUN_SMILE_KEY, NOUN_FROWN_KEY };
+		static int _buttonList[12] = {NOUN_0_KEY, NOUN_1_KEY, NOUN_2_KEY, NOUN_3_KEY, NOUN_4_KEY, NOUN_5_KEY, NOUN_6_KEY, NOUN_7_KEY, NOUN_8_KEY, NOUN_9_KEY, NOUN_SMILE_KEY, NOUN_FROWN_KEY};
 		for (int i = 0; i < 12; i++) {
 			if (_action._activeAction._objectNameId == _buttonList[i])
 				_buttonTyped = i;
@@ -610,9 +609,9 @@ void SceneTeleporter::teleporterStep() {
 			for (int i = 0; i < (3 - place); i++)
 				digit = digit / 10;
 
-			digit   = digit % 10;
+			digit = digit % 10;
 		} else {
-			digit   = 10;
+			digit = 10;
 		}
 		_buttonTyped = digit;
 		_meteorologistCurPlace = place + 1;

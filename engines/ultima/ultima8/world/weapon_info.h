@@ -23,7 +23,6 @@
 #ifndef ULTIMA8_WORLD_WEAPONINFO_H
 #define ULTIMA8_WORLD_WEAPONINFO_H
 
-
 struct WeaponInfo {
 	uint32 _shape;
 	uint8 _overlayType;
@@ -38,16 +37,15 @@ struct WeaponInfo {
 
 	enum DmgType {
 		DMG_NORMAL = 0x0001,
-		DMG_BLADE  = 0x0002,
-		DMG_BLUNT  = 0x0004,
-		DMG_FIRE   = 0x0008,
+		DMG_BLADE = 0x0002,
+		DMG_BLUNT = 0x0004,
+		DMG_FIRE = 0x0008,
 		DMG_UNDEAD = 0x0010,
-		DMG_MAGIC  = 0x0020,
+		DMG_MAGIC = 0x0020,
 		DMG_SLAYER = 0x0040,
 		DMG_PIERCE = 0x0080,
 		DMG_FALLING = 0x0100
 	};
 };
-
 
 #endif

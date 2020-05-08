@@ -25,7 +25,6 @@
 
 #include <UIKit/UIKit.h>
 
-
 @interface iOS7ScummVMViewController : UIViewController
 
 @end

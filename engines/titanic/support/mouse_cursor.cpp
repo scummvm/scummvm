@@ -21,45 +21,43 @@
  */
 
 #include "titanic/support/mouse_cursor.h"
-#include "titanic/support/screen_manager.h"
-#include "titanic/support/transparency_surface.h"
-#include "titanic/support/video_surface.h"
+#include "graphics/cursorman.h"
+#include "graphics/screen.h"
 #include "titanic/events.h"
 #include "titanic/input_handler.h"
 #include "titanic/messages/mouse_messages.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/transparency_surface.h"
+#include "titanic/support/video_surface.h"
 #include "titanic/titanic.h"
-#include "graphics/cursorman.h"
-#include "graphics/screen.h"
 
 namespace Titanic {
 
 #define CURSOR_SIZE 64
 
 static const int CURSOR_DATA[NUM_CURSORS][4] = {
-	{ 1, 136, 19, 18 },
-	{ 2, 139, 1, 1 },
-	{ 3, 140, 32, 1 },
-	{ 4, 137, 13, 0 },
-	{ 5, 145, 13, 0 },
-	{ 6, 144, 13, 22 },
-	{ 7, 137, 14, 0 },
-	{ 8, 148, 22, 40 },
-	{ 9, 136, 19, 18 },
-	{ 10, 143, 11, 11 },
-	{ 11, 146, 11, 11 },
-	{ 12, 136, 19, 18 },
-	{ 13, 136, 19, 25 },
-	{ 14, 136, 13, 22 },
-	{ 15, 138, 20, 28 }
-};
+    {1, 136, 19, 18},
+    {2, 139, 1, 1},
+    {3, 140, 32, 1},
+    {4, 137, 13, 0},
+    {5, 145, 13, 0},
+    {6, 144, 13, 22},
+    {7, 137, 14, 0},
+    {8, 148, 22, 40},
+    {9, 136, 19, 18},
+    {10, 143, 11, 11},
+    {11, 146, 11, 11},
+    {12, 136, 19, 18},
+    {13, 136, 19, 25},
+    {14, 136, 13, 22},
+    {15, 138, 20, 28}};
 
 CMouseCursor::CursorEntry::~CursorEntry() {
 	delete _surface;
 }
 
-CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
-		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS), _hideCounter(0),
-		_busyCount(0), _cursorSuppressed(false), _setCursorCount(0), _inputEnabled(true), _fieldE8(0) {
+CMouseCursor::CMouseCursor(CScreenManager *screenManager) : _screenManager(screenManager), _cursorId(CURSOR_HOURGLASS), _hideCounter(0),
+                                                            _busyCount(0), _cursorSuppressed(false), _setCursorCount(0), _inputEnabled(true), _fieldE8(0) {
 	loadCursorImages();
 	setCursor(CURSOR_ARROW);
 	CursorMan.showMouse(true);
@@ -75,7 +73,7 @@ void CMouseCursor::loadCursorImages() {
 	for (int idx = 0; idx < NUM_CURSORS; ++idx) {
 		assert(CURSOR_DATA[idx][0] == (idx + 1));
 		_cursors[idx]._centroid = Common::Point(CURSOR_DATA[idx][2],
-			CURSOR_DATA[idx][3]);
+		                                        CURSOR_DATA[idx][3]);
 
 		// Create the surface
 		CVideoSurface *surface = _screenManager->createSurface(CURSOR_SIZE, CURSOR_SIZE);
@@ -153,7 +151,7 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 
 		// Set the cursor
 		CursorMan.replaceCursor(ce._surface->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
-			ce._centroid.x, ce._centroid.y, 0, false, &ce._surface->format);
+		                        ce._centroid.x, ce._centroid.y, 0, false, &ce._surface->format);
 	}
 }
 
@@ -161,11 +159,10 @@ void CMouseCursor::update() {
 	if (!_inputEnabled && _moveStartTime) {
 		uint32 time = CLIP(g_system->getMillis(), _moveStartTime, _moveEndTime);
 		Common::Point pt(
-			_moveStartPos.x + (_moveDestPos.x - _moveStartPos.x) *
-				(int)(time - _moveStartTime) / (int)(_moveEndTime - _moveStartTime),
-			_moveStartPos.y + (_moveDestPos.y - _moveStartPos.y) *
-			(int)(time - _moveStartTime) / (int)(_moveEndTime - _moveStartTime)
-		);
+		    _moveStartPos.x + (_moveDestPos.x - _moveStartPos.x) *
+		                          (int)(time - _moveStartTime) / (int)(_moveEndTime - _moveStartTime),
+		    _moveStartPos.y + (_moveDestPos.y - _moveStartPos.y) *
+		                          (int)(time - _moveStartTime) / (int)(_moveEndTime - _moveStartTime));
 
 		if (pt != g_vm->_events->getMousePos()) {
 			g_vm->_events->setMousePos(pt);

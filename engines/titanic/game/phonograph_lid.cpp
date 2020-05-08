@@ -25,10 +25,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPhonographLid, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(LockPhonographMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(LockPhonographMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 void CPhonographLid::save(SimpleFile *file, int indent) {

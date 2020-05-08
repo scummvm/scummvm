@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/split_item_process.h"
-#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/graphics/shape_info.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -33,7 +33,6 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SplitItemProcess, Process)
 
 SplitItemProcess::SplitItemProcess() : Process(), _target(0) {
-
 }
 
 SplitItemProcess::SplitItemProcess(Item *original, Item *target_) {
@@ -95,7 +94,8 @@ void SplitItemProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool SplitItemProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_target = rs->readUint16LE();
 

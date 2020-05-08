@@ -18,9 +18,9 @@
 #ifndef MT32EMU_TVP_H
 #define MT32EMU_TVP_H
 
-#include "globals.h"
-#include "Types.h"
 #include "Structures.h"
+#include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 
@@ -29,8 +29,8 @@ class Partial;
 
 class TVP {
 private:
-	const Partial * const partial;
-	const MemParams::System * const system; // FIXME: Only necessary because masterTune calculation is done in the wrong place atm.
+	const Partial *const partial;
+	const MemParams::System *const system; // FIXME: Only necessary because masterTune calculation is done in the wrong place atm.
 
 	const Part *part;
 	const TimbreParam::PartialParam *partialParam;
@@ -60,6 +60,7 @@ private:
 	void targetPitchOffsetReached();
 	void nextPhase();
 	void process();
+
 public:
 	TVP(const Partial *partial);
 	void reset(const Part *part, const TimbreParam::PartialParam *partialParam);

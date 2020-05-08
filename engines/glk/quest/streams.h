@@ -23,9 +23,9 @@
 #ifndef GLK_QUEST_STREAMS
 #define GLK_QUEST_STREAMS
 
-#include "glk/quest/string.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "glk/quest/string.h"
 
 namespace Glk {
 namespace Quest {

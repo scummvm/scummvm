@@ -21,12 +21,12 @@
  */
 
 #include "ultima/ultima1/widgets/transport.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/maps/map.h"
-#include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/maps/map_overworld.h"
 #include "common/algorithm.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/maps/map_overworld.h"
+#include "ultima/ultima1/maps/map_tile.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -42,8 +42,7 @@ uint TransportOnFoot::getTileNum() const {
 
 /*-------------------------------------------------------------------*/
 
-Transport::Transport(Ultima1Game *game, Maps::MapBase *map, uint transportId) :
-		OverworldWidget(game, map), _transportId(transportId) {
+Transport::Transport(Ultima1Game *game, Maps::MapBase *map, uint transportId) : OverworldWidget(game, map), _transportId(transportId) {
 	_name = game->_res->TRANSPORT_NAMES[transportId];
 }
 
@@ -128,7 +127,7 @@ Common::String Aircar::getWeaponsName() {
 EMPTY_MESSAGE_MAP(Shuttle, Transport);
 
 Shuttle::Shuttle(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 6),
-		_space1(1000), _space2(1000) {
+                                                          _space1(1000), _space2(1000) {
 }
 
 void Shuttle::synchronize(Common::Serializer &s) {
@@ -148,7 +147,6 @@ void TimeMachine::board() {
 	// TODO
 	Transport::board();
 }
-
 
 } // End of namespace Widgets
 } // End of namespace Ultima1

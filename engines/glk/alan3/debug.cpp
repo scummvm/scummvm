@@ -22,9 +22,8 @@
 
 #include "glk/alan3/debug.h"
 #include "glk/alan3/alan3.h"
-#include "glk/alan3/class.h"
-#include "glk/alan3/sysdep.h"
 #include "glk/alan3/alan_version.h"
+#include "glk/alan3/class.h"
 #include "glk/alan3/compatibility.h"
 #include "glk/alan3/current.h"
 #include "glk/alan3/event.h"
@@ -45,7 +44,6 @@ namespace Alan3 {
 
 #define BREAKPOINTMAX 50
 
-
 /* PUBLIC: */
 int breakpointCount = 0;
 Breakpoint breakpoint[BREAKPOINTMAX];
@@ -63,13 +61,12 @@ static void showAttributes(AttributeEntry *attrib) {
 
 	i = 1;
 	for (at = attrib; !isEndOfArray(at); at++) {
-		sprintf(str, "$i$t%s[%d] = %d", (char *) pointerTo(at->id), at->code, (int)at->value);
+		sprintf(str, "$i$t%s[%d] = %d", (char *)pointerTo(at->id), at->code, (int)at->value);
 
 		output(str);
 		i++;
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static void showContents(CONTEXT, int cnt) {
@@ -92,14 +89,12 @@ static void showContents(CONTEXT, int cnt) {
 		output("nothing");
 }
 
-
 /*----------------------------------------------------------------------*/
 static char *idOfInstance(CONTEXT, int instance) {
 	int base = header->instanceTableAddress +
 	           header->instanceMax * sizeof(InstanceEntry) / sizeof(Aword) + 1;
 	return (char *)&memory[memory[base + instance - 1]];
 }
-
 
 /*----------------------------------------------------------------------*/
 static void sayInstanceNumberAndName(CONTEXT, int ins) {
@@ -110,7 +105,6 @@ static void sayInstanceNumberAndName(CONTEXT, int ins) {
 	say(context, ins);
 	output("$$\")");
 }
-
 
 /*----------------------------------------------------------------------*/
 static void sayLocationOfInstance(CONTEXT, int ins, const char *prefix) {
@@ -143,7 +137,6 @@ static void listInstance(CONTEXT, int ins) {
 		output("(container)");
 	CALL2(sayLocationOfInstance, ins, ", ")
 }
-
 
 /*----------------------------------------------------------------------*/
 static void listInstances(CONTEXT, char *pattern) {
@@ -203,7 +196,6 @@ static void showInstance(CONTEXT, int ins) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void listObjects(CONTEXT) {
 	uint obj;
@@ -214,11 +206,9 @@ static void listObjects(CONTEXT) {
 			CALL1(listInstance, obj)
 }
 
-
 /*----------------------------------------------------------------------*/
 static void showObject(CONTEXT, int obj) {
 	char str[80];
-
 
 	if (!isAObject(obj)) {
 		sprintf(str, "Instance %d is not an object", obj);
@@ -234,23 +224,22 @@ static int sourceFileNumber(char *fileName) {
 	SourceFileEntry *entries = (SourceFileEntry *)pointerTo(header->sourceFileTable);
 	int n;
 
-	for (n = 0; * (Aword *)&entries[n] != EOD; n++) {
+	for (n = 0; *(Aword *)&entries[n] != EOD; n++) {
 		char *entryName;
 		entryName = getStringFromFile(entries[n].fpos, entries[n].len);
-		if (strcmp(entryName, fileName) == 0) return n;
+		if (strcmp(entryName, fileName) == 0)
+			return n;
 		entryName = baseNameStart(entryName);
-		if (strcmp(entryName, fileName) == 0) return n;
+		if (strcmp(entryName, fileName) == 0)
+			return n;
 	}
 	return -1;
 }
-
-
 
 /*----------------------------------------------------------------------*/
 static void printClassName(int c) {
 	output(idOfClass(c));
 }
-
 
 /*----------------------------------------------------------------------*/
 static void showClassInheritance(int c) {
@@ -263,7 +252,6 @@ static void showClassInheritance(int c) {
 		output(str);
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static void showClass(int cla) {
@@ -282,7 +270,6 @@ static void showClass(int cla) {
 	showClassInheritance(cla);
 }
 
-
 /*----------------------------------------------------------------------*/
 static void listClass(int c) {
 	char str[80];
@@ -292,7 +279,6 @@ static void listClass(int c) {
 	printClassName(c);
 	showClassInheritance(c);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void showClassHierarchy(int thisItem, int depth) {
@@ -311,7 +297,6 @@ static void showClassHierarchy(int thisItem, int depth) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void listLocations(CONTEXT) {
 	uint loc;
@@ -322,11 +307,9 @@ static void listLocations(CONTEXT) {
 			listInstance(context, loc);
 }
 
-
 /*----------------------------------------------------------------------*/
 static void showLocation(CONTEXT, int loc) {
 	char str[80];
-
 
 	if (!isALocation(loc)) {
 		sprintf(str, "Instance %d is not a location.", loc);
@@ -343,7 +326,6 @@ static void showLocation(CONTEXT, int loc) {
 	showAttributes(admin[loc].attributes);
 }
 
-
 /*----------------------------------------------------------------------*/
 static void listActors(CONTEXT) {
 	uint act;
@@ -353,7 +335,6 @@ static void listActors(CONTEXT) {
 		if (isAActor(act))
 			CALL1(listInstance, act)
 }
-
 
 /*----------------------------------------------------------------------*/
 static void showActor(CONTEXT, int act) {
@@ -367,7 +348,6 @@ static void showActor(CONTEXT, int act) {
 
 	CALL1(showInstance, act)
 }
-
 
 /*----------------------------------------------------------------------*/
 static void showEvents(CONTEXT) {
@@ -394,14 +374,12 @@ static void showEvents(CONTEXT) {
 	}
 }
 
-
 /*======================================================================*/
 char *sourceFileName(int fileNumber) {
 	SourceFileEntry *entries = (SourceFileEntry *)pointerTo(header->sourceFileTable);
 
 	return getStringFromFile(entries[fileNumber].fpos, entries[fileNumber].len);
 }
-
 
 /*======================================================================*/
 bool readLine(Common::SeekableReadStream *rs, char *line, int maxLen) {
@@ -417,7 +395,6 @@ bool readLine(Common::SeekableReadStream *rs, char *line, int maxLen) {
 
 	return rs->pos() < rs->size();
 }
-
 
 /*======================================================================*/
 char *readSourceLine(int file, int line) {
@@ -457,17 +434,15 @@ void showSourceLine(int fileNumber, int line) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void listFiles() {
 	SourceFileEntry *entry;
 	int i = 0;
-	for (entry = (SourceFileEntry *)pointerTo(header->sourceFileTable); * ((Aword *)entry) != EOD; entry++) {
+	for (entry = (SourceFileEntry *)pointerTo(header->sourceFileTable); *((Aword *)entry) != EOD; entry++) {
 		printf("  %2d : %s\n", i, sourceFileName(i));
 		i++;
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static int findSourceLineIndex(SourceLineEntry *entry, int file, int line) {
@@ -476,14 +451,13 @@ static int findSourceLineIndex(SourceLineEntry *entry, int file, int line) {
 
 	while (!isEndOfArray(&entry[i]) && entry[i].file != file)
 		i++;
-	while (!isEndOfArray(&entry[i]) && entry[i].file == file  && entry[i].line < line)
+	while (!isEndOfArray(&entry[i]) && entry[i].file == file && entry[i].line < line)
 		i++;
 	if (isEndOfArray(entry) || entry[i].file != file)
 		return i - 1;
 	else
 		return i;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void listBreakpoints() {
@@ -501,7 +475,6 @@ static void listBreakpoints() {
 		printf("No breakpoints set\n");
 }
 
-
 /*======================================================================*/
 int breakpointIndex(int file, int line) {
 	int i;
@@ -512,7 +485,6 @@ int breakpointIndex(int file, int line) {
 	return -1;
 }
 
-
 /*----------------------------------------------------------------------*/
 static int availableBreakpointSlot() {
 	int i;
@@ -522,7 +494,6 @@ static int availableBreakpointSlot() {
 			return i;
 	return -1;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void setBreakpoint(int file, int line) {
@@ -553,7 +524,6 @@ static void setBreakpoint(int file, int line) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void deleteBreakpoint(int line, int file) {
 	int i = breakpointIndex(file, line);
@@ -565,8 +535,6 @@ static void deleteBreakpoint(int line, int file) {
 		printf("Breakpoint at %s:%d deleted\n", sourceFileName(file), line);
 	}
 }
-
-
 
 static bool saved_traceSection, saved_traceInstruction, saved_capitilize, saved_tracePush, saved_traceStack, saved_traceSource;
 static int loc;
@@ -589,7 +557,6 @@ void saveInfo(void) {
 	loc = current.location;
 	current.location = where(HERO, DIRECT);
 }
-
 
 /*======================================================================*/
 void restoreInfo(void) {
@@ -636,35 +603,32 @@ typedef struct DebugParseEntry {
 } DebugParseEntry;
 
 static const DebugParseEntry commandEntries[] = {
-	{"help", "", HELP_COMMAND, "this help"},
-	{"?", "", HELP_COMMAND, "d:o"},
-	{"break", "[[file:]n]", BREAK_COMMAND, "set breakpoint at source line [n] (optionally in [file])"},
-	{"delete", "[[file:]n]", DELETE_COMMAND, "delete breakpoint at source line [n] (optionally in [file])"},
-	{"files", "", FILES_COMMAND, "list source files"},
-	{"events", "", EVENTS_COMMAND, "list events"},
-	{"classes", "", CLASSES_COMMAND, "list class hierarchy"},
-	{"instances", "[n]", INSTANCES_COMMAND, "list instance(s), all, wildcard, number or name"},
-	{"objects", "[n]", OBJECTS_COMMAND, "list instance(s) that are objects"},
-	{"actors", "[n]", ACTORS_COMMAND, "list instance(s) that are actors"},
-	{"locations", "[n]", LOCATIONS_COMMAND, "list instances that are locations"},
-	{"trace", "('source'|'section'|'instruction'|'push'|'stack')", TRACE_COMMAND, "toggle various traces"},
-	{"next", "", NEXT_COMMAND, "run game and stop at next source line"},
-	{"go", "", GO_COMMAND, "go another player turn"},
-	{"exit", "", EXIT_COMMAND, "exit to game, enter 'debug' to get back"},
-	{"x", "", EXIT_COMMAND, "d:o"},
-	{"quit", "", QUIT_COMMAND, "quit game"},
-	{NULL, NULL, '\0', NULL}
-};
+    {"help", "", HELP_COMMAND, "this help"},
+    {"?", "", HELP_COMMAND, "d:o"},
+    {"break", "[[file:]n]", BREAK_COMMAND, "set breakpoint at source line [n] (optionally in [file])"},
+    {"delete", "[[file:]n]", DELETE_COMMAND, "delete breakpoint at source line [n] (optionally in [file])"},
+    {"files", "", FILES_COMMAND, "list source files"},
+    {"events", "", EVENTS_COMMAND, "list events"},
+    {"classes", "", CLASSES_COMMAND, "list class hierarchy"},
+    {"instances", "[n]", INSTANCES_COMMAND, "list instance(s), all, wildcard, number or name"},
+    {"objects", "[n]", OBJECTS_COMMAND, "list instance(s) that are objects"},
+    {"actors", "[n]", ACTORS_COMMAND, "list instance(s) that are actors"},
+    {"locations", "[n]", LOCATIONS_COMMAND, "list instances that are locations"},
+    {"trace", "('source'|'section'|'instruction'|'push'|'stack')", TRACE_COMMAND, "toggle various traces"},
+    {"next", "", NEXT_COMMAND, "run game and stop at next source line"},
+    {"go", "", GO_COMMAND, "go another player turn"},
+    {"exit", "", EXIT_COMMAND, "exit to game, enter 'debug' to get back"},
+    {"x", "", EXIT_COMMAND, "d:o"},
+    {"quit", "", QUIT_COMMAND, "quit game"},
+    {NULL, NULL, '\0', NULL}};
 
 static const DebugParseEntry traceSubcommand[] = {
-	{"source", "", TRACE_SOURCE_COMMAND, ""},
-	{"section", "", TRACE_SECTION_COMMAND, ""},
-	{"instructions", "", TRACE_INSTRUCTION_COMMAND, ""},
-	{"pushs", "", TRACE_PUSH_COMMAND, ""},
-	{"stacks", "", TRACE_STACK_COMMAND, ""},
-	{NULL, NULL, '\0', NULL}
-};
-
+    {"source", "", TRACE_SOURCE_COMMAND, ""},
+    {"section", "", TRACE_SECTION_COMMAND, ""},
+    {"instructions", "", TRACE_INSTRUCTION_COMMAND, ""},
+    {"pushs", "", TRACE_PUSH_COMMAND, ""},
+    {"stacks", "", TRACE_STACK_COMMAND, ""},
+    {NULL, NULL, '\0', NULL}};
 
 static char *spaces(int length) {
 	static char buf[200];
@@ -676,12 +640,10 @@ static char *spaces(int length) {
 	return buf;
 }
 
-
 /*----------------------------------------------------------------------*/
 static char *padding(const DebugParseEntry *entry, int maxLength) {
 	return spaces(maxLength - strlen(entry->command) - strlen(entry->parameter));
 }
-
 
 /*----------------------------------------------------------------------*/
 static void handleHelpCommand() {
@@ -704,7 +666,6 @@ static void handleHelpCommand() {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static const DebugParseEntry *findEntry(char *command, const DebugParseEntry *entry) {
 	while (entry->command != NULL) {
@@ -714,7 +675,6 @@ static const DebugParseEntry *findEntry(char *command, const DebugParseEntry *en
 	}
 	return NULL;
 }
-
 
 /*----------------------------------------------------------------------*/
 static char parseDebugCommand(char *command) {
@@ -731,14 +691,14 @@ static char parseDebugCommand(char *command) {
 		return UNKNOWN_COMMAND;
 }
 
-
 /*----------------------------------------------------------------------*/
 static void readCommand(CONTEXT, char buf[], size_t maxLen) {
 	char c;
 	bool flag;
 
 	capitalize = FALSE;
-	if (anyOutput) newline();
+	if (anyOutput)
+		newline();
 	do {
 		output("adbg> ");
 
@@ -752,11 +712,11 @@ static void readCommand(CONTEXT, char buf[], size_t maxLen) {
 	} while (c == '\0');
 }
 
-
 /*----------------------------------------------------------------------*/
 static void displaySourceLocation(int line, int fileNumber) {
 	const char *cause;
-	if (anyOutput) newline();
+	if (anyOutput)
+		newline();
 	if (breakpointIndex(fileNumber, line) != -1)
 		cause = "Breakpoint hit at";
 	else
@@ -766,7 +726,6 @@ static void displaySourceLocation(int line, int fileNumber) {
 	printf("\n");
 	anyOutput = FALSE;
 }
-
 
 /*----------------------------------------------------------------------*/
 static void toggleSectionTrace() {
@@ -792,7 +751,6 @@ static void toggleSourceTrace() {
 		printf("Source code trace off.");
 }
 
-
 /*----------------------------------------------------------------------*/
 static void togglePushTrace() {
 	if ((saved_tracePush = !saved_tracePush))
@@ -801,7 +759,6 @@ static void togglePushTrace() {
 		printf("Stack Push trace off.");
 }
 
-
 /*----------------------------------------------------------------------*/
 static void toggleStackTrace() {
 	if ((saved_traceStack = !saved_traceStack))
@@ -809,7 +766,6 @@ static void toggleStackTrace() {
 	else
 		printf("Full stack trace off.");
 }
-
 
 /*----------------------------------------------------------------------*/
 static int parseTraceCommand() {
@@ -830,7 +786,6 @@ static int parseTraceCommand() {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static const char *printTraceState(bool state) {
 	if (state)
@@ -847,7 +802,6 @@ static void printTrace(void) {
 	printf("Trace push        : %s every push onto the Amachine stack\n", printTraceState(saved_tracePush));
 	printf("Trace stack       : %s the complete stack every time\n", printTraceState(saved_traceStack));
 }
-
 
 /*----------------------------------------------------------------------*/
 static void handleTraceCommand() {
@@ -877,7 +831,6 @@ static void handleTraceCommand() {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void handleBreakCommand(int fileNumber) {
 	char *parameter = strtok(NULL, ":");
@@ -895,7 +848,6 @@ static void handleBreakCommand(int fileNumber) {
 		setBreakpoint(fileNumber, atoi(parameter));
 }
 
-
 /*----------------------------------------------------------------------*/
 static void handleDeleteCommand(bool calledFromBreakpoint, int line, int fileNumber) {
 	char *parameter = strtok(NULL, "");
@@ -908,7 +860,6 @@ static void handleDeleteCommand(bool calledFromBreakpoint, int line, int fileNum
 		deleteBreakpoint(atoi(parameter), fileNumber);
 }
 
-
 /*----------------------------------------------------------------------*/
 static void handleNextCommand(bool calledFromBreakpoint) {
 	stopAtNextLine = TRUE;
@@ -917,7 +868,6 @@ static void handleNextCommand(bool calledFromBreakpoint) {
 		current.sourceLine = 0;
 	restoreInfo();
 }
-
 
 /*----------------------------------------------------------------------*/
 static void handleLocationsCommand(CONTEXT) {
@@ -928,7 +878,6 @@ static void handleLocationsCommand(CONTEXT) {
 		showLocation(context, atoi(parameter));
 }
 
-
 /*----------------------------------------------------------------------*/
 static void handleActorsCommand(CONTEXT) {
 	char *parameter = strtok(NULL, "");
@@ -937,7 +886,6 @@ static void handleActorsCommand(CONTEXT) {
 	else
 		showActor(context, atoi(parameter));
 }
-
 
 /*----------------------------------------------------------------------*/
 static void handleClassesCommand(CONTEXT) {
@@ -953,7 +901,6 @@ static void handleClassesCommand(CONTEXT) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void handleObjectsCommand(CONTEXT) {
 	char *parameter = strtok(NULL, "");
@@ -962,7 +909,6 @@ static void handleObjectsCommand(CONTEXT) {
 	else
 		showObject(context, atoi(parameter));
 }
-
 
 /*----------------------------------------------------------------------*/
 static void handleInstancesCommand(CONTEXT) {
@@ -985,12 +931,8 @@ static void handleInstancesCommand(CONTEXT) {
 
 /*----------------------------------------------------------------------*/
 static bool exactSameVersion() {
-	return header->version[3] == alan.version.version
-	       && header->version[2] == alan.version.revision
-	       && header->version[1] == alan.version.correction
-	       && header->version[0] == alan.version.state[0];
+	return header->version[3] == alan.version.version && header->version[2] == alan.version.revision && header->version[1] == alan.version.correction && header->version[0] == alan.version.state[0];
 }
-
 
 /*======================================================================*/
 void debug(CONTEXT, bool calledFromBreakpoint, int line, int fileNumber) {
@@ -1083,7 +1025,6 @@ void debug(CONTEXT, bool calledFromBreakpoint, int line, int fileNumber) {
 exit_debug:
 	g_vm->glk_set_style(style_Normal);
 }
-
 
 /*======================================================================*/
 void traceSay(CONTEXT, int item) {

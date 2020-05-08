@@ -23,9 +23,9 @@
 #ifndef WORLD_ACTORS_ACTOR_H
 #define WORLD_ACTORS_ACTOR_H
 
-#include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/world/container.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -37,6 +37,7 @@ class CombatProcess;
 class Actor : public Container {
 	friend class ActorAnimProcess;
 	friend class AnimationTracker;
+
 public:
 	Actor();
 	~Actor() override;
@@ -83,8 +84,10 @@ public:
 		return (_actorFlags & ACT_INCOMBAT) != 0;
 	}
 	void toggleInCombat() {
-		if (isInCombat()) clearInCombat();
-		else setInCombat();
+		if (isInCombat())
+			clearInCombat();
+		else
+			setInCombat();
 	}
 
 	CombatProcess *getCombatProcess();
@@ -272,23 +275,23 @@ public:
 	INTRINSIC(I_setEquip);
 
 	enum ActorFlags {
-		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B
-		ACT_ASCENDING      = 0x000002,
-		ACT_DESCENDING     = 0x000004,
-		ACT_ANIMLOCK       = 0x000008,
+		ACT_INVINCIBLE = 0x000001, // flags from npcdata byte 0x1B
+		ACT_ASCENDING = 0x000002,
+		ACT_DESCENDING = 0x000004,
+		ACT_ANIMLOCK = 0x000008,
 
-		ACT_FIRSTSTEP      = 0x000400, // flags from npcdata byte 0x2F
-		ACT_INCOMBAT       = 0x000800,
-		ACT_DEAD           = 0x001000,
-		ACT_COMBATRUN      = 0x008000,
+		ACT_FIRSTSTEP = 0x000400, // flags from npcdata byte 0x2F
+		ACT_INCOMBAT = 0x000800,
+		ACT_DEAD = 0x001000,
+		ACT_COMBATRUN = 0x008000,
 
-		ACT_AIRWALK        = 0x010000, // flags from npcdata byte 0x30
-		ACT_IMMORTAL       = 0x040000,
+		ACT_AIRWALK = 0x010000, // flags from npcdata byte 0x30
+		ACT_IMMORTAL = 0x040000,
 		ACT_WITHSTANDDEATH = 0x080000,
-		ACT_FEIGNDEATH     = 0x100000,
-		ACT_STUNNED        = 0x200000,
-		ACT_POISONED       = 0x400000,
-		ACT_PATHFINDING    = 0x800000
+		ACT_FEIGNDEATH = 0x100000,
+		ACT_STUNNED = 0x200000,
+		ACT_POISONED = 0x400000,
+		ACT_PATHFINDING = 0x800000
 	};
 
 protected:

@@ -25,10 +25,10 @@
 
 #include "common/array.h"
 #include "common/fs.h"
-#include "common/str.h"
+#include "common/language.h"
 #include "common/singleton.h"
 #include "common/str-array.h"
-#include "common/language.h"
+#include "common/str.h"
 
 #ifdef USE_TRANSLATION
 

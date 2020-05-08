@@ -27,7 +27,6 @@
 
 namespace Sci {
 
-
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 #define HOOKARRAY(x) x, ARRAYSIZE(x)
 
@@ -41,8 +40,6 @@ struct HookHashKey {
 	bool operator==(const HookHashKey &other) const {
 		return scriptNumber == other.scriptNumber && offset == other.offset;
 	}
-
-
 };
 
 /** _hooksMap value entry */
@@ -96,7 +93,6 @@ private:
 	/** Location inside patch */
 	int _location;
 };
-
 
 } // End of namespace Sci
 

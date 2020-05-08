@@ -27,13 +27,12 @@ namespace Shared {
 namespace Gfx {
 
 BEGIN_MESSAGE_MAP(VisualContainer, VisualItem)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(MouseMoveMsg)
-	ON_MESSAGE(MouseDoubleClickMsg)
-	ON_MESSAGE(MouseWheelMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseMoveMsg)
+ON_MESSAGE(MouseDoubleClickMsg)
+ON_MESSAGE(MouseWheelMsg)
 END_MESSAGE_MAP()
-
 
 bool VisualContainer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (msg->_buttons & MB_LEFT) {

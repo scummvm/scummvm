@@ -20,26 +20,15 @@
  *
  */
 
-#include "backends/platform/3ds/osystem.h"
 #include "backends/platform/3ds/sprite.h"
+#include "backends/platform/3ds/osystem.h"
 #include "common/algorithm.h"
 #include "common/util.h"
 
 namespace _3DS {
 
 Sprite::Sprite()
-	: textureTransferFlags(0)
-	, dirtyPixels(true)
-	, dirtyMatrix(true)
-	, actualWidth(0)
-	, actualHeight(0)
-	, posX(0)
-	, posY(0)
-	, offsetX(0)
-	, offsetY(0)
-	, scaleX(1.f)
-	, scaleY(1.f)
-{
+    : textureTransferFlags(0), dirtyPixels(true), dirtyMatrix(true), actualWidth(0), actualHeight(0), posX(0), posY(0), offsetX(0), offsetY(0), scaleX(1.f), scaleY(1.f) {
 	Mtx_Identity(&modelview);
 
 	vertices = (vertex *)linearAlloc(sizeof(vertex) * 4);
@@ -70,13 +59,13 @@ void Sprite::create(uint16 width, uint16 height, const GfxMode3DS *mode) {
 	}
 
 	float x = 0.f, y = 0.f;
-	float u = (float)width/w;
-	float v = (float)height/h;
+	float u = (float)width / w;
+	float v = (float)height / h;
 	vertex tmp[4] = {
-		{{x,       y,        0.5f}, {0, 0}},
-		{{x+width, y,        0.5f}, {u, 0}},
-		{{x,       y+height, 0.5f}, {0, v}},
-		{{x+width, y+height, 0.5f}, {u, v}},
+	    {{x, y, 0.5f}, {0, 0}},
+	    {{x + width, y, 0.5f}, {u, 0}},
+	    {{x, y + height, 0.5f}, {0, v}},
+	    {{x + width, y + height, 0.5f}, {u, v}},
 	};
 	memcpy(vertices, tmp, sizeof(vertex) * 4);
 }
@@ -99,7 +88,7 @@ void Sprite::transfer() {
 	if (pixels && dirtyPixels) {
 		dirtyPixels = false;
 		GSPGPU_FlushDataCache(pixels, w * h * format.bytesPerPixel);
-		C3D_SyncDisplayTransfer((u32*)pixels, GX_BUFFER_DIM(w, h), (u32*)texture.data, GX_BUFFER_DIM(w, h), textureTransferFlags);
+		C3D_SyncDisplayTransfer((u32 *)pixels, GX_BUFFER_DIM(w, h), (u32 *)texture.data, GX_BUFFER_DIM(w, h), textureTransferFlags);
 	}
 }
 
@@ -117,7 +106,7 @@ void Sprite::clear(uint32 color) {
 	memset(pixels, color, w * h * format.bytesPerPixel);
 }
 
-void Sprite::setScale (float x, float y) {
+void Sprite::setScale(float x, float y) {
 	if (x != scaleX || y != scaleY) {
 		scaleX = x;
 		scaleY = y;
@@ -139,7 +128,7 @@ void Sprite::setOffset(uint16 x, uint16 y) {
 	dirtyMatrix = true;
 }
 
-C3D_Mtx* Sprite::getMatrix() {
+C3D_Mtx *Sprite::getMatrix() {
 	if (dirtyMatrix) {
 		dirtyMatrix = false;
 		Mtx_Identity(&modelview);

@@ -83,7 +83,8 @@ uint32 decompressSPCN(byte *src, byte *dst, uint32 dstsize) {
 	byte *dstp = dst, *dste = dst + dstsize;
 	byte val;
 	uint16 len, ofs;
-	if (!(*srcp & 0x80)) srcp++;
+	if (!(*srcp & 0x80))
+		srcp++;
 	while (dstp < dste) {
 		val = *(srcp++);
 		if (val & 0x80) {
@@ -125,14 +126,14 @@ uint32 decompressSPCN(byte *src, byte *dst, uint32 dstsize) {
 }
 
 //return codes
-#define NOT_PACKED  0
-#define PACKED_CRC  -1
-#define UNPACKED_CRC    -2
+#define NOT_PACKED 0
+#define PACKED_CRC -1
+#define UNPACKED_CRC -2
 
 //other defines
-#define TABLE_SIZE  (16 * 8)
-#define MIN_LENGTH  2
-#define HEADER_LEN  18
+#define TABLE_SIZE (16 * 8)
+#define MIN_LENGTH 2
+#define HEADER_LEN 18
 
 RncDecoder::RncDecoder() {
 	initCrc();
@@ -145,7 +146,7 @@ RncDecoder::RncDecoder() {
 	_inputByteLeft = 0;
 }
 
-RncDecoder::~RncDecoder() { }
+RncDecoder::~RncDecoder() {}
 
 void RncDecoder::initCrc() {
 	debugC(1, kDebugTools, "initCrc()");
@@ -310,7 +311,6 @@ int32 RncDecoder::unpackM1(const void *input, uint16 inputSize, void *output) {
 	uint16 crcUnpacked = 0;
 	uint16 crcPacked = 0;
 
-
 	_inputByteLeft = inputSize;
 	_bitBuffl = 0;
 	_bitBuffh = 0;
@@ -358,7 +358,6 @@ int32 RncDecoder::unpackM1(const void *input, uint16 inputSize, void *output) {
 
 	_dstPtr = (uint8 *)output;
 	_bitCount = 0;
-
 
 	_bitBuffl = READ_LE_UINT16(_srcPtr);
 	inputBits(2);
@@ -531,7 +530,6 @@ int32 RncDecoder::unpackM2(const void *input, void *output) {
 			*_dstPtr = *(byte *)(_dstPtr - ofs - 1);
 			_dstPtr++;
 		}
-
 	}
 
 	if (crcBlock((uint8 *)output, unpackLen) != crcUnpacked)

@@ -23,45 +23,45 @@
  *
  */
 
-#include "pegasus/compass.h"
-#include "pegasus/energymonitor.h"
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/prehistoric/prehistoric.h"
 #include "pegasus/ai/ai_action.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/ai/ai_condition.h"
 #include "pegasus/ai/ai_rule.h"
-#include "pegasus/neighborhood/prehistoric/prehistoric.h"
+#include "pegasus/compass.h"
+#include "pegasus/energymonitor.h"
+#include "pegasus/gamestate.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
 static const int16 s_prehistoricCompass[kPrehistoric25 + 1][4] = {
-	{ 0, 170, 90, 270 },   // kPrehistoric01
-	{ 0, 180, 90, 270 },   // kPrehistoric02
-	{ 10, 180, 90, 270 },  // kPrehistoric03
-	{ 10, 190, 90, 270 },  // kPrehistoric04
-	{ 10, 195, 90, 270 },  // kPrehistoric05
-	{ 20, 210, 90, 270 },  // kPrehistoric06
-	{ 20, 200, 130, 276 }, // kPrehistoric07
-	{ 20, 176, 110, 260 }, // kPrehistoric08
-	{ 20, 200, 100, 270 }, // kPrehistoric09
-	{ 14, 186, 100, 280 }, // kPrehistoric10
-	{ 26, 206, 116, 296 }, // kPrehistoric11
-	{ 60, 226, 140, 320 }, // kPrehistoric12
-	{ 0, 180, 80, 270 },   // kPrehistoric13
-	{ 14, 200, 106, 286 }, // kPrehistoric14
-	{ -10, 174, 80, 260 }, // kPrehistoric15
-	{ 54, 236, 140, 210 }, // kPrehistoric16
-	{ -24, 160, 70, 250 }, // kPrehistoric17
-	{ 26, 206, 140, 296 }, // kPrehistoric18
-	{ -16, 160, 70, 250 }, // kPrehistoric19
-	{ -16, 160, 70, 250 }, // kPrehistoric20
-	{ -10, 160, 90, 250 }, // kPrehistoric21
-	{ -20, 160, 70, 244 }, // kPrehistoric22
-	{ -20, 160, 70, 244 }, // kPrehistoric22North
-	{ 60, 234, 150, 330 }, // kPrehistoric23
-	{ 50, 230, 140, 320 }, // kPrehistoric24
-	{ 60, 240, 140, 330 }  // kPrehistoric25
+    {0, 170, 90, 270},   // kPrehistoric01
+    {0, 180, 90, 270},   // kPrehistoric02
+    {10, 180, 90, 270},  // kPrehistoric03
+    {10, 190, 90, 270},  // kPrehistoric04
+    {10, 195, 90, 270},  // kPrehistoric05
+    {20, 210, 90, 270},  // kPrehistoric06
+    {20, 200, 130, 276}, // kPrehistoric07
+    {20, 176, 110, 260}, // kPrehistoric08
+    {20, 200, 100, 270}, // kPrehistoric09
+    {14, 186, 100, 280}, // kPrehistoric10
+    {26, 206, 116, 296}, // kPrehistoric11
+    {60, 226, 140, 320}, // kPrehistoric12
+    {0, 180, 80, 270},   // kPrehistoric13
+    {14, 200, 106, 286}, // kPrehistoric14
+    {-10, 174, 80, 260}, // kPrehistoric15
+    {54, 236, 140, 210}, // kPrehistoric16
+    {-24, 160, 70, 250}, // kPrehistoric17
+    {26, 206, 140, 296}, // kPrehistoric18
+    {-16, 160, 70, 250}, // kPrehistoric19
+    {-16, 160, 70, 250}, // kPrehistoric20
+    {-10, 160, 90, 250}, // kPrehistoric21
+    {-20, 160, 70, 244}, // kPrehistoric22
+    {-20, 160, 70, 244}, // kPrehistoric22North
+    {60, 234, 150, 330}, // kPrehistoric23
+    {50, 230, 140, 320}, // kPrehistoric24
+    {60, 240, 140, 330}  // kPrehistoric25
 };
 
 static const TimeValue kPrehistoricFlashlightClickIn = 0;
@@ -107,7 +107,6 @@ public:
 	~FinishPrehistoricAction() override {}
 
 	void performAIAction(AIRule *) override;
-
 };
 
 void FinishPrehistoricAction::performAIAction(AIRule *rule) {
@@ -139,7 +138,7 @@ void Prehistoric::setUpAIRules() {
 			rule = new AIRule(locCondition, messageAction);
 			g_AIArea->addAIRule(rule);
 
-			messageAction = new  AIPlayMessageAction("Images/AI/Prehistoric/XP2SB", false);
+			messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP2SB", false);
 			locCondition = new AILocationCondition(1);
 			locCondition->addLocation(MakeRoomView(kPrehistoric08, kEast));
 			rule = new AIRule(locCondition, messageAction);
@@ -201,7 +200,6 @@ TimeValue Prehistoric::getViewTime(const RoomID room, const DirectionConstant di
 	getExtraEntry(extraID, extra);
 	return extra.movieEnd - 1;
 }
-
 
 void Prehistoric::findSpotEntry(const RoomID room, const DirectionConstant direction, SpotFlags flags, SpotTable::Entry &entry) {
 	Neighborhood::findSpotEntry(room, direction, flags, entry);
@@ -338,7 +336,7 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 	Item *keyCard;
 
 	if (MakeRoomView(room, direction) == MakeRoomView(kPrehistoric25, kEast) &&
-			_privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag)) {
+	    _privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag)) {
 		_navMovie.stop();
 		playSpotSoundSync(kBridgeRetractIn, kBridgeRetractOut);
 		_privateFlags.setFlag(kPrehistoricPrivateExtendedBridgeFlag, false);
@@ -643,7 +641,7 @@ uint Prehistoric::getNumHints() {
 		switch (GameState.getCurrentRoomAndView()) {
 		case MakeRoomView(kPrehistoric18, kEast):
 			if (!GameState.getPrehistoricBreakerThrown() && GameState.getPrehistoricTriedToExtendBridge() &&
-					!_privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag))
+			    !_privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag))
 				numHints = 1;
 			break;
 		case MakeRoomView(kPrehistoric25, kEast):
@@ -676,10 +674,10 @@ Common::String Prehistoric::getHintMovie(uint hintNum) {
 }
 
 bool Prehistoric::canSolve() {
-	return	GameState.getCurrentRoomAndView() == MakeRoomView(kPrehistoric18, kEast) &&
-			!GameState.getPrehistoricBreakerThrown() &&
-			GameState.getPrehistoricTriedToExtendBridge() &&
-			!_privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag);
+	return GameState.getCurrentRoomAndView() == MakeRoomView(kPrehistoric18, kEast) &&
+	       !GameState.getPrehistoricBreakerThrown() &&
+	       GameState.getPrehistoricTriedToExtendBridge() &&
+	       !_privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag);
 }
 
 void Prehistoric::doSolve() {

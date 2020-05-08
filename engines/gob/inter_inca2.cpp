@@ -22,17 +22,17 @@
 
 #include "common/endian.h"
 
+#include "gob/game.h"
 #include "gob/gob.h"
 #include "gob/inter.h"
-#include "gob/game.h"
 #include "gob/script.h"
 
 namespace Gob {
 
 #define OPCODEVER Inter_Inca2
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
-#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
+#define OPCODEDRAW(i, x) _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x) _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x) _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_Inca2::Inter_Inca2(GobEngine *vm) : Inter_v3(vm) {
 }

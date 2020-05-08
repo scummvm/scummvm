@@ -29,10 +29,10 @@ namespace Bbvs {
 
 class MinigameBbAnt : public Minigame {
 public:
-	MinigameBbAnt(BbvsEngine *vm) : Minigame(vm) {};
+	MinigameBbAnt(BbvsEngine *vm) : Minigame(vm){};
 	bool run(bool fromMainGame) override;
-public:
 
+public:
 	struct Obj {
 		int kind;
 		int x, y, priority;
@@ -101,7 +101,7 @@ public:
 
 	const ObjAnimation *getAnimation(int animIndex);
 	const ObjInit *getObjInit(int index);
-	const ObjAnimation * const *getObjKindAnimTable(int kind);
+	const ObjAnimation *const *getObjKindAnimTable(int kind);
 	const ObjAnimation *getObjAnim(int index);
 
 	void buildDrawList0(DrawList &drawList);
@@ -165,7 +165,6 @@ public:
 	void scale2x(int x, int y);
 
 	void loadSounds();
-
 };
 
 } // End of namespace Bbvs

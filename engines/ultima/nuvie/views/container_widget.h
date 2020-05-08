@@ -23,8 +23,8 @@
 #ifndef NUVIE_VIEWS_CONTAINER_WIDGET_H
 #define NUVIE_VIEWS_CONTAINER_WIDGET_H
 
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/views/inventory_message.h"
 
 namespace Ultima {
@@ -101,7 +101,6 @@ public:
 	void drag_draw(int x, int y, int message, void *data) override;
 
 protected:
-
 	GUI_CallBack *callback_object; // object-selected callback
 
 	inline uint16 get_list_position(int x, int y);

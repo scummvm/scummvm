@@ -32,8 +32,7 @@
 namespace Sherlock {
 
 static const int TATTOO_LINE_SPACING[17] = {
-	21, 21, 20, 21, 20, 21, 20, 21, 20, 21, 20, 21, 20, 20, 20, 20, 21
-};
+    21, 21, 20, 21, 20, 21, 20, 21, 20, 21, 20, 21, 20, 20, 20, 20, 21};
 
 /*----------------------------------------------------------------*/
 
@@ -119,8 +118,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 						_index = 0;
 						_sub = 0;
 						endJournal = true;
-					}
-					else {
+					} else {
 						loadJournalFile(false);
 						_sub = _lines.size() - 1;
 					}
@@ -247,7 +245,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 				} else {
 					width = screen.stringWidth(lineStart.c_str());
 					screen.gPrint(Common::Point(JOURNAL_LEFT_X, yp), COL_PEN_COLOR, "%s", lineStart.c_str());
-				 }
+				}
 
 				// Print out the found keyword
 				Common::String lineMatch(matchP, matchP + _find.size());
@@ -372,7 +370,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			// Split the header into two lines, and add a '@' prefix
 			// to the second line as well
 			journalString = Common::String(journalString.c_str(), lineP) + "\n@" +
-				Common::String(lineP + 1);
+			                Common::String(lineP + 1);
 		}
 
 		// Add a newline at the end of the title
@@ -432,9 +430,10 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 		if (IS_ROSE_TATTOO) {
 			// Ignore commented out data
 			if (c == '/' && *(replyP + 1) == '*') {
-				replyP++;	// skip *
-				while (*replyP++ != '*') {}	// empty loop on purpose
-				replyP++;	// skip /
+				replyP++; // skip *
+				while (*replyP++ != '*') {
+				}         // empty loop on purpose
+				replyP++; // skip /
 				c = *replyP;
 			}
 		}
@@ -630,10 +629,10 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			if (IS_SERRATED_SCALPEL) {
 				// Control code, so move past it and any parameters
 				if (c == opcodes[OP_RUN_CANIMATION] ||
-					c == opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
-					c == opcodes[OP_PAUSE] ||
-					c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
-					c == opcodes[OP_WALK_TO_CANIMATION]) {
+				    c == opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
+				    c == opcodes[OP_PAUSE] ||
+				    c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
+				    c == opcodes[OP_WALK_TO_CANIMATION]) {
 					// These commands have a single parameter
 					++replyP;
 				} else if (c == opcodes[OP_ADJUST_OBJ_SEQUENCE]) {
@@ -643,15 +642,15 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				} else if (c == opcodes[OP_SET_FLAG] || c == opcodes[OP_IF_STATEMENT]) {
 					replyP += 2;
 				} else if (c == opcodes[OP_SFX_COMMAND] || c == opcodes[OP_PLAY_PROLOGUE] ||
-					c == opcodes[OP_CALL_TALK_FILE]) {
+				           c == opcodes[OP_CALL_TALK_FILE]) {
 					replyP += 8;
 					break;
 				} else if (
-					c == opcodes[OP_TOGGLE_OBJECT] ||
-					c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
-					c == opcodes[OP_SET_OBJECT] ||
-					c == opcodes[OP_DISPLAY_INFO_LINE] ||
-					c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY]) {
+				    c == opcodes[OP_TOGGLE_OBJECT] ||
+				    c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
+				    c == opcodes[OP_SET_OBJECT] ||
+				    c == opcodes[OP_DISPLAY_INFO_LINE] ||
+				    c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY]) {
 					replyP += (*replyP & 127) + 1;
 				} else if (c == opcodes[OP_GOTO_SCENE]) {
 					replyP += 5;
@@ -660,87 +659,87 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				}
 			} else {
 				if (c == opcodes[OP_RUN_CANIMATION] ||
-					c == opcodes[OP_PAUSE] ||
-					c == opcodes[OP_MOUSE_OFF_ON] ||
-					c == opcodes[OP_SET_WALK_CONTROL] ||
-					c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
-					c == opcodes[OP_WALK_TO_CANIMATION] ||
-					c == opcodes[OP_TURN_NPC_OFF] ||
-					c == opcodes[OP_TURN_NPC_ON] ||
-					c == opcodes[OP_RESTORE_PEOPLE_SEQUENCE])
+				    c == opcodes[OP_PAUSE] ||
+				    c == opcodes[OP_MOUSE_OFF_ON] ||
+				    c == opcodes[OP_SET_WALK_CONTROL] ||
+				    c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
+				    c == opcodes[OP_WALK_TO_CANIMATION] ||
+				    c == opcodes[OP_TURN_NPC_OFF] ||
+				    c == opcodes[OP_TURN_NPC_ON] ||
+				    c == opcodes[OP_RESTORE_PEOPLE_SEQUENCE])
 					++replyP;
 				else if (
-					c == opcodes[OP_SET_TALK_SEQUENCE] ||
-					c == opcodes[OP_SET_FLAG] ||
-					c == opcodes[OP_WALK_NPC_TO_CANIM] ||
-					c == opcodes[OP_WALK_HOLMES_AND_NPC_TO_CANIM] ||
-					c == opcodes[OP_NPC_PATH_LABEL] ||
-					c == opcodes[OP_PATH_GOTO_LABEL])
+				    c == opcodes[OP_SET_TALK_SEQUENCE] ||
+				    c == opcodes[OP_SET_FLAG] ||
+				    c == opcodes[OP_WALK_NPC_TO_CANIM] ||
+				    c == opcodes[OP_WALK_HOLMES_AND_NPC_TO_CANIM] ||
+				    c == opcodes[OP_NPC_PATH_LABEL] ||
+				    c == opcodes[OP_PATH_GOTO_LABEL])
 					replyP += 2;
 				else if (
-					c == opcodes[OP_SET_NPC_PATH_PAUSE] ||
-					c == opcodes[OP_NPC_PATH_PAUSE_TAKING_NOTES] ||
-					c == opcodes[OP_NPC_PATH_PAUSE_LOOKING_HOLMES] ||
-					c == opcodes[OP_NPC_VERB_CANIM])
+				    c == opcodes[OP_SET_NPC_PATH_PAUSE] ||
+				    c == opcodes[OP_NPC_PATH_PAUSE_TAKING_NOTES] ||
+				    c == opcodes[OP_NPC_PATH_PAUSE_LOOKING_HOLMES] ||
+				    c == opcodes[OP_NPC_VERB_CANIM])
 					replyP += 3;
 				else if (
-					c == opcodes[OP_SET_SCENE_ENTRY_FLAG] ||
-					c == opcodes[OP_PATH_IF_FLAG_GOTO_LABEL])
+				    c == opcodes[OP_SET_SCENE_ENTRY_FLAG] ||
+				    c == opcodes[OP_PATH_IF_FLAG_GOTO_LABEL])
 					replyP += 4;
 				else if (
-					c == opcodes[OP_WALK_TO_COORDS])
+				    c == opcodes[OP_WALK_TO_COORDS])
 					replyP += 5;
 				else if (
-					c == opcodes[OP_WALK_NPC_TO_COORDS] ||
-					c == opcodes[OP_GOTO_SCENE] ||
-					c == opcodes[OP_SET_NPC_PATH_DEST] ||
-					c == opcodes[OP_SET_NPC_POSITION])
+				    c == opcodes[OP_WALK_NPC_TO_COORDS] ||
+				    c == opcodes[OP_GOTO_SCENE] ||
+				    c == opcodes[OP_SET_NPC_PATH_DEST] ||
+				    c == opcodes[OP_SET_NPC_POSITION])
 					replyP += 6;
 				else if (
-					c == opcodes[OP_PLAY_SONG] ||
-					c == opcodes[OP_NEXT_SONG])
+				    c == opcodes[OP_PLAY_SONG] ||
+				    c == opcodes[OP_NEXT_SONG])
 					replyP += 8;
 				else if (
-					c == opcodes[OP_CALL_TALK_FILE] ||
-					c == opcodes[OP_SET_NPC_TALK_FILE] ||
-					c == opcodes[OP_NPC_WALK_GRAPHICS])
+				    c == opcodes[OP_CALL_TALK_FILE] ||
+				    c == opcodes[OP_SET_NPC_TALK_FILE] ||
+				    c == opcodes[OP_NPC_WALK_GRAPHICS])
 					replyP += 9;
 				else if (
-					c == opcodes[OP_NPC_VERB_SCRIPT])
+				    c == opcodes[OP_NPC_VERB_SCRIPT])
 					replyP += 10;
 				else if (
-					c == opcodes[OP_WALK_HOLMES_AND_NPC_TO_COORDS])
+				    c == opcodes[OP_WALK_HOLMES_AND_NPC_TO_COORDS])
 					replyP += 11;
 				else if (
-					c == opcodes[OP_NPC_VERB] ||
-					c == opcodes[OP_NPC_VERB_TARGET])
+				    c == opcodes[OP_NPC_VERB] ||
+				    c == opcodes[OP_NPC_VERB_TARGET])
 					replyP += 14;
 				else if (
-					c == opcodes[OP_ADJUST_OBJ_SEQUENCE])
+				    c == opcodes[OP_ADJUST_OBJ_SEQUENCE])
 					replyP += (replyP[0] & 127) + replyP[1] + 2;
 				else if (
-					c == opcodes[OP_TOGGLE_OBJECT] ||
-					c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
-					c == opcodes[OP_SET_OBJECT] ||
-					c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY])
+				    c == opcodes[OP_TOGGLE_OBJECT] ||
+				    c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
+				    c == opcodes[OP_SET_OBJECT] ||
+				    c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY])
 					replyP += (*replyP & 127) + 1;
 				else if (
-					c == opcodes[OP_END_TEXT_WINDOW]) {
+				    c == opcodes[OP_END_TEXT_WINDOW]) {
 					journalString += '\n';
 				} else if (
-					c == opcodes[OP_NPC_DESC_ON_OFF]) {
+				    c == opcodes[OP_NPC_DESC_ON_OFF]) {
 					replyP++;
 					while (replyP[0] && replyP[0] != opcodes[OP_NPC_DESC_ON_OFF])
 						replyP++;
 				} else if (
-					c == opcodes[OP_SET_NPC_INFO_LINE])
+				    c == opcodes[OP_SET_NPC_INFO_LINE])
 					replyP += replyP[1] + 2;
 			}
 
 			// Put a space in the output for a control character, unless it's
 			// immediately coming after another control character
 			if (ctrlSpace && c != opcodes[OP_ASSIGN_PORTRAIT_LOCATION] && c != opcodes[OP_END_TEXT_WINDOW] &&
-					!commentJustPrinted) {
+			    !commentJustPrinted) {
 				journalString += " ";
 				ctrlSpace = false;
 			}
@@ -849,7 +848,6 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 		_journal.remove_at(_journal.size() - 1);
 	}
 }
-
 
 void Journal::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_index);

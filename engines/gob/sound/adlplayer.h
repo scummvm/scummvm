@@ -28,7 +28,7 @@
 #include "gob/sound/adlib.h"
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Gob {
@@ -60,21 +60,20 @@ private:
 
 	Common::Array<Timbre> _timbres;
 
-	byte  *_songData;
+	byte *_songData;
 	uint32 _songDataSize;
 
 	const byte *_playPos;
 
 	int _index;
 
-	uint8  _modifyInstrument;
+	uint8 _modifyInstrument;
 	uint16 _currentInstruments[kMaxVoiceCount];
-
 
 	void setInstrument(int voice, int instrument);
 
-	bool readHeader  (Common::SeekableReadStream &adl, int &timbreCount);
-	bool readTimbres (Common::SeekableReadStream &adl, int  timbreCount);
+	bool readHeader(Common::SeekableReadStream &adl, int &timbreCount);
+	bool readTimbres(Common::SeekableReadStream &adl, int timbreCount);
 	bool readSongData(Common::SeekableReadStream &adl);
 };
 

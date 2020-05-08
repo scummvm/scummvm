@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/texture_png.h"
-#include "ultima/ultima8/filesys/idata_source.h"
-#include "image/png.h"
 #include "graphics/surface.h"
+#include "image/png.h"
+#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {

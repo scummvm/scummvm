@@ -33,14 +33,14 @@ namespace BladeRunner {
  */
 class AudioCache {
 	struct cacheItem {
-		int32   hash;
-		int     refs;
-		uint    lastAccess;
-		byte   *data;
-		uint32  size;
+		int32 hash;
+		int refs;
+		uint lastAccess;
+		byte *data;
+		uint32 size;
 	};
 
-	Common::Mutex            _mutex;
+	Common::Mutex _mutex;
 	Common::Array<cacheItem> _cacheItems;
 
 	uint32 _totalSize;
@@ -51,13 +51,13 @@ public:
 	AudioCache();
 	~AudioCache();
 
-	bool  canAllocate(uint32 size) const;
-	bool  dropOldest();
+	bool canAllocate(uint32 size) const;
+	bool dropOldest();
 	byte *findByHash(int32 hash);
-	void  storeByHash(int32 hash, Common::SeekableReadStream *stream);
+	void storeByHash(int32 hash, Common::SeekableReadStream *stream);
 
-	void  incRef(int32 hash);
-	void  decRef(int32 hash);
+	void incRef(int32 hash);
+	void decRef(int32 hash);
 };
 
 } // End of namespace BladeRunner

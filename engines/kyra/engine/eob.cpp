@@ -29,7 +29,7 @@
 namespace Kyra {
 
 EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
-	: EoBCoreEngine(system, flags) {
+    : EoBCoreEngine(system, flags) {
 	_numSpells = 53;
 	_menuChoiceInit = 4;
 
@@ -325,7 +325,7 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 
 	case 7:
 		r = DLG3(22, 10);
-		if (r  < 2) {
+		if (r < 2) {
 			if (r == 0)
 				npcJoinDialogue(8, 27, 44, 45);
 			else

@@ -48,9 +48,10 @@ using namespace Indeo;
 class Indeo5Decoder : public IndeoDecoderBase {
 	struct Transform {
 		InvTransformPtr *inv_trans;
-		DCTransformPtr  *dc_trans;
-		int             is_2d_trans;
+		DCTransformPtr *dc_trans;
+		int is_2d_trans;
 	};
+
 public:
 	Indeo5Decoder(uint16 width, uint16 height, uint bitsPerPixel = 16);
 	virtual ~Indeo5Decoder() {}
@@ -58,6 +59,7 @@ public:
 	virtual const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 
 	static bool isIndeo5(Common::SeekableReadStream &stream);
+
 protected:
 	/**
 	 * Decode the Indeo 5 picture header.
@@ -89,6 +91,7 @@ protected:
 	 *  @return        result code: 0 = OK, negative number = error
 	 */
 	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile);
+
 private:
 	/**
 	 *  Decode Indeo5 GOP (Group of pictures) header.

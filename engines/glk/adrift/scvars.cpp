@@ -21,10 +21,10 @@
  */
 
 #include "glk/adrift/scare.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
-#include "glk/glk.h"
+#include "glk/adrift/scprotos.h"
 #include "glk/events.h"
+#include "glk/glk.h"
 
 namespace Glk {
 namespace Adrift {
@@ -51,10 +51,9 @@ static sc_bool var_trace = FALSE;
 /* Table of numbers zero to twenty spelled out. */
 enum { VAR_NUMBERS_SIZE = 21 };
 static const sc_char *const VAR_NUMBERS[VAR_NUMBERS_SIZE] = {
-	"zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
-	"nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
-	"sixteen", "seventeen", "eighteen", "nineteen", "twenty"
-};
+    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+    "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+    "sixteen", "seventeen", "eighteen", "nineteen", "twenty"};
 
 /* Variable entry, held on a list hashed by variable name. */
 struct sc_var_s {
@@ -90,7 +89,6 @@ struct sc_var_set_s {
 };
 typedef sc_var_set_s sc_var_set_t;
 
-
 /*
  * var_is_valid()
  *
@@ -100,7 +98,6 @@ static sc_bool var_is_valid(sc_var_setref_t vars) {
 	return vars && vars->magic == VARS_MAGIC;
 }
 
-
 /*
  * var_hash_name()
  *
@@ -109,7 +106,6 @@ static sc_bool var_is_valid(sc_var_setref_t vars) {
 static sc_uint var_hash_name(const sc_char *name) {
 	return sc_hash(name) % VAR_HASH_TABLE_SIZE;
 }
-
 
 /*
  * var_create_empty()
@@ -140,7 +136,6 @@ static sc_var_setref_t var_create_empty(void) {
 
 	return vars;
 }
-
 
 /*
  * var_destroy()
@@ -174,7 +169,6 @@ void var_destroy(sc_var_setref_t vars) {
 	memset(vars, 0xaa, sizeof(*vars));
 	sc_free(vars);
 }
-
 
 /*
  * var_find()
@@ -216,7 +210,6 @@ static sc_varref_t var_add(sc_var_setref_t vars, const sc_char *name, sc_int typ
 	return var;
 }
 
-
 /*
  * var_get_scare_version()
  *
@@ -234,7 +227,6 @@ static sc_int var_get_scare_version(void) {
 	version = major * 10000 + minor * 100 + point;
 	return version;
 }
-
 
 /*
  * var_put()
@@ -309,7 +301,7 @@ void var_put(sc_var_setref_t vars, const sc_char *name, sc_int type, sc_vartype_
 	case VAR_STRING:
 		/* Use mutable string instead of const string. */
 		var->value.mutable_string = (sc_char *)sc_realloc(var->value.mutable_string,
-		                            strlen(vt_value.string) + 1);
+		                                                  strlen(vt_value.string) + 1);
 		strcpy(var->value.mutable_string, vt_value.string);
 		break;
 
@@ -336,7 +328,6 @@ void var_put(sc_var_setref_t vars, const sc_char *name, sc_int type, sc_vartype_
 	}
 }
 
-
 /*
  * var_append_temp()
  *
@@ -359,14 +350,13 @@ static void var_append_temp(sc_var_setref_t vars, const sc_char *string) {
 		noted = strlen(vars->temporary);
 		vars->temporary = (sc_char *)sc_realloc(vars->temporary,
 		                                        strlen(vars->temporary) +
-		                                        strlen(string) + 1);
+		                                            strlen(string) + 1);
 		strcat(vars->temporary, string);
 	}
 
 	if (new_sentence)
 		vars->temporary[noted] = sc_toupper(vars->temporary[noted]);
 }
-
 
 /*
  * var_print_object_np
@@ -457,7 +447,6 @@ static void var_print_object(sc_gameref_t game, sc_int object) {
 	var_append_temp(vars, name);
 }
 
-
 /*
  * var_select_plurality()
  *
@@ -465,10 +454,9 @@ static void var_print_object(sc_gameref_t game, sc_int object) {
  * on whether an object appears singular or plural.
  */
 static const sc_char *var_select_plurality(sc_gameref_t game, sc_int object,
-		const sc_char *singular, const sc_char *plural) {
+                                           const sc_char *singular, const sc_char *plural) {
 	return obj_appears_plural(game, object) ? plural : singular;
 }
-
 
 /*
  * var_list_in_object()
@@ -484,8 +472,7 @@ static void var_list_in_object(sc_gameref_t game, sc_int container) {
 	trail = -1;
 	for (object = 0; object < gs_object_count(game); object++) {
 		/* Contained? */
-		if (gs_object_position(game, object) == OBJ_IN_OBJECT
-		        && gs_object_parent(game, object) == container) {
+		if (gs_object_position(game, object) == OBJ_IN_OBJECT && gs_object_parent(game, object) == container) {
 			if (count > 0) {
 				if (count > 1)
 					var_append_temp(vars, ", ");
@@ -517,7 +504,6 @@ static void var_list_in_object(sc_gameref_t game, sc_int container) {
 	}
 }
 
-
 /*
  * var_list_on_object()
  *
@@ -532,8 +518,7 @@ static void var_list_on_object(sc_gameref_t game, sc_int supporter) {
 	trail = -1;
 	for (object = 0; object < gs_object_count(game); object++) {
 		/* Standing on? */
-		if (gs_object_position(game, object) == OBJ_ON_OBJECT
-		        && gs_object_parent(game, object) == supporter) {
+		if (gs_object_position(game, object) == OBJ_ON_OBJECT && gs_object_parent(game, object) == supporter) {
 			if (count > 0) {
 				if (count > 1)
 					var_append_temp(vars, ", ");
@@ -564,7 +549,6 @@ static void var_list_on_object(sc_gameref_t game, sc_int supporter) {
 	}
 }
 
-
 /*
  * var_list_onin_object()
  *
@@ -581,8 +565,7 @@ static void var_list_onin_object(sc_gameref_t game, sc_int associate) {
 	supporting = FALSE;
 	for (object = 0; object < gs_object_count(game); object++) {
 		/* Standing on? */
-		if (gs_object_position(game, object) == OBJ_ON_OBJECT
-		        && gs_object_parent(game, object) == associate) {
+		if (gs_object_position(game, object) == OBJ_ON_OBJECT && gs_object_parent(game, object) == associate) {
 			if (count > 0) {
 				if (count > 1)
 					var_append_temp(vars, ", ");
@@ -617,8 +600,7 @@ static void var_list_onin_object(sc_gameref_t game, sc_int associate) {
 	trail = -1;
 	for (object = 0; object < gs_object_count(game); object++) {
 		/* Contained? */
-		if (gs_object_position(game, object) == OBJ_IN_OBJECT
-		        && gs_object_parent(game, object) == associate) {
+		if (gs_object_position(game, object) == OBJ_IN_OBJECT && gs_object_parent(game, object) == associate) {
 			if (count > 0) {
 				if (count == 1) {
 					if (supporting)
@@ -661,7 +643,6 @@ static void var_list_onin_object(sc_gameref_t game, sc_int associate) {
 	}
 }
 
-
 /*
  * var_return_integer()
  * var_return_string()
@@ -683,7 +664,6 @@ static sc_bool var_return_string(const sc_char *value, sc_int *type, sc_vartype_
 	return TRUE;
 }
 
-
 /*
  * var_get_system()
  *
@@ -691,7 +671,7 @@ static sc_bool var_return_string(const sc_char *value, sc_int *type, sc_vartype_
  * if invalid name passed in.  Uses var_return_*() to reduce code untidiness.
  */
 static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
-		sc_int *type, sc_vartype_t *vt_rvalue) {
+                              sc_int *type, sc_vartype_t *vt_rvalue) {
 	const sc_prop_setref_t bundle = vars->bundle;
 	const sc_gameref_t game = vars->game;
 
@@ -843,8 +823,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 			objname = prop_get_string(bundle, "S<-sis", vt_key);
 
 			vars->temporary = (sc_char *)sc_realloc(vars->temporary,
-			                                        strlen(vars->temporary)
-			                                        + strlen(objname) + 2);
+			                                        strlen(vars->temporary) + strlen(objname) + 2);
 			strcat(vars->temporary, " ");
 			strcat(vars->temporary, objname);
 
@@ -1153,11 +1132,13 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 		var = var_find(vars, name + 2);
 		if (!var) {
 			sc_error("var_get_system:"
-			         " no such variable, %s\n", name + 2);
+			         " no such variable, %s\n",
+			         name + 2);
 			return var_return_string("[Unknown variable]", type, vt_rvalue);
 		} else if (var->type != VAR_INTEGER) {
 			sc_error("var_get_system:"
-			         " not an integer variable, %s\n", name + 2);
+			         " not an integer variable, %s\n",
+			         name + 2);
 			return var_return_string(var->value.string, type, vt_rvalue);
 		} else {
 			sc_int number;
@@ -1240,8 +1221,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 				objname += 4;
 
 			vars->temporary = (sc_char *)sc_realloc(vars->temporary,
-			                                        strlen(vars->temporary)
-			                                        + strlen(objname) + 1);
+			                                        strlen(vars->temporary) + strlen(objname) + 1);
 			strcat(vars->temporary, objname);
 
 			return var_return_string(vars->temporary, type, vt_rvalue);
@@ -1257,7 +1237,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 
 		/* Return the elapsed game time in seconds. */
 		delta = vars->timestamp - (g_vm->_events->getTotalPlayTicks() / 1000);
-		retval = (sc_int) delta + vars->time_offset;
+		retval = (sc_int)delta + vars->time_offset;
 
 		return var_return_integer(retval, type, vt_rvalue);
 	}
@@ -1300,7 +1280,6 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 	return FALSE;
 }
 
-
 /*
  * var_get_user()
  *
@@ -1308,7 +1287,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
  * name passed in is not a defined user variable.
  */
 static sc_bool var_get_user(sc_var_setref_t vars, const sc_char *name,
-		sc_int *type, sc_vartype_t *vt_rvalue) {
+                            sc_int *type, sc_vartype_t *vt_rvalue) {
 	sc_varref_t var;
 
 	/* Check user variables for a reference to the named variable. */
@@ -1334,7 +1313,6 @@ static sc_bool var_get_user(sc_var_setref_t vars, const sc_char *name,
 
 	return FALSE;
 }
-
 
 /*
  * var_get()
@@ -1379,7 +1357,6 @@ sc_bool var_get(sc_var_setref_t vars, const sc_char *name, sc_int *type, sc_vart
 	return status;
 }
 
-
 /*
  * var_put_integer()
  * var_get_integer()
@@ -1408,7 +1385,6 @@ sc_int var_get_integer(sc_var_setref_t vars, const sc_char *name) {
 	return vt_rvalue.integer;
 }
 
-
 /*
  * var_put_string()
  * var_get_string()
@@ -1436,7 +1412,6 @@ const sc_char *var_get_string(sc_var_setref_t vars, const sc_char *name) {
 
 	return vt_rvalue.string;
 }
-
 
 /*
  * var_create()
@@ -1481,7 +1456,8 @@ sc_var_setref_t var_create(sc_prop_setref_t bundle) {
 			sc_int integer_value;
 			if (sscanf(value, "%ld", &integer_value) != 1) {
 				sc_error("var_create:"
-				         " invalid numeric variable %s, %s\n", name, value);
+				         " invalid numeric variable %s, %s\n",
+				         name, value);
 				integer_value = 0;
 			}
 			var_put_integer(vars, name, integer_value);
@@ -1500,7 +1476,6 @@ sc_var_setref_t var_create(sc_prop_setref_t bundle) {
 	return vars;
 }
 
-
 /*
  * var_register_game()
  *
@@ -1517,7 +1492,6 @@ void var_register_game(sc_var_setref_t vars, sc_gameref_t game) {
 
 	vars->game = game;
 }
-
 
 /*
  * var_set_ref_character()
@@ -1550,7 +1524,6 @@ void var_set_ref_text(sc_var_setref_t vars, const sc_char *text) {
 	vars->referenced_text = (sc_char *)sc_realloc(vars->referenced_text, strlen(text) + 1);
 	strcpy(vars->referenced_text, text);
 }
-
 
 /*
  * var_get_ref_character()
@@ -1586,7 +1559,6 @@ const sc_char *var_get_ref_text(sc_var_setref_t vars) {
 	return vars->referenced_text ? vars->referenced_text : "";
 }
 
-
 /*
  * var_get_elapsed_seconds()
  * var_set_elapsed_seconds()
@@ -1599,7 +1571,7 @@ sc_uint var_get_elapsed_seconds(sc_var_setref_t vars) {
 	assert(var_is_valid(vars));
 
 	delta = vars->timestamp - g_vm->_events->getTotalPlayTicks();
-	return (sc_uint) delta + vars->time_offset;
+	return (sc_uint)delta + vars->time_offset;
 }
 
 void var_set_elapsed_seconds(sc_var_setref_t vars, sc_uint seconds) {
@@ -1614,7 +1586,6 @@ void var_set_elapsed_seconds(sc_var_setref_t vars, sc_uint seconds) {
 	vars->time_offset = seconds;
 }
 
-
 /*
  * var_debug_trace()
  *
@@ -1623,7 +1594,6 @@ void var_set_elapsed_seconds(sc_var_setref_t vars, sc_uint seconds) {
 void var_debug_trace(sc_bool flag) {
 	var_trace = flag;
 }
-
 
 /*
  * var_debug_dump()
@@ -1637,7 +1607,7 @@ void var_debug_dump(sc_var_setref_t vars) {
 
 	/* Dump complete structure. */
 	sc_trace("Variable: debug dump follows...\n");
-	sc_trace("vars->bundle = %p\n", (void *) vars->bundle);
+	sc_trace("vars->bundle = %p\n", (void *)vars->bundle);
 	sc_trace("vars->referenced_character = %ld\n", vars->referenced_character);
 	sc_trace("vars->referenced_object = %ld\n", vars->referenced_object);
 	sc_trace("vars->referenced_number = %ld\n", vars->referenced_number);
@@ -1650,9 +1620,9 @@ void var_debug_dump(sc_var_setref_t vars) {
 	else
 		sc_trace("(nil)\n");
 
-	sc_trace("vars->temporary = %p\n", (void *) vars->temporary);
-	sc_trace("vars->timestamp = %lu\n", (sc_uint) vars->timestamp);
-	sc_trace("vars->game = %p\n", (void *) vars->game);
+	sc_trace("vars->temporary = %p\n", (void *)vars->temporary);
+	sc_trace("vars->timestamp = %lu\n", (sc_uint)vars->timestamp);
+	sc_trace("vars->game = %p\n", (void *)vars->game);
 
 	sc_trace("vars->variables =\n");
 	for (index_ = 0; index_ < VAR_HASH_TABLE_SIZE; index_++) {

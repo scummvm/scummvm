@@ -29,7 +29,7 @@
 namespace Cloud {
 namespace GoogleDrive {
 
-class GoogleDriveStorage: public Id::IdStorage {
+class GoogleDriveStorage : public Id::IdStorage {
 	/** This private constructor is called from loadFromConfig(). */
 	GoogleDriveStorage(Common::String token, Common::String refreshToken, bool enabled);
 

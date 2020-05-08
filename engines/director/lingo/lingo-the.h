@@ -20,8 +20,8 @@
  *
  */
 
- #ifndef DIRECTOR_LINGO_LINGO_THE_H
- #define DIRECTOR_LINGO_LINGO_THE_H
+#ifndef DIRECTOR_LINGO_LINGO_THE_H
+#define DIRECTOR_LINGO_LINGO_THE_H
 
 namespace Director {
 
@@ -144,12 +144,12 @@ enum TheEntityType {
 	kTheWindow,
 	kTheWindowList,
 	kTheWords,
-	kTheMaxTheEntityType		// This must be always last
+	kTheMaxTheEntityType // This must be always last
 };
 
 enum TheFieldType {
 	kTheNOField = 0,
-	kTheAbbr    = 1,
+	kTheAbbr = 1,
 	kTheBackColor,
 	kTheBlend,
 	kTheBottom,
@@ -229,7 +229,7 @@ enum TheFieldType {
 	kTheVolume,
 	kTheWidth,
 	kTheWindowType,
-	kTheMaxTheFieldType		// This must be always last
+	kTheMaxTheFieldType // This must be always last
 };
 
 struct TheEntity {

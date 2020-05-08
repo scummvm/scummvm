@@ -31,12 +31,11 @@ namespace Graphics {
  * Represents a hardware video mode.
  */
 struct Mode {
-	int16 width; ///< The width in pixels
+	int16 width;  ///< The width in pixels
 	int16 height; ///< The height in pixels
 
-	Mode(const int16 w, const int16 h) :
-		width(w),
-		height(h) {}
+	Mode(const int16 w, const int16 h) : width(w),
+	                                     height(h) {}
 
 	bool operator<(const Mode &other) const {
 		return width < other.width && height < other.height;
@@ -45,6 +44,6 @@ struct Mode {
 
 typedef Common::Array<Mode> ModeList;
 
-}
+} // namespace Graphics
 
 #endif

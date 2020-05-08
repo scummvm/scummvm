@@ -42,7 +42,7 @@
 namespace Common {
 class SeekableReadStream;
 struct Rect;
-}
+} // namespace Common
 
 namespace LastExpress {
 

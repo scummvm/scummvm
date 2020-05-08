@@ -48,7 +48,7 @@ public:
 	uint getGfxWidth() const { return kGfxWidth; }
 	uint getGfxHeight() const { return kGfxHeight; }
 	uint getGfxPitch() const { return kGfxPitch; }
-	void loadFrameBuffer(Common::ReadStream &stream, byte *dst) const ;
+	void loadFrameBuffer(Common::ReadStream &stream, byte *dst) const;
 	void loadFrameBuffer(Common::ReadStream &stream);
 	void putPixel(const Common::Point &p, byte color);
 	void setPixelByte(const Common::Point &p, byte color);

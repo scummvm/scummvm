@@ -34,7 +34,7 @@ public:
 
 private:
 	Synth &synth;
-	float * const inBuffer;
+	float *const inBuffer;
 	soxr_t resampler;
 
 	static size_t getInputSamples(void *input_fn_state, soxr_in_t *data, size_t requested_len);

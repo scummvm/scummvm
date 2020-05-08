@@ -23,7 +23,6 @@
 #ifndef CRUISE_CELL_H
 #define CRUISE_CELL_H
 
-
 #include "common/scummsys.h"
 
 namespace Cruise {
@@ -61,14 +60,13 @@ struct cellStruct {
 
 extern cellStruct cellHead;
 
-void resetPtr(cellStruct * ptr);
+void resetPtr(cellStruct *ptr);
 cellStruct *addCell(cellStruct *pHead, int16 overlayIdx, int16 objIdx, int16 type, int16 backgroundPlane, int16 scriptOverlay, int16 scriptNumber, int16 scriptType);
 void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x, int y, int width, int16 color, int backgroundPlane, int parentOvl, int parentIdx);
 void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, int backgroundPlane);
-void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, int backgroundPlane, int oldFreeze, int newFreeze);
+void freezeCell(cellStruct *pObject, int overlayIdx, int objIdx, int objType, int backgroundPlane, int oldFreeze, int newFreeze);
 void sortCells(int16 param1, int16 param2, cellStruct *objPtr);
 void linkCell(cellStruct *pHead, int ovl, int obj, int type, int ovl2, int obj2);
-
 
 } // End of namespace Cruise
 

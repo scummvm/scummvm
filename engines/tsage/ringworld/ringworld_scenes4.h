@@ -24,8 +24,8 @@
 #define TSAGE_RINGWORLD_SCENES4_H
 
 #include "common/scummsys.h"
-#include "tsage/core.h"
 #include "tsage/converse.h"
+#include "tsage/core.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
 
@@ -45,6 +45,7 @@ class Scene3500 : public Scene {
 	public:
 		void signal() override;
 	};
+
 public:
 	SpeakerSText _speakerSText;
 	SpeakerMText _speakerMText;
@@ -80,6 +81,7 @@ class Scene3700 : public Scene {
 	public:
 		void signal() override;
 	};
+
 public:
 	Viewer _viewer;
 	Action1 _action1;

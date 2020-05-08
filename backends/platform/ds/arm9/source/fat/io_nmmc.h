@@ -22,9 +22,9 @@
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE NMMC_GetInterface(void) ;
+extern LPIO_INTERFACE NMMC_GetInterface(void);
 
-#endif	// define IO_NMMC_H
+#endif // define IO_NMMC_H
 /*
 	io_NMMC.h
 
@@ -49,6 +49,6 @@ extern LPIO_INTERFACE NMMC_GetInterface(void) ;
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE NMMC_GetInterface(void) ;
+extern LPIO_INTERFACE NMMC_GetInterface(void);
 
-#endif	// define IO_NMMC_H
+#endif // define IO_NMMC_H

@@ -23,17 +23,16 @@
 #ifndef NUVIE_CORE_FPS_COUNTER_H
 #define NUVIE_CORE_FPS_COUNTER_H
 
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 class Game;
 
-class FpsCounter: public GUI_Widget {
+class FpsCounter : public GUI_Widget {
 protected:
-
 	Game *game;
 	Font *font;
 

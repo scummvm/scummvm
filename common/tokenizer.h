@@ -50,8 +50,8 @@ public:
 private:
 	const String _str;        ///< The string to be tokenized
 	const String _delimiters; ///< String containing all the delimiter characters
-	uint         _tokenBegin; ///< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
-	uint         _tokenEnd;   ///< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
+	uint _tokenBegin;         ///< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
+	uint _tokenEnd;           ///< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
 };
 
 } // End of namespace Common

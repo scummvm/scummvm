@@ -35,9 +35,8 @@ namespace GoogleDrive {
 
 #define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/upload/drive/v3/files"
 
-GoogleDriveUploadRequest::GoogleDriveUploadRequest(GoogleDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
-	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
-	_workingRequest(nullptr), _ignoreCallback(false) {
+GoogleDriveUploadRequest::GoogleDriveUploadRequest(GoogleDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb) : Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
+                                                                                                                                                                                                              _workingRequest(nullptr), _ignoreCallback(false) {
 	start();
 }
 
@@ -59,7 +58,7 @@ void GoogleDriveUploadRequest::start() {
 		return;
 	}
 	_resolvedId = ""; //used to update file contents
-	_parentId = ""; //used to create file within parent directory
+	_parentId = "";   //used to create file within parent directory
 	_serverReceivedBytes = 0;
 	_ignoreCallback = false;
 
@@ -285,8 +284,8 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 		}
 
 		if (Networking::CurlJsonRequest::jsonContainsString(object, "id", "GoogleDriveUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsString(object, "name", "GoogleDriveUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsString(object, "mimeType", "GoogleDriveUploadRequest")) {
+		    Networking::CurlJsonRequest::jsonContainsString(object, "name", "GoogleDriveUploadRequest") &&
+		    Networking::CurlJsonRequest::jsonContainsString(object, "mimeType", "GoogleDriveUploadRequest")) {
 			//finished
 			Common::String id = object.getVal("id")->asString();
 			Common::String name = object.getVal("name")->asString();

@@ -21,22 +21,21 @@
  */
 
 #include "glk/glk_api.h"
+#include "common/translation.h"
 #include "glk/conf.h"
 #include "glk/events.h"
 #include "glk/picture.h"
 #include "glk/sound.h"
 #include "glk/streams.h"
 #include "glk/unicode.h"
-#include "glk/windows.h"
 #include "glk/window_graphics.h"
-#include "glk/window_text_buffer.h"
 #include "glk/window_pair.h"
-#include "common/translation.h"
+#include "glk/window_text_buffer.h"
+#include "glk/windows.h"
 
 namespace Glk {
 
-GlkAPI::GlkAPI(OSystem *syst, const GlkGameDescription &gameDesc) :
-		GlkEngine(syst, gameDesc), _gliFirstEvent(false) {
+GlkAPI::GlkAPI(OSystem *syst, const GlkGameDescription &gameDesc) : GlkEngine(syst, gameDesc), _gliFirstEvent(false) {
 	// Set uppercase/lowercase tables
 	int ix, res;
 	for (ix = 0; ix < 256; ix++) {
@@ -69,7 +68,7 @@ void GlkAPI::glk_exit(void) {
 	g_system->getEventManager()->pollEvent(e);
 }
 
-void GlkAPI::glk_set_interrupt_handler(void(*func)(void)) {
+void GlkAPI::glk_set_interrupt_handler(void (*func)(void)) {
 	// This library doesn't handle interrupts.
 }
 
@@ -198,7 +197,7 @@ void GlkAPI::glk_window_set_arrangement(winid_t win, uint method, uint size, win
 }
 
 void GlkAPI::glk_window_get_arrangement(winid_t win, uint *method,
-                                     uint *size, winid_t *keyWin) {
+                                        uint *size, winid_t *keyWin) {
 	if (win) {
 		win->getArrangement(method, size, keyWin);
 	} else {
@@ -702,8 +701,7 @@ void GlkAPI::glk_request_timer_events(uint millisecs) {
 void GlkAPI::glk_request_line_event(winid_t win, char *buf, uint maxlen, uint initlen) {
 	if (!win) {
 		warning("request_line_event: invalid ref");
-	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
-	           || win->_lineRequestUni) {
+	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni || win->_lineRequestUni) {
 		warning("request_line_event: window already has keyboard request");
 	} else {
 		win->requestLineEvent(buf, maxlen, initlen);
@@ -713,8 +711,7 @@ void GlkAPI::glk_request_line_event(winid_t win, char *buf, uint maxlen, uint in
 void GlkAPI::glk_request_char_event(winid_t win) {
 	if (!win) {
 		warning("request_char_event: invalid ref");
-	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
-	           || win->_lineRequestUni) {
+	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni || win->_lineRequestUni) {
 		warning("request_char_event: window already has keyboard request");
 	} else {
 		win->requestCharEvent();
@@ -778,7 +775,7 @@ uint GlkAPI::glk_buffer_to_upper_case_uni(uint32 *buf, uint len, uint numchars) 
 }
 
 uint GlkAPI::glk_buffer_to_title_case_uni(uint32 *buf, uint len,
-        uint numchars, uint lowerrest) {
+                                          uint numchars, uint lowerrest) {
 	return bufferChangeCase(buf, len, numchars, CASE_TITLE, COND_LINESTART, lowerrest);
 }
 
@@ -839,9 +836,9 @@ uint GlkAPI::glk_get_buffer_stream_uni(strid_t str, uint32 *buf, uint len) {
 uint GlkAPI::glk_get_line_stream_uni(strid_t str, uint32 *buf, uint len) {
 	if (str) {
 		return str->getLineUni(buf, len);
-	} else  {
+	} else {
 		warning("get_line_stream_uni: invalid ref");
-		return (uint) - 1;
+		return (uint)-1;
 	}
 }
 
@@ -856,8 +853,7 @@ strid_t GlkAPI::glk_stream_open_memory_uni(uint32 *buf, uint buflen, FileMode fm
 void GlkAPI::glk_request_char_event_uni(winid_t win) {
 	if (!win) {
 		warning("request_char_event_uni: invalid ref");
-	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
-	           || win->_lineRequestUni) {
+	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni || win->_lineRequestUni) {
 		warning("request_char_event_uni: window already has keyboard request");
 	} else {
 		win->requestCharEvent();
@@ -867,8 +863,7 @@ void GlkAPI::glk_request_char_event_uni(winid_t win) {
 void GlkAPI::glk_request_line_event_uni(winid_t win, uint32 *buf, uint maxlen, uint initlen) {
 	if (!win) {
 		warning("request_line_event_uni: invalid ref");
-	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni
-	           || win->_lineRequestUni) {
+	} else if (win->_charRequest || win->_lineRequest || win->_charRequestUni || win->_lineRequestUni) {
 		warning("request_line_event_uni: window already has keyboard request");
 	} else {
 		win->requestLineEventUni(buf, maxlen, initlen);
@@ -901,7 +896,7 @@ bool GlkAPI::glk_image_draw(winid_t win, uint image, int val1, int val2) {
 }
 
 bool GlkAPI::glk_image_draw_scaled(winid_t win, uint image, int val1, int val2,
-                                  uint width, uint height) {
+                                   uint width, uint height) {
 	if (!win) {
 		warning("image_draw_scaled: invalid ref");
 	} else if (g_conf->_graphics) {
@@ -918,7 +913,7 @@ bool GlkAPI::glk_image_draw_scaled(winid_t win, uint image, int val1, int val2,
 }
 
 bool GlkAPI::glk_image_draw(winid_t win, const Graphics::Surface &image, uint transColor,
-		int xp, int yp) {
+                            int xp, int yp) {
 	if (!win) {
 		warning("image_draw: invalid ref");
 	} else if (g_conf->_graphics) {
@@ -932,7 +927,7 @@ bool GlkAPI::glk_image_draw(winid_t win, const Graphics::Surface &image, uint tr
 }
 
 bool GlkAPI::glk_image_draw_scaled(winid_t win, const Graphics::Surface &image, uint transColor,
-		int xp, int yp, uint width, uint height) {
+                                   int xp, int yp, uint width, uint height) {
 	if (!win) {
 		warning("image_draw_scaled: invalid ref");
 	} else if (g_conf->_graphics) {
@@ -944,7 +939,7 @@ bool GlkAPI::glk_image_draw_scaled(winid_t win, const Graphics::Surface &image, 
 
 			Graphics::ManagedSurface s(width, height, image.format);
 			s.transBlitFrom(image, Common::Rect(0, 0, image.w, image.h),
-				Common::Rect(0, 0, width, height));
+			                Common::Rect(0, 0, width, height));
 
 			if (gfxWin)
 				gfxWin->drawPicture(s, transColor, xp, yp, s.w, s.h);
@@ -987,7 +982,7 @@ void GlkAPI::glk_window_erase_rect(winid_t win, int left, int top, uint width, u
 }
 
 void GlkAPI::glk_window_fill_rect(winid_t win, uint color, int left, int top,
-                               uint width, uint height) {
+                                  uint width, uint height) {
 	if (!win) {
 		warning("window_fill_rect: invalid ref");
 	} else {
@@ -1071,7 +1066,7 @@ schanid_t GlkAPI::glk_schannel_create_ext(uint rock, uint volume) {
 }
 
 uint GlkAPI::glk_schannel_play_multi(schanid_t *chanarray, uint chancount,
-                                    uint *sndarray, uint soundcount, uint notify) {
+                                     uint *sndarray, uint soundcount, uint notify) {
 	// No implementation
 	return 0;
 }
@@ -1093,7 +1088,7 @@ void GlkAPI::glk_schannel_unpause(schanid_t chan) {
 }
 
 void GlkAPI::glk_schannel_set_volume_ext(schanid_t chan, uint vol,
-                                      uint duration, uint notify) {
+                                         uint duration, uint notify) {
 	if (chan) {
 		chan->setVolume(vol, duration, notify);
 	} else {

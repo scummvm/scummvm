@@ -19,34 +19,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/textconsole.h"
-#include "common/debug.h"
-#include "audio/decoders/xa.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "common/memstream.h"
 #include "dragons/vabsound.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/xa.h"
+#include "audio/mixer.h"
+#include "common/debug.h"
+#include "common/memstream.h"
+#include "common/textconsole.h"
 #include "dragons/dragons.h"
 
 namespace Dragons {
 
-VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm): _toneAttrs(nullptr), _vbData(nullptr) {
+VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm) : _toneAttrs(nullptr), _vbData(nullptr) {
 	loadHeader(msfData);
 
 	int32 dataSize = msfData->size() - msfData->pos();
 	_vbData = new byte[dataSize];
 	msfData->read(_vbData, dataSize);
 
-//		_vbData = new Common::MemoryReadStream(newData, dataSize, DisposeAfterUse::YES);
-//
-//		Audio::AudioStream *str = Audio::makeXAStream(_vbData, 11025);
-//		Audio::SoundHandle _speechHandle;
-//		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speechHandle, str);
+	//		_vbData = new Common::MemoryReadStream(newData, dataSize, DisposeAfterUse::YES);
+	//
+	//		Audio::AudioStream *str = Audio::makeXAStream(_vbData, 11025);
+	//		Audio::SoundHandle _speechHandle;
+	//		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speechHandle, str);
 
 	delete msfData;
 }
 
-VabSound::VabSound(Common::SeekableReadStream *vhData, Common::SeekableReadStream *vbData): _toneAttrs(nullptr), _vbData(nullptr) {
+VabSound::VabSound(Common::SeekableReadStream *vhData, Common::SeekableReadStream *vbData) : _toneAttrs(nullptr), _vbData(nullptr) {
 	loadHeader(vhData);
 
 	assert(vhData->pos() == vhData->size());
@@ -112,9 +112,9 @@ Audio::AudioStream *VabSound::getAudioStream(uint16 program, uint16 key) {
 	}
 	debug("Playing program %d, numTones: %d, key %d vagID %d, vagOffset: %x, size: %x", program, _programAttrs[program].tones, key, vagID, _vagOffsets[vagID], _vagSizes[vagID]);
 	Audio::AudioStream *str = Audio::makeXAStream(
-			new Common::MemoryReadStream(&_vbData[_vagOffsets[vagID]], _vagSizes[vagID], DisposeAfterUse::NO),
-			11025,
-			DisposeAfterUse::YES);
+	    new Common::MemoryReadStream(&_vbData[_vagOffsets[vagID]], _vagSizes[vagID], DisposeAfterUse::NO),
+	    11025,
+	    DisposeAfterUse::YES);
 	return str;
 }
 

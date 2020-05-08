@@ -29,8 +29,8 @@
 namespace Illusions {
 
 enum {
-	kUFNext      = 1,  // Run next update funtion
-	kUFTerminate = 2   // Terminate update function
+	kUFNext = 1,     // Run next update funtion
+	kUFTerminate = 2 // Terminate update function
 };
 
 typedef Common::Functor1<uint, int> UpdateFunctionCallback;
@@ -54,11 +54,12 @@ public:
 	void add(int priority, uint32 sceneId, UpdateFunctionCallback *callback);
 	void update();
 	void terminateByScene(uint32 sceneId);
+
 protected:
-	typedef Common::List<UpdateFunction*> UpdateFunctionList;
+	typedef Common::List<UpdateFunction *> UpdateFunctionList;
 	typedef UpdateFunctionList::iterator UpdateFunctionListIterator;
 
-	struct FindInsertionPosition : public Common::UnaryFunction<const UpdateFunction*, bool> {
+	struct FindInsertionPosition : public Common::UnaryFunction<const UpdateFunction *, bool> {
 		int _priority;
 		FindInsertionPosition(int priority) : _priority(priority) {}
 		bool operator()(const UpdateFunction *updateFunction) const {
@@ -66,7 +67,7 @@ protected:
 		}
 	};
 
-	Common::List<UpdateFunction*> _updateFunctions;
+	Common::List<UpdateFunction *> _updateFunctions;
 	uint32 _lastTimerUpdateTime;
 };
 

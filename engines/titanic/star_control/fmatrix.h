@@ -38,6 +38,7 @@ public:
 	FVector _row1;
 	FVector _row2;
 	FVector _row3;
+
 public:
 	FMatrix();
 	FMatrix(const FVector &, const FVector &, const FVector &);
@@ -109,7 +110,7 @@ public:
 	 */
 	FVector &operator[](int idx) {
 		assert(idx >= 0 && idx <= 2);
-		FVector *rows[3] = { &_row1, &_row2, &_row3 };
+		FVector *rows[3] = {&_row1, &_row2, &_row3};
 		return *rows[idx];
 	}
 };

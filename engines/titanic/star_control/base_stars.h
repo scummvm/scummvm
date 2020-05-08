@@ -23,8 +23,8 @@
 #ifndef TITANIC_BASE_STARS_H
 #define TITANIC_BASE_STARS_H
 
-#include "titanic/star_control/frange.h"
 #include "common/array.h"
+#include "titanic/star_control/frange.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -32,7 +32,8 @@ class SeekableReadStream;
 
 namespace Titanic {
 
-enum StarMode { MODE_STARFIELD = 0, MODE_PHOTO = 1 };
+enum StarMode { MODE_STARFIELD = 0,
+	            MODE_PHOTO = 1 };
 
 class CCamera;
 class CStarCloseup;
@@ -78,6 +79,7 @@ private:
 	void draw2(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup);
 	void draw3(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup);
 	void draw4(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup);
+
 protected:
 	FRange _minMax;
 	double _minVal;
@@ -85,6 +87,7 @@ protected:
 	double _range;
 	double _value1, _value2;
 	double _value3, _value4;
+
 protected:
 	/**
 	 * Load entry data from a passed stream
@@ -100,8 +103,10 @@ protected:
 	 * Reset the data for an entry
 	 */
 	void resetEntry(CBaseStarEntry &entry);
+
 public:
 	Common::Array<CBaseStarEntry> _data;
+
 public:
 	CBaseStars();
 	virtual ~CBaseStars() {}
@@ -117,7 +122,7 @@ public:
 	 * Selects a star
 	 */
 	virtual bool selectStar(CSurfaceArea *surfaceArea, CCamera *camera,
-		const Common::Point &pt, void *handler = nullptr) { return false; }
+	                        const Common::Point &pt, void *handler = nullptr) { return false; }
 
 	/**
 	 * Adds a new star, or removes one if already present at the given co-ordinates
@@ -155,7 +160,7 @@ public:
 	 * screen given the specified camera view, and returns it's index
 	 */
 	int findStar(CSurfaceArea *surfaceArea, CCamera *camera,
-		const Common::Point &pt);
+	             const Common::Point &pt);
 
 	int baseFn2(CSurfaceArea *surfaceArea, CCamera *camera);
 };

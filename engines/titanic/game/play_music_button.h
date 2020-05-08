@@ -31,9 +31,11 @@ class CPlayMusicButton : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
+
 public:
 	bool _flag;
 	uint _ticks;
+
 public:
 	CLASSDEF;
 	CPlayMusicButton() : CBackground(), _flag(false), _ticks(0) {}

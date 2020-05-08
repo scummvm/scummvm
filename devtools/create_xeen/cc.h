@@ -23,9 +23,9 @@
 #ifndef CC_H
 #define CC_H
 
+#include "common/array.h"
 #include "file.h"
 #include "str.h"
-#include "common/array.h"
 
 /**
  * Details of a single entry in a CC file index
@@ -39,19 +39,20 @@ struct CCEntry {
 	CCEntry() : _id(0), _offset(0), _size(0) {
 		memset(_data, 0, MAX_MEM_SIZE);
 	}
-	CCEntry(uint16 id, const byte *data, uint32 size) :
-			_id(id), _offset(0), _size(size) {
+	CCEntry(uint16 id, const byte *data, uint32 size) : _id(id), _offset(0), _size(size) {
 		memcpy(_data, data, size);
 	}
 };
 
-enum CCAccess { kRead = 0, kWrite = 1 };
+enum CCAccess { kRead = 0,
+	            kWrite = 1 };
 
 class CCArchive {
 private:
 	Common::Array<CCEntry> _index;
 	Common::File &_file;
 	CCAccess _mode;
+
 private:
 	/**
 	 * Convert a resource name to it's equivalent hash key
@@ -72,6 +73,7 @@ private:
 	 * Saves the individual entries to the file
 	 */
 	void saveEntries();
+
 public:
 	/**
 	 * Constructor

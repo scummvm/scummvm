@@ -22,16 +22,16 @@
 
 #include "ultima/nuvie/core/nuvie_defs.h"
 
-#include "ultima/nuvie/gui/gui_text_input.h"
 #include "ultima/nuvie/gui/gui_font.h"
+#include "ultima/nuvie/gui/gui_text_input.h"
 #include "ultima/nuvie/keybinding/keys.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-GUI_TextInput:: GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b, const char *str,
-                              GUI_Font *gui_font, uint16 width, uint16 height, GUI_CallBack *callback)
-	: GUI_Text(x, y, r, g, b, gui_font, width) {
+GUI_TextInput::GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b, const char *str,
+                             GUI_Font *gui_font, uint16 width, uint16 height, GUI_CallBack *callback)
+    : GUI_Text(x, y, r, g, b, gui_font, width) {
 	max_height = height;
 	callback_object = callback;
 	cursor_color = 0;
@@ -60,19 +60,19 @@ GUI_TextInput::~GUI_TextInput() {
 void GUI_TextInput::release_focus() {
 	GUI_Widget::release_focus();
 
-// SDL_EnableUNICODE(0); //disable unicode.
+	// SDL_EnableUNICODE(0); //disable unicode.
 }
 
 GUI_status GUI_TextInput::MouseUp(int x, int y, Shared::MouseButton button) {
-// if(button == SDL_BUTTON_WHEELUP || button == SDL_BUTTON_WHEELDOWN)
-//   return GUI_PASS;
-//release focus if we click outside the text box.
+	// if(button == SDL_BUTTON_WHEELUP || button == SDL_BUTTON_WHEELDOWN)
+	//   return GUI_PASS;
+	//release focus if we click outside the text box.
 	if (focused && !HitRect(x, y))
 		release_focus();
 	else {
 		if (!focused) {
 			grab_focus();
-// FIXME SDL2     SDL_EnableUNICODE(1); //turn on unicode processing.
+			// FIXME SDL2     SDL_EnableUNICODE(1); //turn on unicode processing.
 		}
 	}
 
@@ -85,7 +85,6 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
 
 	if (!focused)
 		return GUI_PASS;
-
 
 	if (!Common::isPrint(ascii) && key.keycode != Common::KEYCODE_BACKSPACE) {
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
@@ -118,8 +117,9 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
 		case END_KEY:
 			key.keycode = Common::KEYCODE_END;
 			break;
-		default :
-			if (keybinder->handle_always_available_keys(a)) return GUI_YUM;
+		default:
+			if (keybinder->handle_always_available_keys(a))
+				return GUI_YUM;
 			break;
 		}
 	}
@@ -136,7 +136,7 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
 	case Common::KEYCODE_RETURN:
 		if (callback_object)
 			callback_object->callback(TEXTINPUT_CB_TEXT_READY, this, text);
-	case Common::KEYCODE_ESCAPE :
+	case Common::KEYCODE_ESCAPE:
 		release_focus();
 		break;
 
@@ -159,7 +159,7 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
 			pos++;
 		break;
 
-	case Common::KEYCODE_DELETE    :
+	case Common::KEYCODE_DELETE:
 		if (pos < length) { //delete the character to the right of the cursor
 			pos++;
 			remove_char();
@@ -167,7 +167,7 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
 		}
 		break;
 
-	case Common::KEYCODE_BACKSPACE :
+	case Common::KEYCODE_BACKSPACE:
 		remove_char();
 		break; //delete the character to the left of the cursor
 
@@ -218,7 +218,7 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
 			text[pos]--;
 		break;
 
-	default :
+	default:
 		if (Common::isPrint(ascii))
 			add_char(ascii);
 		break;
@@ -279,9 +279,8 @@ void GUI_TextInput::SetDisplay(Screen *s) {
 	selected_bgcolor = SDL_MapRGB(surface->format, 0x5a, 0x6e, 0x91);
 }
 
-
 /* Show the widget  */
-void GUI_TextInput:: Display(bool full_redraw) {
+void GUI_TextInput::Display(bool full_redraw) {
 	Common::Rect r;
 
 	if (full_redraw && focused) {
@@ -293,7 +292,6 @@ void GUI_TextInput:: Display(bool full_redraw) {
 
 	if (focused)
 		display_cursor();
-
 }
 
 void GUI_TextInput::display_cursor() {

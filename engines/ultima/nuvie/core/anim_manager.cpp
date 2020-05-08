@@ -20,36 +20,34 @@
  *
  */
 
-#include "ultima/shared/std/containers.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/fonts/font.h"
-#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/core/anim_manager.h"
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/map.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/screen/screen.h"
 #include "ultima/nuvie/script/script.h"
 #include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/core/anim_manager.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 #define MESG_ANIM_HIT_WORLD ANIM_CB_HIT_WORLD
-#define MESG_ANIM_HIT       ANIM_CB_HIT
-#define MESG_ANIM_DONE      ANIM_CB_DONE
+#define MESG_ANIM_HIT ANIM_CB_HIT
+#define MESG_ANIM_DONE ANIM_CB_DONE
 
 static float get_relative_degrees(sint16 sx, sint16 sy, float angle_up = 0);
 struct tossanim_tile_shifts_s tossanim_tile_shifts[] = {
-	{ TILE_U6_BOLT, 4 },
-	{ TILE_U6_ARROW, 4 },
-	{ 0, 0}
-}; // end-list pointer
-
+    {TILE_U6_BOLT, 4},
+    {TILE_U6_ARROW, 4},
+    {0, 0}}; // end-list pointer
 
 /* Convert a non-normalized relative direction (difference) from any center
  * point to degrees, where direction 0,-1 (up) is `angle_up' degrees.
@@ -82,9 +80,8 @@ static float get_relative_degrees(sint16 sx, sint16 sy, float angle_up) {
 	return (angle);
 }
 
-
 AnimManager::AnimManager(sint16 x, sint16 y, Screen *screen, Common::Rect *clipto)
-	: next_id(0) {
+    : next_id(0) {
 	map_window = Game::get_game()->get_map_window();
 	tile_pitch = 16;
 
@@ -95,7 +92,6 @@ AnimManager::AnimManager(sint16 x, sint16 y, Screen *screen, Common::Rect *clipt
 	mapwindow_x_offset = x;
 	mapwindow_y_offset = y;
 }
-
 
 /* Returns an iterator to the animation with requested id_n.
  */
@@ -109,7 +105,6 @@ AnimIterator AnimManager::get_anim_iterator(uint32 anim_id) {
 	return (anim_list.end());
 }
 
-
 /* Returns animation with requested id_n.
  */
 NuvieAnim *AnimManager::get_anim(uint32 anim_id) {
@@ -118,7 +113,6 @@ NuvieAnim *AnimManager::get_anim(uint32 anim_id) {
 		return (*i);
 	return (NULL);
 }
-
 
 /* Update all animations.
  */
@@ -135,9 +129,9 @@ void AnimManager::update() {
 		if (!(*i)->running) {
 			destroy_anim(*i);
 			i = anim_list.begin();
-		} else ++i;
+		} else
+			++i;
 }
-
 
 /* Draw all animations that have been updated.
  */
@@ -151,7 +145,6 @@ void AnimManager::display(bool top_anims) {
 		++i;
 	}
 }
-
 
 /* Add animation pointer to managed list.
  * Returns id_n of new animation for future reference.
@@ -168,7 +161,6 @@ sint32 AnimManager::new_anim(NuvieAnim *new_anim) {
 	return (-1);
 }
 
-
 /* Delete all animations.
  */
 void AnimManager::destroy_all() {
@@ -177,20 +169,18 @@ void AnimManager::destroy_all() {
 			break;
 }
 
-
 /* Delete an animation.
  */
 bool AnimManager::destroy_anim(uint32 anim_id) {
 	return (destroy_anim(get_anim(anim_id)));
 }
 
-
 /* Delete an animation.
  */
 bool AnimManager::destroy_anim(NuvieAnim *anim_pt) {
 	AnimIterator i = get_anim_iterator(anim_pt->id_n);
 	if (i != anim_list.end()) {
-//            (*i)->message(MESG_ANIM_DONE); // FIXME: for now Anims send this for various reasons
+		//            (*i)->message(MESG_ANIM_DONE); // FIXME: for now Anims send this for various reasons
 		if ((*i)->safe_to_delete)
 			delete *i;
 		anim_list.erase(i);
@@ -199,7 +189,6 @@ bool AnimManager::destroy_anim(NuvieAnim *anim_pt) {
 	DEBUG(0, LEVEL_ERROR, "Anim: error deleting %d\n", anim_pt->id_n);
 	return (false);
 }
-
 
 /* Draw tile on viewsurf at x,y.
  */
@@ -222,7 +211,6 @@ void AnimManager::drawTileAtWorldCoords(Tile *tile, uint16 wx, uint16 wy,
 	         ((wy - cur_y) * tile_pitch) + add_y);
 }
 
-
 /*** NuvieAnim ***/
 NuvieAnim::NuvieAnim() {
 	anim_manager = NULL;
@@ -241,11 +229,8 @@ NuvieAnim::NuvieAnim() {
 	top_anim = false;
 }
 
-
 NuvieAnim::~NuvieAnim() {
-
 }
-
 
 /* Set velocity (x,y) for moving towards a target at distance (xdir,ydir).
  */
@@ -255,13 +240,15 @@ void NuvieAnim::set_velocity_for_speed(sint16 xdir, sint16 ydir, uint32 spd) {
 	sint32 xvel = spd, yvel = spd;
 
 	if (xdir == 0 || ydir == 0) {
-		if (xdir == 0) xvel = 0;
-		if (ydir == 0) yvel = 0;
+		if (xdir == 0)
+			xvel = 0;
+		if (ydir == 0)
+			yvel = 0;
 	} else if (xdist > ydist) { // MAX_DIR = xdir
 		max_dist = xdist;
 		min_dist = ydist;
 		yvel = xvel / (max_dist / min_dist); // max_vel/min_vel = max_dir/min_dir
-	} else { // MAX_DIR = ydir
+	} else {                                 // MAX_DIR = ydir
 		min_dist = xdist;
 		max_dist = ydist;
 		xvel = yvel / (max_dist / min_dist);
@@ -269,7 +256,6 @@ void NuvieAnim::set_velocity_for_speed(sint16 xdir, sint16 ydir, uint32 spd) {
 	set_velocity((xdir == 0) ? 0 : (xdir > 0) ? xvel : -xvel,
 	             (ydir == 0) ? 0 : (ydir > 0) ? yvel : -yvel);
 }
-
 
 /* Move per velocity.
  */
@@ -288,19 +274,16 @@ void NuvieAnim::update_position() {
 	}
 }
 
-
 /*** TileAnim ***/
 TileAnim::TileAnim() {
 	map_window = Game::get_game()->get_map_window();
 	tx = ty = px = py = 0;
 }
 
-
 TileAnim::~TileAnim() {
 	while (tiles.size())
 		remove_tile();
 }
-
 
 /* Find a tile in the animation and return its id or list position.
  * Returns -1 if it isn't found.
@@ -313,7 +296,6 @@ sint32 TileAnim::get_tile_id(PositionedTile *find_tile) {
 	return (-1);
 }
 
-
 /* Display ordered tile list.
  */
 void TileAnim::display() {
@@ -323,7 +305,6 @@ void TileAnim::display() {
 		                                    tx + tiles[t]->pos_x, ty + tiles[t]->pos_y,
 		                                    px + tiles[t]->px, py + tiles[t]->py);
 }
-
 
 /* Add tile to list for this Anim, relative to the Anim coordinates.
  */
@@ -338,7 +319,6 @@ PositionedTile *TileAnim::add_tile(Tile *tile, sint16 x, sint16 y,
 	tiles.insert(tiles.begin(), new_tile);
 	return (new_tile);
 }
-
 
 /* Remove tile from list position `i'. (default = last added)
  */
@@ -367,7 +347,6 @@ void TileAnim::remove_tile(PositionedTile *p_tile) {
 	return;
 }
 
-
 /* Move tile(s) by the pixel, in direction sx,sy.
  */
 void TileAnim::shift(sint32 sx, sint32 sy) {
@@ -378,7 +357,6 @@ void TileAnim::shift(sint32 sx, sint32 sy) {
 	move(total_px / tile_pitch, total_py / tile_pitch,
 	     total_px % tile_pitch, total_py % tile_pitch);
 }
-
 
 /* Move a tile by the pixel, relative to the animation, in direction sx,sy.
  */
@@ -419,7 +397,6 @@ HitAnim::HitAnim(MapCoord *loc) {
 	move(loc->x, loc->y);
 }
 
-
 HitAnim::HitAnim(Actor *actor) {
 	hit_actor = actor;
 	add_tile(map_window->get_tile_manager()->get_tile(257), // U6 HIT_EFFECT
@@ -427,7 +404,6 @@ HitAnim::HitAnim(Actor *actor) {
 	MapCoord loc = hit_actor->get_location();
 	move(loc.x, loc.y);
 }
-
 
 /* Keep effect over actor. */
 bool HitAnim::update() {
@@ -447,7 +423,6 @@ uint16 HitAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	return (0);
 }
 
-
 /*** TextAnim ***/
 
 TextAnim::TextAnim(Std::string t, MapCoord loc, uint32 dur) {
@@ -460,7 +435,6 @@ TextAnim::TextAnim(Std::string t, MapCoord loc, uint32 dur) {
 }
 
 TextAnim::~TextAnim() {
-
 }
 
 void TextAnim::display() {
@@ -532,7 +506,6 @@ void TossAnim::init(Tile *tile, uint16 degrees, const MapCoord &start, const Map
 	y_dist = 0;
 }
 
-
 /* Start tile at source. Get a tangent for velocity. */
 void TossAnim::start() {
 	uint8 pitch = anim_manager->get_tile_pitch(); // AnimManager not set until start
@@ -550,10 +523,10 @@ void TossAnim::start() {
 	y_dist = abs(sint32(target_py - start_py));
 	if (x_dist) // will move in X direction (and possibly diagonally)
 		tanS = float(sint32(target_py - start_py)) / sint32(target_px - start_px);
-//DEBUG(0,LEVEL_DEBUGGING,"start: tanS = %d / %d = %f\n", target_py-start_py, target_px-start_px, tanS);
+	//DEBUG(0,LEVEL_DEBUGGING,"start: tanS = %d / %d = %f\n", target_py-start_py, target_px-start_px, tanS);
 	Game::get_game()->dont_wait_for_interval();
 
-// adjust tile appearance but not anim location
+	// adjust tile appearance but not anim location
 	uint16 t = 0;
 	while (tossanim_tile_shifts[t].tile_num != 0) {
 		if (tossanim_tile_shifts[t].tile_num == toss_tile->tile_num) {
@@ -571,7 +544,6 @@ void TossAnim::start() {
 	}
 }
 
-
 /* Return to normal Events timing.
  */
 void TossAnim::stop() {
@@ -581,21 +553,21 @@ void TossAnim::stop() {
 	}
 }
 
-
 /* Returns location of tile biased by movement. If moving left or up, the
  * center of the tile must be left or above the center of its location.
  */
 MapCoord TossAnim::get_location() {
 	MapCoord loc(tx, ty, 0);
 	if (src->x > target->x) { // moving left
-		if (px > 0) loc.x += 1;
+		if (px > 0)
+			loc.x += 1;
 	}
 	if (src->y > target->y) { // moving up
-		if (px > 0) loc.y += 1;
+		if (px > 0)
+			loc.y += 1;
 	}
 	return (loc);
 }
-
 
 /* Slide tile. Check map for interception. (stop if hit target)
  * Possible things to hit are actors and objects. Possible locations to hit are
@@ -606,14 +578,14 @@ bool TossAnim::update() {
 	if (!running || is_paused())
 		return true;
 
-	do { // move (no more than) one tile at a time, and check for intercept
-		MapCoord old_loc = get_location(); // record old location
+	do {                                                              // move (no more than) one tile at a time, and check for intercept
+		MapCoord old_loc = get_location();                            // record old location
 		moves_left = update_position(anim_manager->get_tile_pitch()); /** MOVE **/
 		MapCoord new_loc = get_location();
 
 		// test the current location, check for intercept
 		if (new_loc != old_loc) {
-//DEBUG(0,LEVEL_DEBUGGING,"Toss: %x,%x,%x->%x,%x,%x\n",old_loc.x,old_loc.y,old_loc.z,new_loc.x,new_loc.y,new_loc.z);
+			//DEBUG(0,LEVEL_DEBUGGING,"Toss: %x,%x,%x->%x,%x,%x\n",old_loc.x,old_loc.y,old_loc.z,new_loc.x,new_loc.y,new_loc.z);
 			// hit actor or object? (can be one or the other)
 			Actor *hitActor = actor_manager->get_actor(new_loc.x, new_loc.y, mapwindow_level);
 			Obj *hitObj = obj_manager->get_obj(new_loc.x, new_loc.y, mapwindow_level);
@@ -682,7 +654,6 @@ void TossAnim::hit_blocking(MapCoord obj_loc) {
 		message(MESG_ANIM_HIT_WORLD, &obj_loc);
 }
 
-
 /* Get velocity from tangent & speed, and move the tile.
  * FIXME: for diagonal movement the speed is only applied to X-axis, which is modified for Y-axis (so some tosses look faster than others)
  */
@@ -704,30 +675,29 @@ uint32 TossAnim::update_position(uint32 max_move) {
 
 	// collect the remainder (amount of movement less than 1)
 	accumulate_moves(moves, x_move, y_move, xdir, ydir);
-//DEBUG(0,LEVEL_DEBUGGING,"(%d) moves:%f x_move:%d y_move:%d x_left:%f y_left:%f\n",ms_passed,moves,x_move,y_move,x_left,y_left);
+	//DEBUG(0,LEVEL_DEBUGGING,"(%d) moves:%f x_move:%d y_move:%d x_left:%f y_left:%f\n",ms_passed,moves,x_move,y_move,x_left,y_left);
 	// too slow for movement, just return
 	if (x_move == 0 && y_move == 0)
 		return (moves_left);
 
 	if (x_move != 0) {
-		if (x_dist >= y_dist) { // Y=X*tangent
-			uint32 xpos = tx * 16 + px; // pixel location
+		if (x_dist >= y_dist) {                       // Y=X*tangent
+			uint32 xpos = tx * 16 + px;               // pixel location
 			sint32 relx = (xpos + x_move) - start_px; // new relative position
 			sint32 rely = (uint32)roundf(relx * tanS);
 			shift(x_move, rely - old_relpos); // **MOVE**
 			old_relpos = rely;
-		} else { // X=Y/tangent
-			uint32 ypos = ty * 16 + py; // pixel location
+		} else {                                      // X=Y/tangent
+			uint32 ypos = ty * 16 + py;               // pixel location
 			sint32 rely = (ypos + y_move) - start_py; // new relative position
 			sint32 relx = (uint32)roundf(rely / tanS);
 			shift(relx - old_relpos, y_move); // **MOVE**
 			old_relpos = relx;
 		}
-	} else // only moving along Y
+	} else                // only moving along Y
 		shift(0, y_move); // **MOVE**
 	return (moves_left);
 }
-
 
 /* Update x_left/y_left from incremental moves adding the decimal of
  * moves to them. If any integer value has been collected, move it to
@@ -738,14 +708,13 @@ void TossAnim::accumulate_moves(float moves, sint32 &x_move, sint32 &y_move, sin
 	y_left += (float)moves - (uint32)floorf(moves);
 	if (x_left >= 1.0) {
 		x_move += (uint32)floorf(x_left) * xdir; // add integer to movement
-		x_left -= (uint32)floorf(x_left); // remove from collection
+		x_left -= (uint32)floorf(x_left);        // remove from collection
 	}
 	if (y_left >= 1.0) {
 		y_move += (uint32)floorf(y_left) * ydir; // add integer to movement
-		y_left -= (uint32)floorf(y_left); // remove from collection
+		y_left -= (uint32)floorf(y_left);        // remove from collection
 	}
 }
-
 
 /*** ExplosiveAnim ***/
 ExplosiveAnim::ExplosiveAnim(MapCoord *start, uint32 size) {
@@ -755,15 +724,13 @@ ExplosiveAnim::ExplosiveAnim(MapCoord *start, uint32 size) {
 	radius = size;
 }
 
-
 /* Delete the rotated tileset.
  */
 ExplosiveAnim::~ExplosiveAnim() {
-// removed - this is deleted in TileAnim
-//    for(uint32 i = 0; i < tiles.size(); i++)
-//        delete tiles[i]->tile;
+	// removed - this is deleted in TileAnim
+	//    for(uint32 i = 0; i < tiles.size(); i++)
+	//        delete tiles[i]->tile;
 }
-
 
 /* Set up how many fireballs shoot out and in what directions. Start them at
  * the center.
@@ -814,7 +781,7 @@ void ExplosiveAnim::start() {
 		if (!(flame[t].direction.sx == 0 && flame[t].direction.sy == 0)) {
 			Tile *rot_tile = NULL;
 			rot_tile = tile_manager->get_rotated_tile(flame[t].tile->tile,
-			           get_relative_degrees(flame[t].direction.sx, flame[t].direction.sy));
+			                                          get_relative_degrees(flame[t].direction.sx, flame[t].direction.sy));
 			flame[t].tile->tile = rot_tile;
 		}
 	}
@@ -829,7 +796,6 @@ void ExplosiveAnim::start() {
 		delay = 4;
 	start_timer(delay);
 }
-
 
 /* On TIMED: Expand explosion. End when explosion is finished.
  */
@@ -854,13 +820,12 @@ uint16 ExplosiveAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 		}
 	}
 
-	if (!animating) { // all flames stopped moving, so we're done
+	if (!animating) {            // all flames stopped moving, so we're done
 		message(MESG_ANIM_DONE); // FIXME: in the future make all Anims send when deleted
 		stop();
 	}
 	return (0);
 }
-
 
 /* Check map for interception with any flames. Stop exploding in direction of
  * a blocked tile. Hit actors & volatile objects (powder kegs).
@@ -881,32 +846,33 @@ bool ExplosiveAnim::update() {
 		uint16 edge_py = flame[t].tile->py;
 		// effective edge is location of the CENTER of this fireball/tile, if it
 		// is moving down or right, but I'm not sure why direction affects it
-		if (flame[t].direction.sx > 0 && edge_px >= 8) edge.x += 1;
-		if (flame[t].direction.sy > 0 && edge_py >= 8) edge.y += 1;
+		if (flame[t].direction.sx > 0 && edge_px >= 8)
+			edge.x += 1;
+		if (flame[t].direction.sy > 0 && edge_py >= 8)
+			edge.y += 1;
 
 		if (map->lineTest(center.x, center.y, edge.x, edge.y, mapwindow_level,
-		                  LT_HitActors, lt, 1)
-		        && !already_hit(MapEntity(lt.hitActor)))
+		                  LT_HitActors, lt, 1) &&
+		    !already_hit(MapEntity(lt.hitActor)))
 			hit_actor(lt.hitActor);
 		else if (map->lineTest(center.x, center.y, edge.x, edge.y, mapwindow_level,
-		                       LT_HitObjects, lt, 1)
-		         && !already_hit(MapEntity(lt.hitObj)))
+		                       LT_HitObjects, lt, 1) &&
+		         !already_hit(MapEntity(lt.hitObj)))
 			hit_object(lt.hitObj);
 
 		// stop in this direction
 		// FIXME: more things than boundaries (walls) stop explosions
 		if (map->is_boundary(edge.x, edge.y, mapwindow_level) && edge != center)
 			flame[t].direction.sx = flame[t].direction.sy = 0;
-//        get_shifted_location(edge.x, edge.y, edge_px, edge_py,
-//                             flame[t].direction.sx, flame[t].direction.sy);
-//        if(map->lineTest(center.x, center.y, edge.x, edge.y, mapwindow_level,
-//                         LT_HitUnpassable, lt, 1))
-//            flame[t].direction.sx = flame[t].direction.sy = 0;
+		//        get_shifted_location(edge.x, edge.y, edge_px, edge_py,
+		//                             flame[t].direction.sx, flame[t].direction.sy);
+		//        if(map->lineTest(center.x, center.y, edge.x, edge.y, mapwindow_level,
+		//                         LT_HitUnpassable, lt, 1))
+		//            flame[t].direction.sx = flame[t].direction.sy = 0;
 	}
 
 	return (true);
 }
-
 
 /* Returns true if the explosion has already the particular thing this MapEntity
  * points to. (and shouldn't hit it again)
@@ -919,7 +885,6 @@ bool ExplosiveAnim::already_hit(MapEntity ent) {
 	return (false);
 }
 
-
 /* Also adds object to hit_items list for already_hit() to check. */
 void ExplosiveAnim::hit_object(Obj *obj) {
 	if (!running)
@@ -929,7 +894,6 @@ void ExplosiveAnim::hit_object(Obj *obj) {
 	message(MESG_ANIM_HIT, &obj_ent);
 }
 
-
 /* Also adds actor to hit_items list for already_hit() to check. */
 void ExplosiveAnim::hit_actor(Actor *actor) {
 	if (!running)
@@ -938,7 +902,6 @@ void ExplosiveAnim::hit_actor(Actor *actor) {
 	hit_items.push_back(actor_ent);
 	message(MESG_ANIM_HIT, &actor_ent);
 }
-
 
 /* Get the location something on the map would be at were it
  * shifted by sx,sy pixels from x,y+px,py.
@@ -955,7 +918,6 @@ void ExplosiveAnim::get_shifted_location(uint16 &x, uint16 &y, uint16 &px_, uint
 	px_ = total_px % tile_pitch;
 	py_ = total_py % tile_pitch;
 }
-
 
 /*** ProjectileAnim ***/
 ProjectileAnim::ProjectileAnim(uint16 tileNum, MapCoord *start, vector<MapCoord> target, uint8 animSpeed, bool leaveTrail, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
@@ -980,7 +942,6 @@ ProjectileAnim::ProjectileAnim(uint16 tileNum, MapCoord *start, vector<MapCoord>
 	leaveTrailFlag = leaveTrail;
 }
 
-
 /* Delete the rotated tileset.
  */
 ProjectileAnim::~ProjectileAnim() {
@@ -990,7 +951,6 @@ ProjectileAnim::~ProjectileAnim() {
 		delete line[i].p_tile->tile; //because we made a new rotated tile.
 	}
 }
-
 
 /* Set up how many fireballs shoot out and in what directions. Start them at
  * the center.
@@ -1013,8 +973,6 @@ void ProjectileAnim::start() {
 		line[i].isRunning = true;
 	}
 }
-
-
 
 /* Check map for interception with any flames. Stop exploding in direction of
  * a blocked tile. Hit actors & volatile objects (powder kegs).
@@ -1054,11 +1012,9 @@ bool ProjectileAnim::update() {
 				move_tile(line[i].p_tile, x, y);
 			}
 
-			if (map->testIntersection(x / 16, y / 16, level, LT_HitActors, lt)
-			        && !already_hit(MapEntity(lt.hitActor)))
+			if (map->testIntersection(x / 16, y / 16, level, LT_HitActors, lt) && !already_hit(MapEntity(lt.hitActor)))
 				hit_entity(MapEntity(lt.hitActor));
-			else if (map->testIntersection(x / 16, y / 16, level, LT_HitObjects, lt)
-			         && !already_hit(MapEntity(lt.hitObj)))
+			else if (map->testIntersection(x / 16, y / 16, level, LT_HitObjects, lt) && !already_hit(MapEntity(lt.hitObj)))
 				hit_entity(MapEntity(lt.hitObj));
 
 			if (canContinue == false) {
@@ -1066,7 +1022,6 @@ bool ProjectileAnim::update() {
 				stopped_count++;
 			}
 		}
-
 	}
 
 	if (stopped_count == line.size()) {
@@ -1113,7 +1068,7 @@ WingAnim::WingAnim(MapCoord t) {
 
 	off_x = target.x - mx;
 
-	if (off_x <=  win_w / 2) {
+	if (off_x <= win_w / 2) {
 		//right, left
 		finish_x = (mx - 1) * 16;
 		x_inc = -4;
@@ -1138,11 +1093,8 @@ WingAnim::WingAnim(MapCoord t) {
 	unpause();
 }
 
-
 WingAnim::~WingAnim() {
-
 }
-
 
 void WingAnim::start() {
 	move(0, 0);
@@ -1150,8 +1102,6 @@ void WingAnim::start() {
 	p_tile_top = add_tile(wing_top[0], x / 16, (y - 16) / 16, x % 16, (y - 16) % 16);
 	p_tile_bottom = add_tile(wing_bottom[0], x / 16, y / 16, x % 16, y % 16);
 }
-
-
 
 bool WingAnim::update() {
 	if (is_paused())

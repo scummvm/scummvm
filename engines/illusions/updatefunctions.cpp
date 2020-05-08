@@ -21,9 +21,9 @@
  */
 
 #include "illusions/updatefunctions.h"
-#include "illusions/time.h"
 #include "common/algorithm.h"
 #include "common/system.h"
+#include "illusions/time.h"
 
 namespace Illusions {
 
@@ -46,7 +46,7 @@ void UpdateFunctions::add(int priority, uint32 sceneId, UpdateFunctionCallback *
 	updateFunction->_sceneId = sceneId;
 	updateFunction->_callback = callback;
 	UpdateFunctionListIterator insertionPos = Common::find_if(_updateFunctions.begin(), _updateFunctions.end(),
-		FindInsertionPosition(priority));
+	                                                          FindInsertionPosition(priority));
 	_updateFunctions.insert(insertionPos, updateFunction);
 }
 

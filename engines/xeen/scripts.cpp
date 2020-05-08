@@ -20,14 +20,14 @@
  *
  */
 
+#include "xeen/scripts.h"
+#include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
-#include "backends/audiocd/audiocd.h"
-#include "xeen/scripts.h"
 #include "xeen/dialogs/dialogs_copy_protection.h"
 #include "xeen/dialogs/dialogs_input.h"
-#include "xeen/dialogs/dialogs_whowill.h"
 #include "xeen/dialogs/dialogs_query.h"
+#include "xeen/dialogs/dialogs_whowill.h"
 #include "xeen/party.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -41,15 +41,13 @@ byte EventParameters::Iterator::readByte() {
 }
 
 uint16 EventParameters::Iterator::readUint16LE() {
-	uint16 result = ((_index + 1) >= _data.size()) ? 0 :
-		READ_LE_UINT16(&_data[_index]);
+	uint16 result = ((_index + 1) >= _data.size()) ? 0 : READ_LE_UINT16(&_data[_index]);
 	_index += 2;
 	return result;
 }
 
 uint32 EventParameters::Iterator::readUint32LE() {
-	uint32 result = ((_index + 3) >= _data.size()) ? 0 :
-		READ_LE_UINT32(&_data[_index]);
+	uint32 result = ((_index + 3) >= _data.size()) ? 0 : READ_LE_UINT32(&_data[_index]);
 	_index += 4;
 	return result;
 }
@@ -184,7 +182,7 @@ int Scripts::checkEvents() {
 				MazeEvent &event = map._events[eventIndex];
 
 				if (event._position == _currentPos && event._line == _lineNum &&
-						(party._mazeDirection | _currentPos.x | _currentPos.y)) {
+				    (party._mazeDirection | _currentPos.x | _currentPos.y)) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
 						_vm->_mode = MODE_SCRIPT_IN_PROGRESS;
 						_scriptExecuted = true;
@@ -272,7 +270,7 @@ int Scripts::checkEvents() {
 
 	// Restore saved treasure
 	if (party._savedTreasure._hasItems || party._savedTreasure._gold ||
-			party._savedTreasure._gems) {
+	    party._savedTreasure._gems) {
 		party._treasure = party._savedTreasure;
 	}
 
@@ -292,7 +290,7 @@ bool Scripts::openGrate(int wallVal, int action) {
 	int ccNum = files._ccNum;
 
 	if (!((wallVal != 13 || map._currentGrateUnlocked) && (!ccNum || wallVal != 9 ||
-			map.mazeData()._wallKind != 2)))
+	                                                       map.mazeData()._wallKind != 2)))
 		return false;
 
 	if (wallVal != 9 && !map._currentGrateUnlocked) {
@@ -305,13 +303,13 @@ bool Scripts::openGrate(int wallVal, int action) {
 		// There is a 1 in 4 chance the character will receive damage
 		if (_vm->getRandomNumber(1, 4) == 1) {
 			combat.giveCharDamage(map.mazeData()._trapDamage,
-				(DamageType)_vm->getRandomNumber(0, 6), charIndex);
+			                      (DamageType)_vm->getRandomNumber(0, 6), charIndex);
 		}
 
 		// Check whether character can unlock the door
 		Character &c = party._activeParty[charIndex];
 		if ((c.getThievery() + _vm->getRandomNumber(1, 20)) <
-				map.mazeData()._difficulties._unlockDoor)
+		    map.mazeData()._difficulties._unlockDoor)
 			return true;
 
 		c._experience += map.mazeData()._difficulties._unlockDoor * c.getCurrentLevel();
@@ -351,31 +349,30 @@ bool Scripts::openGrate(int wallVal, int action) {
 
 bool Scripts::doOpcode(MazeEvent &event) {
 	Map &map = *_vm->_map;
-	typedef bool(Scripts::*ScriptMethodPtr)(ParamsIterator &);
+	typedef bool (Scripts::*ScriptMethodPtr)(ParamsIterator &);
 	static const ScriptMethodPtr COMMAND_LIST[] = {
-		&Scripts::cmdDoNothing, &Scripts::cmdDisplay1, &Scripts::cmdDoorTextSml,
-		&Scripts::cmdDoorTextLrg, &Scripts::cmdSignText,
-		&Scripts::cmdNPC, &Scripts::cmdPlayFX, &Scripts::cmdTeleport,
-		&Scripts::cmdIf, &Scripts::cmdIf, &Scripts::cmdIf,
-		&Scripts::cmdMoveObj, &Scripts::cmdTakeOrGive, &Scripts::cmdDoNothing,
-		&Scripts::cmdRemove, &Scripts::cmdSetChar, &Scripts::cmdSpawn,
-		&Scripts::cmdDoTownEvent, &Scripts::cmdExit, &Scripts::cmdAlterMap,
-		&Scripts::cmdGiveMulti, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
-		&Scripts::cmdJumpRnd, &Scripts::cmdAlterEvent, &Scripts::cmdCallEvent,
-		&Scripts::cmdReturn, &Scripts::cmdSetVar, &Scripts::cmdTakeOrGive,
-		&Scripts::cmdTakeOrGive, &Scripts::cmdCutsceneEndClouds,
-		&Scripts::cmdTeleport, &Scripts::cmdWhoWill,
-		&Scripts::cmdRndDamage, &Scripts::cmdMoveWallObj, &Scripts::cmdAlterCellFlag,
-		&Scripts::cmdAlterHed, &Scripts::cmdDisplayStat, &Scripts::cmdTakeOrGive,
-		&Scripts::cmdSignTextSml, &Scripts::cmdPlayEventVoc, &Scripts::cmdDisplayBottom,
-		&Scripts::cmdIfMapFlag, &Scripts::cmdSelectRandomChar, &Scripts::cmdGiveEnchanted,
-		&Scripts::cmdItemType, &Scripts::cmdMakeNothingHere, &Scripts::cmdCheckProtection,
-		&Scripts::cmdChooseNumeric, &Scripts::cmdDisplayBottomTwoLines,
-		&Scripts::cmdDisplayLarge, &Scripts::cmdExchObj, &Scripts::cmdFallToMap,
-		&Scripts::cmdDisplayMain, &Scripts::cmdGoto, &Scripts::cmdConfirmWord,
-		&Scripts::cmdGotoRandom, &Scripts::cmdCutsceneEndDarkside,
-		&Scripts::cmdCutsceneEndWorld, &Scripts::cmdFlipWorld, &Scripts::cmdPlayCD
-	};
+	    &Scripts::cmdDoNothing, &Scripts::cmdDisplay1, &Scripts::cmdDoorTextSml,
+	    &Scripts::cmdDoorTextLrg, &Scripts::cmdSignText,
+	    &Scripts::cmdNPC, &Scripts::cmdPlayFX, &Scripts::cmdTeleport,
+	    &Scripts::cmdIf, &Scripts::cmdIf, &Scripts::cmdIf,
+	    &Scripts::cmdMoveObj, &Scripts::cmdTakeOrGive, &Scripts::cmdDoNothing,
+	    &Scripts::cmdRemove, &Scripts::cmdSetChar, &Scripts::cmdSpawn,
+	    &Scripts::cmdDoTownEvent, &Scripts::cmdExit, &Scripts::cmdAlterMap,
+	    &Scripts::cmdGiveMulti, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
+	    &Scripts::cmdJumpRnd, &Scripts::cmdAlterEvent, &Scripts::cmdCallEvent,
+	    &Scripts::cmdReturn, &Scripts::cmdSetVar, &Scripts::cmdTakeOrGive,
+	    &Scripts::cmdTakeOrGive, &Scripts::cmdCutsceneEndClouds,
+	    &Scripts::cmdTeleport, &Scripts::cmdWhoWill,
+	    &Scripts::cmdRndDamage, &Scripts::cmdMoveWallObj, &Scripts::cmdAlterCellFlag,
+	    &Scripts::cmdAlterHed, &Scripts::cmdDisplayStat, &Scripts::cmdTakeOrGive,
+	    &Scripts::cmdSignTextSml, &Scripts::cmdPlayEventVoc, &Scripts::cmdDisplayBottom,
+	    &Scripts::cmdIfMapFlag, &Scripts::cmdSelectRandomChar, &Scripts::cmdGiveEnchanted,
+	    &Scripts::cmdItemType, &Scripts::cmdMakeNothingHere, &Scripts::cmdCheckProtection,
+	    &Scripts::cmdChooseNumeric, &Scripts::cmdDisplayBottomTwoLines,
+	    &Scripts::cmdDisplayLarge, &Scripts::cmdExchObj, &Scripts::cmdFallToMap,
+	    &Scripts::cmdDisplayMain, &Scripts::cmdGoto, &Scripts::cmdConfirmWord,
+	    &Scripts::cmdGotoRandom, &Scripts::cmdCutsceneEndDarkside,
+	    &Scripts::cmdCutsceneEndWorld, &Scripts::cmdFlipWorld, &Scripts::cmdPlayCD};
 
 	_event = &event;
 
@@ -400,7 +397,9 @@ bool Scripts::cmdDoNothing(ParamsIterator &params) {
 bool Scripts::cmdDisplay1(ParamsIterator &params) {
 	Windows &windows = *_vm->_windows;
 	Common::String paramText = _vm->_map->_events._text[params.readByte()];
-	Common::String msg = Common::String::format("\r\x03""c%s", paramText.c_str());
+	Common::String msg = Common::String::format("\r\x03"
+	                                            "c%s",
+	                                            paramText.c_str());
 
 	windows[12].close();
 	if (!windows[38]._enabled)
@@ -415,8 +414,12 @@ bool Scripts::cmdDoorTextSml(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 
 	Common::String paramText = _vm->_map->_events._text[params.readByte()];
-	intf._screenText = Common::String::format("\x02\f""08\x03""c\t116\v025%s\x03""l\fd""\x01",
-		paramText.c_str());
+	intf._screenText = Common::String::format("\x02\f"
+	                                          "08\x03"
+	                                          "c\t116\v025%s\x03"
+	                                          "l\fd"
+	                                          "\x01",
+	                                          paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
@@ -427,8 +430,10 @@ bool Scripts::cmdDoorTextLrg(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 
 	Common::String paramText = _vm->_map->_events._text[params.readByte()];
-	intf._screenText = Common::String::format("\f04\x03""c\t116\v030%s\x03""l\fd",
-		paramText.c_str());
+	intf._screenText = Common::String::format("\f04\x03"
+	                                          "c\t116\v030%s\x03"
+	                                          "l\fd",
+	                                          paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
@@ -439,8 +444,10 @@ bool Scripts::cmdSignText(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 
 	Common::String paramText = _vm->_map->_events._text[params.readByte()];
-	intf._screenText = Common::String::format("\f08\x03""c\t120\v088%s\x03""l\fd",
-		paramText.c_str());
+	intf._screenText = Common::String::format("\f08\x03"
+	                                          "c\t120\v088%s\x03"
+	                                          "l\fd",
+	                                          paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
@@ -450,14 +457,14 @@ bool Scripts::cmdSignText(ParamsIterator &params) {
 bool Scripts::cmdNPC(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 
-	params.readByte();					// _message already holds title
+	params.readByte(); // _message already holds title
 	int textNum = params.readByte();
 	int portrait = params.readByte();
 	int confirm = params.readByte();
 	int lineNum = params.readByte();
 
 	if (LocationMessage::show(portrait, _message, map._events._text[textNum],
-			confirm)) {
+	                          confirm)) {
 		_lineNum = lineNum;
 		return false;
 	}
@@ -696,7 +703,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 				}
 			}
 		} else if (ifProc(mode1, val1, 1, _charIndex - 1) &&
-				ifProc(mode2, val2, 1, _charIndex - 1)) {
+		           ifProc(mode2, val2, 1, _charIndex - 1)) {
 			party.giveTake(0, 0, mode2, val3, _charIndex - 1);
 		}
 		break;
@@ -925,7 +932,7 @@ bool Scripts::cmdGiveMulti(ParamsIterator &params) {
 
 	_scriptExecuted = true;
 	bool result = party.giveExt(modes[0], vals[0], modes[1], vals[1], modes[2], vals[2],
-		(_charIndex > 0) ? _charIndex - 1 : 0);
+	                            (_charIndex > 0) ? _charIndex - 1 : 0);
 
 	if (result) {
 		if (_animCounter == 255) {
@@ -977,7 +984,7 @@ bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 		} else if (_mirrorId == 34 && files._ccNum) {
 			doWorldEnding();
 		} else if (_mirrorId == 35 && files._ccNum &&
-				_vm->getGameID() == GType_WorldOfXeen) {
+		           _vm->getGameID() == GType_WorldOfXeen) {
 			doCloudsEnding();
 		} else if (_mirrorId == 40 && !files._ccNum) {
 			doCloudsEnding();
@@ -1043,8 +1050,8 @@ bool Scripts::cmdAlterEvent(ParamsIterator &params) {
 	for (uint idx = 0; idx < map._events.size(); ++idx) {
 		MazeEvent &evt = map._events[idx];
 		if (evt._position == party._mazePosition &&
-				(evt._direction == DIR_ALL || evt._direction == party._mazeDirection) &&
-				evt._line == lineNum) {
+		    (evt._direction == DIR_ALL || evt._direction == party._mazeDirection) &&
+		    evt._line == lineNum) {
 			evt._opcode = opcode;
 		}
 	}
@@ -1212,8 +1219,9 @@ bool Scripts::cmdDisplayStat(ParamsIterator &params) {
 bool Scripts::cmdSignTextSml(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 
-	intf._screenText = Common::String::format("\x2\f08\x3""c\t116\v090%s\x3l\fd\x1",
-		_message.c_str());
+	intf._screenText = Common::String::format("\x2\f08\x3"
+	                                          "c\t116\v090%s\x3l\fd\x1",
+	                                          _message.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
@@ -1358,9 +1366,10 @@ bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 	params.readByte();
 	int textId = params.readByte();
 
-	Common::String msg = Common::String::format("\r\x03""c\t000\v007%s\n\n%s",
-		"",
-		map._events._text[textId].c_str());
+	Common::String msg = Common::String::format("\r\x03"
+	                                            "c\t000\v007%s\n\n%s",
+	                                            "",
+	                                            map._events._text[textId].c_str());
 	w.close();
 	w.open();
 	w.writeString(msg);
@@ -1384,7 +1393,8 @@ bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
 
 	// Get the message at the specified line
 	const char *lineP = data;
-	for (uint idx = 0; idx < lineNumber; ++idx, lineP += strlen(lineP) + 1) {}
+	for (uint idx = 0; idx < lineNumber; ++idx, lineP += strlen(lineP) + 1) {
+	}
 
 	_message = Common::String(lineP);
 	delete[] data;
@@ -1925,7 +1935,9 @@ void Scripts::display(bool justifyFlag, int var46) {
 	windows[38].close();
 
 	if (!justifyFlag)
-		_displayMessage = Common::String::format("\r\x3""c%s", _message.c_str());
+		_displayMessage = Common::String::format("\r\x3"
+		                                         "c%s",
+		                                         _message.c_str());
 	else
 		_displayMessage = _message;
 
@@ -1953,7 +1965,8 @@ void Scripts::display(bool justifyFlag, int var46) {
 			events.wait(1);
 		} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
-		w.writeString(justifyFlag ? "\r" : "\r\x3""c");
+		w.writeString(justifyFlag ? "\r" : "\r\x3"
+		                                   "c");
 	}
 }
 

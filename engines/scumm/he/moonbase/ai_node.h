@@ -40,8 +40,14 @@ protected:
 	virtual float calcH() { return 0; }
 
 public:
-	IContainedObject() { _valueG = 0; _objID = -1; }
-	IContainedObject(float inG) { _valueG = inG; _objID = -1; }
+	IContainedObject() {
+		_valueG = 0;
+		_objID = -1;
+	}
+	IContainedObject(float inG) {
+		_valueG = inG;
+		_objID = -1;
+	}
 	IContainedObject(IContainedObject &sourceContainedObject);
 	virtual ~IContainedObject() {}
 

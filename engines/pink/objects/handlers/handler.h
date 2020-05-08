@@ -86,7 +86,7 @@ public:
 	const Common::String &getRecepient() const { return _recepient; }
 
 private:
-	void execute(Sequence *sequence) override {};
+	void execute(Sequence *sequence) override{};
 
 	Common::String _inventoryItem;
 	Common::String _recepient;

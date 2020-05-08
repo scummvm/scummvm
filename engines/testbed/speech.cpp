@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/text-to-speech.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "common/array.h"
 #include "engines/testbed/speech.h"
+#include "common/array.h"
+#include "common/events.h"
+#include "common/system.h"
+#include "common/text-to-speech.h"
 
 namespace Testbed {
 

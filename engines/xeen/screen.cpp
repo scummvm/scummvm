@@ -20,10 +20,10 @@
  *
  */
 
+#include "xeen/screen.h"
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
-#include "xeen/screen.h"
 #include "xeen/resources.h"
 #include "xeen/window.h"
 #include "xeen/xeen.h"
@@ -166,8 +166,8 @@ void Screen::restoreBackground(int slot) {
 bool Screen::doScroll(bool rollUp, bool fadeInFlag) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
-	const int SCROLL_L[8] = { 29, 23, 15, -5, -11, -23, -49, -71 };
-	const int SCROLL_R[8] = { 165, 171, 198, 218, 228, 245, 264, 281 };
+	const int SCROLL_L[8] = {29, 23, 15, -5, -11, -23, -49, -71};
+	const int SCROLL_R[8] = {165, 171, 198, 218, 228, 245, 264, 281};
 
 	if (_vm->_files->_ccNum) {
 		if (fadeInFlag)
@@ -192,8 +192,7 @@ bool Screen::doScroll(bool rollUp, bool fadeInFlag) {
 	}
 
 	if (rollUp) {
-		for (int i = 22, ctr = 7; i > 0 && !events.isKeyMousePressed()
-				&& !_vm->shouldExit(); --i) {
+		for (int i = 22, ctr = 7; i > 0 && !events.isKeyMousePressed() && !_vm->shouldExit(); --i) {
 			events.updateGameCounter();
 			screen.restoreBackground();
 
@@ -216,8 +215,7 @@ bool Screen::doScroll(bool rollUp, bool fadeInFlag) {
 				screen.fadeIn(2);
 		}
 	} else {
-		for (int i = 0, ctr = 0; i < 22 && !events.isKeyMousePressed()
-				&& !_vm->shouldExit(); ++i) {
+		for (int i = 0, ctr = 0; i < 22 && !events.isKeyMousePressed() && !_vm->shouldExit(); ++i) {
 			events.updateGameCounter();
 			screen.restoreBackground();
 

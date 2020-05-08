@@ -20,17 +20,17 @@
  *
  */
 
+#include "glk/archetype/archetype.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "glk/archetype/archetype.h"
 #include "glk/archetype/crypt.h"
 #include "glk/archetype/expression.h"
+#include "glk/archetype/game_stat.h"
 #include "glk/archetype/heap_sort.h"
 #include "glk/archetype/misc.h"
 #include "glk/archetype/saveload.h"
 #include "glk/archetype/sys_object.h"
 #include "glk/archetype/timestamp.h"
-#include "glk/archetype/game_stat.h"
 
 namespace Glk {
 namespace Archetype {
@@ -40,7 +40,7 @@ namespace Archetype {
 Archetype *g_vm;
 
 Archetype::Archetype(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_saveSlot(-1) {
+                                                                          _saveSlot(-1) {
 	g_vm = this;
 
 	DebugMan.addDebugChannel(DEBUG_BYTES, "bytes", "Memory usage");
@@ -63,7 +63,7 @@ bool Archetype::initialize() {
 	saveload_init();
 	sys_object_init();
 	timestamp_init();
-	
+
 	// keywords
 	new_xarray(Literals);
 	new_xarray(Vocabulary);
@@ -166,11 +166,11 @@ String Archetype::readLine() {
 	if (text.contains("save") || text.contains("load")) {
 		writeln();
 		return "";
-	
+
 	} else if (loadingSavegame()) {
 		// Automatically trigger a load action if a savegame needs loading from the launcher
 		return String("load");
-	
+
 	} else if (_saveSlot == -2) {
 		_saveSlot = -1;
 		return String("look");
@@ -212,7 +212,7 @@ char Archetype::readKey() {
 }
 
 void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextType &context,
-		DesiredType desired) {
+                       DesiredType desired) {
 	NodePtr np;
 	bool done, first_pass;
 	ListType attrs;
@@ -246,7 +246,7 @@ void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextTyp
 	// It is important to change the context before a lookup so that any non-scalar expressions
 	// that are referenced will be evaluated in the light of that object's context
 	c = context;
-	c.self = the_obj;              // references to self must be right
+	c.self = the_obj; // references to self must be right
 	c.each = 0;
 
 	first_pass = true;
@@ -311,11 +311,11 @@ void Archetype::lookup(int the_obj, int the_attr, ResultType &result, ContextTyp
 static int messageCtr = 0;
 
 bool Archetype::send_message(int transport, int message_sent, int recipient,
-		ResultType &result, ContextType &context) {
+                             ResultType &result, ContextType &context) {
 	bool done, find_other;
 	ObjectPtr op, original;
 	ResultType r;
-	NodePtr np;  
+	NodePtr np;
 	StatementPtr st;
 	void *p;
 	ContextType c;
@@ -332,7 +332,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 		r._kind = IDENT;
 		r._data._ident.ident_kind = OBJECT_ID;
 		r._data._ident.ident_int = context.self;
-		
+
 		debugN(" : ");
 		display_result(r);
 
@@ -357,9 +357,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 
 	// Trying to send a message to a destroyed object results in UNDEFINED
 
-	if ((((transport == OP_SEND_TO_TYPE) && index_xarray(Type_List, recipient, p))
-			|| index_xarray(Object_List, recipient, p))
-			&& (p != nullptr)) {
+	if ((((transport == OP_SEND_TO_TYPE) && index_xarray(Type_List, recipient, p)) || index_xarray(Object_List, recipient, p)) && (p != nullptr)) {
 		c = context;
 		c.each = 0;
 		c.message = message_sent;
@@ -441,11 +439,11 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 		case RW_KEY:
 			result._kind = STR_PTR;
 			if (the_expr->_data._reserved.keyword == RW_READ)
-				result._data._str.acl_str = MakeNewDynStr(readLine());	// read full line
+				result._data._str.acl_str = MakeNewDynStr(readLine()); // read full line
 			else {
 				String s;
 				s += readKey();
-				result._data._str.acl_str = MakeNewDynStr(s);	// read single key
+				result._data._str.acl_str = MakeNewDynStr(s); // read single key
 			}
 			break;
 
@@ -497,10 +495,10 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 				} else if (convert_to(MESSAGE, r1)) {
 					if (r2._data._ident.ident_kind == TYPE_ID)
 						send_message(OP_SEND_TO_TYPE, r1._data._msgTextQuote.index, r2._data._ident.ident_int,
-							result, context);
+						             result, context);
 					else
 						send_message(the_expr->_data._oper.op_name, r1._data._msgTextQuote.index,
-							r2._data._ident.ident_int, result, context);
+						             r2._data._ident.ident_int, result, context);
 				}
 			}
 			break;
@@ -690,7 +688,7 @@ void Archetype::eval_expr(ExprTree the_expr, ResultType &result, ContextType &co
 					result._data._str.acl_str = MakeNewDynStr(r1._data._str.acl_str->left(r2._data._numeric.acl_int));
 				else
 					result._data._str.acl_str = MakeNewDynStr(r1._data._str.acl_str->right(
-						r1._data._str.acl_str->size() - r2._data._numeric.acl_int + 1));
+					    r1._data._str.acl_str->size() - r2._data._numeric.acl_int + 1));
 			}
 			break;
 
@@ -757,11 +755,9 @@ bool Archetype::eval_condition(ExprTree the_expr, ContextType &context) {
 	undefine(result);
 	eval_expr(the_expr, result, context, RVALUE);
 
-	failure = (result._kind == RESERVED) && (
-		result._data._reserved.keyword == RW_UNDEFINED ||
-		result._data._reserved.keyword == RW_FALSE ||
-		result._data._reserved.keyword == RW_ABSENT
-	);
+	failure = (result._kind == RESERVED) && (result._data._reserved.keyword == RW_UNDEFINED ||
+	                                         result._data._reserved.keyword == RW_FALSE ||
+	                                         result._data._reserved.keyword == RW_ABSENT);
 
 	cleanup(result);
 	return !failure;
@@ -817,7 +813,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 
 		case MESSAGE:
 			b = send_message(OP_PASS, the_stmt->_data._expr.expression->_data._msgTextQuote.index,
-				context.self, result, context);
+			                 context.self, result, context);
 			break;
 
 		default:
@@ -904,8 +900,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 
 			//with this_case^ do begin
 			eval_expr(this_case->value, r2, context, RVALUE);
-			if ((r2._kind == RESERVED && r2._data._reserved.keyword == RW_DEFAULT)
-				|| result_compare(OP_EQ, r1, r2)) {
+			if ((r2._kind == RESERVED && r2._data._reserved.keyword == RW_DEFAULT) || result_compare(OP_EQ, r1, r2)) {
 				exec_stmt(this_case->action, result, context);
 				cleanup(r1);
 				cleanup(r2);
@@ -995,8 +990,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 		// the very last object was destroyed
 	case ST_DESTROY:
 		eval_expr(the_stmt->_data._destroy.victim, result, context, RVALUE);
-		if (result._kind == IDENT && result._data._ident.ident_kind == OBJECT_ID
-				&& index_xarray(Object_List, result._data._ident.ident_int, p)) {
+		if (result._kind == IDENT && result._data._ident.ident_kind == OBJECT_ID && index_xarray(Object_List, result._data._ident.ident_int, p)) {
 			the_object = (ObjectPtr)p;
 			dispose_object(the_object);
 			p = nullptr;
@@ -1016,7 +1010,7 @@ void Archetype::exec_stmt(StatementPtr the_stmt, ResultType &result, ContextType
 	}
 
 	if (verbose)
-		debug("%s", "");		// finish off dangling lines
+		debug("%s", ""); // finish off dangling lines
 }
 
 } // End of namespace Archetype

@@ -21,8 +21,8 @@
  */
 
 #include "backends/graphics/opengl/pipelines/shader.h"
-#include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/framebuffer.h"
+#include "backends/graphics/opengl/shader.h"
 
 namespace OpenGL {
 
@@ -33,17 +33,15 @@ ShaderPipeline::ShaderPipeline(Shader *shader)
 	_texCoordAttribLocation = shader->getAttributeLocation("texCoordIn");
 	_colorAttribLocation = shader->getAttributeLocation("blendColorIn");
 
-	assert(_vertexAttribLocation   != -1);
+	assert(_vertexAttribLocation != -1);
 	assert(_texCoordAttribLocation != -1);
-	assert(_colorAttribLocation    != -1);
+	assert(_colorAttribLocation != -1);
 
 	// One of the attributes needs to be passed through location 0, otherwise
 	// we get no output for GL contexts due to GL compatibility reasons. Let's
 	// check whether this ever happens. If this ever gets hit, we need to
 	// enable location 0 and pass some dummy values through it to fix output.
-	assert(   _vertexAttribLocation == 0
-	       || _texCoordAttribLocation == 0
-	       || _colorAttribLocation == 0);
+	assert(_vertexAttribLocation == 0 || _texCoordAttribLocation == 0 || _colorAttribLocation == 0);
 }
 
 void ShaderPipeline::activateInternal() {

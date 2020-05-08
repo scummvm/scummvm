@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CDeskClickResponder, CClickResponder)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(LoadSuccessMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
 void CDeskClickResponder::save(SimpleFile *file, int indent) {

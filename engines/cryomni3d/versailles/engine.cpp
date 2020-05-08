@@ -21,16 +21,16 @@
  */
 
 #include "common/config-manager.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/rect.h"
+#include "common/system.h"
 #include "engines/util.h"
 #include "image/bmp.h"
 
-#include "cryomni3d/font_manager.h"
 #include "cryomni3d/dialogs_manager.h"
 #include "cryomni3d/fixed_image.h"
+#include "cryomni3d/font_manager.h"
 #include "cryomni3d/omni3d.h"
 
 #include "cryomni3d/versailles/engine.h"
@@ -44,23 +44,22 @@ namespace CryOmni3D {
 namespace Versailles {
 
 const FixedImageConfiguration CryOmni3DEngine_Versailles::kFixedImageConfiguration = {
-	45, 223, 243, 238, 226, 198, 136, 145, 99, 113,
-	470
-};
+    45, 223, 243, 238, 226, 198, 136, 145, 99, 113,
+    470};
 
 CryOmni3DEngine_Versailles::CryOmni3DEngine_Versailles(OSystem *syst,
-        const CryOmni3DGameDescription *gamedesc) : CryOmni3DEngine(syst, gamedesc),
-	_mainPalette(nullptr), _cursorPalette(nullptr), _transparentPaletteMap(nullptr),
-	_transparentSrcStart(uint(-1)), _transparentSrcStop(uint(-1)), _transparentDstStart(uint(-1)),
-	_transparentDstStop(uint(-1)), _transparentNewStart(uint(-1)), _transparentNewStop(uint(-1)),
-	_currentPlace(nullptr), _currentWarpImage(nullptr), _fixedImage(nullptr),
-	_transitionAnimateWarp(true), _forceRedrawWarp(false), _forcePaletteUpdate(false),
-	_fadedPalette(false), _loadedSave(uint(-1)), _dialogsMan(this,
-	        getFeatures() & GF_VERSAILLES_AUDIOPADDING_YES),
-	_musicVolumeFactor(1.), _musicCurrentFile(nullptr), _omni3dSpeed(0),
-	_isPlaying(false), _isVisiting(false), _abortCommand(kAbortQuit),
-	_currentPlaceId(uint(-1)), _nextPlaceId(uint(-1)), _currentLevel(uint(-1)),
-	_countingDown(false), _countdownNextEvent(0) {
+                                                       const CryOmni3DGameDescription *gamedesc) : CryOmni3DEngine(syst, gamedesc),
+                                                                                                   _mainPalette(nullptr), _cursorPalette(nullptr), _transparentPaletteMap(nullptr),
+                                                                                                   _transparentSrcStart(uint(-1)), _transparentSrcStop(uint(-1)), _transparentDstStart(uint(-1)),
+                                                                                                   _transparentDstStop(uint(-1)), _transparentNewStart(uint(-1)), _transparentNewStop(uint(-1)),
+                                                                                                   _currentPlace(nullptr), _currentWarpImage(nullptr), _fixedImage(nullptr),
+                                                                                                   _transitionAnimateWarp(true), _forceRedrawWarp(false), _forcePaletteUpdate(false),
+                                                                                                   _fadedPalette(false), _loadedSave(uint(-1)), _dialogsMan(this,
+                                                                                                                                                            getFeatures() & GF_VERSAILLES_AUDIOPADDING_YES),
+                                                                                                   _musicVolumeFactor(1.), _musicCurrentFile(nullptr), _omni3dSpeed(0),
+                                                                                                   _isPlaying(false), _isVisiting(false), _abortCommand(kAbortQuit),
+                                                                                                   _currentPlaceId(uint(-1)), _nextPlaceId(uint(-1)), _currentLevel(uint(-1)),
+                                                                                                   _countingDown(false), _countdownNextEvent(0) {
 }
 
 CryOmni3DEngine_Versailles::~CryOmni3DEngine_Versailles() {
@@ -73,9 +72,7 @@ CryOmni3DEngine_Versailles::~CryOmni3DEngine_Versailles() {
 }
 
 bool CryOmni3DEngine_Versailles::hasFeature(EngineFeature f) const {
-	return CryOmni3DEngine::hasFeature(f)
-	       || (f == kSupportsSavingDuringRuntime)
-	       || (f == kSupportsLoadingDuringRuntime);
+	return CryOmni3DEngine::hasFeature(f) || (f == kSupportsSavingDuringRuntime) || (f == kSupportsLoadingDuringRuntime);
 }
 
 void CryOmni3DEngine_Versailles::initializePath(const Common::FSNode &gamePath) {
@@ -120,7 +117,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 
 	// Inventory has a size of 50
 	_inventory.init(50, new Common::Functor1Mem<uint, void, Toolbar>(&_toolbar,
-	                &Toolbar::inventoryChanged));
+	                                                                 &Toolbar::inventoryChanged));
 
 	// Init toolbar after we have setup sprites and fonts
 	_toolbar.init(&_sprites, &_fontManager, &_messages, &_inventory, this);
@@ -131,9 +128,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	initDocPeopleRecord();
 	_docManager.init(&_sprites, &_fontManager, &_messages, this,
 	                 _localizedFilenames[LocalizedFilenames::kAllDocs],
-	                 getFeatures() & GF_VERSAILLES_LINK_LOCALIZED ?
-	                 _localizedFilenames[LocalizedFilenames::kLinksDocs] :
-	                 "lien_doc.txt");
+	                 getFeatures() & GF_VERSAILLES_LINK_LOCALIZED ? _localizedFilenames[LocalizedFilenames::kLinksDocs] : "lien_doc.txt");
 
 	_countdownSurface.create(40, 15, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -147,7 +142,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 
 	int saveSlot = ConfMan.getInt("save_slot");
 
-#if !defined(DEBUG_FAST_START) || DEBUG_FAST_START<1
+#if !defined(DEBUG_FAST_START) || DEBUG_FAST_START < 1
 	if (saveSlot == -1) {
 		// Don't play introduction if loading directly a game
 		playTransitionEndLevel(-2);
@@ -171,7 +166,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 			// Called in options
 			syncOmni3DSettings();
 		} else {
-#if defined(DEBUG_FAST_START) && DEBUG_FAST_START>=2
+#if defined(DEBUG_FAST_START) && DEBUG_FAST_START >= 2
 			nextStep = 27;
 			// Called in options
 			syncOmni3DSettings();
@@ -191,7 +186,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 				// New game, Load game, Next level
 				if (nextStep == 27) {
 					// New game
-#if !defined(DEBUG_FAST_START) || DEBUG_FAST_START<1
+#if !defined(DEBUG_FAST_START) || DEBUG_FAST_START < 1
 					playTransitionEndLevel(0);
 					if (shouldAbort()) {
 						stopGame = true;
@@ -257,7 +252,7 @@ bool CryOmni3DEngine_Versailles::shouldAbort() {
 }
 
 Common::String CryOmni3DEngine_Versailles::prepareFileName(const Common::String &baseName,
-        const char *const *extensions) const {
+                                                           const char *const *extensions) const {
 	Common::String baseName_(baseName);
 	if (getPlatform() != Common::kPlatformMacintosh) {
 		// Replace dashes by underscores for PC versions
@@ -341,7 +336,7 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 		//fonts.push_back("fruitL16.CRF");
 		fonts.push_back("fruitL18.CRF"); // 22: Warp messages texts
 		//fonts.push_back("arial11.CRF");
-		fonts.push_back("MPW12.CRF");    // 24: debug
+		fonts.push_back("MPW12.CRF"); // 24: debug
 		//fonts.push_back("MPW9.CRF");
 
 		// This file isn't even loaded by MacOS executable
@@ -401,7 +396,6 @@ void CryOmni3DEngine_Versailles::setupSprites() {
 	}
 	_sprites.setupMapTable(kSpritesMapTable, kSpritesMapTableSize);
 
-
 	_sprites.setSpriteHotspot(181, 4, 0);
 	// Replace 2-keys, 3-keys and 4-keys icons with 1-key ones
 	_sprites.replaceSprite(80, 64);
@@ -433,14 +427,13 @@ void CryOmni3DEngine_Versailles::loadCursorsPalette() {
 
 	_cursorPalette = new byte[3 * (bmpDecoder.getPaletteColorCount() +
 	                               bmpDecoder.getPaletteStartIndex())];
-	memset(_cursorPalette, 0, 3 * (bmpDecoder.getPaletteColorCount() +
-	                               bmpDecoder.getPaletteStartIndex()));
+	memset(_cursorPalette, 0, 3 * (bmpDecoder.getPaletteColorCount() + bmpDecoder.getPaletteStartIndex()));
 	memcpy(_cursorPalette + 3 * bmpDecoder.getPaletteStartIndex(), bmpDecoder.getPalette(),
 	       3 * bmpDecoder.getPaletteColorCount());
 }
 
 void CryOmni3DEngine_Versailles::setupPalette(const byte *palette, uint start, uint num,
-        bool commit) {
+                                              bool commit) {
 	memcpy(_mainPalette + 3 * start, palette, 3 * num);
 	copySubPalette(_mainPalette, _cursorPalette, 240, 8);
 
@@ -486,7 +479,7 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 
 	for (uint i = _transparentSrcStart; i < _transparentSrcStop; i++) {
 		proximities[i] = transparentCalculateScore(_mainPalette[3 * i + 0], _mainPalette[3 * i + 1],
-		                 _mainPalette[3 * i + 2]);
+		                                           _mainPalette[3 * i + 2]);
 	}
 
 	uint newColorsNextId = _transparentNewStart;
@@ -498,7 +491,7 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 
 		// Find nearest color
 		transparentScore newColorScore = transparentCalculateScore(transparentRed, transparentGreen,
-		                                 transparentBlue);
+		                                                           transparentBlue);
 		uint distanceMin = uint(-1);
 		uint nearestId = uint(-1);
 		for (uint j = _transparentSrcStart; j < _transparentSrcStop; j++) {
@@ -536,11 +529,11 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 }
 
 void CryOmni3DEngine_Versailles::makeTranslucent(Graphics::Surface &dst,
-        const Graphics::Surface &src) const {
+                                                 const Graphics::Surface &src) const {
 	assert(dst.w == src.w && dst.h == src.h);
 
-	const byte *srcP = (const byte *) src.getPixels();
-	byte *dstP = (byte *) dst.getPixels();
+	const byte *srcP = (const byte *)src.getPixels();
+	byte *dstP = (byte *)dst.getPixels();
 	for (uint y = 0; y < dst.h; y++) {
 		for (uint x = 0; x < dst.w; x++) {
 			dstP[x] = _transparentPaletteMap[srcP[x]];
@@ -592,7 +585,7 @@ void CryOmni3DEngine_Versailles::syncSoundSettings() {
 		mute = ConfMan.getBool("mute");
 	}
 
-	bool musicMute = mute  || ConfMan.getBool("music_mute");
+	bool musicMute = mute || ConfMan.getBool("music_mute");
 
 	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, musicMute);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
@@ -730,7 +723,7 @@ void CryOmni3DEngine_Versailles::changeLevel(int level) {
 	if (_currentLevel == 1) {
 		_dialogsMan.reinitVariables();
 		for (Common::Array<uint>::iterator it = _gameVariables.begin(); it != _gameVariables.end();
-		        it++) {
+		     it++) {
 			*it = 0;
 		}
 		initCountdown();
@@ -756,7 +749,7 @@ void CryOmni3DEngine_Versailles::changeLevel(int level) {
 
 void CryOmni3DEngine_Versailles::initNewLevel(int level) {
 	if (level < 1 || level > 8 ||
-	        (level == 8 && !_isVisiting)) {
+	    (level == 8 && !_isVisiting)) {
 		error("Invalid level %d", level);
 	}
 
@@ -1120,7 +1113,7 @@ void CryOmni3DEngine_Versailles::fakeTransition(uint dstPlaceId) {
 }
 
 uint CryOmni3DEngine_Versailles::determineTransitionAnimation(uint srcPlaceId,
-        uint dstPlaceId, const Transition **transition_) {
+                                                              uint dstPlaceId, const Transition **transition_) {
 	const Place *srcPlace = _wam.findPlaceById(srcPlaceId);
 	const Place *dstPlace = _wam.findPlaceById(dstPlaceId);
 	const Transition *transition = srcPlace->findTransition(dstPlaceId);
@@ -1270,11 +1263,11 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 }
 
 bool CryOmni3DEngine_Versailles::handleWarpMouse(uint *actionId,
-        uint movingCursor) {
+                                                 uint movingCursor) {
 	fixActionId(actionId);
 
 	if (getCurrentMouseButton() == 2 ||
-	        getNextKey().keycode == Common::KEYCODE_SPACE) {
+	    getNextKey().keycode == Common::KEYCODE_SPACE) {
 		// Prepare background using alpha
 		const Graphics::Surface *original = _omni3dMan.getSurface();
 
@@ -1341,7 +1334,7 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(uint *actionId,
 
 void CryOmni3DEngine_Versailles::fixActionId(uint *actionId) const {
 	PlaceStateActionKey mask = PlaceStateActionKey(_currentPlaceId, _placeStates[_currentPlaceId].state,
-	                           *actionId);
+	                                               *actionId);
 	Common::HashMap<PlaceStateActionKey, uint>::const_iterator it = _actionMasks.find(mask);
 	if (it != _actionMasks.end()) {
 		*actionId = it->_value;
@@ -1372,7 +1365,6 @@ void CryOmni3DEngine_Versailles::fixActionId(uint *actionId) const {
 			} else if (*actionId == 13150) {
 				*actionId = 23150;
 			}
-
 		}
 	}
 }
@@ -1387,11 +1379,11 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 
 	bool exit = false;
 	while (!exit) {
-		double deltaAlpha = 2.*M_PI - srcAlpha + _omni3dMan.getAlpha();
-		if (deltaAlpha >= 2.*M_PI) {
-			deltaAlpha -= 2.*M_PI;
+		double deltaAlpha = 2. * M_PI - srcAlpha + _omni3dMan.getAlpha();
+		if (deltaAlpha >= 2. * M_PI) {
+			deltaAlpha -= 2. * M_PI;
 		} else if (deltaAlpha < 0) {
-			deltaAlpha += 2.*M_PI;
+			deltaAlpha += 2. * M_PI;
 		}
 
 		// We devide by 5 to slow down movement for modern CPUs
@@ -1399,7 +1391,7 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 		if (deltaAlpha < M_PI) {
 			deltaAlphaI = int(-(deltaAlpha * 512. / 5.));
 		} else {
-			deltaAlphaI = int((2.*M_PI - deltaAlpha) * 512. / 5.);
+			deltaAlphaI = int((2. * M_PI - deltaAlpha) * 512. / 5.);
 		}
 
 		double deltaBeta = -srcBeta - _omni3dMan.getBeta();
@@ -1485,7 +1477,7 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 }
 
 void CryOmni3DEngine_Versailles::collectObject(Object *obj, const ZonFixedImage *fimg,
-        bool showObject) {
+                                               bool showObject) {
 	_inventory.add(obj);
 	Object::ViewCallback cb = obj->viewCallback();
 	if (showObject && cb) {
@@ -1501,7 +1493,7 @@ void CryOmni3DEngine_Versailles::collectObject(Object *obj, const ZonFixedImage 
 }
 
 void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
-        DisplayObjectHook hook) {
+                                               DisplayObjectHook hook) {
 	Image::ImageDecoder *imageDecoder = loadHLZ(imgName);
 	if (!imageDecoder) {
 		error("Can't display object");
@@ -1628,7 +1620,7 @@ uint CryOmni3DEngine_Versailles::getFakeTransition(uint actionId) const {
 }
 
 void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
-        bool restoreCursorPalette) {
+                                                 bool restoreCursorPalette) {
 	if (!_isPlaying) {
 		return;
 	}
@@ -1652,11 +1644,11 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 }
 
 void CryOmni3DEngine_Versailles::playSubtitledVideo(const Common::String &filename) {
-	Common::HashMap<Common::String, Common::Array<SubtitleEntry> >::const_iterator it;
+	Common::HashMap<Common::String, Common::Array<SubtitleEntry>>::const_iterator it;
 
 	if (!showSubtitles() ||
-	        (it = _subtitles.find(filename)) == _subtitles.end() ||
-	        it->_value.size() == 0) {
+	    (it = _subtitles.find(filename)) == _subtitles.end() ||
+	    it->_value.size() == 0) {
 		// No subtitle, don't try to handle them frame by frame
 		// Videos are like music because if you mute music in game it will mute videos soundtracks
 		playHNM(filename, Audio::Mixer::kMusicSoundType);
@@ -1727,7 +1719,7 @@ void CryOmni3DEngine_Versailles::drawVideoSubtitles(uint frameNum) {
 }
 
 void CryOmni3DEngine_Versailles::loadBMPs(const char *pattern, Graphics::Surface *bmps,
-        uint count) {
+                                          uint count) {
 	Image::BitmapDecoder bmpDecoder;
 	Common::File file;
 

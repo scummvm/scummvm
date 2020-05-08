@@ -21,8 +21,8 @@
  */
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -33,8 +33,8 @@
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 
-#include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -53,7 +53,7 @@
 namespace TeenAgent {
 
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
-	: Engine(system), _action(kActionNone), _gameDescription(gd), _rnd("teenagent") {
+    : Engine(system), _action(kActionNone), _gameDescription(gd), _rnd("teenagent") {
 	DebugMan.addDebugChannel(kDebugActor, "Actor", "Enable Actor Debug");
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Enable Animation Debug");
 	DebugMan.addDebugChannel(kDebugCallbacks, "Callbacks", "Enable Callbacks Debug");
@@ -149,8 +149,7 @@ void TeenAgentEngine::processObject() {
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (callback == 0 || !processCallback(callback))
 			displayMessage(_dstObject->description);
-	}
-	break;
+	} break;
 	case kActionUse: {
 		if (trySelectedObject())
 			break;
@@ -161,8 +160,7 @@ void TeenAgentEngine::processObject() {
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (!processCallback(callback))
 			displayMessage(_dstObject->description);
-	}
-	break;
+	} break;
 
 	case kActionNone:
 	default:
@@ -212,7 +210,7 @@ void TeenAgentEngine::init() {
 	_useHotspots.resize(42);
 	byte *sceneHotspots = res->dseg.ptr(dsAddr_sceneHotspotsPtr);
 	for (byte i = 0; i < 42; ++i) {
-		Common::Array<UseHotspot> & hotspots = _useHotspots[i];
+		Common::Array<UseHotspot> &hotspots = _useHotspots[i];
 		byte *hotspotsPtr = res->dseg.ptr(READ_LE_UINT16(sceneHotspots + i * 2));
 		while (*hotspotsPtr) {
 			UseHotspot h;
@@ -226,7 +224,7 @@ void TeenAgentEngine::init() {
 Common::Error TeenAgentEngine::loadGameState(int slot) {
 	debug(0, "loading from slot %d", slot);
 	Common::ScopedPtr<Common::InSaveFile> in(_saveFileMan->openForLoading(
-		getSaveStateName(slot)));
+	    getSaveStateName(slot)));
 	if (!in)
 		in.reset(_saveFileMan->openForLoading(Common::String::format("teenagent.%d", slot)));
 
@@ -271,7 +269,7 @@ Common::String TeenAgentEngine::getSaveStateName(int slot) const {
 Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	debug(0, "saving to slot %d", slot);
 	Common::ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(
-		getSaveStateName(slot)));
+	    getSaveStateName(slot)));
 	if (!out)
 		return Common::kWritingFailed;
 
@@ -527,7 +525,6 @@ bool TeenAgentEngine::showMetropolis() {
 		if (logo_y < 82 - 57)
 			++logo_y;
 
-
 		_system->updateScreen();
 		_system->delayMillis(100);
 	}
@@ -606,7 +603,8 @@ Common::Error TeenAgentEngine::run() {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.hasFlags(0) && event.kbd.keycode == Common::KEYCODE_F5) {
 					openMainMenuDialog();
-				} if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
+				}
+				if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
 					_markDelay = _markDelay == 80 ? 40 : 80;
 					debug(5, "markDelay = %u", _markDelay);
 				}
@@ -638,8 +636,7 @@ Common::Error TeenAgentEngine::run() {
 			case Common::EVENT_MOUSEMOVE:
 				mouse = event.mouse;
 				break;
-			default:
-				;
+			default:;
 			}
 		}
 

@@ -36,6 +36,7 @@ class CServiceElevator : public CTransport {
 	bool ServiceElevatorFloorRequestMsg(CServiceElevatorFloorRequestMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 	bool OpeningCreditsMsg(COpeningCreditsMsg *msg);
+
 private:
 	static bool _v1;
 	static int _v2;
@@ -45,6 +46,7 @@ private:
 	int _soundHandle1;
 	int _timerId;
 	int _soundHandle2;
+
 public:
 	CLASSDEF;
 	CServiceElevator();

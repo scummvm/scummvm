@@ -25,16 +25,16 @@
 #ifndef NUVIE_GUI_GUI_WIDGET_H
 #define NUVIE_GUI_GUI_WIDGET_H
 
-#include "ultima/nuvie/gui/gui_status.h"
+#include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/gui/gui_drag_area.h"
 #include "ultima/nuvie/gui/gui_drag_manager.h"
+#include "ultima/nuvie/gui/gui_status.h"
 #include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/core/events.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-typedef GUI_status(*GUI_CallbackProc)(void *data);
+typedef GUI_status (*GUI_CallbackProc)(void *data);
 
 class GUI_Widget : public GUI_DragArea {
 
@@ -60,22 +60,22 @@ protected:
 
 	bool focused;
 
-	Std::list<GUI_Widget *>children;
+	Std::list<GUI_Widget *> children;
 	GUI_Widget *parent;
 
 	char *error;
-	char  errbuf[BUFSIZ];
+	char errbuf[BUFSIZ];
 
 	GUI_DragManager *gui_drag_manager;
 
 	// SB-X
 	/* The time of the last mouse click (SDL_GetTicks()). */
-	unsigned int mouseup[3]; /* for 3 buttons */
-	unsigned int mousedown[3]; /* waiting for MouseUp */
-	bool accept_mouseclick[3]; /* which buttons can be [double]clicked */
+	unsigned int mouseup[3];            /* for 3 buttons */
+	unsigned int mousedown[3];          /* waiting for MouseUp */
+	bool accept_mouseclick[3];          /* which buttons can be [double]clicked */
 	Shared::MouseButton delayed_button; /* a MouseClick can be delayed on one button; 0=none */
-	Shared::MouseButton held_button; /* a MouseDown can be delayed on one button; 0=none */
-	bool mouse_moved; /* true if mouse moves while button is pressed */
+	Shared::MouseButton held_button;    /* a MouseDown can be delayed on one button; 0=none */
+	bool mouse_moved;                   /* true if mouse moves while button is pressed */
 
 	bool mouse_over; // initialized here; toggled by GUI
 
@@ -109,7 +109,7 @@ public:
 	void moveToFront();
 	virtual void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
 
-	virtual int  Status(void);  /* Reports status to GUI */
+	virtual int Status(void); /* Reports status to GUI */
 
 	/* Set the bounds of the widget.
 	   If 'w' or 'h' is -1, that parameter will not be changed.
@@ -204,7 +204,8 @@ public:
 
 	/* set click state from remote */
 	inline virtual void SetClickState(int button, int value) {
-		if ((button > 0) && (button <= 3)) pressed[button - 1] = value;
+		if ((button > 0) && (button <= 3))
+			pressed[button - 1] = value;
 	}
 
 protected:
@@ -227,13 +228,17 @@ protected:
 	void set_accept_mouseclick(bool set, int button = 0);
 	void set_mouseup(int set, int button = 0);
 	void set_mousedown(int set, int button = 0);
-	int get_mouseup(int button)  {
-		if (button > 0 && button < 4) return (mouseup[button - 1]);
-		else return (0);
+	int get_mouseup(int button) {
+		if (button > 0 && button < 4)
+			return (mouseup[button - 1]);
+		else
+			return (0);
 	}
 	int get_mousedown(int button) {
-		if (button > 0 && button < 4) return (mousedown[button - 1]);
-		else return (0);
+		if (button > 0 && button < 4)
+			return (mousedown[button - 1]);
+		else
+			return (0);
 	}
 	void wait_for_mouseclick(int button) {
 		if (button >= Shared::BUTTON_NONE && button < Shared::BUTTON_MIDDLE)

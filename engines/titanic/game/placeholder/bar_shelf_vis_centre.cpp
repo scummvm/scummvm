@@ -25,9 +25,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CBarShelfVisCentre, CPlaceHolder)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
 void CBarShelfVisCentre::save(SimpleFile *file, int indent) {
@@ -62,6 +62,5 @@ bool CBarShelfVisCentre::EnterViewMsg(CEnterViewMsg *msg) {
 	_flag = false;
 	return true;
 }
-
 
 } // End of namespace Titanic

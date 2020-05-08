@@ -31,8 +31,10 @@ namespace Titanic {
 class CEnterBridge : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+
 private:
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CEnterBridge() : CGameObject(), _flag(true) {}

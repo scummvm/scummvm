@@ -20,7 +20,6 @@
  *
  */
 
-
 #ifndef SCUMM_ACTOR_HE_H
 #define SCUMM_ACTOR_HE_H
 
@@ -78,7 +77,6 @@ public:
 		int16 color;
 		byte sentence[128];
 	} _heTalkQueue[16];
-
 
 	void prepareDrawActorCostume(BaseCostumeRenderer *bcr) override;
 	void setActorCostume(int c) override;

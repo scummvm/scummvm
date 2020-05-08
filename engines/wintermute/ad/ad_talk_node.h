@@ -29,8 +29,8 @@
 #ifndef WINTERMUTE_ADTALKNODE_H
 #define WINTERMUTE_ADTALKNODE_H
 
-#include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 class AdSpriteSet;
@@ -55,7 +55,6 @@ public:
 	bool _playToEnd;
 	bool _preCache;
 	char *_comment;
-
 };
 
 } // End of namespace Wintermute

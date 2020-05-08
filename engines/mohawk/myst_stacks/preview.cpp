@@ -20,13 +20,13 @@
  *
  */
 
+#include "mohawk/myst_stacks/preview.h"
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_sound.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/preview.h"
 
 #include "common/system.h"
 #include "gui/message.h"
@@ -34,8 +34,7 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Preview::Preview(MohawkEngine_Myst *vm) :
-		Myst(vm, kDemoPreviewStack) {
+Preview::Preview(MohawkEngine_Myst *vm) : Myst(vm, kDemoPreviewStack) {
 	setupOpcodes();
 	_vm->_cursor->hideCursor();
 
@@ -122,7 +121,7 @@ void Preview::speech_run() {
 	switch (_speechStep) {
 	case 0: // Start Voice Over... which controls book opening
 		_currentCue = 0;
-			_vm->_sound->playSpeech(3001, &_cueList);
+		_vm->_sound->playSpeech(3001, &_cueList);
 
 		_speechStep++;
 		break;
@@ -241,7 +240,6 @@ void Preview::libraryBookcaseTransform_run() {
 
 	Myst::libraryBookcaseTransform_run();
 }
-
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

@@ -21,8 +21,8 @@
  */
 
 #include "glk/jacl/jacl.h"
-#include "glk/jacl/types.h"
 #include "glk/jacl/prototypes.h"
+#include "glk/jacl/types.h"
 
 namespace Glk {
 namespace JACL {
@@ -30,23 +30,22 @@ namespace JACL {
 extern struct synonym_type *synonym_table;
 extern struct filter_type *filter_table;
 
-char            text_buffer[1024];
+char text_buffer[1024];
 
 /* THIS IS A STRING CONSTANT TO POINT TO WHENEVER A COMMA IS
  * USED IN THE PLAYER'S INPUT */
-const char     *comma = "comma\0";
-const char     *then = "then\0";
-const char     *word[MAX_WORDS];
-int             quoted[MAX_WORDS];
-int             percented[MAX_WORDS];
-int             wp;
+const char *comma = "comma\0";
+const char *then = "then\0";
+const char *word[MAX_WORDS];
+int quoted[MAX_WORDS];
+int percented[MAX_WORDS];
+int wp;
 
-void
-encapsulate() {
-	int             index,
-	                length;
-	int             position = 0;
-	int             new_word = TRUE;
+void encapsulate() {
+	int index,
+	    length;
+	int position = 0;
+	int new_word = TRUE;
 
 	length = strlen(text_buffer);
 
@@ -115,7 +114,6 @@ encapsulate() {
 			}
 			break;
 		}
-
 	}
 
 	/* NULL OUT ALL THE WORD POINTERS BEYOND THE LAST WORD */
@@ -126,12 +124,11 @@ encapsulate() {
 }
 
 // THIS VERSION OF ENCAPSULATE DOESN'T LOOK FOR CERTAIN SPECIAL CHARACTERS
-void
-command_encapsulate() {
-	int             index,
-	                length;
-	int             position = 0;
-	int             new_word = TRUE;
+void command_encapsulate() {
+	int index,
+	    length;
+	int position = 0;
+	int new_word = TRUE;
 
 	length = strlen(text_buffer);
 
@@ -144,7 +141,7 @@ command_encapsulate() {
 	for (index = 0; index < length; index++) {
 
 		// REDUSE EVERYTHING TO LOWER CASE EXCEPT TEXT ENCLOSED IN QUOTES
-		text_buffer[index] = tolower((int) text_buffer[index]);
+		text_buffer[index] = tolower((int)text_buffer[index]);
 
 		switch (text_buffer[index]) {
 		case ':':
@@ -216,7 +213,6 @@ command_encapsulate() {
 			}
 			break;
 		}
-
 	}
 
 	// NULL OUT ALL THE WORD POINTERS BEYOND THE LAST WORD
@@ -227,12 +223,11 @@ command_encapsulate() {
 	wp = 0;
 }
 
-void
-jacl_truncate() {
-	int             index,
-	                counter,
-	                match;
-	int             position = 0;
+void jacl_truncate() {
+	int index,
+	    counter,
+	    match;
+	int position = 0;
 
 	struct synonym_type *synonym;
 	struct filter_type *filter = filter_table;
@@ -244,7 +239,7 @@ jacl_truncate() {
 			do {
 				if (!strcmp(word[position], filter->word)) {
 					for (index = position; word[index + 1] != NULL;
-					        index++)
+					     index++)
 						word[index] = word[index + 1];
 					word[index] = NULL;
 					match = TRUE;

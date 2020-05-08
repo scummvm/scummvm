@@ -36,6 +36,7 @@ public:
 	~TalkResourceLoader() override {}
 	void load(Resource *resource) override;
 	bool isFlag(int flag) override;
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -54,6 +55,7 @@ public:
 	TalkResource();
 	~TalkResource();
 	void load(byte *data, uint32 dataSize);
+
 public:
 	uint _talkEntriesCount;
 	TalkEntry *_talkEntries;
@@ -66,6 +68,7 @@ public:
 	void unload() override;
 	void pause() override;
 	void unpause() override;
+
 public:
 	IllusionsEngine *_vm;
 	uint32 _talkId;
@@ -86,9 +89,9 @@ public:
 	TalkInstance *findTalkItemBySceneId(uint32 sceneId);
 	void pauseBySceneId(uint32 sceneId);
 	void unpauseBySceneId(uint32 sceneId);
-//protected:
+	//protected:
 public:
-	typedef Common::List<TalkInstance*> Items;
+	typedef Common::List<TalkInstance *> Items;
 	typedef Items::iterator ItemsIterator;
 	IllusionsEngine *_vm;
 	Items _items;

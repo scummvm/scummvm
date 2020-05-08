@@ -23,8 +23,8 @@
  *
  */
 
-#include "pegasus/gamestate.h"
 #include "pegasus/menu.h"
+#include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/scoring.h"
 
@@ -144,8 +144,8 @@ static const CoordType kMainMenuQuitSelectTop = 424;
 
 // Never set the current input handler to the MainMenu.
 MainMenu::MainMenu() : GameMenu(kMainMenuID), _menuBackground(0), _overviewButton(0),
-		_restoreButton(0), _adventureButton(0), _walkthroughButton(0), _startButton(0),
-		_creditsButton(0), _quitButton(0), _largeSelect(0), _smallSelect(0) {
+                       _restoreButton(0), _adventureButton(0), _walkthroughButton(0), _startButton(0),
+                       _creditsButton(0), _quitButton(0), _largeSelect(0), _smallSelect(0) {
 
 	bool isDemo = ((PegasusEngine *)g_engine)->isDemo();
 
@@ -461,7 +461,7 @@ static const TimeValue kFrameIncrement = 120; // Three frames...
 
 // Never set the current input handler to the CreditsMenu.
 CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _creditsMovie(0),
-		_mainMenuButton(0), _largeSelect(0), _smallSelect(0) {
+                             _mainMenuButton(0), _largeSelect(0), _smallSelect(0) {
 
 	_menuBackground.initFromPICTFile("Images/Credits/CredScrn.pict");
 	_menuBackground.setDisplayOrder(0);
@@ -639,7 +639,7 @@ enum {
 
 // Never set the current input handler to the DeathMenu.
 DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _deathBackground(0), _continueButton(0),
-		_mainMenuButton(0), _quitButton(0), _restoreButton(0), _largeSelect(0), _smallSelect(0) {
+                                                      _mainMenuButton(0), _quitButton(0), _restoreButton(0), _largeSelect(0), _smallSelect(0) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 	bool isDemo = vm->isDemo();
 
@@ -672,14 +672,13 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 		imageName = prefix;
 
 		static const char *fileNames[] = {
-			"dAunmade", "dAbombed", "dAshot", "dAassass", "dAnuked",
-			"dTunmade", "dTshot", "dPfall", "dPdino", "dPstuck",
-			"dNchoke", "dNcaught", "dNcaught", "dNsub", "dNrobot1",
-			"dNrobot2", "dMfall", "dMcaught", "dMtracks", "dMrobot",
-			"dMtoast", "dMexplo1", "dMexplo2", "dMchoke1", "dMchoke2",
-			"dMdroid", "dMfall", "dMgears", "dMshutt1", "dMshutt2",
-			"dWpoison", "dWcaught", "dWplasma", "dWshot", "dAfinale"
-		};
+		    "dAunmade", "dAbombed", "dAshot", "dAassass", "dAnuked",
+		    "dTunmade", "dTshot", "dPfall", "dPdino", "dPstuck",
+		    "dNchoke", "dNcaught", "dNcaught", "dNsub", "dNrobot1",
+		    "dNrobot2", "dMfall", "dMcaught", "dMtracks", "dMrobot",
+		    "dMtoast", "dMexplo1", "dMexplo2", "dMchoke1", "dMchoke2",
+		    "dMdroid", "dMfall", "dMgears", "dMshutt1", "dMshutt2",
+		    "dWpoison", "dWcaught", "dWplasma", "dWshot", "dAfinale"};
 
 		imageName += fileNames[deathReason - 1];
 		imageName += ".pict";
@@ -701,7 +700,7 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 	if (isDemo) {
 		if (_playerWon) // Make credits button...
 			_continueButton.initFromPICTFile(prefix + "Credits.pict");
-		else            // Make continue button...
+		else // Make continue button...
 			_continueButton.initFromPICTFile(prefix + "Continue.pict");
 
 		_mainMenuButton.initFromPICTFile(prefix + "MainMenu.pict");
@@ -903,7 +902,7 @@ void DeathMenu::drawAllScores() {
 	case kPlayerWonGame:
 		caldoriaTotal += kMaxCaldoriaTSAScoreAfter;
 		scoreBounds = Common::Rect(kDeathScreenScoreLeft, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 5,
-				kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 5 + kDeathScreenScoreHeight);
+		                           kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 5 + kDeathScreenScoreHeight);
 		drawScore(GameState.getGandhiScore(), kMaxGandhiScore, scoreBounds, &numbers);
 
 		scoreBounds.translate(0, kDeathScreenScoreSkipVert);
@@ -920,18 +919,18 @@ void DeathMenu::drawAllScores() {
 	case kDeathStranded:
 	case kDeathShotByTSARobots:
 		scoreBounds = Common::Rect(kDeathScreenScoreLeft, kDeathScreenScoreTop - kDeathScreenScoreSkipVert,
-				kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert + kDeathScreenScoreHeight);
+		                           kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert + kDeathScreenScoreHeight);
 		drawScore(GameState.getPrehistoricScore(), kMaxPrehistoricScore, scoreBounds, &numbers);
 		// fall through
 	case kDeathUncreatedInCaldoria:
 	case kDeathUncreatedInTSA:
 		scoreBounds = Common::Rect(kDeathScreenScoreLeft, kDeathScreenScoreTop, kDeathScreenScoreLeft + kDeathScreenScoreWidth,
-				kDeathScreenScoreTop + kDeathScreenScoreHeight);
+		                           kDeathScreenScoreTop + kDeathScreenScoreHeight);
 		caldoriaTotal += kMaxCaldoriaTSAScoreBefore;
 		drawScore(GameState.getCaldoriaTSAScore(), caldoriaTotal, scoreBounds, &numbers);
 
 		scoreBounds = Common::Rect(kDeathScreenScoreLeft, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 6,
-				kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 6 + kDeathScreenScoreHeight);
+		                           kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 6 + kDeathScreenScoreHeight);
 
 		drawScore(GameState.getTotalScore(), kMaxTotalScore, scoreBounds, &numbers);
 		break;
@@ -1010,8 +1009,8 @@ static const CoordType kPauseScoreBottom = kPauseScoreTop + 12;
 
 // Never set the current input handler to the CPauseMenu.
 PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButton(0), _restoreButton(0),
-		_walkthroughButton(0), _continueButton(0), _soundFXLevel(0), _ambienceLevel(0), _quitButton(0),
-		_largeSelect(0), _smallSelect(0) {
+                         _walkthroughButton(0), _continueButton(0), _soundFXLevel(0), _ambienceLevel(0), _quitButton(0),
+                         _largeSelect(0), _smallSelect(0) {
 	PegasusEngine *vm = (PegasusEngine *)g_engine;
 
 	_pauseBackground.initFromPICTFile("Images/Pause Screen/PausScrn.pict", true);
@@ -1021,7 +1020,7 @@ PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButto
 		numbers.getImageFromPICTFile("Images/Pause Screen/Numbers.pict");
 		vm->_gfx->setCurSurface(_pauseBackground.getSurface());
 		drawScore(GameState.getTotalScore(), kMaxTotalScore,
-				Common::Rect(kPauseScoreLeft, kPauseScoreTop, kPauseScoreRight, kPauseScoreBottom), &numbers);
+		          Common::Rect(kPauseScoreLeft, kPauseScoreTop, kPauseScoreRight, kPauseScoreBottom), &numbers);
 		vm->_gfx->setCurSurface(vm->_gfx->getWorkArea());
 	}
 
@@ -1248,6 +1247,5 @@ void PauseMenu::updateDisplay() {
 
 	((PegasusEngine *)g_engine)->resetIntroTimer();
 }
-
 
 } // End of namespace Pegasus

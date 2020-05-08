@@ -20,18 +20,18 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/views/portrait_view_gump.h"
+#include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_button.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/portraits/portrait.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/views/container_widget_gump.h"
-#include "ultima/nuvie/views/portrait_view_gump.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/views/container_widget_gump.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -135,8 +135,8 @@ void PortraitViewGump::right_arrow() {
 
 void PortraitViewGump::Display(bool full_redraw) {
 	char buf[6]; //xxxxx\n
-//display_level_text();
-//display_spell_list_text();
+	             //display_level_text();
+	             //display_spell_list_text();
 	Common::Rect dst;
 	dst = area;
 	SDL_BlitSurface(bg_image, NULL, surface, &dst);
@@ -198,7 +198,6 @@ void PortraitViewGump::Display(bool full_redraw) {
 	update_display = false;
 	screen->update(area.left, area.top, area.width(), area.height());
 
-
 	return;
 }
 
@@ -234,7 +233,7 @@ GUI_status PortraitViewGump::callback(uint16 msg, GUI_CallBack *caller, void *da
 }
 
 GUI_status PortraitViewGump::KeyDown(const Common::KeyState &key) {
-//	I was checking for numlock but probably don't need to
+	//	I was checking for numlock but probably don't need to
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

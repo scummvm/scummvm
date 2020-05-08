@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CHammer, CCarry)
-	ON_MESSAGE(PuzzleSolvedMsg)
-	ON_MESSAGE(UseWithOtherMsg)
+ON_MESSAGE(PuzzleSolvedMsg)
+ON_MESSAGE(UseWithOtherMsg)
 END_MESSAGE_MAP()
 
 CHammer::CHammer() : CCarry() {

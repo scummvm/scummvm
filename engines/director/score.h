@@ -26,15 +26,15 @@
 #include "common/hash-str.h"
 
 namespace Graphics {
-	class ManagedSurface;
-	class Font;
-	class MacWindow;
-}
+class ManagedSurface;
+class Font;
+class MacWindow;
+} // namespace Graphics
 
 namespace Common {
-	class ReadStreamEndian;
-	class SeekableSubReadStreamEndian;
-}
+class ReadStreamEndian;
+class SeekableSubReadStreamEndian;
+} // namespace Common
 
 namespace Director {
 

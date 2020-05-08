@@ -23,9 +23,9 @@
 #ifndef XEEN_EVENTS_H
 #define XEEN_EVENTS_H
 
-#include "common/scummsys.h"
 #include "common/events.h"
 #include "common/queue.h"
+#include "common/scummsys.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -74,8 +74,10 @@ private:
 	 * Handles moving to the next game frame
 	 */
 	void nextFrame();
+
 public:
 	Common::Point _mousePos;
+
 public:
 	EventsManager(XeenEngine *vm);
 	~EventsManager();

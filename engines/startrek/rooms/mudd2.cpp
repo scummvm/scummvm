@@ -127,7 +127,7 @@ void Room::mudd2MccoyPickedUpCapsules() {
 }
 
 void Room::mudd2UseCommunicator() {
-	showText(TX_SPEAKER_KIRK,  TX_MUD4_018);	// originally TX_MUD4_019, this matches the audio
+	showText(TX_SPEAKER_KIRK, TX_MUD4_018); // originally TX_MUD4_019, this matches the audio
 	showText(TX_SPEAKER_UHURA, TX_STATICU1);
 }
 
@@ -137,7 +137,7 @@ void Room::mudd2LookAtCapsules() {
 
 void Room::mudd2UseMTricorderOnCapsules() {
 	mccoyScan(DIR_W, 30, false, true);
-	showText(TX_SPEAKER_KIRK,  4, true);
+	showText(TX_SPEAKER_KIRK, 4, true);
 	showText(TX_SPEAKER_MCCOY, 19, true);
 }
 
@@ -184,7 +184,6 @@ void Room::mudd2KirkReachedBed() {
 	showText(TX_SPEAKER_MCCOY, 22, true);
 }
 
-
 void Room::mudd2MuddNoticedKirk() {
 	showText(TX_SPEAKER_MUDD, 44, true);
 	playVoc("BATTYGAS");
@@ -198,24 +197,22 @@ void Room::mudd2MuddDroppedCapsule() {
 	_awayMission->mudd.muddCurrentlyInsane = true;
 
 	showText(TX_SPEAKER_MCCOY, 32, true);
-	showText(TX_SPEAKER_MUDD,  49, true);
+	showText(TX_SPEAKER_MUDD, 49, true);
 	showText(TX_SPEAKER_MCCOY, 26, true);
-	showText(TX_SPEAKER_MUDD,  51, true);
+	showText(TX_SPEAKER_MUDD, 51, true);
 	showText(TX_SPEAKER_MCCOY, 31, true);
-	showText(TX_SPEAKER_MUDD,  50, true);
+	showText(TX_SPEAKER_MUDD, 50, true);
 
 	_awayMission->disableInput = false;
 }
 
-
 void Room::mudd2UsePhaserOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious) {
 		showText(TX_SPEAKER_BUCHERT, 53, true);
-		showText(TX_SPEAKER_MUDD,    42, true);
-		showText(TX_SPEAKER_MUDD,    43, true);
+		showText(TX_SPEAKER_MUDD, 42, true);
+		showText(TX_SPEAKER_MUDD, 43, true);
 	}
 }
-
 
 // Spock neck-pinches Mudd
 void Room::mudd2UseSpockOnMudd() {
@@ -249,7 +246,6 @@ void Room::mudd2UseKirkOnMudd() {
 	}
 }
 
-
 void Room::mudd2UseRedshirtOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious) {
 		_awayMission->disableInput = true;
@@ -280,7 +276,6 @@ void Room::mudd2RedshirtPushedAway() {
 	walkCrewman(OBJECT_REDSHIRT, 0x117, 0xae);
 }
 
-
 // BUGFIX: This was originally "Action 0x45 on Mudd"; as far as I know, action 0x45
 // doesn't exist. It's far more likely that 0x45 is supposed to correspond to
 // OBJECT_IMTRICOR in a USE action.
@@ -289,7 +284,6 @@ void Room::mudd2UseMTricorderOnMudd() {
 	if (_awayMission->mudd.muddInhaledGas && !_awayMission->mudd.muddUnconscious)
 		mccoyScan(DIR_W, 13, false, true);
 }
-
 
 void Room::mudd2UseMedkitOnMudd() {
 	if (!_awayMission->mudd.muddInhaledGas)
@@ -317,11 +311,10 @@ void Room::mudd2MccoyCuredMudd() {
 	_awayMission->mudd.muddInhaledGas = false;
 
 	showText(TX_SPEAKER_MCCOY, 33, true);
-	showText(TX_SPEAKER_MUDD,  45, true);
+	showText(TX_SPEAKER_MUDD, 45, true);
 
 	_awayMission->mudd.muddUnconscious = false;
 }
-
 
 void Room::mudd2LookAtKirk() {
 	showDescription(3, true);
@@ -357,8 +350,8 @@ void Room::mudd2TalkToKirk() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious)
 		showText(TX_SPEAKER_KIRK, 10, true);
 	else {
-		showText(TX_SPEAKER_KIRK,   5, true);
-		showText(TX_SPEAKER_MUDD,  46, true);
+		showText(TX_SPEAKER_KIRK, 5, true);
+		showText(TX_SPEAKER_MUDD, 46, true);
 		showText(TX_SPEAKER_MCCOY, 35, true);
 	}
 }
@@ -366,7 +359,7 @@ void Room::mudd2TalkToKirk() {
 void Room::mudd2TalkToSpock() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
 		showText(TX_SPEAKER_SPOCK, 40, true);
-		showText(TX_SPEAKER_KIRK,  11, true);
+		showText(TX_SPEAKER_KIRK, 11, true);
 	} else {
 		showText(TX_SPEAKER_SPOCK, 38, true);
 	}
@@ -375,7 +368,7 @@ void Room::mudd2TalkToSpock() {
 void Room::mudd2TalkToMccoy() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
 		showText(TX_SPEAKER_MCCOY, 25, true);
-		showText(TX_SPEAKER_KIRK,   7, true);
+		showText(TX_SPEAKER_KIRK, 7, true);
 	} else {
 		showText(TX_SPEAKER_MCCOY, 27, true);
 	}
@@ -384,11 +377,11 @@ void Room::mudd2TalkToMccoy() {
 void Room::mudd2TalkToRedshirt() {
 	if (!_awayMission->mudd.muddCurrentlyInsane || !_awayMission->mudd.muddInhaledGas || _awayMission->mudd.muddUnconscious) {
 		showText(TX_SPEAKER_BUCHERT, 54, true);
-		showText(TX_SPEAKER_KIRK,     8, true);
+		showText(TX_SPEAKER_KIRK, 8, true);
 	} else {
 		showText(TX_SPEAKER_BUCHERT, 55, true);
-		showText(TX_SPEAKER_KIRK,     3, true);
-		showText(TX_SPEAKER_MCCOY,   36, true);
+		showText(TX_SPEAKER_KIRK, 3, true);
+		showText(TX_SPEAKER_MCCOY, 36, true);
 	}
 }
 
@@ -400,8 +393,8 @@ void Room::mudd2TalkToMudd() {
 		showText(TX_SPEAKER_MCCOY, 28, true);
 	} else { // NOTE: Unused (assumes harry is in a normal state, which doesn't happen here)
 		showText(TX_SPEAKER_MUDD, 47, true);
-		showText(TX_SPEAKER_KIRK,  6, true);
+		showText(TX_SPEAKER_KIRK, 6, true);
 	}
 }
 
-}
+} // namespace StarTrek

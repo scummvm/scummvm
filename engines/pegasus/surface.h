@@ -33,15 +33,15 @@
 #include "pegasus/types.h"
 
 namespace Common {
-	class MacResManager;
+class MacResManager;
 }
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace Video {
-	class VideoDecoder;
+class VideoDecoder;
 }
 
 namespace Pegasus {
@@ -114,7 +114,8 @@ public:
 };
 
 class SpriteFrame : public Frame {
-friend class Sprite;
+	friend class Sprite;
+
 public:
 	SpriteFrame() { _referenceCount = 0; }
 	~SpriteFrame() override {}

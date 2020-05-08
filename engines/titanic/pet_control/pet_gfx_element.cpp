@@ -22,13 +22,13 @@
 
 #include "common/textconsole.h"
 #include "titanic/core/game_object.h"
-#include "titanic/pet_control/pet_element.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/pet_control/pet_element.h"
 
 namespace Titanic {
 
 void CPetGfxElement::setup(PetElementMode mode, const CString &name,
-		CPetControl *petControl) {
+                           CPetControl *petControl) {
 	switch (mode) {
 	case MODE_UNSELECTED:
 		_object0 = petControl->getHiddenObject(name);

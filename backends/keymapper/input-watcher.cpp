@@ -27,11 +27,9 @@
 
 namespace Common {
 
-InputWatcher::InputWatcher(EventDispatcher *eventDispatcher, Keymapper *keymapper) :
-		_eventDispatcher(eventDispatcher),
-		_keymapper(keymapper),
-		_watching(false) {
-
+InputWatcher::InputWatcher(EventDispatcher *eventDispatcher, Keymapper *keymapper) : _eventDispatcher(eventDispatcher),
+                                                                                     _keymapper(keymapper),
+                                                                                     _watching(false) {
 }
 
 void InputWatcher::startWatching() {
@@ -58,32 +56,32 @@ bool InputWatcher::notifyEvent(const Event &event) {
 	assert(_hwInput.type == kHardwareInputTypeInvalid);
 
 	switch (event.type) {
-		case EVENT_KEYDOWN:
-		case EVENT_JOYBUTTON_DOWN:
-		case EVENT_LBUTTONDOWN:
-		case EVENT_RBUTTONDOWN:
-		case EVENT_MBUTTONDOWN:
-		case EVENT_X1BUTTONDOWN:
-		case EVENT_X2BUTTONDOWN:
-			return true;
-		case EVENT_KEYUP:
-		case EVENT_JOYBUTTON_UP:
-		case EVENT_JOYAXIS_MOTION:
-		case EVENT_LBUTTONUP:
-		case EVENT_RBUTTONUP:
-		case EVENT_MBUTTONUP:
-		case EVENT_WHEELUP:
-		case EVENT_WHEELDOWN:
-		case EVENT_X1BUTTONUP:
-		case EVENT_X2BUTTONUP:
-		case EVENT_CUSTOM_BACKEND_HARDWARE:
-			_hwInput = _keymapper->findHardwareInput(event);
-			if (_hwInput.type != kHardwareInputTypeInvalid) {
-				stopWatching();
-			}
-			return true;
-		default:
-			break;
+	case EVENT_KEYDOWN:
+	case EVENT_JOYBUTTON_DOWN:
+	case EVENT_LBUTTONDOWN:
+	case EVENT_RBUTTONDOWN:
+	case EVENT_MBUTTONDOWN:
+	case EVENT_X1BUTTONDOWN:
+	case EVENT_X2BUTTONDOWN:
+		return true;
+	case EVENT_KEYUP:
+	case EVENT_JOYBUTTON_UP:
+	case EVENT_JOYAXIS_MOTION:
+	case EVENT_LBUTTONUP:
+	case EVENT_RBUTTONUP:
+	case EVENT_MBUTTONUP:
+	case EVENT_WHEELUP:
+	case EVENT_WHEELDOWN:
+	case EVENT_X1BUTTONUP:
+	case EVENT_X2BUTTONUP:
+	case EVENT_CUSTOM_BACKEND_HARDWARE:
+		_hwInput = _keymapper->findHardwareInput(event);
+		if (_hwInput.type != kHardwareInputTypeInvalid) {
+			stopWatching();
+		}
+		return true;
+	default:
+		break;
 	}
 
 	return false;

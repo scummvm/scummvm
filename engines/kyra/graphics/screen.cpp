@@ -24,10 +24,10 @@
 #include "kyra/kyra_v1.h"
 #include "kyra/resource/resource.h"
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/system.h"
-#include "common/config-manager.h"
 
 #include "engines/util.h"
 
@@ -38,8 +38,8 @@
 namespace Kyra {
 
 Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize)
-	: _system(system), _vm(vm), _sjisInvisibleColor(0), _dimTable(dimTable), _dimTableCount(dimTableSize),
-	_cursorColorKey((vm->game() == GI_KYRA1 || vm->game() == GI_EOB1 || vm->game() == GI_EOB2) ? 0xFF : 0) {
+    : _system(system), _vm(vm), _sjisInvisibleColor(0), _dimTable(dimTable), _dimTableCount(dimTableSize),
+      _cursorColorKey((vm->game() == GI_KYRA1 || vm->game() == GI_EOB1 || vm->game() == GI_EOB2) ? 0xFF : 0) {
 	_debugEnabled = false;
 	_maskMinY = _maskMaxY = -1;
 
@@ -201,7 +201,7 @@ bool Screen::init() {
 	_palettes.resize(paletteCount);
 	_palettes[0] = new Palette(numColorsInternal);
 	assert(_palettes[0]);
-	
+
 	for (int i = 1; i < paletteCount; ++i) {
 		_palettes[i] = new Palette(numColors);
 		assert(_palettes[i]);
@@ -306,7 +306,7 @@ void Screen::setResolution() {
 		initGraphics(width, height, tryModes);
 		if (_system->getScreenFormat().bytesPerPixel != 2)
 			error("Required graphics mode not supported by platform.");
-		
+
 	} else {
 		initGraphics(width, height);
 		_system->getPaletteManager()->setPalette(palette, 0, 256);
@@ -376,7 +376,7 @@ void Screen::updateDirtyRects() {
 
 void Screen::updateDirtyRectsAmiga() {
 	if (_forceFullUpdate) {
-		uint32 *pos = (uint32*)(_pagePtrs[0] + _dualPaletteModeSplitY * SCREEN_W);
+		uint32 *pos = (uint32 *)(_pagePtrs[0] + _dualPaletteModeSplitY * SCREEN_W);
 		uint16 h = (SCREEN_H - _dualPaletteModeSplitY) * (SCREEN_W >> 2);
 		while (h--)
 			*pos++ |= 0x20202020;
@@ -421,7 +421,7 @@ void Screen::updateDirtyRectsOvl() {
 			const byte *src = page0 + it->top * SCREEN_W * _bytesPerPixel + it->left * _bytesPerPixel;
 
 			scale2x(dst, 640, src, SCREEN_W, it->width(), it->height());
-			mergeOverlay(it->left<<1, it->top<<1, it->width()<<1, it->height()<<1);
+			mergeOverlay(it->left << 1, it->top << 1, it->width() << 1, it->height() << 1);
 			_system->copyRectToScreen(dst, _useHiColorScreen ? 1280 : 640, it->left << 1, it->top << 1, it->width() << 1, it->height() << 1);
 		}
 	}
@@ -457,7 +457,8 @@ void Screen::scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int
 				*(uint32 *)(dstL1) = *(uint32 *)(dstL2) = col;
 			}
 		}
-		dstL1 += dstAdd; dstL2 += dstAdd;
+		dstL1 += dstAdd;
+		dstL2 += dstAdd;
 		src += srcAdd;
 	}
 }
@@ -475,7 +476,7 @@ void Screen::mergeOverlay(int x, int y, int w, int h) {
 			byte col = *src++;
 			if (col != _sjisInvisibleColor) {
 				if (bpp == 2)
-					*(uint16*)dst = p16[col];
+					*(uint16 *)dst = p16[col];
 				else
 					*dst = col;
 			}
@@ -577,7 +578,7 @@ void Screen::clearCurPage() {
 }
 
 void Screen::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
-						int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2) {
+                         int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2) {
 	uint8 *dstPtr = getPagePtr(_curPage);
 	uint8 *origDst = dstPtr;
 
@@ -648,7 +649,8 @@ void Screen::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc,
 		switch (plotFunc) {
 		case 0:
 			memcpy(dst, src, cW);
-			dst += cW; src += cW;
+			dst += cW;
+			src += cW;
 			break;
 
 		case 1:
@@ -725,7 +727,7 @@ int Screen::getPagePixel(int pageNum, int x, int y) {
 	if (_bytesPerPixel == 1)
 		return _pagePtrs[pageNum][y * SCREEN_W + x];
 	else
-		return ((uint16*)_pagePtrs[pageNum])[y * SCREEN_W + x];
+		return ((uint16 *)_pagePtrs[pageNum])[y * SCREEN_W + x];
 }
 
 void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
@@ -742,10 +744,10 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 		color &= 0x03;
 	} else if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering)) {
 		color &= 0x0F;
-	} 
-	
+	}
+
 	if (_bytesPerPixel == 2) {
-		((uint16*)_pagePtrs[pageNum])[y * SCREEN_W + x] = _16bitPalette[color];
+		((uint16 *)_pagePtrs[pageNum])[y * SCREEN_W + x] = _16bitPalette[color];
 	} else {
 		_pagePtrs[pageNum][y * SCREEN_W + x] = color;
 	}
@@ -960,7 +962,7 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 
 void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {
 	if (x2 < 0) {
-		if (x2  <= -w)
+		if (x2 <= -w)
 			return;
 		w += x2;
 		x1 -= x2;
@@ -1004,9 +1006,9 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 		while (h--) {
 			for (int i = 0; i < w; ++i) {
 				if (_bytesPerPixel == 2) {
-					uint px = *(const uint16*)&src[i << 1];
+					uint px = *(const uint16 *)&src[i << 1];
 					if (px)
-						*(uint16*)&dst[i << 1] = px;
+						*(uint16 *)&dst[i << 1] = px;
 				} else {
 					if (src[i])
 						dst[i] = src[i];
@@ -1154,9 +1156,9 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 	uint8 *dst = getPagePtr(pageNum) + y1 * SCREEN_W * _bytesPerPixel + x1 * _bytesPerPixel;
 
 	if (pageNum == 0 || pageNum == 1)
-		addDirtyRect(x1, y1, x2-x1+1, y2-y1+1);
+		addDirtyRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 
-	clearOverlayRect(pageNum, x1, y1, x2-x1+1, y2-y1+1);
+	clearOverlayRect(pageNum, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 
 	if (_4bitPixelPacking) {
 		color &= 0x0F;
@@ -1178,7 +1180,7 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 	} else {
 		for (; y1 <= y2; ++y1) {
 			if (_bytesPerPixel == 2) {
-				uint16 *ptr = (uint16*)dst;
+				uint16 *ptr = (uint16 *)dst;
 				for (int i = 0; i < x2 - x1 + 1; i++)
 					*ptr++ = color16;
 			} else {
@@ -1233,11 +1235,10 @@ void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
 			drawLine(true, x1, y2, y1 - y2 + 1, color);
 		else
 			drawLine(true, x1, y1, y2 - y1 + 1, color);
+	else if (x1 > x2)
+		drawLine(false, x2, y1, x1 - x2 + 1, color);
 	else
-		if (x1 > x2)
-			drawLine(false, x2, y1, x1 - x2 + 1, color);
-		else
-			drawLine(false, x1, y1, x2 - x1 + 1, color);
+		drawLine(false, x1, y1, x2 - x1 + 1, color);
 }
 
 void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
@@ -1258,7 +1259,7 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 		int currLine = 0;
 		while (currLine < length) {
 			if (_bytesPerPixel == 2)
-				*(uint16*)ptr = color;
+				*(uint16 *)ptr = color;
 			else
 				*ptr = color;
 			ptr += SCREEN_W * _bytesPerPixel;
@@ -1268,7 +1269,7 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 		assert((x + length) <= SCREEN_W);
 		if (_bytesPerPixel == 2) {
 			for (int i = 0; i < length; i++) {
-				*(uint16*)ptr = color;
+				*(uint16 *)ptr = color;
 				ptr += 2;
 			}
 		} else {
@@ -1295,7 +1296,7 @@ void Screen::setTextColor(const uint8 *cmap8, int a, int b) {
 	// We need to update the color tables of all fonts, we
 	// setup so far here.
 	for (int i = 0; i < FID_NUM; ++i) {
-		if (_fonts[i]) 
+		if (_fonts[i])
 			_fonts[i]->setColorMap(_textColorsMap);
 	}
 }
@@ -1395,7 +1396,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 		cmap16[0] = color2 ? shade16bitColor(_16bitPalette[color2]) : 0xFFFF;
 		cmap16[1] = _16bitPalette[color1];
 		setTextColor16bit(cmap16);
-	}	
+	}
 
 	uint8 cmap8[2];
 	cmap8[0] = color2;
@@ -1503,8 +1504,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	va_start(args, flags);
 
 	static const int drawShapeVar2[] = {
-		1, 3, 2, 5, 4, 3, 2, 1
-	};
+	    1, 3, 2, 5, 4, 3, 2, 1};
 
 	_dsShapeFadingTable = 0;
 	_dsShapeFadingLevel = 0;
@@ -1557,71 +1557,67 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	va_end(args);
 
 	static const DsMarginSkipFunc dsMarginFunc[] = {
-		&Screen::drawShapeMarginNoScaleUpwind,
-		&Screen::drawShapeMarginNoScaleDownwind,
-		&Screen::drawShapeMarginNoScaleUpwind,
-		&Screen::drawShapeMarginNoScaleDownwind,
-		&Screen::drawShapeMarginScaleUpwind,
-		&Screen::drawShapeMarginScaleDownwind,
-		&Screen::drawShapeMarginScaleUpwind,
-		&Screen::drawShapeMarginScaleDownwind
-	};
+	    &Screen::drawShapeMarginNoScaleUpwind,
+	    &Screen::drawShapeMarginNoScaleDownwind,
+	    &Screen::drawShapeMarginNoScaleUpwind,
+	    &Screen::drawShapeMarginNoScaleDownwind,
+	    &Screen::drawShapeMarginScaleUpwind,
+	    &Screen::drawShapeMarginScaleDownwind,
+	    &Screen::drawShapeMarginScaleUpwind,
+	    &Screen::drawShapeMarginScaleDownwind};
 
 	static const DsMarginSkipFunc dsSkipFunc[] = {
-		&Screen::drawShapeMarginNoScaleUpwind,
-		&Screen::drawShapeMarginNoScaleDownwind,
-		&Screen::drawShapeMarginNoScaleUpwind,
-		&Screen::drawShapeMarginNoScaleDownwind,
-		&Screen::drawShapeSkipScaleUpwind,
-		&Screen::drawShapeSkipScaleDownwind,
-		&Screen::drawShapeSkipScaleUpwind,
-		&Screen::drawShapeSkipScaleDownwind
-	};
+	    &Screen::drawShapeMarginNoScaleUpwind,
+	    &Screen::drawShapeMarginNoScaleDownwind,
+	    &Screen::drawShapeMarginNoScaleUpwind,
+	    &Screen::drawShapeMarginNoScaleDownwind,
+	    &Screen::drawShapeSkipScaleUpwind,
+	    &Screen::drawShapeSkipScaleDownwind,
+	    &Screen::drawShapeSkipScaleUpwind,
+	    &Screen::drawShapeSkipScaleDownwind};
 
 	static const DsLineFunc dsLineFunc[] = {
-		&Screen::drawShapeProcessLineNoScaleUpwind,
-		&Screen::drawShapeProcessLineNoScaleDownwind,
-		&Screen::drawShapeProcessLineNoScaleUpwind,
-		&Screen::drawShapeProcessLineNoScaleDownwind,
-		&Screen::drawShapeProcessLineScaleUpwind,
-		&Screen::drawShapeProcessLineScaleDownwind,
-		&Screen::drawShapeProcessLineScaleUpwind,
-		&Screen::drawShapeProcessLineScaleDownwind
-	};
+	    &Screen::drawShapeProcessLineNoScaleUpwind,
+	    &Screen::drawShapeProcessLineNoScaleDownwind,
+	    &Screen::drawShapeProcessLineNoScaleUpwind,
+	    &Screen::drawShapeProcessLineNoScaleDownwind,
+	    &Screen::drawShapeProcessLineScaleUpwind,
+	    &Screen::drawShapeProcessLineScaleDownwind,
+	    &Screen::drawShapeProcessLineScaleUpwind,
+	    &Screen::drawShapeProcessLineScaleDownwind};
 
 	static const DsPlotFunc dsPlotFunc[] = {
-		&Screen::drawShapePlotType0,		// used by Kyra 1 + 2
-		&Screen::drawShapePlotType1,		// used by Kyra 3
-		0,
-		&Screen::drawShapePlotType3_7,		// used by Kyra 3 (shadow)
-		&Screen::drawShapePlotType4,		// used by Kyra 1, 2 + 3
-		&Screen::drawShapePlotType5,		// used by Kyra 1
-		&Screen::drawShapePlotType6,		// used by Kyra 1 (invisibility)
-		&Screen::drawShapePlotType3_7,		// used by Kyra 1 (invisibility)
-		&Screen::drawShapePlotType8,		// used by Kyra 2
-		&Screen::drawShapePlotType9,		// used by Kyra 1 + 3
-		0,
-		&Screen::drawShapePlotType11_15,	// used by Kyra 1 (invisibility) + Kyra 3 (shadow)
-		&Screen::drawShapePlotType12,		// used by Kyra 2
-		&Screen::drawShapePlotType13,		// used by Kyra 1
-		&Screen::drawShapePlotType14,		// used by Kyra 1 (invisibility)
-		&Screen::drawShapePlotType11_15,	// used by Kyra 1 (invisibility)
-		&Screen::drawShapePlotType16,		// used by LoL PC-98/16 Colors (teleporters),
-		0, 0, 0,
-		&Screen::drawShapePlotType20,		// used by LoL (heal spell effect)
-		&Screen::drawShapePlotType21,		// used by LoL (white tower spirits)
-		0, 0, 0, 0,	0, 0, 0, 0, 0, 0,
-		0,
-		&Screen::drawShapePlotType33,		// used by LoL (blood spots on the floor)
-		0, 0, 0,
-		&Screen::drawShapePlotType37,		// used by LoL (monsters)
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		&Screen::drawShapePlotType48,		// used by LoL (slime spots on the floor)
-		0, 0, 0,
-		&Screen::drawShapePlotType52,		// used by LoL (projectiles)
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0
-	};
+	    &Screen::drawShapePlotType0, // used by Kyra 1 + 2
+	    &Screen::drawShapePlotType1, // used by Kyra 3
+	    0,
+	    &Screen::drawShapePlotType3_7, // used by Kyra 3 (shadow)
+	    &Screen::drawShapePlotType4,   // used by Kyra 1, 2 + 3
+	    &Screen::drawShapePlotType5,   // used by Kyra 1
+	    &Screen::drawShapePlotType6,   // used by Kyra 1 (invisibility)
+	    &Screen::drawShapePlotType3_7, // used by Kyra 1 (invisibility)
+	    &Screen::drawShapePlotType8,   // used by Kyra 2
+	    &Screen::drawShapePlotType9,   // used by Kyra 1 + 3
+	    0,
+	    &Screen::drawShapePlotType11_15, // used by Kyra 1 (invisibility) + Kyra 3 (shadow)
+	    &Screen::drawShapePlotType12,    // used by Kyra 2
+	    &Screen::drawShapePlotType13,    // used by Kyra 1
+	    &Screen::drawShapePlotType14,    // used by Kyra 1 (invisibility)
+	    &Screen::drawShapePlotType11_15, // used by Kyra 1 (invisibility)
+	    &Screen::drawShapePlotType16,    // used by LoL PC-98/16 Colors (teleporters),
+	    0, 0, 0,
+	    &Screen::drawShapePlotType20, // used by LoL (heal spell effect)
+	    &Screen::drawShapePlotType21, // used by LoL (white tower spirits)
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	    0,
+	    &Screen::drawShapePlotType33, // used by LoL (blood spots on the floor)
+	    0, 0, 0,
+	    &Screen::drawShapePlotType37, // used by LoL (monsters)
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	    &Screen::drawShapePlotType48, // used by LoL (slime spots on the floor)
+	    0, 0, 0,
+	    &Screen::drawShapePlotType52, // used by LoL (projectiles)
+	    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	    0};
 
 	int scaleCounterV = 0;
 
@@ -1661,10 +1657,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int y2 = y1 + dsDim->h;
 
-	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
+	uint16 shapeFlags = READ_LE_UINT16(src);
+	src += 2;
 
 	int shapeHeight = *src++;
-	uint16 shapeWidth = READ_LE_UINT16(src); src += 2;
+	uint16 shapeWidth = READ_LE_UINT16(src);
+	src += 2;
 
 	int shpWidthScaled1 = shapeWidth;
 	int shpWidthScaled2 = shapeWidth;
@@ -1684,7 +1682,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	src += 3;
 
-	uint16 frameSize = READ_LE_UINT16(src); src += 2;
+	uint16 frameSize = READ_LE_UINT16(src);
+	src += 2;
 
 	int colorTableColors = ((_vm->game() != GI_KYRA1) && (shapeFlags & 4)) ? *src++ : 16;
 
@@ -2349,8 +2348,8 @@ uint Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 			break;
 
 		uint8 code = *src++;
-		if (!(code & 0x80)) { // 8th bit isn't set
-			int len = MIN(count, (code >> 4) + 3); //upper half of code is the length
+		if (!(code & 0x80)) {                        // 8th bit isn't set
+			int len = MIN(count, (code >> 4) + 3);   //upper half of code is the length
 			int offs = ((code & 0xF) << 8) | *src++; //lower half of code as byte 2 of offset.
 			const uint8 *dstOffs = dst - offs;
 			while (len--)
@@ -2358,18 +2357,21 @@ uint Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 		} else if (code & 0x40) { // 7th bit is set
 			int len = (code & 0x3F) + 3;
 			if (code == 0xFE) {
-				len = READ_LE_UINT16(src); src += 2;
+				len = READ_LE_UINT16(src);
+				src += 2;
 				if (len > count)
 					len = count;
 
-				memset(dst, *src++, len); dst += len;
+				memset(dst, *src++, len);
+				dst += len;
 			} else {
 				if (code == 0xFF) {
 					len = READ_LE_UINT16(src);
 					src += 2;
 				}
 
-				int offs = READ_LE_UINT16(src); src += 2;
+				int offs = READ_LE_UINT16(src);
+				src += 2;
 				if (len > count)
 					len = count;
 
@@ -2414,7 +2416,8 @@ void Screen::wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src) {
 			if (code != 0) {
 				dst += code;
 			} else {
-				uint16 subcode = READ_LE_UINT16(src); src += 2;
+				uint16 subcode = READ_LE_UINT16(src);
+				src += 2;
 				if (subcode == 0) {
 					break;
 				} else if (subcode & 0x8000) {
@@ -2581,7 +2584,8 @@ void Screen::wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitc
 					dst = dstNext + count;
 				}
 			} else {
-				uint16 subcode = READ_LE_UINT16(src); src += 2;
+				uint16 subcode = READ_LE_UINT16(src);
+				src += 2;
 				if (subcode == 0) {
 					break;
 				} else if (subcode & 0x8000) {
@@ -2624,7 +2628,6 @@ void Screen::wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitc
 						dstNext += SCREEN_W;
 						dst = dstNext + count;
 					}
-
 				}
 			}
 		} else {
@@ -2702,7 +2705,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	int tableIndex = 0;
 
 	uint8 *newShape = 0;
-	newShape = new uint8[shapeSize+16];
+	newShape = new uint8[shapeSize + 16];
 	assert(newShape);
 
 	byte *dst = newShape;
@@ -2710,12 +2713,18 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 	if (_vm->gameFlags().useAltShapeHeader)
 		dst += 2;
 
-	WRITE_LE_UINT16(dst, (flags & 3)); dst += 2;
-	*dst = h; dst += 1;
-	WRITE_LE_UINT16(dst, w); dst += 2;
-	*dst = h; dst += 1;
-	WRITE_LE_UINT16(dst, shapeSize); dst += 2;
-	WRITE_LE_UINT16(dst, shapeSize2); dst += 2;
+	WRITE_LE_UINT16(dst, (flags & 3));
+	dst += 2;
+	*dst = h;
+	dst += 1;
+	WRITE_LE_UINT16(dst, w);
+	dst += 2;
+	*dst = h;
+	dst += 1;
+	WRITE_LE_UINT16(dst, shapeSize);
+	dst += 2;
+	WRITE_LE_UINT16(dst, shapeSize2);
+	dst += 2;
 
 	byte *src = srcPtr;
 	if (flags & 1) {
@@ -2735,7 +2744,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 						if (tableIndex == 16) {
 							value = 1;
 						} else {
-							table[0x100+tableIndex] = value;
+							table[0x100 + tableIndex] = value;
 							table[value] = tableIndex;
 							++tableIndex;
 							value = table[value];
@@ -2826,7 +2835,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 		if (_vm->gameFlags().useAltShapeHeader)
 			dst += 2;
 		src = &table[0x100];
-		memcpy(dst, src, sizeof(uint8)*16);
+		memcpy(dst, src, sizeof(uint8) * 16);
 	}
 
 	return newShape;
@@ -2850,7 +2859,7 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 
 		while (true) {
 			byte curPixel = *from;
-			if (curPixel == *(from+0x40)) {
+			if (curPixel == *(from + 0x40)) {
 				byte *toBackUp = to;
 				to = from;
 
@@ -2865,7 +2874,8 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 					from = to;
 					to = curToPtr;
 					*to++ = 0xFE;
-					WRITE_LE_UINT16(to, diffSize); to += 2;
+					WRITE_LE_UINT16(to, diffSize);
+					to += 2;
 					*to++ = curPixel;
 					curToPtr = to;
 					to = toBackUp;
@@ -2885,8 +2895,8 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 					if (*to++ == curPixel)
 						break;
 				}
-				if (*(to-1) == curPixel) {
-					if (*(from+size-1) != *(to+size-2))
+				if (*(to - 1) == curPixel) {
+					if (*(from + size - 1) != *(to + size - 2))
 						continue;
 
 					byte *fromBackUp = from;
@@ -2925,7 +2935,8 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 				if (diffSize <= 0x0FFF) {
 					byte highByte = ((diffSize & 0xFF00) >> 8) + (((size & 0xFF) - 3) << 4);
 					word = ((diffSize & 0xFF) << 8) | highByte;
-					WRITE_LE_UINT16(to, word); to += 2;
+					WRITE_LE_UINT16(to, word);
+					to += 2;
 					from += size;
 					skipPixel = false;
 					continue;
@@ -2934,13 +2945,15 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 
 			if (size > 0x40) {
 				*to++ = 0xFF;
-				WRITE_LE_UINT16(to, size); to += 2;
+				WRITE_LE_UINT16(to, size);
+				to += 2;
 			} else {
 				*to++ = ((size & 0xFF) - 3) | 0xC0;
 			}
 
 			word = tempPtr - fromPtr;
-			WRITE_LE_UINT16(to, word); to += 2;
+			WRITE_LE_UINT16(to, word);
+			to += 2;
 			from += size;
 			skipPixel = false;
 		} else {
@@ -2993,7 +3006,6 @@ void Screen::showMouse() {
 	if (_mouseLockCount > 0)
 		_mouseLockCount--;
 }
-
 
 bool Screen::isMouseVisible() const {
 	return _mouseLockCount == 0;
@@ -3116,7 +3128,6 @@ int Screen::getDrawLayer2(int x, int y, int height) {
 	return layer;
 }
 
-
 int Screen::setNewShapeHeight(uint8 *shape, int height) {
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
@@ -3170,12 +3181,12 @@ void Screen::rectClip(int &x, int &y, int w, int h) {
 }
 
 void Screen::shakeScreen(int times) {
-	static const int8 _shakeParaPC[] = { 32, 0, -4, 32, 0, 0 };
-	static const int8 _shakeParaFMTOWNS[] = { 32, 0, -4, 48, 0, 4, 32, -4, 0, 32, 4, 0, 32, 0, 0 };
+	static const int8 _shakeParaPC[] = {32, 0, -4, 32, 0, 0};
+	static const int8 _shakeParaFMTOWNS[] = {32, 0, -4, 48, 0, 4, 32, -4, 0, 32, 4, 0, 32, 0, 0};
 
 	const int8 *shakeData = _shakeParaPC;
 	int steps = ARRAYSIZE(_shakeParaPC) / 3;
-	
+
 	// The FM-TOWNS version has a slightly better shake animation
 	// TODO: check PC-98 version
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
@@ -3193,7 +3204,7 @@ void Screen::shakeScreen(int times) {
 			uint32 end = _system->getMillis() + data[0];
 			_system->setShakePos(data[1], data[2]);
 
-			for (uint32 now = _system->getMillis(); now < end; ) {
+			for (uint32 now = _system->getMillis(); now < end;) {
 				// Update the event manager to keep smooth mouse pointer movement.
 				while (_vm->getEventManager()->pollEvent(event)) {
 					if (event.type == Common::EVENT_KEYDOWN) {
@@ -3283,7 +3294,7 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 	} else if (_renderMode == Common::kRenderEGA) {
 		numCols = stream->size();
 		// There aren't any 16 color EGA palette files. So this shouldn't ever get triggered.
-		assert (numCols != 16);
+		assert(numCols != 16);
 		numCols /= Palette::kVGABytesPerColor;
 		pal.loadVGAPalette(*stream, 0, numCols);
 	} else {
@@ -3372,7 +3383,7 @@ void Screen::addDirtyRect(int x, int y, int w, int h) {
 
 	// Check if the new rectangle is contained within another in the list
 	Common::List<Common::Rect>::iterator it;
-	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ) {
+	for (it = _dirtyRects.begin(); it != _dirtyRects.end();) {
 		// If we find a rectangle which fully contains the new one,
 		// we can abort the search.
 		if (it->contains(r))
@@ -3426,8 +3437,10 @@ void Screen::clearOverlayRect(int page, int x, int y, int w, int h) {
 	if (!dst || w < 0 || h < 0)
 		return;
 
-	x <<= 1; y <<= 1;
-	w <<= 1; h <<= 1;
+	x <<= 1;
+	y <<= 1;
+	w <<= 1;
+	h <<= 1;
 
 	dst += y * 640 + x;
 
@@ -3448,9 +3461,12 @@ void Screen::copyOverlayRegion(int x, int y, int x2, int y2, int w, int h, int s
 	if (!dst || !src)
 		return;
 
-	x <<= 1; x2 <<= 1;
-	y <<= 1; y2 <<= 1;
-	w <<= 1; h <<= 1;
+	x <<= 1;
+	x2 <<= 1;
+	y <<= 1;
+	y2 <<= 1;
+	w <<= 1;
+	h <<= 1;
 
 	if (w == 640 && h == 400) {
 		memcpy(dst, src, SCREEN_OVL_SJIS_SIZE);
@@ -3504,7 +3520,7 @@ void Screen::crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int s
 				iH = 0;
 
 			if (_bytesPerPixel == 2)
-				((uint16*)d)[dY * 320 + dX] = ((uint16*)s)[sY * 320 + sX];
+				((uint16 *)d)[dY * 320 + dX] = ((uint16 *)s)[sY * 320 + sX];
 			else
 				d[dY * 320 + dX] = s[sY * 320 + sX];
 			addDirtyRect(dX, dY, 1, 1);
@@ -3639,7 +3655,6 @@ void DOSFont::unload() {
 	_bitmapOffsets = 0;
 }
 
-
 AMIGAFont::AMIGAFont() {
 	_width = _height = 0;
 	memset(_chars, 0, sizeof(_chars));
@@ -3750,7 +3765,7 @@ void AMIGAFont::unload() {
 }
 
 SJISFont::SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing)
-	: _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kFSNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
+    : _colorMap(0), _font(font), _invisColor(invisColor), _isTextMode(is16Color), _style(kFSNone), _drawOutline(drawOutline), _sjisWidthOffset(extraSpacing) {
 	assert(_font);
 	_sjisWidth = _font->getMaxFontWidth() >> 1;
 	_fontHeight = _font->getFontHeight() >> 1;
@@ -3816,12 +3831,12 @@ void Palette::loadVGAPalette(Common::ReadStream &stream, int startIndex, int col
 	assert(startIndex + colors <= _numColors);
 
 	uint8 *pos = _palData + startIndex * 3;
-	for (int i = 0 ; i < colors * 3; i++)
+	for (int i = 0; i < colors * 3; i++)
 		*pos++ = stream.readByte() & 0x3F;
 }
 
 void Palette::loadHiColorPalette(Common::ReadStream &stream, int startIndex, int colors) {
-	uint16 *pos = (uint16*)(_palData + startIndex * 2);
+	uint16 *pos = (uint16 *)(_palData + startIndex * 2);
 
 	Graphics::PixelFormat currentFormat = g_system->getScreenFormat();
 	Graphics::PixelFormat originalFormat(2, 5, 5, 5, 0, 5, 10, 0, 0);
@@ -3856,9 +3871,12 @@ void Palette::loadAmigaPalette(Common::ReadStream &stream, int startIndex, int c
 
 	for (int i = 0; i < colors; ++i) {
 		uint16 col = stream.readUint16BE();
-		_palData[(i + startIndex) * 3 + 2] = ((col & 0xF) * 0x3F) / 0xF; col >>= 4;
-		_palData[(i + startIndex) * 3 + 1] = ((col & 0xF) * 0x3F) / 0xF; col >>= 4;
-		_palData[(i + startIndex) * 3 + 0] = ((col & 0xF) * 0x3F) / 0xF; col >>= 4;
+		_palData[(i + startIndex) * 3 + 2] = ((col & 0xF) * 0x3F) / 0xF;
+		col >>= 4;
+		_palData[(i + startIndex) * 3 + 1] = ((col & 0xF) * 0x3F) / 0xF;
+		col >>= 4;
+		_palData[(i + startIndex) * 3 + 0] = ((col & 0xF) * 0x3F) / 0xF;
+		col >>= 4;
 	}
 }
 
@@ -3928,20 +3946,18 @@ uint8 *Palette::fetchRealPalette() const {
 }
 
 const uint8 Palette::_egaColors[] = {
-	0x00, 0x00, 0x00, 0x00, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0x00, 0xAA, 0xAA,
-	0xAA, 0x00, 0x00, 0xAA,	0x00, 0xAA, 0xAA, 0x55, 0x00, 0xAA, 0xAA, 0xAA,
-	0x55, 0x55, 0x55, 0x55, 0x55, 0xFF, 0x55, 0xFF,	0x55, 0x55, 0xFF, 0xFF,
-	0xFF, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0xFF, 0xFF, 0x55, 0xFF, 0xFF, 0xFF
-};
+    0x00, 0x00, 0x00, 0x00, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0x00, 0xAA, 0xAA,
+    0xAA, 0x00, 0x00, 0xAA, 0x00, 0xAA, 0xAA, 0x55, 0x00, 0xAA, 0xAA, 0xAA,
+    0x55, 0x55, 0x55, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0x55, 0x55, 0xFF, 0xFF,
+    0xFF, 0x55, 0x55, 0xFF, 0x55, 0xFF, 0xFF, 0xFF, 0x55, 0xFF, 0xFF, 0xFF};
 
 const int Palette::_egaNumColors = ARRAYSIZE(_egaColors) / 3;
 
 const uint8 Palette::_cgaColors[4][12] = {
-	{ 0x00, 0x00, 0x00, 0x00, 0x2A, 0x00, 0x2A, 0x00, 0x00, 0x2A, 0x15, 0x00 },
-	{ 0x00, 0x00, 0x00, 0x15, 0x3F, 0x15, 0x3F, 0x15, 0x15, 0x3F, 0x3F, 0x15 },
-	{ 0x00, 0x00, 0x00, 0x00, 0x2A, 0x2A, 0x2A, 0x00, 0x2A, 0x2A, 0x2A, 0x2A },
-	{ 0x00, 0x00, 0x00, 0x15, 0x3F, 0x3F, 0x3F, 0x15, 0x3F, 0x3F, 0x3F, 0x3F }
-};
+    {0x00, 0x00, 0x00, 0x00, 0x2A, 0x00, 0x2A, 0x00, 0x00, 0x2A, 0x15, 0x00},
+    {0x00, 0x00, 0x00, 0x15, 0x3F, 0x15, 0x3F, 0x15, 0x15, 0x3F, 0x3F, 0x15},
+    {0x00, 0x00, 0x00, 0x00, 0x2A, 0x2A, 0x2A, 0x00, 0x2A, 0x2A, 0x2A, 0x2A},
+    {0x00, 0x00, 0x00, 0x15, 0x3F, 0x3F, 0x3F, 0x15, 0x3F, 0x3F, 0x3F, 0x3F}};
 
 const int Palette::_cgaNumColors = ARRAYSIZE(_cgaColors[0]) / 3;
 

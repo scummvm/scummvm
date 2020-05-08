@@ -30,7 +30,6 @@ namespace Nuvie {
 
 class GUI_Font;
 
-
 #define TEXTINPUT_CB_TEXT_READY 0x1
 
 class GUI_TextInput : public GUI_Text {
@@ -45,7 +44,6 @@ protected:
 	uint32 selected_bgcolor;
 
 public:
-
 	GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b,
 	              const char *str, GUI_Font *gui_font, uint16 width, uint16 height, GUI_CallBack *callback);
 	~GUI_TextInput() override;
@@ -66,7 +64,6 @@ public:
 
 	/* Show the widget  */
 	void Display(bool full_redraw) override;
-
 };
 
 } // End of namespace Nuvie

@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/item_relative_gump.h"
-#include "ultima/ultima8/gumps/game_map_gump.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/graphics/shape_info.h"
+#include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/world/container.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -38,7 +38,7 @@ ItemRelativeGump::ItemRelativeGump() : Gump(), _ix(0), _iy(0) {
 
 ItemRelativeGump::ItemRelativeGump(int32 x, int32 y, int32 width, int32 height,
                                    uint16 owner, uint32 flags, int32 layer)
-	: Gump(x, y, width, height, owner, flags, layer), _ix(0), _iy(0) {
+    : Gump(x, y, width, height, owner, flags, layer), _ix(0), _iy(0) {
 }
 
 ItemRelativeGump::~ItemRelativeGump(void) {
@@ -93,7 +93,6 @@ void ItemRelativeGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled
 	Gump::Paint(surf, lerp_factor, scaled);
 }
 
-
 // Convert a parent relative point to a gump point
 void ItemRelativeGump::ParentToGump(int32 &px, int32 &py, PointRoundDir r) {
 	px -= _ix;
@@ -126,7 +125,8 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 		prev = it;
 		it = next;
 		gump = getGump(it->getGump());
-		if (gump) break;
+		if (gump)
+			break;
 	}
 
 	int32 gx, gy;
@@ -152,13 +152,13 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 	gump->GumpToScreenSpace(gx, gy);
 
 	// Convert the screenspace coords into the coords of us
-	if (_parent) _parent->ScreenSpaceToGump(gx, gy);
+	if (_parent)
+		_parent->ScreenSpaceToGump(gx, gy);
 
 	// Set x and y, and center us over it
 	_ix = gx - _dims.w / 2;
-//	_iy = gy-_dims.h-it->getShapeInfo()->z*8-16;
+	//	_iy = gy-_dims.h-it->getShapeInfo()->z*8-16;
 	_iy = gy - _dims.h;
-
 
 	if (_flags & FLAG_KEEP_VISIBLE)
 		MoveOnScreen();
@@ -175,7 +175,8 @@ void ItemRelativeGump::saveData(Common::WriteStream *ws) {
 }
 
 bool ItemRelativeGump::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Gump::loadData(rs, version)) return false;
+	if (!Gump::loadData(rs, version))
+		return false;
 
 	return true;
 }

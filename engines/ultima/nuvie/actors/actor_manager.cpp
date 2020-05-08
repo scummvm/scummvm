@@ -20,28 +20,28 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_file_list.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/save/obj_list.h"
 
 #include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/actors/u6_actor.h"
-#include "ultima/nuvie/actors/se_actor.h"
-#include "ultima/nuvie/actors/md_actor.h"
-#include "ultima/nuvie/actors/u6_work_types.h"
-#include "ultima/nuvie/core/tile_manager.h"
-#include "ultima/nuvie/misc/u6_llist.h"
 #include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/actors/md_actor.h"
+#include "ultima/nuvie/actors/se_actor.h"
+#include "ultima/nuvie/actors/u6_actor.h"
+#include "ultima/nuvie/actors/u6_work_types.h"
 #include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/game_clock.h"
 #include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/core/u6_objects.h"
+#include "ultima/nuvie/files/nuvie_io_file.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/u6_llist.h"
 #include "ultima/nuvie/portraits/portrait.h"
 #include "ultima/nuvie/script/script.h"
-#include "ultima/nuvie/core/u6_objects.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
@@ -90,7 +90,7 @@ void ActorManager::init() {
 void ActorManager::clean() {
 	uint16 i;
 
-//delete all actors
+	//delete all actors
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		if (actors[i]) {
 			delete actors[i];
@@ -120,13 +120,13 @@ bool ActorManager::load(NuvieIO *objlist) {
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		switch (game_type) {
-		case NUVIE_GAME_U6 :
+		case NUVIE_GAME_U6:
 			actors[i] = new U6Actor(map, obj_manager, clock);
 			break;
-		case NUVIE_GAME_MD :
+		case NUVIE_GAME_MD:
 			actors[i] = new MDActor(map, obj_manager, clock);
 			break;
-		case NUVIE_GAME_SE :
+		case NUVIE_GAME_SE:
 			actors[i] = new SEActor(map, obj_manager, clock);
 			break;
 		}
@@ -147,7 +147,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->temp_actor = is_temp_actor(actors[i]->id_n);
 	}
 
-// objlist.seek(0x15f1);
+	// objlist.seek(0x15f1);
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		b1 = objlist->read1();
@@ -164,7 +164,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		}
 	}
 
-// Object flags.
+	// Object flags.
 
 	objlist->seek(0x000);
 
@@ -172,7 +172,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->obj_flags = objlist->read1();
 	}
 
-// Actor status flags.
+	// Actor status flags.
 
 	objlist->seek(0x800);
 
@@ -181,7 +181,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->alignment = ((actors[i]->status_flags & ACTOR_STATUS_ALIGNMENT_MASK) >> 5) + 1;
 	}
 
-//old obj_n & frame_n values
+	//old obj_n & frame_n values
 
 	objlist->seek(game_type == NUVIE_GAME_U6 ? 0x15f1 : 0x16f1);
 
@@ -204,7 +204,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 			actors[i]->old_frame_n = actors[i]->frame_n;
 		}
 	}
-// Strength
+	// Strength
 
 	objlist->seek(0x900);
 
@@ -212,7 +212,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->strength = objlist->read1();
 	}
 
-// Dexterity
+	// Dexterity
 
 	objlist->seek(0xa00);
 
@@ -220,7 +220,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->dex = objlist->read1();
 	}
 
-// Intelligence
+	// Intelligence
 
 	objlist->seek(0xb00);
 
@@ -236,7 +236,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->exp = objlist->read2();
 	}
 
-// Health
+	// Health
 
 	objlist->seek(0xe00);
 
@@ -244,7 +244,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->hp = objlist->read1();
 	}
 
-// Experience Level
+	// Experience Level
 
 	objlist->seek(0xff1);
 
@@ -252,36 +252,35 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->level = objlist->read1();
 	}
 
-
-// Combat mode
+	// Combat mode
 
 	objlist->seek(0x12f1);
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		switch (game_type) {
-		case NUVIE_GAME_U6 :
+		case NUVIE_GAME_U6:
 			actors[i]->combat_mode = objlist->read1();
 			break;
 
-		case NUVIE_GAME_MD : // FIXME not sure what this is supposed to be
-		case NUVIE_GAME_SE :
+		case NUVIE_GAME_MD: // FIXME not sure what this is supposed to be
+		case NUVIE_GAME_SE:
 			actors[i]->magic = objlist->read1();
 			break;
 		}
 	}
 
-// Magic Points
+	// Magic Points
 
 	objlist->seek(0x13f1);
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		switch (game_type) {
-		case NUVIE_GAME_U6 :
+		case NUVIE_GAME_U6:
 			actors[i]->magic = objlist->read1();
 			break;
 
-		case NUVIE_GAME_MD :
-		case NUVIE_GAME_SE :
+		case NUVIE_GAME_MD:
+		case NUVIE_GAME_SE:
 			actors[i]->combat_mode = objlist->read1();
 			break;
 		}
@@ -311,7 +310,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->init(); //let the actor object do some init
 	}
 
-// Moves
+	// Moves
 
 	objlist->seek(game_type == NUVIE_GAME_MD ? OBJLIST_OFFSET_MD_MOVEMENT_POINTS : OBJLIST_OFFSET_U6_MOVEMENT_POINTS);
 
@@ -319,7 +318,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->moves = objlist->read1();
 	}
 
-// Current Worktype
+	// Current Worktype
 
 	objlist->seek(0x11f1);
 
@@ -327,7 +326,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 		actors[i]->set_worktype(objlist->read1(), true);
 	}
 
-//cleanup party actor if not currently set as the player.
+	//cleanup party actor if not currently set as the player.
 
 	if (actors[ACTOR_VEHICLE_ID_N]->get_worktype() != ACTOR_WT_PLAYER) {
 		Actor *a = actors[ACTOR_VEHICLE_ID_N];
@@ -373,7 +372,7 @@ bool ActorManager::save(NuvieIO *objlist) {
 		objlist->write1(b);
 	}
 
-//old obj_n & frame_n values
+	//old obj_n & frame_n values
 
 	objlist->seek(game_type == NUVIE_GAME_U6 ? 0x15f1 : 0x16f1);
 
@@ -384,7 +383,7 @@ bool ActorManager::save(NuvieIO *objlist) {
 		objlist->write1(b);
 	}
 
-// Strength
+	// Strength
 
 	objlist->seek(0x900);
 
@@ -392,7 +391,7 @@ bool ActorManager::save(NuvieIO *objlist) {
 		objlist->write1(actors[i]->strength);
 	}
 
-// Dexterity
+	// Dexterity
 
 	objlist->seek(0xa00);
 
@@ -400,7 +399,7 @@ bool ActorManager::save(NuvieIO *objlist) {
 		objlist->write1(actors[i]->dex);
 	}
 
-// Intelligence
+	// Intelligence
 
 	objlist->seek(0xb00);
 
@@ -416,7 +415,7 @@ bool ActorManager::save(NuvieIO *objlist) {
 		objlist->write2(actors[i]->exp);
 	}
 
-// Health
+	// Health
 
 	objlist->seek(0xe00);
 
@@ -424,7 +423,7 @@ bool ActorManager::save(NuvieIO *objlist) {
 		objlist->write1(actors[i]->hp);
 	}
 
-// Experience Level
+	// Experience Level
 
 	objlist->seek(0xff1);
 
@@ -432,42 +431,41 @@ bool ActorManager::save(NuvieIO *objlist) {
 		objlist->write1(actors[i]->level);
 	}
 
-
-// Combat mode
+	// Combat mode
 
 	objlist->seek(0x12f1);
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		switch (game_type) {
-		case NUVIE_GAME_U6 :
+		case NUVIE_GAME_U6:
 			objlist->write1(actors[i]->combat_mode);
 			break;
 
-		case NUVIE_GAME_MD : // FIXME not sure what this is supposed to be
-		case NUVIE_GAME_SE :
+		case NUVIE_GAME_MD: // FIXME not sure what this is supposed to be
+		case NUVIE_GAME_SE:
 			objlist->write1(actors[i]->magic);
 			break;
 		}
 	}
 
-// Magic Points
+	// Magic Points
 
 	objlist->seek(0x13f1);
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		switch (game_type) {
-		case NUVIE_GAME_U6 :
+		case NUVIE_GAME_U6:
 			objlist->write1(actors[i]->magic);
 			break;
 
-		case NUVIE_GAME_MD :
-		case NUVIE_GAME_SE :
+		case NUVIE_GAME_MD:
+		case NUVIE_GAME_SE:
 			objlist->write1(actors[i]->combat_mode);
 			break;
 		}
 	}
 
-// Moves
+	// Moves
 
 	objlist->seek(0x14f1);
 
@@ -512,7 +510,7 @@ bool ActorManager::save(NuvieIO *objlist) {
 	    actors[i]->init(); //let the actor object do some init
 	   }
 	*/
-// Current Worktype
+	// Current Worktype
 
 	objlist->seek(0x11f1);
 
@@ -579,7 +577,6 @@ Actor *ActorManager::get_multi_tile_actor(uint16 x, uint16 y, uint8 z) {
 			return actor;
 	}
 
-
 	return NULL;
 }
 
@@ -618,12 +615,12 @@ const char *ActorManager::look_actor(Actor *a, bool show_prefix) {
 
 // Update area, and spawn or remove actors.
 void ActorManager::updateActors(uint16 x, uint16 y, uint8 z) {
-// uint8 cur_hour;
-// uint16 i;
+	// uint8 cur_hour;
+	// uint16 i;
 
-// if(!update)
-//  return;
-//DEBUG(0,LEVEL_DEBUGGING,"updateActors()\n");
+	// if(!update)
+	//  return;
+	//DEBUG(0,LEVEL_DEBUGGING,"updateActors()\n");
 
 	cur_x = x;
 	cur_y = y;
@@ -643,7 +640,7 @@ void ActorManager::updateActors(uint16 x, uint16 y, uint8 z) {
 
 // After player/party moves, continue moving actors.
 void ActorManager::startActors() {
-//DEBUG(0,LEVEL_DEBUGGING,"startActors()\n");
+	//DEBUG(0,LEVEL_DEBUGGING,"startActors()\n");
 
 	wait_for_player = false;
 	//ERIC Game::get_game()->pause_user();
@@ -660,19 +657,18 @@ void ActorManager::updateSchedules(bool teleport) {
 void ActorManager::twitchActors() {
 	uint16 i;
 
-// while Actors are part of the world, their twitching is considered animation
+	// while Actors are part of the world, their twitching is considered animation
 	if (Game::get_game()->anims_paused())
 		return;
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++)
 		actors[i]->twitch();
-
 }
 
 // Update actors. StopActors() if no one can move.
 void ActorManager::moveActors() {
 	if (!update || wait_for_player) {
-		return;// nothing to do
+		return; // nothing to do
 	}
 
 	Game::get_game()->pause_user();
@@ -715,7 +711,7 @@ bool ActorManager::loadActorSchedules() {
 		if (sched_offsets[i] > (total_schedules - 1))
 			num_schedules[i] = 0;
 		else
-			// sched_offsets[i] is valid
+		// sched_offsets[i] is valid
 		{
 			if (i == ACTORMANAGER_MAX_ACTORS - 1)
 				num_schedules[i] = total_schedules - sched_offsets[i];
@@ -786,7 +782,6 @@ bool ActorManager::create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, u
 	Actor *actor;
 	actor = find_free_temp_actor();
 
-
 	if (actor) {
 		actor->inventory_del_all_objs(); //We need to do this because the original game doesn't unset inventory flag when temp actors die.
 
@@ -847,21 +842,21 @@ inline Actor *ActorManager::find_free_temp_actor() {
 void ActorManager::update_temp_actors(uint16 x, uint16 y, uint8 z) {
 	uint16 cur_blk_x, cur_blk_y;
 
-// We're changing levels so clean out all temp actors on the current level.
+	// We're changing levels so clean out all temp actors on the current level.
 	if (last_obj_blk_z != z) {
 		if (last_obj_blk_z != ACTOR_TEMP_INIT) { //don't clean actors on startup.
 			clean_temp_actors_from_level(last_obj_blk_z);
 			return;
 		}
-//    last_obj_blk_z = z;
+		//    last_obj_blk_z = z;
 	}
 
 	cur_blk_x = x >> 3; // x / 8;
 	cur_blk_y = y >> 3; // y / 8;
 
 	if (cur_blk_x != last_obj_blk_x || cur_blk_y != last_obj_blk_y) {
-//    last_obj_blk_x = cur_blk_x;
-//    last_obj_blk_y = cur_blk_y;
+		//    last_obj_blk_x = cur_blk_x;
+		//    last_obj_blk_y = cur_blk_y;
 
 		clean_temp_actors_from_area(x, y);
 	}
@@ -873,8 +868,7 @@ void ActorManager::clean_temp_actors_from_level(uint8 level) {
 	uint16 i;
 
 	for (i = temp_actor_offset; i < ACTORMANAGER_MAX_ACTORS; i++) {
-		if ((actors[i]->is_visible() || actors[i]->x != 0 || actors[i]->y != 0 || actors[i]->z != 0)
-		        && actors[i]->is_in_party() == false && actors[i]->z == level)
+		if ((actors[i]->is_visible() || actors[i]->x != 0 || actors[i]->y != 0 || actors[i]->z != 0) && actors[i]->is_in_party() == false && actors[i]->z == level)
 			clean_temp_actor(actors[i]);
 	}
 
@@ -889,8 +883,7 @@ void ActorManager::clean_temp_actors_from_area(uint16 x, uint16 y) {
 		return;
 
 	for (i = temp_actor_offset; i < ACTORMANAGER_MAX_ACTORS; i++) {
-		if ((actors[i]->is_visible() || actors[i]->x != 0 || actors[i]->y != 0 || actors[i]->z != 0)
-		        && actors[i]->is_in_party() == false) {
+		if ((actors[i]->is_visible() || actors[i]->x != 0 || actors[i]->y != 0 || actors[i]->z != 0) && actors[i]->is_in_party() == false) {
 			dist_x = abs((sint16)actors[i]->x - x);
 			dist_y = abs((sint16)actors[i]->y - y);
 
@@ -937,8 +930,10 @@ bool ActorManager::toss_actor(Actor *actor, uint16 xrange, uint16 yrange) {
 	const uint32 toss_max = MAX(xrange, yrange) * MIN(xrange, yrange) * 2;
 	uint32 t = 0;
 	LineTestResult lt;
-	if (xrange > 0) --xrange; // range includes the starting location
-	if (yrange > 0) --yrange;
+	if (xrange > 0)
+		--xrange; // range includes the starting location
+	if (yrange > 0)
+		--yrange;
 	while (t++ < toss_max) { // TRY RANDOM LOCATION
 		sint16 x = (actor->x - xrange) + (NUVIE_RAND() % ((actor->x + xrange) - (actor->x - xrange) + 1)),
 		       y = (actor->y - yrange) + (NUVIE_RAND() % ((actor->y + yrange) - (actor->y - yrange) + 1));
@@ -963,8 +958,10 @@ bool ActorManager::toss_actor_get_location(uint16 start_x, uint16 start_y, uint8
 	const uint32 toss_max = MAX(xrange, yrange) * MIN(xrange, yrange) * 2;
 	uint32 t = 0;
 	LineTestResult lt;
-	if (xrange > 0) --xrange; // range includes the starting location
-	if (yrange > 0) --yrange;
+	if (xrange > 0)
+		--xrange; // range includes the starting location
+	if (yrange > 0)
+		--yrange;
 	while (t++ < toss_max) { // TRY RANDOM LOCATION
 		sint16 x = (start_x - xrange) + (NUVIE_RAND() % ((start_x + xrange) - (start_x - xrange) + 1)),
 		       y = (start_y - yrange) + (NUVIE_RAND() % ((start_y + yrange) - (start_y - yrange) + 1));
@@ -975,7 +972,6 @@ bool ActorManager::toss_actor_get_location(uint16 start_x, uint16 start_y, uint8
 				location->z = start_z;
 				return can_put_actor(*location);
 			}
-
 		}
 	}
 	// TRY ANY LOCATION
@@ -992,7 +988,6 @@ bool ActorManager::toss_actor_get_location(uint16 start_x, uint16 start_y, uint8
 
 	return (false);
 }
-
 
 /* Returns the actor whose inventory contains an object. */
 Actor *ActorManager::get_actor_holding_obj(Obj *obj) {
@@ -1012,7 +1007,8 @@ ActorList *ActorManager::filter_distance(ActorList *list, uint16 x, uint16 y, ui
 		MapCoord actor_loc(actor->x, actor->y, actor->z);
 		if (loc.distance(actor_loc) > dist || loc.z != actor_loc.z)
 			i = list->erase(i);
-		else ++i;
+		else
+			++i;
 	}
 	return list;
 }
@@ -1027,15 +1023,15 @@ inline ActorList *ActorManager::filter_active_actors(ActorList *list, uint16 x, 
 		MapCoord loc(x, y, z);
 		MapCoord actor_loc(actor->x, actor->y, actor->z);
 		if (!actor->is_in_party()) {
-			if ((loc.distance(actor_loc) > dist || loc.z != actor_loc.z)
-			        && actor->worktype != WORKTYPE_U6_WALK_TO_LOCATION)
+			if ((loc.distance(actor_loc) > dist || loc.z != actor_loc.z) && actor->worktype != WORKTYPE_U6_WALK_TO_LOCATION)
 				actor->set_moves_left(0);
 			if (actor->is_sleeping() || actor->is_immobile() || !actor->is_alive())
 				actor->set_moves_left(0);
 		}
 		if ((actor->is_in_party() == true && combat_movement == false) || actor->moves <= 0)
 			i = list->erase(i);
-		else ++i;
+		else
+			++i;
 	}
 	return list;
 }
@@ -1051,7 +1047,8 @@ ActorList *ActorManager::sort_nearest(ActorList *list, uint16 x, uint16 y, uint8
 	while (a != list->end())
 		if ((*a)->z != z)
 			a = list->erase(a); // only return actors on the same map
-		else ++a;
+		else
+			++a;
 	return list;
 }
 
@@ -1076,7 +1073,8 @@ ActorList *ActorManager::filter_alignment(ActorList *list, uint8 align) {
 		Actor *actor = *i;
 		if (actor->alignment == align)
 			i = list->erase(i);
-		else ++i;
+		else
+			++i;
 	}
 	return list;
 }
@@ -1088,7 +1086,8 @@ ActorList *ActorManager::filter_party(ActorList *list) {
 		Actor *actor = *i;
 		if (actor->is_in_party() == true || actor->id_n == 0) // also remove vehicle
 			i = list->erase(i);
-		else ++i;
+		else
+			++i;
 	}
 	return list;
 }

@@ -30,12 +30,10 @@
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/mixer/types.h"
 
-#include "decoder/wave/stream.h"
 #include "decoder/wave/list.h"
-
+#include "decoder/wave/stream.h"
 
 //namespace Common { class SeekableReadStream; }
-
 
 namespace Audio {
 
@@ -65,13 +63,12 @@ enum RawFlags {
 	FLAG_STEREO = 1 << 3
 };
 
-
 /**
  * Struct used to define the audio data to be played by a RawStream.
  */
 struct RawStreamBlock {
-	sint32 pos;   ///< Position in stream of the block (in bytes of course!)
-	sint32 len;   ///< Length of the block (in raw samples, not sample pairs!)
+	sint32 pos; ///< Position in stream of the block (in bytes of course!)
+	sint32 len; ///< Length of the block (in raw samples, not sample pairs!)
 };
 
 /**
@@ -129,7 +126,6 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
                                    uint8 flags,
                                    DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-
 /**
  * NOTE:
  * This API is considered deprecated.
@@ -147,10 +143,9 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream,
-        RawStreamBlock *block, int numBlocks,
-        int rate, uint8 flags,
-        DisposeAfterUse::Flag disposeStream);
-
+                                           RawStreamBlock *block, int numBlocks,
+                                           int rate, uint8 flags,
+                                           DisposeAfterUse::Flag disposeStream);
 
 } // End of namespace Audio
 

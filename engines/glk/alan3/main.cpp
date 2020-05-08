@@ -34,7 +34,6 @@
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/instance.h"
 #include "glk/alan3/inter.h"
-#include "glk/jumps.h"
 #include "glk/alan3/lists.h"
 #include "glk/alan3/literal.h"
 #include "glk/alan3/location.h"
@@ -48,9 +47,10 @@
 #include "glk/alan3/scan.h"
 #include "glk/alan3/score.h"
 #include "glk/alan3/state.h"
-#include "glk/alan3/syserr.h"
 #include "glk/alan3/syntax.h"
+#include "glk/alan3/syserr.h"
 #include "glk/alan3/utils.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -58,8 +58,7 @@ namespace Alan3 {
 /* PUBLIC DATA */
 
 /* Amachine structures - Static */
-VerbEntry *vrbs;        /* Verb table pointer */
-
+VerbEntry *vrbs; /* Verb table pointer */
 
 /* PRIVATE DATA */
 #define STACKSIZE 100
@@ -74,7 +73,6 @@ VerbEntry *vrbs;        /* Verb table pointer */
 static char *eventName(int event) {
 	return stringAt(events[event].id);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void runPendingEvents(CONTEXT) {
@@ -101,7 +99,6 @@ static void runPendingEvents(CONTEXT) {
 		eventQueue[i].after--;
 }
 
-
 /*----------------------------------------------------------------------*\
 
   Main program and initialisation
@@ -126,22 +123,20 @@ static int crcStart(const byte version[4]) {
 		return sizeof(ACodeHeader) / sizeof(Aword);
 }
 
-
 /*----------------------------------------------------------------------*/
 static void readTemporaryHeader(CONTEXT, ACodeHeader *tmphdr) {
 	codfil->seek(0);
 	if (codfil->read(&tmphdr->tag[0], sizeof(ACodeHeader)) != sizeof(ACodeHeader) ||
-			strncmp((char *)tmphdr, "ALAN", 4) != 0)
+	    strncmp((char *)tmphdr, "ALAN", 4) != 0)
 		playererr(context, "Not an Alan game file, does not start with \"ALAN\"");
 }
-
 
 /*----------------------------------------------------------------------*/
 #ifdef SCUMM_LITTLE_ENDIAN
 static void reverseMemory() {
 	if (debugOption || traceSectionOption || traceInstructionOption)
 		output("<Hmm, this is a little-endian machine, fixing byte ordering....");
-	reverseACD();           /* Reverse content of the ACD file */
+	reverseACD(); /* Reverse content of the ACD file */
 	if (debugOption || traceSectionOption || traceInstructionOption)
 		output("OK.>$n");
 }
@@ -161,7 +156,6 @@ static void setupHeader(ACodeHeader tmphdr) {
 		header = (ACodeHeader *)pointerTo(0);
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static void loadAndCheckMemory(ACodeHeader tmphdr, Aword crc, char err[]) {
@@ -185,7 +179,7 @@ static void loadAndCheckMemory(ACodeHeader tmphdr, Aword crc, char err[]) {
 	}
 	if (crc != tmphdr.acdcrc) {
 		sprintf(err, "Checksum error in Acode (.a3c) file (0x%lx instead of 0x%lx).",
-		        (unsigned long) crc, (unsigned long) tmphdr.acdcrc);
+		        (unsigned long)crc, (unsigned long)tmphdr.acdcrc);
 		if (!ignoreErrorOption)
 			syserr(err);
 		else {
@@ -195,7 +189,6 @@ static void loadAndCheckMemory(ACodeHeader tmphdr, Aword crc, char err[]) {
 		}
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static const char *decodeState(int c) {
@@ -229,29 +222,27 @@ char *decodedGameVersion(const byte version[]) {
 /*----------------------------------------------------------------------*/
 static void incompatibleDevelopmentVersion(ACodeHeader *hdr) {
 	Common::String msg = Common::String::format("Incompatible version of ACODE program. "
-		"Development versions always require exact match. Game is %ld.%ld%s%ld, interpreter %ld.%ld%s%ld!",
-	        (long)(hdr->version[0]),
-	        (long)(hdr->version[1]),
-	        decodeState(hdr->version[3]),
-	        (long)(hdr->version[2]),
-	        (long)alan.version.version,
-	        (long)alan.version.revision,
-	        alan.version.state,
-	        (long)alan.version.correction);
+	                                            "Development versions always require exact match. Game is %ld.%ld%s%ld, interpreter %ld.%ld%s%ld!",
+	                                            (long)(hdr->version[0]),
+	                                            (long)(hdr->version[1]),
+	                                            decodeState(hdr->version[3]),
+	                                            (long)(hdr->version[2]),
+	                                            (long)alan.version.version,
+	                                            (long)alan.version.revision,
+	                                            alan.version.state,
+	                                            (long)alan.version.correction);
 	apperr(msg.c_str());
 }
-
 
 /*----------------------------------------------------------------------*/
 static void incompatibleVersion(ACodeHeader *hdr) {
 	Common::String msg = Common::String::format("Incompatible version of ACODE program. Game is %ld.%ld, interpreter %ld.%ld.",
-	        (long)(hdr->version[0]),
-	        (long)(hdr->version[1]),
-	        (long)alan.version.version,
-	        (long)alan.version.revision);
+	                                            (long)(hdr->version[0]),
+	                                            (long)(hdr->version[1]),
+	                                            (long)alan.version.version,
+	                                            (long)alan.version.revision);
 	apperr(msg.c_str());
 }
-
 
 /*----------------------------------------------------------------------*/
 static void alphaRunningLaterGame(char gameState) {
@@ -275,7 +266,6 @@ static void nonDevelopmentRunningDevelopmentStateGame(const byte version[]) {
 	strcat(errorMessage, "can only be run with a matching interpreter. Look for a game file generated with an alpha, beta or release state compiler.>\n");
 	apperr(errorMessage);
 }
-
 
 /*======================================================================*/
 void checkVersion(ACodeHeader *hdr) {
@@ -369,7 +359,6 @@ static void load(CONTEXT) {
 	setupHeader(tmphdr);
 }
 
-
 /*----------------------------------------------------------------------*/
 static void checkDebug(CONTEXT) {
 	/* Make sure he can't debug if not allowed! */
@@ -390,16 +379,15 @@ static void checkDebug(CONTEXT) {
 		g_vm->setRandomNumberSeed(1);
 }
 
-
 /*----------------------------------------------------------------------*/
 static void initStaticData(void) {
 	/* Dictionary */
-	dictionary = (DictionaryEntry *) pointerTo(header->dictionary);
+	dictionary = (DictionaryEntry *)pointerTo(header->dictionary);
 	/* Find out number of entries in dictionary */
-	for (dictionarySize = 0; !isEndOfArray(&dictionary[dictionarySize]); dictionarySize++);
+	for (dictionarySize = 0; !isEndOfArray(&dictionary[dictionarySize]); dictionarySize++)
+		;
 
 	/* Scores */
-
 
 	/* All addresses to tables indexed by ids are converted to pointers,
 	   then adjusted to point to the (imaginary) element before the
@@ -408,49 +396,47 @@ static void initStaticData(void) {
 
 	if (header->instanceTableAddress == 0)
 		syserr("Instance table pointer == 0");
-	instances = (InstanceEntry *) pointerTo(header->instanceTableAddress);
-	instances--;            /* Back up one so that first is no. 1 */
-
+	instances = (InstanceEntry *)pointerTo(header->instanceTableAddress);
+	instances--; /* Back up one so that first is no. 1 */
 
 	if (header->classTableAddress == 0)
 		syserr("Class table pointer == 0");
-	classes = (ClassEntry *) pointerTo(header->classTableAddress);
-	classes--;          /* Back up one so that first is no. 1 */
+	classes = (ClassEntry *)pointerTo(header->classTableAddress);
+	classes--; /* Back up one so that first is no. 1 */
 
 	if (header->containerTableAddress != 0) {
-		containers = (ContainerEntry *) pointerTo(header->containerTableAddress);
+		containers = (ContainerEntry *)pointerTo(header->containerTableAddress);
 		containers--;
 	}
 
 	if (header->eventTableAddress != 0) {
-		events = (EventEntry *) pointerTo(header->eventTableAddress);
+		events = (EventEntry *)pointerTo(header->eventTableAddress);
 		events--;
 	}
 
 	/* Scores, if already allocated, copy initial data */
 	if (scores == NULL)
-		scores = (Aword *)duplicate((Aword *) pointerTo(header->scores), header->scoreCount * sizeof(Aword));
+		scores = (Aword *)duplicate((Aword *)pointerTo(header->scores), header->scoreCount * sizeof(Aword));
 	else
 		memcpy(scores, pointerTo(header->scores), header->scoreCount * sizeof(Aword));
 
 	if (literals == NULL)
 		literals = (LiteralEntry *)allocate(sizeof(Aword) * (MAXPARAMS + 1));
 
-	stxs = (SyntaxEntry *) pointerTo(header->syntaxTableAddress);
-	vrbs = (VerbEntry *) pointerTo(header->verbTableAddress);
-	msgs = (MessageEntry *) pointerTo(header->messageTableAddress);
+	stxs = (SyntaxEntry *)pointerTo(header->syntaxTableAddress);
+	vrbs = (VerbEntry *)pointerTo(header->verbTableAddress);
+	msgs = (MessageEntry *)pointerTo(header->messageTableAddress);
 	initRules(header->ruleTableAddress);
 
 	if (header->pack)
-		freq = (Aword *) pointerTo(header->freq);
+		freq = (Aword *)pointerTo(header->freq);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void initStrings(void) {
 	StringInitEntry *init;
 
-	for (init = (StringInitEntry *) pointerTo(header->stringInitTable); !isEndOfArray(init); init++)
+	for (init = (StringInitEntry *)pointerTo(header->stringInitTable); !isEndOfArray(init); init++)
 		setInstanceAttribute(init->instanceCode, init->attributeCode, toAptr(getStringFromFile(init->fpos, init->len)));
 }
 
@@ -465,15 +451,13 @@ static Aint sizeOfAttributeData(void) {
 			size += AwordSizeOf(AttributeEntry);
 			attribute++;
 		}
-		size += 1;          /* For EOD */
+		size += 1; /* For EOD */
 	}
 
-	if (size != header->attributesAreaSize
-	        && (sizeof(AttributeHeaderEntry) == sizeof(AttributeEntry)))
+	if (size != header->attributesAreaSize && (sizeof(AttributeHeaderEntry) == sizeof(AttributeEntry)))
 		syserr("Attribute area size calculated wrong.");
 	return size;
 }
-
 
 /*----------------------------------------------------------------------*/
 static AttributeEntry *initializeAttributes(int awordSize) {
@@ -498,9 +482,6 @@ static AttributeEntry *initializeAttributes(int awordSize) {
 	return (AttributeEntry *)attributeArea;
 }
 
-
-
-
 /*----------------------------------------------------------------------*/
 static void initDynamicData(void) {
 	uint instanceId;
@@ -520,16 +501,15 @@ static void initDynamicData(void) {
 		admin[instanceId].location = instances[instanceId].initialLocation;
 }
 
-
 /*----------------------------------------------------------------------*/
 static void runInheritedInitialize(CONTEXT, Aint theClass) {
-	if (theClass == 0) return;
+	if (theClass == 0)
+		return;
 	CALL1(runInheritedInitialize, classes[theClass].parent)
 
 	if (classes[theClass].initialize)
 		interpret(context, classes[theClass].initialize);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void runInitialize(CONTEXT, Aint theInstance) {
@@ -538,7 +518,6 @@ static void runInitialize(CONTEXT, Aint theInstance) {
 	if (instances[theInstance].initialize != 0)
 		interpret(context, instances[theInstance].initialize);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void initializeInstances(CONTEXT) {
@@ -550,7 +529,6 @@ static void initializeInstances(CONTEXT) {
 		CALL1(runInitialize, instanceId)
 	}
 }
-
 
 /*----------------------------------------------------------------------*/
 static void start(CONTEXT) {
@@ -577,7 +555,6 @@ static void start(CONTEXT) {
 	resetAndEvaluateRules(context, rules, header->version);
 }
 
-
 /*----------------------------------------------------------------------*/
 static void openFiles(void) {
 	/* If logging open log file */
@@ -586,13 +563,12 @@ static void openFiles(void) {
 	}
 }
 
-
 /*----------------------------------------------------------------------*/
 static void init(CONTEXT) {
 	int i;
 
 	/* Initialise some status */
-	eventQueueTop = 0;          /* No pending events */
+	eventQueueTop = 0; /* No pending events */
 	initStaticData();
 	initDynamicData();
 	initParsing();
@@ -617,8 +593,6 @@ static void init(CONTEXT) {
 	start(context);
 }
 
-
-
 /*----------------------------------------------------------------------*/
 static bool traceActor(CONTEXT, int theActor) {
 	if (traceSectionOption) {
@@ -635,7 +609,6 @@ static bool traceActor(CONTEXT, int theActor) {
 	return traceSectionOption;
 }
 
-
 /*----------------------------------------------------------------------*/
 static char *scriptName(int theActor, int theScript) {
 	ScriptEntry *scriptEntry = (ScriptEntry *)pointerTo(header->scriptTableAddress);
@@ -646,7 +619,6 @@ static char *scriptName(int theActor, int theScript) {
 	}
 	return (char *)pointerTo(scriptEntry->id);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void moveActor(CONTEXT, int theActor) {
@@ -671,14 +643,14 @@ static void moveActor(CONTEXT, int theActor) {
 		// Ask him!
 		CALL0(parse)
 		capitalize = TRUE;
-		fail = FALSE;           // fail only aborts one actor
+		fail = FALSE; // fail only aborts one actor
 
 	} else if (admin[theActor].script != 0) {
-		for (scr = (ScriptEntry *) pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++) {
+		for (scr = (ScriptEntry *)pointerTo(header->scriptTableAddress); !isEndOfArray(scr); scr++) {
 			if (scr->code == admin[theActor].script) {
 				/* Find correct step in the list by indexing */
-				step = (StepEntry *) pointerTo(scr->steps);
-				step = (StepEntry *) &step[admin[theActor].step];
+				step = (StepEntry *)pointerTo(scr->steps);
+				step = (StepEntry *)&step[admin[theActor].step];
 				/* Now execute it, maybe. First check wait count */
 				if (admin[theActor].waitCount > 0) { /* Wait some more ? */
 					FUNC1(traceActor, flag, theActor)
@@ -695,15 +667,15 @@ static void moveActor(CONTEXT, int theActor) {
 				if (step->exp != 0) {
 					FUNC1(traceActor, flag, theActor)
 					if (flag)
-							printf(", SCRIPT %s[%ld], STEP %ld, Evaluating:>\n",
+						printf(", SCRIPT %s[%ld], STEP %ld, Evaluating:>\n",
 						       scriptName(theActor, admin[theActor].script),
 						       (long)admin[theActor].script, (long)admin[theActor].step + 1);
 					FUNC1(evaluate, flag, step->exp)
 					if (!flag)
-						break;      /* Break loop, don't execute step*/
+						break; /* Break loop, don't execute step*/
 				}
 				/* OK, so finally let him do his thing */
-				admin[theActor].step++;     /* Increment step number before executing... */
+				admin[theActor].step++; /* Increment step number before executing... */
 				if (!isEndOfArray(step + 1) && (step + 1)->after != 0) {
 					FUNC1(evaluate, admin[theActor].waitCount, (step + 1)->after)
 				}
@@ -720,8 +692,8 @@ static void moveActor(CONTEXT, int theActor) {
 				if (fail || (admin[theActor].step != 0 && isEndOfArray(step)))
 					/* No more steps in this script, so stop him */
 					admin[theActor].script = 0;
-				fail = FALSE;           /* fail only aborts one actor */
-				break;          /* We have executed a script so leave loop */
+				fail = FALSE; /* fail only aborts one actor */
+				break;        /* We have executed a script so leave loop */
 			}
 		}
 		if (isEndOfArray(scr))
@@ -742,7 +714,7 @@ void run(void) {
 	Context ctx;
 
 	openFiles();
-	load(ctx);			// Load program
+	load(ctx); // Load program
 
 	do {
 		ctx.clear();

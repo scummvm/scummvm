@@ -24,8 +24,8 @@
 #include "common/memstream.h"
 #include "common/zlib.h"
 
-#include "hdb/hdb.h"
 #include "hdb/file-manager.h"
+#include "hdb/hdb.h"
 
 namespace HDB {
 

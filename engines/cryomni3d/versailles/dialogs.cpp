@@ -39,58 +39,58 @@ bool CryOmni3DEngine_Versailles::preprocessDialog(const Common::String &sequence
 
 	_dialogsMan["{JOUEUR-VU-MEMORANDUM-DANS-LUSTRE-DU-SALON-DE-LA-GUERRE}"] = 'N';
 	if (_currentLevel == 5 && _gameVariables[GameVariables::kSeenMemorandum] &&
-	        !_inventory.inInventoryByNameID(140)) {
+	    !_inventory.inInventoryByNameID(140)) {
 		_dialogsMan["{JOUEUR-VU-MEMORANDUM-DANS-LUSTRE-DU-SALON-DE-LA-GUERRE}"] = 'Y';
 	}
 
 	if (_currentLevel == 1 && _currentPlaceId == 1 && currentGameTime() == 3 &&
-	        sequence.hasPrefix("13F_HUI") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
-	        _dialogsMan["{JOUEUR-TROUVE-TITRE-ET-PAMPHLET}"] == 'Y' &&
-	        (!_inventory.inInventoryByNameID(96) || !_inventory.inInventoryByNameID(98))) {
+	    sequence.hasPrefix("13F_HUI") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
+	    _dialogsMan["{JOUEUR-TROUVE-TITRE-ET-PAMPHLET}"] == 'Y' &&
+	    (!_inventory.inInventoryByNameID(96) || !_inventory.inInventoryByNameID(98))) {
 		displayMessageBoxWarp(18);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
 	}
 	if (_currentLevel == 2 && _currentPlaceId == 11 && currentGameTime() == 4 &&
-	        sequence.hasPrefix("24Z_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
-	        _dialogsMan["{JOUEUR-MONTRE-TITRE-FABLE-APPARU-SUR-ESQUISSE}"] == 'Y' &&
-	        (!_inventory.inInventoryByNameID(101) || !_inventory.inInventoryByNameID(103))) {
+	    sequence.hasPrefix("24Z_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
+	    _dialogsMan["{JOUEUR-MONTRE-TITRE-FABLE-APPARU-SUR-ESQUISSE}"] == 'Y' &&
+	    (!_inventory.inInventoryByNameID(101) || !_inventory.inInventoryByNameID(103))) {
 		displayMessageBoxWarp(18);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
 	}
 	if (_currentLevel == 3 && _currentPlaceId == 10 && currentGameTime() == 3 &&
-	        sequence.hasPrefix("31O_SUIA") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
-	        _dialogsMan["CROISSY-ACCEPTE-TEXTE"] == 'Y' &&
-	        (!_inventory.inInventoryByNameID(121) || !_inventory.inInventoryByNameID(119) ||
-	         !_inventory.inInventoryByNameID(115) ||
-	         _gameVariables[GameVariables::kGotMedalsSolution] == 0)) {
+	    sequence.hasPrefix("31O_SUIA") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
+	    _dialogsMan["CROISSY-ACCEPTE-TEXTE"] == 'Y' &&
+	    (!_inventory.inInventoryByNameID(121) || !_inventory.inInventoryByNameID(119) ||
+	     !_inventory.inInventoryByNameID(115) ||
+	     _gameVariables[GameVariables::kGotMedalsSolution] == 0)) {
 		displayMessageBoxWarp(18);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
 	}
 	if (_currentLevel == 4 && _currentPlaceId == 10 && currentGameTime() == 3 &&
-	        sequence.hasPrefix("42C_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
-	        _dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] == 'Y' &&
-	        (!_inventory.inInventoryByNameID(127) ||
-	         _gameVariables[GameVariables::kUsedVaubanBlueprint1] == 0 ||
-	         _gameVariables[GameVariables::kUsedVaubanBlueprint2] == 0)) {
+	    sequence.hasPrefix("42C_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
+	    _dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] == 'Y' &&
+	    (!_inventory.inInventoryByNameID(127) ||
+	     _gameVariables[GameVariables::kUsedVaubanBlueprint1] == 0 ||
+	     _gameVariables[GameVariables::kUsedVaubanBlueprint2] == 0)) {
 		displayMessageBoxWarp(18);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
 	}
 	if (_currentLevel == 5 && _currentPlaceId == 10 && currentGameTime() == 3 &&
-	        sequence.hasPrefix("42C_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
-	        _dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] == 'Y' &&
-	        (!_inventory.inInventoryByNameID(127) ||
-	         _gameVariables[GameVariables::kUsedVaubanBlueprint1] == 0 ||
-	         _gameVariables[GameVariables::kUsedVaubanBlueprint2] == 0)) {
+	    sequence.hasPrefix("42C_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
+	    _dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] == 'Y' &&
+	    (!_inventory.inInventoryByNameID(127) ||
+	     _gameVariables[GameVariables::kUsedVaubanBlueprint1] == 0 ||
+	     _gameVariables[GameVariables::kUsedVaubanBlueprint2] == 0)) {
 		displayMessageBoxWarp(18);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
 	}
 	if (_currentLevel == 6 && _currentPlaceId == 14 && currentGameTime() == 2 &&
-	        sequence.hasPrefix("61_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0) {
+	    sequence.hasPrefix("61_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0) {
 		displayMessageBoxWarp(19);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
@@ -119,12 +119,12 @@ void CryOmni3DEngine_Versailles::postprocessDialog(const Common::String &sequenc
 			setGameTime(2, 3);
 		}
 		if (!_gameVariables[GameVariables::kGotMedalsSolution] &&
-		        _dialogsMan["MONSIEUR-DONNE-SOLUTION-MEDAILLES"] == 'Y') {
+		    _dialogsMan["MONSIEUR-DONNE-SOLUTION-MEDAILLES"] == 'Y') {
 			playInGameVideo("32M_MR2");
 			_gameVariables[GameVariables::kGotMedalsSolution] = 1;
 		}
 		if (!_gameVariables[GameVariables::kDecipherScore] &&
-		        _dialogsMan["LULLY-DIT-CHAT-PENDU-JOUEUR"] == 'Y') {
+		    _dialogsMan["LULLY-DIT-CHAT-PENDU-JOUEUR"] == 'Y') {
 			_gameVariables[GameVariables::kDecipherScore] = 1;
 			collectObject(118);
 			setGameTime(3, 3);
@@ -151,8 +151,8 @@ void CryOmni3DEngine_Versailles::postprocessDialog(const Common::String &sequenc
 			playTransitionEndLevel(5);
 		}
 		if (sequence == "52A4_LAC" && _gameVariables[GameVariables::kStateLampoonReligion] != 3 &&
-		        _dialogsMan["LACHAIZE-DIT-REFORME"] == 'Y' && _dialogsMan["LACHAIZE-DIT-DRAGONNADES"] == 'Y' &&
-		        _dialogsMan["LACHAIZE-TROUVE-ECROUELLES"] == 'Y') {
+		    _dialogsMan["LACHAIZE-DIT-REFORME"] == 'Y' && _dialogsMan["LACHAIZE-DIT-DRAGONNADES"] == 'Y' &&
+		    _dialogsMan["LACHAIZE-TROUVE-ECROUELLES"] == 'Y') {
 			_inventory.removeByNameID(125);
 			_gameVariables[GameVariables::kStateLampoonReligion] = 3;
 			collectObject(125);
@@ -211,7 +211,9 @@ void CryOmni3DEngine_Versailles::setupDialogShows() {
 	                                 &CryOmni3DEngine_Versailles::dialogShowMaintenonGives);
 	_dialogsMan.registerShowCallback("(LA CHAIZE REND TEXTE)",
 	                                 &CryOmni3DEngine_Versailles::dialogShowLaChaizeGivesBack);
-	_dialogsMan.registerShowCallback("(LA CHAIZE " "\x83" "CRIT DRAGONNADES)",
+	_dialogsMan.registerShowCallback("(LA CHAIZE "
+	                                 "\x83"
+	                                 "CRIT DRAGONNADES)",
 	                                 &CryOmni3DEngine_Versailles::dialogShowLaChaizeWrites);
 	_dialogsMan.registerShowCallback("(LACHAIZE-DONNE-PAMPHLET-JOUEUR)",
 	                                 &CryOmni3DEngine_Versailles::dialogShowLaChaizeGivesPamphlet);
@@ -219,7 +221,9 @@ void CryOmni3DEngine_Versailles::setupDialogShows() {
 	                                 &CryOmni3DEngine_Versailles::dialogShowBontempsGivesKey);
 	_dialogsMan.registerShowCallback("(LE DUC DU MAINE S'EN VA)",
 	                                 &CryOmni3DEngine_Versailles::dialogShowDuMaineLeaves);
-	_dialogsMan.registerShowCallback("(SC" "\xe9" "NE DE TRANSITION)",
+	_dialogsMan.registerShowCallback("(SC"
+	                                 "\xe9"
+	                                 "NE DE TRANSITION)",
 	                                 &CryOmni3DEngine_Versailles::dialogShowTransitionScene);
 	_dialogsMan.registerShowCallback("(FIN DU JEU)", &CryOmni3DEngine_Versailles::dialogShowEndOfGame);
 	_dialogsMan.registerShowCallback("(LEBRUN-DONNE-FAUSSES-ESQUISSES)",

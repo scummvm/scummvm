@@ -29,8 +29,8 @@
 
 #include "common/system.h"
 
-#include "hugo/hugo.h"
 #include "hugo/file.h"
+#include "hugo/hugo.h"
 #include "hugo/util.h"
 
 namespace Hugo {

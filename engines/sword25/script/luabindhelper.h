@@ -34,8 +34,8 @@
 
 #include "sword25/kernel/common.h"
 
-#include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
+#include "common/lua/lua.h"
 
 namespace Sword25 {
 
@@ -43,8 +43,8 @@ namespace Sword25 {
 #define lua_tobooleancpp(L, i) (lua_toboolean(L, i) != 0)
 
 struct lua_constant_reg {
-	const char     *Name;
-	lua_Number      Value;
+	const char *Name;
+	lua_Number Value;
 };
 
 class LuaBindhelper {

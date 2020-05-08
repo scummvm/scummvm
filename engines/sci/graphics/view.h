@@ -36,7 +36,7 @@ struct CelInfo {
 	uint16 offsetEGA;
 	uint32 offsetRLE;
 	uint32 offsetLiteral;
-	Common::SpanOwner<SciSpan<const byte> > rawBitmap;
+	Common::SpanOwner<SciSpan<const byte>> rawBitmap;
 };
 
 struct LoopInfo {

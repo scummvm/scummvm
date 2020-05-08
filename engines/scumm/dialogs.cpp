@@ -21,10 +21,10 @@
  */
 
 #include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/system.h"
 #include "common/events.h"
 #include "common/localization.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 #include "graphics/scaler.h"
@@ -33,15 +33,15 @@
 #include "scummhelp.h"
 #endif
 
+#include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
 #include "gui/widget.h"
-#include "gui/ThemeEval.h"
 
 #include "scumm/dialogs.h"
-#include "scumm/sound.h"
-#include "scumm/scumm.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
 #include "scumm/verbs.h"
 
 #ifndef DISABLE_HELP
@@ -64,51 +64,50 @@ struct ResString {
 };
 
 static const ResString string_map_table_v8[] = {
-	{0, "/BT_100/Please insert disk %d. Press ENTER"},
-	{0, "/BT__003/Unable to Find %s, (%s %d) Press Button."},
-	{0, "/BT__004/Error reading disk %c, (%c%d) Press Button."},
-	{0, "/BT__002/Game Paused.  Press SPACE to Continue."},
-	{0, "/BT__005/Are you sure you want to restart?  (Y/N)"}, //BOOT.004
-	{0, "/BT__006/Are you sure you want to quit?  (Y/N)"}, //BOOT.005
-	{0, "/BT__008/Save"},
-	{0, "/BT__009/Load"},
-	{0, "/BT__010/Play"},
-	{0, "/BT__011/Cancel"},
-	{0, "/BT__012/Quit"},
-	{0, "/BT__013/OK"},
-	{0, ""},
-	{0, "/BT__014/You must enter a name"},
-	{0, "/BT__015/The game was NOT saved (disk full?)"},
-	{0, "/BT__016/The game was NOT loaded"},
-	{0, "/BT__017/Saving '%s'"},
-	{0, "/BT__018/Loading '%s'"},
-	{0, "/BT__019/Name your SAVE game"},
-	{0, "/BT__020/Select a game to LOAD"}
-};
+    {0, "/BT_100/Please insert disk %d. Press ENTER"},
+    {0, "/BT__003/Unable to Find %s, (%s %d) Press Button."},
+    {0, "/BT__004/Error reading disk %c, (%c%d) Press Button."},
+    {0, "/BT__002/Game Paused.  Press SPACE to Continue."},
+    {0, "/BT__005/Are you sure you want to restart?  (Y/N)"}, //BOOT.004
+    {0, "/BT__006/Are you sure you want to quit?  (Y/N)"},    //BOOT.005
+    {0, "/BT__008/Save"},
+    {0, "/BT__009/Load"},
+    {0, "/BT__010/Play"},
+    {0, "/BT__011/Cancel"},
+    {0, "/BT__012/Quit"},
+    {0, "/BT__013/OK"},
+    {0, ""},
+    {0, "/BT__014/You must enter a name"},
+    {0, "/BT__015/The game was NOT saved (disk full?)"},
+    {0, "/BT__016/The game was NOT loaded"},
+    {0, "/BT__017/Saving '%s'"},
+    {0, "/BT__018/Loading '%s'"},
+    {0, "/BT__019/Name your SAVE game"},
+    {0, "/BT__020/Select a game to LOAD"}};
 
 static const ResString string_map_table_v7[] = {
-	{96, "game name and version"}, //that's how it's supposed to be
-	{83, "Unable to Find %s, (%c%d) Press Button."},
-	{84, "Error reading disk %c, (%c%d) Press Button."},
-	{85, "/BOOT.003/Game Paused.  Press SPACE to Continue."},
-	{86, "/BOOT.004/Are you sure you want to restart?  (Y/N)"},
-	{87, "/BOOT.005/Are you sure you want to quit?  (Y/N)"},
-	{70, "/BOOT.008/Save"},
-	{71, "/BOOT.009/Load"},
-	{72, "/BOOT.010/Play"},
-	{73, "/BOOT.011/Cancel"},
-	{74, "/BOOT.012/Quit"},
-	{75, "/BOOT.013/OK"},
-	{0, ""},
-	{78, "/BOOT.014/You must enter a name"},
-	{81, "/BOOT.015/The game was NOT saved (disk full?)"},
-	{82, "/BOOT.016/The game was NOT loaded"},
-	{79, "/BOOT.017/Saving '%s'"},
-	{80, "/BOOT.018/Loading '%s'"},
-	{76, "/BOOT.019/Name your SAVE game"},
-	{77, "/BOOT.020/Select a game to LOAD"}
+    {96, "game name and version"}, //that's how it's supposed to be
+    {83, "Unable to Find %s, (%c%d) Press Button."},
+    {84, "Error reading disk %c, (%c%d) Press Button."},
+    {85, "/BOOT.003/Game Paused.  Press SPACE to Continue."},
+    {86, "/BOOT.004/Are you sure you want to restart?  (Y/N)"},
+    {87, "/BOOT.005/Are you sure you want to quit?  (Y/N)"},
+    {70, "/BOOT.008/Save"},
+    {71, "/BOOT.009/Load"},
+    {72, "/BOOT.010/Play"},
+    {73, "/BOOT.011/Cancel"},
+    {74, "/BOOT.012/Quit"},
+    {75, "/BOOT.013/OK"},
+    {0, ""},
+    {78, "/BOOT.014/You must enter a name"},
+    {81, "/BOOT.015/The game was NOT saved (disk full?)"},
+    {82, "/BOOT.016/The game was NOT loaded"},
+    {79, "/BOOT.017/Saving '%s'"},
+    {80, "/BOOT.018/Loading '%s'"},
+    {76, "/BOOT.019/Name your SAVE game"},
+    {77, "/BOOT.020/Select a game to LOAD"}
 
-	/* This is the complete string map for v7
+    /* This is the complete string map for v7
 	{68, "/BOOT.007/c:\\dig"},
 	{69, "/BOOT.021/The Dig"},
 	{70, "/BOOT.008/Save"},
@@ -145,58 +144,56 @@ static const ResString string_map_table_v7[] = {
 };
 
 static const ResString string_map_table_v6[] = {
-	{90, "Insert Disk %c and Press Button to Continue."},
-	{91, "Unable to Find %s, (%c%d) Press Button."},
-	{92, "Error reading disk %c, (%c%d) Press Button."},
-	{93, "Game Paused.  Press SPACE to Continue."},
-	{94, "Are you sure you want to restart?  (Y/N)Y"},
-	{95, "Are you sure you want to quit?  (Y/N)Y"},
-	{96, "Save"},
-	{97, "Load"},
-	{98, "Play"},
-	{99, "Cancel"},
-	{100, "Quit"},
-	{101, "OK"},
-	{102, "Insert save/load game disk"},
-	{103, "You must enter a name"},
-	{104, "The game was NOT saved (disk full?)"},
-	{105, "The game was NOT loaded"},
-	{106, "Saving '%s'"},
-	{107, "Loading '%s'"},
-	{108, "Name your SAVE game"},
-	{109, "Select a game to LOAD"},
-	{117, "How may I serve you?"}
-};
+    {90, "Insert Disk %c and Press Button to Continue."},
+    {91, "Unable to Find %s, (%c%d) Press Button."},
+    {92, "Error reading disk %c, (%c%d) Press Button."},
+    {93, "Game Paused.  Press SPACE to Continue."},
+    {94, "Are you sure you want to restart?  (Y/N)Y"},
+    {95, "Are you sure you want to quit?  (Y/N)Y"},
+    {96, "Save"},
+    {97, "Load"},
+    {98, "Play"},
+    {99, "Cancel"},
+    {100, "Quit"},
+    {101, "OK"},
+    {102, "Insert save/load game disk"},
+    {103, "You must enter a name"},
+    {104, "The game was NOT saved (disk full?)"},
+    {105, "The game was NOT loaded"},
+    {106, "Saving '%s'"},
+    {107, "Loading '%s'"},
+    {108, "Name your SAVE game"},
+    {109, "Select a game to LOAD"},
+    {117, "How may I serve you?"}};
 
 static const ResString string_map_table_v345[] = {
-	{1, _s("Insert Disk %c and Press Button to Continue.")},
-	{2, _s("Unable to Find %s, (%c%d) Press Button.")},
-	{3, _s("Error reading disk %c, (%c%d) Press Button.")},
-	{4, _s("Game Paused.  Press SPACE to Continue.")},
-	// I18N: You may specify 'Yes' symbol at the end of the line, like this:
-	// "Moechten Sie wirklich neu starten?  (J/N)J"
-	// Will react to J as 'Yes'
-	{5, _s("Are you sure you want to restart?  (Y/N)Y")},
-	// I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-	{6, _s("Are you sure you want to quit?  (Y/N)Y")},
+    {1, _s("Insert Disk %c and Press Button to Continue.")},
+    {2, _s("Unable to Find %s, (%c%d) Press Button.")},
+    {3, _s("Error reading disk %c, (%c%d) Press Button.")},
+    {4, _s("Game Paused.  Press SPACE to Continue.")},
+    // I18N: You may specify 'Yes' symbol at the end of the line, like this:
+    // "Moechten Sie wirklich neu starten?  (J/N)J"
+    // Will react to J as 'Yes'
+    {5, _s("Are you sure you want to restart?  (Y/N)Y")},
+    // I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
+    {6, _s("Are you sure you want to quit?  (Y/N)Y")},
 
-	// Added in SCUMM4
-	{7, _s("Save")},
-	{8, _s("Load")},
-	{9, _s("Play")},
-	{10, _s("Cancel")},
-	{11, _s("Quit")},
-	{12, _s("OK")},
-	{13, _s("Insert save/load game disk")},
-	{14, _s("You must enter a name")},
-	{15, _s("The game was NOT saved (disk full?)")},
-	{16, _s("The game was NOT loaded")},
-	{17, _s("Saving '%s'")},
-	{18, _s("Loading '%s'")},
-	{19, _s("Name your SAVE game")},
-	{20, _s("Select a game to LOAD")},
-	{28, _s("Game title)")}
-};
+    // Added in SCUMM4
+    {7, _s("Save")},
+    {8, _s("Load")},
+    {9, _s("Play")},
+    {10, _s("Cancel")},
+    {11, _s("Quit")},
+    {12, _s("OK")},
+    {13, _s("Insert save/load game disk")},
+    {14, _s("You must enter a name")},
+    {15, _s("The game was NOT saved (disk full?)")},
+    {16, _s("The game was NOT loaded")},
+    {17, _s("Saving '%s'")},
+    {18, _s("Loading '%s'")},
+    {19, _s("Name your SAVE game")},
+    {20, _s("Select a game to LOAD")},
+    {28, _s("Game title)")}};
 
 #pragma mark -
 
@@ -245,7 +242,7 @@ ScummDialog::ScummDialog(String name) : GUI::Dialog(name) {
 #ifndef DISABLE_HELP
 
 ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
-	: MainMenuDialog(scumm) {
+    : MainMenuDialog(scumm) {
 	_helpDialog = new HelpDialog(scumm->_game);
 	_helpButton->setEnabled(true);
 }
@@ -272,7 +269,7 @@ enum {
 };
 
 HelpDialog::HelpDialog(const GameSettings &game)
-	: ScummDialog("ScummHelp"), _game(game) {
+    : ScummDialog("ScummHelp"), _game(game) {
 	_title = new GUI::StaticTextWidget(this, "ScummHelp.Title", "");
 
 	_page = 1;
@@ -297,7 +294,6 @@ HelpDialog::HelpDialog(const GameSettings &game)
 		_key[i] = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "", Graphics::kTextAlignRight);
 		_dsc[i] = new GUI::StaticTextWidget(this, 0, 0, 10, 10, "", Graphics::kTextAlignLeft);
 	}
-
 }
 
 void HelpDialog::reflowLayout() {
@@ -384,7 +380,7 @@ void HelpDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 da
 #pragma mark -
 
 InfoDialog::InfoDialog(ScummEngine *scumm, int res)
-: ScummDialog(0, 0, 0, 0), _vm(scumm) { // dummy x and w
+    : ScummDialog(0, 0, 0, 0), _vm(scumm) { // dummy x and w
 
 	_message = queryResString(res);
 
@@ -392,8 +388,8 @@ InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 	_text = new GUI::StaticTextWidget(this, 0, 0, 10, 10, _message, kTextAlignCenter);
 }
 
-InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
-: ScummDialog(0, 0, 0, 0), _vm(scumm) { // dummy x and w
+InfoDialog::InfoDialog(ScummEngine *scumm, const String &message)
+    : ScummDialog(0, 0, 0, 0), _vm(scumm) { // dummy x and w
 
 	_message = message;
 
@@ -401,7 +397,7 @@ InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 	_text = new GUI::StaticTextWidget(this, 0, 0, 10, 10, _message, kTextAlignCenter);
 }
 
-void InfoDialog::setInfoText(const String& message) {
+void InfoDialog::setInfoText(const String &message) {
 	_message = message;
 	_text->setLabel(_message);
 	//reflowLayout(); // FIXME: Should we call this here? Depends on the usage patterns, I guess...
@@ -447,7 +443,7 @@ const Common::String InfoDialog::queryResString(int stringno) {
 		result = buf;
 	}
 
-	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
+	if (!result || *result == '\0') { // Gracelessly degrade to english :)
 		return _(string_map_table_v345[stringno - 1].string);
 	}
 
@@ -467,18 +463,18 @@ const Common::String InfoDialog::queryResString(int stringno) {
 #pragma mark -
 
 PauseDialog::PauseDialog(ScummEngine *scumm, int res)
-	: InfoDialog(scumm, res) {
+    : InfoDialog(scumm, res) {
 }
 
 void PauseDialog::handleKeyDown(Common::KeyState state) {
-	if (state.ascii == ' ')  // Close pause dialog if space key is pressed
+	if (state.ascii == ' ') // Close pause dialog if space key is pressed
 		close();
 	else
 		ScummDialog::handleKeyDown(state);
 }
 
 ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
-	: InfoDialog(scumm, res), _yesKey('y'), _noKey('n') {
+    : InfoDialog(scumm, res), _yesKey('y'), _noKey('n') {
 
 	if (_message.lastChar() != ')') {
 		_yesKey = _message.lastChar();
@@ -509,11 +505,11 @@ void ConfirmDialog::handleKeyDown(Common::KeyState state) {
 
 #pragma mark -
 
-ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, int maxVal,
-		int val, uint16 incKey, uint16 decKey)
-	: GUI::Dialog(0, 0, 0, 0),
-	_label(label), _min(minVal), _max(maxVal),
-	_value(val), _incKey(incKey), _decKey(decKey), _timer(0) {
+ValueDisplayDialog::ValueDisplayDialog(const Common::String &label, int minVal, int maxVal,
+                                       int val, uint16 incKey, uint16 decKey)
+    : GUI::Dialog(0, 0, 0, 0),
+      _label(label), _min(minVal), _max(maxVal),
+      _value(val), _incKey(incKey), _decKey(decKey), _timer(0) {
 	assert(_min <= _value && _value <= _max);
 }
 
@@ -521,10 +517,11 @@ void ValueDisplayDialog::drawDialog(GUI::DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
 	const int labelWidth = _w - 8 - _percentBarWidth;
-	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4,
-				_y+g_gui.theme()->getFontHeight()+4), _label);
-	g_gui.theme()->drawSlider(Common::Rect(_x+4+labelWidth, _y+4, _x+_w-4, _y+_h-4),
-				_percentBarWidth * (_value - _min) / (_max - _min));
+	g_gui.theme()->drawText(Common::Rect(_x + 4, _y + 4, _x + labelWidth + 4,
+	                                     _y + g_gui.theme()->getFontHeight() + 4),
+	                        _label);
+	g_gui.theme()->drawSlider(Common::Rect(_x + 4 + labelWidth, _y + 4, _x + _w - 4, _y + _h - 4),
+	                          _percentBarWidth * (_value - _min) / (_max - _min));
 }
 
 void ValueDisplayDialog::handleTickle() {
@@ -570,8 +567,7 @@ void ValueDisplayDialog::open() {
 }
 
 SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value)
-	: InfoDialog(scumm, ""), _value(value), _timer(0) {
-
+    : InfoDialog(scumm, ""), _value(value), _timer(0) {
 }
 
 void SubtitleSettingsDialog::handleTickle() {
@@ -599,10 +595,9 @@ void SubtitleSettingsDialog::open() {
 
 void SubtitleSettingsDialog::cycleValue() {
 	static const char *const subtitleDesc[] = {
-		_s("Speech Only"),
-		_s("Speech and Subtitles"),
-		_s("Subtitles Only")
-	};
+	    _s("Speech Only"),
+	    _s("Speech and Subtitles"),
+	    _s("Subtitles Only")};
 
 	_value += 1;
 	if (_value > 2)
@@ -616,8 +611,8 @@ void SubtitleSettingsDialog::cycleValue() {
 	_timer = g_system->getMillis() + 1500;
 }
 
-Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)
-	: InfoDialog(scumm, text) {
+Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char *text)
+    : InfoDialog(scumm, text) {
 }
 
 void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
@@ -627,8 +622,8 @@ void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
 		ScummDialog::handleKeyDown(state);
 }
 
-DebugInputDialog::DebugInputDialog(ScummEngine *scumm, char* text)
-	: InfoDialog(scumm, text) {
+DebugInputDialog::DebugInputDialog(ScummEngine *scumm, char *text)
+    : InfoDialog(scumm, text) {
 	mainText = text;
 	done = 0;
 }

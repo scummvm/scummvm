@@ -23,9 +23,9 @@
 #ifndef PRINCE_SCRIPT_H
 #define PRINCE_SCRIPT_H
 
-#include "common/random.h"
-#include "common/endian.h"
 #include "common/array.h"
+#include "common/endian.h"
+#include "common/random.h"
 #include "common/stream.h"
 
 #include "prince/flags.h"
@@ -42,13 +42,13 @@ struct Mask;
 class Room {
 public:
 	Room();
-	int _mobs; // mob flag offset
+	int _mobs;     // mob flag offset
 	int _backAnim; // offset to array of animation numbers
-	int _obj; // offset to array of object numbers
-	int _nak; // offset to array of masks
+	int _obj;      // offset to array of object numbers
+	int _nak;      // offset to array of masks
 	int _itemUse;
 	int _itemGive;
-	int _walkTo; // offset to array of WALKTO events or 0
+	int _walkTo;  // offset to array of WALKTO events or 0
 	int _examine; // offset to array of EXAMINE events or 0
 	int _pickup;
 	int _use;
@@ -62,7 +62,6 @@ public:
 	int getOptionOffset(int option);
 
 private:
-
 	typedef void (Room::*LoadingStep)(Common::SeekableReadStream &stream);
 
 	void nextLoadStep(Common::SeekableReadStream &stream, LoadingStep step);
@@ -82,7 +81,6 @@ private:
 	void loadTalk(Common::SeekableReadStream &stream);
 	void loadGive(Common::SeekableReadStream &stream);
 };
-
 
 class Script {
 public:
@@ -169,6 +167,7 @@ public:
 
 	static const uint16 kFlagMask = 0x8000;
 	static const uint16 kMaxFlags = 2000;
+
 private:
 	int32 _flags[kMaxFlags];
 };
@@ -211,7 +210,7 @@ private:
 	uint32 _lastInstruction;
 	byte _result;
 
-	bool _opcodeNF; // break interpreter loop
+	bool _opcodeNF;  // break interpreter loop
 	bool _opcodeEnd; // end of a game flag
 
 	static const uint32 _STACK_SIZE = 500;
@@ -271,7 +270,7 @@ private:
 	void O__WAIT();
 	void O_UPDATEOFF();
 	void O_UPDATEON();
-	void O_UPDATE ();
+	void O_UPDATE();
 	void O_CLS();
 	void O__CALL();
 	void O_RETURN();
@@ -393,7 +392,6 @@ private:
 	void O_INPUTLINE();
 	void O_SETVOICED();
 	void O_BREAK_POINT();
-
 };
 
 } // End of namespace Prince

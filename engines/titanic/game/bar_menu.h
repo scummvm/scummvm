@@ -35,10 +35,12 @@ class CBarMenu : public CGameObject {
 	bool PETUpMsg(CPETUpMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 public:
 	int _barFrameNumber;
 	bool _visibleFlag;
 	int _numFrames;
+
 public:
 	CLASSDEF;
 	CBarMenu();

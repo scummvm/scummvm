@@ -23,8 +23,8 @@
 #ifndef GUI_LAUNCHER_DIALOG_H
 #define GUI_LAUNCHER_DIALOG_H
 
-#include "gui/dialog.h"
 #include "engines/game.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 
@@ -41,6 +41,7 @@ class SaveLoadChooser;
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
+
 public:
 	LauncherDialog();
 	~LauncherDialog() override;
@@ -53,23 +54,24 @@ public:
 	void handleKeyUp(Common::KeyState state) override;
 	void handleOtherEvent(const Common::Event &evt) override;
 	bool doGameDetection(const Common::String &path);
+
 protected:
-	EditTextWidget  *_searchWidget;
-	ListWidget		*_list;
-	ButtonWidget	*_addButton;
-	Widget			*_startButton;
-	ButtonWidget	*_loadButton;
-	Widget			*_editButton;
-	Widget			*_removeButton;
+	EditTextWidget *_searchWidget;
+	ListWidget *_list;
+	ButtonWidget *_addButton;
+	Widget *_startButton;
+	ButtonWidget *_loadButton;
+	Widget *_editButton;
+	Widget *_removeButton;
 #ifndef DISABLE_FANCY_THEMES
-	GraphicsWidget		*_logo;
-	GraphicsWidget		*_searchPic;
+	GraphicsWidget *_logo;
+	GraphicsWidget *_searchPic;
 #endif
-	StaticTextWidget	*_searchDesc;
-	ButtonWidget	*_searchClearButton;
-	StringArray		_domains;
-	BrowserDialog	*_browser;
-	SaveLoadChooser	*_loadDialog;
+	StaticTextWidget *_searchDesc;
+	ButtonWidget *_searchClearButton;
+	StringArray _domains;
+	BrowserDialog *_browser;
+	SaveLoadChooser *_loadDialog;
 
 	String _search;
 
@@ -122,6 +124,7 @@ protected:
 	 * @target	name of target to select
 	 */
 	void selectTarget(const String &target);
+
 private:
 	bool checkModifier(int modifier);
 };

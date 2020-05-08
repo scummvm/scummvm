@@ -26,11 +26,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CTitaniaSpeech, CGameObject)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(MovieFrameMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(MovieFrameMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(EnterRoomMsg)
 END_MESSAGE_MAP()
 
 void CTitaniaSpeech::save(SimpleFile *file, int indent) {
@@ -61,7 +61,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 			loadSound(TRANSLATE("a#12.wav", "a#0.wav"));
 			sleep(1000);
 			playMovie(TRANSLATE(0, 584), TRANSLATE(187, 761),
-				MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
+			          MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			if (g_language == Common::EN_ANY) {
 				movieSetPlaying(true);
 				movieEvent(0);

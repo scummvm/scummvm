@@ -20,10 +20,9 @@
  *
  */
 
-
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/ask_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 
@@ -36,9 +35,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(AskGump, ItemRelativeGump)
 AskGump::AskGump() : ItemRelativeGump(), _answers(0) {
 }
 
-AskGump::AskGump(uint16 owner, UCList *answers) :
-	ItemRelativeGump(0, 0, 0, 0, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
-	_answers(new UCList(2)) {
+AskGump::AskGump(uint16 owner, UCList *answers) : ItemRelativeGump(0, 0, 0, 0, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
+                                                  _answers(new UCList(2)) {
 	_answers->copyStringList(*answers);
 }
 
@@ -51,9 +49,12 @@ AskGump::~AskGump() {
 void AskGump::InitGump(Gump *newparent, bool take_focus) {
 	// OK, this is a bit of a hack, but it's how it has to be
 	int fontnum;
-	if (_owner == 1) fontnum = 6;
-	else if (_owner > 256) fontnum = 8;
-	else switch (_owner % 3) {
+	if (_owner == 1)
+		fontnum = 6;
+	else if (_owner > 256)
+		fontnum = 8;
+	else
+		switch (_owner % 3) {
 		case 1:
 			fontnum = 5;
 			break;
@@ -92,8 +93,10 @@ void AskGump::InitGump(Gump *newparent, bool take_focus) {
 			child->Move(px, py);
 		}
 
-		if (cd.w + px > _dims.w) _dims.w = cd.w + px;
-		if (cd.h + py > _dims.h) _dims.h = cd.h + py;
+		if (cd.w + px > _dims.w)
+			_dims.w = cd.w + px;
+		if (cd.h + py > _dims.h)
+			_dims.h = cd.h + py;
 
 		px += cd.w + 4;
 	}
@@ -122,7 +125,8 @@ void AskGump::saveData(Common::WriteStream *ws) {
 }
 
 bool AskGump::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!ItemRelativeGump::loadData(rs, version)) return false;
+	if (!ItemRelativeGump::loadData(rs, version))
+		return false;
 
 	_answers = new UCList(2);
 	_answers->load(rs, version);
@@ -133,19 +137,21 @@ bool AskGump::loadData(Common::ReadStream *rs, uint32 version) {
 	_dims.w = 0;
 	_dims.h = 0;
 
-
 	for (unsigned int i = 0; i < _answers->getSize(); ++i) {
 
 		ButtonWidget *child = nullptr;
 
 		Std::list<Gump *>::iterator it;
 		for (it = _children.begin(); it != _children.end(); ++it) {
-			if ((*it)->GetIndex() != (int)i) continue;
+			if ((*it)->GetIndex() != (int)i)
+				continue;
 			child = p_dynamic_cast<ButtonWidget *>(*it);
-			if (!child) continue;
+			if (!child)
+				continue;
 		}
 
-		if (!child) return false;
+		if (!child)
+			return false;
 
 		Rect cd;
 		child->GetDims(cd);
@@ -156,8 +162,10 @@ bool AskGump::loadData(Common::ReadStream *rs, uint32 version) {
 		}
 		child->Move(px, py);
 
-		if (cd.w + px > _dims.w) _dims.w = cd.w + px;
-		if (cd.h + py > _dims.h) _dims.h = cd.h + py;
+		if (cd.w + px > _dims.w)
+			_dims.w = cd.w + px;
+		if (cd.h + py > _dims.h)
+			_dims.h = cd.h + py;
 
 		px += cd.w + 4;
 	}

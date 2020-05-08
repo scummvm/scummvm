@@ -256,7 +256,7 @@ int Glulxe::heap_apply_summary(uint valcount, uint *summary) {
 
 #ifdef FIXED_MEMSIZE
 	return 1;
-#else /* FIXED_MEMSIZE */
+#else  /* FIXED_MEMSIZE */
 
 	lx = 0;
 	heap_start = summary[lx++];

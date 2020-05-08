@@ -31,15 +31,16 @@ namespace Ultima8 {
 
 //! Creates a Sprite. Animates it. Destroys it.
 class SpriteProcess : public Process {
-	int     _shape;
-	int     _frame;
-	int     _firstFrame;
-	int     _lastFrame;
-	int     _repeats;
-	int     _delay;
-	int     _x, _y, _z;
-	int     _delayCounter;
-	bool    _initialized;
+	int _shape;
+	int _frame;
+	int _firstFrame;
+	int _lastFrame;
+	int _repeats;
+	int _delay;
+	int _x, _y, _z;
+	int _delayCounter;
+	bool _initialized;
+
 public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -67,13 +68,14 @@ public:
 	void run() override;
 
 	INTRINSIC(I_createSprite);
-//	INTRINSIC(I_createSpriteEx);
+	//	INTRINSIC(I_createSpriteEx);
 
 protected:
 	void init();
 
 public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/ bin / sh
 
 echo Quick script to make building all the time less painful.
 
@@ -7,7 +7,7 @@ echo Quick script to make building all the time less painful.
 CROSS_COMPILE=arm-angstrom-linux-gnueabi-
 export CROSS_COMPILE
 
-# Export the tool names for cross-compiling
+#Export the tool names for cross - compiling
 export CXX=arm-angstrom-linux-gnueabi-g++
 export CC=arm-angstrom-linux-gnueabi-gcc
 export DEFINES=-DNDEBUG

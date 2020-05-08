@@ -23,8 +23,8 @@
 #ifndef BACKENDS_MUTEX_ABSTRACT_H
 #define BACKENDS_MUTEX_ABSTRACT_H
 
-#include "common/system.h"
 #include "common/noncopyable.h"
+#include "common/system.h"
 
 /**
  * Abstract class for mutex manager. Subclasses

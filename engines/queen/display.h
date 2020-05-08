@@ -23,9 +23,9 @@
 #ifndef QUEEN_DISPLAY_H
 #define QUEEN_DISPLAY_H
 
+#include "common/random.h"
 #include "common/str.h"
 #include "common/util.h"
-#include "common/random.h"
 #include "queen/defs.h"
 
 class OSystem;
@@ -40,7 +40,6 @@ class QueenEngine;
 
 class Display {
 public:
-
 	Display(QueenEngine *vm, OSystem *system);
 	~Display();
 
@@ -89,7 +88,10 @@ public:
 	void palCustomLightsOn(uint16 roomNum);
 
 	//! mark all palette entries as dirty
-	void palSetAllDirty() { _pal.dirtyMin = 0; _pal.dirtyMax = 255; }
+	void palSetAllDirty() {
+		_pal.dirtyMin = 0;
+		_pal.dirtyMax = 255;
+	}
 
 	//! returns the number of colors used by the room
 	int getNumColorsForRoom(uint16 room) const;
@@ -123,7 +125,10 @@ public:
 	void horizontalScroll(int16 scroll);
 	int16 horizontalScroll() const { return _horizontalScroll; }
 
-	void fullscreen(bool fs) { _fullRefresh = 2; _fullscreen = fs; }
+	void fullscreen(bool fs) {
+		_fullRefresh = 2;
+		_fullscreen = fs;
+	}
 	bool fullscreen() const { return _fullscreen; }
 
 	//! mark the specified block as dirty
@@ -164,7 +169,7 @@ public:
 	void textColor(uint16 y, uint8 color) { _texts[y].color = color; }
 
 	//! Set the focus rectangle to the speaking character
-	void setFocusRect(const Common::Rect& rect);
+	void setFocusRect(const Common::Rect &rect);
 
 	int textCenterX(const char *text) const;
 	uint16 textWidth(const char *text) const;
@@ -181,20 +186,19 @@ public:
 	void blankScreenEffect3();
 
 private:
-
 	enum {
 		FADE_SPEED = 16,
-		D_BLOCK_W  =  8,
-		D_BLOCK_H  =  8
+		D_BLOCK_W = 8,
+		D_BLOCK_H = 8
 	};
 
 	enum BufferDimension {
 		BACKDROP_W = 640,
 		BACKDROP_H = 200,
-		SCREEN_W   = 320,
-		SCREEN_H   = 200,
-		PANEL_W    = 320,
-		PANEL_H    =  50
+		SCREEN_W = 320,
+		SCREEN_H = 200,
+		PANEL_W = 320,
+		PANEL_H = 50
 	};
 
 	struct {
@@ -261,7 +265,6 @@ private:
 	static const uint8 _palJoeClothes[];
 	static const uint8 _palJoeDress[];
 };
-
 
 } // End of namespace Queen
 

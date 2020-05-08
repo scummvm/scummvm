@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(SGTNav, CSGTStateRoom)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseMoveMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseMoveMsg)
 END_MESSAGE_MAP()
 
 void SGTNav::save(SimpleFile *file, int indent) {
@@ -45,8 +45,7 @@ bool SGTNav::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CTurnOff offMsg;
 
 	CPetControl *pet = getPetControl();
-	if (_statics->_chestOfDrawers == "Open" && _statics->_bedhead == "Open"
-			&& pet->isInAssignedRoom()) {
+	if (_statics->_chestOfDrawers == "Open" && _statics->_bedhead == "Open" && pet->isInAssignedRoom()) {
 		if (_statics->_vase == "Open")
 			offMsg.execute("Vase");
 		if (_statics->_tv == "Closed")

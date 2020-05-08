@@ -20,12 +20,12 @@
  *
  */
 
+#include "common/debug.h"
+#include "common/file.h"
+#include "common/str.h"
+#include "common/textconsole.h"
 #include "glk/adrift/scare.h"
 #include "glk/adrift/sxprotos.h"
-#include "common/debug.h"
-#include "common/str.h"
-#include "common/file.h"
-#include "common/textconsole.h"
 
 namespace Glk {
 namespace Adrift {
@@ -97,7 +97,7 @@ void *sx_malloc(size_t size) {
 
 	allocated = malloc(size);
 	if (!allocated)
-		sx_fatal("sx_malloc: requested %lu bytes\n", (sc_uint) size);
+		sx_fatal("sx_malloc: requested %lu bytes\n", (sc_uint)size);
 	else if (allocated == sx_zero_allocation)
 		sx_fatal("sx_malloc: zero-byte allocation address returned\n");
 
@@ -118,7 +118,7 @@ void *sx_realloc(void *pointer, size_t size) {
 
 	allocated = realloc(pointer, size);
 	if (!allocated)
-		sx_fatal("sx_realloc: requested %lu bytes\n", (sc_uint) size);
+		sx_fatal("sx_realloc: requested %lu bytes\n", (sc_uint)size);
 	else if (allocated == sx_zero_allocation)
 		sx_fatal("sx_realloc: zero-byte allocation address returned\n");
 
@@ -134,7 +134,6 @@ void sx_free(void *pointer) {
 	if (pointer && pointer != sx_zero_allocation)
 		free(pointer);
 }
-
 
 /*
  * sx_fopen()
@@ -154,7 +153,6 @@ Common::SeekableReadStream *sx_fopen(const sc_char *name, const sc_char *extensi
 	delete f;
 	return nullptr;
 }
-
 
 /* Miscellaneous general ascii constants. */
 static const sc_char NUL = '\0';
@@ -177,7 +175,6 @@ static sc_bool sx_isprint(sc_char character) {
 	return character >= MIN_PRINTABLE && character <= MAX_PRINTABLE;
 }
 
-
 /*
  * sx_trim_string()
  *
@@ -189,7 +186,7 @@ sc_char *sx_trim_string(sc_char *string) {
 	assert(string);
 
 	for (index_ = strlen(string) - 1;
-	        index_ >= 0 && sx_isspace(string[index_]); index_--)
+	     index_ >= 0 && sx_isspace(string[index_]); index_--)
 		string[index_] = NUL;
 
 	for (index_ = 0; sx_isspace(string[index_]);)
@@ -198,7 +195,6 @@ sc_char *sx_trim_string(sc_char *string) {
 
 	return string;
 }
-
 
 /*
  * sx_normalize_string()

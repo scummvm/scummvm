@@ -22,9 +22,9 @@
 
 #include "common/random.h"
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
 #include "hdb/mpc.h"
@@ -48,9 +48,9 @@ Window::Window() {
 		_dialogTextRight = 208;
 		_openDialogTextLeft = 0;
 		_openDialogTextRight = 228;
-		_tryY1 = 60;	// TRY
-		_tryY2 = 100;			// AGAIN
-		_tryRestartY = 240;	// (ok)
+		_tryY1 = 60;        // TRY
+		_tryY2 = 100;       // AGAIN
+		_tryRestartY = 240; // (ok)
 		_panicXStop = g_hdb->_screenDrawWidth / 4;
 		_panicZoneFaceX = g_hdb->_screenDrawWidth - 32;
 
@@ -72,9 +72,9 @@ Window::Window() {
 		_dialogTextRight = _dialogTextLeft + kTileWidth * 9;
 		_openDialogTextLeft = _dialogTextLeft;
 		_openDialogTextRight = _dialogTextRight + kTileWidth * 2;
-		_tryY1 = (g_hdb->_screenHeight >> 2);	// TRY
-		_tryY2 = (_tryY1 + 32);			// AGAIN
-		_tryRestartY = ((g_hdb->_screenHeight >> 2) * 3);	// (ok)
+		_tryY1 = (g_hdb->_screenHeight >> 2);             // TRY
+		_tryY2 = (_tryY1 + 32);                           // AGAIN
+		_tryRestartY = ((g_hdb->_screenHeight >> 2) * 3); // (ok)
 		_panicXStop = g_hdb->_screenDrawWidth / 3;
 		_panicZoneFaceX = g_hdb->_screenDrawWidth - 32;
 		// Fields only used in the PPC version
@@ -174,7 +174,6 @@ Window::~Window() {
 		delete _gfxPausePlaque;
 		delete _mstoneGfx;
 	}
-
 
 	delete _gemGfx;
 }
@@ -522,7 +521,7 @@ void Window::loadSaveFile(Common::InSaveFile *in) {
 		in->read(t->text, 128);
 		t->x = in->readSint32LE();
 		t->y = in->readSint32LE();
-		(void)in->readUint32LE(); // Skip timer value
+		(void)in->readUint32LE();                // Skip timer value
 		t->timer = g_system->getMillis() + 1000; // And override it to a second
 
 		_textOutList.push_back(t);
@@ -559,8 +558,7 @@ void Window::drawPause() {
 }
 
 void Window::checkPause(int x, int y) {
-	if (x >= g_hdb->_screenDrawWidth / 2 - _gfxPausePlaque->_width / 2 && g_hdb->_screenDrawWidth / 2 + _gfxPausePlaque->_width / 2 > x
-		&& y >= _pauseY && y < _pauseY + _gfxPausePlaque->_height) {
+	if (x >= g_hdb->_screenDrawWidth / 2 - _gfxPausePlaque->_width / 2 && g_hdb->_screenDrawWidth / 2 + _gfxPausePlaque->_width / 2 > x && y >= _pauseY && y < _pauseY + _gfxPausePlaque->_height) {
 		g_hdb->togglePause();
 		g_hdb->_sound->playSound(SND_POP);
 	}
@@ -580,7 +578,7 @@ void Window::drawWeapon() {
 
 void Window::chooseWeapon(AIType wType) {
 	static AIType lastWeaponSelected = AI_NONE;
-	int	slot = g_hdb->_ai->queryInventoryTypeSlot(wType);
+	int slot = g_hdb->_ai->queryInventoryTypeSlot(wType);
 
 	if (slot == -1)
 		return;
@@ -840,8 +838,8 @@ void Window::setDialogDelay(int delay) {
 }
 
 void Window::openDialogChoice(const char *title, const char *text, const char *func, int numChoices, const char *choices[10]) {
-	int		width, height, titleWidth, titleHeight;
-	int		e1, e2, e3, e4;
+	int width, height, titleWidth, titleHeight;
+	int e1, e2, e3, e4;
 
 	if (_dialogInfo.active)
 		return;
@@ -866,7 +864,7 @@ void Window::openDialogChoice(const char *title, const char *text, const char *f
 
 	for (int i = 0; i < 10; i++)
 		if (choices[i]) {
-			int	w, h;
+			int w, h;
 			g_hdb->_gfx->getDimensions(choices[i], &w, &h);
 			if (w > width)
 				width = w;
@@ -920,7 +918,7 @@ void Window::drawDialogChoice() {
 		_gGfxTitleR->drawMasked(_dialogChoiceInfo.x + (blocks + 1) * 16, _dialogChoiceInfo.y - 10);
 	}
 
-	int	e1, e2, e3, e4;
+	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(_dialogChoiceInfo.x + 10, _openDialogTextRight, 0, g_hdb->_screenDrawHeight);
 	g_hdb->_gfx->setCursor(0, _dialogChoiceInfo.y - 7);
@@ -955,7 +953,7 @@ bool Window::checkDialogChoiceClose(int x, int y) {
 		return false;
 
 	if (x >= _dialogChoiceInfo.x && x < _dialogChoiceInfo.x + _dialogChoiceInfo.width &&
-		y >= _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight && y < _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + _dialogChoiceInfo.numChoices * 16) {
+	    y >= _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight && y < _dialogChoiceInfo.y + _dialogChoiceInfo.textHeight + _dialogChoiceInfo.numChoices * 16) {
 		g_hdb->_sound->playSound(SND_SWITCH_USE);
 		_dialogChoiceInfo.selection = (y - (_dialogChoiceInfo.y + _dialogChoiceInfo.textHeight)) >> 4;
 		_dialogChoiceInfo.timeout = g_hdb->getTimeSlice() + 500;
@@ -983,7 +981,7 @@ void Window::openMessageBar(const char *title, int time) {
 	// is the messagebar already up?  if so, add this msg to the queue
 	if (_msgInfo.active) {
 		if (_numMsgQueue < kMaxMsgQueue) {
-			int		i;
+			int i;
 			if (!scumm_stricmp(_msgInfo.title, title))
 				return;
 
@@ -1001,10 +999,10 @@ void Window::openMessageBar(const char *title, int time) {
 	_msgInfo.timer = (time * kGameFPS);
 	Common::strlcpy(_msgInfo.title, title, 128);
 
-	int	e1, e2, e3, e4;
+	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(_dialogTextLeft, _dialogTextRight, 0, g_hdb->_screenDrawHeight);
-	int	width, height;
+	int width, height;
 	g_hdb->_gfx->getDimensions(title, &width, &height);
 	g_hdb->_gfx->setTextEdges(e1, e2, e3, e4);
 
@@ -1020,16 +1018,16 @@ void Window::drawMessageBar() {
 	if (!_msgInfo.active || _invWinInfo.active || _dialogInfo.active)
 		return;
 
-	int	xx, py, my;
-	g_hdb->_ai->getPlayerXY(&xx, &py);	// don't care about the x
+	int xx, py, my;
+	g_hdb->_ai->getPlayerXY(&xx, &py); // don't care about the x
 	g_hdb->_map->getMapXY(&xx, &my);
-	_msgInfo.y = (py - my) - _msgInfo.height - 64;	// put msgbar directly above player
+	_msgInfo.y = (py - my) - _msgInfo.height - 64; // put msgbar directly above player
 	if (_msgInfo.y < _msgInfo.height)
-		_msgInfo.y = (py - my) + 40;					// if at top, but it directly below
+		_msgInfo.y = (py - my) + 40; // if at top, but it directly below
 
 	drawBorder(_msgInfo.x, _msgInfo.y, _msgInfo.width, _msgInfo.height, false);
 
-	int	e1, e2, e3, e4;
+	int e1, e2, e3, e4;
 	g_hdb->_gfx->getTextEdges(&e1, &e2, &e3, &e4);
 	g_hdb->_gfx->setTextEdges(_msgInfo.x + 16, _msgInfo.x + _msgInfo.width - 16, 0, 320);
 	g_hdb->_gfx->setCursor(_msgInfo.x + 16, _msgInfo.y + 16);
@@ -1045,7 +1043,7 @@ void Window::drawMessageBar() {
 
 bool Window::checkMsgClose(int x, int y) {
 	if (x >= _msgInfo.x && x < _msgInfo.x + _msgInfo.width &&
-		y >= _msgInfo.y && y < _msgInfo.y + _msgInfo.height) {
+	    y >= _msgInfo.y && y < _msgInfo.y + _msgInfo.height) {
 		closeMsg();
 		return true;
 	}
@@ -1298,7 +1296,7 @@ void Window::openInventory() {
 
 	_invWinInfo.x = (g_hdb->_screenWidth >> 1) - (_invWinInfo.width >> 1) - 8;
 
-	int	px, py;
+	int px, py;
 	g_hdb->_ai->getPlayerXY(&px, &py);
 	if (py < (g_hdb->_screenHeight >> 1) - 16)
 		_invWinInfo.y = (g_hdb->_screenHeight >> 1) + 16;
@@ -1314,12 +1312,12 @@ bool Window::checkInvClose(int x, int y) {
 		return false;
 
 	if (x >= g_hdb->_screenWidth - _gfxHandright->_width &&
-		y >= _invWinInfo.y && y < _invWinInfo.y + _invItemSpace * 3) {
+	    y >= _invWinInfo.y && y < _invWinInfo.y + _invItemSpace * 3) {
 		closeInv();
 		openDeliveries(0);
 		return true;
 	} else if (x >= _invWinInfo.x && x < _invWinInfo.x + _invWinInfo.width &&
-		y >= _invWinInfo.y && y < _invWinInfo.y + _invWinInfo.height) {
+	           y >= _invWinInfo.y && y < _invWinInfo.y + _invWinInfo.height) {
 		int xc = (x - _invWinInfo.x) / _invItemSpace;
 		int yc = (y - _invWinInfo.y) / _invItemSpace;
 		if (yc * 5 + xc > g_hdb->_ai->getInvAmount()) {
@@ -1409,44 +1407,43 @@ void Window::openDeliveries(bool animate) {
 void Window::drawDeliveries() {
 	static uint32 timer = g_hdb->getTimeSlice() + 300; //unused
 	static const int crazySounds[kNumCrazy] = {
-		SND_GUI_INPUT,
-		SND_MAIL_PROCESS,
-		SND_MONKEY_OOHOOH,
-		SND_GET_GEM,
-		SND_MENU_ACCEPT,
-		SND_MENU_BACKOUT,
-		SND_MENU_SLIDER,
-		SND_DIALOG_CLOSE,
-		SND_POP,
-		SND_SPLASH,
-		SND_CHICKEN_AMBIENT,
-		SND_SWITCH_USE,
-		SND_BARREL_EXPLODE,
-		SND_BARREL_MELTING,
-		SND_MOVE_SELECTION,
-		SND_NOTICE,
-		SND_DIALOG_OPEN,
-		SND_TOUCHPLATE_CLICK,
-		SND_MBOT_HYEAH,
-		SND_MBOT_YEAH,
-		SND_MBOT_WHISTLE1,
-		SND_CLUB_MISS,
-		SND_CLUB_HIT_METAL,
-		SND_CLUB_HIT_FLESH,
-		SND_FROG_LICK,
-		SND_ROBOT_STUNNED,
-		SND_BRIDGE_EXTEND,
-		SND_BRIDGE_END,
-		SND_AIRLOCK_CLOSE,
-		SND_FART,
-		SND_FART2,
-		SND_GEM_THROW,
-		SND_INV_SELECT,
-		SND_INFOCOMP,
-		SND_CLOCK_BONK,
-		SND_GET_GOO,
-		SND_MANNY_CRASH
-	};
+	    SND_GUI_INPUT,
+	    SND_MAIL_PROCESS,
+	    SND_MONKEY_OOHOOH,
+	    SND_GET_GEM,
+	    SND_MENU_ACCEPT,
+	    SND_MENU_BACKOUT,
+	    SND_MENU_SLIDER,
+	    SND_DIALOG_CLOSE,
+	    SND_POP,
+	    SND_SPLASH,
+	    SND_CHICKEN_AMBIENT,
+	    SND_SWITCH_USE,
+	    SND_BARREL_EXPLODE,
+	    SND_BARREL_MELTING,
+	    SND_MOVE_SELECTION,
+	    SND_NOTICE,
+	    SND_DIALOG_OPEN,
+	    SND_TOUCHPLATE_CLICK,
+	    SND_MBOT_HYEAH,
+	    SND_MBOT_YEAH,
+	    SND_MBOT_WHISTLE1,
+	    SND_CLUB_MISS,
+	    SND_CLUB_HIT_METAL,
+	    SND_CLUB_HIT_FLESH,
+	    SND_FROG_LICK,
+	    SND_ROBOT_STUNNED,
+	    SND_BRIDGE_EXTEND,
+	    SND_BRIDGE_END,
+	    SND_AIRLOCK_CLOSE,
+	    SND_FART,
+	    SND_FART2,
+	    SND_GEM_THROW,
+	    SND_INV_SELECT,
+	    SND_INFOCOMP,
+	    SND_CLOCK_BONK,
+	    SND_GET_GOO,
+	    SND_MANNY_CRASH};
 
 	if (g_hdb->isPPC()) {
 		if (!_dlvsInfo.active)
@@ -1699,17 +1696,17 @@ bool Window::checkDlvsClose(int x, int y) {
 
 	// click on a delivery to select it for inspection?
 	if (x >= _dlvsInfo.x + 16 && x < _dlvsInfo.x + 16 + amt * _invItemSpace &&
-		y >= _dlvsInfo.y && y < _dlvsInfo.y + _invItemSpace * 3) {
+	    y >= _dlvsInfo.y && y < _dlvsInfo.y + _invItemSpace * 3) {
 		setSelectedDelivery(((x - _dlvsInfo.x + 16) / _invItemSpace) - 1);
 	} else if (g_hdb->_ai->getInvAmount() &&
-		x >= g_hdb->_screenWidth - _gfxHandright->_width &&
-		y >= _dlvsInfo.y && y < _dlvsInfo.y + _invItemSpace * 3) {
+	           x >= g_hdb->_screenWidth - _gfxHandright->_width &&
+	           y >= _dlvsInfo.y && y < _dlvsInfo.y + _invItemSpace * 3) {
 		// click on HAND?
 		closeDlvs();
 		openInventory();
 		return true;
 	} else if (x >= _dlvsInfo.x && x < _dlvsInfo.x + _dlvsInfo.width &&
-		y >= _dlvsInfo.y && y < _dlvsInfo.y + _dlvsInfo.height) {
+	           y >= _dlvsInfo.y && y < _dlvsInfo.y + _dlvsInfo.height) {
 		// click anywhere else in window to close it?
 		closeDlvs();
 		return true;
@@ -1740,7 +1737,8 @@ void Window::drawTryAgain() {
 
 		_tryAgainInfo.y1 = _tryY1;
 		_tryAgainInfo.y2 = _tryY2;
-		_tryAgainInfo.x1 = g_hdb->_screenDrawWidth / 2 - _gfxTry->_width / 2;;
+		_tryAgainInfo.x1 = g_hdb->_screenDrawWidth / 2 - _gfxTry->_width / 2;
+		;
 		_tryAgainInfo.x2 = g_hdb->_screenDrawWidth / 2 - _gfxAgain->_width / 2;
 	}
 
@@ -1761,7 +1759,7 @@ void Window::clearTryAgain() {
 
 void Window::loadPanicZoneGfx() {
 	_pzInfo.gfxPanic = g_hdb->_gfx->loadPic(PANIC_PANIC);
-	_pzInfo.gfxZone	= g_hdb->_gfx->loadPic(PANIC_ZONE);
+	_pzInfo.gfxZone = g_hdb->_gfx->loadPic(PANIC_ZONE);
 	_pzInfo.gfxFace[0] = g_hdb->_gfx->loadPic(PANIC_POINTER1);
 	_pzInfo.gfxFace[1] = g_hdb->_gfx->loadPic(PANIC_POINTER2);
 	_pzInfo.gfxNumber[0] = g_hdb->_gfx->loadPic(PANIC_NUM0);
@@ -1791,75 +1789,67 @@ void Window::drawPanicZone() {
 		break;
 
 		// Move PANIC ZONE to screen center
-	case PANICZONE_START:
-		{
-			int xx = g_hdb->_rnd->getRandomNumber(9) - 5;
-			int yy = g_hdb->_rnd->getRandomNumber(9) - 5;
-			_pzInfo.x1 += _pzInfo.xv;
-			_pzInfo.y1++;
-			_pzInfo.x2 += _pzInfo.yv;
-			_pzInfo.y2--;
-			if (_pzInfo.x1 > _panicXStop) {
-				_pzInfo.timer = 30;
-				_pzInfo.sequence++;
-			}
-			_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
-			_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
+	case PANICZONE_START: {
+		int xx = g_hdb->_rnd->getRandomNumber(9) - 5;
+		int yy = g_hdb->_rnd->getRandomNumber(9) - 5;
+		_pzInfo.x1 += _pzInfo.xv;
+		_pzInfo.y1++;
+		_pzInfo.x2 += _pzInfo.yv;
+		_pzInfo.y2--;
+		if (_pzInfo.x1 > _panicXStop) {
+			_pzInfo.timer = 30;
+			_pzInfo.sequence++;
 		}
-		break;
-	case PANICZONE_TITLESTOP:
-		{
-			int xx = g_hdb->_rnd->getRandomNumber(9) - 5;
-			int yy = g_hdb->_rnd->getRandomNumber(9) - 5;
-			_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
-			_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
-			_pzInfo.timer--;
-			if (!_pzInfo.timer)
-				_pzInfo.sequence++;
+		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
+		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
+	} break;
+	case PANICZONE_TITLESTOP: {
+		int xx = g_hdb->_rnd->getRandomNumber(9) - 5;
+		int yy = g_hdb->_rnd->getRandomNumber(9) - 5;
+		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
+		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
+		_pzInfo.timer--;
+		if (!_pzInfo.timer)
+			_pzInfo.sequence++;
+	} break;
+	case PANICZONE_BLASTOFF: {
+		int xx = g_hdb->_rnd->getRandomNumber(9) - 5;
+		int yy = g_hdb->_rnd->getRandomNumber(9) - 5;
+		_pzInfo.y1 -= 10;
+		_pzInfo.y2 += 10;
+		_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
+		_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
+		if (_pzInfo.y1 < -_pzInfo.gfxPanic->_height &&
+		    _pzInfo.y2 > g_hdb->_screenHeight) {
+			g_hdb->_sound->playSound(SND_PANIC_COUNT);
+			_pzInfo.sequence++;
+			_pzInfo.timer = 30 + g_hdb->getTime();
 		}
-		break;
-	case PANICZONE_BLASTOFF:
-		{
-			int xx = g_hdb->_rnd->getRandomNumber(9) - 5;
-			int yy = g_hdb->_rnd->getRandomNumber(9) - 5;
-			_pzInfo.y1 -= 10;
-			_pzInfo.y2 += 10;
-			_pzInfo.gfxPanic->drawMasked(_pzInfo.x1 + xx, _pzInfo.y1 + yy);
-			_pzInfo.gfxZone->drawMasked(_pzInfo.x2 + yy, _pzInfo.y2 + xx);
-			if (_pzInfo.y1 < -_pzInfo.gfxPanic->_height &&
-				_pzInfo.y2 > g_hdb->_screenHeight) {
-				g_hdb->_sound->playSound(SND_PANIC_COUNT);
-				_pzInfo.sequence++;
-				_pzInfo.timer = 30 + g_hdb->getTime();
-			}
-		}
-		break;
-	case PANICZONE_COUNTDOWN:
-		{
-			static int last_seconds = 0, seconds = 0;
-			_pzInfo.gfxFace[seconds & 1]->drawMasked(_panicZoneFaceX, kPanicZoneFaceY);
+	} break;
+	case PANICZONE_COUNTDOWN: {
+		static int last_seconds = 0, seconds = 0;
+		_pzInfo.gfxFace[seconds & 1]->drawMasked(_panicZoneFaceX, kPanicZoneFaceY);
 
-			// make knocking timer sound
-			if (last_seconds != seconds)
-				g_hdb->_sound->playSound(SND_PANIC_COUNT);
+		// make knocking timer sound
+		if (last_seconds != seconds)
+			g_hdb->_sound->playSound(SND_PANIC_COUNT);
 
-			last_seconds = seconds;
-			seconds = _pzInfo.timer - g_hdb->getTime();
-			if (seconds >= 10) {
-				_pzInfo.gfxNumber[seconds / 10]->drawMasked(_panicZoneFaceX, kPanicZoneFaceY + 32);
-				_pzInfo.gfxNumber[seconds % 10]->drawMasked(_panicZoneFaceX + 16, kPanicZoneFaceY + 32);
-			} else
-				_pzInfo.gfxNumber[seconds]->drawMasked(_panicZoneFaceX + 8, kPanicZoneFaceY + 32);
+		last_seconds = seconds;
+		seconds = _pzInfo.timer - g_hdb->getTime();
+		if (seconds >= 10) {
+			_pzInfo.gfxNumber[seconds / 10]->drawMasked(_panicZoneFaceX, kPanicZoneFaceY + 32);
+			_pzInfo.gfxNumber[seconds % 10]->drawMasked(_panicZoneFaceX + 16, kPanicZoneFaceY + 32);
+		} else
+			_pzInfo.gfxNumber[seconds]->drawMasked(_panicZoneFaceX + 8, kPanicZoneFaceY + 32);
 
-			// time until death!
-			if (!seconds) {
-				// dead
-				g_hdb->_ai->killPlayer(DEATH_PANICZONE);
-				_pzInfo.active = false;
-				return;
-			}
+		// time until death!
+		if (!seconds) {
+			// dead
+			g_hdb->_ai->killPlayer(DEATH_PANICZONE);
+			_pzInfo.active = false;
+			return;
 		}
-		break;
+	} break;
 	default:
 		break;
 	}
@@ -1877,9 +1867,9 @@ void Window::startPanicZone() {
 	_pzInfo.y1 = (g_hdb->_screenHeight / 4) - (_pzInfo.gfxPanic->_height >> 1);
 	_pzInfo.x2 = g_hdb->_screenDrawWidth + (_pzInfo.gfxZone->_width >> 1);
 	_pzInfo.y2 = (g_hdb->_screenHeight / 4) * 3 - (_pzInfo.gfxZone->_height >> 1);
-	_pzInfo.xv = 10;			// horizontal speed
-	_pzInfo.yv = -12;			// vertical speed
-	_pzInfo.timer = 30;			// 30 seconds to get out!
+	_pzInfo.xv = 10;    // horizontal speed
+	_pzInfo.yv = -12;   // vertical speed
+	_pzInfo.timer = 30; // 30 seconds to get out!
 }
 
 void Window::stopPanicZone() {
@@ -1936,4 +1926,4 @@ void Window::drawTextOut() {
 void Window::closeTextOut() {
 	_textOutList.clear();
 }
-} // End of Namespace
+} // namespace HDB

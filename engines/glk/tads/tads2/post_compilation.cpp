@@ -29,7 +29,7 @@ namespace TADS {
 namespace TADS2 {
 
 void supcont(void *ctx, objnum obj, prpnum prp) {
-		// No implementation
+	// No implementation
 }
 
 void supivoc(supcxdef *ctx) {
@@ -37,26 +37,26 @@ void supivoc(supcxdef *ctx) {
 }
 
 void supfind(errcxdef *ctx, tokthdef *tab, voccxdef *voc,
-		objnum *preinit, int warnlevel, int casefold) {
+             objnum *preinit, int warnlevel, int casefold) {
 	// No implementation
 }
 
-void suprsrv(supcxdef *sup, void(*bif[])(struct bifcxdef *, int),
-		toktdef *tab, int fncntmax, int v1compat, char *new_do, int casefold) {
+void suprsrv(supcxdef *sup, void (*bif[])(struct bifcxdef *, int),
+             toktdef *tab, int fncntmax, int v1compat, char *new_do, int casefold) {
 	// No implementation
 }
 
-void supbif(supcxdef *sup, void(*bif[])(struct bifcxdef *, int), int bifsiz) {
+void supbif(supcxdef *sup, void (*bif[])(struct bifcxdef *, int), int bifsiz) {
 	// No implementation
 }
 
 void sup_log_undefobj(mcmcxdef *mctx, errcxdef *ec, int err,
-		char *sym_name, int sym_name_len, objnum objn) {
+                      char *sym_name, int sym_name_len, objnum objn) {
 	// No implementation
 }
 
 void supivoc1(supcxdef *sup, voccxdef *ctx, vocidef *v, objnum target,
-		int inh_from_obj, int flags) {
+              int inh_from_obj, int flags) {
 	// No implementation
 }
 

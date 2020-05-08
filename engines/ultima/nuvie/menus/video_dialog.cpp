@@ -20,26 +20,25 @@
  *
  */
 
-
+#include "ultima/nuvie/menus/video_dialog.h"
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/gui_types.h"
+#include "ultima/nuvie/gui/gui_area.h"
 #include "ultima/nuvie/gui/gui_button.h"
+#include "ultima/nuvie/gui/gui_callback.h"
+#include "ultima/nuvie/gui/gui_dialog.h"
 #include "ultima/nuvie/gui/gui_text.h"
 #include "ultima/nuvie/gui/gui_text_toggle_button.h"
-#include "ultima/nuvie/gui/gui_callback.h"
-#include "ultima/nuvie/gui/gui_area.h"
+#include "ultima/nuvie/gui/gui_types.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/keybinding/keys.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/screen/dither.h"
 #include "ultima/nuvie/screen/scale.h"
 #include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/gui/gui_dialog.h"
-#include "ultima/nuvie/menus/video_dialog.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/views/view_manager.h"
 #include "ultima/nuvie/views/inventory_view.h"
-#include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -48,9 +47,9 @@ namespace Nuvie {
 #define VD_HEIGHT 171 // add or subtract 13 if you add/remove a row
 
 VideoDialog::VideoDialog(GUI_CallBack *callback)
-	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - VD_WIDTH) / 2,
-	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - VD_HEIGHT) / 2,
-	             VD_WIDTH, VD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
+    : GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - VD_WIDTH) / 2,
+                 Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - VD_HEIGHT) / 2,
+                 VD_WIDTH, VD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
 	callback_object = callback;
 	non_square_pixels_button = NULL;
 	init();
@@ -58,13 +57,14 @@ VideoDialog::VideoDialog(GUI_CallBack *callback)
 }
 
 bool VideoDialog::init() {
-	int colX[] = { 9, 29, 63, 232, 270};
+	int colX[] = {9, 29, 63, 232, 270};
 	int height = 12;
 	int yesno_width = 32;
 	int buttonY = 9;
 	uint8 textY = 11;
 	uint8 row_h = 13;
-	last_index = 0;;
+	last_index = 0;
+	;
 	b_index_num = -1;
 	bool no_fullscreen = false; // no compatible fullscreen setting found
 	GUI_Widget *widget;
@@ -72,7 +72,7 @@ bool VideoDialog::init() {
 	GUI_Font *font = gui->get_font();
 	Game *game = Game::get_game();
 	Screen *scr = game->get_screen();
-	const char *const yesno_text[] = { "no", "yes" };
+	const char *const yesno_text[] = {"no", "yes"};
 #define SCALER_AND_SCALE_CANNOT_BE_CHANGED 1 // FIXME need to be able to change these in game -- they also haven't been updated for keyboard controls and the size of the gump isn't right
 #if SCALER_AND_SCALE_CANNOT_BE_CHANGED
 	only2x_button = NULL;
@@ -85,17 +85,17 @@ bool VideoDialog::init() {
 	uint16 scrHeight = scr->get_height();
 	uint16 bpp = scr->get_bpp();
 
-	int textY[] = { 11, 24, 37, 50, 63 , 76, 89, 102, 115, 128, 141 };
-	int buttonY[] = { 9, 22, 35, 48, 61, 74, 87, 100, 113, 126, 139, 152 };
-// scaler
+	int textY[] = {11, 24, 37, 50, 63, 76, 89, 102, 115, 128, 141};
+	int buttonY[] = {9, 22, 35, 48, 61, 74, 87, 100, 113, 126, 139, 152};
+	// scaler
 	int num_scalers = scr->get_scaler_reg()->GetNumScalers();
 	const char *scaler_text[num_scalers];
 	for (int i = 0; i <= num_scalers; i++)
 		scaler_text[i] = scr->get_scaler_reg()->GetNameForIndex(i);
 
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[0], 0, 0, 0, "Scaler:", font);
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY[0], 0, 0, 0, "Scaler:", font);
 	AddWidget(widget);
-// scaler(fullscreen)
+	// scaler(fullscreen)
 	int num_scalers_fullscreen, fullscreen_scaler_selection;
 	bool no_only2x_scalers = !SDL_VideoModeOK(scrWidth * 2, scrHeight * 2, bpp, SDL_FULLSCREEN);
 	if (no_only2x_scalers) {
@@ -107,11 +107,11 @@ bool VideoDialog::init() {
 	}
 	scaler_button = new GUI_TextToggleButton(this, colX[2], buttonY[0], 208, height, scaler_text, num_scalers_fullscreen, fullscreen_scaler_selection, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(scaler_button);
-// scaler (windowed)
+	// scaler (windowed)
 	scaler_win_button = new GUI_TextToggleButton(this, colX[2], buttonY[0], 208, height, scaler_text, num_scalers, scr->get_scaler_index(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(scaler_win_button);
-// scale
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[1], 0, 0, 0, "Scale:", gui->get_font());
+	// scale
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY[1], 0, 0, 0, "Scale:", gui->get_font());
 	AddWidget(widget);
 	const char *scale_win_text[10];
 	scale_win_text[0] = "1";
@@ -123,9 +123,9 @@ bool VideoDialog::init() {
 	scale_win_text[6] = "7";
 	scale_win_text[7] = "8";
 	int scale = scr->get_scale_factor();
-	char buff [4];
-	itoa(scale, buff, 10);  // write current scale to buff
-// scale (fullscreen)
+	char buff[4];
+	itoa(scale, buff, 10); // write current scale to buff
+	                       // scale (fullscreen)
 	const char *scale_text[10];
 	int num_scale = 0;
 	int scale_selection = 9;
@@ -157,7 +157,7 @@ bool VideoDialog::init() {
 		scale_button = new GUI_TextToggleButton(this, colX[4], buttonY[1], yesno_width, height, scale_text, num_scale, scale_selection, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(scale_button);
 	}
-// scale (windowed)
+	// scale (windowed)
 	int num_win_scale, scale_win_selection;
 	if (scale < 9) {
 		num_win_scale = 8;
@@ -169,33 +169,33 @@ bool VideoDialog::init() {
 	}
 	scale_win_button = new GUI_TextToggleButton(this, colX[4], buttonY[1], yesno_width, height, scale_win_text, num_win_scale, scale_win_selection, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(scale_win_button);
-// scale (only2x scale button for scalers that aren't point or interlaced)
+	// scale (only2x scale button for scalers that aren't point or interlaced)
 	only2x_button = new GUI_Button(this, colX[3], buttonY[1], 70, height, "2x only", font, BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(only2x_button);
-// fullscreen_toggle
+	// fullscreen_toggle
 	fullscreen_button = new GUI_TextToggleButton(this, colX[4], buttonY[2], yesno_width, height, yesno_text, 2, scr->is_fullscreen(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(fullscreen_button);
 
 	if (no_fullscreen && !scr->is_fullscreen()) {
 		fullscreen_button->Hide();
 	} else {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY[2], 0, 0, 0, "Fullscreen:", gui->get_font());
+		widget = (GUI_Widget *)new GUI_Text(colX[0], textY[2], 0, 0, 0, "Fullscreen:", gui->get_font());
 		AddWidget(widget);
 	}
 #endif /* !SCALER_AND_SCALE_CANNOT_BE_CHANGED */
 
 	bool first_index = true;
 #if SCALER_AND_SCALE_CANNOT_BE_CHANGED
-// fullscreen_toggle
+	// fullscreen_toggle
 	if (!no_fullscreen || scr->is_fullscreen()) {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY, 0, 0, 0, "Fullscreen:", gui->get_font());
+		widget = (GUI_Widget *)new GUI_Text(colX[0], textY, 0, 0, 0, "Fullscreen:", gui->get_font());
 		AddWidget(widget);
 
 		fullscreen_button = new GUI_TextToggleButton(this, colX[4], buttonY, yesno_width, height, yesno_text, 2, scr->is_fullscreen(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(fullscreen_button);
 		button_index[last_index] = fullscreen_button;
 
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Non-square pixels:", gui->get_font());
+		widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Non-square pixels:", gui->get_font());
 		AddWidget(widget);
 		non_square_pixels_button = new GUI_TextToggleButton(this, colX[4], buttonY += row_h, yesno_width, height, yesno_text, 2, scr->is_non_square_pixels(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(non_square_pixels_button);
@@ -208,18 +208,18 @@ bool VideoDialog::init() {
 
 	Configuration *config = Game::get_game()->get_config();
 
-// show roofs
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += first_index ? 0 : row_h, 0, 0, 0, "Show roofs:", gui->get_font());
+	// show roofs
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY += first_index ? 0 : row_h, 0, 0, 0, "Show roofs:", gui->get_font());
 	AddWidget(widget);
 	roof_button = new GUI_TextToggleButton(this, colX[4], buttonY += first_index ? 0 : row_h, yesno_width, height, yesno_text, 2, game->is_roof_mode(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(roof_button);
 	button_index[(last_index += first_index ? 0 : 1)] = roof_button;
-// use_new_dolls
+	// use_new_dolls
 	if (game->is_new_style()) {
 		doll_button = NULL;
 		old_use_new_dolls = true;
 	} else {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use new actor dolls:", gui->get_font());
+		widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use new actor dolls:", gui->get_font());
 		AddWidget(widget);
 		bool use_new_dolls;
 		config->value(config_get_game_key(config) + "/use_new_dolls", use_new_dolls, false);
@@ -228,27 +228,27 @@ bool VideoDialog::init() {
 		AddWidget(doll_button);
 		button_index[last_index += 1] = doll_button;
 	}
-// tile_lighting_b
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use lighting data from map tiles:", gui->get_font());
+	// tile_lighting_b
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use lighting data from map tiles:", gui->get_font());
 	AddWidget(widget);
 	old_use_tile_lighting = game->get_map_window()->using_map_tile_lighting;
 	tile_lighting_b = new GUI_TextToggleButton(this, colX[4], buttonY += row_h, yesno_width, height, yesno_text, 2, old_use_tile_lighting, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(tile_lighting_b);
 	button_index[last_index += 1] = tile_lighting_b;
-// needs restart text
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h * 2, 0, 0, 0, "The following require a restart:", gui->get_font());
+	// needs restart text
+	widget = (GUI_Widget *)new GUI_Text(colX[0], textY += row_h * 2, 0, 0, 0, "The following require a restart:", gui->get_font());
 	AddWidget(widget);
-// lighting (needs reset)
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Lighting mode:", gui->get_font());
+	// lighting (needs reset)
+	widget = (GUI_Widget *)new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Lighting mode:", gui->get_font());
 	AddWidget(widget);
-	const char *const lighting_text[] = { "none", "smooth", "original" };
+	const char *const lighting_text[] = {"none", "smooth", "original"};
 	lighting_button = new GUI_TextToggleButton(this, colX[3], buttonY += row_h * 3, 70, height, lighting_text, 3, scr->get_old_lighting_style(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(lighting_button);
 	button_index[last_index += 1] = lighting_button;
-// sprites (needs reset)
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Use custom actor tiles:", gui->get_font());
+	// sprites (needs reset)
+	widget = (GUI_Widget *)new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Use custom actor tiles:", gui->get_font());
 	AddWidget(widget);
-	const char *const sprite_text[] = { "no", "yes", "default" };
+	const char *const sprite_text[] = {"no", "yes", "default"};
 	Std::string custom_tile_str;
 	int custom_tiles;
 	config->value(config_get_game_key(config) + "/custom_actor_tiles", custom_tile_str, "default");
@@ -259,25 +259,25 @@ bool VideoDialog::init() {
 	sprites_b = new GUI_TextToggleButton(this, colX[3], buttonY += row_h, 70, height, sprite_text, 3, custom_tiles, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(sprites_b);
 	button_index[last_index += 1] = sprites_b;
-// game_style (needs reset)
+	// game_style (needs reset)
 	const char *game_style_text[4];
 	game_style_text[0] = "original style";
 	game_style_text[1] = "new style";
 	game_style_text[2] = "original+";
 	game_style_text[3] = "original+ full map";
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Game style:", gui->get_font());
+	widget = (GUI_Widget *)new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Game style:", gui->get_font());
 	AddWidget(widget);
 	game_style_button = new GUI_TextToggleButton(this, colX[3] - 84, buttonY += row_h, 154, height, game_style_text, 4, game->get_game_style(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(game_style_button);
 	button_index[last_index += 1] = game_style_button;
-// dithering (needs reset)
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Old video graphics:", gui->get_font());
+	// dithering (needs reset)
+	widget = (GUI_Widget *)new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Old video graphics:", gui->get_font());
 	AddWidget(widget);
-	const char *const dither_text[] = { "no", "CGA", "EGA" };
+	const char *const dither_text[] = {"no", "CGA", "EGA"};
 	dither_button = new GUI_TextToggleButton(this, colX[4], buttonY += row_h, yesno_width, height, dither_text, 3, game->get_dither()->get_mode(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(dither_button);
 	button_index[last_index += 1] = dither_button;
-// cancel/save buttons
+	// cancel/save buttons
 	cancel_button = new GUI_Button(this, 95, VD_HEIGHT - 20, 54, height, "Cancel", font, BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(cancel_button);
 	button_index[last_index += 1] = cancel_button;
@@ -310,7 +310,7 @@ void VideoDialog::rebuild_buttons(bool init) {
 		else
 			scaler = scaler_win_button->GetSelection();
 	}
-// scaler buttons
+	// scaler buttons
 	if (fullscreen) {
 		if (scaler_button)
 			scaler_button->Show();
@@ -320,7 +320,7 @@ void VideoDialog::rebuild_buttons(bool init) {
 			scaler_button->Hide();
 		scaler_win_button->Show();
 	}
-// scale buttons
+	// scale buttons
 	if (scaler > 1) {
 		if (scale_button)
 			scale_button->Hide();
@@ -374,7 +374,8 @@ GUI_status VideoDialog::KeyDown(const Common::KeyState &key) {
 		button_index[b_index_num]->set_highlighted(true);
 		break;
 	case DO_ACTION_KEY:
-		if (b_index_num != -1) return button_index[b_index_num]->Activate_button();
+		if (b_index_num != -1)
+			return button_index[b_index_num]->Activate_button();
 		break;
 	case CANCEL_ACTION_KEY:
 		return close_dialog();

@@ -27,10 +27,10 @@
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -45,6 +45,7 @@ class Scene600 : public SceneExt {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
@@ -77,10 +78,11 @@ class Scene666 : public SceneExt {
 	};
 
 	/* Items */
-	class Item1: public NamedHotspot {
+	class Item1 : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	Action1 _action1;
 	SequenceManager _sequenceManager;
@@ -93,17 +95,17 @@ public:
 	void signal() override;
 };
 
-
 class Scene690 : public SceneExt {
 	/* Objects */
-	class Object1: public NamedObject {
+	class Object1 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object2: public NamedObject {
+	class Object2 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Object1 _object1;

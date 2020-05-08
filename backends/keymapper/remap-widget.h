@@ -23,8 +23,8 @@
 #ifndef REMAP_WIDGET_H
 #define REMAP_WIDGET_H
 
-#include "common/scummsys.h"
 #include "common/hash-ptr.h"
+#include "common/scummsys.h"
 
 #include "gui/widget.h"
 
@@ -34,7 +34,7 @@ class DropdownButtonWidget;
 class PopUpWidget;
 class ScrollContainerWidget;
 class StaticTextWidget;
-}
+} // namespace GUI
 
 namespace Common {
 

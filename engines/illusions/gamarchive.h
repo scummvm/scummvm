@@ -23,8 +23,8 @@
 #ifndef ILLUSIONS_GAMARCHIVE_H
 #define ILLUSIONS_GAMARCHIVE_H
 
-#include "illusions/illusions.h"
 #include "common/file.h"
+#include "illusions/illusions.h"
 
 namespace Illusions {
 
@@ -50,6 +50,7 @@ public:
 	GamArchive(const char *filename);
 	~GamArchive();
 	byte *readResource(uint32 sceneId, uint32 resId, uint32 &dataSize);
+
 protected:
 	Common::File *_fd;
 	uint _groupCount;

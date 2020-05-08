@@ -75,9 +75,9 @@ void Room::love1Tick1() {
 		_roomVar.love.itemInNozzle = OBJECT_IRLG;
 		goto common;
 
-common:
+	common:
 		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
-	// fall through
+		// fall through
 
 	case BOTTLETYPE_NONE:
 	default:
@@ -619,11 +619,10 @@ void Room::love1UseRedshirtOnLadder() {
 
 void Room::love1CrewmanReachedLadder() {
 	const int32 speakers[] = {
-		TX_SPEAKER_KIRK,
-		TX_SPEAKER_SPOCK,
-		TX_SPEAKER_MCCOY,
-		TX_SPEAKER_FERRIS
-	};
+	    TX_SPEAKER_KIRK,
+	    TX_SPEAKER_SPOCK,
+	    TX_SPEAKER_MCCOY,
+	    TX_SPEAKER_FERRIS};
 
 	if (_awayMission->love.romulansUnconsciousFromLaughingGas || _awayMission->love.romulansUnconsciousFromVirus) // Romulans unconscious
 		loadRoomIndex(4, 3);
@@ -658,4 +657,4 @@ void Room::love1TouchedHotspot0() {
 		showText(TX_SPEAKER_FERRIS, 28, true);
 }
 
-}
+} // namespace StarTrek

@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/fireball_process.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/misc/direction.h"
-#include "ultima/ultima8/world/weapon_info.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/item_factory.h"
+#include "ultima/ultima8/world/weapon_info.h"
 
 #include "ultima/shared/std/misc.h"
 
@@ -40,12 +40,11 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(FireballProcess, Process)
 
 FireballProcess::FireballProcess()
-	: Process(), _xSpeed(0), _ySpeed(0), _age(0), _target(0) {
-
+    : Process(), _xSpeed(0), _ySpeed(0), _age(0), _target(0) {
 }
 
 FireballProcess::FireballProcess(Item *item, Item *target)
-	: _xSpeed(0), _ySpeed(0), _age(0) {
+    : _xSpeed(0), _ySpeed(0), _age(0) {
 	assert(item);
 	assert(target);
 
@@ -164,11 +163,13 @@ void FireballProcess::terminate() {
 
 void FireballProcess::explode() {
 	Item *item = getItem(_itemNum);
-	if (item) item->destroy();
+	if (item)
+		item->destroy();
 
 	for (unsigned int i = 0; i < 3; ++i) {
 		item = getItem(_tail[i]);
-		if (item) item->destroy();
+		if (item)
+			item->destroy();
 	}
 }
 
@@ -214,7 +215,8 @@ void FireballProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool FireballProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_xSpeed = static_cast<int>(rs->readUint32LE());
 	_ySpeed = static_cast<int>(rs->readUint32LE());

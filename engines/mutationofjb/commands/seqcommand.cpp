@@ -43,4 +43,4 @@ Command *SeqCommand::next() const {
 	return _nextCommand;
 }
 
-}
+} // namespace MutationOfJB

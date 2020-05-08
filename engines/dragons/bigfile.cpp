@@ -34,7 +34,7 @@ uint32 BigfileArchive::getResourceId(const char *filename) {
 	return DRAGONS_BIGFILE_TOTAL_FILES;
 }
 
-BigfileArchive::BigfileArchive(DragonsEngine *vm, const char *filename) :_vm(vm), _fd(0) {
+BigfileArchive::BigfileArchive(DragonsEngine *vm, const char *filename) : _vm(vm), _fd(0) {
 	_fd = new Common::File();
 	if (!_fd->open(filename)) {
 		error("BigfileArchive::BigfileArchive() Could not open %s", filename);
@@ -87,6 +87,5 @@ bool BigfileArchive::doesFileExist(const char *filename) {
 	uint32 id = getResourceId(filename);
 	return (id < DRAGONS_BIGFILE_TOTAL_FILES);
 }
-
 
 } // End of namespace Dragons

@@ -21,8 +21,8 @@
  */
 
 #include "titanic/support/movie_range_info.h"
-#include "titanic/support/movie_clip.h"
 #include "titanic/core/game_object.h"
+#include "titanic/support/movie_clip.h"
 
 namespace Titanic {
 
@@ -42,7 +42,7 @@ CMovieRangeInfo::CMovieRangeInfo(const CMovieRangeInfo *src) : ListItem() {
 
 	// Duplicate the events list
 	for (CMovieEventList::const_iterator i = _events.begin();
-			i != _events.end(); ++i) {
+	     i != _events.end(); ++i) {
 		_events.push_back(new CMovieEvent(*i));
 	}
 }

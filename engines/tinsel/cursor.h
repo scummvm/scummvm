@@ -21,10 +21,10 @@
  * Clipping rectangle defines
  */
 
-#ifndef TINSEL_CURSOR_H	// prevent multiple includes
+#ifndef TINSEL_CURSOR_H // prevent multiple includes
 #define TINSEL_CURSOR_H
 
-#include "tinsel/dw.h"	// for SCNHANDLE
+#include "tinsel/dw.h" // for SCNHANDLE
 
 namespace Tinsel {
 
@@ -54,4 +54,4 @@ void EndCursorFollowed();
 
 } // End of namespace Tinsel
 
-#endif	// TINSEL_CURSOR_H
+#endif // TINSEL_CURSOR_H

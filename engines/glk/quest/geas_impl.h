@@ -43,8 +43,7 @@ struct match_binding {
 	}
 };
 
-Common::WriteStream &operator<< (Common::WriteStream &, const match_binding &);
-
+Common::WriteStream &operator<<(Common::WriteStream &, const match_binding &);
 
 struct match_rv {
 	bool success;
@@ -52,12 +51,12 @@ struct match_rv {
 	//match_rv (bool b, const Common::Array<String> &v) : success(b), bindings(v) {}
 	match_rv() : success(false) {}
 	match_rv(bool b, const match_rv &rv) : success(b), bindings(rv.bindings) {}
-	operator bool () {
+	operator bool() {
 		return success;
 	}
 };
 
-Common::WriteStream &operator<< (Common::WriteStream &o, const match_rv &rv);
+Common::WriteStream &operator<<(Common::WriteStream &o, const match_rv &rv);
 /*
   inline ostream &operator<< (ostream &o, const match_rv &rv)
 {
@@ -77,8 +76,8 @@ class geas_implementation : public GeasRunner {
 	GeasFile gf;
 	//bool running;
 	bool dont_process, outputting;
-	LimitStack <GeasState> undo_buffer;
-	Common::Array <String> function_args;
+	LimitStack<GeasState> undo_buffer;
+	Common::Array<String> function_args;
 	String this_object;
 	v2string current_places;
 	bool is_running_;
@@ -86,7 +85,7 @@ class geas_implementation : public GeasRunner {
 
 public:
 	geas_implementation(GeasInterface *in_gi)
-		: GeasRunner(in_gi), undo_buffer(20), is_running_(true) {}
+	    : GeasRunner(in_gi), undo_buffer(20), is_running_(true) {}
 	void set_game(const String &fname) override;
 
 	bool is_running() const override;
@@ -138,7 +137,7 @@ public:
 	bool get_obj_action(String objname, String actname,
 	                    String &rv) const;
 	String exit_dest(String room, String dir, bool *is_act = NULL) const;
-	Common::Array<Common::Array<String> > get_places(String room);
+	Common::Array<Common::Array<String>> get_places(String room);
 
 	void set_obj_property(String obj, String prop);
 	void set_obj_action(String obj, String act);
@@ -153,7 +152,6 @@ public:
 		assert(is_param(s));
 		return eval_string(param_contents(s));
 	}
-
 
 	void run_script_as(String, String);
 	void run_script(String);
@@ -175,15 +173,17 @@ public:
 	vstring get_status_vars() override;
 	Common::Array<bool> get_valid_exits() override;
 
-
 	inline void print_formatted(String s) const {
-		if (outputting) gi->print_formatted(s);
+		if (outputting)
+			gi->print_formatted(s);
 	}
 	inline void print_normal(String s) const {
-		if (outputting) gi->print_normal(s);
+		if (outputting)
+			gi->print_normal(s);
 	}
 	inline void print_newline() const {
-		if (outputting) gi->print_newline();
+		if (outputting)
+			gi->print_newline();
 	}
 
 	/*

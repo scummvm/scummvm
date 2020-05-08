@@ -23,23 +23,23 @@
 #include "ultima/nuvie/core/nuvie_defs.h"
 
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/gui/widgets/console.h"
+#include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_shape.h"
+#include "ultima/nuvie/gui/widgets/console.h"
 #include "ultima/nuvie/screen/dither.h"
-#include "ultima/nuvie/core/game.h"
 
-#include "ultima/nuvie/actors/actor_manager.h"
 #include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
 
 #include "ultima/nuvie/portraits/portrait.h"
-#include "ultima/nuvie/portraits/portrait_u6.h"
 #include "ultima/nuvie/portraits/portrait_md.h"
 #include "ultima/nuvie/portraits/portrait_se.h"
+#include "ultima/nuvie/portraits/portrait_u6.h"
 
+#include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_lzw.h"
 #include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/u6_lib_n.h"
 
 #include "ultima/nuvie/core/u6_objects.h"
 
@@ -49,19 +49,18 @@ namespace Nuvie {
 Portrait *newPortrait(nuvie_game_t gametype, Configuration *cfg) {
 	// Correct portrait class for each game
 	switch (gametype) {
-	case NUVIE_GAME_U6 :
-		return (Portrait *) new PortraitU6(cfg);
+	case NUVIE_GAME_U6:
+		return (Portrait *)new PortraitU6(cfg);
 		break;
-	case NUVIE_GAME_MD :
-		return (Portrait *) new PortraitMD(cfg);
+	case NUVIE_GAME_MD:
+		return (Portrait *)new PortraitMD(cfg);
 		break;
-	case NUVIE_GAME_SE :
-		return (Portrait *) new PortraitSE(cfg);
+	case NUVIE_GAME_SE:
+		return (Portrait *)new PortraitSE(cfg);
 		break;
 	}
 	return NULL;
 }
-
 
 Portrait::Portrait(Configuration *cfg) {
 	config = cfg;
@@ -74,9 +73,8 @@ uint8 Portrait::get_avatar_portrait_num() {
 	return get_portrait_num(Game::get_game()->get_actor_manager()->get_avatar());
 }
 
-
 unsigned char *Portrait::get_wou_portrait_data(U6Lib_n *lib, uint8 num) {
-// MD/SE
+	// MD/SE
 	U6Shape *shp;
 	unsigned char *shp_data;
 	NuvieIOBuffer shp_buf;

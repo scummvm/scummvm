@@ -23,13 +23,13 @@
 #ifndef GRAPHICS_SURFACE_H
 #define GRAPHICS_SURFACE_H
 
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 
 namespace Common {
 struct Rect;
 struct Point;
-}
+} // namespace Common
 
 #include "graphics/pixelformat.h"
 
@@ -418,6 +418,5 @@ private:
 };
 
 } // End of namespace Graphics
-
 
 #endif

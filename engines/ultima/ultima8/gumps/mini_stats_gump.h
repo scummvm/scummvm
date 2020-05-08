@@ -51,6 +51,7 @@ public:
 	void OnMouseDouble(int button, int32 mx, int32 my) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

@@ -55,43 +55,31 @@ bool AIScriptClovis::Update() {
 		return true;
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 3
-	 && Actor_Query_Goal_Number(kActorClovis) < kGoalClovisStartChapter3
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorClovis) < kGoalClovisStartChapter3) {
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisStartChapter3);
 		return true;
 	}
 
-	if ( Global_Variable_Query(kVariableChapter) == 4
-	 && !Game_Flag_Query(kFlagClovisChapter4Started)
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(kFlagClovisChapter4Started)) {
 		Game_Flag_Set(kFlagClovisChapter4Started);
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisStartChapter4);
 		return true;
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 5
-	 && Actor_Query_Goal_Number(kActorClovis) < kGoalClovisStartChapter5
-	) {
+	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorClovis) < kGoalClovisStartChapter5) {
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisStartChapter5);
 	}
 
-	if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP06Wait
-	 && Game_Flag_Query(kFlagNotUsed657)
-	) {
+	if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP06Wait && Game_Flag_Query(kFlagNotUsed657)) {
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP06TalkToMcCoy);
 	}
 
-	if ( Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-	 && !Game_Flag_Query(kFlagKP07ReplicantsAttackMcCoy)
-	 &&  Game_Flag_Query(kFlagKP07McCoyPulledGun)
-	) {
+	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants) && !Game_Flag_Query(kFlagKP07ReplicantsAttackMcCoy) && Game_Flag_Query(kFlagKP07McCoyPulledGun)) {
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07ReplicantsAttackMcCoy);
 		Game_Flag_Set(kFlagKP07ReplicantsAttackMcCoy);
 		return true;
 	}
 	return false;
-
 }
 
 void AIScriptClovis::TimerExpired(int timer) {
@@ -149,9 +137,7 @@ void AIScriptClovis::OtherAgentExitedThisSet(int otherActorId) {
 }
 
 void AIScriptClovis::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-	 && Actor_Query_In_Set(kActorMcCoy, kSetKP07)
-	) {
+	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants) && Actor_Query_In_Set(kActorMcCoy, kSetKP07)) {
 		Game_Flag_Set(kFlagKP07McCoyPulledGun);
 		Game_Flag_Set(kFlagMcCoyAttackedReplicants);
 		// return true;
@@ -172,16 +158,14 @@ bool AIScriptClovis::ShotAtAndHit() {
 			Actor_Set_Targetable(kActorClovis, false);
 			ADQ_Add(kActorMcCoy, 2340, -1);
 			Music_Stop(3);
-		} else if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07Wait
-		        || Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07LayDown
-		) {
+		} else if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07Wait || Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07LayDown) {
 			ADQ_Flush();
 			Actor_Set_Goal_Number(kActorClovis, kGoalClovisGone);
 			shotAnim();
 			Actor_Set_Targetable(kActorClovis, false);
 			Music_Stop(3);
 		}
-}
+	}
 	return false;
 }
 
@@ -466,13 +450,9 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeEnd4A, false, -1);
-		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
-		 && Game_Flag_Query(kFlagLucyIsReplicant)
-		) {
+		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy && Game_Flag_Query(kFlagLucyIsReplicant)) {
 			Outtake_Play(kOuttakeEnd4B, false, -1);
-		} else if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
-		       && Game_Flag_Query(kFlagDektoraIsReplicant)
-		) {
+		} else if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora && Game_Flag_Query(kFlagDektoraIsReplicant)) {
 			Outtake_Play(kOuttakeEnd4C, false, -1);
 		}
 		Outtake_Play(kOuttakeEnd4D, false, -1);
@@ -480,9 +460,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalClovisKP07ReplicantsAttackMcCoy:
-		if (Global_Variable_Query(kVariableChapter) == 5
-		 && Actor_Query_In_Set(kActorLucy, kSetKP07)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorLucy, kSetKP07)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 			// Lucy's retirement on the moonbus should be handled in her ai script AIScriptLucy::Retired()
 			// like the others - even if she won't attack McCoy, she should be retired immediately (with one shot)
@@ -495,9 +473,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 
-		if (Global_Variable_Query(kVariableChapter) == 5
-		 && Actor_Query_In_Set(kActorLuther, kSetKP07)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorLuther, kSetKP07)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 			// Luther's retirement on the moonbus should be handled in his ai script AIScriptLuther:Retired()
 			// like the others - even if he won't attack McCoy, he should be retired immediately (with one shot)
@@ -506,39 +482,27 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 
-		if (Global_Variable_Query(kVariableChapter) == 5
-		 && Actor_Query_In_Set(kActorDektora, kSetKP07)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorDektora, kSetKP07)) {
 			Non_Player_Actor_Combat_Mode_On(kActorDektora, kActorCombatStateIdle, false, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 
-		if (Global_Variable_Query(kVariableChapter) == 5
-		 && Actor_Query_In_Set(kActorZuben, kSetKP07)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorZuben, kSetKP07)) {
 			Non_Player_Actor_Combat_Mode_On(kActorZuben, kActorCombatStateIdle, false, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 
-		if (Global_Variable_Query(kVariableChapter) == 5
-		 && Actor_Query_In_Set(kActorSadik, kSetKP07)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorSadik, kSetKP07)) {
 			Non_Player_Actor_Combat_Mode_On(kActorSadik, kActorCombatStateIdle, true, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 
-		if (Global_Variable_Query(kVariableChapter) == 5
-		 && Actor_Query_In_Set(kActorIzo, kSetKP07)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorIzo, kSetKP07)) {
 			Non_Player_Actor_Combat_Mode_On(kActorIzo, kActorCombatStateIdle, false, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 
-		if (Global_Variable_Query(kVariableChapter) == 5
-		 && Actor_Query_In_Set(kActorGordo, kSetKP07)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorGordo, kSetKP07)) {
 			Non_Player_Actor_Combat_Mode_On(kActorGordo, kActorCombatStateIdle, true, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 
-		if (Global_Variable_Query(kVariableChapter) == 5
-		 && Actor_Query_In_Set(kActorClovis, kSetKP07)
-		) {
+		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorClovis, kSetKP07)) {
 			Non_Player_Actor_Combat_Mode_On(kActorClovis, kActorCombatStateIdle, false, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 		return true;
@@ -1143,9 +1107,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 33:
 		*animation = 244;
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _flag) {
 			_animationState = 32;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorClovis, 54);
@@ -1511,17 +1473,17 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 }
 
 void AIScriptClovis::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptClovis::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptClovis::ReachedMovementTrackWaypoint(int waypointId) {

@@ -23,13 +23,13 @@
 #ifndef NUVIE_NUVIE_H
 #define NUVIE_NUVIE_H
 
-#include "ultima/shared/engine/ultima.h"
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/conf/configuration.h"
 #include "common/archive.h"
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/shared/engine/ultima.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -46,6 +46,7 @@ private:
 	Script *_script;
 	Game *_game;
 	SaveGame *_savegame;
+
 private:
 	void initConfig();
 	void assignGameConfigValues(uint8 game_type);
@@ -53,15 +54,18 @@ private:
 	bool checkDataDir();
 
 	bool playIntro();
-protected:
-    bool initialize() override;
 
-    /**
+protected:
+	bool initialize() override;
+
+	/**
      * Returns the data archive folder and version that's required
      */
-    bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+
 public:
 	const Std::string c_empty_string;
+
 public:
 	NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~NuvieEngine() override;

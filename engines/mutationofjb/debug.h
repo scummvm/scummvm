@@ -35,6 +35,7 @@ class Console : public GUI::Debugger {
 public:
 	Console(MutationOfJBEngine *vm);
 	~Console(void) override {}
+
 private:
 	bool cmd_showallcommands(int argc, const char **argv);
 	bool cmd_listsections(int argc, const char **argv);
@@ -58,6 +59,6 @@ private:
 	MutationOfJBEngine *_vm;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

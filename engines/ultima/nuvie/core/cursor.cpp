@@ -20,23 +20,22 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/cursor.h"
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/screen/screen.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_lzw.h"
 #include "ultima/nuvie/files/u6_shape.h"
-#include "ultima/nuvie/files/u6_lib_n.h"
-#include "ultima/nuvie/core/cursor.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/screen.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 using Std::string;
 using Std::vector;
-
 
 Cursor::Cursor() {
 	cursor_id = 0;
@@ -49,7 +48,6 @@ Cursor::Cursor() {
 	config = NULL;
 	screen_w = screen_h = 0;
 }
-
 
 /* Returns true if mouse pointers file was loaded.
  */
@@ -68,13 +66,13 @@ bool Cursor::init(Configuration *c, Screen *s, nuvie_game_t game_type) {
 	if (!enable_cursors)
 		return false;
 	switch (game_type) {
-	case NUVIE_GAME_U6 :
+	case NUVIE_GAME_U6:
 		file = "u6mcga.ptr";
 		break;
-	case NUVIE_GAME_SE :
+	case NUVIE_GAME_SE:
 		file = "secursor.ptr";
 		break;
-	case NUVIE_GAME_MD :
+	case NUVIE_GAME_MD:
 		file = "mdcursor.ptr";
 		break;
 	}
@@ -86,7 +84,6 @@ bool Cursor::init(Configuration *c, Screen *s, nuvie_game_t game_type) {
 			return (true);
 	return (false);
 }
-
 
 /* Load pointers from `filename'. (lzw -> s_lib_32 -> shapes)
  * Returns the number found in the file.
@@ -115,7 +112,6 @@ uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
 	if (!pointer_list.open(&iobuf, 4, NUVIE_GAME_MD))
 		return (0);
 
-
 	uint32 num_read = 0, num_total = pointer_list.get_num_items();
 	cursors.resize(num_total);
 	while (num_read < num_total) { // read each into a new MousePointer
@@ -142,7 +138,6 @@ uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
 	return (num_read);
 }
 
-
 /* Free data.
  */
 void Cursor::unload_all() {
@@ -155,7 +150,6 @@ void Cursor::unload_all() {
 		free(cleanup);
 }
 
-
 /* Set active pointer.
  */
 bool Cursor::set_pointer(uint8 ptr_num) {
@@ -165,7 +159,6 @@ bool Cursor::set_pointer(uint8 ptr_num) {
 	cursor_id = ptr_num;
 	return (true);
 }
-
 
 /* Draw self on screen at px,py, or at mouse location if px or py is -1.
  * Returns false on failure.
@@ -177,7 +170,7 @@ bool Cursor::display(int px, int py) {
 		return (true);
 	if (px == -1 || py == -1) {
 		screen->get_mouse_location(&px, &py);
-//        DEBUG(0,LEVEL_DEBUGGING,"mouse pos: %d,%d", px, py);
+		//        DEBUG(0,LEVEL_DEBUGGING,"mouse pos: %d,%d", px, py);
 	}
 	MousePointer *ptr = cursors[cursor_id];
 
@@ -186,12 +179,11 @@ bool Cursor::display(int px, int py) {
 
 	screen->blit((uint16)px, (uint16)py, ptr->shapedat, 8, ptr->w, ptr->h, ptr->w, true);
 
-//    screen->update(px, py, ptr->w, ptr->h);
+	//    screen->update(px, py, ptr->w, ptr->h);
 	add_update(px, py, ptr->w, ptr->h);
 	update();
 	return (true);
 }
-
 
 /* Restore backing behind cursor (hide until next display). Must call update()
  * sometime after to remove from screen.
@@ -200,11 +192,10 @@ void Cursor::clear() {
 	if (cleanup) {
 		screen->restore_area(cleanup, &cleanup_area);
 		cleanup = NULL;
-//        screen->update(cleanup_area.left, cleanup_area.top, cleanup_area.w, cleanup_area.h);
+		//        screen->update(cleanup_area.left, cleanup_area.top, cleanup_area.w, cleanup_area.h);
 		add_update(cleanup_area.left, cleanup_area.top, cleanup_area.width(), cleanup_area.height());
 	}
 }
-
 
 /* Offset requested position px,py by pointer hotspot, and screen boundary.
  */
@@ -223,7 +214,6 @@ inline void Cursor::fix_position(MousePointer *ptr, int &px, int &py) {
 		py = screen_h - ptr->h - 1;
 }
 
-
 /* Copy cleanup area (cursor backingstore) from screen.
  */
 void Cursor::save_backing(uint32 px, uint32 py, uint32 w, uint32 h) {
@@ -239,14 +229,12 @@ void Cursor::save_backing(uint32 px, uint32 py, uint32 w, uint32 h) {
 	cleanup = screen->copy_area(&cleanup_area);
 }
 
-
 /* Mark update_area (cleared/displayed) as updated on the screen.
  */
 void Cursor::update() {
 	screen->update(update_area.left, update_area.top, update_area.width(), update_area.height());
 	update_area = Common::Rect();
 }
-
 
 /* Add to update_area.
  */
@@ -258,11 +246,15 @@ void Cursor::add_update(uint16 x, uint16 y, uint16 w, uint16 h) {
 		update_area.setHeight(h);
 	} else {
 		uint16 x2 = x + w, y2 = y + h,
-			update_x2 = update_area.right, update_y2 = update_area.bottom;
-		if (x <= update_area.left) update_area.left = x;
-		if (y <= update_area.top) update_area.top = y;
-		if (x2 >= update_x2) update_x2 = x2;
-		if (y2 >= update_y2) update_y2 = y2;
+		       update_x2 = update_area.right, update_y2 = update_area.bottom;
+		if (x <= update_area.left)
+			update_area.left = x;
+		if (y <= update_area.top)
+			update_area.top = y;
+		if (x2 >= update_x2)
+			update_x2 = x2;
+		if (y2 >= update_y2)
+			update_y2 = y2;
 		update_area.setWidth(update_x2 - update_area.left);
 		update_area.setHeight(update_y2 - update_area.top);
 	}

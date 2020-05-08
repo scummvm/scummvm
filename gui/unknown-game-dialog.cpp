@@ -22,13 +22,13 @@
 
 #include "gui/unknown-game-dialog.h"
 
-#include "common/translation.h"
 #include "common/str-array.h"
 #include "common/system.h"
+#include "common/translation.h"
 
+#include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
-#include "gui/ThemeEval.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/scrollcontainer.h"
 
@@ -41,9 +41,8 @@ enum {
 	kAddAnyway = 'adda'
 };
 
-UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame) :
-		Dialog("UnknownGameDialog"),
-		_detectedGame(detectedGame) {
+UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame) : Dialog("UnknownGameDialog"),
+                                                                         _detectedGame(detectedGame) {
 
 	if (detectedGame.canBeAdded) {
 		_addAnywayButton = new ButtonWidget(this, "UnknownGameDialog.Add", _("Add anyway"), nullptr, kAddAnyway);
@@ -83,7 +82,7 @@ void UnknownGameDialog::reflowLayout() {
 
 void UnknownGameDialog::rebuild() {
 	// First remove the old text widgets
-	for (uint i = 0; i < _textWidgets.size() ; i++) {
+	for (uint i = 0; i < _textWidgets.size(); i++) {
 		_textContainer->removeWidget(_textWidgets[i]);
 
 		// Also remove the widget from the dialog for the case it was
@@ -112,7 +111,7 @@ void UnknownGameDialog::rebuild() {
 
 	// Create text widgets
 	uint y = 8;
-	for (uint i = 0; i < lines.size() ; i++) {
+	for (uint i = 0; i < lines.size(); i++) {
 		StaticTextWidget *widget = new StaticTextWidget(_textContainer, 10, y, _textContainer->getWidth() - 20, kLineHeight, lines[i], Graphics::kTextAlignLeft);
 		_textWidgets.push_back(widget);
 		y += kLineHeight;
@@ -121,10 +120,10 @@ void UnknownGameDialog::rebuild() {
 
 Common::String UnknownGameDialog::encodeUrlString(const Common::String &string) {
 	Common::String encoded;
-	for (uint i = 0 ; i < string.size() ; ++i) {
+	for (uint i = 0; i < string.size(); ++i) {
 		char c = string[i];
-		if ((c >= 'a' && c <= 'z') || (c >= 'A'  && c <= 'Z') || (c >= '0' && c <= '9') ||
-			c == '~' || c == '-' || c == '.' || c == '_')
+		if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') ||
+		    c == '~' || c == '-' || c == '.' || c == '_')
 			encoded += c;
 		else
 			encoded += Common::String::format("%%%02X", c);
@@ -139,21 +138,21 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 	Common::String engineId = encodeUrlString(_detectedGame.engineId);
 
 	return Common::String::format(
-		"https://www.scummvm.org/unknowngame?"
-		"engine=%s"
-		"&description=%s",
-		engineId.c_str(),
-		report.c_str());
+	    "https://www.scummvm.org/unknowngame?"
+	    "engine=%s"
+	    "&description=%s",
+	    engineId.c_str(),
+	    report.c_str());
 }
 
 void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	switch(cmd) {
+	switch (cmd) {
 	case kCopyToClipboard: {
 		Common::String report = generateUnknownGameReport(_detectedGame, false, false);
 
 		if (g_system->setTextInClipboard(report)) {
 			g_system->displayMessageOnOSD(
-					_("All necessary information about your game has been copied into the clipboard"));
+			    _("All necessary information about your game has been copied into the clipboard"));
 		} else {
 			g_system->displayMessageOnOSD(_("Copying the game information to the clipboard has failed!"));
 		}

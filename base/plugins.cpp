@@ -22,10 +22,10 @@
 
 #include "base/plugins.h"
 
-#include "common/translation.h"
-#include "common/func.h"
-#include "common/debug.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/func.h"
+#include "common/translation.h"
 
 #ifdef DYNAMIC_MODULES
 #include "common/fs.h"
@@ -34,10 +34,9 @@
 // Plugin versioning
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
-	PLUGIN_TYPE_ENGINE_VERSION,
-	PLUGIN_TYPE_MUSIC_VERSION,
+    PLUGIN_TYPE_ENGINE_VERSION,
+    PLUGIN_TYPE_MUSIC_VERSION,
 };
-
 
 // Abstract plugins
 
@@ -62,8 +61,8 @@ public:
 		delete _pluginObject;
 	}
 
-	virtual bool loadPlugin()		{ return true; }
-	virtual void unloadPlugin()		{}
+	virtual bool loadPlugin() { return true; }
+	virtual void unloadPlugin() {}
 };
 
 class StaticPluginProvider : public PluginProvider {
@@ -77,74 +76,74 @@ public:
 	virtual PluginList getPlugins() {
 		PluginList pl;
 
-		#define LINK_PLUGIN(ID) \
-			extern PluginType g_##ID##_type; \
-			extern PluginObject *g_##ID##_getObject(); \
-			pl.push_back(new StaticPlugin(g_##ID##_getObject(), g_##ID##_type));
+#define LINK_PLUGIN(ID)                        \
+	extern PluginType g_##ID##_type;           \
+	extern PluginObject *g_##ID##_getObject(); \
+	pl.push_back(new StaticPlugin(g_##ID##_getObject(), g_##ID##_type));
 
-		// "Loader" for the static plugins.
-		// Iterate over all registered (static) plugins and load them.
+// "Loader" for the static plugins.
+// Iterate over all registered (static) plugins and load them.
 
-		// Engine plugins
-		#include "engines/plugins_table.h"
+// Engine plugins
+#include "engines/plugins_table.h"
 
 		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
 		// static/dynamic plugin, like it's done for the engines
 		LINK_PLUGIN(AUTO)
 		LINK_PLUGIN(NULL)
-		#if defined(WIN32) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(__SYMBIAN32__)
 		LINK_PLUGIN(WINDOWS)
-		#endif
-		#if defined(USE_ALSA)
+#endif
+#if defined(USE_ALSA)
 		LINK_PLUGIN(ALSA)
-		#endif
-		#if defined(USE_SEQ_MIDI)
+#endif
+#if defined(USE_SEQ_MIDI)
 		LINK_PLUGIN(SEQ)
-		#endif
-		#if defined(USE_SNDIO)
+#endif
+#if defined(USE_SNDIO)
 		LINK_PLUGIN(SNDIO)
-		#endif
-		#if defined(__MINT__)
+#endif
+#if defined(__MINT__)
 		LINK_PLUGIN(STMIDI)
-		#endif
-		#if defined(IRIX)
+#endif
+#if defined(IRIX)
 		LINK_PLUGIN(DMEDIA)
-		#endif
-		#if defined(__amigaos4__)
+#endif
+#if defined(__amigaos4__)
 		LINK_PLUGIN(CAMD)
-		#endif
-		#if defined(MACOSX)
+#endif
+#if defined(MACOSX)
 		LINK_PLUGIN(COREAUDIO)
-		#endif
-		#ifdef USE_FLUIDSYNTH
+#endif
+#ifdef USE_FLUIDSYNTH
 		LINK_PLUGIN(FLUIDSYNTH)
-		#endif
-		#ifdef USE_MT32EMU
+#endif
+#ifdef USE_MT32EMU
 		LINK_PLUGIN(MT32)
-		#endif
-		#if defined(__ANDROID__)
+#endif
+#if defined(__ANDROID__)
 		LINK_PLUGIN(EAS)
-		#endif
+#endif
 		LINK_PLUGIN(ADLIB)
 		LINK_PLUGIN(PCSPK)
 		LINK_PLUGIN(PCJR)
 		LINK_PLUGIN(CMS)
-		#ifndef DISABLE_SID
+#ifndef DISABLE_SID
 		LINK_PLUGIN(C64)
-		#endif
+#endif
 		LINK_PLUGIN(AMIGA)
 		LINK_PLUGIN(APPLEIIGS)
 		LINK_PLUGIN(TOWNS)
 		LINK_PLUGIN(PC98)
-		#if defined(USE_TIMIDITY)
+#if defined(USE_TIMIDITY)
 		LINK_PLUGIN(TIMIDITY)
-		#endif
-		#if defined(MACOSX)
+#endif
+#if defined(MACOSX)
 		// Keep this at the end of the list - it takes a long time to enumerate
 		// and is only for hardware midi devices
 		LINK_PLUGIN(COREMIDI)
-		#endif
+#endif
 
 		return pl;
 	}
@@ -227,9 +226,9 @@ PluginManager &PluginManager::instance() {
 		return *_instance;
 
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
-		_instance = new PluginManagerUncached();
+	_instance = new PluginManagerUncached();
 #else
-		_instance = new PluginManager();
+	_instance = new PluginManager();
 #endif
 	return *_instance;
 }
@@ -245,8 +244,8 @@ PluginManager::~PluginManager() {
 
 	// Delete the plugin providers
 	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
+	     pp != _providers.end();
+	     ++pp) {
 		delete *pp;
 	}
 }
@@ -265,8 +264,8 @@ void PluginManagerUncached::init() {
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false); // empty the engine plugins
 
 	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
+	     pp != _providers.end();
+	     ++pp) {
 		PluginList pl((*pp)->getPlugins());
 
 		for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
@@ -280,13 +279,13 @@ void PluginManagerUncached::init() {
 				if ((*p)->getType() == PLUGIN_TYPE_ENGINE) {
 					(*p)->unloadPlugin();
 					_allEnginePlugins.push_back(*p);
-				} else {	// add non-engine plugins to the 'in-memory' list
-							// these won't ever get unloaded
+				} else { // add non-engine plugins to the 'in-memory' list
+					     // these won't ever get unloaded
 					addToPluginsInMemList(*p);
 				}
 			}
- 		}
- 	}
+		}
+	}
 }
 
 /**
@@ -379,8 +378,8 @@ bool PluginManagerUncached::loadNextPlugin() {
  **/
 void PluginManager::loadAllPlugins() {
 	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
+	     pp != _providers.end();
+	     ++pp) {
 		PluginList pl((*pp)->getPlugins());
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
 	}
@@ -388,12 +387,12 @@ void PluginManager::loadAllPlugins() {
 
 void PluginManager::loadAllPluginsOfType(PluginType type) {
 	for (ProviderList::iterator pp = _providers.begin();
-	                            pp != _providers.end();
-	                            ++pp) {
+	     pp != _providers.end();
+	     ++pp) {
 		PluginList pl((*pp)->getPlugins());
 		for (PluginList::iterator p = pl.begin();
-				                  p != pl.end();
-								  ++p) {
+		     p != pl.end();
+		     ++p) {
 			if ((*p)->loadPlugin()) {
 				if ((*p)->getType() == type) {
 					addToPluginsInMemList((*p));
@@ -554,7 +553,6 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 				engineCandidates[i].shortPath = fslist.begin()->getParent().getDisplayName();
 				candidates.push_back(engineCandidates[i]);
 			}
-
 		}
 	} while (PluginMan.loadNextPlugin());
 
@@ -606,7 +604,7 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 
 	// Add any extra configuration keys
 	for (Common::StringMap::iterator i = game._extraConfigEntries.begin();
-			i != game._extraConfigEntries.end(); ++i)
+	     i != game._extraConfigEntries.end(); ++i)
 		addStringToConf((*i)._key, (*i)._value, domain);
 
 	// TODO: Setting the description field here has the drawback
@@ -641,7 +639,7 @@ const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 
 	// Now look for the plugin using the engine ID. This is much faster than scanning plugin
 	// by plugin
-	if (PluginMan.loadPluginFromEngineId(engineId))  {
+	if (PluginMan.loadPluginFromEngineId(engineId)) {
 		plugin = findLoadedPlugin(engineId);
 		if (plugin)
 			return plugin;

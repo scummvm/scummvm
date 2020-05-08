@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "ultima/nuvie/fonts/bmp_font.h"
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/fonts/bmp_font.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -94,8 +94,6 @@ uint16 BMPFont::getStringWidth(const char *str, uint16 string_len) {
 	}
 
 	return w;
-
-
 }
 uint16 BMPFont::getCharWidth(uint8 c) {
 	if (font_width_data) {

@@ -31,7 +31,7 @@ static osfildef *openForReading(const char *fname) {
 	Common::File f;
 	if (f.open(fname))
 		return f.readStream(f.size());
-	
+
 	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(fname);
 	return save;
 }
@@ -175,7 +175,6 @@ int os_rename_file(const char *oldname, const char *newname) {
 	return g_system->getSavefileManager()->renameSavefile(oldname, newname);
 }
 
-
 bool os_locate(const char *fname, int flen, const char *arg0, char *buf, size_t bufsiz) {
 	Common::String name = !flen ? Common::String(fname) : Common::String(fname, fname + flen);
 
@@ -259,35 +258,33 @@ void os_get_path_name(char *pathbuf, size_t pathbuflen, const char *fname) {
 }
 
 void os_build_full_path(char *fullpathbuf, size_t fullpathbuflen,
-	const char *path, const char *filename) {
+                        const char *path, const char *filename) {
 	strcpy(fullpathbuf, filename);
 }
 
 void os_combine_paths(char *fullpathbuf, size_t pathbuflen,
-	const char *path, const char *filename) {
+                      const char *path, const char *filename) {
 	strcpy(fullpathbuf, filename);
 }
 
 bool os_get_abs_filename(char *result_buf, size_t result_buf_size,
-	const char *filename) {
+                         const char *filename) {
 	strcpy(result_buf, filename);
 	return true;
 }
 
 bool os_get_rel_path(char *result_buf, size_t result_buf_size,
-	const char *basepath, const char *filename) {
+                     const char *basepath, const char *filename) {
 	strcpy(result_buf, filename);
 	return true;
 }
 
 bool os_is_file_in_dir(const char *filename, const char *path,
-	bool include_subdirs, bool match_self) {
+                       bool include_subdirs, bool match_self) {
 	assert(!include_subdirs && !match_self);
 
 	return Common::File::exists(filename);
 }
-
-
 
 /* ------------------------------------------------------------------------ */
 /*
@@ -371,7 +368,7 @@ bool os_is_file_in_dir(const char *filename, const char *path,
 *   quote or otherwise modify characters outside the 0-127 range.
 */
 void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
-	const char *src_path);
+                    const char *src_path);
 
 /*
 *   Convert a URL-style path into a filename path expressed in the local
@@ -469,8 +466,7 @@ void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
 *   Character sets: use the same rules as for os_cvt_dir_url().
 */
 void os_cvt_url_dir(char *result_buf, size_t result_buf_size,
-	const char *src_url);
-
+                    const char *src_url);
 
 } // End of namespace TADS
 } // End of namespace Glk

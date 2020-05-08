@@ -36,9 +36,11 @@ class CSeasonalAdjustment : public CBackground {
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
 	bool ActMsg(CActMsg *msg);
+
 private:
 	bool _switching;
 	bool _enabled;
+
 public:
 	CLASSDEF;
 	CSeasonalAdjustment() : CBackground(), _switching(false), _enabled(0) {}

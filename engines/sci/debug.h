@@ -24,7 +24,7 @@
 #define SCI_DEBUG_H
 
 #include "common/list.h"
-#include "sci/engine/vm_types.h"	// for StackPtr
+#include "sci/engine/vm_types.h" // for StackPtr
 
 namespace Sci {
 
@@ -34,17 +34,17 @@ enum BreakpointType {
 	 * Break when a selector is executed. Data contains selector name
 	 * (in the format Object::Method)
 	 */
-	BREAK_SELECTOREXEC  = 1 << 0, // break when a function selector is executed
-	BREAK_SELECTORREAD  = 1 << 1, // break when a variable selector is read
+	BREAK_SELECTOREXEC = 1 << 0,  // break when a function selector is executed
+	BREAK_SELECTORREAD = 1 << 1,  // break when a variable selector is read
 	BREAK_SELECTORWRITE = 1 << 2, // break when a variable selector is written
 
 	/**
 	 * Break when an exported function is called. _address contains
 	 * script_no << 16 | export_no.
 	 */
-	BREAK_EXPORT        = 1 << 3,
-	BREAK_ADDRESS       = 1 << 4, // break when pc is at _regAddress
-	BREAK_KERNEL        = 1 << 5  // break on named kernel call
+	BREAK_EXPORT = 1 << 3,
+	BREAK_ADDRESS = 1 << 4, // break when pc is at _regAddress
+	BREAK_KERNEL = 1 << 5   // break on named kernel call
 };
 
 enum BreakpointAction {
@@ -57,8 +57,8 @@ enum BreakpointAction {
 
 struct Breakpoint {
 	BreakpointType _type;
-	uint32 _address;     ///< Breakpoints on exports
-	reg_t _regAddress; ///< Breakpoints on addresses
+	uint32 _address;      ///< Breakpoints on exports
+	reg_t _regAddress;    ///< Breakpoints on addresses
 	Common::String _name; ///< Breakpoints on selector names
 	BreakpointAction _action;
 };
@@ -76,14 +76,14 @@ struct DebugState {
 	bool debugging;
 	bool breakpointWasHit;
 	bool stopOnEvent;
-	DebugSeeking seeking;		// Stepping forward until some special condition is met
-	int runningStep;			// Set to > 0 to allow multiple stepping
-	int seekLevel;				// Used for seekers that want to check their exec stack depth
-	int seekSpecial;			// Used for special seeks
+	DebugSeeking seeking; // Stepping forward until some special condition is met
+	int runningStep;      // Set to > 0 to allow multiple stepping
+	int seekLevel;        // Used for seekers that want to check their exec stack depth
+	int seekSpecial;      // Used for special seeks
 	int old_pc_offset;
 	StackPtr old_sp;
-	Common::List<Breakpoint> _breakpoints;   //< List of breakpoints
-	int _activeBreakpointTypes;  //< Bit mask specifying which types of breakpoints are active
+	Common::List<Breakpoint> _breakpoints; //< List of breakpoints
+	int _activeBreakpointTypes;            //< Bit mask specifying which types of breakpoints are active
 
 	void updateActiveBreakpointTypes();
 };

@@ -26,8 +26,8 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
 
 namespace Wintermute {
 
@@ -35,18 +35,15 @@ namespace Wintermute {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseSaveThumbFile::BaseSaveThumbFile() {
 	_data = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 BaseSaveThumbFile::~BaseSaveThumbFile() {
 	close();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbFile::open(const Common::String &filename) {
@@ -96,7 +93,6 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 	return res;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbFile::close() {
 	delete[] _data;
@@ -107,7 +103,6 @@ bool BaseSaveThumbFile::close() {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbFile::read(void *buffer, uint32 size) {
@@ -120,7 +115,6 @@ bool BaseSaveThumbFile::read(void *buffer, uint32 size) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbFile::seek(uint32 pos, int whence) {

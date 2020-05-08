@@ -20,13 +20,12 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/textconsole.h"
 
-#include "sky/music/adlibmusic.h"
-#include "sky/music/adlibchannel.h"
 #include "audio/fmopl.h"
+#include "sky/music/adlibchannel.h"
+#include "sky/music/adlibmusic.h"
 #include "sky/sky.h"
 
 namespace Audio {

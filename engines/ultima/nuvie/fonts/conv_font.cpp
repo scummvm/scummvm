@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "ultima/nuvie/fonts/conv_font.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/fonts/conv_font.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -37,17 +37,15 @@ ConvFont::ConvFont() {
 }
 
 ConvFont::~ConvFont() {
-
 }
 
 bool ConvFont::init(unsigned char *data, uint8 *width_data, uint16 num_c, uint16 char_offset) {
-    assert(data && width_data);
-    data_offset = char_offset;
+	assert(data && width_data);
+	data_offset = char_offset;
 	num_chars = num_c;
 
 	f_data = data;
 	f_w_data = width_data;
-
 
 	return true;
 }

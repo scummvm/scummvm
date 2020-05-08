@@ -28,26 +28,26 @@
 #undef main
 #endif // main
 
-#include "config.h"
 #include "create_project.h"
+#include "config.h"
 
 #include "cmake.h"
 #include "codeblocks.h"
+#include "msbuild.h"
 #include "msvc.h"
 #include "visualstudio.h"
-#include "msbuild.h"
 #include "xcode.h"
 
+#include <algorithm>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 #include <stack>
-#include <algorithm>
-#include <iomanip>
-#include <iterator>
 
-#include <cstring>
 #include <cstdlib>
+#include <cstring>
 #include <ctime>
 
 #if (defined(_WIN32) || defined(WIN32)) && !defined(__GNUC__)
@@ -57,11 +57,11 @@
 #if (defined(_WIN32) || defined(WIN32))
 #include <windows.h>
 #else
+#include <dirent.h>
+#include <errno.h>
 #include <sstream>
 #include <sys/param.h>
 #include <sys/stat.h>
-#include <dirent.h>
-#include <errno.h>
 #endif
 
 namespace {
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
 	setup.features = getAllFeatures();
 
 	ProjectType projectType = kProjectNone;
-	const MSVCVersion* msvc = NULL;
+	const MSVCVersion *msvc = NULL;
 	int msvcVersion = 0;
 
 	// Parse command line arguments
@@ -141,7 +141,8 @@ int main(int argc, char *argv[]) {
 	for (int i = 2; i < argc; ++i) {
 		if (!std::strcmp(argv[i], "--list-engines")) {
 			cout << " The following enables are available in the " PROJECT_DESCRIPTION " source distribution\n"
-			        " located at \"" << srcDir << "\":\n";
+			        " located at \""
+			     << srcDir << "\":\n";
 
 			cout << "   state  |       name      |     description\n\n";
 			cout.setf(std::ios_base::left, std::ios_base::adjustfield);
@@ -275,7 +276,7 @@ int main(int argc, char *argv[]) {
 		} else if (!std::strcmp(argv[i], "--build-events")) {
 			setup.runBuildEvents = true;
 		} else if (!std::strcmp(argv[i], "--installer")) {
-			setup.runBuildEvents  = true;
+			setup.runBuildEvents = true;
 			setup.createInstaller = true;
 		} else if (!std::strcmp(argv[i], "--tools")) {
 			setup.devTools = true;
@@ -475,7 +476,6 @@ int main(int argc, char *argv[]) {
 
 		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
 
-
 		// Those libraries are automatically added by MSVC, but we need to add them manually with mingw
 		setup.libraries.push_back("ole32");
 		setup.libraries.push_back("uuid");
@@ -665,11 +665,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Setup project name and description
-	setup.projectName        = PROJECT_NAME;
+	setup.projectName = PROJECT_NAME;
 	setup.projectDescription = PROJECT_DESCRIPTION;
 
 	if (setup.devTools) {
-		setup.projectName        += "-tools";
+		setup.projectName += "-tools";
 		setup.projectDescription += "Tools";
 	}
 
@@ -952,9 +952,12 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 		return false;
 	++token;
 
-	engine.name = *token; ++token;
-	engine.desc = *token; ++token;
-	engine.enable = (*token == "yes"); ++token;
+	engine.name = *token;
+	++token;
+	engine.desc = *token;
+	++token;
+	engine.enable = (*token == "yes");
+	++token;
 	if (token != tokens.end()) {
 		engine.subEngines = tokenize(*token);
 		++token;
@@ -1044,73 +1047,70 @@ TokenList tokenize(const std::string &input, char separator) {
 
 namespace {
 const Feature s_features[] = {
-	// Libraries
-	{      "libz",        "USE_ZLIB", "zlib",             true,  "zlib (compression) support" },
-	{       "mad",         "USE_MAD", "libmad",           true,  "libmad (MP3) support" },
-	{   "fribidi",     "USE_FRIBIDI", "fribidi",          true,  "BiDi support" },
-	{       "ogg",         "USE_OGG", "libogg_static",    true,  "Ogg support" },
-	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static", true, "Vorbis support" },
-	{    "tremor",      "USE_TREMOR", "libtremor", false, "Tremor support" },
-	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   true, "FLAC support" },
-	{       "png",         "USE_PNG", "libpng16",         true,  "libpng support" },
-	{      "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
-	{     "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
-	{    "theora",   "USE_THEORADEC", "libtheora_static", true, "Theora decoding support" },
-	{  "freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
-	{      "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
-	{"fluidsynth",  "USE_FLUIDSYNTH", "libfluidsynth",    true, "FluidSynth support" },
-	{   "libcurl",     "USE_LIBCURL", "libcurl",          true, "libcurl support" },
-	{    "sdlnet",     "USE_SDL_NET", "SDL_net",          true, "SDL_net support" },
+    // Libraries
+    {"libz", "USE_ZLIB", "zlib", true, "zlib (compression) support"},
+    {"mad", "USE_MAD", "libmad", true, "libmad (MP3) support"},
+    {"fribidi", "USE_FRIBIDI", "fribidi", true, "BiDi support"},
+    {"ogg", "USE_OGG", "libogg_static", true, "Ogg support"},
+    {"vorbis", "USE_VORBIS", "libvorbisfile_static libvorbis_static", true, "Vorbis support"},
+    {"tremor", "USE_TREMOR", "libtremor", false, "Tremor support"},
+    {"flac", "USE_FLAC", "libFLAC_static win_utf8_io_static", true, "FLAC support"},
+    {"png", "USE_PNG", "libpng16", true, "libpng support"},
+    {"faad", "USE_FAAD", "libfaad", false, "AAC support"},
+    {"mpeg2", "USE_MPEG2", "libmpeg2", false, "MPEG-2 support"},
+    {"theora", "USE_THEORADEC", "libtheora_static", true, "Theora decoding support"},
+    {"freetype", "USE_FREETYPE2", "freetype", true, "FreeType support"},
+    {"jpeg", "USE_JPEG", "jpeg-static", true, "libjpeg support"},
+    {"fluidsynth", "USE_FLUIDSYNTH", "libfluidsynth", true, "FluidSynth support"},
+    {"libcurl", "USE_LIBCURL", "libcurl", true, "libcurl support"},
+    {"sdlnet", "USE_SDL_NET", "SDL_net", true, "SDL_net support"},
 
-	// Feature flags
-	{            "bink",                      "USE_BINK",  "", true,  "Bink video support" },
-	{         "scalers",                   "USE_SCALERS",  "", true,  "Scalers" },
-	{       "hqscalers",                "USE_HQ_SCALERS",  "", true,  "HQ scalers" },
-	{           "16bit",                 "USE_RGB_COLOR",  "", true,  "16bit color support" },
-	{         "highres",                   "USE_HIGHRES",  "", true,  "high resolution" },
-	{         "mt32emu",                   "USE_MT32EMU",  "", true,  "integrated MT-32 emulator" },
-	{             "lua",                       "USE_LUA",  "", true,  "lua" },
-	{            "nasm",                      "USE_NASM",  "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{          "opengl",                    "USE_OPENGL",  "", true,  "OpenGL support" },
-	{        "opengles",                      "USE_GLES",  "", true,  "forced OpenGL ES mode" },
-	{         "taskbar",                   "USE_TASKBAR",  "", true,  "Taskbar integration support" },
-	{           "cloud",                     "USE_CLOUD",  "", true,  "Cloud integration support" },
-	{     "translation",               "USE_TRANSLATION",  "", true,  "Translation support" },
-	{          "vkeybd",                 "ENABLE_VKEYBD",  "", false, "Virtual keyboard support"},
-	{   "eventrecorder",          "ENABLE_EVENTRECORDER",  "", false, "Event recorder support"},
-	{         "updates",                   "USE_UPDATES",  "", false, "Updates support"},
-	{         "dialogs",                "USE_SYSDIALOGS",  "", true,  "System dialogs support"},
-	{      "langdetect",                "USE_DETECTLANG",  "", true,  "System language detection support" }, // This feature actually depends on "translation", there
-	                                                                                                         // is just no current way of properly detecting this...
-	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" }, // This feature is always applied in xcode projects
-	{             "tts",                       "USE_TTS",  "", true,  "Text to speech support"}
-};
+    // Feature flags
+    {"bink", "USE_BINK", "", true, "Bink video support"},
+    {"scalers", "USE_SCALERS", "", true, "Scalers"},
+    {"hqscalers", "USE_HQ_SCALERS", "", true, "HQ scalers"},
+    {"16bit", "USE_RGB_COLOR", "", true, "16bit color support"},
+    {"highres", "USE_HIGHRES", "", true, "high resolution"},
+    {"mt32emu", "USE_MT32EMU", "", true, "integrated MT-32 emulator"},
+    {"lua", "USE_LUA", "", true, "lua"},
+    {"nasm", "USE_NASM", "", true, "IA-32 assembly support"}, // This feature is special in the regard, that it needs additional handling.
+    {"opengl", "USE_OPENGL", "", true, "OpenGL support"},
+    {"opengles", "USE_GLES", "", true, "forced OpenGL ES mode"},
+    {"taskbar", "USE_TASKBAR", "", true, "Taskbar integration support"},
+    {"cloud", "USE_CLOUD", "", true, "Cloud integration support"},
+    {"translation", "USE_TRANSLATION", "", true, "Translation support"},
+    {"vkeybd", "ENABLE_VKEYBD", "", false, "Virtual keyboard support"},
+    {"eventrecorder", "ENABLE_EVENTRECORDER", "", false, "Event recorder support"},
+    {"updates", "USE_UPDATES", "", false, "Updates support"},
+    {"dialogs", "USE_SYSDIALOGS", "", true, "System dialogs support"},
+    {"langdetect", "USE_DETECTLANG", "", true, "System language detection support"},       // This feature actually depends on "translation", there
+                                                                                           // is just no current way of properly detecting this...
+    {"text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER", "", false, "Text console debugger"}, // This feature is always applied in xcode projects
+    {"tts", "USE_TTS", "", true, "Text to speech support"}};
 
 const Tool s_tools[] = {
-	{ "create_cryo",         true},
-	{ "create_drascula",     true},
-	{ "create_hugo",         true},
-	{ "create_kyradat",      true},
-	{ "create_lure",         true},
-	{ "create_neverhood",    true},
-	{ "create_teenagent",    true},
-	{ "create_titanic",      true},
-	{ "create_tony",         true},
-	{ "create_toon",         true},
-	{ "create_translations", true},
-	{ "qtable",              true}
-};
+    {"create_cryo", true},
+    {"create_drascula", true},
+    {"create_hugo", true},
+    {"create_kyradat", true},
+    {"create_lure", true},
+    {"create_neverhood", true},
+    {"create_teenagent", true},
+    {"create_titanic", true},
+    {"create_tony", true},
+    {"create_toon", true},
+    {"create_translations", true},
+    {"qtable", true}};
 
 const MSVCVersion s_msvc[] = {
-//    Ver    Name                     Solution                     Project    Toolset    LLVM
-	{  9,    "Visual Studio 2008",    "10.00",          "2008",     "4.0",     "v90",    "LLVM-vs2008" },
-	{ 10,    "Visual Studio 2010",    "11.00",          "2010",     "4.0",    "v100",    "LLVM-vs2010" },
-	{ 11,    "Visual Studio 2012",    "11.00",          "2012",     "4.0",    "v110",    "LLVM-vs2012" },
-	{ 12,    "Visual Studio 2013",    "12.00",          "2013",    "12.0",    "v120",    "LLVM-vs2013" },
-	{ 14,    "Visual Studio 2015",    "12.00",            "14",    "14.0",    "v140",    "LLVM-vs2014" },
-	{ 15,    "Visual Studio 2017",    "12.00",            "15",    "15.0",    "v141",    "llvm"        },
-	{ 16,    "Visual Studio 2019",    "12.00",    "Version 16",    "16.0",    "v142",    "llvm"        }
-};
+    //    Ver    Name                     Solution                     Project    Toolset    LLVM
+    {9, "Visual Studio 2008", "10.00", "2008", "4.0", "v90", "LLVM-vs2008"},
+    {10, "Visual Studio 2010", "11.00", "2010", "4.0", "v100", "LLVM-vs2010"},
+    {11, "Visual Studio 2012", "11.00", "2012", "4.0", "v110", "LLVM-vs2012"},
+    {12, "Visual Studio 2013", "12.00", "2013", "12.0", "v120", "LLVM-vs2013"},
+    {14, "Visual Studio 2015", "12.00", "14", "14.0", "v140", "LLVM-vs2014"},
+    {15, "Visual Studio 2017", "12.00", "15", "15.0", "v141", "llvm"},
+    {16, "Visual Studio 2019", "12.00", "Version 16", "16.0", "v142", "llvm"}};
 } // End of anonymous namespace
 
 FeatureList getAllFeatures() {
@@ -1260,7 +1260,8 @@ void splitFilename(const std::string &fileName, std::string &name, std::string &
 
 std::string basename(const std::string &fileName) {
 	const std::string::size_type slash = fileName.find_last_of('/');
-	if (slash == std::string::npos) return fileName;
+	if (slash == std::string::npos)
+		return fileName;
 	return fileName.substr(slash + 1);
 }
 
@@ -1420,7 +1421,6 @@ void createDirectory(const std::string &dir) {
 		}
 	}
 #endif
-
 }
 
 /**
@@ -1485,7 +1485,7 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 // Project Provider methods
 //////////////////////////////////////////////////////////////////////////
 ProjectProvider::ProjectProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings) {
+    : _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings) {
 }
 
 void ProjectProvider::createProject(BuildSetup &setup) {
@@ -1511,7 +1511,8 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		if (i->first == setup.projectName)
 			continue;
 		// Retain the files between engines if we're creating a single project
-		in.clear(); ex.clear();
+		in.clear();
+		ex.clear();
 
 		const std::string moduleDir = setup.srcDir + targetFolder + i->first;
 
@@ -1521,7 +1522,8 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 	if (setup.tests) {
 		// Create the main project file.
-		in.clear(); ex.clear();
+		in.clear();
+		ex.clear();
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex);
@@ -1535,7 +1537,8 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
 	} else if (!setup.devTools) {
 		// Last but not least create the main project file.
-		in.clear(); ex.clear();
+		in.clear();
+		ex.clear();
 		// File list for the Project file
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
@@ -1628,8 +1631,10 @@ std::string ProjectProvider::createUUID() const {
 	for (int i = 0; i < kUUIDLen; ++i)
 		uuid[i] = (unsigned char)((std::rand() / (double)(RAND_MAX)) * 0xFF);
 
-	uuid[8] &= 0xBF; uuid[8] |= 0x80;
-	uuid[6] &= 0x4F; uuid[6] |= 0x40;
+	uuid[8] &= 0xBF;
+	uuid[8] |= 0x80;
+	uuid[6] &= 0x4F;
+	uuid[6] |= 0x40;
 
 	return UUIDToString(uuid);
 #endif
@@ -1641,7 +1646,7 @@ std::string ProjectProvider::createUUID(const std::string &name) const {
 	if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT)) {
 		error("CryptAcquireContext failed");
 	}
-	
+
 	// Use MD5 hashing algorithm
 	HCRYPTHASH hHash = NULL;
 	if (!CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash)) {
@@ -1651,7 +1656,7 @@ std::string ProjectProvider::createUUID(const std::string &name) const {
 
 	// Hash unique ScummVM namespace {5f5b43e8-35ff-4f1e-ad7e-a2a87e9b5254}
 	const BYTE uuidNs[kUUIDLen] =
-		{ 0x5f, 0x5b, 0x43, 0xe8, 0x35, 0xff, 0x4f, 0x1e, 0xad, 0x7e, 0xa2, 0xa8, 0x7e, 0x9b, 0x52, 0x54 };
+	    {0x5f, 0x5b, 0x43, 0xe8, 0x35, 0xff, 0x4f, 0x1e, 0xad, 0x7e, 0xa2, 0xa8, 0x7e, 0x9b, 0x52, 0x54};
 	if (!CryptHashData(hHash, uuidNs, kUUIDLen, 0)) {
 		CryptDestroyHash(hHash);
 		CryptReleaseContext(hProv, 0);
@@ -1675,8 +1680,10 @@ std::string ProjectProvider::createUUID(const std::string &name) const {
 	}
 
 	// Add version and variant
-	uuid[6] &= 0x0F; uuid[6] |= 0x30;
-	uuid[8] &= 0x3F; uuid[8] |= 0x80;
+	uuid[6] &= 0x0F;
+	uuid[6] |= 0x30;
+	uuid[8] &= 0x3F;
+	uuid[8] |= 0x80;
 
 	CryptDestroyHash(hHash);
 	CryptReleaseContext(hProv, 0);
@@ -1727,7 +1734,8 @@ void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &p
 			continue;
 
 		// Search for duplicates
-		StringList::const_iterator j = i; ++j;
+		StringList::const_iterator j = i;
+		++j;
 		for (; j != includeList.end(); ++j) {
 			std::string candidateFileName = getLastPathComponent(*j);
 			std::transform(candidateFileName.begin(), candidateFileName.end(), candidateFileName.begin(), tolower);
@@ -1998,7 +2006,7 @@ void ProjectProvider::createEnginePluginsTable(const BuildSetup &setup) {
 		                   << "#endif\n";
 	}
 }
-} // End of anonymous namespace
+} // namespace CreateProjectTool
 
 void error(const std::string &message) {
 	std::cerr << "ERROR: " << message << "!" << std::endl;

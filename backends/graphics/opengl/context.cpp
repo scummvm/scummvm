@@ -20,14 +20,14 @@
  *
  */
 
-#include "backends/graphics/opengl/opengl-sys.h"
-#include "backends/graphics/opengl/opengl-graphics.h"
-#include "backends/graphics/opengl/shader.h"
-#include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/graphics/opengl/framebuffer.h"
+#include "backends/graphics/opengl/opengl-graphics.h"
+#include "backends/graphics/opengl/opengl-sys.h"
+#include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/shader.h"
 
-#include "common/tokenizer.h"
 #include "common/debug.h"
+#include "common/tokenizer.h"
 
 namespace OpenGL {
 
@@ -83,10 +83,11 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	// See backends/plugins/sdl/sdl-provider.cpp for more information.
 	assert(sizeof(void (*)()) == sizeof(void *));
 
-#define LOAD_FUNC(name, loadName) { \
-	void *fn = getProcAddress(#loadName); \
-	memcpy(&g_context.name, &fn, sizeof(fn)); \
-}
+#define LOAD_FUNC(name, loadName)                 \
+	{                                             \
+		void *fn = getProcAddress(#loadName);     \
+		memcpy(&g_context.name, &fn, sizeof(fn)); \
+	}
 
 #define GL_EXT_FUNC_DEF(ret, name, param) LOAD_FUNC(name, name)
 
@@ -96,10 +97,10 @@ void OpenGLGraphicsManager::initializeGLContext() {
 #else
 #define GL_FUNC_DEF GL_EXT_FUNC_DEF
 #define GL_FUNC_2_DEF(ret, name, extName, param) \
-	if (g_context.type == kContextGL) { \
-		LOAD_FUNC(name, extName); \
-	} else { \
-		LOAD_FUNC(name, name); \
+	if (g_context.type == kContextGL) {          \
+		LOAD_FUNC(name, extName);                \
+	} else {                                     \
+		LOAD_FUNC(name, name);                   \
 	}
 #endif
 #include "backends/graphics/opengl/opengl-func.h"

@@ -44,7 +44,7 @@
 #define NUM_TEXTMISC 7
 #define NUM_TEXTD1 11
 
-typedef unsigned char   uint8;
+typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef signed short int16;
 
@@ -74,7 +74,7 @@ struct ItemLocation {
 struct CharInfo {
 	char inChar;
 	uint16 mappedChar;
-	char charType;	// 0 - letters, 1 - signs, 2 - accented
+	char charType; // 0 - letters, 1 - signs, 2 - accented
 };
 
 struct RoomUpdate {
@@ -87,7 +87,7 @@ struct RoomUpdate {
 	int destY;
 	int width;
 	int height;
-	int type;	// 0 - background, 1 - rect
+	int type; // 0 - background, 1 - rect
 };
 
 enum TalkSequenceCommands {

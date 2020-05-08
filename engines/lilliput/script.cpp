@@ -20,9 +20,9 @@
  *
  */
 
-#include "lilliput/lilliput.h"
 #include "lilliput/script.h"
 #include "common/debug.h"
+#include "lilliput/lilliput.h"
 
 #include "common/system.h"
 
@@ -561,169 +561,167 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 }
 
 static const OpCode opCodes1[] = {
-	{ "OC_checkCharacterGoalPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-	{ "OC_comparePos", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },
-	{ "OC_checkIsoMap3", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_compareCharacterVariable", 4, kGetValue1, kImmediateValue, kCompareOperation, kImmediateValue, kNone },
-	{ "OC_CompareLastRandomValue", 2, kCompareOperation, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_getRandom", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_for", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_compCurrentSpeechId", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_checkSaveFlag", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_compScriptForVal", 2, kCompareOperation, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_isCarrying", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
-	{ "OC_CompareCharacterVariables", 5, kGetValue1, kImmediateValue, kCompareOperation, kGetValue1, kImmediateValue },
-	{ "OC_compareCoords_1", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_compareCoords_2", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_CompareDistanceFromCharacterToPositionWith", 3, kgetPosFromScript, kCompareOperation, kImmediateValue, kNone, kNone },
-	{ "OC_compareRandomCharacterId", 3, kGetValue1, kCompareOperation, kImmediateValue, kNone, kNone },
-	{ "OC_isCurrentCharacterIndex", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_hasVisibilityLevel", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
-	{ "OC_hasGainedVisibilityLevel", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
-	{ "OC_hasReducedVisibilityLevel", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
-	{ "OC_isHost", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_isSequenceActive", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_isSequenceFinished", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_compareMapValueWith", 4, kgetPosFromScript, kImmediateValue, kImmediateValue, kCompareOperation, kNone },
-	{ "OC_isCharacterValid", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_checkWaitingSignal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_currentCharacterVar0AndVar1Equals", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_currentCharacterVar0Equals", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_checkLastInterfaceHotspotIndexMenu13", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_checkLastInterfaceHotspotIndexMenu2", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_compareNumberOfCharacterWithVar0Equals", 3, kImmediateValue, kCompareOperation, kImmediateValue, kNone, kNone },
-	{ "OC_isPositionInViewport", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-	{ "OC_compareGameVariables", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
-	{ "OC_skipNextOpcode", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_CheckCurrentCharacterAttr2", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_CheckCurrentCharacterType", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_CheckCurrentCharacterAttr0And", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
-	{ "OC_IsCurrentCharacterAttr0LessEqualThan", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_isCarried", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_CheckCurrentCharacterAttr1", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_isCurrentCharacterStung", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_CurrentCharacterAttr3Equals1", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_sub1796E", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_checkLastInterfaceHotspotIndex", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_checkSelectedCharacter", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_checkDelayedReactivation", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_checkTargetReached", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-	{ "OC_checkFunctionKeyPressed", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_checkCodeEntered", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone },
-	{ "OC_checkViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
+    {"OC_checkCharacterGoalPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone},
+    {"OC_comparePos", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone},
+    {"OC_checkIsoMap3", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_compareCharacterVariable", 4, kGetValue1, kImmediateValue, kCompareOperation, kImmediateValue, kNone},
+    {"OC_CompareLastRandomValue", 2, kCompareOperation, kImmediateValue, kNone, kNone, kNone},
+    {"OC_getRandom", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_for", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    {"OC_compCurrentSpeechId", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_checkSaveFlag", 0, kNone, kNone, kNone, kNone, kNone},
+    {"OC_compScriptForVal", 2, kCompareOperation, kImmediateValue, kNone, kNone, kNone},
+    {"OC_isCarrying", 2, kGetValue1, kGetValue1, kNone, kNone, kNone},
+    {"OC_CompareCharacterVariables", 5, kGetValue1, kImmediateValue, kCompareOperation, kGetValue1, kImmediateValue},
+    {"OC_compareCoords_1", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_compareCoords_2", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone},
+    {"OC_CompareDistanceFromCharacterToPositionWith", 3, kgetPosFromScript, kCompareOperation, kImmediateValue, kNone, kNone},
+    {"OC_compareRandomCharacterId", 3, kGetValue1, kCompareOperation, kImmediateValue, kNone, kNone},
+    {"OC_isCurrentCharacterIndex", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    {"OC_hasVisibilityLevel", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone},
+    {"OC_hasGainedVisibilityLevel", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone},
+    {"OC_hasReducedVisibilityLevel", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone},
+    {"OC_isHost", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    {"OC_isSequenceActive", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_isSequenceFinished", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_compareMapValueWith", 4, kgetPosFromScript, kImmediateValue, kImmediateValue, kCompareOperation, kNone},
+    {"OC_isCharacterValid", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    {"OC_checkWaitingSignal", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_currentCharacterVar0AndVar1Equals", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    {"OC_currentCharacterVar0Equals", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_checkLastInterfaceHotspotIndexMenu13", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_checkLastInterfaceHotspotIndexMenu2", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_compareNumberOfCharacterWithVar0Equals", 3, kImmediateValue, kCompareOperation, kImmediateValue, kNone, kNone},
+    {"OC_isPositionInViewport", 1, kgetPosFromScript, kNone, kNone, kNone, kNone},
+    {"OC_compareGameVariables", 2, kGetValue1, kGetValue1, kNone, kNone, kNone},
+    {"OC_skipNextOpcode", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_CheckCurrentCharacterAttr2", 0, kNone, kNone, kNone, kNone, kNone},
+    {"OC_CheckCurrentCharacterType", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone},
+    {"OC_CheckCurrentCharacterAttr0And", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone},
+    {"OC_IsCurrentCharacterAttr0LessEqualThan", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_isCarried", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    {"OC_CheckCurrentCharacterAttr1", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_isCurrentCharacterStung", 0, kNone, kNone, kNone, kNone, kNone},
+    {"OC_CurrentCharacterAttr3Equals1", 0, kNone, kNone, kNone, kNone, kNone},
+    {"OC_sub1796E", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone},
+    {"OC_checkLastInterfaceHotspotIndex", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    {"OC_checkSelectedCharacter", 0, kNone, kNone, kNone, kNone, kNone},
+    {"OC_checkDelayedReactivation", 0, kNone, kNone, kNone, kNone, kNone},
+    {"OC_checkTargetReached", 1, kgetPosFromScript, kNone, kNone, kNone, kNone},
+    {"OC_checkFunctionKeyPressed", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    {"OC_checkCodeEntered", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone},
+    {"OC_checkViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone},
 };
-
 
 static const OpCode opCodes2[] = {
-/* 0x00 */	{ "OC_setWord18821", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x01 */	{ "OC_changeIsoMap", 3, kgetPosFromScript, kImmediateValue, kImmediateValue, kNone, kNone },
-/* 0x02 */	{ "OC_startSpeech", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x03 */	{ "OC_getComputedVariantSpeech", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x04 */	{ "OC_getRotatingVariantSpeech", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, // todo
-/* 0x05 */	{ "OC_startSpeechIfMute", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x06 */	{ "OC_getComputedVariantSpeechIfMute", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, // pb
-/* 0x07 */	{ "OC_startSpeechIfSilent", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x08 */	{ "OC_computeCharacterVariable", 4, kGetValue1, kImmediateValue, kComputeOperation, kImmediateValue, kNone },
-/* 0x09 */	{ "OC_setAttributeToRandom", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
-/* 0x0a */	{ "OC_setCharacterPosition", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },
-/* 0x0b */	{ "OC_disableCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x0c */	{ "OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x0d */	{ "OC_nSkipOpcodes", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
-/* 0x0e */	{ "OC_startSpeech5", 0, kNone, kNone, kNone, kNone, kNone },  // todo
-/* 0x0f */	{ "OC_resetHandleOpcodeFlag", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x10 */	{ "OC_deleteSavegameAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x11 */	{ "OC_incScriptForVal", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x12 */	{ "OC_ComputeChararacterAttr", 5, kGetValue1, kImmediateValue,kComputeOperation, kGetValue1, kImmediateValue },
-/* 0x13 */	{ "OC_setTextVarNumber", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-/* 0x14 */	{ "OC_callScript", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },  // run script
-/* 0x15 */	{ "OC_callScriptAndReturn", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },  // run script then stop
-/* 0x16 */	{ "OC_setCurrentScriptCharacterPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-/* 0x17 */	{ "OC_initScriptFor", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x18 */	{ "OC_setCurrentCharacterSequence", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x19 */	{ "OC_setNextCharacterSequence", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x1a */	{ "OC_setHost", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x1b */	{ "OC_changeMapCube", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x1c */ 	{ "OC_setCharacterCarry", 4, kGetValue1, kGetValue1, kImmediateValue, kImmediateValue, kNone },
-/* 0x1d */	{ "OC_dropCarried", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x1e */	{ "OC_setCurrentCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x1f */	{ "OC_sendSeeSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x20 */	{ "OC_sendHearSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x21 */	{ "OC_sendVarSignal", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone },
-/* 0x22 */	{ "OC_sendBroadcastSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x23 */	{ "OC_resetWaitingSignal", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x24 */	{ "OC_enableCurrentCharacterScript", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // stop script
-/* 0x25 */	{ "OC_incCurrentCharacterVar1", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x26 */	{ "OC_setCurrentCharacterPos", 2, kImmediateValue, kgetPosFromScript, kNone, kNone, kNone },
-/* 0x27 */	{ "OC_setCurrentCharacterBehavior", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x28 */	{ "OC_changeCurrentCharacterSprite", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x29 */	{ "OC_getList", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x2a */	{ "OC_setList", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x2b */	{ "OC_setCharacterDirectionTowardsPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-/* 0x2c */	{ "OC_turnCharacterTowardsAnother", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x2d */	{ "OC_setSeek", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x2e */	{ "OC_scrollAwayFromCharacter", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x2f */	{ "OC_skipNextVal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x30 */	{ "OC_setCurrentCharacterAttr6", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x31 */	{ "OC_setCurrentCharacterPose", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x32 */	{ "OC_setCharacterScriptEnabled", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x33 */	{ "OC_setCurrentCharacterAttr2", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x34 */	{ "OC_ClearCurrentCharacterAttr2", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x35 */	{ "OC_setCharacterProperties", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue },
-/* 0x36 */	{ "OC_setMonitoredCharacter", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue },
-/* 0x37 */	{ "OC_setNewPose", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x38 */	{ "OC_setCurrentCharacterDirection", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x39 */	{ "OC_setInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x3a */	{ "OC_scrollViewPort", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x3b */	{ "OC_setViewPortPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-/* 0x3c */	{ "OC_setCurrentCharacterAltitude", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x3d */	{ "OC_setModePriority", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x3e */	{ "OC_setComputedModePriority", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x3f */	{ "OC_selectBestMode", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x40 */	{ "OC_magicPuffEntrance", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x41 */	{ "OC_spawnCharacterAtPos", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone }, // TODO
-/* 0x42 */	{ "OC_characterVariableAddOrRemoveFlag", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x43 */	{ "OC_paletteFadeOut", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x44 */	{ "OC_paletteFadeIn", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x45 */	{ "OC_loadAndDisplayCubesGfx", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x46 */	{ "OC_setCurrentCharacterAttr3", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x47 */	{ "OC_setArray122C1", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x48 */	{ "OC_sub18367", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x49 */	{ "OC_enableCharacterScript", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-/* 0x4a */	{ "OC_setRulesBuffer2Element", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-/* 0x4b */	{ "OC_setDebugFlag", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x4c */	{ "OC_setDebugFlag2", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x4d */	{ "OC_waitForEvent", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x4e */	{ "OC_disableInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },  // TODO
-/* 0x4f */	{ "OC_loadFileAerial", 1, kNone, kNone, kNone, kNone, kNone },
-/* 0x50 */	{ "OC_startSpeechIfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x51 */	{ "OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-/* 0x52 */	{ "OC_displayNumericCharacterVariable", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue },
-/* 0x53 */	{ "OC_displayVGAFile", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x54 */	{ "OC_startSpeechWithoutSpeeker", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // TODO
-/* 0x55 */	{ "OC_displayTitleScreen", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x56 */	{ "OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x57 */	{ "OC_displayCharacterStatBar", 6, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue},
-/* 0x58 */	{ "OC_initSmallAnim", 11, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue },
-/* 0x59 */	{ "OC_setCharacterHeroismBar", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x5a */	{ "OC_setCharacterHome", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },  //TODO
-/* 0x5b */	{ "OC_setViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x5c */	{ "OC_showObject", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },  //TODO
-/* 0x5d */	{ "OC_playObjectSound", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-/* 0x5e */	{ "OC_startLocationSound", 2, kgetPosFromScript, kImmediateValue, kNone, kNone, kNone },
-/* 0x5f */	{ "OC_stopObjectSound", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x60 */	{ "OC_stopLocationSound", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x61 */	{ "OC_toggleSound", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-/* 0x62 */	{ "OC_playMusic", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x63 */	{ "OC_stopMusic", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x64 */	{ "OC_setCharacterMapColor", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-/* 0x65 */	{ "OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone }
-};
+    /* 0x00 */ {"OC_setWord18821", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x01 */ {"OC_changeIsoMap", 3, kgetPosFromScript, kImmediateValue, kImmediateValue, kNone, kNone},
+    /* 0x02 */ {"OC_startSpeech", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x03 */ {"OC_getComputedVariantSpeech", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone},
+    /* 0x04 */ {"OC_getRotatingVariantSpeech", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone}, // todo
+    /* 0x05 */ {"OC_startSpeechIfMute", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x06 */ {"OC_getComputedVariantSpeechIfMute", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone}, // pb
+    /* 0x07 */ {"OC_startSpeechIfSilent", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    /* 0x08 */ {"OC_computeCharacterVariable", 4, kGetValue1, kImmediateValue, kComputeOperation, kImmediateValue, kNone},
+    /* 0x09 */ {"OC_setAttributeToRandom", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone},
+    /* 0x0a */ {"OC_setCharacterPosition", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone},
+    /* 0x0b */ {"OC_disableCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x0c */ {"OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x0d */ {"OC_nSkipOpcodes", 1, kImmediateValue, kNone, kNone, kNone, kNone}, // todo : jump to other opcode
+    /* 0x0e */ {"OC_startSpeech5", 0, kNone, kNone, kNone, kNone, kNone},           // todo
+    /* 0x0f */ {"OC_resetHandleOpcodeFlag", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x10 */ {"OC_deleteSavegameAndQuit", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x11 */ {"OC_incScriptForVal", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x12 */ {"OC_ComputeChararacterAttr", 5, kGetValue1, kImmediateValue, kComputeOperation, kGetValue1, kImmediateValue},
+    /* 0x13 */ {"OC_setTextVarNumber", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone},
+    /* 0x14 */ {"OC_callScript", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone},          // run script
+    /* 0x15 */ {"OC_callScriptAndReturn", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone}, // run script then stop
+    /* 0x16 */ {"OC_setCurrentScriptCharacterPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone},
+    /* 0x17 */ {"OC_initScriptFor", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x18 */ {"OC_setCurrentCharacterSequence", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x19 */ {"OC_setNextCharacterSequence", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x1a */ {"OC_setHost", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x1b */ {"OC_changeMapCube", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x1c */ {"OC_setCharacterCarry", 4, kGetValue1, kGetValue1, kImmediateValue, kImmediateValue, kNone},
+    /* 0x1d */ {"OC_dropCarried", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x1e */ {"OC_setCurrentCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x1f */ {"OC_sendSeeSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    /* 0x20 */ {"OC_sendHearSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    /* 0x21 */ {"OC_sendVarSignal", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone},
+    /* 0x22 */ {"OC_sendBroadcastSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    /* 0x23 */ {"OC_resetWaitingSignal", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x24 */ {"OC_enableCurrentCharacterScript", 1, kImmediateValue, kNone, kNone, kNone, kNone}, // stop script
+    /* 0x25 */ {"OC_incCurrentCharacterVar1", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x26 */ {"OC_setCurrentCharacterPos", 2, kImmediateValue, kgetPosFromScript, kNone, kNone, kNone},
+    /* 0x27 */ {"OC_setCurrentCharacterBehavior", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x28 */ {"OC_changeCurrentCharacterSprite", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    /* 0x29 */ {"OC_getList", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone},
+    /* 0x2a */ {"OC_setList", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone},
+    /* 0x2b */ {"OC_setCharacterDirectionTowardsPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone},
+    /* 0x2c */ {"OC_turnCharacterTowardsAnother", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x2d */ {"OC_setSeek", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x2e */ {"OC_scrollAwayFromCharacter", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x2f */ {"OC_skipNextVal", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x30 */ {"OC_setCurrentCharacterAttr6", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x31 */ {"OC_setCurrentCharacterPose", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x32 */ {"OC_setCharacterScriptEnabled", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x33 */ {"OC_setCurrentCharacterAttr2", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x34 */ {"OC_ClearCurrentCharacterAttr2", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x35 */ {"OC_setCharacterProperties", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue},
+    /* 0x36 */ {"OC_setMonitoredCharacter", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue},
+    /* 0x37 */ {"OC_setNewPose", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    /* 0x38 */ {"OC_setCurrentCharacterDirection", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x39 */ {"OC_setInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    /* 0x3a */ {"OC_scrollViewPort", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x3b */ {"OC_setViewPortPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone},
+    /* 0x3c */ {"OC_setCurrentCharacterAltitude", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x3d */ {"OC_setModePriority", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone},
+    /* 0x3e */ {"OC_setComputedModePriority", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone},
+    /* 0x3f */ {"OC_selectBestMode", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x40 */ {"OC_magicPuffEntrance", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x41 */ {"OC_spawnCharacterAtPos", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone}, // TODO
+    /* 0x42 */ {"OC_characterVariableAddOrRemoveFlag", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone},
+    /* 0x43 */ {"OC_paletteFadeOut", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x44 */ {"OC_paletteFadeIn", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x45 */ {"OC_loadAndDisplayCubesGfx", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x46 */ {"OC_setCurrentCharacterAttr3", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x47 */ {"OC_setArray122C1", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x48 */ {"OC_sub18367", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x49 */ {"OC_enableCharacterScript", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone},
+    /* 0x4a */ {"OC_setRulesBuffer2Element", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone},
+    /* 0x4b */ {"OC_setDebugFlag", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x4c */ {"OC_setDebugFlag2", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x4d */ {"OC_waitForEvent", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x4e */ {"OC_disableInterfaceHotspot", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone}, // TODO
+    /* 0x4f */ {"OC_loadFileAerial", 1, kNone, kNone, kNone, kNone, kNone},
+    /* 0x50 */ {"OC_startSpeechIfSoundOff", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x51 */ {"OC_sub1844A", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone},
+    /* 0x52 */ {"OC_displayNumericCharacterVariable", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue},
+    /* 0x53 */ {"OC_displayVGAFile", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x54 */ {"OC_startSpeechWithoutSpeeker", 1, kImmediateValue, kNone, kNone, kNone, kNone}, // TODO
+    /* 0x55 */ {"OC_displayTitleScreen", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x56 */ {"OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x57 */ {"OC_displayCharacterStatBar", 6, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue},
+    /* 0x58 */ {"OC_initSmallAnim", 11, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue},
+    /* 0x59 */ {"OC_setCharacterHeroismBar", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone},
+    /* 0x5a */ {"OC_setCharacterHome", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone}, //TODO
+    /* 0x5b */ {"OC_setViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x5c */ {"OC_showObject", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone}, //TODO
+    /* 0x5d */ {"OC_playObjectSound", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone},
+    /* 0x5e */ {"OC_startLocationSound", 2, kgetPosFromScript, kImmediateValue, kNone, kNone, kNone},
+    /* 0x5f */ {"OC_stopObjectSound", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x60 */ {"OC_stopLocationSound", 1, kGetValue1, kNone, kNone, kNone, kNone},
+    /* 0x61 */ {"OC_toggleSound", 1, kgetPosFromScript, kNone, kNone, kNone, kNone},
+    /* 0x62 */ {"OC_playMusic", 1, kImmediateValue, kNone, kNone, kNone, kNone},
+    /* 0x63 */ {"OC_stopMusic", 0, kNone, kNone, kNone, kNone, kNone},
+    /* 0x64 */ {"OC_setCharacterMapColor", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone},
+    /* 0x65 */ {"OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone}};
 
-Common::String LilliputScript::getArgumentString(kValueType type, ScriptStream& script) {
+Common::String LilliputScript::getArgumentString(kValueType type, ScriptStream &script) {
 
 	Common::String str;
 	if (type == kImmediateValue) {
-		str =  Common::String::format("0x%x", script.readUint16LE());
+		str = Common::String::format("0x%x", script.readUint16LE());
 	} else if (type == kGetValue1) {
 		int val = script.readUint16LE();
 		if (val < 1000) {
@@ -744,59 +742,58 @@ Common::String LilliputScript::getArgumentString(kValueType type, ScriptStream& 
 	} else if (type == kgetPosFromScript) {
 		int curWord = script.readUint16LE();
 		int tmpVal = curWord >> 8;
-		switch(tmpVal) {
-	case 0xFF:
-		str = "(_rulesBuffer2_13[currentCharacter],_rulesBuffer2_14[currentCharacter])";
-		break;
-	case 0xFE: {
-		int index = curWord & 0xFF;
-		assert((index >= 0) && (index < 40));
-		str = Common::String::format("_vm->_rulesBuffer2_13[%d],_vm->_rulesBuffer2_14[%d]", index, index);
-		break;
-			   }
-	case 0xFD:
-		str = "_currentScriptCharacterPosition";
-		break;
-	case 0xFC: {
-		int index = curWord & 0xFF;
-		assert(index < 40);
-		str = Common::String::format("(characterPositionTileX[%d], characterPositionTileY[%d])", index, index);
-		break;
-			   }
-	case 0xFB: {
-		str = "(characterPositionTileX[_word16F00_characterId], characterPositionTileY[_word16F00_characterId])";
-		break;
-			   }
-	case 0xFA:
-		str = Common::String::format("(_characterTargetPosX[currentCharacter], _characterTargetPosY[currentCharacter])");
-		break;
-	case 0xF9:
-		str = Common::String::format("(_currentCharacterVariables[4], _currentCharacterVariables[5])");
-		break;
-	case 0xF8: {
-		int index = curWord & 0xFF;
-		assert((index >= 0) && (index < 40));
-		str = Common::String::format("_vm->_rulesBuffer12Pos3[%d]", index);
-		break;
-	}
-	case 0xF7: {
-		str = Common::String::format("(_characterPositionTileX[_currentCharacterVariables[6]], _characterPositionTileY[_currentCharacterVariables[6]])");
-		break;
-	}
-	case 0xF6:
-		str = "_savedMousePosDivided";
-		break;
-	default:
-		str = Common::String::format("(0x%x,0x%x)", curWord >> 8, curWord & 0xFF);
-		break;
+		switch (tmpVal) {
+		case 0xFF:
+			str = "(_rulesBuffer2_13[currentCharacter],_rulesBuffer2_14[currentCharacter])";
+			break;
+		case 0xFE: {
+			int index = curWord & 0xFF;
+			assert((index >= 0) && (index < 40));
+			str = Common::String::format("_vm->_rulesBuffer2_13[%d],_vm->_rulesBuffer2_14[%d]", index, index);
+			break;
+		}
+		case 0xFD:
+			str = "_currentScriptCharacterPosition";
+			break;
+		case 0xFC: {
+			int index = curWord & 0xFF;
+			assert(index < 40);
+			str = Common::String::format("(characterPositionTileX[%d], characterPositionTileY[%d])", index, index);
+			break;
+		}
+		case 0xFB: {
+			str = "(characterPositionTileX[_word16F00_characterId], characterPositionTileY[_word16F00_characterId])";
+			break;
+		}
+		case 0xFA:
+			str = Common::String::format("(_characterTargetPosX[currentCharacter], _characterTargetPosY[currentCharacter])");
+			break;
+		case 0xF9:
+			str = Common::String::format("(_currentCharacterVariables[4], _currentCharacterVariables[5])");
+			break;
+		case 0xF8: {
+			int index = curWord & 0xFF;
+			assert((index >= 0) && (index < 40));
+			str = Common::String::format("_vm->_rulesBuffer12Pos3[%d]", index);
+			break;
+		}
+		case 0xF7: {
+			str = Common::String::format("(_characterPositionTileX[_currentCharacterVariables[6]], _characterPositionTileY[_currentCharacterVariables[6]])");
+			break;
+		}
+		case 0xF6:
+			str = "_savedMousePosDivided";
+			break;
+		default:
+			str = Common::String::format("(0x%x,0x%x)", curWord >> 8, curWord & 0xFF);
+			break;
 		}
 	} else if (type == kCompareOperation) {
 		int comp = script.readUint16LE();
 		if (comp != '<' && comp != '>')
 			comp = '=';
 		str = Common::String::format("%c", comp);
-	}
-	else if (type == kComputeOperation) {
+	} else if (type == kComputeOperation) {
 		int comp = script.readUint16LE();
 		str = Common::String::format("%c", comp);
 	}
@@ -977,26 +974,22 @@ void LilliputScript::computeOperation(byte *bufPtr, uint16 oper, int16 var3) {
 			bufPtr[0] = 0xFF;
 		else
 			bufPtr[0] = (byte)tmpVal;
-		}
-		break;
+	} break;
 	case '-': {
 		int tmpVal = bufPtr[0] - var3;
 		if (tmpVal < 0)
 			bufPtr[0] = 0;
 		else
 			bufPtr[0] = (byte)tmpVal;
-		}
-		break;
+	} break;
 	case '*': {
 		int tmpVal = bufPtr[0] * var3;
 		bufPtr[0] = tmpVal & 0xFF;
-		}
-		break;
+	} break;
 	case '/': {
 		if (var3 != 0)
 			bufPtr[0] /= var3;
-		}
-		break;
+	} break;
 	default: {
 		warning("computeOperation : oper %d", oper);
 		if (var3 != 0) {
@@ -1007,14 +1000,14 @@ void LilliputScript::computeOperation(byte *bufPtr, uint16 oper, int16 var3) {
 				bufPtr[0] = 0;
 		}
 		break;
-		}
+	}
 	}
 }
 
 void LilliputScript::enableCharacterScript(byte index, byte var1, byte *curBufPtr) {
 	debugC(1, kDebugScript, "enableCharacterScript(%d, %d, curBufPtr)", index, var1);
 
-	assert (index < 40);
+	assert(index < 40);
 	_characterScriptEnabled[index] = 1;
 	curBufPtr[0] = var1;
 	curBufPtr[1] = 0;
@@ -1146,12 +1139,12 @@ void LilliputScript::decodePackedText(char *buf) {
 
 	// All the languages use the English dictionary
 	static const char *nounsArrayPtr = "I am |You are |you are |hou art |in the |"
-		"is the |is a |in a |To the |to the |by |going |here |The|the|and |"
-		"some |build|not |way|I |a |an |from |of |him|her|by |his |ing |tion|"
-		"have |you|I've |can't |up |to |he |she |down |what|What|with|are |"
-		"and|ent|ian|ome|ed |me|my|ai|it|is|of|oo|ea|er|es|th|we|ou|ow|or|"
-		"gh|go|er|st|ee|th|sh|ch|ct|on|ly|ng|nd|nt|ty|ll|le|de|as|ie|in|ss|"
-		"'s |'t |re|gg|tt|pp|nn|ay|ar|wh|";
+	                                   "is the |is a |in a |To the |to the |by |going |here |The|the|and |"
+	                                   "some |build|not |way|I |a |an |from |of |him|her|by |his |ing |tion|"
+	                                   "have |you|I've |can't |up |to |he |she |down |what|What|with|are |"
+	                                   "and|ent|ian|ome|ed |me|my|ai|it|is|of|oo|ea|er|es|th|we|ou|ow|or|"
+	                                   "gh|go|er|st|ee|th|sh|ch|ct|on|ly|ng|nd|nt|ty|ll|le|de|as|ie|in|ss|"
+	                                   "'s |'t |re|gg|tt|pp|nn|ay|ar|wh|";
 
 	_vm->_displayStringIndex = 0;
 	int index = 0;
@@ -1233,8 +1226,8 @@ void LilliputScript::listAllTexts() {
 				} while (_vm->_packedStrings[index + variantCount + it] != 0x5B);
 			}
 		} else {*/
-			decodePackedText(&_vm->_packedStrings[index + variantCount]);
-			debugC(1, kDebugScript, "Text 0x%x variant 0 : %s", i, _vm->_displayStringBuf);
+		decodePackedText(&_vm->_packedStrings[index + variantCount]);
+		debugC(1, kDebugScript, "Text 0x%x variant 0 : %s", i, _vm->_displayStringBuf);
 		/* }*/
 	}
 }
@@ -1297,7 +1290,7 @@ Common::Point LilliputScript::getPosFromScript() {
 
 	int curWord = _currScript->readUint16LE();
 	int tmpVal = curWord >> 8;
-	switch(tmpVal) {
+	switch (tmpVal) {
 	case 0xFF:
 		assert((_vm->_currentScriptCharacter >= 0) && (_vm->_currentScriptCharacter < 40));
 		return _vm->_characterHomePos[_vm->_currentScriptCharacter];
@@ -1305,7 +1298,7 @@ Common::Point LilliputScript::getPosFromScript() {
 		int8 index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
 		return _vm->_characterHomePos[index];
-		}
+	}
 	case 0xFD:
 		return _vm->_currentScriptCharacterPos;
 	case 0xFC: {
@@ -1315,7 +1308,7 @@ Common::Point LilliputScript::getPosFromScript() {
 		int16 y = _vm->_characterPos[index].y >> 3;
 
 		return Common::Point(x, y);
-		}
+	}
 	case 0xFB: {
 		int index = _word16F00_characterId;
 		assert((index >= 0) && (index < 40));
@@ -1323,7 +1316,7 @@ Common::Point LilliputScript::getPosFromScript() {
 		int16 y = _vm->_characterPos[index].y >> 3;
 
 		return Common::Point(x, y);
-		}
+	}
 	case 0xFA:
 		return _vm->_characterTargetPos[_vm->_currentScriptCharacter];
 	case 0xF9:
@@ -1332,12 +1325,12 @@ Common::Point LilliputScript::getPosFromScript() {
 		int8 index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
 		return _vm->_keyPos[index];
-		}
+	}
 	case 0xF7: {
 		int8 index = _vm->_currentCharacterAttributes[6];
 		assert((index >= 0) && (index < 40));
 		return Common::Point(_vm->_characterPos[index].x >> 3, _vm->_characterPos[index].y >> 3);
-		}
+	}
 	case 0xF6:
 		return _vm->_savedMousePosDivided;
 	default:
@@ -1350,7 +1343,7 @@ Common::Point LilliputScript::getPosFromScript() {
 byte *LilliputScript::getCharacterAttributesPtr() {
 	debugC(2, kDebugScript, "getCharacterVariablePtr()");
 
-	int8 tmpVal = (int8) (getValue1() & 0xFF);
+	int8 tmpVal = (int8)(getValue1() & 0xFF);
 	int index = tmpVal * 32;
 	index += _currScript->readUint16LE();
 
@@ -1505,12 +1498,12 @@ byte LilliputScript::OC_isCarrying() {
 byte LilliputScript::OC_CompareCharacterVariables() {
 	debugC(1, kDebugScript, "OC_CompareCharacterVariables()");
 
-	byte* buf1 = getCharacterAttributesPtr();
+	byte *buf1 = getCharacterAttributesPtr();
 	int var1 = *buf1;
 
 	int operation = _currScript->readUint16LE();
 
-	byte* buf2 = getCharacterAttributesPtr();
+	byte *buf2 = getCharacterAttributesPtr();
 	int var2 = *buf2;
 
 	return compareValues(var1, operation, var2);
@@ -1901,7 +1894,7 @@ byte LilliputScript::OC_CheckCurrentCharacterType() {
 	debugC(1, kDebugScript, "OC_CheckCurrentCharacterType()");
 
 	int index = getValue1();
-	assert (index < 40);
+	assert(index < 40);
 
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
 	if (curByte == _vm->_characterBehaviour[index])
@@ -2038,8 +2031,8 @@ byte LilliputScript::OC_checkFunctionKeyPressed() {
 	debugC(1, kDebugScript, "OC_checkFunctionKeyPressed()");
 
 	static const Common::KeyCode specialKeys[10] = {
-		Common::KEYCODE_F10, Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3, Common::KEYCODE_F4,
-		Common::KEYCODE_F5,  Common::KEYCODE_F6, Common::KEYCODE_F7, Common::KEYCODE_F8, Common::KEYCODE_F9};
+	    Common::KEYCODE_F10, Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3, Common::KEYCODE_F4,
+	    Common::KEYCODE_F5, Common::KEYCODE_F6, Common::KEYCODE_F7, Common::KEYCODE_F8, Common::KEYCODE_F9};
 
 	int8 index = (_currScript->readUint16LE() & 0xFF) - 0x30;
 
@@ -2098,7 +2091,7 @@ void LilliputScript::OC_ChangeIsoMap() {
 	Common::Point var1 = getPosFromScript();
 	int var2 = _currScript->readUint16LE();
 	int var3 = _currScript->readUint16LE();
-	byte* mapPtr = getMapPtr(var1);
+	byte *mapPtr = getMapPtr(var1);
 
 	int mask = 8 >> var2;
 	mask = ~mask;
@@ -2197,7 +2190,6 @@ void LilliputScript::OC_getRotatingVariantSpeech() {
 	_talkingCharacter = _vm->_currentScriptCharacter;
 
 	getSpeechVariant(index, currVariant);
-
 }
 
 void LilliputScript::OC_startSpeechIfMute() {
@@ -2222,7 +2214,6 @@ void LilliputScript::OC_getComputedVariantSpeechIfMute() {
 	_currScript->readUint16LE();
 	_currScript->readUint16LE();
 	_currScript->readUint16LE();
-
 }
 
 void LilliputScript::OC_startSpeechIfSilent() {
@@ -2522,7 +2513,7 @@ void LilliputScript::OC_enableCurrentCharacterScript() {
 	debugC(1, kDebugScript, "OC_enableCurrentCharacterScript()");
 
 	uint8 var1 = (_currScript->readUint16LE() & 0xFF);
-	enableCharacterScript(_vm->_currentScriptCharacter , var1, _vm->_currentCharacterAttributes);
+	enableCharacterScript(_vm->_currentScriptCharacter, var1, _vm->_currentCharacterAttributes);
 	skipOpcodes(0);
 }
 
@@ -2538,7 +2529,7 @@ void LilliputScript::OC_setCurrentCharacterPos() {
 
 	uint16 oper = _currScript->readUint16LE();
 	Common::Point var1 = getPosFromScript();
-	byte* buf = _vm->_currentCharacterAttributes + 4;
+	byte *buf = _vm->_currentCharacterAttributes + 4;
 	computeOperation(buf, oper, var1.x);
 	computeOperation(buf + 1, oper, var1.y);
 }
@@ -2557,7 +2548,6 @@ void LilliputScript::OC_changeCurrentCharacterSprite() {
 	byte var2 = (_currScript->readUint16LE() & 0xFF);
 	_vm->_characterFrameArray[_vm->_currentScriptCharacter] = var1;
 	_vm->_spriteSizeArray[_vm->_currentScriptCharacter] = var2;
-
 }
 
 byte *LilliputScript::getCurrentCharacterVarFromScript() {
@@ -2617,7 +2607,7 @@ void LilliputScript::OC_turnCharacterTowardsAnother() {
 
 	int index = getValue1();
 
-	static const byte _directionsArray[] = { 0, 2, 0, 1, 3, 2, 3, 1 };
+	static const byte _directionsArray[] = {0, 2, 0, 1, 3, 2, 3, 1};
 
 	int dx = _vm->_characterPos[index].x - _vm->_characterPos[_vm->_currentScriptCharacter].x;
 	int dy = _vm->_characterPos[index].y - _vm->_characterPos[_vm->_currentScriptCharacter].y;
@@ -2669,13 +2659,12 @@ void LilliputScript::OC_scrollAwayFromCharacter() {
 	_vm->_refreshScreenFlag = true;
 	_vm->viewportScrollTo(Common::Point(newPosX, newPosY));
 	_vm->_refreshScreenFlag = false;
-
 }
 
 void LilliputScript::OC_skipNextVal() {
 	debugC(1, kDebugScript, "OC_skipNextVal()");
 
-	 _currScript->readUint16LE();
+	_currScript->readUint16LE();
 }
 
 void LilliputScript::OC_setCurrentCharacterAttr6() {
@@ -2691,7 +2680,7 @@ void LilliputScript::OC_setCurrentCharacterPose() {
 	int index = _currScript->readUint16LE();
 
 	int tmpVal = (_vm->_currentScriptCharacter * 32) + index;
-	assert (tmpVal < 40 * 32);
+	assert(tmpVal < 40 * 32);
 	_characterPose[_vm->_currentScriptCharacter] = _vm->_poseArray[tmpVal];
 	_characterNextSequence[_vm->_currentScriptCharacter] = 16;
 }
@@ -2731,7 +2720,7 @@ void LilliputScript::OC_setCharacterProperties() {
 	y += _currScript->readSint16LE();
 	_vm->_characterPos[index].y = y;
 
-	_vm->_characterPosAltitude[index]  = (int8)(_currScript->readUint16LE() & 0xFF);
+	_vm->_characterPosAltitude[index] = (int8)(_currScript->readUint16LE() & 0xFF);
 	_vm->_characterDirectionArray[index] = _currScript->readUint16LE() & 0xFF;
 }
 
@@ -2778,8 +2767,8 @@ void LilliputScript::OC_scrollViewPort() {
 
 	int direction = _currScript->readUint16LE();
 
-	static const int8 scrollValX[] = { 6, 0, 0, -6 };
-	static const int8 scrollValY[] = { 0, -6, 6, 0 };
+	static const int8 scrollValX[] = {6, 0, 0, -6};
+	static const int8 scrollValY[] = {0, -6, 6, 0};
 
 	int x = _viewportPos.x + scrollValX[direction];
 	int y = _viewportPos.y + scrollValY[direction];
@@ -2822,7 +2811,7 @@ void LilliputScript::OC_setModePriority() {
 void LilliputScript::setMode(EvaluatedMode newMode) {
 	debugC(2, kDebugScript, "setMode(%d - %d)", newMode._mode, newMode._priority);
 
-	for (int i = 0; i <  _vm->_newModesEvaluatedNumber; i++) {
+	for (int i = 0; i < _vm->_newModesEvaluatedNumber; i++) {
 		if (_newEvaluatedModes[i]._mode == newMode._mode) {
 			int newPriority = newMode._priority + _newEvaluatedModes[i]._priority;
 			newPriority = CLIP(newPriority, 0, 255);
@@ -2900,7 +2889,7 @@ void LilliputScript::OC_magicPuffEntrance() {
 	debugC(1, kDebugScript, "OC_magicPuffEntrance()");
 
 	int16 index = getValue1();
-	assert((index >0) && (index < 40));
+	assert((index > 0) && (index < 40));
 
 	_vm->_characterMagicPuffFrame[index] = 4;
 }
@@ -3045,7 +3034,8 @@ void LilliputScript::OC_waitForEvent() {
 	while (true) {
 		if (_vm->_keyboard_checkKeyboard()) {
 			_vm->_keyboard_getch();
-			break;;
+			break;
+			;
 		}
 		if (_vm->_mouseButton == 1)
 			break;
@@ -3228,7 +3218,7 @@ void LilliputScript::OC_initSmallAnim() {
 	debugC(1, kDebugScript, "OC_initSmallAnim()");
 
 	int index = _currScript->readUint16LE();
-	assert (index < 4);
+	assert(index < 4);
 	_vm->_smallAnims[index]._active = true;
 	_vm->_smallAnims[index]._pos.x = _currScript->readSint16LE();
 	_vm->_smallAnims[index]._pos.y = _currScript->readSint16LE();
@@ -3269,7 +3259,7 @@ void LilliputScript::OC_showObject() {
 	_vm->fill16x16Rect(16, pos);
 
 	int frame = _vm->_characterFrameArray[frameIdx];
-	byte* buf = _vm->_bufferMen;
+	byte *buf = _vm->_bufferMen;
 
 	if (frame > 240) {
 		buf = _vm->_bufferMen2;
@@ -3351,4 +3341,4 @@ void LilliputScript::OC_setCharacterMapColor() {
 	_characterMapPixelColor[index] = (color & 0xFF);
 }
 
-} // End of namespace
+} // namespace Lilliput

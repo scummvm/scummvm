@@ -37,16 +37,15 @@
 
 namespace Mohawk {
 
-RivenVideo::RivenVideo(MohawkEngine_Riven *vm, uint16 code) :
-		_vm(vm),
-		_id(0),
-		_slot(code),
-		_x(0),
-		_y(0),
-		_loop(false),
-		_enabled(false),
-		_video(nullptr),
-		_playing(false) {
+RivenVideo::RivenVideo(MohawkEngine_Riven *vm, uint16 code) : _vm(vm),
+                                                              _id(0),
+                                                              _slot(code),
+                                                              _x(0),
+                                                              _y(0),
+                                                              _loop(false),
+                                                              _enabled(false),
+                                                              _video(nullptr),
+                                                              _playing(false) {
 }
 
 RivenVideo::~RivenVideo() {
@@ -199,7 +198,7 @@ void RivenVideo::drawNextFrame() {
 	}
 
 	g_system->copyRectToScreen(frame->getPixels(), frame->pitch,
-	                               _x, _y, _video->getWidth(), _video->getHeight());
+	                           _x, _y, _video->getWidth(), _video->getHeight());
 
 	// Delete 8bpp conversion surface
 	if (convertedFrame) {

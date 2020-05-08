@@ -50,7 +50,6 @@ public:
 	/* Show the widget  */
 	void Display(bool full_redraw) override;
 
-
 protected:
 	uint8 R, G, B;
 	uint32 color;
@@ -65,7 +64,6 @@ protected:
 	/* remember me */
 	int frameThickness;
 	int shape;
-
 };
 
 } // End of namespace Nuvie

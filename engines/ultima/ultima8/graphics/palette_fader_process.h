@@ -23,22 +23,23 @@
 #ifndef ULTIMA8_GRAPHICS_PALETTEFADERPROCESS_H
 #define ULTIMA8_GRAPHICS_PALETTEFADERPROCESS_H
 
-#include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 class PaletteFaderProcess : public Process {
-	int                         _priority;
-	int32                       _counter;
-	int32                       _maxCounter;
-	int16                       _oldMatrix[12]; // Fixed point -4.11
-	int16                       _newMatrix[12];
+	int _priority;
+	int32 _counter;
+	int32 _maxCounter;
+	int16 _oldMatrix[12]; // Fixed point -4.11
+	int16 _newMatrix[12];
+
 public:
-	static PaletteFaderProcess  *_fader;
+	static PaletteFaderProcess *_fader;
 
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -58,6 +59,7 @@ public:
 	INTRINSIC(I_lightningBolt);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

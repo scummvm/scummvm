@@ -20,9 +20,9 @@
  *
  */
 
+#include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/obj_manager.h"
-#include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/u6_objects.h"
 
 namespace Ultima {
@@ -158,14 +158,14 @@ void Obj::set_actor_obj(bool flag) {
 
 bool Obj::is_in_inventory(bool check_parent) {
 	switch (get_engine_loc()) {
-	case OBJ_LOC_INV :
-	case OBJ_LOC_READIED :
+	case OBJ_LOC_INV:
+	case OBJ_LOC_READIED:
 		return true;
-	case OBJ_LOC_CONT :
+	case OBJ_LOC_CONT:
 		if (check_parent)
 			return ((Obj *)parent)->is_in_inventory(check_parent);
 		break;
-	default :
+	default:
 		break;
 	}
 
@@ -178,14 +178,14 @@ uint8 Obj::get_engine_loc() {
 
 Actor *Obj::get_actor_holding_obj() {
 	switch (get_engine_loc()) {
-	case OBJ_LOC_INV :
-	case OBJ_LOC_READIED :
+	case OBJ_LOC_INV:
+	case OBJ_LOC_READIED:
 		return (Actor *)this->parent;
 
-	case OBJ_LOC_CONT :
+	case OBJ_LOC_CONT:
 		return ((Obj *)parent)->get_actor_holding_obj();
 
-	default :
+	default:
 		break;
 	}
 

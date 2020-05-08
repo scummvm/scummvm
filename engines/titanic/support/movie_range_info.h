@@ -23,10 +23,10 @@
 #ifndef TITANIC_MOVIE_RANGE_INFO_H
 #define TITANIC_MOVIE_RANGE_INFO_H
 
-#include "video/video_decoder.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/support/movie_event.h"
+#include "video/video_decoder.h"
 
 namespace Titanic {
 
@@ -40,6 +40,7 @@ public:
 	bool _isReversed;
 	bool _isRepeat;
 	CMovieEventList _events;
+
 public:
 	CLASSDEF;
 	CMovieRangeInfo();

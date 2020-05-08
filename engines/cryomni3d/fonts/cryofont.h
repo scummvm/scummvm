@@ -36,7 +36,7 @@ namespace CryOmni3D {
 
 class CryoFont : public Graphics::Font {
 public:
-	CryoFont() : _height(0), _maxAdvance(0) { }
+	CryoFont() : _height(0), _maxAdvance(0) {}
 
 	void load(const Common::String &fontFile);
 

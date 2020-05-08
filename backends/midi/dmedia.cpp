@@ -32,16 +32,16 @@
 
 #if defined(IRIX)
 
+#include "audio/mpu401.h"
+#include "audio/musicplugin.h"
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "audio/musicplugin.h"
-#include "audio/mpu401.h"
 
+#include <bstring.h>
 #include <dmedia/midi.h>
 #include <sys/types.h>
-#include <bstring.h>
 #include <unistd.h>
 
 ////////////////////////////////////////
@@ -105,7 +105,6 @@ int MidiDriver_DMEDIA::open() {
 					_midiportName = portName;
 				}
 			}
-
 		}
 	}
 
@@ -122,7 +121,7 @@ int MidiDriver_DMEDIA::open() {
 		return -1;
 	}
 
-	mdSetStampMode(_midiPort, MD_NOSTAMP);  /* don't use Timestamps */
+	mdSetStampMode(_midiPort, MD_NOSTAMP); /* don't use Timestamps */
 
 	return 0;
 }
@@ -142,22 +141,21 @@ void MidiDriver_DMEDIA::send(uint32 b) {
 	byte first_byte = (b & 0x0000FF00) >> 8;
 	byte second_byte = (b & 0x00FF0000) >> 16;
 
-
 	event.sysexmsg = NULL;
 	event.msg[0] = status_byte;
 	event.msg[1] = first_byte;
 	event.msg[2] = second_byte;
 
 	switch (status_byte & 0xF0) {
-	case 0x80:      // Note Off
-	case 0x90:      // Note On
-	case 0xA0:      // Polyphonic Aftertouch
-	case 0xB0:      // Controller Change
-	case 0xE0:      // Pitch Bending
+	case 0x80: // Note Off
+	case 0x90: // Note On
+	case 0xA0: // Polyphonic Aftertouch
+	case 0xB0: // Controller Change
+	case 0xE0: // Pitch Bending
 		event.msglen = 3;
 		break;
-	case 0xC0:      // Programm Change
-	case 0xD0:      // Monophonic Aftertouch
+	case 0xC0: // Programm Change
+	case 0xD0: // Monophonic Aftertouch
 		event.msglen = 2;
 		break;
 	default:
@@ -173,9 +171,9 @@ void MidiDriver_DMEDIA::send(uint32 b) {
 	}
 }
 
-void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
+void MidiDriver_DMEDIA::sysEx(const byte *msg, uint16 length) {
 	MDevent event;
-	char buf [1024];
+	char buf[1024];
 
 	assert(length + 2 <= 256);
 
@@ -195,7 +193,6 @@ void MidiDriver_DMEDIA::sysEx (const byte *msg, uint16 length) {
 			warning("%02x ", (int)event.msg[i]);
 	}
 }
-
 
 // Plugin interface
 
@@ -226,7 +223,7 @@ MusicDevices DMediaMusicPlugin::getDevices() const {
 		fprintf(stderr, "No MIDI interfaces configured.\n");
 	}
 
-	for (i=0; i<numinterfaces; i++) {
+	for (i = 0; i < numinterfaces; i++) {
 		portName = mdGetName(0);
 		fprintf(stderr, "device %i %s\n", i, portName);
 		devices.push_back(MusicDevice(this, portName, MT_GM));
@@ -242,9 +239,9 @@ Common::Error DMediaMusicPlugin::createInstance(MidiDriver **mididriver, MidiDri
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(DMEDIA)
-	//REGISTER_PLUGIN_DYNAMIC(DMEDIA, PLUGIN_TYPE_MUSIC, DMediaMusicPlugin);
+//REGISTER_PLUGIN_DYNAMIC(DMEDIA, PLUGIN_TYPE_MUSIC, DMediaMusicPlugin);
 //#else
-	REGISTER_PLUGIN_STATIC(DMEDIA, PLUGIN_TYPE_MUSIC, DMediaMusicPlugin);
+REGISTER_PLUGIN_STATIC(DMEDIA, PLUGIN_TYPE_MUSIC, DMediaMusicPlugin);
 //#endif
 
 #endif

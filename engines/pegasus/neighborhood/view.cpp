@@ -41,7 +41,7 @@ void ViewTable::loadFromStream(Common::SeekableReadStream *stream) {
 		_entries[i].altCode = stream->readByte();
 		_entries[i].time = stream->readUint32BE();
 		debug(0, "View[%d]: %d %d %d %d", i, _entries[i].room, _entries[i].direction,
-				_entries[i].altCode, _entries[i].time);
+		      _entries[i].altCode, _entries[i].time);
 	}
 }
 
@@ -57,4 +57,4 @@ ViewTable::Entry ViewTable::findEntry(RoomID room, DirectionConstant direction, 
 	return Entry();
 }
 
-} // End of namespace pegasus
+} // namespace Pegasus

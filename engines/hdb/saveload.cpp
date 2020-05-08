@@ -22,9 +22,9 @@
 
 #include "graphics/thumbnail.h"
 
-#include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/gfx.h"
+#include "hdb/hdb.h"
 #include "hdb/lua-script.h"
 #include "hdb/map.h"
 #include "hdb/sound.h"
@@ -232,7 +232,6 @@ void AIEntity::save(Common::OutSaveFile *out) {
 	char funcString[32];
 	const char *lookUp;
 
-
 	// Write out 32-char names for the function ptrs we have in the entity struct
 	lookUp = g_hdb->_ai->funcLookUp(aiAction);
 	memset(&funcString, 0, 32);
@@ -388,5 +387,4 @@ Common::String HDBGame::genSaveFileName(uint slot, bool lua) {
 	return Common::String::format("%s.l.%03d", _targetName.c_str(), slot);
 }
 
-
-} // End of Namespace
+} // namespace HDB

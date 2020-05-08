@@ -22,9 +22,9 @@
 
 #include "sci/sound/drivers/mididriver.h"
 
-#include "audio/softsynth/emumidi.h"
-#include "audio/softsynth/cms.h"
 #include "audio/mixer.h"
+#include "audio/softsynth/cms.h"
+#include "audio/softsynth/emumidi.h"
 
 #include "common/system.h"
 
@@ -37,7 +37,7 @@ class MidiDriver_CMS;
 
 class CMSVoice {
 public:
-	CMSVoice(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8>& patchData);
+	CMSVoice(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8> &patchData);
 	virtual ~CMSVoice() {}
 
 	virtual void noteOn(int note, int velocity) = 0;
@@ -79,7 +79,7 @@ private:
 
 class CMSVoice_V0 : public CMSVoice {
 public:
-	CMSVoice_V0(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8>& patchData);
+	CMSVoice_V0(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8> &patchData);
 	~CMSVoice_V0() override {}
 
 	void noteOn(int note, int) override;
@@ -98,20 +98,20 @@ private:
 	void selectEnvelope(int id);
 
 	enum EnvelopeState {
-		kReady		= 0,
-		kRestart	= 1,
-		kAttack		= 2,
-		kDecay		= 3,
-		kSustain	= 4,
-		kRelease	= 5		
+		kReady = 0,
+		kRestart = 1,
+		kAttack = 2,
+		kDecay = 3,
+		kSustain = 4,
+		kRelease = 5
 	};
-	
+
 	EnvelopeState _envState;
 	uint8 _envAR;
 	uint8 _envTL;
 	uint8 _envDR;
 	uint8 _envSL;
-	uint8 _envRR;	
+	uint8 _envRR;
 	uint8 _envSLI;
 	uint8 _envPAC;
 	uint8 _envPA;
@@ -142,7 +142,7 @@ private:
 
 class CMSVoice_V1 : public CMSVoice {
 public:
-	CMSVoice_V1(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8>& patchData);
+	CMSVoice_V1(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8> &patchData);
 	~CMSVoice_V1() override {}
 
 	void noteOn(int note, int velocity) override;
@@ -188,7 +188,7 @@ public:
 	void send(uint32 b) override;
 	uint32 property(int prop, uint32 param) override;
 
-	void initTrack(SciSpan<const byte>& header);
+	void initTrack(SciSpan<const byte> &header);
 
 	void onTimer() override;
 
@@ -235,7 +235,7 @@ private:
 
 	CMSEmulator *_cms;
 	ResourceManager *_resMan;
-	Common::SpanOwner<SciSpan<const uint8> > _patchData;
+	Common::SpanOwner<SciSpan<const uint8>> _patchData;
 
 	bool _playSwitch;
 	uint16 _masterVolume;
@@ -248,8 +248,8 @@ private:
 	SciVersion _version;
 };
 
-CMSVoice::CMSVoice(uint8 id, MidiDriver_CMS* driver, CMSEmulator *cms, SciSpan<const uint8>& patchData) : _id(id), _regOffset(id > 5 ? id - 6 : id), _portOffset(id > 5 ? 2 : 0),
-	_driver(driver), _cms(cms), _assign(0xFF), _note(0xFF), _sustained(false), _duration(0), _releaseDuration(0), _secondaryVoice(0), _patchData(patchData) {
+CMSVoice::CMSVoice(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8> &patchData) : _id(id), _regOffset(id > 5 ? id - 6 : id), _portOffset(id > 5 ? 2 : 0),
+                                                                                                          _driver(driver), _cms(cms), _assign(0xFF), _note(0xFF), _sustained(false), _duration(0), _releaseDuration(0), _secondaryVoice(0), _patchData(patchData) {
 	assert(_id < 12);
 	_octaveRegs[_id >> 1] = 0;
 }
@@ -258,7 +258,7 @@ void CMSVoice::sendFrequency() {
 	uint8 frequency = 0;
 	uint8 octave = 0;
 
-	recalculateFrequency(frequency, octave);	
+	recalculateFrequency(frequency, octave);
 
 	uint8 octaveData = _octaveRegs[_id >> 1];
 	octaveData = (_id & 1) ? (octaveData & 0x0F) | (octave << 4) : (octaveData & 0xF0) | octave;
@@ -276,27 +276,25 @@ void CMSVoice::cmsWrite(uint8 reg, uint8 val) {
 }
 
 uint8 CMSVoice::_octaveRegs[6] = {
-	0, 0, 0, 0, 0, 0
-};
+    0, 0, 0, 0, 0, 0};
 
 const int CMSVoice::_frequencyTable[48] = {
-	  3,  10,  17,  24,
-	 31,  38,  46,  51,
-	 58,  64,  71,  77,
-	 83,  89,  95, 101,
-	107, 113, 119, 124,
-	130, 135, 141, 146,
-	151, 156, 162, 167,
-	172, 177, 182, 186,
-	191, 196, 200, 205,
-	209, 213, 217, 222,
-	226, 230, 234, 238,
-	242, 246, 250, 253
-};
+    3, 10, 17, 24,
+    31, 38, 46, 51,
+    58, 64, 71, 77,
+    83, 89, 95, 101,
+    107, 113, 119, 124,
+    130, 135, 141, 146,
+    151, 156, 162, 167,
+    172, 177, 182, 186,
+    191, 196, 200, 205,
+    209, 213, 217, 222,
+    226, 230, 234, 238,
+    242, 246, 250, 253};
 
-CMSVoice_V0::CMSVoice_V0(uint8 id, MidiDriver_CMS* driver, CMSEmulator *cms, SciSpan<const uint8>& patchData) : CMSVoice(id, driver, cms, patchData), _envState(kReady), _currentLevel(0), _strMask(0),
-	_envAR(0), _envTL(0), _envDR(0), _envSL(0), _envRR(0), _envSLI(0), _vbrOn(false), _vbrSteps(0), _vbrState(0), _vbrMod(0), _vbrCur(0), _isSecondary(id > 7),
-	_vbrPhase(0), _transOct(0), _transFreq(0), _envPAC(0), _envPA(0), _panMask(_id & 1 ? 0xF0 : 0x0F), _envSSL(0), _envNote(0xFF), _updateCMS(false) {
+CMSVoice_V0::CMSVoice_V0(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8> &patchData) : CMSVoice(id, driver, cms, patchData), _envState(kReady), _currentLevel(0), _strMask(0),
+                                                                                                                _envAR(0), _envTL(0), _envDR(0), _envSL(0), _envRR(0), _envSLI(0), _vbrOn(false), _vbrSteps(0), _vbrState(0), _vbrMod(0), _vbrCur(0), _isSecondary(id > 7),
+                                                                                                                _vbrPhase(0), _transOct(0), _transFreq(0), _envPAC(0), _envPA(0), _panMask(_id & 1 ? 0xF0 : 0x0F), _envSSL(0), _envNote(0xFF), _updateCMS(false) {
 }
 
 void CMSVoice_V0::noteOn(int note, int) {
@@ -338,7 +336,7 @@ void CMSVoice_V0::programChange(int program) {
 		// I encountered this with PQ2 at the airport (program 204 sent on part 13). The original driver does not really handle that.
 		// In fact, it even interprets this value as signed so it will not point into the instrument data buffer, but into a random
 		// invalid memory location (in the case of 204 it will read a value of 8 from the device init data array). Since there seems
-		// to be no effect on the sound I don't emulate this (mis)behaviour. 
+		// to be no effect on the sound I don't emulate this (mis)behaviour.
 		warning("CMSVoice_V0::programChange:: Invalid program '%d' requested on midi channel '%d'", program, _assign);
 		program = 0;
 	} else if (program == 127) {
@@ -493,7 +491,7 @@ void CMSVoice_V0::recalculateFrequency(uint8 &freq, uint8 &octave) {
 			frequency = 47;
 		}
 	}
-	
+
 	octave = CLIP<int8>(octave + _transOct, 0, 7);
 	frequency = _frequencyTable[frequency & 0xFF] + _transFreq + _vbrPhase;
 
@@ -519,7 +517,7 @@ void CMSVoice_V0::recalculateEnvelopeLevels() {
 	} else if (_envTL) {
 		_envTL = chanVol;
 	}
-	
+
 	int volIndexSL = (_envSLI << 4) + (_envTL >> 4);
 	assert(volIndexSL < ARRAYSIZE(_volumeTable));
 	_envSL = _volumeTable[volIndexSL];
@@ -532,7 +530,7 @@ void CMSVoice_V0::selectEnvelope(int id) {
 	_envDR = *in++;
 	_envSLI = *in++;
 	_envRR = *in++;
-	/*unused*/in++;
+	/*unused*/ in++;
 	_vbrMod = *in++;
 	_vbrSteps = *in++;
 	_vbrOn = _vbrMod;
@@ -542,33 +540,31 @@ void CMSVoice_V0::selectEnvelope(int id) {
 }
 
 const uint8 CMSVoice_V0::_volumeTable[176] = {
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10,	0x10, 0x10, 0x20, 0x20, 0x20, 0x20, 0x20, 0x30,
-	0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10, 0x20,	0x20, 0x20, 0x30, 0x30, 0x30, 0x30, 0x40, 0x40,
-	0x00, 0x00, 0x00, 0x10, 0x10, 0x20, 0x20, 0x20,	0x30, 0x30, 0x40, 0x40, 0x40, 0x50, 0x50, 0x60,
-	0x00, 0x00, 0x10, 0x10, 0x20, 0x20, 0x30, 0x30,	0x40, 0x40, 0x50, 0x50, 0x60, 0x60, 0x70, 0x70,
-	0x00, 0x00, 0x10, 0x10, 0x20, 0x30, 0x30, 0x40,	0x40, 0x50, 0x60, 0x60, 0x70, 0x70, 0x80, 0x90,
-	0x00, 0x00, 0x10, 0x20, 0x20, 0x30, 0x40, 0x40,	0x50, 0x60, 0x70, 0x70, 0x80, 0x90, 0x90, 0xa0,
-	0x00, 0x00, 0x10, 0x20, 0x30, 0x40, 0x40, 0x50,	0x60, 0x70, 0x80, 0x80, 0x90, 0xa0, 0xb0, 0xc0,
-	0x00, 0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60,	0x70, 0x80, 0x90, 0x90, 0xa0, 0xb0, 0xc0, 0xd0,
-	0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70,	0x80, 0x90, 0xa0, 0xb0, 0xc0, 0xd0, 0xe0, 0xf0
-};
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10, 0x10, 0x10, 0x20, 0x20, 0x20, 0x20, 0x20, 0x30,
+    0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10, 0x20, 0x20, 0x20, 0x30, 0x30, 0x30, 0x30, 0x40, 0x40,
+    0x00, 0x00, 0x00, 0x10, 0x10, 0x20, 0x20, 0x20, 0x30, 0x30, 0x40, 0x40, 0x40, 0x50, 0x50, 0x60,
+    0x00, 0x00, 0x10, 0x10, 0x20, 0x20, 0x30, 0x30, 0x40, 0x40, 0x50, 0x50, 0x60, 0x60, 0x70, 0x70,
+    0x00, 0x00, 0x10, 0x10, 0x20, 0x30, 0x30, 0x40, 0x40, 0x50, 0x60, 0x60, 0x70, 0x70, 0x80, 0x90,
+    0x00, 0x00, 0x10, 0x20, 0x20, 0x30, 0x40, 0x40, 0x50, 0x60, 0x70, 0x70, 0x80, 0x90, 0x90, 0xa0,
+    0x00, 0x00, 0x10, 0x20, 0x30, 0x40, 0x40, 0x50, 0x60, 0x70, 0x80, 0x80, 0x90, 0xa0, 0xb0, 0xc0,
+    0x00, 0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0x90, 0xa0, 0xb0, 0xc0, 0xd0,
+    0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xa0, 0xb0, 0xc0, 0xd0, 0xe0, 0xf0};
 
 const uint8 CMSVoice_V0::_pitchWheelTable[65] = {
-	0x00, 0x01, 0x02, 0x02, 0x03, 0x04, 0x05, 0x05,
-	0x06, 0x07, 0x08, 0x08, 0x09, 0x0a, 0x0b, 0x0b,
-	0x0c, 0x0d, 0x0e, 0x0e, 0x0f, 0x10, 0x11, 0x11,
-	0x12, 0x13, 0x14, 0x14, 0x15, 0x16, 0x17, 0x17,
-	0x18, 0x19, 0x1a, 0x1a, 0x1b, 0x1c, 0x1d, 0x1d,
-	0x1e, 0x1f, 0x20, 0x20, 0x21, 0x22, 0x23, 0x23,
-	0x24, 0x25, 0x26, 0x26, 0x27, 0x28, 0x29, 0x29,
-	0x2a, 0x2b, 0x2c, 0x2c, 0x2d, 0x2e, 0x2f, 0x2f,
-	0x30
-};
+    0x00, 0x01, 0x02, 0x02, 0x03, 0x04, 0x05, 0x05,
+    0x06, 0x07, 0x08, 0x08, 0x09, 0x0a, 0x0b, 0x0b,
+    0x0c, 0x0d, 0x0e, 0x0e, 0x0f, 0x10, 0x11, 0x11,
+    0x12, 0x13, 0x14, 0x14, 0x15, 0x16, 0x17, 0x17,
+    0x18, 0x19, 0x1a, 0x1a, 0x1b, 0x1c, 0x1d, 0x1d,
+    0x1e, 0x1f, 0x20, 0x20, 0x21, 0x22, 0x23, 0x23,
+    0x24, 0x25, 0x26, 0x26, 0x27, 0x28, 0x29, 0x29,
+    0x2a, 0x2b, 0x2c, 0x2c, 0x2d, 0x2e, 0x2f, 0x2f,
+    0x30};
 
-CMSVoice_V1::CMSVoice_V1(uint8 id, MidiDriver_CMS* driver, CMSEmulator *cms, SciSpan<const uint8>& patchData) : CMSVoice(id, driver, cms, patchData), _velocity(0), _patchDataIndex(0),
-	_amplitudeTimer(0), _amplitudeModifier(0), _release(false) {
+CMSVoice_V1::CMSVoice_V1(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8> &patchData) : CMSVoice(id, driver, cms, patchData), _velocity(0), _patchDataIndex(0),
+                                                                                                                _amplitudeTimer(0), _amplitudeModifier(0), _release(false) {
 }
 
 void CMSVoice_V1::noteOn(int note, int velocity) {
@@ -714,15 +710,14 @@ void CMSVoice_V1::setupVoiceAmplitude() {
 }
 
 const int CMSVoice_V1::_velocityTable[32] = {
-	 1,  3,  6,  8,  9, 10, 11, 12,
-	12, 13, 13, 14, 14, 14, 15, 15,
-	 0,  1,  2,  2,  3,  4,  4,  5,
-	 6,  6,  7,  8,  8,  9, 10, 10
-};
+    1, 3, 6, 8, 9, 10, 11, 12,
+    12, 13, 13, 14, 14, 14, 15, 15,
+    0, 1, 2, 2, 3, 4, 4, 5,
+    6, 6, 7, 8, 8, 9, 10, 10};
 
-MidiDriver_CMS::MidiDriver_CMS(Audio::Mixer* mixer, ResourceManager* resMan, SciVersion version) : MidiDriver_Emulated(mixer), _resMan(resMan),
-	_version(version), _cms(0), _rate(0), _playSwitch(true), _masterVolume(0), _numVoicesPrimary(version > SCI_VERSION_0_LATE ? 12 : 8),
-	_actualTimerInterval(1000000 / _baseFreq), _reqTimerInterval(1000000/60), _numVoicesSecondary(version > SCI_VERSION_0_LATE ? 0 : 4) {
+MidiDriver_CMS::MidiDriver_CMS(Audio::Mixer *mixer, ResourceManager *resMan, SciVersion version) : MidiDriver_Emulated(mixer), _resMan(resMan),
+                                                                                                   _version(version), _cms(0), _rate(0), _playSwitch(true), _masterVolume(0), _numVoicesPrimary(version > SCI_VERSION_0_LATE ? 12 : 8),
+                                                                                                   _actualTimerInterval(1000000 / _baseFreq), _reqTimerInterval(1000000 / 60), _numVoicesSecondary(version > SCI_VERSION_0_LATE ? 0 : 4) {
 	memset(_voice, 0, sizeof(_voice));
 	_updateTimer = _reqTimerInterval;
 }
@@ -745,8 +740,8 @@ int MidiDriver_CMS::open() {
 
 	_rate = _mixer->getOutputRate();
 	_cms = new CMSEmulator(_rate);
-	assert(_cms);	
-	
+	assert(_cms);
+
 	for (uint i = 0; i < ARRAYSIZE(_channel); ++i)
 		_channel[i] = Channel();
 
@@ -756,7 +751,7 @@ int MidiDriver_CMS::open() {
 		else
 			_voice[i] = new CMSVoice_V1(i, this, _cms, *_patchData);
 	}
-	
+
 	_playSwitch = true;
 	_masterVolume = 0;
 
@@ -850,7 +845,7 @@ uint32 MidiDriver_CMS::property(int prop, uint32 param) {
 	}
 }
 
-void MidiDriver_CMS::initTrack(SciSpan<const byte>& header) {
+void MidiDriver_CMS::initTrack(SciSpan<const byte> &header) {
 	if (!_isOpen || _version > SCI_VERSION_0_LATE)
 		return;
 
@@ -1026,7 +1021,7 @@ void MidiDriver_CMS::voiceMapping(int channelNr, int value) {
 	} else if (curVoices > value) {
 		unbindVoices(channelNr, curVoices - value, value == 1);
 		donateVoices(value == 1);
-	}/*else if (_version < SCI_VERSION_1_EARLY && value == 1) {
+	} /*else if (_version < SCI_VERSION_1_EARLY && value == 1) {
 		// The purpose of these lines would be to fill up missing secondary voices.
 		// I have commented them out, since the original driver doesn't do that either.
 		unbindVoices(channelNr, 1, true);
@@ -1081,7 +1076,7 @@ void MidiDriver_CMS::unbindVoices(int channelNr, int voices, bool bindSecondary)
 		for (int i = 0; i < _numVoicesPrimary; ++i) {
 			if (_voice[i]->_assign == channelNr && _voice[i]->_note == 0xFF) {
 				_voice[i]->_assign = 0xFF;
-				
+
 				CMSVoice *sec = _voice[i]->_secondaryVoice;
 				if (sec) {
 					sec->stop();
@@ -1243,7 +1238,7 @@ int MidiDriver_CMS::findVoice(int channelNr, int note) {
 
 		return voiceNr;
 	}
-	
+
 	return -1;
 }
 
@@ -1299,7 +1294,7 @@ public:
 	int open(ResourceManager *resMan) override;
 	void close() override;
 
-	void initTrack(SciSpan<const byte>& header) override;
+	void initTrack(SciSpan<const byte> &header) override;
 
 	bool hasRhythmChannel() const override { return false; }
 	byte getPlayId() const override { return _version > SCI_VERSION_0_LATE ? 9 : 4; }
@@ -1334,9 +1329,9 @@ void MidiPlayer_CMS::close() {
 	_driver = nullptr;
 }
 
-void MidiPlayer_CMS::initTrack(SciSpan<const byte>& header) {
+void MidiPlayer_CMS::initTrack(SciSpan<const byte> &header) {
 	if (_driver)
-		static_cast<MidiDriver_CMS*>(_driver)->initTrack(header);
+		static_cast<MidiDriver_CMS *>(_driver)->initTrack(header);
 }
 
 const char MidiPlayer_CMS::_requiredFiles[] = "'PATCH.101'";
@@ -1345,4 +1340,4 @@ MidiPlayer *MidiPlayer_CMS_create(SciVersion version) {
 	return new MidiPlayer_CMS(version);
 }
 
-} // End of namespace SCI
+} // namespace Sci

@@ -37,7 +37,8 @@ protected:
 	 * Draws a surface at a given position within this surface with transparency
 	 */
 	virtual void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped,
-		int overrideColor);
+	                                   int overrideColor);
+
 public:
 	Scalpel3DOScreen(SherlockEngine *vm);
 	~Scalpel3DOScreen() override {}
@@ -73,13 +74,13 @@ public:
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
 	void SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD) override;
+	                     bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD) override;
 
 	/**
 	 * Draws an image frame at a given position within this surface with transparency
 	 */
 	void SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD) override;
+	                     bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD) override;
 
 	/**
 	 * Fill a given area of the surface with a given color

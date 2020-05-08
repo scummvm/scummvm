@@ -59,8 +59,7 @@ void Config::setGame(const Common::String &name) {
 
 /*-------------------------------------------------------------------*/
 
-ConfigElement::ConfigElement(const Shared::XMLNode *xmlNode) :
-	_node(xmlNode), _name(xmlNode->id().c_str()) {
+ConfigElement::ConfigElement(const Shared::XMLNode *xmlNode) : _node(xmlNode), _name(xmlNode->id().c_str()) {
 }
 
 ConfigElement::ConfigElement(const ConfigElement &e) : _node(e._node), _name(e._name) {
@@ -119,7 +118,7 @@ Std::vector<ConfigElement> ConfigElement::getChildren() const {
 	Std::vector<ConfigElement> result;
 
 	for (Common::Array<Shared::XMLNode *>::const_iterator it = children.begin();
-	        it != children.end(); ++it)
+	     it != children.end(); ++it)
 		result.push_back(*it);
 
 	return result;

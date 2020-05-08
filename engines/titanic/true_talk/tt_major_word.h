@@ -30,13 +30,16 @@ namespace Titanic {
 class TTmajorWord : public TTword {
 private:
 	static bool _staticFlag;
+
 protected:
 	int _field2C;
+
 protected:
 	/**
 	 * Dumps data for the word to a file
 	 */
 	int saveData(SimpleFile *file, int val) const;
+
 public:
 	TTmajorWord(const TTstring &str, WordClass wordClass, int val2, int val3);
 	TTmajorWord(const TTmajorWord *src);

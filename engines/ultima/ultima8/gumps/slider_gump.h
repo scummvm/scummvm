@@ -56,6 +56,7 @@ public:
 	bool OnKeyDown(int key, int mod) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 

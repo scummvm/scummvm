@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CGlassSmasher, CGameObject)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CGlassSmasher::save(SimpleFile *file, int indent) {

@@ -29,7 +29,7 @@ namespace Graphics {
 class ManagedSurface;
 class MacText;
 class MacWindowManager;
-}
+} // namespace Graphics
 
 namespace Director {
 
@@ -49,7 +49,7 @@ private:
 
 public:
 	CachedMacText(TextCast *const textCast, int32 bgcolor, int version, int defaultWidth = -1,
-			Graphics::MacWindowManager *const wm = NULL);
+	              Graphics::MacWindowManager *const wm = NULL);
 	~CachedMacText();
 
 	void setWm(Graphics::MacWindowManager *wm);
@@ -59,7 +59,10 @@ public:
 	const Graphics::ManagedSurface *getSurface();
 	int getLineCount();
 
-	void setStxt(const TextCast *stxt) { _textCast = stxt; forceDirty(); }
+	void setStxt(const TextCast *stxt) {
+		_textCast = stxt;
+		forceDirty();
+	}
 };
 
 } // End of namespace Director

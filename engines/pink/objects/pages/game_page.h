@@ -75,6 +75,6 @@ private:
 	StringMap _variables;
 };
 
-}
+} // namespace Pink
 
 #endif

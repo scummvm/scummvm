@@ -26,11 +26,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSUBGlass, CGameObject)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(MouseButtonUpMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(SignalObject)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(SignalObject)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 CSUBGlass::CSUBGlass() : _fieldBC(0), _startFrame(0), _endFrame(1), _signalStartFrame(0) {

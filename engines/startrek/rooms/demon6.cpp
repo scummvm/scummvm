@@ -242,7 +242,7 @@ void Room::demon6StephenIsInsulted() {
 void Room::demon6StephenDescribesItemsInCase() {
 	while (true) {
 		showText(TX_SPEAKER_STEPHEN, 51, true);
-		TextRef choices2[] = { TX_SPEAKER_STEPHEN, 45, 46, 47, 48, 49, 50, TX_BLANK };
+		TextRef choices2[] = {TX_SPEAKER_STEPHEN, 45, 46, 47, 48, 49, 50, TX_BLANK};
 		TextRef choice = showMultipleTexts(choices2, true);
 
 		switch (choice) {
@@ -427,7 +427,7 @@ void Room::demon6GetCase() {
 }
 
 void Room::demon6KirkReachedCase() {
-	const int items[] = { OBJECT_IMETAL, OBJECT_ISHELLS, OBJECT_IMETEOR, OBJECT_IMINERAL, OBJECT_ISKULL };
+	const int items[] = {OBJECT_IMETAL, OBJECT_ISHELLS, OBJECT_IMETEOR, OBJECT_IMINERAL, OBJECT_ISKULL};
 	byte ret = 0x1f ^ demon6ShowCase(_awayMission->demon.itemsTakenFromCase ^ 0x1f);
 	_awayMission->demon.itemsTakenFromCase = ret;
 
@@ -442,12 +442,11 @@ void Room::demon6KirkReachedCase() {
 
 int Room::demon6ShowCase(int visible) {
 	const Common::Point spritePositions[] = {
-		Common::Point(0x29, 0x80),
-		Common::Point(0x58, 0x7d),
-		Common::Point(0x82, 0x7d),
-		Common::Point(0xae, 0x79),
-		Common::Point(0xe1, 0x7d)
-	};
+	    Common::Point(0x29, 0x80),
+	    Common::Point(0x58, 0x7d),
+	    Common::Point(0x82, 0x7d),
+	    Common::Point(0xae, 0x79),
+	    Common::Point(0xe1, 0x7d)};
 
 	_vm->_gfx->fadeoutScreen();
 	_vm->_gfx->pushSprites();
@@ -580,8 +579,8 @@ int Room::demon6ShowCaseProcessSelection(Sprite *sprites, Sprite *clickedSprite,
 	_vm->_gfx->delSprite(clickedSprite);
 	clickedSprite->bitmap.reset();
 	visible ^= (0x10 >> (clickedSprite - sprites));
-	
+
 	return visible;
 }
 
-}
+} // namespace StarTrek

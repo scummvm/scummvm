@@ -31,7 +31,7 @@ void WidthHeight::load(Common::SeekableReadStream &stream) {
 	_height = stream.readSint16LE();
 
 	debug(5, "WidthHeight::load() _width: %d; _height: %d",
-		_width, _height);
+	      _width, _height);
 }
 
 // SurfInfo
@@ -41,7 +41,7 @@ void SurfInfo::load(Common::SeekableReadStream &stream) {
 	_dimensions.load(stream);
 
 	debug(5, "SurfInfo::load() _pixelSize: %d",
-		_pixelSize);
+	      _pixelSize);
 }
 
 // NamedPoint

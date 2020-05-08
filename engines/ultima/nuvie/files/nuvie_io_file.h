@@ -23,11 +23,11 @@
 #ifndef NUVIE_FILES_NUVIE_IO_FILE_H
 #define NUVIE_FILES_NUVIE_IO_FILE_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/files/nuvie_io.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "ultima/nuvie/files/nuvie_io.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -46,6 +46,7 @@ class NuvieIOFileRead : public NuvieIOFile {
 private:
 	Common::SeekableReadStream *_file;
 	Common::File _srcFile;
+
 public:
 	NuvieIOFileRead() : NuvieIOFile(), _file(nullptr) {}
 	~NuvieIOFileRead() override;
@@ -81,10 +82,12 @@ private:
 	Common::MemoryWriteStreamDynamic _saveFileData;
 	Common::String _description;
 	bool _isAutosave;
+
 protected:
 	bool isOpen() const {
 		return _file != nullptr;
 	}
+
 public:
 	NuvieIOFileWrite();
 	~NuvieIOFileWrite() override;

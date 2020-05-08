@@ -32,8 +32,8 @@
 
 #include "graphics/cursorman.h"
 
-#include "gui/editrecorddialog.h"
 #include "gui/ThemeEval.h"
+#include "gui/editrecorddialog.h"
 
 #include "gui/onscreendialog.h"
 
@@ -110,7 +110,6 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 			new ButtonWidget(this, "OnScreenDialog.FastReplayButton", ">>", _("Fast replay"), kFastModeCmd);
 		}
 	}
-
 
 	_text = new GUI::StaticTextWidget(this, "OnScreenDialog.TimeLabel", "00:00:00");
 	_enableDrag = false;
@@ -201,7 +200,6 @@ void OnScreenDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 
 void OnScreenDialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isMouseOver(x, y)) {
-
 	}
 	_enableDrag = false;
 	Dialog::handleMouseUp(x, y, button, clickCount);
@@ -232,4 +230,4 @@ bool OnScreenDialog::isEditDlgVisible() {
 	return _editDlgShown;
 }
 
-}
+} // namespace GUI

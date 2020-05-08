@@ -24,10 +24,10 @@
 #define TSAGE_RINGWORLD_DEMO_H
 
 #include "common/scummsys.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -36,9 +36,10 @@ namespace Ringworld {
 
 using namespace TsAGE;
 
-class RingworldDemoGame: public Game {
+class RingworldDemoGame : public Game {
 private:
 	void pauseGame();
+
 public:
 	void start() override;
 	Scene *createScene(int sceneNumber) override;
@@ -48,7 +49,7 @@ public:
 	bool canLoadGameStateCurrently() override;
 };
 
-class RingworldDemoScene: public Scene {
+class RingworldDemoScene : public Scene {
 public:
 	SequenceManager _sequenceManager;
 	SceneObject _actor1, _actor2, _actor3;

@@ -23,10 +23,10 @@
  *
  */
 
-#include "pegasus/gamestate.h"
-#include "pegasus/pegasus.h"
-#include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/caldoria/caldoriabomb.h"
+#include "pegasus/gamestate.h"
+#include "pegasus/neighborhood/caldoria/caldoria.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -56,645 +56,639 @@ static const CoordType kVertextHotSpotHeight = 24;
 static const NotificationFlags kBombTimerExpiredFlag = 1;
 
 static const VertexType kBombLevelOne[] = {
-	0, 1, 0, 1, 0,			// hot vertices first.
-	1, 1, 0, 1, 1,
-	1, 1, 0, 1, 0,
-	1, 1, 0, 1, 1,
-	0, 1, 0, 1, 0,
+    0, 1, 0, 1, 0, // hot vertices first.
+    1, 1, 0, 1, 1,
+    1, 1, 0, 1, 0,
+    1, 1, 0, 1, 1,
+    0, 1, 0, 1, 0,
 
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
 
-	9,						// 9 edges in this level
+    9, // 9 edges in this level
 
-	kEdgeOneFourth,
-	3,
-	1, 2, 3,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    1, 2, 3,
+    0, 0,
 
-	kEdgeOneFourth,
-	5,
-	5, 6, 7, 8, 9,
-	0, 0, 0, 0,
+    kEdgeOneFourth,
+    5,
+    5, 6, 7, 8, 9,
+    0, 0, 0, 0,
 
-	kEdgeOneFourth,
-	4,
-	10, 11, 12, 13,
-	0, 0, 0,
+    kEdgeOneFourth,
+    4,
+    10, 11, 12, 13,
+    0, 0, 0,
 
-	kEdgeOneFourth,
-	5,
-	15, 16, 17, 18, 19,
-	0, 0, 0, 0,
+    kEdgeOneFourth,
+    5,
+    15, 16, 17, 18, 19,
+    0, 0, 0, 0,
 
-	kEdgeOneFourth,
-	3,
-	21, 22, 23,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    21, 22, 23,
+    0, 0,
 
-	kEdgeOneHalf,
-	3,
-	5, 10, 15,
-	0, 0,
+    kEdgeOneHalf,
+    3,
+    5, 10, 15,
+    0, 0,
 
-	kEdgeOneHalf,
-	5,
-	1, 6, 11, 16, 21,
-	0, 0, 0, 0,
+    kEdgeOneHalf,
+    5,
+    1, 6, 11, 16, 21,
+    0, 0, 0, 0,
 
-	kEdgeOneHalf,
-	5,
-	3, 8, 13, 18, 23,
-	0, 0, 0, 0,
+    kEdgeOneHalf,
+    5,
+    3, 8, 13, 18, 23,
+    0, 0, 0, 0,
 
-	kEdgeOneHalf,
-	3,
-	9, 14, 19,
-	0, 0
-};
+    kEdgeOneHalf,
+    3,
+    9, 14, 19,
+    0, 0};
 
 static const VertexType kBombLevelTwo[] = {
-	0, 1, 0, 1, 0,
-	1, 1, 1, 0, 1,
-	0, 0, 0, 1, 0,
-	1, 1, 1, 0, 1,
-	0, 1, 0, 1, 0,
+    0, 1, 0, 1, 0,
+    1, 1, 1, 0, 1,
+    0, 0, 0, 1, 0,
+    1, 1, 1, 0, 1,
+    0, 1, 0, 1, 0,
 
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
 
-	15,
+    15,
 
-	kEdgeOneEighth,
-	2,
-	5, 1,
-	0,
+    kEdgeOneEighth,
+    2,
+    5, 1,
+    0,
 
-	kEdgeOneEighth,
-	3,
-	17, 13, 9,
-	0, 0,
+    kEdgeOneEighth,
+    3,
+    17, 13, 9,
+    0, 0,
 
-	kEdgeOneEighth,
-	2,
-	23, 19,
-	0,
+    kEdgeOneEighth,
+    2,
+    23, 19,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	3, 9,
-	0,
+    kEdgeThreeEighths,
+    2,
+    3, 9,
+    0,
 
-	kEdgeThreeEighths,
-	3,
-	7, 13, 19,
-	0, 0,
+    kEdgeThreeEighths,
+    3,
+    7, 13, 19,
+    0, 0,
 
-	kEdgeThreeEighths,
-	2,
-	15, 21,
-	0,
+    kEdgeThreeEighths,
+    2,
+    15, 21,
+    0,
 
-	kEdgeOneFourth,
-	3,
-	1, 2, 3,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    1, 2, 3,
+    0, 0,
 
-	kEdgeOneFourth,
-	4,
-	6, 7, 8, 9,
-	0, 0, 0,
+    kEdgeOneFourth,
+    4,
+    6, 7, 8, 9,
+    0, 0, 0,
 
-	kEdgeOneFourth,
-	4,
-	16, 17, 18, 19,
-	0, 0, 0,
+    kEdgeOneFourth,
+    4,
+    16, 17, 18, 19,
+    0, 0, 0,
 
-	kEdgeOneFourth,
-	3,
-	21, 22, 23,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    21, 22, 23,
+    0, 0,
 
-	kEdgeOneHalf,
-	3,
-	5, 10, 15,
-	0, 0,
+    kEdgeOneHalf,
+    3,
+    5, 10, 15,
+    0, 0,
 
-	kEdgeOneHalf,
-	2,
-	1, 6,
-	0,
+    kEdgeOneHalf,
+    2,
+    1, 6,
+    0,
 
-	kEdgeOneHalf,
-	3,
-	7, 12, 17,
-	0, 0,
+    kEdgeOneHalf,
+    3,
+    7, 12, 17,
+    0, 0,
 
-	kEdgeOneHalf,
-	3,
-	9, 14, 19,
-	0, 0,
+    kEdgeOneHalf,
+    3,
+    9, 14, 19,
+    0, 0,
 
-	kEdgeOneHalf,
-	2,
-	16, 21,
-	0
-};
+    kEdgeOneHalf,
+    2,
+    16, 21,
+    0};
 
 static const VertexType kBombLevelThree[] = {
-	0, 1, 0, 1, 0,
-	1, 1, 1, 1, 1,
-	0, 1, 1, 0, 0,
-	1, 1, 1, 1, 1,
-	0, 1, 0, 1, 0,
+    0, 1, 0, 1, 0,
+    1, 1, 1, 1, 1,
+    0, 1, 1, 0, 0,
+    1, 1, 1, 1, 1,
+    0, 1, 0, 1, 0,
 
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
 
-	22,
+    22,
 
-	kEdgeThreeSixteenths,
-	3,
-	15, 12, 9,
-	0, 0,
+    kEdgeThreeSixteenths,
+    3,
+    15, 12, 9,
+    0, 0,
 
-	kEdgeFiveSixteenths,
-	3,
-	5, 12, 19,
-	0, 0,
+    kEdgeFiveSixteenths,
+    3,
+    5, 12, 19,
+    0, 0,
 
-	kEdgeOneEighth,
-	2,
-	5, 1,
-	0,
+    kEdgeOneEighth,
+    2,
+    5, 1,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	7, 3,
-	0,
+    kEdgeOneEighth,
+    2,
+    7, 3,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	15, 11,
-	0,
+    kEdgeOneEighth,
+    2,
+    15, 11,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	21, 17,
-	0,
+    kEdgeOneEighth,
+    2,
+    21, 17,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	23, 19,
-	0,
+    kEdgeOneEighth,
+    2,
+    23, 19,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	1, 7,
-	0,
+    kEdgeThreeEighths,
+    2,
+    1, 7,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	3, 9,
-	0,
+    kEdgeThreeEighths,
+    2,
+    3, 9,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	5, 11,
-	0,
+    kEdgeThreeEighths,
+    2,
+    5, 11,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	15, 21,
-	0,
+    kEdgeThreeEighths,
+    2,
+    15, 21,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	17, 23,
-	0,
+    kEdgeThreeEighths,
+    2,
+    17, 23,
+    0,
 
-	kEdgeOneFourth,
-	3,
-	1, 2, 3,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    1, 2, 3,
+    0, 0,
 
-	kEdgeOneFourth,
-	2,
-	5, 6,
-	0,
+    kEdgeOneFourth,
+    2,
+    5, 6,
+    0,
 
-	kEdgeOneFourth,
-	2,
-	8, 9,
-	0,
+    kEdgeOneFourth,
+    2,
+    8, 9,
+    0,
 
-	kEdgeOneFourth,
-	2,
-	15, 16,
-	0,
+    kEdgeOneFourth,
+    2,
+    15, 16,
+    0,
 
-	kEdgeOneFourth,
-	2,
-	18, 19,
-	0,
+    kEdgeOneFourth,
+    2,
+    18, 19,
+    0,
 
-	kEdgeOneFourth,
-	3,
-	21, 22, 23,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    21, 22, 23,
+    0, 0,
 
-	kEdgeOneHalf,
-	2,
-	1, 6,
-	0,
+    kEdgeOneHalf,
+    2,
+    1, 6,
+    0,
 
-	kEdgeOneHalf,
-	2,
-	3, 8,
-	0,
+    kEdgeOneHalf,
+    2,
+    3, 8,
+    0,
 
-	kEdgeOneHalf,
-	2,
-	16, 21,
-	0,
+    kEdgeOneHalf,
+    2,
+    16, 21,
+    0,
 
-	kEdgeOneHalf,
-	2,
-	18, 23,
-	0
-};
+    kEdgeOneHalf,
+    2,
+    18, 23,
+    0};
 
 static const VertexType kBombLevelFour[] = {
-	1, 1, 1, 1, 0,
-	1, 1, 0, 1, 1,
-	1, 0, 1, 0, 1,
-	1, 1, 0, 1, 1,
-	0, 1, 1, 1, 1,
+    1, 1, 1, 1, 0,
+    1, 1, 0, 1, 1,
+    1, 0, 1, 0, 1,
+    1, 1, 0, 1, 1,
+    0, 1, 1, 1, 1,
 
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
 
-	19,
+    19,
 
-	kEdgeOneEighth,
-	2,
-	5, 1,
-	0,
+    kEdgeOneEighth,
+    2,
+    5, 1,
+    0,
 
-	kEdgeOneEighth,
-	3,
-	10, 6, 2,
-	0, 0,
+    kEdgeOneEighth,
+    3,
+    10, 6, 2,
+    0, 0,
 
-	kEdgeOneEighth,
-	3,
-	16, 12, 8,
-	0, 0,
+    kEdgeOneEighth,
+    3,
+    16, 12, 8,
+    0, 0,
 
-	kEdgeOneEighth,
-	3,
-	22, 18, 14,
-	0, 0,
+    kEdgeOneEighth,
+    3,
+    22, 18, 14,
+    0, 0,
 
-	kEdgeOneEighth,
-	2,
-	23, 19,
-	0,
+    kEdgeOneEighth,
+    2,
+    23, 19,
+    0,
 
-	kEdgeThreeEighths,
-	3,
-	2, 8, 14,
-	0, 0,
+    kEdgeThreeEighths,
+    3,
+    2, 8, 14,
+    0, 0,
 
-	kEdgeThreeEighths,
-	3,
-	10, 16, 22,
-	0, 0,
+    kEdgeThreeEighths,
+    3,
+    10, 16, 22,
+    0, 0,
 
-	kEdgeOneFourth,
-	4,
-	0, 1, 2, 3,
-	0, 0, 0,
+    kEdgeOneFourth,
+    4,
+    0, 1, 2, 3,
+    0, 0, 0,
 
-	kEdgeOneFourth,
-	2,
-	5, 6,
-	0,
+    kEdgeOneFourth,
+    2,
+    5, 6,
+    0,
 
-	kEdgeOneFourth,
-	2,
-	8, 9,
-	0,
+    kEdgeOneFourth,
+    2,
+    8, 9,
+    0,
 
-	kEdgeOneFourth,
-	2,
-	15, 16,
-	0,
+    kEdgeOneFourth,
+    2,
+    15, 16,
+    0,
 
-	kEdgeOneFourth,
-	2,
-	18, 19,
-	0,
+    kEdgeOneFourth,
+    2,
+    18, 19,
+    0,
 
-	kEdgeOneFourth,
-	4,
-	21, 22, 23, 24,
-	0, 0, 0,
+    kEdgeOneFourth,
+    4,
+    21, 22, 23, 24,
+    0, 0, 0,
 
-	kEdgeOneHalf,
-	4,
-	0, 5, 10, 15,
-	0, 0, 0,
+    kEdgeOneHalf,
+    4,
+    0, 5, 10, 15,
+    0, 0, 0,
 
-	kEdgeOneHalf,
-	2,
-	1, 6,
-	0,
+    kEdgeOneHalf,
+    2,
+    1, 6,
+    0,
 
-	kEdgeOneHalf,
-	2,
-	3, 8,
-	0,
+    kEdgeOneHalf,
+    2,
+    3, 8,
+    0,
 
-	kEdgeOneHalf,
-	4,
-	9, 14, 19, 24,
-	0, 0, 0,
+    kEdgeOneHalf,
+    4,
+    9, 14, 19, 24,
+    0, 0, 0,
 
-	kEdgeOneHalf,
-	2,
-	16, 21,
-	0,
+    kEdgeOneHalf,
+    2,
+    16, 21,
+    0,
 
-	kEdgeOneHalf,
-	2,
-	18, 23,
-	0
-};
+    kEdgeOneHalf,
+    2,
+    18, 23,
+    0};
 
 static const VertexType kBombLevelFive[] = {
-	0, 1, 0, 1, 0,
-	1, 1, 1, 1, 1,
-	0, 1, 1, 1, 0,
-	1, 1, 1, 1, 1,
-	0, 1, 0, 1, 0,
+    0, 1, 0, 1, 0,
+    1, 1, 1, 1, 1,
+    0, 1, 1, 1, 0,
+    1, 1, 1, 1, 1,
+    0, 1, 0, 1, 0,
 
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
 
-	19,
+    19,
 
-	kEdgeOneEighth,
-	2,
-	5, 1,
-	0,
+    kEdgeOneEighth,
+    2,
+    5, 1,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	7, 3,
-	0,
+    kEdgeOneEighth,
+    2,
+    7, 3,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	13, 9,
-	0,
+    kEdgeOneEighth,
+    2,
+    13, 9,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	15, 11,
-	0,
+    kEdgeOneEighth,
+    2,
+    15, 11,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	21, 17,
-	0,
+    kEdgeOneEighth,
+    2,
+    21, 17,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	23, 19,
-	0,
+    kEdgeOneEighth,
+    2,
+    23, 19,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	1, 7,
-	0,
+    kEdgeThreeEighths,
+    2,
+    1, 7,
+    0,
 
-	kEdgeThreeEighths,
-	4,
-	5, 11, 17, 23,
-	0, 0, 0,
+    kEdgeThreeEighths,
+    4,
+    5, 11, 17, 23,
+    0, 0, 0,
 
-	kEdgeThreeEighths,
-	3,
-	6, 12, 18,
-	0, 0,
+    kEdgeThreeEighths,
+    3,
+    6, 12, 18,
+    0, 0,
 
-	kEdgeThreeEighths,
-	2,
-	13, 19,
-	0,
+    kEdgeThreeEighths,
+    2,
+    13, 19,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	15, 21,
-	0,
+    kEdgeThreeEighths,
+    2,
+    15, 21,
+    0,
 
-	kEdgeOneFourth,
-	5,
-	5, 6, 7, 8, 9,
-	0, 0, 0, 0,
+    kEdgeOneFourth,
+    5,
+    5, 6, 7, 8, 9,
+    0, 0, 0, 0,
 
-	kEdgeOneFourth,
-	3,
-	15, 16, 17,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    15, 16, 17,
+    0, 0,
 
-	kEdgeOneFourth,
-	2,
-	18, 19,
-	0,
+    kEdgeOneFourth,
+    2,
+    18, 19,
+    0,
 
-	kEdgeOneFourth,
-	3,
-	21, 22, 23,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    21, 22, 23,
+    0, 0,
 
-	kEdgeOneHalf,
-	3,
-	5, 10, 15,
-	0, 0,
+    kEdgeOneHalf,
+    3,
+    5, 10, 15,
+    0, 0,
 
-	kEdgeOneHalf,
-	2,
-	1, 6,
-	0,
+    kEdgeOneHalf,
+    2,
+    1, 6,
+    0,
 
-	kEdgeOneHalf,
-	3,
-	11, 16, 21,
-	0, 0,
+    kEdgeOneHalf,
+    3,
+    11, 16, 21,
+    0, 0,
 
-	kEdgeOneHalf,
-	5,
-	3, 8, 13, 18, 23,
-	0, 0, 0, 0
-};
+    kEdgeOneHalf,
+    5,
+    3, 8, 13, 18, 23,
+    0, 0, 0, 0};
 
 static const VertexType kBombLevelSix[] = {
-	0, 1, 1, 1, 0,
-	1, 1, 1, 1, 1,
-	1, 0, 0, 0, 1,
-	1, 1, 1, 1, 1,
-	0, 1, 1, 1, 0,
+    0, 1, 1, 1, 0,
+    1, 1, 1, 1, 1,
+    1, 0, 0, 0, 1,
+    1, 1, 1, 1, 1,
+    0, 1, 1, 1, 0,
 
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
 
-	25,
+    25,
 
-	kEdgeOneSixteenth,
-	2,
-	10, 1,
-	0,
+    kEdgeOneSixteenth,
+    2,
+    10, 1,
+    0,
 
-	kEdgeOneSixteenth,
-	2,
-	23, 14,
-	0,
+    kEdgeOneSixteenth,
+    2,
+    23, 14,
+    0,
 
-	kEdgeSevenSixteenths,
-	2,
-	3, 14,
-	0,
+    kEdgeSevenSixteenths,
+    2,
+    3, 14,
+    0,
 
-	kEdgeSevenSixteenths,
-	2,
-	10, 21,
-	0,
+    kEdgeSevenSixteenths,
+    2,
+    10, 21,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	5, 1,
-	0,
+    kEdgeOneEighth,
+    2,
+    5, 1,
+    0,
 
-	kEdgeOneEighth,
-	3,
-	10, 6, 2,
-	0, 0,
+    kEdgeOneEighth,
+    3,
+    10, 6, 2,
+    0, 0,
 
-	kEdgeOneEighth,
-	2,
-	7, 3,
-	0,
+    kEdgeOneEighth,
+    2,
+    7, 3,
+    0,
 
-	kEdgeOneEighth,
-	2,
-	21, 17,
-	0,
+    kEdgeOneEighth,
+    2,
+    21, 17,
+    0,
 
-	kEdgeOneEighth,
-	3,
-	22, 18, 14,
-	0, 0,
+    kEdgeOneEighth,
+    3,
+    22, 18, 14,
+    0, 0,
 
-	kEdgeOneEighth,
-	2,
-	23, 19,
-	0,
+    kEdgeOneEighth,
+    2,
+    23, 19,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	1, 7,
-	0,
+    kEdgeThreeEighths,
+    2,
+    1, 7,
+    0,
 
-	kEdgeThreeEighths,
-	3,
-	2, 8, 14,
-	0, 0,
+    kEdgeThreeEighths,
+    3,
+    2, 8, 14,
+    0, 0,
 
-	kEdgeThreeEighths,
-	2,
-	3, 9,
-	0,
+    kEdgeThreeEighths,
+    2,
+    3, 9,
+    0,
 
-	kEdgeThreeEighths,
-	3,
-	10, 16, 22,
-	0, 0,
+    kEdgeThreeEighths,
+    3,
+    10, 16, 22,
+    0, 0,
 
-	kEdgeThreeEighths,
-	2,
-	15, 21,
-	0,
+    kEdgeThreeEighths,
+    2,
+    15, 21,
+    0,
 
-	kEdgeThreeEighths,
-	2,
-	17, 23,
-	0,
+    kEdgeThreeEighths,
+    2,
+    17, 23,
+    0,
 
-	kEdgeOneFourth,
-	3,
-	1, 2, 3,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    1, 2, 3,
+    0, 0,
 
-	kEdgeOneFourth,
-	3,
-	6, 7, 8,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    6, 7, 8,
+    0, 0,
 
-	kEdgeOneFourth,
-	3,
-	16, 17, 18,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    16, 17, 18,
+    0, 0,
 
-	kEdgeOneFourth,
-	3,
-	21, 22, 23,
-	0, 0,
+    kEdgeOneFourth,
+    3,
+    21, 22, 23,
+    0, 0,
 
-	kEdgeOneHalf,
-	3,
-	5, 10, 15,
-	0, 0,
+    kEdgeOneHalf,
+    3,
+    5, 10, 15,
+    0, 0,
 
-	kEdgeOneHalf,
-	3,
-	6, 11, 16,
-	0, 0,
+    kEdgeOneHalf,
+    3,
+    6, 11, 16,
+    0, 0,
 
-	kEdgeOneHalf,
-	5,
-	2, 7, 12, 17, 22,
-	0, 0, 0, 0,
+    kEdgeOneHalf,
+    5,
+    2, 7, 12, 17, 22,
+    0, 0, 0, 0,
 
-	kEdgeOneHalf,
-	3,
-	8, 13, 18,
-	0, 0,
+    kEdgeOneHalf,
+    3,
+    8, 13, 18,
+    0, 0,
 
-	kEdgeOneHalf,
-	3,
-	9, 14, 19,
-	0, 0
-};
+    kEdgeOneHalf,
+    3,
+    9, 14, 19,
+    0, 0};
 
 static const CoordType kBombGridWidth = 140;
 static const CoordType kBombGridHeight = 140;
@@ -712,26 +706,24 @@ static const CoordType kDiagOriginX = 6;
 static const CoordType kDiagOriginY = 6;
 
 static const int g_originsX[] = {
-	kDiagOriginX,
-	kDiagOriginX,
-	kDiagOriginX,
-	kHorizOriginX,
-	kDiagOriginX,
-	kDiagOriginX,
-	kDiagOriginX,
-	kVertOriginX
-};
+    kDiagOriginX,
+    kDiagOriginX,
+    kDiagOriginX,
+    kHorizOriginX,
+    kDiagOriginX,
+    kDiagOriginX,
+    kDiagOriginX,
+    kVertOriginX};
 
 static const int g_originsY[] = {
-	kDiagOriginY - 64,
-	kDiagOriginY - 32,
-	kDiagOriginY - 32,
-	kHorizOriginY,
-	kDiagOriginY,
-	kDiagOriginY,
-	kDiagOriginY,
-	kVertOriginY
-};
+    kDiagOriginY - 64,
+    kDiagOriginY - 32,
+    kDiagOriginY - 32,
+    kHorizOriginY,
+    kDiagOriginY,
+    kDiagOriginY,
+    kDiagOriginY,
+    kVertOriginY};
 
 struct HotVerticesList {
 	int numHotVerts;
@@ -1144,13 +1136,12 @@ void BombTimer::timeChanged(const TimeValue newTime) {
 	}
 }
 
-#define CREATE_BOMB_LEVEL(num, data) \
+#define CREATE_BOMB_LEVEL(num, data)                \
 	_bombLevel[num] = new VertexType[sizeof(data)]; \
 	memcpy(_bombLevel[num], data, sizeof(data))
 
-CaldoriaBomb::CaldoriaBomb(Neighborhood *owner, NotificationManager *manager) :
-		GameInteraction(kCaldoriaBombInteractionID, owner), _grid(kCaldoriaBombGridID),
-		_timer(kCaldoriaBombTimerID), _timerNotification(kCaldoriaBombTimerNotificationID, manager) {
+CaldoriaBomb::CaldoriaBomb(Neighborhood *owner, NotificationManager *manager) : GameInteraction(kCaldoriaBombInteractionID, owner), _grid(kCaldoriaBombGridID),
+                                                                                _timer(kCaldoriaBombTimerID), _timerNotification(kCaldoriaBombTimerNotificationID, manager) {
 	CREATE_BOMB_LEVEL(0, kBombLevelOne);
 	CREATE_BOMB_LEVEL(1, kBombLevelTwo);
 	CREATE_BOMB_LEVEL(2, kBombLevelThree);
@@ -1200,7 +1191,7 @@ void CaldoriaBomb::openInteraction() {
 	for (VertexType i = 0; i < 25; i++) {
 		_vertexHotspot[i] = new Hotspot(i + kVertextHotSpotBaseID);
 		r.moveTo(vertToX(i) + kCaldoriaBombGridLeft - kVertextHotSpotWidth / 2 + 6,
-				vertToY(i) + kCaldoriaBombGridTop - kVertextHotSpotHeight / 2 + 6);
+		         vertToY(i) + kCaldoriaBombGridTop - kVertextHotSpotHeight / 2 + 6);
 		_vertexHotspot[i]->setArea(r);
 		_vertexHotspot[i]->setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
 		g_allHotspots.push_back(_vertexHotspot[i]);
@@ -1322,49 +1313,49 @@ void CaldoriaBomb::handleInput(const Input &input, const Hotspot *hotspot) {
 	GameInteraction::handleInput(input, hotspot);
 
 	switch (_lastVertex) {
-	case -2:			// Flash back to yellow.
+	case -2: // Flash back to yellow.
 		if (tickCount() > _flashTime + kOnTime1) {
 			replaceUsedEdges(_bombLevel[_currentLevel], 2, 3);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -3;
 		}
 		break;
-	case -3:			// Flash back to red.
+	case -3: // Flash back to red.
 		if (tickCount() > _flashTime + kOffTime1) {
 			replaceUsedEdges(_bombLevel[_currentLevel], 3, 2);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -4;
 		}
 		break;
-	case -4:			// Flash all to yellow.
+	case -4: // Flash all to yellow.
 		if (tickCount() > _flashTime + kOnTime2) {
 			setAllUsedEdgesUsed(_bombLevel[_currentLevel], 1);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -5;
 		}
 		break;
-	case -5:			// Flash all to red.
+	case -5: // Flash all to red.
 		if (tickCount() > _flashTime + kOffTime2) {
 			setAllUsedEdgesUsed(_bombLevel[_currentLevel], 2);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -6;
 		}
 		break;
-	case -6:			// Flash all to yellow.
+	case -6: // Flash all to yellow.
 		if (tickCount() > _flashTime + kOnTime3) {
 			setAllUsedEdgesUsed(_bombLevel[_currentLevel], 1);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -7;
 		}
 		break;
-	case -7:			// Flash all to red.
+	case -7: // Flash all to red.
 		if (tickCount() > _flashTime + kOffTime3) {
 			setAllUsedEdgesUsed(_bombLevel[_currentLevel], 2);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -8;
 		}
 		break;
-	case -8:			// Restore to normal.
+	case -8: // Restore to normal.
 		if (tickCount() > _flashTime + kOnTime4) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 0);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
@@ -1373,28 +1364,28 @@ void CaldoriaBomb::handleInput(const Input &input, const Hotspot *hotspot) {
 		break;
 
 	// Flash grid after success.
-	case -20:			// Flash off.
+	case -20: // Flash off.
 		if (tickCount() > _flashTime + kOnTime1) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 4);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -21;
 		}
 		break;
-	case -21:			// Flash on.
+	case -21: // Flash on.
 		if (tickCount() > _flashTime + kOffTime1) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 1);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -22;
 		}
 		break;
-	case -22:			// Flash off.
+	case -22: // Flash off.
 		if (tickCount() > _flashTime + kOnTime2) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 4);
 			_grid.drawEdges(_bombLevel[_currentLevel]);
 			_lastVertex = -23;
 		}
 		break;
-	case -23:			// Flash on.
+	case -23: // Flash on.
 		if (tickCount() > _flashTime + kOffTime2) {
 			setAllEdgesUsed(_bombLevel[_currentLevel], 1);
 			_grid.drawEdges(_bombLevel[_currentLevel]);

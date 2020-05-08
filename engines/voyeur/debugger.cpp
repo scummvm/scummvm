@@ -22,8 +22,8 @@
 
 #include "voyeur/debugger.h"
 #include "voyeur/screen.h"
-#include "voyeur/voyeur.h"
 #include "voyeur/staticres.h"
+#include "voyeur/voyeur.h"
 
 namespace Voyeur {
 
@@ -40,8 +40,7 @@ Debugger::Debugger(VoyeurEngine *vm) : GUI::Debugger(), _vm(vm) {
 }
 
 static const int TIME_STATES[] = {
-	0, 31, 0, 43, 59, 0, 67, 75, 85, 93, 0, 0, 111, 121, 0, 0
-};
+    0, 31, 0, 43, 59, 0, 67, 75, 85, 93, 0, 0, 111, 121, 0, 0};
 
 bool Debugger::Cmd_Time(int argc, const char **argv) {
 	if (argc < 2) {
@@ -52,7 +51,7 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 			dtString += " " + timeString;
 
 		debugPrintf("Time period = %d, date/time is: %s, time is %s\n",
-			_vm->_voy->_transitionId, dtString.c_str(), _isTimeActive ? "on" : "off");
+		            _vm->_voy->_transitionId, dtString.c_str(), _isTimeActive ? "on" : "off");
 		debugPrintf("Format: %s [on | off | 1..17 | val <amount>]\n\n", argv[0]);
 	} else {
 		if (!strcmp(argv[1], "on")) {
@@ -93,11 +92,11 @@ bool Debugger::Cmd_Time(int argc, const char **argv) {
 bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 	if (_vm->_voy->_computerTextId >= 0) {
 		debugPrintf("Hotspot Computer Screen %d - %d,%d->%d,%d\n",
-			_vm->_voy->_computerTextId,
-			_vm->_voy->_computerScreenRect.left,
-			_vm->_voy->_computerScreenRect.top,
-			_vm->_voy->_computerScreenRect.right,
-			_vm->_voy->_computerScreenRect.bottom);
+		            _vm->_voy->_computerTextId,
+		            _vm->_voy->_computerScreenRect.left,
+		            _vm->_voy->_computerScreenRect.top,
+		            _vm->_voy->_computerScreenRect.right,
+		            _vm->_voy->_computerScreenRect.bottom);
 	}
 
 #if 0
@@ -126,31 +125,31 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 
 		for (uint hotspotIdx = 0; hotspotIdx < hotspots.size(); ++hotspotIdx) {
 			Common::String pos = Common::String::format("(%d,%d->%d,%d)",
-				hotspots[hotspotIdx].left, hotspots[hotspotIdx].top,
-				hotspots[hotspotIdx].right, hotspots[hotspotIdx].bottom);
+			                                            hotspots[hotspotIdx].left, hotspots[hotspotIdx].top,
+			                                            hotspots[hotspotIdx].right, hotspots[hotspotIdx].bottom);
 
 			for (int arrIndex = 0; arrIndex < 3; ++arrIndex) {
 				if (_vm->_voy->_audioHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
 					debugPrintf("Hotspot %d %s Audio slot %d, time: %d to %d\n",
-						hotspotIdx, pos.c_str(), arrIndex,
-						_vm->_voy->_audioHotspotTimes._min[arrIndex][hotspotIdx],
-						_vm->_voy->_audioHotspotTimes._max[arrIndex][hotspotIdx]);
+					            hotspotIdx, pos.c_str(), arrIndex,
+					            _vm->_voy->_audioHotspotTimes._min[arrIndex][hotspotIdx],
+					            _vm->_voy->_audioHotspotTimes._max[arrIndex][hotspotIdx]);
 				}
 
 				if (_vm->_voy->_evidenceHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
 					debugPrintf("Hotspot %d %s Evidence slot %d, time: %d to %d\n",
-						hotspotIdx, pos.c_str(), arrIndex,
-						_vm->_voy->_evidenceHotspotTimes._min[arrIndex][hotspotIdx],
-						_vm->_voy->_evidenceHotspotTimes._max[arrIndex][hotspotIdx]);
+					            hotspotIdx, pos.c_str(), arrIndex,
+					            _vm->_voy->_evidenceHotspotTimes._min[arrIndex][hotspotIdx],
+					            _vm->_voy->_evidenceHotspotTimes._max[arrIndex][hotspotIdx]);
 				}
 			}
 
 			for (int arrIndex = 0; arrIndex < 8; ++arrIndex) {
 				if (_vm->_voy->_videoHotspotTimes._min[arrIndex][hotspotIdx] != 9999) {
 					debugPrintf("Hotspot %d %s Video slot %d, time: %d to %d\n",
-						hotspotIdx, pos.c_str(), arrIndex,
-						_vm->_voy->_videoHotspotTimes._min[arrIndex][hotspotIdx],
-						_vm->_voy->_videoHotspotTimes._max[arrIndex][hotspotIdx]);
+					            hotspotIdx, pos.c_str(), arrIndex,
+					            _vm->_voy->_videoHotspotTimes._min[arrIndex][hotspotIdx],
+					            _vm->_voy->_videoHotspotTimes._max[arrIndex][hotspotIdx]);
 				}
 			}
 		}

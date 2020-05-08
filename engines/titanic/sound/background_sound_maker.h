@@ -30,8 +30,10 @@ namespace Titanic {
 class CBackgroundSoundMaker : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool FrameMsg(CFrameMsg *msg);
+
 public:
 	int _value;
+
 public:
 	CLASSDEF;
 	CBackgroundSoundMaker() : CGameObject(), _value(0) {}

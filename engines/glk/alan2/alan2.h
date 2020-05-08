@@ -39,11 +39,13 @@ namespace Alan2 {
 class Alan2 : public GlkAPI {
 private:
 	bool _restartFlag;
+
 public:
 	bool vm_exited_cleanly;
 	Common::String _advName;
 	int _saveSlot;
 	bool _pendingLook;
+
 private:
 	/**
 	 * Initialization
@@ -59,6 +61,7 @@ private:
 	 * Synchronize data to or from a save file
 	 */
 	void synchronizeSave(Common::Serializer &s);
+
 public:
 	/**
 	 * Constructor
@@ -97,7 +100,6 @@ public:
 	 * in the Quetzal save file that will be created
 	 */
 	Common::Error writeGameData(Common::WriteStream *ws) override;
-
 };
 
 extern Alan2 *g_vm;

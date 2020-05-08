@@ -34,11 +34,13 @@ class CShipSetting : public CBackground {
 	bool SetFrameMsg(CSetFrameMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	CString _target;
 	Point _pos1;
 	CString _itemName;
 	CString _frameTarget;
+
 public:
 	CLASSDEF;
 	CShipSetting();

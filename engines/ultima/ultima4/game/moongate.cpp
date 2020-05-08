@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/game/moongate.h"
-#include "ultima/ultima4/core/types.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/core/coords.h"
+#include "ultima/ultima4/core/types.h"
 
 namespace Ultima {
 namespace Ultima4 {

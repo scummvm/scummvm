@@ -27,10 +27,10 @@
  */
 
 #include "engines/wintermute/ad/ad_scale_level.h"
-#include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_parser.h"
 
 namespace Wintermute {
 
@@ -42,10 +42,8 @@ AdScaleLevel::AdScaleLevel(BaseGame *inGame) : BaseObject(inGame) {
 	_scale = 100;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdScaleLevel::~AdScaleLevel() {
-
 }
 
 float AdScaleLevel::getScale() const {
@@ -68,12 +66,10 @@ bool AdScaleLevel::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing SCALE_LEVEL file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(SCALE_LEVEL)
@@ -120,8 +116,7 @@ bool AdScaleLevel::loadBuffer(char *buffer, bool complete) {
 			int i;
 			parser.scanStr(params, "%d", &i);
 			_scale = (float)i;
-		}
-		break;
+		} break;
 
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
@@ -139,7 +134,6 @@ bool AdScaleLevel::loadBuffer(char *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdScaleLevel::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SCALE_LEVEL {\n");
@@ -150,7 +144,6 @@ bool AdScaleLevel::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScaleLevel::persist(BasePersistenceManager *persistMgr) {

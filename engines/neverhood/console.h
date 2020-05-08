@@ -44,7 +44,6 @@ private:
 	bool Cmd_PlaySound(int argc, const char **argv);
 	bool Cmd_CheckResource(int argc, const char **argv);
 	bool Cmd_DumpResource(int argc, const char **argv);
-
 };
 
 } // End of namespace Neverhood

@@ -24,13 +24,13 @@
 #define BACKENDS_CLOUD_DROPBOX_DROPBOXCREATEDIRECTORYREQUEST_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/request.h"
 #include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/curl/request.h"
 
 namespace Cloud {
 namespace Dropbox {
 
-class DropboxCreateDirectoryRequest: public Networking::Request {
+class DropboxCreateDirectoryRequest : public Networking::Request {
 	Common::String _token;
 	Common::String _path;
 	Storage::BoolCallback _boolCallback;
@@ -42,6 +42,7 @@ class DropboxCreateDirectoryRequest: public Networking::Request {
 	void responseCallback(Networking::JsonResponse response);
 	void errorCallback(Networking::ErrorResponse error);
 	void finishCreation(bool success);
+
 public:
 	DropboxCreateDirectoryRequest(Common::String token, Common::String path, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
 	virtual ~DropboxCreateDirectoryRequest();

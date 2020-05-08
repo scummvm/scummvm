@@ -42,8 +42,8 @@ void CTitleEngine::setup(int val1, VocabMode vocabMode) {
 
 /*------------------------------------------------------------------------*/
 
-STtitleEngine::STtitleEngine(): CTitleEngine(),
-		_responseP(nullptr), _stream(nullptr) {
+STtitleEngine::STtitleEngine() : CTitleEngine(),
+                                 _responseP(nullptr), _stream(nullptr) {
 }
 
 STtitleEngine::~STtitleEngine() {
@@ -70,7 +70,7 @@ int STtitleEngine::setResponse(TTscriptBase *script, TTresponse *response) {
 
 SimpleFile *STtitleEngine::open(const CString &name) {
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource(
-		CString::format("TEXT/%s", name.c_str()));
+	    CString::format("TEXT/%s", name.c_str()));
 	assert(stream);
 
 	SimpleFile *file = new SimpleFile();

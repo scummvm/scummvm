@@ -19,16 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
+#include "common/scummsys.h"
 
 #include "sludge/cursors.h"
 #include "sludge/event.h"
-#include "sludge/fonttext.h"
 #include "sludge/floor.h"
+#include "sludge/fonttext.h"
 #include "sludge/graphics.h"
 #include "sludge/main_loop.h"
 #include "sludge/newfatal.h"
@@ -45,8 +45,7 @@ SludgeEngine *g_sludge;
 Graphics::PixelFormat *SludgeEngine::getScreenPixelFormat() const { return _pixelFormat; }
 Graphics::PixelFormat *SludgeEngine::getOrigPixelFormat() const { return _origFormat; }
 
-SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc) {
+SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 	// register your random source
 	_rnd = new Common::RandomSource("sludge");
@@ -147,4 +146,3 @@ Common::Error SludgeEngine::run() {
 }
 
 } // End of namespace Sludge
-

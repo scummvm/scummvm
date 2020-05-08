@@ -23,8 +23,8 @@
 #include "tsage/blue_force/blueforce_scenes7.h"
 #include "tsage/globals.h"
 #include "tsage/scenes.h"
-#include "tsage/tsage.h"
 #include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -61,7 +61,7 @@ void Scene710::Action1::signal() {
 	case 1: {
 		ADD_MOVER(BF_GLOBALS._player, scene->_laura._position.x + 8, scene->_laura._position.y + 8);
 		break;
-		}
+	}
 	case 2:
 		BF_GLOBALS._player._strip = 2;
 		scene->_stripManager.start(_state, this);
@@ -77,7 +77,7 @@ void Scene710::Action1::signal() {
 		if (_state < 7104) {
 			_state++;
 			if ((_state == 7104) && (BF_INVENTORY.getObjectScene(INV_CRATE1) == 1))
-					_state = 7105;
+				_state = 7105;
 		}
 		remove();
 		break;
@@ -177,15 +177,15 @@ void Scene710::postInit(SceneObjectList *OwnerList) {
 	_kid.setDetails(710, 6, -1, -1, 1, (SceneItem *)NULL);
 	_dog.setDetails(710, 0, -1, -1, 1, (SceneItem *)NULL);
 
-	_item1.setDetails(Rect(555, 68, 583, 101), 710, 7,  23, -1, 1, NULL);
-	_item2.setDetails(Rect(583, 46, 611,  78), 710, 7,  23, -1, 1, NULL);
-	_item3.setDetails(Rect(611, 24, 639,  56), 710, 7,  23, -1, 1, NULL);
-	_item6.setDetails(1, 710, 9,  1,  -1, 1);
-	_item4.setDetails(2, 710, 8,  14, -1, 1);
+	_item1.setDetails(Rect(555, 68, 583, 101), 710, 7, 23, -1, 1, NULL);
+	_item2.setDetails(Rect(583, 46, 611, 78), 710, 7, 23, -1, 1, NULL);
+	_item3.setDetails(Rect(611, 24, 639, 56), 710, 7, 23, -1, 1, NULL);
+	_item6.setDetails(1, 710, 9, 1, -1, 1);
+	_item4.setDetails(2, 710, 8, 14, -1, 1);
 	_item5.setDetails(3, 710, 10, 16, -1, 1);
-	_item8.setDetails(Rect(222, 18, 249,  42), 710, 12, 18, -1, 1, NULL);
-	_item7.setDetails(Rect(0,    0, 640,  52), 710, 11, 17, -1, 1, NULL);
-	_item9.setDetails(Rect(0,    0, 640, 128), 710,  5, 15, -1, 1, NULL);
+	_item8.setDetails(Rect(222, 18, 249, 42), 710, 12, 18, -1, 1, NULL);
+	_item7.setDetails(Rect(0, 0, 640, 52), 710, 11, 17, -1, 1, NULL);
+	_item9.setDetails(Rect(0, 0, 640, 128), 710, 5, 15, -1, 1, NULL);
 
 	_stickThrowCount = 0;
 	_dogLying = _watchCrate = _throwStick = false;
@@ -273,7 +273,6 @@ void Scene710::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_watchCrate);
 	s.syncAsSint16LE(_throwStick);
 }
-
 
 } // End of namespace BlueForce
 } // End of namespace TsAGE

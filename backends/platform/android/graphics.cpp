@@ -37,8 +37,8 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
-#include "backends/platform/android/android.h"
 #include "backends/platform/android/graphics.h"
+#include "backends/platform/android/android.h"
 #include "backends/platform/android/jni-android.h"
 
 //
@@ -49,7 +49,6 @@ AndroidGraphicsManager::AndroidGraphicsManager() {
 
 	// Initialize our OpenGL ES context.
 	initSurface();
-
 }
 
 AndroidGraphicsManager::~AndroidGraphicsManager() {

@@ -43,7 +43,7 @@ public:
 	/**
 	 * Returns reference to File session
 	 */
-	RFs& FsSession();
+	RFs &FsSession();
 
 	void quitWithErrorMsg(const char *msg);
 
@@ -55,7 +55,7 @@ protected:
 	 */
 	void checkMappings();
 
-	RFs* _RFs;
+	RFs *_RFs;
 };
 
 #endif

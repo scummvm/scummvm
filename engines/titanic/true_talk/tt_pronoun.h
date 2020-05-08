@@ -30,8 +30,10 @@ namespace Titanic {
 class TTpronoun : public TTmajorWord {
 private:
 	static bool _staticFlag;
+
 protected:
 	int _field30;
+
 public:
 	TTpronoun(TTstring &str, WordClass wordClass, int val2, int val3, int val4);
 	TTpronoun(const TTpronoun *src);

@@ -23,10 +23,10 @@
 #ifndef ULTIMA_ULTIMA1_U1GFX_SPRITES_H
 #define ULTIMA_ULTIMA1_U1GFX_SPRITES_H
 
-#include "ultima/shared/gfx/sprites.h"
 #include "ultima/shared/core/tree_item.h"
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/sprites.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -40,17 +40,20 @@ using Shared::CFrameMsg;
 class Sprites : public Shared::Gfx::Sprites, public Shared::TreeItem {
 	DECLARE_MESSAGE_MAP;
 	bool FrameMsg(CFrameMsg &msg);
+
 private:
 	bool _isOverworld;
 	uint _frameCtr;
+
 private:
 	/**
 	 * Animates the water sprite by rotating it's lines vertically
 	 */
 	void animateWater();
+
 public:
 	CLASSDEF;
-	
+
 	/**
 	 * Constructor
 	 */

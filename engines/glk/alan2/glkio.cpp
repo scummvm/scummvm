@@ -20,10 +20,10 @@
  *
  */
 
-#include "glk/glk.h"
-#include "glk/alan2/alan2.h"
 #include "glk/alan2/glkio.h"
+#include "glk/alan2/alan2.h"
 #include "glk/alan2/main.h"
+#include "glk/glk.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -59,7 +59,7 @@ void glkio_printf(const char *fmt, ...) {
 
   */
 
-  /* 4f - length of user buffer should be used */
+/* 4f - length of user buffer should be used */
 Boolean readline(char usrbuf[]) {
 	if (g_vm->_pendingLook) {
 		g_vm->_pendingLook = false;
@@ -87,7 +87,5 @@ Boolean readline(char usrbuf[]) {
 	return TRUE;
 }
 
-
 } // End of namespace Alan2
 } // End of namespace Glk
-

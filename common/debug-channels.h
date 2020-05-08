@@ -25,23 +25,21 @@
 
 #include "common/scummsys.h"
 
-#include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/list.h"
 #include "common/singleton.h"
 #include "common/str.h"
-
 
 namespace Common {
 
 // TODO: Find a better name for this
 class DebugManager : public Singleton<DebugManager> {
 public:
-
 	struct DebugChannel {
 		DebugChannel() : channel(0), enabled(false) {}
 		DebugChannel(uint32 c, const String &n, const String &d)
-			: name(n), description(d), channel(c), enabled(false) {}
+		    : name(n), description(d), channel(c), enabled(false) {}
 
 		String name;
 		String description;
@@ -146,7 +144,7 @@ private:
 };
 
 /** Shortcut for accessing the debug manager. */
-#define DebugMan		Common::DebugManager::instance()
+#define DebugMan Common::DebugManager::instance()
 
 } // End of namespace Common
 

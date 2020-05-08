@@ -20,10 +20,10 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/widgets/sliding_widget.h"
-#include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -31,11 +31,11 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(SlidingWidget, Gump)
 
 SlidingWidget::SlidingWidget()
-	: Gump() {
+    : Gump() {
 }
 
 SlidingWidget::SlidingWidget(int x, int y, Shape *shape, uint32 frameNum)
-	: Gump(x, y, 5, 5, 0, FLAG_DRAGGABLE) {
+    : Gump(x, y, 5, 5, 0, FLAG_DRAGGABLE) {
 	_shape = shape;
 	_frameNum = frameNum;
 }
@@ -61,7 +61,8 @@ void SlidingWidget::saveData(Common::WriteStream *ws) {
 }
 
 bool SlidingWidget::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Gump::loadData(rs, version)) return false;
+	if (!Gump::loadData(rs, version))
+		return false;
 
 	return true;
 }

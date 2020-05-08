@@ -20,15 +20,15 @@
  *
  */
 
+#include "mohawk/myst_stacks/menu.h"
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_state.h"
-#include "mohawk/cursors.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
-#include "mohawk/myst_stacks/menu.h"
 
 #include "common/translation.h"
 #include "graphics/cursorman.h"
@@ -37,12 +37,11 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Menu::Menu(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm, kMenuStack),
-		_inGame(false),
-		_canSave(false),
-		_wasCursorVisible(true),
-		_introMoviesRunning(false) {
+Menu::Menu(MohawkEngine_Myst *vm) : MystScriptParser(vm, kMenuStack),
+                                    _inGame(false),
+                                    _canSave(false),
+                                    _wasCursorVisible(true),
+                                    _introMoviesRunning(false) {
 
 	for (uint i = 0; i < ARRAYSIZE(_menuItemHovered); i++) {
 		_menuItemHovered[i] = false;
@@ -125,19 +124,18 @@ void Menu::o_menuInit(uint16 var, const ArgumentsArray &args) {
 	};
 
 	static const MenuButton buttons[] = {
-		{ 1, 0, Graphics::kTextAlignRight },
-		{ 1, 0, Graphics::kTextAlignRight },
-		{ 1, 2, Graphics::kTextAlignRight },
-		{ 1, 2, Graphics::kTextAlignRight },
-		{ 1, 0, Graphics::kTextAlignRight },
-		{ 1, 0, Graphics::kTextAlignLeft  }
-	};
+	    {1, 0, Graphics::kTextAlignRight},
+	    {1, 0, Graphics::kTextAlignRight},
+	    {1, 2, Graphics::kTextAlignRight},
+	    {1, 2, Graphics::kTextAlignRight},
+	    {1, 0, Graphics::kTextAlignRight},
+	    {1, 0, Graphics::kTextAlignLeft}};
 
 	const char **buttonCaptions = getButtonCaptions();
 
 	for (uint i = 0; i < ARRAYSIZE(buttons); i++) {
-		MystAreaImageSwitch *image  = _vm->getCard()->getResource<MystAreaImageSwitch>(2 * i + 0);
-		MystAreaHover       *hover  = _vm->getCard()->getResource<MystAreaHover>      (2 * i + 1);
+		MystAreaImageSwitch *image = _vm->getCard()->getResource<MystAreaImageSwitch>(2 * i + 0);
+		MystAreaHover *hover = _vm->getCard()->getResource<MystAreaHover>(2 * i + 1);
 
 		Common::U32String str = Common::convertUtf8ToUtf32(buttonCaptions[i]);
 		drawButtonImages(str, image, buttons[i].align, buttons[i].highlightedIndex, buttons[i].disabledIndex);
@@ -147,62 +145,57 @@ void Menu::o_menuInit(uint16 var, const ArgumentsArray &args) {
 
 const char **Menu::getButtonCaptions() const {
 	static const char *buttonCaptionsEnglish[] = {
-		"NEW GAME",
-		"LOAD GAME",
-		"SAVE GAME",
-		"RESUME",
-		"QUIT",
-		"OPTIONS"
-	};
+	    "NEW GAME",
+	    "LOAD GAME",
+	    "SAVE GAME",
+	    "RESUME",
+	    "QUIT",
+	    "OPTIONS"};
 
 	static const char *buttonCaptionsFrench[] = {
-		"NOUVEAU",
-		"CHARGER",
-		"SAUVER",
-		"REPRENDRE",
-		"QUITTER",
-		"OPTIONS"
-	};
+	    "NOUVEAU",
+	    "CHARGER",
+	    "SAUVER",
+	    "REPRENDRE",
+	    "QUITTER",
+	    "OPTIONS"};
 
 	static const char *buttonCaptionsGerman[] = {
-		"NEUES SPIEL",
-		"SPIEL LADEN",
-		"SPIEL SPEICHERN",
-		"FORTSETZEN",
-		"BEENDEN",
-		"OPTIONEN"
-	};
+	    "NEUES SPIEL",
+	    "SPIEL LADEN",
+	    "SPIEL SPEICHERN",
+	    "FORTSETZEN",
+	    "BEENDEN",
+	    "OPTIONEN"};
 
 	static const char *buttonCaptionsSpanish[] = {
-		"JUEGO NUEVO",
-		"CARGAR JUEGO",
-		"GUARDAR JUEGO",
-		"CONTINUAR",
-		"SALIR",
-		"OPCIONES"
-	};
+	    "JUEGO NUEVO",
+	    "CARGAR JUEGO",
+	    "GUARDAR JUEGO",
+	    "CONTINUAR",
+	    "SALIR",
+	    "OPCIONES"};
 
 	static const char *buttonCaptionsPolish[] = {
-		"NOWA GRA",
-		"ZAŁADUJ GRĘ",
-		"ZAPISZ GRĘ",
-		"POWRÓT",
-		"WYJŚCIE",
-		"OPCJE"
-	};
+	    "NOWA GRA",
+	    "ZAŁADUJ GRĘ",
+	    "ZAPISZ GRĘ",
+	    "POWRÓT",
+	    "WYJŚCIE",
+	    "OPCJE"};
 
 	switch (_vm->getLanguage()) {
-		case Common::FR_FRA:
-			return buttonCaptionsFrench;
-		case Common::DE_DEU:
-			return buttonCaptionsGerman;
-		case Common::ES_ESP:
-			return buttonCaptionsSpanish;
-		case Common::PL_POL:
-			return buttonCaptionsPolish;
-		case Common::EN_ANY:
-		default:
-			return buttonCaptionsEnglish;
+	case Common::FR_FRA:
+		return buttonCaptionsFrench;
+	case Common::DE_DEU:
+		return buttonCaptionsGerman;
+	case Common::ES_ESP:
+		return buttonCaptionsSpanish;
+	case Common::PL_POL:
+		return buttonCaptionsPolish;
+	case Common::EN_ANY:
+	default:
+		return buttonCaptionsEnglish;
 	}
 }
 
@@ -345,24 +338,24 @@ void Menu::introMovies_run() {
 	VideoEntryPtr video;
 
 	switch (_introStep) {
-		case 0:
-			_introStep = 1;
-			video = _vm->playMovieFullscreen("broder", kIntroStack);
-			break;
-		case 1:
-			if (!_vm->_video->isVideoPlaying())
-				_introStep = 2;
-			break;
-		case 2:
-			_introStep = 3;
-			video = _vm->playMovieFullscreen("cyanlogo", kIntroStack);
-			break;
-		case 3:
-			if (!_vm->_video->isVideoPlaying())
-				_introStep = 4;
-			break;
-		default:
-			_vm->changeToCard(1000, kTransitionCopy);
+	case 0:
+		_introStep = 1;
+		video = _vm->playMovieFullscreen("broder", kIntroStack);
+		break;
+	case 1:
+		if (!_vm->_video->isVideoPlaying())
+			_introStep = 2;
+		break;
+	case 2:
+		_introStep = 3;
+		video = _vm->playMovieFullscreen("cyanlogo", kIntroStack);
+		break;
+	case 3:
+		if (!_vm->_video->isVideoPlaying())
+			_introStep = 4;
+		break;
+	default:
+		_vm->changeToCard(1000, kTransitionCopy);
 	}
 }
 
@@ -375,7 +368,7 @@ bool Menu::showConfirmationDialog(const char *message, const char *confirmButton
 
 	GUI::MessageDialog dialog(message, confirmButton, cancelButton);
 
-	return dialog.runModal() !=0;
+	return dialog.runModal() != 0;
 }
 
 void Menu::resetButtons() {
@@ -386,7 +379,6 @@ void Menu::resetButtons() {
 
 	_vm->doFrame();
 }
-
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

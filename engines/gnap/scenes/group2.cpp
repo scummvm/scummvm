@@ -20,10 +20,10 @@
  *
  */
 
-#include "gnap/gnap.h"
-#include "gnap/gamesys.h"
-#include "gnap/resource.h"
 #include "gnap/scenes/group2.h"
+#include "gnap/gamesys.h"
+#include "gnap/gnap.h"
+#include "gnap/resource.h"
 
 namespace Gnap {
 
@@ -58,8 +58,8 @@ void Scene20::updateHotspots() {
 }
 
 void Scene20::updateAnimationsCb() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(2) == 2) {
 		switch (_nextStonerGuySequenceId) {
@@ -162,9 +162,9 @@ void Scene20::stopSounds() {
 }
 
 void Scene20::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x10940, true);
 	_vm->startSoundTimerA(8);
@@ -351,7 +351,7 @@ void Scene20::run() {
 					_vm->_timers[4] = 0;
 				_vm->_isLeavingScene = true;
 				_vm->_newSceneNum = 22;
-				gnap.walkTo(_vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity] + Common::Point(0, - 1), 0, 0x107BB, 1);
+				gnap.walkTo(_vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity] + Common::Point(0, -1), 0, 0x107BB, 1);
 				gnap._actionStatus = kAS20LeaveScene;
 				plat.walkTo(_vm->_hotspotsWalkPos[kHS20ExitInsideGrubCity] + Common::Point(1, 0), -1, 0x107C2, 1);
 				plat._idleFacing = kDirIdleRight;
@@ -476,7 +476,6 @@ void Scene20::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -532,8 +531,8 @@ void Scene20::run() {
 }
 
 void Scene20::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -756,9 +755,9 @@ void Scene21::updateHotspots() {
 }
 
 void Scene21::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x10940, true);
 	_vm->startSoundTimerA(6);
@@ -919,7 +918,6 @@ void Scene21::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -964,8 +962,8 @@ void Scene21::run() {
 }
 
 void Scene21::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -1061,9 +1059,9 @@ void Scene22::updateHotspots() {
 }
 
 void Scene22::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	gameSys.insertSequence(0x5D, 254, 0, 0, kSeqNone, 0, 0, 0);
 
@@ -1273,8 +1271,8 @@ void Scene22::run() {
 }
 
 void Scene22::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -1321,9 +1319,9 @@ void Scene23::updateHotspots() {
 }
 
 void Scene23::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->_timers[4] = _vm->getRandom(100) + 200;
 	_vm->_timers[5] = _vm->getRandom(100) + 200;
@@ -1513,8 +1511,8 @@ void Scene23::run() {
 }
 
 void Scene23::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -1591,9 +1589,9 @@ void Scene24::updateHotspots() {
 }
 
 void Scene24::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	int counter = 0;
 
@@ -1782,8 +1780,8 @@ void Scene24::run() {
 }
 
 void Scene24::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -1823,7 +1821,7 @@ void Scene25::playAnims(int index) {
 	if (index > 4)
 		return;
 
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	_vm->hideCursor();
 	_vm->setGrabCursorSprite(-1);
@@ -1846,7 +1844,7 @@ void Scene25::playAnims(int index) {
 	gameSys.insertSpriteDrawItem(_vm->_largeSprite, 0, 0, 300);
 	_vm->delayTicksCursor(5);
 	while (!_vm->_mouseClickState._left && !_vm->isKeyStatus1(Common::KEYCODE_ESCAPE) && !_vm->isKeyStatus1(Common::KEYCODE_SPACE) &&
-		!_vm->isKeyStatus1(Common::KEYCODE_RETURN) && !_vm->_gameDone) {
+	       !_vm->isKeyStatus1(Common::KEYCODE_RETURN) && !_vm->_gameDone) {
 		_vm->gameUpdateTick();
 	}
 	_vm->_mouseClickState._left = false;
@@ -1860,9 +1858,9 @@ void Scene25::playAnims(int index) {
 }
 
 void Scene25::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x10940, true);
 	_vm->startSoundTimerA(5);
@@ -2096,8 +2094,8 @@ void Scene25::run() {
 }
 
 void Scene25::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -2182,9 +2180,9 @@ void Scene26::updateHotspots() {
 }
 
 void Scene26::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->startSoundTimerB(7);
 	_vm->playSound(0x1093B, true);
@@ -2358,8 +2356,8 @@ void Scene26::run() {
 }
 
 void Scene26::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -2403,9 +2401,9 @@ void Scene27::updateHotspots() {
 }
 
 void Scene27::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1093B, true);
 	_vm->startSoundTimerB(4);
@@ -2608,7 +2606,6 @@ void Scene27::run() {
 				_vm->_mouseClickState._left = false;
 			}
 			break;
-
 		}
 
 		updateAnimations();
@@ -2650,8 +2647,8 @@ void Scene27::run() {
 }
 
 void Scene27::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -2787,9 +2784,9 @@ void Scene28::updateHotspots() {
 }
 
 void Scene28::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1093C, true);
 	_nextClownSequenceId = -1;
@@ -3035,8 +3032,8 @@ void Scene28::run() {
 }
 
 void Scene28::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);
@@ -3202,9 +3199,9 @@ void Scene29::updateHotspots() {
 }
 
 void Scene29::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
-	PlayerPlat& plat = *_vm->_plat;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
+	PlayerPlat &plat = *_vm->_plat;
 
 	_vm->playSound(0x1093B, true);
 	_vm->startSoundTimerB(6);
@@ -3430,8 +3427,8 @@ void Scene29::run() {
 }
 
 void Scene29::updateAnimations() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (gameSys.getAnimationStatus(0) == 2) {
 		gameSys.setAnimation(0, 0, 0);

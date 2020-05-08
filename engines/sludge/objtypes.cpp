@@ -20,11 +20,11 @@
  *
  */
 
+#include "sludge/objtypes.h"
 #include "sludge/allfiles.h"
 #include "sludge/fileset.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
-#include "sludge/objtypes.h"
 #include "sludge/sludge.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
@@ -43,7 +43,7 @@ bool ObjectManager::init() {
 void ObjectManager::kill() {
 	ObjectTypeList::iterator it;
 	for (it = _allObjectTypes.begin(); it != _allObjectTypes.end(); ++it) {
-		delete [](*it)->allCombis;
+		delete[](*it)->allCombis;
 		delete (*it);
 		(*it) = nullptr;
 	}
@@ -93,7 +93,6 @@ ObjectType *ObjectManager::loadObjectType(int i) {
 			newType->numCom = readStream->readUint16BE();
 			newType->allCombis = (newType->numCom) ? new Combination[newType->numCom] : nullptr;
 
-
 			for (a = 0; a < newType->numCom; a++) {
 				newType->allCombis[a].withObj = readStream->readUint16BE();
 				newType->allCombis[a].funcNum = readStream->readUint16BE();
@@ -138,7 +137,7 @@ int ObjectManager::getCombinationFunction(int withThis, int thisObject) {
 
 void ObjectManager::removeObjectType(ObjectType *oT) {
 	_allObjectTypes.remove(oT);
-	delete []oT->allCombis;
+	delete[] oT->allCombis;
 	delete oT;
 	oT = nullptr;
 }

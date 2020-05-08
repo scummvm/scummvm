@@ -26,16 +26,16 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/system/sys_class_registry.h"
-#include "engines/wintermute/system/sys_class.h"
+#include "engines/wintermute/base/scriptables/script_ext_file.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/utils/utils.h"
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/base/scriptables/script_ext_file.h"
+#include "engines/wintermute/system/sys_class.h"
+#include "engines/wintermute/system/sys_class_registry.h"
+#include "engines/wintermute/utils/utils.h"
 
 // Note: This code is completely untested, as I have yet to find a game that uses SXFile.
 
@@ -64,7 +64,6 @@ SXFile::SXFile(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	_textMode = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 SXFile::~SXFile() {
 	cleanup();
@@ -76,7 +75,6 @@ void SXFile::cleanup() {
 	_filename = nullptr;
 	close();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void SXFile::close() {
@@ -213,7 +211,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		/* const char *dest = */ stack->pop()->getString();
 		/* bool overwrite = */ stack->pop()->getBool(true);
 
-		// Known game that need this: 
+		// Known game that need this:
 		// * Space Madness (to copy bonus wallpapers from data.dcp to /saves/ folder)
 		// * games by Rootfix intertainment (to save temporary screenshot as savegame screenshot)
 		warning("SXFile-Method: Copy not supported");
@@ -639,7 +637,6 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *SXFile::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -695,7 +692,6 @@ ScValue *SXFile::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	/*
@@ -715,7 +711,8 @@ bool SXFile::scSetProperty(const char *name, ScValue *value) {
 	    }
 	    return STATUS_OK;
 	}
-	else*/ return BaseScriptable::scSetProperty(name, value);
+	else*/
+	return BaseScriptable::scSetProperty(name, value);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -725,7 +722,7 @@ uint32 SXFile::getPos() {
 	} else if ((_mode == 2 || _mode == 3) && _writeFile) {
 		error("SXFile - getPos for WriteFile not supported");
 		return 0;
-//		return ftell((FILE *)_writeFile);
+		//		return ftell((FILE *)_writeFile);
 	} else {
 		return 0;
 	}
@@ -738,7 +735,7 @@ bool SXFile::setPos(uint32 pos, int whence) {
 	} else if ((_mode == 2 || _mode == 3) && _writeFile) {
 		error("SXFile - seeking in WriteFile not supported");
 		return false;
-//		return fseek((FILE *)_writeFile, pos, (int)origin) == 0;
+		//		return fseek((FILE *)_writeFile, pos, (int)origin) == 0;
 	} else {
 		return false;
 	}

@@ -39,10 +39,10 @@
 namespace Gnap {
 
 enum {
-	kResTypeSprite		= 0,
-	kResTypeBitmap		= 1,
-	kResTypeSound		= 2,
-	kResTypeSequence	= 3
+	kResTypeSprite = 0,
+	kResTypeBitmap = 1,
+	kResTypeSound = 2,
+	kResTypeSequence = 3
 };
 
 struct SequenceFrame {
@@ -69,6 +69,7 @@ class SequenceResource {
 public:
 	SequenceResource(byte *data, uint32 size);
 	~SequenceResource();
+
 public:
 	int32 _sequenceId;
 	int32 _defaultId;
@@ -86,6 +87,7 @@ class SpriteResource {
 public:
 	SpriteResource(byte *data, uint32 size);
 	~SpriteResource();
+
 public:
 	byte *_data;
 	byte *_pixels;
@@ -101,15 +103,15 @@ class SoundResource {
 public:
 	SoundResource(byte *data, uint32 size);
 	~SoundResource();
+
 public:
 	byte *_data;
 	uint32 _size;
 };
 
-template <class ResourceClass, int ResourceType, bool FreeAfterLoad>
+template<class ResourceClass, int ResourceType, bool FreeAfterLoad>
 class ResourceCacheTemplate {
 public:
-
 	ResourceCacheTemplate(DatManager *dat) : _dat(dat) {
 	}
 
@@ -146,7 +148,6 @@ public:
 	}
 
 protected:
-
 	struct Resource {
 		ResourceClass *_obj;
 		bool _isLocked;
@@ -178,7 +179,6 @@ protected:
 			delete[] resourceData;
 		return obj;
 	}
-
 };
 
 typedef ResourceCacheTemplate<SpriteResource, kResTypeSprite, false> SpriteCache;

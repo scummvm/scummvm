@@ -26,27 +26,27 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/ext/wme_3fstatistics.h"
 #include "engines/metaengine.h"
-#include "engines/wintermute/wintermute.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/ext/wme_3fstatistics.h"
+#include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(SX3fStatistics, false)
 
 BaseScriptable *makeSX3fStatistics(BaseGame *inGame, ScStack *stack) {
-	return new SX3fStatistics(inGame,  stack);
+	return new SX3fStatistics(inGame, stack);
 }
 
 //////////////////////////////////////////////////////////////////////////
 SX3fStatistics::SX3fStatistics(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(4);
 
-	ScValue * tmp;
+	ScValue *tmp;
 	_baseUrl = stack->pop()->getString();
 	tmp = stack->pop();
 	_chapter = tmp->isNULL() ? "" : tmp->getString();
@@ -68,7 +68,6 @@ SX3fStatistics::~SX3fStatistics() {
 const char *SX3fStatistics::scToString() {
 	return "[statistics object]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SX3fStatistics::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) {
@@ -132,7 +131,6 @@ bool SX3fStatistics::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *SX3fStatistics::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -150,12 +148,10 @@ ScValue *SX3fStatistics::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool SX3fStatistics::scSetProperty(const char *name, ScValue *value) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool SX3fStatistics::persist(BasePersistenceManager *persistMgr) {
@@ -166,7 +162,7 @@ bool SX3fStatistics::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferString(TMEMBER(_language));
 	persistMgr->transferString(TMEMBER(_buildNum));
 	persistMgr->transferSint32(TMEMBER(_repeat));
-	
+
 	return STATUS_OK;
 }
 

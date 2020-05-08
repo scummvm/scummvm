@@ -55,7 +55,6 @@ int NullSdlMixerManager::resumeAudio() {
 	return 0;
 }
 
-
 void NullSdlMixerManager::startAudio() {
 }
 

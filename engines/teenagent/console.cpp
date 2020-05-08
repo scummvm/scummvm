@@ -27,15 +27,15 @@
 namespace TeenAgent {
 
 Console::Console(TeenAgentEngine *engine) : _engine(engine) {
-	registerCmd("enable_object",		WRAP_METHOD(Console, enableObject));
-	registerCmd("disable_object",		WRAP_METHOD(Console, enableObject));
-	registerCmd("set_ons",			WRAP_METHOD(Console, setOns));
-	registerCmd("set_music",			WRAP_METHOD(Console, setMusic));
-	registerCmd("animation",			WRAP_METHOD(Console, playAnimation));
-	registerCmd("actor_animation",	WRAP_METHOD(Console, playActorAnimation));
-	registerCmd("call",				WRAP_METHOD(Console, call));
-	registerCmd("playSound",			WRAP_METHOD(Console, playSound));
-	registerCmd("playVoice",			WRAP_METHOD(Console, playVoice));
+	registerCmd("enable_object", WRAP_METHOD(Console, enableObject));
+	registerCmd("disable_object", WRAP_METHOD(Console, enableObject));
+	registerCmd("set_ons", WRAP_METHOD(Console, setOns));
+	registerCmd("set_music", WRAP_METHOD(Console, setMusic));
+	registerCmd("animation", WRAP_METHOD(Console, playAnimation));
+	registerCmd("actor_animation", WRAP_METHOD(Console, playActorAnimation));
+	registerCmd("call", WRAP_METHOD(Console, call));
+	registerCmd("playSound", WRAP_METHOD(Console, playSound));
+	registerCmd("playVoice", WRAP_METHOD(Console, playVoice));
 }
 
 bool Console::enableObject(int argc, const char **argv) {
@@ -200,4 +200,4 @@ bool Console::playVoice(int argc, const char **argv) {
 	return true;
 }
 
-}
+} // namespace TeenAgent

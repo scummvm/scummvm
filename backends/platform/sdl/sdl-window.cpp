@@ -34,10 +34,10 @@ static const uint32 fullscreenMask = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_
 
 SdlWindow::SdlWindow()
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	: _window(nullptr), _inputGrabState(false), _windowCaption("ScummVM"),
-	_lastFlags(0), _lastX(SDL_WINDOWPOS_UNDEFINED), _lastY(SDL_WINDOWPOS_UNDEFINED)
+    : _window(nullptr), _inputGrabState(false), _windowCaption("ScummVM"),
+      _lastFlags(0), _lastX(SDL_WINDOWPOS_UNDEFINED), _lastY(SDL_WINDOWPOS_UNDEFINED)
 #endif
-	{
+{
 }
 
 SdlWindow::~SdlWindow() {
@@ -60,7 +60,7 @@ void SdlWindow::setupIcon() {
 		warning("Could not load the built-in icon (%d %d %d %d)", w, h, ncols, nbytes);
 		return;
 	}
-	icon = (unsigned int*)malloc(w*h*sizeof(unsigned int));
+	icon = (unsigned int *)malloc(w * h * sizeof(unsigned int));
 	if (!icon) {
 		warning("Could not allocate temp storage for the built-in icon");
 		return;
@@ -203,9 +203,9 @@ SDL_Surface *copySDLSurface(SDL_Surface *src) {
 	}
 
 	SDL_Surface *res = SDL_CreateRGBSurfaceFrom(src->pixels,
-	                       src->w, src->h, src->format->BitsPerPixel,
-	                       src->pitch, src->format->Rmask, src->format->Gmask,
-	                       src->format->Bmask, src->format->Amask);
+	                                            src->w, src->h, src->format->BitsPerPixel,
+	                                            src->pitch, src->format->Rmask, src->format->Gmask,
+	                                            src->format->Bmask, src->format->Amask);
 
 	if (locked) {
 		SDL_UnlockSurface(src);
@@ -263,7 +263,7 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	if (!_window || oldNonUpdateableFlags != newNonUpdateableFlags) {
 		destroyWindow();
 		_window = SDL_CreateWindow(_windowCaption.c_str(), _lastX,
-								   _lastY, width, height, flags);
+		                           _lastY, width, height, flags);
 		if (_window) {
 			setupIcon();
 		}

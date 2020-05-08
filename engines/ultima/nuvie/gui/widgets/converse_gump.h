@@ -23,8 +23,8 @@
 #ifndef NUVIE_CORE_CONVERSE_GUMP_H
 #define NUVIE_CORE_CONVERSE_GUMP_H
 
-#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
+#include "ultima/nuvie/misc/call_back.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
@@ -33,13 +33,12 @@ namespace Nuvie {
 
 using Std::list;
 
-
 class Configuration;
 class Font;
 class MsgScroll;
 class Actor;
 
-class ConverseGump: public MsgScroll {
+class ConverseGump : public MsgScroll {
 	Std::list<MsgText> conv_keywords;
 	Std::list<MsgText> permitted_input_keywords;
 
@@ -64,7 +63,6 @@ class ConverseGump: public MsgScroll {
 	nuvie_game_t game_type;
 
 public:
-
 	ConverseGump(Configuration *cfg, Font *f, Screen *s);
 	~ConverseGump() override;
 
@@ -75,7 +73,7 @@ public:
 	void display_string(Std::string s, Font *f, bool include_on_map_window) override;
 	void set_talking(bool state, Actor *actor = NULL) override;
 	void set_font(uint8 font_type) override {}
-//bool get_solid_bg() { return solid_bg; }
+	//bool get_solid_bg() { return solid_bg; }
 	void set_solid_bg(bool val) {
 		solid_bg = val;
 	}

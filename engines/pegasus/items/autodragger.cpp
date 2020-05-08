@@ -23,8 +23,8 @@
  *
  */
 
-#include "pegasus/elements.h"
 #include "pegasus/items/autodragger.h"
+#include "pegasus/elements.h"
 
 namespace Pegasus {
 
@@ -35,7 +35,7 @@ AutoDragger::AutoDragger() {
 }
 
 void AutoDragger::autoDrag(DisplayElement *dragElement, const Common::Point &startPoint, const Common::Point &stopPoint,
-		TimeValue dragTime, TimeScale dragScale) {
+                           TimeValue dragTime, TimeScale dragScale) {
 	_draggingElement = dragElement;
 
 	if (_draggingElement) {

@@ -70,7 +70,7 @@ void WidgetOptions::handleEvents() {
 
 		// Emulate a mouse release if Enter or Space Bar is pressed
 		if (ui._keyState.keycode == Common::KEYCODE_RETURN || ui._keyState.keycode == Common::KEYCODE_SPACE) {
-			events._pressed  = events._oldButtons = false;
+			events._pressed = events._oldButtons = false;
 			events._released = true;
 		} else if (ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 			close();
@@ -108,9 +108,8 @@ void WidgetOptions::handleEvents() {
 		_midiSliderX = mousePos.x - _bounds.left;
 		if (_midiSliderX < _surface.widestChar())
 			_midiSliderX = _surface.widestChar();
-		else
-			if (_midiSliderX > _bounds.width() - _surface.widestChar())
-				_midiSliderX = _bounds.width() - _surface.widestChar();
+		else if (_midiSliderX > _bounds.width() - _surface.widestChar())
+			_midiSliderX = _bounds.width() - _surface.widestChar();
 
 		int newVolume = (_midiSliderX - _surface.widestChar()) * 255 / (_bounds.width() - _surface.widestChar() * 2);
 		if (newVolume != music._musicVolume) {
@@ -241,14 +240,14 @@ void WidgetOptions::render(OptionRenderMode mode) {
 	Sound &sound = *_vm->_sound;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	ImageFile &images = *ui._interfaceImages;
-	const char *const OFF_ON[2] = { FIXED(Off), FIXED(On) };
+	const char *const OFF_ON[2] = {FIXED(Off), FIXED(On)};
 
 	// Draw the border if necessary
 	if (mode == OP_ALL) {
 		// Set bounds for the dialog
 		Common::String widestString = Common::String::format("%s %s", FIXED(TransparentMenus), FIXED(Off));
 		_bounds = Common::Rect(_surface.stringWidth(widestString) + _surface.widestChar() * 2 + 6,
-			(_surface.fontHeight() + 7) * 11 + 3);
+		                       (_surface.fontHeight() + 7) * 11 + 3);
 		_bounds.moveTo(_centerPos.x - _bounds.width() / 2, _centerPos.y - _bounds.height() / 2);
 
 		// Get slider positions
@@ -303,15 +302,18 @@ void WidgetOptions::render(OptionRenderMode mode) {
 				int sliderY = yp + num / 2 - 8;
 
 				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.width() - 5,
-					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
+				                               sliderY - (num - 6) / 2 + num - 1),
+				                  TRANSPARENCY);
 				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2,
-					_surface.width() - _surface.widestChar() - 1, sliderY + 3), INFO_MIDDLE);
+				                               _surface.width() - _surface.widestChar() - 1, sliderY + 3),
+				                  INFO_MIDDLE);
 				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.width() - _surface.widestChar(), sliderY + 6));
 
 				_surface.fillRect(Common::Rect(_midiSliderX - 1, sliderY - (num - 6) / 2 + 2,
-					_midiSliderX + 1, sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
+				                               _midiSliderX + 1, sliderY - (num - 6) / 2 + num - 3),
+				                  INFO_MIDDLE);
 				drawDialogRect(Common::Rect(_midiSliderX - 3, sliderY - (num - 6) / 2,
-					_midiSliderX + 4, sliderY - (num - 6) / 2 + num));
+				                            _midiSliderX + 4, sliderY - (num - 6) / 2 + num));
 
 				if (_midiSliderX - 4 > _surface.widestChar())
 					_surface.fillRect(Common::Rect(_midiSliderX - 4, sliderY, _midiSliderX - 4, sliderY + 4), INFO_BOTTOM);
@@ -333,14 +335,17 @@ void WidgetOptions::render(OptionRenderMode mode) {
 				int sliderY = yp + num / 2 - 8;
 
 				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.width() - 5,
-					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
+				                               sliderY - (num - 6) / 2 + num - 1),
+				                  TRANSPARENCY);
 				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2, _surface.width() - _surface.widestChar() - 1,
-					sliderY + 3), INFO_MIDDLE);
+				                               sliderY + 3),
+				                  INFO_MIDDLE);
 				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.width() - _surface.widestChar(), sliderY + 6));
 				_surface.fillRect(Common::Rect(_digiSliderX - 1, sliderY - (num - 6) / 2 + 2, _digiSliderX + 1,
-					sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
+				                               sliderY - (num - 6) / 2 + num - 3),
+				                  INFO_MIDDLE);
 				drawDialogRect(Common::Rect(_digiSliderX - 3, sliderY - (num - 6) / 2, _digiSliderX + 4,
-					sliderY - (num - 6) / 2 + num));
+				                            sliderY - (num - 6) / 2 + num));
 				if (_digiSliderX - 4 > _surface.widestChar())
 					_surface.fillRect(Common::Rect(_digiSliderX - 4, sliderY, _digiSliderX - 4, sliderY + 4), INFO_BOTTOM);
 				if (_digiSliderX + 4 < _surface.width() - _surface.widestChar())

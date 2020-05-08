@@ -25,9 +25,9 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
+#include "memory.h"
 #include "mpal.h"
 #include "mpaldll.h"
-#include "memory.h"
 #include "tony/tony.h"
 
 namespace Tony {
@@ -41,7 +41,7 @@ namespace MPAL {
 static bool compareCommands(struct Command *cmd1, struct Command *cmd2) {
 	if (cmd1->_type == 2 && cmd2->_type == 2) {
 		if (strcmp(cmd1->_lpszVarName, cmd2->_lpszVarName) == 0 &&
-			compareExpressions(cmd1->_expr, cmd2->_expr))
+		    compareExpressions(cmd1->_expr, cmd2->_expr))
 			return true;
 		else
 			return false;
@@ -173,7 +173,8 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 	for (i = 0; i < num; i++) {
 		lpmdDialog->_group[i]._num = READ_LE_UINT16(lpBuf);
 		lpBuf += 2;
-		lpmdDialog->_group[i]._nCmds = *lpBuf; lpBuf++;
+		lpmdDialog->_group[i]._nCmds = *lpBuf;
+		lpBuf++;
 
 		if (lpmdDialog->_group[i]._nCmds >= MAX_COMMANDS_PER_GROUP)
 			error("Too much commands in group #%d in dialog #%d", lpmdDialog->_group[i]._num, lpmdDialog->_nObj);
@@ -225,7 +226,7 @@ static const byte *parseDialog(const byte *lpBuf, LpMpalDialog lpmdDialog) {
 			}
 
 			uint32 kk;
-			for (kk = 0;kk < curCmd; kk++) {
+			for (kk = 0; kk < curCmd; kk++) {
 				if (compareCommands(&lpmdDialog->_command[kk], &lpmdDialog->_command[curCmd])) {
 					lpmdDialog->_group[i]._cmdNum[j] = kk;
 
@@ -340,7 +341,7 @@ static const byte *parseItem(const byte *lpBuf, LpMpalItem lpmiItem) {
 	if (len >= MAX_DESCRIBE_SIZE)
 		error("Describe too long in item #%d", lpmiItem->_nObj);
 
-	lpmiItem->_nActions=*lpBuf;
+	lpmiItem->_nActions = *lpBuf;
 	lpBuf++;
 
 	// Allocation action
@@ -369,12 +370,12 @@ static const byte *parseItem(const byte *lpBuf, LpMpalItem lpmiItem) {
 			lpmiItem->_action[i]._when = NULL;
 		} else {
 			lpBuf++;
-			lpBuf = parseExpression(lpBuf,&lpmiItem->_action[i]._when);
+			lpBuf = parseExpression(lpBuf, &lpmiItem->_action[i]._when);
 			if (lpBuf == NULL)
 				return NULL;
 		}
 
-		lpmiItem->_action[i]._nCmds=*lpBuf;
+		lpmiItem->_action[i]._nCmds = *lpBuf;
 		lpBuf++;
 
 		if (lpmiItem->_action[i]._nCmds >= MAX_COMMANDS_PER_ACTION)
@@ -385,7 +386,7 @@ static const byte *parseItem(const byte *lpBuf, LpMpalItem lpmiItem) {
 			lpBuf++;
 			switch (lpmiItem->_command[curCmd]._type) {
 			case 1: // Call custom function
-				lpmiItem->_command[curCmd]._nCf  = READ_LE_UINT16(lpBuf);
+				lpmiItem->_command[curCmd]._nCf = READ_LE_UINT16(lpBuf);
 				lpBuf += 2;
 				lpmiItem->_command[curCmd]._arg1 = (int32)READ_LE_UINT32(lpBuf);
 				lpBuf += 4;
@@ -559,8 +560,8 @@ bool parseMpc(const byte *lpBuf) {
 
 	GLOBALS._lpmmMsgs = (LpMpalMsg)globalLock(GLOBALS._hMsgs);
 #else
-	GLOBALS._lpmmMsgs=(LPMPALMSG)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALMSG) * (uint32)GLOBALS._nMsgs);
-	if (GLOBALS._lpmmMsgs==NULL)
+	GLOBALS._lpmmMsgs = (LPMPALMSG)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, sizeof(MPALMSG) * (uint32)GLOBALS._nMsgs);
+	if (GLOBALS._lpmmMsgs == NULL)
 		return false;
 #endif
 
@@ -578,7 +579,7 @@ bool parseMpc(const byte *lpBuf) {
 		for (j = 0; lpBuf[j] != 0;) {
 			memcpy(lpTemp, &lpBuf[j + 1], lpBuf[j]);
 			lpTemp += lpBuf[j];
-			*lpTemp ++= '\0';
+			*lpTemp++ = '\0';
 			j += lpBuf[j] + 1;
 		}
 

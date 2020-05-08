@@ -31,7 +31,7 @@
 #include "graphics/screen.h"
 
 namespace Graphics {
-	class MacMenu;
+class MacMenu;
 }
 
 namespace Pink {
@@ -92,6 +92,5 @@ private:
 };
 
 } // End of namespace Pink
-
 
 #endif

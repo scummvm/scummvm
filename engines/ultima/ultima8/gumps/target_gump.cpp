@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/target_gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
-#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,13 +34,10 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetGump, ModalGump)
 
 TargetGump::TargetGump() : ModalGump(), _targetTracing(false) {
-
 }
 
-
 TargetGump::TargetGump(int x_, int y_)
-	: ModalGump(x_, y_, 0, 0), _targetTracing(false) {
-
+    : ModalGump(x_, y_, 0, 0), _targetTracing(false) {
 }
 
 TargetGump::~TargetGump() {
@@ -71,7 +68,8 @@ void TargetGump::Close(bool no_del) {
 bool TargetGump::PointOnGump(int mx, int my) {
 	// HACK alert: if we're currently tracing from TargetGump::OnMouseUp,
 	//  then we do NOT want to intercept the trace
-	if (_targetTracing) return false;
+	if (_targetTracing)
+		return false;
 
 	return ModalGump::PointOnGump(mx, my);
 }
@@ -103,8 +101,6 @@ uint32 TargetGump::I_target(const uint8 * /*args*/, unsigned int /*argsize*/) {
 
 	return targetgump->GetNotifyProcess()->getPid();
 }
-
-
 
 void TargetGump::saveData(Common::WriteStream *ws) {
 	CANT_HAPPEN_MSG("Trying to save ModalGump");

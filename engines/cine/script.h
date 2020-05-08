@@ -23,10 +23,10 @@
 #ifndef CINE_SCRIPT_H
 #define CINE_SCRIPT_H
 
-#include "common/savefile.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/ptr.h"
+#include "common/savefile.h"
 
 namespace Cine {
 
@@ -55,7 +55,7 @@ struct Opcode {
 class ScriptVars {
 private:
 	unsigned int _size; ///< Size of array
-	int16 *_vars; ///< Variable values
+	int16 *_vars;       ///< Variable values
 
 public:
 	// Explicit to prevent var=0 instead of var[i]=0 typos.
@@ -86,7 +86,7 @@ class FWScriptInfo;
  */
 class RawScript {
 private:
-	byte *_data; ///< Script bytecode
+	byte *_data;        ///< Script bytecode
 	ScriptVars _labels; ///< Initial script labels
 
 protected:
@@ -120,9 +120,9 @@ public:
 class RawObjectScript : public RawScript {
 public:
 	int16 _runCount; ///< How many times the script was used
-	uint16 _param1; ///< Additional parameter not used at the moment
-	uint16 _param2; ///< Additional parameter not used at the moment
-	uint16 _param3; ///< Additional parameter not used at the moment
+	uint16 _param1;  ///< Additional parameter not used at the moment
+	uint16 _param2;  ///< Additional parameter not used at the moment
+	uint16 _param3;  ///< Additional parameter not used at the moment
 
 	RawObjectScript(uint16 size, uint16 p1, uint16 p2, uint16 p3);
 	RawObjectScript(const FWScriptInfo &info, const byte *data, uint16 size, uint16 p1, uint16 p2, uint16 p3);
@@ -141,13 +141,13 @@ public:
 class FWScript {
 private:
 	const RawScript &_script; ///< Script bytecode reference
-	uint16 _pos; ///< Current position in script
-	uint16 _line; ///< Current opcode index in bytecode for debugging
-	uint16 _compare; ///< Last compare result
-	ScriptVars _labels; ///< Current script labels
-	ScriptVars _localVars; ///< Local script variables
-	ScriptVars &_globalVars; ///< Global variables reference
-	FWScriptInfo *_info; ///< Script info
+	uint16 _pos;              ///< Current position in script
+	uint16 _line;             ///< Current opcode index in bytecode for debugging
+	uint16 _compare;          ///< Last compare result
+	ScriptVars _labels;       ///< Current script labels
+	ScriptVars _localVars;    ///< Local script variables
+	ScriptVars &_globalVars;  ///< Global variables reference
+	FWScriptInfo *_info;      ///< Script info
 
 protected:
 	static const Opcode *_opcodeTable;
@@ -284,7 +284,7 @@ public:
 	static void setupTable();
 
 	FWScript(const RawScript &script, int16 index);
-//	FWScript(const RawObjectScript &script, int16 index);
+	//	FWScript(const RawObjectScript &script, int16 index);
 	FWScript(const FWScript &src);
 	~FWScript();
 
@@ -374,10 +374,10 @@ void setupOpcodes();
 void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx);
 void dumpScript(char *dumpName);
 
-#define OP_loadPart                     0x3F
-#define OP_loadNewPrcName               0x41
-#define OP_requestCheckPendingDataLoad  0x42
-#define OP_endScript                    0x50
+#define OP_loadPart 0x3F
+#define OP_loadNewPrcName 0x41
+#define OP_requestCheckPendingDataLoad 0x42
+#define OP_endScript 0x50
 
 void addScriptToGlobalScripts(uint16 idx);
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx);

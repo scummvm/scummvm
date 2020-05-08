@@ -147,7 +147,7 @@ extern void newline();
 extern bool save_game(strid_t save);
 extern bool restore_game(strid_t save, bool warn = false);
 extern void write_integer(strid_t stream, int x);
-extern int  read_integer(strid_t stream);
+extern int read_integer(strid_t stream);
 extern void write_long(strid_t stream, long x);
 extern long read_long(strid_t stream);
 extern void save_game_state();

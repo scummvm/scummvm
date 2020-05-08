@@ -20,27 +20,27 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/world/map.h"
-#include "ultima/ultima8/world/item.h"
-#include "ultima/ultima8/world/glob_egg.h"
-#include "ultima/ultima8/world/egg.h"
-#include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/world.h"
-#include "ultima/ultima8/misc/rect.h"
-#include "ultima/ultima8/world/container.h"
-#include "ultima/ultima8/usecode/uc_list.h"
-#include "ultima/ultima8/graphics/shape_info.h"
-#include "ultima/ultima8/world/teleport_egg.h"
-#include "ultima/ultima8/world/egg_hatcher_process.h"
-#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
-#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
+#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/misc/rect.h"
+#include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/container.h"
+#include "ultima/ultima8/world/egg.h"
+#include "ultima/ultima8/world/egg_hatcher_process.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/glob_egg.h"
+#include "ultima/ultima8/world/item.h"
+#include "ultima/ultima8/world/map.h"
+#include "ultima/ultima8/world/teleport_egg.h"
+#include "ultima/ultima8/world/world.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -50,9 +50,9 @@ typedef Std::list<Item *> item_list;
 static const int INT_MAX_VALUE = 0x7fffffff;
 
 CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
-	  _fastXMin(-1), _fastYMin(-1), _fastXMax(-1), _fastYMax(-1) {
+                           _fastXMin(-1), _fastYMin(-1), _fastXMax(-1), _fastYMax(-1) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
-		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		Std::memset(_fast[i], false, sizeof(uint32) * MAP_NUM_CHUNKS / 32);
 	}
 
 	if (GAME_IS_U8) {
@@ -64,9 +64,8 @@ CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
 	}
 }
 
-
 CurrentMap::~CurrentMap() {
-//	clear();
+	//	clear();
 }
 
 void CurrentMap::clear() {
@@ -77,10 +76,10 @@ void CurrentMap::clear() {
 				delete *iter;
 			_items[i][j].clear();
 		}
-		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		Std::memset(_fast[i], false, sizeof(uint32) * MAP_NUM_CHUNKS / 32);
 	}
 
-	_fastXMin =  _fastYMin = _fastXMax = _fastYMax = -1;
+	_fastXMin = _fastYMin = _fastXMax = _fastYMax = -1;
 	_currentMap = nullptr;
 
 	Process *ehp = Kernel::get_instance()->getProcess(_eggHatcher);
@@ -182,7 +181,7 @@ void CurrentMap::loadMap(Map *map) {
 
 	// Clear _fast area
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
-		Std::memset(_fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		Std::memset(_fast[i], false, sizeof(uint32) * MAP_NUM_CHUNKS / 32);
 	}
 	_fastXMin = -1;
 	_fastYMin = -1;
@@ -200,7 +199,8 @@ void CurrentMap::loadMap(Map *map) {
 	// !constant
 	for (uint16 i = 0; i < 256; ++i) {
 		Actor *actor = getActor(i);
-		if (!actor) continue;
+		if (!actor)
+			continue;
 
 		// Schedule
 		// CHECKME: is this the right time to pass?
@@ -225,7 +225,7 @@ void CurrentMap::addItem(Item *item) {
 	item->getLocation(ix, iy, iz);
 
 	if (ix < 0 || ix >= _mapChunkSize * MAP_NUM_CHUNKS ||
-	        iy < 0 || iy >= _mapChunkSize * MAP_NUM_CHUNKS) {
+	    iy < 0 || iy >= _mapChunkSize * MAP_NUM_CHUNKS) {
 		perr << "Skipping item " << item->getObjId() << ": out of range ("
 		     << ix << "," << iy << ")" << Std::endl;
 		return;
@@ -251,7 +251,7 @@ void CurrentMap::addItemToEnd(Item *item) {
 	item->getLocation(ix, iy, iz);
 
 	if (ix < 0 || ix >= _mapChunkSize * MAP_NUM_CHUNKS ||
-	        iy < 0 || iy >= _mapChunkSize * MAP_NUM_CHUNKS) {
+	    iy < 0 || iy >= _mapChunkSize * MAP_NUM_CHUNKS) {
 		perr << "Skipping item " << item->getObjId() << ": out of range ("
 		     << ix << "," << iy << ")" << Std::endl;
 		return;
@@ -279,14 +279,13 @@ void CurrentMap::removeItem(Item *item) {
 	removeItemFromList(item, ix, iy);
 }
 
-
 void CurrentMap::removeItemFromList(Item *item, int32 oldx, int32 oldy) {
 	//! This might a bit too inefficient
 	// if it's really a problem we could change the item lists into sets
 	// or something, but let's see how it turns out
 
 	if (oldx < 0 || oldx >= _mapChunkSize * MAP_NUM_CHUNKS ||
-	        oldy < 0 || oldy >= _mapChunkSize * MAP_NUM_CHUNKS) {
+	    oldy < 0 || oldy >= _mapChunkSize * MAP_NUM_CHUNKS) {
 		perr << "Skipping item " << item->getObjId() << ": out of range ("
 		     << oldx << "," << oldy << ")" << Std::endl;
 		return;
@@ -350,14 +349,14 @@ void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 
 	Rect dims;
 	Ultima8Engine::get_instance()->getGameMapGump()->GetDims(dims);
 
-	int32 sleft  = ((x_min - y_min) / 4)         - (dims.w / 2 + _mapChunkSize / 4);
-	int32 stop   = ((x_min + y_min) / 8 - z_max) - (dims.h / 2 + _mapChunkSize / 8);
-	int32 sright = ((x_max - y_max) / 4)         + (dims.w / 2 + _mapChunkSize / 4);
-	int32 sbot   = ((x_max + y_max) / 8 - z_min) + (dims.h / 2 + _mapChunkSize / 8);
+	int32 sleft = ((x_min - y_min) / 4) - (dims.w / 2 + _mapChunkSize / 4);
+	int32 stop = ((x_min + y_min) / 8 - z_max) - (dims.h / 2 + _mapChunkSize / 8);
+	int32 sright = ((x_max - y_max) / 4) + (dims.w / 2 + _mapChunkSize / 4);
+	int32 sbot = ((x_max + y_max) / 8 - z_min) + (dims.h / 2 + _mapChunkSize / 8);
 
 	// Don't do anything IF the regions are the same
 	if (_fastXMin == sleft && _fastYMin == stop &&
-	        _fastXMax == sright && _fastYMax == sbot)
+	    _fastXMax == sright && _fastYMax == sbot)
 		return;
 
 	// Update the saved region
@@ -385,7 +384,8 @@ void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 
 			bool want_fast = cx >= x_min && cx <= x_max && cy >= y_min && cy <= y_max;
 
 			// Fine
-			if (want_fast) want_fast = ChunkOnScreen(cx, cy, sleft, stop, sright, sbot, _mapChunkSize);
+			if (want_fast)
+				want_fast = ChunkOnScreen(cx, cy, sleft, stop, sright, sbot, _mapChunkSize);
 
 			bool currently_fast = isChunkFast(cx, cy);
 
@@ -394,9 +394,11 @@ void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 
 				continue;
 
 			// leave _fast area
-			if (!want_fast) unsetChunkFast(cx, cy);
+			if (!want_fast)
+				unsetChunkFast(cx, cy);
 			// Enter _fast area
-			else setChunkFast(cx, cy);
+			else
+				setChunkFast(cx, cy);
 		}
 	}
 }
@@ -406,7 +408,7 @@ void CurrentMap::setChunkFast(int32 cx, int32 cy) {
 
 	item_list::iterator iter;
 	for (iter = _items[cx][cy].begin();
-	        iter != _items[cx][cy].end(); ++iter) {
+	     iter != _items[cx][cy].end(); ++iter) {
 		(*iter)->enterFastArea();
 	}
 }
@@ -418,7 +420,7 @@ void CurrentMap::unsetChunkFast(int32 cx, int32 cy) {
 	while (iter != _items[cx][cy].end()) {
 		Item *item = *iter;
 		++iter;
-		item->leaveFastArea();  // Can destroy the item
+		item->leaveFastArea(); // Can destroy the item
 	}
 }
 
@@ -454,7 +456,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 		for (int cy = miny; cy <= maxy; cy++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
+			     iter != _items[cx][cy].end(); ++iter) {
 
 				const Item *item = *iter;
 
@@ -497,7 +499,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
                                uint32 scriptsize, const Item *check,
-							   bool above, bool below, bool recurse) const {
+                               bool above, bool below, bool recurse) const {
 	int32 origin[3];
 	int32 dims[3];
 	check->getLocationAbsolute(origin[0], origin[1], origin[2]);
@@ -511,7 +513,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
                                int32 origin[3], int32 dims[3],
                                bool above, bool below, bool recurse) const {
 	const Rect searchrange(origin[0] - dims[0], origin[1] - dims[1],
-	                 dims[0], dims[1]);
+	                       dims[0], dims[1]);
 
 	int minx = ((origin[0] - dims[0]) / _mapChunkSize) - 1;
 	int maxx = ((origin[0]) / _mapChunkSize) + 1;
@@ -523,7 +525,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 		for (int cy = miny; cy <= maxy; cy++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
+			     iter != _items[cx][cy].end(); ++iter) {
 
 				const Item *item = *iter;
 
@@ -581,7 +583,7 @@ TeleportEgg *CurrentMap::findDestination(uint16 id) {
 		for (unsigned int j = 0; j < MAP_NUM_CHUNKS; j++) {
 			item_list::iterator iter;
 			for (iter = _items[i][j].begin();
-			        iter != _items[i][j].end(); ++iter) {
+			     iter != _items[i][j].end(); ++iter) {
 				TeleportEgg *egg = p_dynamic_cast<TeleportEgg *>(*iter);
 				if (egg) {
 					if (!egg->isTeleporter() && egg->getTeleportId() == id)
@@ -599,13 +601,11 @@ const Std::list<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
 	return &_items[gx][gy];
 }
 
-
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  uint32 shape,
                                  ObjId item, const Item **support,
                                  ObjId *roof) const {
-	const ShapeInfo *si = GameData::get_instance()->
-	                getMainShapes()->getShapeInfo(shape);
+	const ShapeInfo *si = GameData::get_instance()->getMainShapes()->getShapeInfo(shape);
 	int32 xd, yd, zd;
 	// Note: this assumes the shape to be placed is not flipped
 	si->getFootpadWorld(xd, yd, zd, 0);
@@ -626,7 +626,6 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 	                       xd, yd, zd,
 	                       shapeflags, item_, support_, roof_);
 }
-
 
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
                                  int32 startx, int32 starty, int32 startz,
@@ -653,7 +652,7 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 		for (int cy = miny; cy <= maxy; cy++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
-				 iter != _items[cx][cy].end(); ++iter) {
+			     iter != _items[cx][cy].end(); ++iter) {
 				const Item *item = *iter;
 				if (item->getObjId() == item_)
 					continue;
@@ -680,14 +679,14 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 				// check overlap
 				if ((si->_flags & shapeflags & blockflagmask) &&
-				        /* not non-overlapping */
-				        !(x <= ix - ixd || x - xd >= ix ||
-				          y <= iy - iyd || y - yd >= iy ||
-				          z + zd <= iz || z >= iz + izd) &&
-				        /* non-overlapping start position */
-				        (startx <= ix - ixd || startx - xd >= ix ||
-				         starty <= iy - iyd || starty - yd >= iy ||
-				         startz + zd <= iz || startz >= iz + izd)) {
+				    /* not non-overlapping */
+				    !(x <= ix - ixd || x - xd >= ix ||
+				      y <= iy - iyd || y - yd >= iy ||
+				      z + zd <= iz || z >= iz + izd) &&
+				    /* non-overlapping start position */
+				    (startx <= ix - ixd || startx - xd >= ix ||
+				     starty <= iy - iyd || starty - yd >= iy ||
+				     startz + zd <= iz || startz >= iz + izd)) {
 					// overlapping an item. Invalid position
 #if 0
 					item->dumpInfo();
@@ -697,10 +696,10 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 				// check xy overlap
 				if (!(x <= ix - ixd || x - xd >= ix ||
-				        y <= iy - iyd || y - yd >= iy)) {
+				      y <= iy - iyd || y - yd >= iy)) {
 					// check support
 					if (support == nullptr && si->is_solid() &&
-					        iz + izd == z) {
+					    iz + izd == z) {
 						support = item;
 					}
 
@@ -751,7 +750,6 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 	// in which case positive horiz points in the (positive x, negative y)
 	// direction.
 
-
 	// next, we'll loop over all objects in the area, and mark the areas
 	// overlapped and supported by each object
 
@@ -765,7 +763,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 		for (int cy = miny; cy <= maxy; cy++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
+			     iter != _items[cx][cy].end(); ++iter) {
 				const Item *citem = *iter;
 				if (citem->getObjId() == item->getObjId())
 					continue;
@@ -783,14 +781,16 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 
 				int minv = iz - z - zd + 1;
 				int maxv = iz + izd - z - 1;
-				if (minv < -8) minv = -8;
-				if (maxv > 8) maxv = 8;
+				if (minv < -8)
+					minv = -8;
+				if (maxv > 8)
+					maxv = 8;
 
 				int sminx, smaxx, sminy, smaxy;
 				sminx = ix - ixd + 1 - x;
-				smaxx = ix + xd - 1  - x;
+				smaxx = ix + xd - 1 - x;
 				sminy = iy - iyd + 1 - y;
-				smaxy = iy + yd - 1  - y;
+				smaxy = iy + yd - 1 - y;
 
 				int minh = -100;
 				int maxh = 100;
@@ -812,18 +812,19 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 				if (searchdir == 1 && maxh > -sminy)
 					maxh = -sminy;
 
-				if (minh < -8) minh = -8;
-				if (maxh > 8) maxh = 8;
+				if (minh < -8)
+					minh = -8;
+				if (maxh > 8)
+					maxh = 8;
 
 				for (int j = minv; j <= maxv; ++j)
 					for (int i = minh; i <= maxh; ++i)
 						validmask[j + 8] &= ~(1 << (i + 8));
 
 				if (wantsupport && si->is_solid() &&
-				        iz + izd >= z - 8 && iz + izd <= z + 8) {
+				    iz + izd >= z - 8 && iz + izd <= z + 8) {
 					for (int i = minh; i <= maxh; ++i)
 						supportmask[iz + izd - z + 8] |= (1 << (i + 8));
-
 				}
 			}
 		}
@@ -854,7 +855,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 
 			if (validmask[vert + 8] & (1 << (horiz + 8))) {
 				if (!wantsupport || !foundunsupported ||
-				        (supportmask[vert + 8] & (1 << (horiz + 8)))) {
+				    (supportmask[vert + 8] & (1 << (horiz + 8)))) {
 					tz = z + vert;
 					tx = x;
 					if (searchdir != 0)
@@ -878,7 +879,6 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 
 	return false;
 }
-
 
 // Do a sweepTest of an item from start to end point.
 // dims is the bounding box size.
@@ -927,19 +927,20 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 	// Z is opposite direction to x and y..
 	centre[2] = start[2] + ext[2];
 
-//	pout << "Sweeping from (" << -ext[0] << ", " << -ext[1] << ", " << -ext[2] << ")" << Std::endl;
-//	pout << "              (" << ext[0] << ", " << ext[1] << ", " << ext[2] << ")" << Std::endl;
-//	pout << "Sweeping to   (" << vel[0]-ext[0] << ", " << vel[1]-ext[1] << ", " << vel[2]-ext[2] << ")" << Std::endl;
-//	pout << "              (" << vel[0]+ext[0] << ", " << vel[1]+ext[1] << ", " << vel[2]+ext[2] << ")" << Std::endl;
+	//	pout << "Sweeping from (" << -ext[0] << ", " << -ext[1] << ", " << -ext[2] << ")" << Std::endl;
+	//	pout << "              (" << ext[0] << ", " << ext[1] << ", " << ext[2] << ")" << Std::endl;
+	//	pout << "Sweeping to   (" << vel[0]-ext[0] << ", " << vel[1]-ext[1] << ", " << vel[2]-ext[2] << ")" << Std::endl;
+	//	pout << "              (" << vel[0]+ext[0] << ", " << vel[1]+ext[1] << ", " << vel[2]+ext[2] << ")" << Std::endl;
 
 	Std::list<SweepItem>::iterator sw_it;
-	if (hit) sw_it = hit->end();
+	if (hit)
+		sw_it = hit->end();
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
+			     iter != _items[cx][cy].end(); ++iter) {
 				const Item *other_item = *iter;
 				if (other_item->getObjId() == item)
 					continue;
@@ -965,7 +966,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 				// intents and purposes, but partially overlapped due to an
 				// off-by-one error (hypothetically, but they do happen so
 				// protect against it).
-				if ( /* not non-overlapping start position */
+				if (/* not non-overlapping start position */
 				    !(start[0] <= other[0] - (oext[0] - 1) ||
 				      start[0] - dims[0] >= other[0] - 1 ||
 				      start[1] <= other[1] - (oext[1] - 1) ||
@@ -998,21 +999,20 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 				//find the possible first and last times
 				//of overlap along each axis
-				for (int i = 0 ; i < 3; i++) {
+				for (int i = 0; i < 3; i++) {
 					int32 A_max = ext[i];
 					int32 A_min = -ext[i];
 					int32 B_max = other[i] + oext[i];
 					int32 B_min = other[i] - oext[i];
 
-					if (vel[i] < 0 && A_max >= B_min) {      // A_max>=B_min not required
+					if (vel[i] < 0 && A_max >= B_min) { // A_max>=B_min not required
 						// Special case: if moving item has zero height and
 						// other item is a 128x128 flat, then moving item is
 						// considered blocked by the flat
 						// FIXME: it might be better to make this extra check
 						// identical to the 'flats' special case in ItemSorter
-						if (A_max == B_min && !
-						        (i == 2 && ext[i] == 0 && oext[i] == 0 &&
-						         oext[0] == 64 && oext[1] == 64))
+						if (A_max == B_min && !(i == 2 && ext[i] == 0 && oext[i] == 0 &&
+						                        oext[0] == 64 && oext[1] == 64))
 							touch = true; // touch at start
 						if (A_min + vel[i] == B_max)
 							touch = true; // touch at end
@@ -1052,13 +1052,17 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 				//possible first time of overlap
 				int32 first = u_0[0];
-				if (u_0[1] > first) first = u_0[1];
-				if (u_0[2] > first) first = u_0[2];
+				if (u_0[1] > first)
+					first = u_0[1];
+				if (u_0[2] > first)
+					first = u_0[2];
 
 				//possible last time of overlap
 				int32 last = u_1[0];
-				if (u_1[1] < last) last = u_1[1];
-				if (u_1[2] < last) last = u_1[2];
+				if (u_1[1] < last)
+					last = u_1[1];
+				if (u_1[2] < last)
+					last = u_1[2];
 
 				// store directions in which we're being blocked
 				uint8 dirs = 0;
@@ -1077,8 +1081,10 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 						return true;
 
 					// Clamp
-					if (first < -1) first = -1;
-					if (last > 0x4000) last = 0x4000;
+					if (first < -1)
+						first = -1;
+					if (last > 0x4000)
+						last = 0x4000;
 
 					// Ok, what we want to do here is add to the list.
 					// Sorted by _hitTime.
@@ -1086,7 +1092,8 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 					// Small speed up.
 					if (sw_it != hit->end()) {
 						SweepItem &si = *sw_it;
-						if (si._hitTime > first) sw_it = hit->begin();
+						if (si._hitTime > first)
+							sw_it = hit->begin();
 					} else
 						sw_it = hit->begin();
 
@@ -1096,11 +1103,11 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 					// Now add it
 					sw_it = hit->insert(sw_it, SweepItem(other_item->getObjId(), first, last, touch, touch_floor, blocking, dirs));
-//					pout << "Hit item " << other_item->getObjId() << " at (" << first << "," << last << ")" << Std::endl;
-//					pout << "hit item      (" << other[0] << ", " << other[1] << ", " << other[2] << ")" << Std::endl;
-//					pout << "hit item time (" << u_0[0] << "-" << u_1[0] << ") (" << u_0[1] << "-" << u_1[1] << ") ("
-//						 << u_0[2] << "-" << u_1[2] << ")" << Std::endl;
-//					pout << "touch: " << touch << ", floor: " << touch_floor << ", block: " << blocking << Std::endl;
+					//					pout << "Hit item " << other_item->getObjId() << " at (" << first << "," << last << ")" << Std::endl;
+					//					pout << "hit item      (" << other[0] << ", " << other[1] << ", " << other[2] << ")" << Std::endl;
+					//					pout << "hit item time (" << u_0[0] << "-" << u_1[0] << ") (" << u_0[1] << "-" << u_1[1] << ") ("
+					//						 << u_0[2] << "-" << u_1[2] << ")" << Std::endl;
+					//					pout << "touch: " << touch << ", floor: " << touch_floor << ", block: " << blocking << Std::endl;
 				}
 			}
 		}
@@ -1108,7 +1115,6 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 	return hit && hit->size();
 }
-
 
 const Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, ObjId ignore, uint32 shflags) {
 	const Item *top = nullptr;
@@ -1129,7 +1135,7 @@ const Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, O
 		for (int cy = miny; cy <= maxy; cy++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
-			        iter != _items[cx][cy].end(); ++iter) {
+			     iter != _items[cx][cy].end(); ++iter) {
 				const Item *item = *iter;
 				if (item->getObjId() == ignore)
 					continue;
@@ -1137,7 +1143,8 @@ const Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, O
 					continue;
 
 				const ShapeInfo *si = item->getShapeInfo();
-				if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent()) continue;
+				if (!(si->_flags & shflags) || si->is_editor() || si->is_translucent())
+					continue;
 
 				int32 ix, iy, iz, ixd, iyd, izd;
 				item->getLocation(ix, iy, iz);
@@ -1155,10 +1162,12 @@ const Item *CurrentMap::traceTopItem(int32 x, int32 y, int32 ztop, int32 zbot, O
 					top->getLocation(tix, tiy, tiz);
 					top->getFootpadWorld(tixd, tiyd, tizd);
 
-					if ((tiz + tizd) < (iz + izd)) top = nullptr;
+					if ((tiz + tizd) < (iz + izd))
+						top = nullptr;
 				}
 
-				if (!top) top = item;
+				if (!top)
+					top = item;
 			}
 		}
 	}

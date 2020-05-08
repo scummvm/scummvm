@@ -54,7 +54,6 @@ static const sc_byte V400_SEPARATOR[SEPARATOR_SIZE] = {0xbd, 0xd0, 0x00};
 static const sc_byte V390_SEPARATOR[SEPARATOR_SIZE] = {0x2a, 0x2a, 0x00};
 static const sc_byte V380_SEPARATOR[SEPARATOR_SIZE] = {0x2a, 0x2a, 0x00};
 
-
 /*
  * Tables of properties descriptors.  These strings define the structure of
  * a TAF file.  Field keys are:
@@ -79,377 +78,247 @@ struct sc_parse_schema_t {
 
 /* Version 4.0 TAF file properties descriptor table. */
 static const sc_parse_schema_t V400_PARSE_SCHEMA[] = {
-	{
-		"_GAME_",
-		"<HEADER>Header <GLOBAL>Globals V<ROOM>Rooms V<OBJECT>Objects V<TASK>Tasks"
-		" V<EVENT>Events V<NPC>NPCs V<ROOM_GROUP>RoomGroups V<SYNONYM>Synonyms"
-		" V<VARIABLE>Variables V<ALR>ALRs BCustomFont ?BCustomFont:$FontNameSize"
-		" $CompileDate"
-	},
-	{
-		"HEADER",
-		"MStartupText #StartRoom MWinText"
-	},
-	{
-		"GLOBAL",
-		"$GameName $GameAuthor $DontUnderstand #Perspective BShowExits #WaitTurns"
-		" BDispFirstRoom BBattleSystem #MaxScore $PlayerName BPromptName $PlayerDesc"
-		" #Task ?!#Task=0:$AltDesc #Position #ParentObject #PlayerGender"
-		" #MaxSize #MaxWt ?GBattleSystem:<BATTLE>Battle BEightPointCompass bNoDebug"
-		" BNoScoreNotify BNoMap bNoAutoComplete bNoControlPanel bNoMouse BSound"
-		" BGraphics <RESOURCE>IntroRes <RESOURCE>WinRes BStatusBox $StatusBoxText"
-		" iUnk1 iUnk2 BEmbedded"
-	},
-	{
-		"BATTLE",
-		"iStaminaLo iStaminaHi iStrengthLo iStrengthHi iAccuracyLo iAccuracyHi"
-		" iDefenseLo iDefenseHi iAgilityLo iAgilityHi iRecovery"
-	},
-	{
-		"ROOM",
-		"$Short $Long ?GEightPointCompass:[12]<ROOM_EXIT>Exits"
-		" ?!GEightPointCompass:[8]<ROOM_EXIT>Exits <RESOURCE>Res V<ROOM_ALT>Alts"
-		" ?!GNoMap:bHideOnMap"
-	},
-	{
-		"ROOM_EXIT",
-		"{V400_ROOM_EXIT:#Dest_#Var1_#Var2_#Var3}"
-	},
-	{
-		"ROOM_ALT",
-		"$M1 #Type <RESOURCE>Res1 $M2 #Var2 <RESOURCE>Res2 #HideObjects $Changed"
-		" #Var3 #DisplayRoom"
-	},
-	{
-		"RESOURCE",
-		"?GSound:$SoundFile,#SoundLen,ZSoundOffset"
-		" ?GGraphics:$GraphicFile,#GraphicLen,ZGraphicOffset {V400_RESOURCE}"
-	},
-	{
-		"OBJECT",
-		"$Prefix $Short V$Alias BStatic $Description #InitialPosition #Task"
-		" BTaskNotDone $AltDesc ?BStatic:<ROOM_LIST1>Where BContainer BSurface"
-		" #Capacity ?!BStatic:BWearable,#SizeWeight,#Parent"
-		" ?BStatic:{OBJECT:#Parent} #Openable ?#Openable=5:#Key ?#Openable=6:#Key"
-		" ?#Openable=7:#Key #SitLie ?!BStatic:BEdible BReadable ?BReadable:$ReadText"
-		" ?!BStatic:BWeapon #CurrentState ?!#CurrentState=0:$States,BStateListed"
-		" BListFlag <RESOURCE>Res1 <RESOURCE>Res2 ?GBattleSystem:<OBJ_BATTLE>Battle"
-		" $InRoomDesc #OnlyWhenNotMoved"
-	},
-	{
-		"OBJ_BATTLE",
-		"iProtectionValue iHitValue iMethod iAccuracy"
-	},
-	{
-		"ROOM_LIST1",
-		"#Type {ROOM_LIST1}"
-	},
-	{
-		"TASK",
-		"V$Command $CompleteText $ReverseMessage $RepeatText $AdditionalMessage"
-		" #ShowRoomDesc BRepeatable BReversible V$ReverseCommand <ROOM_LIST0>Where"
-		" $Question ?$Question:$Hint1,$Hint2 V<TASK_RESTR>Restrictions"
-		" V<TASK_ACTION>Actions $RestrMask <RESOURCE>Res"
-	},
-	{
-		"TASK_RESTR",
-		"#Type ?#Type=0:#Var1,#Var2,#Var3 ?#Type=1:#Var1,#Var2 ?#Type=2:#Var1,#Var2"
-		" ?#Type=3:#Var1,#Var2,#Var3 ?#Type=4:#Var1,#Var2,#Var3,$Var4 $FailMessage"
-	},
-	{
-		"TASK_ACTION",
-		"#Type ?#Type=0:#Var1,#Var2,#Var3 ?#Type=1:#Var1,#Var2,#Var3"
-		" ?#Type=2:#Var1,#Var2 ?#Type=3:#Var1,#Var2,#Var3,$Expr,#Var5"
-		" ?#Type=4:#Var1 ?#Type=5:#Var1,#Var2 ?#Type=6:#Var1,#Var2,#Var3"
-		" ?#Type=7:iVar1,iVar2,iVar3"
-	},
-	{
-		"ROOM_LIST0",
-		"#Type {ROOM_LIST0}"
-	},
-	{
-		"EVENT",
-		"$Short #StarterType ?#StarterType=2:#StartTime,#EndTime"
-		" ?#StarterType=3:#TaskNum #RestartType BTaskFinished #Time1 #Time2"
-		" $StartText $LookText $FinishText <ROOM_LIST0>Where #PauseTask"
-		" BPauserCompleted #PrefTime1 $PrefText1 #ResumeTask BResumerCompleted"
-		" #PrefTime2 $PrefText2 #Obj2 #Obj2Dest #Obj3 #Obj3Dest #Obj1 #Obj1Dest"
-		" #TaskAffected [5]<RESOURCE>Res"
-	},
-	{
-		"NPC",
-		"$Name $Prefix V$Alias $Descr #StartRoom $AltText #Task V<TOPIC>Topics"
-		" V<WALK>Walks BShowEnterExit ?BShowEnterExit:$EnterText,$ExitText"
-		" $InRoomText #Gender [4]<RESOURCE>Res ?GBattleSystem:<NPC_BATTLE>Battle"
-	},
-	{
-		"NPC_BATTLE",
-		"iAttitude iStaminaLo iStaminaHi iStrengthLo iStrengthHi iAccuracyLo"
-		" iAccuracyHi iDefenseLo iDefenseHi iAgilityLo iAgilityHi iSpeed"
-		" iKilledTask iRecovery iStaminaTask"
-	},
-	{
-		"TOPIC",
-		"$Subject $Reply #Task $AltReply"
-	},
-	{
-		"WALK",
-		"#NumStops BLoop #StartTask #CharTask #MeetObject #ObjectTask #StoppingTask"
-		" #MeetChar $ChangedDesc {WALK:#Rooms_#Times}"
-	},
-	{
-		"ROOM_GROUP",
-		"$Name {ROOM_GROUP:[]BList}"
-	},
-	{
-		"SYNONYM",
-		"$Replacement $Original"
-	},
-	{
-		"VARIABLE",
-		"$Name #Type $Value"
-	},
-	{
-		"ALR",
-		"$Original $Replacement"
-	},
-	{NULL, NULL}
-};
+    {"_GAME_",
+     "<HEADER>Header <GLOBAL>Globals V<ROOM>Rooms V<OBJECT>Objects V<TASK>Tasks"
+     " V<EVENT>Events V<NPC>NPCs V<ROOM_GROUP>RoomGroups V<SYNONYM>Synonyms"
+     " V<VARIABLE>Variables V<ALR>ALRs BCustomFont ?BCustomFont:$FontNameSize"
+     " $CompileDate"},
+    {"HEADER",
+     "MStartupText #StartRoom MWinText"},
+    {"GLOBAL",
+     "$GameName $GameAuthor $DontUnderstand #Perspective BShowExits #WaitTurns"
+     " BDispFirstRoom BBattleSystem #MaxScore $PlayerName BPromptName $PlayerDesc"
+     " #Task ?!#Task=0:$AltDesc #Position #ParentObject #PlayerGender"
+     " #MaxSize #MaxWt ?GBattleSystem:<BATTLE>Battle BEightPointCompass bNoDebug"
+     " BNoScoreNotify BNoMap bNoAutoComplete bNoControlPanel bNoMouse BSound"
+     " BGraphics <RESOURCE>IntroRes <RESOURCE>WinRes BStatusBox $StatusBoxText"
+     " iUnk1 iUnk2 BEmbedded"},
+    {"BATTLE",
+     "iStaminaLo iStaminaHi iStrengthLo iStrengthHi iAccuracyLo iAccuracyHi"
+     " iDefenseLo iDefenseHi iAgilityLo iAgilityHi iRecovery"},
+    {"ROOM",
+     "$Short $Long ?GEightPointCompass:[12]<ROOM_EXIT>Exits"
+     " ?!GEightPointCompass:[8]<ROOM_EXIT>Exits <RESOURCE>Res V<ROOM_ALT>Alts"
+     " ?!GNoMap:bHideOnMap"},
+    {"ROOM_EXIT",
+     "{V400_ROOM_EXIT:#Dest_#Var1_#Var2_#Var3}"},
+    {"ROOM_ALT",
+     "$M1 #Type <RESOURCE>Res1 $M2 #Var2 <RESOURCE>Res2 #HideObjects $Changed"
+     " #Var3 #DisplayRoom"},
+    {"RESOURCE",
+     "?GSound:$SoundFile,#SoundLen,ZSoundOffset"
+     " ?GGraphics:$GraphicFile,#GraphicLen,ZGraphicOffset {V400_RESOURCE}"},
+    {"OBJECT",
+     "$Prefix $Short V$Alias BStatic $Description #InitialPosition #Task"
+     " BTaskNotDone $AltDesc ?BStatic:<ROOM_LIST1>Where BContainer BSurface"
+     " #Capacity ?!BStatic:BWearable,#SizeWeight,#Parent"
+     " ?BStatic:{OBJECT:#Parent} #Openable ?#Openable=5:#Key ?#Openable=6:#Key"
+     " ?#Openable=7:#Key #SitLie ?!BStatic:BEdible BReadable ?BReadable:$ReadText"
+     " ?!BStatic:BWeapon #CurrentState ?!#CurrentState=0:$States,BStateListed"
+     " BListFlag <RESOURCE>Res1 <RESOURCE>Res2 ?GBattleSystem:<OBJ_BATTLE>Battle"
+     " $InRoomDesc #OnlyWhenNotMoved"},
+    {"OBJ_BATTLE",
+     "iProtectionValue iHitValue iMethod iAccuracy"},
+    {"ROOM_LIST1",
+     "#Type {ROOM_LIST1}"},
+    {"TASK",
+     "V$Command $CompleteText $ReverseMessage $RepeatText $AdditionalMessage"
+     " #ShowRoomDesc BRepeatable BReversible V$ReverseCommand <ROOM_LIST0>Where"
+     " $Question ?$Question:$Hint1,$Hint2 V<TASK_RESTR>Restrictions"
+     " V<TASK_ACTION>Actions $RestrMask <RESOURCE>Res"},
+    {"TASK_RESTR",
+     "#Type ?#Type=0:#Var1,#Var2,#Var3 ?#Type=1:#Var1,#Var2 ?#Type=2:#Var1,#Var2"
+     " ?#Type=3:#Var1,#Var2,#Var3 ?#Type=4:#Var1,#Var2,#Var3,$Var4 $FailMessage"},
+    {"TASK_ACTION",
+     "#Type ?#Type=0:#Var1,#Var2,#Var3 ?#Type=1:#Var1,#Var2,#Var3"
+     " ?#Type=2:#Var1,#Var2 ?#Type=3:#Var1,#Var2,#Var3,$Expr,#Var5"
+     " ?#Type=4:#Var1 ?#Type=5:#Var1,#Var2 ?#Type=6:#Var1,#Var2,#Var3"
+     " ?#Type=7:iVar1,iVar2,iVar3"},
+    {"ROOM_LIST0",
+     "#Type {ROOM_LIST0}"},
+    {"EVENT",
+     "$Short #StarterType ?#StarterType=2:#StartTime,#EndTime"
+     " ?#StarterType=3:#TaskNum #RestartType BTaskFinished #Time1 #Time2"
+     " $StartText $LookText $FinishText <ROOM_LIST0>Where #PauseTask"
+     " BPauserCompleted #PrefTime1 $PrefText1 #ResumeTask BResumerCompleted"
+     " #PrefTime2 $PrefText2 #Obj2 #Obj2Dest #Obj3 #Obj3Dest #Obj1 #Obj1Dest"
+     " #TaskAffected [5]<RESOURCE>Res"},
+    {"NPC",
+     "$Name $Prefix V$Alias $Descr #StartRoom $AltText #Task V<TOPIC>Topics"
+     " V<WALK>Walks BShowEnterExit ?BShowEnterExit:$EnterText,$ExitText"
+     " $InRoomText #Gender [4]<RESOURCE>Res ?GBattleSystem:<NPC_BATTLE>Battle"},
+    {"NPC_BATTLE",
+     "iAttitude iStaminaLo iStaminaHi iStrengthLo iStrengthHi iAccuracyLo"
+     " iAccuracyHi iDefenseLo iDefenseHi iAgilityLo iAgilityHi iSpeed"
+     " iKilledTask iRecovery iStaminaTask"},
+    {"TOPIC",
+     "$Subject $Reply #Task $AltReply"},
+    {"WALK",
+     "#NumStops BLoop #StartTask #CharTask #MeetObject #ObjectTask #StoppingTask"
+     " #MeetChar $ChangedDesc {WALK:#Rooms_#Times}"},
+    {"ROOM_GROUP",
+     "$Name {ROOM_GROUP:[]BList}"},
+    {"SYNONYM",
+     "$Replacement $Original"},
+    {"VARIABLE",
+     "$Name #Type $Value"},
+    {"ALR",
+     "$Original $Replacement"},
+    {NULL, NULL}};
 
 /* Version 3.9 TAF file properties descriptor table. */
 static const sc_parse_schema_t V390_PARSE_SCHEMA[] = {
-	{
-		"_GAME_",
-		"<HEADER>Header <GLOBAL>Globals V<ROOM>Rooms V<OBJECT>Objects V<TASK>Tasks"
-		" V<EVENT>Events V<NPC>NPCs V<ROOM_GROUP>RoomGroups V<SYNONYM>Synonyms"
-		" V<VARIABLE>Variables V<ALR>ALRs BCustomFont ?BCustomFont:$FontNameSize"
-		" $CompileDate sPassword"
-	},
-	{
-		"HEADER",
-		"MStartupText #StartRoom MWinText"
-	},
-	{
-		"GLOBAL",
-		"$GameName $GameAuthor $DontUnderstand #Perspective BShowExits #WaitTurns"
-		" BDispFirstRoom BBattleSystem #MaxScore $PlayerName BPromptName $PlayerDesc"
-		" #Task ?!#Task=0:$AltDesc #Position #ParentObject #PlayerGender"
-		" #MaxSize #MaxWt ?GBattleSystem:<BATTLE>Battle BEightPointCompass bNoDebug"
-		" BNoScoreNotify BNoMap bNoAutoComplete bNoControlPanel bNoMouse"
-		" BSound BGraphics <RESOURCE>IntroRes <RESOURCE>WinRes FStatusBox"
-		" EStatusBoxText iUnk1 iUnk2 FEmbedded"
-	},
-	{
-		"BATTLE",
-		"iStamina iStrength iDefense"
-	},
-	{
-		"ROOM",
-		"$Short $Long $LastDesc ?GEightPointCompass:[12]<ROOM_EXIT>Exits"
-		" ?!GEightPointCompass:[8]<ROOM_EXIT>Exits $AddDesc1 #Task1 $AddDesc2 #Task2"
-		" #Obj $AltDesc #TypeHideObjects <RESOURCE>Res <RESOURCE>LastRes"
-		" <RESOURCE>Task1Res <RESOURCE>Task2Res <RESOURCE>AltRes"
-		" ?!GNoMap:bHideOnMap |V390_ROOM:_Alts_|"
-	},
-	{
-		"ROOM_EXIT",
-		"{V390_V380_ROOM_EXIT:#Dest_#Var1_#Var2_ZVar3}"
-	},
-	{
-		"RESOURCE",
-		"?GSound:$SoundFile,ZSoundLen,ZSoundOffset"
-		" ?GGraphics:$GraphicFile,ZGraphicLen,ZGraphicOffset"
-	},
-	{
-		"OBJECT",
-		"$Prefix $Short"
-		" [1]$Alias BStatic $Description #InitialPosition #Task BTaskNotDone"
-		" $AltDesc ?BStatic:<ROOM_LIST1>Where BContainer BSurface #Capacity"
-		" ?!BStatic:BWearable,#SizeWeight,#Parent ?BStatic:{OBJECT:#Parent}"
-		" #Openable |V390_OBJECT:_Openable_,Key| #SitLie ?!BStatic:BEdible BReadable"
-		" ?BReadable:$ReadText ?!BStatic:BWeapon ZCurrentState FListFlag"
-		" <RESOURCE>Res1 <RESOURCE>Res2 ?GBattleSystem:<OBJ_BATTLE>Battle"
-		" EInRoomDesc ZOnlyWhenNotMoved"
-	},
-	{
-		"OBJ_BATTLE",
-		"iProtectionValue iHitValue iMethod"
-	},
-	{
-		"ROOM_LIST1",
-		"#Type {ROOM_LIST1}"
-	},
-	{
-		"TASK",
-		"W$Command $CompleteText $ReverseMessage $RepeatText $AdditionalMessage"
-		" #ShowRoomDesc BRepeatable BReversible W$ReverseCommand <ROOM_LIST0>Where"
-		" $Question ?$Question:$Hint1,$Hint2 V<TASK_RESTR>Restrictions"
-		" V<TASK_ACTION>Actions |V390_TASK:$RestrMask| <RESOURCE>Res"
-	},
-	{
-		"TASK_RESTR",
-		"#Type ?#Type=0:#Var1,#Var2,#Var3 ?#Type=1:#Var1,#Var2 ?#Type=2:#Var1,#Var2"
-		" ?#Type=3:#Var1,#Var2,#Var3 ?#Type=4:#Var1,#Var2,#Var3,EVar4"
-		",|V390_TASK_RESTR:Var1>0?#Var1++| $FailMessage"
-	},
-	{
-		"TASK_ACTION",
-		"#Type |V390_TASK_ACTION:Type>4?#Type++| ?#Type=0:#Var1,#Var2,#Var3"
-		" ?#Type=1:#Var1,#Var2,#Var3 ?#Type=2:#Var1,#Var2"
-		" ?#Type=3:#Var1,#Var2,#Var3,|V390_TASK_ACTION:$Expr_#Var5|"
-		" ?#Type=4:#Var1 ?#Type=6:#Var1,ZVar2,ZVar3 ?#Type=7:iVar1,iVar2,iVar3"
-	},
-	{
-		"ROOM_LIST0",
-		"#Type {ROOM_LIST0}"
-	},
-	{
-		"EVENT",
-		"$Short #StarterType ?#StarterType=2:#StartTime,#EndTime"
-		" ?#StarterType=3:#TaskNum #RestartType BTaskFinished #Time1 #Time2"
-		" $StartText $LookText $FinishText <ROOM_LIST0>Where #PauseTask"
-		" BPauserCompleted #PrefTime1 $PrefText1 #ResumeTask BResumerCompleted"
-		" #PrefTime2 $PrefText2 #Obj2 #Obj2Dest #Obj3 #Obj3Dest #Obj1 #Obj1Dest"
-		" #TaskAffected [5]<RESOURCE>Res"
-	},
-	{
-		"NPC",
-		"$Name $Prefix [1]$Alias $Descr #StartRoom $AltText #Task V<TOPIC>Topics"
-		" V<WALK>Walks BShowEnterExit ?BShowEnterExit:$EnterText,$ExitText"
-		" $InRoomText #Gender [4]<RESOURCE>Res ?GBattleSystem:<NPC_BATTLE>Battle"
-	},
-	{
-		"NPC_BATTLE",
-		"iAttitude iStamina iStrength iDefense iSpeed iKilledTask"
-	},
-	{
-		"TOPIC",
-		"$Subject $Reply #Task $AltReply"
-	},
-	{
-		"WALK",
-		"#NumStops BLoop #StartTask #CharTask #MeetObject #ObjectTask #StoppingTask"
-		" ZMeetChar $ChangedDesc {WALK:#Rooms_#Times}"
-	},
-	{
-		"ROOM_GROUP",
-		"$Name {ROOM_GROUP:[]BList}"
-	},
-	{
-		"SYNONYM",
-		"$Replacement $Original"
-	},
-	{
-		"VARIABLE",
-		"$Name ZType $Value"
-	},
-	{
-		"ALR",
-		"$Original $Replacement"
-	},
-	{NULL, NULL}
-};
+    {"_GAME_",
+     "<HEADER>Header <GLOBAL>Globals V<ROOM>Rooms V<OBJECT>Objects V<TASK>Tasks"
+     " V<EVENT>Events V<NPC>NPCs V<ROOM_GROUP>RoomGroups V<SYNONYM>Synonyms"
+     " V<VARIABLE>Variables V<ALR>ALRs BCustomFont ?BCustomFont:$FontNameSize"
+     " $CompileDate sPassword"},
+    {"HEADER",
+     "MStartupText #StartRoom MWinText"},
+    {"GLOBAL",
+     "$GameName $GameAuthor $DontUnderstand #Perspective BShowExits #WaitTurns"
+     " BDispFirstRoom BBattleSystem #MaxScore $PlayerName BPromptName $PlayerDesc"
+     " #Task ?!#Task=0:$AltDesc #Position #ParentObject #PlayerGender"
+     " #MaxSize #MaxWt ?GBattleSystem:<BATTLE>Battle BEightPointCompass bNoDebug"
+     " BNoScoreNotify BNoMap bNoAutoComplete bNoControlPanel bNoMouse"
+     " BSound BGraphics <RESOURCE>IntroRes <RESOURCE>WinRes FStatusBox"
+     " EStatusBoxText iUnk1 iUnk2 FEmbedded"},
+    {"BATTLE",
+     "iStamina iStrength iDefense"},
+    {"ROOM",
+     "$Short $Long $LastDesc ?GEightPointCompass:[12]<ROOM_EXIT>Exits"
+     " ?!GEightPointCompass:[8]<ROOM_EXIT>Exits $AddDesc1 #Task1 $AddDesc2 #Task2"
+     " #Obj $AltDesc #TypeHideObjects <RESOURCE>Res <RESOURCE>LastRes"
+     " <RESOURCE>Task1Res <RESOURCE>Task2Res <RESOURCE>AltRes"
+     " ?!GNoMap:bHideOnMap |V390_ROOM:_Alts_|"},
+    {"ROOM_EXIT",
+     "{V390_V380_ROOM_EXIT:#Dest_#Var1_#Var2_ZVar3}"},
+    {"RESOURCE",
+     "?GSound:$SoundFile,ZSoundLen,ZSoundOffset"
+     " ?GGraphics:$GraphicFile,ZGraphicLen,ZGraphicOffset"},
+    {"OBJECT",
+     "$Prefix $Short"
+     " [1]$Alias BStatic $Description #InitialPosition #Task BTaskNotDone"
+     " $AltDesc ?BStatic:<ROOM_LIST1>Where BContainer BSurface #Capacity"
+     " ?!BStatic:BWearable,#SizeWeight,#Parent ?BStatic:{OBJECT:#Parent}"
+     " #Openable |V390_OBJECT:_Openable_,Key| #SitLie ?!BStatic:BEdible BReadable"
+     " ?BReadable:$ReadText ?!BStatic:BWeapon ZCurrentState FListFlag"
+     " <RESOURCE>Res1 <RESOURCE>Res2 ?GBattleSystem:<OBJ_BATTLE>Battle"
+     " EInRoomDesc ZOnlyWhenNotMoved"},
+    {"OBJ_BATTLE",
+     "iProtectionValue iHitValue iMethod"},
+    {"ROOM_LIST1",
+     "#Type {ROOM_LIST1}"},
+    {"TASK",
+     "W$Command $CompleteText $ReverseMessage $RepeatText $AdditionalMessage"
+     " #ShowRoomDesc BRepeatable BReversible W$ReverseCommand <ROOM_LIST0>Where"
+     " $Question ?$Question:$Hint1,$Hint2 V<TASK_RESTR>Restrictions"
+     " V<TASK_ACTION>Actions |V390_TASK:$RestrMask| <RESOURCE>Res"},
+    {"TASK_RESTR",
+     "#Type ?#Type=0:#Var1,#Var2,#Var3 ?#Type=1:#Var1,#Var2 ?#Type=2:#Var1,#Var2"
+     " ?#Type=3:#Var1,#Var2,#Var3 ?#Type=4:#Var1,#Var2,#Var3,EVar4"
+     ",|V390_TASK_RESTR:Var1>0?#Var1++| $FailMessage"},
+    {"TASK_ACTION",
+     "#Type |V390_TASK_ACTION:Type>4?#Type++| ?#Type=0:#Var1,#Var2,#Var3"
+     " ?#Type=1:#Var1,#Var2,#Var3 ?#Type=2:#Var1,#Var2"
+     " ?#Type=3:#Var1,#Var2,#Var3,|V390_TASK_ACTION:$Expr_#Var5|"
+     " ?#Type=4:#Var1 ?#Type=6:#Var1,ZVar2,ZVar3 ?#Type=7:iVar1,iVar2,iVar3"},
+    {"ROOM_LIST0",
+     "#Type {ROOM_LIST0}"},
+    {"EVENT",
+     "$Short #StarterType ?#StarterType=2:#StartTime,#EndTime"
+     " ?#StarterType=3:#TaskNum #RestartType BTaskFinished #Time1 #Time2"
+     " $StartText $LookText $FinishText <ROOM_LIST0>Where #PauseTask"
+     " BPauserCompleted #PrefTime1 $PrefText1 #ResumeTask BResumerCompleted"
+     " #PrefTime2 $PrefText2 #Obj2 #Obj2Dest #Obj3 #Obj3Dest #Obj1 #Obj1Dest"
+     " #TaskAffected [5]<RESOURCE>Res"},
+    {"NPC",
+     "$Name $Prefix [1]$Alias $Descr #StartRoom $AltText #Task V<TOPIC>Topics"
+     " V<WALK>Walks BShowEnterExit ?BShowEnterExit:$EnterText,$ExitText"
+     " $InRoomText #Gender [4]<RESOURCE>Res ?GBattleSystem:<NPC_BATTLE>Battle"},
+    {"NPC_BATTLE",
+     "iAttitude iStamina iStrength iDefense iSpeed iKilledTask"},
+    {"TOPIC",
+     "$Subject $Reply #Task $AltReply"},
+    {"WALK",
+     "#NumStops BLoop #StartTask #CharTask #MeetObject #ObjectTask #StoppingTask"
+     " ZMeetChar $ChangedDesc {WALK:#Rooms_#Times}"},
+    {"ROOM_GROUP",
+     "$Name {ROOM_GROUP:[]BList}"},
+    {"SYNONYM",
+     "$Replacement $Original"},
+    {"VARIABLE",
+     "$Name ZType $Value"},
+    {"ALR",
+     "$Original $Replacement"},
+    {NULL, NULL}};
 
 /* Version 3.8 TAF file properties descriptor table. */
 static const sc_parse_schema_t V380_PARSE_SCHEMA[] = {
-	{
-		"_GAME_",
-		"<HEADER>Header <GLOBAL>Globals V<ROOM>Rooms V<OBJECT>Objects V<TASK>Tasks"
-		" V<EVENT>Events V<NPC>NPCs V<ROOM_GROUP>RoomGroups V<SYNONYM>Synonyms"
-		" FCustomFont $CompileDate sPassword |V380_GLOBAL:_MaxScore_|"
-		" |V380_OBJECT:_InitialPositions_|"
-	},
-	{
-		"HEADER",
-		"MStartupText #StartRoom MWinText"
-	},
-	{
-		"GLOBAL",
-		"$GameName $GameAuthor #MaxCarried |V380_MaxSize_MaxWt_| $DontUnderstand"
-		" #Perspective BShowExits #WaitTurns FDispFirstRoom FBattleSystem"
-		" EPlayerName FPromptName EPlayerDesc ZTask ZPosition ZParentObject"
-		" ZPlayerGender FEightPointCompass TNoScoreNotify FSound FGraphics"
-		" FStatusBox EStatusBoxText FEmbedded"
-	},
-	{
-		"ROOM",
-		"$Short $Long $LastDesc [8]<ROOM_EXIT>Exits $AddDesc1 #Task1 $AddDesc2"
-		" #Task2 #Obj $AltDesc #TypeHideObjects |V380_ROOM:_Alts_|"
-	},
-	{
-		"ROOM_EXIT",
-		"{V390_V380_ROOM_EXIT:#Dest_#Var1_#Var2_ZVar3}"
-	},
-	{
-		"OBJECT",
-		"$Prefix $Short [1]$Alias BStatic $Description #InitialPosition #Task"
-		" BTaskNotDone $AltDesc ?BStatic:<ROOM_LIST1>Where #SurfaceContainer"
-		" FSurface ?#SurfaceContainer=2:TSurface FContainer"
-		" ?#SurfaceContainer=1:TContainer #Capacity |V380_OBJECT:#Capacity*10+2|"
-		" ?!BStatic:BWearable,#SizeWeight,#Parent ?BStatic:{OBJECT:#Parent}"
-		" #Openable |V380_OBJECT:_Openable_,Key| #SitLie ?!BStatic:BEdible BReadable"
-		" ?BReadable:$ReadText ?!BStatic:BWeapon ZCurrentState FListFlag"
-		" EInRoomDesc ZOnlyWhenNotMoved"
-	},
-	{
-		"ROOM_LIST1",
-		"#Type {ROOM_LIST1}"
-	},
-	{
-		"TASK",
-		"W$Command $CompleteText $ReverseMessage $RepeatText $AdditionalMessage"
-		" #ShowRoomDesc BRepeatable #Score BSingleScore [6]<TASK_MOVE>Movements"
-		" BReversible W$ReverseCommand #WearObj1 #WearObj2 #HoldObj1 #HoldObj2"
-		" #HoldObj3 #Obj1 #Task BTaskNotDone $TaskMsg $HoldMsg $WearMsg $CompanyMsg"
-		" BNotInSameRoom #NPC $Obj1Msg #Obj1Room <ROOM_LIST0>Where BKillsPlayer"
-		" BHoldingSameRoom $Question ?$Question:$Hint1,$Hint2 #Obj2"
-		" ?!#Obj2=0:#Obj2Var1,#Obj2Var2,$Obj2Msg BWinGame |V380_TASK:_Actions_|"
-		" |V380_TASK:_Restrictions_|"
-	},
-	{
-		"TASK_MOVE",
-		"#Var1 #Var2 #Var3"
-	},
-	{
-		"ROOM_LIST0",
-		"#Type {ROOM_LIST0}"
-	},
-	{
-		"EVENT",
-		"$Short #StarterType ?#StarterType=2:#StartTime,#EndTime"
-		" ?#StarterType=3:#TaskNum #RestartType BTaskFinished #Time1 #Time2"
-		" $StartText $LookText $FinishText <ROOM_LIST0>Where #PauseTask"
-		" BPauserCompleted #PrefTime1 $PrefText1 #ResumeTask BResumerCompleted"
-		" #PrefTime2 $PrefText2 #Obj2 #Obj2Dest #Obj3 #Obj3Dest #Obj1 #Obj1Dest"
-		" #TaskAffected"
-	},
-	{
-		"NPC",
-		"$Name $Prefix [1]$Alias $Descr #StartRoom $AltText #Task V<TOPIC>Topics"
-		" V<WALK>Walks BShowEnterExit ?BShowEnterExit:$EnterText,$ExitText"
-		" $InRoomText ZGender"
-	},
-	{
-		"TOPIC",
-		"$Subject $Reply #Task $AltReply"
-	},
-	{
-		"WALK",
-		"#NumStops BLoop #StartTask #CharTask #MeetObject"
-		" ?!#MeetObject=0:|V380_WALK:_MeetObject_| #ObjectTask ZMeetChar"
-		" {WALK:#Rooms_#Times} ZStoppingTask EChangedDesc"
-	},
-	{
-		"ROOM_GROUP",
-		"$Name {ROOM_GROUP:[]BList}"
-	},
-	{
-		"SYNONYM",
-		"$Replacement $Original"
-	},
-	{NULL, NULL}
-};
-
+    {"_GAME_",
+     "<HEADER>Header <GLOBAL>Globals V<ROOM>Rooms V<OBJECT>Objects V<TASK>Tasks"
+     " V<EVENT>Events V<NPC>NPCs V<ROOM_GROUP>RoomGroups V<SYNONYM>Synonyms"
+     " FCustomFont $CompileDate sPassword |V380_GLOBAL:_MaxScore_|"
+     " |V380_OBJECT:_InitialPositions_|"},
+    {"HEADER",
+     "MStartupText #StartRoom MWinText"},
+    {"GLOBAL",
+     "$GameName $GameAuthor #MaxCarried |V380_MaxSize_MaxWt_| $DontUnderstand"
+     " #Perspective BShowExits #WaitTurns FDispFirstRoom FBattleSystem"
+     " EPlayerName FPromptName EPlayerDesc ZTask ZPosition ZParentObject"
+     " ZPlayerGender FEightPointCompass TNoScoreNotify FSound FGraphics"
+     " FStatusBox EStatusBoxText FEmbedded"},
+    {"ROOM",
+     "$Short $Long $LastDesc [8]<ROOM_EXIT>Exits $AddDesc1 #Task1 $AddDesc2"
+     " #Task2 #Obj $AltDesc #TypeHideObjects |V380_ROOM:_Alts_|"},
+    {"ROOM_EXIT",
+     "{V390_V380_ROOM_EXIT:#Dest_#Var1_#Var2_ZVar3}"},
+    {"OBJECT",
+     "$Prefix $Short [1]$Alias BStatic $Description #InitialPosition #Task"
+     " BTaskNotDone $AltDesc ?BStatic:<ROOM_LIST1>Where #SurfaceContainer"
+     " FSurface ?#SurfaceContainer=2:TSurface FContainer"
+     " ?#SurfaceContainer=1:TContainer #Capacity |V380_OBJECT:#Capacity*10+2|"
+     " ?!BStatic:BWearable,#SizeWeight,#Parent ?BStatic:{OBJECT:#Parent}"
+     " #Openable |V380_OBJECT:_Openable_,Key| #SitLie ?!BStatic:BEdible BReadable"
+     " ?BReadable:$ReadText ?!BStatic:BWeapon ZCurrentState FListFlag"
+     " EInRoomDesc ZOnlyWhenNotMoved"},
+    {"ROOM_LIST1",
+     "#Type {ROOM_LIST1}"},
+    {"TASK",
+     "W$Command $CompleteText $ReverseMessage $RepeatText $AdditionalMessage"
+     " #ShowRoomDesc BRepeatable #Score BSingleScore [6]<TASK_MOVE>Movements"
+     " BReversible W$ReverseCommand #WearObj1 #WearObj2 #HoldObj1 #HoldObj2"
+     " #HoldObj3 #Obj1 #Task BTaskNotDone $TaskMsg $HoldMsg $WearMsg $CompanyMsg"
+     " BNotInSameRoom #NPC $Obj1Msg #Obj1Room <ROOM_LIST0>Where BKillsPlayer"
+     " BHoldingSameRoom $Question ?$Question:$Hint1,$Hint2 #Obj2"
+     " ?!#Obj2=0:#Obj2Var1,#Obj2Var2,$Obj2Msg BWinGame |V380_TASK:_Actions_|"
+     " |V380_TASK:_Restrictions_|"},
+    {"TASK_MOVE",
+     "#Var1 #Var2 #Var3"},
+    {"ROOM_LIST0",
+     "#Type {ROOM_LIST0}"},
+    {"EVENT",
+     "$Short #StarterType ?#StarterType=2:#StartTime,#EndTime"
+     " ?#StarterType=3:#TaskNum #RestartType BTaskFinished #Time1 #Time2"
+     " $StartText $LookText $FinishText <ROOM_LIST0>Where #PauseTask"
+     " BPauserCompleted #PrefTime1 $PrefText1 #ResumeTask BResumerCompleted"
+     " #PrefTime2 $PrefText2 #Obj2 #Obj2Dest #Obj3 #Obj3Dest #Obj1 #Obj1Dest"
+     " #TaskAffected"},
+    {"NPC",
+     "$Name $Prefix [1]$Alias $Descr #StartRoom $AltText #Task V<TOPIC>Topics"
+     " V<WALK>Walks BShowEnterExit ?BShowEnterExit:$EnterText,$ExitText"
+     " $InRoomText ZGender"},
+    {"TOPIC",
+     "$Subject $Reply #Task $AltReply"},
+    {"WALK",
+     "#NumStops BLoop #StartTask #CharTask #MeetObject"
+     " ?!#MeetObject=0:|V380_WALK:_MeetObject_| #ObjectTask ZMeetChar"
+     " {WALK:#Rooms_#Times} ZStoppingTask EChangedDesc"},
+    {"ROOM_GROUP",
+     "$Name {ROOM_GROUP:[]BList}"},
+    {"SYNONYM",
+     "$Replacement $Original"},
+    {NULL, NULL}};
 
 /*
  * parse_select_schema()
@@ -471,7 +340,6 @@ static const sc_parse_schema_t *parse_select_schema(sc_tafref_t taf) {
 	}
 }
 
-
 /* The uncompressed TAF file from which we get all our data. */
 static sc_tafref_t parse_taf = NULL;
 static sc_int parse_tafline = 0;
@@ -490,7 +358,6 @@ static sc_bool parse_trace = FALSE;
 static sc_vartype_t parse_vt_key[PARSE_MAX_DEPTH];
 static sc_char parse_format[PARSE_MAX_DEPTH];
 static sc_int parse_depth = 0;
-
 
 /*
  * parse_push_key()
@@ -516,7 +383,6 @@ static void parse_pop_key(void) {
 	parse_depth--;
 }
 
-
 /*
  * parse_retrieve_stack()
  *
@@ -529,9 +395,7 @@ static void parse_retrieve_stack(sc_char format[], sc_vartype_t vt_key[], sc_int
 
 	/* Switch index-string key pairs. */
 	for (index_ = 0; index_ < parse_depth; index_++) {
-		if (index_ < parse_depth - 1
-		        && parse_format[index_] == PROP_KEY_INTEGER
-		        && parse_format[index_ + 1] == PROP_KEY_STRING) {
+		if (index_ < parse_depth - 1 && parse_format[index_] == PROP_KEY_INTEGER && parse_format[index_ + 1] == PROP_KEY_STRING) {
 			/* Swap format and key elements. */
 			format[index_] = parse_format[index_ + 1];
 			format[index_ + 1] = parse_format[index_];
@@ -550,7 +414,6 @@ static void parse_retrieve_stack(sc_char format[], sc_vartype_t vt_key[], sc_int
 	*depth = parse_depth;
 }
 
-
 /*
  * parse_stack_backtrace()
  *
@@ -565,9 +428,7 @@ static void parse_stack_backtrace(void) {
 	parse_retrieve_stack(format, vt_key, &depth);
 
 	sc_error("parse_stack_backtrace: version %s schema parsed to depth %ld\n",
-	         (parse_schema == V400_PARSE_SCHEMA) ? "4.00" :
-	         (parse_schema == V390_PARSE_SCHEMA) ? "3.90" :
-	         (parse_schema == V380_PARSE_SCHEMA) ? "3.80" : "[Invalid]",
+	         (parse_schema == V400_PARSE_SCHEMA) ? "4.00" : (parse_schema == V390_PARSE_SCHEMA) ? "3.90" : (parse_schema == V380_PARSE_SCHEMA) ? "3.80" : "[Invalid]",
 	         depth);
 
 	sc_error("parse_stack_backtrace: parse stack backtrace follows...\n");
@@ -583,7 +444,6 @@ static void parse_stack_backtrace(void) {
 			sc_error("%2ld - [%c] %p\n", index_, type, vt_key[index_].voidp);
 	}
 }
-
 
 /*
  * parse_put_property()
@@ -632,7 +492,6 @@ static sc_bool parse_get_property(sc_vartype_t *vt_rvalue, sc_char type) {
 	return status;
 }
 
-
 /*
  * parse_get_child_count()
  *
@@ -648,7 +507,6 @@ static sc_int parse_get_child_count(void) {
 
 	return vt_rvalue.integer;
 }
-
 
 /*
  * parse_get_integer_property()
@@ -685,7 +543,6 @@ static const sc_char *parse_get_string_property(void) {
 	return vt_rvalue.string;
 }
 
-
 /* Pushback line, and pushback requested flag. */
 static const sc_char *parse_pushback_line = NULL;
 static sc_bool parse_use_pushback = FALSE;
@@ -714,7 +571,8 @@ static const sc_char *parse_get_taf_string(CONTEXT) {
 		line = taf_next_line(parse_taf);
 		if (!line) {
 			sc_error("parse_get_taf_string:"
-			         " out of TAF data at line %ld\n", parse_tafline);
+			         " out of TAF data at line %ld\n",
+			         parse_tafline);
 			parse_stack_backtrace();
 			LONG_JUMP0;
 		}
@@ -739,7 +597,8 @@ static sc_int parse_get_taf_integer(CONTEXT) {
 	R0FUNC0(parse_get_taf_string, line);
 	if (sscanf(line, "%ld", &integer) != 1) {
 		sc_error("parse_get_taf_integer:"
-		         " invalid integer at line %ld\n", parse_tafline - 1);
+		         " invalid integer at line %ld\n",
+		         parse_tafline - 1);
 		parse_stack_backtrace();
 		LONG_JUMP0;
 	}
@@ -758,13 +617,15 @@ static sc_bool parse_get_taf_boolean(CONTEXT) {
 	R0FUNC0(parse_get_taf_string, line);
 	if (sscanf(line, "%lu", &boolean) != 1) {
 		sc_error("parse_get_taf_boolean:"
-		         " invalid boolean at line %ld\n", parse_tafline - 1);
+		         " invalid boolean at line %ld\n",
+		         parse_tafline - 1);
 		parse_stack_backtrace();
 		LONG_JUMP0;
 	}
 	if (boolean != 0 && boolean != 1) {
 		sc_error("parse_get_taf_boolean:"
-		         " warning: suspect boolean at line %ld\n", parse_tafline - 1);
+		         " warning: suspect boolean at line %ld\n",
+		         parse_tafline - 1);
 	}
 
 	return boolean != 0;
@@ -782,7 +643,6 @@ static void parse_taf_pushback(void) {
 	if (parse_trace)
 		sc_trace("Parse: push back at line %ld\n", parse_tafline);
 }
-
 
 /* Enumerations of parse types found in the parse schema. */
 enum {
@@ -845,7 +705,6 @@ static void parse_array(CONTEXT, const sc_char *array) {
 		sc_trace("Parse: leaving array %s\n", array);
 }
 
-
 /*
  * parse_vector_common()
  * parse_vector()
@@ -896,7 +755,6 @@ static void parse_vector_alternate(CONTEXT, const sc_char *vector) {
 	if (parse_trace)
 		sc_trace("Parse: leaving alternate vector %s\n", vector);
 }
-
 
 /*
  * parse_test_expression()
@@ -954,7 +812,8 @@ static sc_bool parse_test_expression(const sc_char *test_expression) {
 
 	default:
 		sc_fatal("parse_test_expression:"
-		         " bad expression, %s\n", test_expression + 1);
+		         " bad expression, %s\n",
+		         test_expression + 1);
 	}
 
 	if (parse_trace)
@@ -976,8 +835,8 @@ static void parse_expression(CONTEXT, const sc_char *expression) {
 
 	/* Handle the remainder of the expression only if test passes. */
 	is_present = (test_expression[0] == PARSE_EXPRESSION_NOT)
-	             ? !parse_test_expression(test_expression + 1)
-	             : parse_test_expression(test_expression);
+	                 ? !parse_test_expression(test_expression + 1)
+	                 : parse_test_expression(test_expression);
 	if (is_present) {
 		sc_int next;
 
@@ -1003,7 +862,6 @@ static void parse_expression(CONTEXT, const sc_char *expression) {
 	if (parse_trace)
 		sc_trace("Parse: leaving expression %s\n", expression);
 }
-
 
 /*
  * parse_read_multiline()
@@ -1049,7 +907,6 @@ static sc_char *parse_read_multiline(CONTEXT) {
 
 	return multiline;
 }
-
 
 /*
  * parse_terminal()
@@ -1126,7 +983,6 @@ static void parse_terminal(CONTEXT, const sc_char *terminal) {
 		sc_trace("Parse: leaving terminal %s\n", terminal);
 }
 
-
 /*
  * Resources table.  This table enables resource offsets to be calculated
  * for the various sound and graphic resources encountered on parsing
@@ -1143,7 +999,6 @@ enum { RESOURCE_GROW_INCREMENT = 32 };
 static sc_int parse_resources_length = 0;
 static sc_int parse_resources_size = 0;
 static sc_parse_resource_t *parse_resources = NULL;
-
 
 /*
  * parse_clear_v400_resources_table()
@@ -1165,7 +1020,6 @@ static void parse_clear_v400_resources_table(void) {
 	parse_resources_size = 0;
 }
 
-
 /*
  * parse_get_v400_resource_offset()
  *
@@ -1180,7 +1034,7 @@ static void parse_clear_v400_resources_table(void) {
  * length with real_length to see if that happened.
  */
 static sc_int parse_get_v400_resource_offset(const sc_char *name,
-		sc_int length, sc_int *real_length) {
+                                             sc_int length, sc_int *real_length) {
 	sc_char *clean_name;
 	sc_uint hash;
 	sc_int index_, offset;
@@ -1204,8 +1058,7 @@ static sc_int parse_get_v400_resource_offset(const sc_char *name,
 	offset = -1;
 	hash = sc_hash(clean_name);
 	for (index_ = 0; index_ < parse_resources_length; index_++) {
-		if (parse_resources[index_].hash == hash
-		        && strcmp(parse_resources[index_].name, clean_name) == 0) {
+		if (parse_resources[index_].hash == hash && strcmp(parse_resources[index_].name, clean_name) == 0) {
 			offset = parse_resources[index_].offset;
 			break;
 		}
@@ -1220,8 +1073,8 @@ static sc_int parse_get_v400_resource_offset(const sc_char *name,
 	if (parse_resources_length == parse_resources_size) {
 		parse_resources_size += RESOURCE_GROW_INCREMENT;
 		parse_resources = (sc_parse_resource_t *)sc_realloc(parse_resources,
-		                  parse_resources_size *
-		                  sizeof(parse_resources[0]));
+		                                                    parse_resources_size *
+		                                                        sizeof(parse_resources[0]));
 	}
 
 	/*
@@ -1231,8 +1084,7 @@ static sc_int parse_get_v400_resource_offset(const sc_char *name,
 	if (parse_resources_length == 0)
 		offset = 0;
 	else {
-		offset = parse_resources[parse_resources_length - 1].offset
-		         + parse_resources[parse_resources_length - 1].length + 1;
+		offset = parse_resources[parse_resources_length - 1].offset + parse_resources[parse_resources_length - 1].length + 1;
 	}
 
 	/* Add details to the table. */
@@ -1245,7 +1097,6 @@ static sc_int parse_get_v400_resource_offset(const sc_char *name,
 	*real_length = length;
 	return offset;
 }
-
 
 /*
  * parse_handle_v400_resources()
@@ -1356,7 +1207,6 @@ static void parse_handle_v400_resources(sc_bool has_sound, sc_bool has_graphics)
 	}
 }
 
-
 /*
  * parse_special()
  *
@@ -1410,8 +1260,7 @@ static void parse_special(CONTEXT, const sc_char *special) {
 	}
 
 	/* Parse room lists, with optional extra room. */
-	else if (strcmp(special, "{ROOM_LIST0}") == 0
-	         || strcmp(special, "{ROOM_LIST1}") == 0) {
+	else if (strcmp(special, "{ROOM_LIST0}") == 0 || strcmp(special, "{ROOM_LIST1}") == 0) {
 		sc_vartype_t vt_key, vt_value;
 		sc_int room_count, num_rooms, type, index_;
 
@@ -1582,7 +1431,6 @@ static void parse_special(CONTEXT, const sc_char *special) {
 		sc_trace("Parse: leaving special %s\n", special);
 }
 
-
 /*
  * parse_fixup_v390_v380_room_alt()
  *
@@ -1590,8 +1438,8 @@ static void parse_special(CONTEXT, const sc_char *special) {
  * version 4.0 room alts for version 3.9 and version 3.8 games.
  */
 static void parse_fixup_v390_v380_room_alt(const sc_char *m1, sc_int type,
-		const sc_char *resource1, const sc_char *m2, sc_int var2, const sc_char *resource2,
-		sc_int hide_objects, const sc_char *changed, sc_int var3, sc_int display_room) {
+                                           const sc_char *resource1, const sc_char *m2, sc_int var2, const sc_char *resource2,
+                                           sc_int hide_objects, const sc_char *changed, sc_int var3, sc_int display_room) {
 	sc_vartype_t vt_key, vt_value, vt_gkey[2];
 	sc_bool has_sound, has_graphics;
 	sc_int alt_count;
@@ -1786,7 +1634,6 @@ static void parse_fixup_v390_v380_room_alt(const sc_char *m1, sc_int type,
 	parse_pop_key();
 }
 
-
 /* Multiplier for combination AltDesc Type and HideObject values. */
 enum { V390_V380_ALT_TYPEHIDE_MULT = 10 };
 
@@ -1803,15 +1650,15 @@ static void parse_fixup_v390_v380_room_alts(void) {
 	sc_int type, var2, hide_objects, var3, display_room;
 
 	/* Room alt invariants. */
-	m2 = "";                      /* No else text */
-	changed = "";                 /* No changed room name */
+	m2 = "";      /* No else text */
+	changed = ""; /* No changed room name */
 
 	/*
 	 * Create a room alt to override all others, controlled by an object
 	 * condition and with optional object hiding.
 	 */
-	type = 2;                     /* Object condition */
-	display_room = 0;             /* Override all others */
+	type = 2;         /* Object condition */
+	display_room = 0; /* Override all others */
 
 	vt_key.string = "Obj";
 	parse_push_key(vt_key, PROP_KEY_STRING);
@@ -1844,8 +1691,8 @@ static void parse_fixup_v390_v380_room_alts(void) {
 	 * If a second task alternate description is defined, create a room alt to
 	 * add after the main description, one that stops printing once done.
 	 */
-	type = 0;                     /* Task condition */
-	display_room = 1;             /* Print after main and stop */
+	type = 0;         /* Task condition */
+	display_room = 1; /* Print after main and stop */
 
 	vt_key.string = "Task2";
 	parse_push_key(vt_key, PROP_KEY_STRING);
@@ -1868,8 +1715,8 @@ static void parse_fixup_v390_v380_room_alts(void) {
 	}
 
 	/* Do the same for any first task additional description. */
-	type = 0;                     /* Task condition */
-	display_room = 1;             /* Print after main and stop */
+	type = 0;         /* Task condition */
+	display_room = 1; /* Print after main and stop */
 
 	vt_key.string = "Task1";
 	parse_push_key(vt_key, PROP_KEY_STRING);
@@ -1895,8 +1742,8 @@ static void parse_fixup_v390_v380_room_alts(void) {
 	 * If still printing at this point, we need a catch-all room alt that will
 	 * print.  So create one with an always true condition.
 	 */
-	type = 0;                     /* Task condition */
-	display_room = 2;             /* Lowest priority output */
+	type = 0;         /* Task condition */
+	display_room = 2; /* Lowest priority output */
 
 	vt_key.string = "LastDesc";
 	parse_push_key(vt_key, PROP_KEY_STRING);
@@ -1904,7 +1751,7 @@ static void parse_fixup_v390_v380_room_alts(void) {
 	parse_pop_key();
 
 	if (!sc_strempty(m1)) {
-		var2 = 0;                 /* No task - always TRUE */
+		var2 = 0; /* No task - always TRUE */
 		var3 = 0;
 		hide_objects = 0;
 
@@ -1914,7 +1761,6 @@ static void parse_fixup_v390_v380_room_alts(void) {
 		                               display_room);
 	}
 }
-
 
 /*
  * parse_fixup_v390()
@@ -2057,14 +1903,15 @@ static void parse_fixup_v390(CONTEXT, const sc_char *fixup) {
 		sc_trace("Parse: leaving version 3.9 fixup %s\n", fixup);
 }
 
-
 /*
  * Object surface and container masks for version 3.8 object fixup, container
  * capacity conversion factor and default object sizing, and the count of
  * task movements in a version 3.8 task.
  */
-enum { V380_OBJ_IS_SURFACE = 2, V380_OBJ_IS_CONTAINER = 1 };
-enum { V380_OBJ_CAPACITY_MULT = 10, V380_OBJ_DEFAULT_SIZE = 2 };
+enum { V380_OBJ_IS_SURFACE = 2,
+	   V380_OBJ_IS_CONTAINER = 1 };
+enum { V380_OBJ_CAPACITY_MULT = 10,
+	   V380_OBJ_DEFAULT_SIZE = 2 };
 enum { V380_TASK_MOVEMENTS = 6 };
 
 /*
@@ -2073,7 +1920,7 @@ enum { V380_TASK_MOVEMENTS = 6 };
  * Helper for parse_fixup_v380(), adds a task action.
  */
 static void parse_fixup_v380_action(sc_int type, sc_int var_count,
-		sc_int var1, sc_int var2, sc_int var3) {
+                                    sc_int var1, sc_int var2, sc_int var3) {
 	sc_vartype_t vt_key, vt_value;
 	sc_int action_count;
 
@@ -2122,7 +1969,6 @@ static void parse_fixup_v380_action(sc_int type, sc_int var_count,
 	parse_pop_key();
 }
 
-
 /*
  * parse_fixup_v380_movement()
  *
@@ -2153,33 +1999,33 @@ static void parse_fixup_v380_movement(sc_int mvar1, sc_int mvar2, sc_int mvar3) 
 	switch (mvar1) {
 	case 2:
 		var1 = 2;
-		break;                    /* Referenced obj */
+		break; /* Referenced obj */
 	case 3:
 		var1 = 0;
-		break;                    /* All held */
+		break; /* All held */
 	default:
 		var1 = mvar1 - 1;
-		break;                    /* Dynamic obj */
+		break; /* Dynamic obj */
 	}
 
 	/* Dissect the rest of the movement. */
 	switch (mvar3) {
-	case 0:                    /* To room */
+	case 0: /* To room */
 		/*
 		 * Convert movement var2 into action var2 and var3.  Var2 is 0 for move
 		 * to room, 6 for move to player room.  Var3 is 0 for hidden, otherwise
 		 * the room number plus one.
 		 */
-		if (mvar2 == 0)           /* Hidden */
+		if (mvar2 == 0) /* Hidden */
 			parse_fixup_v380_action(0, 3, var1, 0, 0);
-		else if (mvar2 == 1)      /* Player room */
+		else if (mvar2 == 1) /* Player room */
 			parse_fixup_v380_action(0, 3, var1, 6, 0);
-		else                      /* Specified room */
+		else /* Specified room */
 			parse_fixup_v380_action(0, 3, var1, 0, mvar2 - 1);
 		break;
 
-	case 1:                    /* To inside */
-	case 2:                    /* To onto */
+	case 1: /* To inside */
+	case 2: /* To onto */
 		/*
 		 * Convert movement var2 and var3 into action var3 and var2, a simple
 		 * conversion, but check that var2 is not 'not selected' first.
@@ -2188,8 +2034,8 @@ static void parse_fixup_v380_movement(sc_int mvar1, sc_int mvar2, sc_int mvar3) 
 			parse_fixup_v380_action(0, 3, var1, mvar3 + 1, mvar2 - 1);
 		break;
 
-	case 3:                    /* To held by */
-	case 4:                    /* To worn by */
+	case 3: /* To held by */
+	case 4: /* To worn by */
 		/*
 		 * Convert movement var2 and var3 into action var3 and var2, in this
 		 * case a simple conversion, since version 4.0 task actions are close
@@ -2203,14 +2049,13 @@ static void parse_fixup_v380_movement(sc_int mvar1, sc_int mvar2, sc_int mvar3) 
 	}
 }
 
-
 /*
  * parse_fixup_v380_restr()
  *
  * Helper for parse_fixup_v380(), adds a task restriction.
  */
 static void parse_fixup_v380_restr(sc_int type, sc_int var_count,
-		sc_int var1, sc_int var2, sc_int var3, const sc_char *failmessage) {
+                                   sc_int var1, sc_int var2, sc_int var3, const sc_char *failmessage) {
 	sc_vartype_t vt_key, vt_value;
 	sc_int restriction_count;
 
@@ -2264,7 +2109,6 @@ static void parse_fixup_v380_restr(sc_int type, sc_int var_count,
 	parse_pop_key();
 	parse_pop_key();
 }
-
 
 /*
  * parse_fixup_v380_obj_restr()
@@ -2361,7 +2205,7 @@ static void parse_fixup_v380_wear_restr(sc_int wearobj, const sc_char *failmessa
 }
 
 static void parse_fixup_v380_npc_restr(sc_bool notinsameroom, sc_int npc,
-		const sc_char *failmessage) {
+                                       const sc_char *failmessage) {
 	/* Ignore if no NPC selected. */
 	if (npc > 0) {
 		sc_int var2;
@@ -2388,7 +2232,7 @@ static void parse_fixup_v380_objroom_restr(sc_int obj, sc_int objroom, const sc_
 }
 
 static void parse_fixup_v380_objstate_restr(sc_int obj, sc_int ivar1, sc_int ivar2,
-		const sc_char *failmessage) {
+                                            const sc_char *failmessage) {
 	sc_vartype_t vt_key[3];
 	sc_int object, dynamic, var2, var3;
 
@@ -2446,25 +2290,24 @@ static void parse_fixup_v380_objstate_restr(sc_int obj, sc_int ivar1, sc_int iva
 	case 1:
 		var2 = 4;
 		var3 = ivar2;
-		break;                    /* Inside */
+		break; /* Inside */
 	case 2:
 		var2 = 5;
 		var3 = ivar2;
-		break;                    /* On */
+		break; /* On */
 	case 5:
 		var2 = 1;
 		var3 = ivar2 + 1;
-		break;                    /* Held by */
+		break; /* Held by */
 	case 6:
 		var2 = 2;
 		var3 = ivar2 + 1;
-		break;                    /* Worn by */
+		break; /* Worn by */
 	default:
 		sc_fatal("parse_fixup_v380_objstate_restr: invalid ivar1, %ld\n", ivar1);
 	}
 	parse_fixup_v380_restr(0, 3, dynamic + 3, var2, var3, failmessage);
 }
-
 
 /*
  * parse_fixup_v380()
@@ -2828,8 +2671,7 @@ static void parse_fixup_v380(const sc_char *fixup) {
 
 				/* Convert container/surface index. */
 				for (parent = 0; parent < object_count && count >= 0; parent++) {
-					if (object_type[parent] == V380_OBJ_IS_CONTAINER
-					        || object_type[parent] == V380_OBJ_IS_SURFACE)
+					if (object_type[parent] == V380_OBJ_IS_CONTAINER || object_type[parent] == V380_OBJ_IS_SURFACE)
 						count--;
 				}
 				parent--;
@@ -2870,8 +2712,7 @@ static void parse_fixup_v380(const sc_char *fixup) {
 		maxcarried = parse_get_integer_property();
 		parse_pop_key();
 
-		vt_value.integer = maxcarried * V380_OBJ_CAPACITY_MULT
-		                   + V380_OBJ_DEFAULT_SIZE;
+		vt_value.integer = maxcarried * V380_OBJ_CAPACITY_MULT + V380_OBJ_DEFAULT_SIZE;
 
 		vt_key.string = "MaxSize";
 		parse_push_key(vt_key, PROP_KEY_STRING);
@@ -2957,7 +2798,6 @@ static void parse_fixup_v380(const sc_char *fixup) {
 		sc_trace("Parse: leaving version 3.8 fixup %s\n", fixup);
 }
 
-
 /*
  * parse_fixup()
  *
@@ -2984,7 +2824,6 @@ static void parse_fixup(CONTEXT, const sc_char *fixup) {
 		break;
 	}
 }
-
 
 /*
  * parse_element()
@@ -3040,7 +2879,6 @@ static void parse_element(CONTEXT, const sc_char *element) {
 		sc_trace("Parse: leaving element %s\n", element);
 }
 
-
 /*
  * parse_descriptor()
  *
@@ -3065,7 +2903,6 @@ static void parse_descriptor(CONTEXT, const sc_char *descriptor) {
 		next += strspn(descriptor + next, " ");
 	}
 }
-
 
 /*
  * parse_class()
@@ -3111,7 +2948,6 @@ static void parse_class(CONTEXT, const sc_char *class_) {
 	if (parse_trace)
 		sc_trace("Parse: leaving class %s\n", class_name);
 }
-
 
 /*
  * parse_add_walkalerts()
@@ -3165,7 +3001,6 @@ static void parse_add_walkalerts(sc_prop_setref_t bundle) {
 	}
 }
 
-
 /*
  * parse_add_movetimes()
  *
@@ -3203,8 +3038,7 @@ static void parse_add_movetimes(sc_prop_setref_t bundle) {
 			for (index_ = waittimes - 1; index_ >= 0; index_--) {
 				vt_key[4].string = "Times";
 				vt_key[5].integer = index_;
-				movetimes[index_] = prop_get_integer(bundle, "I<-sisisi", vt_key)
-				                    + movetimes[index_ + 1];
+				movetimes[index_] = prop_get_integer(bundle, "I<-sisisi", vt_key) + movetimes[index_ + 1];
 			}
 			movetimes[waittimes] = -2;
 
@@ -3218,7 +3052,6 @@ static void parse_add_movetimes(sc_prop_setref_t bundle) {
 		}
 	}
 }
-
 
 /*
  * parse_add_alrs_index()
@@ -3282,7 +3115,6 @@ static void parse_add_alrs_index(sc_prop_setref_t bundle) {
 	sc_free(alr_lengths);
 }
 
-
 /*
  * parse_add_resources_offset()
  *
@@ -3309,7 +3141,6 @@ static void parse_add_resources_offset(sc_prop_setref_t bundle, sc_tafref_t taf)
 	vt_value.integer = offset;
 	prop_put(bundle, "I->s", vt_value, vt_key);
 }
-
 
 /*
  * parse_add_version()
@@ -3344,7 +3175,6 @@ static void parse_add_version(sc_prop_setref_t bundle, sc_tafref_t taf) {
 	vt_key.string = "VersionString";
 	prop_put(bundle, "S->s", vt_value, &vt_key);
 }
-
 
 /*
  * parse_game()
@@ -3405,7 +3235,6 @@ sc_bool parse_game(sc_tafref_t taf, sc_prop_setref_t bundle) {
 	parse_depth = 0;
 	return TRUE;
 }
-
 
 /*
  * parse_debug_trace()

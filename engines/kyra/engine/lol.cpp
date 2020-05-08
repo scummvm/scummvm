@@ -23,11 +23,11 @@
 #ifdef ENABLE_LOL
 
 #include "kyra/engine/lol.h"
-#include "kyra/graphics/screen_lol.h"
-#include "kyra/resource/resource.h"
 #include "kyra/engine/timer.h"
 #include "kyra/engine/util.h"
+#include "kyra/graphics/screen_lol.h"
 #include "kyra/gui/debugger.h"
+#include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
 
 #include "audio/audiostream.h"
@@ -234,49 +234,49 @@ LoLEngine::~LoLEngine() {
 
 	if (_itemIconShapes) {
 		for (int i = 0; i < _numItemIconShapes; i++)
-			delete[]  _itemIconShapes[i];
+			delete[] _itemIconShapes[i];
 		delete[] _itemIconShapes;
 	}
 
 	if (_itemShapes) {
 		for (int i = 0; i < _numItemShapes; i++)
-			delete[]  _itemShapes[i];
+			delete[] _itemShapes[i];
 		delete[] _itemShapes;
 	}
 
 	if (_gameShapes) {
 		for (int i = 0; i < _numGameShapes; i++)
-			delete[]  _gameShapes[i];
+			delete[] _gameShapes[i];
 		delete[] _gameShapes;
 	}
 
 	if (_thrownShapes) {
 		for (int i = 0; i < _numThrownShapes; i++)
-			delete[]  _thrownShapes[i];
+			delete[] _thrownShapes[i];
 		delete[] _thrownShapes;
 	}
 
 	if (_effectShapes) {
 		for (int i = 0; i < _numEffectShapes; i++)
-			delete[]  _effectShapes[i];
+			delete[] _effectShapes[i];
 		delete[] _effectShapes;
 	}
 
 	if (_fireballShapes) {
 		for (int i = 0; i < _numFireballShapes; i++)
-			delete[]  _fireballShapes[i];
+			delete[] _fireballShapes[i];
 		delete[] _fireballShapes;
 	}
 
 	if (_healShapes) {
 		for (int i = 0; i < _numHealShapes; i++)
-			delete[]  _healShapes[i];
+			delete[] _healShapes[i];
 		delete[] _healShapes;
 	}
 
 	if (_healiShapes) {
 		for (int i = 0; i < _numHealiShapes; i++)
-			delete[]  _healiShapes[i];
+			delete[] _healiShapes[i];
 		delete[] _healiShapes;
 	}
 
@@ -424,17 +424,17 @@ Common::Error LoLEngine::init() {
 	_clickedShapeYOffs = 8;
 	_clickedSpecialFlag = 0x40;
 
-	_monsterShapes = new uint8*[48];
+	_monsterShapes = new uint8 *[48];
 	memset(_monsterShapes, 0, 48 * sizeof(uint8 *));
-	_monsterPalettes = new uint8*[48];
+	_monsterPalettes = new uint8 *[48];
 	memset(_monsterPalettes, 0, 48 * sizeof(uint8 *));
-	_monsterDecorationShapes = new uint8*[576];
+	_monsterDecorationShapes = new uint8 *[576];
 	memset(_monsterDecorationShapes, 0, 576 * sizeof(uint8 *));
 	memset(&_scriptData, 0, sizeof(EMCData));
 
 	_activeMagicMenu = -1;
 
-	_automapShapes = new const uint8*[109];
+	_automapShapes = new const uint8 *[109];
 	_mapOverlay = new uint8[256];
 
 	memset(_availableSpells, -1, 8);
@@ -637,14 +637,14 @@ void LoLEngine::preInit() {
 void LoLEngine::loadItemIconShapes() {
 	if (_itemIconShapes) {
 		for (int i = 0; i < _numItemIconShapes; i++)
-			delete[]  _itemIconShapes[i];
+			delete[] _itemIconShapes[i];
 		delete[] _itemIconShapes;
 	}
 
 	_screen->loadBitmap("ITEMICN.SHP", 3, 3, 0);
 	const uint8 *shp = _screen->getCPagePtr(3);
 	_numItemIconShapes = READ_LE_UINT16(shp);
-	_itemIconShapes = new uint8*[_numItemIconShapes];
+	_itemIconShapes = new uint8 *[_numItemIconShapes];
 	for (int i = 0; i < _numItemIconShapes; i++)
 		_itemIconShapes[i] = _screen->makeShapeCopy(shp, i);
 
@@ -654,7 +654,7 @@ void LoLEngine::loadItemIconShapes() {
 		_screen->loadBitmap("GAMESHP.SHP", 3, 3, 0);
 		shp = _screen->getCPagePtr(3);
 		_numGameShapes = READ_LE_UINT16(shp);
-		_gameShapes = new uint8*[_numGameShapes];
+		_gameShapes = new uint8 *[_numGameShapes];
 		for (int i = 0; i < _numGameShapes; i++)
 			_gameShapes[i] = _screen->makeShapeCopy(shp, i);
 	}
@@ -713,8 +713,8 @@ void LoLEngine::checkFloatingPointerRegions() {
 	if (t == -1) {
 		setMouseCursorToItemInHand();
 	} else {
-		static const uint8 floatingPtrX[] = { 7, 13, 7, 0, 0, 15, 7 };
-		static const uint8 floatingPtrY[] = { 0, 7, 12, 7, 6, 6, 7 };
+		static const uint8 floatingPtrX[] = {7, 13, 7, 0, 0, 15, 7};
+		static const uint8 floatingPtrY[] = {0, 7, 12, 7, 6, 6, 7};
 		_screen->setMouseCursor(floatingPtrX[t], floatingPtrY[t], _gameShapes[10 + t]);
 	}
 
@@ -733,21 +733,20 @@ int LoLEngine::mainMenu() {
 	bool hasSave = saveFileLoadable(0);
 
 	MainMenu::StaticData data[] = {
-		// 256 color ASCII mode
-		{
-			{ 0, 0, 0, 0, 0 },
-			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x3D, 0x9F },
-			{ 0x2C, 0x19, 0x48, 0x2C },
-			Screen::FID_9_FNT, 1
-		},
-		// 16 color SJIS mode
-		{
-			{ 0, 0, 0, 0, 0 },
-			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xC1, 0xE1 },
-			{ 0xCC, 0xDD, 0xDD, 0xDD },
-			Screen::FID_SJIS_TEXTMODE_FNT, 1
-		}
-	};
+	    // 256 color ASCII mode
+	    {
+	        {0, 0, 0, 0, 0},
+	        {0x01, 0x04, 0x0C, 0x04, 0x00, 0x3D, 0x9F},
+	        {0x2C, 0x19, 0x48, 0x2C},
+	        Screen::FID_9_FNT,
+	        1},
+	    // 16 color SJIS mode
+	    {
+	        {0, 0, 0, 0, 0},
+	        {0x01, 0x04, 0x0C, 0x04, 0x00, 0xC1, 0xE1},
+	        {0xCC, 0xDD, 0xDD, 0xDD},
+	        Screen::FID_SJIS_TEXTMODE_FNT,
+	        1}};
 
 	int dataIndex = _flags.use16ColorMode ? 1 : 0;
 
@@ -758,11 +757,10 @@ int LoLEngine::mainMenu() {
 		++data[dataIndex].menuTable[3];
 
 	static const uint16 mainMenuStrings[4][5] = {
-		{ 0x4248, 0x4249, 0x42DD, 0x424A, 0x0000 },
-		{ 0x4248, 0x4249, 0x42DD, 0x4001, 0x424A },
-		{ 0x4248, 0x4249, 0x424A, 0x0000, 0x0000 },
-		{ 0x4248, 0x4249, 0x4001, 0x424A, 0x0000 }
-	};
+	    {0x4248, 0x4249, 0x42DD, 0x424A, 0x0000},
+	    {0x4248, 0x4249, 0x42DD, 0x4001, 0x424A},
+	    {0x4248, 0x4249, 0x424A, 0x0000, 0x0000},
+	    {0x4248, 0x4249, 0x4001, 0x424A, 0x0000}};
 
 	int tableOffs = _flags.isTalkie ? 0 : 2;
 
@@ -800,9 +798,9 @@ void LoLEngine::startup() {
 		memset(_screen->_paletteOverlay1, 0, 256);
 		memset(_screen->_paletteOverlay2, 0, 256);
 
-		static const uint8 colTable1[] = { 0x00, 0xEE, 0xCC, 0xFF, 0x44, 0x66, 0x44, 0x88, 0xEE, 0xAA, 0x11, 0xCC, 0xDD, 0xEE, 0x44, 0xCC };
-		static const uint8 colTable2[] = { 0x00, 0xCC, 0xFF, 0xBB, 0xEE, 0xBB, 0x55, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xFF, 0xCC, 0xDD, 0xBB };
-		static const uint8 colTable3[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+		static const uint8 colTable1[] = {0x00, 0xEE, 0xCC, 0xFF, 0x44, 0x66, 0x44, 0x88, 0xEE, 0xAA, 0x11, 0xCC, 0xDD, 0xEE, 0x44, 0xCC};
+		static const uint8 colTable2[] = {0x00, 0xCC, 0xFF, 0xBB, 0xEE, 0xBB, 0x55, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xFF, 0xCC, 0xDD, 0xBB};
+		static const uint8 colTable3[] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
 
 		for (int i = 0; i < 16; i++) {
 			_screen->_paletteOverlay1[colTable3[i]] = colTable1[i];
@@ -828,42 +826,42 @@ void LoLEngine::startup() {
 	_screen->loadBitmap("ITEMSHP.SHP", 3, 3, 0);
 	const uint8 *shp = _screen->getCPagePtr(3);
 	_numItemShapes = READ_LE_UINT16(shp);
-	_itemShapes = new uint8*[_numItemShapes];
+	_itemShapes = new uint8 *[_numItemShapes];
 	for (int i = 0; i < _numItemShapes; i++)
 		_itemShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("THROWN.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numThrownShapes = READ_LE_UINT16(shp);
-	_thrownShapes = new uint8*[_numThrownShapes];
+	_thrownShapes = new uint8 *[_numThrownShapes];
 	for (int i = 0; i < _numThrownShapes; i++)
 		_thrownShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("ICE.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numEffectShapes = READ_LE_UINT16(shp);
-	_effectShapes = new uint8*[_numEffectShapes];
+	_effectShapes = new uint8 *[_numEffectShapes];
 	for (int i = 0; i < _numEffectShapes; i++)
 		_effectShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("FIREBALL.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numFireballShapes = READ_LE_UINT16(shp);
-	_fireballShapes = new uint8*[_numFireballShapes];
+	_fireballShapes = new uint8 *[_numFireballShapes];
 	for (int i = 0; i < _numFireballShapes; i++)
 		_fireballShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("HEAL.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numHealShapes = READ_LE_UINT16(shp);
-	_healShapes = new uint8*[_numHealShapes];
+	_healShapes = new uint8 *[_numHealShapes];
 	for (int i = 0; i < _numHealShapes; i++)
 		_healShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("HEALI.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numHealiShapes = READ_LE_UINT16(shp);
-	_healiShapes = new uint8*[_numHealiShapes];
+	_healiShapes = new uint8 *[_numHealiShapes];
 	for (int i = 0; i < _numHealiShapes; i++)
 		_healiShapes[i] = _screen->makeShapeCopy(shp, i);
 
@@ -902,7 +900,7 @@ void LoLEngine::startupNew() {
 
 	Common::fill(_globalScriptVars2, ARRAYEND(_globalScriptVars2), 0x100);
 
-	static const int selectIds[] = { -9, -1, -8, -5 };
+	static const int selectIds[] = {-9, -1, -8, -5};
 	assert(_charSelection >= 0);
 	assert(_charSelection < ARRAYSIZE(selectIds));
 	addCharacter(selectIds[_charSelection]);
@@ -1096,25 +1094,23 @@ void LoLEngine::decodeSjis(const char *src, char *dst) {
 
 int LoLEngine::decodeCyrillic(const char *src, char *dst) {
 	static const uint8 decodeTable1[] = {
-		0x20, 0xAE, 0xA5, 0xA0, 0xE2, 0xAD, 0xA8, 0xE0, 0xE1, 0xAB, 0xA2,
-		0xA4, 0xAC, 0xAA, 0xE3, 0x2E
-	};
+	    0x20, 0xAE, 0xA5, 0xA0, 0xE2, 0xAD, 0xA8, 0xE0, 0xE1, 0xAB, 0xA2,
+	    0xA4, 0xAC, 0xAA, 0xE3, 0x2E};
 
 	static const uint8 decodeTable2[] = {
-		0xAD, 0xAF, 0xA2, 0xE1, 0xAC, 0xAA, 0x20, 0xA4, 0xAB, 0x20,
-		0xE0, 0xE2, 0xA4, 0xA2, 0xA6, 0xAA, 0x20, 0xAD, 0xE2, 0xE0,
-		0xAB, 0xAC, 0xE1, 0xA1, 0x20, 0xAC, 0xE1, 0xAA, 0xAB, 0xE0,
-		0xE2, 0xAD, 0xAE, 0xEC, 0xA8, 0xA5, 0xA0, 0x20, 0xE0, 0xEB,
-		0xAE, 0xA0, 0xA8, 0xA5, 0xEB, 0xEF, 0x20, 0xE3, 0xE2, 0x20,
-		0xAD, 0xE7, 0xAB, 0xAC, 0xA5, 0xE0, 0xAE, 0xA0, 0xA5, 0xA8,
-		0xE3, 0xEB, 0xEF, 0xAA, 0xE2, 0xEF, 0xA5, 0xEC, 0xAB, 0xAE,
-		0xAA, 0xAF, 0xA8, 0xA0, 0xA5, 0xEF, 0xAE, 0xEE, 0xEC, 0xE3,
-		0xA0, 0xAE, 0xA5, 0xA8, 0xEB, 0x20, 0xE0, 0xE3, 0xA0, 0xA5,
-		0xAE, 0xA8, 0xE3, 0xE1, 0xAD, 0xAB, 0x20, 0xAE, 0xA5, 0xA0,
-		0xA8, 0xAD, 0x2E, 0xE3, 0xAE, 0xA0, 0xA8, 0x20, 0xE0, 0xE3,
-		0xAB, 0xE1, 0x20, 0xA4, 0xAD, 0xE2, 0xA1, 0xA6, 0xAC, 0xE1,
-		0x0D, 0x20, 0x2E, 0x09, 0xA0, 0xA1, 0x9D, 0xA5
-	};
+	    0xAD, 0xAF, 0xA2, 0xE1, 0xAC, 0xAA, 0x20, 0xA4, 0xAB, 0x20,
+	    0xE0, 0xE2, 0xA4, 0xA2, 0xA6, 0xAA, 0x20, 0xAD, 0xE2, 0xE0,
+	    0xAB, 0xAC, 0xE1, 0xA1, 0x20, 0xAC, 0xE1, 0xAA, 0xAB, 0xE0,
+	    0xE2, 0xAD, 0xAE, 0xEC, 0xA8, 0xA5, 0xA0, 0x20, 0xE0, 0xEB,
+	    0xAE, 0xA0, 0xA8, 0xA5, 0xEB, 0xEF, 0x20, 0xE3, 0xE2, 0x20,
+	    0xAD, 0xE7, 0xAB, 0xAC, 0xA5, 0xE0, 0xAE, 0xA0, 0xA5, 0xA8,
+	    0xE3, 0xEB, 0xEF, 0xAA, 0xE2, 0xEF, 0xA5, 0xEC, 0xAB, 0xAE,
+	    0xAA, 0xAF, 0xA8, 0xA0, 0xA5, 0xEF, 0xAE, 0xEE, 0xEC, 0xE3,
+	    0xA0, 0xAE, 0xA5, 0xA8, 0xEB, 0x20, 0xE0, 0xE3, 0xA0, 0xA5,
+	    0xAE, 0xA8, 0xE3, 0xE1, 0xAD, 0xAB, 0x20, 0xAE, 0xA5, 0xA0,
+	    0xA8, 0xAD, 0x2E, 0xE3, 0xAE, 0xA0, 0xA8, 0x20, 0xE0, 0xE3,
+	    0xAB, 0xE1, 0x20, 0xA4, 0xAD, 0xE2, 0xA1, 0xA6, 0xAC, 0xE1,
+	    0x0D, 0x20, 0x2E, 0x09, 0xA0, 0xA1, 0x9D, 0xA5};
 
 	int size = 0;
 	uint cChar = 0;
@@ -1144,9 +1140,8 @@ int LoLEngine::decodeCyrillic(const char *src, char *dst) {
 
 bool LoLEngine::addCharacter(int id) {
 	const uint16 *cdf[] = {
-		_charDefsMan, _charDefsMan, _charDefsMan, _charDefsWoman,
-		_charDefsMan, _charDefsMan, _charDefsWoman, _charDefsKieran, _charDefsAkshel
-	};
+	    _charDefsMan, _charDefsMan, _charDefsMan, _charDefsWoman,
+	    _charDefsMan, _charDefsMan, _charDefsWoman, _charDefsKieran, _charDefsAkshel};
 
 	int numChars = countActiveCharacters();
 	if (numChars == 4)
@@ -1405,13 +1400,12 @@ int LoLEngine::calculateProtection(int index) {
 
 void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, int mode) {
 	static const uint16 barData[4][5] = {
-		// xPos, bar color, text color, flag, string id
-		{ 0x27, 0x9A, 0x98, 0x01, 0x4254 },
-		{ 0x21, 0xA2, 0xA0, 0x00, 0x4253 },
-		// 16 color mode
-		{ 0x27, 0x66, 0x55, 0x01, 0x4254 },
-		{ 0x21, 0xAA, 0x99, 0x00, 0x4253 }
-	};
+	    // xPos, bar color, text color, flag, string id
+	    {0x27, 0x9A, 0x98, 0x01, 0x4254},
+	    {0x21, 0xA2, 0xA0, 0x00, 0x4253},
+	    // 16 color mode
+	    {0x27, 0x66, 0x55, 0x01, 0x4254},
+	    {0x21, 0xAA, 0x99, 0x00, 0x4253}};
 
 	if (charNum > 2)
 		return;
@@ -1801,9 +1795,8 @@ void LoLEngine::createTransparencyTables() {
 
 	if (_flags.use16ColorMode) {
 		static const uint8 colTbl[] = {
-			0x00, 0x00, 0x11, 0x00, 0x22, 0x00, 0x33, 0x00, 0x44, 0x00, 0x55, 0x00, 0x66, 0x00, 0x77, 0x00,
-			0x88, 0x00, 0x99, 0x00, 0xAA, 0x00, 0xBB, 0x00, 0xCC, 0x00, 0xDD, 0x00, 0xEE, 0x00, 0xFF, 0x00
-		};
+		    0x00, 0x00, 0x11, 0x00, 0x22, 0x00, 0x33, 0x00, 0x44, 0x00, 0x55, 0x00, 0x66, 0x00, 0x77, 0x00,
+		    0x88, 0x00, 0x99, 0x00, 0xAA, 0x00, 0xBB, 0x00, 0xCC, 0x00, 0xDD, 0x00, 0xEE, 0x00, 0xFF, 0x00};
 
 		memset(tpal, 0xFF, 768);
 		_res->loadFileToBuf("LOL.NOL", tpal, 48);
@@ -1816,7 +1809,7 @@ void LoLEngine::createTransparencyTables() {
 			tpal[i * 3 + 2] = tpal[i * 3 + 1] = tpal[i * 3] = 0xFF;
 		}
 
-		_screen->createTransparencyTablesIntern(colTbl, 16, tpal, tpal,  _transparencyTable1, _transparencyTable2, 80);
+		_screen->createTransparencyTablesIntern(colTbl, 16, tpal, tpal, _transparencyTable1, _transparencyTable2, 80);
 
 	} else {
 		_res->loadFileToBuf("fxpal.col", tpal, 768);
@@ -1856,7 +1849,8 @@ void LoLEngine::loadTalkFile(int index) {
 int LoLEngine::characterSays(int track, int charId, bool redraw) {
 	if (charId == 1) {
 		charId = _selectedCharacter;
-	} if (charId <= 0) {
+	}
+	if (charId <= 0) {
 		charId = 0;
 	} else {
 		int i = 0;
@@ -2147,7 +2141,7 @@ int LoLEngine::processMagicSpark(int charNum, int spellLevel) {
 	int dist = getSpellTargetBlock(_currentBlock, _currentDirection, 4, targetBlock);
 	uint16 target = getNearestMonsterFromCharacterForBlock(targetBlock, charNum);
 
-	static const uint8 dmg[] = { 7, 15, 25, 60 };
+	static const uint8 dmg[] = {7, 15, 25, 60};
 	if (target != 0xFFFF) {
 		inflictMagicalDamage(target, charNum, dmg[spellLevel], 5, 0);
 		updateDrawPage2();
@@ -2354,7 +2348,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 			SWAP(sc[i], dc[i]);
 
 		_flagsTable[52] |= 0x04;
-		static const uint8 freezeTimes[] =  { 20, 28, 40, 60 };
+		static const uint8 freezeTimes[] = {20, 28, 40, 60};
 		setCharacterUpdateEvent(charNum, 8, freezeTimes[spellLevel], 1);
 	}
 
@@ -2400,11 +2394,13 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 
 	if (spellLevel == 0) {
 		sX = 0;
-	} if (spellLevel == 1 || spellLevel == 2) {
+	}
+	if (spellLevel == 1 || spellLevel == 2) {
 		mov->open("SNOW.WSA", 1, 0);
 		if (!mov->opened())
 			error("Ice: Unable to load snow.wsa");
-	} if (spellLevel == 3) {
+	}
+	if (spellLevel == 3) {
 		mov->open("ICE.WSA", 1, 0);
 		if (!mov->opened())
 			error("Ice: Unable to load ice.wsa");
@@ -2430,7 +2426,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	}
 
 	delete mov;
-	static const uint8 snowDamage[] = { 10, 20, 30, 55 };
+	static const uint8 snowDamage[] = {10, 20, 30, 55};
 	static const uint8 iceDamageMax[] = {1, 2, 15, 20, 35};
 	static const uint8 iceDamageMin[] = {10, 10, 3, 4, 4};
 	static const uint8 iceDamageAdd[] = {5, 10, 30, 10, 10};
@@ -2522,7 +2518,7 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 
 		if ((o & 0x8000) || (_wllWallFlags[_levelBlockProperties[bl].walls[_currentDirection ^ 2]] & 7)) {
 			while (o & 0x8000) {
-				static const uint8 fireballDamage[] = { 20, 40, 80, 100 };
+				static const uint8 fireballDamage[] = {20, 40, 80, 100};
 				int dmg = calcInflictableDamagePerItem(charNum, o, fireballDamage[spellLevel], 4, 1);
 				LoLMonster *m = &_monsters[o & 0x7FFF];
 				o = m->nextAssignedObject;
@@ -2570,8 +2566,8 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 			if (!fb->active)
 				continue;
 
-			static const int8 finShpIndex1[] = { 5, 6, 7, 7, 6, 5 };
-			static const int8 finShpIndex2[] = { -1, 1, 2, 3, 4, -1 };
+			static const int8 finShpIndex1[] = {5, 6, 7, 7, 6, 5};
+			static const int8 finShpIndex2[] = {-1, 1, 2, 3, 4, -1};
 			uint8 *shp = fb->finalize ? _fireballShapes[finShpIndex1[fb->finProgress]] : _fireballShapes[0];
 
 			int fX = (((fb->progress * _fireBallCoords[fb->tblIndex & 0xFF]) >> 16) + fb->destX) - ((fb->progress / 8 + shp[3] + fireBallWH) >> 1);
@@ -2621,7 +2617,7 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 						i++;
 					}
 
-					static const uint8 fireballSfx[] = { 98, 167, 167, 168 };
+					static const uint8 fireballSfx[] = {98, 167, 167, 168};
 					snd_playSoundEffect(fireballSfx[d], -1);
 
 				} else {
@@ -2661,12 +2657,12 @@ int LoLEngine::processMagicHandOfFate(int spellLevel) {
 	if (!mov->opened())
 		error("Hand: Unable to load HAND.WSA");
 
-	static const uint8 frames[] = { 17, 26, 11, 16, 27, 35, 27, 35, 0, 75 };
+	static const uint8 frames[] = {17, 26, 11, 16, 27, 35, 27, 35, 0, 75};
 
 	snd_playSoundEffect(173, -1);
 	playSpellAnimation(mov, 0, 10, 3, 112, 0, 0, 0, 0, 0, false);
 	snd_playSoundEffect(151, -1);
-	playSpellAnimation(mov, frames[spellLevel * 2] , frames[spellLevel * 2 + 1], 3, 112, 0, 0, 0, 0, 0, false);
+	playSpellAnimation(mov, frames[spellLevel * 2], frames[spellLevel * 2 + 1], 3, 112, 0, 0, 0, 0, 0, false);
 	snd_playSoundEffect(18, -1);
 	playSpellAnimation(mov, 10, 0, 3, 112, 0, 0, 0, 0, 0, false);
 
@@ -2708,7 +2704,7 @@ int LoLEngine::processMagicHandOfFate(int spellLevel) {
 		uint16 b1 = calcNewBlockPosition(_currentBlock, _currentDirection);
 		checkSceneUpdateNeed(b1);
 
-		static const uint16 damage[] = { 75, 125, 175 };
+		static const uint16 damage[] = {75, 125, 175};
 		uint16 o = _levelBlockProperties[b1].assignedObjects;
 
 		while (o & 0x8000) {
@@ -2733,7 +2729,7 @@ int LoLEngine::processMagicHandOfFate(int spellLevel) {
 }
 
 int LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
-	static const uint8 mistDamage[] = { 30, 70, 110, 200 };
+	static const uint8 mistDamage[] = {30, 70, 110, 200};
 
 	_envSfxUseQueue = true;
 	inflictMagicalDamageForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum, mistDamage[spellLevel], 0x80);
@@ -2794,7 +2790,7 @@ int LoLEngine::processMagicLightning(int charNum, int spellLevel) {
 	_screen->copyPage(12, 0);
 	updateDrawPage2();
 
-	static const uint8 lightningDamage[] = { 18, 35, 50, 72 };
+	static const uint8 lightningDamage[] = {18, 35, 50, 72};
 	inflictMagicalDamageForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum, lightningDamage[spellLevel], 5);
 
 	_sceneUpdateRequired = true;
@@ -3080,7 +3076,7 @@ void LoLEngine::drinkBezelCup(int numUses, int charNum) {
 
 	_screen->copyRegion(x, y, 0, 0, w, h, 0, 2, Screen::CR_NO_P_CHECK);
 
-	static const uint8 bezelAnimData[] = { 0, 26, 20, 27, 61, 55, 62, 92, 86, 93, 131, 125 };
+	static const uint8 bezelAnimData[] = {0, 26, 20, 27, 61, 55, 62, 92, 86, 93, 131, 125};
 	int frm = bezelAnimData[numUses * 3];
 	int hpDiff = _characters[charNum].hitPointsMax - _characters[charNum].hitPointsCur;
 	uint16 step = 0;
@@ -3135,7 +3131,7 @@ void LoLEngine::addSpellToScroll(int spell, int charNum) {
 	gui_enableDefaultPlayfieldButtons();
 }
 
-void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot)  {
+void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) {
 	int cX = 16 + _activeCharsXpos[charNum];
 
 	if (slot != 1) {
@@ -3432,7 +3428,7 @@ int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) 
 	// The original code looks somewhat like the commented out part of the next line.
 	// In the end the value is always set to zero. I do not know whether this is done on purpose or not.
 	// It might be a bug in the original code.
-	int res = 0/*attacker & 0x8000 ? 0 : _characters[attacker].might*/;
+	int res = 0 /*attacker & 0x8000 ? 0 : _characters[attacker].might*/;
 	for (int i = 0; i < 8; i++)
 		res += calcInflictableDamagePerItem(attacker, target, s[i], i, hitType);
 
@@ -3594,7 +3590,6 @@ int LoLEngine::calcInflictableDamagePerItem(int16 attacker, int16 target, uint16
 
 	if (hitType == 2 || !dmg)
 		return (dmg == 1) ? 2 : dmg;
-
 
 	int p = (calculateProtection(target) << 7) / dmg;
 	if (p > 217)
@@ -3825,7 +3820,7 @@ int LoLEngine::paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFl
 		setCharacterUpdateEvent(charNum, 3, 3600, 1);
 		r = 1;
 
-	// check for bezel ring
+		// check for bezel ring
 	} else if (typeFlag == 0x80 && !itemEquipped(charNum, 225)) {
 		_characters[charNum].flags |= 0x80;
 		setCharacterUpdateEvent(charNum, 4, 10, 1);
@@ -3907,7 +3902,7 @@ void LoLEngine::launchMagicViper() {
 	if (!mov->opened())
 		error("Viper: Unable to load viper.wsa");
 
-	static const uint8 viperAnimData[] = { 15, 25, 20, 10, 25, 20, 5, 25, 20, 0, 25, 20 };
+	static const uint8 viperAnimData[] = {15, 25, 20, 10, 25, 20, 5, 25, 20, 0, 25, 20};
 	const uint8 *v = &viperAnimData[d * 3];
 	int frm = v[0];
 
@@ -4062,7 +4057,7 @@ void LoLEngine::displayAutomap() {
 		_automapShapes[i] = _screen->getPtrToShape(shp, i + 11);
 
 	if (_flags.use16ColorMode) {
-		static const uint8 ovlSrc[] = { 0x00, 0xEE, 0xCC, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0x22, 0x11, 0xDD, 0xEE, 0xCC };
+		static const uint8 ovlSrc[] = {0x00, 0xEE, 0xCC, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0x22, 0x11, 0xDD, 0xEE, 0xCC};
 		memset(_mapOverlay, 0, 256);
 		for (int i = 0; i < 16; i++)
 			_mapOverlay[(i << 4) | i] = ovlSrc[i];
@@ -4160,7 +4155,7 @@ void LoLEngine::updateAutoMap(uint16 block) {
 }
 
 bool LoLEngine::updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOffs, int16 yOffs) {
-	static const int16 blockPosTable[] = { 1, -1, 3, 2, -1, 0, -1, 0, 1, -32, 0, 32 };
+	static const int16 blockPosTable[] = {1, -1, 3, 2, -1, 0, -1, 0, 1, -32, 0, 32};
 	x += xOffs;
 	y += yOffs;
 
@@ -4310,7 +4305,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 		uint16 *legendData = (uint16 *)_tempBuffer5120;
 		uint8 yOffset = _flags.use16ColorMode ? 4 : 0;
 
-		for (int ii = 0; ii < 32; ii++)  {
+		for (int ii = 0; ii < 32; ii++) {
 			uint16 *l = &legendData[ii * 6];
 			if (l[0] == 0xFFFF)
 				break;
@@ -4385,7 +4380,8 @@ bool LoLEngine::automapProcessButtons(int inputFlag) {
 	} else if (r == 1) {
 		automapBackButton();
 		printMapExitButtonText();
-	} if (r == 2) {
+	}
+	if (r == 2) {
 		return true;
 	}
 
@@ -4555,8 +4551,6 @@ void LoLEngine::printMapExitButtonText() {
 	_screen->setFont(of);
 	_screen->setCurPage(cp);
 }
-
-
 
 } // End of namespace Kyra
 

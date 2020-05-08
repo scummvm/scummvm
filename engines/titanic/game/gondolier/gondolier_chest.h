@@ -32,6 +32,7 @@ class CGondolierChest : public CGondolierBase {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+
 public:
 	CLASSDEF;
 

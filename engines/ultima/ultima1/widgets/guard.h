@@ -31,7 +31,7 @@ namespace Widgets {
 
 class Guard : public Person {
 private:
-//	bool _moved;
+	//	bool _moved;
 protected:
 	/**
 	 * Returns the attack distance for the guard
@@ -47,20 +47,19 @@ protected:
 	 * Handles attacking the party
 	 */
 	void attackParty() override;
+
 public:
 	DECLARE_WIDGET(Guard)
 
 	/**
 	 * Constructor
 	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 17, hitPoints) {}
+	Guard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) : Person(game, map, 17, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map) :
-		Person(game, map, 17) {}
+	Guard(Ultima1Game *game, Maps::MapBase *map) : Person(game, map, 17) {}
 
 	/**
 	 * Destructor

@@ -23,17 +23,18 @@
 #ifndef TITANIC_RESOURCE_KEY_H
 #define TITANIC_RESOURCE_KEY_H
 
-#include "titanic/support/string.h"
 #include "titanic/core/saveable_object.h"
+#include "titanic/support/string.h"
 
 namespace Titanic {
 
-class CResourceKey: public CSaveableObject {
+class CResourceKey : public CSaveableObject {
 private:
 	CString _key;
 	CString _value;
 
 	void setValue(const CString &name);
+
 public:
 	CLASSDEF;
 	CResourceKey() {}

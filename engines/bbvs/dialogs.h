@@ -29,7 +29,7 @@
 namespace GUI {
 class ButtonWidget;
 class CommandSender;
-}
+} // namespace GUI
 
 namespace Bbvs {
 
@@ -54,9 +54,9 @@ enum {
 };
 
 enum {
-	kMainMenuScr        = 0,
-	kOptionsMenuScr     = 1,
-	kMiniGamesMenuScr   = 2
+	kMainMenuScr = 0,
+	kOptionsMenuScr = 1,
+	kMiniGamesMenuScr = 2
 };
 
 class MainMenu : public GUI::Dialog {
@@ -77,9 +77,8 @@ protected:
 	void gotoMenuScreen(int index);
 	bool canContinue();
 	void gotoScene(int sceneNum);
-
 };
 
-}
+} // namespace Bbvs
 
 #endif // BBVS_DIALOGS_H

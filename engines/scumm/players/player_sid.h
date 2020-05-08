@@ -23,12 +23,12 @@
 #ifndef SCUMM_PLAYERS_PLAYER_SID_H
 #define SCUMM_PLAYERS_PLAYER_SID_H
 
-#include "common/mutex.h"
-#include "common/scummsys.h"
-#include "scumm/music.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/sid.h"
+#include "common/mutex.h"
+#include "common/scummsys.h"
+#include "scumm/music.h"
 
 namespace Scumm {
 
@@ -60,8 +60,8 @@ public:
 	void startSound(int sound) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int  getSoundStatus(int sound) const override;
-	int  getMusicTimer() override;
+	int getSoundStatus(int sound) const override;
+	int getMusicTimer() override;
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) override;
@@ -88,54 +88,54 @@ private:
 	VideoStandard _videoSystem;
 
 	int _music_timer;
-	uint8* _music;
+	uint8 *_music;
 
 private:
-	void initMusic(int songResIndex); // $7de6
-	int initSound(int soundResID); // $4D0A
+	void initMusic(int songResIndex);      // $7de6
+	int initSound(int soundResID);         // $4D0A
 	void stopSound_intern(int soundResID); // $5093
-	void stopMusic_intern(); // $4CAA
+	void stopMusic_intern();               // $4CAA
 
 	void resetSID(); // $48D8
-	void update(); // $481B
+	void update();   // $481B
 	void handleMusicBuffer();
-	int setupSongFileData(); // $36cb
-	void func_3674(int channel); // $3674
-	void resetPlayerState(); // $48f7
-	void processSongData(int channel); // $4939
-	void readSetSIDFilterAndProps(int *offset, uint8* dataPtr);  // $49e7
+	int setupSongFileData();                                    // $36cb
+	void func_3674(int channel);                                // $3674
+	void resetPlayerState();                                    // $48f7
+	void processSongData(int channel);                          // $4939
+	void readSetSIDFilterAndProps(int *offset, uint8 *dataPtr); // $49e7
 	void saveSongPos(int y, int channel);
 	void updateFreq(int channel);
 	void resetFreqDelta(int channel);
-	void readSongChunk(int channel); // $4a6b
-	void setSIDFreqAS(int channel); // $4be6
-	void setSIDWaveCtrlReg(int channel); // $4C0D
-	int setupSongPtr(int channel); // $4C1C
+	void readSongChunk(int channel);       // $4a6b
+	void setSIDFreqAS(int channel);        // $4be6
+	void setSIDWaveCtrlReg(int channel);   // $4C0D
+	int setupSongPtr(int channel);         // $4C1C
 	void unlockResource(int chanResIndex); // $4CDA
-	void countFreeChannels(); // $4f26
-	void func_4F45(int channel); // $4F45
+	void countFreeChannels();              // $4f26
+	void func_4F45(int channel);           // $4F45
 	void safeUnlockResource(int resIndex); // $4FEA
-	void releaseResource(int resIndex); // $5031
+	void releaseResource(int resIndex);    // $5031
 	void releaseResChannels(int resIndex); // $5070
 	void releaseResourceUnk(int resIndex); // $50A4
 	void releaseChannel(int channel);
 	void clearSIDWaveform(int channel);
 	void stopChannel(int channel);
-	void swapVars(int channel, int swapIndex); // $51a5
-	void resetSwapVars(); // $52d0
-	void prepareSwapVars(int channel); // $52E5
-	void useSwapVars(int channel); // $5342
-	void lockResource(int resIndex); // $4ff4
-	void reserveChannel(int channel, uint8 prioValue, int chanResIndex); // $4ffe
-	void unlockCodeLocation(); // $513e
-	void lockCodeLocation(); // $514f
-	void func_7eae(int channel, uint8* songFileDataPtr); // $7eae
-	void func_819b(int channel); // $819b
-	void buildStepTbl(int step); // $82B4
-	int reserveSoundFilter(uint8 value, uint8 chanResIndex); // $4ED0
-	int reserveSoundVoice(uint8 value, uint8 chanResIndex); // $4EB8
-	void findLessPrioChannels(uint8 soundPrio); // $4ED8
-	void releaseResourceBySound(int resID); // $5088
+	void swapVars(int channel, int swapIndex);                                // $51a5
+	void resetSwapVars();                                                     // $52d0
+	void prepareSwapVars(int channel);                                        // $52E5
+	void useSwapVars(int channel);                                            // $5342
+	void lockResource(int resIndex);                                          // $4ff4
+	void reserveChannel(int channel, uint8 prioValue, int chanResIndex);      // $4ffe
+	void unlockCodeLocation();                                                // $513e
+	void lockCodeLocation();                                                  // $514f
+	void func_7eae(int channel, uint8 *songFileDataPtr);                      // $7eae
+	void func_819b(int channel);                                              // $819b
+	void buildStepTbl(int step);                                              // $82B4
+	int reserveSoundFilter(uint8 value, uint8 chanResIndex);                  // $4ED0
+	int reserveSoundVoice(uint8 value, uint8 chanResIndex);                   // $4EB8
+	void findLessPrioChannels(uint8 soundPrio);                               // $4ED8
+	void releaseResourceBySound(int resID);                                   // $5088
 	void readVec6Data(int x, int *offset, uint8 *songFilePtr, int chanResID); // $4E99
 
 	void unused1(); // $50AF
@@ -154,9 +154,9 @@ private:
 	uint8 SIDReg23Stuff;
 	uint8 SIDReg24;
 
-	uint8* chanFileData[3];
+	uint8 *chanFileData[3];
 	uint16 chanDataOffset[3];
-	uint8* songPosPtr[7];
+	uint8 *songPosPtr[7];
 
 	// 0..2: freq value voice1/2/3
 	// 3:    filter freq
@@ -173,8 +173,8 @@ private:
 
 	uint16 freqDelta[7];
 	int freqDeltaCounter[7];
-	uint8* swapSongPosPtr[3];
-	uint8* swapVec5[3];
+	uint8 *swapSongPosPtr[3];
+	uint8 *swapVec5[3];
 	uint16 swapVec8[3];
 	uint16 swapVec10[3];
 	uint16 swapFreqReg[3];
@@ -187,17 +187,17 @@ private:
 	// never read (needed by scumm engine?)
 	//bool curChannelActive;
 
-	uint8* vec20[7];
+	uint8 *vec20[7];
 
-	uint8* swapVec20[3];
+	uint8 *swapVec20[3];
 
 	// resource status (never read)
 	// bit7: some flag
 	// bit6..0: counter (use-count?), maybe just bit0 as flag (used/unused?)
 	uint8 resStatus[70];
 
-	uint8* songFileOrChanBufData;
-	uint8* actSongFileData;
+	uint8 *songFileOrChanBufData;
+	uint8 *actSongFileData;
 
 	uint16 stepTbl[33];
 

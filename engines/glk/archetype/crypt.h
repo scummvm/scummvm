@@ -29,7 +29,12 @@ namespace Glk {
 namespace Archetype {
 
 enum EncryptionType {
-	NONE, SIMPLE, PURPLE, UNPURPLE, COMPLEX, DEBUGGING_ON
+	NONE,
+	SIMPLE,
+	PURPLE,
+	UNPURPLE,
+	COMPLEX,
+	DEBUGGING_ON
 };
 
 extern byte CryptMask;

@@ -21,21 +21,20 @@
  */
 
 #include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/events/event_handler.h"
-#include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/core/settings.h"
 #include "common/debug.h"
+#include "ultima/ultima4/core/settings.h"
+#include "ultima/ultima4/events/event_handler.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/map/map.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-Annotation::Annotation(const Coords &pos, MapTile t, bool v, bool coverUp) :
-	_coords(pos),
-	_tile(t),
-	_visual(v),
-	_ttl(-1),
-	_coverUp(coverUp) {
+Annotation::Annotation(const Coords &pos, MapTile t, bool v, bool coverUp) : _coords(pos),
+                                                                             _tile(t),
+                                                                             _visual(v),
+                                                                             _ttl(-1),
+                                                                             _coverUp(coverUp) {
 }
 
 void Annotation::debug_output() const {

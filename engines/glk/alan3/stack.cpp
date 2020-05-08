@@ -22,10 +22,10 @@
 
 #include "glk/alan3/stack.h"
 #include "glk/alan3/glkio.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/memory.h"
 #include "glk/alan3/options.h"
 #include "glk/alan3/syserr.h"
+#include "glk/alan3/types.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -41,7 +41,6 @@ Stack createStack(int size) {
 	return theStack;
 }
 
-
 /*======================================================================*/
 void deleteStack(Stack theStack) {
 	if (theStack == NULL)
@@ -51,12 +50,10 @@ void deleteStack(Stack theStack) {
 	deallocate(theStack);
 }
 
-
 /*======================================================================*/
 int stackDepth(Stack theStack) {
 	return theStack->stackp;
 }
-
 
 /*======================================================================*/
 void dumpStack(Stack theStack) {
@@ -67,12 +64,11 @@ void dumpStack(Stack theStack) {
 
 	printf("[");
 	for (i = 0; i < theStack->stackp; i++)
-		printf("%ld ", (unsigned long) theStack->stack[i]);
+		printf("%ld ", (unsigned long)theStack->stack[i]);
 	printf("]");
 	if (!traceInstructionOption && !tracePushOption)
 		printf("\n");
 }
-
 
 /*======================================================================*/
 void push(Stack theStack, Aptr i) {
@@ -84,7 +80,6 @@ void push(Stack theStack, Aptr i) {
 	theStack->stack[(theStack->stackp)++] = i;
 }
 
-
 /*======================================================================*/
 Aptr pop(Stack theStack) {
 	if (theStack == NULL)
@@ -95,7 +90,6 @@ Aptr pop(Stack theStack) {
 	return theStack->stack[--(theStack->stackp)];
 }
 
-
 /*======================================================================*/
 Aptr top(Stack theStack) {
 	if (theStack == NULL)
@@ -103,7 +97,6 @@ Aptr top(Stack theStack) {
 
 	return theStack->stack[theStack->stackp - 1];
 }
-
 
 /* The AMACHINE Block Frames */
 
@@ -119,7 +112,6 @@ void newFrame(Stack theStack, Aint noOfLocals) {
 	for (n = 0; n < noOfLocals; n++)
 		push(theStack, 0);
 }
-
 
 /*======================================================================*/
 /* Local variables are numbered 1 and up and stored on their index-1 */
@@ -141,7 +133,6 @@ Aptr getLocal(Stack theStack, Aint framesBelow, Aint variableNumber) {
 
 	return theStack->stack[frame + variableNumber - 1];
 }
-
 
 /*======================================================================*/
 void setLocal(Stack theStack, Aint framesBelow, Aint variableNumber, Aptr value) {

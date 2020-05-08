@@ -23,13 +23,13 @@
 #ifndef ULTIMA4_MAP_SHRINE_H
 #define ULTIMA4_MAP_SHRINE_H
 
-#include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/filesys/savegame.h"
+#include "ultima/ultima4/map/map.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-#define SHRINE_MEDITATION_INTERVAL  100
+#define SHRINE_MEDITATION_INTERVAL 100
 #define MEDITATION_MANTRAS_PER_CYCLE 16
 
 class Shrine : public Map {
@@ -37,7 +37,7 @@ public:
 	Shrine();
 
 	// Methods
-	Common::String  getName() override;
+	Common::String getName() override;
 	Virtue getVirtue() const;
 	Common::String getMantra() const;
 
@@ -65,6 +65,7 @@ class Shrines {
 public:
 	int _cycles, _completedCycles;
 	Std::vector<Common::String> _advice;
+
 public:
 	/**
 	 * Constructor

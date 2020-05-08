@@ -39,6 +39,6 @@ class AudioStream;
 
 AudioStream *make8SVXStream(Common::ReadStream &stream, bool loop);
 
-}
+} // namespace Audio
 
 #endif

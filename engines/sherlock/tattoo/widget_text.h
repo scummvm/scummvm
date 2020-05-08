@@ -32,7 +32,7 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetText: public WidgetBase {
+class WidgetText : public WidgetBase {
 private:
 	/**
 	 * Center the area the dialog will be drawn on above a given speaker
@@ -43,8 +43,10 @@ private:
 	 * Build up the text dialog based on the previously set bounds
 	 */
 	void render(const Common::String &str);
+
 public:
 	Common::String _remainingText;
+
 public:
 	WidgetText(SherlockEngine *vm);
 	~WidgetText() override {}
@@ -58,6 +60,7 @@ public:
 class WidgetMessage : public WidgetBase {
 private:
 	int _menuCounter;
+
 public:
 	WidgetMessage(SherlockEngine *vm);
 	~WidgetMessage() override {}

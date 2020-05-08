@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CNote, CCarry)
-	ON_MESSAGE(MouseDoubleClickMsg)
+ON_MESSAGE(MouseDoubleClickMsg)
 END_MESSAGE_MAP()
 
 CNote::CNote() : CCarry(), _field138(1) {

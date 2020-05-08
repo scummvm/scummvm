@@ -30,21 +30,33 @@ namespace CryOmni3D {
 class Omni3DManager {
 public:
 	Omni3DManager() : _vfov(0), _alpha(0), _beta(0), _xSpeed(0), _ySpeed(0), _alphaMin(0), _alphaMax(0),
-		_betaMin(0), _betaMax(0), _helperValue(0), _dirty(true), _dirtyCoords(true),
-		_sourceSurface(nullptr) {}
+	                  _betaMin(0), _betaMax(0), _helperValue(0), _dirty(true), _dirtyCoords(true),
+	                  _sourceSurface(nullptr) {}
 	virtual ~Omni3DManager();
 
 	void init(double hfov);
 
-	void setSourceSurface(const Graphics::Surface *surface) { _sourceSurface = surface; _dirty = true; }
+	void setSourceSurface(const Graphics::Surface *surface) {
+		_sourceSurface = surface;
+		_dirty = true;
+	}
 
 	void clearConstraints();
-	void setAlphaConstraints(double alphaMin, double alphaMax) { _alphaMin = alphaMin; _alphaMax = alphaMax; }
+	void setAlphaConstraints(double alphaMin, double alphaMax) {
+		_alphaMin = alphaMin;
+		_alphaMax = alphaMax;
+	}
 	void setBetaMinConstraint(double betaMin) { _betaMin = betaMin; }
 	void setBetaMaxConstraint(double betaMax) { _betaMax = betaMax; }
 
-	void setAlpha(double alpha) { _alpha = alpha; _dirtyCoords = true; }
-	void setBeta(double beta) { _beta = beta; _dirtyCoords = true; }
+	void setAlpha(double alpha) {
+		_alpha = alpha;
+		_dirtyCoords = true;
+	}
+	void setBeta(double beta) {
+		_beta = beta;
+		_dirtyCoords = true;
+	}
 	void updateCoords(int xDelta, int yDelta, bool useOldSpeed);
 
 	double getAlpha() const { return _alpha; }

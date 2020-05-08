@@ -55,9 +55,9 @@ extern scriptInstanceStruct *currentScriptPtr;
 void setupFuncArray();
 int8 getByteFromScript();
 
-int removeScript(int overlay, int idx, scriptInstanceStruct * headPtr);
+int removeScript(int overlay, int idx, scriptInstanceStruct *headPtr);
 uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overlayNumber, int16 param, int16 arg0, int16 arg1, int16 arg2, scriptTypeEnum scriptType);
-void manageScripts(scriptInstanceStruct * scriptHandle);
+void manageScripts(scriptInstanceStruct *scriptHandle);
 
 } // End of namespace Cruise
 

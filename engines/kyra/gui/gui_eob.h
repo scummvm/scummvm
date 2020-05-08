@@ -44,6 +44,7 @@ class Screen_EoB;
 class GUI_EoB : public GUI {
 	friend class EoBCoreEngine;
 	friend class CharacterGenerator;
+
 public:
 	GUI_EoB(EoBCoreEngine *vm);
 	~GUI_EoB() override;

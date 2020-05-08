@@ -41,7 +41,7 @@
 namespace Audio {
 class AudioStream;
 class QueuingAudioStream;
-}
+} // namespace Audio
 
 namespace Common {
 class SeekableReadStream;

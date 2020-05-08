@@ -41,17 +41,17 @@
 namespace Glk {
 namespace Archetype {
 
-const int BUCKETS = 27;		// 1 per letter of alphabet, plus the underscore
+const int BUCKETS = 27; // 1 per letter of alphabet, plus the underscore
 
 struct IdRecType {
 	ClassifyType id_kind;
-	int id_integer;			// What integer the ID gets written as
-	int id_index;			// The ID's index in the ID table
+	int id_integer; // What integer the ID gets written as
+	int id_index;   // The ID's index in the ID table
 	StringPtr id_name;
 	IdRecType *next;
 
 	IdRecType() : id_kind(UNDEFINED_ID), id_integer(0), id_index(0),
-		id_name(nullptr), next(nullptr) {}
+	              id_name(nullptr), next(nullptr) {}
 };
 typedef IdRecType *IdRecPtr;
 

@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMaitreDBody, CMaitreDProdReceptor)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(AnimateMaitreDMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(AnimateMaitreDMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 void CMaitreDBody::save(SimpleFile *file, int indent) {
@@ -49,12 +49,10 @@ bool CMaitreDBody::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CMaitreDBody::AnimateMaitreDMsg(CAnimateMaitreDMsg *msg) {
 	static const char *const ARMED_CLIPS[5] = {
-		"Talking 1", "Talking 2", "Talking 3", "Talking 4", nullptr
-	};
+	    "Talking 1", "Talking 2", "Talking 3", "Talking 4", nullptr};
 	static const char *const UNARMED_CLIPS[5] = {
-		"Armless Talking 1", "Armless Talking 2", "Armless Talking 3",
-		"Armless Talking 4", nullptr
-	};
+	    "Armless Talking 1", "Armless Talking 2", "Armless Talking 3",
+	    "Armless Talking 4", nullptr};
 
 	if (!hasActiveMovie()) {
 		playRandomClip(_armed ? ARMED_CLIPS : UNARMED_CLIPS);

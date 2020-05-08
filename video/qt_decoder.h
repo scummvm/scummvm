@@ -83,7 +83,7 @@ private:
 
 	Graphics::Surface *_scaledSurface;
 	void scaleSurface(const Graphics::Surface *src, Graphics::Surface *dst,
-			const Common::Rational &scaleFactorX, const Common::Rational &scaleFactorY);
+	                  const Common::Rational &scaleFactorX, const Common::Rational &scaleFactorY);
 
 	class VideoSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:

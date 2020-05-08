@@ -55,11 +55,11 @@ public:
 	void cheatWin();
 
 private:
-	static const uint kEvilFishCount  =  3;
-	static const uint kDecorFishCount =  3;
-	static const uint kMaxShotCount   = 10;
+	static const uint kEvilFishCount = 3;
+	static const uint kDecorFishCount = 3;
+	static const uint kMaxShotCount = 10;
 
-	static const uint   kEvilFishTypeCount = 3;
+	static const uint kEvilFishTypeCount = 3;
 	static const uint16 kEvilFishTypes[kEvilFishTypeCount][5];
 
 	struct PlantLevel {
@@ -68,7 +68,7 @@ private:
 		const uint16 *plants;
 	};
 
-	static const uint kPlantLevelCount    = 3;
+	static const uint kPlantLevelCount = 3;
 	static const uint kPlantPerLevelCount = 5;
 
 	static const uint16 kPlantLevel1[];
@@ -119,10 +119,10 @@ private:
 	ANIObject *_lungs;
 	ANIObject *_heart;
 
-	ManagedEvilFish  _evilFish[kEvilFishCount];
+	ManagedEvilFish _evilFish[kEvilFishCount];
 	ManagedDecorFish _decorFish[kDecorFishCount];
-	ManagedPlant     _plant[kPlantCount];
-	ManagedPearl     _pearl;
+	ManagedPlant _plant[kPlantCount];
+	ManagedPearl _pearl;
 
 	Oko *_oko;
 
@@ -152,7 +152,6 @@ private:
 
 	bool _hasPearlLocation;
 	bool _isPlaying;
-
 
 	void init();
 	void deinit();

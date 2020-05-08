@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/save/obj_list.h"
-#include "ultima/nuvie/core/weather.h"
 #include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/weather.h"
+#include "ultima/nuvie/files/nuvie_io_file.h"
+#include "ultima/nuvie/save/obj_list.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -43,13 +43,12 @@ GameClock::GameClock(Configuration *cfg, nuvie_game_t type) {
 }
 
 GameClock::~GameClock() {
-
 }
 
 void GameClock::init() {
 	move_counter = 0;
 	time_counter = 0;
-// tick_counter = 0;
+	// tick_counter = 0;
 
 	minute = 0;
 	hour = 0;
@@ -57,7 +56,7 @@ void GameClock::init() {
 	month = 0;
 	year = 0;
 	rest_counter = 0;
-//active = true;
+	//active = true;
 	num_timers = 0;
 }
 
@@ -111,9 +110,9 @@ void GameClock::load_MD_timers(NuvieIO *objlist) {
 	for (uint8 i = 0; i < GAMECLOCK_NUM_TIMERS; i++) {
 		uint8 byte = objlist->read1();
 
-		timers.push_back((uint8)(byte & 0xf));   //purple
-		timers.push_back((uint8)(byte >> 4));    //green
-		timers.push_back((uint8)(objlist->read1() & 0xf));    //brown
+		timers.push_back((uint8)(byte & 0xf));             //purple
+		timers.push_back((uint8)(byte >> 4));              //green
+		timers.push_back((uint8)(objlist->read1() & 0xf)); //brown
 	}
 
 	objlist->seek(OBJLIST_OFFSET_MD_BLUE_BERRY_COUNTER);
@@ -167,7 +166,8 @@ void GameClock::inc_move_counter() {
 	/* if((move_counter % GAMECLOCK_TICKS_PER_MINUTE) == 0)
 	   inc_minute();
 	 else
-	   tick_counter++;*/ // commented out because time is updated independently
+	   tick_counter++;*/
+	// commented out because time is updated independently
 
 	return;
 }
@@ -200,7 +200,7 @@ void GameClock::inc_minute(uint16 amount) {
 		time_counter += amount;
 	}
 
-//update_timers(1);
+	//update_timers(1);
 	return;
 }
 
@@ -215,7 +215,6 @@ void GameClock::inc_hour() {
 		hour++;
 		time_counter += 60;
 	}
-
 
 	if (game_type == NUVIE_GAME_U6)
 		Game::get_game()->get_weather()->update_moongates();
@@ -234,7 +233,6 @@ void GameClock::inc_day() {
 	update_day_of_week();
 
 	DEBUG(0, LEVEL_INFORMATIONAL, "%s\n", get_date_string());
-
 
 	return;
 }

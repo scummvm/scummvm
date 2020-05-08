@@ -75,4 +75,4 @@ Common::String SpecialShowCommand::debugString() const {
 	return Common::String::format("SPECIALSHOW %s", modes[static_cast<int>(_mode)]);
 }
 
-}
+} // namespace MutationOfJB

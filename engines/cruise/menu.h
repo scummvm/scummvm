@@ -37,11 +37,11 @@ struct menuStruct {
 extern menuStruct *menuTable[8];
 
 menuStruct *createMenu(int X, int Y, const char *menuName);
-void addSelectableMenuEntry(int var0, int var1, menuStruct * pMenu, int var2,
+void addSelectableMenuEntry(int var0, int var1, menuStruct *pMenu, int var2,
                             int color, const char *menuText);
-void updateMenuMouse(int mouseX, int mouseY, menuStruct * pMenu);
-int processMenu(menuStruct * pMenu);
-void freeMenu(menuStruct * pMenu);
+void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu);
+int processMenu(menuStruct *pMenu);
+void freeMenu(menuStruct *pMenu);
 int playerMenu(int menuX, int menuY);
 
 } // End of namespace Cruise

@@ -22,19 +22,18 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
+#include "backends/networking/curl/sessionrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
-#include "backends/networking/curl/sessionrequest.h"
 #include "common/debug.h"
 #include "common/json.h"
+#include <curl/curl.h>
 
 namespace Networking {
 
-SessionRequest::SessionRequest(Common::String url, DataCallback cb, ErrorCallback ecb):
-	CurlRequest(cb, ecb, url), _contentsStream(DisposeAfterUse::YES),
-	_buffer(new byte[CURL_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr),
-	_started(false), _complete(false), _success(false) {
+SessionRequest::SessionRequest(Common::String url, DataCallback cb, ErrorCallback ecb) : CurlRequest(cb, ecb, url), _contentsStream(DisposeAfterUse::YES),
+                                                                                         _buffer(new byte[CURL_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr),
+                                                                                         _started(false), _complete(false), _success(false) {
 
 	// automatically go under ConnMan control so nobody would be able to leak the memory
 	// but, we don't need it to be working just yet
@@ -117,7 +116,8 @@ void SessionRequest::reuse(Common::String url, DataCallback cb, ErrorCallback ec
 }
 
 void SessionRequest::handle() {
-	if (!_stream) _stream = makeStream();
+	if (!_stream)
+		_stream = makeStream();
 
 	if (_stream) {
 		uint32 readBytes = _stream->read(_buffer, CURL_SESSION_REQUEST_BUFFER_SIZE);
@@ -125,7 +125,7 @@ void SessionRequest::handle() {
 			if (_contentsStream.write(_buffer, readBytes) != readBytes)
 				warning("SessionRequest: unable to write all the bytes into MemoryWriteStreamDynamic");
 
-		if (_stream->eos()) {			
+		if (_stream->eos()) {
 			finishSuccess();
 		}
 	}

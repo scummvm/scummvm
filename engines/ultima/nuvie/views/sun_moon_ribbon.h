@@ -45,7 +45,6 @@ public:
 
 	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
 
-
 	void extend() {
 		retracted = false;
 	}

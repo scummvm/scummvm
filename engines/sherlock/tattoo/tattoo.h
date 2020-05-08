@@ -32,24 +32,24 @@ namespace Sherlock {
 namespace Tattoo {
 
 enum {
-	INV_FOREGROUND		= 167,
-	INV_BACKGROUND		= 1,
-	INFO_FOREGROUND		= 233,
-	INFO_BACKGROUND		= 239,
-	INFO_TOP			= 185,
-	INFO_MIDDLE			= 186,
-	INFO_BOTTOM			= 188,
-	MENU_BACKGROUND		= 225,
-	COMMAND_FOREGROUND	= 15,
-	COMMAND_HIGHLIGHTED	= 254,
-	COMMAND_NULL		= 193,
-	PEN_COLOR			= 248,
-	PEN_HIGHLIGHT_COLOR	= 129
+	INV_FOREGROUND = 167,
+	INV_BACKGROUND = 1,
+	INFO_FOREGROUND = 233,
+	INFO_BACKGROUND = 239,
+	INFO_TOP = 185,
+	INFO_MIDDLE = 186,
+	INFO_BOTTOM = 188,
+	MENU_BACKGROUND = 225,
+	COMMAND_FOREGROUND = 15,
+	COMMAND_HIGHLIGHTED = 254,
+	COMMAND_NULL = 193,
+	PEN_COLOR = 248,
+	PEN_HIGHLIGHT_COLOR = 129
 };
 
 enum {
-	FLAG_PLAYER_IS_HOLMES	= 76,
-	FLAG_ALT_MAP_MUSIC		= 525
+	FLAG_PLAYER_IS_HOLMES = 76,
+	FLAG_ALT_MAP_MUSIC = 525
 };
 
 class TattooEngine : public SherlockEngine {
@@ -66,6 +66,7 @@ private:
 	 * Load the initial inventory
 	 */
 	void loadInventory();
+
 protected:
 	/**
 	 * Initialize the engine
@@ -83,11 +84,13 @@ protected:
 	 * Load configuration options
 	 */
 	void loadConfig() override;
+
 public:
 	bool _runningProlog;
 	bool _fastMode, _allowFastMode;
 	bool _transparentMenus;
 	bool _textWindowsOn;
+
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	~TattooEngine() override;

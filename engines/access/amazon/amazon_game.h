@@ -65,6 +65,7 @@ protected:
 	* Synchronize savegame data
 	*/
 	void synchronize(Common::Serializer &s) override;
+
 public:
 	InactivePlayer _inactive;
 	bool _charSegSwitch;
@@ -106,6 +107,7 @@ public:
 	int _updateChapter;
 	int _oldTitleChapter;
 	int _iqValue;
+
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 

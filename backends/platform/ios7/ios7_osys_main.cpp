@@ -23,56 +23,54 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <unistd.h>
 #include <pthread.h>
 #include <string.h>
+#include <unistd.h>
 
-#include <sys/time.h>
 #include <QuartzCore/QuartzCore.h>
+#include <sys/time.h>
 
-#include "common/scummsys.h"
-#include "common/util.h"
-#include "common/rect.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/rect.h"
+#include "common/scummsys.h"
+#include "common/util.h"
 
 #include "base/main.h"
 
-#include "backends/saves/default/default-saves.h"
-#include "backends/timer/default/default-timer.h"
-#include "backends/fs/chroot/chroot-fs-factory.h"
-#include "backends/fs/posix/posix-fs.h"
 #include "audio/mixer.h"
 #include "audio/mixer_intern.h"
+#include "backends/fs/chroot/chroot-fs-factory.h"
+#include "backends/fs/posix/posix-fs.h"
+#include "backends/saves/default/default-saves.h"
+#include "backends/timer/default/default-timer.h"
 
 #include "graphics/scaler.h"
 #include "graphics/scaler/aspect.h"
 
 #include "backends/platform/ios7/ios7_osys_main.h"
 
-
 const OSystem::GraphicsMode OSystem_iOS7::s_supportedGraphicsModes[] = {
-	{ "none", "Normal", kGraphicsModeNone },
+    {"none", "Normal", kGraphicsModeNone},
 
 #ifdef ENABLE_IOS7_SCALERS
 #ifdef USE_SCALERS
-//	{"2x", "2x", GFX_DOUBLESIZE},
-//	{"3x", "3x", GFX_TRIPLESIZE},
-	{ "2xsai", "2xSAI", kGraphicsMode2xSaI},
-	{"super2xsai", "Super2xSAI", kGraphicsModeSuper2xSaI},
-	{"supereagle", "SuperEagle", kGraphicsModeSuperEagle},
-	{"advmame2x", "AdvMAME2x", kGraphicsModeAdvMame2x},
-	{"advmame3x", "AdvMAME3x", kGraphicsModeAdvMame3x},
+    //	{"2x", "2x", GFX_DOUBLESIZE},
+    //	{"3x", "3x", GFX_TRIPLESIZE},
+    {"2xsai", "2xSAI", kGraphicsMode2xSaI},
+    {"super2xsai", "Super2xSAI", kGraphicsModeSuper2xSaI},
+    {"supereagle", "SuperEagle", kGraphicsModeSuperEagle},
+    {"advmame2x", "AdvMAME2x", kGraphicsModeAdvMame2x},
+    {"advmame3x", "AdvMAME3x", kGraphicsModeAdvMame3x},
 #ifdef USE_HQ_SCALERS
-	{"hq2x", "HQ2x", kGraphicsModeHQ2x},
-	{"hq3x", "HQ3x", kGraphicsModeHQ3x},
+    {"hq2x", "HQ2x", kGraphicsModeHQ2x},
+    {"hq3x", "HQ3x", kGraphicsModeHQ3x},
 #endif
-	{"tv2x", "TV2x", kGraphicsModeTV2x},
-	{"dotmatrix", "DotMatrix", kGraphicsModeDotMatrix},
+    {"tv2x", "TV2x", kGraphicsModeTV2x},
+    {"dotmatrix", "DotMatrix", kGraphicsModeDotMatrix},
 #endif
 #endif
-	{ 0, 0, 0 }
-};
+    {0, 0, 0}};
 
 AQCallbackStruct OSystem_iOS7::s_AudioQueue;
 SoundProc OSystem_iOS7::s_soundCallback = NULL;
@@ -81,10 +79,10 @@ void *OSystem_iOS7::s_soundParam = NULL;
 #ifdef IPHONE_SANDBOXED
 class SandboxedSaveFileManager : public DefaultSaveFileManager {
 	Common::String _sandboxRootPath;
-public:
 
+public:
 	SandboxedSaveFileManager(Common::String sandboxRootPath, Common::String defaultSavepath)
-			: DefaultSaveFileManager(defaultSavepath), _sandboxRootPath(sandboxRootPath) {
+	    : DefaultSaveFileManager(defaultSavepath), _sandboxRootPath(sandboxRootPath) {
 	}
 
 	virtual bool removeSavefile(const Common::String &filename) override {
@@ -93,10 +91,10 @@ public:
 
 		if (remove(realFilePath.c_str()) != 0) {
 			if (errno == EACCES)
-				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+chrootedFile);
+				setError(Common::kWritePermissionDenied, "Search or write permission denied: " + chrootedFile);
 
 			if (errno == ENOENT)
-				setError(Common::kPathDoesNotExist, "removeSavefile: '"+chrootedFile+"' does not exist or path is invalid");
+				setError(Common::kPathDoesNotExist, "removeSavefile: '" + chrootedFile + "' does not exist or path is invalid");
 			return false;
 		} else {
 			return true;
@@ -105,13 +103,12 @@ public:
 };
 #endif
 
-OSystem_iOS7::OSystem_iOS7() :
-	_mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
-	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
-	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
-	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
-	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
+OSystem_iOS7::OSystem_iOS7() : _mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
+                               _mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
+                               _screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
+                               _gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
+                               _mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
+                               _mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iOS7_isBigDevice();
 #ifdef IPHONE_SANDBOXED
@@ -243,7 +240,7 @@ void OSystem_iOS7::suspendLoop() {
 
 uint32 OSystem_iOS7::getMillis(bool skipRecord) {
 	CFTimeInterval timeInSeconds = CACurrentMediaTime();
-	return (uint32) ((timeInSeconds - _startTime) * 1000.0) - _timeSuspended;
+	return (uint32)((timeInSeconds - _startTime) * 1000.0) - _timeSuspended;
 }
 
 void OSystem_iOS7::delayMillis(uint msecs) {
@@ -256,7 +253,7 @@ OSystem::MutexRef OSystem_iOS7::createMutex(void) {
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
 
-	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_t *mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
 	if (pthread_mutex_init(mutex, &attr) != 0) {
 		printf("pthread_mutex_init() failed!\n");
 		free(mutex);
@@ -267,25 +264,24 @@ OSystem::MutexRef OSystem_iOS7::createMutex(void) {
 }
 
 void OSystem_iOS7::lockMutex(MutexRef mutex) {
-	if (pthread_mutex_lock((pthread_mutex_t *) mutex) != 0) {
+	if (pthread_mutex_lock((pthread_mutex_t *)mutex) != 0) {
 		printf("pthread_mutex_lock() failed!\n");
 	}
 }
 
 void OSystem_iOS7::unlockMutex(MutexRef mutex) {
-	if (pthread_mutex_unlock((pthread_mutex_t *) mutex) != 0) {
+	if (pthread_mutex_unlock((pthread_mutex_t *)mutex) != 0) {
 		printf("pthread_mutex_unlock() failed!\n");
 	}
 }
 
 void OSystem_iOS7::deleteMutex(MutexRef mutex) {
-	if (pthread_mutex_destroy((pthread_mutex_t *) mutex) != 0) {
+	if (pthread_mutex_destroy((pthread_mutex_t *)mutex) != 0) {
 		printf("pthread_mutex_destroy() failed!\n");
 	} else {
 		free(mutex);
 	}
 }
-
 
 void OSystem_iOS7::setTimerCallback(TimerProc callback, int interval) {
 	//printf("setTimerCallback()\n");
@@ -353,7 +349,7 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 }
 
 bool iOS7_touchpadModeEnabled() {
-	OSystem_iOS7 *sys = (OSystem_iOS7 *) g_system;
+	OSystem_iOS7 *sys = (OSystem_iOS7 *)g_system;
 	return sys && sys->touchpadModeEnabled();
 }
 
@@ -391,8 +387,8 @@ void iOS7_main(int argc, char **argv) {
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
-	scummvm_main(argc, (const char *const *) argv);
-	g_system->quit();       // TODO: Consider removing / replacing this!
+	scummvm_main(argc, (const char *const *)argv);
+	g_system->quit(); // TODO: Consider removing / replacing this!
 
 	if (newfp != NULL) {
 		//*stdout = NULL;

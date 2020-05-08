@@ -23,9 +23,9 @@
 #ifndef COMMON_TIMER_H
 #define COMMON_TIMER_H
 
+#include "common/noncopyable.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "common/noncopyable.h"
 
 namespace Common {
 

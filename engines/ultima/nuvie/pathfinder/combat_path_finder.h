@@ -34,7 +34,7 @@ typedef enum {
 	PATHFINDER_FLEE
 } CombatPathFinderMode;
 
-class CombatPathFinder: public ActorPathFinder {
+class CombatPathFinder : public ActorPathFinder {
 protected:
 	Actor *target;
 	CombatPathFinderMode target_mode;

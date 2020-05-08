@@ -29,15 +29,15 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CMissiveOMat, CGameObject)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(KeyCharMsg)
-	ON_MESSAGE(TimerMsg)
-	ON_MESSAGE(MissiveOMatActionMsg)
-	ON_MESSAGE(LeaveViewMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(KeyCharMsg)
+ON_MESSAGE(TimerMsg)
+ON_MESSAGE(MissiveOMatActionMsg)
+ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
 CMissiveOMat::CMissiveOMat() : CGameObject(), _mode(MMODE_USERNAME),
-		_totalMessages(0), _messageNum(0), _account(NO_ACCOUNT) {
+                               _totalMessages(0), _messageNum(0), _account(NO_ACCOUNT) {
 	// Load data for the messages, their from and to names
 	loadArray(_welcomeMessages, "TEXT/MISSIVEOMAT/WELCOME", 3);
 	loadArray(_messages, "TEXT/MISSIVEOMAT/MESSAGES", 58);
@@ -143,13 +143,13 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			}
 
 			// Check whether a valid username and password has been entered
-			static const char *const PASSWORDS_EN[3] = { "other", "this", "that" };
-			static const char *const PASSWORDS_DE[3] = { "t'ok", "t'ik", "t'ak" };
+			static const char *const PASSWORDS_EN[3] = {"other", "this", "that"};
+			static const char *const PASSWORDS_DE[3] = {"t'ok", "t'ik", "t'ak"};
 			static const char *const *pwds = TRANSLATE(PASSWORDS_EN, PASSWORDS_DE);
 
 			bool validFlag = false;
 			if ((_username == "leovinus" && _password == pwds[0]) ||
-					(_username == "scummvm")) {
+			    (_username == "scummvm")) {
 				validFlag = true;
 				_account = LEOVINUS;
 			} else if (_username == "scraliontis" && _password == pwds[1]) {
@@ -299,9 +299,9 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 	case REDRAW_MESSAGE:
 		if (welcome) {
 			CString str = CString::format(
-				"Missive %d of %d.\nFrom: %s\nTo: %s\n\n%s\n",
-				_messageNum + 1, _totalMessages, _from[_account * 19 + _messageNum].c_str(),
-				_to[_account * 19 + _messageNum].c_str(), _messages[_account * 19 + _messageNum].c_str());
+			    "Missive %d of %d.\nFrom: %s\nTo: %s\n\n%s\n",
+			    _messageNum + 1, _totalMessages, _from[_account * 19 + _messageNum].c_str(),
+			    _to[_account * 19 + _messageNum].c_str(), _messages[_account * 19 + _messageNum].c_str());
 
 			welcome->setText(str);
 		}
@@ -314,11 +314,10 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		_account = NO_ACCOUNT;
 
 		static const char *const WIDGETS[8] = {
-			"MissiveOMat Login Control", "MissiveOMat Welcome",
-			"MissiveOMat OK Button", "MissiveOMat Next Button",
-			"MissiveOMat Prev Button", "MissiveOMat Logout Button",
-			"MissiveOMat ScrollDown Button", "MissiveOMat ScrollUp Button"
-		};
+		    "MissiveOMat Login Control", "MissiveOMat Welcome",
+		    "MissiveOMat OK Button", "MissiveOMat Next Button",
+		    "MissiveOMat Prev Button", "MissiveOMat Logout Button",
+		    "MissiveOMat ScrollDown Button", "MissiveOMat ScrollUp Button"};
 		CEditControlMsg editMsg;
 
 		for (int idx = 0; idx < 8; ++idx) {

@@ -25,16 +25,16 @@
 namespace BladeRunner {
 
 enum kDR01Loops {
-	kDR01LoopBikerInshot          = 0, //   0 -  74
-	kDR01LoopPanFromDR02          = 1, //  75 -  88
-	kDR01LoopPanFromDR04Pre       = 2, //  89 - 116
-	kDR01LoopPanFromDR04Post      = 3, // 117 - 144
-	kDR01LoopMainLoop             = 4  // 145 - 205
+	kDR01LoopBikerInshot = 0,     //   0 -  74
+	kDR01LoopPanFromDR02 = 1,     //  75 -  88
+	kDR01LoopPanFromDR04Pre = 2,  //  89 - 116
+	kDR01LoopPanFromDR04Post = 3, // 117 - 144
+	kDR01LoopMainLoop = 4         // 145 - 205
 };
 
 void SceneScriptDR01::InitializeScene() {
 	if (Game_Flag_Query(kFlagDR02toDR01)) {
-		Setup_Scene_Information(  -835.0f, -0.04f, -118.0f, 664);
+		Setup_Scene_Information(-835.0f, -0.04f, -118.0f, 664);
 	} else if (Game_Flag_Query(kFlagDR04toDR01)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -42,18 +42,16 @@ void SceneScriptDR01::InitializeScene() {
 		// Disable rogue barrel flame effect during the pan from DR04 to DR01
 		Screen_Effect_Skip(0, false);
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		Setup_Scene_Information(  -711.0f, -0.04f,   70.0f, 307);
+		Setup_Scene_Information(-711.0f, -0.04f, 70.0f, 307);
 	} else if (Game_Flag_Query(kFlagCT11toDR01)) {
 		Setup_Scene_Information(-1765.28f, -0.04f, -23.82f, 269);
 	} else {
-		Setup_Scene_Information(  -386.0f, -0.04f,  -82.0f, 792);
+		Setup_Scene_Information(-386.0f, -0.04f, -82.0f, 792);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 240, 60, 450, 250, 0);
-	Scene_Exit_Add_2D_Exit(1,   0,   0, 30, 479, 3);
-	if (Game_Flag_Query(kFlagSpinnerAtDR01)
-	 && Global_Variable_Query(kVariableChapter) < 4
-	) {
+	Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
+	if (Game_Flag_Query(kFlagSpinnerAtDR01) && Global_Variable_Query(kVariableChapter) < 4) {
 		Scene_Exit_Add_2D_Exit(2, 610, 0, 639, 479, 1);
 	}
 	if (Global_Variable_Query(kVariableChapter) >= 3) {
@@ -61,27 +59,23 @@ void SceneScriptDR01::InitializeScene() {
 	}
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
-	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER3, 12, 85, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBIGFAN2, 14, 85, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 5, 80, 16, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 5, 80, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDR1, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDR2, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDR3, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 
-	if (Game_Flag_Query(kFlagDR05BombExploded)
-	 && Game_Flag_Query(kFlagDR04toDR01)
-	) {
+	if (Game_Flag_Query(kFlagDR05BombExploded) && Game_Flag_Query(kFlagDR04toDR01)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopPanFromDR04Post, false);
 		Scene_Loop_Set_Default(kDR01LoopMainLoop);
-	} else if (!Game_Flag_Query(kFlagDR05BombExploded)
-	        &&  Game_Flag_Query(kFlagDR04toDR01)
-	) {
+	} else if (!Game_Flag_Query(kFlagDR05BombExploded) && Game_Flag_Query(kFlagDR04toDR01)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopPanFromDR04Pre, false);
 		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else if (Game_Flag_Query(kFlagDR02toDR01)) {
@@ -90,9 +84,7 @@ void SceneScriptDR01::InitializeScene() {
 	} else if (Game_Flag_Query(kFlagCT11toDR01)) {
 		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else {
-		if ((!Game_Flag_Query(kFlagDR01Visited) && Global_Variable_Query(kVariableChapter) == 2)
-		     || Random_Query(1, 3) == 1)
-		{
+		if ((!Game_Flag_Query(kFlagDR01Visited) && Global_Variable_Query(kVariableChapter) == 2) || Random_Query(1, 3) == 1) {
 			// enhancement: don't always play after first visit
 			// But first visit in 2nd chapter should always show it.
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopBikerInshot, false);
@@ -150,7 +142,7 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 			}
 			if (!exitFlag) {
 				if (fromFarTop) {
-					Async_Actor_Walk_To_XYZ(kActorMcCoy,  -1066.51f, 0.51f, -110.60f, 0, false);
+					Async_Actor_Walk_To_XYZ(kActorMcCoy, -1066.51f, 0.51f, -110.60f, 0, false);
 				} else {
 					Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
 				}
@@ -295,7 +287,7 @@ void SceneScriptDR01::SceneFrameAdvanced(int frame) {
 	// Part of the barrel flame glitch bug fix:
 	// Disable rogue barrel flame effect during the pan from DR04 to DR01
 	// loops: kDR01LoopPanFromDR04Pre, kDR01LoopPanFromDR04Post
-	if (frame == 89 || frame == 117 ){
+	if (frame == 89 || frame == 117) {
 		Screen_Effect_Skip(0, false);
 	}
 	// And restore the flame effect at the end of the loops
@@ -311,9 +303,7 @@ void SceneScriptDR01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptDR01::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagCT11toDR01)) {
 		Async_Actor_Walk_To_XYZ(kActorMcCoy, -757.15f, -0.04f, 24.64f, 0, false);
-	} else if (!Game_Flag_Query(kFlagDR02toDR01)
-	        && !Game_Flag_Query(kFlagDR04toDR01)
-	) {
+	} else if (!Game_Flag_Query(kFlagDR02toDR01) && !Game_Flag_Query(kFlagDR04toDR01)) {
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, false, false);
 		if (!Game_Flag_Query(kFlagDR01Visited)) {
@@ -323,10 +313,7 @@ void SceneScriptDR01::PlayerWalkedIn() {
 			// in imported original save games (or "exported" save games for the original)
 			if (_vm->_cutContent) {
 				if (
-					Global_Variable_Query(kVariableChapter) == 2
-					&& !Game_Flag_Query(kFlagDR03ChewTalk1)
-					&& !Game_Flag_Query(kFlagDR05MorajiTalk)
-					&& !Game_Flag_Query(kFlagDirectorsCut)) {
+				    Global_Variable_Query(kVariableChapter) == 2 && !Game_Flag_Query(kFlagDR03ChewTalk1) && !Game_Flag_Query(kFlagDR05MorajiTalk) && !Game_Flag_Query(kFlagDirectorsCut)) {
 					Actor_Voice_Over(600, kActorVoiceOver);
 					Actor_Voice_Over(610, kActorVoiceOver);
 					Actor_Voice_Over(620, kActorVoiceOver);
@@ -344,10 +331,7 @@ void SceneScriptDR01::PlayerWalkedIn() {
 }
 
 void SceneScriptDR01::PlayerWalkedOut() {
-	if (!Game_Flag_Query(kFlagDR01toDR04)
-	 && !Game_Flag_Query(kFlagDR01toDR02)
-	 && !Game_Flag_Query(kFlagDR01toCT11)
-	) {
+	if (!Game_Flag_Query(kFlagDR01toDR04) && !Game_Flag_Query(kFlagDR01toDR02) && !Game_Flag_Query(kFlagDR01toCT11)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeInside2, true, -1);
@@ -356,7 +340,7 @@ void SceneScriptDR01::PlayerWalkedOut() {
 		// add another transition to make it less abrupt
 		if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
 			// but don't play this extra outtake when going to Tyrell Building
-			Outtake_Play(kOuttakeAway1,   true, -1);
+			Outtake_Play(kOuttakeAway1, true, -1);
 		}
 
 		// Part of the barrel flame glitch bug fix:

@@ -33,8 +33,8 @@
 
 #include "image/pcx.h"
 
-#include "tucker/tucker.h"
 #include "tucker/graphics.h"
+#include "tucker/tucker.h"
 
 namespace Tucker {
 
@@ -50,16 +50,15 @@ struct CompressedSoundFile {
 
 static const CompressedSoundFile compressedSoundFilesTable[] = {
 #ifdef USE_FLAC
-	{ "TUCKER.SOF", Audio::makeFLACStream },
+    {"TUCKER.SOF", Audio::makeFLACStream},
 #endif
 #ifdef USE_VORBIS
-	{ "TUCKER.SOG", Audio::makeVorbisStream },
+    {"TUCKER.SOG", Audio::makeVorbisStream},
 #endif
 #ifdef USE_MAD
-	{ "TUCKER.SO3", Audio::makeMP3Stream },
+    {"TUCKER.SO3", Audio::makeMP3Stream},
 #endif
-	{ nullptr,      nullptr }
-};
+    {nullptr, nullptr}};
 
 static void decodeData(uint8 *data, int dataSize) {
 	for (int i = 0; i < dataSize; ++i) {
@@ -89,9 +88,8 @@ enum DataToken {
 
 class DataTokenizer {
 public:
-
 	DataTokenizer(uint8 *data, int dataSize, bool stripComments = false)
-		: _data(data), _dataSize(dataSize), _pos(0) {
+	    : _data(data), _dataSize(dataSize), _pos(0) {
 		if (stripComments) {
 			stripData(_data, _dataSize);
 		}
@@ -424,7 +422,7 @@ void TuckerEngine::loadBudSpr() {
 
 int TuckerEngine::loadCTable01(int *framesCount) {
 	loadFile("ctable01.c", _loadTempBuf);
-	DataTokenizer t(_loadTempBuf,  _fileLoadSize);
+	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	int lastSpriteNum = 0;
 	int count = 0;
 	if (t.findIndex(0)) {
@@ -542,9 +540,7 @@ void TuckerEngine::loadObj() {
 	if (_location <= kLocationWarehouseCutscene) {
 		_part = kPartOne;
 		_speechSoundBaseNum = 2639;
-	} else if ((                                        _location <= kLocationFarDocks)
-	        || (_location >= kLocationComputerScreen && _location <= kLocationSeedyStreetCutscene)
-	        || (_location >= kLocationElvisCutscene  && _location <= kLocationJesusCutscene2)) {
+	} else if ((_location <= kLocationFarDocks) || (_location >= kLocationComputerScreen && _location <= kLocationSeedyStreetCutscene) || (_location >= kLocationElvisCutscene && _location <= kLocationJesusCutscene2)) {
 		_part = kPartTwo;
 		_speechSoundBaseNum = 2679;
 	} else {
@@ -915,8 +911,8 @@ void TuckerEngine::loadFx() {
 					continue;
 				}
 
-				assert(s->_num >= 0 && s ->_num < i);
-				s->_num  = _locationSoundsTable[s->_num]._num;
+				assert(s->_num >= 0 && s->_num < i);
+				s->_num = _locationSoundsTable[s->_num]._num;
 				s->_type = 6;
 			}
 		}
@@ -941,7 +937,6 @@ void TuckerEngine::loadFx() {
 	} else {
 		error("loadFx() - Index not found for location %d", _location);
 	}
-
 }
 
 void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, bool loop, Audio::SoundHandle *handle) {
@@ -986,7 +981,7 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 	if (stream) {
 		_mixer->stopHandle(*handle);
 		_mixer->playStream(type, handle, Audio::makeLoopingAudioStream(stream, loop ? 0 : 1),
-		                        -1, scaleMixerVolume(volume, kMaxSoundVolume));
+		                   -1, scaleMixerVolume(volume, kMaxSoundVolume));
 	}
 }
 
@@ -1045,13 +1040,13 @@ void TuckerEngine::loadActionsTable() {
 					break;
 				}
 			}
-			 _csDataTableCount = 0;
+			_csDataTableCount = 0;
 		}
 		if (_conversationOptionsCount != 0) {
 			if (_leftMouseButtonPressed && _nextTableToLoadIndex != -1) {
 				_nextAction = _nextTableToLoadTable[_nextTableToLoadIndex];
 				_csDataLoaded = false;
-				 _conversationOptionsCount = 0;
+				_conversationOptionsCount = 0;
 				setCursorState(kCursorStateDisabledHidden);
 			}
 			break;

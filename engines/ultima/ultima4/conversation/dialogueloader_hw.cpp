@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader_hw.h"
-#include "ultima/ultima4/game/player.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/ultima4/conversation/conversation.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/ultima4.h"
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -68,7 +68,7 @@ Dialogue *U4HWDialogueLoader::load(void *source) {
 	dlg->setDefaultAnswer(new Response(Common::String("\n" + hawkwindText[HW_DEFAULT])));
 
 	for (int v = 0; v < VIRT_MAX; v++) {
-		Common::String virtue(getVirtueName((Virtue) v));
+		Common::String virtue(getVirtueName((Virtue)v));
 		lowercase(virtue);
 		virtue = virtue.substr(0, 4);
 		dlg->addKeyword(virtue, new DynamicResponse(&hawkwindGetAdvice, virtue));
@@ -96,7 +96,7 @@ Response *hawkwindGetAdvice(const DynamicResponse *dynResp) {
 
 	/* check if asking about a virtue */
 	for (int v = 0; v < VIRT_MAX; v++) {
-		if (scumm_strnicmp(dynResp->getParam().c_str(), getVirtueName((Virtue) v), 4) == 0) {
+		if (scumm_strnicmp(dynResp->getParam().c_str(), getVirtueName((Virtue)v), 4) == 0) {
 			virtue = v;
 			virtueLevel = g_ultima->_saveGame->_karma[v];
 			break;
@@ -124,17 +124,17 @@ Response *hawkwindGetIntro(const DynamicResponse *dynResp) {
 	Std::vector<Common::String> &hawkwindText = g_ultima->_hawkwindText;
 
 	if (g_context->_party->member(0)->getStatus() == STAT_SLEEPING ||
-	        g_context->_party->member(0)->getStatus() == STAT_DEAD) {
+	    g_context->_party->member(0)->getStatus() == STAT_DEAD) {
 		intro->add(hawkwindText[HW_SPEAKONLYWITH] + g_context->_party->member(0)->getName() +
-		    hawkwindText[HW_RETURNWHEN] + g_context->_party->member(0)->getName() +
-		    hawkwindText[HW_ISREVIVED]);
+		           hawkwindText[HW_RETURNWHEN] + g_context->_party->member(0)->getName() +
+		           hawkwindText[HW_ISREVIVED]);
 		intro->add(g_responseParts->END);
 	} else {
 		intro->add(g_responseParts->STARTMUSIC_HW);
 		intro->add(g_responseParts->HAWKWIND);
 
 		intro->add(hawkwindText[HW_WELCOME] + g_context->_party->member(0)->getName() +
-			hawkwindText[HW_GREETING1] + hawkwindText[HW_GREETING2]);
+		           hawkwindText[HW_GREETING1] + hawkwindText[HW_GREETING2]);
 	}
 
 	return intro;

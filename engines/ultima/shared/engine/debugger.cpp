@@ -21,8 +21,8 @@
  */
 
 #include "ultima/shared/engine/debugger.h"
-#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/maps/map.h"
 
 namespace Ultima {
@@ -48,7 +48,7 @@ int Debugger::strToInt(const char *s) {
 }
 
 void Debugger::splitString(const Common::String &str,
-		Common::StringArray &argv) {
+                           Common::StringArray &argv) {
 	// Clear the vector
 	argv.clear();
 

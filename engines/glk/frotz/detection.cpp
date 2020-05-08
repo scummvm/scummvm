@@ -21,13 +21,13 @@
  */
 
 #include "glk/frotz/detection.h"
-#include "glk/frotz/detection_tables.h"
-#include "glk/frotz/quetzal.h"
-#include "glk/blorb.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "common/translation.h"
+#include "glk/blorb.h"
+#include "glk/frotz/detection_tables.h"
+#include "glk/frotz/quetzal.h"
 
 namespace Glk {
 namespace Frotz {
@@ -56,8 +56,8 @@ GameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
 }
 
 bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8",
-		".dat", ".zip", nullptr };
+	const char *const EXTENSIONS[] = {".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8",
+	                                  ".dat", ".zip", nullptr};
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -110,8 +110,7 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		// for Infocom games due to padding at the end of files. So we match on md5s for the
 		// first 5Kb, and only worry about filesize for more recent Blorb based Zcode games
 		const FrotzGameDescription *p = FROTZ_GAMES;
-		while (p->_gameId && p->_md5 && (md5 != p->_md5 ||
-				(filesize != p->_filesize && isBlorb)))
+		while (p->_gameId && p->_md5 && (md5 != p->_md5 || (filesize != p->_filesize && isBlorb)))
 			++p;
 
 		if (!p->_gameId) {

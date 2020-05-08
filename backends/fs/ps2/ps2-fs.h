@@ -32,7 +32,7 @@
  */
 class Ps2FilesystemNode : public AbstractFSNode {
 
-friend class Ps2FilesystemFactory;
+	friend class Ps2FilesystemFactory;
 
 protected:
 	Common::String _displayName;
@@ -84,7 +84,7 @@ public:
 	}
 
 	virtual bool isWritable() const {
-		if (strncmp(_path.c_str(), "cdfs", 4)==0)
+		if (strncmp(_path.c_str(), "cdfs", 4) == 0)
 			return false;
 		return true; // exists(); // creating ?
 	}

@@ -25,10 +25,10 @@
 #include "ultima/ultima8/graphics/anim_dat.h"
 
 #include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/world/actors/actor_anim.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
-#include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/games/game_info.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -56,7 +56,6 @@ AnimAction *AnimDat::getAnim(uint32 shape, uint32 action) const {
 
 	return _anims[shape]->getAction(action);
 }
-
 
 void AnimDat::load(Common::SeekableReadStream *rs) {
 	AnimFrame f;
@@ -105,7 +104,7 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 
 			unsigned int dirCount = 8;
 			if (GAME_IS_CRUSADER &&
-			        (a->_actions[action]->_flags & AnimAction::AAF_CRUS_16DIRS)) {
+			    (a->_actions[action]->_flags & AnimAction::AAF_CRUS_16DIRS)) {
 				dirCount = 16;
 			}
 			a->_actions[action]->_dirCount = dirCount;

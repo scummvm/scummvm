@@ -28,7 +28,7 @@
 namespace Audio {
 class SoundHandle;
 class QueuingAudioStream;
-}
+} // namespace Audio
 
 namespace Scumm {
 
@@ -41,6 +41,7 @@ class Codec47Decoder;
 
 class SmushPlayer {
 	friend class Insane;
+
 private:
 	ScummEngine_v7 *_vm;
 	int32 _nbframes;

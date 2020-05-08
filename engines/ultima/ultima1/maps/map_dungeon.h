@@ -23,14 +23,14 @@
 #ifndef ULTIMA_ULTIMA1_MAP_MAP_DUNGEON_H
 #define ULTIMA_ULTIMA1_MAP_MAP_DUNGEON_H
 
-#include "ultima/ultima1/maps/map_base.h"
-#include "ultima/shared/core/rect.h"
 #include "common/random.h"
+#include "ultima/shared/core/rect.h"
+#include "ultima/ultima1/maps/map_base.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
-	class DungeonMonster;
+class DungeonMonster;
 }
 
 namespace Maps {
@@ -39,8 +39,13 @@ namespace Maps {
 #define DUNGEON_HEIGHT 11
 
 enum DungeonTile {
-	DTILE_HALLWAY = 0, DTILE_WALL = 1, DTILE_SECRET_DOOR = 2, DTILE_DOOR = 3, DTILE_LADDER_DOWN = 6,
-	DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
+	DTILE_HALLWAY = 0,
+	DTILE_WALL = 1,
+	DTILE_SECRET_DOOR = 2,
+	DTILE_DOOR = 3,
+	DTILE_LADDER_DOWN = 6,
+	DTILE_LADDER_UP = 7,
+	DTILE_BEAMS = 8
 };
 
 /**
@@ -49,7 +54,7 @@ enum DungeonTile {
 class MapDungeon : public MapBase {
 private:
 	Common::RandomSource _random;
-	uint _dungeonLevel;					// Dungeon level number
+	uint _dungeonLevel; // Dungeon level number
 private:
 	/**
 	 * Sets up a deterministic random seed for generating dungeon data
@@ -66,11 +71,13 @@ private:
 	 * Called when the dungeon is being left
 	 */
 	void leavingDungeon();
+
 public:
 	uint _dungeonExitHitPoints;
+
 public:
 	MapDungeon(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map), _random("UltimaDungeons"),
-		_dungeonLevel(0), _dungeonExitHitPoints(0) {}
+	                                                 _dungeonLevel(0), _dungeonExitHitPoints(0) {}
 	~MapDungeon() override {}
 
 	/**

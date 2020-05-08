@@ -57,7 +57,7 @@ bool RISCOSSdlEventSource::handleSysWMEvent(SDL_Event &ev, Common::Event &event)
 			// Acknowledge that the event has been received
 			pollBlock[4] = 4; // Message_DataLoadAck
 			pollBlock[3] = pollBlock[2];
-			_swix(Wimp_SendMessage, _INR(0,2), 19, pollBlock, 0);
+			_swix(Wimp_SendMessage, _INR(0, 2), 19, pollBlock, 0);
 			return true;
 		}
 	}

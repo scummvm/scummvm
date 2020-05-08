@@ -145,7 +145,6 @@ public:
 	const Array<String> &getDefaultInputMapping() const {
 		return _defaultInputMapping;
 	}
-
 };
 
 } // End of namespace Common

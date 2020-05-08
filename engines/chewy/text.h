@@ -23,9 +23,9 @@
 #ifndef CHEWY_TEXT_H
 #define CHEWY_TEXT_H
 
-#include "common/list.h"
 #include "chewy/chewy.h"
 #include "chewy/resource.h"
+#include "common/list.h"
 
 namespace Chewy {
 
@@ -38,11 +38,11 @@ namespace Chewy {
  * USE - use action texts, 100 entries max
  */
 enum MaxTextTypes {
-	kADSTextMax = 500,	//   0 - 499
-	kATSTextMax = 100,	// 500 - 599
-	kAADTextMax = 100,	// 600 - 699
-	kINVTextMax = 100,	// 700 - 799
-	kUSETextMax = 100	// 800 - 899
+	kADSTextMax = 500, //   0 - 499
+	kATSTextMax = 100, // 500 - 599
+	kAADTextMax = 100, // 600 - 699
+	kINVTextMax = 100, // 700 - 799
+	kUSETextMax = 100  // 800 - 899
 };
 
 /**
@@ -65,7 +65,6 @@ struct TextEntry {
 };
 
 typedef Common::List<TextEntry> TextEntryList;
-
 
 class Text : public Resource {
 public:

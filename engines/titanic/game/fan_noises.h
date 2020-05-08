@@ -35,6 +35,7 @@ class CFanNoises : public CGameObject {
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool SetVolumeMsg(CSetVolumeMsg *msg);
 	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+
 private:
 	int _state;
 	int _soundHandle;
@@ -43,6 +44,7 @@ private:
 	int _soundSeconds;
 	int _stopSeconds;
 	bool _startFlag;
+
 public:
 	CLASSDEF;
 	CFanNoises();

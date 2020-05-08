@@ -40,7 +40,7 @@ DIBDecoder::~DIBDecoder() {
 }
 
 void DIBDecoder::destroy() {
-	_surface = 0;	// It is deleted by BitmapRawDecoder
+	_surface = 0; // It is deleted by BitmapRawDecoder
 
 	delete[] _palette;
 	_palette = 0;
@@ -85,7 +85,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_paletteColorCount = stream.readUint32LE();
 	/* uint32 colorsImportant = */ stream.readUint32LE();
 
-	_paletteColorCount = (_paletteColorCount == 0) ? 255: _paletteColorCount;
+	_paletteColorCount = (_paletteColorCount == 0) ? 255 : _paletteColorCount;
 
 	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
@@ -157,22 +157,22 @@ void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
 	// no op
 }
 
-void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue) {
+void BITDDecoder::convertPixelIntoSurface(void *surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue) {
 	// Initial implementation of 32-bit images to palettised sprites.
 	switch (fromBpp) {
 	case 4:
 		switch (toBpp) {
 		case 1:
 			if (red == 255 && blue == 255 && green == 255) {
-				*((byte*)surfacePointer) = 255;
+				*((byte *)surfacePointer) = 255;
 			} else if (red == 0 && blue == 0 && green == 0) {
-				*((byte*)surfacePointer) = 0;
+				*((byte *)surfacePointer) = 0;
 			} else {
 				for (byte p = 0; p < _paletteColorCount; p++) {
 					if (_palette[p * 3 + 0] == red &&
-						_palette[p * 3 + 1] == green &&
-						_palette[p * 3 + 2] == blue) {
-						*((byte*)surfacePointer) = p;
+					    _palette[p * 3 + 1] == green &&
+					    _palette[p * 3 + 2] == blue) {
+						*((byte *)surfacePointer) = p;
 					}
 				}
 			}
@@ -180,13 +180,13 @@ void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, ui
 
 		default:
 			warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented",
-				fromBpp, toBpp);
+			        fromBpp, toBpp);
 		}
 		break;
 
 	default:
 		warning("BITDDecoder::convertPixelIntoSurface(): could not convert from %d to %d",
-			fromBpp, toBpp);
+		        fromBpp, toBpp);
 		break;
 	}
 }
@@ -199,7 +199,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (stream.size() * 8 == _surface->pitch * _surface->h) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
-			for (x = 0; x < _surface->pitch; ) {
+			for (x = 0; x < _surface->pitch;) {
 				byte color = stream.readByte();
 				for (int c = 0; c < 8; c++)
 					*((byte *)_surface->getBasePtr(x++, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
@@ -240,7 +240,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 		int tail = (_surface->w * _surface->h * _bitsPerPixel / 8) - pixels.size();
 
 		warning("BITDDecoder::loadStream(): premature end of stream (%d of %d pixels)",
-			pixels.size(), pixels.size() + tail);
+		        pixels.size(), pixels.size() + tail);
 
 		for (int i = 0; i < tail; i++)
 			pixels.push_back(0);
@@ -267,21 +267,21 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 					break;
 
 				case 16:
-					*((uint16*)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
-						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
-						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					*((uint16 *)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
+					    (pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
+					    (pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
+					        (pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
+					    (pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
 					x++;
 					break;
 
 				case 32:
 					convertPixelIntoSurface(_surface->getBasePtr(x, y),
-						(_bitsPerPixel / 8),
-						_surface->format.bytesPerPixel,
-						pixels[(((y * (_surface->w * 4))) + ((x * 4) + 1))],
-						pixels[(((y * (_surface->w * 4))) + ((x * 4) + 2))],
-						pixels[(((y * (_surface->w * 4))) + ((x * 4) + 3))]);
+					                        (_bitsPerPixel / 8),
+					                        _surface->format.bytesPerPixel,
+					                        pixels[(((y * (_surface->w * 4))) + ((x * 4) + 1))],
+					                        pixels[(((y * (_surface->w * 4))) + ((x * 4) + 2))],
+					                        pixels[(((y * (_surface->w * 4))) + ((x * 4) + 3))]);
 					x++;
 					break;
 

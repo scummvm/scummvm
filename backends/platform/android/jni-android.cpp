@@ -43,18 +43,19 @@
 #include "base/main.h"
 #include "base/version.h"
 #include "common/config-manager.h"
+#include "common/encoding.h"
 #include "common/error.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/encoding.h"
 #include "engines/engine.h"
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/asset-archive.h"
 #include "backends/platform/android/jni-android.h"
 
-__attribute__ ((visibility("default")))
-jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
+__attribute__((visibility("default")))
+jint JNICALL
+JNI_OnLoad(JavaVM *vm, void *) {
 	return JNI::onLoad(vm);
 }
 
@@ -69,7 +70,7 @@ Common::Archive *JNI::_asset_archive = 0;
 OSystem_Android *JNI::_system = 0;
 
 bool JNI::pause = false;
-sem_t JNI::pause_sem = { 0 };
+sem_t JNI::pause_sem = {0};
 
 int JNI::surface_changeid = 0;
 int JNI::egl_surface_width = 0;
@@ -100,24 +101,23 @@ jmethodID JNI::_MID_AudioTrack_stop = 0;
 jmethodID JNI::_MID_AudioTrack_write = 0;
 
 const JNINativeMethod JNI::_natives[] = {
-	{ "create", "(Landroid/content/res/AssetManager;"
-				"Ljavax/microedition/khronos/egl/EGL10;"
-				"Ljavax/microedition/khronos/egl/EGLDisplay;"
-				"Landroid/media/AudioTrack;II)V",
-		(void *)JNI::create },
-	{ "destroy", "()V",
-		(void *)JNI::destroy },
-	{ "setSurface", "(II)V",
-		(void *)JNI::setSurface },
-	{ "main", "([Ljava/lang/String;)I",
-		(void *)JNI::main },
-	{ "pushEvent", "(IIIIIII)V",
-		(void *)JNI::pushEvent },
-	{ "setPause", "(Z)V",
-		(void *)JNI::setPause },
-	{ "getCurrentCharset", "()Ljava/lang/String;",
-		(void *)JNI::getCurrentCharset }
-};
+    {"create", "(Landroid/content/res/AssetManager;"
+               "Ljavax/microedition/khronos/egl/EGL10;"
+               "Ljavax/microedition/khronos/egl/EGLDisplay;"
+               "Landroid/media/AudioTrack;II)V",
+     (void *)JNI::create},
+    {"destroy", "()V",
+     (void *)JNI::destroy},
+    {"setSurface", "(II)V",
+     (void *)JNI::setSurface},
+    {"main", "([Ljava/lang/String;)I",
+     (void *)JNI::main},
+    {"pushEvent", "(IIIIIII)V",
+     (void *)JNI::pushEvent},
+    {"setPause", "(Z)V",
+     (void *)JNI::setPause},
+    {"getCurrentCharset", "()Ljava/lang/String;",
+     (void *)JNI::getCurrentCharset}};
 
 JNI::JNI() {
 }
@@ -236,7 +236,7 @@ void JNI::displayMessageOnOSD(const char *msg) {
 #endif
 	Common::Encoding converter("UTF-8", fromEncoding.c_str());
 
-	const char *utf8Msg = converter.convert(msg, converter.stringLength(msg, fromEncoding) );
+	const char *utf8Msg = converter.convert(msg, converter.stringLength(msg, fromEncoding));
 	if (utf8Msg == nullptr) {
 		// Show a placeholder indicative of the translation error instead of silent failing
 		utf8Msg = "?";
@@ -305,8 +305,8 @@ Common::String JNI::getTextFromClipboard() {
 	}
 
 	int len = env->GetArrayLength(javaText);
-	char* buf = new char[len];
-	env->GetByteArrayRegion(javaText, 0, len, reinterpret_cast<jbyte*>(buf));
+	char *buf = new char[len];
+	env->GetByteArrayRegion(javaText, 0, len, reinterpret_cast<jbyte *>(buf));
 	Common::String text(buf, len);
 	delete[] buf;
 
@@ -317,7 +317,7 @@ bool JNI::setTextInClipboard(const Common::String &text) {
 	JNIEnv *env = JNI::getEnv();
 
 	jbyteArray javaText = env->NewByteArray(text.size());
-	env->SetByteArrayRegion(javaText, 0, text.size(), reinterpret_cast<const jbyte*>(text.c_str()));
+	env->SetByteArrayRegion(javaText, 0, text.size(), reinterpret_cast<const jbyte *>(text.c_str()));
 
 	bool success = env->CallBooleanMethod(_jobj, _MID_setTextInClipboard, javaText);
 
@@ -396,7 +396,7 @@ void JNI::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	s.add("ASSET", _asset_archive, priority, false);
 
 	jobjectArray array =
-		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getSysArchives);
+	    (jobjectArray)env->CallObjectMethod(_jobj, _MID_getSysArchives);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Error finding system archive path");
@@ -507,8 +507,8 @@ void JNI::setAudioStop() {
 // natives for the dark side
 
 void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
-				jobject egl, jobject egl_display,
-				jobject at, jint audio_sample_rate, jint audio_buffer_size) {
+                 jobject egl, jobject egl_display,
+                 jobject at, jint audio_sample_rate, jint audio_buffer_size) {
 	LOGI("%s", gScummVMFullVersion);
 
 	assert(!_system);
@@ -531,10 +531,11 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 
 	jclass cls = env->GetObjectClass(_jobj);
 
-#define FIND_METHOD(prefix, name, signature) do {							\
-		_MID_ ## prefix ## name = env->GetMethodID(cls, #name, signature);	\
-		if (_MID_ ## prefix ## name == 0)									\
-			return;															\
+#define FIND_METHOD(prefix, name, signature)                           \
+	do {                                                               \
+		_MID_##prefix##name = env->GetMethodID(cls, #name, signature); \
+		if (_MID_##prefix##name == 0)                                  \
+			return;                                                    \
 	} while (0)
 
 	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
@@ -558,8 +559,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	cls = env->GetObjectClass(_jobj_egl);
 
 	FIND_METHOD(EGL10_, eglSwapBuffers,
-				"(Ljavax/microedition/khronos/egl/EGLDisplay;"
-				"Ljavax/microedition/khronos/egl/EGLSurface;)Z");
+	            "(Ljavax/microedition/khronos/egl/EGLDisplay;"
+	            "Ljavax/microedition/khronos/egl/EGLSurface;)Z");
 
 	_jobj_audio_track = env->NewGlobalRef(at);
 
@@ -586,7 +587,7 @@ void JNI::destroy(JNIEnv *env, jobject self) {
 	_system->destroy();
 
 	g_system = 0;
-	_system  = 0;
+	_system = 0;
 
 	sem_destroy(&pause_sem);
 
@@ -614,7 +615,7 @@ jint JNI::main(JNIEnv *env, jobject self, jobjectArray args) {
 	int argc = env->GetArrayLength(args);
 	if (argc > MAX_NARGS) {
 		throwByName(env, "java/lang/IllegalArgumentException",
-					"too many arguments");
+		            "too many arguments");
 		return 0;
 	}
 
@@ -670,7 +671,7 @@ cleanup:
 }
 
 void JNI::pushEvent(JNIEnv *env, jobject self, int type, int arg1, int arg2,
-					int arg3, int arg4, int arg5, int arg6) {
+                    int arg3, int arg4, int arg5, int arg6) {
 	// drop events until we're ready and after we quit
 	if (!_ready_for_events) {
 		LOGW("dropping event");
@@ -709,7 +710,7 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 jstring JNI::getCurrentCharset(JNIEnv *env, jobject self) {
 #ifdef USE_TRANSLATION
 	if (TransMan.getCurrentCharset() != "ASCII") {
-//		LOGD("getCurrentCharset: %s", TransMan.getCurrentCharset().c_str());
+		//		LOGD("getCurrentCharset: %s", TransMan.getCurrentCharset().c_str());
 		return env->NewStringUTF(TransMan.getCurrentCharset().c_str());
 	}
 #endif
@@ -722,7 +723,7 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 	JNIEnv *env = JNI::getEnv();
 
 	jobjectArray array =
-		(jobjectArray)env->CallObjectMethod(_jobj, _MID_getAllStorageLocations);
+	    (jobjectArray)env->CallObjectMethod(_jobj, _MID_getAllStorageLocations);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Error finding system archive path");
@@ -748,6 +749,5 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 
 	return *res;
 }
-
 
 #endif

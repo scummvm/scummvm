@@ -25,7 +25,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPlaceHolder, CGameObject)
-	ON_MESSAGE(VisibleMsg)
+ON_MESSAGE(VisibleMsg)
 END_MESSAGE_MAP()
 
 void CPlaceHolder::save(SimpleFile *file, int indent) {

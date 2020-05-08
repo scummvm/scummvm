@@ -23,8 +23,8 @@
 #ifndef GOB_SCRIPT_H
 #define GOB_SCRIPT_H
 
-#include "common/str.h"
 #include "common/stack.h"
+#include "common/str.h"
 
 #include "gob/totfile.h"
 
@@ -53,36 +53,36 @@ public:
 	bool skipBlock();
 
 	// Reading data
-	byte   readByte  ();
-	char   readChar  ();
-	uint8  readUint8 ();
+	byte readByte();
+	char readChar();
+	uint8 readUint8();
 	uint16 readUint16();
 	uint32 readUint32();
-	int8   readInt8  ();
-	int16  readInt16 ();
-	int32  readInt32 ();
-	char  *readString(int32 length = -1);
+	int8 readInt8();
+	int16 readInt16();
+	int32 readInt32();
+	char *readString(int32 length = -1);
 
 	// Peeking data
-	byte   peekByte  (int32 offset = 0);
-	char   peekChar  (int32 offset = 0);
-	uint8  peekUint8 (int32 offset = 0);
+	byte peekByte(int32 offset = 0);
+	char peekChar(int32 offset = 0);
+	uint8 peekUint8(int32 offset = 0);
 	uint16 peekUint16(int32 offset = 0);
 	uint32 peekUint32(int32 offset = 0);
-	int8   peekInt8  (int32 offset = 0);
-	int16  peekInt16 (int32 offset = 0);
-	int32  peekInt32 (int32 offset = 0);
-	char  *peekString(int32 offset = 0);
+	int8 peekInt8(int32 offset = 0);
+	int16 peekInt16(int32 offset = 0);
+	int32 peekInt32(int32 offset = 0);
+	char *peekString(int32 offset = 0);
 
 	// Expression parsing functions
 	int16 readVarIndex(uint16 *size = 0, uint16 *type = 0);
 	int16 readValExpr(byte stopToken = 99);
 	int16 readExpr(byte stopToken, byte *type);
-	void  skipExpr(char stopToken);
+	void skipExpr(char stopToken);
 
 	// Higher-level expression parsing functions
-	char  evalExpr(int16 *pRes);
-	bool  evalBool();
+	char evalExpr(int16 *pRes);
+	bool evalBool();
 	int32 evalInt();
 
 	const char *evalString();
@@ -120,17 +120,17 @@ public:
 	void call(uint32 offset);
 
 	// Fixed properties
-	uint8  getVersionMajor   () const;
-	uint8  getVersionMinor   () const;
-	uint32 getVariablesCount () const;
-	uint32 getTextsOffset    () const;
+	uint8 getVersionMajor() const;
+	uint8 getVersionMinor() const;
+	uint32 getVariablesCount() const;
+	uint32 getTextsOffset() const;
 	uint32 getResourcesOffset() const;
-	uint16 getAnimDataSize   () const;
-	uint8  getImFileNumber   () const;
-	uint8  getExFileNumber   () const;
-	uint8  getCommunHandling () const;
+	uint16 getAnimDataSize() const;
+	uint8 getImFileNumber() const;
+	uint8 getExFileNumber() const;
+	uint8 getCommunHandling() const;
 
-	uint16 getFunctionOffset (uint8 function) const;
+	uint16 getFunctionOffset(uint8 function) const;
 
 	static uint32 getVariablesCount(const char *fileName, GobEngine *vm);
 

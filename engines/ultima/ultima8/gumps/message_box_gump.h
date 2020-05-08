@@ -37,6 +37,7 @@ class MessageBoxGump : public ModalGump {
 	Std::string _message;
 	Std::vector<Std::string> _buttons;
 	int _titleColour;
+
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 

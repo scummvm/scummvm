@@ -23,8 +23,8 @@
 #ifndef WORLD_ACTORS_AVATARMOVERPROCESS_H
 #define WORLD_ACTORS_AVATARMOVERPROCESS_H
 
-#include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/world/actors/animation.h"
 
 namespace Ultima {

@@ -31,14 +31,13 @@ static struct {
 	int pic1;
 	int pic2;
 } mapper[] = {
-	{ ZORK_ZERO,  5, 497, 498 },
-	{ ZORK_ZERO,  6, 501, 502 },
-	{ ZORK_ZERO,  7, 499, 500 },
-	{ ZORK_ZERO,  8, 503, 504 },
-	{    ARTHUR, 54, 170, 171 },
-	{    SHOGUN, 50,  61,  62 },
-	{   UNKNOWN,  0,   0,   0 }
-};
+    {ZORK_ZERO, 5, 497, 498},
+    {ZORK_ZERO, 6, 501, 502},
+    {ZORK_ZERO, 7, 499, 500},
+    {ZORK_ZERO, 8, 503, 504},
+    {ARTHUR, 54, 170, 171},
+    {SHOGUN, 50, 61, 62},
+    {UNKNOWN, 0, 0, 0}};
 
 void Processor::z_draw_picture() {
 	zword pic = zargs[0];
@@ -137,9 +136,9 @@ void Processor::z_erase_picture() {
 	if (hi(cwp->colour) == TRANSPARENT_COLOUR)
 		return;
 
-	if (y == 0)		/* use cursor line if y-coordinate is 0 */
+	if (y == 0) /* use cursor line if y-coordinate is 0 */
 		y = cwp->y_cursor;
-	if (x == 0)    	/* use cursor column if x-coordinate is 0 */
+	if (x == 0) /* use cursor column if x-coordinate is 0 */
 		x = cwp->x_cursor;
 
 	os_picture_data(zargs[0], &height, &width);
@@ -168,7 +167,6 @@ void Processor::z_set_margins() {
 
 		if (win == cwin)
 			update_cursor();
-
 	}
 #endif
 }
@@ -202,10 +200,18 @@ void Processor::z_window_style() {
 	/* Set window style */
 
 	switch (zargs[2]) {
-	case 0: wp[win].attribute = flags; break;
-	case 1: wp[win].attribute |= flags; break;
-	case 2: wp[win].attribute &= ~flags; break;
-	case 3: wp[win].attribute ^= flags; break;
+	case 0:
+		wp[win].attribute = flags;
+		break;
+	case 1:
+		wp[win].attribute |= flags;
+		break;
+	case 2:
+		wp[win].attribute &= ~flags;
+		break;
+	case 3:
+		wp[win].attribute ^= flags;
+		break;
 	}
 
 	if (cwin == win)
@@ -254,10 +260,10 @@ void Processor::z_scroll_window() {
 	x = wp[win].x_pos;
 
 	os_scroll_area(y,
-		x,
-		y + wp[win].y_size - 1,
-		x + wp[win].x_size - 1,
-		(short)zargs[1]);
+	               x,
+	               y + wp[win].y_size - 1,
+	               x + wp[win].x_size - 1,
+	               (short)zargs[1]);
 
 	if (win != cwin && !amiga_screen_model())
 		os_set_colour(lo(cwp->colour), hi(cwp->colour));

@@ -21,21 +21,20 @@
  */
 
 #include "glk/alan3/container.h"
+#include "glk/alan3/current.h"
 #include "glk/alan3/instance.h"
-#include "glk/alan3/syserr.h"
 #include "glk/alan3/inter.h"
 #include "glk/alan3/lists.h"
 #include "glk/alan3/memory.h"
-#include "glk/alan3/current.h"
 #include "glk/alan3/msg.h"
 #include "glk/alan3/output.h"
+#include "glk/alan3/syserr.h"
 
 namespace Glk {
 namespace Alan3 {
 
 /* PUBLIC DATA */
-ContainerEntry *containers;  /* Container table pointer */
-
+ContainerEntry *containers; /* Container table pointer */
 
 /*----------------------------------------------------------------------*/
 static int countInContainer(int containerIndex) { /* IN - the container to count in */
@@ -48,24 +47,22 @@ static int countInContainer(int containerIndex) { /* IN - the container to count
 	return (j);
 }
 
-
 /*----------------------------------------------------------------------*/
 static int sumAttributeInContainer(
-    Aint containerIndex,         /* IN - the container to sum */
-    Aint attributeIndex          /* IN - the attribute to sum over */
+    Aint containerIndex, /* IN - the container to sum */
+    Aint attributeIndex  /* IN - the attribute to sum over */
 ) {
 	uint instanceIndex;
 	int sum = 0;
 
 	for (instanceIndex = 1; instanceIndex <= header->instanceMax; instanceIndex++)
-		if (isIn(instanceIndex, containerIndex, DIRECT)) {  /* Then it's directly in this cont */
-			if (instances[instanceIndex].container != 0)    /* This is also a container! */
+		if (isIn(instanceIndex, containerIndex, DIRECT)) { /* Then it's directly in this cont */
+			if (instances[instanceIndex].container != 0)   /* This is also a container! */
 				sum = sum + sumAttributeInContainer(instanceIndex, attributeIndex);
 			sum = sum + getInstanceAttribute(instanceIndex, attributeIndex);
 		}
 	return (sum);
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool containerIsEmpty(int container) {
@@ -77,13 +74,11 @@ static bool containerIsEmpty(int container) {
 	return TRUE;
 }
 
-
 /*======================================================================*/
 void describeContainer(CONTEXT, int container) {
 	if (!containerIsEmpty(container) && !isOpaque(container))
 		CALL1(list, container)
 }
-
 
 /*======================================================================*/
 bool passesContainerLimits(CONTEXT, Aint theContainer, Aint theAddedInstance) {
@@ -97,7 +92,7 @@ bool passesContainerLimits(CONTEXT, Aint theContainer, Aint theAddedInstance) {
 	props = instances[theContainer].container;
 
 	if (containers[props].limits != 0) { /* Any limits at all? */
-		for (limit = (LimitEntry *) pointerTo(containers[props].limits); !isEndOfArray(limit); limit++)
+		for (limit = (LimitEntry *)pointerTo(containers[props].limits); !isEndOfArray(limit); limit++)
 			if ((int)limit->atr == 1 - I_COUNT) { /* TODO This is actually some encoding of the attribute number, right? */
 				if (countInContainer(theContainer) >= (int)limit->val) {
 					R0CALL1(interpret, limit->stms)
@@ -112,7 +107,6 @@ bool passesContainerLimits(CONTEXT, Aint theContainer, Aint theAddedInstance) {
 	}
 	return (TRUE);
 }
-
 
 /*======================================================================*/
 int containerSize(int container, ATrans trans) {
@@ -138,7 +132,8 @@ void list(CONTEXT, int container) {
 
 	/* Find container table entry */
 	props = instances[container].container;
-	if (props == 0) syserr("Trying to list something not a container.");
+	if (props == 0)
+		syserr("Trying to list something not a container.");
 
 	for (i = 1; i <= header->instanceMax; i++) {
 		if (isDescribable(i)) {

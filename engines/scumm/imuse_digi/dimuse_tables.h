@@ -55,7 +55,6 @@ struct imuseComiTable {
 	char filename[13];
 };
 
-
 struct imuseFtNames {
 	char name[20];
 };

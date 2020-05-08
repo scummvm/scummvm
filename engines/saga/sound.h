@@ -25,9 +25,9 @@
 #ifndef SAGA_SOUND_H
 #define SAGA_SOUND_H
 
-#include "common/file.h"
 #include "audio/mixer.h"
 #include "audio/timestamp.h"
+#include "common/file.h"
 
 namespace Audio {
 class RewindableAudioStream;
@@ -60,7 +60,6 @@ struct SndHandle {
 
 class Sound {
 public:
-
 	Sound(SagaEngine *vm, Audio::Mixer *mixer);
 	~Sound();
 
@@ -78,10 +77,9 @@ public:
 
 	void setVolume();
 
- private:
-
+private:
 	void playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffer, int volume,
-				sndHandleType handleType, bool loop);
+	                     sndHandleType handleType, bool loop);
 
 	SndHandle *getHandle();
 

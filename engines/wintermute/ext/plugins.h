@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/base/base_scriptable.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 #ifndef WINTERMUTE_PLUGINS_H
 #define WINTERMUTE_PLUGINS_H
@@ -49,7 +49,7 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 	if (strcmp(name, "SteamAPI") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXSteamAPI(inGame,  stack));
+		thisObj->setNative(makeSXSteamAPI(inGame, stack));
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -61,7 +61,7 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 	else if (strcmp(name, "WMEGalaxyAPI") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSXWMEGalaxyAPI(inGame,  stack));
+		thisObj->setNative(makeSXWMEGalaxyAPI(inGame, stack));
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -73,7 +73,7 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 	else if (strcmp(name, "Statistics") == 0) {
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(makeSX3fStatistics(inGame,  stack));
+		thisObj->setNative(makeSX3fStatistics(inGame, stack));
 
 		stack->pushNULL();
 		return STATUS_OK;

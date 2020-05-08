@@ -21,8 +21,8 @@
  */
 
 #include "mutationofjb/commands/changecommand.h"
-#include "mutationofjb/script.h"
 #include "mutationofjb/gamedata.h"
+#include "mutationofjb/script.h"
 
 /** @file
  * "CHANGE" <entity> " " <register> " " <sceneId> " " <entityId> " " <value>
@@ -146,7 +146,6 @@ bool ChangeCommandParser::parseValueString(const Common::String &valueString, bo
 	return true;
 }
 
-
 bool ChangeDoorCommandParser::parse(const Common::String &line, ScriptParseContext &, Command *&command) {
 	if (!line.hasPrefix("CHANGED ")) {
 		return false;
@@ -235,7 +234,6 @@ int ChangeCommandParser::parseInteger(const char *val, ChangeCommand::ChangeOper
 
 	return atoi(val);
 }
-
 
 const char *ChangeCommand::getRegisterAsString() const {
 	switch (_register) {
@@ -556,4 +554,4 @@ Common::String ChangeSceneCommand::debugString() const {
 	return Common::String::format("SCENE%d.%s %s %s", _sceneId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 
-}
+} // namespace MutationOfJB

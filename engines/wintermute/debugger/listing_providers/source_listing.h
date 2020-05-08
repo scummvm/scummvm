@@ -27,11 +27,12 @@
 namespace Wintermute {
 class SourceListing : public Listing {
 	const Common::Array<Common::String> _strings;
+
 public:
 	SourceListing(const Common::Array<Common::String> &strings);
 	~SourceListing() override;
 	uint getLength() const override;
 	Common::String getLine(uint n) override;
 };
-}
+} // namespace Wintermute
 #endif /* DUMMY_LISTING_H_ */

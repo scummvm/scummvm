@@ -20,24 +20,24 @@
  *
  */
 
-#include "ultima/ultima4/ultima4.h"
-#include "ultima/ultima4/map/annotation.h"
-#include "ultima/ultima4/map/city.h"
-#include "ultima/ultima4/controllers/combat_controller.h"
-#include "ultima/ultima4/map/dungeon.h"
-#include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/controllers/combat_controller.h"
+#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/game/item.h"
 #include "ultima/ultima4/game/moongate.h"
 #include "ultima/ultima4/game/person.h"
 #include "ultima/ultima4/game/portal.h"
+#include "ultima/ultima4/map/annotation.h"
+#include "ultima/ultima4/map/city.h"
+#include "ultima/ultima4/map/dungeon.h"
+#include "ultima/ultima4/map/map.h"
+#include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/shrine.h"
 #include "ultima/ultima4/map/tilemap.h"
 #include "ultima/ultima4/map/tileset.h"
-#include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/ultima4/core/config.h"
+#include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -89,7 +89,6 @@ void MapMgr::unloadMap(MapId id) {
 			break;
 		}
 	}
-
 }
 
 Map *MapMgr::initMap(Map::Type type) {
@@ -149,8 +148,8 @@ void MapMgr::registerMap(Map *map) {
 
 Map *MapMgr::initMapFromConf(const ConfigElement &mapConf) {
 	Map *map;
-	static const char *mapTypeEnumStrings[] = { "world", "city", "shrine", "combat", "dungeon", nullptr };
-	static const char *borderBehaviorEnumStrings[] = { "wrap", "exit", "fixed", nullptr };
+	static const char *mapTypeEnumStrings[] = {"world", "city", "shrine", "combat", "dungeon", nullptr};
+	static const char *borderBehaviorEnumStrings[] = {"wrap", "exit", "fixed", nullptr};
 
 	map = initMap(static_cast<Map::Type>(mapConf.getEnum("type", mapTypeEnumStrings)));
 	if (!map)
@@ -227,10 +226,9 @@ void MapMgr::initCityFromConf(const ConfigElement &cityConf, City *city) {
 
 PersonRole *MapMgr::initPersonRoleFromConf(const ConfigElement &personRoleConf) {
 	PersonRole *personrole;
-	static const char *roleEnumStrings[] = { "companion", "weaponsvendor", "armorvendor", "foodvendor", "tavernkeeper",
-	                                         "reagentsvendor", "healer", "innkeeper", "guildvendor", "horsevendor",
-	                                         "lordbritish", "hawkwind", nullptr
-	                                       };
+	static const char *roleEnumStrings[] = {"companion", "weaponsvendor", "armorvendor", "foodvendor", "tavernkeeper",
+	                                        "reagentsvendor", "healer", "innkeeper", "guildvendor", "horsevendor",
+	                                        "lordbritish", "hawkwind", nullptr};
 
 	personrole = new PersonRole();
 
@@ -249,9 +247,9 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 	portal->_retroActiveDest = nullptr;
 
 	portal->_coords = MapCoords(
-	                      portalConf.getInt("x"),
-	                      portalConf.getInt("y"),
-	                      portalConf.getInt("z", 0));
+	    portalConf.getInt("x"),
+	    portalConf.getInt("y"),
+	    portalConf.getInt("z", 0));
 	portal->_destid = static_cast<MapId>(portalConf.getInt("destmapid"));
 
 	portal->_start.x = static_cast<unsigned short>(portalConf.getInt("startx"));
@@ -308,9 +306,9 @@ Portal *MapMgr::initPortalFromConf(const ConfigElement &portalConf) {
 			portal->_retroActiveDest = new PortalDestination();
 
 			portal->_retroActiveDest->_coords = MapCoords(
-			                                        i->getInt("x"),
-			                                        i->getInt("y"),
-			                                        i->getInt("z", 0));
+			    i->getInt("x"),
+			    i->getInt("y"),
+			    i->getInt("z", 0));
 			portal->_retroActiveDest->_mapid = static_cast<MapId>(i->getInt("mapid"));
 		}
 	}
@@ -343,9 +341,8 @@ int MapMgr::initCompressedChunkFromConf(const ConfigElement &compressedChunkConf
 }
 
 Std::pair<Common::String, MapCoords> MapMgr::initLabelFromConf(const ConfigElement &labelConf) {
-	return Std::pair<Common::String, MapCoords>
-	       (labelConf.getString("name"),
-	        MapCoords(labelConf.getInt("x"), labelConf.getInt("y"), labelConf.getInt("z", 0)));
+	return Std::pair<Common::String, MapCoords>(labelConf.getString("name"),
+	                                            MapCoords(labelConf.getInt("x"), labelConf.getInt("y"), labelConf.getInt("z", 0)));
 }
 
 } // End of namespace Ultima4

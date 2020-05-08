@@ -23,8 +23,8 @@
 #ifndef ULTIMA8_GRAPHICS_PALETTEMANAGER_H
 #define ULTIMA8_GRAPHICS_PALETTEMANAGER_H
 
-#include "ultima/ultima8/graphics/palette.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/ultima8/graphics/palette.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -43,11 +43,11 @@ public:
 	enum PalIndex {
 		Pal_Game = 0,
 		Pal_Movie = 1,
-		Pal_Diff = 2,	// Crusaders only - difficulty screen
-		Pal_Misc = 3,	// Crusaders only - game menu
-		Pal_Misc2 = 4,	// Crusaders only
-		Pal_Star = 5,	// Crusaders only
-		Pal_Cred = 6,	// Crusader: No regret only
+		Pal_Diff = 2,  // Crusaders only - difficulty screen
+		Pal_Misc = 3,  // Crusaders only - game menu
+		Pal_Misc2 = 4, // Crusaders only
+		Pal_Star = 5,  // Crusaders only
+		Pal_Cred = 6,  // Crusader: No regret only
 		Pal_JPFontStart = 16
 	};
 

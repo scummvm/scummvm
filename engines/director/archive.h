@@ -27,7 +27,7 @@ namespace Common {
 class MacResManager;
 class SeekableSubReadStreamEndian;
 class SeekableReadStream;
-}
+} // namespace Common
 
 namespace Director {
 
@@ -107,7 +107,7 @@ public:
 
 class RIFXArchive : public Archive {
 public:
-	RIFXArchive() : Archive(){ _isBigEndian = true; }
+	RIFXArchive() : Archive() { _isBigEndian = true; }
 	~RIFXArchive() override {}
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;

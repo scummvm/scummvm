@@ -20,21 +20,21 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "tsage/ringworld/ringworld_logic.h"
-#include "tsage/scenes.h"
-#include "tsage/tsage.h"
-#include "tsage/staticres.h"
+#include "common/config-manager.h"
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_dialogs.h"
 #include "tsage/ringworld/ringworld_scenes1.h"
+#include "tsage/ringworld/ringworld_scenes10.h"
 #include "tsage/ringworld/ringworld_scenes2.h"
 #include "tsage/ringworld/ringworld_scenes3.h"
 #include "tsage/ringworld/ringworld_scenes4.h"
 #include "tsage/ringworld/ringworld_scenes5.h"
 #include "tsage/ringworld/ringworld_scenes6.h"
 #include "tsage/ringworld/ringworld_scenes8.h"
-#include "tsage/ringworld/ringworld_scenes10.h"
+#include "tsage/scenes.h"
+#include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -44,147 +44,210 @@ Scene *RingworldGame::createScene(int sceneNumber) {
 	switch (sceneNumber) {
 	/* Scene group 1 */
 	// Kziniti Palace (Introduction)
-	case 10: return new Scene10();
+	case 10:
+		return new Scene10();
 	// Outer Space (Introduction)
-	case 15: return new Scene15();
+	case 15:
+		return new Scene15();
 	// Cut-scenes for Ch'mee house in distance
-	case 20: return new Scene20();
+	case 20:
+		return new Scene20();
 	// Outside Ch'mee residence
-	case 30: return new Scene30();
+	case 30:
+		return new Scene30();
 	// Chmeee Home
-	case 40: return new Scene40();
+	case 40:
+		return new Scene40();
 	// By Flycycles
-	case 50: return new Scene50();
+	case 50:
+		return new Scene50();
 	// Flycycle controls
-	case 60: return new Scene60();
+	case 60:
+		return new Scene60();
 	// Shipyard Entrance
-	case 90: return new Scene90();
+	case 90:
+		return new Scene90();
 	// Ship Close-up
-	case 95: return new Scene95();
+	case 95:
+		return new Scene95();
 	// Sunflower navigation sequence
-	case 6100: return new Scene6100();
+	case 6100:
+		return new Scene6100();
 
 	/* Scene group 2 */
 	// Title screen
-	case 1000: return new Scene1000();
+	case 1000:
+		return new Scene1000();
 	// Fleeing planet cutscene
-	case 1001: return new Scene1001();
+	case 1001:
+		return new Scene1001();
 	// Unused
-	case 1250: return new Scene1250();
+	case 1250:
+		return new Scene1250();
 	// Ringworld Wall
-	case 1400: return new Scene1400();
+	case 1400:
+		return new Scene1400();
 	// Ringworld Space-port
-	case 1500: return new Scene1500();
+	case 1500:
+		return new Scene1500();
 
 	/* Scene group 3 - Part #1 */
 	// Cockpit cutscenes
-	case 2000: return new Scene2000();
+	case 2000:
+		return new Scene2000();
 	// Starcraft - Cockpit
-	case 2100: return new Scene2100();
+	case 2100:
+		return new Scene2100();
 	// Encyclopedia
-	case 2120: return new Scene2120();
+	case 2120:
+		return new Scene2120();
 	// Starcraft - Level 2
-	case 2150: return new Scene2150();
+	case 2150:
+		return new Scene2150();
 	// Starcraft - AutoDoc
-	case 2200: return new Scene2200();
+	case 2200:
+		return new Scene2200();
 	// Stasis Field Map
-	case 2222: return new Scene2222();
+	case 2222:
+		return new Scene2222();
 	// Starcraft - Quinn's Room
-	case 2230: return new Scene2230();
+	case 2230:
+		return new Scene2230();
 
 	/* Scene group 3 - Part #2 */
 	// Starcraft - Storage Room
-	case 2280: return new Scene2280();
+	case 2280:
+		return new Scene2280();
 	// Starcraft - Hanger Bay
-	case 2300: return new Scene2300();
+	case 2300:
+		return new Scene2300();
 	// Starcraft - Copy Protection Screen
-	case 2310: return new Scene2310();
+	case 2310:
+		return new Scene2310();
 	// Starcraft - Lander Bay
-	case 2320: return new Scene2320();
+	case 2320:
+		return new Scene2320();
 	// Scene 2400 - Descending in Lander
-	case 2400: return new Scene2400();
+	case 2400:
+		return new Scene2400();
 
 	/* Scene group 4 */
 	// Ringworld Scan
-	case 3500: return new Scene3500();
+	case 3500:
+		return new Scene3500();
 	// Remote Viewer
-	case 3700: return new Scene3700();
+	case 3700:
+		return new Scene3700();
 
 	/* Scene group 5 */
 	// Village
-	case 4000: return new Scene4000();
+	case 4000:
+		return new Scene4000();
 	// Village - Outside Lander
-	case 4010: return new Scene4010();
+	case 4010:
+		return new Scene4010();
 	// Village - Puzzle Board
-	case 4025: return new Scene4025();
+	case 4025:
+		return new Scene4025();
 	// Village - Temple Antechamber
-	case 4045: return new Scene4045();
+	case 4045:
+		return new Scene4045();
 	// Village - Temple
-	case 4050: return new Scene4050();
+	case 4050:
+		return new Scene4050();
 	// Village - Hut
-	case 4100: return new Scene4100();
+	case 4100:
+		return new Scene4100();
 	// Village - Bedroom
-	case 4150: return new Scene4150();
+	case 4150:
+		return new Scene4150();
 	// Village - Near Slaver Ship
-	case 4250: return new Scene4250();
+	case 4250:
+		return new Scene4250();
 	// Village - Slaver Ship
-	case 4300: return new Scene4300();
+	case 4300:
+		return new Scene4300();
 	// Village - Slaver Ship Keypad
-	case 4301: return new Scene4301();
+	case 4301:
+		return new Scene4301();
 
 	/* Scene group 6 */
 	// Caverns - Entrance
-	case 5000: return new Scene5000();
+	case 5000:
+		return new Scene5000();
 	// Caverns
-	case 5100: return new Scene5100();
+	case 5100:
+		return new Scene5100();
 	// Caverns - Throne-room
-	case 5200: return new Scene5200();
+	case 5200:
+		return new Scene5200();
 	// Caverns - Pit
-	case 5300: return new Scene5300();
+	case 5300:
+		return new Scene5300();
 
 	/* Scene group 8 */
 	// Landing near beach
-	case 7000: return new Scene7000();
+	case 7000:
+		return new Scene7000();
 	// Underwater: swimming
-	case 7100: return new Scene7100();
+	case 7100:
+		return new Scene7100();
 	// Underwater: Entering the cave
-	case 7200: return new Scene7200();
+	case 7200:
+		return new Scene7200();
 	// Underwater: Lord Poria
-	case 7300: return new Scene7300();
+	case 7300:
+		return new Scene7300();
 	// Floating Buildings: Outside
-	case 7600: return new Scene7600();
+	case 7600:
+		return new Scene7600();
 	// Floating Buildings: In the lab
-	case 7700: return new Scene7700();
+	case 7700:
+		return new Scene7700();
 
 	/* Scene group 10 */
 	// Near beach: Slave washing clothes
-	case 9100: return new Scene9100();
+	case 9100:
+		return new Scene9100();
 	// Castle: Outside the bulwarks
-	case 9150: return new Scene9150();
+	case 9150:
+		return new Scene9150();
 	// Castle: Near the fountain
-	case 9200: return new Scene9200();
+	case 9200:
+		return new Scene9200();
 	// Castle: In front of a large guarded door
-	case 9300: return new Scene9300();
+	case 9300:
+		return new Scene9300();
 	// Castle: In a hallway
-	case 9350: return new Scene9350();
+	case 9350:
+		return new Scene9350();
 	// Castle: In a hallway
-	case 9360: return new Scene9360();
+	case 9360:
+		return new Scene9360();
 	// Castle: Black-Smith room
-	case 9400: return new Scene9400();
+	case 9400:
+		return new Scene9400();
 	// Castle: Dining room
-	case 9450: return new Scene9450();
+	case 9450:
+		return new Scene9450();
 	// Castle: Bedroom
-	case 9500: return new Scene9500();
+	case 9500:
+		return new Scene9500();
 	// Castle: Balcony
-	case 9700: return new Scene9700();
+	case 9700:
+		return new Scene9700();
 	// Castle: In the garden
-	case 9750: return new Scene9750();
+	case 9750:
+		return new Scene9750();
 	// Castle: Dressing room
-	case 9850: return new Scene9850();
+	case 9850:
+		return new Scene9850();
 	// Ending
-	case 9900: return new Scene9900();
+	case 9900:
+		return new Scene9900();
 	// Space travel
-	case 9999: return new Scene9999();
+	case 9999:
+		return new Scene9999();
 
 	default:
 		error("Unknown scene number - %d", sceneNumber);
@@ -350,40 +413,39 @@ void SceneArea::synchronize(Serializer &s) {
 
 /*--------------------------------------------------------------------------*/
 
-RingworldInvObjectList::RingworldInvObjectList() :
-		_stunner(2280, 1, 2, OBJECT_STUNNER, "This is your stunner."),
-		_scanner(1, 1, 3, OBJECT_SCANNER, "A combination scanner comm unit."),
-		_stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, "A stasis box."),
-		_infoDisk(40, 1, 1, OBJECT_INFODISK, "The infodisk you took from the assassin."),
-		_stasisNegator(0, 2, 2, OBJECT_STASIS_NEGATOR, "The stasis field negator."),
-		_keyDevice(4250, 1, 6, OBJECT_KEY_DEVICE, "A magnetic key device."),
-		_medkit(2280, 1, 7, OBJECT_MEDKIT,  "Your medkit."),
-		_ladder(4100, 1, 8, OBJECT_LADDER, "The chief's ladder."),
-		_rope(4150, 1, 9, OBJECT_ROPE, "The chief's rope."),
-		_key(7700, 1, 11, OBJECT_KEY, "A key."),
-		_translator(7700, 1, 13, OBJECT_TRANSLATOR,  "The dolphin translator box."),
-		_ale(2150, 1, 10, OBJECT_ALE, "A bottle of ale."),
-		_paper(7700, 1, 12, OBJECT_PAPER, "A slip of paper with the numbers 2,4, and 3 written on it."),
-		_waldos(0, 1, 14, OBJECT_WALDOS, "A pair of waldos from the ruined probe."),
-		_stasisBox2(8100, 1, 4, OBJECT_STASIS_BOX2, "A stasis box."),
-		_ring(8100, 2, 5, OBJECT_RING, "This is a signet ring sent to you by Louis Wu."),
-		_cloak(9850, 2, 6, OBJECT_CLOAK, "A fine silk cloak."),
-		_tunic(9450, 2, 7, OBJECT_TUNIC, "The patriarch's soiled tunic."),
-		_candle(9500, 2, 8, OBJECT_CANDLE, "A tallow candle."),
-		_straw(9400, 2, 9, OBJECT_STRAW, "Clean, dry straw."),
-		_scimitar(9850, 1, 18, OBJECT_SCIMITAR, "A scimitar from the Patriarch's closet."),
-		_sword(9850, 1, 17, OBJECT_SWORD, "A short sword from the Patriarch's closet."),
-		_helmet(9500, 2, 4, OBJECT_HELMET, "Some type of helmet."),
-		_items(4300, 2, 10, OBJECT_ITEMS, "Two interesting items from the Tnuctipun vessel."),
-		_concentrator(4300, 2, 11, OBJECT_CONCENTRATOR, "The Tnuctipun anti-matter concentrator contained in a stasis field."),
-		_nullifier(5200, 2, 12, OBJECT_NULLIFIER, "A purported neural wave nullifier."),
-		_peg(4045, 2, 16, OBJECT_PEG, "A peg with a symbol."),
-		_vial(5100, 2, 17, OBJECT_VIAL, "A vial of the bat creatures anti-pheromone drug."),
-		_jacket(9850, 3, 1, OBJECT_JACKET, "A natty padded jacket."),
-		_tunic2(9850, 3, 2, OBJECT_TUNIC2, "A very hairy tunic."),
-		_bone(5300, 3, 5, OBJECT_BONE, "A very sharp bone."),
-		_jar(7700, 3, 4, OBJECT_JAR, "An jar filled with a green substance."),
-		_emptyJar(7700, 3, 3, OBJECT_EMPTY_JAR, "An empty jar.") {
+RingworldInvObjectList::RingworldInvObjectList() : _stunner(2280, 1, 2, OBJECT_STUNNER, "This is your stunner."),
+                                                   _scanner(1, 1, 3, OBJECT_SCANNER, "A combination scanner comm unit."),
+                                                   _stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, "A stasis box."),
+                                                   _infoDisk(40, 1, 1, OBJECT_INFODISK, "The infodisk you took from the assassin."),
+                                                   _stasisNegator(0, 2, 2, OBJECT_STASIS_NEGATOR, "The stasis field negator."),
+                                                   _keyDevice(4250, 1, 6, OBJECT_KEY_DEVICE, "A magnetic key device."),
+                                                   _medkit(2280, 1, 7, OBJECT_MEDKIT, "Your medkit."),
+                                                   _ladder(4100, 1, 8, OBJECT_LADDER, "The chief's ladder."),
+                                                   _rope(4150, 1, 9, OBJECT_ROPE, "The chief's rope."),
+                                                   _key(7700, 1, 11, OBJECT_KEY, "A key."),
+                                                   _translator(7700, 1, 13, OBJECT_TRANSLATOR, "The dolphin translator box."),
+                                                   _ale(2150, 1, 10, OBJECT_ALE, "A bottle of ale."),
+                                                   _paper(7700, 1, 12, OBJECT_PAPER, "A slip of paper with the numbers 2,4, and 3 written on it."),
+                                                   _waldos(0, 1, 14, OBJECT_WALDOS, "A pair of waldos from the ruined probe."),
+                                                   _stasisBox2(8100, 1, 4, OBJECT_STASIS_BOX2, "A stasis box."),
+                                                   _ring(8100, 2, 5, OBJECT_RING, "This is a signet ring sent to you by Louis Wu."),
+                                                   _cloak(9850, 2, 6, OBJECT_CLOAK, "A fine silk cloak."),
+                                                   _tunic(9450, 2, 7, OBJECT_TUNIC, "The patriarch's soiled tunic."),
+                                                   _candle(9500, 2, 8, OBJECT_CANDLE, "A tallow candle."),
+                                                   _straw(9400, 2, 9, OBJECT_STRAW, "Clean, dry straw."),
+                                                   _scimitar(9850, 1, 18, OBJECT_SCIMITAR, "A scimitar from the Patriarch's closet."),
+                                                   _sword(9850, 1, 17, OBJECT_SWORD, "A short sword from the Patriarch's closet."),
+                                                   _helmet(9500, 2, 4, OBJECT_HELMET, "Some type of helmet."),
+                                                   _items(4300, 2, 10, OBJECT_ITEMS, "Two interesting items from the Tnuctipun vessel."),
+                                                   _concentrator(4300, 2, 11, OBJECT_CONCENTRATOR, "The Tnuctipun anti-matter concentrator contained in a stasis field."),
+                                                   _nullifier(5200, 2, 12, OBJECT_NULLIFIER, "A purported neural wave nullifier."),
+                                                   _peg(4045, 2, 16, OBJECT_PEG, "A peg with a symbol."),
+                                                   _vial(5100, 2, 17, OBJECT_VIAL, "A vial of the bat creatures anti-pheromone drug."),
+                                                   _jacket(9850, 3, 1, OBJECT_JACKET, "A natty padded jacket."),
+                                                   _tunic2(9850, 3, 2, OBJECT_TUNIC2, "A very hairy tunic."),
+                                                   _bone(5300, 3, 5, OBJECT_BONE, "A very sharp bone."),
+                                                   _jar(7700, 3, 4, OBJECT_JAR, "An jar filled with a green substance."),
+                                                   _emptyJar(7700, 3, 3, OBJECT_EMPTY_JAR, "An empty jar.") {
 
 	// Add the items to the list
 	_itemList.push_back(&_stunner);
@@ -639,7 +701,6 @@ void NamedHotspot::synchronize(Serializer &s) {
 	if (g_vm->getGameID() == GType_BlueForce)
 		s.syncAsSint16LE(_talkLineNum);
 }
-
 
 } // End of namespace Ringworld
 

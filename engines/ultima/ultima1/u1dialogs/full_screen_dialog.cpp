@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
-#include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/u1gfx/drawing_support.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -31,7 +31,7 @@ namespace U1Dialogs {
 FullScreenDialog::FullScreenDialog(Ultima1Game *game) : Dialog(game) {
 	_bounds = Common::Rect(0, 0, 320, 200);
 }
-	
+
 void FullScreenDialog::drawFrame(const Common::String &title) {
 	Shared::Gfx::VisualSurface s = getSurface();
 	U1Gfx::DrawingSupport ds(s);
@@ -54,5 +54,5 @@ void FullScreenDialog::hide() {
 }
 
 } // End of namespace U1Dialogs
-} // End of namespace Gfx
+} // namespace Ultima1
 } // End of namespace Ultima

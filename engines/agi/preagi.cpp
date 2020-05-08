@@ -27,8 +27,8 @@
 #include "common/events.h"
 #include "common/random.h"
 
-#include "agi/preagi.h"
 #include "agi/graphics.h"
+#include "agi/preagi.h"
 
 namespace Agi {
 
@@ -129,7 +129,8 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 		switch (code) {
 		case '\n':
 		case 0x8D:
-			if (++row == 200 / 8) return;
+			if (++row == 200 / 8)
+				return;
 			col = 0;
 			break;
 
@@ -142,14 +143,15 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 
 			if (++col == 320 / 8) {
 				col = 0;
-				if (++row == 200 / 8) return;
+				if (++row == 200 / 8)
+					return;
 			}
 		}
 	}
 }
 
 void PreAgiEngine::drawStrMiddle(int row, int attr, const char *buffer) {
-	int col = (25 / 2) - (strlen(buffer) / 2);  // 25 = 320 / 8 (maximum column)
+	int col = (25 / 2) - (strlen(buffer) / 2); // 25 = 320 / 8 (maximum column)
 	drawStr(row, col, attr, buffer);
 }
 
@@ -165,7 +167,7 @@ void PreAgiEngine::clearTextArea() {
 }
 
 void PreAgiEngine::clearRow(int row) {
-	drawStr(row, 0, IDA_DEFAULT, "                                        ");   // 40 spaces
+	drawStr(row, 0, IDA_DEFAULT, "                                        "); // 40 spaces
 }
 
 void PreAgiEngine::printStr(const char *szMsg) {

@@ -27,21 +27,21 @@
  */
 
 #include "engines/wintermute/ad/ad_item.h"
+#include "common/str.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_sentence.h"
-#include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/base/font/base_font.h"
+#include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "common/str.h"
+#include "engines/wintermute/utils/utils.h"
 
 namespace Wintermute {
 
@@ -67,7 +67,6 @@ AdItem::AdItem(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_movable = false;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdItem::~AdItem() {
 	delete _spriteHover;
@@ -80,7 +79,6 @@ AdItem::~AdItem() {
 	delete[] _amountString;
 	_amountString = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::loadFile(const char *filename) {
@@ -98,12 +96,10 @@ bool AdItem::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing ITEM file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(ITEM)
@@ -254,8 +250,7 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 			} else {
 				_talkSprites.add(spr);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_TALK_SPECIAL: {
 			BaseSprite *spr = new BaseSprite(_gameRef, this);
@@ -264,8 +259,7 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 			} else {
 				_talkSpritesEx.add(spr);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_CURSOR:
 			delete _cursorNormal;
@@ -331,7 +325,6 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::update() {
@@ -408,7 +401,6 @@ bool AdItem::update() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::display(int x, int y) {
 	int width = 0;
@@ -452,7 +444,6 @@ bool AdItem::display(int x, int y) {
 
 	return ret;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -649,7 +640,6 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *AdItem::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -733,7 +723,6 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
@@ -808,12 +797,10 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *AdItem::scToString() {
 	return "[item]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::persist(BasePersistenceManager *persistMgr) {
@@ -834,7 +821,6 @@ bool AdItem::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::getExtendedFlag(const char *flagName) {

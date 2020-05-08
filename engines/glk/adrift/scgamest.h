@@ -43,8 +43,14 @@ typedef sc_roomstate_s sc_roomstate_t;
  * room number + 1.
  */
 enum {
-	OBJ_HIDDEN = -1, OBJ_HELD_PLAYER = 0, OBJ_HELD_NPC = -200, OBJ_WORN_PLAYER = -100,
-	OBJ_WORN_NPC = -300, OBJ_PART_PLAYER = -30, OBJ_PART_NPC = -30, OBJ_ON_OBJECT = -20,
+	OBJ_HIDDEN = -1,
+	OBJ_HELD_PLAYER = 0,
+	OBJ_HELD_NPC = -200,
+	OBJ_WORN_PLAYER = -100,
+	OBJ_WORN_NPC = -300,
+	OBJ_PART_PLAYER = -30,
+	OBJ_PART_NPC = -30,
+	OBJ_ON_OBJECT = -20,
 	OBJ_IN_OBJECT = -10
 };
 struct sc_objectstate_s {
@@ -69,7 +75,10 @@ typedef sc_taskstate_s sc_taskstate_t;
 /* Event state structure, holds event state, and timing information. */
 enum {
 	ES_WAITING = 1,
-	ES_RUNNING = 2, ES_AWAITING = 3, ES_FINISHED = 4, ES_PAUSED = 5
+	ES_RUNNING = 2,
+	ES_AWAITING = 3,
+	ES_FINISHED = 4,
+	ES_PAUSED = 5
 };
 struct sc_eventstate_s {
 	sc_int state;

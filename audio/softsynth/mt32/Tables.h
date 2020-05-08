@@ -18,8 +18,8 @@
 #ifndef MT32EMU_TABLES_H
 #define MT32EMU_TABLES_H
 
-#include "globals.h"
 #include "Types.h"
+#include "globals.h"
 
 namespace MT32Emu {
 

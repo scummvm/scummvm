@@ -24,8 +24,8 @@
 #define ULTIMA8_GUMPS_BOOKGUMP_H
 
 #include "ultima/ultima8/gumps/modal_gump.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,6 +34,7 @@ class BookGump : public ModalGump {
 	Std::string _text;
 	ObjId _textWidgetL;
 	ObjId _textWidgetR;
+
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -57,6 +58,7 @@ protected:
 
 public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

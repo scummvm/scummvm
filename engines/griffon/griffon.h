@@ -36,10 +36,10 @@
 #ifndef GRIFFON_GRIFFON_H
 #define GRIFFON_GRIFFON_H
 
-#include "common/scummsys.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "engines/engine.h"
 
 #include "audio/mixer.h"
@@ -51,9 +51,9 @@ namespace Griffon {
 class Console;
 
 #define kSoundHandles 16
-#define kMaxNPC      32
-#define kMaxFloat    32
-#define kMaxSpell    32
+#define kMaxNPC 32
+#define kMaxFloat 32
+#define kMaxSpell 32
 
 // spells
 enum {
@@ -93,56 +93,55 @@ enum {
 
 //  in game scripts
 enum {
-	kScriptFlask = 0,			// get flask
-	kScriptMasterKey = 2, 		// find master key
-	kScriptFindCrystal = 3,		// find crystal
-	kScriptFindShield = 4,		// find shield - obj 8
-	kScriptFindSword = 5,		// find sword - obj 9
-	kScriptKeyChest = 6,		// regular key chest
-	kScriptBlueFlask = 7,		// blue flask
-	kScriptGardenMasterKey = 8,	// garden's master key
-	kScriptLightningBomb = 9,	// lightning bomb
-	kScriptBlueFlaskChest = 10,	// blue flask chest
-	kScriptLightningChest = 11,	// lightning chest
-	kScriptArmourChest = 12,	// armour chest
-	kScriptCitadelMasterKey = 13,	// citadel master key
-	kScriptEndOfGame = 14,		// end of game
-	kScriptGetSword3 = 15,		// get sword3
-	kScriptShield3 = 16,		// shield3
-	kScriptArmour3 = 17,		// armour3
-	kScriptKeyChest1 = 20,		// key chest 1
-	kScriptLever = 60			// lever
+	kScriptFlask = 0,             // get flask
+	kScriptMasterKey = 2,         // find master key
+	kScriptFindCrystal = 3,       // find crystal
+	kScriptFindShield = 4,        // find shield - obj 8
+	kScriptFindSword = 5,         // find sword - obj 9
+	kScriptKeyChest = 6,          // regular key chest
+	kScriptBlueFlask = 7,         // blue flask
+	kScriptGardenMasterKey = 8,   // garden's master key
+	kScriptLightningBomb = 9,     // lightning bomb
+	kScriptBlueFlaskChest = 10,   // blue flask chest
+	kScriptLightningChest = 11,   // lightning chest
+	kScriptArmourChest = 12,      // armour chest
+	kScriptCitadelMasterKey = 13, // citadel master key
+	kScriptEndOfGame = 14,        // end of game
+	kScriptGetSword3 = 15,        // get sword3
+	kScriptShield3 = 16,          // shield3
+	kScriptArmour3 = 17,          // armour3
+	kScriptKeyChest1 = 20,        // key chest 1
+	kScriptLever = 60             // lever
 };
 
 // monsters
 enum {
-	kMonsterBabyDragon = 1, 	// baby dragon
- 	kMonsterOneWing = 2,		// one wing
- 	kMonsterBoss1 = 3, 			// boss 1
- 	kMonsterBlackKnight = 4,	// black knight
- 	kMonsterFireHydra = 5,		// fire hydra
- 	kMonsterRedDragon = 6,		// red dragon
- 	kMonsterPriest = 7,			// priest
- 	kMonsterYellowDragon = 8,	// yellow fire dragon
- 	kMonsterTwoWing = 9,		// two wing
-	kMonsterDragon2 = 10,		// dragon2
-	kMonsterFinalBoss = 11,		// final boss
-	kMonsterBatKitty = 12		// bat kitty
+	kMonsterBabyDragon = 1,   // baby dragon
+	kMonsterOneWing = 2,      // one wing
+	kMonsterBoss1 = 3,        // boss 1
+	kMonsterBlackKnight = 4,  // black knight
+	kMonsterFireHydra = 5,    // fire hydra
+	kMonsterRedDragon = 6,    // red dragon
+	kMonsterPriest = 7,       // priest
+	kMonsterYellowDragon = 8, // yellow fire dragon
+	kMonsterTwoWing = 9,      // two wing
+	kMonsterDragon2 = 10,     // dragon2
+	kMonsterFinalBoss = 11,   // final boss
+	kMonsterBatKitty = 12     // bat kitty
 };
-
 
 #define kEpsilon 0.001
 
 struct Player {
-	float   px;
-	float   py;
-	float   opx;
-	float   opy;
-	int     walkDir;
-	float   walkFrame;
-	float   walkSpeed;
-	float   attackFrame;
-	float   attackSpeed;
+	float px;
+	float py;
+	float opx;
+	float opy;
+	int walkDir;
+	float walkFrame;
+	float walkSpeed;
+	float attackFrame;
+	float attackSpeed;
 
 	int hp;
 	int maxHp;
@@ -173,8 +172,8 @@ struct Player {
 };
 
 struct BodySection {
-	float   x;
-	float   y;
+	float x;
+	float y;
 	int parentID;
 	int isbase;
 	int sprite;
@@ -185,7 +184,7 @@ struct NPC {
 	float x;
 	float y;
 	int spriteset;
-	int x1;     // patrol area
+	int x1; // patrol area
 	int y1;
 	int x2;
 	int y2;
@@ -198,9 +197,9 @@ struct NPC {
 	int item3;
 	int script;
 	float frame;
-	float frame2;     // end boss specific
+	float frame2; // end boss specific
 	int cframe;
-	bool onMap;      // is this npc set to be genned in the mapfile
+	bool onMap; // is this npc set to be genned in the mapfile
 
 	int ticks;
 	int pause;
@@ -223,7 +222,6 @@ struct NPC {
 	int spellDamage;
 	int attackDamage;
 
-
 	// one wing and firehydra specific
 	BodySection bodysection[31];
 	float swayAngle;
@@ -238,32 +236,32 @@ struct NPC {
 	int attackframe2[4];
 
 	// dragon2 specific
-	float   floating;
+	float floating;
 };
 
 struct Spell {
 	int spellnum;
-	float   homex;
-	float   homey;
-	float   enemyx;
-	float   enemyy;
+	float homex;
+	float homey;
+	float enemyx;
+	float enemyy;
 
-	float   frame;
+	float frame;
 
-	int damagewho;  // 0 = npc, 1 = player
+	int damagewho; // 0 = npc, 1 = player
 
 	// for earthslide
-	float   rocky[9]; // CHECKME: Looks unused
+	float rocky[9]; // CHECKME: Looks unused
 	int rockimg[9];
 	int rockdeflect[9];
 
-	float   strength;
+	float strength;
 
 	// fire
 	int legalive[5];
 
 	// spell 6 specific
-	float   fireballs[7][4];    // x,y,targetx, targety
+	float fireballs[7][4]; // x,y,targetx, targety
 	int nfballs;
 	int ballon[7];
 
@@ -271,11 +269,11 @@ struct Spell {
 };
 
 struct AnimSet {
-	int x;  // xyloc on spriteimageset
+	int x; // xyloc on spriteimageset
 	int y;
-	int xofs;   // the actual place to paste the sprite in reference to the bodypart loc on screen
+	int xofs; // the actual place to paste the sprite in reference to the bodypart loc on screen
 	int yofs;
-	int w;  // w/h of the sprite in the imageset
+	int w; // w/h of the sprite in the imageset
 	int h;
 };
 
@@ -344,7 +342,6 @@ private:
 	Console *_console;
 
 private:
-
 	// combat.cpp
 	void attack();
 	void castSpell(int spellnum, float homex, float homey, float enemyx, float enemyy, int damagewho);
@@ -461,8 +458,8 @@ private:
 	bool _selEnemyOn;
 	int _curEnemy;
 	bool _forcePause;
-	bool _roomLock; // set to disable any room jumps while in the room
-	int _scriptFlag[100][10], _saveSlot;  // script, flag
+	bool _roomLock;                      // set to disable any room jumps while in the room
+	int _scriptFlag[100][10], _saveSlot; // script, flag
 
 	// timer related - move to local later
 	int _ticks, _ticksPassed, _nextTicks;
@@ -474,7 +471,7 @@ private:
 	Common::Rect rcSrc, rcDest;
 
 	// -----------special case
-	bool _dontDrawOver;   // used in map24 so that the candles don't draw over the boss, default set to 0
+	bool _dontDrawOver; // used in map24 so that the candles don't draw over the boss, default set to 0
 
 	// saveload info
 	Graphics::TransparentSurface *_saveLoadImg;
@@ -564,6 +561,6 @@ private:
 	void saveConfig();
 };
 
-}
+} // namespace Griffon
 
 #endif // GRIFFON_GRIFFON_H

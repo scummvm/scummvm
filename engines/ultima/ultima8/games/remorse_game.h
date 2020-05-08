@@ -48,7 +48,7 @@ public:
 	ProcId playIntroMovie(bool fade) override;
 	ProcId playEndgameMovie(bool fade) override;
 	void playCredits() override;
-	void playQuotes() override { };
+	void playQuotes() override{};
 
 	static Game *createGame(GameInfo *info);
 

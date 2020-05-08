@@ -23,19 +23,19 @@
 #ifndef SCI_INCLUDE_ENGINE_H
 #define SCI_INCLUDE_ENGINE_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/str-array.h"
 
 namespace Common {
 class SeekableReadStream;
 class WriteStream;
-}
+} // namespace Common
 
-#include "sci/sci.h"
 #include "sci/engine/file.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/sci.h"
 
 #include "sci/parser/vocabulary.h"
 
@@ -71,27 +71,27 @@ enum {
 };
 
 enum VideoFlags {
-	kNone            = 0,
-	kDoubled         = 1 << 0,
-	kDropFrames      = 1 << 1,
-	kBlackLines      = 1 << 2,
-	kUnkBit3         = 1 << 3,
-	kGammaBoost      = 1 << 4,
-	kHoldBlackFrame  = 1 << 5,
-	kHoldLastFrame   = 1 << 6,
-	kUnkBit7         = 1 << 7,
-	kStretch         = 1 << 8
+	kNone = 0,
+	kDoubled = 1 << 0,
+	kDropFrames = 1 << 1,
+	kBlackLines = 1 << 2,
+	kUnkBit3 = 1 << 3,
+	kGammaBoost = 1 << 4,
+	kHoldBlackFrame = 1 << 5,
+	kHoldLastFrame = 1 << 6,
+	kUnkBit7 = 1 << 7,
+	kStretch = 1 << 8
 };
 
 /**
  * Trace information about a VM function call.
  */
 struct SciCallOrigin {
-	int scriptNr; //< The source script of the function
+	int scriptNr;              //< The source script of the function
 	Common::String objectName; //< The name of the object being called
 	Common::String methodName; //< The name of the method being called
-	int localCallOffset; //< The byte offset of a local script subroutine called by the origin method. -1 if not in a local subroutine.
-	int roomNr; //< The room that was loaded at the time of the call
+	int localCallOffset;       //< The byte offset of a local script subroutine called by the origin method. -1 if not in a local subroutine.
+	int roomNr;                //< The room that was loaded at the time of the call
 
 	Common::String toString() const {
 		return Common::String::format("method %s::%s (room %d, script %d, localCall %x)", objectName.c_str(), methodName.c_str(), roomNr, scriptNr, localCallOffset);
@@ -110,8 +110,8 @@ public:
 
 	/* Non-VM information */
 
-	uint32 lastWaitTime; /**< The last time the game invoked Wait() */
-	uint32 _screenUpdateTime;	/**< The last time the game updated the screen */
+	uint32 lastWaitTime;      /**< The last time the game invoked Wait() */
+	uint32 _screenUpdateTime; /**< The last time the game updated the screen */
 
 	void speedThrottler(uint32 neededSleep);
 	uint16 wait(uint16 ticks);
@@ -131,18 +131,18 @@ public:
 	DirSeeker _dirseeker;
 
 	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
-	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
+	int16 _lastSaveNewId;     // last newly created filename-id by kSaveGame
 
 	// see detection.cpp / SciEngine::loadGameState()
 	int _delayedRestoreGameId; // the saved game id, that it supposed to get restored (triggered by ScummVM menu)
 
 	// see kmisc.cpp / kMacPlatform32
-	int _kq7MacSaveGameId; // the saved game id to use when saving (might not exist yet)
+	int _kq7MacSaveGameId;                     // the saved game id to use when saving (might not exist yet)
 	Common::String _kq7MacSaveGameDescription; // description to use when saving game
 
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
-	bool _cursorWorkaroundActive; // Refer to GfxCursor::setPosition()
+	bool _cursorWorkaroundActive;    // Refer to GfxCursor::setPosition()
 	int16 _cursorWorkaroundPosCount; // When the cursor is reported to be at the previously set coordinate, we won't disable the workaround unless it happened for this many times
 	Common::Point _cursorWorkaroundPoint;
 	Common::Rect _cursorWorkaroundRect;
@@ -156,28 +156,28 @@ public:
 	 * the same stack. This variable contains the stack base for the current vm.
 	 */
 	int executionStackBase;
-	bool _executionStackPosChanged;   /**< Set to true if the execution stack position should be re-evaluated by the vm */
+	bool _executionStackPosChanged; /**< Set to true if the execution stack position should be re-evaluated by the vm */
 
 	// Registers
-	reg_t r_acc; /**< Accumulator */
+	reg_t r_acc;  /**< Accumulator */
 	reg_t r_prev; /**< previous comparison result */
 	int16 r_rest; /**< current &rest register */
 
 	StackPtr stack_base; /**< Pointer to the least stack element */
-	StackPtr stack_top; /**< First invalid stack element */
+	StackPtr stack_top;  /**< First invalid stack element */
 
 	// Script state
 	ExecStack *xs;
-	reg_t *variables[4];		///< global, local, temp, param, as immediate pointers
-	reg_t *variablesBase[4];	///< Used for referencing VM ops
-	SegmentId variablesSegment[4];	///< Same as above, contains segment IDs
-	int variablesMax[4];		///< Max. values for all variables
+	reg_t *variables[4];           ///< global, local, temp, param, as immediate pointers
+	reg_t *variablesBase[4];       ///< Used for referencing VM ops
+	SegmentId variablesSegment[4]; ///< Same as above, contains segment IDs
+	int variablesMax[4];           ///< Max. values for all variables
 
 	AbortGameState abortScriptProcessing;
 	int16 gameIsRestarting; // is set when restarting (=1) or restoring the game (=2)
 
 	int scriptStepCounter; // Counts the number of steps executed
-	int scriptGCInterval; // Number of steps in between gcs
+	int scriptGCInterval;  // Number of steps in between gcs
 
 	uint16 currentRoomNumber() const;
 	void setRoomNumber(uint16 roomNumber);

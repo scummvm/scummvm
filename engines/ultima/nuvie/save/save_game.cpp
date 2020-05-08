@@ -20,45 +20,44 @@
  *
  */
 
+#include "ultima/nuvie/save/save_game.h"
+#include "common/savefile.h"
+#include "common/system.h"
+#include "common/translation.h"
+#include "gui/browser.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/egg_manager.h"
+#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/game_clock.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/core/weather.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_lzw.h"
 #include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/command_bar.h"
 #include "ultima/nuvie/gui/widgets/console.h"
-#include "ultima/nuvie/save/save_game.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/core/obj_manager.h"
-#include "ultima/nuvie/save/obj_list.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/core/egg_manager.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/views/view_manager.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/portraits/portrait.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/gui/widgets/command_bar.h"
-#include "ultima/nuvie/core/weather.h"
-#include "ultima/nuvie/script/script.h"
-#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/nuvie.h"
-#include "common/system.h"
-#include "common/savefile.h"
-#include "common/translation.h"
-#include "gui/browser.h"
+#include "ultima/nuvie/portraits/portrait.h"
+#include "ultima/nuvie/save/obj_list.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 #define OBJLIST_FILENAME "savegame/objlist"
-#define OBJBLK_FILENAME  "savegame/objblkxx"
-#define GAME_ID(GT) ((GT == GAME_SAVAGE_EMPIRE) ? MKTAG16('S', 'E') : \
-	((GT == GAME_MARTIAN_DREAMS) ? MKTAG16('M', 'D') : MKTAG16('U', '6')))
+#define OBJBLK_FILENAME "savegame/objblkxx"
+#define GAME_ID(GT) ((GT == GAME_SAVAGE_EMPIRE) ? MKTAG16('S', 'E') : ((GT == GAME_MARTIAN_DREAMS) ? MKTAG16('M', 'D') : MKTAG16('U', '6')))
 
 SaveGame::SaveGame(Configuration *cfg) {
 	config = cfg;
@@ -80,7 +79,6 @@ void SaveGame::init(ObjManager *obj_manager) {
 
 	return;
 }
-
 
 bool SaveGame::load_new() {
 	Std::string filename;
@@ -440,7 +438,6 @@ void SaveGame::update_objlist_for_new_game() {
 	} else {
 		update_objlist_for_new_game_u6();
 	}
-
 }
 
 void SaveGame::update_objlist_for_new_game_u6() {

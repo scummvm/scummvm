@@ -34,6 +34,7 @@ namespace Widgets {
  */
 class Merchant : public Person {
 	DECLARE_MESSAGE_MAP;
+
 protected:
 	/**
 	 * Checks whether the player is caught stealing, and if so, makes the guards hostile
@@ -44,20 +45,19 @@ protected:
 	 * Adds a response that you don't have the king's permission
 	 */
 	void noKingsPermission();
+
 public:
 	CLASSDEF;
 
 	/**
 	 * Constructor
 	 */
-	Merchant(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 50, hitPoints) {}
+	Merchant(Ultima1Game *game, Maps::MapBase *map, int hitPoints) : Person(game, map, 50, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Merchant(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
-		Person(game, map, tileNum, hitPoints) {}
+	Merchant(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) : Person(game, map, tileNum, hitPoints) {}
 
 	/**
 	 * Constructor

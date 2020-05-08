@@ -21,41 +21,40 @@
  *
  */
 
+#include "backends/platform/3ds/config.h"
+#include "backends/platform/3ds/options-dialog.h"
 #include "backends/platform/3ds/osystem.h"
 #include "backends/platform/3ds/shader_shbin.h"
-#include "backends/platform/3ds/options-dialog.h"
-#include "backends/platform/3ds/config.h"
 #include "common/rect.h"
 #include "graphics/fontman.h"
 #include "gui/gui-manager.h"
 
 // Used to transfer the final rendered display to the framebuffer
-#define DISPLAY_TRANSFER_FLAGS                                                    \
-        (GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                    \
-         GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | \
-         GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                           \
-         GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
-#define TEXTURE_TRANSFER_FLAGS(fmt)                             \
-        (GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) |  \
-         GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(fmt) | \
-         GX_TRANSFER_OUT_FORMAT(fmt) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
+#define DISPLAY_TRANSFER_FLAGS                                                \
+	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) |                    \
+	 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | \
+	 GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) |                           \
+	 GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
+#define TEXTURE_TRANSFER_FLAGS(fmt)                         \
+	(GX_TRANSFER_FLIP_VERT(1) | GX_TRANSFER_OUT_TILED(1) |  \
+	 GX_TRANSFER_RAW_COPY(0) | GX_TRANSFER_IN_FORMAT(fmt) | \
+	 GX_TRANSFER_OUT_FORMAT(fmt) | GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 #define DEFAULT_MODE _modeRGBA8
 
 namespace _3DS {
 /* Group the various enums, values, etc. needed for
  * each graphics mode into instaces of GfxMode3DS */
-static const GfxMode3DS _modeRGBA8 = { Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
-                                       GPU_RGBA8, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8) };
-static const GfxMode3DS _modeRGB565 = { Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
-                                        GPU_RGB565, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565) };
-static const GfxMode3DS _modeRGB555 = { Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
-                                        GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1) };
-static const GfxMode3DS _modeRGB5A1 = { Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
-                                        GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1) };
+static const GfxMode3DS _modeRGBA8 = {Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
+                                      GPU_RGBA8, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8)};
+static const GfxMode3DS _modeRGB565 = {Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+                                       GPU_RGB565, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565)};
+static const GfxMode3DS _modeRGB555 = {Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
+                                       GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1)};
+static const GfxMode3DS _modeRGB5A1 = {Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
+                                       GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1)};
 static const GfxMode3DS _modeCLUT8 = _modeRGBA8;
 
-static const GfxMode3DS *gfxModes[] = { &_modeRGBA8, &_modeRGB565, &_modeRGB555, &_modeRGB5A1, &_modeCLUT8 };
-
+static const GfxMode3DS *gfxModes[] = {&_modeRGBA8, &_modeRGB565, &_modeRGB555, &_modeRGB5A1, &_modeCLUT8};
 
 void OSystem_3DS::init3DSGraphics() {
 	_gfxState.gfxMode = gfxModes[CLUT8];
@@ -78,7 +77,7 @@ void OSystem_3DS::init3DSGraphics() {
 	                          DISPLAY_TRANSFER_FLAGS);
 
 	// Load and bind simple default shader (shader.v.pica)
-	_dvlb = DVLB_ParseFile((u32*)shader_shbin, shader_shbin_size);
+	_dvlb = DVLB_ParseFile((u32 *)shader_shbin, shader_shbin_size);
 	shaderProgramInit(&_program);
 	shaderProgramSetVsh(&_program, &_dvlb->DVLE[0]);
 	C3D_BindProgram(&_program);
@@ -265,9 +264,9 @@ void OSystem_3DS::updateSize() {
 Common::List<Graphics::PixelFormat> OSystem_3DS::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> list;
 	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)); // GPU_RGBA8
-	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)); // GPU_RGB565
-	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)); // RGB555 (needed for FMTOWNS?)
-	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)); // GPU_RGBA5551
+	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));  // GPU_RGB565
+	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));  // RGB555 (needed for FMTOWNS?)
+	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));  // GPU_RGBA5551
 	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 	return list;
 }
@@ -353,7 +352,7 @@ static void copyRect555To5551(const Graphics::Surface &srcSurface, Graphics::Sur
 
 void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
                                    int y, int w, int h) {
-	Common::Rect rect(x, y, x+w, y+h);
+	Common::Rect rect(x, y, x + w, y + h);
 	_gameScreen.copyRectToSurface(buf, pitch, x, y, w, h);
 	Graphics::Surface subSurface = _gameScreen.getSubArea(rect);
 
@@ -403,7 +402,7 @@ void OSystem_3DS::updateScreen() {
 		_gameTextureDirty = false;
 	}
 
-// 	updateFocus();
+	// 	updateFocus();
 	updateMagnify();
 
 	if (_osdMessage.getPixels() && _osdMessageEndTime <= getMillis(true)) {
@@ -411,71 +410,71 @@ void OSystem_3DS::updateScreen() {
 	}
 
 	C3D_FrameBegin(0);
-		_gameTopTexture.transfer();
-		if (_overlayVisible) {
-			_overlay.transfer();
-		}
-		if (_cursorVisible && config.showCursor) {
-			_cursorTexture.transfer();
-		}
-		_osdMessage.transfer();
-		_activityIcon.transfer();
+	_gameTopTexture.transfer();
+	if (_overlayVisible) {
+		_overlay.transfer();
+	}
+	if (_cursorVisible && config.showCursor) {
+		_cursorTexture.transfer();
+	}
+	_osdMessage.transfer();
+	_activityIcon.transfer();
 	C3D_FrameEnd(0);
 
 	C3D_FrameBegin(0);
-		// Render top screen
-		C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x00000000, 0);
-		C3D_FrameDrawOn(_renderTargetTop);
-		if (config.screen == kScreenTop || config.screen == kScreenBoth) {
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionTop);
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameTopTexture.getMatrix());
-			_gameTopTexture.render();
-			if (_overlayVisible && config.screen == kScreenTop) {
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
-				_overlay.render();
-			}
-			if (_activityIcon.getPixels() && config.screen == kScreenTop) {
-				_activityIcon.setPosition(400 - _activityIcon.actualWidth, 0);
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _activityIcon.getMatrix());
-				_activityIcon.render();
-			}
-			if (_osdMessage.getPixels() && config.screen == kScreenTop) {
-				_osdMessage.setPosition((400 - _osdMessage.actualWidth) / 2, (240 - _osdMessage.actualHeight) / 2);
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _osdMessage.getMatrix());
-				_osdMessage.render();
-			}
-			if (_cursorVisible && config.showCursor && config.screen == kScreenTop) {
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
-				_cursorTexture.render();
-			}
+	// Render top screen
+	C3D_RenderTargetClear(_renderTargetTop, C3D_CLEAR_ALL, 0x00000000, 0);
+	C3D_FrameDrawOn(_renderTargetTop);
+	if (config.screen == kScreenTop || config.screen == kScreenBoth) {
+		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionTop);
+		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameTopTexture.getMatrix());
+		_gameTopTexture.render();
+		if (_overlayVisible && config.screen == kScreenTop) {
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
+			_overlay.render();
 		}
+		if (_activityIcon.getPixels() && config.screen == kScreenTop) {
+			_activityIcon.setPosition(400 - _activityIcon.actualWidth, 0);
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _activityIcon.getMatrix());
+			_activityIcon.render();
+		}
+		if (_osdMessage.getPixels() && config.screen == kScreenTop) {
+			_osdMessage.setPosition((400 - _osdMessage.actualWidth) / 2, (240 - _osdMessage.actualHeight) / 2);
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _osdMessage.getMatrix());
+			_osdMessage.render();
+		}
+		if (_cursorVisible && config.showCursor && config.screen == kScreenTop) {
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
+			_cursorTexture.render();
+		}
+	}
 
-		// Render bottom screen
-		C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
-		C3D_FrameDrawOn(_renderTargetBottom);
-		if (config.screen == kScreenBottom || config.screen == kScreenBoth) {
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionBottom);
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameBottomTexture.getMatrix());
-			_gameTopTexture.render();
-			if (_overlayVisible) {
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
-				_overlay.render();
-			}
-			if (_activityIcon.getPixels()) {
-				_activityIcon.setPosition(320 - _activityIcon.actualWidth, 0);
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _activityIcon.getMatrix());
-				_activityIcon.render();
-			}
-			if (_osdMessage.getPixels()) {
-				_osdMessage.setPosition((320 - _osdMessage.actualWidth) / 2, (240 - _osdMessage.actualHeight) / 2);
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _osdMessage.getMatrix());
-				_osdMessage.render();
-			}
-			if (_cursorVisible && config.showCursor) {
-				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
-				_cursorTexture.render();
-			}
+	// Render bottom screen
+	C3D_RenderTargetClear(_renderTargetBottom, C3D_CLEAR_ALL, 0x00000000, 0);
+	C3D_FrameDrawOn(_renderTargetBottom);
+	if (config.screen == kScreenBottom || config.screen == kScreenBoth) {
+		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _projectionLocation, &_projectionBottom);
+		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _gameBottomTexture.getMatrix());
+		_gameTopTexture.render();
+		if (_overlayVisible) {
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _overlay.getMatrix());
+			_overlay.render();
 		}
+		if (_activityIcon.getPixels()) {
+			_activityIcon.setPosition(320 - _activityIcon.actualWidth, 0);
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _activityIcon.getMatrix());
+			_activityIcon.render();
+		}
+		if (_osdMessage.getPixels()) {
+			_osdMessage.setPosition((320 - _osdMessage.actualWidth) / 2, (240 - _osdMessage.actualHeight) / 2);
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _osdMessage.getMatrix());
+			_osdMessage.render();
+		}
+		if (_cursorVisible && config.showCursor) {
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
+			_cursorTexture.render();
+		}
+	}
 	C3D_FrameEnd(0);
 }
 
@@ -515,18 +514,18 @@ void OSystem_3DS::updateFocus() {
 		float w = 400.f;
 		float h = 240.f;
 		float ratio = _focusRect.width() / _focusRect.height();
-		if (ratio > w/h) {
+		if (ratio > w / h) {
 			_focusTargetScaleX = w / _focusRect.width();
-			float newHeight = (float)_focusRect.width() / w/h;
+			float newHeight = (float)_focusRect.width() / w / h;
 			_focusTargetScaleY = h / newHeight;
 			_focusTargetPosX = _focusTargetScaleX * _focusRect.left;
-			_focusTargetPosY = _focusTargetScaleY * ((float)_focusRect.top - (newHeight - _focusRect.height())/2.f);
+			_focusTargetPosY = _focusTargetScaleY * ((float)_focusRect.top - (newHeight - _focusRect.height()) / 2.f);
 		} else {
 			_focusTargetScaleY = h / _focusRect.height();
-			float newWidth = (float)_focusRect.height() * w/h;
+			float newWidth = (float)_focusRect.height() * w / h;
 			_focusTargetScaleX = w / newWidth;
 			_focusTargetPosY = _focusTargetScaleY * _focusRect.top;
-			_focusTargetPosX = _focusTargetScaleX * ((float)_focusRect.left - (newWidth - _focusRect.width())/2.f);
+			_focusTargetPosX = _focusTargetScaleX * ((float)_focusRect.left - (newWidth - _focusRect.width()) / 2.f);
 		}
 		if (_focusTargetPosX < 0 && _focusTargetScaleY != 240.f / _gameHeight) {
 			_focusTargetPosX = 0;
@@ -582,15 +581,11 @@ void OSystem_3DS::updateMagnify() {
 
 	if (_magnifyMode == MODE_MAGON) {
 		if (!_overlayVisible) {
-			_magX = (_cursorScreenX < _magCenterX) ?
-			         0 : ((_cursorScreenX < (_gameWidth - _magCenterX)) ?
-			         _cursorScreenX - _magCenterX : _gameWidth - _magWidth);
-			_magY = (_cursorScreenY < _magCenterY) ?
-			         0 : ((_cursorScreenY < _gameHeight - _magCenterY) ?
-			         _cursorScreenY - _magCenterY : _gameHeight - _magHeight);
+			_magX = (_cursorScreenX < _magCenterX) ? 0 : ((_cursorScreenX < (_gameWidth - _magCenterX)) ? _cursorScreenX - _magCenterX : _gameWidth - _magWidth);
+			_magY = (_cursorScreenY < _magCenterY) ? 0 : ((_cursorScreenY < _gameHeight - _magCenterY) ? _cursorScreenY - _magCenterY : _gameHeight - _magHeight);
 		}
-		_gameTopTexture.setScale(1.f,1.f);
-		_gameTopTexture.setPosition(0,0);
+		_gameTopTexture.setScale(1.f, 1.f);
+		_gameTopTexture.setPosition(0, 0);
 		_gameTopTexture.setOffset(_magX, _magY);
 	}
 }
@@ -759,7 +754,7 @@ void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 		_cursorTexture.create(w, h, &DEFAULT_MODE);
 	}
 
-	if ( w != 0 && h != 0 ) {
+	if (w != 0 && h != 0) {
 		_cursor.copyRectToSurface(buf, w * _pfCursor.bytesPerPixel, 0, 0, w, h);
 	}
 

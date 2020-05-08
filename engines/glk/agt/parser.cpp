@@ -54,7 +54,7 @@ int ip_back, parse_ip;
 
 /* The following are global only for rfree() purposes and
    in order to maintain state for disambiguation */
-static int vnum;  /* Verb number from synonym scan */
+static int vnum; /* Verb number from synonym scan */
 
 /* Pointers to negative-terminated arrays of possible nouns */
 static parse_rec *lactor = NULL, *lobj = NULL, *lnoun = NULL;
@@ -64,14 +64,10 @@ static int ambig_flag = 0;
 disambiguation info?)  1=ambig actor, 2=ambig noun,
 3=ambig obj */
 
-
 /* Empty ALL error messages, for those verbs that have their own */
-int all_err_msg[] = {73, 83, 113, 103, /* open, close, lock, unlock: 15 - 18 */
+int all_err_msg[] = {73, 83, 113, 103,   /* open, close, lock, unlock: 15 - 18 */
                      239, 239, 239, 239, /* 19 - 22 */
-                     123, 125
-                    }; /* eat, drink: 23 - 24 */
-
-
+                     123, 125};          /* eat, drink: 23 - 24 */
 
 /*-------------------------------------------------------------------*/
 /* DEBUGGING OUTPUT FUNCTIONS & MISC UTILITIES                        */
@@ -84,7 +80,6 @@ static void freeall(void) {
 	lnoun = lobj = NULL;
 }
 
-
 /* Print out parse error message and abort the parse */
 static int parseerr(int msgid, const char *s, int n) {
 	if (n >= 0)
@@ -96,7 +91,6 @@ static int parseerr(int msgid, const char *s, int n) {
 	ip = -1;
 	return -1;
 }
-
 
 /* Print out noun list; used for debugging the parser */
 static void print_nlist(parse_rec *n) {
@@ -111,7 +105,8 @@ static void print_nlist(parse_rec *n) {
 		n++;
 	}
 	for (c = 0; n->info != D_END && c < 20; n++, c++)
-		if (n->info == D_AND) writestr(" AND ");
+		if (n->info == D_AND)
+			writestr(" AND ");
 		else if (n->info == D_NUM) { /* Number entered */
 			sprintf(buff, "#%ld(%d); ", n->num, n->obj);
 			writestr(buff);
@@ -126,7 +121,8 @@ static void print_nlist(parse_rec *n) {
 			sprintf(buff, "(%d) ['%s %s']; ", n->obj, dict[n->adj], dict[n->noun]);
 			writestr(buff);
 		}
-	if (n->info != D_END) writestr("///");
+	if (n->info != D_END)
+		writestr("///");
 	writeln("");
 }
 
@@ -138,17 +134,18 @@ static int parse_out(parse_rec *lactor_, int vb_, parse_rec *lnoun_, int prep_,
 	writestr("Actor: ");
 	print_nlist(lactor_);
 	writestr("Verb:");
-	writeln(dict[ syntbl[auxsyn[vb_]] ]);
+	writeln(dict[syntbl[auxsyn[vb_]]]);
 	writestr("DObj: ");
 	print_nlist(lnoun_);
 	writestr("Prep: ");
-	if (prep_ != 0) writeln(dict[prep_]);
-	else writeln("---");
+	if (prep_ != 0)
+		writeln(dict[prep_]);
+	else
+		writeln("---");
 	writestr("IObj: ");
 	print_nlist(lobj_);
 	return 0;
 }
-
 
 static void save_input(void) {
 	int i;
@@ -172,34 +169,31 @@ static void restore_input(void) {
 	ip = ip_back;
 }
 
-
-
 /*-------------------------------------------------------------------*/
 /* Misc. Parsing Routines (includes parsing of verbs and preps)      */
 /*-------------------------------------------------------------------*/
 
-#define w_and(w) (w==ext_code[wand] || w==ext_code[wc])
-#define w_but(w) (w==ext_code[wbut] || w==ext_code[wexcept])
-#define w_isterm(w) (w==ext_code[wp] || w==ext_code[wthen] || \
-                     w==ext_code[wsc] || w_and(w) || w==-1)
-
-
+#define w_and(w) (w == ext_code[wand] || w == ext_code[wc])
+#define w_but(w) (w == ext_code[wbut] || w == ext_code[wexcept])
+#define w_isterm(w) (w == ext_code[wp] || w == ext_code[wthen] || \
+	                 w == ext_code[wsc] || w_and(w) || w == -1)
 
 static word check_comb(int combptr) {
 	int k;
 	word w;
 
-	if (combptr == 0) return 0;
+	if (combptr == 0)
+		return 0;
 	w = syntbl[combptr];
 	for (combptr += 1, k = ip; syntbl[combptr] != 0; combptr++, k++)
-		if (syntbl[combptr] != input[k]) break;
+		if (syntbl[combptr] != input[k])
+			break;
 	if (syntbl[combptr] == 0) {
 		ip = k - 1;
 		return w;
 	}
 	return 0;
 }
-
 
 static int comb_verb(void)
 /* This eliminates two-word verbs */
@@ -209,14 +203,17 @@ static int comb_verb(void)
 
 	for (i = 0; i < num_comb; i++) {
 		w = check_comb(comblist[i]);
-		if (w != 0) return w;
+		if (w != 0)
+			return w;
 	}
 
 	if (input[ip] == ext_code[wgo] && verb_authorsyn(ext_code[wgo]) == 0) {
 		/* GO <dir> --> <dir> */
 		w = input[ip + 1];
-		if (w != 0) i = verb_builtin(w);
-		else i = 0;
+		if (w != 0)
+			i = verb_builtin(w);
+		else
+			i = 0;
 		if (i != 0) {
 			ip++;
 			return w;
@@ -225,15 +222,12 @@ static int comb_verb(void)
 
 	for (i = 0; i < num_auxcomb; i++) {
 		w = check_comb(auxcomb[i]);
-		if (w != 0) return w;
+		if (w != 0)
+			return w;
 	}
 
 	return input[ip];
 }
-
-
-
-
 
 /* This return true if the word in question is in the list
    of original AGT verbs, but is not the canonical verb.
@@ -241,8 +235,10 @@ static int comb_verb(void)
    are not overridden by dummy_verbs in pre-Magx games. */
 static rbool orig_agt_verb(word w) {
 	int i;
-	if (aver <= AGT10 && w == ext_code[wg]) return 0; /* AGT 1.0 didn't have AGAIN */
-	for (i = 0; old_agt_verb[i] != -1 && old_agt_verb[i] != w; i++);
+	if (aver <= AGT10 && w == ext_code[wg])
+		return 0; /* AGT 1.0 didn't have AGAIN */
+	for (i = 0; old_agt_verb[i] != -1 && old_agt_verb[i] != w; i++)
+		;
 	return (old_agt_verb[i] == w);
 }
 
@@ -265,7 +261,8 @@ static int id_verb(void)
 	int j, canon_word, tmp;
 
 	w = comb_verb(); /* Combine 2-word verbs */
-	if (w == 0) return 0;
+	if (w == 0)
+		return 0;
 
 	/* Pre-Canonization of w: see if w has any built-in synonyms */
 	canon_word = verb_builtin(w);
@@ -288,14 +285,19 @@ static int id_verb(void)
 	/* Next check to see if we already have the canonical form of the verb. */
 	/* and go through the built-in list of synonyms */
 	canon_word = verb_code(w);
-	if (!PURE_DUMMY && canon_word == 57) canon_word = 0; /* AFTER */
+	if (!PURE_DUMMY && canon_word == 57)
+		canon_word = 0; /* AFTER */
 	return canon_word;
 }
 
-
-#define compr_prep(w1,w2,r) {if (w1==input[ip] && w2==input[ip+1]) \
-		{ip+=2;return r;}}
-#define cprep(c1,c2,r)  compr_prep(ext_code[c1],ext_code[c2],ext_code[r])
+#define compr_prep(w1, w2, r)                         \
+	{                                                 \
+		if (w1 == input[ip] && w2 == input[ip + 1]) { \
+			ip += 2;                                  \
+			return r;                                 \
+		}                                             \
+	}
+#define cprep(c1, c2, r) compr_prep(ext_code[c1], ext_code[c2], ext_code[r])
 
 /* Eventually should add support for the handful of two word preps */
 /* (eg IN TO, OUT OF,...); otherwise, this is pretty trivial. */
@@ -307,7 +309,8 @@ static int parse_prep(void) {
 		/* This table is formatted like the multi-verb table:
 		     end-prep prep-word1 prepword2 etc. */
 		for (k = 0; syntbl[userprep[j] + k + 1] != 0; k++)
-			if (syntbl[userprep[j] + k + 1] != input[ip + k]) break;
+			if (syntbl[userprep[j] + k + 1] != input[ip + k])
+				break;
 		if (syntbl[userprep[j] + k + 1] == 0) {
 			ip += k;
 			return syntbl[userprep[j]];
@@ -316,11 +319,10 @@ static int parse_prep(void) {
 	cprep(win, wto, winto);
 	cprep(wout, wof, wfrom);
 	for (i = win; i <= wabout; ++i)
-		if (ext_code[i] == input[ip]) return input[ip++];
+		if (ext_code[i] == input[ip])
+			return input[ip++];
 	return 0;
 }
-
-
 
 static int noun_syn(word w, int obj)
 /* Is the word w  a synonym for the object obj? */
@@ -330,30 +332,35 @@ static int noun_syn(word w, int obj)
 {
 	int i;
 
-	if (w <= 0) return 0;
+	if (w <= 0)
+		return 0;
 
 	if (obj >= first_noun && obj <= maxnoun) {
 		obj = obj - first_noun;
-		if (w == noun[obj].name) return 3;
+		if (w == noun[obj].name)
+			return 3;
 		if (noun[obj].has_syns)
 			for (i = noun[obj].syns; syntbl[i] != 0; i++)
-				if (w == syntbl[i]) return (PURE_SYN ? 3 : 2);
-		if (w == noun[obj].adj) return 1;
+				if (w == syntbl[i])
+					return (PURE_SYN ? 3 : 2);
+		if (w == noun[obj].adj)
+			return 1;
 		return 0;
 	}
 	if (obj >= first_creat && obj <= maxcreat) {
 		obj = obj - first_creat;
-		if (w == creature[obj].name) return 3;
+		if (w == creature[obj].name)
+			return 3;
 		if (creature[obj].has_syns)
 			for (i = creature[obj].syns; syntbl[i] != 0; i++)
-				if (w == syntbl[i]) return (PURE_SYN ? 3 : 2);
-		if (w == creature[obj].adj) return 1;
+				if (w == syntbl[i])
+					return (PURE_SYN ? 3 : 2);
+		if (w == creature[obj].adj)
+			return 1;
 		return 0;
 	}
 	return 0; /* If the object doesn't exist, can't have synonyms */
 }
-
-
 
 /*-------------------------------------------------------------------*/
 /*   Noun-list manipulation functions.                               */
@@ -375,7 +382,8 @@ static parse_rec *add_w_rec(parse_rec *pold, int obj0, long num0, int info0,
 	parse_rec *pnew;
 	int n;
 
-	for (n = 0; pold[n].info != D_END; n++);
+	for (n = 0; pold[n].info != D_END; n++)
+		;
 	pnew = (parse_rec *)rrealloc(pold, (n + 2) * sizeof(parse_rec));
 	pnew[n].obj = obj0;
 	pnew[n].num = num0;
@@ -390,12 +398,13 @@ static parse_rec *add_w_rec(parse_rec *pold, int obj0, long num0, int info0,
 static parse_rec *add_rec(parse_rec *old, int obj0, long num0, int info0) {
 	word w;
 
-	if (obj0 < 0) w = -obj0;  /* The NOUN field of literal words will just be
+	if (obj0 < 0)
+		w = -obj0; /* The NOUN field of literal words will just be
                that word */
-	else w = 0;
+	else
+		w = 0;
 	return add_w_rec(old, obj0, num0, info0, 0, w);
 }
-
 
 static parse_rec *kill_rec(parse_rec *old, int index)
 /* Remove record old[index] */
@@ -418,10 +427,12 @@ static parse_rec *kill_rec(parse_rec *old, int index)
 static parse_rec *concat_list(parse_rec *dest, parse_rec *src) {
 	int i, j;
 
-	for (i = 0; dest[i].info != D_END; i++); /* Put i at end of first list */
-	for (j = 0; src[j].info != D_END; j++); /* j marks end of the second list */
+	for (i = 0; dest[i].info != D_END; i++)
+		; /* Put i at end of first list */
+	for (j = 0; src[j].info != D_END; j++)
+		; /* j marks end of the second list */
 	dest = (parse_rec *)rrealloc(dest, sizeof(parse_rec) * (i + j + 1));
-	memcpy(dest + i, src, (j + 1)*sizeof(parse_rec));
+	memcpy(dest + i, src, (j + 1) * sizeof(parse_rec));
 	return dest;
 }
 
@@ -433,7 +444,8 @@ static parse_rec *purge_list(parse_rec *list)
 	for (i = 0; list[i].info != D_END;)
 		if ((list[i].info & D_MARK) != 0)
 			list = kill_rec(list, i);
-		else i++;      /* (Note: we only increment i if we _don't_ kill) */
+		else
+			i++; /* (Note: we only increment i if we _don't_ kill) */
 	return list;
 }
 
@@ -442,19 +454,17 @@ static void clean_list(parse_rec *list) {
 		list->info &= ~D_MARK; /* Clear mark */
 }
 
-
 static parse_rec *copy_list(parse_rec *list) {
 	parse_rec *cpy;
 	int i;
 
 	cpy = new_list();
-	for (i = 0; list[i].info != D_END; i++);
+	for (i = 0; list[i].info != D_END; i++)
+		;
 	cpy = (parse_rec *)rmalloc(sizeof(parse_rec) * (i + 1));
-	memcpy(cpy, list, (i + 1)*sizeof(parse_rec));
+	memcpy(cpy, list, (i + 1) * sizeof(parse_rec));
 	return cpy;
 }
-
-
 
 /* Among other things, this is used to add disambiguation information */
 static int scan_rec(int item, int num, parse_rec *list) {
@@ -468,17 +478,19 @@ static int scan_rec(int item, int num, parse_rec *list) {
 
 static rbool scan_andrec(int item, parse_rec *list) {
 	for (; list->info != D_END; list++)
-		if (list->obj == item && list->info != D_AND
-		        && list->info != D_ALL) return 1;
+		if (list->obj == item && list->info != D_AND && list->info != D_ALL)
+			return 1;
 	return 0;
 }
 
 static rbool multinoun(parse_rec *list)
 /* Determines if LIST refers to a multiple object */
 {
-	if (list->info == D_ALL) return 1;
+	if (list->info == D_ALL)
+		return 1;
 	for (; list->info != D_END; list++)
-		if (list->info == D_AND) return 1;
+		if (list->info == D_AND)
+			return 1;
 	return 0;
 }
 
@@ -496,8 +508,10 @@ static void add_words_to_rec(parse_rec *nrec, word w, int tmp) {
 	}
 	if (nrec->adj == 0)
 		nrec->adj = w;
-	if (tmp == 2) nrec->info = D_SYN;
-	else if (tmp == 3) nrec->info = D_NOUN;
+	if (tmp == 2)
+		nrec->info = D_SYN;
+	else if (tmp == 3)
+		nrec->info = D_NOUN;
 }
 
 /* This updates nrec with the information in newobj; this routine
@@ -506,34 +520,42 @@ static void add_words_to_rec(parse_rec *nrec, word w, int tmp) {
 void update_rec_words(parse_rec *nrec, parse_rec *newobj) {
 	int tmp;
 
-	if (nrec->adj == 0) nrec->adj = newobj->adj;
-	if (newobj->info == D_ADJ) tmp = 1;
-	else if (newobj->info == D_SYN) tmp = 2;
-	else if (newobj->info == D_NOUN) tmp = 3;
-	else return;
+	if (nrec->adj == 0)
+		nrec->adj = newobj->adj;
+	if (newobj->info == D_ADJ)
+		tmp = 1;
+	else if (newobj->info == D_SYN)
+		tmp = 2;
+	else if (newobj->info == D_NOUN)
+		tmp = 3;
+	else
+		return;
 	add_words_to_rec(nrec, newobj->noun, tmp);
 }
-
 
 static rbool ident_objrec(parse_rec *p1, parse_rec *p2) {
 	word noun1, adj1, noun2, adj2;
 
-	if (p1->obj == p2->obj) return 1;
-	if (p1->obj <= 0 || p2->obj <= 0) return 0;
+	if (p1->obj == p2->obj)
+		return 1;
+	if (p1->obj <= 0 || p2->obj <= 0)
+		return 0;
 	if (tnoun(p1->obj)) {
 		noun1 = noun[p1->obj - first_noun].name;
 		adj1 = noun[p1->obj - first_noun].adj;
 	} else if (tcreat(p1->obj)) {
 		noun1 = creature[p1->obj - first_creat].name;
 		adj1 = creature[p1->obj - first_creat].adj;
-	} else return 0;
+	} else
+		return 0;
 	if (tnoun(p2->obj)) {
 		noun2 = noun[p2->obj - first_noun].name;
 		adj2 = noun[p2->obj - first_noun].adj;
 	} else if (tcreat(p2->obj)) {
 		noun2 = creature[p2->obj - first_creat].name;
 		adj2 = creature[p2->obj - first_creat].adj;
-	} else return 0;
+	} else
+		return 0;
 	return (noun1 == noun2 && adj1 == adj2);
 }
 
@@ -555,13 +577,14 @@ static parse_rec *fix_actor(parse_rec *alist) {
 	/* Start by eliminating non-creatures */
 	cnt = 0;
 	for (i = 0; alist[i].info != D_END; i++)
-		if ((alist[i].obj < first_creat || alist[i].obj > maxcreat)
-		        && alist[i].obj != -ext_code[weverybody]) {
+		if ((alist[i].obj < first_creat || alist[i].obj > maxcreat) && alist[i].obj != -ext_code[weverybody]) {
 			if (alist[i].info != D_AND)
 				alist[i].info |= D_MARK;
-		} else cnt++;
+		} else
+			cnt++;
 	alist = purge_list(alist);
-	if (cnt <= 1) return alist;
+	if (cnt <= 1)
+		return alist;
 
 	/* Now eliminate those not present */
 	cnt = 0;
@@ -569,30 +592,34 @@ static parse_rec *fix_actor(parse_rec *alist) {
 		if (!genvisible(&alist[i])) {
 			if (alist[i].info != D_AND)
 				alist[i].info |= D_MARK;
-		} else cnt++;
+		} else
+			cnt++;
 
-	if (cnt == 0) alist[0].info &= ~D_MARK;
+	if (cnt == 0)
+		alist[0].info &= ~D_MARK;
 
 	return purge_list(alist);
 }
-
 
 /* Convert disambig list to all list, moving things up. */
 static parse_rec *convert_to_all(parse_rec *list, int *ofsref) {
 	int i;
 	int cnt;
 
-	for (i = *ofsref; list[i].info != D_AND && list[i].info != D_END; i++);
+	for (i = *ofsref; list[i].info != D_AND && list[i].info != D_END; i++)
+		;
 	cnt = i - *ofsref; /* Number of objects. We will add cnt-1 ANDs */
 
-	while (list[i].info != D_END) i++;
+	while (list[i].info != D_END)
+		i++;
 	list = (parse_rec *)rrealloc(list, (i + cnt) * sizeof(parse_rec));
 	memmove(list + *ofsref + 2 * cnt - 1, list + *ofsref + cnt,
-	        (i + 1 - cnt - *ofsref)*sizeof(parse_rec));
+	        (i + 1 - cnt - *ofsref) * sizeof(parse_rec));
 	for (i = cnt - 1; i >= 0; i--) {
 		int k;
 		list[*ofsref + 2 * i] = list[*ofsref + i];
-		if (i == 0) break;
+		if (i == 0)
+			break;
 		k = *ofsref + 2 * i - 1;
 		list[k].obj = 0;
 		list[k].num = 0;
@@ -602,8 +629,6 @@ static parse_rec *convert_to_all(parse_rec *list, int *ofsref) {
 	/* *ofsref+=2*cnt-1; */
 	return list;
 }
-
-
 
 static parse_rec *add_disambig_info(parse_rec *ilist, int ofs,
                                     parse_rec *truenoun)
@@ -617,12 +642,13 @@ the ambiguity */
 	for (i = ofs; ilist[i].info != D_AND && ilist[i].info != D_END; i++) {
 		if (truenoun[0].info == D_EITHER) {
 			/* Mark all but the first for deletion */
-			if (i > ofs) ilist[i].info |= D_MARK;
+			if (i > ofs)
+				ilist[i].info |= D_MARK;
 		} else {
 			n = scan_rec(ilist[i].obj, ilist[i].num, truenoun);
 			if (n == -1)
 				ilist[i].info |= D_MARK;
-			else  /* Add any new information to the words */
+			else /* Add any new information to the words */
 				update_rec_words(&ilist[i], &truenoun[n]);
 		}
 	}
@@ -647,10 +673,10 @@ static int score_disambig(parse_rec *rec, int ambig_type)
 		return check_obj(lactor, vnum, rec, prep, NULL);
 	else if (ambig_type == 3) /* IOBJ */
 		return check_obj(lactor, vnum, lnoun, prep, rec);
-	else fatal("Invalid ambig_type!");
+	else
+		fatal("Invalid ambig_type!");
 	return 0;
 }
-
 
 /* This routine does all expansion: it returns a list of ALL objects in the
  current context (lactor, vnum, <ALL>, prep, lobj) */
@@ -659,8 +685,8 @@ static int score_disambig(parse_rec *rec, int ambig_type)
 static parse_rec *expand_all(parse_rec *lnoun_) {
 	parse_rec *list;
 	int i, j;
-	rbool prev_obj; /* Is there a previous object on the list? */
-	rbool kill_obj; /* Don't put current object on ALL list after all */
+	rbool prev_obj;     /* Is there a previous object on the list? */
+	rbool kill_obj;     /* Don't put current object on ALL list after all */
 	parse_rec temp_obj; /* Used to pass object info to disambiguation routine */
 
 	if (debug_parse) {
@@ -669,17 +695,20 @@ static parse_rec *expand_all(parse_rec *lnoun_) {
 	}
 	tmpobj(&temp_obj);
 	nounloop(i)
-	noun[i].scratch = 0;
+	    noun[i]
+	        .scratch = 0;
 	creatloop(i)
-	creature[i].scratch = 0;
-	objloop(i)
-	if (((verbflag[vnum]&VERB_GLOBAL) != 0 || visible(i))
-	        && (lnoun_ == NULL || !scan_andrec(i, lnoun_))) {
+	    creature[i]
+	        .scratch = 0;
+	objloop(i) if (((verbflag[vnum] & VERB_GLOBAL) != 0 || visible(i)) && (lnoun_ == NULL || !scan_andrec(i, lnoun_))) {
 		temp_obj.obj = i;
 		if (score_disambig(&temp_obj, 2) >= 500) {
-			if (tnoun(i)) noun[i - first_noun].scratch = 1;
-			else if (tcreat(i)) creature[i - first_creat].scratch = 1;
-			else writeln("INTERNAL ERROR: Invalid object type in expand_all().");
+			if (tnoun(i))
+				noun[i - first_noun].scratch = 1;
+			else if (tcreat(i))
+				creature[i - first_creat].scratch = 1;
+			else
+				writeln("INTERNAL ERROR: Invalid object type in expand_all().");
 		}
 	}
 
@@ -688,17 +717,18 @@ static parse_rec *expand_all(parse_rec *lnoun_) {
 	   onto the list.*/
 	list = new_list();
 	prev_obj = 0;
-	objloop(i)
-	if (it_scratch(i)) {
+	objloop(i) if (it_scratch(i)) {
 		kill_obj = 0;
 		for (j = it_loc(i); tnoun(j) || tcreat(j); j = it_loc(j))
 			if (it_scratch(j)) {
 				kill_obj = 1;
 				break;
 			}
-		if (kill_obj) continue;
+		if (kill_obj)
+			continue;
 		/* Now actually add object to list. */
-		if (prev_obj) list = add_rec(list, 0, 0, D_AND);
+		if (prev_obj)
+			list = add_rec(list, 0, 0, D_AND);
 		list = add_rec(list, i, 0, D_SYN);
 		prev_obj = 1;
 	}
@@ -710,8 +740,6 @@ static parse_rec *expand_all(parse_rec *lnoun_) {
 	rfree(lnoun_);
 	return list;
 }
-
-
 
 /* disambig check checks for the various things that can eliminate a noun
      from the list. The higher dlev is, the more things that are bad */
@@ -762,23 +790,21 @@ static rbool disambig_check(parse_rec *rec, int dsch, int dlev,
 			/* if PURE_DISAMBIG, no intel dismbig */
 			if (PURE_DISAMBIG || rec->info == D_NUM)
 				rec->score = DISAMBIG_SUCC;
-			else rec->score = score_disambig(rec, ambig_type);
+			else
+				rec->score = score_disambig(rec, ambig_type);
 			if (rec->score >= max_disambig_score)
 				max_disambig_score = rec->score;
 			return 1;
 		case 1:
 			return (rec->score == max_disambig_score);
 		case 2:
-			return (rec->info == D_NUM
-			        || ((verbflag[vnum] & VERB_GLOBAL) != 0 && rec->score >= 500)
-			        || (tnoun(rec->obj) && noun[rec->obj - first_noun].scope)
-			        || (tcreat(rec->obj) && creature[rec->obj - first_creat].scope));
+			return (rec->info == D_NUM || ((verbflag[vnum] & VERB_GLOBAL) != 0 && rec->score >= 500) || (tnoun(rec->obj) && noun[rec->obj - first_noun].scope) || (tcreat(rec->obj) && creature[rec->obj - first_creat].scope));
 		default:
 			return 1;
 		}
 	case 2:
 		switch (dlev) { /* Syntax, take 2 */
-		case 0: /* Reserved for alternative adjective checking */
+		case 0:         /* Reserved for alternative adjective checking */
 			return 1;
 		/* Kill internal matches */
 		case 1:
@@ -794,7 +820,6 @@ static rbool disambig_check(parse_rec *rec, int dsch, int dlev,
 	}
 }
 
-
 /* disambig_a_noun does disambiguation for a single AND-terminated block */
 /* *list* contains the list of possible objects,                      */
 /*    *ofs* is our starting offset within the list (since with ANDs we */
@@ -805,10 +830,10 @@ static parse_rec *disambig_a_noun(parse_rec *list, int ofs, int ambig_type)
 /* We can assume that the earlier bits have already been disambiguated */
 /*  Parse of current command in lactor, vnum, lnoun, prep, and lobj */
 {
-	int i, cnt; /* cnt keeps track of how many nouns we've let through */
-	int dsch; /* Dismabiguation scheme; we run through these in turn,
+	int i, cnt;         /* cnt keeps track of how many nouns we've let through */
+	int dsch;           /* Dismabiguation scheme; we run through these in turn,
            pushing dlev as high as possible for each scheme */
-	int dlev; /* Disambiguation level: how picky do we want to be?
+	int dlev;           /* Disambiguation level: how picky do we want to be?
            We keep raising this until we get a unique choice
            or until we reach MAX_DLEV and have to give up */
 	rbool one_in_scope; /* True if at least one noun is visible; if no nouns
@@ -818,7 +843,7 @@ static parse_rec *disambig_a_noun(parse_rec *list, int ofs, int ambig_type)
 
 	cnt = 2; /* Arbitrary number > 1 */
 	one_in_scope = 0;
-	max_disambig_score = -1000;  /* Nothing built in returns anything lower than 0,
+	max_disambig_score = -1000; /* Nothing built in returns anything lower than 0,
                 but some game author might come up with a
                 clever application of negative scores */
 	for (dsch = 0; dsch <= MAX_DSCHEME; dsch++)
@@ -828,8 +853,7 @@ static parse_rec *disambig_a_noun(parse_rec *list, int ofs, int ambig_type)
 			cnt = 0;
 			for (i = ofs; list[i].info != D_END && list[i].info != D_AND; i++)
 				if (disambig_check(&list[i], dsch, dlev, ambig_type,
-				                   one_in_scope || (i == ofs))
-				   ) {
+				                   one_in_scope || (i == ofs))) {
 					cnt++;
 					if (DEBUG_DISAMBIG)
 						rprintf("+%d ", list[i].obj);
@@ -840,7 +864,8 @@ static parse_rec *disambig_a_noun(parse_rec *list, int ofs, int ambig_type)
 				}
 			if (cnt != 0) {
 				list = purge_list(list); /* Delete marked items */
-				if (cnt == 1) return list;
+				if (cnt == 1)
+					return list;
 				if (dsch == 1 && dlev == MAX_DLEV)
 					one_in_scope = 1;
 			} else {
@@ -850,20 +875,22 @@ static parse_rec *disambig_a_noun(parse_rec *list, int ofs, int ambig_type)
 		}
 	/* Check to make sure we don't have a list of multiple identical items */
 	for (i = ofs; list[i].info != D_END && list[i].info != D_AND; i++) {
-		if (!ident_objrec(&list[i], &list[ofs])) break;
+		if (!ident_objrec(&list[i], &list[ofs]))
+			break;
 		list[i].info |= D_MARK;
 	}
 	if (list[i].info == D_END || list[i].info == D_AND) {
 		/* If all of the items are identical, just pick the first */
-		if (one_in_scope) writeln("(Picking one at random)");
+		if (one_in_scope)
+			writeln("(Picking one at random)");
 		list[0].info &= ~D_MARK;
 		list = purge_list(list);
-	} else clean_list(list);
-	if (DEBUG_DISAMBIG) rprintf("\n");
+	} else
+		clean_list(list);
+	if (DEBUG_DISAMBIG)
+		rprintf("\n");
 	return list;
 }
-
-
 
 /* Note that this routine must be _restartable_, when new input comes in. */
 /* Truenoun is 0 or else the "correct" noun for where disambig first
@@ -872,8 +899,7 @@ static parse_rec *disambig_a_noun(parse_rec *list, int ofs, int ambig_type)
  went ok. Return -2 if we eliminate everything */
 /* *tn_ofs* contains the offset where truenoun is supposed to be used */
 
-#define list (*ilist)    /* in disambig_phrase only */
-
+#define list (*ilist) /* in disambig_phrase only */
 
 static int disambig_phrase(parse_rec **ilist, parse_rec *truenoun, int tn_ofs,
                            int ambig_type)
@@ -885,11 +911,13 @@ static int disambig_phrase(parse_rec **ilist, parse_rec *truenoun, int tn_ofs,
 	char *s;
 
 	ofs = 0;
-	if (list[0].info == D_END) return -1; /* No nouns, so no ambiguity */
-	if (list[0].info == D_ALL) ofs = 1; /* might have ALL EXCEPT construction */
+	if (list[0].info == D_END)
+		return -1; /* No nouns, so no ambiguity */
+	if (list[0].info == D_ALL)
+		ofs = 1; /* might have ALL EXCEPT construction */
 #ifdef OMEGA
 	return -1; /* No ambiguity over ALL, either */
-	/* (at least if it appears as the first element of the list) */
+	           /* (at least if it appears as the first element of the list) */
 #endif
 
 	while (list[ofs].info != D_END) { /* Go through each AND block */
@@ -907,15 +935,18 @@ static int disambig_phrase(parse_rec **ilist, parse_rec *truenoun, int tn_ofs,
 		}
 		list = disambig_a_noun(list, ofs, ambig_type);
 		assert(list[ofs].info != D_END && list[ofs].info != D_AND);
-		if (list[ofs + 1].info != D_END &&  list[ofs + 1].info != D_AND)
-			/* Disambiguation failed */
+		if (list[ofs + 1].info != D_END && list[ofs + 1].info != D_AND)
+		/* Disambiguation failed */
 		{
 			writestr("Do you mean");
 			for (i = ofs; list[i].info != D_END && list[i].info != D_AND; i++) {
 				if (list[i + 1].info == D_END || list[i + 1].info == D_AND)
-					if (i > ofs + 1) writestr(", or");
-					else writestr(" or");
-				else if (i > ofs) writestr(",");
+					if (i > ofs + 1)
+						writestr(", or");
+					else
+						writestr(" or");
+				else if (i > ofs)
+					writestr(",");
 				writestr(" the ");
 				if (list[i].info != D_NUM || list[i].obj != 0)
 					s = (char *)objname(list[i].obj);
@@ -932,7 +963,8 @@ static int disambig_phrase(parse_rec **ilist, parse_rec *truenoun, int tn_ofs,
 		/* Skip forward to next AND  */
 		while ((*ilist)[ofs].info != D_END && (*ilist)[ofs].info != D_AND)
 			ofs++;
-		if ((*ilist)[ofs].info == D_AND) ofs++;
+		if ((*ilist)[ofs].info == D_AND)
+			ofs++;
 	}
 	return -1;
 }
@@ -950,22 +982,22 @@ static parse_rec *disambig(int ambig_set, parse_rec *list, parse_rec *truenoun)
 /* ambig_set = 1 for actor, 2 for noun, 3 for object */
 {
 	if (ambig_flag == ambig_set || ambig_flag == 0) { /* restart where we left off...*/
-		if (truenoun == NULL || truenoun[0].info == D_END) disambig_ofs = -1;
+		if (truenoun == NULL || truenoun[0].info == D_END)
+			disambig_ofs = -1;
 		disambig_ofs = disambig_phrase(&list, truenoun, disambig_ofs, ambig_set);
-		if (disambig_ofs == -1) ambig_flag = 0; /* Success */
-		else if (disambig_ofs == -2) ambig_flag = -1; /* Error: elim all choices */
-		else ambig_flag = ambig_set;
+		if (disambig_ofs == -1)
+			ambig_flag = 0; /* Success */
+		else if (disambig_ofs == -2)
+			ambig_flag = -1; /* Error: elim all choices */
+		else
+			ambig_flag = ambig_set;
 	}
 	return list;
 }
 
-
-
-
 /*-------------------------------------------------------------------*/
 /*   Noun parsing routines                                           */
 /*-------------------------------------------------------------------*/
-
 
 /* PARSE_A_NOUN(), parses a single noun, leaves ip pointing after it. */
 /*   Just be greedy: grab as many of the input words as possible */
@@ -992,11 +1024,12 @@ static parse_rec *parse_a_noun(void)
 
 	if (input[ip] == -1) /* End of input */
 		return nlist;
-	if (input[ip] == 0) { /* i.e. tokeniser threw up its hands */
+	if (input[ip] == 0) {                          /* i.e. tokeniser threw up its hands */
 		numval = strtol(in_text[ip], &errptr, 10); /* Is it a number? */
-		if (errptr == in_text[ip]) /* Nope. */
+		if (errptr == in_text[ip])                 /* Nope. */
 			return nlist;
-		if (*errptr != 0) return nlist; /* May want to be less picky */
+		if (*errptr != 0)
+			return nlist; /* May want to be less picky */
 		nlist = add_rec(nlist, 0, numval, D_NUM);
 		ip++;
 		return nlist;
@@ -1005,13 +1038,13 @@ static parse_rec *parse_a_noun(void)
 	/* Basic strategy: try to match nouns. If all matches are of length<=1,
 	   then go looking for flag nouns, global nouns, ALL, DOOR, etc. */
 	num = 0;
-	objloop(i)
-	if ((tmp = noun_syn(input[ip], i)) != 0) {
+	objloop(i) if ((tmp = noun_syn(input[ip], i)) != 0) {
 		numval = strtol(in_text[ip], &errptr, 10); /* Is it a number, too? */
-		if (*errptr != 0) numval = 0; /* Only accept perfectly formed numbers */
+		if (*errptr != 0)
+			numval = 0; /* Only accept perfectly formed numbers */
 		nlist = add_w_rec(nlist, i, numval,
 		                  (tmp == 1) ? D_ADJ : (tmp == 2 ? D_SYN : D_NOUN),
-		                  (tmp == 1) ? input[ip] : 0, /* Adjective */
+		                  (tmp == 1) ? input[ip] : 0,  /* Adjective */
 		                  (tmp == 1) ? 0 : input[ip]); /* Noun */
 		num++;
 	}
@@ -1028,15 +1061,16 @@ static parse_rec *parse_a_noun(void)
 	/* compare against the next word in the queue */
 	while (num > 0 && input[ip] != -1 && ip < MAXINPUT) {
 		ip++;
-		if (input[ip] == -1) break;
+		if (input[ip] == -1)
+			break;
 		num = 0;
 		for (i = 0; nlist[i].info != D_END; i++) /* Which nouns match the new word? */
-			if (nlist[i].info == D_NOUN)      /* Nothing can come after a noun */
+			if (nlist[i].info == D_NOUN)         /* Nothing can come after a noun */
 				nlist[i].info |= D_MARK;
 			else if ((tmp = noun_syn(input[ip], nlist[i].obj)) == 0)
 				nlist[i].info |= D_MARK; /* Mark this noun to be eliminated */
-			else {  /* Noun _does_ match */
-				num++;  /* Count them up */
+			else {                       /* Noun _does_ match */
+				num++;                   /* Count them up */
 				add_words_to_rec(&nlist[i], input[ip], tmp);
 			}
 		/* If we had any matches, kill the nouns that didn't match */
@@ -1044,7 +1078,7 @@ static parse_rec *parse_a_noun(void)
 			nlist = purge_list(nlist);
 			for (i = 0; nlist[i].info != D_END; i++)
 				nlist[i].num = 0; /* Multi-word nouns can't be numbers */
-		} else /* num==0; we need to clear all of the marks */
+		} else                    /* num==0; we need to clear all of the marks */
 			clean_list(nlist);
 	}
 
@@ -1058,8 +1092,7 @@ static parse_rec *parse_a_noun(void)
 	if (ip == oip || ip == oip + 1) {
 
 		/* First match the built in things... */
-		if ((input[oip] == ext_code[wdoor] && aver <= AGX00)
-		        || input[oip] == ext_code[wscene])
+		if ((input[oip] == ext_code[wdoor] && aver <= AGX00) || input[oip] == ext_code[wscene])
 			nlist = add_rec(nlist, -input[oip], 0, D_INTERN);
 		else if (input[oip] == ext_code[wall] ||
 		         input[oip] == ext_code[weverything])
@@ -1072,7 +1105,8 @@ static parse_rec *parse_a_noun(void)
 			nlist = add_rec(nlist, last_it, 0, D_PRO);
 		else if (input[oip] == ext_code[wthey] || input[oip] == ext_code[wthem])
 			nlist = add_rec(nlist, last_they, 0, D_PRO);
-		else for (i = 0; i < 10; i++) /* Match direction names */
+		else
+			for (i = 0; i < 10; i++) /* Match direction names */
 				if (input[oip] == syntbl[auxsyn[i]])
 					nlist = add_rec(nlist, -syntbl[auxsyn[i]], 0, D_INTERN);
 				else if (input[oip] == ext_code[weveryone] ||
@@ -1081,7 +1115,7 @@ static parse_rec *parse_a_noun(void)
 
 		/* Next look for number word matches */
 		numval = strtol(in_text[oip], &errptr, 10); /* Is it a number? */
-		if (*errptr == 0) /* Yes */
+		if (*errptr == 0)                           /* Yes */
 			nlist = add_rec(nlist, -input[oip], numval, D_NUM);
 
 		/* Next handle the flag nouns and global nouns */
@@ -1094,16 +1128,17 @@ static parse_rec *parse_a_noun(void)
 #if 0
 			        && (room[loc].flag_noun_bits & (1L << i)) != 0
 #endif
-			   )
+			)
 				nlist = add_rec(nlist, -input[oip], 0, D_FLAG);
 
 		/* Finally the PIX names */
 		for (i = 0; i < MAX_PIX; i++)
 			if (pix_name[i] != 0 && input[oip] == pix_name[i] &&
-			        (room[loc].PIX_bits & (1L << i)) != 0)
+			    (room[loc].PIX_bits & (1L << i)) != 0)
 				nlist = add_rec(nlist, -input[oip], 0, D_PIX);
 
-		if (nlist[0].info != D_END) ip = oip + 1;
+		if (nlist[0].info != D_END)
+			ip = oip + 1;
 	}
 	return nlist;
 }
@@ -1122,41 +1157,42 @@ resolving disambiguation) */
 	next = lnoun_ = parse_a_noun();
 	saveinfo = next[0].info;
 
-#if 0  /* Let the main parser sort this out */
+#if 0 /* Let the main parser sort this out */
 	if (!and_ok) return lnoun_; /* If no ANDs allowed, stop here. */
 #endif
 	/* We need to explicitly handle the actor case here because
 	   the comma after an actor can be confused with the comma
 	   used to separate multiple objects */
-	if (is_actor) return lnoun_; /* If no ANDs allowed, stop here. */
+	if (is_actor)
+		return lnoun_; /* If no ANDs allowed, stop here. */
 
 	if (lnoun_[0].info == D_ALL && w_but(input[ip])) /* ALL EXCEPT ... */
-		all_except = 1; /* This will cause us to skip over EXCEPT and
+		all_except = 1;                              /* This will cause us to skip over EXCEPT and
              start creating an AND list */
 
 	/* Now, itereate over <noun> AND <noun> AND ... */
 	while ((all_except || w_and(input[ip])) &&
-	        saveinfo != D_END) { /* && saveinfo!=D_ALL */
-		ip++; /* Skip over AND or EXCEPT */
+	       saveinfo != D_END) { /* && saveinfo!=D_ALL */
+		ip++;                   /* Skip over AND or EXCEPT */
 		next = parse_a_noun();
 		saveinfo = next[0].info;
-		if (next[0].info != D_END) {          /* We found a word */
-			if (!all_except) lnoun_ = add_rec(lnoun_, AND_MARK, 0, D_AND);
+		if (next[0].info != D_END) { /* We found a word */
+			if (!all_except)
+				lnoun_ = add_rec(lnoun_, AND_MARK, 0, D_AND);
 			lnoun_ = concat_list(lnoun_, next);
-		} else ip--; /* We hit trouble: back up to the AND  */
+		} else
+			ip--;       /* We hit trouble: back up to the AND  */
 		all_except = 0; /* Only skip EXCEPT once */
 		rfree(next);
 	}
 	return lnoun_;
 }
 
-
 parse_rec *parse_disambig_answer(void) {
 	parse_rec *temp;
 
 	if (input[ip + 1] == -1) {
-		if (input[ip] == ext_code[wall] || input[ip] == ext_code[weverything]
-		        || input[ip] == ext_code[wboth]) {
+		if (input[ip] == ext_code[wall] || input[ip] == ext_code[weverything] || input[ip] == ext_code[wboth]) {
 			temp = new_list();
 			ip++;
 			return add_rec(temp, ALL_MARK, 0, D_ALL);
@@ -1170,12 +1206,9 @@ parse_rec *parse_disambig_answer(void) {
 	return parse_noun(0, 0);
 }
 
-
-
 /*-------------------------------------------------------------------*/
 /*      Main parsing routines                                        */
 /*-------------------------------------------------------------------*/
-
 
 static int parse_cmd(void)
 /* Parse entered text and execute it, one statement at a time */
@@ -1196,17 +1229,18 @@ static int parse_cmd(void)
 		lactor = parse_noun(0, 1);
 		/* Check that actor is a creature. */
 		if (lactor[0].info != D_END) {
-			lactor = fix_actor(lactor); /* eliminate non-creatures */
+			lactor = fix_actor(lactor);    /* eliminate non-creatures */
 			if (lactor[0].info == D_END) { /* Not a creature. */
 				/* print intelligent error message */
 				if (input[ip] == ext_code[wc]) /* ie there is a comma */
 					return parseerr(229, "Who is this '$word$' you are addressing?", ap);
-				else ip = ap; /* Otherwise, assume we shouldn't have parsed it as
+				else
+					ip = ap; /* Otherwise, assume we shouldn't have parsed it as
                an actor-- it may be a verb. */
 			}
 		}
 		if (lactor[0].info != D_END && input[ip] == ext_code[wc])
-			ip++;  /* this skips over a comma after an actor. */
+			ip++; /* this skips over a comma after an actor. */
 	}
 	/* Now onwards... */
 	vp = ip;
@@ -1217,14 +1251,14 @@ static int parse_cmd(void)
 		vnum = id_verb();
 		if (vnum == 0) /* if it's still bad, probably we really have an actor */
 			ip = vp;
-		else {  /* no actor; really a verb */
+		else { /* no actor; really a verb */
 			lactor[0].obj = 0;
 			lactor[0].info = D_END;
 			vp = ap;
 		}
 	}
 
-TELLHack:  /* This is used to restart the noun/prep/object scan
+TELLHack: /* This is used to restart the noun/prep/object scan
           if we find a TELL <actor> TO <verb> ... command */
 
 	if (vnum == 0)
@@ -1247,21 +1281,20 @@ TELLHack:  /* This is used to restart the noun/prep/object scan
 	/* Check for TELL <actor> TO <verb> ... construction */
 	/* If found, convert to <actor>, <verb> ... construction */
 	if (lactor[0].info == D_END && lnoun[0].info != D_END &&
-	        vnum == 31 && prep == ext_code[wto] && !multinoun(lnoun)) {
+	    vnum == 31 && prep == ext_code[wto] && !multinoun(lnoun)) {
 		ip = op; /* Back up */
 		rfree(lactor);
 		rfree(lobj);
 		lactor = lnoun;
 		lnoun = NULL;
-		vp = ip; /* Replace TELL with new verb */
+		vp = ip;          /* Replace TELL with new verb */
 		vnum = id_verb(); /* May increment ip (ip points att last word in verb) */
-		goto TELLHack;  /* Go back up and reparse the sentence from
+		goto TELLHack;    /* Go back up and reparse the sentence from
              the new start point. */
 	}
 
 	/* Convert TURN <noun> ON to TURN ON <noun> */
-	if (vnum == 35 && (prep == ext_code[won] || prep == ext_code[woff])
-	        && lobj[0].info == D_END) {
+	if (vnum == 35 && (prep == ext_code[won] || prep == ext_code[woff]) && lobj[0].info == D_END) {
 		tmp = lobj;
 		lobj = lnoun;
 		lnoun = tmp;
@@ -1269,7 +1302,6 @@ TELLHack:  /* This is used to restart the noun/prep/object scan
 		np = op;
 		op = tp;
 	}
-
 
 	/* For pre-Magx versions of AGT,
 	      convert <verb> <prep> <noun>  ==>  <verb> <noun> <prep> <noun> */
@@ -1296,15 +1328,19 @@ TELLHack:  /* This is used to restart the noun/prep/object scan
 		vnum = 42; /* LISTEXITS */
 
 	/* Convert LOOK <something> into EXAMINE <something> */
-	if (smart_look && vnum == 19 && lnoun[0].info != D_END) vnum = 20;
+	if (smart_look && vnum == 19 && lnoun[0].info != D_END)
+		vnum = 20;
 
 	/* need better error msgs */
-	if ((verbflag[vnum]&VERB_MULTI) == 0 && multinoun(lnoun)) {
+	if ((verbflag[vnum] & VERB_MULTI) == 0 && multinoun(lnoun)) {
 		/* Multiple objects when they are not allowed */
 		int msgnum;
-		if (vnum == 31) msgnum = 155; /* TALK */
-		else if (vnum == 34) msgnum = 160; /* ASK */
-		else msgnum = 231;
+		if (vnum == 31)
+			msgnum = 155; /* TALK */
+		else if (vnum == 34)
+			msgnum = 160; /* ASK */
+		else
+			msgnum = 231;
 		return parseerr(msgnum,
 		                "The verb '$word$' doesn't take multiple objects.", vp);
 	} else if (multinoun(lobj))
@@ -1325,7 +1361,6 @@ TELLHack:  /* This is used to restart the noun/prep/object scan
 	return 0;
 }
 
-
 static void v_undo(void) {
 	if (undo_state == NULL) {
 		writeln("There is insufficiant memory to support UNDO");
@@ -1335,7 +1370,8 @@ static void v_undo(void) {
 	if (can_undo == 0) {
 		if (newlife_flag)
 			writeln("You can't UNDO on the first turn.");
-		else writeln("You can only UNDO one turn.");
+		else
+			writeln("You can only UNDO one turn.");
 		ip = -1;
 		return;
 	}
@@ -1363,7 +1399,7 @@ rbool parse(void)
 	   THEN nonsense). OOPS commands are always of the form
 	   OOPS <word> */
 	if (ip == 0 && input[0] == ext_code[woops] && input[1] > 0 &&
-	        input[2] == -1 && ep > -1) {
+	    input[2] == -1 && ep > -1) {
 		fixword = input[ip + 1];
 		restore_input();
 		input[ep] = fixword;
@@ -1371,17 +1407,17 @@ rbool parse(void)
 	}
 	ep = -1;
 
-
 	/* Next, we need to determine if someone is trying to do
 	   disambiguation. This is only the case if
 	   i)ambig_flag is set
 	   ii)ip=0 (no multiple command nonsense)
 	   iii)there is only one noun on the line. */
-	if (ip != 0) ambig_flag = 0;
+	if (ip != 0)
+		ambig_flag = 0;
 	if (ambig_flag) {
 		currnoun = parse_disambig_answer();
 		if (input[ip] == -1 && currnoun[0].info != D_END) {
-			restore_input();    /* Yep, we're disambiguaing. */
+			restore_input(); /* Yep, we're disambiguaing. */
 			ip = parse_ip;
 		} else { /* nope; it's a new command */
 			ip = 0;
@@ -1404,12 +1440,12 @@ rbool parse(void)
 	/* If starting a new line, clear out old the old actor */
 	if (ip == 0) {
 		actor_in_scope = 0; /* Clear this */
-		rfree(lactor); /* This resets lactor to NULL  */
+		rfree(lactor);      /* This resets lactor to NULL  */
 	}
 
 	if (!ambig_flag)
 		if (parse_cmd() == -1)
-			return 1;  /* error condition */
+			return 1; /* error condition */
 
 	parse_ip = ip;
 
@@ -1424,7 +1460,8 @@ rbool parse(void)
 	lactor = disambig(1, lactor, currnoun);
 	lnoun = disambig(2, lnoun, currnoun);
 	lobj = disambig(3, lobj, currnoun);
-	if (ambig_flag > 0) return 0; /* We need to get disambig info */
+	if (ambig_flag > 0)
+		return 0; /* We need to get disambig info */
 	if (ambig_flag == -1) {
 		ambig_flag = 0;
 		return 1;
@@ -1470,36 +1507,34 @@ rbool parse(void)
 	/* Finally check for THENs */
 
 	if (ip != -1 && w_and(input[ip]) && input[ip + 1] == ext_code[wthen])
-		ip++;  /* AND THEN construction */
-	if (ip != -1 && input[ip] != -1) ip++;
+		ip++; /* AND THEN construction */
+	if (ip != -1 && input[ip] != -1)
+		ip++;
 	return 1;
 }
-
-
-
 
 void menu_cmd(void) {
 	int i, j;
 	int choice;
-	char *curr_cmd, *tmp1, *tmp2;  /* String of current command */
-	int objcnt; /* Number of objects taken by the current verb */
-	int verbword; /* Verb word */
+	char *curr_cmd, *tmp1, *tmp2; /* String of current command */
+	int objcnt;                   /* Number of objects taken by the current verb */
+	int verbword;                 /* Verb word */
 	parse_rec actrec;
 
 	parse_rec mobj;
-	int vnum_;  /* Verb number */
+	int vnum_; /* Verb number */
 	word prep_;
 
 	menuentry *nounmenu;
-	int *nounval;  /* Object id's for the menu entries */
+	int *nounval;          /* Object id's for the menu entries */
 	int nm_size, nm_width; /* Size and width of noun menu */
-
 
 	nounval = NULL;
 	nounmenu = NULL;
 	/* Get verb+prep */
 	choice = agt_menu("", vm_size, vm_width, verbmenu);
-	if (choice == -1 || doing_restore) return;
+	if (choice == -1 || doing_restore)
+		return;
 
 	verbword = verbinfo[choice].verb;
 	prep_ = verbinfo[choice].prep;
@@ -1509,7 +1544,8 @@ void menu_cmd(void) {
 	ip = 0;
 	input[0] = verbword;
 	input[1] = input[2] = -1;
-	if (objcnt <= 1 && prep_ != 0) input[1] = prep_;
+	if (objcnt <= 1 && prep_ != 0)
+		input[1] = prep_;
 	vnum_ = id_verb();
 
 	lnoun = (parse_rec *)rmalloc(sizeof(parse_rec) * 2);
@@ -1522,16 +1558,19 @@ void menu_cmd(void) {
 	if (objcnt >= 1) {
 		/* Construct noun list */
 		nounval = get_nouns();
-		for (nm_size = 0; nounval[nm_size] != 0; nm_size++);
+		for (nm_size = 0; nounval[nm_size] != 0; nm_size++)
+			;
 		nounmenu = (menuentry *)rmalloc(nm_size * sizeof(menuentry));
 		nm_width = 0;
 		for (i = 0; i < nm_size; i++) {
 			tmp1 = objname(nounval[i]);
 			strncpy(nounmenu[i], tmp1, MENU_WIDTH);
 			j = strlen(tmp1);
-			if (j > nm_width) nm_width = j;
+			if (j > nm_width)
+				nm_width = j;
 		}
-		if (nm_width > MENU_WIDTH) nm_width = MENU_WIDTH;
+		if (nm_width > MENU_WIDTH)
+			nm_width = MENU_WIDTH;
 
 		if (objcnt >= 2 || prep_ == 0)
 			curr_cmd = rstrdup(dict[verbword]);
@@ -1551,7 +1590,7 @@ void menu_cmd(void) {
 			mobj.obj = nounval[choice];
 			mobj.num = 0;
 			mobj.info = D_NOUN;
-		} else {  /* Normal VERB OBJ construction */
+		} else { /* Normal VERB OBJ construction */
 			lnoun[0].obj = nounval[choice];
 			lnoun[0].num = 0;
 			lnoun[0].info = D_NOUN;
@@ -1562,7 +1601,7 @@ void menu_cmd(void) {
 	}
 
 	if (objcnt >= 2) {
-		tmp1 = objname(lnoun[0].obj);      /* Build up current command line */
+		tmp1 = objname(lnoun[0].obj);         /* Build up current command line */
 		tmp2 = concdup(dict[verbword], tmp1); /* VERB NOUN */
 		rfree(tmp1);
 		curr_cmd = concdup(tmp2, dict[prep_]); /* VERB NOUN PREP */
@@ -1601,7 +1640,6 @@ void menu_cmd(void) {
 	exec(&actrec, vnum_, lnoun, prep_, &mobj);
 	lnoun = NULL; /* exec() is responsible for freeing lnoun */
 }
-
 
 /* Grammer structures:
  sverb, dverb                     (n,s,e,w,...,q,l,....)

@@ -20,72 +20,73 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/screen/surface.h"
-#include "ultima/shared/std/misc.h"
 #include "common/algorithm.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 // Colour shifting values
-uint8  RenderSurface::Rloss;
-uint8  RenderSurface::Gloss;
-uint8  RenderSurface::Bloss;
-uint8  RenderSurface::Rloss16;
-uint8  RenderSurface::Gloss16;
-uint8  RenderSurface::Bloss16;
-uint8  RenderSurface::Rshift;
-uint8  RenderSurface::Gshift;
-uint8  RenderSurface::Bshift;
+uint8 RenderSurface::Rloss;
+uint8 RenderSurface::Gloss;
+uint8 RenderSurface::Bloss;
+uint8 RenderSurface::Rloss16;
+uint8 RenderSurface::Gloss16;
+uint8 RenderSurface::Bloss16;
+uint8 RenderSurface::Rshift;
+uint8 RenderSurface::Gshift;
+uint8 RenderSurface::Bshift;
 uint32 RenderSurface::Rmask;
 uint32 RenderSurface::Gmask;
 uint32 RenderSurface::Bmask;
 
 // Default constructor for no created surface
 RenderSurface::RenderSurface() : buffer(0), zbuffer_priv(0), _rawSurface(NULL),
-		_disposeSurface(DisposeAfterUse::YES), opengl(0), bytes_per_pixel(0),
-		bits_per_pixel(0), format_type(0), pixels(0), zbuffer(0), w(0), h(0),
-		pitch(0), gl(0), gr(0), gt(0), gb(0),  lock_count(0) {
+                                 _disposeSurface(DisposeAfterUse::YES), opengl(0), bytes_per_pixel(0),
+                                 bits_per_pixel(0), format_type(0), pixels(0), zbuffer(0), w(0), h(0),
+                                 pitch(0), gl(0), gr(0), gt(0), gb(0), lock_count(0) {
 }
 
 // Constructor for custom buffer
-RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, byte *p) :
-		buffer(0), zbuffer_priv(0), _rawSurface(NULL), _disposeSurface(DisposeAfterUse::YES),
-		opengl(0), bytes_per_pixel(bpp / 8), bits_per_pixel(bpp), pixels(p), zbuffer(0),
-		w(width), h(height), pitch(width), gl(0), gr(width), gt(0), gb(height), lock_count(0) {
+RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, byte *p) : buffer(0), zbuffer_priv(0), _rawSurface(NULL), _disposeSurface(DisposeAfterUse::YES),
+                                                                                 opengl(0), bytes_per_pixel(bpp / 8), bits_per_pixel(bpp), pixels(p), zbuffer(0),
+                                                                                 w(width), h(height), pitch(width), gl(0), gr(width), gt(0), gb(height), lock_count(0) {
 	// Set default formats for the buffer
-	if (bpp == 32) set_format888();
-	else set_format565();
+	if (bpp == 32)
+		set_format888();
+	else
+		set_format565();
 }
 
 // Constructor for generic surface (with optional guardband)
-RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, sint32 guard) :
-		buffer(0), zbuffer_priv(0), _rawSurface(NULL), _disposeSurface(DisposeAfterUse::YES),
-		opengl(0), bytes_per_pixel(bpp / 8), bits_per_pixel(bpp), pixels(0), zbuffer(0),
-		w(width), h(height), pitch(width * (bpp / 8) + 2 * guard * (bpp / 8)),
-		gl(-guard), gr(guard + width), gt(-guard), gb(guard + height), lock_count(0) {
+RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, sint32 guard) : buffer(0), zbuffer_priv(0), _rawSurface(NULL), _disposeSurface(DisposeAfterUse::YES),
+                                                                                      opengl(0), bytes_per_pixel(bpp / 8), bits_per_pixel(bpp), pixels(0), zbuffer(0),
+                                                                                      w(width), h(height), pitch(width * (bpp / 8) + 2 * guard * (bpp / 8)),
+                                                                                      gl(-guard), gr(guard + width), gt(-guard), gb(guard + height), lock_count(0) {
 	// Set default formats for the buffer
-	if (bpp == 32) set_format888();
-	else set_format565();
+	if (bpp == 32)
+		set_format888();
+	else
+		set_format565();
 
 	buffer = new uint8[pitch * (height + 2 * gb)];
 	pixels = buffer + (pitch * gb) + gb;
 }
 
 // Constructor for sdl surface
-RenderSurface::RenderSurface(Graphics::ManagedSurface *surf) :
-		_rawSurface(surf), _disposeSurface(DisposeAfterUse::NO), w(surf->w), h(surf->h),
-		pitch(surf->pitch), gr(surf->w), pixels((byte*)surf->getPixels()), buffer(0),
-		zbuffer_priv(0), opengl(0), bytes_per_pixel(0), bits_per_pixel(0), zbuffer(0),
-		gl(0), gt(0), gb(surf->h), lock_count(0) {
+RenderSurface::RenderSurface(Graphics::ManagedSurface *surf) : _rawSurface(surf), _disposeSurface(DisposeAfterUse::NO), w(surf->w), h(surf->h),
+                                                               pitch(surf->pitch), gr(surf->w), pixels((byte *)surf->getPixels()), buffer(0),
+                                                               zbuffer_priv(0), opengl(0), bytes_per_pixel(0), bits_per_pixel(0), zbuffer(0),
+                                                               gl(0), gt(0), gb(surf->h), lock_count(0) {
 	set_format(&surf->format);
 }
 
 // Constructor for opengl surface
 RenderSurface::RenderSurface(OpenGL *ogl) : buffer(0), zbuffer_priv(0), _rawSurface(NULL),
-		opengl(ogl), bytes_per_pixel(0), bits_per_pixel(0), format_type(0), pixels(0),
-		zbuffer(0), w(0), h(0), pitch(0), gl(0), gr(0), gt(0), gb(0), lock_count(0) {
+                                            opengl(ogl), bytes_per_pixel(0), bits_per_pixel(0), format_type(0), pixels(0),
+                                            zbuffer(0), w(0), h(0), pitch(0), gl(0), gr(0), gt(0), gb(0), lock_count(0) {
 }
 
 RenderSurface::~RenderSurface() {
@@ -109,7 +110,7 @@ void RenderSurface::set_format(const Graphics::PixelFormat *fmt) {
 	Gloss16 = Gloss + 8;
 	Bloss16 = Bloss + 8;
 	Rshift = fmt->rShift;
-	Gshift = fmt->gShift; 
+	Gshift = fmt->gShift;
 	Bshift = fmt->bShift;
 	Rmask = fmt->rMax() << fmt->rShift;
 	Gmask = fmt->gMax() << fmt->gShift;
@@ -219,8 +220,10 @@ void RenderSurface::set_format888(int rsft, int gsft, int bsft) {
 }
 
 void RenderSurface::draw_line(int sx, int sy, int ex, int ey, unsigned char col) {
-	if (bytes_per_pixel == 4) draw_line32(sx, sy, ex, ey, col);
-	else draw_line16(sx, sy, ex, ey, col);
+	if (bytes_per_pixel == 4)
+		draw_line32(sx, sy, ex, ey, col);
+	else
+		draw_line16(sx, sy, ex, ey, col);
 }
 
 #define LINE_FRACTION 65536L
@@ -237,7 +240,7 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 	int yinc = 1;
 
 	if (sx == ex) {
-		sx --;
+		sx--;
 		if (sy > ey) {
 			yinc = -1;
 			sy--;
@@ -267,13 +270,19 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 	int height = h;
 	bool no_clip = true;
 
-	if (sx >= width && ex >= width) return;
-	if (sy >= height && ey >= height) return;
-	if (sx < 0 && ex < 0) return;
-	if (sy < 0 && ey < 0) return;
+	if (sx >= width && ex >= width)
+		return;
+	if (sy >= height && ey >= height)
+		return;
+	if (sx < 0 && ex < 0)
+		return;
+	if (sy < 0 && ey < 0)
+		return;
 
-	if (sy < 0 || sy >= height || sx < 0 || sx >= width) no_clip = false;
-	if (ey < 0 || ey >= height || ex < 0 || ex >= width) no_clip = false;
+	if (sy < 0 || sy >= height || sx < 0 || sx >= width)
+		no_clip = false;
+	if (ey < 0 || ey >= height || ex < 0 || ex >= width)
+		no_clip = false;
 
 	int col32 = colour32[col];
 
@@ -282,7 +291,8 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 		//Std::cout << "Vertical" << Std::endl;
 		// start is below end
 		while (pixptr != pixend) {
-			if (no_clip || (cury >= 0 && cury < height)) *pixptr = col32;
+			if (no_clip || (cury >= 0 && cury < height))
+				*pixptr = col32;
 			pixptr += pitch_;
 			cury += yinc;
 		}
@@ -291,7 +301,8 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 	else if (sy == ey) {
 		//Std::cout << "Horizontal" << Std::endl;
 		while (pixptr != pixend) {
-			if (no_clip || (curx >= 0 && curx < width)) *pixptr = col32;
+			if (no_clip || (curx >= 0 && curx < width))
+				*pixptr = col32;
 			pixptr += xinc;
 			curx += xinc;
 		}
@@ -302,19 +313,20 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 		uint32 fraction = Std::labs((LINE_FRACTION * (sy - ey)) / (sx - ex));
 		uint32 ycounter = 0;
 
-		for (; ;) {
+		for (;;) {
 			if ((no_clip || (cury >= 0 && cury < height && curx >= 0 && curx < width)))
 				*pixptr = col32;
 			pixptr += xinc;
-			if (curx == ex) break;
-			curx  += xinc;
+			if (curx == ex)
+				break;
+			curx += xinc;
 			ycounter += fraction;
 
 			// Need to work out if we need to change line
 			if (ycounter > LINE_FRACTION) {
 				ycounter -= LINE_FRACTION;
 				pixptr += pitch_;
-				cury  += yinc;
+				cury += yinc;
 			}
 		}
 	}
@@ -324,12 +336,13 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 		uint32 fraction = Std::labs((LINE_FRACTION * (sx - ex)) / (sy - ey));
 		uint32 xcounter = 0;
 
-		for (; ;) {
+		for (;;) {
 			if ((no_clip || (cury >= 0 && cury < height && curx >= 0 && curx < width)))
 				*pixptr = col32;
 			pixptr += pitch_;
-			if (cury == ey) break;
-			cury  += yinc;
+			if (cury == ey)
+				break;
+			cury += yinc;
 			xcounter += fraction;
 
 			// Need to work out if we need to change line
@@ -340,7 +353,6 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 			}
 		}
 	}
-
 }
 
 void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char col) {
@@ -355,7 +367,7 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 	int yinc = 1;
 
 	if (sx == ex) {
-		sx --;
+		sx--;
 		if (sy > ey) {
 			yinc = -1;
 			sy--;
@@ -385,13 +397,19 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 	int height = h;
 	bool no_clip = true;
 
-	if (sx >= width && ex >= width) return;
-	if (sy >= height && ey >= height) return;
-	if (sx < 0 && ex < 0) return;
-	if (sy < 0 && ey < 0) return;
+	if (sx >= width && ex >= width)
+		return;
+	if (sy >= height && ey >= height)
+		return;
+	if (sx < 0 && ex < 0)
+		return;
+	if (sy < 0 && ey < 0)
+		return;
 
-	if (sy < 0 || sy >= height || sx < 0 || sx >= width) no_clip = false;
-	if (ey < 0 || ey >= height || ex < 0 || ex >= width) no_clip = false;
+	if (sy < 0 || sy >= height || sx < 0 || sx >= width)
+		no_clip = false;
+	if (ey < 0 || ey >= height || ex < 0 || ex >= width)
+		no_clip = false;
 
 	int col32 = colour32[col];
 
@@ -400,7 +418,8 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 		//Std::cout << "Vertical" << Std::endl;
 		// start is below end
 		while (pixptr != pixend) {
-			if (no_clip || (cury >= 0 && cury < height)) *pixptr = col32;
+			if (no_clip || (cury >= 0 && cury < height))
+				*pixptr = col32;
 			pixptr += pitch_;
 			cury += yinc;
 		}
@@ -409,7 +428,8 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 	else if (sy == ey) {
 		//Std::cout << "Horizontal" << Std::endl;
 		while (pixptr != pixend) {
-			if (no_clip || (curx >= 0 && curx < width)) *pixptr = col32;
+			if (no_clip || (curx >= 0 && curx < width))
+				*pixptr = col32;
 			pixptr += xinc;
 			curx += xinc;
 		}
@@ -420,19 +440,20 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 		uint32 fraction = Std::labs((LINE_FRACTION * (sy - ey)) / (sx - ex));
 		uint32 ycounter = 0;
 
-		for (; ;) {
+		for (;;) {
 			if ((no_clip || (cury >= 0 && cury < height && curx >= 0 && curx < width)))
 				*pixptr = col32;
 			pixptr += xinc;
-			if (curx == ex) break;
-			curx  += xinc;
+			if (curx == ex)
+				break;
+			curx += xinc;
 			ycounter += fraction;
 
 			// Need to work out if we need to change line
 			if (ycounter > LINE_FRACTION) {
 				ycounter -= LINE_FRACTION;
 				pixptr += pitch_;
-				cury  += yinc;
+				cury += yinc;
 			}
 		}
 	}
@@ -442,12 +463,13 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 		uint32 fraction = Std::labs((LINE_FRACTION * (sx - ex)) / (sy - ey));
 		uint32 xcounter = 0;
 
-		for (; ;) {
+		for (;;) {
 			if ((no_clip || (cury >= 0 && cury < height && curx >= 0 && curx < width)))
 				*pixptr = col32;
 			pixptr += pitch_;
-			if (cury == ey) break;
-			cury  += yinc;
+			if (cury == ey)
+				break;
+			cury += yinc;
 			xcounter += fraction;
 
 			// Need to work out if we need to change line
@@ -458,7 +480,6 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 			}
 		}
 	}
-
 }
 
 //
@@ -471,7 +492,8 @@ void RenderSurface::draw_3d_line(int x, int y, int sx, int sy, int sz, int ex, i
 	int dispey = y + (ex + ey) / 8 - ez;
 
 #ifdef WANT_OPENGL
-	if (opengl) opengl->draw_line(dispsx, dispsy + 1, 0, dispex, dispey + 1, 0, col);
+	if (opengl)
+		opengl->draw_line(dispsx, dispsy + 1, 0, dispex, dispey + 1, 0, col);
 	else
 #endif
 		draw_line(dispsx, dispsy + 1, dispex, dispey + 1, col);
@@ -484,7 +506,8 @@ void RenderSurface::create_zbuffer() {
 #endif
 
 	// Not in opengl, or if we alraedy have one
-	if (opengl || zbuffer_priv) return;
+	if (opengl || zbuffer_priv)
+		return;
 
 	zbuffer = zbuffer_priv = new uint16[pitch * h];
 }
@@ -513,15 +536,15 @@ static int getBits(uint mask) {
 }
 
 Graphics::ManagedSurface *RenderSurface::createSurface(int w, int h,
-		const Graphics::PixelFormat &format) {
+                                                       const Graphics::PixelFormat &format) {
 	return new Graphics::ManagedSurface(w, h, format);
 }
 
 Graphics::ManagedSurface *RenderSurface::get_sdl_surface() {
 	if (_rawSurface == NULL) {
 		_rawSurface = new Graphics::ManagedSurface(w, h,
-			Graphics::PixelFormat(bytes_per_pixel, getBits(Rmask), getBits(Gmask),
-				getBits(Bmask), 0, Rshift, Gshift, Bshift, 0));
+		                                           Graphics::PixelFormat(bytes_per_pixel, getBits(Rmask), getBits(Gmask),
+		                                                                 getBits(Bmask), 0, Rshift, Gshift, Bshift, 0));
 
 		byte *dest = (byte *)_rawSurface->getPixels();
 		Common::copy(pixels, pixels + (_rawSurface->pitch * _rawSurface->h), dest);

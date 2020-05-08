@@ -25,10 +25,10 @@
 
 #include "common/scummsys.h"
 
-namespace Common{
+namespace Common {
 class SeekableReadStream;
 class WriteStream;
-}
+} // namespace Common
 
 namespace Graphics {
 
@@ -81,7 +81,6 @@ bool createScreenShot(Graphics::Surface &surf);
  * @remarks Caller is responsible for freeing the returned surface
  */
 Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize);
-
 
 } // End of namespace Graphics
 

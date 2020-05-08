@@ -47,7 +47,7 @@ TestExitStatus playBeeps();
 TestExitStatus mixSounds();
 TestExitStatus audiocdOutput();
 TestExitStatus sampleRates();
-}
+} // namespace SoundSubsystem
 
 class SoundSubsystemTestSuite : public Testsuite {
 public:

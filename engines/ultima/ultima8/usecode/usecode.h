@@ -30,8 +30,8 @@ namespace Ultima8 {
 
 class Usecode {
 public:
-	Usecode() { }
-	virtual ~Usecode() { }
+	Usecode() {}
+	virtual ~Usecode() {}
 
 	virtual const uint8 *get_class(uint32 classid) = 0;
 	virtual uint32 get_class_size(uint32 classid) = 0;

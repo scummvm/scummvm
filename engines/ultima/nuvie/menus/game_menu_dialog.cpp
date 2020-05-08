@@ -20,21 +20,21 @@
  *
  */
 
+#include "ultima/nuvie/menus/game_menu_dialog.h"
+#include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/gui_types.h"
+#include "ultima/nuvie/gui/gui_area.h"
 #include "ultima/nuvie/gui/gui_button.h"
 #include "ultima/nuvie/gui/gui_callback.h"
-#include "ultima/nuvie/gui/gui_area.h"
 #include "ultima/nuvie/gui/gui_dialog.h"
-#include "ultima/nuvie/menus/game_menu_dialog.h"
-#include "ultima/nuvie/menus/video_dialog.h"
+#include "ultima/nuvie/gui/gui_types.h"
+#include "ultima/nuvie/keybinding/keys.h"
 #include "ultima/nuvie/menus/audio_dialog.h"
+#include "ultima/nuvie/menus/cheats_dialog.h"
 #include "ultima/nuvie/menus/gameplay_dialog.h"
 #include "ultima/nuvie/menus/input_dialog.h"
-#include "ultima/nuvie/menus/cheats_dialog.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/menus/video_dialog.h"
 #include "ultima/nuvie/nuvie.h"
 
 namespace Ultima {
@@ -44,9 +44,9 @@ namespace Nuvie {
 #define GMD_HEIGHT 135
 
 GameMenuDialog::GameMenuDialog(CallBack *callback)
-	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - GMD_WIDTH) / 2,
-	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - GMD_HEIGHT) / 2,
-	             GMD_WIDTH, GMD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
+    : GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - GMD_WIDTH) / 2,
+                 Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - GMD_HEIGHT) / 2,
+                 GMD_WIDTH, GMD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
 	callback_object = callback;
 	init();
 	grab_focus();
@@ -129,7 +129,8 @@ GUI_status GameMenuDialog::KeyDown(const Common::KeyState &key) {
 		button_index[b_index_num]->set_highlighted(true);
 		break;
 	case DO_ACTION_KEY:
-		if (b_index_num != -1) return button_index[b_index_num]->Activate_button();
+		if (b_index_num != -1)
+			return button_index[b_index_num]->Activate_button();
 		break;
 	case CANCEL_ACTION_KEY:
 		return close_dialog();
@@ -151,27 +152,27 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 		g_engine->loadGameDialog();
 	} else if (caller == video_button) {
 		GUI_Widget *video_dialog;
-		video_dialog = (GUI_Widget *) new VideoDialog(this);
+		video_dialog = (GUI_Widget *)new VideoDialog(this);
 		GUI::get_gui()->AddWidget(video_dialog);
 		gui->lock_input(video_dialog);
 	} else if (caller == audio_button) {
 		GUI_Widget *audio_dialog;
-		audio_dialog = (GUI_Widget *) new AudioDialog(this);
+		audio_dialog = (GUI_Widget *)new AudioDialog(this);
 		GUI::get_gui()->AddWidget(audio_dialog);
 		gui->lock_input(audio_dialog);
 	} else if (caller == input_button) {
 		GUI_Widget *input_dialog;
-		input_dialog = (GUI_Widget *) new InputDialog(this);
+		input_dialog = (GUI_Widget *)new InputDialog(this);
 		GUI::get_gui()->AddWidget(input_dialog);
 		gui->lock_input(input_dialog);
 	} else if (caller == gameplay_button) {
 		GUI_Widget *gameplay_dialog;
-		gameplay_dialog = (GUI_Widget *) new GameplayDialog(this);
+		gameplay_dialog = (GUI_Widget *)new GameplayDialog(this);
 		GUI::get_gui()->AddWidget(gameplay_dialog);
 		gui->lock_input(gameplay_dialog);
 	} else if (caller == cheats_button) {
 		GUI_Widget *cheats_dialog;
-		cheats_dialog = (GUI_Widget *) new CheatsDialog(this);
+		cheats_dialog = (GUI_Widget *)new CheatsDialog(this);
 		GUI::get_gui()->AddWidget(cheats_dialog);
 		gui->lock_input(cheats_dialog);
 	} else if (caller == continue_button) {

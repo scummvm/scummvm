@@ -20,17 +20,17 @@
  *
  */
 
-#include "common/util.h"
+#include "common/savefile.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/system.h"
-#include "common/savefile.h"
+#include "common/util.h"
 
 #include "gob/gob.h"
-#include "gob/save/savefile.h"
-#include "gob/video.h"
 #include "gob/inter.h"
+#include "gob/save/savefile.h"
 #include "gob/variables.h"
+#include "gob/video.h"
 
 namespace Gob {
 
@@ -83,9 +83,9 @@ bool SaveHeader::verify(Common::ReadStream &stream) const {
 }
 
 bool SaveHeader::operator==(const SaveHeader &header) const {
-	return (_type    == header._type)    &&
+	return (_type == header._type) &&
 	       (_version == header._version) &&
-	       (_size    == header._size);
+	       (_size == header._size);
 }
 
 bool SaveHeader::operator!=(const SaveHeader &header) const {
@@ -286,13 +286,13 @@ SavePartSprite::SavePartSprite(uint32 width, uint32 height, bool trueColor) {
 	if (_trueColor)
 		_spriteSize *= 3;
 
-		//          width + height + color +    sprite   + palette
-	_header.setSize(4   +   4    +   1   + _spriteSize + 768);
+	//          width + height + color +    sprite   + palette
+	_header.setSize(4 + 4 + 1 + _spriteSize + 768);
 
-	_dataSprite  = new byte[_spriteSize];
+	_dataSprite = new byte[_spriteSize];
 	_dataPalette = new byte[768];
 
-	memset(_dataSprite,  0, _spriteSize);
+	memset(_dataSprite, 0, _spriteSize);
 	memset(_dataPalette, 0, 768);
 }
 
@@ -444,12 +444,12 @@ bool SavePartSprite::writeSprite(Surface &sprite) const {
 }
 
 SavePartInfo::SavePartInfo(uint32 descMaxLength, uint32 gameID,
-		uint32 gameVersion, byte endian, uint32 varCount) {
+                           uint32 gameVersion, byte endian, uint32 varCount) {
 
 	_header.setType(kID);
 	_header.setVersion(kVersion);
 	//                        descMaxLength + gameID + gameVersion + endian + varCount
-	_header.setSize(descMaxLength + 4       +   4    +     4       +    1   +    4);
+	_header.setSize(descMaxLength + 4 + 4 + 4 + 1 + 4);
 
 	_descMaxLength = descMaxLength;
 	_gameID = gameID;
@@ -651,7 +651,7 @@ bool SaveContainer::readPart(uint32 partN, SavePart *part) const {
 	if (partN >= _partCount)
 		return false;
 
-	const Part * const &p = _parts[partN];
+	const Part *const &p = _parts[partN];
 
 	// Check if the part actually exists
 	if (!p)
@@ -676,7 +676,7 @@ bool SaveContainer::readPartHeader(uint32 partN, SaveHeader *header) const {
 	if (partN >= _partCount)
 		return false;
 
-	const Part * const &p = _parts[partN];
+	const Part *const &p = _parts[partN];
 
 	// Check if the part actually exists
 	if (!p)
@@ -760,7 +760,7 @@ bool SaveContainer::write(Common::WriteStream &stream) const {
 
 	// Iterate over all parts
 	for (PartConstIterator it = _parts.begin(); it != _parts.end(); ++it) {
-		Part * const &p = *it;
+		Part *const &p = *it;
 
 		// Write the part
 		if (stream.write(p->data, p->size) != p->size)
@@ -849,17 +849,14 @@ bool SaveContainer::isSave(Common::SeekableReadStream &stream) {
 	return result;
 }
 
-
-SaveReader::SaveReader(uint32 partCount, uint32 slot, const Common::String &fileName) :
-	SaveContainer(partCount, slot), _fileName(fileName) {
+SaveReader::SaveReader(uint32 partCount, uint32 slot, const Common::String &fileName) : SaveContainer(partCount, slot), _fileName(fileName) {
 
 	_stream = 0;
 
 	_loaded = false;
 }
 
-SaveReader::SaveReader(uint32 partCount, uint32 slot, Common::SeekableReadStream &stream) :
-	SaveContainer(partCount, slot) {
+SaveReader::SaveReader(uint32 partCount, uint32 slot, Common::SeekableReadStream &stream) : SaveContainer(partCount, slot) {
 
 	_stream = &stream;
 
@@ -976,12 +973,10 @@ bool SaveReader::getInfo(const Common::String &fileName, SavePartInfo &info) {
 	return result;
 }
 
-SaveWriter::SaveWriter(uint32 partCount, uint32 slot) :
-	SaveContainer(partCount, slot) {
+SaveWriter::SaveWriter(uint32 partCount, uint32 slot) : SaveContainer(partCount, slot) {
 }
 
-SaveWriter::SaveWriter(uint32 partCount, uint32 slot, const Common::String &fileName) :
-	SaveContainer(partCount, slot), _fileName(fileName) {
+SaveWriter::SaveWriter(uint32 partCount, uint32 slot, const Common::String &fileName) : SaveContainer(partCount, slot), _fileName(fileName) {
 }
 
 SaveWriter::~SaveWriter() {

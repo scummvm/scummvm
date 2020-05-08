@@ -24,8 +24,8 @@
 #define ULTIMA8_GUMPS_READABLEGUMP_H
 
 #include "ultima/ultima8/gumps/modal_gump.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,6 +34,7 @@ class ReadableGump : public ModalGump {
 	uint16 _shapeNum;
 	int _fontNum;
 	Std::string _text;
+
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -52,6 +53,7 @@ public:
 	INTRINSIC(I_readPlaque);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 };

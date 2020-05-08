@@ -42,8 +42,7 @@ enum {
 	kDownloadDialogButtonCmd = 'Dldb'
 };
 
-DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
-	Dialog("GlobalOptions_Cloud_DownloadDialog"), _launcher(launcher), _close(false) {
+DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) : Dialog("GlobalOptions_Cloud_DownloadDialog"), _launcher(launcher), _close(false) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	_browser = new BrowserDialog(_("Select directory where to download game data"), true);
@@ -92,13 +91,12 @@ void DownloadDialog::close() {
 
 void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kDownloadDialogButtonCmd:
-		{
-			CloudMan.setDownloadTarget(nullptr);
-			CloudMan.cancelDownload();
-			close();
-			break;
-		}
+	case kDownloadDialogButtonCmd: {
+		CloudMan.setDownloadTarget(nullptr);
+		CloudMan.cancelDownload();
+		close();
+		break;
+	}
 	case kDownloadProgressCmd:
 		if (!_close) {
 			refreshWidgets();
@@ -116,7 +114,8 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 bool DownloadDialog::selectDirectories() {
 	if (g_system->isConnectionLimited()) {
 		MessageDialog alert(_("It looks like your connection is limited. "
-			"Do you really want to download files with it?"), _("Yes"), _("No"));
+		                      "Do you really want to download files with it?"),
+		                    _("Yes"), _("No"));
 		if (alert.runModal() != GUI::kMessageOK)
 			return false;
 	}
@@ -149,10 +148,9 @@ bool DownloadDialog::selectDirectories() {
 				return false;
 			}
 			GUI::MessageDialog alert(
-				Common::String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?"), remoteDirectory.name().c_str()),
-				_("Yes"),
-				_("No")
-				);
+			    Common::String::format(_("The \"%s\" already exists in the specified directory.\nDo you really want to download files into that directory?"), remoteDirectory.name().c_str()),
+			    _("Yes"),
+			    _("No"));
 			if (alert.runModal() != GUI::kMessageOK)
 				return false;
 			break;

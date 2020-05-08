@@ -20,7 +20,7 @@
  *
  */
 
- /*
+/*
  * This code is based on Labyrinth of Time code with assistance of
  *
  * Copyright (c) 1993 Terra Nova Development
@@ -32,10 +32,10 @@
 
 #include "gui/message.h"
 
-#include "lab/lab.h"
 #include "lab/anim.h"
 #include "lab/dispman.h"
 #include "lab/image.h"
+#include "lab/lab.h"
 #include "lab/labsets.h"
 #include "lab/resource.h"
 #include "lab/speciallocks.h"
@@ -43,8 +43,8 @@
 
 namespace Lab {
 
-#define BRICKOPEN      115
-#define COMBINATIONUNLOCKED  130
+#define BRICKOPEN 115
+#define COMBINATIONUNLOCKED 130
 
 enum TileScroll {
 	kScrollLeft = 1,
@@ -54,20 +54,18 @@ enum TileScroll {
 };
 
 const uint16 INIT_TILE[4][4] = {
-	{ 1, 5, 9, 13 },
-	{ 2, 6, 10, 14 },
-	{ 3, 7, 11, 15 },
-	{ 4, 8, 12, 0 }
-};
+    {1, 5, 9, 13},
+    {2, 6, 10, 14},
+    {3, 7, 11, 15},
+    {4, 8, 12, 0}};
 
 const uint16 SOLUTION[4][4] = {
-	{ 7, 1, 8, 3 },
-	{ 2, 11, 15, 4 },
-	{ 9, 5, 14, 6 },
-	{ 10, 13, 12, 0 }
-};
+    {7, 1, 8, 3},
+    {2, 11, 15, 4},
+    {9, 5, 14, 6},
+    {10, 13, 12, 0}};
 
-const int COMBINATION_X[6] = { 45, 83, 129, 166, 211, 248 };
+const int COMBINATION_X[6] = {45, 83, 129, 166, 211, 248};
 
 SpecialLocks::SpecialLocks(LabEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 16; i++)
@@ -102,7 +100,7 @@ void SpecialLocks::tileClick(Common::Point pos) {
 		return;
 
 	int tileX = (realPos.x - 101) / 30;
-	int tileY = (realPos.y -  26) / 25;
+	int tileY = (realPos.y - 26) / 25;
 
 	if ((tileX < 4) && (tileY < 4))
 		changeTile(tileX, tileY);
@@ -310,7 +308,7 @@ void SpecialLocks::scrollRaster(int16 dx, int16 dy, uint16 x1, uint16 y1, uint16
 }
 
 void SpecialLocks::changeCombination(uint16 number) {
-	const int solution[6] = { 0, 4, 0, 8, 7, 2 };
+	const int solution[6] = {0, 4, 0, 8, 7, 2};
 
 	Image display(_vm);
 

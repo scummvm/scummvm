@@ -30,6 +30,7 @@ namespace Access {
 class LzwDecompressor {
 public:
 	void decompress(byte *source, byte *dest);
+
 private:
 	byte *_source;
 	byte _sourceBitsLeft;

@@ -99,7 +99,7 @@ bool Glulxe::init_dispatch() {
 
 	/* Allocate the class hash tables. */
 	num_classes = gidispatch_count_classes();
-	classes = (classtable_t **)glulx_malloc(num_classes  * sizeof(classtable_t *));
+	classes = (classtable_t **)glulx_malloc(num_classes * sizeof(classtable_t *));
 	if (!classes)
 		return false;
 
@@ -126,7 +126,7 @@ uint Glulxe::perform_glk(uint funcnum, uint numargs, uint *arglist) {
 	uint retval = 0;
 
 	switch (funcnum) {
-	/* To speed life up, we implement commonly-used Glk functions
+		/* To speed life up, we implement commonly-used Glk functions
 	   directly -- instead of bothering with the whole prototype
 	   mess. */
 
@@ -178,11 +178,11 @@ uint Glulxe::perform_glk(uint funcnum, uint numargs, uint *arglist) {
 		glk_put_char_stream_uni(find_stream_by_id(arglist[0]), arglist[1]);
 		break;
 
-WrongArgNum:
+	WrongArgNum:
 		error("Wrong number of arguments to Glk function.");
 		break;
 
-FullDispatcher:
+	FullDispatcher:
 	default: {
 		/* Go through the full dispatcher prototype foo. */
 		const char *proto, *cx;
@@ -230,7 +230,7 @@ FullDispatcher:
 }
 
 const char *Glulxe::read_prefix(const char *cx, int *isref, int *isarray, int *passin, int *passout,
-                                int *nullok, int *isretained,  int *isreturn) {
+                                int *nullok, int *isretained, int *isreturn) {
 	*isref = false;
 	*passin = false;
 	*passout = false;
@@ -347,8 +347,7 @@ void Glulxe::prepare_glk_args(const char *proto, dispatch_splot_t *splot) {
 	}
 	if (!garglist) {
 		garglist_size = maxargs + 16;
-		garglist = (gluniversal_t *)glulx_malloc(garglist_size
-		           * sizeof(gluniversal_t));
+		garglist = (gluniversal_t *)glulx_malloc(garglist_size * sizeof(gluniversal_t));
 	}
 	if (!garglist)
 		error("Unable to allocate storage for Glk arguments.");
@@ -416,8 +415,7 @@ void Glulxe::parse_glk_args(dispatch_splot_t *splot, const char **proto, int dep
 					   something reasonable. Future releases of this interpreter
 					   may remove this test and go on to verify_array_addresses(),
 					   which treats this case as a fatal error. */
-					if (varglist[ix + 1] > endmem
-					        || varglist[ix] + varglist[ix + 1] > endmem) {
+					if (varglist[ix + 1] > endmem || varglist[ix] + varglist[ix + 1] > endmem) {
 						nonfatal_warning_i("Memory access was much too long -- perhaps a print_to_array call with only one argument", varglist[ix + 1]);
 						varglist[ix + 1] = endmem - varglist[ix];
 					}
@@ -431,8 +429,7 @@ void Glulxe::parse_glk_args(dispatch_splot_t *splot, const char **proto, int dep
 					break;
 				case 'I':
 					/* See comment above. */
-					if (varglist[ix + 1] > endmem / 4
-					        || varglist[ix + 1] > (endmem - varglist[ix]) / 4) {
+					if (varglist[ix + 1] > endmem / 4 || varglist[ix + 1] > (endmem - varglist[ix]) / 4) {
 						nonfatal_warning_i("Memory access was much too long -- perhaps a print_to_array call with only one argument", varglist[ix + 1]);
 						varglist[ix + 1] = (endmem - varglist[ix]) / 4;
 					}
@@ -907,7 +904,7 @@ void Glulxe::classes_remove(int classid, void *obj) {
 	return;
 }
 
-gidispatch_rock_t Glulxe::glulxe_classtable_register(void *obj,  uint objclass) {
+gidispatch_rock_t Glulxe::glulxe_classtable_register(void *obj, uint objclass) {
 	classref_t *cref;
 	gidispatch_rock_t objrock;
 	cref = classes_put(objclass, obj, 0);
@@ -916,7 +913,7 @@ gidispatch_rock_t Glulxe::glulxe_classtable_register(void *obj,  uint objclass) 
 }
 
 void Glulxe::glulxe_classtable_unregister(void *obj, uint objclass,
-        gidispatch_rock_t objrock) {
+                                          gidispatch_rock_t objrock) {
 	classes_remove(objclass, obj);
 }
 
@@ -1160,7 +1157,7 @@ gidispatch_rock_t Glulxe::glulxe_retained_register(void *array, uint len, const 
 	return rock;
 }
 
-void Glulxe::glulxe_retained_unregister(void *array, uint len, const  char *typecode, gidispatch_rock_t objrock) {
+void Glulxe::glulxe_retained_unregister(void *array, uint len, const char *typecode, gidispatch_rock_t objrock) {
 	arrayref_t *arref = nullptr;
 	arrayref_t **aptr;
 	uint ix, addr2, val;

@@ -26,26 +26,26 @@
 
 #include "saga/saga.h"
 
-#include "saga/gfx.h"
 #include "saga/actor.h"
 #include "saga/animation.h"
 #include "saga/console.h"
 #include "saga/events.h"
 #include "saga/font.h"
+#include "saga/gfx.h"
 #include "saga/interface.h"
-#include "saga/music.h"
 #include "saga/itedata.h"
+#include "saga/music.h"
 #include "saga/puzzle.h"
 #include "saga/render.h"
-#include "saga/sound.h"
-#include "saga/sndres.h"
 #include "saga/resource.h"
+#include "saga/sndres.h"
+#include "saga/sound.h"
 
-#include "saga/script.h"
 #include "saga/objectmap.h"
+#include "saga/script.h"
 
-#include "saga/scene.h"
 #include "saga/isomap.h"
+#include "saga/scene.h"
 
 #include "common/config-manager.h"
 
@@ -53,112 +53,111 @@ namespace Saga {
 
 void Script::setupIHNMScriptFuncList() {
 	static const ScriptFunctionDescription IHNMScriptFunctionsList[IHNM_SCRIPT_FUNCTION_MAX] = {
-		OPCODE(sfNull),
-		OPCODE(sfWait),
-		OPCODE(sfTakeObject),
-		OPCODE(sfIsCarried),
-		OPCODE(sfStatusBar),
-		OPCODE(sfMainMode),
-		OPCODE(sfScriptWalkTo),
-		OPCODE(sfScriptDoAction),
-		OPCODE(sfSetActorFacing),
-		OPCODE(sfStartBgdAnim),
-		OPCODE(sfStopBgdAnim),
-		OPCODE(sfLockUser),
-		OPCODE(sfPreDialog),
-		OPCODE(sfKillActorThreads),
-		OPCODE(sfFaceTowards),
-		OPCODE(sfSetFollower),
-		OPCODE(sfScriptGotoScene),
-		OPCODE(sfSetObjImage),
-		OPCODE(sfSetObjName),
-		OPCODE(sfGetObjImage),
-		OPCODE(sfGetNumber),
-		OPCODE(sfScriptOpenDoor),
-		OPCODE(sfScriptCloseDoor),
-		OPCODE(sfSetBgdAnimSpeed),
-		OPCODE(sfCycleColors),
-		OPCODE(sfDoCenterActor),
-		OPCODE(sfStartBgdAnimSpeed),
-		OPCODE(sfScriptWalkToAsync),
-		OPCODE(sfEnableZone),
-		OPCODE(sfSetActorState),
-		OPCODE(sfScriptMoveTo),
-		OPCODE(sfSceneEq),
-		OPCODE(sfDropObject),
-		OPCODE(sfFinishBgdAnim),
-		OPCODE(sfSwapActors),
-		OPCODE(sfSimulSpeech),
-		OPCODE(sfScriptWalk),
-		OPCODE(sfCycleFrames),
-		OPCODE(sfSetFrame),
-		OPCODE(sfSetPortrait),
-		OPCODE(sfSetProtagPortrait),
-		OPCODE(sfChainBgdAnim),
-		OPCODE(sfScriptSpecialWalk),
-		OPCODE(sfPlaceActor),
-		OPCODE(sfCheckUserInterrupt),
-		OPCODE(sfScriptWalkRelative),
-		OPCODE(sfScriptMoveRelative),
-		OPCODE(sfSimulSpeech2),
-		OPCODE(sfPsychicProfile),
-		OPCODE(sfPsychicProfileOff),
-		OPCODE(sfSetProtagState),
-		OPCODE(sfResumeBgdAnim),
-		OPCODE(sfThrowActor),
-		OPCODE(sfWaitWalk),
-		OPCODE(sfScriptSceneID),
-		OPCODE(sfChangeActorScene),
-		OPCODE(sfScriptClimb),
-		OPCODE(sfSetDoorState),
-		OPCODE(sfSetActorZ),
-		OPCODE(sfScriptText),
-		OPCODE(sfGetActorX),
-		OPCODE(sfGetActorY),
-		OPCODE(sfEraseDelta),
-		OPCODE(sfPlayMusic),
-		OPCODE(sfNull),
-		OPCODE(sfEnableEscape),
-		OPCODE(sfPlaySound),
-		OPCODE(sfPlayLoopedSound),
-		OPCODE(sfGetDeltaFrame),
-		OPCODE(sfNull),
-		OPCODE(sfNull),
-		OPCODE(sfRand),
-		OPCODE(sfFadeMusic),
-		OPCODE(sfNull),
-		OPCODE(sfSetChapterPoints),
-		OPCODE(sfSetPortraitBgColor),
-		OPCODE(sfScriptStartCutAway),
-		OPCODE(sfReturnFromCutAway),
-		OPCODE(sfEndCutAway),
-		OPCODE(sfGetMouseClicks),
-		OPCODE(sfResetMouseClicks),
-		OPCODE(sfWaitFrames),
-		OPCODE(sfScriptFade),
-		OPCODE(sfScriptStartVideo),
-		OPCODE(sfScriptReturnFromVideo),
-		OPCODE(sfScriptEndVideo),
-		OPCODE(sfSetActorZ),
-		OPCODE(sfShowIHNMDemoHelpBg),
-		OPCODE(sfAddIHNMDemoHelpTextLine),
-		OPCODE(sfShowIHNMDemoHelpPage),
-		OPCODE(sfVstopFX),
-		OPCODE(sfVstopLoopedFX),
-		OPCODE(sfDemoSetInteractive),	// only used in the demo version of IHNM
-		OPCODE(sfDemoIsInteractive),
-		OPCODE(sfVsetTrack),
-		OPCODE(sfGetPoints),
-		OPCODE(sfSetGlobalFlag),
-		OPCODE(sfClearGlobalFlag),
-		OPCODE(sfTestGlobalFlag),
-		OPCODE(sfSetPoints),
-		OPCODE(sfSetSpeechBox),
-		OPCODE(sfDebugShowData),
-		OPCODE(sfWaitFramesEsc),
-		OPCODE(sfQueueMusic),
-		OPCODE(sfDisableAbortSpeeches)
-	};
+	    OPCODE(sfNull),
+	    OPCODE(sfWait),
+	    OPCODE(sfTakeObject),
+	    OPCODE(sfIsCarried),
+	    OPCODE(sfStatusBar),
+	    OPCODE(sfMainMode),
+	    OPCODE(sfScriptWalkTo),
+	    OPCODE(sfScriptDoAction),
+	    OPCODE(sfSetActorFacing),
+	    OPCODE(sfStartBgdAnim),
+	    OPCODE(sfStopBgdAnim),
+	    OPCODE(sfLockUser),
+	    OPCODE(sfPreDialog),
+	    OPCODE(sfKillActorThreads),
+	    OPCODE(sfFaceTowards),
+	    OPCODE(sfSetFollower),
+	    OPCODE(sfScriptGotoScene),
+	    OPCODE(sfSetObjImage),
+	    OPCODE(sfSetObjName),
+	    OPCODE(sfGetObjImage),
+	    OPCODE(sfGetNumber),
+	    OPCODE(sfScriptOpenDoor),
+	    OPCODE(sfScriptCloseDoor),
+	    OPCODE(sfSetBgdAnimSpeed),
+	    OPCODE(sfCycleColors),
+	    OPCODE(sfDoCenterActor),
+	    OPCODE(sfStartBgdAnimSpeed),
+	    OPCODE(sfScriptWalkToAsync),
+	    OPCODE(sfEnableZone),
+	    OPCODE(sfSetActorState),
+	    OPCODE(sfScriptMoveTo),
+	    OPCODE(sfSceneEq),
+	    OPCODE(sfDropObject),
+	    OPCODE(sfFinishBgdAnim),
+	    OPCODE(sfSwapActors),
+	    OPCODE(sfSimulSpeech),
+	    OPCODE(sfScriptWalk),
+	    OPCODE(sfCycleFrames),
+	    OPCODE(sfSetFrame),
+	    OPCODE(sfSetPortrait),
+	    OPCODE(sfSetProtagPortrait),
+	    OPCODE(sfChainBgdAnim),
+	    OPCODE(sfScriptSpecialWalk),
+	    OPCODE(sfPlaceActor),
+	    OPCODE(sfCheckUserInterrupt),
+	    OPCODE(sfScriptWalkRelative),
+	    OPCODE(sfScriptMoveRelative),
+	    OPCODE(sfSimulSpeech2),
+	    OPCODE(sfPsychicProfile),
+	    OPCODE(sfPsychicProfileOff),
+	    OPCODE(sfSetProtagState),
+	    OPCODE(sfResumeBgdAnim),
+	    OPCODE(sfThrowActor),
+	    OPCODE(sfWaitWalk),
+	    OPCODE(sfScriptSceneID),
+	    OPCODE(sfChangeActorScene),
+	    OPCODE(sfScriptClimb),
+	    OPCODE(sfSetDoorState),
+	    OPCODE(sfSetActorZ),
+	    OPCODE(sfScriptText),
+	    OPCODE(sfGetActorX),
+	    OPCODE(sfGetActorY),
+	    OPCODE(sfEraseDelta),
+	    OPCODE(sfPlayMusic),
+	    OPCODE(sfNull),
+	    OPCODE(sfEnableEscape),
+	    OPCODE(sfPlaySound),
+	    OPCODE(sfPlayLoopedSound),
+	    OPCODE(sfGetDeltaFrame),
+	    OPCODE(sfNull),
+	    OPCODE(sfNull),
+	    OPCODE(sfRand),
+	    OPCODE(sfFadeMusic),
+	    OPCODE(sfNull),
+	    OPCODE(sfSetChapterPoints),
+	    OPCODE(sfSetPortraitBgColor),
+	    OPCODE(sfScriptStartCutAway),
+	    OPCODE(sfReturnFromCutAway),
+	    OPCODE(sfEndCutAway),
+	    OPCODE(sfGetMouseClicks),
+	    OPCODE(sfResetMouseClicks),
+	    OPCODE(sfWaitFrames),
+	    OPCODE(sfScriptFade),
+	    OPCODE(sfScriptStartVideo),
+	    OPCODE(sfScriptReturnFromVideo),
+	    OPCODE(sfScriptEndVideo),
+	    OPCODE(sfSetActorZ),
+	    OPCODE(sfShowIHNMDemoHelpBg),
+	    OPCODE(sfAddIHNMDemoHelpTextLine),
+	    OPCODE(sfShowIHNMDemoHelpPage),
+	    OPCODE(sfVstopFX),
+	    OPCODE(sfVstopLoopedFX),
+	    OPCODE(sfDemoSetInteractive), // only used in the demo version of IHNM
+	    OPCODE(sfDemoIsInteractive),
+	    OPCODE(sfVsetTrack),
+	    OPCODE(sfGetPoints),
+	    OPCODE(sfSetGlobalFlag),
+	    OPCODE(sfClearGlobalFlag),
+	    OPCODE(sfTestGlobalFlag),
+	    OPCODE(sfSetPoints),
+	    OPCODE(sfSetSpeechBox),
+	    OPCODE(sfDebugShowData),
+	    OPCODE(sfWaitFramesEsc),
+	    OPCODE(sfQueueMusic),
+	    OPCODE(sfDisableAbortSpeeches)};
 
 	_scriptFunctionsList = IHNMScriptFunctionsList;
 }
@@ -172,7 +171,7 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 	byte portraitColor = (_vm->getLanguage() == Common::ES_ESP) ? 253 : 254;
 
 	_vm->_spiritualBarometer = _vm->_ethicsPoints[chapter] * 256 / barometer;
-	_vm->_scene->setChapterPointsChanged(true);		// don't save this music when saving in IHNM
+	_vm->_scene->setChapterPointsChanged(true); // don't save this music when saving in IHNM
 
 	// Set the portrait bg color, in case a saved state is restored from the
 	// launcher. In this case, sfSetPortraitBgColor is not called, thus the
@@ -184,9 +183,9 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 		_vm->_gfx->setPaletteColor(portraitColor, 0xff, 0xff, 0xff);
 	else
 		_vm->_gfx->setPaletteColor(portraitColor,
-			_vm->_spiritualBarometer * portraitBgColor.red / 256,
-			_vm->_spiritualBarometer * portraitBgColor.green / 256,
-			_vm->_spiritualBarometer * portraitBgColor.blue / 256);
+		                           _vm->_spiritualBarometer * portraitBgColor.red / 256,
+		                           _vm->_spiritualBarometer * portraitBgColor.green / 256,
+		                           _vm->_spiritualBarometer * portraitBgColor.blue / 256);
 
 	_vm->_gfx->getCurrentPal(cur_pal);
 	_vm->_gfx->setPalette(cur_pal);
@@ -202,7 +201,7 @@ void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {
 
 void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
 	int16 cut = thread->pop();
-	thread->pop();		// Not used
+	thread->pop(); // Not used
 	int16 fade = thread->pop();
 
 	_vm->_anim->setCutAwayMode(kPanelCutaway);

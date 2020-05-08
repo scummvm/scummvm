@@ -31,10 +31,10 @@ namespace Ultima8 {
 class Texture;
 
 struct FixedWidthFont {
-	int     _width;
-	int     _height;
-	int     _alignX;
-	int     _alignY;
+	int _width;
+	int _height;
+	int _alignX;
+	int _alignY;
 
 	Texture *_tex;
 

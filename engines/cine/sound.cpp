@@ -20,14 +20,14 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/mutex.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/timer.h"
-#include "common/mutex.h"
-#include "common/config-manager.h"
 
 #include "cine/cine.h"
 #include "cine/sound.h"
@@ -35,9 +35,9 @@
 #include "backends/audiocd/audiocd.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
-#include "audio/decoders/raw.h"
 #include "audio/mods/soundfx.h"
 
 namespace Cine {
@@ -61,25 +61,23 @@ public:
 	void findNote(int freq, int *note, int *oct) const;
 
 protected:
-
 	static const int _noteTable[];
 	static const int _noteTableCount;
 };
 
 const int PCSoundDriver::_noteTable[] = {
-	0xEEE, 0xE17, 0xD4D, 0xC8C, 0xBD9, 0xB2F, 0xA8E, 0x9F7,
-	0x967, 0x8E0, 0x861, 0x7E8, 0x777, 0x70B, 0x6A6, 0x647,
-	0x5EC, 0x597, 0x547, 0x4FB, 0x4B3, 0x470, 0x430, 0x3F4,
-	0x3BB, 0x385, 0x353, 0x323, 0x2F6, 0x2CB, 0x2A3, 0x27D,
-	0x259, 0x238, 0x218, 0x1FA, 0x1DD, 0x1C2, 0x1A9, 0x191,
-	0x17B, 0x165, 0x151, 0x13E, 0x12C, 0x11C, 0x10C, 0x0FD,
-	0x0EE, 0x0E1, 0x0D4, 0x0C8, 0x0BD, 0x0B2, 0x0A8, 0x09F,
-	0x096, 0x08E, 0x086, 0x07E, 0x077, 0x070, 0x06A, 0x064,
-	0x05E, 0x059, 0x054, 0x04F, 0x04B, 0x047, 0x043, 0x03F,
-	0x03B, 0x038, 0x035, 0x032, 0x02F, 0x02C, 0x02A, 0x027,
-	0x025, 0x023, 0x021, 0x01F, 0x01D, 0x01C, 0x01A, 0x019,
-	0x017, 0x016, 0x015, 0x013, 0x012, 0x011, 0x010, 0x00F
-};
+    0xEEE, 0xE17, 0xD4D, 0xC8C, 0xBD9, 0xB2F, 0xA8E, 0x9F7,
+    0x967, 0x8E0, 0x861, 0x7E8, 0x777, 0x70B, 0x6A6, 0x647,
+    0x5EC, 0x597, 0x547, 0x4FB, 0x4B3, 0x470, 0x430, 0x3F4,
+    0x3BB, 0x385, 0x353, 0x323, 0x2F6, 0x2CB, 0x2A3, 0x27D,
+    0x259, 0x238, 0x218, 0x1FA, 0x1DD, 0x1C2, 0x1A9, 0x191,
+    0x17B, 0x165, 0x151, 0x13E, 0x12C, 0x11C, 0x10C, 0x0FD,
+    0x0EE, 0x0E1, 0x0D4, 0x0C8, 0x0BD, 0x0B2, 0x0A8, 0x09F,
+    0x096, 0x08E, 0x086, 0x07E, 0x077, 0x070, 0x06A, 0x064,
+    0x05E, 0x059, 0x054, 0x04F, 0x04B, 0x047, 0x043, 0x03F,
+    0x03B, 0x038, 0x035, 0x032, 0x02F, 0x02C, 0x02A, 0x027,
+    0x025, 0x023, 0x021, 0x01F, 0x01D, 0x01C, 0x01A, 0x019,
+    0x017, 0x016, 0x015, 0x013, 0x012, 0x011, 0x010, 0x00F};
 
 const int PCSoundDriver::_noteTableCount = ARRAYSIZE(_noteTable);
 
@@ -140,21 +138,18 @@ protected:
 };
 
 const int AdLibSoundDriver::_freqTable[] = {
-	0x157, 0x16C, 0x181, 0x198, 0x1B1, 0x1CB,
-	0x1E6, 0x203, 0x222, 0x243, 0x266, 0x28A
-};
+    0x157, 0x16C, 0x181, 0x198, 0x1B1, 0x1CB,
+    0x1E6, 0x203, 0x222, 0x243, 0x266, 0x28A};
 
 const int AdLibSoundDriver::_freqTableCount = ARRAYSIZE(_freqTable);
 
 const int AdLibSoundDriver::_operatorsTable[] = {
-	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21
-};
+    0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21};
 
 const int AdLibSoundDriver::_operatorsTableCount = ARRAYSIZE(_operatorsTable);
 
 const int AdLibSoundDriver::_voiceOperatorsTable[] = {
-	0, 3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 16, 16, 14, 14, 17, 17, 13, 13
-};
+    0, 3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 16, 16, 14, 14, 17, 17, 13, 13};
 
 const int AdLibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperatorsTable);
 
@@ -204,7 +199,6 @@ private:
 
 class PCSoundFxPlayer {
 public:
-
 	PCSoundFxPlayer(PCSoundDriver *driver);
 	~PCSoundFxPlayer();
 
@@ -221,7 +215,6 @@ public:
 	};
 
 private:
-
 	void update();
 	void handleEvents();
 	void handlePattern(int channel, const byte *patternData);
@@ -240,7 +233,6 @@ private:
 	PCSoundDriver *_driver;
 	Common::Mutex _mutex;
 };
-
 
 void PCSoundDriver::findNote(int freq, int *note, int *oct) const {
 	if (freq > 0x777)
@@ -275,7 +267,7 @@ void PCSoundDriver::resetChannel(int channel) {
 }
 
 AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
-	: _upCb(0), _upRef(0), _mixer(mixer) {
+    : _upCb(0), _upRef(0), _mixer(mixer) {
 
 	_opl = OPL::Config::create();
 	if (!_opl || !_opl->init())
@@ -338,7 +330,7 @@ void AdLibSoundDriver::initCard() {
 	_opl->writeReg(0xBD, _vibrato);
 	_opl->writeReg(0x08, 0x40);
 
-	static const int oplRegs[] = { 0x40, 0x60, 0x80, 0x20, 0xE0 };
+	static const int oplRegs[] = {0x40, 0x60, 0x80, 0x20, 0xE0};
 
 	for (int i = 0; i < 9; ++i) {
 		_opl->writeReg(0xB0 | i, 0);
@@ -371,7 +363,7 @@ void AdLibSoundDriver::setupInstrument(const byte *data, int channel) {
 	int mod, car, tmp;
 	const AdLibRegisterSoundInstrument *reg;
 
-	if (ins->mode != 0)  {
+	if (ins->mode != 0) {
 		mod = _operatorsTable[_voiceOperatorsTable[2 * ins->channel + 0]];
 		car = _operatorsTable[_voiceOperatorsTable[2 * ins->channel + 1]];
 	} else {
@@ -425,14 +417,14 @@ void AdLibSoundDriver::loadRegisterInstrument(const byte *data, AdLibRegisterSou
 	}
 	reg->vibrato |= READ_LE_UINT16(data + 2) & 0xF; // frequency multiplier
 
-	reg->attackDecay = READ_LE_UINT16(data + 6) << 4; // attack rate
+	reg->attackDecay = READ_LE_UINT16(data + 6) << 4;    // attack rate
 	reg->attackDecay |= READ_LE_UINT16(data + 12) & 0xF; // decay rate
 
-	reg->sustainRelease = READ_LE_UINT16(data + 8) << 4; // sustain level
+	reg->sustainRelease = READ_LE_UINT16(data + 8) << 4;    // sustain level
 	reg->sustainRelease |= READ_LE_UINT16(data + 14) & 0xF; // release rate
 
 	reg->feedbackStrength = READ_LE_UINT16(data + 4) << 1; // feedback
-	if (READ_LE_UINT16(data + 24) == 0) { // frequency modulation
+	if (READ_LE_UINT16(data + 24) == 0) {                  // frequency modulation
 		reg->feedbackStrength |= 1;
 	}
 
@@ -444,11 +436,16 @@ void AdLibSoundDriver::loadRegisterInstrument(const byte *data, AdLibRegisterSou
 void AdLibSoundDriverINS::loadInstrument(const byte *data, AdLibSoundInstrument *asi) {
 	asi->mode = *data++;
 	asi->channel = *data++;
-	loadRegisterInstrument(data, &asi->regMod); data += 26;
-	loadRegisterInstrument(data, &asi->regCar); data += 26;
-	asi->waveSelectMod = data[0] & 3; data += 2;
-	asi->waveSelectCar = data[0] & 3; data += 2;
-	asi->amDepth = data[0]; data += 2;
+	loadRegisterInstrument(data, &asi->regMod);
+	data += 26;
+	loadRegisterInstrument(data, &asi->regCar);
+	data += 26;
+	asi->waveSelectMod = data[0] & 3;
+	data += 2;
+	asi->waveSelectCar = data[0] & 3;
+	data += 2;
+	asi->amDepth = data[0];
+	data += 2;
 }
 
 void AdLibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
@@ -508,8 +505,10 @@ void AdLibSoundDriverADL::loadInstrument(const byte *data, AdLibSoundInstrument 
 	asi->waveSelectCar = *data++ & 3;
 	asi->amDepth = *data++;
 	++data;
-	loadRegisterInstrument(data, &asi->regMod); data += 26;
-	loadRegisterInstrument(data, &asi->regCar); data += 26;
+	loadRegisterInstrument(data, &asi->regMod);
+	data += 26;
+	loadRegisterInstrument(data, &asi->regCar);
+	data += 26;
 }
 
 void AdLibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
@@ -585,7 +584,7 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 }
 
 MidiSoundDriverH32::MidiSoundDriverH32(MidiDriver *output)
-	: _output(output), _callback(0), _mutex() {
+    : _output(output), _callback(0), _mutex() {
 }
 
 MidiSoundDriverH32::~MidiSoundDriverH32() {
@@ -613,7 +612,7 @@ void MidiSoundDriverH32::setUpdateCallback(UpdateCallback upCb, void *ref) {
 void MidiSoundDriverH32::setupChannel(int channel, const byte *data, int instrument, int volume) {
 	Common::StackLock lock(_mutex);
 
-	if (volume < 0 ||  volume > 100)
+	if (volume < 0 || volume > 100)
 		volume = 0;
 
 	if (!data)
@@ -681,8 +680,8 @@ void MidiSoundDriverH32::writeInstrument(int offset, const byte *data, int size)
 	sysEx[2] = 0x16;
 	sysEx[3] = 0x12;
 	sysEx[4] = (offset >> 16) & 0xFF;
-	sysEx[5] = (offset >>  8) & 0xFF;
-	sysEx[6] = (offset >>  0) & 0xFF;
+	sysEx[5] = (offset >> 8) & 0xFF;
+	sysEx[6] = (offset >> 0) & 0xFF;
 	int copySize = MIN(246, size);
 	memcpy(&sysEx[7], data, copySize);
 
@@ -698,31 +697,30 @@ void MidiSoundDriverH32::selectInstrument(int channel, int timbreGroup, int timb
 	const int offset = channel * 16 + 0x30000; // 0x30000 is the start of the patch temp area
 
 	byte sysEx[24] = {
-		0x41, 0x10, 0x16, 0x12,
-		0x00, 0x00, 0x00,       // offset
-		0x00, // Timbre group   _ timbreGroup * 64 + timbreNumber should be the
-		0x00, // Timbre number /  MT-32 instrument in case timbreGroup is 0 or 1.
-		0x18, // Key shift (= 0)
-		0x32, // Fine tune (= 0)
-		0x0C, // Bender Range
-		0x03, // Assign Mode
-		0x01, // Reverb Switch (= enabled)
-		0x00, // dummy
-		0x00, // Output level
-		0x07, // Panpot (= balanced)
-		0x00, // dummy
-		0x00, // dummy
-		0x00, // dummy
-		0x00, // dummy
-		0x00, // dummy
-		0x00, // dummy
-		0x00  // checksum
+	    0x41, 0x10, 0x16, 0x12,
+	    0x00, 0x00, 0x00, // offset
+	    0x00,             // Timbre group   _ timbreGroup * 64 + timbreNumber should be the
+	    0x00,             // Timbre number /  MT-32 instrument in case timbreGroup is 0 or 1.
+	    0x18,             // Key shift (= 0)
+	    0x32,             // Fine tune (= 0)
+	    0x0C,             // Bender Range
+	    0x03,             // Assign Mode
+	    0x01,             // Reverb Switch (= enabled)
+	    0x00,             // dummy
+	    0x00,             // Output level
+	    0x07,             // Panpot (= balanced)
+	    0x00,             // dummy
+	    0x00,             // dummy
+	    0x00,             // dummy
+	    0x00,             // dummy
+	    0x00,             // dummy
+	    0x00,             // dummy
+	    0x00              // checksum
 	};
 
-
 	sysEx[4] = (offset >> 16) & 0xFF;
-	sysEx[5] = (offset >>  8) & 0xFF;
-	sysEx[6] = (offset >>  0) & 0xFF;
+	sysEx[5] = (offset >> 8) & 0xFF;
+	sysEx[6] = (offset >> 0) & 0xFF;
 
 	sysEx[7] = timbreGroup;
 	sysEx[8] = timbreNumber;
@@ -740,7 +738,7 @@ void MidiSoundDriverH32::selectInstrument(int channel, int timbreGroup, int timb
 }
 
 PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
-	: _playing(false), _driver(driver), _mutex() {
+    : _playing(false), _driver(driver), _mutex() {
 	memset(_instrumentsData, 0, sizeof(_instrumentsData));
 	_sfxData = NULL;
 	_fadeOutCounter = 0;
@@ -901,9 +899,8 @@ void PCSoundFxPlayer::unload() {
 	_sfxData = NULL;
 }
 
-
 PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
-	: Sound(mixer, vm), _soundDriver(0) {
+    : Sound(mixer, vm), _soundDriver(0) {
 
 	_currentMusic = 0;
 	_currentMusicStatus = 0;
@@ -947,21 +944,31 @@ PCSound::~PCSound() {
 }
 
 static const char *const musicFileNames[11] = {
-	"DUGGER.DAT",
-	"SUITE21.DAT",
-	"FWARS.DAT",
-	"SUITE23.DAT",
-	"SUITE22.DAT",
-	"ESCAL",
-	"MOINES.DAT",
-	"MEDIAVAL.DAT",
-	"SFUTUR",
-	"ALIENS",
-	"TELESONG.DAT",
+    "DUGGER.DAT",
+    "SUITE21.DAT",
+    "FWARS.DAT",
+    "SUITE23.DAT",
+    "SUITE22.DAT",
+    "ESCAL",
+    "MOINES.DAT",
+    "MEDIAVAL.DAT",
+    "SFUTUR",
+    "ALIENS",
+    "TELESONG.DAT",
 };
 
 static uint8 musicCDTracks[11] = {
-	20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 22,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    30,
+    22,
 };
 
 void PCSound::loadMusic(const char *name) {
@@ -991,12 +998,11 @@ void PCSound::playMusic() {
 }
 
 static uint8 bgCDTracks[49] = {
-	0, 21, 21, 23, 0, 29, 0, 0, 0, 0,
-	0, 27,  0,  0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 22, 22, 23, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+    0, 21, 21, 23, 0, 29, 0, 0, 0, 0,
+    0, 27, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 22, 22, 23, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void PCSound::setBgMusic(int num) {
 	debugC(5, kCineDebugSound, "PCSound::setBgMusic(%d)", num);
@@ -1052,7 +1058,7 @@ void PCSound::stopSound(int channel) {
 }
 
 PaulaSound::PaulaSound(Audio::Mixer *mixer, CineEngine *vm)
-	: Sound(mixer, vm), _sfxTimer(0), _musicTimer(0), _musicFadeTimer(0) {
+    : Sound(mixer, vm), _sfxTimer(0), _musicTimer(0), _musicFadeTimer(0) {
 	_moduleStream = 0;
 	// The original is using the following timer frequency:
 	// 0.709379Mhz / 8000 = 88.672375Hz
@@ -1246,13 +1252,12 @@ void PaulaSound::musicTimerCallback() {
 }
 
 const int PaulaSound::_channelBalance[NUM_CHANNELS] = {
-	// L/R/R/L This is according to the Hardware Reference Manual.
-	// TODO: It seems the order is swapped for some Amiga models:
-	// http://www.amiga.org/forums/archive/index.php/t-7862.html
-	// Maybe we should consider using R/L/L/R to match Amiga 500?
-	// This also is a bit more drastic to what WineUAE defaults,
-	// which is only 70% of full panning.
-	-127, 127, 127, -127
-};
+    // L/R/R/L This is according to the Hardware Reference Manual.
+    // TODO: It seems the order is swapped for some Amiga models:
+    // http://www.amiga.org/forums/archive/index.php/t-7862.html
+    // Maybe we should consider using R/L/L/R to match Amiga 500?
+    // This also is a bit more drastic to what WineUAE defaults,
+    // which is only 70% of full panning.
+    -127, 127, 127, -127};
 
 } // End of namespace Cine

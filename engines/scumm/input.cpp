@@ -20,16 +20,16 @@
  *
  */
 
+#include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "audio/mixer.h"
 
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
-#include "scumm/insane/insane.h"
 #include "scumm/imuse/imuse.h"
+#include "scumm/insane/insane.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
@@ -39,8 +39,6 @@
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
-
-
 
 namespace Scumm {
 
@@ -105,8 +103,8 @@ void ScummEngine::parseEvent(Common::Event event) {
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9 &&
-			((event.kbd.hasFlags(Common::KBD_ALT) && canSaveGameStateCurrently()) ||
-			(event.kbd.hasFlags(Common::KBD_CTRL) && canLoadGameStateCurrently()))) {
+		    ((event.kbd.hasFlags(Common::KBD_ALT) && canSaveGameStateCurrently()) ||
+		     (event.kbd.hasFlags(Common::KBD_CTRL) && canLoadGameStateCurrently()))) {
 			_saveLoadSlot = event.kbd.keycode - Common::KEYCODE_0;
 
 			//  don't overwrite autosave (slot 0)
@@ -168,16 +166,15 @@ void ScummEngine::parseEvent(Common::Event event) {
 		}
 		break;
 
-
 	// We update the mouse position whenever the mouse moves or a click occurs.
 	// The latter is done to accomodate systems with a touchpad / pen controller.
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_MOUSEMOVE:
 		if (event.type == Common::EVENT_LBUTTONDOWN)
-			_leftBtnPressed |= msClicked|msDown;
+			_leftBtnPressed |= msClicked | msDown;
 		else if (event.type == Common::EVENT_RBUTTONDOWN)
-			_rightBtnPressed |= msClicked|msDown;
+			_rightBtnPressed |= msClicked | msDown;
 		_mouse.x = event.mouse.x;
 		_mouse.y = event.mouse.y;
 
@@ -203,12 +200,12 @@ void ScummEngine::parseEvent(Common::Event event) {
 	// See bug report #1193185 for details.
 	case Common::EVENT_WHEELDOWN:
 		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
-			_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
+			_keyPressed = Common::KeyState(Common::KEYCODE_7, 55); // '7'
 		break;
 
 	case Common::EVENT_WHEELUP:
 		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
-			_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
+			_keyPressed = Common::KeyState(Common::KEYCODE_6, 54); // '6'
 		break;
 
 	default:
@@ -278,12 +275,12 @@ void ScummEngine::processInput() {
 	//
 	if (_mouse.x < 0)
 		_mouse.x = 0;
-	if (_mouse.x > _screenWidth-1)
-		_mouse.x = _screenWidth-1;
+	if (_mouse.x > _screenWidth - 1)
+		_mouse.x = _screenWidth - 1;
 	if (_mouse.y < 0)
 		_mouse.y = 0;
-	if (_mouse.y > _screenHeight-1)
-		_mouse.y = _screenHeight-1;
+	if (_mouse.y > _screenHeight - 1)
+		_mouse.y = _screenHeight - 1;
 
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 	_virtualMouse.x = _mouse.x + vs->xstart;
@@ -440,10 +437,10 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 
 void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	// RETURN is used to skip cutscenes in the Commodote 64 version of Zak McKracken
-	if (_game.id == GID_ZAK &&_game.platform == Common::kPlatformC64 && lastKeyHit.keycode == Common::KEYCODE_RETURN && lastKeyHit.hasFlags(0)) {
+	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformC64 && lastKeyHit.keycode == Common::KEYCODE_RETURN && lastKeyHit.hasFlags(0)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
-	// F7 is used to skip cutscenes in the Commodote 64 version of Maniac Mansion
-	} else if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformC64) {
+		// F7 is used to skip cutscenes in the Commodote 64 version of Maniac Mansion
+	} else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformC64) {
 		// Demo always F7 to be pressed to restart
 		if (_game.features & GF_DEMO) {
 			if (_roomResource != 0x2D && lastKeyHit.keycode == Common::KEYCODE_F7 && lastKeyHit.hasFlags(0)) {
@@ -454,11 +451,11 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 			if (lastKeyHit.keycode == Common::KEYCODE_F7 && lastKeyHit.hasFlags(0))
 				lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
 		}
-	// 'B' is used to skip cutscenes in the NES version of Maniac Mansion
-	} else if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformNES) {
+		// 'B' is used to skip cutscenes in the NES version of Maniac Mansion
+	} else if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES) {
 		if (lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_SHIFT))
 			lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
-	// 'F4' is used to skip cutscenes in the other versions of Maniac Mansion
+		// 'F4' is used to skip cutscenes in the other versions of Maniac Mansion
 	} else if (_game.id == GID_MANIAC) {
 		if (lastKeyHit.keycode == Common::KEYCODE_F4 && lastKeyHit.hasFlags(0))
 			lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
@@ -473,12 +470,12 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 		if (_game.id == GID_MANIAC && _game.version == 0) {
 			runScript(2, 0, 0, 0);
 		}
-		if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformNES) {
+		if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES) {
 			runScript(163, 0, 0, 0);
 		}
 	}
 
-	if (VAR_KEYPRESS != 0xFF && _mouseAndKeyboardStat) {		// Key Input
+	if (VAR_KEYPRESS != 0xFF && _mouseAndKeyboardStat) { // Key Input
 		if (315 <= _mouseAndKeyboardStat && _mouseAndKeyboardStat <= 323) {
 			// Convert F-Keys for V1/V2 games (they start at 1)
 			VAR(VAR_KEYPRESS) = _mouseAndKeyboardStat - 314;
@@ -534,7 +531,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
-		openMainMenuDialog();		// Display global main menu
+		openMainMenuDialog(); // Display global main menu
 
 		if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
@@ -557,7 +554,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_CUTSCENEEXIT_KEY != 0xFF)
 			_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
 	} else if (snapScrollKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_r &&
-		lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+	           lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 		_snapScroll ^= 1;
 		if (_snapScroll) {
 			messageDialog(_("Snap scroll on"));
@@ -613,7 +610,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			_mouseAndKeyboardStat = lastKeyHit.keycode + 154;
 
 		} else if (lastKeyHit.keycode >= Common::KEYCODE_UP &&
-		          lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
+		           lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
 			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
 				// Map arrow keys to number keys in the SEGA version of MI to support
 				// scrolling to conversation choices. See bug report #1193185 for details.

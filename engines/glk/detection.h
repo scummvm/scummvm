@@ -34,6 +34,7 @@
 class GlkMetaEngine : public MetaEngine {
 private:
 	Common::String findFileByGameId(const Common::String &gameId) const;
+
 public:
 	GlkMetaEngine() : MetaEngine() {}
 
@@ -89,10 +90,9 @@ struct GameDescriptor {
 	const char *_description;
 	uint _options;
 
-	GameDescriptor(const char *gameId, const char *description, uint options) :
-		_gameId(gameId), _description(description), _options(options) {}
+	GameDescriptor(const char *gameId, const char *description, uint options) : _gameId(gameId), _description(description), _options(options) {}
 	GameDescriptor(const PlainGameDescriptor &gd) : _gameId(gd.gameId), _description(gd.description),
-		_options(0) {}
+	                                                _options(0) {}
 
 	static PlainGameDescriptor empty() {
 		return GameDescriptor(nullptr, nullptr, 0);
@@ -113,11 +113,11 @@ class GlkDetectedGame : public DetectedGame {
 public:
 	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename);
 	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
-		Common::Language lang);
+	                Common::Language lang);
 	GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
-		const Common::String &md5, size_t filesize);
+	                const Common::String &md5, size_t filesize);
 	GlkDetectedGame(const char *id, const char *desc, const char *extra, const Common::String &filename,
-		Common::Language lang);
+	                Common::Language lang);
 };
 
 /**
@@ -131,12 +131,17 @@ struct GlkDetectionEntry {
 	Common::Language _language;
 };
 
-#define DT_ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY }
-#define DT_ENTRY1(ID, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, Common::EN_ANY }
-#define DT_ENTRYL0(ID, LANG, MD5, FILESIZE) { ID, "", MD5, FILESIZE, LANG }
-#define DT_ENTRYL1(ID, LANG, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, LANG }
+#define DT_ENTRY0(ID, MD5, FILESIZE) \
+	{ ID, "", MD5, FILESIZE, Common::EN_ANY }
+#define DT_ENTRY1(ID, EXTRA, MD5, FILESIZE) \
+	{ ID, EXTRA, MD5, FILESIZE, Common::EN_ANY }
+#define DT_ENTRYL0(ID, LANG, MD5, FILESIZE) \
+	{ ID, "", MD5, FILESIZE, LANG }
+#define DT_ENTRYL1(ID, LANG, EXTRA, MD5, FILESIZE) \
+	{ ID, EXTRA, MD5, FILESIZE, LANG }
 
-#define DT_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
+#define DT_END_MARKER \
+	{ nullptr, nullptr, nullptr, 0, Common::EN_ANY }
 
 } // End of namespace Glk
 

@@ -96,25 +96,25 @@ int LoLEngine::processPrologue() {
 			// quit instantly.
 			break;
 
-		case 0:     // New game
+		case 0: // New game
 			processSelection = 0;
 			break;
 
-		case 1:     // Show intro
+		case 1: // Show intro
 			showIntro();
 			break;
 
-		case 2: {   // "Lore of the Lands" (only CD version)
+		case 2: { // "Lore of the Lands" (only CD version)
 			HistoryPlayer history(this);
 			history.play();
 		} break;
 
-		case 3:     // Load game
+		case 3: // Load game
 			if (_gui->runMenu(_gui->_loadMenu))
 				processSelection = 3;
 			break;
 
-		case 4:     // Quit game
+		case 4: // Quit game
 		default:
 			quitGame();
 			updateInput();
@@ -136,19 +136,16 @@ int LoLEngine::processPrologue() {
 
 void LoLEngine::setupPrologueData(bool load) {
 	static const char *const fileListCD[] = {
-		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
-		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
-		"INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK",
-		"HISTORY.PAK", 0
-	};
+	    "GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
+	    "INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
+	    "INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK",
+	    "HISTORY.PAK", 0};
 
 	static const char *const fileListFloppy[] = {
-		"INTRO.PAK", "INTROVOC.PAK", 0
-	};
+	    "INTRO.PAK", "INTROVOC.PAK", 0};
 
 	static const char *const fileListTowns[] = {
-		"INTRO.PAK", "TINTROVO.PAK", 0
-	};
+	    "INTRO.PAK", "TINTROVO.PAK", 0};
 
 	const char *const *fileList = _flags.isTalkie ? fileListCD : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 
@@ -199,7 +196,8 @@ void LoLEngine::setupPrologueData(bool load) {
 		if (_flags.isDemo)
 			_sound->loadSoundFile("LOREINTR");
 	} else {
-		delete _chargenWSA; _chargenWSA = 0;
+		delete _chargenWSA;
+		_chargenWSA = 0;
 
 		_screen->getPalette(0).clear();
 		_screen->setScreenPalette(_screen->getPalette(0));
@@ -589,7 +587,7 @@ int LoLEngine::selectionCharInfo(int character) {
 	_screen->copyRegion(0, 122, 0, 122, 320, 78, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(_charPreviews[character].x - 3, _charPreviews[character].y - 3, 8, 127, 38, 38, 2, 0);
 
-	static const uint8 charSelectInfoIdx[] = { 0x1D, 0x22, 0x27, 0x2C };
+	static const uint8 charSelectInfoIdx[] = {0x1D, 0x22, 0x27, 0x2C};
 	const int idx = charSelectInfoIdx[character];
 
 	if (_flags.platform == Common::kPlatformPC98) {
@@ -681,7 +679,7 @@ int LoLEngine::getCharSelection() {
 	if (inputFlag == 200) {
 		for (int i = 0; i < 4; ++i) {
 			if (_charPreviews[i].x <= _mouseX && _mouseX <= _charPreviews[i].x + 31 &&
-			        _charPreviews[i].y <= _mouseY && _mouseY <= _charPreviews[i].y + 31)
+			    _charPreviews[i].y <= _mouseY && _mouseY <= _charPreviews[i].y + 31)
 				return i;
 		}
 	}
@@ -812,14 +810,21 @@ void HistoryPlayer::play() {
 					sound->voicePlay(voiceFilename);
 					break;
 
-				case 1: case 2: case 8:
-				case 16: case 25:
+				case 1:
+				case 2:
+				case 8:
+				case 16:
+				case 25:
 					sound->voicePlay(voiceFilename);
 					playWsa(true);
 					break;
 
-				case 3: case 7: case 10:
-				case 17: case 23: case 26:
+				case 3:
+				case 7:
+				case 10:
+				case 17:
+				case 23:
+				case 26:
 					sound->voicePlay(voiceFilename);
 					playWsa(true);
 					restoreWsaBkgd();
@@ -1012,17 +1017,14 @@ void HistoryPlayer::updateFire() {
 
 void LoLEngine::setupEpilogueData(bool load) {
 	static const char *const fileListCD[] = {
-		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK",
-		"FINALE.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
-	};
+	    "GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK",
+	    "FINALE.PAK", "FINALE1.PAK", "FINALE2.PAK", 0};
 
 	static const char *const fileListFloppy[] = {
-		"GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
-	};
+	    "GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "FINALE2.PAK", 0};
 
 	static const char *const fileListTowns[] = {
-		"GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "TFINALE2.PAK", 0
-	};
+	    "GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "TFINALE2.PAK", 0};
 
 	const char *const *fileList = _flags.isTalkie ? fileListCD : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 	assert(fileList);
@@ -1192,7 +1194,7 @@ void LoLEngine::showCredits() {
 
 	_screen->hideMouse();
 
-	static const uint8 colorMap[] = { 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x72, 0x6F, 0x6F, 0x6D };
+	static const uint8 colorMap[] = {0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x72, 0x6F, 0x6F, 0x6D};
 	_screen->_charWidth = 0;
 
 	_screen->loadBitmap("ROOM.CPS", 2, 2, &_screen->getPalette(0));

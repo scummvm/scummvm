@@ -23,13 +23,13 @@
 #ifndef ULTIMA4_GAME_GAME_H
 #define ULTIMA4_GAME_GAME_H
 
-#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/controllers/game_controller.h"
 #include "ultima/ultima4/core/observer.h"
 #include "ultima/ultima4/core/types.h"
+#include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/views/tileview.h"
 #include "ultima/ultima4/sound/sound.h"
+#include "ultima/ultima4/views/tileview.h"
 
 namespace Ultima {
 namespace Ultima4 {

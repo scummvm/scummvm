@@ -25,7 +25,7 @@
 namespace Neverhood {
 
 AsScene2201CeilingFan::AsScene2201CeilingFan(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1100) {
+    : AnimatedSprite(vm, 1100) {
 
 	_x = 403;
 	_y = 259;
@@ -35,7 +35,7 @@ AsScene2201CeilingFan::AsScene2201CeilingFan(NeverhoodEngine *vm)
 }
 
 AsScene2201Door::AsScene2201Door(NeverhoodEngine *vm, Klaymen *klaymen, Sprite *ssDoorLight, bool isOpen)
-	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _ssDoorLight(ssDoorLight), _countdown(0), _isOpen(isOpen) {
+    : AnimatedSprite(vm, 1100), _klaymen(klaymen), _ssDoorLight(ssDoorLight), _countdown(0), _isOpen(isOpen) {
 
 	_x = 408;
 	_y = 290;
@@ -106,33 +106,28 @@ void AsScene2201Door::stCloseDoor() {
 }
 
 SsScene2201PuzzleCube::SsScene2201PuzzleCube(NeverhoodEngine *vm, uint32 positionIndex, uint32 cubeIndex)
-	: StaticSprite(vm, 900) {
+    : StaticSprite(vm, 900) {
 
 	createSurface(100, 16, 16);
 	loadSprite(kSsScene2201PuzzleCubeFileHashes[cubeIndex], kSLFCenteredDrawOffset | kSLFSetPosition, 0,
-		kSsScene2201PuzzleCubePoints[positionIndex].x, kSsScene2201PuzzleCubePoints[positionIndex].y);
+	           kSsScene2201PuzzleCubePoints[positionIndex].x, kSsScene2201PuzzleCubePoints[positionIndex].y);
 }
 
 static const NPoint kSsScene2202PuzzleCubePoints[] = {
-	{196, 105}, {323, 102}, {445, 106},
-	{192, 216}, {319, 220}, {446, 216},
-	{188, 320}, {319, 319}, {443, 322}
-};
+    {196, 105}, {323, 102}, {445, 106}, {192, 216}, {319, 220}, {446, 216}, {188, 320}, {319, 319}, {443, 322}};
 
 static const uint32 kSsScene2202PuzzleCubeFileHashes1[] = {
-	0xA500800C, 0x2182910C, 0x2323980C,
-	0x23049084, 0x21008080, 0x2303900C,
-	0x6120980C, 0x2504D808
-};
+    0xA500800C, 0x2182910C, 0x2323980C,
+    0x23049084, 0x21008080, 0x2303900C,
+    0x6120980C, 0x2504D808};
 
 static const uint32 kSsScene2202PuzzleCubeFileHashes2[] = {
-	0x0AAD8080, 0x0A290291, 0x0A2BA398,
-	0x822B8490, 0x86298080, 0x0A2B8390,
-	0x0A69A098, 0x0E2D84D8
-};
+    0x0AAD8080, 0x0A290291, 0x0A2BA398,
+    0x822B8490, 0x86298080, 0x0A2B8390,
+    0x0A69A098, 0x0E2D84D8};
 
 SsScene2202PuzzleCube::SsScene2202PuzzleCube(NeverhoodEngine *vm, Scene *parentScene, int16 cubePosition, int16 cubeSymbol)
-	: StaticSprite(vm, 900), _parentScene(parentScene), _cubeSymbol(cubeSymbol), _cubePosition(cubePosition), _isMoving(false) {
+    : StaticSprite(vm, 900), _parentScene(parentScene), _cubeSymbol(cubeSymbol), _cubePosition(cubePosition), _isMoving(false) {
 
 	int surfacePriority;
 
@@ -146,7 +141,7 @@ SsScene2202PuzzleCube::SsScene2202PuzzleCube(NeverhoodEngine *vm, Scene *parentS
 		surfacePriority = 500;
 	debug(1, "TODO: Unused SurfacePriority: %d", surfacePriority);
 	loadSprite(kSsScene2202PuzzleCubeFileHashes2[_cubeSymbol], kSLFCenteredDrawOffset | kSLFSetPosition | kSLFDefCollisionBoundsOffset, 0,
-		kSsScene2202PuzzleCubePoints[_cubePosition].x, kSsScene2202PuzzleCubePoints[_cubePosition].y);
+	           kSsScene2202PuzzleCubePoints[_cubePosition].x, kSsScene2202PuzzleCubePoints[_cubePosition].y);
 	loadSound(0, 0x40958621);
 	loadSound(1, 0x51108241);
 }
@@ -205,7 +200,6 @@ void SsScene2202PuzzleCube::suMoveCubeX() {
 		stopMoving();
 
 	updateBounds();
-
 }
 
 void SsScene2202PuzzleCube::suMoveCubeY() {
@@ -239,7 +233,6 @@ void SsScene2202PuzzleCube::suMoveCubeY() {
 		stopMoving();
 
 	updateBounds();
-
 }
 
 void SsScene2202PuzzleCube::moveCube(int16 newCubePosition) {
@@ -314,7 +307,6 @@ void SsScene2202PuzzleCube::moveCube(int16 newCubePosition) {
 		}
 		playSound(1);
 	}
-
 }
 
 void SsScene2202PuzzleCube::stopMoving() {
@@ -325,11 +317,10 @@ void SsScene2202PuzzleCube::stopMoving() {
 }
 
 static const uint32 kAsCommonKeyFileHashes[] = {
-	0x2450D850,	0x0C9CE8D0,	0x2C58A152
-};
+    0x2450D850, 0x0C9CE8D0, 0x2C58A152};
 
 AsCommonKey::AsCommonKey(NeverhoodEngine *vm, Scene *parentScene, int keyIndex, int surfacePriority, int16 x, int16 y)
-	: AnimatedSprite(vm, kAsCommonKeyFileHashes[keyIndex], surfacePriority, x, y), _parentScene(parentScene), _keyIndex(keyIndex) {
+    : AnimatedSprite(vm, kAsCommonKeyFileHashes[keyIndex], surfacePriority, x, y), _parentScene(parentScene), _keyIndex(keyIndex) {
 
 	if (!getSubVar(VA_HAS_KEY, _keyIndex) && !getSubVar(VA_IS_KEY_INSERTED, _keyIndex)) {
 		SetMessageHandler(&AsCommonKey::handleMessage);
@@ -359,11 +350,10 @@ uint32 AsCommonKey::handleMessage(int messageNum, const MessageParam &param, Ent
 }
 
 static const uint32 kAsScene2203DoorFileHashes[] = {
-	0x7868AE10,	0x1A488110
-};
+    0x7868AE10, 0x1A488110};
 
 AsScene2203Door::AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint doorIndex)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _doorIndex(doorIndex) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene), _doorIndex(doorIndex) {
 
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2203Door::handleMessage);
@@ -390,7 +380,7 @@ uint32 AsScene2203Door::handleMessage(int messageNum, const MessageParam &param,
 		messageResult = 1;
 		break;
 	case NM_ANIMATION_UPDATE:
-		_otherDoor = (Sprite*)param.asEntity();
+		_otherDoor = (Sprite *)param.asEntity();
 		break;
 	case NM_ANIMATION_STOP:
 		if (_doorIndex == getGlobalVar(V_LARGE_DOOR_NUMBER))
@@ -424,7 +414,7 @@ void AsScene2203Door::closeDoor() {
 }
 
 SsScene2205DoorFrame::SsScene2205DoorFrame(NeverhoodEngine *vm)
-	: StaticSprite(vm, 900) {
+    : StaticSprite(vm, 900) {
 
 	SetMessageHandler(&SsScene2205DoorFrame::handleMessage);
 	createSurface(1100, 45, 206);
@@ -444,15 +434,13 @@ uint32 SsScene2205DoorFrame::handleMessage(int messageNum, const MessageParam &p
 }
 
 static const int16 kAsScene2206DoorSpikesXDeltasOpen[] = {
-	-24, -28, -18, 6, 9, -8
-};
+    -24, -28, -18, 6, 9, -8};
 
 static const int16 kAsScene2206DoorSpikesXDeltasClose[] = {
-	-8, 7, 11, 26, 13, 14
-};
+    -8, 7, 11, 26, 13, 14};
 
 AsScene2206DoorSpikes::AsScene2206DoorSpikes(NeverhoodEngine *vm, uint32 fileHash)
-	: StaticSprite(vm, fileHash, 200) {
+    : StaticSprite(vm, fileHash, 200) {
 
 	if (getGlobalVar(V_SPIKES_RETRACTED))
 		_x -= 63;
@@ -508,7 +496,7 @@ void AsScene2206DoorSpikes::suClose() {
 }
 
 AsScene2206Platform::AsScene2206Platform(NeverhoodEngine *vm, uint32 fileHash)
-	: StaticSprite(vm, fileHash, 50) {
+    : StaticSprite(vm, fileHash, 50) {
 
 	SetUpdateHandler(&AsScene2206Platform::update);
 	SetMessageHandler(&AsScene2206Platform::handleMessage);
@@ -540,7 +528,7 @@ void AsScene2206Platform::suMoveDown() {
 }
 
 SsScene2206TestTube::SsScene2206TestTube(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, uint32 fileHash)
-	: StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene) {
+    : StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene) {
 
 	if (getGlobalVar(V_HAS_TEST_TUBE)) {
 		setVisible(false);
@@ -570,7 +558,7 @@ uint32 SsScene2206TestTube::handleMessage(int messageNum, const MessageParam &pa
 }
 
 AsScene2207Elevator::AsScene2207Elevator(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 900), _parentScene(parentScene), _pointIndex(0), _destPointIndex(0), _destPointIndexDelta(0) {
+    : AnimatedSprite(vm, 900), _parentScene(parentScene), _pointIndex(0), _destPointIndex(0), _destPointIndexDelta(0) {
 
 	NPoint pt;
 
@@ -634,7 +622,6 @@ void AsScene2207Elevator::update() {
 		sendMessage(_parentScene, 0x2004, 0);
 		_isMoving = false;
 	}
-
 }
 
 void AsScene2207Elevator::suSetPosition() {
@@ -681,11 +668,10 @@ void AsScene2207Elevator::moveToY(int16 y) {
 	}
 
 	_isMoving = true;
-
 }
 
 AsScene2207Lever::AsScene2207Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int doDeltaX)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene) {
+    : AnimatedSprite(vm, 1100), _parentScene(parentScene) {
 
 	_x = x;
 	_y = y;
@@ -748,7 +734,7 @@ void AsScene2207Lever::stLeverUpEvent() {
 }
 
 AsScene2207WallRobotAnimation::AsScene2207WallRobotAnimation(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1200), _idle(true) {
+    : AnimatedSprite(vm, 1200), _idle(true) {
 
 	_x = 309;
 	_y = 320;
@@ -831,7 +817,7 @@ void AsScene2207WallRobotAnimation::cbStopAnimation() {
 }
 
 AsScene2207WallCannonAnimation::AsScene2207WallCannonAnimation(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _idle(true) {
+    : AnimatedSprite(vm, 1200), _idle(true) {
 
 	_x = 309;
 	_y = 320;
@@ -881,7 +867,7 @@ void AsScene2207WallCannonAnimation::cbStopAnimation() {
 }
 
 SsScene2207Symbol::SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int index)
-	: StaticSprite(vm, fileHash, 100) {
+    : StaticSprite(vm, fileHash, 100) {
 
 	_x = 330;
 	_y = 246 + index * 50;
@@ -889,7 +875,7 @@ SsScene2207Symbol::SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int i
 }
 
 KmScene2201::KmScene2201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	_surface->setClipRects(clipRects, clipRectsCount);
 	_dataResource.load(0x04104242);
@@ -959,7 +945,7 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2203::KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -1056,7 +1042,7 @@ uint32 KmScene2203::hmClayDoorOpen(int messageNum, const MessageParam &param, En
 }
 
 KmScene2205::KmScene2205(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -1105,7 +1091,7 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2206::KmScene2206(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	_walkResumeFrameIncr = 1;
 	_vm->_soundMan->addSound(0x80101800, 0xD3B02847);
@@ -1227,7 +1213,7 @@ void KmScene2206::stRidePlatformDown() {
 }
 
 KmScene2207::KmScene2207(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -1292,7 +1278,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2242::KmScene2242(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }
@@ -1361,7 +1347,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmHallOfRecords::KmHallOfRecords(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -1415,7 +1401,7 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 }
 
 KmScene2247::KmScene2247(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y) {
+    : Klaymen(vm, parentScene, x, y) {
 
 	// Empty
 }

@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_IFCOMMAND_H
 #define MUTATIONOFJB_IFCOMMAND_H
 
-#include "mutationofjb/commands/conditionalcommand.h"
 #include "common/scummsys.h"
+#include "mutationofjb/commands/conditionalcommand.h"
 
 namespace MutationOfJB {
 
@@ -33,6 +33,7 @@ class ScriptParseContext;
 class IfCommandParser : public ConditionalCommandParser {
 public:
 	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+
 private:
 };
 
@@ -50,6 +51,6 @@ private:
 	bool _negative;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

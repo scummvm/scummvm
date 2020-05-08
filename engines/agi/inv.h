@@ -27,8 +27,8 @@ namespace Agi {
 
 struct InventoryEntry {
 	uint16 objectNr;
-	int16  row;
-	int16  column;
+	int16 row;
+	int16 column;
 	const char *name;
 };
 typedef Common::Array<InventoryEntry> InventoryArray;

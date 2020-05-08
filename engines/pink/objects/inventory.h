@@ -38,6 +38,7 @@ public:
 	const Common::String &getCurrentOwner() const { return _currentOwner; }
 
 	friend class InventoryMgr;
+
 private:
 	Common::String _initialOwner;
 	Common::String _currentOwner;

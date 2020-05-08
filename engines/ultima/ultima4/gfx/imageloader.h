@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_GFX_IMAGELOADER_H
 #define ULTIMA4_GFX_IMAGELOADER_H
 
-#include "ultima/shared/std/containers.h"
 #include "common/str.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -36,6 +36,7 @@ class U4FILE;
 class ImageLoaders {
 private:
 	Common::HashMap<Common::String, ImageLoader *> _loaderMap;
+
 public:
 	ImageLoaders();
 	~ImageLoaders();
@@ -66,6 +67,7 @@ protected:
 	 * Sets the image from a source image
 	 */
 	static void setFromSurface(Image *image, const Graphics::ManagedSurface &src);
+
 public:
 	ImageLoader() {}
 	virtual ~ImageLoader() {}

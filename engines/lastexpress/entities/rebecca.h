@@ -119,7 +119,6 @@ public:
 	 */
 	DECLARE_VFUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
-
 	/**
 	 * Updates the position
 	 *

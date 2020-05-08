@@ -20,10 +20,10 @@
  *
  */
 
-#include "gnap/gnap.h"
-#include "gnap/gamesys.h"
-#include "gnap/resource.h"
 #include "gnap/scenes/group5.h"
+#include "gnap/gamesys.h"
+#include "gnap/gnap.h"
+#include "gnap/resource.h"
 
 namespace Gnap {
 
@@ -35,7 +35,7 @@ Scene53::Scene53(GnapEngine *vm) : Scene(vm) {
 }
 
 int Scene53::init() {
-	GameSys& gameSys = *_vm->_gameSys;
+	GameSys &gameSys = *_vm->_gameSys;
 
 	gameSys.setAnimation(0, 0, 0);
 	gameSys.setAnimation(0, 0, 1);
@@ -64,19 +64,17 @@ void Scene53::updateHotspots() {
 
 int Scene53::pressPhoneNumberButton(int phoneNumber, int buttonNum) {
 	static const int kGnapHandSequenceIds[13] = {
-		0x00,
-		0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
-		0x4C, 0x4D, 0x4E, 0x50, 0x51, 0x4F
-	};
+	    0x00,
+	    0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
+	    0x4C, 0x4D, 0x4E, 0x50, 0x51, 0x4F};
 
 	static const int kPlatypusHandSequenceIds[13] = {
-		0x00,
-		0x52, 0x53, 0x54, 0x55, 0x56, 0x57,
-		0x58, 0x59, 0x5A, 0x5C, 0x5D, 0x5B
-	};
+	    0x00,
+	    0x52, 0x53, 0x54, 0x55, 0x56, 0x57,
+	    0x58, 0x59, 0x5A, 0x5C, 0x5D, 0x5B};
 
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	if (_isGnapPhoning) {
 		gameSys.setAnimation(kGnapHandSequenceIds[buttonNum], 40, 6);
@@ -116,13 +114,12 @@ int Scene53::getRandomCallIndex() {
 
 void Scene53::runRandomCall() {
 	static const int kCallSequenceIds[15] = {
-		0x60, 0x61, 0x62, 0x63, 0x64,
-		0x65, 0x66, 0x67, 0x68, 0x69,
-		0x6A, 0x6B, 0x6C, 0x6D, 0x71
-	};
+	    0x60, 0x61, 0x62, 0x63, 0x64,
+	    0x65, 0x66, 0x67, 0x68, 0x69,
+	    0x6A, 0x6B, 0x6C, 0x6D, 0x71};
 
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	++_callsMadeCtr;
 	if (_callsMadeCtr <= 10) {
@@ -148,8 +145,8 @@ void Scene53::runRandomCall() {
 }
 
 void Scene53::runChitChatLine() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 	bool flag = false;
 	int sequenceId = -1;
 
@@ -257,8 +254,8 @@ void Scene53::runChitChatLine() {
 }
 
 void Scene53::run() {
-	GameSys& gameSys = *_vm->_gameSys;
-	PlayerGnap& gnap = *_vm->_gnap;
+	GameSys &gameSys = *_vm->_gameSys;
+	PlayerGnap &gnap = *_vm->_gnap;
 
 	int phoneNumber = 0;
 	int phoneNumberLen = 0;

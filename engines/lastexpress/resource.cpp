@@ -81,7 +81,7 @@ bool ResourceManager::loadArchive(ArchiveIndex type) {
 	if (!loadArchive(archiveHDPath))
 		return false;
 
-	switch(type) {
+	switch (type) {
 	case kArchiveCd1:
 		return loadArchive(archiveCD1Path);
 
@@ -185,7 +185,6 @@ Common::SeekableReadStream *ResourceManager::createReadStreamForMember(const Com
 
 	return NULL;
 }
-
 
 // Resource loading
 

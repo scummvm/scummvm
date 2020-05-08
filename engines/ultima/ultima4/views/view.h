@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Ultima4 {
 
-#define SCALED(n) ((n) * settings._scale)
+#define SCALED(n) ((n)*settings._scale)
 
 class Image;
 

@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "mads/game.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -50,7 +50,7 @@ public:
 	Scene5xx(MADSEngine *vm) : NebularScene(vm) {}
 };
 
-class Scene501 : public Scene5xx{
+class Scene501 : public Scene5xx {
 private:
 	int _mainSequenceId;
 	int _mainSpriteId;
@@ -80,7 +80,7 @@ public:
 	void actions() override;
 };
 
-class Scene503 : public Scene5xx{
+class Scene503 : public Scene5xx {
 private:
 	int _detonatorHotspotId;
 
@@ -93,7 +93,7 @@ public:
 	void actions() override;
 };
 
-class Scene504 : public Scene5xx{
+class Scene504 : public Scene5xx {
 private:
 	int _carAnimationMode;
 	int _carFrame;
@@ -109,7 +109,7 @@ public:
 	void actions() override;
 };
 
-class Scene505 : public Scene5xx{
+class Scene505 : public Scene5xx {
 private:
 	int _frame;
 	int _nextButtonId;
@@ -129,7 +129,7 @@ public:
 	void actions() override;
 };
 
-class Scene506 : public Scene5xx{
+class Scene506 : public Scene5xx {
 private:
 	Common::Point _doorPos;
 	Facing _heroFacing;
@@ -155,7 +155,7 @@ public:
 	void actions() override;
 };
 
-class Scene507 : public Scene5xx{
+class Scene507 : public Scene5xx {
 private:
 	int _penlightHotspotId;
 
@@ -168,7 +168,7 @@ public:
 	void actions() override;
 };
 
-class Scene508 : public Scene5xx{
+class Scene508 : public Scene5xx {
 private:
 	int _chosenObject;
 
@@ -184,7 +184,7 @@ public:
 	void actions() override;
 };
 
-class Scene511 : public Scene5xx{
+class Scene511 : public Scene5xx {
 private:
 	bool _handingLine;
 	bool _lineMoving;
@@ -204,10 +204,10 @@ public:
 	void actions() override;
 };
 
-class Scene512 : public Scene5xx{
+class Scene512 : public Scene5xx {
 private:
-  int _fishingRodHotspotId;
-  int _keyHotspotId;
+	int _fishingRodHotspotId;
+	int _keyHotspotId;
 
 public:
 	Scene512(MADSEngine *vm);
@@ -218,7 +218,7 @@ public:
 	void actions() override;
 };
 
-class Scene513 : public Scene5xx{
+class Scene513 : public Scene5xx {
 public:
 	Scene513(MADSEngine *vm) : Scene5xx(vm) {}
 
@@ -228,17 +228,17 @@ public:
 	void actions() override;
 };
 
-class Scene515 : public Scene5xx{
+class Scene515 : public Scene5xx {
 public:
 	Scene515(MADSEngine *vm) : Scene5xx(vm) {}
 
 	void setup() override;
 	void enter() override;
 	void step() override;
-	void actions() override {};
+	void actions() override{};
 };
 
-class Scene551 : public Scene5xx{
+class Scene551 : public Scene5xx {
 public:
 	Scene551(MADSEngine *vm) : Scene5xx(vm) {}
 

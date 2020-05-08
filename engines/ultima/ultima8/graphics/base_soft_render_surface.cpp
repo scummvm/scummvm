@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/graphics/soft_render_surface.h"
-#include "ultima/ultima8/graphics/palette.h"
-#include "ultima/ultima8/graphics/texture.h"
 #include "graphics/screen.h"
+#include "ultima/ultima8/graphics/palette.h"
+#include "ultima/ultima8/graphics/soft_render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -40,12 +40,11 @@ namespace Ultima8 {
 //
 // Desc: Constructor for BaseSoftRenderSurface from a managed surface
 //
-BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
-	_pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr),
-	_zBuffer00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
-	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
-	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
-	_surface(s), _rttTex(nullptr) {
+BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) : _pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr),
+                                                                            _zBuffer00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+                                                                            _ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
+                                                                            _flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
+                                                                            _surface(s), _rttTex(nullptr) {
 	_clipWindow.ResizeAbs(_width = _surface->w, _height = _surface->h);
 	_pitch = _surface->pitch;
 	_bitsPerPixel = _surface->format.bpp();
@@ -76,7 +75,8 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 		uint32 mask = ~(_format.rMask | _format.gMask | _format.bMask);
 
 		// Using all bits????
-		if (!mask) return;
+		if (!mask)
+			return;
 
 		// Check the mask to make sure that it's 'sane'
 		int i;
@@ -99,7 +99,8 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 		}
 
 		// something screwy going on
-		if (zero < last) return;
+		if (zero < last)
+			return;
 
 		// Set it
 		_format.aShift = first;
@@ -109,19 +110,17 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(Graphics::ManagedSurface *s) :
 	}
 }
 
-
 //
 // BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp, int rsft, int gsft, int bsft)
 //
 // Desc: Constructor for Generic BaseSoftRenderSurface
 //
 BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp,
-        int rsft, int gsft, int bsft, int asft) :
-	_pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr),
-	_zBuffer00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
-	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
-	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(nullptr),
-	_rttTex(nullptr) {
+                                             int rsft, int gsft, int bsft, int asft) : _pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr),
+                                                                                       _zBuffer00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+                                                                                       _ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
+                                                                                       _flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(nullptr),
+                                                                                       _rttTex(nullptr) {
 	_clipWindow.ResizeAbs(_width = w, _height = h);
 
 	switch (bpp) {
@@ -172,18 +171,16 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, int bpp,
 	SetPixelsPointer();
 }
 
-
 //
 // BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf)
 //
 // Desc: Constructor for Generic BaseSoftRenderSurface which matches screen params
 //
-BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf) :
-	_pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr),
-	_zBuffer00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
-	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
-	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
-	_surface(nullptr), _rttTex(nullptr) {
+BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf) : _pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr),
+                                                                         _zBuffer00(nullptr), _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+                                                                         _ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
+                                                                         _flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0),
+                                                                         _surface(nullptr), _rttTex(nullptr) {
 	_clipWindow.ResizeAbs(_width = w, _height = h);
 
 	int bpp = RenderSurface::_format.bpp();
@@ -201,12 +198,11 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h, uint8 *buf) :
 //
 // Desc: Constructor for Generic BaseSoftRenderSurface which matches screen params
 //
-BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
-	_pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr), _zBuffer00(nullptr),
-	_bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
-	_ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
-	_flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(nullptr),
-	_rttTex(nullptr) {
+BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) : _pixels(nullptr), _pixels00(nullptr), _zBuffer(nullptr), _zBuffer00(nullptr),
+                                                             _bytesPerPixel(0), _bitsPerPixel(0), _formatType(0),
+                                                             _ox(0), _oy(0), _width(0), _height(0), _pitch(0), _zPitch(0),
+                                                             _flipped(false), _clipWindow(0, 0, 0, 0), _lockCount(0), _surface(nullptr),
+                                                             _rttTex(nullptr) {
 	_clipWindow.ResizeAbs(_width = w, _height = h);
 
 	int bpp = RenderSurface::_format.bpp();
@@ -227,7 +223,6 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
 	SetPixelsPointer();
 }
 
-
 //
 // BaseSoftRenderSurface::~BaseSoftRenderSurface()
 //
@@ -236,11 +231,10 @@ BaseSoftRenderSurface::BaseSoftRenderSurface(int w, int h) :
 BaseSoftRenderSurface::~BaseSoftRenderSurface() {
 	if (_rttTex) {
 		delete _rttTex;
-		delete [] _pixels00;
-		delete [] _zBuffer00;
+		delete[] _pixels00;
+		delete[] _zBuffer00;
 	}
 }
-
 
 //
 // BaseSoftRenderSurface::BeginPainting()
@@ -257,10 +251,12 @@ ECode BaseSoftRenderSurface::BeginPainting() {
 			_pixels00 = static_cast<uint8 *>(s.getPixels());
 
 			_pitch = _surface->pitch;
-			if (_flipped) _pitch = -_pitch;
-		} else  {
+			if (_flipped)
+				_pitch = -_pitch;
+		} else {
 			ECode ret = GenericLock();
-			if (ret.failed()) return ret;
+			if (ret.failed())
+				return ret;
 		}
 	}
 
@@ -278,7 +274,6 @@ ECode BaseSoftRenderSurface::BeginPainting() {
 	// No error
 	return P_NO_ERROR;
 }
-
 
 //
 // BaseSoftRenderSurface::EndPainting()
@@ -309,7 +304,8 @@ ECode BaseSoftRenderSurface::EndPainting() {
 
 		} else {
 			ECode ret = GenericUnlock();
-			if (ret.failed()) return ret;
+			if (ret.failed())
+				return ret;
 		}
 	}
 
@@ -341,35 +337,41 @@ void BaseSoftRenderSurface::CreateNativePalette(Palette *palette) {
 
 		// Normal palette
 		palette->_native_untransformed[i] = PACK_RGB8(palette->_palette[i * 3 + 0],
-		                                   palette->_palette[i * 3 + 1],
-		                                   palette->_palette[i * 3 + 2]);
+		                                              palette->_palette[i * 3 + 1],
+		                                              palette->_palette[i * 3 + 2]);
 
 		r = palette->_matrix[0] * palette->_palette[i * 3 + 0] +
 		    palette->_matrix[1] * palette->_palette[i * 3 + 1] +
 		    palette->_matrix[2] * palette->_palette[i * 3 + 2] +
 		    palette->_matrix[3] * 255;
-		if (r < 0) r = 0;
-		if (r > 0x7F800) r = 0x7F800;
+		if (r < 0)
+			r = 0;
+		if (r > 0x7F800)
+			r = 0x7F800;
 
 		g = palette->_matrix[4] * palette->_palette[i * 3 + 0] +
 		    palette->_matrix[5] * palette->_palette[i * 3 + 1] +
 		    palette->_matrix[6] * palette->_palette[i * 3 + 2] +
 		    palette->_matrix[7] * 255;
-		if (g < 0) g = 0;
-		if (g > 0x7F800) g = 0x7F800;
+		if (g < 0)
+			g = 0;
+		if (g > 0x7F800)
+			g = 0x7F800;
 
 		b = palette->_matrix[8] * palette->_palette[i * 3 + 0] +
 		    palette->_matrix[9] * palette->_palette[i * 3 + 1] +
 		    palette->_matrix[10] * palette->_palette[i * 3 + 2] +
 		    palette->_matrix[11] * 255;
-		if (b < 0) b = 0;
-		if (b > 0x7F800) b = 0x7F800;
+		if (b < 0)
+			b = 0;
+		if (b > 0x7F800)
+			b = 0x7F800;
 
 		// Transformed normal palette
 		// FIXME - Wont work on non SDL SRS Implementations
 		palette->_native[i] = PACK_RGB8(static_cast<uint8>(r >> 11),
-		                               static_cast<uint8>(g >> 11),
-		                               static_cast<uint8>(b >> 11));
+		                                static_cast<uint8>(g >> 11),
+		                                static_cast<uint8>(b >> 11));
 
 		// Transformed XFORM palette (Uses the TEX32 format)
 		if (TEX32_A(palette->_xform_untransformed[i])) {
@@ -377,27 +379,33 @@ void BaseSoftRenderSurface::CreateNativePalette(Palette *palette) {
 			    palette->_matrix[1] * TEX32_G(palette->_xform_untransformed[i]) +
 			    palette->_matrix[2] * TEX32_B(palette->_xform_untransformed[i]) +
 			    palette->_matrix[3] * 255;
-			if (r < 0) r = 0;
-			if (r > 0x7F800) r = 0x7F800;
+			if (r < 0)
+				r = 0;
+			if (r > 0x7F800)
+				r = 0x7F800;
 
 			g = palette->_matrix[4] * TEX32_R(palette->_xform_untransformed[i]) +
 			    palette->_matrix[5] * TEX32_G(palette->_xform_untransformed[i]) +
 			    palette->_matrix[6] * TEX32_B(palette->_xform_untransformed[i]) +
 			    palette->_matrix[7] * 255;
-			if (g < 0) g = 0;
-			if (g > 0x7F800) g = 0x7F800;
+			if (g < 0)
+				g = 0;
+			if (g > 0x7F800)
+				g = 0x7F800;
 
 			b = palette->_matrix[8] * TEX32_R(palette->_xform_untransformed[i]) +
 			    palette->_matrix[9] * TEX32_G(palette->_xform_untransformed[i]) +
 			    palette->_matrix[10] * TEX32_B(palette->_xform_untransformed[i]) +
 			    palette->_matrix[11] * 255;
-			if (b < 0) b = 0;
-			if (b > 0x7F800) b = 0x7F800;
+			if (b < 0)
+				b = 0;
+			if (b > 0x7F800)
+				b = 0x7F800;
 
 			palette->_xform[i] = TEX32_PACK_RGBA(static_cast<uint8>(r >> 11),
-			                                    static_cast<uint8>(g >> 11),
-			                                    static_cast<uint8>(b >> 11),
-			                                    TEX32_A(palette->_xform_untransformed[i]));
+			                                     static_cast<uint8>(g >> 11),
+			                                     static_cast<uint8>(b >> 11),
+			                                     TEX32_A(palette->_xform_untransformed[i]));
 		} else
 			palette->_xform[i] = 0;
 	}
@@ -476,9 +484,12 @@ int16 BaseSoftRenderSurface::CheckClipped(const Rect &c) const {
 	r.Intersect(_clipWindow);
 
 	// Clipped away to the void
-	if (!r.IsValid()) return -1;
-	else if (r == c) return 0;
-	else return 1;
+	if (!r.IsValid())
+		return -1;
+	else if (r == c)
+		return 0;
+	else
+		return 1;
 }
 
 //
@@ -491,7 +502,8 @@ void BaseSoftRenderSurface::SetFlipped(bool wantFlipped) {
 	// But is a bit of a pain to set up
 
 	// First we check to see if we are currently _flipped
-	if (wantFlipped == _flipped) return;
+	if (wantFlipped == _flipped)
+		return;
 
 	_flipped = wantFlipped;
 
@@ -506,7 +518,6 @@ void BaseSoftRenderSurface::SetFlipped(bool wantFlipped) {
 	_zPitch = -_zPitch;
 
 	SetPixelsPointer();
-
 }
 
 //

@@ -40,11 +40,11 @@ class Time {
 public:
 	Time(BladeRunnerEngine *vm);
 
-	uint32  currentSystem();
-	uint32  current();
-	int  pause();
-	uint32  getPauseStart();
-	int  resume();
+	uint32 currentSystem();
+	uint32 current();
+	int pause();
+	uint32 getPauseStart();
+	int resume();
 	bool isLocked();
 	void resetPauseStart();
 };

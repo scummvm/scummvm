@@ -26,10 +26,10 @@
 #include "common/scummsys.h"
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_speakers.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -38,41 +38,43 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-class IntroObject: public NamedObject {
+class IntroObject : public NamedObject {
 };
 
-class Scene200: public SceneExt {
+class Scene200 : public SceneExt {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
 	Action2 _action2;
 	NamedObject _object1, _object2, _object3, _object4, _object5, _object6;
-	IntroObject  _object7, _object8, _object9;
+	IntroObject _object7, _object8, _object9;
 	NamedObject _object10, _object11;
 
 	void postInit(SceneObjectList *OwnerList = NULL) override;
 	void remove() override;
 };
 
-class Scene210: public SceneExt {
+class Scene210 : public SceneExt {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
@@ -85,16 +87,17 @@ public:
 	void remove() override;
 };
 
-class Scene220: public SceneExt {
+class Scene220 : public SceneExt {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
@@ -108,32 +111,33 @@ public:
 	void remove() override;
 };
 
-class Scene225: public SceneExt {
+class Scene225 : public SceneExt {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action3: public Action {
+	class Action3 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action4: public Action {
+	class Action4 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action5: public Action {
+	class Action5 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action6: public Action {
+	class Action6 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
@@ -153,12 +157,13 @@ public:
 	void remove() override;
 };
 
-class Scene265: public SceneExt {
+class Scene265 : public SceneExt {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
+
 public:
 	Action1 _action1;
 
@@ -166,32 +171,33 @@ public:
 	void remove() override;
 };
 
-class Scene270: public SceneExt {
+class Scene270 : public SceneExt {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
 
 	/* Objects */
-	class Lyle: public NamedObject {
+	class Lyle : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Grandma: public NamedObject {
+	class Grandma : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
-	class Item: public NamedHotspot {
+	class Item : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Exit: public NamedHotspot {
+	class Exit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
 	SpeakerGrandma _grandmaSpeaker;
@@ -222,28 +228,29 @@ public:
 	void dispatch() override;
 };
 
-class Scene271: public PalettedScene {
+class Scene271 : public PalettedScene {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
 
 	/* Objects */
-	class Object12: public NamedObject {
+	class Object12 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
-	class Item: public NamedHotspot {
+	class Item : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Exit: public NamedHotspot {
+	class Exit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
 	SpeakerGrandma _grandmaSpeaker;
@@ -276,12 +283,13 @@ public:
 	void dispatch() override;
 };
 
-class Scene280: public PalettedScene {
+class Scene280 : public PalettedScene {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public ActionExt {
 	public:
 		void signal() override;
 	};
+
 public:
 	Action1 _action1;
 	SpeakerGameText _gameTextSpeaker;

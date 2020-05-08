@@ -23,8 +23,8 @@
 #ifndef ULTIMA_SHARED_EARLY_GAME_H
 #define ULTIMA_SHARED_EARLY_GAME_H
 
-#include "ultima/shared/early/game_base.h"
 #include "ultima/shared/core/party.h"
+#include "ultima/shared/early/game_base.h"
 
 namespace Ultima {
 namespace Shared {
@@ -43,9 +43,11 @@ class Map;
 class Game : public GameBase {
 	DECLARE_MESSAGE_MAP;
 	bool EndOfTurnMsg(CEndOfTurnMsg &msg);
+
 protected:
 	GameView *_gameView;
 	FontResources *_fontResources;
+
 protected:
 	/**
 	 * Sets up EGA palette
@@ -56,6 +58,7 @@ protected:
 	 * Loads the Ultima 6 palette
 	 */
 	void loadU6Palette();
+
 public:
 	byte _edgeColor;
 	byte _borderColor;
@@ -87,7 +90,7 @@ public:
 	 * Constructor
 	 */
 	Game();
-	
+
 	/**
 	 * Destructor
 	 */

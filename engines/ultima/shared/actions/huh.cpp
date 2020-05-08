@@ -27,7 +27,7 @@ namespace Shared {
 namespace Actions {
 
 BEGIN_MESSAGE_MAP(Huh, Action)
-	ON_MESSAGE(HuhMsg)
+ON_MESSAGE(HuhMsg)
 END_MESSAGE_MAP()
 
 bool Huh::HuhMsg(CHuhMsg &msg) {

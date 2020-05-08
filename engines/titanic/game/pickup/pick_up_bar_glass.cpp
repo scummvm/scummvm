@@ -26,9 +26,9 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CPickUpBarGlass, CPickUp)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MouseDragStartMsg)
-	ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MouseDragStartMsg)
+ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
 void CPickUpBarGlass::save(SimpleFile *file, int indent) {

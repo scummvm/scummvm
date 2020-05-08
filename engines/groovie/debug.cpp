@@ -32,8 +32,7 @@
 
 namespace Groovie {
 
-Debugger::Debugger(GroovieEngine *vm) :
-	_vm(vm), _script(_vm->_script) {
+Debugger::Debugger(GroovieEngine *vm) : _vm(vm), _script(_vm->_script) {
 
 	// Register the debugger comands
 	registerCmd("step", WRAP_METHOD(Debugger, cmd_step));
@@ -145,4 +144,4 @@ bool Debugger::cmd_dumppal(int argc, const char **argv) {
 	return true;
 }
 
-} // End of Groovie namespace
+} // namespace Groovie

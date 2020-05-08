@@ -18,13 +18,13 @@
 #ifndef MT32EMU_PARTIAL_H
 #define MT32EMU_PARTIAL_H
 
-#include "globals.h"
-#include "internals.h"
-#include "Types.h"
-#include "Structures.h"
+#include "LA32FloatWaveGenerator.h"
 #include "LA32Ramp.h"
 #include "LA32WaveGenerator.h"
-#include "LA32FloatWaveGenerator.h"
+#include "Structures.h"
+#include "Types.h"
+#include "globals.h"
+#include "internals.h"
 
 namespace MT32Emu {
 
@@ -82,10 +82,10 @@ private:
 	Bit32u getAmpValue();
 	Bit32u getCutoffValue();
 
-	template <class Sample, class LA32PairImpl>
+	template<class Sample, class LA32PairImpl>
 	bool doProduceOutput(Sample *leftBuf, Sample *rightBuf, Bit32u length, LA32PairImpl *la32PairImpl);
 	bool canProduceOutput();
-	template <class LA32PairImpl>
+	template<class LA32PairImpl>
 	bool generateNextSample(LA32PairImpl *la32PairImpl);
 	void produceAndMixSample(IntSample *&leftBuf, IntSample *&rightBuf, LA32IntPartialPair *la32IntPair);
 	void produceAndMixSample(FloatSample *&leftBuf, FloatSample *&rightBuf, LA32FloatPartialPair *la32FloatPair);

@@ -27,8 +27,8 @@
 // TextWidget. Displays text in either a fixed-size or a fit-to-text rectangle.
 //
 
-#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/graphics/fonts/font.h"
+#include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
 
 namespace Ultima {
@@ -38,19 +38,20 @@ class RenderedText;
 
 class TextWidget : public Gump {
 protected:
-	Std::string     _text;
-	bool            _gameFont;
-	int             _fontNum;
-	uint32          _blendColour;
-	int32           _tx, _ty;
+	Std::string _text;
+	bool _gameFont;
+	int _fontNum;
+	uint32 _blendColour;
+	int32 _tx, _ty;
 
-	unsigned int    _currentStart; //!< start of currently displaying text
-	unsigned int    _currentEnd;   //!< start of remaining text
+	unsigned int _currentStart; //!< start of currently displaying text
+	unsigned int _currentEnd;   //!< start of remaining text
 
 	int32 _targetWidth, _targetHeight;
 
 	RenderedText *_cachedText;
 	Font::TextAlign _textAlign;
+
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -61,12 +62,12 @@ public:
 	~TextWidget() override;
 
 	// Init the gump, call after construction
-	void            InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Overloadable method to Paint just this Gump (RenderSurface is relative to this)
-	void            PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	void            PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley) override;
+	void PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley) override;
 
 	Gump *OnMouseMotion(int32 mx, int32 my) override;
 

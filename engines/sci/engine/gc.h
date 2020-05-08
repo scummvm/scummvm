@@ -20,18 +20,17 @@
  *
  */
 
-
 #ifndef SCI_ENGINE_GC_H
 #define SCI_ENGINE_GC_H
 
 #include "common/hashmap.h"
-#include "sci/engine/vm_types.h"
 #include "sci/engine/state.h"
+#include "sci/engine/vm_types.h"
 
 namespace Sci {
 
 struct reg_t_Hash {
-	uint operator()(const reg_t& x) const {
+	uint operator()(const reg_t &x) const {
 		return (x.getSegment() << 3) ^ x.getOffset() ^ (x.getOffset() << 16);
 	}
 };
@@ -57,12 +56,11 @@ void run_gc(EngineState *s);
 
 struct WorklistManager {
 	Common::Array<reg_t> _worklist;
-	AddrSet _map;	// used for 2 contains() calls, inside push() and run_gc()
+	AddrSet _map; // used for 2 contains() calls, inside push() and run_gc()
 
 	void push(reg_t reg);
 	void pushArray(const Common::Array<reg_t> &tmp);
 };
-
 
 } // End of namespace Sci
 

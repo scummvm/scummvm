@@ -32,14 +32,13 @@
 #include "mortevielle/mouse.h"
 #include "mortevielle/outtext.h"
 #include "mortevielle/saveload.h"
-#include "mortevielle/outtext.h"
 
-#include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/system.h"
 #include "common/translation.h"
-#include "engines/util.h"
 #include "engines/engine.h"
+#include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 
@@ -47,8 +46,7 @@ namespace Mortevielle {
 
 MortevielleEngine *g_vm;
 
-MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc):
-		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
+MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc) : Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
 	// Set debug channels
 	DebugMan.addDebugChannel(kMortevielleCore, "core", "Core debugging");
 	DebugMan.addDebugChannel(kMortevielleGraphics, "graphics", "Graphics debugging");
@@ -171,10 +169,9 @@ MortevielleEngine::~MortevielleEngine() {
  * Specifies whether the engine supports given features
  */
 bool MortevielleEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsRTL) ||
+	       (f == kSupportsLoadingDuringRuntime) ||
+	       (f == kSupportsSavingDuringRuntime);
 }
 
 /**
@@ -263,7 +260,7 @@ Common::ErrorCode MortevielleEngine::initialize() {
 	}
 
 	// Load some error messages (was previously in chartex())
-	_hintPctMessage = getString(580);  // You should have noticed %d hints
+	_hintPctMessage = getString(580); // You should have noticed %d hints
 
 	// Set default EGA palette
 	_paletteManager.setDefaultPalette();
@@ -320,8 +317,8 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 	if (majVer < MORT_DAT_REQUIRED_VERSION) {
 		GUIErrorMessageFormat(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
-			MORT_DAT, MORT_DAT_REQUIRED_VERSION, 0, majVer, minVer);
+		    _("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+		    MORT_DAT, MORT_DAT_REQUIRED_VERSION, 0, majVer, minVer);
 		return Common::kReadingFailed;
 	}
 
@@ -355,14 +352,13 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	return Common::kNoError;
 }
 
-
 /**
  * Read in a static strings block, and if the language matches, load up the static strings
  */
 void MortevielleEngine::readStaticStrings(Common::File &f, int dataSize, DataType dataType) {
 	// Figure out what language Id is needed
 	byte desiredLanguageId;
-	switch(getLanguage()) {
+	switch (getLanguage()) {
 	case Common::EN_ANY:
 		desiredLanguageId = MORTDAT_LANG_ENGLISH;
 		break;

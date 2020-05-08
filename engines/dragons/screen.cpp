@@ -19,13 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "dragons/screen.h"
 #include "common/endian.h"
-#include "common/system.h"
 #include "common/rect.h"
-#include "engines/util.h"
+#include "common/system.h"
 #include "dragons/dragons.h"
 #include "dragons/scene.h"
-#include "dragons/screen.h"
+#include "engines/util.h"
 
 namespace Dragons {
 
@@ -41,17 +41,17 @@ void Screen::updateScreen() {
 	if (_screenShakeOffset.x != 0 || _screenShakeOffset.y != 0) {
 		g_system->fillScreen(0); //TODO this is meant for 8bit screens. we should use system shake here.
 	}
-	Common::Rect clipRect = clipRectToScreen(_screenShakeOffset.x,  _screenShakeOffset.y, Common::Rect(_backSurface->w, _backSurface->h));
-	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(clipRect.left, clipRect.top),
-			_backSurface->pitch,
-			_screenShakeOffset.x < 0 ? 0 : _screenShakeOffset.x, _screenShakeOffset.y < 0 ? 0 : _screenShakeOffset.y,
-			clipRect.width(), clipRect.height());
-//	if (_screenShakeOffset < 0) {
-//		_backSurface->fillRect(Common::Rect(0, _backSurface->h + _screenShakeOffset - 1, _backSurface->w - 1, _backSurface->h - 1), 0);
-//	}
-//	if (_screenShakeOffset > 0) {
-//		_backSurface->fillRect(Common::Rect(0, 0, _backSurface->w - 1, _screenShakeOffset - 1), 0);
-//	}
+	Common::Rect clipRect = clipRectToScreen(_screenShakeOffset.x, _screenShakeOffset.y, Common::Rect(_backSurface->w, _backSurface->h));
+	g_system->copyRectToScreen((byte *)_backSurface->getBasePtr(clipRect.left, clipRect.top),
+	                           _backSurface->pitch,
+	                           _screenShakeOffset.x < 0 ? 0 : _screenShakeOffset.x, _screenShakeOffset.y < 0 ? 0 : _screenShakeOffset.y,
+	                           clipRect.width(), clipRect.height());
+	//	if (_screenShakeOffset < 0) {
+	//		_backSurface->fillRect(Common::Rect(0, _backSurface->h + _screenShakeOffset - 1, _backSurface->w - 1, _backSurface->h - 1), 0);
+	//	}
+	//	if (_screenShakeOffset > 0) {
+	//		_backSurface->fillRect(Common::Rect(0, 0, _backSurface->w - 1, _screenShakeOffset - 1), 0);
+	//	}
 	g_system->updateScreen();
 }
 
@@ -65,7 +65,7 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 }
 
 void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha) {
-	Common::Rect clipRect = clipRectToScreen(destX,  destY, srcRect);
+	Common::Rect clipRect = clipRectToScreen(destX, destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
 	}
@@ -83,13 +83,13 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, const byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha, uint16 scale) {
 	if (scale != DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) {
 		drawScaledSprite(_backSurface, (const byte *)srcSurface.getBasePtr(0, 0),
-				srcRect.width(), srcRect.height(),
-				destX, destY,
-				srcRect.width() * scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE, srcRect.height() * scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE,
-				palette, flipX, alpha);
+		                 srcRect.width(), srcRect.height(),
+		                 destX, destY,
+		                 srcRect.width() * scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE, srcRect.height() * scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE,
+		                 palette, flipX, alpha);
 		return;
 	}
-	Common::Rect clipRect = clipRectToScreen(destX,  destY, srcRect);
+	Common::Rect clipRect = clipRectToScreen(destX, destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
 	}
@@ -110,7 +110,7 @@ void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, const by
  * @param bg      The background color in uint16 RGB565 format
  * @param alpha   The alpha in range 0-255
  **/
-uint16 alphaBlendRGB555(uint32 fg, uint32 bg, uint8 alpha){
+uint16 alphaBlendRGB555(uint32 fg, uint32 bg, uint8 alpha) {
 	alpha = (alpha + 4) >> 3;
 	bg = (bg | (bg << 16)) & 0x3e07c1f;
 	fg = (fg | (fg << 16)) & 0x3e07c1f;
@@ -118,7 +118,7 @@ uint16 alphaBlendRGB555(uint32 fg, uint32 bg, uint8 alpha){
 	return (uint16)((result >> 16) | result);
 }
 
-uint16 alphaBlendAdditiveRGB555(uint32 fg, uint32 bg){
+uint16 alphaBlendAdditiveRGB555(uint32 fg, uint32 bg) {
 	bg = (bg | (bg << 16)) & 0x3e07c1f;
 	fg = (fg | (fg << 16)) & 0x3e07c1f;
 
@@ -171,7 +171,7 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, i
 	}
 }
 
-void Screen::copyRectToSurface8bpp(const void *buffer, const byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha) {
+void Screen::copyRectToSurface8bpp(const void *buffer, const byte *palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha) {
 	assert(buffer);
 
 	assert(destX >= 0 && destX < _backSurface->w);
@@ -202,13 +202,13 @@ void Screen::copyRectToSurface8bpp(const void *buffer, const byte* palette, int 
 }
 
 void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source, int sourceWidth, int sourceHeight,
-		int destX, int destY, int destWidth, int destHeight, const byte *palette, bool flipX, uint8 alpha) {
+                              int destX, int destY, int destWidth, int destHeight, const byte *palette, bool flipX, uint8 alpha) {
 	// Based on the GNAP engine scaling code
 	if (destWidth == 0 || destHeight == 0) {
 		return;
 	}
 	const int xs = ((sourceWidth - 1) << 16) / destWidth;
-	const int ys = ((sourceHeight -1) << 16) / destHeight;
+	const int ys = ((sourceHeight - 1) << 16) / destHeight;
 	int clipX = 0, clipY = 0;
 	const int destPitch = destSurface->pitch;
 	if (destX < 0) {
@@ -346,7 +346,7 @@ void Screen::loadPalette(uint16 paletteNum, const byte *palette) {
 		}
 	}
 
-	for (int i =1 ; i < 0x100; i++) {
+	for (int i = 1; i < 0x100; i++) {
 		uint16 c = READ_LE_INT16(&_palettes[paletteNum][i * 2]);
 		if ((c & ~0x8000) == 0) {
 			if (!isTransPalette) {
@@ -354,8 +354,8 @@ void Screen::loadPalette(uint16 paletteNum, const byte *palette) {
 			}
 		} else {
 			//TODO is this needed? see load_palette_into_frame_buffer()
-//			c = (uint16)(((uint)c & 0x1f) << 10) | (uint16)(((uint)c & 0x7c00) >> 10) |
-//					(c & 0x3e0) | (c & 0x8000);
+			//			c = (uint16)(((uint)c & 0x1f) << 10) | (uint16)(((uint)c & 0x7c00) >> 10) |
+			//					(c & 0x3e0) | (c & 0x8000);
 		}
 	}
 	WRITE_LE_UINT16(&_palettes[paletteNum][0], 0);
@@ -386,7 +386,6 @@ void Screen::drawRect(uint16 colour, Common::Rect rect, int id) {
 	_backSurface->drawLine(clippedRect.left, clippedRect.bottom, clippedRect.right, clippedRect.bottom, colour);
 	//left
 	_backSurface->drawLine(clippedRect.left, clippedRect.top, clippedRect.left, clippedRect.bottom, colour);
-
 }
 
 void Screen::setScreenShakeOffset(int16 x, int16 y) {
@@ -401,7 +400,7 @@ void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, 
 		for (int j = 0; j < DRAGONS_SCREEN_WIDTH; j++) {
 			uint16 c = READ_LE_UINT16(&palette[src[j] * 2]);
 			if (c != 0) {
-					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
+				WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
 			}
 		}
 		dst += _backSurface->pitch;
@@ -409,7 +408,7 @@ void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, 
 }
 
 void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, const byte *palette, Common::Rect srcRect,
-										   AlphaBlendMode alpha) {
+                                           AlphaBlendMode alpha) {
 	// Copy buffer data to internal buffer
 	const byte *src = (const byte *)srcSurface.getBasePtr(0, 0);
 	int width = srcSurface.w > DRAGONS_SCREEN_WIDTH ? DRAGONS_SCREEN_WIDTH : srcSurface.w;
@@ -435,7 +434,7 @@ void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, 
 }
 
 int16 Screen::addFlatQuad(int16 x0, int16 y0, int16 x1, int16 y1, int16 x3, int16 y3, int16 x2, int16 y2, uint16 colour,
-						 int16 priorityLayer, uint16 flags) {
+                          int16 priorityLayer, uint16 flags) {
 
 	assert(x0 == x2 && x1 == x3 && y0 == y1 && y2 == y3); //make sure this is a rectangle
 

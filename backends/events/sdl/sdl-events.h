@@ -23,15 +23,15 @@
 #ifndef BACKEND_EVENTS_SDL_H
 #define BACKEND_EVENTS_SDL_H
 
-#include "backends/platform/sdl/sdl-sys.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/platform/sdl/sdl-sys.h"
 
 #include "common/events.h"
 
 // Type names which changed between SDL 1.2 and SDL 2.
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
-typedef SDLKey     SDL_Keycode;
-typedef SDLMod     SDL_Keymod;
+typedef SDLKey SDL_Keycode;
+typedef SDLMod SDL_Keymod;
 typedef SDL_keysym SDL_Keysym;
 #endif
 
@@ -111,7 +111,6 @@ protected:
 	 * Dispatchs SDL events for each handler.
 	 */
 	virtual bool dispatchSDLEvent(SDL_Event &ev, Common::Event &event);
-
 
 	/** @name Event Handlers
 	 * Handlers for specific SDL events, called by SdlEventSource::dispatchSDLEvent().

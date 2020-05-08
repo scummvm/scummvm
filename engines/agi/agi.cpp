@@ -20,13 +20,13 @@
  *
  */
 
-#include "common/md5.h"
-#include "common/file.h"
-#include "common/memstream.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/file.h"
+#include "common/md5.h"
+#include "common/memstream.h"
 #include "common/random.h"
+#include "common/savefile.h"
 #include "common/textconsole.h"
 
 #include "engines/util.h"
@@ -42,11 +42,11 @@
 #include "agi/font.h"
 #include "agi/graphics.h"
 #include "agi/inv.h"
-#include "agi/sprite.h"
-#include "agi/text.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+#include "agi/sprite.h"
 #include "agi/systemui.h"
+#include "agi/text.h"
 #include "agi/words.h"
 
 #include "gui/predictivedialog.h"
@@ -154,7 +154,7 @@ int AgiEngine::agiInit() {
 	if (_game.gameFlags & ID_AGDS)
 		debug(1, "AGDS mode enabled.");
 
-	ec = _loader->init();   // load vol files, etc
+	ec = _loader->init(); // load vol files, etc
 
 	if (ec == errOK)
 		ec = _loader->loadObjects(OBJECTS);
@@ -168,11 +168,11 @@ int AgiEngine::agiInit() {
 		ec = _loader->loadResource(RESOURCETYPE_LOGIC, 0);
 
 #ifdef __DS__
-	// Normally, the engine loads the predictive text dictionary when the predictive dialog
-	// is shown.  On the DS version, the word completion feature needs the dictionary too.
+		// Normally, the engine loads the predictive text dictionary when the predictive dialog
+		// is shown.  On the DS version, the word completion feature needs the dictionary too.
 
-	// FIXME - loadDict() no long exists in AGI as this has been moved to within the
-	// GUI Predictive Dialog, but DS Word Completion is probably broken due to this...
+		// FIXME - loadDict() no long exists in AGI as this has been moved to within the
+		// GUI Predictive Dialog, but DS Word Completion is probably broken due to this...
 #endif
 
 	_keyHoldMode = false;
@@ -501,7 +501,7 @@ bool AgiEngine::promptIsEnabled() {
 }
 
 void AgiEngine::redrawScreen() {
-	_game.gfxMode = true; // enable graphics mode
+	_game.gfxMode = true;   // enable graphics mode
 	_gfx->setPalette(true); // set graphics mode palette
 	_text->charAttrib_Set(_text->_textAttrib.foreground, _text->_textAttrib.background);
 	_gfx->clearDisplay(0);
@@ -575,7 +575,6 @@ void AgiEngine::syncSoundSettings() {
 //  - after exiting the very first room, a message pops up, that isn't readable without it (NewRoom)
 //  - Climbing into shuttle on planet Labion. "You open the hatch and head on in." (NewRoom)
 
-
 // Games, that must not be triggered:
 //
 // Fanmade Voodoo Girl:
@@ -622,11 +621,10 @@ void AgiEngine::artificialDelay_CycleDone() {
 
 //         script, description,                                       signature                   patch
 static const AgiArtificialDelayEntry artificialDelayTable[] = {
-	{ GID_GOLDRUSH,   Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWROOM,     14,  21, 2200 }, // Stagecoach path: right after getting on it in Brooklyn
-	{ GID_PQ1,        Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE,   1,   2, 2200 }, // Intro: music track is supposed to finish before credits screen. Developers must have assumed that room loading would take that long.
-	{ GID_MH1,        Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE, 155, 183, 2200 }, // Happens, when hitting fingers at bar
-	{ GID_AGIDEMO,    Common::kPlatformUnknown,  ARTIFICIALDELAYTYPE_END,         -1,  -1,    0 }
-};
+    {GID_GOLDRUSH, Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWROOM, 14, 21, 2200}, // Stagecoach path: right after getting on it in Brooklyn
+    {GID_PQ1, Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE, 1, 2, 2200},     // Intro: music track is supposed to finish before credits screen. Developers must have assumed that room loading would take that long.
+    {GID_MH1, Common::kPlatformApple2GS, ARTIFICIALDELAYTYPE_NEWPICTURE, 155, 183, 2200}, // Happens, when hitting fingers at bar
+    {GID_AGIDEMO, Common::kPlatformUnknown, ARTIFICIALDELAYTYPE_END, -1, -1, 0}};
 
 uint16 AgiEngine::artificialDelay_SearchTable(AgiArtificialDelayTriggerType triggerType, int16 orgNr, int16 newNr) {
 	if (getPlatform() != Common::kPlatformApple2GS) {

@@ -23,11 +23,11 @@
 #ifndef GRAPHICS_MACGUI_MACWINDOWBORDER_H
 #define GRAPHICS_MACGUI_MACWINDOWBORDER_H
 
-#include "common/str.h"
 #include "common/list.h"
+#include "common/str.h"
 
-#include "graphics/nine_patch.h"
 #include "graphics/managed_surface.h"
+#include "graphics/nine_patch.h"
 #include "graphics/transparent_surface.h"
 
 namespace Graphics {
@@ -102,7 +102,6 @@ public:
 	void blitBorderInto(ManagedSurface &destination, bool active);
 
 private:
-
 	NinePatchBitmap *_activeBorder;
 	NinePatchBitmap *_inactiveBorder;
 
@@ -110,7 +109,6 @@ private:
 	bool _inactiveInitialized;
 
 	Common::Rect _borderOffsets;
-
 };
 
 } // End of namespace Graphics

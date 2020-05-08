@@ -26,8 +26,8 @@
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "engines/game.h"
-#include "glk/streams.h"
 #include "glk/detection.h"
+#include "glk/streams.h"
 
 namespace Glk {
 namespace Frotz {

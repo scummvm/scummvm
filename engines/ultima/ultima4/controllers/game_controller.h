@@ -26,8 +26,8 @@
 #include "ultima/ultima4/controllers/controller.h"
 #include "ultima/ultima4/core/coords.h"
 #include "ultima/ultima4/core/observer.h"
-#include "ultima/ultima4/game/portal.h"
 #include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/game/portal.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/views/tileview.h"
 
@@ -42,8 +42,7 @@ namespace Ultima4 {
  *      <li>separate the dungeon specific stuff into another class (subclass?)</li>
  *  </ul>
  */
-class GameController : public Controller, public Observer<Party *, PartyEvent &>, public Observer<Location *, MoveEvent &>,
-	public TurnCompleter {
+class GameController : public Controller, public Observer<Party *, PartyEvent &>, public Observer<Location *, MoveEvent &>, public TurnCompleter {
 private:
 	/**
 	 * Handles feedback after avatar moved during normal 3rd-person view.
@@ -92,6 +91,7 @@ private:
 	 * creature is present at that point, zero is returned.
 	 */
 	bool attackAt(const Coords &coords);
+
 public:
 	/**
 	 * Show an attack flash at x, y on the current map.
@@ -102,10 +102,12 @@ public:
 
 	static void flashTile(const Coords &coords, const Common::String &tilename, int timeFactor);
 	static void doScreenAnimationsWhilePausing(int timeFactor);
+
 public:
 	TileView _mapArea;
 	bool _paused;
 	int _pausedTimer;
+
 public:
 	GameController();
 

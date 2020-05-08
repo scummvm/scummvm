@@ -159,8 +159,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 		}
 
 		_tag = kSoundTagAmbient;
-		}
-		break;
+	} break;
 
 	case kSoundTypeWalla: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagWalla);
@@ -170,8 +169,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 		}
 
 		_tag = kSoundTagWalla;
-		}
-		break;
+	} break;
 
 	case kSoundTypeLink: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagLink);
@@ -179,8 +177,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 			previous->_tag = kSoundTagOldLink;
 
 		_tag = kSoundTagLink;
-		}
-		break;
+	} break;
 
 	case kSoundTypeNIS: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagNIS);
@@ -188,8 +185,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 			previous->_tag = kSoundTagOldNIS;
 
 		_tag = kSoundTagNIS;
-		}
-		break;
+	} break;
 
 	case kSoundTypeIntro: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagIntro);
@@ -197,8 +193,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 			previous->_tag = kSoundTagOldMenu;
 
 		_tag = kSoundTagIntro;
-		}
-		break;
+	} break;
 
 	case kSoundTypeMenu: {
 		SoundEntry *previous = getSoundQueue()->getEntry(kSoundTagMenu);
@@ -206,8 +201,7 @@ void SoundEntry::setupTag(SoundFlag flag) {
 			previous->_tag = kSoundTagOldMenu;
 
 		_tag = kSoundTagMenu;
-		}
-		break;
+	} break;
 
 	default:
 		assert(false);
@@ -378,16 +372,7 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 			_status |= kSoundFlagPlaying;
 		if (_status & (kSoundFlagCloseRequested | kSoundFlagFading))
 			_status |= kSoundFlagClosed;
-		_status &= kSoundVolumeMask
-		         | kSoundFlagPlaying
-		         | kSoundFlagClosed
-		         | kSoundFlagCloseOnDataEnd
-		         | kSoundFlagLooped
-		         | kSoundFlagDelayedActivate
-		         | kSoundFlagHasSubtitles
-		         | kSoundFlagFixedVolume
-		         | kSoundFlagHeaderProcessed
-		         | kSoundTypeMask;
+		_status &= kSoundVolumeMask | kSoundFlagPlaying | kSoundFlagClosed | kSoundFlagCloseOnDataEnd | kSoundFlagLooped | kSoundFlagDelayedActivate | kSoundFlagHasSubtitles | kSoundFlagFixedVolume | kSoundFlagHeaderProcessed | kSoundTypeMask;
 
 		loadStream(name); // also sets _name
 		if (_status & kSoundFlagPlaying)

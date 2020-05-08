@@ -21,10 +21,10 @@
  */
 
 #include "ultima/ultima4/core/settings.h"
+#include "common/file.h"
+#include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/filesys/filesystem.h"
-#include "ultima/ultima4/core/utils.h"
-#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -35,47 +35,13 @@ namespace Ultima4 {
 Settings *Settings::_instance = nullptr;
 
 bool SettingsEnhancementOptions::operator==(const SettingsEnhancementOptions &s) const {
-	return _activePlayer == s._activePlayer
-		&& _u5SpellMixing == s._u5SpellMixing
-		&& _u5Shrines == s._u5Shrines
-		&& _u5Combat == s._u5Combat
-		&& _slimeDivides == s._slimeDivides
-		&& _gazerSpawnsInsects == s._gazerSpawnsInsects
-		&& _textColorization == s._textColorization
-		&& _c64ChestTraps == s._c64ChestTraps
-		&& _smartEnterKey == s._smartEnterKey
-		&& _peerShowsObjects == s._peerShowsObjects
-		&& _u4TileTransparencyHack == s._u4TileTransparencyHack
-		&& _u4TileTransparencyHackPixelShadowOpacity == s._u4TileTransparencyHackPixelShadowOpacity
-		&& _u4TrileTransparencyHackShadowBreadth == s._u4TrileTransparencyHackShadowBreadth;
+	return _activePlayer == s._activePlayer && _u5SpellMixing == s._u5SpellMixing && _u5Shrines == s._u5Shrines && _u5Combat == s._u5Combat && _slimeDivides == s._slimeDivides && _gazerSpawnsInsects == s._gazerSpawnsInsects && _textColorization == s._textColorization && _c64ChestTraps == s._c64ChestTraps && _smartEnterKey == s._smartEnterKey && _peerShowsObjects == s._peerShowsObjects && _u4TileTransparencyHack == s._u4TileTransparencyHack && _u4TileTransparencyHackPixelShadowOpacity == s._u4TileTransparencyHackPixelShadowOpacity && _u4TrileTransparencyHackShadowBreadth == s._u4TrileTransparencyHackShadowBreadth;
 }
 
 /*-------------------------------------------------------------------*/
 
 bool SettingsData::operator==(const SettingsData &s) const {
-	return _videoType == s._videoType
-		&& _battleSpeed == s._battleSpeed
-		&& _campingAlwaysCombat == s._campingAlwaysCombat
-		&& _campTime == s._campTime
-		&& _debug == s._debug
-		&& _enhancements == s._enhancements
-		&& _enhancementsOptions == s._enhancementsOptions
-		&& _filterMoveMessages == s._filterMoveMessages
-		&& _gameCyclesPerSecond == s._gameCyclesPerSecond
-		&& _screenAnimationFramesPerSecond == s._screenAnimationFramesPerSecond
-		&& _innAlwaysCombat == s._innAlwaysCombat
-		&& _innTime == s._innTime
-		&& _mouseOptions == s._mouseOptions
-		&& _screenShakes == s._screenShakes
-		&& _gamma == s._gamma
-		&& _shakeInterval == s._shakeInterval
-		&& _shortcutCommands == s._shortcutCommands
-		&& _shrineTime == s._shrineTime
-		&& _spellEffectSpeed == s._spellEffectSpeed
-		&& _validateXml == s._validateXml
-		&& _volumeFades == s._volumeFades
-		&& _titleSpeedRandom == s._titleSpeedRandom
-		&& _titleSpeedOther == s._titleSpeedOther;
+	return _videoType == s._videoType && _battleSpeed == s._battleSpeed && _campingAlwaysCombat == s._campingAlwaysCombat && _campTime == s._campTime && _debug == s._debug && _enhancements == s._enhancements && _enhancementsOptions == s._enhancementsOptions && _filterMoveMessages == s._filterMoveMessages && _gameCyclesPerSecond == s._gameCyclesPerSecond && _screenAnimationFramesPerSecond == s._screenAnimationFramesPerSecond && _innAlwaysCombat == s._innAlwaysCombat && _innTime == s._innTime && _mouseOptions == s._mouseOptions && _screenShakes == s._screenShakes && _gamma == s._gamma && _shakeInterval == s._shakeInterval && _shortcutCommands == s._shortcutCommands && _shrineTime == s._shrineTime && _spellEffectSpeed == s._spellEffectSpeed && _validateXml == s._validateXml && _volumeFades == s._volumeFades && _titleSpeedRandom == s._titleSpeedRandom && _titleSpeedOther == s._titleSpeedOther;
 }
 
 bool SettingsData::operator!=(const SettingsData &s) const {
@@ -100,7 +66,7 @@ Settings::Settings() {
 	bool isEnhanced = _videoType != "EGA";
 	_scale = isEnhanced ? 2 : 1;
 	_filter = isEnhanced ? "Scale2x" : "point";
-  
+
 	_battleDiffs.push_back("Normal");
 	_battleDiffs.push_back("Hard");
 	_battleDiffs.push_back("Expert");

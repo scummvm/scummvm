@@ -28,5 +28,5 @@ namespace Nuvie {
 Debugger::Debugger() : Shared::Debugger() {
 }
 
-} // End of namespace Ultima8
+} // namespace Nuvie
 } // End of namespace Ultima

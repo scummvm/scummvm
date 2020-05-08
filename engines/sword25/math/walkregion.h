@@ -88,7 +88,7 @@ public:
 	const Common::Array<Vertex> &getNodes() const {
 		return _nodes;
 	}
-	const Common::Array< Common::Array<int> > &getVisibilityMatrix() const {
+	const Common::Array<Common::Array<int>> &getVisibilityMatrix() const {
 		return _visibilityMatrix;
 	}
 
@@ -97,7 +97,7 @@ public:
 
 private:
 	Common::Array<Vertex> _nodes;
-	Common::Array< Common::Array<int> > _visibilityMatrix;
+	Common::Array<Common::Array<int>> _visibilityMatrix;
 
 	void initNodeVector();
 	void computeVisibilityMatrix();

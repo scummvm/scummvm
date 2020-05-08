@@ -21,17 +21,17 @@
  */
 
 #include <FApp.h>
-#include <FGraphics.h>
-#include <FUi.h>
-#include <FSystem.h>
 #include <FBase.h>
+#include <FGraphics.h>
+#include <FSystem.h>
+#include <FUi.h>
 
 #include "backends/platform/tizen/portdefs.h"
 
+#include <ctype.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdarg.h>
-#include <ctype.h>
 
 #define BUF_SIZE 255
 
@@ -42,7 +42,7 @@ C_LINKAGE_BEGIN
 int __errno; // for overridden method in saves/default/default-saves.cpp
 
 void __assert_func(const char *file, int line,
-									 const char *func, const char *err) {
+                   const char *func, const char *err) {
 	char buffer[BUF_SIZE];
 	snprintf(buffer, sizeof(buffer), "%s %d %s %s", file, line, func, err);
 	systemError(buffer);

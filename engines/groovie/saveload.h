@@ -44,6 +44,6 @@ public:
 	static Common::OutSaveFile *openForSaving(const Common::String &target, int slot);
 };
 
-} // End of Groovie namespace
+} // namespace Groovie
 
 #endif // GROOVIE_SAVELOAD_H

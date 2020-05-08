@@ -23,10 +23,10 @@
 #ifndef ULTIMA8_AUDIO_MUSICPROCESS_H
 #define ULTIMA8_AUDIO_MUSICPROCESS_H
 
-#include "ultima/ultima8/kernel/process.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
 #include "audio/mididrv.h"
+#include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -73,7 +73,6 @@ public:
 
 	INTRINSIC(I_playMusic);
 	INTRINSIC(I_musicStop);
-
 };
 
 } // End of namespace Ultima8

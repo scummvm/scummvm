@@ -50,11 +50,11 @@ private:
 	/** A tool function for string conversion
 	 * is this byte the start of a utf8 sequence?
 	 */
-	static inline bool isutf(char c) { return (((c)&0xC0)!=0x80); }
+	static inline bool isutf(char c) { return (((c)&0xC0) != 0x80); }
 
 public:
 	/** Construct a new empty string. */
-	UTF8Converter() {};
+	UTF8Converter(){};
 
 	/** Construct a UTF8String with original char array to convert */
 	UTF8Converter(const char *data);

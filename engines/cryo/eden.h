@@ -27,8 +27,8 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 
-#include "cryo/sound.h"
 #include "cryo/defs.h"
+#include "cryo/sound.h"
 
 enum Direction {
 	kCryoNorth = 0,
@@ -44,7 +44,6 @@ class EdenGraphics;
 
 class EdenGame {
 private:
-	
 	EdenGraphics *_graphics;
 
 public:
@@ -176,7 +175,6 @@ private:
 
 	void afficher128();
 
-
 	void restoreFriezes();
 
 	void useMainBank();
@@ -240,7 +238,7 @@ private:
 	void my_bulle();
 	void my_pr_bulle();
 	void drawSubtitleChar(byte c, byte color, int16 width);
-	
+
 	void patchSentence();
 	void vavapers();
 	void citadelle();
@@ -309,7 +307,6 @@ private:
 	void endDeath(int16 vid);
 	void chronoEvent();
 	void setChrono(int16 t);
-
 
 	void verifh(byte *ptr);
 	void openbigfile();
@@ -570,73 +567,73 @@ private:
 	uint8 _cursor[40 * 40];
 	uint8 *_cursorCenter;
 
-	byte  _ownObjects[128];
+	byte _ownObjects[128];
 
 private:
 	int16 _scrollPos;
 	int16 _oldScrollPos;
-	bool  _frescoTalk;
-	byte  _oldPix[8];
+	bool _frescoTalk;
+	byte _oldPix[8];
 	Common::Point _adamMapMarkPos;
-	byte  _cursKeepBuf[2500];
-	bool  _torchCursor;
+	byte _cursKeepBuf[2500];
+	bool _torchCursor;
 	int16 _curBankNum;
-	bool  _paletteUpdateRequired;
-	bool  _cursorSaved;
-	bool  _backgroundSaved;
+	bool _paletteUpdateRequired;
+	bool _cursorSaved;
+	bool _backgroundSaved;
 	byte *_bankData;
 	perso_t *_tyranPtr;
-	int   _lastAnimFrameNumb;
-	int   _curAnimFrameNumb;
-	int   _lastAnimTicks;
+	int _lastAnimFrameNumb;
+	int _curAnimFrameNumb;
+	int _lastAnimTicks;
 	int16 _numAnimFrames;
 	int16 _maxPersoDesc;
 	int16 _numImgDesc;
-	bool  _restartAnimation;
-	bool  _animationActive;
-	byte  _animationDelay;
-	byte  _animationIndex;
-	byte  _lastAnimationIndex;
+	bool _restartAnimation;
+	bool _animationActive;
+	byte _animationDelay;
+	byte _animationIndex;
+	byte _lastAnimationIndex;
 
 	byte *dword_30724;
-	byte *dword_30728;   //TODO: rename - something amim-related
+	byte *dword_30728; //TODO: rename - something amim-related
 	byte *_mouthAnimations;
 	byte *_animationTable;
-	byte  _imageDesc[512];
+	byte _imageDesc[512];
 	byte *_characterBankData;
 	int16 _numTextLines;
-	byte  _sentenceBuffer[400];
-	byte   phraseIconsBuffer[10];
-	byte   _sentenceCoordsBuffer[22];
-	byte   *_textOutPtr;
-	byte   *textout;
-	object_t        *_curSpecialObject;
-	bool  _lastDialogChoice;
+	byte _sentenceBuffer[400];
+	byte phraseIconsBuffer[10];
+	byte _sentenceCoordsBuffer[22];
+	byte *_textOutPtr;
+	byte *textout;
+	object_t *_curSpecialObject;
+	bool _lastDialogChoice;
 	bool parlemoiNormalFlag;
 
 	bool _closeCharacterDialog;
-	int             dword_30B04;
+	int dword_30B04;
 
-	char            _lastPhrasesFile;
+	char _lastPhrasesFile;
 	byte _dialogSkipFlags;
 
-	byte *_voiceSamplesBuffer;    //TODO: sound sample buffer
+	byte *_voiceSamplesBuffer; //TODO: sound sample buffer
 	Common::File _bigfile;
-	byte  _infoList[16];
+	byte _infoList[16];
 	byte *_mainBankBuf;
 	byte *_musicBuf;
 	byte *_gameLipsync;
 	byte *_gamePhrases;
-	byte *_gameDialogs;   //TODO: rename to dialogs?
+	byte *_gameDialogs; //TODO: rename to dialogs?
 	byte *_gameConditions;
-	byte *_placeRawBuf;   //TODO: fixme
+	byte *_placeRawBuf; //TODO: fixme
 	byte *_bankDataBuf;
 	Icon *_gameIcons;
 	Room *_gameRooms;
 	PakHeaderNode *_bigfileHeader;
 	byte *_glowBuffer;
 
-	byte *_gameFont;  //TODO: rename to font?
+	byte *_gameFont; //TODO: rename to font?
 
 	uint16 _mouseCenterX;
 	uint16 _mouseCenterY;
@@ -646,13 +643,13 @@ private:
 	bool _gameStarted;
 	bool _soundAllocated;
 
-	CSoundChannel  *_musicChannel;
-	CSoundChannel  *_voiceChannel;
+	CSoundChannel *_musicChannel;
+	CSoundChannel *_voiceChannel;
 	CSoundChannel *_hnmSoundChannel;
 
-	int   _demoCurrentTicks;
-	int   _demoStartTicks;
-	int   _currentTime;
+	int _demoCurrentTicks;
+	int _demoStartTicks;
+	int _currentTime;
 	int16 _cirsorPanX;
 	int16 _inventoryScrollDelay;
 	int16 _cursorPosX;
@@ -660,47 +657,47 @@ private:
 	int16 _currCursor;
 	Icon *_currSpot;
 	Icon *_curSpot2;
-	bool  _mouseHeld;
-	bool  _normalCursor;
+	bool _mouseHeld;
+	bool _normalCursor;
 
-	bool  _specialTextMode;
-	int   _voiceSamplesSize;   //TODO: perso vox sample data len
+	bool _specialTextMode;
+	int _voiceSamplesSize; //TODO: perso vox sample data len
 	int16 _musicRightVol;
 	int16 _musicLeftVol;
 
-	bool  _animateTalking;
-	bool  _personTalking;
-	byte  _musicFadeFlag;
+	bool _animateTalking;
+	bool _personTalking;
+	byte _musicFadeFlag;
 
-	char  _musicSequencePos;
-	bool  _musicPlayingFlag;
+	char _musicSequencePos;
+	bool _musicPlayingFlag;
 
 	byte *_musicSamplesPtr;
-	byte *_musicPatternsPtr;  //TODO: sndblock_t ?
+	byte *_musicPatternsPtr; //TODO: sndblock_t ?
 	byte *_musSequencePtr;
-	bool  _musicEnabledFlag;
+	bool _musicEnabledFlag;
 	uint16 *_currentObjectLocation;
-	bool  byte_31D64;
+	bool byte_31D64;
 
-	bool  _noPalette;
-	bool  _gameLoaded;
+	bool _noPalette;
+	bool _gameLoaded;
 #define MAX_TAPES 16
 	tape_t _tapes[MAX_TAPES];
-	byte   _confirmMode;
-	byte  *_curSliderValuePtr;
-	byte   _lastMenuItemIdLo;
-	int16  _lastTapeRoomNum;
-	int16  _curSliderX;
-	int16  _curSliderY;
-	int16  _destinationRoom;
-	int16  word_31E7A; // CHECKME: Unused?
+	byte _confirmMode;
+	byte *_curSliderValuePtr;
+	byte _lastMenuItemIdLo;
+	int16 _lastTapeRoomNum;
+	int16 _curSliderX;
+	int16 _curSliderY;
+	int16 _destinationRoom;
+	int16 word_31E7A; // CHECKME: Unused?
 
-	int16  word_378CC; // TODO: set by CLComputer_Init to 0
-	int16  word_378CE; // CHECKME: Unused
+	int16 word_378CC; // TODO: set by CLComputer_Init to 0
+	int16 word_378CE; // CHECKME: Unused
 
-	int	   _invIconsCount;
-	int	   _invIconsBase;
-	int	   _roomIconsBase;
+	int _invIconsCount;
+	int _invIconsBase;
+	int _roomIconsBase;
 
 	//// cube.c
 	int16 _cosTable[361];
@@ -714,21 +711,21 @@ private:
 	Cube _cube;
 	int16 _cursCurPCMap;
 	int16 _lines[200 * 8];
-	byte  _cubeTexture[0x4000];
-	int   _cubeFaces;
+	byte _cubeTexture[0x4000];
+	int _cubeFaces;
 	uint32 _cursorOldTick, _cursorNewTick;
 	byte *_codePtr;
 
 	uint8 tab_2CB1E[8][4];
 
-	const unsigned int kMaxMusicSize;  // largest .mus file size 
+	const unsigned int kMaxMusicSize; // largest .mus file size
 
 	// Loaded from cryo.dat
 	Follower _followerList[15];
 	byte _labyrinthPath[70];
 	char _dinoSpeedForCitadelLevel[16];
 	char _tabletView[12];
-	char _personRoomBankTable[84];	// special character backgrounds for specific rooms
+	char _personRoomBankTable[84]; // special character backgrounds for specific rooms
 
 	// Loaded from cryo.dat - Area transition descriptors
 	Goto _gotos[130];
@@ -748,7 +745,7 @@ private:
 	byte _cubeTextureCoords[3][6 * 2 * 3 * 2];
 
 	int32 _translationZ;
-	int8 _zDirection;	// 1 (up) or -1 (down)
+	int8 _zDirection; // 1 (up) or -1 (down)
 
 	// Torch/glow related
 	int16 _torchTick;
@@ -758,6 +755,6 @@ private:
 	int _cursCenter;
 };
 
-}
+} // namespace Cryo
 
 #endif

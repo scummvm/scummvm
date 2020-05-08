@@ -24,28 +24,28 @@
 #ifndef ULTIMA8_ULTIMA8
 #define ULTIMA8_ULTIMA8
 
+#include "common/archive.h"
+#include "common/error.h"
+#include "common/events.h"
+#include "common/hash-str.h"
+#include "common/random.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/system.h"
-#include "common/archive.h"
-#include "common/error.h"
-#include "common/random.h"
-#include "common/hash-str.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 #include "gui/debugger.h"
 #include "ultima/detection.h"
-#include "ultima/shared/std/containers.h"
 #include "ultima/shared/engine/ultima.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
-#include "ultima/ultima8/misc/args.h"
-#include "ultima/ultima8/kernel/core_app.h"
-#include "ultima/ultima8/kernel/mouse.h"
-#include "ultima/ultima8/kernel/hid_keys.h"
-#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/graphics/point_scaler.h"
-#include "common/events.h"
+#include "ultima/ultima8/kernel/core_app.h"
+#include "ultima/ultima8/kernel/hid_keys.h"
+#include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/misc/args.h"
+#include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -73,8 +73,9 @@ class AudioMixer;
 
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
 	friend class Debugger;
+
 private:
-	Std::list<ObjId> _textModes;      //!< Gumps that want text mode
+	Std::list<ObjId> _textModes; //!< Gumps that want text mode
 	bool _ttfOverrides;
 	// Audio Mixer
 	AudioMixer *_audioMixer;
@@ -105,27 +106,28 @@ private:
 
 	// Various dependancy flags
 	// Timing stuff
-	int32 _lerpFactor;       //!< Interpolation factor for this frame (0-256)
-	bool _inBetweenFrame;    //!< Set true if we are doing an inbetween frame
+	int32 _lerpFactor;    //!< Interpolation factor for this frame (0-256)
+	bool _inBetweenFrame; //!< Set true if we are doing an inbetween frame
 
-	bool _frameSkip;         //!< Set to true to enable frame skipping (default false)
-	bool _frameLimit;        //!< Set to true to enable frame limiting (default true)
-	bool _interpolate;       //!< Set to true to enable interpolation (default true)
-	int32 _animationRate;    //!< The animation rate. Affects all processes! (default 100)
+	bool _frameSkip;      //!< Set to true to enable frame skipping (default false)
+	bool _frameLimit;     //!< Set to true to enable frame limiting (default true)
+	bool _interpolate;    //!< Set to true to enable interpolation (default true)
+	int32 _animationRate; //!< The animation rate. Affects all processes! (default 100)
 
 	// Sort of Camera Related Stuff, move somewhere else
 
-	bool _avatarInStasis;    //!< If this is set to true, Avatar can't move,
+	bool _avatarInStasis; //!< If this is set to true, Avatar can't move,
 	//!< nor can Avatar start more usecode
-	bool _paintEditorItems;  //!< If true, paint items with the SI_EDITOR flag
-	bool _painting;          //!< Set true when painting
-	bool _showTouching;          //!< If true, highlight items touching Avatar
+	bool _paintEditorItems; //!< If true, paint items with the SI_EDITOR flag
+	bool _painting;         //!< Set true when painting
+	bool _showTouching;     //!< If true, highlight items touching Avatar
 	int32 _timeOffset;
 	bool _hasCheated;
 	bool _cheatsEnabled;
-	uint32 _lastDown[HID_LAST+1];
-	bool _down[HID_LAST+1];
+	uint32 _lastDown[HID_LAST + 1];
+	bool _down[HID_LAST + 1];
 	unsigned int _inversion;
+
 private:
 	/**
 	 * Does engine deinitialization
@@ -154,13 +156,14 @@ private:
 	void setupCoreGumps();
 
 	//! Does a Full reset of the Engine (including shutting down Video)
-//	void fullReset();
+	//	void fullReset();
 
 	// called depending upon command line arguments
-	void GraphicSysInit(); // starts/restarts the graphics subsystem
+	void GraphicSysInit();                        // starts/restarts the graphics subsystem
 	bool LoadConsoleFont(Std::string confontini); // loads the console font
 
 	void handleDelayedEvents();
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -171,8 +174,10 @@ protected:
 	 * Returns the data archive folder and version that's required
 	 */
 	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+
 public:
 	PointScaler point_scaler;
+
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -322,6 +327,7 @@ public:
 	//! \param message The message to display on the box
 	//! \param exit_to_menu If true, then exit to the Pentagram menu then display the message
 	void Error(Std::string message, Std::string title = Std::string(), bool exit_to_menu = false);
+
 public:
 	unsigned int getInversion() const {
 		return _inversion;
@@ -332,6 +338,7 @@ public:
 	bool isInverted() {
 		return (_inversion >= 0x4000 && _inversion < 0xC000);
 	}
+
 public:
 	bool areCheatsEnabled() const {
 		return _cheatsEnabled;

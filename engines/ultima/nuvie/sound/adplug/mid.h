@@ -27,7 +27,7 @@ namespace Nuvie {
 
 class OriginFXAdLibDriver;
 
-class CmidPlayer: public CPlayer {
+class CmidPlayer : public CPlayer {
 public:
 	static CPlayer *factory(Copl *newopl);
 
@@ -78,7 +78,6 @@ protected:
 	int subsongs;
 	unsigned char *data;
 
-
 	int adlib_style;
 	int adlib_mode;
 
@@ -100,7 +99,6 @@ protected:
 	OriginFXAdLibDriver *origin_fx_driver;
 
 private:
-
 	void load_ultima_midi_tracks();
 	void midiprintf(const char *format, ...);
 	unsigned char datalook(long pos);

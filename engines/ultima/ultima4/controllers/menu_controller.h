@@ -58,6 +58,7 @@ public:
 	 * Mouse button was pressed
 	 */
 	bool mousePressed(const Common::Point &mousePos) override;
+
 protected:
 	Menu *_menu;
 	TextView *_view;

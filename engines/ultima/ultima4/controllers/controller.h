@@ -101,6 +101,7 @@ public:
 	 * Returns true if game should quit
 	 */
 	bool shouldQuit() const;
+
 private:
 	int _timerInterval;
 };
@@ -120,15 +121,17 @@ class WaitableController : public Controller {
 private:
 	bool _exitWhenDone;
 	T _defaultValue;
+
 protected:
 	T _value;
 	void doneWaiting() {
 		if (_exitWhenDone)
 			Controller_endWait();
 	}
+
 public:
 	WaitableController(T defaultValue) : _defaultValue(defaultValue),
-		_value(defaultValue), _exitWhenDone(false) {}
+	                                     _value(defaultValue), _exitWhenDone(false) {}
 
 	virtual T getValue() {
 		return shouldQuit() ? _defaultValue : _value;

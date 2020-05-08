@@ -25,11 +25,11 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CTurnOnPlaySound, CTurnOnObject)
-	ON_MESSAGE(MouseButtonUpMsg)
+ON_MESSAGE(MouseButtonUpMsg)
 END_MESSAGE_MAP()
 
 CTurnOnPlaySound::CTurnOnPlaySound() : CTurnOnObject(),
-		_soundName("NULL"), _soundVolume(80), _soundVal3(0) {
+                                       _soundName("NULL"), _soundVolume(80), _soundVal3(0) {
 }
 
 void CTurnOnPlaySound::save(SimpleFile *file, int indent) {

@@ -29,8 +29,8 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 
 namespace Wintermute {
 
@@ -43,8 +43,8 @@ bool EmulateImgExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(function->name, "changeWindowCaption") == 0) {
 		stack->correctParams(2);
-		/*int hwnd =*/ stack->pop()->getInt();
-		/*const char *title =*/ stack->pop()->getString();
+		/*int hwnd =*/stack->pop()->getInt();
+		/*const char *title =*/stack->pop()->getString();
 
 		// do nothing
 
@@ -60,9 +60,9 @@ bool EmulateImgExternalCalls(BaseGame *inGame, ScStack *stack, ScStack *thisStac
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(function->name, "maximizedWindow") == 0) {
 		stack->correctParams(3);
-		/*int hwnd =*/ stack->pop()->getInt();
-		/*int width =*/ stack->pop()->getInt();
-		/*int height =*/ stack->pop()->getInt();
+		/*int hwnd =*/stack->pop()->getInt();
+		/*int width =*/stack->pop()->getInt();
+		/*int height =*/stack->pop()->getInt();
 
 		// do nothing
 

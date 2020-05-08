@@ -27,16 +27,16 @@
  */
 
 #include "engines/wintermute/ad/ad_talk_holder.h"
+#include "common/str.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "common/str.h"
 
 namespace Wintermute {
 
@@ -46,7 +46,6 @@ IMPLEMENT_PERSISTENT(AdTalkHolder, false)
 AdTalkHolder::AdTalkHolder(BaseGame *inGame) : AdObject(inGame) {
 	_sprite = nullptr;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkHolder::~AdTalkHolder() {
@@ -68,7 +67,6 @@ AdTalkHolder::~AdTalkHolder() {
 BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 	BaseSprite *ret = nullptr;
 
-
 	// forced stance?
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
@@ -85,7 +83,6 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 			}
 		}
 	}
-
 
 	if (stance != nullptr) {
 		// search special talk stances
@@ -119,7 +116,6 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 
 	return ret;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -298,7 +294,6 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -314,7 +309,6 @@ ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 	/*
@@ -326,15 +320,14 @@ bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 	    return STATUS_OK;
 	}
 
-	else*/ return AdObject::scSetProperty(name, value);
+	else*/
+	return AdObject::scSetProperty(name, value);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 const char *AdTalkHolder::scToString() {
 	return "[talk-holder object]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
@@ -352,7 +345,6 @@ bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::persist(BasePersistenceManager *persistMgr) {

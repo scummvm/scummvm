@@ -45,7 +45,10 @@ public:
 	~Sound() override;
 
 	virtual bool load(MfcArchive &file, NGIArchive *archive);
-	bool load(MfcArchive &file) override { assert(0); return false; } // Disable base class
+	bool load(MfcArchive &file) override {
+		assert(0);
+		return false;
+	} // Disable base class
 	void updateVolume();
 	int getId() const { return _id; }
 	Audio::SoundHandle *getHandle() const { return _handle; }
@@ -63,9 +66,12 @@ class SoundList : public CObject {
 	Common::Array<Sound> _soundItems;
 	Common::ScopedPtr<NGIArchive> _libHandle;
 
- public:
+public:
 	virtual bool load(MfcArchive &file, const Common::String &fname);
-	bool load(MfcArchive &file) override { assert(0); return false; } // Disable base class
+	bool load(MfcArchive &file) override {
+		assert(0);
+		return false;
+	} // Disable base class
 	bool loadFile(const Common::String &fname, const Common::String &libname);
 
 	int getCount() { return _soundItems.size(); }

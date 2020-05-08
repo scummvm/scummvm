@@ -42,6 +42,7 @@ private:
 	 * Plays a 3DO audio
 	 */
 	bool cmd3DO_PlayAudio(int argc, const char **argv);
+
 public:
 	ScalpelDebugger(SherlockEngine *vm);
 	~ScalpelDebugger() override {}
@@ -51,4 +52,4 @@ public:
 
 } // End of namespace Sherlock
 
-#endif	/* SHERLOCK_DEBUGGER_H */
+#endif /* SHERLOCK_DEBUGGER_H */

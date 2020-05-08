@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/gump.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -31,8 +31,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GumpNotifyProcess, Process)
 
 GumpNotifyProcess::GumpNotifyProcess()
-	: Process(), _gump(0) {
-
+    : Process(), _gump(0) {
 }
 
 GumpNotifyProcess::GumpNotifyProcess(uint16 it) : Process(it), _gump(0) {
@@ -47,11 +46,11 @@ void GumpNotifyProcess::setGump(Gump *g) {
 	_gump = g->getObjId();
 }
 
-
 void GumpNotifyProcess::notifyClosing(int res) {
 	_gump = 0;
 	_result = res;
-	if (!(_flags & PROC_TERMINATED)) terminate();
+	if (!(_flags & PROC_TERMINATED))
+		terminate();
 }
 
 void GumpNotifyProcess::terminate() {
@@ -79,7 +78,8 @@ void GumpNotifyProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool GumpNotifyProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	_gump = rs->readUint16LE();
 

@@ -21,8 +21,8 @@
  */
 
 #include "titanic/star_control/flight_manager_unmarked.h"
-#include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/error_code.h"
+#include "titanic/star_control/fmatrix.h"
 
 namespace Titanic {
 

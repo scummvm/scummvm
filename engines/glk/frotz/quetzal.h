@@ -23,9 +23,9 @@
 #ifndef GLK_FROTZ_QUETZAL
 #define GLK_FROTZ_QUETZAL
 
+#include "glk/frotz/frotz_types.h"
 #include "glk/glk_types.h"
 #include "glk/quetzal.h"
-#include "glk/frotz/frotz_types.h"
 
 namespace Glk {
 namespace Frotz {
@@ -38,6 +38,7 @@ private:
 	QuetzalReader _reader;
 	QuetzalWriter _writer;
 	zword frames[STACK_SIZE / 4 + 1];
+
 public:
 	/**
 	 * Constructor

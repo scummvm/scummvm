@@ -20,19 +20,18 @@
  *
  */
 
-#include "common/system.h"
 #include "common/updates.h"
+#include "common/system.h"
 #include "common/translation.h"
 
 namespace Common {
 
 static const int updateIntervals[] = {
-	UpdateManager::kUpdateIntervalNotSupported,
-	UpdateManager::kUpdateIntervalOneDay,
-	UpdateManager::kUpdateIntervalOneWeek,
-	UpdateManager::kUpdateIntervalOneMonth,
-	-1
-};
+    UpdateManager::kUpdateIntervalNotSupported,
+    UpdateManager::kUpdateIntervalOneDay,
+    UpdateManager::kUpdateIntervalOneWeek,
+    UpdateManager::kUpdateIntervalOneMonth,
+    -1};
 
 const int *UpdateManager::getUpdateIntervals() {
 	return updateIntervals;

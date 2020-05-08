@@ -22,18 +22,18 @@
 #include "dragons/cursor.h"
 #include "dragons/actor.h"
 #include "dragons/actorresource.h"
-#include "dragons/dragons.h"
 #include "dragons/dragonimg.h"
 #include "dragons/dragonini.h"
 #include "dragons/dragonobd.h"
+#include "dragons/dragons.h"
 #include "dragons/inventory.h"
 #include "dragons/scene.h"
-#include "dragons/scriptopcodes.h"
 #include "dragons/screen.h"
+#include "dragons/scriptopcodes.h"
 
 namespace Dragons {
 
-Cursor::Cursor(DragonsEngine *vm): _vm(vm), _actor(0), _x(0), _y(0) {
+Cursor::Cursor(DragonsEngine *vm) : _vm(vm), _actor(0), _x(0), _y(0) {
 	_sequenceID = 0;
 	_data_800728b0_cursor_seqID = 0;
 	_iniUnderCursor = 0;
@@ -53,7 +53,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	_actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(_sequenceID);
 	_actor->_flags |= (ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
-					   ACTOR_FLAG_200);
+	                   ACTOR_FLAG_200);
 
 	dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
 	dragonINIResource->getFlickerRecord()->flags |= INI_FLAG_1;
@@ -64,7 +64,6 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	_data_800728b0_cursor_seqID = 0;
 	_performActionTargetINI = 0;
 }
-
 
 void Cursor::update() {
 	if (!_vm->isFlagSet(ENGINE_FLAG_8) || _vm->isFlagSet(Dragons::ENGINE_FLAG_100)) {
@@ -81,9 +80,7 @@ void Cursor::update() {
 	_actor->_y_pos = _y;
 
 	// 0x80028104
-	if (_iniUnderCursor != 0
-			&& ((_iniUnderCursor & 0x8000 && _vm->_inventory->isOpen())
-			||(!(_iniUnderCursor & 0x8000) && _vm->getINI(_iniUnderCursor - 1)->flags & 0x80))) {
+	if (_iniUnderCursor != 0 && ((_iniUnderCursor & 0x8000 && _vm->_inventory->isOpen()) || (!(_iniUnderCursor & 0x8000) && _vm->getINI(_iniUnderCursor - 1)->flags & 0x80))) {
 		if (_actor->_sequenceID != 0x84) {
 			_actor->updateSequence(0x84);
 		}
@@ -97,7 +94,7 @@ void Cursor::update() {
 		return;
 	}
 
-	if (_iniUnderCursor == 0x8002 && inventorySequenceID == 4) {//goto LAB_80028204;
+	if (_iniUnderCursor == 0x8002 && inventorySequenceID == 4) { //goto LAB_80028204;
 		if (_actor->_sequenceID != 0x84) {
 			_actor->updateSequence(0x84);
 		}
@@ -107,17 +104,17 @@ void Cursor::update() {
 	if (_iniUnderCursor != 0x8002 || (inventorySequenceID != 1 && inventorySequenceID != 3)) {
 		if ((_iniUnderCursor != 0x8001) || ((inventorySequenceID != 0 && (inventorySequenceID != 3)))) {
 			if (_sequenceID == 5) {
-				uint16 uVar1 = (uint) _objectInHandSequenceID;
+				uint16 uVar1 = (uint)_objectInHandSequenceID;
 				if (_cursorActivationSeqOffset != 0) {
 					uVar1 = uVar1 + 1;
 				}
-				if (uVar1 == (uint) _actor->_sequenceID) {
+				if (uVar1 == (uint)_actor->_sequenceID) {
 					return;
 				}
-				_actor->updateSequence((uint) _objectInHandSequenceID + (uint) (_cursorActivationSeqOffset != 0));
+				_actor->updateSequence((uint)_objectInHandSequenceID + (uint)(_cursorActivationSeqOffset != 0));
 			} else {
-				if (_sequenceID + (uint) _cursorActivationSeqOffset != (uint) _actor->_sequenceID) {
-					_actor->updateSequence(_sequenceID + (uint) _cursorActivationSeqOffset);
+				if (_sequenceID + (uint)_cursorActivationSeqOffset != (uint)_actor->_sequenceID) {
+					_actor->updateSequence(_sequenceID + (uint)_cursorActivationSeqOffset);
 				}
 			}
 			return;
@@ -160,20 +157,12 @@ int16 Cursor::updateINIUnderCursor() {
 			}
 		}
 		Common::Point inventoryPosition = _vm->_inventory->getPosition();
-		if (_x >= inventoryPosition.x + 0xa + xOffset
-				&& _x < inventoryPosition.x + 0x35 + xOffset
-				&& _y >= inventoryPosition.y + 0xa
-				&& _y < inventoryPosition.y + 0x25) {
+		if (_x >= inventoryPosition.x + 0xa + xOffset && _x < inventoryPosition.x + 0x35 + xOffset && _y >= inventoryPosition.y + 0xa && _y < inventoryPosition.y + 0x25) {
 			_iniUnderCursor = 0x8001;
 			return _iniUnderCursor;
 		}
 
-		if (_x >= inventoryPosition.x + 0x36
-				&& _x < inventoryPosition.x + 0x5f
-				&& _y >= inventoryPosition.y + 0xa
-				&& _y < inventoryPosition.y + 0x25
-				&& _vm->_inventory->getPositionIndex() != 0
-				&& _vm->_inventory->getPositionIndex() != 2) {
+		if (_x >= inventoryPosition.x + 0x36 && _x < inventoryPosition.x + 0x5f && _y >= inventoryPosition.y + 0xa && _y < inventoryPosition.y + 0x25 && _vm->_inventory->getPositionIndex() != 0 && _vm->_inventory->getPositionIndex() != 2) {
 			_iniUnderCursor = 0x8002;
 			return _iniUnderCursor;
 		}
@@ -196,7 +185,7 @@ int16 Cursor::updateIniFromScene() {
 	int16 data_80072890_orig = _performActionTargetINI;
 	int16 data_800728b0_cursor_seqID_orig = _data_800728b0_cursor_seqID;
 
-	for (int i = 0; i <_vm->_dragonINIResource->totalRecords(); i++) {
+	for (int i = 0; i < _vm->_dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId != _vm->_scene->getSceneId()) {
 			// 0x80028be4
@@ -208,8 +197,7 @@ int16 Cursor::updateIniFromScene() {
 				if (ini->actor->isFlagSet(ACTOR_FLAG_40) && ini->actor->isFlagSet(ACTOR_FLAG_8)) {
 					int16 iniActorXPosition = ini->actor->_x_pos - ini->actor->_frame->xOffset;
 					int16 iniActorYPosition = ini->actor->_y_pos - ini->actor->_frame->yOffset;
-					if (cursorX >= iniActorXPosition && cursorX < iniActorXPosition + ini->actor->_frame->width
-							&& cursorY >= iniActorYPosition && cursorY < iniActorYPosition + ini->actor->_frame->height) {
+					if (cursorX >= iniActorXPosition && cursorX < iniActorXPosition + ini->actor->_frame->width && cursorY >= iniActorYPosition && cursorY < iniActorYPosition + ini->actor->_frame->height) {
 						cursorOverIni = i + 1;
 					}
 				}
@@ -243,12 +231,12 @@ int16 Cursor::updateIniFromScene() {
 						byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getAfterSceneLoadedScript(sceneId);
 						ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
-//						uVar17 = uVar15;
-//						local_58 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
-//						data_800728b0 = idx;
-//						local_54 = read_int32();
-//						local_54 = local_54 + local_58;
-//						uVar6 = ;
+						//						uVar17 = uVar15;
+						//						local_58 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
+						//						data_800728b0 = idx;
+						//						local_54 = read_int32();
+						//						local_54 = local_54 + local_58;
+						//						uVar6 = ;
 						if (executeScript(scriptOpCall, 0)) {
 							newSeqId = idx;
 							break;
@@ -270,9 +258,9 @@ int16 Cursor::updateIniFromScene() {
 				byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getAfterSceneLoadedScript(sceneId);
 				ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
-//				local_48 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
-//				local_44 = read_int32();
-//				local_44 = local_44 + local_48;
+				//				local_48 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
+				//				local_44 = read_int32();
+				//				local_44 = local_44 + local_48;
 				if (executeScript(scriptOpCall, 0)) {
 					_iniUnderCursor = cursorOverIni;
 					_performActionTargetINI = data_80072890_orig;

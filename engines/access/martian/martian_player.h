@@ -23,8 +23,8 @@
 #ifndef ACCESS_MARTIAN_PLAYER_H
 #define ACCESS_MARTIAN_PLAYER_H
 
-#include "common/scummsys.h"
 #include "access/player.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -35,6 +35,7 @@ class MartianEngine;
 class MartianPlayer : public Player {
 private:
 	MartianEngine *_game;
+
 public:
 	MartianPlayer(AccessEngine *vm);
 	void load() override;

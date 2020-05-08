@@ -20,24 +20,23 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/paged_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
-#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
+#include "ultima/ultima8/misc/pent_include.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(PagedGump, ModalGump)
 
-PagedGump::PagedGump(int left, int right, int top, int shape):
-	ModalGump(0, 0, 5, 5), _leftOff(left), _rightOff(right), _topOff(top),
-	_gumpShape(shape), _nextButton(nullptr), _prevButton(nullptr),
-	_buttonsEnabled(true) {
+PagedGump::PagedGump(int left, int right, int top, int shape) : ModalGump(0, 0, 5, 5), _leftOff(left), _rightOff(right), _topOff(top),
+                                                                _gumpShape(shape), _nextButton(nullptr), _prevButton(nullptr),
+                                                                _buttonsEnabled(true) {
 	_current = _gumps.end();
 }
 
@@ -67,12 +66,12 @@ void PagedGump::InitGump(Gump *newparent, bool take_focus) {
 
 	//!! Hardcoded gump
 	_nextButton = new ButtonWidget(0, 0, buttonright, buttonright, false,
-	                              LAYER_ABOVE_NORMAL);
+	                               LAYER_ABOVE_NORMAL);
 	_nextButton->InitGump(this);
 	_nextButton->setRelativePosition(TOP_RIGHT, _rightOff, _topOff);
 
 	_prevButton = new ButtonWidget(0, 0, buttonleft, buttonleft, false,
-	                              LAYER_ABOVE_NORMAL);
+	                               LAYER_ABOVE_NORMAL);
 	_prevButton->InitGump(this);
 	_prevButton->setRelativePosition(TOP_LEFT, _leftOff, _topOff);
 	_prevButton->HideGump();
@@ -86,11 +85,10 @@ void PagedGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
 
-
-
 bool PagedGump::OnKeyDown(int key, int mod) {
 	if (_current != _gumps.end())
-		if ((*_current)->OnKeyDown(key, mod)) return true;
+		if ((*_current)->OnKeyDown(key, mod))
+			return true;
 
 	switch (key) {
 	case Common::KEYCODE_ESCAPE:
@@ -104,8 +102,10 @@ bool PagedGump::OnKeyDown(int key, int mod) {
 }
 
 void PagedGump::ChildNotify(Gump *child, uint32 message) {
-	if (!_buttonsEnabled) return;
-	if (_gumps.empty()) return;
+	if (!_buttonsEnabled)
+		return;
+	if (_gumps.empty())
+		return;
 
 	ObjId cid = child->getObjId();
 

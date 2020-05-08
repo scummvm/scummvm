@@ -25,10 +25,10 @@
 
 #include "common/array.h"
 #include "common/hash-str.h"
-#include "common/str.h"
-#include "common/str-array.h"
 #include "common/language.h"
 #include "common/platform.h"
+#include "common/str-array.h"
+#include "common/str.h"
 
 /**
  * A simple structure used to map gameids (like "monkey", "sword1", ...) to
@@ -82,10 +82,9 @@ typedef Common::Array<QualifiedGameDescriptor> QualifiedGameList;
  */
 enum GameSupportLevel {
 	kStableGame = 0, // the game is fully supported
-	kTestingGame, // the game is not supposed to end up in releases yet but is ready for public testing
-	kUnstableGame // the game is not even ready for public testing yet
+	kTestingGame,    // the game is not supposed to end up in releases yet but is ready for public testing
+	kUnstableGame    // the game is not even ready for public testing yet
 };
-
 
 /**
  * A record describing the properties of a file. Used on the existing
@@ -114,10 +113,10 @@ struct DetectedGame {
 	DetectedGame();
 	DetectedGame(const Common::String &engine, const PlainGameDescriptor &pgd);
 	DetectedGame(const Common::String &engine, const Common::String &id,
-	               const Common::String &description,
-	               Common::Language language = Common::UNK_LANG,
-	               Common::Platform platform = Common::kPlatformUnknown,
-	               const Common::String &extra = Common::String());
+	             const Common::String &description,
+	             Common::Language language = Common::UNK_LANG,
+	             Common::Platform platform = Common::kPlatformUnknown,
+	             const Common::String &extra = Common::String());
 
 	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
@@ -176,6 +175,7 @@ struct DetectedGame {
 	void addExtraEntry(const Common::String &key, const Common::String &value) {
 		_extraConfigEntries[key] = value;
 	}
+
 private:
 	/**
 	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.

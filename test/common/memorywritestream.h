@@ -3,7 +3,7 @@
 #include "common/memstream.h"
 
 class MemoryWriteStreamTestSuite : public CxxTest::TestSuite {
-	public:
+public:
 	void test_err() {
 		byte temp = 0;
 
@@ -23,7 +23,7 @@ class MemoryWriteStreamTestSuite : public CxxTest::TestSuite {
 		byte buffer[7] = {};
 		Common::MemoryWriteStream stream(buffer, sizeof(buffer));
 
-		const byte data[7] = { 7, 4, 3, 0, 10, 12, 1 };
+		const byte data[7] = {7, 4, 3, 0, 10, 12, 1};
 		stream.write(data, sizeof(data));
 		TS_ASSERT(memcmp(buffer, data, sizeof(data)) == 0);
 		TS_ASSERT(!stream.err());

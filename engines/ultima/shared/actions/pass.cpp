@@ -27,7 +27,7 @@ namespace Shared {
 namespace Actions {
 
 BEGIN_MESSAGE_MAP(Pass, Action)
-	ON_MESSAGE(PassMsg)
+ON_MESSAGE(PassMsg)
 END_MESSAGE_MAP()
 
 bool Pass::PassMsg(CPassMsg &msg) {

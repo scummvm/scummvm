@@ -20,11 +20,11 @@
  *
  */
 
-#include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/files/tmx_map.h"
 #include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/core/tile_manager.h"
 #include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/tmx_map.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -38,7 +38,6 @@ TMXMap::TMXMap(TileManager *tm, Map *m, ObjManager *om) {
 }
 
 TMXMap::~TMXMap() {
-
 }
 
 bool TMXMap::exportTmxMapFiles(Std::string dir, nuvie_game_t type) {
@@ -46,8 +45,6 @@ bool TMXMap::exportTmxMapFiles(Std::string dir, nuvie_game_t type) {
 	savename = get_game_tag(type);
 	Std::string filename;
 	build_path(savedir, savename + "_tileset.bmp", filename);
-
-
 
 	tile_manager->exportTilesetToBmpFile(filename);
 
@@ -79,10 +76,9 @@ void TMXMap::writeRoofTileset(uint8 level) {
 }
 
 void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, Std::string layerName,
-		uint16 gidOffset, uint16 bitsPerTile, const unsigned char *data) {
+                        uint16 gidOffset, uint16 bitsPerTile, const unsigned char *data) {
 	Std::string slen = sint32ToString((sint32)sideLength);
-	Std::string header = " <layer name=\"" + layerName + "\" width=\"" + slen + "\" height=\""
-	                     + slen + "\">\n";
+	Std::string header = " <layer name=\"" + layerName + "\" width=\"" + slen + "\" height=\"" + slen + "\">\n";
 	header += "  <data encoding=\"csv\">\n";
 
 	tmx->writeBuf((const unsigned char *)header.c_str(), header.length());
@@ -160,7 +156,7 @@ void TMXMap::writeObjects(NuvieIOFileWrite *tmx, uint8 level, bool forceLower, b
 					Tile *t = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
 					Std::string s;
 					if (canDrawTile(t, forceLower, toptiles)) {
-						s = "  <object name=\"" + encode_xml_entity(Std::string(obj_manager->get_obj_name(obj))) + "\" gid=\"" + sint32ToString(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n + 1) + "\" x=\"" + sint32ToString((x) * 16) + "\" y=\"" + sint32ToString((y + 1) * 16) + "\" width=\"16\" height=\"16\">\n";
+						s = "  <object name=\"" + encode_xml_entity(Std::string(obj_manager->get_obj_name(obj))) + "\" gid=\"" + sint32ToString(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n + 1) + "\" x=\"" + sint32ToString((x)*16) + "\" y=\"" + sint32ToString((y + 1) * 16) + "\" width=\"16\" height=\"16\">\n";
 						s += "    <properties>\n";
 						s += "       <property name=\"obj_n\" value=\"" + sint32ToString(obj->obj_n) + "\"/>\n";
 						s += "       <property name=\"frame_n\" value=\"" + sint32ToString(obj->frame_n) + "\"/>\n";
@@ -204,13 +200,10 @@ bool TMXMap::exportMapLevel(uint8 level) {
 	Std::string swidth = sint32ToString((sint32)width);
 	Std::string header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 	header +=
-	    "<map version=\"1.0\" orientation=\"orthogonal\" renderorder=\"right-down\" width=\""
-	    + swidth + "\" height=\"" + swidth
-	    + "\" tilewidth=\"16\" tileheight=\"16\">\n";
+	    "<map version=\"1.0\" orientation=\"orthogonal\" renderorder=\"right-down\" width=\"" + swidth + "\" height=\"" + swidth + "\" tilewidth=\"16\" tileheight=\"16\">\n";
 	header +=
 	    " <tileset firstgid=\"1\" name=\"tileset\" tilewidth=\"16\" tileheight=\"16\">\n";
-	header += "  <image source=\"" + savename
-	          + "_tileset.bmp\" trans=\"00dffc\" width=\"512\" height=\"1024\"/>\n";
+	header += "  <image source=\"" + savename + "_tileset.bmp\" trans=\"00dffc\" width=\"512\" height=\"1024\"/>\n";
 	header += " </tileset>\n";
 
 	if (map->get_roof_data(level) != NULL) {
@@ -232,10 +225,7 @@ bool TMXMap::exportMapLevel(uint8 level) {
 
 	Std::string footer = "</map>\n";
 
-
 	tmx.writeBuf((const unsigned char *)footer.c_str(), footer.length());
-
-
 
 	tmx.close();
 

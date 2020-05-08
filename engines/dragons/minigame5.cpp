@@ -21,11 +21,11 @@
  */
 #include "dragons/minigame5.h"
 #include "dragons/actor.h"
-#include "dragons/dragons.h"
 #include "dragons/dragonini.h"
-#include "dragons/talk.h"
+#include "dragons/dragons.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
+#include "dragons/talk.h"
 
 namespace Dragons {
 
@@ -37,7 +37,6 @@ namespace Dragons {
 #define DAT_80063e38 0x21E3E
 #define DAT_8006391c 0x475DA
 
-
 Minigame5::Minigame5(DragonsEngine *vm) : _vm(vm), _dat_800633e6(0) {}
 
 void Minigame5::run() {
@@ -48,8 +47,8 @@ void Minigame5::run() {
 	//byte *uVar3;
 	//uint uVar4;
 	uint16 local_850;
-	uint16 auStack2120 [1000];
-	DragonINI*local_78;
+	uint16 auStack2120[1000];
+	DragonINI *local_78;
 	uint16 local_76;
 	uint16 local_74;
 	uint16 local_72;
@@ -74,9 +73,9 @@ void Minigame5::run() {
 	int16 local_46;
 	int16 local_44;
 	short local_42;
-	uint16 local_30 [4];
+	uint16 local_30[4];
 	//uint16 uStack42;
-	uint16 local_28 [10];
+	uint16 local_28[10];
 	short local_10;
 	uint32 savedEngineFlags;
 
@@ -117,10 +116,9 @@ void Minigame5::run() {
 	local_850 = flickerActor->_x_pos;
 	uVar1 = flickerActor->_y_pos;
 	local_74 = 0;
-//	DisableVSyncEvent();
-	pusherActor = _vm->_actorManager->loadActor
-			(0x26, 0, (int)(short)local_850, (int)(((uint)uVar1 + 5) * 0x10000) >> 0x10);
-//	EnableVSyncEvent();
+	//	DisableVSyncEvent();
+	pusherActor = _vm->_actorManager->loadActor(0x26, 0, (int)(short)local_850, (int)(((uint)uVar1 + 5) * 0x10000) >> 0x10);
+	//	EnableVSyncEvent();
 	if (pusherActor == nullptr) {
 		error("Couldn't alloc pusher!");
 	}
@@ -129,9 +127,9 @@ void Minigame5::run() {
 	pusherActor->_y_pos = flickerActor->_y_pos + 7;
 	pusherActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	pusherActor->_priorityLayer = 6;
-//	DisableVSyncEvent();
+	//	DisableVSyncEvent();
 	wheelsActor = _vm->_actorManager->loadActor(7, 0x11, 0, 0);
-//	EnableVSyncEvent();
+	//	EnableVSyncEvent();
 	if (wheelsActor == nullptr) {
 		error("Couldn't alloc wheels!");
 	}
@@ -142,18 +140,18 @@ void Minigame5::run() {
 	wheelsActor->_priorityLayer = 5;
 	wheelsActor->updateSequence(0x11);
 	local_62 = 0;
-//	DisableVSyncEvent();
+	//	DisableVSyncEvent();
 	bombActor = _vm->_actorManager->loadActor(7, 0x1c, 0, 0);
-//	EnableVSyncEvent();
+	//	EnableVSyncEvent();
 	if (bombActor == nullptr) {
 		error("Couldn't alloc bomb!");
 	}
 	bombActor->_flags = bombActor->_flags | 0x380;
 	bombActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	bombActor->_priorityLayer = 0;
-//	DisableVSyncEvent();
+	//	DisableVSyncEvent();
 	dustActor = _vm->_actorManager->loadActor(8, 8, 100, 100, 0);
-//	EnableVSyncEvent();
+	//	EnableVSyncEvent();
 	if (dustActor == nullptr) {
 		error("Couldn't alloc dust sprite!");
 	}
@@ -179,9 +177,9 @@ void Minigame5::run() {
 					if (!_vm->isActionButtonPressed()) {
 						if (local_74 == 0) {
 							if ((((flickerActor->_sequenceID != 0) &&
-								  (flickerActor->_sequenceID != 5)) &&
-								 (flickerActor->_sequenceID != 6)) ||
-								((flickerActor->_flags & 4) != 0)) {
+							      (flickerActor->_sequenceID != 5)) &&
+							     (flickerActor->_sequenceID != 6)) ||
+							    ((flickerActor->_flags & 4) != 0)) {
 								flickerActor->updateSequence(0x19);
 							}
 						} else {
@@ -209,8 +207,8 @@ void Minigame5::run() {
 							local_74 = local_74 + 1;
 							if (local_74 < 0x14) {
 								if (((pusherActor->_sequenceID != 4) &&
-									 (pusherActor->_sequenceID != 2)) &&
-									(pusherActor->_sequenceID != 3)) {
+								     (pusherActor->_sequenceID != 2)) &&
+								    (pusherActor->_sequenceID != 3)) {
 									pusherActor->updateSequence(4);
 								}
 								if (flickerActor->_sequenceID != 0x1a) {
@@ -220,8 +218,8 @@ void Minigame5::run() {
 							} else {
 								if (local_74 < 0x2d) {
 									if (((pusherActor->_sequenceID != 5) &&
-										 (pusherActor->_sequenceID != 2)) &&
-										(pusherActor->_sequenceID != 3)) {
+									     (pusherActor->_sequenceID != 2)) &&
+									    (pusherActor->_sequenceID != 3)) {
 										pusherActor->updateSequence(5);
 									}
 									if (flickerActor->_sequenceID != 0x1e) {
@@ -231,8 +229,8 @@ void Minigame5::run() {
 								} else {
 									if (local_74 < 0x169) {
 										if (((pusherActor->_sequenceID != 6) &&
-											 (pusherActor->_sequenceID != 2)) &&
-											(pusherActor->_sequenceID != 3)) {
+										     (pusherActor->_sequenceID != 2)) &&
+										    (pusherActor->_sequenceID != 3)) {
 											pusherActor->updateSequence(6);
 										}
 										if (flickerActor->_sequenceID != 0x1f) {
@@ -256,7 +254,8 @@ void Minigame5::run() {
 					if (flickerActor->_sequenceID == 0x1b) {
 						if ((flickerActor->_flags & 4) != 0) {
 							if ((((int)(uint)local_850 < (int)((local_30[0]) - 6)) ||
-								 ((uint)local_30[1] + 6 < (uint)local_850)) || (local_72 != local_30[2])) {
+							     ((uint)local_30[1] + 6 < (uint)local_850)) ||
+							    (local_72 != local_30[2])) {
 								local_42 = 8;
 							} else {
 								local_42 = 0;
@@ -264,7 +263,7 @@ void Minigame5::run() {
 							local_5c = 0;
 							if ((local_42 != 8) && ((local_850 < local_30[0] || (local_30[1] < local_850)))) {
 								local_5c = (short)((int)(((local_30[0]) + 0x17) * 0x80) / 0x2a) -
-										   (short)((int)((uint)local_850 << 7) / 0x2a);
+								           (short)((int)((uint)local_850 << 7) / 0x2a);
 							}
 							local_60 = local_850 << 7;
 							bombActor->_x_pos = local_850 & 0x1ff;
@@ -304,21 +303,21 @@ void Minigame5::run() {
 					bombScale = bombScale - 3;
 					bombActor->_scale = bombScale;
 					if (bombScale == 0x7f) {
-						if (((local_60 >> 7 < local_30[0]) || (local_30[1] < local_60 >> 7)) ||
-							(local_72 != local_30[2])) {
+						if (((local_60 >> 7 < local_30[0]) || (local_30[1]<local_60> > 7)) ||
+						    (local_72 != local_30[2])) {
 							local_42 = 8;
 						} else {
 							local_42 = 0;
 						}
 						if (local_42 == 8) {
 							if ((((local_72 == 1) && (local_60 >> 7 < 0x10e)) ||
-								 ((local_72 == 2 &&
-								   ((((0x7f < local_60 >> 7 && (local_60 >> 7 < 0xad)) ||
-									  ((0x30 < local_60 >> 7 && (local_60 >> 7 < 0x4a)))) ||
-									 ((0xf8 < local_60 >> 7 && (local_60 >> 7 < 0x10f)))))))) ||
-								((local_72 == 3 &&
-								  (((0x3c < local_60 >> 7 && (local_60 >> 7 < 0x46)) ||
-									((0x101 < local_60 >> 7 && (local_60 >> 7 < 0x10a)))))))) {
+							     ((local_72 == 2 &&
+							       ((((0x7f < local_60 >> 7 && (local_60 >> 7 < 0xad)) ||
+							          ((0x30 < local_60 >> 7 && (local_60 >> 7 < 0x4a)))) ||
+							         ((0xf8 < local_60 >> 7 && (local_60 >> 7 < 0x10f)))))))) ||
+							    ((local_72 == 3 &&
+							      (((0x3c < local_60 >> 7 && (local_60 >> 7 < 0x46)) ||
+							        ((0x101 < local_60 >> 7 && (local_60 >> 7 < 0x10a)))))))) {
 								bombActor->_priorityLayer = 0;
 								dustActor->_priorityLayer = 4;
 								dustActor->_x_pos = bombActor->_x_pos;
@@ -374,7 +373,7 @@ void Minigame5::run() {
 					_vm->waitForFrames(0x12);
 					_vm->_talk->loadText(DAT_80063e38, auStack2120, 1000);
 					_vm->_talk->displayDialogAroundPoint(auStack2120, 0xf, 2, 0x501, 0, DAT_80063e38);
-//						TODO	callMaybeResetData();
+					//						TODO	callMaybeResetData();
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(3);
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->waitUntilFlag8And4AreSet();
 					pusherActor->updateSequence(7);
@@ -395,8 +394,7 @@ void Minigame5::run() {
 					if (!_vm->isLeftKeyPressed() || (local_850 < 0x37)) {
 						if (!_vm->isRightKeyPressed() || (0x107 < local_850)) {
 							if ((pusherActor->_sequenceID != local_66) &&
-								(((pusherActor->_sequenceID != 4 && (pusherActor->_sequenceID != 5))
-								  && (pusherActor->_sequenceID != 6)))) {
+							    (((pusherActor->_sequenceID != 4 && (pusherActor->_sequenceID != 5)) && (pusherActor->_sequenceID != 6)))) {
 								pusherActor->updateSequence((uint)local_66);
 								if (local_50 == 0) {
 									pusherActor->_x_pos = flickerActor->_x_pos + -0xe;
@@ -448,7 +446,7 @@ void Minigame5::run() {
 							local_850 = 0x108;
 						}
 						local_62 = (short)((uint)local_62 + 1) +
-								   (short)((int)((uint)local_62 + 1) / 6 >> 1) * -0xc;
+						           (short)((int)((uint)local_62 + 1) / 6 >> 1) * -0xc;
 						flickerActor->_x_pos = local_850;
 						wheelsActor->_x_pos = local_850;
 						if ((uint)wheelsActor->_sequenceID != (uint)local_62 / 3 + 0x11) {
@@ -459,7 +457,8 @@ void Minigame5::run() {
 					}
 				}
 			} while (local_10 == 0);
-			if ((local_10 == 2) || (0x117 < flickerActor->_x_pos)) break;
+			if ((local_10 == 2) || (0x117 < flickerActor->_x_pos))
+				break;
 			flickerActor->_x_pos = flickerActor->_x_pos + 2;
 			if (pusherActor->_sequenceID != 2) {
 				pusherActor->updateSequence(2);
@@ -476,7 +475,8 @@ void Minigame5::run() {
 				wheelsActor->updateSequence((uint)local_62 / 3 + 0x11);
 			}
 		}
-		if (local_10 == 1) break;
+		if (local_10 == 1)
+			break;
 		if (local_10 == 2) {
 			_vm->_dragonINIResource->getRecord(DAT_80063a40 + -1)->objectState2 = 2;
 			pusherActor->updateSequence(7);
@@ -484,24 +484,24 @@ void Minigame5::run() {
 			pusherActor->updateSequence(1);
 			_vm->waitForFrames(0x1e);
 			_vm->_dragonINIResource->getRecord(DAT_80063a40 + -1)->actor->clearFlag(ACTOR_FLAG_100);
-			LAB_8009157c:
-//			callMaybeResetData();
+		LAB_8009157c:
+			//			callMaybeResetData();
 			flickerActor->updateSequence(0x15);
 			local_46 = 0;
 			local_44 = 0;
 			if (local_10 == 2) {
-//				DisableVSyncEvent();
+				//				DisableVSyncEvent();
 				local_46 = pusherActor->_x_pos;
 				local_44 = pusherActor->_y_pos;
 				pusherActor->reset_maybe();
-//				EnableVSyncEvent();
+				//				EnableVSyncEvent();
 			} else {
-//				DisableVSyncEvent();
+				//				DisableVSyncEvent();
 				dustActor->reset_maybe();
 				bombActor->reset_maybe();
 				wheelsActor->reset_maybe();
 				pusherActor->reset_maybe();
-//				EnableVSyncEvent();
+				//				EnableVSyncEvent();
 			}
 			_vm->_dragonINIResource->setFlickerRecord(local_78);
 			if (local_10 == 2) {

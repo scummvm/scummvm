@@ -21,8 +21,8 @@
  */
 
 #include "agi/agi.h"
-#include "agi/opcodes.h"
 #include "agi/graphics.h"
+#include "agi/opcodes.h"
 
 #include "agi/preagi.h"
 #include "agi/preagi_mickey.h"
@@ -33,27 +33,27 @@ namespace Agi {
 Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	registerCmd("debug",           WRAP_METHOD(Console, Cmd_Debug));
-	registerCmd("cont",            WRAP_METHOD(Console, Cmd_Cont));
-	registerCmd("agiver",          WRAP_METHOD(Console, Cmd_Agiver));
-	registerCmd("version",         WRAP_METHOD(Console, Cmd_Version));
-	registerCmd("flags",           WRAP_METHOD(Console, Cmd_Flags));
-	registerCmd("logic0",          WRAP_METHOD(Console, Cmd_Logic0));
-	registerCmd("objs",            WRAP_METHOD(Console, Cmd_Objs));
-	registerCmd("runopcode",       WRAP_METHOD(Console, Cmd_RunOpcode));
-	registerCmd("opcode",          WRAP_METHOD(Console, Cmd_Opcode));
-	registerCmd("step",            WRAP_METHOD(Console, Cmd_Step));
-	registerCmd("trigger",         WRAP_METHOD(Console, Cmd_Trigger));
-	registerCmd("vars",            WRAP_METHOD(Console, Cmd_Vars));
-	registerCmd("setvar",          WRAP_METHOD(Console, Cmd_SetVar));
-	registerCmd("setflag",         WRAP_METHOD(Console, Cmd_SetFlag));
-	registerCmd("setobj",          WRAP_METHOD(Console, Cmd_SetObj));
-	registerCmd("room",            WRAP_METHOD(Console, Cmd_Room));
-	registerCmd("bt",              WRAP_METHOD(Console, Cmd_BT));
-	registerCmd("show_map",        WRAP_METHOD(Console, Cmd_ShowMap));
-	registerCmd("screenobj",       WRAP_METHOD(Console, Cmd_ScreenObj));
-	registerCmd("vmvars",          WRAP_METHOD(Console, Cmd_VmVars));
-	registerCmd("vmflags",         WRAP_METHOD(Console, Cmd_VmFlags));
+	registerCmd("debug", WRAP_METHOD(Console, Cmd_Debug));
+	registerCmd("cont", WRAP_METHOD(Console, Cmd_Cont));
+	registerCmd("agiver", WRAP_METHOD(Console, Cmd_Agiver));
+	registerCmd("version", WRAP_METHOD(Console, Cmd_Version));
+	registerCmd("flags", WRAP_METHOD(Console, Cmd_Flags));
+	registerCmd("logic0", WRAP_METHOD(Console, Cmd_Logic0));
+	registerCmd("objs", WRAP_METHOD(Console, Cmd_Objs));
+	registerCmd("runopcode", WRAP_METHOD(Console, Cmd_RunOpcode));
+	registerCmd("opcode", WRAP_METHOD(Console, Cmd_Opcode));
+	registerCmd("step", WRAP_METHOD(Console, Cmd_Step));
+	registerCmd("trigger", WRAP_METHOD(Console, Cmd_Trigger));
+	registerCmd("vars", WRAP_METHOD(Console, Cmd_Vars));
+	registerCmd("setvar", WRAP_METHOD(Console, Cmd_SetVar));
+	registerCmd("setflag", WRAP_METHOD(Console, Cmd_SetFlag));
+	registerCmd("setobj", WRAP_METHOD(Console, Cmd_SetObj));
+	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("bt", WRAP_METHOD(Console, Cmd_BT));
+	registerCmd("show_map", WRAP_METHOD(Console, Cmd_ShowMap));
+	registerCmd("screenobj", WRAP_METHOD(Console, Cmd_ScreenObj));
+	registerCmd("vmvars", WRAP_METHOD(Console, Cmd_VmVars));
+	registerCmd("vmflags", WRAP_METHOD(Console, Cmd_VmFlags));
 	registerCmd("disableautosave", WRAP_METHOD(Console, Cmd_DisableAutomaticSave));
 }
 
@@ -400,7 +400,7 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 
 	uint8 *code = NULL;
 	uint8 op = 0;
-	uint8 p[CMD_BSIZE] = { 0 };
+	uint8 p[CMD_BSIZE] = {0};
 	int parameterSize;
 	Common::Array<ScriptPos>::iterator it;
 
@@ -655,9 +655,9 @@ bool Console::parseInteger(const char *argument, int &result) {
 MickeyConsole::MickeyConsole(MickeyEngine *mickey) : GUI::Debugger() {
 	_mickey = mickey;
 
-	registerCmd("room",        WRAP_METHOD(MickeyConsole, Cmd_Room));
-	registerCmd("drawPic",     WRAP_METHOD(MickeyConsole, Cmd_DrawPic));
-	registerCmd("drawObj",     WRAP_METHOD(MickeyConsole, Cmd_DrawObj));
+	registerCmd("room", WRAP_METHOD(MickeyConsole, Cmd_Room));
+	registerCmd("drawPic", WRAP_METHOD(MickeyConsole, Cmd_DrawPic));
+	registerCmd("drawObj", WRAP_METHOD(MickeyConsole, Cmd_DrawObj));
 }
 
 bool MickeyConsole::Cmd_Room(int argc, const char **argv) {

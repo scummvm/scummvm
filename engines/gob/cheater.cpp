@@ -20,8 +20,8 @@
  *
  */
 
-#include "gob/gob.h"
 #include "gob/cheater.h"
+#include "gob/gob.h"
 
 namespace Gob {
 

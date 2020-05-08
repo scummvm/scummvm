@@ -22,15 +22,15 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+#include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
+#include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/main_menu_process.h"
+#include "ultima/ultima8/gumps/readable_gump.h"
+#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/avatar_death_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/gumps/readable_gump.h"
-#include "ultima/ultima8/games/game_data.h"
-#include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/gumps/main_menu_process.h"
-#include "ultima/ultima8/gumps/gump_notify_process.h"
-#include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
@@ -83,7 +83,8 @@ void AvatarDeathProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool AvatarDeathProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Process::loadData(rs, version)) return false;
+	if (!Process::loadData(rs, version))
+		return false;
 
 	return true;
 }

@@ -49,6 +49,7 @@ public:
 
 	ScValue *scGetProperty(const Common::String &name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
+
 private:
 	int32 _editorSelectedPoint;
 	float _lastMimicScale;

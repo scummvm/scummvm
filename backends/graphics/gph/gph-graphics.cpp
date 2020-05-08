@@ -27,7 +27,7 @@
 #include "backends/graphics/gph/gph-graphics.h"
 
 GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
-	: DownscaleSdlGraphicsManager(sdlEventSource, window) {
+    : DownscaleSdlGraphicsManager(sdlEventSource, window) {
 }
 
 void GPHGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {

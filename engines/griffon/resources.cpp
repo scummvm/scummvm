@@ -49,8 +49,7 @@ namespace Griffon {
 		Common::String line;        \
 		line = file.readLine();     \
 		sscanf(line.c_str(), A, B); \
-	} while(0)
-
+	} while (0)
 
 void GriffonEngine::initialize() {
 	// init char *_floatstri[kMaxFloat]
@@ -92,7 +91,6 @@ void GriffonEngine::initialize() {
 
 	_logosImg = loadImage("art/logos.bmp");
 	_theEndImg = loadImage("art/theend.bmp");
-
 
 	loadTiles();
 	loadTriggers();
@@ -242,7 +240,6 @@ void GriffonEngine::loadMap(int mapnum) {
 		_triggerLoc[mapx][mapy] = trig;
 	}
 	file.close();
-
 
 	for (int y = 0; y <= 23; y++) {
 		for (int x = 0; x <= 39; x++)
@@ -452,7 +449,6 @@ void GriffonEngine::loadMap(int mapnum) {
 			}
 		}
 	}
-
 
 	if (_curMap == 62 && _scriptFlag[kScriptGardenMasterKey][0] > 0)
 		_lastNpc = 0;
@@ -687,7 +683,6 @@ void GriffonEngine::loadMap(int mapnum) {
 
 			_npcInfo[i].headTargetX[0] = _npcInfo[i].x + 12;
 			_npcInfo[i].headTargetY[0] = _npcInfo[i].y + 14;
-
 		}
 
 		if (_npcInfo[i].spriteset == kMonsterFireHydra) {
@@ -741,7 +736,6 @@ void GriffonEngine::loadMap(int mapnum) {
 	}
 
 	file.close();
-
 
 	int cx, cy, npx, npy, lx, ly;
 
@@ -888,7 +882,6 @@ void GriffonEngine::loadMap(int mapnum) {
 
 		_clipBg->fillRect(rcDest, ccc);
 	}
-
 
 	// max ups
 	if (_curMap == 83 && _scriptFlag[kScriptGetSword3][0] == 1 && _player.sword < 3) {
@@ -1171,6 +1164,5 @@ void GriffonEngine::loadObjectDB() {
 
 	file.close();
 }
-
 
 } // end of namespace Griffon

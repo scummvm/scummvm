@@ -25,11 +25,11 @@
 
 #include "common/scummsys.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
+#include "tsage/scenes.h"
 
 namespace TsAGE {
 
@@ -40,6 +40,7 @@ using namespace TsAGE;
 class SpeakerGText : public Speaker {
 public:
 	SceneObject _sceneObject;
+
 public:
 	SpeakerGText();
 
@@ -57,6 +58,7 @@ class SpeakerPOR : public AnimatedSpeaker {
 public:
 	SceneObject _object3;
 	SpeakerAction1 _action2;
+
 public:
 	SpeakerPOR();
 	Common::String getClassName() override { return "SpeakerPOR"; }
@@ -211,6 +213,7 @@ public:
 class SpeakerSR : public AnimatedSpeaker {
 public:
 	SceneObject _object3;
+
 public:
 	SpeakerSR();
 

@@ -20,20 +20,18 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/audio/audio_channel.h"
-#include "ultima/ultima8/audio/audio_sample.h"
-#include "common/memstream.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "common/memstream.h"
+#include "ultima/ultima8/audio/audio_sample.h"
+#include "ultima/ultima8/misc/pent_include.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-
-AudioChannel::AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo) :
-		_mixer(mixer), _decompressorSize(0), _frameSize(0), _loop(0), _sample(nullptr),
-		_frameEvenOdd(0), _paused(false), _priority(0), _lVol(0), _rVol(0), _pitchShift(0) {
+AudioChannel::AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo) : _mixer(mixer), _decompressorSize(0), _frameSize(0), _loop(0), _sample(nullptr),
+                                                                                  _frameEvenOdd(0), _paused(false), _priority(0), _lVol(0), _rVol(0), _pitchShift(0) {
 }
 
 AudioChannel::~AudioChannel(void) {
@@ -75,23 +73,20 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 
 	// Create the _sample
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
-		new Common::MemoryReadStream(streamData.getData(), streamData.size(), DisposeAfterUse::YES),
-		_sample->getRate(),
-		_sample->isStereo() ? Audio::FLAG_STEREO | Audio::FLAG_UNSIGNED : Audio::FLAG_UNSIGNED,
-		DisposeAfterUse::YES
-	);
+	    new Common::MemoryReadStream(streamData.getData(), streamData.size(), DisposeAfterUse::YES),
+	    _sample->getRate(),
+	    _sample->isStereo() ? Audio::FLAG_STEREO | Audio::FLAG_UNSIGNED : Audio::FLAG_UNSIGNED,
+	    DisposeAfterUse::YES);
 
 	int loops = _loop;
 	if (loops == -1) {
 		// loop forever
 		loops = 0;
 	}
-	Audio::AudioStream *stream = (_loop <= 1 && _loop != -1) ?
-		(Audio::AudioStream *)audioStream :
-		new Audio::LoopingAudioStream(audioStream, loops);
+	Audio::AudioStream *stream = (_loop <= 1 && _loop != -1) ? (Audio::AudioStream *)audioStream : new Audio::LoopingAudioStream(audioStream, loops);
 
 	// Play it
-	int vol = (_lVol + _rVol) / 2;		 // range is 0 ~ 255
+	int vol = (_lVol + _rVol) / 2;     // range is 0 ~ 255
 	int balance = (_rVol - _lVol) / 2; // range is -127 ~ +127
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream, -1, vol, balance);
 	if (paused)

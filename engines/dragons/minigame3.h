@@ -29,15 +29,16 @@ class DragonsEngine;
 class Minigame3 {
 private:
 	DragonsEngine *_vm;
+
 public:
 	Minigame3(DragonsEngine *vm);
 
 	void run();
+
 private:
 	void updateBackgroundLayerOffset(uint32 layerNumber, int16 xOffset, int16 yOffset);
 	void fun_80017f70_paletteRelated(uint16 unk);
 	void fun_80017ef0();
-
 };
 
 } // End of namespace Dragons

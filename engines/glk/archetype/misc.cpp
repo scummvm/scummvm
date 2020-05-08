@@ -21,9 +21,9 @@
  */
 
 #include "glk/archetype/misc.h"
+#include "common/debug-channels.h"
 #include "glk/archetype/archetype.h"
 #include "glk/quetzal.h"
-#include "common/debug-channels.h"
 
 namespace Glk {
 namespace Archetype {
@@ -151,7 +151,7 @@ String formatFilename(const String &name, const String &ext, bool replace) {
 void load_string(Common::ReadStream *fIn, String &the_string) {
 	char buffer[257];
 	size_t strSize = fIn->readByte();
-	size_t strSize2 = fIn->readByte();		// Redundant second copy of the length
+	size_t strSize2 = fIn->readByte(); // Redundant second copy of the length
 	assert(strSize2 == strSize);
 
 	fIn->read(buffer, strSize);

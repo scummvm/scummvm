@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "chewy/chewy.h"
 #include "chewy/console.h"

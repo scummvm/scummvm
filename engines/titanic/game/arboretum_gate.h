@@ -39,10 +39,12 @@ class CArboretumGate : public CBackground {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool TurnOn(CTurnOn *msg);
+
 private:
 	static bool _gotSpeechCentre;
 	static bool _disabled;
 	static int _initialFrame;
+
 private:
 	Season _seasonNum;
 	CString _arboretumViewName;
@@ -72,6 +74,7 @@ private:
 	int _startFrameWinterOn2;
 	int _endFrameWinterOn2;
 	CString _exitViewName;
+
 public:
 	CLASSDEF;
 	CArboretumGate();

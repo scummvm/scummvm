@@ -23,8 +23,8 @@
 #ifndef MYST_SCRIPTS_PREVIEW_H
 #define MYST_SCRIPTS_PREVIEW_H
 
-#include "mohawk/sound.h"
 #include "mohawk/myst_stacks/myst.h"
+#include "mohawk/sound.h"
 
 #include "common/scummsys.h"
 #include "common/util.h"
@@ -57,7 +57,7 @@ private:
 	DECLARE_OPCODE(o_speech_init);
 	DECLARE_OPCODE(o_library_init);
 
-	uint16 _libraryState; // 4
+	uint16 _libraryState;          // 4
 	MystAreaImageSwitch *_library; // 32
 
 	bool _speechRunning;

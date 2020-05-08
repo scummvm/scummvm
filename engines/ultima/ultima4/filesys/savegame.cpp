@@ -28,9 +28,9 @@
 #include "ultima/ultima4/game/object.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/spell.h"
-#include "ultima/ultima4/views/stats.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/mapmgr.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -121,10 +121,10 @@ void SaveGame::load(Common::SeekableReadStream *stream) {
 		g_game->setMap(map, 1, nullptr);
 	else
 
-	/**
+	    /**
 	 * Translate info from the savegame to something we can use
 	 */
-	if (g_context->_location->_prev) {
+	    if (g_context->_location->_prev) {
 		g_context->_location->_coords = MapCoords(_x, _y, _dngLevel);
 		g_context->_location->_prev->_coords = MapCoords(_dngX, _dngY);
 	} else {

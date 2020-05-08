@@ -45,8 +45,8 @@ void HotspotInfoTable::loadFromStream(Common::SeekableReadStream *stream) {
 		_entries[i].hotspotExtra = stream->readUint32BE();
 		_entries[i].hotspotItem = stream->readUint16BE();
 		debug(0, "Hotspot[%d]: %d %d %d %d %d %d", i, _entries[i].hotspot, _entries[i].hotspotActivation,
-				_entries[i].hotspotRoom, _entries[i].hotspotDirection, _entries[i].hotspotExtra,
-				_entries[i].hotspotItem);
+		      _entries[i].hotspotRoom, _entries[i].hotspotDirection, _entries[i].hotspotExtra,
+		      _entries[i].hotspotItem);
 	}
 }
 

@@ -22,8 +22,8 @@
 
 #include "glk/tads/tads2/tads2.h"
 #include "glk/tads/tads2/appctx.h"
-#include "glk/tads/tads2/runtime_app.h"
 #include "glk/tads/tads2/os.h"
+#include "glk/tads/tads2/runtime_app.h"
 
 namespace Glk {
 namespace TADS {
@@ -39,7 +39,7 @@ void TADS2::runGame() {
 
 	char name[255];
 	strcpy(name, getFilename().c_str());
-	char *argv[2] = { nullptr, name };
+	char *argv[2] = {nullptr, name};
 
 	trdmain(2, argv, nullptr, ".sav");
 

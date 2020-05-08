@@ -31,7 +31,7 @@ class SeekableReadStream;
 
 namespace Modules {
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h" // START STRUCT PACKING
 
 struct note_t {
 	byte sample;
@@ -40,7 +40,7 @@ struct note_t {
 	uint16 effect;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h" // END STRUCT PACKING
 
 typedef note_t pattern_t[64][4];
 

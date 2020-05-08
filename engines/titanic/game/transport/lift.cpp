@@ -29,12 +29,12 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CLift, CTransport)
-	ON_MESSAGE(StatusChangeMsg)
-	ON_MESSAGE(MovieEndMsg)
-	ON_MESSAGE(EnterViewMsg)
-	ON_MESSAGE(EnterRoomMsg)
-	ON_MESSAGE(LeaveRoomMsg)
-	ON_MESSAGE(ActMsg)
+ON_MESSAGE(StatusChangeMsg)
+ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(EnterViewMsg)
+ON_MESSAGE(EnterRoomMsg)
+ON_MESSAGE(LeaveRoomMsg)
+ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
 bool CLift::_hasHead;
@@ -73,7 +73,7 @@ void CLift::load(SimpleFile *file) {
 bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 	CPetControl *pet = getPetControl();
 	if ((!_hasHead && pet->getRoomsElevatorNum() == 4) ||
-			(!_hasCorrectHead && pet->getRoomsElevatorNum() == 4))
+	    (!_hasCorrectHead && pet->getRoomsElevatorNum() == 4))
 		return true;
 
 	int oldFloorNum = msg->_oldStatus;
@@ -89,17 +89,15 @@ bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 		newClass = 2;
 
 	static const int UP_FRAME_NUMBERS[40] = {
-		0, 8, 13, 18, 23, 28, 33, 38, 43, 48, 53, 58,
-		63, 68, 73, 78, 83, 88, 93, 118, 123, 128, 133,
-		138, 143, 148, 153, 228, 233, 238, 243, 248, 253,
-		258, 263, 268, 273, 278, 298, 299
-	};
+	    0, 8, 13, 18, 23, 28, 33, 38, 43, 48, 53, 58,
+	    63, 68, 73, 78, 83, 88, 93, 118, 123, 128, 133,
+	    138, 143, 148, 153, 228, 233, 238, 243, 248, 253,
+	    258, 263, 268, 273, 278, 298, 299};
 	static const int DOWN_FRAME_NUMBERS[39] = {
-		598, 589, 584, 579, 574, 569, 564, 559, 554, 549,
-		544, 539, 534, 529, 524, 519, 514, 509, 504, 479,
-		474, 469, 464, 459, 454, 449, 444, 369, 364, 359,
-		354, 349, 344, 339, 334, 329, 324, 319, 299
-	};
+	    598, 589, 584, 579, 574, 569, 564, 559, 554, 549,
+	    544, 539, 534, 529, 524, 519, 514, 509, 504, 479,
+	    474, 469, 464, 459, 454, 449, 444, 369, 364, 359,
+	    354, 349, 344, 339, 334, 329, 324, 319, 299};
 
 	pet->setRoomsFloorNum(floorNum);
 	if (pet->getRoomsElevatorNum() == 2 || pet->getRoomsElevatorNum() == 4) {
@@ -227,10 +225,9 @@ bool CLift::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CLift::EnterViewMsg(CEnterViewMsg *msg) {
 	static const int FRAME_NUMBERS[40] = {
-		0, 8, 13, 18, 23, 28, 33, 38, 43, 48, 53, 58, 63, 68, 73,
-		78, 83, 88, 93, 118, 123, 128, 133, 138, 143, 148, 153,
-		228, 233, 238, 243, 248, 253, 258, 263, 268, 273, 278, 298
-	};
+	    0, 8, 13, 18, 23, 28, 33, 38, 43, 48, 53, 58, 63, 68, 73,
+	    78, 83, 88, 93, 118, 123, 128, 133, 138, 143, 148, 153,
+	    228, 233, 238, 243, 248, 253, 258, 263, 268, 273, 278, 298};
 
 	CPetControl *pet = getPetControl();
 	loadFrame(FRAME_NUMBERS[pet->getRoomsFloorNum() - 1]);

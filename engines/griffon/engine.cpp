@@ -34,8 +34,8 @@
  *
  */
 
-#include "griffon/griffon.h"
 #include "griffon/console.h"
+#include "griffon/griffon.h"
 
 #include "common/system.h"
 
@@ -336,6 +336,5 @@ void GriffonEngine::newGame() {
 
 	mainLoop();
 }
-
 
 } // end of namespace Griffon

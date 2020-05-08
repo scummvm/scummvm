@@ -105,54 +105,45 @@ void Room::demon0ReachedTopDoor() {
 
 void Room::demon0TalkToPrelate() {
 	const TextRef options1[] = {
-		TX_SPEAKER_KIRK,
-		6,
-		8,
-		3,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    6,
+	    8,
+	    3,
+	    TX_BLANK};
 	const TextRef firstResponse0[] = {
-		TX_SPEAKER_ANGIVEN,
-		38,
-		TX_BLANK
-	};
+	    TX_SPEAKER_ANGIVEN,
+	    38,
+	    TX_BLANK};
 	const TextRef firstResponse1[] = {
-		TX_SPEAKER_ANGIVEN,
-		32,
-		TX_BLANK
-	};
+	    TX_SPEAKER_ANGIVEN,
+	    32,
+	    TX_BLANK};
 	const TextRef options2[] = {
-		TX_SPEAKER_KIRK,
-		2,
-		5,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    2,
+	    5,
+	    TX_BLANK};
 	const TextRef secondResponse[] = {
-		TX_SPEAKER_ANGIVEN,
-		31,
-		TX_BLANK
-	};
+	    TX_SPEAKER_ANGIVEN,
+	    31,
+	    TX_BLANK};
 	const TextRef options3[] = {
-		TX_SPEAKER_KIRK,
-		10,
-		12,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    10,
+	    12,
+	    TX_BLANK};
 	const TextRef thirdResponse[] = {
-		TX_SPEAKER_ANGIVEN,
-		35,
-		TX_BLANK
-	};
+	    TX_SPEAKER_ANGIVEN,
+	    35,
+	    TX_BLANK};
 	const TextRef badConclusion[] = {
-		TX_SPEAKER_ANGIVEN,
-		37,
-		TX_BLANK
-	};
+	    TX_SPEAKER_ANGIVEN,
+	    37,
+	    TX_BLANK};
 	const TextRef goodConclusion[] = {
-		TX_SPEAKER_ANGIVEN,
-		34,
-		TX_BLANK
-	};
+	    TX_SPEAKER_ANGIVEN,
+	    34,
+	    TX_BLANK};
 
 	if (_awayMission->demon.talkedToPrelate)
 		return;
@@ -260,24 +251,24 @@ void Room::demon0LookAtShelter() {
 }
 
 void Room::demon0TalkToKirk() {
-	showText(TX_SPEAKER_KIRK,  9, true);
+	showText(TX_SPEAKER_KIRK, 9, true);
 	showText(TX_SPEAKER_MCCOY, 27, true);
-	showText(TX_SPEAKER_KIRK,  4, true);
+	showText(TX_SPEAKER_KIRK, 4, true);
 	showText(TX_SPEAKER_MCCOY, 24, true);
 }
 
 void Room::demon0TalkToRedshirt() {
 	showText(TX_SPEAKER_EVERTS, 43, true);
-	showText(TX_SPEAKER_MCCOY,  26, true);
+	showText(TX_SPEAKER_MCCOY, 26, true);
 	showText(TX_SPEAKER_EVERTS, 42, true);
-	showText(TX_SPEAKER_MCCOY,  25, true);
-	showText(TX_SPEAKER_KIRK,   7, true);
+	showText(TX_SPEAKER_MCCOY, 25, true);
+	showText(TX_SPEAKER_KIRK, 7, true);
 	showText(TX_SPEAKER_EVERTS, 44, true);
 }
 
 void Room::demon0TalkToMcCoy() {
 	if (_awayMission->demon.talkedToPrelate) {
-		showText(TX_SPEAKER_KIRK,  11, true);
+		showText(TX_SPEAKER_KIRK, 11, true);
 		showText(TX_SPEAKER_MCCOY, 23, true);
 		showText(TX_SPEAKER_SPOCK, 29, true);
 		if (!_awayMission->redshirtDead)
@@ -336,5 +327,4 @@ void Room::demon0BadResponse() {
 
 	showText(TX_SPEAKER_ANGIVEN, 33, true);
 }
-}
-
+} // namespace StarTrek

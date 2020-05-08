@@ -20,7 +20,6 @@
  *
  */
 
-
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 // Allow use of stuff in <nds.h>
@@ -30,20 +29,20 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "common/util.h"
 #include "common/rect.h"
 #include "common/savefile.h"
+#include "common/util.h"
 
-#include "osystem_ds.h"
-#include "nds.h"
-#include "dsmain.h"
-#include "nds/registers_alt.h"
+#include "backends/fs/ds/ds-fs-factory.h"
+#include "cdaudio.h"
 #include "common/config-manager.h"
 #include "common/str.h"
-#include "cdaudio.h"
+#include "dsmain.h"
 #include "graphics/surface.h"
+#include "nds.h"
+#include "nds/registers_alt.h"
+#include "osystem_ds.h"
 #include "touchkeyboard.h"
-#include "backends/fs/ds/ds-fs-factory.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/timer/default/default-timer.h"
@@ -77,23 +76,22 @@
 #elif defined(DS_BUILD_K)
 #define DEFAULT_CONFIG_FILE "scummvmk.ini"
 #else
-	// Use the "scummvm.ini" as config file if no build was specified. This
-	// currently only happens with builds made using the regular ScummVM build
-	// system (as opposed to the nds specific build system).
+// Use the "scummvm.ini" as config file if no build was specified. This
+// currently only happens with builds made using the regular ScummVM build
+// system (as opposed to the nds specific build system).
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
 OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
-	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _frameBufferExists(false),
-	_disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0)
-{
-//	eventNum = 0;
-//	lastPenFrame = 0;
-//	queuePos = 0;
+    : eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _frameBufferExists(false),
+      _disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0) {
+	//	eventNum = 0;
+	//	lastPenFrame = 0;
+	//	queuePos = 0;
 	_instance = this;
-//	_mixer = NULL;
+	//	_mixer = NULL;
 	//_frameBufferExists = false;
 }
 
@@ -122,7 +120,7 @@ void OSystem_DS::initBackend() {
 	}
 
 	_timerManager = new DefaultTimerManager();
-    DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
+	DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
 
 	if (ConfMan.hasKey("22khzaudio", "ds") && ConfMan.getBool("22khzaudio", "ds")) {
 		DS::startSound(22050, 8192);
@@ -183,7 +181,7 @@ int16 OSystem_DS::getWidth() {
 }
 
 void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
-//	consolePrintf("Setpal %d, %d\n", start, num);
+	//	consolePrintf("Setpal %d, %d\n", start, num);
 
 	for (unsigned int r = start; r < start + num; r++) {
 		int red = *colors;
@@ -194,7 +192,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 
-//		if (r != 255)
+		//		if (r != 255)
 		{
 			u16 paletteValue = red | (green << 5) | (blue << 10);
 
@@ -209,7 +207,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 
 			_palette[r] = paletteValue;
 		}
-	//	if (num == 255) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
+		//	if (num == 255) consolePrintf("pal:%d r:%d g:%d b:%d\n", r, red, green, blue);
 
 		colors += 3;
 	}
@@ -229,7 +227,7 @@ void OSystem_DS::restoreHardwarePalette() {
 
 void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 
-//	consolePrintf("Cursor palette set: start: %d, cols: %d\n", start, num);
+	//	consolePrintf("Cursor palette set: start: %d, cols: %d\n", start, num);
 	for (unsigned int r = start; r < start + num; r++) {
 		int red = *colors;
 		int green = *(colors + 1);
@@ -250,7 +248,7 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) const {
-//	consolePrintf("Grabpalette");
+	//	consolePrintf("Grabpalette");
 
 	for (unsigned int r = start; r < start + num; r++) {
 		*colors++ = (BG_PALETTE[r] & 0x001F) << 3;
@@ -259,16 +257,19 @@ void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) const 
 	}
 }
 
-
-#define MISALIGNED16(ptr) (((u32) (ptr) & 1) != 0)
+#define MISALIGNED16(ptr) (((u32)(ptr)&1) != 0)
 
 void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
-	if (!_graphicsEnable) return;
-	if (w <= 1) return;
-	if (h < 0) return;
-	if (!DS::getIsDisplayMode8Bit()) return;
+	if (!_graphicsEnable)
+		return;
+	if (w <= 1)
+		return;
+	if (h < 0)
+		return;
+	if (!DS::getIsDisplayMode8Bit())
+		return;
 
-//	consolePrintf("CopyRectToScreen %d\n", w * h);
+	//	consolePrintf("CopyRectToScreen %d\n", w * h);
 
 	u16 *bg;
 	s32 stride;
@@ -285,8 +286,7 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 		stride = DS::get8BitBackBufferStride();
 	}
 
-
-	if (((pitch & 1) != 0) || ((w & 1) != 0) || (((int) (buf) & 1) != 0)) {
+	if (((pitch & 1) != 0) || ((w & 1) != 0) || (((int)(buf)&1) != 0)) {
 
 		// Something is misaligned, so we have to use the slow but sure method
 
@@ -297,8 +297,8 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 			// the keyboard image uses the same VRAM addresses.
 
 			for (int dy = y; dy < y + h; dy++) {
-				u8 *dest = ((u8 *) (bg)) + (dy * stride) + x;
-				const u8 *src = (const u8 *) buf + (pitch * by);
+				u8 *dest = ((u8 *)(bg)) + (dy * stride) + x;
+				const u8 *src = (const u8 *)buf + (pitch * by);
 
 				u32 dx;
 
@@ -308,7 +308,7 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 					// Read modify write
 
 					dest--;
-					u16 mix = *((u16 *) dest);
+					u16 mix = *((u16 *)dest);
 
 					mix = (mix & 0x00FF) | (*src++ << 8);
 
@@ -319,9 +319,9 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 				}
 
 				// We can now assume dest is aligned
-				u16 *dest16 = (u16 *) dest;
+				u16 *dest16 = (u16 *)dest;
 
-				for (dx = 0; dx < pixelsLeft; dx+=2) {
+				for (dx = 0; dx < pixelsLeft; dx += 2) {
 					u16 mix;
 
 					mix = *src + (*(src + 1) << 8);
@@ -348,9 +348,9 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 			// When they keyboard is not on screen, update both vram copies
 
 			for (int dy = y; dy < y + h; dy++) {
-				u8 *dest = ((u8 *) (bg)) + (dy * stride) + x;
-				u8 *destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
-				const u8 *src = (const u8 *) buf + (pitch * by);
+				u8 *dest = ((u8 *)(bg)) + (dy * stride) + x;
+				u8 *destSub = ((u8 *)(bgSub)) + (dy * 512) + x;
+				const u8 *src = (const u8 *)buf + (pitch * by);
 
 				u32 dx;
 
@@ -360,7 +360,7 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 					// Read modify write
 
 					dest--;
-					u16 mix = *((u16 *) dest);
+					u16 mix = *((u16 *)dest);
 
 					mix = (mix & 0x00FF) | (*src++ << 8);
 
@@ -373,10 +373,10 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 				}
 
 				// We can now assume dest is aligned
-				u16 *dest16 = (u16 *) dest;
-				u16 *destSub16 = (u16 *) destSub;
+				u16 *dest16 = (u16 *)dest;
+				u16 *destSub16 = (u16 *)destSub;
 
-				for (dx = 0; dx < pixelsLeft; dx+=2) {
+				for (dx = 0; dx < pixelsLeft; dx += 2) {
 					u16 mix;
 
 					mix = *src + (*(src + 1) << 8);
@@ -399,18 +399,16 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 				}
 
 				by++;
-
 			}
 		}
 
-//		consolePrintf("Slow method used!\n");
-
+		//		consolePrintf("Slow method used!\n");
 
 	} else {
 
 		// Stuff is aligned to 16-bit boundaries, so it's safe to do DMA.
 
-		u16 *src = (u16 *) buf;
+		u16 *src = (u16 *)buf;
 
 		if (DS::getKeyboardEnable()) {
 
@@ -421,7 +419,8 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 				DC_FlushRange(dest, w << 1);
 				dmaCopyHalfWords(3, src, dest, w);
 
-				while (dmaBusy(3));
+				while (dmaBusy(3))
+					;
 
 				src += pitch >> 1;
 			}
@@ -441,18 +440,19 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 					dmaCopyHalfWords(2, src, dest2, w);
 				}
 
-				while (dmaBusy(2) || dmaBusy(3));
+				while (dmaBusy(2) || dmaBusy(3))
+					;
 
 				src += pitch >> 1;
 			}
 		}
 	}
-//	consolePrintf("Done\n");
+	//	consolePrintf("Done\n");
 }
 
 void OSystem_DS::updateScreen() {
-//	static int cnt = 0;
-//	consolePrintf("updatescr %d\n", cnt++);
+	//	static int cnt = 0;
+	//	consolePrintf("updatescr %d\n", cnt++);
 
 	if ((_frameBufferExists) && (DS::getIsDisplayMode8Bit())) {
 		_frameBufferExists = false;
@@ -463,7 +463,7 @@ void OSystem_DS::updateScreen() {
 
 	DS::displayMode16BitFlipBuffer();
 	DS::doSoundCallback();
-//	DS::doTimerCallback();
+	//	DS::doTimerCallback();
 	DS::addEventsToQueue();
 
 	// FIXME: Evil game specific hack.
@@ -478,7 +478,7 @@ void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
 }
 
 void OSystem_DS::showOverlay() {
-//	consolePrintf("showovl\n");
+	//	consolePrintf("showovl\n");
 	DS::displayMode16Bit();
 }
 
@@ -487,12 +487,12 @@ void OSystem_DS::hideOverlay() {
 }
 
 void OSystem_DS::clearOverlay() {
-	memset((u16 *) DS::get16BitBackBuffer(), 0, 512 * 256 * 2);
-//	consolePrintf("clearovl\n");
+	memset((u16 *)DS::get16BitBackBuffer(), 0, 512 * 256 * 2);
+	//	consolePrintf("clearovl\n");
 }
 
 void OSystem_DS::grabOverlay(void *buf, int pitch) {
-//	consolePrintf("grabovl\n")
+	//	consolePrintf("grabovl\n")
 	u16 *start = DS::get16BitBackBuffer();
 
 	for (int y = 0; y < 200; y++) {
@@ -500,22 +500,19 @@ void OSystem_DS::grabOverlay(void *buf, int pitch) {
 		u16 *dest = (u16 *)((u8 *)buf + (y * pitch));
 
 		for (int x = 0; x < 320; x++) {
-			*dest++ =  *src++;
+			*dest++ = *src++;
 		}
 	}
-
 }
 
 void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
-	u16 *bg = (u16 *) DS::get16BitBackBuffer();
+	u16 *bg = (u16 *)DS::get16BitBackBuffer();
 	const u8 *source = (const u8 *)buf;
 
-//	if (x + w > 256) w = 256 - x;
+	//	if (x + w > 256) w = 256 - x;
 	//if (x + h > 256) h = 256 - y;
 
-//	consolePrintf("Copy rect ovl %d, %d   %d, %d  %d\n", x, y, w, h, pitch);
-
-
+	//	consolePrintf("Copy rect ovl %d, %d   %d, %d  %d\n", x, y, w, h, pitch);
 
 	for (int dy = y; dy < y + h; dy++) {
 		const u16 *src = (const u16 *)source;
@@ -539,20 +536,18 @@ void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int
 		src += pitch;*/
 	}
 
-//	consolePrintf("Copy rect ovl done");
-
+	//	consolePrintf("Copy rect ovl done");
 }
 
 int16 OSystem_DS::getOverlayHeight() {
-//	consolePrintf("getovlheight\n");
+	//	consolePrintf("getovlheight\n");
 	return getHeight();
 }
 
 int16 OSystem_DS::getOverlayWidth() {
-//	consolePrintf("getovlwid\n");
+	//	consolePrintf("getovlwid\n");
 	return getWidth();
 }
-
 
 bool OSystem_DS::showMouse(bool visible) {
 	DS::setShowCursor(visible);
@@ -581,7 +576,7 @@ void OSystem_DS::refreshCursor() {
 	DS::setCursorIcon(_cursorImage, _cursorW, _cursorH, _cursorKey, _cursorHotX, _cursorHotY);
 }
 
-void OSystem_DS::addEvent(const Common::Event& e) {
+void OSystem_DS::addEvent(const Common::Event &e) {
 	eventQueue[queuePos++] = e;
 }
 
@@ -598,18 +593,18 @@ bool OSystem_DS::pollEvent(Common::Event &event) {
 			event.kbd.ascii = 0;
 			event.kbd.keycode = Common::KEYCODE_INVALID;
 			event.kbd.flags = 0;
-//			consolePrintf("type: %d\n", event.type);
+			//			consolePrintf("type: %d\n", event.type);
 			return false;
 		} else {
 			event = eventQueue[eventNum++];
-//			consolePrintf("type: %d\n", event.type);
+			//			consolePrintf("type: %d\n", event.type);
 			return true;
 		}
 	}
 
 	return false;
 
-/*	if (lastPenFrame != DS::getMillis()) {
+	/*	if (lastPenFrame != DS::getMillis()) {
 		if ((eventNum == 0)) {
 			event.type = Common::EVENT_MOUSEMOVE;
 			event.mouse = Common::Point(DS::getPenX(), DS::getPenY());
@@ -656,7 +651,6 @@ void OSystem_DS::delayMillis(uint msecs) {
 	DS::checkSleepMode();
 	DS::addEventsToQueue();
 }
-
 
 void OSystem_DS::getTimeAndDate(TimeDate &td) const {
 	time_t curTime;
@@ -716,7 +710,7 @@ void OSystem_DS::updateCD() {
 }
 
 void OSystem_DS::quit() {
-/*	consolePrintf("Soft resetting...");
+	/*	consolePrintf("Soft resetting...");
 	IPC->reset = 1;
 	REG_IE = 0;
 
@@ -760,12 +754,11 @@ Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 		}
 
 		_framebuffer.init(width, height, width, dest, Graphics::PixelFormat::createFormatCLUT8());
-
 	}
 
 	_frameBufferExists = true;
 
-/*
+	/*
 	size_t imageStrideInBytes = DS::get8BitBackBufferStride();
 	size_t imageStrideInWords = imageStrideInBytes / 2;
 
@@ -781,7 +774,6 @@ Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 	return &_framebuffer;
 }
 
-
 Graphics::Surface *OSystem_DS::lockScreen() {
 	if (!_frameBufferExists) {
 		createTempFrameBuffer();
@@ -794,14 +786,12 @@ void OSystem_DS::unlockScreen() {
 	// No need to do anything here.  The screen will be updated in updateScreen().
 }
 
-void OSystem_DS::setFocusRectangle(const Common::Rect& rect) {
+void OSystem_DS::setFocusRectangle(const Common::Rect &rect) {
 	DS::setTalkPos(rect.left + rect.width() / 2, rect.top + rect.height() / 2);
 }
 
 void OSystem_DS::clearFocusRectangle() {
-
 }
-
 
 void OSystem_DS::addAutoComplete(const char *word) {
 	DS::addAutoComplete(word);
@@ -840,13 +830,16 @@ u16 OSystem_DS::applyGamma(u16 color) {
 
 	// Scale the three components by the scaling factor, with clamping
 	r = r + ((r * scale) >> 4);
-	if (r > 31) r = 31;
+	if (r > 31)
+		r = 31;
 
 	g = g + ((g * scale) >> 4);
-	if (g > 31) g = 31;
+	if (g > 31)
+		g = 31;
 
 	b = b + ((b * scale) >> 4);
-	if (b > 31) b = 31;
+	if (b > 31)
+		b = 31;
 
 	// Stick them back together into a 555 color value
 	return 0x8000 | r | (g << 5) | (b << 10);
@@ -860,5 +853,4 @@ void OSystem_DS::engineDone() {
 #ifdef ENABLE_AGI
 	DS::clearAutoCompleteWordList();
 #endif
-
 }

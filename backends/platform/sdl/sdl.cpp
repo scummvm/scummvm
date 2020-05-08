@@ -24,11 +24,11 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
-#include "gui/EventRecorder.h"
+#include "common/encoding.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/encoding.h"
+#include "gui/EventRecorder.h"
 
 #include "backends/saves/default/default-saves.h"
 
@@ -41,16 +41,16 @@
 
 #include "backends/events/default/default-events.h"
 #include "backends/events/sdl/legacy-sdl-events.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
-#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "graphics/cursorman.h"
 #endif
 
-#include <time.h>	// for getTimeAndDate()
+#include <time.h> // for getTimeAndDate()
 
 #ifdef USE_DETECTLANG
 #ifndef WIN32
@@ -67,26 +67,26 @@
 #endif
 
 OSystem_SDL::OSystem_SDL()
-	:
+    :
 #ifdef USE_OPENGL
-	_desktopWidth(0),
-	_desktopHeight(0),
-	_graphicsModes(),
-	_graphicsMode(0),
-	_firstGLMode(0),
-	_defaultSDLMode(0),
-	_defaultGLMode(0),
+      _desktopWidth(0),
+      _desktopHeight(0),
+      _graphicsModes(),
+      _graphicsMode(0),
+      _firstGLMode(0),
+      _defaultSDLMode(0),
+      _defaultGLMode(0),
 #endif
-	_inited(false),
-	_initedSDL(false),
+      _inited(false),
+      _initedSDL(false),
 #ifdef USE_SDL_NET
-	_initedSDLnet(false),
+      _initedSDLnet(false),
 #endif
-	_logger(0),
-	_mixerManager(0),
-	_eventSource(0),
-	_eventSourceWrapper(nullptr),
-	_window(0) {
+      _logger(0),
+      _mixerManager(0),
+      _eventSource(0),
+      _eventSourceWrapper(nullptr),
+      _window(0) {
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -132,7 +132,8 @@ OSystem_SDL::~OSystem_SDL() {
 	_logger = 0;
 
 #ifdef USE_SDL_NET
-	if (_initedSDLnet) SDLNet_Quit();
+	if (_initedSDLnet)
+		SDLNet_Quit();
 #endif
 
 	SDL_Quit();
@@ -162,12 +163,12 @@ void OSystem_SDL::init() {
 	if (_taskbarManager == 0)
 		_taskbarManager = new Common::TaskbarManager();
 #endif
-
 }
 
 bool OSystem_SDL::hasFeature(Feature f) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (f == kFeatureClipboardSupport) return true;
+	if (f == kFeatureClipboardSupport)
+		return true;
 #endif
 	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
 		return _eventSource->isJoystickConnected();
@@ -213,12 +214,11 @@ void OSystem_SDL::initBackend() {
 		_eventManager = new DefaultEventManager(_eventSourceWrapper ? _eventSourceWrapper : _eventSource);
 	}
 
-
 #ifdef USE_OPENGL
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_DisplayMode displayMode;
 	if (!SDL_GetDesktopDisplayMode(0, &displayMode)) {
-		_desktopWidth  = displayMode.w;
+		_desktopWidth = displayMode.w;
 		_desktopHeight = displayMode.h;
 	}
 #else
@@ -226,7 +226,7 @@ void OSystem_SDL::initBackend() {
 	// the resolution so far.
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (videoInfo && videoInfo->current_w > 0 && videoInfo->current_h > 0) {
-		_desktopWidth  = videoInfo->current_w;
+		_desktopWidth = videoInfo->current_w;
 		_desktopHeight = videoInfo->current_h;
 	}
 #endif
@@ -358,7 +358,6 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 		s.add(DATA_PATH, new Common::FSDirectory(dataNode, 4), priority);
 	}
 #endif
-
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {
@@ -478,7 +477,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 
 		return Common::String(locale.c_str(), length);
 	}
-#else // USE_DETECTLANG
+#else  // USE_DETECTLANG
 	return ModularBackend::getSystemLanguage();
 #endif // USE_DETECTLANG
 }
@@ -489,7 +488,8 @@ bool OSystem_SDL::hasTextInClipboard() {
 }
 
 Common::String OSystem_SDL::getTextFromClipboard() {
-	if (!hasTextInClipboard()) return "";
+	if (!hasTextInClipboard())
+		return "";
 
 	char *text = SDL_GetClipboardText();
 	// The string returned by SDL is in UTF-8. Convert to the
@@ -589,9 +589,9 @@ AudioCDManager *OSystem_SDL::createAudioCDManager() {
 
 Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 #ifdef ENABLE_EVENTRECORDER
-    return g_eventRec.getSaveManager(_savefileManager);
+	return g_eventRec.getSaveManager(_savefileManager);
 #else
-    return _savefileManager;
+	return _savefileManager;
 #endif
 }
 
@@ -766,7 +766,7 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	result = SDL_iconv_string(to, from, string, length + zeroBytes);
 #else
-	char *stringCopy = (char *) calloc(sizeof(char), length + zeroBytes);
+	char *stringCopy = (char *)calloc(sizeof(char), length + zeroBytes);
 	memcpy(stringCopy, string, length);
 	result = SDL_iconv_string(to, from, stringCopy, length + zeroBytes);
 	free(stringCopy);
@@ -785,7 +785,7 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 		zeroBytes = 2;
 	else if (Common::String(to).hasPrefixIgnoreCase("utf-32"))
 		zeroBytes = 4;
-	char *finalResult = (char *) malloc(newLength + zeroBytes);
+	char *finalResult = (char *)malloc(newLength + zeroBytes);
 	if (!finalResult) {
 		warning("Could not allocate memory for encoding conversion");
 		SDL_free(result);
@@ -798,4 +798,3 @@ char *OSystem_SDL::convertEncoding(const char *to, const char *from, const char 
 	return ModularBackend::convertEncoding(to, from, string, length);
 #endif // SDL_VERSION_ATLEAST(1, 2, 10)
 }
-

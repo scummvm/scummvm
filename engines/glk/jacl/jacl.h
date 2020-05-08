@@ -38,6 +38,7 @@ namespace JACL {
 class JACL : public GlkAPI {
 private:
 	int _saveSlot;
+
 private:
 	/**
 	 * Engine initialization
@@ -48,6 +49,7 @@ private:
 	 * Engine cleanup
 	 */
 	void deinitialize();
+
 public:
 	/**
 	 * Constructor

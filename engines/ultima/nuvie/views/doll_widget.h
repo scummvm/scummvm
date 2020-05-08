@@ -23,9 +23,9 @@
 #ifndef NUVIE_VIEWS_DOLL_WIDGET_H
 #define NUVIE_VIEWS_DOLL_WIDGET_H
 
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
-#include "ultima/nuvie/core/tile_manager.h"
 #include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/views/inventory_message.h"
 
 namespace Ultima {
@@ -82,7 +82,6 @@ public:
 	Common::Rect *get_item_hit_rect(uint8 location);
 
 protected:
-
 	GUI_CallBack *callback_object; // object-selected callback
 
 	void display_doll();

@@ -110,8 +110,8 @@ struct FrameInfo {
 
 	Common::Rect hotspot;
 
-	byte compressionType;         ///< Type of frame compression (0x03, 0x04, 0x05, 0x07, 0xFF)
-	FrameSubType subType;         ///< Subtype (byte)
+	byte compressionType; ///< Type of frame compression (0x03, 0x04, 0x05, 0x07, 0xFF)
+	FrameSubType subType; ///< Subtype (byte)
 
 	byte field_2E;
 	byte keepPreviousFrame;

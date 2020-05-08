@@ -21,13 +21,13 @@
  */
 
 #include "kyra/sound/sound_digital_mr.h"
-#include "kyra/resource/resource.h"
 #include "kyra/engine/kyra_mr.h"
+#include "kyra/resource/resource.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/decoders/flac.h"
 
 #include "common/util.h"
 
@@ -36,7 +36,10 @@ namespace Kyra {
 class KyraAudioStream : public Audio::SeekableAudioStream {
 public:
 	KyraAudioStream(Audio::SeekableAudioStream *impl) : _impl(impl), _rate(impl->getRate()), _fadeSamples(0), _fadeCount(0), _fading(0), _endOfData(false) {}
-	~KyraAudioStream() override { delete _impl; _impl = 0; }
+	~KyraAudioStream() override {
+		delete _impl;
+		_impl = 0;
+	}
 
 	int readBuffer(int16 *buffer, const int numSamples) override;
 	bool isStereo() const override { return _impl->isStereo(); }
@@ -48,6 +51,7 @@ public:
 
 	bool seek(const Audio::Timestamp &where) override { return _impl->seek(where); }
 	Audio::Timestamp getLength() const override { return _impl->getLength(); }
+
 private:
 	Audio::SeekableAudioStream *_impl;
 
@@ -233,16 +237,15 @@ Audio::SeekableAudioStream *makeAUDStream(Common::SeekableReadStream *stream, Di
 
 const SoundDigital_MR::AudioCodecs SoundDigital_MR::_supportedCodecs[] = {
 #ifdef USE_FLAC
-	{ ".FLA", Audio::makeFLACStream },
+    {".FLA", Audio::makeFLACStream},
 #endif // USE_FLAC
 #ifdef USE_VORBIS
-	{ ".OGG", Audio::makeVorbisStream },
+    {".OGG", Audio::makeVorbisStream},
 #endif // USE_VORBIS
 #ifdef USE_MAD
-	{ ".MP3", Audio::makeMP3Stream },
+    {".MP3", Audio::makeMP3Stream},
 #endif // USE_MAD
-	{ ".AUD", makeAUDStream },
-	{ 0, 0 }
-};
+    {".AUD", makeAUDStream},
+    {0, 0}};
 
 } // End of namespace Kyra

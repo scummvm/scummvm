@@ -23,8 +23,8 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "common/scummsys.h"
 #include "cc.h"
+#include "common/scummsys.h"
 
 struct MirrorEntry {
 	char _name[28];

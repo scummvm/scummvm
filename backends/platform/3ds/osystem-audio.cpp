@@ -20,8 +20,8 @@
  *
  */
 
-#include "backends/platform/3ds/osystem.h"
 #include "audio/mixer.h"
+#include "backends/platform/3ds/osystem.h"
 
 namespace _3DS {
 

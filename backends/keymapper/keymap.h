@@ -29,8 +29,8 @@
 
 #include "common/config-manager.h"
 #include "common/func.h"
-#include "common/hashmap.h"
 #include "common/hash-ptr.h"
+#include "common/hashmap.h"
 #include "common/list.h"
 #include "common/str-array.h"
 
@@ -45,16 +45,13 @@ class HardwareInputSet;
 class KeymapperDefaultBindings;
 
 struct HardwareInput_EqualTo {
-	bool operator()(const HardwareInput& x, const HardwareInput& y) const {
-		return (x.type == y.type)
-		        && (x.key.keycode == y.key.keycode)
-		        && (x.key.flags == y.key.flags)
-		        && (x.inputCode == y.inputCode);
+	bool operator()(const HardwareInput &x, const HardwareInput &y) const {
+		return (x.type == y.type) && (x.key.keycode == y.key.keycode) && (x.key.flags == y.key.flags) && (x.inputCode == y.inputCode);
 	}
 };
 
 struct HardwareInput_Hash {
-	uint operator()(const HardwareInput& x) const {
+	uint operator()(const HardwareInput &x) const {
 		uint hash = 7;
 		hash = 31 * hash + x.type;
 		hash = 31 * hash + x.key.keycode;
@@ -163,7 +160,6 @@ public:
 	}
 
 private:
-
 	const Action *findAction(const char *id) const;
 
 	void registerMappings(Action *action, const StringArray &hwInputIds);

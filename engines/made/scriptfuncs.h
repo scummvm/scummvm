@@ -38,14 +38,14 @@ namespace Made {
 
 class MadeEngine;
 
-typedef Common::Functor2<int16, int16*, int16> ExternalFunc;
+typedef Common::Functor2<int16, int16 *, int16> ExternalFunc;
 
 class ScriptFunctions {
 public:
 	ScriptFunctions(MadeEngine *vm);
 	virtual ~ScriptFunctions();
 
-	int16 callFunction(uint16 index, int16 argc, int16 *argv)  {
+	int16 callFunction(uint16 index, int16 argc, int16 *argv) {
 		if (index >= _externalFuncs.size())
 			error("ScriptFunctions::callFunction() Invalid function index %d", index);
 		debug(4, "%s", _externalFuncNames[index]);
@@ -53,7 +53,7 @@ public:
 	}
 
 	void setupExternalsTable();
-	const char* getFuncName(int index) { return _externalFuncNames[index]; }
+	const char *getFuncName(int index) { return _externalFuncNames[index]; }
 	int getCount() const { return _externalFuncs.size(); }
 	void stopSound();
 
@@ -61,7 +61,7 @@ protected:
 	MadeEngine *_vm;
 	Audio::SoundHandle _audioStreamHandle;
 	Audio::SoundHandle _voiceStreamHandle;
-	SoundResource* _soundResource;
+	SoundResource *_soundResource;
 	bool _soundStarted;
 
 	// PlayNote/StopNote and PlayTele/StopTele wave generators
@@ -174,7 +174,6 @@ protected:
 	int16 sfSetSoundVolume(int16 argc, int16 *argv);
 	int16 sfGetSynthType(int16 argc, int16 *argv);
 	int16 sfIsSlowSystem(int16 argc, int16 *argv);
-
 };
 
 } // End of namespace Made

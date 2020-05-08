@@ -42,6 +42,7 @@ enum {
 class Fly : public Sprite {
 private:
 	CGEEngine *_vm;
+
 public:
 	int _tx, _ty;
 	Fly(CGEEngine *vm, Bitmap **shpl);

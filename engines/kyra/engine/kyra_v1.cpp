@@ -21,19 +21,19 @@
  */
 
 #include "kyra/kyra_v1.h"
-#include "kyra/sound/sound_intern.h"
-#include "kyra/resource/resource.h"
 #include "kyra/engine/timer.h"
 #include "kyra/gui/debugger.h"
+#include "kyra/resource/resource.h"
+#include "kyra/sound/sound_intern.h"
 
-#include "common/error.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/error.h"
 
 namespace Kyra {
 
 KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
-	: Engine(system), _flags(flags), _rnd("kyra") {
+    : Engine(system), _flags(flags), _rnd("kyra") {
 	_res = 0;
 	_sound = 0;
 	_text = 0;
@@ -258,7 +258,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode >= Common::KEYCODE_1 && event.kbd.keycode <= Common::KEYCODE_9 &&
-			        (event.kbd.hasFlags(Common::KBD_CTRL) || event.kbd.hasFlags(Common::KBD_ALT)) && mainLoop) {
+			    (event.kbd.hasFlags(Common::KBD_CTRL) || event.kbd.hasFlags(Common::KBD_ALT)) && mainLoop) {
 				int saveLoadSlot = 9 - (event.kbd.keycode - Common::KEYCODE_0) + 990;
 
 				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
@@ -285,7 +285,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 						keys |= 0x100;
 				} else {
 					keys = 0;
-				}				
+				}
 
 				// When we got an keypress, which we might need to handle,
 				// break the event loop and pass it to GUI code.
@@ -304,7 +304,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 			}
 			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
 			breakLoop = true;
-			} break;
+		} break;
 
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP: {
@@ -316,7 +316,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 			}
 			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 201 : (202 | 0x800));
 			breakLoop = true;
-			} break;
+		} break;
 
 		case Common::EVENT_WHEELUP:
 			mouseWheel = -1;
@@ -358,75 +358,74 @@ void KyraEngine_v1::setupKeyMap() {
 #define UNKNOWN_KEYCODE -1
 #define KC(x) Common::KEYCODE_##x
 	static const KeyCodeMapEntry keys[] = {
-		{ KC(SPACE), 61, 53, 32 },
-		{ KC(RETURN), 43, 29, 13 },
-		{ KC(UP), 96, 68, 30 },
-		{ KC(KP8), 96, 68, 30 },
-		{ KC(RIGHT), 102, 73, 28 },
-		{ KC(KP6), 102, 73, 28 },
-		{ KC(DOWN), 98, 76, 31 },
-		{ KC(KP2), 98, 76, 31 },
-		{ KC(KP5), 97, 72, UNKNOWN_KEYCODE },
-		{ KC(LEFT), 92, 71, 29 },
-		{ KC(KP4), 92, 71, 29 },
-		{ KC(HOME), 91, 67, 127 },
-		{ KC(KP7), 91, 67, 127 },
-		{ KC(PAGEUP), 101, 69, 18 },
-		{ KC(KP9), 101, 69, 18 },
-		{ KC(END), 93, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
-		{ KC(KP1), 93, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
-		{ KC(PAGEDOWN), 103, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
-		{ KC(KP3), 103, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
-		{ KC(F1), 112, 99, 93 },
-		{ KC(F2), 113, 100, 94 },
-		{ KC(F3), 114, 101, 95 },
-		{ KC(F4), 115, 102, 96 },
-		{ KC(F5), 116, 103, 97 },
-		{ KC(F6), 117, 104, 98 },
-		{ KC(a), 31, 31, UNKNOWN_KEYCODE },
-		{ KC(b), 50, 50, 66 },
-		{ KC(c), 48, 48, 67 },
-		{ KC(d), 33, 33, 68 },
-		{ KC(e), 19, 19, UNKNOWN_KEYCODE },
-		{ KC(f), 34, 34, 70 },
-		{ KC(i), 24, 24, 24 },
-		{ KC(k), 38, 38, 75 },
-		{ KC(m), 52, 52, 77 },
-		{ KC(n), 51, 51, UNKNOWN_KEYCODE },
-		{ KC(o), 25, 25, 79 },
-		{ KC(p), 26, 26, 80 },
-		{ KC(r), 20, 20, 82 },
-		{ KC(s), 32, 32, UNKNOWN_KEYCODE },
-		{ KC(w), 18, 18, UNKNOWN_KEYCODE },
-		{ KC(y), 22, 22, UNKNOWN_KEYCODE },
-		{ KC(z), 46, 46, UNKNOWN_KEYCODE },
-		{ KC(0), UNKNOWN_KEYCODE, UNKNOWN_KEYCODE, 48 },
-		{ KC(1), 2, UNKNOWN_KEYCODE, 49 },
-		{ KC(2), 3, UNKNOWN_KEYCODE, 50 },
-		{ KC(3), 4, UNKNOWN_KEYCODE, 51 },
-		{ KC(4), 5, UNKNOWN_KEYCODE, 52 },
-		{ KC(5), 6, UNKNOWN_KEYCODE, 53 },
-		{ KC(6), 7, UNKNOWN_KEYCODE, 54 },
-		{ KC(7), 8, UNKNOWN_KEYCODE, 55 },
-		{ KC(SLASH), 55, 55, 47 },
-		{ KC(ESCAPE), 110, 1, 27 },
-		{ KC(MINUS), 12, UNKNOWN_KEYCODE, 45 },
-		{ KC(KP_MINUS), 105, UNKNOWN_KEYCODE, 45 },
-		{ KC(PLUS), 13, UNKNOWN_KEYCODE, 43 },
-		{ KC(KP_PLUS), 106, UNKNOWN_KEYCODE, 43 },
+	    {KC(SPACE), 61, 53, 32},
+	    {KC(RETURN), 43, 29, 13},
+	    {KC(UP), 96, 68, 30},
+	    {KC(KP8), 96, 68, 30},
+	    {KC(RIGHT), 102, 73, 28},
+	    {KC(KP6), 102, 73, 28},
+	    {KC(DOWN), 98, 76, 31},
+	    {KC(KP2), 98, 76, 31},
+	    {KC(KP5), 97, 72, UNKNOWN_KEYCODE},
+	    {KC(LEFT), 92, 71, 29},
+	    {KC(KP4), 92, 71, 29},
+	    {KC(HOME), 91, 67, 127},
+	    {KC(KP7), 91, 67, 127},
+	    {KC(PAGEUP), 101, 69, 18},
+	    {KC(KP9), 101, 69, 18},
+	    {KC(END), 93, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE},
+	    {KC(KP1), 93, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE},
+	    {KC(PAGEDOWN), 103, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE},
+	    {KC(KP3), 103, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE},
+	    {KC(F1), 112, 99, 93},
+	    {KC(F2), 113, 100, 94},
+	    {KC(F3), 114, 101, 95},
+	    {KC(F4), 115, 102, 96},
+	    {KC(F5), 116, 103, 97},
+	    {KC(F6), 117, 104, 98},
+	    {KC(a), 31, 31, UNKNOWN_KEYCODE},
+	    {KC(b), 50, 50, 66},
+	    {KC(c), 48, 48, 67},
+	    {KC(d), 33, 33, 68},
+	    {KC(e), 19, 19, UNKNOWN_KEYCODE},
+	    {KC(f), 34, 34, 70},
+	    {KC(i), 24, 24, 24},
+	    {KC(k), 38, 38, 75},
+	    {KC(m), 52, 52, 77},
+	    {KC(n), 51, 51, UNKNOWN_KEYCODE},
+	    {KC(o), 25, 25, 79},
+	    {KC(p), 26, 26, 80},
+	    {KC(r), 20, 20, 82},
+	    {KC(s), 32, 32, UNKNOWN_KEYCODE},
+	    {KC(w), 18, 18, UNKNOWN_KEYCODE},
+	    {KC(y), 22, 22, UNKNOWN_KEYCODE},
+	    {KC(z), 46, 46, UNKNOWN_KEYCODE},
+	    {KC(0), UNKNOWN_KEYCODE, UNKNOWN_KEYCODE, 48},
+	    {KC(1), 2, UNKNOWN_KEYCODE, 49},
+	    {KC(2), 3, UNKNOWN_KEYCODE, 50},
+	    {KC(3), 4, UNKNOWN_KEYCODE, 51},
+	    {KC(4), 5, UNKNOWN_KEYCODE, 52},
+	    {KC(5), 6, UNKNOWN_KEYCODE, 53},
+	    {KC(6), 7, UNKNOWN_KEYCODE, 54},
+	    {KC(7), 8, UNKNOWN_KEYCODE, 55},
+	    {KC(SLASH), 55, 55, 47},
+	    {KC(ESCAPE), 110, 1, 27},
+	    {KC(MINUS), 12, UNKNOWN_KEYCODE, 45},
+	    {KC(KP_MINUS), 105, UNKNOWN_KEYCODE, 45},
+	    {KC(PLUS), 13, UNKNOWN_KEYCODE, 43},
+	    {KC(KP_PLUS), 106, UNKNOWN_KEYCODE, 43},
 
-		// Multiple mappings for the keys to the right of the 'M' key,
-		// since these are different for QWERTZ, QWERTY and AZERTY keyboards.
-		// QWERTZ
-		{ KC(COMMA), 53, UNKNOWN_KEYCODE, 60 },
-		{ KC(PERIOD), 54, UNKNOWN_KEYCODE, 62 },
-		// AZERTY
-		{ KC(SEMICOLON), 53, UNKNOWN_KEYCODE, 60 },
-		{ KC(COLON), 54, UNKNOWN_KEYCODE, 62 },
-		// QWERTY
-		{ KC(LESS), 53, UNKNOWN_KEYCODE, 60 },
-		{ KC(GREATER), 54, UNKNOWN_KEYCODE, 62 }
-	};
+	    // Multiple mappings for the keys to the right of the 'M' key,
+	    // since these are different for QWERTZ, QWERTY and AZERTY keyboards.
+	    // QWERTZ
+	    {KC(COMMA), 53, UNKNOWN_KEYCODE, 60},
+	    {KC(PERIOD), 54, UNKNOWN_KEYCODE, 62},
+	    // AZERTY
+	    {KC(SEMICOLON), 53, UNKNOWN_KEYCODE, 60},
+	    {KC(COLON), 54, UNKNOWN_KEYCODE, 62},
+	    // QWERTY
+	    {KC(LESS), 53, UNKNOWN_KEYCODE, 60},
+	    {KC(GREATER), 54, UNKNOWN_KEYCODE, 62}};
 #undef KC
 #undef UNKNOWN_KEYCODE
 
@@ -435,7 +434,7 @@ void KyraEngine_v1::setupKeyMap() {
 	// If we have an engine that wants ASCII codes instead of key codes, we can skip the setup of the key map.
 	// In that case we simply return the ASCII codes from the event manager. At least until I know better I
 	// trust that the ASCII codes we get from our event manager are the same identical codes. If that assumption
-	// turns out to be wrong I can still implement the original conversion method... 
+	// turns out to be wrong I can still implement the original conversion method...
 	if (_asciiCodeEvents)
 		return;
 
@@ -452,9 +451,9 @@ void KyraEngine_v1::updateInput() {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_PERIOD || event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-			        event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN ||
-			        event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
-			        event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
+			    event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN ||
+			    event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
+			    event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
 				_eventList.push_back(Event(event, true));
 			else if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
 				quitGame();
@@ -585,11 +584,11 @@ void KyraEngine_v1::readSettings() {
 	bool subtitles = ConfMan.getBool("subtitles");
 
 	if (!_configNullSound && !speechMute && subtitles)
-		_configVoice = 2;   // Voice & Text
+		_configVoice = 2; // Voice & Text
 	else if (!_configNullSound && !speechMute && !subtitles)
-		_configVoice = 1;   // Voice only
+		_configVoice = 1; // Voice only
 	else
-		_configVoice = 0;   // Text only
+		_configVoice = 0; // Text only
 
 	setWalkspeed(_configWalkspeed);
 }
@@ -604,15 +603,15 @@ void KyraEngine_v1::writeSettings() {
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 
 	switch (_configVoice) {
-	case 0:     // Text only
+	case 0: // Text only
 		speechMute = true;
 		subtitles = true;
 		break;
-	case 1:     // Voice only
+	case 1: // Voice only
 		speechMute = false;
 		subtitles = false;
 		break;
-	default:    // Voice & Text
+	default: // Voice & Text
 		speechMute = false;
 		subtitles = true;
 	}

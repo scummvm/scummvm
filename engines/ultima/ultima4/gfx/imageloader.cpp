@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima4/gfx/image.h"
 #include "ultima/ultima4/gfx/imageloader.h"
-#include "ultima/ultima4/gfx/imageloader_u4.h"
-#include "ultima/ultima4/gfx/imageloader_png.h"
-#include "ultima/ultima4/gfx/imageloader_fmtowns.h"
 #include "ultima/ultima4/core/utils.h"
+#include "ultima/ultima4/gfx/image.h"
+#include "ultima/ultima4/gfx/imageloader_fmtowns.h"
+#include "ultima/ultima4/gfx/imageloader_png.h"
+#include "ultima/ultima4/gfx/imageloader_u4.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -40,8 +40,8 @@ ImageLoaders::ImageLoaders() {
 
 ImageLoaders::~ImageLoaders() {
 	for (Common::HashMap<Common::String, ImageLoader *>::iterator it = _loaderMap.begin();
-	        it != _loaderMap.end(); ++it) {
-		delete(*it)._value;
+	     it != _loaderMap.end(); ++it) {
+		delete (*it)._value;
 	}
 }
 

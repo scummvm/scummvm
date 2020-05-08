@@ -25,8 +25,8 @@
 
 #include "common/rational.h"
 #include "common/rect.h"
-#include "sci/resource.h"
 #include "sci/engine/vm_types.h"
+#include "sci/resource.h"
 #include "sci/util.h"
 
 namespace Sci {
@@ -47,15 +47,15 @@ enum {
 };
 
 enum CelType {
-	kCelTypeView  = 0,
-	kCelTypePic   = 1,
-	kCelTypeMem   = 2,
+	kCelTypeView = 0,
+	kCelTypePic = 1,
+	kCelTypeMem = 2,
 	kCelTypeColor = 3
 };
 
 enum CelCompressionType {
-	kCelCompressionNone    = 0,
-	kCelCompressionRLE     = 138,
+	kCelCompressionNone = 0,
+	kCelCompressionRLE = 138,
 	kCelCompressionInvalid = 1000
 };
 
@@ -95,24 +95,22 @@ struct CelInfo32 {
 	 */
 	uint8 color;
 
-	CelInfo32() :
-		// In SSCI, color is left uninitialised
-		type(kCelTypeMem),
-		resourceId(0),
-		loopNo(0),
-		celNo(0),
-		bitmap(NULL_REG) {}
+	CelInfo32() : // In SSCI, color is left uninitialised
+	              type(kCelTypeMem),
+	              resourceId(0),
+	              loopNo(0),
+	              celNo(0),
+	              bitmap(NULL_REG) {}
 
 	// This is the equivalence criteria used by CelObj::searchCache in at least
 	// SSCI SQ6. Notably, it does not check the color field.
 	inline bool operator==(const CelInfo32 &other) {
 		return (
-			type == other.type &&
-			resourceId == other.resourceId &&
-			loopNo == other.loopNo &&
-			celNo == other.celNo &&
-			bitmap == other.bitmap
-		);
+		    type == other.type &&
+		    resourceId == other.resourceId &&
+		    loopNo == other.loopNo &&
+		    celNo == other.celNo &&
+		    bitmap == other.bitmap);
 	}
 
 	inline bool operator!=(const CelInfo32 &other) {
@@ -213,9 +211,8 @@ class CelScaler {
 	void buildLookupTable(int *table, const Ratio &ratio, const int size);
 
 public:
-	CelScaler() :
-		_scaleTables(),
-		_activeIndex(0) {
+	CelScaler() : _scaleTables(),
+	              _activeIndex(0) {
 		CelScalerTable &table = _scaleTables[0];
 		table.scaleX = Ratio();
 		table.scaleY = Ratio();
@@ -345,7 +342,7 @@ public:
 	 */
 	static void deinit();
 
-	virtual ~CelObj() {};
+	virtual ~CelObj(){};
 
 	/**
 	 * Draws the cel to the target buffer using the priority and positioning
@@ -496,7 +493,7 @@ private:
 
 public:
 	CelObjView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo);
-	~CelObjView() override {};
+	~CelObjView() override{};
 
 	using CelObj::draw;
 
@@ -548,7 +545,7 @@ public:
 	int16 _priority;
 
 	CelObjPic(const GuiResourceId pictureId, const int16 celNo);
-	~CelObjPic() override {};
+	~CelObjPic() override{};
 
 	using CelObj::draw;
 	void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition, const bool mirrorX) override;
@@ -568,7 +565,7 @@ public:
 class CelObjMem : public CelObj {
 public:
 	CelObjMem(const reg_t bitmap);
-	~CelObjMem() override {};
+	~CelObjMem() override{};
 
 	CelObjMem *duplicate() const override;
 	const SciSpan<const byte> getResPointer() const override;
@@ -584,7 +581,7 @@ public:
 class CelObjColor : public CelObj {
 public:
 	CelObjColor(const uint8 color, const int16 width, const int16 height);
-	~CelObjColor() override {};
+	~CelObjColor() override{};
 
 	using CelObj::draw;
 	/**

@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "access/martian/martian_room.h"
 #include "access/access.h"
-#include "access/resources.h"
 #include "access/martian/martian_game.h"
 #include "access/martian/martian_resources.h"
-#include "access/martian/martian_room.h"
+#include "access/resources.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -43,9 +43,9 @@ void MartianRoom::loadRoom(int roomNumber) {
 }
 
 void MartianRoom::reloadRoom() {
-//	_vm->_currentMan = _roomFlag;
-//	_vm->_currentManOld = _roomFlag;
-//	_vm->_manScaleOff = 0;
+	//	_vm->_currentMan = _roomFlag;
+	//	_vm->_currentManOld = _roomFlag;
+	//	_vm->_manScaleOff = 0;
 
 	_vm->_player->loadTexPalette();
 	_vm->_player->loadSprites("TEX.LZ");
@@ -106,7 +106,7 @@ void MartianRoom::roomMenu() {
 
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
-	_vm->_destIn = _vm->_screen;	// TODO: Redundant
+	_vm->_destIn = _vm->_screen; // TODO: Redundant
 	_vm->_screen->plotImage(spr, 0, Common::Point(5, 184));
 	_vm->_screen->plotImage(spr, 1, Common::Point(155, 184));
 
@@ -124,12 +124,12 @@ void MartianRoom::mainAreaClick() {
 		player._moveTo = pt;
 		player._playerMove = true;
 	} else if (mousePos.x >= screen._windowXAdd &&
-		mousePos.x <= (screen._windowXAdd + screen._vWindowBytesWide) &&
-		mousePos.y >= screen._windowYAdd &&
-		mousePos.y <= (screen._windowYAdd + screen._vWindowLinesTall)) {
-			if (checkBoxes1(pt) >= 0) {
-				checkBoxes3();
-			}
+	           mousePos.x <= (screen._windowXAdd + screen._vWindowBytesWide) &&
+	           mousePos.y >= screen._windowYAdd &&
+	           mousePos.y <= (screen._windowYAdd + screen._vWindowLinesTall)) {
+		if (checkBoxes1(pt) >= 0) {
+			checkBoxes3();
+		}
 	}
 }
 

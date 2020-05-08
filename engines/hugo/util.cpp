@@ -27,8 +27,8 @@
  *
  */
 
-#include "common/system.h"
 #include "common/util.h"
+#include "common/system.h"
 #include "gui/message.h"
 
 #include "hugo/dialogs.h"

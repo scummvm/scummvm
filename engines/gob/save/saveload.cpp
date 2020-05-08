@@ -20,11 +20,11 @@
  *
  */
 
-#include "gob/gob.h"
 #include "gob/save/saveload.h"
-#include "gob/global.h"
-#include "gob/video.h"
 #include "gob/draw.h"
+#include "gob/global.h"
+#include "gob/gob.h"
+#include "gob/video.h"
 
 namespace Gob {
 
@@ -61,7 +61,7 @@ int32 SaveLoad::getSize(const char *fileName) {
 
 bool SaveLoad::load(const char *fileName, int16 dataVar, int32 size, int32 offset) {
 	debugC(3, kDebugSaveLoad, "Requested loading of save file \"%s\" - %d, %d, %d",
-			fileName, dataVar, size, offset);
+	       fileName, dataVar, size, offset);
 
 	SaveHandler *handler = getHandler(fileName);
 
@@ -77,7 +77,7 @@ bool SaveLoad::load(const char *fileName, int16 dataVar, int32 size, int32 offse
 			desc = "Unknown";
 
 		warning("Could not load %s (\"%s\" (%d, %d, %d))",
-				desc, fileName, dataVar, size, offset);
+		        desc, fileName, dataVar, size, offset);
 		return false;
 	}
 
@@ -87,7 +87,7 @@ bool SaveLoad::load(const char *fileName, int16 dataVar, int32 size, int32 offse
 
 bool SaveLoad::save(const char *fileName, int16 dataVar, int32 size, int32 offset) {
 	debugC(3, kDebugSaveLoad, "Requested saving of save file \"%s\" - %d, %d, %d",
-			fileName, dataVar, size, offset);
+	       fileName, dataVar, size, offset);
 
 	SaveHandler *handler = getHandler(fileName);
 
@@ -103,7 +103,7 @@ bool SaveLoad::save(const char *fileName, int16 dataVar, int32 size, int32 offse
 			desc = "Unknown";
 
 		warning("Could not save %s (\"%s\" (%d, %d, %d))",
-				desc, fileName, dataVar, size, offset);
+		        desc, fileName, dataVar, size, offset);
 		return false;
 	}
 

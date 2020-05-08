@@ -26,16 +26,16 @@
  * Copyright (c) 1997-2003 Nayma Software
  */
 
+#include "tony/game.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "graphics/cursorman.h"
+#include "tony/gfxengine.h"
 #include "tony/mpal/lzo.h"
 #include "tony/mpal/memory.h"
 #include "tony/mpal/mpal.h"
 #include "tony/mpal/mpalutils.h"
-#include "tony/game.h"
-#include "tony/gfxengine.h"
 #include "tony/tony.h"
 
 namespace Tony {
@@ -1049,8 +1049,12 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 	}
 
 #define KEYPRESS(c) (g_vm->getEngine()->getInput().getAsyncKeyState(c))
-#define PROCESS_CHAR(cod, c) if (KEYPRESS(cod)) { \
-		_editName[strlen(_editName) + 1] = '\0'; _editName[strlen(_editName)] = c; _ctx->bRefresh = true; }
+#define PROCESS_CHAR(cod, c)                     \
+	if (KEYPRESS(cod)) {                         \
+		_editName[strlen(_editName) + 1] = '\0'; \
+		_editName[strlen(_editName)] = c;        \
+		_ctx->bRefresh = true;                   \
+	}
 
 	// State Buttons
 	if (_bEditSaveName) {

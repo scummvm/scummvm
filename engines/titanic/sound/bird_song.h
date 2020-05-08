@@ -31,8 +31,10 @@ class CBirdSong : public CRoomAutoSoundPlayer {
 	DECLARE_MESSAGE_MAP;
 	bool TurnOn(CTurnOn *msg);
 	bool SignalObject(CSignalObject *msg);
+
 public:
 	bool _flag;
+
 public:
 	CLASSDEF;
 	CBirdSong() : CRoomAutoSoundPlayer(), _flag(false) {}

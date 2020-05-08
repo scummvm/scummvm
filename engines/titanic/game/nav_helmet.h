@@ -37,8 +37,10 @@ class CNavHelmet : public CGameObject {
 	bool PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg);
 	bool PETStarFieldLockMsg(CPETStarFieldLockMsg *msg);
 	bool PETSetStarDestinationMsg(CPETSetStarDestinationMsg *msg);
+
 private:
 	bool _helmetOn;
+
 public:
 	CLASSDEF;
 	CNavHelmet() : CGameObject(), _helmetOn(false) {}

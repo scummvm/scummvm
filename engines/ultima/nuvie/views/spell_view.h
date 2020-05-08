@@ -23,8 +23,8 @@
 #ifndef NUVIE_VIEWS_SPELL_VIEW_H
 #define NUVIE_VIEWS_SPELL_VIEW_H
 
-#include "ultima/nuvie/views/draggable_view.h"
 #include "ultima/nuvie/core/obj.h"
+#include "ultima/nuvie/views/draggable_view.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -67,7 +67,8 @@ public:
 	sint16 get_selected_spell() {
 		if (spell_container) {
 			return spell_container->quality;
-		} else return -1;
+		} else
+			return -1;
 	}
 	void Display(bool full_redraw) override;
 	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) override;
@@ -102,7 +103,6 @@ public:
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
 protected:
-
 	void event_mode_select_spell();
 
 	void add_command_icons(Screen *tmp_screen, void *view_manager);

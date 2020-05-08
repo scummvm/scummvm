@@ -26,7 +26,7 @@
 namespace CGE {
 
 CGEConsole::CGEConsole(CGEEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("Boundaries",    WRAP_METHOD(CGEConsole, Cmd_boundaries));
+	registerCmd("Boundaries", WRAP_METHOD(CGEConsole, Cmd_boundaries));
 }
 
 CGEConsole::~CGEConsole() {

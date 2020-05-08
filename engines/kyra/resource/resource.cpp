@@ -31,7 +31,10 @@ namespace Kyra {
 class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
 public:
 	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
-	~EndianAwareStreamWrapper() override { if (_dispose) delete _stream; }
+	~EndianAwareStreamWrapper() override {
+		if (_dispose)
+			delete _stream;
+	}
 
 	// Common::Stream interface
 	bool err() const override { return _stream->err(); }
@@ -44,7 +47,7 @@ public:
 	int32 pos() const override { return _stream->pos(); }
 	int32 size() const override { return _stream->size(); }
 	bool seek(int32 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
-	
+
 private:
 	Common::SeekableReadStream *_stream;
 	bool _dispose;
@@ -89,10 +92,9 @@ bool Resource::reset() {
 		if (!_vm->gameFlags().isDemo && _vm->gameFlags().isTalkie) {
 			// List of files in the talkie version, which can never be unload.
 			static const char *const list[] = {
-				"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
-				"INTRO3.PAK", "INTRO4.PAK", "MISC.PAK", "SND.PAK", "STARTUP.PAK", "XMI.PAK",
-				"CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK", 0
-			};
+			    "ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",
+			    "INTRO3.PAK", "INTRO4.PAK", "MISC.PAK", "SND.PAK", "STARTUP.PAK", "XMI.PAK",
+			    "CAVE.APK", "DRAGON1.APK", "DRAGON2.APK", "LAGOON.APK", 0};
 
 			loadProtectedFiles(list);
 		} else {
@@ -149,14 +151,13 @@ bool Resource::reset() {
 
 		if (!_vm->gameFlags().isTalkie && !_vm->gameFlags().isDemo) {
 			static const char *const list[] = {
-				"GENERAL.PAK", 0
-			};
+			    "GENERAL.PAK", 0};
 
 			loadProtectedFiles(list);
 		}
 	} else if (_vm->game() != GI_EOB2) {
 		error("Unknown game id: %d", _vm->game());
-		return false;   // for compilers that don't support NORETURN
+		return false; // for compilers that don't support NORETURN
 	}
 
 	return true;
@@ -215,7 +216,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 			} else if (!loadPakFile(filename)) {
 				delete f;
 				error("couldn't load file '%s'", filename.c_str());
-				return false;   // for compilers that don't support NORETURN
+				return false; // for compilers that don't support NORETURN
 			}
 		}
 	}
@@ -231,7 +232,7 @@ bool Resource::loadFileList(const char *const *filelist, uint32 numFiles) {
 	while (numFiles--) {
 		if (!loadPakFile(filelist[numFiles])) {
 			error("couldn't load file '%s'", filelist[numFiles]);
-			return false;   // for compilers that don't support NORETURN
+			return false; // for compilers that don't support NORETURN
 		}
 	}
 

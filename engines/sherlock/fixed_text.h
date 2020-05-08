@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_FIXED_TEXT_H
 #define SHERLOCK_FIXED_TEXT_H
 
-#include "common/scummsys.h"
 #include "common/language.h"
+#include "common/scummsys.h"
 
 namespace Sherlock {
 
@@ -77,6 +77,7 @@ protected:
 	SherlockEngine *_vm;
 
 	FixedText(SherlockEngine *vm);
+
 public:
 	static FixedText *init(SherlockEngine *vm);
 	virtual ~FixedText() {}

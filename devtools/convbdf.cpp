@@ -20,16 +20,16 @@
  *
  */
 
-#ifndef __has_feature         // Optional of course.
-#define __has_feature(x) 0    // Compatibility with non-clang compilers.
+#ifndef __has_feature      // Optional of course.
+#define __has_feature(x) 0 // Compatibility with non-clang compilers.
 #endif
 
 #include <fstream>
-#include <string>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string.h>
+#include <string>
 #include <time.h>
 
 struct BdfBoundingBox {
@@ -255,7 +255,7 @@ int main(int argc, char *argv[]) {
 						font.maxAdvance = xAdvance;
 
 					hasWidth = true;
-				} else if (hasPrefix(line, "BBX" )) {
+				} else if (hasPrefix(line, "BBX")) {
 					if (sscanf(line.c_str(), "BBX %d %d %d %d",
 					           &bbox.width, &bbox.height,
 					           &bbox.xOffset, &bbox.yOffset) != 4)
@@ -334,10 +334,7 @@ int main(int argc, char *argv[]) {
 			hasFixedAdvance = false;
 
 		const BdfBoundingBox &bbox = font.boxes[i];
-		if (bbox.width != font.defaultBox.width
-		    || bbox.height != font.defaultBox.height
-		    || bbox.xOffset != font.defaultBox.xOffset
-		    || bbox.yOffset != font.defaultBox.yOffset)
+		if (bbox.width != font.defaultBox.width || bbox.height != font.defaultBox.height || bbox.xOffset != font.defaultBox.xOffset || bbox.yOffset != font.defaultBox.yOffset)
 			hasFixedBBox = false;
 	}
 
@@ -357,8 +354,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Adapt for the fact that we never use encoding 0.
-	if (font.defaultCharacter < firstCharacter
-	    || font.defaultCharacter > lastCharacter)
+	if (font.defaultCharacter < firstCharacter || font.defaultCharacter > lastCharacter)
 		font.defaultCharacter = -1;
 
 	font.firstCharacter = firstCharacter;
@@ -432,7 +428,8 @@ int main(int argc, char *argv[]) {
 		printf("// Character %d (0x%02X)\n"
 		       "// Box: %d %d %d %d\n"
 		       "// Advance: %d\n"
-		       "//\n", i + font.firstCharacter, i + font.firstCharacter,
+		       "//\n",
+		       i + font.firstCharacter, i + font.firstCharacter,
 		       box.width, box.height, box.xOffset, box.yOffset,
 		       hasFixedAdvance ? font.maxAdvance : font.advances[i]);
 
@@ -534,11 +531,11 @@ int main(int argc, char *argv[]) {
 
 	printf("// Font structure\n"
 	       "static const BdfFontData desc = {\n"
-		   "\t\"%s\", // Family name\n"
-		   "\t\"%s\", // Slant\n"
+	       "\t\"%s\", // Family name\n"
+	       "\t\"%s\", // Slant\n"
 	       "\t%d, // Max advance\n"
 	       "\t%d, // Height\n"
-		   "\t%d, // Size\n"
+	       "\t%d, // Size\n"
 	       "\t{ %d, %d, %d, %d }, // Bounding box\n"
 	       "\t%d, // Ascent\n"
 	       "\n"

@@ -20,14 +20,14 @@
  *
  */
 
-#include "engines/util.h"
 #include "ultima/shared/gfx/screen.h"
+#include "engines/util.h"
 
 namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-Screen::Screen(): Graphics::Screen(320, 200), _cursor(nullptr), _drawCursor(false) {
+Screen::Screen() : Graphics::Screen(320, 200), _cursor(nullptr), _drawCursor(false) {
 	initGraphics(320, 200);
 }
 
@@ -56,7 +56,6 @@ void Screen::updateScreen() {
 
 	Graphics::Screen::updateScreen();
 }
-
 
 } // End of namespace Gfx
 } // End of namespace Shared

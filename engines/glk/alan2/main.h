@@ -36,9 +36,9 @@ namespace Alan2 {
 
 #define MEMORYSIZE 1000L
 
-extern Aaddr memTop;        // Top of memory
+extern Aaddr memTop; // Top of memory
 
-extern int conjWord;        // First conjunction in dictionary
+extern int conjWord; // First conjunction in dictionary
 
 /* The Amachine memory */
 extern Aword *memory;
@@ -48,20 +48,20 @@ extern AcdHdr *header;
 extern CurVars cur;
 
 /* Amachine data structures */
-extern WrdElem *dict;       /* Dictionary pointer */
-extern ActElem *acts;       /* Actor table pointer */
-extern LocElem *locs;       /* Location table pointer */
-extern VrbElem *vrbs;       /* Verb table pointer */
-extern StxElem *stxs;       /* Syntax table pointer */
-extern ObjElem *objs;       /* Object table pointer */
-extern CntElem *cnts;       /* Container table pointer */
-extern RulElem *ruls;       /* Rule table pointer */
-extern EvtElem *evts;       /* Event table pointer */
-extern MsgElem *msgs;       /* Message table pointer */
-extern Aword *scores;       /* Score table pointer */
-extern Aword *freq;     /* Cumulated frequencies */
+extern WrdElem *dict; /* Dictionary pointer */
+extern ActElem *acts; /* Actor table pointer */
+extern LocElem *locs; /* Location table pointer */
+extern VrbElem *vrbs; /* Verb table pointer */
+extern StxElem *stxs; /* Syntax table pointer */
+extern ObjElem *objs; /* Object table pointer */
+extern CntElem *cnts; /* Container table pointer */
+extern RulElem *ruls; /* Rule table pointer */
+extern EvtElem *evts; /* Event table pointer */
+extern MsgElem *msgs; /* Message table pointer */
+extern Aword *scores; /* Score table pointer */
+extern Aword *freq;   /* Cumulated frequencies */
 
-extern int dictsize;        /* Number of entries in dictionary */
+extern int dictsize; /* Number of entries in dictionary */
 
 /* The text and message file */
 extern Common::File *txtfil;
@@ -79,7 +79,6 @@ extern Common::SeekableReadStream *codfil;
 #define fseek(FP, OFS, WHENCE) FP->seek(OFS, WHENCE)
 #define fclose(FP) delete FP
 
-
 /* File names */
 extern const char *advnam;
 
@@ -91,7 +90,7 @@ extern Boolean fail;
 extern Boolean anyOutput;
 extern Boolean needsp;
 
-#define endOfTable(x) eot((Aword *) x)
+#define endOfTable(x) eot((Aword *)x)
 
 extern void *allocate(unsigned long len);
 extern void terminate(CONTEXT, int code);

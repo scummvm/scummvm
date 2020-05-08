@@ -23,8 +23,8 @@
  *
  */
 
-#include "pegasus/graphics.h"
 #include "pegasus/neighborhood/wsc/moleculebin.h"
+#include "pegasus/graphics.h"
 #include "pegasus/neighborhood/wsc/wsc.h"
 
 namespace Pegasus {
@@ -54,7 +54,7 @@ void MoleculeBin::initMoleculeBin() {
 		_binImages.getImageFromPICTFile("Images/World Science Center/Molecules");
 		setDisplayOrder(kWSCMoleculeBinOrder);
 		setBounds(kMoleculeBinLeft, kMoleculeBinTop, kMoleculeBinLeft + kMoleculeBinWidth,
-				kMoleculeBinTop + kMoleculeBinHeight);
+		          kMoleculeBinTop + kMoleculeBinHeight);
 		startDisplaying();
 		show();
 	}
@@ -107,14 +107,14 @@ void MoleculeBin::draw(const Common::Rect &) {
 			r1.translate(kMoleculeWidth, 0);
 
 		r2.moveTo((_binLayout[i] & 1) * (kMoleculeWidth + 2) + _bounds.left + 2,
-				(_binLayout[i] >> 1) * (kMoleculeHeight + 2) + _bounds.top + 2);
+		          (_binLayout[i] >> 1) * (kMoleculeHeight + 2) + _bounds.top + 2);
 
 		_binImages.copyToCurrentPort(r1, r2);
 	}
 
 	if (_selectedMolecule >= 0) {
 		r2.moveTo((_selectedMolecule & 1) * (kMoleculeWidth + 2) + _bounds.left + 2,
-				(_selectedMolecule >> 1) * (kMoleculeHeight + 2) + _bounds.top + 2);
+		          (_selectedMolecule >> 1) * (kMoleculeHeight + 2) + _bounds.top + 2);
 
 		Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
 

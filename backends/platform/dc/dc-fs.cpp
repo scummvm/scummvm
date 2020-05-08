@@ -22,9 +22,9 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "dc.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/stdiostream.h"
+#include "dc.h"
 
 #include <ronin/cdfs.h>
 #include <stdio.h>
@@ -92,7 +92,7 @@ AbstractFSNode *RoninCDFileNode::makeFileNodePath(const Common::String &path) {
 	if ((fd = open(path.c_str(), O_RDONLY)) >= 0) {
 		close(fd);
 		return new RoninCDFileNode(path);
-	} else if ((fd = open(path.c_str(), O_DIR|O_RDONLY)) >= 0) {
+	} else if ((fd = open(path.c_str(), O_DIR | O_RDONLY)) >= 0) {
 		close(fd);
 		return new RoninCDDirectoryNode(path);
 	} else {
@@ -152,7 +152,6 @@ AbstractFSNode *RoninCDFileNode::getParent() const {
 
 	return new RoninCDDirectoryNode(Common::String(start, end - start));
 }
-
 
 Common::SeekableReadStream *RoninCDFileNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath().c_str(), false);

@@ -32,18 +32,17 @@
 
 #define NUM_ENGINE_TEXT 1
 const char *textEngine[NUM_ENGINE_TEXT] = {
-	"Hugo and Penelope say:\n\n"
-	"We hope you liked our adventure and\n"
-	"hope to see you very soon in Hugo's\n"
-	"Mystery Adventure and Hugo's Amazon\n"
-	"Adventure.  They are just like this\n"
-	"game but bigger and better!\n\n"
-	"Call 1-800-2424-PsL now to order the\n"
-	"Hugo Trilogy for Windows for only $36!\n"
-	"(Note: This number is for ORDERS only).\n\n"
-	"It includes all 3 games plus the 30-page\n"
-	"answer book.  See Ordering information\n"
-	"for more details and some screenshots."
-};
+    "Hugo and Penelope say:\n\n"
+    "We hope you liked our adventure and\n"
+    "hope to see you very soon in Hugo's\n"
+    "Mystery Adventure and Hugo's Amazon\n"
+    "Adventure.  They are just like this\n"
+    "game but bigger and better!\n\n"
+    "Call 1-800-2424-PsL now to order the\n"
+    "Hugo Trilogy for Windows for only $36!\n"
+    "(Note: This number is for ORDERS only).\n\n"
+    "It includes all 3 games plus the 30-page\n"
+    "answer book.  See Ordering information\n"
+    "for more details and some screenshots."};
 
 #endif

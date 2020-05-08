@@ -21,11 +21,6 @@
  */
 
 #include "ultima/ultima4/game/person.h"
-#include "ultima/ultima4/game/names.h"
-#include "ultima/ultima4/game/player.h"
-#include "ultima/ultima4/views/stats.h"
-#include "ultima/ultima4/game/context.h"
-#include "ultima/ultima4/game/script.h"
 #include "ultima/ultima4/controllers/read_choice_controller.h"
 #include "ultima/ultima4/controllers/read_int_controller.h"
 #include "ultima/ultima4/controllers/read_player_controller.h"
@@ -37,10 +32,15 @@
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/filesys/u4file.h"
+#include "ultima/ultima4/game/context.h"
+#include "ultima/ultima4/game/names.h"
+#include "ultima/ultima4/game/player.h"
+#include "ultima/ultima4/game/script.h"
 #include "ultima/ultima4/map/city.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/sound/music.h"
 #include "ultima/ultima4/ultima4.h"
+#include "ultima/ultima4/views/stats.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -119,9 +119,8 @@ bool Person::canConverse() const {
 }
 
 bool Person::isVendor() const {
-	return
-	    _npcType >= NPC_VENDOR_WEAPONS &&
-	    _npcType <= NPC_VENDOR_STABLE;
+	return _npcType >= NPC_VENDOR_WEAPONS &&
+	       _npcType <= NPC_VENDOR_STABLE;
 }
 
 Common::String Person::getName() const {
@@ -160,8 +159,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 	 */
 	if (isVendor()) {
 		static const Common::String ids[] = {
-			"Weapons", "Armor", "Food", "Tavern", "Reagents", "Healer", "Inn", "Guild", "Stable"
-		};
+		    "Weapons", "Armor", "Food", "Tavern", "Reagents", "Healer", "Inn", "Guild", "Stable"};
 		Script *script = cnv->_script;
 
 		/**
@@ -194,8 +192,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 							s_val = val;
 							script->setVar(script->getInputName(), s_val);
 						}
-					}
-					break;
+					} break;
 
 					case Script::INPUT_KEYPRESS:
 						ReadChoiceController::get(" \015\033");
@@ -208,8 +205,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 #endif
 						int val = ReadIntController::get(script->getInputMaxLen(), TEXT_AREA_X + g_context->_col, TEXT_AREA_Y + g_context->_line);
 						script->setVar(script->getInputName(), val);
-					}
-					break;
+					} break;
 
 					case Script::INPUT_STRING: {
 #ifdef IOS_ULTIMA4
@@ -220,9 +216,9 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 						if (str.size()) {
 							lowercase(str);
 							script->setVar(script->getInputName(), str);
-						} else script->unsetVar(script->getInputName());
-					}
-					break;
+						} else
+							script->unsetVar(script->getInputName());
+					} break;
 
 					case Script::INPUT_PLAYER: {
 						ReadPlayerController getPlayerCtrl;
@@ -231,9 +227,9 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 						if (player != -1) {
 							Common::String player_str = xu4_to_string(player + 1);
 							script->setVar(script->getInputName(), player_str);
-						} else script->unsetVar(script->getInputName());
-					}
-					break;
+						} else
+							script->unsetVar(script->getInputName());
+					} break;
 
 					default:
 						break;
@@ -243,7 +239,7 @@ Common::List<Common::String> Person::getConversationText(Conversation *cnv, cons
 					g_context->_line++;
 					script->_continue();
 				} // } if
-			} // } while
+			}     // } while
 		}
 
 		// Unload the script
@@ -474,7 +470,7 @@ Common::String Person::talkerGetQuestionResponse(Conversation *cnv, const char *
 Common::String Person::beggarGetQuantityResponse(Conversation *cnv, const char *response) {
 	Common::String reply;
 
-	cnv->_quant = (int) strtol(response, nullptr, 10);
+	cnv->_quant = (int)strtol(response, nullptr, 10);
 	cnv->_state = Conversation::TALK;
 
 	if (cnv->_quant > 0) {
@@ -555,7 +551,6 @@ int linecount(const Common::String &s, int columnmax) {
 	return lines;
 }
 
-
 /**
  * Returns the number of characters needed to produce a
  * valid screen of text (given a column width and row height)
@@ -577,7 +572,8 @@ int chars_needed(const char *s, int columnmax, int linesdesired, int *real_lines
 		lines += linecount(p.c_str(), columnmax);
 		if (lines <= linesdesired)
 			paragraphs += p + "\n";
-		else break;
+		else
+			break;
 		text = text.substr(pos + 1);
 	}
 	// Seems to be some sort of clang compilation bug in this code, that causes this addition

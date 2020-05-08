@@ -34,7 +34,8 @@
 namespace Kyra {
 
 class DarkmoonSequenceHelper {
-friend class DarkMoonEngine;
+	friend class DarkMoonEngine;
+
 public:
 	enum Mode {
 		kIntro,
@@ -71,7 +72,7 @@ private:
 	OSystem *_system;
 	DarkMoonEngine *_vm;
 	Screen_EoB *_screen;
-	
+
 	struct Config {
 		Config(const char *const *str, const char *const *cpsfiles, const uint8 **cpsdata, const char *const *pal, const DarkMoonShapeDef **shp, const DarkMoonAnimCommand **anim, bool loadScenePalette, bool paletteFading, bool animCmdRestorePalette, bool shapeBackgroundFading, int animPalOffset, int animType1ShapeDim, bool animCmd5SetPalette, int animCmd5ExtraPage) : strings(str), cpsFiles(cpsfiles), cpsData(cpsdata), palFiles(pal), shapeDefs(shp), animData(anim), loadScenePal(loadScenePalette), palFading(paletteFading), animCmdRestorePal(animCmdRestorePalette), shpBackgroundFading(shapeBackgroundFading), animPalOffs(animPalOffset), animCmd1ShapeFrame(animType1ShapeDim), animCmd5SetPal(animCmd5SetPalette), animCmd5AltPage(animCmd5ExtraPage) {}
 		const char *const *strings;
@@ -89,7 +90,7 @@ private:
 		bool animCmd5SetPal;
 		int animCmd5AltPage;
 	};
-	
+
 	const Config *_config;
 
 	Palette *_palettes[13];
@@ -298,29 +299,29 @@ void DarkMoonEngine::seq_playIntro() {
 	_screen->setCurPage(2);
 	_screen->setClearScreenDim(17);
 	_screen->setCurPage(0);
-	
+
 	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 38 : (_configRenderMode == Common::kRenderEGA ? 41 : 40));
 	sq.animCommand(7, 18);
 
 	if (_flags.platform == Common::kPlatformAmiga)
 		sq.fadeText();
 
-	sq.printText(0, textColor1);    // You were settling...
+	sq.printText(0, textColor1); // You were settling...
 	sq.animCommand(7, 90);
 	sq.fadeText();
 
-	sq.printText(1, textColor1);    // Then a note was slipped to you
+	sq.printText(1, textColor1); // Then a note was slipped to you
 	sq.animCommand(8);
 	sq.animCommand(2, 72);
 	sq.fadeText();
 
-	sq.printText(2, textColor1);    // It was from your friend Khelben Blackstaff...
+	sq.printText(2, textColor1); // It was from your friend Khelben Blackstaff...
 	sq.animCommand(2);
 	sq.animCommand(6, 36);
 	sq.animCommand(3);
 	sq.fadeText();
 
-	sq.printText(3, textColor1);    // The message was urgent.
+	sq.printText(3, textColor1); // The message was urgent.
 
 	sq.loadScene(1, 2);
 	sq.waitForSongNotifier(4);
@@ -365,7 +366,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.update(2);
 	sq.delay(10);
 
-	sq.printText(4, textColor1);    // What could Khelben want?
+	sq.printText(4, textColor1); // What could Khelben want?
 	sq.delay(25);
 
 	sq.loadScene(3, 2);
@@ -373,18 +374,18 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 12 : 13);
 	_screen->copyRegion(104, 16, 96, 8, 120, 100, 0, 2, Screen::CR_NO_P_CHECK);
 	sq.fadeText();
-	
+
 	if (_flags.platform == Common::kPlatformAmiga)
 		sq.animCommand(9);
 
-	sq.printText(5, textColor2);    // Welcome, please come in
+	sq.printText(5, textColor2); // Welcome, please come in
 	sq.animCommand(10);
 	sq.animCommand(10);
 	sq.animCommand(9);
 	sq.animCommand(9);
 	sq.fadeText();
 
-	sq.printText(6, textColor2);    // Khelben awaits you in his study
+	sq.printText(6, textColor2); // Khelben awaits you in his study
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(10);
 	sq.animCommand(9);
@@ -431,7 +432,7 @@ void DarkMoonEngine::seq_playIntro() {
 		snd_playSong(15);
 
 	sq.animCommand(16);
-	sq.printText(7, textColor2);    // Thank you for coming so quickly
+	sq.printText(7, textColor2); // Thank you for coming so quickly
 	sq.animCommand(16);
 	sq.animCommand(17);
 	for (int i = 0; i < 3; i++)
@@ -442,14 +443,14 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.loadScene(8, 2, true);
 	sq.update(2);
 	sq.animCommand(32);
-	sq.printText(8, textColor2);    // I am troubled my friend
+	sq.printText(8, textColor2); // I am troubled my friend
 	sq.animCommand(33);
 	sq.animCommand(33);
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(32);
 	sq.fadeText();
 
-	sq.printText(9, textColor2);    // Ancient evil stirs in the Temple Darkmoon
+	sq.printText(9, textColor2); // Ancient evil stirs in the Temple Darkmoon
 	sq.animCommand(33);
 	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 41 : 43);
 	sq.animCommand(33);
@@ -457,7 +458,7 @@ void DarkMoonEngine::seq_playIntro() {
 		sq.animCommand(32);
 	sq.fadeText();
 
-	sq.printText(10, textColor2);   // I fear for the safety of our city
+	sq.printText(10, textColor2); // I fear for the safety of our city
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(33);
 	sq.animCommand(32);
@@ -471,7 +472,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.update(2);
 	sq.animCommand(34);
 
-	sq.printText(11, textColor2);   // I need your help
+	sq.printText(11, textColor2); // I need your help
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(34);
 	sq.animCommand(35);
@@ -484,7 +485,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.loadScene(6, 2, true);
 	sq.animCommand(18);
 
-	sq.printText(12, textColor2);   // Three nights ago I sent forth a scout
+	sq.printText(12, textColor2); // Three nights ago I sent forth a scout
 	sq.animCommand(19);
 	sq.animCommand(20);
 	sq.animCommand(22);
@@ -493,7 +494,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(18);
 	sq.fadeText();
 
-	sq.printText(13, textColor2);   // She has not yet returned
+	sq.printText(13, textColor2); // She has not yet returned
 	sq.animCommand(20);
 	sq.animCommand(19);
 	sq.animCommand(23);
@@ -504,7 +505,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(18);
 	sq.fadeText();
 
-	sq.printText(14, textColor2);   // I fear for her safety
+	sq.printText(14, textColor2); // I fear for her safety
 	sq.animCommand(19);
 	sq.animCommand(20);
 	sq.animCommand(20);
@@ -516,7 +517,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(18);
 	sq.animCommand(18);
 
-	sq.printText(15, textColor2);   // Take this coin
+	sq.printText(15, textColor2); // Take this coin
 	sq.animCommand(28);
 	sq.animCommand(19);
 	sq.animCommand(20);
@@ -542,7 +543,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.update(2);
 
 	sq.loadScene(11, 2, true);
-	sq.printText(16, textColor2);   // I will use it to contact you
+	sq.printText(16, textColor2); // I will use it to contact you
 	sq.animCommand(19);
 	sq.animCommand(20);
 	sq.animCommand(20);
@@ -550,7 +551,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(18);
 	sq.fadeText();
 
-	sq.printText(17, textColor2);   // You must act quickly
+	sq.printText(17, textColor2); // You must act quickly
 	sq.animCommand(19);
 	sq.animCommand(20);
 	sq.animCommand(19);
@@ -559,7 +560,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.animCommand(18);
 
-	sq.printText(18, textColor2);   // I will teleport you near Darkmoon
+	sq.printText(18, textColor2); // I will teleport you near Darkmoon
 	sq.animCommand(20);
 	sq.animCommand(27);
 	sq.animCommand(20);
@@ -569,7 +570,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.animCommand(18);
 
-	sq.printText(19, textColor2);   // May luck be with you my friend
+	sq.printText(19, textColor2); // May luck be with you my friend
 	sq.animCommand(19);
 	sq.animCommand(19);
 	sq.animCommand(20);
@@ -585,7 +586,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.waitForSongNotifier(8, true);
 
 	if (_flags.platform == Common::kPlatformAmiga && !skipFlag() && !shouldQuit()) {
-		static const uint8 magicHandsCol[] = { 0x15, 0x1D, 0x3A, 0x32, 0x32, 0x3F };
+		static const uint8 magicHandsCol[] = {0x15, 0x1D, 0x3A, 0x32, 0x32, 0x3F};
 		snd_fadeOut();
 		_screen->getPalette(0).copy(magicHandsCol, 0, 1, 31);
 		_screen->fadePalette(_screen->getPalette(0), 32);
@@ -652,7 +653,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(2);
 	sq.animCommand(2);
 
-	sq.printText(0, textColor1);            // Finally, Dran has been defeated
+	sq.printText(0, textColor1); // Finally, Dran has been defeated
 	for (int i = 0; i < 7; i++)
 		sq.animCommand(2);
 	sq.fadeText();
@@ -660,13 +661,13 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.waitForSongNotifier(1);
 
-	sq.printText(1, textColor1);            // Suddenly, your friend Khelben appears
+	sq.printText(1, textColor1); // Suddenly, your friend Khelben appears
 	sq.animCommand(4);
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(2, textColor2);            // Greetings, my victorious friends
+	sq.printText(2, textColor2); // Greetings, my victorious friends
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
@@ -674,42 +675,42 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.fadeText();
 	sq.animCommand(6);
 
-	sq.printText(3, textColor2);            // You have defeated Dran
+	sq.printText(3, textColor2); // You have defeated Dran
 	for (int i = 0; i < 5; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(4, textColor2);            // I did not know Dran was a dragon
+	sq.printText(4, textColor2); // I did not know Dran was a dragon
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(5, textColor2);            // He must have been over 300 years old
+	sq.printText(5, textColor2); // He must have been over 300 years old
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(6, textColor2);            // His power is gone
+	sq.printText(6, textColor2); // His power is gone
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(7, textColor2);            // But Darkmoon is still a source of great evil
+	sq.printText(7, textColor2); // But Darkmoon is still a source of great evil
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
 	sq.animCommand(2);
 	sq.fadeText();
 
-	sq.printText(8, textColor2);            // And many of his minions remain
+	sq.printText(8, textColor2); // And many of his minions remain
 	for (int i = 0; i < 4; i++)
 		sq.animCommand(5);
 	sq.animCommand(2);
@@ -721,14 +722,14 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.loadScene(3, 2);
 	_screen->copyRegion(8, 8, 0, 0, 304, 128, 0, 2, Screen::CR_NO_P_CHECK);
 
-	sq.printText(9, textColor2);            // Now we must leave this place
+	sq.printText(9, textColor2); // Now we must leave this place
 	sq.animCommand(7);
 	sq.animCommand(8);
 	sq.animCommand(7);
 	sq.animCommand(7, 36);
 	sq.fadeText();
 
-	sq.printText(10, textColor2);           // So my forces can destroy it..
+	sq.printText(10, textColor2); // So my forces can destroy it..
 	for (int i = 0; i < 3; i++)
 		sq.animCommand(7);
 	sq.animCommand(8);
@@ -737,7 +738,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(8, 18);
 	sq.fadeText();
 
-	sq.printText(11, textColor2);           // Follow me
+	sq.printText(11, textColor2); // Follow me
 	sq.animCommand(7, 18);
 	sq.animCommand(9, 18);
 	sq.animCommand(8, 18);
@@ -758,7 +759,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.loadScene(6, 6);
 	sq.delay(10);
 
-	sq.printText(12, textColor1);           // Powerful mages stand ready for the final assault...
+	sq.printText(12, textColor1); // Powerful mages stand ready for the final assault...
 	sq.delay(90);
 	sq.fadeText();
 
@@ -788,11 +789,11 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(15);
 	sq.animCommand(11);
 
-	sq.printText(13, textColor1);           // The temple's evil is very strong
+	sq.printText(13, textColor1); // The temple's evil is very strong
 	sq.delay(72);
 	sq.fadeText();
 
-	sq.printText(14, textColor1);           // It must not be allowed...
+	sq.printText(14, textColor1); // It must not be allowed...
 	sq.delay(72);
 	sq.fadeText();
 
@@ -824,7 +825,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.animCommand(17);
 	sq.animCommand(18);
 
-	sq.printText(15, textColor1);           // The temple ceases to exist
+	sq.printText(15, textColor1); // The temple ceases to exist
 	if (_flags.platform != Common::kPlatformAmiga) {
 		sq.initDelayedPaletteFade(6, 1);
 	} else {
@@ -839,7 +840,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(54);
 	sq.fadeText();
 	sq.loadScene(12, 2);
-	
+
 	sq.waitForSongNotifier(5);
 
 	if (!skipFlag() && !shouldQuit())
@@ -855,7 +856,7 @@ void DarkMoonEngine::seq_playFinale() {
 	}
 	sq.delay(18);
 
-	sq.printText(16, textColor2);           // My friends, our work is done
+	sq.printText(16, textColor2); // My friends, our work is done
 	sq.animCommand(20);
 	sq.animCommand(19);
 	sq.animCommand(19, 36);
@@ -863,12 +864,12 @@ void DarkMoonEngine::seq_playFinale() {
 		snd_playSoundEffect(12);
 	sq.fadeText();
 
-	sq.printText(17, textColor2);           // Thank you
+	sq.printText(17, textColor2); // Thank you
 	sq.animCommand(19);
 	sq.animCommand(20, 36);
 	sq.fadeText();
 
-	sq.printText(18, textColor2);           // You have earned my deepest respect
+	sq.printText(18, textColor2); // You have earned my deepest respect
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(11);
 	sq.animCommand(20);
@@ -879,7 +880,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(36);
 	sq.fadeText();
 
-	sq.printText(19, textColor2);           // We will remember you always
+	sq.printText(19, textColor2); // We will remember you always
 	sq.animCommand(19);
 	sq.animCommand(19, 18);
 	if (!skipFlag() && !shouldQuit())
@@ -940,9 +941,9 @@ void DarkMoonEngine::seq_playFinale() {
 
 	int temp = 0;
 	const uint8 *creditsData = (_flags.platform != Common::kPlatformDOS) ? _res->fileData("CREDITS.TXT", 0) : _staticres->loadRawData(kEoB2CreditsData, temp);
-	
+
 	seq_playCredits(&sq, creditsData, 18, 2, 6, 2);
-	
+
 	if (_flags.platform != Common::kPlatformDOS)
 		delete[] creditsData;
 
@@ -960,7 +961,7 @@ void DarkMoonEngine::seq_playFinale() {
 	_screen->clearCurPage();
 	sq.loadScene(11, 2);
 
-	static const uint8 finPortraitPos[] = { 0x50, 0x50, 0xD0, 0x50, 0x50, 0x90, 0xD0, 0x90, 0x90, 0x50, 0x90, 0x90 };
+	static const uint8 finPortraitPos[] = {0x50, 0x50, 0xD0, 0x50, 0x50, 0x90, 0xD0, 0x90, 0x90, 0x50, 0x90, 0x90};
 
 	for (int i = 0; i < 6; i++) {
 		if (!testCharacter(i, 1))
@@ -1168,7 +1169,7 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum, bool ignorePalett
 		file = _config->cpsFiles[index];
 		s = _vm->resource()->createReadStream(file);
 	}
-	
+
 	if (s) {
 		chunkID = s->readUint32LE();
 		s->seek(0);
@@ -1458,7 +1459,7 @@ void DarkmoonSequenceHelper::fadeText() {
 		_screen->fadeTextColor(_palettes[0], 31, rate);
 	else if (_vm->_configRenderMode != Common::kRenderEGA)
 		_screen->fadeTextColor(_palettes[0], 255, rate);
-	
+
 	memset(_textColor, 0, 3);
 	_screen->clearCurDim();
 }
@@ -1482,9 +1483,8 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	assert(mode == kIntro || mode == kFinale);
 
 	static const uint16 soundMarkersFMTowns[2][8] = {
-		{  229,  447,  670, 1380, 2037, 3000, 4475, 4825 },
-		{  475, 2030, 2200, 2752, 3475,    0,    0,    0 }
-	};
+	    {229, 447, 670, 1380, 2037, 3000, 4475, 4825},
+	    {475, 2030, 2200, 2752, 3475, 0, 0, 0}};
 
 	int size = 0;
 	_platformAnimOffset = 0;
@@ -1494,21 +1494,20 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 
 	if (mode == kIntro) {
 		_config = new Config(
-			_vm->staticres()->loadStrings(kEoB2IntroStrings, size),
-			_vm->staticres()->loadStrings(kEoB2IntroCPSFiles, size),
-			new const uint8*[16],
-			_vm->_flags.platform == Common::kPlatformAmiga ? 0 : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA),
-			new const DarkMoonShapeDef*[16],
-			new const DarkMoonAnimCommand *[44],
-			false,
-			false,
-			true,
-			true,
-			_vm->_flags.platform == Common::kPlatformAmiga ? 1 : 0,
-			0,
-			false,
-			2
-		);
+		    _vm->staticres()->loadStrings(kEoB2IntroStrings, size),
+		    _vm->staticres()->loadStrings(kEoB2IntroCPSFiles, size),
+		    new const uint8 *[16],
+		    _vm -> _flags.platform == Common::kPlatformAmiga ? 0 : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesIntroEGA : _palFilesIntroVGA),
+		    new const DarkMoonShapeDef *[16],
+		    new const DarkMoonAnimCommand *[44],
+		    false,
+		    false,
+		    true,
+		    true,
+		    _vm->_flags.platform == Common::kPlatformAmiga ? 1 : 0,
+		    0,
+		    false,
+		    2);
 
 		for (int i = 0; i < 44; i++)
 			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2IntroAnimData00 + i, size);
@@ -1516,7 +1515,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 		for (int i = 0; i < 16; i++)
 			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2IntroCpsDataStreet1 + i, size);
 
-		memset(_config->shapeDefs, 0, 16 * sizeof(DarkMoonShapeDef*));
+		memset(_config->shapeDefs, 0, 16 * sizeof(DarkMoonShapeDef *));
 		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes00, size);
 		_config->shapeDefs[1] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes01, size);
 		_config->shapeDefs[4] = _vm->staticres()->loadEoB2ShapeData(kEoB2IntroShapes04, size);
@@ -1527,21 +1526,20 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 
 	} else {
 		_config = new Config(
-			_vm->staticres()->loadStrings(kEoB2FinaleStrings, size),
-			_vm->staticres()->loadStrings(kEoB2FinaleCPSFiles, size),
-			new const uint8*[13],
-			_vm->_flags.platform == Common::kPlatformAmiga ? _palFilesFinaleAmiga : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA),
-			new const DarkMoonShapeDef*[13],
-			new const DarkMoonAnimCommand *[21],
-			true,
-			true,
-			false,
-			false,
-			_vm->_flags.platform == Common::kPlatformAmiga ? 2 : 1,
-			18,
-			true,
-			6
-		);
+		    _vm->staticres()->loadStrings(kEoB2FinaleStrings, size),
+		    _vm->staticres()->loadStrings(kEoB2FinaleCPSFiles, size),
+		    new const uint8 *[13],
+		    _vm -> _flags.platform == Common::kPlatformAmiga ? _palFilesFinaleAmiga : (_vm->_configRenderMode == Common::kRenderEGA ? _palFilesFinaleEGA : _palFilesFinaleVGA),
+		    new const DarkMoonShapeDef *[13],
+		    new const DarkMoonAnimCommand *[21],
+		    true,
+		    true,
+		    false,
+		    false,
+		    _vm->_flags.platform == Common::kPlatformAmiga ? 2 : 1,
+		    18,
+		    true,
+		    6);
 
 		for (int i = 0; i < 21; i++)
 			_config->animData[i] = _vm->staticres()->loadEoB2SeqData(kEoB2FinaleAnimData00 + i, size);
@@ -1549,7 +1547,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 		for (int i = 0; i < 13; i++)
 			_config->cpsData[i] = _vm->staticres()->loadRawData(kEoB2FinaleCpsDataDragon1 + i, size);
 
-		memset(_config->shapeDefs, 0, 13 * sizeof(DarkMoonShapeDef*));
+		memset(_config->shapeDefs, 0, 13 * sizeof(DarkMoonShapeDef *));
 		_config->shapeDefs[0] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes00, size);
 		_config->shapeDefs[3] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes03, size);
 		_config->shapeDefs[7] = _vm->staticres()->loadEoB2ShapeData(kEoB2FinaleShapes07, size);
@@ -1562,7 +1560,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	int numColors = 256;
 
 	if (_vm->_flags.platform == Common::kPlatformAmiga) {
-		static const int8 palIndex[13] = { -1, -1, 3, 2, 4, 5, 6, 7, -1, -1, -1, -1, -1 };
+		static const int8 palIndex[13] = {-1, -1, 3, 2, 4, 5, 6, 7, -1, -1, -1, -1, -1};
 		for (int i = 0; i < 13; ++i)
 			_palettes[i] = &_screen->getPalette(i);
 		Common::SeekableReadStream *s = _config->palFiles ? _vm->resource()->createReadStream(_config->palFiles[0]) : 0;
@@ -1589,7 +1587,6 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	_palettes[10]->fill(0, numColors, 63);
 	_palettes[11]->fill(0, numColors, 0);
 
-
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 		_screen->loadPalette("PALETTE.COL", *_palettes[12]);
 
@@ -1614,7 +1611,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 
 	delete[] fadeData;
 
-	_shapes = new const uint8*[54];
+	_shapes = new const uint8 *[54];
 	memset(_shapes, 0, 54 * sizeof(uint8 *));
 
 	_fadePalTimer = 0;
@@ -1749,56 +1746,51 @@ void DarkmoonSequenceHelper::updateAmigaSound() {
 	if (_sndNextTrack == 4)
 		_sndNextTrack = 1;
 
-	static const uint16 interval[4] = { 0, 1015, 4461, 1770 };
+	static const uint16 interval[4] = {0, 1015, 4461, 1770};
 	_sndNextTrackMarker = interval[_sndNextTrack];
 }
 
 const char *const DarkmoonSequenceHelper::_palFilesIntroVGA[] = {
-	"PALETTE1.PAL",
-	"PALETTE3.PAL",
-	"PALETTE2.PAL",
-	"PALETTE4.PAL",
-	0
-};
+    "PALETTE1.PAL",
+    "PALETTE3.PAL",
+    "PALETTE2.PAL",
+    "PALETTE4.PAL",
+    0};
 
 const char *const DarkmoonSequenceHelper::_palFilesIntroEGA[] = {
-	"PALETTE0.PAL",
-	"PALETTE3.PAL",
-	"PALETTE2.PAL",
-	"PALETTE4.PAL",
-	0
-};
+    "PALETTE0.PAL",
+    "PALETTE3.PAL",
+    "PALETTE2.PAL",
+    "PALETTE4.PAL",
+    0};
 
 const char *const DarkmoonSequenceHelper::_palFilesFinaleVGA[] = {
-	"FINALE_0.PAL",
-	"FINALE_0.PAL",
-	"FINALE_1.PAL",
-	"FINALE_2.PAL",
-	"FINALE_3.PAL",
-	"FINALE_4.PAL",
-	"FINALE_5.PAL",
-	"FINALE_6.PAL",
-	"FINALE_7.PAL",
-	0
-};
+    "FINALE_0.PAL",
+    "FINALE_0.PAL",
+    "FINALE_1.PAL",
+    "FINALE_2.PAL",
+    "FINALE_3.PAL",
+    "FINALE_4.PAL",
+    "FINALE_5.PAL",
+    "FINALE_6.PAL",
+    "FINALE_7.PAL",
+    0};
 
 const char *const DarkmoonSequenceHelper::_palFilesFinaleEGA[] = {
-	"FINALE_6.PAL",
-	"FINALE_0.PAL",
-	"FINALE_1.PAL",
-	"FINALE_7.PAL",
-	"FINALE_3.PAL",
-	"FINALE_4.PAL",
-	"FINALE_5.PAL",
-	"FINALE_0.PAL",
-	"FINALE_0.PAL",
-	0
-};
+    "FINALE_6.PAL",
+    "FINALE_0.PAL",
+    "FINALE_1.PAL",
+    "FINALE_7.PAL",
+    "FINALE_3.PAL",
+    "FINALE_4.PAL",
+    "FINALE_5.PAL",
+    "FINALE_0.PAL",
+    "FINALE_0.PAL",
+    0};
 
 const char *const DarkmoonSequenceHelper::_palFilesFinaleAmiga[] = {
-	"FINALE.PAL",
-	0
-};
+    "FINALE.PAL",
+    0};
 
 void DarkMoonEngine::seq_nightmare() {
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
@@ -1810,9 +1802,9 @@ void DarkMoonEngine::seq_nightmare() {
 	_txt->printDialogueText(99, 0);
 	snd_playSoundEffect(54);
 
-	static const uint8 seqX[] = { 0, 20, 0, 20 };
-	static const uint8 seqY[] = { 0, 0, 96, 96 };
-	static const uint8 seqDelay[] = { 12, 7, 7, 12 };
+	static const uint8 seqX[] = {0, 20, 0, 20};
+	static const uint8 seqY[] = {0, 0, 96, 96};
+	static const uint8 seqDelay[] = {12, 7, 7, 12};
 
 	for (const int8 *i = _dreamSteps; *i != -1; ++i) {
 		drawSequenceBitmap("DREAM", 0, seqX[*i], seqY[*i], 0);

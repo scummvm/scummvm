@@ -38,6 +38,7 @@ public:
 	virtual void unload(Resource *resource);
 	virtual void buildFilename(Resource *resource);
 	bool isFlag(int flag) override;
+
 protected:
 	IllusionsEngine *_vm;
 };
@@ -47,7 +48,7 @@ public:
 	virtual ~SpecialCode() {}
 	virtual void init() = 0;
 	virtual void run(uint32 specialCodeId, OpCall &opCall) = 0;
-	virtual void resetBeforeResumeSavegame() {};
+	virtual void resetBeforeResumeSavegame(){};
 };
 
 } // End of namespace Illusions

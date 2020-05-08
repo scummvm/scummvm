@@ -20,10 +20,10 @@
  *
  */
 
-#include "sci/resource.h"
+#include "sci/sound/audio.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
-#include "sci/sound/audio.h"
+#include "sci/resource.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -44,7 +44,7 @@
 namespace Sci {
 
 AudioPlayer::AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(11025),
-		_audioCdStart(0), _initCD(false) {
+                                                    _audioCdStart(0), _initCD(false) {
 
 	_mixer = g_system->getMixer();
 	_wPlayFlag = false;
@@ -106,11 +106,11 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 		// Determine compression
 		uint32 audioCompressionType = 0;
 		if ((fileName.hasSuffix(".mp3")) || (fileName.hasSuffix(".sciAudio")) || (fileName.hasSuffix(".sciaudio"))) {
-			audioCompressionType = MKTAG('M','P','3',' ');
+			audioCompressionType = MKTAG('M', 'P', '3', ' ');
 		} else if (fileName.hasSuffix(".wav")) {
-			audioCompressionType = MKTAG('W','A','V',' ');
+			audioCompressionType = MKTAG('W', 'A', 'V', ' ');
 		} else if (fileName.hasSuffix(".aiff")) {
-			audioCompressionType = MKTAG('A','I','F','F');
+			audioCompressionType = MKTAG('A', 'I', 'F', 'F');
 		} else {
 			error("sciAudio: unsupported file type");
 		}
@@ -126,15 +126,15 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 		Audio::RewindableAudioStream *audioStream = nullptr;
 
 		switch (audioCompressionType) {
-		case MKTAG('M','P','3',' '):
+		case MKTAG('M', 'P', '3', ' '):
 #ifdef USE_MAD
 			audioStream = Audio::makeMP3Stream(sciAudioFile, DisposeAfterUse::YES);
 #endif
 			break;
-		case MKTAG('W','A','V',' '):
+		case MKTAG('W', 'A', 'V', ' '):
 			audioStream = Audio::makeWAVStream(sciAudioFile, DisposeAfterUse::YES);
 			break;
-		case MKTAG('A','I','F','F'):
+		case MKTAG('A', 'I', 'F', 'F'):
 			audioStream = Audio::makeAIFFStream(sciAudioFile, DisposeAfterUse::YES);
 			break;
 		default:
@@ -147,7 +147,7 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 
 		// We only support one audio handle
 		_mixer->playStream(soundType, &_audioHandle,
-							Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audioStream, loopCount));
+		                   Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audioStream, loopCount));
 	} else if (command == "stop") {
 		_mixer->stopHandle(_audioHandle);
 	} else {
@@ -210,33 +210,32 @@ int AudioPlayer::getAudioPosition() {
 
 enum SolFlags {
 	kSolFlagCompressed = 1 << 0,
-	kSolFlagUnknown    = 1 << 1,
-	kSolFlag16Bit      = 1 << 2,
-	kSolFlagIsSigned   = 1 << 3
+	kSolFlagUnknown = 1 << 1,
+	kSolFlag16Bit = 1 << 2,
+	kSolFlagIsSigned = 1 << 3
 };
 
 // FIXME: Move this to sound/adpcm.cpp?
 // Note that the 16-bit version is also used in coktelvideo.cpp
 static const uint16 tableDPCM16[128] = {
-	0x0000, 0x0008, 0x0010, 0x0020, 0x0030, 0x0040, 0x0050, 0x0060, 0x0070, 0x0080,
-	0x0090, 0x00A0, 0x00B0, 0x00C0, 0x00D0, 0x00E0, 0x00F0, 0x0100, 0x0110, 0x0120,
-	0x0130, 0x0140, 0x0150, 0x0160, 0x0170, 0x0180, 0x0190, 0x01A0, 0x01B0, 0x01C0,
-	0x01D0, 0x01E0, 0x01F0, 0x0200, 0x0208, 0x0210, 0x0218, 0x0220, 0x0228, 0x0230,
-	0x0238, 0x0240, 0x0248, 0x0250, 0x0258, 0x0260, 0x0268, 0x0270, 0x0278, 0x0280,
-	0x0288, 0x0290, 0x0298, 0x02A0, 0x02A8, 0x02B0, 0x02B8, 0x02C0, 0x02C8, 0x02D0,
-	0x02D8, 0x02E0, 0x02E8, 0x02F0, 0x02F8, 0x0300, 0x0308, 0x0310, 0x0318, 0x0320,
-	0x0328, 0x0330, 0x0338, 0x0340, 0x0348, 0x0350, 0x0358, 0x0360, 0x0368, 0x0370,
-	0x0378, 0x0380, 0x0388, 0x0390, 0x0398, 0x03A0, 0x03A8, 0x03B0, 0x03B8, 0x03C0,
-	0x03C8, 0x03D0, 0x03D8, 0x03E0, 0x03E8, 0x03F0, 0x03F8, 0x0400, 0x0440, 0x0480,
-	0x04C0, 0x0500, 0x0540, 0x0580, 0x05C0, 0x0600, 0x0640, 0x0680, 0x06C0, 0x0700,
-	0x0740, 0x0780, 0x07C0, 0x0800, 0x0900, 0x0A00, 0x0B00, 0x0C00, 0x0D00, 0x0E00,
-	0x0F00, 0x1000, 0x1400, 0x1800, 0x1C00, 0x2000, 0x3000, 0x4000
-};
+    0x0000, 0x0008, 0x0010, 0x0020, 0x0030, 0x0040, 0x0050, 0x0060, 0x0070, 0x0080,
+    0x0090, 0x00A0, 0x00B0, 0x00C0, 0x00D0, 0x00E0, 0x00F0, 0x0100, 0x0110, 0x0120,
+    0x0130, 0x0140, 0x0150, 0x0160, 0x0170, 0x0180, 0x0190, 0x01A0, 0x01B0, 0x01C0,
+    0x01D0, 0x01E0, 0x01F0, 0x0200, 0x0208, 0x0210, 0x0218, 0x0220, 0x0228, 0x0230,
+    0x0238, 0x0240, 0x0248, 0x0250, 0x0258, 0x0260, 0x0268, 0x0270, 0x0278, 0x0280,
+    0x0288, 0x0290, 0x0298, 0x02A0, 0x02A8, 0x02B0, 0x02B8, 0x02C0, 0x02C8, 0x02D0,
+    0x02D8, 0x02E0, 0x02E8, 0x02F0, 0x02F8, 0x0300, 0x0308, 0x0310, 0x0318, 0x0320,
+    0x0328, 0x0330, 0x0338, 0x0340, 0x0348, 0x0350, 0x0358, 0x0360, 0x0368, 0x0370,
+    0x0378, 0x0380, 0x0388, 0x0390, 0x0398, 0x03A0, 0x03A8, 0x03B0, 0x03B8, 0x03C0,
+    0x03C8, 0x03D0, 0x03D8, 0x03E0, 0x03E8, 0x03F0, 0x03F8, 0x0400, 0x0440, 0x0480,
+    0x04C0, 0x0500, 0x0540, 0x0580, 0x05C0, 0x0600, 0x0640, 0x0680, 0x06C0, 0x0700,
+    0x0740, 0x0780, 0x07C0, 0x0800, 0x0900, 0x0A00, 0x0B00, 0x0C00, 0x0D00, 0x0E00,
+    0x0F00, 0x1000, 0x1400, 0x1800, 0x1C00, 0x2000, 0x3000, 0x4000};
 
 static const byte tableDPCM8[8] = {0, 1, 2, 3, 6, 10, 15, 21};
 
 static void deDPCM16(byte *soundBuf, Common::SeekableReadStream &audioStream, uint32 n) {
-	int16 *out = (int16 *) soundBuf;
+	int16 *out = (int16 *)soundBuf;
 
 	int32 s = 0;
 	for (uint32 i = 0; i < n; i++) {
@@ -281,7 +280,7 @@ static bool readSOLHeader(Common::SeekableReadStream *audioStream, int headerSiz
 
 	uint32 tag = audioStream->readUint32BE();
 
-	if (tag != MKTAG('S','O','L',0)) {
+	if (tag != MKTAG('S', 'O', 'L', 0)) {
 		warning("No 'SOL' FourCC found");
 		return false;
 	}
@@ -349,7 +348,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		audioRes = _resMan->findResource(ResourceId(kResourceTypeAudio36, volume, number), false);
 		if (!audioRes) {
 			warning("Failed to find audio entry (%i, %i, %i, %i, %i)", volume, (number >> 24) & 0xff,
-					(number >> 16) & 0xff, (number >> 8) & 0xff, number & 0xff);
+			        (number >> 16) & 0xff, (number >> 8) & 0xff, number & 0xff);
 			return NULL;
 		}
 	}
@@ -371,17 +370,17 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		Common::SeekableReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size(), DisposeAfterUse::YES);
 
 		switch (audioCompressionType) {
-		case MKTAG('M','P','3',' '):
+		case MKTAG('M', 'P', '3', ' '):
 #ifdef USE_MAD
 			audioSeekStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::YES);
 #endif
 			break;
-		case MKTAG('O','G','G',' '):
+		case MKTAG('O', 'G', 'G', ' '):
 #ifdef USE_VORBIS
 			audioSeekStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
 #endif
 			break;
-		case MKTAG('F','L','A','C'):
+		case MKTAG('F', 'L', 'A', 'C'):
 #ifdef USE_FLAC
 			audioSeekStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
 #endif
@@ -394,7 +393,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 #endif
 	} else {
 		// Original source file
-		if ((audioRes->getUint8At(0) & 0x7f) == kResourceTypeAudio && audioRes->getUint32BEAt(2) == MKTAG('S','O','L',0)) {
+		if ((audioRes->getUint8At(0) & 0x7f) == kResourceTypeAudio && audioRes->getUint32BEAt(2) == MKTAG('S', 'O', 'L', 0)) {
 			// SCI1.1
 			const uint8 headerSize = audioRes->getUint8At(1);
 			Common::MemoryReadStream headerStream = audioRes->subspan(kResourceHeaderSize, headerSize).toStream();
@@ -403,7 +402,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 				Common::MemoryReadStream dataStream(audioRes->subspan(kResourceHeaderSize + headerSize).toStream());
 				data = readSOLAudio(&dataStream, size, audioFlags, flags);
 			}
-		} else if (audioRes->size() > 4 && audioRes->getUint32BEAt(0) == MKTAG('R','I','F','F')) {
+		} else if (audioRes->size() > 4 && audioRes->getUint32BEAt(0) == MKTAG('R', 'I', 'F', 'F')) {
 			// WAVE detected
 			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->getUnsafeDataAt(0), audioRes->size(), DisposeAfterUse::NO);
 
@@ -418,7 +417,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 
 			waveStream->seek(0, SEEK_SET);
 			audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
-		} else if (audioRes->size() > 4 && audioRes->getUint32BEAt(0) == MKTAG('F','O','R','M')) {
+		} else if (audioRes->size() > 4 && audioRes->getUint32BEAt(0) == MKTAG('F', 'O', 'R', 'M')) {
 			// AIFF detected
 			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->getUnsafeDataAt(0), audioRes->size(), DisposeAfterUse::NO);
 			Audio::RewindableAudioStream *rewindStream = Audio::makeAIFFStream(waveStream, DisposeAfterUse::YES);
@@ -429,10 +428,10 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 				delete rewindStream;
 			}
 		} else if (audioRes->size() > 14 &&
-				   audioRes->getUint16BEAt(0) == 1 &&
-				   audioRes->getUint16BEAt(2) == 1 &&
-				   audioRes->getUint16BEAt(4) == 5 &&
-				   audioRes->getUint32BEAt(10) == 0x00018051) {
+		           audioRes->getUint16BEAt(0) == 1 &&
+		           audioRes->getUint16BEAt(2) == 1 &&
+		           audioRes->getUint16BEAt(4) == 5 &&
+		           audioRes->getUint32BEAt(10) == 0x00018051) {
 
 			// Mac snd detected
 			Common::SeekableReadStream *sndStream = new Common::MemoryReadStream(audioRes->getUnsafeDataAt(0), audioRes->size(), DisposeAfterUse::NO);
@@ -490,7 +489,7 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 		audioCdStop();
 
 		Common::File audioMap;
-		if(!audioMap.open("cdaudio.map"))
+		if (!audioMap.open("cdaudio.map"))
 			error("Could not open cdaudio.map");
 
 		while (audioMap.pos() < audioMap.size()) {

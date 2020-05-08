@@ -61,11 +61,12 @@ private:
 class TestbedExitDialog : public TestbedInteractionDialog {
 public:
 	TestbedExitDialog(Common::Array<Testsuite *> &testsuiteList) : TestbedInteractionDialog(80, 40, 500, 330),
-	_testsuiteList(testsuiteList) {}
+	                                                               _testsuiteList(testsuiteList) {}
 	~TestbedExitDialog() override {}
 	void init();
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 	void run() { runModal(); }
+
 private:
 	Common::Array<Testsuite *> &_testsuiteList;
 };

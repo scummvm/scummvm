@@ -23,8 +23,8 @@
 #ifndef VOYEUR_EVENTS_H
 #define VOYEUR_EVENTS_H
 
-#include "common/scummsys.h"
 #include "common/list.h"
+#include "common/scummsys.h"
 #include "graphics/surface.h"
 #include "voyeur/files.h"
 
@@ -71,7 +71,7 @@ private:
 	bool _cursorBlinked;
 	uint32 _gameCounter;
 	uint32 _priorFrameTime;
-	uint32 _recordBlinkCounter;	// Original field was called _joe :)
+	uint32 _recordBlinkCounter; // Original field was called _joe :)
 	Common::List<IntNode *> _intNodes;
 	Common::Point _mousePos;
 
@@ -89,6 +89,7 @@ private:
 	 * Debugger support method to show the mouse position
 	 */
 	void showMousePosition();
+
 public:
 	IntData _gameData;
 	IntData &_intPtr;

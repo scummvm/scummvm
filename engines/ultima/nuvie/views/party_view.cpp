@@ -20,21 +20,21 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/views/party_view.h"
 #include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/core/player.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/views/party_view.h"
-#include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/core/weather.h"
-#include "ultima/nuvie/script/script.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/gui/widgets/command_bar.h"
-#include "ultima/nuvie/usecode/usecode.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/usecode/usecode.h"
 #include "ultima/nuvie/views/sun_moon_strip_widget.h"
 
 namespace Ultima {
@@ -43,9 +43,9 @@ namespace Nuvie {
 extern GUI_status inventoryViewButtonCallback(void *data);
 extern GUI_status actorViewButtonCallback(void *data);
 
-#define U6 Game::get_game()->get_game_type()==NUVIE_GAME_U6
-#define SE Game::get_game()->get_game_type()==NUVIE_GAME_SE
-#define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
+#define U6 Game::get_game()->get_game_type() == NUVIE_GAME_U6
+#define SE Game::get_game()->get_game_type() == NUVIE_GAME_SE
+#define MD Game::get_game()->get_game_type() == NUVIE_GAME_MD
 
 static const uint8 ACTION_BUTTON = 3;
 
@@ -58,13 +58,12 @@ PartyView::PartyView(Configuration *cfg) : View(cfg) {
 }
 
 PartyView::~PartyView() {
-
 }
 
 bool PartyView::init(void *vm, uint16 x, uint16 y, Font *f, Party *p, Player *pl, TileManager *tm, ObjManager *om) {
 	View::init(x, y, f, p, tm, om);
-// PartyView is 8px wider than other Views, for the arrows
-// ...and 3px taller, for the sky (SB-X)
+	// PartyView is 8px wider than other Views, for the arrows
+	// ...and 3px taller, for the sky (SB-X)
 	if (U6)
 		SetRect(area.left, area.top, area.width() + 8, area.height() + 3);
 	else
@@ -121,12 +120,14 @@ GUI_status PartyView::MouseUp(int x, int y, Shared::MouseButton button) {
 
 	uint8 party_size = party->get_party_size();
 	if (SE) {
-		if (party_size > 7) party_size = 7;
-	} else if (party_size > 5) party_size = 5; // can only display/handle 5 at a time
+		if (party_size > 7)
+			party_size = 7;
+	} else if (party_size > 5)
+		party_size = 5; // can only display/handle 5 at a time
 
-	Common::Rect arrow_rects_U6[2] = { Common::Rect(0, 18, 0 + 8, 18 + 8), Common::Rect(0, 90, 0 + 8, 90 + 8) };
-	Common::Rect arrow_rects[2] = { Common::Rect(0, 6, 0 + 7, 6 + 8), Common::Rect(0, 102, 0 + 7, 102 + 8) };
-	Common::Rect arrow_up_rect_MD[1] = { Common::Rect(0, 15, 0 + 7, 15 + 8) };
+	Common::Rect arrow_rects_U6[2] = {Common::Rect(0, 18, 0 + 8, 18 + 8), Common::Rect(0, 90, 0 + 8, 90 + 8)};
+	Common::Rect arrow_rects[2] = {Common::Rect(0, 6, 0 + 7, 6 + 8), Common::Rect(0, 102, 0 + 7, 102 + 8)};
+	Common::Rect arrow_up_rect_MD[1] = {Common::Rect(0, 15, 0 + 7, 15 + 8)};
 
 	if (HitRect(x, y, U6 ? arrow_rects_U6[0] : (MD ? arrow_up_rect_MD[0] : arrow_rects[0]))) { //up arrow hit rect
 		if (up_arrow())
@@ -153,13 +154,11 @@ GUI_status PartyView::MouseUp(int x, int y, Shared::MouseButton button) {
 		Events *event = Game::get_game()->get_event();
 		CommandBar *command_bar = Game::get_game()->get_command_bar();
 
-		if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE
-		        && command_bar->get_selected_action() > 0) { // Exclude attack mode too
-			if (command_bar->try_selected_action() == false) // start new action
-				return GUI_PASS; // false if new event doesn't need target
+		if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE && command_bar->get_selected_action() > 0) { // Exclude attack mode too
+			if (command_bar->try_selected_action() == false)                                                       // start new action
+				return GUI_PASS;                                                                                   // false if new event doesn't need target
 		}
-		if ((party_view_targeting || (button == ACTION_BUTTON
-		                              && command_bar->get_selected_action() > 0)) && event->can_target_icon()) {
+		if ((party_view_targeting || (button == ACTION_BUTTON && command_bar->get_selected_action() > 0)) && event->can_target_icon()) {
 			x += area.left;
 			y += area.top;
 			Actor *actor = get_actor(x, y);
@@ -191,8 +190,10 @@ Actor *PartyView::get_actor(int x, int y) {
 	}
 	if (SE) {
 		y_offset = 2;
-		if (party_size > 7) party_size = 7;
-	} else if (party_size > 5) party_size = 5; // can only display/handle 5 at a time
+		if (party_size > 7)
+			party_size = 7;
+	} else if (party_size > 5)
+		party_size = 5; // can only display/handle 5 at a time
 
 	if (y > party_size * rowH + y_offset) // clicked below actors
 		return NULL;
@@ -215,20 +216,17 @@ bool PartyView::drag_accept_drop(int x, int y, int message, void *data) {
 		if (actor) {
 			Events *event = Game::get_game()->get_event();
 			event->display_move_text(actor, obj);
-			if (!obj->is_in_inventory()
-			        && !Game::get_game()->get_map_window()->can_get_obj(actor, obj)) {
+			if (!obj->is_in_inventory() && !Game::get_game()->get_map_window()->can_get_obj(actor, obj)) {
 				Game::get_game()->get_scroll()->message("\n\nblocked\n\n");
 				return false;
 			}
-			if ((!Game::get_game()->get_usecode()->has_getcode(obj)
-			        || Game::get_game()->get_usecode()->get_obj(obj, actor))
-			        && event->can_move_obj_between_actors(obj, player->get_actor(), actor)) {
+			if ((!Game::get_game()->get_usecode()->has_getcode(obj) || Game::get_game()->get_usecode()->get_obj(obj, actor)) && event->can_move_obj_between_actors(obj, player->get_actor(), actor)) {
 				if (actor == player->get_actor()) // get
 					player->subtract_movement_points(3);
 				else // get plus move
 					player->subtract_movement_points(8);
 				if (!obj->is_in_inventory() &&
-				        obj_manager->obj_is_damaging(obj, Game::get_game()->get_player()->get_actor()))
+				    obj_manager->obj_is_damaging(obj, Game::get_game()->get_player()->get_actor()))
 					return false;
 				DEBUG(0, LEVEL_DEBUGGING, "Drop Accepted\n");
 				return true;
@@ -314,18 +312,17 @@ void PartyView::Display(bool full_redraw) {
 				y_offset = 6;
 				GameClock *clock = Game::get_game()->get_clock();
 				if (clock->get_purple_berry_counter(actor->get_actor_num()) > 0) {
-					screen->blit(area.left + x_offset + 16, area.top + y_offset + (i - row_offset)*rowH, tile_manager->get_tile(TILE_MD_PURPLE_BERRY_MARKER)->data, 8, 16, 16, 16, true);
+					screen->blit(area.left + x_offset + 16, area.top + y_offset + (i - row_offset) * rowH, tile_manager->get_tile(TILE_MD_PURPLE_BERRY_MARKER)->data, 8, 16, 16, 16, true);
 				}
 				if (clock->get_green_berry_counter(actor->get_actor_num()) > 0) {
-					screen->blit(area.left + x_offset + 32, area.top + y_offset + (i - row_offset)*rowH, tile_manager->get_tile(TILE_MD_GREEN_BERRY_MARKER)->data, 8, 16, 16, 16, true);
+					screen->blit(area.left + x_offset + 32, area.top + y_offset + (i - row_offset) * rowH, tile_manager->get_tile(TILE_MD_GREEN_BERRY_MARKER)->data, 8, 16, 16, 16, true);
 				}
 				if (clock->get_brown_berry_counter(actor->get_actor_num()) > 0) {
-					screen->blit(area.left + x_offset + 32, area.top + y_offset + (i - row_offset)*rowH, tile_manager->get_tile(TILE_MD_BROWN_BERRY_MARKER)->data, 8, 16, 16, 16, true);
+					screen->blit(area.left + x_offset + 32, area.top + y_offset + (i - row_offset) * rowH, tile_manager->get_tile(TILE_MD_BROWN_BERRY_MARKER)->data, 8, 16, 16, 16, true);
 				}
-
 			}
 
-			screen->blit(area.left + x_offset, area.top + y_offset + (i - row_offset)*rowH, actor_tile->data, 8, 16, 16, 16, true);
+			screen->blit(area.left + x_offset, area.top + y_offset + (i - row_offset) * rowH, actor_tile->data, 8, 16, 16, 16, true);
 			actor_name = party->get_actor_name(i);
 
 			if (SE) {
@@ -363,7 +360,6 @@ bool PartyView::up_arrow() {
 	return (false);
 }
 
-
 bool PartyView::down_arrow() {
 	if ((row_offset + (SE ? 7 : 5)) < party->get_party_size()) {
 		row_offset++;
@@ -371,7 +367,6 @@ bool PartyView::down_arrow() {
 	}
 	return (false);
 }
-
 
 void PartyView::display_arrows() {
 	int x_offset = 0;

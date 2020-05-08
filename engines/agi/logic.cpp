@@ -44,23 +44,23 @@ int AgiEngine::decodeLogic(int16 logicNr) {
 	mstart = READ_LE_UINT16(m0) + 2;
 	mc = *(m0 + mstart);
 	mend = READ_LE_UINT16(m0 + mstart + 1);
-	m0 += mstart + 3;   // cover header info
+	m0 += mstart + 3; // cover header info
 	mstart = mc << 1;
 
 	// if the logic was not compressed, decrypt the text messages
 	// only if there are more than 0 messages
 	if ((~_game.dirLogic[logicNr].flags & RES_COMPRESSED) && mc > 0)
-		decrypt(m0 + mstart, mend - mstart);    // decrypt messages
+		decrypt(m0 + mstart, mend - mstart); // decrypt messages
 
 	// build message list
 	m0 = curLogic->data;
-	mstart = READ_LE_UINT16(m0) + 2;    // +2 covers pointer
+	mstart = READ_LE_UINT16(m0) + 2; // +2 covers pointer
 	_game.logics[logicNr].numTexts = *(m0 + mstart);
 
 	// resetp logic pointers
 	curLogic->sIP = 2;
 	curLogic->cIP = 2;
-	curLogic->size = READ_LE_UINT16(m0) + 2;    // logic end pointer
+	curLogic->size = READ_LE_UINT16(m0) + 2; // logic end pointer
 
 	// allocate list of pointers to point into our data
 

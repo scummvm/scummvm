@@ -20,21 +20,21 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/tile_manager.h"
 #include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/gui/widgets/console.h"
-#include "ultima/nuvie/files/nuvie_io_file.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/look.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_bmp_file.h"
+#include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/screen/dither.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/look.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/core/tile_manager.h"
 #include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/console.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/dither.h"
+#include "ultima/nuvie/screen/game_palette.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -46,51 +46,47 @@ static char article_tbl[][5] = {"", "a ", "an ", "the "};
 static const uint16 U6_ANIM_SRC_TILE[32] = {0x16, 0x16, 0x1a, 0x1a, 0x1e, 0x1e, 0x12, 0x12,
                                             0x1a, 0x1e, 0x16, 0x12, 0x16, 0x1a, 0x1e, 0x12,
                                             0x1a, 0x1e, 0x1e, 0x12, 0x12, 0x16, 0x16, 0x1a,
-                                            0x12, 0x16, 0x1e, 0x1a, 0x1a, 0x1e, 0x12, 0x16
-                                           };
+                                            0x12, 0x16, 0x1e, 0x1a, 0x1a, 0x1e, 0x12, 0x16};
 
 //static const uint16 U6_WALL_TYPES[1][2] = {{156,176}};
 
 static const Tile gump_cursor = {
-	0,
-	false,
-	false,
-	false,
-	false,
-	false,
-	true,
-	false,
-	false,
-	0,
-	//uint8 qty;
-	//uint8 flags;
+    0,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    0,
+    //uint8 qty;
+    //uint8 flags;
 
-	0,
-	0,
-	0,
+    0,
+    0,
+    0,
 
-	{
-		15, 15, 15, 15, 255, 255, 255, 255, 255, 255, 255, 255, 15, 15, 15, 15,
-		15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
-		15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
-		15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-		15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
-		15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
-		15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
-		15, 15, 15, 15, 255, 255, 255, 255, 255, 255, 255, 255, 15, 15, 15, 15
-	}
-};
+    {15, 15, 15, 15, 255, 255, 255, 255, 255, 255, 255, 255, 15, 15, 15, 15,
+     15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
+     15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
+     15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+     15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
+     15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
+     15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 15,
+     15, 15, 15, 15, 255, 255, 255, 255, 255, 255, 255, 255, 15, 15, 15, 15}};
 
 TileManager::TileManager(Configuration *cfg)
-	: desc_buf(NULL) {
+    : desc_buf(NULL) {
 	config = cfg;
 	look = NULL;
 	game_counter = rgame_counter = 0;
@@ -105,7 +101,7 @@ TileManager::TileManager(Configuration *cfg)
 }
 
 TileManager::~TileManager() {
-// remove tiles
+	// remove tiles
 	free(desc_buf);
 	delete look;
 	if (extendedTiles) {
@@ -134,14 +130,13 @@ bool TileManager::loadTiles() {
 
 	dither = Game::get_game()->get_dither();
 
-
 	config_get_path(config, "maptiles.vga", maptiles_path);
 	config_get_path(config, "masktype.vga", masktype_path);
 
 	lzw = new U6Lzw();
 
 	switch (game_type) {
-	case NUVIE_GAME_U6 :
+	case NUVIE_GAME_U6:
 		tile_data = lzw->decompress_file(maptiles_path, maptiles_size);
 		if (tile_data == NULL) {
 			ConsoleAddError("Decompressing " + maptiles_path);
@@ -154,8 +149,8 @@ bool TileManager::loadTiles() {
 			return false;
 		}
 		break;
-	case NUVIE_GAME_MD :
-	case NUVIE_GAME_SE :
+	case NUVIE_GAME_MD:
+	case NUVIE_GAME_SE:
 		if (lib_file.open(maptiles_path, 4, game_type) == false) {
 			ConsoleAddError("Opening " + maptiles_path);
 			return false;
@@ -212,16 +207,16 @@ bool TileManager::loadTiles() {
 		tile[i].transparent = false;
 
 		switch (masktype[i]) {
-		case U6TILE_TRANS :
+		case U6TILE_TRANS:
 			tile[i].transparent = true;
 			memcpy(tile[i].data, &tile_data[tile_offset], 256);
 			break;
 
-		case U6TILE_PLAIN :
+		case U6TILE_PLAIN:
 			memcpy(tile[i].data, &tile_data[tile_offset], 256);
 			break;
 
-		case U6TILE_PBLCK :
+		case U6TILE_PBLCK:
 			tile[i].transparent = true;
 			decodePixelBlockTile(&tile_data[tile_offset], i);
 			break;
@@ -294,7 +289,6 @@ Tile *TileManager::get_original_tile(uint16 tile_num) {
 	return get_extended_tile(tile_num);
 }
 
-
 Tile *TileManager::get_extended_tile(uint16 tile_num) {
 	if (tile_num <= numTiles) {
 		return &extendedTiles[tile_num - 2048];
@@ -307,7 +301,6 @@ void TileManager::set_tile_index(uint16 tile_index, uint16 tile_num) {
 	tileindex[tile_index] = tile_num;
 }
 
-
 void TileManager::set_anim_loop(uint16 tile_num, sint8 loopc, uint8 loop) {
 	for (uint32 i = 0; i < 32; i++)
 		if (animdata.tile_to_animate[i] == tile_num) {
@@ -315,7 +308,6 @@ void TileManager::set_anim_loop(uint16 tile_num, sint8 loopc, uint8 loop) {
 			animdata.loop[i] = loop;
 		}
 }
-
 
 const char *TileManager::lookAtTile(uint16 tile_num, uint16 qty, bool show_prefix) {
 	const char *desc;
@@ -334,7 +326,7 @@ const char *TileManager::lookAtTile(uint16 tile_num, uint16 qty, bool show_prefi
 		return desc;
 
 	if (qty > 0 &&
-	        (plural || Game::get_game()->get_game_type() == NUVIE_GAME_SE))
+	    (plural || Game::get_game()->get_game_type() == NUVIE_GAME_SE))
 		sprintf(desc_buf, "%u %s", qty, desc);
 	else
 		sprintf(desc_buf, "%s%s", article_tbl[tileP->article_n], desc);
@@ -361,7 +353,7 @@ void TileManager::update() {
 	uint8 current_hour = Game::get_game()->get_clock()->get_hour();
 	static sint8 last_hour = -1;
 
-// cycle animated tiles
+	// cycle animated tiles
 
 	for (i = 0; i < animdata.number_of_tiles_to_animate; i++) {
 		if (animdata.loop_count[i] != 0) {
@@ -372,9 +364,7 @@ void TileManager::update() {
 			prev_tileindex = tileindex[animdata.tile_to_animate[i]];
 			tileindex[animdata.tile_to_animate[i]] = tileindex[animdata.first_anim_frame[i] + current_anim_frame];
 			// loop complete if back to first frame (and not infinite loop)
-			if (animdata.loop_count[i] > 0
-			        && tileindex[animdata.tile_to_animate[i]] != prev_tileindex
-			        && tileindex[animdata.tile_to_animate[i]] == tileindex[animdata.first_anim_frame[i]])
+			if (animdata.loop_count[i] > 0 && tileindex[animdata.tile_to_animate[i]] != prev_tileindex && tileindex[animdata.tile_to_animate[i]] == tileindex[animdata.first_anim_frame[i]])
 				--animdata.loop_count[i];
 		} else // not animating
 			tileindex[animdata.tile_to_animate[i]] = tileindex[animdata.first_anim_frame[i]];
@@ -390,12 +380,11 @@ void TileManager::update() {
 		else
 			rgame_counter--;
 	}
-// cycle time-based animations
+	// cycle time-based animations
 	if (current_hour != last_hour)
 		update_timed_tiles(current_hour);
 	last_hour = current_hour;
 }
-
 
 bool TileManager::loadTileFlag() {
 	Std::string filename;
@@ -436,7 +425,6 @@ bool TileManager::loadTileFlag() {
 			tile[i].boundary = true;
 		else
 			tile[i].boundary = false;
-
 
 		if (tile[i].flags2 & 0x40)
 			tile[i].dbl_height = true;
@@ -492,19 +480,15 @@ bool TileManager::loadAnimData() {
 	}
 
 	for (i = 0; i < 32; i++) { // FIXME: any data on which tiles don't start as animated?
-		animdata.loop[i] = 0; // loop forwards
+		animdata.loop[i] = 0;  // loop forwards
 		if ((gameType == NUVIE_GAME_U6 &&
-		        (animdata.tile_to_animate[i] == 862 // Crank
-		         || animdata.tile_to_animate[i] == 1009 // Crank
-		         || animdata.tile_to_animate[i] == 1020)) // Chain
-		        || (gameType == NUVIE_GAME_MD
-		            && ((animdata.tile_to_animate[i] >= 1 && animdata.tile_to_animate[i] <= 4) // cistern
-		                || (animdata.tile_to_animate[i] >= 16 && animdata.tile_to_animate[i] <= 23) // canal
-		                || (animdata.tile_to_animate[i] >= 616 && animdata.tile_to_animate[i] <= 627) // watch --pu62 lists as 416-427
-		                || animdata.tile_to_animate[i] == 1992
-		                || animdata.tile_to_animate[i] == 1993
-		                || animdata.tile_to_animate[i] == 1980
-		                || animdata.tile_to_animate[i] == 1981)))
+		     (animdata.tile_to_animate[i] == 862                                                                            // Crank
+		      || animdata.tile_to_animate[i] == 1009                                                                        // Crank
+		      || animdata.tile_to_animate[i] == 1020))                                                                      // Chain
+		    || (gameType == NUVIE_GAME_MD && ((animdata.tile_to_animate[i] >= 1 && animdata.tile_to_animate[i] <= 4)        // cistern
+		                                      || (animdata.tile_to_animate[i] >= 16 && animdata.tile_to_animate[i] <= 23)   // canal
+		                                      || (animdata.tile_to_animate[i] >= 616 && animdata.tile_to_animate[i] <= 627) // watch --pu62 lists as 416-427
+		                                      || animdata.tile_to_animate[i] == 1992 || animdata.tile_to_animate[i] == 1993 || animdata.tile_to_animate[i] == 1980 || animdata.tile_to_animate[i] == 1981)))
 
 			animdata.loop_count[i] = 0; // don't start animated
 		else
@@ -522,7 +506,7 @@ void TileManager::decodePixelBlockTile(unsigned char *tile_data, uint16 tile_num
 	unsigned char *ptr;
 	unsigned char *data_ptr;
 
-// num_blocks = tile_data[0];
+	// num_blocks = tile_data[0];
 
 	ptr = &tile_data[1];
 
@@ -530,7 +514,7 @@ void TileManager::decodePixelBlockTile(unsigned char *tile_data, uint16 tile_num
 
 	memset(data_ptr, 0xff, 256); //set all pixels to transparent.
 
-	for (i = 0; ; i++) {
+	for (i = 0;; i++) {
 		disp = (ptr[0] + (ptr[1] << 8));
 
 		x = disp % 160 + (disp >= 1760 ? 160 : 0);
@@ -552,7 +536,6 @@ void TileManager::decodePixelBlockTile(unsigned char *tile_data, uint16 tile_num
 	return;
 }
 
-
 bool TileManager::loadAnimMask() {
 	Std::string filename;
 	U6Lzw lzw;
@@ -567,7 +550,7 @@ bool TileManager::loadAnimMask() {
 	int gameType;
 
 	config->value("config/GameType", gameType);
-	if (gameType != NUVIE_GAME_U6)               //only U6 has animmask.vga
+	if (gameType != NUVIE_GAME_U6) //only U6 has animmask.vga
 		return true;
 
 	config_get_path(config, "animmask.vga", filename);
@@ -611,7 +594,6 @@ bool TileManager::loadAnimMask() {
 	return true;
 }
 
-
 /* Update tiles for timed-based animations.
  */
 void TileManager::update_timed_tiles(uint8 hour) {
@@ -638,7 +620,6 @@ void TileManager::update_timed_tiles(uint8 hour) {
 			new_tile = 861;
 		set_tile_index(861, new_tile);
 	}
-
 }
 
 void TileManager::set_anim_first_frame(uint16 anim_number, uint16 new_start_tile_num) {
@@ -666,7 +647,7 @@ void TileManager::get_rotated_tile(Tile *tileP, Tile *dest_tile, float rotate, u
 
 	int32 dy, sx, sy;
 	int16 rx, ry;
-	uint16 px = 8, py = 8; // rotate around these coordinates
+	uint16 px = 8, py = 8;                           // rotate around these coordinates
 	uint16 xmin = 0, xmax = 15, ymin = 0, ymax = 15; // size
 	uint16 sxmin = xmin, sxmax = xmax, symin = ymin, symax = ymax;
 	uint16 qx = 8, qy = 8; // ?? don't remember
@@ -699,8 +680,8 @@ void TileManager::get_rotated_tile(Tile *tileP, Tile *dest_tile, float rotate, u
 	for (uint32 y = ymin; y < ymax; y++) {
 		dy = y - qy;
 
-		sx = int32(ctdx  + stx * dy + mx); /* Compute source anchor points */
-		sy = int32(cty * dy - stdx  + my);
+		sx = int32(ctdx + stx * dy + mx); /* Compute source anchor points */
+		sy = int32(cty * dy - stdx + my);
 
 		/* Calculate pointer to dst surface */
 		dst_row = (uint8 *)dst_pixels + y * dst_pitch;
@@ -713,17 +694,15 @@ void TileManager::get_rotated_tile(Tile *tileP, Tile *dest_tile, float rotate, u
 			if ((rx >= sxmin) && (rx <= sxmax) && (ry >= symin) && (ry <= symax))
 				*(dst_row + x) = *(src_row + ry * src_pitch + rx);
 
-			sx += ctx;  /* Incremental transformations */
+			sx += ctx; /* Incremental transformations */
 			sy -= sty;
 		}
 	}
-
 
 	//memcpy(&dest_tile->data, &tile_data, 256); // replace data
 
 	return;
 }
-
 
 #if 0 /* old */
 Tile *TileManager::get_rotated_tile(Tile *tile, float rotate) {
@@ -760,15 +739,15 @@ Tile *TileManager::get_rotated_tile(Tile *tile, float rotate) {
 Tile *TileManager::get_cursor_tile() {
 	Tile *cursor_tile = NULL;
 	switch (game_type) {
-	case NUVIE_GAME_U6 :
+	case NUVIE_GAME_U6:
 		cursor_tile = get_tile(365);
 		break;
 
-	case NUVIE_GAME_MD :
+	case NUVIE_GAME_MD:
 		cursor_tile = get_tile(265);
 		break;
 
-	case NUVIE_GAME_SE :
+	case NUVIE_GAME_SE:
 		cursor_tile = get_tile(381);
 		break;
 	}
@@ -779,15 +758,15 @@ Tile *TileManager::get_cursor_tile() {
 Tile *TileManager::get_use_tile() {
 	Tile *use_tile = NULL;
 	switch (game_type) {
-	case NUVIE_GAME_U6 :
+	case NUVIE_GAME_U6:
 		use_tile = get_tile(364);
 		break;
 
-	case NUVIE_GAME_MD :
+	case NUVIE_GAME_MD:
 		use_tile = get_tile(264);
 		break;
 
-	case NUVIE_GAME_SE :
+	case NUVIE_GAME_SE:
 		use_tile = get_tile(380);
 		break;
 	}

@@ -57,13 +57,14 @@ public:
 	// Get the location of an item in the gump (coords relative to this).
 	// Returns false on failure.
 	bool GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
-	                               int32 lerp_factor = 256) override;
+	                       int32 lerp_factor = 256) override;
 
 	bool StartDraggingItem(Item *item, int mx, int my) override;
 	bool DraggingItem(Item *item, int mx, int my) override;
 	void DropItem(Item *item, int mx, int my) override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
+
 protected:
 	void saveData(Common::WriteStream *ws) override;
 
@@ -75,9 +76,10 @@ protected:
 	               Std::string text, int val);
 
 	RenderedText *_cachedText[14]; // constant!!
-	int _cachedVal[7]; // constant!!
+	int _cachedVal[7];             // constant!!
 
 	uint16 _statButtonId;
+
 private:
 	const Rect _backpackRect;
 };

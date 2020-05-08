@@ -21,8 +21,8 @@
  */
 
 #include "ultima/shared/core/base_object.h"
-#include "ultima/shared/core/tree_item.h"
 #include "ultima/shared/core/named_item.h"
+#include "ultima/shared/core/tree_item.h"
 
 namespace Ultima {
 namespace Shared {

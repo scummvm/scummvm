@@ -20,11 +20,11 @@
  *
  */
 
+#include "mads/nebular/nebular_scenes8.h"
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
-#include "mads/nebular/nebular_scenes8.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -33,8 +33,8 @@ namespace Nebular {
 void Scene8xx::setPlayerSpritesPrefix() {
 	_vm->_sound->command(5);
 	if ((_globals[kFromCockpit] && !_globals[kExitShip]) ||
-			_scene->_nextSceneId == 804 || _scene->_nextSceneId == 805 ||
-			_scene->_nextSceneId == 808 || _scene->_nextSceneId == 810) {
+	    _scene->_nextSceneId == 804 || _scene->_nextSceneId == 805 ||
+	    _scene->_nextSceneId == 808 || _scene->_nextSceneId == 810) {
 		_game._player._spritesPrefix = "";
 	} else
 		_game._player._spritesPrefix = _globals[kSexOfRex] == SEX_FEMALE ? "ROX" : "RXM";
@@ -353,8 +353,6 @@ void Scene802::enter() {
 
 	_game._player._visible = true;
 
-
-
 	if (_globals[kHasWatchedAntigrav] && !_globals[kRemoteSequenceRan]) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(200, 70);
@@ -363,7 +361,7 @@ void Scene802::enter() {
 	if ((_globals[kRemoteOnGround]) && (!_game._objects.isInInventory(OBJ_REMOTE))) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 8);
-		int idx = _scene->_dynamicHotspots.add(NOUN_REMOTE, VERB_WALKTO,_globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_REMOTE, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(107, 99), FACING_NORTH);
 	}
 
@@ -479,17 +477,13 @@ void Scene802::actions() {
 		default:
 			break;
 		}
-	} else if (!_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
-		&& (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
+	} else if (!_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled]) && (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
 		_vm->_dialogs->show(80210);
-	else if (!_globals[kRemoteOnGround]&& !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
-		&& (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
+	else if (!_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
 		_vm->_dialogs->show(80211);
-	else if (_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled]
-		&& (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
+	else if (_globals[kRemoteOnGround] && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
 		_vm->_dialogs->show(80213);
-	else if (_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled])
-		&& (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
+	else if (_globals[kRemoteOnGround] && (_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) || _globals[kShieldModInstalled]) && (_action.isAction(VERB_LOOK, NOUN_LAUNCH_PAD) || _action._lookFlag))
 		_vm->_dialogs->show(80212);
 	else if (!_game._objects.isInInventory(OBJ_SHIELD_MODULATOR) && !_globals[kShieldModInstalled] && _action.isAction(VERB_LOOK, NOUN_SHIELD_MODULATOR))
 		_vm->_dialogs->show(80214);
@@ -526,8 +520,7 @@ void Scene803::setup() {
 	_scene->addActiveVocab(NOUN_GUTS);
 	_scene->addActiveVocab(VERB_WALKTO);
 
-	if ((!_globals[kFromCockpit] && _globals[kReturnFromCut] && !_globals[kBeamIsUp])
-		|| (_globals[kFromCockpit] && !_globals[kExitShip])) {
+	if ((!_globals[kFromCockpit] && _globals[kReturnFromCut] && !_globals[kBeamIsUp]) || (_globals[kFromCockpit] && !_globals[kExitShip])) {
 		_game._player._spritesPrefix = "";
 		_game._player._spritesChanged = true;
 	}
@@ -562,7 +555,7 @@ void Scene803::enter() {
 				_game._player._facing = FACING_EAST;
 			}
 			_game._player._visible = true;
-		} else if (!_globals[kBeamIsUp]){
+		} else if (!_globals[kBeamIsUp]) {
 			_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 1));
 			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 3));
 			_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('a', 2));
@@ -576,7 +569,7 @@ void Scene803::enter() {
 			_vm->_sound->command(14);
 		}
 
-		if (_globals[kBeamIsUp] && !_globals[kReturnFromCut]){
+		if (_globals[kBeamIsUp] && !_globals[kReturnFromCut]) {
 			if (_globals[kForceBeamDown])
 				_game._player._visible = false;
 			else
@@ -634,7 +627,7 @@ void Scene803::step() {
 		if (!_globals[kHoppyDead]) {
 			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 7, 12);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5],SEQUENCE_TRIGGER_EXPIRE, 0, 101);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 101);
 		} else {
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
 			int idx = _scene->_dynamicHotspots.add(NOUN_GUTS, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
@@ -766,15 +759,13 @@ void Scene803::actions() {
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], syncIdx);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[9]);
 			_scene->_sequences.addTimer(60, 161);
-			}
-			break;
+		} break;
 
 		case 161: {
 			int quoteId = 0x31A + _vm->getRandomNumber(1, 8);
 			_scene->_kernelMessages.add(Common::Point(64, 67), 0x1110, 32, 0, 80, _game.getQuote(quoteId));
 			_scene->_sequences.addTimer(60, 162);
-			}
-			break;
+		} break;
 
 		case 162:
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
@@ -877,7 +868,6 @@ void Scene804::enter() {
 	_alreadyOrgan = false;
 	_alreadyPop = false;
 
-
 	if (_globals[kCopyProtectFailed]) {
 		// Copy protection failed
 		_globals[kInSpace] = true;
@@ -931,8 +921,7 @@ void Scene804::step() {
 	if (!_messWithThrottle) {
 
 		if ((_throttleGone) && (_movingThrottle) && (_scene->_animation[0]->getCurrentFrame() == 39)) {
-			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle
-				(_globals._spriteIndexes[1], false, 1);
+			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(133, 139));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
 			_throttleGone = false;
@@ -1006,7 +995,7 @@ void Scene804::step() {
 		}
 
 		// FIXME: Original doesn't have resetFrame check. Check why this has been needed
-		if (_resetFrame == -1 &&  _scene->_animation[0]->getCurrentFrame() == 1) {
+		if (_resetFrame == -1 && _scene->_animation[0]->getCurrentFrame() == 1) {
 			int randomVal = _vm->getRandomNumber(29) + 1;
 			switch (randomVal) {
 			case 1:
@@ -1102,7 +1091,7 @@ void Scene804::step() {
 
 void Scene804::actions() {
 	if (_action.isAction(VERB_LOOK, NOUN_SERVICE_PANEL) ||
-		_action.isAction(VERB_OPEN, NOUN_SERVICE_PANEL)) {
+	    _action.isAction(VERB_OPEN, NOUN_SERVICE_PANEL)) {
 		_scene->_nextSceneId = 805;
 	} else if ((_action.isAction(VERB_ACTIVATE, NOUN_REMOTE)) && _globals[kTopButtonPushed]) {
 		if (!_globals[kInSpace]) {
@@ -1131,13 +1120,13 @@ void Scene804::actions() {
 				_vm->_dialogs->show(80424);
 				_pullThrottleReally = true;
 				_scene->_kernelMessages.add(Common::Point(78, 75), 0x1110, 0, 0,
-					120, _game.getQuote(791));
+				                            120, _game.getQuote(791));
 			}
 		} else {
 			_messWithThrottle = true;
 		}
 	} else if (_action.isAction(VERB_APPLY, NOUN_POLYCEMENT, NOUN_CRACK) ||
-		_action.isAction(VERB_PUT, NOUN_POLYCEMENT, NOUN_CRACK)) {
+	           _action.isAction(VERB_PUT, NOUN_POLYCEMENT, NOUN_CRACK)) {
 		if (!_globals[kWindowFixed]) {
 			_resetFrame = 2;
 			_game._player._stepEnabled = false;
@@ -1153,10 +1142,10 @@ void Scene804::actions() {
 		}
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(2, 90);
-	} else  if (_action._lookFlag) {
+	} else if (_action._lookFlag) {
 		_vm->_dialogs->show(80410);
 	} else if ((_action.isAction(VERB_LOOK, NOUN_WINDOW)) ||
-			(_action.isAction(VERB_LOOK_OUT, NOUN_WINDOW))) {
+	           (_action.isAction(VERB_LOOK_OUT, NOUN_WINDOW))) {
 		if (_globals[kBeamIsUp]) {
 			_vm->_dialogs->show(80412);
 		} else {
@@ -1182,7 +1171,7 @@ void Scene804::actions() {
 		_vm->_dialogs->show(80419);
 	} else if (_action.isAction(VERB_LOOK, NOUN_INSTRUMENTATION)) {
 		_vm->_dialogs->show(80420);
-	} else  if (_action.isAction(VERB_LOOK, NOUN_SEAT)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_SEAT)) {
 		_vm->_dialogs->show(80421);
 	} else
 		return;
@@ -1352,12 +1341,7 @@ void Scene807::actions() {
 		_vm->_dialogs->show(80711);
 	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
 		_vm->_dialogs->show(80712);
-	else if (_action.isAction(VERB_LOOK, NOUN_1_KEY) || _action.isAction(VERB_LOOK, NOUN_2_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_3_KEY) || _action.isAction(VERB_LOOK, NOUN_4_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_5_KEY) || _action.isAction(VERB_LOOK, NOUN_6_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_7_KEY) || _action.isAction(VERB_LOOK, NOUN_8_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_9_KEY) || _action.isAction(VERB_LOOK, NOUN_0_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
+	else if (_action.isAction(VERB_LOOK, NOUN_1_KEY) || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY) || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY) || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY) || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY) || _action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
 		_vm->_dialogs->show(80713);
 	else if (_action.isAction(VERB_LOOK, NOUN_DEVICE) && _action._lookFlag)
 		_vm->_dialogs->show(80714);
@@ -1387,7 +1371,7 @@ void Scene808::setup() {
 void Scene808::enter() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
-	_globals._spriteIndexes[4] = _scene->_sprites.addSprites ("*REXHAND");
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*REXHAND");
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 2));
@@ -1406,7 +1390,7 @@ void Scene808::enter() {
 		_globals[kBeamIsUp] = false;
 		_globals[kForceBeamDown] = false;
 		_globals[kDontRepeat] = false;
-	} else if ((_scene->_priorSceneId == 803) && _globals[kReturnFromCut]){
+	} else if ((_scene->_priorSceneId == 803) && _globals[kReturnFromCut]) {
 		_globals[kDontRepeat] = false;
 		_globals[kBeamIsUp] = true;
 		_globals[kAntigravClock] = _scene->_frameStartTime;
@@ -1508,7 +1492,7 @@ void Scene808::actions() {
 				_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
 				_vm->_sound->command(20);
-			 }
+			}
 			_globals[kTopButtonPushed] = true;
 			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 163));
@@ -1611,8 +1595,7 @@ void Scene810::enter() {
 }
 
 void Scene810::step() {
-	if (_scene->_animation[0] && (_scene->_animation[0]->getCurrentFrame() == 200)
-			&& _moveAllowed) {
+	if (_scene->_animation[0] && (_scene->_animation[0]->getCurrentFrame() == 200) && _moveAllowed) {
 		_scene->_sequences.addTimer(100, 70);
 		_moveAllowed = false;
 	}

@@ -38,41 +38,41 @@ void Party::setup() {
 /*-------------------------------------------------------------------*/
 
 Character::Character(Ultima1Game *game) : Shared::Character(),
-		_weaponHands(game, this, WEAPON_HANDS),
-		_weaponDagger(game, this, WEAPON_DAGGER),
-		_weaponMace(game, this, WEAPON_MACE),
-		_weaponAxe(game, this, WEAPON_AXE),
-		_weaponRopeSpikes(game, this, WEAPON_ROPE_SPIKES),
-		_weaponSword(game, this, WEAPON_SWORD),
-		_weaponGreatSword(game, this, WEAPON_GREAT_SWORD),
-		_weaponBowArrows(game, this, WEAPON_BOW_ARROWS),
-		_weaponAmulet(game, this, WEAPON_AMULET),
-		_weaponWand(game, this, WEAPON_WAND),
-		_weaponStaff(game, this, WEAPON_STAFF),
-		_weaponTriangle(game, this, WEAPON_TRIANGLE),
-		_weaponPistol(game, this, WEAPON_PISTOL),
-		_weaponLightSword(game, this, WEAPON_LIGHT_SWORD),
-		_weaponPhazor(game, this, WEAPON_PHAZOR),
-		_weaponBlaster(game, this, WEAPON_BLASTER),
+                                          _weaponHands(game, this, WEAPON_HANDS),
+                                          _weaponDagger(game, this, WEAPON_DAGGER),
+                                          _weaponMace(game, this, WEAPON_MACE),
+                                          _weaponAxe(game, this, WEAPON_AXE),
+                                          _weaponRopeSpikes(game, this, WEAPON_ROPE_SPIKES),
+                                          _weaponSword(game, this, WEAPON_SWORD),
+                                          _weaponGreatSword(game, this, WEAPON_GREAT_SWORD),
+                                          _weaponBowArrows(game, this, WEAPON_BOW_ARROWS),
+                                          _weaponAmulet(game, this, WEAPON_AMULET),
+                                          _weaponWand(game, this, WEAPON_WAND),
+                                          _weaponStaff(game, this, WEAPON_STAFF),
+                                          _weaponTriangle(game, this, WEAPON_TRIANGLE),
+                                          _weaponPistol(game, this, WEAPON_PISTOL),
+                                          _weaponLightSword(game, this, WEAPON_LIGHT_SWORD),
+                                          _weaponPhazor(game, this, WEAPON_PHAZOR),
+                                          _weaponBlaster(game, this, WEAPON_BLASTER),
 
-		_armourSkin(game, this, ARMOR_SKIN),
-		_armourLeatherArmor(game, this, ARMOR_LEATHER_armour),
-		_armourChainMail(game, this, ARMOR_CHAIN_MAIL),
-		_armourPlateMail(game, this, ARMOR_PLATE_MAIL),
-		_armourVacuumSuit(game, this, ARMOR_VACUUM_SUIT),
-		_armourReflectSuit(game, this, ARMOR_REFLECT_SUIT),
-		
-		_spellBlink(game, this),
-		_spellCreate(game, this),
-		_spellDestroy(game, this),
-		_spellKill(game, this),
-		_spellLadderDown(game, this),
-		_spellLadderUp(game, this),
-		_spellMagicMissile(game, this),
-		_spellOpen(game, this),
-		_spellPrayer(game, this),
-		_spellSteal(game, this),
-		_spellUnlock(game, this) {
+                                          _armourSkin(game, this, ARMOR_SKIN),
+                                          _armourLeatherArmor(game, this, ARMOR_LEATHER_armour),
+                                          _armourChainMail(game, this, ARMOR_CHAIN_MAIL),
+                                          _armourPlateMail(game, this, ARMOR_PLATE_MAIL),
+                                          _armourVacuumSuit(game, this, ARMOR_VACUUM_SUIT),
+                                          _armourReflectSuit(game, this, ARMOR_REFLECT_SUIT),
+
+                                          _spellBlink(game, this),
+                                          _spellCreate(game, this),
+                                          _spellDestroy(game, this),
+                                          _spellKill(game, this),
+                                          _spellLadderDown(game, this),
+                                          _spellLadderUp(game, this),
+                                          _spellMagicMissile(game, this),
+                                          _spellOpen(game, this),
+                                          _spellPrayer(game, this),
+                                          _spellSteal(game, this),
+                                          _spellUnlock(game, this) {
 	setup();
 }
 
@@ -119,8 +119,7 @@ void Character::setup() {
 
 /*-------------------------------------------------------------------*/
 
-Weapon::Weapon(Ultima1Game *game, Character *c, WeaponType weaponType) :
-		_game(game), _character(c), _type(weaponType) {
+Weapon::Weapon(Ultima1Game *game, Character *c, WeaponType weaponType) : _game(game), _character(c), _type(weaponType) {
 	_longName = game->_res->WEAPON_NAMES_UPPERCASE[weaponType];
 	_shortName = game->_res->WEAPON_NAMES_LOWERCASE[weaponType];
 	_distance = game->_res->WEAPON_DISTANCES[weaponType];
@@ -128,7 +127,6 @@ Weapon::Weapon(Ultima1Game *game, Character *c, WeaponType weaponType) :
 	if (weaponType == WEAPON_HANDS)
 		_quantity = 0xffff;
 }
-
 
 uint Weapon::getMagicDamage() const {
 	uint damage = _game->getRandomNumber(1, _character->_intelligence);
@@ -161,8 +159,7 @@ uint Weapon::getSellCost() const {
 
 /*-------------------------------------------------------------------*/
 
-Armour::Armour(Ultima1Game *game, Character *c, ArmorType armorType) :
-		_character(c), _type(armorType) {
+Armour::Armour(Ultima1Game *game, Character *c, ArmorType armorType) : _character(c), _type(armorType) {
 	_name = game->_res->ARMOR_NAMES[armorType];
 
 	if (armorType == ARMOR_SKIN)

@@ -29,8 +29,13 @@
 namespace Titanic {
 
 enum PetArea {
-	PET_INVENTORY = 0, PET_CONVERSATION = 1, PET_REMOTE = 2,
-	PET_ROOMS = 3, PET_REAL_LIFE = 4, PET_STARFIELD = 5, PET_TRANSLATION = 6
+	PET_INVENTORY = 0,
+	PET_CONVERSATION = 1,
+	PET_REMOTE = 2,
+	PET_ROOMS = 3,
+	PET_REAL_LIFE = 4,
+	PET_STARFIELD = 5,
+	PET_TRANSLATION = 6
 };
 
 class CPetControl;
@@ -46,12 +51,13 @@ struct CPetSectionSubData {
 	int _fieldC;
 
 	CPetSectionSubData() : _field0(0), _field4(0), _field8(0),
-		_fieldC(0) {}
+	                       _fieldC(0) {}
 };
 
 class CPetSection {
 public:
 	CPetControl *_petControl;
+
 protected:
 	/**
 	 * Called when the current area is changed
@@ -67,6 +73,7 @@ protected:
 	 * Create a color table
 	 */
 	void copyColors(uint tableNum, uint colors[5]);
+
 public:
 	CPetSection() : _petControl(nullptr) {}
 	virtual ~CPetSection() {}

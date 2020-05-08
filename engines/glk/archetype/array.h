@@ -30,7 +30,8 @@ namespace Archetype {
 
 typedef Common::Array<void *> XArrayType;
 
-enum AccessType { POKE_ACCESS, PEEK_ACCESS };
+enum AccessType { POKE_ACCESS,
+	              PEEK_ACCESS };
 
 /**
  * Initialize an extendible array

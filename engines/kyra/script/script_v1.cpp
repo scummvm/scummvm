@@ -20,8 +20,8 @@
  *
  */
 
-#include "kyra/kyra_v1.h"
 #include "kyra/graphics/screen.h"
+#include "kyra/kyra_v1.h"
 
 #include "common/system.h"
 

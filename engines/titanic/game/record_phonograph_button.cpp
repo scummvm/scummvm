@@ -26,8 +26,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CRecordPhonographButton, CBackground)
-	ON_MESSAGE(MouseButtonDownMsg)
-	ON_MESSAGE(PhonographStopMsg)
+ON_MESSAGE(MouseButtonDownMsg)
+ON_MESSAGE(PhonographStopMsg)
 END_MESSAGE_MAP()
 
 void CRecordPhonographButton::save(SimpleFile *file, int indent) {

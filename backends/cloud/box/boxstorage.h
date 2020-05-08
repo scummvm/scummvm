@@ -29,7 +29,7 @@
 namespace Cloud {
 namespace Box {
 
-class BoxStorage: public Id::IdStorage {
+class BoxStorage : public Id::IdStorage {
 	/** This private constructor is called from loadFromConfig(). */
 	BoxStorage(Common::String token, Common::String refreshToken, bool enabled);
 

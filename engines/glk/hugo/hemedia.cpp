@@ -47,22 +47,19 @@ int Hugo::loadres(HUGO_FILE infile, int reslen, int type) {
 	resids[type][idVal] = offset;
 
 	fileref = glk_fileref_create_by_name(fileusage_Data, buf, 0);
-	if (!fileref)
-	{
+	if (!fileref) {
 		return -1;
 	}
 
 	stream = glk_stream_open_file(fileref, filemode_Write, 0);
-	if (!stream)
-	{
+	if (!stream) {
 		glk_fileref_destroy(fileref);
 		return -1;
 	}
 
 	glk_fileref_destroy(fileref);
 
-	while (reslen > 0)
-	{
+	while (reslen > 0) {
 		n = hugo_fread(buf, 1, reslen < (int)sizeof(buf) ? reslen : sizeof(buf), infile);
 		if (n <= 0)
 			break;
@@ -77,23 +74,20 @@ int Hugo::loadres(HUGO_FILE infile, int reslen, int type) {
 
 int Hugo::hugo_hasgraphics() {
 	/* Returns true if the current display is capable of graphics display */
-	return glk_gestalt(gestalt_Graphics, 0)
-		&& glk_gestalt(gestalt_DrawImage, glk_window_get_type(mainwin));
+	return glk_gestalt(gestalt_Graphics, 0) && glk_gestalt(gestalt_DrawImage, glk_window_get_type(mainwin));
 }
 
 int Hugo::hugo_displaypicture(HUGO_FILE infile, long reslen) {
 	int idVal;
 
 	/* Ignore the call if the current window is set elsewhere. */
-	if (currentwin != NULL && currentwin != mainwin)
-	{
+	if (currentwin != NULL && currentwin != mainwin) {
 		hugo_fclose(infile);
 		return false;
 	}
 
 	idVal = loadres(infile, reslen, PIC);
-	if (idVal < 0)
-	{
+	if (idVal < 0) {
 		hugo_fclose(infile);
 		return false;
 	}
@@ -143,11 +137,9 @@ int Hugo::hugo_playmusic(HUGO_FILE infile, long reslen, char loop_flag) {
 
 	if (!mchannel)
 		initmusic();
-	if (mchannel)
-	{
+	if (mchannel) {
 		idVal = loadres(infile, reslen, SND);
-		if (idVal < 0)
-		{
+		if (idVal < 0) {
 			hugo_fclose(infile);
 			return false;
 		}
@@ -159,25 +151,27 @@ int Hugo::hugo_playmusic(HUGO_FILE infile, long reslen, char loop_flag) {
 }
 
 void Hugo::hugo_musicvolume(int vol) {
-	if (!mchannel) initmusic();
-	if (!mchannel) return;
+	if (!mchannel)
+		initmusic();
+	if (!mchannel)
+		return;
 	glk_schannel_set_volume(mchannel, (vol * 0x10000) / 100);
 }
 
 void Hugo::hugo_stopmusic() {
-	if (!mchannel) initmusic();
-	if (!mchannel) return;
+	if (!mchannel)
+		initmusic();
+	if (!mchannel)
+		return;
 	glk_schannel_stop(mchannel);
 }
 
 int Hugo::hugo_playsample(HUGO_FILE infile, long reslen, char loop_flag) {
 	int idVal;
 
-	if (schannel)
-	{
+	if (schannel) {
 		idVal = loadres(infile, reslen, SND);
-		if (idVal < 0)
-		{
+		if (idVal < 0) {
 			hugo_fclose(infile);
 			return false;
 		}
@@ -189,14 +183,18 @@ int Hugo::hugo_playsample(HUGO_FILE infile, long reslen, char loop_flag) {
 }
 
 void Hugo::hugo_samplevolume(int vol) {
-	if (!schannel) initsound();
-	if (!schannel) return;
+	if (!schannel)
+		initsound();
+	if (!schannel)
+		return;
 	glk_schannel_set_volume(schannel, (vol * 0x10000) / 100);
 }
 
 void Hugo::hugo_stopsample() {
-	if (!schannel) initsound();
-	if (!schannel) return;
+	if (!schannel)
+		initsound();
+	if (!schannel)
+		return;
 	glk_schannel_stop(schannel);
 }
 

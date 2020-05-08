@@ -23,12 +23,12 @@
 #ifndef SHERLOCK_SCALPEL_TALK_H
 #define SHERLOCK_SCALPEL_TALK_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
-#include "common/stream.h"
 #include "common/stack.h"
+#include "common/stream.h"
 #include "sherlock/talk.h"
 
 namespace Sherlock {
@@ -59,6 +59,7 @@ private:
 	OpcodeReturn cmdSfxCommand(const byte *&str);
 	OpcodeReturn cmdSummonWindow(const byte *&str);
 	OpcodeReturn cmdWalkToCoords(const byte *&str);
+
 protected:
 	/**
 	 * Display the talk interface window
@@ -84,6 +85,7 @@ protected:
 	 * Show the talk display
 	 */
 	void showTalk() override;
+
 public:
 	ScalpelTalk(SherlockEngine *vm);
 	~ScalpelTalk() override {}

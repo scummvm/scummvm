@@ -22,10 +22,9 @@
 #ifndef DRAGONS_SOUND_H
 #define DRAGONS_SOUND_H
 
-#include "common/scummsys.h"
-#include "audio/mixer.h"
 #include "audio/audiostream.h"
-
+#include "audio/mixer.h"
+#include "common/scummsys.h"
 
 namespace Dragons {
 
@@ -48,7 +47,7 @@ typedef struct Voice {
 
 class SoundManager {
 public:
-	SoundManager(DragonsEngine *vm, BigfileArchive* bigFileArchive, DragonRMS *dragonRms);
+	SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, DragonRMS *dragonRms);
 	~SoundManager();
 
 	void loadMsf(uint32 sceneId);
@@ -73,8 +72,8 @@ private:
 	// SOUND_ARR_DAT_80071f6c
 	uint8 _soundArr[0x780];
 
-	VabSound* _vabMusx;
-	VabSound* _vabGlob;
+	VabSound *_vabMusx;
+	VabSound *_vabGlob;
 
 	Audio::SoundHandle _speechHandle;
 	Voice _voice[NUM_VOICES];
@@ -90,7 +89,7 @@ private:
 
 	uint16 getVabFromSoundId(uint16 id);
 
-	VabSound * loadVab(const char *headerFilename, const char *bodyFilename);
+	VabSound *loadVab(const char *headerFilename, const char *bodyFilename);
 
 	bool getSpeechLocation(uint32 talkId, struct SpeechLocation *location);
 	bool isVoicePlaying(uint16 soundID);
@@ -108,6 +107,7 @@ private:
 		Audio::QueuingAudioStream *getAudioStream() {
 			return _audStream;
 		}
+
 	private:
 		Audio::QueuingAudioStream *_audStream;
 

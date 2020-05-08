@@ -30,18 +30,23 @@
 namespace Ultima {
 namespace Ultima8 {
 
-template<class T> void StringToArgv(const T &args, Std::vector<T> &argv);
-template<class T> void ArgvToString(const Std::vector<T> &argv, T &args);
+template<class T>
+void StringToArgv(const T &args, Std::vector<T> &argv);
+template<class T>
+void ArgvToString(const Std::vector<T> &argv, T &args);
 
+template<class T>
+void TrimSpaces(T &str);
 
-template<class T> void TrimSpaces(T &str);
+template<class T>
+void TabsToSpaces(T &str, unsigned int nspaces);
 
-template<class T> void TabsToSpaces(T &str, unsigned int nspaces);
+template<class T>
+void SplitString(const T &args, char sep, Std::vector<T> &argv);
 
-template<class T> void SplitString(const T &args, char sep, Std::vector<T> &argv);
-
-template<class T> void SplitStringKV(const T &args, char sep,
-                                     Std::vector<Std::pair<T, T> > &argv);
+template<class T>
+void SplitStringKV(const T &args, char sep,
+                   Std::vector<Std::pair<T, T>> &argv);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

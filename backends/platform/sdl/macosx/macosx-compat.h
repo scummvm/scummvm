@@ -26,7 +26,7 @@
 #include <AvailabilityMacros.h>
 
 #ifndef MAC_OS_X_VERSION_10_5
-#define MAC_OS_X_VERSION_10_5    1050
+#define MAC_OS_X_VERSION_10_5 1050
 #endif
 
 #ifndef MAC_OS_X_VERSION_10_10

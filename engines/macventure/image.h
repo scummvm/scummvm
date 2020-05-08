@@ -31,15 +31,14 @@
 #ifndef MACVENTURE_IMAGE_H
 #define MACVENTURE_IMAGE_H
 
-#include "macventure/macventure.h"
-#include "macventure/container.h"
 #include "common/bitstream.h"
+#include "macventure/container.h"
+#include "macventure/macventure.h"
 
 namespace MacVenture {
 
 typedef uint32 ObjID;
 class Container;
-
 
 enum BlitMode {
 	kBlitDirect = 0,

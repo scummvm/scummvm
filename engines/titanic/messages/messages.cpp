@@ -86,13 +86,13 @@ bool CMessage::execute(const CString &target, const ClassDef *classDef, int flag
 const MSGMAP_ENTRY *CMessage::findMapEntry(const CTreeItem *treeItem, const ClassDef *classDef) {
 	// Iterate through the class and any parent classes
 	for (const MSGMAP *msgMap = treeItem->getMessageMap(); msgMap->pFnGetBaseMap;
-			msgMap = msgMap->pFnGetBaseMap()) {
+	     msgMap = msgMap->pFnGetBaseMap()) {
 		// Iterate through the map entries for this class
 		for (const MSGMAP_ENTRY *entry = msgMap->lpEntries;
-				entry->_class != nullptr; ++entry) {
+		     entry->_class != nullptr; ++entry) {
 			// Check if the class or any of it's ancesotrs is handled by this entry
 			for (const ClassDef *entryDef = *entry->_class; entryDef;
-					entryDef = entryDef->_parent) {
+			     entryDef = entryDef->_parent) {
 				if (entryDef == classDef)
 					return entry;
 			}

@@ -31,16 +31,19 @@ namespace Xeen {
 namespace WorldOfXeen {
 
 enum GooberState {
-	NON_GOOBER = 0, GOOBER = 1, SUPER_GOOBER = 2
+	NON_GOOBER = 0,
+	GOOBER = 1,
+	SUPER_GOOBER = 2
 };
 
 class WorldOfXeenCutscenes : public CloudsCutscenes,
-	public DarkSideCutscenes {
+                             public DarkSideCutscenes {
 private:
 	XeenEngine *_vm;
 	Subtitles _subtitles;
 	GooberState _goober;
 	uint _finalScore;
+
 private:
 	/**
 	 * Sets a subtitle during the world of xeen ending
@@ -69,9 +72,10 @@ private:
 	 * transforming the world into a sphere
 	 */
 	bool worldEnding3();
+
 public:
 	WorldOfXeenCutscenes(XeenEngine *vm) : _vm(vm), CloudsCutscenes(vm),
-		DarkSideCutscenes(vm), _goober(NON_GOOBER), _finalScore(0) {}
+	                                       DarkSideCutscenes(vm), _goober(NON_GOOBER), _finalScore(0) {}
 
 	/**
 	 * Shows the World of Xeen ending sequence

@@ -23,8 +23,8 @@
 #ifndef ULTIMA4_CORE_CONFIG_H
 #define ULTIMA4_CORE_CONFIG_H
 
-#include "ultima/shared/conf/xml_tree.h"
 #include "ultima/shared/conf/xml_node.h"
+#include "ultima/shared/conf/xml_tree.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {
@@ -97,7 +97,6 @@ namespace Ultima4 {
 #define WIND_AREA_H 1
 #define WIND_SECONDS_PER_PHASE 1
 
-
 class ConfigElement;
 
 /**
@@ -107,10 +106,12 @@ class Config {
 private:
 	static Config *_instance;
 	Shared::XMLTree _doc;
+
 public:
 	static const Config *getInstance() {
 		return _instance;
 	}
+
 public:
 	Config();
 	~Config();
@@ -129,6 +130,7 @@ class ConfigElement {
 private:
 	const Shared::XMLNode *_node;
 	Common::String _name;
+
 public:
 	ConfigElement(const Shared::XMLNode *xmlNode);
 	ConfigElement(const ConfigElement &e);

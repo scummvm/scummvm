@@ -23,8 +23,8 @@
 #ifndef SCI_SOUNDCMD_H
 #define SCI_SOUNDCMD_H
 
+#include "audio/mididrv.h" // for MusicType
 #include "common/list.h"
-#include "audio/mididrv.h"	// for MusicType
 #include "sci/engine/state.h"
 
 namespace Sci {

@@ -23,8 +23,8 @@
  *
  */
 
-#include "pegasus/pegasus.h"
 #include "pegasus/neighborhood/mars/energybeam.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 

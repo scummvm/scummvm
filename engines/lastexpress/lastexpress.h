@@ -78,19 +78,19 @@ public:
 	~LastExpressEngine() override;
 
 	// Misc
-	Common::RandomSource& getRandom() {return _random; }
+	Common::RandomSource &getRandom() { return _random; }
 
 	// Game
-	Cursor          *getCursor()          const { return _cursor; }
-	Font            *getFont()            const { return _font; }
-	Logic           *getGameLogic()       const { return _logic; }
-	Menu            *getGameMenu()        const { return _menu; }
+	Cursor *getCursor() const { return _cursor; }
+	Font *getFont() const { return _font; }
+	Logic *getGameLogic() const { return _logic; }
+	Menu *getGameMenu() const { return _menu; }
 
 	// Managers
 	GraphicsManager *getGraphicsManager() const { return _graphicsMan; }
 	ResourceManager *getResourceManager() const { return _resMan; }
-	SceneManager    *getSceneManager()    const { return _sceneMan; }
-	SoundManager    *getSoundManager()    const { return _soundMan; }
+	SceneManager *getSceneManager() const { return _sceneMan; }
+	SoundManager *getSoundManager() const { return _soundMan; }
 
 	// Event handling
 	bool handleEvents();
@@ -116,9 +116,9 @@ private:
 
 	// Game
 	Cursor *_cursor;
-	Font   *_font;
-	Logic  *_logic;
-	Menu   *_menu;
+	Font *_font;
+	Logic *_logic;
+	Menu *_menu;
 
 	// Frame counter
 	uint32 _lastFrameCount;
@@ -126,8 +126,8 @@ private:
 	// Managers
 	GraphicsManager *_graphicsMan;
 	ResourceManager *_resMan;
-	SceneManager    *_sceneMan;
-	SoundManager    *_soundMan;
+	SceneManager *_sceneMan;
+	SoundManager *_soundMan;
 
 	// Event handlers
 	EventHandler::EventFunction *_eventMouse;

@@ -21,15 +21,14 @@
  */
 
 #include "glk/adrift/scare.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 
 namespace Glk {
 namespace Adrift {
 
 /* Assorted definitions and constants. */
 static const sc_char NUL = '\0';
-
 
 /*
  * res_has_sound()
@@ -61,7 +60,6 @@ sc_bool res_has_graphics(sc_gameref_t game) {
 	return has_graphics;
 }
 
-
 /*
  * res_set_resource()
  * res_clear_resource()
@@ -70,7 +68,7 @@ sc_bool res_has_graphics(sc_gameref_t game) {
  * Convenience functions to set, clear, and compare resource fields.
  */
 static void res_set_resource(sc_resourceref_t resource, const sc_char *name,
-                 sc_int offset, sc_int length) {
+                             sc_int offset, sc_int length) {
 	resource->name = name;
 	resource->offset = offset;
 	resource->length = length;
@@ -81,10 +79,8 @@ void res_clear_resource(sc_resourceref_t resource) {
 }
 
 sc_bool res_compare_resource(sc_resourceref_t from, sc_resourceref_t with) {
-	return strcmp(from->name, with->name) == 0
-	       && from->offset == with->offset && from->length == with->length;
+	return strcmp(from->name, with->name) == 0 && from->offset == with->offset && from->length == with->length;
 }
-
 
 /*
  * res_handle_resource()
@@ -99,7 +95,7 @@ sc_bool res_compare_resource(sc_resourceref_t from, sc_resourceref_t with) {
  * strlen(partial_format) elements.
  */
 void res_handle_resource(sc_gameref_t game, const sc_char *partial_format,
-		const sc_vartype_t vt_partial[]) {
+                         const sc_vartype_t vt_partial[]) {
 	const sc_prop_setref_t bundle = gs_get_bundle(game);
 	sc_vartype_t vt_key[2], *vt_full;
 	sc_int partial_length, resource_start_offset;
@@ -163,8 +159,7 @@ void res_handle_resource(sc_gameref_t game, const sc_char *partial_format,
 				strcpy(format, "I<-");
 				strcat(format, partial_format);
 				strcat(format, "s");
-				soundoffset = prop_get_integer(bundle, format, vt_full)
-				              + resource_start_offset;
+				soundoffset = prop_get_integer(bundle, format, vt_full) + resource_start_offset;
 
 				vt_full[partial_length].string = "SoundLen";
 				strcpy(format, "I<-");
@@ -211,8 +206,7 @@ void res_handle_resource(sc_gameref_t game, const sc_char *partial_format,
 				strcpy(format, "I<-");
 				strcat(format, partial_format);
 				strcat(format, "s");
-				graphicoffset = prop_get_integer(bundle, format, vt_full)
-				                + resource_start_offset;
+				graphicoffset = prop_get_integer(bundle, format, vt_full) + resource_start_offset;
 
 				vt_full[partial_length].string = "GraphicLen";
 				strcpy(format, "I<-");
@@ -235,7 +229,6 @@ void res_handle_resource(sc_gameref_t game, const sc_char *partial_format,
 	sc_free(format);
 	sc_free(vt_full);
 }
-
 
 /*
  * res_sync_resources()
@@ -291,7 +284,6 @@ void res_sync_resources(sc_gameref_t game) {
 		game->displayed_graphic = game->requested_graphic;
 	}
 }
-
 
 /*
  * res_cancel_resources()

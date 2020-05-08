@@ -23,11 +23,11 @@
 #ifndef GUI_THEMEBROWSER_H
 #define GUI_THEMEBROWSER_H
 
-#include "gui/dialog.h"
 #include "gui/ThemeEngine.h"
+#include "gui/dialog.h"
 
-#include "common/str.h"
 #include "common/list.h"
+#include "common/str.h"
 
 namespace GUI {
 
@@ -43,6 +43,7 @@ public:
 
 	const Common::String &getSelected() const { return _select; }
 	const Common::String &getSelectedName() const { return _selectName; }
+
 private:
 	ListWidget *_fileList;
 	Common::String _select;

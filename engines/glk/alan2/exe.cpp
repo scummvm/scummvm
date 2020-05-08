@@ -20,15 +20,15 @@
  *
  */
 
-#include "glk/alan2/alan2.h"
-#include "glk/alan2/types.h"
 #include "glk/alan2/exe.h"
+#include "glk/alan2/alan2.h"
+#include "glk/alan2/decode.h"
 #include "glk/alan2/glkio.h"
 #include "glk/alan2/inter.h"
 #include "glk/alan2/main.h"
 #include "glk/alan2/parse.h"
 #include "glk/alan2/stack.h"
-#include "glk/alan2/decode.h"
+#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -37,57 +37,54 @@ namespace Alan2 {
 
 #define N_EVTS 100
 
-
 /* PUBLIC DATA */
 
 /* The event queue */
-EvtqElem eventq[N_EVTS];        /* Event queue */
-int etop = 0;                   /* Event queue top pointer */
+EvtqElem eventq[N_EVTS]; /* Event queue */
+int etop = 0;            /* Event queue top pointer */
 
-Boolean looking = FALSE;        /* LOOKING? flag */
+Boolean looking = FALSE; /* LOOKING? flag */
 
-int dscrstkp = 0;               /* Describe-stack pointer */
-
+int dscrstkp = 0; /* Describe-stack pointer */
 
 void dscrobjs();
 void dscracts();
 
-
 void print(Aword fpos, Aword len) {
-	char str[2 * WIDTH];              // String buffer
-	int outlen = 0;                   // Current output length
+	char str[2 * WIDTH]; // String buffer
+	int outlen = 0;      // Current output length
 	int ch = 0;
 	int i;
 	long savfp = 0;                   // Temporary saved text file position
 	static Boolean printFlag = FALSE; // Printing already?
 	Boolean savedPrintFlag = printFlag;
-	void *info = nullptr;             // Saved decoding info
+	void *info = nullptr; // Saved decoding info
 
+	if (len == 0)
+		return;
 
-	if (len == 0) return;
-
-	if (isHere(HERO)) {           /* Check if the player will see it */
-		if (printFlag) {            /* Already printing? */
+	if (isHere(HERO)) {  /* Check if the player will see it */
+		if (printFlag) { /* Already printing? */
 			/* Save current text file position and/or decoding info */
 			if (header->pack)
 				info = pushDecode();
 			else
 				savfp = ftell(txtfil);
 		}
-		printFlag = TRUE;           /* We're printing now! */
-		fseek(txtfil, fpos, 0);     /* Position to start of text */
+		printFlag = TRUE;       /* We're printing now! */
+		fseek(txtfil, fpos, 0); /* Position to start of text */
 		if (header->pack)
 			startDecoding();
 		for (outlen = 0; outlen != (int)len; outlen = outlen + strlen(str)) {
 			/* Fill the buffer from the beginning */
 			for (i = 0; i <= WIDTH || (i > WIDTH && ch != ' '); i++) {
-				if (outlen + i == (int)len)  /* No more characters? */
+				if (outlen + i == (int)len) /* No more characters? */
 					break;
 				if (header->pack)
 					ch = decodeChar();
 				else
 					ch = getc(txtfil);
-				if (ch == EOFChar)      /* Or end of text? */
+				if (ch == EOFChar) /* Or end of text? */
 					break;
 				str[i] = ch;
 			}
@@ -111,7 +108,7 @@ void sys(Aword fpos, Aword len) {
 #else
 	char *command;
 
-	getstr(fpos, len);            /* Returns address to string on stack */
+	getstr(fpos, len); /* Returns address to string on stack */
 	command = (char *)pop();
 	int tmp = system(command);
 	free(command);
@@ -121,8 +118,8 @@ void sys(Aword fpos, Aword len) {
 void getstr(Aword fpos, Aword len) {
 	char *buf = (char *)allocate(len + 1);
 
-	push((Aptr) buf);            /* Push the address to the string */
-	fseek(txtfil, fpos, 0);       /* Position to start of text */
+	push((Aptr)buf);        /* Push the address to the string */
+	fseek(txtfil, fpos, 0); /* Position to start of text */
 	if (header->pack)
 		startDecoding();
 	while (len--)
@@ -141,7 +138,7 @@ void score(Aword sc) {
 		sprintf(buf, "%d", cur.score);
 		output(buf);
 		prmsg(M_SCORE2);
-		sprintf(buf, "%ld.", (unsigned long) header->maxscore);
+		sprintf(buf, "%ld.", (unsigned long)header->maxscore);
 		output(buf);
 	} else {
 		cur.score += scores[sc - 1];
@@ -160,7 +157,8 @@ Boolean confirm(MsgKind msgno) {
 	   it could be affirmative, but for now any input is NOT! */
 	prmsg(msgno);
 
-	if (!readline(buf)) return TRUE;
+	if (!readline(buf))
+		return TRUE;
 	col = 1;
 
 	return (buf[0] == '\0');
@@ -222,7 +220,8 @@ void schedule(Aword evt, Aword whr, Aword aft) {
 
 	cancl(evt);
 	/* Check for overflow */
-	if (etop == N_EVTS) syserr("Out of event space.");
+	if (etop == N_EVTS)
+		syserr("Out of event space.");
 
 	time = cur.tick + aft;
 
@@ -239,7 +238,6 @@ void schedule(Aword evt, Aword whr, Aword aft) {
 	etop++;
 }
 
-
 /*----------------------------------------------------------------------
 
   getatr()
@@ -248,15 +246,14 @@ void schedule(Aword evt, Aword whr, Aword aft) {
 
  */
 static Aptr getatr(
-    Aaddr atradr,              /* IN - ACODE address to attribute table */
-    Aaddr atr                  /* IN - The attribute to read */
+    Aaddr atradr, /* IN - ACODE address to attribute table */
+    Aaddr atr     /* IN - The attribute to read */
 ) {
 	AtrElem *at;
 
-	at = (AtrElem *) addrTo(atradr);
+	at = (AtrElem *)addrTo(atradr);
 	return at[atr - 1].val;
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -266,16 +263,15 @@ static Aptr getatr(
 
  */
 static void setatr(
-	Aaddr atradr,              /* IN - ACODE address to attribute table */
-	Aword atr,                 /* IN - attribute code */
-	Aword val                  /* IN - new value */
+    Aaddr atradr, /* IN - ACODE address to attribute table */
+    Aword atr,    /* IN - attribute code */
+    Aword val     /* IN - new value */
 ) {
 	AtrElem *at;
 
-	at = (AtrElem *) addrTo(atradr);
+	at = (AtrElem *)addrTo(atradr);
 	at[atr - 1].val = val;
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -305,11 +301,10 @@ void make(Aword id, Aword atr, Aword val) {
 	else if (isAct(id))
 		makact(id, atr, val);
 	else {
-		sprintf(str, "Can't MAKE item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't MAKE item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 }
-
 
 /*----------------------------------------------------------------------------
 
@@ -340,7 +335,7 @@ void set(Aword id, Aword atr, Aword val) {
 	else if (isAct(id))
 		setact(id, atr, val);
 	else {
-		sprintf(str, "Can't SET item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't SET item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 }
@@ -349,8 +344,6 @@ void setstr(Aword id, Aword atr, Aword str) {
 	free((char *)attribute(id, atr));
 	set(id, atr, str);
 }
-
-
 
 /*-----------------------------------------------------------------------------
 
@@ -366,13 +359,13 @@ void setstr(Aword id, Aword atr, Aword str) {
 
  */
 static void incratr(
-    Aaddr atradr,           /* IN - ACODE address to attribute table */
-    Aword atr,              /* IN - attribute code */
-    Aword step              /* IN - step to increment by */
+    Aaddr atradr, /* IN - ACODE address to attribute table */
+    Aword atr,    /* IN - attribute code */
+    Aword step    /* IN - step to increment by */
 ) {
 	AtrElem *at;
 
-	at = (AtrElem *) addrTo(atradr);
+	at = (AtrElem *)addrTo(atradr);
 	at[atr - 1].val += step;
 }
 
@@ -399,7 +392,7 @@ void incr(Aword id, Aword atr, Aword step) {
 	else if (isAct(id))
 		incract(id, atr, step);
 	else {
-		sprintf(str, "Can't INCR item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't INCR item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 }
@@ -416,11 +409,10 @@ void decr(Aword id, Aword atr, Aword step) {
 	else if (isAct(id))
 		incract(id, atr, static_cast<uint>(-(int)step));
 	else {
-		sprintf(str, "Can't DECR item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't DECR item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -446,7 +438,7 @@ static Aptr litatr(Aword lit, Aword atr) {
 	if (atr == 1)
 		return litValues[lit - LITMIN].value;
 	else {
-		sprintf(str, "Unknown attribute for literal (%ld).", (unsigned long) atr);
+		sprintf(str, "Unknown attribute for literal (%ld).", (unsigned long)atr);
 		syserr(str);
 	}
 	return (Aptr)EOD;
@@ -464,7 +456,7 @@ Aptr attribute(Aword id, Aword atr) {
 	else if (isLit(id))
 		return litatr(id, atr);
 	else {
-		sprintf(str, "Can't ATTRIBUTE item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't ATTRIBUTE item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 	return (Aptr)EOD;
@@ -473,7 +465,6 @@ Aptr attribute(Aword id, Aword atr) {
 Aptr strattr(Aword id, Aword atr) {
 	return (Aptr)scumm_strdup((char *)attribute(id, atr));
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -503,12 +494,11 @@ Aword where(Aword id) {
 	else if (isAct(id))
 		return actloc(id);
 	else {
-		sprintf(str, "Can't WHERE item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't WHERE item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 	return (Aptr)EOD;
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -557,7 +547,6 @@ Aint agrcount(Aword whr) {
 	}
 	return (count);
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -620,11 +609,10 @@ void locate(Aword id, Aword whr) {
 	else if (isAct(id))
 		locact(id, whr);
 	else {
-		sprintf(str, "Can't LOCATE item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't LOCATE item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -633,7 +621,7 @@ void locate(Aword id, Aword whr) {
   */
 
 static Abool objhere(Aword obj) {
-	if (isCnt(objs[obj - OBJMIN].loc)) {  /* In something? */
+	if (isCnt(objs[obj - OBJMIN].loc)) { /* In something? */
 		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
 			return (isHere(objs[obj - OBJMIN].loc));
 		else /* If the container wasn't anywhere, assume where HERO is! */
@@ -655,7 +643,7 @@ Abool isHere(Aword id) {
 	else if (isAct(id))
 		return acthere(id);
 	else {
-		sprintf(str, "Can't HERE item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't HERE item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 	return (Abool)EOD;
@@ -668,10 +656,10 @@ Abool isHere(Aword id) {
   */
 
 static Aword objnear(Aword obj) {
-	if (isCnt(objs[obj - OBJMIN].loc)) {  /* In something? */
+	if (isCnt(objs[obj - OBJMIN].loc)) { /* In something? */
 		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
 			return (isNear(objs[obj - OBJMIN].loc));
-		else  /* If the container wasn't anywhere, assume here, so not nearby! */
+		else /* If the container wasn't anywhere, assume here, so not nearby! */
 			return (FALSE);
 	} else
 		return (exitto(where(obj), cur.loc));
@@ -689,12 +677,11 @@ Abool isNear(Aword id) {
 	else if (isAct(id))
 		return actnear(id);
 	else {
-		sprintf(str, "Can't NEAR item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't NEAR item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 	return (Abool)EOD;
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -710,7 +697,6 @@ Abool in(Aword obj, Aword cnt) {
 
 	return (objs[obj - OBJMIN].loc == cnt);
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -734,7 +720,7 @@ void sayint(Aword val) {
 	char buf[25];
 
 	if (isHere(HERO)) {
-		sprintf(buf, "%ld", (unsigned long) val);
+		sprintf(buf, "%ld", (unsigned long)val);
 		output(buf);
 	}
 }
@@ -778,12 +764,11 @@ void say(Aword id) {
 		else if (isLit(id))
 			saylit(id);
 		else {
-			sprintf(str, "Can't SAY item (%ld).", (unsigned long) id);
+			sprintf(str, "Can't SAY item (%ld).", (unsigned long)id);
 			syserr(str);
 		}
 	}
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -814,10 +799,11 @@ static void dscract(Aword act) {
 	ScrElem *scr = NULL;
 
 	if (acts[act - ACTMIN].script != 0) {
-		for (scr = (ScrElem *) addrTo(acts[act - ACTMIN].scradr); !endOfTable(scr); scr++)
+		for (scr = (ScrElem *)addrTo(acts[act - ACTMIN].scradr); !endOfTable(scr); scr++)
 			if (scr->code == acts[act - ACTMIN].script)
 				break;
-		if (endOfTable(scr)) scr = NULL;
+		if (endOfTable(scr))
+			scr = NULL;
 	}
 	if (scr != NULL && scr->dscr != 0)
 		interpret(scr->dscr);
@@ -829,7 +815,6 @@ static void dscract(Aword act) {
 	}
 	acts[act - ACTMIN].describe = FALSE;
 }
-
 
 static Aword dscrstk[255];
 
@@ -849,13 +834,12 @@ void describe(Aword id) {
 	else if (isAct(id))
 		dscract(id);
 	else {
-		sprintf(str, "Can't DESCRIBE item (%ld).", (unsigned long) id);
+		sprintf(str, "Can't DESCRIBE item (%ld).", (unsigned long)id);
 		syserr(str);
 	}
 
 	dscrstkp--;
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -867,14 +851,13 @@ void use(Aword act, Aword scr) {
 	char str[80];
 
 	if (!isAct(act)) {
-		sprintf(str, "Item is not an Actor (%ld).", (unsigned long) act);
+		sprintf(str, "Item is not an Actor (%ld).", (unsigned long)act);
 		syserr(str);
 	}
 
 	acts[act - ACTMIN].script = scr;
 	acts[act - ACTMIN].step = 0;
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -945,7 +928,6 @@ void list(Aword cnt) {
 	needsp = TRUE;
 }
 
-
 /*----------------------------------------------------------------------
 
   empty()
@@ -957,7 +939,6 @@ void empty(Aword cnt, Aword whr) {
 		if (in(i, cnt))
 			locate(i, whr);
 }
-
 
 /*----------------------------------------------------------------------*\
 
@@ -978,8 +959,8 @@ void dscrobjs() {
 	/* First describe everything here with its own description */
 	for (i = OBJMIN; i <= OBJMAX; i++)
 		if ((int)objs[i - OBJMIN].loc == cur.loc &&
-		        objs[i - OBJMIN].describe &&
-		        objs[i - OBJMIN].dscr1)
+		    objs[i - OBJMIN].describe &&
+		    objs[i - OBJMIN].dscr1)
 			describe(i);
 
 	/* Then list everything else here */
@@ -1058,7 +1039,6 @@ void look() {
 	looking = FALSE;
 }
 
-
 /*----------------------------------------------------------------------
 
   save()
@@ -1069,7 +1049,6 @@ void save() {
 	(void)g_vm->saveGame();
 }
 
-
 /*----------------------------------------------------------------------
 
   restore()
@@ -1079,7 +1058,6 @@ void save() {
 void restore() {
 	(void)g_vm->loadGame();
 }
-
 
 /*----------------------------------------------------------------------
 
@@ -1111,8 +1089,6 @@ Abool btw(Aint val, Aint low, Aint high) {
 		return high <= val && val <= low;
 }
 
-
-
 /*----------------------------------------------------------------------
 
   contains()
@@ -1132,7 +1108,6 @@ Aword contains(Aptr string, Aptr substring) {
 
 	return (found);
 }
-
 
 /*----------------------------------------------------------------------
 

@@ -43,10 +43,10 @@ static const float kTangentFOV = 1.0;
 	(kShuttleWindowMidV - (y) / (z) * (kScreenWidth / (2 * kTangentFOV)))
 
 #define convertScreenHToSpaceX(x, d) \
-	(((2.0F * kTangentFOV) / kScreenWidth) * ((float)(x) - kShuttleWindowMidH) * (d))
+	(((2.0F * kTangentFOV) / kScreenWidth) * ((float)(x)-kShuttleWindowMidH) * (d))
 
 #define convertScreenVToSpaceY(y, d) \
-	(((2.0F * kTangentFOV) / kScreenWidth) *	((float)kShuttleWindowMidV - (y)) * (d))
+	(((2.0F * kTangentFOV) / kScreenWidth) * ((float)kShuttleWindowMidV - (y)) * (d))
 
 struct Point3D {
 	float x, y, z;
@@ -77,7 +77,7 @@ void linearInterp(const Point3D &pt1, const Point3D &pt2, const float t, Point3D
 void linearInterp(const Point3D &pt1, const float x2, const float y2, const float z2, const float t, Point3D &pt3);
 void linearInterp(const float x1, const float y1, const float z1, const Point3D &pt2, const float t, Point3D &pt3);
 void linearInterp(const float x1, const float y1, const float z1, const float x2,
-		const float y2, const float z2, const float t, Point3D &pt3);
+                  const float y2, const float z2, const float t, Point3D &pt3);
 
 void linearInterp(const Common::Point &pt1, const Common::Point &pt2, const float t, Common::Point &pt3);
 void linearInterp(const Common::Point &pt1, const float h2, const float v2, const float t, Common::Point &pt3);

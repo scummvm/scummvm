@@ -37,7 +37,7 @@ enum kFileOpenMode {
 
 enum {
 	kMaxSaveNameLength = 36, ///< Maximum length of a savegame name (including optional terminator character).
-	kMaxNumSaveGames = 20 ///< Maximum number of savegames
+	kMaxNumSaveGames = 20    ///< Maximum number of savegames
 };
 
 enum {
@@ -93,7 +93,6 @@ public:
 	bool isOpen() const;
 };
 
-
 class DirSeeker {
 protected:
 	reg_t _outbuffer;
@@ -123,14 +122,17 @@ private:
  */
 class MemoryDynamicRWStream : public Common::MemoryWriteStreamDynamic, public Common::SeekableReadStream {
 public:
-	MemoryDynamicRWStream(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : MemoryWriteStreamDynamic(disposeMemory), _eos(false) { }
+	MemoryDynamicRWStream(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : MemoryWriteStreamDynamic(disposeMemory), _eos(false) {}
 
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 
 	bool eos() const override { return _eos; }
 	int32 pos() const override { return _pos; }
 	int32 size() const override { return _size; }
-	void clearErr() override { _eos = false; Common::MemoryWriteStreamDynamic::clearErr(); }
+	void clearErr() override {
+		_eos = false;
+		Common::MemoryWriteStreamDynamic::clearErr();
+	}
 	bool seek(int32 offs, int whence = SEEK_SET) override { return Common::MemoryWriteStreamDynamic::seek(offs, whence); }
 
 protected:
@@ -149,7 +151,10 @@ public:
 	                      kFileOpenMode mode, bool compress);
 	~SaveFileRewriteStream() override;
 
-	uint32 write(const void *dataPtr, uint32 dataSize) override { _changed = true; return MemoryDynamicRWStream::write(dataPtr, dataSize); }
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
+		_changed = true;
+		return MemoryDynamicRWStream::write(dataPtr, dataSize);
+	}
 
 	void commit(); //< Save back to disk
 

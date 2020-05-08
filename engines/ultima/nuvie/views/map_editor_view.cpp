@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/gui_button.h"
+#include "ultima/nuvie/views/map_editor_view.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/gui_button.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/views/map_editor_view.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/views/view_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -117,7 +117,7 @@ GUI_status MapEditorView::KeyDown(const Common::KeyState &key) {
 
 	// alt input
 	if (key.flags & Common::KBD_ALT) {
-		Common::KeyState key_without_alt = key; // need to see what action is without alt
+		Common::KeyState key_without_alt = key;         // need to see what action is without alt
 		byte mod_without_flags = key_without_alt.flags; // this and next 2 lines are due SDL_Keymod not wanting to do the bitwise ~ operation
 		mod_without_flags &= ~Common::KBD_ALT;
 		key_without_alt.flags = mod_without_flags;
@@ -215,7 +215,7 @@ GUI_status MapEditorView::KeyDown(const Common::KeyState &key) {
 			roof_data[loc.y * 1024 + loc.x] = selectedTile;
 		}
 		break;
-	case TOGGLE_CURSOR_KEY :
+	case TOGGLE_CURSOR_KEY:
 
 		break;
 	case HOME_KEY:
@@ -261,7 +261,6 @@ GUI_status MapEditorView::MouseUp(int x, int y, Shared::MouseButton button) {
 		map_window->get_level(&level);
 		map_window->mouseToWorldCoords(x, y, wx, wy);
 		setTile((uint16)wx, (uint16)wy, level);
-
 	}
 
 	return GUI_YUM;

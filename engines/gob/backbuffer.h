@@ -38,8 +38,8 @@ protected:
 	void trashBuffer();
 	void resizeBuffer(uint16 width, uint16 height);
 
-	bool saveScreen   (const Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
-	bool restoreScreen(      Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool saveScreen(const Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool restoreScreen(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
 
 	bool hasBuffer() const;
 	bool hasSavedBackground() const;

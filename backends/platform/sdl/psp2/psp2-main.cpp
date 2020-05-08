@@ -23,10 +23,10 @@
 #include <psp2/kernel/processmgr.h>
 #include <psp2/power.h>
 
-#include "common/scummsys.h"
 #include "backends/platform/sdl/psp2/psp2.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
+#include "common/scummsys.h"
 
 int _newlib_heap_size_user = 192 * 1024 * 1024;
 

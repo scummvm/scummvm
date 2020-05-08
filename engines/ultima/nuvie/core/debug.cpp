@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -37,12 +37,12 @@ namespace Nuvie {
 //#define WITHOUT_DEBUG_NEWLINE_IN_HEADER
 
 DebugLevelType debug(const char *func, const char *file, const int line, const bool no_header, const DebugLevelType level, const char *format, ...) {
-// original
-//  static const char* DebugLevelNames[]= { "EMERGENCY", "ALERT", "CRITICAL", "ERROR", "WARNING", "NOTIFICATION", "INFORMATIONAL", "DEBUGGING" };
-//  shorter, because spammy enough as is.
-//  static const char* DebugLevelNames[]= { "EMERG", "ALERT", "CRIT.", "ERROR", "WARN.", "NOTE.", "INFO.", "DEBUG" };
-//  shorter, because spammy enough as is.
-	static const char *DebugLevelNames[] = { "!", "A", "C", "E", "W", "N", "I", "D" };
+	// original
+	//  static const char* DebugLevelNames[]= { "EMERGENCY", "ALERT", "CRITICAL", "ERROR", "WARNING", "NOTIFICATION", "INFORMATIONAL", "DEBUGGING" };
+	//  shorter, because spammy enough as is.
+	//  static const char* DebugLevelNames[]= { "EMERG", "ALERT", "CRIT.", "ERROR", "WARN.", "NOTE.", "INFO.", "DEBUG" };
+	//  shorter, because spammy enough as is.
+	static const char *DebugLevelNames[] = {"!", "A", "C", "E", "W", "N", "I", "D"};
 	static DebugLevelType CurrentDebugLevel = LEVEL_DEBUGGING;
 
 	if (format == NULL) {
@@ -50,21 +50,21 @@ DebugLevelType debug(const char *func, const char *file, const int line, const b
 		return CurrentDebugLevel;
 	}
 	if (!strcmp(format, "!!increase!!\n")) {
-		unsigned char c = (unsigned char) CurrentDebugLevel;
+		unsigned char c = (unsigned char)CurrentDebugLevel;
 		if (c < 7) {
 			c++;
 		}
-		CurrentDebugLevel = (DebugLevelType) c;
+		CurrentDebugLevel = (DebugLevelType)c;
 	}
 	if (!strcmp(format, "!!decrease!!\n")) {
-		unsigned char c = (unsigned char) CurrentDebugLevel;
+		unsigned char c = (unsigned char)CurrentDebugLevel;
 		if (c > 0) {
 			c--;
 		}
-		CurrentDebugLevel = (DebugLevelType) c;
+		CurrentDebugLevel = (DebugLevelType)c;
 	}
 	if (level > CurrentDebugLevel) {
-		return CurrentDebugLevel;    // Don't call ourselves here to log something like 'message suppressed'
+		return CurrentDebugLevel; // Don't call ourselves here to log something like 'message suppressed'
 	}
 	if (!no_header) {
 #ifndef WITHOUT_DEBUG_LEVEL_IN_HEADER
@@ -81,7 +81,7 @@ DebugLevelType debug(const char *func, const char *file, const int line, const b
 		::debugN("\n");
 #endif
 	}
-	
+
 	va_list ap;
 	va_start(ap, format);
 	Common::String buf = Common::String::vformat(format, ap);

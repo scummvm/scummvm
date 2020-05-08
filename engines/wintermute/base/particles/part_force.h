@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_PARTFORCE_H
 #define WINTERMUTE_PARTFORCE_H
 
-
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_named_object.h"
 #include "engines/wintermute/math/vector2.h"
@@ -39,7 +38,8 @@ namespace Wintermute {
 class PartForce : public BaseNamedObject {
 public:
 	enum TForceType {
-	    FORCE_POINT, FORCE_GLOBAL
+		FORCE_POINT,
+		FORCE_GLOBAL
 	};
 
 	PartForce(BaseGame *inGame);

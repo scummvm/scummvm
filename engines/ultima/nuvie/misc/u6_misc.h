@@ -31,10 +31,10 @@
  *  Copyright (c) 2003. All rights reserved.
  *
  */
-#include "ultima/shared/std/string.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "common/rect.h"
 #include "graphics/managed_surface.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -76,15 +76,12 @@ inline bool point_in_rect(uint16 x, uint16 y, Common::Rect *rect) {
 	return rect->contains(x, y);
 }
 
-
 /* Does line xy->x2y2 cross rect, to any extent?
  */
 inline bool line_in_rect(uint16 x1, uint16 y1, uint16 x2, uint16 y2, Common::Rect *rect) {
 	uint16 rx2 = rect->right, ry2 = rect->bottom;
-	return (((y1 >= rect->top && y1 <= ry2 && x1 <= rx2 && x2 >= rect->left)
-	         || (x1 >= rect->left && x1 <= rx2 && y1 <= ry2 && y2 >= rect->top)));
+	return (((y1 >= rect->top && y1 <= ry2 && x1 <= rx2 && x2 >= rect->left) || (x1 >= rect->left && x1 <= rx2 && y1 <= ry2 && y2 >= rect->top)));
 }
-
 
 /* Measure a timeslice for a single function-call. (last_time must be static)
  * Returns fraction of a second between this_time and last_time.

@@ -43,7 +43,7 @@ public:
 	void xtopenfissure();
 
 	// External commands - Telescope cover buttons. Button is the button number (1...5).
-	void xtisland390_covercombo(const ArgumentArray &args);	// Param1: button
+	void xtisland390_covercombo(const ArgumentArray &args); // Param1: button
 
 	// External commands - Atrus' Journal and Trap Book are added to inventory
 	void xtatrusgivesbooks(const ArgumentArray &args);

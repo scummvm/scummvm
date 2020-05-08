@@ -23,9 +23,9 @@
 #ifndef MADS_CAMERA_H
 #define MADS_CAMERA_H
 
-#include "mads/scene.h"
-#include "mads/player.h"
 #include "mads/camera.h"
+#include "mads/player.h"
+#include "mads/scene.h"
 
 namespace MADS {
 

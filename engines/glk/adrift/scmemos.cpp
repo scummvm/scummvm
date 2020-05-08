@@ -66,7 +66,8 @@ typedef sc_history_t *sc_historyref_t;
  * used to hold a command history that operates in a somewhat csh-like way,
  * also a ring with limited capacity.
  */
-enum { MEMO_UNDO_TABLE_SIZE = 16, MEMO_HISTORY_TABLE_SIZE = 64 };
+enum { MEMO_UNDO_TABLE_SIZE = 16,
+	   MEMO_HISTORY_TABLE_SIZE = 64 };
 struct sc_memo_set_s {
 	sc_uint magic;
 	sc_memo_t memo[MEMO_UNDO_TABLE_SIZE];
@@ -79,7 +80,6 @@ struct sc_memo_set_s {
 };
 typedef sc_memo_set_s sc_memo_set_t;
 
-
 /*
  * memo_is_valid()
  *
@@ -88,7 +88,6 @@ typedef sc_memo_set_s sc_memo_set_t;
 static sc_bool memo_is_valid(sc_memo_setref_t memento) {
 	return memento && memento->magic == MEMENTO_MAGIC;
 }
-
 
 /*
  * memo_round_up()
@@ -101,7 +100,6 @@ static sc_int memo_round_up(sc_int allocation) {
 	extended = allocation + MEMO_ALLOCATION_BLOCK - 1;
 	return (extended / MEMO_ALLOCATION_BLOCK) * MEMO_ALLOCATION_BLOCK;
 }
-
 
 /*
  * memo_create()
@@ -125,7 +123,6 @@ sc_memo_setref_t memo_create(void) {
 
 	return memento;
 }
-
 
 /*
  * memo_destroy()
@@ -155,7 +152,6 @@ void memo_destroy(sc_memo_setref_t memento) {
 	sc_free(memento);
 }
 
-
 /*
  * memo_save_game_callback()
  *
@@ -183,7 +179,6 @@ static void memo_save_game_callback(void *opaque, const sc_byte *buffer, sc_int 
 	memcpy(memo->serialized_game + memo->length, buffer, length);
 	memo->length += length;
 }
-
 
 /*
  * memo_save_game()
@@ -216,7 +211,6 @@ void memo_save_game(sc_memo_setref_t memento, sc_gameref_t game) {
 		sc_error("memo_save_game: warning: game save failed\n");
 }
 
-
 /*
  * memo_load_game_callback()
  *
@@ -241,7 +235,6 @@ static sc_int memo_load_game_callback(void *opaque, sc_byte *buffer, sc_int leng
 	return bytes;
 }
 
-
 /*
  * memo_load_game()
  *
@@ -254,7 +247,8 @@ sc_bool memo_load_game(sc_memo_setref_t memento, sc_gameref_t game) {
 
 	/* Look back one from the current memo cursor. */
 	cursor = (memento->memo_cursor == 0)
-	         ? MEMO_UNDO_TABLE_SIZE - 1 : memento->memo_cursor - 1;
+	             ? MEMO_UNDO_TABLE_SIZE - 1
+	             : memento->memo_cursor - 1;
 	memo = memento->memo + cursor;
 
 	/* If this slot is not empty, restore the serialized game held in it. */
@@ -289,7 +283,6 @@ sc_bool memo_load_game(sc_memo_setref_t memento, sc_gameref_t game) {
 	return FALSE;
 }
 
-
 /*
  * memo_is_load_available()
  *
@@ -306,11 +299,11 @@ sc_bool memo_is_load_available(sc_memo_setref_t memento) {
 	 * contains a serialized game.
 	 */
 	cursor = (memento->memo_cursor == 0)
-	         ? MEMO_UNDO_TABLE_SIZE - 1 : memento->memo_cursor - 1;
+	             ? MEMO_UNDO_TABLE_SIZE - 1
+	             : memento->memo_cursor - 1;
 	memo = memento->memo + cursor;
 	return memo->length > 0;
 }
-
 
 /*
  * memo_clear_games()
@@ -334,7 +327,6 @@ void memo_clear_games(sc_memo_setref_t memento) {
 	memento->memo_cursor = 0;
 }
 
-
 /*
  * memo_save_command()
  *
@@ -347,8 +339,7 @@ void memo_save_command(sc_memo_setref_t memento, const sc_char *command, sc_int 
 	assert(memo_is_valid(memento));
 
 	/* As with memos, reuse the allocation of the next slot if it has one. */
-	history = memento->history
-	          + memento->history_count % MEMO_HISTORY_TABLE_SIZE;
+	history = memento->history + memento->history_count % MEMO_HISTORY_TABLE_SIZE;
 
 	/*
 	 * Resize the allocation for this slot if required.  Strings tend to be
@@ -375,7 +366,6 @@ void memo_save_command(sc_memo_setref_t memento, const sc_char *command, sc_int 
 	memento->history_count++;
 }
 
-
 /*
  * memo_unsave_command()
  *
@@ -393,15 +383,13 @@ void memo_unsave_command(sc_memo_setref_t memento) {
 
 		/* Decrement the count of histories handled, erase the prior entry. */
 		memento->history_count--;
-		history = memento->history
-		          + memento->history_count % MEMO_HISTORY_TABLE_SIZE;
+		history = memento->history + memento->history_count % MEMO_HISTORY_TABLE_SIZE;
 		history->sequence = 0;
 		history->timestamp = 0;
 		history->turns = 0;
 		history->length = 0;
 	}
 }
-
 
 /*
  * memo_get_command_count()
@@ -417,7 +405,6 @@ sc_int memo_get_command_count(sc_memo_setref_t memento) {
 	else
 		return MEMO_HISTORY_TABLE_SIZE;
 }
-
 
 /*
  * memo_first_command()
@@ -442,7 +429,6 @@ void memo_first_command(sc_memo_setref_t memento) {
 	memento->is_at_start = TRUE;
 }
 
-
 /*
  * memo_next_command()
  *
@@ -450,7 +436,7 @@ void memo_first_command(sc_memo_setref_t memento) {
  * starting at 1, and the timestamp and turns when the command was saved.
  */
 void memo_next_command(sc_memo_setref_t memento, const sc_char **command,
-			sc_int *sequence, sc_int *timestamp, sc_int *turns) {
+                       sc_int *sequence, sc_int *timestamp, sc_int *turns) {
 	assert(memo_is_valid(memento));
 
 	/* If valid, return the current command and advance. */
@@ -477,7 +463,6 @@ void memo_next_command(sc_memo_setref_t memento, const sc_char **command,
 	}
 }
 
-
 /*
  * memo_more_commands()
  *
@@ -502,7 +487,6 @@ sc_bool memo_more_commands(sc_memo_setref_t memento) {
 	else
 		return history->length > 0;
 }
-
 
 /*
  * memo_find_command()
@@ -541,7 +525,6 @@ const sc_char *memo_find_command(sc_memo_setref_t memento, sc_int sequence) {
 	 */
 	return matched ? matched->command : NULL;
 }
-
 
 /*
  * memo_clear_commands()

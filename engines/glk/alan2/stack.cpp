@@ -20,9 +20,9 @@
  *
  */
 
-#include "glk/alan2/types.h"
-#include "glk/alan2/main.h"
 #include "glk/alan2/stack.h"
+#include "glk/alan2/main.h"
+#include "glk/alan2/types.h"
 
 namespace Glk {
 namespace Alan2 {
@@ -34,7 +34,6 @@ namespace Alan2 {
 /* The AMACHINE STACK */
 static Aptr stack[STACKSIZE];
 static int stackp = 0;
-
 
 void push(Aptr i) {
 	if (stackp == STACKSIZE)

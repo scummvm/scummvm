@@ -28,10 +28,10 @@
 
 #include "ultima/shared/std/string.h"
 
+#include "decoder/wave/stream.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/sound/mixer/types.h"
-#include "decoder/wave/stream.h"
 
 class StdioStream : public Common::SeekableReadStream {
 protected:

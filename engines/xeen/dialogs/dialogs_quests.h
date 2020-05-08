@@ -40,6 +40,7 @@ private:
 	void addButtons();
 
 	void loadQuestNotes();
+
 public:
 	static void show(XeenEngine *vm);
 };

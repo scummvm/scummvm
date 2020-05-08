@@ -37,11 +37,13 @@ class TextCursor : public Cursor {
 protected:
 	bool _visible;
 	Common::Rect _bounds;
+
 protected:
 	/**
 	 * Marks the area of the screen the cursor covers as dirty
 	 */
 	void markAsDirty();
+
 public:
 	TextCursor() : _visible(false) {
 	}

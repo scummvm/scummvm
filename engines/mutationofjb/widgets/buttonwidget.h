@@ -23,8 +23,8 @@
 #ifndef MUTATIONOFJB_BUTTONWIDGET_H
 #define MUTATIONOFJB_BUTTONWIDGET_H
 
-#include "mutationofjb/widgets/widget.h"
 #include "graphics/surface.h"
+#include "mutationofjb/widgets/widget.h"
 
 namespace MutationOfJB {
 
@@ -53,6 +53,6 @@ private:
 	bool _pressed;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

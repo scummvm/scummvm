@@ -23,8 +23,8 @@
 #ifndef PRINCE_OBJECT_H
 #define PRINCE_OBJECT_H
 
-#include "image/image_decoder.h"
 #include "graphics/surface.h"
+#include "image/image_decoder.h"
 
 namespace Prince {
 

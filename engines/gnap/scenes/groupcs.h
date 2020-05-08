@@ -30,7 +30,7 @@ namespace Gnap {
 class GnapEngine;
 class CutScene;
 
-class Scene16: public CutScene {
+class Scene16 : public CutScene {
 public:
 	Scene16(GnapEngine *vm);
 	~Scene16() override {}
@@ -38,7 +38,7 @@ public:
 	int init() override;
 };
 
-class Scene471: public CutScene {
+class Scene471 : public CutScene {
 public:
 	Scene471(GnapEngine *vm);
 	~Scene471() override {}
@@ -46,7 +46,7 @@ public:
 	int init() override;
 };
 
-class Scene472: public CutScene {
+class Scene472 : public CutScene {
 public:
 	Scene472(GnapEngine *vm);
 	~Scene472() override {}
@@ -54,7 +54,7 @@ public:
 	int init() override;
 };
 
-class Scene473: public CutScene {
+class Scene473 : public CutScene {
 public:
 	Scene473(GnapEngine *vm);
 	~Scene473() override {}
@@ -62,7 +62,7 @@ public:
 	int init() override;
 };
 
-class Scene474: public CutScene {
+class Scene474 : public CutScene {
 public:
 	Scene474(GnapEngine *vm);
 	~Scene474() override {}
@@ -70,7 +70,7 @@ public:
 	int init() override;
 };
 
-class Scene475: public CutScene {
+class Scene475 : public CutScene {
 public:
 	Scene475(GnapEngine *vm);
 	~Scene475() override {}
@@ -78,7 +78,7 @@ public:
 	int init() override;
 };
 
-class Scene476: public CutScene {
+class Scene476 : public CutScene {
 public:
 	Scene476(GnapEngine *vm);
 	~Scene476() override {}
@@ -86,7 +86,7 @@ public:
 	int init() override;
 };
 
-class Scene477: public CutScene {
+class Scene477 : public CutScene {
 public:
 	Scene477(GnapEngine *vm);
 	~Scene477() override {}
@@ -94,7 +94,7 @@ public:
 	int init() override;
 };
 
-class Scene48: public CutScene {
+class Scene48 : public CutScene {
 public:
 	Scene48(GnapEngine *vm);
 	~Scene48() override {}
@@ -102,7 +102,7 @@ public:
 	int init() override;
 };
 
-class Scene541: public CutScene {
+class Scene541 : public CutScene {
 public:
 	Scene541(GnapEngine *vm);
 	~Scene541() override {}
@@ -110,7 +110,7 @@ public:
 	int init() override;
 };
 
-class Scene542: public CutScene {
+class Scene542 : public CutScene {
 public:
 	Scene542(GnapEngine *vm);
 	~Scene542() override {}

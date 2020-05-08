@@ -28,7 +28,7 @@ void SceneScriptTB03::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG17toTB03)) {
 		Setup_Scene_Information(-260.0f, 0.15f, 2014.0f, 276);
 	} else {
-		Setup_Scene_Information(-152.0f,  0.0f, 1890.0f, 500);
+		Setup_Scene_Information(-152.0f, 0.0f, 1890.0f, 500);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 25, 227, 81, 300, 0);

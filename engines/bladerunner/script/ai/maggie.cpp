@@ -26,23 +26,23 @@
 namespace BladeRunner {
 
 enum kMaggieStates {
-	kMaggieStateIdle         = 0,
-	kMaggieStateWalking      = 1,
-	kMaggieStateJumping      = 2,
-	kMaggieStateHappyA       = 3,
-	kMaggieStateHappyB       = 4,
-	kMaggieStateLayingDown   = 5,
-	kMaggieStateLayingIdle   = 6,
-	kMaggieStateStandingUp   = 7,
+	kMaggieStateIdle = 0,
+	kMaggieStateWalking = 1,
+	kMaggieStateJumping = 2,
+	kMaggieStateHappyA = 3,
+	kMaggieStateHappyB = 4,
+	kMaggieStateLayingDown = 5,
+	kMaggieStateLayingIdle = 6,
+	kMaggieStateStandingUp = 7,
 	kMaggieStateGoingToSleep = 8,
-	kMaggieStateSleeping     = 9,
-	kMaggieStateWakingUp     = 10,
-	kMaggieStateBombIdle     = 11,
-	kMaggieStateBombWalk     = 12,
-	kMaggieStateBombJumping  = 13,
-	kMaggieStateExploding    = 14,
+	kMaggieStateSleeping = 9,
+	kMaggieStateWakingUp = 10,
+	kMaggieStateBombIdle = 11,
+	kMaggieStateBombWalk = 12,
+	kMaggieStateBombJumping = 13,
+	kMaggieStateExploding = 14,
 	kMaggieStateDeadExploded = 15,
-	kMaggieStateDead         = 16
+	kMaggieStateDead = 16
 };
 
 AIScriptMaggie::AIScriptMaggie(BladeRunnerEngine *vm) : AIScriptBase(vm) {
@@ -69,18 +69,14 @@ void AIScriptMaggie::Initialize() {
 bool AIScriptMaggie::Update() {
 	int goal = Actor_Query_Goal_Number(kActorMaggie);
 
-	if (Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04
-	 && Global_Variable_Query(kVariableChapter) == 4
-	) {
+	if (Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04 && Global_Variable_Query(kVariableChapter) == 4) {
 		Actor_Put_In_Set(kActorMaggie, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorMaggie, 39, 0);
 	}
 
 	if (goal == kGoalMaggieKP05WillExplode) {
 		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05Explode);
-	} else if (goal == kGoalMaggieKP05WalkToMcCoy
-	        && Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMaggie) < 60
-	) {
+	} else if (goal == kGoalMaggieKP05WalkToMcCoy && Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMaggie) < 60) {
 		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05Explode);
 	}
 
@@ -151,9 +147,7 @@ void AIScriptMaggie::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptMaggie::ClickedByPlayer() {
-	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-	 &&  Global_Variable_Query(kVariableChapter) == 5
-	) {
+	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants) && Global_Variable_Query(kVariableChapter) == 5) {
 		if (Actor_Query_Goal_Number(kActorMaggie) == kGoalMaggieKP05WalkToMcCoy) {
 			Actor_Set_Targetable(kActorMaggie, true);
 			AI_Movement_Track_Flush(kActorMaggie);
@@ -220,10 +214,7 @@ void AIScriptMaggie::OtherAgentEnteredThisSet(int otherActorId) {
 }
 
 void AIScriptMaggie::OtherAgentExitedThisSet(int otherActorId) {
-	if (otherActorId == kActorMcCoy
-	 && Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04
-	 && Global_Variable_Query(kVariableChapter) < 4
-	) {
+	if (otherActorId == kActorMcCoy && Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04 && Global_Variable_Query(kVariableChapter) < 4) {
 		AI_Movement_Track_Flush(kActorMaggie);
 		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Default);
 	}
@@ -389,7 +380,6 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			}
 		}
 		break;
-
 	}
 	return false;
 }
@@ -681,23 +671,22 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 		_animationState = kMaggieStateDead;
 		_animationFrame = 0;
 		break;
-
 	}
 	return true;
 }
 
 void AIScriptMaggie::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
-	*animationState     = _animationState;
-	*animationFrame     = _animationFrame;
+	*animationState = _animationState;
+	*animationFrame = _animationFrame;
 	*animationStateNext = _animationStateNext;
-	*animationNext      = _animationNext;
+	*animationNext = _animationNext;
 }
 
 void AIScriptMaggie::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
-	_animationState     = animationState;
-	_animationFrame     = animationFrame;
+	_animationState = animationState;
+	_animationFrame = animationFrame;
 	_animationStateNext = animationStateNext;
-	_animationNext      = animationNext;
+	_animationNext = animationNext;
 }
 
 bool AIScriptMaggie::ReachedMovementTrackWaypoint(int waypointId) {

@@ -24,9 +24,9 @@
 
 // "Dinotopia" and "Faery Tale Adventure II: Halls of the Dead" Intro sequence scene procedures
 
+#include "saga/gfx.h"
 #include "saga/saga.h"
 #include "saga/scene.h"
-#include "saga/gfx.h"
 
 #include "common/events.h"
 #include "common/keyboard.h"

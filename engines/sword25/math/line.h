@@ -110,8 +110,10 @@ public:
 	 */
 	static VERTEX_CLASSIFICATION classifyVertexToLine(const Vertex &a, const Vertex &b, const Vertex &c) {
 		int area = triangleArea2(a, b, c);
-		if (area > 0) return LEFT;
-		if (area < 0) return RIGHT;
+		if (area > 0)
+			return LEFT;
+		if (area < 0)
+			return RIGHT;
 		return ON;
 	}
 
@@ -129,9 +131,10 @@ public:
 		VERTEX_CLASSIFICATION class3 = classifyVertexToLine(c, d, a);
 		VERTEX_CLASSIFICATION class4 = classifyVertexToLine(c, d, b);
 
-		if (class1 == ON || class2 == ON || class3 == ON || class4 == ON) return false;
+		if (class1 == ON || class2 == ON || class3 == ON || class4 == ON)
+			return false;
 
-		return ((class1 == LEFT) ^(class2 == LEFT)) && ((class3 == LEFT) ^(class4 == LEFT));
+		return ((class1 == LEFT) ^ (class2 == LEFT)) && ((class3 == LEFT) ^ (class4 == LEFT));
 	}
 
 	/**
@@ -142,7 +145,8 @@ public:
 	 */
 	static bool isOnLine(const Vertex &a, const Vertex &b, const Vertex &c) {
 		// The items must all be Collinear, otherwise don't bothering testing the point
-		if (triangleArea2(a, b, c) != 0) return false;
+		if (triangleArea2(a, b, c) != 0)
+			return false;
 
 		// If the line segment is not vertical, check on the x-axis, otherwise the y-axis
 		if (a.x != b.x) {
@@ -160,7 +164,8 @@ public:
 
 	static bool isOnLineStrict(const Vertex &a, const Vertex &b, const Vertex &c) {
 		// The items must all be Collinear, otherwise don't bothering testing the point
-		if (triangleArea2(a, b, c) != 0) return false;
+		if (triangleArea2(a, b, c) != 0)
+			return false;
 
 		// If the line segment is not vertical, check on the x-axis, otherwise the y-axis
 		if (a.x != b.x) {

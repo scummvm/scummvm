@@ -36,7 +36,6 @@ VariaTxt::~VariaTxt() {
 	}
 }
 
-
 bool VariaTxt::loadStream(Common::SeekableReadStream &stream) {
 	_dataSize = stream.size();
 	_data = (byte *)malloc(_dataSize);

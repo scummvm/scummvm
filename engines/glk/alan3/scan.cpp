@@ -21,12 +21,12 @@
  */
 
 #include "glk/alan3/scan.h"
-#include "glk/alan3/lists.h"
-#include "glk/alan3/dictionary.h"
 #include "glk/alan3/debug.h"
+#include "glk/alan3/dictionary.h"
 #include "glk/alan3/exe.h"
 #include "glk/alan3/glkio.h"
 #include "glk/alan3/inter.h"
+#include "glk/alan3/lists.h"
 #include "glk/alan3/literal.h"
 #include "glk/alan3/memory.h"
 #include "glk/alan3/msg.h"
@@ -42,19 +42,16 @@ namespace Alan3 {
 /* PUBLIC DATA */
 bool continued = FALSE;
 
-
 /* PRIVATE DATA */
-static char buf[1000]; /* The input buffer */
+static char buf[1000];    /* The input buffer */
 static char isobuf[1000]; /* The input buffer in ISO */
-static bool eol = TRUE; /* Looking at End of line? Yes, initially */
+static bool eol = TRUE;   /* Looking at End of line? Yes, initially */
 static char *token = NULL;
-
 
 /*======================================================================*/
 void forceNewPlayerInput() {
 	setEndOfArray(&playerWords[currentWordIndex]);
 }
-
 
 /*----------------------------------------------------------------------*/
 static void unknown(CONTEXT, char tok[]) {
@@ -68,7 +65,6 @@ static void unknown(CONTEXT, char tok[]) {
 	CALL0(abortPlayerCommand)
 }
 
-
 /*----------------------------------------------------------------------*/
 static int number(char tok[]) {
 	int i;
@@ -77,20 +73,18 @@ static int number(char tok[]) {
 	return i;
 }
 
-
 /*----------------------------------------------------------------------*/
 static int lookup(CONTEXT, char wrd[]) {
 	int i;
 
 	for (i = 0; !isEndOfArray(&dictionary[i]); i++) {
-		if (compareStrings(wrd, (char *) pointerTo(dictionary[i].string)) == 0) {
+		if (compareStrings(wrd, (char *)pointerTo(dictionary[i].string)) == 0) {
 			return (i);
 		}
 	}
 	R0CALL1(unknown, wrd)
 	return (int)EOD;
 }
-
 
 /*----------------------------------------------------------------------*/
 static bool isWordCharacter(int ch) {
@@ -128,7 +122,6 @@ static char *gettoken(char *txtBuf) {
 	*marker = '\0';
 	return txtBuf;
 }
-
 
 /*----------------------------------------------------------------------*/
 // TODO replace dependency to exe.c with injection of quitGame() and undo()
@@ -185,8 +178,6 @@ static void getLine(CONTEXT) {
 	} while (token == NULL);
 	eol = FALSE;
 }
-
-
 
 /*======================================================================*/
 void scan(CONTEXT) {

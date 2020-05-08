@@ -20,25 +20,25 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/misc/u6_llist.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/usecode/u6_usecode.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/pathfinder/combat_path_finder.h"
-#include "ultima/nuvie/pathfinder/seek_path.h"
+#include "ultima/nuvie/actors/u6_actor.h"
 #include "ultima/nuvie/core/converse.h"
 #include "ultima/nuvie/core/effect.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/script/script.h"
 #include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/actors/u6_actor.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/obj_manager.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/misc/u6_llist.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/pathfinder/combat_path_finder.h"
+#include "ultima/nuvie/pathfinder/seek_path.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/usecode/u6_usecode.h"
+#include "ultima/nuvie/views/view_manager.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/misc.h"
 
@@ -50,7 +50,7 @@ uint8 walk_frame_tbl[4] = {0, 1, 2, 1};
 class ActorManager;
 
 Actor::Actor(Map *m, ObjManager *om, GameClock *c)
-	: sched(NULL), obj_inventory(NULL) {
+    : sched(NULL), obj_inventory(NULL) {
 	map = m;
 	obj_manager = om;
 	usecode = NULL;
@@ -64,7 +64,7 @@ Actor::Actor(Map *m, ObjManager *om, GameClock *c)
 	temp_actor = false;
 	visible_flag = true;
 	met_player = false;
-// active = false;
+	// active = false;
 
 	worktype = 0;
 	sched_pos = 0;
@@ -90,7 +90,7 @@ Actor::Actor(Map *m, ObjManager *om, GameClock *c)
 }
 
 Actor::~Actor() {
-// free sched array
+	// free sched array
 	if (sched != NULL) {
 		Schedule **cursched = sched;
 		while (*cursched != NULL)
@@ -148,12 +148,10 @@ bool Actor::is_nearby(MapCoord &where, uint8 thresh) {
 	return (false);
 }
 
-
 bool Actor::is_nearby(Actor *other) {
 	MapCoord there(other->get_location());
 	return (is_nearby(there));
 }
-
 
 bool Actor::is_nearby(uint8 actor_num) {
 	return (is_nearby(Game::get_game()->get_actor_manager()->get_actor(actor_num)));
@@ -184,16 +182,17 @@ bool Actor::is_in_vehicle() {
 }
 
 void Actor::get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level) {
-	if (ret_x) *ret_x = x;
-	if (ret_y) *ret_y = y;
-	if (ret_level) *ret_level = z;
+	if (ret_x)
+		*ret_x = x;
+	if (ret_y)
+		*ret_y = y;
+	if (ret_level)
+		*ret_level = z;
 }
-
 
 MapCoord Actor::get_location() {
 	return (MapCoord(x, y, z));
 }
-
 
 uint16 Actor::get_tile_num() {
 	if (custom_tile_tbl) {
@@ -253,7 +252,6 @@ void Actor::set_direction(uint8 d) {
 	walk_frame = (walk_frame + 1) % 4;
 
 	frame_n = direction * 4 + walk_frame_tbl[walk_frame];
-
 }
 
 /* Set direction as if moving in relative direction rel_x,rel_y. */
@@ -265,7 +263,7 @@ void Actor::set_direction(sint16 rel_x, sint16 rel_y) {
 		new_direction = (rel_y < 0) ? NUVIE_DIR_N : NUVIE_DIR_S;
 	else if (rel_y == 0) // left or right
 		new_direction = (rel_x < 0) ? NUVIE_DIR_W : NUVIE_DIR_E;
-// Add 2 to current direction if it is opposite the new direction
+	// Add 2 to current direction if it is opposite the new direction
 	else if (rel_x < 0 && rel_y < 0) { // up-left
 		if (direction != NUVIE_DIR_N && direction != NUVIE_DIR_W)
 			new_direction = direction + 2;
@@ -321,7 +319,6 @@ void Actor::face_actor(Actor *a) {
 	face_location(ax, ay);
 }
 
-
 void Actor::set_poisoned(bool poisoned) {
 	if (poisoned) {
 		status_flags |= ACTOR_STATUS_POISONED;
@@ -349,8 +346,7 @@ const char *Actor::get_name(bool force_real_name) {
 		sint8 party_pos = party->get_member_num(this);
 		if (party_pos != -1)
 			name = party->get_actor_name((uint8)party_pos);
-	} else if ((is_met() || is_in_party() || force_real_name)
-	           && (talk_name = converse->npc_name(id_n)) // assignment
+	} else if ((is_met() || is_in_party() || force_real_name) && (talk_name = converse->npc_name(id_n)) // assignment
 	           && !statue)
 		name = talk_name;
 	else
@@ -364,7 +360,7 @@ void Actor::add_surrounding_obj(Obj *obj) {
 }
 
 void Actor::unlink_surrounding_objects(bool make_objects_temporary) {
-//	if(make_objects_temporary)
+	//	if(make_objects_temporary)
 	{
 		Std::list<Obj *>::iterator obj;
 
@@ -381,12 +377,11 @@ bool Actor::moveRelative(sint16 rel_x, sint16 rel_y, ActorMoveFlags flags) {
 	return move(x + rel_x, y + rel_y, z, flags);
 }
 
-
 bool Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) {
 	Actor *a;
 	bool ignore_actors = flags & ACTOR_IGNORE_OTHERS;
 	bool ignore_danger = (flags & ACTOR_IGNORE_DANGER);
-// bool ignore_danger = true;
+	// bool ignore_danger = true;
 	/*
 	    uint16 pitch = map->get_width(new_z);
 	    if(new_x < 0 || new_x >= pitch)
@@ -404,8 +399,8 @@ bool Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags f
 		}
 	}
 
-//    if(map->is_passable(new_x,new_y,new_z) == false)
-//        return(false);
+	//    if(map->is_passable(new_x,new_y,new_z) == false)
+	//        return(false);
 
 	if (!ignore_danger)
 		if (map->is_damaging(new_x, new_y, new_z))
@@ -417,7 +412,6 @@ bool Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags f
 bool Actor::check_moveRelative(sint16 rel_x, sint16 rel_y, ActorMoveFlags flags) {
 	return check_move(x + rel_x, y + rel_y, z, flags);
 }
-
 
 bool Actor::can_be_moved() {
 	return can_move;
@@ -437,14 +431,14 @@ uint8 Actor::get_object_readiable_location(Obj *obj) {
 }
 
 bool Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) {
-// assert(new_z < 6); // shouldn't need to check anymore
+	// assert(new_z < 6); // shouldn't need to check anymore
 
-//const uint8 move_cost = 5; // base cost to move
+	//const uint8 move_cost = 5; // base cost to move
 	bool force_move = (bool)(flags & ACTOR_FORCE_MOVE);
 	bool open_doors = (bool)(flags & ACTOR_OPEN_DOORS);
 	bool ignore_actors = (bool)(flags & ACTOR_IGNORE_OTHERS);
 	bool ignore_danger = (bool)(flags & ACTOR_IGNORE_DANGER);
-// bool ignore_danger = true;
+	// bool ignore_danger = true;
 	bool ignore_moves = (bool)(flags & ACTOR_IGNORE_MOVES);
 	Obj *obj = NULL;
 	MapCoord oldpos(x, y, z);
@@ -452,34 +446,30 @@ bool Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) 
 	clear_error();
 	if (!usecode)
 		usecode = obj_manager->get_usecode();
-// no moves left
+	// no moves left
 	if (!(force_move || ignore_moves) && moves <= 0) {
 		set_error(ACTOR_OUT_OF_MOVES);
-//    return false;
+		//    return false;
 		DEBUG(0, LEVEL_WARNING, "actor %d is out of moves %d\n", id_n, moves);
 	}
 
-// blocking actors are checked for later
+	// blocking actors are checked for later
 	obj = obj_manager->get_obj(new_x, new_y, new_z, OBJ_SEARCH_TOP, OBJ_INCLUDE_IGNORED); //we include ignored objects here to pick up the sacred quest blocking object.
 	if (!force_move && !check_move(new_x, new_y, new_z, ACTOR_IGNORE_DANGER | ACTOR_IGNORE_OTHERS)) {
 		// open door
-		if (!(obj && usecode->is_unlocked_door(obj) && open_doors)
-		        || (!usecode->use_obj(obj, this))) {
+		if (!(obj && usecode->is_unlocked_door(obj) && open_doors) || (!usecode->use_obj(obj, this))) {
 			set_error(ACTOR_BLOCKED_BY_OBJECT);
 			error_struct.blocking_obj = obj;
 			return false; // blocked by object or map tile
 		}
 	}
-// avoid dangerous objects
-	if (!ignore_danger
-	        && !force_move
-	        && ((is_in_party() && map->is_damaging(new_x, new_y, new_z))
-	            || (obj && obj_manager->is_damaging(new_x, new_y, new_z)))) {
+	// avoid dangerous objects
+	if (!ignore_danger && !force_move && ((is_in_party() && map->is_damaging(new_x, new_y, new_z)) || (obj && obj_manager->is_damaging(new_x, new_y, new_z)))) {
 		set_error(ACTOR_BLOCKED_BY_OBJECT);
 		error_struct.blocking_obj = obj;
 		return false;
 	}
-// usecode must allow movement
+	// usecode must allow movement
 	if (obj && usecode->has_passcode(obj)) {
 		if (!usecode->pass_obj(obj, this, new_x, new_y) && !force_move) { // calling item is this actor
 			set_error(ACTOR_BLOCKED_BY_OBJECT);
@@ -489,20 +479,19 @@ bool Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) 
 	}
 	Game *game = Game::get_game();
 	Actor *other = map->get_actor(new_x, new_y, new_z, false);
-	if (!ignore_actors && !force_move && other && !other->can_be_passed(this)
-	        && (!game->get_party()->get_autowalk() || other->is_visible())) {
+	if (!ignore_actors && !force_move && other && !other->can_be_passed(this) && (!game->get_party()->get_autowalk() || other->is_visible())) {
 		set_error(ACTOR_BLOCKED_BY_ACTOR);
 		error_struct.blocking_actor = other;
 		return false; // blocked by actor
 	}
 
-// move
+	// move
 	x = WRAPPED_COORD(new_x, new_z); // FIXME: this is probably needed because PathFinder is not wrapping coords
 	y = WRAPPED_COORD(new_y, new_z);
 	z = new_z;
 
 	can_move = true;
-//FIXME move this into Player::moveRelative()
+	//FIXME move this into Player::moveRelative()
 	/*
 	if(!(force_move || ignore_moves) && (id_n == game->get_player()->get_actor()->id_n || id_n == 0 || (is_in_party() && game->get_party()->is_in_combat_mode() == false))) // subtract from moves left for party members only. Other actors have their movement points deducted in actor_update_all()
 	{
@@ -511,22 +500,21 @@ bool Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) 
 	       set_moves_left(moves - (move_cost+map->get_impedance(oldpos.x, oldpos.y, oldpos.z)));
 	}
 	*/
-// post-move
-// close door
+	// post-move
+	// close door
 	if (open_doors) {
 		obj = obj_manager->get_obj(oldpos.x, oldpos.y, z);
 		if (obj && usecode->is_door(obj))
 			usecode->use_obj(obj, this);
 	}
 
-// re-center map if actor is player character
+	// re-center map if actor is player character
 	if (id_n == game->get_player()->get_actor()->id_n && game->get_player()->is_mapwindow_centered())
 		game->get_map_window()->centerMapOnActor(this);
-// allows a delay to be set on actor movement, in lieu of using animations
+	// allows a delay to be set on actor movement, in lieu of using animations
 	move_time = clock->get_ticks();
 	return true;
 }
-
 
 void Actor::update() {
 	if (!is_alive()) //we don't need to update dead actors.
@@ -537,10 +525,11 @@ void Actor::update() {
 		// activity still needs to be checked, and depends on pathfinder existing
 		if (pathfinder->reached_goal())
 			delete_pathfinder();
-		else walk_path();
+		else
+			walk_path();
 	}
 
-//    update_time = clock->get_ticks(); moved to move()
+	//    update_time = clock->get_ticks(); moved to move()
 }
 
 /* Returns true if actor moved. */
@@ -601,7 +590,7 @@ void Actor::set_in_party(bool state) {
 	//in_party = state;
 	delete_pathfinder();
 	if (state == true) { // joined
-//        obj_n = base_obj_n; U6Actor::set_worktype
+		                 //        obj_n = base_obj_n; U6Actor::set_worktype
 		can_move = true;
 		set_worktype(0x01); // U6_IN_PARTY
 		status_flags |= ACTOR_STATUS_IN_PARTY;
@@ -641,7 +630,7 @@ uint8 Actor::get_range(uint16 target_x, uint16 target_y) {
 
 	if (target_x <= x)
 		off_x = x - target_x;
-	else { //target_x > x
+	else {                    //target_x > x
 		if (target_x - x < 8) //small positive offset
 			off_x = target_x - x;
 		else { // target wrapped around the map.
@@ -654,7 +643,7 @@ uint8 Actor::get_range(uint16 target_x, uint16 target_y) {
 
 	if (target_y <= y)
 		off_y = y - target_y;
-	else { //target_y > y
+	else {                    //target_y > y
 		if (target_y - y < 8) //small positive offset
 			off_y = target_y - y;
 		else { // target wrapped around the map.
@@ -700,7 +689,6 @@ U6LList *Actor::get_inventory_list() {
 	return obj_manager->get_actor_inventory(id_n);
 }
 
-
 bool Actor::inventory_has_object(uint16 objN, uint8 qual, bool match_quality, uint8 frameN, bool match_frame_n) {
 	if (inventory_get_object(objN, qual, match_quality, frameN, match_frame_n))
 		return (true);
@@ -726,7 +714,6 @@ uint32 Actor::inventory_count_objects(bool inc_readied_objects) {
 	return count;
 }
 
-
 /* Returns the number of objects in the actor's inventory with matching object
  * number and quality.
  */
@@ -745,7 +732,6 @@ uint32 Actor::inventory_count_object(uint16 objN) {
 	return (qty);
 }
 
-
 /* Returns object descriptor of object in the actor's inventory, or NULL if no
  * matching object is found. */
 Obj *Actor::inventory_get_object(uint16 objN, uint8 qual, bool match_quality, uint8 frameN, bool match_frame_n) {
@@ -756,8 +742,7 @@ Obj *Actor::inventory_get_object(uint16 objN, uint8 qual, bool match_quality, ui
 	inventory = get_inventory_list();
 	for (link = inventory->start(); link != NULL; link = link->next) {
 		obj = (Obj *)link->data;
-		if (obj->obj_n == objN && (match_quality == false || obj->quality == qual)
-				&& (match_frame_n == false || obj->frame_n == frameN)) //FIXME should qual = 0 be an all quality search!?
+		if (obj->obj_n == objN && (match_quality == false || obj->quality == qual) && (match_frame_n == false || obj->frame_n == frameN)) //FIXME should qual = 0 be an all quality search!?
 			return (obj);
 		else if (obj->has_container()) {
 			if ((obj = obj->find_in_container(objN, qual, match_quality)))
@@ -789,15 +774,14 @@ const CombatType *Actor::inventory_get_readied_object_combat_type(uint8 location
 	return NULL;
 }
 
-
 bool Actor::inventory_add_object(Obj *obj, Obj *container, bool stack) {
 	obj_manager->unlink_from_engine(obj);
 	U6LList *inventory = get_inventory_list(), *add_to = inventory;
 
-// we have the item now so we don't consider it stealing if we get it at any time in the future.
+	// we have the item now so we don't consider it stealing if we get it at any time in the future.
 	obj->set_ok_to_take(true);
 
-//remove temp flag on inventory items.
+	//remove temp flag on inventory items.
 	obj->set_temporary(false);
 
 	if (container) { // assumes actor is holding the container
@@ -834,7 +818,7 @@ Obj *Actor::inventory_new_object(uint16 objN, uint32 qty, uint8 quality) {
 	obj->frame_n = frameN;
 	obj->quality = quality;
 	obj->qty = obj_manager->is_stackable(obj) ? 1 : 0; // stackable objects must have a quantity
-	if (qty > 1) // this will combine with others, only if object is stackable
+	if (qty > 1)                                       // this will combine with others, only if object is stackable
 		for (uint32 q = 1; q < qty; q++) {
 			inventory_add_object(obj_manager->copy_obj(obj), NULL);
 		}
@@ -849,8 +833,7 @@ uint32 Actor::inventory_del_object(uint16 objN, uint32 qty, uint8 quality) {
 	uint16 oqty = 0;
 	uint32 deleted = 0;
 
-	while ((obj = inventory_get_object(objN, quality, false))
-	        && (deleted < qty)) {
+	while ((obj = inventory_get_object(objN, quality, false)) && (deleted < qty)) {
 		oqty = obj->qty == 0 ? 1 : obj->qty;
 		if (oqty <= (qty - deleted)) {
 			inventory_remove_obj(obj);
@@ -876,7 +859,6 @@ void Actor::inventory_del_all_objs() {
 		inventory_remove_obj(obj);
 		delete_obj(obj);
 	}
-
 }
 
 bool Actor::inventory_remove_obj(Obj *obj, bool run_usecode) {
@@ -940,14 +922,14 @@ float Actor::get_inventory_equip_weight() {
 	return (weight);
 }
 
-
 /* Can the actor carry a new object of this type?
  */
 bool Actor::can_carry_object(uint16 objN, uint32 qty) {
 	if (Game::get_game()->using_hackmove())
 		return true;
 	float obj_weight = obj_manager->get_obj_weight(objN);
-	if (qty) obj_weight *= qty;
+	if (qty)
+		obj_weight *= qty;
 	return (can_carry_weight(obj_weight));
 }
 
@@ -976,7 +958,6 @@ bool Actor::can_carry_weight(float obj_weight) {
 	return (inv_weight <= max_weight);
 }
 
-
 void Actor::inventory_parse_readied_objects() {
 	U6LList *inventory;
 	U6Link *link;
@@ -995,7 +976,7 @@ void Actor::inventory_parse_readied_objects() {
 			add_readied_object(obj);
 		}
 		if (obj->status & OBJ_STATUS_LIT) { // torch
-			add_light(TORCH_LIGHT_LEVEL); // light up actor
+			add_light(TORCH_LIGHT_LEVEL);   // light up actor
 		}
 	}
 
@@ -1003,13 +984,13 @@ void Actor::inventory_parse_readied_objects() {
 }
 
 bool Actor::can_ready_obj(Obj *obj) {
-	uint8 location =  get_object_readiable_location(obj);
+	uint8 location = get_object_readiable_location(obj);
 
 	switch (location) {
-	case ACTOR_NOT_READIABLE :
+	case ACTOR_NOT_READIABLE:
 		return false;
 
-	case ACTOR_ARM :
+	case ACTOR_ARM:
 		if (readied_objects[ACTOR_ARM] != NULL) { //if full try other arm
 			if (readied_objects[ACTOR_ARM]->double_handed)
 				return false;
@@ -1018,13 +999,13 @@ bool Actor::can_ready_obj(Obj *obj) {
 		}
 		break;
 
-	case ACTOR_ARM_2 :
+	case ACTOR_ARM_2:
 		if (readied_objects[ACTOR_ARM] != NULL || readied_objects[ACTOR_ARM_2] != NULL)
 			return false;
 		location = ACTOR_ARM;
 		break;
 
-	case ACTOR_HAND :
+	case ACTOR_HAND:
 		if (readied_objects[ACTOR_HAND] != NULL) // if full try other hand
 			location = ACTOR_HAND_2;
 		break;
@@ -1041,13 +1022,13 @@ bool Actor::add_readied_object(Obj *obj) {
 	uint8 location;
 	bool double_handed = false;
 
-	location =  get_object_readiable_location(obj);
+	location = get_object_readiable_location(obj);
 
 	switch (location) {
-	case ACTOR_NOT_READIABLE :
+	case ACTOR_NOT_READIABLE:
 		return false;
 
-	case ACTOR_ARM :
+	case ACTOR_ARM:
 		if (readied_objects[ACTOR_ARM] != NULL) { //if full try other arm
 			if (readied_objects[ACTOR_ARM]->double_handed)
 				return false;
@@ -1056,14 +1037,14 @@ bool Actor::add_readied_object(Obj *obj) {
 		}
 		break;
 
-	case ACTOR_ARM_2 :
+	case ACTOR_ARM_2:
 		if (readied_objects[ACTOR_ARM] != NULL || readied_objects[ACTOR_ARM_2] != NULL)
 			return false;
 		location = ACTOR_ARM;
 		double_handed = true;
 		break;
 
-	case ACTOR_HAND :
+	case ACTOR_HAND:
 		if (readied_objects[ACTOR_HAND] != NULL) // if full try other hand
 			location = ACTOR_HAND_2;
 		break;
@@ -1152,7 +1133,6 @@ bool Actor::has_readied_objects() {
 	}
 
 	return false;
-
 }
 
 void Actor::inventory_drop_all() {
@@ -1206,7 +1186,6 @@ void Actor::all_items_to_container(Obj *container_obj, bool stack) {
 			obj_manager->moveto_container(obj, container_obj, stack);
 	}
 
-
 	return;
 }
 
@@ -1221,7 +1200,7 @@ void Actor::loadSchedule(unsigned char *sched_data, uint16 num) {
 	for (i = 0; i < num; i++) {
 		sched[i] = (Schedule *)malloc(sizeof(Schedule));
 
-		sched[i]->hour = sched_data_ptr[0] & 0x1f; // 5 bits for hour
+		sched[i]->hour = sched_data_ptr[0] & 0x1f;      // 5 bits for hour
 		sched[i]->day_of_week = sched_data_ptr[0] >> 5; // 3 bits for day of week
 		sched[i]->worktype = sched_data_ptr[1];
 
@@ -1250,12 +1229,11 @@ bool Actor::updateSchedule(uint8 hour, bool teleport) {
 	uint16 new_pos;
 
 	if (is_alive() == false //don't update schedule for dead actors.
-	        || (Game::get_game()->get_player()->get_actor() == this
-	            && Game::get_game()->get_event()->using_control_cheat()))
+	    || (Game::get_game()->get_player()->get_actor() == this && Game::get_game()->get_event()->using_control_cheat()))
 		return false;
 
-//hour = clock->get_hour();
-//	day_of_week = clock->get_day_of_week();
+	//hour = clock->get_hour();
+	//	day_of_week = clock->get_day_of_week();
 
 	new_pos = getSchedulePos(hour);
 
@@ -1267,7 +1245,7 @@ bool Actor::updateSchedule(uint8 hour, bool teleport) {
 	if (sched[sched_pos] == NULL)
 		return false;
 
-// U6: temp. fix for walking statues; they shouldn't have schedules
+	// U6: temp. fix for walking statues; they shouldn't have schedules
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6 && id_n >= 188 && id_n <= 200) {
 		DEBUG(0, LEVEL_WARNING, "tried to update schedule for non-movable actor %d\n", id_n);
 		return (false);
@@ -1385,8 +1363,7 @@ void Actor::set_worktype(uint8 new_worktype, bool init) {
 	work_location.y = y;
 	work_location.z = z;
 
-
-	return ;
+	return;
 }
 
 uint8 Actor::get_flag(uint8 bitflag) {
@@ -1403,7 +1380,6 @@ void Actor::set_flag(uint8 bitflag) {
 		return;
 	talk_flags = talk_flags | (1 << bitflag);
 }
-
 
 /* Set NPC flag `bitflag' to 0.
  */
@@ -1447,7 +1423,6 @@ void Actor::show() {
 	for (obj_iter = surrounding_objects.begin(); obj_iter != surrounding_objects.end(); obj_iter++) {
 		(*obj_iter)->set_invisible(false);
 	}
-
 }
 
 void Actor::hide() {
@@ -1501,7 +1476,7 @@ void Actor::reduce_hp(uint8 amount) {
 		set_hp(hp - amount);
 	else
 		set_hp(0);
-// FIXME... game specific?
+	// FIXME... game specific?
 	if (hp == 0)
 		die();
 }
@@ -1543,7 +1518,7 @@ void Actor::die(bool create_body) {
 	Game *game = Game::get_game();
 
 	if (game->get_game_type() != NUVIE_GAME_U6) // set in U6 before removing items for torch usecode
-		set_dead_flag(true);                   // may need to add it elsewhere for other games
+		set_dead_flag(true);                    // may need to add it elsewhere for other games
 
 	if (game->get_player()->get_actor() == this && game->get_event()->using_control_cheat())
 		game->get_event()->party_mode();
@@ -1570,7 +1545,8 @@ void Actor::resurrect(MapCoord new_position, Obj *body_obj) {
 	z = new_position.z;
 	obj_n = base_obj_n;
 	init((Game::get_game()->get_game_type() == NUVIE_GAME_U6 && id_n == 130)
-	     ? OBJ_STATUS_MUTANT : NO_OBJ_STATUS);
+	         ? OBJ_STATUS_MUTANT
+	         : NO_OBJ_STATUS);
 
 	frame_n = 0;
 
@@ -1639,15 +1615,15 @@ void Actor::hit(uint8 dmg, bool force_hit) {
 		new HitEffect(this);
 		reduce_hp(force_hit ? dmg : dmg - total_armor_class);
 
-//    if(!force_hit)
-//      {
+		//    if(!force_hit)
+		//      {
 		if (hp == 0) {
 			scroll->display_string(get_name());
 			scroll->display_string(" killed!\n");
 		} else {
 			display_condition();
 		}
-//      }
+		//      }
 	}
 }
 
@@ -1672,7 +1648,7 @@ uint8 Actor::get_light_level() {
 void Actor::add_light(uint8 val) {
 	if (is_in_party() || (Actor *)this == Game::get_game()->get_player()->get_actor())
 		Game::get_game()->get_party()->add_light_source();
-//    light += val;
+	//    light += val;
 	light_source.push_back(val);
 	if (val > light)
 		light = val;
@@ -1681,10 +1657,10 @@ void Actor::add_light(uint8 val) {
 void Actor::subtract_light(uint8 val) {
 	if (is_in_party() || (Actor *)this == Game::get_game()->get_player()->get_actor())
 		Game::get_game()->get_party()->subtract_light_source();
-//    if(light >= val)
-//        light -= val;
-//    else
-//        light = 0;
+	//    if(light >= val)
+	//        light -= val;
+	//    else
+	//        light = 0;
 	vector<uint8>::iterator l = light_source.begin();
 	for (; l != light_source.end(); l++)
 		if (*l == val) {
@@ -1741,10 +1717,7 @@ void Actor::print() {
 	DEBUG(1, LEVEL_INFORMATIONAL, "base_obj_n: %03d    old_frame_n: %d\n", actor->base_obj_n, actor->old_frame_n);
 
 	uint8 dir = actor->direction;
-	DEBUG(1, LEVEL_INFORMATIONAL, "direction: %d (%s)\n", dir, (dir == NUVIE_DIR_N) ? "north" :
-	      (dir == NUVIE_DIR_E) ? "east" :
-	      (dir == NUVIE_DIR_S) ? "south" :
-	      (dir == NUVIE_DIR_W) ? "west" : "???");
+	DEBUG(1, LEVEL_INFORMATIONAL, "direction: %d (%s)\n", dir, (dir == NUVIE_DIR_N) ? "north" : (dir == NUVIE_DIR_E) ? "east" : (dir == NUVIE_DIR_S) ? "south" : (dir == NUVIE_DIR_W) ? "west" : "???");
 	DEBUG(1, LEVEL_INFORMATIONAL, "walk_frame: %d\n", actor->walk_frame);
 
 	DEBUG(1, LEVEL_INFORMATIONAL, "can_move: %s\n", actor->can_move ? "true" : "false");
@@ -1757,7 +1730,8 @@ void Actor::print() {
 	DEBUG(1, LEVEL_INFORMATIONAL, "moves: %d\n", actor->moves);
 
 	const char *wt_string = get_worktype_string(actor->worktype);
-	if (!wt_string) wt_string = "???";
+	if (!wt_string)
+		wt_string = "???";
 	DEBUG(1, LEVEL_INFORMATIONAL, "worktype: 0x%02x/%03d %s\n", actor->worktype, actor->worktype, wt_string);
 
 	DEBUG(1, LEVEL_INFORMATIONAL, "NPC stats:\n");
@@ -1771,7 +1745,8 @@ void Actor::print() {
 
 	uint8 combatMode = actor->combat_mode;
 	wt_string = get_worktype_string(actor->combat_mode);
-	if (!wt_string) wt_string = "???";
+	if (!wt_string)
+		wt_string = "???";
 	DEBUG(1, LEVEL_INFORMATIONAL, "combat_mode: %d %s\n", combatMode, wt_string);
 
 	DEBUG(1, LEVEL_INFORMATIONAL, "Object flags: ");
@@ -1805,7 +1780,8 @@ void Actor::print() {
 		uint32 sp = 0;
 		do {
 			wt_string = get_worktype_string(s[sp]->worktype);
-			if (!wt_string) wt_string = "???";
+			if (!wt_string)
+				wt_string = "???";
 			if (sp == actor->sched_pos && s[sp]->worktype == actor->worktype)
 				DEBUG(1, LEVEL_INFORMATIONAL, "*%d: location=0x%03x,0x%03x,0x%x  time=%02d:00  day=%d  worktype=0x%02x(%s)*\n", sp, s[sp]->x, s[sp]->y, s[sp]->z, s[sp]->hour, s[sp]->day_of_week, s[sp]->worktype, wt_string);
 			else
@@ -1820,20 +1796,19 @@ void Actor::print() {
 	DEBUG(1, LEVEL_INFORMATIONAL, "\n");
 }
 
-
 const char *get_actor_alignment_str(uint8 alignment) {
 	switch (alignment) {
-	case ACTOR_ALIGNMENT_DEFAULT :
+	case ACTOR_ALIGNMENT_DEFAULT:
 		return "default";
-	case ACTOR_ALIGNMENT_NEUTRAL :
+	case ACTOR_ALIGNMENT_NEUTRAL:
 		return "neutral";
-	case ACTOR_ALIGNMENT_EVIL :
+	case ACTOR_ALIGNMENT_EVIL:
 		return "evil";
-	case ACTOR_ALIGNMENT_GOOD :
+	case ACTOR_ALIGNMENT_GOOD:
 		return "good";
-	case ACTOR_ALIGNMENT_CHAOTIC :
+	case ACTOR_ALIGNMENT_CHAOTIC:
 		return "chaotic";
-	default :
+	default:
 		break;
 	}
 
@@ -1854,11 +1829,9 @@ void Actor::set_invisible(bool invisible) {
 sint8 Actor::count_readied_objects(sint32 objN, sint16 frameN, sint16 quality) {
 	sint8 count = 0;
 	for (int o = 0; o < ACTOR_MAX_READIED_OBJECTS; o++) {
-		if (readied_objects[o] == 0) continue;
-		if (objN == -1
-		        || (readied_objects[o]->obj->obj_n == objN
-		            && (frameN == -1 || frameN == readied_objects[o]->obj->frame_n)
-		            && (quality == -1 || quality == readied_objects[o]->obj->quality)))
+		if (readied_objects[o] == 0)
+			continue;
+		if (objN == -1 || (readied_objects[o]->obj->obj_n == objN && (frameN == -1 || frameN == readied_objects[o]->obj->frame_n) && (quality == -1 || quality == readied_objects[o]->obj->quality)))
 			++count;
 	}
 	return count;
@@ -1888,7 +1861,8 @@ ActorList *Actor::find_enemies() {
 			a = actors->erase(a);
 		else if ((*a)->is_invisible())
 			a = actors->erase(a);
-		else ++a;
+		else
+			++a;
 	if (actors->empty()) {
 		delete actors;
 		return NULL; // no enemies in range

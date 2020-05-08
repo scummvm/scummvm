@@ -21,8 +21,8 @@
  */
 
 #include "titanic/pet_control/pet_save.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/core/project_item.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 

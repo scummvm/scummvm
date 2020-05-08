@@ -21,9 +21,9 @@
  */
 
 #include "director/director.h"
-#include "director/lingo/lingo.h"
-#include "director/lingo/lingo-code.h"
 #include "director/frame.h"
+#include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo.h"
 #include "director/score.h"
 #include "director/sprite.h"
 
@@ -33,43 +33,43 @@ struct EventHandlerType {
 	LEvent handler;
 	const char *name;
 } static const eventHandlerDescs[] = {
-	{ kEventPrepareMovie,		"prepareMovie" },
-	{ kEventStartMovie,			"startMovie" },			//		D3
-	{ kEventStepMovie,			"stepMovie" },			//		D3
-	{ kEventStopMovie,			"stopMovie" },			//		D3
+    {kEventPrepareMovie, "prepareMovie"},
+    {kEventStartMovie, "startMovie"}, //		D3
+    {kEventStepMovie, "stepMovie"},   //		D3
+    {kEventStopMovie, "stopMovie"},   //		D3
 
-	{ kEventNew,				"newSprite" },
-	{ kEventBeginSprite,		"beginSprite" },
-	{ kEventEndSprite,			"endSprite" },
+    {kEventNew, "newSprite"},
+    {kEventBeginSprite, "beginSprite"},
+    {kEventEndSprite, "endSprite"},
 
-	{ kEventEnterFrame,			"enterFrame" },			//			D4
-	{ kEventPrepareFrame,		"prepareFrame" },
-	{ kEventIdle,				"idle" },				//		D3
-	{ kEventStepFrame,			"stepFrame"},
-	{ kEventExitFrame,			"exitFrame" },			//			D4
+    {kEventEnterFrame, "enterFrame"}, //			D4
+    {kEventPrepareFrame, "prepareFrame"},
+    {kEventIdle, "idle"}, //		D3
+    {kEventStepFrame, "stepFrame"},
+    {kEventExitFrame, "exitFrame"}, //			D4
 
-	{ kEventActivateWindow,		"activateWindow" },
-	{ kEventDeactivateWindow,	"deactivateWindow" },
-	{ kEventMoveWindow,			"moveWindow" },
-	{ kEventResizeWindow,		"resizeWindow" },
-	{ kEventOpenWindow,			"openWindow" },
-	{ kEventCloseWindow,		"closeWindow" },
-	{ kEventStart,				"start" },
+    {kEventActivateWindow, "activateWindow"},
+    {kEventDeactivateWindow, "deactivateWindow"},
+    {kEventMoveWindow, "moveWindow"},
+    {kEventResizeWindow, "resizeWindow"},
+    {kEventOpenWindow, "openWindow"},
+    {kEventCloseWindow, "closeWindow"},
+    {kEventStart, "start"},
 
-	{ kEventKeyUp,				"keyUp" },				//			D4
-	{ kEventKeyDown,			"keyDown" },			// D2 w		D4 (as when from D2)
-	{ kEventMouseUp,			"mouseUp" },			// D2 w	D3
-	{ kEventMouseDown,			"mouseDown" },			// D2 w	D3
-	{ kEventRightMouseDown,		"rightMouseDown" },
-	{ kEventRightMouseUp,		"rightMouseUp" },
-	{ kEventMouseEnter,			"mouseEnter" },
-	{ kEventMouseLeave,			"mouseLeave" },
-	{ kEventMouseUpOutSide,		"mouseUpOutSide" },
-	{ kEventMouseWithin,		"mouseWithin" },
+    {kEventKeyUp, "keyUp"},         //			D4
+    {kEventKeyDown, "keyDown"},     // D2 w		D4 (as when from D2)
+    {kEventMouseUp, "mouseUp"},     // D2 w	D3
+    {kEventMouseDown, "mouseDown"}, // D2 w	D3
+    {kEventRightMouseDown, "rightMouseDown"},
+    {kEventRightMouseUp, "rightMouseUp"},
+    {kEventMouseEnter, "mouseEnter"},
+    {kEventMouseLeave, "mouseLeave"},
+    {kEventMouseUpOutSide, "mouseUpOutSide"},
+    {kEventMouseWithin, "mouseWithin"},
 
-	{ kEventTimeout,			"timeout" },			// D2 as when
+    {kEventTimeout, "timeout"}, // D2 as when
 
-	{ kEventNone,				0 },
+    {kEventNone, 0},
 };
 
 void Lingo::initEventHandlerTypes() {
@@ -203,7 +203,7 @@ void Lingo::runMovieScript(LEvent event) {
 		return;
 
 	for (ScriptContextHash::iterator it = _archives[_archiveIndex].scriptContexts[kMovieScript].begin();
-			it != _archives[_archiveIndex].scriptContexts[kMovieScript].end(); ++it) {
+	     it != _archives[_archiveIndex].scriptContexts[kMovieScript].end(); ++it) {
 		processEvent(event, kMovieScript, it->_key);
 		// TODO: How do know which script handles the message?
 	}
@@ -246,7 +246,7 @@ void Lingo::processFrameEvent(LEvent event) {
 void Lingo::processGenericEvent(LEvent event) {
 	// Movie Script
 	if (event == kEventStart || event == kEventPrepareMovie ||
-			event == kEventStartMovie || event == kEventStopMovie)
+	    event == kEventStartMovie || event == kEventStopMovie)
 		; // we're OK
 	else
 		warning("STUB: processGenericEvent called for unprocessed event, additional logic probably needed");
@@ -266,38 +266,37 @@ void Lingo::processSpriteEvent(LEvent event) {
 	} else {
 		warning("STUB: processSpriteEvent called for something else than kEventBeginSprite, additional logic probably needed");
 	}
-
 }
 
 void Lingo::processEvent(LEvent event) {
 	switch (event) {
-		case kEventKeyUp:
-		case kEventKeyDown:
-		case kEventMouseUp:
-		case kEventMouseDown:
-			processInputEvent(event);
-			break;
+	case kEventKeyUp:
+	case kEventKeyDown:
+	case kEventMouseUp:
+	case kEventMouseDown:
+		processInputEvent(event);
+		break;
 
-		case kEventIdle:
-		case kEventEnterFrame:
-		case kEventExitFrame:
-		case kEventNone:
-			processFrameEvent(event);
-			break;
+	case kEventIdle:
+	case kEventEnterFrame:
+	case kEventExitFrame:
+	case kEventNone:
+		processFrameEvent(event);
+		break;
 
-		case kEventStart:
-		case kEventStartMovie:
-		case kEventStopMovie:
-		case kEventTimeout:
-		case kEventPrepareMovie:
-			processGenericEvent(event);
-			break;
-		case kEventBeginSprite:
-			processSpriteEvent(event);
-			break;
+	case kEventStart:
+	case kEventStartMovie:
+	case kEventStopMovie:
+	case kEventTimeout:
+	case kEventPrepareMovie:
+		processGenericEvent(event);
+		break;
+	case kEventBeginSprite:
+		processSpriteEvent(event);
+		break;
 
-		default:
-			warning("processEvent: Unhandled event %s", _eventHandlerTypes[event]);
+	default:
+		warning("processEvent: Unhandled event %s", _eventHandlerTypes[event]);
 	}
 
 	_dontPassEvent = false;

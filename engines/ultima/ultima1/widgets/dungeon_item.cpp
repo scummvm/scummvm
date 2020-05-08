@@ -29,12 +29,10 @@ namespace Ultima1 {
 namespace Widgets {
 
 DungeonItem::DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId,
-		const Point &pt) : DungeonWidget(game, map, widgetId, pt) {
+                         const Point &pt) : DungeonWidget(game, map, widgetId, pt) {
 }
 
-DungeonItem::DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId) :
-		DungeonWidget(game, map, widgetId, Point()) {
-
+DungeonItem::DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId) : DungeonWidget(game, map, widgetId, Point()) {
 }
 
 } // End of namespace Widgets

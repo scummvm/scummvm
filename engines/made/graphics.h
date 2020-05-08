@@ -38,6 +38,7 @@ public:
 	uint16 readUint16();
 	uint32 readUint32();
 	void resetNibbleSwitch();
+
 protected:
 	byte _nibbleBuf;
 	bool _nibbleMode, _nibbleSwitch;

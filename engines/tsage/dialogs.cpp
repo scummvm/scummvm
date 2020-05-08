@@ -20,14 +20,14 @@
  *
  */
 
-#include "common/translation.h"
 #include "engines/dialogs.h"
-#include "tsage/tsage.h"
+#include "common/translation.h"
 #include "tsage/core.h"
 #include "tsage/dialogs.h"
-#include "tsage/staticres.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
+#include "tsage/staticres.h"
+#include "tsage/tsage.h"
 
 namespace TsAGE {
 
@@ -37,7 +37,7 @@ namespace TsAGE {
  * This dialog class provides a simple message display with support for either one or two buttons.
  */
 MessageDialog::MessageDialog(const Common::String &message, const Common::String &btn1Message,
-							 const Common::String &btn2Message) : GfxDialog() {
+                             const Common::String &btn2Message) : GfxDialog() {
 	// Set up the message
 	addElements(&_msg, &_btn1, NULL);
 
@@ -80,7 +80,7 @@ int MessageDialog::show2(const Common::String &message, const Common::String &bt
 
 	GfxButton *defaultButton = !btn2Message.empty() ? &dlg->_btn2 : &dlg->_btn1;
 	GfxButton *selectedButton = dlg->execute(defaultButton);
-	int result =  (selectedButton == defaultButton) ? 1 : 0;
+	int result = (selectedButton == defaultButton) ? 1 : 0;
 
 	delete dlg;
 	return result;

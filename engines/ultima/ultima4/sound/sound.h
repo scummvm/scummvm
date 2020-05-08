@@ -23,35 +23,35 @@
 #ifndef ULTIMA4_SOUND_H
 #define ULTIMA4_SOUND_H
 
-#include "ultima/shared/std/containers.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/str.h"
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 enum Sound {
-	SOUND_TITLE_FADE,       // the intro title fade
-	SOUND_WALK_NORMAL,      // walk, world and town
-	SOUND_WALK_SLOWED,      // walk, slow progress
-	SOUND_WALK_COMBAT,      // walk, combat
-	SOUND_BLOCKED,          // location blocked
-	SOUND_ERROR,            // error/bad command
-	SOUND_PC_ATTACK,        // PC attacks
-	SOUND_PC_STRUCK,        // PC damaged
-	SOUND_NPC_ATTACK,       // NPC attacks
-	SOUND_NPC_STRUCK,       // NPC damaged
-	SOUND_ACID,             // effect, acid damage
-	SOUND_SLEEP,            // effect, sleep
-	SOUND_POISON_EFFECT,    // effect, poison
-	SOUND_POISON_DAMAGE,    // damage, poison
-	SOUND_EVADE,            // trap evaded
-	SOUND_FLEE,             // flee combat
-	SOUND_ITEM_STOLEN,      // item was stolen from a PC, food or gold
-	SOUND_LBHEAL,           // LB heals party
-	SOUND_LEVELUP,          // PC level up
-	SOUND_MOONGATE,         // moongate used
+	SOUND_TITLE_FADE,    // the intro title fade
+	SOUND_WALK_NORMAL,   // walk, world and town
+	SOUND_WALK_SLOWED,   // walk, slow progress
+	SOUND_WALK_COMBAT,   // walk, combat
+	SOUND_BLOCKED,       // location blocked
+	SOUND_ERROR,         // error/bad command
+	SOUND_PC_ATTACK,     // PC attacks
+	SOUND_PC_STRUCK,     // PC damaged
+	SOUND_NPC_ATTACK,    // NPC attacks
+	SOUND_NPC_STRUCK,    // NPC damaged
+	SOUND_ACID,          // effect, acid damage
+	SOUND_SLEEP,         // effect, sleep
+	SOUND_POISON_EFFECT, // effect, poison
+	SOUND_POISON_DAMAGE, // damage, poison
+	SOUND_EVADE,         // trap evaded
+	SOUND_FLEE,          // flee combat
+	SOUND_ITEM_STOLEN,   // item was stolen from a PC, food or gold
+	SOUND_LBHEAL,        // LB heals party
+	SOUND_LEVELUP,       // PC level up
+	SOUND_MOONGATE,      // moongate used
 
 	SOUND_CANNON,
 	SOUND_RUMBLE,
@@ -76,12 +76,14 @@ private:
 	Audio::SoundHandle _soundHandle;
 	Std::vector<Common::String> _soundFilenames;
 	Std::vector<Audio::SeekableAudioStream *> _sounds;
+
 private:
 	bool load(Sound sound);
 
 	void play_sys(Sound sound, bool onlyOnce, int specificDurationMilli);
 	bool load_sys(Sound sound, const Common::String &filename);
 	void stop_sys(int channel);
+
 public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();

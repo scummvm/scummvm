@@ -31,8 +31,10 @@ class CRecordPhonographButton : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool PhonographStopMsg(CPhonographStopMsg *msg);
+
 public:
 	bool _active;
+
 public:
 	CLASSDEF;
 	CRecordPhonographButton() : CBackground(), _active(false) {}

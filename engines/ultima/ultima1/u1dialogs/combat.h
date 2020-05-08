@@ -23,8 +23,8 @@
 #ifndef ULTIMA_ULTIMA1_U1DIALOGS_COMBAT_H
 #define ULTIMA_ULTIMA1_U1DIALOGS_COMBAT_H
 
-#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
 #include "ultima/shared/maps/map_widget.h"
+#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -38,9 +38,11 @@ using Shared::CKeypressMsg;
 class Combat : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
+
 private:
 	Common::String _weaponName;
 	int _direction;
+
 private:
 	/**
 	 * Nothing selected
@@ -51,6 +53,7 @@ private:
 	 * Draw the selection prompt
 	 */
 	void drawSelection();
+
 public:
 	CLASSDEF;
 

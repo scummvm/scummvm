@@ -22,8 +22,8 @@
 
 #ifdef ENABLE_EOB
 
-#include "kyra/kyra_v1.h"
 #include "kyra/sound/drivers/audiomaster2.h"
+#include "kyra/kyra_v1.h"
 
 #include "audio/mods/paula.h"
 
@@ -42,7 +42,7 @@ public:
 
 	struct IOUnit {
 		IOUnit() : _next(0), _sampleData(0), _sampleDataRepeat(0), _lenOnce(0), _lenRepeat(0), _startTick(0), _endTick(0), _transposeData(0), _rate(0), _period(0), _transposePara(0), _transposeDuration(0),
-			_levelAdjustData(0), _volumeSetting(0), _outputVolume(0), _levelAdjustPara(0), _levelAdjustDuration(0), _fadeOutState(-1), _flags(0) {}
+		           _levelAdjustData(0), _volumeSetting(0), _outputVolume(0), _levelAdjustPara(0), _levelAdjustDuration(0), _fadeOutState(-1), _flags(0) {}
 
 		IOUnit *_next;
 		const int8 *_sampleData;
@@ -68,7 +68,7 @@ public:
 	void clearChain();
 	void deployChannels(IOUnit **dest);
 	IOUnit *requestFreeUnit();
-	
+
 	void fadeOut();
 	bool isFading();
 
@@ -81,9 +81,11 @@ private:
 };
 
 class AudioMaster2Internal : public Audio::Paula {
-friend class AudioMaster2IOManager;
+	friend class AudioMaster2IOManager;
+
 private:
 	AudioMaster2Internal(Audio::Mixer *mixer);
+
 public:
 	~AudioMaster2Internal() override;
 
@@ -135,6 +137,7 @@ class SoundResource {
 protected:
 	SoundResource(AudioMaster2ResourceManager *res, int type) : _res(res), _type(type), _playing(false), _next(0), _flags(0), _masterVolume(64), _refCnt(1) {}
 	virtual ~SoundResource() {}
+
 public:
 	void loadName(Common::ReadStream *stream, uint32 size);
 
@@ -179,8 +182,10 @@ private:
 class SoundResource8SVX : public SoundResource {
 public:
 	SoundResource8SVX(AudioMaster2ResourceManager *res);
+
 private:
 	~SoundResource8SVX() override;
+
 public:
 	void loadHeader(Common::ReadStream *stream, uint32 size);
 	void loadData(Common::ReadStream *stream, uint32 size);
@@ -210,8 +215,10 @@ private:
 class SoundResourceINST : public SoundResource {
 public:
 	SoundResourceINST(AudioMaster2ResourceManager *res) : SoundResource(res, 2), _samplesResource(0), _transpose(0), _levelAdjust(0) {}
+
 private:
 	~SoundResourceINST() override;
+
 public:
 	void loadPitchData(Common::ReadStream *stream, uint32 size);
 	void loadSamples(Common::ReadStream *stream, uint32 size);
@@ -241,8 +248,10 @@ private:
 class SoundResourceSMUS : public SoundResource {
 public:
 	SoundResourceSMUS(AudioMaster2ResourceManager *res) : SoundResource(res, 1), _tempo(0), _songVolume(0), _playFlags(0) {}
+
 private:
 	~SoundResourceSMUS() override;
+
 public:
 	void loadHeader(Common::ReadStream *stream, uint32 size);
 	void loadInstrument(Common::ReadStream *stream, uint32 size);
@@ -281,14 +290,14 @@ private:
 	};
 
 	bool parse(AudioMaster2IOManager *io, Track *track);
-	
+
 	uint16 _tempo;
 	uint8 _songVolume;
 
 	static const uint16 _durationTable[64];
 
-	Common::Array<Track*> _tracks;
-	Common::Array<SoundResource*> _instruments;
+	Common::Array<Track *> _tracks;
+	Common::Array<SoundResource *> _instruments;
 	uint16 _playFlags;
 };
 
@@ -311,7 +320,7 @@ public:
 	void setMasterVolume(int type, int volume);
 
 	void interrupt(AudioMaster2IOManager *io);
-	
+
 private:
 	SoundResource *retrieveFromChain(const Common::String &resName);
 	void linkToChain(SoundResource *resource, SoundResource::Mode mode);
@@ -453,7 +462,7 @@ void SoundResource::loadName(Common::ReadStream *stream, uint32 size) {
 	stream->read(data, size);
 	data[size] = '\0';
 	_name = data;
-	
+
 	delete[] data;
 }
 
@@ -539,9 +548,9 @@ void SoundResource8SVX::setupMusicNote(AudioMaster2IOManager::IOUnit *unit, uint
 	// The original code uses 3579546 here. But since the Paula code uses kPalPaulaClock I do the same.
 	uint32 rt = Audio::Paula::kPalPaulaClock;
 	uint32 offs = 0;
-	
+
 	if (_numSamplesRepeat && _numSamplesPerCycle) {
-		uint32 octave = _numBlocks;		
+		uint32 octave = _numBlocks;
 		rt = _periods[note] << 13;
 
 		for (rt /= _numSamplesPerCycle; rt >= 0x4000000 && octave > 1; octave--) {
@@ -613,23 +622,22 @@ void SoundResource8SVX::setupEnvelopes(AudioMaster2IOManager::IOUnit *unit) {
 }
 
 const uint32 SoundResource8SVX::_periods[128] = {
-	0x0006ae3f, 0x00064e42, 0x0005f3a8, 0x00059e23, 0x00054d6c, 0x0005013c, 0x0004b953, 0x00047573,
-	0x00043563, 0x0003f8eb, 0x0003bfd7, 0x000389f8, 0x0003571f, 0x00032721, 0x0002f9d4, 0x0002cf11,
-	0x0002a6b6, 0x0002809e, 0x00025ca9, 0x00023ab9, 0x00021ab1, 0x0001fc75, 0x0001dfeb, 0x0001c4fc,
-	0x0001ab8f, 0x00019390, 0x00017cea, 0x00016788, 0x0001535b, 0x0001404f, 0x00012e54, 0x00011d5c,
-	0x00010d58, 0x0000fe3a, 0x0000eff5, 0x0000e27e, 0x0000d5c7, 0x0000c9c8, 0x0000be75, 0x0000b3c4,
-	0x0000a9ad, 0x0000a027, 0x0000972a, 0x00008eae, 0x000086ac, 0x00007f1d, 0x000077fa, 0x0000713f,
-	0x00006ae3, 0x000064e4, 0x00005f3a, 0x000059e2, 0x000054d6, 0x00005013, 0x00004b95, 0x00004757,
-	0x00004356, 0x00003f8e, 0x00003bfd, 0x0000389f, 0x00003571, 0x00003272, 0x00002f9d, 0x00002cf1,
-	0x00002a6b, 0x00002809, 0x000025ca, 0x000023ab, 0x000021ab, 0x00001fc7, 0x00001dfe, 0x00001c4f,
-	0x00001ab8, 0x00001939, 0x000017ce, 0x00001678, 0x00001535, 0x00001404, 0x000012e5, 0x000011d5,
-	0x000010d5, 0x00000fe3, 0x00000eff, 0x00000e27, 0x00000d5c, 0x00000c9c, 0x00000be7, 0x00000b3c,
-	0x00000a9a, 0x00000a02, 0x00000972, 0x000008ea, 0x0000086a, 0x000007f1, 0x0000077f, 0x00000713,
-	0x000006ae, 0x0000064e, 0x000005f3, 0x0000059e, 0x0000054d, 0x00000501, 0x000004b9, 0x00000475,
-	0x00000435, 0x000003f8, 0x000003bf, 0x00000389, 0x00000357, 0x00000327, 0x000002f9, 0x000002cf,
-	0x000002a6, 0x00000280, 0x0000025c, 0x0000023a, 0x0000021a, 0x000001fc, 0x000001df, 0x000001c4,
-	0x000001ab, 0x00000193, 0x0000017c, 0x00000167, 0x00000153, 0x00000140, 0x0000012e, 0x0000011d
-};
+    0x0006ae3f, 0x00064e42, 0x0005f3a8, 0x00059e23, 0x00054d6c, 0x0005013c, 0x0004b953, 0x00047573,
+    0x00043563, 0x0003f8eb, 0x0003bfd7, 0x000389f8, 0x0003571f, 0x00032721, 0x0002f9d4, 0x0002cf11,
+    0x0002a6b6, 0x0002809e, 0x00025ca9, 0x00023ab9, 0x00021ab1, 0x0001fc75, 0x0001dfeb, 0x0001c4fc,
+    0x0001ab8f, 0x00019390, 0x00017cea, 0x00016788, 0x0001535b, 0x0001404f, 0x00012e54, 0x00011d5c,
+    0x00010d58, 0x0000fe3a, 0x0000eff5, 0x0000e27e, 0x0000d5c7, 0x0000c9c8, 0x0000be75, 0x0000b3c4,
+    0x0000a9ad, 0x0000a027, 0x0000972a, 0x00008eae, 0x000086ac, 0x00007f1d, 0x000077fa, 0x0000713f,
+    0x00006ae3, 0x000064e4, 0x00005f3a, 0x000059e2, 0x000054d6, 0x00005013, 0x00004b95, 0x00004757,
+    0x00004356, 0x00003f8e, 0x00003bfd, 0x0000389f, 0x00003571, 0x00003272, 0x00002f9d, 0x00002cf1,
+    0x00002a6b, 0x00002809, 0x000025ca, 0x000023ab, 0x000021ab, 0x00001fc7, 0x00001dfe, 0x00001c4f,
+    0x00001ab8, 0x00001939, 0x000017ce, 0x00001678, 0x00001535, 0x00001404, 0x000012e5, 0x000011d5,
+    0x000010d5, 0x00000fe3, 0x00000eff, 0x00000e27, 0x00000d5c, 0x00000c9c, 0x00000be7, 0x00000b3c,
+    0x00000a9a, 0x00000a02, 0x00000972, 0x000008ea, 0x0000086a, 0x000007f1, 0x0000077f, 0x00000713,
+    0x000006ae, 0x0000064e, 0x000005f3, 0x0000059e, 0x0000054d, 0x00000501, 0x000004b9, 0x00000475,
+    0x00000435, 0x000003f8, 0x000003bf, 0x00000389, 0x00000357, 0x00000327, 0x000002f9, 0x000002cf,
+    0x000002a6, 0x00000280, 0x0000025c, 0x0000023a, 0x0000021a, 0x000001fc, 0x000001df, 0x000001c4,
+    0x000001ab, 0x00000193, 0x0000017c, 0x00000167, 0x00000153, 0x00000140, 0x0000012e, 0x0000011d};
 
 SoundResourceINST::~SoundResourceINST() {
 	if (_samplesResource)
@@ -650,7 +658,7 @@ void SoundResourceINST::loadSamples(Common::ReadStream *stream, uint32 size) {
 	char *data = new char[size + 1];
 	stream->read(data, size);
 	data[size] = '\0';
-	
+
 	if (_samplesResource)
 		_samplesResource->close();
 
@@ -709,7 +717,7 @@ void SoundResourceINST::setupEnvelopes(AudioMaster2IOManager::IOUnit *unit) {
 void SoundResourceINST::setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 rate) {
 	if (!unit)
 		return;
-	
+
 	if (_samplesResource)
 		_samplesResource->setupSoundEffect(unit, sync, rate);
 
@@ -717,16 +725,16 @@ void SoundResourceINST::setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, ui
 }
 
 SoundResourceSMUS::~SoundResourceSMUS() {
-	for (Common::Array<Track*>::iterator i = _tracks.begin(); i != _tracks.end(); ++i)
+	for (Common::Array<Track *>::iterator i = _tracks.begin(); i != _tracks.end(); ++i)
 		delete *i;
-	for (Common::Array<SoundResource*>::iterator i = _instruments.begin(); i != _instruments.end(); ++i)
+	for (Common::Array<SoundResource *>::iterator i = _instruments.begin(); i != _instruments.end(); ++i)
 		(*i)->close();
 }
 
 void SoundResourceSMUS::loadHeader(Common::ReadStream *stream, uint32 size) {
 	if (size < 3)
 		error("SoundResourceSMUS:loadHeader(): Invalid data chunk size");
-	
+
 	_tempo = stream->readUint16BE() / 68;
 	_songVolume = stream->readByte();
 }
@@ -750,14 +758,14 @@ void SoundResourceSMUS::loadInstrument(Common::ReadStream *stream, uint32 size) 
 		warning("SoundResourceSMUS::loadInstrument(): Samples resource '%s' not found for '%s'.", data, _name.c_str());
 	}
 
-	delete[] data;	
+	delete[] data;
 }
 
 void SoundResourceSMUS::loadTrack(Common::ReadStream *stream, uint32 size) {
 	Track *track = new Track();
 	uint8 *data = new uint8[size];
 	stream->read(data, size);
-	
+
 	track->_dataStart = data;
 	track->_dataEnd = data + size;
 	track->_volume = 128;
@@ -767,7 +775,7 @@ void SoundResourceSMUS::loadTrack(Common::ReadStream *stream, uint32 size) {
 
 void SoundResourceSMUS::prepare() {
 	_playFlags = 0;
-	for (Common::Array<Track*>::iterator trk = _tracks.begin(); trk != _tracks.end(); ++trk) {
+	for (Common::Array<Track *>::iterator trk = _tracks.begin(); trk != _tracks.end(); ++trk) {
 		(*trk)->_dataCur = (*trk)->_dataStart;
 		(*trk)->setInstrument(*_instruments.begin());
 
@@ -783,7 +791,7 @@ uint16 SoundResourceSMUS::getTempo() const {
 }
 
 void SoundResourceSMUS::setSync(uint32 sync) {
-	for (Common::Array<Track*>::iterator i = _tracks.begin(); i != _tracks.end(); ++i)
+	for (Common::Array<Track *>::iterator i = _tracks.begin(); i != _tracks.end(); ++i)
 		(*i)->_sync = sync;
 }
 
@@ -803,7 +811,7 @@ void SoundResourceSMUS::release() {
 
 bool SoundResourceSMUS::parse(AudioMaster2IOManager *io, Track *track) {
 	uint32 duration = 0;
-	
+
 	while (track->_sync <= io->_sync) {
 		if (track->_dataCur >= track->_dataEnd)
 			return false;
@@ -823,7 +831,7 @@ bool SoundResourceSMUS::parse(AudioMaster2IOManager *io, Track *track) {
 				AudioMaster2IOManager::IOUnit *unit = io->requestFreeUnit();
 				if (unit) {
 					unit->_startTick = track->_sync;
-					unit->_endTick = unit->_startTick + duration;					
+					unit->_endTick = unit->_startTick + duration;
 					track->_instrument->setupMusicNote(unit, cmd, _masterVolume * track->_volume);
 				}
 			}
@@ -859,15 +867,14 @@ bool SoundResourceSMUS::parse(AudioMaster2IOManager *io, Track *track) {
 }
 
 const uint16 SoundResourceSMUS::_durationTable[64] = {
-	0x6900, 0x3480, 0x1a40, 0x0d20, 0x0690, 0x0348, 0x01a4, 0x00d2,
-	0x9d80, 0x4ec0, 0x2760, 0x13b0, 0x09d8, 0x04ec, 0x0276, 0x013b,
-	0x4600, 0x2300, 0x1180, 0x08c0, 0x0460, 0x0230, 0x0118, 0x008c,
-	0x6900, 0x3480, 0x1a40, 0x0d20, 0x0690, 0x0348, 0x01a4, 0x00d2,
-	0x5400, 0x2a00, 0x1500, 0x0a80, 0x0540, 0x02a0, 0x0150, 0x00a8,
-	0x7e00, 0x3f00, 0x1f80, 0x0fc0, 0x07e0, 0x03f0, 0x01f8, 0x00fc,
-	0x5a00, 0x2d00, 0x1680, 0x0b40, 0x05a0, 0x02d0, 0x0168, 0x00b4,
-	0x8700, 0x4380, 0x21c0, 0x10e0, 0x0870, 0x0438, 0x021c, 0x010e
-};
+    0x6900, 0x3480, 0x1a40, 0x0d20, 0x0690, 0x0348, 0x01a4, 0x00d2,
+    0x9d80, 0x4ec0, 0x2760, 0x13b0, 0x09d8, 0x04ec, 0x0276, 0x013b,
+    0x4600, 0x2300, 0x1180, 0x08c0, 0x0460, 0x0230, 0x0118, 0x008c,
+    0x6900, 0x3480, 0x1a40, 0x0d20, 0x0690, 0x0348, 0x01a4, 0x00d2,
+    0x5400, 0x2a00, 0x1500, 0x0a80, 0x0540, 0x02a0, 0x0150, 0x00a8,
+    0x7e00, 0x3f00, 0x1f80, 0x0fc0, 0x07e0, 0x03f0, 0x01f8, 0x00fc,
+    0x5a00, 0x2d00, 0x1680, 0x0b40, 0x05a0, 0x02d0, 0x0168, 0x00b4,
+    0x8700, 0x4380, 0x21c0, 0x10e0, 0x0870, 0x0438, 0x021c, 0x010e};
 
 AudioMaster2ResourceManager::AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex &mutex) : _driver(driver), _mutex(mutex), _chainPlaying(0), _chainStorage(0) {
 	memset(_masterVolume, 0, sizeof(_masterVolume));
@@ -880,7 +887,7 @@ AudioMaster2ResourceManager::~AudioMaster2ResourceManager() {
 void AudioMaster2ResourceManager::loadResourceFile(Common::SeekableReadStream *data) {
 	do {
 		AudioMaster2IFFLoader loader(data, this);
-		Common::Functor1Mem<Common::IFFChunk&, bool, AudioMaster2IFFLoader> cb(&loader, &AudioMaster2IFFLoader::loadChunk);
+		Common::Functor1Mem<Common::IFFChunk &, bool, AudioMaster2IFFLoader> cb(&loader, &AudioMaster2IFFLoader::loadChunk);
 		loader.parse(cb);
 	} while (data->pos() + 8 < data->size());
 
@@ -961,7 +968,7 @@ void AudioMaster2ResourceManager::stopChain() {
 void AudioMaster2ResourceManager::flush() {
 	Common::StackLock lock(_mutex);
 
-	stopChain();	
+	stopChain();
 
 	while (_chainPlaying) {
 		SoundResource *res = _chainPlaying;
@@ -1083,7 +1090,6 @@ SoundResource *AudioMaster2ResourceManager::retrieveFromChain(const Common::Stri
 
 	return 0;
 }
-
 
 void AudioMaster2ResourceManager::linkToChain(SoundResource *resource, SoundResource::Mode mode) {
 	Common::StackLock lock(_mutex);
@@ -1240,9 +1246,9 @@ bool AudioMaster2Internal::init() {
 	_res = new AudioMaster2ResourceManager(this, _mutex);
 
 	startPaula();
-	
+
 	_mixer->playStream(Audio::Mixer::kPlainSoundType,
-		&_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	                   &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_ready = true;
 
@@ -1326,7 +1332,7 @@ void AudioMaster2Internal::sync(SoundResource *res) {
 	if (res->getType() != 1)
 		return;
 
-	SoundResourceSMUS *smus = static_cast<SoundResourceSMUS*>(res);
+	SoundResourceSMUS *smus = static_cast<SoundResourceSMUS *>(res);
 	_io->_tempo = smus->getTempo();
 	smus->setSync(_io->_sync);
 }
@@ -1361,13 +1367,13 @@ void AudioMaster2Internal::updateDevice() {
 		}
 
 		bool next = false;
-		
+
 		if (unit->_transposeData) {
 			unit->_period += unit->_transposePara;
 			const uint8 *data = unit->_transposeData;
-			
+
 			if (unit->_transposeDuration-- <= 1) {
-				for (bool loop = true; loop; ) {
+				for (bool loop = true; loop;) {
 					uint8 para = *data++;
 
 					if (para == 0xFF) {
@@ -1413,7 +1419,7 @@ void AudioMaster2Internal::updateDevice() {
 			const uint8 *data = unit->_levelAdjustData;
 
 			if (unit->_levelAdjustDuration-- <= 1) {
-				for (bool loop = true; loop; ) {
+				for (bool loop = true; loop;) {
 					uint8 para = *data++;
 					if (para == 0xFF) {
 						para = *data++;
@@ -1443,7 +1449,7 @@ void AudioMaster2Internal::updateDevice() {
 						} else {
 							para2 = (unit->_volumeSetting * para2) >> 6;
 							if (para2 > 0x4000)
-								para2 = 0x4000;							
+								para2 = 0x4000;
 						}
 
 						if (!para) {
@@ -1458,7 +1464,7 @@ void AudioMaster2Internal::updateDevice() {
 							unit->_levelAdjustPara = 0;
 						} else {
 							int16 va = para2 - unit->_outputVolume;
-							unit->_levelAdjustPara =  va / para;
+							unit->_levelAdjustPara = va / para;
 						}
 
 						unit->_levelAdjustData = data;
@@ -1483,7 +1489,7 @@ void AudioMaster2Internal::updateDevice() {
 				setChannelSampleStart(i, unit->_sampleDataRepeat);
 				setChannelSampleLen(i, unit->_lenRepeat);
 			}
-	
+
 		} else if (unit->_transposeData || unit->_levelAdjustData) {
 			setChannelPeriod(i, unit->_period);
 			setChannelVolume(i, unit->_outputVolume >> 8);

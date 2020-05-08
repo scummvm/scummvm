@@ -23,29 +23,47 @@
 #ifndef TITANIC_PET_REMOTE_GLYPHS_H
 #define TITANIC_PET_REMOTE_GLYPHS_H
 
-#include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/pet_control/pet_gfx_element.h"
+#include "titanic/pet_control/pet_glyphs.h"
 
 namespace Titanic {
 
 enum RemoteGlyph {
-	GLYPH_SUMMON_ELEVATOR = 0, GLYPH_SUMMON_PELLERATOR = 1,
-	GLYPH_TELEVISION_CONTROL = 2, GLYPH_ENTERTAINMENT_DEVICE = 3,
-	GLYPH_OPERATE_LIGHTS = 4, GLYPH_DEPLOY_FLORAL = 5,
-	GLYPH_DEPLOY_FULLY_RELAXATION = 6, GLYPH_DEPLOY_COMFORT = 7,
-	GLYPH_DEPLOY_MINOR_STORAGE = 8, GLYPH_DEPLOY_MAJOR_RELAXATION = 9,
-	GLYPH_INFLATE_RELAXATION = 10, GLYPH_DEPLOY_MAINTENANCE = 11,
-	GLYPH_DEPLOY_WORK_SURFACE = 12, GLYPH_DEPLOY_MINOR_RELAXATION = 13,
-	GLYPH_DEPLOY_SINK = 14, GLYPH_DEPLOY_MAJOR_STORAGE = 15,
-	GLYPH_SUCCUBUS_DELIVERY = 16, GLYPH_NAVIGATION_CONTROLLER = 17,
-	GLYPH_SKIP_NAVIGATION = 18, GLYPH_GOTO_BOTTOM_OF_WELL = 19,
-	GLYPH_GOTO_TOP_OF_WELL = 20, GLYPH_GOTO_STATEROOM = 21,
-	GLYPH_GOTO_BAR = 22, GLYPH_GOTO_PROMENADE = 23, GLYPH_GOTO_ARBORETUM = 24,
-	GLYPH_GOTO_MUSIC_ROOM = 25, GLYPH_GOTO_RESTAURANT = 26
+	GLYPH_SUMMON_ELEVATOR = 0,
+	GLYPH_SUMMON_PELLERATOR = 1,
+	GLYPH_TELEVISION_CONTROL = 2,
+	GLYPH_ENTERTAINMENT_DEVICE = 3,
+	GLYPH_OPERATE_LIGHTS = 4,
+	GLYPH_DEPLOY_FLORAL = 5,
+	GLYPH_DEPLOY_FULLY_RELAXATION = 6,
+	GLYPH_DEPLOY_COMFORT = 7,
+	GLYPH_DEPLOY_MINOR_STORAGE = 8,
+	GLYPH_DEPLOY_MAJOR_RELAXATION = 9,
+	GLYPH_INFLATE_RELAXATION = 10,
+	GLYPH_DEPLOY_MAINTENANCE = 11,
+	GLYPH_DEPLOY_WORK_SURFACE = 12,
+	GLYPH_DEPLOY_MINOR_RELAXATION = 13,
+	GLYPH_DEPLOY_SINK = 14,
+	GLYPH_DEPLOY_MAJOR_STORAGE = 15,
+	GLYPH_SUCCUBUS_DELIVERY = 16,
+	GLYPH_NAVIGATION_CONTROLLER = 17,
+	GLYPH_SKIP_NAVIGATION = 18,
+	GLYPH_GOTO_BOTTOM_OF_WELL = 19,
+	GLYPH_GOTO_TOP_OF_WELL = 20,
+	GLYPH_GOTO_STATEROOM = 21,
+	GLYPH_GOTO_BAR = 22,
+	GLYPH_GOTO_PROMENADE = 23,
+	GLYPH_GOTO_ARBORETUM = 24,
+	GLYPH_GOTO_MUSIC_ROOM = 25,
+	GLYPH_GOTO_RESTAURANT = 26
 };
 
 enum RemoteMessage {
-	RMSG_LEFT = 0, RMSG_RIGHT = 1, RMSG_UP = 2, RMSG_DOWN = 3, RMSG_ACTIVATE = 4
+	RMSG_LEFT = 0,
+	RMSG_RIGHT = 1,
+	RMSG_UP = 2,
+	RMSG_DOWN = 3,
+	RMSG_ACTIVATE = 4
 };
 
 class CPetRemote;
@@ -66,6 +84,7 @@ public:
 class CPetRemoteGlyph : public CPetGlyph {
 protected:
 	CPetGfxElement *_callButton;
+
 protected:
 	CPetRemoteGlyph() : CPetGlyph(), _callButton(nullptr) {}
 
@@ -88,10 +107,11 @@ protected:
 class CBasicRemoteGlyph : public CPetRemoteGlyph {
 private:
 	CString _gfxName, _tooltip, _msgString;
+
 public:
 	CBasicRemoteGlyph(const CString &gfxName, const CString &tooltip,
-		const CString &msgString) : CPetRemoteGlyph(),
-		_gfxName(gfxName), _tooltip(tooltip), _msgString(msgString) {}
+	                  const CString &msgString) : CPetRemoteGlyph(),
+	                                              _gfxName(gfxName), _tooltip(tooltip), _msgString(msgString) {}
 
 	/**
 	 * Setup the glyph
@@ -123,6 +143,7 @@ class CToggleRemoteGlyph : public CPetRemoteGlyph {
 protected:
 	CPetGfxElement *_toggle;
 	bool _toggleFlag;
+
 public:
 	CToggleRemoteGlyph() : CPetRemoteGlyph(), _toggle(nullptr), _toggleFlag(false) {}
 
@@ -152,11 +173,11 @@ protected:
 	int _roomIndex;
 	CPetGfxElement *_goButton;
 	CString _gfxName, _tooltip;
+
 public:
 	CRemoteGotoGlyph() : CPetRemoteGlyph(), _goButton(nullptr), _roomIndex(21) {}
-	CRemoteGotoGlyph(const CString &gfxName, const CString &tooltip, int roomIndex) :
-		CPetRemoteGlyph(), _gfxName(gfxName), _tooltip(tooltip), _roomIndex(roomIndex),
-		_goButton(nullptr) {}
+	CRemoteGotoGlyph(const CString &gfxName, const CString &tooltip, int roomIndex) : CPetRemoteGlyph(), _gfxName(gfxName), _tooltip(tooltip), _roomIndex(roomIndex),
+	                                                                                  _goButton(nullptr) {}
 
 	/**
 	 * Setup the glyph
@@ -198,9 +219,10 @@ class CTelevisionControlGlyph : public CPetRemoteGlyph {
 private:
 	bool _flag;
 	CPetGfxElement *_up, *_down, *_onOff;
+
 public:
 	CTelevisionControlGlyph() : CPetRemoteGlyph(), _flag(false),
-		_up(nullptr), _down(nullptr), _onOff(nullptr) {}
+	                            _up(nullptr), _down(nullptr), _onOff(nullptr) {}
 
 	/**
 	 * Setup the glyph
@@ -232,9 +254,10 @@ class CEntertainmentDeviceGlyph : public CToggleRemoteGlyph {
 public:
 	bool _flag2;
 	CPetGfxElement *_up, *_down;
+
 public:
 	CEntertainmentDeviceGlyph() : CToggleRemoteGlyph(),
-		_flag2(false), _up(nullptr), _down(nullptr) {}
+	                              _flag2(false), _up(nullptr), _down(nullptr) {}
 
 	/**
 	 * Setup the glyph
@@ -262,13 +285,13 @@ public:
 	void getTooltip(CTextControl *text) override;
 };
 
-
 class COperateLightsGlyph : public CPetRemoteGlyph {
 public:
 	CPetGfxElement *_left, *_right, *_up, *_down, *_activate;
+
 public:
 	COperateLightsGlyph() : CPetRemoteGlyph(), _left(nullptr), _right(nullptr),
-		_up(nullptr), _down(nullptr), _activate(nullptr) {}
+	                        _up(nullptr), _down(nullptr), _activate(nullptr) {}
 
 	/**
 	* Setup the glyph
@@ -596,9 +619,10 @@ public:
 class CSuccubusDeliveryGlyph : public CPetRemoteGlyph {
 private:
 	CPetGfxElement *_send, *_receive;
+
 public:
 	CSuccubusDeliveryGlyph() : CPetRemoteGlyph(),
-		_send(nullptr), _receive(nullptr) {}
+	                           _send(nullptr), _receive(nullptr) {}
 
 	/**
 	 * Setup the glyph
@@ -630,9 +654,10 @@ class CNavigationControllerGlyph : public CPetRemoteGlyph {
 private:
 	bool _flag;
 	CPetGfxElement *_gfxElement;
+
 public:
 	CNavigationControllerGlyph() : CPetRemoteGlyph(),
-		_flag(false), _gfxElement(nullptr) {}
+	                               _flag(false), _gfxElement(nullptr) {}
 
 	/**
 	 * Setup the glyph
@@ -703,6 +728,7 @@ public:
 class CSkipNavigationGlyph : public CPetRemoteGlyph {
 protected:
 	CPetGfxElement *_button;
+
 public:
 	CSkipNavigationGlyph() : CPetRemoteGlyph(), _button(nullptr) {}
 

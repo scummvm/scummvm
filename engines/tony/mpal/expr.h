@@ -39,24 +39,24 @@ namespace MPAL {
  */
 //@{
 
-#define OP_MUL     ((1  << 4) | 0)
-#define OP_DIV     ((1  << 4) | 1)
-#define OP_MODULE  ((1  << 4) | 2)
-#define OP_ADD     ((2  << 4) | 0)
-#define OP_SUB     ((2  << 4) | 1)
-#define OP_SHL     ((3  << 4) | 0)
-#define OP_SHR     ((3  << 4) | 1)
-#define OP_MINOR   ((4  << 4) | 0)
-#define OP_MAJOR   ((4  << 4) | 1)
-#define OP_MINEQ   ((4  << 4) | 2)
-#define OP_MAJEQ   ((4  << 4) | 3)
-#define OP_EQUAL   ((5  << 4) | 0)
-#define OP_NOEQUAL ((5  << 4) | 1)
-#define OP_BITAND  ((6  << 4) | 0)
-#define OP_BITXOR  ((7  << 4) | 0)
-#define OP_BITOR   ((8  << 4) | 0)
-#define OP_AND     ((9  << 4) | 0)
-#define OP_OR      ((10 << 4) | 0)
+#define OP_MUL ((1 << 4) | 0)
+#define OP_DIV ((1 << 4) | 1)
+#define OP_MODULE ((1 << 4) | 2)
+#define OP_ADD ((2 << 4) | 0)
+#define OP_SUB ((2 << 4) | 1)
+#define OP_SHL ((3 << 4) | 0)
+#define OP_SHR ((3 << 4) | 1)
+#define OP_MINOR ((4 << 4) | 0)
+#define OP_MAJOR ((4 << 4) | 1)
+#define OP_MINEQ ((4 << 4) | 2)
+#define OP_MAJEQ ((4 << 4) | 3)
+#define OP_EQUAL ((5 << 4) | 0)
+#define OP_NOEQUAL ((5 << 4) | 1)
+#define OP_BITAND ((6 << 4) | 0)
+#define OP_BITXOR ((7 << 4) | 0)
+#define OP_BITOR ((8 << 4) | 0)
+#define OP_AND ((9 << 4) | 0)
+#define OP_OR ((10 << 4) | 0)
 
 //@}
 
@@ -69,7 +69,7 @@ namespace MPAL {
  * Mathamatical framework to manage operations
  */
 typedef struct {
-	byte _type;          // Object Type (see enum ExprListTypes)
+	byte _type; // Object Type (see enum ExprListTypes)
 
 	union {
 		int _num;        // Identifier (if type == ELT_NUMBER)
@@ -78,7 +78,7 @@ typedef struct {
 		byte *_pson;     // Handle lockato (if type == ELT_PARENTH2)
 	} _val;
 
-	byte _symbol;        // Mathematic symbols (see #define OP_*)
+	byte _symbol; // Mathematic symbols (see #define OP_*)
 
 } Expression;
 typedef Expression *LpExpression;
@@ -89,9 +89,9 @@ typedef Expression *LpExpression;
  * Object types that can be contained in an EXPRESSION structure
  */
 enum ExprListTypes {
-	ELT_NUMBER   = 1,
-	ELT_VAR      = 2,
-	ELT_PARENTH  = 3,
+	ELT_NUMBER = 1,
+	ELT_VAR = 2,
+	ELT_PARENTH = 3,
 	ELT_PARENTH2 = 4
 };
 

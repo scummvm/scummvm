@@ -17,11 +17,11 @@
  *
  */
 
+#include "ultima/nuvie/sound/decoder/adlib_sfx_stream.h"
+#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/adplug/opl_class.h"
 #include "ultima/nuvie/sound/origin_fx_adib_driver.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/sound/decoder/adlib_sfx_stream.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -80,8 +80,7 @@ int AdLibSfxStream::readBuffer(sint16 *buffer, const int numSamples) {
 		i -= j;
 	}
 
-
-//driver->play_note(8, 0x40, 0);
+	//driver->play_note(8, 0x40, 0);
 	return numSamples;
 }
 

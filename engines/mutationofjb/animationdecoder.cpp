@@ -21,9 +21,9 @@
  */
 
 #include "mutationofjb/animationdecoder.h"
+#include "common/debug.h"
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/util.h"
-#include "common/debug.h"
 
 namespace MutationOfJB {
 
@@ -228,7 +228,6 @@ void AnimationDecoder::loadDiffFrame(EncryptedFile &file, uint32) {
 				imageData += no;
 				lineOffset += no;
 			}
-
 		}
 	}
 }
@@ -238,4 +237,4 @@ AnimationDecoder::~AnimationDecoder() {
 		_surface.free();
 }
 
-}
+} // namespace MutationOfJB

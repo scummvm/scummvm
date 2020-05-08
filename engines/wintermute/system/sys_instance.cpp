@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/system/sys_instance.h"
-#include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/system/sys_class.h"
+#include "engines/wintermute/system/sys_class_registry.h"
 
 namespace Wintermute {
 

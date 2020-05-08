@@ -29,7 +29,7 @@
 
 namespace GUI {
 
-class DeccelerateInterpolator: public Interpolator {
+class DeccelerateInterpolator : public Interpolator {
 public:
 	DeccelerateInterpolator() {}
 	virtual ~DeccelerateInterpolator() {}

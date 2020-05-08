@@ -21,8 +21,8 @@
  */
 
 #include "glk/adrift/scare.h"
-#include "glk/adrift/scprotos.h"
 #include "glk/adrift/scgamest.h"
+#include "glk/adrift/scprotos.h"
 
 namespace Glk {
 namespace Adrift {
@@ -35,7 +35,6 @@ namespace Adrift {
 
 /* Trace flag, set before running. */
 static sc_bool evt_trace = FALSE;
-
 
 /*
  * evt_any_task_in_state()
@@ -54,7 +53,6 @@ static sc_bool evt_any_task_in_state(sc_gameref_t game, sc_bool state) {
 	/* No tasks matched. */
 	return FALSE;
 }
-
 
 /*
  * evt_can_see_event()
@@ -80,8 +78,7 @@ sc_bool evt_can_see_event(sc_gameref_t game, sc_int event) {
 
 	case ROOMLIST_ONE_ROOM:
 		vt_key[3].string = "Room";
-		return prop_get_integer(bundle, "I<-siss", vt_key)
-		       == gs_playerroom(game);
+		return prop_get_integer(bundle, "I<-siss", vt_key) == gs_playerroom(game);
 
 	case ROOMLIST_SOME_ROOMS:
 		vt_key[3].string = "Rooms";
@@ -93,7 +90,6 @@ sc_bool evt_can_see_event(sc_gameref_t game, sc_int event) {
 		return FALSE;
 	}
 }
-
 
 /*
  * evt_move_object()
@@ -110,15 +106,15 @@ static void evt_move_object(sc_gameref_t game, sc_int object, sc_int destination
 
 		/* Move object depending on destination. */
 		switch (destination) {
-		case -1:               /* Hidden. */
+		case -1: /* Hidden. */
 			gs_object_make_hidden(game, object);
 			break;
 
-		case 0:                /* Held by player. */
+		case 0: /* Held by player. */
 			gs_object_player_get(game, object);
 			break;
 
-		case 1:                /* Same room as player. */
+		case 1: /* Same room as player. */
 			gs_object_to_room(game, object, gs_playerroom(game));
 			break;
 
@@ -145,7 +141,6 @@ static void evt_move_object(sc_gameref_t game, sc_int object, sc_int destination
 			gs_set_object_static_unmoved(game, object, FALSE);
 	}
 }
-
 
 /*
  * evt_fixup_v390_v380_immediate_restart()
@@ -184,7 +179,6 @@ static sc_bool evt_fixup_v390_v380_immediate_restart(sc_gameref_t game, sc_int e
 	/* Return TRUE if we applied the fixup. */
 	return version < TAF_VERSION_400;
 }
-
 
 /*
  * evt_start_event()
@@ -242,7 +236,6 @@ static void evt_start_event(sc_gameref_t game, sc_int event) {
 		sc_trace("Event: start event handling done, %ld\n", event);
 }
 
-
 /*
  * evt_get_starter_type()
  *
@@ -260,7 +253,6 @@ static sc_int evt_get_starter_type(sc_gameref_t game, sc_int event) {
 
 	return startertype;
 }
-
 
 /*
  * evt_finish_event()
@@ -336,40 +328,41 @@ static void evt_finish_event(sc_gameref_t game, sc_int event) {
 	vt_key[2].string = "RestartType";
 	restarttype = prop_get_integer(bundle, "I<-sis", vt_key);
 	switch (restarttype) {
-	case 0:                    /* Don't restart. */
+	case 0: /* Don't restart. */
 		startertype = evt_get_starter_type(game, event);
 		switch (startertype) {
-		case 1:                /* Immediate. */
-		case 2:                /* Random delay. */
-		case 3:                /* After task. */
+		case 1: /* Immediate. */
+		case 2: /* Random delay. */
+		case 3: /* After task. */
 			gs_set_event_state(game, event, ES_FINISHED);
 			gs_set_event_time(game, event, 0);
 			break;
 
 		default:
 			sc_fatal("evt_finish_event:"
-			         " unknown value for starter type, %ld\n", startertype);
+			         " unknown value for starter type, %ld\n",
+			         startertype);
 		}
 		break;
 
-	case 1:                    /* Restart immediately. */
+	case 1: /* Restart immediately. */
 		if (evt_fixup_v390_v380_immediate_restart(game, event))
 			break;
 		else
 			evt_start_event(game, event);
 		break;
 
-	case 2:                    /* Restart after delay. */
+	case 2: /* Restart after delay. */
 		startertype = evt_get_starter_type(game, event);
 		switch (startertype) {
-		case 1:                /* Immediate. */
+		case 1: /* Immediate. */
 			if (evt_fixup_v390_v380_immediate_restart(game, event))
 				break;
 			else
 				evt_start_event(game, event);
 			break;
 
-		case 2: {              /* Random delay. */
+		case 2: { /* Random delay. */
 			sc_int start, end;
 
 			gs_set_event_state(game, event, ES_WAITING);
@@ -381,7 +374,7 @@ static void evt_finish_event(sc_gameref_t game, sc_int event) {
 			break;
 		}
 
-		case 3:                /* After task. */
+		case 3: /* After task. */
 			gs_set_event_state(game, event, ES_AWAITING);
 			gs_set_event_time(game, event, 0);
 			break;
@@ -398,7 +391,6 @@ static void evt_finish_event(sc_gameref_t game, sc_int event) {
 	if (evt_trace)
 		sc_trace("Event: finish event handling done, %ld\n", event);
 }
-
 
 /*
  * evt_has_starter_task()
@@ -490,7 +482,6 @@ static sc_bool evt_resumer_task_is_complete(sc_gameref_t game, sc_int event) {
 	return resume;
 }
 
-
 /*
  * evt_handle_preftime_notifications()
  *
@@ -537,7 +528,6 @@ static void evt_handle_preftime_notifications(sc_gameref_t game, sc_int event) {
 		res_handle_resource(game, "sisi", vt_key);
 	}
 }
-
 
 /*
  * evt_tick_event()
@@ -593,8 +583,7 @@ static void evt_tick_event(sc_gameref_t game, sc_int event) {
 			if (gs_event_time(game, event) <= 0)
 				evt_finish_event(game, event);
 		}
-	}
-	break;
+	} break;
 
 	case ES_RUNNING: {
 		if (evt_trace)
@@ -616,8 +605,7 @@ static void evt_tick_event(sc_gameref_t game, sc_int event) {
 		}
 
 		/* If the pauser has completed, but resumer not, pause this event. */
-		if (evt_pauser_task_is_complete(game, event)
-		        && !evt_resumer_task_is_complete(game, event)) {
+		if (evt_pauser_task_is_complete(game, event) && !evt_resumer_task_is_complete(game, event)) {
 			if (evt_trace)
 				sc_trace("Event: pause complete\n");
 
@@ -637,8 +625,7 @@ static void evt_tick_event(sc_gameref_t game, sc_int event) {
 		/* If the time goes to zero, finish running the event. */
 		if (gs_event_time(game, event) <= 0)
 			evt_finish_event(game, event);
-	}
-	break;
+	} break;
 
 	case ES_AWAITING: {
 		if (evt_trace)
@@ -659,8 +646,7 @@ static void evt_tick_event(sc_gameref_t game, sc_int event) {
 				 * If the pauser has completed, but resumer not, immediately
 				 * also pause this event.
 				 */
-				if (evt_pauser_task_is_complete(game, event)
-				        && !evt_resumer_task_is_complete(game, event)) {
+				if (evt_pauser_task_is_complete(game, event) && !evt_resumer_task_is_complete(game, event)) {
 					if (evt_trace)
 						sc_trace("Event: pause complete, immediate pause\n");
 
@@ -668,8 +654,7 @@ static void evt_tick_event(sc_gameref_t game, sc_int event) {
 				}
 			}
 		}
-	}
-	break;
+	} break;
 
 	case ES_FINISHED: {
 		if (evt_trace)
@@ -695,8 +680,7 @@ static void evt_tick_event(sc_gameref_t game, sc_int event) {
 				break;
 			}
 		}
-	}
-	break;
+	} break;
 
 	case ES_PAUSED: {
 		if (evt_trace)
@@ -710,8 +694,7 @@ static void evt_tick_event(sc_gameref_t game, sc_int event) {
 			gs_set_event_state(game, event, ES_RUNNING);
 			break;
 		}
-	}
-	break;
+	} break;
 
 	default:
 		sc_fatal("evt_tick: invalid event state\n");
@@ -722,7 +705,6 @@ static void evt_tick_event(sc_gameref_t game, sc_int event) {
 		         gs_event_state(game, event), gs_event_time(game, event));
 	}
 }
-
 
 /*
  * evt_tick_events()
@@ -752,12 +734,10 @@ void evt_tick_events(sc_gameref_t game) {
 		 * otherwise change state alone; a bit of laziness, in other words.
 		 */
 		state = gs_event_state(game, event);
-		if (state == ES_RUNNING
-		        && (prior_state == ES_PAUSED || prior_state == ES_WAITING))
+		if (state == ES_RUNNING && (prior_state == ES_PAUSED || prior_state == ES_WAITING))
 			evt_tick_event(game, event);
 	}
 }
-
 
 /*
  * evt_debug_trace()

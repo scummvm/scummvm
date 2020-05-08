@@ -21,14 +21,13 @@
  */
 
 #include "glk/screen.h"
-#include "glk/conf.h"
 #include "common/unzip.h"
-#include "image/bmp.h"
-#include "graphics/fonts/ttf.h"
+#include "glk/conf.h"
 #include "graphics/fontman.h"
+#include "graphics/fonts/ttf.h"
+#include "image/bmp.h"
 
 namespace Glk {
-
 
 #define FONTS_VERSION 1.0
 #define FONTS_FILENAME "fonts.dat"
@@ -123,9 +122,8 @@ void Screen::loadFonts(Common::Archive *archive) {
 const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, double size, double aspect, int style) {
 	Common::File f;
 	const char *const FILENAMES[8] = {
-		"GoMono-Regular.ttf", "GoMono-Bold.ttf", "GoMono-Italic.ttf", "GoMono-Bold-Italic.ttf",
-		"NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-Bold-Italic.ttf"
-	};
+	    "GoMono-Regular.ttf", "GoMono-Bold.ttf", "GoMono-Italic.ttf", "GoMono-Bold-Italic.ttf",
+	    "NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-Bold-Italic.ttf"};
 
 	if (!f.open(FILENAMES[face], *archive))
 		error("Could not load %s from fonts file", FILENAMES[face]);
@@ -134,14 +132,22 @@ const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, dou
 }
 
 FACES Screen::getFontId(const Common::String &name) {
-	if (name == "monor") return MONOR;
-	if (name == "monob") return MONOB;
-	if (name == "monoi") return MONOI;
-	if (name == "monoz") return MONOZ;
-	if (name == "propr") return PROPR;
-	if (name == "propb") return PROPB;
-	if (name == "propi") return PROPI;
-	if (name == "propz") return PROPZ;
+	if (name == "monor")
+		return MONOR;
+	if (name == "monob")
+		return MONOB;
+	if (name == "monoi")
+		return MONOI;
+	if (name == "monoz")
+		return MONOZ;
+	if (name == "propr")
+		return PROPR;
+	if (name == "propb")
+		return PROPB;
+	if (name == "propi")
+		return PROPI;
+	if (name == "propz")
+		return PROPZ;
 	return MONOR;
 }
 

@@ -35,14 +35,13 @@ namespace MacVenture {
 static void cursorTimerHandler(void *refCon);
 
 static const ClickState _transitionTable[kCursorStateCount][kCursorInputCount] = {
-	/*				Button down,		Button Up,		Tick		*/
-	/* Idle */		{kCursorSCStart,	kCursorIdle,	kCursorIdle	},
-	/* SC Start */	{kCursorSCStart,	kCursorDCStart,	kCursorSCDrag},
-	/* SC Do */		{kCursorSCDrag, 	kCursorIdle,	kCursorSCDrag},
-	/* DC Start */	{kCursorDCDo,		kCursorDCStart,	kCursorSCSink},
-	/* DC Do */		{kCursorDCDo,		kCursorIdle,	kCursorDCDo	},
-	/* SC Sink */	{kCursorIdle,		kCursorIdle,	kCursorIdle	}
-};
+    /*				Button down,		Button Up,		Tick		*/
+    /* Idle */ {kCursorSCStart, kCursorIdle, kCursorIdle},
+    /* SC Start */ {kCursorSCStart, kCursorDCStart, kCursorSCDrag},
+    /* SC Do */ {kCursorSCDrag, kCursorIdle, kCursorSCDrag},
+    /* DC Start */ {kCursorDCDo, kCursorDCStart, kCursorSCSink},
+    /* DC Do */ {kCursorDCDo, kCursorIdle, kCursorDCDo},
+    /* SC Sink */ {kCursorIdle, kCursorIdle, kCursorIdle}};
 
 Cursor::Cursor(Gui *gui) {
 	_gui = gui;
@@ -131,6 +130,5 @@ static void cursorTimerHandler(void *refCon) {
 	Cursor *cursor = (Cursor *)refCon;
 	cursor->tick();
 }
-
 
 } // End of namespace MacVenture

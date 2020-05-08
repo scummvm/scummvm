@@ -23,9 +23,9 @@
 #ifndef SHERLOCK_SCALPEL_DRIVERS_MIDIDRIVER_H
 #define SHERLOCK_SCALPEL_DRIVERS_MIDIDRIVER_H
 
-#include "sherlock/sherlock.h"
 #include "audio/mididrv.h"
 #include "common/error.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 

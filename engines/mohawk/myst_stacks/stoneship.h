@@ -97,7 +97,7 @@ private:
 	uint32 _batteryNextTime;
 
 	bool _batteryGaugeRunning;
-	uint16 _batteryLastCharge; // 92
+	uint16 _batteryLastCharge;          // 92
 	MystAreaImageSwitch *_batteryGauge; // 96
 	void batteryGaugeUpdate();
 	void batteryGauge_run();
@@ -108,27 +108,27 @@ private:
 
 	uint16 _brotherDoorOpen; // 76
 
-	uint16 _chestDrawersOpen; // 78
+	uint16 _chestDrawersOpen;               // 78
 	uint16 _chestAchenarBottomDrawerClosed; // 144
 	void drawerClose(uint16 drawer);
 
-	uint16 _hologramTurnedOn; // 80
-	MystAreaVideo *_hologramDisplay; // 84
+	uint16 _hologramTurnedOn;          // 80
+	MystAreaVideo *_hologramDisplay;   // 84
 	MystAreaVideo *_hologramSelection; // 88
 	uint16 _hologramDisplayPos;
 
 	bool _tunnelRunning;
 	uint32 _tunnelNextTime;
-	uint16 _tunnelAlarmSound; // 100
+	uint16 _tunnelAlarmSound;  // 100
 	uint16 _tunnelImagesCount; // 22
-	uint16 _tunnelImages[2]; // 32
+	uint16 _tunnelImages[2];   // 32
 	void tunnel_run();
 
 	uint16 _telescopePosition; // 112
 	uint16 _telescopePanorama;
 	uint16 _telescopeOldMouse;
 	uint16 _telescopeLighthouseOff; // 130
-	uint16 _telescopeLighthouseOn; // 128
+	uint16 _telescopeLighthouseOn;  // 128
 	bool _telescopeLighthouseState; // 124
 	bool _telescopeRunning;
 	uint32 _telescopeNexTime;
@@ -136,14 +136,14 @@ private:
 	void telescopeLighthouseDraw();
 
 	MystAreaVideo *_cloudOrbMovie; // 136
-	uint16 _cloudOrbSound; // 140
-	uint16 _cloudOrbStopSound; // 142
+	uint16 _cloudOrbSound;         // 140
+	uint16 _cloudOrbStopSound;     // 142
 
 	uint16 batteryRemainingCharge();
 };
 
 } // End of namespace MystStacks
-}
+} // namespace Mohawk
 
 #undef DECLARE_OPCODE
 

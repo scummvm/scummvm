@@ -23,8 +23,8 @@
 #ifndef GLK_AGT_CONFIG
 #define GLK_AGT_CONFIG
 
-#include "glk/glk_api.h"
 #include "common/stream.h"
+#include "glk/glk_api.h"
 
 namespace Glk {
 namespace AGT {
@@ -45,7 +45,6 @@ namespace AGT {
     find yourself needing to do more than that, get in touch with me.)  */
 
 #undef _WIN32 /* GARGLK */
-
 
 /* Default to PLAIN platform */
 /* At the moment, you can replace this with LINUX, HPUX, AMIGA,     */
@@ -133,38 +132,36 @@ namespace AGT {
  * AGiliTy code.  The os_glk.c module handles the translations.
  */
 #ifdef GARGLK
-#define NEED_STR_CMP            /* Inherited from PLAIN. */
-#define NEED_STRN_CMP           /* Inherited from PLAIN. */
-#define BUFF_SIZE   0       /* Inherited from PLAIN. */
-#define CBUF_SIZE   (5000L)     /* Inherited from PLAIN. */
-#define INBUFF_SIZE (1024)      /* Inherited from PLAIN. */
-#define fix_ascii   0       /* os_glk.c does translations. */
-#define MAXSTRUC    (1024L*1024L)   /* 32Kb from PLAIN is too small for
-                       several games (including Soggy). */
-#define PORTSTR     "Glk version"   /* Identify ourselves discreetly. */
-#define REPLACE_GETFILE         /* Override get_user_file. */
-#define REPLACE_MAIN            /* Override main. */
-#define fnamecmp    strcasecmp  /* Case insensitive filename compare. */
+#define NEED_STR_CMP             /* Inherited from PLAIN. */
+#define NEED_STRN_CMP            /* Inherited from PLAIN. */
+#define BUFF_SIZE 0              /* Inherited from PLAIN. */
+#define CBUF_SIZE (5000L)        /* Inherited from PLAIN. */
+#define INBUFF_SIZE (1024)       /* Inherited from PLAIN. */
+#define fix_ascii 0              /* os_glk.c does translations. */
+#define MAXSTRUC (1024L * 1024L) /* 32Kb from PLAIN is too small for \
+	                several games (including Soggy). */
+#define PORTSTR "Glk version"    /* Identify ourselves discreetly. */
+#define REPLACE_GETFILE          /* Override get_user_file. */
+#define REPLACE_MAIN             /* Override main. */
+#define fnamecmp strcasecmp      /* Case insensitive filename compare. */
 #undef PLAIN
 
 #endif
 
 /* PLAIN should always come last, giving everyone else a chance
  to #undef it. */
-#ifdef PLAIN  /* This should work if nothing else does */
+#ifdef PLAIN /* This should work if nothing else does */
 #define NEED_STR_CMP
 #define NEED_STRN_CMP
 #define BUFF_SIZE 0
 #define CBUF_SIZE (5000L)
 #define INBUFF_SIZE (1024)     /* Used by Magx */
-#define MAXSTRUC (32L*1024L) /* IIRC, 32K is the minimum required by
-                the ANSI standard */
+#define MAXSTRUC (32L * 1024L) /* IIRC, 32K is the minimum required by \
+	              the ANSI standard */
 #define PORTSTR "Pure ANSI C version"
 #endif
 
-
 /* __GNUC__ */
-
 
 /* ------------------------------------------------------------------- */
 /* DEFAULTS FOR "PLATFORM SPECIFIC" DEFINES */
@@ -176,38 +173,38 @@ namespace AGT {
 #endif
 
 #ifndef fix_ascii
-#define fix_ascii 1  /* Translate IBM character set by default */
+#define fix_ascii 1 /* Translate IBM character set by default */
 #endif
 
 #ifndef BUFF_SIZE
 #ifdef LOWMEM
-#define BUFF_SIZE 0   /* i.e. unbuffered */
+#define BUFF_SIZE 0 /* i.e. unbuffered */
 #else
-#define BUFF_SIZE (32L*1024L)  /* 32K */
+#define BUFF_SIZE (32L * 1024L) /* 32K */
 #endif
 #endif /* BUFF_SIZE */
 
 #ifndef MAXSTRUC
-#define MAXSTRUC (1024L*1024L)
+#define MAXSTRUC (1024L * 1024L)
 #endif
 
 #ifndef DESCR_BUFFSIZE
-#define DESCR_BUFFSIZE 0  /* Always load descriptions from disk */
+#define DESCR_BUFFSIZE 0 /* Always load descriptions from disk */
 #endif
 
 #ifndef HASHBITS
 #ifdef LOWMEM
-#define HASHBITS 12   /* 4K entries */
+#define HASHBITS 12 /* 4K entries */
 #else
-#define HASHBITS 13   /* 8K entries in hash table */
+#define HASHBITS 13 /* 8K entries in hash table */
 #endif
 #endif /* HASHBITS */
 
-#ifndef fnamecmp   /* Used to compare filenames */
+#ifndef fnamecmp /* Used to compare filenames */
 #define fnamecmp strcmp
 #endif
 
-#ifndef fnamencmp  /* Also used to compare filenames */
+#ifndef fnamencmp /* Also used to compare filenames */
 #define fnamencmp strncmp
 #endif
 
@@ -223,15 +220,15 @@ namespace AGT {
 
 /* The following are only used by the interpreter, agtout, and agt2agx */
 #ifndef DA1
-#define DA1 ".da1"   /* General info (text file) */
-#define DA2 ".da2"   /* Rooms */
-#define DA3 ".da3"   /* Items */
-#define DA4 ".da4"   /* Creatures */
-#define DA5 ".da5"   /* Commands, headers */
-#define DA6 ".da6"   /* Commands, code (Master's Ed only) */
-#define DSS ".d$$"   /* Description strings */
-#define pHNT ".hnt"  /* Popup hint file; not used yet. */
-#define pOPT ".opt"  /* Interface specification file */
+#define DA1 ".da1"  /* General info (text file) */
+#define DA2 ".da2"  /* Rooms */
+#define DA3 ".da3"  /* Items */
+#define DA4 ".da4"  /* Creatures */
+#define DA5 ".da5"  /* Commands, headers */
+#define DA6 ".da6"  /* Commands, code (Master's Ed only) */
+#define DSS ".d$$"  /* Description strings */
+#define pHNT ".hnt" /* Popup hint file; not used yet. */
+#define pOPT ".opt" /* Interface specification file */
 #endif
 
 /* The following are only used by the Magx compiler */
@@ -241,46 +238,41 @@ namespace AGT {
 #define pMSG ".msg"
 #define pCMD ".cmd"
 #define pSTD ".std"
-#define AGTpSTD "agt.std"  /* Default error message file */
+#define AGTpSTD "agt.std" /* Default error message file */
 #endif
 
 /* The following are used by both the interpreter and the compiler */
 #ifndef pAGX
-#define pAGX ".agx"  /* Extension for new Adventure Game eXecutable format */
-#define pTTL ".ttl"  /* Title file */
-#define pINS ".ins"  /* Instruction file */
-#define pVOC ".voc"  /* Menu vocabulary file */
-#define pCFG ".cfg"  /* Game configuration file */
-#define pEXT "."  /* Separator between extension and base of filename */
+#define pAGX ".agx" /* Extension for new Adventure Game eXecutable format */
+#define pTTL ".ttl" /* Title file */
+#define pINS ".ins" /* Instruction file */
+#define pVOC ".voc" /* Menu vocabulary file */
+#define pCFG ".cfg" /* Game configuration file */
+#define pEXT "."    /* Separator between extension and base of filename */
 #endif
 
-
 #ifndef pSAV
-#define pSAV ".sav"  /* Extension for save files */
+#define pSAV ".sav" /* Extension for save files */
 #endif
 
 #ifndef pSCR
-#define pSCR ".scr"  /* Script file */
+#define pSCR ".scr" /* Script file */
 #endif
 
 #ifndef pLOG
-#define pLOG ".log"  /* LOG/REPLAY file */
+#define pLOG ".log" /* LOG/REPLAY file */
 #endif
-
-
-
-
 
 /* Finally, two potentially platform dependent type defintions,
    for binary and text files respectively.  Don't change these
    unless you are also changing filename.c */
 
 typedef Common::Stream *genfile;
-typedef char *file_id_type;  /* i.e. the filename */
+typedef char *file_id_type; /* i.e. the filename */
 
 #define NO_FILE_ID NULL
 #define BAD_TEXTFILE NULL
-#define BAD_BINFILE  NULL
+#define BAD_BINFILE NULL
 
 } // End of namespace AGT
 } // End of namespace Glk

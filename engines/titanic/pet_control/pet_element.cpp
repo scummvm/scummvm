@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/pet_control/pet_element.h"
+#include "common/textconsole.h"
 #include "titanic/core/game_object.h"
 
 namespace Titanic {

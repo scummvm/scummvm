@@ -20,12 +20,12 @@
  *
  */
 
+#include "mads/msurface.h"
 #include "engines/util.h"
 #include "mads/compression.h"
-#include "mads/screen.h"
 #include "mads/mads.h"
-#include "mads/msurface.h"
 #include "mads/resources.h"
+#include "mads/screen.h"
 #include "mads/sprites.h"
 
 namespace MADS {
@@ -78,9 +78,9 @@ void BaseSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Co
 	}
 
 	// Check if sprite is inside the screen. If it's not, there's no need to draw it
-	if (scaledWidth + x <= 0 || scaledHeight + y <= 0)	// check left and top (in case x,y are negative)
+	if (scaledWidth + x <= 0 || scaledHeight + y <= 0) // check left and top (in case x,y are negative)
 		return;
-	if (scaledWidth <= 0 || scaledHeight <= 0)			// check right and bottom
+	if (scaledWidth <= 0 || scaledHeight <= 0) // check right and bottom
 		return;
 	int heightAmt = scaledHeight;
 
@@ -163,9 +163,7 @@ void BaseSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Co
 				if (errY >= 0)
 					status = kStatusSkip;
 			}
-
 		}
-
 	}
 
 	delete[] scaledLineBuf;
@@ -222,7 +220,7 @@ void BaseSurface::scrollY(int yAmount) {
 		Common::copy(srcP, srcP + (pitch * ySize), tempData);
 		// Vertically shift all the lines
 		Common::copy_backward(pixelsP, pixelsP + (pitch * (this->h - ySize)),
-			pixelsP + (pitch * this->h));
+		                      pixelsP + (pitch * this->h));
 		// Transfer the buffered lines top the top of the screen
 		Common::copy(tempData, tempData + blockSize, pixelsP);
 	} else {
@@ -243,7 +241,7 @@ void BaseSurface::translate(Common::Array<RGB6> &palette) {
 		byte *pDest = (byte *)getBasePtr(0, y);
 
 		for (int x = 0; x < this->w; ++x, ++pDest) {
-			if (*pDest < 255)	// scene 752 has some palette indices of 255
+			if (*pDest < 255) // scene 752 has some palette indices of 255
 				*pDest = palette[*pDest]._palIndex;
 		}
 	}
@@ -256,7 +254,7 @@ void BaseSurface::translate(byte map[PALETTE_COUNT]) {
 		byte *pDest = (byte *)getBasePtr(0, y);
 
 		for (int x = 0; x < this->w; ++x, ++pDest) {
-				*pDest = map[*pDest];
+			*pDest = map[*pDest];
 		}
 	}
 
@@ -278,7 +276,7 @@ BaseSurface *BaseSurface::flipHorizontal() const {
 }
 
 void BaseSurface::copyRectTranslate(BaseSurface &srcSurface, const byte *paletteMap,
-		const Common::Point &destPos, const Common::Rect &srcRect) {
+                                    const Common::Point &destPos, const Common::Rect &srcRect) {
 	// Loop through the lines
 	for (int yCtr = 0; yCtr < srcRect.height(); ++yCtr) {
 		const byte *srcP = (const byte *)srcSurface.getBasePtr(srcRect.left, srcRect.top + yCtr);
@@ -291,11 +289,11 @@ void BaseSurface::copyRectTranslate(BaseSurface &srcSurface, const byte *palette
 	}
 
 	addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + srcRect.width(),
-		destPos.y + srcRect.height()));
+	                          destPos.y + srcRect.height()));
 }
 
 void BaseSurface::copyFrom(BaseSurface &src, const Common::Point &destPos, int depth,
-	DepthSurface *depthSurface, int scale, bool flipped, int transparentColor) {
+                           DepthSurface *depthSurface, int scale, bool flipped, int transparentColor) {
 	int destX = destPos.x, destY = destPos.y;
 	int frameWidth = src.w;
 	int frameHeight = src.h;
@@ -312,8 +310,7 @@ void BaseSurface::copyFrom(BaseSurface &src, const Common::Point &destPos, int d
 			distCtr += scale;
 			if (distCtr < 100) {
 				lineDist[distIndex] = false;
-			}
-			else {
+			} else {
 				lineDist[distIndex] = true;
 				distCtr -= 100;
 
@@ -364,8 +361,7 @@ void BaseSurface::copyFrom(BaseSurface &src, const Common::Point &destPos, int d
 			// Copy each byte one at a time checking against the depth
 			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
 				byte *srcP = srcPtr + xCtr * direction;
-				int pixelDepth = depthSurface == nullptr ? 15 :
-					depthSurface->getDepth(Common::Point(destX + xCtr, destY + rowCtr));
+				int pixelDepth = depthSurface == nullptr ? 15 : depthSurface->getDepth(Common::Point(destX + xCtr, destY + rowCtr));
 
 				if ((depth <= pixelDepth) && (*srcP != transparentColor))
 					destPtr[xCtr] = *srcP;
@@ -454,7 +450,7 @@ void BaseSurface::copyFrom(BaseSurface &src, const Common::Point &destPos, int d
 
 			// Get depth of current output pixel in depth surface
 			Common::Point pt((destP - (byte *)getPixels()) % this->pitch,
-				(destP - (byte *)getPixels()) / this->pitch);
+			                 (destP - (byte *)getPixels()) / this->pitch);
 			int pixelDepth = (depthSurface == nullptr) ? 15 : depthSurface->getDepth(pt);
 
 			if ((*srcP != transparentColor) && (depth <= pixelDepth))

@@ -65,7 +65,7 @@ public:
 	DECLARE_FUNCTION(draw)
 
 private:
-	EntityIndex _id;	///< Table entity id
+	EntityIndex _id; ///< Table entity id
 };
 
 } // End of namespace LastExpress

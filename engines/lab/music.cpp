@@ -28,9 +28,9 @@
  *
  */
 
-#include "common/file.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "common/file.h"
 
 #include "lab/lab.h"
 
@@ -41,8 +41,8 @@
 
 namespace Lab {
 
-#define CLOWNROOM           123
-#define DIMROOM              80
+#define CLOWNROOM 123
+#define DIMROOM 80
 
 Music::Music(LabEngine *vm) : _vm(vm) {
 	_musicFile = nullptr;
@@ -79,7 +79,7 @@ void Music::loadSoundEffect(const Common::String filename, bool loop, bool waitT
 	if (soundTag != 0)
 		return;
 
-	file->skip(soundSize);	// skip the header
+	file->skip(soundSize); // skip the header
 
 	while (soundTag != 65535) {
 		_vm->updateEvents();

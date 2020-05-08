@@ -23,10 +23,10 @@
 #ifndef SCUMM_PLAYERS_PLAYER_HE_H
 #define SCUMM_PLAYERS_PLAYER_HE_H
 
-#include "scumm/music.h"
-#include "audio/mixer.h"
 #include "audio/mididrv.h"
+#include "audio/mixer.h"
 #include "common/mutex.h"
+#include "scumm/music.h"
 
 class MidiParser;
 
@@ -44,8 +44,8 @@ public:
 	void startSoundWithTrackID(int sound, int track) override;
 	void stopSound(int sound) override;
 	void stopAllSounds() override;
-	int  getSoundStatus(int sound) const override;
-	int  getMusicTimer() override;
+	int getSoundStatus(int sound) const override;
+	int getMusicTimer() override;
 
 	int open() override;
 	bool isOpen() const override;
@@ -69,7 +69,7 @@ private:
 	static void onTimer(void *data);
 	void loadAdLibBank();
 };
-}
+} // namespace Scumm
 
 #endif
 

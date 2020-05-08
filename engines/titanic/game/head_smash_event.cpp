@@ -25,8 +25,8 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CHeadSmashEvent, CBackground)
-	ON_MESSAGE(ActMsg)
-	ON_MESSAGE(MovieEndMsg)
+ON_MESSAGE(ActMsg)
+ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
 void CHeadSmashEvent::save(SimpleFile *file, int indent) {

@@ -23,13 +23,13 @@
 #ifndef TITANIC_TITANIC_H
 #define TITANIC_TITANIC_H
 
+#include "common/language.h"
 #include "common/random.h"
 #include "engines/engine.h"
 #include "titanic/support/exe_resources.h"
 #include "titanic/support/movie_manager.h"
 #include "titanic/support/string.h"
 #include "titanic/support/strings.h"
-#include "common/language.h"
 
 /**
  * This is the namespace of the Titanic engine.
@@ -49,7 +49,7 @@ class Screen;
 namespace Common {
 class Error;
 class FSNode;
-}
+} // namespace Common
 
 namespace Titanic {
 
@@ -100,6 +100,7 @@ private:
 	 * Sets up the list of room names
 	 */
 	void setRoomNames();
+
 protected:
 	const TitanicGameDescription *_gameDescription;
 
@@ -107,6 +108,7 @@ protected:
 	void initializePath(const Common::FSNode &gamePath) override;
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
+
 public:
 	Events *_events;
 	CFilesManager *_filesManager;
@@ -126,10 +128,10 @@ public:
 	Strings _strings;
 	CString _stateRoomExitView;
 	int _loadSaveSlot;
+
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	~TitanicEngine() override;
-
 
 	/**
 	 * Returns true if a savegame can be loaded

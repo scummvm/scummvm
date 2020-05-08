@@ -23,8 +23,8 @@
 #ifndef ACCESS_MARTIAN_ROOM_H
 #define ACCESS_MARTIAN_ROOM_H
 
-#include "common/scummsys.h"
 #include "access/room.h"
+#include "common/scummsys.h"
 
 namespace Access {
 
@@ -42,6 +42,7 @@ private:
 
 	int _byte26CD2[30];
 	int _byte26CBC[10];
+
 protected:
 	void loadRoom(int roomNumber) override;
 
@@ -50,12 +51,13 @@ protected:
 	void reloadRoom1() override;
 
 	void mainAreaClick() override;
+
 public:
 	MartianRoom(AccessEngine *vm);
 
 	~MartianRoom() override;
 
-	void init4Quads() override { }
+	void init4Quads() override {}
 
 	void roomMenu() override;
 };

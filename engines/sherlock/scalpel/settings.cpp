@@ -20,30 +20,30 @@
  *
  */
 
-#include "sherlock/sherlock.h"
 #include "sherlock/scalpel/settings.h"
+#include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
-#include "sherlock/scalpel/scalpel_fixed_text.h"
-#include "sherlock/scalpel/scalpel.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
 namespace Scalpel {
 
-static const int SETUP_POINTS[12][4]  = {
-	{ 4, 154, 101, 53 },		// Exit
-	{ 4, 165, 101, 53 },		// Music Toggle
-	{ 219, 165, 316, 268 },		// Voice Toggle
-	{ 103, 165, 217, 160 },		// Sound Effects Toggle
-	{ 219, 154, 316, 268 },		// Help Button Left/Right
-	{ 103, 154, 217, 160 },		// New Font Style
-	{ 4, 187, 101, 53 },		// Joystick Toggle
-	{ 103, 187, 217, 160 },		// Calibrate Joystick
-	{ 219, 176, 316, 268 },		// Fade Style
-	{ 103, 176, 217, 160 },		// Window Open Style
-	{ 4, 176, 101, 53 }, 		// Portraits Toggle
-	{ 219, 187, 316, 268 }		// _key Pad Accel. Toggle
+static const int SETUP_POINTS[12][4] = {
+    {4, 154, 101, 53},    // Exit
+    {4, 165, 101, 53},    // Music Toggle
+    {219, 165, 316, 268}, // Voice Toggle
+    {103, 165, 217, 160}, // Sound Effects Toggle
+    {219, 154, 316, 268}, // Help Button Left/Right
+    {103, 154, 217, 160}, // New Font Style
+    {4, 187, 101, 53},    // Joystick Toggle
+    {103, 187, 217, 160}, // Calibrate Joystick
+    {219, 176, 316, 268}, // Fade Style
+    {103, 176, 217, 160}, // Window Open Style
+    {4, 176, 101, 53},    // Portraits Toggle
+    {219, 187, 316, 268}  // _key Pad Accel. Toggle
 };
 
 /*----------------------------------------------------------------*/
@@ -60,16 +60,18 @@ void Settings::drawInterface(bool flag) {
 		screen._backBuffer1.fillRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y1 + 1), BORDER_COLOR);
 		screen._backBuffer1.fillRect(Common::Rect(0, CONTROLS_Y1 + 1, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
 		screen._backBuffer1.fillRect(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y1 + 1, SHERLOCK_SCREEN_WIDTH,
-			SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+		                                          SHERLOCK_SCREEN_HEIGHT),
+		                             BORDER_COLOR);
 		screen._backBuffer1.hLine(0, SHERLOCK_SCREEN_HEIGHT - 1, SHERLOCK_SCREEN_WIDTH - 1, BORDER_COLOR);
 		screen._backBuffer1.fillRect(Common::Rect(2, CONTROLS_Y1 + 1, SHERLOCK_SCREEN_WIDTH - 2,
-			SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+		                                          SHERLOCK_SCREEN_HEIGHT - 2),
+		                             INV_BACKGROUND);
 	}
 
 	tempStr = FIXED(Settings_Exit);
 	_hotkeyExit = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[0][0], SETUP_POINTS[0][1], SETUP_POINTS[0][2], SETUP_POINTS[0][1] + 10),
-		SETUP_POINTS[0][3], tempStr);
+	                  SETUP_POINTS[0][3], tempStr);
 
 	if (music._musicOn) {
 		tempStr = FIXED(Settings_MusicOn);
@@ -78,7 +80,7 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyMusic = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[1][0], SETUP_POINTS[1][1], SETUP_POINTS[1][2], SETUP_POINTS[1][1] + 10),
-		SETUP_POINTS[1][3], tempStr);
+	                  SETUP_POINTS[1][3], tempStr);
 
 	if (people._portraitsOn) {
 		tempStr = FIXED(Settings_PortraitsOn);
@@ -87,18 +89,18 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyPortraits = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[10][0], SETUP_POINTS[10][1], SETUP_POINTS[10][2], SETUP_POINTS[10][1] + 10),
-		SETUP_POINTS[10][3], tempStr);
+	                  SETUP_POINTS[10][3], tempStr);
 
 	// WORKAROUND: We don't support the joystick in ScummVM, so draw the next two buttons as disabled
 	tempStr = FIXED(Settings_JoystickOff);
 	screen.makeButton(Common::Rect(SETUP_POINTS[6][0], SETUP_POINTS[6][1], SETUP_POINTS[6][2], SETUP_POINTS[6][1] + 10),
-		SETUP_POINTS[6][3], tempStr);
+	                  SETUP_POINTS[6][3], tempStr);
 	screen.buttonPrint(Common::Point(SETUP_POINTS[6][3], SETUP_POINTS[6][1]), COMMAND_NULL, false, tempStr);
 
 	tempStr = FIXED(Settings_NewFontStyle);
 	_hotkeyNewFontStyle = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[5][0], SETUP_POINTS[5][1], SETUP_POINTS[5][2], SETUP_POINTS[5][1] + 10),
-		SETUP_POINTS[5][3], tempStr);
+	                  SETUP_POINTS[5][3], tempStr);
 
 	if (sound._digitized) {
 		tempStr = FIXED(Settings_SoundEffectsOn);
@@ -107,7 +109,7 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeySoundEffects = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[3][0], SETUP_POINTS[3][1], SETUP_POINTS[3][2], SETUP_POINTS[3][1] + 10),
-		SETUP_POINTS[3][3], tempStr);
+	                  SETUP_POINTS[3][3], tempStr);
 
 	if (ui._slideWindows) {
 		tempStr = FIXED(Settings_WindowsSlide);
@@ -116,11 +118,11 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyWindows = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[9][0], SETUP_POINTS[9][1], SETUP_POINTS[9][2], SETUP_POINTS[9][1] + 10),
-		SETUP_POINTS[9][3], tempStr);
+	                  SETUP_POINTS[9][3], tempStr);
 
 	tempStr = FIXED(Settings_CalibrateJoystick);
 	screen.makeButton(Common::Rect(SETUP_POINTS[7][0], SETUP_POINTS[7][1], SETUP_POINTS[7][2], SETUP_POINTS[7][1] + 10),
-		SETUP_POINTS[7][3], tempStr);
+	                  SETUP_POINTS[7][3], tempStr);
 	screen.buttonPrint(Common::Point(SETUP_POINTS[7][3], SETUP_POINTS[7][1]), COMMAND_NULL, false, tempStr);
 
 	if (ui._helpStyle) {
@@ -130,7 +132,7 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyAutoHelp = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[4][0], SETUP_POINTS[4][1], SETUP_POINTS[4][2], SETUP_POINTS[4][1] + 10),
-		SETUP_POINTS[4][3], tempStr);
+	                  SETUP_POINTS[4][3], tempStr);
 
 	if (sound._voices) {
 		tempStr = FIXED(Settings_VoicesOn);
@@ -139,7 +141,7 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyVoices = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[2][0], SETUP_POINTS[2][1], SETUP_POINTS[2][2], SETUP_POINTS[2][1] + 10),
-		SETUP_POINTS[2][3], tempStr);
+	                  SETUP_POINTS[2][3], tempStr);
 
 	if (screen._fadeStyle) {
 		tempStr = FIXED(Settings_FadeByPixel);
@@ -148,11 +150,11 @@ void Settings::drawInterface(bool flag) {
 	}
 	_hotkeyFade = toupper(tempStr.firstChar());
 	screen.makeButton(Common::Rect(SETUP_POINTS[8][0], SETUP_POINTS[8][1], SETUP_POINTS[8][2], SETUP_POINTS[8][1] + 10),
-		SETUP_POINTS[8][3], tempStr);
+	                  SETUP_POINTS[8][3], tempStr);
 
 	tempStr = FIXED(Settings_KeyPadSlow);
 	screen.makeButton(Common::Rect(SETUP_POINTS[11][0], SETUP_POINTS[11][1], SETUP_POINTS[11][2], SETUP_POINTS[11][1] + 10),
-		SETUP_POINTS[11][3], tempStr);
+	                  SETUP_POINTS[11][3], tempStr);
 	screen.buttonPrint(Common::Point(SETUP_POINTS[11][3], SETUP_POINTS[11][1]), COMMAND_NULL, false, tempStr);
 
 	_hotkeysIndexed[0] = _hotkeyExit;
@@ -191,9 +193,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 	Common::String tempStr;
 
 	for (int idx = 0; idx < 12; ++idx) {
-		if ((pt.x > SETUP_POINTS[idx][0] && pt.x < SETUP_POINTS[idx][2] && pt.y > SETUP_POINTS[idx][1]
-				&& pt.y < (SETUP_POINTS[idx][1] + 10) && (events._pressed || events._released))
-				|| (_key == toupper(_hotkeysIndexed[idx]))) {
+		if ((pt.x > SETUP_POINTS[idx][0] && pt.x < SETUP_POINTS[idx][2] && pt.y > SETUP_POINTS[idx][1] && pt.y < (SETUP_POINTS[idx][1] + 10) && (events._pressed || events._released)) || (_key == toupper(_hotkeysIndexed[idx]))) {
 			found = idx;
 			color = COMMAND_HIGHLIGHTED;
 		} else {

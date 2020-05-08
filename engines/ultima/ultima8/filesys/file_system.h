@@ -23,10 +23,10 @@
 #ifndef ULTIMA8_FILESYS_FILESYSTEM_H
 #define ULTIMA8_FILESYS_FILESYSTEM_H
 
+#include "common/file.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
-#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -95,10 +95,10 @@ private:
 
 	// This will disable the usage of forced virtual paths.
 	// It's useful for 'tools'
-	bool    _noForcedVPaths;
+	bool _noForcedVPaths;
 
 	// This enables/disables overriding builtin data files with external ones
-	bool    _allowDataOverride;
+	bool _allowDataOverride;
 
 	// rewrite virtual path in-place (i.e., fvn is replaced)
 	// returns false if no rewriting was done
@@ -112,7 +112,7 @@ private:
 
 	struct MemoryFile {
 		MemoryFile(const uint8 *data, const uint32 len)
-			: _data(data), _len(len) { }
+		    : _data(data), _len(len) {}
 		const uint8 *_data;
 		const uint32 _len;
 	};

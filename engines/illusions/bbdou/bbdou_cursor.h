@@ -90,6 +90,7 @@ public:
 	uint calcTrackingFlags(Common::Point actorPos, Common::Point trackingLimits);
 	uint calcTrackingCursorIndex(uint trackingFlags);
 	bool getTrackingCursorSequenceId(Control *control, uint32 &outSequenceId);
+
 public:
 	IllusionsEngine_BBDOU *_vm;
 	BbdouSpecialCode *_bbdou;

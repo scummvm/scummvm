@@ -24,6 +24,6 @@
 #include "disc_io.h"
 
 // export interface
-extern LPIO_INTERFACE SCSD_GetInterface(void) ;
+extern LPIO_INTERFACE SCSD_GetInterface(void);
 
-#endif	// define IO_SCSD_H
+#endif // define IO_SCSD_H

@@ -21,13 +21,13 @@
  */
 
 // Palette animation module
-#include "saga/saga.h"
 #include "saga/gfx.h"
+#include "saga/saga.h"
 
 #include "saga/events.h"
 
-#include "saga/palanim.h"
 #include "saga/interface.h"
+#include "saga/palanim.h"
 
 namespace Saga {
 
@@ -61,7 +61,6 @@ void PalAnim::loadPalAnim(const ByteArray &resourceData) {
 
 		i->palIndex.resize(readS.readUint16());
 		debug(2, "PalAnim::loadPalAnim(): Loading %d palette indices.\n", i->palIndex.size());
-
 
 		for (uint j = 0; j < i->palIndex.size(); j++) {
 			i->palIndex[j] = readS.readByte();
@@ -112,9 +111,9 @@ void PalAnim::cycleStep(int vectortime) {
 		for (j = 0; j < i->palIndex.size(); j++) {
 			palIndex = i->palIndex[j];
 			colIndex = (cycle + j) % cycleLimit;
-			pal[palIndex].red = (byte) i->colors[colIndex].red;
-			pal[palIndex].green = (byte) i->colors[colIndex].green;
-			pal[palIndex].blue = (byte) i->colors[colIndex].blue;
+			pal[palIndex].red = (byte)i->colors[colIndex].red;
+			pal[palIndex].green = (byte)i->colors[colIndex].green;
+			pal[palIndex].blue = (byte)i->colors[colIndex].blue;
 		}
 
 		i->cycle++;
@@ -134,7 +133,6 @@ void PalAnim::cycleStep(int vectortime) {
 	event.op = kEventCycleStep;
 	event.time = vectortime + PALANIM_CYCLETIME;
 	_vm->_events->queue(event);
-
 }
 
 void PalAnim::clear() {

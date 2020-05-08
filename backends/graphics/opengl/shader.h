@@ -27,9 +27,9 @@
 
 #if !USE_FORCED_GLES
 
-#include "common/singleton.h"
 #include "common/hash-str.h"
 #include "common/ptr.h"
+#include "common/singleton.h"
 
 namespace OpenGL {
 
@@ -86,7 +86,7 @@ public:
 	virtual void set(GLint location) const override;
 
 private:
-	GLfloat _matrix[4*4];
+	GLfloat _matrix[4 * 4];
 };
 
 class Shader {
@@ -163,6 +163,7 @@ public:
 	bool setUniform1I(const Common::String &name, GLint value) {
 		return setUniform(name, new ShaderUniformInteger(value));
 	}
+
 protected:
 	/**
 	 * Vertex shader sources.

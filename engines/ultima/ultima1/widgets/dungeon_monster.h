@@ -23,9 +23,9 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_MONSTER_H
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_MONSTER_H
 
-#include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/shared/maps/creature.h"
 #include "ultima/shared/maps/dungeon_creature.h"
+#include "ultima/ultima1/widgets/dungeon_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -45,16 +45,19 @@ private:
 	 * Called when the monster is killed
 	 */
 	void monsterDead();
+
 protected:
 	/**
 	 * Handles moving creatures
 	 */
 	void movement() override;
+
 public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
 	static Shared::Maps::MapWidget::CanMove canMoveTo(Shared::Maps::MapBase *map, MapWidget *widget, const Point &destPos);
+
 public:
 	DECLARE_WIDGET(DungeonMonster)
 
@@ -62,7 +65,7 @@ public:
 	 * Constructor
 	 */
 	DungeonMonster(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
-		const Point &pt);
+	               const Point &pt);
 
 	/**
 	 * Constructor

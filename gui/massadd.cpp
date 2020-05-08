@@ -20,13 +20,13 @@
  *
  */
 
-#include "engines/metaengine.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/taskbar.h"
 #include "common/translation.h"
+#include "engines/metaengine.h"
 
 #include "gui/massadd.h"
 
@@ -53,16 +53,14 @@ enum {
 	kCancelCmd = 'CNCL'
 };
 
-
-
 MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
-	: Dialog("MassAdd"),
-	_dirsScanned(0),
-	_oldGamesCount(0),
-	_dirTotal(0),
-	_okButton(nullptr),
-	_dirProgressText(nullptr),
-	_gameProgressText(nullptr) {
+    : Dialog("MassAdd"),
+      _dirsScanned(0),
+      _oldGamesCount(0),
+      _dirTotal(0),
+      _okButton(nullptr),
+      _dirProgressText(nullptr),
+      _gameProgressText(nullptr) {
 
 	StringArray l;
 
@@ -73,7 +71,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	// new StaticTextWidget(this, "massadddialog_caption", "Mass Add Dialog");
 
 	_dirProgressText = new StaticTextWidget(this, "MassAdd.DirProgressText",
-	                                       _("... progress ..."));
+	                                        _("... progress ..."));
 
 	_gameProgressText = new StaticTextWidget(this, "MassAdd.GameProgressText",
 	                                         _("... progress ..."));
@@ -128,7 +126,6 @@ struct GameDescLess {
 	}
 };
 
-
 void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 #if defined(USE_TASKBAR)
 	// Remove progress bar and count from taskbar
@@ -144,8 +141,8 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		// Add all the detected games to the config
 		for (DetectedGames::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
 			debug(1, "  Added gameid '%s', desc '%s'\n",
-				iter->gameId.c_str(),
-				iter->description.c_str());
+			      iter->gameId.c_str(),
+			      iter->description.c_str());
 			iter->gameId = EngineMan.createTargetForGame(*iter);
 		}
 
@@ -170,7 +167,7 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 void MassAddDialog::handleTickle() {
 	if (_scanStack.empty())
-		return;	// We have finished scanning
+		return; // We have finished scanning
 
 	uint32 t = g_system->getMillis();
 
@@ -220,7 +217,7 @@ void MassAddDialog::handleTickle() {
 					assert(dom);
 
 					if ((*dom)["engineid"] == result.engineId &&
-						(*dom)["gameid"] == result.gameId &&
+					    (*dom)["gameid"] == result.gameId &&
 					    (*dom)["platform"] == resultPlatformCode &&
 					    (*dom)["language"] == resultLanguageCode) {
 						duplicate = true;
@@ -229,14 +226,13 @@ void MassAddDialog::handleTickle() {
 				}
 				if (duplicate) {
 					_oldGamesCount++;
-					continue;	// Skip duplicates
+					continue; // Skip duplicates
 				}
 			}
 			_games.push_back(result);
 
 			_list->append(result.description);
 		}
-
 
 		// Recurse into all subdirs
 		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
@@ -254,7 +250,6 @@ void MassAddDialog::handleTickle() {
 		g_system->getTaskbarManager()->setCount(_games.size());
 #endif
 	}
-
 
 	// Update the dialog
 	Common::String buf;
@@ -283,7 +278,6 @@ void MassAddDialog::handleTickle() {
 
 	drawDialog(kDrawLayerForeground);
 }
-
 
 } // End of namespace GUI
 

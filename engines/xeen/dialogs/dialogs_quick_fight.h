@@ -33,6 +33,7 @@ class QuickFight : public ButtonContainer {
 private:
 	SpriteResource _icons;
 	Character *_currentChar;
+
 private:
 	/**
 	 * Constructor
@@ -48,6 +49,7 @@ private:
 	 * Load butons for the dialog
 	 */
 	void loadButtons();
+
 public:
 	/**
 	 * Show the dialog

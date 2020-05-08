@@ -32,7 +32,9 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-enum GameType { GAME_301, GAME_CRICKET, GAME_501 };
+enum GameType { GAME_301,
+	            GAME_CRICKET,
+	            GAME_501 };
 
 class Darts {
 private:
@@ -157,6 +159,7 @@ private:
 	 * Draw the darts left
 	 */
 	void drawDartsLeft(int dartNum, int computer);
+
 public:
 	Darts(SherlockEngine *vm);
 

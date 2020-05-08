@@ -23,9 +23,9 @@
 #ifndef SOURCE_LISTING_PROVIDER_H_
 #define SOURCE_LISTING_PROVIDER_H_
 
+#include "common/str.h"
 #include "engines/wintermute/debugger/error.h"
 #include "engines/wintermute/debugger/listing_provider.h"
-#include "common/str.h"
 
 namespace Wintermute {
 
@@ -34,14 +34,13 @@ class Listing;
 
 class SourceListingProvider : ListingProvider {
 public:
-	~SourceListingProvider() override {};
+	~SourceListingProvider() override{};
 	/**
 	 * Get a listing. When implementing this, the result should be safe to delete for the caller.
 	 */
 	Listing *getListing(const Common::String &filename, ErrorCode &err) override = 0;
 	virtual ErrorCode setPath(const Common::String &path) = 0;
 	virtual Common::String getPath() const = 0;
-
 };
 
 } // End of namespace Wintermute

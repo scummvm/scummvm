@@ -23,25 +23,25 @@
 #ifndef ULTIMA4_GAME_SPELL_H
 #define ULTIMA4_GAME_SPELL_H
 
+#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/map/map.h"
-#include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/ultima4/sound/sound.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
 enum SpellCastError {
-	CASTERR_NOERROR,            /* success */
-	CASTERR_NOMIX,              /* no mixture available */
-	CASTERR_MPTOOLOW,           /* caster doesn't have enough mp */
-	CASTERR_FAILED,             /* the spell failed */
-	CASTERR_WRONGCONTEXT,       /* generic 'wrong-context' error (generrally finds the correct
+	CASTERR_NOERROR,      /* success */
+	CASTERR_NOMIX,        /* no mixture available */
+	CASTERR_MPTOOLOW,     /* caster doesn't have enough mp */
+	CASTERR_FAILED,       /* the spell failed */
+	CASTERR_WRONGCONTEXT, /* generic 'wrong-context' error (generrally finds the correct
                                    context error message on its own) */
-	CASTERR_COMBATONLY,         /* e.g. spell must be cast in combat */
-	CASTERR_DUNGEONONLY,        /* e.g. spell must be cast in dungeons */
-	CASTERR_WORLDMAPONLY       /* e.g. spell must be cast on the world map */
+	CASTERR_COMBATONLY,   /* e.g. spell must be cast in combat */
+	CASTERR_DUNGEONONLY,  /* e.g. spell must be cast in dungeons */
+	CASTERR_WORLDMAPONLY  /* e.g. spell must be cast on the world map */
 };
 
 /**
@@ -77,18 +77,18 @@ typedef int (Spells::*SpellProc)(int);
 
 struct Spell {
 	enum Param {
-		PARAM_NONE,             ///< None
-		PARAM_PLAYER,           ///< number of a player required
-		PARAM_DIR,              ///< direction required
-		PARAM_TYPEDIR,          ///< type of field and direction required (energy field)
-		PARAM_PHASE,            ///< phase required (gate)
-		PARAM_FROMDIR           ///< direction from required (winds)
+		PARAM_NONE,    ///< None
+		PARAM_PLAYER,  ///< number of a player required
+		PARAM_DIR,     ///< direction required
+		PARAM_TYPEDIR, ///< type of field and direction required (energy field)
+		PARAM_PHASE,   ///< phase required (gate)
+		PARAM_FROMDIR  ///< direction from required (winds)
 	};
 
 	enum SpecialEffects {
-		SFX_NONE,               ///< none
-		SFX_INVERT,             ///< invert the screen (moongates, most normal spells)
-		SFX_TREMOR              ///< tremor spell
+		SFX_NONE,   ///< none
+		SFX_INVERT, ///< invert the screen (moongates, most normal spells)
+		SFX_TREMOR  ///< tremor spell
 	};
 
 	const char *_name;
@@ -107,6 +107,7 @@ class Spells {
 private:
 	static const Spell SPELL_LIST[N_SPELLS];
 	SpellEffectCallback spellEffectCallback;
+
 private:
 	int spellAwaken(int player);
 	int spellBlink(int dir);
@@ -134,6 +135,7 @@ private:
 	int spellXit(int unused);
 	int spellYup(int unused);
 	int spellZdown(int unused);
+
 private:
 	CombatController *spellCombatController();
 
@@ -145,6 +147,7 @@ private:
 
 	LocationContext spellGetContext(uint spell) const;
 	TransportContext spellGetTransportContext(uint spell) const;
+
 public:
 	/**
 	 * Constructor

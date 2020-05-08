@@ -22,9 +22,9 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
-#include "ultima/ultima8/filesys/raw_archive.h"
-#include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/archive_file.h"
+#include "ultima/ultima8/filesys/idata_source.h"
+#include "ultima/ultima8/filesys/raw_archive.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,17 +36,22 @@ RawArchive::~RawArchive() {
 }
 
 void RawArchive::cache(uint32 index) {
-	if (index >= _count) return;
-	if (_objects.empty()) _objects.resize(_count);
+	if (index >= _count)
+		return;
+	if (_objects.empty())
+		_objects.resize(_count);
 
-	if (_objects[index]) return;
+	if (_objects[index])
+		return;
 
 	_objects[index] = getRawObject(index);
 }
 
 void RawArchive::uncache(uint32 index) {
-	if (index >= _count) return;
-	if (_objects.empty()) return;
+	if (index >= _count)
+		return;
+	if (_objects.empty())
+		return;
 
 	if (_objects[index]) {
 		delete[] _objects[index];
@@ -55,8 +60,10 @@ void RawArchive::uncache(uint32 index) {
 }
 
 bool RawArchive::isCached(uint32 index) const {
-	if (index >= _count) return false;
-	if (_objects.empty()) return false;
+	if (index >= _count)
+		return false;
+	if (_objects.empty())
+		return false;
 
 	return (_objects[index] != nullptr);
 }

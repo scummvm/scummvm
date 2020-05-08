@@ -266,7 +266,6 @@ void DreamWebEngine::workoutFrames() {
 	int lineEndX = (int16)_lineEndX;
 	int lineEndY = (int16)_lineEndY;
 
-
 	diffx = ABS(lineStartX - lineEndX);
 	diffy = ABS(lineStartY - lineEndY);
 

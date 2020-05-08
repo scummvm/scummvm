@@ -22,9 +22,9 @@
 
 /* This is a C++ class for handling a GUI, and associated widgets */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui_types.h"
 #include "ultima/nuvie/keybinding/keys.h"
 
@@ -33,13 +33,12 @@ namespace Nuvie {
 
 const int GUI::mouseclick_delay = 300; /* SB-X */
 
-
 /* Number of widget elements to allocate at once */
-#define WIDGET_ARRAYCHUNK   32
+#define WIDGET_ARRAYCHUNK 32
 
 GUI *GUI::gui = NULL;
 
-GUI:: GUI(Configuration *c, Screen *s) {
+GUI::GUI(Configuration *c, Screen *s) {
 	Graphics::ManagedSurface *sdl_surface;
 
 	gui = this;
@@ -67,7 +66,7 @@ GUI:: GUI(Configuration *c, Screen *s) {
 	gui_drag_manager = new GUI_DragManager(screen);
 }
 
-GUI:: ~GUI() {
+GUI::~GUI() {
 	if (widgets != NULL) {
 		for (int i = 0; i < numwidgets; ++i) {
 			delete widgets[i];
@@ -84,8 +83,7 @@ GUI:: ~GUI() {
 /* Add a widget to the GUI.
    The widget will be automatically deleted when the GUI is deleted.
  */
-int
-GUI:: AddWidget(GUI_Widget *widget) {
+int GUI::AddWidget(GUI_Widget *widget) {
 	int i;
 
 	/* Look for deleted widgets */
@@ -169,7 +167,7 @@ bool GUI::moveWidget(GUI_Widget *widget, uint32 dx, uint32 dy) {
 	widget->MoveRelative(dx, dy);
 
 	if (widget->Status() == WIDGET_VISIBLE)
-		widget->Redraw();//force_full_redraw();
+		widget->Redraw(); //force_full_redraw();
 
 	return true;
 }
@@ -205,8 +203,7 @@ void GUI::Display() {
 }
 
 /* Function to handle a GUI status */
-void
-GUI:: HandleStatus(GUI_status status) {
+void GUI::HandleStatus(GUI_status status) {
 	switch (status) {
 	case GUI_QUIT:
 		running = 0;
@@ -223,7 +220,7 @@ GUI:: HandleStatus(GUI_status status) {
 }
 
 /* Handle an event, passing it to widgets until they return a status */
-GUI_status GUI:: HandleEvent(Common::Event *event) {
+GUI_status GUI::HandleEvent(Common::Event *event) {
 	int i;
 	int hit;
 	GUI_status status = GUI_PASS;
@@ -250,7 +247,7 @@ GUI_status GUI:: HandleEvent(Common::Event *event) {
 	}
 #endif
 
-	if (dragging) { //&& !block_input)
+	if (dragging) {                                //&& !block_input)
 		if (Shared::isMouseUpEvent(event->type)) { //FIX for button up that doesn't hit a widget.
 			for (hit = false, i = numwidgets - 1; (i >= 0) && (hit == false); --i) {
 				if (widgets[i]->Status() == WIDGET_VISIBLE && widgets[i]->is_drop_target() && widgets[i]->HitRect(event->mouse.x, event->mouse.y)) {
@@ -263,8 +260,8 @@ GUI_status GUI:: HandleEvent(Common::Event *event) {
 		}
 	} else if (!block_input) {
 		if (event->type == Common::EVENT_JOYAXIS_MOTION ||
-				event->type == Common::EVENT_JOYBUTTON_DOWN ||
-				event->type == Common::EVENT_JOYBUTTON_UP) {
+		    event->type == Common::EVENT_JOYBUTTON_DOWN ||
+		    event->type == Common::EVENT_JOYBUTTON_UP) {
 			event->kbd.keycode = Game::get_game()->get_keybinder()->get_key_from_joy_events(event);
 			if (event->kbd.keycode == Common::KEYCODE_INVALID) { // isn't mapped, is in deadzone, or axis didn't return to center before moving again
 				HandleStatus(status);
@@ -276,12 +273,12 @@ GUI_status GUI:: HandleEvent(Common::Event *event) {
 		}
 
 		switch (event->type) {
-		/* SDL_QUIT events quit the GUI */
-		// case SDL_QUIT:
-		//   status = GUI_QUIT;
-		//   break;
+			/* SDL_QUIT events quit the GUI */
+			// case SDL_QUIT:
+			//   status = GUI_QUIT;
+			//   break;
 
-		/* Keyboard and mouse events go to widgets */
+			/* Keyboard and mouse events go to widgets */
 
 		case Common::EVENT_MOUSEMOVE:
 		case Common::EVENT_LBUTTONDOWN:
@@ -294,14 +291,14 @@ GUI_status GUI:: HandleEvent(Common::Event *event) {
 		case Common::EVENT_KEYUP:
 		case Common::EVENT_WHEELDOWN:
 		case Common::EVENT_WHEELUP:
-//			 /* Go through widgets, topmost first */
-//			 status = GUI_PASS;
-//			 for (i=numwidgets-1; (i>=0)&&(status==GUI_PASS); --i) {
-//				 if ( widgets[i]->Status() == WIDGET_VISIBLE ) {
-//				   status = widgets[i]->HandleEvent(event);
-//				 }
-//			 }
-//			 break;
+			//			 /* Go through widgets, topmost first */
+			//			 status = GUI_PASS;
+			//			 for (i=numwidgets-1; (i>=0)&&(status==GUI_PASS); --i) {
+			//				 if ( widgets[i]->Status() == WIDGET_VISIBLE ) {
+			//				   status = widgets[i]->HandleEvent(event);
+			//				 }
+			//			 }
+			//			 break;
 			/* Send everything to locked widget. */
 			if (locked_widget && locked_widget->Status() == WIDGET_VISIBLE) {
 				status = locked_widget->HandleEvent(event);
@@ -316,8 +313,7 @@ GUI_status GUI:: HandleEvent(Common::Event *event) {
 					status = focused_widget->HandleEvent(event);
 				}
 				for (i = numwidgets - 1; (i >= 0) && (status == GUI_PASS); --i) {
-					if (widgets[i]->Status() == WIDGET_VISIBLE
-					        && widgets[i] != focused_widget) {  // don't send to focused twice
+					if (widgets[i]->Status() == WIDGET_VISIBLE && widgets[i] != focused_widget) { // don't send to focused twice
 						status = widgets[i]->HandleEvent(event);
 					}
 				}
@@ -352,7 +348,7 @@ void GUI::Run(GUI_IdleProc idle, int once, int multitaskfriendly) {
 	}
 
 	running = 1;
-	if (! once) {
+	if (!once) {
 		display = 1;
 	}
 	do {
@@ -364,34 +360,33 @@ void GUI::Run(GUI_IdleProc idle, int once, int multitaskfriendly) {
 			display = 0;
 		}
 
-///////////////////////////////////////////////////////////////// Polling is time consuming - instead:
+		///////////////////////////////////////////////////////////////// Polling is time consuming - instead:
 		if (multitaskfriendly && (idle == NULL)) {
 			SDL_WaitEvent(&event);
 			HandleEvent(&event);
 		} else
-/////////////////////////////////////////////////////////////////
-			/* Handle events, or run idle functions */
-			if (SDL_PollEvent(&event)) {
-				/* Handle all pending events */
-				do {
-					HandleEvent(&event);
-				} while (SDL_PollEvent(&event));
-			} else {
-				if (idle != NULL) {
-					HandleStatus(idle());
-				}
-				for (i = numwidgets - 1; i >= 0; --i) {
-					HandleStatus(widgets[i]->Idle());
-				}
+		    /////////////////////////////////////////////////////////////////
+		    /* Handle events, or run idle functions */
+		    if (SDL_PollEvent(&event)) {
+			/* Handle all pending events */
+			do {
+				HandleEvent(&event);
+			} while (SDL_PollEvent(&event));
+		} else {
+			if (idle != NULL) {
+				HandleStatus(idle());
 			}
+			for (i = numwidgets - 1; i >= 0; --i) {
+				HandleStatus(widgets[i]->Idle());
+			}
+		}
 		//ERIC SDL_Delay(10);
-	} while (running && ! once);
+	} while (running && !once);
 }
 
 GUI_Font *GUI::get_font() {
 	return gui_font;
 }
-
 
 // SB-X
 void GUI::Idle() {
@@ -414,10 +409,10 @@ bool GUI::set_focus(GUI_Widget *widget) {
 	*/
 	focused_widget = widget;
 	return true;
-//            }
-//      }
+	//            }
+	//      }
 
-// return false;
+	// return false;
 }
 
 void GUI::lock_input(GUI_Widget *widget) {

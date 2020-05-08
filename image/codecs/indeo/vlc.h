@@ -39,7 +39,7 @@ namespace Indeo {
 #define VLC_TYPE int16
 
 enum VLCFlag {
-	INIT_VLC_LE             = 2,
+	INIT_VLC_LE = 2,
 	INIT_VLC_USE_NEW_STATIC = 4
 };
 
@@ -66,9 +66,11 @@ private:
 	 * @param size		Size of elements
 	 */
 	static uint getData(const void *table, uint idx, uint wrap, uint size);
+
 public:
 	int _bits;
-	VLC_TYPE (*_table)[2];	///< code, bits
+	VLC_TYPE (*_table)
+	[2]; ///< code, bits
 	int _tableSize, _tableAllocated;
 
 	VLC();
@@ -100,17 +102,16 @@ public:
 	with av_free_static(), 0 if freeVlc() will be used.
 	*/
 	int init_vlc(int nbBits, int nbCodes, const void *bits, int bitsWrap,
-		int bitsSize, const void *codes, int codesWrap, int codesSize,
-		const void *symbols, int symbolsWrap, int symbolsSize, int flags);
+	             int bitsSize, const void *codes, int codesWrap, int codesSize,
+	             const void *symbols, int symbolsWrap, int symbolsSize, int flags);
 
 	int init_vlc(int nbBits, int nbCodes, const void *bits, int bitsWrap, int bitsSize,
-		const void *codes, int codesWrap, int codesSize, int flags);
+	             const void *codes, int codesWrap, int codesSize, int flags);
 
 	/**
 	 * Free VLC data
 	 */
 	void freeVlc();
-
 
 	/**
 	 * Build VLC decoding tables suitable for use with get_vlc().

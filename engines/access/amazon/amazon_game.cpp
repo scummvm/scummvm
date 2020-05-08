@@ -20,22 +20,22 @@
  *
  */
 
-#include "access/resources.h"
 #include "access/amazon/amazon_game.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/amazon/amazon_room.h"
 #include "access/amazon/amazon_scripts.h"
+#include "access/resources.h"
 
 namespace Access {
 
 namespace Amazon {
 
 AmazonEngine::AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc)
-	: AccessEngine(syst, gameDesc), _guardLocation(_flags[122]), _guardFind(_flags[128]),
-	  _helpLevel(_flags[167]), _jasMayaFlag(_flags[168]), _moreHelp(_flags[169]),
-	  _flashbackFlag(_flags[171]), _riverFlag(_flags[185]), _aniOutFlag(_flags[195]),
-	  _badEnd(_flags[218]), _noHints(_flags[219]), _aniFlag(_flags[229]),
-	  _allenFlag(_flags[237]), _noSound(_flags[239]) {
+    : AccessEngine(syst, gameDesc), _guardLocation(_flags[122]), _guardFind(_flags[128]),
+      _helpLevel(_flags[167]), _jasMayaFlag(_flags[168]), _moreHelp(_flags[169]),
+      _flashbackFlag(_flags[171]), _riverFlag(_flags[185]), _aniOutFlag(_flags[195]),
+      _badEnd(_flags[218]), _noHints(_flags[219]), _aniFlag(_flags[229]),
+      _allenFlag(_flags[237]), _noSound(_flags[239]) {
 	_ant = nullptr;
 	_cast = nullptr;
 	_guard = nullptr;
@@ -182,7 +182,7 @@ void AmazonEngine::initVariables() {
 	_player->_playerOff = false;
 
 	// Setup timers
-	const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
+	const int TIMER_DEFAULTS[] = {3, 10, 8, 1, 1, 1, 1, 2};
 	for (int i = 0; i < 32; ++i) {
 		TimerEntry te;
 		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
@@ -210,7 +210,7 @@ void AmazonEngine::establishCenter(int screenId, int esatabIndex) {
 	doEstablish(screenId, esatabIndex);
 }
 
-const char *const _estTable[] = { "ETEXT0.DAT", "ETEXT1.DAT", "ETEXT2.DAT", "ETEXT3.DAT" };
+const char *const _estTable[] = {"ETEXT0.DAT", "ETEXT1.DAT", "ETEXT2.DAT", "ETEXT3.DAT"};
 
 void AmazonEngine::loadEstablish(int estabIndex) {
 	if (!_files->existFile("ETEXT.DAT")) {
@@ -301,10 +301,9 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 }
 
 const char *const _tileFiles[] = {
-	"GRAY.BLK", "RED.BLK", "LTBROWN.BLK", "DKBROWN.BLK", "VIOLET.BLK", "LITEBLUE.BLK",
-	"DARKBLUE.BLK", "CYAN.BLK", "GREEN.BLK", "OLIVE.BLK", "GRAY.BLK", "RED.BLK",
-	"LTBROWN.BLK", "DKBROWN.BLK", "VIOLET.BLK", "OLIVE.BLK"
-};
+    "GRAY.BLK", "RED.BLK", "LTBROWN.BLK", "DKBROWN.BLK", "VIOLET.BLK", "LITEBLUE.BLK",
+    "DARKBLUE.BLK", "CYAN.BLK", "GREEN.BLK", "OLIVE.BLK", "GRAY.BLK", "RED.BLK",
+    "LTBROWN.BLK", "DKBROWN.BLK", "VIOLET.BLK", "OLIVE.BLK"};
 
 void AmazonEngine::tileScreen() {
 	if (!_screen->_vesaMode)
@@ -570,9 +569,9 @@ void AmazonEngine::startChapter(int chapter) {
 
 	const int *chapImg = &CHAPTER_TABLE[_chapter - 1][0];
 	_screen->plotImage(_objectsTable[0], _chapter - 1,
-		Common::Point(chapImg[1], chapImg[2]));
+	                   Common::Point(chapImg[1], chapImg[2]));
 	_screen->plotImage(_objectsTable[_chapter], 0,
-		Common::Point(chapImg[3], chapImg[4]));
+	                   Common::Point(chapImg[3], chapImg[4]));
 	if (chapter == 14)
 		_screen->plotImage(_objectsTable[_chapter], 1, Common::Point(169, 76));
 
@@ -667,7 +666,6 @@ void AmazonEngine::startChapter(int chapter) {
 		}
 	}
 }
-
 
 void AmazonEngine::dead(int deathId) {
 	_events->hideCursor();

@@ -174,25 +174,23 @@ void MortevielleEngine::addKeypress(Common::Event &evt) {
 		_keypresses.push(ch);
 }
 
-
 static const byte CURSOR_ARROW_DATA[16 * 16] = {
-	0x0f, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x00, 0x0f, 0x0f, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0x0f, 0x0f, 0xff, 0xff, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0xff, 0xff, 0xff, 0xff, 0xff, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0xff, 0xff, 0xff, 0xff, 0xff, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x0f, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
-};
+    0x0f, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x00, 0x0f, 0x0f, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x0f, 0x0f, 0xff, 0xff, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0x0f, 0x00, 0x00, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x0f, 0x0f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
 /**
  * Initialize the mouse
@@ -282,7 +280,7 @@ void MortevielleEngine::handleAction() {
 		}
 		if (_menu->_menuSelected && (_currMenu == MENU_LOAD))
 			_savegameManager->loadGame((_currAction & 15) - 1);
-		if (inkey == '\103') {       /* F9 */
+		if (inkey == '\103') { /* F9 */
 			temps = _dialogManager->show(_hintPctMessage);
 			return;
 		} else if (inkey == '\77') {
@@ -333,7 +331,7 @@ void MortevielleEngine::handleAction() {
 				if (!handledOpcodeFl)
 					handleOpcode();
 
-				if ((_controlMenu == 0) && (! _loseGame) && (! _endGame)) {
+				if ((_controlMenu == 0) && (!_loseGame) && (!_endGame)) {
 					_text->taffich();
 					if (_destinationOk) {
 						_destinationOk = false;
@@ -1038,26 +1036,24 @@ int MortevielleEngine::getPresenceBitIndex(int roomId) {
 	int bitIndex = 0;
 	if (roomId == GREEN_ROOM) {
 		if (_roomPresenceLuc)
-			bitIndex = 4;  // LUC
+			bitIndex = 4; // LUC
 		if (_roomPresenceIda)
-			bitIndex = 2;  // IDA
-	} else if ( ((roomId == PURPLE_ROOM) && (_purpleRoomPresenceLeo))
-			 || ((roomId == JULIA_ROOM) && (_juliaRoomPresenceLeo)))
-		bitIndex = 128;    // LEO
+			bitIndex = 2; // IDA
+	} else if (((roomId == PURPLE_ROOM) && (_purpleRoomPresenceLeo)) || ((roomId == JULIA_ROOM) && (_juliaRoomPresenceLeo)))
+		bitIndex = 128; // LEO
 	else if (roomId == DARKBLUE_ROOM) {
 		if (_roomPresenceGuy)
 			bitIndex = 32; // GUY
 		if (_roomPresenceEva)
 			bitIndex = 16; // EVA
 	} else if ((roomId == BLUE_ROOM) && (_roomPresenceMax))
-		bitIndex = 1;      // MAX
+		bitIndex = 1; // MAX
 	else if ((roomId == RED_ROOM) && (_roomPresenceBob))
-		bitIndex = 8;      // BOB
+		bitIndex = 8; // BOB
 	else if ((roomId == GREEN_ROOM2) && (_roomPresencePat))
-		bitIndex = 64;     // PAT
-	else if ( ((roomId == TOILETS) && (_toiletsPresenceBobMax))
-		   || ((roomId == BATHROOM) && (_bathRoomPresenceBobMax)) )
-		bitIndex = 9;      // BOB + MAX
+		bitIndex = 64; // PAT
+	else if (((roomId == TOILETS) && (_toiletsPresenceBobMax)) || ((roomId == BATHROOM) && (_bathRoomPresenceBobMax)))
+		bitIndex = 9; // BOB + MAX
 
 	if (bitIndex != 9)
 		showPeoplePresent(bitIndex);
@@ -1083,8 +1079,7 @@ void MortevielleEngine::initGame() {
  * @remarks	Originally called 'pl1'
  */
 void MortevielleEngine::setRandomPresenceGreenRoom(int faithScore) {
-	if ( ((_place == GREEN_ROOM) && (!_roomPresenceLuc) && (!_roomPresenceIda))
-	  || ((_place == DARKBLUE_ROOM) && (!_roomPresenceGuy) && (!_roomPresenceEva)) ) {
+	if (((_place == GREEN_ROOM) && (!_roomPresenceLuc) && (!_roomPresenceIda)) || ((_place == DARKBLUE_ROOM) && (!_roomPresenceGuy) && (!_roomPresenceEva))) {
 		int p = getPresenceStatsGreenRoom();
 		p += faithScore;
 		if (getRandomNumber(1, 100) > p)
@@ -1129,8 +1124,7 @@ void MortevielleEngine::setRandomPresenceBlueRoom(int faithScore) {
  * @remarks	Originally called 'pl6'
  */
 void MortevielleEngine::setRandomPresenceRedRoom(int faithScore) {
-	if ( ((_place == RED_ROOM) && (!_roomPresenceBob))
-	  || ((_place == GREEN_ROOM2) && (!_roomPresencePat)) ) {
+	if (((_place == RED_ROOM) && (!_roomPresenceBob)) || ((_place == GREEN_ROOM2) && (!_roomPresencePat))) {
 		int p = getPresenceStatsRedRoom();
 		p += faithScore;
 		if (getRandomNumber(1, 100) > p)
@@ -1362,13 +1356,13 @@ void MortevielleEngine::gotoDiningRoom() {
 
 	updateHour(day, hour, minute);
 	if ((hour < 5) && (_coreVar._currPlace > ROOM18)) {
-		if (!checkInventory(137)) {        //You don't have the keys, and it's late
+		if (!checkInventory(137)) { //You don't have the keys, and it's late
 			_crep = 1511;
 			loseGame();
 		} else
 			displayDiningRoom();
-	} else if (!_coreVar._alreadyEnteredManor) {     //Is it your first time?
-		_currBitIndex = 255; // Everybody is present
+	} else if (!_coreVar._alreadyEnteredManor) { //Is it your first time?
+		_currBitIndex = 255;                     // Everybody is present
 		showPeoplePresent(_currBitIndex);
 		_caff = 77;
 		drawPictureWithText();
@@ -1579,10 +1573,9 @@ void MortevielleEngine::handleOpcode() {
 	int hour, day, minute;
 	updateHour(day, hour, minute);
 	if ((((hour == 12) || (hour == 13) || (hour == 19)) && (_coreVar._currPlace != DINING_ROOM)) ||
-	        ((hour > 0) && (hour < 6) && (_coreVar._currPlace != OWN_ROOM)))
+	    ((hour > 0) && (hour < 6) && (_coreVar._currPlace != OWN_ROOM)))
 		++_coreVar._faithScore;
-	if (((_coreVar._currPlace < CRYPT) || (_coreVar._currPlace > MOUNTAIN)) && (_coreVar._currPlace != INSIDE_WELL)
-	        && (_coreVar._currPlace != OWN_ROOM) && (_coreVar._selectedObjectId != 152) && (!_loseGame)) {
+	if (((_coreVar._currPlace < CRYPT) || (_coreVar._currPlace > MOUNTAIN)) && (_coreVar._currPlace != INSIDE_WELL) && (_coreVar._currPlace != OWN_ROOM) && (_coreVar._selectedObjectId != 152) && (!_loseGame)) {
 		if ((_coreVar._faithScore > 99) && (hour > 8) && (hour < 16)) {
 			_crep = 1501;
 			loseGame();
@@ -1720,17 +1713,17 @@ void MortevielleEngine::showConfigScreen() {
 	Common::String tmpStr;
 	int cy = 0;
 	clearScreen();
- 	do {
- 		++cy;
- 		tmpStr = getString(cy + kStartingScreenStringIndex);
- 		int width = _screenSurface->getStringWidth(tmpStr);
- 		_text->displayStr(tmpStr, 320 - width / 2, cy * 8, 80, 1, 2);
- 	} while (cy != 20);
+	do {
+		++cy;
+		tmpStr = getString(cy + kStartingScreenStringIndex);
+		int width = _screenSurface->getStringWidth(tmpStr);
+		_text->displayStr(tmpStr, 320 - width / 2, cy * 8, 80, 1, 2);
+	} while (cy != 20);
 
- 	int ix = 0;
- 	do {
- 		++ix;
- 	} while (!(keyPressed() || ix == 0x5e5));
+	int ix = 0;
+	do {
+		++ix;
+	} while (!(keyPressed() || ix == 0x5e5));
 
 	_crep = 998;
 }
@@ -1757,48 +1750,42 @@ void MortevielleEngine::decodeNumber(byte *pStart, int count) {
 }
 
 const byte cryptoArrDefaultFr[32] = {
-	32, 101, 115,  97, 114, 105, 110,
-	117, 116, 111, 108,  13, 100,  99,
-	112, 109,  46, 118, 130,  39, 102,
-	98,  44, 113, 104, 103,  33,  76,
-	85, 106,  30,  31
-};
+    32, 101, 115, 97, 114, 105, 110,
+    117, 116, 111, 108, 13, 100, 99,
+    112, 109, 46, 118, 130, 39, 102,
+    98, 44, 113, 104, 103, 33, 76,
+    85, 106, 30, 31};
 
 const byte cryptoArr30Fr[32] = {
-	69,  67,  74, 138, 133, 120,  77, 122,
-	121,  68,  65,  63,  73,  80,  83,  82,
-	156,  45,  58,  79,  49,  86,  78,  84,
-	71,  81,  64,  66, 135,  34, 136,  91
-};
+    69, 67, 74, 138, 133, 120, 77, 122,
+    121, 68, 65, 63, 73, 80, 83, 82,
+    156, 45, 58, 79, 49, 86, 78, 84,
+    71, 81, 64, 66, 135, 34, 136, 91};
 
-const byte cryptoArr31Fr[32]= {
-	93,  47,  48,  53,  50,  70, 124,  75,
-	72, 147, 140, 150, 151,  57,  56,  51,
-	107, 139,  55,  89, 131,  37,  54,  88,
-	119,   0,   0,   0,   0,   0,   0,   0
-};
+const byte cryptoArr31Fr[32] = {
+    93, 47, 48, 53, 50, 70, 124, 75,
+    72, 147, 140, 150, 151, 57, 56, 51,
+    107, 139, 55, 89, 131, 37, 54, 88,
+    119, 0, 0, 0, 0, 0, 0, 0};
 
 const byte cryptoArrDefaultDe[32] = {
-	0x20, 0x65, 0x6E, 0x69, 0x73, 0x72, 0x74,
-	0x68, 0x61, 0x75, 0x0D, 0x63, 0x6C, 0x64,
-	0x6D, 0x6F, 0x67, 0x2E, 0x62, 0x66, 0x53,
-	0x2C, 0x77, 0x45, 0x7A, 0x6B, 0x44, 0x76,
-	0x9C, 0x47, 0x1E, 0x1F
-};
+    0x20, 0x65, 0x6E, 0x69, 0x73, 0x72, 0x74,
+    0x68, 0x61, 0x75, 0x0D, 0x63, 0x6C, 0x64,
+    0x6D, 0x6F, 0x67, 0x2E, 0x62, 0x66, 0x53,
+    0x2C, 0x77, 0x45, 0x7A, 0x6B, 0x44, 0x76,
+    0x9C, 0x47, 0x1E, 0x1F};
 
 const byte cryptoArr30De[32] = {
-	0x49, 0x4D, 0x21, 0x42, 0x4C, 0x70, 0x41, 0x52,
-	0x57, 0x4E, 0x48, 0x3F, 0x46, 0x50, 0x55, 0x4B,
-	0x5A, 0x4A, 0x54, 0x31, 0x4F, 0x56, 0x79, 0x3A,
-	0x6A, 0x5B, 0x5D, 0x40, 0x22, 0x2F, 0x30, 0x35
-};
+    0x49, 0x4D, 0x21, 0x42, 0x4C, 0x70, 0x41, 0x52,
+    0x57, 0x4E, 0x48, 0x3F, 0x46, 0x50, 0x55, 0x4B,
+    0x5A, 0x4A, 0x54, 0x31, 0x4F, 0x56, 0x79, 0x3A,
+    0x6A, 0x5B, 0x5D, 0x40, 0x22, 0x2F, 0x30, 0x35};
 
-const byte cryptoArr31De[32]= {
-	0x78, 0x2D, 0x32, 0x82, 0x43, 0x39, 0x33, 0x38,
-	0x7C, 0x27, 0x37, 0x3B, 0x25, 0x28, 0x29, 0x36,
-	0x51, 0x59, 0x71, 0x81, 0x87, 0x88, 0x93, 0,
-	0,    0,    0,    0,    0,    0,    0,    0
-};
+const byte cryptoArr31De[32] = {
+    0x78, 0x2D, 0x32, 0x82, 0x43, 0x39, 0x33, 0x38,
+    0x7C, 0x27, 0x37, 0x3B, 0x25, 0x28, 0x29, 0x36,
+    0x51, 0x59, 0x71, 0x81, 0x87, 0x88, 0x93, 0,
+    0, 0, 0, 0, 0, 0, 0, 0};
 
 const byte *cryptoArrDefault, *cryptoArr30, *cryptoArr31;
 uint16 ctrlChar;
@@ -2049,7 +2036,6 @@ void MortevielleEngine::loadTexts() {
 	}
 
 	ntpFile.close();
-
 }
 
 void MortevielleEngine::loadCFIEC() {
@@ -2076,7 +2062,6 @@ void MortevielleEngine::loadCFIEC() {
 
 	_reloadCFIEC = false;
 }
-
 
 void MortevielleEngine::loadCFIPH() {
 	Common::File f;
@@ -2328,9 +2313,8 @@ void MortevielleEngine::prepareRoom() {
  */
 void MortevielleEngine::drawClock() {
 	const int cv[2][12] = {
-		{  5,  8, 10,  8,  5,  0, -5, -8, -10, -8, -5,  0 },
-		{ -5, -3,  0,  3,  5,  6,  5,  3,   0, -3, -5, -6 }
-	};
+	    {5, 8, 10, 8, 5, 0, -5, -8, -10, -8, -5, 0},
+	    {-5, -3, 0, 3, 5, 6, 5, 3, 0, -3, -5, -6}};
 	const int x = 580;
 	const int y = 123;
 	const int rg = 9;
@@ -2537,8 +2521,7 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 				_coreVar._pctHintFound[6] = '*';
 			else if (mesgId == 179)
 				_coreVar._pctHintFound[10] = '*';
-			}
-			break;
+		} break;
 		case 7: {
 			prepareScreenType3();
 			Common::String tmpStr = getString(mesgId);
@@ -2549,8 +2532,7 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 				_text->displayStr(tmpStr, 252 - size * 3, 86, 50, 3, 5);
 			else
 				_text->displayStr(tmpStr, 144, 86, 50, 3, 5);
-			}
-			break;
+		} break;
 		default:
 			break;
 		}
@@ -2701,23 +2683,19 @@ int MortevielleEngine::getPresenceStats(int &rand, int faithScore, int roomId) {
 		displayAloneText();
 	int retVal = -500;
 	rand = 0;
-	if ( ((roomId == GREEN_ROOM) && (!_roomPresenceLuc) && (!_roomPresenceIda))
-	  || ((roomId == DARKBLUE_ROOM) && (!_roomPresenceGuy) && (!_roomPresenceEva)) )
+	if (((roomId == GREEN_ROOM) && (!_roomPresenceLuc) && (!_roomPresenceIda)) || ((roomId == DARKBLUE_ROOM) && (!_roomPresenceGuy) && (!_roomPresenceEva)))
 		retVal = getPresenceStatsGreenRoom();
 	if ((roomId == PURPLE_ROOM) && (!_purpleRoomPresenceLeo) && (!_juliaRoomPresenceLeo))
 		retVal = getPresenceStatsPurpleRoom();
-	if ( ((roomId == TOILETS) && (!_toiletsPresenceBobMax))
-	  || ((roomId == BATHROOM) && (!_bathRoomPresenceBobMax)) )
+	if (((roomId == TOILETS) && (!_toiletsPresenceBobMax)) || ((roomId == BATHROOM) && (!_bathRoomPresenceBobMax)))
 		retVal = getPresenceStatsToilets();
 	if ((roomId == BLUE_ROOM) && (!_roomPresenceMax))
 		retVal = getPresenceStatsBlueRoom();
-	if ( ((roomId == RED_ROOM) && (!_roomPresenceBob))
-	  || ((roomId == GREEN_ROOM2) && (!_roomPresencePat)))
+	if (((roomId == RED_ROOM) && (!_roomPresenceBob)) || ((roomId == GREEN_ROOM2) && (!_roomPresencePat)))
 		retVal = getPresenceStatsRedRoom();
 	if ((roomId == JULIA_ROOM) && (!_juliaRoomPresenceLeo) && (!_purpleRoomPresenceLeo))
 		retVal = 10;
-	if ( ((roomId == PURPLE_ROOM) && (_juliaRoomPresenceLeo))
-	  || ((roomId == JULIA_ROOM) && (_purpleRoomPresenceLeo)))
+	if (((roomId == PURPLE_ROOM) && (_juliaRoomPresenceLeo)) || ((roomId == JULIA_ROOM) && (_purpleRoomPresenceLeo)))
 		retVal = -400;
 	if (retVal != -500) {
 		retVal += faithScore;
@@ -2766,7 +2744,7 @@ void MortevielleEngine::setPresenceFlags(int roomId) {
  * @remarks	Originally called 'init_nbrepm'
  */
 void MortevielleEngine::initMaxAnswer() {
-	static const byte maxAnswer[9] = { 0, 4, 5, 6, 7, 5, 6, 5, 8 };
+	static const byte maxAnswer[9] = {0, 4, 5, 6, 7, 5, 6, 5, 8};
 
 	for (int idx = 0; idx < 9; ++idx) {
 		_charAnswerMax[idx] = maxAnswer[idx];
@@ -2904,9 +2882,9 @@ void MortevielleEngine::drawPicture() {
 	clearUpperLeftPart();
 	if (_caff > 99) {
 		draw(60, 33);
-		_screenSurface->drawBox(118, 32, 291, 121, 15);         // Medium box
+		_screenSurface->drawBox(118, 32, 291, 121, 15); // Medium box
 	} else if (_caff > 69) {
-		draw(112, 48);           // Heads
+		draw(112, 48); // Heads
 		_screenSurface->drawBox(222, 47, 155, 91, 15);
 	} else {
 		draw(0, 12);
@@ -3065,13 +3043,13 @@ void MortevielleEngine::getReadDescription(int objId) {
 	_crep = 997;
 
 	switch (objId) {
-	case 114 :
+	case 114:
 		_crep = 109;
 		break;
-	case 110 :
+	case 110:
 		_crep = 107;
 		break;
-	case 158 :
+	case 158:
 		_crep = 113;
 		break;
 	case 152:
@@ -3083,7 +3061,7 @@ void MortevielleEngine::getReadDescription(int objId) {
 	case 100:
 	case 157:
 	case 160:
-	case 161 :
+	case 161:
 		displayNarrativePicture(_caff, objId);
 		break;
 	default:
@@ -3298,7 +3276,6 @@ void MortevielleEngine::setCoordinates(int sx) {
 	int sy, ix, iy;
 	int ib;
 
-
 	_num = 0;
 	_crep = 999;
 	int a = 0;
@@ -3441,11 +3418,11 @@ void MortevielleEngine::testKeyboard() {
 int MortevielleEngine::gettKeyPressed() {
 	char ch = getChar();
 
-	switch (ch)  {
-	case '\23' :
+	switch (ch) {
+	case '\23':
 		_soundOff = !_soundOff;
 		break;
-	case '\26' :
+	case '\26':
 		if ((_x26KeyCount == 1) || (_x26KeyCount == 2)) {
 			decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 			++_x26KeyCount;
@@ -3453,7 +3430,7 @@ int MortevielleEngine::gettKeyPressed() {
 			return 61;
 		}
 		break;
-	case '\33' :
+	case '\33':
 		if (keyPressed())
 			ch = getChar();
 		break;

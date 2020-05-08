@@ -23,8 +23,8 @@
 #ifndef IMAGE_CODECS_CINEPAK_H
 #define IMAGE_CODECS_CINEPAK_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "graphics/pixelformat.h"
 
 #include "image/codecs/codec.h"
@@ -77,7 +77,10 @@ public:
 	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 	bool containsPalette() const { return _ditherPalette != 0; }
-	const byte *getPalette() { _dirtyPalette = false; return _ditherPalette; }
+	const byte *getPalette() {
+		_dirtyPalette = false;
+		return _ditherPalette;
+	}
 	bool hasDirtyPalette() const { return _dirtyPalette; }
 	bool canDither(DitherType type) const;
 	void setDither(DitherType type, const byte *palette);

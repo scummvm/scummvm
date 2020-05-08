@@ -22,13 +22,13 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/networkreadstream.h"
 #include "common/debug.h"
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/timer.h"
+#include <curl/curl.h>
 
 namespace Common {
 
@@ -38,7 +38,7 @@ DECLARE_SINGLETON(Networking::ConnectionManager);
 
 namespace Networking {
 
-ConnectionManager::ConnectionManager(): _multi(0), _timerStarted(false), _frame(0) {
+ConnectionManager::ConnectionManager() : _multi(0), _timerStarted(false), _frame(0) {
 	curl_global_init(CURL_GLOBAL_ALL);
 	_multi = curl_multi_init();
 }
@@ -108,12 +108,12 @@ const char *ConnectionManager::getCaCertPath() {
 	} state = kNotInitialized;
 
 	if (state == kNotInitialized) {
-		Common::FSNode node(DATA_PATH"/cacert.pem");
+		Common::FSNode node(DATA_PATH "/cacert.pem");
 		state = node.exists() ? kFileExists : kFileNotFound;
 	}
 
 	if (state == kFileExists) {
-		return DATA_PATH"/cacert.pem";
+		return DATA_PATH "/cacert.pem";
 	} else {
 		return nullptr;
 	}
@@ -199,7 +199,8 @@ void ConnectionManager::interateRequests() {
 }
 
 void ConnectionManager::processTransfers() {
-	if (!_multi) return;
+	if (!_multi)
+		return;
 
 	//check libcurl's transfers and notify requests of messages from queue (transfer completion or failure)
 	int transfersRunning;
@@ -224,4 +225,4 @@ void ConnectionManager::processTransfers() {
 	}
 }
 
-} // End of namespace Cloud
+} // namespace Networking

@@ -33,7 +33,7 @@ namespace OneDrive {
 
 class OneDriveStorage;
 
-class OneDriveListDirectoryRequest: public Networking::Request {
+class OneDriveListDirectoryRequest : public Networking::Request {
 	Common::String _requestedPath;
 	bool _requestedRecursive;
 	OneDriveStorage *_storage;
@@ -51,6 +51,7 @@ class OneDriveListDirectoryRequest: public Networking::Request {
 	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
 	void makeRequest(Common::String url);
 	void finishListing(Common::Array<StorageFile> &files);
+
 public:
 	OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
 	virtual ~OneDriveListDirectoryRequest();

@@ -20,30 +20,29 @@
  *
  */
 
-
 #include "backends/graphics/opengl/opengl-graphics.h"
-#include "backends/graphics/opengl/texture.h"
-#include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/graphics/opengl/pipelines/fixed.h"
+#include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/graphics/opengl/pipelines/shader.h"
 #include "backends/graphics/opengl/shader.h"
+#include "backends/graphics/opengl/texture.h"
 
+#include "common/algorithm.h"
 #include "common/array.h"
+#include "common/file.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "common/algorithm.h"
-#include "common/file.h"
-#include "gui/debugger.h"
 #include "engines/engine.h"
+#include "gui/debugger.h"
 #ifdef USE_OSD
-#include "common/tokenizer.h"
 #include "common/rect.h"
+#include "common/tokenizer.h"
 #endif
 
 #include "graphics/conversion.h"
 #ifdef USE_OSD
-#include "graphics/fontman.h"
 #include "graphics/font.h"
+#include "graphics/fontman.h"
 #endif
 
 #ifdef USE_PNG
@@ -68,10 +67,11 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
       _cursorKeyColor(0), _cursorDontScale(false), _cursorPaletteEnabled(false)
 #ifdef USE_OSD
-      , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
+      ,
+      _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
       _osdIconSurface(nullptr)
 #endif
-    {
+{
 	memset(_gamePalette, 0, sizeof(_gamePalette));
 	g_context.reset();
 }
@@ -155,9 +155,8 @@ bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) const {
 namespace {
 
 const OSystem::GraphicsMode glGraphicsModes[] = {
-	{ "opengl",  _s("OpenGL"),                GFX_OPENGL  },
-	{ nullptr, nullptr, 0 }
-};
+    {"opengl", _s("OpenGL"), GFX_OPENGL},
+    {nullptr, nullptr, 0}};
 
 } // End of anonymous namespace
 
@@ -234,13 +233,12 @@ Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats()
 
 namespace {
 const OSystem::GraphicsMode glStretchModes[] = {
-	{"center", _s("Center"), STRETCH_CENTER},
-	{"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
-	{"fit", _s("Fit to window"), STRETCH_FIT},
-	{"stretch", _s("Stretch to window"), STRETCH_STRETCH},
-	{"fit_force_aspect", _s("Fit to window (4:3)"), STRETCH_FIT_FORCE_ASPECT},
-	{nullptr, nullptr, 0}
-};
+    {"center", _s("Center"), STRETCH_CENTER},
+    {"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
+    {"fit", _s("Fit to window"), STRETCH_FIT},
+    {"stretch", _s("Stretch to window"), STRETCH_STRETCH},
+    {"fit_force_aspect", _s("Fit to window (4:3)"), STRETCH_FIT_FORCE_ASPECT},
+    {nullptr, nullptr, 0}};
 
 } // End of anonymous namespace
 
@@ -295,8 +293,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 	uint transactionError = OSystem::kTransactionSuccess;
 
 	bool setupNewGameScreen = false;
-	if (   _oldState.gameWidth  != _currentState.gameWidth
-	    || _oldState.gameHeight != _currentState.gameHeight) {
+	if (_oldState.gameWidth != _currentState.gameWidth || _oldState.gameHeight != _currentState.gameHeight) {
 		setupNewGameScreen = true;
 	}
 
@@ -316,7 +313,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 
 	do {
 		const uint desiredAspect = getDesiredGameAspectRatio();
-		const uint requestedWidth  = _currentState.gameWidth;
+		const uint requestedWidth = _currentState.gameWidth;
 		const uint requestedHeight = intToFrac(requestedWidth) / desiredAspect;
 
 		if (!loadVideoMode(requestedWidth, requestedHeight,
@@ -325,20 +322,18 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 #else
 		                   Graphics::PixelFormat::createFormatCLUT8()
 #endif
-		                  )
-		   // HACK: This is really nasty but we don't have any guarantees of
-		   // a context existing before, which means we don't know the maximum
-		   // supported texture size before this. Thus, we check whether the
-		   // requested game resolution is supported over here.
-		   || (   _currentState.gameWidth  > (uint)g_context.maxTextureSize
-		       || _currentState.gameHeight > (uint)g_context.maxTextureSize)) {
+		                   )
+		    // HACK: This is really nasty but we don't have any guarantees of
+		    // a context existing before, which means we don't know the maximum
+		    // supported texture size before this. Thus, we check whether the
+		    // requested game resolution is supported over here.
+		    || (_currentState.gameWidth > (uint)g_context.maxTextureSize || _currentState.gameHeight > (uint)g_context.maxTextureSize)) {
 			if (_transactionMode == kTransactionActive) {
 				// Try to setup the old state in case its valid and is
 				// actually different from the new one.
 				if (_oldState.valid && _oldState != _currentState) {
 					// Give some hints on what failed to set up.
-					if (   _oldState.gameWidth  != _currentState.gameWidth
-					    || _oldState.gameHeight != _currentState.gameHeight) {
+					if (_oldState.gameWidth != _currentState.gameWidth || _oldState.gameHeight != _currentState.gameHeight) {
 						transactionError |= OSystem::kTransactionSizeChangeFailed;
 					}
 
@@ -480,15 +475,11 @@ void OpenGLGraphicsManager::updateScreen() {
 		debugger->onFrame();
 
 	// We only update the screen when there actually have been any changes.
-	if (   !_forceRedraw
-		&& !_cursorNeedsRedraw
-	    && !_gameScreen->isDirty()
-	    && !(_overlayVisible && _overlay->isDirty())
-	    && !(_cursorVisible && _cursor && _cursor->isDirty())
+	if (!_forceRedraw && !_cursorNeedsRedraw && !_gameScreen->isDirty() && !(_overlayVisible && _overlay->isDirty()) && !(_cursorVisible && _cursor && _cursor->isDirty())
 #ifdef USE_OSD
 	    && !_osdMessageSurface && !_osdIconSurface
 #endif
-	    ) {
+	) {
 		return;
 	}
 
@@ -528,9 +519,9 @@ void OpenGLGraphicsManager::updateScreen() {
 		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
 		g_context.getActivePipeline()->drawTexture(_cursor->getGLTexture(),
-		                         _cursorX - _cursorHotspotXScaled,
-		                         _cursorY - _cursorHotspotYScaled,
-		                         _cursorWidthScaled, _cursorHeightScaled);
+		                                           _cursorX - _cursorHotspotXScaled,
+		                                           _cursorY - _cursorHotspotYScaled,
+		                                           _cursorWidthScaled, _cursorHeightScaled);
 	}
 
 	if (!_overlayVisible) {
@@ -598,7 +589,7 @@ void OpenGLGraphicsManager::unlockScreen() {
 	_gameScreen->flagDirty();
 }
 
-void OpenGLGraphicsManager::setFocusRectangle(const Common::Rect& rect) {
+void OpenGLGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
 }
 
 void OpenGLGraphicsManager::clearFocusRectangle() {
@@ -661,9 +652,9 @@ void multiplyColorWithAlpha(const byte *src, byte *dst, const uint w, const uint
 				srcFmt.colorToARGB(color, a, r, g, b);
 
 				if (a != 0xFF) {
-					r = (int) r * a / 255;
-					g = (int) g * a / 255;
-					b = (int) b * a / 255;
+					r = (int)r * a / 255;
+					g = (int)g * a / 255;
+					b = (int)b * a / 255;
 				}
 
 				*(DstColor *)dst = dstFmt.ARGBToColor(a, r, g, b);
@@ -748,18 +739,18 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 
 		if (dst->format.bytesPerPixel == 2) {
 			if (inputFormat.bytesPerPixel == 2) {
-				multiplyColorWithAlpha<uint16, uint16>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				multiplyColorWithAlpha<uint16, uint16>((const byte *)buf, (byte *)dst->getPixels(), w, h,
 				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			} else if (inputFormat.bytesPerPixel == 4) {
-				multiplyColorWithAlpha<uint32, uint16>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				multiplyColorWithAlpha<uint32, uint16>((const byte *)buf, (byte *)dst->getPixels(), w, h,
 				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			}
 		} else {
 			if (inputFormat.bytesPerPixel == 2) {
-				multiplyColorWithAlpha<uint16, uint32>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				multiplyColorWithAlpha<uint16, uint32>((const byte *)buf, (byte *)dst->getPixels(), w, h,
 				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			} else if (inputFormat.bytesPerPixel == 4) {
-				multiplyColorWithAlpha<uint32, uint32>((const byte *) buf, (byte *) dst->getPixels(), w, h,
+				multiplyColorWithAlpha<uint32, uint32>((const byte *)buf, (byte *)dst->getPixels(), w, h,
 				                                       inputFormat, dst->format, srcPitch, dst->pitch, keycolor);
 			}
 		}
@@ -817,7 +808,7 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	}
 
 	// Clip the rect
-	width  = MIN<uint>(width,  _gameDrawRect.width());
+	width = MIN<uint>(width, _gameDrawRect.width());
 	height = MIN<uint>(height, _gameDrawRect.height());
 
 	delete _osdMessageSurface;
@@ -854,7 +845,7 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 
 #ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
-			ConfMan.getBool("tts_enabled", "scummvm")) {
+	    ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan)
 			ttsMan->say(_osdMessageNextData);
@@ -928,16 +919,15 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height, 
 	// possible and then scale it to the physical display size. This sounds
 	// bad but actually all recent chips should support full HD resolution
 	// anyway. Thus, it should not be a real issue for modern hardware.
-	if (   overlayWidth  > (uint)g_context.maxTextureSize
-	    || overlayHeight > (uint)g_context.maxTextureSize) {
+	if (overlayWidth > (uint)g_context.maxTextureSize || overlayHeight > (uint)g_context.maxTextureSize) {
 		const frac_t outputAspect = intToFrac(_windowWidth) / _windowHeight;
 
 		if (outputAspect > (frac_t)FRAC_ONE) {
-			overlayWidth  = g_context.maxTextureSize;
+			overlayWidth = g_context.maxTextureSize;
 			overlayHeight = intToFrac(overlayWidth) / outputAspect;
 		} else {
 			overlayHeight = g_context.maxTextureSize;
-			overlayWidth  = fracToInt(overlayHeight * outputAspect);
+			overlayWidth = fracToInt(overlayHeight * outputAspect);
 		}
 	}
 
@@ -1154,8 +1144,8 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glType = GL_UNSIGNED_SHORT_4_4_4_4;
 		return true;
 #if !USE_FORCED_GLES && !USE_FORCED_GLES2
-	// The formats below are not supported by every GLES implementation.
-	// Thus, we do not mark them as supported when a GLES context is setup.
+		// The formats below are not supported by every GLES implementation.
+		// Thus, we do not mark them as supported when a GLES context is setup.
 	} else if (isGLESContext()) {
 		return false;
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -1281,20 +1271,20 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 		const frac_t screenScaleFactorY = intToFrac(_gameDrawRect.height()) / _gameScreen->getHeight();
 
 		_cursorHotspotXScaled = fracToInt(_cursorHotspotXScaled * screenScaleFactorX);
-		_cursorWidthScaled    = fracToInt(_cursorWidthScaled    * screenScaleFactorX);
+		_cursorWidthScaled = fracToInt(_cursorWidthScaled * screenScaleFactorX);
 
 		_cursorHotspotYScaled = fracToInt(_cursorHotspotYScaled * screenScaleFactorY);
-		_cursorHeightScaled   = fracToInt(_cursorHeightScaled   * screenScaleFactorY);
+		_cursorHeightScaled = fracToInt(_cursorHeightScaled * screenScaleFactorY);
 	} else {
 		const frac_t screenScaleFactorX = intToFrac(90) / _xdpi;
 		const frac_t screenScaleFactorY = intToFrac(90) / _ydpi;
 
 		// FIXME: Replace this with integer maths
 		_cursorHotspotXScaled /= fracToDouble(screenScaleFactorX);
-		_cursorWidthScaled    /= fracToDouble(screenScaleFactorX);
+		_cursorWidthScaled /= fracToDouble(screenScaleFactorX);
 
 		_cursorHotspotYScaled /= fracToDouble(screenScaleFactorY);
-		_cursorHeightScaled   /= fracToDouble(screenScaleFactorY);
+		_cursorHeightScaled /= fracToDouble(screenScaleFactorY);
 	}
 }
 
@@ -1305,7 +1295,7 @@ const Graphics::Font *OpenGLGraphicsManager::getFontOSD() const {
 #endif
 
 bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const {
-	const uint width  = _windowWidth;
+	const uint width = _windowWidth;
 	const uint height = _windowHeight;
 
 	// A line of a BMP image must have a size divisible by 4.
@@ -1315,7 +1305,7 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 	// usual way of computing the padding bytes required).
 	// GL_PACK_ALIGNMENT is 4, so this line padding is required for PNG too
 	const uint linePaddingSize = width % 4;
-	const uint lineSize        = width * 3 + linePaddingSize;
+	const uint lineSize = width * 3 + linePaddingSize;
 
 	Common::DumpFile out;
 	if (!out.open(filename)) {

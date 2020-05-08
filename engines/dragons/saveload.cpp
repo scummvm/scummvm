@@ -23,13 +23,12 @@
 
 #include "graphics/thumbnail.h"
 
-#include "dragons/dragons.h"
+#include "dragons/cursor.h"
 #include "dragons/dragonflg.h"
 #include "dragons/dragonini.h"
+#include "dragons/dragons.h"
 #include "dragons/dragonvar.h"
 #include "dragons/scene.h"
-#include "dragons/cursor.h"
-
 
 namespace Dragons {
 
@@ -51,7 +50,7 @@ kReadSaveHeaderError DragonsEngine::readSaveHeader(Common::SeekableReadStream *i
 	}
 
 	// Not used yet, reserved for future usage
-//	header.gameID = in->readByte();
+	//	header.gameID = in->readByte();
 	header.flags = in->readUint32LE();
 
 	header.saveDate = in->readUint32LE();
@@ -128,7 +127,7 @@ bool DragonsEngine::loadgame(const char *filename) {
 	uint16 newSceneId = (uint16)in->readByte();
 	_dragonFLG->loadState(in);
 	//_dragonFLG->set(165, true); //TODO check why this is needed to load save games properly.
-	_dragonFLG->set(125, false);  //TODO check why this is needed to load save games properly.
+	_dragonFLG->set(125, false); //TODO check why this is needed to load save games properly.
 	_dragonVAR->reset();
 
 	_dragonINIResource->reset();
@@ -162,4 +161,4 @@ Common::String DragonsEngine::getSavegameFilename(const Common::String &target, 
 	return Common::String::format("%s.%03d", target.c_str(), num);
 }
 
-} // End of namespace Illusions
+} // namespace Dragons

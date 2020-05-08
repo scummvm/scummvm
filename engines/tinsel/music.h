@@ -25,8 +25,8 @@
 #ifndef TINSEL_MUSIC_H
 #define TINSEL_MUSIC_H
 
-#include "audio/midiplayer.h"
 #include "audio/audiostream.h"
+#include "audio/midiplayer.h"
 #include "audio/mixer.h"
 #include "common/mutex.h"
 
@@ -41,33 +41,33 @@ public:
 		_midiBuffer.size = 0;
 	}
 
-	bool PlayMidiSequence(		// Plays the specified MIDI sequence through the sound driver
-		uint32 dwFileOffset,		// handle of MIDI sequence data
-		bool bLoop);			// Whether to loop the sequence
+	bool PlayMidiSequence(   // Plays the specified MIDI sequence through the sound driver
+	    uint32 dwFileOffset, // handle of MIDI sequence data
+	    bool bLoop);         // Whether to loop the sequence
 
-	bool MidiPlaying();		// Returns TRUE if a Midi tune is currently playing
+	bool MidiPlaying(); // Returns TRUE if a Midi tune is currently playing
 
-	bool StopMidi();		// Stops any currently playing midi
+	bool StopMidi(); // Stops any currently playing midi
 
-	void SetMidiVolume(		// Sets the volume of the MIDI music. Returns the old volume
-		int vol);		// new volume - 0..MAXMIDIVOL
+	void SetMidiVolume( // Sets the volume of the MIDI music. Returns the old volume
+	    int vol);       // new volume - 0..MAXMIDIVOL
 
 	int GetMidiVolume();
 
 	void OpenMidiFiles();
 	void DeleteMidiBuffer();
 
-	void CurrentMidiFacts(SCNHANDLE	*pMidi, bool *pLoop);
-	void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop);
+	void CurrentMidiFacts(SCNHANDLE *pMidi, bool *pLoop);
+	void RestoreMidiFacts(SCNHANDLE Midi, bool Loop);
 
 	int GetTrackNumber(SCNHANDLE hMidi);
 	SCNHANDLE GetTrackOffset(int trackNumber);
 
 	uint8 *GetMidiBuffer() { return _midiBuffer.pDat; }
 
-	uint8* ResizeMidiBuffer(uint32 newSize) {
+	uint8 *ResizeMidiBuffer(uint32 newSize) {
 		if (_midiBuffer.size < newSize) {
-			_midiBuffer.pDat = (byte*)realloc(_midiBuffer.pDat, newSize);
+			_midiBuffer.pDat = (byte *)realloc(_midiBuffer.pDat, newSize);
 			assert(_midiBuffer.pDat);
 		}
 
@@ -79,15 +79,15 @@ public:
 private:
 	// sound buffer structure used for MIDI data and samples
 	struct SOUND_BUFFER {
-		uint8 *pDat;		// pointer to actual buffer
-		uint32 size;		// size of the buffer
+		uint8 *pDat; // pointer to actual buffer
+		uint32 size; // size of the buffer
 	};
 
 	// MIDI buffer
 	SOUND_BUFFER _midiBuffer;
 
-	SCNHANDLE	_currentMidi;
-	bool		_currentLoop;
+	SCNHANDLE _currentMidi;
+	bool _currentLoop;
 
 	// We allocate 155 entries because that's the maximum, used in the SCN version
 	SCNHANDLE _midiOffsets[155];
@@ -101,7 +101,7 @@ public:
 
 	void playMIDI(uint32 size, bool loop);
 
-//	void stop();
+	//	void stop();
 	void pause() override;
 	void resume() override;
 
@@ -110,7 +110,7 @@ public:
 
 	// The original sets the "sequence timing" to 109 Hz, whatever that
 	// means. The default is 120.
-	uint32 getBaseTempo()	{ return _driver ? (109 * _driver->getBaseTempo()) / 120 : 0; }
+	uint32 getBaseTempo() { return _driver ? (109 * _driver->getBaseTempo()) / 120 : 0; }
 
 	bool _milesAudioMode;
 

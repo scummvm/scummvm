@@ -61,6 +61,7 @@ public:
 	void handleEvent(const Common::Event &) override;
 
 	void clearState();
+
 protected:
 	void draw(Graphics::ManagedSurface &) override;
 
@@ -92,6 +93,6 @@ private:
 	GameWidgetCallback *_callback;
 };
 
-}
+} // namespace MutationOfJB
 
 #endif

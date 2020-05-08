@@ -23,18 +23,18 @@
 #ifndef SCAREEXT_PROTOTYPES_H
 #define SCAREEXT_PROTOTYPES_H
 
-#include "glk/adrift/scare.h"
 #include "common/stream.h"
+#include "glk/adrift/scare.h"
 
 namespace Glk {
 namespace Adrift {
 
 /* True and false, unless already defined. */
 #ifndef FALSE
-# define FALSE 0
+#define FALSE 0
 #endif
 #ifndef TRUE
-# define TRUE (!FALSE)
+#define TRUE (!FALSE)
 #endif
 
 /* Alias typedef for a test script. */
@@ -54,11 +54,11 @@ typedef struct sx_test_descriptor_s {
  */
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95)
 extern void sx_trace(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
+    __attribute__((__format__(__printf__, 1, 2)));
 extern void sx_error(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
+    __attribute__((__format__(__printf__, 1, 2)));
 extern void sx_fatal(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
+    __attribute__((__format__(__printf__, 1, 2)));
 #else
 extern void sx_trace(const sc_char *format, ...);
 extern void sx_error(const sc_char *format, ...);
@@ -68,7 +68,7 @@ extern void *sx_malloc(size_t size);
 extern void *sx_realloc(void *pointer, size_t size);
 extern void sx_free(void *pointer);
 extern Common::SeekableReadStream *sx_fopen(const sc_char *name,
-        const sc_char *extension, const sc_char *mode);
+                                            const sc_char *extension, const sc_char *mode);
 extern sc_char *sx_trim_string(sc_char *string);
 extern sc_char *sx_normalize_string(sc_char *string);
 

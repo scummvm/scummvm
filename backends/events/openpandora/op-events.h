@@ -34,7 +34,6 @@ public:
 	OPEventSource();
 
 protected:
-
 	/**
 	 * Button state for L button modifier
 	 */

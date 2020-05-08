@@ -20,12 +20,12 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "xeen/worldofxeen/worldofxeen_menu.h"
-#include "xeen/worldofxeen/worldofxeen.h"
+#include "common/scummsys.h"
 #include "xeen/dialogs/credits_screen.h"
 #include "xeen/dialogs/dialogs_difficulty.h"
 #include "xeen/resources.h"
+#include "xeen/worldofxeen/worldofxeen.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
@@ -54,8 +54,7 @@ void MainMenuContainer::show() {
 	delete menu;
 }
 
-MainMenuContainer::MainMenuContainer(const char *spritesName1, const char *spritesName2, const char *spritesName3) :
-		_animateCtr(0), _dialog(nullptr) {
+MainMenuContainer::MainMenuContainer(const char *spritesName1, const char *spritesName2, const char *spritesName3) : _animateCtr(0), _dialog(nullptr) {
 	g_vm->_files->setGameCc(g_vm->getGameID() == GType_Clouds ? 0 : 1);
 
 	_backgroundSprites.resize(1 + (spritesName2 ? 1 : 0) + (spritesName3 ? 1 : 0));
@@ -402,10 +401,14 @@ void DarkSideMenuDialog::draw() {
 
 	SpriteResource kludgeSprites("kludge.int");
 	SpriteResource title2Sprites[8] = {
-		SpriteResource("title2b.int"), SpriteResource("title2c.int"),
-		SpriteResource("title2d.int"), SpriteResource("title2e.int"),
-		SpriteResource("title2f.int"), SpriteResource("title2g.int"),
-		SpriteResource("title2h.int"), SpriteResource("title2i.int"),
+	    SpriteResource("title2b.int"),
+	    SpriteResource("title2c.int"),
+	    SpriteResource("title2d.int"),
+	    SpriteResource("title2e.int"),
+	    SpriteResource("title2f.int"),
+	    SpriteResource("title2g.int"),
+	    SpriteResource("title2h.int"),
+	    SpriteResource("title2i.int"),
 	};
 
 	screen.loadBackground("title2b.raw");
@@ -520,11 +523,7 @@ OtherOptionsDialog::OtherOptionsDialog(MainMenuContainer *owner) : MenuContainer
 	Windows &windows = *g_vm->_windows;
 	Window &w = windows[GAME_WINDOW];
 
-	int height = (g_vm->getGameID() == GType_WorldOfXeen ? 25 : 0)
-		+ (g_vm->getGameID() == GType_WorldOfXeen && g_vm->_gameWon[0] ? 25 : 0)
-		+ (g_vm->_gameWon[1] ? 25 : 0)
-		+ (g_vm->_gameWon[2] ? 25 : 0)
-		+ 75;
+	int height = (g_vm->getGameID() == GType_WorldOfXeen ? 25 : 0) + (g_vm->getGameID() == GType_WorldOfXeen && g_vm->_gameWon[0] ? 25 : 0) + (g_vm->_gameWon[1] ? 25 : 0) + (g_vm->_gameWon[2] ? 25 : 0) + 75;
 
 	w.setBounds(Common::Rect(72, 25, 248, 25 + height));
 	w.open();
@@ -584,8 +583,8 @@ void OtherOptionsDialog::draw() {
 
 	w.frame();
 	w.writeString(Common::String::format(Res.OPTIONS_MENU,
-		Res.GAME_NAMES[g_vm->getGameID() == GType_WorldOfXeen ? 2 : 1],
-		w.getBounds().height() - 33, 1993));
+	                                     Res.GAME_NAMES[g_vm->getGameID() == GType_WorldOfXeen ? 2 : 1],
+	                                     w.getBounds().height() - 33, 1993));
 	drawButtons(&w);
 }
 

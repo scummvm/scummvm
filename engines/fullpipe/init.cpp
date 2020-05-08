@@ -22,10 +22,10 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objects.h"
 #include "fullpipe/gameloader.h"
-#include "fullpipe/objectnames.h"
 #include "fullpipe/input.h"
+#include "fullpipe/objectnames.h"
+#include "fullpipe/objects.h"
 
 #include "fullpipe/constants.h"
 
@@ -157,30 +157,30 @@ void FullpipeEngine::initCursors() {
 	CursorInfo crs;
 	Scene *inv = accessScene(SC_INV);
 
-	addCursor(&crs, inv, PIC_CSR_DEFAULT,     15,  1, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_DEFAULT, 15, 1, 10, 10);
 	addCursor(&crs, inv, PIC_CSR_DEFAULT_INV, 18, 18, 23, 23);
-	addCursor(&crs, inv, PIC_CSR_ITN,         11, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ITN_RED,     11, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ITN_GREEN,   11, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ITN_INV,     23, 17, 23, 17);
-	addCursor(&crs, inv, PIC_CSR_GOU,         15, 17, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_GOD,         15,  1, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_GOL,         26,  1, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_GOR,         15,  1, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_GOFAR_L,      1,  1, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_GOFAR_R,     39,  1, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE1,     12, 24, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE2,     11, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE2_D,   22, 15, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE3,     11, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE4,     18, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE5,     23, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE6,     11, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE6_D,    0,  0, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE7,     21, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE7_D,    7, 20, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_ARCADE8,     23, 11, 10, 10);
-	addCursor(&crs, inv, PIC_CSR_LIFT,         6, 13, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ITN, 11, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ITN_RED, 11, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ITN_GREEN, 11, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ITN_INV, 23, 17, 23, 17);
+	addCursor(&crs, inv, PIC_CSR_GOU, 15, 17, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_GOD, 15, 1, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_GOL, 26, 1, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_GOR, 15, 1, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_GOFAR_L, 1, 1, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_GOFAR_R, 39, 1, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE1, 12, 24, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE2, 11, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE2_D, 22, 15, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE3, 11, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE4, 18, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE5, 23, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE6, 11, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE6_D, 0, 0, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE7, 21, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE7_D, 7, 20, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_ARCADE8, 23, 11, 10, 10);
+	addCursor(&crs, inv, PIC_CSR_LIFT, 6, 13, 10, 10);
 
 	getGameLoaderInputController()->setCursorMode(0);
 }

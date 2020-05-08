@@ -30,8 +30,10 @@ namespace Titanic {
 class CTVOnBar : public CPlaceHolder {
 	DECLARE_MESSAGE_MAP;
 	bool VisibleMsg(CVisibleMsg *msg);
+
 private:
 	Point _tvPos;
+
 public:
 	CLASSDEF;
 

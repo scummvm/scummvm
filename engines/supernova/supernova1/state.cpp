@@ -163,12 +163,12 @@ static Common::String timeToString(int msec) {
 	msec /= 1000;
 	s[7] = msec % 10 + '0';
 	msec /= 10;
-	s[6] = msec %  6 + '0';
-	msec /=  6;
+	s[6] = msec % 6 + '0';
+	msec /= 6;
 	s[4] = msec % 10 + '0';
 	msec /= 10;
-	s[3] = msec %  6 + '0';
-	msec /=  6;
+	s[3] = msec % 6 + '0';
+	msec /= 6;
 	s[1] = msec % 10 + '0';
 	msec /= 10;
 	if (msec)
@@ -178,7 +178,7 @@ static Common::String timeToString(int msec) {
 }
 
 GameManager1::GameManager1(SupernovaEngine *vm, Sound *sound)
-	: GameManager(vm, sound) {
+    : GameManager(vm, sound) {
 	initRooms();
 	changeRoom(INTRO1);
 	initState();
@@ -246,7 +246,7 @@ void GameManager1::initState() {
 	GameManager::initState();
 	_time = ticksToMsec(916364); // 2 pm
 	_state._timeSleep = 0;
-	_state._timeAlarm = ticksToMsec(458182);    // 7 am
+	_state._timeAlarm = ticksToMsec(458182); // 7 am
 	_state._eventTime = kMaxTimerValue;
 	_state._eventCallback = kNoFn;
 	_state._arrivalDaysLeft = 2840;
@@ -406,22 +406,20 @@ void GameManager1::corridorOnEntrance() {
 
 void GameManager1::telomat(int nr) {
 	static Common::String name[8] = {
-		"DR. ALAB HANSI",
-		"ALAB HANSI",
-		"SAVAL LUN",
-		"x",
-		"PROF. DR. UGNUL TSCHABB",
-		"UGNUL TSCHABB",
-		"ALGA HURZ LI",
-		"x"
-	};
+	    "DR. ALAB HANSI",
+	    "ALAB HANSI",
+	    "SAVAL LUN",
+	    "x",
+	    "PROF. DR. UGNUL TSCHABB",
+	    "UGNUL TSCHABB",
+	    "ALGA HURZ LI",
+	    "x"};
 
 	static Common::String name2[4] = {
-		"Alab Hansi",
-		"Saval Lun",
-		"Ugnul Tschabb",
-		"Alga Hurz Li"
-	};
+	    "Alab Hansi",
+	    "Saval Lun",
+	    "Ugnul Tschabb",
+	    "Alga Hurz Li"};
 
 	int dial1[4];
 	dial1[0] = kStringTelomat1;
@@ -543,7 +541,7 @@ void GameManager1::telomat(int nr) {
 			_guiEnabled = true;
 			drawMapExits();
 			return;
-			}
+		}
 		case Common::KEYCODE_1:
 		case Common::KEYCODE_3:
 		case Common::KEYCODE_4:
@@ -648,23 +646,11 @@ void GameManager1::busted(int i) {
 }
 
 void GameManager1::novaScroll() {
-	static byte planet_f[6] = {0xeb,0xec,0xf0,0xed,0xf1,0xf2};
-	static byte nova_f[13] = {0xea,0xe9,0xf5,0xf3,0xf7,0xf4,0xf6,
-		0xf9,0xfb,0xfc,0xfd,0xfe,0xfa};
+	static byte planet_f[6] = {0xeb, 0xec, 0xf0, 0xed, 0xf1, 0xf2};
+	static byte nova_f[13] = {0xea, 0xe9, 0xf5, 0xf3, 0xf7, 0xf4, 0xf6,
+	                          0xf9, 0xfb, 0xfc, 0xfd, 0xfe, 0xfa};
 	static byte rgb[65][3] = {
-		{ 5, 0, 0},{10, 0, 0},{15, 0, 0},{20, 0, 0},{25, 0, 0},
-		{30, 0, 0},{35, 0, 0},{40, 0, 0},{45, 0, 0},{50, 0, 0},
-		{55, 0, 0},{60, 0, 0},{63,10, 5},{63,20,10},{63,30,15},
-		{63,40,20},{63,50,25},{63,60,30},{63,63,33},{63,63,30},
-		{63,63,25},{63,63,20},{63,63,15},{63,63,10},{60,60,15},
-		{57,57,20},{53,53,25},{50,50,30},{47,47,35},{43,43,40},
-		{40,40,45},{37,37,50},{33,33,53},{30,30,56},{27,27,59},
-		{23,23,61},{20,20,63},{21,25,63},{22,30,63},{25,35,63},
-		{30,40,63},{35,45,63},{40,50,63},{45,55,63},{50,60,63},
-		{55,63,63},{59,63,63},{63,63,63},{63,60,63},{60,50,60},
-		{55,40,55},{50,30,50},{45,20,45},{40,10,40},{42,15,42},
-		{45,20,45},{47,25,47},{50,30,50},{52,35,52},{55,40,55},
-		{57,45,57},{60,50,60},{62,55,62},{63,60,63},{63,63,63}};
+	    {5, 0, 0}, {10, 0, 0}, {15, 0, 0}, {20, 0, 0}, {25, 0, 0}, {30, 0, 0}, {35, 0, 0}, {40, 0, 0}, {45, 0, 0}, {50, 0, 0}, {55, 0, 0}, {60, 0, 0}, {63, 10, 5}, {63, 20, 10}, {63, 30, 15}, {63, 40, 20}, {63, 50, 25}, {63, 60, 30}, {63, 63, 33}, {63, 63, 30}, {63, 63, 25}, {63, 63, 20}, {63, 63, 15}, {63, 63, 10}, {60, 60, 15}, {57, 57, 20}, {53, 53, 25}, {50, 50, 30}, {47, 47, 35}, {43, 43, 40}, {40, 40, 45}, {37, 37, 50}, {33, 33, 53}, {30, 30, 56}, {27, 27, 59}, {23, 23, 61}, {20, 20, 63}, {21, 25, 63}, {22, 30, 63}, {25, 35, 63}, {30, 40, 63}, {35, 45, 63}, {40, 50, 63}, {45, 55, 63}, {50, 60, 63}, {55, 63, 63}, {59, 63, 63}, {63, 63, 63}, {63, 60, 63}, {60, 50, 60}, {55, 40, 55}, {50, 30, 50}, {45, 20, 45}, {40, 10, 40}, {42, 15, 42}, {45, 20, 45}, {47, 25, 47}, {50, 30, 50}, {52, 35, 52}, {55, 40, 55}, {57, 45, 57}, {60, 50, 60}, {62, 55, 62}, {63, 60, 63}, {63, 63, 63}};
 
 	byte palette[768];
 	_vm->_system->getPaletteManager()->grabPalette(palette, 0, 255);
@@ -672,14 +658,14 @@ void GameManager1::novaScroll() {
 	for (int t = 0; t < 65; ++t) {
 		for (int i = 0; i < 6; ++i) {
 			int idx = 3 * (planet_f[i] - 1);
-			for (int c = 0 ; c < 3 ; ++c) {
-				if (palette[idx+c] < rgb[t][c])
-					palette[idx+c] = rgb[t][c];
+			for (int c = 0; c < 3; ++c) {
+				if (palette[idx + c] < rgb[t][c])
+					palette[idx + c] = rgb[t][c];
 			}
 		}
 		for (int cycle = 0; cycle < t && cycle < 13; ++cycle) {
 			int idx = 3 * (nova_f[cycle] - 1);
-			for (int c = 0 ; c < 3 ; ++c)
+			for (int c = 0; c < 3; ++c)
 				palette[idx + c] = rgb[t - cycle - 1][c];
 		}
 
@@ -796,7 +782,7 @@ void GameManager1::walk(int imgId) {
 void GameManager1::guardWalkEvent() {
 	_prevImgId = 0;
 	bool behind = (!_rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OCCUPIED) ||
-				   _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
+	               _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
 	_rooms[BCORRIDOR]->getObject(_state._origin + 4)->disableProperty(OCCUPIED);
 	if (_currentRoom == _rooms[BCORRIDOR]) {
 		if (_vm->_screen->isMessageShown())
@@ -973,15 +959,15 @@ void GameManager1::great(uint number) {
 
 bool GameManager1::airless() {
 	return (_currentRoom->getId() == HOLD ||
-			_currentRoom->getId() == LANDINGMODULE ||
-			_currentRoom->getId() == GENERATOR ||
-			_currentRoom->getId() == OUTSIDE ||
-			_currentRoom->getId() == ROCKS ||
-			_currentRoom->getId() == CAVE ||
-			_currentRoom->getId() == MEETUP ||
-			_currentRoom->getId() == MEETUP2 ||
-			_currentRoom->getId() == MEETUP3 ||
-			(_currentRoom->getId() == AIRLOCK && _rooms[AIRLOCK]->getObject(1)->hasProperty(OPENED)));
+	        _currentRoom->getId() == LANDINGMODULE ||
+	        _currentRoom->getId() == GENERATOR ||
+	        _currentRoom->getId() == OUTSIDE ||
+	        _currentRoom->getId() == ROCKS ||
+	        _currentRoom->getId() == CAVE ||
+	        _currentRoom->getId() == MEETUP ||
+	        _currentRoom->getId() == MEETUP2 ||
+	        _currentRoom->getId() == MEETUP3 ||
+	        (_currentRoom->getId() == AIRLOCK && _rooms[AIRLOCK]->getObject(1)->hasProperty(OPENED)));
 }
 
 void GameManager1::turnOff() {
@@ -1158,7 +1144,7 @@ bool GameManager1::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			takeObject(*_rooms[ENTRANCE]->getObject(17));
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == PILL_HULL) &&
-			   (_state._language == 2)) {
+	           (_state._language == 2)) {
 		_vm->renderMessage(kStringGenericInteract_6);
 		_state._language = 1;
 	} else if ((verb == ACTION_OPEN) && (obj1._id == WALLET)) {
@@ -1443,7 +1429,7 @@ void GameManager1::handleInput() {
 				_vm->renderImage(_inputObject[0]->_section);
 				_inputObject[0]->setProperty(OPENED);
 				byte i = _inputObject[0]->_click;
-				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click = _inputObject[0]->_click2;
 				_inputObject[0]->_click2 = i;
 				_sound->play(kAudioDoorOpen);
 			}
@@ -1451,8 +1437,8 @@ void GameManager1::handleInput() {
 
 		case ACTION_CLOSE:
 			if (!_inputObject[0]->hasProperty(OPENABLE) ||
-				(_inputObject[0]->hasProperty(CLOSED) &&
-				 _inputObject[0]->hasProperty(OPENED))) {
+			    (_inputObject[0]->hasProperty(CLOSED) &&
+			     _inputObject[0]->hasProperty(OPENED))) {
 				// This can't be closed.
 				_vm->renderMessage(kStringGenericInteract_41);
 			} else if (!_inputObject[0]->hasProperty(OPENED)) {
@@ -1462,7 +1448,7 @@ void GameManager1::handleInput() {
 				_vm->renderImage(invertSection(_inputObject[0]->_section));
 				_inputObject[0]->disableProperty(OPENED);
 				byte i = _inputObject[0]->_click;
-				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click = _inputObject[0]->_click2;
 				_inputObject[0]->_click2 = i;
 				_sound->play(kAudioDoorClose);
 			}
@@ -1551,7 +1537,7 @@ void GameManager1::guard3Shot() {
 	wait(5);
 	_vm->renderImage(2);
 	wait(3);
-	shot(3,2);
+	shot(3, 2);
 }
 
 void GameManager1::alarm() {
@@ -1568,9 +1554,8 @@ void GameManager1::alarm() {
 			busted(33);
 	} else {
 		if (_currentRoom->getId() == CORRIDOR2 || _currentRoom->getId() == CORRIDOR4 ||
-			_currentRoom->getId() == GUARD     || _currentRoom->getId() == CORRIDOR7 ||
-			_currentRoom->getId() == CELL)
-		{
+		    _currentRoom->getId() == GUARD || _currentRoom->getId() == CORRIDOR7 ||
+		    _currentRoom->getId() == CELL) {
 			alarmSound();
 			if (_currentRoom->getId() == GUARD)
 				guardShot();
@@ -1608,4 +1593,4 @@ void GameManager1::alarmSound() {
 	animationOn();
 }
 
-}
+} // namespace Supernova

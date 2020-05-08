@@ -20,34 +20,34 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/core/map.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/script/script.h"
-#include "ultima/nuvie/core/anim_manager.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/core/tile_manager.h"
-#include "ultima/nuvie/core/game_clock.h"
-#include "ultima/nuvie/core/effect_manager.h"
-#include "ultima/nuvie/usecode/usecode.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
-#include "ultima/nuvie/actors/actor_manager.h"
-#include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/core/u6_objects.h"
 #include "ultima/nuvie/core/effect.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/actors/actor_manager.h"
+#include "ultima/nuvie/core/anim_manager.h"
+#include "ultima/nuvie/core/effect_manager.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/game_clock.h"
+#include "ultima/nuvie/core/map.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/core/player.h"
+#include "ultima/nuvie/core/tile_manager.h"
+#include "ultima/nuvie/core/u6_objects.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/usecode/usecode.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-#define MESG_ANIM_HIT_WORLD  ANIM_CB_HIT_WORLD
-#define MESG_ANIM_HIT        ANIM_CB_HIT
-#define MESG_ANIM_DONE       ANIM_CB_DONE
+#define MESG_ANIM_HIT_WORLD ANIM_CB_HIT_WORLD
+#define MESG_ANIM_HIT ANIM_CB_HIT
+#define MESG_ANIM_DONE ANIM_CB_DONE
 #define MESG_EFFECT_COMPLETE EFFECT_CB_COMPLETE
 //#define MESG_INPUT_READY     EVENT_CB_INPUT_READY
-#define MESG_INPUT_READY     MSGSCROLL_CB_TEXT_READY
+#define MESG_INPUT_READY MSGSCROLL_CB_TEXT_READY
 
 #define TRANSPARENT_COLOR 0xFF /* transparent pixel color */
 
@@ -55,7 +55,6 @@ namespace Nuvie {
 
 QuakeEffect *QuakeEffect::current_quake = NULL;
 FadeEffect *FadeEffect::current_fade = NULL;
-
 
 /* Add self to effect list (for future deletion).
  */
@@ -66,11 +65,9 @@ Effect::Effect() : defunct(false) {
 	effect_manager->add_effect(this);
 }
 
-
 Effect::~Effect() {
 	// FIXME: should we remove self from Callbacks' default targets?
 }
-
 
 /* Start managing new animation. (AnimMgr will do that actually, but we point to
  * it and can stop it when necessary)
@@ -80,12 +77,11 @@ void Effect::add_anim(NuvieAnim *anim) {
 	game->get_map_window()->get_anim_manager()->new_anim(anim);
 }
 
-
 /* Fire from a cannon in direction: 0=north, 1=east, 2=south, 3=west,
  *                                 -1=use cannon frame
  */
 CannonballEffect::CannonballEffect(Obj *src_obj, sint8 direction)
-	: target_loc() {
+    : target_loc() {
 	usecode = game->get_usecode();
 	obj = src_obj;
 	MapCoord obj_loc(obj->x, obj->y, obj->z);
@@ -107,7 +103,6 @@ CannonballEffect::CannonballEffect(Obj *src_obj, sint8 direction)
 	start_anim();
 }
 
-
 /* Pause world & start animation. */
 void CannonballEffect::start_anim() {
 	MapCoord obj_loc(obj->x, obj->y, obj->z);
@@ -121,7 +116,6 @@ void CannonballEffect::start_anim() {
 	add_anim(anim);
 }
 
-
 /* Handle messages from animation. Hit actors & walls. */
 uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	bool stop_effect = false;
@@ -132,10 +126,9 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 		MapCoord *hit_loc = static_cast<MapCoord *>(msg_data);
 		Tile *obj_tile = game->get_obj_manager()->get_obj_tile(hit_loc->x, hit_loc->y, hit_loc->z);
 		Tile *tile = game->get_game_map()->get_tile(hit_loc->x, hit_loc->y,
-		             hit_loc->z);
+		                                            hit_loc->z);
 
-		if ((tile->flags2 & TILEFLAG_MISSILE_BOUNDARY)
-		        || (obj_tile && (obj_tile->flags2 & TILEFLAG_MISSILE_BOUNDARY))) {
+		if ((tile->flags2 & TILEFLAG_MISSILE_BOUNDARY) || (obj_tile && (obj_tile->flags2 & TILEFLAG_MISSILE_BOUNDARY))) {
 			//new ExplosiveEffect(hit_loc->x, hit_loc->y, 2);
 			new ExpEffect(EXP_EFFECT_TILE_NUM, MapCoord(hit_loc->x, hit_loc->y, hit_loc->z));
 			stop_effect = true;
@@ -156,8 +149,10 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 			if (hit_ent->obj->obj_n == 412) {
 				uint8 f = hit_ent->obj->frame_n;
 				if (f == 9 || f == 15 || f == 11 || f == 13) { // directions
-					if (hit_ent->obj->qty < 20) hit_ent->obj->qty = 0;
-					else                      hit_ent->obj->qty -= 20;
+					if (hit_ent->obj->qty < 20)
+						hit_ent->obj->qty = 0;
+					else
+						hit_ent->obj->qty -= 20;
 					if (hit_ent->obj->qty == 0)
 						game->get_scroll()->display_string("Ship broke!\n");
 					stop_effect = true;
@@ -189,7 +184,6 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 
 #define EXP_EFFECT_SPEED 3
 
-
 ExpEffect::ExpEffect(uint16 tileNum, MapCoord location) {
 	start_loc = location;
 	finished_tiles = 0;
@@ -199,7 +193,6 @@ ExpEffect::ExpEffect(uint16 tileNum, MapCoord location) {
 
 	start_anim();
 }
-
 
 /* Pause world & start animation. */
 void ExpEffect::start_anim() {
@@ -230,10 +223,8 @@ void ExpEffect::start_anim() {
 	targets[14] = MapCoord(start_loc.x + 1, start_loc.y + 1, start_loc.z);
 	targets[15] = MapCoord(start_loc.x + 1, start_loc.y - 2, start_loc.z);
 
-
 	anim = new ProjectileAnim(exp_tile_num, &start_loc, targets, EXP_EFFECT_SPEED, true);
 	add_anim(anim);
-
 }
 
 ProjectileEffect::ProjectileEffect(uint16 tileNum, MapCoord start, MapCoord target, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
@@ -270,7 +261,6 @@ void ProjectileEffect::start_anim() {
 	game->pause_user();
 
 	add_anim(new ProjectileAnim(tile_num, &start_loc, targets, anim_speed, trail, initial_tile_rotation, rotation_amount, src_tile_y_offset));
-
 }
 /* Handle messages from animation. Hit actors & walls. */
 uint16 ProjectileEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
@@ -279,7 +269,7 @@ uint16 ProjectileEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 	case MESG_ANIM_HIT_WORLD: {
 		MapCoord *hit_loc = static_cast<MapCoord *>(msg_data);
 		Tile *tile = game->get_game_map()->get_tile(hit_loc->x, hit_loc->y,
-		             hit_loc->z);
+		                                            hit_loc->z);
 		if (tile->flags1 & TILEFLAG_WALL) {
 			//new ExplosiveEffect(hit_loc->x, hit_loc->y, 2);
 			stop_effect = true;
@@ -314,13 +304,11 @@ uint16 ProjectileEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 	return (0);
 }
 
-
 /*** TimedEffect ***/
 void TimedEffect::start_timer(uint32 delay) {
 	if (!timer)
 		timer = new TimedCallback(this, NULL, delay, true);
 }
-
 
 void TimedEffect::stop_timer() {
 	if (timer) {
@@ -328,7 +316,6 @@ void TimedEffect::stop_timer() {
 		timer = NULL;
 	}
 }
-
 
 /*** QuakeEffect ***/
 /* Shake the visible play area around for `duration' milliseconds. Magnitude
@@ -359,10 +346,8 @@ QuakeEffect::QuakeEffect(uint8 magnitude, uint32 duration, Actor *keep_on) {
 	start_timer(strength * 5);
 }
 
-
 QuakeEffect::~QuakeEffect() {
 }
-
 
 /* On TIMED: Move map.
  */
@@ -391,7 +376,6 @@ uint16 QuakeEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	return (0);
 }
 
-
 /* Finish effect. Move map back to initial position.
  */
 void QuakeEffect::stop_quake() {
@@ -401,7 +385,6 @@ void QuakeEffect::stop_quake() {
 	delete_self();
 }
 
-
 /* Set sx,sy to a random direction. (always move left-right more than up-down)
  */
 void QuakeEffect::init_directions() {
@@ -410,37 +393,36 @@ void QuakeEffect::init_directions() {
 	sy = 0;
 
 	switch (dir) {
-	case NUVIE_DIR_N :
+	case NUVIE_DIR_N:
 		sy = -(strength * 2);
 		break;
-	case NUVIE_DIR_NE :
+	case NUVIE_DIR_NE:
 		sx = (strength * 4);
 		sy = -(strength * 2);
 		break;
-	case NUVIE_DIR_E :
+	case NUVIE_DIR_E:
 		sx = (strength * 4);
 		break;
-	case NUVIE_DIR_SE :
+	case NUVIE_DIR_SE:
 		sx = (strength * 4);
 		sy = (strength * 2);
 		break;
-	case NUVIE_DIR_S :
+	case NUVIE_DIR_S:
 		sy = (strength * 2);
 		break;
-	case NUVIE_DIR_SW :
+	case NUVIE_DIR_SW:
 		sx = -(strength * 4);
 		sy = (strength * 2);
 		break;
-	case NUVIE_DIR_W :
+	case NUVIE_DIR_W:
 		sx = -(strength * 4);
 		break;
-	case NUVIE_DIR_NW :
+	case NUVIE_DIR_NW:
 		sx = -(strength * 4);
 		sy = -(strength * 2);
 		break;
 	}
 }
-
 
 /* Center map on original actor or move to original location.
  */
@@ -450,7 +432,6 @@ void QuakeEffect::recenter_map() {
 	else
 		map_window->moveMap(orig.x, orig.y, orig.z);
 }
-
 
 /*** HitEffect ***/
 /* Hit target actor. FIXME: implement duration and hitting a location
@@ -506,7 +487,7 @@ uint16 TextEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 
 /*** ExplosiveEffect ***/
 ExplosiveEffect::ExplosiveEffect(uint16 x, uint16 y, uint32 size, uint16 dmg)
-	: start_at() {
+    : start_at() {
 	start_at.x = x;
 	start_at.y = y;
 	radius = size;
@@ -515,7 +496,6 @@ ExplosiveEffect::ExplosiveEffect(uint16 x, uint16 y, uint32 size, uint16 dmg)
 	start_anim();
 }
 
-
 /* Pause world & start animation.
  */
 void ExplosiveEffect::start_anim() {
@@ -523,7 +503,6 @@ void ExplosiveEffect::start_anim() {
 	game->pause_user();
 	add_anim(new ExplosiveAnim(&start_at, radius));
 }
-
 
 /* Handle messages from animation. Hit actors & objects.
  */
@@ -556,7 +535,6 @@ uint16 ExplosiveEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	return (0);
 }
 
-
 /* UseCodeExplosiveEffect: before deleting send message to source object
  */
 void UseCodeExplosiveEffect::delete_self() {
@@ -564,7 +542,6 @@ void UseCodeExplosiveEffect::delete_self() {
 		game->get_usecode()->message_obj(obj, MESG_EFFECT_COMPLETE, this);
 	Effect::delete_self();
 }
-
 
 /* The explosion hit an object.
  * Returns true if the effect should end, false to continue.
@@ -584,7 +561,6 @@ bool UseCodeExplosiveEffect::hit_object(Obj *hit_obj) {
 	return (false);
 }
 
-
 /*** ThrowObjectEffect ***/
 ThrowObjectEffect::ThrowObjectEffect() {
 	obj_manager = game->get_obj_manager();
@@ -596,7 +572,6 @@ ThrowObjectEffect::ThrowObjectEffect() {
 	degrees = 0;
 	stop_flags = 0;
 }
-
 
 void ThrowObjectEffect::start_anim() {
 	game->pause_anims();
@@ -613,7 +588,6 @@ void ThrowObjectEffect::start_anim() {
 	add_anim(anim);
 }
 
-
 /* Object has stopped. */
 void ThrowObjectEffect::hit_target() {
 	if (anim)
@@ -621,7 +595,6 @@ void ThrowObjectEffect::hit_target() {
 	game->unpause_all();
 	delete_self();
 }
-
 
 /* The animation will travel from original object location to drop location if
  * NULL actor is specified.
@@ -641,7 +614,6 @@ DropEffect::DropEffect(Obj *obj, uint16 qty, Actor *actor, MapCoord *drop_loc) {
 		hit_target(); // done already? why bother calling DropEffect? :p
 }
 
-
 /* Take `qty' objects of a stack if necessary, and remove from the actor's
  * inventory. Set `throw_obj'.
  */
@@ -651,7 +623,6 @@ void DropEffect::get_obj(Obj *obj, uint16 qty) {
 		drop_from_actor->inventory_remove_obj(throw_obj);
 }
 
-
 /* On ANIM_HIT_WORLD: end at hit location
  * On ANIM_DONE: end
  */
@@ -660,14 +631,12 @@ uint16 DropEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	if (!throw_obj || (msg != MESG_ANIM_DONE && msg != MESG_ANIM_HIT_WORLD))
 		return (0);
 
-	if (msg == MESG_ANIM_HIT_WORLD && stop_at == *(MapCoord *)msg_data
-	        && anim)
+	if (msg == MESG_ANIM_HIT_WORLD && stop_at == *(MapCoord *)msg_data && anim)
 		anim->stop();
 
 	hit_target();
 	return (0);
 }
-
 
 /* Add object to map. (call before completing effect) */
 void DropEffect::hit_target() {
@@ -719,7 +688,6 @@ void DropEffect::hit_target() {
 	ThrowObjectEffect::hit_target(); // calls delete_self()
 }
 
-
 /*** MissileEffect ***/
 MissileEffect::MissileEffect(uint16 tile_num, uint16 obj_n, const MapCoord &source,
                              const MapCoord &target, uint8 dmg,
@@ -753,10 +721,10 @@ void MissileEffect::init(uint16 tile_num, uint16 obj_n,
 	stop_at = target;
 	stop_flags = intercept;
 	assert(stop_at != start_at); // Hmm, can't attack self with boomerang then
-//    if (stop_at != start_at) {
-//      start_at.x=WRAPPED_COORD(start_at.x+1,start_at.z);
-//      start_at.y=WRAPPED_COORD(start_at.y-1,start_at.z);
-//    }
+	                             //    if (stop_at != start_at) {
+	                             //      start_at.x=WRAPPED_COORD(start_at.x+1,start_at.z);
+	                             //      start_at.y=WRAPPED_COORD(start_at.y-1,start_at.z);
+	                             //    }
 
 	// set tile rotation here based on obj_num
 	if (throw_obj != 0) {
@@ -785,7 +753,7 @@ uint16 MissileEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	if (msg == MESG_ANIM_DONE) {
 		// will always hit anything at the target
 		// FIXME: only hit breakable objects like doors
-//        hit_obj = obj_manager->get_obj(stop_at.x,stop_at.y,stop_at.z);
+		//        hit_obj = obj_manager->get_obj(stop_at.x,stop_at.y,stop_at.z);
 		hit_actor = actor_manager->get_actor(stop_at.x, stop_at.y, stop_at.z);
 		hit_target();
 	} else if (msg == MESG_ANIM_HIT && ((MapEntity *)msg_data)->entity_type == ENT_ACTOR) {
@@ -812,7 +780,8 @@ void MissileEffect::hit_target() {
 	} else if (hit_obj) {
 		if (hit_obj->qty < hit_damage)
 			hit_obj->qty = 0;
-		else hit_obj->qty -= hit_damage;
+		else
+			hit_obj->qty -= hit_damage;
 		delete_obj(throw_obj);
 		throw_obj = 0; // don't drop
 	}
@@ -835,35 +804,31 @@ void MissileEffect::hit_blocking() {
 	ThrowObjectEffect::hit_target();
 }
 
-
 /*** SleepEffect ***/
 /* The TimedAdvance is started after the fade-out completes. */
 SleepEffect::SleepEffect(Std::string until)
-	: timer(NULL),
-	  stop_hour(0),
-	  stop_minute(0),
-	  stop_time("") {
+    : timer(NULL),
+      stop_hour(0),
+      stop_minute(0),
+      stop_time("") {
 	stop_time = until;
 	game->pause_user();
 	effect_manager->watch_effect(this, new FadeEffect(FADE_PIXELATED, FADE_OUT));
 }
 
-
 SleepEffect::SleepEffect(uint8 to_hour)
-	: timer(NULL),
-	  stop_hour(to_hour),
-	  stop_minute(0),
-	  stop_time("") {
+    : timer(NULL),
+      stop_hour(to_hour),
+      stop_minute(0),
+      stop_time("") {
 	game->pause_user();
 	effect_manager->watch_effect(this, new FadeEffect(FADE_PIXELATED, FADE_OUT));
 }
-
 
 SleepEffect::~SleepEffect() {
 	//if(timer) // make sure it doesn't try to call us again
 	//    timer->clear_target();
 }
-
 
 /* As with TimedEffect, make sure the timer doesn't try to use callback again.
  */
@@ -872,7 +837,6 @@ void SleepEffect::delete_self() {
 	//timer = NULL;
 	Effect::delete_self();
 }
-
 
 /* Resume normal play when requested time has been reached.
  */
@@ -883,16 +847,16 @@ uint16 SleepEffect::callback(uint16 msg, CallBack *caller, void *data) {
 
 	// waited for FadeEffect
 	if (msg == MESG_EFFECT_COMPLETE) {
-		if (timer == NULL) { // starting
-			if (stop_time != "") { // advance to start time
+		if (timer == NULL) {                              // starting
+			if (stop_time != "") {                        // advance to start time
 				timer = new TimedAdvance(stop_time, 360); // 6 hours per second FIXME: it isnt going anywhere near that fast
 				timer->set_target(this);
 				timer->get_time_from_string(stop_hour, stop_minute, stop_time);
 				// stop_hour & stop_minute are checked each hour
 			} else { // advance a number of hours
 				uint16 advance_h = (hour == stop_hour) ? 24
-				                   : (hour < stop_hour) ? (stop_hour - hour)
-				                   : (24 - (hour - stop_hour));
+				                                       : (hour < stop_hour) ? (stop_hour - hour)
+				                                                            : (24 - (hour - stop_hour));
 				timer = new TimedAdvance(advance_h, 360);
 				timer->set_target(this);
 				stop_minute = minute;
@@ -922,7 +886,6 @@ uint16 SleepEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	return (0);
 }
 
-
 /*** FadeEffect ***/
 FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, uint32 color, uint32 speed) {
 	speed = speed ? speed : game->get_map_window()->get_win_area() * 2116; // was 256000
@@ -932,7 +895,7 @@ FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, uint32 color, uint32 sp
 /* Takes an image to fade from/to. */
 FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, Graphics::ManagedSurface *capture, uint32 speed) {
 	speed = speed ? speed : game->get_map_window()->get_win_area() * 1620; // was 196000
-	init(fade, dir, 0, capture, 0, 0, speed); // color=black
+	init(fade, dir, 0, capture, 0, 0, speed);                              // color=black
 }
 
 /* Localizes effect to specific coordinates. The size of the effect is determined
@@ -941,7 +904,6 @@ FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, Graphics::ManagedSurfac
 	speed = speed ? speed : 1024;
 	init(fade, dir, 0, capture, x, y, speed); // color=black
 }
-
 
 void FadeEffect::init(FadeType fade, FadeDirection dir, uint32 color, Graphics::ManagedSurface *capture, uint16 x, uint16 y, uint32 speed) {
 	if (current_fade) {
@@ -975,7 +937,6 @@ void FadeEffect::init(FadeType fade, FadeDirection dir, uint32 color, Graphics::
 		init_circle_fade();
 }
 
-
 FadeEffect::~FadeEffect() {
 	//moved to delete_self
 }
@@ -1000,7 +961,7 @@ void FadeEffect::init_pixelated_fade() {
 	overlay = map_window->get_overlay();
 	if (overlay != NULL) {
 		pixel_count = fade_from ? (fade_from->w) * (fade_from->h)
-		              : (overlay->w - fade_x) * (overlay->h - fade_y);
+		                        : (overlay->w - fade_x) * (overlay->h - fade_y);
 		// clear overlay to fill color or transparent
 		if (fade_dir == FADE_OUT) {
 			if (fade_from) { // fade from captured surface to transparent
@@ -1025,18 +986,17 @@ void FadeEffect::init_pixelated_fade() {
 
 	// if FADE_PIXELATED_ONTOP is set, place the effect layer above the map border
 	map_window->set_overlay_level((fade_type == FADE_PIXELATED)
-	                              ? MAP_OVERLAY_DEFAULT : MAP_OVERLAY_ONTOP);
+	                                  ? MAP_OVERLAY_DEFAULT
+	                                  : MAP_OVERLAY_ONTOP);
 	colored_total = 0;
 	start_timer(1); // fire timer continuously
 }
-
 
 /* Start effect.
  */
 void FadeEffect::init_circle_fade() {
 	delete_self(); // FIXME
 }
-
 
 /* Called by the timer as frequently as possible. Do the appropriate
  * fade method and stop when the effect is complete.
@@ -1061,7 +1021,6 @@ uint16 FadeEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	return (0);
 }
 
-
 /* Scan the overlay, starting at pixel rnum, for a transparent pixel if fading
  * out, and a colored pixel if fading in.
  * Returns true if a free pixel was found and set as rnum.
@@ -1069,7 +1028,7 @@ uint16 FadeEffect::callback(uint16 msg, CallBack *caller, void *data) {
 // FIXME: this probably doesn't work because it only handles 8bpp
 inline bool FadeEffect::find_free_pixel(uint32 &rnum, uint32 pixelCount) {
 	uint8 scan_color = (fade_dir == FADE_OUT) ? TRANSPARENT_COLOR
-	                   : pixelated_color;
+	                                          : pixelated_color;
 	const uint8 *pixels = (const uint8 *)(overlay->getPixels());
 
 	for (uint32 p = rnum; p < pixelCount; p++) // check all pixels after rnum
@@ -1084,7 +1043,6 @@ inline bool FadeEffect::find_free_pixel(uint32 &rnum, uint32 pixelCount) {
 		}
 	return (false);
 }
-
 
 /* Returns the next pixel to check/colorize. */
 #if 0
@@ -1111,8 +1069,8 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 	Graphics::Surface s = overlay->getSubArea(Common::Rect(0, 0, overlay->w, overlay->h));
 	uint8 *pixels = (uint8 *)s.getPixels();
 	const uint8 *from_pixels = fade_from ? (const uint8 *)(fade_from->getPixels()) : NULL;
-	uint32 p = 0; // scan counter
-	uint32 rnum = 0; // pixel index
+	uint32 p = 0;       // scan counter
+	uint32 rnum = 0;    // pixel index
 	uint32 colored = 0; // number of pixels that get colored
 	uint16 fade_width = fade_from ? fade_from->w : overlay->w - fade_x;
 	uint16 fade_height = fade_from ? fade_from->h : overlay->h - fade_y;
@@ -1125,10 +1083,12 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 	while (p < pixels_to_check) {
 		uint16 x = uint16(float(NUVIE_RAND()) * (fade_width - 1) / NUVIE_RAND_MAX) + fade_x,
 		       y = uint16(float(NUVIE_RAND()) * (fade_height - 1) / NUVIE_RAND_MAX) + fade_y;
-		if (x >= overlay->w) x = overlay->w - 1; // prevent overflow if fade_from is too big
-		if (y >= overlay->h) y = overlay->h - 1;
+		if (x >= overlay->w)
+			x = overlay->w - 1; // prevent overflow if fade_from is too big
+		if (y >= overlay->h)
+			y = overlay->h - 1;
 		rnum = y * overlay->w + x;
-//ERIC        rnum = y*overlay->pitch + x;
+		//ERIC        rnum = y*overlay->pitch + x;
 
 		if (fade_to == -1) { // get color from "fade_from"
 			x -= fade_x;
@@ -1152,9 +1112,9 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 			SDL_BlitSurface(fade_from, &fade_from_rect, overlay, &overlay_rect);
 		}
 		return (true);
-	} else return (false);
+	} else
+		return (false);
 }
-
 
 /* Color some of the mapwindow.
  * Returns true when all pixels have been filled, and nothing is visible.
@@ -1165,7 +1125,6 @@ bool FadeEffect::pixelated_fade_out() {
 	return (pixelated_fade_core(pixels_to_check(), pixelated_color));
 }
 
-
 /* Clear some of the mapwindow.
  * Returns true when all colored pixels have been removed, and the MapWindow
  * is visible.
@@ -1175,7 +1134,6 @@ bool FadeEffect::pixelated_fade_in() {
 		return (pixelated_fade_core(pixels_to_check(), -1));
 	return (pixelated_fade_core(pixels_to_check(), TRANSPARENT_COLOR));
 }
-
 
 /* Returns the number of pixels that should be checked/colored (based on speed)
  * since the previous call.
@@ -1189,36 +1147,31 @@ uint32 FadeEffect::pixels_to_check() {
 	return (pixels_per_fraction);
 }
 
-
 /* Reduce the MapWindow's ambient light level, according to the set speed.
  * Returns true when nothing is visible.
  */
 bool FadeEffect::circle_fade_out() {
-// FIXME
+	// FIXME
 	return (false);
 }
-
 
 /* Add to the MapWindow's ambient light level, according to the set speed.
  * Returns true when the light level has returned to normal.
  */
 bool FadeEffect::circle_fade_in() {
-// FIXME
+	// FIXME
 	return (false);
 }
-
 
 /* Pause game and do FadeEffect.
  */
 GameFadeInEffect::GameFadeInEffect(uint32 color)
-	: FadeEffect(FADE_PIXELATED_ONTOP, FADE_IN, color) {
+    : FadeEffect(FADE_PIXELATED_ONTOP, FADE_IN, color) {
 	game->pause_user();
 }
 
-
 GameFadeInEffect::~GameFadeInEffect() {
 }
-
 
 /* Identical to FadeEffect, but unpause game when finished.
  */
@@ -1229,22 +1182,21 @@ uint16 GameFadeInEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	return (0);
 }
 
-
 FadeObjectEffect::FadeObjectEffect(Obj *obj, FadeDirection dir) {
 	obj_manager = game->get_obj_manager();
 	fade_obj = obj;
 	fade_dir = dir;
 
 	Graphics::ManagedSurface *capture = game->get_map_window()->get_sdl_surface();
-	if (fade_dir == FADE_IN) { // fading IN to object, so fade OUT from capture
+	if (fade_dir == FADE_IN) {             // fading IN to object, so fade OUT from capture
 		effect_manager->watch_effect(this, /* call me */
 		                             new FadeEffect(FADE_PIXELATED, FADE_OUT, capture));
 		obj_manager->add_obj(fade_obj, OBJ_ADD_TOP);
 		game->get_map_window()->updateBlacking(); // object is likely a moongate
 	} else if (fade_dir == FADE_OUT) {
-		effect_manager->watch_effect(this, /* call me */
+		effect_manager->watch_effect(this,                                                                                                    /* call me */
 		                             new FadeEffect(FADE_PIXELATED, FADE_OUT, capture, 0, 0, game->get_map_window()->get_win_area() * 1058)); //was 128000
-//        obj_manager->remove_obj(fade_obj);
+		                                                                                                                                      //        obj_manager->remove_obj(fade_obj);
 		game->get_map_window()->updateBlacking();
 	}
 	SDL_FreeSurface(capture);
@@ -1262,15 +1214,14 @@ uint16 FadeObjectEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	return (0);
 }
 
-
 /* These types of local/vanish effects are slightly longer than a normal Fade.
  * FIXME: FadeEffect should take local effect area, or change speed to time.
  */
 VanishEffect::VanishEffect(bool pause_user)
-	: input_blocked(pause_user) {
+    : input_blocked(pause_user) {
 	Graphics::ManagedSurface *capture = game->get_map_window()->get_sdl_surface();
-//    effect_manager->watch_effect(this, /* call me */
-//                                 new FadeEffect(FADE_PIXELATED, FADE_OUT, capture, 0, 0, 128000));
+	//    effect_manager->watch_effect(this, /* call me */
+	//                                 new FadeEffect(FADE_PIXELATED, FADE_OUT, capture, 0, 0, 128000));
 	effect_manager->watch_effect(this, /* call me */
 	                             new FadeEffect(FADE_PIXELATED, FADE_OUT, capture));
 	SDL_FreeSurface(capture);
@@ -1291,7 +1242,6 @@ uint16 VanishEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	delete_self();
 	return (0);
 }
-
 
 /* TileFadeEffect */
 TileFadeEffect::TileFadeEffect(MapCoord loc, Tile *from, Tile *to, FadeType type, uint16 speed) {
@@ -1321,7 +1271,6 @@ TileFadeEffect::TileFadeEffect(Actor *a, uint16 speed) {
 }
 
 TileFadeEffect::~TileFadeEffect() {
-
 }
 
 void TileFadeEffect::add_actor_anim() {
@@ -1401,7 +1350,6 @@ uint16 TileFadeEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	return 0;
 }
 
-
 TileBlackFadeEffect::TileBlackFadeEffect(Actor *a, uint8 fade_color, uint16 speed) {
 	init(fade_color, speed);
 	actor = a;
@@ -1426,7 +1374,6 @@ void TileBlackFadeEffect::init(uint8 fade_color, uint16 speed) {
 	num_anim_running = 0;
 }
 TileBlackFadeEffect::~TileBlackFadeEffect() {
-
 }
 
 void TileBlackFadeEffect::add_actor_anim() {
@@ -1512,8 +1459,8 @@ uint16 TileBlackFadeEffect::callback(uint16 msg, CallBack *caller, void *data) {
 }
 
 XorEffect::XorEffect(uint32 eff_ms)
-	: map_window(game->get_map_window()),
-	  length(eff_ms) {
+    : map_window(game->get_map_window()),
+      length(eff_ms) {
 	game->pause_user();
 	game->pause_anims();
 
@@ -1550,13 +1497,12 @@ void XorEffect::xor_capture(uint8 mod) {
 		pixels[p] ^= mod;
 }
 
-
 U6WhitePotionEffect::U6WhitePotionEffect(uint32 eff_ms, uint32 delay_ms, Obj *callback_obj)
-	: map_window(game->get_map_window()),
-	  state(0), start_length(1000),
-	  eff1_length(eff_ms), eff2_length(800),
-	  xray_length(delay_ms), capture(0),
-	  potion(callback_obj) {
+    : map_window(game->get_map_window()),
+      state(0), start_length(1000),
+      eff1_length(eff_ms), eff2_length(800),
+      xray_length(delay_ms), capture(0),
+      potion(callback_obj) {
 	game->pause_user();
 	game->pause_anims();
 
@@ -1611,7 +1557,6 @@ void U6WhitePotionEffect::xor_capture(uint8 mod) {
 	for (int p = 0; p < (capture->w * capture->h); p++)
 		pixels[p] ^= mod;
 }
-
 
 XRayEffect::XRayEffect(uint32 eff_ms) {
 	xray_length = eff_ms;
@@ -1679,11 +1624,10 @@ uint16 TextInputEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	return 0;
 }
 
-
 PeerEffect::PeerEffect(uint16 x, uint16 y, uint8 z, Obj *callback_obj)
-	: map_window(game->get_map_window()), overlay(0),
-	  gem(callback_obj), area(x, y, z), tile_trans(0),
-	  map_pitch(0) {
+    : map_window(game->get_map_window()), overlay(0),
+      gem(callback_obj), area(x, y, z), tile_trans(0),
+      map_pitch(0) {
 	uint8 lvl = 0;
 	map_window->get_level(&lvl);
 	map_pitch = (lvl == 0) ? 1024 : 256;
@@ -1706,8 +1650,8 @@ void PeerEffect::delete_self() {
 	if (gem)
 		game->get_usecode()->message_obj(gem, MESG_EFFECT_COMPLETE, this);
 	else // FIXME: I don't want prompt display here, so it's also in UseCode,
-		// but it has to be here if no object was set. (until we have another
-		// way to tell caller effect is complete, and return to player)
+	     // but it has to be here if no object was set. (until we have another
+	     // way to tell caller effect is complete, and return to player)
 	{
 		game->get_scroll()->display_string("\n");
 		game->get_scroll()->display_prompt();
@@ -1718,15 +1662,17 @@ void PeerEffect::delete_self() {
 void PeerEffect::peer() {
 	uint16 w = overlay->w, h = overlay->h;
 	// effect is limited to 48x48 area
-	if (overlay->w > 48 * PEER_TILEW) w = 48 * PEER_TILEW;
-	if (overlay->h > 48 * PEER_TILEW) h = 48 * PEER_TILEW;
+	if (overlay->w > 48 * PEER_TILEW)
+		w = 48 * PEER_TILEW;
+	if (overlay->h > 48 * PEER_TILEW)
+		h = 48 * PEER_TILEW;
 
 	MapCoord player_loc = game->get_player()->get_actor()->get_location();
 	uint16 cx = player_loc.x - area.x; // rough center of area
 	uint16 cy = player_loc.y - area.y;
 	area.x %= map_pitch; // we have to wrap here because we use a map buffer
 	area.y %= map_pitch;
-	uint8 *mapbuffer = new uint8[48 * 48]; // array of tile types/colors
+	uint8 *mapbuffer = new uint8[48 * 48];            // array of tile types/colors
 	memset(mapbuffer, 0x00, sizeof(uint8) * 48 * 48); // fill with black
 	fill_buffer(mapbuffer, cx, cy);
 
@@ -1742,7 +1688,7 @@ void PeerEffect::peer() {
 			}
 		}
 
-	delete [] mapbuffer;
+	delete[] mapbuffer;
 }
 
 void PeerEffect::fill_buffer(uint8 *mapbuffer, uint16 x, uint16 y) {
@@ -1758,21 +1704,27 @@ void PeerEffect::fill_buffer(uint8 *mapbuffer, uint16 x, uint16 y) {
 
 	// stop at unpassable tiles
 	// FIXME: stop at Nothing/black tiles
-	if (*tile != peer_tilemap[2]
-	        || game->get_game_map()->get_tile(wx, wy, area.z, true)->passable) {
+	if (*tile != peer_tilemap[2] || game->get_game_map()->get_tile(wx, wy, area.z, true)->passable) {
 		if (y > 0) {
-			if (x > 0) fill_buffer(mapbuffer, x - 1, y - 1); // +-+-+
-			if (y > 0) fill_buffer(mapbuffer, x,  y - 1); // |\|/|
-			if (x + 1 < 48) fill_buffer(mapbuffer, x + 1, y - 1);
+			if (x > 0)
+				fill_buffer(mapbuffer, x - 1, y - 1); // +-+-+
+			if (y > 0)
+				fill_buffer(mapbuffer, x, y - 1); // |\|/|
+			if (x + 1 < 48)
+				fill_buffer(mapbuffer, x + 1, y - 1);
 		}
 
-		if (x > 0)     fill_buffer(mapbuffer, x - 1, y); // +-+-+
-		if (x + 1 < 48)  fill_buffer(mapbuffer, x + 1, y);
+		if (x > 0)
+			fill_buffer(mapbuffer, x - 1, y); // +-+-+
+		if (x + 1 < 48)
+			fill_buffer(mapbuffer, x + 1, y);
 
 		if (y + 1 < 48) {
-			if (x > 0) fill_buffer(mapbuffer, x - 1, y + 1); // |/|\|
-			fill_buffer(mapbuffer, x,  y + 1); // +-+-+
-			if (x + 1 < 48) fill_buffer(mapbuffer, x + 1, y + 1);
+			if (x > 0)
+				fill_buffer(mapbuffer, x - 1, y + 1); // |/|\|
+			fill_buffer(mapbuffer, x, y + 1);         // +-+-+
+			if (x + 1 < 48)
+				fill_buffer(mapbuffer, x + 1, y + 1);
 		}
 	}
 }
@@ -1789,12 +1741,12 @@ inline void PeerEffect::blit_tile(uint16 x, uint16 y, uint8 c) {
 
 inline void PeerEffect::blit_actor(Actor *actor) {
 	tile_trans = 1;
-	blit_tile((actor->get_location().x - area.x)*PEER_TILEW,
-	          (actor->get_location().y - area.y)*PEER_TILEW, 0x0F);
+	blit_tile((actor->get_location().x - area.x) * PEER_TILEW,
+	          (actor->get_location().y - area.y) * PEER_TILEW, 0x0F);
 	tile_trans = 0;
 	if (game->get_player()->get_actor() == actor)
-		blit_tile((actor->get_location().x - area.x)*PEER_TILEW,
-		          (actor->get_location().y - area.y)*PEER_TILEW, 0x0F);
+		blit_tile((actor->get_location().x - area.x) * PEER_TILEW,
+		          (actor->get_location().y - area.y) * PEER_TILEW, 0x0F);
 }
 
 inline uint8 PeerEffect::get_tilemap_type(uint16 wx, uint16 wy, uint8 wz) {
@@ -1817,11 +1769,11 @@ WingStrikeEffect::WingStrikeEffect(Actor *target_actor) {
 
 uint16 WingStrikeEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	switch (msg) {
-	case MESG_ANIM_HIT :
+	case MESG_ANIM_HIT:
 		DEBUG(0, LEVEL_DEBUGGING, "hit target!\n");
 		Game::get_game()->get_script()->call_actor_hit(actor, (NUVIE_RAND() % 20) + 1);
 		break;
-	case MESG_ANIM_DONE :
+	case MESG_ANIM_DONE:
 		delete_self();
 		break;
 	}
@@ -1834,11 +1786,11 @@ HailStormEffect::HailStormEffect(MapCoord target) {
 
 uint16 HailStormEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	switch (msg) {
-	case MESG_ANIM_HIT :
+	case MESG_ANIM_HIT:
 		DEBUG(0, LEVEL_DEBUGGING, "hit target!\n");
 		Game::get_game()->get_script()->call_actor_hit((Actor *)data, 1);
 		break;
-	case MESG_ANIM_DONE :
+	case MESG_ANIM_DONE:
 		delete_self();
 		break;
 	}

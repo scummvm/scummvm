@@ -35,7 +35,7 @@
  *  users could work without modifications.
  */
 
-class NullSdlMixerManager :	public SdlMixerManager {
+class NullSdlMixerManager : public SdlMixerManager {
 public:
 	NullSdlMixerManager();
 	virtual ~NullSdlMixerManager();
@@ -47,14 +47,13 @@ public:
 	virtual int resumeAudio();
 
 protected:
-
 	virtual void startAudio();
 	virtual void callbackHandler(byte *samples, int len);
 
 private:
 	uint32 _outputRate;
 	uint32 _callsCounter;
-	uint8  _callbackPeriod;
+	uint8 _callbackPeriod;
 	uint32 _samples;
 	uint8 *_samplesBuf;
 };

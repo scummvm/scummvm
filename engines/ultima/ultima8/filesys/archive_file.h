@@ -33,7 +33,7 @@ class ArchiveFile {
 public:
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
-	virtual ~ArchiveFile() { }
+	virtual ~ArchiveFile() {}
 
 	//! Check if constructed object is indeed a valid archive
 	virtual bool isValid() const {
@@ -52,7 +52,6 @@ public:
 	//! \param name name of object to check for
 	virtual bool exists(const Std::string &name) = 0;
 
-
 	//! Get object from file; returns NULL if index is invalid.
 	//! Must delete the returned buffer afterwards.
 	//! See also exists(uint32 index)
@@ -66,7 +65,6 @@ public:
 	//! \param name name of object to fetch
 	//! \param size if non-NULL, size of object is stored in *size
 	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0) = 0;
-
 
 	//! Get size of object; returns zero if index is invalid.
 	//! See also exists(uint32 index)

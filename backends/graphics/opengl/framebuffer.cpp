@@ -21,8 +21,8 @@
  */
 
 #include "backends/graphics/opengl/framebuffer.h"
-#include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/texture.h"
 
 namespace OpenGL {
 
@@ -106,19 +106,19 @@ void Framebuffer::applyClearColor() {
 
 void Framebuffer::applyBlendState() {
 	switch (_blendState) {
-		case kBlendModeDisabled:
-			GL_CALL(glDisable(GL_BLEND));
-			break;
-		case kBlendModeTraditionalTransparency:
-			GL_CALL(glEnable(GL_BLEND));
-			GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-			break;
-		case kBlendModePremultipliedTransparency:
-			GL_CALL(glEnable(GL_BLEND));
-			GL_CALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
-			break;
-		default:
-			break;
+	case kBlendModeDisabled:
+		GL_CALL(glDisable(GL_BLEND));
+		break;
+	case kBlendModeTraditionalTransparency:
+		GL_CALL(glEnable(GL_BLEND));
+		GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		break;
+	case kBlendModePremultipliedTransparency:
+		GL_CALL(glEnable(GL_BLEND));
+		GL_CALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+		break;
+	default:
+		break;
 	}
 }
 
@@ -154,25 +154,25 @@ void Backbuffer::setDimensions(uint width, uint height) {
 	_viewport[3] = height;
 
 	// Setup orthogonal projection matrix.
-	_projectionMatrix[ 0] =  2.0f / width;
-	_projectionMatrix[ 1] =  0.0f;
-	_projectionMatrix[ 2] =  0.0f;
-	_projectionMatrix[ 3] =  0.0f;
+	_projectionMatrix[0] = 2.0f / width;
+	_projectionMatrix[1] = 0.0f;
+	_projectionMatrix[2] = 0.0f;
+	_projectionMatrix[3] = 0.0f;
 
-	_projectionMatrix[ 4] =  0.0f;
-	_projectionMatrix[ 5] = -2.0f / height;
-	_projectionMatrix[ 6] =  0.0f;
-	_projectionMatrix[ 7] =  0.0f;
+	_projectionMatrix[4] = 0.0f;
+	_projectionMatrix[5] = -2.0f / height;
+	_projectionMatrix[6] = 0.0f;
+	_projectionMatrix[7] = 0.0f;
 
-	_projectionMatrix[ 8] =  0.0f;
-	_projectionMatrix[ 9] =  0.0f;
-	_projectionMatrix[10] =  0.0f;
-	_projectionMatrix[11] =  0.0f;
+	_projectionMatrix[8] = 0.0f;
+	_projectionMatrix[9] = 0.0f;
+	_projectionMatrix[10] = 0.0f;
+	_projectionMatrix[11] = 0.0f;
 
 	_projectionMatrix[12] = -1.0f;
-	_projectionMatrix[13] =  1.0f;
-	_projectionMatrix[14] =  0.0f;
-	_projectionMatrix[15] =  1.0f;
+	_projectionMatrix[13] = 1.0f;
+	_projectionMatrix[14] = 0.0f;
+	_projectionMatrix[15] = 1.0f;
 
 	// Directly apply changes when we are active.
 	if (isActive()) {
@@ -228,7 +228,7 @@ void TextureTarget::create() {
 void TextureTarget::setSize(uint width, uint height) {
 	_texture->setSize(width, height);
 
-	const uint texWidth  = _texture->getWidth();
+	const uint texWidth = _texture->getWidth();
 	const uint texHeight = _texture->getHeight();
 
 	// Set viewport dimensions.
@@ -238,25 +238,25 @@ void TextureTarget::setSize(uint width, uint height) {
 	_viewport[3] = texHeight;
 
 	// Setup orthogonal projection matrix.
-	_projectionMatrix[ 0] =  2.0f / texWidth;
-	_projectionMatrix[ 1] =  0.0f;
-	_projectionMatrix[ 2] =  0.0f;
-	_projectionMatrix[ 3] =  0.0f;
+	_projectionMatrix[0] = 2.0f / texWidth;
+	_projectionMatrix[1] = 0.0f;
+	_projectionMatrix[2] = 0.0f;
+	_projectionMatrix[3] = 0.0f;
 
-	_projectionMatrix[ 4] =  0.0f;
-	_projectionMatrix[ 5] =  2.0f / texHeight;
-	_projectionMatrix[ 6] =  0.0f;
-	_projectionMatrix[ 7] =  0.0f;
+	_projectionMatrix[4] = 0.0f;
+	_projectionMatrix[5] = 2.0f / texHeight;
+	_projectionMatrix[6] = 0.0f;
+	_projectionMatrix[7] = 0.0f;
 
-	_projectionMatrix[ 8] =  0.0f;
-	_projectionMatrix[ 9] =  0.0f;
-	_projectionMatrix[10] =  0.0f;
-	_projectionMatrix[11] =  0.0f;
+	_projectionMatrix[8] = 0.0f;
+	_projectionMatrix[9] = 0.0f;
+	_projectionMatrix[10] = 0.0f;
+	_projectionMatrix[11] = 0.0f;
 
 	_projectionMatrix[12] = -1.0f;
 	_projectionMatrix[13] = -1.0f;
-	_projectionMatrix[14] =  0.0f;
-	_projectionMatrix[15] =  1.0f;
+	_projectionMatrix[14] = 0.0f;
+	_projectionMatrix[15] = 1.0f;
 
 	// Directly apply changes when we are active.
 	if (isActive()) {

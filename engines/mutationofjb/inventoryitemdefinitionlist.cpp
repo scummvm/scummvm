@@ -70,4 +70,4 @@ bool InventoryItemDefinitionList::parseFile() {
 	return true;
 }
 
-}
+} // namespace MutationOfJB

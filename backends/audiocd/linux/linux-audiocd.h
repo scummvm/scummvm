@@ -59,4 +59,3 @@ AudioCDManager *createLinuxAudioCDManager();
 #endif
 
 #endif
-

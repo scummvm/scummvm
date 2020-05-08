@@ -22,12 +22,11 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/onedrive/onedrivecreatedirectoryrequest.h"
-#include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivelistdirectoryrequest.h"
+#include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedriveuploadrequest.h"
 #include "backends/networking/curl/connectionmanager.h"
 #include "backends/networking/curl/curljsonrequest.h"
@@ -35,6 +34,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
+#include <curl/curl.h>
 
 namespace Cloud {
 namespace OneDrive {
@@ -42,8 +42,7 @@ namespace OneDrive {
 #define ONEDRIVE_API_SPECIAL_APPROOT_ID "https://graph.microsoft.com/v1.0/drive/special/approot:/"
 #define ONEDRIVE_API_SPECIAL_APPROOT "https://graph.microsoft.com/v1.0/drive/special/approot"
 
-OneDriveStorage::OneDriveStorage(Common::String token, Common::String refreshToken, bool enabled):
-	BaseStorage(token, refreshToken, enabled) {}
+OneDriveStorage::OneDriveStorage(Common::String token, Common::String refreshToken, bool enabled) : BaseStorage(token, refreshToken, enabled) {}
 
 OneDriveStorage::OneDriveStorage(Common::String code, Networking::ErrorCallback cb) {
 	getAccessToken(code, cb);
@@ -150,9 +149,8 @@ void OneDriveStorage::fileInfoCallback(Networking::NetworkReadStreamCallback out
 	const char *url = result.getVal("@microsoft.graph.downloadUrl")->asString().c_str();
 	if (outerCallback)
 		(*outerCallback)(Networking::NetworkReadStreamResponse(
-			response.request,
-			new Networking::NetworkReadStream(url, nullptr, "")
-		));
+		    response.request,
+		    new Networking::NetworkReadStream(url, nullptr, "")));
 
 	delete json;
 	delete outerCallback;

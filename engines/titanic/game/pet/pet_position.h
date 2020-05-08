@@ -33,6 +33,7 @@ class CPETPosition : public CGameObject {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 public:
 	CLASSDEF;
 

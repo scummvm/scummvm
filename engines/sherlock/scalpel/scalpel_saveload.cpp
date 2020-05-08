@@ -20,32 +20,31 @@
  *
  */
 
-#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_saveload.h"
-#include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
+#include "sherlock/scalpel/scalpel_screen.h"
 
 namespace Sherlock {
 
 namespace Scalpel {
 
 const int ENV_POINTS[6][3] = {
-	{ 41, 80, 61 },		// Exit
-	{ 81, 120, 101 },	// Load
-	{ 121, 160, 141 },	// Save
-	{ 161, 200, 181 },	// Up
-	{ 201, 240, 221 },	// Down
-	{ 241, 280, 261 }	// Quit
+    {41, 80, 61},    // Exit
+    {81, 120, 101},  // Load
+    {121, 160, 141}, // Save
+    {161, 200, 181}, // Up
+    {201, 240, 221}, // Down
+    {241, 280, 261}  // Quit
 };
 
 /*----------------------------------------------------------------*/
 
-ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String &target) :
-	SaveManager(vm, target), _envMode(SAVEMODE_NONE) {
+ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String &target) : SaveManager(vm, target), _envMode(SAVEMODE_NONE) {
 
 	_fixedTextExit = FIXED(LoadSave_Exit);
 	_fixedTextLoad = FIXED(LoadSave_Load);
-	_fixedTextSave  = FIXED(LoadSave_Save);
+	_fixedTextSave = FIXED(LoadSave_Save);
 	_fixedTextUp = FIXED(LoadSave_Up);
 	_fixedTextDown = FIXED(LoadSave_Down);
 	_fixedTextQuit = FIXED(LoadSave_Quit);
@@ -53,7 +52,7 @@ ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String 
 	_hotkeyExit = toupper(_fixedTextExit[0]);
 	_hotkeyLoad = toupper(_fixedTextLoad[0]);
 	_hotkeySave = toupper(_fixedTextSave[0]);
-	_hotkeyUp   = toupper(_fixedTextUp[0]);
+	_hotkeyUp = toupper(_fixedTextUp[0]);
 	_hotkeyDown = toupper(_fixedTextDown[0]);
 	_hotkeyQuit = toupper(_fixedTextQuit[0]);
 
@@ -69,7 +68,7 @@ ScalpelSaveManager::ScalpelSaveManager(SherlockEngine *vm, const Common::String 
 	_fixedTextQuitGameNo = FIXED(QuitGame_No);
 
 	_hotkeyQuitGameYes = toupper(_fixedTextQuitGameYes[0]);
-	_hotkeyQuitGameNo  = toupper(_fixedTextQuitGameNo[0]);
+	_hotkeyQuitGameNo = toupper(_fixedTextQuitGameNo[0]);
 }
 
 int ScalpelSaveManager::identifyUserButton(int key) {
@@ -94,17 +93,17 @@ void ScalpelSaveManager::drawInterface() {
 	screen._backBuffer1.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
 
 	screen.makeButton(Common::Rect(ENV_POINTS[0][0], CONTROLS_Y, ENV_POINTS[0][1], CONTROLS_Y + 10),
-		ENV_POINTS[0][2], _fixedTextExit);
+	                  ENV_POINTS[0][2], _fixedTextExit);
 	screen.makeButton(Common::Rect(ENV_POINTS[1][0], CONTROLS_Y, ENV_POINTS[1][1], CONTROLS_Y + 10),
-		ENV_POINTS[1][2], _fixedTextLoad);
+	                  ENV_POINTS[1][2], _fixedTextLoad);
 	screen.makeButton(Common::Rect(ENV_POINTS[2][0], CONTROLS_Y, ENV_POINTS[2][1], CONTROLS_Y + 10),
-		ENV_POINTS[2][2], _fixedTextSave);
+	                  ENV_POINTS[2][2], _fixedTextSave);
 	screen.makeButton(Common::Rect(ENV_POINTS[3][0], CONTROLS_Y, ENV_POINTS[3][1], CONTROLS_Y + 10),
-		ENV_POINTS[3][2], _fixedTextUp);
+	                  ENV_POINTS[3][2], _fixedTextUp);
 	screen.makeButton(Common::Rect(ENV_POINTS[4][0], CONTROLS_Y, ENV_POINTS[4][1], CONTROLS_Y + 10),
-		ENV_POINTS[4][2], _fixedTextDown);
+	                  ENV_POINTS[4][2], _fixedTextDown);
 	screen.makeButton(Common::Rect(ENV_POINTS[5][0], CONTROLS_Y, ENV_POINTS[5][1], CONTROLS_Y + 10),
-		ENV_POINTS[5][2], _fixedTextQuit);
+	                  ENV_POINTS[5][2], _fixedTextQuit);
 
 	if (!_savegameIndex)
 		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, 0, _fixedTextUp);
@@ -114,9 +113,9 @@ void ScalpelSaveManager::drawInterface() {
 
 	for (int idx = _savegameIndex; idx < _savegameIndex + ONSCREEN_FILES_COUNT; ++idx) {
 		screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
-			INV_FOREGROUND, "%d.", idx + 1);
+		              INV_FOREGROUND, "%d.", idx + 1);
 		screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
-			INV_FOREGROUND, "%s", _savegames[idx].c_str());
+		              INV_FOREGROUND, "%s", _savegames[idx].c_str());
 	}
 
 	if (!ui._slideWindows) {
@@ -132,8 +131,7 @@ int ScalpelSaveManager::getHighlightedButton() const {
 	Common::Point pt = _vm->_events->mousePos();
 
 	for (int idx = 0; idx < 6; ++idx) {
-		if (pt.x > ENV_POINTS[idx][0] && pt.x < ENV_POINTS[idx][1] && pt.y > CONTROLS_Y
-				&& pt.y < (CONTROLS_Y + 10))
+		if (pt.x > ENV_POINTS[idx][0] && pt.x < ENV_POINTS[idx][1] && pt.y > CONTROLS_Y && pt.y < (CONTROLS_Y + 10))
 			return idx;
 	}
 
@@ -158,9 +156,8 @@ void ScalpelSaveManager::highlightButtons(int btnIndex) {
 
 	if (btnIndex == 3 && _savegameIndex)
 		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextUp);
-	else
-		if (_savegameIndex)
-			screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextUp);
+	else if (_savegameIndex)
+		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextUp);
 
 	if ((btnIndex == 4) && (_savegameIndex < MAX_SAVEGAME_SLOTS - 5))
 		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, _fixedTextDown);
@@ -179,13 +176,14 @@ bool ScalpelSaveManager::checkGameOnScreen(int slot) {
 		_savegameIndex = slot;
 
 		screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
-			SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
+		                                          SHERLOCK_SCREEN_HEIGHT - 1),
+		                             INV_BACKGROUND);
 
 		for (int idx = _savegameIndex; idx < (_savegameIndex + 5); ++idx) {
 			screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
-				INV_FOREGROUND, "%d.", idx + 1);
+			              INV_FOREGROUND, "%d.", idx + 1);
 			screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
-				INV_FOREGROUND, "%s", _savegames[idx].c_str());
+			              INV_FOREGROUND, "%s", _savegames[idx].c_str());
 		}
 
 		screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, 318, SHERLOCK_SCREEN_HEIGHT));
@@ -258,7 +256,8 @@ bool ScalpelSaveManager::promptForDescription(int slot) {
 		if (keyState.keycode == Common::KEYCODE_BACKSPACE && saveName.size() > 0) {
 			// Delete character of save name
 			screen.vgaBar(Common::Rect(xp - screen.charWidth(saveName.lastChar()), yp - 1,
-				xp + 8, yp + 9), INV_BACKGROUND);
+			                           xp + 8, yp + 9),
+			              INV_BACKGROUND);
 			xp -= screen.charWidth(saveName.lastChar());
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
 			saveName.deleteLastChar();
@@ -270,8 +269,7 @@ bool ScalpelSaveManager::promptForDescription(int slot) {
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
 			done = -1;
 
-		} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && saveName.size() < 50
-				&& (xp + screen.charWidth(keyState.ascii)) < 308) {
+		} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && saveName.size() < 50 && (xp + screen.charWidth(keyState.ascii)) < 308) {
 			char c = (char)keyState.ascii;
 
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);

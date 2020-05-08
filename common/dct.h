@@ -29,9 +29,9 @@
 #ifndef COMMON_DCT_H
 #define COMMON_DCT_H
 
-#include "common/scummsys.h"
 #include "common/math.h"
 #include "common/rdft.h"
+#include "common/scummsys.h"
 
 #include "common/cosinetables.h"
 
@@ -68,10 +68,10 @@ private:
 
 	RDFT *_rdft;
 
-	void calcDCTI  (float *data);
-	void calcDCTII (float *data);
+	void calcDCTI(float *data);
+	void calcDCTII(float *data);
 	void calcDCTIII(float *data);
-	void calcDSTI  (float *data);
+	void calcDSTI(float *data);
 };
 
 } // End of namespace Common

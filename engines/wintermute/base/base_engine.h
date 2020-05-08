@@ -29,10 +29,10 @@
 #ifndef WINTERMUTE_BASE_ENGINE_H
 #define WINTERMUTE_BASE_ENGINE_H
 
-#include "common/str.h"
-#include "common/singleton.h"
-#include "common/random.h"
 #include "common/language.h"
+#include "common/random.h"
+#include "common/singleton.h"
+#include "common/str.h"
 
 namespace Wintermute {
 
@@ -91,7 +91,7 @@ enum WMETargetExecutable {
 	// fork of WME_KINJAL_1_4
 	WME_HEROCRAFT,
 
-	WME_1_9_1,  // DEAD:CODE 2010
+	WME_1_9_1, // DEAD:CODE 2010
 
 	// fork of WME_1_9_1
 	WME_KINJAL_1_5,
@@ -103,8 +103,8 @@ enum WMETargetExecutable {
 	WME_KINJAL_1_9,
 	WME_KINJAL_2_0,
 
-	WME_1_9_2,  // DEAD:CODE 2010
-	WME_1_9_3,  // DEAD:CODE 2012, released as "1.10.1 beta"
+	WME_1_9_2, // DEAD:CODE 2010
+	WME_1_9_3, // DEAD:CODE 2012, released as "1.10.1 beta"
 	WME_LITE,
 	LATEST_VERSION,
 
@@ -137,6 +137,7 @@ class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 	Common::Language _language;
 	WMETargetExecutable _targetExecutable;
 	uint32 _flags;
+
 public:
 	BaseEngine();
 	~BaseEngine() override;
@@ -162,10 +163,10 @@ public:
 	WMETargetExecutable getTargetExecutable() const {
 		return _targetExecutable;
 	}
-	static bool isFoxTailCheck(WMETargetExecutable t, WMETargetExecutable v1=FOXTAIL_OLDEST_VERSION, WMETargetExecutable v2=FOXTAIL_LATEST_VERSION) {
+	static bool isFoxTailCheck(WMETargetExecutable t, WMETargetExecutable v1 = FOXTAIL_OLDEST_VERSION, WMETargetExecutable v2 = FOXTAIL_LATEST_VERSION) {
 		return t >= v1 && t <= v2;
 	}
-	bool isFoxTail(WMETargetExecutable v1=FOXTAIL_OLDEST_VERSION, WMETargetExecutable v2=FOXTAIL_LATEST_VERSION) const {
+	bool isFoxTail(WMETargetExecutable v1 = FOXTAIL_OLDEST_VERSION, WMETargetExecutable v2 = FOXTAIL_LATEST_VERSION) const {
 		return isFoxTailCheck(_targetExecutable, v1, v2);
 	}
 };

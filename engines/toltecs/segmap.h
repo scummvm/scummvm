@@ -61,9 +61,8 @@ public:
 
 	void addMasksToRenderQueue();
 
-//protected:
+	//protected:
 public: // for debugging purposes
-
 	struct SegmapPathRect {
 		int16 x1, y1, x2, y2;
 	};
@@ -109,7 +108,6 @@ public: // for debugging purposes
 
 	void loadSegmapMaskRectSurface(byte *maskData, SegmapMaskRect &maskRect);
 	void freeSegmapMaskRectSurfaces();
-
 };
 
 } // End of namespace Toltecs

@@ -37,11 +37,13 @@ class CUpLighter : public CDropTarget {
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+
 private:
 	bool _hosePumping;
 	bool _inRoom;
 	bool _isSpring;
 	bool _noseDispensed;
+
 public:
 	CLASSDEF;
 	CUpLighter();

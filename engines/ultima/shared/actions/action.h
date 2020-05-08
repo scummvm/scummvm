@@ -45,6 +45,7 @@ protected:
 	 * Signals the end of the turn
 	 */
 	void endOfTurn();
+
 public:
 	/**
 	 * Constructor

@@ -100,12 +100,11 @@ double LBValue::toDouble() const {
 
 Common::Point LBValue::toPoint() const {
 	switch (type) {
-	case kLBValueString:
-		{
+	case kLBValueString: {
 		Common::Point ret;
 		sscanf(string.c_str(), "%hd , %hd", &ret.x, &ret.y);
 		return ret;
-		}
+	}
 	case kLBValueInteger:
 		return Common::Point(integer, integer);
 	case kLBValuePoint:
@@ -119,12 +118,11 @@ Common::Point LBValue::toPoint() const {
 
 Common::Rect LBValue::toRect() const {
 	switch (type) {
-	case kLBValueString:
-		{
+	case kLBValueString: {
 		Common::Rect ret;
 		sscanf(string.c_str(), "%hd , %hd , %hd , %hd", &ret.left, &ret.top, &ret.right, &ret.bottom);
 		return ret;
-		}
+	}
 	case kLBValueInteger:
 		return Common::Rect(integer, integer, integer, integer);
 	case kLBValuePoint:
@@ -198,19 +196,16 @@ void LBCode::nextToken() {
 
 	// We slurp any value associated with the parameter here too, to simplify things.
 	switch (_currToken) {
-	case kTokenIdentifier:
-		{
+	case kTokenIdentifier: {
 		if (_currOffset + 2 > _size)
 			error("went off the end of code reading identifier");
 		uint16 offset = READ_BE_UINT16(_data + _currOffset);
 		// TODO: check string exists
 		_currValue = _strings[offset];
 		_currOffset += 2;
-		}
-		break;
+	} break;
 
-	case kTokenLiteral:
-		{
+	case kTokenLiteral: {
 		if (_currOffset + 1 > _size)
 			error("went off the end of code reading literal");
 		byte literalType = _data[_currOffset++];
@@ -224,8 +219,7 @@ void LBCode::nextToken() {
 		default:
 			error("unknown kTokenLiteral type %02x", literalType);
 		}
-		}
-		break;
+	} break;
 
 	case kTokenConstMode:
 	case kTokenConstEventId:
@@ -247,16 +241,14 @@ void LBCode::nextToken() {
 		//_currOffset += 2;
 		break;
 
-	case kTokenString:
-		{
+	case kTokenString: {
 		if (_currOffset + 2 > _size)
 			error("went off the end of code reading string");
 		uint16 offset = READ_BE_UINT16(_data + _currOffset);
 		// TODO: check string exists
 		_currValue = _strings[offset];
 		_currOffset += 2;
-		}
-		break;
+	} break;
 
 	default:
 		_currValue = LBValue();
@@ -316,7 +308,7 @@ void LBCode::parseComparisons() {
 	parseConcat();
 
 	if (_currToken != kTokenEquals && _currToken != kTokenLessThan && _currToken != kTokenGreaterThan &&
-		_currToken != kTokenLessThanEq && _currToken != kTokenGreaterThanEq && _currToken != kTokenNotEq)
+	    _currToken != kTokenLessThanEq && _currToken != kTokenGreaterThanEq && _currToken != kTokenNotEq)
 		return;
 	byte comparison = _currToken;
 	switch (comparison) {
@@ -487,118 +479,117 @@ void LBCode::parseMain() {
 	case kTokenIdentifier:
 		assert(_currValue.type == kLBValueString);
 		{
-		Common::String varname = _currValue.string;
-		debugN("%s", varname.c_str());
-		nextToken();
-		if (varname.equalsIgnoreCase("self")) {
-			_stack.push(LBValue(_currSource));
-			if (_currToken == kTokenAssign)
-				error("attempted assignment to self");
-			break;
-		}
-		bool indexing = false;
-		Common::Array<LBValue> index;
-		while (_currToken == kTokenListStart) {
-			debugN("[");
+			Common::String varname = _currValue.string;
+			debugN("%s", varname.c_str());
 			nextToken();
-			parseStatement();
-			if (_currToken != kTokenListEnd)
-				error("expected list end");
-			debugN("]");
-			nextToken();
-			if (!_stack.size())
-				error("index failed");
-			indexing = true;
-			index.push_back(_stack.pop());
-		}
-		if (_currToken == kTokenAssign) {
-			debugN(" = ");
-			nextToken();
-			parseStatement();
-			if (!_stack.size())
-				error("assignment failed");
-			LBValue *val;
-			if (indexing)
-				val = getIndexedVar(varname, index);
-			else
-				val = &_vm->_variables[varname];
-			if (val) {
-				*val = _stack.pop();
-				_stack.push(*val);
-			} else
-				error("assignment failed, no dest");
-//				_stack.push(LBValue());
-		} else if (_currToken == kTokenPlusEquals || _currToken == kTokenMinusEquals || _currToken == kTokenAndEquals) {
-			// FIXME: do +=/-= belong here?
-			byte token = _currToken;
-			if (_currToken == kTokenPlusEquals)
-				debugN(" += ");
-			else if (_currToken == kTokenMinusEquals)
-				debugN(" -= ");
-			else if (_currToken == kTokenAndEquals)
-				debugN(" &= ");
-			nextToken();
-			parseStatement();
-			if (!_stack.size())
-				error("assignment failed");
-			LBValue *val;
-			if (indexing)
-				val = getIndexedVar(varname, index);
-			else
-				val = &_vm->_variables[varname];
-			if (val) {
-				if (token == kTokenAndEquals) {
-					if (val->type != kLBValueString)
-						error("operator &= used on non-string");
-					val->string = val->string + _stack.pop().toString();
-				} else {
-					// FIXME: non-integers
-					if (val->type != kLBValueInteger)
-						error("operator used on non-integer");
-					if (token == kTokenPlusEquals)
-						val->integer = val->integer + _stack.pop().toInt();
-					else
-						val->integer = val->integer - _stack.pop().toInt();
-				}
-				_stack.push(*val);
-			} else
-				_stack.push(LBValue());
-		} else {
-			if (indexing) {
-				LBValue *val = getIndexedVar(varname, index);
-				if (val)
-					_stack.push(*val);
+			if (varname.equalsIgnoreCase("self")) {
+				_stack.push(LBValue(_currSource));
+				if (_currToken == kTokenAssign)
+					error("attempted assignment to self");
+				break;
+			}
+			bool indexing = false;
+			Common::Array<LBValue> index;
+			while (_currToken == kTokenListStart) {
+				debugN("[");
+				nextToken();
+				parseStatement();
+				if (_currToken != kTokenListEnd)
+					error("expected list end");
+				debugN("]");
+				nextToken();
+				if (!_stack.size())
+					error("index failed");
+				indexing = true;
+				index.push_back(_stack.pop());
+			}
+			if (_currToken == kTokenAssign) {
+				debugN(" = ");
+				nextToken();
+				parseStatement();
+				if (!_stack.size())
+					error("assignment failed");
+				LBValue *val;
+				if (indexing)
+					val = getIndexedVar(varname, index);
 				else
+					val = &_vm->_variables[varname];
+				if (val) {
+					*val = _stack.pop();
+					_stack.push(*val);
+				} else
+					error("assignment failed, no dest");
+				//				_stack.push(LBValue());
+			} else if (_currToken == kTokenPlusEquals || _currToken == kTokenMinusEquals || _currToken == kTokenAndEquals) {
+				// FIXME: do +=/-= belong here?
+				byte token = _currToken;
+				if (_currToken == kTokenPlusEquals)
+					debugN(" += ");
+				else if (_currToken == kTokenMinusEquals)
+					debugN(" -= ");
+				else if (_currToken == kTokenAndEquals)
+					debugN(" &= ");
+				nextToken();
+				parseStatement();
+				if (!_stack.size())
+					error("assignment failed");
+				LBValue *val;
+				if (indexing)
+					val = getIndexedVar(varname, index);
+				else
+					val = &_vm->_variables[varname];
+				if (val) {
+					if (token == kTokenAndEquals) {
+						if (val->type != kLBValueString)
+							error("operator &= used on non-string");
+						val->string = val->string + _stack.pop().toString();
+					} else {
+						// FIXME: non-integers
+						if (val->type != kLBValueInteger)
+							error("operator used on non-integer");
+						if (token == kTokenPlusEquals)
+							val->integer = val->integer + _stack.pop().toInt();
+						else
+							val->integer = val->integer - _stack.pop().toInt();
+					}
+					_stack.push(*val);
+				} else
 					_stack.push(LBValue());
-			} else
-				_stack.push(_vm->_variables[varname]);
-		}
-		// FIXME: pre/postincrement for non-integers
-		if (_currToken == kTokenPlusPlus) {
-			debugN("++");
-			if (indexing) {
-				LBValue *val = getIndexedVar(varname, index);
-				if (val)
-					val->integer++;
-			} else
-				_vm->_variables[varname].integer++;
-			nextToken();
-		} else if (_currToken == kTokenMinusMinus) {
-			debugN("--");
-			if (indexing) {
-				LBValue *val = getIndexedVar(varname, index);
-				if (val)
-					val->integer--;
-			} else
-				_vm->_variables[varname].integer--;
-			nextToken();
-		}
+			} else {
+				if (indexing) {
+					LBValue *val = getIndexedVar(varname, index);
+					if (val)
+						_stack.push(*val);
+					else
+						_stack.push(LBValue());
+				} else
+					_stack.push(_vm->_variables[varname]);
+			}
+			// FIXME: pre/postincrement for non-integers
+			if (_currToken == kTokenPlusPlus) {
+				debugN("++");
+				if (indexing) {
+					LBValue *val = getIndexedVar(varname, index);
+					if (val)
+						val->integer++;
+				} else
+					_vm->_variables[varname].integer++;
+				nextToken();
+			} else if (_currToken == kTokenMinusMinus) {
+				debugN("--");
+				if (indexing) {
+					LBValue *val = getIndexedVar(varname, index);
+					if (val)
+						val->integer--;
+				} else
+					_vm->_variables[varname].integer--;
+				nextToken();
+			}
 		}
 		break;
 
 	case kTokenPlusPlus:
-	case kTokenMinusMinus:
-		{
+	case kTokenMinusMinus: {
 		byte token = _currToken;
 		if (token == kTokenPlusPlus)
 			debugN("++");
@@ -621,8 +612,7 @@ void LBCode::parseMain() {
 			val.integer--;
 		_stack.push(val);
 		nextToken();
-		}
-		break;
+	} break;
 
 	case kTokenLiteral:
 	case kTokenConstMode:
@@ -667,21 +657,21 @@ void LBCode::parseMain() {
 		debugN("[");
 		nextToken();
 		{
-		Common::SharedPtr<LBList> list = Common::SharedPtr<LBList>(new LBList);
-		while (_currToken != kTokenListEnd) {
-			parseStatement();
-			if (!_stack.size())
-				error("unexpected empty stack during literal list evaluation");
-			list->array.push_back(_stack.pop());
-			if (_currToken == kTokenComma) {
-				debugN(", ");
-				nextToken();
-			} else if (_currToken != kTokenListEnd)
-				error("encountered unexpected token %02x during literal list", _currToken);
-		}
-		debugN("]");
-		nextToken();
-		_stack.push(list);
+			Common::SharedPtr<LBList> list = Common::SharedPtr<LBList>(new LBList);
+			while (_currToken != kTokenListEnd) {
+				parseStatement();
+				if (!_stack.size())
+					error("unexpected empty stack during literal list evaluation");
+				list->array.push_back(_stack.pop());
+				if (_currToken == kTokenComma) {
+					debugN(", ");
+					nextToken();
+				} else if (_currToken != kTokenListEnd)
+					error("encountered unexpected token %02x during literal list", _currToken);
+			}
+			debugN("]");
+			nextToken();
+			_stack.push(list);
 		}
 		break;
 
@@ -703,13 +693,13 @@ void LBCode::parseMain() {
 		if (!_stack.size())
 			error("eval op failed");
 		{
-		// FIXME: XXX
-		LBValue in = _stack.pop();
-		if (in.type != kLBValueString)
-			error("eval op on non-string");
-		Common::String varname = in.string;
-		LBValue &val = _vm->_variables[varname];
-		_stack.push(val);
+			// FIXME: XXX
+			LBValue in = _stack.pop();
+			if (in.type != kLBValueString)
+				error("eval op on non-string");
+			Common::String varname = in.string;
+			LBValue &val = _vm->_variables[varname];
+			_stack.push(val);
 		}
 		break;
 
@@ -832,143 +822,142 @@ struct CodeCommandInfo {
 
 #define NUM_GENERAL_COMMANDS 129
 CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
-	{ "eval", &LBCode::cmdEval },
-	{ "random", &LBCode::cmdRandom },
-	{ "stringLen", &LBCode::cmdStringLen },
-	{ "substring", &LBCode::cmdSubstring },
-	{ "max", &LBCode::cmdMax },
-	{ "min", &LBCode::cmdMin },
-	{ "abs", &LBCode::cmdAbs },
-	{ "getRect", &LBCode::cmdGetRect }, // also "makeRect"
-	{ "makePt", &LBCode::cmdMakePoint }, // also "makePair"
-	{ "topLeft", &LBCode::cmdTopLeft },
-	{ "bottomRight", &LBCode::cmdBottomRight },
-	{ "mousePos", &LBCode::cmdMousePos },
-	{ "top", &LBCode::cmdTop },
-	{ "left", &LBCode::cmdLeft },
-	{ "bottom", &LBCode::cmdBottom },
-	// 0x10
-	{ "right", &LBCode::cmdRight },
-	{ "xpos", &LBCode::cmdXPos },
-	{ "ypos", &LBCode::cmdYPos },
-	{ "playFrom", 0 },
-	{ "move", &LBCode::cmdMove },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ "setDragParams", &LBCode::cmdSetDragParams },
-	{ "resetDragParams", 0 },
-	{ "enableRollover", &LBCode::cmdUnimplemented /* FIXME */ },
-	{ "setCursor", 0 },
-	{ "width", &LBCode::cmdWidth },
-	{ "height", &LBCode::cmdHeight },
-	{ "getFrameBounds", 0 }, // also "getFrameRect"
-	{ "traceRect", 0 },
-	{ "sqrt", 0 },
-	// 0x20
-	{ "deleteVar", &LBCode::cmdDeleteVar },
-	{ "saveVars", 0 },
-	{ "scriptLink", 0 },
-	{ "setViewOrigin", &LBCode::cmdUnimplemented },
-	{ "rectSect", 0 },
-	{ "getViewOrigin", 0 },
-	{ "getViewRect", 0 },
-	{ "getPage", 0 },
-	{ "getWorldRect", 0 },
-	{ "isWorldWrap", 0 },
-	{ "newList", &LBCode::cmdNewList },
-	{ "deleteList", 0 },
-	{ "add", &LBCode::cmdAdd },
-	{ 0, 0 },
-	{ "addAt", &LBCode::cmdAddAt },
-	{ "getAt", 0 },
-	// 0x30
-	{ 0, 0 },
-	{ "getIndex", 0 },
-	{ "setAt", &LBCode::cmdSetAt },
-	{ "listLen", &LBCode::cmdListLen },
-	{ "deleteAt", &LBCode::cmdDeleteAt },
-	{ "clearList", &LBCode::cmdUnimplemented },
-	{ "setWorld", 0 },
-	{ "setProperty", &LBCode::cmdSetProperty },
-	{ "getProperty", &LBCode::cmdGetProperty },
-	{ "copyList", 0 },
-	{ "invoke", 0 },
-	{ "exec", &LBCode::cmdExec },
-	{ "return", &LBCode::cmdReturn },
-	{ "sendSync", 0 },
-	{ "moveViewOrigin", 0 },
-	{ "addToGroup", 0 },
-	// 0x40
-	{ "removeFromGroup", 0 },
-	{ "clearGroup", 0 },
-	{ "setPlayParams", &LBCode::cmdSetPlayParams },
-	{ "autoEvent", 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ "getID", 0 },
-	{ "setCursorPosition", 0 },
-	{ "getTime", 0 },
-	{ "logWriteLn", 0 },
-	{ "logWrite", 0 },
-	{ "getLanguage", 0 },
-	{ "setLanguage", 0 },
-	{ "getSequence", 0 },
-	{ "setSequence", 0 },
-	{ "getFileSpec", 0 },
-	// 0x50
-	{ "setKeyEvent", &LBCode::cmdSetKeyEvent },
-	{ "setHitTest", &LBCode::cmdSetHitTest },
-	{ "key", &LBCode::cmdKey },
-	{ "deleteKeyEvent", 0 },
-	{ "setDisplay", &LBCode::cmdUnimplemented },
-	{ "getDisplay", 0 },
-	{ 0, 0 },
-	{ "lbxCreate", &LBCode::cmdLBXCreate },
-	{ "lbxFunc", &LBCode::cmdLBXFunc },
-	{ "waitCursor", 0 },
-	{ "debugBreak", 0 },
-	{ "menuItemEnable", 0 },
-	{ "showChannel", 0 },
-	{ "hideChannel", 0 },
-	{ "setPageFade", 0 },
-	{ "normalize", 0 },
-	// 0x60 (v5+)
-	{ "addEvent", 0 },
-	{ "setCueEvent", 0 },
-	{ 0, 0 },
-	{ 0, 0 },
-	{ "getName", 0 },
-	{ "getProperties", 0 },
-	{ "createItem", 0 },
-	{ "setProperties", 0 },
-	{ "alert", 0 },
-	{ "getUniqueID", 0 },
-	{ "isNumeric", 0 },
-	{ "setKeyFocus", 0 },
-	{ "getKeyFocus", 0 },
-	{ "isItem", 0 },
-	{ "itemHit", 0 },
-	{ "getItem ", 0 },
-	// 0x70
-	{ 0, 0 },
-	{ "setCascade", 0 },
-	{ "getCascade", 0 },
-	{ "getRes", 0 },
-	{ "setRes", 0 },
-	{ "getFilename", 0 },
-	{ "resEnumNames", 0 },
-	{ "isList", 0 },
-	{ "resetRect", 0 },
-	{ "setVolume", 0 },
-	{ "getVolume", 0 },
-	{ "pause", 0 },
-	{ "getTextWidth", 0 },
-	{ "setItemVolume", 0 },
-	{ "setSoundLoop", 0 },
-	// 0x80
-	{ "setClipboard", 0 },
-	{ "getResDuration", 0 }
-};
+    {"eval", &LBCode::cmdEval},
+    {"random", &LBCode::cmdRandom},
+    {"stringLen", &LBCode::cmdStringLen},
+    {"substring", &LBCode::cmdSubstring},
+    {"max", &LBCode::cmdMax},
+    {"min", &LBCode::cmdMin},
+    {"abs", &LBCode::cmdAbs},
+    {"getRect", &LBCode::cmdGetRect},  // also "makeRect"
+    {"makePt", &LBCode::cmdMakePoint}, // also "makePair"
+    {"topLeft", &LBCode::cmdTopLeft},
+    {"bottomRight", &LBCode::cmdBottomRight},
+    {"mousePos", &LBCode::cmdMousePos},
+    {"top", &LBCode::cmdTop},
+    {"left", &LBCode::cmdLeft},
+    {"bottom", &LBCode::cmdBottom},
+    // 0x10
+    {"right", &LBCode::cmdRight},
+    {"xpos", &LBCode::cmdXPos},
+    {"ypos", &LBCode::cmdYPos},
+    {"playFrom", 0},
+    {"move", &LBCode::cmdMove},
+    {0, 0},
+    {0, 0},
+    {"setDragParams", &LBCode::cmdSetDragParams},
+    {"resetDragParams", 0},
+    {"enableRollover", &LBCode::cmdUnimplemented /* FIXME */},
+    {"setCursor", 0},
+    {"width", &LBCode::cmdWidth},
+    {"height", &LBCode::cmdHeight},
+    {"getFrameBounds", 0}, // also "getFrameRect"
+    {"traceRect", 0},
+    {"sqrt", 0},
+    // 0x20
+    {"deleteVar", &LBCode::cmdDeleteVar},
+    {"saveVars", 0},
+    {"scriptLink", 0},
+    {"setViewOrigin", &LBCode::cmdUnimplemented},
+    {"rectSect", 0},
+    {"getViewOrigin", 0},
+    {"getViewRect", 0},
+    {"getPage", 0},
+    {"getWorldRect", 0},
+    {"isWorldWrap", 0},
+    {"newList", &LBCode::cmdNewList},
+    {"deleteList", 0},
+    {"add", &LBCode::cmdAdd},
+    {0, 0},
+    {"addAt", &LBCode::cmdAddAt},
+    {"getAt", 0},
+    // 0x30
+    {0, 0},
+    {"getIndex", 0},
+    {"setAt", &LBCode::cmdSetAt},
+    {"listLen", &LBCode::cmdListLen},
+    {"deleteAt", &LBCode::cmdDeleteAt},
+    {"clearList", &LBCode::cmdUnimplemented},
+    {"setWorld", 0},
+    {"setProperty", &LBCode::cmdSetProperty},
+    {"getProperty", &LBCode::cmdGetProperty},
+    {"copyList", 0},
+    {"invoke", 0},
+    {"exec", &LBCode::cmdExec},
+    {"return", &LBCode::cmdReturn},
+    {"sendSync", 0},
+    {"moveViewOrigin", 0},
+    {"addToGroup", 0},
+    // 0x40
+    {"removeFromGroup", 0},
+    {"clearGroup", 0},
+    {"setPlayParams", &LBCode::cmdSetPlayParams},
+    {"autoEvent", 0},
+    {0, 0},
+    {0, 0},
+    {"getID", 0},
+    {"setCursorPosition", 0},
+    {"getTime", 0},
+    {"logWriteLn", 0},
+    {"logWrite", 0},
+    {"getLanguage", 0},
+    {"setLanguage", 0},
+    {"getSequence", 0},
+    {"setSequence", 0},
+    {"getFileSpec", 0},
+    // 0x50
+    {"setKeyEvent", &LBCode::cmdSetKeyEvent},
+    {"setHitTest", &LBCode::cmdSetHitTest},
+    {"key", &LBCode::cmdKey},
+    {"deleteKeyEvent", 0},
+    {"setDisplay", &LBCode::cmdUnimplemented},
+    {"getDisplay", 0},
+    {0, 0},
+    {"lbxCreate", &LBCode::cmdLBXCreate},
+    {"lbxFunc", &LBCode::cmdLBXFunc},
+    {"waitCursor", 0},
+    {"debugBreak", 0},
+    {"menuItemEnable", 0},
+    {"showChannel", 0},
+    {"hideChannel", 0},
+    {"setPageFade", 0},
+    {"normalize", 0},
+    // 0x60 (v5+)
+    {"addEvent", 0},
+    {"setCueEvent", 0},
+    {0, 0},
+    {0, 0},
+    {"getName", 0},
+    {"getProperties", 0},
+    {"createItem", 0},
+    {"setProperties", 0},
+    {"alert", 0},
+    {"getUniqueID", 0},
+    {"isNumeric", 0},
+    {"setKeyFocus", 0},
+    {"getKeyFocus", 0},
+    {"isItem", 0},
+    {"itemHit", 0},
+    {"getItem ", 0},
+    // 0x70
+    {0, 0},
+    {"setCascade", 0},
+    {"getCascade", 0},
+    {"getRes", 0},
+    {"setRes", 0},
+    {"getFilename", 0},
+    {"resEnumNames", 0},
+    {"isList", 0},
+    {"resetRect", 0},
+    {"setVolume", 0},
+    {"getVolume", 0},
+    {"pause", 0},
+    {"getTextWidth", 0},
+    {"setItemVolume", 0},
+    {"setSoundLoop", 0},
+    // 0x80
+    {"setClipboard", 0},
+    {"getResDuration", 0}};
 
 void LBCode::runGeneralCommand() {
 	byte commandType = _currValue.integer;
@@ -1236,7 +1225,7 @@ void LBCode::cmdSetAt(const Common::Array<LBValue> &params) {
 
 	if ((uint)params[1].integer > params[0].list->array.size())
 		params[0].list->array.resize(params[1].integer);
-	params[0].list->array[params[1].integer - 1] =  params[2];
+	params[0].list->array[params[1].integer - 1] = params[2];
 }
 
 void LBCode::cmdListLen(const Common::Array<LBValue> &params) {
@@ -1424,43 +1413,42 @@ void LBCode::cmdKey(const Common::Array<LBValue> &params) {
 
 #define NUM_ITEM_COMMANDS 34
 CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
-	{ "clone", &LBCode::itemClone },
-	{ "destroy", 0 },
-	{ "dragBeginFrom", 0 },
-	{ "dragEnd", 0 },
-	{ "enableLocal", 0 },
-	{ "enable", 0 },
-	{ "showLocal", 0 },
-	{ "show", 0 },
-	{ "getFrame", 0 },
-	{ "getParent", 0 },
-	{ "getPosition" , 0 },
-	{ "getText", 0 },
-	{ "getZNext", 0 },
-	{ "getZPrev", 0 },
-	{ "hitTest", 0 },
-	// 0x10
-	{ "isAmbient", 0 },
-	{ "isEnabled", 0 },
-	{ "isMuted", 0 },
-	{ "isPlaying", &LBCode::itemIsPlaying },
-	{ "isVisible", 0 },
-	{ "isLoaded", &LBCode::itemIsLoaded },
-	{ "isDragging", 0 },
-	{ "load", 0 },
-	{ "moveTo", &LBCode::itemMoveTo },
-	{ "mute", 0 },
-	{ "play", 0 },
-	{ "seek", &LBCode::itemSeek },
-	{ "seekToFrame", &LBCode::itemSeekToFrame },
-	{ "setParent", &LBCode::itemSetParent },
-	{ "setZOrder", 0 },
-	{ "setText", 0 },
-	// 0x20
-	{ "stop", 0 },
-	{ "unload", 0 },
-	{ "unloadSync", 0}
-};
+    {"clone", &LBCode::itemClone},
+    {"destroy", 0},
+    {"dragBeginFrom", 0},
+    {"dragEnd", 0},
+    {"enableLocal", 0},
+    {"enable", 0},
+    {"showLocal", 0},
+    {"show", 0},
+    {"getFrame", 0},
+    {"getParent", 0},
+    {"getPosition", 0},
+    {"getText", 0},
+    {"getZNext", 0},
+    {"getZPrev", 0},
+    {"hitTest", 0},
+    // 0x10
+    {"isAmbient", 0},
+    {"isEnabled", 0},
+    {"isMuted", 0},
+    {"isPlaying", &LBCode::itemIsPlaying},
+    {"isVisible", 0},
+    {"isLoaded", &LBCode::itemIsLoaded},
+    {"isDragging", 0},
+    {"load", 0},
+    {"moveTo", &LBCode::itemMoveTo},
+    {"mute", 0},
+    {"play", 0},
+    {"seek", &LBCode::itemSeek},
+    {"seekToFrame", &LBCode::itemSeekToFrame},
+    {"setParent", &LBCode::itemSetParent},
+    {"setZOrder", 0},
+    {"setText", 0},
+    // 0x20
+    {"stop", 0},
+    {"unload", 0},
+    {"unloadSync", 0}};
 
 void LBCode::runItemCommand() {
 	byte commandType = _currValue.integer;
@@ -1556,15 +1544,14 @@ void LBCode::runNotifyCommand() {
 	byte commandType = _currValue.integer;
 
 	switch (commandType) {
-	case kLBNotifyChangePage:
-		{
+	case kLBNotifyChangePage: {
 		debugN("goto");
 		Common::Array<LBValue> params = readParams();
 		// TODO: type-checking
 		NotifyEvent notifyEvent(kLBNotifyChangePage, 1);
 		switch (params.size()) {
 		case 4:
-			notifyEvent.type = kLBNotifyChangeMode; // FIXME: type 8?
+			notifyEvent.type = kLBNotifyChangeMode;     // FIXME: type 8?
 			notifyEvent.newUnknown = params[0].integer; // FIXME: this is newLanguage
 			notifyEvent.newMode = params[1].integer;
 			notifyEvent.newPage = params[2].integer;
@@ -1590,39 +1577,32 @@ void LBCode::runNotifyCommand() {
 			error("incorrect number of parameters (%d) to goto", params.size());
 		}
 		_vm->addNotifyEvent(notifyEvent);
-		}
-		break;
+	} break;
 
 	case kLBNotifyGoToControls:
-	case kLBNotifyGotoQuit:
-		{
+	case kLBNotifyGotoQuit: {
 		debugN(commandType == kLBNotifyGoToControls ? "gotocontrol" : "gotoquit");
 		Common::Array<LBValue> params = readParams();
 		if (params.size() != 0)
 			error("incorrect number of parameters (%d) to notify", params.size());
 		_vm->addNotifyEvent(NotifyEvent(commandType, 0));
-		}
-		break;
+	} break;
 
-	case kLBNotifyIntroDone:
-		{
+	case kLBNotifyIntroDone: {
 		debugN("startphasemain");
 		Common::Array<LBValue> params = readParams();
 		if (params.size() != 0)
 			error("incorrect number of parameters (%d) to startphasemain", params.size());
 		_vm->addNotifyEvent(NotifyEvent(kLBNotifyIntroDone, 1));
-		}
-		break;
+	} break;
 
-	case kLBNotifyQuit:
-		{
+	case kLBNotifyQuit: {
 		debugN("quit");
 		Common::Array<LBValue> params = readParams();
 		if (params.size() != 0)
 			error("incorrect number of parameters (%d) to quit", params.size());
 		_vm->addNotifyEvent(NotifyEvent(kLBNotifyQuit, 0));
-		}
-		break;
+	} break;
 
 	default:
 		error("unknown notify command %02x in code", commandType);
@@ -1643,13 +1623,12 @@ uint LBCode::nextFreeString() {
 }
 
 static const char *const functionNameAliases[][2] = {
-	{ "makerect", "getRect" },
-	{ "makepair", "makePt" },
-	{ "getframerect", "getFrameBounds" },
-	{ "dragbegin", "dragBeginFrom" },
-	{ "x", "xpos" },
-	{ "y", "ypos" }
-};
+    {"makerect", "getRect"},
+    {"makepair", "makePt"},
+    {"getframerect", "getFrameBounds"},
+    {"dragbegin", "dragBeginFrom"},
+    {"x", "xpos"},
+    {"y", "ypos"}};
 
 /*
  * Helper function for parseCode:
@@ -1731,20 +1710,19 @@ uint LBCode::parseCode(const Common::String &source) {
 		byte lookahead2Op;
 	};
 
-	#define NUM_LB_OPERATORS 11
+#define NUM_LB_OPERATORS 11
 	static const LBCodeOperator operators[NUM_LB_OPERATORS] = {
-		{ '+', kTokenPlus, '+', kTokenPlusPlus, '=', kTokenPlusEquals },
-		{ '-', kTokenMinus, '-', kTokenMinusMinus, '=', kTokenMinusEquals },
-		{ '/', kTokenDivide, '=', kTokenDivideEquals, 0, 0 },
-		{ '*', kTokenMultiply, '=', kTokenMultiplyEquals, 0, 0 },
-		{ '=', kTokenAssign, '=', kTokenEquals, 0, 0 },
-		{ '>', kTokenGreaterThan, '=', kTokenGreaterThanEq, 0, 0 },
-		{ '<', kTokenLessThan, '=', kTokenLessThanEq, 0, 0 },
-		{ '!', kTokenNot, '=', kTokenNotEq, 0, 0 },
-		{ '&', kTokenConcat, '&', kTokenAnd, '=', kTokenAndEquals },
-		{ '|', 0, '|', kTokenOr, 0, 0 },
-		{ ';', kTokenEndOfStatement, 0, 0, 0, 0 }
-	};
+	    {'+', kTokenPlus, '+', kTokenPlusPlus, '=', kTokenPlusEquals},
+	    {'-', kTokenMinus, '-', kTokenMinusMinus, '=', kTokenMinusEquals},
+	    {'/', kTokenDivide, '=', kTokenDivideEquals, 0, 0},
+	    {'*', kTokenMultiply, '=', kTokenMultiplyEquals, 0, 0},
+	    {'=', kTokenAssign, '=', kTokenEquals, 0, 0},
+	    {'>', kTokenGreaterThan, '=', kTokenGreaterThanEq, 0, 0},
+	    {'<', kTokenLessThan, '=', kTokenLessThanEq, 0, 0},
+	    {'!', kTokenNot, '=', kTokenNotEq, 0, 0},
+	    {'&', kTokenConcat, '&', kTokenAnd, '=', kTokenAndEquals},
+	    {'|', 0, '|', kTokenOr, 0, 0},
+	    {';', kTokenEndOfStatement, 0, 0, 0, 0}};
 
 	uint pos = 0;
 	Common::Array<byte> code;
@@ -1800,8 +1778,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			break;
 		// literal string
 		case '"':
-		case '\'':
-			{
+		case '\'': {
 			Common::String tempString;
 			while (pos < source.size()) {
 				if (source[pos] == token)
@@ -1820,8 +1797,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			WRITE_BE_UINT16(tmp, (int16)stringId);
 			code.push_back(tmp[0]);
 			code.push_back(tmp[1]);
-			}
-			break;
+		} break;
 		// open bracket
 		case '(':
 			bool parameterless;
@@ -1865,8 +1841,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			counterPositions.pop_back();
 			break;
 		// comma (seperating function params)
-		case ',':
-			{
+		case ',': {
 			if (counterPositions.empty())
 				error("while parsing script '%s', encountered unexpected ,", source.c_str());
 			code.push_back(kTokenComma);
@@ -1874,11 +1849,9 @@ uint LBCode::parseCode(const Common::String &source) {
 			if (!counterPos)
 				error("while parsing script '%s', encountered , outside parameter list", source.c_str());
 			code[counterPos]++;
-			}
-			break;
+		} break;
 		// old-style explicit function call
-		case '@':
-			{
+		case '@': {
 			Common::String tempString;
 			while (pos < source.size()) {
 				if (!Common::isAlpha(source[pos]) && !Common::isDigit(source[pos]))
@@ -1888,9 +1861,8 @@ uint LBCode::parseCode(const Common::String &source) {
 			wasFunction = parseCodeSymbol(tempString, pos, code, true);
 			if (!wasFunction)
 				error("while parsing script '%s', encountered explicit function call to unknown function '%s'",
-					source.c_str(), tempString.c_str());
-			}
-			break;
+				      source.c_str(), tempString.c_str());
+		} break;
 		default:
 			if (Common::isDigit(token)) {
 				const char *in = source.c_str() + pos - 1;

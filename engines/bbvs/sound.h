@@ -40,6 +40,7 @@ public:
 	void play(bool loop);
 	void stop();
 	bool isPlaying();
+
 protected:
 	Audio::RewindableAudioStream *_stream;
 	Audio::SoundHandle _handle;
@@ -57,8 +58,9 @@ public:
 	bool isAnySoundPlaying(uint *indices, uint count);
 	void unloadSounds();
 	void stopAllSounds();
+
 protected:
-	Common::Array<Sound*> _sounds;
+	Common::Array<Sound *> _sounds;
 };
 
 } // End of namespace Bbvs

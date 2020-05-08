@@ -20,13 +20,13 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/gumps/bark_gump.h"
+#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,14 +36,13 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump, ItemRelativeGump)
 // TODO: Remove all the hacks
 
 BarkGump::BarkGump() : ItemRelativeGump(), _counter(0), _textWidget(0),
-		_speechShapeNum(0), _speechLength(0), _totalTextHeight(0),
-		_textDelay(20) {
+                       _speechShapeNum(0), _speechLength(0), _totalTextHeight(0),
+                       _textDelay(20) {
 }
 
-BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) :
-	ItemRelativeGump(0, 0, 100, 100, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
-	_barked(msg), _counter(100), _speechShapeNum(speechShapeNum),
-	_speechLength(0), _totalTextHeight(0), _textWidget(0), _textDelay(20) {
+BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) : ItemRelativeGump(0, 0, 100, 100, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
+                                                                                  _barked(msg), _counter(100), _speechShapeNum(speechShapeNum),
+                                                                                  _speechLength(0), _totalTextHeight(0), _textWidget(0), _textDelay(20) {
 	SettingManager::get_instance()->get("textdelay", _textDelay);
 }
 
@@ -53,9 +52,12 @@ BarkGump::~BarkGump(void) {
 void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 	// OK, this is a bit of a hack, but it's how it has to be
 	int fontnum;
-	if (_owner == 1) fontnum = 6;
-	else if (_owner > 256) fontnum = 8;
-	else switch (_owner % 3) {
+	if (_owner == 1)
+		fontnum = 6;
+	else if (_owner > 256)
+		fontnum = 8;
+	else
+		switch (_owner % 3) {
 		case 1:
 			fontnum = 5;
 			break;
@@ -84,7 +86,8 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 	if (_speechShapeNum && ap) {
 		if (ap->playSpeech(_barked, _speechShapeNum, _owner)) {
 			_speechLength = ap->getSpeechLength(_barked, _speechShapeNum) / 33;
-			if (_speechLength == 0) _speechLength = 1;
+			if (_speechLength == 0)
+				_speechLength = 1;
 
 			// We're playing speech, so need to sync the text with the speech.
 			// First we count the total height of all text blocks.
@@ -164,13 +167,15 @@ void BarkGump::run() {
 
 Gump *BarkGump::OnMouseDown(int button, int32 mx, int32 my) {
 	Gump *g = ItemRelativeGump::OnMouseDown(button, mx, my);
-	if (g) return g;
+	if (g)
+		return g;
 
 	// Scroll to next text, if possible
 	if (!NextText()) {
 		if (_speechLength) {
 			AudioProcess *ap = AudioProcess::get_instance();
-			if (ap) ap->stopSpeech(_barked, _speechShapeNum, _owner);
+			if (ap)
+				ap->stopSpeech(_barked, _speechShapeNum, _owner);
 		}
 		Close();
 	}
@@ -190,7 +195,8 @@ void BarkGump::saveData(Common::WriteStream *ws) {
 }
 
 bool BarkGump::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!ItemRelativeGump::loadData(rs, version)) return false;
+	if (!ItemRelativeGump::loadData(rs, version))
+		return false;
 
 	_counter = static_cast<int32>(rs->readUint32LE());
 	_textWidget = rs->readUint16LE();

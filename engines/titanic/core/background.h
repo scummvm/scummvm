@@ -33,12 +33,14 @@ class CBackground : public CGameObject {
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool SetFrameMsg(CSetFrameMsg *msg);
 	bool VisibleMsg(CVisibleMsg *msg);
+
 protected:
 	int _startFrame;
 	int _endFrame;
 	CString _string1;
 	CString _string2;
 	bool _isBlocking;
+
 public:
 	CLASSDEF;
 	CBackground();

@@ -51,6 +51,7 @@ private:
 	 * Called when a drag operation has ended
 	 */
 	CGameObject *dragEnd(const Point &pt, CTreeItem *dragItem);
+
 public:
 	CGameManager *_gameManager;
 	CInputTranslator *_inputTranslator;
@@ -61,6 +62,7 @@ public:
 	Point _mousePos;
 	int _lockCount;
 	bool _abortMessage;
+
 public:
 	CInputHandler(CGameManager *owner);
 	~CInputHandler();

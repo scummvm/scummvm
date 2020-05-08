@@ -23,23 +23,23 @@
 #ifndef BACKENDS_PLATFORM_IOS7_IOS7_VIDEO_H
 #define BACKENDS_PLATFORM_IOS7_IOS7_VIDEO_H
 
-#include <UIKit/UIKit.h>
 #include <Foundation/Foundation.h>
 #include <QuartzCore/QuartzCore.h>
+#include <UIKit/UIKit.h>
 
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
 
-#include "backends/platform/ios7/ios7_keyboard.h"
 #include "backends/platform/ios7/ios7_common.h"
+#include "backends/platform/ios7/ios7_keyboard.h"
 
 #include "common/list.h"
 #include "graphics/scaler.h"
 
 typedef struct {
 	GLfloat x, y;
-	GLfloat u,v;
+	GLfloat u, v;
 } GLVertex;
 
 @interface iPhoneView : UIView {

@@ -48,12 +48,11 @@
 #define DUMP_STDOUT
 
 OSystem_OP::OSystem_OP()
-	:
-	OSystem_POSIX() {
+    : OSystem_POSIX() {
 }
 
 Common::String OSystem_OP::getCurrentDirectory() {
-	char cwd[MAXPATHLEN+1];
+	char cwd[MAXPATHLEN + 1];
 	return Common::String(getcwd(cwd, MAXPATHLEN));
 }
 

@@ -24,20 +24,20 @@
 #include "common/stack.h"
 #include "common/system.h"
 
-#include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/screen.h"
-#include "sci/graphics/palette.h"
 #include "sci/graphics/coordadjuster.h"
-#include "sci/graphics/ports.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
+#include "sci/graphics/ports.h"
+#include "sci/graphics/screen.h"
+#include "sci/sci.h"
 
 namespace Sci {
 
 //#define DEBUG_PICTURE_DRAW
 
 GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster16 *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
-	: _resMan(resMan), _coordAdjuster(coordAdjuster), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
+    : _resMan(resMan), _coordAdjuster(coordAdjuster), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -176,7 +176,7 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 	// We will unpack cel-data into a temporary buffer and then plot it to screen
 	//  That needs to be done cause a mirrored picture may be requested
 	pixelCount = width * height;
-	Common::SpanOwner<SciSpan<byte> > celBitmap;
+	Common::SpanOwner<SciSpan<byte>> celBitmap;
 	celBitmap->allocate(pixelCount, _resource->name());
 
 	if (compression) {
@@ -358,65 +358,60 @@ enum {
 
 #ifdef DEBUG_PICTURE_DRAW
 const char *picOpcodeNames[] = {
-	"Set color",
-	"Disable visual",
-	"Set priority",
-	"Disable priority",
-	"Short patterns",
-	"Medium lines",
-	"Long lines",
-	"Short lines",
-	"Fill",
-	"Set pattern",
-	"Absolute pattern",
-	"Set control",
-	"Disable control",
-	"Medium patterns",
-	"Extended opcode",
-	"Terminate"
-};
+    "Set color",
+    "Disable visual",
+    "Set priority",
+    "Disable priority",
+    "Short patterns",
+    "Medium lines",
+    "Long lines",
+    "Short lines",
+    "Fill",
+    "Set pattern",
+    "Absolute pattern",
+    "Set control",
+    "Disable control",
+    "Medium patterns",
+    "Extended opcode",
+    "Terminate"};
 
 const char *picExOpcodeNamesEGA[] = {
-	"Set palette entries",
-	"Set palette",
-	"Mono0",
-	"Mono1",
-	"Mono2",
-	"Mono3",
-	"Mono4",
-	"Embedded view",
-	"Set priority table"
-};
+    "Set palette entries",
+    "Set palette",
+    "Mono0",
+    "Mono1",
+    "Mono2",
+    "Mono3",
+    "Mono4",
+    "Embedded view",
+    "Set priority table"};
 
 const char *picExOpcodeNamesVGA[] = {
-	"Set palette entries",
-	"Embedded view",
-	"Set palette",
-	"Set priority table (eqdist)",
-	"Set priority table (explicit)"
-};
+    "Set palette entries",
+    "Embedded view",
+    "Set palette",
+    "Set priority table (eqdist)",
+    "Set priority table (explicit)"};
 #endif
 
 #define PIC_EGAPALETTE_COUNT 4
-#define PIC_EGAPALETTE_SIZE  40
-#define PIC_EGAPALETTE_TOTALSIZE PIC_EGAPALETTE_COUNT*PIC_EGAPALETTE_SIZE
+#define PIC_EGAPALETTE_SIZE 40
+#define PIC_EGAPALETTE_TOTALSIZE PIC_EGAPALETTE_COUNT *PIC_EGAPALETTE_SIZE
 #define PIC_EGAPRIORITY_SIZE PIC_EGAPALETTE_SIZE
 
 static const byte vector_defaultEGApalette[PIC_EGAPALETTE_SIZE] = {
-	0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
-	0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0x88,
-	0x88, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x88,
-	0x88, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff,
-	0x08, 0x91, 0x2a, 0x3b, 0x4c, 0x5d, 0x6e, 0x88
-};
+    0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+    0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0x88,
+    0x88, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x88,
+    0x88, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff,
+    0x08, 0x91, 0x2a, 0x3b, 0x4c, 0x5d, 0x6e, 0x88};
 
 static const byte vector_defaultEGApriority[PIC_EGAPRIORITY_SIZE] = {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07
-};
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 
 void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 	byte pic_op;
@@ -501,7 +496,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 		case PIC_OP_SHORT_LINES: // short line
 			vectorGetAbsCoords(data, curPos, x, y);
 			while (vectorIsNonOpcode(data[curPos])) {
-				oldx = x; oldy = y;
+				oldx = x;
+				oldy = y;
 				vectorGetRelCoords(data, curPos, x, y);
 				Common::Point startPoint(oldx, oldy);
 				Common::Point endPoint(x, y);
@@ -521,7 +517,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 				}
 			}
 			while (vectorIsNonOpcode(data[curPos])) {
-				oldx = x; oldy = y;
+				oldx = x;
+				oldy = y;
 				vectorGetRelCoordsMed(data, curPos, x, y);
 				Common::Point startPoint(oldx, oldy);
 				Common::Point endPoint(x, y);
@@ -532,7 +529,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 		case PIC_OP_LONG_LINES: // long line
 			vectorGetAbsCoords(data, curPos, x, y);
 			while (vectorIsNonOpcode(data[curPos])) {
-				oldx = x; oldy = y;
+				oldx = x;
+				oldy = y;
 				vectorGetAbsCoords(data, curPos, x, y);
 				Common::Point startPoint(oldx, oldy);
 				Common::Point endPoint(x, y);
@@ -563,7 +561,7 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 					case 35:
 					case 381:
 					case 376:
-					//case 390:	// in the blacklisted NRS patch 1.2 (bug #3615060)
+						//case 390:	// in the blacklisted NRS patch 1.2 (bug #3615060)
 						return;
 					default:
 						break;
@@ -644,7 +642,8 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 					break;
 				case PIC_OPX_EGA_EMBEDDED_VIEW:
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
-					size = data.getUint16LEAt(curPos); curPos += 2;
+					size = data.getUint16LEAt(curPos);
+					curPos += 2;
 					// hardcoded in SSCI, 16 for SCI1early excluding Space Quest 4, 0 for anything else
 					//  fixes sq4 pictures 546+547 (Vohaul's head and Roger Jr trapped). Bug #5250
 					//  fixes sq4 picture 631 (SQ1 view from cockpit). Bug 5249
@@ -687,14 +686,17 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 						curPos += 256 + 4; // Skip over mapping and timestamp
 						for (i = 0; i < 256; i++) {
 							palette.colors[i].used = data[curPos++];
-							palette.colors[i].r = data[curPos++]; palette.colors[i].g = data[curPos++]; palette.colors[i].b = data[curPos++];
+							palette.colors[i].r = data[curPos++];
+							palette.colors[i].g = data[curPos++];
+							palette.colors[i].b = data[curPos++];
 						}
 						_palette->set(&palette, true);
 					}
 					break;
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
-					size = data.getUint16LEAt(curPos); curPos += 2;
+					size = data.getUint16LEAt(curPos);
+					curPos += 2;
 					if (getSciVersion() <= SCI_VERSION_1_EARLY) {
 						// During SCI1Early sierra always used 0 as priority for cels inside picture resources
 						//  fixes Space Quest 4 orange ship lifting off (bug #6446)
@@ -760,7 +762,8 @@ void GfxPicture::vectorGetAbsCoords(const SciSpan<const byte> &data, uint &curPo
 	byte pixel = data[curPos++];
 	x = data[curPos++] + ((pixel & 0xF0) << 4);
 	y = data[curPos++] + ((pixel & 0x0F) << 8);
-	if (_mirroredFlag) x = 319 - x;
+	if (_mirroredFlag)
+		x = 319 - x;
 }
 
 void GfxPicture::vectorGetAbsCoordsNoMirror(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y) {
@@ -929,24 +932,24 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 
 // Bitmap for drawing sierra circles
 static const byte vectorPatternCircles[8][30] = {
-	{ 0x01 },
-	{ 0x72, 0x02 },
-	{ 0xCE, 0xF7, 0x7D, 0x0E },
-	{ 0x1C, 0x3E, 0x7F, 0x7F, 0x7F, 0x3E, 0x1C, 0x00 },
-	{ 0x38, 0xF8, 0xF3, 0xDF, 0x7F, 0xFF, 0xFD, 0xF7, 0x9F, 0x3F, 0x38 },
-	{ 0x70, 0xC0, 0x1F, 0xFE, 0xE3, 0x3F, 0xFF, 0xF7, 0x7F, 0xFF, 0xE7, 0x3F, 0xFE, 0xC3, 0x1F, 0xF8, 0x00 },
-	{ 0xF0, 0x01, 0xFF, 0xE1, 0xFF, 0xF8, 0x3F, 0xFF, 0xDF, 0xFF, 0xF7, 0xFF, 0xFD, 0x7F, 0xFF, 0x9F, 0xFF,
-		0xE3, 0xFF, 0xF0, 0x1F, 0xF0, 0x01 },
-	{ 0xE0, 0x03, 0xF8, 0x0F, 0xFC, 0x1F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF,
-		0x7F, 0xFF, 0x7F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFC, 0x1F, 0xF8, 0x0F, 0xE0, 0x03 }
-//  { 0x01 };
-//	{ 0x03, 0x03, 0x03 },
-//	{ 0x02, 0x07, 0x07, 0x07, 0x02 },
-//	{ 0x06, 0x06, 0x0F, 0x0F, 0x0F, 0x06, 0x06 },
-//	{ 0x04, 0x0E, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x0E, 0x04 },
-//	{ 0x0C, 0x1E, 0x1E, 0x1E, 0x3F, 0x3F, 0x3F, 0x1E, 0x1E, 0x1E, 0x0C },
-//	{ 0x1C, 0x3E, 0x3E, 0x3E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x3E, 0x3E, 0x3E, 0x1C },
-//	{ 0x18, 0x3C, 0x7E, 0x7E, 0x7E, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7E, 0x7E, 0x7E, 0x3C, 0x18 }
+    {0x01},
+    {0x72, 0x02},
+    {0xCE, 0xF7, 0x7D, 0x0E},
+    {0x1C, 0x3E, 0x7F, 0x7F, 0x7F, 0x3E, 0x1C, 0x00},
+    {0x38, 0xF8, 0xF3, 0xDF, 0x7F, 0xFF, 0xFD, 0xF7, 0x9F, 0x3F, 0x38},
+    {0x70, 0xC0, 0x1F, 0xFE, 0xE3, 0x3F, 0xFF, 0xF7, 0x7F, 0xFF, 0xE7, 0x3F, 0xFE, 0xC3, 0x1F, 0xF8, 0x00},
+    {0xF0, 0x01, 0xFF, 0xE1, 0xFF, 0xF8, 0x3F, 0xFF, 0xDF, 0xFF, 0xF7, 0xFF, 0xFD, 0x7F, 0xFF, 0x9F, 0xFF,
+     0xE3, 0xFF, 0xF0, 0x1F, 0xF0, 0x01},
+    {0xE0, 0x03, 0xF8, 0x0F, 0xFC, 0x1F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF,
+     0x7F, 0xFF, 0x7F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFC, 0x1F, 0xF8, 0x0F, 0xE0, 0x03}
+    //  { 0x01 };
+    //	{ 0x03, 0x03, 0x03 },
+    //	{ 0x02, 0x07, 0x07, 0x07, 0x02 },
+    //	{ 0x06, 0x06, 0x0F, 0x0F, 0x0F, 0x06, 0x06 },
+    //	{ 0x04, 0x0E, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x0E, 0x04 },
+    //	{ 0x0C, 0x1E, 0x1E, 0x1E, 0x3F, 0x3F, 0x3F, 0x1E, 0x1E, 0x1E, 0x0C },
+    //	{ 0x1C, 0x3E, 0x3E, 0x3E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x3E, 0x3E, 0x3E, 0x1C },
+    //	{ 0x18, 0x3C, 0x7E, 0x7E, 0x7E, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7E, 0x7E, 0x7E, 0x3C, 0x18 }
 };
 
 // TODO: perhaps this is a better way to set the s_patternTextures array below?
@@ -968,91 +971,90 @@ static const byte patternTextures[32 * 2] = {
 // This table is bitwise upwards (from bit0 to bit7), sierras original table went down the bits (bit7 to bit0)
 //  this was done to simplify things, so we can just run through the table w/o worrying too much about clipping
 static const bool vectorPatternTextures[32 * 8 * 2] = {
-	false, false,  true, false, false, false, false, false, // 0x04
-	 true, false, false,  true, false,  true, false, false, // 0x29
-	false, false, false, false, false, false,  true, false, // 0x40
-	false, false,  true, false, false,  true, false, false, // 0x24
-	 true, false, false,  true, false, false, false, false, // 0x09
-	 true, false, false, false, false, false,  true, false, // 0x41
-	 true, false,  true, false, false,  true, false, false, // 0x25
-	 true, false,  true, false, false, false,  true, false, // 0x45
-	 true, false, false, false, false, false,  true, false, // 0x41
-	false, false, false, false,  true, false, false,  true, // 0x90
-	false, false, false, false,  true, false,  true, false, // 0x50
-	false, false,  true, false, false, false,  true, false, // 0x44
-	false, false, false,  true, false, false,  true, false, // 0x48
-	false, false, false,  true, false, false, false, false, // 0x08
-	false,  true, false, false, false, false,  true, false, // 0x42
-	false, false, false,  true, false,  true, false, false, // 0x28
-	 true, false, false,  true, false, false, false,  true, // 0x89
-	false,  true, false, false,  true, false,  true, false, // 0x52
-	 true, false, false,  true, false, false, false,  true, // 0x89
-	false, false, false,  true, false, false, false,  true, // 0x88
-	false, false, false, false,  true, false, false, false, // 0x10
-	false, false, false,  true, false, false,  true, false, // 0x48
-	false, false,  true, false, false,  true, false,  true, // 0xA4
-	false, false, false,  true, false, false, false, false, // 0x08
-	false, false,  true, false, false, false,  true, false, // 0x44
-	 true, false,  true, false,  true, false, false, false, // 0x15
-	false, false, false,  true, false,  true, false, false, // 0x28
-	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false, false, false, false, false, false, false, // 0x00
-	false,  true, false,  true, false, false, false, false, // 0x0A
-	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
-	// Now the table is actually duplicated, so we won't need to wrap around
-	false, false,  true, false, false, false, false, false, // 0x04
-	 true, false, false,  true, false,  true, false, false, // 0x29
-	false, false, false, false, false, false,  true, false, // 0x40
-	false, false,  true, false, false,  true, false, false, // 0x24
-	 true, false, false,  true, false, false, false, false, // 0x09
-	 true, false, false, false, false, false,  true, false, // 0x41
-	 true, false,  true, false, false,  true, false, false, // 0x25
-	 true, false,  true, false, false, false,  true, false, // 0x45
-	 true, false, false, false, false, false,  true, false, // 0x41
-	false, false, false, false,  true, false, false,  true, // 0x90
-	false, false, false, false,  true, false,  true, false, // 0x50
-	false, false,  true, false, false, false,  true, false, // 0x44
-	false, false, false,  true, false, false,  true, false, // 0x48
-	false, false, false,  true, false, false, false, false, // 0x08
-	false,  true, false, false, false, false,  true, false, // 0x42
-	false, false, false,  true, false,  true, false, false, // 0x28
-	 true, false, false,  true, false, false, false,  true, // 0x89
-	false,  true, false, false,  true, false,  true, false, // 0x52
-	 true, false, false,  true, false, false, false,  true, // 0x89
-	false, false, false,  true, false, false, false,  true, // 0x88
-	false, false, false, false,  true, false, false, false, // 0x10
-	false, false, false,  true, false, false,  true, false, // 0x48
-	false, false,  true, false, false,  true, false,  true, // 0xA4
-	false, false, false,  true, false, false, false, false, // 0x08
-	false, false,  true, false, false, false,  true, false, // 0x44
-	 true, false,  true, false,  true, false, false, false, // 0x15
-	false, false, false,  true, false,  true, false, false, // 0x28
-	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false, false, false, false, false, false, false, // 0x00
-	false,  true, false,  true, false, false, false, false, // 0x0A
-	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
+    false, false, true, false, false, false, false, false,  // 0x04
+    true, false, false, true, false, true, false, false,    // 0x29
+    false, false, false, false, false, false, true, false,  // 0x40
+    false, false, true, false, false, true, false, false,   // 0x24
+    true, false, false, true, false, false, false, false,   // 0x09
+    true, false, false, false, false, false, true, false,   // 0x41
+    true, false, true, false, false, true, false, false,    // 0x25
+    true, false, true, false, false, false, true, false,    // 0x45
+    true, false, false, false, false, false, true, false,   // 0x41
+    false, false, false, false, true, false, false, true,   // 0x90
+    false, false, false, false, true, false, true, false,   // 0x50
+    false, false, true, false, false, false, true, false,   // 0x44
+    false, false, false, true, false, false, true, false,   // 0x48
+    false, false, false, true, false, false, false, false,  // 0x08
+    false, true, false, false, false, false, true, false,   // 0x42
+    false, false, false, true, false, true, false, false,   // 0x28
+    true, false, false, true, false, false, false, true,    // 0x89
+    false, true, false, false, true, false, true, false,    // 0x52
+    true, false, false, true, false, false, false, true,    // 0x89
+    false, false, false, true, false, false, false, true,   // 0x88
+    false, false, false, false, true, false, false, false,  // 0x10
+    false, false, false, true, false, false, true, false,   // 0x48
+    false, false, true, false, false, true, false, true,    // 0xA4
+    false, false, false, true, false, false, false, false,  // 0x08
+    false, false, true, false, false, false, true, false,   // 0x44
+    true, false, true, false, true, false, false, false,    // 0x15
+    false, false, false, true, false, true, false, false,   // 0x28
+    false, false, true, false, false, true, false, false,   // 0x24
+    false, false, false, false, false, false, false, false, // 0x00
+    false, true, false, true, false, false, false, false,   // 0x0A
+    false, false, true, false, false, true, false, false,   // 0x24
+    false, false, false, false, false, true, false,         // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
+    // Now the table is actually duplicated, so we won't need to wrap around
+    false, false, true, false, false, false, false, false,  // 0x04
+    true, false, false, true, false, true, false, false,    // 0x29
+    false, false, false, false, false, false, true, false,  // 0x40
+    false, false, true, false, false, true, false, false,   // 0x24
+    true, false, false, true, false, false, false, false,   // 0x09
+    true, false, false, false, false, false, true, false,   // 0x41
+    true, false, true, false, false, true, false, false,    // 0x25
+    true, false, true, false, false, false, true, false,    // 0x45
+    true, false, false, false, false, false, true, false,   // 0x41
+    false, false, false, false, true, false, false, true,   // 0x90
+    false, false, false, false, true, false, true, false,   // 0x50
+    false, false, true, false, false, false, true, false,   // 0x44
+    false, false, false, true, false, false, true, false,   // 0x48
+    false, false, false, true, false, false, false, false,  // 0x08
+    false, true, false, false, false, false, true, false,   // 0x42
+    false, false, false, true, false, true, false, false,   // 0x28
+    true, false, false, true, false, false, false, true,    // 0x89
+    false, true, false, false, true, false, true, false,    // 0x52
+    true, false, false, true, false, false, false, true,    // 0x89
+    false, false, false, true, false, false, false, true,   // 0x88
+    false, false, false, false, true, false, false, false,  // 0x10
+    false, false, false, true, false, false, true, false,   // 0x48
+    false, false, true, false, false, true, false, true,    // 0xA4
+    false, false, false, true, false, false, false, false,  // 0x08
+    false, false, true, false, false, false, true, false,   // 0x44
+    true, false, true, false, true, false, false, false,    // 0x15
+    false, false, false, true, false, true, false, false,   // 0x28
+    false, false, true, false, false, true, false, false,   // 0x24
+    false, false, false, false, false, false, false, false, // 0x00
+    false, true, false, true, false, false, false, false,   // 0x0A
+    false, false, true, false, false, true, false, false,   // 0x24
+    false, false, false, false, false, true, false,         // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
 };
 
 // Bit offsets into pattern_textures
 static const byte vectorPatternTextureOffset[128] = {
-	0x00, 0x18, 0x30, 0xc4, 0xdc, 0x65, 0xeb, 0x48,
-	0x60, 0xbd, 0x89, 0x05, 0x0a, 0xf4, 0x7d, 0x7d,
-	0x85, 0xb0, 0x8e, 0x95, 0x1f, 0x22, 0x0d, 0xdf,
-	0x2a, 0x78, 0xd5, 0x73, 0x1c, 0xb4, 0x40, 0xa1,
-	0xb9, 0x3c, 0xca, 0x58, 0x92, 0x34, 0xcc, 0xce,
-	0xd7, 0x42, 0x90, 0x0f, 0x8b, 0x7f, 0x32, 0xed,
-	0x5c, 0x9d, 0xc8, 0x99, 0xad, 0x4e, 0x56, 0xa6,
-	0xf7, 0x68, 0xb7, 0x25, 0x82, 0x37, 0x3a, 0x51,
-	0x69, 0x26, 0x38, 0x52, 0x9e, 0x9a, 0x4f, 0xa7,
-	0x43, 0x10, 0x80, 0xee, 0x3d, 0x59, 0x35, 0xcf,
-	0x79, 0x74, 0xb5, 0xa2, 0xb1, 0x96, 0x23, 0xe0,
-	0xbe, 0x05, 0xf5, 0x6e, 0x19, 0xc5, 0x66, 0x49,
-	0xf0, 0xd1, 0x54, 0xa9, 0x70, 0x4b, 0xa4, 0xe2,
-	0xe6, 0xe5, 0xab, 0xe4, 0xd2, 0xaa, 0x4c, 0xe3,
-	0x06, 0x6f, 0xc6, 0x4a, 0xa4, 0x75, 0x97, 0xe1
-};
+    0x00, 0x18, 0x30, 0xc4, 0xdc, 0x65, 0xeb, 0x48,
+    0x60, 0xbd, 0x89, 0x05, 0x0a, 0xf4, 0x7d, 0x7d,
+    0x85, 0xb0, 0x8e, 0x95, 0x1f, 0x22, 0x0d, 0xdf,
+    0x2a, 0x78, 0xd5, 0x73, 0x1c, 0xb4, 0x40, 0xa1,
+    0xb9, 0x3c, 0xca, 0x58, 0x92, 0x34, 0xcc, 0xce,
+    0xd7, 0x42, 0x90, 0x0f, 0x8b, 0x7f, 0x32, 0xed,
+    0x5c, 0x9d, 0xc8, 0x99, 0xad, 0x4e, 0x56, 0xa6,
+    0xf7, 0x68, 0xb7, 0x25, 0x82, 0x37, 0x3a, 0x51,
+    0x69, 0x26, 0x38, 0x52, 0x9e, 0x9a, 0x4f, 0xa7,
+    0x43, 0x10, 0x80, 0xee, 0x3d, 0x59, 0x35, 0xcf,
+    0x79, 0x74, 0xb5, 0xa2, 0xb1, 0x96, 0x23, 0xe0,
+    0xbe, 0x05, 0xf5, 0x6e, 0x19, 0xc5, 0x66, 0x49,
+    0xf0, 0xd1, 0x54, 0xa9, 0x70, 0x4b, 0xa4, 0xe2,
+    0xe6, 0xe5, 0xab, 0xe4, 0xd2, 0xaa, 0x4c, 0xe3,
+    0x06, 0x6f, 0xc6, 0x4a, 0xa4, 0x75, 0x97, 0xe1};
 
 void GfxPicture::vectorPatternBox(Common::Rect box, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
@@ -1137,11 +1139,17 @@ void GfxPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte
 	Common::Rect rect;
 
 	// We need to adjust the given coordinates, because the ones given us do not define upper left but somewhat middle
-	y -= size; if (y < 0) y = 0;
-	x -= size; if (x < 0) x = 0;
+	y -= size;
+	if (y < 0)
+		y = 0;
+	x -= size;
+	if (x < 0)
+		x = 0;
 
-	rect.top = y; rect.left = x;
-	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
+	rect.top = y;
+	rect.left = x;
+	rect.setHeight((size * 2) + 1);
+	rect.setWidth((size * 2) + 2);
 	_ports->offsetRect(rect);
 	rect.clip(_screen->getScriptWidth(), _screen->getScriptHeight());
 

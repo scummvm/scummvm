@@ -23,11 +23,11 @@
 #ifndef XEEN_FILES_H
 #define XEEN_FILES_H
 
-#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/str-array.h"
 #include "graphics/surface.h"
@@ -43,18 +43,18 @@ class Party;
 class OutFile;
 class SavesManager;
 
-#define SYNC_AS(SUFFIX,STREAM,TYPE,SIZE) \
-	template<typename T> \
-	void syncAs ## SUFFIX(T &val, Version minVersion = 0, Version maxVersion = kLastVersion) { \
-		if (_version < minVersion || _version > maxVersion) \
-			return;	\
-		if (_loadStream) \
-			val = static_cast<TYPE>(_loadStream->read ## STREAM()); \
-		else { \
-			TYPE tmp = (TYPE)val; \
-			_saveStream->write ## STREAM(tmp); \
-		} \
-		_bytesSynced += SIZE; \
+#define SYNC_AS(SUFFIX, STREAM, TYPE, SIZE)                                                  \
+	template<typename T>                                                                     \
+	void syncAs##SUFFIX(T &val, Version minVersion = 0, Version maxVersion = kLastVersion) { \
+		if (_version < minVersion || _version > maxVersion)                                  \
+			return;                                                                          \
+		if (_loadStream)                                                                     \
+			val = static_cast<TYPE>(_loadStream->read##STREAM());                            \
+		else {                                                                               \
+			TYPE tmp = (TYPE)val;                                                            \
+			_saveStream->write##STREAM(tmp);                                                 \
+		}                                                                                    \
+		_bytesSynced += SIZE;                                                                \
 	}
 
 /**
@@ -68,7 +68,7 @@ struct CCEntry {
 
 	CCEntry() : _id(0), _offset(0), _size(0), _writeOffset(0) {}
 	CCEntry(uint16 id, uint32 offset, uint32 size)
-		: _id(id), _offset(offset), _size(size) {
+	    : _id(id), _offset(offset), _size(size) {
 	}
 };
 
@@ -78,6 +78,7 @@ struct CCEntry {
 class FileManager {
 public:
 	int _ccNum;
+
 public:
 	/**
 	 * Constructor
@@ -119,11 +120,13 @@ class File : public Common::File {
 	friend class FileManager;
 	friend class OutFile;
 	friend class SavesManager;
+
 private:
 	static CCArchive *_xeenCc, *_darkCc, *_introCc;
 	static SaveArchive *_xeenSave, *_darkSave;
 	static BaseCCArchive *_currentArchive;
 	static SaveArchive *_currentSave;
+
 public:
 	/**
 	 * Sets which archive is used by default
@@ -134,6 +137,7 @@ public:
 	 * Synchronizes a boolean array as a bitfield set
 	 */
 	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
+
 public:
 	File() : Common::File() {}
 	File(const Common::String &filename);
@@ -212,9 +216,9 @@ class SubWriteStream : virtual public Common::WriteStream {
 protected:
 	Common::WriteStream *_parentStream;
 	uint32 _begin;
+
 public:
-	SubWriteStream(Common::WriteStream *parentStream) :
-		_parentStream(parentStream),  _begin(parentStream->pos()) {
+	SubWriteStream(Common::WriteStream *parentStream) : _parentStream(parentStream), _begin(parentStream->pos()) {
 	}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) override {
@@ -245,9 +249,9 @@ class XeenSerializer : public Common::Serializer {
 private:
 	Common::SeekableReadStream *_in;
 	int _filesize;
+
 public:
-	XeenSerializer(Common::SeekableReadStream *in, Common::WriteStream *out) :
-		Common::Serializer(in, out), _in(in), _filesize(-1) {}
+	XeenSerializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out), _in(in), _filesize(-1) {}
 
 	SYNC_AS(Sint8, Byte, int8, 1)
 
@@ -286,11 +290,13 @@ protected:
 	 * the header index data for that entry
 	 */
 	virtual bool getHeaderEntry(uint16 id, CCEntry &ccEntry) const;
+
 public:
 	/**
 	 * Hash a given filename to produce the Id that represents it
 	 */
 	static uint16 convertNameToId(const Common::String &resourceName);
+
 public:
 	BaseCCArchive() {}
 
@@ -308,8 +314,10 @@ private:
 	Common::String _filename;
 	Common::String _prefix;
 	bool _encoded;
+
 protected:
 	bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const override;
+
 public:
 	CCArchive(const Common::String &filename, bool encoded);
 	CCArchive(const Common::String &filename, const Common::String &prefix, bool encoded);
@@ -321,11 +329,13 @@ public:
 
 class SaveArchive : public BaseCCArchive {
 	friend class OutFile;
+
 private:
 	Party *_party;
 	byte *_data;
 	uint32 _dataSize;
 	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *> _newData;
+
 public:
 	SaveArchive(Party *party);
 	~SaveArchive() override;
@@ -374,6 +384,7 @@ private:
 	SaveArchive *_archive;
 	Common::String _filename;
 	Common::MemoryWriteStreamDynamic _backingStream;
+
 public:
 	OutFile(const Common::String &filename);
 	OutFile(const Common::String &filename, SaveArchive *archive);

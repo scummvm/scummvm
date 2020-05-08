@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/fonts/font_manager.h"
-#include "ultima/nuvie/fonts/font.h"
 #include "ultima/nuvie/gui/widgets/fps_counter.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/fonts/font.h"
+#include "ultima/nuvie/fonts/font_manager.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/screen.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -56,9 +56,9 @@ void FpsCounter::setFps(float fps) {
 void FpsCounter::Display(bool full_redraw) {
 	Screen *scr = game->get_screen();
 
-//    if(full_redraw || update_display || game->is_new_style())
+	//    if(full_redraw || update_display || game->is_new_style())
 	{
-//        update_display = false;
+		//        update_display = false;
 		scr->fill(0, area.left, area.top, area.width(), area.height());
 		font->drawString(scr, fps_string, area.left, area.top);
 

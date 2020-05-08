@@ -27,10 +27,10 @@
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/converse.h"
-#include "tsage/events.h"
 #include "tsage/core.h"
-#include "tsage/scenes.h"
+#include "tsage/events.h"
 #include "tsage/globals.h"
+#include "tsage/scenes.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -39,7 +39,7 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-class Scene800: public SceneExt {
+class Scene800 : public SceneExt {
 	/* Actions */
 	class Action1 : public Action {
 	public:
@@ -47,33 +47,33 @@ class Scene800: public SceneExt {
 	};
 
 	/* Items */
-	class Item1: public SceneHotspot {
+	class Item1 : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item2: public SceneHotspot {
+	class Item2 : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class Doorway: public NamedObject {
+	class Doorway : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Car1: public NamedObject {
+	class Car1 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Motorcycle: public NamedObject {
+	class Motorcycle : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Lyle: public NamedObject {
+	class Lyle : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Car2: public NamedObject {
+	class Car2 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
@@ -99,104 +99,105 @@ public:
 	void dispatch() override;
 };
 
-class Scene810: public SceneExt {
+class Scene810 : public SceneExt {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
-	class Action2: public Action {
+	class Action2 : public Action {
 	public:
 		void signal() override;
 	};
 
 	/* Items */
-	class Map: public SceneHotspot {
+	class Map : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Window: public SceneHotspot {
+	class Window : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Bookcase: public SceneHotspot {
+	class Bookcase : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class FaxMachine: public SceneHotspot {
+	class FaxMachine : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class GarbageCan: public SceneHotspot {
+	class GarbageCan : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class FileCabinets: public SceneHotspot {
+	class FileCabinets : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class CoffeeMaker: public SceneHotspot {
+	class CoffeeMaker : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Shelves: public SceneHotspot {
+	class Shelves : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class MicroficheReader: public SceneHotspot {
+	class MicroficheReader : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item10: public SceneHotspot {
+	class Item10 : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Pictures: public SceneHotspot {
+	class Pictures : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Item12: public SceneHotspot {
+	class Item12 : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Background: public SceneHotspot {
+	class Background : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Desk: public SceneHotspot {
+	class Desk : public SceneHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Exit: public NamedHotspot {
+	class Exit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class Lyle: public NamedObjectExt {
+	class Lyle : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Chair: public NamedObject {
+	class Chair : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object3: public NamedObject {
+	class Object3 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class FaxMachineInset: public FocusObject {
+	class FaxMachineInset : public FocusObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object5: public NamedObject {
+	class Object5 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object7: public NamedObject {
+	class Object7 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	Action1 _action1;
 	Action2 _action2;
@@ -239,20 +240,21 @@ public:
 	void dispatch() override;
 };
 
-class Scene820: public SceneExt {
+class Scene820 : public SceneExt {
 	/* Objects */
-	class PowerButton: public NamedObject {
+	class PowerButton : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class ForwardButton: public NamedObject {
+	class ForwardButton : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class BackButton: public NamedObject {
+	class BackButton : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	ASoundExt _sound1;
@@ -270,31 +272,31 @@ public:
 	void signal() override;
 };
 
-class Scene830: public PalettedScene {
+class Scene830 : public PalettedScene {
 	/* Items */
-	class SouthEastExit: public NamedHotspot {
+	class SouthEastExit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class NoteBoard: public NamedHotspot {
+	class NoteBoard : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class Lyle: public NamedObject {
+	class Lyle : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Door: public NamedObject {
+	class Door : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class RentalBoat: public NamedObject {
+	class RentalBoat : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Object5: public NamedObject {
+	class Object5 : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
@@ -324,31 +326,32 @@ public:
 	void dispatch() override;
 };
 
-class Scene840: public PalettedScene {
+class Scene840 : public PalettedScene {
 	/* Items */
-	class Coins: public NamedHotspot {
+	class Coins : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Exit: public NamedHotspot {
+	class Exit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
-	class BoatKeysInset: public FocusObject {
-		class RentalKeys: public NamedObject {
+	class BoatKeysInset : public FocusObject {
+		class RentalKeys : public NamedObject {
 		public:
 			bool startAction(CursorType action, Event &event) override;
 		};
-		class WaveKeys: public NamedObject {
+		class WaveKeys : public NamedObject {
 		public:
 			bool startAction(CursorType action, Event &event) override;
 		};
+
 	public:
 		RentalKeys _rentalKeys;
 		WaveKeys _waveKeys;
-		bool _usedRentalKeys,_usedWaveKeys;
+		bool _usedRentalKeys, _usedWaveKeys;
 
 		void synchronize(Serializer &s) override;
 		void postInit(SceneObjectList *OwnerList = NULL) override;
@@ -356,11 +359,11 @@ class Scene840: public PalettedScene {
 		void process(Event &event) override;
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class BoatKeys: public NamedObject {
+	class BoatKeys : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Carter: public NamedObject {
+	class Carter : public NamedObject {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
@@ -394,12 +397,13 @@ public:
 	void dispatch() override;
 };
 
-class Scene850: public SceneExt {
+class Scene850 : public SceneExt {
 	/* Timers */
-	class Timer1: public Timer {
+	class Timer1 : public Timer {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	Timer1 _timer;
@@ -411,12 +415,13 @@ public:
 	void signal() override;
 };
 
-class Scene860: public SceneExt {
+class Scene860 : public SceneExt {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	NamedObject _deadBody, _object2;
@@ -435,33 +440,35 @@ public:
 	void dispatch() override;
 };
 
-class Scene870: public SceneExt {
+class Scene870 : public SceneExt {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	public:
 		void signal() override;
 	};
 
 	/* Objects */
-	class Lyle: public NamedObjectExt {
+	class Lyle : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Green: public NamedObjectExt {
+	class Green : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class CrateInset: public FocusObject {
-		class Jar: public NamedObjectExt {
+	class CrateInset : public FocusObject {
+		class Jar : public NamedObjectExt {
 		public:
 			bool startAction(CursorType action, Event &event) override;
 		};
-		class Rags: public NamedObjectExt {
+		class Rags : public NamedObjectExt {
 		public:
 			bool startAction(CursorType action, Event &event) override;
 		};
+
 	private:
 		void initContents();
+
 	public:
 		Jar _jar;
 		Rags _rags;
@@ -472,18 +479,19 @@ class Scene870: public SceneExt {
 	};
 
 	/* Items */
-	class Boat: public NamedHotspot {
+	class Boat : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Crate: public NamedHotspot {
+	class Crate : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class Exit: public NamedHotspot {
+	class Exit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 public:
 	SequenceManager _sequenceManager;
 	SpeakerGameText _gameTextSpeaker;
@@ -514,32 +522,35 @@ public:
 	void startStrip(int stripNumber);
 };
 
-class Scene880: public SceneExt {
+class Scene880 : public SceneExt {
 	/* Actions */
-	class Action1: public Action {
+	class Action1 : public Action {
 	private:
 		static void SequenceManager_callbackProc(int v1, int v2);
+
 	public:
 		void signal() override;
 	};
 
 	/* Objects */
-	class Object4: public NamedObjectExt {
+	class Object4 : public NamedObjectExt {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Items */
-	class NorthExit: public NamedHotspot {
+	class NorthExit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
-	class SouthEastExit: public NamedHotspot {
+	class SouthEastExit : public NamedHotspot {
 	public:
 		bool startAction(CursorType action, Event &event) override;
 	};
+
 private:
 	static void handleAction(Action *action);
+
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
 	SpeakerGameText _gameTextSpeaker;

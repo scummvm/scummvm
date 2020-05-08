@@ -32,6 +32,7 @@ class Item;
 
 class Map {
 	friend class CurrentMap;
+
 public:
 	explicit Map(uint32 mapnum);
 	~Map();
@@ -50,10 +51,9 @@ public:
 	bool load(Common::ReadStream *rs, uint32 version);
 
 private:
-
 	// load items from something formatted like 'fixed.dat'
 	void loadFixedFormatObjects(Std::list<Item *> &itemlist,
-								Common::SeekableReadStream *rs,
+	                            Common::SeekableReadStream *rs,
 	                            uint32 extendedflags);
 
 	// Add a fixed item to patch game data errors
@@ -70,7 +70,6 @@ private:
 
 	// (Note that we probably won't even have all items permanently stored,
 	// since fixed items will be cached out most of the time)
-
 
 	Std::list<Item *> _fixedItems;
 	Std::list<Item *> _dynamicItems;

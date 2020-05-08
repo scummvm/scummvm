@@ -23,12 +23,12 @@
 #ifndef ULTIMA_ULTIMA8_ENGINE_DEBUGGER_H
 #define ULTIMA_ULTIMA8_ENGINE_DEBUGGER_H
 
-#include "ultima/ultima8/misc/common_types.h"
+#include "common/debug.h"
+#include "common/stream.h"
 #include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/misc.h"
-#include "common/debug.h"
-#include "common/stream.h"
+#include "ultima/ultima8/misc/common_types.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,6 +36,7 @@ namespace Ultima8 {
 class ConsoleStream : public Common::WriteStream {
 private:
 	Std::Precision _precision;
+
 public:
 	ConsoleStream() : Common::WriteStream(), _precision(Std::dec) {
 	}
@@ -76,7 +77,7 @@ public:
 
 	ConsoleStream &operator<<(int val) {
 		Common::String str = Common::String::format(
-			(_precision == Std::hex) ? "%x" : "%d", val);
+		    (_precision == Std::hex) ? "%x" : "%d", val);
 		write(str.c_str(), str.size());
 		return *this;
 	}
@@ -95,6 +96,7 @@ template<class T>
 class console_err_ostream : public ConsoleStream {
 private:
 	Common::String _line;
+
 public:
 	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		_line += Common::String((const char *)dataPtr, dataSize);
@@ -119,7 +121,6 @@ extern console_err_ostream<char> *pperr;
 #define pout (*ppout)
 #define perr (*pperr)
 
-
 /**
  * Debugger base class
  */
@@ -127,11 +128,13 @@ class Debugger : public Shared::Debugger {
 public:
 	typedef Common::String ArgsType;
 	typedef Std::vector<ArgsType> ArgvType;
+
 private:
 	// Standard Output Stream Object
 	console_ostream<char> _strOut;
 	// Error Output Stream Object
 	console_err_ostream<char> _errOut;
+
 private:
 	const char *strBool(bool flag) {
 		return flag ? "true" : "false";

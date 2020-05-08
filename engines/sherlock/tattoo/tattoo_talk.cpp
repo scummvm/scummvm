@@ -21,163 +21,161 @@
  */
 
 #include "sherlock/tattoo/tattoo_talk.h"
+#include "sherlock/screen.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
-#include "sherlock/tattoo/tattoo.h"
-#include "sherlock/screen.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
 static const uint8 DIRECTION_CONVERSION[] = {
-	WALK_RIGHT, WALK_DOWN, WALK_LEFT, WALK_UP, STOP_RIGHT, STOP_DOWN, STOP_LEFT, STOP_UP,
-	WALK_UPRIGHT, WALK_DOWNRIGHT, WALK_UPLEFT, WALK_DOWNLEFT, STOP_UPRIGHT, STOP_UPLEFT,
-	STOP_DOWNRIGHT, STOP_DOWNLEFT
-};
+    WALK_RIGHT, WALK_DOWN, WALK_LEFT, WALK_UP, STOP_RIGHT, STOP_DOWN, STOP_LEFT, STOP_UP,
+    WALK_UPRIGHT, WALK_DOWNRIGHT, WALK_UPLEFT, WALK_DOWNLEFT, STOP_UPRIGHT, STOP_UPLEFT,
+    STOP_DOWNRIGHT, STOP_DOWNLEFT};
 
 const byte TATTOO_OPCODES[] = {
-	170,	// OP_SWITCH_SPEAKER
-	171,	// OP_RUN_CANIMATION
-	0,	// OP_ASSIGN_PORTRAIT_LOCATION
-	173,	// OP_PAUSE
-	0,	// OP_REMOVE_PORTRAIT
-	0,	// OP_CLEAR_WINDOW
-	176,	// OP_ADJUST_OBJ_SEQUENCE
-	177,	// OP_WALK_HOlMES_TO_COORDS
-	178,	// OP_PAUSE_WITHOUT_CONTROL
-	179,	// OP_BANISH_WINDOW
-	0,		// OP_SUMMON_WINDOW
-	181,	// OP_SET_FLAG
-	0,		// OP_SFX_COMMAND
-	183,	// OP_TOGGLE_OBJECT
-	184,	// OP_STEALTH_MODE_ACTIVE
-	0,		// OP_IF_STATEMENT
-	0,		// OP_ELSE_STATEMENT
-	0,		// OP_END_IF_STATEMENT
-	188,	// OP_STEALTH_MODE_DEACTIVATE
-	189,	// OP_TURN_HOLMES_OFF
-	190,	// OP_TURN_HOLMES_ON
-	191,	// OP_GOTO_SCENE
-	0,		// OP_PLAY_PROLOGUE
-	193,	// OP_ADD_ITEM_TO_INVENTORY
-	194,	// OP_SET_OBJECT
-	172,	// OP_CALL_TALK_FILE
-	0,		// OP_MOVE_MOUSE
-	0,		// OP_DISPLAY_INFO_LINE
-	0,		// OP_CLEAR_INFO_LINE
-	199,	// OP_WALK_TO_CANIMATION
-	200,	// OP_REMOVE_ITEM_FROM_INVENTORY
-	201,	// OP_ENABLE_END_KEY
-	202,	// OP_DISABLE_END_KEY
-	203,	// OP_END_TEXT_WINDOW
-	174,	// OP_MOUSE_ON_OFF
-	175,	// OP_SET_WALK_CONTROL
-	180,	// OP_SET_TALK_SEQUENCE
-	182,	// OP_PLAY_SONG
-	187,	// OP_WALK_HOLMES_AND_NPC_TO_CANIM
-	192,	// OP_SET_NPC_PATH_DEST
-	195,	// OP_NEXT_SONG
-	196,	// OP_SET_NPC_PATH_PAUSE
-	197,	// OP_PASSWORD
-	198,	// OP_SET_SCENE_ENTRY_FLAG
-	185,	// OP_WALK_NPC_TO_CANIM
-	186,	// OP_WALK_NPC_TO_COORDS
-	204,	// OP_WALK_HOLMES_AND_NPC_TO_COORDS
-	205,	// OP_SET_NPC_TALK_FILE
-	206,	// OP_TURN_NPC_OFF
-	207,	// OP_TURN_NPC_ON
-	208,	// OP_NPC_DESC_ON_OFF
-	209,	// OP_NPC_PATH_PAUSE_TAKING_NOTES
-	210,	// OP_NPC_PATH_PAUSE_LOOKING_HOLMES
-	211,	// OP_ENABLE_TALK_INTERRUPTS
-	212,	// OP_DISABLE_TALK_INTERRUPTS
-	213,	// OP_SET_NPC_INFO_LINE
-	214,	// OP_SET_NPC_POSITION
-	215,	// OP_NPC_PATH_LABEL
-	216,	// OP_PATH_GOTO_LABEL
-	217,	// OP_PATH_IF_FLAG_GOTO_LABEL
-	218,	// OP_NPC_WALK_GRAPHICS
-	220,	// OP_NPC_VERB
-	221,	// OP_NPC_VERB_CANIM
-	222,	// OP_NPC_VERB_SCRIPT
-	224,	// OP_RESTORE_PEOPLE_SEQUENCE
-	226,	// OP_NPC_VERB_TARGET
-	227,	// OP_TURN_SOUNDS_OFF
-	225		// OP_NULL
+    170, // OP_SWITCH_SPEAKER
+    171, // OP_RUN_CANIMATION
+    0,   // OP_ASSIGN_PORTRAIT_LOCATION
+    173, // OP_PAUSE
+    0,   // OP_REMOVE_PORTRAIT
+    0,   // OP_CLEAR_WINDOW
+    176, // OP_ADJUST_OBJ_SEQUENCE
+    177, // OP_WALK_HOlMES_TO_COORDS
+    178, // OP_PAUSE_WITHOUT_CONTROL
+    179, // OP_BANISH_WINDOW
+    0,   // OP_SUMMON_WINDOW
+    181, // OP_SET_FLAG
+    0,   // OP_SFX_COMMAND
+    183, // OP_TOGGLE_OBJECT
+    184, // OP_STEALTH_MODE_ACTIVE
+    0,   // OP_IF_STATEMENT
+    0,   // OP_ELSE_STATEMENT
+    0,   // OP_END_IF_STATEMENT
+    188, // OP_STEALTH_MODE_DEACTIVATE
+    189, // OP_TURN_HOLMES_OFF
+    190, // OP_TURN_HOLMES_ON
+    191, // OP_GOTO_SCENE
+    0,   // OP_PLAY_PROLOGUE
+    193, // OP_ADD_ITEM_TO_INVENTORY
+    194, // OP_SET_OBJECT
+    172, // OP_CALL_TALK_FILE
+    0,   // OP_MOVE_MOUSE
+    0,   // OP_DISPLAY_INFO_LINE
+    0,   // OP_CLEAR_INFO_LINE
+    199, // OP_WALK_TO_CANIMATION
+    200, // OP_REMOVE_ITEM_FROM_INVENTORY
+    201, // OP_ENABLE_END_KEY
+    202, // OP_DISABLE_END_KEY
+    203, // OP_END_TEXT_WINDOW
+    174, // OP_MOUSE_ON_OFF
+    175, // OP_SET_WALK_CONTROL
+    180, // OP_SET_TALK_SEQUENCE
+    182, // OP_PLAY_SONG
+    187, // OP_WALK_HOLMES_AND_NPC_TO_CANIM
+    192, // OP_SET_NPC_PATH_DEST
+    195, // OP_NEXT_SONG
+    196, // OP_SET_NPC_PATH_PAUSE
+    197, // OP_PASSWORD
+    198, // OP_SET_SCENE_ENTRY_FLAG
+    185, // OP_WALK_NPC_TO_CANIM
+    186, // OP_WALK_NPC_TO_COORDS
+    204, // OP_WALK_HOLMES_AND_NPC_TO_COORDS
+    205, // OP_SET_NPC_TALK_FILE
+    206, // OP_TURN_NPC_OFF
+    207, // OP_TURN_NPC_ON
+    208, // OP_NPC_DESC_ON_OFF
+    209, // OP_NPC_PATH_PAUSE_TAKING_NOTES
+    210, // OP_NPC_PATH_PAUSE_LOOKING_HOLMES
+    211, // OP_ENABLE_TALK_INTERRUPTS
+    212, // OP_DISABLE_TALK_INTERRUPTS
+    213, // OP_SET_NPC_INFO_LINE
+    214, // OP_SET_NPC_POSITION
+    215, // OP_NPC_PATH_LABEL
+    216, // OP_PATH_GOTO_LABEL
+    217, // OP_PATH_IF_FLAG_GOTO_LABEL
+    218, // OP_NPC_WALK_GRAPHICS
+    220, // OP_NPC_VERB
+    221, // OP_NPC_VERB_CANIM
+    222, // OP_NPC_VERB_SCRIPT
+    224, // OP_RESTORE_PEOPLE_SEQUENCE
+    226, // OP_NPC_VERB_TARGET
+    227, // OP_TURN_SOUNDS_OFF
+    225  // OP_NULL
 };
 
 /*----------------------------------------------------------------*/
 
 TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm), _passwordWidget(vm) {
 	static OpcodeMethod OPCODE_METHODS[] = {
-		(OpcodeMethod)&TattooTalk::cmdSwitchSpeaker,
+	    (OpcodeMethod)&TattooTalk::cmdSwitchSpeaker,
 
-		(OpcodeMethod)&TattooTalk::cmdRunCAnimation,
-		(OpcodeMethod)&TattooTalk::cmdCallTalkFile,
-		(OpcodeMethod)&TattooTalk::cmdPause,
-		(OpcodeMethod)&TattooTalk::cmdMouseOnOff,
-		(OpcodeMethod)&TattooTalk::cmdSetWalkControl,
-		(OpcodeMethod)&TattooTalk::cmdAdjustObjectSequence,
-		(OpcodeMethod)&TattooTalk::cmdWalkHolmesToCoords,
-		(OpcodeMethod)&TattooTalk::cmdPauseWithoutControl,
-		(OpcodeMethod)&TattooTalk::cmdBanishWindow,
-		(OpcodeMethod)&TattooTalk::cmdSetTalkSequence,
+	    (OpcodeMethod)&TattooTalk::cmdRunCAnimation,
+	    (OpcodeMethod)&TattooTalk::cmdCallTalkFile,
+	    (OpcodeMethod)&TattooTalk::cmdPause,
+	    (OpcodeMethod)&TattooTalk::cmdMouseOnOff,
+	    (OpcodeMethod)&TattooTalk::cmdSetWalkControl,
+	    (OpcodeMethod)&TattooTalk::cmdAdjustObjectSequence,
+	    (OpcodeMethod)&TattooTalk::cmdWalkHolmesToCoords,
+	    (OpcodeMethod)&TattooTalk::cmdPauseWithoutControl,
+	    (OpcodeMethod)&TattooTalk::cmdBanishWindow,
+	    (OpcodeMethod)&TattooTalk::cmdSetTalkSequence,
 
-		(OpcodeMethod)&TattooTalk::cmdSetFlag,
-		(OpcodeMethod)&TattooTalk::cmdPlaySong,
-		(OpcodeMethod)&TattooTalk::cmdToggleObject,
-		(OpcodeMethod)&TattooTalk::cmdStealthModeActivate,
-		(OpcodeMethod)&TattooTalk::cmdWalkNPCToCAnimation,
-		(OpcodeMethod)&TattooTalk::cmdWalkNPCToCoords,
-		(OpcodeMethod)&TattooTalk::cmdWalkHomesAndNPCToCoords,
-		(OpcodeMethod)&TattooTalk::cmdStealthModeDeactivate,
-		(OpcodeMethod)&TattooTalk::cmdHolmesOff,
-		(OpcodeMethod)&TattooTalk::cmdHolmesOn,
+	    (OpcodeMethod)&TattooTalk::cmdSetFlag,
+	    (OpcodeMethod)&TattooTalk::cmdPlaySong,
+	    (OpcodeMethod)&TattooTalk::cmdToggleObject,
+	    (OpcodeMethod)&TattooTalk::cmdStealthModeActivate,
+	    (OpcodeMethod)&TattooTalk::cmdWalkNPCToCAnimation,
+	    (OpcodeMethod)&TattooTalk::cmdWalkNPCToCoords,
+	    (OpcodeMethod)&TattooTalk::cmdWalkHomesAndNPCToCoords,
+	    (OpcodeMethod)&TattooTalk::cmdStealthModeDeactivate,
+	    (OpcodeMethod)&TattooTalk::cmdHolmesOff,
+	    (OpcodeMethod)&TattooTalk::cmdHolmesOn,
 
-		(OpcodeMethod)&TattooTalk::cmdGotoScene,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCPathDest,
-		(OpcodeMethod)&TattooTalk::cmdAddItemToInventory,
-		(OpcodeMethod)&TattooTalk::cmdSetObject,
-		(OpcodeMethod)&TattooTalk::cmdNextSong,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCPathPause,
-		(OpcodeMethod)&TattooTalk::cmdPassword,
-		(OpcodeMethod)&TattooTalk::cmdSetSceneEntryFlag,
-		(OpcodeMethod)&TattooTalk::cmdWalkToCAnimation,
-		(OpcodeMethod)&TattooTalk::cmdRemoveItemFromInventory,
+	    (OpcodeMethod)&TattooTalk::cmdGotoScene,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCPathDest,
+	    (OpcodeMethod)&TattooTalk::cmdAddItemToInventory,
+	    (OpcodeMethod)&TattooTalk::cmdSetObject,
+	    (OpcodeMethod)&TattooTalk::cmdNextSong,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCPathPause,
+	    (OpcodeMethod)&TattooTalk::cmdPassword,
+	    (OpcodeMethod)&TattooTalk::cmdSetSceneEntryFlag,
+	    (OpcodeMethod)&TattooTalk::cmdWalkToCAnimation,
+	    (OpcodeMethod)&TattooTalk::cmdRemoveItemFromInventory,
 
-		(OpcodeMethod)&TattooTalk::cmdEnableEndKey,
-		(OpcodeMethod)&TattooTalk::cmdDisableEndKey,
-		(OpcodeMethod)&TattooTalk::cmdEndTextWindow,
-		(OpcodeMethod)&TattooTalk::cmdWalkHomesAndNPCToCoords,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCTalkFile,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCOff,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCOn,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCDescOnOff,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCPathPauseTakingNotes,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCPathPauseLookingHolmes,
+	    (OpcodeMethod)&TattooTalk::cmdEnableEndKey,
+	    (OpcodeMethod)&TattooTalk::cmdDisableEndKey,
+	    (OpcodeMethod)&TattooTalk::cmdEndTextWindow,
+	    (OpcodeMethod)&TattooTalk::cmdWalkHomesAndNPCToCoords,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCTalkFile,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCOff,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCOn,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCDescOnOff,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCPathPauseTakingNotes,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCPathPauseLookingHolmes,
 
-		(OpcodeMethod)&TattooTalk::cmdTalkInterruptsEnable,
-		(OpcodeMethod)&TattooTalk::cmdTalkInterruptsDisable,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCInfoLine,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCPosition,
-		(OpcodeMethod)&TattooTalk::cmdNPCLabelSet,
-		(OpcodeMethod)&TattooTalk::cmdNPCLabelGoto,
-		(OpcodeMethod)&TattooTalk::cmdNPCLabelIfFlagGoto,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCWalkGraphics,
-		nullptr,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCVerb,
+	    (OpcodeMethod)&TattooTalk::cmdTalkInterruptsEnable,
+	    (OpcodeMethod)&TattooTalk::cmdTalkInterruptsDisable,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCInfoLine,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCPosition,
+	    (OpcodeMethod)&TattooTalk::cmdNPCLabelSet,
+	    (OpcodeMethod)&TattooTalk::cmdNPCLabelGoto,
+	    (OpcodeMethod)&TattooTalk::cmdNPCLabelIfFlagGoto,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCWalkGraphics,
+	    nullptr,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCVerb,
 
-		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbCAnimation,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbScript,
-		nullptr,
-		(OpcodeMethod)&TattooTalk::cmdRestorePeopleSequence,
-		nullptr,
-		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbTarget,
-		(OpcodeMethod)&TattooTalk::cmdTurnSoundsOff
-	};
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCVerbCAnimation,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCVerbScript,
+	    nullptr,
+	    (OpcodeMethod)&TattooTalk::cmdRestorePeopleSequence,
+	    nullptr,
+	    (OpcodeMethod)&TattooTalk::cmdSetNPCVerbTarget,
+	    (OpcodeMethod)&TattooTalk::cmdTurnSoundsOff};
 
 	_opcodes = TATTOO_OPCODES;
 	_opcodeTable = OPCODE_METHODS;
@@ -288,7 +286,7 @@ OpcodeReturn TattooTalk::cmdWalkHolmesToCoords(const byte *&str) {
 	int yp = (str[2] - 1) * 256 + str[3] - 1;
 
 	people[HOLMES].walkToCoords(Point32(xp * FIXED_INT_MULTIPLIER, yp * FIXED_INT_MULTIPLIER),
-		DIRECTION_CONVERSION[str[4] - 1]);
+	                            DIRECTION_CONVERSION[str[4] - 1]);
 
 	if (_talkToAbort)
 		return RET_EXIT;
@@ -619,7 +617,7 @@ OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) {
 		person.checkWalkGraphics();
 
 	if (person._walkLoaded && person._type == CHARACTER &&
-		person._sequenceNumber >= STOP_UP && person._sequenceNumber <= STOP_UPLEFT) {
+	    person._sequenceNumber >= STOP_UP && person._sequenceNumber <= STOP_UPLEFT) {
 		bool done = false;
 		do {
 			person.checkSprite();
@@ -860,7 +858,7 @@ OpcodeReturn TattooTalk::cmdWalkNPCToCoords(const byte *&str) {
 	int yp = (str[2] - 1) * 256 + str[3] - 1;
 
 	person.walkToCoords(Point32(xp * FIXED_INT_MULTIPLIER, yp * FIXED_INT_MULTIPLIER),
-		DIRECTION_CONVERSION[str[4] - 1]);
+	                    DIRECTION_CONVERSION[str[4] - 1]);
 	if (_talkToAbort)
 		return RET_EXIT;
 
@@ -988,8 +986,7 @@ void TattooTalk::pullSequence(int slot) {
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		Person &person = people[idx];
 
-		if (person._type == CHARACTER && !person._walkSequences.empty() && person._sequenceNumber >= TALK_UPRIGHT
-				&& person._sequenceNumber <= LISTEN_UPLEFT) {
+		if (person._type == CHARACTER && !person._walkSequences.empty() && person._sequenceNumber >= TALK_UPRIGHT && person._sequenceNumber <= LISTEN_UPLEFT) {
 			person.gotoStand();
 
 			bool done = false;

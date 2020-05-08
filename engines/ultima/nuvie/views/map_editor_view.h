@@ -32,7 +32,7 @@ class Configuration;
 class GUI_Button;
 class MapWindow;
 
-class MapEditorView: public View {
+class MapEditorView : public View {
 private:
 	Graphics::ManagedSurface *roof_tiles;
 	MapWindow *map_window;
@@ -40,6 +40,7 @@ private:
 	uint16 tile_offset;
 	GUI_Button *up_button;
 	GUI_Button *down_button;
+
 public:
 	MapEditorView(Configuration *config);
 	~MapEditorView() override;
@@ -53,9 +54,11 @@ public:
 
 	void close_view() override;
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
+
 protected:
 	void setTile(uint16 x, uint16 y, uint8 level);
 	void toggleGrid();
+
 private:
 	void update_selected_tile_relative(sint32 rel_value);
 };

@@ -27,29 +27,28 @@
  */
 
 #include "engines/wintermute/ad/ad_actor.h"
-#include "engines/wintermute/ad/ad_game.h"
-#include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_entity.h"
+#include "engines/wintermute/ad/ad_game.h"
+#include "engines/wintermute/ad/ad_path.h"
+#include "engines/wintermute/ad/ad_scene.h"
+#include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_sprite_set.h"
 #include "engines/wintermute/ad/ad_waypoint_group.h"
-#include "engines/wintermute/ad/ad_path.h"
-#include "engines/wintermute/ad/ad_sentence.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_frame.h"
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/base_region.h"
-#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
-#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/scriptables/script.h"
+#include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/base/sound/base_sound.h"
 
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdActor, false)
-
 
 //////////////////////////////////////////////////////////////////////////
 AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
@@ -114,9 +113,7 @@ AdActor::~AdActor() {
 		_anims[i] = nullptr;
 	}
 	_anims.clear();
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::loadFile(const char *filename) {
@@ -134,12 +131,10 @@ bool AdActor::loadFile(const char *filename) {
 		_gameRef->LOG(0, "Error parsing ACTOR file '%s'", filename);
 	}
 
-
 	delete[] buffer;
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(ACTOR)
@@ -371,16 +366,14 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			parser.scanStr(params, "%d", &s);
 			_scale = (float)s;
 
-		}
-		break;
+		} break;
 
 		case TOKEN_RELATIVE_SCALE: {
 			int s;
 			parser.scanStr(params, "%d", &s);
 			_relativeScale = (float)s;
 
-		}
-		break;
+		} break;
 
 		case TOKEN_SOUND_PANNING:
 			parser.scanStr(params, "%b", &_autoSoundPanning);
@@ -408,8 +401,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 				_currentBlockRegion = crgn;
 				_currentBlockRegion->mimic(_blockRegion);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_WAYPOINTS: {
 			delete _wptGroup;
@@ -429,8 +421,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 				_currentWptGroup = cwpt;
 				_currentWptGroup->mimic(_wptGroup);
 			}
-		}
-		break;
+		} break;
 
 		case TOKEN_IGNORE_ITEMS:
 			parser.scanStr(params, "%b", &_ignoreItems);
@@ -455,8 +446,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			} else {
 				_anims.add(anim);
 			}
-		}
-		break;
+		} break;
 
 		default:
 			break;
@@ -483,7 +473,6 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdActor::turnTo(TDirection dir) {
 	int delta1, delta2, delta3, delta;
@@ -509,7 +498,6 @@ void AdActor::turnTo(TDirection dir) {
 	_tempSprite2 = nullptr;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdActor::goTo(int x, int y, TDirection afterWalkDir) {
 	_afterWalkDir = afterWalkDir;
@@ -526,9 +514,7 @@ void AdActor::goTo(int x, int y, TDirection afterWalkDir) {
 	((AdGame *)_gameRef)->_scene->correctTargetPoint(_posX, _posY, &_targetPoint->x, &_targetPoint->y, true, this);
 
 	_state = STATE_SEARCHING_PATH;
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::display() {
@@ -545,7 +531,6 @@ bool AdActor::display() {
 
 	float scaleX, scaleY;
 	getScale(&scaleX, &scaleY);
-
 
 	float rotate;
 	if (_rotatable) {
@@ -576,7 +561,6 @@ bool AdActor::display() {
 		                        alpha,
 		                        rotate,
 		                        _blendMode);
-
 	}
 
 	if (_active) {
@@ -586,10 +570,8 @@ bool AdActor::display() {
 		_partEmitter->display();
 	}
 
-
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::update() {
@@ -687,7 +669,6 @@ bool AdActor::update() {
 		}
 		break;
 
-
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_RIGHT:
 		if (_tempSprite2 == nullptr || _tempSprite2->isFinished()) {
@@ -724,7 +705,6 @@ bool AdActor::update() {
 		}
 		break;
 
-
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_SEARCHING_PATH:
 		// keep asking scene for the path
@@ -733,7 +713,6 @@ bool AdActor::update() {
 		}
 		break;
 
-
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_WAITING_PATH:
 		// wait until the scene finished the path
@@ -741,7 +720,6 @@ bool AdActor::update() {
 			followPath();
 		}
 		break;
-
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_FOLLOWING_PATH:
@@ -775,8 +753,7 @@ bool AdActor::update() {
 			_currentSprite = _tempSprite2;
 			((AdGame *)_gameRef)->addSentence(_sentence);
 		}
-	}
-	break;
+	} break;
 
 	//////////////////////////////////////////////////////////////////////////
 	case STATE_READY:
@@ -799,7 +776,6 @@ bool AdActor::update() {
 		error("AdActor::Update - Unhandled enum");
 	}
 
-
 	if (_currentSprite && !already_moved) {
 		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->isChanged()) {
@@ -819,7 +795,6 @@ bool AdActor::update() {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void AdActor::followPath() {
@@ -845,7 +820,6 @@ void AdActor::followPath() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdActor::getNextStep() {
 	if (_walkSprite) {
@@ -865,7 +839,6 @@ void AdActor::getNextStep() {
 	if (!_currentSprite->isChanged()) {
 		return;
 	}
-
 
 	int maxStepX, maxStepY;
 	maxStepX = abs(_currentSprite->_moveX);
@@ -892,12 +865,10 @@ void AdActor::getNextStep() {
 		return;
 	}
 
-
 	_posX = (int)_pFX;
 	_posY = (int)_pFY;
 
 	afterMove();
-
 
 	if (_pFCount == 0) {
 		if (_path->getNext() == nullptr) {
@@ -917,7 +888,6 @@ void AdActor::getNextStep() {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void AdActor::initLine(const BasePoint &startPt, const BasePoint &endPt) {
 	_pFCount = MAX((abs(endPt.x - startPt.x)), (abs(endPt.y - startPt.y)));
@@ -934,7 +904,6 @@ void AdActor::initLine(const BasePoint &startPt, const BasePoint &endPt) {
 
 	turnTo(angleToDirection(angle));
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -1126,7 +1095,6 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *AdActor::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -1187,7 +1155,6 @@ ScValue *AdActor::scGetProperty(const Common::String &name) {
 		return AdTalkHolder::scGetProperty(name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::scSetProperty(const char *name, ScValue *value) {
@@ -1265,12 +1232,10 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 const char *AdActor::scToString() {
 	return "[actor object]";
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdActor::getTalkStance(const char *stance) {
@@ -1401,22 +1366,21 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 TDirection AdActor::angleToDirection(int angle) {
 	TDirection ret = DI_DOWN;
 
 	if (angle > -112 && angle <= -67) {
 		ret = DI_UP;
-	} else if (angle > -67  && angle <= -22) {
+	} else if (angle > -67 && angle <= -22) {
 		ret = DI_UPRIGHT;
-	} else if (angle > -22  && angle <= 22) {
+	} else if (angle > -22 && angle <= 22) {
 		ret = DI_RIGHT;
-	} else if (angle > 22   && angle <= 67) {
+	} else if (angle > 22 && angle <= 67) {
 		ret = DI_DOWNRIGHT;
-	} else if (angle > 67   && angle <= 112) {
+	} else if (angle > 67 && angle <= 112) {
 		ret = DI_DOWN;
-	} else if (angle > 112  && angle <= 157) {
+	} else if (angle > 112 && angle <= 157) {
 		ret = DI_DOWNLEFT;
 	} else if ((angle > 157 && angle <= 180) || (angle >= -180 && angle <= -157)) {
 		ret = DI_LEFT;
@@ -1426,7 +1390,6 @@ TDirection AdActor::angleToDirection(int angle) {
 
 	return ret;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 int32 AdActor::getHeight() {
@@ -1445,7 +1408,6 @@ int32 AdActor::getHeight() {
 	return AdTalkHolder::getHeight();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
 	for (uint32 i = 0; i < _anims.size(); i++) {
@@ -1461,7 +1423,6 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 	TOKEN_TABLE_START(commands)
 	TOKEN_TABLE(ANIMATION)
 	TOKEN_TABLE_END
-
 
 	char *fileBuffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(animsFilename);
 	if (fileBuffer == nullptr) {
@@ -1486,8 +1447,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 			} else {
 				_anims.add(anim);
 			}
-		}
-		break;
+		} break;
 
 		default:
 			break;

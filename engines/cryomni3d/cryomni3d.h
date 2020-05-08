@@ -44,7 +44,7 @@ class OSystem;
 namespace Common {
 struct Point;
 class SeekableReadStream;
-}
+} // namespace Common
 
 namespace Image {
 class ImageDecoder;
@@ -68,24 +68,24 @@ enum CryOmni3DGameType {
 };
 
 enum CryOmni3DGameFeatures {
-	GF_VERSAILLES_FONTS_MASK               = (3 << 0), // Fonts flag mask
-	GF_VERSAILLES_FONTS_NUMERIC            = (0 << 0), // Fonts are font01.crf, ...
-	GF_VERSAILLES_FONTS_SET_A              = (1 << 0), // Fonts are for French Macintosh (development version)
-	GF_VERSAILLES_FONTS_SET_B              = (2 << 0), // Standard set (Helvet12 is used for debugging docs)
-	GF_VERSAILLES_FONTS_SET_C              = (3 << 0), // Fonts for Italian version (Helvet12 is used for docs texts)
+	GF_VERSAILLES_FONTS_MASK = (3 << 0),    // Fonts flag mask
+	GF_VERSAILLES_FONTS_NUMERIC = (0 << 0), // Fonts are font01.crf, ...
+	GF_VERSAILLES_FONTS_SET_A = (1 << 0),   // Fonts are for French Macintosh (development version)
+	GF_VERSAILLES_FONTS_SET_B = (2 << 0),   // Standard set (Helvet12 is used for debugging docs)
+	GF_VERSAILLES_FONTS_SET_C = (3 << 0),   // Fonts for Italian version (Helvet12 is used for docs texts)
 
-	GF_VERSAILLES_AUDIOPADDING_NO          = (0 << 2), // Audio files have underscore padding before extension
-	GF_VERSAILLES_AUDIOPADDING_YES         = (1 << 2), // Audio files have underscore padding before extension
+	GF_VERSAILLES_AUDIOPADDING_NO = (0 << 2),  // Audio files have underscore padding before extension
+	GF_VERSAILLES_AUDIOPADDING_YES = (1 << 2), // Audio files have underscore padding before extension
 
-	GF_VERSAILLES_LINK_STANDARD            = (0 << 3), // Links file is lien_doc.txt
-	GF_VERSAILLES_LINK_LOCALIZED           = (1 << 3)  // Links file is taken from cryomni3d.dat
+	GF_VERSAILLES_LINK_STANDARD = (0 << 3), // Links file is lien_doc.txt
+	GF_VERSAILLES_LINK_LOCALIZED = (1 << 3) // Links file is taken from cryomni3d.dat
 };
 
 struct CryOmni3DGameDescription;
 
 // Engine Debug Flags
 enum {
-	kDebugFile     = (1 << 0),
+	kDebugFile = (1 << 0),
 	kDebugVariable = (1 << 1),
 	kDebugSaveLoad = (1 << 2)
 };
@@ -120,6 +120,7 @@ public:
 
 	void setCanLoadSave(bool canLoadSave) { _canLoadSave = canLoadSave; }
 	static const uint kSaveDescriptionLen = 20;
+
 private:
 	void pauseEngineIntern(bool) override;
 
@@ -150,7 +151,7 @@ public:
 	DragStatus getDragStatus() { return _dragStatus; }
 
 	Common::String prepareFileName(const Common::String &baseName, const char *extension) const {
-		const char *const extensions[] = { extension, nullptr };
+		const char *const extensions[] = {extension, nullptr};
 		return prepareFileName(baseName, extensions);
 	}
 	virtual Common::String prepareFileName(const Common::String &baseName,
@@ -170,13 +171,22 @@ protected:
 
 	void copySubPalette(byte *dst, const byte *src, uint start, uint num);
 	void setPalette(const byte *colors, uint start, uint num);
-	void lockPalette(uint startRW, uint endRW) { _lockPaletteStartRW = startRW; _lockPaletteEndRW = endRW; }
-	void unlockPalette() { _lockPaletteStartRW = 0; _lockPaletteEndRW = 255; }
+	void lockPalette(uint startRW, uint endRW) {
+		_lockPaletteStartRW = startRW;
+		_lockPaletteEndRW = endRW;
+	}
+	void unlockPalette() {
+		_lockPaletteStartRW = 0;
+		_lockPaletteEndRW = 255;
+	}
 	void fadeOutPalette();
 	void fadeInPalette(const byte *colors);
 	void setBlackPalette();
 
-	void setHNMClipping(const Common::Rect &clip) { _hnmClipping = clip; _hnmHasClip = true; }
+	void setHNMClipping(const Common::Rect &clip) {
+		_hnmClipping = clip;
+		_hnmHasClip = true;
+	}
 	void unsetHNMClipping() { _hnmHasClip = false; }
 
 protected:

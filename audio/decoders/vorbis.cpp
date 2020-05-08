@@ -47,7 +47,6 @@
 #include <vorbis/vorbisfile.h>
 #endif
 
-
 namespace Audio {
 
 // These are wrapper functions to allow using a SeekableReadStream object to
@@ -78,15 +77,11 @@ static long tell_stream_wrap(void *datasource) {
 }
 
 static ov_callbacks g_stream_wrap = {
-	read_stream_wrap, seek_stream_wrap, close_stream_wrap, tell_stream_wrap
-};
-
-
+    read_stream_wrap, seek_stream_wrap, close_stream_wrap, tell_stream_wrap};
 
 #pragma mark -
-#pragma mark --- Ogg Vorbis stream ---
+#pragma mark--- Ogg Vorbis stream ---
 #pragma mark -
-
 
 class VorbisStream : public SeekableAudioStream {
 protected:
@@ -110,20 +105,20 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool endOfData() const		{ return _pos >= _bufferEnd; }
-	bool isStereo() const		{ return _isStereo; }
-	int getRate() const			{ return _rate; }
+	bool endOfData() const { return _pos >= _bufferEnd; }
+	bool isStereo() const { return _isStereo; }
+	int getRate() const { return _rate; }
 
 	bool seek(const Timestamp &where);
 	Timestamp getLength() const { return _length; }
+
 protected:
 	bool refill();
 };
 
-VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
-	_inStream(inStream, dispose),
-	_length(0, 1000),
-	_bufferEnd(ARRAYEND(_buffer)) {
+VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) : _inStream(inStream, dispose),
+                                                                                                  _length(0, 1000),
+                                                                                                  _bufferEnd(ARRAYEND(_buffer)) {
 
 	int res = ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap);
 	if (res < 0) {
@@ -193,20 +188,20 @@ bool VorbisStream::refill() {
 		// in host byte order. As such, it does not take arguments to request
 		// specific signedness, byte order or bit depth as in Vorbisfile.
 		result = ov_read(&_ovFile, read_pos, len_left,
-						NULL);
+		                 NULL);
 #else
 #ifdef SCUMM_BIG_ENDIAN
 		result = ov_read(&_ovFile, read_pos, len_left,
-						1,
-						2,	// 16 bit
-						1,	// signed
-						NULL);
+		                 1,
+		                 2, // 16 bit
+		                 1, // signed
+		                 NULL);
 #else
 		result = ov_read(&_ovFile, read_pos, len_left,
-						0,
-						2,	// 16 bit
-						1,	// signed
-						NULL);
+		                 0,
+		                 2, // 16 bit
+		                 1, // signed
+		                 NULL);
 #endif
 #endif
 		if (result == OV_HOLE) {
@@ -235,14 +230,13 @@ bool VorbisStream::refill() {
 	return true;
 }
 
-
 #pragma mark -
-#pragma mark --- Ogg Vorbis factory functions ---
+#pragma mark--- Ogg Vorbis factory functions ---
 #pragma mark -
 
 SeekableAudioStream *makeVorbisStream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse) {
+    Common::SeekableReadStream *stream,
+    DisposeAfterUse::Flag disposeAfterUse) {
 	SeekableAudioStream *s = new VorbisStream(stream, disposeAfterUse);
 	if (s && s->endOfData()) {
 		delete s;

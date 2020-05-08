@@ -24,9 +24,9 @@
 #define ULTIMA8_GRAPHICS_FONTS_FONT_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/misc/encoding.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/misc/rect.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -66,7 +66,7 @@ public:
 	//! \param width Returns the width
 	//! \param height Returns the height
 	virtual void getStringSize(const Std::string &text,
-		int32 &width, int32 &height) = 0;
+	                           int32 &width, int32 &height) = 0;
 
 	//! render a string
 	//! \param text The text
@@ -77,9 +77,9 @@ public:
 	//! \param u8specials If true, interpret the special characters U8 uses
 	//! \return the rendered text in a RenderedText object
 	virtual RenderedText *renderText(const Std::string &text,
-	    unsigned int &remaining, int32 width = 0, int32 height = 0,
-		TextAlign align = TEXT_LEFT, bool u8specials = false,
-		Std::string::size_type cursor = Std::string::npos) = 0;
+	                                 unsigned int &remaining, int32 width = 0, int32 height = 0,
+	                                 TextAlign align = TEXT_LEFT, bool u8specials = false,
+	                                 Std::string::size_type cursor = Std::string::npos) = 0;
 
 	//! get the dimensions of a rendered string
 	//! \param text The text
@@ -91,9 +91,9 @@ public:
 	//! \param u8specials If true, interpret the special characters U8 uses
 	//! \param align Alignment of the text (left, right, center)
 	virtual void getTextSize(const Std::string &text,
-		int32 &resultwidth, int32 &resultheight, unsigned int &remaining,
-		int32 width = 0, int32 height = 0, TextAlign align = TEXT_LEFT,
-		bool u8specials = false);
+	                         int32 &resultwidth, int32 &resultheight, unsigned int &remaining,
+	                         int32 width = 0, int32 height = 0, TextAlign align = TEXT_LEFT,
+	                         bool u8specials = false);
 
 	void setHighRes(bool hr) {
 		_highRes = hr;
@@ -106,7 +106,6 @@ protected:
 	bool _highRes;
 
 protected:
-
 	struct Traits {
 		static bool isSpace(Std::string::const_iterator &i, bool u8specials) {
 			char c = *i;
@@ -140,7 +139,8 @@ protected:
 			// FIXME: this can advance past the end of a malformed string
 			uint8 c = *i;
 			i++;
-			if (c >= 0x80) i++;
+			if (c >= 0x80)
+				i++;
 		}
 		static Std::string::size_type length(const Std::string &t) {
 			Std::string::size_type l = 0;
@@ -165,10 +165,10 @@ protected:
 
 template<class T>
 Std::list<PositionedText> typesetText(Font *font,
-	const Std::string &text, unsigned int &remaining,
-	int32 width, int32 height, Font::TextAlign align,
-	bool u8specials, int32 &resultwidth, int32 &resultheight,
-	Std::string::size_type cursor = Std::string::npos);
+                                      const Std::string &text, unsigned int &remaining,
+                                      int32 width, int32 height, Font::TextAlign align,
+                                      bool u8specials, int32 &resultwidth, int32 &resultheight,
+                                      Std::string::size_type cursor = Std::string::npos);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

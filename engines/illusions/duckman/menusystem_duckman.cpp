@@ -20,19 +20,19 @@
  *
  */
 
-#include "illusions/illusions.h"
-#include "illusions/actor.h"
-#include "illusions/sound.h"
-#include "illusions/duckman/illusions_duckman.h"
 #include "illusions/duckman/menusystem_duckman.h"
+#include "illusions/actor.h"
+#include "illusions/duckman/illusions_duckman.h"
+#include "illusions/illusions.h"
 #include "illusions/resources/scriptresource.h"
+#include "illusions/sound.h"
 
 namespace Illusions {
 
 // DuckmanMenuSystem
 
 DuckmanMenuSystem::DuckmanMenuSystem(IllusionsEngine_Duckman *vm)
-	: BaseMenuSystem(vm), _vm(vm) {
+    : BaseMenuSystem(vm), _vm(vm) {
 	clearMenus();
 }
 
@@ -41,7 +41,7 @@ DuckmanMenuSystem::~DuckmanMenuSystem() {
 }
 
 void DuckmanMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
-	uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId) {
+                                uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId) {
 
 	debug(0, "DuckmanMenuSystem::runMenu(%08X)", menuId);
 
@@ -52,7 +52,6 @@ void DuckmanMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menu
 	int rootMenuId = convertRootMenuId(menuId | 0x180000);
 	BaseMenu *rootMenu = getMenuById(rootMenuId);
 	openMenu(rootMenu);
-
 }
 
 void DuckmanMenuSystem::clearMenus() {
@@ -119,16 +118,24 @@ BaseMenu *DuckmanMenuSystem::createLoadGameFailedMenu() {
 	return menu;
 }
 
-
 MenuItem *DuckmanMenuSystem::createOptionsSliderMenuItem(MenuActionUpdateSlider **action, const Common::String &text, SliderActionType type, BaseMenu *baseMenu) {
 	int sliderValue = 0;
 	char sliderText[] = "{~~~~~~~~~~~~~~~~}";
 	switch (type) {
-		case SFX : sliderValue = _vm->_soundMan->getSfxVolume()/(256/15); break;
-		case MUSIC : sliderValue = _vm->_soundMan->getMusicVolume()/(256/15); break;
-		case VOICE : sliderValue = _vm->_soundMan->getSpeechVolume()/(256/15); break;
-		case TEXT_DURATION : sliderValue = _vm->getSubtitleDuration()/(256/15); break;
-		default: break;
+	case SFX:
+		sliderValue = _vm->_soundMan->getSfxVolume() / (256 / 15);
+		break;
+	case MUSIC:
+		sliderValue = _vm->_soundMan->getMusicVolume() / (256 / 15);
+		break;
+	case VOICE:
+		sliderValue = _vm->_soundMan->getSpeechVolume() / (256 / 15);
+		break;
+	case TEXT_DURATION:
+		sliderValue = _vm->getSubtitleDuration() / (256 / 15);
+		break;
+	default:
+		break;
 	}
 
 	sliderText[sliderValue + 1] = '|';
@@ -225,28 +232,27 @@ typedef struct InventoryMenuItem {
 } InventoryMenuItem;
 
 static const InventoryMenuItem kDebugInventoryItems[21] = {
-	{ "Pick-up Book", 262212, 393231, 917519 },
-	{ "Bucket and Squeegee", 262314, 393233, 917599 },
-	{ "Cardboard Cut Out", 262219, 393264, 917573 },
-	{ "Talking Doll", 262209, 393943, 917587 },
-	{ "Cookie Fortunes", 262263, 393266, 917520 },
-	{ "Garbage Can Lid", 262311, 393259, 917597 },
-	{ "Chewing Gum", 262210, 393267, 917522 },
-	{ "Ladder", 262155, 393258, 917598 },
-	{ "Disco Light", 262342, 393260, 917594 },
-	{ "Magazine Cover", 262185, 393261, 917517 },
-	{ "Matches", 262159, 393232, 917516 },
-	{ "Opera Lessons", 262293, 393731, 917600 },
-	{ "Pizza Card", 262239, 393262, 917526 },
-	{ "Toilet Plunger", 262282, 393257, 917555 },
-	{ "Black Velvet Poster", 262258, 393269, 917527 },
-	{ "Red Spray Paint", 262297, 393254, 917531 },
-	{ "Remote Control", 262161, 393255, 917595 },
-	{ "Sparkplug", 262294, 393256, 917532 },
-	{ "Tape Recorder", 262328, 393827, 917584 },
-	{ "Wacky Putty", 262228, 393559, 917537 },
-	{ "Wrench", 262175, 393422, 917530 }
-};
+    {"Pick-up Book", 262212, 393231, 917519},
+    {"Bucket and Squeegee", 262314, 393233, 917599},
+    {"Cardboard Cut Out", 262219, 393264, 917573},
+    {"Talking Doll", 262209, 393943, 917587},
+    {"Cookie Fortunes", 262263, 393266, 917520},
+    {"Garbage Can Lid", 262311, 393259, 917597},
+    {"Chewing Gum", 262210, 393267, 917522},
+    {"Ladder", 262155, 393258, 917598},
+    {"Disco Light", 262342, 393260, 917594},
+    {"Magazine Cover", 262185, 393261, 917517},
+    {"Matches", 262159, 393232, 917516},
+    {"Opera Lessons", 262293, 393731, 917600},
+    {"Pizza Card", 262239, 393262, 917526},
+    {"Toilet Plunger", 262282, 393257, 917555},
+    {"Black Velvet Poster", 262258, 393269, 917527},
+    {"Red Spray Paint", 262297, 393254, 917531},
+    {"Remote Control", 262161, 393255, 917595},
+    {"Sparkplug", 262294, 393256, 917532},
+    {"Tape Recorder", 262328, 393827, 917584},
+    {"Wacky Putty", 262228, 393559, 917537},
+    {"Wrench", 262175, 393422, 917530}};
 
 BaseMenu *DuckmanMenuSystem::createAddRemoveInventoryMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120002, 0, 0, 0, 17, 1);
@@ -320,7 +326,7 @@ void DuckmanMenuSystem::playSoundEffect(int sfxId) {
 }
 
 MenuActionInventoryAddRemove::MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex)
-	: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex), _vm(vm) {
+    : BaseMenuAction(menuSystem), _choiceIndex(choiceIndex), _vm(vm) {
 }
 
 void MenuActionInventoryAddRemove::execute() {
@@ -331,14 +337,14 @@ void MenuActionInventoryAddRemove::execute() {
 		_vm->_scriptResource->_properties.set(kDebugInventoryItems[_choiceIndex].propertyId, false);
 	} else {
 		_vm->startCursorHoldingObject(kDebugInventoryItems[_choiceIndex].objectId,
-									  kDebugInventoryItems[_choiceIndex].sequenceId);
+		                              kDebugInventoryItems[_choiceIndex].sequenceId);
 		_vm->_scriptResource->_properties.set(kDebugInventoryItems[_choiceIndex].propertyId, true);
 	}
 	_menuSystem->leaveMenu();
 }
 
 MenuActionUpdateSlider::MenuActionUpdateSlider(BaseMenuSystem *menuSystem, BaseMenu *baseMenu, SliderActionType type, IllusionsEngine_Duckman *vm)
-			: BaseMenuAction(menuSystem), menu(baseMenu), _type(type), _vm(vm) {
+    : BaseMenuAction(menuSystem), menu(baseMenu), _type(type), _vm(vm) {
 	_menuItem = NULL;
 }
 
@@ -363,10 +369,17 @@ int MenuActionUpdateSlider::calcNewSliderValue(int newOffset) {
 	int currentPosition = 0;
 	for (uint i = 0; i < text.size(); i++) {
 		switch (text[i]) {
-			case '{' : start = i; break;
-			case '}' : end = i; break;
-			case '|' : currentPosition = i; break;
-			default: break;
+		case '{':
+			start = i;
+			break;
+		case '}':
+			end = i;
+			break;
+		case '|':
+			currentPosition = i;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -388,9 +401,14 @@ void MenuActionUpdateSlider::setSliderValue(uint8 newValue) {
 	Common::String text = _menuItem->getText();
 	for (uint i = 0; i < text.size(); i++) {
 		switch (text[i]) {
-			case '{' : start = i; break;
-			case '|' : text.setChar('~', i); break;
-			default: break;
+		case '{':
+			start = i;
+			break;
+		case '|':
+			text.setChar('~', i);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -400,22 +418,30 @@ void MenuActionUpdateSlider::setSliderValue(uint8 newValue) {
 	_menuSystem->redrawMenuText(menu);
 
 	switch (_type) {
-		case SFX : _vm->_soundMan->setSfxVolume(newValue * (256/15)); break;
-		case MUSIC : _vm->_soundMan->setMusicVolume(newValue * (256/15)); break;
-		case VOICE : _vm->_soundMan->setSpeechVolume(newValue * (256/15)); break;
-		case TEXT_DURATION : _vm->setSubtitleDuration(newValue * (256/15)); break;
-		default: break;
+	case SFX:
+		_vm->_soundMan->setSfxVolume(newValue * (256 / 15));
+		break;
+	case MUSIC:
+		_vm->_soundMan->setMusicVolume(newValue * (256 / 15));
+		break;
+	case VOICE:
+		_vm->_soundMan->setSpeechVolume(newValue * (256 / 15));
+		break;
+	case TEXT_DURATION:
+		_vm->setSubtitleDuration(newValue * (256 / 15));
+		break;
+	default:
+		break;
 	}
 }
 
 MenuActionResetOptionSliders::MenuActionResetOptionSliders(BaseMenuSystem *menuSystem,
-														   MenuActionUpdateSlider *sfxSlider,
-														   MenuActionUpdateSlider *musiclider,
-														   MenuActionUpdateSlider *speechSlider,
-														   MenuActionUpdateSlider *textDurationSlider)
-: BaseMenuAction(menuSystem), _sfxSlider(sfxSlider), _musiclider(musiclider),
-  _speechSlider(speechSlider), _textDurationSlider(textDurationSlider) {
-
+                                                           MenuActionUpdateSlider *sfxSlider,
+                                                           MenuActionUpdateSlider *musiclider,
+                                                           MenuActionUpdateSlider *speechSlider,
+                                                           MenuActionUpdateSlider *textDurationSlider)
+    : BaseMenuAction(menuSystem), _sfxSlider(sfxSlider), _musiclider(musiclider),
+      _speechSlider(speechSlider), _textDurationSlider(textDurationSlider) {
 }
 
 void MenuActionResetOptionSliders::execute() {

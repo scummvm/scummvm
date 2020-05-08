@@ -41,76 +41,75 @@
 namespace StarTrek {
 
 extern const RoomAction veng8ActionList[] = {
-	{ {ACTION_TICK, 1, 0, 0}, &Room::veng8Tick1 },
+    {{ACTION_TICK, 1, 0, 0}, &Room::veng8Tick1},
 
-	{ {ACTION_WALK, OBJECT_DOOR,  0, 0}, &Room::veng8WalkToDoor },
-	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::veng8WalkToDoor },
-	{ {ACTION_DONE_WALK, 8,       0, 0}, &Room::veng8ReachedDoor },
-	{ {ACTION_DONE_ANIM, 7,       0, 0}, &Room::veng8DoorOpened },
-	{ {ACTION_TIMER_EXPIRED, 0,   0, 0}, &Room::veng8Timer0Expired },
-	{ {ACTION_DONE_ANIM, 11,      0, 0}, &Room::veng8SparkAnim1Done },
-	{ {ACTION_TIMER_EXPIRED, 1,   0, 0}, &Room::veng8Timer1Expired },
-	{ {ACTION_DONE_ANIM, 12,      0, 0}, &Room::veng8SparkAnim2Done },
+    {{ACTION_WALK, OBJECT_DOOR, 0, 0}, &Room::veng8WalkToDoor},
+    {{ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::veng8WalkToDoor},
+    {{ACTION_DONE_WALK, 8, 0, 0}, &Room::veng8ReachedDoor},
+    {{ACTION_DONE_ANIM, 7, 0, 0}, &Room::veng8DoorOpened},
+    {{ACTION_TIMER_EXPIRED, 0, 0, 0}, &Room::veng8Timer0Expired},
+    {{ACTION_DONE_ANIM, 11, 0, 0}, &Room::veng8SparkAnim1Done},
+    {{ACTION_TIMER_EXPIRED, 1, 0, 0}, &Room::veng8Timer1Expired},
+    {{ACTION_DONE_ANIM, 12, 0, 0}, &Room::veng8SparkAnim2Done},
 
-	{ {ACTION_LOOK, OBJECT_POWER_PACK,     0, 0}, &Room::veng8LookAtPowerPack },
-	{ {ACTION_LOOK, OBJECT_DOOR,           0, 0}, &Room::veng8LookAtDoor },
-	{ {ACTION_LOOK, HOTSPOT_DOOR,          0, 0}, &Room::veng8LookAtDoor },
-	{ {ACTION_LOOK, HOTSPOT_POWER_CIRCUIT, 0, 0}, &Room::veng8LookAtPowerCircuits },
-	{ {ACTION_LOOK, OBJECT_CONTROLS,       0, 0}, &Room::veng8LookAtControls },
-	{ {ACTION_LOOK, HOTSPOT_CONTROLS,      0, 0}, &Room::veng8LookAtControls },
-	{ {ACTION_LOOK, OBJECT_DEAD_GUY,       0, 0}, &Room::veng8LookAtDeadGuy },
-	{ {ACTION_LOOK, OBJECT_SLIDER,         0, 0}, &Room::veng8LookAtSlider },
-	{ {ACTION_LOOK, HOTSPOT_SLIDER,        0, 0}, &Room::veng8LookAtSlider },
-	{ {ACTION_LOOK, OBJECT_KIRK,           0, 0}, &Room::veng8LookAtKirk },
-	{ {ACTION_LOOK, OBJECT_SPOCK,          0, 0}, &Room::veng8LookAtSpock },
-	{ {ACTION_LOOK, OBJECT_MCCOY,          0, 0}, &Room::veng8LookAtMccoy },
-	{ {ACTION_LOOK, OBJECT_REDSHIRT,       0, 0}, &Room::veng8LookAtRedshirt },
-	{ {ACTION_LOOK, HOTSPOT_TRANSPORTER,   0, 0}, &Room::veng8LookAtTransporter },
-	{ {ACTION_LOOK, 0xff,                  0, 0}, &Room::veng8LookAnywhere },
-	{ {ACTION_TALK, OBJECT_KIRK,           0, 0}, &Room::veng8TalkToKirk },
-	{ {ACTION_TALK, OBJECT_SPOCK,          0, 0}, &Room::veng8TalkToSpock },
-	{ {ACTION_TALK, OBJECT_MCCOY,          0, 0}, &Room::veng8TalkToMccoy },
-	{ {ACTION_TALK, OBJECT_REDSHIRT,       0, 0}, &Room::veng8TalkToRedshirt },
+    {{ACTION_LOOK, OBJECT_POWER_PACK, 0, 0}, &Room::veng8LookAtPowerPack},
+    {{ACTION_LOOK, OBJECT_DOOR, 0, 0}, &Room::veng8LookAtDoor},
+    {{ACTION_LOOK, HOTSPOT_DOOR, 0, 0}, &Room::veng8LookAtDoor},
+    {{ACTION_LOOK, HOTSPOT_POWER_CIRCUIT, 0, 0}, &Room::veng8LookAtPowerCircuits},
+    {{ACTION_LOOK, OBJECT_CONTROLS, 0, 0}, &Room::veng8LookAtControls},
+    {{ACTION_LOOK, HOTSPOT_CONTROLS, 0, 0}, &Room::veng8LookAtControls},
+    {{ACTION_LOOK, OBJECT_DEAD_GUY, 0, 0}, &Room::veng8LookAtDeadGuy},
+    {{ACTION_LOOK, OBJECT_SLIDER, 0, 0}, &Room::veng8LookAtSlider},
+    {{ACTION_LOOK, HOTSPOT_SLIDER, 0, 0}, &Room::veng8LookAtSlider},
+    {{ACTION_LOOK, OBJECT_KIRK, 0, 0}, &Room::veng8LookAtKirk},
+    {{ACTION_LOOK, OBJECT_SPOCK, 0, 0}, &Room::veng8LookAtSpock},
+    {{ACTION_LOOK, OBJECT_MCCOY, 0, 0}, &Room::veng8LookAtMccoy},
+    {{ACTION_LOOK, OBJECT_REDSHIRT, 0, 0}, &Room::veng8LookAtRedshirt},
+    {{ACTION_LOOK, HOTSPOT_TRANSPORTER, 0, 0}, &Room::veng8LookAtTransporter},
+    {{ACTION_LOOK, 0xff, 0, 0}, &Room::veng8LookAnywhere},
+    {{ACTION_TALK, OBJECT_KIRK, 0, 0}, &Room::veng8TalkToKirk},
+    {{ACTION_TALK, OBJECT_SPOCK, 0, 0}, &Room::veng8TalkToSpock},
+    {{ACTION_TALK, OBJECT_MCCOY, 0, 0}, &Room::veng8TalkToMccoy},
+    {{ACTION_TALK, OBJECT_REDSHIRT, 0, 0}, &Room::veng8TalkToRedshirt},
 
-	{ {ACTION_USE, OBJECT_KIRK,  OBJECT_CONTROLS,  0}, &Room::veng8UseKirkOnControls },
-	{ {ACTION_USE, OBJECT_KIRK,  HOTSPOT_CONTROLS, 0}, &Room::veng8UseKirkOnControls },
-	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_CONTROLS,  0}, &Room::veng8UseSpockOnControls },
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_CONTROLS, 0}, &Room::veng8UseSpockOnControls },
-	{ {ACTION_DONE_WALK, 13,                    0, 0}, &Room::veng8SpockReachedControls },
-	{ {ACTION_DONE_ANIM, 14,                    0, 0}, &Room::veng8SpockUsedControls },
+    {{ACTION_USE, OBJECT_KIRK, OBJECT_CONTROLS, 0}, &Room::veng8UseKirkOnControls},
+    {{ACTION_USE, OBJECT_KIRK, HOTSPOT_CONTROLS, 0}, &Room::veng8UseKirkOnControls},
+    {{ACTION_USE, OBJECT_SPOCK, OBJECT_CONTROLS, 0}, &Room::veng8UseSpockOnControls},
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_CONTROLS, 0}, &Room::veng8UseSpockOnControls},
+    {{ACTION_DONE_WALK, 13, 0, 0}, &Room::veng8SpockReachedControls},
+    {{ACTION_DONE_ANIM, 14, 0, 0}, &Room::veng8SpockUsedControls},
 
-	{ {ACTION_USE, OBJECT_IFUSION, HOTSPOT_POWER_CIRCUIT, 0}, &Room::veng8UsePowerPackOnPowerCircuit },
-	{ {ACTION_DONE_WALK, 9,                            0, 0}, &Room::veng8SpockReachedPowerCircuit },
-	{ {ACTION_DONE_ANIM, 10,                           0, 0}, &Room::veng8SpockConnectedPowerPack },
-	{ {ACTION_DONE_ANIM, 15,                           0, 0}, &Room::veng8TransporterPoweredUp },
+    {{ACTION_USE, OBJECT_IFUSION, HOTSPOT_POWER_CIRCUIT, 0}, &Room::veng8UsePowerPackOnPowerCircuit},
+    {{ACTION_DONE_WALK, 9, 0, 0}, &Room::veng8SpockReachedPowerCircuit},
+    {{ACTION_DONE_ANIM, 10, 0, 0}, &Room::veng8SpockConnectedPowerPack},
+    {{ACTION_DONE_ANIM, 15, 0, 0}, &Room::veng8TransporterPoweredUp},
 
-	{ {ACTION_USE, OBJECT_KIRK,  OBJECT_SLIDER,  0}, &Room::veng8UseKirkOnSlider },
-	{ {ACTION_USE, OBJECT_KIRK,  HOTSPOT_SLIDER, 0}, &Room::veng8UseKirkOnSlider },
-	{ {ACTION_USE, OBJECT_SPOCK, OBJECT_SLIDER,  0}, &Room::veng8UseSpockOnSlider },
-	{ {ACTION_USE, OBJECT_SPOCK, HOTSPOT_SLIDER, 0}, &Room::veng8UseSpockOnSlider },
-	{ {ACTION_DONE_WALK, 16,                  0, 0}, &Room::veng8SpockReachedSlider },
-	{ {ACTION_DONE_WALK, 1,                   0, 0}, &Room::veng8RedshirtReachedTransporter },
-	{ {ACTION_DONE_WALK, 4,                   0, 0}, &Room::veng8RedshirtReachedTransporter },
-	{ {ACTION_DONE_ANIM, 5,                   0, 0}, &Room::veng8SpockPulledSliderToBeamOut },
-	{ {ACTION_DONE_ANIM, 2,                   0, 0}, &Room::veng8RedshirtBeamedOut },
-	{ {ACTION_DONE_ANIM, 6,                   0, 0}, &Room::veng8SpockPulledSliderToBeamIn },
-	{ {ACTION_DONE_ANIM, 3,                   0, 0}, &Room::veng8RedshirtBeamedIn },
+    {{ACTION_USE, OBJECT_KIRK, OBJECT_SLIDER, 0}, &Room::veng8UseKirkOnSlider},
+    {{ACTION_USE, OBJECT_KIRK, HOTSPOT_SLIDER, 0}, &Room::veng8UseKirkOnSlider},
+    {{ACTION_USE, OBJECT_SPOCK, OBJECT_SLIDER, 0}, &Room::veng8UseSpockOnSlider},
+    {{ACTION_USE, OBJECT_SPOCK, HOTSPOT_SLIDER, 0}, &Room::veng8UseSpockOnSlider},
+    {{ACTION_DONE_WALK, 16, 0, 0}, &Room::veng8SpockReachedSlider},
+    {{ACTION_DONE_WALK, 1, 0, 0}, &Room::veng8RedshirtReachedTransporter},
+    {{ACTION_DONE_WALK, 4, 0, 0}, &Room::veng8RedshirtReachedTransporter},
+    {{ACTION_DONE_ANIM, 5, 0, 0}, &Room::veng8SpockPulledSliderToBeamOut},
+    {{ACTION_DONE_ANIM, 2, 0, 0}, &Room::veng8RedshirtBeamedOut},
+    {{ACTION_DONE_ANIM, 6, 0, 0}, &Room::veng8SpockPulledSliderToBeamIn},
+    {{ACTION_DONE_ANIM, 3, 0, 0}, &Room::veng8RedshirtBeamedIn},
 
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_CONTROLS,  0}, &Room::veng8UseSTricorderOnConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_SLIDER,    0}, &Room::veng8UseSTricorderOnConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_CONTROLS, 0}, &Room::veng8UseSTricorderOnConsole },
-	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_SLIDER,   0}, &Room::veng8UseSTricorderOnConsole },
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_CONTROLS, 0}, &Room::veng8UseSTricorderOnConsole},
+    {{ACTION_USE, OBJECT_ISTRICOR, OBJECT_SLIDER, 0}, &Room::veng8UseSTricorderOnConsole},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_CONTROLS, 0}, &Room::veng8UseSTricorderOnConsole},
+    {{ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_SLIDER, 0}, &Room::veng8UseSTricorderOnConsole},
 
-	// Common code
-	{ {ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick },
-	{ {ACTION_USE, OBJECT_IPHASERS, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
-	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
-	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
+    // Common code
+    {{ACTION_TICK, 0xff, 0xff, 0xff}, &Room::vengaTick},
+    {{ACTION_USE, OBJECT_IPHASERS, 0xff, 0}, &Room::vengaUsePhaserAnywhere},
+    {{ACTION_USE, OBJECT_IPHASERK, 0xff, 0}, &Room::vengaUsePhaserAnywhere},
+    {{ACTION_LOOK, OBJECT_IHYPO, 0, 0}, &Room::vengaLookAtHypo},
+    {{ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator},
 };
 
 extern const int veng8NumActions = ARRAYSIZE(veng8ActionList);
-
 
 void Room::veng8Tick1() {
 	playVoc("VEN8LOOP");
@@ -230,7 +229,7 @@ void Room::veng8TalkToSpock() {
 void Room::veng8TalkToMccoy() {
 	if (_awayMission->veng.torpedoLoaded) {
 		showText(TX_SPEAKER_MCCOY, 20, true);
-		showText(TX_SPEAKER_KIRK,   1, true);
+		showText(TX_SPEAKER_KIRK, 1, true);
 	} else if (_awayMission->veng.countdownStarted)
 		showText(TX_SPEAKER_MCCOY, 21, true);
 	else
@@ -239,9 +238,9 @@ void Room::veng8TalkToMccoy() {
 
 void Room::veng8TalkToRedshirt() {
 	if (_awayMission->veng.torpedoLoaded) {
-		showText(TX_SPEAKER_KIJE,  34, true);
+		showText(TX_SPEAKER_KIJE, 34, true);
 		showText(TX_SPEAKER_MCCOY, 23, true);
-		showText(TX_SPEAKER_KIJE,  36, true);
+		showText(TX_SPEAKER_KIJE, 36, true);
 	} else if (_awayMission->veng.countdownStarted)
 		showText(TX_SPEAKER_KIJE, 41, true);
 	else
@@ -249,7 +248,7 @@ void Room::veng8TalkToRedshirt() {
 }
 
 void Room::veng8UseKirkOnControls() {
-	showText(TX_SPEAKER_KIRK,  3, true);
+	showText(TX_SPEAKER_KIRK, 3, true);
 	veng8UseSpockOnControls();
 }
 
@@ -280,9 +279,9 @@ void Room::veng8SpockUsedControls() {
 void Room::veng8UsePowerPackOnPowerCircuit() {
 	if (!_awayMission->veng.powerPackPluggedIntoTransporter) {
 		_awayMission->disableInput = true;
-		showText(TX_SPEAKER_KIRK,  11, true);
+		showText(TX_SPEAKER_KIRK, 11, true);
 		showText(TX_SPEAKER_SPOCK, 33, true);
-		showText(TX_SPEAKER_KIRK,   9, true);
+		showText(TX_SPEAKER_KIRK, 9, true);
 		walkCrewmanC(OBJECT_SPOCK, 0xfa, 0xa4, &Room::veng8SpockReachedPowerCircuit);
 	}
 }
@@ -310,7 +309,7 @@ void Room::veng8TransporterPoweredUp() {
 }
 
 void Room::veng8UseKirkOnSlider() {
-	showText(TX_SPEAKER_KIRK,  4, true);
+	showText(TX_SPEAKER_KIRK, 4, true);
 	veng8UseSpockOnSlider();
 }
 
@@ -342,7 +341,7 @@ void Room::veng8SpockReachedSlider() {
 }
 
 void Room::veng8RedshirtReachedTransporter() {
-	showText(TX_SPEAKER_KIRK,  9, true);
+	showText(TX_SPEAKER_KIRK, 9, true);
 	loadActorAnimC(OBJECT_SPOCK, "susehn", -1, -1, &Room::veng8SpockPulledSliderToBeamOut);
 	playSoundEffectIndex(SND_TRANSENE);
 }
@@ -358,9 +357,9 @@ void Room::veng8RedshirtBeamedOut() {
 	showText(TX_SPEAKER_KIJE, 37, true);
 	showText(TX_SPEAKER_KIRK, 12, true);
 	showText(TX_SPEAKER_KIJE, 39, true);
-	showText(TX_SPEAKER_KIRK,  8, true);
+	showText(TX_SPEAKER_KIRK, 8, true);
 	showText(TX_SPEAKER_KIJE, 38, true);
-	showText(TX_SPEAKER_KIRK,  7, true);
+	showText(TX_SPEAKER_KIRK, 7, true);
 	loadActorAnimC(OBJECT_SPOCK, "susehn", -1, -1, &Room::veng8SpockPulledSliderToBeamIn);
 	playSoundEffectIndex(SND_TRANSENE);
 }
@@ -381,4 +380,4 @@ void Room::veng8UseSTricorderOnConsole() {
 	spockScan(DIR_S, 25, true);
 }
 
-}
+} // namespace StarTrek

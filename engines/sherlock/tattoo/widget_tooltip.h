@@ -23,8 +23,8 @@
 #ifndef SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
 #define SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
@@ -49,9 +49,10 @@ public:
 	void draw() override;
 };
 
-class WidgetTooltip: public WidgetTooltipBase {
+class WidgetTooltip : public WidgetTooltipBase {
 public:
 	int _offsetY;
+
 public:
 	WidgetTooltip(SherlockEngine *vm);
 	~WidgetTooltip() override {}

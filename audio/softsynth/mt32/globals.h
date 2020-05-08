@@ -29,17 +29,17 @@
 #else /* #ifdef mt32emu_EXPORTS */
 #define MT32EMU_EXPORT_ATTRIBUTE _declspec(dllimport)
 #endif /* #ifdef mt32emu_EXPORTS */
-#else /* #ifdef _MSC_VER */
+#else  /* #ifdef _MSC_VER */
 #ifdef mt32emu_EXPORTS
-#define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((dllexport))
+#define MT32EMU_EXPORT_ATTRIBUTE __attribute__((dllexport))
 #else /* #ifdef mt32emu_EXPORTS */
-#define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((dllimport))
+#define MT32EMU_EXPORT_ATTRIBUTE __attribute__((dllimport))
 #endif /* #ifdef mt32emu_EXPORTS */
 #endif /* #ifdef _MSC_VER */
-#else /* #if defined _WIN32 || defined __CYGWIN__ */
-#define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((visibility("default")))
+#else  /* #if defined _WIN32 || defined __CYGWIN__ */
+#define MT32EMU_EXPORT_ATTRIBUTE __attribute__((visibility("default")))
 #endif /* #if defined _WIN32 || defined __CYGWIN__ */
-#else /* #ifdef MT32EMU_SHARED */
+#else  /* #ifdef MT32EMU_SHARED */
 #define MT32EMU_EXPORT_ATTRIBUTE
 #endif /* #ifdef MT32EMU_SHARED */
 
@@ -93,8 +93,7 @@
 
 #if defined(__cplusplus) && MT32EMU_API_TYPE != 1
 
-namespace MT32Emu
-{
+namespace MT32Emu {
 const unsigned int SAMPLE_RATE = MT32EMU_SAMPLE_RATE;
 #undef MT32EMU_SAMPLE_RATE
 
@@ -112,7 +111,7 @@ const unsigned int MAX_STREAM_BUFFER_SIZE = MT32EMU_MAX_STREAM_BUFFER_SIZE;
 
 const unsigned int SYSEX_BUFFER_SIZE = MT32EMU_SYSEX_BUFFER_SIZE;
 #undef MT32EMU_SYSEX_BUFFER_SIZE
-}
+} // namespace MT32Emu
 
 #endif /* #if defined(__cplusplus) && MT32EMU_API_TYPE != 1 */
 

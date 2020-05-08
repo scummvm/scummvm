@@ -21,8 +21,8 @@
  */
 
 #include "teenagent/surface_list.h"
-#include "teenagent/surface.h"
 #include "teenagent/objects.h"
+#include "teenagent/surface.h"
 #include "teenagent/teenagent.h"
 
 namespace TeenAgent {
@@ -76,4 +76,4 @@ void SurfaceList::render(Graphics::Surface *surface, const Common::Rect &clip) c
 	}
 }
 
-}
+} // namespace TeenAgent

@@ -25,7 +25,6 @@
 
 #include "common/array.h"
 
-
 namespace Common {
 
 class String;
@@ -41,7 +40,7 @@ struct ListingLine {
 
 class Listing {
 public:
-	virtual ~Listing() {};
+	virtual ~Listing(){};
 	/**
 	 * @brief get the listing length (in lines)
 	 */

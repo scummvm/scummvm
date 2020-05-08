@@ -23,7 +23,6 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
@@ -31,16 +30,16 @@
 #endif // main
 
 #include "create_neverhood.h"
-#include <vector>
 #include "md5.h"
 #include "tables.h"
+#include <vector>
 
 const int DAT_VERSION = 0;
 
 // The MD5 hash of the nhc.exe used to extract the tables from
 const uint8 kNhcExeMd5[16] = {
-	0x37, 0xD6, 0x54, 0xA2, 0xA7, 0xBB, 0xB0, 0x1F,
-	0x8C, 0x41, 0x9A, 0xB8, 0x49, 0xFF, 0x29, 0xD4};
+    0x37, 0xD6, 0x54, 0xA2, 0xA7, 0xBB, 0xB0, 0x1F,
+    0x8C, 0x41, 0x9A, 0xB8, 0x49, 0xFF, 0x29, 0xD4};
 
 uint32 dataSize;
 byte *data;
@@ -73,8 +72,8 @@ bool validateMd5() {
 	md5_buffer(data, dataSize, digest);
 
 	printf("MD5 of nhc.exe is %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
-		digest[0], digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7],
-		digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14], digest[15]);
+	       digest[0], digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7],
+	       digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14], digest[15]);
 
 	if (memcmp(kNhcExeMd5, digest, 16)) {
 		printf("MD5 hash of nhc.exe doesn't match the expected value! Quitting...\n");
@@ -88,7 +87,7 @@ byte *getData(uint32 offset) {
 }
 
 const char *getStringP(uint32 offset) {
-	return offset != 0 ? (const char*)getData(offset) : NULL;
+	return offset != 0 ? (const char *)getData(offset) : NULL;
 }
 
 uint32 calcHash(const char *value) {
@@ -133,7 +132,6 @@ struct HitRect {
 	int getItemSize() const {
 		return 10;
 	}
-
 };
 
 struct MessageItem {
@@ -156,7 +154,6 @@ struct MessageItem {
 	int getItemSize() const {
 		return 8;
 	}
-
 };
 
 struct SubRectItem {
@@ -187,7 +184,6 @@ struct SubRectItem {
 	int getItemSize() const {
 		return 16;
 	}
-
 };
 
 struct RectItem {
@@ -227,7 +223,6 @@ struct RectItem {
 	int getItemSize() const {
 		return 16;
 	}
-
 };
 
 struct NavigationItem {
@@ -263,7 +258,6 @@ struct NavigationItem {
 	int getItemSize() const {
 		return 24;
 	}
-
 };
 
 struct SceneInfo140Item {
@@ -296,7 +290,6 @@ struct SceneInfo140Item {
 		writeByte(fd, xPosIndex);
 		writeByte(fd, count);
 	}
-
 };
 
 struct SceneInfo2700Item {
@@ -341,7 +334,6 @@ struct SceneInfo2700Item {
 		writeUint16LE(fd, which1);
 		writeUint16LE(fd, which2);
 	}
-
 };
 
 template<class ITEMCLASS>
@@ -388,7 +380,6 @@ public:
 			items[i].save(fd);
 		}
 	}
-
 };
 
 class HitRectList : public StaticDataList<HitRect> {
@@ -399,7 +390,6 @@ class RectList : public StaticDataList<RectItem> {
 
 class MessageList : public StaticDataList<MessageItem> {
 public:
-
 	virtual bool specialLoadList(uint32 count, uint32 offset) {
 		// Special code for message lists which are set at runtime (but otherwise constant)
 		switch (offset) {
@@ -457,7 +447,6 @@ public:
 		}
 		return false;
 	}
-
 };
 
 class NavigationList : public StaticDataList<NavigationItem> {
@@ -466,11 +455,11 @@ class NavigationList : public StaticDataList<NavigationItem> {
 template<class LISTCLASS>
 class StaticDataListVector {
 public:
-	std::vector<LISTCLASS*> lists;
+	std::vector<LISTCLASS *> lists;
 
 	void add(LISTCLASS *list) {
 		bool doAppend = true;
-		for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
+		for (typename std::vector<LISTCLASS *>::iterator it = lists.begin(); it != lists.end(); it++) {
 			if ((*it)->id == list->id) {
 				doAppend = false;
 				break;
@@ -485,7 +474,7 @@ public:
 			LISTCLASS *list = new LISTCLASS();
 			list->loadList(offsets[i], offsets[i + 1]);
 			bool doAppend = true;
-			for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
+			for (typename std::vector<LISTCLASS *>::iterator it = lists.begin(); it != lists.end(); it++) {
 				if ((*it)->id == list->id) {
 					doAppend = false;
 					break;
@@ -498,11 +487,10 @@ public:
 
 	void saveListVector(FILE *fd) {
 		writeUint32LE(fd, lists.size());
-		for (typename std::vector<LISTCLASS*>::iterator it = lists.begin(); it != lists.end(); it++) {
+		for (typename std::vector<LISTCLASS *>::iterator it = lists.begin(); it != lists.end(); it++) {
 			(*it)->saveList(fd);
 		}
 	}
-
 };
 
 template<class ITEMCLASS>
@@ -524,7 +512,6 @@ public:
 			(*it).save(fd);
 		}
 	}
-
 };
 
 StaticDataListVector<HitRectList> hitRectLists;
@@ -543,7 +530,7 @@ void addMessageList(uint32 messageListCount, uint32 messageListOffset) {
 int main(int argc, char *argv[]) {
 
 	if (!loadExe("nhc.exe") ||
-		!validateMd5())
+	    !validateMd5())
 		return 1;
 
 	FILE *datFile;

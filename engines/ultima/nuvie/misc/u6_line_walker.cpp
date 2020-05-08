@@ -77,7 +77,6 @@ U6LineWalker::~U6LineWalker() {
 	// TODO Auto-generated destructor stub
 }
 
-
 bool U6LineWalker::step() {
 	if (cur_step >= max_length)
 		return false;
@@ -85,8 +84,8 @@ bool U6LineWalker::step() {
 	uint8 idx = line_counter < 0 ? 0 : 1;
 
 	line_counter += line_inc[idx];
-	cur_x +=  xoffset[idx];
-	cur_y +=  yoffset[idx];
+	cur_x += xoffset[idx];
+	cur_y += yoffset[idx];
 
 	cur_step++;
 

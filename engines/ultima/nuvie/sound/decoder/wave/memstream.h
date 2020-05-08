@@ -45,19 +45,17 @@ private:
 	bool _eos;
 
 public:
-
 	/**
 	 * This constructor takes a pointer to a memory buffer and a length, and
 	 * wraps it. If disposeMemory is true, the MemoryReadStream takes ownership
 	 * of the buffer and hence free's it when destructed.
 	 */
-	MemoryReadStream(const uint8 *dataPtr, uint32 dataSize, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) :
-		_ptrOrig(dataPtr),
-		_ptr(dataPtr),
-		_size(dataSize),
-		_pos(0),
-		_disposeMemory(disposeMemory),
-		_eos(false) {}
+	MemoryReadStream(const uint8 *dataPtr, uint32 dataSize, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : _ptrOrig(dataPtr),
+	                                                                                                                     _ptr(dataPtr),
+	                                                                                                                     _size(dataSize),
+	                                                                                                                     _pos(0),
+	                                                                                                                     _disposeMemory(disposeMemory),
+	                                                                                                                     _eos(false) {}
 
 	~MemoryReadStream() {
 		if (_disposeMemory)
@@ -83,7 +81,6 @@ public:
 	bool seek(sint32 offs, int whence = SEEK_SET);
 };
 
-
 /**
  * This is a MemoryReadStream subclass which adds non-endian
  * read methods whose endianness is set on the stream creation.
@@ -91,7 +88,7 @@ public:
 class MemoryReadStreamEndian : public MemoryReadStream, public ReadStreamEndian {
 public:
 	MemoryReadStreamEndian(const uint8 *buf, uint32 len, bool bigEndian)
-		: MemoryReadStream(buf, len), ReadStreamEndian(bigEndian) {}
+	    : MemoryReadStream(buf, len), ReadStreamEndian(bigEndian) {}
 };
 
 /**
@@ -103,6 +100,7 @@ private:
 	uint8 *_ptr;
 	const uint32 _bufSize;
 	uint32 _pos;
+
 public:
 	MemoryWriteStream(uint8 *buf, uint32 len) : _ptr(buf), _bufSize(len), _pos(0) {}
 
@@ -155,6 +153,7 @@ private:
 
 		_size = new_len;
 	}
+
 public:
 	MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
 
@@ -187,6 +186,6 @@ public:
 	bool seek(sint32 offset, int whence = SEEK_SET);
 };
 
-}   // End of namespace Common
+} // End of namespace Common
 
 #endif

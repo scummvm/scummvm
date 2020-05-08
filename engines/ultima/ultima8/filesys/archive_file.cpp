@@ -22,9 +22,9 @@
 
 #include "ultima/ultima8/misc/pent_include.h"
 
+#include "common/memstream.h"
 #include "ultima/ultima8/filesys/archive_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
-#include "common/memstream.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -33,7 +33,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(ArchiveFile)
 
 //static
 bool ArchiveFile::extractIndexFromName(const Std::string &name, uint32 &index) {
-	if (name.size() == 0) return false;
+	if (name.size() == 0)
+		return false;
 
 	char *endptr;
 	long val;
@@ -41,9 +42,11 @@ bool ArchiveFile::extractIndexFromName(const Std::string &name, uint32 &index) {
 	val = Std::strtol(name.c_str(), &endptr, 10);
 
 	// if remainder of name doesn't start with a '.', invalid name
-	if (*endptr != '\0' && *endptr != '.') return false;
+	if (*endptr != '\0' && *endptr != '.')
+		return false;
 
-	if (val < 0) return false;
+	if (val < 0)
+		return false;
 
 	index = static_cast<uint32>(val);
 

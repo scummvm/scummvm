@@ -23,9 +23,9 @@
 #ifndef _WII_FILESYSTEM_FACTORY_H_
 #define _WII_FILESYSTEM_FACTORY_H_
 
-#include "common/str.h"
-#include "common/singleton.h"
 #include "backends/fs/fs-factory.h"
+#include "common/singleton.h"
+#include "common/str.h"
 
 #include <gctypes.h>
 
@@ -53,7 +53,7 @@ public:
 #ifdef USE_WII_SMB
 	void asyncInitNetwork();
 	void setSMBLoginData(const String &server, const String &share,
-							const String &username, const String &password);
+	                     const String &username, const String &password);
 #endif
 
 	bool isMounted(FileSystemType type);

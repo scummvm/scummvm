@@ -24,12 +24,12 @@
 #define TSAGE_RINGWORLD_SCENES8_H
 
 #include "common/scummsys.h"
+#include "tsage/core.h"
+#include "tsage/events.h"
+#include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld/ringworld_speakers.h"
-#include "tsage/events.h"
-#include "tsage/core.h"
 #include "tsage/scenes.h"
-#include "tsage/globals.h"
 
 namespace TsAGE {
 
@@ -123,7 +123,7 @@ public:
 	Action5 _action5;
 	Action6 _action6;
 	Action7 _action7;
-	Hotspot1  _hotspot1;
+	Hotspot1 _hotspot1;
 
 	void postInit(SceneObjectList *OwnerList = NULL) override;
 	void signal() override;
@@ -413,6 +413,7 @@ class Scene7700 : public Scene {
 	public:
 		void doAction(int action) override;
 	};
+
 public:
 	ASound _soundHandler;
 	SequenceManager _sequenceManager;
@@ -444,15 +445,15 @@ public:
 	Action4 _action4;
 	Action5 _action5;
 	Action6 _action6;
-	SceneHotspot1  _sceneHotspot1;
-	SceneHotspot2  _sceneHotspot2;
-	SceneHotspot3  _sceneHotspot3;
-	SceneHotspot4  _sceneHotspot4;
-	SceneHotspot5  _sceneHotspot5;
-	SceneHotspot6  _sceneHotspot6;
-	SceneItem7  _sceneItem7;
-	SceneHotspot8  _sceneHotspot8;
-	SceneHotspot9  _sceneHotspot9;
+	SceneHotspot1 _sceneHotspot1;
+	SceneHotspot2 _sceneHotspot2;
+	SceneHotspot3 _sceneHotspot3;
+	SceneHotspot4 _sceneHotspot4;
+	SceneHotspot5 _sceneHotspot5;
+	SceneHotspot6 _sceneHotspot6;
+	SceneItem7 _sceneItem7;
+	SceneHotspot8 _sceneHotspot8;
+	SceneHotspot9 _sceneHotspot9;
 	SceneItem10 _sceneItem10;
 	SceneHotspot11 _sceneHotspot11;
 	SceneHotspot11 _sceneHotspot12;

@@ -26,143 +26,143 @@
 namespace Director {
 
 namespace LC {
-	void c_xpop();
-	void c_printtop();
+void c_xpop();
+void c_printtop();
 
-	Datum mapBinaryOp(Datum (*func)(Datum, Datum), Datum d1, Datum d2);
-	Datum addData(Datum d1, Datum d2);
-	void c_add();
-	Datum subData(Datum d1, Datum d2);
-	void c_sub();
-	Datum mulData(Datum d1, Datum d2);
-	void c_mul();
-	Datum divData(Datum d1, Datum d2);
-	void c_div();
-	Datum modData(Datum d1, Datum d2);
-	void c_mod();
-	Datum negateData(Datum d1);
-	void c_negate();
+Datum mapBinaryOp(Datum (*func)(Datum, Datum), Datum d1, Datum d2);
+Datum addData(Datum d1, Datum d2);
+void c_add();
+Datum subData(Datum d1, Datum d2);
+void c_sub();
+Datum mulData(Datum d1, Datum d2);
+void c_mul();
+Datum divData(Datum d1, Datum d2);
+void c_div();
+Datum modData(Datum d1, Datum d2);
+void c_mod();
+Datum negateData(Datum d1);
+void c_negate();
 
-	void c_and();
-	void c_or();
-	void c_not();
+void c_and();
+void c_or();
+void c_not();
 
-	void c_ampersand();
-	void c_after();
-	void c_before();
-	void c_concat();
-	void c_contains();
-	void c_starts();
+void c_ampersand();
+void c_after();
+void c_before();
+void c_concat();
+void c_contains();
+void c_starts();
 
-	void c_intersects();
-	void c_within();
-	void c_of();
-	void c_charOf();
-	void c_charToOf();
-	void c_itemOf();
-	void c_itemToOf();
-	void c_lineOf();
-	void c_lineToOf();
-	void c_wordOf();
-	void c_wordToOf();
+void c_intersects();
+void c_within();
+void c_of();
+void c_charOf();
+void c_charToOf();
+void c_itemOf();
+void c_itemToOf();
+void c_lineOf();
+void c_lineToOf();
+void c_wordOf();
+void c_wordToOf();
 
-	void c_intpush();
-	void c_voidpush();
-	void c_floatpush();
-	void c_stringpush();
-	void c_symbolpush();
-	void c_namepush();
-	void c_varpush();
-	void c_argcpush();
-	void c_argcnoretpush();
-	void c_arraypush();
-	void c_proparraypush();
-	void c_assign();
-	bool verify(Symbol *s);
-	void c_eval();
-	void c_setImmediate();
+void c_intpush();
+void c_voidpush();
+void c_floatpush();
+void c_stringpush();
+void c_symbolpush();
+void c_namepush();
+void c_varpush();
+void c_argcpush();
+void c_argcnoretpush();
+void c_arraypush();
+void c_proparraypush();
+void c_assign();
+bool verify(Symbol *s);
+void c_eval();
+void c_setImmediate();
 
-	void c_swap();
+void c_swap();
 
-	void c_theentitypush();
-	void c_themenuentitypush();
-	void c_theentityassign();
-	void c_themenuitementityassign();
-	void c_objectfieldpush();
-	void c_objectfieldassign();
-	void c_objectrefpush();
+void c_theentitypush();
+void c_themenuentitypush();
+void c_theentityassign();
+void c_themenuitementityassign();
+void c_objectfieldpush();
+void c_objectfieldassign();
+void c_objectrefpush();
 
-	void c_repeatwhilecode();
-	void c_repeatwithcode();
-	void c_nextRepeat();
-	void c_ifcode();
-	void c_whencode();
-	void c_tellcode();
-	void c_tell();
-	void c_telldone();
-	void c_exitRepeat();
-	Datum compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, bool location = false, bool value = false);
-	Datum eqData(Datum d1, Datum d2);
-	void c_eq();
-	Datum neqData(Datum d1, Datum d2);
-	void c_neq();
-	Datum gtData(Datum d1, Datum d2);
-	void c_gt();
-	Datum ltData(Datum d1, Datum d2);
-	void c_lt();
-	Datum geData(Datum d1, Datum d2);
-	void c_ge();
-	Datum leData(Datum d1, Datum d2);
-	void c_le();
-	void c_jump();
-	void c_jumpifz();
-	void c_call();
+void c_repeatwhilecode();
+void c_repeatwithcode();
+void c_nextRepeat();
+void c_ifcode();
+void c_whencode();
+void c_tellcode();
+void c_tell();
+void c_telldone();
+void c_exitRepeat();
+Datum compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, bool location = false, bool value = false);
+Datum eqData(Datum d1, Datum d2);
+void c_eq();
+Datum neqData(Datum d1, Datum d2);
+void c_neq();
+Datum gtData(Datum d1, Datum d2);
+void c_gt();
+Datum ltData(Datum d1, Datum d2);
+void c_lt();
+Datum geData(Datum d1, Datum d2);
+void c_ge();
+Datum leData(Datum d1, Datum d2);
+void c_le();
+void c_jump();
+void c_jumpifz();
+void c_call();
 
-	void call(Symbol *, int nargs);
-	void call(Common::String name, int nargs);
+void call(Symbol *, int nargs);
+void call(Common::String name, int nargs);
 
-	void c_procret();
+void c_procret();
 
-	void c_mci();
-	void c_mciwait();
-	void c_goto();
-	void c_gotoloop();
-	void c_gotonext();
-	void c_gotoprevious();
-	void c_global();
-	void c_instance();
-	void c_factory();
-	void c_property();
+void c_mci();
+void c_mciwait();
+void c_goto();
+void c_gotoloop();
+void c_gotonext();
+void c_gotoprevious();
+void c_global();
+void c_instance();
+void c_factory();
+void c_property();
 
-	void c_play();
+void c_play();
 
-	void c_open();
-	void c_hilite();
+void c_open();
+void c_hilite();
 
-	// stubs for unknown instructions
-	void cb_unk();
-	void cb_unk1();
-	void cb_unk2();
+// stubs for unknown instructions
+void cb_unk();
+void cb_unk1();
+void cb_unk2();
 
-	// bytecode-related instructions
-	void cb_call();
-	void cb_field();
-	void cb_globalassign();
-	void cb_globalpush();
-	void cb_list();
-	void cb_localcall();
-	void cb_methodcall();
-	void cb_objectpush();
-	void cb_proplist();
-	void cb_stackpeek();
-	void cb_stackdrop();
-	void cb_varassign();
-	void cb_varpush();
-	void cb_v4assign();
-	void cb_v4theentitypush();
-	void cb_v4theentitynamepush();
-	void cb_v4theentityassign();
-	void cb_zeropush();
+// bytecode-related instructions
+void cb_call();
+void cb_field();
+void cb_globalassign();
+void cb_globalpush();
+void cb_list();
+void cb_localcall();
+void cb_methodcall();
+void cb_objectpush();
+void cb_proplist();
+void cb_stackpeek();
+void cb_stackdrop();
+void cb_varassign();
+void cb_varpush();
+void cb_v4assign();
+void cb_v4theentitypush();
+void cb_v4theentitynamepush();
+void cb_v4theentityassign();
+void cb_zeropush();
 
 } // End of namespace LC
 

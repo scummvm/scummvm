@@ -37,7 +37,6 @@ union iAVLKey {
 /* Comparison function for integers is subtraction. */
 #define iAVLKey_cmp(tree, a, b) ((a._int) - (b._int))
 
-
 typedef struct _iAVLNode {
 	iAVLKey key;
 	long depth;
@@ -47,23 +46,20 @@ typedef struct _iAVLNode {
 	struct _iAVLNode *right;
 } iAVLNode;
 
-
 typedef struct {
 	iAVLNode *top;
 	long count;
-	iAVLKey(*getkey)(const void *item);
+	iAVLKey (*getkey)(const void *item);
 } iAVLTree;
-
 
 typedef struct {
 	const iAVLTree *avltree;
 	const iAVLNode *curnode;
 } iAVLCursor;
 
-
-extern iAVLTree *iAVLAllocTree(iAVLKey(*getkey)(void const *item));
-extern void iAVLFreeTree(iAVLTree *avltree, void (freeitem)(void *item));
-extern void iAVLCleanTree(iAVLTree *avltree, void (freeitem)(void *item));
+extern iAVLTree *iAVLAllocTree(iAVLKey (*getkey)(void const *item));
+extern void iAVLFreeTree(iAVLTree *avltree, void(freeitem)(void *item));
+extern void iAVLCleanTree(iAVLTree *avltree, void(freeitem)(void *item));
 extern int iAVLInsert(iAVLTree *avltree, void *item);
 extern void *iAVLSearch(iAVLTree const *avltree, iAVLKey key);
 extern int iAVLDelete(iAVLTree *avltree, iAVLKey key);

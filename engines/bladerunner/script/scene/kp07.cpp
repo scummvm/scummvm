@@ -32,13 +32,11 @@ void SceneScriptKP07::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 315, 185, 381, 285, 0);
 
 	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
-		if (Game_Flag_Query(kFlagDektoraIsReplicant)
-		 && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraGone
-		) {
+		if (Game_Flag_Query(kFlagDektoraIsReplicant) && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraGone) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 			if (Game_Flag_Query(kFlagNR11DektoraBurning)) {
-				Game_Flag_Reset(kFlagNR11DektoraBurning); // resolves a bug of an original game, where Dektora would default to burning state
+				Game_Flag_Reset(kFlagNR11DektoraBurning);                       // resolves a bug of an original game, where Dektora would default to burning state
 				Actor_Change_Animation_Mode(kActorDektora, kAnimationModeTalk); // dummy animation change to ensure that the next will trigger the mode change case
 				Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
 			}
@@ -63,9 +61,7 @@ void SceneScriptKP07::InitializeScene() {
 			Actor_Set_At_XYZ(kActorZuben, -26.0f, -41.52f, -135.0f, 0);
 		}
 
-		if (Game_Flag_Query(kFlagIzoIsReplicant)
-		 && Actor_Query_Goal_Number(kActorIzo) < 599
-		) {
+		if (Game_Flag_Query(kFlagIzoIsReplicant) && Actor_Query_Goal_Number(kActorIzo) < 599) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 			AI_Movement_Track_Flush(kActorIzo);
@@ -77,9 +73,7 @@ void SceneScriptKP07::InitializeScene() {
 			Actor_Set_At_XYZ(kActorIzo, -38.0f, -41.52f, -175.0f, 500);
 		}
 
-		if (Game_Flag_Query(kFlagGordoIsReplicant)
-		 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoGone
-		) {
+		if (Game_Flag_Query(kFlagGordoIsReplicant) && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoGone) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 			AI_Movement_Track_Flush(kActorGordo);
@@ -91,9 +85,7 @@ void SceneScriptKP07::InitializeScene() {
 			Actor_Set_At_XYZ(kActorGordo, 61.0f, -41.52f, -3.0f, 921);
 		}
 
-		if (Game_Flag_Query(kFlagLucyIsReplicant)
-		 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyGone
-		) {
+		if (Game_Flag_Query(kFlagLucyIsReplicant) && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyGone) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 			AI_Movement_Track_Flush(kActorLucy);
@@ -122,8 +114,7 @@ void SceneScriptKP07::InitializeScene() {
 	// when McCoy is not helping the Replicants
 	else {
 		// McCoy is not helping the Replicants
-		if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07Wait
-			&& !Game_Flag_Query(kFlagClovisLyingDown)) {
+		if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07Wait && !Game_Flag_Query(kFlagClovisLyingDown)) {
 			// this goal set is only for the purpose of switch Clovis goal out of kGoalClovisKP07Wait
 			Actor_Set_Goal_Number(kActorClovis, kGoalClovisStartChapter5);
 			// And explicitly switching back to kGoalClovisKP07Wait in order
@@ -133,9 +124,9 @@ void SceneScriptKP07::InitializeScene() {
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	Ambient_Sounds_Add_Looping_Sound(kSfxCOMPBED1,  7, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCOMPBED1, 7, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxMOONBED2, 52, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3,   38, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3, 38, 1, 1);
 
 	if (Game_Flag_Query(kFlagKP07BusActive)) {
 		Scene_Loop_Set_Default(2);
@@ -170,10 +161,7 @@ bool SceneScriptKP07::ClickedOnActor(int actorId) {
 #else
 		Actor_Face_Actor(kActorMcCoy, kActorClovis, true);
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		if (!Game_Flag_Query(kFlagKP07McCoyPulledGun)
-		 &&  Actor_Query_Goal_Number(kActorClovis) != kGoalClovisGone
-		 &&  Actor_Query_Goal_Number(kActorClovis) != kGoalClovisKP07SayFinalWords
-		) {
+		if (!Game_Flag_Query(kFlagKP07McCoyPulledGun) && Actor_Query_Goal_Number(kActorClovis) != kGoalClovisGone && Actor_Query_Goal_Number(kActorClovis) != kGoalClovisKP07SayFinalWords) {
 			if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 				Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07FlyAway);
 			} else {

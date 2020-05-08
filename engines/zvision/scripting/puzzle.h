@@ -69,7 +69,7 @@ struct Puzzle {
 	};
 
 	uint32 key;
-	Common::List<Common::List <CriteriaEntry> > criteriaList;
+	Common::List<Common::List<CriteriaEntry>> criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
 	Common::List<ResultAction *> resultActions;
 	bool addedBySetState;

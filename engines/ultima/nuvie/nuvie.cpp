@@ -21,35 +21,34 @@
  */
 
 #include "ultima/nuvie/nuvie.h"
-#include "ultima/nuvie/meta_engine.h"
-#include "ultima/nuvie/core/events.h"
-#include "ultima/nuvie/actors/actor.h"
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/core/debugger.h"
-#include "ultima/nuvie/conf/configuration.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/files/nuvie_io_file.h"
-#include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/script/script.h"
-#include "ultima/nuvie/core/game.h"
-#include "ultima/nuvie/gui/gui.h"
-#include "ultima/nuvie/gui/widgets/console.h"
-#include "ultima/nuvie/sound/sound_manager.h"
-#include "ultima/nuvie/gui/widgets/map_window.h"
-#include "ultima/nuvie/save/save_game.h"
-#include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/unzip.h"
+#include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/conf/configuration.h"
+#include "ultima/nuvie/core/debugger.h"
+#include "ultima/nuvie/core/events.h"
+#include "ultima/nuvie/core/game.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/files/nuvie_io_file.h"
+#include "ultima/nuvie/gui/gui.h"
+#include "ultima/nuvie/gui/widgets/console.h"
+#include "ultima/nuvie/gui/widgets/map_window.h"
+#include "ultima/nuvie/gui/widgets/msg_scroll.h"
+#include "ultima/nuvie/meta_engine.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/save/save_game.h"
+#include "ultima/nuvie/screen/screen.h"
+#include "ultima/nuvie/script/script.h"
+#include "ultima/nuvie/sound/sound_manager.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 NuvieEngine *g_engine;
 
-NuvieEngine::NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Ultima::Shared::UltimaEngine(syst, gameDesc),  _config(nullptr), _savegame(nullptr),
-		_screen(nullptr), _script(nullptr), _game(nullptr) {
+NuvieEngine::NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : Ultima::Shared::UltimaEngine(syst, gameDesc), _config(nullptr), _savegame(nullptr),
+                                                                                         _screen(nullptr), _script(nullptr), _game(nullptr) {
 	g_engine = this;
 }
 
@@ -70,7 +69,6 @@ bool NuvieEngine::isDataRequired(Common::String &folder, int &majorVersion, int 
 	minorVersion = 1;
 	return true;
 }
-
 
 bool NuvieEngine::initialize() {
 	uint8 gameType;
@@ -195,7 +193,6 @@ void NuvieEngine::initConfig() {
 		else
 			_config->setUnenhancedDefaults(_gameDescription->gameId);
 	}
-
 }
 
 void NuvieEngine::assignGameConfigValues(uint8 gameType) {
@@ -204,15 +201,15 @@ void NuvieEngine::assignGameConfigValues(uint8 gameType) {
 	_config->set("config/GameType", gameType);
 
 	switch (gameType) {
-	case NUVIE_GAME_U6 :
+	case NUVIE_GAME_U6:
 		game_name.assign("ultima6");
 		game_id.assign("u6");
 		break;
-	case NUVIE_GAME_MD :
+	case NUVIE_GAME_MD:
 		game_name.assign("martian");
 		game_id.assign("md");
 		break;
-	case NUVIE_GAME_SE :
+	case NUVIE_GAME_SE:
 		game_name.assign("savage");
 		game_id.assign("se");
 		break;
@@ -249,10 +246,10 @@ bool NuvieEngine::canLoadGameStateCurrently(bool isAutosave) {
 	// the save dialog will result in active gumps being closed
 	Events *events = static_cast<Events *>(_events);
 	MapWindow *mapWindow = _game->get_map_window();
-	
+
 	if (isAutosave) {
 		return events->get_mode() == MOVE_MODE;
-	
+
 	} else {
 		events->close_gumps();
 

@@ -21,8 +21,8 @@
  */
 
 #include "titanic/sound/qmixer.h"
-#include "titanic/debugger.h"
 #include "common/system.h"
+#include "titanic/debugger.h"
 
 namespace Titanic {
 
@@ -98,7 +98,7 @@ void QMixer::qsWaveMixSetVolume(int iChannel, uint flags, uint volume) {
 	channel._volumeChangeStart = g_system->getMillis();
 	channel._volumeChangeEnd = channel._volumeChangeStart + channel._panRate;
 	debugC(DEBUG_DETAILED, kDebugCore, "qsWaveMixSetPanRate vol=%d to %d, start=%u, end=%u",
-		channel._volumeStart, channel._volumeEnd, channel._volumeChangeStart, channel._volumeChangeEnd);
+	       channel._volumeStart, channel._volumeEnd, channel._volumeChangeStart, channel._volumeChangeEnd);
 }
 
 void QMixer::qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR &position) {
@@ -110,8 +110,7 @@ void QMixer::qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR
 	// Currently, we only do a basic simulation of spatial positioning by
 	// getting the distance, and proportionately reducing the volume the
 	// further away the source is
-	channel._distance = sqrt(position.x * position.x + position.y * position.y
-		+ position.z * position.z);
+	channel._distance = sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
 }
 
 void QMixer::qsWaveMixSetPolarPosition(int iChannel, uint flags, const QSPOLAR &position) {
@@ -193,17 +192,16 @@ void QMixer::qsWaveMixPump() {
 			} else {
 				// Transition in progress, so figure out new volume
 				channel._volume = (int)channel._volumeStart +
-					((int)channel._volumeEnd - (int)channel._volumeStart) *
-					(int)(currentTicks - channel._volumeChangeStart) / (int)channel._panRate;
+				                  ((int)channel._volumeEnd - (int)channel._volumeStart) *
+				                      (int)(currentTicks - channel._volumeChangeStart) / (int)channel._panRate;
 			}
 
 			debugC(DEBUG_DETAILED, kDebugCore, "qsWaveMixPump time=%u vol=%d",
-				currentTicks, channel._volume);
+			       currentTicks, channel._volume);
 
-			if (channel._volume != oldVolume && !channel._sounds.empty()
-					&& channel._sounds.front()._started) {
+			if (channel._volume != oldVolume && !channel._sounds.empty() && channel._sounds.front()._started) {
 				_mixer->setChannelVolume(channel._sounds.front()._soundHandle,
-					channel.getRawVolume());
+				                         channel.getRawVolume());
 			}
 		}
 
@@ -232,7 +230,7 @@ void QMixer::qsWaveMixPump() {
 
 				// Play the wave
 				sound._soundHandle = sound._waveFile->play(
-					sound._loops, channel.getRawVolume());
+				    sound._loops, channel.getRawVolume());
 				sound._started = true;
 			}
 		}

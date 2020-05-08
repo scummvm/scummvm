@@ -23,16 +23,16 @@
 #include "bladerunner/ui/elevator.h"
 
 #include "bladerunner/actor.h"
-#include "bladerunner/bladerunner.h"
 #include "bladerunner/audio_player.h"
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
-#include "bladerunner/shape.h"
 #include "bladerunner/script/script.h"
+#include "bladerunner/shape.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/time.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
-#include "bladerunner/subtitles.h"
 
 #include "common/rect.h"
 #include "common/str.h"
@@ -86,76 +86,70 @@ int Elevator::activate(int elevatorId) {
 
 	if (elevatorId == kElevatorMA) {
 		_imagePicker->defineImage(
-			0,
-			Common::Rect(220, 298, 308, 392),
-			nullptr,
-			_shapes->get(11),
-			_shapes->get(14),
-			nullptr);
+		    0,
+		    Common::Rect(220, 298, 308, 392),
+		    nullptr,
+		    _shapes->get(11),
+		    _shapes->get(14),
+		    nullptr);
 		_imagePicker->defineImage(
-			1,
-			Common::Rect(259, 259, 302, 292),
-			nullptr,
-			_shapes->get(10),
-			_shapes->get(13),
-			nullptr);
+		    1,
+		    Common::Rect(259, 259, 302, 292),
+		    nullptr,
+		    _shapes->get(10),
+		    _shapes->get(13),
+		    nullptr);
 		_imagePicker->defineImage(
-			2,
-			Common::Rect(227, 398, 301, 434),
-			nullptr,
-			_shapes->get(12),
-			_shapes->get(15),
-			nullptr);
+		    2,
+		    Common::Rect(227, 398, 301, 434),
+		    nullptr,
+		    _shapes->get(12),
+		    _shapes->get(15),
+		    nullptr);
 	} else { // kElevatorPS
 		_imagePicker->defineImage(
-			4,
-			Common::Rect(395, 131, 448, 164),
-			nullptr,
-			_shapes->get(0),
-			_shapes->get(5),
-			nullptr
-		);
+		    4,
+		    Common::Rect(395, 131, 448, 164),
+		    nullptr,
+		    _shapes->get(0),
+		    _shapes->get(5),
+		    nullptr);
 		_imagePicker->defineImage(
-			3,
-			Common::Rect(395, 165, 448, 198),
-			nullptr,
-			_shapes->get(1),
-			_shapes->get(6),
-			nullptr
-		);
+		    3,
+		    Common::Rect(395, 165, 448, 198),
+		    nullptr,
+		    _shapes->get(1),
+		    _shapes->get(6),
+		    nullptr);
 		_imagePicker->defineImage(
-			5,
-			Common::Rect(395, 199, 448, 232),
-			nullptr,
-			_shapes->get(2),
-			_shapes->get(7),
-			nullptr
-		);
+		    5,
+		    Common::Rect(395, 199, 448, 232),
+		    nullptr,
+		    _shapes->get(2),
+		    _shapes->get(7),
+		    nullptr);
 		_imagePicker->defineImage(
-			6,
-			Common::Rect(395, 233, 448, 264),
-			nullptr,
-			_shapes->get(3),
-			_shapes->get(8),
-			nullptr
-		);
+		    6,
+		    Common::Rect(395, 233, 448, 264),
+		    nullptr,
+		    _shapes->get(3),
+		    _shapes->get(8),
+		    nullptr);
 		_imagePicker->defineImage(
-			7,
-			Common::Rect(395, 265, 448, 295),
-			nullptr,
-			_shapes->get(4),
-			_shapes->get(9),
-			nullptr
-		);
+		    7,
+		    Common::Rect(395, 265, 448, 295),
+		    nullptr,
+		    _shapes->get(4),
+		    _shapes->get(9),
+		    nullptr);
 	}
 
 	_imagePicker->activate(
-		mouseInCallback,
-		mouseOutCallback,
-		mouseDownCallback,
-		mouseUpCallback,
-		this
-	);
+	    mouseInCallback,
+	    mouseOutCallback,
+	    mouseDownCallback,
+	    mouseUpCallback,
+	    this);
 
 	open();
 

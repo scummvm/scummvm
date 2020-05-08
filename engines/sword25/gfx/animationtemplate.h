@@ -36,9 +36,9 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "sword25/gfx/animationdescription.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
-#include "sword25/gfx/animationdescription.h"
 
 namespace Sword25 {
 
@@ -59,14 +59,14 @@ private:
 public:
 	~AnimationTemplate() override;
 
-	const Frame    &getFrame(uint index) const override {
+	const Frame &getFrame(uint index) const override {
 		assert(index < _frames.size());
 		return _frames[index];
 	}
-	uint    getFrameCount() const override {
+	uint getFrameCount() const override {
 		return _frames.size();
 	}
-	void            unlock() override {
+	void unlock() override {
 		delete this;
 	}
 
@@ -108,9 +108,9 @@ public:
 	bool unpersist(InputPersistenceBlock &reader) override;
 
 private:
-	Common::Array<Frame>  _frames;
-	AnimationResource    *_sourceAnimationPtr;
-	bool                  _valid;
+	Common::Array<Frame> _frames;
+	AnimationResource *_sourceAnimationPtr;
+	bool _valid;
 
 	AnimationResource *requestSourceAnimation(const Common::String &sourceAnimation) const;
 	bool validateSourceIndex(uint index) const;

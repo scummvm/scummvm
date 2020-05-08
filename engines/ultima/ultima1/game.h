@@ -31,17 +31,22 @@ namespace Ultima {
 namespace Ultima1 {
 
 enum VideoMode {
-	VIDEOMODE_EGA = 0, VIDEOMODE_VGA = 1
+	VIDEOMODE_EGA = 0,
+	VIDEOMODE_VGA = 1
 };
 
 enum CharacterClass {
-	CLASS_FIGHTER = 0, CLASS_CLERIC = 1, CLASS_WIZARD = 2, CLASS_THIEF = 3
+	CLASS_FIGHTER = 0,
+	CLASS_CLERIC = 1,
+	CLASS_WIZARD = 2,
+	CLASS_THIEF = 3
 };
 
 class GameResources;
 
 class Ultima1Game : public Shared::Game {
 	DECLARE_MESSAGE_MAP;
+
 public:
 	GameResources *_res;
 	Shared::Gfx::VisualItem *_gameView;
@@ -49,6 +54,7 @@ public:
 	Shared::Gfx::VisualItem *_charGenView;
 	uint _gems[4];
 	Quests _quests;
+
 public:
 	CLASSDEF;
 	Ultima1Game();

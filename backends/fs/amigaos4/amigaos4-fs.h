@@ -27,8 +27,8 @@
 #undef __USE_INLINE__
 #endif
 
-#include <proto/exec.h>
 #include <proto/dos.h>
+#include <proto/exec.h>
 #include <stdio.h>
 
 #ifndef USE_NEWLIB
@@ -118,6 +118,5 @@ public:
 	virtual Common::WriteStream *createWriteStream();
 	virtual bool createDirectory();
 };
-
 
 #endif

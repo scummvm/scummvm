@@ -36,16 +36,16 @@ class MovementTrack {
 	static const int kSize = 100;
 
 	struct Entry {
-		int     waypointId;
-		int32   delay;
-		int     angle;
-		bool    run;
+		int waypointId;
+		int32 delay;
+		int angle;
+		bool run;
 	};
 
-	int   _currentIndex;
-	int   _lastIndex;
-	bool  _hasNext;
-	bool  _paused;
+	int _currentIndex;
+	int _lastIndex;
+	bool _hasNext;
+	bool _paused;
 	Entry _entries[kSize];
 
 public:

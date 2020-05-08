@@ -20,11 +20,11 @@
  *
  */
 
-#include "common/file.h"
-#include "wage/wage.h"
 #include "wage/debugger.h"
+#include "common/file.h"
 #include "wage/entities.h"
 #include "wage/script.h"
+#include "wage/wage.h"
 #include "wage/world.h"
 
 namespace Wage {

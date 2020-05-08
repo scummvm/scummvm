@@ -22,17 +22,16 @@
 
 #include "fullpipe/fullpipe.h"
 
-#include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/motion.h"
 #include "fullpipe/scenes.h"
 #include "fullpipe/statics.h"
 
-#include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
-
+#include "fullpipe/interaction.h"
 
 namespace Fullpipe {
 
@@ -90,7 +89,7 @@ int sceneHandler31(ExCommand *cmd) {
 		break;
 
 	case MSG_SC31_PULL:
-		if ( g_vars->scene31_plusMinus->_statics->_staticsId == ST_PMS_MINUS)
+		if (g_vars->scene31_plusMinus->_statics->_staticsId == ST_PMS_MINUS)
 			g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStaticsById(ST_PMS_PLUS);
 		else
 			g_vars->scene31_plusMinus->_statics = g_vars->scene31_plusMinus->getStaticsById(ST_PMS_MINUS);

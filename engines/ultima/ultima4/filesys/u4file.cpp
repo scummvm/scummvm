@@ -21,13 +21,13 @@
  */
 
 #include "ultima/ultima4/filesys/u4file.h"
-#include "ultima/ultima4/core/utils.h"
-#include "ultima/shared/core/file.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/unzip.h"
+#include "ultima/shared/core/file.h"
+#include "ultima/ultima4/core/utils.h"
 
 namespace Ultima {
 namespace Ultima4 {

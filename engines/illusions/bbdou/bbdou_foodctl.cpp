@@ -20,18 +20,18 @@
  *
  */
 
-#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/bbdou/bbdou_foodctl.h"
 #include "illusions/actor.h"
+#include "illusions/bbdou/illusions_bbdou.h"
 #include "illusions/dictionary.h"
+#include "illusions/resources/scriptresource.h"
 #include "illusions/textdrawer.h"
 #include "illusions/time.h"
-#include "illusions/resources/scriptresource.h"
 
 namespace Illusions {
 
 BbdouFoodCtl::BbdouFoodCtl(IllusionsEngine_BBDOU *vm)
-	: _vm(vm) {
+    : _vm(vm) {
 }
 
 BbdouFoodCtl::~BbdouFoodCtl() {
@@ -92,9 +92,8 @@ void BbdouFoodCtl::resetFood() {
 
 void BbdouFoodCtl::placeActors() {
 	static const uint32 kFoodSequenceIds[] = {
-		0x00060932, 0x00060933, 0x00060934,
-		0x00060935, 0x00060936, 0x00060937
-	};
+	    0x00060932, 0x00060933, 0x00060934,
+	    0x00060935, 0x00060936, 0x00060937};
 	for (uint i = 0; i < kFoodCount; ++i) {
 		uint32 objectId = _vm->_controls->newTempObjectId();
 		_vm->_controls->placeActor(0x00050119, Common::Point(0, 0), 0x00060931, objectId, 0);

@@ -35,8 +35,8 @@
 #include "common/array.h"
 #include "common/str.h"
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/service.h"
 #include "sword25/kernel/persistable.h"
+#include "sword25/kernel/service.h"
 
 namespace Sword25 {
 

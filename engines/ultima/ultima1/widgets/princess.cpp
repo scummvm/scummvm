@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima1/widgets/princess.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/shared/core/utils.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -30,7 +30,7 @@ namespace Widgets {
 
 void Princess::movement() {
 	if (!areGuardsHostile()) {
-		// Until guards turn hostile, the princesses exhibit standard wench behaviour 
+		// Until guards turn hostile, the princesses exhibit standard wench behaviour
 		Wench::movement();
 	} else {
 		// When the guards are hostile, keep the princess moving towards the player

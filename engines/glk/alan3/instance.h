@@ -25,9 +25,9 @@
 
 #include "common/serializer.h"
 #include "glk/alan3/acode.h"
-#include "glk/jumps.h"
-#include "glk/alan3/types.h"
 #include "glk/alan3/set.h"
+#include "glk/alan3/types.h"
+#include "glk/jumps.h"
 
 namespace Glk {
 namespace Alan3 {
@@ -48,13 +48,11 @@ struct AdminEntry { /* Administrative data about instances */
 	void synchronize(Common::Serializer &s);
 };
 
-
 /* Data: */
 extern InstanceEntry *instances; /* Instance table pointer */
 
-extern AdminEntry *admin;   /* Administrative data about instances */
+extern AdminEntry *admin;          /* Administrative data about instances */
 extern AttributeEntry *attributes; /* Dynamic attribute values */
-
 
 /* Functions: */
 extern bool isA(int instance, int ancestor);

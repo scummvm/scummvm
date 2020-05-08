@@ -23,8 +23,8 @@
 #ifndef MOHAWK_VIEW_H
 #define MOHAWK_VIEW_H
 
-#include "mohawk/mohawk.h"
 #include "common/rect.h"
+#include "mohawk/mohawk.h"
 
 namespace Mohawk {
 
@@ -34,29 +34,29 @@ class Feature;
 class View;
 
 enum {
-	kFeatureObjectMask = 0xff, // both (sort of)
-	kFeatureOldSortForeground = 0x1000, // old
-	kFeatureOldDropSpot = 0x2000, // old
-	kFeatureOldNoClip = 0x4000, // old
-	kFeatureNewSortForeground = 0x4000, // new
-	kFeatureSortBackground = 0x8000, // both
-	kFeatureOldReset = 0x10000, // old
-	kFeatureOldDisable = 0x20000, // old
+	kFeatureObjectMask = 0xff,             // both (sort of)
+	kFeatureOldSortForeground = 0x1000,    // old
+	kFeatureOldDropSpot = 0x2000,          // old
+	kFeatureOldNoClip = 0x4000,            // old
+	kFeatureNewSortForeground = 0x4000,    // new
+	kFeatureSortBackground = 0x8000,       // both
+	kFeatureOldReset = 0x10000,            // old
+	kFeatureOldDisable = 0x20000,          // old
 	kFeatureOldAlternateScripts = 0x40000, // old
-	kFeatureOldDisableOnReset = 0x80000, // old
-	kFeatureDisableOnEnd = 0x100000, // both
-	kFeatureNewDisable = 0x200000, // new
-	kFeatureNewDisableOnReset = 0x400000, // new
-	kFeatureOldAdjustByPos = 0x800000, // old
-	kFeatureNewNoLoop = 0x800000, // new
-	kFeatureOldDisabled = 0x1000000, // old
-	kFeatureOldRandom = 0x2000000, // old
-	kFeatureNewClip = 0x2000000, // new
-	kFeatureSortStatic = 0x4000000, // both
-	kFeatureInternalRegion = 0x8000000, // both
-	kFeatureSortCheckRight = 0x10000000, // both
-	kFeatureSortCheckTop = 0x20000000, // both
-	kFeatureSortCheckLeft = 0x40000000, // both
+	kFeatureOldDisableOnReset = 0x80000,   // old
+	kFeatureDisableOnEnd = 0x100000,       // both
+	kFeatureNewDisable = 0x200000,         // new
+	kFeatureNewDisableOnReset = 0x400000,  // new
+	kFeatureOldAdjustByPos = 0x800000,     // old
+	kFeatureNewNoLoop = 0x800000,          // new
+	kFeatureOldDisabled = 0x1000000,       // old
+	kFeatureOldRandom = 0x2000000,         // old
+	kFeatureNewClip = 0x2000000,           // new
+	kFeatureSortStatic = 0x4000000,        // both
+	kFeatureInternalRegion = 0x8000000,    // both
+	kFeatureSortCheckRight = 0x10000000,   // both
+	kFeatureSortCheckTop = 0x20000000,     // both
+	kFeatureSortCheckLeft = 0x40000000,    // both
 	kFeatureNewInternalTiming = 0x80000000 // new
 };
 
@@ -85,7 +85,7 @@ struct FeatureData {
 
 	uint16 scrbIndex;
 	uint16 compoundSHAPIndex;
-	uint16 endFrame; // old?
+	uint16 endFrame;  // old?
 	uint16 currFrame; // old?
 	uint32 currOffset;
 
@@ -141,7 +141,7 @@ public:
 	bool _dirty; // byte in old
 	bool _needsReset;
 	bool _justReset; // old
-	bool _done; // new
+	bool _done;      // new
 
 	FeatureData _data;
 
@@ -251,7 +251,7 @@ protected:
 	Feature *sortOneList(Feature *root);
 	Feature *mergeLists(Feature *root, Feature *mergeRoot);
 
-	virtual void finishDraw() { }
+	virtual void finishDraw() {}
 };
 
 } // End of namespace Mohawk

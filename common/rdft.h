@@ -27,9 +27,9 @@
 #ifndef COMMON_RDFT_H
 #define COMMON_RDFT_H
 
-#include "common/scummsys.h"
-#include "common/math.h"
 #include "common/fft.h"
+#include "common/math.h"
+#include "common/scummsys.h"
 
 #include "common/cosinetables.h"
 #include "common/sinetables.h"

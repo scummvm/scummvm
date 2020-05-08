@@ -21,8 +21,8 @@
  */
 
 //Mix_HookMusicFinished
-#include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/song.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 /*
 
 Song::Song() {
@@ -39,4 +39,3 @@ Song::~Song() {
     }
 }
 */
-

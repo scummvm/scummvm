@@ -32,7 +32,7 @@ namespace Id {
 
 class IdStorage;
 
-class IdListDirectoryRequest: public Networking::Request {
+class IdListDirectoryRequest : public Networking::Request {
 	Common::String _requestedPath;
 	bool _requestedRecursive;
 	IdStorage *_storage;
@@ -51,6 +51,7 @@ class IdListDirectoryRequest: public Networking::Request {
 	void listedDirectoryCallback(Storage::FileArrayResponse response);
 	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
 	void finishListing(Common::Array<StorageFile> &files);
+
 public:
 	IdListDirectoryRequest(IdStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
 	virtual ~IdListDirectoryRequest();

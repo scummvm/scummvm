@@ -21,11 +21,11 @@
  */
 
 #include "glk/magnetic/detection.h"
-#include "glk/magnetic/detection_tables.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/magnetic/detection_tables.h"
 
 namespace Glk {
 namespace Magnetic {
@@ -46,7 +46,7 @@ GameDescriptor MagneticMetaEngine::findGame(const char *gameId) {
 }
 
 bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".mag", ".rsc", nullptr };
+	const char *const EXTENSIONS[] = {".mag", ".rsc", nullptr};
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {

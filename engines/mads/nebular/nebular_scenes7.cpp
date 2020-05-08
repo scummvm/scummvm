@@ -20,11 +20,11 @@
  *
  */
 
+#include "mads/nebular/nebular_scenes7.h"
 #include "common/scummsys.h"
 #include "mads/mads.h"
-#include "mads/scene.h"
 #include "mads/nebular/nebular_scenes.h"
-#include "mads/nebular/nebular_scenes7.h"
+#include "mads/scene.h"
 
 namespace MADS {
 
@@ -39,8 +39,7 @@ void Scene7xx::setPlayerSpritesPrefix() {
 
 	Common::String oldName = _game._player._spritesPrefix;
 
-	if ((_scene->_nextSceneId == 703) || (_scene->_nextSceneId == 704) || (_scene->_nextSceneId == 705)
-	 || (_scene->_nextSceneId == 707) || (_scene->_nextSceneId == 710) || (_scene->_nextSceneId == 711))
+	if ((_scene->_nextSceneId == 703) || (_scene->_nextSceneId == 704) || (_scene->_nextSceneId == 705) || (_scene->_nextSceneId == 707) || (_scene->_nextSceneId == 710) || (_scene->_nextSceneId == 711))
 		_game._player._spritesPrefix = "";
 	else if (_globals[kSexOfRex] == REX_MALE)
 		_game._player._spritesPrefix = "RXM";
@@ -206,7 +205,7 @@ void Scene701::enter() {
 }
 
 void Scene701::step() {
-	switch(_game._trigger) {
+	switch (_game._trigger) {
 	case 60:
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
@@ -259,8 +258,7 @@ void Scene701::step() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTH);
 		_globals[kBoatStatus] = BOAT_TIED;
 		_game._player._stepEnabled = true;
-		}
-		break;
+	} break;
 
 	default:
 		break;
@@ -296,8 +294,7 @@ void Scene701::actions() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[5], Common::Point(155, 129));
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], temp);
 			_scene->_sequences.addTimer(15, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_scene->_nextSceneId = 710;
@@ -345,8 +342,8 @@ void Scene701::actions() {
 			break;
 		}
 	} else if ((_action.isAction(VERB_PULL, NOUN_BOAT) || _action.isAction(VERB_TAKE, NOUN_BOAT) ||
-			   _action.isAction(VERB_PULL, NOUN_FISHING_LINE) || _action.isAction(VERB_TAKE, NOUN_FISHING_LINE)) &&
-			   !_game._objects.isInInventory(OBJ_FISHING_LINE)) {
+	            _action.isAction(VERB_PULL, NOUN_FISHING_LINE) || _action.isAction(VERB_TAKE, NOUN_FISHING_LINE)) &&
+	           !_game._objects.isInInventory(OBJ_FISHING_LINE)) {
 		if (_globals[kBoatStatus] == BOAT_TIED_FLOATING) {
 			switch (_game._trigger) {
 			case 0:
@@ -363,12 +360,11 @@ void Scene701::actions() {
 				_game._player._visible = true;
 				_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
-				_scene->_sequences.setDepth (_globals._sequenceIndexes[2], 9);
+				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
 				int idx = _scene->_dynamicHotspots.add(NOUN_BOAT, VERB_CLIMB_INTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
 				_scene->_sequences.addTimer(15, 2);
-				}
-				break;
+			} break;
 
 			case 2:
 				_globals[kBoatStatus] = BOAT_TIED;
@@ -469,7 +465,7 @@ void Scene702::enter() {
 	}
 
 	if (_game._globals[kTeleporterCommand]) {
-		switch(_game._globals[kTeleporterCommand]) {
+		switch (_game._globals[kTeleporterCommand]) {
 		case TELEPORTER_BEAM_OUT:
 		case TELEPORTER_WRONG:
 		case TELEPORTER_STEP_OUT:
@@ -760,7 +756,6 @@ void Scene703::step() {
 		_monsterTime = 0;
 	}
 
-
 	if (_game._trigger == 70)
 		_scene->_reloadSceneFlag = true;
 
@@ -893,7 +888,6 @@ void Scene703::step() {
 			break;
 		}
 	}
-
 
 	if ((_monsterMode == 1) && (_scene->_animation[0] != nullptr)) {
 		if (_scene->_animation[0]->getCurrentFrame() != _boatFrame) {
@@ -1596,8 +1590,7 @@ void Scene705::step() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 		_game._player._stepEnabled = true;
-		}
-		break;
+	} break;
 
 	default:
 		break;
@@ -1616,8 +1609,7 @@ void Scene705::step() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 		_game._player._stepEnabled = true;
-		}
-		break;
+	} break;
 
 	default:
 		break;
@@ -1683,8 +1675,7 @@ void Scene705::actions() {
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
 			_scene->_nextSceneId = 704;
 			_game._player._stepEnabled = true;
-			}
-			break;
+		} break;
 
 		default:
 			break;
@@ -1705,8 +1696,7 @@ void Scene705::actions() {
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_scene->_nextSceneId = 706;
 			_game._player._stepEnabled = true;
-			}
-			break;
+		} break;
 
 		default:
 			break;
@@ -1965,7 +1955,7 @@ void Scene706::actions() {
 
 	if (_action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_PEDESTAL)) {
 		if ((_globals[kBottleStatus] == 2 && _game._difficulty == DIFFICULTY_HARD) ||
-			 (_globals[kBottleStatus] != 0 && _game._difficulty != DIFFICULTY_HARD)) {
+		    (_globals[kBottleStatus] != 0 && _game._difficulty != DIFFICULTY_HARD)) {
 			if (!_game._objects.isInInventory(OBJ_VASE) || _game._trigger) {
 				_vaseMode = 1;
 				handleTakeVase();
@@ -2063,13 +2053,7 @@ void Scene707::actions() {
 		_vm->_dialogs->show(70711);
 	else if (_action.isAction(VERB_LOOK, NOUN_DISPLAY))
 		_vm->_dialogs->show(70712);
-	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY)
-	 || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
+	else if (_action.isAction(VERB_LOOK, NOUN_0_KEY) || _action.isAction(VERB_LOOK, NOUN_1_KEY) || _action.isAction(VERB_LOOK, NOUN_2_KEY) || _action.isAction(VERB_LOOK, NOUN_3_KEY) || _action.isAction(VERB_LOOK, NOUN_4_KEY) || _action.isAction(VERB_LOOK, NOUN_5_KEY) || _action.isAction(VERB_LOOK, NOUN_6_KEY) || _action.isAction(VERB_LOOK, NOUN_7_KEY) || _action.isAction(VERB_LOOK, NOUN_8_KEY) || _action.isAction(VERB_LOOK, NOUN_9_KEY) || _action.isAction(VERB_LOOK, NOUN_SMILE_KEY) || _action.isAction(VERB_LOOK, NOUN_ENTER_KEY) || _action.isAction(VERB_LOOK, NOUN_FROWN_KEY))
 		_vm->_dialogs->show(70713);
 	else if (_action.isAction(VERB_LOOK, NOUN_DEVICE) || _action._lookFlag)
 		_vm->_dialogs->show(70714);
@@ -2326,8 +2310,7 @@ void Scene751::preActions() {
 	if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_FISHING_LINE) || _action.isAction(VERB_TALKTO))
 		_game._player._needToWalk = false;
 
-	if ((!_action.isAction(VERB_PUT, NOUN_FISHING_LINE, NOUN_HOOK) || !_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_HOOK) || !_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_HOOK))
-	&& (_game._player._needToWalk)) {
+	if ((!_action.isAction(VERB_PUT, NOUN_FISHING_LINE, NOUN_HOOK) || !_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_HOOK) || !_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_HOOK)) && (_game._player._needToWalk)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._readyToWalk = false;
@@ -2371,8 +2354,7 @@ void Scene751::actions() {
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
 			_scene->_sequences.addTimer(15, 2);
-			}
-			break;
+		} break;
 
 		case 2:
 			_scene->_nextSceneId = 710;
@@ -2440,8 +2422,7 @@ void Scene751::actions() {
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 7);
 				_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
 				_scene->_sequences.addTimer(30, 2);
-				}
-				break;
+			} break;
 
 			case 2:
 				_rexHandingLine = true;
@@ -2464,8 +2445,7 @@ void Scene751::actions() {
 				_globals[kLineStatus] = 2;
 				_game._player._stepEnabled = true;
 				_vm->_dialogs->show(75120);
-				}
-				break;
+			} break;
 
 			default:
 				break;
@@ -2479,8 +2459,7 @@ void Scene751::actions() {
 		_vm->_dialogs->show(75113);
 	else if (_action.isAction(VERB_LOOK, NOUN_CEMENT_PYLON))
 		_vm->_dialogs->show(75114);
-	else if ((_action.isAction(VERB_LOOK, NOUN_HOOK) || _action.isAction(VERB_LOOK, NOUN_FISHING_LINE))
-		&& (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3))
+	else if ((_action.isAction(VERB_LOOK, NOUN_HOOK) || _action.isAction(VERB_LOOK, NOUN_FISHING_LINE)) && (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3))
 		_vm->_dialogs->show(75116);
 	else if (_action.isAction(VERB_LOOK, NOUN_HOOK))
 		_vm->_dialogs->show(75115);
@@ -2554,7 +2533,7 @@ void Scene752::enter() {
 	}
 
 	if (_game._globals[kTeleporterCommand]) {
-		switch(_game._globals[kTeleporterCommand]) {
+		switch (_game._globals[kTeleporterCommand]) {
 		case TELEPORTER_BEAM_OUT:
 		case TELEPORTER_WRONG:
 		case TELEPORTER_STEP_OUT:
@@ -2621,7 +2600,7 @@ void Scene752::actions() {
 			break;
 		}
 	} else if (_action.isAction(VERB_TAKE, NOUN_BONES) && (_action._savedFields._mainObjectSource == CAT_HOTSPOT) &&
-			(!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
+	           (!_game._objects.isInInventory(OBJ_BONES) || _game._trigger)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;

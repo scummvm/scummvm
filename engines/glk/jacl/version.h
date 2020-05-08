@@ -20,7 +20,7 @@
  *
  */
 
-#define J_VERSION               2
-#define J_RELEASE               9
-#define J_BUILD                 0
-#define INTERPRETER_VERSION     209
+#define J_VERSION 2
+#define J_RELEASE 9
+#define J_BUILD 0
+#define INTERPRETER_VERSION 209

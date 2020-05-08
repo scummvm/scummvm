@@ -25,10 +25,10 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSpeechCentre, CBrain)
-	ON_MESSAGE(PuzzleSolvedMsg)
-	ON_MESSAGE(ChangeSeasonMsg)
-	ON_MESSAGE(SpeechFallsFromTreeMsg)
-	ON_MESSAGE(FrameMsg)
+ON_MESSAGE(PuzzleSolvedMsg)
+ON_MESSAGE(ChangeSeasonMsg)
+ON_MESSAGE(SpeechFallsFromTreeMsg)
+ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
 void CSpeechCentre::save(SimpleFile *file, int indent) {

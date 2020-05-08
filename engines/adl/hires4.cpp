@@ -20,19 +20,19 @@
  *
  */
 
-#include "common/system.h"
 #include "common/debug.h"
 #include "common/error.h"
-#include "common/file.h"
-#include "common/stream.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/memstream.h"
+#include "common/stream.h"
+#include "common/system.h"
 
 #include "adl/adl_v3.h"
 #include "adl/detection.h"
+#include "adl/disk.h"
 #include "adl/display_a2.h"
 #include "adl/graphics.h"
-#include "adl/disk.h"
 
 namespace Adl {
 
@@ -44,17 +44,16 @@ namespace Adl {
 #define IDI_HR4_NUM_ITEM_OFFSETS 40
 
 // Messages used outside of scripts
-#define IDI_HR4_MSG_CANT_GO_THERE      110
-#define IDI_HR4_MSG_DONT_UNDERSTAND    112
-#define IDI_HR4_MSG_ITEM_DOESNT_MOVE   114
-#define IDI_HR4_MSG_ITEM_NOT_HERE      115
+#define IDI_HR4_MSG_CANT_GO_THERE 110
+#define IDI_HR4_MSG_DONT_UNDERSTAND 112
+#define IDI_HR4_MSG_ITEM_DOESNT_MOVE 114
+#define IDI_HR4_MSG_ITEM_NOT_HERE 115
 #define IDI_HR4_MSG_THANKS_FOR_PLAYING 113
 
 class HiRes4Engine : public AdlEngine_v3 {
 public:
-	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v3(syst, gd),
-			_boot(nullptr) { _brokenRooms.push_back(121); }
+	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd),
+	                                                            _boot(nullptr) { _brokenRooms.push_back(121); }
 	~HiRes4Engine() override;
 
 private:
@@ -413,9 +412,9 @@ void HiRes4Engine::runIntroLoading(Common::SeekableReadStream &adventure) {
 	if (adventure.read(text, sizeof(text)) < sizeof(text))
 		error("Failed to read loading screen text");
 
-	const uint yPos[kStrings] = { 2, 19, 8, 22 };
+	const uint yPos[kStrings] = {2, 19, 8, 22};
 
-	for (uint  i = 0; i < kStrings; ++i) {
+	for (uint i = 0; i < kStrings; ++i) {
 		_display->moveCursorTo(Common::Point(0, yPos[i]));
 		_display->printString(Common::String(text[i], kStringLen));
 	}
@@ -545,10 +544,9 @@ void HiRes4Engine::initGameState() {
 
 class HiRes4Engine_Atari : public AdlEngine_v3 {
 public:
-	HiRes4Engine_Atari(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v3(syst, gd),
-			_boot(nullptr),
-			_curDisk(0) { _brokenRooms.push_back(121); }
+	HiRes4Engine_Atari(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd),
+	                                                                  _boot(nullptr),
+	                                                                  _curDisk(0) { _brokenRooms.push_back(121); }
 	~HiRes4Engine_Atari() override;
 
 private:
@@ -571,7 +569,7 @@ private:
 	byte _curDisk;
 };
 
-static const char *const atariDisks[] = { "ULYS1A.XFD", "ULYS1B.XFD", "ULYS2C.XFD" };
+static const char *const atariDisks[] = {"ULYS1A.XFD", "ULYS1B.XFD", "ULYS2C.XFD"};
 
 HiRes4Engine_Atari::~HiRes4Engine_Atari() {
 	delete _boot;

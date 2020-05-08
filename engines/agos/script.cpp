@@ -105,7 +105,7 @@ void AGOSEngine::o_eq() {
 	// HACK: Skip attempt to read Calypso's letter manually,
 	// due to speech segment been too large to fit into memory
 	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE) &&
-		getPlatform() == Common::kPlatformWindows && _currentTable) {
+	    getPlatform() == Common::kPlatformWindows && _currentTable) {
 		if (_currentTable->id == 71 && tmp == 1 && tmp2 == 1) {
 			setScriptCondition(false);
 			return;
@@ -208,7 +208,7 @@ void AGOSEngine::o_isObject() {
 void AGOSEngine::o_state() {
 	// 27: item state is
 	Item *item = getNextItemPtr();
-	setScriptCondition((uint) item->state == getVarOrWord());
+	setScriptCondition((uint)item->state == getVarOrWord());
 }
 
 void AGOSEngine::o_oflag() {
@@ -264,7 +264,7 @@ void AGOSEngine::o_add() {
 	// WORKAROUND: The conversation of the male in Vid-Phone Booth at Dave's Space Bar
 	// is based on variable 116, but stops due to a missing option (37).
 	if (getGameType() == GType_FF && _currentTable->id == 10538 && readVariable(116) == 37)
-			writeVariable(116, 38);
+		writeVariable(116, 38);
 }
 
 void AGOSEngine::o_sub() {
@@ -440,7 +440,7 @@ void AGOSEngine::o_process() {
 		// HACK: Skip scene of Simon reading letter from Calypso
 		// due to speech segment been too large to fit into memory
 		if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE) &&
-			getPlatform() == Common::kPlatformWindows && sub->id == 2922) {
+		    getPlatform() == Common::kPlatformWindows && sub->id == 2922) {
 			// set parent special
 			_noParentNotify = true;
 			setItemParent(derefItem(16), me());
@@ -557,7 +557,7 @@ void AGOSEngine::o_picture() {
 	// When selecting locations on the magical map, the script looks
 	// for vga_res 12701, but only vga_res 12700 exists.
 	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga &&
-		vga_res == 12701) {
+	    vga_res == 12701) {
 		return;
 	}
 
@@ -579,7 +579,7 @@ void AGOSEngine::o_loadZone() {
 	_videoLockOut |= 0x80;
 
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
-		getGameType() == GType_WW) {
+	    getGameType() == GType_WW) {
 		vc27_resetSprite();
 		vc29_stopAllSounds();
 	}
@@ -587,7 +587,7 @@ void AGOSEngine::o_loadZone() {
 	loadZone(vga_res);
 
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
-		getGameType() == GType_WW) {
+	    getGameType() == GType_WW) {
 		_copyScnFlag = 0;
 		_vgaSpriteChanged = 0;
 	}
@@ -614,7 +614,7 @@ void AGOSEngine::o_defWindow() {
 
 	uint fillColor, textColor;
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 ||
-		getGameType() == GType_WW) {
+	    getGameType() == GType_WW) {
 		fillColor = color % 100;
 		textColor = color / 100;
 	} else {
@@ -853,7 +853,7 @@ void AGOSEngine::o_freezeZones() {
 
 	if (!_copyProtection && !(getFeatures() & GF_TALKIE) && _currentTable) {
 		if ((getGameType() == GType_SIMON1 && _currentTable->id == 2924) ||
-			(getGameType() == GType_SIMON2 && _currentTable->id == 1322)) {
+		    (getGameType() == GType_SIMON2 && _currentTable->id == 1322)) {
 			_variableArray[134] = 3;
 			_variableArray[135] = 3;
 			setBitFlag(135, 1);
@@ -959,7 +959,7 @@ uint AGOSEngine::readVariable(uint16 variable) {
 		else
 			return (uint16)_variableArray[variable];
 	} else {
-			return _variableArray[variable];
+		return _variableArray[variable];
 	}
 }
 

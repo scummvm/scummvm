@@ -97,7 +97,8 @@ int Graphics::drawChar16(uint8 *dst, int dstPitch, uint8 chr, int x, int y, uint
 		int mask = 0;
 		for (int i = 0; i < chrWidth; ++i) {
 			if (shiftCount == 0) {
-				mask = READ_BE_UINT16(chrData); chrData += 2;
+				mask = READ_BE_UINT16(chrData);
+				chrData += 2;
 				shiftCount = 8;
 			}
 			int b = (mask & 0xC000) >> 14;

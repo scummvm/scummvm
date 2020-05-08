@@ -24,13 +24,13 @@
 #define ULTIMA4_GFX_SCREEN_H
 
 #include "graphics/screen.h"
+#include "ultima/shared/core/file.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/types.h"
 #include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/gfx/scale.h"
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/map_tile.h"
-#include "ultima/shared/core/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -43,10 +43,10 @@ namespace Ultima4 {
 /*
  * bitmasks for LOS shadows
  */
-#define ____H 0x01    // obscured along the horizontal face
-#define ___C_ 0x02    // obscured at the center
-#define __V__ 0x04    // obscured along the vertical face
-#define _N___ 0x80    // start of new raster
+#define ____H 0x01 // obscured along the horizontal face
+#define ___C_ 0x02 // obscured at the center
+#define __V__ 0x04 // obscured along the vertical face
+#define _N___ 0x80 // start of new raster
 
 #define ___CH 0x03
 #define __VCH 0x07
@@ -57,7 +57,6 @@ namespace Ultima4 {
 #define _NVCH 0x87
 #define _NVC_ 0x86
 #define _NV__ 0x84
-
 
 enum LayoutType {
 	LAYOUT_STANDARD,
@@ -119,12 +118,14 @@ private:
 	int _los[VIEWPORT_W][VIEWPORT_H];
 	int _frameDuration;
 	bool _continueScreenRefresh;
+
 public:
 	Std::vector<Common::String> _gemLayoutNames;
 	Std::vector<Common::String> _filterNames;
 	Std::vector<Common::String> _lineOfSightStyles;
 	int _currentCycle;
 	TileAnimSet *_tileAnims;
+
 private:
 	/**
 	 * Load the cursors
@@ -193,9 +194,11 @@ private:
 
 	int screenPointInTriangle(int x, int y, int tx1, int ty1, int tx2, int ty2, int tx3, int ty3);
 	Layout *screenGetGemLayout(const Map *map);
+
 public:
 	Std::vector<Layout *> _layouts;
 	Scaler _filterScaler;
+
 public:
 	Screen();
 	~Screen();

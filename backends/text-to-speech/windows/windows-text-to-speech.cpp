@@ -27,20 +27,19 @@
 #endif
 #if defined(USE_TTS) && defined(WIN32)
 #include <basetyps.h>
-#include <windows.h>
 #include <servprov.h>
+#include <windows.h>
 
-#include <sapi.h>
 #include "backends/platform/sdl/win32/win32_wrapper.h"
+#include <sapi.h>
 
 #include "backends/text-to-speech/windows/windows-text-to-speech.h"
 
-
-#include "common/translation.h"
-#include "common/system.h"
-#include "common/ustr.h"
 #include "common/config-manager.h"
 #include "common/encoding.h"
+#include "common/system.h"
+#include "common/translation.h"
+#include "common/ustr.h"
 
 ISpVoice *_voice;
 
@@ -48,7 +47,7 @@ ISpVoice *_voice;
 ISpAudio *_audio;
 
 WindowsTextToSpeechManager::WindowsTextToSpeechManager()
-	: _speechState(BROKEN){
+    : _speechState(BROKEN) {
 	init();
 	_threadParams.queue = &_speechQueue;
 	_threadParams.state = &_speechState;
@@ -139,7 +138,7 @@ WindowsTextToSpeechManager::~WindowsTextToSpeechManager() {
 
 DWORD WINAPI startSpeech(LPVOID parameters) {
 	WindowsTextToSpeechManager::SpeechParameters *params =
-		(WindowsTextToSpeechManager::SpeechParameters *) parameters;
+	    (WindowsTextToSpeechManager::SpeechParameters *)parameters;
 	// wait for the previous speech, if the previous thread exited too early
 	_voice->WaitUntilDone(INFINITE);
 
@@ -192,9 +191,9 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 	}
 
 	// We have to set the pitch by prepending xml code at the start of the said string;
-	Common::String pitch= Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
+	Common::String pitch = Common::String::format("<pitch absmiddle=\"%d\">", _ttsState->_pitch / 10);
 	str.replace((uint32)0, 0, pitch);
-	WCHAR *strW = (WCHAR *) Common::Encoding::convert("UTF-16", charset, str.c_str(), str.size());
+	WCHAR *strW = (WCHAR *)Common::Encoding::convert("UTF-16", charset, str.c_str(), str.size());
 	if (strW == nullptr) {
 		warning("Cannot convert from %s encoding for text to speech", charset.c_str());
 		return true;
@@ -202,7 +201,7 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 
 	WaitForSingleObject(_speechMutex, INFINITE);
 	if (isSpeaking() && !_speechQueue.empty() && action == INTERRUPT_NO_REPEAT &&
-			_speechQueue.front() != NULL && !wcscmp(_speechQueue.front(), strW)) {
+	    _speechQueue.front() != NULL && !wcscmp(_speechQueue.front(), strW)) {
 		while (_speechQueue.size() != 1) {
 			free(_speechQueue.back());
 			_speechQueue.pop_back();
@@ -213,7 +212,7 @@ bool WindowsTextToSpeechManager::say(Common::String str, Action action, Common::
 	}
 
 	if (isSpeaking() && !_speechQueue.empty() && action == QUEUE_NO_REPEAT &&
-			_speechQueue.front() != NULL &&!wcscmp(_speechQueue.back(), strW)) {
+	    _speechQueue.front() != NULL && !wcscmp(_speechQueue.back(), strW)) {
 		ReleaseMutex(_speechMutex);
 		return true;
 	}
@@ -318,7 +317,7 @@ bool WindowsTextToSpeechManager::isReady() {
 void WindowsTextToSpeechManager::setVoice(unsigned index) {
 	if (_speechState == BROKEN || _speechState == NO_VOICE)
 		return;
-	_voice->SetVoice((ISpObjectToken *) _ttsState->_availableVoices[index].getData());
+	_voice->SetVoice((ISpObjectToken *)_ttsState->_availableVoices[index].getData());
 	_ttsState->_activeVoice = index;
 }
 
@@ -352,7 +351,7 @@ void WindowsTextToSpeechManager::setLanguage(Common::String language) {
 }
 
 void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
-	ISpObjectToken *voiceToken = (ISpObjectToken *) cpVoiceToken;
+	ISpObjectToken *voiceToken = (ISpObjectToken *)cpVoiceToken;
 
 	// description
 	WCHAR *descW;
@@ -424,7 +423,7 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 	delete[] buffer;
 	CoTaskMemFree(data);
 
-	_ttsState->_availableVoices.push_back(Common::TTSVoice(gender, age, (void *) voiceToken, desc));
+	_ttsState->_availableVoices.push_back(Common::TTSVoice(gender, age, (void *)voiceToken, desc));
 }
 
 int strToInt(Common::String str) {
@@ -460,7 +459,7 @@ void WindowsTextToSpeechManager::updateVoices() {
 	unsigned long ulCount = 0;
 
 	ISpObjectTokenCategory *cpCategory;
-	HRESULT hr = CoCreateInstance(CLSID_SpObjectTokenCategory, NULL, CLSCTX_ALL, IID_ISpObjectTokenCategory, (void**)&cpCategory);
+	HRESULT hr = CoCreateInstance(CLSID_SpObjectTokenCategory, NULL, CLSCTX_ALL, IID_ISpObjectTokenCategory, (void **)&cpCategory);
 	if (SUCCEEDED(hr)) {
 		hr = cpCategory->SetId(SPCAT_VOICES, FALSE);
 		if (SUCCEEDED(hr)) {
@@ -496,7 +495,7 @@ void WindowsTextToSpeechManager::updateVoices() {
 }
 
 void WindowsTextToSpeechManager::freeVoiceData(void *data) {
-	ISpObjectToken *voiceToken = (ISpObjectToken *) data;
+	ISpObjectToken *voiceToken = (ISpObjectToken *)data;
 	voiceToken->Release();
 }
 

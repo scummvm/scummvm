@@ -42,21 +42,24 @@ class VisualItem : public NamedItem {
 	DECLARE_MESSAGE_MAP;
 	bool ShowMsg(CShowMsg &msg);
 	bool HideMsg(CHideMsg &msg);
+
 private:
 	/**
 	 * Common initialization method used by the constructors
 	 */
 	void init(TreeItem *parent = nullptr);
+
 protected:
 	Rect _bounds;
 	bool _isDirty;
+
 public:
 	CLASSDEF;
 	VisualItem(TreeItem *parent = nullptr) { init(parent); }
 	VisualItem(const Rect &r, TreeItem *parent = nullptr) : _bounds(r) { init(parent); }
 	VisualItem(const Common::String &name, TreeItem *parent = nullptr) : NamedItem(name) { init(parent); }
 	VisualItem(const Common::String &name, const Rect &r, TreeItem *parent = nullptr) : NamedItem(name),
-		_bounds(r) { init(parent); }
+	                                                                                    _bounds(r) { init(parent); }
 
 	~VisualItem() override {
 	}

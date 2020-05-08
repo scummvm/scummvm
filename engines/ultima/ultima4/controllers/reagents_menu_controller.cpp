@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima4/controllers/reagents_menu_controller.h"
-#include "ultima/ultima4/views/menu.h"
 #include "ultima/ultima4/game/spell.h"
+#include "ultima/ultima4/views/menu.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -43,8 +43,7 @@ bool ReagentsMenuController::keyPressed(int key) {
 			_menu->setCurrent(_menu->getById(key - 'a'));
 			keyPressed(Common::KEYCODE_SPACE);
 		}
-	}
-	break;
+	} break;
 	case Common::KEYCODE_LEFT:
 	case Common::KEYCODE_RIGHT:
 	case Common::KEYCODE_SPACE:
@@ -78,7 +77,6 @@ void ReagentsMenuController::keybinder(KeybindingAction action) {
 		eventHandler->setControllerDone();
 	}
 }
-
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

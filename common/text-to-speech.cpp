@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "common/text-to-speech.h"
 #include "common/system.h"
 #if defined(USE_TTS)
@@ -28,29 +27,19 @@
 namespace Common {
 
 TTSVoice::TTSVoice()
-	: _gender(UNKNOWN_GENDER)
-	, _age(UNKNOWN_AGE)
-	, _data(nullptr)
-	, _description("") {
+    : _gender(UNKNOWN_GENDER), _age(UNKNOWN_AGE), _data(nullptr), _description("") {
 	_refCount = new int;
 	*_refCount = 1;
 }
 
 TTSVoice::TTSVoice(Gender gender, Age age, void *data, String description)
-	: _gender(gender)
-	, _age(age)
-	, _data(data)
-	, _description(description) {
+    : _gender(gender), _age(age), _data(data), _description(description) {
 	_refCount = new int;
 	*_refCount = 1;
 }
 
-TTSVoice::TTSVoice(const TTSVoice& voice)
-	: _gender(voice._gender)
-	, _age(voice._age)
-	, _data(voice._data)
-	, _refCount(voice._refCount)
-	, _description(voice._description) {
+TTSVoice::TTSVoice(const TTSVoice &voice)
+    : _gender(voice._gender), _age(voice._age), _data(voice._data), _refCount(voice._refCount), _description(voice._description) {
 	if (_data)
 		(*_refCount)++;
 }
@@ -65,7 +54,7 @@ TTSVoice::~TTSVoice() {
 	}
 }
 
-TTSVoice& TTSVoice::operator=(const TTSVoice& voice) {
+TTSVoice &TTSVoice::operator=(const TTSVoice &voice) {
 	if (&voice != this) {
 		_gender = voice._gender;
 		_data = voice._data;
@@ -158,5 +147,5 @@ void TextToSpeechManager::setLanguage(Common::String language) {
 	_ttsState->_language = language;
 }
 
-}
+} // namespace Common
 #endif

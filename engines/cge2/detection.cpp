@@ -27,96 +27,41 @@
 
 #include "cge2/cge2.h"
 #include "cge2/fileio.h"
-#include "engines/advancedDetector.h"
 #include "common/translation.h"
+#include "engines/advancedDetector.h"
 #include "graphics/surface.h"
 
 namespace CGE2 {
 
-#define GAMEOPTION_COLOR_BLIND_DEFAULT_OFF  GUIO_GAMEOPTIONS1
+#define GAMEOPTION_COLOR_BLIND_DEFAULT_OFF GUIO_GAMEOPTIONS1
 
 static const PlainGameDescriptor CGE2Games[] = {
-		{ "sfinx", "Sfinx" },
-		{ 0, 0 }
-};
+    {"sfinx", "Sfinx"},
+    {0, 0}};
 
 static const ADGameDescription gameDescriptions[] = {
-		{
-			"sfinx", "Freeware",
-			{
-				{ "vol.cat", 0, "21197b287d397c53261b6616bf0dd880", 129024 },
-				{ "vol.dat", 0, "de14291869a8eb7c2732ab783c7542ef", 34180844 },
-				AD_LISTEND
-			},
-			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-		},
+    {"sfinx", "Freeware", {{"vol.cat", 0, "21197b287d397c53261b6616bf0dd880", 129024}, {"vol.dat", 0, "de14291869a8eb7c2732ab783c7542ef", 34180844}, AD_LISTEND}, Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)},
 
-		{
-			"sfinx", "Freeware v1.0",
-			{
-				{"vol.cat", 0, "aa402aed24a72c53a4d1211c456b79dd", 129024},
-				{"vol.dat", 0, "5966ac26d91d664714349669f9dd09b5", 34180164},
-				AD_LISTEND
-			},
-			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-		},
+    {"sfinx", "Freeware v1.0", {{"vol.cat", 0, "aa402aed24a72c53a4d1211c456b79dd", 129024}, {"vol.dat", 0, "5966ac26d91d664714349669f9dd09b5", 34180164}, AD_LISTEND}, Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)},
 
-		{
-			"sfinx", "Freeware v1.1",
-			{
-				{"vol.cat", 0, "aa402aed24a72c53a4d1211c456b79dd", 129024},
-				{"vol.dat", 0, "5966ac26d91d664714349669f9dd09b5", 34180367},
-				AD_LISTEND
-			},
-			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-		},
+    {"sfinx", "Freeware v1.1", {{"vol.cat", 0, "aa402aed24a72c53a4d1211c456b79dd", 129024}, {"vol.dat", 0, "5966ac26d91d664714349669f9dd09b5", 34180367}, AD_LISTEND}, Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)},
 
-		{
-			"sfinx", "Freeware v0.3",
-			{
-				{"vol.cat", 0, "f158e469dccbebc5a632eb848df89779", 129024},
-				{"vol.dat", 0, "d40a6b4ae173d6930be54ba56bee15d5", 34183430},
-				AD_LISTEND
-			},
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-		},
+    {"sfinx", "Freeware v0.3", {{"vol.cat", 0, "f158e469dccbebc5a632eb848df89779", 129024}, {"vol.dat", 0, "d40a6b4ae173d6930be54ba56bee15d5", 34183430}, AD_LISTEND}, Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)},
 
-		{
-			"sfinx", "Freeware v1.0",
-			{
-				{"vol.cat", 0, "f158e469dccbebc5a632eb848df89779", 129024},
-				{"vol.dat", 0, "d40a6b4ae173d6930be54ba56bee15d5", 34183443},
-				AD_LISTEND
-			},
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-		},
+    {"sfinx", "Freeware v1.0", {{"vol.cat", 0, "f158e469dccbebc5a632eb848df89779", 129024}, {"vol.dat", 0, "d40a6b4ae173d6930be54ba56bee15d5", 34183443}, AD_LISTEND}, Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)},
 
-		{
-			"sfinx", "Freeware v1.1",
-			{
-				{"vol.cat", 0, "f158e469dccbebc5a632eb848df89779", 129024},
-				{"vol.dat", 0, "d40a6b4ae173d6930be54ba56bee15d5", 34182773},
-				AD_LISTEND
-			},
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-		},
+    {"sfinx", "Freeware v1.1", {{"vol.cat", 0, "f158e469dccbebc5a632eb848df89779", 129024}, {"vol.dat", 0, "d40a6b4ae173d6930be54ba56bee15d5", 34182773}, AD_LISTEND}, Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)},
 
-		AD_TABLE_END_MARKER
-};
+    AD_TABLE_END_MARKER};
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-		{
-			GAMEOPTION_COLOR_BLIND_DEFAULT_OFF,
-			{
-				_s("Color Blind Mode"),
-				_s("Enable Color Blind Mode by default"),
-				"enable_color_blind",
-				false
-			}
-		},
+    {GAMEOPTION_COLOR_BLIND_DEFAULT_OFF,
+     {_s("Color Blind Mode"),
+      _s("Enable Color Blind Mode by default"),
+      "enable_color_blind",
+      false}},
 
-		AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
+    AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 
 class CGE2MetaEngine : public AdvancedMetaEngine {
 public:
@@ -145,19 +90,17 @@ public:
 };
 
 static ADGameDescription s_fallbackDesc = {
-	"sfinx",
-	"Unknown version",
-	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-	Common::UNK_LANG,
-	Common::kPlatformDOS,
-	ADGF_NO_FLAGS,
-	GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
-};
+    "sfinx",
+    "Unknown version",
+    AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+    Common::UNK_LANG,
+    Common::kPlatformDOS,
+    ADGF_NO_FLAGS,
+    GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)};
 
 static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &s_fallbackDesc, { "vol.cat", "vol.dat", 0 } },
-	{ 0, { 0 } }
-};
+    {&s_fallbackDesc, {"vol.cat", "vol.dat", 0}},
+    {0, {0}}};
 
 // This fallback detection looks identical to the one used for CGE. In fact, the difference resides
 // in the ResourceManager which handles a different archive format. The rest of the detection is identical.
@@ -189,15 +132,14 @@ bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 }
 
 bool CGE2MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSimpleSavesNames);
+	return (f == kSupportsDeleteSave) ||
+	       (f == kSavesSupportMetaInfo) ||
+	       (f == kSavesSupportThumbnail) ||
+	       (f == kSavesSupportCreationDate) ||
+	       (f == kSavesSupportPlayTime) ||
+	       (f == kSupportsListSaves) ||
+	       (f == kSupportsLoadingDuringStartup) ||
+	       (f == kSimpleSavesNames);
 }
 
 int CGE2MetaEngine::getMaximumSaveSlot() const {
@@ -259,7 +201,7 @@ SaveStateDescriptor CGE2MetaEngine::querySaveMetaInfos(const char *target, int s
 		f->read(buffer, kSavegameStrSize + 1);
 
 		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) &&
-			CGE2::CGE2Engine::readSavegameHeader(f, header, false);
+		                 CGE2::CGE2Engine::readSavegameHeader(f, header, false);
 		delete f;
 
 		if (!hasHeader) {
@@ -297,7 +239,7 @@ void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
 } // End of namespace CGE2
 
 #if PLUGIN_ENABLED_DYNAMIC(CGE2)
-	REGISTER_PLUGIN_DYNAMIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
+REGISTER_PLUGIN_STATIC(CGE2, PLUGIN_TYPE_ENGINE, CGE2::CGE2MetaEngine);
 #endif

@@ -32,7 +32,7 @@ struct GuiMenuEntry {
 	int16 row;
 	int16 column;
 
-	int16 itemCount; // total number of menu items
+	int16 itemCount;   // total number of menu items
 	int16 firstItemNr; // first menu item number, points into _itemArray[]
 
 	int16 selectedItemNr; // currently selected menu item
@@ -48,7 +48,7 @@ struct GuiMenuItemEntry {
 	int16 row;
 	int16 column;
 
-	bool enabled; // enabled-state, set by scripts
+	bool enabled;          // enabled-state, set by scripts
 	uint16 controllerSlot; // controller to trigger, when item is executed
 };
 typedef Common::Array<GuiMenuItemEntry *> GuiMenuItemArray;
@@ -111,8 +111,8 @@ private:
 
 	uint16 _drawnMenuHeight;
 	uint16 _drawnMenuWidth;
-	int16  _drawnMenuY;
-	int16  _drawnMenuX;
+	int16 _drawnMenuY;
+	int16 _drawnMenuX;
 
 	// Following variables are used in "via mouse" mode
 	int16 _mouseModeItemNr;

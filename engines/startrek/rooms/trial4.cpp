@@ -29,12 +29,11 @@
 namespace StarTrek {
 
 extern const RoomAction trial4ActionList[] = {
-	{ {ACTION_TICK, 1,  0, 0}, &Room::trial4Tick1 },
-	{ {ACTION_TICK, 60, 0, 0}, &Room::trial4Tick60 },
+    {{ACTION_TICK, 1, 0, 0}, &Room::trial4Tick1},
+    {{ACTION_TICK, 60, 0, 0}, &Room::trial4Tick60},
 };
 
 extern const int trial4NumActions = ARRAYSIZE(trial4ActionList);
-
 
 void Room::trial4Tick1() {
 	playVoc("TRI4LOOP");
@@ -50,36 +49,33 @@ void Room::trial4Tick60() {
 	showText(TX_SPEAKER_VLICT, 61, true);
 
 	const TextRef choices[] = {
-		TX_SPEAKER_KIRK,
-		22, 39, 32,
-		TX_BLANK
-	};
+	    TX_SPEAKER_KIRK,
+	    22, 39, 32,
+	    TX_BLANK};
 	int choice = showMultipleTexts(choices, true);
 
 	if (choice == 0) { // "You were trying to kill us"
 		showText(TX_SPEAKER_VLICT, 64, true);
 
 		const TextRef choices2[] = {
-			TX_SPEAKER_KIRK,
-			33, 9, 2,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    33, 9, 2,
+		    TX_BLANK};
 		showMultipleTexts(choices2, true); // choice doesn't matter
 
 		showText(TX_SPEAKER_VLICT, 62, true);
-		showText(TX_SPEAKER_KIRK,  14, true);
+		showText(TX_SPEAKER_KIRK, 14, true);
 		showText(TX_SPEAKER_VLICT, 66, true);
 		showText(TX_SPEAKER_QUETZECOATL, 43, true);
 
 		const TextRef choices3[] = {
-			TX_SPEAKER_KIRK,
-			29, 20, 30,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    29, 20, 30,
+		    TX_BLANK};
 		choice = showMultipleTexts(choices3, true);
 
-		if (choice == 0) { // "Then you have my deepest respect"
-			// Nothing more
+		if (choice == 0) {        // "Then you have my deepest respect"
+			                      // Nothing more
 		} else if (choice == 1) { // "Make it a painless death"
 			showText(TX_SPEAKER_VLICT, 63, true);
 		} else if (choice == 2) { // "I hope you chose the right time"
@@ -87,11 +83,11 @@ void Room::trial4Tick60() {
 		}
 	} else if (choice == 1) { // "Use of guile is honorable?"
 		showText(TX_SPEAKER_VLICT, 60, true);
-		showText(TX_SPEAKER_KIRK,  13, true);
+		showText(TX_SPEAKER_KIRK, 13, true);
 		showText(TX_SPEAKER_VLICT, 72, true);
-		showText(TX_SPEAKER_KIRK,  15, true);
+		showText(TX_SPEAKER_KIRK, 15, true);
 		showText(TX_SPEAKER_VLICT, 71, true);
-		showText(TX_SPEAKER_KIRK,  05, true);
+		showText(TX_SPEAKER_KIRK, 05, true);
 		showText(TX_SPEAKER_QUETZECOATL, 52, true);
 		showText(TX_SPEAKER_QUETZECOATL, 41, true);
 		showText(TX_SPEAKER_QUETZECOATL, 51, true);
@@ -100,37 +96,34 @@ void Room::trial4Tick60() {
 		showText(TX_SPEAKER_VLICT, 70, true);
 
 		const TextRef choices2[] = {
-			TX_SPEAKER_KIRK,
-			19, 25, 8,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    19, 25, 8,
+		    TX_BLANK};
 		choice = showMultipleTexts(choices2, true);
 
 		if (choice == 1) { // Threatened Vlict
 			showText(TX_SPEAKER_VLICT, 69, true);
-			showText(TX_SPEAKER_KIRK,  04, true);
-		} // else, nothing more
+			showText(TX_SPEAKER_KIRK, 04, true);
+		}                     // else, nothing more
 	} else if (choice == 2) { // "You didn't say I couldn't use my ship"
 		showText(TX_SPEAKER_VLICT, 58, true);
 
 		const TextRef choices2[] = {
-			TX_SPEAKER_KIRK,
-			27, 34, 18,
-			TX_BLANK
-		};
+		    TX_SPEAKER_KIRK,
+		    27, 34, 18,
+		    TX_BLANK};
 		choice = showMultipleTexts(choices2, true);
 
 		if (choice == 0) { // "Let's stop playing games"
 			showText(TX_SPEAKER_VLICT, 75, true);
-			showText(TX_SPEAKER_KIRK,  17, true);
-			showText(TX_SPEAKER_QUETZECOATL,  42, true);
+			showText(TX_SPEAKER_KIRK, 17, true);
+			showText(TX_SPEAKER_QUETZECOATL, 42, true);
 			showText(TX_SPEAKER_VLICT, 54, true);
 
 			const TextRef choices3[] = {
-				TX_SPEAKER_KIRK,
-				28, 21, 31,
-				TX_BLANK
-			};
+			    TX_SPEAKER_KIRK,
+			    28, 21, 31,
+			    TX_BLANK};
 			choice = showMultipleTexts(choices3, true);
 
 			if (choice == 0 || choice == 1) {
@@ -144,18 +137,17 @@ void Room::trial4Tick60() {
 			showText(TX_SPEAKER_VLICT, 76, true);
 			showText(TX_SPEAKER_MCCOY, 37, true);
 			showText(TX_SPEAKER_VLICT, 73, true);
-			showText(TX_SPEAKER_KIRK,  11, true);
+			showText(TX_SPEAKER_KIRK, 11, true);
 			showText(TX_SPEAKER_VLICT, 59, true);
 		} else if (choice == 2) { // "Nature beat me to it"
 			showText(TX_SPEAKER_VLICT, 65, true);
-			showText(TX_SPEAKER_KIRK,  16, true);
+			showText(TX_SPEAKER_KIRK, 16, true);
 			showText(TX_SPEAKER_VLICT, 74, true);
 
 			const TextRef choices3[] = {
-				TX_SPEAKER_KIRK,
-				26, 24, 23,
-				TX_BLANK
-			};
+			    TX_SPEAKER_KIRK,
+			    26, 24, 23,
+			    TX_BLANK};
 			choice = showMultipleTexts(choices3, true);
 
 			if (choice == 0) { // "The empire will learn you betrayed them"
@@ -165,15 +157,15 @@ void Room::trial4Tick60() {
 				showText(TX_SPEAKER_KIRK, 06, true);
 				showText(TX_SPEAKER_QUETZECOATL, 48, true);
 			} else if (choice == 1) { // "You didn't give him a fair trial"
-				showText(TX_SPEAKER_VLICT,       55, true);
+				showText(TX_SPEAKER_VLICT, 55, true);
 				showText(TX_SPEAKER_QUETZECOATL, 45, true);
-				showText(TX_SPEAKER_KIRK,        03, true);
+				showText(TX_SPEAKER_KIRK, 03, true);
 				showText(TX_SPEAKER_QUETZECOATL, 47, true);
-				showText(TX_SPEAKER_KIRK,        10, true);
+				showText(TX_SPEAKER_KIRK, 10, true);
 			} else if (choice == 2) { // "How can a liar like you say 'honor'"
-				showText(TX_SPEAKER_VLICT,       67, true);
+				showText(TX_SPEAKER_VLICT, 67, true);
 				showText(TX_SPEAKER_QUETZECOATL, 46, true);
-				showText(TX_SPEAKER_KIRK,        07, true);
+				showText(TX_SPEAKER_KIRK, 07, true);
 				showText(TX_SPEAKER_QUETZECOATL, 49, true);
 			}
 		}
@@ -184,4 +176,4 @@ void Room::trial4Tick60() {
 	endMission(_awayMission->trial.missionScore, _awayMission->trial.field2b, 2);
 }
 
-}
+} // namespace StarTrek

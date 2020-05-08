@@ -31,8 +31,10 @@ class CPetDisabler : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+
 public:
 	CString _value;
+
 public:
 	CLASSDEF;
 	CPetDisabler() : CGameObject() {}

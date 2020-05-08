@@ -225,35 +225,31 @@ bool FPSfx::loadVoiceFromVDB(Common::File &vdbFP) {
 		uint32 rate = vdbFP.readUint32LE();
 
 		_rewindableStream = Audio::makeADPCMStream(vdbFP.readStream(size), DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, 1);
-		}
-		break;
-	case FPCODEC_MP3 : {
+	} break;
+	case FPCODEC_MP3: {
 #ifdef USE_MAD
 		uint32 size = vdbFP.readUint32LE();
 		_rewindableStream = Audio::makeMP3Stream(vdbFP.readStream(size), DisposeAfterUse::YES);
 #else
 		return false;
 #endif
-		}
-		break;
-	case FPCODEC_OGG : {
+	} break;
+	case FPCODEC_OGG: {
 #ifdef USE_VORBIS
 		uint32 size = vdbFP.readUint32LE();
 		_rewindableStream = Audio::makeVorbisStream(vdbFP.readStream(size), DisposeAfterUse::YES);
 #else
 		return false;
 #endif
-		}
-		break;
-	case FPCODEC_FLAC : {
+	} break;
+	case FPCODEC_FLAC: {
 #ifdef USE_FLAC
 		uint32 size = vdbFP.readUint32LE();
 		_rewindableStream = Audio::makeFLACStream(vdbFP.readStream(size), DisposeAfterUse::YES);
 #else
 		return false;
 #endif
-		}
-		break;
+	} break;
 	default:
 		return false;
 	}
@@ -303,8 +299,7 @@ bool FPSfx::loadFile(const char *fileName) {
 
 		buffer = file.readStream(file.size() - file.pos());
 		_rewindableStream = Audio::makeADPCMStream(buffer, DisposeAfterUse::YES, 0, Audio::kADPCMDVI, rate, channels);
-		}
-		break;
+	} break;
 	case FPCODEC_MP3:
 #ifdef USE_MAD
 		buffer = file.readStream(file.size());
@@ -354,7 +349,7 @@ bool FPSfx::play() {
 		}
 
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, stream, -1,
-				Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		                                 Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 		setVolume(_lastVolume);
 
@@ -464,7 +459,7 @@ bool FPSfx::endOfBuffer() const {
  */
 void FPSfx::soundCheckProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
-		Common::List<FPSfx *>::iterator i;
+	Common::List<FPSfx *>::iterator i;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);

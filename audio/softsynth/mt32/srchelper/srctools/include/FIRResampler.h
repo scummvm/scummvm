@@ -48,7 +48,7 @@ private:
 		// Index of last delay line element, generally greater than numberOfTaps to form a proper binary mask
 		unsigned int delayLineMask;
 		// Delay line
-		FloatSample(*ringBuffer)[FIR_INTERPOLATOR_CHANNEL_COUNT];
+		FloatSample (*ringBuffer)[FIR_INTERPOLATOR_CHANNEL_COUNT];
 
 		Constants(const unsigned int upsampleFactor, const double downsampleFactor, const FIRCoefficient kernel[], const unsigned int kernelLength);
 	} constants;

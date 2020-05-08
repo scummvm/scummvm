@@ -28,23 +28,22 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define HAS_YM3812  1
+#define HAS_YM3812 1
 
 /* --- select emulation chips --- */
 #define BUILD_YM3812 (HAS_YM3812)
 #define BUILD_YM3526 (HAS_YM3526)
-#define BUILD_Y8950  (HAS_Y8950)
+#define BUILD_Y8950 (HAS_Y8950)
 
 /* select output bits size of output : 8 or 16 */
 #define OPL_SAMPLE_BITS 16
 
-#if (OPL_SAMPLE_BITS==16)
+#if (OPL_SAMPLE_BITS == 16)
 typedef int16 OPLSAMPLE;
 #endif
-#if (OPL_SAMPLE_BITS==8)
+#if (OPL_SAMPLE_BITS == 8)
 typedef int8 OPLSAMPLE;
 #endif
-
 
 typedef void (*OPL_TIMERHANDLER)(int channel, double interval_Sec);
 typedef void (*OPL_IRQHANDLER)(int param, int irq);
@@ -52,15 +51,14 @@ typedef void (*OPL_UPDATEHANDLER)(int param, int min_interval_us);
 typedef void (*OPL_PORTHANDLER_W)(int param, unsigned char data);
 typedef unsigned char (*OPL_PORTHANDLER_R)(int param);
 
-
 #if BUILD_YM3812
 
-int  YM3812Init(int num, int clock, int rate);
+int YM3812Init(int num, int clock, int rate);
 void YM3812Shutdown(void);
 void YM3812ResetChip(int which);
-int  YM3812Write(int which, int a, int v);
+int YM3812Write(int which, int a, int v);
 unsigned char YM3812Read(int which, int a);
-int  YM3812TimerOver(int which, int c);
+int YM3812TimerOver(int which, int c);
 void YM3812UpdateOne(int which, int16 *buffer, int length);
 
 void YM3812SetTimerHandler(int which, OPL_TIMERHANDLER TimerHandler, int channelOffset);
@@ -68,7 +66,6 @@ void YM3812SetIRQHandler(int which, OPL_IRQHANDLER IRQHandler, int param);
 void YM3812SetUpdateHandler(int which, OPL_UPDATEHANDLER UpdateHandler, int param);
 
 #endif
-
 
 #if BUILD_YM3526
 
@@ -79,13 +76,13 @@ void YM3812SetUpdateHandler(int which, OPL_UPDATEHANDLER UpdateHandler, int para
 ** 'clock' is the chip clock in Hz
 ** 'rate' is sampling rate
 */
-int  YM3526Init(int num, int clock, int rate);
+int YM3526Init(int num, int clock, int rate);
 /* shutdown the YM3526 emulators*/
 void YM3526Shutdown(void);
 void YM3526ResetChip(int which);
-int  YM3526Write(int which, int a, int v);
+int YM3526Write(int which, int a, int v);
 unsigned char YM3526Read(int which, int a);
-int  YM3526TimerOver(int which, int c);
+int YM3526TimerOver(int which, int c);
 /*
 ** Generate samples for one of the YM3526's
 **
@@ -116,12 +113,12 @@ void Y8950SetPortHandler(int which, OPL_PORTHANDLER_W PortHandler_w, OPL_PORTHAN
 void Y8950SetKeyboardHandler(int which, OPL_PORTHANDLER_W KeyboardHandler_w, OPL_PORTHANDLER_R KeyboardHandler_r, int param);
 void Y8950SetDeltaTMemory(int which, void *deltat_rom, int deltat_rom_size);
 
-int  Y8950Init(int num, int clock, int rate);
+int Y8950Init(int num, int clock, int rate);
 void Y8950Shutdown(void);
 void Y8950ResetChip(int which);
-int  Y8950Write(int which, int a, int v);
+int Y8950Write(int which, int a, int v);
 unsigned char Y8950Read(int which, int a);
-int  Y8950TimerOver(int which, int c);
+int Y8950TimerOver(int which, int c);
 void Y8950UpdateOne(int which, int16 *buffer, int length);
 
 void Y8950SetTimerHandler(int which, OPL_TIMERHANDLER TimerHandler, int channelOffset);

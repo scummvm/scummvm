@@ -23,11 +23,11 @@
 #ifndef CRYOMNI3D_VERSAILLES_ENGINE_H
 #define CRYOMNI3D_VERSAILLES_ENGINE_H
 
-#include "common/events.h"
-#include "common/random.h"
 #include "common/array.h"
-#include "common/hashmap.h"
+#include "common/events.h"
 #include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/random.h"
 #include "common/str.h"
 
 #include "cryomni3d/cryomni3d.h"
@@ -35,19 +35,19 @@
 #include "cryomni3d/sprites.h"
 #include "cryomni3d/wam_parser.h"
 
+#include "cryomni3d/versailles/dialogs_manager.h"
 #include "cryomni3d/versailles/documentation.h"
 #include "cryomni3d/versailles/toolbar.h"
-#include "cryomni3d/versailles/dialogs_manager.h"
 
 namespace Graphics {
 class ManagedSurface;
 struct Surface;
-}
+} // namespace Graphics
 
 namespace CryOmni3D {
 struct FixedImageConfiguration;
 class ZonFixedImage;
-}
+} // namespace CryOmni3D
 
 namespace CryOmni3D {
 namespace Versailles {
@@ -55,8 +55,7 @@ struct PlaceStateActionKey {
 	uint placeId;
 	uint placeState;
 	uint actionId;
-	PlaceStateActionKey(uint placeId_, uint placeState_, uint actionId_) :
-		placeId(placeId_), placeState(placeState_), actionId(actionId_) {}
+	PlaceStateActionKey(uint placeId_, uint placeState_, uint actionId_) : placeId(placeId_), placeState(placeState_), actionId(actionId_) {}
 
 	bool operator==(const PlaceStateActionKey &other) const {
 		return other.placeId == placeId && other.placeState == placeState && other.actionId == actionId;
@@ -66,15 +65,14 @@ struct PlaceStateActionKey {
 struct PlaceActionKey {
 	uint placeId;
 	uint actionId;
-	PlaceActionKey(uint placeId_, uint actionId_) :
-		placeId(placeId_), actionId(actionId_) {}
+	PlaceActionKey(uint placeId_, uint actionId_) : placeId(placeId_), actionId(actionId_) {}
 
 	bool operator==(const PlaceActionKey &other) const {
 		return other.placeId == placeId && other.actionId == actionId;
 	}
 };
-}
-}
+} // namespace Versailles
+} // namespace CryOmni3D
 
 namespace Common {
 template<>
@@ -93,7 +91,7 @@ struct Hash<CryOmni3D::Versailles::PlaceActionKey> {
 		return (k.placeId << 16) ^ k.actionId;
 	}
 };
-}
+} // namespace Common
 
 namespace CryOmni3D {
 namespace Versailles {
@@ -112,7 +110,7 @@ enum AbortCommand {
 
 struct GameVariables {
 	enum Var {
-		kCollectScore = 0,             // 0
+		kCollectScore = 0, // 0
 		kUnlockHiddenDoor,
 		kAlreadyWent3_19,
 		kMedalsDrawerStatus,
@@ -122,7 +120,7 @@ struct GameVariables {
 		kDecipherScore,
 		kCollectLampoonArchitecture,
 		kGotRevealedPaper,
-		kCollectKey,                   // 10
+		kCollectKey, // 10
 		kCollectPortfolio,
 		kSketchState,
 		kFakeSketchChatState,
@@ -132,7 +130,7 @@ struct GameVariables {
 		kCollectSmallKey3,
 		kCollectEngraving,
 		kCollectCord,
-		kCollectVaubanBlueprint1,      // 20
+		kCollectVaubanBlueprint1, // 20
 		kCollectVaubanBlueprint2,
 		kLadderState,
 		kOpenedCurtain,
@@ -142,7 +140,7 @@ struct GameVariables {
 		kUsedLitCandle,
 		kBombState,
 		kInkSpilled,
-		kCollectedPaperOnTable,        // 30
+		kCollectedPaperOnTable, // 30
 		kSafeUnlocked,
 		//kUselessVar,
 		kCollectedPaperInTrunk = 33,
@@ -152,7 +150,7 @@ struct GameVariables {
 		kHasPlayedLebrun,
 		kWarnedIncomplete,
 		kUsedVaubanBlueprint1,
-		kUsedVaubanBlueprint2,         // 40
+		kUsedVaubanBlueprint2, // 40
 		kSeenMemorandum,
 		kCollectScissors,
 		kSavedCountdown,
@@ -185,8 +183,7 @@ struct PlaceState {
 	typedef bool (CryOmni3DEngine_Versailles::*FilterEventFunc)(uint *event);
 
 	PlaceState() : initPlace(nullptr), filterEvent(nullptr), docImage(nullptr), state(0) {}
-	PlaceState(InitFunc initPlace_, FilterEventFunc filterEvent_, const char *docImage_) :
-		initPlace(initPlace_), filterEvent(filterEvent_), docImage(docImage_), state(0) {}
+	PlaceState(InitFunc initPlace_, FilterEventFunc filterEvent_, const char *docImage_) : initPlace(initPlace_), filterEvent(filterEvent_), docImage(docImage_), state(0) {}
 
 	InitFunc initPlace;
 	FilterEventFunc filterEvent;
@@ -227,6 +224,7 @@ struct SubtitleEntry {
 
 class CryOmni3DEngine_Versailles : public CryOmni3DEngine {
 	friend class Versailles_DialogsManager;
+
 protected:
 	Common::Error run() override;
 
@@ -242,11 +240,11 @@ public:
 	Common::String getSaveStateName(int slot) const override;
 
 	Common::String prepareFileName(const Common::String &baseName, const char *extension) const {
-		const char *const extensions[] = { extension, nullptr };
+		const char *const extensions[] = {extension, nullptr};
 		return prepareFileName(baseName, extensions);
 	}
 	Common::String prepareFileName(const Common::String &baseName,
-	                                       const char *const *extensions) const override;
+	                               const char *const *extensions) const override;
 
 	void setupPalette(const byte *colors, uint start, uint num) override { setupPalette(colors, start, num, true); }
 	void makeTranslucent(Graphics::Surface &dst, const Graphics::Surface &src) const override;
@@ -424,8 +422,18 @@ private:
 	// Countdown
 	void initCountdown();
 	void syncCountdown();
-	inline bool countDown() { if (_countingDown) { return doCountDown(); } else { return false; } }
-	inline void drawCountdown(Graphics::ManagedSurface *surface = nullptr) { if (_countingDown) { doDrawCountdown(surface); } }
+	inline bool countDown() {
+		if (_countingDown) {
+			return doCountDown();
+		} else {
+			return false;
+		}
+	}
+	inline void drawCountdown(Graphics::ManagedSurface *surface = nullptr) {
+		if (_countingDown) {
+			doDrawCountdown(surface);
+		}
+	}
 	void drawCountdownVideo(uint frameNum) { drawCountdown(); }
 
 	bool _countingDown;
@@ -436,7 +444,7 @@ private:
 	void doDrawCountdown(Graphics::ManagedSurface *surface);
 
 	// Video subtitles
-	Common::HashMap<Common::String, Common::Array<SubtitleEntry> > _subtitles;
+	Common::HashMap<Common::String, Common::Array<SubtitleEntry>> _subtitles;
 	const Common::Array<SubtitleEntry> *_currentSubtitleSet;
 	Common::Array<SubtitleEntry>::const_iterator _currentSubtitle;
 	void drawVideoSubtitles(uint frameNum);
@@ -462,7 +470,7 @@ private:
 	void genericDumbImage(ZonFixedImage *fimg);
 	template<uint ID>
 	void genericPainting(ZonFixedImage *fimg);
-#define IMG_CB(name) void img_ ## name(ZonFixedImage *fimg)
+#define IMG_CB(name) void img_##name(ZonFixedImage *fimg)
 	IMG_CB(31101);
 	IMG_CB(31101b);
 	IMG_CB(31142);
@@ -498,7 +506,7 @@ private:
 	static const uint16 kSafeDigitsY[];
 	static const char *kSafeDates[];
 	bool handleSafe(ZonFixedImage *fimg);
-	void drawSafeDigits(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpDigits)[10],
+	void drawSafeDigits(Graphics::ManagedSurface &surface, const Graphics::Surface (&bmpDigits)[10],
 	                    const unsigned char (&safeDigits)[kSafeDigitsCount]);
 	bool checkSafeDigits(unsigned char (&safeDigits)[kSafeDigitsCount]);
 
@@ -542,7 +550,7 @@ private:
 	Common::String _epigraphPassword;
 	bool handleEpigraph(ZonFixedImage *fimg);
 	void drawEpigraphLetters(Graphics::ManagedSurface &surface,
-	                         const Graphics::Surface(&bmpLetters)[28], const Common::String &letters);
+	                         const Graphics::Surface (&bmpLetters)[28], const Common::String &letters);
 	IMG_CB(45130);
 	IMG_CB(45270);
 	IMG_CB(45270b);
@@ -567,16 +575,16 @@ private:
 	static const uint16 kBombLettersPos[2][kBombPasswordMaxLength][2];
 	bool handleBomb(ZonFixedImage *fimg);
 	void handleBombTranslation(Graphics::ManagedSurface &surface);
-	void drawBombLetters(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpLetters)[28],
+	void drawBombLetters(Graphics::ManagedSurface &surface, const Graphics::Surface (&bmpLetters)[28],
 	                     const uint bombPasswordLength,
-	                     const uint32(&bombPossibilites)[kBombPasswordMaxLength][5],
-	                     const byte(&bombCurrentLetters)[kBombPasswordMaxLength]);
+	                     const uint32 (&bombPossibilites)[kBombPasswordMaxLength][5],
+	                     const byte (&bombCurrentLetters)[kBombPasswordMaxLength]);
 	IMG_CB(88004);
 	IMG_CB(88004b);
 #undef IMG_CB
 
-#define FILTER_EVENT(level, place) bool filterEventLevel ## level ## Place ## place(uint *event)
-#define INIT_PLACE(level, place) void initPlaceLevel ## level ## Place ## place()
+#define FILTER_EVENT(level, place) bool filterEventLevel##level##Place##place(uint *event)
+#define INIT_PLACE(level, place) void initPlaceLevel##level##Place##place()
 	FILTER_EVENT(1, 1);
 	FILTER_EVENT(1, 2);
 	INIT_PLACE(1, 3);

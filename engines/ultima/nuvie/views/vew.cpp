@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/nuvie/core/nuvie_defs.h"
-#include "ultima/nuvie/misc/u6_misc.h"
-#include "ultima/nuvie/core/party.h"
-#include "ultima/nuvie/screen/game_palette.h"
-#include "ultima/nuvie/views/view_manager.h"
-#include "ultima/nuvie/views/view.h"
 #include "ultima/nuvie/actors/actor.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/party.h"
+#include "ultima/nuvie/misc/u6_misc.h"
+#include "ultima/nuvie/screen/game_palette.h"
+#include "ultima/nuvie/views/view.h"
+#include "ultima/nuvie/views/view_manager.h"
 
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/gui/gui_button.h"
+#include "ultima/nuvie/gui/widgets/gui_widget.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -70,9 +70,7 @@ bool View::init(uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManag
 
 	bg_color = Game::get_game()->get_palette()->get_bg_color();
 
-
 	new_ui_mode = Game::get_game()->is_new_style();
-
 
 	return true;
 }
@@ -118,16 +116,15 @@ bool View::prev_party_member() {
 
 void View::fill_md_background(uint8 color, const Common::Rect &r) {
 	Screen *scr = Game::get_game()->get_screen();
-	scr->fill(color, r.left + 1, r.top + 9, 1, 1); // left pillar
-	scr->fill(color, r.left + 2, r.top + 6, 1, 4); // left pillar
-	scr->fill(color, r.left + 3, r.top + 3, 1, 11); // left pillar
-	scr->fill(color, r.left + r.width() - 2, r.top + 9, 1, 1); // right pillar
-	scr->fill(color, r.left + r.width() - 3, r.top + 6, 1, 4); // right pillar
-	scr->fill(color, r.left + r.width() - 4, r.top + 3, 1, 11); // right pillar
-	scr->fill(color, r.left + 4, r.top, r.width() - 8, 15); // top center
+	scr->fill(color, r.left + 1, r.top + 9, 1, 1);                    // left pillar
+	scr->fill(color, r.left + 2, r.top + 6, 1, 4);                    // left pillar
+	scr->fill(color, r.left + 3, r.top + 3, 1, 11);                   // left pillar
+	scr->fill(color, r.left + r.width() - 2, r.top + 9, 1, 1);        // right pillar
+	scr->fill(color, r.left + r.width() - 3, r.top + 6, 1, 4);        // right pillar
+	scr->fill(color, r.left + r.width() - 4, r.top + 3, 1, 11);       // right pillar
+	scr->fill(color, r.left + 4, r.top, r.width() - 8, 15);           // top center
 	scr->fill(color, r.left, r.top + 14, r.width(), r.height() - 14); // bottom
-	//scr->fill(15, r.left, r.top, r.width(), r.height()); // bottom
-
+	                                                                  //scr->fill(15, r.left, r.top, r.width(), r.height()); // bottom
 }
 
 void View::set_combat_mode(Actor *actor) {

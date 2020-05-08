@@ -21,20 +21,19 @@
  */
 
 #include "glk/frotz/frotz.h"
-#include "glk/frotz/frotz_types.h"
-#include "glk/frotz/screen.h"
-#include "glk/frotz/quetzal.h"
-#include "engines/util.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "engines/util.h"
+#include "glk/frotz/frotz_types.h"
+#include "glk/frotz/quetzal.h"
+#include "glk/frotz/screen.h"
 
 namespace Glk {
 namespace Frotz {
 
 Frotz *g_vm;
 
-Frotz::Frotz(OSystem *syst, const GlkGameDescription &gameDesc) :
-		Processor(syst, gameDesc) {
+Frotz::Frotz(OSystem *syst, const GlkGameDescription &gameDesc) : Processor(syst, gameDesc) {
 	g_vm = this;
 }
 
@@ -119,8 +118,7 @@ Common::Error Frotz::loadGameState(int slot) {
 		 * the screen sizes may vary a lot. Erasing the status window
 		 * seems to cover up most of the resulting badness.
 		 */
-		if (h_version > V3 && h_version != V6 && (h_screen_rows != old_screen_rows
-			|| h_screen_cols != old_screen_cols))
+		if (h_version > V3 && h_version != V6 && (h_screen_rows != old_screen_rows || h_screen_cols != old_screen_cols))
 			erase_window(1);
 	} else {
 		error("%s", _("Error reading save file"));
@@ -144,7 +142,6 @@ Common::Error Frotz::saveGameState(int slot, const Common::String &desc, bool is
 		print_string(_("Error writing save file\n"));
 
 	return Common::kNoError;
-
 }
 
 } // End of namespace Frotz
